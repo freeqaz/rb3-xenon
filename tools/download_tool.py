@@ -76,10 +76,15 @@ def sjiswrap_url(tag: str) -> str:
     repo = "https://github.com/encounter/sjiswrap"
     return f"{repo}/releases/download/{tag}/sjiswrap-windows-x86.exe"
 
-
 def wibo_url(tag: str) -> str:
+    uname = platform.uname()
+    arch = uname.machine.lower()
+    system = uname.system.lower()
+    if system == "darwin":
+        arch = "macos"
+
     repo = "https://github.com/decompals/wibo"
-    return f"{repo}/releases/download/{tag}/wibo"
+    return f"{repo}/releases/download/{tag}/wibo-{arch}"
 
 
 TOOLS: Dict[str, Callable[[str], str]] = {

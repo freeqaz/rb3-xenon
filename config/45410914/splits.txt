@@ -1,0 +1,15 @@
+Sections:
+	.rdata      type:rodata align:65536
+	.pdata      type:rodata align:65536
+	BINKCONS    type:rodata align:65536
+	.text       type:code align:65536
+	BINK        type:code align:65536
+	BINKBSS     type:bss align:65536
+	.data       type:data align:65536
+	BINKDATA    type:data align:65536
+	.XBMOVIE    type:data align:65536
+	.idata      type:data align:65536
+
+Main.cpp:
+	.pdata      start:0x821F1878 end:0x821F1880
+	.text       start:0x82272E68 end:0x82272EB4
