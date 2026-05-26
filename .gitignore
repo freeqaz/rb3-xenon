@@ -37,6 +37,11 @@ compile_commands.json
 # wibo/cl.exe scratch files (linker temp output left in cwd)
 /_CL_*
 
+# .claude/ holds subagent worktrees + transient state; allow skills only
+# (NB: use /* not / so git still recurses into .claude/ to find skills/)
+.claude/*
+!.claude/skills/
+
 # Native port build output
 native/build/
 native/build-*/
