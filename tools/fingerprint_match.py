@@ -689,6 +689,162 @@ def bindiff_clusters(args):
               f"density={r['density']:.1%}")
 
 
+def gen_target_map(args):
+    """Auto-populate scripts/target_symbol_map.json from unified_id.json.
+
+    Filter: source includes 'bindiff', confidence >= --min-confidence, and
+    rb3_addr falls inside a currently-pinned .text range in splits.txt.
+    Records with missing/untrustworthy dc3_name (FUN_*/sub_*) are skipped.
+
+    Merge rule: existing manual entries in target_symbol_map.json are
+    PRESERVED. If the same address appears in both manual + auto-gen,
+    manual wins (the seed entries were hand-verified). Comment fields
+    (keys not starting with 0x) are preserved verbatim.
+
+    Output reports per-TU breakdown of how many fn_<addr> symbols got an
+    auto-gen name within each pinned cluster.
+    """
+    # Load unified_id
+    with open(args.unified) as f:
+        unified = json.load(f)
+
+    # Parse splits.txt for pinned .text ranges
+    splits = _parse_splits(args.splits)
+    # Build a flat list of (lo, hi, cpp) ordered by lo for fast lookup
+    pinned = []
+    for cpp, ranges in splits.items():
+        for lo, hi in ranges:
+            pinned.append((lo, hi, cpp))
+    pinned.sort()
+    pinned_los = [p[0] for p in pinned]
+
+    import bisect
+    def find_pinned_cpp(addr):
+        i = bisect.bisect_right(pinned_los, addr) - 1
+        if i < 0:
+            return None
+        lo, hi, cpp = pinned[i]
+        if lo <= addr < hi:
+            return cpp
+        return None
+
+    # Load existing map (preserve comment/metadata + manual entries)
+    map_path = args.map
+    if os.path.isfile(map_path):
+        with open(map_path) as f:
+            existing = json.load(f)
+    else:
+        existing = {}
+
+    # Separate metadata (non-0x keys) from address entries
+    metadata = {k: v for k, v in existing.items() if not k.lower().startswith("0x")}
+    manual = {k: v for k, v in existing.items() if k.lower().startswith("0x")}
+    # Normalize manual keys to uppercase hex for collision detection
+    manual_norm = {_norm_addr_key(k): (k, v) for k, v in manual.items()}
+
+    # Filter unified_id records
+    auto = {}              # normalized_addr -> mangled_name
+    per_tu = {}            # cpp -> count of new entries
+    skipped_reasons = {"low_confidence": 0, "not_bindiff": 0,
+                       "bad_name": 0, "out_of_range": 0, "no_dc3_name": 0}
+    for r in unified:
+        source = r.get("source") or ""
+        if "bindiff" not in source:
+            skipped_reasons["not_bindiff"] += 1
+            continue
+        conf = r.get("confidence") or 0.0
+        if conf < args.min_confidence:
+            skipped_reasons["low_confidence"] += 1
+            continue
+        name = r.get("dc3_name")
+        if not name:
+            skipped_reasons["no_dc3_name"] += 1
+            continue
+        if name.startswith(("FUN_", "sub_")):
+            skipped_reasons["bad_name"] += 1
+            continue
+        addr_str = r.get("rb3_addr") or ""
+        try:
+            addr = int(addr_str, 16)
+        except ValueError:
+            continue
+        cpp = find_pinned_cpp(addr)
+        if cpp is None:
+            skipped_reasons["out_of_range"] += 1
+            continue
+        norm = _norm_addr_key(addr_str)
+        # If multiple bindiff records hit the same addr (rare but possible),
+        # keep the higher-confidence one.
+        prev = auto.get(norm)
+        if prev is None or prev[1] < conf:
+            auto[norm] = (name, conf, cpp)
+
+    # Build merged output: metadata + manual + auto-gen (manual wins on key
+    # collision). Sort 0x keys for stable output.
+    merged = dict(metadata)  # comment fields first
+    n_auto_kept = 0
+    n_auto_overridden_by_manual = 0
+    for norm, (name, conf, cpp) in auto.items():
+        if norm in manual_norm:
+            n_auto_overridden_by_manual += 1
+            continue
+        n_auto_kept += 1
+        per_tu[cpp] = per_tu.get(cpp, 0) + 1
+
+    # Re-emit manual entries with their original key casing
+    for norm, (orig_key, orig_val) in manual_norm.items():
+        merged[orig_key] = orig_val
+
+    # Emit auto entries with normalized "0xUPPERCASE" form, except where a
+    # manual entry already claimed the address.
+    for norm, (name, conf, cpp) in sorted(auto.items()):
+        if norm in manual_norm:
+            continue
+        merged[norm] = name
+
+    # Write output
+    if args.dry_run:
+        print(f"[gen_target_map] DRY RUN — would write {len(merged)} entries "
+              f"to {map_path}", file=sys.stderr)
+    else:
+        # Preserve readable formatting (manual file was 4-space indented).
+        with open(map_path, "w") as f:
+            json.dump(merged, f, indent=4, sort_keys=False)
+            f.write("\n")
+
+    # Report
+    n_metadata = len(metadata)
+    n_manual = len(manual_norm)
+    n_total_addrs = sum(1 for k in merged if k.lower().startswith("0x"))
+    print(f"[gen_target_map] unified_id records:    {len(unified)}")
+    print(f"[gen_target_map] eligible auto-gen:     {len(auto)} "
+          f"(after filters)")
+    print(f"[gen_target_map] auto-gen kept:         {n_auto_kept}")
+    print(f"[gen_target_map] overridden by manual:  {n_auto_overridden_by_manual}")
+    print(f"[gen_target_map] manual entries:        {n_manual}")
+    print(f"[gen_target_map] comment/metadata keys: {n_metadata}")
+    print(f"[gen_target_map] total entries in map:  {n_total_addrs} + "
+          f"{n_metadata} metadata")
+    print(f"[gen_target_map] skipped:")
+    for reason, n in sorted(skipped_reasons.items(), key=lambda kv: -kv[1]):
+        print(f"    {reason:20s}: {n}")
+    print(f"[gen_target_map] auto-gen entries per pinned TU:")
+    for cpp, n in sorted(per_tu.items(), key=lambda kv: -kv[1]):
+        print(f"    {cpp:30s}: {n}")
+
+
+def _norm_addr_key(k):
+    """Normalize address-string keys to uppercase '0xXXXXXXXX' form."""
+    k = k.strip()
+    if k.lower().startswith("0x"):
+        k = k[2:]
+    try:
+        n = int(k, 16)
+    except ValueError:
+        return k
+    return f"0x{n:08X}"
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -750,6 +906,26 @@ def main():
     pc.add_argument("--min-hits", type=int, default=3,
                     help="min distinct bindiff hits per cluster (default 3)")
     pc.set_defaults(func=bindiff_clusters)
+
+    pgt = sub.add_parser("gen_target_map",
+        help="Auto-populate scripts/target_symbol_map.json from unified_id.json"
+             " (filter: bindiff source, confidence >= 0.95, addr in pinned"
+             " .text range). Manual entries preserved on collision.")
+    pgt.add_argument("--unified", default="unified_id.json",
+                     help="Input unified_id.json (default: %(default)s)")
+    pgt.add_argument("--splits",
+                     default=os.path.join(os.path.dirname(__file__), "..",
+                                          "config", "45410914", "splits.txt"),
+                     help="splits.txt with pinned .text ranges")
+    pgt.add_argument("--map",
+                     default=os.path.join(os.path.dirname(__file__), "..",
+                                          "scripts", "target_symbol_map.json"),
+                     help="Target symbol map JSON (default: %(default)s)")
+    pgt.add_argument("--min-confidence", type=float, default=0.95,
+                     help="min bindiff confidence (default: %(default)s)")
+    pgt.add_argument("--dry-run", action="store_true",
+                     help="Compute and report counts but don't write the file")
+    pgt.set_defaults(func=gen_target_map)
 
     args = ap.parse_args()
     args.func(args)
