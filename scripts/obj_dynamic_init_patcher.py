@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-SRC_DIR = PROJECT_ROOT / "build" / "373307D9" / "src"
+SRC_DIR = PROJECT_ROOT / "build" / "45410914" / "src"
 
 IMAGE_SYM_CLASS_EXTERNAL = 2
 IMAGE_SYM_CLASS_STATIC = 3
@@ -118,7 +118,7 @@ def main():
     parser.add_argument('--batch', action='store_true',
                         help='Process all decomp .obj files')
     parser.add_argument('--src-dir',
-                        help='Decomp .obj directory (default: build/373307D9/src)')
+                        help='Decomp .obj directory (default: build/45410914/src)')
     args = parser.parse_args()
 
     if not args.batch:

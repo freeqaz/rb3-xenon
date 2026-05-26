@@ -241,6 +241,69 @@ config.linker_version = "X360/16.00.11886.00"
 config.shift_jis = False
 config.progress_all = False
 
+# Post-compile patchers: run after all .obj files are compiled, before linking.
+# These patch decomp .obj files to match original binary patterns (anonymous
+# namespace hashes, ??__E dynamic initializers, $S guard variables, bool
+# parameter mangling, ??__F atexit scope counters). Mirrors
+# dc3-decomp/configure.py:294-357.
+stamp_dir = config.build_dir / config.version
+config.custom_build_rules = [
+    {
+        "name": "run_script",
+        "command": "$cmd && touch $out",
+        "description": "$desc",
+    },
+]
+config.custom_build_steps = {
+    "post-compile": [
+        {
+            "outputs": str(stamp_dir / "anon_ns_patched.stamp"),
+            "rule": "run_script",
+            "order_only": "all_source",
+            "variables": {
+                "cmd": "python3 scripts/obj_anon_ns_patcher.py --batch --apply",
+                "desc": "PATCH anonymous namespace hashes",
+            },
+        },
+        {
+            "outputs": str(stamp_dir / "dynamic_init_patched.stamp"),
+            "rule": "run_script",
+            "order_only": "all_source",
+            "variables": {
+                "cmd": "python3 scripts/obj_dynamic_init_patcher.py --batch --apply",
+                "desc": "PATCH ??__E dynamic initializers STATIC->EXTERNAL",
+            },
+        },
+        {
+            "outputs": str(stamp_dir / "guard_patched.stamp"),
+            "rule": "run_script",
+            "order_only": "all_source",
+            "variables": {
+                "cmd": "python3 scripts/obj_guard_patcher.py --batch --apply",
+                "desc": "PATCH $S guard variables to match ??_B naming",
+            },
+        },
+        {
+            "outputs": str(stamp_dir / "bool_mangle_patched.stamp"),
+            "rule": "run_script",
+            "order_only": "all_source",
+            "variables": {
+                "cmd": "python3 scripts/obj_bool_mangle_patcher.py --batch --apply",
+                "desc": "PATCH bool parameter back-reference mangling",
+            },
+        },
+        {
+            "outputs": str(stamp_dir / "atexit_scope_patched.stamp"),
+            "rule": "run_script",
+            "order_only": "all_source",
+            "variables": {
+                "cmd": "python3 scripts/obj_atexit_scope_patcher.py --batch --apply",
+                "desc": "PATCH ??__F atexit scope counters (fuzzy match)",
+            },
+        },
+    ],
+}
+
 # Object files
 Matching = True
 Equivalent = config.non_matching
