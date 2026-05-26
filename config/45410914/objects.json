@@ -40,7 +40,23 @@
             "system/beatmatch/GuitarController.cpp": "NonMatching",
             "system/beatmatch/MasterAudio.cpp": "NonMatching",
             "system/rndobj/Console.cpp": "NonMatching",
-            "system/rndobj/ShaderOptions.cpp": "NonMatching"
+            "system/rndobj/ShaderOptions.cpp": "NonMatching",
+            "system/oggvorbis/framing.c": "NonMatching",
+            "system/oggvorbis/bitwise.c": "NonMatching",
+            "system/oggvorbis/info.c": "NonMatching",
+            "system/oggvorbis/sharedbook.c": "NonMatching",
+            "system/oggvorbis/block.c": "NonMatching",
+            "system/oggvorbis/codebook.c": "NonMatching",
+            "system/oggvorbis/mdct.c": "NonMatching",
+            "system/oggvorbis/psy.c": "NonMatching",
+            "system/oggvorbis/smallft.c": "NonMatching",
+            "system/utl/Pool.cpp": "NonMatching",
+            "system/utl/VarTimer.cpp": "NonMatching",
+            "system/obj/DataFlex.c": "NonMatching",
+            "system/synth/DelayEffect.cpp": "NonMatching",
+            "system/synth/FlangerEffect.cpp": "NonMatching",
+            "system/synth/CompressionEffect.cpp": "NonMatching",
+            "system/synth_xbox/FFT.cpp": "NonMatching"
         }
     },
     "band3": {
