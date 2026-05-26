@@ -338,6 +338,84 @@ two wrappers (already matched). Empty virtuals (`Beat`, `Swing`, …) are
 ICF-folded in the target (no standalone `fn_` of size 4 exists), so they
 can't be paired either.
 
+## Post-mortem #2 (2026-05-26): VERIFIED root cause — Hmx::Object is 0x28 in RB3, not 0x2c. The "HxAudio fold" hypothesis above was WRONG.
+
+Did the binary verification the previous section asked for. The +4 shift is
+**NOT** a missing/folded vptr. **Both** the target and our compiled obj write
+**4 vptrs** for MasterAudio. The real cause is that `Hmx::Object` is **0x28
+bytes in the RB3-360 retail binary** but our (dc3-derived) header models it as
+**0x2c** — a clean 4-byte over-size in the most foundational class.
+
+### Binary evidence (all read directly, no guessing)
+
+1. **Target MasterAudio ctor** `fn_82758380` (`build/45410914/asm/MasterAudio.s:271`):
+   final vptr stores at **0x0, 0x4, 0x8, 0x30**; then `mNumPlayers`(=r5 int arg)
+   @**0x34**, `mSongStream`(=0)@**0x38**, `mSongData`(=r7)@**0x3c**,
+   `mStreamEnabled`(=0 byte)@**0x40**. Hmx::Object subobject ctor (`bl
+   ??0Object@Hmx@@QAA@XZ` = `lbl_82737FE8`) is invoked on `this+0x8`.
+   → 4 vptrs (BeatMasterSink@0, BeatMatchSink@0x4, Object@0x8, HxAudio@0x30).
+2. **Compiled MasterAudio ctor** (objdiff `--full-listing` self-diff of
+   `??0MasterAudio@@QAA@...`): final vptrs at **0x0, 0x4, 0x8, 0x34**; members
+   `mNumPlayers`@0x38 / `mSongStream`@0x3c / `mSongData`@0x40 /
+   `mStreamEnabled`@0x44. Symtab shows 4 vtables emitted:
+   `??_7MasterAudio@@6BObject@Hmx@@@`, `…6BBeatMatchSink@@@`, `…6BHxAudio@@@`,
+   `…6BBeatMasterSink@@@`. **Both builds have 4 vptrs — the fold hypothesis is
+   refuted.**
+3. The ONLY divergence: HxAudio vptr @**0x30 (target)** vs **0x34 (compiled)**.
+   Object subobject starts at 0x8 in both → Object spans **0x8..0x30 = 0x28
+   (target)** vs **0x8..0x34 = 0x2c (compiled)**.
+4. **Hmx::Object ctor** `lbl_82737FE8` (target, `auto_03_82672130_text.s:252628`)
+   confirms it directly: last member store is `stw …, 0x24(r3)` → object size
+   **0x28**. Its layout is also REORDERED vs dc3: the `mRefs` ObjRef ring is at
+   **0x20** (the dtor `fn_82738050` walks a self-loop ring at `this+0x20` and
+   destructs it via `fn_82451A48`), a `FixedString/char*`-style member is at
+   **0x4** (ctor stores a string-literal ptr `lbl_8200E64C` (`data:string`) there;
+   dtor frees it / destructs via `fn_82263E30`), `mTypeProps`-like ptr @0x10
+   (deleted in dtor), a `char*` @0x14 (strlen+freed in dtor). There is **no
+   field at 0x28** — i.e. the dc3 `MsgSinks *mSinks // 0x28` does not exist in
+   RB3 (or the chain is otherwise one 4-byte field shorter and reordered).
+
+### Why this is a real RB3-vs-DC3 divergence (not our bug)
+
+`../dc3-decomp/config/373307D9/objects.json` marks `system/obj/Object.cpp` as
+**`Matching`**, and dc3's `Object.h` is byte-identical to ours (mRefs@0x4,
+mTypeProps@0x10, mTypeDef@0x14, mNote:String@0x18, mName@0x20, mDir@0x24,
+mSinks@0x28 → 0x2c). So **DC3's Hmx::Object genuinely is 0x2c and matches DC3's
+target.** RB3 is *older*; its Object is 0x28 with a different member order
+(`mRefs` ring at 0x20). This is precisely the CLAUDE.md provenance caveat
+("dc3 is newer; cross-check rb3-Wii"). rb3-Wii's `Object.h` is older still
+(`class Object : public ObjRef`, inline `TypeProps mTypeProps`, `vector<ObjRef*>
+mRefs` — a third, distinct layout). The 360-retail layout sits between them and
+must be reconstructed from the 360 binary, not copied from either sibling.
+
+### DECISION: do NOT change Hmx::Object as part of MasterAudio. Recommend instead.
+
+The fix is real but **systemic and high-risk**, not a minimal MasterAudio edit:
+- **826 TUs** `#include "obj/Object.h"`; **111 classes** derive from
+  `Hmx::Object`. Shrinking/reordering Object shifts every Object subclass's
+  members by -4 — it will move the needle on *many* TUs but could also break
+  any that currently rely on the 0x2c layout.
+- The **native build depends on the current Object layout** (`HX_NATIVE` blocks
+  in `Object.h`, `native/src/*`). A reorder must be regression-tested there.
+- The exact RB3-360 field identity (which member is dropped, full reorder) is
+  only *partially* pinned by the ctor/dtor; nailing every offset needs a
+  dedicated diff against `Object.cpp` itself (its own target asm), plus the
+  `mNote`/`mSinks`/`mRefs` types reconciled — work that belongs in a focused
+  "match Hmx::Object" effort, not a side effect of MasterAudio.
+
+There is **no sound MasterAudio-local workaround**: you cannot fake a 4-byte
+smaller base in a derived class without a hand-rolled padding hack that would
+corrupt the vtable/base-subobject layout and the native build.
+
+**Recommended next step (separate task):** drive `system/obj/Object.cpp` to
+match against its own target (`Hmx::Object::Object`/`~Object` at 0x82737FE8 /
+0x82738050). Reconstruct the 0x28 layout there (mRefs ObjRef ring at 0x20, the
+0x4 string member, drop the 0x28 field), validate with objdiff on Object.cpp,
+**then** rebuild the native engine to confirm no regression. Once Object is
+0x28, `MasterAudio::SetupTrackChannel`/`SetupBackgroundChannel` and ~every
+member-accessing fn across all 111 Object subclasses get the -4 correction for
+free. MasterAudio stays at `matched_functions: 2` until then.
+
 ## Numbered execution steps (for Sonnet impl agent)
 
 1. **Verify stamp freshness.** `ls -la build/45410914/bool_mangle_patched.stamp build/45410914/src/system/beatmatch/MasterAudio.obj` — stamp newer? If not, `ninja` (it's cheap; rebuilds nothing if obj is current, just re-runs patcher).
