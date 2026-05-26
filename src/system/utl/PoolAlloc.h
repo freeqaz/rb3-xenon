@@ -86,3 +86,16 @@ void PoolReport(TextStream &);
         PoolFree(sizeof(class_name), v, __FILE__, line_num, #class_name);                \
     }
 #endif
+
+// rb3-Wii style aliases. dc3's engine uses POOL_OVERLOAD(class, line) but the
+// rb3-Wii headers (which we port verbatim) use the older NEW_POOL_OVERLOAD/
+// DELETE_POOL_OVERLOAD spelling. Provide both so beatmatch/* headers compile
+// without modification.
+#define NEW_POOL_OVERLOAD(obj)                                                           \
+    static void *operator new(unsigned int s) {                                          \
+        return PoolAlloc(s, s, __FILE__, 0, #obj);                                       \
+    }                                                                                    \
+    static void *operator new(unsigned int, void *place) { return place; }
+
+#define DELETE_POOL_OVERLOAD(obj)                                                        \
+    static void operator delete(void *v) { PoolFree(sizeof(obj), v, __FILE__, 0, #obj); }

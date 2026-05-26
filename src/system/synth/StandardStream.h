@@ -79,7 +79,7 @@ public:
     virtual float GetSlipOffset(int);
     virtual void SetSlipSpeed(int, float);
     virtual void SetStereoPair(int, int) {}
-    virtual FaderGroup &ChannelFaders(int);
+    virtual FaderGroup *ChannelFaders(int);
     virtual void AddVirtualChannels(int);
     virtual void RemapChannel(int, int);
     StreamReceiver *GetChannel(int i) const { return mChannels[i]; }
