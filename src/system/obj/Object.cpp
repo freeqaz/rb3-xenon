@@ -85,6 +85,16 @@ DataArrayPtr gPropPaths[8] = {
 };
 MsgSinks gSinks(nullptr);
 
+#ifndef HX_NATIVE
+// RB3 retail X360: Hmx::Object is 0x28 bytes (reconstructed from ctor
+// lbl_82737FE8 / dtor fn_82738050; last member store at 0x24). This is
+// load-bearing — every Object subclass's members are offset by sizeof(Object),
+// so a wrong size silently +4-shifts ~all member-accessing functions. Achieved
+// by making ObjRef non-polymorphic in the match build (see Object.h). dc3 is
+// 0x2c; this is a genuine RB3-vs-DC3 divergence.
+static_assert(sizeof(Hmx::Object) == 0x28, "Hmx::Object must be 0x28 (RB3 retail)");
+#endif
+
 #pragma region Virtual Methods
 
 Hmx::Object::Object()

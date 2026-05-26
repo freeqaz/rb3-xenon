@@ -44,7 +44,20 @@ public:
 
 void ObjRefRelinkRing(ObjRef *ref);
 
-// ObjRef size: 0xc
+// ObjRef size: 0x8 (retail X360) / 0xc (HX_NATIVE: extra sentinel + vtable).
+// RB3 retail's ObjRef is NON-polymorphic: next@0x0, prev@0x4, no vtable. The
+// ring's Replace dispatch goes through the *referenced* object's vtable, not
+// the node's (verified: Hmx::Object dtor fn_82738050 ring-walk + ring-free
+// fn_82451A48, which read next@0x0 and free 0xc-byte ObjRefConcrete nodes).
+// dc3-decomp models ObjRef as polymorphic (0xc, vptr@0x0) — a genuine
+// RB3-vs-DC3 divergence. We keep dc3's polymorphic ObjRef for the HX_NATIVE
+// engine (its ring machinery + ASAN sentinel rely on it) but drop the vtable
+// for the X360 match build so Hmx::Object lays out at 0x28.
+#ifdef HX_NATIVE
+#define OBJREF_VIRTUAL virtual
+#else
+#define OBJREF_VIRTUAL
+#endif
 /** A circular doubly linked list to track an Object's refs. */
 class ObjRef {
     friend class Hmx::Object;
@@ -52,8 +65,8 @@ class ObjRef {
     friend void ::ObjRefRelinkRing(ObjRef *);
 
 protected:
-    ObjRef *next; // 0x4
-    ObjRef *prev; // 0x8
+    ObjRef *next; // 0x0 (retail) / 0x4 (native, after vptr)
+    ObjRef *prev; // 0x4 (retail) / 0x8 (native)
 #ifdef HX_NATIVE
     // Sentinel to detect freed ObjRefs during snapshot-based ReplaceRefs.
     // Set to kAliveSentinel in constructor, cleared to 0 in destructor.
@@ -99,7 +112,7 @@ public:
         prev = this;
 #endif
     }
-    virtual ~ObjRef() {
+    OBJREF_VIRTUAL ~ObjRef() {
 #ifdef HX_NATIVE
         mAliveSentinel = 0;
 #endif
@@ -107,16 +120,16 @@ public:
 #ifdef HX_NATIVE
     bool IsAlive() const { return mAliveSentinel == kAliveSentinel; }
 #endif
-    virtual Hmx::Object *RefOwner() const { return nullptr; }
-    virtual bool IsDirPtr() { return false; }
-    virtual Hmx::Object *GetObj() const {
+    OBJREF_VIRTUAL Hmx::Object *RefOwner() const { return nullptr; }
+    OBJREF_VIRTUAL bool IsDirPtr() { return false; }
+    OBJREF_VIRTUAL Hmx::Object *GetObj() const {
         MILO_FAIL("calling get obj on abstract ObjRef");
         return nullptr;
     }
-    virtual void Replace(Hmx::Object *) {
+    OBJREF_VIRTUAL void Replace(Hmx::Object *) {
         MILO_FAIL("calling get obj on abstract ObjRef");
     }
-    virtual ObjRefOwner *Parent() const { return nullptr; }
+    OBJREF_VIRTUAL ObjRefOwner *Parent() const { return nullptr; }
 #ifdef HX_NATIVE
     /** Null the ref's target pointer and self-loop ring pointers.
      *  No Replace callback fires — purely mechanical. Used by
@@ -1182,10 +1195,13 @@ namespace Hmx {
 
     protected:
         /** A collection of object instances which reference this Object. */
-        /** "ref owners" */
+        /** "ref owners" — ring head (next, prev). In the X360 match build
+         *  ObjRef is non-polymorphic (8 bytes), so this whole class lays out
+         *  at 0x28, matching RB3 retail. In HX_NATIVE it is 0xc (polymorphic
+         *  + ASAN sentinel), keeping dc3's 0x2c native layout. */
         ObjRef mRefs; // 0x4
         /** An array of properties this Object can have. */
-        TypeProps *mTypeProps; // 0x10
+        TypeProps *mTypeProps; // 0x10 (native) / 0xc (X360)
     private: // these were marked private in RB2
         /** A collection of handler methods this Object can have.
          *  More specifically, this is an array of arrays, with each array
@@ -1193,18 +1209,18 @@ namespace Hmx {
          *  Formatted in the style of:
          *  ( (name1 {handler1}) (name2 {handler2}) (name3 {handler3}) )
          */
-        DataArray *mTypeDef; // 0x14
+        DataArray *mTypeDef; // 0x14 (native) / 0x10 (X360)
         /** A note about this Object, useful for debugging. */
         /** "Just a note describing the object, stripped out of shipping assets,
             so don't make code rely on this" */
-        String mNote; // 0x18
+        String mNote; // 0x18 (native) / 0x14 (X360)
         /** This Object's name. */
         /** "name of the object" */
-        const char *mName; // 0x20
+        const char *mName; // 0x20 (native) / 0x1c (X360)
         /** The ObjectDir in which this Object resides. */
-        ObjectDir *mDir; // 0x24
+        ObjectDir *mDir; // 0x24 (native) / 0x20 (X360)
         /** "Sinks for messages sent to me" */
-        MsgSinks *mSinks; // 0x28
+        MsgSinks *mSinks; // 0x28 (native) / 0x24 (X360)
     protected:
         /** An Object in the process of being deleted. */
         static Object *sDeleting;
