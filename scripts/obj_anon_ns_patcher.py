@@ -25,8 +25,8 @@ from collections import defaultdict
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-OBJ_DIR = PROJECT_ROOT / "build" / "373307D9" / "obj"
-SRC_DIR = PROJECT_ROOT / "build" / "373307D9" / "src"
+OBJ_DIR = PROJECT_ROOT / "build" / "45410914" / "obj"
+SRC_DIR = PROJECT_ROOT / "build" / "45410914" / "src"
 
 ANON_NS_PATTERN = re.compile(rb'\?A0x([0-9a-fA-F]{8})@@')
 
@@ -276,9 +276,9 @@ def main():
     parser.add_argument('--batch', action='store_true',
                         help='Process all decomp .obj files')
     parser.add_argument('--obj-dir',
-                        help='Original .obj directory (default: build/373307D9/obj)')
+                        help='Original .obj directory (default: build/45410914/obj)')
     parser.add_argument('--src-dir',
-                        help='Decomp .obj directory (default: build/373307D9/src)')
+                        help='Decomp .obj directory (default: build/45410914/src)')
     args = parser.parse_args()
 
     if not args.batch:
