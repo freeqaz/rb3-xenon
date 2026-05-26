@@ -14,6 +14,10 @@ MasterAudio.cpp:
 	.pdata      start:0x82235A20 end:0x82235B78
 	.text       start:0x82758380 end:0x8275A534
 
+Object.cpp:
+	.pdata      start:0x82233D38 end:0x82233D40
+	.text       start:0x82737FE8 end:0x82738160
+
 RockCentral.cpp:
 	.pdata      start:0x8220E6E8 end:0x8220E978
 	.text       start:0x824E8468 end:0x824EA844
