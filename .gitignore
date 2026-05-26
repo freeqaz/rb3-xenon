@@ -46,3 +46,6 @@ core.*
 # fingerprint_match.py generated indexes (regenerable from build/ + source trees)
 /fingerprints.json
 /autoid.json
+/unified_id.json
+/proposed_splits_bindiff.txt
+/proposed_splits_bindiff.spotcheck.csv
