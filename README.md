@@ -25,11 +25,30 @@ This project is scaffolded from two sibling repositories:
 Status
 ------
 
-Early scaffolding. The build pipeline runs end-to-end (`ninja`: dtk SPLIT →
-MSVC compile → objdiff report → progress). Currently compiling the `system/math`
+Two build tracks are alive:
+
+**1. X360 decomp-matching build** (`ninja`). Runs end-to-end: dtk SPLIT → MSVC
+compile → objdiff report → progress. Currently compiles the `system/math`
 engine library plus `Main.cpp`. Everything is `NonMatching` — we're establishing
-breadth (what compiles) before depth (what matches). See the project roadmap in
-Claude's memory for phase tracking.
+breadth (what compiles) before depth (what matches against the retail XEX).
+
+**2. Native engine build** (`native/`, x86_64 Linux + clang). A host build of
+the shared Milo engine that actually *runs*. The `rb3-dta` tool boots the bare
+engine and parses a real RB3 `songs.dta` into the engine's DataArray tree,
+printing each song's id / name / artist — no GPU or audio. Verified loading the
+138-song RB3 360 catalog. This is the foundation for bringing more of the engine
+up natively (chart parsing, audio, eventually rendering).
+
+See the project roadmap in Claude's memory for full phase tracking.
+
+Building the native tool:
+
+```sh
+cd native
+cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+cmake --build build
+./build/rb3-dta path/to/songs.dta
+```
 
 Toolchain
 ---------
@@ -70,3 +89,26 @@ Project structure
 - `src/xdk/` - Xbox 360 SDK headers (from dc3-decomp).
 - `tools/` - Build scripts (project.py, defines_common.py, etc.).
 - `scripts/` - MSVC object patchers, staged for the matching phase (dormant).
+- `native/` - Host (x86_64 Linux + clang) engine build. CMake project +
+  platform shims + the `rb3-dta` song-data loader.
+
+Next steps
+----------
+
+Native engine (toward playing a song):
+
+1. ✅ Parse `songs.dta` into the engine's DataArray and read song metadata.
+2. Load a song's `.mid` chart (`src/system/midi` + `beatmatch`).
+3. Decode `.mogg` audio (libvorbis / miniaudio, as in dc3's `native/src/audio`).
+4. Venue render (`Rnd_Wgpu` + Dawn WebGPU) — the heavy lift.
+
+Steps 2+ need a fuller engine boot (MemMgr heap, possibly `SystemInit` with a
+config DTA) and more compiled subsystems in place of the current link stubs.
+
+X360 matching build:
+
+- Continue porting engine `.cpp` from dc3-decomp's `objects.json` menu (utl,
+  obj, rndobj, …); then RB3 `band3/` game code from rb3-Wii.
+- Pin real `splits.txt` address ranges so objects become diffable against the
+  retail XEX (where LTO makes matching hard).
+- Wire dc3's object patchers (`scripts/`) when matching begins.
