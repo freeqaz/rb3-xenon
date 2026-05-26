@@ -42,3 +42,7 @@ native/build/
 native/build-*/
 core
 core.*
+
+# fingerprint_match.py generated indexes (regenerable from build/ + source trees)
+/fingerprints.json
+/autoid.json
