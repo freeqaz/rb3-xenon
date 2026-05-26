@@ -313,9 +313,9 @@ def main():
                         help='Actually modify files (default: dry-run)')
     parser.add_argument('--verbose', '-v', action='store_true',
                         help='Show per-file details')
-    parser.add_argument('--obj-dir', default='build/373307D9/obj',
+    parser.add_argument('--obj-dir', default='build/45410914/obj',
                         help='Original .obj directory')
-    parser.add_argument('--src-dir', default='build/373307D9/src',
+    parser.add_argument('--src-dir', default='build/45410914/src',
                         help='Decomp .obj directory')
     parser.add_argument('files', nargs='*',
                         help='Specific .obj files to patch (relative paths)')

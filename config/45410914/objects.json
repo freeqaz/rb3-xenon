@@ -33,7 +33,8 @@
             "system/bandobj/BandCharacter.cpp": "NonMatching",
             "system/bandobj/BandDirector.cpp": "NonMatching",
             "system/bandobj/BandWardrobe.cpp": "NonMatching",
-            "system/bandobj/TrackPanelDir.cpp": "NonMatching"
+            "system/bandobj/TrackPanelDir.cpp": "NonMatching",
+            "system/beatmatch/MasterAudio.cpp": "NonMatching"
         }
     },
     "band3": {

@@ -46,8 +46,8 @@ from collections import defaultdict
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_TARGET_DIR = PROJECT_ROOT / "build" / "373307D9" / "obj"
-DEFAULT_BASE_DIR = PROJECT_ROOT / "build" / "373307D9" / "src"
+DEFAULT_TARGET_DIR = PROJECT_ROOT / "build" / "45410914" / "obj"
+DEFAULT_BASE_DIR = PROJECT_ROOT / "build" / "45410914" / "src"
 
 IMAGE_FILE_MACHINE_POWERPCBE_LE = 0x01F2  # COFF header is little-endian
 

@@ -161,6 +161,29 @@ void operator delete[](void *mem);
     }
 #endif
 
+// rb3-Wii style NEW_OVERLOAD/DELETE_OVERLOAD (no class name / line tracking).
+// dc3 only exposes MEM_OVERLOAD/OBJ_MEM_OVERLOAD; the rb3-Wii Fader.h uses the
+// terser spelling, so provide it for header compatibility.
+#ifdef HX_NATIVE
+#define NEW_OVERLOAD                                                                     \
+    static void *operator new(size_t s) {                                                \
+        return MemAlloc(s, __FILE__, 0, "unknown", 0);                                   \
+    }                                                                                    \
+    static void *operator new(size_t s, void *place) { return place; }
+
+#define DELETE_OVERLOAD                                                                  \
+    static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
+#else
+#define NEW_OVERLOAD                                                                     \
+    static void *operator new(unsigned int s) {                                          \
+        return MemAlloc(s, __FILE__, 0, "unknown", 0);                                   \
+    }                                                                                    \
+    static void *operator new(unsigned int s, void *place) { return place; }
+
+#define DELETE_OVERLOAD                                                                  \
+    static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
+#endif
+
 // #define NEW_ARRAY_OVERLOAD \
 //     void *operator new[](size_t t) { return _MemAlloc(t, 0); } \ void *operator
 //     new[](size_t, void *place) { return place; }
