@@ -78,6 +78,10 @@ CrowdAudio.cpp:
 	.pdata      start:0x821F3B10 end:0x821F3D40
 	.text       start:0x822FEDF8 end:0x82301318
 
+StreakMeter.cpp:
+	.pdata      start:0x821F0560 end:0x821F05B0
+	.text       start:0x822C9020 end:0x822C97C8
+
 OvershellSlot.cpp:
 	.pdata      start:0x8221CD90 end:0x8221CE28
 	.text       start:0x825C10D8 end:0x825C3A44
