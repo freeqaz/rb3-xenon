@@ -692,9 +692,40 @@ def bindiff_clusters(args):
 def gen_target_map(args):
     """Auto-populate scripts/target_symbol_map.json from unified_id.json.
 
-    Filter: source includes 'bindiff', confidence >= --min-confidence, and
-    rb3_addr falls inside a currently-pinned .text range in splits.txt.
-    Records with missing/untrustworthy dc3_name (FUN_*/sub_*) are skipped.
+    Filter: source includes 'bindiff', confidence >= --min-confidence,
+    similarity >= --min-similarity, and (unless --include-unpinned) rb3_addr
+    falls inside a currently-pinned .text range in splits.txt. Records with
+    missing/untrustworthy dc3_name (FUN_*/sub_*) are skipped.
+
+    Why --include-unpinned matters
+    ------------------------------
+    objdiff pairs a caller's `bl` relocation against the callee by SYMBOL
+    NAME. A pinned+compiled function whose call targets live in *unpinned*
+    TUs sees those callees as anonymous `fn_<addr>` on the target side, so the
+    relocation shows as a `diff_arg` even when the bytes match. Renaming those
+    cross-TU callees (regardless of whether they're pinned) lets the relocation
+    pair, which can tip a near-match to 100%. With --include-unpinned we emit a
+    rename for every high-confidence callee in the binary, not just ones inside
+    a pinned range. (Verified empirically: relaxing this ticked
+    ChannelData::SetSlippable from a near-miss to a full match.)
+
+    Regression safety
+    -----------------
+    A WRONG rename (e.g. a flowgraph-shape collision picking the wrong STL
+    template instantiation, or the known 0x82759310->DrawBounds fingerprint
+    collision) could mispair an existing match's callee. Three guards:
+      * --min-similarity (default 0.96) drops low-similarity guesses; the
+        observed wrong renames had similarity ~0.90, safe ones >=0.98.
+      * A `_denylist` metadata key in the map (list of "0xADDR" strings) is
+        never auto-emitted, so hand-flagged bad addresses stay anonymous.
+      * Manual entries always win on collision (existing behavior), so a
+        hand-verified rename is never overwritten by a bindiff guess.
+    NOTE: matched_functions counts fuzzy_match_percent>=100, which already
+    TOLERATES relocation-name noise. So even a stray wrong rename cannot
+    *drop* a currently-matched function below 100 (an unrenamed `fn_X` and a
+    wrongly-renamed one are both just reloc-name noise to the fuzzy scorer);
+    the denylist/similarity guards exist to keep the map honest, not because a
+    wrong rename can regress the count.
 
     Merge rule: existing manual entries in target_symbol_map.json are
     PRESERVED. If the same address appears in both manual + auto-gen,
@@ -702,7 +733,7 @@ def gen_target_map(args):
     (keys not starting with 0x) are preserved verbatim.
 
     Output reports per-TU breakdown of how many fn_<addr> symbols got an
-    auto-gen name within each pinned cluster.
+    auto-gen name within each pinned cluster (or [UNPINNED]).
     """
     # Load unified_id
     with open(args.unified) as f:
@@ -742,11 +773,18 @@ def gen_target_map(args):
     # Normalize manual keys to uppercase hex for collision detection
     manual_norm = {_norm_addr_key(k): (k, v) for k, v in manual.items()}
 
+    # Denylist: addresses that must never be auto-emitted (hand-flagged bad
+    # bindiff guesses, e.g. fingerprint collisions). Lives under the `_denylist`
+    # metadata key as a list of "0xADDR" strings. Preserved verbatim across runs.
+    denylist_raw = metadata.get("_denylist") or []
+    denylist = {_norm_addr_key(k) for k in denylist_raw}
+
     # Filter unified_id records
-    auto = {}              # normalized_addr -> mangled_name
+    auto = {}              # normalized_addr -> (name, conf, cpp_or_UNPINNED)
     per_tu = {}            # cpp -> count of new entries
     skipped_reasons = {"low_confidence": 0, "not_bindiff": 0,
-                       "bad_name": 0, "out_of_range": 0, "no_dc3_name": 0}
+                       "bad_name": 0, "out_of_range": 0, "no_dc3_name": 0,
+                       "low_similarity": 0, "denylisted": 0}
     for r in unified:
         source = r.get("source") or ""
         if "bindiff" not in source:
@@ -755,6 +793,10 @@ def gen_target_map(args):
         conf = r.get("confidence") or 0.0
         if conf < args.min_confidence:
             skipped_reasons["low_confidence"] += 1
+            continue
+        sim = r.get("similarity")
+        if sim is not None and sim < args.min_similarity:
+            skipped_reasons["low_similarity"] += 1
             continue
         name = r.get("dc3_name")
         if not name:
@@ -768,11 +810,16 @@ def gen_target_map(args):
             addr = int(addr_str, 16)
         except ValueError:
             continue
+        norm = _norm_addr_key(addr_str)
+        if norm in denylist:
+            skipped_reasons["denylisted"] += 1
+            continue
         cpp = find_pinned_cpp(addr)
         if cpp is None:
-            skipped_reasons["out_of_range"] += 1
-            continue
-        norm = _norm_addr_key(addr_str)
+            if not args.include_unpinned:
+                skipped_reasons["out_of_range"] += 1
+                continue
+            cpp = "[UNPINNED]"
         # If multiple bindiff records hit the same addr (rare but possible),
         # keep the higher-confidence one.
         prev = auto.get(norm)
@@ -791,8 +838,14 @@ def gen_target_map(args):
         n_auto_kept += 1
         per_tu[cpp] = per_tu.get(cpp, 0) + 1
 
-    # Re-emit manual entries with their original key casing
+    # Re-emit manual entries with their original key casing — but drop any that
+    # are denylisted (a hand-flagged bad guess takes precedence over a stale
+    # manual entry, so a previously-mistaken rename can be retired cleanly).
+    n_manual_denylisted = 0
     for norm, (orig_key, orig_val) in manual_norm.items():
+        if norm in denylist:
+            n_manual_denylisted += 1
+            continue
         merged[orig_key] = orig_val
 
     # Emit auto entries with normalized "0xUPPERCASE" form, except where a
@@ -817,19 +870,22 @@ def gen_target_map(args):
     n_manual = len(manual_norm)
     n_total_addrs = sum(1 for k in merged if k.lower().startswith("0x"))
     print(f"[gen_target_map] unified_id records:    {len(unified)}")
+    print(f"[gen_target_map] include_unpinned:      {args.include_unpinned}")
     print(f"[gen_target_map] eligible auto-gen:     {len(auto)} "
           f"(after filters)")
     print(f"[gen_target_map] auto-gen kept:         {n_auto_kept}")
     print(f"[gen_target_map] overridden by manual:  {n_auto_overridden_by_manual}")
-    print(f"[gen_target_map] manual entries:        {n_manual}")
+    print(f"[gen_target_map] manual entries:        {n_manual}"
+          f" (denylisted/dropped: {n_manual_denylisted})")
+    print(f"[gen_target_map] denylist size:         {len(denylist)}")
     print(f"[gen_target_map] comment/metadata keys: {n_metadata}")
     print(f"[gen_target_map] total entries in map:  {n_total_addrs} + "
           f"{n_metadata} metadata")
     print(f"[gen_target_map] skipped:")
     for reason, n in sorted(skipped_reasons.items(), key=lambda kv: -kv[1]):
         print(f"    {reason:20s}: {n}")
-    print(f"[gen_target_map] auto-gen entries per pinned TU:")
-    for cpp, n in sorted(per_tu.items(), key=lambda kv: -kv[1]):
+    print(f"[gen_target_map] auto-gen entries per TU (top 20):")
+    for cpp, n in sorted(per_tu.items(), key=lambda kv: -kv[1])[:20]:
         print(f"    {cpp:30s}: {n}")
 
 
@@ -923,6 +979,16 @@ def main():
                      help="Target symbol map JSON (default: %(default)s)")
     pgt.add_argument("--min-confidence", type=float, default=0.95,
                      help="min bindiff confidence (default: %(default)s)")
+    pgt.add_argument("--min-similarity", type=float, default=0.96,
+                     help="min bindiff similarity; drops low-similarity "
+                          "flowgraph-shape collisions (default: %(default)s)")
+    pgt.add_argument("--include-unpinned", action="store_true", default=True,
+                     help="Also emit renames for high-confidence callees that "
+                          "live OUTSIDE pinned .text ranges, so cross-TU `bl` "
+                          "relocations pair (default: on, for scaffolding)")
+    pgt.add_argument("--pinned-only", dest="include_unpinned",
+                     action="store_false",
+                     help="Restrict to callees inside pinned ranges (old behavior)")
     pgt.add_argument("--dry-run", action="store_true",
                      help="Compute and report counts but don't write the file")
     pgt.set_defaults(func=gen_target_map)
