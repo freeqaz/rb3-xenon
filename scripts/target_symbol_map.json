@@ -1,0 +1,7 @@
+{
+    "_comment": "Address -> MSVC mangled name map for renaming dtk's fn_<addr> symbols in target .obj files. Consumed by scripts/obj_target_symbol_renamer.py and wired in via configure.py's custom_build_steps.",
+    "0x8275A2C0": "?SetupTrackChannel_@MasterAudio@@QAAXHAAVExtraTrackInfo@1@@Z",
+    "0x8275A2D8": "?SetupBackgroundChannel_@MasterAudio@@QAAXHAAVExtraTrackInfo@1@@Z",
+    "0x82759A78": "?SetupTrackChannel@MasterAudio@@QAAXH_NM00@Z",
+    "0x82759BC0": "?SetupBackgroundChannel@MasterAudio@@QAAXH_NM00@Z"
+}
