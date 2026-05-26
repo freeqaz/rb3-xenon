@@ -557,6 +557,7 @@
     "0x822C71F0": "??1?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "0x822C72A8": "?_M_insert_overflow_aux@?$vector@UActionElement@InlineHelp@@V?$StlNodeAlloc@UActionElement@InlineHelp@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUActionElement@InlineHelp@@ABU34@ABU__false_type@2@I_N@Z",
     "0x822C8BC8": "?_M_fill_insert@?$vector@UHamSpecialOffer@@V?$StlNodeAlloc@UHamSpecialOffer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamSpecialOffer@@IABU3@@Z",
+    "0x822C9020": "?SyncObjects@StreakMeter@@UAAXXZ",
     "0x822CACE0": "?StaticClassName@FlowOnStop@@SA?AVSymbol@@XZ",
     "0x822CADA8": "??$__fill_n@U?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@stlpmtx_std@@I_N@stlpmtx_std@@YA?AU?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@0@U10@IAB_N@Z",
     "0x822CAE28": "??$__copy@U?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@stlpmtx_std@@U12@H@stlpmtx_std@@YA?AU?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@0@U10@00ABUrandom_access_iterator_tag@0@PAH@Z",
