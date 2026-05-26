@@ -259,6 +259,85 @@ the cluster, so this is unlikely but worth a sanity check.
 - Verify-assumptions memory:
   `~/.claude/projects/-home-free-code-milohax-rb3-xenon/memory/feedback_verify_assumptions.md`
 
+## Post-mortem (2026-05-26): the 5-arg callees + the layout blocker
+
+Both wrappers `fn_8275A2C0` (`SetupTrackChannel_`) and `fn_8275A2D8`
+(`SetupBackgroundChannel_`) **matched 100%** — they only touch the
+`ExtraTrackInfo &` argument struct (offsets 0x4/0x8/0x9/0xa), never
+`this->mXxx`. `matched_functions: 2`.
+
+The 5-arg callees did **NOT** match, and the root cause is a **class-layout
+shift**, not symbol/reloc and not per-function codegen:
+
+- `?SetupTrackChannel@MasterAudio@@QAAXH_NM00@Z` (`fn_82759A78`): **98.8%**.
+  Every `this->mXxx` member load is +4 over the target:
+  `lwz r3, 0x38(r30)` (target, `mSongStream`) vs `lwz r3, 0x3c(r30)` (base);
+  `lwz r11, 0x7c(r3)` (target, `mChannelData`) vs `0x80(r3)` (base);
+  Faders 0x48/0x4c/0x58 (target) vs 0x4c/0x50/0x5c (base). The remaining
+  diffs are all unfixable noise: `LINKER_MERGED` ICF calls (13) showing as
+  `fn_xxx` vs MSVC names, and `ADDRESS_RELOCATION_NOISE` (7).
+- `?SetupBackgroundChannel@...` (`fn_82759BC0`): **93.4%**. Same +4 member
+  shift, PLUS a real `CONTROL_FLOW` diff at the `val += (b4 ? 0 :
+  mBackgroundVolume)` ternary (idx 31–39: target computes `mCueVolume`
+  vs `0xa8(r31)` differently from base's `__real@00000000` path) and a
+  `REGISTER_SWAP` (r27↔r28).
+
+**The blocker = the compiled `MasterAudio` base-class region is exactly 4
+bytes larger than the target's.** Compiled puts `mNumPlayers` at 0x38 /
+`mSongStream` at 0x3c; target puts them at 0x34 / 0x38. Field *order* is
+identical (consecutive faders), so it is a clean uniform +4, isolated to the
+inherited region: `BeatMasterSink` + `BeatMatchSink` + `Hmx::Object` +
+`HxAudio`.
+
+- Compiled region total = 4 (BMS vptr) + 4 (BMaS vptr) + 0x2c (Hmx::Object)
+  + 4 (HxAudio vptr) = **0x38**. Target = **0x34**.
+- `Hmx::Object` is 0x2c in **both** rb3-xenon and dc3-decomp (the matching
+  build), and dc3 matches with 0x2c — so Hmx::Object size is NOT the culprit.
+- Therefore the missing 4 bytes is **one eliminated vptr among the 4 bases.**
+  CONFIRMED by disassembling the compiled `??0MasterAudio` ctor: it writes
+  **4 vptrs** at offsets `0x0, 0x4, 0x8, 0x34` (then `mNumPlayers` at 0x38,
+  `mSongStream` at 0x3c). The 4th vptr at 0x34 is `HxAudio`'s
+  (`??_7MasterAudio@@6BHxAudio@@@`). In the **target**, `mNumPlayers` is at
+  0x34 — i.e. **there is no 4th vptr; `HxAudio` is folded.** Target has only
+  3 vptrs (BeatMasterSink 0x0, BeatMatchSink 0x4, Hmx::Object 0x8), so
+  `mNumPlayers` lands at 0x34 / `mSongStream` at 0x38, matching the asm.
+
+  **Strongest hypothesis:** in retail RB3, `HxAudio` derives from
+  `Hmx::Object` (`class HxAudio : public Hmx::Object`), so `MasterAudio :
+  BeatMasterSink, BeatMatchSink, HxAudio` collapses HxAudio's vtable into the
+  shared Hmx::Object vptr → 3 vptrs total. (rb3-Wii/dc3 both declare HxAudio
+  as a standalone class with 7 pure virtuals and MasterAudio inheriting all 4
+  bases independently — but that's MWCC/older; the MSVC X360 retail layout
+  folds HxAudio.) **VERIFY against the binary before changing** (read base
+  descriptors / vtable, or BinDiff the ctor vptr-store count) — making the
+  inheritance change load-bearing without verification risks regressing the
+  native build and every TU that includes `MasterAudio.h`/`HxAudio.h`.
+
+**Next iteration (to unlock SetupTrackChannel + ~all member-accessing fns):**
+1. Verify the exact target layout against the binary (read the `??_R1` base
+   descriptors / vtable offset table, or BinDiff the ctor) **before** editing —
+   this is load-bearing (per `feedback_verify_assumptions`).
+2. Reproduce the 4-byte fold. Candidate levers (try one, re-diff, revert if
+   no movement): reorder the base list so the folded base is primary; or check
+   whether one sink should be a non-polymorphic / `__declspec(novtable)` base;
+   or whether `HxAudio` should derive from `Hmx::Object` (single chain) rather
+   than be a 4th independent base.
+3. Once `mSongStream` lands at 0x38, `SetupTrackChannel` should jump to ~100%
+   modulo the unfixable ICF/reloc noise (which objdiff scores as "matched" for
+   `matched_functions` purposes since they're verified-ICF). Then
+   `SetupBackgroundChannel` still needs the ternary control-flow fix.
+
+**Why no map-file / patcher path helps here:** the renamer already works
+(target `fn_82759A78` → `?SetupTrackChannel@…` rename applied; objdiff pairs
+them). The residue is genuine byte divergence from layout, not pairing.
+
+**Other small MasterAudio fns are NOT trivially matchable** without the layout
+fix: nearly every one touches `this->mTrackData`/`mSongData`/`mSongStream`
+and inherits the +4 shift. The only layout-independent fns in the TU are the
+two wrappers (already matched). Empty virtuals (`Beat`, `Swing`, …) are
+ICF-folded in the target (no standalone `fn_` of size 4 exists), so they
+can't be paired either.
+
 ## Numbered execution steps (for Sonnet impl agent)
 
 1. **Verify stamp freshness.** `ls -la build/45410914/bool_mangle_patched.stamp build/45410914/src/system/beatmatch/MasterAudio.obj` — stamp newer? If not, `ninja` (it's cheap; rebuilds nothing if obj is current, just re-runs patcher).
