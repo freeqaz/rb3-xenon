@@ -31,10 +31,16 @@
             "system/math/Trig.cpp": "NonMatching",
             "system/math/vec.cpp": "NonMatching",
             "system/bandobj/BandCharacter.cpp": "NonMatching",
+            "system/bandobj/BandCharDesc.cpp": "NonMatching",
             "system/bandobj/BandDirector.cpp": "NonMatching",
             "system/bandobj/BandWardrobe.cpp": "NonMatching",
+            "system/bandobj/CrowdAudio.cpp": "NonMatching",
             "system/bandobj/TrackPanelDir.cpp": "NonMatching",
-            "system/beatmatch/MasterAudio.cpp": "NonMatching"
+            "system/bandobj/VocalTrackDir.cpp": "NonMatching",
+            "system/beatmatch/GuitarController.cpp": "NonMatching",
+            "system/beatmatch/MasterAudio.cpp": "NonMatching",
+            "system/rndobj/Console.cpp": "NonMatching",
+            "system/rndobj/ShaderOptions.cpp": "NonMatching"
         }
     },
     "band3": {
@@ -43,8 +49,14 @@
         "cflags": "base",
         "objects": {
             "band3/bandtrack/VocalTrack.cpp": "NonMatching",
+            "band3/game/GameMode.cpp": "NonMatching",
+            "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
             "band3/meta_band/MusicLibrary.cpp": "NonMatching",
-            "band3/net_band/RockCentral.cpp": "NonMatching"
+            "band3/meta_band/OvershellSlot.cpp": "NonMatching",
+            "band3/meta_band/PatchPanel.cpp": "NonMatching",
+            "band3/net_band/RockCentral.cpp": "NonMatching",
+            "band3/tour/QuestFilterPanel.cpp": "NonMatching",
+            "band3/tour/TourDescPanel.cpp": "NonMatching"
         }
     }
 }

@@ -19,16 +19,16 @@ RockCentral.cpp:
 	.text       start:0x824E8468 end:0x824EA844
 
 BandDirector.cpp:
-	.pdata      start:0x821EB8D0 end:0x821EB910
-	.text       start:0x8227E728 end:0x8227EF2C
+	.pdata      start:0x821EB640 end:0x821EBF48
+	.text       start:0x8227C378 end:0x82285220
 
 BandWardrobe.cpp:
 	.pdata      start:0x821F59D0 end:0x821F5A90
 	.text       start:0x8231CCB0 end:0x8231E258
 
 TrackPanelDir.cpp:
-	.pdata      start:0x821F2FA0 end:0x821F2FC8
-	.text       start:0x822F3C50 end:0x822F3F20
+	.pdata      start:0x821F2F30 end:0x821F3130
+	.text       start:0x822F2E68 end:0x822F5830
 
 VocalTrack.cpp:
 	.pdata      start:0x82254EC0 end:0x82254F50
@@ -39,5 +39,53 @@ MusicLibrary.cpp:
 	.text       start:0x82528C50 end:0x82529D64
 
 BandCharacter.cpp:
-	.pdata      start:0x821EAA80 end:0x821EAE20
-	.text       start:0x8226FFD8 end:0x82275EA8
+	.pdata      start:0x821EA6E8 end:0x821EAE20
+	.text       start:0x8226C738 end:0x82275EA8
+
+PatchPanel.cpp:
+	.pdata      start:0x82221F48 end:0x82221F58
+	.text       start:0x8260DDD0 end:0x8260E290
+
+Console.cpp:
+	.pdata      start:0x82206EF0 end:0x82207028
+	.text       start:0x82453730 end:0x82455718
+
+ShaderOptions.cpp:
+	.pdata      start:0x82209970 end:0x82209990
+	.text       start:0x82487438 end:0x824884C4
+
+QuestFilterPanel.cpp:
+	.pdata      start:0x82253238 end:0x822533B8
+	.text       start:0x82B4B850 end:0x82B4CED0
+
+GameMode.cpp:
+	.pdata      start:0x82228AA8 end:0x82228B00
+	.text       start:0x82671A60 end:0x82672130
+
+BandCharDesc.cpp:
+	.pdata      start:0x821F5F80 end:0x821F6050
+	.text       start:0x82322DA0 end:0x82324884
+
+VocalTrackDir.cpp:
+	.pdata      start:0x821F1FA8 end:0x821F22A0
+	.text       start:0x822E4180 end:0x822E847C
+
+CrowdAudio.cpp:
+	.pdata      start:0x821F3B10 end:0x821F3D40
+	.text       start:0x822FEDF8 end:0x82301318
+
+OvershellSlot.cpp:
+	.pdata      start:0x8221CD90 end:0x8221CE28
+	.text       start:0x825C10D8 end:0x825C3A44
+
+GuitarController.cpp:
+	.pdata      start:0x82237270 end:0x822372C8
+	.text       start:0x82777E90 end:0x827786AC
+
+CalibrationPanel.cpp:
+	.pdata      start:0x8221FD30 end:0x8221FE78
+	.text       start:0x825ED848 end:0x825EF598
+
+TourDescPanel.cpp:
+	.pdata      start:0x822534B0 end:0x82253608
+	.text       start:0x82B4DBA0 end:0x82B4F8D8
