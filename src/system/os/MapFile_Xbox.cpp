@@ -1,0 +1,344 @@
+#include "os/MapFile_Xbox.h"
+#include "os/File.h"
+#include "os/Debug.h"
+#include "os/System.h"
+#include "utl/MemMgr.h"
+#include <cstdio>
+
+namespace {
+    const char *kSpecialOperators[] = { "constuctor",
+                                        "destructor",
+                                        "operator new",
+                                        "operator delete",
+                                        "operator =",
+                                        "operator >>",
+                                        "operator <<",
+                                        "operator !",
+                                        "operator ==",
+                                        "operator !=",
+                                        "operator []",
+                                        "operator type",
+                                        "operator ->",
+                                        "operator *",
+                                        "operator ++",
+                                        "operator --",
+                                        "operator -",
+                                        "operator +",
+                                        "operator &",
+                                        "operator ->*",
+                                        "operator /",
+                                        "operator %",
+                                        "operator <",
+                                        "operator <=",
+                                        "operator >",
+                                        "operator >=",
+                                        "operator ,",
+                                        "operator ()",
+                                        "operator ~",
+                                        "operator ^",
+                                        "operator |",
+                                        "operator &&",
+                                        "operator ||",
+                                        "operator *=",
+                                        "operator +=",
+                                        "operator -=",
+                                        "operator /=",
+                                        "operator %=",
+                                        "operator >>=",
+                                        "operator <<=",
+                                        "operator &=",
+                                        "operator |=",
+                                        "operator ^=",
+                                        "$vftable",
+                                        "$vbtable",
+                                        "vcall",
+                                        "typeof",
+                                        "local static guard",
+                                        "string literal",
+                                        "__vbaseDtor",
+                                        "__vecDelDtor",
+                                        "__dflt_ctor_closure",
+                                        "__delDtor",
+                                        "__vec_ctor",
+                                        "__vec_dtor",
+                                        "__vec_ctor_vb",
+                                        "$vdispmap",
+                                        "__ehvec_ctor",
+                                        "__ehvec_dtor",
+                                        "__ehvec_ctor_vb",
+                                        "__copy_ctor_closure",
+                                        "udt returning",
+                                        "EH",
+                                        "RTTI",
+                                        "$locvftable",
+                                        "__local_vftable_ctor_closure",
+                                        "operator new []",
+                                        "operator delete []",
+                                        "omni callsig",
+                                        "__placement_delete_closure",
+                                        "__placement_arrayDelete_closure",
+                                        "operator _Z",
+                                        "operator __0",
+                                        "operator __1",
+                                        "operator __2",
+                                        "operator __3",
+                                        "operator __4",
+                                        "operator __5",
+                                        "operator __6",
+                                        "operator __7",
+                                        "operator __8",
+                                        "operator __9",
+                                        "__man_vec_ctor",
+                                        "__man_vec_dtor",
+                                        "__ehvec_copy_ctor",
+                                        "__ehvec_copy_ctor_vb" };
+
+    void specialIdxStr(char *buffer, unsigned int size, int idx) {
+        if (idx < DIM(kSpecialOperators)) {
+            _snprintf(buffer, size, "%s", kSpecialOperators[idx]);
+        } else {
+            int theChar = idx % 36;
+            if (theChar < 10) {
+                theChar += '0';
+            } else {
+                theChar += '7';
+            }
+            _snprintf(buffer, size, "operator %.*s%c", idx / 36, "_____", (char)theChar);
+        }
+        buffer[size - 1] = '\0';
+    }
+}
+
+void TryDemangleScope(char *demangled, const char *mangled, int i3) {
+    char *c2 = strchr(mangled, 64);
+    if (c2 && c2 < mangled + i3) {
+        int count = c2 - mangled;
+        TryDemangleScope(demangled, c2 + 1, (i3 - count) - 1);
+        strcat(demangled, "::");
+        strncat(demangled, mangled, count);
+    } else {
+        strncat(demangled, mangled, i3);
+    }
+}
+
+void TryDemangleParams(char *demangled, const char *mangled) {
+    bool b2 = true;
+    const char *p8 = mangled;
+    if (!mangled) {
+        strcat(demangled, "()");
+    } else {
+        while (p8) {
+            const char *strAtAt = strstr(p8, "@@");
+            if (b2) {
+                if (strAtAt) {
+                    strcat(demangled, "(");
+                } else {
+                    strcat(demangled, "()");
+                }
+                b2 = false;
+            } else {
+                if (strAtAt) {
+                    strcat(demangled, ",");
+                } else {
+                    strcat(demangled, ")");
+                }
+            }
+            if (!strAtAt)
+                return;
+            const char *strV = strstr(p8, "V");
+            const char *strW = strstr(p8, "W4");
+            if (!strV || (strW && strV >= strW)) {
+                if (strW) {
+                    strV = strW + 2;
+                } else {
+                    strV = p8;
+                }
+            } else {
+                strV++;
+            }
+            TryDemangleScope(demangled, strV, strAtAt - strV);
+            p8 = strAtAt + 2;
+        };
+    }
+}
+
+void TryDemangleFunc(char *demangled, const char *mangled) {
+    *demangled = '\0';
+    if (*mangled && *mangled == '?') {
+        const char *p = mangled + 1;
+        if (*p == '?') {
+            int idx = 0;
+            p++;
+            while (p[idx] == '_') {
+                idx++;
+            }
+            int i7 = 0x56;
+            char curChar = p[idx];
+            if (curChar >= '0' && curChar <= '9') {
+                i7 = (idx * 0x24 + curChar) - 0x30;
+            } else if (curChar >= 'A' && curChar <= 'Z') {
+                i7 = (idx * 0x24 + curChar) - 0x37;
+            }
+            char buf[128];
+            specialIdxStr(buf, 0x80, i7);
+            p += idx + 1;
+            const char *params_start = strstr(p, "@@");
+            if (!params_start) {
+                params_start = strstr(p, "@");
+            }
+            MILO_ASSERT(params_start, 0x100);
+            TryDemangleScope(demangled, p, params_start - p);
+            strcat(demangled, "::");
+            strcat(demangled, kSpecialOperators[i7]);
+            TryDemangleParams(demangled, params_start + 2);
+        } else {
+            const char *params_start = strstr(p, "@@");
+            TryDemangleScope(demangled, p, params_start - p);
+            TryDemangleParams(demangled, params_start + 2);
+        }
+    } else {
+        strncpy(demangled, mangled, 0x1E);
+        strcpy(&demangled[0x1E], "...");
+    }
+    for (char *p = demangled; *p != '\0'; p++) {
+        if (*p == '@') {
+            *p = ' ';
+        }
+    }
+}
+
+XboxMapFile::XboxMapFile(const char *file) {
+    static int _x = MemFindHeap("main");
+    MemHeapTracker tmp(_x);
+    mFile = NewFile(file, 0x10002);
+    char buf[1024];
+    if (!mFile)
+        return;
+    else {
+        do {
+            ReadLine(buf, 1024);
+        } while (!strstr(buf, "Publics by Value"));
+        ReadLine(buf, 1024);
+        mStart = mFile->Tell();
+    }
+}
+
+XboxMapFile::~XboxMapFile() { delete mFile; }
+
+void XboxMapFile::ReadLine(char *line, int size) {
+    int idx = 0;
+    while (!mFile->Eof()) {
+        char curChar;
+        mFile->Read(&curChar, 1);
+        if (curChar == '\n')
+            break;
+        if (idx < size - 1) {
+            line[idx] = curChar;
+            idx++;
+        }
+    }
+    line[idx] = '\0';
+}
+
+template <typename T>
+void InsertSort(int *keys, T *data, int count) {
+    unsigned int *arr = (unsigned int *)data;
+    ptrdiff_t offset = keys - (int *)arr;
+    for (int i = 1; i < count; i++) {
+        unsigned int savedVal = arr[i];
+        int savedKey = keys[i];
+        int j = i;
+        while (j > 0 && savedVal < arr[j - 1]) {
+            arr[j] = arr[j - 1];
+            keys[j] = keys[j - 1];
+            j--;
+        }
+        arr[j] = savedVal;
+        keys[j] = savedKey;
+    }
+}
+
+template void InsertSort<StackData>(int *, StackData *, int);
+
+bool XboxMapFile::ParseStack(
+    const char *mapFileName, struct StackData *stack, int count, FixedString &str
+) {
+    XboxMapFile mapFile(mapFileName);
+    if (!mapFile.mFile) {
+        return false;
+    }
+    int keys[50];
+    char funcNames[50 * 0x80];
+    int i;
+    for (i = 0; i < count; i++) {
+        keys[i] = i;
+    }
+    InsertSort(keys, stack, i);
+    if (count > 0) {
+        int *pKey = keys;
+        int offset = (int)stack - (int)keys;
+        int remaining = count;
+        do {
+            int origIdx = *pKey;
+            int nameOff = origIdx * 0x80;
+            const char *name =
+                mapFile.GetFunction(*(unsigned int *)((int)pKey + offset), false);
+            strncpy(&funcNames[nameOff], name, 0x7f);
+            funcNames[nameOff + 0x7f] = '\0';
+            remaining--;
+            pKey++;
+        } while (remaining != 0);
+    }
+    for (int k = 0; k < count; k++) {
+        str += "\n   ";
+        str += &funcNames[k * 0x80];
+    }
+    return true;
+}
+
+const char *XboxMapFile::GetFunction(unsigned int ui, bool b2) {
+    static char sBuffer[0x400];
+    if (b2) {
+        mFile->Seek(mStart, 0);
+    }
+    char local1440[2048];
+    char localC40[1024];
+    char *cur = local1440;
+    sprintf(localC40, "%8x", ui);
+    int oldTell = mFile->Tell();
+    char *b4 = "";
+    while (!mFile->Eof()) {
+                                cur = cur == local1440 ? localC40 : local1440;
+        int curTell = mFile->Tell();
+        ReadLine(cur, 0x800);
+        char c2 = cur[0x15];
+        char *pCur = &cur[0x15];
+        while (c2 != 0x20) {
+            pCur++;
+            c2 = *pCur;
+        }
+        *pCur = 0;
+        while (*pCur++ == 0x20)
+            ;
+        pCur--;
+
+        // String comparison
+        char *cmpBuf = localC40;
+        char b3 = *cmpBuf;
+        char b4_1 = *pCur;
+
+        while (b3 != 0 && b3 == b4_1) {
+            cmpBuf++;
+            pCur++;
+            b3 = *cmpBuf;
+            b4_1 = *pCur;
+        }
+
+        if ((int)((unsigned char)b3 - (unsigned char)b4_1) >= 0) {
+            TryDemangleFunc(sBuffer, &cur[0x15]);
+            mFile->Seek(oldTell, 0);
+            return sBuffer;
+        }
+    }
+    return "(unknown)";
+}

@@ -1,0 +1,42 @@
+DataNode HamDirector::OnLoadSong(DataArray *a) {
+    int i3 = a->Int(3);
+    bool i4 = a->Int(4);
+    bool b5 = a->Int(5);
+    String str(a->Str(2));
+    int dancers = a->Int(6);
+    FilePathTracker tracker(FileRoot());
+    MILO_ASSERT(TheGameData, 0xC1D);
+    for (int i = 0; i < 2; i++) {
+        HamPlayerData *hpd = TheGameData->Player(i);
+        MILO_ASSERT(hpd, 0xC21);
+        mCrews[i] = hpd->Crew();
+        mCharacterOutfits[i] = hpd->CharacterOutfit(mCrews[i]);
+    }
+    MILO_ASSERT(dancers >= 0 && dancers < kBackupDancersNumTypes, 0xC2E);
+    mBackupDancers = (HamBackupDancers)dancers;
+    mLoadedNewSong = true;
+    if (mMerger && !str.empty()) {
+        const char *speed;
+        if (i3 < 113)
+            speed = "slow";
+        else if (i3 < 136)
+            speed = "medium";
+        else
+            speed = "fast";
+        mSongSpeed = speed;
+        auto _tmp1 = str.c_str();
+        auto _tmp_base = FileGetBase(_tmp1);
+        TheGameData->SetSong(_tmp_base);
+        mMerger->Select("song", str.c_str(), true);
+        if (i4) {
+            mMerger->StartLoad(b5);
+            if (mVenue) {
+                FileMerger *extras = mVenue->Find<FileMerger>("extras.fm", false);
+                if (extras) {
+                    extras->StartLoad(b5);
+                }
+            }
+        }
+    }
+    return 0;
+}

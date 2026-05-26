@@ -11,5 +11,4 @@ Sections:
 	.idata      type:data align:65536
 
 Main.cpp:
-	.pdata      start:0x821F1878 end:0x821F1880
 	.text       start:0x82272E68 end:0x82272EB4

@@ -6,5 +6,30 @@
         "objects": {
             "Main.cpp": "NonMatching"
         }
+    },
+    "engine": {
+        "progress_category": "engine",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "system/math/Color.cpp": "NonMatching",
+            "system/math/Decibels.cpp": "NonMatching",
+            "system/math/DoubleExponentialSmoother.cpp": "NonMatching",
+            "system/math/Easing.cpp": "NonMatching",
+            "system/math/FileChecksum.cpp": "NonMatching",
+            "system/math/Geo.cpp": "NonMatching",
+            "system/math/Interp.cpp": "NonMatching",
+            "system/math/Key.cpp": "NonMatching",
+            "system/math/mtx.cpp": "NonMatching",
+            "system/math/Primes.cpp": "NonMatching",
+            "system/math/Rand.cpp": "NonMatching",
+            "system/math/Rand2.cpp": "NonMatching",
+            "system/math/Rot.cpp": "NonMatching",
+            "system/math/SHA1.cpp": "NonMatching",
+            "system/math/Sort.cpp": "NonMatching",
+            "system/math/StreamChecksum.cpp": "NonMatching",
+            "system/math/Trig.cpp": "NonMatching",
+            "system/math/vec.cpp": "NonMatching"
+        }
     }
 }

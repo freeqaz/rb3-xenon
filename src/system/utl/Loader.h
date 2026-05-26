@@ -1,0 +1,156 @@
+#pragma once
+#include "os/Platform.h"
+#include "os/Timer.h"
+#include "utl/FilePath.h"
+#include "utl/MemMgr.h"
+#include <list>
+
+enum LoaderPos {
+    kLoadFront = 0,
+    kLoadBack = 1,
+    kLoadFrontStayBack = 2,
+    kLoadStayBack = 3,
+};
+
+class Loader {
+public:
+    class Callback {
+    public:
+        Callback() {}
+        virtual ~Callback() {}
+        virtual void FinishLoading(Loader *) {}
+        virtual void FailedLoading(Loader *) {}
+    };
+    Loader(const FilePath &, LoaderPos);
+    virtual ~Loader();
+    virtual const char *DebugText() = 0;
+    virtual bool IsLoaded() const = 0;
+    virtual const char *StateName() const { return "Unknown"; }
+
+    LoaderPos GetPos() const { return mPos; }
+    FilePath &LoaderFile() { return mFile; }
+
+    MEM_OVERLOAD(Loader, 0xA8);
+
+    friend class LoadMgr;
+
+protected:
+    virtual void PollLoading() = 0;
+
+    int mLoadCount; // 0x4 - snapshot of gLoadCount for re-entrance detection
+    LoaderPos mPos; // 0x8
+    FilePath mFile; // 0xc
+    int mLoadStartMs; // 0x14 - debug load timing: SystemMs() when tracking starts, -1 when inactive
+    int mHeap; // 0x18
+};
+
+typedef Loader *LoaderFactoryFunc(const FilePath &, LoaderPos);
+
+class LoadMgr {
+private:
+    std::list<Loader *> mLoaders; // 0x0
+    unsigned int mPlatform; // 0x8
+    bool mEditMode; // 0xC
+    bool mCacheMode; // 0xD
+    std::list<std::pair<class String, LoaderFactoryFunc *> > mFactories; // 0x10
+    float mPeriod; // 0x18
+    float mCurrentPeriod; // 0x1c
+    std::list<Loader *> mLoading; // 0x20
+    Timer mTimer; // 0x28
+    int mAsyncUnload; // 0x58
+    LoaderPos mLoaderPos; // 0x5c
+
+    static bool (*sFileOpenCallback)(const char *);
+    void PollFrontLoader();
+
+public:
+    LoadMgr();
+    ~LoadMgr();
+
+    void StartAsyncUnload();
+    void FinishAsyncUnload();
+    bool EditMode() const { return mEditMode; }
+    Platform GetPlatform() const { return (Platform)mPlatform; }
+    int AsyncUnload() const;
+    const std::list<Loader *> &Loaders() const { return mLoaders; }
+    std::list<Loader *> &Loaders() { return mLoaders; }
+    std::list<Loader *> &Loading() { return mLoading; }
+    LoaderPos GetLoaderPos() const { return mLoaderPos; }
+    float SetLoaderPeriod(float period) {
+        float ret = mPeriod;
+        mPeriod = period;
+        mCurrentPeriod = period;
+        return ret;
+    }
+    bool CheckSplit() { return mTimer.SplitMs() > mCurrentPeriod; }
+    void SetCurrentPeriod(float p) { mCurrentPeriod = p; }
+    Loader *GetFirstLoading() {
+        if (mLoading.empty()) {
+            return nullptr;
+        } else {
+            return mLoading.front();
+        }
+    }
+
+    void SetEditMode(bool);
+    void SetCacheMode(bool mode) { mCacheMode = mode; }
+    void RegisterFactory(const char *, LoaderFactoryFunc *);
+    void PollUntilLoaded(Loader *, Loader *);
+    Loader *GetLoader(const FilePath &) const;
+    Loader *ForceGetLoader(const FilePath &);
+    Loader *AddLoader(const FilePath &, LoaderPos);
+    void Poll();
+    void Print();
+    void Init();
+
+    static const char *LoaderPosString(LoaderPos, bool);
+};
+
+extern LoadMgr TheLoadMgr;
+
+class FileLoader;
+typedef void (FileLoader::*FileLoaderStateFunc)(void);
+
+class FileLoader : public Loader {
+public:
+    FileLoader(
+        const FilePath &,
+        const char *,
+        LoaderPos,
+        int,
+        bool,
+        bool,
+        BinStream *,
+        const char *
+    );
+    virtual ~FileLoader();
+    virtual const char *DebugText();
+    virtual bool IsLoaded() const;
+    virtual void PollLoading();
+
+    int GetSize(); // { return mBufLen; }
+    char *GetBuffer(int *);
+
+    static void SaveData(BinStream &, void *, int);
+
+private:
+    void AllocBuffer();
+    void OpenFile();
+    void LoadFile();
+    void DoneLoading();
+    void LoadStream();
+
+    File *mFile; // 0x1c
+    BinStream *mStream; // 0x20
+    const char *mBuffer; // 0x24
+    int mBufLen; // 0x28
+    bool mAccessed; // 0x2c
+    bool mTemp; // 0x2d
+    bool mWarn; // 0x2e
+    int mFlags; // 0x30
+    String mFilename; // 0x34
+    int mBytesLoaded; // 0x3c
+    int mChunkSize; // 0x40
+    String mHeapName; // 0x44
+    FileLoaderStateFunc mState; // 0x4c
+};

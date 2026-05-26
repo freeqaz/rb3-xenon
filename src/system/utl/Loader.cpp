@@ -1,0 +1,484 @@
+#include "utl/Loader.h"
+#include "Loader.h"
+#include "MemTrack.h"
+#include "obj/Data.h"
+#include "obj/DataFunc.h"
+#include "os/Archive.h"
+#include "os/Debug.h"
+#include "os/File.h"
+#include "os/Platform.h"
+#include "os/System.h"
+#include "utl/ChunkStream.h"
+#include "utl/FilePath.h"
+#include "utl/MemMgr.h"
+#include "utl/Option.h"
+#include "utl/Std.h"
+
+#ifdef HX_NATIVE
+bool (*LoadMgr::sFileOpenCallback)(const char *);
+#endif
+
+LoadMgr TheLoadMgr;
+int gLoadCount;
+
+struct LoaderGlitchContext {
+    String file;            // 0x0
+    const char *name;       // 0x8
+    const char *fromState;  // 0xC
+    LoaderPos toPos;        // 0x10
+};
+
+void FrontLoaderGlitchCB(float elapsed, void *v) {
+    LoaderGlitchContext *ctx = (LoaderGlitchContext *)v;
+    TheDebug << MakeString("Loader %s %s took %f (%s to %s)\n",
+                           LoadMgr::LoaderPosString(ctx->toPos, true),
+                           ctx->file,
+                           elapsed,
+                           ctx->name,
+                           ctx->fromState);
+}
+
+const char *WhiteSpace(int count) {
+    int len = 0x80;
+    MILO_ASSERT(count < len, 0x179);
+    MILO_ASSERT(count >= 0, 0x17A);
+    return &"                                                                                                                                "
+        [0x80 - count];
+}
+
+#pragma region Loader
+
+Loader::Loader(const FilePath &fp, LoaderPos pos)
+    : mLoadCount(0), mPos(pos), mFile(fp), mLoadStartMs(-1), mHeap(GetCurrentHeapNum()) {
+    MILO_ASSERT(MemNumHeaps() == 0 || (mHeap != kNoHeap && mHeap != kSystemHeap), 0x1F0);
+    TheLoadMgr.Loaders().push_front(this);
+    if (mPos == kLoadFront) {
+        TheLoadMgr.Loading().push_front(this);
+    } else if (!(!(mPos == kLoadStayBack))) {
+        TheLoadMgr.Loading().push_back(this);
+    } else {
+        auto it = TheLoadMgr.Loading().begin();
+        for (; it != TheLoadMgr.Loading().end();) {
+            if ((*it)->GetPos() <= kLoadBack) {
+                ++it;
+                break;
+            }
+        }
+        TheLoadMgr.Loading().insert(it, this);
+    }
+}
+
+Loader::~Loader() {
+    TheLoadMgr.Loading().remove(this);
+    TheLoadMgr.Loaders().remove(this);
+    if (mLoadStartMs != -1) {
+        gLoadCount--;
+    }
+}
+
+#pragma endregion
+#pragma region FileLoader
+
+FileLoader::FileLoader(
+    const FilePath &fp,
+    const char *cc,
+    LoaderPos pos,
+    int i4,
+    bool b5,
+    bool b6,
+    BinStream *bs,
+    const char *cc8
+)
+    : Loader(fp, pos), mFile(nullptr), mStream(bs), mBuffer(nullptr), mBufLen(0),
+      mAccessed(false), mTemp(b5), mWarn(b6), mFlags(i4), mFilename(cc), mBytesLoaded(0),
+      mChunkSize(-1), mState(nullptr) {
+    mHeapName = cc8 ? cc8 : "main";
+    if (mStream) {
+        mState = &FileLoader::LoadStream;
+    } else {
+        mState = &FileLoader::OpenFile;
+    }
+}
+
+FileLoader::~FileLoader() {
+    if (!mAccessed) {
+        MemFree((void *)mBuffer);
+        delete mFile;
+    }
+}
+
+const char *FileLoader::DebugText() {
+    return MakeString("FileLoader: %s", LoaderFile().c_str());
+}
+bool FileLoader::IsLoaded() const { return mState == &FileLoader::DoneLoading; }
+void FileLoader::PollLoading() { (this->*mState)(); }
+int FileLoader::GetSize() { return mBufLen; }
+void FileLoader::DoneLoading() {}
+
+void FileLoader::AllocBuffer() {
+    const char *filename = mFilename.c_str();
+    MemHeapTracker tmp(MemFindHeap(mHeapName.c_str()));
+    BeginMemTrackFileName(filename);
+    if (mTemp) {
+        mBuffer =
+            (const char *)_MemAllocTemp(mBufLen, __FILE__, 0x241, "Temp Resource", 0);
+    } else {
+        mBuffer = (const char *)MemAlloc(
+            mBufLen, __FILE__, 0x243, Symbol(FileGetExt(filename)).Str()
+        );
+    }
+    EndMemTrackFileName();
+}
+
+void FileLoader::LoadFile() {
+    int asdf;
+    if (mFile->ReadDone(asdf)) {
+        if (mFile->Fail()) {
+            mBufLen = 0;
+            MemFree((void *)mBuffer);
+            mBuffer = nullptr;
+        }
+        RELEASE(mFile);
+        mState = &FileLoader::DoneLoading;
+    }
+}
+
+void FileLoader::LoadStream() {
+    while (mStream->Eof() != NotEof) {
+        if (TheLoadMgr.CheckSplit())
+            return;
+    }
+    if (!mBuffer) {
+        int size;
+        *mStream >> size;
+        if (size == -1) {
+            *mStream >> mChunkSize;
+            *mStream >> mBufLen;
+        } else {
+            mChunkSize = 0;
+            mBufLen = size;
+        }
+        AllocBuffer();
+    }
+    int i2 = mChunkSize > 0 ? 0x10000 : mBufLen;
+    while (true) {
+        int i3 = Min(mBufLen - mBytesLoaded, i2);
+        while (mStream->Eof() != NotEof) {
+            if (TheLoadMgr.CheckSplit())
+                return;
+        }
+        if (i3 == 0)
+            break;
+        mStream->Read((void *)(mBuffer + mBytesLoaded), i3);
+        mBytesLoaded += i3;
+    }
+    mState = &FileLoader::DoneLoading;
+}
+
+void FileLoader::OpenFile() {
+    Archive *old = TheArchive;
+    const char *fname = mFilename.c_str();
+    bool oldusingcd = UsingCD();
+    bool b1 = gHostFile && FileMatch(fname, gHostFile);
+    if (b1) {
+        SetUsingCD(false);
+        TheArchive = nullptr;
+    }
+    mFile = NewFile(fname, mFlags | 2);
+    if (b1) {
+        SetUsingCD(oldusingcd);
+        TheArchive = old;
+    }
+
+    if (!mFile && *fname != '\0' && mWarn) {
+        MILO_NOTIFY(
+            "Could not load: %s (actually %s)",
+            FileLocalize(Loader::mFile.c_str(), 0),
+            fname
+        );
+    }
+    if (mFile && !mFile->Fail()) {
+        mBufLen = mFile->Size();
+        AllocBuffer();
+        mFile->ReadAsync((void *)mBuffer, mBufLen);
+        mState = &FileLoader::LoadFile;
+    } else {
+        mState = &FileLoader::DoneLoading;
+    }
+}
+
+char *FileLoader::GetBuffer(int *size) {
+    MILO_ASSERT(IsLoaded(), 0x2B7);
+    if (size)
+        *size = mBufLen;
+    mAccessed = true;
+    return (char *)mBuffer;
+}
+
+void FileLoader::SaveData(BinStream &bs, void *v, int size) {
+    MILO_ASSERT(size >= 0, 0x314);
+    bs << -1;
+    bs << 1;
+    bs << size;
+    int i3 = 0;
+    do {
+        int i2 = size - i3;
+        if (i2 > 0x10000) {
+            i2 = 0x10000;
+        } else if (i2 == 0)
+            return;
+        const char *c = (char *)v;
+        bs.Write(c + i3, i2);
+        i3 += i2;
+        MarkChunk(bs);
+    } while (true);
+}
+
+#pragma endregion
+#pragma region LoadMgr
+
+LoadMgr::LoadMgr()
+    : mPlatform(kPlatformXBox), mEditMode(false), mCacheMode(false), mPeriod(10.0f),
+      mAsyncUnload(0), mLoaderPos(kLoadFront) {}
+
+LoadMgr::~LoadMgr() {}
+
+void LoadMgr::StartAsyncUnload() { mAsyncUnload++; }
+void LoadMgr::FinishAsyncUnload() { mAsyncUnload--; }
+int LoadMgr::AsyncUnload() const { return mAsyncUnload; }
+
+const char *LoadMgr::LoaderPosString(LoaderPos pos, bool abbrev) {
+    static const char *names[4] = {
+        "kLoadFront", "kLoadBack", "kLoadFrontStayBack", "kLoadStayBack"
+    };
+    static const char *abbrevs[4] = { "F", "B", "FSB", "SB" };
+    MILO_ASSERT(pos >= 0 && pos <= kLoadStayBack, 0x121);
+    if (abbrev)
+        return abbrevs[pos];
+    else
+        return names[pos];
+}
+
+void LoadMgr::Print() {
+    FOREACH (it, mLoading) {
+        TheDebug << (*it)->LoaderFile().c_str() << " "
+                 << LoaderPosString((*it)->GetPos(), false) << "\n";
+    }
+}
+
+void LoadMgr::SetEditMode(bool flag) {
+    mEditMode = flag;
+    static DataNode &edit_mode = DataVariable("edit_mode");
+    edit_mode = mEditMode;
+}
+
+Loader *LoadMgr::ForceGetLoader(const FilePath &fp) {
+    if (fp.empty())
+        return nullptr;
+    else {
+        Loader *gotten = GetLoader(fp);
+        if (!gotten) {
+            gotten = TheLoadMgr.AddLoader(fp, kLoadFront);
+            if (!gotten) {
+                MILO_NOTIFY("Don't recognize file %s", fp);
+            }
+        }
+        if (gotten) {
+            TheLoadMgr.PollUntilLoaded(gotten, 0);
+        }
+        return gotten;
+    }
+}
+
+#ifdef HX_NATIVE
+void LoadMgr::PollFrontLoader() {
+    if (!mLoading.empty()) {
+        mLoading.front()->PollLoading();
+    }
+}
+#else
+void LoadMgr::PollFrontLoader() {
+    Loader *front = mLoading.front();
+    LoaderPos savedPos = mLoaderPos;
+    mLoaderPos = front->mPos;
+
+    LoaderGlitchContext ctx;
+    ctx.file = front->mFile.c_str();
+    ctx.toPos = front->mPos;
+    ctx.name = front->StateName();
+
+    if (TheArchive && Archive::DebugArkOrder()) {
+        if (front->mLoadStartMs == -1) {
+            front->mLoadStartMs = SystemMs();
+            if (gLoadCount == 0) {
+                int depth = 0;
+                TheDebug << MakeString("Loading%s Start '%s'\n",
+                    WhiteSpace(depth), ctx.file);
+            }
+            gLoadCount++;
+        }
+    }
+
+    int savedStartMs = front->mLoadStartMs;
+    bool isLoaded = false;
+    bool deleted = false;
+    MemPushHeap(front->mHeap);
+    if (UsingCD()) {
+        AutoGlitchReport hang(mPeriod * 3.0f, FrontLoaderGlitchCB, &ctx);
+        front->PollLoading();
+        if (!ListFind(mLoading, front)) {
+            isLoaded = true;
+            deleted = true;
+            ctx.fromState = "deleted";
+        } else {
+            ctx.fromState = front->StateName();
+            isLoaded = front->IsLoaded();
+        }
+    } else {
+        front->PollLoading();
+    }
+    MemPopHeap();
+
+    if (TheArchive && Archive::DebugArkOrder() && isLoaded) {
+        int endMs = SystemMs();
+        if (!deleted) {
+            gLoadCount--;
+            front->mLoadStartMs = -1;
+        }
+        if (endMs - savedStartMs > 20 || gLoadCount == 0) {
+            int elapsed = endMs - savedStartMs;
+            TheDebug << MakeString("Loading%s End   %4d [%5d,%5d]  '%s'\n",
+                WhiteSpace(gLoadCount), elapsed, savedStartMs, endMs, ctx.file);
+        }
+    }
+
+    mLoaderPos = savedPos;
+}
+#endif
+
+void LoadMgr::Poll() {
+    if (mPeriod > 0) {
+        mTimer.Restart();
+        mCurrentPeriod = mPeriod;
+        while (!mLoading.empty()) {
+            PollFrontLoader();
+            if (!mLoading.empty()) {
+                if (mLoading.front()->IsLoaded()) {
+                    mLoading.pop_front();
+                }
+            }
+            if (CheckSplit())
+                return;
+        }
+    }
+}
+
+void LoadMgr::RegisterFactory(const char *cc, LoaderFactoryFunc *func) {
+    FOREACH (it, mFactories) {
+        if (it->first == cc) {
+            MILO_NOTIFY("More than one LoadMgr factory for extension \"%s\"!", cc);
+        }
+    }
+    mFactories.push_back(std::pair<String, LoaderFactoryFunc *>(cc, func));
+}
+
+Loader *LoadMgr::GetLoader(const FilePath &fp) const {
+    if (fp.empty())
+        return nullptr;
+    else {
+        Loader *theLoader = nullptr;
+        FOREACH (it, mLoaders) {
+            if ((*it)->LoaderFile() == fp) {
+                theLoader = *it;
+                break;
+            }
+        }
+        return theLoader;
+    }
+}
+
+Loader *LoadMgr::AddLoader(const FilePath &file, LoaderPos pos) {
+    if (file.empty())
+        return nullptr;
+    if (sFileOpenCallback) {
+        sFileOpenCallback(file.c_str());
+    }
+    const char *ext = FileGetExt(file.c_str());
+    FOREACH (it, mFactories) {
+        if (it->first == ext) {
+            return (it->second)(file, pos);
+        }
+    }
+    return new FileLoader(file, file.c_str(), pos, 0, false, true, nullptr, nullptr);
+}
+
+void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
+    AutoGlitchReport hang(50.0f, __FUNCTION__);
+    float saved_period = mCurrentPeriod;
+#ifdef HX_WEB
+    int maxIter = 10000; // Safety valve: don't block browser event loop forever
+#endif
+    while (!ldr1->IsLoaded()) {
+#ifdef HX_WEB
+        if (--maxIter <= 0) {
+            MILO_WARN("PollUntilLoaded: timeout waiting for %s", ldr1->DebugText());
+            break;
+        }
+#endif
+        mCurrentPeriod = 1e+30f;
+        if (ldr2 && ldr2 == mLoading.front()) {
+#ifdef MILO_DEBUG
+            MILO_FAIL(
+                "PollUntilLoaded circular dependency %s on %s",
+                ldr2->DebugText(),
+                ldr1->DebugText()
+            );
+#endif
+        }
+        PollFrontLoader();
+        if (!ListFind(mLoading, ldr1))
+            break;
+        if (mLoading.front()->IsLoaded()) {
+            mLoading.pop_front();
+        }
+    }
+    mCurrentPeriod = saved_period;
+}
+
+#pragma endregion
+#pragma region Handlers
+
+DataNode OnSetLoadMgrDebug(DataArray *a) {
+    TheLoadMgr.SetCacheMode(a->Int(1));
+    return 0;
+}
+
+DataNode OnSetEditMode(DataArray *a) {
+    TheLoadMgr.SetEditMode(a->Int(1));
+    return 0;
+}
+
+DataNode OnSetLoaderPeriod(DataArray *a) {
+    return TheLoadMgr.SetLoaderPeriod(a->Float(1));
+}
+
+DataNode OnSysPlatformSym(DataArray *a) {
+    return PlatformSymbol(TheLoadMgr.GetPlatform());
+}
+
+DataNode OnLoadMgrPrint(DataArray *a) {
+    TheLoadMgr.Print();
+    return 0;
+}
+
+void LoadMgr::Init() {
+    SetEditMode(false);
+    if (OptionBool("null_platform", false))
+        mPlatform = kPlatformNone;
+    DataRegisterFunc("loadmgr_debug", OnSetLoadMgrDebug);
+    DataRegisterFunc("loadmgr_print", OnLoadMgrPrint);
+    DataRegisterFunc("set_edit_mode", OnSetEditMode);
+    DataRegisterFunc("set_loader_period", OnSetLoaderPeriod);
+    DataRegisterFunc("sysplatform_sym", OnSysPlatformSym);
+    DataVariable("sysplatform") = (int)mPlatform;
+}

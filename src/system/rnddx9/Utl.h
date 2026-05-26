@@ -1,0 +1,41 @@
+#pragma once
+
+#include "os/Debug.h"
+#include "rnddx9/Rnd.h"
+#include <xdk/D3D9.h>
+
+template <typename T>
+class BufLock {
+public:
+    BufLock(T *buf, uint flags) : mBuf(buf) {
+        MILO_ASSERT(mBuf, 27);
+        if (D3DResource_IsSet(reinterpret_cast<D3DResource *>(mBuf), TheDxRnd.Device())) {
+            D3DDevice_SetStreamSource(TheDxRnd.Device(), 0, nullptr, 0, 0, 1);
+            D3DDevice_SetStreamSource(TheDxRnd.Device(), 1, nullptr, 0, 0, 1);
+        }
+        mBuf->Lock(0, 0, &mDataAddr, flags);
+    }
+    virtual ~BufLock() { mBuf->Unlock(); }
+
+    T *mBuf;
+    void *mDataAddr;
+};
+
+template <typename T = void>
+class VBLock : public BufLock<D3DVertexBuffer> {
+public:
+    VBLock(D3DVertexBuffer *buf, uint flags) : BufLock(buf, flags) {}
+    virtual ~VBLock() {}
+};
+
+template <typename T = void>
+class IBLock : public BufLock<D3DIndexBuffer> {
+public:
+    IBLock(D3DIndexBuffer *buf, uint flags) : BufLock(buf, flags) {}
+    virtual ~IBLock() {}
+};
+
+struct D3DVertexBuffer *MakeVertexBuffer(int, uint, uint, bool);
+struct D3DIndexBuffer *MakeIndexBuffer(int, uint, D3DFORMAT);
+struct D3DVertexBuffer *CloneVertexBuffer(struct D3DVertexBuffer *);
+struct D3DIndexBuffer *CloneIndexBuffer(struct D3DIndexBuffer *);

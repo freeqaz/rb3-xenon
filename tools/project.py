@@ -1098,6 +1098,19 @@ def generate_build_ninja(
                         module_link_step,
                     )
                 link_steps.append(module_link_step)
+
+        # Emit compile-only build edges for objects declared in objects.json
+        # that don't have a corresponding entry in the dtk split units. Used for
+        # smoke-testing C/C++ source files before they have real address ranges.
+        for obj in objects.values():
+            if obj.src_path is None or not obj.src_path.exists():
+                continue
+            if obj.src_obj_path is not None and obj.src_obj_path in source_added:
+                continue
+            if file_is_c_cpp(obj.src_path):
+                c_build(obj, obj.src_path)
+            elif file_is_asm(obj.src_path):
+                asm_build(obj, obj.src_path, obj.src_obj_path)
         n.newline()
 
         # Check if all compiler versions exist

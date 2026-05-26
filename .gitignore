@@ -33,3 +33,6 @@ compile_commands.json
 # Miscellaneous
 /*.txt
 *.exe
+
+# wibo/cl.exe scratch files (linker temp output left in cwd)
+/_CL_*
