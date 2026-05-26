@@ -93,7 +93,13 @@ def parse_coff_symbols(data: bytes) -> List[Tuple[str, int, int, int]]:
 
 def load_address_map(path: Path) -> Dict[str, str]:
     """Load address->name map. Keys may be `"0xABCDEF12"`, `"0xabcdef12"`,
-    or bare hex. Normalize to uppercase `fn_ABCDEF12`."""
+    or bare hex. Normalize to uppercase `fn_ABCDEF12` AND `lbl_ABCDEF12`.
+
+    dtk emits some function entry points as `lbl_<addr>` (a sized-0 `.sym`
+    label) rather than `fn_<addr>` (a `.fn` with a frame) — e.g. leaf ctors
+    with no stack frame like `Hmx::Object::Object` at 0x82737FE8. We register
+    both forms so the rename hits whichever the target obj actually uses; an
+    address is only ever one or the other, so this is collision-free."""
     raw = json.loads(path.read_text())
     out: Dict[str, str] = {}
     for k, v in raw.items():
@@ -107,6 +113,7 @@ def load_address_map(path: Path) -> Dict[str, str]:
             print(f"WARN: invalid address key {k!r} in {path}", file=sys.stderr)
             continue
         out[f"fn_{addr:08X}"] = v
+        out[f"lbl_{addr:08X}"] = v
     return out
 
 

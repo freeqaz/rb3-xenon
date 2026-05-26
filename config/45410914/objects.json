@@ -53,6 +53,7 @@
             "system/utl/Pool.cpp": "NonMatching",
             "system/utl/VarTimer.cpp": "NonMatching",
             "system/obj/DataFlex.c": "NonMatching",
+            "system/obj/Object.cpp": "NonMatching",
             "system/synth/DelayEffect.cpp": "NonMatching",
             "system/synth/FlangerEffect.cpp": "NonMatching",
             "system/synth/CompressionEffect.cpp": "NonMatching",
