@@ -73,7 +73,9 @@ public:
     virtual float GetSlipOffset(int) = 0;
     virtual void SetSlipSpeed(int, float) = 0;
     virtual void SetStereoPair(int, int) {}
-    virtual FaderGroup &ChannelFaders(int) = 0;
+    // rb3-Wii returns FaderGroup*, dc3 returns FaderGroup&. Use ptr for
+    // header compatibility with MasterAudio.cpp.
+    virtual FaderGroup *ChannelFaders(int) = 0;
     virtual void AddVirtualChannels(int) {}
     virtual void RemapChannel(int, int) {}
 
