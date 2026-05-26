@@ -10,5 +10,34 @@ Sections:
 	.XBMOVIE    type:data align:65536
 	.idata      type:data align:65536
 
-Main.cpp:
-	.text       start:0x82272E68 end:0x82272EB4
+MasterAudio.cpp:
+	.pdata      start:0x82235A20 end:0x82235B78
+	.text       start:0x82758380 end:0x8275A534
+
+RockCentral.cpp:
+	.pdata      start:0x8220E6E8 end:0x8220E978
+	.text       start:0x824E8468 end:0x824EA844
+
+BandDirector.cpp:
+	.pdata      start:0x821EB8D0 end:0x821EB910
+	.text       start:0x8227E728 end:0x8227EF2C
+
+BandWardrobe.cpp:
+	.pdata      start:0x821F59D0 end:0x821F5A90
+	.text       start:0x8231CCB0 end:0x8231E258
+
+TrackPanelDir.cpp:
+	.pdata      start:0x821F2FA0 end:0x821F2FC8
+	.text       start:0x822F3C50 end:0x822F3F20
+
+VocalTrack.cpp:
+	.pdata      start:0x82254EC0 end:0x82254F50
+	.text       start:0x82B727B8 end:0x82B768DC
+
+MusicLibrary.cpp:
+	.pdata      start:0x82212A10 end:0x82212AA0
+	.text       start:0x82528C50 end:0x82529D64
+
+BandCharacter.cpp:
+	.pdata      start:0x821EAA80 end:0x821EAE20
+	.text       start:0x8226FFD8 end:0x82275EA8
