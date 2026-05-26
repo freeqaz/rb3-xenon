@@ -16,7 +16,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from tools.project import (
     Object,
@@ -139,9 +139,18 @@ config = ProjectConfig()
 config.version = str(args.version)
 version_num = VERSIONS.index(config.version)
 
+# Default dtk source: prefer the locally-checked-out jeff fork at ../jeff
+# so we build the same toolchain we're iterating on, rather than the upstream
+# GitHub release. Override with --dtk to pick a different path or binary.
+def _default_dtk_path() -> Optional[Path]:
+    local_jeff = Path(__file__).resolve().parent.parent / "jeff"
+    if (local_jeff / "Cargo.toml").is_file():
+        return local_jeff
+    return None
+
 # Apply arguments
 config.build_dir = args.build_dir
-config.dtk_path = args.dtk
+config.dtk_path = args.dtk if args.dtk is not None else _default_dtk_path()
 config.objdiff_path = args.objdiff
 config.binutils_path = args.binutils
 config.compilers_path = args.compilers

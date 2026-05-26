@@ -1,4 +1,10 @@
 # See config.example.yml for documentation.
-object: orig/45410914/default_plus_TU5.xex
+#
+# Targeting the vanilla retail XEX. The original config in this template
+# referenced default_plus_TU5.xex, but the existing symbols.txt aligns with
+# vanilla retail (entry point fn_82816080 matches retail's 0x82816080). Our
+# local copy of retail is also pre-decrypted, so applying official xexp TUs
+# would require the still-encrypted base — out of scope for now.
+object: orig/45410914/default.xex
 symbols: config/45410914/symbols.txt
 splits: config/45410914/splits.txt

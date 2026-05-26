@@ -1,0 +1,113 @@
+#pragma once
+#include "MoveMgr.h"
+#include "gesture/BaseSkeleton.h"
+#include "gesture/Skeleton.h"
+#include "math/Vec.h"
+#include "obj/Object.h"
+#include "rndobj/Poll.h"
+#include "utl/MemMgr.h"
+#include "utl/DebugGraph.h"
+#include "gesture/GestureMgr.h"
+#include <vector>
+
+// size 0xc44
+/** "An object that performs rhythmic analysis on Kinect input." */
+class RhythmDetector : public RndPollable, public SkeletonCallback {
+public:
+    struct Frame {
+        float mTime; // 0x0
+        std::vector<Vector3> mJointVelocities; // 0x4 - could be vec<vec3> - ghidra
+                                               // doesnt make it clear
+    };
+
+    struct RecordData {
+        float mWindowStart; // 0x0 - analysis window start time
+        float mWindowEnd; // 0x4 - analysis window end time
+        float unk8; // 0x8
+        float unkc; // 0xc
+        float unk10; // 0x10
+        float unk14; // 0x14
+        bool mFinalized; // 0x18
+        std::vector<Frame> frames; // 0x1c
+    };
+
+    // Hmx::Object
+    virtual ~RhythmDetector();
+    OBJ_CLASSNAME(RhythmDetector);
+    OBJ_SET_TYPE(RhythmDetector);
+    virtual DataNode Handle(DataArray *, bool);
+    virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
+    virtual void Save(BinStream &);
+    virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
+    virtual void Load(BinStream &);
+    // RndPollable
+    virtual void Poll();
+    virtual void Enter();
+    virtual void Exit() { RndPollable::Exit(); }
+
+    OBJ_MEM_OVERLOAD(0x14)
+    NEW_OBJ(RhythmDetector)
+
+    /** "Start looking at Kinect data" */
+    void StartRecording();
+    /** "Stop looking at Kinect data" */
+    void StopRecording();
+    bool IsRecording() const { return mRecording; }
+    float Groove() const;
+    float Freshness() const;
+    Vector4 Data1(int) const;
+    Vector4 Data2(int) const;
+    void AddDebugGraph(float, float, float, float, Hmx::Color);
+    void AddFullDebugGraphs();
+    void RemoveDebugGraphs();
+    void ClearData();
+    const RecordData &GetRecord(float, float, bool, Symbol, TextStream *);
+    void SetSkeletonID(int skelID) { mSkeletonID = skelID; }
+
+protected:
+    RhythmDetector();
+
+    // SkeletonCallback
+    virtual void Clear() {}
+    virtual void Update(const struct SkeletonUpdateData &) {}
+    virtual void PostUpdate(const struct SkeletonUpdateData *);
+    virtual void Draw(const BaseSkeleton &, class SkeletonViz &) {}
+
+    bool mTracked; // 0xc
+    char mRecording; // 0xd - used in recording funcs
+    int mSkeletonID; // 0x10
+    std::list<Frame> mFrameHistory; // 0x14
+    Frame mCurrentFrame; // 0x1c
+    std::vector<Frame> mAnalysisFrames1; // 0x2c
+    std::vector<Frame> mAnalysisFrames2; // 0x38
+    float mBeats; // 0x44
+    float mGroove; // 0x48
+    float mRhythmDecay; // 0x4c
+    int mFold; // 0x50
+    float mToleranceFactor; // 0x54
+    Vector3 mDirection; // 0x58
+    float mFrameCount; // 0x68 - frame counter
+    DebugGraph *mDebugGraphA; // 0x6c
+    DebugGraph *mDebugGraphB; // 0x70
+    DebugGraph *mDebugGraphC; // 0x74
+    DebugGraph *mDebugGraphD; // 0x78
+    DebugGraph *mDebugGraphE; // 0x7c
+    int mDivergenceCounter; // 0x80
+    PaddedJointPos mJointBuffer[8][kNumJoints]; // 0x84 - circular buffer of joint snapshots
+    float mTimestamps[8]; // 0xa84 - cached beat timestamps
+    int mBufferIndex; // 0xaa4 - circular buffer write index
+    float mLastBeatTime; // 0xaa8 - last beat time at recording start
+    PaddedJointPos unkaac[kNumJoints]; // 0xaac
+    RecordData mRecordData; // 0xbec
+
+private:
+    void AddFrame(BaseSkeleton const &);
+    void ProcessFrames();
+};
+
+void SetupFrame(
+    RhythmDetector::Frame &, float, float, Vector3 const *, Vector3 const *, float
+);
+RhythmDetector::Frame BlendFrameDataToBeat(
+    const RhythmDetector::Frame &, const RhythmDetector::Frame &, float
+);

@@ -1,0 +1,216 @@
+#include "hamobj/CharFeedback.h"
+#include "obj/Object.h"
+#include "obj/Task.h"
+#include "os/Debug.h"
+#include "rndobj/Anim.h"
+#include "rndobj/Draw.h"
+#include "rndobj/Line.h"
+#include "rndobj/Mat.h"
+#include "rndobj/Mesh.h"
+#include "rndobj/Poll.h"
+#include "ui/UIColor.h"
+#include "utl/Loader.h"
+
+bool CharFeedback::sEnabled = true;
+
+CharFeedback::CharFeedback()
+    : mTarget(this), mFailMat(this), mFailTriggerSecs(0.1), mMinFailSecs(0.2),
+      mFadeSecs(1), mTestLimbs(kFeedbackNone) {
+    Sync();
+}
+
+CharFeedback::~CharFeedback() {}
+
+BEGIN_HANDLERS(CharFeedback)
+    HANDLE_ACTION(trigger_fail, TestUpdateLimbs(_msg->Int(2)))
+    HANDLE_SUPERCLASS(RndDrawable)
+    HANDLE_SUPERCLASS(Hmx::Object)
+END_HANDLERS
+
+BEGIN_PROPSYNCS(CharFeedback)
+    SYNC_PROP_MODIFY(target, mTarget, Sync())
+    SYNC_PROP_MODIFY(fail_mat, mFailMat, Sync())
+    SYNC_PROP(fail_trigger_secs, mFailTriggerSecs)
+    SYNC_PROP(min_fail_secs, mMinFailSecs)
+    SYNC_PROP_SET(test_limbs, (int &)mTestLimbs, mTestLimbs = (FeedbackLimbs)_val.Int())
+    SYNC_PROP(fade_secs, mFadeSecs)
+    SYNC_SUPERCLASS(RndDrawable)
+    SYNC_SUPERCLASS(Hmx::Object)
+END_PROPSYNCS
+
+BEGIN_SAVES(CharFeedback)
+    SAVE_REVS(10, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(RndDrawable)
+    bs << mTarget;
+    bs << mTestLimbs;
+    bs << mFailTriggerSecs;
+    bs << mMinFailSecs;
+    bs << mFailMat;
+    bs << mFadeSecs;
+END_SAVES
+
+BEGIN_COPYS(CharFeedback)
+    COPY_SUPERCLASS(Hmx::Object)
+    COPY_SUPERCLASS(RndDrawable)
+    CREATE_COPY(CharFeedback)
+    BEGIN_COPYING_MEMBERS
+        COPY_MEMBER(mTarget)
+        COPY_MEMBER(mTestLimbs)
+        COPY_MEMBER(mFailTriggerSecs)
+        COPY_MEMBER(mMinFailSecs)
+        COPY_MEMBER(mFailMat)
+        COPY_MEMBER(mFadeSecs)
+    END_COPYING_MEMBERS
+END_COPYS
+
+INIT_REVS(10, 0)
+
+BEGIN_LOADS(CharFeedback)
+    LOAD_REVS(bs)
+    ASSERT_REVS(10, 0)
+    LOAD_SUPERCLASS(Hmx::Object)
+    LOAD_SUPERCLASS(RndDrawable)
+    d >> mTarget;
+    if (d.rev < 3) {
+        if (d.rev > 0) {
+            ObjPtr<RndMesh> mesh(this);
+            d >> mesh;
+            int x;
+            d >> x;
+        }
+        if (d.rev > 1) {
+            ObjPtr<RndAnimatable> anim(this);
+            d >> anim;
+        }
+    }
+    if (d.rev > 2) {
+        if (d.rev < 6) {
+            ObjPtr<RndLine> line(this);
+            ObjPtr<UIColor> color(this);
+            d >> line;
+            d >> color;
+            d >> color;
+        } else if (d.rev < 8) {
+            int x;
+            d >> x;
+        } else if (d.rev < 9) {
+            Symbol s;
+            d >> s;
+        } else {
+            d >> (int &)mTestLimbs;
+        }
+    }
+    if (d.rev > 3) {
+        d >> mFailTriggerSecs;
+    }
+    if (d.rev > 6) {
+        d >> mMinFailSecs;
+    }
+    if (d.rev > 4) {
+        d >> mFailMat;
+    }
+    if (d.rev > 8) {
+        d >> mFadeSecs;
+        if (d.rev < 10) {
+            int x;
+            d >> x;
+        }
+    }
+    Sync();
+END_LOADS
+
+void CharFeedback::Enter() {
+    RndPollable::Enter();
+    Sync();
+}
+
+void CharFeedback::TestUpdateLimbs(bool b1) {
+    Sync();
+    for (int i = 0; i < kNumLimbFeedbacks; i++) {
+        if (mTestLimbs & (1 << i)) {
+            UpdateLimb(i, b1);
+        }
+    }
+}
+
+void CharFeedback::ResetErrors() {
+    for (int i = 0; i < kNumLimbFeedbacks; i++) {
+        mLimbStates[i].mFailing = 0;
+        mLimbStates[i].unk0 = 0;
+        mLimbStates[i].mLastChangeTime = -1;
+        mLimbStates[i].unk8 = 0;
+    }
+}
+
+void CharFeedback::UpdateLimb(int limb_index, bool b2) {
+    MILO_ASSERT((0) <= (limb_index) && (limb_index) < (kNumLimbFeedbacks), 0x25);
+    LimbState &cur = mLimbStates[limb_index];
+    if (b2 != cur.mFailing) {
+        float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime);
+        if (b2 || cur.mLastChangeTime == -1 || secs - cur.mLastChangeTime > mMinFailSecs) {
+            cur.mLastChangeTime = secs;
+            cur.mFailing = b2;
+        }
+    }
+}
+
+void CharFeedback::Sync() {
+    static const char *sLimbMeshes[4] = {
+        "left_arm.mesh", "right_arm.mesh", "left_leg.mesh", "right_leg.mesh"
+    };
+    for (int i = 0; i < kNumLimbFeedbacks; i++) {
+        mLimbStates[i].mMesh = nullptr;
+    }
+    ResetErrors();
+    if (mTarget) {
+        for (int i = 0; i < kNumLimbFeedbacks; i++) {
+            RndMesh *mesh = mTarget->Find<RndMesh>(sLimbMeshes[i], false);
+            mLimbStates[i].mMesh = mesh;
+            if (mesh) {
+                mesh->SetShowing(false);
+                mesh->SetMat(mFailMat);
+            }
+        }
+    }
+}
+
+void CharFeedback::DrawShowing() {
+    if (!TheLoadMgr.EditMode() && !sEnabled)
+        return;
+    if (!mTarget || !mFailMat)
+        return;
+    for (int i = 0; i < kNumLimbFeedbacks; i++) {
+        LimbState &limb = mLimbStates[i];
+        if (limb.unk8 > 0.0f && limb.mMesh) {
+            mFailMat->SetAlpha(limb.unk8);
+            limb.mMesh->DrawShowing();
+        }
+    }
+}
+
+void CharFeedback::Poll() {
+    float seconds = TheTaskMgr.Seconds(TaskMgr::kRealTime);
+    float delta = TheTaskMgr.DeltaSeconds();
+    for (int i = 0; i < kNumLimbFeedbacks; i++) {
+        LimbState &limb = mLimbStates[i];
+        if (limb.mLastChangeTime != -1.0f) {
+            if (limb.unk0) {
+                if (!limb.mFailing) {
+                    limb.unk0 = false;
+                }
+            } else if (limb.mFailing
+                       && seconds > mFailTriggerSecs + limb.mLastChangeTime) {
+                limb.unk0 = true;
+            }
+            float fadeStep = delta / mFadeSecs;
+            if (!limb.unk0) {
+                fadeStep *= -1.0f;
+            }
+            limb.unk8 += fadeStep;
+            limb.unk8 = Clamp<float>(0.0f, 1.0f, limb.unk8);
+        } else {
+            limb.unk8 = 0.0f;
+        }
+    }
+}

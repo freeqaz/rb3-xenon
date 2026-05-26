@@ -1,0 +1,134 @@
+#pragma once
+#include "gesture/BaseSkeleton.h"
+#include "gesture/CameraInput.h"
+#include "math/Color.h"
+#include "gesture/Skeleton.h"
+#include "hamobj/Difficulty.h"
+#include "math/Vec.h"
+#include "os/DateTime.h"
+#include "rndobj/Anim.h"
+#include "rndobj/Poll.h"
+#include "gesture/SkeletonHistory.h"
+#include "utl/BinStream.h"
+#include "utl/FileStream.h"
+#include "utl/MemMgr.h"
+
+// size 0x1c8
+struct RecordedFrame {
+    void MakeSkeletonFrame(SkeletonFrame &, int) const;
+
+    int mFrameNumber;
+    int mElapsedMs;
+    Vector3 mFloorNormal;
+    Hmx::Color mFloorClipPlane;
+    bool mIsTracked;
+    PaddedJointPos mJointPositions[kNumJoints];
+    int mJointTrackingState[kNumJoints];
+    int mQualityFlags;
+    int mTrackingID;
+    float mSongSeconds;
+};
+
+class SkeletonClip : public CameraInput,
+                     public RndAnimatable,
+                     public RndPollable,
+                     public SkeletonHistory {
+public:
+    struct MoveRating {
+        String mName; // 0x0
+        Symbol mExpected; // 0x8
+        int mWeightType; // 0xc
+    };
+    // Hmx::Object
+    virtual ~SkeletonClip();
+    OBJ_CLASSNAME(SkeletonClip);
+    OBJ_SET_TYPE(SkeletonClip);
+    virtual DataNode Handle(DataArray *, bool);
+    virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
+    virtual void Save(BinStream &);
+    virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
+    virtual void Load(BinStream &);
+
+public:
+    virtual const SkeletonHistory *History() const { return this; }
+    // RndAnimatable
+    virtual void StartAnim();
+    virtual void SetFrame(float frame, float blend);
+    virtual float EndFrame();
+    // RndPollable
+    virtual void Poll();
+    // SkeletonHistory
+    virtual bool PrevSkeleton(const Skeleton &, int, ArchiveSkeleton &, int &) const;
+
+    static String sRemapClipSearch;
+    static String sRemapClipReplace;
+
+    OBJ_MEM_OVERLOAD(0x3C);
+    NEW_OBJ(SkeletonClip);
+
+    void SetRecordedTime(const DateTime &dt) { mTimeRecorded = dt; }
+    void SetSong(Symbol sym) { mSong = sym; }
+    void SetDifficulty(Difficulty d) { mDifficulty = d; }
+    void SetBuild(const String &str) { mBuild = str; }
+    bool IsRecording() const;
+    const String &Path() const;
+    String DateTimeStr() const;
+    const char *DifficultyStr() const;
+    bool IsFailClip() const;
+    void SetAutoplay(bool);
+    void SetPath(const char *);
+    void EnableAlternateRecord(int);
+    void SetRecordClipIndexHint(int clipIndex) { mRecordClipIndexHint = clipIndex; }
+    int NumMoveRatings() const;
+    void WriteClip(FileStream &);
+    const MoveRating &GetMoveRating(int) const;
+    void FlushMoveRecord(const char *);
+    void StartXboxRecording(const char *);
+    bool SkeletonFrameAt(float, SkeletonFrame &) const;
+    void StopRecording();
+    void LoadClipFromFile(String, SkeletonClip *);
+    float SongStartSeconds() const;
+    float SongEndSeconds() const;
+    void LoadClip(bool);
+    void FillMoveRatings();
+    void SwapMoveRecord();
+    void PollRecording(const SkeletonFrame &);
+    const char *Song() const;
+
+    static void Init();
+    static const RecordedFrame *
+    RecordedFrameAt(const std::vector<RecordedFrame> &, float, int &, int &);
+
+protected:
+    SkeletonClip();
+
+    virtual const SkeletonFrame *PollNewFrame();
+
+    void WriteClipHeader(FileStream &);
+    void WriteClipFrame(FileStream &, const RecordedFrame &);
+    void StopRecordingNoClear();
+    const RecordedFrame *CurRecordedFrame(int &, int &) const;
+
+    static void LoadFrame(BinStream &, RecordedFrame &, int);
+
+    std::vector<RecordedFrame> *mRecordedFrames; // 0x11f0
+    SkeletonFrame *mCamFrame; // 0x11f4
+    String *mLoadedFile; // 0x11f8
+    int mRecordClipIndexHint; // 0x11fc
+    DateTime mTimeRecorded; // 0x1200
+    Symbol mSong; // 0x1208
+    Difficulty mDifficulty; // 0x120c
+    String mBuild; // 0x1210
+    Symbol mDefaultRating; // 0x1218
+    int mWeighted; // 0x121c
+    int mOverrideDiff; // 0x1220
+    std::vector<MoveRating> mMoveRatings; // 0x1224
+    bool mRecordSuspended;
+    bool mIsRecording;
+    FileStream *mFileStream; // 0x1234
+    String mFile; // 0x1238
+    int mPlaybackFrame; // 0x1240
+    bool mAutoplay; // 0x1244
+};
+
+void ReserveFrames();

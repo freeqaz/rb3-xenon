@@ -1,0 +1,71 @@
+#pragma once
+#include "stdlib.h"
+#include "string.h"
+
+namespace std {
+
+    class exception {
+    public:
+        exception() : str(0), unk8(0) {}
+        exception(const exception &e) : str(0), unk8(0) { *this = e; }
+        exception(const char *str) : str(0), unk8(0) { _Copy_str(str); }
+        exception(const char *str, bool b) : str(str), unk8(b) {}
+        virtual ~exception() {
+            if (unk8)
+                free((void *)str);
+            str = nullptr;
+            unk8 = false;
+        }
+        virtual const char *what() const { return str ? str : "Unknown exception"; }
+
+        exception &operator=(const exception &e) {
+            if (this != &e) {
+                if (unk8)
+                    free((void *)str);
+                unk8 = false;
+                str = 0;
+                if (e.unk8) {
+                    _Copy_str(e.str);
+                } else {
+                    str = e.str;
+                }
+            }
+            return *this;
+        }
+
+    private:
+        void _Copy_str(const char *s) {
+            if (s != 0) {
+                size_t len = strlen(s) + 1;
+                char *buf = (char *)malloc(len);
+                str = buf;
+                if (buf != 0) {
+                    strcpy_s(buf, len, s);
+                    unk8 = true;
+                }
+            }
+        }
+
+    protected:
+        const char *str; // 0x4
+        bool unk8; // 0x8
+    };
+
+    class bad_exception : public exception {
+    public:
+        bad_exception() {}
+        virtual ~bad_exception() {}
+        virtual const char *what() const { return "bad_exception"; }
+    };
+
+    typedef void (*unexpected_handler)();
+    unexpected_handler set_unexpected(unexpected_handler f) throw();
+    void unexpected();
+
+    typedef void (*terminate_handler)();
+    terminate_handler set_terminate(terminate_handler f) throw();
+    void terminate();
+
+    bool uncaught_exception() throw();
+
+}

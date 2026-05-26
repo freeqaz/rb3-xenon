@@ -1,0 +1,95 @@
+#pragma once
+#include "ArcDetector.h"
+#include "gesture/BaseSkeleton.h"
+#include "gesture/Skeleton.h"
+#include "gesture/StandingStillGestureFilter.h"
+#include "rndobj/Overlay.h"
+#include "gesture/SkeletonViz.h"
+
+class DirectionGestureFilter : public RndOverlay::Callback {
+public:
+    virtual ~DirectionGestureFilter() {}
+    virtual void Clear() = 0;
+    virtual JointConfidence Confidence() const = 0;
+    virtual void Update(const Skeleton &, int) = 0;
+    virtual void Draw(const Skeleton &, SkeletonViz &) = 0;
+    virtual bool HasDirection() const = 0;
+    virtual float GetPercentPulled() const = 0;
+    virtual bool IsHandValid(const Skeleton &) const = 0;
+    virtual bool IsValidScrollPos(const Skeleton &) const = 0;
+    virtual void ClearSwipe() = 0;
+    virtual bool IsLockedIn() const = 0;
+    virtual void SetEngaged(bool) = 0;
+    virtual void ResetHoverTimer() = 0;
+    virtual void SetAllowAboveShoulder(bool) = 0;
+    virtual void SetHighButtonMode(bool) = 0;
+
+protected:
+    static float sLastSwipeTime[6];
+};
+
+class DirectionGestureFilterSingleUser : public DirectionGestureFilter {
+public:
+    DirectionGestureFilterSingleUser(SkeletonSide, SkeletonSide, float, float);
+    virtual ~DirectionGestureFilterSingleUser();
+    virtual void Clear();
+    virtual JointConfidence Confidence() const { return mConfidence; }
+    virtual void Update(const Skeleton &, int);
+    virtual void Draw(const Skeleton &, SkeletonViz &);
+    virtual bool HasDirection() const { return mHasDirection; }
+    virtual float GetPercentPulled() const { return mPercentPulled; }
+    virtual bool IsHandValid(const Skeleton &) const;
+    virtual bool IsValidScrollPos(const Skeleton &) const;
+    virtual void ClearSwipe();
+    virtual bool IsLockedIn() const;
+    virtual void SetEngaged(bool engaged) { mEngaged = engaged; }
+    virtual void ResetHoverTimer();
+    virtual void SetAllowAboveShoulder(bool allow) { mAllowAboveShoulder = allow; }
+    virtual void SetHighButtonMode(bool set) { mHighButtonMode = set; }
+
+private:
+    virtual float UpdateOverlay(RndOverlay *, float);
+
+    bool HandAtSide(const Skeleton &, float, float, float) const;
+    bool IsValidSwipePosition(const Skeleton &) const;
+
+protected:
+    SkeletonSide mHandSide; // 0x4
+    JointConfidence mConfidence; // 0x8
+    SkeletonSide mSwipeSide; // 0xc
+    bool mHasDirection; // 0x10
+    float mSwipeAmt; // 0x14
+    float mPercentPulled; // 0x18
+    bool mEngaged; // 0x1c
+    bool mAllowAboveShoulder; // 0x1d
+    bool mHighButtonMode; // 0x1e
+    float mSwipeCooldown; // 0x20
+    ArcDetector mArcDetector; // 0x24
+};
+
+class DirectionGestureFilterDoubleUser : public DirectionGestureFilter {
+public:
+    DirectionGestureFilterDoubleUser(SkeletonSide, SkeletonSide, float, float);
+    virtual ~DirectionGestureFilterDoubleUser();
+    virtual void Clear();
+    virtual JointConfidence Confidence() const;
+    virtual void Update(const Skeleton &, int);
+    virtual void Draw(const Skeleton &, SkeletonViz &);
+    virtual bool HasDirection() const;
+    virtual float GetPercentPulled() const;
+    virtual bool IsHandValid(const Skeleton &) const;
+    virtual bool IsValidScrollPos(const Skeleton &) const;
+    virtual void ClearSwipe();
+    virtual bool IsLockedIn() const;
+    virtual void SetEngaged(bool engaged);
+    virtual void ResetHoverTimer();
+    virtual void SetAllowAboveShoulder(bool allow);
+    virtual void SetHighButtonMode(bool set);
+
+private:
+    void GetValidSkeletons(int &, int &) const;
+
+    DirectionGestureFilterSingleUser *mFilter1; // 0x4
+    DirectionGestureFilterSingleUser *mFilter2; // 0x8
+    StandingStillGestureFilter *mStillFilters[2]; // 0xc
+};

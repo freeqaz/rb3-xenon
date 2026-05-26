@@ -1,0 +1,81 @@
+#pragma once
+#include "obj/Data.h"
+#include "utl/MemMgr.h"
+#include "utl/TextStream.h"
+#include <vector>
+
+class DataEvent {
+public:
+    DataEvent() : start(0), end(0), mMsg(0) {}
+    DataEvent(float s, float e, DataArray *da) : start(s), end(e), mMsg(da) {
+        if (mMsg)
+            mMsg->AddRef();
+    }
+    DataEvent(const DataEvent &e) : mMsg(0) { *this = e; }
+    ~DataEvent() {
+        if (mMsg)
+            mMsg->Release();
+    }
+
+    void SetMsg(DataArray *da) {
+        if (mMsg)
+            mMsg->Release();
+        mMsg = da;
+        if (mMsg)
+            mMsg->AddRef();
+    }
+    DataArray *Msg() const { return mMsg; }
+    DataEvent &operator=(const DataEvent &e) {
+        start = e.start;
+        end = e.end;
+        SetMsg(e.mMsg);
+        return *this;
+    }
+    float Start() const { return start; }
+    float End() const { return end; }
+    Symbol Type(int i) const { return mMsg->Sym(i); }
+
+    float start; // 0x0
+    float end; // 0x4
+protected:
+    DataArray *mMsg; // 0x8
+};
+
+class DataEventList {
+public:
+    struct CompEv {
+        float start;
+        float end;
+        int value;
+    };
+
+    DataEventList();
+    ~DataEventList();
+    void InsertEvent(float start, float end, const DataNode &ev, int at);
+    void Reset(float frame);
+    void Clear();
+    void Compress(DataArray *temp, int element);
+    void SecOffset(float);
+    int FindStartFromBack(float) const;
+    const DataEvent &Event(int) const;
+    const DataEvent *NextEvent(float);
+    float *EndPtr(int index);
+    void Invert(float);
+    void Compact();
+    void Print(TextStream &) const;
+
+    int CurIndex() const { return mCurIndex; }
+    int Size() const { return mSize; }
+
+    MEM_OVERLOAD(DataEventList, 0x15);
+
+private:
+    int mCurIndex; // 0x0
+    int mSize; // 0x4
+    std::vector<DataEvent> mEvents; // 0x8
+    std::vector<CompEv> mComps; // 0x14
+    int mElement; // 0x20
+    DataEvent mTemplate; // 0x24
+    DataType mCompType; // 0x30
+    int *mValue; // 0x34
+};

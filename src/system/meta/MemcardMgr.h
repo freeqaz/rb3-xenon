@@ -1,0 +1,89 @@
+#pragma once
+#include "meta/MemcardAction.h"
+#include "meta/Profile.h"
+#include "obj/Data.h"
+#include "obj/Msg.h"
+#include "obj/Object.h"
+#include "os/Memcard.h"
+#include "os/PlatformMgr.h"
+#include "os/ThreadCall.h"
+#include "ui/UI.h"
+
+class MemcardMgr : public Hmx::Object, public ThreadCallback {
+    friend class SaveMemcardAction; // hack
+    friend class LoadMemcardAction; // hack
+
+public:
+    enum State {
+        kS_None = 0,
+        kS_Search = 1,
+        kS_CheckForSaveContainer = 2,
+        kS_SaveGame = 3,
+        kS_LoadGame = 4,
+        kS_DeleteSaves = 5
+    };
+    MemcardMgr();
+    // Hmx::Object
+    virtual ~MemcardMgr();
+    virtual DataNode Handle(DataArray *, bool);
+    // ThreadCallback
+    virtual int ThreadStart();
+    virtual void ThreadDone(int);
+
+    void SetProfileSaveBuffer(void *, int);
+    void SaveLoadProfileComplete(Profile *, int);
+    void SaveLoadAllComplete();
+
+    void Init();
+    bool IsStorageDeviceValid(Profile *);
+    void OnCheckForSaveContainer(Profile *);
+    void OnDeleteSaves(Profile *);
+    void OnSaveGame(Profile *, MemcardAction *, int);
+    void OnLoadGame(Profile *, MemcardAction *);
+    void OnSearchForDevice(Profile *);
+    void SetDevice(unsigned int);
+    void SelectDevice(Profile *, Hmx::Object *, int, bool);
+    int GetSizeNeeded();
+
+private:
+    MCResult ThreadCall_SearchForDevice();
+    MCResult ThreadCall_CheckForSaveContainer();
+    MCResult ThreadCall_SaveGame();
+    MCResult ThreadCall_LoadGame();
+    MCResult PerformRead(MCContainer *);
+    MCResult PerformWrite(MCContainer *);
+
+protected:
+    DataNode OnMsg(const DeviceChosenMsg &);
+    DataNode OnMsg(const NoDeviceChosenMsg &);
+    DataNode OnMsg(const UIChangedMsg &);
+    DataNode OnMsg(const StorageChangedMsg &);
+    DataNode OnMsg(const SigninChangedMsg &);
+
+    State mState; // 0x30
+    void *mSaveDataBuffer; // 0x34
+    int mSaveDataLength; // 0x38
+    MemcardAction *mAction; // 0x3c
+    int mSaveCreateType;
+    // indexed by padnums
+    ContainerId mContainerIDs[4]; // 0x44
+    MCContainer *mContainers[4]; // 0x74
+    bool mValidDevices[4]; // 0x84
+    int mPendingDeviceSelectorIndex;
+    bool mSelectDeviceWaiting; // 0x8c
+    Hmx::Object *mSelectDeviceCallBackObj; // 0x90
+    int mPadNum; // 0x94
+    Profile *mProfile; // 0x98
+};
+
+extern MemcardMgr TheMemcardMgr;
+
+DECLARE_MESSAGE(SaveLoadAllCompleteMsg, "save_load_all_complete_msg")
+SaveLoadAllCompleteMsg() : Message(Type()) {}
+END_MESSAGE
+
+DECLARE_MESSAGE(MCResultMsg, "memcard_result")
+virtual void PrintExtra(TextStream &ts) const { ts << "res:" << Result(); }
+MCResultMsg(MCResult res) : Message(Type(), res) {}
+MCResult Result() const { return (MCResult)mData->Int(2); }
+END_MESSAGE
