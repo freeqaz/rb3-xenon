@@ -17,10 +17,16 @@ This project is scaffolded from two sibling repositories:
   and matching tooling. dc3-decomp is *newer* than RB3, so its engine code can
   contain subtle behavioral differences — merge with rb3-Wii's intent in mind.
 
-> **Why this is a hard target:** unlike dc3-decomp (a dev/debug build with no
-> link-time codegen), the RB3 retail XEX was built with **LTO/LTCG enabled**.
-> Whole-program optimization reorders and inlines aggressively, so byte-exact
-> matching is substantially harder than on a non-LTO build.
+> **Why this is hard, precisely:** retail size-optimized release
+> (`/O1 /Oi /GR /EHsc`, no `/GL`, no `/LTCG` — verified by reading dc3's
+> `config.json`). `/Ob2` inlines leaf functions aggressively (SHA1 K-constants
+> used 20× in source appear 0× in `.text`), but there's *no whole-program
+> reordering* — TU spatial grouping is preserved (MasterAudio's 46 functions
+> pack into 8 KB). dc3-decomp is the same engine compiled the same way; its
+> advantage over us is a leaked PDB/.map giving its functions names, not a
+> cleaner build. We exploit dc3 as a **Rosetta Stone**: transfer its labels to
+> our anonymous `fn_8XXXXXXX` via shared string content or structural
+> similarity.
 
 Status
 ------
@@ -29,8 +35,14 @@ Two build tracks are alive:
 
 **1. X360 decomp-matching build** (`ninja`). Runs end-to-end: dtk SPLIT → MSVC
 compile → objdiff report → progress. Currently compiles the `system/math`
-engine library plus `Main.cpp`. Everything is `NonMatching` — we're establishing
-breadth (what compiles) before depth (what matches against the retail XEX).
+engine library plus `Main.cpp`. Match baseline: `0.00%` (the honest
+whole-binary metric: 11.8 MB code / 66,003 functions, none matched yet).
+
+**Splits-bootstrap proven (2026-05-26):** `MasterAudio.cpp` pinned in
+`splits.txt`, dtk emits a real target `.obj` + per-object `.s` and auto-derives
+the matching `.pdata` range. The pipeline to get from "identification" to
+"registered match" is now open; remaining work is per-target porting +
+wiring the obj patchers. See identification tooling below.
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang). A host build of
 the shared Milo engine that actually *runs*. The `rb3-dta` tool boots the bare
@@ -56,7 +68,32 @@ Toolchain
 The MSVC X360 compiler (`cl.exe`), `wibo` (Win32-on-Linux shim), STLport, and
 the XDK CRT headers (`LIBCMT`) are borrowed from `../dc3-decomp`. dtk (the
 XEX splitter) is the local **jeff** fork at `../jeff`; `configure.py` defaults
-`--dtk` to that checkout.
+`--dtk` to that checkout. objdiff is the local **freeqaz/objdiff** fork at
+`../objdiff` (custom pattern detectors + normalized-diff changes); pass
+`--objdiff ../objdiff` to `configure.py` to use it instead of the default
+`v3.2.1` download.
+
+Identification tooling
+----------------------
+
+`tools/fingerprint_match.py` indexes every RB3 function by its referenced
+string literals (resolved via dtk's disassembly), then cross-references those
+strings against `../rb3/src` (Wii dev decomp — richer source oracle, retains
+asserts retail stripped) and `../dc3-decomp/src` (Xbox engine port,
+~98% named via leaked PDB/.map). Subcommands:
+
+```sh
+python3 tools/fingerprint_match.py extract --out fingerprints.json   # 66,838 fns
+python3 tools/fingerprint_match.py autoid   --out autoid.json        # source-file proposals
+python3 tools/fingerprint_match.py report                            # human view
+python3 tools/fingerprint_match.py identify <string-or-fn>           # one-off lookup
+```
+
+Outputs are gitignored / regenerable. The autoid table is the basis for
+splits.txt pinning.
+
+Cross-binary identification (Ghidra + BinDiff) is in progress for bulk-transfer
+of dc3's named functions onto RB3's anonymous `fn_8XXXXXXX`.
 
 Documentation
 -------------
@@ -75,6 +112,9 @@ References
 - [decomp.me](https://decomp.me) (Collaborate on matches)
 - [wibo](https://github.com/decompals/wibo) (Minimal Win32 wrapper for Linux)
 - [jeff](https://github.com/rjkiv/jeff) (Xbox 360-targeted decomp-toolkit fork)
+- [decomp-toolkit](https://github.com/encounter/decomp-toolkit) (Upstream of jeff)
+- [BinDiff](https://github.com/google/bindiff) (Cross-binary function matching)
+- [XEXLoaderWV](https://github.com/zeroKilo/XEXLoaderWV) (Ghidra Xbox 360 XEX loader)
 
 Project structure
 -----------------
