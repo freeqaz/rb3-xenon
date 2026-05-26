@@ -120,3 +120,66 @@ Key.cpp:
 
 Rand2.cpp:
 	.text       start:0x82B5E050 end:0x82B5E0B8
+
+framing.c:
+	.pdata      start:0x82257BA0 end:0x82257BE8
+	.text       start:0x82BF8C48 end:0x82BF97B0
+
+bitwise.c:
+	.pdata      start:0x82257C28 end:0x82257C40
+	.text       start:0x82BFA368 end:0x82BFA7AC
+
+sharedbook.c:
+	.pdata      start:0x82257C48 end:0x82257C90
+	.text       start:0x82BFA808 end:0x82BFB68C
+
+psy.c:
+	.pdata      start:0x82257C90 end:0x82257D10
+	.text       start:0x82BFB690 end:0x82BFDFEC
+
+smallft.c:
+	.pdata      start:0x82257D10 end:0x82257D48
+	.text       start:0x82BFDFF0 end:0x82BFF480
+
+mdct.c:
+	.pdata      start:0x82257D48 end:0x82257D88
+	.text       start:0x82BFF480 end:0x82C006D4
+
+block.c:
+	.pdata      start:0x82257B68 end:0x82257BA0
+	.text       start:0x82BF7CB0 end:0x82BF8C44
+
+info.c:
+	.pdata      start:0x82257BE8 end:0x82257C20
+	.text       start:0x82BF97C8 end:0x82BFA198
+
+codebook.c:
+	.pdata      start:0x82257DA0 end:0x82257DE0
+	.text       start:0x82C009D0 end:0x82C01418
+
+Pool.cpp:
+	.text       start:0x827B3FE8 end:0x827B4070
+
+VarTimer.cpp:
+	.pdata      start:0x8223A7E8 end:0x8223A810
+	.text       start:0x827AEBE0 end:0x827AF034
+
+DataFlex.c:
+	.pdata      start:0x82234CA8 end:0x82234CC8
+	.text       start:0x82748B90 end:0x82749010
+
+CompressionEffect.cpp:
+	.pdata      start:0x82255850 end:0x82255868
+	.text       start:0x82B81B08 end:0x82B82024
+
+DelayEffect.cpp:
+	.pdata      start:0x82255868 end:0x82255888
+	.text       start:0x82B820F8 end:0x82B823F8
+
+FlangerEffect.cpp:
+	.pdata      start:0x82255888 end:0x822558A0
+	.text       start:0x82B823F8 end:0x82B82554
+
+FFT.cpp:
+	.pdata      start:0x82253078 end:0x822530D0
+	.text       start:0x82B47B38 end:0x82B4A52C

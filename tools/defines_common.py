@@ -19,4 +19,7 @@ cflags_includes = [
     # #include "os/..." resolve the same way under MSVC X360.
     "/I src",
     "/I src/system",
+
+    # Ogg Vorbis codec — ogg.h / codec.h live here; needed by all oggvorbis/ TUs.
+    "/I src/system/oggvorbis",
 ]
