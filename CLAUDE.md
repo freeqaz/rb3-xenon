@@ -26,7 +26,9 @@ code may have subtle behavioral differences or version incompatibilities. When a
 file misbehaves, cross-check against rb3-Wii's equivalent and merge intent — do
 not assume dc3's version is correct for RB3.
 
-## Key commands
+## Two build tracks
+
+**1. X360 decomp-matching build** — compile-to-match the retail XEX (MSVC X360).
 
 ```bash
 ninja                    # dtk SPLIT -> MSVC compile -> objdiff report -> progress
@@ -36,6 +38,26 @@ python3 configure.py     # regenerate build.ninja (after editing objects.json/sp
 dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
 there. After editing `config/45410914/config.yml` or `splits.txt`, `touch`
 `config.yml` to force a re-SPLIT (ninja doesn't track splits.txt as a dep).
+
+**2. Native engine build** (`native/`, x86_64 Linux + clang) — runs the engine
+on the host. Currently boots headlessly and loads RB3 `songs.dta`.
+
+```bash
+cd native && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+cmake --build build && ./build/rb3-dta <songs.dta>
+```
+
+Full native-port build recipe, hard-won lessons, and link-stub regeneration are
+in Claude's memory: `project_native_port.md`. Highlights: needs dc3's dual-target
+`types.h` (LP64 int-width vs Xbox ILP32 long); `Symbol::Init()` mandatory before
+interning; rb3-xenon's RB3 engine is more complete than DC3's so several dc3
+`_Native` shims are redundant; ~74 rendering/MIDI/synth/Win32 symbols off the DTA
+path are satisfied by weak stubs in `native/src/dta_link_stubs.s`.
+
+**Architectural goal:** the native engine should eventually be **extracted into a
+standalone `../milo-native-engine`** repo — a shared native Milo runtime consumed
+by the per-game decomps (rb3-xenon, dc3-decomp, …) rather than each carrying its
+own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
 
 ## Build wiring
 
