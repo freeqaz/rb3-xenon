@@ -36,3 +36,9 @@ compile_commands.json
 
 # wibo/cl.exe scratch files (linker temp output left in cwd)
 /_CL_*
+
+# Native port build output
+native/build/
+native/build-*/
+core
+core.*
