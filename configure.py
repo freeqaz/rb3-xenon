@@ -255,6 +255,30 @@ config.custom_build_rules = [
     },
 ]
 config.custom_build_steps = {
+    "pre-compile": [
+        # Rename anonymous fn_<addr> symbols in dtk-split target .obj files to
+        # their MSVC mangled equivalents (from scripts/target_symbol_map.json).
+        # Runs after SPLIT (target obj is a dep) but before the report step
+        # consumes them. Idempotent: a re-SPLIT recreates fn_<addr> symbols,
+        # which this stamp depends on via the order_only edge to "split"... but
+        # we keep it cheap by scanning all objs every time the stamp is dirty.
+        {
+            "outputs": str(stamp_dir / "target_symbol_renames.stamp"),
+            "rule": "run_script",
+            # No explicit input edge to specific objs — ninja will rerun this
+            # when the stamp is older than build/.../config.json (SPLIT output)
+            # via the implicit dep below.
+            "implicit": [
+                "scripts/obj_target_symbol_renamer.py",
+                "scripts/target_symbol_map.json",
+                str(stamp_dir / "config.json"),
+            ],
+            "variables": {
+                "cmd": "python3 scripts/obj_target_symbol_renamer.py --batch --apply",
+                "desc": "PATCH target fn_<addr> -> MSVC mangled names",
+            },
+        },
+    ],
     "post-compile": [
         {
             "outputs": str(stamp_dir / "anon_ns_patched.stamp"),

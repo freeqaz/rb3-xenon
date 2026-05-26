@@ -424,6 +424,23 @@ def load_build_config(
 def generate_build(config: ProjectConfig) -> None:
     config.validate()
     objects = config.objects()
+    # dtk's splits.txt uses bare basenames (e.g. "MasterAudio.cpp") while our
+    # objects.json uses path-prefixed keys (e.g. "system/beatmatch/MasterAudio.cpp").
+    # Add basename aliases so objects.get(basename) resolves to the same Object,
+    # which lets generate_objdiff_config populate base_path for diffing.
+    basename_aliases: Dict[str, Object] = {}
+    for path_key, obj in objects.items():
+        basename = Path(path_key).name
+        if basename == path_key or basename in objects:
+            continue
+        # Only alias if unambiguous (single object with this basename)
+        if basename in basename_aliases:
+            basename_aliases[basename] = None  # type: ignore  # mark ambiguous
+        else:
+            basename_aliases[basename] = obj
+    for basename, obj in basename_aliases.items():
+        if obj is not None and basename not in objects:
+            objects[basename] = obj
     build_config = load_build_config(config, config.out_path() / "config.json")
     generate_build_ninja(config, objects, build_config)
     generate_objdiff_config(config, objects, build_config)
