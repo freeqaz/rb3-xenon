@@ -89,3 +89,34 @@ CalibrationPanel.cpp:
 TourDescPanel.cpp:
 	.pdata      start:0x822534B0 end:0x82253608
 	.text       start:0x82B4DBA0 end:0x82B4F8D8
+
+FileChecksum.cpp:
+	.pdata      start:0x8220DDD8 end:0x8220DDE8
+	.text       start:0x824DB038 end:0x824DB14C
+
+Rot.cpp:
+	.pdata      start:0x8220DDE8 end:0x8220DEA0
+	.text       start:0x824DB150 end:0x824DC638
+
+mtx.cpp:
+	.pdata      start:0x8220DEA0 end:0x8220DEB0
+	.text       start:0x824DC638 end:0x824DC958
+
+Geo.cpp:
+	.pdata      start:0x8220DEB8 end:0x8220DF98
+	.text       start:0x824DC9C0 end:0x824DF730
+
+Rand.cpp:
+	.pdata      start:0x8220DFC0 end:0x8220DFF8
+	.text       start:0x824DFE08 end:0x824E0148
+
+SHA1.cpp:
+	.pdata      start:0x8220E000 end:0x8220E030
+	.text       start:0x824E0210 end:0x824E1E04
+
+Key.cpp:
+	.pdata      start:0x8220E078 end:0x8220E090
+	.text       start:0x824E2900 end:0x824E2E0C
+
+Rand2.cpp:
+	.text       start:0x82B5E050 end:0x82B5E0B8
