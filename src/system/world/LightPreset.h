@@ -176,6 +176,11 @@ public:
     void ResetEvents();
     void SetFrameEx(float, float, bool);
 
+    // RB3 BandDirector deps (stubs — port from rb3-Wii LightPreset when revisited).
+    class RndPostProc *GetCurrentPostProc();
+    float LegacyFadeIn() const;
+    static void StaticResetEvents();
+
 protected:
     LightPreset();
 

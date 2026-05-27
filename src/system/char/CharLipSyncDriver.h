@@ -48,6 +48,7 @@ public:
     void SetOverrideWeight(float weight) { mOverrideWeight = weight; }
     float GetOverrideWeight() const { return mOverrideWeight; }
     CharClip *OverrideClip() const { return mOverrideClip; }
+    ObjectDir *OverrideDir() const { return mOverrideOptions; }
     CharLipSync *LipSync() const { return mLipSync; }
     CharLipSync::PlayBack *GetPlayBack() const { return mMainPlayback; }
 
