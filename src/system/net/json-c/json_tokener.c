@@ -31,8 +31,9 @@
 #include "json_tokener.h"
 
 #if !HAVE_STRNCASECMP && defined(_MSC_VER)
-/* MSC has the version as _strnicmp */
-#define strncasecmp _strnicmp
+/* The X360 LIBCMT CRT exposes this as `strnicmp` (no leading underscore) and
+   the RB3 retail binary references that symbol, so map to it (not _strnicmp). */
+#define strncasecmp strnicmp
 #elif !HAVE_STRNCASECMP
 #error You do not have strncasecmp on your system.
 #endif /* HAVE_STRNCASECMP */
