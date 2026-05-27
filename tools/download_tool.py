@@ -68,7 +68,9 @@ def objdiff_cli_url(tag: str) -> str:
     if arch == "amd64":
         arch = "x86_64"
 
-    repo = "https://github.com/encounter/objdiff"
+    # Milohax fork: ships --include-data + branch-graph JSON the scripts use.
+    # Upstream is encounter/objdiff (lacks those features).
+    repo = "https://github.com/freeqaz/objdiff"
     return f"{repo}/releases/download/{tag}/objdiff-cli-{system}-{arch}{suffix}"
 
 
