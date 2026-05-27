@@ -191,3 +191,277 @@ FlangerEffect.cpp:
 FFT.cpp:
 	.pdata      start:0x82253078 end:0x822530D0
 	.text       start:0x82B47B38 end:0x82B4A52C
+
+floor0.c:
+	.pdata      start:0x82257EE8 end:0x82257F20
+	.text       start:0x82C05FE0 end:0x82C066EC
+
+floor1.c:
+	.pdata      start:0x82257DE0 end:0x82257EE8
+	.text       start:0x82C01418 end:0x82C05FDC
+
+BeatMap.cpp:
+	.pdata      start:0x8223A678 end:0x8223A690
+	.text       start:0x827AD498 end:0x827AD890
+
+MemHeap.cpp:
+	.pdata      start:0x822390B8 end:0x82239130
+	.text       start:0x82796440 end:0x82797440
+
+SampleZone.cpp:
+	.pdata      start:0x82231918 end:0x82231948
+	.text       start:0x8270CCC0 end:0x8270D028
+
+SpectralAnalysis.cpp:
+	.pdata      start:0x82253000 end:0x82253038
+	.text       start:0x82B46D60 end:0x82B47664
+
+AAFilter.cpp:
+	.pdata      start:0x82252E40 end:0x82252E50
+	.text       start:0x82B43E68 end:0x82B440D8
+
+TDStretch.cpp:
+	.pdata      start:0x82252CD0 end:0x82252D80
+	.text       start:0x82B420A0 end:0x82B43270
+
+SynapseAPO.cpp:
+	.pdata      start:0x822529E8 end:0x82252A28
+	.text       start:0x82B3F0F8 end:0x82B3F3AC
+
+inflate.c:
+	.pdata      start:0x82251718 end:0x82251738
+	.text       start:0x82B25E70 end:0x82B27670
+
+deflate.c:
+	.pdata      start:0x82251738 end:0x82251788
+	.text       start:0x82B27670 end:0x82B292AC
+
+json_object.c:
+	.pdata      start:0x822539D0 end:0x82253A78
+	.text       start:0x82B53B98 end:0x82B54640
+
+linkhash.c:
+	.pdata      start:0x82253AD0 end:0x82253B08
+	.text       start:0x82B55E20 end:0x82B563EC
+
+printbuf.c:
+	.pdata      start:0x82253A78 end:0x82253A98
+	.text       start:0x82B54640 end:0x82B548C0
+
+CritSec.cpp:
+	.pdata      start:0x82211188 end:0x822111A8
+	.text       start:0x82510EC0 end:0x8251101C
+
+DateTime.cpp:
+	.pdata      start:0x82210FE8 end:0x82211050
+	.text       start:0x8250F380 end:0x8250FC50
+
+BlockMgr.cpp:
+	.pdata      start:0x82211878 end:0x82211970
+	.text       start:0x82518970 end:0x82519BC4
+
+JoypadClient.cpp:
+	.pdata      start:0x82211538 end:0x822115D0
+	.text       start:0x82515438 end:0x82516120
+
+Joypad_Xinput.cpp:
+	.pdata      start:0x82211FB0 end:0x82211FE0
+	.text       start:0x8251E868 end:0x8251EF44
+
+AsyncFile.cpp:
+	.pdata      start:0x82211970 end:0x82211A10
+	.text       start:0x82519BC4 end:0x8251A880
+
+HDCache.cpp:
+	.pdata      start:0x822121A0 end:0x82212268
+	.text       start:0x82520730 end:0x82521E08
+
+CacheMgr_Xbox.cpp:
+	.pdata      start:0x8223AA58 end:0x8223AB00
+	.text       start:0x827B2028 end:0x827B2CB0
+
+SIVideo.cpp:
+	.text       start:0x82B5B140 end:0x82B5B1D0
+
+ShadowMap.cpp:
+	.pdata      start:0x82206D80 end:0x82206D90
+	.text       start:0x82451280 end:0x82451418
+
+ColorXfm.cpp:
+	.pdata      start:0x82206E38 end:0x82206E80
+	.text       start:0x82451FB8 end:0x82452AF4
+
+BoxMap.cpp:
+	.pdata      start:0x82206E80 end:0x82206EA8
+	.text       start:0x82452AF8 end:0x824533E4
+
+VelocityBuffer.cpp:
+	.pdata      start:0x82253B20 end:0x82253B70
+	.text       start:0x82B565F8 end:0x82B57044
+
+TexBlendController.cpp:
+	.pdata      start:0x82208BD8 end:0x82208C98
+	.text       start:0x82475FF8 end:0x824769F0
+
+TexBlender.cpp:
+	.pdata      start:0x82208D18 end:0x822094E0
+	.text       start:0x82477160 end:0x824822D8
+
+Shader.cpp:
+	.pdata      start:0x8220A350 end:0x8220A400
+	.text       start:0x82492B18 end:0x82495724
+
+Gen.cpp:
+	.pdata      start:0x822080B8 end:0x822082D8
+	.text       start:0x82469CF0 end:0x8246C2C0
+
+ScrollSelect.cpp:
+	.pdata      start:0x8223ED38 end:0x8223EDF0
+	.text       start:0x827F7CB8 end:0x827F8748
+
+UIScreen.cpp:
+	.pdata      start:0x8223C1E0 end:0x8223C310
+	.text       start:0x827CAA28 end:0x827CBF5C
+
+LightHue.cpp:
+	.pdata      start:0x8220D850 end:0x8220D908
+	.text       start:0x824D46F8 end:0x824D5444
+
+Instance.cpp:
+	.pdata      start:0x8220DAF0 end:0x8220DC20
+	.text       start:0x824D7278 end:0x824D878C
+
+DepthBuffer3D.cpp:
+	.pdata      start:0x8222E610 end:0x8222E9B0
+	.text       start:0x826D9F60 end:0x826DE1E0
+
+MicClientMapper.cpp:
+	.pdata      start:0x8222FE78 end:0x8222FEB0
+	.text       start:0x826F16E0 end:0x826F1BF4
+
+CharBonesBlender.cpp:
+	.pdata      start:0x821FF398 end:0x821FF410
+	.text       start:0x823C5F38 end:0x823C67A4
+
+osfinfo.cpp:
+	.pdata      start:0x8223FF70 end:0x8223FFA0
+	.text       start:0x82811420 end:0x82811948
+
+CharFaceServo.cpp:
+	.pdata      start:0x821FC5C8 end:0x821FC6A0
+	.text       start:0x8238FD20 end:0x823909B4
+
+PitchShiftEffect.cpp:
+	.pdata      start:0x822528F8 end:0x822529C8
+	.text       start:0x82B3DFC0 end:0x82B3EE2C
+
+FxSendDistortion.cpp:
+	.pdata      start:0x82251FA0 end:0x82251FC8
+	.text       start:0x82B32C20 end:0x82B32E0C
+
+FxSendEQ.cpp:
+	.pdata      start:0x822521F0 end:0x82252218
+	.text       start:0x82B348A0 end:0x82B34A8C
+
+FxSendChorus.cpp:
+	.pdata      start:0x822520F8 end:0x82252128
+	.text       start:0x82B33CC8 end:0x82B33F3C
+
+IPP_basicmath_xbox.cpp:
+	.text       start:0x82B46210 end:0x82B462D0
+
+PitchCorrectedVoice.cpp:
+	.pdata      start:0x82252F78 end:0x82252F88
+	.text       start:0x82B45F18 end:0x82B46210
+
+PitchDetector.cpp:
+	.pdata      start:0x82252E50 end:0x82252ED0
+	.text       start:0x82B440D8 end:0x82B44B94
+
+PeakDetector.cpp:
+	.pdata      start:0x82252EF0 end:0x82252F00
+	.text       start:0x82B44C48 end:0x82B45154
+
+ctr.c:
+	.pdata      start:0x822558F8 end:0x82255918
+	.text       start:0x82B83A20 end:0x82B83DBC
+
+HxGuid.cpp:
+	.pdata      start:0x82239F68 end:0x82239F78
+	.text       start:0x827A6260 end:0x827A647C
+
+StringTable.cpp:
+	.pdata      start:0x82239D78 end:0x82239DA8
+	.text       start:0x827A3A08 end:0x827A3E0C
+
+TempoMap.cpp:
+	.pdata      start:0x8223A660 end:0x8223A668
+	.text       start:0x827AD150 end:0x827AD1EC
+
+MemStream.cpp:
+	.pdata      start:0x82239F88 end:0x82239FB0
+	.text       start:0x827A6588 end:0x827A67C4
+
+MemStats.cpp:
+	.pdata      start:0x8223AC00 end:0x8223AC08
+	.text       start:0x827B3DB8 end:0x827B3FE8
+
+NetCacheMgr_Xbox.cpp:
+	.pdata      start:0x8223AA38 end:0x8223AA50
+	.text       start:0x827B1EC8 end:0x827B1FDC
+
+AppChild.cpp:
+	.pdata      start:0x822114B8 end:0x82211508
+	.text       start:0x82514E68 end:0x825152EC
+
+MapFile_Xbox.cpp:
+	.pdata      start:0x82211EA8 end:0x82211ED0
+	.text       start:0x8251D4E0 end:0x8251DAA8
+
+ArkFile.cpp:
+	.pdata      start:0x82211A30 end:0x82211A60
+	.text       start:0x8251AAF0 end:0x8251AD4C
+
+UsbMidiKeyboard.cpp:
+	.pdata      start:0x822107D8 end:0x822107F8
+	.text       start:0x82507800 end:0x82507E3C
+
+json_tokener.c:
+	.pdata      start:0x82253A98 end:0x82253AB8
+	.text       start:0x82B548C0 end:0x82B55CEC
+
+arraylist.c:
+	.pdata      start:0x82253B08 end:0x82253B20
+	.text       start:0x82B563F0 end:0x82B565D4
+
+StoreEnumeration.cpp:
+	.pdata      start:0x82238D08 end:0x82238D28
+	.text       start:0x82792EB0 end:0x82792FC4
+
+Jukebox.cpp:
+	.pdata      start:0x82238668 end:0x82238680
+	.text       start:0x8278C7B8 end:0x8278C964
+
+Sorting.cpp:
+	.pdata      start:0x82238800 end:0x82238810
+	.text       start:0x8278DD80 end:0x8278DFFC
+
+UIGuide.cpp:
+	.pdata      start:0x8223F6D8 end:0x8223F710
+	.text       start:0x82801070 end:0x82801368
+
+Flare.cpp:
+	.pdata      start:0x82207CB8 end:0x82207CD0
+	.text       start:0x82463B28 end:0x82463F38
+
+Debug.cpp:
+	.pdata      start:0x8220FE08 end:0x8220FE70
+	.text       start:0x824FC360 end:0x824FC858
+
+FileStream.cpp:
+	.pdata      start:0x822397F0 end:0x82239850
+	.text       start:0x8279E3A0 end:0x8279E8D8
+
+SoftParticleBuffer.cpp:
+	.pdata      start:0x8220A400 end:0x8220A498
+	.text       start:0x82495728 end:0x824961DC
