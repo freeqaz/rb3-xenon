@@ -26,4 +26,4 @@ float StreamNull::GetTime() { return mTimer.Ms(); }
 
 void StreamNull::SetSpeed(float speed) { mTimer.SetSpeed(speed); }
 
-FaderGroup &StreamNull::ChannelFaders(int idx) { return *mChannelFaders[idx]; }
+FaderGroup *StreamNull::ChannelFaders(int idx) { return mChannelFaders[idx]; }

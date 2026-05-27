@@ -469,3 +469,23 @@ FileStream.cpp:
 SoftParticleBuffer.cpp:
 	.pdata      start:0x8220A400 end:0x8220A498
 	.text       start:0x82495728 end:0x824961DC
+
+keygen_xbox.cpp:
+	.pdata      start:0x82231380 end:0x822313E0
+	.text       start:0x82706A20 end:0x8270735C
+
+NetworkSocket_Win.cpp:
+	.pdata      start:0x82211F08 end:0x82211FA8
+	.text       start:0x8251DF68 end:0x8251E818
+
+Memory_Xbox.cpp:
+	.pdata      start:0x821E9C88 end:0x821E9CB8
+	.text       start:0x82262D70 end:0x82263544
+
+StreamNull.cpp:
+	.pdata      start:0x82230858 end:0x822308B0
+	.text       start:0x826FBD98 end:0x826FC11C
+
+RhythmBattlePlayer.cpp:
+	.pdata      start:0x821F5620 end:0x821F5638
+	.text       start:0x82319810 end:0x82319A04
