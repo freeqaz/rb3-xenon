@@ -104,6 +104,7 @@
             "system/world/LightHue.cpp": "NonMatching",
             "system/world/Instance.cpp": "NonMatching",
             "system/gesture/DepthBuffer3D.cpp": "NonMatching",
+            "system/synth/BinkClip.cpp": "NonMatching",
             "system/synth/MicClientMapper.cpp": "NonMatching",
             "system/synth/tomcrypt/ctr.c": "NonMatching",
             "system/char/CharBonesBlender.cpp": "NonMatching",
