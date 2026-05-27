@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "orchestrator": {
+      "command": "${PWD}/venv/bin/python",
+      "args": ["-m", "scripts.orchestrator.mcp_server", "--db", "${PWD}/decomp.db"],
+      "env": {
+        "PYTHONPATH": "${PWD}"
+      }
+    }
+  }
+}
