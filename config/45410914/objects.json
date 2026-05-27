@@ -131,7 +131,7 @@
             "system/os/ArkFile.cpp": "NonMatching",
             "system/os/UsbMidiKeyboard.cpp": "NonMatching",
             "system/os/NetworkSocket_Win.cpp": "NonMatching",
-            "system/net/json-c/json_tokener.c": "NonMatching",
+            "system/net/json-c/json_tokener.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
             "system/net/json-c/arraylist.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
             "system/meta/StoreEnumeration.cpp": "NonMatching",
             "system/meta/Jukebox.cpp": "NonMatching",

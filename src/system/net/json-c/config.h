@@ -49,8 +49,10 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strncasecmp' function. */
-#define HAVE_STRNCASECMP 1
+/* RB3 retail compiled json-c against an MSVC CRT that exposes the function as
+   `_strnicmp`, so HAVE_STRNCASECMP is off and json_tokener.c's
+   `#define strncasecmp _strnicmp` fires (target calls `_strnicmp`). */
+#define HAVE_STRNCASECMP 0
 
 /* Define to 1 if you have the `strndup' function. */
 #undef HAVE_STRNDUP
