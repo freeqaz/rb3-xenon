@@ -108,6 +108,8 @@ public:
 
 extern LoadMgr TheLoadMgr;
 
+#define LOADMGR_EDITMODE TheLoadMgr.EditMode()
+
 class FileLoader;
 typedef void (FileLoader::*FileLoaderStateFunc)(void);
 

@@ -168,6 +168,7 @@ public:
     OBJ_MEM_OVERLOAD(0xAD)
     NEW_OBJ(CamShot)
 
+    float Duration() const { return mDuration; }
     float GetDurationSeconds() const;
     bool PlatformOk() const;
     void StartAnims(ObjPtrList<RndAnimatable> &);

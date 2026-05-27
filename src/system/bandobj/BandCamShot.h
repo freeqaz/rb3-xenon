@@ -99,9 +99,11 @@ public:
     DataNode OnListTargets(const DataArray *);
     DataNode OnListAnimGroups(const DataArray *);
 
+    static unsigned short gRev;
+    static unsigned short gAltRev;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
-    static std::list<TargetCache> sCache;
+    static std::list<BandCamShot::TargetCache> sCache;
     static int sHideAllCharactersHack;
     NEW_OBJ(BandCamShot)
     static void Init() { Register(); }

@@ -132,6 +132,7 @@ public:
     virtual void SetShrinkToSafeArea(bool shrink) { mShrinkToSafe = shrink; }
     bool ShrinkToSafeArea() const { return mShrinkToSafe; }
     virtual void SetInGame(bool game) { mInGame = game; }
+    bool InGame() const { return mInGame; }
     virtual int BeginQuery(RndDrawable *) { return -1; }
     virtual bool EndQuery(int) { return false; }
     virtual bool VisibleSets(std::vector<RndDrawable *> &, std::vector<RndDrawable *> &) {

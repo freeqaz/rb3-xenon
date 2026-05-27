@@ -1629,6 +1629,18 @@ BinStream &operator>>(BinStreamRev &bs, ObjList<T> &oList) {
     return bs.stream;
 }
 
+template <class T>
+BinStream &operator>>(BinStream &bs, ObjList<T> &oList) {
+    unsigned int length;
+    bs >> length;
+    oList.resize(length);
+
+    for (std::list<T>::iterator it = oList.begin(); it != oList.end(); ++it) {
+        bs >> *it;
+    }
+    return bs;
+}
+
 #pragma endregion
 #pragma region ObjectStage
 
