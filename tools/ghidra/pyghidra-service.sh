@@ -75,6 +75,8 @@ cmd_start() {
     # --wait-for-analysis ensures analysis is complete before serving requests
     setsid nohup uv run --python 3.10 --project "$PYGHIDRA_MCP" pyghidra-mcp \
         --transport streamable-http \
+        --host "$HOST" \
+        --port "$PORT" \
         --project-path "$PROJECT_PATH" \
         --wait-for-analysis \
         --cache-dir "$PROJECT_DIR" \
