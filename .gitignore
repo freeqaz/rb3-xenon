@@ -37,10 +37,12 @@ compile_commands.json
 # wibo/cl.exe scratch files (linker temp output left in cwd)
 /_CL_*
 
-# .claude/ holds subagent worktrees + transient state; allow skills only
+# .claude/ holds subagent worktrees + transient state; allow skills + settings.json
 # (NB: use /* not / so git still recurses into .claude/ to find skills/)
 .claude/*
 !.claude/skills/
+!.claude/settings.json
+.claude/settings.local.json
 
 # Native port build output
 native/build/
@@ -57,3 +59,20 @@ core.*
 # bindiff_match.json is harvested from Ghidra + BinDiff (~10 min run); regenerable, large (~3.6 MB)
 /tools/bindiff_match.json
 /tools/.cache/
+
+# Orchestrator MCP databases (regenerable via scripts/ingest_report.py)
+/decomp.db
+/decomp.db-journal
+/decomp.db-wal
+/decomp.db-shm
+/struct_db.sqlite
+/cache.db
+/permuter_cache.db
+/.scan_cache.db
+/strategy.db
+
+# Shared venv (symlink to ../dc3-decomp/venv)
+/venv
+
+# Ghidra projects (large; rebuild via tools/ghidra/import-xex.sh)
+/ghidra_projects/

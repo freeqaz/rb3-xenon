@@ -165,6 +165,59 @@ match-vs-target diff is blocked on MSVC symbol-naming quirks.
   XEXLoaderWV source cloned at `/home/free/code/milohax/XEXLoaderWV/` (needs
   rebuild for Ghidra 12.1 — installed prebuilt is 12.0.1).
 
+## Orchestrator MCP, Ghidra MCP, skills
+
+Ported from DC3 (2026-05-27). Both projects share the MSVC X360 toolchain so
+most tooling transfers verbatim.
+
+**Orchestrator MCP** (`.mcp.json` → `scripts/orchestrator/`):
+- Server name: `decomp`. Backed by `decomp.db` (SQLite, 66k functions seeded
+  from `build/45410914/report.json` via `scripts/ingest_report.py`).
+- 11 tools: `report_result`, `query_functions`, `get_attempts`, `lookup_rb3wii`
+  (greps `~/code/milohax/rb3/src` — RB3 Wii dev decomp, named functions),
+  `lookup_dc3` (greps `~/code/milohax/dc3-decomp/src` — same compiler twin),
+  `run_objdiff`, `run_analyze_function`, `run_diff_inspect`,
+  `lookup_struct_offset`, `lookup_merged_symbol`, `mark_patch_result`.
+- Worktree pool (`scripts/orchestrator/worktree_pool.py`) tracks per-agent
+  worktrees in `decomp.db.worktrees`. Set up via `scripts/setup_worktree.sh`.
+- Python env: symlinked `venv` → `../dc3-decomp/venv` (shared deps: `mcp`,
+  `pyghidra-mcp`, etc.). Regenerate DB anytime with
+  `venv/bin/python scripts/ingest_report.py build/45410914/report.json`.
+
+**Ghidra MCP** (`tools/ghidra/pyghidra-service.sh`):
+- Port **8002** (DC3 owns 8000, rb3-Wii owns 8001).
+- Project at `ghidra_projects/RB3Xenon/RB3Xenon` (build via
+  `tools/ghidra/import-xex.sh` — single-pass full analysis, no leaked .map).
+- Uses VMX128 SLEIGH fork at `/home/free/code/milohax/ghidra/build/ghidra/`
+  (same Ghidra build DC3 uses).
+- Python client: `tools/ghidra/mcp_client.py` — default URL
+  `http://127.0.0.1:8002/mcp`, session cache at
+  `/tmp/claude/ghidra_mcp_session_rb3xenon.txt`.
+- Sub-tools: `pcode_inspect.py`, `code_search.py`, `struct_check.py`,
+  `ghidra-decompile.py`, `ghidra-search.py`, `ghidra-xrefs.py`,
+  `ghidra-callgraph.py`, `batch_export.py`.
+
+**Skills** (`.claude/skills/`, 24 total): batch-check, compare-asm, data-diff,
+ghidra-{decompile,search,struct}, permute, progress, recon, refactor-staff,
+resolve-vcall, stack-layout, struct-info, vtable, dc3-pair (primary engine
+oracle — DC3 is the closest twin), rb3wii-pair (game-code oracle — richer
+named-function source). All ported with port 8002 + title-ID 45410914
+substitutions applied.
+
+**Analysis engine** (`scripts/analysis/diff_inspect.py`, 1969 LOC): modes
+`diagnose`, `clusters`, `regswaps`, `offsets`, `replaces`, `compare`,
+`save_baseline`, `mismatches`, `stack-layout`, `asm_listing`. Backs the
+`/compare-asm` + `/stack-layout` skills and the MCP `run_diff_inspect` tool.
+
+**Struct + vtable** (`tools/struct_db.py`, `scripts/dump_vtable.py`):
+`// 0xHEX` annotated headers → `struct_db.sqlite`; COFF `??_7*@@6B` vtables
+decoded with `??_R4` RTTI Complete Object Locator parsing.
+
+**MSVC pattern docs** (`docs/decomp/patterns/`, `docs/decomp/MSVC_X360_REGALLOC.md`,
+`docs/decomp/TECHNICAL_NOTES.md`, `docs/decomp/PRAGMA_*.md`,
+`docs/decomp/XBOX360_FLOATING_POINT_CODEGEN.md`): ported verbatim from DC3.
+Same compiler, same flags → applies directly.
+
 ## Phase tracking
 
 Memory files at `~/.claude/projects/-home-free-code-milohax-rb3-xenon/memory/`:
