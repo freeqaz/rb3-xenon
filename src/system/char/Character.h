@@ -115,6 +115,9 @@ public:
     void DrawLod(int);
     void DrawLodOrShadow(int, DrawMode);
     void SetTeleport(bool t) { mTeleported = t; }
+    void SetTeleported(bool t) { mTeleported = t; }
+    void SetFrozen(bool b) { mFrozen = b; }
+    void SetMinLod(int lod) { mForceLod = (LODType)lod; }
     CharDriver *Driver() const { return mDriver; }
     bool DebugDrawInterestObjects() const { return mDebugDrawInterestObjects; }
     bool Synced() const { return mPollState == kCharSyncObject; }

@@ -74,5 +74,8 @@ core.*
 # Shared venv (symlink to ../dc3-decomp/venv)
 /venv
 
+# Machine-specific symlink to the local objdiff fork (create via: ln -s <abs>/objdiff-cli bin/)
+/bin/objdiff-cli
+
 # Ghidra projects (large; rebuild via tools/ghidra/import-xex.sh)
 /ghidra_projects/

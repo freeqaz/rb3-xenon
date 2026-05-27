@@ -22,6 +22,10 @@ RockCentral.cpp:
 	.pdata      start:0x8220E6E8 end:0x8220E978
 	.text       start:0x824E8468 end:0x824EA844
 
+BandCamShot.cpp:
+	.pdata      start:0x821ED9F8 end:0x821EDE90
+	.text       start:0x8229F0A0 end:0x822A3AC4
+
 BandDirector.cpp:
 	.pdata      start:0x821EB640 end:0x821EBF48
 	.text       start:0x8227C378 end:0x82285220
