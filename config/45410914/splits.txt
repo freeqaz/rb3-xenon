@@ -98,6 +98,10 @@ TourDescPanel.cpp:
 	.pdata      start:0x822534B0 end:0x82253608
 	.text       start:0x82B4DBA0 end:0x82B4F8D8
 
+FreeCamera.cpp:
+	.pdata      start:0x8220DD88 end:0x8220DDA0
+	.text       start:0x824DA640 end:0x824DAC48
+
 FileChecksum.cpp:
 	.pdata      start:0x8220DDD8 end:0x8220DDE8
 	.text       start:0x824DB038 end:0x824DB14C

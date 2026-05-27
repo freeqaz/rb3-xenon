@@ -38,6 +38,8 @@ public:
     float GetVal() { return mVal; }
     Symbol LocalName() const { return mLocalName; }
     void SetLocalName(Symbol name) { mLocalName = name; }
+    float GetTranspose() const { return mTranspose; }
+    void SetTranspose(float t) { mTranspose = t; }
 
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
@@ -50,6 +52,7 @@ public:
     Symbol mLocalName; // 0x24
     std::set<FaderGroup *> mClients; // 0x28
     Mode mMode; // 0x40
+    float mTranspose; // 0x44
 };
 
 class FaderTask {

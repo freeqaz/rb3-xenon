@@ -95,6 +95,7 @@
             "system/rndobj/Gen.cpp": "NonMatching",
             "system/ui/ScrollSelect.cpp": "NonMatching",
             "system/ui/UIScreen.cpp": "NonMatching",
+            "system/world/FreeCamera.cpp": "NonMatching",
             "system/world/LightHue.cpp": "NonMatching",
             "system/world/Instance.cpp": "NonMatching",
             "system/gesture/DepthBuffer3D.cpp": "NonMatching",
