@@ -39,6 +39,7 @@
             "system/bandobj/BandCharDesc.cpp": "NonMatching",
             "system/bandobj/BandDirector.cpp": "NonMatching",
             "system/bandobj/BandLabel.cpp": "NonMatching",
+            "system/bandobj/BandSongPref.cpp": "NonMatching",
             "system/bandobj/BandWardrobe.cpp": "NonMatching",
             "system/bandobj/CrowdAudio.cpp": "NonMatching",
             "system/bandobj/StreakMeter.cpp": "NonMatching",

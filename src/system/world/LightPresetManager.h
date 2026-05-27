@@ -1,5 +1,6 @@
 #pragma once
 #include "obj/Data.h"
+#include "utl/Symbol.h"
 
 class LightPreset;
 class WorldDir;
@@ -16,6 +17,13 @@ public:
     void Poll();
     void ForcePreset(LightPreset *, float);
     void ForcePresets(LightPreset *, LightPreset *, float);
+
+    // RB3 BandDirector deps (not in dc3 LightPresetManager — stubbed for compile).
+    void GetPresets(LightPreset *&, LightPreset *&);
+    void Interp(Symbol, Symbol, float);
+    void SchedulePstKey(int);
+    void StompPresets(LightPreset *, LightPreset *);
+    LightPreset *PickRandomPreset(Symbol);
 
 protected:
     DataNode OnToggleLightingEvents(DataArray *);
