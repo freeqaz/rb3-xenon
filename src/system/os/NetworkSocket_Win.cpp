@@ -1,6 +1,8 @@
 #include "os/NetworkSocket.h"
 #include "os/Debug.h"
 #include "utl/MakeString.h"
+#include "xdk/xapilibi/handleapi.h"
+#include "xdk/xapilibi/synchapi.h"
 #include <cstring>
 
 struct XNDNS {

@@ -44,7 +44,7 @@ public:
     virtual void SlipStop(int) {}
     virtual float GetSlipOffset(int) { return 0; }
     virtual void SetSlipSpeed(int, float) {}
-    virtual FaderGroup &ChannelFaders(int);
+    virtual FaderGroup *ChannelFaders(int);
     virtual void SetJumpSamples(int, int, const char *) {}
 
 private:

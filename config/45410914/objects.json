@@ -4,7 +4,12 @@
         "mw_version": "X360/16.00.11886.00",
         "cflags": "base",
         "objects": {
-            "Main.cpp": "NonMatching"
+            "Main.cpp": "NonMatching",
+            "keygen_xbox.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": ["/Od"]
+            },
+            "Memory_Xbox.cpp": "NonMatching"
         }
     },
     "engine": {
@@ -121,6 +126,7 @@
             "system/os/MapFile_Xbox.cpp": "NonMatching",
             "system/os/ArkFile.cpp": "NonMatching",
             "system/os/UsbMidiKeyboard.cpp": "NonMatching",
+            "system/os/NetworkSocket_Win.cpp": "NonMatching",
             "system/net/json-c/json_tokener.c": "NonMatching",
             "system/net/json-c/arraylist.c": "NonMatching",
             "system/meta/StoreEnumeration.cpp": "NonMatching",
@@ -130,7 +136,16 @@
             "system/rndobj/Flare.cpp": "NonMatching",
             "system/os/Debug.cpp": "NonMatching",
             "system/utl/FileStream.cpp": "NonMatching",
-            "system/rndobj/SoftParticleBuffer.cpp": "NonMatching"
+            "system/rndobj/SoftParticleBuffer.cpp": "NonMatching",
+            "system/synth/StreamNull.cpp": "NonMatching"
+        }
+    },
+    "hamobj": {
+        "progress_category": "engine",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "system/hamobj/RhythmBattlePlayer.cpp": "NonMatching"
         }
     },
     "xdk": {
