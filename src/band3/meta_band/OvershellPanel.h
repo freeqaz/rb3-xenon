@@ -13,6 +13,7 @@
 #include "obj/ObjMacros.h"
 #include "os/JoypadMsgs.h"
 #include "os/PlatformMgr.h"
+#include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UIPanel.h"
 #include "net/Synchronize.h"

@@ -1,6 +1,7 @@
 #pragma once
 #include "game/BandUser.h"
 #include "meta/StoreEnumeration.h"
+class StorePurchaser; // forward-decl to avoid kSuccess enum collision with net/SessionMessages.h
 #include "net_band/DataResults.h"
 #include "net_band/RockCentralMsgs.h"
 #include "os/JoypadMsgs.h"

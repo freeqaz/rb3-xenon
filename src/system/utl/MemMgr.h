@@ -80,6 +80,8 @@ void *MemTruncate(
     const char *name = "unknown"
 );
 void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align);
+void *_MemAlloc(int size, int align); // rb3-Wii two-arg allocator used in STLPort specializations
+void _MemFree(void *mem);             // rb3-Wii free used in STLPort specializations
 void *
 MemRealloc(void *mem, int size, const char *file, int line, const char *name, int align);
 void *MemAlloc(int size, const char *file, int line, const char *name, int align = 0);
