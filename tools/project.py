@@ -499,7 +499,8 @@ def generate_build_ninja(
         command=f"$python {decompctx} $in -o $out -d $out.d $includes",
         description="CTX $in",
         depfile="$out.d",
-        deps="gcc",
+        # No deps="gcc" -- binary deps cache is unsafe under concurrent ninja
+        # runs (matches rb3-Wii). Ninja reads $out.d directly each build.
     )
 
     cargo_rule_written = False
@@ -514,7 +515,8 @@ def generate_build_ninja(
                 description="CARGO $bin",
                 pool="cargo",
                 depfile=Path("$target") / "release" / "$bin.d",
-                deps="gcc",
+                # No deps="gcc" -- ninja's binary deps cache is unsafe under
+                # concurrent ninja invocations (matches rb3-Wii).
             )
             cargo_rule_written = True
 
@@ -1428,7 +1430,18 @@ def generate_build_ninja(
         command=f"{dtk} xex split $in $out_dir",
         description="SPLIT $in",
         depfile="$out_dir/dep",
-        deps="gcc",
+        # restat: dtk split is deterministic, so re-running it with an
+        # unchanged config.yml produces an identical config.json. restat lets
+        # ninja keep the old mtime and avoid re-triggering the `configure`
+        # generator rule -- which otherwise causes an infinite
+        # SPLIT->configure manifest-regeneration loop. (Mirrors rb3-Wii.)
+        #
+        # NOTE: no `deps="gcc"` here. The binary deps cache (.ninja_deps) is
+        # unsafe under concurrent ninja invocations; if two builds race the
+        # cache can become inconsistent and cause spurious re-SPLITs. Ninja
+        # will read $out_dir/dep directly each build -- slightly slower, but
+        # killed the rebuild-everything failure mode in rb3-Wii.
+        restat=True,
     )
     n.build(
         inputs=config.config_path,
@@ -1501,7 +1514,15 @@ def generate_objdiff_config(
     if config.ninja_path:
         ninja = str(config.ninja_path.absolute())
     else:
-        ninja = "ninja"
+        # Default custom_make: the ninja-locked flock wrapper. Bare `ninja`
+        # under multiple agents corrupts .ninja_log/.ninja_deps and can hang
+        # in an infinite SPLIT->configure manifest-regeneration loop.
+        # Ported from rb3-Wii (see tools/ninja-locked).
+        ninja_locked = Path("tools") / "ninja-locked"
+        if (Path(__file__).resolve().parent.parent / "tools" / "ninja-locked").is_file():
+            ninja = str(ninja_locked)
+        else:
+            ninja = "ninja"
 
     objdiff_config: Dict[str, Any] = {
         "min_version": "2.0.0-beta.5",
@@ -1971,6 +1992,7 @@ def calculate_progress(config: ProjectConfig) -> None:
         total_code = measures.get("total_code", 0)
         matched_code = measures.get("matched_code", 0)
         matched_code_percent = measures.get("matched_code_percent", 0)
+        fuzzy_match_percent = measures.get("fuzzy_match_percent", 0)
         total_data = measures.get("total_data", 0)
         matched_data = measures.get("matched_data", 0)
         matched_data_percent = measures.get("matched_data_percent", 0)
@@ -1981,7 +2003,7 @@ def calculate_progress(config: ProjectConfig) -> None:
         complete_units = measures.get("complete_units", 0)
 
         progress_print(
-            f"  {name}: {matched_code_percent:.2f}% matched, {complete_code_percent:.2f}% linked ({complete_units} / {total_units} files)"
+            f"  {name}: {matched_code_percent:.2f}% matched ({fuzzy_match_percent:.2f}% fuzzy), {complete_code_percent:.2f}% linked ({complete_units} / {total_units} files)"
         )
         progress_print(
             f"    Code: {matched_code} / {total_code} bytes ({matched_functions} / {total_functions} functions)"
