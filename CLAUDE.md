@@ -46,14 +46,51 @@ code may have subtle behavioral differences or version incompatibilities. When a
 file misbehaves, cross-check against rb3-Wii's equivalent and merge intent — do
 not assume dc3's version is correct for RB3.
 
+## Decomp priority: the GAME, not the engine
+
+**Spend matching/porting effort on RB3's game layer (`src/band3/`, `src/network/`),
+NOT on the Milo engine (`src/system/`).** The engine is effectively pre-solved:
+DC3 is the same engine on the same platform (Xbox 360), and we verified that DC3's
+already-decompiled engine **loads and renders RB3-360 `.milo_xbox` assets** with
+zero rb3-xenon code (same texture tiling / vertex compression / endianness; DC3's
+milo loaders keep backward-compat parse branches for RB3's older revisions). A
+3-way `rndobj` cross-check shows RB3-360 ≈ DC3 on every divergence point (NgRnd,
+BaseMaterial, MetaMaterial, atlas particles, FontMap3d, Matrix4, `rnddx9`); only
+**rb3-Wii** is the outlier (its `rndwii`/GX branch). So the renderer, materials,
+textures, mesh/skeleton load are all supplied by DC3 — the part that's actually
+RB3-specific, and where decomp value concentrates, is the game code.
+
+Full evidence + the asset-render experiment + the "bigger play" (a native target
+that injects DC3 rndobj + only RB3 game code) are in
+`docs/plans/engine-reuse-and-asset-rendering.md`.
+
 ## Two build tracks
 
 **1. X360 decomp-matching build** — compile-to-match the retail XEX (MSVC X360).
 
 ```bash
-ninja                    # dtk SPLIT -> MSVC compile -> objdiff report -> progress
+./tools/ninja-locked 2>&1 | tee /tmp/rb3_build.log    # ALWAYS use this, never bare `ninja`
 python3 configure.py     # regenerate build.ninja (after editing objects.json/splits.txt)
 ```
+
+**ALWAYS `tee` the build output to a log file** (`/tmp/rb3_build.log` or
+similar). dtk SPLIT and MSVC compile via wibo can wedge in ways that are
+invisible without the full log — when a build hangs or fails, the log is the
+only forensic record of what dtk emitted, which compile failed, and what header
+chain the failure came from. Without it, killing the build leaves you blind
+about why it was stuck. The `| tail -N` you want for "did it succeed?" is fine
+*after* the tee, never instead of it.
+
+**Always invoke `./tools/ninja-locked`, never bare `ninja`.** Concurrent
+`ninja` instances in this build dir corrupt `.ninja_log`/`.ninja_deps`, trigger
+an infinite SPLIT→configure manifest-regeneration loop, and leave stray
+`_CL_<hash>{db,ex,gl,in,sy}` files in the repo root + `src/` (cl.exe PCH
+staging racing on the same cwd). The wrapper takes an `flock` on
+`.ninja-build.lock` so subsequent builds queue up. Symptoms of bypassing it:
+`manifest 'build.ninja' still dirty after N tries`, zero/partial `.obj` files,
+cascading header-include errors. (Note: rb3-Wii's permuter spawns its own
+`build/tools/wibo` from `../rb3/`; those are unrelated and won't grab our
+lock — `fuser .ninja-build.lock` is authoritative.)
 
 dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
 there. **objdiff is also a local fork** at `../objdiff` (freeqaz/objdiff,
