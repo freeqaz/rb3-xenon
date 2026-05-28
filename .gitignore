@@ -61,6 +61,12 @@ core.*
 /unified_id_vtable.json
 /proposed_splits_bindiff.txt
 /proposed_splits_bindiff.spotcheck.csv
+# pin_candidates.py generated wave (regenerable from the oracle JSONs above)
+/pin_candidates.json
+/pin_candidates_report.txt
+/pin_candidates_review.json
+/pin_candidates.splits.append
+/pin_candidates.objects.append
 # bindiff_match.json is harvested from Ghidra + BinDiff (~10 min run); regenerable, large (~3.6 MB)
 /tools/bindiff_match.json
 /tools/.cache/
