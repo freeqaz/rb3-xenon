@@ -23,12 +23,9 @@ enum SongMgrState {
     kSongMgr_Nil = -1,
 };
 
-enum SongID {
-    kSongID_Invalid = 0,
-    kSongID_Any = -1,
-    kSongID_Random = -2
-};
-
+// SongID enum removed: DC3 had it here but RB3 only defines it in BandSongMgr.h
+// (with different values: Invalid=-2, Any=-1, Random=0). BandSongMgr.h includes
+// this header, causing a redefinition error. Removing from engine base.
 class SongMgr : public Hmx::Object, public ContentMgr::Callback {
 public:
     SongMgr() {}
@@ -164,4 +161,6 @@ protected:
     bool mSongCacheWriteAllowed; // 0xce
 };
 
-extern SongMgr &TheSongMgr;
+// TheSongMgr removed from engine header: RB3's BandSongMgr.h redeclares it as
+// BandSongMgr& (the actual subclass), causing a type redefinition error.
+// BandSongMgr.h includes this header, so both decls would be visible.

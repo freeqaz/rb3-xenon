@@ -23,6 +23,7 @@ public:
     XUID GetXUID() const;
     const char *ToString() const;
     bool GetIsValid() const { return mValid; }
+    bool IsInvalid() const { return !mValid; }
 
     MEM_OVERLOAD(OnlineID, 0x1E)
 };

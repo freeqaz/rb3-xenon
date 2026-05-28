@@ -26,3 +26,11 @@ public:
 };
 
 extern WiiProfileMgr TheWiiProfileMgr;
+
+#include "obj/Msg.h"
+// Wii-only message types forward-declared for X360 compilation of RockCentral.h
+DECLARE_MESSAGE(DeleteQueueUpdatedMsg, "delete_queue_update")
+END_MESSAGE
+
+DECLARE_MESSAGE(DeleteUserCompleteMsg, "delete_user_complete")
+END_MESSAGE

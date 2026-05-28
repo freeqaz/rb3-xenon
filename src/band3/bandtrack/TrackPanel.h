@@ -103,7 +103,7 @@ public:
     std::vector<Track *> mTracks; // 0x3c
     std::vector<TrackSlot> mTrackSlots; // 0x44
     int mReservedVocalSlot; // 0x4c
-    ObjPtr<BandScoreboard, ObjectDir> mScoreboard; // 0x50
+    ObjPtr<BandScoreboard> mScoreboard; // 0x50
     bool unk5c; // 0x5c
     bool unk5d; // 0x5d
     bool unk5e; // 0x5e

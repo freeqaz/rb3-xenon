@@ -40,3 +40,6 @@ public:
 
     bool Null() const;
 };
+
+extern UserGuid gNullUserGuid;
+inline bool UserGuid::Null() const { return *this == gNullUserGuid; }

@@ -65,10 +65,10 @@ private:
     JobMgr *mJobMgr; // 0x64
     bool unk68; // 0x68
     bool unk69; // 0x69
-
     DataNode OnSignInUsers(DataArray *);
 
 public:
+    bool unkce6b; // TODO: needs correct X360 offset (Wii 0xce6b = content maturity flag)
     // Hmx::Object
     virtual ~PlatformMgr();
     virtual DataNode Handle(DataArray *, bool);
@@ -161,4 +161,17 @@ int GetChangedMask() const { return mData->Int(3); }
 END_MESSAGE
 
 DECLARE_MESSAGE(StorageChangedMsg, "storage_changed")
+END_MESSAGE
+
+DECLARE_MESSAGE(PartyMembersChangedMsg, "party_members_changed")
+END_MESSAGE
+
+DECLARE_MESSAGE(EnumerateMessagesCompleteMsg, "enumerate_messages_complete")
+END_MESSAGE
+
+// Wii DWC profanity-check result message — referenced by Jobs_Wii.h.
+// On Xbox 360 this message is never sent; forward-declare to satisfy the type.
+DECLARE_MESSAGE(DWCProfanityResultMsg, "dwc_profanity_result_msg")
+DWCProfanityResultMsg() : Message(Type()) {}
+bool IsProfane() const { return mData->Int(2); }
 END_MESSAGE

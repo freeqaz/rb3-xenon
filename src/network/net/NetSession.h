@@ -1,6 +1,9 @@
 #pragma once
 #include "Platform/Time.h"
-#include "game/Game.h"
+// game/Game.h pulled in a huge beatmatch dependency chain (SongDB, DrumMap, etc.)
+// but NetSession.h does not use any types from Game.h directly.
+// Removed to unblock compilation of UploadErrorMgr + other band3 TUs.
+// If a future consumer of NetSession.h needs Game types, include Game.h there.
 #include "meta_band/BandNetGameData.h"
 #include "net/NetMessage.h"
 #include "net/NetSearchResult.h"

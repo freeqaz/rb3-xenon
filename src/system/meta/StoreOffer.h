@@ -52,6 +52,11 @@ public:
     bool InLibrary() const;
     bool PartiallyInLibrary() const;
     int GetSingleSongID() const;
+    // RB3-specific methods (missing from DC3 base)
+    char const *Artist() const;
+    Symbol ShortName() const;
+    bool IsCover() const;
+    float PartRank(Symbol) const;
     DataNode GetData(DataArray const *, bool) const;
     bool HasSong(StoreOffer const *) const;
     DataNode OnGetData(DataArray *);

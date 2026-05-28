@@ -1,0 +1,56 @@
+#!/bin/sh
+# ninja-locked: serialized ninja wrapper for rb3-xenon.
+#
+# Running multiple `ninja` instances concurrently in one build directory
+# corrupts .ninja_log/.ninja_deps and can trigger an infinite
+# SPLIT->configure manifest-regeneration loop. Symptoms include:
+#   - "ninja: manifest 'build.ninja' still dirty after N tries"
+#   - Stray _CL_<hash>{db,ex,gl,in,sy} files left in repo root and src/
+#     (cl.exe PCH staging racing on the same cwd)
+#   - .obj files of zero or partial size, cascading header-include errors
+#     on subsequent compiles
+#
+# This wrapper takes an exclusive flock so concurrent builds queue up
+# instead of colliding.
+#
+# Used as objdiff.json's `custom_make` (so every orchestrator / objdiff-cli
+# build is serialized) and by build scripts. For manual builds, run this
+# instead of bare `ninja`.
+#
+# Ported from rb3-Wii (tools/ninja-locked), adapted for title-ID 45410914.
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+exec 9>"$REPO/.ninja-build.lock"
+if ! flock -n 9; then
+    echo "ninja-locked: another build is running; waiting for the lock..." >&2
+    flock 9
+fi
+
+# Skip the post-build progress print for ninja subtools / help / version
+# queries -- those aren't builds and the report file may be stale or absent.
+skip_progress=0
+for arg in "$@"; do
+    case "$arg" in
+        -t|--help|-h|--version) skip_progress=1 ;;
+    esac
+done
+
+report_json="$REPO/build/45410914/report.json"
+before=""
+if [ "$skip_progress" -eq 0 ] && [ -f "$report_json" ]; then
+    before=$(stat -c %Y "$report_json" 2>/dev/null)
+fi
+
+ninja "$@"
+status=$?
+
+# Ninja runs the `progress` rule (which prints the summary) only when its
+# inputs changed. On a no-op build that rule is skipped, so print the
+# summary here so every successful invocation shows the current %.
+if [ "$status" -eq 0 ] && [ "$skip_progress" -eq 0 ] && [ -f "$report_json" ]; then
+    after=$(stat -c %Y "$report_json" 2>/dev/null)
+    if [ "$before" = "$after" ]; then
+        (cd "$REPO" && python3 configure.py progress) 2>/dev/null || true
+    fi
+fi
+
+exit "$status"

@@ -734,3 +734,974 @@ DataArray.cpp:
 JobMgr.cpp:
 	.pdata      start:0x82239FB0 end:0x82239FC8
 	.text       start:0x827A67D8 end:0x827A6AA4
+
+FlowMultiSetProperty.cpp:
+	.pdata      start:0x821E9C38 end:0x821E9C40
+	.text       start:0x82262960 end:0x822629B0
+
+Char.cpp:
+	.pdata      start:0x821E9CD8 end:0x821E9CE0
+	.text       start:0x822636F0 end:0x82263748
+
+SkeletonViz.cpp:
+	.pdata      start:0x821E9E50 end:0x821E9E58
+	.text       start:0x82264FE8 end:0x8226508C
+
+WebSvcReq.cpp:
+	.pdata      start:0x821EA050 end:0x821EA058
+	.text       start:0x82266FC0 end:0x82267010
+
+World.cpp:
+	.pdata      start:0x821EA270 end:0x821EA278
+	.text       start:0x82269450 end:0x822694A8
+
+HamCamTransform.cpp:
+	.pdata      start:0x821EC950 end:0x821EC958
+	.text       start:0x8228F410 end:0x8228F470
+
+Spline.cpp:
+	.pdata      start:0x821ECA58 end:0x821ECA60
+	.text       start:0x82290640 end:0x822906A4
+
+Character.cpp:
+	.pdata      start:0x821ECAF8 end:0x821ECB00
+	.text       start:0x822911F0 end:0x82291238
+
+SampleInst.cpp:
+	.pdata      start:0x821ECBC0 end:0x821ECBC8
+	.text       start:0x82291E08 end:0x82291E6C
+
+User.cpp:
+	.pdata      start:0x821ECE40 end:0x821ECE48
+	.text       start:0x82293A68 end:0x82293AA4
+
+HamMove.cpp:
+	.pdata      start:0x821ED030 end:0x821ED038
+	.text       start:0x82295480 end:0x822954E4
+
+HamNavProvider.cpp:
+	.pdata      start:0x821ED580 end:0x821ED588
+	.text       start:0x8229A2A0 end:0x8229A300
+
+Flow.cpp:
+	.pdata      start:0x821ED6A0 end:0x821ED6A8
+	.text       start:0x8229B608 end:0x8229B660
+
+CharInterest.cpp:
+	.pdata      start:0x821ED8E0 end:0x821ED8E8
+	.text       start:0x8229D760 end:0x8229D7B0
+
+VorbisReader.cpp:
+	.pdata      start:0x821EE240 end:0x821EE248
+	.text       start:0x822A71D8 end:0x822A727C
+
+TexMovie.cpp:
+	.text       start:0x822A78F8 end:0x822A7904
+
+HamDirector.cpp:
+	.pdata      start:0x821EE850 end:0x821EE858
+	.text       start:0x822AC718 end:0x822AC778
+
+CharCuff.cpp:
+	.pdata      start:0x821EEA58 end:0x821EEA60
+	.text       start:0x822AE1E0 end:0x822AE230
+
+SongLayout.cpp:
+	.pdata      start:0x821EF0C8 end:0x821EF0D0
+	.text       start:0x822B5DC8 end:0x822B5E2C
+
+Mesh.cpp:
+	.pdata      start:0x821EF480 end:0x821EF488
+	.text       start:0x822B9138 end:0x822B9188
+
+CharMeshHide.cpp:
+	.pdata      start:0x821EFCC0 end:0x821EFCC8
+	.text       start:0x822C1E58 end:0x822C1E9C
+
+AmbientOcclusion.cpp:
+	.pdata      start:0x821EFD68 end:0x821EFD70
+	.text       start:0x822C2610 end:0x822C2690
+
+Waypoint.cpp:
+	.pdata      start:0x821F0508 end:0x821F0510
+	.text       start:0x822C8CA8 end:0x822C8CF8
+
+Font.cpp:
+	.pdata      start:0x821F0658 end:0x821F0660
+	.text       start:0x822CA2A0 end:0x822CA2F4
+
+XLSPConnection.cpp:
+	.pdata      start:0x821F0798 end:0x821F07A0
+	.text       start:0x822CB7C8 end:0x822CB814
+
+CharIKFingers.cpp:
+	.pdata      start:0x821F3A68 end:0x821F3A70
+	.text       start:0x822FE498 end:0x822FE4DC
+
+HamPhotoDisplay.cpp:
+	.pdata      start:0x821F3AC8 end:0x821F3AD0
+	.text       start:0x822FEA88 end:0x822FEAE0
+
+HamRibbon.cpp:
+	.pdata      start:0x821F3E30 end:0x821F3E38
+	.text       start:0x82301F64 end:0x823020F0
+
+FilterQueue.cpp:
+	.pdata      start:0x821F3F98 end:0x821F3FA0
+	.text       start:0x82303530 end:0x82303594
+
+MoveAsyncDetector.cpp:
+	.pdata      start:0x821F4188 end:0x821F4190
+	.text       start:0x823054B8 end:0x82305528
+
+HamListRibbon.cpp:
+	.pdata      start:0x821F4500 end:0x821F4508
+	.text       start:0x82308EA0 end:0x82308EF0
+
+GestureMgr.cpp:
+	.pdata      start:0x821F4610 end:0x821F4618
+	.text       start:0x82309C98 end:0x82309CF0
+
+Text.cpp:
+	.pdata      start:0x821F46F8 end:0x821F4700
+	.text       start:0x8230AB20 end:0x8230AB84
+
+HamScrollSpeedIndicator.cpp:
+	.pdata      start:0x821F4958 end:0x821F4960
+	.text       start:0x8230CC38 end:0x8230CC88
+
+LiveCameraInput.cpp:
+	.pdata      start:0x821F49B8 end:0x821F49C0
+	.text       start:0x8230D1D8 end:0x8230D230
+
+CharacterTest.cpp:
+	.pdata      start:0x821F4AC0 end:0x821F4AC8
+	.text       start:0x8230E0E0 end:0x8230E308
+
+FlowTrigger.cpp:
+	.pdata      start:0x821F51C0 end:0x821F51C8
+	.text       start:0x823154D0 end:0x8231553C
+
+CharIKHand.cpp:
+	.pdata      start:0x821F5570 end:0x821F5578
+	.text       start:0x823188A8 end:0x823188EC
+
+HollaBackMinigame.cpp:
+	.pdata      start:0x821F5638 end:0x821F5640
+	.text       start:0x82319A08 end:0x82319AAC
+
+PropAnim.cpp:
+	.pdata      start:0x821F5C20 end:0x821F5C28
+	.text       start:0x8231F9F8 end:0x8231FA54
+
+HamNavList.cpp:
+	.pdata      start:0x821F64F0 end:0x821F64F8
+	.text       start:0x82329000 end:0x82329044
+
+HamLabel.cpp:
+	.pdata      start:0x821F6978 end:0x821F6990
+	.text       start:0x8232DB70 end:0x8232DC5C
+
+HamWardrobe.cpp:
+	.pdata      start:0x821F6D68 end:0x821F6D70
+	.text       start:0x823325C8 end:0x82332620
+
+SkeletonClip.cpp:
+	.pdata      start:0x821F6E80 end:0x821F6E88
+	.text       start:0x82334A40 end:0x82334A98
+
+CharLipSync.cpp:
+	.text       start:0x82334A98 end:0x82334AE4
+
+MoveMgr.cpp:
+	.pdata      start:0x821F6EE8 end:0x821F6EF0
+	.text       start:0x82335318 end:0x82335368
+
+Watcher.cpp:
+	.pdata      start:0x821F6F70 end:0x821F6F78
+	.text       start:0x82336030 end:0x823360A0
+
+UILabel.cpp:
+	.pdata      start:0x821F7208 end:0x821F7210
+	.text       start:0x82339998 end:0x823399F4
+
+CharBones.cpp:
+	.pdata      start:0x821F7210 end:0x821F7218
+	.text       start:0x823399F8 end:0x82339A54
+
+Draw.cpp:
+	.pdata      start:0x821F7278 end:0x821F7280
+	.text       start:0x8233A388 end:0x8233A548
+
+AnimFilter.cpp:
+	.pdata      start:0x821F75C8 end:0x821F75D0
+	.text       start:0x8233CE48 end:0x8233CEBC
+
+CharIKHead.cpp:
+	.pdata      start:0x821F7610 end:0x821F7618
+	.text       start:0x8233D2E8 end:0x8233D32C
+
+Anim.cpp:
+	.pdata      start:0x821F7B78 end:0x821F7B80
+	.text       start:0x82343098 end:0x8234314C
+
+Joypad_Xbox.cpp:
+	.pdata      start:0x821F8578 end:0x821F8580
+	.text       start:0x8234C390 end:0x8234C408
+
+SkeletonUpdate.cpp:
+	.pdata      start:0x821F89D8 end:0x821F89E0
+	.text       start:0x82350038 end:0x82350088
+
+StubCameraInput.cpp:
+	.pdata      start:0x821F8BD0 end:0x821F8BD8
+	.text       start:0x82351D30 end:0x82351EB0
+
+CameraInput.cpp:
+	.pdata      start:0x821F9190 end:0x821F9198
+	.text       start:0x82357250 end:0x82357338
+
+Ham.cpp:
+	.pdata      start:0x821F9210 end:0x821F9218
+	.text       start:0x82357A10 end:0x82357A68
+
+HamCharacter.cpp:
+	.pdata      start:0x821F9320 end:0x821F9328
+	.text       start:0x82358290 end:0x823582E8
+
+PoseFatalities.cpp:
+	.pdata      start:0x821F9340 end:0x821F9348
+	.text       start:0x82358390 end:0x823583E8
+
+MoveDir.cpp:
+	.pdata      start:0x821F93F0 end:0x821F93F8
+	.text       start:0x82358910 end:0x82358968
+
+StarsDisplay.cpp:
+	.pdata      start:0x821F9460 end:0x821F9468
+	.text       start:0x82358C90 end:0x82358CE8
+
+TypeProps.cpp:
+	.pdata      start:0x821F9788 end:0x821F9790
+	.text       start:0x8235B0F0 end:0x8235B138
+
+CharBlendBone.cpp:
+	.pdata      start:0x821F9B08 end:0x821F9B10
+	.text       start:0x8235F180 end:0x8235F1E4
+
+CharForeTwist.cpp:
+	.pdata      start:0x821FA208 end:0x821FA210
+	.text       start:0x82366F18 end:0x82366F5C
+
+CharSignalApplier.cpp:
+	.pdata      start:0x821FB010 end:0x821FB018
+	.text       start:0x82377048 end:0x8237708C
+
+Morph.cpp:
+	.pdata      start:0x821FB110 end:0x821FB118
+	.text       start:0x82377FC8 end:0x82378020
+
+HamPlayerData.cpp:
+	.pdata      start:0x821FB8D8 end:0x821FB8E0
+	.text       start:0x8237FBD8 end:0x8237FC74
+
+FileMerger.cpp:
+	.pdata      start:0x821FBBC0 end:0x821FBBC8
+	.text       start:0x82382A28 end:0x82382A80
+
+FlowAnimate.cpp:
+	.pdata      start:0x821FBDE0 end:0x821FBDE8
+	.text       start:0x82385F78 end:0x82385FBC
+
+Rnd_NG.cpp:
+	.pdata      start:0x821FBEB8 end:0x821FBEC0
+	.text       start:0x82386B70 end:0x82386BCC
+
+CharClipDriver.cpp:
+	.pdata      start:0x821FC310 end:0x821FC318
+	.text       start:0x8238D208 end:0x8238D254
+
+CharLookAt.cpp:
+	.pdata      start:0x821FC720 end:0x821FC728
+	.text       start:0x82391298 end:0x8239131C
+
+CharHair.cpp:
+	.pdata      start:0x821FCB20 end:0x821FCB28
+	.text       start:0x82396468 end:0x823964C0
+
+FlowSwitch.cpp:
+	.pdata      start:0x821FCC28 end:0x821FCC30
+	.text       start:0x82397610 end:0x82397654
+
+CharUtl.cpp:
+	.pdata      start:0x821FCD38 end:0x821FCD40
+	.text       start:0x82398988 end:0x82398A2C
+
+FlowRun.cpp:
+	.pdata      start:0x821FD330 end:0x821FD338
+	.text       start:0x823A1D88 end:0x823A1DCC
+
+FlowTimer.cpp:
+	.pdata      start:0x821FD6F8 end:0x821FD700
+	.text       start:0x823A6128 end:0x823A616C
+
+CharWeightSetter.cpp:
+	.pdata      start:0x821FD718 end:0x821FD720
+	.text       start:0x823A63D8 end:0x823A6538
+
+HamIKEffector.cpp:
+	.pdata      start:0x821FE338 end:0x821FE340
+	.text       start:0x823B44A0 end:0x823B44E4
+
+PracticeSection.cpp:
+	.pdata      start:0x821FE4B8 end:0x821FE4C0
+	.text       start:0x823B5C60 end:0x823B5CA4
+
+TexProc.cpp:
+	.pdata      start:0x821FE508 end:0x821FE518
+	.text       start:0x823B61B0 end:0x823B6314
+
+RhythmBattle.cpp:
+	.pdata      start:0x821FF188 end:0x821FF190
+	.text       start:0x823C3E80 end:0x823C3EC4
+
+CharBonesSamples.cpp:
+	.pdata      start:0x821FF948 end:0x821FF950
+	.text       start:0x823CCD60 end:0x823CCDD4
+
+DingoSvr_Xbox.cpp:
+	.pdata      start:0x821FFA58 end:0x821FFA60
+	.text       start:0x823CDEC8 end:0x823CDF20
+
+CharBonesMeshes.cpp:
+	.pdata      start:0x821FFA68 end:0x821FFA70
+	.text       start:0x823CDF48 end:0x823CDFA0
+
+DingoSvr.cpp:
+	.pdata      start:0x821FFAB8 end:0x821FFAC0
+	.text       start:0x823CE1C8 end:0x823CE220
+
+HamSongData.cpp:
+	.pdata      start:0x82200540 end:0x82200550
+	.text       start:0x823D71A8 end:0x823D7344
+
+FlowLabel.cpp:
+	.text       start:0x823D8D40 end:0x823D8D48
+
+UIComponent.cpp:
+	.pdata      start:0x82200860 end:0x82200868
+	.text       start:0x823D9AE0 end:0x823D9B38
+
+StandardStream.cpp:
+	.pdata      start:0x82200C58 end:0x82200C60
+	.text       start:0x823DD8A8 end:0x823DD8EC
+
+MemMgr.cpp:
+	.text       start:0x823DED68 end:0x823DED84
+
+StorePurchaser.cpp:
+	.pdata      start:0x82200F58 end:0x82200F60
+	.text       start:0x823E0160 end:0x823E019C
+
+FftIpp.cpp:
+	.pdata      start:0x822014C0 end:0x822014C8
+	.text       start:0x823E5280 end:0x823E53B0
+
+Tex.cpp:
+	.pdata      start:0x82201AA0 end:0x82201AA8
+	.text       start:0x823ECA48 end:0x823ECB40
+
+PollAnim.cpp:
+	.pdata      start:0x82201E48 end:0x82201E50
+	.text       start:0x823F06C0 end:0x823F0724
+
+ShaderProgram.cpp:
+	.pdata      start:0x82202098 end:0x822020A0
+	.text       start:0x823F2D58 end:0x823F2F98
+
+ByteGrinder.cpp:
+	.pdata      start:0x82202318 end:0x82202320
+	.text       start:0x823F5AB8 end:0x823F5C58
+
+UsbMidiKeyboardMsgs.cpp:
+	.pdata      start:0x822029B0 end:0x822029B8
+	.text       start:0x823FBE80 end:0x823FBED8
+
+Overlay.cpp:
+	.pdata      start:0x82203288 end:0x82203290
+	.text       start:0x82404988 end:0x82404A68
+
+MeterDisplay.cpp:
+	.pdata      start:0x82203730 end:0x82203738
+	.text       start:0x8240A428 end:0x8240A478
+
+MessageTimer.cpp:
+	.pdata      start:0x822040A8 end:0x822040B0
+	.text       start:0x82415C78 end:0x82415CE8
+
+WaveFile.cpp:
+	.pdata      start:0x822041F0 end:0x822041F8
+	.text       start:0x82417110 end:0x82417174
+
+Env.cpp:
+	.pdata      start:0x822047C8 end:0x822047D0
+	.text       start:0x8241DAC8 end:0x8241DEE8
+
+BaseMaterial.cpp:
+	.pdata      start:0x82204BF0 end:0x82204C08
+	.text       start:0x82422B28 end:0x82422C70
+
+MetaMaterial.cpp:
+	.pdata      start:0x82204CC0 end:0x82204CC8
+	.text       start:0x82423A88 end:0x82424D50
+
+PartLauncher.cpp:
+	.pdata      start:0x82205D90 end:0x82205D98
+	.text       start:0x8243D320 end:0x8243D468
+
+DataNode.cpp:
+	.pdata      start:0x82206210 end:0x82206218
+	.text       start:0x82442120 end:0x82442348
+
+FileCache.cpp:
+	.pdata      start:0x82206310 end:0x82206318
+	.text       start:0x82443C00 end:0x82443C64
+
+Wind.cpp:
+	.pdata      start:0x82206868 end:0x82206870
+	.text       start:0x8244B338 end:0x8244B418
+
+Line.cpp:
+	.pdata      start:0x82206D10 end:0x82206D18
+	.text       start:0x82450950 end:0x824509CC
+
+Font3d.cpp:
+	.pdata      start:0x82207A50 end:0x82207A58
+	.text       start:0x82460378 end:0x824603E8
+
+Movie.cpp:
+	.pdata      start:0x82208808 end:0x82208810
+	.text       start:0x82472160 end:0x824721A4
+
+MultiMesh.cpp:
+	.pdata      start:0x82208838 end:0x82208840
+	.text       start:0x82472380 end:0x824723D8
+
+Mat_NG.cpp:
+	.text       start:0x82496294 end:0x824962DC
+
+HamMaster.cpp:
+	.text       start:0x824A6740 end:0x824A6758
+
+CharClipGroup.cpp:
+	.pdata      start:0x8220B310 end:0x8220B318
+	.text       start:0x824A8450 end:0x824A8498
+
+CharPollGroup.cpp:
+	.pdata      start:0x8220B458 end:0x8220B460
+	.text       start:0x824A9890 end:0x824A9934
+
+CameraShot.cpp:
+	.pdata      start:0x8220BCF0 end:0x8220BCF8
+	.text       start:0x824B37A8 end:0x824B37EC
+
+Sfx.cpp:
+	.pdata      start:0x8220BD00 end:0x8220BD08
+	.text       start:0x824B3818 end:0x824B3874
+
+PropSync.cpp:
+	.pdata      start:0x8220C018 end:0x8220C020
+	.text       start:0x824B71C8 end:0x824B7300
+
+SpotlightDrawer.cpp:
+	.pdata      start:0x8220CA68 end:0x8220CA70
+	.text       start:0x824C2CE8 end:0x824C2E24
+
+Spotlight.cpp:
+	.pdata      start:0x8220D118 end:0x8220D120
+	.text       start:0x824CC0F0 end:0x824CC14C
+
+Crowd.cpp:
+	.pdata      start:0x8220D400 end:0x8220D408
+	.text       start:0x824CF2C8 end:0x824CF32C
+
+LitAnim.cpp:
+	.pdata      start:0x8220E1A0 end:0x8220E1A8
+	.text       start:0x824E3C50 end:0x824E3D10
+
+FlowManager.cpp:
+	.pdata      start:0x8220E478 end:0x8220E480
+	.text       start:0x824E60E8 end:0x824E6140
+
+SongMgr.cpp:
+	.pdata      start:0x8220E488 end:0x8220E490
+	.text       start:0x824E6220 end:0x824E6274
+
+File.cpp:
+	.text       start:0x825033C4 end:0x82503430
+
+DanceRemixer.cpp:
+	.pdata      start:0x82211110 end:0x82211118
+	.text       start:0x82510718 end:0x825107BC
+
+Joypad.cpp:
+	.text       start:0x82511548 end:0x8251158C
+
+StreamPlayer.cpp:
+	.text       start:0x82511590 end:0x82511654
+
+Common_Xbox.cpp:
+	.pdata      start:0x822115E0 end:0x822115E8
+	.text       start:0x825161A0 end:0x825162A0
+
+UsbMidiGuitarMsgs.cpp:
+	.pdata      start:0x82211B30 end:0x82211B38
+	.text       start:0x8251B528 end:0x8251B60C
+
+ErrorNode.cpp:
+	.pdata      start:0x82212DE0 end:0x82212DE8
+	.text       start:0x8252CD38 end:0x8252CD9C
+
+Sequence.cpp:
+	.pdata      start:0x82213328 end:0x82213330
+	.text       start:0x82532110 end:0x82532168
+
+System.cpp:
+	.pdata      start:0x822147E8 end:0x822147F0
+	.text       start:0x82545870 end:0x825458DC
+
+DataEventList.cpp:
+	.pdata      start:0x82214F28 end:0x82214F30
+	.text       start:0x8254D220 end:0x8254D290
+
+DataUtl.cpp:
+	.pdata      start:0x822151A8 end:0x822151B0
+	.text       start:0x8254F6E8 end:0x8254F750
+
+ThreeDSoundManager.cpp:
+	.pdata      start:0x822156B0 end:0x822156B8
+	.text       start:0x825540D0 end:0x8255414C
+
+UIList.cpp:
+	.pdata      start:0x82215F48 end:0x82215F50
+	.text       start:0x82559D10 end:0x82559D68
+
+MemTrack.cpp:
+	.pdata      start:0x82216840 end:0x82216848
+	.text       start:0x825626C0 end:0x82562710
+
+StreamRecorder.cpp:
+	.pdata      start:0x82217910 end:0x82217918
+	.text       start:0x825732D0 end:0x8257332C
+
+DirLoader.cpp:
+	.pdata      start:0x82218468 end:0x82218470
+	.text       start:0x8257EA60 end:0x8257EAB8
+
+LabelShrinkWrapper.cpp:
+	.pdata      start:0x822189A0 end:0x822189A8
+	.text       start:0x82582EF8 end:0x82582F50
+
+LabelNumberTicker.cpp:
+	.pdata      start:0x822189B0 end:0x822189B8
+	.text       start:0x82582F78 end:0x82582FD0
+
+MoveVariant.cpp:
+	.pdata      start:0x82218F78 end:0x82218F80
+	.text       start:0x82588000 end:0x82588464
+
+Bitmap.cpp:
+	.pdata      start:0x82219558 end:0x82219560
+	.text       start:0x8258D7C8 end:0x8258D80C
+
+MiniGameMgr.cpp:
+	.pdata      start:0x82219EB0 end:0x82219EB8
+	.text       start:0x82595540 end:0x82595610
+
+LightPresetManager.cpp:
+	.pdata      start:0x82219FE8 end:0x82219FF0
+	.text       start:0x82596468 end:0x825964C0
+
+Memcard_Xbox.cpp:
+	.pdata      start:0x8221B310 end:0x8221B318
+	.text       start:0x825A9290 end:0x825A9314
+
+IdentityInfo.cpp:
+	.pdata      start:0x8221B348 end:0x8221B350
+	.text       start:0x825A94A0 end:0x825A954C
+
+OSCMessenger.cpp:
+	.pdata      start:0x8221B7C0 end:0x8221B7C8
+	.text       start:0x825ACEA8 end:0x825ACF60
+
+MoggClip.cpp:
+	.pdata      start:0x8221C4B0 end:0x8221C4B8
+	.text       start:0x825B8670 end:0x825B86A0
+
+FixedSizeSaveable.cpp:
+	.pdata      start:0x8221DFA0 end:0x8221DFA8
+	.text       start:0x825D0EF0 end:0x825D0F34
+
+FreestyleMoveRecorder.cpp:
+	.pdata      start:0x8221E160 end:0x8221E168
+	.text       start:0x825D26C8 end:0x825D2760
+
+PhysicsManager.cpp:
+	.pdata      start:0x8221EA20 end:0x8221EA40
+	.text       start:0x825DA840 end:0x825DAA18
+
+CharServoBone.cpp:
+	.pdata      start:0x8221F7A0 end:0x8221F7A8
+	.text       start:0x825E80F0 end:0x825E8190
+
+Mat.cpp:
+	.pdata      start:0x8221F9C8 end:0x8221F9D0
+	.text       start:0x825EA080 end:0x825EA148
+
+Cam.cpp:
+	.pdata      start:0x822224F0 end:0x822224F8
+	.text       start:0x82613568 end:0x826135CC
+
+CreditsPanel.cpp:
+	.pdata      start:0x82222738 end:0x82222740
+	.text       start:0x82615CF0 end:0x82615D48
+
+HeldButtonPanel.cpp:
+	.pdata      start:0x82222E60 end:0x82222E68
+	.text       start:0x8261C5C8 end:0x8261C60C
+
+SoundTouch.cpp:
+	.pdata      start:0x82223408 end:0x82223410
+	.text       start:0x826218C0 end:0x82621968
+
+HamCamShot.cpp:
+	.pdata      start:0x82224BF0 end:0x82224BF8
+	.text       start:0x82635720 end:0x826357BC
+
+HamSupereasyData.cpp:
+	.pdata      start:0x82226C00 end:0x82226C08
+	.text       start:0x82653960 end:0x826539E4
+
+TransAnim.cpp:
+	.pdata      start:0x82228338 end:0x82228340
+	.text       start:0x82669E50 end:0x82669EBC
+
+PropKeys.cpp:
+	.pdata      start:0x82229380 end:0x82229388
+	.text       start:0x82679738 end:0x8267978C
+
+ClipDistMap.cpp:
+	.pdata      start:0x822293D8 end:0x822293E0
+	.text       start:0x8267A138 end:0x8267A198
+
+CamAnim.cpp:
+	.pdata      start:0x82229460 end:0x82229468
+	.text       start:0x8267A9B8 end:0x8267AA24
+
+PartAnim.cpp:
+	.pdata      start:0x8222A190 end:0x8222A198
+	.text       start:0x82688DD0 end:0x82688E38
+
+SongPreview.cpp:
+	.pdata      start:0x8222A900 end:0x8222A908
+	.text       start:0x826911D0 end:0x82691220
+
+HamAudio.cpp:
+	.pdata      start:0x8222B0B8 end:0x8222B0C0
+	.text       start:0x82699410 end:0x82699484
+
+LocalePanel.cpp:
+	.pdata      start:0x8222B1C0 end:0x8222B1C8
+	.text       start:0x8269A240 end:0x8269A2A0
+
+RhythmDetector.cpp:
+	.pdata      start:0x8222B1D8 end:0x8222B1E0
+	.text       start:0x8269A338 end:0x8269A39C
+
+CharBoneTwist.cpp:
+	.pdata      start:0x8222B630 end:0x8222B638
+	.text       start:0x8269FBC8 end:0x8269FC3C
+
+SkeletonHistory.cpp:
+	.pdata      start:0x8222B920 end:0x8222B928
+	.text       start:0x826A2EA8 end:0x826A2F18
+
+HttpGet.cpp:
+	.text       start:0x826AAB38 end:0x826AAB60
+
+UIListDir.cpp:
+	.pdata      start:0x8222BEA8 end:0x8222BEB0
+	.text       start:0x826AAE80 end:0x826AAF1C
+
+UIFontImporter.cpp:
+	.pdata      start:0x8222C5A0 end:0x8222C5A8
+	.text       start:0x826B28F8 end:0x826B2968
+
+CharMirror.cpp:
+	.pdata      start:0x8222CC78 end:0x8222CC80
+	.text       start:0x826B7B60 end:0x826B7BE4
+
+FileMergerOrganizer.cpp:
+	.pdata      start:0x8222D1A8 end:0x8222D1B0
+	.text       start:0x826BD2B8 end:0x826BD394
+
+Faders.cpp:
+	.pdata      start:0x8222D598 end:0x8222D5A0
+	.text       start:0x826C1730 end:0x826C1794
+
+Sound.cpp:
+	.text       start:0x826C6D08 end:0x826C6D3C
+
+CheatProvider.cpp:
+	.pdata      start:0x8222EE00 end:0x8222EE08
+	.text       start:0x826E1C78 end:0x826E1CD8
+
+CameraManager.cpp:
+	.pdata      start:0x8222EE58 end:0x8222EE60
+	.text       start:0x826E20E8 end:0x826E2170
+
+UITrigger.cpp:
+	.pdata      start:0x8222FC18 end:0x8222FC20
+	.text       start:0x826EEF28 end:0x826EEF98
+
+FxSend.cpp:
+	.pdata      start:0x82230608 end:0x82230610
+	.text       start:0x826F91E0 end:0x826F963C
+
+WebSvcMgr.cpp:
+	.text       start:0x826FA860 end:0x826FA864
+
+Emitter.cpp:
+	.pdata      start:0x82230E20 end:0x82230E40
+	.text       start:0x82700E18 end:0x82701398
+
+FxSendDelay.cpp:
+	.pdata      start:0x82230FA8 end:0x82230FB0
+	.text       start:0x82702980 end:0x82702A38
+
+ADSR.cpp:
+	.pdata      start:0x82231858 end:0x82231860
+	.text       start:0x8270BDC4 end:0x8270BEF4
+
+StreamReceiver.cpp:
+	.pdata      start:0x82231898 end:0x822318A0
+	.text       start:0x8270C3E8 end:0x8270C464
+
+MoggClipMap.cpp:
+	.pdata      start:0x82231970 end:0x82231978
+	.text       start:0x8270D2D8 end:0x8270D368
+
+Lit_NG.cpp:
+	.pdata      start:0x82231C98 end:0x82231CA0
+	.text       start:0x82712358 end:0x827123AC
+
+Splash.cpp:
+	.pdata      start:0x82232460 end:0x82232468
+	.text       start:0x8271C4C0 end:0x8271C534
+
+PoolAlloc.cpp:
+	.pdata      start:0x822327E0 end:0x822327E8
+	.text       start:0x82720A80 end:0x82720AC0
+
+Msg.cpp:
+	.pdata      start:0x82232BA8 end:0x82232BB0
+	.text       start:0x82724370 end:0x827243AC
+
+FlowEventListener.cpp:
+	.pdata      start:0x82234578 end:0x82234580
+	.text       start:0x827418D0 end:0x82741950
+
+SkeletonDir.cpp:
+	.pdata      start:0x822345C0 end:0x822345C8
+	.text       start:0x82741D88 end:0x82741E44
+
+HamRegulate.cpp:
+	.pdata      start:0x822346B0 end:0x822346B8
+	.text       start:0x82742D38 end:0x82742E48
+
+MetaMusic.cpp:
+	.pdata      start:0x82234CE8 end:0x82234CF0
+	.text       start:0x82749660 end:0x827496C0
+
+SongCollision.cpp:
+	.pdata      start:0x82234F10 end:0x82234F18
+	.text       start:0x8274B9D0 end:0x8274BA10
+
+TransProxy.cpp:
+	.text       start:0x8275B7D8 end:0x8275B7E8
+
+HamBattleData.cpp:
+	.pdata      start:0x82236698 end:0x822366A0
+	.text       start:0x82768E68 end:0x82768F88
+
+Pollable.cpp:
+	.text       start:0x82769AB0 end:0x82769C64
+
+MidiReader.cpp:
+	.pdata      start:0x82236898 end:0x822368A0
+	.text       start:0x8276BEC0 end:0x8276BF24
+
+HamGameData.cpp:
+	.pdata      start:0x82237700 end:0x82237708
+	.text       start:0x8277DE30 end:0x8277DE98
+
+DataArraySongInfo.cpp:
+	.pdata      start:0x82237848 end:0x82237850
+	.text       start:0x8277F140 end:0x8277FB00
+
+StorePreviewMgr.cpp:
+	.pdata      start:0x82237958 end:0x82237960
+	.text       start:0x82780628 end:0x82780784
+
+CharEyes.cpp:
+	.pdata      start:0x82237980 end:0x82237988
+	.text       start:0x82780AF0 end:0x82780B44
+
+SpeechMgr.cpp:
+	.pdata      start:0x82237A90 end:0x82237A98
+	.text       start:0x82781BB8 end:0x82781C1C
+
+BinkMovieImpl.cpp:
+	.pdata      start:0x82237ED0 end:0x82237ED8
+	.text       start:0x82785668 end:0x827856D4
+
+SongMetadata.cpp:
+	.pdata      start:0x82237EF8 end:0x82237F00
+	.text       start:0x82785848 end:0x82785C90
+
+ButtonHolder.cpp:
+	.pdata      start:0x82238DC0 end:0x82238DC8
+	.text       start:0x82793998 end:0x82793A24
+
+HolmesClient.cpp:
+	.pdata      start:0x82239040 end:0x82239048
+	.text       start:0x82795DA0 end:0x82795E24
+
+Symbol.cpp:
+	.pdata      start:0x82239500 end:0x82239508
+	.text       start:0x8279B558 end:0x8279B5BC
+
+Cheats.cpp:
+	.pdata      start:0x82239750 end:0x82239758
+	.text       start:0x8279DA90 end:0x8279DB5C
+
+MakeString.cpp:
+	.pdata      start:0x822398D0 end:0x822398D8
+	.text       start:0x8279EF68 end:0x8279F014
+
+Song.cpp:
+	.pdata      start:0x82239A88 end:0x82239A90
+	.text       start:0x827A0AD8 end:0x827A0B54
+
+FlowSetProperty.cpp:
+	.pdata      start:0x82239B80 end:0x82239B88
+	.text       start:0x827A1708 end:0x827A177C
+
+Loader.cpp:
+	.pdata      start:0x82239C00 end:0x82239C08
+	.text       start:0x827A1E70 end:0x827A1FB4
+
+ChunkStream.cpp:
+	.pdata      start:0x82239EC0 end:0x82239EC8
+	.text       start:0x827A51A8 end:0x827A5324
+
+NetCacheMgr.cpp:
+	.pdata      start:0x8223A1E8 end:0x8223A1F0
+	.text       start:0x827A8AC8 end:0x827A8DE8
+
+NetLoader.cpp:
+	.pdata      start:0x8223A3A0 end:0x8223A3A8
+	.text       start:0x827AA860 end:0x827AA8C4
+
+SongInfoCopy.cpp:
+	.pdata      start:0x8223A4F0 end:0x8223A500
+	.text       start:0x827ABE68 end:0x827ABF8C
+
+JsonUtils.cpp:
+	.pdata      start:0x8223AF58 end:0x8223AF60
+	.text       start:0x827B75C0 end:0x827B7650
+
+MidiParserMgr.cpp:
+	.pdata      start:0x8223BE60 end:0x8223BE68
+	.text       start:0x827C6B18 end:0x827C6BC8
+
+OriginalChoreoRemixer.cpp:
+	.pdata      start:0x8223BF50 end:0x8223BF58
+	.text       start:0x827C7A18 end:0x827C7A7C
+
+Profile.cpp:
+	.text       start:0x827CA4B8 end:0x827CA4C0
+
+InlineHelp.cpp:
+	.pdata      start:0x8223D198 end:0x8223D1A0
+	.text       start:0x827DAF40 end:0x827DAF90
+
+PreloadPanel.cpp:
+	.pdata      start:0x8223D3B8 end:0x8223D3C0
+	.text       start:0x827DD1D0 end:0x827DD228
+
+PanelDir.cpp:
+	.pdata      start:0x8223D8C0 end:0x8223D8C8
+	.text       start:0x827E2858 end:0x827E2930
+
+SpotlightDrawer_NG.cpp:
+	.text       start:0x8281EF28 end:0x8281EF34
+
+TimeConversion.cpp:
+	.pdata      start:0x82247BD8 end:0x82247BE0
+	.text       start:0x82A3F820 end:0x82A3F864
+
+Trans.cpp:
+	.pdata      start:0x82248128 end:0x82248130
+	.text       start:0x82A48308 end:0x82A483BC
+
+MeshDeform.cpp:
+	.pdata      start:0x82248D70 end:0x82248D78
+	.text       start:0x82A5C818 end:0x82A5C8D4
+
+HamDriver.cpp:
+	.pdata      start:0x822495E0 end:0x822495E8
+	.text       start:0x82A6ACF0 end:0x82A6AD34
+
+Graph.cpp:
+	.pdata      start:0x8224A380 end:0x8224A388
+	.text       start:0x82A7F560 end:0x82A7F5A0
+
+ssluse.c:
+	.pdata      start:0x8224C5C0 end:0x8224C5C8
+	.text       start:0x82AB42B0 end:0x82AB4388
+
+Mic.cpp:
+	.pdata      start:0x82251CE0 end:0x82251CE8
+	.text       start:0x82B2FC80 end:0x82B2FD08
+
+FxSendWah.cpp:
+	.pdata      start:0x82252380 end:0x82252388
+	.text       start:0x82B35C90 end:0x82B35D84
+
+Lit.cpp:
+	.pdata      start:0x822524A8 end:0x822524B0
+	.text       start:0x82B37570 end:0x82B37640
+
+sslgen.c:
+	.pdata      start:0x822525E0 end:0x822525E8
+	.text       start:0x82B39468 end:0x82B3A138
+
+Synapse_dsp.cpp:
+	.text       start:0x82B3FE68 end:0x82B3FEF8
+
+UIListSlot.cpp:
+	.pdata      start:0x822541A0 end:0x822541A8
+	.text       start:0x82B605A0 end:0x82B60638
+
+FontBase.cpp:
+	.pdata      start:0x82254C48 end:0x82254C50
+	.text       start:0x82B6E8E0 end:0x82B6E934
+
+DataPointMgr.cpp:
+	.pdata      start:0x82255470 end:0x82255478
+	.text       start:0x82B7C258 end:0x82B7C2D4
+
+PostProc_NG.cpp:
+	.pdata      start:0x822556A0 end:0x822556A8
+	.text       start:0x82B7F648 end:0x82B7F6B8

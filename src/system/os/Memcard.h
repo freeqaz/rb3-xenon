@@ -127,3 +127,8 @@ END_MESSAGE
 DECLARE_MESSAGE(NoDeviceChosenMsg, "no_device_chosen")
 NoDeviceChosenMsg() : Message(Type()) {}
 END_MESSAGE
+
+DECLARE_MESSAGE(MCResultMsg, "mc_result")
+MCResultMsg(MCResult res) : Message(Type(), res) {}
+MCResult Result() const { return (MCResult)mData->Int(2); }
+END_MESSAGE

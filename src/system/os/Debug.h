@@ -72,6 +72,8 @@ public:
     void Warn(const char *msg);
     void Notify(const char *msg);
     void Fail(const char *msg, void *);
+    // rb3-Wii uses 1-arg Fail; inline wrapper for portability
+    inline void Fail(const char *msg) { Fail(msg, nullptr); }
     void DoCrucible(ModalType, const char *, void *);
     TextStream *Reflect() const { return mReflect; }
     TextStream *SetReflect(TextStream *ts) {

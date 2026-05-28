@@ -1,5 +1,7 @@
 #pragma once
 #include "meta_band/LockMessages.h"
+#include "ui/UI.h"
+#include "ui/UIComponent.h"
 #include "ui/UIScreen.h"
 
 class StartTransitionMsg : public StartLockMsg, public LockData {
