@@ -2,7 +2,11 @@
 #include "game/BandUser.h"
 #include "meta_band/SessionMgr.h"
 #include "net/NetSession.h"
-#include "net/VoiceChatMgr.h"
+// Avoid including net/VoiceChatMgr.h which pulls Extensions/SpeexCodec.h -> speex/speex.h
+// (speex is an external lib not yet in our include path). Forward-declare the message type.
+#include "obj/Msg.h"
+DECLARE_MESSAGE(VoiceChatDisabledMsg, "voice_chat_disabled")
+END_MESSAGE
 #include "obj/Data.h"
 #include "obj/Object.h"
 #include "os/Timer.h"

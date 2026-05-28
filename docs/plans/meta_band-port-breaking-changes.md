@@ -282,3 +282,100 @@ sessions. The objects.json file is a shared resource and concurrent modification
 SPLIT failures that block the build.
 
 **Note:** The background agent cannot be stopped by a sibling agent — only the user can stop it.
+
+---
+
+## Session 3 — New 10 TUs (2026-05-28)
+
+Files ported:
+- `AccomplishmentDiscSongConditional.cpp`
+- `AccomplishmentLessonDiscSongConditional.cpp`
+- `AccomplishmentLessonSongListConditional.cpp`
+- `AccomplishmentPlayerConditional.cpp`
+- `AccomplishmentSongConditional.cpp`
+- `AccomplishmentSongFilterConditional.cpp`
+- `AccomplishmentSongListConditional.cpp`
+- `AccomplishmentTourConditional.cpp`
+- `SongSortByDiff.cpp`
+- `WiiBufStreamMgr.cpp`
+
+### New MWCC→MSVC patterns encountered
+
+**`_MemAlloc(int, int)` / `_MemFree(void*)` not declared in xenon MemMgr.h**
+- Affected: `AccomplishmentDiscSongConditional.cpp` (inside `stlpmtx_std` specialization)
+- rb3-Wii's `MemMgr.h` declares `void *_MemAlloc(int, int)` and presumably `void _MemFree(void*)`.
+  Our xenon `MemMgr.h` (ported from DC3) uses the longer `MemAlloc(size, file, line, name, align)` 
+  signature and has no two-arg `_MemAlloc`.
+- Fix: Added forward declarations to `src/system/utl/MemMgr.h`:
+  ```cpp
+  void *_MemAlloc(int size, int align);
+  void _MemFree(void *mem);
+  ```
+- **Future work:** Implement `_MemAlloc` / `_MemFree` as thin wrappers in `MemMgr.cpp` pointing
+  to `MemAlloc`/`MemFree` with a default name. These are needed for the STLPort allocator
+  specializations to actually link.
+
+**`kSuccess` enum name clash between `PurchaseState` and `JoinResponseError`**
+- Affected: Any file that includes both `meta/StorePurchaser.h` (via `TokenRedemptionPanel.h`) 
+  and `net/SessionMessages.h` (pulled in by many net headers).
+- Both `PurchaseState::kSuccess` and `JoinResponseError::kSuccess` are global-scope enum values,
+  causing MSVC C2365 redefinition error.
+- Fix: Forward-declare `StorePurchaser` in `TokenRedemptionPanel.h` instead of including
+  `meta/StorePurchaser.h`. Since `TokenRedemptionPanel` only stores a `StorePurchaser *` pointer,
+  a forward declaration is sufficient.
+- **Future work:** When `TokenRedemptionPanel.cpp` is ported, it will need the full header;
+  include it there (cpp scope), not in the .h.
+
+**`TrackerDesc` forward-declared in `Accomplishment.h` is undefined when members accessed**
+- Affected: `AccomplishmentSongConditional.cpp`, `AccomplishmentPlayerConditional.cpp`
+- `Accomplishment.h` only forward-declares `TrackerDesc` to avoid the deep include chain
+  (`game/Tracker.h` → `TrackPanel.h` → `TrackPanelDirBase.h` → missing headers). 
+  The .cpp files that implement `InitializeTrackerDesc()` need the full type to access members.
+- Fix: Add `#include "game/Tracker.h"` in the .cpp files (not the .h files, to contain the chain).
+- The chain now compiles OK because `TrackPanelDirBase.h` is our forward-decl stub.
+
+**`OvershellPanel.h` missing `#include "ui/UI.h"` for `UIComponentFocusChangeMsg`**
+- Affected: Any compilation unit that includes `OvershellPanel.h` (which now includes via AppLabel.h)
+- `UIComponentFocusChangeMsg` is declared only in `ui/UI.h`, but `OvershellPanel.h` only included
+  `ui/UIComponent.h` and `ui/UIPanel.h`.
+- Fix: Added `#include "ui/UI.h"` to `OvershellPanel.h` (before the existing UIComponent.h include).
+- Impact: `UI.h` does not include `OvershellPanel.h`, so no circular dependency. OK.
+
+**Missing headers created this session**
+
+- `src/system/bandobj/MeterDisplay.h` (NEW): Ported from rb3-Wii. Needed by `Campaign.h` which
+  is included by `AccomplishmentPlayerConditional.cpp`. The class is a `UIComponent`-derived meter
+  display widget with `BandLabel *mMeterLabel`.
+- `src/system/meta/StoreArtLoaderPanel.h` (NEW): Ported from rb3-Wii. Needed by
+  `StoreInfoPanel.h` (included transitively via `AppLabel.h`). Uses `UIPanel`, `NetCacheLoader`,
+  `RndBitmap` — all present in our xenon tree.
+
+**Modified existing headers (PURELY ADDITIVE)**
+
+- `src/system/utl/MemMgr.h`: Added two-line forward decl block for `_MemAlloc` and `_MemFree`.
+- `src/band3/meta_band/OvershellPanel.h`: Added `#include "ui/UI.h"`.
+- `src/band3/meta_band/TokenRedemptionPanel.h`: Replaced `#include "meta/StorePurchaser.h"` with
+  `class StorePurchaser;` forward declaration.
+- `src/band3/meta_band/PassiveMessenger.h`: Replaced `#include "net/VoiceChatMgr.h"` with
+  inline `DECLARE_MESSAGE(VoiceChatDisabledMsg, "voice_chat_disabled") END_MESSAGE` to avoid
+  pulling in `Extensions/SpeexCodec.h → speex/speex.h` (speex not in our include path).
+- `src/network/Platform/VirtualRootObject.h`: Changed `operator new(unsigned long, ...)` to
+  `operator new(size_t, ...)` — classic MWCC→MSVC pattern (Wii uses unsigned long for size_t).
+
+**Additional AccomplishmentManager.cpp fixes**
+
+- `Symbol::mStr` → `Symbol::Str()` (see Session 2 playbook)
+- `TheContentMgr->Method()` → `TheContentMgr.Method()` — `TheContentMgr` is a reference in
+  xenon's ContentMgr.h (`extern ContentMgr &TheContentMgr;`) not a pointer, so arrow → dot.
+- `Achievements::Submit(LocalBandUser *, Symbol, int)` → `Achievements::Submit(int, Symbol, int)`:
+  xenon's Achievements.h changed the first parameter from `LocalUser *` to `int` (pad number).
+  Fix: `TheAchievements->Submit(pProfileUser, s, id)` → `TheAchievements->Submit(pProfileUser->GetPadNum(), s, id)`.
+- `#pragma dont_inline on` / `#pragma pool_data off` blocks: remove (MWCC-only; see Session 2 playbook).
+- `String` implicit conversion to `const char *` not available in MSVC STLPort:
+  explicit `.c_str()` needed when passing `String` to `const char *` parameters.
+
+**AccomplishmentPanel.cpp — EXCLUDED from objects.json (too many unresolved issues)**
+- 24+ errors: `PanelDir` undefined, `UIPanel::GetState` const-ness mismatch, 
+  `cMsg` initialization skipped by case labels (switch variable declaration issue).
+- File is on disk at `src/band3/meta_band/AccomplishmentPanel.cpp` but not wired.
+- To re-enable: fix PanelDir full include (it's a stub), fix GetState const, fix switch cases.
