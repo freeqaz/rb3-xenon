@@ -5,7 +5,11 @@
 #include <set>
 #include "BandProfile.h"
 #include "band3/game/BandUser.h"
-#include "band3/game/Tracker.h"
+// game/Tracker.h was removed: it pulls in TrackPanel.h -> TrackPanelDirBase.h ->
+// GemTrackDir.h -> many missing bandobj engine headers (not yet ported).
+// TrackerDesc is only needed as a reference parameter in InitializeTrackerDesc —
+// forward declaration suffices.
+class TrackerDesc;
 #include "band3/meta_band/MusicLibrary.h"
 #include "system/ui/UILabel.h"
 

@@ -10,6 +10,9 @@ class LocalUserLeftMsg;
 class MetadataLoadedMsg;
 class StoreOfferProvider;
 class StoreOfferContentsProvider;
+// RB3 store architecture uses StorePackedOfferBase (not DataArray *) in MakeNewOffer.
+// Forward-declare here; full definition lives in meta/StorePackedMetadata.h (not yet ported).
+class StorePackedOfferBase;
 
 class BandStoreShortcutProvider : public DataProvider {
 public:
