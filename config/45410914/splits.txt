@@ -493,3 +493,138 @@ StreamNull.cpp:
 RhythmBattlePlayer.cpp:
 	.pdata      start:0x821F5620 end:0x821F5638
 	.text       start:0x82319810 end:0x82319A04
+
+CharEyeDartRuleset.cpp:
+	.pdata      start:0x821FDA40 end:0x821FDA70
+	.text       start:0x823AA590 end:0x823AA9F0
+
+CharIKRod.cpp:
+	.pdata      start:0x821FE188 end:0x821FE198
+	.text       start:0x823B27E8 end:0x823B2AB4
+
+CharSleeve.cpp:
+	.pdata      start:0x821FEBA0 end:0x821FEBD0
+	.text       start:0x823BD6D8 end:0x823BDDC0
+
+CharUpperTwist.cpp:
+	.pdata      start:0x821FE348 end:0x821FE358
+	.text       start:0x823B45D0 end:0x823B482C
+
+FlowIf.cpp:
+	.pdata      start:0x821FE3A8 end:0x821FE410
+	.text       start:0x823B4C20 end:0x823B523C
+
+bitrate.c:
+	.pdata      start:0x82257D88 end:0x82257D90
+	.text       start:0x82C006D8 end:0x82C007E8
+
+lsp.c:
+	.pdata      start:0x82257F20 end:0x82257F28
+	.text       start:0x82C066F0 end:0x82C06A0C
+
+window.c:
+	.pdata      start:0x82257D98 end:0x82257DA0
+	.text       start:0x82C00848 end:0x82C009CC
+
+AsyncFile_Win.cpp:
+	.pdata      start:0x82212288 end:0x822122A0
+	.text       start:0x82521F00 end:0x82522090
+
+CDReader.cpp:
+	.pdata      start:0x82212180 end:0x822121A0
+	.text       start:0x825203C8 end:0x82520730
+
+ContentMgr_Xbox.cpp:
+	.pdata      start:0x82210D60 end:0x82210EB8
+	.text       start:0x8250C4D0 end:0x8250DFB8
+
+SynchronizationEvent.cpp:
+	.pdata      start:0x822113E8 end:0x822113F0
+	.text       start:0x82514560 end:0x825145A8
+
+UserMgr.cpp:
+	.pdata      start:0x82211060 end:0x82211098
+	.text       start:0x8250FD18 end:0x82510078
+
+DistortionEffect.cpp:
+	.text       start:0x82B82028 end:0x82B820F8
+
+SfxMap.cpp:
+	.pdata      start:0x82231838 end:0x82231848
+	.text       start:0x8270BBC8 end:0x8270BCB0
+
+aes.c:
+	.pdata      start:0x82255928 end:0x82255938
+	.text       start:0x82B84390 end:0x82B86A90
+
+crypt.c:
+	.pdata      start:0x82255918 end:0x82255920
+	.text       start:0x82B83DC8 end:0x82B83EF0
+
+Biquad.cpp:
+	.pdata      start:0x82252F98 end:0x82252FA0
+	.text       start:0x82B46588 end:0x82B4663C
+
+FilterCoeffs.cpp:
+	.pdata      start:0x82252F88 end:0x82252F98
+	.text       start:0x82B462D0 end:0x82B46584
+
+HeadsetXferEffect.cpp:
+	.pdata      start:0x822527C0 end:0x822527E0
+	.text       start:0x82B3CBE0 end:0x82B3CD98
+
+FIFOSampleBuffer.cpp:
+	.pdata      start:0x82252FA0 end:0x82252FD0
+	.text       start:0x82B46670 end:0x82B46994
+
+FIRFilter.cpp:
+	.pdata      start:0x82252FE8 end:0x82252FF8
+	.text       start:0x82B46C08 end:0x82B46CC4
+
+UIColor.cpp:
+	.pdata      start:0x8223D308 end:0x8223D318
+	.text       start:0x827DCA50 end:0x827DCB4C
+
+UIListArrow.cpp:
+	.pdata      start:0x8223EE18 end:0x8223EE28
+	.text       start:0x827F8820 end:0x827F8A90
+
+UIPicture.cpp:
+	.pdata      start:0x8223E6C0 end:0x8223E720
+	.text       start:0x827F11F0 end:0x827F1AE8
+
+BufStream.cpp:
+	.pdata      start:0x8223A018 end:0x8223A048
+	.text       start:0x827A6E40 end:0x827A70C0
+
+Locale.cpp:
+	.pdata      start:0x82239E38 end:0x82239E50
+	.text       start:0x827A4520 end:0x827A4824
+
+NetCacheLoader.cpp:
+	.pdata      start:0x8223A440 end:0x8223A480
+	.text       start:0x827AB158 end:0x827AB598
+
+NetLoader_Xbox.cpp:
+	.pdata      start:0x8223A3B8 end:0x8223A408
+	.text       start:0x827AA998 end:0x827AADD4
+
+Option.cpp:
+	.pdata      start:0x82239578 end:0x82239580
+	.text       start:0x8279BE40 end:0x8279BF24
+
+Profiler.cpp:
+	.pdata      start:0x8223A668 end:0x8223A670
+	.text       start:0x827AD1F8 end:0x827AD28C
+
+TextFileStream.cpp:
+	.pdata      start:0x822398B0 end:0x822398C8
+	.text       start:0x8279ECD8 end:0x8279EDAC
+
+TextStream.cpp:
+	.pdata      start:0x82239890 end:0x822398A8
+	.text       start:0x8279EB70 end:0x8279EC5C
+
+crc32.c:
+	.pdata      start:0x82251798 end:0x822517A0
+	.text       start:0x82B29B60 end:0x82B29EDC
