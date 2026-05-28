@@ -292,7 +292,7 @@ class WorktreePool:
                     "python3", str(configure_py),
                     "--dtk", str(dtk),
                     "--objdiff", str(objdiff),
-                    "--wibo", str(wibo),
+                    "--wrapper", str(wibo),
                 ],
                 cwd=worktree_path,
                 capture_output=True,
