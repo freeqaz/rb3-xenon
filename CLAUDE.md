@@ -64,6 +64,36 @@ Full evidence + the asset-render experiment + the "bigger play" (a native target
 that injects DC3 rndobj + only RB3 game code) are in
 `docs/plans/engine-reuse-and-asset-rendering.md`.
 
+## Git & worktrees (concurrent agents) **important**
+
+**Assume other agents are working in the main repo right now.** The main
+working tree is shared, so any command that mutates tracked files or the index
+out from under them will *deeply break* concurrent work. Hard rules:
+
+- **Never `git stash` in the main repo.** It silently yanks everyone's
+  uncommitted changes. To compare a change against `HEAD` or another commit, do
+  it in a worktree, not by stashing.
+- **Never `git checkout`/`git restore`/`git reset --hard` *files* in the main
+  repo** to discard or swap working-tree content. Another agent's in-flight edits
+  to that file would be destroyed. (Switching branches is also off-limits in the
+  shared tree — use a worktree.)
+- **Do your isolated/experimental work in a git worktree.** A bare
+  `git worktree add` is *unbuildable* here — the build inputs and toolchain are
+  gitignored (`build/`, `orig/*`, `build.ninja`, `objdiff.json`). Use
+  **`scripts/setup_worktree.sh [path] [branch]`** to get a buildable + diffable
+  worktree in seconds via btrfs CoW reflinks: it reflinks `orig/` and
+  `build/45410914/` (a *private* warm-cache build dir — never a symlink into
+  main, so the worktree's build can't corrupt the shared one), symlinks the
+  read-only toolchain, baks absolute tool paths into the worktree's
+  `build.ninja` via `configure.py`, and primes ninja state. Add `--cold-cache`
+  for a guaranteed-clean A/B baseline. Remove with
+  `git worktree remove --force <path>`.
+- The orchestrator MCP manages a pool of these worktrees
+  (`scripts/orchestrator/worktree_pool.py`) for its agents; `setup_worktree.sh`
+  is the same machinery you can drive by hand.
+- **Keep** the `Co-Authored-By` trailer on commits (this repo's convention —
+  unlike sibling dc3/rb3 repos, which omit it).
+
 ## Two build tracks
 
 **1. X360 decomp-matching build** — compile-to-match the retail XEX (MSVC X360).
