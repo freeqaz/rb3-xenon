@@ -1705,3 +1705,445 @@ DataPointMgr.cpp:
 PostProc_NG.cpp:
 	.pdata      start:0x822556A0 end:0x822556A8
 	.text       start:0x82B7F648 end:0x82B7F6B8
+
+Archive.cpp:
+	.pdata      start:0x82210080 end:0x822101B8
+	.text       start:0x824FF168 end:0x825010CC
+
+Rnd_Xbox.cpp:
+	.pdata      start:0x82231E48 end:0x822320B0
+	.text       start:0x827143D0 end:0x8271799C
+
+MidiSynth.cpp:
+	.pdata      start:0x82230708 end:0x82230810
+	.text       start:0x826FAAA8 end:0x826FB84C
+
+Cache_Xbox.cpp:
+	.pdata      start:0x8223AC98 end:0x8223AE90
+	.text       start:0x827B4A18 end:0x827B69B0
+
+DataFile.cpp:
+	.pdata      start:0x82234978 end:0x82234B60
+	.text       start:0x82745928 end:0x827479AC
+
+system/rnddx9/ShaderMgr.cpp:
+	.pdata      start:0x82231B80 end:0x82231C68
+	.text       start:0x82710990 end:0x82711D08
+
+Voice.cpp:
+	.pdata      start:0x822523C0 end:0x822524A8
+	.text       start:0x82B35FA0 end:0x82B37570
+
+BinStream.cpp:
+	.pdata      start:0x822399C0 end:0x82239A28
+	.text       start:0x8279FE58 end:0x827A0424
+
+ExternalMic.cpp:
+	.pdata      start:0x82252508 end:0x82252580
+	.text       start:0x82B37FD0 end:0x82B38D48
+
+Compress.cpp:
+	.pdata      start:0x82247900 end:0x82247948
+	.text       start:0x82A39A30 end:0x82A3A918
+
+system/rndobj/CubeTex.cpp:
+	.pdata      start:0x822094E0 end:0x82209590
+	.text       start:0x824822D8 end:0x82482F50
+
+CacheMgr.cpp:
+	.pdata      start:0x8223A300 end:0x8223A328
+	.text       start:0x827A9B08 end:0x827A9D44
+
+Env_NG.cpp:
+	.pdata      start:0x82253B70 end:0x82253BA0
+	.text       start:0x82B57048 end:0x82B57A04
+
+MemcardMgr_Xbox.cpp:
+	.pdata      start:0x82238078 end:0x82238148
+	.text       start:0x82786D20 end:0x82787DA8
+
+GranularSynth.cpp:
+	.pdata      start:0x82252F00 end:0x82252F58
+	.text       start:0x82B45158 end:0x82B45E6C
+
+SampleData.cpp:
+	.pdata      start:0x82231980 end:0x822319C0
+	.text       start:0x8270D3A0 end:0x8270D828
+
+rtti.cpp:
+	.pdata      start:0x8223FA40 end:0x8223FA80
+	.text       start:0x82804770 end:0x82804F10
+
+MeasureMap.cpp:
+	.pdata      start:0x8223A4A0 end:0x8223A4C8
+	.text       start:0x827AB920 end:0x827ABBB8
+
+AllocInfo.cpp:
+	.pdata      start:0x8223A9D8 end:0x8223AA00
+	.text       start:0x827B1A78 end:0x827B1C4C
+
+system/rnddx9/CubeTex.cpp:
+	.pdata      start:0x82232240 end:0x82232280
+	.text       start:0x82719E78 end:0x8271A12C
+
+UIListCustom.cpp:
+	.pdata      start:0x8223EED0 end:0x8223EEF0
+	.text       start:0x827F92C0 end:0x827F94B4
+
+UIListSubList.cpp:
+	.pdata      start:0x8223F0A8 end:0x8223F0D0
+	.text       start:0x827FACF8 end:0x827FAF28
+
+system/synth/FxSendReverb.cpp:
+	.pdata      start:0x82230E80 end:0x82230EB8
+	.text       start:0x827015E0 end:0x827019E0
+
+Achievements.cpp:
+	.pdata      start:0x82237680 end:0x822376B0
+	.text       start:0x8277D790 end:0x8277D9BC
+
+system/synth/FxSendCompress.cpp:
+	.pdata      start:0x82231090 end:0x822310B8
+	.text       start:0x82703788 end:0x82703B80
+
+FxSendMeterEffect.cpp:
+	.pdata      start:0x82231270 end:0x822312D0
+	.text       start:0x82705940 end:0x82705DE4
+
+Cache.cpp:
+	.pdata      start:0x8223A368 end:0x8223A378
+	.text       start:0x827AA548 end:0x827AA5E4
+
+UIListMesh.cpp:
+	.pdata      start:0x8223E440 end:0x8223E468
+	.text       start:0x827EF028 end:0x827EF30C
+
+WahEffect.cpp:
+	.pdata      start:0x822558C8 end:0x822558D0
+	.text       start:0x82B833B0 end:0x82B83778
+
+ThreadCall_Win.cpp:
+	.text       start:0x825141B0 end:0x82514284
+
+FxSendSynapse.cpp:
+	.pdata      start:0x822526E0 end:0x822526E8
+	.text       start:0x82B3B5A0 end:0x82B3B754
+
+PropertyEventProvider.cpp:
+	.pdata      start:0x8222E1B0 end:0x8222E1C0
+	.text       start:0x826D2680 end:0x826D2730
+
+Poll.cpp:
+	.pdata      start:0x82203AD0 end:0x82203AE8
+	.text       start:0x8240EA08 end:0x8240EB60
+
+FixedSizeSaveableStream.cpp:
+	.pdata      start:0x82237FB8 end:0x82237FD0
+	.text       start:0x82786468 end:0x82786548
+
+VorbisMem.cpp:
+	.pdata      start:0x82257C40 end:0x82257C48
+	.text       start:0x82BFA7B0 end:0x82BFA808
+
+OnlineID.cpp:
+	.pdata      start:0x822111A8 end:0x822111B0
+	.text       start:0x82511030 end:0x82511108
+
+MetaMusicScene.cpp:
+	.pdata      start:0x82238F38 end:0x82238F50
+	.text       start:0x82794F10 end:0x8279500C
+
+ScreenMask.cpp:
+	.pdata      start:0x822084E8 end:0x822084F8
+	.text       start:0x8246EBF8 end:0x8246ECB8
+
+OggMap.cpp:
+	.pdata      start:0x822558D0 end:0x822558E0
+	.text       start:0x82B83858 end:0x82B83904
+
+AsyncFileHolmes.cpp:
+	.pdata      start:0x822122B8 end:0x822122D0
+	.text       start:0x825221D0 end:0x82522294
+
+BustAMoveData.cpp:
+	.pdata      start:0x821EEF10 end:0x821EEF28
+	.text       start:0x822B3D28 end:0x822B3E00
+
+trie.cpp:
+	.pdata      start:0x8224A740 end:0x8224A768
+	.text       start:0x82A82A50 end:0x82A82DD4
+
+File_Win.cpp:
+	.pdata      start:0x82210F30 end:0x82210F40
+	.text       start:0x8250E3D0 end:0x8250E4D0
+
+CharLipSyncDriver.cpp:
+	.pdata      start:0x821E9D68 end:0x821E9D70
+	.text       start:0x82263F38 end:0x82263F98
+
+DeJitterPanel.cpp:
+	.pdata      start:0x82238818 end:0x82238820
+	.text       start:0x8278E070 end:0x8278E108
+
+UIListHighlight.cpp:
+	.pdata      start:0x8223EF80 end:0x8223EF88
+	.text       start:0x827F9C98 end:0x827F9D7C
+
+UsbMidiGuitar.cpp:
+	.pdata      start:0x82210770 end:0x82210778
+	.text       start:0x825070D8 end:0x825075BC
+
+BinkMovieSys_Xbox.cpp:
+	.text       start:0x82721138 end:0x82721160
+
+SynthSample.cpp:
+	.pdata      start:0x822528A8 end:0x822528B0
+	.text       start:0x82B3DB18 end:0x82B3DB88
+
+CrazeHollaback.cpp:
+	.pdata      start:0x821EEB48 end:0x821EEB50
+	.text       start:0x822AF248 end:0x822AF2C8
+
+CharPosConstraint.cpp:
+	.pdata      start:0x821FDFB0 end:0x821FDFB8
+	.text       start:0x823B0A60 end:0x823B0B5C
+
+Screenshot.cpp:
+	.pdata      start:0x8223F530 end:0x8223F538
+	.text       start:0x827FF650 end:0x827FF758
+
+SpotlightEnder.cpp:
+	.pdata      start:0x8220DAA0 end:0x8220DAA8
+	.text       start:0x824D6CD0 end:0x824D6DE0
+
+system/synth_xbox/FxSendPitchShift.cpp:
+	.pdata      start:0x822526B8 end:0x822526C0
+	.text       start:0x82B3B460 end:0x82B3B4B8
+
+system/synth_xbox/FxSendCompress.cpp:
+	.pdata      start:0x82252160 end:0x82252168
+	.text       start:0x82B34128 end:0x82B341BC
+
+MultiMeshProxy.cpp:
+	.pdata      start:0x82208490 end:0x82208498
+	.text       start:0x8246E6C0 end:0x8246E808
+
+StandingStillGestureFilter.cpp:
+	.pdata      start:0x82238C90 end:0x82238C98
+	.text       start:0x827928C8 end:0x82792920
+
+MicNull.cpp:
+	.pdata      start:0x822317E8 end:0x822317F0
+	.text       start:0x8270B778 end:0x8270B7F0
+
+UIButton.cpp:
+	.pdata      start:0x8223DF38 end:0x8223DF40
+	.text       start:0x827EA628 end:0x827EA6A4
+
+JsonMemory.cpp:
+	.text       start:0x82664890 end:0x826648AC
+
+DOFProc.cpp:
+	.text       start:0x82453468 end:0x82453478
+
+System_Xbox.cpp:
+	.text       start:0x825085E8 end:0x825085FC
+
+FakeSongMgr.cpp:
+	.pdata      start:0x8223A388 end:0x8223A390
+	.text       start:0x827AA720 end:0x827AA78C
+
+PostProcer.cpp:
+	.pdata      start:0x8220DAC0 end:0x8220DAC8
+	.text       start:0x824D6F88 end:0x824D6FF8
+
+FxSendBitCrush.cpp:
+	.pdata      start:0x82231050 end:0x82231058
+	.text       start:0x82703370 end:0x827033E0
+
+CharDriverMidi.cpp:
+	.pdata      start:0x821FE888 end:0x821FE890
+	.text       start:0x823B9E68 end:0x823B9EDC
+
+CharIKSliderMidi.cpp:
+	.pdata      start:0x821FE778 end:0x821FE780
+	.text       start:0x823B8D48 end:0x823B8DF4
+
+Crowd3DCharHandle.cpp:
+	.pdata      start:0x822493F0 end:0x822493F8
+	.text       start:0x82A68230 end:0x82A6833C
+
+FlowSwitchCase.cpp:
+	.pdata      start:0x821FD0C0 end:0x821FD0C8
+	.text       start:0x8239E1F8 end:0x8239E23C
+
+FreestyleMotionFilter.cpp:
+	.text       start:0x827AA978 end:0x827AA984
+
+system/synth_xbox/FxSendReverb.cpp:
+	.pdata      start:0x822525B8 end:0x822525C0
+	.text       start:0x82B38FD0 end:0x82B38FF8
+
+MovieSys.cpp:
+	.text       start:0x827839C8 end:0x82783A00
+
+FlowSequence.cpp:
+	.pdata      start:0x821FB488 end:0x821FB490
+	.text       start:0x8237B4B8 end:0x8237B4FC
+
+FlowOnStop.cpp:
+	.pdata      start:0x821FDD00 end:0x821FDD08
+	.text       start:0x823ADA98 end:0x823ADADC
+
+BinkReader.cpp:
+	.pdata      start:0x822559C0 end:0x822559C8
+	.text       start:0x82B87A60 end:0x82B87AAC
+
+MemcardMgr.cpp:
+	.pdata      start:0x822518E0 end:0x822518E8
+	.text       start:0x82B2BCB8 end:0x82B2BD10
+
+CharIKScale.cpp:
+	.pdata      start:0x82205F98 end:0x82205FA0
+	.text       start:0x8243F508 end:0x8243F570
+
+system/synth/FxSendPitchShift.cpp:
+	.pdata      start:0x82231060 end:0x82231068
+	.text       start:0x82703470 end:0x827034D8
+
+MoveParent.cpp:
+	.pdata      start:0x82236720 end:0x82236728
+	.text       start:0x827697C8 end:0x82769810
+
+ClipCollide.cpp:
+	.pdata      start:0x82201360 end:0x82201368
+	.text       start:0x823E38D0 end:0x823E3914
+
+Meta.cpp:
+	.pdata      start:0x82215E68 end:0x82215E70
+	.text       start:0x825595A0 end:0x825595F8
+
+DingoJob.cpp:
+	.pdata      start:0x8223B3B0 end:0x8223B3B8
+	.text       start:0x827BBD68 end:0x827BBE40
+
+DrivenPropertyEntry.cpp:
+	.pdata      start:0x822086C8 end:0x822086D0
+	.text       start:0x82470F40 end:0x82470FA4
+
+HamIKSkeleton.cpp:
+	.pdata      start:0x821EEC20 end:0x821EEC28
+	.text       start:0x822B0968 end:0x822B09F0
+
+DefaultPhysicsManager.cpp:
+	.pdata      start:0x8220C000 end:0x8220C008
+	.text       start:0x824B70D8 end:0x824B714C
+
+SkeletonRecoverer.cpp:
+	.pdata      start:0x82235840 end:0x82235848
+	.text       start:0x82755328 end:0x827553A4
+
+WavMgr.cpp:
+	.text       start:0x827207C8 end:0x827207D0
+
+ClipGraphGen.cpp:
+	.text       start:0x82666EF0 end:0x82666F0C
+
+Gesture.cpp:
+	.pdata      start:0x821F3AB8 end:0x821F3AC0
+	.text       start:0x822FEA08 end:0x822FEA60
+
+CharGuitarString.cpp:
+	.pdata      start:0x821F8C20 end:0x821F8C28
+	.text       start:0x82352058 end:0x823520AC
+
+PhotoSpotlightPositioner.cpp:
+	.pdata      start:0x821F9430 end:0x821F9438
+	.text       start:0x82358B10 end:0x82358B68
+
+PracticeOptionsProvider.cpp:
+	.pdata      start:0x821F9440 end:0x821F9448
+	.text       start:0x82358B90 end:0x82358BE8
+
+HAQManager.cpp:
+	.pdata      start:0x821FB6F8 end:0x821FB700
+	.text       start:0x8237DE28 end:0x8237DEA4
+
+StreamRenderer.cpp:
+	.pdata      start:0x8221A278 end:0x8221A280
+	.text       start:0x82598C08 end:0x82598CD4
+
+TransConstraint.cpp:
+	.pdata      start:0x821ED5B0 end:0x821ED5B8
+	.text       start:0x8229A4E0 end:0x8229A5CC
+
+NetStream.cpp:
+	.pdata      start:0x821EA098 end:0x821EA0A0
+	.text       start:0x82267300 end:0x82267364
+
+LocaleOrdinal.cpp:
+	.pdata      start:0x8223A330 end:0x8223A338
+	.text       start:0x827A9DB8 end:0x827AA488
+
+nuidetroit.cpp:
+	.pdata      start:0x822297F0 end:0x822297F8
+	.text       start:0x8267E6E0 end:0x8267E744
+
+VirtualKeyboard_Xbox.cpp:
+	.pdata      start:0x82247BA8 end:0x82247BB0
+	.text       start:0x82A3F620 end:0x82A3F6A0
+
+MidiVarLen.cpp:
+	.pdata      start:0x821F5680 end:0x821F5688
+	.text       start:0x82319F60 end:0x82319FF0
+
+FlowWhile.cpp:
+	.pdata      start:0x821F6B70 end:0x821F6B78
+	.text       start:0x8232FC88 end:0x8232FD00
+
+DrivenPropertyMathOps.cpp:
+	.pdata      start:0x8222C5E0 end:0x8222C5E8
+	.text       start:0x826B2CE8 end:0x826B2DA8
+
+CharTransDraw.cpp:
+	.pdata      start:0x821F8D50 end:0x821F8D58
+	.text       start:0x82353068 end:0x8235314C
+
+HamSkeletonConverter.cpp:
+	.pdata      start:0x82228F48 end:0x82228F50
+	.text       start:0x82675418 end:0x82675480
+
+GlitchFinder.cpp:
+	.pdata      start:0x82248628 end:0x82248630
+	.text       start:0x82A51508 end:0x82A5164C
+
+DirectionGestureFilter.cpp:
+	.text       start:0x82B3F7C0 end:0x82B3F7D4
+
+SessionJobs_Xbox.cpp:
+	.pdata      start:0x82200F28 end:0x82200F30
+	.text       start:0x823DFEE0 end:0x823DFF24
+
+RhythmDetectorGroup.cpp:
+	.pdata      start:0x8220B308 end:0x8220B310
+	.text       start:0x824A83C0 end:0x824A844C
+
+CharFeedback.cpp:
+	.pdata      start:0x821EC980 end:0x821EC988
+	.text       start:0x8228F6A8 end:0x8228F75C
+
+FitnessFilter.cpp:
+	.pdata      start:0x821FF7D8 end:0x821FF7E0
+	.text       start:0x823CA668 end:0x823CA6AC
+
+Memcard.cpp:
+	.pdata      start:0x82212158 end:0x82212160
+	.text       start:0x82520110 end:0x82520180
+
+EQEffect.cpp:
+	.pdata      start:0x822558B0 end:0x822558B8
+	.text       start:0x82B82B58 end:0x82B82C5C
+
+MoveGraph.cpp:
+	.pdata      start:0x821F5840 end:0x821F5848
+	.text       start:0x8231B9A8 end:0x8231BA48
