@@ -5,7 +5,7 @@
 #include "synth/Faders.h"
 #include "utl/TimeConversion.h"
 
-class BinkClip;
+#include "synth/BinkClip.h"
 
 enum ExcitementLevel {
     kExcitementBoot,

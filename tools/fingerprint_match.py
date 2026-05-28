@@ -511,6 +511,301 @@ def merge_bindiff(args):
 
 
 # ---------------------------------------------------------------------------
+# callgraph triangulation: triangulate
+# (productionizes tools/exploratory/callgraph_triangulate.py — see
+#  docs/decomp/callgraph-triangulation.md)
+#
+# Method: for a known-mapped rb3 function (rb3 fn_A -> dc3 "Foo"), the `bl`
+# call sequence in rb3's .s file is positionally aligned with dc3's "Foo".
+# So rb3.bl[i] == fn_B (anonymous) and dc3.bl[i] == "Bar" (named) implies
+# rb3 fn_B IS dc3 "Bar". Votes accumulate across every named caller; a fn that
+# gets >=2 agreeing distinct callers is "multi" (high conf), 1 caller "single".
+# ---------------------------------------------------------------------------
+
+# .s function delimiters and bl-target extraction (ported from the POC).
+CG_FN_RE = re.compile(r'^\.fn\s+(\S+?),')
+CG_ENDFN_RE = re.compile(r'^\.endfn\b')
+# /* 82758434 00753C34  4B BA 67 1D */<tab>bl fn_822FEB50   (or bl "?Foo@@...")
+CG_BL_RE = re.compile(
+    r'/\*\s+([0-9A-Fa-f]{8})\s+\S+\s+\S+ \S+ \S+ \S+ \*/\s+bl\s+(\S.*)$')
+CG_ADDR_RE = re.compile(r'/\*\s+([0-9A-Fa-f]{8})')
+
+
+def _cg_parse_asm_file(path):
+    """Parse one .s file into a list of fn dicts {name, start, bl:[(off,tgt)]}.
+
+    Each fn spans `.fn NAME, ...` .. `.endfn`. `start` is the address of the
+    first instruction (from its leading /* ADDR ... */ comment); each `bl`
+    records (instruction_addr - start, target_symbol).
+    """
+    fns = []
+    cur = None
+    with open(path, errors="replace") as f:
+        for line in f:
+            m = CG_FN_RE.match(line)
+            if m:
+                if cur is not None:
+                    fns.append(cur)
+                cur = {"name": m.group(1).strip('"'), "start": None, "bl": []}
+                continue
+            if CG_ENDFN_RE.match(line):
+                if cur is not None:
+                    fns.append(cur)
+                cur = None
+                continue
+            if cur is None:
+                continue
+            am = CG_ADDR_RE.match(line)
+            if am and cur["start"] is None:
+                cur["start"] = int(am.group(1), 16)
+            blm = CG_BL_RE.search(line)
+            if blm and cur["start"] is not None:
+                ins_addr = int(blm.group(1), 16)
+                tgt = blm.group(2).strip().strip('"')
+                cur["bl"].append((ins_addr - cur["start"], tgt))
+        if cur is not None:
+            fns.append(cur)
+    return fns
+
+
+def _cg_load_rb3_fns(asm_dir):
+    """rb3 fn start-addr -> {name, start, bl}. Parses every *.s in asm_dir.
+
+    rb3's stripped XEX disassembly names every function `fn_<addr>` (even
+    matched ones), so this captures all of them; we key by start address.
+    """
+    out = {}
+    for s in sorted(p for p in os.listdir(asm_dir) if p.endswith(".s")):
+        for fn in _cg_parse_asm_file(os.path.join(asm_dir, s)):
+            if fn["start"] is not None:
+                out[fn["start"]] = fn
+    return out
+
+
+def _cg_load_dc3_fns(dc3_asm_dir):
+    """dc3 fn name -> {name, start, bl}. Recursive; first definition wins."""
+    out = {}
+    for root, _dirs, files in os.walk(dc3_asm_dir):
+        for fn_file in sorted(files):
+            if not fn_file.endswith(".s"):
+                continue
+            for fn in _cg_parse_asm_file(os.path.join(root, fn_file)):
+                if fn["start"] is None:
+                    continue
+                if fn["name"] not in out:
+                    out[fn["name"]] = fn
+    return out
+
+
+def triangulate(args):
+    """Call-graph triangulation: identify anonymous rb3 fns by aligning the
+    bl call sequences of known-mapped functions against their dc3 twins.
+
+    Anchor set = unified_id.json entries that carry a dc3_name (the rb3 fn ->
+    dc3 name mapping). report.json's 100%-matched functions are also folded in
+    as anchors, but in practice they are a subset of unified_id (rb3's .s is
+    fully anonymous, so a matched fn only helps as an anchor when its dc3 twin
+    is known — which IS the unified_id mapping).
+
+    Output: a NEW-only oracle file (default unified_id_callgraph.json) whose
+    records are schema-compatible with unified_id.json (source="callgraph").
+    Existing unified_id addresses are never emitted, so a union is collision-
+    free. Confidence tiers:
+      * multi  (>=2 distinct named callers agree, unanimous) -> confidence 0.97
+      * single (exactly 1 caller, unanimous)                 -> confidence 0.80
+      * majority (contested but winner has >=--majority-frac) -> confidence 0.70
+    The 0.97/0.96 multi-tier confidence/similarity clears gen_target_map's
+    default thresholds; single/majority deliberately fall below them so they
+    stay manual-review until promoted.
+    """
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from dc3_map import (parse_map, load_objects, obj_to_cpp, demangle_safe)
+
+    # --- 1. anchor set: rb3 addr -> dc3 name ---
+    with open(args.unified) as f:
+        unified = json.load(f)
+    rb3_to_dc3 = {}
+    unified_addrs = set()
+    for r in unified:
+        try:
+            va = int(r["rb3_addr"], 16)
+        except (KeyError, ValueError):
+            continue
+        unified_addrs.add(va)
+        if r.get("dc3_name"):
+            rb3_to_dc3[va] = r["dc3_name"]
+    print(f"[triangulate] anchors from unified_id: {len(rb3_to_dc3)}",
+          file=sys.stderr)
+
+    # report.json matched fns are RB3-side mangled names with no address (the
+    # report stores address='0'); they cannot anchor without a dc3 twin, and
+    # 391/394 are already covered by unified_id. We surface the count only.
+    n_matched = 0
+    if args.report and os.path.isfile(args.report):
+        rep = json.load(open(args.report))
+        for u in rep.get("units", []):
+            for fn in u.get("functions", []):
+                if fn.get("match_percent_normalized", 0) >= 100.0:
+                    n_matched += 1
+        print(f"[triangulate] report.json 100%-matched fns: {n_matched} "
+              f"(folded via unified_id; no extra anchors — rb3 .s is anonymous)",
+              file=sys.stderr)
+
+    # --- 2. sizes (for output records) ---
+    funcs = load_functions(args.rb3_symbols)
+    addr_to_size = {a: s for a, s, _ in funcs}
+
+    # --- 3. parse asm ---
+    print("[triangulate] parsing rb3 asm...", file=sys.stderr)
+    rb3_fns = _cg_load_rb3_fns(args.rb3_asm)
+    print(f"[triangulate]   rb3 fns parsed: {len(rb3_fns)}", file=sys.stderr)
+    print("[triangulate] parsing dc3 asm (recursive)...", file=sys.stderr)
+    dc3_by_name = _cg_load_dc3_fns(args.dc3_asm)
+    print(f"[triangulate]   dc3 named fns parsed: {len(dc3_by_name)}",
+          file=sys.stderr)
+
+    # --- 4. triangulate: positional bl alignment, vote per anonymous callee ---
+    from collections import defaultdict, Counter
+    votes = defaultdict(Counter)        # fn_anon -> Counter({dc3_name: votes})
+    voters = defaultdict(set)           # fn_anon -> set of distinct caller names
+    pairings_attempted = pairings_aligned = 0
+    for rb3_addr, dc3_name in rb3_to_dc3.items():
+        rb3_fn = rb3_fns.get(rb3_addr)
+        dc3_fn = dc3_by_name.get(dc3_name)
+        if rb3_fn is None or dc3_fn is None:
+            continue
+        rb3_bls, dc3_bls = rb3_fn["bl"], dc3_fn["bl"]
+        pairings_attempted += 1
+        if len(rb3_bls) != len(dc3_bls):
+            continue  # bl-count mismatch (usually /Ob2 inline divergence)
+        pairings_aligned += 1
+        for (_o_r, tgt_r), (_o_d, tgt_d) in zip(rb3_bls, dc3_bls):
+            if not tgt_r.startswith("fn_"):
+                continue  # rb3 callee already named/labelled
+            if tgt_d.startswith("fn_") or tgt_d.startswith("lbl_"):
+                continue  # dc3 callee also anonymous -> no signal
+            votes[tgt_r][tgt_d] += 1
+            voters[tgt_r].add(dc3_name)
+
+    # --- 5. decide proposals, NEW-only, enriched via dc3_map ---
+    mapinfo = parse_map(args.dc3_map)
+    objects_db = load_objects(args.dc3_objects)
+
+    proposals = []
+    tier_counts = Counter()
+    # cross-verify counters: all-vote overlap, plus unanimous-only (the POC's
+    # 94.1% headline metric; faithful port should reproduce it bit-for-bit).
+    verify_agree = verify_disagree = 0
+    unanim_agree = unanim_disagree = 0
+    skipped_existing = skipped_noncanon = 0
+    for fn_anon, ct in votes.items():
+        addr_part = fn_anon[3:]
+        if "+" in addr_part or "-" in addr_part:
+            skipped_noncanon += 1
+            continue
+        try:
+            rb3_va = int(addr_part, 16)
+        except ValueError:
+            skipped_noncanon += 1
+            continue
+        total = sum(ct.values())
+        winner, w_votes = ct.most_common(1)[0]
+        n_distinct_callers = len(voters[fn_anon])
+
+        # cross-verify against unified_id (precision check on the overlap)
+        if rb3_va in rb3_to_dc3:
+            agree = (rb3_to_dc3[rb3_va] == winner)
+            verify_agree += agree
+            verify_disagree += (not agree)
+            if len(ct) == 1:  # unanimous subset == the POC metric
+                unanim_agree += agree
+                unanim_disagree += (not agree)
+        if rb3_va in unified_addrs:
+            skipped_existing += 1
+            continue  # NEW-only; never clobber an existing oracle entry
+
+        unanimous = (len(ct) == 1)
+        if unanimous and n_distinct_callers >= 2:
+            tier, confidence, similarity = "multi", 0.97, 0.96
+        elif unanimous:
+            tier, confidence, similarity = "single", 0.80, 0.80
+        elif w_votes / total >= args.majority_frac:
+            tier, confidence, similarity = "majority", 0.70, 0.70
+        else:
+            continue  # too contested to propose
+        tier_counts[tier] += 1
+
+        # enrich the winning dc3 name -> obj/cpp/demangled (mirror merge_bindiff)
+        info = mapinfo.get(winner)
+        if info is not None:
+            dc3_obj = info["obj"]
+            inline_only = "i" in info["tags"]
+            dc3_cpp = obj_to_cpp(dc3_obj, objects_db)
+        else:
+            dc3_obj = dc3_cpp = None
+            inline_only = False
+        # apply the same dc3 HamX->BandX class substitution merge_bindiff /
+        # gen_target_map use, so the rb3-side name is correct for the symbol map.
+        subbed_name, _applied = substitute_dc3_class_names(winner)
+
+        proposals.append({
+            "rb3_fn": fn_anon,
+            "rb3_addr": f"0x{rb3_va:08x}",
+            "size": addr_to_size.get(rb3_va, 0),
+            "source": "callgraph",
+            "dc3_name": subbed_name,
+            "dc3_name_demangled": demangle_safe(winner),
+            "dc3_obj": dc3_obj,
+            "dc3_inline_only": inline_only,
+            "bindiff_src": dc3_cpp,          # named bindiff_src so cluster/map
+                                              # tooling (which keys on this) works
+            "similarity": similarity,
+            "confidence": confidence,
+            "algorithm": "callgraph triangulation",
+            "cg_tier": tier,
+            "cg_distinct_callers": n_distinct_callers,
+            "cg_total_votes": total,
+            "cg_top_votes": w_votes,
+            "cg_alternatives": dict(ct.most_common(5)),
+        })
+
+    proposals.sort(key=lambda r: int(r["rb3_addr"], 16))
+
+    with open(args.out, "w") as f:
+        json.dump(proposals, f, indent=1)
+
+    overlap = verify_agree + verify_disagree
+    precision = 100 * verify_agree / overlap if overlap else 0.0
+    unanim_overlap = unanim_agree + unanim_disagree
+    unanim_precision = (100 * unanim_agree / unanim_overlap
+                        if unanim_overlap else 0.0)
+    align_rate = (100 * pairings_aligned / pairings_attempted
+                  if pairings_attempted else 0.0)
+
+    print(f"[triangulate] anchors aligned: {pairings_aligned}/"
+          f"{pairings_attempted} ({align_rate:.1f}%)", file=sys.stderr)
+    print(f"[triangulate] cross-verify precision (all-vote overlap): "
+          f"{verify_agree}/{overlap} ({precision:.2f}%)", file=sys.stderr)
+    print(f"[triangulate] cross-verify precision (unanimous overlap, POC "
+          f"metric): {unanim_agree}/{unanim_overlap} "
+          f"({unanim_precision:.2f}%)", file=sys.stderr)
+    print(f"[triangulate]   (disagreements are mostly STL/ICF aliases — same "
+          f"code body, different MSVC name expansion)", file=sys.stderr)
+    print(f"[triangulate] skipped: already-in-unified={skipped_existing} "
+          f"non-canonical-target={skipped_noncanon}", file=sys.stderr)
+    print(f"[triangulate] NEW proposals: {len(proposals)}", file=sys.stderr)
+    for tier in ("multi", "single", "majority"):
+        print(f"[triangulate]   {tier:9s}: {tier_counts[tier]}", file=sys.stderr)
+    print(f"[triangulate] wrote {args.out}", file=sys.stderr)
+    print(f"[triangulate] MERGE: union with unified_id.json — these are "
+          f"NEW addrs (source='callgraph'); existing entries untouched. "
+          f"Wave tooling (bindiff_clusters/gen_target_map) keys on source in "
+          f"('both','bindiff'); pass --unified <merged> after unioning, or "
+          f"only the 'multi' tier clears gen_target_map's default thresholds.",
+          file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
 
 # splits.txt section header: `Foo.cpp:` at column 0
 SPLITS_HEADER_RE = re.compile(r"^([A-Za-z0-9_]+\.cpp):\s*$")
@@ -1036,6 +1331,36 @@ def main():
     pc.add_argument("--min-hits", type=int, default=3,
                     help="min distinct bindiff hits per cluster (default 3)")
     pc.set_defaults(func=bindiff_clusters)
+
+    pt = sub.add_parser("triangulate",
+        help="Call-graph triangulation: identify anonymous rb3 fns by aligning "
+             "bl call sequences of known-mapped functions against dc3 twins. "
+             "Writes a NEW-only oracle (union with unified_id.json).")
+    pt.add_argument("--unified", default="unified_id.json",
+                    help="Anchor oracle (rb3 addr -> dc3 name); also the "
+                         "NEW-only filter set (default: %(default)s)")
+    pt.add_argument("--report", default=os.path.join(
+                        os.path.dirname(__file__), "..", "build", "45410914",
+                        "report.json"),
+                    help="report.json (matched-fn count; informational)")
+    pt.add_argument("--rb3-symbols", default=SYMS,
+                    help="rb3 symbols.txt for function sizes")
+    pt.add_argument("--rb3-asm", default=DEFAULT_ASM,
+                    help="rb3 dtk-emitted asm dir (build/45410914/asm)")
+    pt.add_argument("--dc3-asm", default=os.path.join(
+                        os.path.dirname(__file__), "..", "..", "dc3-decomp",
+                        "build", "373307D9", "asm"),
+                    help="dc3 dtk-emitted asm dir (recursive)")
+    pt.add_argument("--dc3-map",
+                    default="../dc3-decomp/orig/373307D9/ham_xbox_r.map")
+    pt.add_argument("--dc3-objects",
+                    default="../dc3-decomp/config/373307D9/objects.json")
+    pt.add_argument("--majority-frac", type=float, default=0.5,
+                    help="min winner vote-fraction for a contested (majority) "
+                         "proposal (default: %(default)s)")
+    pt.add_argument("--out", default="unified_id_callgraph.json",
+                    help="Output NEW-only oracle file (default: %(default)s)")
+    pt.set_defaults(func=triangulate)
 
     pgt = sub.add_parser("gen_target_map",
         help="Auto-populate scripts/target_symbol_map.json from unified_id.json"

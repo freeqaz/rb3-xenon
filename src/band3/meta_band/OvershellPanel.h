@@ -2,6 +2,7 @@
 #include "game/BandUser.h"
 #include "game/Defines.h"
 #include "game/GameMic.h"
+#include "net/NetSession.h"
 #include "game/UISyncNetMsgs.h"
 #include "meta_band/BandMachine.h"
 #include "meta_band/CharData.h"

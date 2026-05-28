@@ -44,6 +44,13 @@ these proposals are wired.
 
 ### 1.1 Call-graph triangulation (`tools/exploratory/callgraph_triangulate.py`)
 
+> **PRODUCTIONIZED 2026-05-28.** This POC is now shipped as
+> `tools/fingerprint_match.py triangulate`, with tiered confidence and an
+> `unified_id`-compatible output (`unified_id_callgraph.json`). The port
+> reproduces the numbers below bit-for-bit (94.12% unanimous precision,
+> 5,310/5,642). See `docs/decomp/callgraph-triangulation.md` for run/merge
+> semantics, the re-verified precision, hand spot-checks, and limitations.
+
 **Motivation:** for any named rb3 function F (mapped via unified_id to its DC3
 twin F'), the bl call sequence in rb3's `.s` files is positionally aligned
 with F'. So `rb3.bl[i] = fn_X` and `dc3.bl[i] = "Bar"` ⟹ `rb3 fn_X == dc3 "Bar"`.

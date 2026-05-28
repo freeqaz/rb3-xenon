@@ -7,7 +7,9 @@
             "Main.cpp": "NonMatching",
             "keygen_xbox.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": ["/Od"]
+                "extra_cflags": [
+                    "/Od"
+                ]
             },
             "Memory_Xbox.cpp": "NonMatching"
         }
@@ -80,9 +82,24 @@
             "system/synth_xbox/SynapseAPO.cpp": "NonMatching",
             "system/zlib/inflate.c": "NonMatching",
             "system/zlib/deflate.c": "NonMatching",
-            "system/net/json-c/json_object.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
-            "system/net/json-c/linkhash.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
-            "system/net/json-c/printbuf.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
+            "system/net/json-c/json_object.c": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/TP"
+                ]
+            },
+            "system/net/json-c/linkhash.c": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/TP"
+                ]
+            },
+            "system/net/json-c/printbuf.c": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/TP"
+                ]
+            },
             "system/os/CritSec.cpp": "NonMatching",
             "system/os/DateTime.cpp": "NonMatching",
             "system/os/BlockMgr.cpp": "NonMatching",
@@ -131,8 +148,18 @@
             "system/os/ArkFile.cpp": "NonMatching",
             "system/os/UsbMidiKeyboard.cpp": "NonMatching",
             "system/os/NetworkSocket_Win.cpp": "NonMatching",
-            "system/net/json-c/json_tokener.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
-            "system/net/json-c/arraylist.c": { "status": "NonMatching", "extra_cflags": ["/TP"] },
+            "system/net/json-c/json_tokener.c": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/TP"
+                ]
+            },
+            "system/net/json-c/arraylist.c": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/TP"
+                ]
+            },
             "system/meta/StoreEnumeration.cpp": "NonMatching",
             "system/meta/Jukebox.cpp": "NonMatching",
             "system/meta/Sorting.cpp": "NonMatching",
@@ -231,17 +258,32 @@
             "band3/meta_band/AccomplishmentCategory.cpp": "NonMatching",
             "band3/meta_band/AccomplishmentConditional.cpp": "NonMatching",
             "band3/meta_band/AccomplishmentGroup.cpp": "NonMatching",
+            "band3/meta_band/AccomplishmentSetlist.cpp": "NonMatching",
+            "band3/meta_band/AccomplishmentTrainerCategoryConditional.cpp": "NonMatching",
+            "band3/meta_band/AccomplishmentTrainerConditional.cpp": "NonMatching",
             "band3/meta_band/AccomplishmentTrainerListConditional.cpp": "NonMatching",
             "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
             "band3/meta_band/CampaignKey.cpp": "NonMatching",
             "band3/meta_band/CampaignLevel.cpp": "NonMatching",
+            "band3/meta_band/ContextChecker.cpp": "NonMatching",
             "band3/meta_band/CymbalSelectionProvider.cpp": "NonMatching",
             "band3/meta_band/LicenseMgr.cpp": "NonMatching",
             "band3/meta_band/MusicLibrary.cpp": "NonMatching",
+            "band3/meta_band/NameGenerator.cpp": "NonMatching",
             "band3/meta_band/OvershellSlot.cpp": "NonMatching",
+            "band3/meta_band/OvershellSlotState.cpp": "NonMatching",
             "band3/meta_band/PatchPanel.cpp": "NonMatching",
+            "band3/meta_band/SongSortByArtist.cpp": "NonMatching",
+            "band3/meta_band/SongSortByPlays.cpp": "NonMatching",
+            "band3/meta_band/SongSortByRank.cpp": "NonMatching",
+            "band3/meta_band/SongSortByRecent.cpp": "NonMatching",
+            "band3/meta_band/SongSortBySong.cpp": "NonMatching",
             "band3/meta_band/StandIn.cpp": "NonMatching",
+            "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
+            "band3/meta_band/UIEvent.cpp": "NonMatching",
+            "band3/meta_band/UIEventMgr.cpp": "NonMatching",
             "band3/meta_band/UploadErrorMgr.cpp": "NonMatching",
+            "band3/meta_band/Utl.cpp": "NonMatching",
             "band3/net_band/RockCentral.cpp": "NonMatching",
             "band3/tour/QuestFilterPanel.cpp": "NonMatching",
             "band3/tour/TourDescPanel.cpp": "NonMatching"

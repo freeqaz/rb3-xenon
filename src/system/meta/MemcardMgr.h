@@ -82,8 +82,4 @@ DECLARE_MESSAGE(SaveLoadAllCompleteMsg, "save_load_all_complete_msg")
 SaveLoadAllCompleteMsg() : Message(Type()) {}
 END_MESSAGE
 
-DECLARE_MESSAGE(MCResultMsg, "memcard_result")
-virtual void PrintExtra(TextStream &ts) const { ts << "res:" << Result(); }
-MCResultMsg(MCResult res) : Message(Type(), res) {}
-MCResult Result() const { return (MCResult)mData->Int(2); }
-END_MESSAGE
+// MCResultMsg is defined in os/Memcard.h (included transitively)

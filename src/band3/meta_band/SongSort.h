@@ -7,6 +7,7 @@
 
 class NodeSort : public UIListProvider, public Hmx::Object {
 public:
+    using Hmx::Object::Handle;
     NodeSort();
     virtual ~NodeSort() {}
     virtual void Text(int, int, UIListLabel *, UILabel *) const;

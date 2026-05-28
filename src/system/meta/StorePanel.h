@@ -53,7 +53,9 @@ public:
     virtual bool IsSongInLibrary(int const &) const { return false; }
     virtual void ExitStore(StoreError) const;
     virtual Profile *StoreProfile() const;
-    virtual StoreOffer *MakeNewOffer(DataArray *) = 0;
+    // RB3 overrides this as MakeNewOffer(const StorePackedOfferBase *, bool) —
+    // a different signature. Make the base non-pure so BandStorePanel compiles.
+    virtual StoreOffer *MakeNewOffer(DataArray *) { return 0; }
     virtual StoreOffer *FindOffer(Symbol) const;
     virtual bool EnumerateSubsetOfOfferIDs() const { return false; }
     virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const {}
@@ -93,7 +95,8 @@ protected:
     virtual void PopulateOffers(DataArray *, bool);
     virtual void EnumerateOffers(bool);
     virtual void FinishEnum(std::list<EnumProduct> const &, bool);
-    virtual StoreError UpdateOffers(std::list<EnumProduct> const &, bool);
+    // RB3 returns int (not StoreError) — matches rb3-Wii's StorePanel.h
+    virtual int UpdateOffers(std::list<EnumProduct> const &, bool);
     virtual void UpdateFromEnumProduct(StorePurchaseable *, EnumProduct const *);
     virtual void StoreUserProfileSwappedToUser(LocalUser *);
 
