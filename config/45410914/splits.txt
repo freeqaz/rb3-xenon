@@ -628,3 +628,67 @@ TextStream.cpp:
 crc32.c:
 	.pdata      start:0x82251798 end:0x822517A0
 	.text       start:0x82B29B60 end:0x82B29EDC
+
+CharBoneDir.cpp:
+	.pdata      start:0x821FD410 end:0x821FD5A0
+	.text       start:0x823A29A8 end:0x823A49E4
+
+CharClip.cpp:
+	.pdata      start:0x821FA628 end:0x821FA838
+	.text       start:0x8236B5F0 end:0x8236DDE8
+
+CharClipSet.cpp:
+	.pdata      start:0x821FECD0 end:0x821FEDA0
+	.text       start:0x823BEA70 end:0x823BF930
+
+MidiParser.cpp:
+	.pdata      start:0x8223B8D8 end:0x8223BD48
+	.text       start:0x827C1218 end:0x827C5CE0
+
+DataFunc.cpp:
+	.pdata      start:0x821F8EB8 end:0x821F8F88
+	.text       start:0x823543A0 end:0x82355678
+
+Task.cpp:
+	.pdata      start:0x82232CA0 end:0x82232CF0
+	.text       start:0x82724FE8 end:0x827255B4
+
+AsyncTask.cpp:
+	.pdata      start:0x82212170 end:0x82212178
+	.text       start:0x82520278 end:0x82520338
+
+EventTrigger.cpp:
+	.pdata      start:0x82209B48 end:0x82209F80
+	.text       start:0x82489D38 end:0x8248EB80
+
+MeshAnim.cpp:
+	.pdata      start:0x82207168 end:0x822075A0
+	.text       start:0x82456970 end:0x8245B940
+
+Part.cpp:
+	.pdata      start:0x822056A8 end:0x822059D8
+	.text       start:0x82433AB0 end:0x82439D8C
+
+Rnd.cpp:
+	.pdata      start:0x82202E08 end:0x822031B0
+	.text       start:0x823FFA78 end:0x82403BCC
+
+MeterEffect.cpp:
+	.pdata      start:0x82252790 end:0x822527A0
+	.text       start:0x82B3C8C0 end:0x82B3CA1C
+
+UI.cpp:
+	.pdata      start:0x8223D628 end:0x8223D710
+	.text       start:0x827DF8B8 end:0x827E0E0C
+
+Utl.cpp:
+	.pdata      start:0x822051E8 end:0x82205310
+	.text       start:0x8242C110 end:0x8242D250
+
+MemTracker.cpp:
+	.pdata      start:0x8223A850 end:0x8223A9D8
+	.text       start:0x827AF180 end:0x827B1A70
+
+LightPreset.cpp:
+	.pdata      start:0x8220A840 end:0x8220AF58
+	.text       start:0x8249B800 end:0x824A3A28
