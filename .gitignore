@@ -56,6 +56,9 @@ core.*
 /autoid.json
 /unified_id.json
 /unified_id_callgraph.json
+/unified_id_rtti.json
+/unified_id_rtti_low.json
+/unified_id_vtable.json
 /proposed_splits_bindiff.txt
 /proposed_splits_bindiff.spotcheck.csv
 # bindiff_match.json is harvested from Ghidra + BinDiff (~10 min run); regenerable, large (~3.6 MB)

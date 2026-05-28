@@ -24,10 +24,17 @@ import argparse
 import json
 import os
 import re
+import struct
 import sys
 
 DEFAULT_ASM = os.path.join(os.path.dirname(__file__), "..", "build", "45410914", "asm")
 SYMS = os.path.join(os.path.dirname(__file__), "..", "config", "45410914", "symbols.txt")
+# rb3 retail PE (unxex'd) for RTTI scanning; dc3 leaked .map + release PE for
+# the named vtable oracle (same defaults as the exploratory POCs).
+DEFAULT_RB3_EXE = os.path.join(os.path.dirname(__file__), "..", "orig", "45410914", "band.exe")
+DEFAULT_DC3_MAP = os.path.join(os.path.dirname(__file__), "..", "..", "dc3-decomp", "orig", "373307D9", "ham_xbox_r.map")
+DEFAULT_DC3_EXE = os.path.join(os.path.dirname(__file__), "..", "..", "dc3-decomp", "orig", "373307D9", "ham_xbox_r.exe")
+DEFAULT_DC3_OBJECTS = os.path.join(os.path.dirname(__file__), "..", "..", "dc3-decomp", "config", "373307D9", "objects.json")
 
 # /* 82272EB8 0026E6B8  7D 88 02 A6 */\tmflr r12
 INSN_RE = re.compile(r"^/\*\s*([0-9A-Fa-f]{8})\s+[0-9A-Fa-f]{8}\s+[0-9A-Fa-f ]+\*/\t(.*)$")
@@ -806,6 +813,624 @@ def triangulate(args):
 
 
 # ---------------------------------------------------------------------------
+# RTTI + vtable slot transitivity: rtti
+# (productionizes tools/exploratory/rtti_vtable_combined.py — see
+#  docs/decomp/rtti-vtable-transitivity.md)
+#
+# Method:
+#   1. Walk rb3's NON-STANDARD X360 RTTI (no 0x19930522 COL signature; 12 zero
+#      bytes instead) to recover {rb3 vtable VA -> mangled class name + slot
+#      fn VAs}. Recovers 1,321 vtables (vs jeff's 342 heuristic scan).
+#   2. Parse dc3's leaked .map for `??_7CLASS@@6B@` -> dc3 vtable RVA, read the
+#      dc3 PE to get dc3 slot fn VAs, name them via the .map.
+#   3. Join by mangled class name. For each common class with a SINGLE vtable
+#      on each side, pair slot-by-slot: rb3 slot[i] (anonymous fn_) == dc3
+#      slot[i] (named).
+#   4. Confidence tier:
+#        HIGH = rb3 vt and dc3 vt have IDENTICAL slot counts (no engine drift)
+#        LOW  = slot counts differ (drift; positional pairing unreliable)
+#      Only HIGH ships by default; LOW is opt-in via --include-low.
+# ---------------------------------------------------------------------------
+
+# X360 RTTI: a TypeDescriptor is `vptr(4) spare(4) ".?AV<CLASS>@@\0"`.
+RTTI_TD_NAME_RE = re.compile(rb'\.\?A[VU]([^\x00]+)@@\x00')
+# dc3 .map "Publics by Value" row: ` 0001:0006d3a0  ?Foo@Bar@@... 82373b80 ...`
+DC3_MAP_PUB_RE = re.compile(
+    r'^\s+([0-9a-f]{4}):([0-9a-f]{8})\s+(\S+)\s+([0-9a-f]{8})')
+# vtable symbol `??_7CLASS@@6B<modifier>@` — group(1)=class, group(2)=modifier.
+DC3_MAP_VT_RE = re.compile(r'^\?\?_7(.+?)@@6B(.*)@$')
+
+
+def _pe_parse(path):
+    """Return (image_bytes, img_base, [(name, va, vsize, raw_off), ...])."""
+    exe = open(path, 'rb').read()
+    pe_off = struct.unpack_from('<I', exe, 0x3c)[0]
+    n_sections = struct.unpack_from('<H', exe, pe_off + 6)[0]
+    size_oh = struct.unpack_from('<H', exe, pe_off + 20)[0]
+    img_base = struct.unpack_from('<I', exe, pe_off + 24 + 28)[0]
+    sect_start = pe_off + 24 + size_oh
+    sections = []
+    for i in range(n_sections):
+        o = sect_start + i * 40
+        name = exe[o:o + 8].rstrip(b'\x00').decode('ascii', errors='replace')
+        vaddr = struct.unpack_from('<I', exe, o + 12)[0]
+        vsize = struct.unpack_from('<I', exe, o + 8)[0]
+        raw_off = struct.unpack_from('<I', exe, o + 20)[0]
+        sections.append((name, img_base + vaddr, vsize, raw_off))
+    return exe, img_base, sections
+
+
+def _pe_text_bounds(sections):
+    for name, va, sz, _ in sections:
+        if name == '.text':
+            return va, va + sz
+    raise RuntimeError('no .text section')
+
+
+def _pe_off_to_va(sections, o):
+    for _n, sec_va, vsize, off in sections:
+        if off <= o < off + vsize:
+            return sec_va + (o - off)
+    return None
+
+
+def _pe_read_va(exe, sections, va, n):
+    for _name, sec_va, vsize, raw_off in sections:
+        if sec_va <= va < sec_va + vsize:
+            offset = raw_off + (va - sec_va)
+            return exe[offset:offset + n]
+    return None
+
+
+def _rtti_walk_rb3(rb3_exe_path):
+    """Walk rb3's non-standard X360 RTTI. Returns
+    {vt_va:int -> {'class': mangled, 'slot_vas': [int]}}.
+
+    Layout (empirically derived; band.exe has NO 0x19930522 COL signature):
+      TypeDescriptor: vptr(4)+spare(4)+".?AV<CLASS>@@\\0"
+      COL (precedes vtable at vt_va-4): +0..+0x8 = three zero dwords,
+                                        +0xC = pTypeDescriptor
+      vtable: vt_va-4 -> COL ptr; vt_va+0 = slot 0.
+    Recovers ALL named vtables (1,321), not just jeff's 342 heuristic scan.
+    """
+    exe, _img_base, sections = _pe_parse(rb3_exe_path)
+    text_lo, text_hi = _pe_text_bounds(sections)
+
+    # --- TypeDescriptors: a `.?AV<CLASS>@@\0` whose -8 dword is a vptr in .text
+    td_records = []  # (td_va, mangled_class)
+    for m in RTTI_TD_NAME_RE.finditer(exe):
+        name_start = m.start()
+        td_off = name_start - 8
+        if td_off < 0:
+            continue
+        vptr = struct.unpack_from('>I', exe, td_off)[0]
+        if not (0x82000000 <= vptr < 0x83000000):
+            continue
+        td_va = _pe_off_to_va(sections, td_off)
+        if td_va is None:
+            continue
+        td_records.append((td_va, m.group(1).decode('ascii', errors='replace')))
+
+    # --- COLs: a >I pointer to a TD preceded by 12 zero bytes (no signature word)
+    cols = []  # (col_va, mangled_class)
+    for td_va, cls in td_records:
+        pat = struct.pack('>I', td_va)
+        start = 0
+        while True:
+            p = exe.find(pat, start)
+            if p < 0:
+                break
+            start = p + 4
+            col_start = p - 0xC
+            if col_start < 0:
+                continue
+            if exe[col_start:p] != b'\x00' * 0xC:
+                continue
+            col_va = _pe_off_to_va(sections, col_start)
+            if col_va is not None:
+                cols.append((col_va, cls))
+
+    # --- vtables: a >I pointer to a COL; the vtable starts at ref+4
+    out = {}
+    for col_va, cls in cols:
+        pat = struct.pack('>I', col_va)
+        start = 0
+        while True:
+            p = exe.find(pat, start)
+            if p < 0:
+                break
+            start = p + 4
+            vt_off = p + 4
+            vt_va = _pe_off_to_va(sections, vt_off)
+            if vt_va is None:
+                continue
+            slots = []
+            for j in range(200):
+                so = vt_off + j * 4
+                if so + 4 > len(exe):
+                    break
+                v = struct.unpack_from('>I', exe, so)[0]
+                if not (text_lo <= v < text_hi):
+                    break
+                slots.append(v)
+            if vt_va in out and out[vt_va]['class'] != cls:
+                continue  # duplicate; keep first
+            out[vt_va] = {'class': cls, 'slot_vas': slots}
+    return out
+
+
+def _dc3_parse_vtables_from_map(dc3_map_path):
+    """Return (addr_to_name {rva:int -> name}, vt_to_class {vt_rva:int ->
+    (class, modifier)}) from dc3's leaked .map. Vtable symbols (??_7..@@6B..@)
+    live in .rdata, so this independent parse is needed (dc3_map.parse_map only
+    ingests .text)."""
+    addr_to_name = {}
+    vt_to_class = {}
+    saw_header = False
+    with open(dc3_map_path, errors="replace") as f:
+        for line in f:
+            if 'Publics by Value' in line:
+                saw_header = True
+                continue
+            if not saw_header:
+                continue
+            m = DC3_MAP_PUB_RE.match(line)
+            if not m:
+                continue
+            rva = int(m.group(4), 16)
+            name = m.group(3)
+            if rva < 0x82000000:
+                continue
+            if rva not in addr_to_name:
+                addr_to_name[rva] = name
+            vm = DC3_MAP_VT_RE.match(name)
+            if vm:
+                vt_to_class[rva] = (vm.group(1), vm.group(2))
+    return addr_to_name, vt_to_class
+
+
+def _dc3_extract_vtable(rva, exe, sections, addr_to_name, sorted_addrs,
+                        text_lo, text_hi):
+    """Read a dc3 vtable at rva -> [(slot_idx, slot_va, slot_name_or_None)].
+    Slot count is bounded by the next named symbol (vtable end). Stops at the
+    first non-.text pointer (RTTI data follows the slots)."""
+    import bisect
+    i = bisect.bisect_right(sorted_addrs, rva)
+    n_slots = 200 if i >= len(sorted_addrs) else min(200, (sorted_addrs[i] - rva) // 4)
+    if n_slots <= 0:
+        return []
+    raw = _pe_read_va(exe, sections, rva, n_slots * 4)
+    if raw is None or len(raw) < 4:
+        return []
+    out = []
+    for j in range(min(n_slots, len(raw) // 4)):
+        v = struct.unpack_from('>I', raw, j * 4)[0]
+        if not (text_lo <= v < text_hi):
+            break
+        out.append((j, v, addr_to_name.get(v)))
+    return out
+
+
+def rtti(args):
+    """RTTI + vtable slot transitivity: identify anonymous rb3 fns by joining
+    rb3's RTTI-recovered vtables to dc3's named `??_7CLASS@@6B@` vtables by
+    class name, then pairing slots positionally.
+
+    Output: a NEW-only oracle file (default unified_id_rtti.json) whose records
+    are schema-compatible with unified_id.json (source="rtti").
+
+    Precision reality (re-measured, not parroted): HIGH-tier raw precision is
+    ~71% vs unified_id overlap — BELOW the >=90% bar callgraph clears. So even
+    HIGH is emitted to its OWN file (never auto-unioned into the symbol map) at
+    confidence 0.80, which is sub-threshold for gen_target_map's 0.95 default.
+    It is a manual-review / splits-derivation oracle. Many of the ~29% "misses"
+    are ICF aliases (??_E/??_G deleting-dtor pairs, folded template-container
+    methods) so the actionable error rate is lower, but it still does not clear
+    the auto-merge bar. LOW-tier (~41%) is suppressed entirely unless
+    --include-low, and then lands in a SEPARATE file (--out-low).
+    """
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from dc3_map import parse_map, load_objects, obj_to_cpp, demangle_safe
+    from collections import defaultdict, Counter
+
+    # --- anchor / NEW-only filter set: unified_id addrs + addr->dc3_name ---
+    with open(args.unified) as f:
+        unified = json.load(f)
+    unified_addrs = set()
+    rb3_to_dc3 = {}  # int VA -> dc3_name (for cross-verify)
+    for r in unified:
+        try:
+            va = int(r["rb3_addr"], 16)
+        except (KeyError, ValueError):
+            continue
+        unified_addrs.add(va)
+        if r.get("dc3_name"):
+            rb3_to_dc3[va] = r["dc3_name"]
+
+    # --- 1. rb3 RTTI walk ---
+    print("[rtti] walking rb3 X360 RTTI...", file=sys.stderr)
+    rb3_vts = _rtti_walk_rb3(args.rb3_exe)
+    print(f"[rtti]   rb3 vtables (via RTTI): {len(rb3_vts)}", file=sys.stderr)
+    rb3_by_class = defaultdict(list)  # cls -> [(vt_va, slot_vas)]
+    for vt_va, info in rb3_vts.items():
+        rb3_by_class[info['class']].append((vt_va, info['slot_vas']))
+    print(f"[rtti]   distinct rb3 classes: {len(rb3_by_class)}", file=sys.stderr)
+
+    # --- 2. dc3 vtables from .map + PE ---
+    print("[rtti] parsing dc3 .map + dc3 PE vtables...", file=sys.stderr)
+    dc3_addr_to_name, dc3_vt_to_class = _dc3_parse_vtables_from_map(args.dc3_map)
+    dc3_exe, _, dc3_sections = _pe_parse(args.dc3_exe)
+    dc3_text_lo, dc3_text_hi = _pe_text_bounds(dc3_sections)
+    sorted_dc3_addrs = sorted(dc3_addr_to_name.keys())
+    dc3_by_class = defaultdict(list)  # cls -> [{'vt_va','base','slots'}]
+    for vt_va, (cls, base) in dc3_vt_to_class.items():
+        slots = _dc3_extract_vtable(vt_va, dc3_exe, dc3_sections,
+                                    dc3_addr_to_name, sorted_dc3_addrs,
+                                    dc3_text_lo, dc3_text_hi)
+        dc3_by_class[cls].append({'vt_va': vt_va, 'base': base, 'slots': slots})
+    print(f"[rtti]   distinct dc3 classes (??_7CLS@@6B@): {len(dc3_by_class)}",
+          file=sys.stderr)
+
+    common_classes = set(rb3_by_class) & set(dc3_by_class)
+    print(f"[rtti]   common (rb3 INT dc3) classes: {len(common_classes)}",
+          file=sys.stderr)
+
+    # --- 3. slot-by-slot pairing for single-vtable classes ---
+    # proposals: rb3_va(int) -> (dc3_name, tier, cls, slot_idx)
+    proposals = {}
+    pairs_done = 0
+    multi_vt_skipped = 0
+    for cls in sorted(common_classes):
+        rb3_list = rb3_by_class[cls]
+        dc3_list = dc3_by_class[cls]
+        if len(rb3_list) > 1 or len(dc3_list) > 1:
+            multi_vt_skipped += 1  # multiple-inheritance sub-vtables; deferred
+            continue
+        rb3_vt_va, rb3_slots = rb3_list[0]
+        dc3_info = dc3_list[0]
+        dc3_slots = dc3_info['slots']
+        if not dc3_slots or not rb3_slots:
+            continue
+        same_layout = len(rb3_slots) == len(dc3_slots)
+        n_pair = min(len(rb3_slots), len(dc3_slots))
+        pairs_done += 1
+        for j in range(n_pair):
+            rb3_slot_va = rb3_slots[j]
+            dc3_slot_name = dc3_slots[j][2]
+            if dc3_slot_name is None:
+                continue
+            existing = proposals.get(rb3_slot_va)
+            if existing and existing[0] != dc3_slot_name:
+                continue  # name collision across vtables; keep first
+            # same-name (or first) hit: take the latest tier seen, so a
+            # later HIGH pairing upgrades an earlier LOW one (POC behaviour).
+            tier = 'HIGH' if same_layout else 'LOW'
+            proposals[rb3_slot_va] = (dc3_slot_name, tier, cls, j)
+    print(f"[rtti]   pairings done: {pairs_done}  "
+          f"multi-vt classes skipped: {multi_vt_skipped}", file=sys.stderr)
+
+    # --- 4. cross-verify against unified_id, split NEW vs overlap, by tier ---
+    agree = {'HIGH': 0, 'LOW': 0}
+    disagree = {'HIGH': 0, 'LOW': 0}
+    new_records = {'HIGH': [], 'LOW': []}
+    # addrs already in unified_id (incl. autoid-only entries with no dc3_name)
+    # are skipped — strict address-based NEW-only, matching `triangulate`. Some
+    # of these are autoid string-attributions lacking a dc3_name that `rtti`
+    # *could* enrich; we count them but don't clobber the existing entry.
+    skipped_existing = {'HIGH': 0, 'LOW': 0}
+
+    mapinfo = parse_map(args.dc3_map)
+    objects_db = load_objects(args.dc3_objects)
+    funcs = load_functions(args.rb3_symbols)
+    addr_to_size = {a: s for a, s, _ in funcs}
+
+    def build_record(rb3_va, dc3_name, tier, cls, slot_idx):
+        info = mapinfo.get(dc3_name)
+        if info is not None:
+            dc3_obj = info["obj"]
+            inline_only = "i" in info["tags"]
+            dc3_cpp = obj_to_cpp(dc3_obj, objects_db)
+        else:
+            dc3_obj = dc3_cpp = None
+            inline_only = False
+        subbed_name, _applied = substitute_dc3_class_names(dc3_name)
+        # HIGH = matching slot counts (no drift); confidence below
+        # gen_target_map's 0.95 default (HIGH raw precision ~71%, semantic
+        # ~80-85% after ICF-alias accounting) so it stays manual-review.
+        confidence = 0.80 if tier == 'HIGH' else 0.40
+        similarity = 0.80 if tier == 'HIGH' else 0.40
+        return {
+            "rb3_fn": f"fn_{rb3_va:08X}",
+            "rb3_addr": f"0x{rb3_va:08x}",
+            "size": addr_to_size.get(rb3_va, 0),
+            "source": "rtti",
+            "dc3_name": subbed_name,
+            "dc3_name_demangled": demangle_safe(dc3_name),
+            "dc3_obj": dc3_obj,
+            "dc3_inline_only": inline_only,
+            "bindiff_src": dc3_cpp,
+            "similarity": similarity,
+            "confidence": confidence,
+            "algorithm": "rtti+vtable transitivity",
+            "rtti_tier": tier,
+            "rtti_class": cls,
+            "rtti_slot": slot_idx,
+        }
+
+    for rb3_va, (dc3_name, tier, cls, slot_idx) in proposals.items():
+        if rb3_va in rb3_to_dc3:
+            if rb3_to_dc3[rb3_va] == dc3_name:
+                agree[tier] += 1
+            else:
+                disagree[tier] += 1
+        if rb3_va in unified_addrs:
+            skipped_existing[tier] += 1
+            continue  # NEW-only
+        new_records[tier].append(build_record(rb3_va, dc3_name, tier, cls, slot_idx))
+
+    for tier in ('HIGH', 'LOW'):
+        new_records[tier].sort(key=lambda r: int(r["rb3_addr"], 16))
+
+    def prec(tier):
+        ov = agree[tier] + disagree[tier]
+        return (100 * agree[tier] / ov) if ov else 0.0
+
+    # HIGH ships by default
+    with open(args.out, "w") as f:
+        json.dump(new_records['HIGH'], f, indent=1)
+
+    # LOW: opt-in, separate file
+    wrote_low = False
+    if args.include_low:
+        with open(args.out_low, "w") as f:
+            json.dump(new_records['LOW'], f, indent=1)
+        wrote_low = True
+
+    print(f"[rtti] cross-verify precision (vs unified_id overlap):", file=sys.stderr)
+    print(f"[rtti]   HIGH: {agree['HIGH']}/{agree['HIGH']+disagree['HIGH']} "
+          f"({prec('HIGH'):.1f}%)   LOW: {agree['LOW']}/"
+          f"{agree['LOW']+disagree['LOW']} ({prec('LOW'):.1f}%)", file=sys.stderr)
+    print(f"[rtti]   skipped (addr already in unified_id, incl. autoid-no-name "
+          f"that rtti could enrich): HIGH={skipped_existing['HIGH']} "
+          f"LOW={skipped_existing['LOW']}", file=sys.stderr)
+    print(f"[rtti]   (many HIGH misses are ICF aliases — ??_E/??_G deleting-"
+          f"dtor pairs + folded template-container methods — same code body, "
+          f"different MSVC name; semantic precision is higher than raw)",
+          file=sys.stderr)
+    print(f"[rtti] NOTE: HIGH raw precision ({prec('HIGH'):.0f}%) is BELOW the "
+          f">=90%% default-on/auto-merge bar (callgraph multi-tier is 94%%). "
+          f"HIGH is written to its OWN file at confidence 0.80 (sub-threshold "
+          f"for gen_target_map's 0.95) — it is a manual-review oracle, NOT "
+          f"auto-merged into the symbol map.", file=sys.stderr)
+    print(f"[rtti] {len(new_records['HIGH'])} HIGH records -> {args.out}",
+          file=sys.stderr)
+    if wrote_low:
+        print(f"[rtti] {len(new_records['LOW'])} LOW records -> {args.out_low} "
+              f"(opt-in; ~41% precision — DO NOT auto-merge)", file=sys.stderr)
+    else:
+        print(f"[rtti] LOW tier suppressed ({len(new_records['LOW'])} records, "
+              f"~41% precision); pass --include-low to emit {args.out_low}",
+              file=sys.stderr)
+    print(f"[rtti] MERGE: HIGH is NEW addrs (source='rtti', confidence 0.80 — "
+          f"below gen_target_map's 0.95 default, so manual-review until "
+          f"promoted). Union with unified_id.json is collision-free.",
+          file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
+# Vtable slot transitivity (no RTTI): vtable
+# (productionizes tools/exploratory/vtable_transitivity.py — see
+#  docs/decomp/rtti-vtable-transitivity.md §"vtable subcommand")
+#
+# Pre-RTTI technique. Uses jeff's 342 heuristically-scanned rb3 `vftable_<addr>`
+# symbols (parsed from the *_rdata.s files), resolves the slots we ALREADY know
+# (via unified_id), then finds the dc3 vtable whose named slots align at the
+# same indices, and transfers the remaining names. Subsumed by `rtti` (which
+# recovers 3.8x more vtables) but kept as an orthogonal fallback (+37).
+# ---------------------------------------------------------------------------
+
+RB3_VFTABLE_RE = re.compile(r'^\.obj vftable_([0-9A-Fa-f]{8})')
+RB3_VFT_SLOT_RE = re.compile(r'^\s*\.4byte\s+(\S+)')
+RB3_ENDOBJ_RE = re.compile(r'^\.endobj')
+
+
+def _parse_rb3_vftables_from_asm(asm_dir):
+    """Parse rb3 *_rdata.s for jeff's `.obj vftable_<addr>` records.
+    Returns {vt_va:int -> [slot_token, ...]} where tokens are fn_<addr>/lbl_/..."""
+    out = {}
+    cur_va = None
+    cur_slots = None
+    for fname in sorted(p for p in os.listdir(asm_dir) if "rdata" in p and p.endswith(".s")):
+        with open(os.path.join(asm_dir, fname), errors="replace") as f:
+            for line in f:
+                m = RB3_VFTABLE_RE.match(line)
+                if m:
+                    cur_va = int(m.group(1), 16)
+                    cur_slots = []
+                    continue
+                if cur_slots is not None:
+                    if RB3_ENDOBJ_RE.match(line):
+                        out[cur_va] = cur_slots
+                        cur_va = None
+                        cur_slots = None
+                        continue
+                    sm = RB3_VFT_SLOT_RE.match(line)
+                    if sm:
+                        cur_slots.append(sm.group(1).strip())
+    return out
+
+
+def vtable(args):
+    """Vtable slot transitivity (no RTTI): identify anonymous rb3 fns by pairing
+    jeff's heuristic `vftable_<addr>` rb3 vtables to dc3's named vtables via
+    already-known slot names, then transferring the unnamed slots.
+
+    Output: a NEW-only oracle file (default unified_id_vtable.json) whose records
+    are schema-compatible with unified_id.json (source="vtable"). Subsumed by
+    `rtti`; kept as an orthogonal fallback.
+    """
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from dc3_map import parse_map, load_objects, obj_to_cpp, demangle_safe
+    from collections import Counter, defaultdict
+
+    with open(args.unified) as f:
+        unified = json.load(f)
+    unified_addrs = set()
+    rb3_to_dc3 = {}     # int VA -> dc3_name
+    rb3_to_dc3_lc = {}  # "fn_xxxxxxxx" lowercase -> dc3_name
+    for r in unified:
+        try:
+            va = int(r["rb3_addr"], 16)
+        except (KeyError, ValueError):
+            continue
+        unified_addrs.add(va)
+        if r.get("dc3_name"):
+            rb3_to_dc3[va] = r["dc3_name"]
+            rb3_to_dc3_lc[r["rb3_fn"].lower()] = r["dc3_name"]
+
+    # --- dc3 vtables (name->slots) ---
+    print("[vtable] parsing dc3 .map + dc3 PE vtables...", file=sys.stderr)
+    dc3_addr_to_name, dc3_vt_to_class = _dc3_parse_vtables_from_map(args.dc3_map)
+    dc3_exe, _, dc3_sections = _pe_parse(args.dc3_exe)
+    dc3_text_lo, dc3_text_hi = _pe_text_bounds(dc3_sections)
+    sorted_dc3_addrs = sorted(dc3_addr_to_name.keys())
+    # name->{'class','slots'} (re-key vt_to_class by the full ??_7 symbol name)
+    dc3_vt_contents = {}
+    for vt_rva, (cls, base) in dc3_vt_to_class.items():
+        slots = _dc3_extract_vtable(vt_rva, dc3_exe, dc3_sections,
+                                    dc3_addr_to_name, sorted_dc3_addrs,
+                                    dc3_text_lo, dc3_text_hi)
+        if not slots:
+            continue
+        vt_name = dc3_addr_to_name.get(vt_rva, f"vt_{vt_rva:08x}")
+        dc3_vt_contents[vt_name] = {'class': cls, 'slots': slots}
+    print(f"[vtable]   dc3 vtables extracted: {len(dc3_vt_contents)}",
+          file=sys.stderr)
+
+    # --- rb3 vtables (jeff's heuristic vftable_<addr>) ---
+    rb3_vt = _parse_rb3_vftables_from_asm(args.rb3_asm)
+    print(f"[vtable]   rb3 vftables (jeff scan): {len(rb3_vt)}", file=sys.stderr)
+
+    # index dc3 vts by their named slot fns
+    dc3_slot_to_vts = defaultdict(list)
+    for vt_name, info in dc3_vt_contents.items():
+        for _idx, _va, sname in info['slots']:
+            if sname is not None:
+                dc3_slot_to_vts[sname].append(vt_name)
+
+    # proposals: rb3_va(int) -> (dc3_name, slot_idx, dc3_vt, evidence, cls)
+    proposals = {}
+    matched_pairs = 0
+    for rb3_va, rb3_slots in rb3_vt.items():
+        if not rb3_slots:
+            continue
+        rb3_known = []  # (slot_idx, rb3_fn, dc3_name)
+        for i, slot in enumerate(rb3_slots):
+            if not slot.startswith('fn_'):
+                continue
+            dc3_name = rb3_to_dc3_lc.get(slot.lower())
+            if dc3_name:
+                rb3_known.append((i, slot, dc3_name))
+        if not rb3_known:
+            continue
+        cand_scores = Counter()
+        for i, _fn, dc3_name in rb3_known:
+            for vt_name in dc3_slot_to_vts.get(dc3_name, []):
+                info = dc3_vt_contents[vt_name]
+                if i < len(info['slots']) and info['slots'][i][2] == dc3_name:
+                    cand_scores[vt_name] += 1
+        if not cand_scores:
+            continue
+        top_vt, top_score = cand_scores.most_common(1)[0]
+        info = dc3_vt_contents[top_vt]
+        all_known_aligned = all(
+            i < len(info['slots']) and info['slots'][i][2] == dc3_name
+            for i, _f, dc3_name in rb3_known)
+        if not all_known_aligned:
+            continue
+        matched_pairs += 1
+        n_pair = min(len(rb3_slots), len(info['slots']))
+        for i in range(n_pair):
+            rb3_slot = rb3_slots[i]
+            if not rb3_slot.startswith('fn_'):
+                continue
+            try:
+                rb3_slot_va = int(rb3_slot[3:], 16)
+            except ValueError:
+                continue
+            if rb3_slot.lower() in rb3_to_dc3_lc:
+                continue  # already known
+            dc3_slot_name = info['slots'][i][2]
+            if dc3_slot_name is None:
+                continue
+            existing = proposals.get(rb3_slot_va)
+            if existing and existing[0] != dc3_slot_name:
+                continue
+            if existing is None:
+                proposals[rb3_slot_va] = (dc3_slot_name, i, top_vt, top_score,
+                                          info['class'])
+    print(f"[vtable]   rb3<->dc3 vtable pairings: {matched_pairs}",
+          file=sys.stderr)
+
+    # cross-verify + build NEW records
+    mapinfo = parse_map(args.dc3_map)
+    objects_db = load_objects(args.dc3_objects)
+    funcs = load_functions(args.rb3_symbols)
+    addr_to_size = {a: s for a, s, _ in funcs}
+    agree = disagree = 0
+    new_records = []
+    for rb3_va, (dc3_name, slot_idx, top_vt, evidence, cls) in proposals.items():
+        if rb3_va in rb3_to_dc3:
+            if rb3_to_dc3[rb3_va] == dc3_name:
+                agree += 1
+            else:
+                disagree += 1
+        if rb3_va in unified_addrs:
+            continue  # NEW-only
+        info = mapinfo.get(dc3_name)
+        if info is not None:
+            dc3_obj = info["obj"]
+            inline_only = "i" in info["tags"]
+            dc3_cpp = obj_to_cpp(dc3_obj, objects_db)
+        else:
+            dc3_obj = dc3_cpp = None
+            inline_only = False
+        subbed_name, _applied = substitute_dc3_class_names(dc3_name)
+        new_records.append({
+            "rb3_fn": f"fn_{rb3_va:08X}",
+            "rb3_addr": f"0x{rb3_va:08x}",
+            "size": addr_to_size.get(rb3_va, 0),
+            "source": "vtable",
+            "dc3_name": subbed_name,
+            "dc3_name_demangled": demangle_safe(dc3_name),
+            "dc3_obj": dc3_obj,
+            "dc3_inline_only": inline_only,
+            "bindiff_src": dc3_cpp,
+            "similarity": 0.80,
+            "confidence": 0.80,
+            "algorithm": "vtable transitivity (no RTTI)",
+            "vt_class": cls,
+            "vt_dc3_vtable": top_vt,
+            "vt_slot": slot_idx,
+            "vt_pairing_evidence": evidence,
+        })
+    new_records.sort(key=lambda r: int(r["rb3_addr"], 16))
+
+    with open(args.out, "w") as f:
+        json.dump(new_records, f, indent=1)
+
+    ov = agree + disagree
+    prec = (100 * agree / ov) if ov else 0.0
+    print(f"[vtable] cross-verify precision (vs unified_id overlap): "
+          f"{agree}/{ov} ({prec:.1f}%)", file=sys.stderr)
+    print(f"[vtable] {len(new_records)} NEW records -> {args.out}",
+          file=sys.stderr)
+    print(f"[vtable]   (subsumed by `rtti`; orthogonal fallback. NEW addrs, "
+          f"source='vtable', confidence 0.80 -> manual-review until promoted.)",
+          file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
 
 # splits.txt section header: `Foo.cpp:` at column 0
 SPLITS_HEADER_RE = re.compile(r"^([A-Za-z0-9_]+\.cpp):\s*$")
@@ -1361,6 +1986,49 @@ def main():
     pt.add_argument("--out", default="unified_id_callgraph.json",
                     help="Output NEW-only oracle file (default: %(default)s)")
     pt.set_defaults(func=triangulate)
+
+    prt = sub.add_parser("rtti",
+        help="RTTI+vtable transitivity: walk rb3's non-standard X360 RTTI to "
+             "recover all named vtables, join to dc3's ??_7CLASS@@6B@ vtables "
+             "by class name, pair slots. Writes a NEW-only HIGH-tier oracle.")
+    prt.add_argument("--unified", default="unified_id.json",
+                     help="Anchor oracle + NEW-only filter set (default: %(default)s)")
+    prt.add_argument("--rb3-exe", default=DEFAULT_RB3_EXE,
+                     help="rb3 unxex'd PE for RTTI scan (default: %(default)s)")
+    prt.add_argument("--rb3-symbols", default=SYMS,
+                     help="rb3 symbols.txt for function sizes")
+    prt.add_argument("--dc3-map", default=DEFAULT_DC3_MAP,
+                     help="dc3 leaked .map (vtable RVAs) (default: %(default)s)")
+    prt.add_argument("--dc3-exe", default=DEFAULT_DC3_EXE,
+                     help="dc3 release PE (vtable contents) (default: %(default)s)")
+    prt.add_argument("--dc3-objects", default=DEFAULT_DC3_OBJECTS)
+    prt.add_argument("--out", default="unified_id_rtti.json",
+                     help="HIGH-tier NEW-only oracle file (default: %(default)s)")
+    prt.add_argument("--out-low", default="unified_id_rtti_low.json",
+                     help="LOW-tier output (only written with --include-low)")
+    prt.add_argument("--include-low", action="store_true",
+                     help="Also emit the LOW tier (~41%% precision) to --out-low. "
+                          "OFF by default; LOW must NOT be auto-merged.")
+    prt.set_defaults(func=rtti)
+
+    pvt = sub.add_parser("vtable",
+        help="Vtable slot transitivity (no RTTI): pair jeff's heuristic "
+             "vftable_<addr> rb3 vtables to dc3 vtables via known slot names, "
+             "transfer the rest. Subsumed by `rtti`; orthogonal fallback.")
+    pvt.add_argument("--unified", default="unified_id.json",
+                     help="Anchor oracle + NEW-only filter set (default: %(default)s)")
+    pvt.add_argument("--rb3-asm", default=DEFAULT_ASM,
+                     help="rb3 dtk-emitted asm dir (vftable_ in *_rdata.s)")
+    pvt.add_argument("--rb3-symbols", default=SYMS,
+                     help="rb3 symbols.txt for function sizes")
+    pvt.add_argument("--dc3-map", default=DEFAULT_DC3_MAP,
+                     help="dc3 leaked .map (vtable RVAs) (default: %(default)s)")
+    pvt.add_argument("--dc3-exe", default=DEFAULT_DC3_EXE,
+                     help="dc3 release PE (vtable contents) (default: %(default)s)")
+    pvt.add_argument("--dc3-objects", default=DEFAULT_DC3_OBJECTS)
+    pvt.add_argument("--out", default="unified_id_vtable.json",
+                     help="NEW-only oracle file (default: %(default)s)")
+    pvt.set_defaults(func=vtable)
 
     pgt = sub.add_parser("gen_target_map",
         help="Auto-populate scripts/target_symbol_map.json from unified_id.json"
