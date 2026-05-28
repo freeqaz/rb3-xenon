@@ -279,6 +279,7 @@ public:
     }
 
     bool Equal(const DataNode &, DataArray *, bool) const;
+    bool operator==(const DataNode &n) const;
     bool operator!=(const DataNode &n) const;
     bool operator>(const DataNode &) const;
     bool NotNull() const;

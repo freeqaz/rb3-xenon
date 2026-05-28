@@ -714,6 +714,10 @@ bool DataNode::Equal(const DataNode &n, DataArray *a, bool warn) const {
     return false;
 }
 
+bool DataNode::operator==(const DataNode &other) const {
+    return Equal(other, nullptr, true);
+}
+
 bool DataNode::operator!=(const DataNode &other) const {
     return !Equal(other, nullptr, true);
 }
