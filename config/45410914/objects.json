@@ -191,7 +191,18 @@
             "system/ui/UI.cpp": "NonMatching",
             "system/ui/Utl.cpp": "NonMatching",
             "system/utl/MemTracker.cpp": "NonMatching",
-            "system/world/LightPreset.cpp": "NonMatching"
+            "system/world/LightPreset.cpp": "NonMatching",
+            "system/os/Timer.cpp": "NonMatching",
+            "system/utl/Str.cpp": "NonMatching",
+            "system/rnddx9/RenderState.cpp": "NonMatching",
+            "system/world/Dir.cpp": "NonMatching",
+            "system/ui/UIListState.cpp": "NonMatching",
+            "system/ui/UIListWidget.cpp": "NonMatching",
+            "system/synth_xbox/Synth.cpp": "NonMatching",
+            "system/char/CharDriver.cpp": "NonMatching",
+            "system/rndobj/PostProc.cpp": "NonMatching",
+            "system/obj/DataArray.cpp": "NonMatching",
+            "system/utl/JobMgr.cpp": "NonMatching"
         }
     },
     "hamobj": {
@@ -217,21 +228,10 @@
         "objects": {
             "band3/bandtrack/VocalTrack.cpp": "NonMatching",
             "band3/game/GameMode.cpp": "NonMatching",
-            "band3/meta_band/AccomplishmentCategory.cpp": "NonMatching",
-            "band3/meta_band/AccomplishmentConditional.cpp": "NonMatching",
-            "band3/meta_band/AccomplishmentGroup.cpp": "NonMatching",
-            "band3/meta_band/AccomplishmentTrainerListConditional.cpp": "NonMatching",
-            "band3/meta_band/BandStoreUIPanel.cpp": "NonMatching",
             "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
-            "band3/meta_band/CampaignKey.cpp": "NonMatching",
-            "band3/meta_band/CampaignLevel.cpp": "NonMatching",
-            "band3/meta_band/CymbalSelectionProvider.cpp": "NonMatching",
-            "band3/meta_band/LicenseMgr.cpp": "NonMatching",
             "band3/meta_band/MusicLibrary.cpp": "NonMatching",
             "band3/meta_band/OvershellSlot.cpp": "NonMatching",
             "band3/meta_band/PatchPanel.cpp": "NonMatching",
-            "band3/meta_band/StandIn.cpp": "NonMatching",
-            "band3/meta_band/UploadErrorMgr.cpp": "NonMatching",
             "band3/net_band/RockCentral.cpp": "NonMatching",
             "band3/tour/QuestFilterPanel.cpp": "NonMatching",
             "band3/tour/TourDescPanel.cpp": "NonMatching"

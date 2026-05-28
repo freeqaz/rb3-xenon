@@ -692,3 +692,45 @@ MemTracker.cpp:
 LightPreset.cpp:
 	.pdata      start:0x8220A840 end:0x8220AF58
 	.text       start:0x8249B800 end:0x824A3A28
+
+Timer.cpp:
+	.pdata      start:0x82210010 end:0x82210028
+	.text       start:0x824FE830 end:0x824FEB0C
+
+Str.cpp:
+	.text       start:0x82798750 end:0x827988D0
+
+RenderState.cpp:
+	.pdata      start:0x82231C80 end:0x82231C88
+	.text       start:0x82712160 end:0x82712204
+
+Dir.cpp:
+	.pdata      start:0x82233010 end:0x82233020
+	.text       start:0x82728D00 end:0x82728E50
+
+UIListState.cpp:
+	.pdata      start:0x8223DE10 end:0x8223DE20
+	.text       start:0x827E89F4 end:0x827E8B24
+
+UIListWidget.cpp:
+	.pdata      start:0x8223F188 end:0x8223F190
+	.text       start:0x827FBA80 end:0x827FBB08
+
+Synth.cpp:
+	.pdata      start:0x82251C18 end:0x82251C40
+	.text       start:0x82B2E770 end:0x82B2EE00
+
+CharDriver.cpp:
+	.pdata      start:0x821F9FE0 end:0x821F9FE8
+	.text       start:0x823648E8 end:0x823649E4
+
+PostProc.cpp:
+	.text       start:0x8241CF84 end:0x8241D000
+
+DataArray.cpp:
+	.pdata      start:0x82232ED8 end:0x82232EE8
+	.text       start:0x82727770 end:0x8272781C
+
+JobMgr.cpp:
+	.pdata      start:0x82239FB0 end:0x82239FC8
+	.text       start:0x827A67D8 end:0x827A6AA4
