@@ -82,15 +82,26 @@ about why it was stuck. The `| tail -N` you want for "did it succeed?" is fine
 *after* the tee, never instead of it.
 
 **Always invoke `./tools/ninja-locked`, never bare `ninja`.** Concurrent
-`ninja` instances in this build dir corrupt `.ninja_log`/`.ninja_deps`, trigger
-an infinite SPLIT→configure manifest-regeneration loop, and leave stray
-`_CL_<hash>{db,ex,gl,in,sy}` files in the repo root + `src/` (cl.exe PCH
-staging racing on the same cwd). The wrapper takes an `flock` on
-`.ninja-build.lock` so subsequent builds queue up. Symptoms of bypassing it:
-`manifest 'build.ninja' still dirty after N tries`, zero/partial `.obj` files,
-cascading header-include errors. (Note: rb3-Wii's permuter spawns its own
-`build/tools/wibo` from `../rb3/`; those are unrelated and won't grab our
-lock — `fuser .ninja-build.lock` is authoritative.)
+`ninja` instances in this build dir corrupt `.ninja_log`/`.ninja_deps`, leave
+stray `_CL_<hash>{db,ex,gl,in,sy}` files in the repo root + `src/` (cl.exe PCH
+staging racing on the same cwd), and produce zero/partial `.obj` files with
+cascading header-include errors. The wrapper takes an `flock` on
+`.ninja-build.lock` so subsequent builds queue up. (Note: rb3-Wii's permuter
+spawns its own `build/tools/wibo` from `../rb3/`; those are unrelated and won't
+grab our lock — `fuser .ninja-build.lock` is authoritative.)
+
+**Separate failure mode — `manifest 'build.ninja' still dirty after 100 tries`**
+(NOT caused by concurrency): cargo's depfile (`build/tools/release/dtk.d`)
+writes the target as an absolute path while ninja's build edge declares it
+relative. Ninja rejects the depfile with "expected depfile to mention X, got
+<abs path>" and treats the cargo output as if its inputs changed — so cargo
+fires every pass, dirties dtk → config.json → build.ninja, and the manifest
+never converges. **Fixed (2026-05-28):** `tools/project.py` `write_cargo_rule`
+now sets `restat=True`, so ninja re-stats dtk after cargo runs, sees the
+binary mtime didn't change (cargo's incremental build is a no-op), and
+absorbs the spurious dirtiness instead of cascading it. rb3-Wii and
+dc3-decomp don't hit this because they use a downloaded dtk binary — rb3-xenon
+is the only project that builds the (jeff) dtk fork from source via cargo.
 
 dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
 there. **objdiff is also a local fork** at `../objdiff` (freeqaz/objdiff,

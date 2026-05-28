@@ -509,6 +509,20 @@ def generate_build_ninja(
         nonlocal cargo_rule_written
         if not cargo_rule_written:
             n.pool("cargo", 1)
+            # Cargo emits a depfile whose TARGET line is an absolute path
+            # (e.g. "/home/.../build/tools/release/dtk: ...") while ninja's
+            # build edge declares the output with a relative path
+            # ("build/tools/release/dtk"). Ninja rejects the depfile with
+            # "expected depfile to mention X, got <abs path>" and treats it
+            # as if the input changed -- so cargo re-fires every ninja pass.
+            # That update bumps the depfile's mtime, dtk binary stays unchanged
+            # but ninja's generator-rule churn then re-fires SPLIT + configure
+            # in an infinite manifest-regeneration loop.
+            #
+            # restat=True breaks the loop: ninja re-stats $out after cargo
+            # runs, sees the binary mtime didn't change (cargo's incremental
+            # build is a no-op), and absorbs the dirtiness instead of
+            # cascading it to dependents (config.json -> build.ninja).
             n.rule(
                 name="cargo",
                 command="cargo build --release --manifest-path $in --bin $bin --target-dir $target",
@@ -517,6 +531,7 @@ def generate_build_ninja(
                 depfile=Path("$target") / "release" / "$bin.d",
                 # No deps="gcc" -- ninja's binary deps cache is unsafe under
                 # concurrent ninja invocations (matches rb3-Wii).
+                restat=True,
             )
             cargo_rule_written = True
 
