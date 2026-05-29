@@ -21,8 +21,11 @@ protected:
     virtual bool Replace(ObjRef *, Hmx::Object *);
     virtual void ReallocateInternal();
 
-    static RndTransformable *sDummyMesh;
-
     /** "Transes we will change" */
-    ObjPtrVec<RndTransformable> mMeshes; // 0x58
+    // Retail X360: ObjVector<ObjOwnerPtr<...>> (a plain std::vector subclass, no
+    // leading vtable) = 0x10 bytes at 0x54 — NOT the 0x1c-byte ObjPtrVec (which
+    // has a vtable + erase/list-mode fields and skewed every CharFaceServo member
+    // +8). mDummyMesh is a per-instance member here (retail), not a static.
+    ObjVector<ObjOwnerPtr<RndTransformable> > mMeshes; // 0x54
+    RndTransformable *mDummyMesh; // 0x64
 };

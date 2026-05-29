@@ -6,21 +6,27 @@
 #include "utl/Str.h"
 #include <string.h>
 
-RndTransformable *CharBonesMeshes::sDummyMesh;
+CharBonesMeshes::CharBonesMeshes()
+    : mMeshes(this), mDummyMesh(Hmx::Object::New<RndTransformable>()) {}
 
-CharBonesMeshes::CharBonesMeshes() : mMeshes(this, (EraseMode)0, kObjListOwnerControl) {}
-
-CharBonesMeshes::~CharBonesMeshes() { mMeshes.clear(); }
+CharBonesMeshes::~CharBonesMeshes() {
+    mMeshes.clear();
+    delete mDummyMesh;
+}
 
 bool CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
-    ObjPtrVec<RndTransformable>::iterator it = mMeshes.FindRef(ref);
-    if (it != mMeshes.end()) {
-        RndTransformable *trans = obj ? dynamic_cast<RndTransformable *>(obj) : 0;
-        mMeshes.Set(it, trans);
-        if (!*it) {
-            mMeshes.Set(it, sDummyMesh);
+    Hmx::Object *from = ref->GetObj();
+    if (from != mDummyMesh) {
+        for (ObjVector<ObjOwnerPtr<RndTransformable> >::iterator it = mMeshes.begin();
+             it != mMeshes.end();
+             ++it) {
+            if (*it == from) {
+                *it = obj ? dynamic_cast<RndTransformable *>(obj) : 0;
+                if (!*it)
+                    *it = mDummyMesh;
+                return true;
+            }
         }
-        return true;
     }
     return Hmx::Object::Replace(ref, obj);
 }
@@ -28,17 +34,19 @@ bool CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
 void CharBonesMeshes::ReallocateInternal() {
     CharBonesAlloc::ReallocateInternal();
     String str;
-    mMeshes.clear();
-    mMeshes.reserve(mBones.size());
-    for (int i = 0; i < mBones.size(); i++) {
-        RndTransformable *trans = CharUtlFindBoneTrans(mBones[i].name.Str(), Dir());
-        if (!trans) {
+    {
+        ObjVector<ObjOwnerPtr<RndTransformable> > temp(this);
+        mMeshes.swap(temp);
+    }
+    mMeshes.resize(mBones.size());
+    for (int i = 0; i < mMeshes.size(); i++) {
+        mMeshes[i] = CharUtlFindBoneTrans(mBones[i].name.Str(), Dir());
+        if (!mMeshes[i]) {
             if (strncmp("bone_facing", mBones[i].name.Str(), 0xB)) {
                 str += MakeString("%s, ", mBones[i].name);
             }
-            trans = sDummyMesh;
+            mMeshes[i] = mDummyMesh;
         }
-        mMeshes.push_back(trans);
     }
     if (mMeshes.empty())
         return;
@@ -47,7 +55,7 @@ void CharBonesMeshes::ReallocateInternal() {
 }
 
 void CharBonesMeshes::AcquirePose() {
-    ObjPtrVec<RndTransformable>::iterator curMesh = mMeshes.begin();
+    ObjVector<ObjOwnerPtr<RndTransformable> >::iterator curMesh = mMeshes.begin();
 
     // Copy positions
     char *scaleOff = mOffsets[TYPE_SCALE] + mStart;
@@ -91,7 +99,7 @@ void CharBonesMeshes::AcquirePose() {
 }
 
 void CharBonesMeshes::PoseMeshes() {
-    ObjPtrVec<RndTransformable>::iterator curMesh = mMeshes.begin();
+    ObjVector<ObjOwnerPtr<RndTransformable> >::iterator curMesh = mMeshes.begin();
 
 #ifdef HX_NATIVE
     { static int sPoseMeshLog = 0;
@@ -192,6 +200,6 @@ BEGIN_PROPSYNCS(CharBonesMeshes)
     SYNC_SUPERCLASS(CharBonesObject)
 END_PROPSYNCS
 
-void CharBonesMeshes::Init() { sDummyMesh = Hmx::Object::New<RndTransformable>(); }
+void CharBonesMeshes::Init() {}
 
 void CharBonesMeshes::Terminate() {}
