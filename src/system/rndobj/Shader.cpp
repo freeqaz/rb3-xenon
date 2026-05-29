@@ -279,7 +279,9 @@ void RndShaderSimple::Select(RndMat *mat, ShaderType s, bool b) {
     if (!RedundantState(mat, s, isSkinned, TheShaderMgr.UseAO(), b)) {
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         SetColorWriteMask(ShaderOptions(optsVal), mat);
         CheckForceCull(s);
         Cache(s, ShaderOptions(optsVal), mat);
@@ -1232,7 +1234,9 @@ void RndShaderParticles::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     if (!RedundantState(mat, s, false, false, b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(false, true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
@@ -1244,7 +1248,9 @@ void RndShaderMultimesh::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     if (!RedundantState(mat, s, false, TheShaderMgr.UseAO(), b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
@@ -1259,7 +1265,9 @@ void RndShaderStandard::Select(RndMat *mat, ShaderType shader_type, bool b) {
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     bool skinned = TheShaderMgr.BoneCount() != 0;
     if (!RedundantState(mat, shader_type, skinned, TheShaderMgr.UseAO(), b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         CheckShadow();
         ShaderOptions opts(CalcShaderOpts((NgMat *)mat, shader_type, b));
@@ -1281,7 +1289,9 @@ void RndShaderPostProc::Select(RndMat *mat, ShaderType s, bool b) {
     if (!RedundantState(mat, s, false, false, b)) {
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), false);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         TheRenderState.SetColorWriteMask(0xF);
         auto _tmp2 = ShaderOptions(optsVal);
         Cache(s, _tmp2, mat);
@@ -1294,7 +1304,9 @@ void RndShaderDrawRect::Select(RndMat *mat, ShaderType s, bool b) {
     if (!RedundantState(mat, s, false, false, b)) {
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         SetColorWriteMask(ShaderOptions(optsVal), mat);
         TheShaderMgr.SetVConstant(kVS_AmbientColor, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
         TheShaderMgr.SetPConstant(kPS_AmbientColor, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -1309,7 +1321,9 @@ void RndShaderUnwrapUV::Select(RndMat *mat, ShaderType s, bool b) {
     if (!RedundantState(mat, s, false, false, b)) {
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         TheRenderState.SetColorWriteMask(7);
         const Hmx::Color &color = mat->GetColor();
         auto _tmp0 = Vector4(color.red, color.green, color.blue, color.alpha);
@@ -1325,7 +1339,9 @@ void RndShaderVelocity::Select(RndMat *mat, ShaderType s, bool b) {
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     bool skinned = TheShaderMgr.BoneCount() != 0;
     if (!RedundantState(mat, s, skinned, false, b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(false, false);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
@@ -1338,7 +1354,9 @@ void RndShaderVelocityCamera::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     if (!RedundantState(mat, s, false, false, b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(false, false);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
@@ -1352,7 +1370,9 @@ void RndShaderDepthVolume::Select(RndMat *mat, ShaderType s, bool b) {
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     bool skinned = TheShaderMgr.BoneCount() != 0;
     if (!RedundantState(mat, s, skinned, false, b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
@@ -1383,7 +1403,9 @@ void RndShaderFur::Select(RndMat *mat, ShaderType s, bool b) {
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     bool skinned = TheShaderMgr.BoneCount() != 0;
     if (!RedundantState(mat, s, skinned, false, b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(false, true);
         CheckShadow();
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
@@ -1398,7 +1420,9 @@ void RndShaderSyncTrack::Select(RndMat *mat, ShaderType shader_type, bool b) {
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     bool skinned = TheShaderMgr.BoneCount() != 0;
     if (!RedundantState(mat, shader_type, skinned, TheShaderMgr.UseAO(), b)) {
+#ifdef HX_NATIVE
         TheNgStats->mMats++;
+#endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         CheckShadow();
         u64 optsVal = CalcShaderOpts((NgMat *)mat, shader_type, b);

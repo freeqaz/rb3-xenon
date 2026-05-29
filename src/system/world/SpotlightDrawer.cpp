@@ -531,11 +531,13 @@ void DrawAccessories<LensExtract>(
 }
 
 void SpotlightDrawer::DrawWorld() {
+#ifdef HX_NATIVE
     int numLights = sLights.size();
     if (numLights < TheNgStats->mSpotlights) {
         numLights = TheNgStats->mSpotlights;
     }
     TheNgStats->mSpotlights = numLights;
+#endif
     if ((!sLights.empty() || !sCans.empty()) && Showing()) {
         SortLights();
         DrawMeshVec(sCans);

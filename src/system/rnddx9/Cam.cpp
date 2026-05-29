@@ -17,7 +17,9 @@ Vector3 Hmx::Matrix4::Col3(int col) const {
 DxCam::DxCam() {}
 
 void DxCam::Select() {
+#ifdef HX_NATIVE
     TheNgStats->mCams++;
+#endif
     auto& _ref0 = mTargetTex;
     RndCam::Select();
     if (_ref0 != nullptr) {

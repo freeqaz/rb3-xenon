@@ -129,7 +129,9 @@ void NgRnd::ResetStats() {
         TheNgStats = &gNgStats[2];
     }
     memset(TheNgStats, 0, sizeof(NgStats));
+#ifdef HX_NATIVE
     TheNgStats->mCams++;
+#endif
 }
 
 float EstimateDraw(int idx) {

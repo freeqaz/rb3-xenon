@@ -187,7 +187,9 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
                     TheShaderMgr.SetVConstant((VShaderConstant)4, unk36bec[cacheIdx]);
                     TheShaderMgr.SetPConstant((PShaderConstant)8, (const Vector4 &)mDepthRangeValues);
                     mesh->GetGeomOwner()->DrawFacesInRange(0, -1);
+#ifdef HX_NATIVE
                     TheNgStats->mMotionBlurs++;
+#endif
                 } else {
                     auto _tmp3 = PathName(mesh->Mat());
                     MILO_NOTIFY_ONCE(
