@@ -266,7 +266,7 @@ protected:
     /** "Range in frames to randomly offset by when playing" */
     float mRange; // 0x4c
     /** "Make the clip all relative to this other clip's first frame" */
-    CharClip *mRelative; // 0x50
+    ObjPtr<CharClip> mRelative; // 0x50
     /** "Events that get triggered during clip playback,
         exports {clip_event <event> <clip>} to the character owner,
         you get enter and exit events for free" */
