@@ -355,11 +355,21 @@ void HamIKEffector::Poll() {
                             "DC3_IK_DIAG TypePropsDump: type=%s typeProps=%p "
                             "constraintCount=%d\n",
                             Type().Str() ? Type().Str() : "null",
+#ifdef HX_NATIVE
                             (void*)mTypeProps,
+#else
+                            (void*)&mTypeProps,
+#endif
                             (int)mConstraints.size());
+#ifdef HX_NATIVE
                         if (mTypeProps) {
                             DataNode *n = mTypeProps->KeyValue(
                                 Symbol("constraints"), false);
+#else
+                        if (mTypeProps.HasProps()) {
+                            DataNode *n = mTypeProps.KeyValue(
+                                Symbol("constraints"), false);
+#endif
                             fprintf(stderr,
                                 "DC3_IK_DIAG TypePropsConstraints: node=%p type=%d\n",
                                 (void*)n, n ? (int)n->Type() : -1);

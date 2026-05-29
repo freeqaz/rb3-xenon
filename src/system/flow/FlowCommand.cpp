@@ -19,12 +19,21 @@ END_PROPSYNCS
 
 BEGIN_SAVES(FlowCommand)
     SAVE_REVS(3, 0)
+#ifdef HX_NATIVE
     int size = mTypeProps ? mTypeProps->Map()->Size() : 0;
+#else
+    int size = mTypeProps.HasProps() ? mTypeProps.Map()->Size() : 0;
+#endif
     DataArrayPtr ptr(new DataArray(size));
     bs << size;
     for (int i = 0; i < size; i++) {
+#ifdef HX_NATIVE
         bs << mTypeProps->Map()->Evaluate(i);
         ptr->Node(i) = mTypeProps->Map()->Evaluate(i);
+#else
+        bs << mTypeProps.Map()->Evaluate(i);
+        ptr->Node(i) = mTypeProps.Map()->Evaluate(i);
+#endif
     }
     ClearAllTypeProps();
     SAVE_SUPERCLASS(FlowNode)
@@ -121,11 +130,19 @@ bool FlowCommand::Activate() {
     mStopRequested = false;
     PushDrivenProperties();
     if (mObject && !mHandler.Null()) {
+#ifdef HX_NATIVE
         int size = mTypeProps ? mTypeProps->Size() : 0;
+#else
+        int size = mTypeProps.HasProps() ? mTypeProps.Size() : 0;
+#endif
         Message msg(size);
         msg.SetType(mHandler);
         for (int i = 0, j = 1; i < size; i++, j += 2) {
+#ifdef HX_NATIVE
             msg[i] = mTypeProps->Map()->Evaluate(j);
+#else
+            msg[i] = mTypeProps.Map()->Evaluate(j);
+#endif
         }
         mObject->Handle(msg, false);
     }

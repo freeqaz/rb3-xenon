@@ -61,7 +61,9 @@ void TypeProps::ClearKeyValue(Symbol key) {
                 if (val.Type() == kDataObject) {
                     Hmx::Object *obj = val.UncheckedObj();
                     if (obj) {
+#ifdef HX_NATIVE
                         mObjects.remove(obj);
+#endif
                     }
                 }
                 mMap->Remove(i);
@@ -80,8 +82,11 @@ void TypeProps::ClearKeyValue(Symbol key) {
 void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
     if (b && value.Type() == kDataObject) {
         Hmx::Object *o = value.UncheckedObj();
-        if (o)
+        if (o) {
+#ifdef HX_NATIVE
             mObjects.push_back(o);
+#endif
+        }
     }
     if (!mMap) {
         mMap = new DataArray(2);
@@ -101,8 +106,11 @@ void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
                 DataNode &valNode = mMap->Node(cnt + 1);
                 if (valNode.Type() == kDataObject) {
                     Hmx::Object *o = valNode.UncheckedObj();
-                    if (o)
+                    if (o) {
+#ifdef HX_NATIVE
                         mObjects.remove(o);
+#endif
+                    }
                 }
                 valNode = value;
                 return;
@@ -117,10 +125,14 @@ void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
 void TypeProps::ReplaceObject(DataNode &n, Hmx::Object *from, Hmx::Object *to) {
     Hmx::Object *fromObj = n.UncheckedObj();
     if (fromObj == from) {
+#ifdef HX_NATIVE
         mObjects.remove(fromObj);
+#endif
         n = to;
         if (to) {
+#ifdef HX_NATIVE
             mObjects.push_back(to);
+#endif
         }
     }
 }
@@ -147,11 +159,14 @@ bool TypeProps::Replace(ObjRef *from, Hmx::Object *to) {
 }
 
 void TypeProps::ReleaseObjects() {
+#ifdef HX_NATIVE
     if (mMap)
         mObjects.clear();
+#endif
 }
 
 void TypeProps::AddRefObjects() {
+#ifdef HX_NATIVE
     if (mMap) {
         for (int i = mMap->Size() - 1; i > 0; i -= 2) {
             DataNode &node = mMap->Node(i);
@@ -173,6 +188,7 @@ void TypeProps::AddRefObjects() {
             }
         }
     }
+#endif
 }
 
 #include "rndobj/Lit.h"
@@ -237,14 +253,18 @@ void TypeProps::SetArrayValue(Symbol key, int i, const DataNode &value) {
     if (n.Type() == kDataObject) {
         Hmx::Object *obj = n.UncheckedObj();
         if (obj) {
+#ifdef HX_NATIVE
             mObjects.remove(obj);
+#endif
         }
     }
     n = value;
     if (n.Type() == kDataObject) {
         Hmx::Object *obj = n.UncheckedObj();
         if (obj) {
+#ifdef HX_NATIVE
             mObjects.push_back(obj);
+#endif
         }
     }
 }
@@ -255,7 +275,9 @@ void TypeProps::RemoveArrayValue(Symbol prop, int i) {
     if (n.Type() == kDataObject) {
         Hmx::Object *obj = n.UncheckedObj();
         if (obj) {
+#ifdef HX_NATIVE
             mObjects.remove(obj);
+#endif
         }
     }
     a->Remove(i);
@@ -267,7 +289,9 @@ void TypeProps::InsertArrayValue(Symbol key, int i, const DataNode &value) {
     if (value.Type() == kDataObject) {
         Hmx::Object *obj = value.UncheckedObj();
         if (obj) {
+#ifdef HX_NATIVE
             mObjects.push_back(obj);
+#endif
         }
     }
 }

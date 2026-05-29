@@ -196,11 +196,20 @@ BEGIN_SAVES(Flow)
             ptr2->Node(1) = prop->Evaluate();
             ptr->Resize(ptr->Size() + 1);
             ptr->Node(ptr->Size() - 1) = ptr2;
+#ifdef HX_NATIVE
             mTypeProps->ClearKeyValue(name);
+#else
+            mTypeProps.ClearKeyValue(name);
+#endif
         }
     }
+#ifdef HX_NATIVE
     if (mTypeProps && mTypeProps->Map()) {
         DataArray *props = mTypeProps->Map();
+#else
+    if (mTypeProps.HasProps() && mTypeProps.Map()) {
+        DataArray *props = mTypeProps.Map();
+#endif
         for (int i = 0; i < props->Size(); i += 2) {
             Symbol sym = props->Sym(i);
             if (props->Type(i + 1) == kDataObject) {
@@ -209,13 +218,21 @@ BEGIN_SAVES(Flow)
                 ptr3->Node(1) = props->Evaluate(i + 1);
                 ptr->Resize(ptr->Size() + 1);
                 ptr->Node(ptr->Size() - 1) = ptr3;
+#ifdef HX_NATIVE
                 mTypeProps->ClearKeyValue(sym);
+#else
+                mTypeProps.ClearKeyValue(sym);
+#endif
             }
         }
     }
     SAVE_SUPERCLASS(ObjectDir)
     for (int i = 0; i < ptr->Size(); i++) {
+#ifdef HX_NATIVE
         mTypeProps->SetKeyValue(ptr->Array(i)->Sym(0), ptr->Array(i)->Node(1), true);
+#else
+        mTypeProps.SetKeyValue(ptr->Array(i)->Sym(0), ptr->Array(i)->Node(1), true);
+#endif
     }
     if (IsProxy()) {
         bs << mDynamicProperties.size();

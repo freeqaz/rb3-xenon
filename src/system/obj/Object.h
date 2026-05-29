@@ -175,9 +175,10 @@ public:
     bool empty() const { return next == this; }
 
     /** Make `this` its own standalone single list node. */
-    void DetachSelf() { next = prev = this; }
+    // Assignment order: next first, prev second (matches retail stw 0x20 then 0x24).
+    void DetachSelf() { next = this; prev = this; }
     /** Alias for DetachSelf */
-    void Clear() { next = prev = this; }
+    void Clear() { next = this; prev = this; }
 
     // Splice this ref from its current ring and insert at end of targetRing.
     // Returns predecessor in the original ring for safe iteration.
@@ -1109,11 +1110,19 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
 #pragma region TypeProps
 
 // TypeProps implementation
+// Retail X360: TypeProps is a 0xc-byte inline ObjRefOwner member of Hmx::Object
+// (vtable@0, mMap@4, mOwner@8). No mObjects ring — object-ref tracking uses
+// the simpler rb3-Wii approach (pass Hmx::Object* ref explicitly to each op).
+// HX_NATIVE keeps the full dc3-style TypeProps (with mObjects) for
+// correct ref-counting in the native engine.
 class TypeProps : public ObjRefOwner {
+    friend class Hmx::Object;
 private:
     DataArray *mMap; // 0x4
     Hmx::Object *mOwner; // 0x8
-    ObjPtrList<Hmx::Object> mObjects; // 0xc
+#ifdef HX_NATIVE
+    ObjPtrList<Hmx::Object> mObjects; // 0xc (native only: ref-counting for embedded objects)
+#endif
 
     void ReplaceObject(DataNode &n, Hmx::Object *from, Hmx::Object *to);
     void ReleaseObjects();
@@ -1121,11 +1130,19 @@ private:
     void ClearAll();
 
 public:
+#ifdef HX_NATIVE
     TypeProps(Hmx::Object *o)
         : mOwner(o), mMap(nullptr), mObjects(this, kObjListOwnerControl) {}
     virtual ~TypeProps() { ClearAll(); }
+#else
+    // Retail X360: inline in Hmx::Object, constructed via mTypeProps(this) in Object ctor.
+    TypeProps(Hmx::Object *o) : mMap(nullptr), mOwner(o) {}
+    virtual ~TypeProps() { ClearAll(); }
+#endif
     virtual Hmx::Object *RefOwner() const { return mOwner; }
     virtual bool Replace(ObjRef *from, Hmx::Object *to);
+
+    void SetOwner(Hmx::Object *o) { mOwner = o; }
 
     DataNode *KeyValue(Symbol key, bool fail = true) const;
     int Size() const;
@@ -1194,14 +1211,26 @@ namespace Hmx {
         static std::map<Symbol, ObjectFunc *> sFactories;
 
     protected:
+        // Retail X360 Object layout (0x28 bytes total, from ctor lbl_82737FE8):
+        //   0x00: ObjRefOwner vtable
+        //   0x04: TypeProps (ObjRefOwner-derived, 0xc bytes: vtable@4, mMap@8, mOwner@c)
+        //   0x10: mTypeDef*
+        //   0x14: mNote (const char*)
+        //   0x18: mName (const char*)
+        //   0x1c: mDir*
+        //   0x20: mRefs.next (ring head, 8 bytes)
+        //   0x24: mRefs.prev
+        // HX_NATIVE uses a larger TypeProps (with mObjects + vtable = 0x20 bytes)
+        // and replaces mNote with String, so layout diverges from retail there.
+#ifdef HX_NATIVE
         /** A collection of object instances which reference this Object. */
-        /** "ref owners" — ring head (next, prev). In the X360 match build
-         *  ObjRef is non-polymorphic (8 bytes), so this whole class lays out
-         *  at 0x28, matching RB3 retail. In HX_NATIVE it is 0xc (polymorphic
-         *  + ASAN sentinel), keeping dc3's 0x2c native layout. */
-        ObjRef mRefs; // 0x4
+        ObjRef mRefs; // 0x4 (native)
         /** An array of properties this Object can have. */
-        TypeProps *mTypeProps; // 0x10 (native) / 0xc (X360)
+        TypeProps *mTypeProps; // 0xc+0x10 (native, pointer)
+#else
+        /** An array of properties this Object can have (inline, 0xc bytes). */
+        TypeProps mTypeProps; // 0x4 (retail X360: vtable@4, mMap@8, mOwner@c)
+#endif
     private: // these were marked private in RB2
         /** A collection of handler methods this Object can have.
          *  More specifically, this is an array of arrays, with each array
@@ -1213,22 +1242,27 @@ namespace Hmx {
         /** A note about this Object, useful for debugging. */
         /** "Just a note describing the object, stripped out of shipping assets,
             so don't make code rely on this" */
-        String mNote; // 0x18 (native) / 0x14 (X360)
+#ifdef HX_NATIVE
+        String mNote; // 0x18 (native, String 0xc bytes)
+#else
+        const char *mNote; // 0x14 (retail X360, const char*)
+#endif
         /** This Object's name. */
         /** "name of the object" */
-        const char *mName; // 0x20 (native) / 0x20 (X360)
+        const char *mName; // 0x20 (native) / 0x18 (X360)
         /** The ObjectDir in which this Object resides. */
-        ObjectDir *mDir; // 0x24 (native) / 0x24 (X360)
+        ObjectDir *mDir; // 0x24 (native) / 0x1c (X360)
         /** "Sinks for messages sent to me" */
-        // Retail X360: mSinks does not exist in the Object dtor (fn_82738050) and the
-        // retail Object is exactly 0x28 bytes with 0xC-byte String. mSinks is absent
-        // from the retail binary layout; it is a development/tool feature only in HX_NATIVE.
-        // Removing mSinks for X360 compensates for String growing from 0x8 to 0xC,
-        // keeping Object at 0x28.
+        // Retail X360: mSinks does not exist in the Object dtor (fn_82738050).
+        // mSinks is absent from the retail binary layout; development/tool feature only.
 #ifdef HX_NATIVE
-        MsgSinks *mSinks; // 0x28 (native only)
+        MsgSinks *mSinks; // native only
 #endif
     protected:
+#ifndef HX_NATIVE
+        /** Retail X360: ring head at 0x20 (after mDir), non-polymorphic (8 bytes). */
+        ObjRef mRefs; // 0x20 (X360)
+#endif
         /** An Object in the process of being deleted. */
         static Object *sDeleting;
     public:
@@ -1285,6 +1319,8 @@ namespace Hmx {
         /** Set this Object's mTypeDef array based this Object's types entry in
          * SystemConfig. */
         OBJ_SET_TYPE(Object);
+        /** Returns whether this ref is an ObjDirPtr (vtable slot 5 in retail). */
+        virtual bool IsDirPtr() { return false; }
         /** Executes a message/command on the Object.
          * @param [in] _msg The received message.
          * @param [in] _warn If true, and the message goes unhandled, print to console.
@@ -1303,7 +1339,7 @@ namespace Hmx {
          * prop array size.
          */
         virtual bool SyncProperty(DataNode &_val, DataArray *_prop, int _i, PropOp _op);
-        virtual void InitObject();
+        void InitObject();
         /** Serializes the Object's state
          * @param [in] bs The BinStream to save into.
          */
@@ -1330,7 +1366,7 @@ namespace Hmx {
          * @param [in] data The array to set.
          */
         virtual void SetTypeDef(DataArray *data);
-        virtual DataArray *ObjectDef(Symbol);
+        DataArray *ObjectDef(Symbol);
         /** Sets this Object's name and updates the ObjectDir this Object resides in.
          * @param [in] name The name to give this Object.
          * @param [in] dir The ObjectDir to place this Object in. If name is null, this
@@ -1359,7 +1395,11 @@ namespace Hmx {
         DataArray *TypeDef() const { return mTypeDef; }
         ObjectDir *Dir() const { return mDir; }
         const char *Name() const { return mName; }
+#ifdef HX_NATIVE
         const String &Note() const { return mNote; }
+#else
+        const char *Note() const { return mNote; }
+#endif
         const char *AllocHeapName() { return MemHeapName(MemFindAddrHeap(this)); }
         void AddRef(ObjRef *ref) {
 #ifdef HX_NATIVE

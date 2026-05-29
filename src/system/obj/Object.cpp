@@ -86,21 +86,21 @@ DataArrayPtr gPropPaths[8] = {
 MsgSinks gSinks(nullptr);
 
 #ifndef HX_NATIVE
-// RB3 retail X360: Hmx::Object is 0x28 bytes (reconstructed from ctor
-// lbl_82737FE8 / dtor fn_82738050; last member store at 0x24). This is
-// load-bearing — every Object subclass's members are offset by sizeof(Object),
-// so a wrong size silently +4-shifts ~all member-accessing functions. Achieved
-// by making ObjRef non-polymorphic in the match build (see Object.h). dc3 is
-// 0x2c; this is a genuine RB3-vs-DC3 divergence.
+// RB3 retail X360: Hmx::Object is 0x28 bytes (verified from ctor lbl_82737FE8 /
+// dtor fn_82738050): vtable@0, TypeProps(inline,0xc)@4, mTypeDef@10,
+// mNote(const char*)@14, mName@18, mDir@1c, mRefs(8B ring)@20.
+// dc3-decomp uses a larger layout (0x2c, pointer TypeProps, String mNote).
 static_assert(sizeof(Hmx::Object) == 0x28, "Hmx::Object must be 0x28 (RB3 retail)");
 #endif
 
 #pragma region Virtual Methods
 
 Hmx::Object::Object()
-    : mTypeProps(nullptr), mTypeDef(nullptr), mName(gNullStr), mDir(nullptr)
 #ifdef HX_NATIVE
-    , mSinks(nullptr)
+    : mTypeProps(nullptr), mTypeDef(nullptr), mName(gNullStr), mDir(nullptr), mSinks(nullptr)
+#else
+    // Retail X360: TypeProps is inline; mTypeProps(this) stores this as mOwner immediately.
+    : mTypeProps(this), mTypeDef(nullptr), mNote(gNullStr), mName(gNullStr), mDir(nullptr)
 #endif
 {
     mRefs.DetachSelf();
@@ -204,15 +204,26 @@ void Hmx::Object::SaveType(BinStream &bs) {
 }
 
 void Hmx::Object::SaveRest(BinStream &bs) {
+#ifdef HX_NATIVE
     if (!mTypeProps)
         bs << (DataArray *)nullptr;
     else
         mTypeProps->Save(bs);
-
     if (mNote.empty() || bs.Cached())
         bs << 0;
     else
         bs << mNote;
+#else
+    // Retail X360: TypeProps is inline, mNote is const char*
+    if (!mTypeProps.HasProps())
+        bs << (DataArray *)nullptr;
+    else
+        mTypeProps.Save(bs);
+    if (!mNote || mNote == gNullStr || bs.Cached())
+        bs << 0;
+    else
+        bs << mNote;
+#endif
 }
 
 void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
@@ -220,6 +231,7 @@ void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
         mNote = o->Note();
         if (ClassName() == o->ClassName()) {
             SetTypeDef(o->TypeDef());
+#ifdef HX_NATIVE
             if (o->HasTypeProps() && !mTypeProps) {
                 mTypeProps = new TypeProps(this);
             } else if (!o->HasTypeProps()) {
@@ -230,6 +242,12 @@ void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
             if (mTypeProps) {
                 *mTypeProps = *o->mTypeProps;
             }
+#else
+            // Retail X360: TypeProps is inline, copy directly
+            if (o->HasTypeProps() || mTypeProps.HasProps()) {
+                mTypeProps = o->mTypeProps;
+            }
+#endif
         } else if (o->TypeDef() || TypeDef()) {
             MILO_NOTIFY(
                 "Can't copy type \"%s\" or type props of %s to %s, different classes %s and %s",
@@ -261,6 +279,7 @@ void Hmx::Object::LoadType(BinStream &bs) {
 
 void Hmx::Object::LoadRest(BinStream &bs) {
     BinStreamRev d(bs, bs.PopRev(this));
+#ifdef HX_NATIVE
     if (!mTypeProps) {
         mTypeProps = new TypeProps(this);
     }
@@ -271,6 +290,22 @@ void Hmx::Object::LoadRest(BinStream &bs) {
     if (d.rev > 0) {
         d >> mNote;
     }
+#else
+    // Retail X360: TypeProps is inline
+    mTypeProps.Load(d);
+    if (d.rev > 0) {
+        // Read string into a String, then allocate persistent copy.
+        // Retail stores mNote as const char* into a memory pool.
+        String noteStr;
+        d >> noteStr;
+        if (!noteStr.empty()) {
+            unsigned int len = noteStr.length() + 1;
+            char *buf = (char *)MemAlloc(len, __FILE__, __LINE__, "Object::mNote", 0);
+            memcpy(buf, noteStr.c_str(), len);
+            mNote = buf;
+        }
+    }
+#endif
 }
 
 void Hmx::Object::Export(DataArray *a, bool b) {
@@ -564,10 +599,14 @@ const DataNode *Hmx::Object::Property(DataArray *prop, bool fail) const {
         return &n;
     Symbol propKey = prop->Sym(0);
     const DataNode *propValue = nullptr;
+#ifdef HX_NATIVE
     if (mTypeProps) {
         // retrieve property val from typeprops array
         propValue = mTypeProps->KeyValue(propKey, false);
     }
+#else
+    propValue = mTypeProps.KeyValue(propKey, false);
+#endif
     if (!propValue && mTypeDef) {
         DataArray *found = mTypeDef->FindArray(propKey, fail);
         if (found)
@@ -632,9 +671,13 @@ int Hmx::Object::PropertySize(DataArray *prop) {
     MILO_ASSERT(prop->Size() == 1, 0x208);
     Symbol name = prop->Sym(0);
     const DataNode *a = nullptr;
+#ifdef HX_NATIVE
     if (mTypeProps) {
         a = mTypeProps->KeyValue(name, false);
     }
+#else
+    a = mTypeProps.KeyValue(name, false);
+#endif
     if (!a) {
         if (mTypeDef) {
             a = &mTypeDef->FindArray(name)->Evaluate(1);
@@ -653,9 +696,13 @@ void Hmx::Object::RemoveProperty(DataArray *prop) {
     static DataNode n;
     if (!SyncProperty(n, prop, 0, kPropRemove)) {
         MILO_ASSERT(prop->Size() == 2, 0x235);
+#ifdef HX_NATIVE
         if (mTypeProps) {
             mTypeProps->RemoveArrayValue(prop->Sym(0), prop->Int(1));
         }
+#else
+        mTypeProps.RemoveArrayValue(prop->Sym(0), prop->Int(1));
+#endif
     }
 }
 
@@ -692,6 +739,7 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
 #endif
     if (!SyncProperty((DataNode &)val, prop, 0, kPropSet)) {
         Symbol key = prop->Sym(0);
+#ifdef HX_NATIVE
         if (!mTypeProps) {
             mTypeProps = new TypeProps(this);
         }
@@ -701,6 +749,14 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
             MILO_ASSERT(prop->Size() == 2, 0x1C4);
             mTypeProps->SetArrayValue(key, prop->Int(1), val);
         }
+#else
+        if (prop->Size() == 1) {
+            mTypeProps.SetKeyValue(key, val, true);
+        } else {
+            MILO_ASSERT(prop->Size() == 2, 0x1C4);
+            mTypeProps.SetArrayValue(key, prop->Int(1), val);
+        }
+#endif
         if (prop_n && val.Equal(n, nullptr, false)) {
             handler = Symbol();
         }
@@ -726,10 +782,14 @@ void Hmx::Object::SetProperty(Symbol prop, const DataNode &val) {
 void Hmx::Object::InsertProperty(DataArray *prop, const DataNode &val) {
     if (!SyncProperty((DataNode &)val, prop, 0, kPropInsert)) {
         MILO_ASSERT(prop->Size() == 2, 0x240);
+#ifdef HX_NATIVE
         if (!mTypeProps) {
             mTypeProps = new TypeProps(this);
         }
         mTypeProps->InsertArrayValue(prop->Sym(0), prop->Int(1), val);
+#else
+        mTypeProps.InsertArrayValue(prop->Sym(0), prop->Int(1), val);
+#endif
     }
 }
 
@@ -772,12 +832,22 @@ void Hmx::Object::RemoveFromDir() {
     }
 }
 
-bool Hmx::Object::HasTypeProps() const { return mTypeProps && mTypeProps->HasProps(); }
+bool Hmx::Object::HasTypeProps() const {
+#ifdef HX_NATIVE
+    return mTypeProps && mTypeProps->HasProps();
+#else
+    return mTypeProps.HasProps();
+#endif
+}
 
 void Hmx::Object::ClearAllTypeProps() {
+#ifdef HX_NATIVE
     if (mTypeProps) {
         RELEASE(mTypeProps);
     }
+#else
+    mTypeProps.ClearAll();
+#endif
 }
 
 DataNode Hmx::Object::HandleType(DataArray *msg) {
