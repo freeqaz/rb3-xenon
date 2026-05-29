@@ -67,6 +67,9 @@ core.*
 /pin_candidates_review.json
 /pin_candidates.splits.append
 /pin_candidates.objects.append
+# permuter_targets.py generated work queue (regenerable from report.json)
+/permuter_targets.json
+/permuter_targets.txt
 # bindiff_match.json is harvested from Ghidra + BinDiff (~10 min run); regenerable, large (~3.6 MB)
 /tools/bindiff_match.json
 /tools/.cache/
