@@ -209,12 +209,13 @@ BEGIN_HANDLERS(RndParticleSys)
 END_HANDLERS
 
 bool AngleVectorSync(Vector2 &vec, DataNode &_val, DataArray *_prop, int _i, PropOp _op) {
-    if (_i == _prop->Size())
+    auto _tmp2 = _prop->Size();
+    if (_i == _tmp2)
         return true;
     else {
         Symbol sym = _prop->Sym(_i);
-        static Symbol x("x");
         static Symbol y("y");
+        static Symbol x("x");
         float *coord = nullptr;
         if (sym == x) {
             coord = &vec.x;

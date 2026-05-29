@@ -286,12 +286,13 @@ bool RndFlare::RectOffscreen(const Hmx::Rect &r) const {
 }
 
 void RndFlare::CalcScale() {
-    if (WorldXfm().m != mMatrix) {
+    if (mMatrix != WorldXfm().m) {
         Vector3 v28;
         mMatrix = WorldXfm().m;
         float len = Length(mMatrix.z);
         Cross(mMatrix.x, mMatrix.y, v28);
-        mScaleFactors.Set(Length(mMatrix.x), Dot(v28, mMatrix.z) > 0.0f ? len : -len);
+        auto _tmp2 = Dot(v28, mMatrix.z);
+        mScaleFactors.Set(Length(mMatrix.x), 0.0 < _tmp2 ? len : -len);
     }
 }
 

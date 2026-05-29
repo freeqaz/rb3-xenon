@@ -446,7 +446,7 @@ void mdct_backward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out){
     oX[3]       = MULT_NORM (iX[4] * T[1] - iX[6]  * T[0]);
     iX         -= 8;
     T          += 4;
-  }while(iX>=in);
+  }while(in<=iX);
 
   iX            = in+n2-8;
   oX            = out+n2+n4;
@@ -460,7 +460,7 @@ void mdct_backward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out){
     oX[3]       =  MULT_NORM (iX[0] * T[0] - iX[2] * T[1]);
     iX         -= 8;
     oX         += 4;
-  }while(iX>=in);
+  }while(in<=iX);
 
   mdct_butterflies(init,out+n2,n2);
   mdct_bitreverse(init,out);

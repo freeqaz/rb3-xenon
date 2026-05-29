@@ -427,13 +427,13 @@ int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
 bool FreeBlock::AttemptMerge(FreeBlock *next, int debugLevel) {
     if ((int *)this + mSizeWords == (int *)next) {
         unsigned int ts = mTimeStamp;
-        if (mTimeStamp < next->mTimeStamp) {
+        if (next->mTimeStamp > mTimeStamp) {
             ts = next->mTimeStamp;
         }
         int nextSize = next->mSizeWords;
         FreeBlock *nextNext = next->mNextBlock;
-        mTimeStamp = ts;
         mSizeWords += nextSize;
+        mTimeStamp = ts;
         mNextBlock = nextNext;
         if (1 <= debugLevel) {
             int *ptr = (int *)next;

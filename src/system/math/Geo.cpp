@@ -198,14 +198,16 @@ bool CheckBSPTree(const BSPNode *node, const Box &box) {
     Multiply(box, gBSPCheckScale, box68);
     Hmx::Polygon polygon70;
     polygon70.points.resize(4);
-    Transform tf50;
+    auto _tmp9 = Vector2(box68.mMax.x, box68.mMin.y);
     polygon70.points[0] = Vector2(box68.mMin.x, box68.mMin.y);
-    polygon70.points[1] = Vector2(box68.mMax.x, box68.mMin.y);
+    Transform tf50;
     polygon70.points[2] = Vector2(box68.mMax.x, box68.mMax.y);
+    polygon70.points[1] = _tmp9;
     polygon70.points[3] = Vector2(box68.mMin.x, box68.mMax.y);
     tf50.m.Identity();
     tf50.v.Set(0, 0, box68.mMin.z);
-    if (Intersect(tf50, polygon70, node))
+    auto _tmp0 = Intersect(tf50, polygon70, node);
+    if (_tmp0)
         return false;
     // first intersect check
 
