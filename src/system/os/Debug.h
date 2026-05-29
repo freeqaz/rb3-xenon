@@ -92,6 +92,7 @@ typedef void ModalCallbackFunc(Debug::ModalType &, FixedString &, bool);
 extern Debug TheDebug;
 extern const char *kAssertStr;
 
+#ifdef HX_NATIVE
 #define MILO_ASSERT(cond, line)                                                          \
     do {                                                                                 \
         if (!(cond)) {                                                                   \
@@ -105,6 +106,13 @@ extern const char *kAssertStr;
             TheDebugFailer << MakeString(__VA_ARGS__);                                   \
         }                                                                                \
     } while (0)
+#else
+// Retail RB3-360 compiled MILO_ASSERT out (CLAUDE.md: only 41 .cpp assert strings
+// survive). No-op the assert family for the match build (sizeof keeps cond
+// type-checked, zero runtime code). HX_NATIVE keeps real asserts.
+#define MILO_ASSERT(cond, line) ((void)sizeof(!(cond)))
+#define MILO_ASSERT_FMT(cond, ...) ((void)sizeof(!(cond)))
+#endif
 
 #define MILO_FAIL(...) TheDebugFailer << MakeString(__VA_ARGS__)
 #define MILO_WARN(...) TheDebugWarner << MakeString(__VA_ARGS__)
