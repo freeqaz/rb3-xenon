@@ -130,6 +130,28 @@ Do **one at a time**, each in a dedicated `scripts/setup_worktree.sh` worktree:
 land to main. Because reach is large, a correct fix should produce a *big* jump;
 a wrong one regresses — the no-regression gate makes attempts safe.
 
+## Post-String landscape (2026-05-29, main @1697) — the queue + next levers
+
+The String +94 landing exposed a large near-miss queue: **979 fns at 80-99.99%
+normalized, 721 of them at 99%+** (one/few diffs from matched). They cluster by
+the remaining base-class bugs, in EV order for the next waves:
+
+1. **Hmx::Object vtable + inline-TypeProps layout** (in flight, `sweep-obj`) —
+   cascades to every Handle/SetName dispatch + every Object-subclass member access.
+2. **RndDrawable / RndTransformable / RndPollable MI chain** — the BIG rendering
+   cascade. The bulk of the queue derives from it: LightPreset (63), Gen (33),
+   Part (33), MeshAnim (29), TexBlender (28), DepthBuffer3D (28), Group (19),
+   MatAnim (16), + UIComponent (UIScreen). Same MI-layout class as bug #3
+   (RndGroup 0x34-vs-0x50). Do AFTER Object (these layouts sit on Object).
+3. **ObjPtr family 0xc** (#1) — every ObjPtr member; leaf-workaround where raw.
+4. **MILO_ASSERT** (#6, verified +4) + **POOL_OVERLOAD** (#7) — re-measure
+   post-String (may now be larger), land in a coordinated rebuild.
+Non-rendering clusters likely on Object-vtable/ObjPtr: MidiParser (42),
+BandDirector (37), Rnd (35), DataFile (28), MidiInstrument (23), CrowdAudio (13).
+
+**Proven cadence:** one base-class fix → big cascade (String +94). Each lever is a
+focused worktree agent with the net-positive-or-revert gate; orchestrator lands.
+
 ## Why this matters
 This converts a vague 200-function engine backlog into **4 concrete, evidenced,
 high-leverage targets**, and proves the parallel-leaf-fix approach is futile for
