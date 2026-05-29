@@ -35,6 +35,16 @@ SDK_UNIT_PREFIXES = [
 ]
 
 
+def _is_auto_unit(unit_name: str) -> bool:
+    """True for objdiff auto-generated units (e.g. default/auto_03_827786AC_text).
+
+    Auto units only carry a target obj with raw fn_<addr> symbol names, not the
+    mangled C++ name — so a per-symbol objdiff against them fails. The real named
+    unit (with both base_path and target_path) is always preferred.
+    """
+    return unit_name.rsplit("/", 1)[-1].startswith("auto_")
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="Sync objdiff report.json into decomp.db",
@@ -80,6 +90,8 @@ def load_report(report_path: Path) -> tuple[dict[str, dict], set[str]]:
         if unit_all_100:
             units_at_100.add(unit_name)
 
+        unit_is_auto = _is_auto_unit(unit_name)
+
         for fn in fns:
             pct = fn.get("fuzzy_match_percent")
             if pct is None:
@@ -87,6 +99,12 @@ def load_report(report_path: Path) -> tuple[dict[str, dict], set[str]]:
             symbol = fn["name"]
             size = int(fn.get("size", 0))
             demangled = fn.get("metadata", {}).get("demangled_name")
+            # A symbol can appear under both its real named unit and an
+            # auto-generated unit. Prefer the named one: never let an auto unit
+            # clobber a named unit we've already seen for this symbol.
+            prev = functions.get(symbol)
+            if prev is not None and unit_is_auto and not _is_auto_unit(prev["unit"]):
+                continue
             functions[symbol] = {
                 "unit": unit_name,
                 "percent": round(pct, 2),
@@ -240,12 +258,12 @@ def sync(args: argparse.Namespace) -> None:
     stats = {
         "pct_updated": 0, "pct_unchanged": 0,
         "improvements": 0, "regressions": 0,
-        "size_updated": 0, "demangled_updated": 0,
+        "size_updated": 0, "demangled_updated": 0, "unit_updated": 0,
         "promoted": 0, "not_in_db": 0, "not_in_report": 0,
     }
 
     pct_updates: list[tuple] = []       # (new_percent, new_percent, function_id)
-    field_updates: list[tuple] = []     # (size, demangled, function_id)
+    field_updates: list[tuple] = []     # (size, demangled, unit, function_id)
     promotions: list[int] = []          # function_ids
 
     for symbol, report_info in report_funcs.items():
@@ -276,22 +294,35 @@ def sync(args: argparse.Namespace) -> None:
         else:
             stats["pct_unchanged"] += 1
 
-        # Check size / demangled changes
+        # Check size / demangled / unit changes
         new_size = report_info["size"]
         new_demangled = report_info["demangled"]
+        new_unit = report_info["unit"]
         size_changed = new_size and db_row["size"] != new_size
         demangled_changed = new_demangled and db_row["demangled"] != new_demangled
+        # Keep the unit attribution fresh, but never repoint a named unit back to
+        # an auto-generated one (auto units lack the mangled symbol → objdiff
+        # "Symbol not found"). load_report already prefers named units, so the
+        # only auto value here is when report.json genuinely knows no named unit.
+        unit_changed = (
+            new_unit
+            and db_row["unit"] != new_unit
+            and not (_is_auto_unit(new_unit) and not _is_auto_unit(db_row["unit"] or ""))
+        )
 
-        if size_changed or demangled_changed:
+        if size_changed or demangled_changed or unit_changed:
             field_updates.append((
                 new_size if size_changed else db_row["size"],
                 new_demangled if demangled_changed else db_row["demangled"],
+                new_unit if unit_changed else db_row["unit"],
                 db_row["id"],
             ))
             if size_changed:
                 stats["size_updated"] += 1
             if demangled_changed:
                 stats["demangled_updated"] += 1
+            if unit_changed:
+                stats["unit_updated"] += 1
 
         # Check for promotion
         if args.promote and new_pct == 100.0 and db_row["verdict"] != "COMPLETE":
@@ -318,7 +349,7 @@ def sync(args: argparse.Namespace) -> None:
         if field_updates:
             conn.executemany(
                 """UPDATE functions
-                   SET size = ?, demangled = ?,
+                   SET size = ?, demangled = ?, unit = ?,
                        updated_at = CURRENT_TIMESTAMP
                    WHERE id = ?""",
                 field_updates,
@@ -342,6 +373,7 @@ def sync(args: argparse.Namespace) -> None:
     print(f"  Regressions:      {stats['regressions']}")
     print(f"  Size updated:     {stats['size_updated']}")
     print(f"  Demangled updated:{stats['demangled_updated']}")
+    print(f"  Unit updated:     {stats['unit_updated']}")
     if args.promote:
         print(f"  Promoted:         {stats['promoted']} (-> COMPLETE)")
     print(f"  Not in DB:        {stats['not_in_db']}")
