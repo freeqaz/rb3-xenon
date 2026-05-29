@@ -68,15 +68,32 @@ index 16 vs 17). Cascades to all virtual dispatch through Object. **Fix:** ident
 & remove/reorder the extra virtual (needs the retail vtable order via Ghidra).
 - Evidence: `ObjectDir::New<ObjectDir>` `lwz r11,0x40,r11` (target) vs `0x44`.
 
+### 4b. Hmx::Object vtable — PRECISE fix (ContentMgr agent, corroborated)
+Two off-by-one slot errors that net to the observed Handle@slot6 / SetName@slot16:
+- **We're MISSING `IsDirPtr()` as a virtual** in Object's vtable (retail has it ~slot
+  3). In our X360 build `IsDirPtr` is `OBJREF_VIRTUAL` (= non-virtual) on `ObjRef`.
+- **We have an EXTRA `InitObject()`** virtual on `Hmx::Object` (a DC3 addition retail
+  lacks) before SetName.
+Net retail: +IsDirPtr (Handle 5→6) − InitObject (SetName 17→16). **CAVEAT:** making
+`IsDirPtr` virtual naively re-adds a vtable to `ObjRef` (breaks the tuned 0x8 ObjRef
+/ 0x28 Object model + interacts with bug #1). The correct fix likely declares
+`IsDirPtr` virtual on **Hmx::Object** (and ObjRefOwner) without re-polymorphizing the
+plain `ObjRef` ring node — verify the exact class each vtable slot belongs to before
+editing. Removing `InitObject` is the clean half.
+
 ### 5. String / FilePath is 0xc in retail, ours is 0x8
 `src/system/utl/Str.h` (String) — **huge blast radius (every class with a String/
 FilePath member).** Retail `String` is 3 words `{vptr@0, capacity@4, mStr@8}` = 0xc;
 ours is `{vptr@0, mStr@4}` = 0x8. Verified from the String ctor `fn_82798E18`
 (stores vptr@0, 0@4, gNullStr@8) and resize `fn_82798E68` (capacity@4, mStr@8).
 Propagates +4 to `mKeys` in every LightHue near-miss and to `FilePath` everywhere.
-(Note: Hmx::Object's `mName` String already nets to the right 0x28 total because a
-compensating field-order shift cancels the +4 — so fixing String must re-check
-Object.) **Found by the LightHue sweep agent.**
+**ROOT CAUSE (ContentMgr agent):** our DC3-derived `String` uses `FixedString +
+TextStream` multiple inheritance → `{FixedString::mStr@0, TextStream vtable@4}` = 8.
+Retail/rb3-Wii is `class String : public TextStream { uint mCap; char* mStr; }` →
+`{vtable@0, mCap@4, mStr@8}` = 0xc. Fix = adopt the rb3-Wii single-inheritance
+layout. (Note: Hmx::Object's `mName` String currently nets to the right 0x28 total
+via a compensating field-order shift — so fixing String must re-check Object.)
+**Found by LightHue + ContentMgr sweep agents.**
 
 ### 6. MILO_ASSERT not no-op'd — VERIFIED +4 (worktree A/B)
 `src/system/os/Debug.h`. Retail compiled `MILO_ASSERT` out (CLAUDE.md: only 41
