@@ -2,9 +2,8 @@
 
 **Audience:** the background permuter actor (and any agent driving fuzzy-gap
 codegen iteration). **Status:** the queue generator is committed; the permuter
-itself is being proper-ported in the background (see `scripts/permuter*` +
-`.claude/skills/permute/SKILL.md` — re-check those before relying on an exact
-invocation; they may be mid-rework).
+is the installed **`decomp_synth`** package (consumed via rb3-xenon's `venv`; see
+`.claude/skills/permute/SKILL.md` for the current invocation).
 
 ## What the permuter is for (the fuzzy gap)
 

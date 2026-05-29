@@ -14,26 +14,13 @@ to identify relevant patterns first, then hill-climbs only those — much faster
 All advanced features (Ghidra guidance, chain search, adaptive boosting, constrained synthesis)
 are **on by default**. You only need `--no-*` flags to disable them.
 
-## rb3-xenon setup (IMPORTANT — read before running)
+## rb3-xenon setup
 
-`scripts/permuter` is a **symlink** into `../dc3-decomp/scripts/permuter` (the same
-package rb3-Wii reuses). That package only autodetects DC3 (title `373307D9`) and
-RB3-Wii (title `SZBE69_B8`, mwcceppc/`.o`). rb3-xenon is neither: MSVC PPC `cl.exe`
-(`.obj`/`/Fo`, like DC3) but title **`45410914`** with a **flat** target-obj layout
-(`build/45410914/obj/Rot.obj`, not `obj/system/math/Rot.obj`). The autodetector even
-mis-classifies us as the Wii project because our repo path contains "rb3".
-
-So **always run through the shim** `scripts/permuter_rb3xenon.py` (lives outside the
-symlink; it monkeypatches the project config to title `45410914`, MSVC codepath, and
-the flat target-obj mapping read from `objdiff.json`). The invocation is identical to
-the upstream one with `-m scripts.permuter_rb3xenon -m` prepended:
-
-```bash
-venv/bin/python -m scripts.permuter_rb3xenon -m scripts.permuter.scan_and_permute <args...>
-```
-
-Do **not** invoke `scripts.permuter.scan_and_permute` directly — it will target the
-wrong build dir and every variant score errors out with "Failed to read target object".
+The permuter is the installed **`decomp_synth`** package (`pip install -e` into the
+shared venv; rb3-xenon's `venv` symlinks to it). It is fully config-driven: it reads
+`decomp-synth.json` at the repo root, which describes rb3-xenon (title `45410914`,
+MSVC PPC `cl.exe`, `.obj`/`/Fo`, flat target-obj layout `build/45410914/obj/Rot.obj`).
+Invoke `decomp_synth.scan_and_permute` as-is — no shim.
 
 Notes:
 - Variants compile to `/tmp` (never the main build dir); the apply step only writes
@@ -51,7 +38,7 @@ Notes:
 ### Single function (most common)
 
 ```bash
-venv/bin/python -m scripts.permuter_rb3xenon -m scripts.permuter.scan_and_permute --symbol '$0' --max-rounds 10 --max-variants 100 --plateau-limit 3 --chain-depth 5
+venv/bin/python -m decomp_synth.scan_and_permute --symbol '$0' --max-rounds 10 --max-variants 100 --plateau-limit 3 --chain-depth 5
 ```
 
 Accepts mangled symbols, qualified names, or partial names:
@@ -62,13 +49,13 @@ Accepts mangled symbols, qualified names, or partial names:
 ### Unit scan
 
 ```bash
-venv/bin/python -m scripts.permuter_rb3xenon -m scripts.permuter.scan_and_permute --unit 'system/obj/*'
+venv/bin/python -m decomp_synth.scan_and_permute --unit 'system/obj/*'
 ```
 
 ### Bulk scan (all functions)
 
 ```bash
-venv/bin/python -m scripts.permuter_rb3xenon -m scripts.permuter.scan_and_permute --jobs 16 --limit 200
+venv/bin/python -m decomp_synth.scan_and_permute --jobs 16 --limit 200
 ```
 
 ## Key flags
