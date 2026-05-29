@@ -2,7 +2,8 @@
     "progress_categories": {
         "game": "Game Code",
         "engine": "Milo Engine Code",
-        "sdk": "XDK Code"
+        "sdk": "XDK Code",
+        "network": "Quazal Network Code"
     },
     "asflags": [],
     "ldflags": [],
