@@ -67,6 +67,18 @@ void *PoolAlloc(int classSize, int reqSize, const char *file, int line, const ch
 void PoolFree(int, void *mem, const char *file, int line, const char *name);
 void PoolReport(TextStream &);
 
+// Retail/match 2-arg pool entry points. Bug doc §7: the retail RB3 XEX's
+// POOL_OVERLOAD operator new/delete pass NO debug info to the pool allocator —
+// the call site only sets r3/r4 (classSize/reqSize), leaving r5/r6/r7 untouched
+// (verified on operator>>(BinStream&, BSPNode*&): the target omits the
+// __FILE__/__LINE__/#class loads our 5-arg form emits). The retail build's
+// MILO_ASSERT/MemTrack debug strings are compiled out, so the pool allocator
+// ignores file/line/name and these 2-arg overloads ICF-fold onto it. (Hand-
+// written debug call sites in synth360, e.g. StreamReceiver360/Voice, keep the
+// 5-arg form and survive as real path strings, so we leave the 5-arg overload.)
+void *PoolAlloc(int classSize, int reqSize);
+void PoolFree(int idx, void *mem);
+
 #ifdef HX_NATIVE
 #define POOL_OVERLOAD(class_name, line_num)                                              \
     static void *operator new(size_t s) {                                                \
@@ -78,13 +90,9 @@ void PoolReport(TextStream &);
     }
 #else
 #define POOL_OVERLOAD(class_name, line_num)                                              \
-    static void *operator new(unsigned int s) {                                          \
-        return PoolAlloc(s, s, __FILE__, line_num, #class_name);                         \
-    }                                                                                    \
+    static void *operator new(unsigned int s) { return PoolAlloc(s, s); }                \
     static void *operator new(unsigned int s, void *place) { return place; }             \
-    static void operator delete(void *v) {                                               \
-        PoolFree(sizeof(class_name), v, __FILE__, line_num, #class_name);                \
-    }
+    static void operator delete(void *v) { PoolFree(sizeof(class_name), v); }
 #endif
 
 // rb3-Wii style aliases. dc3's engine uses POOL_OVERLOAD(class, line) but the
@@ -92,10 +100,8 @@ void PoolReport(TextStream &);
 // DELETE_POOL_OVERLOAD spelling. Provide both so beatmatch/* headers compile
 // without modification.
 #define NEW_POOL_OVERLOAD(obj)                                                           \
-    static void *operator new(unsigned int s) {                                          \
-        return PoolAlloc(s, s, __FILE__, 0, #obj);                                       \
-    }                                                                                    \
+    static void *operator new(unsigned int s) { return PoolAlloc(s, s); }                \
     static void *operator new(unsigned int, void *place) { return place; }
 
 #define DELETE_POOL_OVERLOAD(obj)                                                        \
-    static void operator delete(void *v) { PoolFree(sizeof(obj), v, __FILE__, 0, #obj); }
+    static void operator delete(void *v) { PoolFree(sizeof(obj), v); }
