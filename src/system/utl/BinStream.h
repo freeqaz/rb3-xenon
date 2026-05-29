@@ -43,7 +43,6 @@ public:
     virtual bool Fail() = 0;
     /** Get this BinStream's name. */
     virtual const char *Name() const;
-    virtual int ReadAsync(void *, int);
     /** Get whether or not this BinStream is cached. Interestingly only overwritten in
      * ChunkStream. */
     virtual bool Cached() const { return false; }

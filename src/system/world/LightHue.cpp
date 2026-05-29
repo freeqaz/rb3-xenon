@@ -40,21 +40,20 @@ BEGIN_LOADS(LightHue)
 END_LOADS
 
 DataNode LightHue::OnSaveDefault(DataArray *da) {
-    Hmx::Color color;
     RndBitmap bmap;
     bmap.Create(0x100, 8, 0, 0x18, 0, 0, 0, 0);
     for (int i = 0; i < 0x100; i++) {
+        Hmx::Color color;
         MakeColor((float)i / 255.0f, 1.0f, 0.5f, color);
         unsigned char red = color.red * 255.0f;
-        unsigned char blue = color.blue * 255.0f;
         unsigned char green = color.green * 255.0f;
+        unsigned char blue = color.blue * 255.0f;
         int j = 0;
         for (; j < 8; j++) {
             bmap.SetPixelColor(i, j, red, green, blue, 0xff);
         }
     }
-    auto _tmp0 = da->Str(2);
-    bmap.SaveBmp(_tmp0);
+    bmap.SaveBmp(da->Str(2));
     return 0;
 }
 
