@@ -104,8 +104,20 @@ disturb the tuned 0x28 Object or the 0x8 plain ObjRef.
 - **Corroboration — MidiInstrument SampleZone** (independent agent): the standalone
   `SampleZone.cpp` unit's real ctor `fn_8270CD10` + Load `fn_8270CDC0` show
   `mSample` (ObjPtr) is **0xc** with the rb3-Wii field offsets — confirming retail
-  ObjPtr is 0xc, and that our `SampleZone.h` currently uses the HX_NATIVE 0x14 size
-  (a separate but related bug; see §10).
+  ObjPtr is 0xc.
+- **Corroboration — SampleZone ctor/Load are OUT-OF-LINE in retail** (2nd
+  independent agent, KEY codegen finding): retail's `SampleZone` ctor `fn_8270CD10`
+  (0%) and Load `fn_8270CF08` (0%) diverge because retail **calls an out-of-line
+  ObjPtr ctor `fn_8270B9A8`** (0x64 bytes — does the ring-init *using the `owner`
+  arg*) and out-of-line `ObjPtr::Load fn_8270BAD0`, whereas our build **inlines**
+  them to `stw 0, 0x8(this)` / `lwz 0x8(this)`. Root cause: `ObjPtr_p.h`'s trivial
+  non-HX_NATIVE `ObjPtr(owner, ptr) : ObjRefConcrete<T>(ptr)` **discards `owner`**,
+  so it's a trivial body that `/Ob2` inlines away. **Implication for the migration:
+  the standalone ObjPtr ctor/Load must become NON-trivial (store vtable + use
+  `owner` → mOwner, ring-insert via virtual dispatch) so MSVC emits them
+  out-of-line and matches retail.** This is the same root as (b) above, seen from
+  the construction-code side. (NB: SampleZone's own `// 0x14` header comments are
+  stale-but-harmless — the compiled offsets already match; do not chase them.)
 
 ### (c) List/vec node `{mObject@0, next@4, prev@8, mOwner@c}` = 0x10, mObject-first
 - **Evidence — `AddPolls@SharedGroup`** (Instance unit): target reads
