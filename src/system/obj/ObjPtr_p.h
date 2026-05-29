@@ -160,15 +160,25 @@ bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
 // ObjPtr
 // ------------------------------------------------
 
+#ifdef HX_NATIVE
 template <class T>
-ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr = nullptr)
-    : ObjRefConcrete<T>(ptr), mOwner(owner) {}
+ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(ptr), mOwner(owner) {}
 
 template <class T>
-ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete(p), mOwner(p.mOwner) {}
+ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p), mOwner(p.mOwner) {}
 
 template <class T>
 ObjPtr<T>::~ObjPtr() {}
+#else
+template <class T>
+ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(ptr) {}
+
+template <class T>
+ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {}
+
+template <class T>
+ObjPtr<T>::~ObjPtr() {}
+#endif
 
 template <class T>
 BinStream &operator>>(BinStream &bs, ObjPtr<T> &ptr) {
@@ -182,6 +192,7 @@ BinStream &operator>>(BinStream &bs, ObjPtr<T> &ptr) {
 // ObjOwnerPtr
 // ------------------------------------------------
 
+#ifdef HX_NATIVE
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
     : ObjRefConcrete<T>(ptr), mOwner(owner) {
@@ -190,7 +201,7 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
-    : ObjRefConcrete(o.mObject), mOwner(o.mOwner) {
+    : ObjRefConcrete<T>(o.mObject), mOwner(o.mOwner) {
     MILO_ASSERT(mOwner, 0xCE);
 }
 
@@ -201,6 +212,16 @@ template <class T>
 Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
     return mOwner->RefOwner();
 }
+#else
+template <class T>
+ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>(ptr) {}
+
+template <class T>
+ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o) : ObjRefConcrete<T>(o.mObject) {}
+
+template <class T>
+ObjOwnerPtr<T>::~ObjOwnerPtr() {}
+#endif
 
 // template <class T1>
 // BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr);

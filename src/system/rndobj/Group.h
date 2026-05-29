@@ -6,6 +6,8 @@
 #include "utl/MemMgr.h"
 #include <vector>
 
+class RndEnviron;
+
 /**
  * @brief: A group of objects that receive messages.
  * Original _objects description:
@@ -79,15 +81,23 @@ protected:
     void Update();
 
     /** The objects of this group. */
-    ObjPtrList<Hmx::Object> mObjects; // 0x110
+    ObjPtrList<Hmx::Object> mObjects; // 0xe8 (after ObjPtr layout fix)
     /** "if set, only draws this member of the group" */
-    ObjPtr<RndDrawable> mDrawOnly; // 0x124
+    ObjPtr<RndDrawable> mDrawOnly; // 0xfc
+    /** Environment for this group */
+    ObjPtr<RndEnviron> mEnv; // 0x108
+    /** LOD drawable for this group */
+    ObjPtr<RndDrawable> mLod; // 0x114
+    /** Screen size threshold for LOD switching */
+    float mLodScreenSize; // 0x120
+    /** Whether to draw LOD */
+    bool mDrawLod; // 0x124
     /** The animatable objects of this group. */
-    std::vector<RndAnimatable *> mAnims; // 0x138
+    std::vector<RndAnimatable *> mAnims; // 0x128
     /** The drawable objects of this group. */
-    std::vector<RndDrawable *> mDraws; // 0x144
+    std::vector<RndDrawable *> mDraws; // 0x134
     /** "Sort by distance to current camera per frame.
      * This has a CPU cost if there are many objects."
      */
-    bool mSortInWorld; // 0x150
+    bool mSortInWorld; // 0x140
 };

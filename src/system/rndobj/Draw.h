@@ -132,10 +132,6 @@ protected:
         In groups, draw_order will be ignored unless you explicitly
         click the sort button."*/
     float mOrder; // 0x20
-    /** "List of up to 6 transformable objects which specify user-defined clip planes
-        (for a given trans, the plane will run through the trans position,
-        and use the rotated z-axis for the plane normal)." */
-    ObjPtrVec<RndTransformable> mClipPlanes; // 0x24
 };
 
 class DrawPtrVec : public ObjPtrVec<RndDrawable> {

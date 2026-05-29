@@ -18,7 +18,7 @@ bool RndDrawable::sForceSubpartSelection;
 #endif
 
 RndDrawable::RndDrawable()
-    : mShowing(true), mOrder(0), mClipPlanes(this, (EraseMode)0, kObjListNoNull) {
+    : mShowing(true), mOrder(0) {
     mSphere.Zero();
 }
 
@@ -37,13 +37,11 @@ BEGIN_PROPSYNCS(RndDrawable)
     SYNC_PROP(draw_order, mOrder)
     SYNC_PROP(showing, mShowing)
     SYNC_PROP(sphere, mSphere)
-    SYNC_PROP(clip_planes, mClipPlanes)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndDrawable)
     SAVE_REVS(4, 0)
     bs << (unsigned char)mShowing << mSphere << mOrder;
-    bs << mClipPlanes;
 END_SAVES
 
 BEGIN_COPYS(RndDrawable)
@@ -53,7 +51,7 @@ BEGIN_COPYS(RndDrawable)
             COPY_MEMBER(mShowing)
             COPY_MEMBER(mOrder)
             COPY_MEMBER(mSphere)
-            COPY_MEMBER(mClipPlanes)
+
         } else {
             if (mSphere.GetRadius() && c->mSphere.GetRadius()) {
                 COPY_MEMBER(mSphere);
@@ -100,8 +98,6 @@ BEGIN_LOADS(RndDrawable)
         } else
             bs >> mOrder;
     }
-    if (d.rev > 3)
-        bs >> mClipPlanes;
 END_LOADS
 
 void RndDrawable::Draw() {
@@ -114,9 +110,7 @@ void RndDrawable::Draw() {
             return;
         }
 #endif
-        TheRnd.PushClipPlanes(mClipPlanes);
         DrawShowing();
-        TheRnd.PopClipPlanes(mClipPlanes);
     }
 }
 

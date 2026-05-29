@@ -10,7 +10,9 @@
 Hmx::Object *RndMatAnim::sOwner;
 
 RndMatAnim::TexPtr::TexPtr(RndTex *tex) : ObjPtr<RndTex>(DeferOwner(), tex) {
+#ifdef HX_NATIVE
     mOwner = sOwner;
+#endif
 }
 
 #pragma region Hmx::Object
