@@ -89,10 +89,38 @@ void *MemAlloc(int size, const char *file, int line, const char *name, int align
 // Retail/match 2-arg heap allocator (size, align) — no debug strings. See the
 // retail ABI note above; mirrors rb3-Wii _MemAlloc(int, int).
 void *MemAlloc(int size, int align);
+// Retail/match LEAF alloc: rewrite the inherited debug call sites
+// `MemAlloc(size, __FILE__, line, name[, align])` down to the retail 2-arg
+// `(MemAlloc)(size, align)`. The retail XEX strips MemTrack, so the call passes
+// only size + align (verified in Ghidra: Function_827977D0(size, align)). The
+// common debug form omits align (defaulted 0), so the macro forces align 0 and
+// swallows the trailing file/line/name. The handful of sites that pass a real
+// non-zero align (BlockMgr 4, Mic/BinkReader 0x80, operator new
+// gNewOperatorAlign) bypass the macro with the parenthesized `(MemAlloc)(size,
+// align)` form under their own HX_NATIVE guard. The 5-arg debug stub and the
+// definition likewise parenthesize the name. HX_NATIVE keeps the 5-arg debug
+// form above. NOTE: this macro must follow ALL MemAlloc declarations.
+#define MemAlloc(size, file, line, name, ...) (MemAlloc)((size), 0)
 #endif
+#ifdef HX_NATIVE
 void MemFree(
     void *mem, const char *file = "unknown", int line = 0, const char *name = "unknown"
 );
+#else
+// Retail/match LEAF free: the retail RB3-360 XEX strips MemTrack debug
+// instrumentation, so every MemFree call site passes ONLY the pointer — no
+// __FILE__/line/name (verified in Ghidra: callers like the RndBitmap dtor pass
+// a single reg; the debug literals are absent from the XEX). Mirrors rb3-Wii's
+// 1-arg _MemFree(void*) and follows the MemOrPool/STL +52 + POOL_OVERLOAD
+// precedent. The function is declared/defined 1-arg; a function-like macro
+// rewrites the dozens of inherited 4-arg debug call sites
+// `MemFree(p, __FILE__, line, name)` down to `(MemFree)(p)` so no debug regs
+// are materialized. The definition (and any address-taken use) parenthesizes
+// the name `(MemFree)` to suppress the macro. HX_NATIVE keeps the 4-arg debug
+// form above (host tracking strings stay live).
+void MemFree(void *mem);
+#define MemFree(ptr, ...) (MemFree)(ptr)
+#endif
 // Retail/match allocation ABI. The retail RB3-360 XEX strips all MemTrack /
 // MILO_ASSERT debug instrumentation, so its alloc call sites pass NO __FILE__/
 // __LINE__/name args (verified in Ghidra: callers like fn_82798360 invoke the

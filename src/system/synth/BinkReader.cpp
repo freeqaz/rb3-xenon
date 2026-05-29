@@ -20,8 +20,9 @@ void BinkClose(BINK *);
 void BinkGoto(void *bink, unsigned int frame, int mode);
 }
 
-extern void *MemAlloc(int, const char *, int, const char *, int);
-extern void MemFree(void *, const char *, int, const char *);
+// MemAlloc/MemFree come in transitively from utl/MemMgr.h (via os/File.h). On
+// X360 that header also defines the retail call-site arity macros, so the call
+// sites below pass only the retail args.
 
 int BinkReader::sHeap = 0;
 
@@ -52,7 +53,11 @@ BinkReader::~BinkReader() {
                 BinkCloseTrack(mBinkTracks[i]);
             }
             if (mPCMBuffers[i]) {
+#ifdef HX_NATIVE
                 MemFree(mPCMBuffers[i], "unknown", 0, "unknown");
+#else
+                MemFree(mPCMBuffers[i]);
+#endif
             }
         }
     }
@@ -149,8 +154,14 @@ void BinkReader::Poll(float) {
             MILO_ASSERT(hBinkTrack->Frequency == 44100, 0x74);
             MILO_ASSERT(hBinkTrack->Channels == 1, 0x75);
 
+#ifdef HX_NATIVE
             void *buf =
                 MemAlloc(hBinkTrack->MaxSize, "BinkReader.cpp", 0x78, "Bink Audio", 0x80);
+#else
+            // Retail/match: 2-arg (size, align). align=0x80 non-zero →
+            // parenthesized bypass of the align-0-forcing macro.
+            void *buf = (MemAlloc)(hBinkTrack->MaxSize, 0x80);
+#endif
             mPCMOffsets[i] = buf;
             mPCMBuffers[i] = buf;
         }

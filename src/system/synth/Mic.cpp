@@ -34,7 +34,13 @@ void RingBuffer::Init(int size) {
         MemFree(mBuffer, __FILE__, 0x2B);
         mBuffer = nullptr;
     }
+#ifdef HX_NATIVE
     mBuffer = MemAlloc(size, __FILE__, 0x2C, "VirtualMic RingBuffer", 0x80);
+#else
+    // Retail/match: 2-arg (size, align). align=0x80 non-zero → parenthesized
+    // bypass of the align-0-forcing macro. See MemMgr.h ABI note.
+    mBuffer = (MemAlloc)(size, 0x80);
+#endif
     MILO_ASSERT(mBuffer, 0x2D);
     Reset();
 }
