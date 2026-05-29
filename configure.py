@@ -143,10 +143,19 @@ version_num = VERSIONS.index(config.version)
 # so we build the same toolchain we're iterating on, rather than the upstream
 # GitHub release. Override with --dtk to pick a different path or binary.
 def _default_dtk_path() -> Optional[Path]:
-    local_jeff = Path(__file__).resolve().parent.parent / "jeff"
-    if (local_jeff / "Cargo.toml").is_file():
-        return local_jeff
-    return None
+    """Find the local jeff dtk fork. Walks parents so worktrees nested under
+    .claude/worktrees/<name>/ (where the direct sibling lookup misses) still
+    resolve to ../../../../jeff. Without this, fresh worktrees silently fall
+    back to the upstream GitHub-released dtk which lacks jeff's RB3-retail
+    overlap-tolerance patch."""
+    cur = Path(__file__).resolve().parent
+    while True:
+        candidate = cur.parent / "jeff" / "Cargo.toml"
+        if candidate.is_file():
+            return candidate.parent
+        if cur.parent == cur:
+            return None
+        cur = cur.parent
 
 # Apply arguments
 config.build_dir = args.build_dir
