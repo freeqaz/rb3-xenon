@@ -168,12 +168,24 @@ Toolchain
 =========
 
 The MSVC X360 compiler (`cl.exe`), `wibo` (Win32-on-Linux shim), STLport, and
-the XDK CRT headers (`LIBCMT`) are borrowed from `../dc3-decomp`. **dtk** (the
-XEX splitter) is the local **jeff** fork at `../jeff` with RB3-retail XEX fixes;
-`configure.py` defaults `--dtk` there. **objdiff** is the local
-**freeqaz/objdiff** fork at `../objdiff` (custom pattern detectors +
-normalized-diff changes); pass `--objdiff ../objdiff` to use it instead of the
-default download.
+the XDK CRT headers (`LIBCMT`) are borrowed from `../dc3-decomp`.
+
+Two tools are **local forks that must be checked out as siblings under `../`** —
+the build prefers them over any upstream release:
+
+- **dtk** (the XEX splitter) — [`freeqaz/jeff`](https://github.com/freeqaz/jeff)
+  checked out at **`../jeff`**. Our fork of
+  [`rjkiv/jeff`](https://github.com/rjkiv/jeff) (itself the Xbox 360 fork of
+  [`encounter/decomp-toolkit`](https://github.com/encounter/decomp-toolkit)),
+  carrying the RB3-retail XEX fixes. `configure.py` auto-discovers `../jeff` and
+  defaults `--dtk` there; without it the build silently falls back to the
+  upstream dtk release, which lacks jeff's retail overlap-tolerance patch.
+- **objdiff** (the diff engine) —
+  [`freeqaz/objdiff`](https://github.com/freeqaz/objdiff) checked out at
+  **`../objdiff`**. Our fork of
+  [`encounter/objdiff`](https://github.com/encounter/objdiff) with custom
+  pattern detectors + normalized-diff changes. Pass `--objdiff ../objdiff` to
+  build from it instead of the default download.
 
 Building
 ========
@@ -205,10 +217,12 @@ cmake --build build
 Diffing
 =======
 
-After the initial build, an `objdiff.json` exists in the project root. Download
-a release from [encounter/objdiff](https://github.com/encounter/objdiff) (or
-build the `../objdiff` fork), set **Project directory** to this repo under
-**Project → Settings**, and the configuration loads automatically. Selecting an
+After the initial build, an `objdiff.json` exists in the project root. Build the
+[`freeqaz/objdiff`](https://github.com/freeqaz/objdiff) fork at `../objdiff` (or,
+for a quick look, download an upstream release from
+[encounter/objdiff](https://github.com/encounter/objdiff)), set **Project
+directory** to this repo under **Project → Settings**, and the configuration
+loads automatically. Selecting an
 object from the left sidebar starts diffing against the retail XEX; edits to
 source, headers, `configure.py`, `splits.txt`, or `symbols.txt` trigger
 automatic rebuilds.
@@ -250,9 +264,13 @@ Project structure
 References
 ==========
 
-- [objdiff](https://github.com/encounter/objdiff) — local diffing tool
-- [decomp-toolkit](https://github.com/encounter/decomp-toolkit) — upstream of jeff
-- [jeff](https://github.com/rjkiv/jeff) — Xbox 360-targeted decomp-toolkit fork
+- [freeqaz/objdiff](https://github.com/freeqaz/objdiff) — **the diffing fork we
+  use** (checked out at `../objdiff`); forked from
+  [encounter/objdiff](https://github.com/encounter/objdiff)
+- [freeqaz/jeff](https://github.com/freeqaz/jeff) — **the dtk/XEX-splitter fork
+  we use** (checked out at `../jeff`); forked from
+  [rjkiv/jeff](https://github.com/rjkiv/jeff), the Xbox 360 fork of
+  [encounter/decomp-toolkit](https://github.com/encounter/decomp-toolkit)
 - [wibo](https://github.com/decompals/wibo) — minimal Win32 wrapper for Linux
 - [BinDiff](https://github.com/google/bindiff) — cross-binary function matching
 - [XEXLoaderWV](https://github.com/zeroKilo/XEXLoaderWV) — Ghidra Xbox 360 XEX loader
