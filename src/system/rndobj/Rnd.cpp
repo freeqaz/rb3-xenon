@@ -154,8 +154,11 @@ Rnd::Rnd()
       mFont(nullptr), mSync(1), mGsTiming(0), mShowSafeArea(0), mDrawing(0),
       mWorldEnded(1), mAspect(kWidescreen), mDrawMode(kDrawNormal), mResourceCached(0), mShowShaderCost(0),
       mShrinkToSafe(1), mInGame(0), mVerboseTimers(0), mDisablePostProc(0), unk146(0),
-      mWorldCamCopied(0), unk148(0), mWorldEndCallback(0), unk150(0), mPostProcOverride(this),
-      mPostProcBlackLightOverride(nullptr), mPreClearDraws(this), mDraws(this), mReleaseImmediate(0),
+      mWorldCamCopied(0), unk148(0), mWorldEndCallback(0), unk150(0), mPostProcOverride(nullptr),
+#ifdef HX_NATIVE
+      mPostProcBlackLightOverride(nullptr),
+#endif
+      mPreClearDraws(this), mDraws(this), mReleaseImmediate(0),
       mProcCmds(kProcessAll), mLastProcCmds(kProcessAll) {
     for (int i = 0; i < 8; i++)
         mDefaultTex[i] = nullptr;
@@ -523,9 +526,12 @@ void Rnd::BeginDrawing() {
         mPointTests.clear();
     }
     mDrawCount++;
+#ifdef HX_NATIVE
     if (mPostProcBlackLightOverride) {
         mPostProcBlackLightOverride->SetBloomColor();
-    } else if (mPostProcOverride) {
+    } else
+#endif
+        if (mPostProcOverride) {
         mPostProcOverride->SetBloomColor();
     } else if (RndPostProc::Current()) {
         RndPostProc::Current()->SetBloomColor();
@@ -694,9 +700,12 @@ RndPostProc *Rnd::GetSelectedPostProc() {
 }
 
 void Rnd::DoWorldBegin() {
+#ifdef HX_NATIVE
     if (mPostProcBlackLightOverride) {
         mPostProcBlackLightOverride->BeginWorld();
-    } else if (mPostProcOverride) {
+    } else
+#endif
+        if (mPostProcOverride) {
         mPostProcOverride->BeginWorld();
     } else {
         for (std::list<PostProcessor *>::iterator it = mPostProcessors.begin();
@@ -714,9 +723,12 @@ void Rnd::DoWorldEnd() {
         CopyWorldCam(nullptr);
     }
     mWorldCamCopied = false;
+#ifdef HX_NATIVE
     if (mPostProcBlackLightOverride) {
         mPostProcBlackLightOverride->EndWorld();
-    } else if (mPostProcOverride) {
+    } else
+#endif
+        if (mPostProcOverride) {
         mPostProcOverride->EndWorld();
     } else {
         it = mPostProcessors.begin();
@@ -730,9 +742,12 @@ void Rnd::DoWorldEnd() {
 
 void Rnd::DoPostProcess() {
     if (!mDisablePostProc) {
+#ifdef HX_NATIVE
         if (mPostProcBlackLightOverride) {
             mPostProcBlackLightOverride->DoPost();
-        } else if (mPostProcOverride) {
+        } else
+#endif
+            if (mPostProcOverride) {
             mPostProcOverride->DoPost();
         } else {
             for (std::list<PostProcessor *>::iterator it = mPostProcessors.begin();
@@ -955,7 +970,9 @@ void Rnd::SetPostProcOverride(RndPostProc *pp) {
 }
 
 void Rnd::SetPostProcBlacklightOverride(RndPostProc *pp) {
+#ifdef HX_NATIVE
     mPostProcBlackLightOverride = pp;
+#endif
     RndOverlay *ppOverlay = RndOverlay::Find("postproc", true);
     if (ppOverlay->Showing()) {
         TextStream *old = TheDebug.Reflect();
