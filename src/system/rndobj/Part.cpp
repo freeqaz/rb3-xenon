@@ -36,7 +36,7 @@ namespace {
             MILO_LOG(
                 "   %d particles can be allocated, %.1f KB.\n",
                 size,
-                (float)((unsigned int)(size * 200) * 0.0009765625f)
+                (float)((unsigned int)(size * 176) * 0.0009765625f)
             );
             MILO_LOG(
                 "   %d particles active, %d is the high water mark.\n",
@@ -1186,7 +1186,8 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
             if (dead) {
                 p = FreeParticle(p);
             } else {
-                // UV tile animation
+#ifdef HX_NATIVE
+                // UV tile animation (DC3-era feature; retail RB3 lacks tile fields)
                 if (mAnimateUVs) {
                     float tileTime = p->mTileTime + frameSpan;
                     p->mTileTime = tileTime;
@@ -1204,7 +1205,7 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                     }
                 }
 
-                // Birth momentum (fancy only)
+                // Birth momentum (fancy only; DC3-era feature, absent in retail RB3)
                 if (isFancy && mBirthMomentum) {
                     RndFancyParticle *fp = (RndFancyParticle *)p;
                     float momentumScale = mBirthMomentumAmount * frameSpan * oneOverThirty;
@@ -1212,6 +1213,7 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                     p->pos.z += fp->mBirthVelocityZ * momentumScale;
                     p->pos.y += fp->mBirthVelocityY * momentumScale;
                 }
+#endif
 
                 // Position integration
                 // TODO: target uses fmuls+fadds (separate multiply then add) here,
@@ -1300,10 +1302,18 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
 
                     // RPM rotation and swing arm
                     if (isRotate) {
+#ifdef HX_NATIVE
+                        // DC3-era: RPM velocity stored in dedicated fields.
                         float rpmVel = fp->mRPMVelocity;
                         p->angle += rpmVel * frameSpan;
                         fp->mRPMVelocity = rpmVel * rpmDragFactor;
                         p->swingArm += fp->mPitchAngularVel * frameSpan;
+#else
+                        // Retail RB3 (rb3-Wii semantics): reuse RPF / swingArmVel.
+                        p->angle += fp->RPF * frameSpan;
+                        fp->RPF *= rpmDragFactor;
+                        p->swingArm += fp->swingArmVel * frameSpan;
+#endif
                     }
 
                     // Fancy color: 2-phase Hermite-like blend (before/after midcolFrame).
@@ -1640,7 +1650,10 @@ void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *
 
     if ((unsigned long)(int)mType == kFancy) {
         RndFancyParticle *fp = static_cast<RndFancyParticle *>(p);
+#ifdef HX_NATIVE
+        // DC3-era birth-momentum seed; retail RB3 has no momentum fields.
         memcpy(&fp->mRPMVelocity, &mMotionParentDelta, 16);
+#endif
 
         if (mBubble) {
             fp->bubbleFreq = PI / RandomFloat(mBubblePeriod.x, mBubblePeriod.y);
@@ -1797,12 +1810,15 @@ void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *
         fp->bubbleDir.x = bz * xfm->m.z.x + (bx * xfm->m.x.x + by * xfm->m.y.x);
     }
 
+#ifdef HX_NATIVE
+    // DC3-era UV tile-animation init; retail RB3 has no tile fields.
     if (mRandomAnimStart) {
         p->mCurrentTileIndex = RandomInt(0, mNumTilesTotal);
     } else {
         p->mCurrentTileIndex = mStartingTile;
     }
     p->mTileTime = 0;
+#endif
 }
 
 void RndParticleSys::InitParticle(RndParticle *p, const Transform *t) {
