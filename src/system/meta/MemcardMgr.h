@@ -9,7 +9,17 @@
 #include "os/ThreadCall.h"
 #include "ui/UI.h"
 
-class MemcardMgr : public Hmx::Object, public ThreadCallback {
+// Retail RB3-360 layout (verified vs ctor fn_82787030 + OnMsg/Init/ThreadCall
+// targets in build/45410914/asm/MemcardMgr_Xbox.s):
+//   MemcardMgr : ThreadCallback, MsgSource
+//   - ThreadCallback vfptr @ 0x0 (primary base; ThreadCall(this) is passed
+//     this+0, e.g. fn_82786DD8 `mr r3,r31; bl ThreadCall`).
+//   - MsgSource subobject @ 0x4 {vbptr@4, mSinks@8, mEventSinks@0x10,
+//     mExporting@0x18} — its ctor fn_827432A0 runs on this+0x4.
+//   - MemcardMgr's own members start @ 0x1c (mState).
+//   - Hmx::Object virtual base trails @ 0x8c (ctor: addi r3,r3,0x8c; bl
+//     Object::Object).
+class MemcardMgr : public ThreadCallback, public MsgSource {
     friend class SaveMemcardAction; // hack
     friend class LoadMemcardAction; // hack
 
@@ -60,20 +70,21 @@ protected:
     DataNode OnMsg(const StorageChangedMsg &);
     DataNode OnMsg(const SigninChangedMsg &);
 
-    State mState; // 0x30
-    void *mSaveDataBuffer; // 0x34
-    int mSaveDataLength; // 0x38
-    MemcardAction *mAction; // 0x3c
-    int mSaveCreateType;
+    State mState; // 0x1c
+    void *mSaveDataBuffer; // 0x20
+    int mSaveDataLength; // 0x24
+    MemcardAction *mAction; // 0x28
+    int mSaveCreateType; // 0x2c
     // indexed by padnums
-    ContainerId mContainerIDs[4]; // 0x44
-    MCContainer *mContainers[4]; // 0x74
-    bool mValidDevices[4]; // 0x84
-    int mPendingDeviceSelectorIndex;
-    bool mSelectDeviceWaiting; // 0x8c
-    Hmx::Object *mSelectDeviceCallBackObj; // 0x90
-    int mPadNum; // 0x94
-    Profile *mProfile; // 0x98
+    ContainerId mContainerIDs[4]; // 0x30 (ContainerId is 0xc bytes)
+    MCContainer *mContainers[4]; // 0x60
+    bool mValidDevices[4]; // 0x70
+    int mPendingDeviceSelectorIndex; // 0x74
+    bool mSelectDeviceWaiting; // 0x78 (ctor also zeroes 0x79 padding byte)
+    Hmx::Object *mSelectDeviceCallBackObj; // 0x7c
+    int mPadNum; // 0x80
+    Profile *mProfile; // 0x84
+    // Hmx::Object virtual base @ 0x8c
 };
 
 extern MemcardMgr TheMemcardMgr;
