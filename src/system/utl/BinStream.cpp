@@ -9,9 +9,14 @@
 
 #define BUF_SIZE 512
 
+// RB3's BinStream has no per-instance rev stack member (sizeof==0xc). The rev
+// stack is process-wide here so PushRev/PopRev still compile while the derived
+// stream classes keep the target member offsets. See BinStream.h note.
+static std::vector<ObjVersion> *sRevStack = nullptr;
+
 const char *BinStream::Name() const { return "<unnamed>"; }
 
-BinStream::BinStream(bool b) : mLittleEndian(b), mCrypto(nullptr), mRevStack(nullptr) {}
+BinStream::BinStream(bool b) : mLittleEndian(b), mCrypto(nullptr) {}
 
 void SwapData(const void *in, void *out, int size) {
     switch (size) {
@@ -125,18 +130,18 @@ void BinStream::EnableWriteEncryption() {
 }
 
 int BinStream::PopRev(Hmx::Object *o) {
-    MILO_ASSERT(mRevStack, 0x34);
+    MILO_ASSERT(sRevStack, 0x34);
 #ifdef HX_NATIVE
-    if (mRevStack->empty()) {
+    if (sRevStack->empty()) {
         fprintf(stderr, "PopRev ABORT: empty stack for %s '%s' (stream=%p)\n", o->ClassName(), o->Name(), (void*)this);
         abort();
     }
 #endif
-    ObjVersion *back = &mRevStack->back();
+    ObjVersion *back = &sRevStack->back();
     while (back->obj == nullptr) {
         MILO_NOTIFY("hey object got deleted!");
-        mRevStack->pop_back();
-        back = &mRevStack->back();
+        sRevStack->pop_back();
+        back = &sRevStack->back();
     }
     int revs = back->revs;
     if (o != back->obj) {
@@ -153,7 +158,7 @@ int BinStream::PopRev(Hmx::Object *o) {
             PathName(back->obj)
         );
     }
-    mRevStack->pop_back();
+    sRevStack->pop_back();
     return revs;
 }
 
@@ -233,7 +238,6 @@ void BinStream::EnableReadEncryption() {
 
 BinStream::~BinStream() {
     delete mCrypto;
-    delete mRevStack;
 }
 
 #ifdef HX_NATIVE
@@ -269,8 +273,8 @@ bool BinStream::WaitUntilReady(int sleepMs) {
 #endif
 
 void BinStream::PushRev(int revs, Hmx::Object *obj) {
-    if (!mRevStack) {
-        mRevStack = new std::vector<ObjVersion>();
+    if (!sRevStack) {
+        sRevStack = new std::vector<ObjVersion>();
     }
-    mRevStack->push_back(ObjVersion(revs, obj));
+    sRevStack->push_back(ObjVersion(revs, obj));
 }

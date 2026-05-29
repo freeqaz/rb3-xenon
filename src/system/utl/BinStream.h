@@ -184,7 +184,12 @@ private:
 protected:
     bool mLittleEndian; // 0x4
     Rand2 *mCrypto; // 0x8
-    std::vector<struct ObjVersion> *mRevStack; // 0xc
+    // NOTE: RB3 has NO per-instance rev stack member here. The retail-360
+    // BinStream ctor only initializes through 0x8 (mCrypto) and the dtor only
+    // `delete mCrypto`s — sizeof(BinStream)==0xc. (rb3-Wii's BinStream has no
+    // rev machinery at all; DC3, a newer engine, added an mRevStack *member*.)
+    // For RB3 the rev stack lives as a file-static in BinStream.cpp so that
+    // derived MemStream/FileStream members land at the target offsets.
 };
 
 inline unsigned short getHmxRev(int packed) { return packed; }
