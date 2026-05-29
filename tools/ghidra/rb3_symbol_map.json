@@ -1,0 +1,3964 @@
+{
+ "0x82263248": {
+  "demangled": "void __cdecl PhysicalFreeTracked(void *, char const *, int, char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?PhysicalFreeTracked@@YAXPAXPBDH1@Z",
+  "unit": "default/Memory_Xbox"
+ },
+ "0x82263348": {
+  "demangled": "public: __cdecl PhysMemTypeTracker::~PhysMemTypeTracker(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1PhysMemTypeTracker@@QAA@XZ",
+  "unit": "default/Memory_Xbox"
+ },
+ "0x82263510": {
+  "demangled": "public: __cdecl PhysMemTypeTracker::PhysMemTypeTracker(class Symbol)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0PhysMemTypeTracker@@QAA@VSymbol@@@Z",
+  "unit": "default/Memory_Xbox"
+ },
+ "0x82263f38": {
+  "demangled": "float __cdecl Mod(float, float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Mod@@YAMMM@Z",
+  "unit": "default/CharLipSyncDriver"
+ },
+ "0x822847a8": {
+  "demangled": "public: void __cdecl Message::SetType(class Symbol)",
+  "method": "comdat_reloc",
+  "percent": 91.7,
+  "symbol": "?SetType@Message@@QAAXVSymbol@@@Z",
+  "unit": "default/BandDirector"
+ },
+ "0x822a3318": {
+  "demangled": "public: float __cdecl BandCamShot::GetTotalDuration(void)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?GetTotalDuration@BandCamShot@@QAAMXZ",
+  "unit": "default/BandCamShot"
+ },
+ "0x822af248": {
+  "demangled": "public: virtual void __cdecl CrazeHollaback::Copy(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Copy@CrazeHollaback@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "unit": "default/CrazeHollaback"
+ },
+ "0x822b3030": {
+  "demangled": "public: class stlpmtx_std::vector<class SampleZone, class stlpmtx_std::StlNodeAlloc<class SampleZone> > & __cdecl stlpmtx_std::vector<class SampleZone, class stlpmtx_std::StlNodeAlloc<class SampleZone> >::operator=(class stlpmtx_std::vector<class SampleZone, class stlpmtx_std::StlNodeAlloc<class SampleZone> > const &)",
+  "method": "comdat_size",
+  "percent": 97.93,
+  "symbol": "??4?$vector@VSampleZone@@V?$StlNodeAlloc@VSampleZone@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+  "unit": "default/MidiInstrument"
+ },
+ "0x822b3788": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class SampleZone, class stlpmtx_std::StlNodeAlloc<class SampleZone> >::_M_fill_insert(class SampleZone *, unsigned int, class SampleZone const &)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?_M_fill_insert@?$vector@VSampleZone@@V?$StlNodeAlloc@VSampleZone@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleZone@@IABV3@@Z",
+  "unit": "default/MidiInstrument"
+ },
+ "0x8236b758": {
+  "demangled": "protected: struct stlpmtx_std::_List_node_base * __cdecl stlpmtx_std::list<struct CharBones::Bone, class stlpmtx_std::StlNodeAlloc<struct CharBones::Bone> >::_M_create_node(struct CharBones::Bone const &)",
+  "method": "comdat_size",
+  "percent": 83.33,
+  "symbol": "?_M_create_node@?$list@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUBone@CharBones@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236b800": {
+  "demangled": "void __cdecl stlpmtx_std::__unguarded_insertion_sort_aux<class CharClip::BeatEvent *, class CharClip::BeatEvent, struct SortByFrame>(class CharClip::BeatEvent *, class CharClip::BeatEvent *, class CharClip::BeatEvent *, struct SortByFrame)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__unguarded_insertion_sort_aux@PAVBeatEvent@CharClip@@V12@USortByFrame@@@stlpmtx_std@@YAXPAVBeatEvent@CharClip@@00USortByFrame@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236b858": {
+  "demangled": "void __cdecl stlpmtx_std::__adjust_heap<class CharClip::BeatEvent *, int, class CharClip::BeatEvent, struct SortByFrame>(class CharClip::BeatEvent *, int, int, class CharClip::BeatEvent, struct SortByFrame)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__adjust_heap@PAVBeatEvent@CharClip@@HV12@USortByFrame@@@stlpmtx_std@@YAXPAVBeatEvent@CharClip@@HHV12@USortByFrame@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236b938": {
+  "demangled": "public: bool __cdecl CharClip::SharesGroups(class CharClip *)",
+  "method": "comdat_size",
+  "percent": 81.61,
+  "symbol": "?SharesGroups@CharClip@@QAA_NPAV1@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236c528": {
+  "demangled": "bool __cdecl PropSync(class CharClip::NodeVector &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 96.67,
+  "symbol": "?PropSync@@YA_NAAVNodeVector@CharClip@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236c810": {
+  "demangled": "bool __cdecl PropSync(class CharClip::BeatEvent &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 95.94,
+  "symbol": "?PropSync@@YA_NAAVBeatEvent@CharClip@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236ca20": {
+  "demangled": "public: bool __cdecl Keys<float, float>::Linear(float, float &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Linear@?$Keys@MM@@QBA_NMAAM@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236cac8": {
+  "demangled": "public: bool __cdecl Keys<float, float>::ReverseLinear(float const &, float &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ReverseLinear@?$Keys@MM@@QBA_NABMAAM@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236cc28": {
+  "demangled": "struct CharBones::Bone * __cdecl stlpmtx_std::__uninitialized_fill_n<struct CharBones::Bone *, unsigned int, struct CharBones::Bone>(struct CharBones::Bone *, unsigned int, struct CharBones::Bone const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__uninitialized_fill_n@PAUBone@CharBones@@IU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@IABU12@ABU__false_type@0@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236cd38": {
+  "demangled": "public: float __cdecl CharClip::FrameToBeat(float) const",
+  "method": "comdat_size",
+  "percent": 99.93,
+  "symbol": "?FrameToBeat@CharClip@@QBAMM@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236ce68": {
+  "demangled": "public: int __cdecl CharClip::BeatToSample(float, float *) const",
+  "method": "comdat_size",
+  "percent": 99.91,
+  "symbol": "?BeatToSample@CharClip@@QBAHMPAM@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236d5d8": {
+  "demangled": "public: class CharClip::BeatEvent * __cdecl stlpmtx_std::vector<class CharClip::BeatEvent, class stlpmtx_std::StlNodeAlloc<class CharClip::BeatEvent> >::erase(class CharClip::BeatEvent *)",
+  "method": "comdat_size",
+  "percent": 94.74,
+  "symbol": "?erase@?$vector@VBeatEvent@CharClip@@V?$StlNodeAlloc@VBeatEvent@CharClip@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVBeatEvent@CharClip@@PAV34@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236d6c8": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<struct CharBones::Bone, class stlpmtx_std::StlNodeAlloc<struct CharBones::Bone> >::_M_fill_insert_aux(struct CharBones::Bone *, unsigned int, struct CharBones::Bone const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?_M_fill_insert_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@ABU__false_type@2@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236d850": {
+  "demangled": "class CharClip::BeatEvent * __cdecl stlpmtx_std::__uninitialized_fill_n<class CharClip::BeatEvent *, unsigned int, class CharClip::BeatEvent>(class CharClip::BeatEvent *, unsigned int, class CharClip::BeatEvent const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__uninitialized_fill_n@PAVBeatEvent@CharClip@@IV12@@stlpmtx_std@@YAPAVBeatEvent@CharClip@@PAV12@IABV12@ABU__false_type@0@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236d958": {
+  "demangled": "void __cdecl stlpmtx_std::__linear_insert<class CharClip::BeatEvent *, class CharClip::BeatEvent, struct SortByFrame>(class CharClip::BeatEvent *, class CharClip::BeatEvent *, class CharClip::BeatEvent, struct SortByFrame)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__linear_insert@PAVBeatEvent@CharClip@@V12@USortByFrame@@@stlpmtx_std@@YAXPAVBeatEvent@CharClip@@0V12@USortByFrame@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236d9f8": {
+  "demangled": "public: void __cdecl CharClip::ListBones(class stlpmtx_std::list<struct CharBones::Bone, class stlpmtx_std::StlNodeAlloc<struct CharBones::Bone> > &)",
+  "method": "comdat_size",
+  "percent": 99.89,
+  "symbol": "?ListBones@CharClip@@QAAXAAV?$list@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236da90": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class CharClip::BeatEvent, class stlpmtx_std::StlNodeAlloc<class CharClip::BeatEvent> >::_M_fill_insert_aux(class CharClip::BeatEvent *, unsigned int, class CharClip::BeatEvent const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?_M_fill_insert_aux@?$vector@VBeatEvent@CharClip@@V?$StlNodeAlloc@VBeatEvent@CharClip@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVBeatEvent@CharClip@@IABV34@ABU__false_type@2@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236dc88": {
+  "demangled": "public: void __cdecl CharClip::StuffBones(class CharBones &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?StuffBones@CharClip@@QAAXAAVCharBones@@@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8236dd30": {
+  "demangled": "public: void __cdecl CharClip::PoseMeshes(class ObjectDir *, float)",
+  "method": "comdat_size",
+  "percent": 99.98,
+  "symbol": "?PoseMeshes@CharClip@@QAAXPAVObjectDir@@M@Z",
+  "unit": "default/CharClip"
+ },
+ "0x8238fd20": {
+  "demangled": "public: void __cdecl CharFaceServo::SetClipType(class Symbol)",
+  "method": "comdat_size",
+  "percent": 99.83,
+  "symbol": "?SetClipType@CharFaceServo@@QAAXVSymbol@@@Z",
+  "unit": "default/CharFaceServo"
+ },
+ "0x8238fd90": {
+  "demangled": "protected: void __cdecl CharFaceServo::TryScaleDown(void)",
+  "method": "comdat_size",
+  "percent": 99.81,
+  "symbol": "?TryScaleDown@CharFaceServo@@IAAXXZ",
+  "unit": "default/CharFaceServo"
+ },
+ "0x82390648": {
+  "demangled": "public: void __cdecl CharFaceServo::SetClips(class ObjectDir *)",
+  "method": "comdat_size",
+  "percent": 99.7,
+  "symbol": "?SetClips@CharFaceServo@@QAAXPAVObjectDir@@@Z",
+  "unit": "default/CharFaceServo"
+ },
+ "0x82390788": {
+  "demangled": "public: void __cdecl CharFaceServo::ApplyProceduralWeights(void)",
+  "method": "comdat_size",
+  "percent": 99.78,
+  "symbol": "?ApplyProceduralWeights@CharFaceServo@@QAAXXZ",
+  "unit": "default/CharFaceServo"
+ },
+ "0x82390910": {
+  "demangled": "public: virtual void __cdecl CharFaceServo::Copy(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+  "method": "comdat_size",
+  "percent": 99.63,
+  "symbol": "?Copy@CharFaceServo@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "unit": "default/CharFaceServo"
+ },
+ "0x823a2ca8": {
+  "demangled": "class BinStream & __cdecl operator<<(class BinStream &, class CharBoneDir::Recenter &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVBinStream@@AAV0@AAVRecenter@CharBoneDir@@@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a2d08": {
+  "demangled": "public: virtual void __cdecl CharBoneDir::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Save@CharBoneDir@@UAAXAAVBinStream@@@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a30c8": {
+  "demangled": "public: class ObjectDir * __cdecl ObjectDir::New<class ObjectDir>(char const *)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "??$New@VObjectDir@@@ObjectDir@@QAAPAV0@PBD@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a3430": {
+  "demangled": "public: static void __cdecl CharBoneDir::Init(void)",
+  "method": "comdat_size",
+  "percent": 94.31,
+  "symbol": "?Init@CharBoneDir@@SAXXZ",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a3758": {
+  "demangled": "public: __cdecl CharBoneDir::Recenter::~Recenter(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1Recenter@CharBoneDir@@QAA@XZ",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a37c8": {
+  "demangled": "public: class CharBoneDir::Recenter & __cdecl CharBoneDir::Recenter::operator=(class CharBoneDir::Recenter const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??4Recenter@CharBoneDir@@QAAAAV01@ABV01@@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a3c90": {
+  "demangled": "public: virtual void __cdecl CharBoneDir::Copy(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+  "method": "comdat_size",
+  "percent": 99.91,
+  "symbol": "?Copy@CharBoneDir@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a3d18": {
+  "demangled": "bool __cdecl PropSync(class CharBoneDir::Recenter &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 97.02,
+  "symbol": "?PropSync@@YA_NAAVRecenter@CharBoneDir@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a42a0": {
+  "demangled": "public: virtual __cdecl CharBoneDir::~CharBoneDir(void)",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "??1CharBoneDir@@UAA@XZ",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823a4410": {
+  "demangled": "public: void __cdecl CharBoneDir::StuffBones(class CharBones &, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?StuffBones@CharBoneDir@@QAAXAAVCharBones@@H@Z",
+  "unit": "default/CharBoneDir"
+ },
+ "0x823aa590": {
+  "demangled": "public: void __cdecl CharEyeDartRuleset::EyeDartRulesetData::ClearToDefaults(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ClearToDefaults@EyeDartRulesetData@CharEyeDartRuleset@@QAAXXZ",
+  "unit": "default/CharEyeDartRuleset"
+ },
+ "0x823aa890": {
+  "demangled": "public: virtual void __cdecl CharEyeDartRuleset::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Save@CharEyeDartRuleset@@UAAXAAVBinStream@@@Z",
+  "unit": "default/CharEyeDartRuleset"
+ },
+ "0x823acf28": {
+  "demangled": "protected: __cdecl CharIKFoot::CharIKFoot(void)",
+  "method": "comdat_size",
+  "percent": 81.44,
+  "symbol": "??0CharIKFoot@@IAA@XZ",
+  "unit": "default/CharIKFoot"
+ },
+ "0x823ad5e8": {
+  "demangled": "public: virtual void __cdecl CharIKFoot::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "?Save@CharIKFoot@@UAAXAAVBinStream@@@Z",
+  "unit": "default/CharIKFoot"
+ },
+ "0x823b0a60": {
+  "demangled": "public: virtual void __cdecl CharPosConstraint::PollDeps(class stlpmtx_std::list<class Hmx::Object *, class stlpmtx_std::StlNodeAlloc<class Hmx::Object *> > &, class stlpmtx_std::list<class Hmx::Object *, class stlpmtx_std::StlNodeAlloc<class Hmx::Object *> > &)",
+  "method": "comdat_size",
+  "percent": 99.92,
+  "symbol": "?PollDeps@CharPosConstraint@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
+  "unit": "default/CharPosConstraint"
+ },
+ "0x823b27e8": {
+  "demangled": "protected: bool __cdecl CharIKRod::ComputeRod(class Transform &)",
+  "method": "comdat_size",
+  "percent": 99.83,
+  "symbol": "?ComputeRod@CharIKRod@@IAA_NAAVTransform@@@Z",
+  "unit": "default/CharIKRod"
+ },
+ "0x823b2a48": {
+  "demangled": "public: void __cdecl CharIKRod::SyncBones(void)",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "?SyncBones@CharIKRod@@QAAXXZ",
+  "unit": "default/CharIKRod"
+ },
+ "0x823b45d0": {
+  "demangled": "void __cdecl NormalizeAboutX(class Hmx::Matrix3&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?NormalizeAboutX@@YAXAAVMatrix3@Hmx@@@Z",
+  "unit": "default/CharUpperTwist"
+ },
+ "0x823b4680": {
+  "demangled": "public: virtual void __cdecl CharUpperTwist::Poll(void)",
+  "method": "comdat_size",
+  "percent": 99.84,
+  "symbol": "?Poll@CharUpperTwist@@UAAXXZ",
+  "unit": "default/CharUpperTwist"
+ },
+ "0x823b51f8": {
+  "demangled": "public: virtual void * __cdecl FlowIf::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "??_GFlowIf@@UAAPAXI@Z",
+  "unit": "default/FlowIf"
+ },
+ "0x823b8d48": {
+  "demangled": "public: virtual void __cdecl CharIKSliderMidi::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "?Save@CharIKSliderMidi@@UAAXAAVBinStream@@@Z",
+  "unit": "default/CharIKSliderMidi"
+ },
+ "0x823b9e68": {
+  "demangled": "public: virtual void __cdecl CharDriverMidi::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Save@CharDriverMidi@@UAAXAAVBinStream@@@Z",
+  "unit": "default/CharDriverMidi"
+ },
+ "0x823bd6d8": {
+  "demangled": "public: virtual void __cdecl CharSleeve::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "?Save@CharSleeve@@UAAXAAVBinStream@@@Z",
+  "unit": "default/CharSleeve"
+ },
+ "0x823bf0e8": {
+  "demangled": "public: virtual bool __cdecl CharClipSet::SyncProperty(class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 98.53,
+  "symbol": "?SyncProperty@CharClipSet@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/CharClipSet"
+ },
+ "0x823c4230": {
+  "demangled": "public: struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Nonconst_traits<struct CharBone::WeightContext> > __cdecl stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> >::erase(struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Nonconst_traits<struct CharBone::WeightContext> >, struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Nonconst_traits<struct CharBone::WeightContext> >)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?erase@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UWeightContext@CharBone@@U?$_Nonconst_traits@UWeightContext@CharBone@@@stlpmtx_std@@@2@U32@0@Z",
+  "unit": "default/CharBone"
+ },
+ "0x823c4e70": {
+  "demangled": "public: void __cdecl CharBone::StuffBones(class stlpmtx_std::list<struct CharBones::Bone, class stlpmtx_std::StlNodeAlloc<struct CharBones::Bone> > &, int) const",
+  "method": "comdat_size",
+  "percent": 99.66,
+  "symbol": "?StuffBones@CharBone@@QBAXAAV?$list@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@H@Z",
+  "unit": "default/CharBone"
+ },
+ "0x823c54b8": {
+  "demangled": "public: void __cdecl stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> >::resize(unsigned int, struct CharBone::WeightContext const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?resize@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUWeightContext@CharBone@@@Z",
+  "unit": "default/CharBone"
+ },
+ "0x823c5550": {
+  "demangled": "public: __cdecl stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> >::ctor<struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Const_traits<struct CharBone::WeightContext> > >(struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Const_traits<struct CharBone::WeightContext> >, struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Const_traits<struct CharBone::WeightContext> >, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$?0U?$_List_iterator@UWeightContext@CharBone@@U?$_Const_traits@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UWeightContext@CharBone@@U?$_Const_traits@UWeightContext@CharBone@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UWeightContext@CharBone@@@1@@Z",
+  "unit": "default/CharBone"
+ },
+ "0x823c59e0": {
+  "demangled": "private: void __cdecl stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> >::_M_splice_insert_dispatch<struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Const_traits<struct CharBone::WeightContext> > >(struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Nonconst_traits<struct CharBone::WeightContext> >, struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Const_traits<struct CharBone::WeightContext> >, struct stlpmtx_std::_List_iterator<struct CharBone::WeightContext, struct stlpmtx_std::_Const_traits<struct CharBone::WeightContext> >, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_M_splice_insert_dispatch@U?$_List_iterator@UWeightContext@CharBone@@U?$_Const_traits@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UWeightContext@CharBone@@U?$_Nonconst_traits@UWeightContext@CharBone@@@stlpmtx_std@@@1@U?$_List_iterator@UWeightContext@CharBone@@U?$_Const_traits@UWeightContext@CharBone@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+  "unit": "default/CharBone"
+ },
+ "0x823c5d88": {
+  "demangled": "public: class stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> > & __cdecl stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> >::operator=(class stlpmtx_std::list<struct CharBone::WeightContext, class stlpmtx_std::StlNodeAlloc<struct CharBone::WeightContext> > const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??4?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+  "unit": "default/CharBone"
+ },
+ "0x823c5f90": {
+  "demangled": "public: virtual void __cdecl CharBonesBlender::Poll(void)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?Poll@CharBonesBlender@@UAAXXZ",
+  "unit": "default/CharBonesBlender"
+ },
+ "0x823c5ff8": {
+  "demangled": "public: void __cdecl CharBonesBlender::SetDest(class CharBonesObject *)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "?SetDest@CharBonesBlender@@QAAXPAVCharBonesObject@@@Z",
+  "unit": "default/CharBonesBlender"
+ },
+ "0x823d8818": {
+  "demangled": "void __cdecl stlpmtx_std::__linear_insert<class FlowNode **, class FlowNode *, bool (__cdecl *)(class FlowNode *, class FlowNode **)>(class FlowNode **, class FlowNode **, class FlowNode *, bool (__cdecl *)(class FlowNode *, class FlowNode *))",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+  "unit": "default/FlowSlider"
+ },
+ "0x823ffa78": {
+  "demangled": "protected: void __cdecl Rnd::CreateDefaults(void)",
+  "method": "comdat_size",
+  "percent": 83.29,
+  "symbol": "?CreateDefaults@Rnd@@IAAXXZ",
+  "unit": "default/Rnd"
+ },
+ "0x824000a8": {
+  "demangled": "protected: class DataNode __cdecl Rnd::OnToggleOverlayPosition(class DataArray const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?OnToggleOverlayPosition@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "unit": "default/Rnd"
+ },
+ "0x824000f0": {
+  "demangled": "protected: class DataNode __cdecl Rnd::OnShowConsole(class DataArray const *)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?OnShowConsole@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "unit": "default/Rnd"
+ },
+ "0x824001b0": {
+  "demangled": "protected: class DataNode __cdecl Rnd::OnToggleTimersVerbose(class DataArray const *)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?OnToggleTimersVerbose@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "unit": "default/Rnd"
+ },
+ "0x82400250": {
+  "demangled": "protected: class DataNode __cdecl Rnd::OnClearColorPacked(class DataArray const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?OnClearColorPacked@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "unit": "default/Rnd"
+ },
+ "0x8240eac8": {
+  "demangled": "public: virtual void __cdecl RndPollable::Exit(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Exit@RndPollable@@UAAXXZ",
+  "unit": "default/Poll"
+ },
+ "0x82430e18": {
+  "demangled": "float __cdecl ComputeAngle(class Vector3const &, class Vector3const &, class Vector3const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ComputeAngle@@YAMABVVector3@@00@Z",
+  "unit": "default/TexRenderer"
+ },
+ "0x82430ef8": {
+  "demangled": "protected: void __cdecl RndTexRenderer::InitTexture(void)",
+  "method": "comdat_size",
+  "percent": 99.72,
+  "symbol": "?InitTexture@RndTexRenderer@@IAAXXZ",
+  "unit": "default/TexRenderer"
+ },
+ "0x824317a8": {
+  "demangled": "public: virtual void __cdecl RndTexRenderer::SetFrame(float, float)",
+  "method": "comdat_size",
+  "percent": 99.97,
+  "symbol": "?SetFrame@RndTexRenderer@@UAAXMM@Z",
+  "unit": "default/TexRenderer"
+ },
+ "0x82433c50": {
+  "demangled": "public: void __cdecl RndParticleSys::SetSubSamples(int)",
+  "method": "comdat_size",
+  "percent": 99.81,
+  "symbol": "?SetSubSamples@RndParticleSys@@QAAXH@Z",
+  "unit": "default/Part"
+ },
+ "0x82434810": {
+  "demangled": "public: void __cdecl RndParticleSys::SetMesh(class RndMesh *)",
+  "method": "comdat_size",
+  "percent": 81.09,
+  "symbol": "?SetMesh@RndParticleSys@@QAAXPAVRndMesh@@@Z",
+  "unit": "default/Part"
+ },
+ "0x824348e8": {
+  "demangled": "class BinStream & __cdecl operator<<(class BinStream &, class RndParticle const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVBinStream@@AAV0@ABVRndParticle@@@Z",
+  "unit": "default/Part"
+ },
+ "0x82435f48": {
+  "demangled": "public: void __cdecl RndParticleSys::ExplicitParticles(int, bool, class PartOverride &)",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "?ExplicitParticles@RndParticleSys@@QAAXH_NAAVPartOverride@@@Z",
+  "unit": "default/Part"
+ },
+ "0x82436de0": {
+  "demangled": "protected: class DataNode __cdecl RndParticleSys::OnActiveParticles(class DataArray const *)",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "?OnActiveParticles@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "unit": "default/Part"
+ },
+ "0x82436e08": {
+  "demangled": "bool __cdecl AngleVectorSync(class Vector2&, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 94.94,
+  "symbol": "?AngleVectorSync@@YA_NAAVVector2@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/Part"
+ },
+ "0x82436fb8": {
+  "demangled": "public: struct stlpmtx_std::_List_iterator<class Plane, struct stlpmtx_std::_Nonconst_traits<class Plane> > __cdecl stlpmtx_std::list<class Plane, class stlpmtx_std::StlNodeAlloc<class Plane> >::erase(struct stlpmtx_std::_List_iterator<class Plane, struct stlpmtx_std::_Nonconst_traits<class Plane> >, struct stlpmtx_std::_List_iterator<class Plane, struct stlpmtx_std::_Nonconst_traits<class Plane> >)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?erase@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@0@Z",
+  "unit": "default/Part"
+ },
+ "0x82437018": {
+  "demangled": "public: void __cdecl ParticleCommonPool::InitPool(void)",
+  "method": "comdat_size",
+  "percent": 89.29,
+  "symbol": "?InitPool@ParticleCommonPool@@QAAXXZ",
+  "unit": "default/Part"
+ },
+ "0x8243f5d0": {
+  "demangled": "void __cdecl stlpmtx_std::__push_heap<struct GroupDrawDist *, int, struct GroupDrawDist, bool (__cdecl *)(struct GroupDrawDist const &, struct GroupDrawDist *)>(struct GroupDrawDist *, int, int, struct GroupDrawDist, bool (__cdecl *)(struct GroupDrawDist const &, struct GroupDrawDist const &))",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__push_heap@PAUGroupDrawDist@@HU1@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@HHU1@P6A_NABU1@2@Z@Z",
+  "unit": "default/Group"
+ },
+ "0x82441548": {
+  "demangled": "public: void __cdecl RndGroup::SortDraws(void)",
+  "method": "comdat_size",
+  "percent": 92.74,
+  "symbol": "?SortDraws@RndGroup@@QAAXXZ",
+  "unit": "default/Group"
+ },
+ "0x8244d140": {
+  "demangled": "public: virtual void * __cdecl CharNeckTwist::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "??_GCharNeckTwist@@UAAPAXI@Z",
+  "unit": "default/CharNeckTwist"
+ },
+ "0x8244e9f8": {
+  "demangled": "public: class RndMatAnim * __cdecl ObjectDir::New<class RndMatAnim>(char const *)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "??$New@VRndMatAnim@@@ObjectDir@@QAAPAVRndMatAnim@@PBD@Z",
+  "unit": "default/MatAnim"
+ },
+ "0x8244f108": {
+  "demangled": "public: __cdecl Key<class RndMatAnim::TexPtr>::Key<class RndMatAnim::TexPtr>(class Key<class RndMatAnim::TexPtr> const &)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "??0?$Key@VTexPtr@RndMatAnim@@@@QAA@ABV0@@Z",
+  "unit": "default/MatAnim"
+ },
+ "0x8244f5e8": {
+  "demangled": "public: int __cdecl Keys<class Vector3, class Vector3>::AtFrame(float, class Vector3&) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?AtFrame@?$Keys@VVector3@@V1@@@QBAHMAAVVector3@@@Z",
+  "unit": "default/MatAnim"
+ },
+ "0x82451280": {
+  "demangled": "public: static void __cdecl RndShadowMap::Terminate(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Terminate@RndShadowMap@@SAXXZ",
+  "unit": "default/ShadowMap"
+ },
+ "0x82451318": {
+  "demangled": "public: static void __cdecl RndShadowMap::EndShadow(void)",
+  "method": "comdat_size",
+  "percent": 99.89,
+  "symbol": "?EndShadow@RndShadowMap@@SAXXZ",
+  "unit": "default/ShadowMap"
+ },
+ "0x82451348": {
+  "demangled": "public: static void __cdecl RndShadowMap::Init(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Init@RndShadowMap@@SAXXZ",
+  "unit": "default/ShadowMap"
+ },
+ "0x82451fb8": {
+  "demangled": "public: void __cdecl RndColorXfm::Reset(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Reset@RndColorXfm@@QAAXXZ",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452548": {
+  "demangled": "public: void __cdecl RndColorXfm::AdjustContrast(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?AdjustContrast@RndColorXfm@@QAAXXZ",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452600": {
+  "demangled": "public: void __cdecl RndColorXfm::AdjustBrightness(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?AdjustBrightness@RndColorXfm@@QAAXXZ",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452690": {
+  "demangled": "public: void __cdecl RndColorXfm::AdjustLevels(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?AdjustLevels@RndColorXfm@@QAAXXZ",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452850": {
+  "demangled": "public: void __cdecl RndColorXfm::Save(class BinStream &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Save@RndColorXfm@@QBAXAAVBinStream@@@Z",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452960": {
+  "demangled": "public: bool __cdecl RndColorXfm::Load(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Load@RndColorXfm@@QAA_NAAVBinStream@@@Z",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452a58": {
+  "demangled": "public: __cdecl RndColorXfm::RndColorXfm(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0RndColorXfm@@QAA@XZ",
+  "unit": "default/ColorXfm"
+ },
+ "0x82452af8": {
+  "demangled": "public: void __cdecl BoxMapLighting::Clear(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Clear@BoxMapLighting@@QAAXXZ",
+  "unit": "default/BoxMap"
+ },
+ "0x82452b10": {
+  "demangled": "public: bool __cdecl BoxMapLighting::QueueLight(class RndLight *, float)",
+  "method": "comdat_size",
+  "percent": 99.89,
+  "symbol": "?QueueLight@BoxMapLighting@@QAA_NPAVRndLight@@M@Z",
+  "unit": "default/BoxMap"
+ },
+ "0x824533c8": {
+  "demangled": "public: __cdecl BoxMapLighting::BoxMapLighting(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0BoxMapLighting@@QAA@XZ",
+  "unit": "default/BoxMap"
+ },
+ "0x82453468": {
+  "demangled": "public: virtual __cdecl DOFProc::~DOFProc(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1DOFProc@@UAA@XZ",
+  "unit": "default/DOFProc"
+ },
+ "0x8245a6a0": {
+  "demangled": "public: int __cdecl Keys<class stlpmtx_std::vector<class Vector3, class stlpmtx_std::StlNodeAlloc<class Vector3> >, class stlpmtx_std::vector<class RndMesh::Vert, class stlpmtx_std::StlNodeAlloc<class RndMesh::Vert> > >::KeyLessEq(float) const",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?KeyLessEq@?$Keys@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@2@@@QBAHM@Z",
+  "unit": "default/MeshAnim"
+ },
+ "0x82463b28": {
+  "demangled": "public: void __cdecl RndFlare::SetPointTest(bool)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "?SetPointTest@RndFlare@@QAAX_N@Z",
+  "unit": "default/Flare"
+ },
+ "0x82463b90": {
+  "demangled": "protected: bool __cdecl RndFlare::RectOffscreen(class Hmx::Rect const &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?RectOffscreen@RndFlare@@IBA_NABVRect@Hmx@@@Z",
+  "unit": "default/Flare"
+ },
+ "0x82463e08": {
+  "demangled": "protected: void __cdecl RndFlare::CalcScale(void)",
+  "method": "comdat_size",
+  "percent": 98.88,
+  "symbol": "?CalcScale@RndFlare@@IAAXXZ",
+  "unit": "default/Flare"
+ },
+ "0x8246a538": {
+  "demangled": "public: void __cdecl stlpmtx_std::_List_base<class RndGenerator::Instance, class stlpmtx_std::StlNodeAlloc<class RndGenerator::Instance> >::clear(void)",
+  "method": "comdat_size",
+  "percent": 92.68,
+  "symbol": "?clear@?$_List_base@VInstance@RndGenerator@@V?$StlNodeAlloc@VInstance@RndGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "unit": "default/Gen"
+ },
+ "0x8246ab88": {
+  "demangled": "public: void __cdecl RndGenerator::Generate(float)",
+  "method": "comdat_size",
+  "percent": 97.49,
+  "symbol": "?Generate@RndGenerator@@QAAXM@Z",
+  "unit": "default/Gen"
+ },
+ "0x8246afb0": {
+  "demangled": "protected: class DataNode __cdecl RndGenerator::OnGenerate(class DataArray const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?OnGenerate@RndGenerator@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "unit": "default/Gen"
+ },
+ "0x8246e6c0": {
+  "demangled": "protected: __cdecl RndMultiMeshProxy::RndMultiMeshProxy(void)",
+  "method": "comdat_size",
+  "percent": 92.6,
+  "symbol": "??0RndMultiMeshProxy@@IAA@XZ",
+  "unit": "default/MultiMeshProxy"
+ },
+ "0x8246ec68": {
+  "demangled": "public: virtual void * __cdecl RndScreenMask::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "??_GRndScreenMask@@UAAPAXI@Z",
+  "unit": "default/ScreenMask"
+ },
+ "0x8246f910": {
+  "demangled": "public: virtual void * __cdecl RndRibbon::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "??_GRndRibbon@@UAAPAXI@Z",
+  "unit": "default/Ribbon"
+ },
+ "0x8246f960": {
+  "demangled": "protected: bool __cdecl RndSet::AllowedObject(class Hmx::Object *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?AllowedObject@RndSet@@IAA_NPAVObject@Hmx@@@Z",
+  "unit": "default/Set"
+ },
+ "0x82471360": {
+  "demangled": "void __cdecl stlpmtx_std::_Destroy_Range<class DrivenPropertyEntry *>(class DrivenPropertyEntry *, class DrivenPropertyEntry *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_Destroy_Range@PAVDrivenPropertyEntry@@@stlpmtx_std@@YAXPAVDrivenPropertyEntry@@0@Z",
+  "unit": "default/FlowNode"
+ },
+ "0x82471690": {
+  "demangled": "public: __cdecl stlpmtx_std::vector<class DrivenPropertyEntry, class stlpmtx_std::StlNodeAlloc<class DrivenPropertyEntry> >::~vector<class DrivenPropertyEntry, class stlpmtx_std::StlNodeAlloc<class DrivenPropertyEntry> >(void)",
+  "method": "comdat_size",
+  "percent": 94.71,
+  "symbol": "??1?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+  "unit": "default/FlowNode"
+ },
+ "0x824719b8": {
+  "demangled": "public: class DrivenPropertyEntry * __cdecl stlpmtx_std::vector<class DrivenPropertyEntry, class stlpmtx_std::StlNodeAlloc<class DrivenPropertyEntry> >::erase(class DrivenPropertyEntry *, class DrivenPropertyEntry *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?erase@?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVDrivenPropertyEntry@@PAV3@0@Z",
+  "unit": "default/FlowNode"
+ },
+ "0x82471a10": {
+  "demangled": "public: class stlpmtx_std::vector<class DrivenPropertyEntry, class stlpmtx_std::StlNodeAlloc<class DrivenPropertyEntry> > & __cdecl stlpmtx_std::vector<class DrivenPropertyEntry, class stlpmtx_std::StlNodeAlloc<class DrivenPropertyEntry> >::operator=(class stlpmtx_std::vector<class DrivenPropertyEntry, class stlpmtx_std::StlNodeAlloc<class DrivenPropertyEntry> > const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??4?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+  "unit": "default/FlowNode"
+ },
+ "0x82474e58": {
+  "demangled": "public: virtual void * __cdecl FlowQueueable::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "??_GFlowQueueable@@UAAPAXI@Z",
+  "unit": "default/FlowQueueable"
+ },
+ "0x82475ff8": {
+  "demangled": "protected: bool __cdecl RndTexBlendController::IsValid(void) const",
+  "method": "comdat_size",
+  "percent": 87.29,
+  "symbol": "?IsValid@RndTexBlendController@@IBA_NXZ",
+  "unit": "default/TexBlendController"
+ },
+ "0x82476080": {
+  "demangled": "protected: bool __cdecl RndTexBlendController::GetCurrentDistance(float &) const",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "?GetCurrentDistance@RndTexBlendController@@IBA_NAAM@Z",
+  "unit": "default/TexBlendController"
+ },
+ "0x82476140": {
+  "demangled": "protected: void __cdecl RndTexBlendController::UpdateReferenceDistance(void)",
+  "method": "comdat_size",
+  "percent": 99.71,
+  "symbol": "?UpdateReferenceDistance@RndTexBlendController@@IAAXXZ",
+  "unit": "default/TexBlendController"
+ },
+ "0x82476228": {
+  "demangled": "protected: void __cdecl RndTexBlendController::UpdateAllDistances(void)",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "?UpdateAllDistances@RndTexBlendController@@IAAXXZ",
+  "unit": "default/TexBlendController"
+ },
+ "0x824766e0": {
+  "demangled": "public: enum RndTexBlendController::BlendState __cdecl RndTexBlendController::GetBlendState(float &, float) const",
+  "method": "comdat_size",
+  "percent": 91.19,
+  "symbol": "?GetBlendState@RndTexBlendController@@QBA?AW4BlendState@1@AAMM@Z",
+  "unit": "default/TexBlendController"
+ },
+ "0x82476920": {
+  "demangled": "public: virtual void __cdecl RndTexBlendController::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "?Save@RndTexBlendController@@UAAXAAVBinStream@@@Z",
+  "unit": "default/TexBlendController"
+ },
+ "0x82477160": {
+  "demangled": "void __cdecl stlpmtx_std::__unguarded_linear_insert<struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter>(struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "??$__unguarded_linear_insert@PAU?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@U12@UBlendSorter@@@stlpmtx_std@@YAXPAU?$pair@PAVRndTexBlendController@@M@0@U10@UBlendSorter@@@Z",
+  "unit": "default/TexBlender"
+ },
+ "0x824771b8": {
+  "demangled": "void __cdecl stlpmtx_std::__push_heap<struct stlpmtx_std::pair<class RndTexBlendController *, float> *, int, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter>(struct stlpmtx_std::pair<class RndTexBlendController *, float> *, int, int, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__push_heap@PAU?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@HU12@UBlendSorter@@@stlpmtx_std@@YAXPAU?$pair@PAVRndTexBlendController@@M@0@HHU10@UBlendSorter@@@Z",
+  "unit": "default/TexBlender"
+ },
+ "0x82477350": {
+  "demangled": "void __cdecl stlpmtx_std::__adjust_heap<struct stlpmtx_std::pair<class RndTexBlendController *, float> *, int, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter>(struct stlpmtx_std::pair<class RndTexBlendController *, float> *, int, int, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__adjust_heap@PAU?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@HU12@UBlendSorter@@@stlpmtx_std@@YAXPAU?$pair@PAVRndTexBlendController@@M@0@HHU10@UBlendSorter@@@Z",
+  "unit": "default/TexBlender"
+ },
+ "0x82477dc0": {
+  "demangled": "void __cdecl stlpmtx_std::__pop_heap_aux<struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter>(struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct BlendSorter)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__pop_heap_aux@PAU?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@U12@UBlendSorter@@@stlpmtx_std@@YAXPAU?$pair@PAVRndTexBlendController@@M@0@00UBlendSorter@@@Z",
+  "unit": "default/TexBlender"
+ },
+ "0x82479018": {
+  "demangled": "void __cdecl stlpmtx_std::__introsort_loop<struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float>, int, struct BlendSorter>(struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float> *, int, struct BlendSorter)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__introsort_loop@PAU?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@U12@HUBlendSorter@@@stlpmtx_std@@YAXPAU?$pair@PAVRndTexBlendController@@M@0@00HUBlendSorter@@@Z",
+  "unit": "default/TexBlender"
+ },
+ "0x8247c7d0": {
+  "demangled": "void __cdecl stlpmtx_std::__insertion_sort<struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float>, struct BlendSorter>(struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct stlpmtx_std::pair<class RndTexBlendController *, float> *, struct BlendSorter)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "??$__insertion_sort@PAU?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@U12@UBlendSorter@@@stlpmtx_std@@YAXPAU?$pair@PAVRndTexBlendController@@M@0@00UBlendSorter@@@Z",
+  "unit": "default/TexBlender"
+ },
+ "0x824840e8": {
+  "demangled": "public: virtual __cdecl DancerSequence::~DancerSequence(void)",
+  "method": "comdat_size",
+  "percent": 99.84,
+  "symbol": "??1DancerSequence@@UAA@XZ",
+  "unit": "default/DancerSequence"
+ },
+ "0x82484910": {
+  "demangled": "public: virtual void * __cdecl DancerSequence::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "??_GDancerSequence@@UAAPAXI@Z",
+  "unit": "default/DancerSequence"
+ },
+ "0x8248a09c": {
+  "demangled": "public: __cdecl EventTrigger::ProxyCall::ProxyCall(struct EventTrigger::ProxyCall const &)",
+  "method": "comdat_reloc",
+  "percent": 99.75,
+  "symbol": "??0ProxyCall@EventTrigger@@QAA@ABU01@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248add8": {
+  "demangled": "public: __cdecl EventTrigger::Anim::Anim(struct EventTrigger::Anim const &)",
+  "method": "comdat_size",
+  "percent": 99.43,
+  "symbol": "??0Anim@EventTrigger@@QAA@ABU01@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248af98": {
+  "demangled": "class BinStreamRev & __cdecl operator>>(class BinStreamRev &, struct EventTrigger::Anim &)",
+  "method": "comdat_size",
+  "percent": 85.27,
+  "symbol": "??5@YAAAVBinStreamRev@@AAV0@AAUAnim@EventTrigger@@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248b0f8": {
+  "demangled": "void __cdecl RemoveNullEvents(class stlpmtx_std::list<class Symbol, class stlpmtx_std::StlNodeAlloc<class Symbol> > &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?RemoveNullEvents@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248bd60": {
+  "demangled": "bool __cdecl PropSync(struct EventTrigger::Anim &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 98.97,
+  "symbol": "?PropSync@@YA_NAAUAnim@EventTrigger@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248c2f8": {
+  "demangled": "bool __cdecl PropSync(struct EventTrigger::ProxyCall &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 97.35,
+  "symbol": "?PropSync@@YA_NAAUProxyCall@EventTrigger@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248d070": {
+  "demangled": "void __cdecl stlpmtx_std::_Copy_Construct<struct EventTrigger::HideDelay>(struct EventTrigger::HideDelay *, struct EventTrigger::HideDelay const &)",
+  "method": "comdat_size",
+  "percent": 99.76,
+  "symbol": "??$_Copy_Construct@UHideDelay@EventTrigger@@@stlpmtx_std@@YAXPAUHideDelay@EventTrigger@@ABU12@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x8248d840": {
+  "demangled": "public: void __cdecl stlpmtx_std::list<class Symbol, class stlpmtx_std::StlNodeAlloc<class Symbol> >::resize(unsigned int, class Symbol const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?resize@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSymbol@@@Z",
+  "unit": "default/EventTrigger"
+ },
+ "0x82492b18": {
+  "demangled": "protected: void __cdecl RndShader::CheckForceCull(enum ShaderType)",
+  "method": "text_exact",
+  "percent": 99.9,
+  "symbol": "?CheckForceCull@RndShader@@IAAXW4ShaderType@@@Z",
+  "unit": "default/Shader"
+ },
+ "0x82492d48": {
+  "demangled": "protected: virtual void __cdecl RndShaderPostProc::Select(class RndMat *, enum ShaderType, bool)",
+  "method": "comdat_size",
+  "percent": 86.25,
+  "symbol": "?Select@RndShaderPostProc@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+  "unit": "default/Shader"
+ },
+ "0x82492f68": {
+  "demangled": "protected: virtual void __cdecl RndShaderSimple::Select(class RndMat *, enum ShaderType, bool)",
+  "method": "comdat_size",
+  "percent": 85.9,
+  "symbol": "?Select@RndShaderSimple@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+  "unit": "default/Shader"
+ },
+ "0x824944a0": {
+  "demangled": "protected: virtual void __cdecl RndShaderDrawRect::Select(class RndMat *, enum ShaderType, bool)",
+  "method": "comdat_size",
+  "percent": 90.84,
+  "symbol": "?Select@RndShaderDrawRect@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+  "unit": "default/Shader"
+ },
+ "0x82494608": {
+  "demangled": "protected: virtual void __cdecl RndShaderUnwrapUV::Select(class RndMat *, enum ShaderType, bool)",
+  "method": "comdat_size",
+  "percent": 91.53,
+  "symbol": "?Select@RndShaderUnwrapUV@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+  "unit": "default/Shader"
+ },
+ "0x82495640": {
+  "demangled": "protected: virtual void __cdecl RndShaderFur::Select(class RndMat *, enum ShaderType, bool)",
+  "method": "comdat_size",
+  "percent": 91.21,
+  "symbol": "?Select@RndShaderFur@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+  "unit": "default/Shader"
+ },
+ "0x82495728": {
+  "demangled": "private: void __cdecl RndSoftParticleBuffer::FreeData(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?FreeData@RndSoftParticleBuffer@@AAAXXZ",
+  "unit": "default/SoftParticleBuffer"
+ },
+ "0x82495e18": {
+  "demangled": "public: virtual __cdecl RndSoftParticleBuffer::~RndSoftParticleBuffer(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1RndSoftParticleBuffer@@UAA@XZ",
+  "unit": "default/SoftParticleBuffer"
+ },
+ "0x8249bd28": {
+  "demangled": "bool __cdecl PropSync(struct LightPreset::SpotlightDrawerEntry &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 91.5,
+  "symbol": "?PropSync@@YA_NAAUSpotlightDrawerEntry@LightPreset@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249c208": {
+  "demangled": "bool __cdecl PropSync(struct LightPreset::EnvironmentEntry &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 90.74,
+  "symbol": "?PropSync@@YA_NAAUEnvironmentEntry@LightPreset@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249c700": {
+  "demangled": "bool __cdecl PropSync(struct LightPreset::EnvLightEntry &, class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 93.18,
+  "symbol": "?PropSync@@YA_NAAUEnvLightEntry@LightPreset@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249cee0": {
+  "demangled": "protected: struct LightPreset::EnvLightEntry * __cdecl stlpmtx_std::vector<struct LightPreset::EnvLightEntry, class stlpmtx_std::StlNodeAlloc<struct LightPreset::EnvLightEntry> >::_M_erase(struct LightPreset::EnvLightEntry *, struct LightPreset::EnvLightEntry *, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?_M_erase@?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUEnvLightEntry@LightPreset@@PAU34@0ABU__false_type@2@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249d9a8": {
+  "demangled": "public: __cdecl stlpmtx_std::vector<bool, class stlpmtx_std::StlNodeAlloc<bool> >::vector<bool, class stlpmtx_std::StlNodeAlloc<bool> >(class stlpmtx_std::vector<bool, class stlpmtx_std::StlNodeAlloc<bool> > const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249da80": {
+  "demangled": "public: class stlpmtx_std::vector<bool, class stlpmtx_std::StlNodeAlloc<bool> > & __cdecl stlpmtx_std::vector<bool, class stlpmtx_std::StlNodeAlloc<bool> >::operator=(class stlpmtx_std::vector<bool, class stlpmtx_std::StlNodeAlloc<bool> > const &)",
+  "method": "comdat_size",
+  "percent": 80.69,
+  "symbol": "??4?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249e258": {
+  "demangled": "protected: void __cdecl LightPreset::CacheFrames(void)",
+  "method": "comdat_size",
+  "percent": 99.72,
+  "symbol": "?CacheFrames@LightPreset@@IAAXXZ",
+  "unit": "default/LightPreset"
+ },
+ "0x8249e918": {
+  "demangled": "protected: void __cdecl stlpmtx_std::vector<struct LightPreset::EnvLightEntry, class stlpmtx_std::StlNodeAlloc<struct LightPreset::EnvLightEntry> >::_M_insert_overflow_aux(struct LightPreset::EnvLightEntry *, struct LightPreset::EnvLightEntry const &, struct stlpmtx_std::__false_type const &, unsigned int, bool)",
+  "method": "comdat_size",
+  "percent": 86.68,
+  "symbol": "?_M_insert_overflow_aux@?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEnvLightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x8249f428": {
+  "demangled": "public: void __cdecl LightPreset::OnKeyframeCmd(enum LightPreset::KeyframeCmd)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?OnKeyframeCmd@LightPreset@@QAAXW4KeyframeCmd@1@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x824a07f8": {
+  "demangled": "class BinStreamRev & __cdecl operator>><struct LightPreset::EnvironmentEntry, class stlpmtx_std::StlNodeAlloc<struct LightPreset::EnvironmentEntry> >(class BinStreamRev &, class stlpmtx_std::vector<struct LightPreset::EnvironmentEntry, class stlpmtx_std::StlNodeAlloc<struct LightPreset::EnvironmentEntry> > &)",
+  "method": "comdat_size",
+  "percent": 95.53,
+  "symbol": "??$?5UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x824a08f8": {
+  "demangled": "class BinStreamRev & __cdecl operator>><struct LightPreset::SpotlightDrawerEntry, class stlpmtx_std::StlNodeAlloc<struct LightPreset::SpotlightDrawerEntry> >(class BinStreamRev &, class stlpmtx_std::vector<struct LightPreset::SpotlightDrawerEntry, class stlpmtx_std::StlNodeAlloc<struct LightPreset::SpotlightDrawerEntry> > &)",
+  "method": "comdat_size",
+  "percent": 97.78,
+  "symbol": "??$?5USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x824a2a30": {
+  "demangled": "public: void __cdecl LightPreset::SetSpotlight(class Spotlight *, int)",
+  "method": "comdat_size",
+  "percent": 91.95,
+  "symbol": "?SetSpotlight@LightPreset@@QAAXPAVSpotlight@@H@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x824a2b10": {
+  "demangled": "public: class stlpmtx_std::vector<struct LightPreset::Keyframe, class stlpmtx_std::StlNodeAlloc<struct LightPreset::Keyframe> > & __cdecl stlpmtx_std::vector<struct LightPreset::Keyframe, class stlpmtx_std::StlNodeAlloc<struct LightPreset::Keyframe> >::operator=(class stlpmtx_std::vector<struct LightPreset::Keyframe, class stlpmtx_std::StlNodeAlloc<struct LightPreset::Keyframe> > const &)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "??4?$vector@UKeyframe@LightPreset@@V?$StlNodeAlloc@UKeyframe@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+  "unit": "default/LightPreset"
+ },
+ "0x824a5990": {
+  "demangled": "public: virtual void * __cdecl FlowOutPort::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "??_GFlowOutPort@@UAAPAXI@Z",
+  "unit": "default/FlowOutPort"
+ },
+ "0x824b70d8": {
+  "demangled": "public: __cdecl stlpmtx_std::list<class RndMesh *, class stlpmtx_std::StlNodeAlloc<class RndMesh *> >::list<class RndMesh *, class stlpmtx_std::StlNodeAlloc<class RndMesh *> >(class stlpmtx_std::list<class RndMesh *, class stlpmtx_std::StlNodeAlloc<class RndMesh *> > const &)",
+  "method": "comdat_size",
+  "percent": 97.41,
+  "symbol": "??0?$list@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+  "unit": "default/DefaultPhysicsManager"
+ },
+ "0x824bd698": {
+  "demangled": "public: virtual void * __cdecl RndShockwave::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "??_GRndShockwave@@UAAPAXI@Z",
+  "unit": "default/Shockwave"
+ },
+ "0x824d46f8": {
+  "demangled": "private: class DataNode __cdecl LightHue::OnSaveDefault(class DataArray *)",
+  "method": "comdat_size",
+  "percent": 92.68,
+  "symbol": "?OnSaveDefault@LightHue@@AAA?AVDataNode@@PAVDataArray@@@Z",
+  "unit": "default/LightHue"
+ },
+ "0x824d48d0": {
+  "demangled": "public: virtual void __cdecl LightHue::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "?Save@LightHue@@UAAXAAVBinStream@@@Z",
+  "unit": "default/LightHue"
+ },
+ "0x824d4c78": {
+  "demangled": "public: virtual __cdecl LightHue::~LightHue(void)",
+  "method": "comdat_size",
+  "percent": 87.67,
+  "symbol": "??1LightHue@@UAA@XZ",
+  "unit": "default/LightHue"
+ },
+ "0x824d4ef8": {
+  "demangled": "protected: __cdecl LightHue::LightHue(void)",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "??0LightHue@@IAA@XZ",
+  "unit": "default/LightHue"
+ },
+ "0x824d4f88": {
+  "demangled": "public: virtual void * __cdecl LightHue::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??_GLightHue@@UAAPAXI@Z",
+  "unit": "default/LightHue"
+ },
+ "0x824d5170": {
+  "demangled": "private: void __cdecl LightHue::Sync(void)",
+  "method": "comdat_size",
+  "percent": 86.9,
+  "symbol": "?Sync@LightHue@@AAAXXZ",
+  "unit": "default/LightHue"
+ },
+ "0x824d6cd0": {
+  "demangled": "protected: __cdecl SpotlightEnder::SpotlightEnder(void)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "??0SpotlightEnder@@IAA@XZ",
+  "unit": "default/SpotlightEnder"
+ },
+ "0x824d6f88": {
+  "demangled": "public: virtual void __cdecl PostProcer::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.89,
+  "symbol": "?Save@PostProcer@@UAAXAAVBinStream@@@Z",
+  "unit": "default/PostProcer"
+ },
+ "0x824d7278": {
+  "demangled": "public: void __cdecl SharedGroup::MakeWorldSphere(class Transform const &, class Sphere &)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?MakeWorldSphere@SharedGroup@@QAAXABVTransform@@AAVSphere@@@Z",
+  "unit": "default/Instance"
+ },
+ "0x824d7950": {
+  "demangled": "void __cdecl stlpmtx_std::_S_merge<class Hmx::Object *, class stlpmtx_std::StlNodeAlloc<class Hmx::Object *>, struct DirLoader::ClassAndNameSort>(class stlpmtx_std::list<class Hmx::Object *, class stlpmtx_std::StlNodeAlloc<class Hmx::Object *> > &, class stlpmtx_std::list<class Hmx::Object *, class stlpmtx_std::StlNodeAlloc<class Hmx::Object *> > &, struct DirLoader::ClassAndNameSort)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_S_merge@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@UClassAndNameSort@DirLoader@@@stlpmtx_std@@YAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@0@0UClassAndNameSort@DirLoader@@@Z",
+  "unit": "default/Instance"
+ },
+ "0x824d7a30": {
+  "demangled": "public: void __cdecl SharedGroup::TryPoll(class WorldInstance *)",
+  "method": "comdat_size",
+  "percent": 99.87,
+  "symbol": "?TryPoll@SharedGroup@@QAAXPAVWorldInstance@@@Z",
+  "unit": "default/Instance"
+ },
+ "0x824d8698": {
+  "demangled": "public: __cdecl SharedGroup::SharedGroup(class RndGroup *)",
+  "method": "comdat_size",
+  "percent": 90.33,
+  "symbol": "??0SharedGroup@@QAA@PAVRndGroup@@@Z",
+  "unit": "default/Instance"
+ },
+ "0x824da640": {
+  "demangled": "protected: void __cdecl FreeCamera::UpdateFromCamera(void)",
+  "method": "comdat_size",
+  "percent": 99.87,
+  "symbol": "?UpdateFromCamera@FreeCamera@@IAAXXZ",
+  "unit": "default/FreeCamera"
+ },
+ "0x824da6e0": {
+  "demangled": "public: void __cdecl FreeCamera::Poll(void)",
+  "method": "comdat_size",
+  "percent": 90.25,
+  "symbol": "?Poll@FreeCamera@@QAAXXZ",
+  "unit": "default/FreeCamera"
+ },
+ "0x824db038": {
+  "demangled": "bool __cdecl HasFileChecksumData(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?HasFileChecksumData@@YA_NXZ",
+  "unit": "default/FileChecksum"
+ },
+ "0x824db058": {
+  "demangled": "unsigned char const * __cdecl GetFileChecksum(char const *, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetFileChecksum@@YAPBEPBD_N@Z",
+  "unit": "default/FileChecksum"
+ },
+ "0x824db110": {
+  "demangled": "void __cdecl SetFileChecksumData(struct FileChecksum *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetFileChecksumData@@YAXPAUFileChecksum@@H@Z",
+  "unit": "default/FileChecksum"
+ },
+ "0x824db150": {
+  "demangled": "void __cdecl MakeRotMatrix(class Hmx::Quat const &, class Hmx::Matrix3&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MakeRotMatrix@@YAXABVQuat@Hmx@@AAVMatrix3@2@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824db2c0": {
+  "demangled": "class TextStream & __cdecl operator<<(class TextStream &, class Vector3const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVTextStream@@AAV0@ABVVector3@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824db438": {
+  "demangled": "class TextStream & __cdecl operator<<(class TextStream &, class Transform const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVTextStream@@AAV0@ABVTransform@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824db648": {
+  "demangled": "void __cdecl MakeEuler(class Hmx::Matrix3const &, class Vector3&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MakeEuler@@YAXABVMatrix3@Hmx@@AAVVector3@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824db720": {
+  "demangled": "public: void __cdecl Hmx::Quat::Set(class Vector3const &, float)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?Set@Quat@Hmx@@QAAXABVVector3@@M@Z",
+  "unit": "default/Rot"
+ },
+ "0x824db7b8": {
+  "demangled": "void __cdecl MakeScale(class Hmx::Matrix3const &, class Vector3&)",
+  "method": "comdat_size",
+  "percent": 94.27,
+  "symbol": "?MakeScale@@YAXABVMatrix3@Hmx@@AAVVector3@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824db9f0": {
+  "demangled": "public: void __cdecl Hmx::Quat::Set(class Vector3const &)",
+  "method": "comdat_size",
+  "percent": 94.74,
+  "symbol": "?Set@Quat@Hmx@@QAAXABVVector3@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824dbcfc": {
+  "demangled": "float __cdecl GetXAngle(class Hmx::Matrix3const &)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?GetXAngle@@YAMABVMatrix3@Hmx@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824dbfc0": {
+  "demangled": "void __cdecl MakeRotMatrix(class Vector3const &, class Hmx::Matrix3&, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MakeRotMatrix@@YAXABVVector3@@AAVMatrix3@Hmx@@_N@Z",
+  "unit": "default/Rot"
+ },
+ "0x824dc120": {
+  "demangled": "void __cdecl MakeRotMatrix(class Vector3const &, class Vector3const &, class Hmx::Matrix3&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MakeRotMatrix@@YAXABVVector3@@0AAVMatrix3@Hmx@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824dc3c8": {
+  "demangled": "void __cdecl MakeEuler(class Hmx::Quat const &, class Vector3&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MakeEuler@@YAXABVQuat@Hmx@@AAVVector3@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824dc400": {
+  "demangled": "void __cdecl MakeRotQuat(class Vector3const &, class Vector3const &, class Hmx::Quat &)",
+  "method": "comdat_size",
+  "percent": 95.06,
+  "symbol": "?MakeRotQuat@@YAXABVVector3@@0AAVQuat@Hmx@@@Z",
+  "unit": "default/Rot"
+ },
+ "0x824dc818": {
+  "demangled": "void __cdecl Invert(class Hmx::Matrix3const &, class Hmx::Matrix3&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Invert@@YAXABVMatrix3@Hmx@@AAV12@@Z",
+  "unit": "default/mtx"
+ },
+ "0x824dc9c0": {
+  "demangled": "public: void __cdecl Box::Extend(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Extend@Box@@QAAXM@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dcba8": {
+  "demangled": "class BinStream & __cdecl operator<<(class BinStream &, class BSPNode const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVBinStream@@AAV0@PBVBSPNode@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dcc18": {
+  "demangled": "class BinStream & __cdecl operator>>(class BinStream &, class BSPNode *&)",
+  "method": "comdat_size",
+  "percent": 86.11,
+  "symbol": "??5@YAAAVBinStream@@AAV0@AAPAVBSPNode@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dcde0": {
+  "demangled": "public: bool __cdecl Box::Contains(class Triangle const &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Contains@Box@@QBA_NABVTriangle@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dcf08": {
+  "demangled": "void __cdecl Multiply(class Box const &, float, class Box &)",
+  "method": "comdat_size",
+  "percent": 87.74,
+  "symbol": "?Multiply@@YAXABVBox@@MAAV1@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dd1e0": {
+  "demangled": "void __cdecl Multiply(class Plane const &, class Transform const &, class Plane &)",
+  "method": "comdat_size",
+  "percent": 97.69,
+  "symbol": "?Multiply@@YAXABVPlane@@ABVTransform@@AAV1@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dd2e0": {
+  "demangled": "void __cdecl Intersect(class Hmx::Ray const &, class Hmx::Ray const &, class Vector2&)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Intersect@@YAXABVRay@Hmx@@0AAVVector2@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dd358": {
+  "demangled": "void __cdecl Intersect(class Transform const &, class Plane const &, class Hmx::Ray &)",
+  "method": "comdat_size",
+  "percent": 83.1,
+  "symbol": "?Intersect@@YAXABVTransform@@ABVPlane@@AAVRay@Hmx@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dd470": {
+  "demangled": "bool __cdecl Intersect(class Segment const &, class Triangle const &, bool, float &)",
+  "method": "comdat_size",
+  "percent": 93.73,
+  "symbol": "?Intersect@@YA_NABVSegment@@ABVTriangle@@_NAAM@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dd620": {
+  "demangled": "bool __cdecl Intersect(class Vector3const &, class Vector3const &, class Triangle const &, float &)",
+  "method": "comdat_size",
+  "percent": 98.78,
+  "symbol": "?Intersect@@YA_NABVVector3@@0ABVTriangle@@AAM@Z",
+  "unit": "default/Geo"
+ },
+ "0x824ddbb8": {
+  "demangled": "void __cdecl MultiplyEq(class BSPNode *, class Transform const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MultiplyEq@@YAXPAVBSPNode@@ABVTransform@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824ddc28": {
+  "demangled": "public: void __cdecl BSPFace::OnSide(class Plane const &, bool &, bool &)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "?OnSide@BSPFace@@QAAXABVPlane@@AA_N1@Z",
+  "unit": "default/Geo"
+ },
+ "0x824ddfb0": {
+  "demangled": "bool __cdecl operator>(class Sphere const &, class Frustum const &)",
+  "method": "comdat_reloc",
+  "percent": 98.06,
+  "symbol": "??O@YA_NABVSphere@@ABVFrustum@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824de128": {
+  "demangled": "void __cdecl stlpmtx_std::_S_merge<class BSPFace, class stlpmtx_std::StlNodeAlloc<class BSPFace>, struct stlpmtx_std::less<class BSPFace> >(class stlpmtx_std::list<class BSPFace, class stlpmtx_std::StlNodeAlloc<class BSPFace> > &, class stlpmtx_std::list<class BSPFace, class stlpmtx_std::StlNodeAlloc<class BSPFace> > &, struct stlpmtx_std::less<class BSPFace>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_S_merge@VBSPFace@@V?$StlNodeAlloc@VBSPFace@@@stlpmtx_std@@U?$less@VBSPFace@@@3@@stlpmtx_std@@YAXAAV?$list@VBSPFace@@V?$StlNodeAlloc@VBSPFace@@@stlpmtx_std@@@0@0U?$less@VBSPFace@@@0@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824de9f0": {
+  "demangled": "public: void __cdecl BSPFace::Set(class Vector3const &, class Vector3const &, class Vector3const &)",
+  "method": "comdat_size",
+  "percent": 99.74,
+  "symbol": "?Set@BSPFace@@QAAXABVVector3@@00@Z",
+  "unit": "default/Geo"
+ },
+ "0x824debc8": {
+  "demangled": "void __cdecl Clip(class Hmx::Polygon const &, class Hmx::Ray const &, class Hmx::Polygon &)",
+  "method": "comdat_size",
+  "percent": 93.47,
+  "symbol": "?Clip@@YAXABVPolygon@Hmx@@ABVRay@2@AAV12@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824df020": {
+  "demangled": "bool __cdecl CheckBSPTree(class BSPNode const *, class Box const &)",
+  "method": "comdat_size",
+  "percent": 97.93,
+  "symbol": "?CheckBSPTree@@YA_NPBVBSPNode@@ABVBox@@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824df588": {
+  "demangled": "void __cdecl stlpmtx_std::_S_sort<class BSPFace, class stlpmtx_std::StlNodeAlloc<class BSPFace>, struct stlpmtx_std::less<class BSPFace> >(class stlpmtx_std::list<class BSPFace, class stlpmtx_std::StlNodeAlloc<class BSPFace> > &, struct stlpmtx_std::less<class BSPFace>)",
+  "method": "comdat_size",
+  "percent": 98.77,
+  "symbol": "??$_S_sort@VBSPFace@@V?$StlNodeAlloc@VBSPFace@@@stlpmtx_std@@U?$less@VBSPFace@@@3@@stlpmtx_std@@YAXAAV?$list@VBSPFace@@V?$StlNodeAlloc@VBSPFace@@@stlpmtx_std@@@0@U?$less@VBSPFace@@@0@@Z",
+  "unit": "default/Geo"
+ },
+ "0x824dff60": {
+  "demangled": "public: float __cdecl Rand::Float(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Float@Rand@@QAAMXZ",
+  "unit": "default/Rand"
+ },
+ "0x824e18f0": {
+  "demangled": "public: void __cdecl CSHA1::Update(unsigned char const *, unsigned int)",
+  "method": "comdat_size",
+  "percent": 95.53,
+  "symbol": "?Update@CSHA1@@QAAXPBEI@Z",
+  "unit": "default/SHA1"
+ },
+ "0x824e19d8": {
+  "demangled": "public: struct CSHA1::Digest const & __cdecl CSHA1::Final(void)",
+  "method": "comdat_size",
+  "percent": 97.44,
+  "symbol": "?Final@CSHA1@@QAAABUDigest@1@XZ",
+  "unit": "default/SHA1"
+ },
+ "0x824e1b10": {
+  "demangled": "public: void __cdecl CSHA1::Digest::ReportHash(char *, unsigned char) const",
+  "method": "comdat_size",
+  "percent": 98.74,
+  "symbol": "?ReportHash@Digest@CSHA1@@QBAXPADE@Z",
+  "unit": "default/SHA1"
+ },
+ "0x824e2908": {
+  "demangled": "void __cdecl InterpVector(class Keys<class Vector3, class Vector3> const &, class Key<class Vector3> const *, class Key<class Vector3> const *, float, bool, class Vector3&, class Vector3*)",
+  "method": "comdat_size",
+  "percent": 92.46,
+  "symbol": "?InterpVector@@YAXABV?$Keys@VVector3@@V1@@@PBV?$Key@VVector3@@@@1M_NAAVVector3@@PAV3@@Z",
+  "unit": "default/Key"
+ },
+ "0x824e2db8": {
+  "demangled": "void __cdecl InterpVector(class Keys<class Vector3, class Vector3> const &, bool, float, class Vector3&, class Vector3*)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?InterpVector@@YAXABV?$Keys@VVector3@@V1@@@_NMAAVVector3@@PAV2@@Z",
+  "unit": "default/Key"
+ },
+ "0x824e53e8": {
+  "demangled": "public: virtual void * __cdecl FlowSound::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "??_GFlowSound@@UAAPAXI@Z",
+  "unit": "default/FlowSound"
+ },
+ "0x824fc360": {
+  "demangled": "public: void __cdecl Debug::StopLog(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?StopLog@Debug@@QAAXXZ",
+  "unit": "default/Debug"
+ },
+ "0x824fc460": {
+  "demangled": "public: void __cdecl Debug::StartLog(char const *, bool)",
+  "method": "comdat_size",
+  "percent": 81.25,
+  "symbol": "?StartLog@Debug@@QAAXPBD_N@Z",
+  "unit": "default/Debug"
+ },
+ "0x824fc820": {
+  "demangled": "public: void __cdecl Debug::RemoveExitCallback(void (__cdecl *)(void))",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?RemoveExitCallback@Debug@@QAAXP6AXXZ@Z",
+  "unit": "default/Debug"
+ },
+ "0x824fe8b0": {
+  "demangled": "void __cdecl stlpmtx_std::_Copy_Construct<struct stlpmtx_std::pair<class Timer, class TimerStats> >(struct stlpmtx_std::pair<class Timer, class TimerStats> *, struct stlpmtx_std::pair<class Timer, class TimerStats> const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_Copy_Construct@U?$pair@VTimer@@VTimerStats@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VTimer@@VTimerStats@@@0@ABU10@@Z",
+  "unit": "default/Timer"
+ },
+ "0x824fe908": {
+  "demangled": "public: static class Timer * __cdecl AutoTimer::GetTimer(class Symbol)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetTimer@AutoTimer@@SAPAVTimer@@VSymbol@@@Z",
+  "unit": "default/Timer"
+ },
+ "0x824fe948": {
+  "demangled": "public: static void __cdecl AutoTimer::ComputeCriticalFrame(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ComputeCriticalFrame@AutoTimer@@SAXXZ",
+  "unit": "default/Timer"
+ },
+ "0x824fe9b0": {
+  "demangled": "public: static void __cdecl AutoTimer::CollectTimerStats(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?CollectTimerStats@AutoTimer@@SAXXZ",
+  "unit": "default/Timer"
+ },
+ "0x824ff1f8": {
+  "demangled": "void __cdecl stlpmtx_std::__unguarded_linear_insert<class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__unguarded_linear_insert@PAVFileEntry@@V1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@V1@U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ff288": {
+  "demangled": "void __cdecl stlpmtx_std::__push_heap<class FileEntry *, int, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, int, int, class FileEntry, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__push_heap@PAVFileEntry@@HV1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@HHV1@U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ff7a8": {
+  "demangled": "class FileEntry const & __cdecl stlpmtx_std::__median<class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry const &, class FileEntry const &, class FileEntry const &, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__median@VFileEntry@@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAABVFileEntry@@ABV1@00U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ff8c0": {
+  "demangled": "void __cdecl stlpmtx_std::__adjust_heap<class FileEntry *, int, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, int, int, class FileEntry, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__adjust_heap@PAVFileEntry@@HV1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@HHV1@U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ffae0": {
+  "demangled": "class FileEntry * __cdecl stlpmtx_std::__lower_bound<class FileEntry *, class FileEntry, struct stlpmtx_std::__less_2<class FileEntry, class FileEntry>, int>(class FileEntry *, class FileEntry *, class FileEntry const &, struct stlpmtx_std::__less_2<class FileEntry, class FileEntry>, int *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__lower_bound@PAVFileEntry@@V1@U?$__less_2@VFileEntry@@V1@@stlpmtx_std@@H@stlpmtx_std@@YAPAVFileEntry@@PAV1@0ABV1@U?$__less_2@VFileEntry@@V1@@0@PAH@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ffbd0": {
+  "demangled": "void __cdecl stlpmtx_std::__pop_heap_aux<class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, class FileEntry *, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__pop_heap_aux@PAVFileEntry@@V1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@00U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ffca0": {
+  "demangled": "class FileEntry * __cdecl stlpmtx_std::__unguarded_partition<class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "??$__unguarded_partition@PAVFileEntry@@V1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAPAVFileEntry@@PAV1@0V1@U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824ffd90": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class FileEntry, class stlpmtx_std::StlNodeAlloc<class FileEntry> >::_M_range_insert_aux<class FileEntry *>(class FileEntry *, class FileEntry *, class FileEntry *, unsigned int, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_M_range_insert_aux@PAVFileEntry@@@?$vector@VFileEntry@@V?$StlNodeAlloc@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFileEntry@@00IABU__false_type@1@@Z",
+  "unit": "default/Archive"
+ },
+ "0x824fff08": {
+  "demangled": "void __cdecl stlpmtx_std::__linear_insert<class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__linear_insert@PAVFileEntry@@V1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@0V1@U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x825001f0": {
+  "demangled": "class FileEntry * __cdecl stlpmtx_std::__uninitialized_fill_n<class FileEntry *, unsigned int, class FileEntry>(class FileEntry *, unsigned int, class FileEntry const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__uninitialized_fill_n@PAVFileEntry@@IV1@@stlpmtx_std@@YAPAVFileEntry@@PAV1@IABV1@ABU__false_type@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x82500440": {
+  "demangled": "void __cdecl stlpmtx_std::sort_heap<class FileEntry *, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$sort_heap@PAVFileEntry@@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@0U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x82500498": {
+  "demangled": "void __cdecl stlpmtx_std::__insertion_sort<class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, class FileEntry *, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "??$__insertion_sort@PAVFileEntry@@V1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@00U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x825006d8": {
+  "demangled": "void __cdecl stlpmtx_std::__partial_sort<class FileEntry *, class FileEntry, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, class FileEntry *, class FileEntry *, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__partial_sort@PAVFileEntry@@V1@U?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@000U?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x825007d0": {
+  "demangled": "protected: void __cdecl stlpmtx_std::vector<class FileEntry, class stlpmtx_std::StlNodeAlloc<class FileEntry> >::_M_insert_overflow_aux(class FileEntry *, class FileEntry const &, struct stlpmtx_std::__false_type const &, unsigned int, bool)",
+  "method": "comdat_size",
+  "percent": 86.81,
+  "symbol": "?_M_insert_overflow_aux@?$vector@VFileEntry@@V?$StlNodeAlloc@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFileEntry@@ABV3@ABU__false_type@2@I_N@Z",
+  "unit": "default/Archive"
+ },
+ "0x825009a0": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class FileEntry, class stlpmtx_std::StlNodeAlloc<class FileEntry> >::_M_range_insert<class FileEntry *>(class FileEntry *, class FileEntry *, class FileEntry *, struct stlpmtx_std::forward_iterator_tag const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_M_range_insert@PAVFileEntry@@@?$vector@VFileEntry@@V?$StlNodeAlloc@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFileEntry@@00ABUforward_iterator_tag@1@@Z",
+  "unit": "default/Archive"
+ },
+ "0x82500bb8": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class FileEntry, class stlpmtx_std::StlNodeAlloc<class FileEntry> >::_M_fill_insert(class FileEntry *, unsigned int, class FileEntry const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?_M_fill_insert@?$vector@VFileEntry@@V?$StlNodeAlloc@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFileEntry@@IABV3@@Z",
+  "unit": "default/Archive"
+ },
+ "0x82500c28": {
+  "demangled": "void __cdecl stlpmtx_std::__introsort_loop<class FileEntry *, class FileEntry, int, struct stlpmtx_std::less<class FileEntry> >(class FileEntry *, class FileEntry *, class FileEntry *, int, struct stlpmtx_std::less<class FileEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__introsort_loop@PAVFileEntry@@V1@HU?$less@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVFileEntry@@00HU?$less@VFileEntry@@@0@@Z",
+  "unit": "default/Archive"
+ },
+ "0x82500d70": {
+  "demangled": "void __cdecl stlpmtx_std::sort<class FileEntry *>(class FileEntry *, class FileEntry *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$sort@PAVFileEntry@@@stlpmtx_std@@YAXPAVFileEntry@@0@Z",
+  "unit": "default/Archive"
+ },
+ "0x82501030": {
+  "demangled": "class BinStream & __cdecl operator>><class FileEntry, class stlpmtx_std::StlNodeAlloc<class FileEntry> >(class BinStream &, class stlpmtx_std::vector<class FileEntry, class stlpmtx_std::StlNodeAlloc<class FileEntry> > &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$?5VFileEntry@@V?$StlNodeAlloc@VFileEntry@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VFileEntry@@V?$StlNodeAlloc@VFileEntry@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/Archive"
+ },
+ "0x82501d78": {
+  "demangled": "void __cdecl UTF8FilterKeyboardString(char *, int, char const *)",
+  "method": "comdat_size",
+  "percent": 90.18,
+  "symbol": "?UTF8FilterKeyboardString@@YAXPADHPBD@Z",
+  "unit": "default/PlatformMgr"
+ },
+ "0x825070d8": {
+  "demangled": "public: static void __cdecl UsbMidiGuitar::Poll(void)",
+  "method": "comdat_size",
+  "percent": 98.71,
+  "symbol": "?Poll@UsbMidiGuitar@@SAXXZ",
+  "unit": "default/UsbMidiGuitar"
+ },
+ "0x825079b0": {
+  "demangled": "public: static void __cdecl UsbMidiKeyboard::Poll(void)",
+  "method": "comdat_size",
+  "percent": 83.91,
+  "symbol": "?Poll@UsbMidiKeyboard@@SAXXZ",
+  "unit": "default/UsbMidiKeyboard"
+ },
+ "0x825085e8": {
+  "demangled": "void (__cdecl * __cdecl SetDiskErrorCallback(void (__cdecl *)(void)))(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetDiskErrorCallback@@YAP6AXXZP6AXXZ@Z",
+  "unit": "default/System_Xbox"
+ },
+ "0x8250afe8": {
+  "demangled": "public: static class Symbol __cdecl ContentReadFailureMsg::Type(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Type@ContentReadFailureMsg@@SA?AVSymbol@@XZ",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b060": {
+  "demangled": "public: bool __cdecl Content::Contains(char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Contains@Content@@QAA_NPBD@Z",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b0d0": {
+  "demangled": "public: __cdecl ContentMgr::CallbackFile::CallbackFile(char const *, class ContentMgr::Callback *, enum ContentLocT, char const *)",
+  "method": "comdat_reloc",
+  "percent": 99.83,
+  "symbol": "??0CallbackFile@ContentMgr@@QAA@PBDPAVCallback@1@W4ContentLocT@@0@Z",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b218": {
+  "demangled": "public: virtual void __cdecl ContentMgr::Init(void)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "?Init@ContentMgr@@UAAXXZ",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b2f8": {
+  "demangled": "public: __cdecl ContentMgr::CallbackFile::CallbackFile(struct ContentMgr::CallbackFile const &)",
+  "method": "comdat_size",
+  "percent": 99.71,
+  "symbol": "??0CallbackFile@ContentMgr@@QAA@ABU01@@Z",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b380": {
+  "demangled": "public: __cdecl ContentReadFailureMsg::ContentReadFailureMsg(bool, char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0ContentReadFailureMsg@@QAA@_NPBD@Z",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b498": {
+  "demangled": "public: void __cdecl ContentMgr::OnReadFailure(bool, char const *)",
+  "method": "comdat_size",
+  "percent": 99.92,
+  "symbol": "?OnReadFailure@ContentMgr@@QAAX_NPBD@Z",
+  "unit": "default/ContentMgr"
+ },
+ "0x8250b558": {
+  "demangled": "void __cdecl stlpmtx_std::_Copy_Construct<class DataNode>(class DataNode *, class DataNode const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_Copy_Construct@VDataNode@@@stlpmtx_std@@YAXPAVDataNode@@ABV1@@Z",
+  "unit": "default/FlowCommand"
+ },
+ "0x8250df08": {
+  "demangled": "public: __cdecl ContentMgr::ContentMgr(void)",
+  "method": "comdat_size",
+  "percent": 99.91,
+  "symbol": "??0ContentMgr@@QAA@XZ",
+  "unit": "default/ContentMgr_Xbox"
+ },
+ "0x8250f438": {
+  "demangled": "public: unsigned int __cdecl DateTime::ToCode(void) const",
+  "method": "comdat_size",
+  "percent": 85.71,
+  "symbol": "?ToCode@DateTime@@QBAIXZ",
+  "unit": "default/DateTime"
+ },
+ "0x8250f5c8": {
+  "demangled": "public: void __cdecl DateTime::FromFileTime(struct _FILETIME const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?FromFileTime@DateTime@@QAAXABU_FILETIME@@@Z",
+  "unit": "default/DateTime"
+ },
+ "0x8250f788": {
+  "demangled": "public: void __cdecl DateTime::Format(class String &) const",
+  "method": "comdat_size",
+  "percent": 87.7,
+  "symbol": "?Format@DateTime@@QBAXAAVString@@@Z",
+  "unit": "default/DateTime"
+ },
+ "0x8250faf8": {
+  "demangled": "class BinStream & __cdecl operator<<(class BinStream &, struct DateTime const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVBinStream@@AAV0@ABUDateTime@@@Z",
+  "unit": "default/DateTime"
+ },
+ "0x8250fbc0": {
+  "demangled": "class BinStream & __cdecl operator>>(class BinStream &, struct DateTime &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??5@YAAAVBinStream@@AAV0@AAUDateTime@@@Z",
+  "unit": "default/DateTime"
+ },
+ "0x8250ffa0": {
+  "demangled": "public: void __cdecl UserMgr::GetLocalUsers(class stlpmtx_std::vector<class LocalUser *, class stlpmtx_std::StlNodeAlloc<class LocalUser *> > &) const",
+  "method": "comdat_size",
+  "percent": 96.61,
+  "symbol": "?GetLocalUsers@UserMgr@@QBAXAAV?$vector@PAVLocalUser@@V?$StlNodeAlloc@PAVLocalUser@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/UserMgr"
+ },
+ "0x82510f40": {
+  "demangled": "public: void __cdecl CriticalSection::Exit(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Exit@CriticalSection@@QAAXXZ",
+  "unit": "default/CritSec"
+ },
+ "0x82510f58": {
+  "demangled": "public: bool __cdecl CriticalSection::TryEnter(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?TryEnter@CriticalSection@@QAA_NXZ",
+  "unit": "default/CritSec"
+ },
+ "0x82510fa8": {
+  "demangled": "public: void __cdecl CriticalSection::Abandon(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Abandon@CriticalSection@@QAAXXZ",
+  "unit": "default/CritSec"
+ },
+ "0x82511030": {
+  "demangled": "public: void __cdecl OnlineID::SetXUID(unsigned __int64const &)",
+  "method": "comdat_size",
+  "percent": 99.8,
+  "symbol": "?SetXUID@OnlineID@@QAAXAB_K@Z",
+  "unit": "default/OnlineID"
+ },
+ "0x82514570": {
+  "demangled": "public: bool __cdecl SynchronizationEvent::Wait(int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Wait@SynchronizationEvent@@QAA_NH@Z",
+  "unit": "default/SynchronizationEvent"
+ },
+ "0x825147c8": {
+  "demangled": "public: __cdecl VirtualKeyboardResultMsg::VirtualKeyboardResultMsg(bool, char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0VirtualKeyboardResultMsg@@QAA@_NPBD@Z",
+  "unit": "default/VirtualKeyboard"
+ },
+ "0x82514e68": {
+  "demangled": "private: void * __cdecl AppChild::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 80.77,
+  "symbol": "??_GAppChild@@AAAPAXI@Z",
+  "unit": "default/AppChild"
+ },
+ "0x82514f70": {
+  "demangled": "public: void __cdecl AppChild::Sync(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Sync@AppChild@@QAAXXZ",
+  "unit": "default/AppChild"
+ },
+ "0x825151e0": {
+  "demangled": "public: static void __cdecl AppChild::Terminate(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Terminate@AppChild@@SAXXZ",
+  "unit": "default/AppChild"
+ },
+ "0x82515438": {
+  "demangled": "public: __cdecl JoypadRepeat::JoypadRepeat(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0JoypadRepeat@@QAA@XZ",
+  "unit": "default/JoypadClient"
+ },
+ "0x825155b0": {
+  "demangled": "public: void __cdecl JoypadRepeat::SendRepeat(class Hmx::Object *, int)",
+  "method": "comdat_size",
+  "percent": 99.97,
+  "symbol": "?SendRepeat@JoypadRepeat@@QAAXPAVObject@Hmx@@H@Z",
+  "unit": "default/JoypadClient"
+ },
+ "0x82515bb0": {
+  "demangled": "public: void __cdecl JoypadRepeat::Poll(float, float, class Hmx::Object *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Poll@JoypadRepeat@@QAAXMMPAVObject@Hmx@@H@Z",
+  "unit": "default/JoypadClient"
+ },
+ "0x82515d38": {
+  "demangled": "private: void __cdecl JoypadClient::Poll(void)",
+  "method": "comdat_size",
+  "percent": 93.9,
+  "symbol": "?Poll@JoypadClient@@AAAXXZ",
+  "unit": "default/JoypadClient"
+ },
+ "0x82518b50": {
+  "demangled": "private: class Block * __cdecl BlockMgr::FindLRUBlock(bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?FindLRUBlock@BlockMgr@@AAAPAVBlock@@_N@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x82518cb8": {
+  "demangled": "public: char * __cdecl BlockMgr::GetBlockData(int, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetBlockData@BlockMgr@@QAAPADHH@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x82518de0": {
+  "demangled": "public: void __cdecl stlpmtx_std::_List_base<class AsyncTask, class stlpmtx_std::StlNodeAlloc<class AsyncTask> >::clear(void)",
+  "method": "comdat_size",
+  "percent": 92.68,
+  "symbol": "?clear@?$_List_base@VAsyncTask@@V?$StlNodeAlloc@VAsyncTask@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "unit": "default/BlockMgr"
+ },
+ "0x82518e48": {
+  "demangled": "public: __cdecl stlpmtx_std::list<class AsyncTask, class stlpmtx_std::StlNodeAlloc<class AsyncTask> >::list<class AsyncTask, class stlpmtx_std::StlNodeAlloc<class AsyncTask> >(class stlpmtx_std::list<class AsyncTask, class stlpmtx_std::StlNodeAlloc<class AsyncTask> > const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0?$list@VAsyncTask@@V?$StlNodeAlloc@VAsyncTask@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x82518f48": {
+  "demangled": "public: __cdecl BlockRequest::BlockRequest(class AsyncTask const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0BlockRequest@@QAA@ABVAsyncTask@@@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x82519018": {
+  "demangled": "void __cdecl stlpmtx_std::_Copy_Construct<class BlockRequest>(class BlockRequest *, class BlockRequest const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_Copy_Construct@VBlockRequest@@@stlpmtx_std@@YAXPAVBlockRequest@@ABV1@@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x82519170": {
+  "demangled": "public: void __cdecl BlockMgr::AddTask(class AsyncTask const &)",
+  "method": "comdat_size",
+  "percent": 98.0,
+  "symbol": "?AddTask@BlockMgr@@QAAXABVAsyncTask@@@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x825192e0": {
+  "demangled": "public: void __cdecl stlpmtx_std::_List_base<class BlockRequest, class stlpmtx_std::StlNodeAlloc<class BlockRequest> >::clear(void)",
+  "method": "comdat_size",
+  "percent": 83.68,
+  "symbol": "?clear@?$_List_base@VBlockRequest@@V?$StlNodeAlloc@VBlockRequest@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "unit": "default/BlockMgr"
+ },
+ "0x82519330": {
+  "demangled": "public: void __cdecl BlockMgr::KillBlockRequests(class ArkFile *)",
+  "method": "comdat_size",
+  "percent": 95.16,
+  "symbol": "?KillBlockRequests@BlockMgr@@QAAXPAVArkFile@@@Z",
+  "unit": "default/BlockMgr"
+ },
+ "0x82519a88": {
+  "demangled": "public: __cdecl BlockMgr::BlockMgr(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0BlockMgr@@QAA@XZ",
+  "unit": "default/BlockMgr"
+ },
+ "0x82519c50": {
+  "demangled": "public: virtual int __cdecl AsyncFile::Read(void *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Read@AsyncFile@@UAAHPAXH@Z",
+  "unit": "default/AsyncFile"
+ },
+ "0x8251a498": {
+  "demangled": "protected: void __cdecl AsyncFile::FillBuffer(void)",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "?FillBuffer@AsyncFile@@IAAXXZ",
+  "unit": "default/AsyncFile"
+ },
+ "0x8251a748": {
+  "demangled": "public: virtual bool __cdecl AsyncFile::ReadDone(int &)",
+  "method": "comdat_size",
+  "percent": 99.69,
+  "symbol": "?ReadDone@AsyncFile@@UAA_NAAH@Z",
+  "unit": "default/AsyncFile"
+ },
+ "0x8251aaf0": {
+  "demangled": "public: void __cdecl ArkFile::TaskDone(int)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?TaskDone@ArkFile@@QAAXH@Z",
+  "unit": "default/ArkFile"
+ },
+ "0x8251ab18": {
+  "demangled": "public: virtual bool __cdecl ArkFile::ReadDone(int &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ReadDone@ArkFile@@UAA_NAAH@Z",
+  "unit": "default/ArkFile"
+ },
+ "0x8251acd8": {
+  "demangled": "public: virtual __cdecl ArkFile::~ArkFile(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1ArkFile@@UAA@XZ",
+  "unit": "default/ArkFile"
+ },
+ "0x8251d4e0": {
+  "demangled": "void __cdecl TryDemangleScope(char *, char const *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?TryDemangleScope@@YAXPADPBDH@Z",
+  "unit": "default/MapFile_Xbox"
+ },
+ "0x8251d588": {
+  "demangled": "void __cdecl TryDemangleParams(char *, char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?TryDemangleParams@@YAXPADPBD@Z",
+  "unit": "default/MapFile_Xbox"
+ },
+ "0x8251da28": {
+  "demangled": "void __cdecl InsertSort<struct StackData>(int *, struct StackData *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$InsertSort@UStackData@@@@YAXPAHPAUStackData@@H@Z",
+  "unit": "default/MapFile_Xbox"
+ },
+ "0x8251e9e0": {
+  "demangled": "bool __cdecl JoypadGetCachedXInputCaps(int, struct _XINPUT_CAPABILITIES *, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?JoypadGetCachedXInputCaps@@YA_NHPAU_XINPUT_CAPABILITIES@@_N@Z",
+  "unit": "default/Joypad_Xinput"
+ },
+ "0x825202b0": {
+  "demangled": "public: bool __cdecl AsyncTask::FillData(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?FillData@AsyncTask@@QAA_NXZ",
+  "unit": "default/AsyncTask"
+ },
+ "0x825203c8": {
+  "demangled": "int __cdecl `anonymous namespace'::ArkFilesInit(void)",
+  "method": "comdat_size",
+  "percent": 90.45,
+  "symbol": "?ArkFilesInit@?A0x7f36a62b@@YAHXZ",
+  "unit": "default/CDReader"
+ },
+ "0x825206c8": {
+  "demangled": "bool __cdecl CDReadExternal(void *&, int, unsigned __int64)",
+  "method": "comdat_size",
+  "percent": 86.15,
+  "symbol": "?CDReadExternal@@YA_NAAPAXH_K@Z",
+  "unit": "default/CDReader"
+ },
+ "0x82520730": {
+  "demangled": "private: int __cdecl HDCache::HdrSize(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?HdrSize@HDCache@@AAAHXZ",
+  "unit": "default/HDCache"
+ },
+ "0x82520d18": {
+  "demangled": "public: bool __cdecl HDCache::ReadDone(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ReadDone@HDCache@@QAA_NXZ",
+  "unit": "default/HDCache"
+ },
+ "0x82521f00": {
+  "demangled": "protected: virtual void __cdecl AsyncFileWin::_SeekToTell(void)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?_SeekToTell@AsyncFileWin@@MAAXXZ",
+  "unit": "default/AsyncFile_Win"
+ },
+ "0x82522048": {
+  "demangled": "protected: virtual bool __cdecl AsyncFileWin::Truncate(int)",
+  "method": "comdat_size",
+  "percent": 99.89,
+  "symbol": "?Truncate@AsyncFileWin@@MAA_NH@Z",
+  "unit": "default/AsyncFile_Win"
+ },
+ "0x825595a0": {
+  "demangled": "public: static class Symbol __cdecl DeJitterPanel::StaticClassName(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?StaticClassName@DeJitterPanel@@SA?AVSymbol@@XZ",
+  "unit": "default/Meta"
+ },
+ "0x825b67b0": {
+  "demangled": "struct Delete __cdecl stlpmtx_std::for_each<class PoseElement **, struct Delete>(class PoseElement **, class PoseElement **, struct Delete)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z",
+  "unit": "default/Pose"
+ },
+ "0x825e2580": {
+  "demangled": "public: virtual void * __cdecl PhysicsVolume::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??_GPhysicsVolume@@UAAPAXI@Z",
+  "unit": "default/PhysicsVolume"
+ },
+ "0x8268c4a8": {
+  "demangled": "struct ColorSet * __cdecl stlpmtx_std::__uninitialized_fill_n<struct ColorSet *, unsigned int, struct ColorSet>(struct ColorSet *, unsigned int, struct ColorSet const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "??$__uninitialized_fill_n@PAUColorSet@@IU1@@stlpmtx_std@@YAPAUColorSet@@PAU1@IABU1@ABU__false_type@0@@Z",
+  "unit": "default/ColorPalette"
+ },
+ "0x826d2680": {
+  "demangled": "private: void __cdecl stlpmtx_std::_Rb_tree<class Symbol, struct stlpmtx_std::less<class Symbol>, struct stlpmtx_std::pair<class Symbol const, float>, struct stlpmtx_std::_Select1st<struct stlpmtx_std::pair<class Symbol const, float> >, struct stlpmtx_std::priv::_MapTraitsT<struct stlpmtx_std::pair<class Symbol const, float> >, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<class Symbol const, float> > >::_M_erase(struct stlpmtx_std::_Rb_tree_node_base *)",
+  "method": "comdat_size",
+  "percent": 95.39,
+  "symbol": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+  "unit": "default/PropertyEventProvider"
+ },
+ "0x826d26e0": {
+  "demangled": "public: void __cdecl stlpmtx_std::_Rb_tree<class Symbol, struct stlpmtx_std::less<class Symbol>, struct stlpmtx_std::pair<class Symbol const, float>, struct stlpmtx_std::_Select1st<struct stlpmtx_std::pair<class Symbol const, float> >, struct stlpmtx_std::priv::_MapTraitsT<struct stlpmtx_std::pair<class Symbol const, float> >, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<class Symbol const, float> > >::clear(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "unit": "default/PropertyEventProvider"
+ },
+ "0x826d9fb0": {
+  "demangled": "struct DepthBuffer3DAttachment * __cdecl stlpmtx_std::__uninitialized_copy<struct DepthBuffer3DAttachment *, struct DepthBuffer3DAttachment *>(struct DepthBuffer3DAttachment *, struct DepthBuffer3DAttachment *, struct DepthBuffer3DAttachment *, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "??$__uninitialized_copy@PAUDepthBuffer3DAttachment@@PAU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@00ABU__false_type@0@@Z",
+  "unit": "default/DepthBuffer3D"
+ },
+ "0x826da730": {
+  "demangled": "protected: void __cdecl stlpmtx_std::vector<struct DepthBuffer3DAttachment, class stlpmtx_std::StlNodeAlloc<struct DepthBuffer3DAttachment> >::_M_insert_overflow_aux(struct DepthBuffer3DAttachment *, struct DepthBuffer3DAttachment const &, struct stlpmtx_std::__false_type const &, unsigned int, bool)",
+  "method": "comdat_size",
+  "percent": 86.64,
+  "symbol": "?_M_insert_overflow_aux@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUDepthBuffer3DAttachment@@ABU3@ABU__false_type@2@I_N@Z",
+  "unit": "default/DepthBuffer3D"
+ },
+ "0x826db460": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<struct DepthBuffer3DAttachment, class stlpmtx_std::StlNodeAlloc<struct DepthBuffer3DAttachment> >::_M_fill_insert(struct DepthBuffer3DAttachment *, unsigned int, struct DepthBuffer3DAttachment const &)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?_M_fill_insert@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUDepthBuffer3DAttachment@@IABU3@@Z",
+  "unit": "default/DepthBuffer3D"
+ },
+ "0x826db5e0": {
+  "demangled": "public: void __cdecl stlpmtx_std::vector<struct DepthBuffer3DAttachment, class stlpmtx_std::StlNodeAlloc<struct DepthBuffer3DAttachment> >::resize(unsigned int, struct DepthBuffer3DAttachment const &)",
+  "method": "comdat_size",
+  "percent": 99.94,
+  "symbol": "?resize@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUDepthBuffer3DAttachment@@@Z",
+  "unit": "default/DepthBuffer3D"
+ },
+ "0x826f1818": {
+  "demangled": "protected: void __cdecl stlpmtx_std::vector<struct MicClientMapper::MicMappingData, class stlpmtx_std::StlNodeAlloc<struct MicClientMapper::MicMappingData> >::_M_insert_overflow_aux(struct MicClientMapper::MicMappingData *, struct MicClientMapper::MicMappingData const &, struct stlpmtx_std::__false_type const &, unsigned int, bool)",
+  "method": "comdat_size",
+  "percent": 90.83,
+  "symbol": "?_M_insert_overflow_aux@?$vector@UMicMappingData@MicClientMapper@@V?$StlNodeAlloc@UMicMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMicMappingData@MicClientMapper@@ABU34@ABU__false_type@2@I_N@Z",
+  "unit": "default/MicClientMapper"
+ },
+ "0x826f1a98": {
+  "demangled": "public: void __cdecl stlpmtx_std::vector<struct MicClientMapper::MicMappingData, class stlpmtx_std::StlNodeAlloc<struct MicClientMapper::MicMappingData> >::push_back(struct MicClientMapper::MicMappingData const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?push_back@?$vector@UMicMappingData@MicClientMapper@@V?$StlNodeAlloc@UMicMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUMicMappingData@MicClientMapper@@@Z",
+  "unit": "default/MicClientMapper"
+ },
+ "0x826f1b28": {
+  "demangled": "public: __cdecl MicClientMapper::MicClientMapper(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0MicClientMapper@@QAA@XZ",
+  "unit": "default/MicClientMapper"
+ },
+ "0x826f4258": {
+  "demangled": "public: virtual __cdecl Stream::~Stream(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1Stream@@UAA@XZ",
+  "unit": "default/Stream"
+ },
+ "0x826face0": {
+  "demangled": "public: struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Nonconst_traits<struct MidiChannel::Note> > __cdecl stlpmtx_std::list<struct MidiChannel::Note, class stlpmtx_std::StlNodeAlloc<struct MidiChannel::Note> >::erase(struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Nonconst_traits<struct MidiChannel::Note> >, struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Nonconst_traits<struct MidiChannel::Note> >)",
+  "method": "comdat_size",
+  "percent": 83.52,
+  "symbol": "?erase@?$list@UNote@MidiChannel@@V?$StlNodeAlloc@UNote@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNote@MidiChannel@@U?$_Nonconst_traits@UNote@MidiChannel@@@stlpmtx_std@@@2@U32@0@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826faf78": {
+  "demangled": "private: void __cdecl stlpmtx_std::list<struct MidiChannel::Note, class stlpmtx_std::StlNodeAlloc<struct MidiChannel::Note> >::_M_splice_insert_dispatch<struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Const_traits<struct MidiChannel::Note> > >(struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Nonconst_traits<struct MidiChannel::Note> >, struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Const_traits<struct MidiChannel::Note> >, struct stlpmtx_std::_List_iterator<struct MidiChannel::Note, struct stlpmtx_std::_Const_traits<struct MidiChannel::Note> >, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_M_splice_insert_dispatch@U?$_List_iterator@UNote@MidiChannel@@U?$_Const_traits@UNote@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UNote@MidiChannel@@V?$StlNodeAlloc@UNote@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UNote@MidiChannel@@U?$_Nonconst_traits@UNote@MidiChannel@@@stlpmtx_std@@@1@U?$_List_iterator@UNote@MidiChannel@@U?$_Const_traits@UNote@MidiChannel@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826fb018": {
+  "demangled": "public: class stlpmtx_std::list<struct MidiChannel::Note, class stlpmtx_std::StlNodeAlloc<struct MidiChannel::Note> > & __cdecl stlpmtx_std::list<struct MidiChannel::Note, class stlpmtx_std::StlNodeAlloc<struct MidiChannel::Note> >::operator=(class stlpmtx_std::list<struct MidiChannel::Note, class stlpmtx_std::StlNodeAlloc<struct MidiChannel::Note> > const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??4?$list@UNote@MidiChannel@@V?$StlNodeAlloc@UNote@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826fb398": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class MidiChannel, class stlpmtx_std::StlNodeAlloc<class MidiChannel> >::_M_fill_insert_aux(class MidiChannel *, unsigned int, class MidiChannel const &, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?_M_fill_insert_aux@?$vector@VMidiChannel@@V?$StlNodeAlloc@VMidiChannel@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMidiChannel@@IABV3@ABU__false_type@2@@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826fb550": {
+  "demangled": "protected: void __cdecl stlpmtx_std::vector<class MidiChannel, class stlpmtx_std::StlNodeAlloc<class MidiChannel> >::_M_insert_overflow_aux(class MidiChannel *, class MidiChannel const &, struct stlpmtx_std::__false_type const &, unsigned int, bool)",
+  "method": "comdat_size",
+  "percent": 84.56,
+  "symbol": "?_M_insert_overflow_aux@?$vector@VMidiChannel@@V?$StlNodeAlloc@VMidiChannel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVMidiChannel@@ABV3@ABU__false_type@2@I_N@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826fb6e0": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<class MidiChannel, class stlpmtx_std::StlNodeAlloc<class MidiChannel> >::_M_fill_insert(class MidiChannel *, unsigned int, class MidiChannel const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?_M_fill_insert@?$vector@VMidiChannel@@V?$StlNodeAlloc@VMidiChannel@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMidiChannel@@IABV3@@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826fb750": {
+  "demangled": "public: void __cdecl stlpmtx_std::vector<class MidiChannel, class stlpmtx_std::StlNodeAlloc<class MidiChannel> >::resize(unsigned int, class MidiChannel const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?resize@?$vector@VMidiChannel@@V?$StlNodeAlloc@VMidiChannel@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVMidiChannel@@@Z",
+  "unit": "default/MidiSynth"
+ },
+ "0x826fbd98": {
+  "demangled": "void __cdecl DeleteAll<class stlpmtx_std::vector<class FaderGroup *, class stlpmtx_std::StlNodeAlloc<class FaderGroup *> > >(class stlpmtx_std::vector<class FaderGroup *, class stlpmtx_std::StlNodeAlloc<class FaderGroup *> > &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/StreamNull"
+ },
+ "0x826fbf08": {
+  "demangled": "public: __cdecl StreamNull::StreamNull(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0StreamNull@@QAA@M@Z",
+  "unit": "default/StreamNull"
+ },
+ "0x826fc0d0": {
+  "demangled": "public: virtual void * __cdecl StreamNull::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??_GStreamNull@@UAAPAXI@Z",
+  "unit": "default/StreamNull"
+ },
+ "0x82703370": {
+  "demangled": "public: virtual void __cdecl FxSendBitCrush::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?Save@FxSendBitCrush@@UAAXAAVBinStream@@@Z",
+  "unit": "default/FxSendBitCrush"
+ },
+ "0x82705b78": {
+  "demangled": "protected: __cdecl FxSendMeterEffect::FxSendMeterEffect(void)",
+  "method": "comdat_size",
+  "percent": 99.8,
+  "symbol": "??0FxSendMeterEffect@@IAA@XZ",
+  "unit": "default/FxSendMeterEffect"
+ },
+ "0x82706a20": {
+  "demangled": "unsigned char __cdecl asciiDigitToHex(char)",
+  "method": "comdat_size",
+  "percent": 95.56,
+  "symbol": "?asciiDigitToHex@@YAED@Z",
+  "unit": "default/keygen_xbox"
+ },
+ "0x82706ab0": {
+  "demangled": "void __cdecl parseHex16(char const *, unsigned char *)",
+  "method": "comdat_size",
+  "percent": 96.59,
+  "symbol": "?parseHex16@@YAXPBDPAE@Z",
+  "unit": "default/keygen_xbox"
+ },
+ "0x82706e70": {
+  "demangled": "void __cdecl shuffle2(char *)",
+  "method": "comdat_size",
+  "percent": 95.61,
+  "symbol": "?shuffle2@@YAXPAD@Z",
+  "unit": "default/keygen_xbox"
+ },
+ "0x827071d8": {
+  "demangled": "void __cdecl supershuffle(char *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?supershuffle@@YAXPAD@Z",
+  "unit": "default/keygen_xbox"
+ },
+ "0x82707248": {
+  "demangled": "void __cdecl memcpy_cs(unsigned char *, unsigned char const *, unsigned int)",
+  "method": "comdat_size",
+  "percent": 97.14,
+  "symbol": "?memcpy_cs@@YAXPAEPBEI@Z",
+  "unit": "default/keygen_xbox"
+ },
+ "0x82707318": {
+  "demangled": "void __cdecl getKeyImpl(unsigned char *, char *, unsigned char *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?getKeyImpl@@YAXPAEPAD0@Z",
+  "unit": "default/keygen_xbox"
+ },
+ "0x8270b778": {
+  "demangled": "public: __cdecl MicNull::MicNull(void)",
+  "method": "comdat_size",
+  "percent": 96.5,
+  "symbol": "??0MicNull@@QAA@XZ",
+  "unit": "default/MicNull"
+ },
+ "0x8270bbc8": {
+  "demangled": "public: void __cdecl SfxMap::Save(class BinStream &) const",
+  "method": "comdat_size",
+  "percent": 99.88,
+  "symbol": "?Save@SfxMap@@QBAXAAVBinStream@@@Z",
+  "unit": "default/SfxMap"
+ },
+ "0x8270bc78": {
+  "demangled": "class BinStream & __cdecl operator<<(class BinStream &, class SfxMap const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVBinStream@@AAV0@ABVSfxMap@@@Z",
+  "unit": "default/SfxMap"
+ },
+ "0x8270cdc0": {
+  "demangled": "public: void __cdecl SampleZone::Save(class BinStream &) const",
+  "method": "comdat_size",
+  "percent": 93.51,
+  "symbol": "?Save@SampleZone@@QBAXAAVBinStream@@@Z",
+  "unit": "default/SampleZone"
+ },
+ "0x8270d3a0": {
+  "demangled": "public: void __cdecl SampleMarker::Save(class BinStream &) const",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?Save@SampleMarker@@QBAXAAVBinStream@@@Z",
+  "unit": "default/SampleData"
+ },
+ "0x8270d6b8": {
+  "demangled": "protected: class SampleMarker * __cdecl stlpmtx_std::vector<class SampleMarker, class stlpmtx_std::StlNodeAlloc<class SampleMarker> >::_M_erase(class SampleMarker *, class SampleMarker *, struct stlpmtx_std::__false_type const &)",
+  "method": "comdat_size",
+  "percent": 91.15,
+  "symbol": "?_M_erase@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSampleMarker@@PAV3@0ABU__false_type@2@@Z",
+  "unit": "default/SampleData"
+ },
+ "0x827121a8": {
+  "demangled": "public: void __cdecl RndRenderState::SetAlphaFunc(enum RndRenderState::TestFunc, unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.91,
+  "symbol": "?SetAlphaFunc@RndRenderState@@QAAXW4TestFunc@1@I@Z",
+  "unit": "default/RenderState"
+ },
+ "0x82714718": {
+  "demangled": "public: struct D3DSurface * __cdecl DxRnd::BackBuffer(void) const",
+  "method": "comdat_size",
+  "percent": 99.85,
+  "symbol": "?BackBuffer@DxRnd@@QBAPAUD3DSurface@@XZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82714800": {
+  "demangled": "public: void __cdecl DxRnd::Present(void)",
+  "method": "comdat_size",
+  "percent": 96.16,
+  "symbol": "?Present@DxRnd@@QAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82714900": {
+  "demangled": "public: struct D3DTexture * __cdecl DxRnd::NotFrontBuffer(void)",
+  "method": "comdat_size",
+  "percent": 99.6,
+  "symbol": "?NotFrontBuffer@DxRnd@@QAAPAUD3DTexture@@XZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82714c08": {
+  "demangled": "private: void __cdecl DxRnd::SetupGamma(void)",
+  "method": "comdat_size",
+  "percent": 96.43,
+  "symbol": "?SetupGamma@DxRnd@@AAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82714d20": {
+  "demangled": "public: void __cdecl DxRnd::SetDefaultRenderStates(void)",
+  "method": "comdat_size",
+  "percent": 86.26,
+  "symbol": "?SetDefaultRenderStates@DxRnd@@QAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82714fe8": {
+  "demangled": "private: void __cdecl DxRnd::BeginTiling(class Hmx::Color const &, float, unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.37,
+  "symbol": "?BeginTiling@DxRnd@@AAAXABVColor@Hmx@@MI@Z",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82715168": {
+  "demangled": "private: void __cdecl DxRnd::SavePostBuffer(void)",
+  "method": "comdat_reloc",
+  "percent": 99.9,
+  "symbol": "?SavePostBuffer@DxRnd@@AAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x827151c0": {
+  "demangled": "private: void __cdecl DxRnd::SetFrameBuffersAsSource(void)",
+  "method": "comdat_size",
+  "percent": 99.81,
+  "symbol": "?SetFrameBuffersAsSource@DxRnd@@AAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x827162b8": {
+  "demangled": "private: void __cdecl DxRnd::CreatePostTextures(void)",
+  "method": "comdat_size",
+  "percent": 99.77,
+  "symbol": "?CreatePostTextures@DxRnd@@AAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82717578": {
+  "demangled": "protected: virtual void __cdecl DxRnd::DoPostProcess(void)",
+  "method": "comdat_size",
+  "percent": 97.77,
+  "symbol": "?DoPostProcess@DxRnd@@MAAXXZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82717880": {
+  "demangled": "public: __cdecl DxRnd::DxRnd(void)",
+  "method": "comdat_size",
+  "percent": 92.1,
+  "symbol": "??0DxRnd@@QAA@XZ",
+  "unit": "default/Rnd_Xbox"
+ },
+ "0x82721138": {
+  "demangled": "public: void __cdecl BinkMovieSys::PlatformStoreCache(void *, unsigned int)",
+  "method": "comdat_size",
+  "percent": 97.5,
+  "symbol": "?PlatformStoreCache@BinkMovieSys@@QAAXPAXI@Z",
+  "unit": "default/BinkMovieSys_Xbox"
+ },
+ "0x827459b8": {
+  "demangled": "class DataArray * __cdecl ReadCacheStream(class BinStream &, char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ReadCacheStream@@YAPAVDataArray@@AAVBinStream@@PBD@Z",
+  "unit": "default/DataFile"
+ },
+ "0x82745f90": {
+  "demangled": "void __cdecl DataWriteFile(char const *, class DataArray const *, int)",
+  "method": "comdat_size",
+  "percent": 88.53,
+  "symbol": "?DataWriteFile@@YAXPBDPBVDataArray@@H@Z",
+  "unit": "default/DataFile"
+ },
+ "0x82746340": {
+  "demangled": "public: __cdecl stlpmtx_std::pair<class String const, class DataNode>::pair<class String const, class DataNode>(class String const &, class DataNode const &)",
+  "method": "comdat_size",
+  "percent": 99.93,
+  "symbol": "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z",
+  "unit": "default/DataFile"
+ },
+ "0x827471a0": {
+  "demangled": "class DataArray * __cdecl ParseArray(void)",
+  "method": "comdat_size",
+  "percent": 81.68,
+  "symbol": "?ParseArray@@YAPAVDataArray@@XZ",
+  "unit": "default/DataFile"
+ },
+ "0x82747510": {
+  "demangled": "class DataArray * __cdecl DataReadString(char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?DataReadString@@YAPAVDataArray@@PBD@Z",
+  "unit": "default/DataFile"
+ },
+ "0x82759648": {
+  "demangled": "public: void __cdecl ChannelData::SetSlippable(bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetSlippable@ChannelData@@QAAX_N@Z",
+  "unit": "default/MasterAudio"
+ },
+ "0x82759a78": {
+  "demangled": "public: void __cdecl MasterAudio::SetupTrackChannel(int, bool, float, bool, bool)",
+  "method": "comdat_size",
+  "percent": 99.99,
+  "symbol": "?SetupTrackChannel@MasterAudio@@QAAXH_NM00@Z",
+  "unit": "default/MasterAudio"
+ },
+ "0x82759bc0": {
+  "demangled": "public: void __cdecl MasterAudio::SetupBackgroundChannel(int, bool, float, bool, bool)",
+  "method": "comdat_size",
+  "percent": 94.69,
+  "symbol": "?SetupBackgroundChannel@MasterAudio@@QAAXH_NM00@Z",
+  "unit": "default/MasterAudio"
+ },
+ "0x827697c8": {
+  "demangled": "public: void __cdecl MoveParent::CacheLinks(class MoveGraph *)",
+  "method": "comdat_size",
+  "percent": 92.61,
+  "symbol": "?CacheLinks@MoveParent@@QAAXPAVMoveGraph@@@Z",
+  "unit": "default/MoveParent"
+ },
+ "0x8277d790": {
+  "demangled": "private: __cdecl Achievements::Achievements(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0Achievements@@AAA@XZ",
+  "unit": "default/Achievements"
+ },
+ "0x8277d898": {
+  "demangled": "public: static void __cdecl Achievements::Init(void)",
+  "method": "comdat_size",
+  "percent": 99.97,
+  "symbol": "?Init@Achievements@@SAXXZ",
+  "unit": "default/Achievements"
+ },
+ "0x8277d938": {
+  "demangled": "public: void __cdecl Achievements::Poll(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Poll@Achievements@@QAAXXZ",
+  "unit": "default/Achievements"
+ },
+ "0x82781500": {
+  "demangled": "public: __cdecl StorePurchaseable::StorePurchaseable(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0StorePurchaseable@@QAA@XZ",
+  "unit": "default/StoreOffer"
+ },
+ "0x82781550": {
+  "demangled": "public: bool __cdecl StorePurchaseable::Exists(void) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Exists@StorePurchaseable@@QBA_NXZ",
+  "unit": "default/StoreOffer"
+ },
+ "0x827815a8": {
+  "demangled": "public: bool __cdecl StoreOffer::HasData(class Symbol) const",
+  "method": "comdat_size",
+  "percent": 99.92,
+  "symbol": "?HasData@StoreOffer@@QBA_NVSymbol@@@Z",
+  "unit": "default/StoreOffer"
+ },
+ "0x82781730": {
+  "demangled": "public: class Symbol __cdecl StoreOffer::PackFirstLetter(void) const",
+  "method": "comdat_size",
+  "percent": 89.54,
+  "symbol": "?PackFirstLetter@StoreOffer@@QBA?AVSymbol@@XZ",
+  "unit": "default/StoreOffer"
+ },
+ "0x82786500": {
+  "demangled": "public: bool __cdecl FixedSizeSaveableStream::HasID(int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?HasID@FixedSizeSaveableStream@@QBA_NH@Z",
+  "unit": "default/FixedSizeSaveableStream"
+ },
+ "0x82786e20": {
+  "demangled": "private: enum MCResult __cdecl MemcardMgr::PerformWrite(class MCContainer *)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?PerformWrite@MemcardMgr@@AAA?AW4MCResult@@PAVMCContainer@@@Z",
+  "unit": "default/MemcardMgr_Xbox"
+ },
+ "0x827872f0": {
+  "demangled": "private: enum MCResult __cdecl MemcardMgr::ThreadCall_SaveGame(void)",
+  "method": "comdat_size",
+  "percent": 87.43,
+  "symbol": "?ThreadCall_SaveGame@MemcardMgr@@AAA?AW4MCResult@@XZ",
+  "unit": "default/MemcardMgr_Xbox"
+ },
+ "0x82787c58": {
+  "demangled": "protected: class DataNode __cdecl MemcardMgr::OnMsg(class SigninChangedMsg const &)",
+  "method": "comdat_size",
+  "percent": 94.36,
+  "symbol": "?OnMsg@MemcardMgr@@IAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
+  "unit": "default/MemcardMgr_Xbox"
+ },
+ "0x8278ad10": {
+  "demangled": "public: virtual void __cdecl MoviePanel::Unload(void)",
+  "method": "comdat_size",
+  "percent": 99.91,
+  "symbol": "?Unload@MoviePanel@@UAAXXZ",
+  "unit": "default/MoviePanel"
+ },
+ "0x8278b060": {
+  "demangled": "public: virtual bool __cdecl MoviePanel::SyncProperty(class DataNode &, class DataArray *, int, enum PropOp)",
+  "method": "comdat_size",
+  "percent": 95.26,
+  "symbol": "?SyncProperty@MoviePanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "unit": "default/MoviePanel"
+ },
+ "0x8278c870": {
+  "demangled": "public: __cdecl Jukebox::Jukebox(int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0Jukebox@@QAA@H@Z",
+  "unit": "default/Jukebox"
+ },
+ "0x8278deb0": {
+  "demangled": "int __cdecl AlphaKeyStrCmp(char const *, char const *, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?AlphaKeyStrCmp@@YAHPBD0_N@Z",
+  "unit": "default/Sorting"
+ },
+ "0x8278e070": {
+  "demangled": "public: __cdecl DeJitterSetter::DeJitterSetter(class DeJitter &, class Timer *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0DeJitterSetter@@QAA@AAVDeJitter@@PAVTimer@@@Z",
+  "unit": "default/DeJitterPanel"
+ },
+ "0x8278fe70": {
+  "demangled": "struct stlpmtx_std::_List_iterator<class NetCacheLoader *, struct stlpmtx_std::_Nonconst_traits<class NetCacheLoader *> > __cdecl stlpmtx_std::__find<struct stlpmtx_std::_List_iterator<class NetCacheLoader *, struct stlpmtx_std::_Nonconst_traits<class NetCacheLoader *> >, class String>(struct stlpmtx_std::_List_iterator<class NetCacheLoader *, struct stlpmtx_std::_Nonconst_traits<class NetCacheLoader *> >, struct stlpmtx_std::_List_iterator<class NetCacheLoader *, struct stlpmtx_std::_Nonconst_traits<class NetCacheLoader *> >, class String const &, struct stlpmtx_std::input_iterator_tag const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__find@U?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@VString@@@stlpmtx_std@@YA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@0@U10@0ABVString@@ABUinput_iterator_tag@0@@Z",
+  "unit": "default/StorePanel"
+ },
+ "0x827928c8": {
+  "demangled": "public: static class Symbol __cdecl StandingStillGestureFilter::StaticClassName(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?StaticClassName@StandingStillGestureFilter@@SA?AVSymbol@@XZ",
+  "unit": "default/StandingStillGestureFilter"
+ },
+ "0x82792eb0": {
+  "demangled": "public: __cdecl EnumProduct::EnumProduct(struct EnumProduct const &)",
+  "method": "comdat_size",
+  "percent": 99.71,
+  "symbol": "??0EnumProduct@@QAA@ABU0@@Z",
+  "unit": "default/StoreEnumeration"
+ },
+ "0x82792f10": {
+  "demangled": "void __cdecl stlpmtx_std::_Copy_Construct<struct EnumProduct>(struct EnumProduct *, struct EnumProduct const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$_Copy_Construct@UEnumProduct@@@stlpmtx_std@@YAXPAUEnumProduct@@ABU1@@Z",
+  "unit": "default/StoreEnumeration"
+ },
+ "0x82794f10": {
+  "demangled": "public: __cdecl MetaMusicScene::MetaMusicScene(class DataArray *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0MetaMusicScene@@QAA@PAVDataArray@@@Z",
+  "unit": "default/MetaMusicScene"
+ },
+ "0x82795448": {
+  "demangled": "protected: void __cdecl ConnectionStatusPanel::CheckForLostConnection(void)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?CheckForLostConnection@ConnectionStatusPanel@@IAAXXZ",
+  "unit": "default/ConnectionStatusPanel"
+ },
+ "0x827955e8": {
+  "demangled": "protected: class DataNode __cdecl ConnectionStatusPanel::OnMsg(class ConnectionStatusChangedMsg const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?OnMsg@ConnectionStatusPanel@@IAA?AVDataNode@@ABVConnectionStatusChangedMsg@@@Z",
+  "unit": "default/ConnectionStatusPanel"
+ },
+ "0x82796440": {
+  "demangled": "public: void __cdecl MemHeap::FirstFit(int, int, struct MemHeap::FreeBlockInfo &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?FirstFit@MemHeap@@QAAXHHAAUFreeBlockInfo@1@@Z",
+  "unit": "default/MemHeap"
+ },
+ "0x827964b0": {
+  "demangled": "public: void __cdecl MemHeap::BestFit(int, int, struct MemHeap::FreeBlockInfo &)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?BestFit@MemHeap@@QAAXHHAAUFreeBlockInfo@1@@Z",
+  "unit": "default/MemHeap"
+ },
+ "0x82796528": {
+  "demangled": "public: void __cdecl MemHeap::LRUFit(int, int, struct MemHeap::FreeBlockInfo &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?LRUFit@MemHeap@@QAAXHHAAUFreeBlockInfo@1@@Z",
+  "unit": "default/MemHeap"
+ },
+ "0x827965b8": {
+  "demangled": "public: void __cdecl MemHeap::LastFit(int, int, struct MemHeap::FreeBlockInfo &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?LastFit@MemHeap@@QAAXHHAAUFreeBlockInfo@1@@Z",
+  "unit": "default/MemHeap"
+ },
+ "0x82799a00": {
+  "demangled": "public: void __cdecl FilePath::Set(char const *, char const *)",
+  "method": "comdat_size",
+  "percent": 93.25,
+  "symbol": "?Set@FilePath@@QAAXPBD0@Z",
+  "unit": "default/FilePath"
+ },
+ "0x8279be40": {
+  "demangled": "char ** __cdecl FindOption(char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?FindOption@@YAPAPADPBD@Z",
+  "unit": "default/Option"
+ },
+ "0x8279beb8": {
+  "demangled": "bool __cdecl OptionBool(char const *, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?OptionBool@@YA_NPBD_N@Z",
+  "unit": "default/Option"
+ },
+ "0x8279e3a0": {
+  "demangled": "public: __cdecl FileStream::FileStream(char const *, enum FileStream::FileType, bool)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "??0FileStream@@QAA@PBDW4FileType@0@_N@Z",
+  "unit": "default/FileStream"
+ },
+ "0x8279e530": {
+  "demangled": "private: virtual void __cdecl FileStream::ReadImpl(void *, int)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?ReadImpl@FileStream@@EAAXPAXH@Z",
+  "unit": "default/FileStream"
+ },
+ "0x8279e840": {
+  "demangled": "public: virtual __cdecl FileStream::~FileStream(void)",
+  "method": "comdat_size",
+  "percent": 90.47,
+  "symbol": "??1FileStream@@UAA@XZ",
+  "unit": "default/FileStream"
+ },
+ "0x8279eb70": {
+  "demangled": "public: class TextStream & __cdecl TextStream::operator<<(bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6TextStream@@QAAAAV0@_N@Z",
+  "unit": "default/TextStream"
+ },
+ "0x8279ec20": {
+  "demangled": "public: class TextStream & __cdecl TextStream::operator<<(class Symbol)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6TextStream@@QAAAAV0@VSymbol@@@Z",
+  "unit": "default/TextStream"
+ },
+ "0x8279ecd8": {
+  "demangled": "public: __cdecl TextFileStream::TextFileStream(char const *, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0TextFileStream@@QAA@PBD_N@Z",
+  "unit": "default/TextFileStream"
+ },
+ "0x8279ffc8": {
+  "demangled": "public: void __cdecl BinStream::Write(void const *, int)",
+  "method": "comdat_size",
+  "percent": 82.43,
+  "symbol": "?Write@BinStream@@QAAXPBXH@Z",
+  "unit": "default/BinStream"
+ },
+ "0x827a0358": {
+  "demangled": "public: class BinStream & __cdecl BinStream::operator>>(class String &)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "??5BinStream@@QAAAAV0@AAVString@@@Z",
+  "unit": "default/BinStream"
+ },
+ "0x827a3da0": {
+  "demangled": "public: __cdecl StringTable::StringTable(int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0StringTable@@QAA@H@Z",
+  "unit": "default/StringTable"
+ },
+ "0x827a4520": {
+  "demangled": "char const * __cdecl LocalizeSeparatedInt(int, class Locale &)",
+  "method": "comdat_size",
+  "percent": 95.62,
+  "symbol": "?LocalizeSeparatedInt@@YAPBDHAAVLocale@@@Z",
+  "unit": "default/Locale"
+ },
+ "0x827a4728": {
+  "demangled": "char const * __cdecl LocalizeFloat(char const *, float)",
+  "method": "comdat_size",
+  "percent": 96.78,
+  "symbol": "?LocalizeFloat@@YAPBDPBDM@Z",
+  "unit": "default/Locale"
+ },
+ "0x827a6260": {
+  "demangled": "public: bool __cdecl HxGuid::operator==(class HxGuid const &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??8HxGuid@@QBA_NABV0@@Z",
+  "unit": "default/HxGuid"
+ },
+ "0x827a62b0": {
+  "demangled": "public: bool __cdecl HxGuid::operator<(class HxGuid const &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??MHxGuid@@QBA_NABV0@@Z",
+  "unit": "default/HxGuid"
+ },
+ "0x827a6378": {
+  "demangled": "public: __cdecl HxGuid::HxGuid(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0HxGuid@@QAA@XZ",
+  "unit": "default/HxGuid"
+ },
+ "0x827a63d0": {
+  "demangled": "class BinStream & __cdecl operator<<(class BinStream &, class HxGuid const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??6@YAAAVBinStream@@AAV0@ABVHxGuid@@@Z",
+  "unit": "default/HxGuid"
+ },
+ "0x827a65e8": {
+  "demangled": "public: void __cdecl MemStream::Compact(void)",
+  "method": "comdat_size",
+  "percent": 99.76,
+  "symbol": "?Compact@MemStream@@QAAXXZ",
+  "unit": "default/MemStream"
+ },
+ "0x827a6638": {
+  "demangled": "public: __cdecl MemStream::MemStream(bool)",
+  "method": "comdat_size",
+  "percent": 99.76,
+  "symbol": "??0MemStream@@QAA@_N@Z",
+  "unit": "default/MemStream"
+ },
+ "0x827a66f0": {
+  "demangled": "private: virtual void __cdecl MemStream::WriteImpl(void const *, int)",
+  "method": "comdat_size",
+  "percent": 99.83,
+  "symbol": "?WriteImpl@MemStream@@EAAXPBXH@Z",
+  "unit": "default/MemStream"
+ },
+ "0x827a67f0": {
+  "demangled": "public: void __cdecl JobMgr::Poll(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Poll@JobMgr@@QAAXXZ",
+  "unit": "default/JobMgr"
+ },
+ "0x827a69d8": {
+  "demangled": "public: __cdecl JobMgr::JobMgr(class Hmx::Object *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0JobMgr@@QAA@PAVObject@Hmx@@@Z",
+  "unit": "default/JobMgr"
+ },
+ "0x827a6e40": {
+  "demangled": "public: __cdecl BufStream::BufStream(void *, int, bool)",
+  "method": "comdat_size",
+  "percent": 99.74,
+  "symbol": "??0BufStream@@QAA@PAXH_N@Z",
+  "unit": "default/BufStream"
+ },
+ "0x827a7050": {
+  "demangled": "private: virtual void __cdecl BufStream::WriteImpl(void const *, int)",
+  "method": "comdat_size",
+  "percent": 99.79,
+  "symbol": "?WriteImpl@BufStream@@EAAXPBXH@Z",
+  "unit": "default/BufStream"
+ },
+ "0x827a7920": {
+  "demangled": "class String __cdecl WideVectorToASCII(class stlpmtx_std::vector<unsigned short, class stlpmtx_std::StlNodeAlloc<unsigned short> > const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?WideVectorToASCII@@YA?AVString@@ABV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "unit": "default/UTF8"
+ },
+ "0x827a7a00": {
+  "demangled": "unsigned int __cdecl WideVectorToUTF8(class stlpmtx_std::vector<unsigned short, class stlpmtx_std::StlNodeAlloc<unsigned short> > const &, class String &)",
+  "method": "comdat_size",
+  "percent": 82.97,
+  "symbol": "?WideVectorToUTF8@@YAIABV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@AAVString@@@Z",
+  "unit": "default/UTF8"
+ },
+ "0x827a7b48": {
+  "demangled": "char const * __cdecl WideCharToChar(unsigned short const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?WideCharToChar@@YAPBDPBG@Z",
+  "unit": "default/UTF8"
+ },
+ "0x827a7c18": {
+  "demangled": "unsigned short const * __cdecl CharToWideChar(char const *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?CharToWideChar@@YAPBGPBD@Z",
+  "unit": "default/UTF8"
+ },
+ "0x827a7cf8": {
+  "demangled": "void __cdecl ASCIItoWideVector(class stlpmtx_std::vector<unsigned short, class stlpmtx_std::StlNodeAlloc<unsigned short> > &, char const *)",
+  "method": "comdat_size",
+  "percent": 99.98,
+  "symbol": "?ASCIItoWideVector@@YAXAAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@PBD@Z",
+  "unit": "default/UTF8"
+ },
+ "0x827a9bd0": {
+  "demangled": "public: class CacheID * __cdecl CacheMgr::GetCacheID(class Symbol)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetCacheID@CacheMgr@@QAAPAVCacheID@@VSymbol@@@Z",
+  "unit": "default/CacheMgr"
+ },
+ "0x827aa590": {
+  "demangled": "public: virtual __cdecl Cache::~Cache(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1Cache@@UAA@XZ",
+  "unit": "default/Cache"
+ },
+ "0x827aa720": {
+  "demangled": "public: class DataArray * __cdecl FakeSongMgr::GetSongConfig(class Symbol)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetSongConfig@FakeSongMgr@@QAAPAVDataArray@@VSymbol@@@Z",
+  "unit": "default/FakeSongMgr"
+ },
+ "0x827aa978": {
+  "demangled": "public: void __cdecl FreestyleMotionFilter::Deactivate(void)",
+  "method": "comdat_size",
+  "percent": 99.33,
+  "symbol": "?Deactivate@FreestyleMotionFilter@@QAAXXZ",
+  "unit": "default/FreestyleMotionFilter"
+ },
+ "0x827aa998": {
+  "demangled": "public: virtual __cdecl NetLoaderXbox::~NetLoaderXbox(void)",
+  "method": "comdat_size",
+  "percent": 99.93,
+  "symbol": "??1NetLoaderXbox@@UAA@XZ",
+  "unit": "default/NetLoader_Xbox"
+ },
+ "0x827ab550": {
+  "demangled": "public: __cdecl NetCacheLoader::~NetCacheLoader(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1NetCacheLoader@@QAA@XZ",
+  "unit": "default/NetCacheLoader"
+ },
+ "0x827ab920": {
+  "demangled": "public: int __cdecl MeasureMap::MeasureBeatTickToTick(int, int, int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?MeasureBeatTickToTick@MeasureMap@@QBAHHHH@Z",
+  "unit": "default/MeasureMap"
+ },
+ "0x827ab9b8": {
+  "demangled": "public: void __cdecl MeasureMap::TickToMeasureBeatTick(int, int &, int &, int &, int &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?TickToMeasureBeatTick@MeasureMap@@QBAXHAAH000@Z",
+  "unit": "default/MeasureMap"
+ },
+ "0x827aba90": {
+  "demangled": "public: void __cdecl MeasureMap::TickToMeasureBeatTick(int, int &, int &, int &) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?TickToMeasureBeatTick@MeasureMap@@QBAXHAAH00@Z",
+  "unit": "default/MeasureMap"
+ },
+ "0x827abb48": {
+  "demangled": "public: __cdecl MeasureMap::MeasureMap(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0MeasureMap@@QAA@XZ",
+  "unit": "default/MeasureMap"
+ },
+ "0x827ad1a8": {
+  "demangled": "public: virtual int __cdecl SimpleTempoMap::GetTempoInMicroseconds(int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetTempoInMicroseconds@SimpleTempoMap@@UBAHH@Z",
+  "unit": "default/TempoMap"
+ },
+ "0x827ad1f8": {
+  "demangled": "public: __cdecl Profiler::Profiler(char const *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0Profiler@@QAA@PBDH@Z",
+  "unit": "default/Profiler"
+ },
+ "0x827ad268": {
+  "demangled": "public: void __cdecl Profiler::Start(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Start@Profiler@@QAAXXZ",
+  "unit": "default/Profiler"
+ },
+ "0x827ad5d8": {
+  "demangled": "struct BeatInfo const * __cdecl stlpmtx_std::__lower_bound<struct BeatInfo const *, int, bool (__cdecl *)(struct BeatInfo const &, int), int>(struct BeatInfo const *, struct BeatInfo const *, int const &, bool (__cdecl *)(struct BeatInfo const &, int), int *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__lower_bound@PBUBeatInfo@@HP6A_NABU1@H@ZH@stlpmtx_std@@YAPBUBeatInfo@@PBU1@0ABHP6A_NABU1@H@ZPAH@Z",
+  "unit": "default/BeatMap"
+ },
+ "0x827ad648": {
+  "demangled": "public: float __cdecl BeatMap::Beat(int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Beat@BeatMap@@QBAMH@Z",
+  "unit": "default/BeatMap"
+ },
+ "0x827ad770": {
+  "demangled": "public: float __cdecl BeatMap::Beat(float) const",
+  "method": "comdat_size",
+  "percent": 90.4,
+  "symbol": "?Beat@BeatMap@@QBAMM@Z",
+  "unit": "default/BeatMap"
+ },
+ "0x827aebe0": {
+  "demangled": "public: __cdecl VarTimer::VarTimer(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0VarTimer@@QAA@XZ",
+  "unit": "default/VarTimer"
+ },
+ "0x827aec28": {
+  "demangled": "public: void __cdecl VarTimer::Start(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Start@VarTimer@@QAAXXZ",
+  "unit": "default/VarTimer"
+ },
+ "0x827aec50": {
+  "demangled": "public: void __cdecl VarTimer::Stop(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Stop@VarTimer@@QAAXXZ",
+  "unit": "default/VarTimer"
+ },
+ "0x827aed00": {
+  "demangled": "public: void __cdecl VarTimer::Reset(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Reset@VarTimer@@QAAXM@Z",
+  "unit": "default/VarTimer"
+ },
+ "0x827aed78": {
+  "demangled": "public: void __cdecl VarTimer::SetSpeed(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetSpeed@VarTimer@@QAAXM@Z",
+  "unit": "default/VarTimer"
+ },
+ "0x827af200": {
+  "demangled": "public: __cdecl KeylessHash<void *, class AllocInfo *>::KeylessHash<void *, class AllocInfo *>(int, class AllocInfo *const &, class AllocInfo *const &, class AllocInfo **)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0?$KeylessHash@PAXPAVAllocInfo@@@@QAA@HABQAVAllocInfo@@0PAPAV1@@Z",
+  "unit": "default/MemTracker"
+ },
+ "0x827af2e0": {
+  "demangled": "private: class AllocInfo ** __cdecl KeylessHash<void *, class AllocInfo *>::FirstFrom(class AllocInfo **)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "?FirstFrom@?$KeylessHash@PAXPAVAllocInfo@@@@AAAPAPAVAllocInfo@@PAPAV2@@Z",
+  "unit": "default/MemTracker"
+ },
+ "0x827aff88": {
+  "demangled": "private: void __cdecl MemTracker::UpdateStats(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?UpdateStats@MemTracker@@AAAXXZ",
+  "unit": "default/MemTracker"
+ },
+ "0x827b0030": {
+  "demangled": "public: class AllocInfo const * __cdecl MemTracker::GetInfo(void *) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetInfo@MemTracker@@QBAPBVAllocInfo@@PAX@Z",
+  "unit": "default/MemTracker"
+ },
+ "0x827b02a8": {
+  "demangled": "void __cdecl stlpmtx_std::__make_heap<struct MemDiffEntry *, struct stlpmtx_std::less<struct MemDiffEntry>, struct MemDiffEntry, int>(struct MemDiffEntry *, struct MemDiffEntry *, struct stlpmtx_std::less<struct MemDiffEntry>, struct MemDiffEntry *, int *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__make_heap@PAUMemDiffEntry@@U?$less@UMemDiffEntry@@@stlpmtx_std@@U1@H@stlpmtx_std@@YAXPAUMemDiffEntry@@0U?$less@UMemDiffEntry@@@0@0PAH@Z",
+  "unit": "default/MemTracker"
+ },
+ "0x827b0370": {
+  "demangled": "void __cdecl stlpmtx_std::__pop_heap_aux<struct MemDiffEntry *, struct MemDiffEntry, struct stlpmtx_std::less<struct MemDiffEntry> >(struct MemDiffEntry *, struct MemDiffEntry *, struct MemDiffEntry *, struct stlpmtx_std::less<struct MemDiffEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__pop_heap_aux@PAUMemDiffEntry@@U1@U?$less@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAUMemDiffEntry@@00U?$less@UMemDiffEntry@@@0@@Z",
+  "unit": "default/MemTracker"
+ },
+ "0x827b0b20": {
+  "demangled": "void __cdecl stlpmtx_std::__insertion_sort<struct MemDiffEntry *, struct MemDiffEntry, struct stlpmtx_std::less<struct MemDiffEntry> >(struct MemDiffEntry *, struct MemDiffEntry *, struct MemDiffEntry *, struct stlpmtx_std::less<struct MemDiffEntry>)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__insertion_sort@PAUMemDiffEntry@@U1@U?$less@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAUMemDiffEntry@@00U?$less@UMemDiffEntry@@@0@@Z",
+  "unit": "default/MemTracker"
+ },
+ "0x827b1a78": {
+  "demangled": "class Pool & __cdecl GetPool(void)",
+  "method": "comdat_size",
+  "percent": 95.37,
+  "symbol": "?GetPool@@YAAAVPool@@XZ",
+  "unit": "default/AllocInfo"
+ },
+ "0x827b1b08": {
+  "demangled": "public: static void __cdecl AllocInfo::SetPoolMemory(void *, int)",
+  "method": "comdat_size",
+  "percent": 99.94,
+  "symbol": "?SetPoolMemory@AllocInfo@@SAXPAXH@Z",
+  "unit": "default/AllocInfo"
+ },
+ "0x827b1ec8": {
+  "demangled": "protected: virtual void __cdecl NetCacheMgrXbox::LoadInit(void)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "?LoadInit@NetCacheMgrXbox@@MAAXXZ",
+  "unit": "default/NetCacheMgr_Xbox"
+ },
+ "0x827b1f40": {
+  "demangled": "protected: virtual void __cdecl NetCacheMgrXbox::UnloadInit(void)",
+  "method": "comdat_size",
+  "percent": 99.93,
+  "symbol": "?UnloadInit@NetCacheMgrXbox@@MAAXXZ",
+  "unit": "default/NetCacheMgr_Xbox"
+ },
+ "0x827b2060": {
+  "demangled": "public: __cdecl CacheMgrXbox::CacheMgrXbox(void)",
+  "method": "comdat_size",
+  "percent": 99.96,
+  "symbol": "??0CacheMgrXbox@@QAA@XZ",
+  "unit": "default/CacheMgr_Xbox"
+ },
+ "0x827b2a98": {
+  "demangled": "private: void __cdecl CacheMgrXbox::PollChoose(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?PollChoose@CacheMgrXbox@@AAAXXZ",
+  "unit": "default/CacheMgr_Xbox"
+ },
+ "0x827b2bd8": {
+  "demangled": "public: virtual bool __cdecl CacheMgrXbox::CreateCacheIDFromDeviceID(unsigned int, char const *, char const *, class CacheID **)",
+  "method": "comdat_size",
+  "percent": 99.94,
+  "symbol": "?CreateCacheIDFromDeviceID@CacheMgrXbox@@UAA_NIPBD0PAPAVCacheID@@@Z",
+  "unit": "default/CacheMgr_Xbox"
+ },
+ "0x827b35e8": {
+  "demangled": "public: virtual int __cdecl IDataChunk::Tell(void)",
+  "method": "comdat_reloc",
+  "percent": 99.92,
+  "symbol": "?Tell@IDataChunk@@UAAHXZ",
+  "unit": "default/Chunks"
+ },
+ "0x827b3f98": {
+  "demangled": "public: void __cdecl HeapStats::Alloc(int, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Alloc@HeapStats@@QAAXHH@Z",
+  "unit": "default/MemStats"
+ },
+ "0x827b3fe8": {
+  "demangled": "public: __cdecl Pool::Pool(int, void *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0Pool@@QAA@HPAXH@Z",
+  "unit": "default/Pool"
+ },
+ "0x827b4038": {
+  "demangled": "public: void * __cdecl Pool::Alloc(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Alloc@Pool@@QAAPAXXZ",
+  "unit": "default/Pool"
+ },
+ "0x827b4058": {
+  "demangled": "public: void __cdecl Pool::Free(void *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Free@Pool@@QAAXPAX@Z",
+  "unit": "default/Pool"
+ },
+ "0x827b4ae8": {
+  "demangled": "public: virtual bool __cdecl CacheXbox::IsConnectedSync(void)",
+  "method": "comdat_size",
+  "percent": 99.92,
+  "symbol": "?IsConnectedSync@CacheXbox@@UAA_NXZ",
+  "unit": "default/Cache_Xbox"
+ },
+ "0x827b4ba8": {
+  "demangled": "public: virtual bool __cdecl CacheXbox::ReadAsync(char const *, void *, unsigned int, class Hmx::Object *)",
+  "method": "comdat_size",
+  "percent": 99.93,
+  "symbol": "?ReadAsync@CacheXbox@@UAA_NPBDPAXIPAVObject@Hmx@@@Z",
+  "unit": "default/Cache_Xbox"
+ },
+ "0x827b4c50": {
+  "demangled": "public: virtual bool __cdecl CacheXbox::DeleteAsync(char const *, class Hmx::Object *)",
+  "method": "comdat_size",
+  "percent": 99.97,
+  "symbol": "?DeleteAsync@CacheXbox@@UAA_NPBDPAVObject@Hmx@@@Z",
+  "unit": "default/Cache_Xbox"
+ },
+ "0x827b4dc0": {
+  "demangled": "public: __cdecl CacheDirEntry::CacheDirEntry(class CacheDirEntry const &)",
+  "method": "comdat_size",
+  "percent": 99.81,
+  "symbol": "??0CacheDirEntry@@QAA@ABV0@@Z",
+  "unit": "default/Cache_Xbox"
+ },
+ "0x827b5938": {
+  "demangled": "public: __cdecl CacheXbox::CacheXbox(class CacheIDXbox const &)",
+  "method": "comdat_size",
+  "percent": 99.84,
+  "symbol": "??0CacheXbox@@QAA@ABVCacheIDXbox@@@Z",
+  "unit": "default/Cache_Xbox"
+ },
+ "0x827b66c8": {
+  "demangled": "protected: int __cdecl CacheXbox::ThreadGetDir(class String, class String)",
+  "method": "comdat_size",
+  "percent": 84.57,
+  "symbol": "?ThreadGetDir@CacheXbox@@IAAHVString@@0@Z",
+  "unit": "default/Cache_Xbox"
+ },
+ "0x827c1a40": {
+  "demangled": "private: bool __cdecl MidiParser::InsertIdle(float, int)",
+  "method": "comdat_size",
+  "percent": 92.67,
+  "symbol": "?InsertIdle@MidiParser@@AAA_NMH@Z",
+  "unit": "default/MidiParser"
+ },
+ "0x827c1b18": {
+  "demangled": "private: void __cdecl MidiParser::PushIdle(float, float, int, class Symbol)",
+  "method": "comdat_size",
+  "percent": 85.21,
+  "symbol": "?PushIdle@MidiParser@@AAAXMMHVSymbol@@@Z",
+  "unit": "default/MidiParser"
+ },
+ "0x827c2af8": {
+  "demangled": "private: class DataNode __cdecl MidiParser::OnNextStartDelta(class DataArray *)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "?OnNextStartDelta@MidiParser@@AAA?AVDataNode@@PAVDataArray@@@Z",
+  "unit": "default/MidiParser"
+ },
+ "0x827c4ba8": {
+  "demangled": "public: static void __cdecl MidiParser::ClearManagedParsers(void)",
+  "method": "comdat_size",
+  "percent": 89.88,
+  "symbol": "?ClearManagedParsers@MidiParser@@SAXXZ",
+  "unit": "default/MidiParser"
+ },
+ "0x827c4cf0": {
+  "demangled": "protected: void __cdecl stlpmtx_std::vector<struct MidiParser::Note, class stlpmtx_std::StlNodeAlloc<struct MidiParser::Note> >::_M_insert_overflow_aux(struct MidiParser::Note *, struct MidiParser::Note const &, struct stlpmtx_std::__false_type const &, unsigned int, bool)",
+  "method": "comdat_size",
+  "percent": 86.81,
+  "symbol": "?_M_insert_overflow_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUNote@MidiParser@@ABU34@ABU__false_type@2@I_N@Z",
+  "unit": "default/MidiParser"
+ },
+ "0x827c5a48": {
+  "demangled": "private: void __cdecl stlpmtx_std::vector<struct MidiParser::Note, class stlpmtx_std::StlNodeAlloc<struct MidiParser::Note> >::_M_fill_insert(struct MidiParser::Note *, unsigned int, struct MidiParser::Note const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?_M_fill_insert@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNote@MidiParser@@IABU34@@Z",
+  "unit": "default/MidiParser"
+ },
+ "0x827caa28": {
+  "demangled": "public: virtual bool __cdecl UIScreen::InComponentSelect(void) const",
+  "method": "comdat_size",
+  "percent": 99.94,
+  "symbol": "?InComponentSelect@UIScreen@@UBA_NXZ",
+  "unit": "default/UIScreen"
+ },
+ "0x827caa78": {
+  "demangled": "public: virtual bool __cdecl UIScreen::Entering(void) const",
+  "method": "comdat_size",
+  "percent": 99.98,
+  "symbol": "?Entering@UIScreen@@UBA_NXZ",
+  "unit": "default/UIScreen"
+ },
+ "0x827cab40": {
+  "demangled": "public: virtual bool __cdecl UIScreen::Exiting(void) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Exiting@UIScreen@@UBA_NXZ",
+  "unit": "default/UIScreen"
+ },
+ "0x827cadf8": {
+  "demangled": "public: virtual bool __cdecl UIScreen::CheckIsLoaded(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?CheckIsLoaded@UIScreen@@UAA_NXZ",
+  "unit": "default/UIScreen"
+ },
+ "0x827caee8": {
+  "demangled": "protected: class DataNode __cdecl UIScreen::OnMsg(class ButtonDownMsg const &)",
+  "method": "comdat_size",
+  "percent": 87.75,
+  "symbol": "?OnMsg@UIScreen@@IAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+  "unit": "default/UIScreen"
+ },
+ "0x827cbac0": {
+  "demangled": "public: virtual void __cdecl UIScreen::Poll(void)",
+  "method": "comdat_size",
+  "percent": 99.98,
+  "symbol": "?Poll@UIScreen@@UAAXXZ",
+  "unit": "default/UIScreen"
+ },
+ "0x827dc5d8": {
+  "demangled": "protected: virtual void __cdecl UITransitionHandler::FinishValueChange(void)",
+  "method": "comdat_size",
+  "percent": 89.37,
+  "symbol": "?FinishValueChange@UITransitionHandler@@MAAXXZ",
+  "unit": "default/UITransitionHandler"
+ },
+ "0x827dc8e0": {
+  "demangled": "protected: void __cdecl UITransitionHandler::SaveHandlerData(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.94,
+  "symbol": "?SaveHandlerData@UITransitionHandler@@IAAXAAVBinStream@@@Z",
+  "unit": "default/UITransitionHandler"
+ },
+ "0x827dc9f0": {
+  "demangled": "protected: void __cdecl UITransitionHandler::LoadHandlerData(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?LoadHandlerData@UITransitionHandler@@IAAXAAVBinStream@@@Z",
+  "unit": "default/UITransitionHandler"
+ },
+ "0x827dca50": {
+  "demangled": "public: void __cdecl UIColor::SetColor(class Hmx::Color const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetColor@UIColor@@QAAXABVColor@Hmx@@@Z",
+  "unit": "default/UIColor"
+ },
+ "0x827dcaf8": {
+  "demangled": "protected: __cdecl UIColor::UIColor(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0UIColor@@IAA@XZ",
+  "unit": "default/UIColor"
+ },
+ "0x827e8a50": {
+  "demangled": "public: int __cdecl UIListState::NumShowing(void) const",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?NumShowing@UIListState@@QBAHXZ",
+  "unit": "default/UIListState"
+ },
+ "0x827e8aa0": {
+  "demangled": "public: int __cdecl UIListState::WrapShowing(int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?WrapShowing@UIListState@@QBAHH@Z",
+  "unit": "default/UIListState"
+ },
+ "0x827ea628": {
+  "demangled": "private: class DataNode __cdecl UIButton::OnMsg(class ButtonDownMsg const &)",
+  "method": "comdat_size",
+  "percent": 80.58,
+  "symbol": "?OnMsg@UIButton@@AAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+  "unit": "default/UIButton"
+ },
+ "0x827ef028": {
+  "demangled": "public: virtual void __cdecl UIListMeshElement::Fill(class UIListProvider const &, int, int)",
+  "method": "comdat_size",
+  "percent": 99.95,
+  "symbol": "?Fill@UIListMeshElement@@UAAXABVUIListProvider@@HH@Z",
+  "unit": "default/UIListMesh"
+ },
+ "0x827f11f0": {
+  "demangled": "public: virtual void __cdecl UIPicture::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "?Save@UIPicture@@UAAXAAVBinStream@@@Z",
+  "unit": "default/UIPicture"
+ },
+ "0x827f7cc0": {
+  "demangled": "public: static class Symbol __cdecl UIComponentScrollSelectMsg::Type(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Type@UIComponentScrollSelectMsg@@SA?AVSymbol@@XZ",
+  "unit": "default/ScrollSelect"
+ },
+ "0x827f7e48": {
+  "demangled": "protected: bool __cdecl ScrollSelect::CatchNavAction(enum JoypadAction) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?CatchNavAction@ScrollSelect@@IBA_NW4JoypadAction@@@Z",
+  "unit": "default/ScrollSelect"
+ },
+ "0x827f7eb8": {
+  "demangled": "public: __cdecl UIComponentScrollSelectMsg::UIComponentScrollSelectMsg(class UIComponent *, class LocalUser *, bool)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0UIComponentScrollSelectMsg@@QAA@PAVUIComponent@@PAVLocalUser@@_N@Z",
+  "unit": "default/ScrollSelect"
+ },
+ "0x827f82c8": {
+  "demangled": "private: class DataNode __cdecl ScrollSelect::SendScrollSelected(class UIComponent *, class LocalUser *)",
+  "method": "comdat_size",
+  "percent": 87.04,
+  "symbol": "?SendScrollSelected@ScrollSelect@@AAA?AVDataNode@@PAVUIComponent@@PAVLocalUser@@@Z",
+  "unit": "default/ScrollSelect"
+ },
+ "0x827f84f0": {
+  "demangled": "public: bool __cdecl ScrollSelect::SelectScrollSelect(class UIComponent *, class LocalUser *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SelectScrollSelect@ScrollSelect@@QAA_NPAVUIComponent@@PAVLocalUser@@@Z",
+  "unit": "default/ScrollSelect"
+ },
+ "0x827f8820": {
+  "demangled": "public: virtual void __cdecl UIListArrow::Draw(struct UIListWidgetDrawState const &, class UIListState const &, class Transform const &, enum UIComponent::State, class Box *, enum DrawCommand)",
+  "method": "comdat_size",
+  "percent": 99.83,
+  "symbol": "?Draw@UIListArrow@@UAAXABUUIListWidgetDrawState@@ABVUIListState@@ABVTransform@@W4State@UIComponent@@PAVBox@@W4DrawCommand@@@Z",
+  "unit": "default/UIListArrow"
+ },
+ "0x827f89d8": {
+  "demangled": "public: virtual void __cdecl UIListArrow::Save(class BinStream &)",
+  "method": "comdat_size",
+  "percent": 99.89,
+  "symbol": "?Save@UIListArrow@@UAAXAAVBinStream@@@Z",
+  "unit": "default/UIListArrow"
+ },
+ "0x827f92c0": {
+  "demangled": "public: virtual __cdecl UIListCustomElement::~UIListCustomElement(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1UIListCustomElement@@UAA@XZ",
+  "unit": "default/UIListCustom"
+ },
+ "0x827f9c98": {
+  "demangled": "public: virtual void __cdecl UIListHighlight::Draw(struct UIListWidgetDrawState const &, class UIListState const &, class Transform const &, enum UIComponent::State, class Box *, enum DrawCommand)",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "?Draw@UIListHighlight@@UAAXABUUIListWidgetDrawState@@ABVUIListState@@ABVTransform@@W4State@UIComponent@@PAVBox@@W4DrawCommand@@@Z",
+  "unit": "default/UIListHighlight"
+ },
+ "0x827fa3e0": {
+  "demangled": "public: char const * __cdecl UIListLabel::GetDefaultText(void) const",
+  "method": "comdat_size",
+  "percent": 99.86,
+  "symbol": "?GetDefaultText@UIListLabel@@QBAPBDXZ",
+  "unit": "default/UIListLabel"
+ },
+ "0x827facf8": {
+  "demangled": "public: virtual __cdecl UIListSubListElement::~UIListSubListElement(void)",
+  "method": "comdat_size",
+  "percent": 99.9,
+  "symbol": "??1UIListSubListElement@@UAA@XZ",
+  "unit": "default/UIListSubList"
+ },
+ "0x827ff650": {
+  "demangled": "protected: __cdecl Screenshot::Screenshot(void)",
+  "method": "comdat_size",
+  "percent": 92.05,
+  "symbol": "??0Screenshot@@IAA@XZ",
+  "unit": "default/Screenshot"
+ },
+ "0x82801070": {
+  "demangled": "protected: __cdecl UIGuide::UIGuide(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0UIGuide@@IAA@XZ",
+  "unit": "default/UIGuide"
+ },
+ "0x828010f0": {
+  "demangled": "public: virtual void __cdecl UIGuide::Copy(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Copy@UIGuide@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "unit": "default/UIGuide"
+ },
+ "0x82b2bcb8": {
+  "demangled": "public: static class Symbol __cdecl SaveLoadAllCompleteMsg::Type(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Type@SaveLoadAllCompleteMsg@@SA?AVSymbol@@XZ",
+  "unit": "default/MemcardMgr"
+ },
+ "0x82b2e798": {
+  "demangled": "public: virtual void * __cdecl Synth360::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??_GSynth360@@UAAPAXI@Z",
+  "unit": "default/Synth"
+ },
+ "0x82b36fe0": {
+  "demangled": "private: void __cdecl Voice::SetSendImpl(class FxSend360*)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetSendImpl@Voice@@AAAXPAVFxSend360@@@Z",
+  "unit": "default/Voice"
+ },
+ "0x82b37068": {
+  "demangled": "protected: void __cdecl stlpmtx_std::_Deque_base<struct PoolVoice, class stlpmtx_std::StlNodeAlloc<struct PoolVoice> >::_M_initialize_map(unsigned int)",
+  "method": "comdat_size",
+  "percent": 97.69,
+  "symbol": "?_M_initialize_map@?$_Deque_base@UPoolVoice@@V?$StlNodeAlloc@UPoolVoice@@@stlpmtx_std@@@stlpmtx_std@@IAAXI@Z",
+  "unit": "default/Voice"
+ },
+ "0x82b37198": {
+  "demangled": "public: void __cdecl Voice::SetSend(class FxSend360*)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetSend@Voice@@QAAXPAVFxSend360@@@Z",
+  "unit": "default/Voice"
+ },
+ "0x82b37fd0": {
+  "demangled": "public: __cdecl ExternalMic::~ExternalMic(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1ExternalMic@@QAA@XZ",
+  "unit": "default/ExternalMic"
+ },
+ "0x82b3b5a0": {
+  "demangled": "public: __cdecl DSP::SynapseAPOParams::SynapseAPOParams(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0SynapseAPOParams@DSP@@QAA@XZ",
+  "unit": "default/FxSendSynapse"
+ },
+ "0x82b3db18": {
+  "demangled": "public: virtual float __cdecl SynthSample360::LengthMs(void) const",
+  "method": "comdat_size",
+  "percent": 97.79,
+  "symbol": "?LengthMs@SynthSample360@@UBAMXZ",
+  "unit": "default/SynthSample"
+ },
+ "0x82b3f0f8": {
+  "demangled": "public: void __cdecl DSP::SynapseAPO::SetSamplingRate(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetSamplingRate@SynapseAPO@DSP@@QAAXM@Z",
+  "unit": "default/SynapseAPO"
+ },
+ "0x82b3f198": {
+  "demangled": "public: virtual __cdecl DSP::SynapseAPO::~SynapseAPO(void)",
+  "method": "comdat_size",
+  "percent": 96.41,
+  "symbol": "??1SynapseAPO@DSP@@UAA@XZ",
+  "unit": "default/SynapseAPO"
+ },
+ "0x82b3f2c0": {
+  "demangled": "public: __cdecl DSP::SynapseAPO::SynapseAPO(void)",
+  "method": "comdat_size",
+  "percent": 96.0,
+  "symbol": "??0SynapseAPO@DSP@@QAA@XZ",
+  "unit": "default/SynapseAPO"
+ },
+ "0x82b3f360": {
+  "demangled": "public: virtual void * __cdecl DSP::SynapseAPO::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??_GSynapseAPO@DSP@@UAAPAXI@Z",
+  "unit": "default/SynapseAPO"
+ },
+ "0x82b42168": {
+  "demangled": "public: void __cdecl soundtouch::TDStretch::getParameters(int *, int *, int *, int *) const",
+  "method": "text_exact",
+  "percent": 100.0,
+  "symbol": "?getParameters@TDStretch@soundtouch@@QBAXPAH000@Z",
+  "unit": "default/TDStretch"
+ },
+ "0x82b42268": {
+  "demangled": "public: void __cdecl soundtouch::TDStretch::clearInput(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?clearInput@TDStretch@soundtouch@@QAAXXZ",
+  "unit": "default/TDStretch"
+ },
+ "0x82b42450": {
+  "demangled": "public: void __cdecl soundtouch::TDStretch::setTempo(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?setTempo@TDStretch@soundtouch@@QAAXM@Z",
+  "unit": "default/TDStretch"
+ },
+ "0x82b42838": {
+  "demangled": "protected: void __cdecl soundtouch::TDStretch::precalcCorrReferenceStereo(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?precalcCorrReferenceStereo@TDStretch@soundtouch@@IAAXXZ",
+  "unit": "default/TDStretch"
+ },
+ "0x82b428c8": {
+  "demangled": "public: virtual __cdecl soundtouch::TDStretch::~TDStretch(void)",
+  "method": "comdat_reloc",
+  "percent": 100.0,
+  "symbol": "??1TDStretch@soundtouch@@UAA@XZ",
+  "unit": "default/TDStretch"
+ },
+ "0x82b430c8": {
+  "demangled": "public: __cdecl soundtouch::TDStretch::TDStretch(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0TDStretch@soundtouch@@QAA@XZ",
+  "unit": "default/TDStretch"
+ },
+ "0x82b43228": {
+  "demangled": "public: static class soundtouch::TDStretch * __cdecl soundtouch::TDStretch::newInstance(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?newInstance@TDStretch@soundtouch@@SAPAV12@XZ",
+  "unit": "default/TDStretch"
+ },
+ "0x82b43e68": {
+  "demangled": "public: __cdecl soundtouch::AAFilter::~AAFilter(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1AAFilter@soundtouch@@QAA@XZ",
+  "unit": "default/AAFilter"
+ },
+ "0x82b44080": {
+  "demangled": "public: __cdecl soundtouch::AAFilter::AAFilter(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0AAFilter@soundtouch@@QAA@I@Z",
+  "unit": "default/AAFilter"
+ },
+ "0x82b46200": {
+  "demangled": "public: void __cdecl DSP::Synapse::PitchCorrectedVoice::SetAttackSmoothing(float)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetAttackSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+  "unit": "default/PitchCorrectedVoice"
+ },
+ "0x82b46588": {
+  "demangled": "public: void __cdecl DSP::Biquad::SetCoefficients(float *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetCoefficients@Biquad@DSP@@QAAXPAM@Z",
+  "unit": "default/Biquad"
+ },
+ "0x82b46618": {
+  "demangled": "public: __cdecl DSP::Biquad::Biquad(float *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0Biquad@DSP@@QAA@PAM@Z",
+  "unit": "default/Biquad"
+ },
+ "0x82b46670": {
+  "demangled": "public: __cdecl soundtouch::FIFOSampleBuffer::~FIFOSampleBuffer(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1FIFOSampleBuffer@soundtouch@@QAA@XZ",
+  "unit": "default/FIFOSampleBuffer"
+ },
+ "0x82b48110": {
+  "demangled": "int __cdecl fft_matrix_inverse_columnwise(float *, long, float *)",
+  "method": "comdat_size",
+  "percent": 84.18,
+  "symbol": "?fft_matrix_inverse_columnwise@@YAHPAMJ0@Z",
+  "unit": "default/FFT"
+ },
+ "0x82b53b98": {
+  "demangled": "int __cdecl json_escape_str(struct printbuf *, char *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_escape_str@@YAHPAUprintbuf@@PAD@Z",
+  "unit": "default/json_object"
+ },
+ "0x82b53d80": {
+  "demangled": "void __cdecl json_object_generic_delete(struct json_object *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_object_generic_delete@@YAXPAUjson_object@@@Z",
+  "unit": "default/json_object"
+ },
+ "0x82b53ea0": {
+  "demangled": "void __cdecl json_object_lh_entry_free(struct lh_entry *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_object_lh_entry_free@@YAXPAUlh_entry@@@Z",
+  "unit": "default/json_object"
+ },
+ "0x82b54200": {
+  "demangled": "int __cdecl json_object_string_to_json_string(struct json_object *, struct printbuf *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_object_string_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+  "unit": "default/json_object"
+ },
+ "0x82b54378": {
+  "demangled": "int __cdecl json_object_object_to_json_string(struct json_object *, struct printbuf *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_object_object_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+  "unit": "default/json_object"
+ },
+ "0x82b54510": {
+  "demangled": "int __cdecl json_object_array_to_json_string(struct json_object *, struct printbuf *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_object_array_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+  "unit": "default/json_object"
+ },
+ "0x82b548c0": {
+  "demangled": "void __cdecl json_tokener_reset_level(struct json_tokener *, int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?json_tokener_reset_level@@YAXPAUjson_tokener@@H@Z",
+  "unit": "default/json_tokener"
+ },
+ "0x82b567c0": {
+  "demangled": "private: bool __cdecl RndXfmCache::GetXfms(unsigned int *, class RndMesh &volatile, unsigned int, unsigned int, float const *&) const",
+  "method": "comdat_size",
+  "percent": 84.58,
+  "symbol": "?GetXfms@RndXfmCache@@ABA_NPIBVRndMesh@@IIAAPBM@Z",
+  "unit": "default/VelocityBuffer"
+ },
+ "0x82b56ab0": {
+  "demangled": "public: void __cdecl RndVelocityBuffer::CacheTransform(unsigned int *, class RndMesh &, unsigned int *, float &volatile, unsigned int)",
+  "method": "comdat_size",
+  "percent": 99.93,
+  "symbol": "?CacheTransform@RndVelocityBuffer@@QAAXPIAVRndMesh@@PIBMI@Z",
+  "unit": "default/VelocityBuffer"
+ },
+ "0x82b56f20": {
+  "demangled": "private: __cdecl RndVelocityBuffer::RndVelocityBuffer(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0RndVelocityBuffer@@AAA@XZ",
+  "unit": "default/VelocityBuffer"
+ },
+ "0x82b57048": {
+  "demangled": "void __cdecl `anonymous namespace'::ClearLightTransforms(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?ClearLightTransforms@?A0x8e417309@@YAXXZ",
+  "unit": "default/Env_NG"
+ },
+ "0x82b570b8": {
+  "demangled": "void __cdecl `anonymous namespace'::ClearPointCubeTex(void)",
+  "method": "comdat_size",
+  "percent": 99.97,
+  "symbol": "?ClearPointCubeTex@?A0x8e417309@@YAXXZ",
+  "unit": "default/Env_NG"
+ },
+ "0x82b57130": {
+  "demangled": "void __cdecl `anonymous namespace'::ClearLightRegisters(int)",
+  "method": "comdat_size",
+  "percent": 99.97,
+  "symbol": "?ClearLightRegisters@?A0x8e417309@@YAXH@Z",
+  "unit": "default/Env_NG"
+ },
+ "0x82b57270": {
+  "demangled": "bool __cdecl `anonymous namespace'::CheckPointLight(class NgLight &)",
+  "method": "comdat_size",
+  "percent": 99.82,
+  "symbol": "?CheckPointLight@?A0x8e417309@@YA_NAAVNgLight@@@Z",
+  "unit": "default/Env_NG"
+ },
+ "0x82b57310": {
+  "demangled": "bool __cdecl `anonymous namespace'::CheckProjLight(class NgLight &)",
+  "method": "comdat_size",
+  "percent": 99.84,
+  "symbol": "?CheckProjLight@?A0x8e417309@@YA_NAAVNgLight@@@Z",
+  "unit": "default/Env_NG"
+ },
+ "0x82b57420": {
+  "demangled": "bool __cdecl `anonymous namespace'::SetPointLightRegisters(int, class RndLight &, bool &)",
+  "method": "comdat_size",
+  "percent": 86.43,
+  "symbol": "?SetPointLightRegisters@?A0x8e417309@@YA_NHAAVRndLight@@AA_N@Z",
+  "unit": "default/Env_NG"
+ },
+ "0x82b576e8": {
+  "demangled": "bool __cdecl `anonymous namespace'::SetProjLightRegisters(int, int, class NgLight &)",
+  "method": "comdat_size",
+  "percent": 96.57,
+  "symbol": "?SetProjLightRegisters@?A0x8e417309@@YA_NHHAAVNgLight@@@Z",
+  "unit": "default/Env_NG"
+ },
+ "0x82b5b140": {
+  "demangled": "public: int __cdecl SIVideo::Bpp(void) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Bpp@SIVideo@@QBAHXZ",
+  "unit": "default/SIVideo"
+ },
+ "0x82b5d040": {
+  "demangled": "public: virtual __cdecl NgDOFProc::~NgDOFProc(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1NgDOFProc@@UAA@XZ",
+  "unit": "default/DOFProc_NG"
+ },
+ "0x82b5e050": {
+  "demangled": "public: __cdecl Rand2::Rand2(int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0Rand2@@QAA@H@Z",
+  "unit": "default/Rand2"
+ },
+ "0x82b81b08": {
+  "demangled": "public: void __cdecl CompressionEffect::Reset(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Reset@CompressionEffect@@QAAXXZ",
+  "unit": "default/CompressionEffect"
+ },
+ "0x82b81b20": {
+  "demangled": "public: void __cdecl CompressionEffect::Process(float *, int, int)",
+  "method": "comdat_size",
+  "percent": 91.46,
+  "symbol": "?Process@CompressionEffect@@QAAXPAMHH@Z",
+  "unit": "default/CompressionEffect"
+ },
+ "0x82b81d98": {
+  "demangled": "public: void __cdecl CompressionEffect::SetParameters(struct CompressionEffect::Params const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetParameters@CompressionEffect@@QAAXABUParams@1@@Z",
+  "unit": "default/CompressionEffect"
+ },
+ "0x82b81f80": {
+  "demangled": "public: __cdecl CompressionEffect::CompressionEffect(struct IXAudioBatchAllocator *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0CompressionEffect@@QAA@PAUIXAudioBatchAllocator@@@Z",
+  "unit": "default/CompressionEffect"
+ },
+ "0x82b82028": {
+  "demangled": "public: __cdecl DistortionEffect::DistortionEffect(struct IXAudioBatchAllocator *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0DistortionEffect@@QAA@PAUIXAudioBatchAllocator@@@Z",
+  "unit": "default/DistortionEffect"
+ },
+ "0x82b820f8": {
+  "demangled": "public: __cdecl DelayEffect::DelayEffect(struct IXAudioBatchAllocator *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0DelayEffect@@QAA@PAUIXAudioBatchAllocator@@@Z",
+  "unit": "default/DelayEffect"
+ },
+ "0x82b82398": {
+  "demangled": "public: void __cdecl DelayEffect::SetParameters(struct DelayEffect::Params const &)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?SetParameters@DelayEffect@@QAAXABUParams@1@@Z",
+  "unit": "default/DelayEffect"
+ },
+ "0x82b823f8": {
+  "demangled": "public: __cdecl FlangerEffect::FlangerEffect(struct IXAudioBatchAllocator *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??0FlangerEffect@@QAA@PAUIXAudioBatchAllocator@@@Z",
+  "unit": "default/FlangerEffect"
+ },
+ "0x82b82490": {
+  "demangled": "public: __cdecl FlangerEffect::~FlangerEffect(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??1FlangerEffect@@QAA@XZ",
+  "unit": "default/FlangerEffect"
+ },
+ "0x82b824e0": {
+  "demangled": "public: void __cdecl FlangerEffect::Reset(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Reset@FlangerEffect@@QAAXXZ",
+  "unit": "default/FlangerEffect"
+ },
+ "0x82b83460": {
+  "demangled": "public: void __cdecl WahEffect::Reset(void)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?Reset@WahEffect@@QAAXXZ",
+  "unit": "default/WahEffect"
+ },
+ "0x82b83858": {
+  "demangled": "public: virtual __cdecl OggMap::~OggMap(void)",
+  "method": "comdat_size",
+  "percent": 92.17,
+  "symbol": "??1OggMap@@UAA@XZ",
+  "unit": "default/OggMap"
+ },
+ "0x82b87490": {
+  "demangled": "struct MultiTempoTempoMap::TempoInfoPoint const * __cdecl stlpmtx_std::__upper_bound<struct MultiTempoTempoMap::TempoInfoPoint const *, float, bool (__cdecl *)(float, struct MultiTempoTempoMap::TempoInfoPoint const &), int>(struct MultiTempoTempoMap::TempoInfoPoint const *, struct MultiTempoTempoMap::TempoInfoPoint const *, float const &, bool (__cdecl *)(float, struct MultiTempoTempoMap::TempoInfoPoint const &), int *)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??$__upper_bound@PBUTempoInfoPoint@MultiTempoTempoMap@@MP6A_NMABU12@@ZH@stlpmtx_std@@YAPBUTempoInfoPoint@MultiTempoTempoMap@@PBU12@0ABMP6A_NMABU12@@ZPAH@Z",
+  "unit": "default/MultiTempoTempoMap"
+ },
+ "0x82b875e0": {
+  "demangled": "public: virtual float __cdecl MultiTempoTempoMap::GetTempo(int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetTempo@MultiTempoTempoMap@@UBAMH@Z",
+  "unit": "default/MultiTempoTempoMap"
+ },
+ "0x82b87658": {
+  "demangled": "public: virtual int __cdecl MultiTempoTempoMap::GetTempoInMicroseconds(int) const",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "?GetTempoInMicroseconds@MultiTempoTempoMap@@UBAHH@Z",
+  "unit": "default/MultiTempoTempoMap"
+ },
+ "0x82b87a60": {
+  "demangled": "public: virtual void * __cdecl BinkReader::`scalar deleting destructor'(unsigned int)",
+  "method": "comdat_size",
+  "percent": 100.0,
+  "symbol": "??_GBinkReader@@UAAPAXI@Z",
+  "unit": "default/BinkReader"
+ }
+}
