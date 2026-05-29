@@ -50,15 +50,15 @@ int gNumHeaps;
 // because some code paths still went through custom MemHeap logic.
 #else
 void *operator new(unsigned int size) {
-    return MemAlloc(size, __FILE__, 0x5CF, "new", gNewOperatorAlign);
+    // Retail/match: 2-arg (size, align). gNewOperatorAlign is non-zero, so it
+    // can't go through the align-0-forcing macro — use the parenthesized form.
+    return (MemAlloc)(size, gNewOperatorAlign);
 }
 
-void *operator new[](unsigned int size) {
-    return MemAlloc(size, __FILE__, 0x5E6, "new[]");
-}
+void *operator new[](unsigned int size) { return (MemAlloc)(size, 0); }
 
-void operator delete(void *v) { MemFree(v, "unknown", 0, "unknown"); }
-void operator delete[](void *v) { MemFree(v, "unknown", 0, "unknown"); }
+void operator delete(void *v) { MemFree(v); }
+void operator delete[](void *v) { MemFree(v); }
 #endif
 
 void PhysDelta(const char *name) {
@@ -122,7 +122,13 @@ int _GetFreeSystemMemory() {
 
 int MemNumHeaps() { return gNumHeaps; }
 
+#ifdef HX_NATIVE
 void MemFree(void *mem, const char *file, int line, const char *name) {
+#else
+// Retail/match: 1-arg leaf free (see MemMgr.h ABI note). Parenthesized name
+// suppresses the call-site MemFree(...) arg-stripping macro at the definition.
+void(MemFree)(void *mem) {
+#endif
     if (mem) {
 #ifdef HX_NATIVE
         free(mem);
@@ -331,7 +337,7 @@ void AddHeap(int i1, int i2, DataArray *arr) {
 // Stub: MemHeap::Alloc and ThreadMemStack are not yet decompiled, so route
 // through malloc() which uses the CRT heap (NtAllocateVirtualMemory in Xenia).
 __declspec(noinline) void *
-MemAlloc(int size, const char *file, int line, const char *name, int align) {
+(MemAlloc)(int size, const char *file, int line, const char *name, int align) {
     if (size <= 0)
         return nullptr;
     return malloc(size);
@@ -342,7 +348,7 @@ MemAlloc(int size, const char *file, int line, const char *name, int align) {
 // heap fast path (verified in Ghidra: Function_827977D0(size, align)) takes no
 // __FILE__/line/name — MemTrack is compiled out. Mirrors rb3-Wii _MemAlloc(int,
 // int). Routes through the existing stub for now (MemHeap::Alloc TBD).
-__declspec(noinline) void *MemAlloc(int size, int align) {
+__declspec(noinline) void *(MemAlloc)(int size, int align) {
     if (size <= 0)
         return nullptr;
     return malloc(size);
@@ -351,7 +357,9 @@ __declspec(noinline) void *MemAlloc(int size, int align) {
 
 void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align) {
     MemTemp tmp;
-    return MemAlloc(size, file, line, name, align);
+    // Parenthesized: route to the 5-arg debug stub, bypassing the X360 call-site
+    // macro (internal MemMgr plumbing, not an external retail call site).
+    return (MemAlloc)(size, file, line, name, align);
 }
 
 void *MemOrPoolAllocSTL(int size, const char *file, int line, const char *name) {
@@ -362,7 +370,7 @@ void *MemOrPoolAllocSTL(int size, const char *file, int line, const char *name) 
 #else
     else if (size > 0x80) {
         MemTemp tmp;
-        return MemAlloc(size, file, line, name, 0);
+        return (MemAlloc)(size, file, line, name, 0);
     } else {
         return PoolAlloc(size, size, file, line, name);
     }
@@ -509,7 +517,7 @@ void *MemResizeElem(
         newTotalSize = delta + prefixSize;
     }
     if (newTotalSize != totalSize) {
-        mem = MemAlloc(newTotalSize, file, line, name);
+        mem = (MemAlloc)(newTotalSize, file, line, name);
         totalSize = newTotalSize;
         if (prefixSize != 0) {
             memcpy(mem, old, prefixSize);
@@ -531,7 +539,7 @@ MemRealloc(void *mem, int size, const char *file, int line, const char *name, in
     CritSecTracker tracker(gMemLock);
     if (gNumHeaps != 0) {
         int memSize = MemAllocSize(mem);
-        void *dst = MemAlloc(size, file, line, name, align);
+        void *dst = (MemAlloc)(size, file, line, name, align);
         memcpy(dst, mem, size < memSize ? size : memSize);
         MemFree(mem);
         return dst;

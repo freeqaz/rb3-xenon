@@ -60,7 +60,13 @@ BlockRequest::BlockRequest(const AsyncTask &task)
 }
 
 void BlockMgr::Init() {
+#ifdef HX_NATIVE
     gTempBlock = (char *)MemAlloc(0x1000, __FILE__, 0xB7, "BlockMgr junk", 4);
+#else
+    // Retail/match: 2-arg (size, align). align=4 is non-zero so bypass the
+    // align-0-forcing macro with the parenthesized form. See MemMgr.h ABI note.
+    gTempBlock = (char *)(MemAlloc)(0x1000, 4);
+#endif
     gCurrBuffNum = 0;
     mBlockCache.resize(kNumBlockBuffers);
     mReadingBlock = nullptr;
