@@ -161,14 +161,17 @@ protected:
 
     virtual void UpdatedWorldXfm() {}
 
-    Transform mLocalXfm; // 0x8
-    Transform mWorldXfm; // 0x48
-    ObjOwnerPtr<RndTransformable> mParent; // 0x88
-    std::list<RndTransformable *> mChildren; // 0x9c
-    ObjPtr<RndTransformable> mTarget; // 0xa4
-    Constraint mConstraint; // 0xb8
-    bool mPreserveScale; // 0xbc
-    bool mDirty; // 0xbd
+    // Retail RB3-360 member order (verified from binary fn_823E6E98 constructor):
+    // Parent/children/target pointers come before and after transforms.
+    // mDirty precedes mConstraint (different from DC3).
+    ObjOwnerPtr<RndTransformable> mParent; // 0x8  (ObjOwnerPtr = 0xc retail)
+    std::list<RndTransformable *> mChildren; // 0x14 (list = 0x8)
+    Transform mLocalXfm; // 0x1c
+    Transform mWorldXfm; // 0x5c
+    bool mDirty; // 0x9c  (before mConstraint in retail, unlike DC3)
+    Constraint mConstraint; // 0xa0
+    bool mPreserveScale; // 0xa4
+    ObjPtr<RndTransformable> mTarget; // 0xa8  (ObjPtr = 0xc retail)
 };
 
 class RndTransformableRemover : public RndTransformable {

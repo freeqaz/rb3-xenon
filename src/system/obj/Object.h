@@ -225,19 +225,28 @@ public:
 #pragma endregion
 #pragma region ObjRefConcrete
 
-// ObjRefConcrete size: 0x10
+// ObjRefConcrete size:
+//   Retail X360: 0xc (non-polymorphic: next@0x0, prev@0x4, mObject@0x8 — no vtable)
+//   HX_NATIVE:   0x10 (polymorphic: vtable@0x0, next@0x4, prev@0x8, mObject@0xc)
+// DC3 uses polymorphic 0x10; RB3 retail verifiably uses 0xc (ring-free fn_82451A48
+// allocates and frees 0xc-byte nodes).
 template <class T1, class T2 = class ObjectDir>
 class ObjRefConcrete : public ObjRef {
 protected:
-    T1 *mObject; // 0xc
+    T1 *mObject; // 0x8 (retail X360) / 0xc (HX_NATIVE)
 public:
     ObjRefConcrete(T1 *obj);
     ObjRefConcrete(const ObjRefConcrete &o);
+#ifdef HX_NATIVE
     virtual ~ObjRefConcrete();
     virtual Hmx::Object *GetObj() const { return mObject; }
     virtual void Replace(Hmx::Object *obj) { SetObj(obj); }
-#ifdef HX_NATIVE
     void NullifyObj() override { mObject = nullptr; ObjRef::NullifyObj(); }
+#else
+    // Retail X360: non-polymorphic (no vtable). Implementation in ObjPtr_p.h.
+    ~ObjRefConcrete();
+    Hmx::Object *GetObj() const { return mObject; }
+    void Replace(Hmx::Object *obj) { SetObj(obj); }
 #endif
 
     T1 *operator->() const { return mObject; }
@@ -257,23 +266,31 @@ BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &
 #pragma endregion
 #pragma region ObjPtr
 
-// ObjPtr size: 0x14
+// ObjPtr size:
+//   Retail X360: 0xc (= ObjRefConcrete, no mOwner — owner recovered from ring/vtable)
+//   HX_NATIVE:   0x14 (adds mOwner@0x10 for explicit owner tracking)
 template <class T>
 class ObjPtr : public ObjRefConcrete<T> {
 protected:
-    Hmx::Object *mOwner; // 0x10
     struct DeferOwner {};
     ObjPtr(DeferOwner, T *ptr) : ObjRefConcrete<T>(ptr) {}
 public:
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
     ObjPtr(const ObjPtr &p);
-    virtual ~ObjPtr();
+    ~ObjPtr();
+#ifdef HX_NATIVE
+    Hmx::Object *mOwner; // 0x10 (HX_NATIVE only)
     virtual Hmx::Object *RefOwner() const { return mOwner; }
+    Hmx::Object *Owner() const { return mOwner; }
+#else
+    // Retail X360: no mOwner (ObjPtr = 0xc bytes = ObjRefConcrete size)
+    Hmx::Object *RefOwner() const { return nullptr; }
+    Hmx::Object *Owner() const { return nullptr; }
+#endif
 
     void operator=(T *obj) { SetObjConcrete(obj); }
     void operator=(const ObjPtr &p) { CopyRef(p); }
     T *Ptr() const { return mObject; }
-    Hmx::Object *Owner() const { return mOwner; }
 };
 
 // template <class T1>
@@ -285,17 +302,24 @@ BinStream &operator>>(BinStream &bs, ObjPtr<T1> &ptr);
 #pragma endregion
 #pragma region ObjOwnerPtr
 
-// ObjOwnerPtr size: 0x14
+// ObjOwnerPtr size:
+//   Retail X360: 0xc (= ObjRefConcrete, no mOwner — same as ObjPtr in retail)
+//   HX_NATIVE:   0x14 (adds mOwner@0x10 for explicit owner tracking + Replace dispatch)
 template <class T>
 class ObjOwnerPtr : public ObjRefConcrete<T> {
-private:
-    ObjRefOwner *mOwner; // 0x10
 public:
     ObjOwnerPtr(ObjRefOwner *owner, T *ptr = nullptr);
     ObjOwnerPtr(const ObjOwnerPtr &o);
-    virtual ~ObjOwnerPtr();
+    ~ObjOwnerPtr();
+#ifdef HX_NATIVE
+    ObjRefOwner *mOwner; // 0x10 (HX_NATIVE only)
     virtual Hmx::Object *RefOwner() const;
     virtual void Replace(Hmx::Object *obj) { mOwner->Replace(this, obj); }
+#else
+    // Retail X360: no mOwner (ObjOwnerPtr = 0xc bytes = ObjRefConcrete size)
+    Hmx::Object *RefOwner() const { return nullptr; }
+    void Replace(Hmx::Object *obj) { SetObj(obj); }
+#endif
     void operator=(T *obj) { SetObjConcrete(obj); }
     T *Ptr() const { return mObject; }
 };

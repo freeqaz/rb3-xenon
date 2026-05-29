@@ -22,7 +22,8 @@ bool SortInWorld(const GroupDrawDist &a, const GroupDrawDist &b) {
 bool gInReplace;
 
 RndGroup::RndGroup()
-    : mObjects(this, kObjListOwnerControl), mDrawOnly(this), mSortInWorld(false) {}
+    : mObjects(this, kObjListOwnerControl), mDrawOnly(this), mEnv(this), mLod(this),
+      mLodScreenSize(0), mDrawLod(false), mSortInWorld(false) {}
 
 bool RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (ref->Parent() == &mObjects) {
@@ -245,9 +246,7 @@ void RndGroup::DrawShowing() {
 
 void RndGroup::Draw() {
     if (mShowing) {
-        TheRnd.PushClipPlanes(mClipPlanes);
         RndGroup::DrawShowing();
-        TheRnd.PopClipPlanes(mClipPlanes);
     }
 }
 
