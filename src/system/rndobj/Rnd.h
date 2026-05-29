@@ -251,10 +251,12 @@ protected:
     DataNode OnScaleObject(const DataArray *);
     DataNode OnReflect(const DataArray *);
     DataNode OnToggleHeap(const DataArray *);
+#ifdef HX_NATIVE
+    DataNode OnToggleWatch(const DataArray *);
+#endif
     DataNode OnOverlayPrint(const DataArray *);
     DataNode OnToggleShowMetaMatErrors(const DataArray *);
     DataNode OnToggleShowShaderErrors(const DataArray *);
-    DataNode OnToggleWatch(const DataArray *);
 
     Hmx::Color mClearColor; // 0x30
     int mWidth; // 0x40
@@ -262,62 +264,70 @@ protected:
     int mScreenBpp; // 0x48
     int mDrawCount; // 0x4c
     Timer mDrawTimer; // 0x50
+    // Retail X360/RB3 layout (verified via Rnd ctor fn_82402FA0 + OnShowConsole
+    // loading mConsole at 0x90): the four overlay pointers sit at 0x80..0x8c
+    // followed by mConsole at 0x90. RB3 retail has NO Watcher subsystem in Rnd
+    // (confirmed: rb3-Wii Rnd.h/.cpp carry no mWatcher/mWatchOverlay at all).
+    // DC3 added mWatchOverlay (+4) + inline Watcher mWatcher (+0x3c) = +0x40,
+    // which shifted every member from mStatsOverlay onward up 64 bytes vs retail.
     RndOverlay *mTimersOverlay; // 0x80
     RndOverlay *mRateOverlay; // 0x84
     RndOverlay *mHeapOverlay; // 0x88
-    RndOverlay *mWatchOverlay; // 0x8c
-    Watcher mWatcher; // 0x90
-    RndOverlay *mStatsOverlay; // 0xcc
-    RndConsole *mConsole; // 0xd0
-    RndMat *mDefaultMat; // 0xd4
-    RndMat *mOverlayMat; // 0xd8
-    RndMat *mOverdrawMat; // 0xdc
-    RndCam *mDefaultCam; // 0xe0
-    RndCam *mWorldCamCopy; // 0xe4
-    RndEnviron *mDefaultEnv; // 0xe8
-    RndLight *mDefaultLit; // 0xec
-    RndTex *mDefaultTex[kDefaultTex_Max]; // 0xf0 - 0x10c, inclusive
-    RndCubeTex *mDefaultCubeTexBlack;
-    RndCubeTex *mDefaultCubeTexWhite;
-    float mRateTotal;
-    int unk11c;
-    int mRateCount;
-    unsigned int mFrameID; // 0x124
-    const char *mRateGate; // 0x128
-    DataArray *mFont; // 0x12c
-    int mSync; // 0x130
-    bool mGsTiming; // 0x134
-    bool mShowSafeArea; // 0x135
-    bool mDrawing; // 0x136
-    bool mWorldEnded; // 0x137
-    Aspect mAspect; // 0x138
-    DrawMode mDrawMode; // 0x13c
-    bool mResourceCached; // 0x140
-    bool mShowShaderCost; // 0x141
-    bool mShrinkToSafe; // 0x142
-    bool mInGame; // 0x143
-    bool mVerboseTimers; // 0x144
-    bool mDisablePostProc; // 0x145
-    bool unk146;
-    bool mWorldCamCopied; // 0x147 - set by CopyWorldCam, cleared by DoWorldEnd
-    bool unk148;
-    void (*mWorldEndCallback)(); // 0x14c - funcptr
-    void (*unk150)(); // 0x150 - another funcptr
-    std::list<PointTest> mPointTests; // 0x154
-    std::list<PostProcessor *> mPostProcessors; // 0x15c
-    ObjPtr<RndPostProc> mPostProcOverride; // 0x164
-    ObjPtr<RndPostProc> mPostProcBlackLightOverride; // 0x178
-    ObjPtrList<RndDrawable> mPreClearDraws; // 0x18c
-    ObjPtrList<RndDrawable> mDraws; // 0x1a0
+#ifdef HX_NATIVE
+    RndOverlay *mWatchOverlay; // native-only (DC3 watcher subsystem)
+    Watcher mWatcher; // native-only
+#endif
+    RndOverlay *mStatsOverlay; // 0x8c
+    RndConsole *mConsole; // 0x90
+    RndMat *mDefaultMat; // 0x94
+    RndMat *mOverlayMat; // 0x98
+    RndMat *mOverdrawMat; // 0x9c
+    RndCam *mDefaultCam; // 0xa0
+    RndCam *mWorldCamCopy; // 0xa4
+    RndEnviron *mDefaultEnv; // 0xa8
+    RndLight *mDefaultLit; // 0xac
+    RndTex *mDefaultTex[kDefaultTex_Max]; // 0xb0 - 0xcc, inclusive (do-loop, 8 words)
+    RndCubeTex *mDefaultCubeTexBlack; // 0xd0
+    RndCubeTex *mDefaultCubeTexWhite; // 0xd4
+    float mRateTotal; // 0xd8
+    int unk11c; // 0xdc
+    int mRateCount; // 0xe0 (=5)
+    unsigned int mFrameID; // 0xe4
+    const char *mRateGate; // 0xe8
+    DataArray *mFont; // 0xec
+    int mSync; // 0xf0 (=1)
+    bool mGsTiming; // 0xf4
+    bool mShowSafeArea; // 0xf5
+    bool mDrawing; // 0xf6
+    bool mWorldEnded; // 0xf7 (=1)
+    Aspect mAspect; // 0xf8
+    DrawMode mDrawMode; // 0xfc
+    bool mResourceCached; // 0x100
+    bool mShowShaderCost; // 0x101
+    bool mShrinkToSafe; // 0x102 (=1)
+    bool mInGame; // 0x103
+    bool mVerboseTimers; // 0x104
+    bool mDisablePostProc; // 0x105
+    bool unk146; // 0x106
+    bool mWorldCamCopied; // 0x107 - set by CopyWorldCam, cleared by DoWorldEnd
+    bool unk148; // 0x108
+    void (*mWorldEndCallback)(); // 0x10c - funcptr
+    void (*unk150)(); // 0x110 - another funcptr
+    std::list<PointTest> mPointTests; // 0x114
+    std::list<PostProcessor *> mPostProcessors; // 0x11c
+    ObjPtr<RndPostProc> mPostProcOverride; // 0x124
+    ObjPtr<RndPostProc> mPostProcBlackLightOverride; // 0x138
+    ObjPtrList<RndDrawable> mPreClearDraws; // 0x14c
+    ObjPtrList<RndDrawable> mDraws; // 0x160
 
 public:
-    bool mReleaseImmediate; // 0x1b4
+    bool mReleaseImmediate; // 0x174
 
 protected:
-    ProcCounter mProcCounter; // 0x1b8
-    ProcessCmd mProcCmds; // 0x1d0
-    ProcessCmd mLastProcCmds; // 0x1d4
-    std::list<CompressTexDesc *> mCompressTexQueue; // 0x1d8
+    ProcCounter mProcCounter; // 0x178
+    ProcessCmd mProcCmds; // 0x190
+    ProcessCmd mLastProcCmds; // 0x194
+    std::list<CompressTexDesc *> mCompressTexQueue; // 0x198
 };
 
 extern Rnd &TheRnd;

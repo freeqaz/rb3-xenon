@@ -145,7 +145,10 @@ DataNode FailRestartConsole(DataArray *) {
 Rnd::Rnd()
     : mClearColor(0.3f, 0.3f, 0.3f), mWidth(640), mHeight(480), mScreenBpp(16),
       mDrawCount(0), mDrawTimer(), mTimersOverlay(0), mRateOverlay(0), mHeapOverlay(0),
-      mWatchOverlay(0), mStatsOverlay(0), mDefaultMat(0), mOverlayMat(0), mOverdrawMat(0),
+#ifdef HX_NATIVE
+      mWatchOverlay(0),
+#endif
+      mStatsOverlay(0), mDefaultMat(0), mOverlayMat(0), mOverdrawMat(0),
       mDefaultCam(0), mWorldCamCopy(0), mDefaultEnv(0), mDefaultLit(0), mDefaultCubeTexBlack(nullptr),
       mDefaultCubeTexWhite(nullptr), mRateTotal(0), mRateCount(5), mFrameID(0), mRateGate("    "),
       mFont(nullptr), mSync(1), mGsTiming(0), mShowSafeArea(0), mDrawing(0),
@@ -243,7 +246,9 @@ BEGIN_HANDLERS(Rnd)
     HANDLE(scale_object, OnScaleObject)
     HANDLE(reflect, OnReflect)
     HANDLE(toggle_heap, OnToggleHeap)
+#ifdef HX_NATIVE
     HANDLE(toggle_watch, OnToggleWatch)
+#endif
     HANDLE_ACTION(
         fix_vert_order, FixVertOrder(_msg->Obj<RndMesh>(2), _msg->Obj<RndMesh>(3))
     )
@@ -364,14 +369,17 @@ void Rnd::PreInit() {
     InitShaderOptions();
     mRateOverlay = RndOverlay::Find("rate", true);
     mHeapOverlay = RndOverlay::Find("heap", true);
-    // well ok then
+#ifdef HX_NATIVE
     mWatcher.SetOverlay(mWatchOverlay = RndOverlay::Find("watch", true));
     mWatcher.Init();
+#endif
     mStatsOverlay = RndOverlay::Find("stats", true);
     mTimersOverlay = RndOverlay::Find("timers", true);
     mRateOverlay->SetCallback(this);
     mHeapOverlay->SetCallback(this);
+#ifdef HX_NATIVE
     mWatchOverlay->SetCallback(this);
+#endif
     mStatsOverlay->SetCallback(this);
     mTimersOverlay->SetCallback(this);
     mConsole = new RndConsole();
@@ -741,8 +749,10 @@ float Rnd::UpdateOverlay(RndOverlay *o, float f) {
         UpdateRate();
     } else if (o == mHeapOverlay) {
         UpdateHeap();
+#ifdef HX_NATIVE
     } else if (o == mWatchOverlay) {
         mWatcher.Update();
+#endif
     } else if (o == mTimersOverlay) {
         f = DrawTimers(f);
     }
@@ -911,10 +921,12 @@ void Rnd::CreateCubeTextures() {
     }
 }
 
+#ifdef HX_NATIVE
 DataNode Rnd::OnToggleWatch(const DataArray *) {
     mWatchOverlay->SetShowing(!mWatchOverlay->Showing());
     return 0;
 }
+#endif
 
 DataNode Rnd::OnToggleShowMetaMatErrors(const DataArray *) {
     TheShaderMgr.ToggleShowMetaMatErrors();
