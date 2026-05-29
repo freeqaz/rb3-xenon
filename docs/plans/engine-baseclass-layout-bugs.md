@@ -68,6 +68,33 @@ index 16 vs 17). Cascades to all virtual dispatch through Object. **Fix:** ident
 & remove/reorder the extra virtual (needs the retail vtable order via Ghidra).
 - Evidence: `ObjectDir::New<ObjectDir>` `lwz r11,0x40,r11` (target) vs `0x44`.
 
+### 5. String / FilePath is 0xc in retail, ours is 0x8
+`src/system/utl/Str.h` (String) — **huge blast radius (every class with a String/
+FilePath member).** Retail `String` is 3 words `{vptr@0, capacity@4, mStr@8}` = 0xc;
+ours is `{vptr@0, mStr@4}` = 0x8. Verified from the String ctor `fn_82798E18`
+(stores vptr@0, 0@4, gNullStr@8) and resize `fn_82798E68` (capacity@4, mStr@8).
+Propagates +4 to `mKeys` in every LightHue near-miss and to `FilePath` everywhere.
+(Note: Hmx::Object's `mName` String already nets to the right 0x28 total because a
+compensating field-order shift cancels the +4 — so fixing String must re-check
+Object.) **Found by the LightHue sweep agent.**
+
+### 6. MILO_ASSERT not no-op'd — VERIFIED +4 (worktree A/B)
+`src/system/os/Debug.h`. Retail compiled `MILO_ASSERT` out (CLAUDE.md: only 41
+.cpp assert strings, all 3rd-party); ours emits the check + `MakeString(__FILE__,
+line,#cond)` failer call. **Tested in a clean worktree: guarding the assert family
+under `#ifdef HX_NATIVE` and no-op'ing the match build (`((void)sizeof(!(cond)))`)
+gave +4 net (1595→1599), no regression.** Modest because most assert-containing
+fns have other diffs too — but it's correct + foundational (unconfounds future
+work). NOT landed to main yet (whole-engine change; got clobbered by a concurrent
+permuter run in the shared main tree — land in a coordinated/quiet moment). The
+exact +4-vs-bigger question may improve with POOL_OVERLOAD (#7) fixed too.
+
+### 7. POOL_OVERLOAD passes debug args; retail passes null/garbage
+`src/system/utl/PoolAlloc.h`. Our `POOL_OVERLOAD` passes `__FILE__`, line, and
+`#class` to `PoolAlloc`; retail passes null/garbage (no debug strings). Affects
+pool-allocating ctors (e.g. `operator>>(BinStream, BSPNode*&)`). A release-mode
+macro variant. **Found by the Geo sweep agent.**
+
 ## How to attack (priority order, EV)
 
 Do **one at a time**, each in a dedicated `scripts/setup_worktree.sh` worktree:
