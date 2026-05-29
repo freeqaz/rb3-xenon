@@ -152,7 +152,11 @@ public:
 };
 
 DataNode *NodesAlloc(int size) {
+#ifdef HX_NATIVE
     return (DataNode *)MemOrPoolAlloc(size, __FILE__, 0xFE, "Nodes");
+#else
+    return (DataNode *)MemOrPoolAlloc(size);
+#endif
 }
 
 void NodesFree(int size, DataNode *mem) { MemOrPoolFree(size, mem); }

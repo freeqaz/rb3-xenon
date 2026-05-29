@@ -85,9 +85,24 @@ void _MemFree(void *mem);             // rb3-Wii free used in STLPort specializa
 void *
 MemRealloc(void *mem, int size, const char *file, int line, const char *name, int align);
 void *MemAlloc(int size, const char *file, int line, const char *name, int align = 0);
+#ifndef HX_NATIVE
+// Retail/match 2-arg heap allocator (size, align) — no debug strings. See the
+// retail ABI note above; mirrors rb3-Wii _MemAlloc(int, int).
+void *MemAlloc(int size, int align);
+#endif
 void MemFree(
     void *mem, const char *file = "unknown", int line = 0, const char *name = "unknown"
 );
+// Retail/match allocation ABI. The retail RB3-360 XEX strips all MemTrack /
+// MILO_ASSERT debug instrumentation, so its alloc call sites pass NO __FILE__/
+// __LINE__/name args (verified in Ghidra: callers like fn_82798360 invoke the
+// heap allocator as MemAlloc(size, align) — exactly 2 regs, no string loads;
+// the "StringBuf"/__FILE__ literals are absent from the binary). This mirrors
+// rb3-Wii's _MemOrPoolAlloc(int)/_MemAlloc(int,int) form and follows the same
+// precedent as PoolAlloc.h's 2-arg POOL_OVERLOAD win. On HX_NATIVE we keep the
+// debug form (default args carry real host tracking strings); on the X360 match
+// build the entry points take only the size/idx the retail call site passes.
+#ifdef HX_NATIVE
 void *MemOrPoolAlloc(int size, const char *file, int line, const char *name);
 void *MemOrPoolAllocSTL(int size, const char *file, int line, const char *name);
 void MemOrPoolFree(
@@ -98,6 +113,12 @@ void MemOrPoolFree(
     const char *name = "unknown"
 );
 void MemOrPoolFreeSTL(int, void *mem, const char *file, int line, const char *name);
+#else
+void *MemOrPoolAlloc(int size);
+void *MemOrPoolAllocSTL(int size);
+void MemOrPoolFree(int idx, void *mem);
+void MemOrPoolFreeSTL(int idx, void *mem);
+#endif
 
 #ifdef HX_NATIVE
 // On 64-bit native, operator new takes size_t (unsigned long), not unsigned int

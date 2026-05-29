@@ -1093,8 +1093,12 @@ void ObjectDir::SetPathName(const char *path) {
         MemOrPoolFree(strlen(mPathName) + 1, (void *)mPathName);
     }
     if (path != 0 && *path != '\0') {
+#ifdef HX_NATIVE
         mPathName =
             (char *)MemOrPoolAlloc(strlen(path) + 1, __FILE__, 0x996, "path name");
+#else
+        mPathName = (char *)MemOrPoolAlloc(strlen(path) + 1);
+#endif
         strcpy((char *)mPathName, path);
         mStoredFile.Set(FilePath::Root().c_str(), mPathName);
     } else
@@ -1146,7 +1150,11 @@ void ObjectDir::PreLoad(BinStream &bs) {
         int hashLen;
         d >> hashLen;
         if (hashLen) {
+#ifdef HX_NATIVE
             char *hash = (char *)MemOrPoolAlloc(hashLen + 1, __FILE__, 0x30A, "Always Inline CDB");
+#else
+            char *hash = (char *)MemOrPoolAlloc(hashLen + 1);
+#endif
             mAlwaysInlineHash = hash;
             bs.Read(hash, hashLen);
             char *ptr = (char *)mAlwaysInlineHash;
