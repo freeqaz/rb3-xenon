@@ -315,19 +315,29 @@ protected:
     void (*unk150)(); // 0x110 - another funcptr
     std::list<PointTest> mPointTests; // 0x114
     std::list<PostProcessor *> mPostProcessors; // 0x11c
-    ObjPtr<RndPostProc> mPostProcOverride; // 0x124
-    ObjPtr<RndPostProc> mPostProcBlackLightOverride; // 0x138
-    ObjPtrList<RndDrawable> mPreClearDraws; // 0x14c
-    ObjPtrList<RndDrawable> mDraws; // 0x160
+    // Retail X360/RB3 layout (verified via Rnd ctor fn_82402FA0 + NgRnd ctor
+    // fn_82B59180): mPostProcOverride is a plain 4-byte RndPostProc* at 0x124,
+    // immediately followed by mPreClearDraws (ObjPtrList vtable @0x128). RB3
+    // retail has NO mPostProcBlackLightOverride field (confirmed: rb3-Wii Rnd.h
+    // carries a single `PostProcessor *mPostProcOverride` and no blacklight
+    // override). DC3 promoted both to ObjPtr<RndPostProc> (0x14 each = +0x24),
+    // which shifted mPreClearDraws..mCompressTexQueue and the whole NgRnd/DxRnd
+    // own region up 0x24/0x60 bytes vs retail.
+    RndPostProc *mPostProcOverride; // 0x124
+#ifdef HX_NATIVE
+    ObjPtr<RndPostProc> mPostProcBlackLightOverride; // native-only (DC3 blacklight override)
+#endif
+    ObjPtrList<RndDrawable> mPreClearDraws; // 0x128
+    ObjPtrList<RndDrawable> mDraws; // 0x13c
 
 public:
-    bool mReleaseImmediate; // 0x174
+    bool mReleaseImmediate; // 0x150
 
 protected:
-    ProcCounter mProcCounter; // 0x178
-    ProcessCmd mProcCmds; // 0x190
-    ProcessCmd mLastProcCmds; // 0x194
-    std::list<CompressTexDesc *> mCompressTexQueue; // 0x198
+    ProcCounter mProcCounter; // 0x154
+    ProcessCmd mProcCmds; // 0x16c
+    ProcessCmd mLastProcCmds; // 0x170
+    std::list<CompressTexDesc *> mCompressTexQueue; // 0x174
 };
 
 extern Rnd &TheRnd;
