@@ -37,11 +37,19 @@ public:
 protected:
     virtual void PollLoading() = 0;
 
-    int mLoadCount; // 0x4 - snapshot of gLoadCount for re-entrance detection
-    LoaderPos mPos; // 0x8
-    FilePath mFile; // 0xc
-    int mLoadStartMs; // 0x14 - debug load timing: SystemMs() when tracking starts, -1 when inactive
-    int mHeap; // 0x18
+#ifdef HX_NATIVE
+    // DC3-era fields. Retail RB3 Loader has NO re-entrance counter / debug load
+    // timer (verified: retail Loader::Loader writes only vptr@0, mPos@0x4,
+    // mFile@0x8, mHeap@0x14, ending at 0x18). Kept only for the native build,
+    // which carries the DC3 engine layout.
+    int mLoadCount; // (native-only) snapshot of gLoadCount for re-entrance detection
+#endif
+    LoaderPos mPos; // 0x4
+    FilePath mFile; // 0x8
+#ifdef HX_NATIVE
+    int mLoadStartMs; // (native-only) debug load timing: SystemMs() when tracking starts, -1 when inactive
+#endif
+    int mHeap; // 0x14
 };
 
 typedef Loader *LoaderFactoryFunc(const FilePath &, LoaderPos);
@@ -142,17 +150,17 @@ private:
     void DoneLoading();
     void LoadStream();
 
-    File *mFile; // 0x1c
-    BinStream *mStream; // 0x20
-    const char *mBuffer; // 0x24
-    int mBufLen; // 0x28
-    bool mAccessed; // 0x2c
-    bool mTemp; // 0x2d
-    bool mWarn; // 0x2e
-    int mFlags; // 0x30
-    String mFilename; // 0x34
+    File *mFile; // 0x18
+    BinStream *mStream; // 0x1c
+    const char *mBuffer; // 0x20
+    int mBufLen; // 0x24
+    bool mAccessed; // 0x28
+    bool mTemp; // 0x29
+    bool mWarn; // 0x2a
+    int mFlags; // 0x2c
+    String mFilename; // 0x30
     int mBytesLoaded; // 0x3c
     int mChunkSize; // 0x40
     String mHeapName; // 0x44
-    FileLoaderStateFunc mState; // 0x4c
+    FileLoaderStateFunc mState; // 0x50
 };

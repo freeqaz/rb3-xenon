@@ -49,7 +49,12 @@ const char *WhiteSpace(int count) {
 #pragma region Loader
 
 Loader::Loader(const FilePath &fp, LoaderPos pos)
-    : mLoadCount(0), mPos(pos), mFile(fp), mLoadStartMs(-1), mHeap(GetCurrentHeapNum()) {
+    :
+#ifdef HX_NATIVE
+      mLoadCount(0), mPos(pos), mFile(fp), mLoadStartMs(-1), mHeap(GetCurrentHeapNum()) {
+#else
+      mPos(pos), mFile(fp), mHeap(GetCurrentHeapNum()) {
+#endif
     MILO_ASSERT(MemNumHeaps() == 0 || (mHeap != kNoHeap && mHeap != kSystemHeap), 0x1F0);
     TheLoadMgr.Loaders().push_front(this);
     if (mPos == kLoadFront) {
@@ -71,9 +76,11 @@ Loader::Loader(const FilePath &fp, LoaderPos pos)
 Loader::~Loader() {
     TheLoadMgr.Loading().remove(this);
     TheLoadMgr.Loaders().remove(this);
+#ifdef HX_NATIVE
     if (mLoadStartMs != -1) {
         gLoadCount--;
     }
+#endif
 }
 
 #pragma endregion
@@ -307,6 +314,7 @@ void LoadMgr::PollFrontLoader() {
     ctx.toPos = front->mPos;
     ctx.name = front->StateName();
 
+#ifdef HX_NATIVE
     if (TheArchive && Archive::DebugArkOrder()) {
         if (front->mLoadStartMs == -1) {
             front->mLoadStartMs = SystemMs();
@@ -320,6 +328,7 @@ void LoadMgr::PollFrontLoader() {
     }
 
     int savedStartMs = front->mLoadStartMs;
+#endif
     bool isLoaded = false;
     bool deleted = false;
     MemPushHeap(front->mHeap);
@@ -339,6 +348,7 @@ void LoadMgr::PollFrontLoader() {
     }
     MemPopHeap();
 
+#ifdef HX_NATIVE
     if (TheArchive && Archive::DebugArkOrder() && isLoaded) {
         int endMs = SystemMs();
         if (!deleted) {
@@ -351,6 +361,10 @@ void LoadMgr::PollFrontLoader() {
                 WhiteSpace(gLoadCount), elapsed, savedStartMs, endMs, ctx.file);
         }
     }
+#else
+    (void)isLoaded;
+    (void)deleted;
+#endif
 
     mLoaderPos = savedPos;
 }
