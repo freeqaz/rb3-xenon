@@ -274,11 +274,12 @@ void RndShaderSimple::Select(RndMat *mat, ShaderType s, bool b) {
         }
     }
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
-    bool isSkinned = TheShaderMgr.BoneCount() && (s == kErrorShader || s == kShadowmapShader);
+    auto _tmp6 = TheShaderMgr.BoneCount();
+    bool isSkinned = _tmp6 && (s == kErrorShader || s == kShadowmapShader);
     if (!RedundantState(mat, s, isSkinned, TheShaderMgr.UseAO(), b)) {
-        TheNgStats->mMats++;
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+        TheNgStats->mMats++;
         SetColorWriteMask(ShaderOptions(optsVal), mat);
         CheckForceCull(s);
         Cache(s, ShaderOptions(optsVal), mat);
@@ -1278,11 +1279,12 @@ void RndShaderPostProc::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     if (!RedundantState(mat, s, false, false, b)) {
-        TheNgStats->mMats++;
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), false);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+        TheNgStats->mMats++;
         TheRenderState.SetColorWriteMask(0xF);
-        Cache(s, ShaderOptions(optsVal), mat);
+        auto _tmp2 = ShaderOptions(optsVal);
+        Cache(s, _tmp2, mat);
     }
 }
 
@@ -1290,9 +1292,9 @@ void RndShaderDrawRect::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheShaderMgr.DrawRectMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     if (!RedundantState(mat, s, false, false, b)) {
-        TheNgStats->mMats++;
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+        TheNgStats->mMats++;
         SetColorWriteMask(ShaderOptions(optsVal), mat);
         TheShaderMgr.SetVConstant(kVS_AmbientColor, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
         TheShaderMgr.SetPConstant(kPS_AmbientColor, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -1305,12 +1307,13 @@ void RndShaderUnwrapUV::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
     if (!RedundantState(mat, s, false, false, b)) {
-        TheNgStats->mMats++;
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
+        TheNgStats->mMats++;
         TheRenderState.SetColorWriteMask(7);
         const Hmx::Color &color = mat->GetColor();
-        TheShaderMgr.SetVConstant(kVS_AmbientColor, Vector4(color.red, color.green, color.blue, color.alpha));
+        auto _tmp0 = Vector4(color.red, color.green, color.blue, color.alpha);
+        TheShaderMgr.SetVConstant(kVS_AmbientColor, _tmp0);
         TheShaderMgr.SetPConstant(kPS_AmbientColor, Vector4(color.red, color.green, color.blue, color.alpha));
         CheckForceCull(s);
         Cache(s, ShaderOptions(optsVal), mat);

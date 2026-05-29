@@ -459,13 +459,13 @@ int DataInput(void *v, int x) {
 void DataWriteFile(const char *file, const DataArray *da, int i) {
     TextStream *stream;
     int idx;
+    idx = i;
     if (file != 0) {
         stream = new TextFileStream(file, false);
     }
     else {
         stream = new Debug();
     }
-    idx = i;
     for (; idx < da->Size(); idx++) {
         da->Node(idx).Print(*stream, false, 0);
         stream->operator<<("\n");

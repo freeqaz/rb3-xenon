@@ -111,14 +111,15 @@ namespace {
 }
 
 void DateTime::Format(class String &str) const {
+    char _slotpad[4]; (void)_slotpad;
     char buf[256];
 
     if (SearchReplace(str.c_str(), "%d", MakeString("%02d", mDay), buf)) {
         str = buf;
     }
-    static Symbol fre("fre");
-    static Symbol ita("ita");
     static Symbol esl("esl");
+    static Symbol ita("ita");
+    static Symbol fre("fre");
     Symbol lang = SystemLanguage();
     if (lang == fre || lang == ita || lang == esl) {
         if (SearchReplace(str.c_str(), "%e", MakeString("%d", mDay), buf)) {

@@ -41,8 +41,7 @@ void FreeCamera::Poll() {
     if (!padData)
         return;
 
-    float dt = TheTaskMgr.DeltaUISeconds();
-    float deltaMs = dt * 1000.0f;
+    float deltaMs = TheTaskMgr.DeltaUISeconds() * 1000.0f;
     if (mFrozen) {
         deltaMs = 0.0f;
     }
@@ -52,7 +51,7 @@ void FreeCamera::Poll() {
     // Apply left stick to rotation
     float lx = padData->mSticks[0][0];
     float ly = padData->mSticks[0][1];
-    mRot.z = LimitAng(mRot.z - fabsf(lx) * rotSpeed * lx);
+    mRot.z = LimitAng((-fabsf(lx) * (rotSpeed * lx)) + mRot.z);
     mRot.x = LimitAng(mRot.x + fabsf(ly) * rotSpeed * ly);
 
     // Rebuild rotation matrix
@@ -70,8 +69,8 @@ void FreeCamera::Poll() {
     float slewY = -(fabsf(ry * ry) * ry * slewSpeed);
 
     // Move along X axis (strafe)
-    mXfm.v.x += mXfm.m.x.x * slewX;
     mXfm.v.y += mXfm.m.x.y * slewX;
+    mXfm.v.x += mXfm.m.x.x * slewX;
     mXfm.v.z += mXfm.m.x.z * slewX;
 
     // Move along Y (forward) or Z (up) depending on LB

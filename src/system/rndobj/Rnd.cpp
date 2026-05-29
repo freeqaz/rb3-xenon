@@ -961,11 +961,12 @@ void Rnd::CreateDefaults() {
     RELEASE(mDefaultMat);
     RELEASE(mOverlayMat);
     RELEASE(mOverdrawMat);
-    mWorldCamCopy = ObjectDir::Main()->New<RndCam>("[world cam copy]");
-    mDefaultCam = ObjectDir::Main()->New<RndCam>("[default cam]");
-    mDefaultEnv = ObjectDir::Main()->New<RndEnviron>("[default env]");
+    auto _tmp0 = ObjectDir::Main()->New<RndCam>("[world cam copy]");
+    mWorldCamCopy = _tmp0;
+    auto _tmp1 = ObjectDir::Main()->New<RndCam>("[default cam]");
+        mDefaultEnv = ObjectDir::Main()->New<RndEnviron>("[default env]");
     mDefaultLit = ObjectDir::Main()->New<RndLight>("[default lit]");
-    mDefaultLit->SetTransParent(mDefaultCam, false);
+    mDefaultLit->SetTransParent(mDefaultCam = _tmp1, false);
     mDefaultLit->SetLightType(RndLight::kDirectional);
     mDefaultEnv->AddLight(mDefaultLit);
     mDefaultEnv->SetUseApproxes(true);

@@ -8,8 +8,9 @@
 #include "rndobj/Trans.h"
 
 CharIKFoot::CharIKFoot() : mFootBone(this), mFootFsmState(0), mData(this), mDataIndex(0) {
-    mFootBone = Hmx::Object::New<RndTransformable>();
-    mFootBone->DirtyLocalXfm().Reset();
+    auto& _ref0 = mFootBone;
+    _ref0 = Hmx::Object::New<RndTransformable>();
+    _ref0->DirtyLocalXfm().Reset();
 }
 
 CharIKFoot::~CharIKFoot() { delete mFootBone; }
