@@ -50,10 +50,6 @@ BandCharacter.cpp:
 	.pdata      start:0x821EA6E8 end:0x821EAE20
 	.text       start:0x8226C738 end:0x82275EA8
 
-PatchPanel.cpp:
-	.pdata      start:0x82221F48 end:0x82221F58
-	.text       start:0x8260DDD0 end:0x8260E290
-
 Console.cpp:
 	.pdata      start:0x82206EF0 end:0x82207028
 	.text       start:0x82453730 end:0x82455718
