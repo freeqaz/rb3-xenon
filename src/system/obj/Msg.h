@@ -242,7 +242,18 @@ public:
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual ~MsgSource();
-    virtual void Replace(Hmx::Object *, Hmx::Object *);
+    // Retail RB3-360 MsgSource is laid out with a single vbptr at offset 0 and
+    // mSinks at 0x4 (proven by ctor fn_827432A0: param_1[1]/[2]=mSinks list,
+    // param_1[3]/[4]=mEventSinks, param_1[5]=mExporting, Hmx::Object vbase at
+    // 0x1c). That single-pointer layout means MSVC did NOT emit a separate
+    // MsgSource vfptr — i.e. MsgSource introduced no new vtable slot. Declaring
+    // Replace(Hmx::Object*,Hmx::Object*) virtual (its signature differs from the
+    // inherited ObjRefOwner::Replace(ObjRef*,Hmx::Object*), so it's a NEW slot)
+    // forces a separate vfptr@0 + vbptr@4, pushing every member +4 and breaking
+    // all MsgSource-derived layouts (MidiParser etc.). Non-virtual here matches
+    // the retail object layout; there are no polymorphic call sites of this
+    // 2-arg Replace in the source (it's invoked through the obj-ref ring).
+    void Replace(Hmx::Object *, Hmx::Object *);
     virtual void Export(DataArray *, bool);
 
     void ChainSource(MsgSource *, MsgSource *);

@@ -1,14 +1,17 @@
 #pragma once
 #include "obj/Data.h"
 #include "obj/Object.h"
+#include "obj/Msg.h"
 #include "midi/DataEventList.h"
 #include <vector>
 #include <list>
 
 class GemListInterface; // forward dec
 
-// size 0xC0
-class MidiParser : public Hmx::Object {
+// retail RB3-360: MidiParser : MsgSource : virtual Hmx::Object
+// MSVC virtual-base layout: vfptr@0, MsgSource members, MidiParser members,
+// Hmx::Object virtual base at tail (this+0xB0). Verified vs ctor fn_827C4EC8.
+class MidiParser : public MsgSource {
 public:
     struct PostProcess {
         PostProcess()
@@ -49,49 +52,49 @@ public:
     };
 
 private:
-    DataEventList *mEvents; // 0x2c
+    DataEventList *mEvents; // 0x18
     /** The midi track's name. */
-    Symbol mTrackName; // 0x30
+    Symbol mTrackName; // 0x1c
     /** The typedef array to use when parsing gems. */
-    DataArray *mGemParser; // 0x34
+    DataArray *mGemParser; // 0x20
     /** The typedef array to use when parsing midi notes. */
-    DataArray *mNoteParser; // 0x38
+    DataArray *mNoteParser; // 0x24
     /** The typedef array to use when parsing text. */
-    DataArray *mTextParser; // 0x3c
+    DataArray *mTextParser; // 0x28
     /** The typedef array to use when parsing lyrics. */
-    DataArray *mLyricParser; // 0x40
+    DataArray *mLyricParser; // 0x2c
     /** The typedef array to use when inserting idle events. */
-    DataArray *mIdleParser; // 0x44
+    DataArray *mIdleParser; // 0x30
     /** The current parser in use. */
-    DataArray *mCurParser; // 0x48
+    DataArray *mCurParser; // 0x34
     /** The list of allowed midi notes for this track. */
-    DataArray *mAllowedNotes; // 0x4c
+    DataArray *mAllowedNotes; // 0x38
     /** The list of vocal events for this track. */
-    std::vector<VocalEvent> *mVocalEvents; // 0x50
+    std::vector<VocalEvent> *mVocalEvents; // 0x3c
     /** The list of midi notes for this track. */
-    std::vector<Note> mNotes; // 0x54
+    std::vector<Note> mNotes; // 0x40
     /** The list of gems for this track. */
-    GemListInterface *mGems; // 0x60
-    bool mInverted; // 0x64
-    PostProcess mProcess; // 0x68
-    float mLastStart; // 0x8c
-    float mLastEnd; // 0x90
-    float mFirstEnd; // 0x94
-    DataEvent *mEvent; // 0x98
-    Symbol mMessageType; // 0x9c
-    bool mAppendLength; // 0xa0
-    bool mUseVariableBlending; // 0xa1
-    float mVariableBlendPct; // 0xa4
-    bool mMessageSelf; // 0xa8
-    bool mCompressed; // 0xa9
+    GemListInterface *mGems; // 0x4c
+    bool mInverted; // 0x50
+    PostProcess mProcess; // 0x54
+    float mLastStart; // 0x78
+    float mLastEnd; // 0x7c
+    float mFirstEnd; // 0x80
+    DataEvent *mEvent; // 0x84
+    Symbol mMessageType; // 0x88
+    bool mAppendLength; // 0x8c
+    bool mUseVariableBlending; // 0x8d
+    float mVariableBlendPct; // 0x90
+    bool mMessageSelf; // 0x94
+    bool mCompressed; // 0x95
     /** The index of the current gem being parsed. */
-    int mGemIndex; // 0xac
+    int mGemIndex; // 0x98
     /** The index of the current note being parsed. */
-    int mNoteIndex; // 0xb0
+    int mNoteIndex; // 0x9c
     /** The index of the current vocal event being parsed. */
-    int mVocalIndex; // 0xb4
-    float mStart; // 0xb8
-    int mBefore; // 0xbc
+    int mVocalIndex; // 0xa0
+    float mStart; // 0xa4
+    int mBefore; // 0xa8
 
     static DataNode *mpStart;
     static DataNode *mpEnd;
