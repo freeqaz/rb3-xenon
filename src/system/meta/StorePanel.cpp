@@ -483,7 +483,7 @@ void StorePanel::FinishEnum(std::list<EnumProduct> const &enumList, bool arg) {
     mEnumJobID = -1;
 
     if (arg) {
-        StoreError err = UpdateOffers(enumList, arg);
+        int err = UpdateOffers(enumList, arg);
 
         if (0 == err || err == 1) {
             if (!mPendingOffers.empty()) {
@@ -498,10 +498,10 @@ void StorePanel::FinishEnum(std::list<EnumProduct> const &enumList, bool arg) {
                     TheDebug.Notify(fmt.Str());
                 }
             } else {
-                ExitError(err);
+                ExitError((StoreError)err);
                 return;
             }
-            ExitError(err);
+            ExitError((StoreError)err);
             return;
         }
 
@@ -523,8 +523,8 @@ void StorePanel::FinishEnum(std::list<EnumProduct> const &enumList, bool arg) {
     }
 }
 
-StoreError StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
-    StoreError result;
+int StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
+    int result;
     std::vector<StoreOffer *> *offers;
 
     if (arg) {
