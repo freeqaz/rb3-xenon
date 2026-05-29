@@ -463,5 +463,14 @@
             "band3/tour/QuestFilterPanel.cpp": "NonMatching",
             "band3/tour/TourDescPanel.cpp": "NonMatching"
         }
+    },
+    "network": {
+        "progress_category": "network",
+        "mw_version": "X360/16.00.11886.00",
+        "cflags": "base",
+        "objects": {
+            "network/Core/TimedSignal.cpp": "NonMatching",
+            "network/Core/PeriodicJob.cpp": "NonMatching"
+        }
     }
 }
