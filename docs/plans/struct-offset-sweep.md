@@ -74,6 +74,34 @@ system/rndobj/CubeTex (2), CacheMgr_Xbox (2).
 - Don't edit objects.json / splits.txt / symbols.txt (that's pinning, a separate
   lane).
 
+## LEAF-WORKAROUND for the ObjPtr-family bug (proven: CharClip +7, commit 69862fe)
+
+The ObjPtr/ObjOwnerPtr base-class bug (`engine-baseclass-layout-bugs.md` #1) does
+NOT always require the architectural refactor. Many classes are **leaf-fixable**
+in their OWN header, contained + objdiff-verifiable + no base-class risk:
+
+- **Remove DC3's erroneous polymorphic bases.** DC3 sometimes made a helper class
+  inherit `ObjRefOwner` (adds a vtable RB3 lacks). Dropping the base + making its
+  methods non-virtual shrinks it to match (CharClip `Transitions`: `: public
+  ObjRefOwner` → plain struct, 0x10→0xc).
+- **`ObjPtr<T>`/`ObjOwnerPtr<T>` member → raw `T*` WHERE RETAIL USES A RAW
+  POINTER.** CharClip `mRelative`, `NodeVector::clip` were raw in retail (objdiff
+  confirmed: the deep-member accessor RotateTo flipped). rb3-Wii is a hint but
+  objdiff is the arbiter.
+
+**The limit (when leaf-workaround does NOT apply):** if retail uses a *smaller
+ObjPtr* (0xc) rather than a raw pointer, the member access is `+8` (our 0x14 vs
+retail 0xc), and a raw `T*` (4 bytes) would be `-0x10` — WRONG. Those need the
+base-class ObjPtr→0xc refactor (#1). Tell: an `ObjPtr` member whose downstream
+delta is exactly **+8** (e.g. EventTrigger `Anim`/`ProxyCall`) is retail-0xc-ObjPtr,
+NOT raw → base-class-blocked. A delta consistent with **−0x10/−0x14 removed**
+(member becomes 4 bytes) is raw-in-retail → leaf-fixable.
+
+**Method per class:** for each `ObjPtr`/`ObjOwnerPtr` member or `ObjRefOwner`-derived
+helper in the unit's header, try the leaf change, rebuild, objdiff. Keep iff a
+target fn flips to 100% AND `matched_functions` doesn't drop. This is contained
+(one header) and safe (revert on regression) — unlike the base-class refactor.
+
 ## Refs
 - `scripts/permuter_targets.py rank` — the fuzzy-gap queue (but see finding above).
 - `tools/game_oracle_triage.py` — the game-code lane (separate; gated on pairing +
