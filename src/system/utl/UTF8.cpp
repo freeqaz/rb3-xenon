@@ -354,7 +354,7 @@ unsigned int WideVectorToUTF8(const std::vector<unsigned short> &vec, String &st
         else if (curChar <= 0xFFFFU)
             totalBytes += 3;
         else {
-            MILO_FAIL("HMX wide chars cannot exceed 16 bits");
+            MILO_WARN("HMX wide chars cannot exceed 16 bits");
             return 0;
         }
     }

@@ -72,7 +72,7 @@ void CompressionEffect::Process(float *samples, int numFrames, int numChannels) 
                         prev_sample = sample;
 
                         if (((tmp > 0.012483216f) || (tmp < -0.012483216f)) &&
-                            (fabsf(tmp - prev_peak) < 0.004999995f) &&
+                            (fabsf(tmp - prev_peak) < 0.004999995) &&
                             (fabsf(sample - prev_peak) < 0.004999995f)) {
                             float ratio = mDCBlock;
                             mDCBlock = ((1.0f - ratio) * 0.004999995f) + ratio;

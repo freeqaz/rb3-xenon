@@ -527,6 +527,11 @@ bool UIScreen::SharesPanels(UIScreen *screen) {
 
     return false;
 }
+template <class _T>
+__declspec(noinline) auto _outline_GetAction(_T* _obj) -> decltype(_obj->GetAction()) {
+    return _obj->GetAction();
+}
+
 
 DataNode UIScreen::OnMsg(ButtonDownMsg const &msg) {
 #ifdef HX_NATIVE
@@ -543,7 +548,7 @@ DataNode UIScreen::OnMsg(ButtonDownMsg const &msg) {
         }
     }
 #endif
-    if (mBack != nullptr && msg.GetAction() == kAction_Cancel) {
+    if (mBack != nullptr && _outline_GetAction(&msg) == kAction_Cancel) {
         DataNode n = mBack->Evaluate(1);
         if (n.Type() != kDataUnhandled) {
             static Symbol go_back_screen("go_back_screen");

@@ -66,12 +66,15 @@ void UsbMidiKeyboard::Poll() {
                             slotCounter++, proData->unk0
                         );
                         TheKeyboard->SetKeyVelocity(i, note, extVel);
+                        auto _tmp2 = TheKeyboard->GetKeyVelocity(i, note);
+                        auto _tmp0 = KeyboardKeyPressedMsg(note, _tmp2, i);
                         SendMessage(
-                            KeyboardKeyPressedMsg(note, TheKeyboard->GetKeyVelocity(i, note), i)
+                            _tmp0
                         );
                     } else {
                         TheKeyboard->SetKeyVelocity(i, note, 0);
-                        SendMessage(KeyboardKeyReleasedMsg(note, i));
+                        auto _tmp3 = KeyboardKeyReleasedMsg(note, i);
+                        SendMessage(_tmp3);
                     }
                     TheKeyboard->SetKeyPressed(i, note, pressed);
                 } else {
@@ -130,8 +133,9 @@ void UsbMidiKeyboard::Poll() {
                 || accelAxisVal1 != TheKeyboard->GetAccelAxisVal(i, 1)
                 || accelAxisVal2 != TheKeyboard->GetAccelAxisVal(i, 2)) {
                 TheKeyboard->SetAccelerometer(i, accelAxisVal0, accelAxisVal1, accelAxisVal2);
+                auto _tmp1 = KeysAccelerometerMsg(accelAxisVal0, accelAxisVal1, accelAxisVal2, i);
                 SendMessage(
-                    KeysAccelerometerMsg(accelAxisVal0, accelAxisVal1, accelAxisVal2, i)
+                    _tmp1
                 );
             }
         }

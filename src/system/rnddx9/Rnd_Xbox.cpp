@@ -65,8 +65,8 @@ DxRnd::DxRnd()
       mPIXCaptureState(false),
       mPreInited(false),
       unk408(0) {
-    mInited = 1;
     mFrontBuffers[0] = nullptr;
+    mInited = 1;
     mFrontBuffers[1] = nullptr;
     mBackBuffer = nullptr;
     mWorldDepth = nullptr;
@@ -340,9 +340,8 @@ void DxRnd::SetDefaultRenderStates() {
     D3DDevice_SetRenderState_SrcBlendAlpha(TheDxRnd.Device(), 1);
     D3DDevice_SetRenderState_DestBlendAlpha(TheDxRnd.Device(), 1);
     D3DDevice_SetRenderState_BlendOpAlpha(TheDxRnd.Device(), 3);
-    unsigned int max_stages = caps.MaxTextureBlendStages;
 
-    if (max_stages != 0) {
+    if (caps.MaxTextureBlendStages != 0) {
         unsigned int stage_offset = 0;
         unsigned int i = 0;
         do {
@@ -360,7 +359,7 @@ void DxRnd::SetDefaultRenderStates() {
 
             i++;
             stage_offset += 0x18;
-        } while (i < max_stages);
+        } while (i < caps.MaxTextureBlendStages);
     }
 
     D3DDevice_SetRenderState_PresentImmediateThreshold(TheDxRnd.Device(), 100);
