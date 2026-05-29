@@ -114,21 +114,33 @@ public:
 
         /** "Description of the keyframe" */
         String mDescription; // 0x0
-        ObjVector<SpotlightEntry> mSpotlightEntries; // 0x8
-        std::vector<EnvironmentEntry> mEnvironmentEntries; // 0x18
-        std::vector<EnvLightEntry> mLightEntries; // 0x24
-        std::vector<SpotlightDrawerEntry> mSpotlightDrawerEntries; // 0x30
+        ObjVector<SpotlightEntry> mSpotlightEntries; // 0xc
+        std::vector<EnvironmentEntry> mEnvironmentEntries; // 0x1c
+        std::vector<EnvLightEntry> mLightEntries; // 0x28
+        std::vector<SpotlightDrawerEntry> mSpotlightDrawerEntries; // 0x34
+        /** "Post-processing to apply during the video venue (RB3 retail)" */
+        ObjPtr<RndPostProc> mVideoVenuePostProc; // 0x40
         /** "Trigger to fire when keyframe starts blending (deprecated)" */
-        ObjPtrList<EventTrigger> mTriggers; // 0x3c
-        std::vector<bool> mSpotlightChanges; // 0x50
-        std::vector<bool> mEnvironmentChanges; // 0x5c
-        std::vector<bool> mLightChanges; // 0x68
-        std::vector<bool> mSpotlightDrawerChanges; // 0x74
+        ObjPtrList<EventTrigger> mTriggers; // 0x4c
+        std::vector<bool> mSpotlightChanges; // 0x60
+        std::vector<bool> mEnvironmentChanges; // 0x74
+        std::vector<bool> mLightChanges; // 0x88
+        std::vector<bool> mSpotlightDrawerChanges; // 0x9c
         /** "Duration of the keyframe" */
-        float mDuration; // 0xa0
+        float mDuration; // 0xb0
         /** "Fade-out time of the keyframe" */
-        float mFadeOutTime; // 0xa4
-        float mFrame; // 0xa8
+        float mFadeOutTime; // 0xb4
+        float mFrame; // 0xb8
+        // RB3 retail StageKit LED keyframe fields (absent in DC3/rb3-Wii dev).
+        int mLedRed; // 0xbc
+        int mLedBlue; // 0xc0
+        int mLedGreen; // 0xc4
+        int mLedYellow; // 0xc8
+        int mLedRedPattern; // 0xcc
+        int mLedBluePattern; // 0xd0
+        int mLedGreenPattern; // 0xd4
+        int mLedYellowPattern; // 0xd8
+        int mStrobeSetting; // 0xdc
     };
 
     enum KeyframeCmd {

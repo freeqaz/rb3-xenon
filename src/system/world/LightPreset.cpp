@@ -251,8 +251,10 @@ BinStreamRev &operator>>(BinStreamRev &d, LightPreset::SpotlightDrawerEntry &e) 
 #pragma region Keyframe
 
 LightPreset::Keyframe::Keyframe(Hmx::Object *owner)
-    : mSpotlightEntries(owner), mTriggers(owner), mDuration(0), mFadeOutTime(0),
-      mFrame(-1) {
+    : mSpotlightEntries(owner), mVideoVenuePostProc(owner), mTriggers(owner),
+      mDuration(0), mFadeOutTime(0), mFrame(-1), mLedRed(0), mLedBlue(0), mLedGreen(0),
+      mLedYellow(0), mLedRedPattern(0), mLedBluePattern(0), mLedGreenPattern(0),
+      mLedYellowPattern(0), mStrobeSetting(0) {
     LightPreset *preset = dynamic_cast<LightPreset *>(owner);
     MILO_ASSERT(preset, 0x56F);
 
