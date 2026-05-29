@@ -353,6 +353,8 @@
             "system/flow/FlowSound.cpp": "NonMatching",
             "system/os/PlatformMgr.cpp": "NonMatching",
             "system/flow/FlowCommand.cpp": "NonMatching",
+            "system/os/ContentMgr.cpp": "NonMatching",
+            "system/flow/FlowOutPort.cpp": "NonMatching",
             "system/os/VirtualKeyboard.cpp": "NonMatching",
             "system/os/JoypadMsgs.cpp": "NonMatching",
             "system/world/PhysicsVolume.cpp": "NonMatching",

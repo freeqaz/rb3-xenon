@@ -2331,3 +2331,11 @@ DOFProc_NG.cpp:
 MultiTempoTempoMap.cpp:
 	.pdata      start:0x82255950 end:0x822559C0
 	.text       start:0x82B871F0 end:0x82B87A60
+
+ContentMgr.cpp:
+	.pdata      start:0x82210BF0 end:0x82210C80
+	.text       start:0x8250AFE8 end:0x8250B558
+
+FlowOutPort.cpp:
+	.pdata      start:0x8220B0A8 end:0x8220B0B0
+	.text       start:0x824A5990 end:0x824A59D4
