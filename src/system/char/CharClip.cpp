@@ -313,7 +313,7 @@ void CharClip::BeatEvent::Load(BinStream &bs) {
 
 CharClip::CharClip()
     : mTransitions(this), mFramesPerSec(30), mFlags(0), mPlayFlags(0), mRange(0),
-      mRelative(nullptr), mDirty(true), mOldVer(-1), mDoNotCompress(false), mSyncAnim(this),
+      mRelative(this), mDirty(true), mOldVer(-1), mDoNotCompress(false), mSyncAnim(this),
       unk198(0) {
     mBeatTrack.resize(1);
     mBeatTrack[0].frame = 0;
@@ -395,7 +395,7 @@ BEGIN_PROPSYNCS(CharClip)
     SYNC_PROP_SET(default_loop, mPlayFlags & 0xF0, SetDefaultLoop(_val.Int()))
     SYNC_PROP_SET(beat_align, mPlayFlags & 0xF600, SetBeatAlignMode(_val.Int()))
     SYNC_PROP(range, mRange)
-    SYNC_PROP_SET(relative, mRelative, SetRelative(_val.Obj<CharClip>()))
+    SYNC_PROP_SET(relative, mRelative.Ptr(), SetRelative(_val.Obj<CharClip>()))
     SYNC_PROP_MODIFY(events, mBeatEvents, SortEvents())
     SYNC_PROP_SET(dirty, mDirty, )
     SYNC_PROP_SET(size, AllocSize(), )
