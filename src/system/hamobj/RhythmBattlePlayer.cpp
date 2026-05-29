@@ -301,9 +301,8 @@ void RhythmBattlePlayer::Enter() {
             attachment.obj = mBoxyWaistTrans;
             attachment.player = mPlayer;
             attachment.mJoint = 0;
-            attachment.mOffset = Vector3::ZeroVec();
+            attachment.mOffset = 0;
             attachment.unk1c = 0;
-            attachment.unk20 = 0;
             mBoxyman1->AddAttachment(attachment);
         }
     }

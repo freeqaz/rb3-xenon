@@ -14,10 +14,9 @@
 struct DepthBuffer3DAttachment {
     RndTransformable *obj; // 0x0
     int player; // 0x4
-    int mJoint; // 0x8
-    Vector3 mOffset; // 0xc
-    bool unk1c; // 0x1c
-    int unk20; // 0x20
+    bool unk1c; // 0x8  (retail byte@8)
+    int mJoint; // 0xc
+    float mOffset; // 0x10 (retail float@10; DC3-newer widened this to Vector3 and appended an int unk20, growing the struct to 0x24 — retail RB3 is 0x14)
 };
 
 /** "Render the Kinect depth buffer as a 3D mesh" */
