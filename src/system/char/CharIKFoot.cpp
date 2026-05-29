@@ -7,10 +7,16 @@
 #include "obj/Task.h"
 #include "rndobj/Trans.h"
 
-CharIKFoot::CharIKFoot() : mFootBone(this), mFootFsmState(0), mData(this), mDataIndex(0) {
+CharIKFoot::CharIKFoot()
+    : mFootBone(this), mFootFsmState(0), mData(this), mDataIndex(0), mMe(this) {
     auto& _ref0 = mFootBone;
     _ref0 = Hmx::Object::New<RndTransformable>();
     _ref0->DirtyLocalXfm().Reset();
+}
+
+void CharIKFoot::SetName(const char *cc, ObjectDir *dir) {
+    Hmx::Object::SetName(cc, dir);
+    mMe = dynamic_cast<Character *>(dir);
 }
 
 CharIKFoot::~CharIKFoot() { delete mFootBone; }
@@ -93,14 +99,13 @@ void CharIKFoot::Poll() {
     if (mFinger && mHand && mData) {
         mTargets.clear();
         mTargets.push_back(IKTarget(mFootBone, 0));
-        DoFSM(Character::Current(), mFootBone->DirtyLocalXfm());
+        DoFSM(mFootBone->DirtyLocalXfm());
         CharIKHand::Poll();
         mTargets.clear();
     }
 }
 
-void CharIKFoot::DoFSM(Character *mMe, Transform &tf) {
-    mFootTransform = mFinger->WorldXfm();
+void CharIKFoot::DoFSM(Transform &tf) {
     if (mMe && mMe->Teleported())
         mFootFsmState = 0;
     float deltasecs = TheTaskMgr.DeltaSeconds();
