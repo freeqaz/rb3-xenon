@@ -86,7 +86,7 @@ public:
     OBJ_SET_TYPE(Spotlight);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
-    virtual void InitObject();
+    void InitObject();
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
