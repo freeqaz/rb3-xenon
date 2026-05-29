@@ -53,7 +53,7 @@ void CompressionEffect::SetParameters(CompressionEffect::Params const &params) {
 void CompressionEffect::Process(float *samples, int numFrames, int numChannels) {
     if (mRatio > 0.999999046f) {
         float envelope = mEnvelope;
-        float prev_peak = 0.0f;
+        float prev_peak = 0;
         float prev_sample = 0.0f;
 
         for (int frame = 0; frame < numFrames; frame++) {
@@ -72,10 +72,10 @@ void CompressionEffect::Process(float *samples, int numFrames, int numChannels) 
                         prev_sample = sample;
 
                         if (((tmp > 0.012483216f) || (tmp < -0.012483216f)) &&
-                            (fabsf(tmp - prev_peak) < 0.004999995) &&
+                            (fabs(tmp - prev_peak) < 0.004999995) &&
                             (fabsf(sample - prev_peak) < 0.004999995f)) {
                             float ratio = mDCBlock;
-                            mDCBlock = ((1.0f - ratio) * 0.004999995f) + ratio;
+                            mDCBlock = ((1.0 - ratio) * 0.004999995f) + ratio;
                         }
                         float ratio = mDCBlock;
                         mDCBlock = ((1.0f - ratio) * 0.01f) + ratio;
