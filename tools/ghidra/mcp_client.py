@@ -66,6 +66,9 @@ class MCPClient:
             # pyghidra-mcp generates names like "default.xex-997567"
             if isinstance(binaries, dict) and "binaries" in binaries:
                 binary_list = binaries["binaries"]
+            elif isinstance(binaries, dict) and "programs" in binaries:
+                # pyghidra-mcp's list_project_binaries returns {"programs": [...]}
+                binary_list = binaries["programs"]
             elif isinstance(binaries, list):
                 binary_list = binaries
             else:
