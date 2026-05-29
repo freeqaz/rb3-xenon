@@ -88,7 +88,7 @@ static float ***setup_tone_curves(float curveatt_dB[P_BANDS],float binHz,int n,
   float ath[EHMER_MAX];
   float workc[P_BANDS][P_LEVELS][EHMER_MAX];
   float athc[P_LEVELS][EHMER_MAX];
-  float *brute_buffer=alloca(n*sizeof(*brute_buffer));
+  float *brute_buffer=_alloca(n*sizeof(*brute_buffer));
 
   float ***ret=_ogg_malloc(sizeof(*ret)*P_BANDS);
 
@@ -832,7 +832,7 @@ void _vp_tonemask(vorbis_look_psy *p,
 
   int i,n=p->n;
 
-  float *seed=alloca(sizeof(*seed)*p->total_octave_lines);
+  float *seed=_alloca(sizeof(*seed)*p->total_octave_lines);
   float att=local_specmax+p->vi->ath_adjatt;
   for(i=0;i<p->total_octave_lines;i++)seed[i]=NEGINF;
   
