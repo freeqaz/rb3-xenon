@@ -56,13 +56,17 @@ public:
     static const unsigned int npos;
 };
 
-// TODO(hugh): upstream has TextStream, FixedString order here but that
-// causes String copy ctor to drop from 96.7% to 39.4% (extra TextStream
-// ctor call emitted). Need to verify correct order via DWARF/objdiff.
-class String : public FixedString, public TextStream {
-    // TextStream vtable = 0x4
-    // FixedString = 0x0
+// Retail String layout (X360): {vptr@0, mCap@4, mStr@8} = 0xC bytes.
+// Verified from retail ctor fn_82798E18: param_1[0]=vptr, param_1[1]=0 (mCap),
+// param_1[2]=gNullStr (mStr). resize fn_82798E68 uses iVar1+4 for mCap,
+// iVar1+8 for mStr.
+// String inherits only from TextStream (brings vptr@0), with mCap and mStr
+// as explicit members. FixedString is kept only for StackString.
+class String : public TextStream {
 public:
+    unsigned int mCap; // 0x4
+    char *mStr;        // 0x8
+
     virtual ~String();
     virtual void Print(const char *str) { *this += str; }
 
@@ -72,16 +76,27 @@ public:
     String(const String &);
     String(unsigned int, char);
 
+    unsigned int length() const { return strlen(mStr); }
+    unsigned int size() const { return strlen(mStr); }
+    unsigned int capacity() const { return mCap; }
+    const char *c_str() const { return mStr; }
+    bool empty() const { return *mStr == '\0'; }
+
+    bool operator<(const String &) const;
     bool operator==(const FixedString &) const;
+    bool operator==(const String &s) const { return strcmp(mStr, s.mStr) == 0; }
+    bool operator!=(const String &s) const { return strcmp(mStr, s.mStr) != 0; }
 
     void reserve(unsigned int);
 
     String operator+(const char *) const;
     String operator+(char) const;
     String operator+(const FixedString &) const;
+    String operator+(const String &s) const { String r(*this); r += s.mStr; return r; }
     String &operator+=(const char *);
     String &operator+=(Symbol);
     String &operator+=(const FixedString &);
+    String &operator+=(const String &s) { return *this += s.mStr; }
     String &operator+=(char);
     String &operator=(const char *);
     String &operator=(Symbol);
@@ -94,12 +109,27 @@ public:
     bool operator!=(const char *) const;
     bool operator!=(const FixedString &) const;
     bool operator==(const char *) const;
-    // bool operator==(const String &) const;
-    // bool operator<(const String &) const;
     bool operator==(Symbol) const;
 
     void resize(unsigned int);
     // unsigned int rfind(const char *) const;
+
+    unsigned int find(const char *) const;
+    unsigned int find(char, unsigned int) const;
+    unsigned int find(char) const;
+    unsigned int find_last_of(char) const;
+    unsigned int find_last_of(const char *) const;
+    unsigned int find(const char *, unsigned int) const;
+    unsigned int find_first_of(const char *, unsigned int) const;
+
+    char &operator[](unsigned int);
+    void ToLower();
+    void ToUpper();
+    void ReplaceAll(char, char);
+    bool contains(const char *) const;
+    int compare(unsigned int, unsigned int, const char *) const;
+
+    static const unsigned int npos;
 
     int split(const char *token, std::vector<String> &subStrings) const;
 

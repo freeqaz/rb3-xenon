@@ -98,8 +98,11 @@ static_assert(sizeof(Hmx::Object) == 0x28, "Hmx::Object must be 0x28 (RB3 retail
 #pragma region Virtual Methods
 
 Hmx::Object::Object()
-    : mTypeProps(nullptr), mTypeDef(nullptr), mName(gNullStr), mDir(nullptr),
-      mSinks(nullptr) {
+    : mTypeProps(nullptr), mTypeDef(nullptr), mName(gNullStr), mDir(nullptr)
+#ifdef HX_NATIVE
+    , mSinks(nullptr)
+#endif
+{
     mRefs.DetachSelf();
 }
 
@@ -111,7 +114,9 @@ Hmx::Object::~Object() {
     }
     ClearAllTypeProps();
     RemoveFromDir();
+#ifdef HX_NATIVE
     RELEASE(mSinks);
+#endif
     Hmx::Object *old = sDeleting;
     sDeleting = this;
 #ifdef HX_NATIVE
@@ -129,10 +134,11 @@ Hmx::Object::~Object() {
 }
 
 bool Hmx::Object::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
     if (mSinks)
         return mSinks->Replace(from, to);
-    else
-        return false;
+#endif
+    return false;
 }
 
 BEGIN_HANDLERS(Hmx::Object)
@@ -171,7 +177,11 @@ END_HANDLERS
 BEGIN_PROPSYNCS(Hmx::Object)
     SYNC_PROP_SET(name, mName, SetName(_val.Str(), mDir))
     SYNC_PROP_SET(type, Type(), SetType(_val.Sym()))
+#ifdef HX_NATIVE
     SYNC_PROP(sinks, mSinks ? *mSinks : gSinks)
+#else
+    SYNC_PROP(sinks, gSinks)
+#endif
 END_PROPSYNCS
 
 void Hmx::Object::InitObject() {
@@ -266,8 +276,10 @@ void Hmx::Object::LoadRest(BinStream &bs) {
 void Hmx::Object::Export(DataArray *a, bool b) {
     if (b)
         HandleType(a);
+#ifdef HX_NATIVE
     if (mSinks)
         mSinks->Export(a);
+#endif
 }
 
 void Hmx::Object::SetTypeDef(DataArray *def) {
@@ -444,62 +456,79 @@ int Hmx::Object::RefCount() const {
 #pragma region Sink Methods
 
 void Hmx::Object::RemovePropertySink(Hmx::Object *o, DataArray *a) {
+#ifdef HX_NATIVE
     if (mSinks)
         mSinks->RemovePropertySink(o, a);
+#endif
 }
 
 bool Hmx::Object::HasPropertySink(Hmx::Object *o, DataArray *a) {
+#ifdef HX_NATIVE
     if (mSinks)
         return mSinks->HasPropertySink(o, a);
-    else
-        return false;
+#endif
+    return false;
 }
 
 void Hmx::Object::RemoveSink(Hmx::Object *o, Symbol s) {
+#ifdef HX_NATIVE
     if (mSinks)
         mSinks->RemoveSink(o, s);
+#endif
 }
 
 MsgSinks *Hmx::Object::GetOrAddSinks() {
+#ifdef HX_NATIVE
     if (!mSinks) {
         mSinks = new MsgSinks(this);
     }
     return mSinks;
+#else
+    return nullptr;
+#endif
 }
 
 void Hmx::Object::AddSink(Hmx::Object *o, Symbol s1, Symbol s2, SinkMode sm, bool b) {
+#ifdef HX_NATIVE
     GetOrAddSinks()->AddSink(o, s1, s2, sm, b);
+#endif
 }
 
 void Hmx::Object::AddPropertySink(Hmx::Object *o, DataArray *a, Symbol s) {
+#ifdef HX_NATIVE
     GetOrAddSinks()->AddPropertySink(o, a, s);
+#endif
 }
 
 void Hmx::Object::MergeSinks(Hmx::Object *o) {
-    // (int) cast produces signed cmpwi; direct pointer produces unsigned cmplwi
 #ifdef HX_NATIVE
     if (o && o->mSinks) {
-#else
-    if (o && (int)o->mSinks) {
-#endif
         GetOrAddSinks()->MergeSinks(o);
     }
+#endif
 }
 
 void Hmx::Object::ChainSource(Hmx::Object *source, Hmx::Object *o2) {
     MILO_ASSERT(source, 0x29D);
     if (!o2)
         o2 = this;
+#ifdef HX_NATIVE
     if (mSinks && !mSinks->Sinks().empty()) {
         source->GetOrAddSinks()->AddSink(this, Symbol());
     } else if (o2->mSinks) {
         o2->mSinks->ChainEventSinks(source, this);
     }
+#else
+    (void)o2;
+    (void)source;
+#endif
 }
 
 void Hmx::Object::ExportPropertyChange(DataArray *a, Symbol s) {
     if (!s.Null()) {
+#ifdef HX_NATIVE
         MILO_ASSERT(mSinks, 0x17F);
+#endif
         static Message msg("blah", 0);
         msg.SetType(s);
         msg[0] = a;
@@ -508,7 +537,11 @@ void Hmx::Object::ExportPropertyChange(DataArray *a, Symbol s) {
 }
 
 void Hmx::Object::BroadcastPropertyChange(DataArray *a) {
+#ifdef HX_NATIVE
     ExportPropertyChange(a, mSinks ? mSinks->GetPropSyncHandler(a) : Symbol());
+#else
+    ExportPropertyChange(a, Symbol());
+#endif
 }
 
 #pragma endregion
@@ -646,6 +679,7 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
     const DataNode *prop_n = nullptr;
     DataNode n;
     Symbol handler;
+#ifdef HX_NATIVE
     if (mSinks) {
         handler = mSinks->GetPropSyncHandler(prop);
         if (!handler.Null()) {
@@ -655,6 +689,7 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
             }
         }
     }
+#endif
     if (!SyncProperty((DataNode &)val, prop, 0, kPropSet)) {
         Symbol key = prop->Sym(0);
         if (!mTypeProps) {
@@ -842,6 +877,7 @@ DataNode Hmx::Object::OnAddSink(DataArray *a) {
 }
 
 DataNode Hmx::Object::OnRemoveSink(DataArray *a) {
+#ifdef HX_NATIVE
     if (a->Size() > 3) {
         Hmx::Object *obj = a->GetObj(2);
         Symbol s;
@@ -856,6 +892,7 @@ DataNode Hmx::Object::OnRemoveSink(DataArray *a) {
         if (mSinks)
             mSinks->RemoveSink(obj, s);
     }
+#endif
     return 0;
 }
 
