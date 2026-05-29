@@ -12,10 +12,21 @@
 #include "utl/BinStream.h"
 #include "utl/MemMgr.h"
 
-// size 0x68
+// size 0x60 (retail). DC3 (newer engine) extended this to 0x68 by adding the
+// UV-tile-animation fields mCurrentTileIndex/mTileTime; retail RB3 has no
+// tile animation, so those are HX_NATIVE-only (native build uses DC3 semantics).
 class RndParticle {
 public:
+#ifdef HX_NATIVE
     MEM_ARRAY_OVERLOAD(Particle, 0x1E);
+#else
+    // Retail RB3 allocates the pool via the 2-arg MemAlloc(size, align) form
+    // (verified: ParticleCommonPool::InitPool calls the heap allocator as
+    // MemAlloc(size*0xb0, 0) with no __FILE__/__LINE__/name strings).
+    static void *operator new[](unsigned int s) { return MemAlloc(s, 0); }
+    static void *operator new[](unsigned int s, void *place) { return place; }
+    static void operator delete[](void *v) { MemFree(v); }
+#endif
 
     Hmx::Color col; // 0x0
     Hmx::Color colVel; // 0x10
@@ -29,32 +40,39 @@ public:
     float swingArm; // 0x54
     RndParticle *prev; // 0x58
     RndParticle *next; // 0x5c
+#ifdef HX_NATIVE
     int mCurrentTileIndex;
     float mTileTime;
+#endif
 };
 
-// size 0xcc (target 0xc8 - one field may be wrong)
+// size 0xb0 (retail; matches the 0xb0 pool stride in ParticleCommonPool::InitPool).
+// Offsets here assume the retail RndParticle base (0x60). DC3 (newer engine) added
+// the birth-momentum / RPM-velocity fields mRPMVelocity..mBirthVelocityZ that push
+// the struct to 0xc8; retail RB3 has no birth-momentum, so those are HX_NATIVE-only.
 class RndFancyParticle : public RndParticle {
 public:
-    float growFrame; // 0x68
-    float growVel; // 0x6c
-    float shrinkFrame; // 0x70
-    float shrinkVel; // 0x74
-    Hmx::Color midcolVel; // 0x78
-    float midcolFrame; // 0x88
-    float beginGrow; // 0x8c
-    float midGrow; // 0x90
-    float endGrow; // 0x94
-    Vector4 bubbleDir; // 0x98
-    float bubbleFreq; // 0xa8
-    float bubblePhase; // 0xac
-    float RPF; // 0xb0
-    float swingArmVel; // 0xb4
-    float mRPMVelocity; // 0xb8
-    float mPitchAngularVel; // 0xbc
-    float mBirthVelocityX; // 0xc0
-    float mBirthVelocityY; // 0xc4
-    float mBirthVelocityZ; // 0xc8
+    float growFrame; // 0x60
+    float growVel; // 0x64
+    float shrinkFrame; // 0x68
+    float shrinkVel; // 0x6c
+    Hmx::Color midcolVel; // 0x70
+    float midcolFrame; // 0x80
+    float beginGrow; // 0x84
+    float midGrow; // 0x88
+    float endGrow; // 0x8c
+    Vector4 bubbleDir; // 0x90
+    float bubbleFreq; // 0xa0
+    float bubblePhase; // 0xa4
+    float RPF; // 0xa8
+    float swingArmVel; // 0xac
+#ifdef HX_NATIVE
+    float mRPMVelocity;
+    float mPitchAngularVel;
+    float mBirthVelocityX;
+    float mBirthVelocityY;
+    float mBirthVelocityZ;
+#endif
 };
 
 class ParticleCommonPool {
@@ -70,7 +88,10 @@ public:
     MEM_OVERLOAD(ParticleCommonPool, 0x254)
 
 private:
-    RndParticle *mPoolParticles; // 0x0
+    // Pool holds fancy particles; indexing must use the 0xb0 fancy stride
+    // (see ParticleCommonPool::InitPool — mulli ...,0xb0). Matches DC3: only
+    // mPoolParticles is RndFancyParticle*, the free-list head stays RndParticle*.
+    RndFancyParticle *mPoolParticles; // 0x0
     RndParticle *mPoolFreeParticles; // 0x4
     int mNumActiveParticles; // 0x8
     int mHighWaterMark; // 0xc
