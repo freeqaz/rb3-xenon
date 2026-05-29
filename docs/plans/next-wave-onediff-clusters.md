@@ -104,12 +104,13 @@ Evidence: retail ctor `fn_827E47F0` lays the ScrollSelect vptr at 0x140 and a
 DC3 had EXTRA slots retail lacked) — here retail has many extra slots/bytes DC3
 lacks, so UIComponent genuinely needs first-class retail reconstruction.
 
-**Blast radius: 15 UI units / 79 matched functions** depend on the current
-layout — so this is HARD/high-risk, must be a dedicated Ghidra-verified effort
-against `fn_827E47F0` + `??_7UIComponent`, validated across ALL UI units (revert
-if net-negative). **Task #17.** Once correct, UISlider OnMsg + the rest of the UI
-near-miss cluster close for free. This is another instance of the documented
-`project-engine-baseclass-layout-wall`.
+**Blast radius: 15 UI units / 79 matched functions.** **UPDATE (2026-05-29): the
+full retail layout is now RECONSTRUCTED + verified — see the dedicated doc
+`docs/plans/ui-base-layout-reconstruction.md`.** Critical correction: the layout
+fix alone registers **+0** (UI units lack pinned `.text` splits AND need body
+ports). The "closes for free" premise is FALSE — it's a **3-step effort**
+(land layout → pin splits → port bodies). Do the ObjPtr migration first (UI uses
+ObjPtr/ObjDirPtr members). Another instance of `project-engine-baseclass-layout-wall`.
 
 ## Refs
 - `docs/plans/recon-structural-levers-2026-05-29.md` (Levers 1–5)
