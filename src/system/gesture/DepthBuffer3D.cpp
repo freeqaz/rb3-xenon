@@ -138,7 +138,8 @@ void DepthBuffer3D::AddAttachment(const DepthBuffer3DAttachment &attachment) {
         mAttachments.resize(mAttachments.size() + 1);
         DepthBuffer3DAttachment &back = mAttachments[mAttachments.size() - 1];
         back = attachment;
-        back.unk20 = (int)back.obj->TransParent();
+        // NOTE: DC3-newer added `back.unk20 = (int)back.obj->TransParent();` here
+        // alongside the struct's trailing fields; retail RB3 has neither (struct is 0x14).
         back.obj->SetTransParent(mParent, false);
         back.obj->SetTransConstraint(mConstraint, nullptr, false);
     }
