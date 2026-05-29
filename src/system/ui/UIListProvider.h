@@ -17,7 +17,8 @@ class UIListSubList;
 class UIListProvider {
 public:
     UIListProvider() {}
-    virtual DataNode Handle(DataArray *, bool);
+    DataNode Handle(DataArray *, bool);
+    bool CanSelect(int) const { return true; }
     virtual ~UIListProvider() {}
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual RndMat *Mat(int, int, UIListMesh *) const;
@@ -27,7 +28,6 @@ public:
     virtual void UpdateExtendedMesh(int, int, RndMesh *) const;
     virtual void UpdateExtendedCustom(int, int, Hmx::Object *) const;
     virtual Symbol DataSymbol(int) const { return gNullStr; }
-    virtual bool CanSelect(int) const { return true; }
     virtual int DataIndex(Symbol s) const {
         int numdata = NumData();
         for (int i = 0; i < numdata; i++) {
