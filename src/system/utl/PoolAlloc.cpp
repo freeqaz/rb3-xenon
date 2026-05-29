@@ -52,6 +52,36 @@ void PoolFree(int idx, void *mem, const char *file, int line, const char *name) 
 #endif
 }
 
+// Retail/match 2-arg pool entry points (see PoolAlloc.h §7). The retail XEX's
+// POOL_OVERLOAD operator new/delete call these without debug args; the debug
+// instrumentation is compiled out so they are ICF-equivalent to the 5-arg form.
+void *PoolAlloc(int classSize, int reqSize) {
+    MILO_ASSERT_FMT(classSize >= 0, "PoolAlloc class size is < 0: %d", classSize);
+#ifdef HX_NATIVE
+    return malloc(reqSize);
+#else
+    CritSecTracker tracker(gMemLock);
+    if (!gChunkAlloc) {
+        gChunkAlloc = new ChunkAllocator();
+    }
+    MILO_ASSERT(reqSize == classSize, 0x15F);
+    void *alloced = gChunkAlloc->Alloc(classSize);
+    MemTrackAlloc(classSize, classSize, nullptr, alloced, true, 0, nullptr, 0);
+    return alloced;
+#endif
+}
+
+void PoolFree(int idx, void *mem) {
+#ifdef HX_NATIVE
+    free(mem);
+#else
+    CritSecTracker tracker(gMemLock);
+    MemTrackFree(mem);
+    MILO_ASSERT(gChunkAlloc, 0x16F);
+    gChunkAlloc->Free(mem, idx);
+#endif
+}
+
 void PoolReport(TextStream &ts) {
     CritSecTracker tracker(gMemLock);
     MILO_ASSERT(gChunkAlloc, 0x179);
