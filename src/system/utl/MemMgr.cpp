@@ -210,6 +210,7 @@ void MemPrint(int heapIdx, TextStream &stream, bool freeOnly) {
     gHeaps[heapIdx].Print(stream, freeOnly);
 }
 
+#ifdef HX_NATIVE
 void *MemOrPoolAlloc(int size, const char *file, int line, const char *name) {
     if (size == 0) {
         return nullptr;
@@ -241,6 +242,41 @@ void MemOrPoolFreeSTL(
         }
     }
 }
+#else
+// Retail/match dispatchers: no __FILE__/line/name — the retail XEX's MemTrack
+// instrumentation is compiled out, so the pool/heap entry points take only the
+// byte size (and the heap fast path's MemAlloc takes (size, align)). Mirrors
+// rb3-Wii _MemOrPoolAlloc(int)/_MemAlloc(int,int) and the 2-arg POOL_OVERLOAD.
+void *MemOrPoolAlloc(int size) {
+    if (size == 0) {
+        return nullptr;
+    } else if (size > 0x80) {
+        return MemAlloc(size, 0);
+    } else {
+        return PoolAlloc(size, size);
+    }
+}
+
+void MemOrPoolFree(int poolIdx, void *mem) {
+    if (mem) {
+        if (poolIdx > 0x80) {
+            MemFree(mem);
+        } else {
+            PoolFree(poolIdx, mem);
+        }
+    }
+}
+
+void MemOrPoolFreeSTL(int poolIdx, void *mem) {
+    if (mem) {
+        if (poolIdx > 0x80) {
+            MemFree(mem);
+        } else {
+            PoolFree(poolIdx, mem);
+        }
+    }
+}
+#endif
 
 void AddHeap(
     int heapNum,
@@ -300,6 +336,18 @@ MemAlloc(int size, const char *file, int line, const char *name, int align) {
         return nullptr;
     return malloc(size);
 }
+
+#ifndef HX_NATIVE
+// Retail/match 2-arg heap allocator: MemAlloc(size, align). The retail XEX's
+// heap fast path (verified in Ghidra: Function_827977D0(size, align)) takes no
+// __FILE__/line/name — MemTrack is compiled out. Mirrors rb3-Wii _MemAlloc(int,
+// int). Routes through the existing stub for now (MemHeap::Alloc TBD).
+__declspec(noinline) void *MemAlloc(int size, int align) {
+    if (size <= 0)
+        return nullptr;
+    return malloc(size);
+}
+#endif
 
 void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align) {
     MemTemp tmp;

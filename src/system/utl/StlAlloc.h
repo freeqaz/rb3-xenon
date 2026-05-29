@@ -61,6 +61,7 @@ namespace STLPORT {
         size_type max_size() const { return size_type(-1) / sizeof(T); }
 
         pointer allocate(const size_type count, const void *hint = nullptr) const {
+#ifdef HX_NATIVE
             const char *name;
             if (gStlAllocNameLookup) {
                 name = typeid(pointer).name();
@@ -70,9 +71,17 @@ namespace STLPORT {
             return reinterpret_cast<pointer>(
                 MemOrPoolAllocSTL(count * sizeof(T), __FILE__, 0x39, name)
             );
+#else
+            // Retail/match: the X360 XEX's STL allocate passes only the byte
+            // count to the pool dispatcher — no __FILE__/line/name (the
+            // gStlAllocNameLookup typeid path is dead, MemTrack is compiled
+            // out). See MemMgr.h retail ABI note.
+            return reinterpret_cast<pointer>(MemOrPoolAllocSTL(count * sizeof(T)));
+#endif
         }
 
         void deallocate(pointer ptr, size_type count) const {
+#ifdef HX_NATIVE
             int size = count * sizeof(T);
             const char *name;
             if (gStlAllocNameLookup) {
@@ -81,6 +90,9 @@ namespace STLPORT {
                 name = gStlAllocName;
             }
             MemOrPoolFreeSTL(size, ptr, __FILE__, 0x40, name);
+#else
+            MemOrPoolFreeSTL(count * sizeof(T), ptr);
+#endif
         }
 
         void construct(pointer ptr, const_reference value) const { new (ptr) T(value); }

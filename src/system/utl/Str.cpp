@@ -278,7 +278,12 @@ bool String::operator==(Symbol s) const { return strcmp(s.Str(), mStr) == 0; }
 
 void String::reserve(unsigned int len) {
     if (len > mCap) {
+#ifdef HX_NATIVE
         void *dst = MemOrPoolAlloc(len + 1, __FILE__, 0x13B, "StringBuf");
+#else
+        // Retail/match: no __FILE__/line/"StringBuf" — see MemMgr.h ABI note.
+        void *dst = MemOrPoolAlloc(len + 1);
+#endif
         memcpy(dst, mStr, mCap + 1);
         *((char *)dst + len) = 0;
         if (mCap != 0) {
