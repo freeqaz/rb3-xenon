@@ -1216,11 +1216,18 @@ namespace Hmx {
         String mNote; // 0x18 (native) / 0x14 (X360)
         /** This Object's name. */
         /** "name of the object" */
-        const char *mName; // 0x20 (native) / 0x1c (X360)
+        const char *mName; // 0x20 (native) / 0x20 (X360)
         /** The ObjectDir in which this Object resides. */
-        ObjectDir *mDir; // 0x24 (native) / 0x20 (X360)
+        ObjectDir *mDir; // 0x24 (native) / 0x24 (X360)
         /** "Sinks for messages sent to me" */
-        MsgSinks *mSinks; // 0x28 (native) / 0x24 (X360)
+        // Retail X360: mSinks does not exist in the Object dtor (fn_82738050) and the
+        // retail Object is exactly 0x28 bytes with 0xC-byte String. mSinks is absent
+        // from the retail binary layout; it is a development/tool feature only in HX_NATIVE.
+        // Removing mSinks for X360 compensates for String growing from 0x8 to 0xC,
+        // keeping Object at 0x28.
+#ifdef HX_NATIVE
+        MsgSinks *mSinks; // 0x28 (native only)
+#endif
     protected:
         /** An Object in the process of being deleted. */
         static Object *sDeleting;
@@ -1381,7 +1388,11 @@ namespace Hmx {
 #endif
             ref->Release(nullptr);
         }
+#ifdef HX_NATIVE
         MsgSinks *Sinks() const { return mSinks; }
+#else
+        MsgSinks *Sinks() const { return nullptr; }
+#endif
 
         void ReplaceRefs(Hmx::Object *);
         void ReplaceRefsFrom(Hmx::Object *from, Hmx::Object *);

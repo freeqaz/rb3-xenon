@@ -6,9 +6,16 @@
 
 #ifdef HX_NATIVE
 const unsigned int FixedString::npos = (unsigned int)-1;
+const unsigned int String::npos = (unsigned int)-1;
+#else
+const unsigned int String::npos = (unsigned int)-1;
 #endif
 
+// FixedString (for StackString) uses gEmpty+4 with capacity stored at gEmpty[0..3].
 char gEmpty[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+// gNullStr is the initial mStr for a default-constructed String.
+extern const char *gNullStr;
 
 void RemoveSpaces(char *out, int len, const char *in) {
     MILO_ASSERT(out, 0x2C0);
@@ -214,24 +221,29 @@ bool FixedString::contains(const char *str) const { return find(str) != -1; }
 #pragma endregion
 #pragma region String
 
-String::String() {}
+// Retail String layout: {vptr@0, mCap@4, mStr@8} = 0xC bytes.
+// mCap is the allocated buffer size (number of chars, excluding null terminator).
+// mStr points to the start of the char buffer (gNullStr when mCap == 0).
+// Free: MemOrPoolFree(mCap + 1, mStr) — allocations are mCap+1 bytes, no header prefix.
 
-String::String(const char *str) { *this = str; }
+String::String() : mCap(0), mStr((char *)gNullStr) {}
 
-String::String(Symbol s) { *this = s; }
+String::String(const char *str) : mCap(0), mStr((char *)gNullStr) { *this = str; }
 
-String::String(unsigned int len, char c) {
+String::String(Symbol s) : mCap(0), mStr((char *)gNullStr) { *this = s; }
+
+String::String(unsigned int len, char c) : mCap(0), mStr((char *)gNullStr) {
     reserve(len);
     for (unsigned int i = 0; i < len; i++)
         mStr[i] = c;
     mStr[len] = '\0';
 }
 
-String::String(const String &str) { *this = str.c_str(); }
+String::String(const String &str) : mCap(0), mStr((char *)gNullStr) { *this = str.c_str(); }
 
 String::~String() {
-    if (capacity() != 0) {
-        MemOrPoolFree(capacity() + 5, mStr - 4);
+    if (mCap != 0) {
+        MemOrPoolFree(mCap + 1, mStr);
     }
 }
 
@@ -265,18 +277,15 @@ bool String::operator==(const FixedString &str) const {
 bool String::operator==(Symbol s) const { return strcmp(s.Str(), mStr) == 0; }
 
 void String::reserve(unsigned int len) {
-    unsigned int cap = capacity();
-    if (len > cap) {
-        void *dst = MemOrPoolAlloc(len + 5, __FILE__, 0x13B, "StringBuf");
-        char *strmem = (char *)dst + 4;
-        memcpy(strmem, mStr, cap + 1);
-        *(strmem + len) = 0;
-        if (cap != 0) {
-            MemOrPoolFree(cap + 5, mStr - 4);
+    if (len > mCap) {
+        void *dst = MemOrPoolAlloc(len + 1, __FILE__, 0x13B, "StringBuf");
+        memcpy(dst, mStr, mCap + 1);
+        *((char *)dst + len) = 0;
+        if (mCap != 0) {
+            MemOrPoolFree(mCap + 1, mStr);
         }
-        mStr = strmem;
-        int *lenmem = (int *)strmem - 1;
-        *lenmem = len;
+        mCap = len;
+        mStr = (char *)dst;
     }
 }
 
@@ -311,7 +320,12 @@ String &String::operator=(const FixedString &str) {
 }
 
 String &String::operator=(const String &str) {
-    return *this = static_cast<const FixedString &>(str);
+    reserve(str.mCap);
+#ifdef HX_NATIVE
+    if (mStr != str.mStr) // avoid ASan strcpy-param-overlap on self-assignment
+#endif
+    strcpy(mStr, str.mStr);
+    return *this;
 }
 
 void String::resize(unsigned int arg) {
@@ -452,14 +466,119 @@ String &String::insert(unsigned int pos, unsigned int count, char c) {
 
 String &String::insert(unsigned int pos, const char *str) { return replace(pos, 0, str); }
 
+bool String::operator<(const String &str) const {
+    return strcmp(mStr, str.mStr) < 0;
+}
+
+unsigned int String::find(char c, unsigned int pos) const {
+    MILO_ASSERT(pos <= mCap, 0x6C);
+    char *p = &mStr[pos];
+    while ((*p != '\0') && (*p != c))
+        p++;
+    if (*p != '\0')
+        return p - mStr;
+    else
+        return -1;
+}
+
+unsigned int String::find(char c) const { return find(c, 0); }
+
+unsigned int String::find(const char *str, unsigned int pos) const {
+    MILO_ASSERT(pos <= mCap, 0x83);
+    char *found = strstr(&mStr[pos], str);
+    if (found != 0)
+        return found - mStr;
+    else
+        return -1;
+}
+
+unsigned int String::find_first_of(const char *str, unsigned int pos) const {
+    char *p1;
+    char *p2;
+    if (str == 0)
+        return -1;
+    MILO_ASSERT(pos <= mCap, 0x8E);
+    for (p1 = &mStr[pos]; *p1 != '\0'; p1++) {
+        for (p2 = (char *)str; *p2 != '\0'; p2++) {
+            if (*p1 == *p2)
+                return p1 - mStr;
+        }
+    }
+    return -1;
+}
+
+unsigned int String::find_last_of(char c) const {
+    char *found = strrchr(mStr, c);
+    if (found)
+        return found - mStr;
+    else
+        return -1;
+}
+
+unsigned int String::find_last_of(const char *str) const {
+    if (!str)
+        return -1;
+    int a = -1;
+    for (char *tmp = (char *)str; *tmp != '\0'; tmp++) {
+        int lastIdx = find_last_of(*tmp);
+        if (lastIdx != -1 && lastIdx > a) {
+            a = lastIdx;
+        }
+    }
+    if (a == -1)
+        return -1;
+    else
+        return a;
+}
+
+void String::ToLower() {
+    char *p;
+    for (p = mStr; *p != '\0'; p++) {
+        *p = tolower(*p);
+    }
+}
+
+void String::ToUpper() {
+    char *p;
+    for (p = mStr; *p != '\0'; p++) {
+        *p = toupper(*p);
+    }
+}
+
+void String::ReplaceAll(char old_char, char new_char) {
+    char *p;
+    for (p = mStr; *p != '\0'; p++) {
+        if (*p == old_char)
+            *p = new_char;
+    }
+}
+
+bool String::contains(const char *str) const { return find(str, 0) != -1; }
+
+int String::compare(unsigned int pos, unsigned int i2, const char *str) const {
+    if (!str)
+        return -1;
+    else {
+        MILO_ASSERT(pos <= mCap, 0xDD);
+        return strncmp(mStr + pos, str, i2);
+    }
+}
+
+char &String::operator[](unsigned int i) {
+    MILO_ASSERT(i < mCap, 0xFC);
+    return *(mStr + i);
+}
+
+unsigned int String::find(const char *cc) const { return find(cc, 0); }
+
 void String::swap(String &s) {
     char *temp_text;
     unsigned int temp_len;
 
     temp_text = mStr;
-    temp_len = capacity();
+    temp_len = mCap;
     mStr = s.mStr;
-    *(int *)(mStr - 4) = s.capacity();
+    mCap = s.mCap;
     s.mStr = temp_text;
-    *(int *)(s.mStr - 4) = temp_len;
+    s.mCap = temp_len;
 }
