@@ -59,6 +59,7 @@ core.*
 /unified_id_rtti.json
 /unified_id_rtti_low.json
 /unified_id_vtable.json
+/unified_id_rb3wii.json
 /proposed_splits_bindiff.txt
 /proposed_splits_bindiff.spotcheck.csv
 # pin_candidates.py generated wave (regenerable from the oracle JSONs above)

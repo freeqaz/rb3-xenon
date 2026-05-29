@@ -2339,3 +2339,31 @@ ContentMgr.cpp:
 FlowOutPort.cpp:
 	.pdata      start:0x8220B0A8 end:0x8220B0B0
 	.text       start:0x824A5990 end:0x824A59D4
+
+Accomplishment.cpp:
+	.pdata      start:0x82205AD0 end:0x82205BE8
+	.text       start:0x8243A18C end:0x8243A614
+
+AccomplishmentCategory.cpp:
+	.pdata      start:0x82205E58 end:0x82205E70
+	.text       start:0x8243EF98 end:0x8243EFF8
+
+AccomplishmentPlayerConditional.cpp:
+	.pdata      start:0x82205EC8 end:0x82205EF0
+	.text       start:0x8243F178 end:0x8243F220
+
+AccomplishmentSetlist.cpp:
+	.pdata      start:0x82205EF0 end:0x82205F30
+	.text       start:0x8243F220 end:0x8243F330
+
+AccomplishmentSongFilterConditional.cpp:
+	.pdata      start:0x82205F40 end:0x82205F68
+	.text       start:0x8243F378 end:0x8243F418
+
+UIEvent.cpp:
+	.pdata      start:0x82215390 end:0x822153F0
+	.text       start:0x825519DC end:0x82551B5C
+
+ContextChecker.cpp:
+	.pdata      start:0x8222E150 end:0x8222E168
+	.text       start:0x826D1558 end:0x826D1E68
