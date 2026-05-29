@@ -23,24 +23,14 @@ CharClip::FacingSet::FacingBones CharClip::FacingSet::sFacingRotAndPos;
 
 bool CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
     NodeVector *vector = reinterpret_cast<NodeVector *>(from);
-    if (!vector->clip.SetObj(to)) {
-#ifdef HX_NATIVE
-        // During ReplaceList, RemoveNodes' memmove shifts subsequent NodeVectors
-        // into the current position. The ReplaceList walker then sees the shifted
-        // NodeVector at the same address, triggers force-unlink (self-loop) without
-        // nulling mObject → use-after-free on teardown. Skip the removal; the null
-        // NodeVector is harmless and cleaned up by Clear().
-        if (!gInReplaceList)
-#endif
-            RemoveNodes(vector);
+    vector->clip = (CharClip *)to;
+    if (!vector->clip) {
+        RemoveNodes(vector);
     }
     return true;
 }
 
 void CharClip::Transitions::Clear() {
-    for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
-        it->~NodeVector();
-    }
     Resize(0, 0);
 }
 
@@ -108,8 +98,7 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
             (intptr_t)end - (intptr_t)next
         );
     } else {
-        resized = Resize(BytesInMemory() + 0x20, mNodeEnd);
-        new (&resized->clip) ObjOwnerPtr<CharClip>(mOwner, (CharClip *)NULL);
+        resized = Resize(BytesInMemory() + 0x10, mNodeEnd);
         resized->clip = clip;
         resized->size = 0;
     }
@@ -128,16 +117,6 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
     }
     resized->nodes[i] = node;
     resized->size++;
-    // Fix up ObjRef ring pointers after potential reallocation.
-    // ObjRef layout: vtable (sizeof(void*)) | next (sizeof(void*)) | prev (sizeof(void*))
-    // Original code used hardcoded offsets 4/8 which are only correct on 32-bit PPC.
-    for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
-        ObjRef *clipRef = (ObjRef *)&it->clip;
-        ObjRef *clipNext = *(ObjRef **)((char *)clipRef + sizeof(void *));
-        ObjRef *clipPrev = *(ObjRef **)((char *)clipRef + sizeof(void *) * 2);
-        *(ObjRef **)((char *)clipPrev + sizeof(void *)) = clipRef;
-        *(ObjRef **)((char *)clipNext + sizeof(void *) * 2) = clipRef;
-    }
 }
 
 void CharClip::Transitions::RemoveClip(CharClip *clip) {
@@ -149,18 +128,8 @@ void CharClip::Transitions::RemoveClip(CharClip *clip) {
 void CharClip::Transitions::RemoveNodes(NodeVector *n) {
     MILO_ASSERT(n, 0xEC);
     NodeVector *next = n->Next();
-    n->~NodeVector();
     memmove(n, next, (intptr_t)mNodeEnd - (intptr_t)next);
     Resize(BytesInMemory() - ((intptr_t)next - (intptr_t)n), nullptr);
-    for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
-        // Fix up linked list pointers after memmove
-        // ObjRef layout: vtable(sizeof(void*)) + next(sizeof(void*)) + prev(sizeof(void*))
-        ObjRef *clipRef = (ObjRef*)&it->clip;
-        ObjRef *clipPrev = *(ObjRef**)((char*)clipRef + sizeof(void*) * 2);
-        *(ObjRef**)((char*)clipPrev + sizeof(void*)) = clipRef;
-        ObjRef *clipNext = *(ObjRef**)((char*)clipRef + sizeof(void*));
-        *(ObjRef**)((char*)clipNext + sizeof(void*) * 2) = clipRef;
-    }
 }
 
 void CharClip::Transitions::Save(BinStream &bs) {
@@ -250,50 +219,8 @@ void CharClip::Transitions::Load(BinStreamRev &d, int oldRev) {
                 }
             }
         }
-#ifdef HX_NATIVE
-        // On native, ObjOwnerPtr is a full ObjRef with vtable, ring pointers,
-        // and mAliveSentinel. The temp buffer was memset(0) so memcpy'd
-        // ObjOwnerPtrs have null vtables and zero sentinels. NullifyAllRefs
-        // uses mAliveSentinel to skip freed nodes — zero sentinel causes it
-        // to skip these, leaving mObject non-null during cascade Phase 1.
-        // When CharClip A's Transitions buffer is freed, then CharClip B's
-        // SafeReleaseFromRing writes through ring prev/next that point into
-        // A's freed buffer, corrupting glibc heap metadata.
-        //
-        // Fix: after memcpy, reconstruct each ObjOwnerPtr via placement new
-        // so vtable, mAliveSentinel, and mOwner are all properly initialized.
-        // Then deregister the temp copy and register the permanent copy in
-        // the clip's ref ring.
-        {
-            int dataSize = (intptr_t)it - (intptr_t)start;
-            Resize(dataSize, nullptr);
-            memcpy(mNodeStart, start, BytesInMemory());
-            NodeVector *tempEnd = (NodeVector *)((char *)start + dataSize);
-            NodeVector *permIt = mNodeStart;
-            for (NodeVector *tempIt = start; tempIt < tempEnd;
-                 tempIt = tempIt->Next(), permIt = permIt->Next()) {
-                CharClip *clip = (CharClip *)tempIt->clip;
-                // Deregister the temp ObjRef from the clip's ring first
-                if (clip) {
-                    clip->Release(&tempIt->clip);
-                }
-                // Reconstruct the permanent ObjOwnerPtr in-place. The memcpy
-                // already copied size and nodes[] data; only the ObjOwnerPtr
-                // at offset 0 needs reconstruction.
-                new (&permIt->clip) ObjOwnerPtr<CharClip>(this, (CharClip *)nullptr);
-                // Now assign the clip, which properly does AddRef into the ring
-                if (clip) {
-                    permIt->clip = clip;
-                }
-            }
-        }
-#else
         Resize((intptr_t)it - (intptr_t)start, nullptr);
         memcpy(mNodeStart, start, BytesInMemory());
-        for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
-            it->clip->Release(nullptr);
-        }
-#endif
         MemFree(start);
     }
 }
@@ -386,7 +313,7 @@ void CharClip::BeatEvent::Load(BinStream &bs) {
 
 CharClip::CharClip()
     : mTransitions(this), mFramesPerSec(30), mFlags(0), mPlayFlags(0), mRange(0),
-      mRelative(this), mDirty(true), mOldVer(-1), mDoNotCompress(false), mSyncAnim(this),
+      mRelative(nullptr), mDirty(true), mOldVer(-1), mDoNotCompress(false), mSyncAnim(this),
       unk198(0) {
     mBeatTrack.resize(1);
     mBeatTrack[0].frame = 0;
@@ -426,7 +353,7 @@ bool PropSyncArray(
 }
 
 BEGIN_CUSTOM_PROPSYNC(CharClip::NodeVector)
-    SYNC_PROP_SET(clip, o.clip.Ptr(), ) {
+    SYNC_PROP_SET(clip, o.clip, ) {
         static Symbol _s("nodes");
         if (sym == _s) {
             PropSyncArray(o, _val, _prop, _i + 1, _op);
@@ -468,7 +395,7 @@ BEGIN_PROPSYNCS(CharClip)
     SYNC_PROP_SET(default_loop, mPlayFlags & 0xF0, SetDefaultLoop(_val.Int()))
     SYNC_PROP_SET(beat_align, mPlayFlags & 0xF600, SetBeatAlignMode(_val.Int()))
     SYNC_PROP(range, mRange)
-    SYNC_PROP_SET(relative, mRelative.Ptr(), SetRelative(_val.Obj<CharClip>()))
+    SYNC_PROP_SET(relative, mRelative, SetRelative(_val.Obj<CharClip>()))
     SYNC_PROP_MODIFY(events, mBeatEvents, SortEvents())
     SYNC_PROP_SET(dirty, mDirty, )
     SYNC_PROP_SET(size, AllocSize(), )
@@ -489,7 +416,7 @@ BEGIN_SAVES(CharClip)
     bs << mFlags;
     bs << mPlayFlags;
     bs << mRange;
-    bs << mRelative;
+    bs << (mRelative ? mRelative->Name() : "");
     bs << mOldVer;
     bs << mDoNotCompress;
     mTransitions.Save(bs);
@@ -566,7 +493,9 @@ BEGIN_LOADS(CharClip)
         d >> mRange;
     }
     if (oldRev > 5) {
-        mRelative.Load(d.stream, false, nullptr);
+        char _relBuf[128];
+        d.stream.ReadString(_relBuf, 128);
+        mRelative = Dir() ? Dir()->Find<CharClip>(_relBuf, false) : nullptr;
     } else if (oldRev > 4) {
         bool isRelativeToSelf;
         d >> isRelativeToSelf;

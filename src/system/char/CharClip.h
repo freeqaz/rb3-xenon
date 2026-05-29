@@ -26,17 +26,17 @@ public:
     public:
         NodeVector *Next() const { return (NodeVector *)(this->nodes + size); }
 
-        ObjOwnerPtr<CharClip> clip; // 0x0
-        int size; // 0x14
-        CharGraphNode nodes[1]; // 0x18
+        CharClip *clip; // 0x0
+        int size; // 0x4
+        CharGraphNode nodes[1]; // 0x8
     };
-    class Transitions : public ObjRefOwner {
+    class Transitions {
     public:
         Transitions(Hmx::Object *owner)
             : mNodeStart(nullptr), mNodeEnd(nullptr), mOwner(owner) {}
-        virtual ~Transitions() { Clear(); }
-        virtual Hmx::Object *RefOwner() const { return mOwner; }
-        virtual bool Replace(ObjRef *, Hmx::Object *);
+        ~Transitions() { Clear(); }
+        Hmx::Object *RefOwner() const { return mOwner; }
+        bool Replace(ObjRef *, Hmx::Object *);
 
         void Clear();
         int Size() const;
@@ -51,9 +51,9 @@ public:
         void AddNode(CharClip *, const CharGraphNode &);
 
     private:
-        NodeVector *mNodeStart; // 0x4
-        NodeVector *mNodeEnd; // 0x8
-        Hmx::Object *mOwner; // 0xc
+        NodeVector *mNodeStart; // 0x0
+        NodeVector *mNodeEnd; // 0x4
+        Hmx::Object *mOwner; // 0x8
     };
 
     class BeatEvent {
@@ -256,32 +256,32 @@ protected:
     DataNode OnGroups(DataArray *);
     DataNode OnHasGroup(DataArray *);
 
-    Transitions mTransitions; // 0x2c
+    Transitions mTransitions; // 0x28
     /** "Frames per second" */
-    float mFramesPerSec; // 0x3c
-    Keys<float, float> mBeatTrack; // 0x40
+    float mFramesPerSec; // 0x34
+    Keys<float, float> mBeatTrack; // 0x38
     /** "Search flags, app specific" */
-    int mFlags; // 0x4c
-    int mPlayFlags; // 0x50
+    int mFlags; // 0x44
+    int mPlayFlags; // 0x48
     /** "Range in frames to randomly offset by when playing" */
-    float mRange; // 0x54
+    float mRange; // 0x4c
     /** "Make the clip all relative to this other clip's first frame" */
-    ObjPtr<CharClip> mRelative; // 0x58
+    CharClip *mRelative; // 0x50
     /** "Events that get triggered during clip playback,
         exports {clip_event <event> <clip>} to the character owner,
         you get enter and exit events for free" */
-    std::vector<BeatEvent> mBeatEvents; // 0x6c
+    std::vector<BeatEvent> mBeatEvents; // 0x54
     /** "Indicates transition graph needs updating" */
-    bool mDirty; // 0x78
-    int mOldVer; // 0x7c
+    bool mDirty; // 0x60
+    int mOldVer; // 0x64
     /** "Check this to prevent any compression from happening on this clip" */
-    bool mDoNotCompress; // 0x80
+    bool mDoNotCompress; // 0x68
     /** "An animatable, like a PropAnim, you'd like play in sync with this clip" */
-    ObjPtr<RndAnimatable> mSyncAnim; // 0x84
-    CharBonesSamples mFull; // 0x98
-    CharBonesSamples mOne; // 0x104
-    FacingSet mFacing; // 0x170
-    std::vector<CharBones::Bone> mZeros; // 0x180
-    std::vector<std::map<int, float> > mBlendSamples; // 0x18c
-    int unk198; // 0x198
+    ObjPtr<RndAnimatable> mSyncAnim; // 0x6c
+    CharBonesSamples mFull; // 0x80
+    CharBonesSamples mOne; // 0xec
+    FacingSet mFacing; // 0x158
+    std::vector<CharBones::Bone> mZeros; // 0x168
+    std::vector<std::map<int, float> > mBlendSamples; // 0x174
+    int unk198; // 0x180
 };
