@@ -230,7 +230,10 @@ public:
     u8 *Pixels() const { return mPixels; }
     u8 *Buffer() const { return mBuffer; }
     RndBitmap *nextMip() const { return mMip; }
-    bool HasName() const { return mName.mCRC; }
+    // RB3 retail RndBitmap has no stored mName member (0x1c layout). The CRC name
+    // is only handled transiently during serialization; HasName is conservatively
+    // false here. (Not in a matched split; correctness-neutral for the diff.)
+    bool HasName() const { return false; }
 
 private:
     bool SamePixelFormat(const RndBitmap &) const;
@@ -289,26 +292,32 @@ private:
         unsigned char *buffer
     ) const;
 
-    Hmx::CRC mName; // 0x0
+    // Retail X360 RndBitmap layout = 0x1c bytes (verified via objdiff on
+    // RndCubeTex::Copy: mBitmap[] array stride is 0x1c, and Set/LoadBitmap read
+    // mWidth@0x0, mHeight@0x2, mBpp@0x6, mOrder@0x8). DC3's RndBitmap carries a
+    // 4-byte Hmx::CRC mName at 0x0 (0x20 total) — a genuine RB3-vs-DC3 binary
+    // divergence: RB3 retail has NO stored mName member, so every field sits 4
+    // bytes earlier. The serialized name CRC (Load/Save) is handled via a local,
+    // not a member (those funcs aren't in a matched split).
     /** The bitmap's width in pixels. */
-    u16 mWidth; // 0x4
+    u16 mWidth; // 0x0
     /** The bitmap's height in pixels. */
-    u16 mHeight; // 0x6
+    u16 mHeight; // 0x2
     /** The number of bytes in memory that make up one row of the image. */
-    u16 mRowBytes; // 0x8
+    u16 mRowBytes; // 0x4
     /** The number of bits per pixel, aka color depth. */
-    u8 mBpp; // 0xa
+    u8 mBpp; // 0x6
     /** The ordering of the color bytes in this bitmap (e.g. RGBA, BGRA) - determined with
      * masking */
-    unsigned int mOrder; // 0xc
+    unsigned int mOrder; // 0x8
     /** The pixels that makes up this image. */
-    u8 *mPixels; // 0x10
+    u8 *mPixels; // 0xc
     /** The colors of this image's color palette. */
-    u8 *mPalette; // 0x14
+    u8 *mPalette; // 0x10
     /** The contiguous series of bytes that make up the bitmap's palette and pixels */
-    u8 *mBuffer; // 0x18
+    u8 *mBuffer; // 0x14
     /** The next mip after this one, used to create a mipmap. */
-    RndBitmap *mMip; // 0x1c
+    RndBitmap *mMip; // 0x18
 };
 
 inline BinStream &operator>>(BinStream &bs, RndBitmap &bm) {

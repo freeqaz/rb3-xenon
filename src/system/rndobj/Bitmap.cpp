@@ -34,15 +34,19 @@ unsigned char RndBitmap::PixelIndex(int i1, int i2) const {
     return ret;
 }
 
-void RndBitmap::SetName(const Hmx::CRC &crc) { mName = crc; }
+// RB3 retail RndBitmap has no stored mName member (0x1c layout). SetName is a
+// no-op in this build; the name CRC only exists transiently during serialization.
+void RndBitmap::SetName(const Hmx::CRC &crc) {}
 
 BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
     u8 rev, h;
     u8 pad[32];
     bs.Tell();
     bs >> rev;
-    if (rev > 1)
-        bs.ReadEndian(&mName.mCRC, 4);
+    if (rev > 1) {
+        Hmx::CRC name; // retail: name CRC read into a local, not a stored member
+        bs.ReadEndian(&name.mCRC, 4);
+    }
     bs >> mBpp;
     if (rev > 0)
         bs >> mOrder;
@@ -66,7 +70,8 @@ BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
 
 BinStream &RndBitmap::SaveHeader(BinStream &bs) const {
     static u8 pad[0xf];
-    bs << BITMAP_REV << mName << mBpp << (unsigned int)mOrder << (unsigned char)NumMips()
+    Hmx::CRC name; // retail: no stored mName member; serialize an empty CRC
+    bs << BITMAP_REV << name << mBpp << (unsigned int)mOrder << (unsigned char)NumMips()
        << mWidth << mHeight;
     bs << mRowBytes;
     bs.Write(pad, 0xf);
@@ -109,7 +114,7 @@ BinStream &operator<<(BinStream &bs, const tagBITMAPINFOHEADER &bmih) {
 }
 
 void RndBitmap::Reset() {
-    mName.Reset();
+    // retail: no stored mName member to reset
     mRowBytes = 0;
     mHeight = 0;
     mWidth = 0;
