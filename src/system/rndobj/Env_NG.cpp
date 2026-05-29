@@ -79,12 +79,12 @@ namespace {
                 rangeScale = -(range * invRange);
             }
             Vector4 pos(posX, posY, posZ, invRange);
-            TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x3e), pos);
-            TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x3e), pos);
+            TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x40), pos);
+            TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x40), pos);
             Vector4 colorVec(color.red, color.green, color.blue, rangeScale);
-            TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x42), colorVec);
+            TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x43), colorVec);
             Vector4 colorVec2(color.red, color.green, color.blue, rangeScale);
-            TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x42), colorVec2);
+            TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x43), colorVec2);
             if (light.GetCubeTexture() != nullptr && lightIdx == 0) {
                 TheShaderMgr.SetPConstant((PShaderConstant)0xd, light.GetCubeTexture());
                 TheRenderState.SetTextureClamp(0xd, (RndRenderState::ClampMode)1);
@@ -115,13 +115,13 @@ namespace {
         float dirY = -xfm.m.y.y;
         float dirZ = -xfm.m.y.z;
         Vector4 dir(dirX, dirY, dirZ, 0.0f);
-        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x3e), dir);
+        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x40), dir);
         Vector4 dir2(dirX, dirY, dirZ, 0.0f);
-        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x3e), dir2);
+        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x40), dir2);
         Vector4 colorVec(color.red, color.green, color.blue, 1.0f);
-        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x42), colorVec);
+        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x43), colorVec);
         Vector4 colorVec2(color.red, color.green, color.blue, 1.0f);
-        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x42), colorVec2);
+        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x43), colorVec2);
         Transform proj = light.Projection();
         TheShaderMgr.SetPConstant4x3(
             (PShaderConstant)(projIdx * 3 + 0x5f), Hmx::Matrix4(proj)
@@ -150,12 +150,12 @@ namespace {
     void ClearLightRegisters(int lightIdx) {
         static Vector4 sDefaultLight(0, 0, 0, 1);
         static Vector4 sZeroVec(0, 0, 0, 0);
-        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x3e), sZeroVec);
-        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x3e), sZeroVec);
+        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x40), sZeroVec);
+        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x40), sZeroVec);
         Vector4 v(sDefaultLight.x, sDefaultLight.y, sDefaultLight.z, sDefaultLight.w);
-        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x42), v);
+        TheShaderMgr.SetVConstant((VShaderConstant)(lightIdx + 0x43), v);
         Vector4 v2(sDefaultLight.x, sDefaultLight.y, sDefaultLight.z, sDefaultLight.w);
-        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x42), v2);
+        TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x43), v2);
     }
 }
 
