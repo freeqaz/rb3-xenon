@@ -23,6 +23,7 @@ public:
     virtual void Poll();
     virtual void Enter();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
+    virtual void SetName(const char *, ObjectDir *);
 
     OBJ_MEM_OVERLOAD(0x1A)
     NEW_OBJ(CharIKFoot)
@@ -33,13 +34,16 @@ public:
 protected:
     CharIKFoot();
 
-    void DoFSM(Character *, Transform &);
+    void DoFSM(Transform &);
 
-    ObjPtr<RndTransformable> mFootBone; // 0xb0
-    int mFootFsmState; // 0xc4
-    ObjPtr<RndTransformable> mData; // 0xc8
-    int mDataIndex; // 0xdc
-    Vector3 mFootPosition; // 0xe0
-    float mFootBlendTime; // 0xf0
-    Transform mFootTransform; // 0xf4
+    ObjPtr<RndTransformable> mFootBone;
+    int mFootFsmState;
+    ObjPtr<RndTransformable> mData;
+    int mDataIndex;
+    Vector3 mFootPosition;
+    float mFootBlendTime;
+    // RB3 has an ObjPtr<Character> here (set in SetName, used by DoFSM), NOT
+    // DC3's Transform mFootTransform. DC3 is newer and diverged; rb3-Wii's
+    // retail scratch (decomp.me/scratch/G9HMd) confirms the mMe member.
+    ObjPtr<Character> mMe;
 };
