@@ -371,10 +371,19 @@ protected:
     std::vector<InlinedDir> mInlinedDirs; // 0x70
     std::vector<Viewport> mViewports; // 0x7c
     ViewportId mCurViewportID; // 0x88
-    Hmx::Object *unk8c; // 0x8c
-    Hmx::Object *mCurCam; // 0x90
-    int mAlwaysInlined; // 0x94 / -0xC
-    const char *mAlwaysInlineHash; // 0x98
+#ifdef HX_NATIVE
+    // DC3 has a secondary object pointer (unk8c) between mCurViewportID and
+    // mCurCam, set from FindObject during load (Dir.cpp 1203/1437). The RB3
+    // retail binary does NOT have this field — verified by ObjectDir layout:
+    // with String/FilePath at 0xc, RB3's ObjectDir-own region ends at 0xa0
+    // (CharBoneDir::mRecenter@0xa0, mMoveContext@0xcc), whereas including unk8c
+    // pushes it to 0xa4. A genuine RB3-vs-DC3 version difference. Native build
+    // keeps it because Dir.cpp (HX_NATIVE-only compile) references it.
+    Hmx::Object *unk8c; // 0x8c (DC3/native only)
+#endif
+    Hmx::Object *mCurCam; // 0x8c (X360) / 0x90 (native)
+    int mAlwaysInlined; // 0x90 (X360) / 0x94 (native)
+    const char *mAlwaysInlineHash; // 0x94 (X360) / 0x98 (native)
 
     ObjectDir();
     static ObjectDir *sMainDir;
