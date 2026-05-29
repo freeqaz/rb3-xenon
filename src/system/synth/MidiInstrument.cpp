@@ -40,7 +40,7 @@ NoteVoiceInst::~NoteVoiceInst() { RELEASE(mSample); }
 void NoteVoiceInst::Start() {
     mStarted = true;
     mSample->SetStartProgress(mStartProgress);
-    mSample->Play(mOwner->Faders().GetVolume() + mVolume);
+    mSample->Play(mOwner->Faders().GetVal() + mVolume);
 }
 
 void NoteVoiceInst::Stop() {
@@ -57,13 +57,13 @@ void NoteVoiceInst::SetTranspose(float transpose) {
 
 void NoteVoiceInst::UpdateVolume() {
     if (mSample && mOwner) {
-        mSample->SetVolume(mOwner->Faders().GetVolume() + mVolume);
+        mSample->SetVolume(mOwner->Faders().GetVal() + mVolume);
     }
 }
 
 void NoteVoiceInst::UpdatePan() {
     if (mSample && mOwner) {
-        mSample->SetPan(mOwner->Faders().GetPan());
+        mSample->SetPan(0.0f);
     }
 }
 
@@ -153,7 +153,6 @@ BEGIN_SAVES(MidiInstrument)
     bs << mMultiSampleMap;
     bs << mSend;
     bs << mPatchNumber;
-    mFaders.Save(bs);
     bs << mReverbMixDb;
     bs << mReverbEnable;
 END_SAVES

@@ -2147,3 +2147,187 @@ EQEffect.cpp:
 MoveGraph.cpp:
 	.pdata      start:0x821F5840 end:0x821F5848
 	.text       start:0x8231B9A8 end:0x8231BA48
+
+MidiInstrument.cpp:
+	.pdata      start:0x821EEC60 end:0x821EEF10
+	.text       start:0x822B0C60 end:0x822B3D28
+
+CharCollide.cpp:
+	.pdata      start:0x821EF268 end:0x821EF2C0
+	.text       start:0x822B76F8 end:0x822B7D54
+
+CameraTilt.cpp:
+	.pdata      start:0x821F4BC8 end:0x821F4BD0
+	.text       start:0x8230F100 end:0x8230F158
+
+CharBoneOffset.cpp:
+	.pdata      start:0x821FC728 end:0x821FC790
+	.text       start:0x82391328 end:0x82391A28
+
+CharWeightable.cpp:
+	.pdata      start:0x821FCEE8 end:0x821FCF38
+	.text       start:0x8239C350 end:0x8239C8C8
+
+FlowValueCase.cpp:
+	.pdata      start:0x821FD7D0 end:0x821FD890
+	.text       start:0x823A71D8 end:0x823A7EAC
+
+CharIKFoot.cpp:
+	.pdata      start:0x821FDC38 end:0x821FDCC8
+	.text       start:0x823ACF28 end:0x823AD664
+
+FlowDistance.cpp:
+	.pdata      start:0x821FDEC8 end:0x821FDED0
+	.text       start:0x823AF410 end:0x823AF454
+
+CharBone.cpp:
+	.pdata      start:0x821FF198 end:0x821FF388
+	.text       start:0x823C3FF0 end:0x823C5E44
+
+FlowSlider.cpp:
+	.pdata      start:0x82200710 end:0x82200718
+	.text       start:0x823D8818 end:0x823D8890
+
+HiResScreen.cpp:
+	.pdata      start:0x82201458 end:0x82201468
+	.text       start:0x823E4548 end:0x823E4644
+
+TexRenderer.cpp:
+	.pdata      start:0x822054D0 end:0x82205590
+	.text       start:0x82430E18 end:0x82431948
+
+Group.cpp:
+	.pdata      start:0x82205FA8 end:0x82206188
+	.text       start:0x8243F5D0 end:0x8244169C
+
+CharNeckTwist.cpp:
+	.pdata      start:0x822069A8 end:0x822069E8
+	.text       start:0x8244CE30 end:0x8244D184
+
+MatAnim.cpp:
+	.pdata      start:0x82206B28 end:0x82206D10
+	.text       start:0x8244E768 end:0x82450950
+
+FilterVersion.cpp:
+	.pdata      start:0x82207BB0 end:0x82207BB8
+	.text       start:0x82462300 end:0x82462340
+
+Ribbon.cpp:
+	.pdata      start:0x82208558 end:0x822085A0
+	.text       start:0x8246F4F8 end:0x8246F960
+
+Set.cpp:
+	.pdata      start:0x822085A0 end:0x822085A8
+	.text       start:0x8246F960 end:0x8246F9F0
+
+FlowNode.cpp:
+	.pdata      start:0x822086F8 end:0x82208808
+	.text       start:0x824710A8 end:0x82472160
+
+FlowQueueable.cpp:
+	.pdata      start:0x82208AB0 end:0x82208AF0
+	.text       start:0x82474BA8 end:0x82474E9C
+
+DancerSequence.cpp:
+	.pdata      start:0x822096A0 end:0x82209728
+	.text       start:0x824840E8 end:0x82484954
+
+Shockwave.cpp:
+	.pdata      start:0x8220C6A0 end:0x8220C728
+	.text       start:0x824BD0C8 end:0x824BD6E8
+
+FlowSound.cpp:
+	.pdata      start:0x8220E2C0 end:0x8220E388
+	.text       start:0x824E4AF0 end:0x824E542C
+
+PlatformMgr.cpp:
+	.pdata      start:0x82210248 end:0x822102D0
+	.text       start:0x82501880 end:0x82501E5C
+
+FlowCommand.cpp:
+	.pdata      start:0x82210C80 end:0x82210CB0
+	.text       start:0x8250B558 end:0x8250B768
+
+VirtualKeyboard.cpp:
+	.pdata      start:0x822113F0 end:0x82211430
+	.text       start:0x825145B0 end:0x82514870
+
+JoypadMsgs.cpp:
+	.pdata      start:0x82211FF8 end:0x822120C8
+	.text       start:0x8251EFF8 end:0x8251F828
+
+Pose.cpp:
+	.pdata      start:0x8221C2D8 end:0x8221C2E0
+	.text       start:0x825B67B0 end:0x825B6804
+
+PhysicsVolume.cpp:
+	.pdata      start:0x8221F108 end:0x8221F1D8
+	.text       start:0x825E16D8 end:0x825E25CC
+
+ColorPalette.cpp:
+	.pdata      start:0x8222A4A8 end:0x8222A4E0
+	.text       start:0x8268C4A8 end:0x8268C844
+
+BaseSkeleton.cpp:
+	.pdata      start:0x8222AB40 end:0x8222AB90
+	.text       start:0x82693C20 end:0x826940A0
+
+Stream.cpp:
+	.pdata      start:0x822300C0 end:0x822300D8
+	.text       start:0x826F41C0 end:0x826F42A4
+
+DirUnloader.cpp:
+	.pdata      start:0x822320C0 end:0x822320E8
+	.text       start:0x82717A40 end:0x82717C24
+
+StoreOffer.cpp:
+	.pdata      start:0x822379F8 end:0x82237A90
+	.text       start:0x82781500 end:0x82781BB8
+
+MoviePanel.cpp:
+	.pdata      start:0x82238490 end:0x82238588
+	.text       start:0x8278AD10 end:0x8278BE6C
+
+StorePanel.cpp:
+	.pdata      start:0x82238A30 end:0x82238AF8
+	.text       start:0x8278FE70 end:0x82790C24
+
+ConnectionStatusPanel.cpp:
+	.pdata      start:0x82238F98 end:0x82238FC0
+	.text       start:0x82795448 end:0x82795630
+
+FilePath.cpp:
+	.pdata      start:0x82239340 end:0x82239348
+	.text       start:0x82799A00 end:0x82799A60
+
+UTF8.cpp:
+	.pdata      start:0x8223A060 end:0x8223A0D8
+	.text       start:0x827A7448 end:0x827A7DAC
+
+Chunks.cpp:
+	.pdata      start:0x8223AB98 end:0x8223ABF0
+	.text       start:0x827B35E8 end:0x827B3C38
+
+DisplayEvents.cpp:
+	.pdata      start:0x8223C1B0 end:0x8223C1B8
+	.text       start:0x827CA570 end:0x827CA8D0
+
+UITransitionHandler.cpp:
+	.pdata      start:0x8223D298 end:0x8223D308
+	.text       start:0x827DC4E0 end:0x827DCA48
+
+UISlider.cpp:
+	.pdata      start:0x8223DA60 end:0x8223DB08
+	.text       start:0x827E4368 end:0x827E4F7C
+
+UIListLabel.cpp:
+	.pdata      start:0x8223F000 end:0x8223F0A0
+	.text       start:0x827FA338 end:0x827FACC4
+
+DOFProc_NG.cpp:
+	.pdata      start:0x82253EE8 end:0x82253F40
+	.text       start:0x82B5D040 end:0x82B5D764
+
+MultiTempoTempoMap.cpp:
+	.pdata      start:0x82255950 end:0x822559C0
+	.text       start:0x82B871F0 end:0x82B87A60
