@@ -917,7 +917,6 @@ BEGIN_HANDLERS(CamShot)
     HANDLE(set_all_to_3D, OnSetAllCrowdChars3D)
     HANDLE(radio, OnRadio)
     HANDLE_SUPERCLASS(RndAnimatable)
-    HANDLE_SUPERCLASS(RndTransformable)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
@@ -969,7 +968,6 @@ BEGIN_PROPSYNCS(CamShot)
     SYNC_PROP_SET(disabled, mDisabled, )
     SYNC_PROP(anims, mAnims)
     SYNC_SUPERCLASS(RndAnimatable)
-    SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
@@ -977,7 +975,6 @@ BEGIN_SAVES(CamShot)
     SAVE_REVS(0x34, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
-    SAVE_SUPERCLASS(RndTransformable)
     bs << mKeyframes;
     bs << mLooping;
     bs << mLoopKeyframe;
@@ -990,7 +987,9 @@ BEGIN_SAVES(CamShot)
     bs << mCategory;
     bs << mPlatform;
     bs << mHideList;
+#ifdef HX_NATIVE
     MILO_ASSERT(mGenHideVector.empty(), 0x3CE);
+#endif
     if (bs.Cached()) {
         FOREACH (it, mHideList) {
             mGenHideList.remove(*it);
@@ -1014,7 +1013,6 @@ END_SAVES
 BEGIN_COPYS(CamShot)
     COPY_SUPERCLASS(Hmx::Object)
     COPY_SUPERCLASS(RndAnimatable)
-    COPY_SUPERCLASS(RndTransformable)
     CREATE_COPY(CamShot)
     BEGIN_COPYING_MEMBERS
         mKeyframes.clear();
@@ -1036,7 +1034,9 @@ BEGIN_COPYS(CamShot)
         COPY_MEMBER(mCategory)
         COPY_MEMBER(mHideList)
         COPY_MEMBER(mGenHideList)
+#ifdef HX_NATIVE
         COPY_MEMBER(mGenHideVector)
+#endif
         COPY_MEMBER(mShowList)
         COPY_MEMBER(mLooping)
         COPY_MEMBER(mLoopKeyframe)
@@ -1082,9 +1082,10 @@ BEGIN_LOADS(CamShot)
         Hmx::Object::Load(bs);
         RndAnimatable::Load(bs);
     }
-    if (d.rev > 0x32) {
-        RndTransformable::Load(bs);
-    }
+    // NB(rb3-xenon): retail CamShot does NOT inherit RndTransformable, so the
+    // serialized RndTransformable block is absent — rev > 0x32 still holds in
+    // the file format but loads nothing for it here. (rb3-Wii equivalent in
+    // ../rb3/src/system/world/CameraShot.cpp also has no RndTransformable::Load.)
     if (d.rev > 0xC) {
         d >> mKeyframes;
         d >> mLooping;
@@ -1228,7 +1229,9 @@ BEGIN_LOADS(CamShot)
     if (d.rev >= 8 && d.rev < 42)
         d >> crowdModifyStamp;
     if (d.rev > 5) {
+#ifdef HX_NATIVE
         mGenHideVector.clear();
+#endif
         mGenHideList.clear();
         mHideList.clear();
         if (d.rev <= 0x2F || (bs.Cached() && d.rev < 0x32)) {
@@ -1782,6 +1785,7 @@ void CamShot::DoHide() {
                 CAMERA_LOG("   ** %s hide from mEndShowList\n", cur->Name());
             }
         }
+#ifdef HX_NATIVE
         FOREACH (it, mGenHideVector) {
             RndDrawable *cur = *it;
             if (cur->Showing()) {
@@ -1790,6 +1794,7 @@ void CamShot::DoHide() {
                 mEndShowList.push_back(cur);
             }
         }
+#endif
         FOREACH (it, mShowList) {
             RndDrawable *cur = *it;
             if (!cur->Showing()) {
