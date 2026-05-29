@@ -137,7 +137,11 @@ inline BinStream &operator<<(BinStream &bs, const CamShotCrowd &f) {
 class AutoPrepTarget;
 
 /** "A camera shot. This is an animated camera path with keyframed settings." */
-class CamShot : public RndAnimatable, public RndTransformable {
+// NB(rb3-xenon): retail CamShot is single-inheritance RndAnimatable only
+// (per rb3-Wii's CameraShot.h and Ghidra of BandCamShot::GetTotalDuration
+// reading mDuration at this+0x190). DC3 derives from RndAnimatable +
+// RndTransformable; retail does not.
+class CamShot : public RndAnimatable {
 public:
     friend class AutoPrepTarget;
     friend class CamShotFrame;
@@ -236,9 +240,11 @@ protected:
     float mClampHeight; // 0xf8
     /** "Category for shot-picking" */
     Symbol mCategory; // 0xfc
-    int mShotStartedPending; // 0x100
+    // NB(rb3-xenon): DC3-only mShotStartedPending dropped — retail RB3 lacks
+    // this field (rb3-Wii CameraShot has no equivalent; the +0x10 mDuration
+    // skew vs target collapses when this + mGenHideVector are removed).
     /** "animatables to be driven with the same frame" */
-    ObjPtrList<RndAnimatable> mAnims; // 0x104
+    ObjPtrList<RndAnimatable> mAnims;
     /** "Optional camera path to use" */
     ObjPtr<RndTransAnim> mPath; // 0x118
     float mPathFrame; // 0x12c
@@ -253,9 +259,14 @@ protected:
     /** "Automatically generated list of objects to hide while this camera shot is active,
         shows them when done.  Not editable" */
     ObjPtrList<RndDrawable> mGenHideList; // 0x15c
-    std::vector<RndDrawable *> mGenHideVector; // 0x170
+#ifdef HX_NATIVE
+    // NB(rb3-xenon): DC3-only std::vector mirror used by HamCamShot in the
+    // native build. Retail RB3 has no HamCamShot, so this field is absent in
+    // the matching layout — guarded out to keep CamShot size correct.
+    std::vector<RndDrawable *> mGenHideVector;
+#endif
     /** "List of objects to draw in order instead of whole world" */
-    ObjPtrList<RndDrawable> mDrawOverrides; // 0x17c
+    ObjPtrList<RndDrawable> mDrawOverrides;
     /** "List of objects to draw after post-processing" */
     ObjPtrList<RndDrawable> mPostProcOverrides; // 0x190
     ObjPtr<RndDir> mParentDir; // 0x1a4
