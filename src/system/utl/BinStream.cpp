@@ -180,11 +180,6 @@ void BinStream::Read(void *data, int bytes) {
     }
 }
 
-int BinStream::ReadAsync(void *v, int i) {
-    Read(v, i);
-    return Fail() ? 0 : i;
-}
-
 void BinStream::ReadEndian(void *out, int size) {
     Read(out, size);
 #ifdef HX_NATIVE
