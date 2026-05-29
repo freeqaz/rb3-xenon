@@ -222,14 +222,18 @@ void NgEnviron::Select(const Vector3 *pos) {
     if (mode == 4 || mode == 2 || mode == 6 || mode == 3) {
         RndEnviron::Select(pos);
         NgMat::SetCurrent(0);
+#ifdef HX_NATIVE
         TheNgStats->mLightsReal += mNumLightsReal;
         TheNgStats->mLightsApprox += mNumLightsApprox;
+#endif
         return;
     }
 
     ReclassifyLights();
     RndEnviron::Select(pos);
     NgMat::SetCurrent(0);
+#ifdef HX_NATIVE
     TheNgStats->mLightsApprox += mNumLightsApprox;
     TheNgStats->mLightsReal += mNumLightsReal;
+#endif
 }

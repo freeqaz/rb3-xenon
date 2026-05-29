@@ -828,7 +828,9 @@ void DxRnd::DoPointTests() {
     // Process each point test
     int idx = 0;
     for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it, ++idx) {
+#ifdef HX_NATIVE
         TheNgStats->mFlares++;
+#endif
 
         RndFlare *flare = it->mFlare;
         RndPointTest &test = mPointTestQueries[idx];
