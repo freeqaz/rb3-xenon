@@ -139,7 +139,7 @@ your code uses `&*`, fix it.
 This pattern is automated by the `iter_address_of` permuter pattern:
 
 ```bash
-python -m scripts.permuter --patterns iter_address_of \
+python -m decomp_synth --patterns iter_address_of \
     --symbol "<mangled>" --source <path> --function "<Class::Method>"
 ```
 

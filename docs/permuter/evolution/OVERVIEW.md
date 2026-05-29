@@ -34,7 +34,7 @@ Every pattern currently has its own recursive AST walker, its own byte-splicing 
 The test suite is the safety net for every change. Each phase adds its own tests and must pass all existing ones:
 
 ```bash
-python -m pytest scripts/permuter/tests/ -v
+python -m pytest decomp_synth/tests/ -v
 ```
 
 ## See Also

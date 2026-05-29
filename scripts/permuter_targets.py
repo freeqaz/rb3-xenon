@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """permuter_targets.py — rank the permuter's work queue from report.json.
 
-The source permuter (scripts/permuter, wired via the `permute` skill) mechanizes
+The source permuter (the `decomp_synth` package, wired via the `permute` skill) mechanizes
 the FP/GPR register-swap, local-declaration-order, and statement-reassociation
 fixes that hand-editing cannot reliably do. Its sweet spot is functions that
 already match 80–99.99% (a small codegen residue), in TUs that compile + are
@@ -139,10 +139,10 @@ def main():
         fh.write(f"Permuter work queue from {os.path.relpath(args.report, REPO)}\n")
         fh.write(f"  {len(cands)} fns at {args.min_pct:.0f}-99.99%  "
                  f"({len(real)} real / {len(icf)} likely-ICF)\n")
-        fh.write("  invoke: venv/bin/python -m scripts.permuter_rb3xenon "
-                 "-m scripts.permuter.scan_and_permute --symbol '<name>'\n")
-        fh.write("  (re-check scripts/permuter* + .claude/skills/permute/SKILL.md "
-                 "for the current invocation — proper-port may have changed it)\n\n")
+        fh.write("  invoke: venv/bin/python -m decomp_synth.scan_and_permute "
+                 "--symbol '<name>'\n")
+        fh.write("  (re-check .claude/skills/permute/SKILL.md "
+                 "for the current invocation)\n\n")
         fh.write(f"{'score':>6} {'pct':>7} {'size':>6}  unit / symbol\n")
         fh.write("-" * 78 + "\n")
         for c in real:

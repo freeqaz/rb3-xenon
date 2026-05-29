@@ -1,0 +1,11 @@
+{
+  "name": "rb3-xenon",
+  "compiler": "msvc",
+  "build_id": "45410914",
+  "obj_extension": ".obj",
+  "output_flag": "/Fo",
+  "uses_cd_prefix": false,
+  "obj_layout": "objdiff_map",
+  "objdiff_cli": "bin/objdiff-cli",
+  "m2c_target": "ppc"
+}

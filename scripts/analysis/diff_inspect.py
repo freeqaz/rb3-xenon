@@ -971,7 +971,7 @@ def cmd_attributed(instrs, symbol, project_dir=None):
     if repo_root not in sys.path:
         sys.path.insert(0, repo_root)
 
-    from scripts.permuter.attribution import (
+    from decomp_synth.attribution import (
         attribute_function,
     )
 
@@ -1011,10 +1011,10 @@ def cmd_attributed(instrs, symbol, project_dir=None):
         parts = symbol.split("@")
         if len(parts) >= 2:
             short_name = parts[0].lstrip("?")
-            from scripts.permuter.attribution import parse_asm_listing
+            from decomp_synth.attribution import parse_asm_listing
             listing = parse_asm_listing(listing_text, short_name)
             if listing:
-                from scripts.permuter.attribution import attribute_mismatches, aggregate_regions
+                from decomp_synth.attribution import attribute_mismatches, aggregate_regions
                 attributed = attribute_mismatches(listing, diff_instrs)
                 regions = aggregate_regions(attributed, listing)
 

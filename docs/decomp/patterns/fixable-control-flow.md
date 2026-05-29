@@ -708,7 +708,7 @@ Verify the residual diff is actually at the helper-call boundary first.
 This pattern is automated by the `helper_inline` permuter pattern:
 
 ```bash
-python -m scripts.permuter --patterns helper_inline \
+python -m decomp_synth --patterns helper_inline \
     --symbol "<mangled>" --source <path> --function "<Class::Method>"
 ```
 

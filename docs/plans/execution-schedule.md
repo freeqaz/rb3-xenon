@@ -22,11 +22,10 @@ recomputed from the live artifacts this session (citations inline).
 
 ## What changed since path-to-100 was written (the re-planning inputs)
 
-1. **Permuter is wired.** `scripts/permuter` → symlink to
-   `/home/free/code/milohax/dc3-decomp/scripts/permuter` exists and is populated
-   (`ast_queries.py`, `beam_search.py`, … verified present). This *removes* the
-   hard blocker in `feedback_fuzzy_gap_needs_permuter.md` that made path-to-100 P3
-   "over-optimistic." The `permute` skill should now function.
+1. **Permuter is wired.** The permuter is the installed **`decomp_synth`** package
+   (consumed via rb3-xenon's `venv`; `ast_queries`, `beam_search`, … importable).
+   This *removes* the hard blocker in `feedback_fuzzy_gap_needs_permuter.md` that
+   made path-to-100 P3 "over-optimistic." The `permute` skill should now function.
 2. **jeff asm mis-nest fix in flight** (isolated worktree — 3 locked agent worktrees
    exist: `git worktree list`). Quantified blast radius **this session**: **438
    mis-nests across 100 named (non-auto) units** (scan below). Top: BandDirector 25,
@@ -52,7 +51,7 @@ recomputed from the live artifacts this session (citations inline).
                           └─────────────────────────────────────────────┘
 
   [A] jeff mis-nest fix          [B] unified oracle ranker      [C] permuter smoke-test
-  (isolated jeff worktree,        (tools/pin_candidates.py;       (verify scripts/permuter
+  (isolated jeff worktree,        (tools/pin_candidates.py;       (verify decomp_synth
    Rust edit, no main-tree         pure read-only data;            runs end-to-end on ONE
    write)                          no build)                       known near-miss fn)
         │                               │                               │
@@ -437,7 +436,7 @@ Ham→Band substitution), `project_jeff_fork.md`, `project_ninja_lock_tooling.md
 (triangulate/rtti/vtable/merge_bindiff/bindiff_clusters subcommands — all verified
 present), `unified_id{,_callgraph,_rtti,_vtable}.json`, `autoid.json`,
 `fingerprints.json`, `proposed_splits_bindiff.txt`, `config/45410914/symbols.txt`
-(snap oracle), `scripts/get_progress.py`, `scripts/permuter/` (symlink → dc3),
+(snap oracle), `scripts/get_progress.py`, the `decomp_synth` package (installed),
 `scripts/setup_worktree.sh`, `tools/ninja-locked`.
 
 **External:** `../dc3-decomp/src` (engine oracle), `../rb3/src` (band3/network
