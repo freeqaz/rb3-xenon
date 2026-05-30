@@ -113,12 +113,22 @@ ports). The "closes for free" premise is FALSE — it's a **3-step effort**
 ObjPtr/ObjDirPtr members). Another instance of `project-engine-baseclass-layout-wall`.
 
 ## Open leads (found in passing, not yet actioned)
-- **MeshAnim `mVertColorsKeys` element-type divergence**: our `MeshAnim.h` declares
-  it `Keys<std::vector<Hmx::Color>, ...>` (16-byte stride, `srawi 4`), but the RB3
-  target wants an **8-byte stride** (`srawi 3`). rb3-Wii uses `std::vector<Hmx::Color32>`
-  (4-byte). Neither 16 nor 4 maps to the target's 8 — needs its own investigation
-  (maybe a 2-element packed color, or a different Key payload). DC3-vs-Wii member-type
-  port divergence, NOT an MI base issue. (Found by the RndPollable/Rnd-MI agent.)
+- ~~**MeshAnim `mVertColorsKeys` element-type divergence**~~ **— RESOLVED INVALID
+  (2026-05-30 agent).** Our `Keys<std::vector<Hmx::Color>>` (16-byte, `srawi 4`) is
+  **already correct**; DC3's `MeshAnim.h` is byte-identical. The `srawi 3` (÷8) the
+  lead pointed at is the **VertTexs `Vector2`** path, NOT colors — proven via Ghidra:
+  the 16-byte colors `Print` loop (target `0x8245A370`) calls per-element printer
+  `0x824E22F8` reading **4 floats** (`Hmx::Color`); the 8-byte loop (`0x8245A2C0`)
+  calls `0x824DB360` reading **2 floats** (`Vector2`). rb3-Wii's `Color32` (4-byte)
+  is the **Wii GX platform outlier**, not the 360 target. Retyping to Color32 would
+  REGRESS (wrong ÷4 stride + member-offset shift). DO NOT pursue. The **real**
+  MeshAnim near-miss blockers (separate tasks): (1) **dynamic-init guard bit-clears**
+  on the `SetType@RndMeshAnim` once-flag (`fn_82457ED8/82458160/824580D0`: target
+  `clrrwi`/`rlwinm 0,N,M` vs our mask) → **guard/dynamic-init patcher** territory
+  (`scripts/`, dc3 `configure.py:301-357`), not source; (2) **RndMeshAnim/RndMesh
+  class-layout delta** — dtors `fn_82458138/82458180` show target frame `0x140` +
+  member `+0x88` vs our `0x80`/`+0x94` destructing a `_Vector_base<Vector3>` → a real
+  layout task, distinct from the color element type.
 - **DancerSequence** RB3-extra-member TU reconstruction (task #29 writeup): pin the
   full `DancerSequence.cpp` TU, derive ~9 scalar members from `Load fn_824847A8`
   (reads `this+0x1c..0x3c`), then the dtor cluster flips.
