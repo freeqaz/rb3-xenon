@@ -68,6 +68,10 @@ core.*
 /pin_candidates_review.json
 /pin_candidates.splits.append
 /pin_candidates.objects.append
+# game_splits.py generated PROVISIONAL game/network spans (regenerable; content is hand-merged into splits.txt/objects.json)
+/game_splits.json
+/game_splits.append
+/game_splits.objects.append
 # permuter_targets.py generated work queue (regenerable from report.json)
 /permuter_targets.json
 /permuter_targets.txt
@@ -83,6 +87,9 @@ core.*
 /struct_db.sqlite
 /cache.db
 /permuter_cache.db
+/permuter_cache.db-shm
+/permuter_cache.db-wal
+/permuter_cache.db-journal
 /.scan_cache.db
 /strategy.db
 
