@@ -150,6 +150,21 @@ files) is why it needs a dedicated session.
 
 ---
 
+## 4b. Confirmed downstream consumers (this migration unblocks them)
+Two dedicated wall agents (2026-05-30) proved their walls are NOT independent — they
+are bug-#1 consumers that close when this migration lands. New concrete sub-tasks for
+the payoff list:
+- **`DataNodeObjTrack` → drop `DataNode mNode`** (`obj/Object.h:686`): RB3's is a bare
+  poly vtable-first ObjPtr 0xc (`fn_8228C248` stores vtable@0/mObject@8); DC3 added
+  `mNode`. Restores 0xc → FlowIf cluster + flow-class family flip (vbase 0x90→0x30).
+- **`ObjDirPtr` 0x14 → 0xc** (`obj/Dir.h:54`): its `virtual ~ObjDirPtr/IsDirPtr/Replace`
+  + `mLoader` are declared UNCONDITIONALLY; retail is non-poly `{next,prev,mObject}`=0xc
+  (UISlider dtor `fn_827DABC0`: mResourceDir→mResourcePath 0xc apart). Make the virtuals
+  + mLoader HX_NATIVE-only. **This blocks the entire UIComponent/UI base reconstruction**
+  (`docs/plans/ui-base-layout-reconstruction.md`) — UIComponent is 0x148 not 0x140 until
+  ObjDirPtr is 0xc. ~20 ObjDirPtr users to revalidate. Per memory 4b, host `IsDirPtr`
+  virtual on Hmx::Object/ObjRefOwner, not the plain ring node.
+
 ## 5. Migration plan (phased)
 
 Each phase in its own `scripts/setup_worktree.sh` worktree, full
