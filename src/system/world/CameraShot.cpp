@@ -463,7 +463,12 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
         }
     }
 
+#ifdef HX_NATIVE
+    // NB(rb3-xenon): DC3 CamShot inherits RndTransformable and has a real
+    // WorldXfm(). Retail CamShot does not; the multiplication is absent in
+    // rb3-Wii's BuildTransform and guarded out here to keep X360 compiling.
     Multiply(tf, mCamShot->WorldXfm(), tf);
+#endif
 
     mCamShot->ApplyDynamicOffsetPreLookAt(tf, HasTargets());
     if (b3) {

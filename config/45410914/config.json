@@ -1,24 +1,33 @@
 {
-    "progress_categories": {
-        "game": "Game Code",
-        "engine": "Milo Engine Code",
-        "sdk": "XDK Code",
-        "network": "Quazal Network Code"
+  "progress_categories": {
+    "game": "Game Code",
+    "engine": "Milo Engine Code",
+    "sdk": "XDK Code",
+    "network": "Quazal Network Code"
+  },
+  "asflags": [],
+  "ldflags": [],
+  "cflags": {
+    "base": {
+      "flags": [
+        "/nologo",
+        "/wd4355",
+        "/wd4164",
+        "/c",
+        "/GR",
+        "/O1",
+        "/Oi",
+        "/EHsc"
+      ]
     },
-    "asflags": [],
-    "ldflags": [],
-    "cflags": {
-        "base": {
-            "flags": [
-                "/nologo",
-                "/wd4355",
-                "/wd4164",
-                "/c",
-                "/GR",
-                "/O1",
-                "/Oi",
-                "/EHsc"
-            ]
-        }
+    "curl": {
+      "base": "base",
+      "flags": [
+        "/TC",
+        "/GS",
+        "/D_XBOX360",
+        "/DCURL_STATICLIB"
+      ]
     }
+  }
 }
