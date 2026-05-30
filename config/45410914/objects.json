@@ -648,6 +648,13 @@
     "mw_version": "X360/16.00.11886.00",
     "cflags": "base",
     "objects": {
+      "band3/game/SongDB.cpp": "NonMatching",
+      "band3/game/Player.cpp": "NonMatching",
+      "band3/meta_band/NetSync.cpp": "NonMatching",
+      "band3/bandtrack/GemTrack.cpp": "NonMatching",
+      "band3/game/Singer.cpp": "NonMatching",
+      "band3/game/VocalPlayer.cpp": "NonMatching",
+      "band3/game/TrainerPanel.cpp": "NonMatching",
       "band3/bandtrack/VocalTrack.cpp": "NonMatching",
       "band3/game/GameMode.cpp": "NonMatching",
       "band3/meta_band/Accomplishment.cpp": "NonMatching",
@@ -703,6 +710,7 @@
     "mw_version": "X360/16.00.11886.00",
     "cflags": "base",
     "objects": {
+      "network/ObjDup/DuplicatedObject.cpp": "NonMatching",
       "network/Core/TimedSignal.cpp": "NonMatching",
       "network/Core/PeriodicJob.cpp": "NonMatching"
     }

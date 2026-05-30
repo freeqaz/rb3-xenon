@@ -2363,3 +2363,35 @@ UIEvent.cpp:
 ContextChecker.cpp:
 	.pdata      start:0x8222E150 end:0x8222E168
 	.text       start:0x826D1558 end:0x826D1E68
+
+band3/meta_band/NetSync.cpp:
+	.pdata      start:0x82218B30 end:0x82218D58
+	.text       start:0x82583DD8 end:0x82586338
+
+band3/game/Player.cpp:
+	.pdata      start:0x82229DC8 end:0x82229F88
+	.text       start:0x826843F0 end:0x82686C50
+
+band3/game/TrainerPanel.cpp:
+	.pdata      start:0x8222BE10 end:0x8222BE58
+	.text       start:0x826AA548 end:0x826AA9B0
+
+band3/game/VocalPlayer.cpp:
+	.pdata      start:0x8222D930 end:0x8222D9A8
+	.text       start:0x826C6328 end:0x826C6D08
+
+band3/game/Singer.cpp:
+	.pdata      start:0x8222E578 end:0x8222E5B0
+	.text       start:0x826D8D08 end:0x826D99DC
+
+band3/game/SongDB.cpp:
+	.pdata      start:0x82234F28 end:0x822351D8
+	.text       start:0x8274BB34 end:0x8274E870
+
+network/ObjDup/DuplicatedObject.cpp:
+	.pdata      start:0x82248010 end:0x822480A0
+	.text       start:0x82A46180 end:0x82A47228
+
+band3/bandtrack/GemTrack.cpp:
+	.pdata      start:0x82254318 end:0x822543F8
+	.text       start:0x82B61E30 end:0x82B63268
