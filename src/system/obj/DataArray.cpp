@@ -207,29 +207,9 @@ bool strncat_tofit(FixedString &str, const char *cc, int i) {
         return false;
 }
 
-DataNode &DataArray::Node(int i) const {
-    MILO_ASSERT_FMT(
-        i >= 0 && i < mSize,
-        "Array doesn't have node %d, only has %d (file %s, line %d)",
-        i,
-        mSize,
-        File(),
-        Line()
-    );
-    return mNodes[i];
-}
-
-DataNode &DataArray::Node(int i) {
-    MILO_ASSERT_FMT(
-        i >= 0 && i < mSize,
-        "Array doesn't have node %d, only has %d (file %s, line %d)",
-        i,
-        mSize,
-        File(),
-        Line()
-    );
-    return mNodes[i];
-}
+// DataArray::Node(int) is now defined inline in obj/Data.h so callers fold the
+// mNodes[i] access in-place (matching retail, where Node never appears as an
+// out-of-line call). The out-of-line definitions were removed from here.
 
 void DataArray::Print(TextStream &ts, DataType type, bool b, int i3) const {
     DataNode *end = &mNodes[mSize];
