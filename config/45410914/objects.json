@@ -648,6 +648,9 @@
     "mw_version": "X360/16.00.11886.00",
     "cflags": "base",
     "objects": {
+      "band3/game/NetGameMsgs.cpp": "NonMatching",
+      "band3/game/GamePanel.cpp": "NonMatching",
+      "band3/bandtrack/Lyric.cpp": "NonMatching",
       "band3/game/SongDB.cpp": "NonMatching",
       "band3/game/Player.cpp": "NonMatching",
       "band3/meta_band/NetSync.cpp": "NonMatching",
@@ -710,6 +713,9 @@
     "mw_version": "X360/16.00.11886.00",
     "cflags": "base",
     "objects": {
+      "network/Plugins/Checksum/MD5/MD5.cpp": "NonMatching",
+      "network/Plugins/SessionDiscovery/Interface/SessionDiscoveryTable.cpp": "NonMatching",
+      "network/Plugins/Checksum/Interface/KeyedChecksumAlgorithm.cpp": "NonMatching",
       "network/ObjDup/DuplicatedObject.cpp": "NonMatching",
       "network/Core/TimedSignal.cpp": "NonMatching",
       "network/Core/PeriodicJob.cpp": "NonMatching"
