@@ -126,13 +126,15 @@ protected:
     NetCacheMgrFailType mFailType; // 0x34
     String mXLSPFilter; // 0x38
     unsigned int mServiceId; // 0x40
-    bool mServiceIDObtained;
-    std::list<ServerData> mServers; // 0x48
-    Symbol mServerType; // 0x50
-    int mLoadCacheSize; // 0x54
-    FileCache *mCache; // 0x58
-    std::list<NetLoaderRef> mNetLoaderRefs; // 0x5c
-    int mLoadCount; // 0x64
+    // NB: RB3 has no mServiceIDObtained flag here (DC3-newer addition). RB3's
+    // GetServiceId() is a trivial `return mServiceId;` (fn_82B3DB10), so the
+    // base class is 0x64 bytes, not 0x68 — derived members shift down 4.
+    std::list<ServerData> mServers; // 0x44
+    Symbol mServerType; // 0x4c
+    int mLoadCacheSize; // 0x50
+    FileCache *mCache; // 0x54
+    std::list<NetLoaderRef> mNetLoaderRefs; // 0x58
+    int mLoadCount; // 0x60
 };
 
 void NetCacheMgrTerminate();
