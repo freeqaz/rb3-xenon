@@ -91,54 +91,22 @@ out from under them will *deeply break* concurrent work. Hard rules:
 - The orchestrator MCP manages a pool of these worktrees
   (`scripts/orchestrator/worktree_pool.py`) for its agents; `setup_worktree.sh`
   is the same machinery you can drive by hand.
-- **Keep** the `Co-Authored-By` trailer on commits (this repo's convention —
-  unlike sibling dc3/rb3 repos, which omit it).
 
 ## Two build tracks
 
 **1. X360 decomp-matching build** — compile-to-match the retail XEX (MSVC X360).
 
 ```bash
-./tools/ninja-locked 2>&1 | tee /tmp/rb3_build.log    # ALWAYS use this, never bare `ninja`
+./tools/ninja-locked 2>&1 | tee /tmp/rb3_build_{task}.log
 python3 configure.py     # regenerate build.ninja (after editing objects.json/splits.txt)
 ```
 
-**ALWAYS `tee` the build output to a log file** (`/tmp/rb3_build.log` or
-similar). dtk SPLIT and MSVC compile via wibo can wedge in ways that are
-invisible without the full log — when a build hangs or fails, the log is the
-only forensic record of what dtk emitted, which compile failed, and what header
-chain the failure came from. Without it, killing the build leaves you blind
-about why it was stuck. The `| tail -N` you want for "did it succeed?" is fine
-*after* the tee, never instead of it.
-
-**Always invoke `./tools/ninja-locked`, never bare `ninja`.** Concurrent
-`ninja` instances in this build dir corrupt `.ninja_log`/`.ninja_deps`, leave
-stray `_CL_<hash>{db,ex,gl,in,sy}` files in the repo root + `src/` (cl.exe PCH
-staging racing on the same cwd), and produce zero/partial `.obj` files with
-cascading header-include errors. The wrapper takes an `flock` on
-`.ninja-build.lock` so subsequent builds queue up. (Note: rb3-Wii's permuter
-spawns its own `build/tools/wibo` from `../rb3/`; those are unrelated and won't
-grab our lock — `fuser .ninja-build.lock` is authoritative.)
-
-**Separate failure mode — `manifest 'build.ninja' still dirty after 100 tries`**
-(NOT caused by concurrency): cargo's depfile (`build/tools/release/dtk.d`)
-writes the target as an absolute path while ninja's build edge declares it
-relative. Ninja rejects the depfile with "expected depfile to mention X, got
-<abs path>" and treats the cargo output as if its inputs changed — so cargo
-fires every pass, dirties dtk → config.json → build.ninja, and the manifest
-never converges. **Fixed (2026-05-28):** `tools/project.py` `write_cargo_rule`
-now sets `restat=True`, so ninja re-stats dtk after cargo runs, sees the
-binary mtime didn't change (cargo's incremental build is a no-op), and
-absorbs the spurious dirtiness instead of cascading it. rb3-Wii and
-dc3-decomp don't hit this because they use a downloaded dtk binary — rb3-xenon
-is the only project that builds the (jeff) dtk fork from source via cargo.
+**ALWAYS `tee` the build output to a log file** (`/tmp/rb3_build_{task}.log` or
+similar). Makes debugging easier.
 
 dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
 there. **objdiff is also a local fork** at `../objdiff` (freeqaz/objdiff,
-with custom pattern-detector work and normalized-diff changes) — pass
-`--objdiff ../objdiff` to use it instead of the default v3.2.1 download.
-After editing `config/45410914/config.yml` or `splits.txt`, `touch`
-`config.yml` to force a re-SPLIT (ninja doesn't track splits.txt as a dep).
+with custom pattern-detector work and normalized-diff changes)
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang) — runs the engine
 on the host. Currently boots headlessly and loads RB3 `songs.dta`.
