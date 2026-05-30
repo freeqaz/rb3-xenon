@@ -41,7 +41,7 @@ END_COPYS
 
 bool TexMovie::Replace(ObjRef *a, Hmx::Object *b) {
     bool check;
-    if (&mTex == a) {
+    if (RefIs(a, mTex)) {
         mMovie.End();
         mTex.SetObj(b);
         check = true;

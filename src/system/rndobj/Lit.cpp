@@ -66,7 +66,7 @@ BEGIN_COPYS(RndLight)
 END_COPYS
 
 bool RndLight::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (&mColorOwner == ref) {
+    if (RefIs(ref, mColorOwner)) {
         RndLight *lit = NULL;
         if (mColorOwner != this) {
             lit = dynamic_cast<RndLight *>(obj);

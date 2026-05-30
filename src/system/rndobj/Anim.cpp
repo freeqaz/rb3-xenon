@@ -11,6 +11,7 @@
 #include "os/Debug.h"
 #include "rndobj/AnimFilter.h"
 #include "rndobj/Group.h"
+#include "rndobj/Env.h"
 #include "utl/BinStream.h"
 
 static TaskUnits gRateUnits[6] = { kTaskSeconds, kTaskBeats,           kTaskUISeconds,

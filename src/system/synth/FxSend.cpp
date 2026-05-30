@@ -14,7 +14,7 @@ FxSend::FxSend()
       mChannels(kSendAll) {}
 
 bool FxSend::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mNextSend) {
+    if (RefIs(from, mNextSend)) {
         mNextSend.SetObj(to);
         RebuildChain();
         return true;

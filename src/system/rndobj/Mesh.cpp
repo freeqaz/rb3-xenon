@@ -919,7 +919,7 @@ void RndMesh::ClearCompressedVerts() {
 }
 
 bool RndMesh::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (&mGeomOwner == ref) {
+    if (RefIs(ref, mGeomOwner)) {
         RndMesh *meshObj;
         if (mGeomOwner == this
             || (meshObj = dynamic_cast<RndMesh *>(obj)) == nullptr) {
