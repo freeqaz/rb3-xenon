@@ -545,12 +545,9 @@ ObjPtrList<T1, T2>::ObjPtrList(const ObjPtrList &other)
     }
 }
 
-template <class T1, class T2>
 #ifdef HX_NATIVE
+template <class T1, class T2>
 void *ObjPtrList<T1, T2>::Node::operator new(size_t s) {
-#else
-void *ObjPtrList<T1, T2>::Node::operator new(unsigned int s) {
-#endif
     return PoolAlloc(s, s, __FILE__, 0x122, "ObjPtrList_node");
 }
 
@@ -558,20 +555,28 @@ template <class T1, class T2>
 void ObjPtrList<T1, T2>::Node::operator delete(void *v) {
     PoolFree(sizeof(Node), v, __FILE__, 0x122, "ObjPtrList_node");
 }
+#else
+// X360 retail: 2-arg pool form (no debug info), matching POOL_OVERLOAD's retail
+// X360 spelling and the AddObject evidence (fn_824410F0: PoolAlloc(0xc,0xc)).
+template <class T1, class T2>
+void *ObjPtrList<T1, T2>::Node::operator new(unsigned int s) {
+    return PoolAlloc(s, s);
+}
 
+template <class T1, class T2>
+void ObjPtrList<T1, T2>::Node::operator delete(void *v) {
+    PoolFree(sizeof(Node), v);
+}
+#endif
+
+#ifdef HX_NATIVE
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object *obj) {
     if (mListMode == kObjListOwnerControl) {
-#ifdef HX_NATIVE
         mOwner->Replace(static_cast<ObjRef *>(static_cast<ObjRefConcrete<T1, T2> *>(node)), obj);
-#else
-        // X360: nodes are not ObjRefs; pass the node as the opaque `from`.
-        mOwner->Replace(reinterpret_cast<ObjRef *>(node), obj);
-#endif
     } else {
         Hmx::Object *old = static_cast<ObjRefConcrete<T1, T2> *>(node)->SetObj(obj);
         if (!old && mListMode == kObjListNoNull) {
-#ifdef HX_NATIVE
             // During ReplaceList, erasing frees the node while other ObjRefs in
             // the ring still hold prev/next pointers to it. Subsequent ring
             // operations write through dangling pointers and corrupt glibc's
@@ -584,12 +589,30 @@ void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object 
                 MILO_WARN("ObjPtrList::ReplaceNode: suppressed erase during ReplaceList (owner=%s)",
                     mOwner ? PathName(dynamic_cast<Hmx::Object*>(mOwner)) : "<null>");
             }
-#else
-            erase(node);
-#endif
         }
     }
 }
+#else
+// X360 retail: the thin node has no SetObj/vtable; the LIST is the ring-ref.
+// Do the ring ops directly on `this` (the list), mirroring rb3-Wii's Replace.
+template <class T1, class T2>
+void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object *obj) {
+    if (mListMode == kObjListOwnerControl) {
+        // List-as-ref: the owner's Replace expects `from` = the dying
+        // Hmx::Object* (same convention as ObjPtr::Replace), not the node.
+        // Pass the currently-held object reinterpreted into the `from` slot.
+        mOwner->Replace(reinterpret_cast<ObjRef *>(node->mObject), obj);
+    } else if (!obj && mListMode == kObjListNoNull) {
+        erase(node);
+    } else {
+        if (node->mObject)
+            node->mObject->Release(this);
+        node->mObject = dynamic_cast<T1 *>(obj);
+        if (node->mObject)
+            node->mObject->AddRef(this);
+    }
+}
+#endif
 
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::operator=(const ObjPtrList &other) {
@@ -599,7 +622,18 @@ void ObjPtrList<T1, T2>::operator=(const ObjPtrList &other) {
         pop_back();
     Node *otherNodes = other.mNodes;
     for (Node *n = mNodes; n != nullptr; n = n->next, otherNodes = otherNodes->next) {
+#ifdef HX_NATIVE
         *n = *otherNodes;
+#else
+        // Thin X360 node has no operator=; replace the held object in place,
+        // keeping the existing links, with list-as-ref Release/AddRef on `this`
+        // (mirrors rb3-Wii operator= calling Set()).
+        if (n->mObject)
+            n->mObject->Release(this);
+        n->mObject = otherNodes->mObject;
+        if (n->mObject)
+            n->mObject->AddRef(this);
+#endif
     }
     for (; otherNodes != nullptr; otherNodes = otherNodes->next) {
         push_back(otherNodes->Obj());
@@ -650,14 +684,24 @@ ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
         MILO_ASSERT(obj, 0x177);
     }
     Node *node = new Node();
-    node->SetObjConcrete(obj);
+    // Thin X360 node has no SetObjConcrete; just store the raw pointer. Link()
+    // performs the ring AddRef(this) (binary fn_826E8098 / rb3-Wii link()).
+    node->mObject = obj;
     Link(it, node);
     return node;
 }
 
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
-    it.mNode->SetObjConcrete(obj);
+    // Replace the object held by an already-linked node. The LIST is the
+    // ring-ref (list-as-ref): Release/AddRef `this`, not the thin node.
+    // Mirrors rb3-Wii ObjPtrList::Set (fn_80453DC4).
+    Node *n = it.mNode;
+    if (n->mObject)
+        n->mObject->Release(this);
+    n->mObject = obj;
+    if (n->mObject)
+        n->mObject->AddRef(this);
 }
 
 template <class T1, class T2>
@@ -783,9 +827,12 @@ void ObjPtrList<T1, T2>::sort(const S &cmp) {
             for (Node *inner = outer; inner != sentinel; inner = inner->prev) {
                 Node *prev = inner->prev;
                 if (cmp(inner->Obj(), prev->Obj())) {
-                    T1 *tmp = inner->Obj();
-                    inner->SetObjConcrete(prev->Obj());
-                    prev->SetObjConcrete(tmp);
+                    // Both nodes stay in the list; set membership is unchanged,
+                    // so just swap the held objects — no ring Release/AddRef.
+                    // Mirrors rb3-Wii ObjPtrList::sort.
+                    T1 *tmp = inner->mObject;
+                    inner->mObject = prev->mObject;
+                    prev->mObject = tmp;
                 } else {
                     break;
                 }
@@ -801,7 +848,11 @@ void ObjPtrList<T1, T2>::sort(const S &cmp) {
 
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::Link(iterator it, Node *node) {
-    node->mListOwner = this;
+    // List-as-ref: the LIST is the ring-ref, so AddRef `this` (not the thin
+    // node) up front, before splicing. Matches binary fn_826E8098 and
+    // rb3-Wii ObjPtrList::link().
+    if (node->mObject)
+        node->mObject->AddRef(this);
     node->next = it.mNode;
     if (it.mNode == mNodes) {
         if (mNodes) {
@@ -828,6 +879,11 @@ void ObjPtrList<T1, T2>::Link(iterator it, Node *node) {
 template <class T1, class T2>
 typename ObjPtrList<T1, T2>::Node *ObjPtrList<T1, T2>::Unlink(Node *node) {
     MILO_ASSERT(node != NULL && mNodes != NULL, 0x26B);
+    // List-as-ref: Release `this` (the ring-ref), not the thin node. The thin
+    // node has no dtor, so erase()'s `delete node` only pool-frees — no double
+    // release. Matches binary fn_823A2538 and rb3-Wii ObjPtrList::unlink().
+    if (node->mObject)
+        node->mObject->Release(this);
     if (node == mNodes) {
         if (mNodes->next != nullptr) {
             mNodes->next->prev = mNodes->prev;
@@ -868,21 +924,27 @@ Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
 }
 
 template <class T1, class T2>
-bool ObjPtrList<T1, T2>::Replace(ObjRef *ref, Hmx::Object *obj) {
-    for (iterator it = begin(); it != end(); ++it) {
-        if (reinterpret_cast<ObjRef *>(it.mNode) == ref) {
-            ReplaceNode(it.mNode, obj);
-            return true;
+bool ObjPtrList<T1, T2>::Replace(ObjRef *from, Hmx::Object *obj) {
+    // List-as-ref: the LIST is the polymorphic ring-ref, so ~Object dispatches
+    // this with `from` reinterpreted as the dying Hmx::Object* (same convention
+    // as ObjPtr::Replace; from==nullptr means "replace every entry"). Match the
+    // node(s) whose held mObject == the dying object. Mirrors rb3-Wii
+    // ObjPtrList::Replace, which loops `if (it->obj == from)`.
+    Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
+    for (Node *node = mNodes; node != nullptr;) {
+        // ReplaceNode may erase `node` (NoNull + null obj), freeing it; capture
+        // the successor first so iteration stays valid.
+        Node *next = node->next;
+        if (fromObj == nullptr || (Hmx::Object *)node->mObject == fromObj) {
+            ReplaceNode(node, obj);
         }
+        node = next;
     }
     return false;
 }
 
-template <class T1, class T2>
-Hmx::Object *ObjPtrList<T1, T2>::Node::RefOwner() const {
-    ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
-    return list->Owner();
-}
+// The thin X360 ObjPtrList::Node is non-polymorphic and declares no RefOwner();
+// the LIST is the ring-ref. (No ObjPtrList::Node::RefOwner definition here.)
 
 // -- ObjPtrVec Xbox template implementations --
 
