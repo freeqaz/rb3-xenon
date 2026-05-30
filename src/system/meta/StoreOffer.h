@@ -65,10 +65,16 @@ public:
     DataArray *StoreOfferData() const { return mStoreOfferData; }
 
 protected:
-    DataArray *mStoreOfferData; // 0x40
-    DateTime date; // 0x44
-    SongMgr *mSongMgr; // 0x4c
-    std::vector<int> mSongsInOffer; // 0x50
+    // RB3-360 retail keeps the nested album/pack purchaseables (DC3 dropped
+    // them). Each StorePurchaseable is 0x40 bytes, so they push mStoreOfferData
+    // from 0x40 to 0xc0 — verified against the retail binary (?HasData@,
+    // ?PackFirstLetter@ load mStoreOfferData from this+0xc0).
+    StorePurchaseable mAlbum; // 0x40
+    StorePurchaseable mPack; // 0x80
+    DataArray *mStoreOfferData; // 0xc0
+    DateTime date; // 0xc4
+    SongMgr *mSongMgr; // 0xcc
+    std::vector<int> mSongsInOffer; // 0xd0
 };
 
 class SortCmp {
