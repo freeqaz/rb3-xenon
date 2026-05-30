@@ -1,4 +1,5 @@
 #pragma once
+#include "obj/ObjMacros.h"
 #include "rndobj/Dir.h"
 #include "rndobj/EventTrigger.h"
 #include "bandobj/BandLabel.h"
