@@ -291,8 +291,8 @@ void MasterAudio::SetupBackgroundChannel(int chan, bool b2, float f3, bool b4, b
     grp->Add(mPracticeFader);
     grp->Add(mRemoteFader);
     ChannelData *cur = mChannelData[chan];
-    float val = f3 + cur->GetVol();
-    val += (b4 ? 0 : mBackgroundVolume);
+    float val = (b4 ? 0 : mBackgroundVolume) + cur->GetVol();
+    val += f3;
     cur->SetFaderVal(val);
     if (b4)
         grp->Add(mVocalCueFader);
