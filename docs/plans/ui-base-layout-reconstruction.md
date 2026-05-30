@@ -42,7 +42,7 @@ Base spans (from dtor vptr stores): `RndDrawable [0x0,0x24)`,
 | 0xfc | `LocalUser* mSelectingUser` | — |
 | 0x100 | `UIScreen* mSelectScreen` | — |
 | 0x104 | `UIResource* mResource` | — |
-| **0x108** | **unidentified 4-byte slot** (gap before mMeshes) | inferred from mMeshes anchor — OPEN ITEM |
+| 0x108 | **`int mSelected`** (RB3-360 promotes Wii's trailing byte to an int here) | 2nd agent, from dtor (POD, not destroyed) + Wii int usage — RESOLVED |
 | 0x10c | `std::vector<UIMesh> mMeshes` (stride 0x18) | dtor `-0x38/-0x30` |
 | 0x118 | `String mResourceName` (0xc) | dtor `-0x2c` → String dtor `fn_82798F98` |
 | 0x124 | `ObjDirPtr<ObjectDir> mResourceDir` (0x14) | dtor `-0x20` → `fn_82260A38` |
@@ -67,26 +67,51 @@ layout. ~14 MoviePanel near-misses (99.8–99.94%) flip once UIPanel is correct.
 Note rb3-Wii's `ui/UIPanel.h:60-73` is self-consistent with String=0xc; DC3's is
 internally inconsistent (mFocusName compressed to 8 bytes but mState still at 0x1c).
 
-## The plan (3 phases, in order)
-**Phase A — land the verified UIComponent + UIPanel layout as a foundation.**
-Apply the table above to `src/system/ui/UIComponent.h` (and `UIPanel.h`). It builds
-clean and is non-regressing (verified). Expect **+0** measured — that's fine, it's
-infrastructure. Commit it as foundation so B/C can build on it. (Open item: nail
-the 4-byte slot at 0x108 — possibly an X360-only member rb3-Wii lacks; and port
-`ui/UIResource.h`, currently missing from our tree — the agent forward-declared it.)
+## ⚠️ CRITICAL PREREQUISITES (discovered 2026-05-30, 2nd agent) — the layout CANNOT land until these clear
 
-**Phase B — pin `.text` splits for the UI units at `0/N`.** Use the
-CLAUDE.md splits-bootstrap recipe for UIButton, UILabel, UIComponent, UIEvent,
-UIList, etc.: run `tools/fingerprint_match.py autoid`, compute each cluster's
-`[min(fn), max(fn)+size)` `.text` span, add to `splits.txt`, `touch config.yml`,
-rebuild. Now layout changes can register matches in those units.
+The doc's "plain non-virtual MI" prescription is **build-breaking on its own** and the
+0x140 size is **unreachable** until two upstream base migrations land. A second agent
+applied the layout both ways and proved:
 
-**Phase C — port the function bodies** from the rb3-Wii oracle against the now-correct
-layout (UISlider `OnMsg` first — its 75% residual is `DataArray::Node`/`DataNode`
-inlining + regswaps; the body must be ported, not the offsets fixed).
+1. **ObjDirPtr is 0x14, retail is 0xc (unfinished bug #1).** `src/system/obj/Dir.h:54`
+   declares `virtual ~ObjDirPtr()/IsDirPtr()/Replace()` **unconditionally** + an
+   always-present `mLoader` → `{vtable,next,prev,mObject,mLoader}` = 0x14. Retail is
+   non-poly `{next,prev,mObject}` = 0xc (verified from UISlider dtor `fn_827DABC0`:
+   `mResourceDir@0x124 → mResourcePath@0x130` = 0xc apart). Our 0x14 pushes
+   UIComponent to **0x148, not 0x140** — no subclass can be byte-exact until ObjDirPtr
+   is made non-poly + mLoader HX_NATIVE-only. **This is a bug-#1 sub-task** (see the
+   ObjPtr migration doc) — DO IT FIRST.
+2. **RndText virtual-inheritance diamond (the `SetShowing` build break).** Non-virtual
+   UIComponent gives `UILabel` TWO `RndDrawable` subobjects, because our tree is
+   `RndText : public virtual RndDrawable` and `UILabel : public RndText, public
+   UIComponent`. Retail (rb3-Wii oracle) is structurally different:
+   `RndText : public RndDrawable, public RndTransformable` (**non-virtual**) and
+   `UILabel : public UIComponent` **only** (composes a `RndText*` member, does NOT
+   inherit RndText). Resolving the diamond requires **restructuring RndText (drop
+   virtual inheritance — every text class) + rewriting UILabel** — a separate large
+   migration, prerequisite to the non-virtual UIComponent.
 
-**Why this order:** A is correct-but-invisible until B exists; C is what actually
-moves the metric. Doing A alone (as the agent did) is a verified-correct no-op.
+So: doing the UIComponent layout as a standalone change is a verified-correct **+0**
+no-op (under virtual inheritance, build-clean) or a **build break** (non-virtual). It
+sits on top of (1) ObjDirPtr 0xc and (2) RndText non-virtual.
+
+## The plan (CORRECTED dependency order)
+1. **ObjDirPtr 0x14→0xc** — finish this slice of bug #1 (make ObjDirPtr's virtuals +
+   `mLoader` HX_NATIVE-only; per memory note 4b host `IsDirPtr` virtual on
+   Hmx::Object/ObjRefOwner, not the ring node; ~20 ObjDirPtr users to revalidate).
+2. **RndText non-virtual + UILabel → `: UIComponent` + RndText member** — resolves the
+   SetShowing diamond (large text-class blast radius; validate every text/UI unit).
+3. **THEN apply the non-virtual UIComponent 0x140 layout** (the table above) — it
+   becomes byte-exact; UISlider's already-99.9–100%-normalized near-misses
+   (`fn_827E47CC` is 0 instruction-mismatches, `fn_827E45A0` a single dtor-thunk
+   diff) flip to matched.
+4. **Pin `.text` splits** for UI units at `0/N` (CLAUDE.md splits-bootstrap) so the
+   gains register.
+5. **Port the bodies** (UISlider `OnMsg` etc. — 75% body-logic residual:
+   `DataArray::Node`/`DataNode` inlining + regswaps).
+
+The UIComponent/UIPanel layout itself is **fully reverse-engineered and correct**
+(table above) — it just can't be landed net-positive until steps 1–2 clear.
 
 ## Risks
 - Wide blast radius: UIComponent/UIPanel are bases for ~15 UI units. Validate per-unit
