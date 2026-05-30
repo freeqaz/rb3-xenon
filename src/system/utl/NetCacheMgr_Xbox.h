@@ -17,7 +17,6 @@ protected:
     virtual void UnloadInit();
     virtual bool IsDoneUnloading() const;
 
-    bool mDoneLoading; // 0x68
-    int unk6c;
-    XLSPConnection mConnection; // 0x70
+    bool mDoneLoading; // 0x64
+    XLSPConnection mConnection; // 0x68
 };
