@@ -37,6 +37,11 @@ void InitMakeString() {
 
 void TerminateMakeString() {}
 
+const char *MakeString(const char *c) {
+    FormatString fs(c);
+    return fs.Str();
+}
+
 bool MakeStringInitted() { return gLock != nullptr; }
 
 #ifdef HX_NATIVE

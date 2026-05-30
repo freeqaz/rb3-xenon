@@ -51,10 +51,7 @@ void InitMakeString();
 bool MakeStringInitted();
 void TerminateMakeString();
 
-inline const char *MakeString(const char *c) {
-    FormatString fs(c);
-    return fs.Str();
-}
+const char *MakeString(const char *c);
 
 template <class T>
 const char *MakeString(const char *c, const T &t) {
