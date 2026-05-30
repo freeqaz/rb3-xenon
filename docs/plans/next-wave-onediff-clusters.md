@@ -112,6 +112,17 @@ ports). The "closes for free" premise is FALSE — it's a **3-step effort**
 (land layout → pin splits → port bodies). Do the ObjPtr migration first (UI uses
 ObjPtr/ObjDirPtr members). Another instance of `project-engine-baseclass-layout-wall`.
 
+## Open leads (found in passing, not yet actioned)
+- **MeshAnim `mVertColorsKeys` element-type divergence**: our `MeshAnim.h` declares
+  it `Keys<std::vector<Hmx::Color>, ...>` (16-byte stride, `srawi 4`), but the RB3
+  target wants an **8-byte stride** (`srawi 3`). rb3-Wii uses `std::vector<Hmx::Color32>`
+  (4-byte). Neither 16 nor 4 maps to the target's 8 — needs its own investigation
+  (maybe a 2-element packed color, or a different Key payload). DC3-vs-Wii member-type
+  port divergence, NOT an MI base issue. (Found by the RndPollable/Rnd-MI agent.)
+- **DancerSequence** RB3-extra-member TU reconstruction (task #29 writeup): pin the
+  full `DancerSequence.cpp` TU, derive ~9 scalar members from `Load fn_824847A8`
+  (reads `this+0x1c..0x3c`), then the dtor cluster flips.
+
 ## Refs
 - `docs/plans/recon-structural-levers-2026-05-29.md` (Levers 1–5)
 - `docs/plans/engine-baseclass-layout-bugs.md` (the 7 base-class bugs)
