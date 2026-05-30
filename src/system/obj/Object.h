@@ -481,7 +481,10 @@ enum ObjListMode {
 template <class T1, class T2 = class ObjectDir>
 class ObjPtrVec : public ObjRefOwner {
 private:
-    // Node size: 0x14
+    // Node size: 0x10. Phase 2 shrank ObjRefConcrete from 0x10 to 0xc
+    // (dropped the X360 vtable-less retail layout), so this Node auto-shrank
+    // from 0x14 to 0x10. The Node stays the polymorphic ring-ref
+    // {vtable@0, mOwner@4, mObject@8} + mVecOwner@0xc — see EVIDENCE_SUMMARY.
     struct Node : public ObjRefConcrete<T1, T2> {
 #ifdef HX_NATIVE
         Node(ObjRefOwner *owner) : ObjRefConcrete<T1>(nullptr), mVecOwner(owner) {}
@@ -526,7 +529,7 @@ private:
         }
 
         /** The ObjPtrVec this Node belongs to. */
-        ObjRefOwner *mVecOwner; // 0x10
+        ObjRefOwner *mVecOwner; // 0xc
     };
 
 protected:
@@ -692,20 +695,18 @@ public:
     virtual ~ObjPtrList() { clear(); }
 
 private:
-    // Node size: 0x14
-    struct Node : public ObjRefConcrete<T1, T2> {
 #ifdef HX_NATIVE
+    // Native: the Node is the polymorphic ring-ref (ObjRefConcrete derivative).
+    // The native ring machinery (NullifyObj, Parent, cascade teardown) relies on
+    // the Node carrying a vtable + mListOwner back-pointer. Size: 0x1c.
+    struct Node : public ObjRefConcrete<T1, T2> {
         // Clang needs explicit using-declarations for dependent base class members
         using ObjRefConcrete<T1, T2>::mObject;
         using ObjRefConcrete<T1, T2>::SetObj;
         using ObjRefConcrete<T1, T2>::SetObjConcrete;
         Node() : ObjRefConcrete<T1, T2>(nullptr) {}
-#else
-        Node() : ObjRefConcrete<T1, T2>(nullptr, nullptr) {}
-#endif
         virtual ~Node() {}
         virtual Hmx::Object *RefOwner() const;
-#ifdef HX_NATIVE
         virtual void Replace(Hmx::Object *obj) {
             ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
             list->ReplaceNode(this, obj);
@@ -721,15 +722,6 @@ private:
             }
         }
         static void *operator new(size_t);
-#else
-        // X360: vtable slot +8 — dispatch to the owning list's ReplaceNode.
-        virtual bool Replace(ObjRef *from, Hmx::Object *obj) {
-            ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
-            list->ReplaceNode(this, obj);
-            return true;
-        }
-        static void *operator new(unsigned int);
-#endif
         static void operator delete(void *);
 
         T1 *Obj() const { return mObject; }
@@ -739,6 +731,26 @@ private:
         Node *next; // 0x14
         Node *prev; // 0x18
     };
+#else
+    // RB3 retail X360 (EVIDENCE_SUMMARY §ObjPtrList): the Node is a thin 0xc
+    // pool allocation with NO vtable, NO mOwner. The LIST is the ring-ref (it
+    // derives ObjRefOwner); the ring AddRefs/Releases *the list*, not the node
+    // (verified Link=fn_826E8098, Unlink=fn_823A2538, AddObject=fn_824410F0:
+    // `node = PoolAlloc(0xc,0xc); *node = obj; Link(list,it,node)`).
+    //   Node = { mObject@0, next@4, prev@8 } = 0xc
+    struct Node {
+        T1 *mObject; // 0x0
+        Node *next; // 0x4
+        Node *prev; // 0x8
+
+        // Thin pool node: 2-arg PoolAlloc/PoolFree (matches POOL_OVERLOAD's
+        // retail X360 form — no __FILE__/__LINE__/name; see PoolAlloc.h §7).
+        static void *operator new(unsigned int);
+        static void operator delete(void *);
+
+        T1 *Obj() const { return mObject; }
+    };
+#endif
     int mSize; // 0x4
     Node *mNodes; // 0x8
     ObjRefOwner *mOwner; // 0xc
