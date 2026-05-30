@@ -684,17 +684,28 @@ ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
         MILO_ASSERT(obj, 0x177);
     }
     Node *node = new Node();
+#ifdef HX_NATIVE
+    // Native: Node derives ObjRefConcrete; use SetObjConcrete so AddRef fires
+    // on the node (the node IS the ring-ref in native mode).
+    node->SetObjConcrete(obj);
+#else
     // Thin X360 node has no SetObjConcrete; just store the raw pointer. Link()
     // performs the ring AddRef(this) (binary fn_826E8098 / rb3-Wii link()).
     node->mObject = obj;
+#endif
     Link(it, node);
     return node;
 }
 
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
-    // Replace the object held by an already-linked node. The LIST is the
-    // ring-ref (list-as-ref): Release/AddRef `this`, not the thin node.
+#ifdef HX_NATIVE
+    // Native: Node derives ObjRefConcrete which owns the ring-ref; use
+    // SetObjConcrete so AddRef/Release fire on the node (not the list).
+    it.mNode->SetObjConcrete(obj);
+#else
+    // Retail X360: thin pool node has no ring machinery; the LIST is the
+    // ring-ref. Release/AddRef `this` (ObjRefOwner) directly.
     // Mirrors rb3-Wii ObjPtrList::Set (fn_80453DC4).
     Node *n = it.mNode;
     if (n->mObject)
@@ -702,6 +713,7 @@ void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
     n->mObject = obj;
     if (n->mObject)
         n->mObject->AddRef(this);
+#endif
 }
 
 template <class T1, class T2>
@@ -988,7 +1000,7 @@ typename ObjPtrVec<T1, T2>::iterator ObjPtrVec<T1, T2>::FindRef(ObjRef *ref) {
 
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::Link(iterator it, Node *node) {
-    node->mOwner = this;
+    node->mListOwner = this;
     Node *pos = it.mNode;
     if (mNodes == nullptr) {
         // First node: self-referencing prev (head->prev = tail = self)
@@ -1071,7 +1083,7 @@ bool ObjPtrList<T1, T2>::Replace(ObjRef *ref, Hmx::Object *obj) {
 
 template <class T1, class T2>
 Hmx::Object *ObjPtrList<T1, T2>::Node::RefOwner() const {
-    ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mOwner);
+    ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
     return list->Owner();
 }
 
