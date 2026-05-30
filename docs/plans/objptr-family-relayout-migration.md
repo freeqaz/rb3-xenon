@@ -454,3 +454,69 @@ inlined and out-of-lined — retail chose per-type by usage/code-size. We optimi
 out-of-line case (SampleZone +1 matched) since it's the larger population; the SharedGroup
 inline case would need a per-instantiation `__forceinline` we can't express without
 breaking SampleZone. Leave as-is.
+
+## 13. Dispatch-round findings (2026-05-30, main @2097) — the remaining tails, binary-confirmed
+
+Four cluster agents (Group, FlowNode, CharFaceServo, MeshAnim) all reverted +0, each
+proving its near-misses reduce to a foundational layout tail (or were already closed by
+the Phase-2 ObjPtr=0xc landing). Net new evidence:
+
+### 13.1 P4 ObjDirPtr — refined shape (CORRECTS §4b: it is POLY/vtable-first, not {next,prev,mObject})
+Retail `ObjDirPtr` = **`{vtable@0, mObject@4, mLoader@8}` = 0xc, POLYMORPHIC, NO `mOwner`.**
+- Evidence (Group agent, unambiguous): `ObjDirPtr::operator=` retail `fn_824D77D0` stores
+  **mObject@4, mLoader@8**; `PropSync<WorldInstance>` reads `lwz r10,0x4(r3)` (mObject@4) +
+  `lwz r11,0x8(r30)` (mLoader@8). So mObject is at **+4** (not +8 like standalone ObjPtr (b)),
+  and there is **no mOwner**.
+- Our build is WRONG by +4: `ObjDirPtr` derives `ObjRefConcrete<C>`, which injects `mOwner@4`,
+  giving `{vtable, mOwner@4, mObject@8, mLoader@c}` = **0x10**.
+- **Fix:** `ObjDirPtr` needs its OWN X360 layout — vtable-first, `mObject@4`, `mLoader@8`, NO
+  `mOwner` — NOT derived from `ObjRefConcrete`. Oracle: rb3-Wii `~/code/milohax/rb3/src/system/obj/Dir.h:31`
+  (`ObjDirPtr : ObjRef { T* mDir; DirLoader* mLoader; }` — no mOwner). All `#ifndef HX_NATIVE`.
+- **Unblocks:** the entire UIComponent/UI base (`ui-base-layout-reconstruction.md` — UIComponent
+  is 0x148 not 0x140 until this lands) + ~20 ObjDirPtr users.
+- **CAVEAT — Group itself won't flip from ObjDirPtr-alone:** `WorldInstance` also has an
+  *unisolated* **RndDir +0xc base deficit** (retail RndDir is 0xc BIGGER than ours; everything
+  0..0xe8 matches incl. RndPollable@0xe8, but RndDir's own members end ~0x130 ours vs ~0x13c
+  retail — a missing/undersized 0xc member between 0xe8 and 0x130; headers match DC3 exactly,
+  so suspect a shared-type size divergence or a member DC3 dropped that retail RB3 kept).
+  Target: `mDir` 0x130→0x13c, `mSharedGroup` 0x140→0x148. ObjDirPtr (−4) alone moves mSharedGroup
+  to 0x13c (further). The two must land together for Group. ObjDirPtr 0xc IS still net-positive
+  binary-wide (every ObjDirPtr field-access fn), Group just needs the RndDir fix too.
+
+### 13.2 Phase-3 (c)-node — DataNodeObjTrack mNode-drop is READY but gated on it
+`DataNodeObjTrack` mNode-drop is **verified-correct against the XEX** (dtor `fn_8228C248`,
+copy-ctor `fn_8228C1A0`, Load `fn_8228CDB8`, Save `fn_822B75B0`, SetObj `fn_827D90F0` — all
+touch only the 0xc poly ObjPtr; retail stores no non-object values). The ready edit
+(`obj/Object.h` ~846-879):
+```cpp
+class DataNodeObjTrack : public ObjPtr<Hmx::Object>   // drop `DataNode mNode`
+  Node()               -> Ptr()
+  operator=(DataNode)  -> SetObjConcrete(node.Evaluate().GetObj())
+  operator=(DataNodeObjTrack) -> CopyRef(other)
+```
+Confirmed it shrinks FlowIf vbase **0x90→0x80** (the 0x10 = 2×DataNode removed), NO regressions —
+but **+0 matched**, because the remaining **0x50** of vbase inflation is `FlowNode::mChildNodes`
+(`ObjPtrVec`) + `mRunningNodes` (`ObjPtrList`) node sizes = the deferred **(c) `{mObject@0,next@4,
+prev@8,mOwner@c}` node rework** (§12.3, §410). FlowIf dtor also wants retail's *out-of-lined*
+`fn_8228C248` ObjPtr dtor (ours is empty → MSVC inlines). **Fold the mNode-drop into the Phase-3
+(c)-node session**; it flips FlowIf/FlowNode/FlowSwitchCase/FlowValueCase together. `??_GFlowIf`
+vbase retail = 0x30.
+
+### 13.3 NEW adjacent wall — CharBones `virtual Hmx::Object` diamond +0x10 (NOT this doc, NOT ObjPtr)
+CharFaceServo's 6 once-near-miss fns (ApplyProceduralWeights etc.) are **already matched** on
+main (ObjPtr=0xc closed the old +8 — the next-wave doc diagnosis is obsolete). The residual is
+7 MI-adjustor thunks (`fn_823901B4/8239053C/82390568/82390594/823905C0/823905EC/82390618`, fuzzy
+99.8) with a uniform **+0x10**: target `subi r31,r12,0x70`/`lwz r11,0x84(r31)` vs ours `0x80`/`0x94`.
+CharFaceServo's OWN members match the target (don't touch `CharFaceServo.h`). Root cause: the
+`CharBonesMeshes`/`CharBones`/`RndPollable ∩ CharBonesObject` **double-`virtual Hmx::Object`**
+subobject sits 0x10 too late in our build. High fanout (every CharBones-derived class). Oracle
+conflict: rb3-Wii (faithful) == our current header; DC3 variant is *bigger* (wrong direction).
+Decisive next step: pair the ctor `fn_8238FF68` (currently unpaired, base_size=0 — mangled-name
+mismatch) and diff its vbtable-access word-for-word against the retail target ctor at `0x8238FF68`;
+the first divergent vbase-offset load pinpoints the 0x10. Separate `[[project-engine-baseclass-layout-wall]]`
+instance, not bug #1.
+
+### 13.4 MeshAnim color-stride lead — RESOLVED INVALID
+See `next-wave-onediff-clusters.md` (color path already correct; ÷8 was VertTexs Vector2). Real
+MeshAnim blockers = dynamic-init guard bit-clears (patcher territory) + an RndMeshAnim dtor frame
+0x140-vs-0x80 layout delta. Not ObjPtr.

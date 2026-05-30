@@ -27,7 +27,18 @@ Diff class is read via:
 | 3 | 2 | FileStream | TBD |
 | 3 | 1 | LightHue | mKeys +4 residue (post-String) — see baseclass doc |
 
-## CharFaceServo — FULLY DIAGNOSED (do this first)
+## CharFaceServo — ⚠️ DIAGNOSIS OBSOLETE (2026-05-30): 6 fns ALREADY MATCHED
+
+**The +8 below was closed by the ObjPtr=0xc landing.** All 6 named fns
+(ApplyProceduralWeights, SetClips, SetClipType, TryScaleDown, Copy, fn_82390144)
+are now fuzzy=100, counted in matched_functions. The current residual is a
+DIFFERENT problem: 7 MI-adjustor thunks (`fn_823901B4/8239053C/82390568/82390594/
+823905C0/823905EC/82390618`, 99.8) with a uniform **+0x10** from the CharBones
+**`virtual Hmx::Object` diamond** (CharFaceServo's own members already match — do
+NOT touch the header). Full writeup: `objptr-family-relayout-migration.md` §13.3.
+The original +8 diagnosis is retained below only for historical context.
+
+## CharFaceServo — (HISTORICAL) FULLY DIAGNOSED
 
 Unit `default/CharFaceServo`, header `src/system/char/CharFaceServo.h`. All 6
 named near-misses (`ApplyProceduralWeights`, `SetClips`, `SetClipType`,
@@ -73,10 +84,12 @@ Likely a **+6** flip (all 6 fns), possibly more via callers. Confidence HIGH
 (the +8 is bit-stable across 7 accesses in one function).
 
 ## Notes
-- Instance/SharedGroup: the `SharedGroup::SharedGroup(RndGroup*)` ctor @86.9% is
-  the lever; the 5 @99.9% (TryPoll/GetDistanceToPlane/Poll/AddPolls/PropSync)
-  hang off SharedGroup/WorldInstance layout. Related to RndGroup MI (baseclass
-  doc bug #3) — verify the `mGroup+0x34` offset is now correct post-`f09aab3`.
+- Instance/SharedGroup: **DIAGNOSED (2026-05-30) — see `objptr-family-relayout-migration.md`
+  §13.1.** The lever is `mSharedGroup` retail@0x148 vs ours@0x140 (+8), which decomposes
+  into TWO offsetting bugs: (1) **ObjDirPtr 0x10→0xc** (drop injected `mOwner`; `operator=`
+  `fn_824D77D0` proves `mObject@4,mLoader@8`) and (2) an **unisolated RndDir +0xc base
+  deficit** (retail RndDir is 0xc bigger; headers match DC3 yet compiled offset differs).
+  Both must land together for Group to flip. Not a standalone cluster — it's a bug-#1 P4 tail.
 - MemStream + FileStream + TexRenderer are small, self-contained, low-risk —
   good for batching into one agent.
 - LightHue `mKeys +4` may auto-resolve if the LightPreset agent's struct work
