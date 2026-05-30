@@ -89,13 +89,15 @@ parser.add_argument(
     "--dtk",
     metavar="BINARY | DIR",
     type=Path,
-    help="path to decomp-toolkit binary or source (optional)",
+    help="path to decomp-toolkit binary or source "
+    "(optional; defaults to the local jeff fork at ../jeff)",
 )
 parser.add_argument(
     "--objdiff",
     metavar="BINARY | DIR",
     type=Path,
-    help="path to objdiff-cli binary or source (optional)",
+    help="path to objdiff-cli binary or source "
+    "(optional; defaults to the local objdiff fork at ../objdiff)",
 )
 parser.add_argument(
     "--sjiswrap",
@@ -139,28 +141,57 @@ config = ProjectConfig()
 config.version = str(args.version)
 version_num = VERSIONS.index(config.version)
 
-# Default dtk source: prefer the locally-checked-out jeff fork at ../jeff
-# so we build the same toolchain we're iterating on, rather than the upstream
-# GitHub release. Override with --dtk to pick a different path or binary.
-def _default_dtk_path() -> Optional[Path]:
-    """Find the local jeff dtk fork. Walks parents so worktrees nested under
-    .claude/worktrees/<name>/ (where the direct sibling lookup misses) still
-    resolve to ../../../../jeff. Without this, fresh worktrees silently fall
-    back to the upstream GitHub-released dtk which lacks jeff's RB3-retail
-    overlap-tolerance patch."""
+# Default toolchain sources: ALWAYS prefer the locally-checked-out forks we
+# iterate on -- ../jeff for dtk and ../objdiff for objdiff-cli -- so the build
+# runs the exact fork state on disk. Building from the sibling source tree (via
+# the `cargo` ninja rule) is strictly better than downloading a pinned release:
+# even the forks' own tagged releases (rjkiv/jeff, freeqaz/objdiff) can lag
+# behind local commits carrying RB3-retail fixes (jeff's overlap-tolerance
+# patch, objdiff's --include-data + branch-graph JSON the scripts depend on).
+# Override either with --dtk / --objdiff to point at a different path or binary.
+def _find_local_fork(repo_name: str) -> Optional[Path]:
+    """Return the sibling fork checkout `<repo_name>/` (the directory holding
+    its Cargo.toml), searching upward from this file's directory. Walks parents
+    -- not just the direct sibling -- so worktrees nested under
+    .claude/worktrees/<name>/ still resolve up to the shared ../../../../jeff
+    and ../../../../objdiff checkouts. Returns None if no checkout is found, in
+    which case the build falls back to a downloaded fork release."""
     cur = Path(__file__).resolve().parent
     while True:
-        candidate = cur.parent / "jeff" / "Cargo.toml"
+        candidate = cur.parent / repo_name / "Cargo.toml"
         if candidate.is_file():
             return candidate.parent
         if cur.parent == cur:
             return None
         cur = cur.parent
 
+def _default_dtk_path() -> Optional[Path]:
+    return _find_local_fork("jeff")
+
+def _default_objdiff_path() -> Optional[Path]:
+    return _find_local_fork("objdiff")
+
 # Apply arguments
 config.build_dir = args.build_dir
 config.dtk_path = args.dtk if args.dtk is not None else _default_dtk_path()
-config.objdiff_path = args.objdiff
+config.objdiff_path = args.objdiff if args.objdiff is not None else _default_objdiff_path()
+
+# "Always use our forks": warn loudly if a local fork checkout couldn't be found
+# and no explicit override was given, so we notice when a build silently falls
+# back to a downloaded release instead of the source tree we're iterating on.
+if args.dtk is None and config.dtk_path is None:
+    print(
+        "WARN: local jeff fork (../jeff) not found; falling back to a "
+        "downloaded dtk release from rjkiv/jeff. Clone the fork or pass --dtk.",
+        file=sys.stderr,
+    )
+if args.objdiff is None and config.objdiff_path is None:
+    print(
+        "WARN: local objdiff fork (../objdiff) not found; falling back to a "
+        "downloaded objdiff-cli release from freeqaz/objdiff. Clone the fork or "
+        "pass --objdiff.",
+        file=sys.stderr,
+    )
 config.binutils_path = args.binutils
 config.compilers_path = args.compilers
 config.generate_map = args.map
@@ -178,7 +209,7 @@ if not config.non_matching:
 config.binutils_tag = "2.42-1"
 config.compilers_tag = "20250812"
 config.dtk_tag = "v0.3.0"
-config.objdiff_tag = "v4.2.1"  # freeqaz/objdiff fork release (linux-x86_64 asset)
+config.objdiff_tag = "v4.2.2"  # freeqaz/objdiff fork release (linux-x86_64 asset)
 config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "1.0.1"
 
