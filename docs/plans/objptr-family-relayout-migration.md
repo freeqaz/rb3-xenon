@@ -487,6 +487,14 @@ Retail `ObjDirPtr` = **`{vtable@0, mObject@4, mLoader@8}` = 0xc, POLYMORPHIC, NO
   Target: `mDir` 0x130→0x13c, `mSharedGroup` 0x140→0x148. ObjDirPtr (−4) alone moves mSharedGroup
   to 0x13c (further). The two must land together for Group. ObjDirPtr 0xc IS still net-positive
   binary-wide (every ObjDirPtr field-access fn), Group just needs the RndDir fix too.
+- **✅ RndDir +0xc RESOLVED + LANDED @`ff22216` — both halves now on main; Group/Instance cluster FLIPPED.**
+  Root cause (clean DC3 divergence): DC3 **dropped RndDir's `MsgSource` base** (0x18 = `vtable + mSinks
+  std::list@4 + mEventSinks std::list@c + mExporting int@14`) AND **added an `mEnters` std::vector** (0xc) →
+  net 0xc too small. Fix (`src/system/rndobj/Dir.h`): restore `MsgSource` base + drop `mEnters`, per the
+  rb3-Wii faithful oracle (retail RndDir = 6 bases incl. MsgSource, 3 vectors mDraws/mAnims/mPolls, no
+  mEnters). Verified by a `char[0xc]` probe + retail `RndDir::DrawShowing` 0x823F0A50 (only 3 vectors before
+  `mEnv@+0x12c`). A/B vs main: ObjDirPtr (dc2e50b) raised Group 17→25 standalone; RndDir (ff22216) then added
+  Instance +4 + FreeCamera +1, ZERO regressions. **Group 25/69, Instance 14/47.**
 
 ### 13.2 Phase-3 (c)-node — DataNodeObjTrack mNode-drop is READY but gated on it
 `DataNodeObjTrack` mNode-drop is **verified-correct against the XEX** (dtor `fn_8228C248`,
