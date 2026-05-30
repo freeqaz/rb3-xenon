@@ -2,6 +2,10 @@
 #include "char/CharPollable.h"
 #include "hamobj/PhotoSpotlightPositioner.h"
 #include "obj/Object.h"
+// ObjPtr<RndEnviron> (via rndobj/Group.h) now has a vtable that force-
+// instantiates ObjRefConcrete<RndEnviron>::SetObj/Load — needs RndEnviron
+// complete in this TU.
+#include "rndobj/Env.h"
 
 CharBoneOffset::CharBoneOffset() : mDest(this), mOffset(0, 0, 0) {}
 

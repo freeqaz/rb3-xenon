@@ -323,7 +323,7 @@ AnimTask::AnimTask(
 AnimTask::~AnimTask() { TheTaskMgr.QueueTaskDelete(mBlendTask); }
 
 bool AnimTask::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mAnim) {
+    if (RefIs(from, mAnim)) {
         RndAnimatable *myAnim = Anim();
         if (!mAnim.SetObj(to)) {
             if (mBlendTask && mBlendTask->Anim() == myAnim) {

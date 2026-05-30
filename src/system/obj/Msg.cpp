@@ -326,7 +326,7 @@ void MsgSinks::RemovePropertySink(Hmx::Object *o, DataArray *a) {
 
 bool MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
     for (ObjList<Sink>::iterator it = mSinks.begin(); it != mSinks.end(); ++it) {
-        if (&it->obj == ref) {
+        if (RefIs(ref, it->obj)) {
             mSinks.erase(it);
             return true;
         }

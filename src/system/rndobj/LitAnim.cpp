@@ -10,7 +10,7 @@
 RndLightAnim::RndLightAnim() : mLight(this), mKeysOwner(this, this) {}
 
 bool RndLightAnim::Replace(ObjRef *from, Hmx::Object *to) {
-    if (&mLight == from) {
+    if (RefIs(from, mLight)) {
         if (!(mKeysOwner != this)) {
             RndLightAnim *litTo = dynamic_cast<RndLightAnim *>(to);
             if (litTo) {

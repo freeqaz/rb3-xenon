@@ -20,7 +20,7 @@ RndMatAnim::TexPtr::TexPtr(RndTex *tex) : ObjPtr<RndTex>(DeferOwner(), tex) {
 RndMatAnim::RndMatAnim() : mMat(this), mKeysOwner(this, this), mTexKeys(this) {}
 
 bool RndMatAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (&mKeysOwner == ref) {
+    if (RefIs(ref, mKeysOwner)) {
         RndMatAnim *ma;
         if (mKeysOwner == this || !(ma = dynamic_cast<RndMatAnim *>(obj))) {
             mKeysOwner.SetObjConcrete(this);

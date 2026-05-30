@@ -40,9 +40,39 @@ public:
     virtual ~ObjRefOwner() {}
     virtual Hmx::Object *RefOwner() const = 0;
     virtual bool Replace(ObjRef *from, Hmx::Object *to) = 0;
+#ifndef HX_NATIVE
+    // Vtable slot +c. Present on every ring-ref so ring-walks (HasDirPtrs) can
+    // dispatch uniformly. Only ObjDirPtr overrides to true.
+    virtual bool IsDirPtr() { return false; }
+#endif
 };
 
 void ObjRefRelinkRing(ObjRef *ref);
+
+#ifndef HX_NATIVE
+// ----------------------------------------------------------------------------
+// ObjRefBase (RB3 retail X360 — the standalone smart-pointer abstract base)
+// ----------------------------------------------------------------------------
+// In retail, the standalone smart pointers (ObjPtr/ObjOwnerPtr) are NOT ring
+// nodes. They are polymorphic objects {vtable@0, mOwner@4, mObject@8} = 0xc.
+// The ring is a separate pool of {next@0, prev@4, refPtr@8} nodes owned by
+// Hmx::Object; each node's refPtr@8 points back at the ring-ref. Ring-walks
+// (dtor, HasDirPtrs, ...) dispatch through node->refPtr's vtable.
+//
+// The ring-ref is the SAME shape as ObjRefOwner (slot +4 RefOwner, slot +8
+// Replace(from,to)) — the retail AddRef/dtor treat refPtr as an ObjRefOwner.
+// For ObjOwnerPtr the ring-ref is mOwner (an ObjRefOwner); for ObjPtr the
+// ring-ref is `this`. So the smart-pointer base derives ObjRefOwner and adds
+// IsDirPtr@c, giving the 4-slot vtable retail emits (verified fn_82489268 /
+// fn_82738050 / fn_82737168):
+//   +0  scalar-deleting dtor
+//   +4  RefOwner() const   (returns raw mOwner@4)
+//   +8  Replace(ObjRef *from, Hmx::Object *to)
+//   +c  IsDirPtr()
+// ObjRefBase is just an alias for ObjRefOwner now — the smart-pointer base.
+// (IsDirPtr@c lives in ObjRefOwner so the whole ring shares the slot.)
+typedef ObjRefOwner ObjRefBase;
+#endif
 
 // ObjRef size: 0x8 (retail X360) / 0xc (HX_NATIVE: extra sentinel + vtable).
 // RB3 retail's ObjRef is NON-polymorphic: next@0x0, prev@0x4, no vtable. The
@@ -63,6 +93,11 @@ class ObjRef {
     friend class Hmx::Object;
     friend void ::MergeObjectsRecurse(ObjectDir *, ObjectDir *, MergeFilter &, bool);
     friend void ::ObjRefRelinkRing(ObjRef *);
+#ifndef HX_NATIVE
+    // X360 ring machinery (Object.cpp) needs to splice/free pool nodes.
+    friend void ObjRingInsert(ObjRef *, ObjRefOwner *);
+    friend void ObjRingFree(ObjRef *);
+#endif
 
 protected:
     ObjRef *next; // 0x0 (retail) / 0x4 (native, after vptr)
@@ -212,15 +247,33 @@ public:
 #ifdef HX_NATIVE
     void ReplaceList(Hmx::Object *obj);
 #else
-    void ReplaceList(Hmx::Object *obj) {
-        while (!empty()) {
-            ObjRef *oldNext = next;
-            next->Replace(obj);
-            MILO_ASSERT_FMT(oldNext != next, "ReplaceList stuck in infinite loop");
-        }
-    }
+    // X360 retail: ring entries are separate pool nodes (ObjRefNode), so the
+    // node's refPtr@8 carries the ObjRefBase to dispatch Replace on. Used by
+    // the ObjRefRelinkRing swap path (Key<ObjectStage>) which manipulates a
+    // single detached ring directly.
+    void ReplaceList(Hmx::Object *obj);
 #endif
 };
+
+#ifndef HX_NATIVE
+// RB3 retail X360 ring node: a separate 0xc PoolAlloc allocation spliced into
+// Hmx::Object::mRefs. Layout-compatible with ObjRef at {next@0, prev@4}; adds
+// refPtr@8 pointing back at the referencing ObjRefBase. Allocated/freed only
+// inside Hmx::Object::AddRef/Release/~Object (Object.cpp). Ring-walkers in
+// headers read RefPtrOf(it) to recover the ObjRefBase.
+class ObjRefNode : public ObjRef {
+public:
+    // The ring-ref this node tracks: for ObjOwnerPtr it's the mOwner, for
+    // ObjPtr/ObjDirPtr it's the smart pointer itself. Typed ObjRefOwner because
+    // that is the interface the ring dispatches on (RefOwner@4, Replace@8).
+    ObjRefOwner *refPtr; // 0x8
+};
+
+// Recover the ring-ref (ObjRefOwner) from a ring entry (which is an ObjRefNode).
+inline ObjRefOwner *RefPtrOf(const ObjRef *node) {
+    return static_cast<const ObjRefNode *>(node)->refPtr;
+}
+#endif
 
 #pragma endregion
 #pragma region ObjRefConcrete
@@ -230,24 +283,18 @@ public:
 //   HX_NATIVE:   0x10 (polymorphic: vtable@0x0, next@0x4, prev@0x8, mObject@0xc)
 // DC3 uses polymorphic 0x10; RB3 retail verifiably uses 0xc (ring-free fn_82451A48
 // allocates and frees 0xc-byte nodes).
+#ifdef HX_NATIVE
 template <class T1, class T2 = class ObjectDir>
 class ObjRefConcrete : public ObjRef {
 protected:
-    T1 *mObject; // 0x8 (retail X360) / 0xc (HX_NATIVE)
+    T1 *mObject; // 0xc (HX_NATIVE)
 public:
     ObjRefConcrete(T1 *obj);
     ObjRefConcrete(const ObjRefConcrete &o);
-#ifdef HX_NATIVE
     virtual ~ObjRefConcrete();
     virtual Hmx::Object *GetObj() const { return mObject; }
     virtual void Replace(Hmx::Object *obj) { SetObj(obj); }
     void NullifyObj() override { mObject = nullptr; ObjRef::NullifyObj(); }
-#else
-    // Retail X360: non-polymorphic (no vtable). Implementation in ObjPtr_p.h.
-    ~ObjRefConcrete();
-    Hmx::Object *GetObj() const { return mObject; }
-    void Replace(Hmx::Object *obj) { SetObj(obj); }
-#endif
 
     T1 *operator->() const { return mObject; }
     operator T1 *() const { return mObject; }
@@ -259,6 +306,36 @@ public:
     Hmx::Object *SetObj(Hmx::Object *root_obj);
     bool Load(BinStream &, bool, ObjectDir *);
 };
+#else
+// Retail X360: the standalone smart-pointer base. Polymorphic, vtable-first:
+// {vtable@0, mOwner@4, mObject@8} = 0xc. The ring is separate (pool nodes), so
+// there is NO inline next/prev here. RefOwner() returns mOwner@4 (vtable slot
+// +4). Replace(from,to) is left pure (overridden by ObjPtr/ObjOwnerPtr). The
+// ctor/SetObj/CopyRef/Load are non-trivial and use mOwner so MSVC /O1 /Ob2
+// emits the ctor/Load out-of-line (matching fn_8270B9A8 / fn_8270BAD0).
+template <class T1, class T2 = class ObjectDir>
+class ObjRefConcrete : public ObjRefBase {
+protected:
+    Hmx::Object *mOwner; // 0x4
+    T1 *mObject; // 0x8
+public:
+    ObjRefConcrete(Hmx::Object *owner, T1 *obj);
+    ObjRefConcrete(const ObjRefConcrete &o);
+    ~ObjRefConcrete();
+    virtual Hmx::Object *RefOwner() const { return mOwner; }
+    Hmx::Object *GetObj() const { return mObject; }
+
+    T1 *operator->() const { return mObject; }
+    operator T1 *() const { return mObject; }
+    void operator=(T1 *obj) { SetObjConcrete(obj); }
+    void operator=(const ObjRefConcrete &o) { SetObjConcrete(o); }
+
+    void SetObjConcrete(T1 *obj);
+    void CopyRef(const ObjRefConcrete &);
+    Hmx::Object *SetObj(Hmx::Object *root_obj);
+    bool Load(BinStream &, bool, ObjectDir *);
+};
+#endif
 
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &f);
@@ -266,9 +343,8 @@ BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &
 #pragma endregion
 #pragma region ObjPtr
 
-// ObjPtr size:
-//   Retail X360: 0xc (= ObjRefConcrete, no mOwner — owner recovered from ring/vtable)
-//   HX_NATIVE:   0x14 (adds mOwner@0x10 for explicit owner tracking)
+#ifdef HX_NATIVE
+// ObjPtr size (HX_NATIVE): 0x14 (adds mOwner@0x10 for explicit owner tracking)
 template <class T>
 class ObjPtr : public ObjRefConcrete<T> {
 protected:
@@ -278,20 +354,42 @@ public:
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
     ObjPtr(const ObjPtr &p);
     ~ObjPtr();
-#ifdef HX_NATIVE
     Hmx::Object *mOwner; // 0x10 (HX_NATIVE only)
     virtual Hmx::Object *RefOwner() const { return mOwner; }
     Hmx::Object *Owner() const { return mOwner; }
-#else
-    // Retail X360: no mOwner (ObjPtr = 0xc bytes = ObjRefConcrete size)
-    Hmx::Object *RefOwner() const { return nullptr; }
-    Hmx::Object *Owner() const { return nullptr; }
-#endif
 
     void operator=(T *obj) { SetObjConcrete(obj); }
     void operator=(const ObjPtr &p) { CopyRef(p); }
     T *Ptr() const { return mObject; }
 };
+#else
+// ObjPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}. mOwner lives
+// in the ObjRefConcrete base; the ring-ref is `this`. ctor/Load are out-of-line
+// (fn_8270B9A8 / fn_8270BAD0): they store all three fields and AddRef(this).
+template <class T>
+class ObjPtr : public ObjRefConcrete<T> {
+protected:
+    struct DeferOwner {};
+    ObjPtr(DeferOwner, T *ptr) : ObjRefConcrete<T>(nullptr, ptr) {}
+public:
+    ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
+    ObjPtr(const ObjPtr &p);
+    ~ObjPtr();
+    // Vtable slot +8: Replace(from, to). Retail fn_824D76B0.
+    // from==nullptr is the ReplaceList/MergeDirs "replace unconditionally" path.
+    virtual bool Replace(ObjRef *from, Hmx::Object *to) {
+        Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
+        if (fromObj == nullptr || (Hmx::Object *)mObject == fromObj)
+            SetObj(to);
+        return false;
+    }
+    Hmx::Object *Owner() const { return mOwner; }
+
+    void operator=(T *obj) { SetObjConcrete(obj); }
+    void operator=(const ObjPtr &p) { CopyRef(p); }
+    T *Ptr() const { return mObject; }
+};
+#endif
 
 // template <class T1>
 // BinStream &operator<<(BinStream &bs, const ObjPtr<T1> &ptr);
@@ -302,27 +400,62 @@ BinStream &operator>>(BinStream &bs, ObjPtr<T1> &ptr);
 #pragma endregion
 #pragma region ObjOwnerPtr
 
-// ObjOwnerPtr size:
-//   Retail X360: 0xc (= ObjRefConcrete, no mOwner — same as ObjPtr in retail)
-//   HX_NATIVE:   0x14 (adds mOwner@0x10 for explicit owner tracking + Replace dispatch)
+#ifdef HX_NATIVE
+// ObjOwnerPtr size (HX_NATIVE): 0x14 (adds mOwner@0x10)
 template <class T>
 class ObjOwnerPtr : public ObjRefConcrete<T> {
 public:
     ObjOwnerPtr(ObjRefOwner *owner, T *ptr = nullptr);
     ObjOwnerPtr(const ObjOwnerPtr &o);
     ~ObjOwnerPtr();
-#ifdef HX_NATIVE
     ObjRefOwner *mOwner; // 0x10 (HX_NATIVE only)
     virtual Hmx::Object *RefOwner() const;
     virtual void Replace(Hmx::Object *obj) { mOwner->Replace(this, obj); }
-#else
-    // Retail X360: no mOwner (ObjOwnerPtr = 0xc bytes = ObjRefConcrete size)
-    Hmx::Object *RefOwner() const { return nullptr; }
-    void Replace(Hmx::Object *obj) { SetObj(obj); }
-#endif
     void operator=(T *obj) { SetObjConcrete(obj); }
     T *Ptr() const { return mObject; }
 };
+#else
+// ObjOwnerPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}. The
+// ring-ref is mOwner (an ObjRefOwner) — AddRef/Release/Replace dispatch on the
+// owner, not on this. So ObjOwnerPtr::Replace is empty (retail fn_82465928).
+// mOwner is stored in the base mOwner@4 slot (reinterpreted ObjRefOwner*).
+template <class T>
+class ObjOwnerPtr : public ObjRefConcrete<T> {
+public:
+    ObjOwnerPtr(ObjRefOwner *owner, T *ptr = nullptr);
+    ObjOwnerPtr(const ObjOwnerPtr &o);
+    ~ObjOwnerPtr();
+    ObjRefOwner *OwnerRef() const {
+        return reinterpret_cast<ObjRefOwner *>(mOwner);
+    }
+    virtual Hmx::Object *RefOwner() const { return OwnerRef()->RefOwner(); }
+    // Vtable slot +8: empty — the ring dispatches Replace on mOwner, not this.
+    virtual bool Replace(ObjRef *, Hmx::Object *) { return false; }
+    // Ring-ref is mOwner (not this), so manage the ring directly here.
+    void SetOwnerObj(T *obj);
+    void operator=(T *obj) { SetOwnerObj(obj); }
+    T *Ptr() const { return mObject; }
+};
+#endif
+
+// ---------------------------------------------------------------------------
+// RefIs: portable "does this ring Replace() target the given member pointer?"
+// In native, the ring passes the ObjRef* member as `from`; in X360 retail the
+// ring passes the dying Hmx::Object* as `from` (the owner's Replace is invoked).
+// Consumer Replace() overrides use RefIs(from, member) to stay portable.
+// ---------------------------------------------------------------------------
+template <class P>
+inline bool RefIs(ObjRef *from, const P &member) {
+#ifdef HX_NATIVE
+    return from == static_cast<ObjRef *>(const_cast<P *>(&member));
+#else
+    // X360: the ring dispatches the owner's Replace with the dying Hmx::Object*
+    // as `from`. Compare against the held object's raw address. (MI/vbase cases
+    // can false-negative here, but these are NonMatching consumer ring paths.)
+    return reinterpret_cast<void *>(from)
+        == reinterpret_cast<void *>(const_cast<P &>(member).Ptr());
+#endif
+}
 
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr);
@@ -350,39 +483,50 @@ class ObjPtrVec : public ObjRefOwner {
 private:
     // Node size: 0x14
     struct Node : public ObjRefConcrete<T1, T2> {
-        Node(ObjRefOwner *owner) : ObjRefConcrete<T1>(nullptr), mOwner(owner) {}
+#ifdef HX_NATIVE
+        Node(ObjRefOwner *owner) : ObjRefConcrete<T1>(nullptr), mVecOwner(owner) {}
+#else
+        Node(ObjRefOwner *owner) : ObjRefConcrete<T1>(nullptr, nullptr), mVecOwner(owner) {}
+#endif
         Node(const Node &n);
         virtual ~Node() {}
         virtual Hmx::Object *RefOwner() const {
-            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mOwner);
+            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
             return vec->Owner();
         }
+#ifdef HX_NATIVE
         virtual void Replace(Hmx::Object *obj) {
-            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mOwner);
+            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
             vec->ReplaceNode(this, obj);
         }
-        virtual ObjRefOwner *Parent() const { return mOwner; }
-#ifdef HX_NATIVE
+        virtual ObjRefOwner *Parent() const { return mVecOwner; }
         void NullifyObj() override {
             ObjRefConcrete<T1, T2>::NullifyObj();
-            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mOwner);
+            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
             if (vec && vec->Mode() == kObjListNoNull && !gInReplaceList) {
                 vec->erase(typename ObjPtrVec<T1, T2>::iterator(
                     vec->mNodes.begin() + (this - vec->mNodes.data())
                 ));
             }
         }
+#else
+        // X360: vtable slot +8 — dispatch to the owning vec's ReplaceNode.
+        virtual bool Replace(ObjRef *from, Hmx::Object *obj) {
+            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
+            vec->ReplaceNode(this, obj);
+            return true;
+        }
 #endif
 
         T1 *Obj() const { return mObject; }
         Node &operator=(const Node &n) {
             CopyRef(n);
-            mOwner = n.mOwner;
+            mVecOwner = n.mVecOwner;
             return *this;
         }
 
         /** The ObjPtrVec this Node belongs to. */
-        ObjRefOwner *mOwner; // 0x10
+        ObjRefOwner *mVecOwner; // 0x10
     };
 
 protected:
@@ -555,30 +699,35 @@ private:
         using ObjRefConcrete<T1, T2>::mObject;
         using ObjRefConcrete<T1, T2>::SetObj;
         using ObjRefConcrete<T1, T2>::SetObjConcrete;
-#endif
         Node() : ObjRefConcrete<T1, T2>(nullptr) {}
+#else
+        Node() : ObjRefConcrete<T1, T2>(nullptr, nullptr) {}
+#endif
         virtual ~Node() {}
         virtual Hmx::Object *RefOwner() const;
+#ifdef HX_NATIVE
         virtual void Replace(Hmx::Object *obj) {
-            ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mOwner);
+            ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
             list->ReplaceNode(this, obj);
         }
-        virtual ObjRefOwner *Parent() const { return mOwner; }
-#ifdef HX_NATIVE
+        virtual ObjRefOwner *Parent() const { return mListOwner; }
         void NullifyObj() override {
             ObjRefConcrete<T1, T2>::NullifyObj();
             ObjPtrList<T1, T2> *list =
-                static_cast<ObjPtrList<T1, T2> *>(mOwner);
+                static_cast<ObjPtrList<T1, T2> *>(mListOwner);
             if (list && list->Mode() == kObjListNoNull && !gInReplaceList) {
                 list->Unlink(this);
                 delete this;
             }
         }
-#endif
-
-#ifdef HX_NATIVE
         static void *operator new(size_t);
 #else
+        // X360: vtable slot +8 — dispatch to the owning list's ReplaceNode.
+        virtual bool Replace(ObjRef *from, Hmx::Object *obj) {
+            ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
+            list->ReplaceNode(this, obj);
+            return true;
+        }
         static void *operator new(unsigned int);
 #endif
         static void operator delete(void *);
@@ -586,7 +735,7 @@ private:
         T1 *Obj() const { return mObject; }
         void operator=(const Node &n) { SetObjConcrete(n.mObject); }
 
-        ObjRefOwner *mOwner; // 0x10
+        ObjRefOwner *mListOwner; // 0x10
         Node *next; // 0x14
         Node *prev; // 0x18
     };
@@ -1425,8 +1574,8 @@ namespace Hmx {
         const char *Note() const { return mNote; }
 #endif
         const char *AllocHeapName() { return MemHeapName(MemFindAddrHeap(this)); }
-        void AddRef(ObjRef *ref) {
 #ifdef HX_NATIVE
+        void AddRef(ObjRef *ref) {
             // During cascade, ~ObjRefConcrete skips Release, leaving dead
             // entries in the ring. If the last entry is dead (freed), the
             // ring is corrupted — reset to self-loop before insertion.
@@ -1434,10 +1583,8 @@ namespace Hmx {
             // no_sanitize cache-miss reads during normal operation).
             if (sRingsDirty && mRefs.prev != &mRefs && !IsRingPrevAlive())
                 mRefs.Clear();
-#endif
             ref->AddRef(&mRefs);
         }
-#ifdef HX_NATIVE
         __attribute__((no_sanitize("address")))
         bool IsRingPrevAlive() const {
             return mRefs.prev->mAliveSentinel == ObjRef::kAliveSentinel;
@@ -1445,13 +1592,18 @@ namespace Hmx {
         /** Check if this object's mRefs sentinel is still alive.
          *  False after ~Object (mRefs' ~ObjRef clears sentinel). */
         bool IsRefAlive() const { return mRefs.IsAlive(); }
-#endif
         void Release(ObjRef *ref) {
-#ifdef HX_NATIVE
             if (!ref) return;
-#endif
             ref->Release(nullptr);
         }
+#else
+        // Retail X360: the ring holds separate pool nodes {next,prev,refPtr}.
+        // AddRef allocates a node tracking `ref` and splices it into mRefs (if
+        // ref->RefOwner() != this); Release finds and frees the node. Both are
+        // out-of-line (fn_82737168 / fn_827367D8).
+        void AddRef(ObjRefOwner *ref);
+        void Release(ObjRefOwner *ref);
+#endif
 #ifdef HX_NATIVE
         MsgSinks *Sinks() const { return mSinks; }
 #else

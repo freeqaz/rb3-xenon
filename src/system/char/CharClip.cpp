@@ -1098,7 +1098,11 @@ void CharClip::LockAndDelete(CharClip **const clips, int remaining, int maxToDel
             CharClip *clip = *releasePtr;
             remaining--;
             if ((unsigned int)clip) {
+#ifdef HX_NATIVE
                 clip->Release((ObjRef *)1);
+#else
+                clip->Release((ObjRefOwner *)1);
+#endif
             }
         } while (remaining > 0);
     }

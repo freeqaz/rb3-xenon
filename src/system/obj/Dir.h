@@ -53,28 +53,45 @@ static inline bool MiloDebugChooseModePath(const char *path) {
 template <class C>
 class ObjDirPtr : public ObjRefConcrete<C> {
 public:
-    ObjDirPtr() : ObjRefConcrete(nullptr), mLoader(nullptr) {}
-    ObjDirPtr(C *);
-    ObjDirPtr(const ObjDirPtr &o) : ObjRefConcrete<C>(o.mObject), mLoader(nullptr) {
 #ifdef HX_NATIVE
+    ObjDirPtr() : ObjRefConcrete(nullptr), mLoader(nullptr) {}
+    ObjDirPtr(const ObjDirPtr &o) : ObjRefConcrete<C>(o.mObject), mLoader(nullptr) {
         if (o.mObject) DirPtrRefCounts()[(const void *)o.mObject]++;
-#endif
     }
+#else
+    // X360: ObjDirPtr is an ObjPtr-shaped smart pointer (null owner; ring-ref is
+    // this). The base ctor takes (owner, obj) and only stores fields; AddRef runs
+    // in the derived ctor (after the ObjDirPtr vtable is set).
+    ObjDirPtr() : ObjRefConcrete<C>(nullptr, nullptr), mLoader(nullptr) {}
+    ObjDirPtr(const ObjDirPtr &o)
+        : ObjRefConcrete<C>(nullptr, o.mObject), mLoader(nullptr) {
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
+#endif
+    ObjDirPtr(C *);
     virtual ~ObjDirPtr() { *this = nullptr; }
     virtual bool IsDirPtr() { return true; }
-    virtual void Replace(Hmx::Object *o) {
 #ifdef HX_NATIVE
+    virtual void Replace(Hmx::Object *o) {
         if (!ObjRefConcrete<C>::mObject) {
             // mObject is already null — operator= won't call Release, so
             // manually unlink from ring to prevent infinite ReplaceList loop.
             ObjRef::Release(this);
             return;
         }
-#else
-        MILO_ASSERT(ObjRefConcrete<C>::mObject, 0x70);
-#endif
         *this = o ? dynamic_cast<C *>(o) : nullptr;
     }
+#else
+    // Vtable slot +8: Replace(from, to). from==nullptr => unconditional.
+    virtual bool Replace(ObjRef *from, Hmx::Object *o) {
+        Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
+        if (fromObj == nullptr || mObject == fromObj) {
+            *this = o ? dynamic_cast<C *>(o) : nullptr;
+        }
+        return false;
+    }
+#endif
 
     bool IsLoaded() const;
 
@@ -249,14 +266,20 @@ protected:
     class DirLoader *mLoader; // 0x10
 };
 
+#ifdef HX_NATIVE
 template <class C>
 ObjDirPtr<C>::ObjDirPtr(C *dir) : ObjRefConcrete<C>(dir), mLoader(nullptr) {
-#ifdef HX_NATIVE
     if (dir) {
         DirPtrRefCounts()[(const void *)dir]++;
     }
-#endif
 }
+#else
+template <class C>
+ObjDirPtr<C>::ObjDirPtr(C *dir) : ObjRefConcrete<C>(nullptr, dir), mLoader(nullptr) {
+    if (this->mObject)
+        this->mObject->AddRef(this);
+}
+#endif
 
 template <class C>
 bool ObjDirPtr<C>::IsLoaded() const {

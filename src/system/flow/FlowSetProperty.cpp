@@ -127,7 +127,7 @@ void PropertyTask::Poll(float ms) {
 
 bool PropertyTask::Replace(ObjRef *from, Hmx::Object *to) {
     auto& target = mTarget;
-    if (from == static_cast<ObjRef *>(&target)) {
+    if (RefIs(from, target)) {
         target = to;
         if (target == nullptr) {
             delete this;
@@ -441,7 +441,7 @@ void FlowSetProperty::ChildFinished(FlowNode *child) {
 }
 
 bool FlowSetProperty::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == static_cast<ObjRef *>(&unk_0xCC)) {
+    if (RefIs(from, unk_0xCC)) {
         unk_0xCC = nullptr;
         OnAnimEvent("interrupted");
         return true;

@@ -91,6 +91,64 @@ MsgSinks gSinks(nullptr);
 // mNote(const char*)@14, mName@18, mDir@1c, mRefs(8B ring)@20.
 // dc3-decomp uses a larger layout (0x2c, pointer TypeProps, String mNote).
 static_assert(sizeof(Hmx::Object) == 0x28, "Hmx::Object must be 0x28 (RB3 retail)");
+static_assert(sizeof(ObjRefNode) == 0xc, "ObjRefNode must be 0xc (RB3 retail)");
+
+#include "utl/PoolAlloc.h"
+
+// Allocate a 0xc ring node {next,prev,refPtr} and splice it just after `head`,
+// pointing back at `ref`. Mirrors retail fn_8271EAE0 / fn_82262360 / fn_82737168.
+void ObjRingInsert(ObjRef *head, ObjRefOwner *ref) {
+    ObjRefNode *node =
+        (ObjRefNode *)PoolAlloc(sizeof(ObjRefNode), sizeof(ObjRefNode));
+    node->refPtr = ref;
+    node->next = head->next;
+    node->prev = head;
+    head->next->prev = node;
+    head->next = node;
+}
+
+// Free every 0xc node in the ring and reset the head to self-loop.
+// Mirrors retail fn_82451A48.
+void ObjRingFree(ObjRef *head) {
+    ObjRef *it = head->next;
+    while (it != head) {
+        ObjRef *nxt = it->next;
+        PoolFree(sizeof(ObjRefNode), it);
+        it = nxt;
+    }
+    head->next = head;
+    head->prev = head;
+}
+
+void Hmx::Object::AddRef(ObjRefOwner *ref) {
+    if (ref->RefOwner() != this)
+        ObjRingInsert(&mRefs, ref);
+}
+
+void Hmx::Object::Release(ObjRefOwner *ref) {
+    if (this != sDeleting && ref->RefOwner() != this) {
+        for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
+            if (RefPtrOf(it) == ref) {
+                it->prev->next = it->next;
+                it->next->prev = it->prev;
+                PoolFree(sizeof(ObjRefNode), it);
+                return;
+            }
+        }
+    }
+}
+
+// X360 ring helpers used by ObjRefRelinkRing/ReplaceList paths.
+void ObjRef::ReplaceList(Hmx::Object *obj) {
+    while (next != this) {
+        ObjRef *cur = next;
+        ObjRefOwner *ref = RefPtrOf(cur);
+        cur->prev->next = cur->next;
+        cur->next->prev = cur->prev;
+        PoolFree(sizeof(ObjRefNode), cur);
+        ref->Replace(nullptr, obj);
+    }
+}
 #endif
 
 #pragma region Virtual Methods
@@ -125,9 +183,17 @@ Hmx::Object::~Object() {
     // here would be unsafe: derived member destructors have already freed
     // ObjPtrVec buffers, leaving stale ring entries that crash SnapshotRing.
     if (!ObjectDir::InDeleteObjects())
-#endif
-    ReplaceRefs(nullptr);
+        ReplaceRefs(nullptr);
     sDeleting = old;
+#else
+    // Retail X360 (fn_82738050): walk mRefs, dispatch Replace(this, 0) on each
+    // node's ring-ref (vtable slot +8), then free all 0xc pool nodes.
+    for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
+        RefPtrOf(it)->Replace(reinterpret_cast<ObjRef *>(this), nullptr);
+    }
+    sDeleting = old;
+    ObjRingFree(&mRefs);
+#endif
     if (gDataThis == this) {
         gDataThis = nullptr;
     }
@@ -416,11 +482,17 @@ void Hmx::Object::ReplaceRefs(Hmx::Object *obj) {
         }
         gInReplaceList = wasInReplace;
 #else
-        ObjRef other(mRefs);
-        other.prev->next = &other;
-        other.next->prev = &other;
-        mRefs.Clear();
-        other.ReplaceList(obj);
+        // Retail X360: walk the pool-node ring; dispatch Replace(this, obj) on
+        // each ring-ref (vtable slot +8), then free the node.
+        for (ObjRef *it = mRefs.next; it != &mRefs;) {
+            ObjRef *nxt = it->next;
+            ObjRefOwner *ref = RefPtrOf(it);
+            it->prev->next = it->next;
+            it->next->prev = it->prev;
+            PoolFree(sizeof(ObjRefNode), it);
+            ref->Replace(reinterpret_cast<ObjRef *>(this), obj);
+            it = nxt;
+        }
 #endif
     }
 }
@@ -456,10 +528,10 @@ void Hmx::Object::NullifyAllRefs() {
 
 void Hmx::Object::ReplaceRefsFrom(Hmx::Object *from, Hmx::Object *to) {
     MILO_ASSERT(from, 0xA6);
+#ifdef HX_NATIVE
     ObjRef other;
     other.DetachSelf();
     FOREACH (it, mRefs) {
-#ifdef HX_NATIVE
         // Virtual base offsets can make RefOwner() != from even for the same
         // object (Itanium ABI vbase adjustment). Use dynamic_cast<void*> to
         // compare most-derived addresses.
@@ -469,14 +541,27 @@ void Hmx::Object::ReplaceRefsFrom(Hmx::Object *from, Hmx::Object *to) {
                  == dynamic_cast<const void *>(from);
         }
         if (match) {
-#else
-        if (it->RefOwner() == from) {
-#endif
             it->Release(&other);
             other.AddRef(it);
         }
     }
     other.ReplaceList(to);
+#else
+    // Retail X360: ring entries are pool nodes; the ring-ref's RefOwner()
+    // identifies `from`. For each matching node, dispatch Replace(from, to) on
+    // the ring-ref and free the node (the ref re-AddRefs `to` via SetObj).
+    for (ObjRef *it = mRefs.next; it != &mRefs;) {
+        ObjRef *nxt = it->next;
+        ObjRefOwner *ref = RefPtrOf(it);
+        if (ref->RefOwner() == from) {
+            it->prev->next = it->next;
+            it->next->prev = it->prev;
+            PoolFree(sizeof(ObjRefNode), it);
+            ref->Replace(reinterpret_cast<ObjRef *>(from), to);
+        }
+        it = nxt;
+    }
+#endif
 }
 
 int Hmx::Object::RefCount() const {
@@ -872,7 +957,11 @@ DataNode Hmx::Object::OnIterateRefs(const DataArray *da) {
     ObjRef *end = &mRefs;
     for (ObjRef *it = mRefs.next; it != end;) {
         ObjRef *next_it = it->next;
+#ifdef HX_NATIVE
         *var = it->RefOwner();
+#else
+        *var = RefPtrOf(it)->RefOwner();
+#endif
         for (int i = 3; i < da->Size(); i++) {
             da->Command(i)->Execute();
         }

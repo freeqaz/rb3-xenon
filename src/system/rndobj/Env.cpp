@@ -82,7 +82,7 @@ void RndEnviron::OnRemoveAllLights() {
 }
 
 bool RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
-    if (&mAmbientFogOwner == from) {
+    if (RefIs(from, mAmbientFogOwner)) {
         if (mAmbientFogOwner == this) {
             mAmbientFogOwner = this;
         } else {

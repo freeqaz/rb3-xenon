@@ -29,7 +29,11 @@ RndPropAnim::~RndPropAnim() { DeleteAll(mPropKeys); }
 bool RndPropAnim::Replace(ObjRef *from, Hmx::Object *to) {
     for (auto it = mPropKeys.begin(); it != mPropKeys.end();) {
         PropKeys *cur = *it;
+#ifdef HX_NATIVE
         if (cur->TargetRef() == from) {
+#else
+        if (cur->TargetRef() == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
             if (!to) {
                 it = mPropKeys.erase(it);
                 delete cur;

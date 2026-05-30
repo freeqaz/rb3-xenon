@@ -48,7 +48,7 @@ RndTransformable::~RndTransformable() {
 }
 
 bool RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
-    if (&mParent == from) {
+    if (RefIs(from, mParent)) {
         SetTransParent(dynamic_cast<RndTransformable *>(to), false);
         return true;
     } else

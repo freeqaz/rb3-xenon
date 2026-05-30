@@ -96,7 +96,7 @@ DirLoader::~DirLoader() {
 }
 
 bool DirLoader::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mProxyDir) {
+    if (RefIs(from, mProxyDir)) {
         mProxyDir = nullptr;
         mProxyName = nullptr;
         delete this; // uhhh.

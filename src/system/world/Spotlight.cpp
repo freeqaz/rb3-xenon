@@ -164,7 +164,7 @@ Spotlight::~Spotlight() {
 }
 
 bool Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
-    if (&mColorOwner == from) {
+    if (RefIs(from, mColorOwner)) {
         if (!mColorOwner.SetObj(to)) {
             mColorOwner = this;
         }

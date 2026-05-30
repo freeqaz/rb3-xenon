@@ -33,7 +33,7 @@ public:
     const char *GetName() const { return FileGetBase(GetFile().c_str()); }
     void SetName(const char *name, bool b2) {
         FilePath path;
-        if (MakeResourcePath(path, mOwner->ClassName(), T::StaticClassName(), name)) {
+        if (MakeResourcePath(path, ResourceDirBase::mOwner->ClassName(), T::StaticClassName(), name)) {
             LoadFile(path, b2, true, kLoadFront, false);
         } else {
             ObjDirPtr<T>::operator=(nullptr);

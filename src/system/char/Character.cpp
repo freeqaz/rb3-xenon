@@ -69,7 +69,7 @@ Character::~Character() {
 }
 
 bool Character::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mSphereBase) {
+    if (RefIs(from, mSphereBase)) {
         Hmx::Object *obj = mSphereBase.SetObj(to);
         if (!obj) {
             mSphereBase = this;

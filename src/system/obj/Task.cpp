@@ -50,7 +50,7 @@ MessageTask::~MessageTask() {
 }
 
 bool MessageTask::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mObj) {
+    if (RefIs(from, mObj)) {
         if (!to) {
             delete this;
         } else {
@@ -90,7 +90,7 @@ ScriptTask::ScriptTask(DataArray *script, bool once, DataArray *updateVarsObjs)
 ScriptTask::~ScriptTask() { mScript->Release(); }
 
 bool ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mThis) {
+    if (RefIs(from, mThis)) {
         mThis = to;
         if (mThis) {
             return true;
