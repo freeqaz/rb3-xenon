@@ -354,3 +354,70 @@ share the "dc3-newer-than-RB3 base class" character. Track separately:
   `[[project-shared-index-commit-race]]`, `[[project-native-port]]`,
   `[[feedback-verify-assumptions]]`.
 - Preserved worktree: `.claude/worktrees/objptr` (branch `objptr-relayout`).
+
+---
+
+## 12. CONFIRMED retail ring architecture (2026-05-30, from the binary)
+
+This session decompiled the actual retail ring functions and **corrects the model
+in §2/§3**. The divergence is deeper than "reorder ObjPtr fields": it is
+**inline-node (our current/DC3 model) vs separate-pool-node (retail)**.
+
+**Migration base:** branch `objptr-migration` fast-forwarded to `main` @ `8f93712`
+(was a strict ancestor — no merge needed). Worktree `.claude/worktrees/objptr-migration`.
+**Baseline gate = `matched_functions = 1999`** (the worktree's own clean build of
+`8f93712`; the main repo's 2004 included uncommitted edits — 1999 is the honest
+committed baseline). No phase may drop below it.
+
+### 12.1 The retail ring (verified from XEX)
+- **`Hmx::Object`** = 0x28. `mRefs` is just an **8-byte ring head `{next@0x20, prev@0x24}`**,
+  self-looped in the ctor (`fn_82737FE8`: `[8]=this+0x20`, `[9]=this+0x20`). This
+  already matches our `Object.h`; **do not touch.**
+- **Ring node = a SEPARATE 0xc `PoolAlloc` allocation** `{next@0, prev@4, refPtr@8}`.
+  The `ObjPtr` is **not** itself in the ring; the node's `refPtr@8` points back at it.
+- **`Object::AddRef(ref)` = `fn_82737168`**: `if (ref->RefOwner() != this)` (virtual,
+  vtable **slot +4**) → alloc a 0xc node (`fn_8271EAE0`→`fn_82262360`), set `node.refPtr=ref`,
+  splice into `this->mRefs`. (Skips self-references.)
+- **`Object::Release(ref)` = `fn_827367D8`**: `if (this != sDeleting && ref->RefOwner() != this)`
+  → walk `mRefs`, find the node whose `refPtr == ref`, unlink + free the 0xc node.
+- **`Object::~Object` = `fn_82738050`**: set `sDeleting=this`; walk `mRefs`; for each node call
+  **`node.refPtr->Replace(this, 0)` via vtable slot +8** — note **two args `(from, to)`**;
+  then ring-free all 0xc nodes (`fn_82451A48` frees `0xc` each).
+
+### 12.2 The standalone smart pointers (layout b — verified)
+Both are `{vtable@0, mOwner@4, mObject@8}` = **0xc, polymorphic**, deriving a
+**vtable-only abstract base** (the rb3-Wii model — `~/code/milohax/rb3/src/system/obj/ObjPtr_p.h:16-162`),
+**NOT** the inline-ring `ObjRefConcrete` we currently inherit.
+- **`ObjPtr` ctor `fn_8270B9A8`** (0x64, out-of-line): `mOwner@4=owner; mObject@8=ptr; vtable@0;
+  if(ptr) AddRef(ptr, this)` — ring-ref = **this**. Must be **non-trivial + use `owner`** so
+  `/O1 /Ob2` emits it out-of-line (our current trivial `: ObjRefConcrete<T>(ptr)` discards
+  `owner` → inlined away → the entire SampleZone/Instance divergence).
+- **`ObjOwnerPtr` copy ctor `fn_82489268`**: same layout; ring-ref = **mOwner** (not this).
+- **Vtable slots** (4 logical): `+0` scalar-deleting dtor · `+4 RefOwner()` (returns raw `mOwner@4`,
+  `fn_82B565D8`, ICF-shared) · `+8 Replace(from,to)` (`fn_824D76B0` for ObjPtr; **empty** `fn_82465928`
+  for ObjOwnerPtr) · `+c IsDirPtr`.
+- **`ObjPtr::Load` `fn_8270BAD0`** reads `mOwner@4`, `mOwner->Dir()@1c` — out-of-line, uses owner.
+
+### 12.3 What must change vs what must NOT
+- **CHANGE (X360 / `#ifndef HX_NATIVE` only):** standalone `ObjPtr`/`ObjOwnerPtr` → poly
+  `{vtable,mOwner,mObject}` off a new vtable-only base; `ObjRef::Replace` 1-arg → **2-arg `Replace(from,to)`**;
+  `Object::AddRef`/`Release`/`~Object` ring → **separate-pool-node** bodies (the helper that
+  PoolAllocs the 0xc `{next,prev,refPtr}` node is currently **unmodeled** — reconstruct it in
+  `Object.cpp`, X360 branch).
+- **DO NOT TOUCH:** `Hmx::Object` 0x28 layout / `mRefs` 8-byte head; the entire `#ifdef HX_NATIVE`
+  cascade machinery (`ReplaceRefs` snapshot, `sRingsDirty`, `SafeReleaseFromRing`, `kAliveSentinel`).
+  Native keeps the inline-node model; **every edit is `#ifndef HX_NATIVE`.**
+- **DEFER to Phase 3:** the (c) `ObjPtrList`/`ObjPtrVec` node `{mObject@0,next@4,prev@8,mOwner@c}`.
+  Keep them compiling + non-regressing in Phase 2 (they're NonMatching today).
+
+### 12.4 Blast radius is CONTAINED (key)
+`ObjPtr<T>`'s public API (`operator T*`, `operator->`, `Ptr()`, `operator=`) is preserved, so the
+233/322 "consumers" **do not need edits**. Only **internal-field-access sites** break and need audit:
+`Object.cpp` (ring), `Utl.cpp:375`, `rndobj/Group.cpp:386,404,411` (`mObjects.mNodes/Link/Unlink`),
+`flow/FlowSetProperty.cpp:130,444` + `rndobj/PropKeys.h:87` (`static_cast<ObjRef*>`), `obj/Dir.h:58-137`
+(`ObjDirPtr` reads `mObject`). Phase 2 is really **3 core files + ~7 audit sites**, not 322.
+
+### 12.5 Phase-2 payoff targets (measure these)
+`world/Instance.cpp` SharedGroup ctor (86.9% → ~100%), `synth/SampleZone.cpp` ctor `fn_8270CD10`/Load
+`fn_8270CF08` (0% →), `synth/MidiInstrument.cpp`, `obj/Object.cpp` ctor/dtor. Evidence saved:
+`/tmp/objptr-spec/*.txt` (fn_82489268, fn_8270B9A8, fn_8270BAD0, fn_82738050, fn_82451A48, ring_helpers, key_asm).
