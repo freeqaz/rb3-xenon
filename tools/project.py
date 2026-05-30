@@ -1440,40 +1440,22 @@ def generate_build_ninja(
     ###
     build_config_path = build_path / "config.json"
     n.comment("Split XEX into relocatable objects")
-    n.comment("write_if_changed: only bump config.json's mtime when its content")
-    n.comment("actually changes, so a no-op resplit doesn't re-trigger the")
-    n.comment("`configure` generator and spin the SPLIT->configure loop.")
     n.rule(
         name="split",
-        # dtk *always* rewrites config.json with a fresh mtime, even when the
-        # content is byte-identical (dtk's split output IS deterministic -- two
-        # runs produce identical bytes -- it just rewrites the file each time).
-        # `restat=True` alone is therefore a no-op for this rule: ninja re-stats
-        # the output, sees a newer mtime, and re-fires the `configure` generator
-        # -- which regenerates build.ninja and can spin the infinite
-        # SPLIT->configure manifest-regeneration loop (stray _CL_<hash>
-        # PCH-staging litter + zero-size .obj files).
-        #
-        # Fix: preserve config.json's ORIGINAL mtime when content is unchanged.
-        # `cp -p` snapshots config.json *with its timestamp* into .prev; after
-        # dtk rewrites it, if the bytes are identical (`cmp -s`) we restore the
-        # original mtime (`touch -r`). restat then sees a true no-change and
-        # leaves the `configure` rule alone. NOTE: `-p` is load-bearing -- plain
-        # `cp` stamps .prev with *now*, so touch -r would advance the mtime
-        # anyway and the guard would do nothing (this is a latent bug in
-        # dc3-decomp's copy of this rule; do not mirror it).
-        command=f"cp -p $out_dir/config.json $out_dir/config.json.prev 2>/dev/null; "
-                f"{dtk} xex split $in $out_dir && "
-                f"if cmp -s $out_dir/config.json $out_dir/config.json.prev; then "
-                f"touch -r $out_dir/config.json.prev $out_dir/config.json; fi; "
-                f"rm -f $out_dir/config.json.prev",
+        command=f"{dtk} xex split $in $out_dir",
         description="SPLIT $in",
         depfile="$out_dir/dep",
-        # NOTE: no `deps="gcc"` here (unlike dc3-decomp). The binary deps cache
-        # (.ninja_deps) is unsafe under concurrent ninja invocations; if two
-        # builds race the cache can become inconsistent and cause spurious
-        # re-SPLITs. Ninja reads $out_dir/dep directly each build -- slightly
-        # slower, but killed the rebuild-everything failure mode in rb3-Wii.
+        # restat: dtk split is deterministic, so re-running it with an
+        # unchanged config.yml produces an identical config.json. restat lets
+        # ninja keep the old mtime and avoid re-triggering the `configure`
+        # generator rule -- which otherwise causes an infinite
+        # SPLIT->configure manifest-regeneration loop. (Mirrors rb3-Wii.)
+        #
+        # NOTE: no `deps="gcc"` here. The binary deps cache (.ninja_deps) is
+        # unsafe under concurrent ninja invocations; if two builds race the
+        # cache can become inconsistent and cause spurious re-SPLITs. Ninja
+        # will read $out_dir/dep directly each build -- slightly slower, but
+        # killed the rebuild-everything failure mode in rb3-Wii.
         restat=True,
     )
     n.build(
