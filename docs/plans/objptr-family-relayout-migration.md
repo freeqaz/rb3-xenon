@@ -507,19 +507,22 @@ prev@8,mOwner@c}` node rework** (§12.3, §410). FlowIf dtor also wants retail's
 (c)-node session**; it flips FlowIf/FlowNode/FlowSwitchCase/FlowValueCase together. `??_GFlowIf`
 vbase retail = 0x30.
 
-### 13.3 NEW adjacent wall — CharBones `virtual Hmx::Object` diamond +0x10 (NOT this doc, NOT ObjPtr)
-CharFaceServo's 6 once-near-miss fns (ApplyProceduralWeights etc.) are **already matched** on
-main (ObjPtr=0xc closed the old +8 — the next-wave doc diagnosis is obsolete). The residual is
-7 MI-adjustor thunks (`fn_823901B4/8239053C/82390568/82390594/823905C0/823905EC/82390618`, fuzzy
-99.8) with a uniform **+0x10**: target `subi r31,r12,0x70`/`lwz r11,0x84(r31)` vs ours `0x80`/`0x94`.
-CharFaceServo's OWN members match the target (don't touch `CharFaceServo.h`). Root cause: the
-`CharBonesMeshes`/`CharBones`/`RndPollable ∩ CharBonesObject` **double-`virtual Hmx::Object`**
-subobject sits 0x10 too late in our build. High fanout (every CharBones-derived class). Oracle
-conflict: rb3-Wii (faithful) == our current header; DC3 variant is *bigger* (wrong direction).
-Decisive next step: pair the ctor `fn_8238FF68` (currently unpaired, base_size=0 — mangled-name
-mismatch) and diff its vbtable-access word-for-word against the retail target ctor at `0x8238FF68`;
-the first divergent vbase-offset load pinpoints the 0x10. Separate `[[project-engine-baseclass-layout-wall]]`
-instance, not bug #1.
+### 13.3 ~~CharBones diamond +0x10~~ — DISPROVEN (2026-05-30 agent): layout is ALREADY CORRECT
+The "+0x10 diamond" hypothesis is **WRONG** — the CharBones object layout is provably correct:
+ctor `fn_8238FF68` diffs at **93.3% and is layout-perfect** (vbptr@0x4 idx14, vbptr@0x5c idx16,
+`Hmx::Object` virtual base **@0xe8** ✓, every data member at its exact target offset). The vbtables
+read from the XEX (`[-0x54,+0x8c,-4,+0xe4]`) compute the vbase correctly both ways
+(0x5c+0x8c=0xe8, 0x4+0xe4=0xe8). The 7 "thunks" (`fn_823901B4/8239053C/82390568/82390594/823905C0/
+823905EC/82390618`, 99.8) are **EH cleanup funclets**, not MI adjustors, split across two
+`__ehfuncinfo` unwind-maps: Group A (@0x82049b58) belongs to the ctor `fn_8238FF68` (frame 0x80) and
+**already matches**; Group B (@0x82049c40) belongs to **`fn_82390328`** (a CharFaceServo
+SyncProperty/SetClips-class body, target frame **0x70**, ours **0xa0**). The uniform +0x10 is just
+`fn_82390328`'s stack-frame offset (`subi r31,r12,0x70` vs `0x80`; `F−K` effective address is
+identical = behaviorally equal). **Lever = match `fn_82390328`'s stack frame (per-function /
+permuter-class), NOT a base relayout.** Do NOT touch CharBones/CharBonesMeshes headers — it would
+corrupt the proven-correct layout + regress 13 matched CharFaceServo fns + every Char* unit.
+(Optional net-neutral: the ctor pairing entry `0x8238FF68 → ??0CharFaceServo@@IAA@XZ` in
+`scripts/target_symbol_map.json` makes the ctor visible at 93.3% for follow-up — not landed.)
 
 ### 13.4 MeshAnim color-stride lead — RESOLVED INVALID
 See `next-wave-onediff-clusters.md` (color path already correct; ÷8 was VertTexs Vector2). Real
