@@ -27,7 +27,10 @@ enum HamPlayerFlags {
 };
 
 /** "Hammer specific camera shot" */
-class HamCamShot : public CamShot {
+// NB(rb3-xenon): retail CamShot dropped RndTransformable; HamCamShot keeps it as
+// a direct base so WorldXfm()/SetTransParent() remain available for Reteleport,
+// HamCamTransform::Setup, and CreateFlippedShowHideList. Layout NonMatching.
+class HamCamShot : public CamShot, public RndTransformable {
 public:
     struct Target {
         Target(Hmx::Object *owner)
@@ -174,6 +177,10 @@ protected:
     ObjPtrList<RndDrawable> mFlipPostProcOverrides; // 0x354
     ObjPtrList<RndDrawable> mFlipEndHideList; // 0x368
     std::vector<RndDrawable *> mFlipEndShowVector; // 0x37c
+    // NB(rb3-xenon): retail CamShot::mGenHideVector is HX_NATIVE-guarded (dropped
+    // from X360 layout). HamCamShot carries its own copy so SetFrameEx /
+    // CreateFlippedShowHideList can assign/iterate it in the X360 build.
+    std::vector<RndDrawable *> mGenHideVector;
     bool mFlipActive; // 0x388
 };
 
