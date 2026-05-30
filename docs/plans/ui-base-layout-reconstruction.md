@@ -123,6 +123,38 @@ The UIComponent/UIPanel layout itself is **fully reverse-engineered and correct*
   mResourceDir is `ObjDirPtr`) — do the ObjPtr re-layout (bug #1) FIRST or the UI
   ObjPtr-member ctors won't fully match.
 
+## Step 3 VERIFIED CORRECT + ObjDirPtr-unblocked, but still +0 (2026-05-30, 3rd agent)
+
+With **ObjDirPtr 0xc now landed on main** (`dc2e50b`), a 3rd agent applied Steps 2+3 and
+**confirmed the 0x140 layout is byte-exact correct**: it compiled clean and matches the retail
+UIComponent dtor `fn_827DABC0` member-for-member (base vptrs at -0x144/-0x120/-0x6c; destroys
+mResourcePath@0x130, mResourceDir@0x124, mResourceName@0x118, mMeshes@0x10c stride 0x18,
+mNavDown@0xf0, mNavRight@0xe4). **ObjDirPtr 0xc reached UIComponent** — mResourceName@0x118 →
+mResourceDir@0x124 → mResourcePath@0x130 are 0xc apart, giving total 0x140. UISlider's
+`fn_827E45A0` base moved 0x38 → 0x140 (now 4 bytes from target).
+
+**Still +0** (3rd confirmation of the "necessary but not sufficient" verdict). UISlider stayed
+1/32; ScrollSelect 17/24, MoviePanel 9/37, ConnectionStatusPanel 3/5 — no subclass registered a
+new match. The residuals are **UISlider.h's OWN member layout (Step 5)**, with exact targets now
+known:
+- `fn_827E45A0`: `addi 0x144` vs our `0x140` (ScrollSelect base member)
+- `fn_827E4518` / `fn_827E455C`: target `0x180` / `0x1b4` vs our `0x15c` / `0x190` (UISlider member dtor thunks)
+- `fn_827E4C20`: `lwz 0x54` vs target `0x84`
+Reconstruct UISlider.h members from ctor `fn_827E47F0` / dtor `fn_827DABC0` starting ScrollSelect@0x140.
+
+**UILabel diamond is the build-gate (Step 2):** non-virtual UIComponent makes UILabel inherit
+RndDrawable/RndTransformable twice → 4 TUs fail (UILabel.cpp ambiguous DirtyLocalXfm/WorldXfm/
+LocalXfm/SetLocalXfm; StreakMeter/HamListRibbon/StarsDisplay ambiguous SetShowing/Showing/
+SetTransParent via `UILabel*`). Resolving = rewrite UILabel to **compose** RndText (it uses ~80
+RndText protected members/methods directly: mStyles, mWidth, mAlignment, Style(i), SetText,
+GetWidthHeightBox, ComputeHeight, RndText::Highlight/DrawShowing, …). UILabel is **0/1 (unpinned)**
+so this rewrite is guaranteed +0 by itself — it only unblocks the build.
+
+**Verdict:** UI is a single **dedicated session**: (1) ObjDirPtr 0xc ✅ landed; (2) UILabel→compose
+RndText (build-gate, +0); (3) UIComponent 0x140 ✅ verified-correct, ready to apply; (4) pin UI
+`.text` splits; (5) UISlider.h member reconstruction + OnMsg body port (where the actual matches
+are). Do NOT re-derive the layout — it's done (table above, dtor-verified).
+
 ## Refs
 - `docs/plans/next-wave-onediff-clusters.md` (UIComponent lever entry — points here).
 - `docs/plans/objptr-family-relayout-migration.md` (do first — UI uses ObjPtr/ObjDirPtr).
