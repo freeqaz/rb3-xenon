@@ -14,7 +14,7 @@ Trie *s_pTrie;
 bool AllocInfo::bPrintCsv;
 
 Pool &GetPool() {
-    static void *sMem;
+    static char sMem[4];
     static Pool sPool(4, sMem, 4);
     return sPool;
 }
@@ -63,7 +63,7 @@ void *AllocInfo::operator new(unsigned int size) {
 
 void AllocInfo::operator delete(void *mem) { GetPool().Free(mem); }
 
-void AllocInfo::SetPoolMemory(void *mem, int i2) { GetPool() = Pool(0x65, mem, i2); }
+void AllocInfo::SetPoolMemory(void *mem, int i2) { GetPool() = Pool(0x18, mem, i2); }
 
 void AllocInfo::Validate() const { MILO_ASSERT(mPooled <= 1, 0xA5); }
 
