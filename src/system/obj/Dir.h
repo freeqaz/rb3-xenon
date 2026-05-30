@@ -380,14 +380,22 @@ protected:
 
     KeylessHash<const char *, Entry> mHashTable; // 0x8
     StringTable mStringTable; // 0x28
-    FilePath mProxyFile; // 0x3c
-    bool mProxyOverride; // 0x44
-    /** "How is this Proxy inlined?  Note that when you change this,
-        you must resave everything subdiring this file for it to take effect"
-        kInlineNever: "Never inline this, this is the default value"
-        kInlineCached: "Inline it during cached saves"
-        kInlineAlways: "Always inline it, even during non cached saves" */
-    InlineDirType mInlineProxyType; // 0x48
+    FilePath mProxyFile; // 0x3c (X360 String=0xC -> spans 0x3c..0x48)
+    bool mProxyOverride; // 0x48 (X360) — String is 0xC so this lands at 0x48
+    /** "How is this Proxy inlined?".
+        RB3 retail stores this as a single bool (rb3-Wii oracle:
+        `bool mInlineProxy; // 0x45`, `AllowsInlineProxy() { return mInlineProxy; }`),
+        NOT a 4-byte InlineDirType enum. The enum form is a DC3-era divergence
+        that over-sizes ObjectDir by +4. Verified from the retail binary:
+        TransferLoaderState (fn_82729200) copies String mProxyFile@0x3c, a single
+        byte @0x48, then mLoader @0x4c with NO 4-byte field between them; GetFile
+        (fn_82729700) reads mLoader@0x4c and mStoredFile@0x68. Keeping DC3's enum
+        for HX_NATIVE because native Dir.cpp uses its multi-value semantics. */
+#ifdef HX_NATIVE
+    InlineDirType mInlineProxyType; // native only
+#else
+    bool mInlineProxy; // 0x49 (X360) — packs directly after mProxyOverride@0x48
+#endif
     DirLoader *mLoader; // 0x4c
     /** "Subdirectories of objects" */
     std::vector<ObjDirPtr<ObjectDir> > mSubDirs; // 0x50
@@ -406,21 +414,21 @@ protected:
     InlineDirType mInlineSubDirType; // 0x60
     /** "where this came from". aka: the path this ObjectDir was loaded from. */
     const char *mPathName; // 0x64
-    FilePath mStoredFile; // 0x68
-    std::vector<InlinedDir> mInlinedDirs; // 0x70
-    std::vector<Viewport> mViewports; // 0x7c
-    ViewportId mCurViewportID; // 0x88
-#ifdef HX_NATIVE
-    // DC3 has a secondary object pointer (unk8c) between mCurViewportID and
-    // mCurCam, set from FindObject during load (Dir.cpp 1203/1437). The RB3
-    // retail binary does NOT have this field — verified by ObjectDir layout:
-    // with String/FilePath at 0xc, RB3's ObjectDir-own region ends at 0xa0
-    // (CharBoneDir::mRecenter@0xa0, mMoveContext@0xcc), whereas including unk8c
-    // pushes it to 0xa4. A genuine RB3-vs-DC3 version difference. Native build
-    // keeps it because Dir.cpp (HX_NATIVE-only compile) references it.
-    Hmx::Object *unk8c; // 0x8c (DC3/native only)
-#endif
-    Hmx::Object *mCurCam; // 0x8c (X360) / 0x90 (native)
+    FilePath mStoredFile; // 0x68 (String=0xC -> 0x68..0x74)
+    std::vector<InlinedDir> mInlinedDirs; // 0x74
+    std::vector<Viewport> mViewports; // 0x80
+    ViewportId mCurViewportID; // 0x8c
+    // Secondary object pointer between mCurViewportID and mCurCam, set from
+    // FindObject during load (Dir.cpp 1203/1437). PRESENT in RB3 retail — verified
+    // from SetCurViewport (fn_82728D00): it writes mCurViewportID@0x8c and
+    // mCurCam@0x94 with a 4-byte GAP at 0x90, i.e. this field. (A prior note
+    // wrongly excluded it; that, combined with the oversized mInlineProxyType,
+    // happened to keep the 0xa0 total but mis-placed every member from 0x48 on.
+    // With mInlineProxyType shrunk to a bool AND unk8c restored, the total stays
+    // 0xa0 and the internal offsets match: mLoader@0x4c, mStoredFile@0x68,
+    // mIsSubDir@0x5c, mCurViewportID@0x8c, mCurCam@0x94.)
+    Hmx::Object *unk8c; // 0x90
+    Hmx::Object *mCurCam; // 0x94
     int mAlwaysInlined; // 0x90 (X360) / 0x94 (native)
     const char *mAlwaysInlineHash; // 0x94 (X360) / 0x98 (native)
 
@@ -491,7 +499,16 @@ public:
     KeylessHash<const char *, Entry> &HashTable() { return mHashTable; }
     const char *GetPathName() const { return mPathName; }
     const std::vector<ObjDirPtr<ObjectDir> > &SubDirs() const { return mSubDirs; }
+#ifdef HX_NATIVE
     InlineDirType InlineProxyType() const { return mInlineProxyType; }
+#else
+    // RB3 retail stores a bool. Map it onto the enum API so DC3-sourced callers
+    // (Flow.cpp, Utl.cpp) comparing against kInlineAlways still compile.
+    InlineDirType InlineProxyType() const {
+        return mInlineProxy ? kInlineAlways : kInlineNever;
+    }
+    bool AllowsInlineProxy() const { return mInlineProxy; }
+#endif
     FilePath &StoredFile() { return mStoredFile; }
     bool IsSubDir() const { return mIsSubDir; }
     ObjectDir *ProxyDir() const;
