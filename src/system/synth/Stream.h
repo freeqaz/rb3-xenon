@@ -64,8 +64,12 @@ public:
     virtual int MarkerListSize() const { return 0; }
     virtual bool MarkerAt(int, Marker &) const { return 0; }
     virtual void SetJump(String &, String &) = 0;
-    virtual void SetJump(float, float, const char *) = 0;
     virtual bool CurrentJumpPoints(Marker &, Marker &) { return 0; }
+    // RB3 retail (matching rb3-Wii) has an extra AbandonLoop slot here that
+    // dc3 (newer) dropped; without it Stream's vtable is one slot short and
+    // ChannelFaders lands at 0xbc instead of retail's 0xc0.
+    virtual void AbandonLoop() = 0;
+    virtual void SetJump(float, float, const char *) = 0;
     virtual void ClearJump() = 0;
     virtual void EnableSlipStreaming(int) = 0;
     virtual void SetSlipOffset(int, float) = 0;
