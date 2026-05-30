@@ -9,4 +9,7 @@ class BandTrack : public virtual Hmx::Object {
 public:
     BandTrack(Hmx::Object *) {}
     virtual ~BandTrack() {}
+    // Declaration-only (defined in BandTrack.cpp, not yet ported). Added so
+    // GemTrack.cpp can call it; non-virtual, no layout impact on the stub.
+    void SpotlightFail(bool);
 };

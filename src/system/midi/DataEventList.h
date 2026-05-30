@@ -37,7 +37,8 @@ public:
 
     float start; // 0x0
     float end; // 0x4
-protected:
+    // mMsg is public to match rb3-Wii's canonical midi/DataEvent.h (direct
+    // access from TrainerPanel.cpp / SongDB.cpp). No layout impact.
     DataArray *mMsg; // 0x8
 };
 
