@@ -296,6 +296,15 @@ share the "dc3-newer-than-RB3 base class" character. Track separately:
   0x1c (2 poly ObjPtrs + float), the standalone class is 0x50. Plus `SampleZone.h`
   uses the HX_NATIVE 0x14 ObjPtr where retail is 0xc (rb3-Wii offsets). Fixing the
   standalone-unit ObjPtr size is a small win independent of the vector divergence.
+- **FlowNode / DataNodeObjTrack base (flow-class family)**: RB3's `FlowNode` +
+  `DataNodeObjTrack` bases are **0x60 (96 bytes) SMALLER** than DC3's — our headers
+  are byte-identical to DC3 and DC3 matches its own `??1FlowIf@@UAA@XZ` at 100%, but
+  DC3 grew these bases vs RB3. Decisive: `DataNodeObjTrack` dtor member-spacing is
+  RB3=0xc / DC3=0x1c / ours=0x14 (three distinct layouts). `DataNodeObjTrack` tracks
+  a DataNode→Object, so it may be ObjPtr-adjacent — reconstruct RB3's true
+  `FlowNode`/`DataNodeObjTrack` member layout (from the FlowIf dtor `subi r30,r3,0x30`
+  vbase adjust vs our 0x90) to unlock the whole flow-class family at once. (Found by
+  the FlowIf agent; deterministic-layout, NOT permuter-class.)
 
 ---
 
