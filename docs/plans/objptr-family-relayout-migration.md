@@ -296,15 +296,25 @@ share the "dc3-newer-than-RB3 base class" character. Track separately:
   0x1c (2 poly ObjPtrs + float), the standalone class is 0x50. Plus `SampleZone.h`
   uses the HX_NATIVE 0x14 ObjPtr where retail is 0xc (rb3-Wii offsets). Fixing the
   standalone-unit ObjPtr size is a small win independent of the vector divergence.
-- **FlowNode / DataNodeObjTrack base (flow-class family)**: RB3's `FlowNode` +
-  `DataNodeObjTrack` bases are **0x60 (96 bytes) SMALLER** than DC3's — our headers
-  are byte-identical to DC3 and DC3 matches its own `??1FlowIf@@UAA@XZ` at 100%, but
-  DC3 grew these bases vs RB3. Decisive: `DataNodeObjTrack` dtor member-spacing is
-  RB3=0xc / DC3=0x1c / ours=0x14 (three distinct layouts). `DataNodeObjTrack` tracks
-  a DataNode→Object, so it may be ObjPtr-adjacent — reconstruct RB3's true
-  `FlowNode`/`DataNodeObjTrack` member layout (from the FlowIf dtor `subi r30,r3,0x30`
-  vbase adjust vs our 0x90) to unlock the whole flow-class family at once. (Found by
-  the FlowIf agent; deterministic-layout, NOT permuter-class.)
+- **FlowNode / DataNodeObjTrack (flow-class family) — CONFIRMED a bug-#1 CONSUMER,
+  not an independent wall** (verified by a dedicated reconstruction agent, 2026-05-30).
+  It will close **automatically** when this migration's Phase 2 (vtable-first 0xc
+  ObjPtr) + Phase 3 (ObjPtrVec/ObjPtrList node rework) land. Proof:
+  - **`DataNodeObjTrack` IS a standalone ObjPtr (shape (b))**: target `~DataNodeObjTrack`
+    `fn_8228C248` stores a vtable at offset 0 (`lbl_82017140+4`, slot 0 = ObjPtr
+    scalar-deleting dtor `fn_8228C638`) and reads `mObject` at **+8** → `{vtable@0,
+    mOwner@4, mObject@8}` = **0xc with NO `DataNode mNode`**. DC3 *added* `DataNode
+    mNode@0x14` (→ DC3 0x1c); our non-poly ObjPtr 0xc + DataNode 0x8 = our 0x14.
+    **NEW SUB-TASK for this migration: drop `DataNode mNode` from `DataNodeObjTrack`**
+    (`obj/Object.h:686`) to restore the RB3 ObjPtr-only 0xc form.
+  - **`FlowNode::mChildNodes` (ObjPtrVec)** internal `std::vector` sits at +0x10 (RB3)
+    vs +0x4 (ours) — RB3's ObjRefOwner/ObjPtrVec node carries vtable+ring (0x10),
+    ours carries only a vtable (0x4). Same for ObjPtrList. = Phase 3 (shape (c)).
+  - **Payoff when it lands:** FlowIf vbase drops 0x90→0x30; `??1FlowIf` (98.7%) and
+    `??_GFlowIf` (99.9%) flip to 100%; the flow-class family follows.
+  - Files: `obj/Object.h` (DataNodeObjTrack@686), `flow/FlowNode.h`, `flow/FlowIf.h`.
+    Evidence fns: `fn_8228C248` (poly ObjPtr dtor), `fn_8228C638` (slot-0 dtor),
+    vtable `lbl_82017140`, FlowIf dtor `fn_823B4C20`.
 
 ---
 
