@@ -2395,3 +2395,27 @@ network/ObjDup/DuplicatedObject.cpp:
 band3/bandtrack/GemTrack.cpp:
 	.pdata      start:0x82254318 end:0x822543F8
 	.text       start:0x82B61E30 end:0x82B63268
+
+band3/game/GamePanel.cpp:
+	.pdata      start:0x822290D0 end:0x82229110
+	.text       start:0x826768D0 end:0x82676C8C
+
+band3/bandtrack/Lyric.cpp:
+	.pdata      start:0x822554E8 end:0x82255510
+	.text       start:0x82B7C9C0 end:0x82B7D098
+
+network/Plugins/SessionDiscovery/Interface/SessionDiscoveryTable.cpp:
+	.pdata      start:0x8224B138 end:0x8224B160
+	.text       start:0x82A95648 end:0x82A958D4
+
+network/Plugins/Checksum/Interface/KeyedChecksumAlgorithm.cpp:
+	.pdata      start:0x82250FD8 end:0x82251000
+	.text       start:0x82B1AF48 end:0x82B1B0F4
+
+band3/game/NetGameMsgs.cpp:
+	.pdata      start:0x82228B68 end:0x82228C08
+	.text       start:0x826725F0 end:0x82672D18
+
+network/Plugins/Checksum/MD5/MD5.cpp:
+	.pdata      start:0x82250C70 end:0x82250C98
+	.text       start:0x82B15190 end:0x82B16D44

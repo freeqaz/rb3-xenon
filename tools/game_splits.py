@@ -29,6 +29,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 def _p(*a): return os.path.join(ROOT, *a)
 
+# TUs whose dominant oracle cluster was Ghidra-verified to be a MISATTRIBUTION
+# (the bindiff anchors landed in a different/foreign TU), so the derived span is
+# bogus and must not be re-proposed. The real TU, if locatable, lives elsewhere.
+#   InetAddress: dominant cluster was an XDK/kernel CRT region (FP anchors).
+#   SessionMgr:  dominant cluster was BeatMatcher vtable methods (RTTI-confirmed).
+KNOWN_FP_RELS = {
+    "network/Platform/Stack/Core/InetAddress.cpp",
+    "band3/meta_band/SessionMgr.cpp",
+}
+
 SYM_FN_RE = re.compile(
     r"^(\S+) = \.text:0x([0-9A-Fa-f]+);.*type:function(?:.*size:0x([0-9A-Fa-f]+))?")
 SPLITS_HEADER_RE = re.compile(r"^([A-Za-z0-9_]+\.cpp):\s*$")
@@ -155,6 +165,8 @@ def main():
         except (KeyError, ValueError):
             continue
         rel, group, base = map_oracle_src(src)
+        if rel in KNOWN_FP_RELS:
+            continue
         by_tu[(rel, group, base)].append((addr, e))
 
     cands = []
