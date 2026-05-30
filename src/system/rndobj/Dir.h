@@ -8,13 +8,19 @@
 #include "rndobj/Env.h"
 #include "rndobj/Poll.h"
 #include "rndobj/Trans.h"
+#include "obj/Msg.h"
 #include "utl/MemMgr.h"
 
+// RndDir derives MsgSource in retail RB3 (and the faithful rb3-Wii decomp). DC3
+// (our source provenance) DROPPED the MsgSource base and ADDED an `mEnters`
+// vector + HarvestPollables — making our RndDir 0xc too small (MsgSource
+// subobject 0x18 - mEnters 0xc = +0xc deficit). Restored to match retail.
 class RndDir : public ObjectDir,
                public RndDrawable,
                public RndAnimatable,
                public RndTransformable,
-               public RndPollable {
+               public RndPollable,
+               public MsgSource {
 public:
     // Hmx::Object
     virtual bool Replace(ObjRef *, Hmx::Object *);
@@ -87,7 +93,6 @@ protected:
     std::vector<RndAnimatable *> mAnims; // 0x1c0
     /** "List of all the polls" */
     std::vector<RndPollable *> mPolls; // 0x1cc
-    std::vector<RndPollable *> mEnters; // 0x1d8
     /** The dedicated RndEnviron for this dir. */
     ObjPtr<RndEnviron> mEnv; // 0x1e4
     /** "Test event" */
