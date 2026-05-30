@@ -12,7 +12,7 @@ RndTransAnim::RndTransAnim()
       mRepeatTrans(false), mFollowPath(false) {}
 
 bool RndTransAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (&mKeysOwner == ref) {
+    if (RefIs(ref, mKeysOwner)) {
         RndTransAnim *ta;
         if (mKeysOwner == this || !(ta = dynamic_cast<RndTransAnim *>(obj))) {
             mKeysOwner.SetObjConcrete(this);

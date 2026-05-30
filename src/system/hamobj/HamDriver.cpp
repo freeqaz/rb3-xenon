@@ -248,7 +248,7 @@ void HamDriver::LayerClip::Play(CharBones &bones) {
 CharClip *HamDriver::LayerClip::FirstClip() { return mClip; }
 
 bool HamDriver::LayerClip::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (&mClip == ref) {
+    if (RefIs(ref, mClip)) {
         if (!mClip.SetObj(obj)) {
             CharClip *ptr = mClip.Ptr();
             if (ptr) {

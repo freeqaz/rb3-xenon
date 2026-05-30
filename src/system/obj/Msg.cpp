@@ -335,7 +335,7 @@ bool MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
          evIt != mEventSinks.end(); ++evIt) {
         for (ObjList<EventSinkElem>::iterator sinkIt = evIt->sinks.begin();
              sinkIt != evIt->sinks.end(); ++sinkIt) {
-            if (&sinkIt->obj == ref) {
+            if (RefIs(ref, sinkIt->obj)) {
                 evIt->sinks.erase(sinkIt);
                 return true;
             }
