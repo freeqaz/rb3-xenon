@@ -50,29 +50,28 @@ static inline bool MiloDebugChooseModePath(const char *path) {
 }
 #endif
 
+// Retail X360: ObjDirPtr is its OWN polymorphic smart pointer, NOT an
+// ObjRefConcrete. Layout {vtable@0, mObject@4, mLoader@8} = 0xc — there is NO
+// mOwner. The ring-ref is `this` (an ObjRefOwner); AddRef/Release dispatch on
+// the *referenced object*'s ring. Verified from the retail binary:
+//   - operator= fn_824D77D0: reads mObject@4, mLoader@8 (Release fn_827367D8 /
+//     AddRef fn_82737168 with `this` as the ring-ref).
+//   - PostLoad helper fn_824D7480: reads mLoader@8.
+//   - rb3-Wii oracle (obj/Dir.h:31): `ObjDirPtr : ObjRef { T* mDir; DirLoader*
+//     mLoader; }` — vtable-first, mDir first, mLoader after, NO mOwner.
+// Vtable (4 slots, from ObjRefOwner): +0 dtor, +4 RefOwner()=>nullptr,
+// +8 Replace(from,to), +c IsDirPtr()=>true.
+#ifdef HX_NATIVE
 template <class C>
 class ObjDirPtr : public ObjRefConcrete<C> {
 public:
-#ifdef HX_NATIVE
     ObjDirPtr() : ObjRefConcrete(nullptr), mLoader(nullptr) {}
     ObjDirPtr(const ObjDirPtr &o) : ObjRefConcrete<C>(o.mObject), mLoader(nullptr) {
         if (o.mObject) DirPtrRefCounts()[(const void *)o.mObject]++;
     }
-#else
-    // X360: ObjDirPtr is an ObjPtr-shaped smart pointer (null owner; ring-ref is
-    // this). The base ctor takes (owner, obj) and only stores fields; AddRef runs
-    // in the derived ctor (after the ObjDirPtr vtable is set).
-    ObjDirPtr() : ObjRefConcrete<C>(nullptr, nullptr), mLoader(nullptr) {}
-    ObjDirPtr(const ObjDirPtr &o)
-        : ObjRefConcrete<C>(nullptr, o.mObject), mLoader(nullptr) {
-        if (this->mObject)
-            this->mObject->AddRef(this);
-    }
-#endif
     ObjDirPtr(C *);
     virtual ~ObjDirPtr() { *this = nullptr; }
     virtual bool IsDirPtr() { return true; }
-#ifdef HX_NATIVE
     virtual void Replace(Hmx::Object *o) {
         if (!ObjRefConcrete<C>::mObject) {
             // mObject is already null — operator= won't call Release, so
@@ -83,14 +82,31 @@ public:
         *this = o ? dynamic_cast<C *>(o) : nullptr;
     }
 #else
+template <class C>
+class ObjDirPtr : public ObjRefBase {
+protected:
+    C *mObject; // 0x4 (immediately after vtable — NO mOwner)
+public:
+    ObjDirPtr() : mObject(nullptr), mLoader(nullptr) {}
+    ObjDirPtr(const ObjDirPtr &o) : mObject(o.mObject), mLoader(nullptr) {
+        if (mObject)
+            mObject->AddRef(this);
+    }
+    ObjDirPtr(C *);
+    virtual ~ObjDirPtr() { *this = nullptr; }
+    // Vtable slot +4: RefOwner() — ObjDirPtr has no owner; returns null
+    // (rb3-Wii oracle: `RefOwner() { return 0; }`).
+    virtual Hmx::Object *RefOwner() const { return nullptr; }
     // Vtable slot +8: Replace(from, to). from==nullptr => unconditional.
     virtual bool Replace(ObjRef *from, Hmx::Object *o) {
         Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
-        if (fromObj == nullptr || mObject == fromObj) {
+        if (fromObj == nullptr || (Hmx::Object *)mObject == fromObj) {
             *this = o ? dynamic_cast<C *>(o) : nullptr;
         }
         return false;
     }
+    // Vtable slot +c: IsDirPtr() => true.
+    virtual bool IsDirPtr() { return true; }
 #endif
 
     bool IsLoaded() const;
@@ -150,7 +166,7 @@ public:
 
     operator C *() const { return mObject; }
     C *operator->() const {
-        MILO_ASSERT(ObjRefConcrete<C>::mObject, 0x5F);
+        MILO_ASSERT(mObject, 0x5F);
         return mObject;
     }
     void PostLoad(Loader *loader) {
@@ -263,7 +279,7 @@ public:
 #endif
 
 protected:
-    class DirLoader *mLoader; // 0x10
+    class DirLoader *mLoader; // 0x8 (X360) / 0x10 (native)
 };
 
 #ifdef HX_NATIVE
@@ -275,9 +291,9 @@ ObjDirPtr<C>::ObjDirPtr(C *dir) : ObjRefConcrete<C>(dir), mLoader(nullptr) {
 }
 #else
 template <class C>
-ObjDirPtr<C>::ObjDirPtr(C *dir) : ObjRefConcrete<C>(nullptr, dir), mLoader(nullptr) {
-    if (this->mObject)
-        this->mObject->AddRef(this);
+ObjDirPtr<C>::ObjDirPtr(C *dir) : mObject(dir), mLoader(nullptr) {
+    if (mObject)
+        mObject->AddRef(this);
 }
 #endif
 
