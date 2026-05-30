@@ -462,6 +462,11 @@ proving its near-misses reduce to a foundational layout tail (or were already cl
 the Phase-2 ObjPtr=0xc landing). Net new evidence:
 
 ### 13.1 P4 ObjDirPtr — refined shape (CORRECTS §4b: it is POLY/vtable-first, not {next,prev,mObject})
+**✅ LANDED on main @`dc2e50b` (+1, cold-verified, zero regressions).** X360 branch now
+derives the vtable-only `ObjRefBase` directly with its own `mObject@4`/`mLoader@8` (no `mOwner`);
+RE'd retail vtable = +0 dtor, +4 `RefOwner()`→nullptr, +8 `Replace(from,to)`, +c `IsDirPtr()`→true.
+`BandDirector::Exit` 99.92%→100%. The UI-family payoff is still gated on the remaining UI-chain
+steps (RndText non-virtual + UIComponent 0x140 layout + splits + bodies). Spec retained below.
 Retail `ObjDirPtr` = **`{vtable@0, mObject@4, mLoader@8}` = 0xc, POLYMORPHIC, NO `mOwner`.**
 - Evidence (Group agent, unambiguous): `ObjDirPtr::operator=` retail `fn_824D77D0` stores
   **mObject@4, mLoader@8**; `PropSync<WorldInstance>` reads `lwz r10,0x4(r3)` (mObject@4) +
