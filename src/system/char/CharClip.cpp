@@ -978,7 +978,12 @@ void CharClip::ApplyBlendedSkeletons(
 
 bool CharClip::SharesGroups(CharClip *clip) {
     FOREACH (it, mRefs) {
+#ifdef HX_NATIVE
         Hmx::Object *owner = it->RefOwner();
+#else
+        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
         CharClipGroup *group = dynamic_cast<CharClipGroup *>(owner);
         if (group && group->HasClip(clip))
             return true;
@@ -989,7 +994,11 @@ bool CharClip::SharesGroups(CharClip *clip) {
 int CharClip::InGroups() {
     int num = 0;
     FOREACH (it, mRefs) {
+#ifdef HX_NATIVE
         Hmx::Object *owner = it->RefOwner();
+#else
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
         CharClipGroup *group = dynamic_cast<CharClipGroup *>(owner);
         if (group)
             num++;
@@ -1000,7 +1009,11 @@ int CharClip::InGroups() {
 DataNode CharClip::OnGroups(DataArray *) {
     DataArray *groups = new DataArray(0);
     FOREACH (it, mRefs) {
+#ifdef HX_NATIVE
         Hmx::Object *owner = it->RefOwner();
+#else
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
         CharClipGroup *group = dynamic_cast<CharClipGroup *>(owner);
         if (group) {
             groups->Insert(groups->Size(), group);
@@ -1014,7 +1027,11 @@ DataNode CharClip::OnGroups(DataArray *) {
 DataNode CharClip::OnHasGroup(DataArray *arr) {
     const char *str = arr->Str(2);
     FOREACH (it, mRefs) {
+#ifdef HX_NATIVE
         Hmx::Object *owner = it->RefOwner();
+#else
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
         CharClipGroup *group = dynamic_cast<CharClipGroup *>(owner);
         if (group && streq(group->Name(), str))
             return 1;

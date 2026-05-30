@@ -497,13 +497,39 @@ public:
     /** Get the DataNode at the given node index.
      * @param [in] i The node index.
      * @returns The resulting DataNode.
+     *
+     * Defined inline so callers fold the `mNodes[i]` access in-place. In the
+     * retail match build MILO_ASSERT is a no-op, so the body reduces to
+     * `return mNodes[i]` and /Ob2 inlines it into every accessor (Str/Int/Sym/
+     * ...) — matching the retail codegen where DataArray::Node never appears as
+     * an out-of-line call (e.g. CharClip::OnHasGroup folds Node(2) to mNodes+0x10).
      */
-    DataNode &Node(int i);
+    DataNode &Node(int i) {
+        MILO_ASSERT_FMT(
+            i >= 0 && i < mSize,
+            "Array doesn't have node %d, only has %d (file %s, line %d)",
+            i,
+            mSize,
+            File(),
+            Line()
+        );
+        return mNodes[i];
+    }
     /** Get the DataNode at the given node index.
      * @param [in] i The node index.
      * @returns The resulting DataNode.
      */
-    DataNode &Node(int i) const;
+    DataNode &Node(int i) const {
+        MILO_ASSERT_FMT(
+            i >= 0 && i < mSize,
+            "Array doesn't have node %d, only has %d (file %s, line %d)",
+            i,
+            mSize,
+            File(),
+            Line()
+        );
+        return mNodes[i];
+    }
 
     /** Print the DataArray's contents to the TextStream.
      * @param [in] s The TextStream to print to.
