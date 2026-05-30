@@ -81,9 +81,7 @@ bool RndTexBlendController::IsValid() const {
         } else {
             distValid = false;
         }
-        if (!mObject1 || !mObject2 || refDist <= 0 || !distValid) {
-            return false;
-        }
+        return mObject1 && mObject2 && refDist > 0 && distValid;
     }
     return true;
 }
@@ -110,7 +108,7 @@ RndTexBlendController::GetBlendState(float &blend, float influence) const {
             state = kBlendCustom;
         } else {
             float dist;
-            if (GetCurrentDistance(dist) && mReferenceDistance > 0.0f) {
+            if (GetCurrentDistance(dist) && (bool)(mReferenceDistance > 0.0f)) {
                 if (dist < mReferenceDistance) {
                     float denom = mReferenceDistance - mMinDistance;
                     if (denom > 0.0f) {
