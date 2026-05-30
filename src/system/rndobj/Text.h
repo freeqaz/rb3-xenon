@@ -345,6 +345,8 @@ public:
     friend class UIFontImporter;
     friend class LabelShrinkWrapper;
     friend class UIListLabelElement;
+    friend class UILabel;
+    friend class HamLabel;
 
     // Line class for text layout — size 0x14
     class Line {

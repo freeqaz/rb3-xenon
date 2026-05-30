@@ -110,30 +110,31 @@ UIListLabelElement::~UIListLabelElement() { delete mLabel; }
 void UIListLabelElement::Draw(const Transform &tf, float f, UIColor *col, Box *box) {
     auto& label = mLabel;
     label->SetWorldXfm(tf);
+    RndText *text = label->TextObj();
     if (box) {
-        Vector3 minPt(label->mBoundsLeft, 0.0f, label->mBoundsTop);
+        Vector3 minPt(text->mBoundsLeft, 0.0f, text->mBoundsTop);
         Box localbox = *box;
-        Vector3 maxPt(label->mBoundsLeft + label->mBoundsRight, 0.0f, label->mBoundsTop + label->mBoundsBottom);
+        Vector3 maxPt(text->mBoundsLeft + text->mBoundsRight, 0.0f, text->mBoundsTop + text->mBoundsBottom);
         localbox.GrowToContain(minPt, false);
         localbox.GrowToContain(maxPt, false);
         box->GrowToContain(localbox.mMin, false);
         box->GrowToContain(localbox.mMax, false);
     } else {
-        float *savedAlphas = (float *)_alloca(label->NumStyles() * sizeof(float));
-        for (unsigned int i = 0; i < label->NumStyles(); i++) {
+        float *savedAlphas = (float *)_alloca(text->NumStyles() * sizeof(float));
+        for (unsigned int i = 0; i < text->NumStyles(); i++) {
             savedAlphas[i] = label->Style(i).GetAlpha();
         }
         label->LStyle(0).mColorOverride = col;
         if (mListLabel->mHighlightAltStyles) {
-            for (unsigned int i = 1; i < label->NumStyles(); i++) {
+            for (unsigned int i = 1; i < text->NumStyles(); i++) {
                 label->LStyle(i).mColorOverride = col;
             }
         }
-        for (unsigned int i = 0; i < label->NumStyles(); i++) {
+        for (unsigned int i = 0; i < text->NumStyles(); i++) {
             label->Style(i).SetAlpha(f * savedAlphas[i]);
         }
         label->DrawShowing();
-        for (unsigned int i = 0; i < label->NumStyles(); i++) {
+        for (unsigned int i = 0; i < text->NumStyles(); i++) {
             label->Style(i).SetAlpha(savedAlphas[i]);
         }
     }

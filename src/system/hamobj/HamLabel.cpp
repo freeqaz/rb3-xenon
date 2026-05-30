@@ -87,7 +87,7 @@ void HamLabel::SetMoveName(HamMove *move) {
     String str;
     if (move) {
         str = move->DisplayName();
-        mMarkup = str.find('<') != FixedString::npos;
+        mText->mMarkup = str.find('<') != FixedString::npos;
     }
     SetDisplayText(str.c_str(), true);
 }

@@ -41,7 +41,7 @@ protected:
     virtual void SetDisplayText(const char *, bool);
     // UITransitionHandler
     virtual void FinishValueChange();
-    virtual bool IsEmptyValue() const { return mText == gNullStr; }
+    virtual bool IsEmptyValue() const { return mText->RawText() == gNullStr; }
 
     Keys<float, float> mCountKeys; // 0x168
     Symbol mCountToken; // 0x174

@@ -15,9 +15,9 @@ class PanelDir;
  * "Base class of all UI components,
  * defines navigation and component state"
  */
-class UIComponent : public RndPollable,
-                    public virtual RndDrawable,
-                    public virtual RndTransformable {
+class UIComponent : public RndDrawable,
+                    public RndTransformable,
+                    public RndPollable {
 public:
     enum State {
         kNormal = 0,

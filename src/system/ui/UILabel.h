@@ -12,7 +12,7 @@
 #include "utl/MemMgr.h"
 #include "utl/Symbol.h"
 
-class UILabel : public RndText, public UIComponent, public TextHolder {
+class UILabel : public UIComponent {
 public:
     struct LabelStyle {
         LabelStyle(Hmx::Object *owner) : mColorOverride(owner), mFontResource(owner) {}
@@ -26,9 +26,11 @@ public:
         ResourceDirPtr<UILabelDir> mFontResource; // 0x14
     };
     friend bool __cdecl PropSync(LabelStyle &, DataNode &, DataArray *, int, PropOp);
+    friend bool __cdecl
+    PropSync(ObjVector<LabelStyle> &, DataNode &, DataArray *, int, PropOp);
 
     // Hmx::Object
-    virtual ~UILabel() {}
+    virtual ~UILabel();
     OBJ_CLASSNAME(UILabel)
     OBJ_SET_TYPE(UILabel)
     virtual DataNode Handle(DataArray *, bool);
@@ -38,19 +40,15 @@ public:
     virtual void Load(BinStream &);
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
-    // RndText
+    // UIComponent
+    virtual void Poll() { UIComponent::Poll(); }
+    virtual void Highlight();
+    virtual void DrawShowing();
+    // text-holder semantics (was TextHolder, now plain forwarding)
     virtual Symbol TextToken() { return mTextToken; }
     virtual void SetCreditsText(DataArray *, class UIListSlot *) {
         MILO_ASSERT(false, 0x50);
     }
-    // UIComponent
-    virtual void Poll() { UIComponent::Poll(); }
-    virtual void Highlight();
-    // TextHolder
-    virtual void SetTextToken(Symbol);
-    virtual void SetInt(int, bool);
-
-    virtual void DrawShowing();
 
     OBJ_MEM_OVERLOAD(0x26);
     NEW_OBJ(UILabel)
@@ -59,6 +57,8 @@ public:
     static void Terminate();
     static bool sRequireFixedLength;
 
+    void SetTextToken(Symbol);
+    void SetInt(int, bool);
     void SetFloat(char const *, float);
     void SetDateTime(DateTime const &, Symbol);
     void SetIcon(char);
@@ -73,6 +73,9 @@ public:
     void SetTimeHMS(int, bool);
     bool CheckValid(bool);
     void SetEditText(char const *);
+
+    RndText *TextObj() { return mText; }
+    const RndText *TextObj() const { return mText; }
 
     Symbol GetTextToken() const { return mTextToken; }
     char const *GetDefaultText() const;
@@ -121,6 +124,7 @@ protected:
     static bool sDebugHighlight;
     static bool sInDebugHighlight;
 
+    RndText *mText; // 0xd0 - underlying text object (formerly a base of UILabel)
     Symbol mTextToken; // 0x114
     String mLabelText; // 0x118
     char mIconChar; // 0x120

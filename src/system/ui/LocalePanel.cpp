@@ -99,7 +99,7 @@ void LocalePanel::AddDirEntries(ObjectDir *dir, const char *cc) {
         Entry entry;
         entry.mLabel = cur->Name();
         entry.mToken = TokenForLabel(cur);
-        entry.mText = cur->RawText();
+        entry.mText = cur->TextObj()->RawText();
         mEntries.push_back(entry);
     }
     for (ObjDirItr<UIList> it(dir, true); it != nullptr; ++it) {
@@ -111,11 +111,11 @@ void LocalePanel::AddDirEntries(ObjectDir *dir, const char *cc) {
                     UIListLabel *label = dynamic_cast<UIListLabel *>(*w);
                     if (label) {
                         UILabel *el = label->ElementLabel(i);
-                        if (el && !el->RawText().empty()) {
+                        if (el && !el->TextObj()->RawText().empty()) {
                             Entry entry;
                             entry.mLabel = MakeString("%i:%s", i, label->MatchName());
                             entry.mToken = TokenForLabel(el);
-                            entry.mText = el->RawText();
+                            entry.mText = el->TextObj()->RawText();
                             mEntries.push_back(entry);
                         }
                     }
