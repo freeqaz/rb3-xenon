@@ -9,7 +9,7 @@
 RndMovie::RndMovie() : mStream(false), mLoop(true), mTex(this) {}
 
 bool RndMovie::Replace(ObjRef *from, Hmx::Object *to) {
-    if (&mTex == from) {
+    if (RefIs(from, mTex)) {
         SetTex(dynamic_cast<RndTex *>(to));
         return true;
     } else {

@@ -421,3 +421,36 @@ Both are `{vtable@0, mOwner@4, mObject@8}` = **0xc, polymorphic**, deriving a
 `world/Instance.cpp` SharedGroup ctor (86.9% → ~100%), `synth/SampleZone.cpp` ctor `fn_8270CD10`/Load
 `fn_8270CF08` (0% →), `synth/MidiInstrument.cpp`, `obj/Object.cpp` ctor/dtor. Evidence saved:
 `/tmp/objptr-spec/*.txt` (fn_82489268, fn_8270B9A8, fn_8270BAD0, fn_82738050, fn_82451A48, ring_helpers, key_asm).
+
+### 12.6 Phase-2 RESULTS (2026-05-30) — `matched_functions 1999→2049 (+50)`
+Phase-2 (type split + ring rewrite) was implemented in `.claude/worktrees/objptr-migration`
+(uncommitted). Two later refinements this session pushed it to 2049:
+
+1. **AddRef moved out of the `ObjRefConcrete` base ctor into the derived ctors**
+   (`ObjPtr`/`ObjOwnerPtr`/`ObjDirPtr`, + the `ObjPtrVec::Node` copy ctor), X360 only.
+   Root cause: the base ctor doing `mObject->AddRef(this)` made *the base ctor* the
+   out-of-line body, so callers did `bl ??0ObjRefConcrete` + stored the ObjPtr vtable
+   **inline** — but retail's `fn_8270B9A8` IS the ObjPtr ctor (vtable store + AddRef
+   together, out-of-line). Moving AddRef to the derived ctor makes ObjPtr's ctor the
+   out-of-line `bl fn_8270B9A8`. **SampleZone ctor 88.9%→100%** (+net 8 across the
+   engine: many ObjPtr-member ctors flipped). See `ObjPtr_p.h` ObjRefConcrete/ObjPtr.
+2. **`scripts/target_symbol_map.json`**: added `0x8270CD10`→`??0SampleZone@@QAA@PAVObject@Hmx@@@Z`
+   and `0x8270CF08`→`?Load@SampleZone@@QAAXAAVBinStreamRev@@@Z` (they were missing, so
+   objdiff reported "base 0 bytes" / 0% even though our obj had the symbols). Pure
+   pairing fix — re-SPLIT (`touch config.yml`) needed so the renamer re-patches the obj.
+
+**Final per-target:** SampleZone ctor **100%**, SampleZone Load **75%** (residual is a
+separate `BinStreamRev::operator>>` divergence — retail calls `fn_827A00C8` directly,
+we indirect through `[d+8]`→`ReadEndian`; NOT ObjPtr), Object ctor 71.9% / dtor 63.3%
+(residual is TypeProps-dtor shape + `mNote` poolstring-free + a missing `std::list`
+member + r27↔r28 permuter swaps — all NON-ObjPtr base-class issues, out of scope here).
+
+**SharedGroup ctor regressed 96.2%→90.4%** (still <100%, 0 matched-count change). This is
+an inherent MSVC tension, NOT a bug: SharedGroup's `mPollMaster(this)` builds an
+`ObjPtr<WorldInstance>` with a **null** object ptr, so retail constant-folds `if(ptr)AddRef`
+away and **inlines** the whole ObjPtr ctor; SampleZone's `ObjPtr<SynthSample>` is used in
+many TUs so retail **out-of-lines** it (fn_8270B9A8). One template body can't be both
+inlined and out-of-lined — retail chose per-type by usage/code-size. We optimized for the
+out-of-line case (SampleZone +1 matched) since it's the larger population; the SharedGroup
+inline case would need a per-instantiation `__forceinline` we can't express without
+breaking SampleZone. Leave as-is.

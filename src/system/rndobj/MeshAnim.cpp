@@ -10,7 +10,7 @@ RndMeshAnim::RndMeshAnim() : mMesh(this), mKeysOwner(this, this) {}
 // On GCC, Replace is the key function — without it, the vtable ends up in .bss as zeros,
 // which crashes at construction time due to null VTT entries.
 bool RndMeshAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (&mKeysOwner == ref) {
+    if (RefIs(ref, mKeysOwner)) {
         RndMeshAnim *ma;
         if (mKeysOwner == this || !(ma = dynamic_cast<RndMeshAnim *>(obj))) {
             mKeysOwner.SetObjConcrete(this);

@@ -163,7 +163,7 @@ RndFont::RndFont()
 RndFont::~RndFont() { RELEASE(mKerningTable); }
 
 bool RndFont::Replace(ObjRef *from, Hmx::Object *to) {
-    if (&mTextureOwner == from) {
+    if (RefIs(from, mTextureOwner)) {
         RndFont *replace;
         if (mTextureOwner == this) {
             replace = this;

@@ -153,7 +153,7 @@ RndParticleSys::RndParticleSys()
 }
 
 bool RndParticleSys::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (ref == &mMotionParent) {
+    if (RefIs(ref, mMotionParent)) {
         RndTransformable *trans = dynamic_cast<RndTransformable *>(obj);
         SetRelativeMotion(mRelativeMotion, trans);
         return true;

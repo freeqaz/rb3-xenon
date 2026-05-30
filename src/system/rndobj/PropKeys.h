@@ -250,7 +250,13 @@ public:
     void SetInterpolation(Interpolation interp) { mInterpolation = interp; }
     Symbol InterpHandler() const { return mInterpHandler; }
     ExceptionID GetExceptionID() const { return mPropExceptionID; }
+#ifdef HX_NATIVE
     ObjRef *TargetRef() { return &mTarget; }
+#else
+    // X360: mTarget is not an ObjRef. The ring dispatches Replace(dyingObj, to)
+    // on the owner, so callers compare the raw target object instead.
+    Hmx::Object *TargetRef() { return mTarget; }
+#endif
 
     static ExceptionID PropExceptionID(Hmx::Object *, DataArray *);
     static Message sInterpMessage;

@@ -16,6 +16,7 @@
 // ObjRefConcrete
 // ------------------------------------------------
 
+#ifdef HX_NATIVE
 template <class T1, class T2>
 ObjRefConcrete<T1, T2>::ObjRefConcrete(T1 *obj) : mObject(obj) {
     if (mObject)
@@ -32,13 +33,11 @@ __forceinline ObjRefConcrete<T1, T2>::ObjRefConcrete(const ObjRefConcrete &o)
 template <class T1, class T2>
 ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
     if (mObject) {
-#ifdef HX_NATIVE
         if (ObjectDir::InDeleteObjects() || Hmx::Object::sRingsDirty) {
             SafeReleaseFromRing(this);
             mObject = nullptr;
             return;
         }
-#endif
         mObject->Release(this);
     }
 }
@@ -46,12 +45,10 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
 template <class T1, class T2>
 void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
     if (mObject) {
-#ifdef HX_NATIVE
         if (ObjectDir::InDeleteObjects() || Hmx::Object::sRingsDirty) {
             SafeReleaseFromRing(this);
             goto skip_ring_ops;
         }
-#endif
         mObject->Release(this);
     }
     mObject = obj;
@@ -59,13 +56,11 @@ void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
         mObject->AddRef(this);
     }
     return;
-#ifdef HX_NATIVE
 skip_ring_ops:
     mObject = obj;
     if (mObject) {
         mObject->AddRef(this);
     }
-#endif
 }
 
 template <class T1, class T2>
@@ -76,6 +71,50 @@ void ObjRefConcrete<T1, T2>::CopyRef(const ObjRefConcrete &o) {
     if (!mObject) return;
     this->ObjRef::AddRef(const_cast<ObjRef *>(static_cast<const ObjRef *>(&o)));
 }
+#else
+// ----------------------------------------------------------------------------
+// Retail X360: separate-pool-node ring. The ObjRefConcrete is the smart-pointer
+// {vtable@0, mOwner@4, mObject@8}. The ring-ref passed to Hmx::Object::AddRef /
+// Release is `this` (an ObjRefOwner).
+//
+// The base ctor ONLY stores mOwner/mObject — it does NOT AddRef. The AddRef
+// belongs in the most-derived ctor (ObjPtr/ObjOwnerPtr/ObjDirPtr), AFTER the
+// derived vtable is set (matching retail fn_8270B9A8: store fields, store the
+// ObjPtr vtable, THEN AddRef). Doing AddRef in the base ctor would (a) emit it
+// against the ObjRefConcrete vtable instead of the derived one and (b) make the
+// base ctor the out-of-line body instead of ObjPtr's, so SampleZone/Instance
+// would call ??0ObjRefConcrete and store the vtable inline (the 88.9% miss).
+// ----------------------------------------------------------------------------
+template <class T1, class T2>
+ObjRefConcrete<T1, T2>::ObjRefConcrete(Hmx::Object *owner, T1 *obj)
+    : mOwner(owner), mObject(obj) {}
+
+template <class T1, class T2>
+ObjRefConcrete<T1, T2>::ObjRefConcrete(const ObjRefConcrete &o)
+    : mOwner(o.mOwner), mObject(o.mObject) {}
+
+template <class T1, class T2>
+ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(this);
+}
+
+template <class T1, class T2>
+void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
+    if (obj != mObject) {
+        if (mObject)
+            mObject->Release(this);
+        mObject = obj;
+        if (mObject)
+            mObject->AddRef(this);
+    }
+}
+
+template <class T1, class T2>
+void ObjRefConcrete<T1, T2>::CopyRef(const ObjRefConcrete &o) {
+    SetObjConcrete(o.mObject);
+}
+#endif
 
 template <class T1, class T2>
 Hmx::Object *ObjRefConcrete<T1, T2>::SetObj(Hmx::Object *root_obj) {
@@ -143,7 +182,7 @@ bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
         }
     } else {
         if (mObject) {
-            Release(this);
+            mObject->Release(this);
         }
         mObject = nullptr;
         if (buf[0] != '\0') {
@@ -170,11 +209,22 @@ ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p), mOwner(p.mOwner) {}
 template <class T>
 ObjPtr<T>::~ObjPtr() {}
 #else
+// Retail X360 (fn_8270B9A8): the base ObjRefConcrete ctor stores mOwner/mObject
+// (and the vtable is set to ObjPtr's during this derived ctor); then AddRef(this)
+// runs HERE so the ring-ref recorded is `this` with the ObjPtr vtable already in
+// place. Keeping AddRef in the derived ctor makes ObjPtr's ctor the out-of-line
+// body (callers do `bl fn_8270B9A8`, not an inline vtable store + base-ctor call).
 template <class T>
-ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(ptr) {}
+ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
+    if (this->mObject)
+        this->mObject->AddRef(this);
+}
 
 template <class T>
-ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {}
+ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {
+    if (this->mObject)
+        this->mObject->AddRef(this);
+}
 
 template <class T>
 ObjPtr<T>::~ObjPtr() {}
@@ -213,14 +263,43 @@ Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
     return mOwner->RefOwner();
 }
 #else
+// Retail X360: the ring-ref is mOwner (an ObjRefOwner), NOT this. We pass a null
+// object to the base ctor (so it does not AddRef(this)), then AddRef(mOwner).
+// The base ctor stores mOwner (as Hmx::Object*, reinterpreted) and mObject.
 template <class T>
-ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>(ptr) {}
+ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
+    : ObjRefConcrete<T>(reinterpret_cast<Hmx::Object *>(owner), nullptr) {
+    mObject = ptr;
+    if (mObject)
+        mObject->AddRef(owner);
+}
 
 template <class T>
-ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o) : ObjRefConcrete<T>(o.mObject) {}
+ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
+    : ObjRefConcrete<T>(o.mOwner, nullptr) {
+    mObject = o.mObject;
+    if (mObject)
+        mObject->AddRef(OwnerRef());
+}
 
 template <class T>
-ObjOwnerPtr<T>::~ObjOwnerPtr() {}
+ObjOwnerPtr<T>::~ObjOwnerPtr() {
+    if (mObject)
+        mObject->Release(OwnerRef());
+    // Prevent the base dtor from releasing again with the wrong (this) ring-ref.
+    mObject = nullptr;
+}
+
+template <class T>
+void ObjOwnerPtr<T>::SetOwnerObj(T *obj) {
+    if (obj != mObject) {
+        if (mObject)
+            mObject->Release(OwnerRef());
+        mObject = obj;
+        if (mObject)
+            mObject->AddRef(OwnerRef());
+    }
+}
 #endif
 
 // template <class T1>
@@ -252,7 +331,14 @@ ObjPtrVec<T1, T2>::ObjPtrVec(const ObjPtrVec &other)
 
 template <class T1, class T2>
 ObjPtrVec<T1, T2>::Node::Node(const Node &n)
-    : ObjRefConcrete<T1, T2>(n), mOwner(n.mOwner) {}
+    : ObjRefConcrete<T1, T2>(n), mVecOwner(n.mVecOwner) {
+#ifndef HX_NATIVE
+    // X360: the base copy ctor only stores fields (AddRef moved to derived ctors),
+    // so register this Node as a ring-ref here to preserve ring membership.
+    if (this->mObject)
+        this->mObject->AddRef(this);
+#endif
+}
 
 template <class T1, class T2>
 ObjPtrVec<T1, T2>::~ObjPtrVec() {
@@ -262,7 +348,11 @@ ObjPtrVec<T1, T2>::~ObjPtrVec() {
 template <class T1, class T2>
 void ObjPtrVec<T1, T2>::ReplaceNode(Node *n, Hmx::Object *obj) {
     if (mListMode == kObjListOwnerControl) {
+#ifdef HX_NATIVE
         mOwner->Replace(n, obj);
+#else
+        mOwner->Replace(reinterpret_cast<ObjRef *>(n), obj);
+#endif
     } else {
         Hmx::Object *oldObj = n->SetObj(obj);
         if (!oldObj && mListMode == kObjListNoNull) {
@@ -472,7 +562,12 @@ void ObjPtrList<T1, T2>::Node::operator delete(void *v) {
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object *obj) {
     if (mListMode == kObjListOwnerControl) {
+#ifdef HX_NATIVE
         mOwner->Replace(static_cast<ObjRef *>(static_cast<ObjRefConcrete<T1, T2> *>(node)), obj);
+#else
+        // X360: nodes are not ObjRefs; pass the node as the opaque `from`.
+        mOwner->Replace(reinterpret_cast<ObjRef *>(node), obj);
+#endif
     } else {
         Hmx::Object *old = static_cast<ObjRefConcrete<T1, T2> *>(node)->SetObj(obj);
         if (!old && mListMode == kObjListNoNull) {
@@ -706,7 +801,7 @@ void ObjPtrList<T1, T2>::sort(const S &cmp) {
 
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::Link(iterator it, Node *node) {
-    node->mOwner = this;
+    node->mListOwner = this;
     node->next = it.mNode;
     if (it.mNode == mNodes) {
         if (mNodes) {
@@ -775,7 +870,7 @@ Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
 template <class T1, class T2>
 bool ObjPtrList<T1, T2>::Replace(ObjRef *ref, Hmx::Object *obj) {
     for (iterator it = begin(); it != end(); ++it) {
-        if (it.mNode == ref) {
+        if (reinterpret_cast<ObjRef *>(it.mNode) == ref) {
             ReplaceNode(it.mNode, obj);
             return true;
         }
@@ -785,7 +880,7 @@ bool ObjPtrList<T1, T2>::Replace(ObjRef *ref, Hmx::Object *obj) {
 
 template <class T1, class T2>
 Hmx::Object *ObjPtrList<T1, T2>::Node::RefOwner() const {
-    ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mOwner);
+    ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
     return list->Owner();
 }
 
@@ -811,7 +906,7 @@ ObjPtrVec<T1, T2>::erase(typename ObjPtrVec<T1, T2>::iterator it) {
 template <class T1, class T2>
 typename ObjPtrVec<T1, T2>::iterator ObjPtrVec<T1, T2>::FindRef(ObjRef *ref) {
     for (iterator it = begin(); it != end(); ++it) {
-        if (&(*it) == ref) return it;
+        if (reinterpret_cast<ObjRef *>(&(*it)) == ref) return it;
     }
     return end();
 }

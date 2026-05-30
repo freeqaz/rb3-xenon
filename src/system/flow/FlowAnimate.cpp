@@ -345,7 +345,7 @@ void FlowAnimate::OnAnimEvent(Symbol sym) {
 }
 
 bool FlowAnimate::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (ref == &mAnimTask) {
+    if (RefIs(ref, mAnimTask)) {
         if (mAnimTask) {
             AnimTask *task = mAnimTask;
             if (task->mListener == (Hmx::Object *)this) {

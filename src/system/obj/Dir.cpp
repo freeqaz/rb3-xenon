@@ -598,7 +598,7 @@ bool ObjectDir::HasDirPtrs() const {
         return true;
     } else {
         FOREACH (it, mRefs) {
-            if (it->IsDirPtr())
+            if (RefPtrOf(it)->IsDirPtr())
                 return true;
         }
         return false;

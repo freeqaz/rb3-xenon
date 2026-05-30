@@ -163,7 +163,7 @@ SkeletonUpdateHandle SkeletonUpdate::InstanceHandle() {
 }
 
 bool SkeletonUpdate::Replace(ObjRef *from, Hmx::Object *to) {
-    if (from == &mCameraInput) {
+    if (RefIs(from, mCameraInput)) {
         SetCameraInput(LiveCameraInput::sInstance);
     }
     return Hmx::Object::Replace(from, to);

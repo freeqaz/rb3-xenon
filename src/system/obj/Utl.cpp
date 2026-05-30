@@ -373,7 +373,12 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         ObjRef tempRefs;
         tempRefs.Clear();
         for (ObjRef *it = fromDir->mRefs.next; it != &fromDir->mRefs;) {
+#ifdef HX_NATIVE
             Hmx::Object *owner = it->RefOwner();
+#else
+            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
             if (owner && owner->Dir() == fromDir) {
                 ObjRef *prevRef = it->prev;
                 it->Release(nullptr);
