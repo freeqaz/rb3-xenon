@@ -186,28 +186,40 @@ void *operator new[](unsigned int size);
 void operator delete(void *mem);
 void operator delete[](void *mem);
 
+// Retail/match: keep class operator new/delete OUT OF LINE. After the
+// debug-arg-stripping `MemAlloc` macro reduces these bodies to the trivial
+// `return MemAlloc(s, 0)`, MSVC /Ob2 would otherwise INLINE operator new into
+// every `new Foo` call site (emitting a direct 2-arg `MemAlloc(size, 0)` with an
+// extra `li r4, 0`). The retail XEX instead keeps operator new out-of-line and
+// ICF-folds every identical `{ return MemAlloc(size, 0); }` into a single thunk
+// (fn_82709EE0), so each `new` site is just `li r3, size; bl <operator new>`
+// (verified on CacheMgr::CreateCacheMgr: target `bl fn_82709EE0` vs our inlined
+// 2-arg MemAlloc). __declspec(noinline) reproduces that: the body still folds to
+// fn_82709EE0, but the call site no longer inlines it. operator delete likewise.
 #define OBJ_MEM_OVERLOAD(line_num)                                                       \
-    static void *operator new(unsigned int s) {                                          \
+    __declspec(noinline) static void *operator new(unsigned int s) {                     \
         return MemAlloc(s, __FILE__, line_num, StaticClassName().Str(), 0);              \
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }             \
-    static void operator delete(void *v) {                                               \
+    __declspec(noinline) static void operator delete(void *v) {                          \
         MemFree(v, __FILE__, line_num, StaticClassName().Str());                         \
     }
 
 #define MEM_OVERLOAD(class_name, line_num)                                               \
-    static void *operator new(unsigned int s) {                                          \
+    __declspec(noinline) static void *operator new(unsigned int s) {                     \
         return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }             \
-    static void operator delete(void *v) { MemFree(v, __FILE__, line_num, #class_name); }
+    __declspec(noinline) static void operator delete(void *v) {                          \
+        MemFree(v, __FILE__, line_num, #class_name);                                      \
+    }
 
 #define MEM_ARRAY_OVERLOAD(class_name, line_num)                                         \
-    static void *operator new[](unsigned int s) {                                        \
+    __declspec(noinline) static void *operator new[](unsigned int s) {                   \
         return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
     }                                                                                    \
     static void *operator new[](unsigned int s, void *place) { return place; }           \
-    static void operator delete[](void *v) {                                             \
+    __declspec(noinline) static void operator delete[](void *v) {                        \
         MemFree(v, __FILE__, line_num, #class_name);                                     \
     }
 #endif
@@ -226,13 +238,15 @@ void operator delete[](void *mem);
     static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
 #else
 #define NEW_OVERLOAD                                                                     \
-    static void *operator new(unsigned int s) {                                          \
+    __declspec(noinline) static void *operator new(unsigned int s) {                     \
         return MemAlloc(s, __FILE__, 0, "unknown", 0);                                   \
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }
 
 #define DELETE_OVERLOAD                                                                  \
-    static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
+    __declspec(noinline) static void operator delete(void *v) {                          \
+        MemFree(v, __FILE__, 0, "unknown");                                              \
+    }
 #endif
 
 // #define NEW_ARRAY_OVERLOAD \
