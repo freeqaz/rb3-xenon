@@ -123,8 +123,8 @@ bool CacheXbox::GetFileSizeAsync(const char *cc, unsigned int *ui, Hmx::Object *
         mLastResult = kCache_ErrorBadParam;
         return false;
     } else {
-        mThreadStr = mCacheID.GetCachePath(cc);
-        mData = ui;
+        mThreadStr = mCacheID.GetCacheSearchPath(cc);
+        mCacheDirList = (std::vector<CacheDirEntry> *)ui;
         mLastResult = kCache_NoError;
         mOpCur = kOpFileSize;
         ThreadCall(this);
@@ -320,7 +320,7 @@ int CacheXbox::ThreadGetFileSize() {
         DWORD fileSize = 0;
         DWORD res = GetFileSize(file, &fileSize);
         if (!(res != -1)) {
-            int *data = (int *)mData;
+            int *data = (int *)mCacheDirList;
             *data = res;
         } else {
             DWORD err = GetLastError();

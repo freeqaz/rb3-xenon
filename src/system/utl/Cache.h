@@ -7,8 +7,8 @@
 
 enum OpType {
     kOpNone = 0,
-    kOpDirectory = 1,
-    kOpFileSize = 2,
+    kOpFileSize = 1,
+    kOpDirectory = 2,
     kOpRead = 3,
     kOpWrite = 4,
     kOpDelete = 5,
