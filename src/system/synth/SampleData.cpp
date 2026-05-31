@@ -117,23 +117,22 @@ void SampleData::LoadWAV(BinStream &bs, const FilePath &fp, bool bigEndian) {
 }
 
 int SampleData::SizeAs(Format fmt) const {
-    if ((unsigned int)fmt <= 7U) {
-        switch (fmt) {
-        case kBigEndPCM:
-        case kPCM:
-            return mNumSamples * 2;
-        case kVAG:
-            return ((mNumSamples + 0x6F) / 0x70) * 0x40;
-        case kXMA:
-            return mNumSamples / 5;
-        case kATRAC:
-        case kMP3:
-            return ((mNumSamples + 0x3FF) / 0x400) * 0xC0;
-        case kNintendoADPCM:
-            return 0x60 - (int)((float)(long long)(mNumSamples * 2) * -0.29411763f);
-        }
+    switch (fmt) {
+    case kBigEndPCM:
+    case kPCM:
+        return mNumSamples * 2;
+    case kVAG:
+        return ((mNumSamples + 0x6F) / 0x70) * 0x40;
+    case kXMA:
+        return mNumSamples / 5;
+    case kATRAC:
+    case kMP3:
+        return ((mNumSamples + 0x3FF) / 0x400) * 0xC0;
+    case kNintendoADPCM:
+        return 0x60 - (int)((float)(long long)(mNumSamples * 2) * -0.29411763f);
+    default:
+        return 0;
     }
-    return 0;
 }
 
 void SampleData::Load(BinStream &bs, const FilePath &fp) {
