@@ -713,10 +713,10 @@
     "mw_version": "X360/16.00.11886.00",
     "cflags": "base",
     "objects": {
-      "network/Plugins/Checksum/MD5/MD5.cpp": "NonMatching",
+      "network/Plugins/Checksum/MD5/MD5.cpp": { "status": "NonMatching", "extra_cflags": ["/Od", "/Oi-"] },
       "network/Plugins/SessionDiscovery/Interface/SessionDiscoveryTable.cpp": "NonMatching",
-      "network/Plugins/Checksum/Interface/KeyedChecksumAlgorithm.cpp": "NonMatching",
-      "network/ObjDup/DuplicatedObject.cpp": "NonMatching",
+      "network/Plugins/Checksum/Interface/KeyedChecksumAlgorithm.cpp": { "status": "NonMatching", "extra_cflags": ["/Od", "/Oi-"] },
+      "network/ObjDup/DuplicatedObject.cpp": { "status": "NonMatching", "extra_cflags": ["/Od"] },
       "network/Core/TimedSignal.cpp": "NonMatching",
       "network/Core/PeriodicJob.cpp": "NonMatching"
     }

@@ -2,8 +2,8 @@
 #include "Platform/MemoryManager.h"
 #include "Platform/RootObject.h"
 #include "Platform/String.h"
-#include "revolution/os/OSAlarm.h"
-#include "revolution/os/OSThread.h"
+// Xbox 360 port: replace revolution/os OSThread/OSAlarm with Win32/XBOXKRNL handles
+#include "xdk/XAPILIB.h"
 
 namespace Quazal {
     class ObjectThreadRoot : public RootObject {
@@ -14,21 +14,17 @@ namespace Quazal {
             ~Handle() {
                 if (mThread) {
                     if (!mHasJoined) {
-                        OSCancelAlarms(mThread);
-                        OSCancelThread(mThread);
-                        OSJoinThread(mThread, 0);
+                        // Xbox 360: WaitForSingleObject + CloseHandle (vs Wii OSJoinThread)
+                        WaitForSingleObject(mThread, 0xFFFFFFFF);
                     }
-                    QUAZAL_DEFAULT_FREE(mThread, _InstType8);
+                    CloseHandle(mThread);
                     mThread = 0;
-                    if (mStack) {
-                        QUAZAL_DEFAULT_FREE(mStack - 4, _InstType9);
-                        // mStack = 0;
-                    }
+                    // mStack is NULL on Xbox (OS-managed stack); no free needed
                 }
             }
 
-            OSThread *mThread; // 0x0
-            char *mStack; // 0x4
+            HANDLE mThread; // 0x0 (was OSThread* on Wii, same pointer size)
+            char *mStack;   // 0x4 (unused on Xbox, kept for layout parity)
             bool mHasJoined; // 0x8
         };
         ObjectThreadRoot(const String &);

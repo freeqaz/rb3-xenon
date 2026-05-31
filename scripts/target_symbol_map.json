@@ -9545,5 +9545,19 @@
   "0x825848C8": "?OnMsg@NetSync@@QAA?AVDataNode@@ABVLockStepCompleteMsg@@@Z",
   "0x82585630": "?HandleStartTransitionMsg@NetSync@@QAAXPAVStartTransitionMsg@@@Z",
   "0x825858F8": "?OnMsg@NetSync@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
-  "0x82586258": "?Poll@NetSync@@QAAXXZ"
+  "0x82586258": "?Poll@NetSync@@QAAXXZ",
+  "0x82A467A0": "?ComputeDistance@DuplicatedObject@Quazal@@UAAMPAV12@@Z",
+  "0x82A467B8": "?ReleaseReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
+  "0x82A467E8": "?AcquireReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
+  "0x82A46CB0": "?IsInDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z",
+  "0x82A46EE0": "?SetInitialState@DuplicatedObject@Quazal@@QAAXABVQEvent@StateMachine@2@@Z",
+  "0x82A46F00": "?InvalidState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+  "0x82A46F18": "?ValidState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+  "0x82B15190": "?update@MD5@Quazal@@QAAXPBEI@Z",
+  "0x82B15318": "?finalize@MD5@Quazal@@QAAXXZ",
+  "0x82B15520": "??0MD5@Quazal@@QAA@XZ",
+  "0x82B15590": "?transform@MD5@Quazal@@QAAXPBE@Z",
+  "0x82B1AF48": "??0KeyedChecksumAlgorithm@Quazal@@QAA@II@Z",
+  "0x82B1AFF0": "??1KeyedChecksumAlgorithm@Quazal@@UAA@XZ",
+  "0x82B1B068": "?SetKey@KeyedChecksumAlgorithm@Quazal@@QAA_NABVKey@2@@Z"
 }
