@@ -181,3 +181,33 @@ are). Do NOT re-derive the layout — it's done (table above, dtor-verified).
 - Oracles: rb3-Wii `~/code/milohax/rb3/src/system/ui/` (faithful), DC3
   `~/code/milohax/dc3-decomp/src/system/ui/` (divergent — virtual inheritance).
 - Memory: `[[project-engine-baseclass-layout-wall]]`.
+
+## UISlider tail RESOLVED + ResourceDirPtr-vbase hypothesis DISPROVEN (2026-05-31, @2837fcc, +2)
+
+The Step-5 "UISlider.h member reconstruction" landed: **2207 → 2209, UISlider 3/32 → 5/32**,
+funclets `fn_827E4518`/`fn_827E455C` 99.94% → **100%**. But the diagnosis that drove it was the
+OPPOSITE of the prior "ResourceDirPtr vbase migration" lead — record this so it is not re-attempted:
+
+- **The +0x14 funclet skew was NOT a ResourceDirPtr layout bug.** The two funclets destroy
+  `Hmx::Object@0x15c` and `RndHighlightable@0x190` — these are **UISlider's OWN virtual bases**, not
+  a contained member. UISlider → UIComponent → `RndTransformable : public virtual RndHighlightable :
+  public virtual Hmx::Object`; MSVC lays virtual bases LAST, so they sit at the object tail
+  (Hmx::Object 0x15c..0x184 [0x28], RndHighlightable @0x190; `sizeof=0x190`, New `fn_827E4BB0`
+  `li r3,0x190`). Confirmed: retail ctor `fn_827E43D8` (vbtable fixups + `Hmx::Object::Object`
+  fn_82737fe8 @0x15c), dtor `fn_827E47F0`, member deleting-dtor `fn_82594400`→`fn_82738050`
+  (`~Object`), DC3 leaked-map (`??_7UISlider@@6BObject@Hmx@@@`, `…6BRndHighlightable@@@` are
+  UISlider's OWN base-vtables), rb3-Wii oracle (UISlider = only `{mCurrent,mNumSteps,mVertical}`).
+- **Root cause:** the DC3-derived header carried a SPECULATIVE non-virtual tail
+  `RndMesh *unk68`(0x158) + `ResourceDirPtr<RndDir> mSliderResource`(0x15c) = **0x14 bytes**, which
+  shoved the virtual-base region from 0x15c → 0x170 (the exact uniform +0x14 in both funclets). Fix =
+  DELETE both members + their PROPSYNC/SAVE/COPY/Pre+PostLoad wiring + resource-touching bodies.
+  Isolated to UISlider.{h,cpp}; per-unit A/B = zero regressions.
+- **Therefore the "make ResourceDirPtr<RndDir>'s ObjDirPtr a virtual base (14-user blast radius)"
+  task is RETIRED** — it was a mis-read of these funclets. UISlider never had a slider resource
+  member (visuals use UIComponent's inherited `mResource`). The remaining UISlider residual is
+  `OnMsg @91%` (body-logic, permuter-class) plus the 0%-matched bodies (per-fn ports).
+- **Method note:** I almost dispatched an agent on the (wrong) vbase-migration framing. Pulling the
+  two funclet instruction-diffs + the ctor/member-ctor decompiles FIRST (before briefing) caught the
+  +0x14 direction (our tail too BIG, not too small → adding a vbase grows it the wrong way) and
+  reframed the task to an isolated UISlider fix. Verify the binary before committing the agent to a
+  hypothesis. `[[feedback-verify-assumptions]]`
