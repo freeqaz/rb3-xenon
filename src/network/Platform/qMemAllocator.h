@@ -35,9 +35,15 @@ namespace Quazal {
         // ...but still has the destructor
         ~MemAllocator() {}
 
-#ifdef VERSION_SZBE69
+#if defined(VERSION_SZBE69) || (!defined(VERSION_SZBE69_B8))
         // This is the only way to make allocator conversions
-        // work in retail without using constructors
+        // work in retail without using constructors.
+        // rb3-xenon (X360 retail) defines neither VERSION_SZBE69 nor
+        // VERSION_SZBE69_B8, which previously left MemAllocator with NO rebind
+        // path -> STLport _List_base(const MemAllocator&) failed to convert
+        // MemAllocator<T> to MemAllocator<_List_node<T>>. The retail SKU used
+        // this conversion-operator path (the comment above), so enable it when
+        // the constructor path (VERSION_SZBE69_B8) is absent.
         template <class T2>
         operator MemAllocator<T2>() const {
             return MemAllocator<T2>();

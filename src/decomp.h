@@ -1,8 +1,15 @@
 #ifndef DECOMP_H
 #define DECOMP_H
 
+#ifdef __MWERKS__
 #define FORCE_LOCAL_INLINE _Pragma("push") _Pragma("force_active on") inline
 #define END_FORCE_LOCAL_INLINE _Pragma("pop")
+#else
+// MSVC X360 has no `force_active` pragma; this MWCC matching hint expands to
+// nothing on the real target compiler (inline-ness is decided by /Ob2).
+#define FORCE_LOCAL_INLINE
+#define END_FORCE_LOCAL_INLINE
+#endif
 
 #ifdef VERSION_SZBE69_B8
 #define UNPOOL_DATA _Pragma("push") _Pragma("pool_data off")

@@ -9521,5 +9521,14 @@
   "0x82672040": "??0GameMode@@QAA@XZ",
   "0x82671B90": "??_EGameMode@@$4PPPPPPPM@A@AAPAXI@Z",
   "0x82671BA0": "??_GGameMode@@UAAPAXI@Z",
-  "0x82671BF0": "??_DGameMode@@QAAXXZ"
+  "0x82671BF0": "??_DGameMode@@QAAXXZ",
+  "0x826C6328": "?GetNextPhraseMarker@VocalPlayer@@QBAPBVVocalPhrase@@ABQBV2@@Z",
+  "0x826C6498": "?GetSpotlightPhraseID@VocalPlayer@@QBAHXZ",
+  "0x826C65C8": "?SetAutoplay@VocalPlayer@@UAAX_N@Z",
+  "0x826C6850": "?OnGameOver@VocalPlayer@@QAAXXZ",
+  "0x826C6AC0": "?GetFreestyleDeploymentRequiredMs@VocalPlayer@@QBA_NAAM@Z",
+  "0x826C6BD8": "?ChangeDifficulty@VocalPlayer@@UAAXW4Difficulty@@@Z",
+  "0x826C6C58": "?Rollback@VocalPlayer@@UAAXMM@Z",
+  "0x826D8E70": "?ResolveAmbiguity@Singer@@QAAXXZ",
+  "0x826D99B0": "?GetFrameMatchType@Singer@@QAAHXZ"
 }

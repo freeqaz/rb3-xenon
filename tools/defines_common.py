@@ -29,4 +29,10 @@ cflags_includes = [
 
     # RB3 network code (network/). Mirrors rb3-Wii's "-i src/network".
     "/I src/network",
+
+    # Speex voice codec headers (network voice chat: SpeexCodec.h -> Codec.h ->
+    # "speex/speex.h"). Mirrors rb3-Wii's "-i src/system/speex/include". Vendored
+    # header-only; no speex .cpp is compiled. Pulled by any TU including
+    # net/NetSession.h (e.g. game/Singer.cpp, game/VocalPlayer.cpp).
+    "/I src/system/speex/include",
 ]

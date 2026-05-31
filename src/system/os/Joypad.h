@@ -335,3 +335,9 @@ inline bool DirectionalAction(JoypadAction a) {
     return a == kAction_Up || a == kAction_Down || a == kAction_Right
         || a == kAction_Left;
 }
+
+// Present in rb3-Wii's os/Joypad.h but absent from our dc3-based copy; needed by
+// RB3 game code (game/VocalPlayer.cpp). Declarations only (additive).
+class LocalUser;
+void JoypadKeepAlive(int, bool);
+bool UserHasController(LocalUser *);

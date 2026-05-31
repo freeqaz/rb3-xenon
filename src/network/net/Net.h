@@ -8,7 +8,6 @@
 #include "net/VoiceChatMgr.h"
 #include "obj/Object.h"
 #include "rndobj/Overlay.h"
-#include "revolution/os/OSThread.h"
 
 class Net : public Hmx::Object {
 public:
@@ -40,7 +39,14 @@ public:
     int unk3c;
     int unk40;
     int unk44;
-    OSThread mThread; // 0x48
+    // rb3-Wii had `OSThread mThread` (Wii RVL SDK) here, spanning 0x48..0x360.
+    // That pulled the Wii revolution/ SDK into a 360 build. The retail X360 Net
+    // uses Xbox threading and almost certainly a different layout past 0x48, but
+    // the only consumer (game/Singer.cpp) just calls GetNetSession() -> mSession
+    // (0x20), which is BEFORE this field, so the thread representation does not
+    // affect its codegen. Keep an opaque byte span of the Wii size so the few
+    // trailing members keep their offsets until the network layer is ported.
+    unsigned char mThread[0x360 - 0x48]; // 0x48
     RndOverlay *mNetOverlay; // 0x360
 };
 
