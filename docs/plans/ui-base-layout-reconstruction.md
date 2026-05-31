@@ -142,6 +142,23 @@ known:
 - `fn_827E4C20`: `lwz 0x54` vs target `0x84`
 Reconstruct UISlider.h members from ctor `fn_827E47F0` / dtor `fn_827DABC0` starting ScrollSelect@0x140.
 
+### ✅ UI SESSION LANDED @`b097867` (2026-05-31) — UISlider 1/32→3/32, +3, zero regressions
+Steps 2+3+5 landed (on top of the concurrent `c454c0f` which did UIComponent-non-virtual + UILabel
+compose). A/B vs main: 2152→2155. `UISlider::Frame`→100%, a funclet flipped, UIListSubList +1.
+- **⚠️ DOC TABLE CORRECTION — `mState` is an int-State @`0xe0` (the FIRST UIComponent member), NOT a
+  trailing byte at 0x13c.** Proven by `UIButton::OnMsg` target `lwz r11, 0xe0(r29)`. The table above
+  (0x13c–0x13f mSelected/mState/...) is WRONG on mState; the landed `UIComponent.h` is now ground truth.
+  Placing mState as a trailing byte regresses UIButton/UIScreen (−2); @0xe0 recovers them.
+- **UISlider sizeof = 0x190** (from `New` `fn_827E4BB0`): ScrollSelect@0x140, mCurrent@0x14c,
+  mNumSteps@0x150, mVertical@0x154, mSliderResource@0x15c. Dropped the **DC3-only `unk6c[5]` mat-cache
+  array** (RB3-360 lacks it).
+- **RESIDUALS for the next push (NOT UISlider.h):** (1) `fn_827E4518`/`fn_827E455C` stay 99.94% —
+  `mSliderResource`'s main part lands @0x170 ours vs retail @0x15c (+0x14); root cause = **`ResourceDirPtr<RndDir>`'s
+  `ObjDirPtr<RndDir>` is a non-virtual base in our tree but a VIRTUAL base in retail** (`fn_827E455C`
+  destroys the relocated vbase part @0x190 with a vbtable adjust) — a shared ObjDirPtr-vbase migration,
+  affects all ResourceDirPtr users. (2) `UISlider::OnMsg` @91% = body-logic (JoypadTypeHasLeftyFlip
+  ordering / ScrollDirection) — permuter-class.
+
 **UILabel diamond is the build-gate (Step 2):** non-virtual UIComponent makes UILabel inherit
 RndDrawable/RndTransformable twice → 4 TUs fail (UILabel.cpp ambiguous DirtyLocalXfm/WorldXfm/
 LocalXfm/SetLocalXfm; StreakMeter/HamListRibbon/StarsDisplay ambiguous SetShowing/Showing/
