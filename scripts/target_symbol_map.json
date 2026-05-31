@@ -9533,5 +9533,17 @@
   "0x826C6BD8": "?ChangeDifficulty@VocalPlayer@@UAAXW4Difficulty@@@Z",
   "0x826C6C58": "?Rollback@VocalPlayer@@UAAXMM@Z",
   "0x826D8E70": "?ResolveAmbiguity@Singer@@QAAXXZ",
-  "0x826D99B0": "?GetFrameMatchType@Singer@@QAAHXZ"
+  "0x826D99B0": "?GetFrameMatchType@Singer@@QAAHXZ",
+  "0x82583DD8": "?IsEnabled@NetSync@@QBA_NXZ",
+  "0x82583E18": "?Enable@NetSync@@QAAXXZ",
+  "0x82583F30": "?IsTransitionAllowed@NetSync@@QBA_NPAVUIScreen@@@Z",
+  "0x82584010": "?SendStartTransitionMsg@NetSync@@QAAXAAVStartTransitionMsg@@@Z",
+  "0x825841E0": "??_GStartTransitionMsg@@UAAPAXI@Z",
+  "0x82584338": "?RegisterNetMessages@?A0x147d8002@@YAXXZ",
+  "0x82584508": "?OnMsg@NetSync@@QAA?AVDataNode@@ABVUITransitionCompleteMsg@@@Z",
+  "0x82584580": "?OnMsg@NetSync@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
+  "0x825848C8": "?OnMsg@NetSync@@QAA?AVDataNode@@ABVLockStepCompleteMsg@@@Z",
+  "0x82585630": "?HandleStartTransitionMsg@NetSync@@QAAXPAVStartTransitionMsg@@@Z",
+  "0x825858F8": "?OnMsg@NetSync@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
+  "0x82586258": "?Poll@NetSync@@QAAXXZ"
 }
