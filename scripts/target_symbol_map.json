@@ -9515,5 +9515,11 @@
     "0x82759310"
   ],
   "_denylist_comment": "Addresses that gen_target_map must never auto-emit (hand-flagged bad bindiff guesses / fingerprint collisions). 0x82759310 was a known DrawBounds collision (similarity 0.91).",
-  "0x827A00C8": "?ReadEndian@BinStream@@QAAXPAXH@Z"
+  "0x827A00C8": "?ReadEndian@BinStream@@QAAXPAXH@Z",
+  "0x82671A60": "?InMode@GameMode@@QAA_NVSymbol@@@Z",
+  "0x82671C58": "?SetMode@GameMode@@QAAXVSymbol@@@Z",
+  "0x82672040": "??0GameMode@@QAA@XZ",
+  "0x82671B90": "??_EGameMode@@$4PPPPPPPM@A@AAPAXI@Z",
+  "0x82671BA0": "??_GGameMode@@UAAPAXI@Z",
+  "0x82671BF0": "??_DGameMode@@QAAXXZ"
 }
