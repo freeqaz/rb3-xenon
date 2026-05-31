@@ -9514,5 +9514,6 @@
   "_denylist": [
     "0x82759310"
   ],
-  "_denylist_comment": "Addresses that gen_target_map must never auto-emit (hand-flagged bad bindiff guesses / fingerprint collisions). 0x82759310 was a known DrawBounds collision (similarity 0.91)."
+  "_denylist_comment": "Addresses that gen_target_map must never auto-emit (hand-flagged bad bindiff guesses / fingerprint collisions). 0x82759310 was a known DrawBounds collision (similarity 0.91).",
+  "0x827A00C8": "?ReadEndian@BinStream@@QAAXPAXH@Z"
 }
