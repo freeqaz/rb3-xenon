@@ -13,10 +13,9 @@ BinStream &operator>>(BinStream &bs, FilePath &fp) {
 }
 
 void FilePath::Set(const char *str1, const char *str2) {
-    char buf[256];
     const char *path;
     if (str2 && *str2) {
-        path = FileMakePathBuf(str1, str2, buf);
+        path = FileMakePath(str1, str2);
     } else
         path = "";
 
