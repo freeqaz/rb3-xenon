@@ -22,8 +22,8 @@
 
 
 
-void *SampleAlloc(int size, const char *file) {
-    void *ret = PhysicalAllocTracked(size, 4, file, 0, "SampleData(phys)");
+void *SampleAlloc(int size) {
+    void *ret = PhysicalAllocTracked(size, 4, 0, 0, "SampleData(phys)");
     MILO_ASSERT(ret, 0x19);
     return ret;
 }

@@ -14,7 +14,7 @@ FileLoader *SynthSample::sLoader = nullptr;
 SynthSample *SynthSample::sLoading = nullptr;
 bool sDisabled = false;
 
-void *SampleAlloc(int size, const char *) {
+void *SampleAlloc(int size) {
     return MemAlloc(size, __FILE__, 0x1C, "Sample Data");
 }
 

@@ -106,7 +106,7 @@ void SampleData::LoadWAV(BinStream &bs, const FilePath &fp, bool bigEndian) {
     mNumSamples = wav.NumSamples();
     mSampleRate = wav.SamplesPerSec();
     mSizeBytes = SizeAs(mFormat);
-    mData = sAlloc(mSizeBytes, fp.c_str());
+    mData = sAlloc(mSizeBytes);
     WaveFileData wavdata(wav);
     wavdata.Read(mData, mSizeBytes);
     for (int i = 0; i < wav.NumMarkers(); i++) {
@@ -141,22 +141,22 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
     bs >> rev;
     if (rev > gSampleDataMaxRev) {
         if (rev > 0x3E8 && rev < 0x249F0) {
-            MILO_LOG("%s: loading old cached sample\n", fp);
+            { FilePath tmp(fp); }
             mSampleRate = rev;
             bs >> mSizeBytes;
             mFormat = kBigEndPCM;
             mNumSamples = mSizeBytes / 2;
 #ifdef HX_NATIVE
             if (sAlloc)
-                mData = sAlloc(mSizeBytes, fp.c_str());
+                mData = sAlloc(mSizeBytes);
             else
                 mData = malloc(mSizeBytes);
 #else
-            mData = sAlloc(mSizeBytes, fp.c_str());
+            mData = sAlloc(mSizeBytes);
 #endif
             bs.Read(mData, mSizeBytes);
         } else {
-            MILO_WARN("can't load new SampleData: %s", fp);
+            { FilePath tmp(fp); }
         }
         return;
     }
@@ -170,11 +170,11 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
     if (hasData) {
 #ifdef HX_NATIVE
         if (sAlloc)
-            mData = sAlloc(mSizeBytes, fp.c_str());
+            mData = sAlloc(mSizeBytes);
         else
             mData = malloc(mSizeBytes);
 #else
-        mData = sAlloc(mSizeBytes, fp.c_str());
+        mData = sAlloc(mSizeBytes);
 #endif
         ReadChunks(bs, mData, mSizeBytes, 0x8000);
     }
@@ -192,7 +192,7 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
             Dealloc();
             // Allocate decoded PCM with engine allocator (CRC=0 so sFree used on destruction)
             if (sAlloc)
-                mData = sAlloc(pcmSize, fp.c_str());
+                mData = sAlloc(pcmSize);
             else
                 mData = malloc(pcmSize);
             memcpy(mData, pcm, pcmSize);

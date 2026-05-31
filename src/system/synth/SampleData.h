@@ -29,10 +29,9 @@ private:
     int sample; // 0x8
 };
 
-// Retail RB3 alloc/free signatures (verified: SampleData::Reset inlines the
-// free as a 1-arg call). DC3's newer engine widened these to carry file/line
-// tracking; RB3 does not.
-typedef void *(*SampleDataAllocFunc)(int, const char *);
+// Retail RB3 alloc/free signatures are size-only alloc and pointer-only free.
+// DC3's newer engine widened these to carry file/line tracking; RB3 does not.
+typedef void *(*SampleDataAllocFunc)(int);
 typedef void (*SampleDataFreeFunc)(void *);
 
 class SampleData {
