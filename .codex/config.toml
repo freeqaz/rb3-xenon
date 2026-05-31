@@ -1,0 +1,8 @@
+[mcp_servers.orchestrator]
+command = "/home/free/code/milohax/rb3-xenon/venv/bin/python"
+args = ["-m", "scripts.orchestrator.mcp_server", "--db", "/home/free/code/milohax/rb3-xenon/decomp.db"]
+cwd = "/home/free/code/milohax/rb3-xenon"
+
+[mcp_servers.orchestrator.env]
+PYTHONPATH = "/home/free/code/milohax/rb3-xenon"
+REPO_ROOT = "/home/free/code/milohax/rb3-xenon"
