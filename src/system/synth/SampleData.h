@@ -29,8 +29,11 @@ private:
     int sample; // 0x8
 };
 
-typedef void *(*SampleDataAllocFunc)(int, const char *, int, const char *, int);
-typedef void (*SampleDataFreeFunc)(void *, const char *, int, const char *);
+// Retail RB3 alloc/free signatures (verified: SampleData::Reset inlines the
+// free as a 1-arg call). DC3's newer engine widened these to carry file/line
+// tracking; RB3 does not.
+typedef void *(*SampleDataAllocFunc)(int, const char *);
+typedef void (*SampleDataFreeFunc)(void *);
 
 class SampleData {
 public:
@@ -54,15 +57,20 @@ public:
     int NumMarkers() const;
     const SampleMarker &GetMarker(int) const;
     void Dealloc();
-    int NumChannels() const { return mNumChannels; }
     int GetSampleRate() const { return mSampleRate; }
     int GetNumSamples() const { return mNumSamples; }
     Format GetFormat() const { return mFormat; }
     int GetSizeBytes() const { return mSizeBytes; }
-    bool HasData() const { return mData != nullptr; }
+    bool HasData() const { return (int)(uintptr_t)mData != 0; }
     unsigned int DataAddr() const { return (unsigned int)(uintptr_t)mData; }
 #ifdef HX_NATIVE
+    // RB3 samples are 16-bit mono; the channel count is not stored on retail
+    // (see SizeAs, which has no per-channel multiply). The native FFMPEG XMA
+    // decode path keeps a real channel count alongside the matched fields.
+    int NumChannels() const { return mNumChannels; }
     void *DataPtr() const { return mData; }
+#else
+    int NumChannels() const { return 1; }
 #endif
     std::vector<SampleMarker> &AccessMarkers() { return mMarkers; }
 
@@ -72,12 +80,16 @@ private:
     static SampleDataAllocFunc sAlloc;
     static SampleDataFreeFunc sFree;
 
-    Hmx::CRC mCRC; // 0x0
-    int mNumSamples; // 0x4
-    int mSampleRate; // 0x8
-    int mNumChannels; // 0xc
-    int mSizeBytes; // 0x10
-    Format mFormat; // 0x14
-    void *mData; // 0x18
-    std::vector<SampleMarker> mMarkers; // 0x1c
+    // Retail RB3 layout (cross-checked against the target binary's
+    // SampleData::Reset/Save/SizeAs and rb3-Wii's SampleData.h). DC3's newer
+    // engine added mCRC@0x0 and mNumChannels@0xc; RB3 has neither.
+    int mNumSamples; // 0x0
+    int mSampleRate; // 0x4
+    int mSizeBytes; // 0x8
+    Format mFormat; // 0xc
+    void *mData; // 0x10
+#ifdef HX_NATIVE
+    int mNumChannels;
+#endif
+    std::vector<SampleMarker> mMarkers; // 0x14
 };

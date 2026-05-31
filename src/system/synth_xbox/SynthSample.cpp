@@ -22,13 +22,13 @@
 
 
 
-void *SampleAlloc(int size, const char *file, int line, const char *name, int) {
-    void *ret = PhysicalAllocTracked(size, 4, file, line, "SampleData(phys)");
+void *SampleAlloc(int size, const char *file) {
+    void *ret = PhysicalAllocTracked(size, 4, file, 0, "SampleData(phys)");
     MILO_ASSERT(ret, 0x19);
     return ret;
 }
 
-void SampleFree(void *mem, const char *, int, const char *) {
+void SampleFree(void *mem) {
     if (mem)
         MemFree(mem, __FILE__, __LINE__, "");
 }

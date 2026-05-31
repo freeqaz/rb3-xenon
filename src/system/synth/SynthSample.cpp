@@ -14,7 +14,7 @@ FileLoader *SynthSample::sLoader = nullptr;
 SynthSample *SynthSample::sLoading = nullptr;
 bool sDisabled = false;
 
-void *SampleAlloc(int size, const char *, int, const char *, int) {
+void *SampleAlloc(int size, const char *) {
     return MemAlloc(size, __FILE__, 0x1C, "Sample Data");
 }
 
@@ -23,9 +23,11 @@ void *SampleAlloc(int size, const char *, int, const char *, int) {
 SynthSample::SynthSample() {}
 
 SynthSample::~SynthSample() {
+#ifdef HX_NATIVE
     FOREACH (it, mSampleInsts) {
         (*it)->Stop(true);
     }
+#endif
     if (sLoading == this) {
         RELEASE(sLoader);
         sLoading = nullptr;
@@ -149,9 +151,14 @@ void SynthSample::Sync(SyncType ty) {
     }
 }
 
-void SynthSample::RegisterChild(SampleInst *inst) { mSampleInsts.push_back(inst); }
+void SynthSample::RegisterChild(SampleInst *inst) {
+#ifdef HX_NATIVE
+    mSampleInsts.push_back(inst);
+#endif
+}
 
 void SynthSample::UnregisterChild(SampleInst *inst) {
+#ifdef HX_NATIVE
     FOREACH (it, mSampleInsts) {
         if (*it == inst) {
             mSampleInsts.erase(it);
@@ -159,11 +166,12 @@ void SynthSample::UnregisterChild(SampleInst *inst) {
         }
     }
     MILO_NOTIFY("Could not find child instance for unregistration!");
+#endif
 }
 
 void SynthSample::Init() {
     REGISTER_OBJ_FACTORY(SynthSample);
-    SampleData::SetAllocator(SampleAlloc, MemFree);
+    SampleData::SetAllocator(SampleAlloc, (SampleDataFreeFunc)MemFree);
 }
 
 #pragma endregion
