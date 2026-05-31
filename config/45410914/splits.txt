@@ -1763,8 +1763,8 @@ GranularSynth.cpp:
 	.text       start:0x82B45158 end:0x82B45E6C
 
 SampleData.cpp:
-	.pdata      start:0x82231980 end:0x822319C0
-	.text       start:0x8270D3A0 end:0x8270D828
+	.pdata      start:0x82231980 end:0x822319F0
+	.text       start:0x8270D3A0 end:0x8270DBB0
 
 rtti.cpp:
 	.pdata      start:0x8223FA40 end:0x8223FA80

@@ -1,5 +1,4 @@
 #include "synth/SampleData.h"
-#include "synth/WavMgr.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "os/File.h"
@@ -19,12 +18,20 @@ static const unsigned short gSampleDataMaxRev = 0xE;
 static const unsigned short gSampleDataMaxAltRev = 0;
 
 SampleData::SampleData() : mData(0), mMarkers() { Reset(); }
-SampleData::~SampleData() { Dealloc(); }
+SampleData::~SampleData() {
+#ifdef HX_NATIVE
+    if (sFree)
+        sFree(mData);
+    else
+        free(mData);
+#else
+    sFree(mData);
+#endif
+}
 
 void SampleData::SetAllocator(SampleDataAllocFunc a, SampleDataFreeFunc f) {
     sAlloc = a;
     sFree = f;
-    TheWavMgr->SetAllocator((WavMgrAllocFunc)a, (WavMgrFreeFunc)f);
 }
 
 void SampleData::Dealloc() {
@@ -112,47 +119,54 @@ void SampleData::LoadWAV(BinStream &bs, const FilePath &fp, bool bigEndian) {
 int SampleData::SizeAs(Format fmt) const {
     if ((unsigned int)fmt <= 7U) {
         switch (fmt) {
-        case 1:
+        case kBigEndPCM:
+        case kPCM:
             return mNumSamples * 2;
-        case 0:
-            return mNumSamples * 2;
-        case 2:
+        case kVAG:
             return ((mNumSamples + 0x6F) / 0x70) * 0x40;
-        case 4:
-        case 5:
-            return ((mNumSamples + 0x3FF) / 0x400) * 0xC0;
-        case 3:
-            MILO_NOTIFY("don't know size as XMA");
+        case kXMA:
             return mNumSamples / 5;
-        case 6: {
+        case kATRAC:
+        case kMP3:
+            return ((mNumSamples + 0x3FF) / 0x400) * 0xC0;
+        case kNintendoADPCM:
             return 0x60 - (int)((float)(long long)(mNumSamples * 2) * -0.29411763f);
         }
-        case 7: {
-            return 0x60 - (int)((float)(long long)(mNumSamples * 2) * -0.29411763f);
-        }
-        }
-    } else {
-        MILO_ASSERT(0, 0x12B);
-        return 0;
     }
     return 0;
 }
 
 void SampleData::Load(BinStream &bs, const FilePath &fp) {
     Reset();
-    LOAD_REVS(bs);
-    if (d.rev > gSampleDataMaxRev) {
-        MILO_FAIL("%s can't load new %s version %d > %d", fp, "SampleData", d.rev, gSampleDataMaxRev);
-    }
-    if (d.altRev > gSampleDataMaxAltRev) {
-        MILO_FAIL("%s can't load new %s alt version %d > %d", fp, "SampleData", d.altRev, gSampleDataMaxAltRev);
+    int rev;
+    bs >> rev;
+    if (rev > gSampleDataMaxRev) {
+        if (rev > 0x3E8 && rev < 0x249F0) {
+            MILO_LOG("%s: loading old cached sample\n", fp);
+            mSampleRate = rev;
+            bs >> mSizeBytes;
+            mFormat = kBigEndPCM;
+            mNumSamples = mSizeBytes / 2;
+#ifdef HX_NATIVE
+            if (sAlloc)
+                mData = sAlloc(mSizeBytes, fp.c_str());
+            else
+                mData = malloc(mSizeBytes);
+#else
+            mData = sAlloc(mSizeBytes, fp.c_str());
+#endif
+            bs.Read(mData, mSizeBytes);
+        } else {
+            MILO_WARN("can't load new SampleData: %s", fp);
+        }
+        return;
     }
     int fmt;
-    d >> fmt >> mNumSamples >> mSampleRate >> mSizeBytes;
+    bs >> fmt >> mNumSamples >> mSampleRate >> mSizeBytes;
     mFormat = (Format)fmt;
     bool hasData = true;
-    if (d.rev >= 0xB) {
-        d >> hasData;
+    if (rev >= 0xB) {
+        bs >> hasData;
     }
     if (hasData) {
 #ifdef HX_NATIVE
@@ -165,8 +179,8 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
 #endif
         ReadChunks(bs, mData, mSizeBytes, 0x8000);
     }
-    if (d.rev >= 0xE) {
-        d >> mMarkers;
+    if (rev >= 0xE) {
+        bs >> mMarkers;
     }
 #ifdef HX_FFMPEG
     // Decode XMA to PCM at load time so SampleInstNative can play it
