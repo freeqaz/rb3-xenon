@@ -11,8 +11,8 @@ private:
     friend BinStream &operator<<(BinStream &, const OnlineID &);
 
     XUID mXUID; // 0x0
-    String mPlayerName; // 0x8
-    bool mValid; // 0x10
+    bool mValid; // 0x8
+    String mPlayerName; // 0xc
 public:
     OnlineID();
     OnlineID(const OnlineID &);
