@@ -14,6 +14,7 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -149,21 +150,62 @@ version_num = VERSIONS.index(config.version)
 # behind local commits carrying RB3-retail fixes (jeff's overlap-tolerance
 # patch, objdiff's --include-data + branch-graph JSON the scripts depend on).
 # Override either with --dtk / --objdiff to point at a different path or binary.
+#
+# Absolute fallback for the sibling fork checkouts: (source_dir, prebuilt_bin).
+# The upward CWD-walk below works when configure.py lives next to its siblings
+# (the main repo, or a worktree nested under .claude/worktrees/ which still
+# walks up to the real ../../../../jeff). But a *detached* worktree (e.g.
+# /tmp/wt-foo from scripts/setup_worktree.sh) has no sibling ../jeff to walk up
+# to, so the walk fails and a bare `configure.py` would silently fall back to a
+# DOWNLOADED dtk release (v0.3.0) that hard-fails the RB3 split on "Overlapping
+# functions 3:0x8229D660". To make a bare `python3 configure.py` work from any
+# cwd, fall back to these known absolute paths (overridable via env var) after
+# the walk fails. We prefer the prebuilt binary (no cargo edge, matching what
+# setup_worktree.sh passes via --dtk/--objdiff), else the source dir (cargo
+# edge, same as the main-repo default). Explicit --dtk/--objdiff flags still win
+# (they short-circuit before _default_*_path), and the upward walk still wins
+# when it succeeds -- this only ADDS a fallback.
+# repo_name -> (source_dir, release_binary_name). The release binary is looked
+# for at <source_dir>/target/release/<binary_name>.
+_FORK_FALLBACK = {
+    "jeff": ("/home/free/code/milohax/jeff", "dtk"),
+    "objdiff": ("/home/free/code/milohax/objdiff", "objdiff-cli"),
+}
+
+
 def _find_local_fork(repo_name: str) -> Optional[Path]:
     """Return the sibling fork checkout `<repo_name>/` (the directory holding
     its Cargo.toml), searching upward from this file's directory. Walks parents
     -- not just the direct sibling -- so worktrees nested under
     .claude/worktrees/<name>/ still resolve up to the shared ../../../../jeff
-    and ../../../../objdiff checkouts. Returns None if no checkout is found, in
-    which case the build falls back to a downloaded fork release."""
+    and ../../../../objdiff checkouts. If the walk fails (e.g. a detached /tmp
+    worktree with no sibling checkout), falls back to a known absolute path
+    (env var RB3_<REPO>_DIR, else a baked-in default): the prebuilt release
+    binary if present (no cargo edge), else the source dir. This lets a bare
+    `configure.py` resolve the real fork instead of downloading a broken
+    release. Returns None only if nothing resolves."""
     cur = Path(__file__).resolve().parent
     while True:
         candidate = cur.parent / repo_name / "Cargo.toml"
         if candidate.is_file():
             return candidate.parent
         if cur.parent == cur:
-            return None
+            break
         cur = cur.parent
+    # Upward walk failed -- resolve from a known fork dir: env var override
+    # (authoritative if set), else the baked-in absolute default.
+    src_default, bin_name = _FORK_FALLBACK.get(repo_name, (None, None))
+    src_dir = os.environ.get(f"RB3_{repo_name.upper()}_DIR") or src_default
+    if src_dir and bin_name:
+        sd = Path(src_dir)
+        # Prefer the prebuilt release binary (avoids a cargo build edge in
+        # worktrees); else the source dir (cargo edge, same as the main default).
+        prebuilt = sd / "target" / "release" / bin_name
+        if prebuilt.is_file():
+            return prebuilt
+        if (sd / "Cargo.toml").is_file():
+            return sd
+    return None
 
 def _default_dtk_path() -> Optional[Path]:
     return _find_local_fork("jeff")
