@@ -12,7 +12,7 @@
 #include "utl/BinStream.h"
 #include "utl/Symbol.h"
 
-UISlider::UISlider() : mSliderResource(this), mCurrent(0), mNumSteps(10), mVertical(0) {}
+UISlider::UISlider() : mCurrent(0), mNumSteps(10), mVertical(0), mSliderResource(this) {}
 
 BEGIN_HANDLERS(UISlider)
     HANDLE_MESSAGE(ButtonDownMsg)
@@ -95,9 +95,6 @@ void UISlider::PostLoad(BinStream &bs) {
 
 void UISlider::DrawShowing() {
     SyncSlider();
-    if (unk68) {
-        unk68->SetMat(unk6c[DrawState(this)]);
-    }
     if (mSliderResource) {
         mSliderResource->DrawShowing();
     }
@@ -167,23 +164,11 @@ void UISlider::Init() { REGISTER_OBJ_FACTORY(UISlider) }
 
 void UISlider::Update() {
     static Symbol mesh("mesh");
-    static Symbol mats("mats");
     unk68 = nullptr;
-    for (int i = 0; i < UIComponent::kNumStates; i++) {
-        unk6c[i] = nullptr;
-    }
     if (TypeDef() && mSliderResource) {
         DataArray *meshArr = TypeDef()->FindArray(mesh, false);
         if (meshArr) {
             unk68 = mSliderResource->Find<RndMesh>(meshArr->Str(1));
-        }
-        DataArray *matArr = TypeDef()->FindArray(mats, false);
-        if (matArr) {
-            for (int i = 1; i < matArr->Size(); i++) {
-                DataArray *curArr = matArr->Array(i);
-                UIComponent::State state = SymToUIComponentState(curArr->Sym(0));
-                unk6c[state] = mSliderResource->Find<RndMat>(curArr->Str(1));
-            }
         }
     }
 }

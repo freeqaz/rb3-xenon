@@ -29,8 +29,10 @@ void UIComponent::Enter() {
 void UIComponent::Exit() { RndPollable::Exit(); }
 
 UIComponent::UIComponent()
-    : mState(kNormal), mNavRight(this), mNavDown(this), mSelectScreen(nullptr),
-      mSelected(0), mSelectCancelled(0) {}
+    : mState(kNormal), mNavRight(this), mNavDown(this), mSelectingUser(nullptr),
+      mSelectScreen(nullptr), mResource(nullptr), mSelected(0),
+      mResourceName(), mResourceDir(), mResourcePath(), mSelectCancelled(0),
+      mLoading(0), mMockSelect(0) {}
 
 BEGIN_PROPSYNCS(UIComponent)
     SYNC_PROP(nav_right, mNavRight)

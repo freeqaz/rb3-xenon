@@ -31,7 +31,7 @@ public:
     virtual void SetInt(int, bool) = 0;
 };
 
-class RndText : public virtual RndDrawable, public virtual RndTransformable {
+class RndText : public RndDrawable, public RndTransformable {
 public:
     enum Alignment {
         kCenter = 0x2,

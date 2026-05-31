@@ -59,10 +59,11 @@ protected:
     void Update();
     DataNode OnMsg(const ButtonDownMsg &);
 
-    ResourceDirPtr<RndDir> mSliderResource; // 0x50
-    RndMesh *unk68; // 0x68
-    RndMat *unk6c[UIComponent::kNumStates]; // 0x6c
-    int mCurrent; // 0x80
-    int mNumSteps; // 0x84
-    bool mVertical; // 0x88
+    // Retail X360 layout: UIComponent [0,0x140), ScrollSelect base @0x140.
+    // sizeof(UISlider) = 0x190 (retail New allocs 400 bytes via fn_827E4BB0).
+    int mCurrent; // 0x14c
+    int mNumSteps; // 0x150
+    bool mVertical; // 0x154 (lbz 0x154 confirmed)
+    RndMesh *unk68; // 0x158
+    ResourceDirPtr<RndDir> mSliderResource; // 0x15c (dtor fn_827E4518@0x15c / fn_827E455C@0x190)
 };
