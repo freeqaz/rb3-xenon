@@ -302,9 +302,12 @@ int ButtonToVelocityBucket(JoypadData *data, JoypadButton btn);
 void JoypadSetActuatorsImp(int, int, int);
 void AssociateUserAndPad(LocalUser *iUser, int iPadNum);
 void ResetAllUsersPads();
+void JoypadSetCalbertMode(int, int);
 
 bool requestBreedWrite(int, unsigned char *);
 }
+
+float JoypadGetCalbertValue(int, bool);
 
 void JoypadInit();
 void JoypadPoll();

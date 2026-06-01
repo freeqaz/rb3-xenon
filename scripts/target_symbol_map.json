@@ -9559,5 +9559,17 @@
   "0x82B15590": "?transform@MD5@Quazal@@QAAXPBE@Z",
   "0x82B1AF48": "??0KeyedChecksumAlgorithm@Quazal@@QAA@II@Z",
   "0x82B1AFF0": "??1KeyedChecksumAlgorithm@Quazal@@UAA@XZ",
-  "0x82B1B068": "?SetKey@KeyedChecksumAlgorithm@Quazal@@QAA_NABVKey@2@@Z"
+  "0x82B1B068": "?SetKey@KeyedChecksumAlgorithm@Quazal@@QAA_NABVKey@2@@Z",
+  "0x825EEE50": "?Exit@CalibrationPanel@@UAAXXZ",
+  "0x825EE1E8": "??_ECalibrationPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+  "0x825EE380": "?SyncProperty@CalibrationPanel@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "0x825EE390": "?SetType@CalibrationPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "0x825EF068": "?UpdateAnimation@CalibrationPanel@@QAAXXZ",
+  "0x825EE4E0": "?HandlePreAndPostTestAnim@CalibrationPanel@@QAAMM@Z",
+  "0x825EF340": "?TriggerCalibration@CalibrationPanel@@QAAXH@Z",
+  "0x82528C50": "?InitData@MusicLibrary@@UAAXPAVRndDir@@@Z",
+  "0x825293E8": "?SendMessageToSongSelectPanel@MusicLibrary@@QAAXAAVMessage@@@Z",
+  "0x82529468": "?SetlistHasSong@MusicLibrary@@QAA_NH@Z",
+  "0x8252975C": "??$__uninitialized_move@PAVSymbol@@PAV1@U__false_type@stlpmtx_std@@@stlpmtx_std@@YAPAVSymbol@@PAV1@00U__false_type@0@ABU20@@Z",
+  "0x82529788": "?GetSongFilterAsString@MusicLibraryTask@MusicLibrary@@QAAXAAVString@@@Z"
 }

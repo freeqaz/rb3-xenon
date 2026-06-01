@@ -130,6 +130,13 @@ public:
     void Poll();
 
     bool GuideShowing() { return mGuideShowing; }
+    // Wii-origin entry points referenced by ported RB3-Wii game code
+    // (meta_band/MusicLibrary). Declaration-only: the Xbox 360 retail engine
+    // has no Wii home-menu / Wii online-restriction concept, so there is no
+    // body to link against on this platform — these exist purely so the ported
+    // TU compiles. Append-only; does not alter existing PlatformMgr layout.
+    void SetHomeMenuEnabled(bool);
+    bool IsOnlineRestricted();
     bool IsConnected() { return mConnected; }
     bool ScreenSaver() { return mScreenSaver; }
     int SignInMask() const { return mSigninMask; }

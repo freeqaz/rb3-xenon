@@ -23,6 +23,9 @@ public:
 class WiiProfileMgr {
 public:
     WiiProfileMgr() {}
+    // Declaration-only (X360 stub): referenced by ported RB3-Wii Wii-friends
+    // code paths (MusicLibrary::FilterSetlist) that are unreachable on Xbox 360.
+    const char *GetNameForIndex(int) const;
 };
 
 extern WiiProfileMgr TheWiiProfileMgr;
