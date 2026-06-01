@@ -103,6 +103,9 @@ public:
     bool CheckCommonBank(bool);
     void SetMasterVolume(float);
     float GetMasterVolume();
+    // RB3-era fire-and-forget cue playback (GamePanel::PlayBandDiedCue); dc3's
+    // newer Synth dropped it. Declared decl-only.
+    void Play(const char *, float, float, float);
     void ToggleHud();
     const ADSRImpl *DefaultADSR();
     void DrawMeterScale(float &);

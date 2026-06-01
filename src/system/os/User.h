@@ -9,12 +9,11 @@ class LocalUser;
 class RemoteUser;
 
 class User : public Hmx::Object {
-protected:
+public:
     OnlineID *mOnlineID; // 0x2c
     UserGuid mUserGuid; // 0x30
     unsigned int mMachineID; // 0x40
 
-public:
     User();
     // Hmx::Object
     virtual ~User() {}

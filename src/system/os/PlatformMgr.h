@@ -70,6 +70,8 @@ private:
 public:
     bool unkce6b; // TODO: needs correct X360 offset (Wii 0xce6b = content maturity flag)
     bool mNetworkPlay; // RB3 GameMode writes online_play_required here
+    bool mIsRestarting; // RB3 RestartGameMsg::Dispatch sets this via SetIsRestarting
+    void SetIsRestarting(bool b) { mIsRestarting = b; }
     // Hmx::Object
     virtual ~PlatformMgr();
     virtual DataNode Handle(DataArray *, bool);

@@ -79,6 +79,7 @@ public:
 
     class Style {
     public:
+        Style() : mFont(nullptr, nullptr) {}
         Style(Hmx::Object *owner);
         Style(const Style &s);
         Style &operator=(const Style &s) {
@@ -330,6 +331,16 @@ public:
     float ComputeHeight(int, float, float &);
     int NumStyles() const { return mStyles.size(); }
     ObjVector<Style> &Styles() { return mStyles; }
+    // RB3-era single-style line API (dc3's newer RndText replaced these with the
+    // StyleState/mStyles model). Declared decl-only so RB3 game TUs that still call
+    // the old API (e.g. band3/bandtrack/Lyric.cpp) compile; not defined here.
+    const Style &GetSingleStyle() const;
+    void ReserveLines(int);
+    void SyncMeshes();
+    int NumLines() const;
+    void UpdateLineColor(int, const Hmx::Color &, bool *);
+    float GetStringWidthUTF8(const char *, const char *, bool, const Style *) const;
+    int AddLineUTF8(const String &, const Transform &, const Style &, float *, bool *, int);
     const String &RawText() const { return mText; }
     float Width() const { return mWidth; }
 #ifdef HX_NATIVE

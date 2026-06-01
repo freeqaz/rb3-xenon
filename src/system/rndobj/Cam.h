@@ -75,10 +75,12 @@ public:
     static float MaxFarNearPlaneRatio() { return sMaxFarNearPlaneRatio; }
     const Hmx::Matrix4 &GetViewProjMatrix() const { return mViewProjMatrix; }
 
+    // RB3 GamePanel::Enter() calls cam->UpdateLocal() directly (retail X360
+    // exposes it publicly); dc3's newer RndCam left it protected.
+    void UpdateLocal();
+
 protected:
     RndCam();
-
-    void UpdateLocal();
 
     DataNode OnSetFrustum(const DataArray *);
     DataNode OnSetZRange(const DataArray *);
