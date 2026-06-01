@@ -4,10 +4,6 @@
 #include <map>
 
 class DataPoint {
-private:
-    Symbol mType; // 0x0
-    std::map<Symbol, DataNode> mNameValPairs; // 0x4
-
 public:
     DataPoint();
     DataPoint(const char *);
@@ -16,6 +12,12 @@ public:
     void AddPair(Symbol, DataNode);
     void ToJSON(String &) const;
     const char *Type() const { return mType.Str(); }
+
+    // RB3 game code (RockCentral.cpp) populates these fields directly via the
+    // INIT_DATAPOINT/ADD_DATA_PAIR macros, so they must be public. Offsets
+    // (0x0 / 0x4) are unchanged — layout-preserving.
+    Symbol mType; // 0x0
+    std::map<Symbol, DataNode> mNameValPairs; // 0x4
 };
 
 typedef void DataPointRecordFunc(DataPoint &);

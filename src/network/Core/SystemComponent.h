@@ -40,7 +40,7 @@ namespace Quazal {
         virtual bool IsAKindOf(const char *str) const { return type() == str; } // 0x18
         virtual void EnforceDeclareSysComponentMacro() = 0; // 0x1C
         virtual void TraceImpl(uint) const {} // 0x20
-        virtual _State StateTransition(_State) {} // 0x24
+        virtual _State StateTransition(_State s) { return s; } // 0x24 (MSVC C4716: MWCC tolerated the empty body; the base default is a no-op transition)
         virtual void OnInitialize() { TestState(); } // 0x28
         virtual void OnTerminate() { TestState(); } // 0x2C
         virtual bool BeginInitialization(); // 0x30

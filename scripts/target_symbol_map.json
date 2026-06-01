@@ -9589,5 +9589,14 @@
   "0x82672A48": "?Load@AccomplishmentEarnedMsg@@UAAXAAVBinStream@@@Z",
   "0x82672AF0": "?Dispatch@SetPartyShuffleModeMsg@@UAAXXZ",
   "0x826728F0": "??0SongResultsScrollMsg@@QAA@HH@Z",
-  "0x82672AA0": "??0SetPartyShuffleModeMsg@@QAA@XZ"
+  "0x82672AA0": "??0SetPartyShuffleModeMsg@@QAA@XZ",
+  "0x824E8468": "?GetAccMaxRank@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVSymbol@@AAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824E86A8": "?GetBattleMaxRank@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@HAAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824E88E8": "?GetLeaderboardByPlayer@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@HW4ScoreType@@W4LeaderboardType@@W4LeaderboardMode@@HAAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824E8DD8": "?GetAccLeaderboardByPlayer@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVSymbol@@W4LeaderboardMode@@HAAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824E9170": "?GetBattleLeaderboardByPlayer@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@HW4LeaderboardMode@@HAAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824E99F8": "?GetAccLeaderboardByRankRange@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVSymbol@@HHAAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824E9D90": "?GetBattleLeaderboardByRankRange@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@HHHAAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824EA128": "?UpdateFriendList@RockCentral@@QAAXPAVProfile@@V?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@AAVDataResultList@@PAVObject@Hmx@@@Z",
+  "0x824EA508": "?RecordBattleScore@RockCentral@@QAAXHHAAV?$vector@PAVBandProfile@@V?$StlNodeAlloc@PAVBandProfile@@@stlpmtx_std@@@stlpmtx_std@@HAAVDataResultList@@PAVObject@Hmx@@@Z"
 }

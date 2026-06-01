@@ -185,3 +185,10 @@ DECLARE_MESSAGE(DWCProfanityResultMsg, "dwc_profanity_result_msg")
 DWCProfanityResultMsg() : Message(Type()) {}
 bool IsProfane() const { return mData->Int(2); }
 END_MESSAGE
+
+// Wii platform-mgr op-complete message — referenced by RockCentralJobs.h / the
+// friend-list jobs. On Xbox 360 this is never sent; declared to satisfy the type.
+DECLARE_MESSAGE(PlatformMgrOpCompleteMsg, "platform_mgr_op_complete")
+PlatformMgrOpCompleteMsg(int i) : Message(Type(), i) {}
+bool Success() const { return mData->Int(2); }
+END_MESSAGE
