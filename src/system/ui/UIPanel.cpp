@@ -94,7 +94,9 @@ bool UIPanel::Entering() const {
 }
 
 void UIPanel::Draw() {
-    if (mFinalDrawPassFlag == sIsFinalDrawPass && mDir && !mLoaded) {
+    // RB3 (rb3-Wii oracle) has no mFinalDrawPassFlag gate; that field is a
+    // dc3-newer addition removed from the RB3-360-matching layout.
+    if (mDir && !mLoaded) {
         mDir->DrawShowing();
     }
 }
@@ -107,7 +109,7 @@ void UIPanel::SetFocusComponent(UIComponent *comp) {
 
 UIPanel::UIPanel()
     : mDir(0), mLoader(0), mLoaded(0), mState(kUnloaded), mPaused(0), mShowing(1),
-      mForceExit(0), mLoadRefs(0), mFinalDrawPassFlag(0) {
+      mForceExit(0), mLoadRefs(0) {
     mPanelId = sMaxPanelId++;
     MILO_ASSERT(sMaxPanelId < 0x8000, 0x27);
 }

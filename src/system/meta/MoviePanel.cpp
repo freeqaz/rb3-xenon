@@ -113,7 +113,9 @@ void MoviePanel::Load() {
 }
 
 void MoviePanel::Draw() {
-    if (GetState() != kUnloaded && mFinalDrawPassFlag == GetFinalDrawPass()) {
+    // RB3 (rb3-Wii oracle): gate only on state. mFinalDrawPassFlag is a
+    // dc3-newer field removed from the RB3-360-matching UIPanel layout.
+    if (GetState() != kUnloaded) {
 #ifdef __EMSCRIPTEN__
         // Web: upload decoded video frame to GPU texture, then draw fullscreen.
         // On Xbox, BinkDraw renders directly to the backbuffer; we replicate

@@ -74,19 +74,26 @@ private:
     DataNode OnLoad(DataArray *);
 
 protected:
+    // RB3-360 retail layout (verified vs the target binary, NOT dc3's). dc3 is
+    // *newer* and added a trailing `mFinalDrawPassFlag` bool (with a Draw()-gate
+    // using it) that RB3 predates — keeping it made every UIPanel-derived field
+    // read +4 (CalibrationPanel::Exit, GamePanel, etc.). rb3-Wii UIPanel has no
+    // such field. Offsets below cross-checked against the binary: UIPanel::Exit
+    // sets mState (int) at +0x20 and tests mLoaded (bool) at +0x1c; with String
+    // = 0xc bytes (mFocusName 0x10..0x1b) the bool/int order packs as below and
+    // CalibrationPanel's first own field (mStream) lands at the correct 0x40.
     PanelDir *mDir; // 0x8
     DirLoader *mLoader; // 0xc
-    String mFocusName; // 0x10
-    bool mLoaded; // 0x18
+    String mFocusName; // 0x10 (0xc bytes -> ends 0x1c)
+    bool mLoaded; // 0x1c
     /** The panel's current state. */
-    State mState; // 0x1c
-    bool mPaused; // 0x20
-    bool mShowing; // 0x21
-    bool mForceExit; // 0x22
+    State mState; // 0x20
+    bool mPaused; // 0x24
+    bool mShowing; // 0x25
+    bool mForceExit; // 0x26
     /** The number of refs to this loaded UIPanel. */
-    int mLoadRefs; // 0x24
-    FilePath mFilePath; // 0x28
+    int mLoadRefs; // 0x28
+    FilePath mFilePath; // 0x2c (0xc bytes -> ends 0x38)
     /** This panel's ID. */
-    int mPanelId; // 0x30
-    bool mFinalDrawPassFlag; // 0x34
+    int mPanelId; // 0x38
 };
