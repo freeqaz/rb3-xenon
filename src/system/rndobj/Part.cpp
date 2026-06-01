@@ -214,8 +214,8 @@ bool AngleVectorSync(Vector2 &vec, DataNode &_val, DataArray *_prop, int _i, Pro
         return true;
     else {
         Symbol sym = _prop->Sym(_i);
-        static Symbol y("y");
         static Symbol x("x");
+        static Symbol y("y");
         float *coord = nullptr;
         if (sym == x) {
             coord = &vec.x;
@@ -943,8 +943,8 @@ void RndParticleSys::SetAnimatedUV(bool b) {
 
 void RndParticleSys::SetMesh(RndMesh *mesh) {
     if (mesh) {
-        SetTransParent(mesh, false);
         SetTransConstraint(RndTransformable::kConstraintParentWorld, 0, false);
+        SetTransParent(mesh, false);
         if (!mesh->GetKeepMeshData()) {
             MILO_NOTIFY(
                 "keep_mesh_data should be checked for %s.  It's the mesh emitter for %s.\n",

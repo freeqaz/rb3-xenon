@@ -143,8 +143,7 @@ JoypadType ReadSingleXinputJoypad(
     }
 
     short lx = state.Gamepad.sThumbLX;
-    unsigned char deadzone_apply = (setup_flag == 0) ? 1 : 0;
-    TranslateStick(stick_lx, lx, 0, deadzone_apply);
+    TranslateStick(stick_lx, lx, 0, ((setup_flag == 0) ? 1 : 0));
 
     short ry = state.Gamepad.sThumbRY;
     if ((joypad_type == kJoypadXboxDrums) && (ry > 0) && (ry < 0x100)) {
@@ -155,7 +154,7 @@ JoypadType ReadSingleXinputJoypad(
         short result = (short)(-0x8000 - scaled);
         TranslateStick(stick_ry, result, 1, 0);
     } else {
-        TranslateStick(stick_ry, 1, 1, deadzone_apply);
+        TranslateStick(stick_ry, 1, 1, ((setup_flag == 0) ? 1 : 0));
     }
 
     short rx = state.Gamepad.sThumbRX;

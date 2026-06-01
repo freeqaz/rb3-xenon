@@ -80,8 +80,8 @@ Symbol StoreOffer::FirstChar(Symbol s, bool b) const {
 }
 
 Symbol StoreOffer::PackFirstLetter() const {
-    static Symbol name("name");
     static Symbol pack("pack");
+    static Symbol name("name");
 
     if (OfferType() == pack) {
         return FirstSortChar(mStoreOfferData->FindStr(name), 1);

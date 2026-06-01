@@ -196,8 +196,8 @@ void StartSynchronizedVoices() {
     if (gShutdownVoiceThread)
         return;
     gLockPendingLists.Enter();
-    gCommitSyncVoices = true;
     gCommitTag = 1;
+    gCommitSyncVoices = true;
     if (gEvent != (HANDLE)-1) {
         SetEvent(gEvent);
     }
