@@ -115,19 +115,36 @@ extern const char *kAssertStr;
 #endif
 
 #define MILO_FAIL(...) TheDebugFailer << MakeString(__VA_ARGS__)
+// Retail RB3-360 compiled the debug-OUTPUT family (WARN/NOTIFY/LOG/PRINT_ONCE/
+// NOTIFY_ONCE/WARN_ONCE) to NO code in release (verified: their format strings
+// are absent from orig band.exe, and gating them raises the match count +23
+// with zero real regressions — engine logging-heavy TUs like MidiParser jump).
+// No-op them for the match build (sizeof keeps args type-checked, zero runtime
+// code). MILO_FAIL / MILO_FAIL_DTA are NOT gated — retail retained the
+// fatal/abort paths (gating them regresses CharBoneDir/CharFaceServo via inlined
+// Find<> fail-paths). HX_NATIVE keeps real output for the native port.
+#ifdef HX_NATIVE
 #define MILO_WARN(...) TheDebugWarner << MakeString(__VA_ARGS__)
+#else
+#define MILO_WARN(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#endif
 // DTA runtime errors: FAIL on Xbox (shows dialog + Continue), WARN on native
 #ifdef HX_NATIVE
 #define MILO_FAIL_DTA(...) TheDebugWarner << MakeString(__VA_ARGS__)
 #else
 #define MILO_FAIL_DTA(...) TheDebugFailer << MakeString(__VA_ARGS__)
 #endif
+#ifdef HX_NATIVE
 #define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)
 #define MILO_NOTIFY_BETA(...) DebugBeta() << MakeString(__VA_ARGS__)
+#else
+#define MILO_NOTIFY(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#define MILO_NOTIFY_BETA(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#endif
 #ifdef HX_NATIVE
 #define MILO_LOG(...) do { TheDebug << MakeString(__VA_ARGS__); fprintf(stderr, "%s", MakeString(__VA_ARGS__)); } while(0)
 #else
-#define MILO_LOG(...) TheDebug << MakeString(__VA_ARGS__)
+#define MILO_LOG(...) ((void)sizeof(MakeString(__VA_ARGS__)))
 #endif
 
 // Usage:
@@ -192,7 +209,11 @@ public:
 
 extern DebugNotifyOncePrinter TheDebugNotifyOncePrinter;
 
+#ifdef HX_NATIVE
 #define MILO_PRINT_ONCE(...) TheDebugNotifyOncePrinter << MakeString(__VA_ARGS__)
+#else
+#define MILO_PRINT_ONCE(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#endif
 
 namespace {
     inline bool AddToStrings(const char *name, std::list<String> &strings) {
@@ -228,11 +249,17 @@ public:
     }
 };
 
+#ifdef HX_NATIVE
 #define MILO_NOTIFY_ONCE(...)                                                            \
     {                                                                                    \
         static DebugNotifyOncer _dw;                                                     \
         _dw << MakeString(__VA_ARGS__);                                                  \
     }
+#else
+// Brace-block no-op (some call sites omit the trailing ';').
+#define MILO_NOTIFY_ONCE(...)                                                            \
+    { (void)sizeof(MakeString(__VA_ARGS__)); }
+#endif
 
 class DebugWarnOncer {
 private:
@@ -249,8 +276,14 @@ public:
     }
 };
 
+#ifdef HX_NATIVE
 #define MILO_WARN_ONCE(...)                                                              \
     {                                                                                    \
         static DebugWarnOncer _dw;                                                       \
         _dw << MakeString(__VA_ARGS__);                                                  \
     }
+#else
+// Brace-block no-op (some call sites omit the trailing ';').
+#define MILO_WARN_ONCE(...)                                                              \
+    { (void)sizeof(MakeString(__VA_ARGS__)); }
+#endif
