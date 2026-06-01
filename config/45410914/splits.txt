@@ -2400,6 +2400,10 @@ band3/game/GamePanel.cpp:
 	.pdata      start:0x822290D0 end:0x82229110
 	.text       start:0x826768D0 end:0x82676C8C
 
+band3/game/Stats.cpp:
+	.pdata      start:0x82229360 end:0x82229380
+	.text       start:0x82678FF8 end:0x82679738
+
 band3/bandtrack/Lyric.cpp:
 	.pdata      start:0x822554E8 end:0x82255510
 	.text       start:0x82B7C9C0 end:0x82B7D098

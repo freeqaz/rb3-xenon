@@ -73,6 +73,9 @@ public:
     void SetTimeHMS(int, bool);
     bool CheckValid(bool);
     void SetEditText(char const *);
+    // Forwards to text caps mode; referenced by game code (OvershellSlot::ShowState).
+    // Decl-only, mirrors rb3-Wii UILabel::SetCapsMode(RndText::CapsMode).
+    void SetCapsMode(RndText::CapsMode);
 
     RndText *TextObj() { return mText; }
     const RndText *TextObj() const { return mText; }

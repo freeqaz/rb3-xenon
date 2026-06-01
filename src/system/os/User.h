@@ -34,6 +34,9 @@ public:
     bool ComesBefore(const User *u) { return (mUserGuid < u->mUserGuid); }
     const UserGuid &GetUserGuid() const { return mUserGuid; }
     OnlineID *GetOnlineID() const { return mOnlineID; }
+    // Wii-only online-ID refresh, referenced by Wii profile-swap game paths
+    // (e.g. OvershellSlot::SelectGuestProfile). Decl-only; matches rb3-Wii User.
+    void UpdateOnlineID();
 };
 
 class LocalUser : public virtual User {

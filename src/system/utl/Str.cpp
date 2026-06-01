@@ -574,6 +574,16 @@ char &String::operator[](unsigned int i) {
     return *(mStr + i);
 }
 
+char String::rindex(int i) const {
+    MILO_ASSERT(i < 0 && uint(-i) <= mCap, 0xBC);
+    return mStr[mCap + i];
+}
+
+char &String::rindex(int i) {
+    MILO_ASSERT(i < 0 && uint(-i) <= mCap, 0xC2);
+    return mStr[mCap + i];
+}
+
 unsigned int String::find(const char *cc) const { return find(cc, 0); }
 
 void String::swap(String &s) {

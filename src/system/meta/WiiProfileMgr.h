@@ -26,6 +26,20 @@ public:
     // Declaration-only (X360 stub): referenced by ported RB3-Wii Wii-friends
     // code paths (MusicLibrary::FilterSetlist) that are unreachable on Xbox 360.
     const char *GetNameForIndex(int) const;
+
+    // Wii-only API used by game code (e.g. OvershellSlot). Declared to mirror the
+    // rb3-Wii WiiProfileMgr signatures so 360 game TUs that reference these
+    // (unreachable) Wii paths compile. Decl-only; no storage added.
+    bool IsIndexValid(int) const;
+    int GetIndexForPad(int) const;
+    int GetPadForIndex(int) const;
+    void SetPadToGuest(int);
+    WiiProfile *GetProfileForPad(int);
+    bool IsPadAGuest(int) const;
+    bool IsPadRegistered(int) const;
+    void RemovePad(int);
+    bool IsSlotAvailable() const;
+    bool IsDeleteQueueFull() const;
 };
 
 extern WiiProfileMgr TheWiiProfileMgr;

@@ -103,8 +103,8 @@ public:
     String &operator=(const FixedString &);
     String &operator=(const String &);
 
-    // char rindex(int) const;
-    // char &rindex(int);
+    char rindex(int) const;
+    char &rindex(int);
 
     bool operator!=(const char *) const;
     bool operator!=(const FixedString &) const;
