@@ -20,4 +20,6 @@ public:
 
     void SetValues(int, int);
     void SetToToken(Symbol);
+    void SetForceMixedMode(bool);
+    void SetShowDenominator(bool);
 };
