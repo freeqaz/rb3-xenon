@@ -86,6 +86,10 @@ OvershellSlot.cpp:
 	.pdata      start:0x8221CD90 end:0x8221CE28
 	.text       start:0x825C10D8 end:0x825C3A44
 
+OvershellPartSelectProvider.cpp:
+	.pdata      start:0x82226288 end:0x822262E0
+	.text       start:0x8264B5F8 end:0x8264C238
+
 GuitarController.cpp:
 	.pdata      start:0x82237270 end:0x822372C8
 	.text       start:0x82777E90 end:0x827786AC
@@ -2391,6 +2395,10 @@ band3/game/SongDB.cpp:
 network/ObjDup/DuplicatedObject.cpp:
 	.pdata      start:0x82248010 end:0x822480A0
 	.text       start:0x82A46180 end:0x82A47228
+
+band3/bandtrack/Gem.cpp:
+	.pdata      start:0x82255330 end:0x822553C8
+	.text       start:0x82B7A2A0 end:0x82B7B3BC
 
 band3/bandtrack/GemTrack.cpp:
 	.pdata      start:0x82254318 end:0x822543F8

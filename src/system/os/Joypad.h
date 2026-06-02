@@ -344,3 +344,4 @@ inline bool DirectionalAction(JoypadAction a) {
 class LocalUser;
 void JoypadKeepAlive(int, bool);
 bool UserHasController(LocalUser *);
+bool UserHasGHDrums(LocalUser *);
