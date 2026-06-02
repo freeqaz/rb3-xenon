@@ -824,7 +824,10 @@ DataNode UIManager::OnForeachCurrentScreen(const DataArray *arr) {
 
 void UIManager::Init() {
     MILO_ASSERT(TheUI, 0x1f3);
-    mAutomator = new Automator(*this);
+    // RB3-360 (verified @ 0x827E0690): Init does NOT allocate the Automator (no
+    // ??0Automator ctor call, no mAutomator store in the retail body). DC3 and
+    // rb3-Wii both create it here; RB3 retail does not (mAutomator stays null
+    // and HANDLE_MEMBER_PTR(mAutomator) tolerates that).
     SetName("ui", ObjectDir::Main());
     DataArray *cfg = SystemConfig("ui");
     SetTypeDef(SystemConfig("ui"));
@@ -889,15 +892,14 @@ void UIManager::Init() {
     Hmx::Object::Handle(cheat_init, false);
     mOverlay = RndOverlay::Find("ui", true);
     mOverlay->SetShowing(false);
-    TheOSCMessenger.Connect();
-    TheDebug.AddFailAppendCallback(FailAppendCallback);
     PreloadSharedSubdirs("ui");
-    UILabel::sRequireFixedLength = true;
     static Message init("init");
     Hmx::Object::Handle(init, false);
-    UILabel::sRequireFixedLength = false;
+    // RB3-360 (verified @ 0x827E0690): restart the UI timer at the tail of Init,
+    // then read overload_horizontal_nav. DC3's Init lacked the timer restart and
+    // carried OSC/FailAppend/sRequireFixedLength/KnownIssues tails that RB3 omits.
+    mTimer.Restart();
     cfg->FindData("overload_horizontal_nav", mOverloadHorizontalNav, false);
-    TheKnownIssues.Init();
 }
 
 BEGIN_HANDLERS(UIManager)

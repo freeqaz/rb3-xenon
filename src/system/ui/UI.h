@@ -10,11 +10,21 @@
 #include "ui/UIScreen.h"
 #include "ui/UIComponent.h"
 #include "utl/Symbol.h"
+#include <list>
 
 class Automator;
 class JoypadClient;
+class UIResource;
 
-class UIManager : public Hmx::Object {
+// RB3-360 layout (verified in Ghidra @ 0x827DF8B8 Handle / 0x827E0690 Init /
+// 0x827DED28 Terminate / 0x827E0448 InitResources):
+//   own-vftable @ 0x0, vbtbl @ 0x8, Hmx::Object vbase relocated to tail @ 0x84.
+//   The dc3 source had `class UIManager : public Hmx::Object` (NON-virtual base,
+//   fields starting @ 0x2c); that addressing model is wrong for RB3-360, which
+//   uses `public virtual Hmx::Object` (matches rb3-Wii, the game oracle). The
+//   retail Handle accesses members as negative offsets from the vbase `this`
+//   (e.g. -0x74 = mTransitionState @ 0x10), proving the virtual base.
+class UIManager : public virtual Hmx::Object {
 public:
     enum TransitionState {
         kTransitionNone = 0,
@@ -32,7 +42,7 @@ public:
     virtual void Draw();
     virtual void GotoScreen(const char *, bool, bool);
     virtual void GotoScreen(UIScreen *, bool, bool);
-    virtual void PushScreen(UIScreen *); // 0x70
+    virtual void PushScreen(UIScreen *);
     virtual void PopScreen(UIScreen *);
     virtual void ResetScreen(UIScreen *);
     virtual bool InComponentSelect();
@@ -49,6 +59,9 @@ public:
     void SetScreenBlacklghtDisabled(bool);
     UIPanel *FocusPanel();
     UIComponent *FocusComponent();
+    UIResource *Resource(const UIComponent *);
+    void InitResources(Symbol);
+    UIResource *FindResource(const DataArray *);
     void GotoFirstScreen();
     UIScreen *BottomScreen();
     UIScreen *ScreenAtDepth(int);
@@ -91,25 +104,28 @@ private:
 protected:
     void ReloadStrings();
 
-    TransitionState mTransitionState; // 0x2c
-    bool mWentBack; // 0x30
-    std::vector<UIScreen *> mPushedScreens; // 0x34
-    int mMaxPushDepth; // 0x40
-    JoypadClient *mJoyClient; // 0x44
-    UIScreen *mCurrentScreen; // 0x48
-    UIScreen *mTransitionScreen; // 0x4c
-    Hmx::Object *mSink; // 0x50
-    RndCam *mCam; // 0x54
-    RndEnviron *mEnv; // 0x58
-    Timer mTimer; // 0x60
-    bool mOverloadHorizontalNav; // 0x90
-    bool mCancelTransitionNotify; // 0x91
-    bool mDefaultAllowEditText; // 0x92
-    bool mDisableScreenBlacklight; // 0x93
-    Timer mLoadTimer; // 0x98
-    RndOverlay *mOverlay; // 0xc8
-    Automator *mAutomator; // 0xcc
-    bool mShowDevMenu; // 0xd0
+    // Fields are at the verified RB3-360 offsets (vftable@0x0, vbtbl@0x8,
+    // Hmx::Object vbase @ 0x84). First field is mTransitionState @ 0x10.
+    TransitionState mTransitionState; // 0x10
+    bool mWentBack; // 0x14
+    std::vector<UIScreen *> mPushedScreens; // 0x18
+    int mMaxPushDepth; // 0x24
+    JoypadClient *mJoyClient; // 0x28
+    UIScreen *mCurrentScreen; // 0x2c
+    UIScreen *mTransitionScreen; // 0x30
+    std::list<UIResource *> mResources; // 0x34
+    Hmx::Object *mSink; // 0x3c
+    RndCam *mCam; // 0x40
+    RndEnviron *mEnv; // 0x44
+    Timer mTimer; // 0x48
+    bool mOverloadHorizontalNav; // 0x78
+    bool mCancelTransitionNotify; // 0x79
+    bool mDefaultAllowEditText; // 0x7a
+    bool mDisableScreenBlacklight; // 0x7b
+    Timer mLoadTimer; // 0x80 (region; trails into vbase area in some builds)
+    RndOverlay *mOverlay;
+    Automator *mAutomator;
+    bool mShowDevMenu;
 };
 
 extern UIManager *TheUI;
