@@ -1,0 +1,2368 @@
+{
+  "note": "XEX import table for Rock Band 3 Xbox 360 (title ID 45410914). All 277 entries are XDK/kernel/middleware symbols that will NEVER be decompiled from source. Import thunk stubs occupy 0x82c13854-0x82c148cc (263 fn-type thunks, 16 bytes each). BINK section (0x82c14a00-0x82c23xxx) is Bink Video 1.9 middleware: 137 fns, ~65KB code (never decompile). xdk_fn_addrs covers both the import-thunk range and the BINK code section.",
+  "imports": [
+    {
+      "name": "XGetGameRegion",
+      "iat_addr": "0x82000400",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13854"
+    },
+    {
+      "name": "XNotifyPositionUI",
+      "iat_addr": "0x82000404",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13864"
+    },
+    {
+      "name": "XNotifyGetNext",
+      "iat_addr": "0x82000408",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13874"
+    },
+    {
+      "name": "XamInputSendStayAliveRequest",
+      "iat_addr": "0x8200040c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13884"
+    },
+    {
+      "name": "XGetVideoMode",
+      "iat_addr": "0x82000410",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13894"
+    },
+    {
+      "name": "XamShowMessageBoxUIEx",
+      "iat_addr": "0x82000414",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c138a4"
+    },
+    {
+      "name": "XGetLanguage",
+      "iat_addr": "0x82000418",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c138b4"
+    },
+    {
+      "name": "XGetAVPack",
+      "iat_addr": "0x8200041c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c138c4"
+    },
+    {
+      "name": "XamLoaderTerminateTitle",
+      "iat_addr": "0x82000420",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c138d4"
+    },
+    {
+      "name": "XMsgStartIORequest",
+      "iat_addr": "0x82000424",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c138e4"
+    },
+    {
+      "name": "XamUserGetName",
+      "iat_addr": "0x82000428",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c138f4"
+    },
+    {
+      "name": "XamUserGetSigninState",
+      "iat_addr": "0x8200042c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13904"
+    },
+    {
+      "name": "XamUserAreUsersFriends",
+      "iat_addr": "0x82000430",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13914"
+    },
+    {
+      "name": "XamUserCheckPrivilege",
+      "iat_addr": "0x82000434",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13924"
+    },
+    {
+      "name": "XamGetSystemVersion",
+      "iat_addr": "0x82000438",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13934"
+    },
+    {
+      "name": "XamReadTileToTexture",
+      "iat_addr": "0x8200043c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13944"
+    },
+    {
+      "name": "XamWriteGamerTile",
+      "iat_addr": "0x82000440",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13954"
+    },
+    {
+      "name": "XamUserGetXUID",
+      "iat_addr": "0x82000444",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13964"
+    },
+    {
+      "name": "XMsgCancelIORequest",
+      "iat_addr": "0x82000448",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13974"
+    },
+    {
+      "name": "XamLoaderLaunchTitle",
+      "iat_addr": "0x8200044c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13984"
+    },
+    {
+      "name": "XamShowSigninUI",
+      "iat_addr": "0x82000450",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13994"
+    },
+    {
+      "name": "XamShowFriendsUI",
+      "iat_addr": "0x82000454",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c139a4"
+    },
+    {
+      "name": "XamShowKeyboardUI",
+      "iat_addr": "0x82000458",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c139b4"
+    },
+    {
+      "name": "XamShowGamerCardUIForXUID",
+      "iat_addr": "0x8200045c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c139c4"
+    },
+    {
+      "name": "XamShowMarketplaceUI",
+      "iat_addr": "0x82000460",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c139d4"
+    },
+    {
+      "name": "XamShowDeviceSelectorUI",
+      "iat_addr": "0x82000464",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c139e4"
+    },
+    {
+      "name": "XamShowDirtyDiscErrorUI",
+      "iat_addr": "0x82000468",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c139f4"
+    },
+    {
+      "name": "XamEnableInactivityProcessing",
+      "iat_addr": "0x8200046c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a04"
+    },
+    {
+      "name": "XamResetInactivity",
+      "iat_addr": "0x82000470",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a14"
+    },
+    {
+      "name": "XamUserGetSigninInfo",
+      "iat_addr": "0x82000474",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a24"
+    },
+    {
+      "name": "XamNotifyCreateListener",
+      "iat_addr": "0x82000478",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a34"
+    },
+    {
+      "name": "XamEnumerate",
+      "iat_addr": "0x8200047c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a44"
+    },
+    {
+      "name": "XamGetExecutionId",
+      "iat_addr": "0x82000480",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a54"
+    },
+    {
+      "name": "XamAlloc",
+      "iat_addr": "0x82000484",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a64"
+    },
+    {
+      "name": "XamFree",
+      "iat_addr": "0x82000488",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a74"
+    },
+    {
+      "name": "XamGetOverlappedResult",
+      "iat_addr": "0x8200048c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a84"
+    },
+    {
+      "name": "XamTaskSchedule",
+      "iat_addr": "0x82000490",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13a94"
+    },
+    {
+      "name": "XMsgCompleteIORequest",
+      "iat_addr": "0x82000494",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13aa4"
+    },
+    {
+      "name": "XMsgInProcessCall",
+      "iat_addr": "0x82000498",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13ab4"
+    },
+    {
+      "name": "XamGetPrivateEnumStructureFromHandle",
+      "iat_addr": "0x8200049c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13ac4"
+    },
+    {
+      "name": "XamContentCreateEx",
+      "iat_addr": "0x820004a0",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13ad4"
+    },
+    {
+      "name": "XamContentDelete",
+      "iat_addr": "0x820004a4",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13ae4"
+    },
+    {
+      "name": "XamContentClose",
+      "iat_addr": "0x820004a8",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13af4"
+    },
+    {
+      "name": "XamContentFlush",
+      "iat_addr": "0x820004ac",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b04"
+    },
+    {
+      "name": "XamContentGetCreator",
+      "iat_addr": "0x820004b0",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b14"
+    },
+    {
+      "name": "XamContentCreateEnumerator",
+      "iat_addr": "0x820004b4",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b24"
+    },
+    {
+      "name": "XamContentGetDeviceState",
+      "iat_addr": "0x820004b8",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b34"
+    },
+    {
+      "name": "XamContentGetDeviceData",
+      "iat_addr": "0x820004bc",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b44"
+    },
+    {
+      "name": "XamInputGetCapabilities",
+      "iat_addr": "0x820004c0",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b54"
+    },
+    {
+      "name": "XamInputGetState",
+      "iat_addr": "0x820004c4",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b64"
+    },
+    {
+      "name": "XamInputSetState",
+      "iat_addr": "0x820004c8",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b74"
+    },
+    {
+      "name": "XamBackgroundDownloadSetMode",
+      "iat_addr": "0x820004cc",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b84"
+    },
+    {
+      "name": "XamBackgroundDownloadItemGetHistoryStatus",
+      "iat_addr": "0x820004d0",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13b94"
+    },
+    {
+      "name": "XamBackgroundDownloadItemGetStatus",
+      "iat_addr": "0x820004d4",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13ba4"
+    },
+    {
+      "name": "XamShowMarketplaceDownloadItemsUI",
+      "iat_addr": "0x820004d8",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13bb4"
+    },
+    {
+      "name": "XamVoiceSubmitPacket",
+      "iat_addr": "0x820004dc",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c147e4"
+    },
+    {
+      "name": "XamVoiceClose",
+      "iat_addr": "0x820004e0",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c147d4"
+    },
+    {
+      "name": "XamVoiceHeadsetPresent",
+      "iat_addr": "0x820004e4",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c147c4"
+    },
+    {
+      "name": "XamUserReadProfileSettings",
+      "iat_addr": "0x820004e8",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c147b4"
+    },
+    {
+      "name": "XamUserGetDeviceContext",
+      "iat_addr": "0x820004ec",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c147a4"
+    },
+    {
+      "name": "NetDll_XNetSetSystemLinkPort",
+      "iat_addr": "0x820004f0",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14794"
+    },
+    {
+      "name": "XamDeviceRemap",
+      "iat_addr": "0x820004f4",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14484"
+    },
+    {
+      "name": "XMsgStartIORequestEx",
+      "iat_addr": "0x820004f8",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14474"
+    },
+    {
+      "name": "XamUserGetOnlineCountryFromXUID",
+      "iat_addr": "0x820004fc",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14464"
+    },
+    {
+      "name": "XamUserGetMembershipTierFromXUID",
+      "iat_addr": "0x82000500",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14454"
+    },
+    {
+      "name": "XamCreateEnumeratorHandle",
+      "iat_addr": "0x82000504",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14444"
+    },
+    {
+      "name": "XNetLogonGetTitleID",
+      "iat_addr": "0x82000508",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14434"
+    },
+    {
+      "name": "XamSessionCreateHandle",
+      "iat_addr": "0x8200050c",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14424"
+    },
+    {
+      "name": "XamSessionRefObjByHandle",
+      "iat_addr": "0x82000510",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14414"
+    },
+    {
+      "name": "XamInputControl",
+      "iat_addr": "0x82000514",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14404"
+    },
+    {
+      "name": "XamInputRawState",
+      "iat_addr": "0x82000518",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c143f4"
+    },
+    {
+      "name": "NetDll___WSAFDIsSet",
+      "iat_addr": "0x8200051c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c143e4"
+    },
+    {
+      "name": "NetDll_WSAWaitForMultipleEvents",
+      "iat_addr": "0x82000520",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c143d4"
+    },
+    {
+      "name": "NetDll_WSAResetEvent",
+      "iat_addr": "0x82000524",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c143c4"
+    },
+    {
+      "name": "NetDll_WSACloseEvent",
+      "iat_addr": "0x82000528",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c143b4"
+    },
+    {
+      "name": "NetDll_WSACreateEvent",
+      "iat_addr": "0x8200052c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c143a4"
+    },
+    {
+      "name": "NetDll_WSAGetLastError",
+      "iat_addr": "0x82000530",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14394"
+    },
+    {
+      "name": "NetDll_inet_addr",
+      "iat_addr": "0x82000534",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14384"
+    },
+    {
+      "name": "NetDll_WSASendTo",
+      "iat_addr": "0x82000538",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14374"
+    },
+    {
+      "name": "NetDll_sendto",
+      "iat_addr": "0x8200053c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14364"
+    },
+    {
+      "name": "NetDll_send",
+      "iat_addr": "0x82000540",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14354"
+    },
+    {
+      "name": "NetDll_WSARecvFrom",
+      "iat_addr": "0x82000544",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14344"
+    },
+    {
+      "name": "NetDll_recvfrom",
+      "iat_addr": "0x82000548",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14334"
+    },
+    {
+      "name": "NetDll_recv",
+      "iat_addr": "0x8200054c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14324"
+    },
+    {
+      "name": "NetDll_WSAGetOverlappedResult",
+      "iat_addr": "0x82000550",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14314"
+    },
+    {
+      "name": "NetDll_select",
+      "iat_addr": "0x82000554",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14304"
+    },
+    {
+      "name": "NetDll_accept",
+      "iat_addr": "0x82000558",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c142f4"
+    },
+    {
+      "name": "NetDll_listen",
+      "iat_addr": "0x8200055c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c142e4"
+    },
+    {
+      "name": "NetDll_connect",
+      "iat_addr": "0x82000560",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c142d4"
+    },
+    {
+      "name": "NetDll_bind",
+      "iat_addr": "0x82000564",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c142c4"
+    },
+    {
+      "name": "NetDll_getpeername",
+      "iat_addr": "0x82000568",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c142b4"
+    },
+    {
+      "name": "NetDll_getsockname",
+      "iat_addr": "0x8200056c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c142a4"
+    },
+    {
+      "name": "NetDll_setsockopt",
+      "iat_addr": "0x82000570",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14294"
+    },
+    {
+      "name": "NetDll_ioctlsocket",
+      "iat_addr": "0x82000574",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14284"
+    },
+    {
+      "name": "NetDll_shutdown",
+      "iat_addr": "0x82000578",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14274"
+    },
+    {
+      "name": "NetDll_closesocket",
+      "iat_addr": "0x8200057c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14264"
+    },
+    {
+      "name": "NetDll_socket",
+      "iat_addr": "0x82000580",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14254"
+    },
+    {
+      "name": "NetDll_WSACleanup",
+      "iat_addr": "0x82000584",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14244"
+    },
+    {
+      "name": "NetDll_WSAStartup",
+      "iat_addr": "0x82000588",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14234"
+    },
+    {
+      "name": "NetDll_XNetGetEthernetLinkStatus",
+      "iat_addr": "0x8200058c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14224"
+    },
+    {
+      "name": "NetDll_XNetGetTitleXnAddr",
+      "iat_addr": "0x82000590",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14214"
+    },
+    {
+      "name": "NetDll_XNetQosRelease",
+      "iat_addr": "0x82000594",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14204"
+    },
+    {
+      "name": "NetDll_XNetQosLookup",
+      "iat_addr": "0x82000598",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c141f4"
+    },
+    {
+      "name": "NetDll_XNetQosListen",
+      "iat_addr": "0x8200059c",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c141e4"
+    },
+    {
+      "name": "NetDll_XNetDnsRelease",
+      "iat_addr": "0x820005a0",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c141d4"
+    },
+    {
+      "name": "NetDll_XNetDnsLookup",
+      "iat_addr": "0x820005a4",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c141c4"
+    },
+    {
+      "name": "NetDll_XNetGetConnectStatus",
+      "iat_addr": "0x820005a8",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c141b4"
+    },
+    {
+      "name": "XamVoiceCreate",
+      "iat_addr": "0x820005ac",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c147f4"
+    },
+    {
+      "name": "NetDll_XNetConnect",
+      "iat_addr": "0x820005b0",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c141a4"
+    },
+    {
+      "name": "NetDll_XNetXnAddrToMachineId",
+      "iat_addr": "0x820005b4",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14194"
+    },
+    {
+      "name": "NetDll_XNetUnregisterInAddr",
+      "iat_addr": "0x820005b8",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14184"
+    },
+    {
+      "name": "NetDll_XNetServerToInAddr",
+      "iat_addr": "0x820005bc",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14174"
+    },
+    {
+      "name": "NetDll_XNetXnAddrToInAddr",
+      "iat_addr": "0x820005c0",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14164"
+    },
+    {
+      "name": "NetDll_XNetUnregisterKey",
+      "iat_addr": "0x820005c4",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14154"
+    },
+    {
+      "name": "NetDll_XNetRegisterKey",
+      "iat_addr": "0x820005c8",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14144"
+    },
+    {
+      "name": "NetDll_XNetCreateKey",
+      "iat_addr": "0x820005cc",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14134"
+    },
+    {
+      "name": "NetDll_XNetRandom",
+      "iat_addr": "0x820005d0",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14124"
+    },
+    {
+      "name": "NetDll_XNetStartup",
+      "iat_addr": "0x820005d4",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14104"
+    },
+    {
+      "name": "NetDll_XNetCleanup",
+      "iat_addr": "0x820005d8",
+      "module": "xnet.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14114"
+    },
+    {
+      "name": "XboxHardwareInfo",
+      "iat_addr": "0x820005e0",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "ExFreePool",
+      "iat_addr": "0x820005e4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c140f4"
+    },
+    {
+      "name": "KeDelayExecutionThread",
+      "iat_addr": "0x820005e8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c140e4"
+    },
+    {
+      "name": "ExCreateThread",
+      "iat_addr": "0x820005ec",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c140d4"
+    },
+    {
+      "name": "NtDuplicateObject",
+      "iat_addr": "0x820005f0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c140c4"
+    },
+    {
+      "name": "NtReadFile",
+      "iat_addr": "0x820005f4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c140b4"
+    },
+    {
+      "name": "NtReadFileScatter",
+      "iat_addr": "0x820005f8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c140a4"
+    },
+    {
+      "name": "NtQueryDirectoryFile",
+      "iat_addr": "0x820005fc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14094"
+    },
+    {
+      "name": "XexLoadImage",
+      "iat_addr": "0x82000600",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14084"
+    },
+    {
+      "name": "HalReturnToFirmware",
+      "iat_addr": "0x82000604",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14064"
+    },
+    {
+      "name": "NtFlushBuffersFile",
+      "iat_addr": "0x82000608",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14054"
+    },
+    {
+      "name": "RtlInitUnicodeString",
+      "iat_addr": "0x8200060c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14044"
+    },
+    {
+      "name": "RtlUnicodeStringToAnsiString",
+      "iat_addr": "0x82000610",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14034"
+    },
+    {
+      "name": "RtlFreeAnsiString",
+      "iat_addr": "0x82000614",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14024"
+    },
+    {
+      "name": "ExTerminateThread",
+      "iat_addr": "0x82000618",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14014"
+    },
+    {
+      "name": "RtlCompareMemoryUlong",
+      "iat_addr": "0x8200061c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14004"
+    },
+    {
+      "name": "NtFreeVirtualMemory",
+      "iat_addr": "0x82000620",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ff4"
+    },
+    {
+      "name": "KeBugCheckEx",
+      "iat_addr": "0x82000624",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13fe4"
+    },
+    {
+      "name": "RtlFillMemoryUlong",
+      "iat_addr": "0x82000628",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13fd4"
+    },
+    {
+      "name": "NtAllocateVirtualMemory",
+      "iat_addr": "0x8200062c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13fc4"
+    },
+    {
+      "name": "RtlRaiseException",
+      "iat_addr": "0x82000630",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13fb4"
+    },
+    {
+      "name": "KeTimeStampBundle",
+      "iat_addr": "0x82000634",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "NtCreateMutant",
+      "iat_addr": "0x82000638",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13fa4"
+    },
+    {
+      "name": "NtReleaseMutant",
+      "iat_addr": "0x8200063c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f94"
+    },
+    {
+      "name": "DbgBreakPoint",
+      "iat_addr": "0x82000640",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f84"
+    },
+    {
+      "name": "NtQueryFullAttributesFile",
+      "iat_addr": "0x82000644",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f74"
+    },
+    {
+      "name": "RtlMultiByteToUnicodeN",
+      "iat_addr": "0x82000648",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f64"
+    },
+    {
+      "name": "_vsnprintf",
+      "iat_addr": "0x8200064c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f54"
+    },
+    {
+      "name": "XeKeysAesCbc",
+      "iat_addr": "0x82000650",
+      "module": "xcrypt.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13f44"
+    },
+    {
+      "name": "XeKeysSetKey",
+      "iat_addr": "0x82000654",
+      "module": "xcrypt.xex",
+      "type": "function",
+      "thunk_addr": "0x82c13f34"
+    },
+    {
+      "name": "NtQueryInformationFile",
+      "iat_addr": "0x82000658",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f24"
+    },
+    {
+      "name": "RtlUnicodeToMultiByteN",
+      "iat_addr": "0x8200065c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f14"
+    },
+    {
+      "name": "NtQueryVolumeInformationFile",
+      "iat_addr": "0x82000660",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13f04"
+    },
+    {
+      "name": "NtWriteFile",
+      "iat_addr": "0x82000664",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ef4"
+    },
+    {
+      "name": "NtWaitForSingleObjectEx",
+      "iat_addr": "0x82000668",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ee4"
+    },
+    {
+      "name": "XboxKrnlVersion",
+      "iat_addr": "0x8200066c",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "NtClearEvent",
+      "iat_addr": "0x82000670",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ed4"
+    },
+    {
+      "name": "NtWaitForMultipleObjectsEx",
+      "iat_addr": "0x82000674",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ec4"
+    },
+    {
+      "name": "NtReleaseSemaphore",
+      "iat_addr": "0x82000678",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13eb4"
+    },
+    {
+      "name": "NtCreateSemaphore",
+      "iat_addr": "0x8200067c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ea4"
+    },
+    {
+      "name": "RtlTimeFieldsToTime",
+      "iat_addr": "0x82000680",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e94"
+    },
+    {
+      "name": "NtSetInformationFile",
+      "iat_addr": "0x82000684",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e84"
+    },
+    {
+      "name": "KeGetCurrentProcessType",
+      "iat_addr": "0x82000688",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e74"
+    },
+    {
+      "name": "NtCreateFile",
+      "iat_addr": "0x8200068c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e64"
+    },
+    {
+      "name": "RtlInitAnsiString",
+      "iat_addr": "0x82000690",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e54"
+    },
+    {
+      "name": "NtOpenFile",
+      "iat_addr": "0x82000694",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e44"
+    },
+    {
+      "name": "ExEventObjectType",
+      "iat_addr": "0x82000698",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "XexExecutableModuleHandle",
+      "iat_addr": "0x8200069c",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "RtlImageXexHeaderField",
+      "iat_addr": "0x820006a0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e34"
+    },
+    {
+      "name": "XexGetModuleHandle",
+      "iat_addr": "0x820006a4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e24"
+    },
+    {
+      "name": "XexGetProcedureAddress",
+      "iat_addr": "0x820006a8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e14"
+    },
+    {
+      "name": "RtlNtStatusToDosError",
+      "iat_addr": "0x820006ac",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13e04"
+    },
+    {
+      "name": "ExLoadedCommandLine",
+      "iat_addr": "0x820006b0",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "KeQuerySystemTime",
+      "iat_addr": "0x820006b4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13df4"
+    },
+    {
+      "name": "RtlTimeToTimeFields",
+      "iat_addr": "0x820006b8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13de4"
+    },
+    {
+      "name": "NtResumeThread",
+      "iat_addr": "0x820006bc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13dd4"
+    },
+    {
+      "name": "NtSetEvent",
+      "iat_addr": "0x820006c0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13dc4"
+    },
+    {
+      "name": "DbgPrint",
+      "iat_addr": "0x820006c4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13db4"
+    },
+    {
+      "name": "XexCheckExecutablePrivilege",
+      "iat_addr": "0x820006c8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13da4"
+    },
+    {
+      "name": "ExGetXConfigSetting",
+      "iat_addr": "0x820006cc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d94"
+    },
+    {
+      "name": "NtCreateEvent",
+      "iat_addr": "0x820006d0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d84"
+    },
+    {
+      "name": "NtClose",
+      "iat_addr": "0x820006d4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d74"
+    },
+    {
+      "name": "MmQueryStatistics",
+      "iat_addr": "0x820006d8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d64"
+    },
+    {
+      "name": "NtQueryVirtualMemory",
+      "iat_addr": "0x820006dc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d54"
+    },
+    {
+      "name": "MmQueryAddressProtect",
+      "iat_addr": "0x820006e0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d44"
+    },
+    {
+      "name": "MmFreePhysicalMemory",
+      "iat_addr": "0x820006e4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d34"
+    },
+    {
+      "name": "MmQueryAllocationSize",
+      "iat_addr": "0x820006e8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d24"
+    },
+    {
+      "name": "MmAllocatePhysicalMemoryEx",
+      "iat_addr": "0x820006ec",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d14"
+    },
+    {
+      "name": "KeDebugMonitorData",
+      "iat_addr": "0x820006f0",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "KeSetAffinityThread",
+      "iat_addr": "0x820006f4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13d04"
+    },
+    {
+      "name": "KeQueryBasePriorityThread",
+      "iat_addr": "0x820006f8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13cf4"
+    },
+    {
+      "name": "ExThreadObjectType",
+      "iat_addr": "0x820006fc",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "ObReferenceObjectByHandle",
+      "iat_addr": "0x82000700",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ce4"
+    },
+    {
+      "name": "KeSetBasePriorityThread",
+      "iat_addr": "0x82000704",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13cd4"
+    },
+    {
+      "name": "ObLookupThreadByThreadId",
+      "iat_addr": "0x82000708",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13cc4"
+    },
+    {
+      "name": "ObOpenObjectByPointer",
+      "iat_addr": "0x8200070c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13cb4"
+    },
+    {
+      "name": "ObDereferenceObject",
+      "iat_addr": "0x82000710",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13ca4"
+    },
+    {
+      "name": "KeEnableFpuExceptions",
+      "iat_addr": "0x82000714",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c94"
+    },
+    {
+      "name": "RtlCaptureContext",
+      "iat_addr": "0x82000718",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c84"
+    },
+    {
+      "name": "RtlInitializeCriticalSectionAndSpinCount",
+      "iat_addr": "0x8200071c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c74"
+    },
+    {
+      "name": "RtlUnwind",
+      "iat_addr": "0x82000720",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c64"
+    },
+    {
+      "name": "KeTlsAlloc",
+      "iat_addr": "0x82000724",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c54"
+    },
+    {
+      "name": "KeInitializeApc",
+      "iat_addr": "0x82000728",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14494"
+    },
+    {
+      "name": "ObReferenceObject",
+      "iat_addr": "0x8200072c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c144a4"
+    },
+    {
+      "name": "ExAllocatePoolWithTag",
+      "iat_addr": "0x82000730",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c144b4"
+    },
+    {
+      "name": "KeInsertQueueApc",
+      "iat_addr": "0x82000734",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c144c4"
+    },
+    {
+      "name": "KeSetEvent",
+      "iat_addr": "0x82000738",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c144d4"
+    },
+    {
+      "name": "KeWaitForSingleObject",
+      "iat_addr": "0x8200073c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c144e4"
+    },
+    {
+      "name": "VdGlobalDevice",
+      "iat_addr": "0x82000740",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "VdGlobalXamDevice",
+      "iat_addr": "0x82000744",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "VdEnableDisableClockGating",
+      "iat_addr": "0x82000748",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c144f4"
+    },
+    {
+      "name": "KeCertMonitorData",
+      "iat_addr": "0x8200074c",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "KfReleaseSpinLock",
+      "iat_addr": "0x82000750",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14504"
+    },
+    {
+      "name": "KfAcquireSpinLock",
+      "iat_addr": "0x82000754",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14514"
+    },
+    {
+      "name": "KeQueryPerformanceFrequency",
+      "iat_addr": "0x82000758",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14524"
+    },
+    {
+      "name": "VdPersistDisplay",
+      "iat_addr": "0x8200075c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14534"
+    },
+    {
+      "name": "VdSwap",
+      "iat_addr": "0x82000760",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14544"
+    },
+    {
+      "name": "VdGetSystemCommandBuffer",
+      "iat_addr": "0x82000764",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14554"
+    },
+    {
+      "name": "KeReleaseSpinLockFromRaisedIrql",
+      "iat_addr": "0x82000768",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14564"
+    },
+    {
+      "name": "KeAcquireSpinLockAtRaisedIrql",
+      "iat_addr": "0x8200076c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14574"
+    },
+    {
+      "name": "KiApcNormalRoutineNop",
+      "iat_addr": "0x82000770",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14584"
+    },
+    {
+      "name": "VdEnableRingBufferRPtrWriteBack",
+      "iat_addr": "0x82000774",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14594"
+    },
+    {
+      "name": "VdInitializeRingBuffer",
+      "iat_addr": "0x82000778",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c145a4"
+    },
+    {
+      "name": "MmGetPhysicalAddress",
+      "iat_addr": "0x8200077c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c145b4"
+    },
+    {
+      "name": "VdSetSystemCommandBufferGpuIdentifierAddress",
+      "iat_addr": "0x82000780",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c145c4"
+    },
+    {
+      "name": "sprintf",
+      "iat_addr": "0x82000784",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c145d4"
+    },
+    {
+      "name": "VdGetCurrentDisplayGamma",
+      "iat_addr": "0x82000788",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c145e4"
+    },
+    {
+      "name": "KeLockL2",
+      "iat_addr": "0x8200078c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c145f4"
+    },
+    {
+      "name": "KeUnlockL2",
+      "iat_addr": "0x82000790",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14604"
+    },
+    {
+      "name": "KeResetEvent",
+      "iat_addr": "0x82000794",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14614"
+    },
+    {
+      "name": "KeInitializeDpc",
+      "iat_addr": "0x82000798",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14624"
+    },
+    {
+      "name": "ExRegisterTitleTerminateNotification",
+      "iat_addr": "0x8200079c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14634"
+    },
+    {
+      "name": "VdShutdownEngines",
+      "iat_addr": "0x820007a0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14644"
+    },
+    {
+      "name": "VdQueryVideoMode",
+      "iat_addr": "0x820007a4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14654"
+    },
+    {
+      "name": "VdGetCurrentDisplayInformation",
+      "iat_addr": "0x820007a8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14664"
+    },
+    {
+      "name": "VdSetDisplayMode",
+      "iat_addr": "0x820007ac",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14674"
+    },
+    {
+      "name": "VdSetGraphicsInterruptCallback",
+      "iat_addr": "0x820007b0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14684"
+    },
+    {
+      "name": "VdInitializeEngines",
+      "iat_addr": "0x820007b4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14694"
+    },
+    {
+      "name": "VdIsHSIOTrainingSucceeded",
+      "iat_addr": "0x820007b8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c146a4"
+    },
+    {
+      "name": "VdQueryVideoFlags",
+      "iat_addr": "0x820007bc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c146b4"
+    },
+    {
+      "name": "VdCallGraphicsNotificationRoutines",
+      "iat_addr": "0x820007c0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c146c4"
+    },
+    {
+      "name": "VdGpuClockInMHz",
+      "iat_addr": "0x820007c4",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "VdInitializeScalerCommandBuffer",
+      "iat_addr": "0x820007c8",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c146d4"
+    },
+    {
+      "name": "KeLeaveCriticalRegion",
+      "iat_addr": "0x820007cc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c146e4"
+    },
+    {
+      "name": "VdRetrainEDRAM",
+      "iat_addr": "0x820007d0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c146f4"
+    },
+    {
+      "name": "VdRetrainEDRAMWorker",
+      "iat_addr": "0x820007d4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14704"
+    },
+    {
+      "name": "VdHSIOCalibrationLock",
+      "iat_addr": "0x820007d8",
+      "module": "xboxkrnl.exe",
+      "type": "data"
+    },
+    {
+      "name": "KeEnterCriticalRegion",
+      "iat_addr": "0x820007dc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14714"
+    },
+    {
+      "name": "ObDeleteSymbolicLink",
+      "iat_addr": "0x820007e0",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14724"
+    },
+    {
+      "name": "ObCreateSymbolicLink",
+      "iat_addr": "0x820007e4",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14734"
+    },
+    {
+      "name": "XAudioOverrideSpeakerConfig",
+      "iat_addr": "0x820007e8",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14744"
+    },
+    {
+      "name": "XAudioGetSpeakerConfig",
+      "iat_addr": "0x820007ec",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14754"
+    },
+    {
+      "name": "XeCryptShaInit",
+      "iat_addr": "0x820007f0",
+      "module": "xcrypt.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14764"
+    },
+    {
+      "name": "XeCryptShaUpdate",
+      "iat_addr": "0x820007f4",
+      "module": "xcrypt.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14774"
+    },
+    {
+      "name": "XeCryptShaFinal",
+      "iat_addr": "0x820007f8",
+      "module": "xcrypt.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14784"
+    },
+    {
+      "name": "KeTlsFree",
+      "iat_addr": "0x820007fc",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c44"
+    },
+    {
+      "name": "KeTlsSetValue",
+      "iat_addr": "0x82000800",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c34"
+    },
+    {
+      "name": "KeTlsGetValue",
+      "iat_addr": "0x82000804",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c24"
+    },
+    {
+      "name": "KeBugCheck",
+      "iat_addr": "0x82000808",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13c14"
+    },
+    {
+      "name": "__C_specific_handler",
+      "iat_addr": "0x8200080c",
+      "module": "xboxkrnl.exe",
+      "type": "function"
+    },
+    {
+      "name": "RtlTryEnterCriticalSection",
+      "iat_addr": "0x82000810",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13bf4"
+    },
+    {
+      "name": "RtlLeaveCriticalSection",
+      "iat_addr": "0x82000814",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13be4"
+    },
+    {
+      "name": "RtlEnterCriticalSection",
+      "iat_addr": "0x82000818",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13bd4"
+    },
+    {
+      "name": "RtlInitializeCriticalSection",
+      "iat_addr": "0x8200081c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c13bc4"
+    },
+    {
+      "name": "XexUnloadImage",
+      "iat_addr": "0x82000820",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14074"
+    },
+    {
+      "name": "XAudioGetVoiceCategoryVolume",
+      "iat_addr": "0x82000824",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14804"
+    },
+    {
+      "name": "MmMapIoSpace",
+      "iat_addr": "0x82000828",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14814"
+    },
+    {
+      "name": "XMACreateContext",
+      "iat_addr": "0x8200082c",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14824"
+    },
+    {
+      "name": "XMAReleaseContext",
+      "iat_addr": "0x82000830",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14834"
+    },
+    {
+      "name": "KeWaitForMultipleObjects",
+      "iat_addr": "0x82000834",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c14844"
+    },
+    {
+      "name": "XAudioSubmitRenderDriverFrame",
+      "iat_addr": "0x82000838",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14854"
+    },
+    {
+      "name": "XAudioUnregisterRenderDriverClient",
+      "iat_addr": "0x8200083c",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14864"
+    },
+    {
+      "name": "XAudioRegisterRenderDriverClient",
+      "iat_addr": "0x82000840",
+      "module": "xaudio2.dll",
+      "type": "function",
+      "thunk_addr": "0x82c14874"
+    },
+    {
+      "name": "RmcDeviceRequest",
+      "iat_addr": "0x82000844",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14884"
+    },
+    {
+      "name": "MicDeviceRequest",
+      "iat_addr": "0x82000848",
+      "module": "xam.xex",
+      "type": "function",
+      "thunk_addr": "0x82c14894"
+    },
+    {
+      "name": "NtCancelTimer",
+      "iat_addr": "0x8200084c",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c148a4"
+    },
+    {
+      "name": "NtSetTimerEx",
+      "iat_addr": "0x82000850",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c148b4"
+    },
+    {
+      "name": "NtCreateTimer",
+      "iat_addr": "0x82000854",
+      "module": "xboxkrnl.exe",
+      "type": "function",
+      "thunk_addr": "0x82c148c4"
+    }
+  ],
+  "xdk_fn_addrs": [
+    "0x82c13854",
+    "0x82c13864",
+    "0x82c13874",
+    "0x82c13884",
+    "0x82c13894",
+    "0x82c138a4",
+    "0x82c138b4",
+    "0x82c138c4",
+    "0x82c138d4",
+    "0x82c138e4",
+    "0x82c138f4",
+    "0x82c13904",
+    "0x82c13914",
+    "0x82c13924",
+    "0x82c13934",
+    "0x82c13944",
+    "0x82c13954",
+    "0x82c13964",
+    "0x82c13974",
+    "0x82c13984",
+    "0x82c13994",
+    "0x82c139a4",
+    "0x82c139b4",
+    "0x82c139c4",
+    "0x82c139d4",
+    "0x82c139e4",
+    "0x82c139f4",
+    "0x82c13a04",
+    "0x82c13a14",
+    "0x82c13a24",
+    "0x82c13a34",
+    "0x82c13a44",
+    "0x82c13a54",
+    "0x82c13a64",
+    "0x82c13a74",
+    "0x82c13a84",
+    "0x82c13a94",
+    "0x82c13aa4",
+    "0x82c13ab4",
+    "0x82c13ac4",
+    "0x82c13ad4",
+    "0x82c13ae4",
+    "0x82c13af4",
+    "0x82c13b04",
+    "0x82c13b14",
+    "0x82c13b24",
+    "0x82c13b34",
+    "0x82c13b44",
+    "0x82c13b54",
+    "0x82c13b64",
+    "0x82c13b74",
+    "0x82c13b84",
+    "0x82c13b94",
+    "0x82c13ba4",
+    "0x82c13bb4",
+    "0x82c13bc4",
+    "0x82c13bd4",
+    "0x82c13be4",
+    "0x82c13bf4",
+    "0x82c13c14",
+    "0x82c13c24",
+    "0x82c13c34",
+    "0x82c13c44",
+    "0x82c13c54",
+    "0x82c13c64",
+    "0x82c13c74",
+    "0x82c13c84",
+    "0x82c13c94",
+    "0x82c13ca4",
+    "0x82c13cb4",
+    "0x82c13cc4",
+    "0x82c13cd4",
+    "0x82c13ce4",
+    "0x82c13cf4",
+    "0x82c13d04",
+    "0x82c13d14",
+    "0x82c13d24",
+    "0x82c13d34",
+    "0x82c13d44",
+    "0x82c13d54",
+    "0x82c13d64",
+    "0x82c13d74",
+    "0x82c13d84",
+    "0x82c13d94",
+    "0x82c13da4",
+    "0x82c13db4",
+    "0x82c13dc4",
+    "0x82c13dd4",
+    "0x82c13de4",
+    "0x82c13df4",
+    "0x82c13e04",
+    "0x82c13e14",
+    "0x82c13e24",
+    "0x82c13e34",
+    "0x82c13e44",
+    "0x82c13e54",
+    "0x82c13e64",
+    "0x82c13e74",
+    "0x82c13e84",
+    "0x82c13e94",
+    "0x82c13ea4",
+    "0x82c13eb4",
+    "0x82c13ec4",
+    "0x82c13ed4",
+    "0x82c13ee4",
+    "0x82c13ef4",
+    "0x82c13f04",
+    "0x82c13f14",
+    "0x82c13f24",
+    "0x82c13f34",
+    "0x82c13f44",
+    "0x82c13f54",
+    "0x82c13f64",
+    "0x82c13f74",
+    "0x82c13f84",
+    "0x82c13f94",
+    "0x82c13fa4",
+    "0x82c13fb4",
+    "0x82c13fc4",
+    "0x82c13fd4",
+    "0x82c13fe4",
+    "0x82c13ff4",
+    "0x82c14004",
+    "0x82c14014",
+    "0x82c14024",
+    "0x82c14034",
+    "0x82c14044",
+    "0x82c14054",
+    "0x82c14064",
+    "0x82c14074",
+    "0x82c14084",
+    "0x82c14094",
+    "0x82c140a4",
+    "0x82c140b4",
+    "0x82c140c4",
+    "0x82c140d4",
+    "0x82c140e4",
+    "0x82c140f4",
+    "0x82c14104",
+    "0x82c14114",
+    "0x82c14124",
+    "0x82c14134",
+    "0x82c14144",
+    "0x82c14154",
+    "0x82c14164",
+    "0x82c14174",
+    "0x82c14184",
+    "0x82c14194",
+    "0x82c141a4",
+    "0x82c141b4",
+    "0x82c141c4",
+    "0x82c141d4",
+    "0x82c141e4",
+    "0x82c141f4",
+    "0x82c14204",
+    "0x82c14214",
+    "0x82c14224",
+    "0x82c14234",
+    "0x82c14244",
+    "0x82c14254",
+    "0x82c14264",
+    "0x82c14274",
+    "0x82c14284",
+    "0x82c14294",
+    "0x82c142a4",
+    "0x82c142b4",
+    "0x82c142c4",
+    "0x82c142d4",
+    "0x82c142e4",
+    "0x82c142f4",
+    "0x82c14304",
+    "0x82c14314",
+    "0x82c14324",
+    "0x82c14334",
+    "0x82c14344",
+    "0x82c14354",
+    "0x82c14364",
+    "0x82c14374",
+    "0x82c14384",
+    "0x82c14394",
+    "0x82c143a4",
+    "0x82c143b4",
+    "0x82c143c4",
+    "0x82c143d4",
+    "0x82c143e4",
+    "0x82c143f4",
+    "0x82c14404",
+    "0x82c14414",
+    "0x82c14424",
+    "0x82c14434",
+    "0x82c14444",
+    "0x82c14454",
+    "0x82c14464",
+    "0x82c14474",
+    "0x82c14484",
+    "0x82c14494",
+    "0x82c144a4",
+    "0x82c144b4",
+    "0x82c144c4",
+    "0x82c144d4",
+    "0x82c144e4",
+    "0x82c144f4",
+    "0x82c14504",
+    "0x82c14514",
+    "0x82c14524",
+    "0x82c14534",
+    "0x82c14544",
+    "0x82c14554",
+    "0x82c14564",
+    "0x82c14574",
+    "0x82c14584",
+    "0x82c14594",
+    "0x82c145a4",
+    "0x82c145b4",
+    "0x82c145c4",
+    "0x82c145d4",
+    "0x82c145e4",
+    "0x82c145f4",
+    "0x82c14604",
+    "0x82c14614",
+    "0x82c14624",
+    "0x82c14634",
+    "0x82c14644",
+    "0x82c14654",
+    "0x82c14664",
+    "0x82c14674",
+    "0x82c14684",
+    "0x82c14694",
+    "0x82c146a4",
+    "0x82c146b4",
+    "0x82c146c4",
+    "0x82c146d4",
+    "0x82c146e4",
+    "0x82c146f4",
+    "0x82c14704",
+    "0x82c14714",
+    "0x82c14724",
+    "0x82c14734",
+    "0x82c14744",
+    "0x82c14754",
+    "0x82c14764",
+    "0x82c14774",
+    "0x82c14784",
+    "0x82c14794",
+    "0x82c147a4",
+    "0x82c147b4",
+    "0x82c147c4",
+    "0x82c147d4",
+    "0x82c147e4",
+    "0x82c147f4",
+    "0x82c14804",
+    "0x82c14814",
+    "0x82c14824",
+    "0x82c14834",
+    "0x82c14844",
+    "0x82c14854",
+    "0x82c14864",
+    "0x82c14874",
+    "0x82c14884",
+    "0x82c14894",
+    "0x82c148a4",
+    "0x82c148b4",
+    "0x82c148c4",
+    "0x82c14a00",
+    "0x82c14a40",
+    "0x82c14a84",
+    "0x82c14a90",
+    "0x82c14b34",
+    "0x82c14bf8",
+    "0x82c14ed4",
+    "0x82c15024",
+    "0x82c15060",
+    "0x82c15160",
+    "0x82c1520c",
+    "0x82c15258",
+    "0x82c1528c",
+    "0x82c152a4",
+    "0x82c152f0",
+    "0x82c153c4",
+    "0x82c15414",
+    "0x82c165d0",
+    "0x82c16704",
+    "0x82c16924",
+    "0x82c16a78",
+    "0x82c16c38",
+    "0x82c16c98",
+    "0x82c16e50",
+    "0x82c16f88",
+    "0x82c17180",
+    "0x82c172bc",
+    "0x82c172c0",
+    "0x82c173ec",
+    "0x82c175e8",
+    "0x82c177b4",
+    "0x82c177b8",
+    "0x82c17840",
+    "0x82c17990",
+    "0x82c17998",
+    "0x82c17b0c",
+    "0x82c17b8c",
+    "0x82c17cf8",
+    "0x82c17e30",
+    "0x82c17f10",
+    "0x82c17f4c",
+    "0x82c18034",
+    "0x82c1807c",
+    "0x82c180f4",
+    "0x82c1817c",
+    "0x82c183ec",
+    "0x82c183f8",
+    "0x82c18460",
+    "0x82c185c0",
+    "0x82c185e8",
+    "0x82c18618",
+    "0x82c186a4",
+    "0x82c186b8",
+    "0x82c1876c",
+    "0x82c187d4",
+    "0x82c1887c",
+    "0x82c189f0",
+    "0x82c18a98",
+    "0x82c18bd0",
+    "0x82c18c38",
+    "0x82c18cac",
+    "0x82c18d1c",
+    "0x82c18dc4",
+    "0x82c18dec",
+    "0x82c18e40",
+    "0x82c18e60",
+    "0x82c18e70",
+    "0x82c18e8c",
+    "0x82c18f34",
+    "0x82c18f3c",
+    "0x82c18ff0",
+    "0x82c191d4",
+    "0x82c19234",
+    "0x82c192a8",
+    "0x82c19390",
+    "0x82c19694",
+    "0x82c19bdc",
+    "0x82c19f40",
+    "0x82c19f44",
+    "0x82c1a02c",
+    "0x82c1a038",
+    "0x82c1a0cc",
+    "0x82c1a8d8",
+    "0x82c1ab84",
+    "0x82c1ae34",
+    "0x82c1b0cc",
+    "0x82c1b2f8",
+    "0x82c1b4e4",
+    "0x82c1b770",
+    "0x82c1ba88",
+    "0x82c1bb18",
+    "0x82c1de18",
+    "0x82c1e1b8",
+    "0x82c1e2c4",
+    "0x82c1e350",
+    "0x82c1e718",
+    "0x82c1e740",
+    "0x82c1e7cc",
+    "0x82c1e834",
+    "0x82c1eb48",
+    "0x82c1ec08",
+    "0x82c1ed04",
+    "0x82c1ed80",
+    "0x82c1eddc",
+    "0x82c1ee00",
+    "0x82c1eea0",
+    "0x82c1ef6c",
+    "0x82c1f068",
+    "0x82c1f15c",
+    "0x82c1f1e0",
+    "0x82c1f268",
+    "0x82c1f468",
+    "0x82c1f550",
+    "0x82c1fa58",
+    "0x82c2013c",
+    "0x82c204a4",
+    "0x82c208b4",
+    "0x82c20cc0",
+    "0x82c211d8",
+    "0x82c21360",
+    "0x82c21530",
+    "0x82c21704",
+    "0x82c217a4",
+    "0x82c21b7c",
+    "0x82c21f78",
+    "0x82c22050",
+    "0x82c22120",
+    "0x82c22468",
+    "0x82c2263c",
+    "0x82c2269c",
+    "0x82c229b8",
+    "0x82c22d30",
+    "0x82c22d44",
+    "0x82c22d58",
+    "0x82c230cc",
+    "0x82c23b34",
+    "0x82c2401c"
+  ],
+  "bink_section": {
+    "code_start": "0x82c14a00",
+    "code_end": "0x82c23fff",
+    "total_functions": 137,
+    "total_code_bytes": 65332,
+    "notable_symbols": [
+      "BinkGetFrameBuffersInfo",
+      "BinkRegisterFrameBuffers",
+      "BinkGetSummary",
+      "ExpandBink",
+      "ReadBPLossyWithMotion",
+      "RADTimerRead",
+      "XASoundPlay",
+      "FastmIDCT8x8WithMotion"
+    ]
+  },
+  "stats": {
+    "total_iat_entries": 277,
+    "function_imports": 264,
+    "data_imports": 13,
+    "thunk_fns_in_text": 263,
+    "bink_fns": 137,
+    "total_xdk_fns": 400,
+    "thunk_range": "0x82c13854-0x82c148cc",
+    "thunk_bytes": 4232,
+    "bink_code_bytes": 65332,
+    "total_xdk_code_bytes": 69564,
+    "modules": {
+      "xboxkrnl.exe": 143,
+      "xam.xex": 73,
+      "xnet.xex": 48,
+      "xaudio2.dll": 8,
+      "xcrypt.xex": 5,
+      "unknown": 0
+    }
+  }
+}

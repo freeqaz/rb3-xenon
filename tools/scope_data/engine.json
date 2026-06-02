@@ -1,0 +1,2792 @@
+{
+ "8273ED68": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "high"
+ },
+ "82423A88": {
+  "src_file": "src/system/rndobj/MetaMaterial.cpp",
+  "confidence": "high"
+ },
+ "824878B8": {
+  "src_file": "src/system/rndobj/ShaderOptions.cpp",
+  "confidence": "high"
+ },
+ "8244BA18": {
+  "src_file": "src/system/rndobj/TransAnim.cpp",
+  "confidence": "high"
+ },
+ "8239FE40": {
+  "src_file": "src/system/char/CharIKFingers.cpp",
+  "confidence": "high"
+ },
+ "82B31150": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "high"
+ },
+ "82453730": {
+  "src_file": "src/system/rndobj/Console.cpp",
+  "confidence": "high"
+ },
+ "82730090": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "high"
+ },
+ "827CC570": {
+  "src_file": "src/system/ui/UIScreen.cpp",
+  "confidence": "high"
+ },
+ "82513220": {
+  "src_file": "src/system/os/Joypad.cpp",
+  "confidence": "high"
+ },
+ "827A8AC8": {
+  "src_file": "src/system/utl/NetCacheMgr.cpp",
+  "confidence": "high"
+ },
+ "827C1218": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "high"
+ },
+ "824FD798": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "high"
+ },
+ "8242D0D0": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "high"
+ },
+ "823E4B50": {
+  "src_file": "src/system/rndobj/Trans.cpp",
+  "confidence": "high"
+ },
+ "826DF9C8": {
+  "src_file": "src/system/synth/Synth.cpp",
+  "confidence": "high"
+ },
+ "824FDA98": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "high"
+ },
+ "82711D10": {
+  "src_file": "src/system/rnddx9/ShaderMgr.cpp",
+  "confidence": "high"
+ },
+ "82455430": {
+  "src_file": "src/system/rndobj/Console.cpp",
+  "confidence": "high"
+ },
+ "82B58BB0": {
+  "src_file": "src/system/rndobj/Rnd_NG.cpp",
+  "confidence": "high"
+ },
+ "8248BD60": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "high"
+ },
+ "824298B0": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "high"
+ },
+ "82445348": {
+  "src_file": "src/system/rndobj/Text.cpp",
+  "confidence": "high"
+ },
+ "826F1090": {
+  "src_file": "src/system/synth/Utl.cpp",
+  "confidence": "high"
+ },
+ "823EBAC0": {
+  "src_file": "src/system/rndobj/Tex.cpp",
+  "confidence": "high"
+ },
+ "8244F1C8": {
+  "src_file": "src/system/rndobj/MatAnim.cpp",
+  "confidence": "high"
+ },
+ "827C5AB8": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "high"
+ },
+ "827CC2A8": {
+  "src_file": "src/system/ui/UIScreen.cpp",
+  "confidence": "high"
+ },
+ "82724FE8": {
+  "src_file": "src/system/obj/Task.cpp",
+  "confidence": "high"
+ },
+ "827ED890": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "high"
+ },
+ "82469A50": {
+  "src_file": "src/system/rndobj/Gen.cpp",
+  "confidence": "high"
+ },
+ "82785848": {
+  "src_file": "src/system/meta/SongMetadata.cpp",
+  "confidence": "high"
+ },
+ "823BF960": {
+  "src_file": "src/system/char/CharClipSet.cpp",
+  "confidence": "high"
+ },
+ "8235DC48": {
+  "src_file": "src/system/char/Character.cpp",
+  "confidence": "high"
+ },
+ "826F2240": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "high"
+ },
+ "824034A0": {
+  "src_file": "src/system/rndobj/Rnd.cpp",
+  "confidence": "high"
+ },
+ "827E0690": {
+  "src_file": "src/system/ui/UI.cpp",
+  "confidence": "high"
+ },
+ "827EE208": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "high"
+ },
+ "8277F140": {
+  "src_file": "src/system/meta/DataArraySongInfo.cpp",
+  "confidence": "high"
+ },
+ "82B26138": {
+  "src_file": "src/system/zlib/inflate.c",
+  "confidence": "high"
+ },
+ "827ABD60": {
+  "src_file": "src/system/utl/MBT.cpp",
+  "confidence": "medium"
+ },
+ "824FE830": {
+  "src_file": "src/system/os/Timer.cpp",
+  "confidence": "medium"
+ },
+ "82A85EF0": {
+  "src_file": "src/system/net/json-c/json_object.c",
+  "confidence": "medium"
+ },
+ "827AF180": {
+  "src_file": "src/system/utl/MemTracker.cpp",
+  "confidence": "medium"
+ },
+ "827D8DC8": {
+  "src_file": "src/system/ui/UIComponent.cpp",
+  "confidence": "medium"
+ },
+ "824A6F08": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "medium"
+ },
+ "8236B5F0": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "medium"
+ },
+ "824FCA30": {
+  "src_file": "src/system/os/Debug.cpp",
+  "confidence": "medium"
+ },
+ "8278DAE0": {
+  "src_file": "src/system/os/PlatformMgr_Xbox.cpp",
+  "confidence": "medium"
+ },
+ "827E2858": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "medium"
+ },
+ "824E2218": {
+  "src_file": "src/system/math/Trig.cpp",
+  "confidence": "medium"
+ },
+ "828482E8": {
+  "src_file": "src/system/rnddx9/ShaderMgr.cpp",
+  "confidence": "medium"
+ },
+ "823FDE38": {
+  "src_file": "src/system/rndobj/Rnd.cpp",
+  "confidence": "medium"
+ },
+ "8250F498": {
+  "src_file": "src/system/os/DateTime.cpp",
+  "confidence": "medium"
+ },
+ "82515080": {
+  "src_file": "src/system/os/AppChild.cpp",
+  "confidence": "medium"
+ },
+ "82398AE8": {
+  "src_file": "src/system/char/CharUtl.cpp",
+  "confidence": "medium"
+ },
+ "82470900": {
+  "src_file": "src/system/rndobj/Morph.cpp",
+  "confidence": "medium"
+ },
+ "826FB8A0": {
+  "src_file": "src/system/synth/Mic.cpp",
+  "confidence": "medium"
+ },
+ "82780628": {
+  "src_file": "src/system/meta/SongPreview.cpp",
+  "confidence": "medium"
+ },
+ "823B5018": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "medium"
+ },
+ "8245B7D8": {
+  "src_file": "src/system/rndobj/MeshAnim.cpp",
+  "confidence": "medium"
+ },
+ "8240E828": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "medium"
+ },
+ "827C6890": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "medium"
+ },
+ "8246C7B8": {
+  "src_file": "src/system/rndobj/PartAnim.cpp",
+  "confidence": "medium"
+ },
+ "82848870": {
+  "src_file": "src/system/rnddx9/ShaderMgr.cpp",
+  "confidence": "medium"
+ },
+ "824FF5C0": {
+  "src_file": "src/system/os/Archive.cpp",
+  "confidence": "medium"
+ },
+ "827253C8": {
+  "src_file": "src/system/obj/Task.cpp",
+  "confidence": "medium"
+ },
+ "827EECF8": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "medium"
+ },
+ "8227ED38": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "medium",
+  "note": "dc3-game-false-friend"
+ },
+ "8237E7F8": {
+  "src_file": "src/system/char/FileMerger.cpp",
+  "confidence": "medium"
+ },
+ "82504938": {
+  "src_file": "src/system/os/File.cpp",
+  "confidence": "medium"
+ },
+ "8242C110": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "medium"
+ },
+ "8247B180": {
+  "src_file": "src/system/rndobj/AmbientOcclusion.cpp",
+  "confidence": "medium"
+ },
+ "82489D38": {
+  "src_file": "src/system/rndobj/EventTrigger.cpp",
+  "confidence": "medium"
+ },
+ "823A29A8": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "medium"
+ },
+ "82487438": {
+  "src_file": "src/system/rndobj/ShaderOptions.cpp",
+  "confidence": "medium"
+ },
+ "82387F60": {
+  "src_file": "src/system/rndobj/EventTrigger.cpp",
+  "confidence": "medium"
+ },
+ "823A3430": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "medium"
+ },
+ "82324890": {
+  "src_file": "src/system/rndobj/AmbientOcclusion.cpp",
+  "confidence": "medium"
+ },
+ "827261D0": {
+  "src_file": "src/system/obj/DataNode.cpp",
+  "confidence": "medium"
+ },
+ "82407958": {
+  "src_file": "src/system/rndobj/Mesh.cpp",
+  "confidence": "medium"
+ },
+ "8240EE58": {
+  "src_file": "src/system/ui/UIScreen.cpp",
+  "confidence": "medium"
+ },
+ "82512408": {
+  "src_file": "src/system/os/Joypad.cpp",
+  "confidence": "medium"
+ },
+ "82798360": {
+  "src_file": "src/system/utl/MemMgr.cpp",
+  "confidence": "medium"
+ },
+ "823FFA78": {
+  "src_file": "src/system/rndobj/Rnd.cpp",
+  "confidence": "medium"
+ },
+ "8249B800": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "medium"
+ },
+ "82372BC8": {
+  "src_file": "src/system/char/CharEyes.cpp",
+  "confidence": "medium"
+ },
+ "82492050": {
+  "src_file": "src/system/rndobj/ShaderProgram.cpp",
+  "confidence": "medium"
+ },
+ "8249C700": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "medium"
+ },
+ "823A4588": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "medium"
+ },
+ "824841A0": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "medium"
+ },
+ "82744730": {
+  "src_file": "src/system/obj/PropSync.cpp",
+  "confidence": "medium"
+ },
+ "82492488": {
+  "src_file": "src/system/rndobj/ShaderProgram.cpp",
+  "confidence": "medium"
+ },
+ "82275110": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "medium"
+ },
+ "82483048": {
+  "src_file": "src/system/char/ClipCollide.cpp",
+  "confidence": "medium"
+ },
+ "827C5438": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "medium"
+ },
+ "827B1580": {
+  "src_file": "src/system/utl/MemTracker.cpp",
+  "confidence": "medium"
+ },
+ "82B385C8": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "medium"
+ },
+ "82555918": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "medium",
+  "note": "dc3-game-false-friend"
+ },
+ "824D9348": {
+  "src_file": "src/system/world/Instance.cpp",
+  "confidence": "medium"
+ },
+ "824AEE00": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "medium"
+ },
+ "82289600": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "medium"
+ },
+ "824006A8": {
+  "src_file": "src/system/rndobj/Rnd.cpp",
+  "confidence": "medium"
+ },
+ "8256B758": {
+  "src_file": "src/system/meta/SongMetadata.cpp",
+  "confidence": "medium"
+ },
+ "8244EC98": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "822AF160": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "8232CAD0": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low"
+ },
+ "8226C738": {
+  "src_file": "src/system/hamobj/Ham.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82456970": {
+  "src_file": "src/system/rndobj/MultiMesh.cpp",
+  "confidence": "low"
+ },
+ "82322DA0": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82343098": {
+  "src_file": "src/system/synth_xbox/soundtouch/source/SoundTouch/RateTransposer.cpp",
+  "confidence": "low"
+ },
+ "8236DD30": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low"
+ },
+ "82702980": {
+  "src_file": "src/system/synth/Utl.cpp",
+  "confidence": "low"
+ },
+ "8276B540": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "82B7F410": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "823543A0": {
+  "src_file": "src/system/net/curl/lib/urldata.h",
+  "confidence": "low-generic"
+ },
+ "825A5998": {
+  "src_file": "src/system/net/curl/lib/version.c",
+  "confidence": "low"
+ },
+ "827015E0": {
+  "src_file": "src/system/net/curl/lib/sslgen.c",
+  "confidence": "low"
+ },
+ "82AB42B0": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-generic"
+ },
+ "8255E4C0": {
+  "src_file": "src/system/obj/DataArray.cpp",
+  "confidence": "low"
+ },
+ "823247A0": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82342208": {
+  "src_file": "src/system/synth_xbox/soundtouch/source/SoundTouch/RateTransposer.cpp",
+  "confidence": "low"
+ },
+ "829149B0": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low"
+ },
+ "826966F0": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "827B7280": {
+  "src_file": "src/system/net/HttpGet.cpp",
+  "confidence": "low"
+ },
+ "82672040": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "82B4B5D8": {
+  "src_file": "src/system/net/curl/lib/urldata.h",
+  "confidence": "low-generic"
+ },
+ "8231CCB0": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82433AB0": {
+  "src_file": "src/system/rndobj/Part.cpp",
+  "confidence": "low"
+ },
+ "826F0040": {
+  "src_file": "src/system/hamobj/HamAudio.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82352E08": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "82656EB8": {
+  "src_file": "src/system/hamobj/HollaBackMinigame.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "827F29A0": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "82663918": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8245EAD0": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "82473198": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "823C4750": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "826230A0": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low"
+ },
+ "82671A60": {
+  "src_file": "src/system/utl/Cheats.cpp",
+  "confidence": "low"
+ },
+ "82749870": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "823BEA70": {
+  "src_file": "src/system/char/CharClipSet.cpp",
+  "confidence": "low"
+ },
+ "82470768": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "82474180": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "82657758": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low"
+ },
+ "823EE4D8": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "low"
+ },
+ "8255BA10": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "825CBC58": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "822D4958": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "8260E138": {
+  "src_file": "src/system/jpeg/jpegtran.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "8264DBB8": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "823E3240": {
+  "src_file": "src/system/obj/Object.h",
+  "confidence": "low"
+ },
+ "827FE750": {
+  "src_file": "src/system/net/curl/lib/version.c",
+  "confidence": "low"
+ },
+ "82460140": {
+  "src_file": "src/system/rndobj/Font.cpp",
+  "confidence": "low"
+ },
+ "82525148": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "822B2090": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "82450BD0": {
+  "src_file": "src/system/rndobj/MatAnim.cpp",
+  "confidence": "low"
+ },
+ "8269C530": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "82290288": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low"
+ },
+ "8238E7F8": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low"
+ },
+ "8248C4F8": {
+  "src_file": "src/system/obj/Task.cpp",
+  "confidence": "low"
+ },
+ "82714E50": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low"
+ },
+ "82355500": {
+  "src_file": "src/system/net/curl/lib/urldata.h",
+  "confidence": "low-generic"
+ },
+ "823EECE8": {
+  "src_file": "src/system/synth_xbox/soundtouch/source/SoundTouch/RateTransposer.cpp",
+  "confidence": "low"
+ },
+ "822BDB00": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "823D9F38": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "82B31590": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low"
+ },
+ "82641E18": {
+  "src_file": "src/system/obj/DataArray.cpp",
+  "confidence": "low"
+ },
+ "822E4180": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "8239BA70": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "82666AE8": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "82404690": {
+  "src_file": "src/system/rndobj/Overlay.cpp",
+  "confidence": "low"
+ },
+ "8258CE98": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "82352990": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "8239C8D0": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "823BF750": {
+  "src_file": "src/system/char/CharClipSet.cpp",
+  "confidence": "low"
+ },
+ "822CBA08": {
+  "src_file": "src/system/rndobj/MatAnim.cpp",
+  "confidence": "low"
+ },
+ "82524E78": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "826F3E28": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low"
+ },
+ "82780F58": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "82260BF0": {
+  "src_file": "src/system/os/File.cpp",
+  "confidence": "low"
+ },
+ "82302B48": {
+  "src_file": "src/system/net/curl/include/curl/multi.h",
+  "confidence": "low"
+ },
+ "8264FED0": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82B4ABE0": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "82586ED8": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "828021C0": {
+  "src_file": "src/system/hamobj/HamNavProvider.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8233C898": {
+  "src_file": "src/system/synth_xbox/soundtouch/source/SoundTouch/RateTransposer.cpp",
+  "confidence": "low"
+ },
+ "82B8C978": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-generic"
+ },
+ "82BA0CC0": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-generic"
+ },
+ "82327820": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "823C2AB8": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "low"
+ },
+ "82442120": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "824AE3E0": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "low"
+ },
+ "8278A428": {
+  "src_file": "src/system/meta/CreditsPanel.cpp",
+  "confidence": "low"
+ },
+ "822BD738": {
+  "src_file": "src/system/utl/Locale.cpp",
+  "confidence": "low"
+ },
+ "8230E0E0": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "8274A128": {
+  "src_file": "src/system/obj/DataFlex.c",
+  "confidence": "low-generic"
+ },
+ "82287400": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low"
+ },
+ "8229D3B0": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low"
+ },
+ "827E20E8": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "823F2D58": {
+  "src_file": "src/system/rndobj/ShaderProgram.cpp",
+  "confidence": "low"
+ },
+ "826F3B50": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low"
+ },
+ "8252C728": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "826667A8": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "82284958": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "824E80D0": {
+  "src_file": "src/system/meta/SongMetadata.cpp",
+  "confidence": "low"
+ },
+ "8233AFB0": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82519F60": {
+  "src_file": "src/system/os/AsyncFile.cpp",
+  "confidence": "low"
+ },
+ "82305190": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low"
+ },
+ "8290B9B8": {
+  "src_file": "src/system/gesture/SpeechMgr.cpp",
+  "confidence": "low"
+ },
+ "827AC250": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "8227E9A8": {
+  "src_file": "src/system/char/ClipCollide.cpp",
+  "confidence": "low"
+ },
+ "8244AE20": {
+  "src_file": "src/system/net/curl/lib/urldata.h",
+  "confidence": "low-generic"
+ },
+ "826E6D08": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "8269E6C0": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "82776930": {
+  "src_file": "src/system/os/Joypad.cpp",
+  "confidence": "low"
+ },
+ "822A9A30": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82702F70": {
+  "src_file": "src/system/synth/Synth.cpp",
+  "confidence": "low"
+ },
+ "823B1978": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "low"
+ },
+ "82606078": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "823BAC48": {
+  "src_file": "src/system/char/CharMirror.cpp",
+  "confidence": "low"
+ },
+ "8270B300": {
+  "src_file": "src/system/net/curl/lib/version.c",
+  "confidence": "low"
+ },
+ "822FEDF8": {
+  "src_file": "src/system/hamobj/HollaBackMinigame.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82312360": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8255C8D0": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "826E2F10": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "822BB930": {
+  "src_file": "src/system/synth_xbox/soundtouch/source/SoundTouch/RateTransposer.cpp",
+  "confidence": "low"
+ },
+ "822745C0": {
+  "src_file": "src/system/hamobj/Ham.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8264D6E8": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "824A36F8": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "low"
+ },
+ "8241E188": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low"
+ },
+ "82440B80": {
+  "src_file": "src/system/rndobj/ShaderProgram.cpp",
+  "confidence": "low"
+ },
+ "824E88E8": {
+  "src_file": "src/system/meta/SongMetadata.cpp",
+  "confidence": "low"
+ },
+ "822DFA10": {
+  "src_file": "src/system/meta/MoviePanel.cpp",
+  "confidence": "low"
+ },
+ "824EA508": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "82671C58": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "826F0190": {
+  "src_file": "src/system/net/curl/lib/version.c",
+  "confidence": "low"
+ },
+ "82701B68": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low"
+ },
+ "82702518": {
+  "src_file": "src/system/synth_xbox/soundtouch/include/STTypes.h",
+  "confidence": "low"
+ },
+ "827052A8": {
+  "src_file": "src/system/synth_xbox/soundtouch/include/STTypes.h",
+  "confidence": "low"
+ },
+ "827CA570": {
+  "src_file": "src/system/midi/DisplayEvents.cpp",
+  "confidence": "low"
+ },
+ "8260DDD0": {
+  "src_file": "src/system/jpeg/jpegtran.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82396C58": {
+  "src_file": "src/system/utl/NetCacheMgr.cpp",
+  "confidence": "low"
+ },
+ "82B2F128": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "82271AD8": {
+  "src_file": "src/system/hamobj/HamWardrobe.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8249C208": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "low"
+ },
+ "825E9B40": {
+  "src_file": "src/system/hamobj/HollaBackMinigame.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "826628E8": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "822B1BB8": {
+  "src_file": "src/system/hamobj/HamIKEffector.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82703D08": {
+  "src_file": "src/system/flow/FlowSound.cpp",
+  "confidence": "low"
+ },
+ "8254A600": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82783368": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low"
+ },
+ "82380830": {
+  "src_file": "src/system/rndobj/EventTrigger.cpp",
+  "confidence": "low"
+ },
+ "823EF728": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "low"
+ },
+ "8290BC38": {
+  "src_file": "src/system/gesture/SpeechMgr.cpp",
+  "confidence": "low"
+ },
+ "82397C70": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "826D7260": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "824D2C48": {
+  "src_file": "src/system/hamobj/HamGameData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "825D2E30": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82588000": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82348248": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "8238BEE0": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low"
+ },
+ "8264D078": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "823AC4A0": {
+  "src_file": "src/system/obj/Object.h",
+  "confidence": "low"
+ },
+ "827941A8": {
+  "src_file": "src/system/meta/ButtonHolder.cpp",
+  "confidence": "low"
+ },
+ "82562A60": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "8255ED98": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82706380": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82529858": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8229A978": {
+  "src_file": "src/system/ui/UISlider.cpp",
+  "confidence": "low"
+ },
+ "823EFC90": {
+  "src_file": "src/system/jpeg/djpeg.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "827A2D68": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82B2E8E8": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-generic"
+ },
+ "82716D18": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low"
+ },
+ "82650E78": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "826D64A0": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82432E78": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "825C7188": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "82914650": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low"
+ },
+ "82723BD8": {
+  "src_file": "src/system/obj/Task.cpp",
+  "confidence": "low"
+ },
+ "827E5008": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "low"
+ },
+ "82327B88": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low"
+ },
+ "82315B78": {
+  "src_file": "src/system/hamobj/HollaBackMinigame.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8268E260": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8262E360": {
+  "src_file": "src/system/hamobj/HamNavProvider.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8227A0A8": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8265A3D8": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low"
+ },
+ "8233F600": {
+  "src_file": "src/system/gesture/SpeechMgr.cpp",
+  "confidence": "low"
+ },
+ "82B6BA80": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "82314100": {
+  "src_file": "src/system/rndobj/Font.cpp",
+  "confidence": "low"
+ },
+ "82377638": {
+  "src_file": "src/system/obj/Object.h",
+  "confidence": "low"
+ },
+ "823562C0": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "827657D8": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "824A0BD8": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "low"
+ },
+ "822A2888": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low"
+ },
+ "8231CF18": {
+  "src_file": "src/system/hamobj/HamCharacter.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82624EC8": {
+  "src_file": "src/system/meta/StorePanel.cpp",
+  "confidence": "low"
+ },
+ "8240BD78": {
+  "src_file": "src/system/obj/Object.h",
+  "confidence": "low"
+ },
+ "82914A98": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low"
+ },
+ "82646C98": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low"
+ },
+ "8231DB68": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "823453B8": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "823256E0": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low"
+ },
+ "827827B0": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low"
+ },
+ "824EA9A0": {
+  "src_file": "src/system/meta/SongMetadata.cpp",
+  "confidence": "low"
+ },
+ "823202E0": {
+  "src_file": "src/system/hamobj/HamCamShot.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "825F8B80": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "825B71A0": {
+  "src_file": "src/system/hamobj/HollaBackMinigame.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82920DC0": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low"
+ },
+ "827DF8B8": {
+  "src_file": "src/system/ui/UI.cpp",
+  "confidence": "low"
+ },
+ "825C1698": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "824477E8": {
+  "src_file": "src/system/net/curl/lib/curl_fnmatch.c",
+  "confidence": "low"
+ },
+ "826E0EC0": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low"
+ },
+ "8231E6C0": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8253EF78": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low"
+ },
+ "8257D6B0": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low"
+ },
+ "824B3C48": {
+  "src_file": "src/system/obj/Object.h",
+  "confidence": "low"
+ },
+ "826A9920": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low"
+ },
+ "8236EE78": {
+  "src_file": "src/system/char/ClipGraphGen.cpp",
+  "confidence": "low"
+ },
+ "82BE16D0": {
+  "src_file": "src/system/hamobj/HamNavProvider.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82B39468": {
+  "src_file": "src/system/net/curl/lib/sslgen.c",
+  "confidence": "low"
+ },
+ "827D0F00": {
+  "src_file": "src/system/net/curl/lib/curl_fnmatch.c",
+  "confidence": "low"
+ },
+ "82340DF8": {
+  "src_file": "src/system/midi/MidiParser.cpp",
+  "confidence": "low"
+ },
+ "822804F8": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "8267F4C0": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "826C9228": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "8241EF00": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "low"
+ },
+ "82589208": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low"
+ },
+ "82686FB0": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "822829F0": {
+  "src_file": "src/system/gesture/SpeechMgr.cpp",
+  "confidence": "low"
+ },
+ "826A59A8": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low"
+ },
+ "82438660": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "low"
+ },
+ "825C1F80": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low"
+ },
+ "824EB498": {
+  "src_file": "src/system/hamobj/HamPlayerData.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "82628AE8": {
+  "src_file": "src/system/hamobj/HamNavProvider.cpp",
+  "confidence": "low",
+  "note": "dc3-game-false-friend"
+ },
+ "8237E708": {
+  "src_file": "src/system/char/FileMerger.cpp",
+  "confidence": "low-single"
+ },
+ "82632050": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low-single"
+ },
+ "82720C68": {
+  "src_file": "src/system/moviebink/BinkMovieLoader.h",
+  "confidence": "low-single"
+ },
+ "82B3DAE8": {
+  "src_file": "src/system/synth_xbox/SynthSample.cpp",
+  "confidence": "low-single"
+ },
+ "82A82128": {
+  "src_file": "src/system/stlport/stl/_vector.c",
+  "confidence": "low-single"
+ },
+ "82A82DA8": {
+  "src_file": "src/system/stlport/stl/_string.c",
+  "confidence": "low-single"
+ },
+ "82C093E8": {
+  "src_file": "src/system/net/curl/lib/ftp.c",
+  "confidence": "low-generic"
+ },
+ "82C09FE8": {
+  "src_file": "src/system/net/curl/lib/ftp.c",
+  "confidence": "low-generic"
+ },
+ "82C0A0A8": {
+  "src_file": "src/system/net/curl/lib/ftp.c",
+  "confidence": "low-generic"
+ },
+ "82554628": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82749560": {
+  "src_file": "src/system/obj/DataFlex.c",
+  "confidence": "low-generic"
+ },
+ "82781620": {
+  "src_file": "src/system/os/PlatformMgr_Xbox.cpp",
+  "confidence": "low-single"
+ },
+ "82554980": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "827349D8": {
+  "src_file": "src/system/obj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "82734AB8": {
+  "src_file": "src/system/jpeg/jpeglib.h",
+  "confidence": "low-generic"
+ },
+ "82749550": {
+  "src_file": "src/system/obj/DataFlex.c",
+  "confidence": "low-generic"
+ },
+ "82517900": {
+  "src_file": "src/system/os/Memcard_Xbox.cpp",
+  "confidence": "low-single"
+ },
+ "826EFAD0": {
+  "src_file": "src/system/synth/MoggClip.cpp",
+  "confidence": "low-single"
+ },
+ "826DDE00": {
+  "src_file": "src/system/os/BufFile.h",
+  "confidence": "low-single"
+ },
+ "82740CE0": {
+  "src_file": "src/system/obj/TypeProps.cpp",
+  "confidence": "low-single"
+ },
+ "82A3F7C8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A3F868": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A6AC98": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A6AD38": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82261AE8": {
+  "src_file": "src/system/jpeg/jpeglib.h",
+  "confidence": "low-generic"
+ },
+ "8226DA18": {
+  "src_file": "src/system/rndobj/PropKeys.cpp",
+  "confidence": "low-generic"
+ },
+ "82330E58": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "82332478": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "82346728": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "8236A4B8": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "823D9AE0": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "823ED990": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "low-single"
+ },
+ "823FB688": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "82495C38": {
+  "src_file": "src/system/rndobj/SoftParticleBuffer.h",
+  "confidence": "low-single"
+ },
+ "824BE5C8": {
+  "src_file": "src/system/world/SpotlightDrawer.h",
+  "confidence": "low-single"
+ },
+ "824BE648": {
+  "src_file": "src/system/world/SpotlightDrawer.h",
+  "confidence": "low-single"
+ },
+ "825086A0": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-single"
+ },
+ "82508720": {
+  "src_file": "src/system/os/ContentMgr.h",
+  "confidence": "low-single"
+ },
+ "825088A0": {
+  "src_file": "src/system/ui/UI.h",
+  "confidence": "low-single"
+ },
+ "825153C0": {
+  "src_file": "src/system/os/JoypadMsgs.h",
+  "confidence": "low-single"
+ },
+ "82516FE8": {
+  "src_file": "src/system/os/Memcard.h",
+  "confidence": "low-single"
+ },
+ "8251AFA8": {
+  "src_file": "src/system/os/UsbMidiGuitarMsgs.h",
+  "confidence": "low-single"
+ },
+ "8251B028": {
+  "src_file": "src/system/os/UsbMidiGuitarMsgs.h",
+  "confidence": "low-single"
+ },
+ "8251C3E8": {
+  "src_file": "src/system/os/UsbMidiKeyboardMsgs.h",
+  "confidence": "low-single"
+ },
+ "8251C568": {
+  "src_file": "src/system/os/UsbMidiKeyboardMsgs.h",
+  "confidence": "low-single"
+ },
+ "8251EF78": {
+  "src_file": "src/system/os/JoypadMsgs.h",
+  "confidence": "low-single"
+ },
+ "82522F28": {
+  "src_file": "src/system/ui/UIScreen.h",
+  "confidence": "low-single"
+ },
+ "827868A8": {
+  "src_file": "src/system/meta/MemcardMgr.h",
+  "confidence": "low-single"
+ },
+ "827CCC28": {
+  "src_file": "src/system/hamobj/MoveDir.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "827D8D48": {
+  "src_file": "src/system/ui/UIComponent.cpp",
+  "confidence": "low-single"
+ },
+ "82A7A1A0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "8250FCA8": {
+  "src_file": "src/system/os/DateTime.cpp",
+  "confidence": "low-single"
+ },
+ "8271B3C0": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low-single"
+ },
+ "82727E10": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "82B5CAB8": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low-single"
+ },
+ "82554670": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82795C98": {
+  "src_file": "src/system/utl/PoolAlloc.cpp",
+  "confidence": "low-single"
+ },
+ "8279BDE0": {
+  "src_file": "src/system/utl/Symbol.cpp",
+  "confidence": "low-single"
+ },
+ "82405D20": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "8270B6E8": {
+  "src_file": "src/system/synth_xbox/Mic.cpp",
+  "confidence": "low-single"
+ },
+ "827A9978": {
+  "src_file": "src/system/utl/NetCacheMgr.cpp",
+  "confidence": "low-single"
+ },
+ "825546D0": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82726168": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "82AC71D8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "826710D0": {
+  "src_file": "src/system/hamobj/Difficulty.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82733160": {
+  "src_file": "src/system/jpeg/jpeglib.h",
+  "confidence": "low-generic"
+ },
+ "82B23770": {
+  "src_file": "src/system/net/curl/lib/ftp.c",
+  "confidence": "low-generic"
+ },
+ "82B5B050": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low-single"
+ },
+ "824FD608": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low-single"
+ },
+ "8278E710": {
+  "src_file": "src/system/meta/PreloadPanel.cpp",
+  "confidence": "low-single"
+ },
+ "82AB73B0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AE3478": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82B13990": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82414B38": {
+  "src_file": "src/system/rndobj/PropAnim.cpp",
+  "confidence": "low-single"
+ },
+ "82554908": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82732E20": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "8236B040": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "low-generic"
+ },
+ "8244B440": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8244B4B8": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8244E6F0": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8244E768": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8245B158": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8245B1D0": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8245B248": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8246C2C0": {
+  "src_file": "src/system/math/Key.h",
+  "confidence": "low-generic"
+ },
+ "8250A038": {
+  "src_file": "src/system/os/PlatformMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82A2E8B0": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "low-generic"
+ },
+ "82732DA0": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "8279FBA0": {
+  "src_file": "src/system/utl/MemTrack.cpp",
+  "confidence": "low-single"
+ },
+ "82781A70": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low-single"
+ },
+ "8238BBB8": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "82433A28": {
+  "src_file": "src/system/rndobj/Part.cpp",
+  "confidence": "low-single"
+ },
+ "82512A90": {
+  "src_file": "src/system/os/Joypad.cpp",
+  "confidence": "low-single"
+ },
+ "82ADD6F8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "827AA600": {
+  "src_file": "src/system/zlib/zlib.h",
+  "confidence": "low-single"
+ },
+ "82A8CF60": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AC8240": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82ADABA0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "823985D8": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "82A85E60": {
+  "src_file": "src/system/rndobj/PropAnim.cpp",
+  "confidence": "low-single"
+ },
+ "8236B348": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "8251E868": {
+  "src_file": "src/system/os/Joypad_Xinput.cpp",
+  "confidence": "low-single"
+ },
+ "825C1518": {
+  "src_file": "src/system/rndobj/Poll.cpp",
+  "confidence": "low-generic"
+ },
+ "82A82B18": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AEB3C0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "823A2710": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "low-generic"
+ },
+ "8278E7A8": {
+  "src_file": "src/system/hamobj/MoveDir.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82A4B5B8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A618D8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82ABFAB0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AD09E0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82783910": {
+  "src_file": "src/system/meta/SongMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82799E60": {
+  "src_file": "src/system/utl/Loader.cpp",
+  "confidence": "low-single"
+ },
+ "827AA688": {
+  "src_file": "src/system/zlib/zlib.h",
+  "confidence": "low-single"
+ },
+ "82B22FE0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "826AADB8": {
+  "src_file": "src/system/rndobj/Poll.cpp",
+  "confidence": "low-generic"
+ },
+ "82A5E480": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A60920": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A61290": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AA2AC8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AB0820": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "824ACC80": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low-single"
+ },
+ "826DECE0": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "825096D0": {
+  "src_file": "src/system/meta/HAQManager.cpp",
+  "confidence": "low-single"
+ },
+ "82789FC8": {
+  "src_file": "src/system/meta/CreditsPanel.cpp",
+  "confidence": "low-single"
+ },
+ "827E6CD0": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "82A0A580": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "low-generic"
+ },
+ "82A604A8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A96168": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AB7138": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AB7270": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AB7B60": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AD89C8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AF3A98": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "825549C8": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "8263FE80": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82732E98": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "82B03490": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82277748": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "8229D688": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low-single"
+ },
+ "8244B740": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8244B7F0": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8244EA50": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8244EB00": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8244F058": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8245A210": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8245A2C0": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8245A370": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8245B5C8": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8245B678": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8245B728": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "8246C548": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "827DAF90": {
+  "src_file": "src/system/ui/UIComponent.cpp",
+  "confidence": "low-single"
+ },
+ "8236A918": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "8251D428": {
+  "src_file": "src/system/os/MapFile_Xbox.cpp",
+  "confidence": "low-single"
+ },
+ "825C0B80": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "8263C498": {
+  "src_file": "src/system/ui/UIScreen.cpp",
+  "confidence": "low-single"
+ },
+ "8278A908": {
+  "src_file": "src/system/meta/MoviePanel.cpp",
+  "confidence": "low-single"
+ },
+ "82B0D178": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "8241E628": {
+  "src_file": "src/system/ui/UIComponent.cpp",
+  "confidence": "low-single"
+ },
+ "8241E708": {
+  "src_file": "src/system/rndobj/PostProc.cpp",
+  "confidence": "low-single"
+ },
+ "827C6098": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82A82CF0": {
+  "src_file": "src/system/stlport/stl/_alloc.h",
+  "confidence": "low-single"
+ },
+ "824567E0": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "82658488": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low-single"
+ },
+ "8265F7A8": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "82A8A368": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82515230": {
+  "src_file": "src/system/os/AppChild.cpp",
+  "confidence": "low-single"
+ },
+ "82657908": {
+  "src_file": "src/system/hamobj/PracticeOptionsProvider.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82683C28": {
+  "src_file": "src/system/hamobj/.permuter_work_HollaBackMinigame.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "8272FE30": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "827ED130": {
+  "src_file": "src/system/ui/UIScreen.cpp",
+  "confidence": "low-single"
+ },
+ "82A6FB10": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AF2E18": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "827822E0": {
+  "src_file": "src/system/hamobj/MoveVariant.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "827A9800": {
+  "src_file": "src/system/utl/NetCacheMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82A4BAA0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A6D128": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A85730": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A8FA38": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82A9A6D0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "827A2B60": {
+  "src_file": "src/system/utl/Song.cpp",
+  "confidence": "low-single"
+ },
+ "82A58730": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82ADB3F0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "823A44B0": {
+  "src_file": "src/system/char/CharBoneDir.cpp",
+  "confidence": "low-generic"
+ },
+ "827C5ED8": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82A77C70": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AD14B8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82ADFAC8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82B03598": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82B202C0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "823DD548": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "82451348": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low-single"
+ },
+ "827CBFE8": {
+  "src_file": "src/system/ui/UIScreen.cpp",
+  "confidence": "low-single"
+ },
+ "82B23948": {
+  "src_file": "src/system/net/curl/lib/ftp.c",
+  "confidence": "low-generic"
+ },
+ "826157B8": {
+  "src_file": "src/system/flow/FlowTrigger.cpp",
+  "confidence": "low-single"
+ },
+ "8279A050": {
+  "src_file": "src/system/utl/Loader.cpp",
+  "confidence": "low-single"
+ },
+ "827F1C88": {
+  "src_file": "src/system/ui/UIPicture.cpp",
+  "confidence": "low-single"
+ },
+ "82ADF970": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82B22E88": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "827FAA18": {
+  "src_file": "src/system/hamobj/PracticeOptionsProvider.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "827FEDF0": {
+  "src_file": "src/system/rndobj/ShaderProgram.cpp",
+  "confidence": "low-single"
+ },
+ "82466ED0": {
+  "src_file": "src/system/utl/TextStream.h",
+  "confidence": "low-generic"
+ },
+ "82733080": {
+  "src_file": "src/system/obj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "8278C9F0": {
+  "src_file": "src/system/meta/StorePreviewMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82AD1358": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82467C60": {
+  "src_file": "src/system/rndobj/Line.cpp",
+  "confidence": "low-single"
+ },
+ "82501D78": {
+  "src_file": "src/system/os/PlatformMgr.cpp",
+  "confidence": "low-single"
+ },
+ "827ED780": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-single"
+ },
+ "8231CBC0": {
+  "src_file": "src/system/hamobj/HamWardrobe.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82363180": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "82759708": {
+  "src_file": "src/system/stlport/stl/_bvector.h",
+  "confidence": "low-single"
+ },
+ "82AFD0E0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "8278D000": {
+  "src_file": "src/system/meta/StorePreviewMgr.cpp",
+  "confidence": "low-single"
+ },
+ "824A80C0": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low-single"
+ },
+ "82501FF0": {
+  "src_file": "src/system/os/PlatformMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82676B20": {
+  "src_file": "src/system/ui/UI.cpp",
+  "confidence": "low-single"
+ },
+ "827A4728": {
+  "src_file": "src/system/utl/Locale.cpp",
+  "confidence": "low-single"
+ },
+ "824FD270": {
+  "src_file": "src/system/net/DingoSvr.cpp",
+  "confidence": "low-single"
+ },
+ "82779278": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low-single"
+ },
+ "8279FC28": {
+  "src_file": "src/system/utl/MemTrack.cpp",
+  "confidence": "low-single"
+ },
+ "826DEBC8": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "8279E268": {
+  "src_file": "src/system/utl/Cheats.cpp",
+  "confidence": "low-single"
+ },
+ "827EDE30": {
+  "src_file": "src/system/rndobj/Poll.cpp",
+  "confidence": "low-generic"
+ },
+ "823C9C40": {
+  "src_file": "src/system/char/Waypoint.cpp",
+  "confidence": "low-single"
+ },
+ "82290458": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low-single"
+ },
+ "8237D9E8": {
+  "src_file": "src/system/hamobj/HamCharacter.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "823B11F8": {
+  "src_file": "src/system/ui/UIFontImporter.cpp",
+  "confidence": "low-single"
+ },
+ "8274A478": {
+  "src_file": "src/system/obj/DataFlex.c",
+  "confidence": "low-generic"
+ },
+ "82B35478": {
+  "src_file": "src/system/jpeg/jquant2.c",
+  "confidence": "low-single"
+ },
+ "82ACEFF8": {
+  "src_file": "src/system/net/curl/lib/url.c",
+  "confidence": "low-single"
+ },
+ "82463CE8": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "8255B438": {
+  "src_file": "src/system/rndobj/ShaderOptions.cpp",
+  "confidence": "low-single"
+ },
+ "825A37E8": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "82778868": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low-single"
+ },
+ "825654A8": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low-generic"
+ },
+ "82565618": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low-generic"
+ },
+ "82730FA0": {
+  "src_file": "src/system/rndobj/PropKeys.cpp",
+  "confidence": "low-generic"
+ },
+ "827F9AA8": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low-single"
+ },
+ "828036E8": {
+  "src_file": "src/system/hamobj/PracticeOptionsProvider.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82667508": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "82565200": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low-generic"
+ },
+ "82790C30": {
+  "src_file": "src/system/meta/StorePanel.cpp",
+  "confidence": "low-single"
+ },
+ "8231E2F0": {
+  "src_file": "src/system/hamobj/HamDirector.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "823986B0": {
+  "src_file": "src/system/char/Character.cpp",
+  "confidence": "low-single"
+ },
+ "824B71C8": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "823A3AD8": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "82512B40": {
+  "src_file": "src/system/os/Joypad.cpp",
+  "confidence": "low-single"
+ },
+ "826E3668": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "82ABD990": {
+  "src_file": "src/system/net/curl/lib/inet_ntop.c",
+  "confidence": "low-single"
+ },
+ "82733228": {
+  "src_file": "src/system/obj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "82449FA0": {
+  "src_file": "src/system/net/curl/lib/asyn-thread.c",
+  "confidence": "low-single"
+ },
+ "825AEB00": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low-single"
+ },
+ "82421C00": {
+  "src_file": "src/system/rndobj/Cam.cpp",
+  "confidence": "low-single"
+ },
+ "82565AB8": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low-generic"
+ },
+ "8231CDA8": {
+  "src_file": "src/system/hamobj/HamCharacter.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "824AD0E0": {
+  "src_file": "src/system/world/CameraShot.cpp",
+  "confidence": "low-single"
+ },
+ "824BEA70": {
+  "src_file": "src/system/rndobj/ShadowMap.cpp",
+  "confidence": "low-single"
+ },
+ "82308EF8": {
+  "src_file": "src/system/hamobj/MeterDisplay.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "8271D018": {
+  "src_file": "src/system/movie/Splash.cpp",
+  "confidence": "low-single"
+ },
+ "82764C20": {
+  "src_file": "src/system/utl/Song.cpp",
+  "confidence": "low-single"
+ },
+ "8238D8D8": {
+  "src_file": "src/system/rndobj/Poll.cpp",
+  "confidence": "low-generic"
+ },
+ "827CBBD8": {
+  "src_file": "src/system/rndobj/Poll.cpp",
+  "confidence": "low-generic"
+ },
+ "827E1D20": {
+  "src_file": "src/system/ui/PanelDir.cpp",
+  "confidence": "low-single"
+ },
+ "82556348": {
+  "src_file": "src/system/meta/PreloadPanel.cpp",
+  "confidence": "low-single"
+ },
+ "8229CA98": {
+  "src_file": "src/system/char/ClipCollide.cpp",
+  "confidence": "low-single"
+ },
+ "824DE2A8": {
+  "src_file": "src/system/math/Geo.cpp",
+  "confidence": "low-single"
+ },
+ "8248C2F8": {
+  "src_file": "src/system/net/curl/lib/asyn-thread.c",
+  "confidence": "low-single"
+ },
+ "82A81B68": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AEAE40": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82733D78": {
+  "src_file": "src/system/obj/Task.cpp",
+  "confidence": "low-single"
+ },
+ "8231E478": {
+  "src_file": "src/system/hamobj/PoseFatalities.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82AFCE58": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "8271D198": {
+  "src_file": "src/system/movie/Splash.cpp",
+  "confidence": "low-single"
+ },
+ "822A0CA0": {
+  "src_file": "src/system/hamobj/HamCamShot.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "823B4248": {
+  "src_file": "src/system/char/CharacterTest.cpp",
+  "confidence": "low-single"
+ },
+ "823C7A50": {
+  "src_file": "src/system/char/FileMergerOrganizer.cpp",
+  "confidence": "low-single"
+ },
+ "827221C8": {
+  "src_file": "src/system/movie/TexMovie.cpp",
+  "confidence": "low-single"
+ },
+ "8233A388": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low-single"
+ },
+ "82719C38": {
+  "src_file": "src/system/rnddx9/CubeTex.cpp",
+  "confidence": "low-single"
+ },
+ "822B0210": {
+  "src_file": "src/system/hamobj/HamIKEffector.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "8279C690": {
+  "src_file": "src/system/utl/Cheats.cpp",
+  "confidence": "low-single"
+ },
+ "823F6CB0": {
+  "src_file": "src/system/hamobj/HamCamShot.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "8237F060": {
+  "src_file": "src/system/char/FileMerger.cpp",
+  "confidence": "low-single"
+ },
+ "827A4520": {
+  "src_file": "src/system/utl/Locale.cpp",
+  "confidence": "low-single"
+ },
+ "824B76F0": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "824FDDA8": {
+  "src_file": "src/system/os/System.cpp",
+  "confidence": "low-single"
+ },
+ "825010D8": {
+  "src_file": "src/system/os/Archive.cpp",
+  "confidence": "low-single"
+ },
+ "823F69D8": {
+  "src_file": "src/system/hamobj/HamCamShot.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82AF3598": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "8239B740": {
+  "src_file": "src/system/char/CharBones.cpp",
+  "confidence": "low-single"
+ },
+ "827B2CB8": {
+  "src_file": "src/system/utl/CacheMgr_Xbox.cpp",
+  "confidence": "low-single"
+ },
+ "82366FC0": {
+  "src_file": "src/system/char/CharClip.cpp",
+  "confidence": "low-single"
+ },
+ "82AD3EA0": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82562040": {
+  "src_file": "src/system/hamobj/MoveDir.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82B64D40": {
+  "src_file": "src/system/hamobj/.permuter_work_HollaBackMinigame.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "826F2C00": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "8246F618": {
+  "src_file": "src/system/rndobj/MetaMaterial.cpp",
+  "confidence": "low-single"
+ },
+ "824E7D60": {
+  "src_file": "src/system/meta/SongMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82749E38": {
+  "src_file": "src/system/world/BeatClock.cpp",
+  "confidence": "low-single"
+ },
+ "8233EBA0": {
+  "src_file": "src/system/hamobj/.permuter_work_HollaBackMinigame.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "82688B30": {
+  "src_file": "src/system/hamobj/.permuter_work_HollaBackMinigame.cpp",
+  "confidence": "low-generic",
+  "note": "dc3-game-false-friend"
+ },
+ "827B12E0": {
+  "src_file": "src/system/utl/MemTracker.cpp",
+  "confidence": "low-single"
+ },
+ "82A830A8": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82AEB908": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "82732830": {
+  "src_file": "src/system/obj/DirLoader.cpp",
+  "confidence": "low-single"
+ },
+ "8272DD10": {
+  "src_file": "src/system/obj/Dir.cpp",
+  "confidence": "low-single"
+ },
+ "824C3320": {
+  "src_file": "src/system/net/curl/lib/asyn-thread.c",
+  "confidence": "low-single"
+ },
+ "8263D8F0": {
+  "src_file": "src/system/meta/StoreOffer.cpp",
+  "confidence": "low-single"
+ },
+ "8274BF50": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low-single"
+ },
+ "82AA9150": {
+  "src_file": "src/system/net/curl/lib/ftp.c",
+  "confidence": "low-generic"
+ },
+ "822A3618": {
+  "src_file": "src/system/hamobj/HamCamShot.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82623648": {
+  "src_file": "src/system/os/PlatformMgr_Xbox.cpp",
+  "confidence": "low-single"
+ },
+ "822C1538": {
+  "src_file": "src/system/utl/SongInfoAudioType.cpp",
+  "confidence": "low-generic"
+ },
+ "82314DF8": {
+  "src_file": "src/system/hamobj/HamCamShot.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "8242D258": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "82453ED8": {
+  "src_file": "src/system/rndobj/Console.cpp",
+  "confidence": "low-single"
+ },
+ "8242D578": {
+  "src_file": "src/system/char/Character.cpp",
+  "confidence": "low-single"
+ },
+ "822E3788": {
+  "src_file": "src/system/jpeg/jpeglib.h",
+  "confidence": "low-generic"
+ },
+ "82662F80": {
+  "src_file": "src/system/os/PlatformMgr.h",
+  "confidence": "low-generic"
+ },
+ "8278BAD0": {
+  "src_file": "src/system/obj/DataFunc.cpp",
+  "confidence": "low-single"
+ },
+ "8276AEF0": {
+  "src_file": "src/system/midi/MidiParserMgr.cpp",
+  "confidence": "low-single"
+ },
+ "823C5080": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "low-single"
+ },
+ "82701060": {
+  "src_file": "src/system/rndobj/Anim.cpp",
+  "confidence": "low-single"
+ },
+ "824FD470": {
+  "src_file": "src/system/net/DingoSvr.cpp",
+  "confidence": "low-single"
+ },
+ "82631BD8": {
+  "src_file": "src/system/meta/SongMgr.cpp",
+  "confidence": "low-single"
+ },
+ "823F8FC0": {
+  "src_file": "src/system/ui/UIPanel.cpp",
+  "confidence": "low-generic"
+ },
+ "826E2368": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "82421F18": {
+  "src_file": "src/system/rndobj/Cam.cpp",
+  "confidence": "low-single"
+ },
+ "827F17A8": {
+  "src_file": "src/system/ui/UIPicture.cpp",
+  "confidence": "low-single"
+ },
+ "82AFCB00": {
+  "src_file": "src/system/jpeg/rdjpgcom.c",
+  "confidence": "fp-jpeg-util"
+ },
+ "827324C8": {
+  "src_file": "src/system/rndobj/PropKeys.cpp",
+  "confidence": "low-generic"
+ },
+ "826E6788": {
+  "src_file": "src/system/synth/MetaMusic.cpp",
+  "confidence": "low-generic"
+ },
+ "8249BD28": {
+  "src_file": "src/system/world/LightPreset.cpp",
+  "confidence": "low-single"
+ },
+ "823A79B0": {
+  "src_file": "src/system/rndobj/AmbientOcclusion.cpp",
+  "confidence": "low-single"
+ },
+ "824A3C20": {
+  "src_file": "src/system/world/CameraManager.cpp",
+  "confidence": "low-single"
+ },
+ "8238CAC8": {
+  "src_file": "src/system/rndobj/Utl.cpp",
+  "confidence": "low-single"
+ },
+ "82788808": {
+  "src_file": "src/system/meta/HeldButtonPanel.cpp",
+  "confidence": "low-single"
+ },
+ "826226F0": {
+  "src_file": "src/system/meta/StorePanel.cpp",
+  "confidence": "low-single"
+ },
+ "82784830": {
+  "src_file": "src/system/utl/CacheMgr_Xbox.cpp",
+  "confidence": "low-single"
+ },
+ "827A4850": {
+  "src_file": "src/system/utl/Locale.cpp",
+  "confidence": "low-single"
+ },
+ "82790FD8": {
+  "src_file": "src/system/meta/StorePanel.cpp",
+  "confidence": "low-single"
+ },
+ "82749010": {
+  "src_file": "src/system/obj/DataFlex.c",
+  "confidence": "low-generic"
+ },
+ "8237ACE0": {
+  "src_file": "src/system/hamobj/HamCharacter.cpp",
+  "confidence": "low-single",
+  "note": "dc3-game-false-friend"
+ },
+ "82490488": {
+  "src_file": "src/system/rndobj/AmbientOcclusion.cpp",
+  "confidence": "low-single"
+ }
+}

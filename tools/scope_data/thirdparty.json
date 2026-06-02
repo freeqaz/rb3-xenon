@@ -1,0 +1,72 @@
+{
+  "zlib": [
+    {
+      "start": "0x82B25E70",
+      "end": "0x82B2B428",
+      "note": "zlib 1.2.1 (string at rdata 0x8218B5C8/0x8218B6A7). Cluster: inflate.c + deflate.c + [inftrees + inffast + trees + adler32 + compress + zutil] + crc32.c. Pinned TUs: inflate.c(0x82B25E70-0x82B27670), deflate.c(0x82B27670-0x82B292AC), crc32.c(0x82B29B60-0x82B29EDC). 38 fns, ~23232 bytes."
+    }
+  ],
+  "oggvorbis": [
+    {
+      "start": "0x82BF7AB0",
+      "end": "0x82C0A024",
+      "note": "Ogg/Vorbis (string \"oggvorbis\" at rdata 0x820F3914). Contiguous cluster: block.c + framing.c + info.c + synthesis.c(~) + VorbisMem.cpp + bitwise.c + sharedbook.c + psy.c + smallft.c + mdct.c + bitrate.c + envelope.c(~) + window.c + codebook.c + [mapping0.c + res0.c unidentified tail] + floor1.c + floor0.c + lsp.c. Pinned TUs: block, framing, info, VorbisMem, bitwise, sharedbook, psy, smallft, mdct, bitrate, window, codebook, floor1, floor0, lsp. 388 fns, ~77948 bytes."
+    }
+  ],
+  "json-c": [
+    {
+      "start": "0x82B53B98",
+      "end": "0x82B565D4",
+      "note": "json-c (C-as-C++, /TP flag). Contiguous cluster: json_object.c + printbuf.c + json_tokener.c + [json_util.c/debug.c gap] + linkhash.c + arraylist.c. Pinned TUs: json_object.c, printbuf.c, json_tokener.c, linkhash.c, arraylist.c. 56 fns, ~12356 bytes."
+    }
+  ],
+  "libtomcrypt": [
+    {
+      "start": "0x82B83A20",
+      "end": "0x82B870C0",
+      "note": "LibTomCrypt 0.70 (string at rdata 0x8219AE28). Cluster: ctr.c + [OFB/CBC/ECB mode gap fns] + aes.c + [yarrow/crypt single fn]. Pinned TUs: ctr.c(0x82B83A20-0x82B83DBC), aes.c(0x82B84390-0x82B86A90). 15 fns, ~14180 bytes. Note: crypt.c not separately pinned yet."
+    }
+  ],
+  "libcurl": [
+    {
+      "start": "0x82B39468",
+      "end": "0x82B3A138",
+      "note": "libcurl (partial identification). Only sslgen.c pinned (1 fn, 3280 bytes). Full curl library (~170 source files) not yet located - no characteristic strings in binary (CURLOPT, Content-Type, etc. absent; likely stripped). ssluse.c scattered fns also found at 0x82AB42B0, 0x82B8C978, 0x82BA0CC0 (score=1, low confidence). LOW CONFIDENCE for full libcurl extent."
+    },
+    {
+      "start": "0x82AB42B0",
+      "end": "0x82AB42D8",
+      "note": "ssluse.c candidate (autoid score=1, low confidence, 216 bytes)"
+    },
+    {
+      "start": "0x82B8C978",
+      "end": "0x82B8CB88",
+      "note": "ssluse.c candidate (autoid score=1, low confidence, 528 bytes, TLS version strings 2.1/4.1/5.1)"
+    },
+    {
+      "start": "0x82BA0CC0",
+      "end": "0x82BA0EE0",
+      "note": "ssluse.c candidate (autoid score=1, low confidence, 544 bytes, TLS version strings 2.1/4.1/5.1)"
+    }
+  ],
+  "speex": [
+    {
+      "note": "Speex present in rb3/src (SpeexCodec.cpp + system/speex/libspeex/*.c) but NOT yet ported/compiled in rb3-xenon source. No identifying strings found in binary. Cannot locate .text cluster without source port."
+    }
+  ],
+  "expat": [
+    {
+      "note": "Expat: NOT found. No expat strings, objects, or headers in rb3-xenon. Not present in DC3 engine either. Likely absent from this binary."
+    }
+  ],
+  "openssl": [
+    {
+      "note": "OpenSSL: NOT found. curl/ssluse.c references SSL functions but no standalone OpenSSL library detected. DC3 uses CyaSSL (axtls.c/cyassl.c) not OpenSSL. curl ssluse.c may be linking to Xbox 360 XSDK SSL rather than OpenSSL."
+    }
+  ],
+  "stlport": [
+    {
+      "note": "STLport: present as template instantiations throughout the binary (no distinct cluster). Path string in rdata. No discrete .text block - instantiations are inlined per-TU by /Ob2. Cannot assign a range."
+    }
+  ]
+}

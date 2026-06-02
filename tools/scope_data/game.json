@@ -1,0 +1,618 @@
+{
+ "826D0368": {
+  "src_file": "band3/game/TrainerGemTab.cpp",
+  "confidence": 0.95
+ },
+ "82562A60": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.66
+ },
+ "8265A3D8": {
+  "src_file": "band3/game/Game.cpp",
+  "confidence": 0.66
+ },
+ "82555918": {
+  "src_file": "band3/meta_band/ContextChecker.cpp",
+  "confidence": 0.6
+ },
+ "82B4B850": {
+  "src_file": "band3/tour/QuestFilterPanel.cpp",
+  "confidence": 0.54
+ },
+ "823D9288": {
+  "src_file": "network/net/NetworkEmulator.cpp",
+  "confidence": 0.54
+ },
+ "8252C728": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.54
+ },
+ "822F4668": {
+  "src_file": "band3/game/Game.cpp",
+  "confidence": 0.54
+ },
+ "826844E0": {
+  "src_file": "band3/game/Player.cpp",
+  "confidence": 0.54
+ },
+ "8255C8D0": {
+  "src_file": "band3/meta_band/MetaPanel.cpp",
+  "confidence": 0.54
+ },
+ "82B7DFA0": {
+  "src_file": "band3/bandtrack/GemSmasher.cpp",
+  "confidence": 0.54
+ },
+ "82541658": {
+  "src_file": "band3/meta_band/PrefabMgr.cpp",
+  "confidence": 0.54
+ },
+ "8255E4C0": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "825F9C20": {
+  "src_file": "band3/meta_band/CustomizePanel.cpp",
+  "confidence": 0.48
+ },
+ "82B4C7E8": {
+  "src_file": "band3/tour/QuestFilterPanel.cpp",
+  "confidence": 0.48
+ },
+ "822D4958": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "8260E138": {
+  "src_file": "band3/meta_band/PatchPanel.cpp",
+  "confidence": 0.48
+ },
+ "82586ED8": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "8233AFB0": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "822A9A30": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "825ED848": {
+  "src_file": "band3/meta_band/CalibrationPanel.cpp",
+  "confidence": 0.48
+ },
+ "82B6AAC8": {
+  "src_file": "band3/bandtrack/GemManager.cpp",
+  "confidence": 0.48
+ },
+ "8260DDD0": {
+  "src_file": "band3/meta_band/PatchPanel.cpp",
+  "confidence": 0.48
+ },
+ "8254A600": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "825D2E30": {
+  "src_file": "band3/meta_band/CharacterCreatorPanel.cpp",
+  "confidence": 0.48
+ },
+ "8255ED98": {
+  "src_file": "band3/meta_band/BandSongMgr.cpp",
+  "confidence": 0.48
+ },
+ "82529858": {
+  "src_file": "band3/meta_band/MusicLibrary.cpp",
+  "confidence": 0.48
+ },
+ "82650E78": {
+  "src_file": "band3/meta_band/Leaderboard.cpp",
+  "confidence": 0.48
+ },
+ "82B7A2A0": {
+  "src_file": "band3/bandtrack/Gem.cpp",
+  "confidence": 0.48
+ },
+ "825F8B80": {
+  "src_file": "band3/meta_band/CharacterCreatorPanel.cpp",
+  "confidence": 0.48
+ },
+ "825C1698": {
+  "src_file": "band3/meta_band/OvershellSlot.cpp",
+  "confidence": 0.48
+ },
+ "826A9920": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.48
+ },
+ "82657628": {
+  "src_file": "band3/meta_band/LessonProvider.cpp",
+  "confidence": 0.42
+ },
+ "825AA950": {
+  "src_file": "band3/meta_band/BandMachineMgr.cpp",
+  "confidence": 0.42
+ },
+ "82A85EF0": {
+  "src_file": "network/net/json-c/json_tokener.c",
+  "confidence": 0.42
+ },
+ "82B7B7B8": {
+  "src_file": "band3/bandtrack/GemRepTemplate.cpp",
+  "confidence": 0.42
+ },
+ "825F19C8": {
+  "src_file": "band3/meta_band/CharacterCreatorPanel.cpp",
+  "confidence": 0.42
+ },
+ "826966F0": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.42
+ },
+ "82672040": {
+  "src_file": "band3/game/GameMode.cpp",
+  "confidence": 0.42
+ },
+ "82693880": {
+  "src_file": "band3/game/PracticePanel.cpp",
+  "confidence": 0.42
+ },
+ "82B7E7F8": {
+  "src_file": "band3/bandtrack/Tail.cpp",
+  "confidence": 0.42
+ },
+ "82657758": {
+  "src_file": "band3/meta_band/LessonProvider.cpp",
+  "confidence": 0.42
+ },
+ "826A32D8": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.42
+ },
+ "8264B9A0": {
+  "src_file": "band3/meta_band/OvershellPartSelectProvider.cpp",
+  "confidence": 0.42
+ },
+ "823E3240": {
+  "src_file": "network/net/Server.cpp",
+  "confidence": 0.42
+ },
+ "8269C530": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.42
+ },
+ "82B4DBA0": {
+  "src_file": "band3/tour/TourDescPanel.cpp",
+  "confidence": 0.42
+ },
+ "82641E18": {
+  "src_file": "band3/meta_band/SongSortByRank.cpp",
+  "confidence": 0.42
+ },
+ "82528C50": {
+  "src_file": "band3/meta_band/MusicLibrary.cpp",
+  "confidence": 0.42
+ },
+ "824E8468": {
+  "src_file": "band3/net_band/RockCentral.cpp",
+  "confidence": 0.42
+ },
+ "82321A40": {
+  "src_file": "band3/meta_band/CharacterCreatorPanel.cpp",
+  "confidence": 0.42
+ },
+ "826AE5D0": {
+  "src_file": "band3/game/MultiplayerAnalyzer.cpp",
+  "confidence": 0.42
+ },
+ "8258CE98": {
+  "src_file": "band3/meta_band/ProfileMgr.cpp",
+  "confidence": 0.42
+ },
+ "82682190": {
+  "src_file": "band3/game/Scoring.cpp",
+  "confidence": 0.42
+ },
+ "82B4ABE0": {
+  "src_file": "band3/tour/TourBand.cpp",
+  "confidence": 0.42
+ },
+ "82B4CCD0": {
+  "src_file": "band3/tour/QuestFilterPanel.cpp",
+  "confidence": 0.42
+ },
+ "825EAA78": {
+  "src_file": "band3/meta_band/BandStorePanel.cpp",
+  "confidence": 0.42
+ },
+ "825ACF88": {
+  "src_file": "band3/meta_band/AppLabel.cpp",
+  "confidence": 0.42
+ },
+ "82B4F218": {
+  "src_file": "band3/tour/TourDescPanel.cpp",
+  "confidence": 0.42
+ },
+ "8269E6C0": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.42
+ },
+ "826D39C0": {
+  "src_file": "band3/game/.permuter_work_3_VocalPart.cpp",
+  "confidence": 0.42
+ },
+ "824EA508": {
+  "src_file": "band3/net_band/RockCentral.cpp",
+  "confidence": 0.42
+ },
+ "82B68528": {
+  "src_file": "band3/bandtrack/Tail.cpp",
+  "confidence": 0.42
+ },
+ "82B7AA60": {
+  "src_file": "band3/game/ChordbookPanel.cpp",
+  "confidence": 0.42
+ },
+ "82605638": {
+  "src_file": "band3/meta_band/MainHubPanel.cpp",
+  "confidence": 0.42
+ },
+ "82324E50": {
+  "src_file": "band3/meta_band/CharacterCreatorPanel.cpp",
+  "confidence": 0.42
+ },
+ "826C25D8": {
+  "src_file": "band3/game/Player.cpp",
+  "confidence": 0.42
+ },
+ "82528DF8": {
+  "src_file": "band3/meta_band/MusicLibrary.cpp",
+  "confidence": 0.42
+ },
+ "826A81B0": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.42
+ },
+ "82B63DF0": {
+  "src_file": "band3/bandtrack/GemTrack.cpp",
+  "confidence": 0.42
+ },
+ "8268E260": {
+  "src_file": "band3/game/GemTrainerPanel.cpp",
+  "confidence": 0.42
+ },
+ "824F3088": {
+  "src_file": "band3/net_band/RockCentral.cpp",
+  "confidence": 0.42
+ },
+ "82B6BA80": {
+  "src_file": "band3/bandtrack/GemManager.cpp",
+  "confidence": 0.42
+ },
+ "82646C98": {
+  "src_file": "band3/meta_band/StoreOfferProvider.cpp",
+  "confidence": 0.42
+ },
+ "825B71A0": {
+  "src_file": "band3/meta_band/MusicLibraryNetSetlists.cpp",
+  "confidence": 0.42
+ },
+ "82B727B8": {
+  "src_file": "band3/bandtrack/VocalTrack.cpp",
+  "confidence": 0.42
+ },
+ "825C1F80": {
+  "src_file": "band3/meta_band/OvershellSlot.cpp",
+  "confidence": 0.42
+ },
+ "8254F920": {
+  "src_file": "band3/meta_band/ClosetMgr.cpp",
+  "confidence": 0.36
+ },
+ "825C1410": {
+  "src_file": "band3/meta_band/OvershellSlot.cpp",
+  "confidence": 0.36
+ },
+ "826D3530": {
+  "src_file": "band3/game/VocalGuidePitch.cpp",
+  "confidence": 0.36
+ },
+ "8276B540": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.36
+ },
+ "82663F60": {
+  "src_file": "band3/game/GameMicManager.cpp",
+  "confidence": 0.36
+ },
+ "8269D780": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.36
+ },
+ "82697338": {
+  "src_file": "band3/game/ChordbookPanel.cpp",
+  "confidence": 0.36
+ },
+ "82677358": {
+  "src_file": "band3/game/GamePanel.cpp",
+  "confidence": 0.36
+ },
+ "826739C8": {
+  "src_file": "band3/game/NetGameMsgs.cpp",
+  "confidence": 0.36
+ },
+ "8269C7C8": {
+  "src_file": "band3/game/FreestylePanel.cpp",
+  "confidence": 0.36
+ },
+ "823C4750": {
+  "src_file": "band3/meta_band/ContextChecker.cpp",
+  "confidence": 0.36
+ },
+ "82749870": {
+  "src_file": "band3/game/.permuter_work_3_VocalPart.cpp",
+  "confidence": 0.36
+ },
+ "825A4288": {
+  "src_file": "band3/meta_band/BandStorePanel.cpp",
+  "confidence": 0.36
+ },
+ "826C4AC8": {
+  "src_file": "band3/game/VocalGuidePitch.cpp",
+  "confidence": 0.36
+ },
+ "8260C9D8": {
+  "src_file": "band3/meta_band/PassiveMessagesPanel.cpp",
+  "confidence": 0.36
+ },
+ "82525148": {
+  "src_file": "band3/meta_band/CustomizePanel.cpp",
+  "confidence": 0.36
+ },
+ "822B2090": {
+  "src_file": "band3/meta_band/ContextChecker.cpp",
+  "confidence": 0.36
+ },
+ "8269C8D0": {
+  "src_file": "band3/game/FreestylePanel.cpp",
+  "confidence": 0.36
+ },
+ "82B79B40": {
+  "src_file": "band3/bandtrack/GemManager.cpp",
+  "confidence": 0.36
+ },
+ "825CF390": {
+  "src_file": "band3/meta_band/StoreMenuProvider.cpp",
+  "confidence": 0.36
+ },
+ "82B5F598": {
+  "src_file": "band3/bandtrack/TrackPanel.cpp",
+  "confidence": 0.36
+ },
+ "823D9F38": {
+  "src_file": "band3/meta_band/StoreMenuProvider.cpp",
+  "confidence": 0.36
+ },
+ "8239BA70": {
+  "src_file": "band3/meta_band/ContextChecker.cpp",
+  "confidence": 0.36
+ },
+ "82663A88": {
+  "src_file": "band3/game/GameMicManager.cpp",
+  "confidence": 0.36
+ },
+ "82666AE8": {
+  "src_file": "band3/meta_band/BandProfile.h",
+  "confidence": 0.36
+ },
+ "826A22F8": {
+  "src_file": "band3/game/TambourineManager.cpp",
+  "confidence": 0.36
+ },
+ "82677FE8": {
+  "src_file": "band3/game/GamePanel.cpp",
+  "confidence": 0.36
+ },
+ "82352990": {
+  "src_file": "band3/meta_band/StoreMenuProvider.cpp",
+  "confidence": 0.36
+ },
+ "8239C8D0": {
+  "src_file": "band3/meta_band/ContextChecker.cpp",
+  "confidence": 0.36
+ },
+ "826530F0": {
+  "src_file": "band3/meta_band/MakeupProvider.cpp",
+  "confidence": 0.36
+ },
+ "82780F58": {
+  "src_file": "band3/game/.permuter_work_3_VocalPart.cpp",
+  "confidence": 0.36
+ },
+ "82B774A8": {
+  "src_file": "band3/bandtrack/VocalTrack.cpp",
+  "confidence": 0.36
+ },
+ "82B74150": {
+  "src_file": "band3/bandtrack/VocalTrack.cpp",
+  "confidence": 0.36
+ },
+ "82B4F6A8": {
+  "src_file": "band3/tour/TourDescPanel.cpp",
+  "confidence": 0.36
+ },
+ "826667A8": {
+  "src_file": "band3/meta_band/BandProfile.h",
+  "confidence": 0.36
+ },
+ "82691990": {
+  "src_file": "band3/game/RGTrainerPanel.cpp",
+  "confidence": 0.36
+ },
+ "825EF340": {
+  "src_file": "band3/meta_band/CalibrationPanel.cpp",
+  "confidence": 0.36
+ },
+ "826A1190": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.36
+ },
+ "82B7B138": {
+  "src_file": "band3/bandtrack/Gem.cpp",
+  "confidence": 0.36
+ },
+ "825C10D8": {
+  "src_file": "band3/meta_band/OvershellSlot.cpp",
+  "confidence": 0.36
+ },
+ "826DBC68": {
+  "src_file": "band3/game/TambourineManager.cpp",
+  "confidence": 0.36
+ },
+ "8260B858": {
+  "src_file": "band3/meta_band/NewAwardPanel.cpp",
+  "confidence": 0.36
+ },
+ "82606078": {
+  "src_file": "band3/meta_band/CustomizePanel.cpp",
+  "confidence": 0.36
+ },
+ "82697448": {
+  "src_file": "band3/game/RGTrainerPanel.cpp",
+  "confidence": 0.36
+ },
+ "826A0788": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.36
+ },
+ "826381F8": {
+  "src_file": "band3/bandtrack/GemManager.cpp",
+  "confidence": 0.36
+ },
+ "8259E9E0": {
+  "src_file": "band3/meta_band/OvershellPanel.cpp",
+  "confidence": 0.36
+ },
+ "824F3C68": {
+  "src_file": "band3/net_band/RockCentral.cpp",
+  "confidence": 0.36
+ },
+ "8226FFD8": {
+  "src_file": "band3/meta_band/PrefabMgr.cpp",
+  "confidence": 0.36
+ },
+ "82B6D048": {
+  "src_file": "band3/bandtrack/GemManager.cpp",
+  "confidence": 0.36
+ },
+ "826628E8": {
+  "src_file": "band3/meta_band/SessionMgr.h",
+  "confidence": 0.36
+ },
+ "826A76B8": {
+  "src_file": "band3/bandtrack/GemManager.cpp",
+  "confidence": 0.36
+ },
+ "82380830": {
+  "src_file": "band3/meta_band/CharData.cpp",
+  "confidence": 0.36
+ },
+ "82527F18": {
+  "src_file": "band3/meta_band/Leaderboard.cpp",
+  "confidence": 0.36
+ },
+ "823814C8": {
+  "src_file": "band3/meta_band/CharData.cpp",
+  "confidence": 0.36
+ },
+ "82397C70": {
+  "src_file": "band3/meta_band/ContextChecker.cpp",
+  "confidence": 0.36
+ },
+ "826D7260": {
+  "src_file": "band3/game/GuitarFx.cpp",
+  "confidence": 0.36
+ },
+ "826C7EF8": {
+  "src_file": "band3/game/VocalPlayer.cpp",
+  "confidence": 0.36
+ },
+ "8264BD70": {
+  "src_file": "band3/meta_band/OvershellPartSelectProvider.cpp",
+  "confidence": 0.36
+ },
+ "822FDBC0": {
+  "src_file": "band3/game/PracticePanel.cpp",
+  "confidence": 0.36
+ },
+ "824F2320": {
+  "src_file": "band3/net_band/RockCentral.cpp",
+  "confidence": 0.36
+ },
+ "825C7188": {
+  "src_file": "band3/meta_band/CustomizePanel.cpp",
+  "confidence": 0.36
+ },
+ "826895D8": {
+  "src_file": "band3/game/Player.cpp",
+  "confidence": 0.36
+ },
+ "82327B88": {
+  "src_file": "band3/meta_band/PrefabMgr.cpp",
+  "confidence": 0.36
+ },
+ "823562C0": {
+  "src_file": "band3/meta_band/StoreMenuProvider.cpp",
+  "confidence": 0.36
+ },
+ "82B636D0": {
+  "src_file": "band3/game/GemPlayer.cpp",
+  "confidence": 0.36
+ },
+ "82624EC8": {
+  "src_file": "band3/meta_band/TokenRedemptionPanel.cpp",
+  "confidence": 0.36
+ },
+ "823004D8": {
+  "src_file": "band3/game/GamePanel.cpp",
+  "confidence": 0.36
+ },
+ "8252DB68": {
+  "src_file": "band3/meta_band/MusicLibrary.cpp",
+  "confidence": 0.36
+ },
+ "826CAD08": {
+  "src_file": "band3/game/VocalPlayer.cpp",
+  "confidence": 0.36
+ },
+ "8254C130": {
+  "src_file": "band3/meta_band/UIStats.cpp",
+  "confidence": 0.36
+ },
+ "82694E50": {
+  "src_file": "band3/game/PracticePanel.cpp",
+  "confidence": 0.36
+ },
+ "8241A910": {
+  "src_file": "band3/game/GemTrainerPanel.cpp",
+  "confidence": 0.36
+ },
+ "8267F4C0": {
+  "src_file": "band3/tour/TourReward.cpp",
+  "confidence": 0.36
+ },
+ "82686FB0": {
+  "src_file": "band3/game/Player.cpp",
+  "confidence": 0.36
+ },
+ "82B745E8": {
+  "src_file": "band3/bandtrack/VocalTrack.cpp",
+  "confidence": 0.36
+ },
+ "82628AE8": {
+  "src_file": "band3/meta_band/NextSongPanel.cpp",
+  "confidence": 0.36
+ }
+}
