@@ -649,6 +649,8 @@
     "cflags": "base",
     "objects": {
       "band3/game/NetGameMsgs.cpp": "NonMatching",
+      "band3/meta_band/LessonProvider.cpp": "NonMatching",
+      "band3/game/TrainerGemTab.cpp": "NonMatching",
       "band3/game/Stats.cpp": "NonMatching",
       "band3/game/GamePanel.cpp": "NonMatching",
       "band3/bandtrack/Lyric.cpp": "NonMatching",

@@ -67,7 +67,7 @@ public:
     NEW_OBJ(RndDrawable);
     static void Init() { REGISTER_OBJ_FACTORY(RndDrawable); }
 
-    void SetShowing(bool);
+    void SetShowing(bool b) { mShowing = b; }
     bool Showing() const { return mShowing; }
     void SetOrder(float order) { mOrder = order; }
     float GetOrder() const { return mOrder; }

@@ -165,14 +165,6 @@ void RndDrawable::Highlight() {
     }
 }
 
-void RndDrawable::SetShowing(bool show) {
-    if (mShowing != show) {
-        static Symbol showing("showing");
-        mShowing = show;
-        BroadcastPropertyChange(showing);
-    }
-}
-
 DataNode RndDrawable::OnCopySphere(const DataArray *da) {
     RndDrawable *draw = da->Obj<RndDrawable>(2);
     if (draw)
