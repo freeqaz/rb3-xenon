@@ -3,16 +3,18 @@
 
 float DeJitter::sTimeScale = 1;
 
-DeJitter::DeJitter() { Reset(); }
+DeJitter::DeJitter() {
+    Reset();
+    // RB3 stores the history ring in a heap-backed std::vector (rb3-Wii oracle),
+    // not an inline array; size it once at construction.
+    mHistoryBuffer.resize(32);
+}
 
 void DeJitter::Reset() {
     mCurrentIndex = 0;
     mHistoryCount = -2;
     mFilteredDelta = 0;
     mPreviousOutput = 0;
-    for (int i = 0; i < 32; i++) {
-        mHistoryBuffer[i] = 0;
-    }
 }
 
 float DeJitter::NewMs(float f1, float &fref) {

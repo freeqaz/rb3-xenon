@@ -52,10 +52,14 @@ GamePanel *TheGamePanel;
 LatencyCallback gGamePanelCallback;
 
 GamePanel::GamePanel()
-    : mGame(0), mTime(RndOverlay::Find("time", true)),
+    : mGame(0),
+#ifdef MILO_DEBUG
+      mTime(RndOverlay::Find("time", true)),
       mLatency(RndOverlay::Find("latency", true)),
       mDeltaTime(RndOverlay::Find("delta_time", true)), unk64(1), unk68(0), unk6c(0),
-      unk70(0), mStartPaused(0), mGameState(kGameNeedIntro), mMultiEvent(0), mScoring(0),
+      unk70(0),
+#endif
+      mStartPaused(0), mGameState(kGameNeedIntro), mMultiEvent(0), mScoring(0),
       mLoadProf("game_panel_load", 1), mExcitement(kNumExcitements),
       mLastExcitement(kNumExcitements), mReplay(0), unk150(1), unk151(0), unk154(0),
       mLoadingState(kLoadingState_NotReady), mHitTracker(new HitTracker()),
@@ -337,6 +341,7 @@ void GamePanel::Poll() {
     if (unk151 && 1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime) > unk154) {
         unk151 = false;
     }
+#ifdef MILO_DEBUG
     if (mTime->Showing()) {
         UpdateNowBar();
     }
@@ -344,6 +349,7 @@ void GamePanel::Poll() {
         UpdateDeltaTimeOverlay();
     }
     UpdateLatency();
+#endif
 }
 
 void GamePanel::SetPaused(bool b1) {
@@ -372,6 +378,7 @@ void GamePanel::StartIntro() {
     mGame->StartIntro();
 }
 
+#ifdef MILO_DEBUG
 void GamePanel::UpdateNowBar() {
     MILO_ASSERT(mGame, 0x212);
     TaskMgr& tm = TheTaskMgr;
@@ -471,6 +478,7 @@ void GamePanel::UpdateDeltaTimeOverlay() {
     float t = unk70;
     *mDeltaTime << MakeString("dt: %5.1f, ddt: %5.1f\n", t, t - unk6c);
 }
+#endif // MILO_DEBUG
 
 void GamePanel::FinishLoad() {
     UIPanel::FinishLoad();
@@ -483,8 +491,10 @@ void GamePanel::FinishLoad() {
     HAQManager::PrintSongInfo(
         MetaPerformer::Current()->Song(), TheSongDB->GetSongDurationMs()
     );
+#ifdef MILO_DEBUG
     if (unk64)
         unk64 = false;
+#endif
 }
 
 void GamePanel::PlayBandDiedCue() {
