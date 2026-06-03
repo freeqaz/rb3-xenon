@@ -15,7 +15,10 @@ Buckets
   thirdparty  zlib/ogg/vorbis/tomcrypt/curl/   IN-SCOPE   (mechanical)
               json-c/expat/speex/STLport
   crt         src/xdk/LIBCMT/ (CRT we compile)  IN-SCOPE
-  xdk         XEX-imported XDK + BINK middleware OUT-OF-SCOPE
+  xdk         XEX-imported XDK glue + BINK       OUT-OF-SCOPE
+  vendor      statically-linked no-source MS     OUT-OF-SCOPE
+              D3DX/D3D9/XGRAPHICS/XAUDIO/XMA,
+              RAD BINK, Quazal/Rendez-vous net
   unknown     residual (classification TODO)    reported separately
 
 Classification is layered, highest-confidence first:
@@ -23,9 +26,11 @@ Classification is layered, highest-confidence first:
   2. pinned src -- unit has a source_path -> bucket by path                 [conf=1.0]
   3. thirdparty -- addr inside a thirdparty.json library range              [conf=0.9]
   4. engine/game-- addr in engine.json / game.json provenance labels        [conf=label]
-  5. spatial    -- propagate the bucket of confident neighbors across an    [conf<=0.5]
+  5. uid merge  -- addr in uid_merge.json (DC3+rb3-Wii BinDiff cross-ID)    [conf<=0.95]
+  6. name class -- mangled-symbol CLASS -> bucket (catch-all named fns)     [conf=0.9]
+  7. spatial    -- propagate the bucket of confident neighbors across an    [conf<=0.5]
                    unlabeled .text run (no LTCG => TUs stay contiguous)
-  6. unknown    -- nothing said anything                                    [conf=0.0]
+  8. unknown    -- nothing said anything                                    [conf=0.0]
 
 Outputs config/45410914/scope_map.json: {addr_hex: {size, scope, provenance,
 confidence, matched}}.
@@ -53,10 +58,10 @@ FN_ADDR_RE = re.compile(r"fn_([0-9A-Fa-f]{8})")
 AUTO_ADDR_RE = re.compile(r"auto_\d+_([0-9A-Fa-f]{8})_")
 
 IN_SCOPE = {"game", "engine", "thirdparty", "crt"}
-OUT_OF_SCOPE = {"xdk"}
+OUT_OF_SCOPE = {"xdk", "vendor"}
 
 # --- bucket ordering for stable reporting ---
-BUCKET_ORDER = ["game", "engine", "thirdparty", "crt", "xdk", "unknown"]
+BUCKET_ORDER = ["game", "engine", "thirdparty", "crt", "xdk", "vendor", "unknown"]
 
 
 # ---------------------------------------------------------------------------
@@ -103,6 +108,208 @@ def bucket_for_engine_label(src_file):
     return bucket_for_source(src_file) or "engine"
 
 
+# ---------------------------------------------------------------------------
+# uid-merge / cross-binary BinDiff src_path -> bucket
+# ---------------------------------------------------------------------------
+# The DC3 / rb3-Wii BinDiff cross-ID artifacts carry a `bindiff_src` path that
+# names the *source-twin's* TU. Map it to our scope buckets. Distinct from
+# bucket_for_source (which classifies OUR pinned units) because these paths use
+# the twin trees' layout: DC3's `../dc3-decomp/src/{system,xdk,lazer,...}` and
+# rb3-Wii's `band3/`, `network/`. Crucially this is also where the OUT-OF-SCOPE
+# `vendor` bucket gets populated: DC3 already attributed the statically-linked
+# Microsoft D3DX/XGRAPHICS/XAUDIO/XMA + RAD BINK code to `xdk/<lib>/` TUs with
+# no source -- those are vendor, not the small XDK glue we ship.
+_VENDOR_XDK_DIRS = (
+    "/d3dx9/", "/xgraphics/", "/xaudio2/", "/d3d9i/", "/xhv2/", "/xapilibi/",
+    "/xonline/", "/xmic/", "/xinput2/", "/xmcore/", "/xnet/", "/xlrc/", "/xmp/",
+    "/xparty/", "/xjson/", "/xbdm/", "/nuiaudio/", "/nuispeech/", "/ST/",
+    "/xact3/", "/xmedia/",
+)
+
+
+def bucket_for_uid_src(src):
+    """A BinDiff `bindiff_src` path -> scope bucket. None if unattributable."""
+    if not src:
+        return None
+    low = "/" + src.lower().replace("../dc3-decomp/src/", "").replace("../rb3/src/", "")
+    for m in THIRDPARTY_MARKERS:
+        if m in low:
+            return "thirdparty"
+    if "binkxenon" in low or "/binkxenon/" in low:
+        return "vendor"          # RAD BINK middleware (DC3 ships it under src/)
+    if "/xdk/libcmt/" in low:
+        return "crt"
+    for v in _VENDOR_XDK_DIRS:
+        if v in low and "/xdk/" in low:
+            return "vendor"
+    if "/xdk/nuiapi/" in low:
+        return "xdk"             # NUI api glue we actually ship (OUT, but not vendor)
+    if "/xdk/" in low:
+        return "vendor"          # any other XDK TU is a no-source MS lib
+    if "/lazer/" in low:
+        return "game"            # DC3's game/meta layer == RB3 game-layer twin
+    if low.startswith("/band3/") or low.startswith("/network/"):
+        return "game"            # rb3-Wii game code
+    if "/system/" in low:
+        return "engine"
+    base = low.lstrip("/")
+    if base.count("/") == 0 and base.endswith(".cpp"):
+        return "engine"          # root-level DC3 platform glue (Memory_Xbox.cpp ...)
+    return None
+
+
+# ---------------------------------------------------------------------------
+# mangled-symbol CLASS -> bucket (catch-all NAMED functions)
+# ---------------------------------------------------------------------------
+# ~8 K functions in the catch-all `auto_*` units carry full MSVC-mangled names
+# whose CLASS/namespace token is ground-truth identity (e.g. ?DrawRegular@App@@
+# -> class App). The loader retains these names (the catch-all loader path no
+# longer drops them); classify_name() routes them by class. Resolution order:
+#   STL token (stlpmtx_std/std)         -> thirdparty   (authoritative)
+#   class present in an in-scope tree    -> engine/game  (NEVER overridden by
+#                                          vendor -- protects matchable work)
+#   class in empirical vendor set / prefix -> vendor
+#   else                                 -> unknown (don't guess)
+# The class sets live in tools/scope_data/name_class.json (regenerate with
+# tools/scope_data/gen_name_class.py); the vendor set is derived empirically
+# from DC3's BinDiff xdk/* attributions, so it's data-backed not guessed.
+_VENDOR_NAME_PREFIXES = (
+    "D3D", "ID3D", "XG", "XAudio", "IXAudio", "XACT", "XMA", "XAPO", "XHV",
+    "Bink", "RAD", "Quazal", "NetZ", "ENet",
+)
+_VENDOR_NAME_EXACT = {
+    "XGRAPHICS", "xWMA", "OAPIPELINE", "COAPReverbMono", "COAPReverbStereo",
+    "CMixMatrix",
+}
+
+
+def _parse_msvc_scope(n):
+    """Extract the primary class/namespace token from an MSVC-mangled name.
+    Handles ctors (??0Class@@), dtors (??1/??_E), template classes (?$Tmpl@..),
+    template functions (??$fn@..), anon namespaces (?A0x..@), and plain
+    ?meth@Class@@. Returns the class token, or None for free functions /
+    non-mangled names."""
+    if not n.startswith("?"):
+        return None
+    s = n[1:]
+    if s.startswith("?"):
+        s = s[1:]
+        if s.startswith("$"):
+            # template FUNCTION ??$fn@<template-args>@<CLASS>@@<sig>. The class
+            # is NOT the first token after the fn-name -- the template ARGS come
+            # first (e.g. ??$Find@VCharClip@@@ObjectDir@@ -> class ObjectDir, not
+            # the arg CharClip). Parsing the exact class out of the interleaved
+            # arg/scope chain is brittle, so the template-fn case is resolved by
+            # _candidate_scopes() + the class maps in classify_name(); here we
+            # just return a sentinel so classify_name knows to take that path.
+            return "\x00TMPLFN"
+        else:
+            # operator (??0 ctor, ??1 dtor, ??_E vector-dtor, ...): drop op code.
+            if s and s[0] == "_":
+                s = s[2:]
+            elif s:
+                s = s[1:]
+    else:
+        # ?name@... : skip the simple function-name token.
+        at = s.find("@")
+        if at < 0:
+            return None
+        s = s[at + 1:]
+    # s now begins with the innermost scope token; skip anon-ns wrappers.
+    for _ in range(4):
+        if s.startswith("?$"):
+            m = re.match(r"\?\$([A-Za-z0-9_]+)@", s)
+            return m.group(1) if m else None
+        if s.startswith("?A0x"):
+            m = re.match(r"\?A0x[0-9a-f]+@(.*)", s, re.S)
+            if m:
+                s = m.group(1)
+                continue
+        break
+    m = re.match(r"([A-Za-z0-9_]+)@", s)
+    return m.group(1) if m else None
+
+
+_NAME_CLASS_CACHE = {}
+
+
+def load_name_class(wn_data):
+    """Load + cache tools/scope_data/name_class.json -> (engine, game, vendor)
+    class-name sets."""
+    key = wn_data
+    if key in _NAME_CLASS_CACHE:
+        return _NAME_CLASS_CACHE[key]
+    p = os.path.join(wn_data, "name_class.json")
+    if not os.path.exists(p):
+        res = (set(), set(), set())
+    else:
+        d = json.load(open(p))
+        res = (set(d.get("engine", [])), set(d.get("game", [])),
+               set(d.get("vendor", [])))
+    _NAME_CLASS_CACHE[key] = res
+    return res
+
+
+def _vendor_name_hit(cls):
+    if cls in _VENDOR_NAME_EXACT:
+        return True
+    for p in _VENDOR_NAME_PREFIXES:
+        if cls.startswith(p) and len(cls) > len(p):
+            return True
+    return False
+
+
+_CAND_RE = re.compile(r"[@VU]\??\$?([A-Za-z_][A-Za-z0-9_]*)@")
+
+
+def _candidate_scopes(name):
+    """All plausible class/type identifier tokens in a mangled name, e.g. every
+    V<Class>@@ / U<Struct>@@ / @<Scope>@ token. Used to resolve template-FUNCTION
+    owners (where the exact owning class is interleaved with template args)."""
+    return [m.group(1) for m in _CAND_RE.finditer(name)]
+
+
+def _resolve_class(cls, engine_cls, game_cls, vendor_cls):
+    """A single class token -> (bucket, tag) or (None, None). In-scope source
+    presence wins so `vendor` never steals matchable work."""
+    if cls in engine_cls:
+        return "engine", "name:" + cls
+    if cls in game_cls:
+        return "game", "name:" + cls
+    if cls in vendor_cls:
+        return "vendor", "name:" + cls
+    if _vendor_name_hit(cls):
+        return "vendor", "name-prefix:" + cls
+    return None, None
+
+
+def classify_name(name, engine_cls, game_cls, vendor_cls):
+    """Mangled symbol name -> (bucket, provenance_tag) or (None, None).
+    HIGH confidence when matched (the symbol is authoritative)."""
+    if not name or not name.startswith("?"):
+        return None, None
+    # STLport / std templates are thirdparty regardless of the outer token.
+    if "stlpmtx_std" in name or "@std@@" in name or "@stlp" in name or "stlp_std" in name:
+        return "thirdparty", "name:stl"
+    cls = _parse_msvc_scope(name)
+    if cls == "\x00TMPLFN":
+        # template FUNCTION: owning class is interleaved with template args. Scan
+        # every candidate type/scope token; prefer an in-scope (engine/game)
+        # match, else vendor, over the whole token set. (`Find<CharClip>` in
+        # ObjectDir scans {Find?, CharClip, ObjectDir} -> ObjectDir=engine.)
+        best = None
+        for c in _candidate_scopes(name):
+            b, tag = _resolve_class(c, engine_cls, game_cls, vendor_cls)
+            if b in ("engine", "game"):
+                return b, tag              # in-scope wins immediately
+            if b and best is None:
+                best = (b, tag)            # remember a vendor hit as fallback
+        return best if best else (None, None)
+    if not cls:
+        return None, None              # free function / unparsable -> leave unknown
+    return _resolve_class(cls, engine_cls, game_cls, vendor_cls)
+
+
 SPLITS = os.path.join(ROOT, "config", "45410914", "splits.txt")
 SPLIT_HDR_RE = re.compile(r"^(\S.*?):\s*$")
 SPLIT_TEXT_RE = re.compile(r"\.text\s+start:0x([0-9A-Fa-f]+)\s+end:0x([0-9A-Fa-f]+)")
@@ -137,7 +344,7 @@ def load_functions(report_path):
     with open(report_path) as f:
         rep = json.load(f)
     split_bases = load_splits_text_bases(SPLITS)
-    funcs = []  # (addr:int, size:int, matched:bool, source_path, unit_name)
+    funcs = []  # (addr:int, size:int, matched:bool, source_path, unit_name, name)
     synth = SYNTH_BASE
     for u in rep["units"]:
         unit = u["name"]
@@ -168,7 +375,7 @@ def load_functions(report_path):
                 addr = int(m.group(1), 16) if m else base + int(fn.get("address", "0"))
                 size = int(fn.get("size", "0"))
                 matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
-                funcs.append((addr, size, matched, sp, unit))
+                funcs.append((addr, size, matched, sp, unit, fn["name"]))
             continue
 
         # -- CATCH-ALL / auto UNITS (no source_path) --
@@ -199,7 +406,7 @@ def load_functions(report_path):
                 # small odd delta keeps these distinct from the anchor + each
                 # other without crossing into the next real fn (sizes are >=8).
                 addr = last_anchor + named_off  # 1..N within the anchor's slot
-            funcs.append((addr, size, matched, sp, unit))
+            funcs.append((addr, size, matched, sp, unit, fn["name"]))
     # de-dup on addr (ICF folds / catch-all named-fn anchoring can land two
     # records on one addr). Precedence, best first:
     #   (1) pinned source_path beats catch-all   (we compile it; ground truth)
@@ -207,12 +414,12 @@ def load_functions(report_path):
     #   (3) larger size
     # Tuple ordering on (has_sp, matched, size) does exactly this.
     by_addr = {}
-    for addr, size, matched, sp, unit in funcs:
+    for addr, size, matched, sp, unit, name in funcs:
         rank = (1 if sp else 0, 1 if matched else 0, size)
         cur = by_addr.get(addr)
         if cur is None or rank > cur[0]:
-            by_addr[addr] = (rank, size, matched, sp, unit)
-    out = [(addr, r[1], r[2], r[3], r[4]) for addr, r in by_addr.items()]
+            by_addr[addr] = (rank, size, matched, sp, unit, name)
+    out = [(addr, r[1], r[2], r[3], r[4], r[5]) for addr, r in by_addr.items()]
     out.sort()
     return out, rep
 
@@ -275,6 +482,28 @@ def load_provenance(wn_data, fname):
     return out
 
 
+def load_uid_merge(wn_data):
+    """uid_merge.json: {ADDR_HEX: {bucket, src, sim, source, conf}} addr-keyed
+    cross-binary BinDiff IDs (DC3 sim>=0.9, rb3-Wii sim>=0.7). Pre-bucketed by
+    the generator (tools/scope_data/gen_uid_merge.py); we re-derive the bucket
+    here too as a guard so a stale file with raw `src` still classifies."""
+    p = os.path.join(wn_data, "uid_merge.json")
+    if not os.path.exists(p):
+        return {}
+    d = json.load(open(p))
+    entries = d.get("entries", d)
+    out = {}
+    for k, v in entries.items():
+        if k.startswith("_"):
+            continue
+        try:
+            addr = int(k, 16)
+        except ValueError:
+            continue
+        out[addr] = v
+    return out
+
+
 # ---------------------------------------------------------------------------
 # build
 # ---------------------------------------------------------------------------
@@ -296,6 +525,8 @@ def cmd_build(args):
     tp_ranges = load_thirdparty_ranges(WN_DATA)
     engine_prov = load_provenance(WN_DATA, "engine.json")
     game_prov = load_provenance(WN_DATA, "game.json")
+    uid_merge = load_uid_merge(WN_DATA)
+    engine_cls, game_cls, vendor_cls = load_name_class(WN_DATA)
 
     def in_tp(addr):
         for s, e, lib in tp_ranges:
@@ -308,7 +539,7 @@ def cmd_build(args):
     prov = [None] * n           # provenance string
     conf = [0.0] * n            # confidence float
 
-    for i, (addr, size, matched, sp, unit) in enumerate(funcs):
+    for i, (addr, size, matched, sp, unit, name) in enumerate(funcs):
         # Layer 1: XDK exact addr / BINK range -> OUT-OF-SCOPE.
         if addr in xdk_addrs or (bink_range and bink_range[0] <= addr < bink_range[1]):
             scope[i] = "xdk"
@@ -343,6 +574,26 @@ def cmd_build(args):
             prov[i] = "engine.json:" + str(v.get("src_file")) + (("|" + note) if note else "")
             conf[i] = normalize_conf(v.get("confidence"))
             continue
+        # Layer 5: uid_merge cross-binary BinDiff ID (addr-keyed). DC3 (sim>=0.9,
+        # conf 0.95) and rb3-Wii (sim>=0.7, conf 0.7) twins. Pre-bucketed by the
+        # generator; re-derive from `src` if a stale file lacks `bucket`.
+        if addr in uid_merge:
+            v = uid_merge[addr]
+            ub = v.get("bucket") or bucket_for_uid_src(v.get("src"))
+            if ub:
+                scope[i] = ub
+                prov[i] = "%s:%s" % (v.get("source", "uid"), v.get("src"))
+                conf[i] = float(v.get("conf", 0.9))
+                continue
+        # Layer 6: mangled-symbol CLASS -> bucket (catch-all NAMED fns). The
+        # symbol name is authoritative for the owning class; classify_name never
+        # lets `vendor` override a class that exists in an in-scope source tree.
+        nb, ntag = classify_name(name, engine_cls, game_cls, vendor_cls)
+        if nb:
+            scope[i] = nb
+            prov[i] = ntag
+            conf[i] = 0.9
+            continue
         # else: leave for spatial propagation.
 
     # ---- Layer 5: REACH-CAPPED SPATIAL CLUSTER PROPAGATION ----
@@ -364,8 +615,19 @@ def cmd_build(args):
     REACH_BYTES = 6144      # ~one big TU of reach from each confident edge
     GAP_JUMP = 256          # consecutive-fn address jump that breaks a TU run
 
+    # xdk is an exact-addr import-thunk island and never propagates. `vendor` is
+    # a real contiguous-TU bucket, BUT a single BinDiff-misplaced vendor fn (e.g.
+    # one nuispeech leaf dropped into a CharClip/PropKeys engine run) must not
+    # seed a 6 KB vendor sweep that steals matchable engine code from the
+    # denominator. So vendor is allowed to propagate ONLY when it is the agreeing
+    # SANDWICH bucket (both edges vendor) -- never as a lone single edge. (Name-
+    # classified vendor fns carry synthetic addrs >= SYNTH_BASE and sort past all
+    # real fns, so they never act as edges inside a real-fn run anyway.)
+    NO_PROP = {"xdk"}
+    SANDWICH_ONLY = {"vendor"}
+
     def is_conf(i):
-        return scope[i] is not None and scope[i] != "xdk"
+        return scope[i] is not None and scope[i] not in NO_PROP
 
     def fn_end(i):
         return funcs[i][0] + funcs[i][1]
@@ -382,9 +644,13 @@ def cmd_build(args):
         right = j
         lb = scope[left] if left >= 0 and is_conf(left) else None
         rb = scope[right] if right < n and is_conf(right) else None
+        sandwiched = (lb is not None and lb == rb)
+        # a SANDWICH_ONLY bucket may only fill when it is the agreeing sandwich.
+        lb_prop = lb if (lb not in SANDWICH_ONLY or sandwiched) else None
+        rb_prop = rb if (rb not in SANDWICH_ONLY or sandwiched) else None
 
         # propagate from the LEFT edge rightward, within reach + contiguity
-        if lb is not None:
+        if lb_prop is not None:
             anchor_end = fn_end(left)
             prev_end = anchor_end
             for k in range(i, j):
@@ -393,12 +659,12 @@ def cmd_build(args):
                     break                      # section/TU break -> stop reach
                 if a - anchor_end > REACH_BYTES:
                     break                      # out of reach -> stop
-                scope[k] = lb
-                prov[k] = "spatial:after-" + lb
+                scope[k] = lb_prop
+                prov[k] = "spatial:after-" + lb_prop
                 conf[k] = 0.4
                 prev_end = fn_end(k)
         # propagate from the RIGHT edge leftward into still-unlabeled fns
-        if rb is not None:
+        if rb_prop is not None:
             anchor_start = funcs[right][0]
             next_start = anchor_start
             for k in range(j - 1, i - 1, -1):
@@ -411,9 +677,9 @@ def cmd_build(args):
                     break
                 # if both edges agree, bump confidence slightly (sandwiched)
                 if scope[k] is None:
-                    scope[k] = rb
-                    prov[k] = ("spatial:between-" + rb) if rb == lb else ("spatial:before-" + rb)
-                    conf[k] = 0.5 if rb == lb else 0.4
+                    scope[k] = rb_prop
+                    prov[k] = ("spatial:between-" + rb_prop) if sandwiched else ("spatial:before-" + rb_prop)
+                    conf[k] = 0.5 if sandwiched else 0.4
                 next_start = funcs[k][0]
 
         # anything still unlabeled in this gap = genuine residual
@@ -426,7 +692,7 @@ def cmd_build(args):
 
     # ---- emit ----
     out = {}
-    for i, (addr, size, matched, sp, unit) in enumerate(funcs):
+    for i, (addr, size, matched, sp, unit, name) in enumerate(funcs):
         out["%08X" % addr] = {
             "size": size,
             "scope": scope[i],
@@ -502,9 +768,135 @@ def _print_report(sm):
     print("  whole-binary matched bytes: %d / %d = %.3f%%" %
           (tm, total_bytes, 100.0 * tm / total_bytes))
 
+    # bounded achievable ceiling (from the cached-file aggregates above)
+    in_matched_fns_l = sum(by[b][2] for b in IN_SCOPE)
+    pess_b = in_bytes + unk_bytes
+    pess_f = in_fns + unk_fns
+    print_ceiling({
+        "matched_b": in_matched_bytes, "matched_f": in_matched_fns_l,
+        "in_b": in_bytes, "in_f": in_fns,
+        "unk_b": unk_bytes, "unk_f": unk_fns,
+        "out_b": out_bytes, "out_f": by["xdk"][0],
+        "tot_b": total_bytes,
+        "opt_pct_b": 100.0 * in_matched_bytes / in_bytes if in_bytes else 0.0,
+        "pess_pct_b": 100.0 * in_matched_bytes / pess_b if pess_b else 0.0,
+        "opt_pct_f": 100.0 * in_matched_fns_l / in_fns if in_fns else 0.0,
+        "pess_pct_f": 100.0 * in_matched_fns_l / pess_f if pess_f else 0.0,
+        "unk_band_pct": 100.0 * unk_bytes / total_bytes if total_bytes else 0.0,
+        "out_pct": 100.0 * out_bytes / total_bytes if total_bytes else 0.0,
+    })
+
 
 def cmd_report(args):
     _print_report(_load_scope_map())
+
+
+# ---------------------------------------------------------------------------
+# ceiling -- the bounded "achievable %" (matched / matchable)
+# ---------------------------------------------------------------------------
+# The honest objdiff % (matched / whole-binary) can NEVER reach 100: the binary
+# contains vendor code with no source we can compile (XDK import thunks + the
+# statically-linked Microsoft D3DX/XAudio/XGRAPHICS libraries, RAD's BINK video,
+# and the Quazal/Rendez-vous network stack). So "% of binary" is the wrong goal.
+#
+# The RIGHT goal is "% of the code we can actually write from source" -- but we
+# don't yet know that denominator exactly, because 54% of the binary sits in the
+# UNKNOWN bucket (unattributed). Part of unknown is matchable engine/game/3rd-party
+# we just haven't identified; part is more vendor-no-source we haven't separated
+# out. Until the identification campaign resolves it, the true achievable % is a
+# RANGE, and the WIDTH of that range IS the unknown bucket:
+#
+#   optimistic  (assume ALL unknown turns out to be vendor/no-source):
+#       achievable% = matched / in-scope                  <- smallest denom, HIGHEST %
+#   pessimistic (assume ALL unknown turns out to be ours):
+#       achievable% = matched / (in-scope + unknown)      <- largest denom, LOWEST %
+#
+# The campaign collapses this band by sorting `unknown` into matchable vs vendor.
+# This is the metric to watch: not the absolute number, but the band narrowing.
+def compute_ceiling(scope_by_addr, funcs):
+    """Overlay FRESH matched-status + sizes (from the live report.json `funcs`)
+    onto the CACHED classification (`scope_by_addr`: HEXADDR -> scope). Keeping
+    the numerator live means the ceiling is always current without rewriting the
+    8 MB scope_map.json every build; the (slow-changing) classification is read
+    from cache. Returns a stats dict for print_ceiling()."""
+    in_b = in_f = in_mb = in_mf = 0   # in-scope bytes/fns + matched
+    unk_b = unk_f = 0                 # unknown (the band)
+    out_b = out_f = 0                 # confidently no-source (xdk + vendor)
+    engine_cls, game_cls, vendor_cls = load_name_class(WN_DATA)
+    for addr, size, matched, sp, unit, name in funcs:
+        sc = scope_by_addr.get("%08X" % addr)
+        if sc is None:                # new fn since last `build` -> best-effort
+            sc = bucket_for_source(sp)
+            if sc is None:            # catch-all named fn -> try class-by-name
+                sc = classify_name(name, engine_cls, game_cls, vendor_cls)[0]
+            sc = sc or "unknown"
+        if sc in IN_SCOPE:
+            in_b += size; in_f += 1
+            if matched:
+                in_mb += size; in_mf += 1
+        elif sc in OUT_OF_SCOPE:
+            out_b += size; out_f += 1
+        else:
+            unk_b += size; unk_f += 1
+    tot_b = in_b + unk_b + out_b
+    pess_den_b = in_b + unk_b         # unknown counted against us
+    pess_den_f = in_f + unk_f
+    return {
+        "matched_b": in_mb, "matched_f": in_mf,
+        "in_b": in_b, "in_f": in_f,
+        "unk_b": unk_b, "unk_f": unk_f,
+        "out_b": out_b, "out_f": out_f,
+        "tot_b": tot_b,
+        "opt_pct_b": 100.0 * in_mb / in_b if in_b else 0.0,
+        "pess_pct_b": 100.0 * in_mb / pess_den_b if pess_den_b else 0.0,
+        "opt_pct_f": 100.0 * in_mf / in_f if in_f else 0.0,
+        "pess_pct_f": 100.0 * in_mf / pess_den_f if pess_den_f else 0.0,
+        "unk_band_pct": 100.0 * unk_b / tot_b if tot_b else 0.0,
+        "out_pct": 100.0 * out_b / tot_b if tot_b else 0.0,
+    }
+
+
+def print_ceiling(s, compact=False):
+    def mb(x):
+        return "%.2f MB" % (x / 1048576.0)
+    if compact:
+        print("Achievable ceiling: %s matched -> [%.2f%%, %.2f%%] of matchable "
+              "(band = %.1f%% unknown / %s unresolved; vendor-no-source >= %.2f%%)" %
+              (mb(s["matched_b"]), s["pess_pct_b"], s["opt_pct_b"],
+               s["unk_band_pct"], mb(s["unk_b"]), s["out_pct"]))
+        return
+    print()
+    print("=== ACHIEVABLE CEILING (matched / matchable) ===")
+    print("matched (numerator):        %d bytes / %d fns" % (s["matched_b"], s["matched_f"]))
+    print("in-scope-identified denom:  %d bytes / %d fns" % (s["in_b"], s["in_f"]))
+    print("unknown band (unresolved):  %d bytes / %d fns  (%.1f%% of binary)" %
+          (s["unk_b"], s["unk_f"], s["unk_band_pct"]))
+    print("vendor/no-source (OUT, xdk):%d bytes  (%.2f%% of binary; >= this -- unknown hides more)" %
+          (s["out_b"], s["out_pct"]))
+    print()
+    print("  achievable% is BOUNDED by the unresolved unknown band:")
+    print("    optimistic  (unknown all vendor):  %7.3f%% bytes | %7.3f%% fns" %
+          (s["opt_pct_b"], s["opt_pct_f"]))
+    print("    pessimistic (unknown all ours):    %7.3f%% bytes | %7.3f%% fns" %
+          (s["pess_pct_b"], s["pess_pct_f"]))
+    print("    => TRUE achievable%% in [%.2f%%, %.2f%%] bytes; the band width = the unknown bucket." %
+          (s["pess_pct_b"], s["opt_pct_b"]))
+    print("    The identification campaign collapses this band (sort unknown -> matchable vs vendor).")
+
+
+def _ceiling_stats_live():
+    """Fresh ceiling stats: live report.json overlaid on cached classification."""
+    funcs, _ = load_functions(REPORT)
+    try:
+        sm = _load_scope_map()
+        scope_by_addr = {a: e["scope"] for a, e in sm.items()}
+    except (FileNotFoundError, json.JSONDecodeError):
+        scope_by_addr = {}      # no cache yet -> everything best-effort/unknown
+    return compute_ceiling(scope_by_addr, funcs)
+
+
+def cmd_ceiling(args):
+    print_ceiling(_ceiling_stats_live(), compact=args.compact)
 
 
 # ---------------------------------------------------------------------------
@@ -602,13 +994,15 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("build", help="classify all fns, write scope_map.json")
     sub.add_parser("report", help="per-bucket breakdown + in-scope denominator")
+    ce = sub.add_parser("ceiling", help="bounded achievable %% (live matched, cached classification)")
+    ce.add_argument("--compact", action="store_true", help="one-line form (for the build PROGRESS step)")
     w = sub.add_parser("worklist", help="size-ranked unmatched in-scope clusters")
     w.add_argument("--limit", type=int, default=50)
     w.add_argument("--bucket", choices=BUCKET_ORDER, help="filter to one bucket")
     c = sub.add_parser("classify", help="classify a single addr")
     c.add_argument("addr")
     args = ap.parse_args()
-    {"build": cmd_build, "report": cmd_report,
+    {"build": cmd_build, "report": cmd_report, "ceiling": cmd_ceiling,
      "worklist": cmd_worklist, "classify": cmd_classify}[args.cmd](args)
 
 

@@ -479,5 +479,20 @@ if args.mode == "configure":
 elif args.mode == "progress":
     # Print progress and write progress.json
     calculate_progress(config)
+    # Also print the honest "achievable ceiling" band (matched / matchable),
+    # not just the misleading matched / whole-binary number -- the binary is
+    # ~54% unattributed + ~0.6%+ vendor-no-source, so "% of binary" can never
+    # reach 100. See tools/scope_map.py. Failure here must never break a build.
+    try:
+        import subprocess
+
+        sys.stdout.flush()  # flush calculate_progress output before the subprocess
+        subprocess.run(
+            [sys.executable, "tools/scope_map.py", "ceiling", "--compact"],
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+            check=False,
+        )
+    except Exception as e:
+        print(f"(scope_map ceiling skipped: {e})")
 else:
     sys.exit("Unknown mode: " + args.mode)
