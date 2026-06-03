@@ -61,6 +61,8 @@ core.*
 /unified_id_vtable.json
 /unified_id_rb3wii.json
 /proposed_splits_bindiff.txt
+# dc3_content_match.py output (regenerable: dtk xex split DC3 + content hash)
+/dc3_content_match.json
 /proposed_splits_bindiff.spotcheck.csv
 # pin_candidates.py generated wave (regenerable from the oracle JSONs above)
 /pin_candidates.json
