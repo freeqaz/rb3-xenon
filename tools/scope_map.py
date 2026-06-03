@@ -348,7 +348,15 @@ def load_splits_text_bases(splits_path):
 # ---------------------------------------------------------------------------
 # load report.json -> list of (addr, size, matched, source_path, unit)
 # ---------------------------------------------------------------------------
-def load_functions(report_path):
+def load_functions(report_path, dedup=True):
+    """Return [(addr, size, matched, source_path, unit, name)], rep.
+
+    dedup=True (for `build`, where the output scope_map.json is addr-keyed and
+    must be unique) collapses same-addr records (ICF folds / catch-all named-fn
+    anchoring). dedup=False (for PROGRESS accounting) keeps EVERY report fn so the
+    totals reconcile EXACTLY with report.json's official measures: summing all fn
+    sizes == total_code, and the count == total_functions. Dedup drops ~28 fns /
+    ~4 KB, so progress must NOT dedup."""
     with open(report_path) as f:
         rep = json.load(f)
     split_bases = load_splits_text_bases(SPLITS)
@@ -383,7 +391,8 @@ def load_functions(report_path):
                 addr = int(m.group(1), 16) if m else base + int(fn.get("address", "0"))
                 size = int(fn.get("size", "0"))
                 matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
-                funcs.append((addr, size, matched, sp, unit, fn["name"]))
+                mraw = float(fn.get("fuzzy_match_percent", 0.0)) >= 100.0
+                funcs.append((addr, size, matched, sp, unit, fn["name"], mraw))
             continue
 
         # -- CATCH-ALL / auto UNITS (no source_path) --
@@ -401,6 +410,7 @@ def load_functions(report_path):
             m = FN_ADDR_RE.match(fn["name"])
             size = int(fn.get("size", "0"))
             matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
+            mraw = float(fn.get("fuzzy_match_percent", 0.0)) >= 100.0
             if m:
                 addr = int(m.group(1), 16)
                 last_anchor = addr
@@ -414,7 +424,9 @@ def load_functions(report_path):
                 # small odd delta keeps these distinct from the anchor + each
                 # other without crossing into the next real fn (sizes are >=8).
                 addr = last_anchor + named_off  # 1..N within the anchor's slot
-            funcs.append((addr, size, matched, sp, unit, fn["name"]))
+            funcs.append((addr, size, matched, sp, unit, fn["name"], mraw))
+    if not dedup:
+        return funcs, rep
     # de-dup on addr (ICF folds / catch-all named-fn anchoring can land two
     # records on one addr). Precedence, best first:
     #   (1) pinned source_path beats catch-all   (we compile it; ground truth)
@@ -422,12 +434,12 @@ def load_functions(report_path):
     #   (3) larger size
     # Tuple ordering on (has_sp, matched, size) does exactly this.
     by_addr = {}
-    for addr, size, matched, sp, unit, name in funcs:
+    for addr, size, matched, sp, unit, name, mraw in funcs:
         rank = (1 if sp else 0, 1 if matched else 0, size)
         cur = by_addr.get(addr)
         if cur is None or rank > cur[0]:
-            by_addr[addr] = (rank, size, matched, sp, unit, name)
-    out = [(addr, r[1], r[2], r[3], r[4], r[5]) for addr, r in by_addr.items()]
+            by_addr[addr] = (rank, size, matched, sp, unit, name, mraw)
+    out = [(addr, r[1], r[2], r[3], r[4], r[5], r[6]) for addr, r in by_addr.items()]
     out.sort()
     return out, rep
 
@@ -547,7 +559,7 @@ def cmd_build(args):
     prov = [None] * n           # provenance string
     conf = [0.0] * n            # confidence float
 
-    for i, (addr, size, matched, sp, unit, name) in enumerate(funcs):
+    for i, (addr, size, matched, sp, unit, name, mraw) in enumerate(funcs):
         # Layer 1: XDK exact addr / BINK range -> OUT-OF-SCOPE.
         if addr in xdk_addrs or (bink_range and bink_range[0] <= addr < bink_range[1]):
             scope[i] = "xdk"
@@ -700,7 +712,7 @@ def cmd_build(args):
 
     # ---- emit ----
     out = {}
-    for i, (addr, size, matched, sp, unit, name) in enumerate(funcs):
+    for i, (addr, size, matched, sp, unit, name, mraw) in enumerate(funcs):
         out["%08X" % addr] = {
             "size": size,
             "scope": scope[i],
@@ -747,10 +759,13 @@ def _print_report(sm):
         fns, byt, mf, mb = by[b]
         print("%-12s %8d %12d %8d %12d  %-9s" % (b, fns, byt, mf, mb, tier(b)))
     print("-" * 64)
-    print("%-12s %8d %12d %8d %12d" %
+    print("%-12s %8d %12d %8d %12d  %s" %
           ("TOTAL", total_fns, total_bytes, sum(v[2] for v in by.values()),
-           sum(v[3] for v in by.values())))
-    print_progress(by)
+           sum(v[3] for v in by.values()), "(cached snapshot; dedup'd)"))
+    # The progress block below is AUTHORITATIVE: official measures for the headline
+    # + a no-dedup live classification for per-tier (sums to total_code exactly).
+    by_live, measures = _progress_by_live()
+    print_progress(by_live, measures)
 
 
 def cmd_report(args):
@@ -780,14 +795,20 @@ LABELS = {
 
 
 def _by_live(scope_by_addr, funcs):
-    """Build the per-bucket aggregate [fns, bytes, m_fns, m_bytes] with FRESH
-    matched-status + sizes (live report.json) over CACHED classification, so it's
-    always current without rewriting the 8 MB scope_map.json every build."""
+    """Per-bucket aggregate [fns, bytes, m_fns, m_bytes] over EVERY report fn
+    (funcs must be dedup=False), classified by the cached map (real addr) with a
+    name/source fallback for catch-all fns the build's dedup dropped. Because no
+    fn is dropped, sum(bytes) == report total_code and sum(fns) == total_functions
+    EXACTLY -- the per-tier denominators are honest TRUE tier sizes."""
+    # per bucket: [fns, bytes, m_fns(normalized), m_bytes(raw byte-perfect)]
+    # m_fns uses normalized (sums to measures.matched_functions); m_bytes uses the
+    # raw fuzzy_match_percent==100 predicate (sums to measures.matched_code) -- the
+    # two predicates objdiff itself uses, so each axis reconciles with ninja's All.
     by = defaultdict(lambda: [0, 0, 0, 0])
     engine_cls, game_cls, vendor_cls = load_name_class(WN_DATA)
-    for addr, size, matched, sp, unit, name in funcs:
+    for addr, size, matched, sp, unit, name, mraw in funcs:
         sc = scope_by_addr.get("%08X" % addr)
-        if sc is None:                # new fn since last `build` -> best-effort
+        if sc is None:                # not in cache (dropped by build dedup / new)
             sc = bucket_for_source(sp)
             if sc is None:            # catch-all named fn -> try class-by-name
                 sc = classify_name(name, engine_cls, game_cls, vendor_cls)[0]
@@ -796,51 +817,63 @@ def _by_live(scope_by_addr, funcs):
         by[sc][1] += size
         if matched:
             by[sc][2] += 1
+        if mraw:
             by[sc][3] += size
     for b in BUCKET_ORDER:            # ensure every bucket key exists
         by[b]
     return by
 
 
-def print_progress(by, compact=False):
+def print_progress(by, measures, compact=False):
+    """All numbers reconcile EXACTLY with ninja's "All" line. The headline reads
+    report.json's official `measures`. The per-tier `by` uses objdiff's OWN two
+    predicates so each axis sums to its official total:
+      * matched BYTES  via raw fuzzy_match_percent==100 (byte-perfect)  -> measures.matched_code
+      * matched FNS    via match_percent_normalized==100 (reloc-tolerant) -> measures.matched_functions
+    Denominator per tier = the TRUE tier size from the map (sums to total_code)."""
     def mb(x):
         return x / 1048576.0
 
     def pct(n, d):
         return 100.0 * n / d if d else 0.0
 
-    tot_b = sum(v[1] for v in by.values())
-    tot_f = sum(v[0] for v in by.values())
-    m_b = sum(v[3] for v in by.values())
-    m_f = sum(v[2] for v in by.values())
+    def mi(k):
+        v = measures.get(k, 0)
+        return int(v) if isinstance(v, str) else v
+
+    off_mc, off_tc = mi("matched_code"), mi("total_code")
+    off_mf, off_tf = mi("matched_functions"), mi("total_functions")
+
+    tot_b = sum(v[1] for v in by.values())           # == off_tc (no-dedup)
     orac_b = sum(by[b][1] for b in ORACLE_BACKED)
-    orac_mb = sum(by[b][3] for b in ORACLE_BACKED)
+    orac_mb = sum(by[b][3] for b in ORACLE_BACKED)   # raw matched bytes
     noora_b = sum(by[b][1] for b in NO_ORACLE)
     unk_b = by["unknown"][1]
-    mapped_b = tot_b - unk_b
+    mapped_b = (tot_b - unk_b)
 
     if compact:
-        print("Decomp: %.2f%% of binary matched (%.2f/%.2f MB), %.0f%% mapped"
-              " | priority(oracle %.2f MB): %.2f%% | no-oracle %.2f MB"
-              " (lower-prio, matchable)" %
-              (pct(m_b, tot_b), mb(m_b), mb(tot_b), pct(mapped_b, tot_b),
+        print("Decomp: %.2f%% of binary matched (%d/%d B; %d/%d fns), %.0f%% mapped"
+              " | oracle-backed %.2f MB: %.2f%% | no-oracle %.2f MB (lower-prio, matchable)" %
+              (pct(off_mc, off_tc), off_mc, off_tc, off_mf, off_tf, pct(mapped_b, tot_b),
                mb(orac_b), pct(orac_mb, orac_b), mb(noora_b)))
         return
 
     print()
     print("=== DECOMP PROGRESS (goal: 100% of the WHOLE binary -- all of it is matchable) ===")
-    print("matched toward 100%%:  %6.2f%%   (%.2f / %.2f MB | %d / %d fns)" %
-          (pct(m_b, tot_b), mb(m_b), mb(tot_b), m_f, tot_f))
+    print("matched toward 100%%:  %6.2f%% bytes (%d / %d) | %6.2f%% fns (%d / %d)   [official; == ninja All]" %
+          (pct(off_mc, off_tc), off_mc, off_tc, pct(off_mf, off_tf), off_mf, off_tf))
     print("mapped (attributed):  %6.2f%%   (unmapped %.2f%% / %.2f MB = mapping TODO, not yet a target)" %
           (pct(mapped_b, tot_b), pct(unk_b, tot_b), mb(unk_b)))
     print()
-    print("by tier (matched% / tier size):")
+    print("by tier (denom = TRUE tier size from the map):")
+    print("  %-11s %8s %8s   %9s  %s" % ("tier", "match%", "size", "m_fns/fns", "note"))
     for b in BUCKET_ORDER:
-        fns, byt, mf, mbb = by[b]
+        fns, byt, mf, mbr = by[b]
         if b == "unknown":
-            print("  %-11s %7s   %6.2f MB   %s" % (b, "-", mb(byt), LABELS[b]))
+            print("  %-11s %8s %6.2f MB   %9s  %s" % (b, "-", mb(byt), "-", LABELS[b]))
         else:
-            print("  %-11s %6.2f%%   %6.2f MB   %s" % (b, pct(mbb, byt), mb(byt), LABELS[b]))
+            print("  %-11s %7.2f%% %6.2f MB   %4d/%-4d  %s" %
+                  (b, pct(mbr, byt), mb(byt), mf, fns, LABELS[b]))
     print()
     print("near-term priority target (oracle-backed %.2f MB): %.2f%% matched." %
           (mb(orac_b), pct(orac_mb, orac_b)))
@@ -849,18 +882,20 @@ def print_progress(by, compact=False):
 
 
 def _progress_by_live():
-    """Fresh per-bucket aggregate: live report.json over cached classification."""
-    funcs, _ = load_functions(REPORT)
+    """Fresh per-bucket aggregate (every fn, no dedup) over the cached map, plus
+    report.json's official `measures` for the authoritative headline."""
+    funcs, rep = load_functions(REPORT, dedup=False)
     try:
         sm = _load_scope_map()
         scope_by_addr = {a: e["scope"] for a, e in sm.items()}
     except (FileNotFoundError, json.JSONDecodeError):
         scope_by_addr = {}      # no cache yet -> everything best-effort/unknown
-    return _by_live(scope_by_addr, funcs)
+    return _by_live(scope_by_addr, funcs), rep.get("measures", {})
 
 
 def cmd_priority(args):
-    print_progress(_progress_by_live(), compact=args.compact)
+    by, measures = _progress_by_live()
+    print_progress(by, measures, compact=args.compact)
 
 
 # ---------------------------------------------------------------------------

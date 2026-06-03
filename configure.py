@@ -469,8 +469,14 @@ for (lib, lib_config) in objects.items():
 
 config.libs = libs
 
-# Progress tracking categories
+# Progress tracking categories. We still COMPUTE them (report.json categories are
+# consumed by other tooling) but do NOT print the dtk per-category lines: their
+# denominators are the *declared/pinned* units only (e.g. "Milo Engine 21%" is
+# matched / 0.93 MB declared, not / the true 3.4 MB engine tier), which misreads as
+# tier coverage. The authoritative per-tier view comes from the full-binary MAP via
+# tools/scope_map.py (printed below in the progress step). dtk's "All" line stays.
 config.progress_categories = [ProgressCategory(name, desc) for (name, desc) in progress_categories.items()]
+config.print_progress_categories = False
 config.progress_each_module = args.verbose
 
 if args.mode == "configure":
@@ -489,7 +495,7 @@ elif args.mode == "progress":
 
         sys.stdout.flush()  # flush calculate_progress output before the subprocess
         subprocess.run(
-            [sys.executable, "tools/scope_map.py", "priority", "--compact"],
+            [sys.executable, "tools/scope_map.py", "priority"],
             cwd=os.path.dirname(os.path.abspath(__file__)),
             check=False,
         )
