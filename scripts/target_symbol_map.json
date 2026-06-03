@@ -11521,5 +11521,17 @@
  "0x824655A8": "??_GRndGroup@@UAAPAXI@Z",
  "0x82478E30": "??_GMeterDisplay@@UAAPAXI@Z",
  "0x8264E210": "?IsSymbolEntryFulfilled@AccomplishmentTrainerConditional@@UBA_NPAVBandProfile@@VSymbol@@@Z",
- "0x826B0628": "?_M_erase@?$vector@VRangeShift@GemTrack@@V?$StlNodeAlloc@VRangeShift@GemTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRangeShift@GemTrack@@PAV34@0ABU__false_type@2@@Z"
+ "0x826B0628": "?_M_erase@?$vector@VRangeShift@GemTrack@@V?$StlNodeAlloc@VRangeShift@GemTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRangeShift@GemTrack@@PAV34@0ABU__false_type@2@@Z",
+ "0x82679080": "?AddHarmony@Stats@@QAAXH@Z",
+ "0x82679288": "??0MultiplierInfo@Stats@@QAA@XZ",
+ "0x826792B8": "??0SectionInfo@Stats@@QAA@XZ",
+ "0x82679550": "?SetPersistentStreak@Stats@@QAAXH@Z",
+ "0x826D8D38": "?SetOctaveOffset@Singer@@QAAXH@Z",
+ "0x8274BB38": "?GetVocalNoteList@SongDB@@QBAPAVVocalNoteList@@H@Z",
+ "0x8274E800": "?GetVocalNoteListCount@SongDB@@QBAHXZ",
+ "0x82B61EA0": "?ResetFills@GemTrack@@QAAX_N@Z",
+ "0x82B63200": "?See@GemTrack@@QAAXMH@Z",
+ "0x8227E560": "??1PropertyFilter@CameraManager@@QAA@XZ",
+ "0x82400220": "?OnClearColorR@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82400238": "?OnClearColorG@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z"
 }

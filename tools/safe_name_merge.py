@@ -84,6 +84,46 @@ def is_icf(name):
     return any(s in name for s in ICF_SUBSTR)
 
 
+# NON-REAL / build-environment symbols — these are NOT functions with a stable
+# cross-compile identity. They carry a per-TU sequence counter (MSVC EH/unwind
+# funclets, `__unwind$NNNNNN`, `__catch$`, `__sep$`, `__ehhandler$`, GS cookie
+# handlers, safeseh thunks) or an address-derived placeholder
+# (`fn_8XXXXXXX`, `lbl_8XXXXXXX`, `jumptable_8XXXXXXX`). objdiff already pairs
+# unwind funclets in pinned units BY ADDRESS as `fn_<addr>` and they match 100%
+# for free. Naming a target funclet with DC3's `__unwind$<DC3-number>` forces a
+# NAME pairing against our base obj's `__unwind$<RB3-number>` (a different per-TU
+# counter) -> the name matches nothing -> the funclet UN-PAIRS and drops from
+# 100. This is the recurring BandDirector -16 (and CharIKFoot/Rnd/ContextChecker)
+# regression: a span dense in EH funclets gets each one named with a DC3 counter
+# and loses every address-paired funclet. PROVEN 2026-06-03: applying the 22
+# `__unwind$` names in safe.json drops BandDirector 154->141. The fix is to NEVER
+# emit a name whose IDENTITY is build-environment-specific.
+NON_REAL_PREFIXES = (
+    "__unwind$",     # EH unwind funclet, per-TU sequence counter
+    "__catch$",      # EH catch funclet
+    "__ehhandler$",  # EH handler thunk
+    "__sep$",        # separated/cold code chunk
+    "__GSHandler",   # /GS cookie check handler
+    "__safe_se",     # SafeSEH handler thunk
+    "__tls",         # TLS init/guard helper
+    "fn_",           # dtk address placeholder (no real identity)
+    "lbl_",          # dtk address-label placeholder
+    "jumptable_",    # dtk jump-table data placeholder
+    "$LN",           # MSVC local code label leaked as a symbol
+    "__real@",       # FP literal pool symbol (build-env addr, not a fn)
+    "__xmm@",        # SIMD literal pool symbol
+)
+
+
+def is_non_real_symbol(name):
+    """True for compiler/linker-generated pseudo-symbols whose name has NO
+    stable cross-compile identity (per-TU sequence counters or address-derived
+    placeholders). Naming a target obj symbol with one of these forces objdiff
+    into a name-pairing it cannot satisfy, UN-PAIRING funclets it already matched
+    by address. These must never be emitted by the gate."""
+    return name.startswith(NON_REAL_PREFIXES)
+
+
 # ---------------------------------------------------------------------------
 # splits / symbols parsing (reused shape from relocate_engine_splits.py)
 # ---------------------------------------------------------------------------
@@ -341,6 +381,12 @@ def gate(cands, tsm, splits, band_x, ham_classes, exact_canonical):
         if addr.lower() in tsm_addrs:
             reasons["addr_exists"] += 1
             continue
+        # Reject build-environment pseudo-symbols (EH funclets / address
+        # placeholders) BEFORE any normalization: their identity is per-TU and
+        # un-pairs objdiff's address-matched funclets. See is_non_real_symbol.
+        if is_non_real_symbol(c["name"]):
+            reasons["non_real_symbol"] += 1
+            continue
         norm_name, status = normalize_ham_band(c["name"], band_x, ham_classes)
         if status == "phantom":
             reasons["ham_band_phantom"] += 1
@@ -497,8 +543,9 @@ def main():
     print(f"[gate] candidates in : {len(cands)}", file=sys.stderr)
     print(f"[gate] safe out      : {len(safe)}", file=sys.stderr)
     print(f"[gate] rejected      : {len(cands) - len(safe)}", file=sys.stderr)
-    order = ["addr_exists", "name_collision_tsm", "batch_dup_nonicf",
-             "icf_folded_twin", "icf_indeterminate", "ham_band_phantom"]
+    order = ["addr_exists", "non_real_symbol", "name_collision_tsm",
+             "batch_dup_nonicf", "icf_folded_twin", "icf_indeterminate",
+             "ham_band_phantom"]
     for r in order:
         if reasons.get(r):
             print(f"         {r:22s}: {reasons[r]}", file=sys.stderr)
