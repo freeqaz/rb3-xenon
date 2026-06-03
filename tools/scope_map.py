@@ -2,24 +2,27 @@
 """scope_map.py -- classify every function in the RB3-360 XEX into a decomp scope
 bucket and compute a *meaningful* progress denominator.
 
-The honest objdiff baseline (matched_code / total_code over the WHOLE 11.53 MB
-.text) buries real progress under code we will never write from source: the XDK
-import thunks and statically-linked BINK video middleware. This tool partitions
-every function into one of six buckets so progress can be reported against the
-*in-scope* denominator (game + engine + thirdparty + crt) instead.
+The GOAL is 100% of the WHOLE 11.53 MB binary. EVERYTHING in it is matchable:
+DC3 and rb3-Wii both started from ZERO source and matched functions by
+reconstructing C++ from the asm. A "source twin" (DC3 engine / rb3-Wii game /
+public 3rd-party) is an ACCELERANT, not a prerequisite -- its absence makes a
+function harder and lower-priority, never impossible. So the buckets below are
+PRIORITY + difficulty tiers, NOT in/out of scope. This tool partitions every
+function into a tier so we can (a) report honest progress toward 100% and
+(b) sequence effort by ROI (oracle-backed first).
 
-Buckets
+Buckets (tier = priority + whether a source-oracle exists)
 -------
-  game        src/band3/, src/network/         IN-SCOPE   (HIGHEST priority)
-  engine      src/system/ (Milo engine)        IN-SCOPE
-  thirdparty  zlib/ogg/vorbis/tomcrypt/curl/   IN-SCOPE   (mechanical)
+  game        src/band3/, src/network/         oracle: rb3-Wii  · HIGHEST priority
+  engine      src/system/ (Milo engine)        oracle: DC3 (byte-faithful, cheapest)
+  thirdparty  zlib/ogg/vorbis/tomcrypt/curl/   oracle: public source · mechanical
               json-c/expat/speex/STLport
-  crt         src/xdk/LIBCMT/ (CRT we compile)  IN-SCOPE
-  xdk         XEX-imported XDK glue + BINK       OUT-OF-SCOPE
-  vendor      statically-linked no-source MS     OUT-OF-SCOPE
-              D3DX/D3D9/XGRAPHICS/XAUDIO/XMA,
+  crt         src/xdk/LIBCMT/ (CRT we compile)  oracle: we compile it
+  xdk         XEX-imported XDK glue + BINK       NO oracle · lower prio (reconstruct)
+  vendor      statically-linked MS              NO oracle · lower prio (reconstruct)
+              D3DX/D3D9/XGRAPHICS/XAUDIO/XMA,    -- still matchable + worth SPLITTING
               RAD BINK, Quazal/Rendez-vous net
-  unknown     residual (classification TODO)    reported separately
+  unknown     residual (mapping TODO)           not yet attributed to a TU
 
 Classification is layered, highest-confidence first:
   1. xdk        -- exact addr in xdk.json (import thunks + BINK)            [conf=1.0]
@@ -57,8 +60,13 @@ WN_DATA = os.environ.get("WN_DATA", os.path.join(ROOT, "tools", "scope_data"))
 FN_ADDR_RE = re.compile(r"fn_([0-9A-Fa-f]{8})")
 AUTO_ADDR_RE = re.compile(r"auto_\d+_([0-9A-Fa-f]{8})_")
 
-IN_SCOPE = {"game", "engine", "thirdparty", "crt"}
-OUT_OF_SCOPE = {"xdk", "vendor"}
+# Tiers, NOT in/out of scope. Everything is matchable; this only sequences ROI.
+#   ORACLE_BACKED  a source twin exists -> CHEAP -> near-term priority
+#   NO_ORACLE      no source twin -> HARDER (reconstruct from asm), LOWER priority,
+#                  but still matchable AND worth splitting
+#   (unknown is neither: it's just not-yet-mapped)
+ORACLE_BACKED = {"game", "engine", "thirdparty", "crt"}
+NO_ORACLE = {"xdk", "vendor"}
 
 # --- bucket ordering for stable reporting ---
 BUCKET_ORDER = ["game", "engine", "thirdparty", "crt", "xdk", "vendor", "unknown"]
@@ -145,7 +153,7 @@ def bucket_for_uid_src(src):
     if "/xdk/nuiapi/" in low:
         return "xdk"             # NUI api glue we actually ship (OUT, but not vendor)
     if "/xdk/" in low:
-        return "vendor"          # any other XDK TU is a no-source MS lib
+        return "vendor"          # any other XDK TU is a no-oracle MS lib (no source twin)
     if "/lazer/" in low:
         return "game"            # DC3's game/meta layer == RB3 game-layer twin
     if low.startswith("/band3/") or low.startswith("/network/"):
@@ -727,64 +735,22 @@ def _print_report(sm):
             by[b][3] += e["size"]
     total_bytes = sum(v[1] for v in by.values())
     total_fns = sum(v[0] for v in by.values())
-    in_bytes = sum(by[b][1] for b in IN_SCOPE)
-    in_fns = sum(by[b][0] for b in IN_SCOPE)
-    in_matched_bytes = sum(by[b][3] for b in IN_SCOPE)
-    in_matched_fns = sum(by[b][2] for b in IN_SCOPE)
-    out_bytes = sum(by[b][1] for b in OUT_OF_SCOPE)
-    unk_bytes = by["unknown"][1]
-    unk_fns = by["unknown"][0]
+    def tier(b):
+        return ("oracle" if b in ORACLE_BACKED
+                else "no-oracle" if b in NO_ORACLE else "todo")
 
     print()
-    print("=== SCOPE BREAKDOWN (per bucket) ===")
-    print("%-12s %8s %12s %8s %12s  %6s" %
-          ("bucket", "fns", "bytes", "m_fns", "m_bytes", "in?"))
+    print("=== BUCKET BREAKDOWN (tier = priority + oracle, NOT in/out) ===")
+    print("%-12s %8s %12s %8s %12s  %-9s" %
+          ("bucket", "fns", "bytes", "m_fns", "m_bytes", "tier"))
     for b in BUCKET_ORDER:
         fns, byt, mf, mb = by[b]
-        flag = "IN" if b in IN_SCOPE else ("OUT" if b in OUT_OF_SCOPE else "n/a")
-        print("%-12s %8d %12d %8d %12d  %6s" % (b, fns, byt, mf, mb, flag))
+        print("%-12s %8d %12d %8d %12d  %-9s" % (b, fns, byt, mf, mb, tier(b)))
     print("-" * 64)
     print("%-12s %8d %12d %8d %12d" %
           ("TOTAL", total_fns, total_bytes, sum(v[2] for v in by.values()),
            sum(v[3] for v in by.values())))
-    print()
-    print("=== MEANINGFUL DENOMINATOR ===")
-    print("in-scope (game+engine+thirdparty+crt):")
-    print("  bytes: %d / %d total = %.2f%% of binary" %
-          (in_bytes, total_bytes, 100.0 * in_bytes / total_bytes))
-    print("  fns:   %d / %d total = %.2f%% of binary" %
-          (in_fns, total_fns, 100.0 * in_fns / total_fns))
-    print("  MATCHED-IN-SCOPE: %d/%d bytes = %.3f%%   |  %d/%d fns = %.3f%%" %
-          (in_matched_bytes, in_bytes, 100.0 * in_matched_bytes / in_bytes,
-           in_matched_fns, in_fns, 100.0 * in_matched_fns / in_fns))
-    print("out-of-scope (xdk): %d bytes (%.2f%% of binary) -- excluded" %
-          (out_bytes, 100.0 * out_bytes / total_bytes))
-    print("unknown (classification TODO): %d bytes (%.2f%%) / %d fns (%.2f%%)" %
-          (unk_bytes, 100.0 * unk_bytes / total_bytes,
-           unk_fns, 100.0 * unk_fns / total_fns))
-    print()
-    print("vs honest objdiff metric: matched_code/total_code over WHOLE binary")
-    tm = sum(v[3] for v in by.values())
-    print("  whole-binary matched bytes: %d / %d = %.3f%%" %
-          (tm, total_bytes, 100.0 * tm / total_bytes))
-
-    # bounded achievable ceiling (from the cached-file aggregates above)
-    in_matched_fns_l = sum(by[b][2] for b in IN_SCOPE)
-    pess_b = in_bytes + unk_bytes
-    pess_f = in_fns + unk_fns
-    print_ceiling({
-        "matched_b": in_matched_bytes, "matched_f": in_matched_fns_l,
-        "in_b": in_bytes, "in_f": in_fns,
-        "unk_b": unk_bytes, "unk_f": unk_fns,
-        "out_b": out_bytes, "out_f": by["xdk"][0],
-        "tot_b": total_bytes,
-        "opt_pct_b": 100.0 * in_matched_bytes / in_bytes if in_bytes else 0.0,
-        "pess_pct_b": 100.0 * in_matched_bytes / pess_b if pess_b else 0.0,
-        "opt_pct_f": 100.0 * in_matched_fns_l / in_fns if in_fns else 0.0,
-        "pess_pct_f": 100.0 * in_matched_fns_l / pess_f if pess_f else 0.0,
-        "unk_band_pct": 100.0 * unk_bytes / total_bytes if total_bytes else 0.0,
-        "out_pct": 100.0 * out_bytes / total_bytes if total_bytes else 0.0,
-    })
+    print_progress(by)
 
 
 def cmd_report(args):
@@ -792,36 +758,32 @@ def cmd_report(args):
 
 
 # ---------------------------------------------------------------------------
-# ceiling -- the bounded "achievable %" (matched / matchable)
+# progress -- honest progress toward 100% of the WHOLE binary, by priority tier
 # ---------------------------------------------------------------------------
-# The honest objdiff % (matched / whole-binary) can NEVER reach 100: the binary
-# contains vendor code with no source we can compile (XDK import thunks + the
-# statically-linked Microsoft D3DX/XAudio/XGRAPHICS libraries, RAD's BINK video,
-# and the Quazal/Rendez-vous network stack). So "% of binary" is the wrong goal.
-#
-# The RIGHT goal is "% of the code we can actually write from source" -- but we
-# don't yet know that denominator exactly, because 54% of the binary sits in the
-# UNKNOWN bucket (unattributed). Part of unknown is matchable engine/game/3rd-party
-# we just haven't identified; part is more vendor-no-source we haven't separated
-# out. Until the identification campaign resolves it, the true achievable % is a
-# RANGE, and the WIDTH of that range IS the unknown bucket:
-#
-#   optimistic  (assume ALL unknown turns out to be vendor/no-source):
-#       achievable% = matched / in-scope                  <- smallest denom, HIGHEST %
-#   pessimistic (assume ALL unknown turns out to be ours):
-#       achievable% = matched / (in-scope + unknown)      <- largest denom, LOWEST %
-#
-# The campaign collapses this band by sorting `unknown` into matchable vs vendor.
-# This is the metric to watch: not the absolute number, but the band narrowing.
-def compute_ceiling(scope_by_addr, funcs):
-    """Overlay FRESH matched-status + sizes (from the live report.json `funcs`)
-    onto the CACHED classification (`scope_by_addr`: HEXADDR -> scope). Keeping
-    the numerator live means the ceiling is always current without rewriting the
-    8 MB scope_map.json every build; the (slow-changing) classification is read
-    from cache. Returns a stats dict for print_ceiling()."""
-    in_b = in_f = in_mb = in_mf = 0   # in-scope bytes/fns + matched
-    unk_b = unk_f = 0                 # unknown (the band)
-    out_b = out_f = 0                 # confidently no-source (xdk + vendor)
+# The goal is 100% of the whole binary; ALL of it is matchable (DC3/RB3 started
+# from zero source). So there is no "ceiling" -- only sequencing. We report:
+#   * matched / whole-binary           the true progress toward 100%
+#   * mapped %                         how much is attributed to a TU yet (the
+#                                      mapping axis -- prerequisite to matching)
+#   * matched% per priority tier       so effort goes oracle-backed-first (cheap)
+#   * a near-term focus number         matched / oracle-backed -- explicitly NOT
+#                                      a ceiling, just the cheapest slice to do now
+LABELS = {
+    "game": "HIGH prio  · rb3-Wii oracle",
+    "engine": "DC3 oracle (byte-faithful, cheapest)",
+    "thirdparty": "public source (mechanical)",
+    "crt": "we compile LIBCMT",
+    "xdk": "no oracle · lower prio · matchable + worth splitting",
+    "vendor": "no oracle · lower prio · matchable + worth splitting",
+    "unknown": "not yet attributed (mapping TODO)",
+}
+
+
+def _by_live(scope_by_addr, funcs):
+    """Build the per-bucket aggregate [fns, bytes, m_fns, m_bytes] with FRESH
+    matched-status + sizes (live report.json) over CACHED classification, so it's
+    always current without rewriting the 8 MB scope_map.json every build."""
+    by = defaultdict(lambda: [0, 0, 0, 0])
     engine_cls, game_cls, vendor_cls = load_name_class(WN_DATA)
     for addr, size, matched, sp, unit, name in funcs:
         sc = scope_by_addr.get("%08X" % addr)
@@ -830,73 +792,75 @@ def compute_ceiling(scope_by_addr, funcs):
             if sc is None:            # catch-all named fn -> try class-by-name
                 sc = classify_name(name, engine_cls, game_cls, vendor_cls)[0]
             sc = sc or "unknown"
-        if sc in IN_SCOPE:
-            in_b += size; in_f += 1
-            if matched:
-                in_mb += size; in_mf += 1
-        elif sc in OUT_OF_SCOPE:
-            out_b += size; out_f += 1
-        else:
-            unk_b += size; unk_f += 1
-    tot_b = in_b + unk_b + out_b
-    pess_den_b = in_b + unk_b         # unknown counted against us
-    pess_den_f = in_f + unk_f
-    return {
-        "matched_b": in_mb, "matched_f": in_mf,
-        "in_b": in_b, "in_f": in_f,
-        "unk_b": unk_b, "unk_f": unk_f,
-        "out_b": out_b, "out_f": out_f,
-        "tot_b": tot_b,
-        "opt_pct_b": 100.0 * in_mb / in_b if in_b else 0.0,
-        "pess_pct_b": 100.0 * in_mb / pess_den_b if pess_den_b else 0.0,
-        "opt_pct_f": 100.0 * in_mf / in_f if in_f else 0.0,
-        "pess_pct_f": 100.0 * in_mf / pess_den_f if pess_den_f else 0.0,
-        "unk_band_pct": 100.0 * unk_b / tot_b if tot_b else 0.0,
-        "out_pct": 100.0 * out_b / tot_b if tot_b else 0.0,
-    }
+        by[sc][0] += 1
+        by[sc][1] += size
+        if matched:
+            by[sc][2] += 1
+            by[sc][3] += size
+    for b in BUCKET_ORDER:            # ensure every bucket key exists
+        by[b]
+    return by
 
 
-def print_ceiling(s, compact=False):
+def print_progress(by, compact=False):
     def mb(x):
-        return "%.2f MB" % (x / 1048576.0)
+        return x / 1048576.0
+
+    def pct(n, d):
+        return 100.0 * n / d if d else 0.0
+
+    tot_b = sum(v[1] for v in by.values())
+    tot_f = sum(v[0] for v in by.values())
+    m_b = sum(v[3] for v in by.values())
+    m_f = sum(v[2] for v in by.values())
+    orac_b = sum(by[b][1] for b in ORACLE_BACKED)
+    orac_mb = sum(by[b][3] for b in ORACLE_BACKED)
+    noora_b = sum(by[b][1] for b in NO_ORACLE)
+    unk_b = by["unknown"][1]
+    mapped_b = tot_b - unk_b
+
     if compact:
-        print("Achievable ceiling: %s matched -> [%.2f%%, %.2f%%] of matchable "
-              "(band = %.1f%% unknown / %s unresolved; vendor-no-source >= %.2f%%)" %
-              (mb(s["matched_b"]), s["pess_pct_b"], s["opt_pct_b"],
-               s["unk_band_pct"], mb(s["unk_b"]), s["out_pct"]))
+        print("Decomp: %.2f%% of binary matched (%.2f/%.2f MB), %.0f%% mapped"
+              " | priority(oracle %.2f MB): %.2f%% | no-oracle %.2f MB"
+              " (lower-prio, matchable)" %
+              (pct(m_b, tot_b), mb(m_b), mb(tot_b), pct(mapped_b, tot_b),
+               mb(orac_b), pct(orac_mb, orac_b), mb(noora_b)))
         return
+
     print()
-    print("=== ACHIEVABLE CEILING (matched / matchable) ===")
-    print("matched (numerator):        %d bytes / %d fns" % (s["matched_b"], s["matched_f"]))
-    print("in-scope-identified denom:  %d bytes / %d fns" % (s["in_b"], s["in_f"]))
-    print("unknown band (unresolved):  %d bytes / %d fns  (%.1f%% of binary)" %
-          (s["unk_b"], s["unk_f"], s["unk_band_pct"]))
-    print("vendor/no-source (OUT, xdk):%d bytes  (%.2f%% of binary; >= this -- unknown hides more)" %
-          (s["out_b"], s["out_pct"]))
+    print("=== DECOMP PROGRESS (goal: 100% of the WHOLE binary -- all of it is matchable) ===")
+    print("matched toward 100%%:  %6.2f%%   (%.2f / %.2f MB | %d / %d fns)" %
+          (pct(m_b, tot_b), mb(m_b), mb(tot_b), m_f, tot_f))
+    print("mapped (attributed):  %6.2f%%   (unmapped %.2f%% / %.2f MB = mapping TODO, not yet a target)" %
+          (pct(mapped_b, tot_b), pct(unk_b, tot_b), mb(unk_b)))
     print()
-    print("  achievable% is BOUNDED by the unresolved unknown band:")
-    print("    optimistic  (unknown all vendor):  %7.3f%% bytes | %7.3f%% fns" %
-          (s["opt_pct_b"], s["opt_pct_f"]))
-    print("    pessimistic (unknown all ours):    %7.3f%% bytes | %7.3f%% fns" %
-          (s["pess_pct_b"], s["pess_pct_f"]))
-    print("    => TRUE achievable%% in [%.2f%%, %.2f%%] bytes; the band width = the unknown bucket." %
-          (s["pess_pct_b"], s["opt_pct_b"]))
-    print("    The identification campaign collapses this band (sort unknown -> matchable vs vendor).")
+    print("by tier (matched% / tier size):")
+    for b in BUCKET_ORDER:
+        fns, byt, mf, mbb = by[b]
+        if b == "unknown":
+            print("  %-11s %7s   %6.2f MB   %s" % (b, "-", mb(byt), LABELS[b]))
+        else:
+            print("  %-11s %6.2f%%   %6.2f MB   %s" % (b, pct(mbb, byt), mb(byt), LABELS[b]))
+    print()
+    print("near-term priority target (oracle-backed %.2f MB): %.2f%% matched." %
+          (mb(orac_b), pct(orac_mb, orac_b)))
+    print("  NOT a ceiling -- the no-oracle %.2f MB is matchable too, just deprioritized" % mb(noora_b))
+    print("  (and worth splitting regardless of when we match it).")
 
 
-def _ceiling_stats_live():
-    """Fresh ceiling stats: live report.json overlaid on cached classification."""
+def _progress_by_live():
+    """Fresh per-bucket aggregate: live report.json over cached classification."""
     funcs, _ = load_functions(REPORT)
     try:
         sm = _load_scope_map()
         scope_by_addr = {a: e["scope"] for a, e in sm.items()}
     except (FileNotFoundError, json.JSONDecodeError):
         scope_by_addr = {}      # no cache yet -> everything best-effort/unknown
-    return compute_ceiling(scope_by_addr, funcs)
+    return _by_live(scope_by_addr, funcs)
 
 
-def cmd_ceiling(args):
-    print_ceiling(_ceiling_stats_live(), compact=args.compact)
+def cmd_priority(args):
+    print_progress(_progress_by_live(), compact=args.compact)
 
 
 # ---------------------------------------------------------------------------
@@ -924,7 +888,7 @@ def cmd_worklist(args):
     cur = None
     for addr, e in items:
         scope = e["scope"]
-        in_scope = scope in IN_SCOPE
+        in_scope = scope in ORACLE_BACKED   # oracle-backed = the cheap near-term work
         unmatched = not e["matched"]
         key = (scope, prov_key(e)) if in_scope else None
         if in_scope and unmatched and cur and cur["key"] == key:
@@ -946,7 +910,8 @@ def cmd_worklist(args):
     clusters.sort(key=lambda c: c["umb"], reverse=True)
     limit = args.limit or 50
     bucket_filter = args.bucket
-    print("=== UNMATCHED IN-SCOPE CLUSTERS (size-ranked) ===")
+    print("=== PRIORITY WORKLIST: unmatched oracle-backed clusters (size-ranked) ===")
+    print("(the cheapest near-term work; no-oracle xdk/vendor is matchable too, just lower prio)")
     print("%-10s %-10s %6s %9s  %-9s %s" %
           ("start", "end", "fns", "bytes", "bucket", "provenance"))
     shown = 0
@@ -993,16 +958,16 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("build", help="classify all fns, write scope_map.json")
-    sub.add_parser("report", help="per-bucket breakdown + in-scope denominator")
-    ce = sub.add_parser("ceiling", help="bounded achievable %% (live matched, cached classification)")
-    ce.add_argument("--compact", action="store_true", help="one-line form (for the build PROGRESS step)")
-    w = sub.add_parser("worklist", help="size-ranked unmatched in-scope clusters")
+    sub.add_parser("report", help="per-bucket breakdown + progress toward 100%%")
+    pr = sub.add_parser("priority", help="progress toward 100%% by priority tier (live matched, cached classification)")
+    pr.add_argument("--compact", action="store_true", help="one-line form (for the build PROGRESS step)")
+    w = sub.add_parser("worklist", help="size-ranked unmatched oracle-backed clusters (cheapest work)")
     w.add_argument("--limit", type=int, default=50)
     w.add_argument("--bucket", choices=BUCKET_ORDER, help="filter to one bucket")
     c = sub.add_parser("classify", help="classify a single addr")
     c.add_argument("addr")
     args = ap.parse_args()
-    {"build": cmd_build, "report": cmd_report, "ceiling": cmd_ceiling,
+    {"build": cmd_build, "report": cmd_report, "priority": cmd_priority,
      "worklist": cmd_worklist, "classify": cmd_classify}[args.cmd](args)
 
 
