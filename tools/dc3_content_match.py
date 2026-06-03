@@ -119,7 +119,9 @@ def main():
     ap.add_argument("--tsm", default=TSM)
     ap.add_argument("--out", default=os.path.join(ROOT, "dc3_content_match.json"))
     ap.add_argument("--min-size", type=int, default=16,
-                    help="ignore tiny functions (<N bytes); collide too easily")
+                    help="ignore tiny functions (<N bytes); collide too easily. "
+                         "Tested 8: net-negative (tiny trivial/unwind bodies collide "
+                         "and poison real matches' uniqueness). 16 is the sweet spot.")
     ap.add_argument("--validate", action="store_true",
                     help="cross-check against unified_id.json confident matches")
     args = ap.parse_args()

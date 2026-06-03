@@ -9788,5 +9788,22 @@
  "0x82730DE8": "?ReadDead@@YAXAAVBinStream@@@Z",
  "0x827A7DD8": "?SetDataPointRecorder@DataPointMgr@@QAAP6AXAAVDataPoint@@@ZP6AX0@Z@Z",
  "0x827260A0": "?NotNull@DataNode@@QBA_NXZ",
- "0x823EDA90": "??0RndAnimatable@@IAA@XZ"
+ "0x823EDA90": "??0RndAnimatable@@IAA@XZ",
+ "0x8249A658": "?_M_erase@?$vector@UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUEnvironmentEntry@LightPreset@@PAU34@ABU__false_type@2@@Z",
+ "0x8249A6C8": "?_M_erase@?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUEnvLightEntry@LightPreset@@PAU34@ABU__false_type@2@@Z",
+ "0x824289E0": "?UtilDrawRect2D@@YAXABVVector2@@0ABVColor@Hmx@@@Z",
+ "0x82429A40": "??$_S_merge@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@P6A_NAAU12@0@Z@stlpmtx_std@@YAXAAV?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@0@0P6A_NAAUInstance@RndMultiMesh@@1@Z@Z",
+ "0x8236AC70": "?Save@BeatEvent@CharClip@@QAAXAAVBinStream@@@Z",
+ "0x8251D428": "?specialIdxStr@?A0x3cbaff2c@@YAXPADIH@Z",
+ "0x8251DAB0": "??0XboxMapFile@@QAA@PBD@Z",
+ "0x8251DBA4": "__unwind$98994",
+ "0x8251DBD0": "?GetFunction@XboxMapFile@@QAAPBDI_N@Z",
+ "0x8251DEF4": "__unwind$99076",
+ "0x82B45E6C": "__unwind$112142",
+ "0x82B45E98": "__unwind$112143",
+ "0x82B45EC4": "__unwind$112144",
+ "0x8277E9F0": "?_M_erase@?$vector@UTrackChannels@@V?$StlNodeAlloc@UTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUTrackChannels@@PAU3@0ABU__false_type@2@@Z",
+ "0x82B44BEC": "__unwind$106811",
+ "0x82B44C18": "__unwind$106812",
+ "0x82518928": "?ReadError@?A0xd12e7047@@YAHXZ"
 }

@@ -265,8 +265,8 @@ DateTime.cpp:
 	.text       start:0x8250F380 end:0x8250FC50
 
 BlockMgr.cpp:
-	.pdata      start:0x82211878 end:0x82211970
-	.text       start:0x82518970 end:0x82519BC4
+	.pdata      start:0x82211870 end:0x82211970
+	.text       start:0x82518928 end:0x82519BC4
 
 JoypadClient.cpp:
 	.pdata      start:0x82211538 end:0x822115D0
@@ -383,8 +383,8 @@ PitchCorrectedVoice.cpp:
 	.text       start:0x82B45F18 end:0x82B46210
 
 PitchDetector.cpp:
-	.pdata      start:0x82252E50 end:0x82252ED0
-	.text       start:0x82B440D8 end:0x82B44B94
+	.pdata      start:0x82252E50 end:0x82252EF0
+	.text       start:0x82B440D8 end:0x82B44C48
 
 PeakDetector.cpp:
 	.pdata      start:0x82252EF0 end:0x82252F00
@@ -422,8 +422,8 @@ AppChild.cpp:
 	.text       start:0x82514E68 end:0x825152EC
 
 MapFile_Xbox.cpp:
-	.pdata      start:0x82211EA8 end:0x82211ED0
-	.text       start:0x8251D4E0 end:0x8251DAA8
+	.pdata      start:0x82211EA0 end:0x82211F00
+	.text       start:0x8251D428 end:0x8251DF20
 
 ArkFile.cpp:
 	.pdata      start:0x82211A28 end:0x82211A60
@@ -633,8 +633,8 @@ CharBoneDir.cpp:
 	.text       start:0x823A29A8 end:0x823A49E4
 
 CharClip.cpp:
-	.pdata      start:0x821FA628 end:0x821FA838
-	.text       start:0x8236B5F0 end:0x8236DDE8
+	.pdata      start:0x821FA588 end:0x821FA860
+	.text       start:0x8236A918 end:0x8236E060
 
 CharClipSet.cpp:
 	.pdata      start:0x821FECD0 end:0x821FEDA0
@@ -665,8 +665,8 @@ MeshAnim.cpp:
 	.text       start:0x82456970 end:0x8245B940
 
 Part.cpp:
-	.pdata      start:0x822056A8 end:0x822059D8
-	.text       start:0x82433AB0 end:0x82439D8C
+	.pdata      start:0x82205690 end:0x822059D8
+	.text       start:0x82433730 end:0x82439D8C
 
 Rnd.cpp:
 	.pdata      start:0x82202E08 end:0x822031B0
@@ -681,16 +681,16 @@ UI.cpp:
 	.text       start:0x827DF8B8 end:0x827E0E0C
 
 Utl.cpp:
-	.pdata      start:0x822051E8 end:0x82205310
-	.text       start:0x8242C110 end:0x8242D250
+	.pdata      start:0x82205008 end:0x822054A8
+	.text       start:0x82426F10 end:0x82430AB8
 
 MemTracker.cpp:
 	.pdata      start:0x8223A850 end:0x8223A9D8
 	.text       start:0x827AF180 end:0x827B1A70
 
 LightPreset.cpp:
-	.pdata      start:0x8220A840 end:0x8220AF58
-	.text       start:0x8249B800 end:0x824A3A28
+	.pdata      start:0x8220A618 end:0x8220AF58
+	.text       start:0x824981C8 end:0x824A3A28
 
 Timer.cpp:
 	.pdata      start:0x8220FFF0 end:0x82210058
@@ -709,8 +709,8 @@ Dir.cpp:
 	.text       start:0x82728D00 end:0x82728E50
 
 UIListState.cpp:
-	.pdata      start:0x8223DE20 end:0x8223DE88
-	.text       start:0x827E8B28 end:0x827E9678
+	.pdata      start:0x8223DE18 end:0x8223DE88
+	.text       start:0x827E8AA0 end:0x827E9678
 
 UIListWidget.cpp:
 	.pdata      start:0x8223F188 end:0x8223F190
@@ -1550,8 +1550,8 @@ HamGameData.cpp:
 	.text       start:0x8277DE30 end:0x8277DE98
 
 DataArraySongInfo.cpp:
-	.pdata      start:0x82237848 end:0x82237850
-	.text       start:0x8277F140 end:0x8277FB00
+	.pdata      start:0x822377B8 end:0x822378D8
+	.text       start:0x8277E888 end:0x8277FDF4
 
 StorePreviewMgr.cpp:
 	.pdata      start:0x82237958 end:0x82237960
@@ -1770,8 +1770,8 @@ MemcardMgr_Xbox.cpp:
 	.text       start:0x82786D20 end:0x82787DA8
 
 GranularSynth.cpp:
-	.pdata      start:0x82252F00 end:0x82252F58
-	.text       start:0x82B45158 end:0x82B45E6C
+	.pdata      start:0x82252F00 end:0x82252F70
+	.text       start:0x82B45158 end:0x82B45EF0
 
 SampleData.cpp:
 	.pdata      start:0x82231980 end:0x822319F0

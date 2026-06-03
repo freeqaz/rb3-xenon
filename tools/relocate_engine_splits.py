@@ -106,6 +106,13 @@ def main():
                          "unit's content-matches")
     ap.add_argument("--cluster-gap", type=lambda x: int(x, 0), default=0x8000)
     ap.add_argument("--only", default="")
+    ap.add_argument("--extend", action="store_true",
+                    help="EXTEND mode: instead of relocating stub units, grow "
+                         "NON-stub units (current span >= --stub-max) to UNION "
+                         "their current pin with the dominant cluster, but ONLY "
+                         "when the cluster overlaps the current pin (extend in "
+                         "place). Never shrinks; clips to neighbour pins; "
+                         "fail-closed if the result would overlap another pin.")
     ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
 
@@ -151,49 +158,68 @@ def main():
         if not u or u.get("lo") is None:
             continue
         cur_lo, cur_hi = u["lo"], u["hi"]
-        if (cur_hi - cur_lo) >= args.stub_max:
-            continue  # not a stub; leave well-pinned units alone
+        is_stub = (cur_hi - cur_lo) < args.stub_max
+        # default mode -> stubs only (relocate); --extend -> non-stubs only (grow)
+        if args.extend == is_stub:
+            continue
         lo, hi, cl, frac = dominant_cluster(addrs, sizes, args.cluster_gap)
         if len(cl) < args.min_cluster or frac < args.min_frac:
             continue
-        # clip to nearest OTHER-unit pin
+        if args.extend:
+            # extend in place ONLY: the cluster must overlap the current pin
+            # (a far cluster = current pin is junk = the riskier "relocate-far"
+            # case, deliberately NOT handled here).
+            if hi <= cur_lo or lo >= cur_hi:
+                continue
+            desired_lo, desired_hi = min(cur_lo, lo), max(cur_hi, hi)
+        else:
+            desired_lo, desired_hi = lo, hi
+        # clip to nearest OTHER-unit pin (relative to the desired span)
         left, right = 0, 1 << 32
         for plo, phi, pn in pins:
             if pn == cpp:
                 continue
-            if phi <= lo:
+            if phi <= desired_lo:
                 left = max(left, phi)
-            elif plo >= hi:
+            elif plo >= desired_hi:
                 right = min(right, plo)
-            elif not (phi <= lo or plo >= hi):
-                # overlaps the cluster -> clip cluster to avoid it
-                if plo >= lo:
+            else:
+                # other pin intrudes into desired span -> clip to its near edge
+                if plo >= desired_lo:
                     right = min(right, plo)
                 else:
                     left = max(left, phi)
-        nlo, nhi = max(lo, left), min(hi, right)
-        # snap to real function boundaries: nlo down to a function start, nhi up
-        # to the next function start so the range never bisects a function.
+        nlo, nhi = max(desired_lo, left), min(desired_hi, right)
+        # snap to non-bisecting function boundaries, then re-clip
         li = bisect.bisect_right(starts, nlo) - 1
         if li >= 0:
             nlo = starts[li]
         hi_i = bisect.bisect_left(starts, nhi)
         nhi = starts[hi_i] if hi_i < len(starts) else nhi
-        # re-clip after snapping so we still never overlap a neighbour pin
         nlo = max(nlo, left)
         nhi = min(nhi, right)
-        # keep only matched addrs that survive the clip
-        kept = [a for a in cl if nlo <= a < nhi]
-        if len(kept) < args.min_cluster or nhi <= nlo:
+        if args.extend:
+            # never shrink the current pin
+            nlo = min(nlo, cur_lo)
+            nhi = max(nhi, cur_hi)
+        # GUARD (fail-closed): never overlap another unit's pin
+        if any(pn != cpp and not (phi <= nlo or plo >= nhi)
+               for plo, phi, pn in pins):
+            print(f"  SKIP {cpp}: guard tripped (would overlap a pin)")
+            continue
+        # newly-covered content-matches (outside the old pinned range)
+        kept = [a for a in cl if nlo <= a < nhi and not (cur_lo <= a < cur_hi)]
+        if len(kept) < 1 or nhi <= nlo:
             continue
         proposals.append((len(kept), cpp, cur_lo, cur_hi, nlo, nhi, kept))
 
     proposals.sort(reverse=True)
     total = sum(p[0] for p in proposals)
-    print(f"engine stub units to relocate: {len(proposals)}")
+    mode = "extend non-stub" if args.extend else "relocate stub"
+    print(f"engine units to {mode}: {len(proposals)}")
     print(f"content-matched functions newly pinned+named: {total}")
-    for n, cpp, olo, ohi, nlo, nhi, kept in proposals[:25]:
-        print(f"  {cpp:26s} +{n:3d}  stub 0x{olo:08X}..0x{ohi:08X} -> "
+    for n, cpp, olo, ohi, nlo, nhi, kept in proposals[:30]:
+        print(f"  {cpp:26s} +{n:3d}  0x{olo:08X}..0x{ohi:08X} -> "
               f"0x{nlo:08X}..0x{nhi:08X} ({nhi-nlo}B)")
 
     if not args.apply:
