@@ -2348,8 +2348,8 @@ FlowOutPort.cpp:
 	.text       start:0x824A5990 end:0x824A59D4
 
 Accomplishment.cpp:
-	.pdata      start:0x82205AD0 end:0x82205BE8
-	.text       start:0x8243A18C end:0x8243A614
+	.pdata      start:0x821E9D88 end:0x821E9E50
+	.text       start:0x82264178 end:0x82264FE8
 
 AccomplishmentCategory.cpp:
 	.pdata      start:0x82205E58 end:0x82205E70
@@ -2368,8 +2368,8 @@ AccomplishmentSongFilterConditional.cpp:
 	.text       start:0x8243F378 end:0x8243F418
 
 UIEvent.cpp:
-	.pdata      start:0x82215390 end:0x822153F0
-	.text       start:0x825519DC end:0x82551B5C
+	.pdata      start:0x822251B0 end:0x82225290
+	.text       start:0x8263C058 end:0x8263CC60
 
 band3/meta_band/NetSync.cpp:
 	.pdata      start:0x82218B30 end:0x82218D58
@@ -2380,16 +2380,15 @@ band3/game/Player.cpp:
 	.text       start:0x826843F0 end:0x82686C50
 
 band3/game/TrainerPanel.cpp:
-	.pdata      start:0x8222BE10 end:0x8222BE58
-	.text       start:0x826AA548 end:0x826AA9B0
+	.text       start:0x826AAAE8 end:0x826AAB38
 
 band3/game/VocalPlayer.cpp:
 	.pdata      start:0x8222D930 end:0x8222D9A8
 	.text       start:0x826C6328 end:0x826C6D08
 
 band3/game/Singer.cpp:
-	.pdata      start:0x8222E578 end:0x8222E5B0
-	.text       start:0x826D8D08 end:0x826D99DC
+	.pdata      start:0x8222E568 end:0x8222E608
+	.text       start:0x826D8B98 end:0x826D9F10
 
 band3/game/SongDB.cpp:
 	.pdata      start:0x82234F28 end:0x822351D8
@@ -2442,3 +2441,47 @@ band3/meta_band/LessonProvider.cpp:
 band3/game/TrainerGemTab.cpp:
 	.pdata      start:0x8222E0F0 end:0x8222E168
 	.text       start:0x826D0170 end:0x826D1E68
+
+band3/meta_band/AccomplishmentManager.cpp:
+	.pdata      start:0x82214490 end:0x82214DF8
+	.text       start:0x825426A0 end:0x8254BC90
+
+band3/meta_band/ContextChecker.cpp:
+	.pdata      start:0x822157F8 end:0x822159A0
+	.text       start:0x82555398 end:0x82556B48
+
+band3/meta_band/AccomplishmentProgress.cpp:
+	.pdata      start:0x82217D78 end:0x82217FF0
+	.text       start:0x825776E8 end:0x8257A960
+
+band3/meta_band/UIEventMgr.cpp:
+	.pdata      start:0x822180B0 end:0x82218138
+	.text       start:0x8257B4F8 end:0x8257BE58
+
+band3/meta_band/StandIn.cpp:
+	.pdata      start:0x8221DFE8 end:0x8221E038
+	.text       start:0x825D1250 end:0x825D1588
+
+band3/meta_band/StoreSongSortNode.cpp:
+	.pdata      start:0x8221AFD8 end:0x8221B078
+	.text       start:0x825A6640 end:0x825A7038
+
+band3/meta_band/NameGenerator.cpp:
+	.pdata      start:0x82223A28 end:0x82223A50
+	.text       start:0x82626F80 end:0x82627200
+
+band3/meta_band/CampaignKey.cpp:
+	.pdata      start:0x82225918 end:0x82225928
+	.text       start:0x826421B8 end:0x82642270
+
+band3/meta_band/AccomplishmentTourConditional.cpp:
+	.pdata      start:0x82219348 end:0x82219378
+	.text       start:0x8258BE40 end:0x8258C0C0
+
+band3/meta_band/AccomplishmentSongConditional.cpp:
+	.pdata      start:0x82226428 end:0x82226440
+	.text       start:0x8264CEF0 end:0x8264D018
+
+band3/meta_band/AccomplishmentGroup.cpp:
+	.pdata      start:0x8221DFD8 end:0x8221DFE8
+	.text       start:0x825D1198 end:0x825D1240

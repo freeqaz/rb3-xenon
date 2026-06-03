@@ -106,3 +106,4 @@ core.*
 
 # Generated decomp scope-map (~8 MB; rebuild via tools/scope_map.py build)
 /config/45410914/scope_map.json
+/game_content_match.json
