@@ -315,11 +315,22 @@ class MCPClient:
     # Convenience methods for each tool
 
     def decompile_function(self, name_or_address: str) -> dict:
-        """Decompile a function by name or address."""
-        return self.call_tool("decompile_function", {
+        """Decompile a function by name or address.
+
+        The server's decompile_function is a batch API returning
+        list[DecompiledFunction]; MCP wraps a bare list in structuredContent as
+        {"result": [...]}. Unwrap to the first entry so callers keep the
+        historical single-object contract (dict with code/signature/...).
+        """
+        result = self.call_tool("decompile_function", {
             "binary_name": self.binary,
             "name_or_address": name_or_address
         })
+        if isinstance(result, dict) and isinstance(result.get("result"), list):
+            result = result["result"]
+        if isinstance(result, list):
+            result = result[0] if result else {}
+        return result
 
     def search_symbols(self, query: str, offset: int = 0, limit: int = 25) -> dict:
         """Search for symbols by name."""
@@ -347,11 +358,21 @@ class MCPClient:
         })
 
     def list_xrefs(self, name_or_address: str) -> dict:
-        """List cross-references to/from a symbol or address."""
-        return self.call_tool("list_cross_references", {
+        """List cross-references to/from a symbol or address.
+
+        The tool was renamed list_cross_references -> list_xrefs and is now a
+        batch API returning list[CrossReferenceInfos]; MCP wraps a bare list in
+        structuredContent as {"result": [...]}. Unwrap to the first entry.
+        """
+        result = self.call_tool("list_xrefs", {
             "binary_name": self.binary,
             "name_or_address": name_or_address
         })
+        if isinstance(result, dict) and isinstance(result.get("result"), list):
+            result = result["result"]
+        if isinstance(result, list):
+            result = result[0] if result else {}
+        return result
 
     def get_callgraph(self, function_name: str, direction: str = "calling") -> dict:
         """Generate call graph for a function."""
