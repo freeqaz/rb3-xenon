@@ -35,7 +35,11 @@ void LessonProvider::InitData(RndDir *dir) {
 }
 
 bool LessonProvider::IsActive(int i) const {
-    return NumData() == 0 ? false : !GetLessonEntry(i).unk4;
+        if (NumData() == 0) {
+        return false;
+    } else {
+        return !GetLessonEntry(i).unk4;
+    }
 }
 
 void LessonProvider::Text(int, int idx, UIListLabel *slot, UILabel *label) const {

@@ -40,9 +40,14 @@ Symbol QuestFilterPanel::GetSelectedFilter() {
             return "";
     }
 }
+template <class _T>
+__declspec(noinline) auto _outline_SelectedData(_T* _obj) -> decltype(_obj->SelectedData()) {
+    return _obj->SelectedData();
+}
+
 
 UIComponent::State QuestFilterProvider::ComponentStateOverride(int iRow, int iCol, UIComponent::State s) const {
-    if (iCol != unk30->SelectedData()) {
+    if (iCol != _outline_SelectedData(unk30)) {
         return (UIComponent::State)2;
     }
     return s;
