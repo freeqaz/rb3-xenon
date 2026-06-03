@@ -108,7 +108,7 @@ FreeCamera.cpp:
 
 FileChecksum.cpp:
 	.pdata      start:0x8220DDD8 end:0x8220DDE8
-	.text       start:0x824DB038 end:0x824DB14C
+	.text       start:0x824DB038 end:0x824DB150
 
 Rot.cpp:
 	.pdata      start:0x8220DDE8 end:0x8220DEA0
@@ -411,8 +411,7 @@ MemStream.cpp:
 	.text       start:0x827A6588 end:0x827A67C4
 
 MemStats.cpp:
-	.pdata      start:0x8223AC00 end:0x8223AC08
-	.text       start:0x827B3DB8 end:0x827B3FE8
+	.text       start:0x827B3D40 end:0x827B3DB8
 
 NetCacheMgr_Xbox.cpp:
 	.pdata      start:0x8223AA38 end:0x8223AA50
@@ -698,7 +697,8 @@ Timer.cpp:
 	.text       start:0x824FE310 end:0x824FEE18
 
 Str.cpp:
-	.text       start:0x82798750 end:0x827988D0
+	.pdata      start:0x82239230 end:0x822392B0
+	.text       start:0x827989F0 end:0x82799230
 
 RenderState.cpp:
 	.pdata      start:0x82231C80 end:0x82231C88
@@ -773,8 +773,8 @@ SampleInst.cpp:
 	.text       start:0x82291E08 end:0x82291E6C
 
 User.cpp:
-	.pdata      start:0x821ECE40 end:0x821ECE48
-	.text       start:0x82293A68 end:0x82293AA4
+	.pdata      start:0x822110D0 end:0x82211108
+	.text       start:0x82510378 end:0x82510600
 
 HamMove.cpp:
 	.pdata      start:0x821ED030 end:0x821ED038
@@ -912,11 +912,12 @@ SkeletonClip.cpp:
 	.text       start:0x82334A40 end:0x82334A98
 
 CharLipSync.cpp:
-	.text       start:0x82334A98 end:0x82334AE4
+	.pdata      start:0x821F0760 end:0x821F0798
+	.text       start:0x822CADA8 end:0x822CB7C8
 
 MoveMgr.cpp:
-	.pdata      start:0x821F6EE8 end:0x821F6EF0
-	.text       start:0x82335318 end:0x82335368
+	.pdata      start:0x821EFA78 end:0x821EFB10
+	.text       start:0x822BF230 end:0x822BFB78
 
 Watcher.cpp:
 	.pdata      start:0x821F6F70 end:0x821F6F78
@@ -931,8 +932,8 @@ CharBones.cpp:
 	.text       start:0x82399850 end:0x8239C1D8
 
 Draw.cpp:
-	.pdata      start:0x821F7278 end:0x821F7280
-	.text       start:0x8233A388 end:0x8233A548
+	.pdata      start:0x82202160 end:0x82202270
+	.text       start:0x823F3C80 end:0x823F4D20
 
 AnimFilter.cpp:
 	.pdata      start:0x821F75C8 end:0x821F75D0
@@ -943,8 +944,8 @@ CharIKHead.cpp:
 	.text       start:0x8233D2E8 end:0x8233D32C
 
 Anim.cpp:
-	.pdata      start:0x821F7B78 end:0x821F7B80
-	.text       start:0x82343098 end:0x8234314C
+	.pdata      start:0x82201B88 end:0x82201BB0
+	.text       start:0x823EDA90 end:0x823EDCB8
 
 Joypad_Xbox.cpp:
 	.pdata      start:0x822115F8 end:0x82211690
@@ -967,8 +968,8 @@ Ham.cpp:
 	.text       start:0x82357A10 end:0x82357A68
 
 HamCharacter.cpp:
-	.pdata      start:0x821F9320 end:0x821F9328
-	.text       start:0x82358290 end:0x823582E8
+	.pdata      start:0x8223E200 end:0x8223E258
+	.text       start:0x827ECDC0 end:0x827ED040
 
 PoseFatalities.cpp:
 	.pdata      start:0x821F9340 end:0x821F9348
@@ -1063,8 +1064,8 @@ TexProc.cpp:
 	.text       start:0x823B61B0 end:0x823B6314
 
 RhythmBattle.cpp:
-	.pdata      start:0x821FF188 end:0x821FF190
-	.text       start:0x823C3E80 end:0x823C3EC4
+	.pdata      start:0x821EAE60 end:0x821EAE90
+	.text       start:0x82276000 end:0x822760F0
 
 CharBonesSamples.cpp:
 	.pdata      start:0x821FF908 end:0x821FF970
@@ -1105,16 +1106,16 @@ StorePurchaser.cpp:
 	.text       start:0x823E0160 end:0x823E019C
 
 FftIpp.cpp:
-	.pdata      start:0x822014C0 end:0x822014C8
-	.text       start:0x823E5280 end:0x823E53B0
+	.pdata      start:0x82253040 end:0x82253078
+	.text       start:0x82B476E8 end:0x82B47B38
 
 Tex.cpp:
 	.pdata      start:0x82201AA0 end:0x82201AA8
 	.text       start:0x823ECA48 end:0x823ECB40
 
 PollAnim.cpp:
-	.pdata      start:0x82201E48 end:0x82201E50
-	.text       start:0x823F06C0 end:0x823F0724
+	.pdata      start:0x82208B28 end:0x82208BD8
+	.text       start:0x824752A0 end:0x82475FF8
 
 ShaderProgram.cpp:
 	.pdata      start:0x82202098 end:0x822020A0
@@ -1161,16 +1162,16 @@ PartLauncher.cpp:
 	.text       start:0x8243D320 end:0x8243D468
 
 DataNode.cpp:
-	.pdata      start:0x82206210 end:0x82206218
-	.text       start:0x82442120 end:0x82442348
+	.pdata      start:0x82232D78 end:0x82232DD8
+	.text       start:0x82725DA8 end:0x827261D0
 
 FileCache.cpp:
 	.pdata      start:0x82210628 end:0x82210740
 	.text       start:0x825057A0 end:0x82506D90
 
 Wind.cpp:
-	.pdata      start:0x82206868 end:0x82206870
-	.text       start:0x8244B338 end:0x8244B418
+	.pdata      start:0x82206758 end:0x82206768
+	.text       start:0x8244A228 end:0x8244A390
 
 Line.cpp:
 	.pdata      start:0x82207F20 end:0x82207FE8
@@ -1219,8 +1220,8 @@ SpotlightDrawer.cpp:
 	.text       start:0x824C1C38 end:0x824C4D58
 
 Spotlight.cpp:
-	.pdata      start:0x8220D118 end:0x8220D120
-	.text       start:0x824CC0F0 end:0x824CC14C
+	.pdata      start:0x8220CBF8 end:0x8220CF68
+	.text       start:0x824C4ED8 end:0x824CA700
 
 Crowd.cpp:
 	.pdata      start:0x8220D1D0 end:0x8220D7A8
@@ -1297,8 +1298,8 @@ StreamRecorder.cpp:
 	.text       start:0x825732D0 end:0x8257332C
 
 DirLoader.cpp:
-	.pdata      start:0x82218468 end:0x82218470
-	.text       start:0x8257EA60 end:0x8257EAB8
+	.pdata      start:0x82233608 end:0x82233748
+	.text       start:0x8272FF10 end:0x82730E88
 
 LabelShrinkWrapper.cpp:
 	.pdata      start:0x822189A0 end:0x822189A8
@@ -1637,8 +1638,8 @@ Profile.cpp:
 	.text       start:0x8277FF30 end:0x82780458
 
 InlineHelp.cpp:
-	.pdata      start:0x8223D198 end:0x8223D1A0
-	.text       start:0x827DAF40 end:0x827DAF90
+	.pdata      start:0x821F3E68 end:0x821F3F10
+	.text       start:0x823024E8 end:0x82302EA4
 
 PreloadPanel.cpp:
 	.pdata      start:0x8223D3B8 end:0x8223D3C0
@@ -1661,8 +1662,8 @@ Trans.cpp:
 	.text       start:0x82A48308 end:0x82A483BC
 
 MeshDeform.cpp:
-	.pdata      start:0x82248D70 end:0x82248D78
-	.text       start:0x82A5C818 end:0x82A5C8D4
+	.pdata      start:0x822025C8 end:0x822025F8
+	.text       start:0x823F8468 end:0x823F8A80
 
 HamDriver.cpp:
 	.pdata      start:0x822495E0 end:0x822495E8
@@ -1705,8 +1706,8 @@ FontBase.cpp:
 	.text       start:0x82B6E8E0 end:0x82B6E934
 
 DataPointMgr.cpp:
-	.pdata      start:0x82255470 end:0x82255478
-	.text       start:0x82B7C258 end:0x82B7C2D4
+	.pdata      start:0x8223A0E0 end:0x8223A140
+	.text       start:0x827A7DD8 end:0x827A826C
 
 PostProc_NG.cpp:
 	.pdata      start:0x82253C90 end:0x82253DD0
