@@ -100,3 +100,7 @@ def main():
     print(f"  of those, jaccard>=0.97 AND same size: {len(near)} (strong byte-match candidates)")
     for p in pairs[:15]:
         print(f"  {p['rb3_addr']} j={p['jaccard']} sz={p['rb3_size']}/{p['dc3_size']} {p['dc3_name'][:50]}")
+
+
+if __name__ == "__main__":
+    main()

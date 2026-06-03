@@ -181,8 +181,8 @@ VarTimer.cpp:
 	.text       start:0x827AEBE0 end:0x827AF034
 
 DataFlex.c:
-	.pdata      start:0x82234CA8 end:0x82234CC8
-	.text       start:0x82748B90 end:0x82749010
+	.pdata      start:0x82234CA8 end:0x82234CD0
+	.text       start:0x82748B90 end:0x82749548
 
 CompressionEffect.cpp:
 	.pdata      start:0x82255850 end:0x82255868
@@ -320,16 +320,16 @@ Shader.cpp:
 	.text       start:0x82492B18 end:0x82495724
 
 Gen.cpp:
-	.pdata      start:0x822080B8 end:0x822082D8
-	.text       start:0x82469CF0 end:0x8246C2C0
+	.pdata      start:0x822080B0 end:0x822082D8
+	.text       start:0x82469A50 end:0x8246C2C0
 
 ScrollSelect.cpp:
 	.pdata      start:0x8223ED38 end:0x8223EDF0
 	.text       start:0x827F7CB8 end:0x827F8748
 
 UIScreen.cpp:
-	.pdata      start:0x8223C1E0 end:0x8223C310
-	.text       start:0x827CAA28 end:0x827CBF5C
+	.pdata      start:0x8223C1D8 end:0x8223C348
+	.text       start:0x827CA9B0 end:0x827CC258
 
 LightHue.cpp:
 	.pdata      start:0x8220D850 end:0x8220D908
@@ -407,15 +407,15 @@ TempoMap.cpp:
 	.text       start:0x827AD150 end:0x827AD1EC
 
 MemStream.cpp:
-	.pdata      start:0x82239F88 end:0x82239FB0
-	.text       start:0x827A6588 end:0x827A67C4
+	.pdata      start:0x82239F80 end:0x82239FB0
+	.text       start:0x827A6508 end:0x827A67C8
 
 MemStats.cpp:
 	.text       start:0x827B3D40 end:0x827B3DB8
 
 NetCacheMgr_Xbox.cpp:
-	.pdata      start:0x8223AA38 end:0x8223AA50
-	.text       start:0x827B1EC8 end:0x827B1FDC
+	.pdata      start:0x8223AA30 end:0x8223AA50
+	.text       start:0x827B1E10 end:0x827B1FE0
 
 AppChild.cpp:
 	.pdata      start:0x822114B8 end:0x82211508
@@ -502,8 +502,8 @@ CharIKRod.cpp:
 	.text       start:0x823B27E8 end:0x823B2AB4
 
 CharSleeve.cpp:
-	.pdata      start:0x821FEBA0 end:0x821FEBD0
-	.text       start:0x823BD6D8 end:0x823BDDC0
+	.pdata      start:0x821FEBA0 end:0x821FEC20
+	.text       start:0x823BD6D8 end:0x823BE030
 
 CharUpperTwist.cpp:
 	.pdata      start:0x821FE348 end:0x821FE358
@@ -661,8 +661,8 @@ EventTrigger.cpp:
 	.text       start:0x82489D38 end:0x8248EB80
 
 MeshAnim.cpp:
-	.pdata      start:0x82207168 end:0x822075A0
-	.text       start:0x82456970 end:0x8245B940
+	.pdata      start:0x82207168 end:0x82207830
+	.text       start:0x82456970 end:0x8245E1D0
 
 Part.cpp:
 	.pdata      start:0x82205690 end:0x822059D8
@@ -705,8 +705,8 @@ RenderState.cpp:
 	.text       start:0x82712160 end:0x82712204
 
 Dir.cpp:
-	.pdata      start:0x82233010 end:0x82233020
-	.text       start:0x82728D00 end:0x82728E50
+	.pdata      start:0x82233010 end:0x822331C0
+	.text       start:0x82728D00 end:0x8272A9B0
 
 UIListState.cpp:
 	.pdata      start:0x8223DE18 end:0x8223DE88
@@ -1110,8 +1110,8 @@ FftIpp.cpp:
 	.text       start:0x82B476E8 end:0x82B47B38
 
 Tex.cpp:
-	.pdata      start:0x82201AA0 end:0x82201AA8
-	.text       start:0x823ECA48 end:0x823ECB40
+	.pdata      start:0x82201A70 end:0x82201AA8
+	.text       start:0x823EC438 end:0x823ECB40
 
 PollAnim.cpp:
 	.pdata      start:0x82208B28 end:0x82208BD8
@@ -1270,8 +1270,8 @@ Sequence.cpp:
 	.text       start:0x82532110 end:0x82532168
 
 System.cpp:
-	.pdata      start:0x822564F8 end:0x822565E0
-	.text       start:0x82BAF878 end:0x82BB0BF0
+	.pdata      start:0x822564F8 end:0x822565F0
+	.text       start:0x82BAF878 end:0x82BB0EB0
 
 DataEventList.cpp:
 	.pdata      start:0x8223BF08 end:0x8223BF50
@@ -1298,8 +1298,8 @@ StreamRecorder.cpp:
 	.text       start:0x825732D0 end:0x8257332C
 
 DirLoader.cpp:
-	.pdata      start:0x82233608 end:0x82233748
-	.text       start:0x8272FF10 end:0x82730E88
+	.pdata      start:0x82233608 end:0x822337E8
+	.text       start:0x8272FF10 end:0x82731D08
 
 LabelShrinkWrapper.cpp:
 	.pdata      start:0x822189A0 end:0x822189A8
@@ -1326,8 +1326,8 @@ LightPresetManager.cpp:
 	.text       start:0x82596468 end:0x825964C0
 
 Memcard_Xbox.cpp:
-	.pdata      start:0x822116B0 end:0x82211750
-	.text       start:0x82517080 end:0x825178A8
+	.pdata      start:0x822116B0 end:0x82211818
+	.text       start:0x82517080 end:0x82518400
 
 IdentityInfo.cpp:
 	.pdata      start:0x8221B348 end:0x8221B350
@@ -1468,8 +1468,8 @@ UITrigger.cpp:
 	.text       start:0x826EEF28 end:0x826EEF98
 
 FxSend.cpp:
-	.pdata      start:0x82230608 end:0x82230610
-	.text       start:0x826F91E0 end:0x826F963C
+	.pdata      start:0x82230570 end:0x82230610
+	.text       start:0x826F86C0 end:0x826F963C
 
 WebSvcMgr.cpp:
 	.text       start:0x826FA860 end:0x826FA864
@@ -1499,8 +1499,8 @@ Lit_NG.cpp:
 	.text       start:0x82712358 end:0x827123AC
 
 Splash.cpp:
-	.pdata      start:0x82232460 end:0x82232468
-	.text       start:0x8271C4C0 end:0x8271C534
+	.pdata      start:0x82232460 end:0x82232488
+	.text       start:0x8271C4C0 end:0x8271C938
 
 PoolAlloc.cpp:
 	.pdata      start:0x822327E0 end:0x822327E8
@@ -1542,8 +1542,8 @@ Pollable.cpp:
 	.text       start:0x826FA868 end:0x826FA9E8
 
 MidiReader.cpp:
-	.pdata      start:0x8223C038 end:0x8223C120
-	.text       start:0x827C8848 end:0x827C9910
+	.pdata      start:0x8223C038 end:0x8223C190
+	.text       start:0x827C8848 end:0x827CA3D8
 
 HamGameData.cpp:
 	.pdata      start:0x82237700 end:0x82237708
@@ -1626,8 +1626,8 @@ JsonUtils.cpp:
 	.text       start:0x827B75C0 end:0x827B7650
 
 MidiParserMgr.cpp:
-	.pdata      start:0x8223BE60 end:0x8223BE68
-	.text       start:0x827C6B18 end:0x827C6BC8
+	.pdata      start:0x8223BDA8 end:0x8223BE68
+	.text       start:0x827C62D0 end:0x827C6BC8
 
 OriginalChoreoRemixer.cpp:
 	.pdata      start:0x8223BF50 end:0x8223BF58
@@ -1646,8 +1646,8 @@ PreloadPanel.cpp:
 	.text       start:0x827DD1D0 end:0x827DD228
 
 PanelDir.cpp:
-	.pdata      start:0x8223D8C0 end:0x8223D8C8
-	.text       start:0x827E2858 end:0x827E2930
+	.pdata      start:0x8223D788 end:0x8223D8C8
+	.text       start:0x827E1458 end:0x827E2930
 
 SpotlightDrawer_NG.cpp:
 	.pdata      start:0x8220C7E0 end:0x8220C980
@@ -1762,8 +1762,8 @@ CacheMgr.cpp:
 	.text       start:0x827A9B08 end:0x827A9D44
 
 Env_NG.cpp:
-	.pdata      start:0x82253B70 end:0x82253BA0
-	.text       start:0x82B57048 end:0x82B57A04
+	.pdata      start:0x82253B70 end:0x82253BA8
+	.text       start:0x82B57048 end:0x82B57D28
 
 MemcardMgr_Xbox.cpp:
 	.pdata      start:0x82238078 end:0x82238148
@@ -1798,8 +1798,8 @@ UIListCustom.cpp:
 	.text       start:0x827F92C0 end:0x827F94B4
 
 UIListSubList.cpp:
-	.pdata      start:0x8223F0A8 end:0x8223F0D0
-	.text       start:0x827FACF8 end:0x827FAF28
+	.pdata      start:0x8223F0A8 end:0x8223F150
+	.text       start:0x827FACF8 end:0x827FB700
 
 system/synth/FxSendReverb.cpp:
 	.pdata      start:0x82230E80 end:0x82230EB8
@@ -1889,8 +1889,8 @@ CharLipSyncDriver.cpp:
 	.text       start:0x82263F38 end:0x82263F98
 
 DeJitterPanel.cpp:
-	.pdata      start:0x82238818 end:0x82238820
-	.text       start:0x8278E070 end:0x8278E108
+	.pdata      start:0x82238818 end:0x82238870
+	.text       start:0x8278E070 end:0x8278E5FC
 
 UIListHighlight.cpp:
 	.pdata      start:0x8223EF80 end:0x8223EF88
@@ -2144,8 +2144,8 @@ FitnessFilter.cpp:
 	.text       start:0x823CA668 end:0x823CA6AC
 
 Memcard.cpp:
-	.pdata      start:0x82212158 end:0x82212160
-	.text       start:0x82520110 end:0x82520180
+	.pdata      start:0x82212158 end:0x82212168
+	.text       start:0x82520110 end:0x82520238
 
 EQEffect.cpp:
 	.pdata      start:0x822558B0 end:0x822558B8
@@ -2280,8 +2280,8 @@ BaseSkeleton.cpp:
 	.text       start:0x82693C20 end:0x826940A0
 
 Stream.cpp:
-	.pdata      start:0x822300C0 end:0x822300D8
-	.text       start:0x826F41C0 end:0x826F42A4
+	.pdata      start:0x822300A8 end:0x822300D8
+	.text       start:0x826F40C0 end:0x826F42A8
 
 DirUnloader.cpp:
 	.pdata      start:0x822320C0 end:0x822320E8
@@ -2292,12 +2292,12 @@ StoreOffer.cpp:
 	.text       start:0x82781500 end:0x82781BB8
 
 MoviePanel.cpp:
-	.pdata      start:0x82238490 end:0x82238588
-	.text       start:0x8278AD10 end:0x8278BE6C
+	.pdata      start:0x82238450 end:0x82238588
+	.text       start:0x8278A908 end:0x8278BE70
 
 StorePanel.cpp:
-	.pdata      start:0x82238A30 end:0x82238AF8
-	.text       start:0x8278FE70 end:0x82790C24
+	.pdata      start:0x82238A30 end:0x82238B58
+	.text       start:0x8278FE70 end:0x82791668
 
 ConnectionStatusPanel.cpp:
 	.pdata      start:0x82238F98 end:0x82238FC0
