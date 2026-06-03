@@ -483,23 +483,23 @@ if args.mode == "configure":
     # Write build.ninja and objdiff.json
     generate_build(config)
 elif args.mode == "progress":
-    # Print progress and write progress.json
-    calculate_progress(config)
-    # Also print honest progress toward 100% of the WHOLE binary, broken out by
-    # priority tier (oracle-backed = cheap near-term work; no-oracle xdk/vendor is
-    # matchable too, just lower priority) plus the mapping %. The dtk number above
-    # is matched/whole-binary; this adds the tier breakdown. See tools/scope_map.py.
-    # Failure here must never break a build.
+    # tools/scope_map.py prints the single unified decomp dashboard ninja shows after
+    # every build: headline matched/fuzzy/fns (== ninja "All"), gains-today, and the
+    # per-tier (oracle-backed vs no-oracle) breakdown. calculate_progress() is the
+    # canonical dtk printer, kept ONLY as a fallback if scope_map fails -- a build
+    # must never be left with no progress output.
+    rc = 1
     try:
         import subprocess
 
-        sys.stdout.flush()  # flush calculate_progress output before the subprocess
-        subprocess.run(
+        rc = subprocess.run(
             [sys.executable, "tools/scope_map.py", "priority"],
             cwd=os.path.dirname(os.path.abspath(__file__)),
             check=False,
-        )
+        ).returncode
     except Exception as e:
-        print(f"(scope_map priority report skipped: {e})")
+        print(f"(scope_map dashboard failed, falling back: {e})")
+    if rc != 0:
+        calculate_progress(config)
 else:
     sys.exit("Unknown mode: " + args.mode)

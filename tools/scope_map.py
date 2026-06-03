@@ -41,6 +41,7 @@ confidence, matched}}.
 Subcommands: build | report | worklist | classify <addr>
 """
 import argparse
+import datetime
 import json
 import os
 import re
@@ -391,8 +392,8 @@ def load_functions(report_path, dedup=True):
                 addr = int(m.group(1), 16) if m else base + int(fn.get("address", "0"))
                 size = int(fn.get("size", "0"))
                 matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
-                mraw = float(fn.get("fuzzy_match_percent", 0.0)) >= 100.0
-                funcs.append((addr, size, matched, sp, unit, fn["name"], mraw))
+                fz = float(fn.get("fuzzy_match_percent", 0.0))
+                funcs.append((addr, size, matched, sp, unit, fn["name"], fz))
             continue
 
         # -- CATCH-ALL / auto UNITS (no source_path) --
@@ -410,7 +411,7 @@ def load_functions(report_path, dedup=True):
             m = FN_ADDR_RE.match(fn["name"])
             size = int(fn.get("size", "0"))
             matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
-            mraw = float(fn.get("fuzzy_match_percent", 0.0)) >= 100.0
+            fz = float(fn.get("fuzzy_match_percent", 0.0))
             if m:
                 addr = int(m.group(1), 16)
                 last_anchor = addr
@@ -424,7 +425,7 @@ def load_functions(report_path, dedup=True):
                 # small odd delta keeps these distinct from the anchor + each
                 # other without crossing into the next real fn (sizes are >=8).
                 addr = last_anchor + named_off  # 1..N within the anchor's slot
-            funcs.append((addr, size, matched, sp, unit, fn["name"], mraw))
+            funcs.append((addr, size, matched, sp, unit, fn["name"], fz))
     if not dedup:
         return funcs, rep
     # de-dup on addr (ICF folds / catch-all named-fn anchoring can land two
@@ -434,11 +435,11 @@ def load_functions(report_path, dedup=True):
     #   (3) larger size
     # Tuple ordering on (has_sp, matched, size) does exactly this.
     by_addr = {}
-    for addr, size, matched, sp, unit, name, mraw in funcs:
+    for addr, size, matched, sp, unit, name, fz in funcs:
         rank = (1 if sp else 0, 1 if matched else 0, size)
         cur = by_addr.get(addr)
         if cur is None or rank > cur[0]:
-            by_addr[addr] = (rank, size, matched, sp, unit, name, mraw)
+            by_addr[addr] = (rank, size, matched, sp, unit, name, fz)
     out = [(addr, r[1], r[2], r[3], r[4], r[5], r[6]) for addr, r in by_addr.items()]
     out.sort()
     return out, rep
@@ -559,7 +560,7 @@ def cmd_build(args):
     prov = [None] * n           # provenance string
     conf = [0.0] * n            # confidence float
 
-    for i, (addr, size, matched, sp, unit, name, mraw) in enumerate(funcs):
+    for i, (addr, size, matched, sp, unit, name, fz) in enumerate(funcs):
         # Layer 1: XDK exact addr / BINK range -> OUT-OF-SCOPE.
         if addr in xdk_addrs or (bink_range and bink_range[0] <= addr < bink_range[1]):
             scope[i] = "xdk"
@@ -712,7 +713,7 @@ def cmd_build(args):
 
     # ---- emit ----
     out = {}
-    for i, (addr, size, matched, sp, unit, name, mraw) in enumerate(funcs):
+    for i, (addr, size, matched, sp, unit, name, fz) in enumerate(funcs):
         out["%08X" % addr] = {
             "size": size,
             "scope": scope[i],
@@ -783,30 +784,34 @@ def cmd_report(args):
 #   * matched% per priority tier       so effort goes oracle-backed-first (cheap)
 #   * a near-term focus number         matched / oracle-backed -- explicitly NOT
 #                                      a ceiling, just the cheapest slice to do now
+# Per-row notes describe the tier's CONTENT (the oracle status now lives in the
+# cluster header, so it's no longer repeated per row).
 LABELS = {
-    "game": "HIGH prio  · rb3-Wii oracle",
-    "engine": "DC3 oracle (byte-faithful, cheapest)",
-    "thirdparty": "public source (mechanical)",
-    "crt": "we compile LIBCMT",
-    "xdk": "no oracle · lower prio · matchable + worth splitting",
-    "vendor": "no oracle · lower prio · matchable + worth splitting",
-    "unknown": "not yet attributed (mapping TODO)",
+    "game": "rb3-Wii (HIGH)",
+    "engine": "DC3",
+    "thirdparty": "public src",
+    "crt": "LIBCMT",
+    "xdk": "XDK glue",
+    "vendor": "MS/RAD libs",
+    "unknown": "mapping TODO",
 }
 
 
 def _by_live(scope_by_addr, funcs):
-    """Per-bucket aggregate [fns, bytes, m_fns, m_bytes] over EVERY report fn
-    (funcs must be dedup=False), classified by the cached map (real addr) with a
-    name/source fallback for catch-all fns the build's dedup dropped. Because no
-    fn is dropped, sum(bytes) == report total_code and sum(fns) == total_functions
+    """Per-bucket aggregate [fns, bytes, m_fns, m_bytes, fuzzy_bytes] over EVERY
+    report fn (funcs must be dedup=False), classified by the cached map (real addr)
+    with a name/source fallback for catch-all fns the build's dedup dropped. Because
+    no fn is dropped, sum(bytes) == report total_code and sum(fns) == total_functions
     EXACTLY -- the per-tier denominators are honest TRUE tier sizes."""
-    # per bucket: [fns, bytes, m_fns(normalized), m_bytes(raw byte-perfect)]
+    # per bucket: [fns, bytes, m_fns(normalized), m_bytes(raw byte-perfect),
+    #              fuzzy_bytes(size-weighted fuzzy_match_percent)]
     # m_fns uses normalized (sums to measures.matched_functions); m_bytes uses the
     # raw fuzzy_match_percent==100 predicate (sums to measures.matched_code) -- the
     # two predicates objdiff itself uses, so each axis reconciles with ninja's All.
-    by = defaultdict(lambda: [0, 0, 0, 0])
+    # fuzzy_bytes / bytes == the tier's size-weighted fuzzy% (work-in-progress).
+    by = defaultdict(lambda: [0, 0, 0, 0, 0.0])
     engine_cls, game_cls, vendor_cls = load_name_class(WN_DATA)
-    for addr, size, matched, sp, unit, name, mraw in funcs:
+    for addr, size, matched, sp, unit, name, fz in funcs:
         sc = scope_by_addr.get("%08X" % addr)
         if sc is None:                # not in cache (dropped by build dedup / new)
             sc = bucket_for_source(sp)
@@ -817,19 +822,77 @@ def _by_live(scope_by_addr, funcs):
         by[sc][1] += size
         if matched:
             by[sc][2] += 1
-        if mraw:
+        if fz >= 100.0:
             by[sc][3] += size
+        by[sc][4] += size * fz / 100.0
     for b in BUCKET_ORDER:            # ensure every bucket key exists
         by[b]
     return by
 
 
+def _today_delta(off_mc, off_tc, off_mf, fuzzy_pct):
+    """Persist a per-calendar-day baseline and return a compact 'progress today'
+    string = delta vs the first build of today. The baseline lives in the (private,
+    per-worktree) build dir, so it never collides across worktrees or gets committed.
+    Robust by design: any error -> '' (this must never break a build)."""
+    path = os.path.join(ROOT, "build", "45410914", "progress_today.json")
+    cur = {"mc": off_mc, "tc": off_tc, "mf": off_mf, "fz": fuzzy_pct}
+    try:
+        today = datetime.date.today().isoformat()
+    except Exception:
+        return ""
+    base = None
+    try:
+        with open(path) as f:
+            st = json.load(f)
+        if st.get("day") == today:
+            base = st.get("baseline")
+    except (FileNotFoundError, json.JSONDecodeError, OSError, ValueError):
+        pass
+    if base is None:                       # first build of the day -> set baseline
+        try:
+            with open(path, "w") as f:
+                json.dump({"day": today, "baseline": cur}, f)
+        except OSError:
+            pass
+        base = cur                         # delta reads zero this run
+    d_fns = off_mf - base.get("mf", off_mf)
+    cur_mp = 100.0 * off_mc / off_tc if off_tc else 0.0
+    base_mp = 100.0 * base.get("mc", 0) / base["tc"] if base.get("tc") else 0.0
+    d_mp = cur_mp - base_mp
+    d_fz = fuzzy_pct - base.get("fz", fuzzy_pct)
+    return "%+d fns · %+.2f%% matched · %+.2f%% fuzzy" % (d_fns, d_mp, d_fz)
+
+
+# Tiers shown as their own row -- the oracle-backed movers. crt (oracle, ~0.01 MB)
+# folds into the oracle-backed footer total; xdk/vendor into no-oracle; unknown into
+# the mapped footer. So the footer reconciles every byte while the table stays short.
+TIER_ROWS = ["game", "engine", "thirdparty"]
+
+
+def _bar(p, width=42):
+    """A fixed-width unicode progress bar, 0..100% -> full=100%. Uses eighth-block
+    partials so even single-digit percentages render a visible sliver; the unfilled
+    track is drawn with light shade so the bar reads as a gauge."""
+    p = max(0.0, min(100.0, p))
+    units = p / 100.0 * width
+    full = int(units)
+    s = "█" * full
+    used = full
+    if used < width:
+        idx = int(round((units - full) * 8))
+        if idx > 0:
+            s += "▏▎▍▌▋▊▉█"[idx - 1]
+            used += 1
+    return s + "░" * (width - used)
+
+
 def print_progress(by, measures, compact=False):
-    """All numbers reconcile EXACTLY with ninja's "All" line. The headline reads
-    report.json's official `measures`. The per-tier `by` uses objdiff's OWN two
-    predicates so each axis sums to its official total:
-      * matched BYTES  via raw fuzzy_match_percent==100 (byte-perfect)  -> measures.matched_code
-      * matched FNS    via match_percent_normalized==100 (reloc-tolerant) -> measures.matched_functions
+    """The single at-a-glance decomp dashboard ninja prints after every build.
+    Headline reads report.json's official `measures` (== ninja "All"); the per-tier
+    `by` uses objdiff's OWN predicates so each axis sums to its official total:
+      * matched%  = match_percent_normalized==100 fns / raw fuzzy==100 bytes
+      * fuzzy%    = size-weighted fuzzy_match_percent (work-in-progress indicator)
     Denominator per tier = the TRUE tier size from the map (sums to total_code)."""
     def mb(x):
         return x / 1048576.0
@@ -843,42 +906,90 @@ def print_progress(by, measures, compact=False):
 
     off_mc, off_tc = mi("matched_code"), mi("total_code")
     off_mf, off_tf = mi("matched_functions"), mi("total_functions")
+    fuzzy_pct = float(measures.get("fuzzy_match_percent", 0.0) or 0.0)
 
     tot_b = sum(v[1] for v in by.values())           # == off_tc (no-dedup)
     orac_b = sum(by[b][1] for b in ORACLE_BACKED)
     orac_mb = sum(by[b][3] for b in ORACLE_BACKED)   # raw matched bytes
+    orac_fzb = sum(by[b][4] for b in ORACLE_BACKED)  # fuzzy-weighted bytes
     noora_b = sum(by[b][1] for b in NO_ORACLE)
+    noora_mb = sum(by[b][3] for b in NO_ORACLE)
+    noora_fzb = sum(by[b][4] for b in NO_ORACLE)
     unk_b = by["unknown"][1]
     mapped_b = (tot_b - unk_b)
+    delta = _today_delta(off_mc, off_tc, off_mf, fuzzy_pct)
 
+    out = []
     if compact:
-        print("Decomp: %.2f%% of binary matched (%d/%d B; %d/%d fns), %.0f%% mapped"
-              " | oracle-backed %.2f MB: %.2f%% | no-oracle %.2f MB (lower-prio, matchable)" %
-              (pct(off_mc, off_tc), off_mc, off_tc, off_mf, off_tf, pct(mapped_b, tot_b),
-               mb(orac_b), pct(orac_mb, orac_b), mb(noora_b)))
-        return
+        out.append("Decomp %.2f%% matched · %.2f%% fuzzy · %d/%d fns%s"
+                   "  |  north-star oracle %.2f MB @ %.2f%% matched / %.2f%% fuzzy · %.0f%% mapped" %
+                   (pct(off_mc, off_tc), fuzzy_pct, off_mf, off_tf,
+                    "  (today " + delta + ")" if delta else "",
+                    mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b), pct(mapped_b, tot_b)))
+    else:
+        # ---- framed dashboard --------------------------------------------------
+        IW = 66                                  # inner width between the │ borders
+        def edge(l, r):
+            return l + "─" * IW + r
+        def rule(label):                         # ├── label ───────┤ section break
+            seg = "── " + label + " "
+            return "├" + seg + "─" * max(0, IW - len(seg)) + "┤"
+        def line(content=""):
+            return "│" + content.ljust(IW) + "│"
 
-    print()
-    print("=== DECOMP PROGRESS (goal: 100% of the WHOLE binary -- all of it is matchable) ===")
-    print("matched toward 100%%:  %6.2f%% bytes (%d / %d) | %6.2f%% fns (%d / %d)   [official; == ninja All]" %
-          (pct(off_mc, off_tc), off_mc, off_tc, pct(off_mf, off_tf), off_mf, off_tf))
-    print("mapped (attributed):  %6.2f%%   (unmapped %.2f%% / %.2f MB = mapping TODO, not yet a target)" %
-          (pct(mapped_b, tot_b), pct(unk_b, tot_b), mb(unk_b)))
-    print()
-    print("by tier (denom = TRUE tier size from the map):")
-    print("  %-11s %8s %8s   %9s  %s" % ("tier", "match%", "size", "m_fns/fns", "note"))
-    for b in BUCKET_ORDER:
-        fns, byt, mf, mbr = by[b]
-        if b == "unknown":
-            print("  %-11s %8s %6.2f MB   %9s  %s" % (b, "-", mb(byt), "-", LABELS[b]))
-        else:
-            print("  %-11s %7.2f%% %6.2f MB   %4d/%-4d  %s" %
-                  (b, pct(mbr, byt), mb(byt), mf, fns, LABELS[b]))
-    print()
-    print("near-term priority target (oracle-backed %.2f MB): %.2f%% matched." %
-          (mb(orac_b), pct(orac_mb, orac_b)))
-    print("  NOT a ceiling -- the no-oracle %.2f MB is matchable too, just deprioritized" % mb(noora_b))
-    print("  (and worth splitting regardless of when we match it).")
+        cols = "   %-11s%8s%8s%14s%15s"          # tier · match% · fuzzy% · fns m/t · MB m/t
+        def tier_line(b):
+            fns, byt, mf, mbr, fzb = by[b]
+            return line(cols % (b, "%.2f%%" % pct(mbr, byt), "%.2f%%" % pct(fzb, byt),
+                                "%d / %d" % (mf, fns), "%.2f / %.2f" % (mb(mbr), mb(byt))))
+
+        out.append(edge("╭", "╮"))
+        out.append(line("  RB3-XENON · decomp dashboard"))
+        out.append(line())
+        out.append(line("  binary   %.2f%% matched · %.2f%% fuzzy" %
+                        (pct(off_mc, off_tc), fuzzy_pct)))
+        out.append(line("           %.2f / %.2f MB · %d / %d fns" %
+                        (mb(off_mc), mb(off_tc), off_mf, off_tf)))
+        if delta:
+            out.append(line("  today    %s" % delta))
+        out.append(line())
+
+        # Core goals: oracle-backed (the cheap near-term work; crt folds into the
+        # MB subtotal rather than spending a row). Bars gauge the run to 100% =
+        # "cruising". Tier rows break the cluster down (matched / total each axis).
+        out.append(rule("CORE GOALS — oracle-backed · %.2f / %.2f MB" %
+                        (mb(orac_mb), mb(orac_b))))
+        out.append(line())
+        out.append(line("   %-8s%s  %6.2f%%" % ("matched", _bar(pct(orac_mb, orac_b)), pct(orac_mb, orac_b))))
+        out.append(line("   %-8s%s  %6.2f%%" % ("fuzzy", _bar(pct(orac_fzb, orac_b)), pct(orac_fzb, orac_b))))
+        out.append(line())
+        out.append(line(cols % ("", "match", "fuzzy", "fns m/t", "MB m/t")))
+        for b in TIER_ROWS:
+            out.append(tier_line(b))
+        out.append(line())
+
+        # Lower priority: no-oracle (matchable too, just deferred), largest first.
+        out.append(rule("lower priority — no oracle · %.2f / %.2f MB" %
+                        (mb(noora_mb), mb(noora_b))))
+        out.append(line())
+        for b in sorted(NO_ORACLE, key=lambda x: -by[x][1]):
+            out.append(tier_line(b))
+        out.append(line())
+
+        out.append(rule("%.0f%% of binary mapped · %.2f MB unmapped" %
+                        (pct(mapped_b, tot_b), mb(unk_b))))
+        out.append(edge("╰", "╯"))
+
+    text = "\n".join(out)
+    print(text)
+    # Mirror to the GitHub Actions job summary when running in CI (best-effort).
+    sp = os.getenv("GITHUB_STEP_SUMMARY")
+    if sp:
+        try:
+            with open(sp, "a", encoding="utf-8") as sf:
+                sf.write("```\n" + text + "\n```\n")
+        except OSError:
+            pass
 
 
 def _progress_by_live():
