@@ -52,33 +52,34 @@
 void mdct_init(mdct_lookup *lookup,int n){
   int   *bitrev=_ogg_malloc(sizeof(*bitrev)*(n/4));
   DATA_TYPE *T=_ogg_malloc(sizeof(*T)*(n+n/4));
-  DATA_TYPE *T2=_ogg_malloc(sizeof(*T2)*(n+n/4));
+  DATA_TYPE *hmx=_ogg_malloc(sizeof(*hmx)*(n+n/4));
 
   int i;
   int n2=n>>1;
   int log2n=lookup->log2n=rint(log((float)n)/log(2.f));
   lookup->n=n;
   lookup->trig=T;
-  lookup->unknown_ptr=T2;
+  lookup->hmx_buf=hmx;
   lookup->bitrev=bitrev;
 
 /* trig lookups... */
 
   for(i=0;i<n/4;i++){
-    T[i*2]=FLOAT_CONV(cos((M_PI/n)*(4*i)));
-    T[i*2+1]=FLOAT_CONV(-sin((M_PI/n)*(4*i)));
-    T[n2+i*2]=FLOAT_CONV(cos((M_PI/(2*n))*(2*i+1)));
-    T[n2+i*2+1]=FLOAT_CONV(sin((M_PI/(2*n))*(2*i+1)));
+    T[i*2+1]=FLOAT_CONV(cos((M_PI/n)*(4*i)));
+    T[i*2]=FLOAT_CONV(-sin((M_PI/n)*(4*i)));
+    T[n2+i*2+1]=FLOAT_CONV(cos((M_PI/(2*n))*(2*i+1)));
+    T[n2+i*2]=FLOAT_CONV(sin((M_PI/(2*n))*(2*i+1)));
   }
   for(i=0;i<n/8;i++){
-    T[n+i*2]=FLOAT_CONV(cos((M_PI/n)*(4*i+2))*.5);
-    T[n+i*2+1]=FLOAT_CONV(-sin((M_PI/n)*(4*i+2))*.5);
+    T[n+i*2+1]=FLOAT_CONV(cos((M_PI/n)*(4*i+2))*.5);
+    T[n+i*2]=FLOAT_CONV(-sin((M_PI/n)*(4*i+2))*.5);
   }
 
-  /* copy trig data to T2 */
-  for(i=0;i<n2+n/4;i+=2){
-    T2[i] = T[i];
-    T2[i+1] = -T[n2+n/4-2-i];
+  /* copy trig data to hmx */
+
+  for(i=0;i<n+n/4;i+=2){
+    hmx[i]=T[i+1];
+    hmx[i+1]=-T[i];
   }
 
   /* bitreverse lookup... */
@@ -107,19 +108,19 @@ STIN void mdct_butterfly_8(DATA_TYPE *x){
 
 	   x[6] = r0   + r2;
 	   x[4] = r0   - r2;
-	   
+
 	   r0   = x[5] - x[1];
 	   r2   = x[7] - x[3];
 	   x[0] = r1   + r0;
 	   x[2] = r1   - r0;
-	   
+
 	   r0   = x[5] + x[1];
 	   r1   = x[7] + x[3];
 	   x[3] = r2   + r3;
 	   x[1] = r2   - r3;
 	   x[7] = r1   + r0;
 	   x[5] = r1   - r0;
-	   
+
 }
 
 /* 16 point butterfly (in place, 4 register) */
@@ -162,14 +163,14 @@ STIN void mdct_butterfly_32(DATA_TYPE *x){
   REG_TYPE r0     = x[30] - x[14];
   REG_TYPE r1     = x[31] - x[15];
 
-           x[30] +=         x[14];           
+           x[30] +=         x[14];
 	   x[31] +=         x[15];
-           x[14]  =         r0;              
+           x[14]  =         r0;
 	   x[15]  =         r1;
 
-           r0     = x[28] - x[12];   
+           r0     = x[28] - x[12];
 	   r1     = x[29] - x[13];
-           x[28] +=         x[12];           
+           x[28] +=         x[12];
 	   x[29] +=         x[13];
            x[12]  = MULT_NORM( r0 * cPI1_8  -  r1 * cPI3_8 );
 	   x[13]  = MULT_NORM( r0 * cPI3_8  +  r1 * cPI1_8 );
@@ -223,6 +224,7 @@ STIN void mdct_butterfly_32(DATA_TYPE *x){
 
 /* N point first stage butterfly (in place, 2 register) */
 STIN void mdct_butterfly_first(DATA_TYPE *T,
+					DATA_TYPE *T2,
 					DATA_TYPE *x,
 					int points){
 
@@ -237,45 +239,46 @@ STIN void mdct_butterfly_first(DATA_TYPE *T,
 	       r1      = x1[7]      -  x2[7];
 	       x1[6]  += x2[6];
 	       x1[7]  += x2[7];
-	       x2[6]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
-	       x2[7]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+	       x2[6]   = MULT_NORM(r1 * T[0]   +  r0 * T2[0]);
+	       x2[7]   = MULT_NORM(r1 * T[1]   +  r0 * T2[1]);
 
 	       r0      = x1[4]      -  x2[4];
 	       r1      = x1[5]      -  x2[5];
 	       x1[4]  += x2[4];
 	       x1[5]  += x2[5];
-	       x2[4]   = MULT_NORM(r1 * T[5]  +  r0 * T[4]);
-	       x2[5]   = MULT_NORM(r1 * T[4]  -  r0 * T[5]);
+	       x2[4]   = MULT_NORM(r1 * T[4]   +  r0 * T2[4]);
+	       x2[5]   = MULT_NORM(r1 * T[5]   +  r0 * T2[5]);
 
 	       r0      = x1[2]      -  x2[2];
 	       r1      = x1[3]      -  x2[3];
 	       x1[2]  += x2[2];
 	       x1[3]  += x2[3];
-	       x2[2]   = MULT_NORM(r1 * T[9]  +  r0 * T[8]);
-	       x2[3]   = MULT_NORM(r1 * T[8]  -  r0 * T[9]);
+	       x2[2]   = MULT_NORM(r1 * T[8]   +  r0 * T2[8]);
+	       x2[3]   = MULT_NORM(r1 * T[9]   +  r0 * T2[9]);
 
 	       r0      = x1[0]      -  x2[0];
 	       r1      = x1[1]      -  x2[1];
 	       x1[0]  += x2[0];
 	       x1[1]  += x2[1];
-	       x2[0]   = MULT_NORM(r1 * T[13] +  r0 * T[12]);
-	       x2[1]   = MULT_NORM(r1 * T[12] -  r0 * T[13]);
+	       x2[0]   = MULT_NORM(r1 * T[12]  +  r0 * T2[12]);
+	       x2[1]   = MULT_NORM(r1 * T[13]  +  r0 * T2[13]);
 
-	       T+=16;
     x1-=8;
     x2-=8;
+    T+=16;
+    T2+=16;
 
   }while(x2>=x);
 }
 
 /* N/stage point generic N stage butterfly (in place, 2 register) */
 STIN void mdct_butterfly_generic(DATA_TYPE *T,
-					  DATA_TYPE *x,
-					  int points,
-					  int trigint){
-  
-  DATA_TYPE *x2        = x          + (points>>1) - 8;
+				  DATA_TYPE *T2,
+				  DATA_TYPE *x,
+				  int points,
+				  int trigint){
   DATA_TYPE *x1        = x          + points      - 8;
+  DATA_TYPE *x2        = x          + (points>>1) - 8;
   REG_TYPE   r0;
   REG_TYPE   r1;
 
@@ -285,37 +288,41 @@ STIN void mdct_butterfly_generic(DATA_TYPE *T,
 	       r1      = x1[7]      -  x2[7];
 	       x1[6]  += x2[6];
 	       x1[7]  += x2[7];
-	       x2[6]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
-	       x2[7]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+	       x2[6]   = MULT_NORM(r1 * T[0]   +  r0 * T2[0]);
+	       x2[7]   = MULT_NORM(r1 * T[1]   +  r0 * T2[1]);
 
 	       T+=trigint;
+	       T2+=trigint;
 
 	       r0      = x1[4]      -  x2[4];
 	       r1      = x1[5]      -  x2[5];
 	       x1[4]  += x2[4];
 	       x1[5]  += x2[5];
-	       x2[4]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
-	       x2[5]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+	       x2[4]   = MULT_NORM(r1 * T[0]   +  r0 * T2[0]);
+	       x2[5]   = MULT_NORM(r1 * T[1]   +  r0 * T2[1]);
 
 	       T+=trigint;
+	       T2+=trigint;
 
 	       r0      = x1[2]      -  x2[2];
 	       r1      = x1[3]      -  x2[3];
 	       x1[2]  += x2[2];
 	       x1[3]  += x2[3];
-	       x2[2]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
-	       x2[3]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+	       x2[2]   = MULT_NORM(r1 * T[0]   +  r0 * T2[0]);
+	       x2[3]   = MULT_NORM(r1 * T[1]   +  r0 * T2[1]);
 
 	       T+=trigint;
+	       T2+=trigint;
 
 	       r0      = x1[0]      -  x2[0];
 	       r1      = x1[1]      -  x2[1];
 	       x1[0]  += x2[0];
 	       x1[1]  += x2[1];
-	       x2[0]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
-	       x2[1]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+	       x2[0]   = MULT_NORM(r1 * T[0]   +  r0 * T2[0]);
+	       x2[1]   = MULT_NORM(r1 * T[1]   +  r0 * T2[1]);
 
 	       T+=trigint;
+	       T2+=trigint;
     x1-=8;
     x2-=8;
 
@@ -325,18 +332,19 @@ STIN void mdct_butterfly_generic(DATA_TYPE *T,
 STIN void mdct_butterflies(mdct_lookup *init,
 			     DATA_TYPE *x,
 			     int points){
-  
+
   DATA_TYPE *T=init->trig;
+  DATA_TYPE *T2=init->hmx_buf;
   int stages=init->log2n-5;
   int i,j;
-  
+
   if(--stages>0){
-    mdct_butterfly_first(T,x,points);
+    mdct_butterfly_first(T,T2,x,points);
   }
 
   for(i=1;--stages>0;i++){
     for(j=0;j<(1<<i);j++)
-      mdct_butterfly_generic(T,x+(points>>i)*j,points>>i,4<<i);
+      mdct_butterfly_generic(T,T2,x+(points>>i)*j,points>>i,4<<i);
   }
 
   for(j=0;j<points;j+=32)
@@ -347,36 +355,12 @@ STIN void mdct_butterflies(mdct_lookup *init,
 void mdct_clear(mdct_lookup *l){
   if(l){
     if(l->trig)_ogg_free(l->trig);
+    if(l->hmx_buf)_ogg_free(l->hmx_buf);
     if(l->bitrev)_ogg_free(l->bitrev);
     memset(l,0,sizeof(*l));
   }
 }
 
-/* mdct_bitreverse - bit-reversed FFT butterfly with twiddle factors
- *
- * Current match: 86.3% (approaching limit)
- *
- * Analysis shows 15 register swaps (f10↔f12, f8↔f9, etc.) and 2 offset swaps
- * indicating different register allocation and stack layout between our build
- * and the target. The compiler generates functionally equivalent code with
- * different instruction scheduling.
- *
- * Key issues identified:
- * - GPR/FPR register allocation differences (15 swap pairs)
- * - Stack offset shifts (-4, -8 deltas) affecting local variable layout
- * - Instruction scheduling differences in floating-point operations
- * - Control flow differences (4 detected) in loop structure
- *
- * Attempted fixes with no improvement:
- * - Moving w1 decrement before/after first calculation block
- * - Hoisting REG_TYPE declarations outside loop
- * - Reordering expression evaluation
- *
- * The 4 control flow differences and persistent register swaps suggest this
- * is at the limit of what source-level changes can achieve. The target binary
- * uses different register allocation heuristics that cannot be controlled from
- * C source code.
- */
 STIN void mdct_bitreverse(mdct_lookup *init,
 			    DATA_TYPE *x){
   int        n       = init->n;
@@ -391,8 +375,8 @@ STIN void mdct_bitreverse(mdct_lookup *init,
 
     REG_TYPE  r0     = x0[1]  - x1[1];
     REG_TYPE  r1     = x0[0]  + x1[0];
-    REG_TYPE  r2     = MULT_NORM(r1     * T[0]   + r0 * T[1]);
-    REG_TYPE  r3     = MULT_NORM(r1     * T[1]   - r0 * T[0]);
+    REG_TYPE  r2     = MULT_NORM(r1     * T[1]   + r0 * T[0]);
+    REG_TYPE  r3     = MULT_NORM(r1     * T[0]   - r0 * T[1]);
 
 	      w1    -= 4;
 
@@ -409,8 +393,8 @@ STIN void mdct_bitreverse(mdct_lookup *init,
 
               r0     = x0[1]  - x1[1];
               r1     = x0[0]  + x1[0];
-              r2     = MULT_NORM(r1     * T[2]   + r0 * T[3]);
-              r3     = MULT_NORM(r1     * T[3]   - r0 * T[2]);
+              r2     = MULT_NORM(r1     * T[3]   + r0 * T[2]);
+              r3     = MULT_NORM(r1     * T[2]   - r0 * T[3]);
 
               r0     = HALVE(x0[1] + x1[1]);
               r1     = HALVE(x0[0] - x1[0]);
@@ -440,13 +424,13 @@ void mdct_backward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out){
 
   do{
     oX         -= 4;
-    oX[0]       = MULT_NORM(-iX[2] * T[3] - iX[0]  * T[2]);
-    oX[1]       = MULT_NORM (iX[0] * T[3] - iX[2]  * T[2]);
-    oX[2]       = MULT_NORM(-iX[6] * T[1] - iX[4]  * T[0]);
-    oX[3]       = MULT_NORM (iX[4] * T[1] - iX[6]  * T[0]);
+    oX[0]       = MULT_NORM(-iX[2] * T[2] - iX[0]  * T[3]);
+    oX[1]       = MULT_NORM (iX[0] * T[2] - iX[2]  * T[3]);
+    oX[2]       = MULT_NORM(-iX[6] * T[0] - iX[4]  * T[1]);
+    oX[3]       = MULT_NORM (iX[4] * T[0] - iX[6]  * T[1]);
     iX         -= 8;
     T          += 4;
-  }while(in<=iX);
+  }while(iX>=in);
 
   iX            = in+n2-8;
   oX            = out+n2+n4;
@@ -454,13 +438,13 @@ void mdct_backward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out){
 
   do{
     T          -= 4;
-    oX[0]       =  MULT_NORM (iX[4] * T[3] + iX[6] * T[2]);
-    oX[1]       =  MULT_NORM (iX[4] * T[2] - iX[6] * T[3]);
-    oX[2]       =  MULT_NORM (iX[0] * T[1] + iX[2] * T[0]);
-    oX[3]       =  MULT_NORM (iX[0] * T[0] - iX[2] * T[1]);
+    oX[0]       =  MULT_NORM (iX[4] * T[2] + iX[6] * T[3]);
+    oX[1]       =  MULT_NORM (iX[4] * T[3] - iX[6] * T[2]);
+    oX[2]       =  MULT_NORM (iX[0] * T[0] + iX[2] * T[1]);
+    oX[3]       =  MULT_NORM (iX[0] * T[1] - iX[2] * T[0]);
     iX         -= 8;
     oX         += 4;
-  }while(in<=iX);
+  }while(iX>=in);
 
   mdct_butterflies(init,out+n2,n2);
   mdct_bitreverse(init,out);
@@ -472,21 +456,21 @@ void mdct_backward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out){
     DATA_TYPE *oX2=out+n2+n4;
     DATA_TYPE *iX =out;
     T             =init->trig+n2;
-    
+
     do{
       oX1-=4;
 
-      oX1[3]  =  MULT_NORM (iX[0] * T[1] - iX[1] * T[0]);
-      oX2[0]  = -MULT_NORM (iX[0] * T[0] + iX[1] * T[1]);
+      oX1[3]  =  MULT_NORM (iX[0] * T[0] - iX[1] * T[1]);
+      oX2[0]  = -MULT_NORM (iX[0] * T[1] + iX[1] * T[0]);
 
-      oX1[2]  =  MULT_NORM (iX[2] * T[3] - iX[3] * T[2]);
-      oX2[1]  = -MULT_NORM (iX[2] * T[2] + iX[3] * T[3]);
+      oX1[2]  =  MULT_NORM (iX[2] * T[2] - iX[3] * T[3]);
+      oX2[1]  = -MULT_NORM (iX[2] * T[3] + iX[3] * T[2]);
 
-      oX1[1]  =  MULT_NORM (iX[4] * T[5] - iX[5] * T[4]);
-      oX2[2]  = -MULT_NORM (iX[4] * T[4] + iX[5] * T[5]);
+      oX1[1]  =  MULT_NORM (iX[4] * T[4] - iX[5] * T[5]);
+      oX2[2]  = -MULT_NORM (iX[4] * T[5] + iX[5] * T[4]);
 
-      oX1[0]  =  MULT_NORM (iX[6] * T[7] - iX[7] * T[6]);
-      oX2[3]  = -MULT_NORM (iX[6] * T[6] + iX[7] * T[7]);
+      oX1[0]  =  MULT_NORM (iX[6] * T[6] - iX[7] * T[7]);
+      oX2[3]  = -MULT_NORM (iX[6] * T[7] + iX[7] * T[6]);
 
       oX2+=4;
       iX    +=   8;
@@ -528,50 +512,50 @@ void mdct_forward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out){
   int n2=n>>1;
   int n4=n>>2;
   int n8=n>>3;
-  DATA_TYPE *w=alloca(n*sizeof(*w)); /* forward needs working space */
+  DATA_TYPE *w=(DATA_TYPE*)_alloca(n*sizeof(*w)); /* forward needs working space */
   DATA_TYPE *w2=w+n2;
 
   /* rotate */
 
   /* window + rotate + step 1 */
-  
+
   REG_TYPE r0;
   REG_TYPE r1;
   DATA_TYPE *x0=in+n2+n4;
   DATA_TYPE *x1=x0+1;
   DATA_TYPE *T=init->trig+n2;
-  
+
   int i=0;
-  
+
   for(i=0;i<n8;i+=2){
     x0 -=4;
     T-=2;
     r0= x0[2] + x1[0];
-    r1= x0[0] + x1[2];       
+    r1= x0[0] + x1[2];
     w2[i]=   MULT_NORM(r1*T[1] + r0*T[0]);
     w2[i+1]= MULT_NORM(r1*T[0] - r0*T[1]);
     x1 +=4;
   }
 
   x1=in+1;
-  
+
   for(;i<n2-n8;i+=2){
     T-=2;
     x0 -=4;
     r0= x0[2] - x1[0];
-    r1= x0[0] - x1[2];       
+    r1= x0[0] - x1[2];
     w2[i]=   MULT_NORM(r1*T[1] + r0*T[0]);
     w2[i+1]= MULT_NORM(r1*T[0] - r0*T[1]);
     x1 +=4;
   }
-    
+
   x0=in+n;
 
   for(;i<n2;i+=2){
     T-=2;
     x0 -=4;
     r0= -x0[2] - x1[0];
-    r1= -x0[0] - x1[2];       
+    r1= -x0[0] - x1[2];
     w2[i]=   MULT_NORM(r1*T[1] + r0*T[0]);
     w2[i+1]= MULT_NORM(r1*T[0] - r0*T[1]);
     x1 +=4;

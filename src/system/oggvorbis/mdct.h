@@ -58,7 +58,7 @@ typedef struct {
   int log2n;
 
   DATA_TYPE *trig;
-  DATA_TYPE *unknown_ptr;
+  DATA_TYPE *hmx_buf;
 
   int       *bitrev;
 
