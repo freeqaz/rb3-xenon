@@ -124,6 +124,66 @@ Each attempt: A/B in a dedicated `scripts/setup_worktree.sh` worktree, measure w
 `tools/ab_measure.py`, land on main one-at-a-time only if net-positive. Coupled-base
 items measure the **whole family**; body-port items measure the target unit + permute.
 
+---
+
+## Pass 1 results (2026-06-05) — structural-grind-pass workflow
+
+7 parallel agents over the 7 targets. **Landed +42 (4094 -> 4136), zero regressions,
+5 commits** (`4026e04`, `1a7815c`, `fa49543`, `00e2355`, `186c193`):
+
+| item | result | net | how |
+|------|--------|----:|-----|
+| Char3D mHandle->int | **LANDED** | **+28** | dropped dc3's handle-object; RB3 stores int index; Char3D 0x54->0x50, vector cascade flipped (Crowd 89->117) |
+| AccomplishmentProgress | **LANDED** | **+8** | added the missing 4-byte int@0x50 before mGamerAwardStatusList |
+| DataFile::ParseArray | **LANDED** | **+2** | merged gArray/gNode into one static struct (shared base reg; bare `static` reorders BSS) |
+| MicManagerXbox | **LANDED** | **+2** | vector@0x28, new int@0x20 + mMicsChanged@0x24 moved before it (pinned from ctor asm) |
+| UIManager InitResources | **LANDED** | **+2** | ported RB3's std::list mResources + DTA loader; InitResources 0->100% |
+| Flow collections | RETIRED | 0 | **premise was a mis-diagnosis** (see below) |
+| PanelDir mFlows | held | 0 | correct + regression-free but flips nothing alone; bundle with UIComponent-vtable fix |
+
+### Three NEW root-caused coupled-base levers (the real next targets)
+1. **StlNodeAlloc EBO size — std::map/set node 0x18 (ours) vs 0x1c (retail). HIGHEST EV.**
+   `src/system/stlport/stl/_alloc.h` `_STLP_alloc_proxy` uses EBO; our `StlNodeAlloc`
+   is EMPTY so EBO folds it to 0 -> proxy 0x10 -> `_Rb_tree` 0x18. Retail's StlNodeAlloc
+   carries 4 bytes of state (pool/heap ptr) -> proxy 0x14 -> tree 0x1c. **Every
+   node-based container in the binary is +4.** This is the root of AccomplishmentManager's
+   "40-byte gap" (= 10 maps x 4B) and ~12 of its fns stuck at 99.9%, and likely MANY
+   multi-map game classes. FIX: give StlNodeAlloc a 4-byte member (non-empty). MUST be
+   A/B'd WHOLE-BINARY (regresses classes where the map is the last/only member — start
+   offset already matches — while fixing every multi-map class). Textbook converge-loop;
+   dedicate a session.
+2. **UIComponent vtable +1 slot (+4).** UIComponent's vtable has one extra 4-byte slot
+   before Entering()/Exiting(): retail dispatches `lwz r11,0x3c(r11)` vs ours `0x40`.
+   Blocks the whole PanelDir family. Bundle with the (verified-correct) PanelDir mFlows
+   removal (`~/tmp/grind/paneldir.patch`) -> Entering/Exiting/Exit flip (+3). UIComponent
+   blast radius -> coupled-base, A/B the family.
+3. **RndCam.h field layout (+176 skew).** UIManager::Init writes cam fields at
+   target 0x114/0x118/0x11c vs ours 0x64/0x68/0x6c (+0xB0). An RndCam.h layout fix with
+   broad blast radius; gates UIManager::Init (87.6%) + other RndCam users.
+
+### Retired / corrected
+- **Flow collections (readiness T5) was a MIS-DIAGNOSIS.** ObjPtrVec=0x1c, ObjPtrList=0x14,
+  ObjVector=0x10 are all CORRECT (match DC3 + retail member spans). The "FlowNode 0x64 vs
+  0x38" figures were the funclet/ICF false-positives readiness s1 warns about. The genuine
+  FlowNode delta is only +4, from String 0xc (ours, with mCap) vs DC3 String 0x8
+  (capacity-in-buffer). **OPEN QUESTION:** our String=0xc is a deliberately LANDED RB3 fix
+  (+94); if RB3 retail genuinely uses 0xc (mCap member) while DC3 uses 0x8, then our FlowNode
+  0x64 is RB3-CORRECT and Flow is already done modulo funclet noise. Re-pin against RB3
+  Ghidra (String ctor fn_82798E18 / resize fn_82798E68), NOT DC3, before any action.
+- **PanelDir readiness T2 had the direction BACKWARDS:** verified from `build/45410914/asm/
+  PanelDir.s` — mTriggers@0x1f0, mComponents@0x1f8 (gap 0x8 = one healthy std::list); RB3
+  has NO mFlows. Ours has the spurious mFlows (DC3 false-friend) -> REMOVE it (not add).
+
+### Reusable levers discovered
+- **When Ghidra (8002) is saturated by concurrent agents, read the retail algorithm
+  DIRECTLY from `build/45410914/asm/<UNIT>.s` (.fn/.endfn blocks)** — same ground truth,
+  never times out. This unblocked PanelDir/Mic/Char3D pinning when Ghidra was down all run.
+- decomp_synth `temp_elimination` + `statement_reorder` are high-value for static-init/guard
+  ordering (found the UIManager InitResources guard-less-Symbol win). Run `--no-apply` first,
+  then re-run WITHOUT it to actually write the winning variant.
+- dc3 is a FALSE FRIEND for several of these (Char3D handle-object, Mic 0x20 bug, PanelDir
+  mFlows, String 0x8); rb3-Wii + the retail asm are the correct oracles for RB3-specific shapes.
+
 ## Refs
 `docs/plans/structural-readiness-2026-06-03.md` (verified target evidence + DROP list),
 `docs/plans/engine-baseclass-layout-bugs.md`, `docs/plans/objptr-family-relayout-migration.md`,
