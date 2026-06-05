@@ -18,6 +18,8 @@ public:
     OBJ_MEM_OVERLOAD(0x10);
     NEW_OBJ(FxSendReverb)
 
+    static unsigned short gRevs[3];
+
 #ifdef HX_NATIVE
 public:
 #else

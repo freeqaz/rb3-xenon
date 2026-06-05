@@ -37,19 +37,21 @@ void FxSendReverb::Save(BinStream &bs) {
        << mEarlyLate;
 }
 
-INIT_REVS(2, 0)
+unsigned short FxSendReverb::gRevs[3] = { 0, 0, 0 };
 
-BEGIN_LOADS(FxSendReverb)
-    LOAD_REVS(bs);
-    ASSERT_REVS(2, 0);
-    LOAD_SUPERCLASS(FxSend)
+void FxSendReverb::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRevs[0] = getHmxRev(rev);
+    gRevs[2] = getAltRev(rev);
+    FxSend::Load(bs);
     bs >> mEnvironmentPreset;
-    if (d.rev >= 2) {
+    if (gRevs[0] >= 2) {
         bs >> mPreDelayMs >> mHighCut >> mLowCut >> mRoomSize >> mDamping >> mDiffusion
             >> mEarlyLate;
     }
     OnParametersChanged();
-END_LOADS
+}
 
 BEGIN_HANDLERS(FxSendReverb)
     HANDLE_SUPERCLASS(FxSend)
