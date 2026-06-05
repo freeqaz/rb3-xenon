@@ -23,19 +23,25 @@
 #include "utl/Loader.h"
 #include "utl/MemMgr.h"
 
-CriticalSection gDataReadCrit; // yes these are the bss offsets. this tu sucks
-DataArray *gArray; // 0x28
-int gNode; // 0x2c
-Symbol gFile; // 0x30
-BinStream *gBinStream; // 0x34
-int gOpenArray; // 0x38
-std::list<bool> gConditional; // 0x48
-DataType gDataLine; // 0x50
-std::map<String, DataNode> gReadFiles; // 0x60
-
+// retail/dc3 emit gArray+gNode through ONE base register with gArray@+0 / gNode@+4.
+// Two separate file-statics let MSVC reorder them in BSS (it puts gNode first);
+// a single struct pins the member order so the compiler shares one base.
+static struct DataParseState {
+    DataArray *array;
+    int node;
+} gParse;
+#define gArray gParse.array
+#define gNode gParse.node
+static BinStream *gBinStream;
+static int gOpenArray;
+static bool gCachingFile;
+static bool gReadingFile;
+DataType gDataLine;
+CriticalSection gDataReadCrit;
+Symbol gFile;
+std::list<bool> gConditional;
+std::map<String, DataNode> gReadFiles;
 // bool gCompressCached;
-bool gCachingFile;
-bool gReadingFile;
 
 #ifdef HX_NATIVE
 static int gParseDepth = 0;
