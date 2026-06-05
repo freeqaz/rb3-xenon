@@ -52,15 +52,12 @@ public:
 
     struct CharData {
         struct Char3D {
-            Char3D(const Char3D &o) : mXfm(o.mXfm), mIdx(o.mIdx), mHandle(0) {
-                mColors = o.mColors;
-            }
-            Char3D(const Transform &t, int idx) : mXfm(t), mIdx(idx), mHandle(nullptr) {}
+            Char3D(const Char3D &o) : mXfm(o.mXfm), mIdx(o.mIdx) { mColors = o.mColors; }
+            Char3D(const Transform &t, int idx) : mXfm(t), mIdx(idx) {}
 
-            Transform mXfm;
-            int mIdx;
-            std::vector<Hmx::Color> mColors;
-            class WorldCrowd3DCharHandle *mHandle;
+            Transform mXfm; // 0x0
+            int mIdx; // 0x40
+            std::vector<Hmx::Color> mColors; // 0x44
         };
         CharData(Hmx::Object *owner) : mDef(owner), mMMesh(nullptr) {}
         void Save(BinStream &) const;

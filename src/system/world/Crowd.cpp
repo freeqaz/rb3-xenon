@@ -463,14 +463,8 @@ void WorldCrowd::CollideList(const Segment &seg, std::list<Collision> &colls) {
                 Plane plane;
                 RndDrawable *draw = theChar->CollideShowing(seg, dist, plane);
                 if (draw) {
-                    if (it->m3DChars[i].mHandle == 0) {
-                        it->m3DChars[i].mHandle = Hmx::Object::New<WorldCrowd3DCharHandle>();
-                        it->m3DChars[i].mHandle->Set3DChar(this, it, i, it->m3DChars[i].mXfm);
-                    }
-                    WorldCrowd3DCharHandle *h = it->m3DChars[i].mHandle;
-                    RndDrawable *drawable = h ? (RndDrawable *)h : 0;
                     Collision coll;
-                    coll.object = drawable;
+                    coll.object = theChar;
                     coll.distance = dist;
                     coll.plane = plane;
                     colls.insert(colls.end(), coll);
@@ -527,15 +521,7 @@ void WorldCrowd::ListPollChildren(std::list<RndPollable *> &polls) const {
     }
 }
 
-void WorldCrowd::Delete3DCrowdHandles() {
-    if (TheLoadMgr.EditMode()) {
-        FOREACH (it, mCharacters) {
-            for (int i = 0; i != it->m3DChars.size(); i++) {
-                RELEASE(it->m3DChars[i].mHandle);
-            }
-        }
-    }
-}
+void WorldCrowd::Delete3DCrowdHandles() {}
 
 bool WorldCrowd::Crowd3DExists() {
     FOREACH (it, mCharacters) {
@@ -751,7 +737,7 @@ void WorldCrowd::Reset3DCrowd() {
             InstanceList::iterator instIt = instances.begin();
             int curInstIdx = 0;
             for (int i = 0; (unsigned int)i != it->m3DCharsCreated.size(); i++) {
-                int targetInstIdx = (int)(intptr_t)it->m3DCharsCreated[i].mHandle;
+                int targetInstIdx = it->m3DCharsCreated[i].mIdx;
                 while (curInstIdx != targetInstIdx) {
                     ++instIt;
                     curInstIdx++;
@@ -822,93 +808,47 @@ void WorldCrowd::Set3DCharXfm(
     const std::list<CharData>::iterator &charItr, int charIdx, const Transform &xfm
 ) {
     MILO_ASSERT(charIdx >= 0 && charIdx < (int)charItr->m3DChars.size(), 0x289);
-    CharData::Char3D &char3D = charItr->m3DChars[charIdx];
-    char3D.mXfm = xfm;
-    // Also update the matching entry in m3DCharsCreated (matched by handle)
-    WorldCrowd3DCharHandle *handle = char3D.mHandle;
+    charItr->m3DChars[charIdx].mXfm = xfm;
+    bool foundCreated = false;
     for (int i = 0; i < (int)charItr->m3DCharsCreated.size(); i++) {
-        if (charItr->m3DCharsCreated[i].mHandle == handle) {
+        if (charItr->m3DChars[charIdx].mIdx == charItr->m3DCharsCreated[i].mIdx) {
             charItr->m3DCharsCreated[i].mXfm = xfm;
+            foundCreated = true;
             break;
         }
     }
-    MILO_ASSERT(true, 0x297); // always passes - just for line number
+    MILO_ASSERT(foundCreated, 0x297);
 }
 
 void WorldCrowd::Apply3DCharXfm(
     const std::list<CharData>::iterator &charItr, int charIdx, RndCam *cam
 ) {
     MILO_ASSERT(charIdx >= 0 && charIdx < (int)charItr->m3DChars.size(), 0x29d);
-    int charHandle = (int)charItr->m3DChars[charIdx].mHandle;
-    if (charHandle == 0) return;
-    RndTransformable *environ = mEnviron;
-    if (environ == 0) return;
-
-    float charPosX = charItr->m3DChars[charIdx].mXfm.v.x;
-    float charPosY = charItr->m3DChars[charIdx].mXfm.v.y;
-    float charPosZ = charItr->m3DChars[charIdx].mXfm.v.z;
-    float charRadiusAdjust = -(charItr->mDef.mRadius * 0.5f - charItr->m3DChars[charIdx].mXfm.m.z.z);
-
-    bool useCam = (mCrowdRotate != 0) && (cam != 0);
-    if ((!useCam) && (!mFocus)) {
-        Transform newXfm = environ->WorldXfm();
-        ((WorldCrowd3DCharHandle *)charHandle)->SetWorldXfm(newXfm);
-        return;
+    Character *itrChar = charItr->mDef.mChar;
+    if (itrChar && mPlacementMesh) {
+        Transform xfm;
+        xfm.v = charItr->m3DChars[charIdx].mXfm.v;
+        xfm.v.z -= charItr->mDef.mHeight / 2;
+        bool useCam = (mCrowdRotate != kCrowdRotateNone) && (cam != 0);
+        if (!useCam && !mFocus) {
+            xfm.m = mPlacementMesh->WorldXfm().m;
+            itrChar->SetWorldXfm(xfm);
+            return;
+        }
+        xfm.m.z = mPlacementMesh->WorldXfm().m.z;
+        if (mCrowdRotate == kCrowdRotateFace) {
+            Cross(xfm.m.z, cam->WorldXfm().m.y, xfm.m.x);
+        } else if (mCrowdRotate == kCrowdRotateAway) {
+            Cross(cam->WorldXfm().m.y, xfm.m.z, xfm.m.x);
+        } else {
+            const Vector3 &v = mFocus->WorldXfm().v;
+            Vector3 diff(v.x - xfm.v.x, v.y - xfm.v.y, 0);
+            Cross(diff, xfm.m.z, xfm.m.x);
+        }
+        Normalize(xfm.m.x, xfm.m.x);
+        Cross(xfm.m.z, xfm.m.x, xfm.m.y);
+        itrChar->SetWorldXfm(xfm);
     }
-
-    const Transform &environXfm = environ->WorldXfm();
-    float envY_x = environXfm.m.y.x;
-    float envY_y = environXfm.m.y.y;
-    float envY_z = environXfm.m.y.z;
-
-    float forwardDir_x, forwardDir_y, forwardDir_z;
-
-    if (mCrowdRotate == 1) {
-        const Transform &camXfm = cam->WorldXfm();
-        forwardDir_x = camXfm.m.z.y * envY_x - camXfm.m.z.x * envY_y;
-        forwardDir_y = camXfm.m.z.x * envY_z - camXfm.m.z.z * envY_x;
-        forwardDir_z = camXfm.m.z.z * envY_y - camXfm.m.z.y * envY_z;
-    } else if (mCrowdRotate == 2) {
-        const Transform &camXfm = cam->WorldXfm();
-        forwardDir_x = camXfm.m.z.x * envY_y - camXfm.m.z.y * envY_x;
-        forwardDir_y = camXfm.m.z.z * envY_x - camXfm.m.z.x * envY_z;
-        forwardDir_z = camXfm.m.z.y * envY_z - camXfm.m.z.z * envY_y;
-    } else {
-        const Transform &focusXfm = mFocus->WorldXfm();
-        forwardDir_x = focusXfm.v.x - charPosX;
-        forwardDir_y = focusXfm.v.y - charPosY;
-        forwardDir_z = focusXfm.v.y * envY_z - envY_y * 0.0f;
-        float fx = forwardDir_x, fy = forwardDir_y;
-        forwardDir_x = fy * envY_z - envY_y * 0.0f;
-        forwardDir_y = envY_z * fx - envY_x * 0.0f;
-        forwardDir_z = envY_y * fx - fy * envY_x;
-    }
-
-    Vector3 forwardVec;
-    forwardVec.x = forwardDir_x;
-    forwardVec.y = forwardDir_y;
-    forwardVec.z = forwardDir_z;
-    Normalize(forwardVec, forwardVec);
-
-    float rightDir_x = forwardVec.z * envY_y - forwardVec.y * envY_z;
-    float rightDir_y = forwardVec.x * envY_z - forwardVec.z * envY_x;
-    float rightDir_z = forwardVec.y * envY_x - forwardVec.x * envY_y;
-
-    Transform newXfm;
-    newXfm.m.x.x = forwardVec.x;
-    newXfm.m.x.y = forwardVec.y;
-    newXfm.m.x.z = forwardVec.z;
-    newXfm.m.y.x = envY_x;
-    newXfm.m.y.y = envY_y;
-    newXfm.m.y.z = envY_z;
-    newXfm.m.z.x = rightDir_x;
-    newXfm.m.z.y = rightDir_y;
-    newXfm.m.z.z = rightDir_z;
-    newXfm.v.x = charPosX;
-    newXfm.v.y = charPosY;
-    newXfm.v.z = charPosZ;
-
-    ((WorldCrowd3DCharHandle *)charHandle)->SetWorldXfm(newXfm);
 }
 
 void WorldCrowd::Set3DCharList(
