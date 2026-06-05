@@ -187,7 +187,8 @@ public:
     std::map<Symbol, int> mStepTrackingMap; // 0x24
     BandProfile *mParentProfile; // 0x3c
     bool mHardCoreStatusUpdatePending; // 0x40
-    std::list<GamerAwardStatus *> mGamerAwardStatusList; // 0x44
+    int unk50; // 0x50 (retail-360 4-byte field before mGamerAwardStatusList; absent in Wii)
+    std::list<GamerAwardStatus *> mGamerAwardStatusList; // 0x54
     std::set<Symbol> mAccomplishments; // 0x4c
     std::set<Symbol> mNewlyAcquiredAccomplishments; // 0x64
     std::vector<Symbol> unk7c; // 0x7c
