@@ -142,11 +142,11 @@ void MicXbox::OnMicDisconnected() {
 #pragma region MicManagerXbox
 
 MicManagerXbox::MicManagerXbox()
-    : unk18(-1), unk1c(0), unk2c(0), mMicsChanged(false), mPushToTalkPad(-1) {
+    : unk18(-1), unk1c(0), unk20(0), mMicsChanged(false), mPushToTalkPad(-1) {
     for (int i = 0; i < 4; i++) {
         unkc.push_back(0);
     }
-    unk20.reserve(4);
+    unk28.reserve(4);
 
     // Register data functions for headset configuration
     DataRegisterFunc(Symbol("set_noise_gate"), SetNoiseGate);

@@ -122,13 +122,13 @@ public:
     std::vector<ChatReceiver *> unkc;
     int unk18;
     int unk1c;
-    std::vector<MicManagerXbox::ChatBuffer> unk20;
-    int unk2c;
-    bool mMicsChanged;
-    u32 unk34;
-    Timer unk38;
-    CriticalSection unk68;
-    int mPushToTalkPad;
+    int unk20; // 0x20
+    bool mMicsChanged; // 0x24
+    std::vector<MicManagerXbox::ChatBuffer> unk28; // 0x28
+    int unk34; // 0x34
+    Timer unk38; // 0x38
+    CriticalSection unk68; // 0x68
+    int mPushToTalkPad; // 0x88
 
 private:
     ~MicManagerXbox();
