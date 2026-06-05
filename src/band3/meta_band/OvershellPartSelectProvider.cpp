@@ -21,57 +21,67 @@ OvershellPartSelectProvider::OvershellPartSelectProvider(OvershellPanel *panel)
 OvershellPartSelectProvider::~OvershellPartSelectProvider() { Clear(); }
 
 void OvershellPartSelectProvider::Reload(ControllerType ty, BandUser *user) {
+    static Symbol s_overshell_guitar("overshell_guitar");
+    static Symbol s_overshell_real_guitar("overshell_real_guitar");
+    static Symbol s_overshell_bass("overshell_bass");
+    static Symbol s_overshell_real_bass("overshell_real_bass");
+    static Symbol s_overshell_keys("overshell_keys");
+    static Symbol s_overshell_real_keys("overshell_real_keys");
+    static Symbol s_overshell_drums("overshell_drums");
+    static Symbol s_overshell_drums_pro("overshell_drums_pro");
+    static Symbol s_overshell_vocal_solo("overshell_vocal_solo");
+    static Symbol s_overshell_vocal_harmony("overshell_vocal_harmony");
     Clear();
     mControllerType = ty;
     mUser = user;
     switch (ty) {
     case kControllerDrum:
-        AddPart(overshell_drums, kTrackDrum, GetFontCharFromTrackType(kTrackDrum, 0));
-        AddPart(overshell_drums_pro, kTrackDrum, GetFontCharForProDrums(0));
+        AddPart(s_overshell_drums, kTrackDrum, GetFontCharFromTrackType(kTrackDrum, 0));
+        AddPart(s_overshell_drums_pro, kTrackDrum, GetFontCharForProDrums(0));
         break;
     case kControllerGuitar:
-        AddPart(overshell_guitar, kTrackGuitar, GetFontCharFromTrackType(kTrackGuitar, 0));
-        AddPart(overshell_bass, kTrackBass, GetFontCharFromTrackType(kTrackBass, 0));
+        AddPart(s_overshell_guitar, kTrackGuitar, GetFontCharFromTrackType(kTrackGuitar, 0));
+        AddPart(s_overshell_bass, kTrackBass, GetFontCharFromTrackType(kTrackBass, 0));
         if (mOvershell->CanGuitarPlayKeys()) {
-            AddPart(overshell_keys, kTrackKeys, GetFontCharFromTrackType(kTrackKeys, 0));
+            AddPart(s_overshell_keys, kTrackKeys, GetFontCharFromTrackType(kTrackKeys, 0));
         }
         break;
     case kControllerVocals:
         AddPart(
-            overshell_vocal_solo, kTrackVocals, GetFontCharFromTrackType(kTrackVocals, 0)
+            s_overshell_vocal_solo, kTrackVocals, GetFontCharFromTrackType(kTrackVocals, 0)
         );
-        AddPart(overshell_vocal_harmony, kTrackVocals, GetFontCharForHarmonyMics(2, 0));
+        AddPart(s_overshell_vocal_harmony, kTrackVocals, GetFontCharForHarmonyMics(2, 0));
         break;
     case kControllerKeys:
-        AddPart(overshell_keys, kTrackKeys, GetFontCharFromTrackType(kTrackKeys, 0));
+        AddPart(s_overshell_keys, kTrackKeys, GetFontCharFromTrackType(kTrackKeys, 0));
         AddPart(
-            overshell_real_keys,
+            s_overshell_real_keys,
             kTrackRealKeys,
             GetFontCharFromTrackType(kTrackRealKeys, 0)
         );
-        AddPart(overshell_guitar, kTrackGuitar, GetFontCharFromTrackType(kTrackGuitar, 0));
-        AddPart(overshell_bass, kTrackBass, GetFontCharFromTrackType(kTrackBass, 0));
+        AddPart(s_overshell_guitar, kTrackGuitar, GetFontCharFromTrackType(kTrackGuitar, 0));
+        AddPart(s_overshell_bass, kTrackBass, GetFontCharFromTrackType(kTrackBass, 0));
         break;
     case kControllerRealGuitar:
         AddPart(
-            overshell_real_guitar,
+            s_overshell_real_guitar,
             kTrackRealGuitar,
             GetFontCharFromTrackType(kTrackRealGuitar, 0)
         );
         AddPart(
-            overshell_real_bass,
+            s_overshell_real_bass,
             kTrackRealBass,
             GetFontCharFromTrackType(kTrackRealBass, 0)
         );
         if (mUser->mHasButtonGuitar) {
             if (TheGameMode->Property("allow_coreguitars_with_real", true)->Int()) {
                 AddPart(
-                    overshell_guitar,
+                    s_overshell_guitar,
                     kTrackGuitar,
                     GetFontCharFromTrackType(kTrackGuitar, 0)
                 );
                 AddPart(
-                    overshell_bass, kTrackBass, GetFontCharFromTrackType(kTrackBass, 0)
+                    s_overshell_bass, kTrackBass, GetFontCharFromTrackType(kTrackBass, 0)
                 );
             }
         }
@@ -84,13 +94,14 @@ void OvershellPartSelectProvider::Reload(ControllerType ty, BandUser *user) {
 void OvershellPartSelectProvider::Clear() { mPartSelections.clear(); }
 
 bool OvershellPartSelectProvider::IsActive(int data) const {
-    if (mPartSelections.empty())
+    if (mPartSelections.size() == 0)
         return false;
     if (!mUser->IsParticipating())
         return true;
+    static Symbol s_overshell_drums_pro("overshell_drums_pro");
     MILO_ASSERT_RANGE(data, 0, mPartSelections.size(), 0x6E);
     const PartSelectEntry &entry = mPartSelections[data];
-    if (mUser->IsLocal() && entry.unk0 == overshell_drums_pro) {
+    if (mUser->IsLocal() && entry.unk0 == s_overshell_drums_pro) {
         if (UserHasGHDrums(mUser->GetLocalUser()))
             return false;
     }
@@ -146,6 +157,7 @@ void OvershellPartSelectProvider::Text(int, int data, UIListLabel *slot, UILabel
     const {
     MetaPerformer *performer = MetaPerformer::Current();
     if (performer) {
+        static Symbol s_overshell_vocal_harmony("overshell_vocal_harmony");
         MILO_ASSERT_RANGE(data, 0, mPartSelections.size(), 0xC2);
         const PartSelectEntry &entry = mPartSelections[data];
         if (slot->Matches("name")) {
@@ -159,7 +171,7 @@ void OvershellPartSelectProvider::Text(int, int data, UIListLabel *slot, UILabel
 
             if (((!performer->IsSetComplete() && performer->PartPlaysInSong(tracktypeSym))
                  && !(
-                     entry.unk0 == overshell_vocal_harmony
+                     entry.unk0 == s_overshell_vocal_harmony
                      && !performer->VocalHarmonyInSong()
                  ))
                 || (performer && performer->IsSetComplete())) {

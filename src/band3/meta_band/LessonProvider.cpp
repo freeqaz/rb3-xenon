@@ -58,7 +58,8 @@ void LessonProvider::Text(int, int idx, UIListLabel *slot, UILabel *label) const
                 int count_completed =
                     pLessonMgr->GetCompletedCountFromCategory(profile, key);
                 int count = pLessonMgr->GetTotalCountFromCategory(key);
-                label->SetTokenFmt(trainer_progress, count_completed, count);
+                static Symbol s_trainer_progress("trainer_progress");
+                label->SetTokenFmt(s_trainer_progress, count_completed, count);
             }
         } else
             label->SetTextToken(gNullStr);
