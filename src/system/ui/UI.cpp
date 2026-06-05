@@ -35,6 +35,7 @@
 #include "ui/UIPicture.h"
 #include "ui/UIScreen.h"
 #include "ui/UIPanel.h"
+#include "ui/UIResource.h"
 #include "ui/UISlider.h"
 #include "ui/UITrigger.h"
 #include "utl/Cheats.h"
@@ -452,6 +453,45 @@ void UIManager::PopScreen(UIScreen *screen) {
         else
             mTransitionScreen = mPushedScreens.back();
     }
+}
+
+UIResource *UIManager::Resource(const UIComponent *comp) {
+    return FindResource(comp->TypeDef());
+}
+
+void UIManager::InitResources(Symbol s) {
+    DataArray *cfg = SystemConfig("objects", s);
+    static Symbol resource_file("resource_file");
+    static Symbol types("types");
+    DataArray *typesArr = cfg->FindArray(types);
+    if (typesArr) {
+        for (int i = 1; i < typesArr->Size(); i++) {
+            DataArray *curArr = typesArr->Array(i);
+            DataArray *rsrcsArr = curArr->FindArray(resource_file, false);
+            if (rsrcsArr && !FindResource(curArr)) {
+                FilePath fp(FileGetPath(rsrcsArr->File()), rsrcsArr->Str(1));
+                mResources.push_back(new UIResource(fp));
+            }
+        }
+    }
+    mResources.sort(UIResource::Compare());
+}
+
+UIResource *UIManager::FindResource(const DataArray *array) {
+    if (!array)
+        return nullptr;
+    static Symbol resource_file("resource_file");
+    DataArray *fileArray = array->FindArray(resource_file, false);
+    if (fileArray) {
+        FilePath path(FileGetPath(fileArray->File()), fileArray->Str(1));
+        for (std::list<UIResource *>::iterator it = mResources.begin();
+             it != mResources.end();
+             ++it) {
+            if (strcmp((*it)->mResourcePath.c_str(), path.c_str()) == 0)
+                return *it;
+        }
+    }
+    return nullptr;
 }
 
 DataNode UIManager::OnIsResource(DataArray *arr) {
