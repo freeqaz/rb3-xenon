@@ -11,8 +11,8 @@ ButtonUpMsg::ButtonUpMsg(LocalUser *user, JoypadButton butt, JoypadAction act, i
 
 LocalUser *ButtonUpMsg::GetUser() const { return mData->Obj<LocalUser>(2); }
 
-JoypadConnectionMsg::JoypadConnectionMsg(LocalUser *user, bool b, int i, int j)
-    : Message(Type(), user, b, i, j) {}
+JoypadConnectionMsg::JoypadConnectionMsg(LocalUser *user, bool b, int i)
+    : Message(Type(), user, b, i) {}
 
 LocalUser *JoypadConnectionMsg::GetUser() const { return mData->Obj<LocalUser>(2); }
 
