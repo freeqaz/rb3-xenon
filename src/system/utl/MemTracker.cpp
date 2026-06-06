@@ -28,7 +28,9 @@ struct MemDiffEntry {
     // total: 0x48 = 72 bytes
 
     bool operator<(const MemDiffEntry &other) const {
-        return mHeap < other.mHeap;
+        if (mHeap != other.mHeap)
+            return mHeap < other.mHeap;
+        return mSizeDiff < other.mSizeDiff;
     }
 };
 
