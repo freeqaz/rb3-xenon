@@ -14,7 +14,13 @@ const unsigned int String::npos = (unsigned int)-1;
 // FixedString (for StackString) uses gEmpty+4 with capacity stored at gEmpty[0..3].
 char gEmpty[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-// gNullStr is the initial mStr for a default-constructed String.
+// A default-constructed String's mStr points at this shared empty-buffer sentinel
+// (a zero-initialized .bss char). Retail bakes its *address* directly into every
+// String ctor (lis/addi of a fixed .bss VA) — mStr = &gNullStrBuf — NOT a load of a
+// `const char*` variable's value. Mirrors rb3-Wii's `char gEmpty; mStr(&gEmpty)`.
+char gNullStrBuf = 0;
+
+// gNullStr ("" in .rdata) backs Symbol/comparison use; distinct from gNullStrBuf.
 extern const char *gNullStr;
 
 void RemoveSpaces(char *out, int len, const char *in) {
@@ -141,27 +147,39 @@ unsigned int FixedString::find_last_of(const char *str) const {
         return a;
 }
 
+// Retail ICF-folds FixedString::{ToLower,ToUpper,ReplaceAll} with their String
+// counterparts (the FixedString-mangled symbol survived). The retained body reads
+// the buffer at String's mStr@8, so for the X360 match operate on the String-layout
+// pointer. The native build keeps true FixedString semantics (mStr@0).
+#ifdef HX_NATIVE
+#define FIXEDSTRING_BUF mStr
+#else
+#define FIXEDSTRING_BUF reinterpret_cast<String *>(this)->mStr
+#endif
+
 void FixedString::ToLower() {
     char *p;
-    for (p = mStr; *p != '\0'; p++) {
+    for (p = FIXEDSTRING_BUF; *p != '\0'; p++) {
         *p = tolower(*p);
     }
 }
 
 void FixedString::ToUpper() {
     char *p;
-    for (p = mStr; *p != '\0'; p++) {
+    for (p = FIXEDSTRING_BUF; *p != '\0'; p++) {
         *p = toupper(*p);
     }
 }
 
 void FixedString::ReplaceAll(char old_char, char new_char) {
     char *p;
-    for (p = mStr; *p != '\0'; p++) {
+    for (p = FIXEDSTRING_BUF; *p != '\0'; p++) {
         if (*p == old_char)
             *p = new_char;
     }
 }
+
+#undef FIXEDSTRING_BUF
 
 unsigned int FixedString::find(char c, unsigned int pos) const {
     MILO_ASSERT(pos <= capacity(), 0x6C);
@@ -226,20 +244,20 @@ bool FixedString::contains(const char *str) const { return find(str) != -1; }
 // mStr points to the start of the char buffer (gNullStr when mCap == 0).
 // Free: MemOrPoolFree(mCap + 1, mStr) — allocations are mCap+1 bytes, no header prefix.
 
-String::String() : mCap(0), mStr((char *)gNullStr) {}
+String::String() : mCap(0), mStr(&gNullStrBuf) {}
 
-String::String(const char *str) : mCap(0), mStr((char *)gNullStr) { *this = str; }
+String::String(const char *str) : mCap(0), mStr(&gNullStrBuf) { *this = str; }
 
-String::String(Symbol s) : mCap(0), mStr((char *)gNullStr) { *this = s; }
+String::String(Symbol s) : mCap(0), mStr(&gNullStrBuf) { *this = s; }
 
-String::String(unsigned int len, char c) : mCap(0), mStr((char *)gNullStr) {
+String::String(unsigned int len, char c) : mCap(0), mStr(&gNullStrBuf) {
     reserve(len);
     for (unsigned int i = 0; i < len; i++)
         mStr[i] = c;
     mStr[len] = '\0';
 }
 
-String::String(const String &str) : mCap(0), mStr((char *)gNullStr) { *this = str.c_str(); }
+String::String(const String &str) : mCap(0), mStr(&gNullStrBuf) { *this = str.c_str(); }
 
 String::~String() {
     if (mCap != 0) {
@@ -315,12 +333,21 @@ String &String::operator+=(char c) {
     return *this;
 }
 
-String &String::operator=(const FixedString &str) {
-    reserve(str.capacity());
+// Retail ICF-folds operator=(const String&) into the operator=(const FixedString&)
+// body (the FixedString-mangled symbol won the COMDAT tie). Both bodies are
+// byte-identical: they read the source's mCap@4 and mStr@8 (String layout), so for
+// the X360 match the FixedString overload reinterprets its arg as a String. The
+// native build keeps true FixedString semantics (its only member, mStr@0).
+String &String::operator=(const FixedString &fstr) {
 #ifdef HX_NATIVE
-    if (mStr != str.c_str()) // avoid ASan strcpy-param-overlap on self-assignment
+    reserve(fstr.capacity());
+    if (mStr != fstr.c_str()) // avoid ASan strcpy-param-overlap on self-assignment
+        strcpy(mStr, fstr.c_str());
+#else
+    const String &str = reinterpret_cast<const String &>(fstr);
+    reserve(str.mCap);
+    strcpy(mStr, str.mStr);
 #endif
-    strcpy(mStr, str.c_str());
     return *this;
 }
 
