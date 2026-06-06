@@ -230,12 +230,7 @@ void TourDescProvider::UpdateExtendedMesh(int, int iData, RndMesh *i_pMesh) cons
     Symbol s = DataSymbol(iData);
     TourDesc *pTourDesc = TheTour->GetTourDesc(s);
     MILO_ASSERT(pTourDesc, 0x150);
-    bool bAvailable;
-    if (MetaPanel::sUnlockAll) {
-        bAvailable = true;
-    } else {
-        bAvailable = bool(IsTourDescAvailable(s));
-    }
+    bool bAvailable = bool(IsTourDescAvailable(s));
     if (!strcmp(i_pMesh->Name(), "tour_art.mesh")) {
         String texName(bAvailable ? pTourDesc->GetName()
                                   : MakeString("%s_gray", pTourDesc->GetName()));
@@ -466,30 +461,28 @@ void TourDescProvider::Text(
     MILO_ASSERT(pTourDesc, 0x60);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x63);
-        bool bAvailable;
     bool bSelected = pProgress->GetTourDesc() == s;
-    if (MetaPanel::sUnlockAll) {
-        bAvailable = true;
-    } else {
-        bAvailable = IsTourDescAvailable(s);
-    }
+    bool bAvailable = IsTourDescAvailable(s);
     if (i_pSlot->Matches("name")) {
         if (bAvailable)
             i_pLabel->SetTextToken(s);
         else
             i_pLabel->SetTextToken(Symbol(gNullStr));
     } else if (i_pSlot->Matches("inprogress")) {
-        if (bAvailable && bSelected)
+        if (bAvailable && bSelected) {
+            static Symbol tour_inprogress("tour_inprogress");
             i_pLabel->SetTextToken(tour_inprogress);
-        else
+        } else
             i_pLabel->SetTextToken(Symbol(gNullStr));
     } else if (i_pSlot->Matches("locked")) {
-        if (!bAvailable)
+        if (!bAvailable) {
+            static Symbol tour_locked("tour_locked");
             i_pLabel->SetTextToken(tour_locked);
-        else
+        } else
             i_pLabel->SetTextToken(Symbol(gNullStr));
     } else if (i_pSlot->Matches("numsongs")) {
         if (bAvailable && !bSelected) {
+            static Symbol tour_desc_songcount("tour_desc_songcount");
             i_pLabel->SetTokenFmt(tour_desc_songcount, pTourDesc->GetNumSongs());
         } else {
             i_pLabel->SetTextToken(Symbol(gNullStr));
@@ -522,7 +515,7 @@ UIComponent::State TourDescProvider::ComponentStateOverride(
     int iCol, int iData, UIComponent::State i_eState
 ) const {
     Symbol s = DataSymbol(iData);
-    bool bAvailable = MetaPanel::sUnlockAll ? true : IsTourDescAvailable(s);
+    bool bAvailable = IsTourDescAvailable(s);
     if (!bAvailable)
         i_eState = UIComponent::kDisabled;
     return i_eState;
