@@ -13,6 +13,10 @@
 #include "utl/Symbol.h"
 #include "utl/StlAlloc.h"
 
+namespace Hmx {
+    class Color32;
+}
+
 #ifndef HX_NATIVE
 using stlpmtx_std::StlNodeAlloc;
 // Convenience: on Xbox, stlpmtx_std::vector with StlNodeAlloc; on native, std::vector
@@ -338,6 +342,11 @@ public:
     void ReserveLines(int);
     void SyncMeshes();
     int NumLines() const;
+    // RB3-era single-style color API. Decl-only (defined in the RndText TU when
+    // ported); lets RB3 game TUs (e.g. bandobj/VocalTrackDir.cpp) that read/write
+    // the single-style packed color compile. dc3's RndText uses mStyles/mTextColor.
+    void SetColor(const Hmx::Color32 &);
+    unsigned int GetSingleStyleColor() const;
     void UpdateLineColor(int, const Hmx::Color &, bool *);
     float GetStringWidthUTF8(const char *, const char *, bool, const Style *) const;
     int AddLineUTF8(const String &, const Transform &, const Style &, float *, bool *, int);

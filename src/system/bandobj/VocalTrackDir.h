@@ -40,14 +40,16 @@ public:
     virtual ObjectDir *ThisDir() { return this; }
     virtual ObjectDir *ThisDir() const { return const_cast<VocalTrackDir *>(this); }
 #else
-    virtual ObjectDir *ThisDir() {}
-    virtual ObjectDir *ThisDir() const {}
+    // Retail RB3 (MWCC) used empty inline bodies relying on r3==this fallthrough;
+    // MSVC X360 rejects empty non-void bodies (C4716). A Dir's ThisDir is itself.
+    virtual ObjectDir *ThisDir() { return this; }
+    virtual ObjectDir *ThisDir() const { return const_cast<VocalTrackDir *>(this); }
 #endif
     virtual void SpotlightPhraseSuccess();
 #ifdef HX_NATIVE
     virtual VocalTrackDir *AsVocalTrackDir() { return this; }
 #else
-    virtual VocalTrackDir *AsVocalTrackDir() {}
+    virtual VocalTrackDir *AsVocalTrackDir() { return this; }
 #endif
     virtual RndDir *AsRndDir() { return AsVocalTrackDir(); }
     virtual void Reset();

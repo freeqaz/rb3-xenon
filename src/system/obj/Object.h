@@ -1331,6 +1331,12 @@ public:
 
     DataNode *KeyValue(Symbol key, bool fail = true) const;
     int Size() const;
+    // RB3-era indexed key/value access over the flat (k0 v0 k1 v1 ...) map.
+    // Decl-only (defined in the Object TU when ported); lets RB3 game TUs that
+    // iterate mTypeProps by index (e.g. bandobj/VocalTrackDir.cpp legacy load)
+    // compile against the retail RB3 TypeProps API.
+    Symbol Key(int idx) const;
+    DataNode &Value(int idx) const;
     void ClearKeyValue(Symbol key);
     void SetKeyValue(Symbol key, const DataNode &value, bool);
     DataArray *GetArray(Symbol prop);

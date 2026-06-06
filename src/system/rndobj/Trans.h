@@ -88,6 +88,15 @@ public:
         SetDirty();
     }
 
+    // RB3-era 3-float overload. rb3-Wii kept this because the Vector3& form
+    // "doesn't inline nicely and results in a stack related mismatch". Unused
+    // inline in TUs that don't call it (no COMDAT emitted), so codegen-neutral
+    // for existing units; required by RB3 game TUs (e.g. VocalTrackDir).
+    void SetLocalPos(float x, float y, float z) {
+        mLocalXfm.v.Set(x, y, z);
+        SetDirty();
+    }
+
     void SetLocalPos(const Vector3 &vec) {
         mLocalXfm.v = vec;
         SetDirty();

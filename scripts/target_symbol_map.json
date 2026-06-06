@@ -12022,5 +12022,21 @@
  "0x824274E8": "?ComputeFaceTangentBasis@@YAXPAVRndMesh@@HAAVMatrix3@Hmx@@@Z",
  "0x82428440": "?UtilDrawPlane@@YAXABVPlane@@ABVVector3@@ABVColor@Hmx@@HM_N@Z",
  "0x82429598": "?SetBloomBlurWeights@@YAX_NMM@Z",
- "0x8242B430": "?FindBounds@?$Keys@VQuat@Hmx@@V12@@@QAAXAAM0AAH1@Z"
+ "0x8242B430": "?FindBounds@?$Keys@VQuat@Hmx@@V12@@@QAAXAAM0AAH1@Z",
+ "0x822E43D0": "?SetVocalLineColors@VocalTrackDir@@QAAXPAW4VocalHUDColor@@@Z",
+ "0x822E48A8": "?SetMicDisplayLabel@VocalTrackDir@@QAAXVSymbol@@@Z",
+ "0x822E4A98": "?GetPitchArrow@VocalTrackDir@@QAAPAVPitchArrow@@H@Z",
+ "0x822E52E8": "?SetPerformanceMode@VocalTrackDir@@UAAX_N@Z",
+ "0x822E5368": "?SortArrowFx@VocalTrackDir@@QAAXXZ",
+ "0x822E53D8": "?UpdatePartIsolation@VocalTrackDir@@QAAXXZ",
+ "0x822E7D50": "?SyncObjects@VocalTrackDir@@UAAXXZ",
+ "0x822E4898": "?ShowMicDisplay@VocalTrackDir@@QAAX_N@Z",
+ "0x822E5900": "?TrackReset@VocalTrackDir@@UAAXXZ",
+ "0x822E4700": "?SpotlightPhraseSuccess@VocalTrackDir@@UAAXXZ",
+ "0x822E4990": "?CanChat@VocalTrackDir@@QAAX_N@Z",
+ "0x822E4318": "?PlayIntro@VocalTrackDir@@UAAXXZ",
+ "0x822E4780": "?Deploy@VocalTrackDir@@UAAXXZ",
+ "0x822E7658": "?TutorialReset@VocalTrackDir@@UAAXXZ",
+ "0x822E7208": "?PreLoad@VocalTrackDir@@UAAXAAVBinStream@@@Z",
+ "0x822E4B40": "?ConfigPanels@VocalTrackDir@@QAAXXZ"
 }
