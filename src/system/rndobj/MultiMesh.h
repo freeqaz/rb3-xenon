@@ -93,7 +93,7 @@ class RndMultiMesh : public RndDrawable {
 public:
     struct Instance {
         Instance();
-        Instance(const Transform &t) : mIsVisible(1), mXfm(t) {}
+        Instance(const Transform &t) : mXfm(t) {}
         Instance &operator=(const Instance &other) {
             memcpy(this, &other, sizeof(*this));
             return *this;
@@ -103,8 +103,7 @@ public:
         void Load(BinStreamRev &);
         void LoadRev(BinStream &, int);
 
-        bool mIsVisible; // 0x0
-        Transform mXfm; // 0x4
+        Transform mXfm; // 0x0
     };
 
     typedef std::

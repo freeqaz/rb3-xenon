@@ -731,21 +731,16 @@ void WorldCrowd::AssignRandomColors(bool incrementStamp) {
 void WorldCrowd::Reset3DCrowd() {
     SetFullness(1.0f, mCharFullness);
     FOREACH (it, mCharacters) {
-        RndMultiMesh *multiMesh = it->mMMesh;
-        if (multiMesh) {
-            InstanceList &instances = multiMesh->Instances();
-            InstanceList::iterator instIt = instances.begin();
-            int curInstIdx = 0;
+        if (it->mMMesh) {
+            InstanceList &insts = it->mMMesh->Instances();
+            int i6 = 0;
+            InstanceList::iterator inst = insts.begin();
             for (int i = 0; (unsigned int)i != it->m3DCharsCreated.size(); i++) {
-                int targetInstIdx = it->m3DCharsCreated[i].mIdx;
-                while (curInstIdx != targetInstIdx) {
-                    ++instIt;
-                    curInstIdx++;
+                int cap = it->m3DCharsCreated[i].mIdx;
+                for (; i6 != cap; i6++) {
+                    ++inst;
                 }
-                RndMultiMesh::Instance inst(it->m3DCharsCreated[i].mXfm);
-                instIt = instances.insert(instIt, inst);
-                ++instIt;
-                curInstIdx++;
+                inst = insts.insert(inst, it->m3DCharsCreated[i].mXfm);
             }
         }
         it->m3DCharsCreated.clear();
