@@ -11973,5 +11973,12 @@
  "0x82B28310": "deflate_stored",
  "0x82B28940": "deflate_slow",
  "0x82B540D8": "?json_object_double_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
- "0x82B54250": "?json_object_string_delete@@YAXPAUjson_object@@@Z"
+ "0x82B54250": "?json_object_string_delete@@YAXPAUjson_object@@@Z",
+ "0x82542EB0": "?GetLeaderboardHardcoreStatus@AccomplishmentManager@@QBAHH@Z",
+ "0x82542EE8": "?GetIconHardCoreStatus@AccomplishmentManager@@QBAHH@Z",
+ "0x82543B18": "?GetNumOtherGoalsAcquired@AccomplishmentManager@@QAAHPBDVSymbol@@@Z",
+ "0x82543B80": "?DidUserMakeProgressOnGoal@AccomplishmentManager@@QAA_NPAVLocalBandUser@@VSymbol@@@Z",
+ "0x82548280": "?AddAssetAward@AccomplishmentManager@@QAAXVSymbol@@0@Z",
+ "0x82549468": "?ConfigureFanScalingData@AccomplishmentManager@@QAAXPAVDataArray@@@Z",
+ "0x82549BB0": "?InqGoalsAcquiredForSong@AccomplishmentManager@@QAA_NPAVBandUser@@VSymbol@@AAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z"
 }
