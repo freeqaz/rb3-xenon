@@ -69,12 +69,11 @@ BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
 }
 
 BinStream &RndBitmap::SaveHeader(BinStream &bs) const {
-    static u8 pad[0xf];
-    Hmx::CRC name; // retail: no stored mName member; serialize an empty CRC
-    bs << BITMAP_REV << name << mBpp << (unsigned int)mOrder << (unsigned char)NumMips()
-       << mWidth << mHeight;
+    static u8 pad[0x13];
+    bs << BITMAP_REV << mBpp << (unsigned int)mOrder << (unsigned char)NumMips() << mWidth
+       << mHeight;
     bs << mRowBytes;
-    bs.Write(pad, 0xf);
+    bs.Write(pad, 0x13);
     return bs;
 }
 
