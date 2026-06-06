@@ -688,7 +688,7 @@ UI.cpp:
 	.pdata      start:0x8223D628 end:0x8223D710
 	.text       start:0x827DF8B8 end:0x827E0E0C
 
-Utl.cpp:
+system/rndobj/Utl.cpp:
 	.pdata      start:0x82205008 end:0x822054A8
 	.text       start:0x82426F10 end:0x82430AB8
 

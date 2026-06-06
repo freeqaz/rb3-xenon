@@ -12011,5 +12011,16 @@
  "0x82745EE0": "?ThreadDone@DataLoader@@QAAXPAVDataArray@@@Z",
  "0x8279FEC8": "?Seek@BinStream@@QAAXHW4SeekType@1@@Z",
  "0x82543938": "?ConfigureAccomplishmentRewardData@AccomplishmentManager@@QAAXPAVDataArray@@@Z",
- "0x8257BB48": "?TriggerEvent@UIEventMgr@@QAAXPAVUIEvent@@@Z"
+ "0x8257BB48": "?TriggerEvent@UIEventMgr@@QAAXPAVUIEvent@@@Z",
+ "0x82429BC8": "?OnGroupOwner@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x8242CE38": "?SortDraws@@YA_NPAVRndDrawable@@0@Z",
+ "0x8242D0D0": "?RndUtlPreInit@@YAXXZ",
+ "0x8242DCA8": "?reserve@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+ "0x8242A040": "?RndScaleObject@@YAXPAVObject@Hmx@@MM@Z",
+ "0x8242FC58": "?SpliceKeys@@YAXPAVRndTransAnim@@0MM@Z",
+ "0x82427908": "?RandomPointOnMesh@@YAXPAVRndMesh@@AAVVector3@@1@Z",
+ "0x824274E8": "?ComputeFaceTangentBasis@@YAXPAVRndMesh@@HAAVMatrix3@Hmx@@@Z",
+ "0x82428440": "?UtilDrawPlane@@YAXABVPlane@@ABVVector3@@ABVColor@Hmx@@HM_N@Z",
+ "0x82429598": "?SetBloomBlurWeights@@YAX_NMM@Z",
+ "0x8242B430": "?FindBounds@?$Keys@VQuat@Hmx@@V12@@@QAAXAAM0AAH1@Z"
 }
