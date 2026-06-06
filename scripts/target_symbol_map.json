@@ -12050,5 +12050,21 @@
  "0x82778368": "?IsDisabled@GuitarController@@UBA_NXZ",
  "0x82778378": "??_GGuitarController@@UAAPAXI@Z",
  "0x827783D0": "??0GuitarController@@QAA@PAVUser@@PBVDataArray@@PAVBeatMatchControllerSink@@_N3@Z",
- "0x82798E18": "??0String@@QAA@XZ"
+ "0x82798E18": "??0String@@QAA@XZ",
+ "0x823233C8": "??6@YAAAVBinStream@@AAV0@ABVPatch@BandCharDesc@@@Z",
+ "0x82323468": "??5@YAAAVBinStream@@AAV0@AAVPatch@BandCharDesc@@@Z",
+ "0x823234F0": "??6@YAAAVBinStream@@AAV0@AAVOutfitPiece@BandCharDesc@@@Z",
+ "0x823235D8": "??6@YAAAVBinStream@@AAV0@AAVOutfit@BandCharDesc@@@Z",
+ "0x82323938": "??6@YAAAVBinStream@@AAV0@AAVHead@BandCharDesc@@@Z",
+ "0x82323B50": "??5@YAAAVBinStream@@AAV0@AAVHead@BandCharDesc@@@Z",
+ "0x82324048": "??4InstrumentOutfit@BandCharDesc@@QAAAAV01@ABV01@@Z",
+ "0x82324170": "??4Patch@BandCharDesc@@QAAAAV01@ABV01@@Z",
+ "0x823241F8": "?FindPatchIndex@BandCharDesc@@QAAHW4Category@Patch@1@PBD@Z",
+ "0x82324590": "?SaveFixed@BandCharDesc@@UBAXAAVFixedSizeSaveableStream@@@Z",
+ "0x82323858": "??6@YAAAVBinStream@@AAV0@AAVInstrumentOutfit@BandCharDesc@@@Z",
+ "0x823238C8": "??5@YAAAVBinStream@@AAV0@AAVInstrumentOutfit@BandCharDesc@@@Z",
+ "0x82324518": "?FindPrefab@BandCharDesc@@SAPAV1@PBD_N@Z",
+ "0x82324290": "?GetPatch@BandCharDesc@@QAAPAVPatch@1@H@Z",
+ "0x823247A0": "?ListOutfits@BandCharDesc@@QAA?AVDataNode@@VSymbol@@@Z",
+ "0x82323540": "??5@YAAAVBinStream@@AAV0@AAVOutfitPiece@BandCharDesc@@@Z"
 }
