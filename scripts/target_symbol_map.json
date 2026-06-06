@@ -11987,5 +11987,14 @@
  "0x824078C8": "?OnUnitizeNormals@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82409B88": "?SetKeepMeshData@RndMesh@@QAAX_N@Z",
  "0x8240A150": "??_DRndMesh@@QAAXXZ",
- "0x824C9438": "?BuildBoard@Spotlight@@KAXXZ"
+ "0x824C9438": "?BuildBoard@Spotlight@@KAXXZ",
+ "0x82436700": "?OnSetBurstInterval@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82436778": "?OnSetBurstPeak@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x824367E0": "?OnSetBurstLength@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x824369F8": "?OnSetRotate@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82436A90": "?OnSetSwingArm@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82436B20": "?OnSetDrag@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82436B60": "?OnSetAlignment@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x8278AA30": "?Exit@MoviePanel@@UAAXXZ",
+ "0x8278AC50": "?FinishLoad@MoviePanel@@UAAXXZ"
 }
