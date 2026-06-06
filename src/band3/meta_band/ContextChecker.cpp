@@ -237,7 +237,7 @@ namespace {
 int CheckContext(const DataArray *a) {
     gContextWeight = 10;
     int result = (int)CheckContextAnd(a);
-    return gContextWeight & ((result | -result) >> 31);
+    return result ? gContextWeight : 0;
 }
 
 void HandleContextUsed(Symbol ctx) { gUsedContexts.insert(ctx); }
@@ -258,7 +258,9 @@ void PotentiallyCreateAndAddEntry(
 
 bool IsSongSpecificEntry(const DataArray *a) {
     for (int i = 1; i < a->Size(); i++) {
-        if (a->Array(i)->Sym(0) == song_specific)
+        static Symbol song_specific("song_specific");
+        Symbol sym = a->Array(i)->Sym(0);
+        if (sym == song_specific)
             return true;
     }
     return false;
