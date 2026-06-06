@@ -15,20 +15,9 @@
 Movie::Movie() : mImpl(nullptr) {
     mImpl = TheMovieSys.CreateMovieImpl();
     MILO_ASSERT(mImpl, 0x98);
-    static Symbol _default("_default");
-    mFaderGroup = new FaderGroup(nullptr);
-    if (Hmx::Object::RegisteredFactory(Fader::StaticClassName())) {
-        Fader *f = mFaderGroup->AddLocal(_default);
-        f->SetVolume(0.0f);
-        mFaderGroup->Add(TheSynth->MasterFader());
-    }
 }
 
-Movie::~Movie() {
-    RELEASE(mImpl);
-    FaderGroup *f = mFaderGroup;
-    RELEASE(f);
-}
+Movie::~Movie() { RELEASE(mImpl); }
 
 void Movie::Init() { TheMovieSys.Init(); }
 
@@ -60,10 +49,7 @@ float Movie::MsPerFrame() const { return mImpl->MsPerFrame(); }
 
 int Movie::NumFrames() const { return mImpl->NumFrames(); }
 
-void Movie::SetVolume(float f) {
-    static Symbol _default("_default");
-    mFaderGroup->FindLocal(_default, true)->SetVolume(f);
-}
+void Movie::SetVolume(float f) { mImpl->SetVolume(f); }
 
 int Movie::LocalizationTrack() {
     Symbol language = HongKongExceptionMet() ? Symbol("eng") : SystemLanguage();
@@ -99,11 +85,6 @@ void Movie::Draw() {
 
 bool Movie::Poll() {
     START_AUTO_TIMER("movie");
-    if (mFaderGroup->Dirty()) {
-        float f = mFaderGroup->GetVolume();
-        mImpl->SetVolume(f);
-        mFaderGroup->ClearDirty();
-    }
     return mImpl->Poll();
 }
 

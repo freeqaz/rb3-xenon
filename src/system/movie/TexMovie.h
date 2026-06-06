@@ -42,7 +42,9 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(TexMovie); }
 
     void SetVolume(float vol) { mMovie.SetVolume(vol); }
-    void AddFader(Fader *f) { mMovie.Faders()->Add(f); }
+    // RB3 retail Movie has no embedded FaderGroup (dc3-engine-only addition);
+    // see movie/Movie.h. Fader management is not routed through Movie here.
+    void AddFader(Fader *f) {}
     bool IsOpen() const { return mMovie.IsOpen(); }
     Movie &GetMovie() { return mMovie; }
 

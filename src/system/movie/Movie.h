@@ -32,10 +32,13 @@ public:
     void Draw();
     bool Poll();
     void SetWidthHeight(int, int);
-    FaderGroup *Faders() const { return mFaderGroup; }
     MovieImpl *GetImpl() const { return mImpl; }
 
 protected:
-    FaderGroup *mFaderGroup; // 0x0
-    MovieImpl *mImpl; // 0x4
+    // RB3 retail Movie is a single Impl pointer (4 bytes); the FaderGroup-based
+    // volume fader is a newer dc3-engine addition not present in RB3. Confirmed
+    // against rb3-Wii Movie (mImpl only) and the embedded-Movie offsets in
+    // MoviePanel/TexMovie target asm (mMovie 4 bytes: mSubtitlesLoader lands at
+    // 0x60 not 0x64). mImpl@0x0.
+    MovieImpl *mImpl; // 0x0
 };
