@@ -39,6 +39,12 @@ public:
     ObjVector<TransformCrowd> mCrowds; // 0x3c
     /** "Flow to execute for the setup of these camshots" */
     ObjPtr<Flow> mFlow; // 0x4c
+    // Retail sizeof(TransformArea)==0x70 (verified from 4 STL stride sites:
+    // _M_erase/_M_fill_insert/resize emit li r10,0x70 / addi r31,r31,0x70 and
+    // ~TransformArea fn_822921A0 destroys members at 0x0,0xc,0x18,0x24,0x30,
+    // 0x3c,0x4c,0x5c plus a byte at 0x6c). Our modeled members sum to 0x50;
+    // pad +0x20 so the vector<TransformArea> element stride matches.
+    char _pad[0x20]; // 0x50..0x70
 };
 
 /** "Used to parent camera shots to separate areas.
