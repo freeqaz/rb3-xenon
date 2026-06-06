@@ -379,8 +379,8 @@ long vorbis_book_decode(codebook *book, oggpack_buffer *b){
 /* returns 0 on OK or -1 on eof *************************************/
 long vorbis_book_decodevs_add(codebook *book,float *a,oggpack_buffer *b,int n){
   int step=n/book->dim;
-  long *entry = alloca(sizeof(*entry)*step);
-  float **t = alloca(sizeof(*t)*step);
+  long *entry = _alloca(sizeof(*entry)*step);
+  float **t = _alloca(sizeof(*t)*step);
   int i,j,o;
 
   for (i = 0; i < step; i++) {
