@@ -14,6 +14,12 @@
 #include "utl/BinStream.h"
 #include "utl/MemMgr.h"
 #include "world/CameraShot.h"
+#include <cmath>
+
+float LimitAng(float ang) {
+    float r = fmod(ang + PI, 2.0f * PI);
+    return r < 0 ? r + PI : r - PI;
+}
 
 const float CharClip::kBeatAccuracy = 0.02;
 CharClip::FacingSet::FacingBones CharClip::FacingSet::sFacingPos;
