@@ -111,15 +111,14 @@ namespace {
 }
 
 void DateTime::Format(class String &str) const {
-    char _slotpad[4]; (void)_slotpad;
     char buf[256];
 
     if (SearchReplace(str.c_str(), "%d", MakeString("%02d", mDay), buf)) {
         str = buf;
     }
-    static Symbol esl("esl");
-    static Symbol ita("ita");
     static Symbol fre("fre");
+    static Symbol ita("ita");
+    static Symbol esl("esl");
     Symbol lang = SystemLanguage();
     if (lang == fre || lang == ita || lang == esl) {
         if (SearchReplace(str.c_str(), "%e", MakeString("%d", mDay), buf)) {
@@ -129,7 +128,7 @@ void DateTime::Format(class String &str) const {
         if (SearchReplace(
                 str.c_str(),
                 "%e",
-                LocalizeOrdinal(mDay, LocaleGenderMasculine, LocaleSingular, false, Symbol(gNullStr), TheLocale),
+                LocalizeOrdinal(mDay, LocaleGenderMasculine, LocaleSingular, false),
                 buf
             )) {
             str = buf;
@@ -141,7 +140,7 @@ void DateTime::Format(class String &str) const {
     }
     if (strstr(str.c_str(), "%M")) {
         if (SearchReplace(
-                str.c_str(), "%M", Localize(MonthToken(mMonth), nullptr, TheLocale), buf
+                str.c_str(), "%M", Localize(MonthToken(mMonth), nullptr), buf
             )) {
             str = buf;
         }
