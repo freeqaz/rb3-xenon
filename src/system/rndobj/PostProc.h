@@ -160,6 +160,13 @@ protected:
     /** "Output low end" */
     /** "Output high end" */
     RndColorXfm mColorXfm; // 0x5c
+    // Retail RB3-360 places mPosterLevels 0xc higher than sizeof(RndColorXfm)
+    // (0x84) would put it: the embedded RndColorXfm region effectively spans to
+    // 0xf0 in retail, 0xc more than DC3/rb3-Wii. Anonymous pad so the entire
+    // mid-region (poster/kaleidoscope/flicker/noise/gradient/refract/vignette)
+    // lands at the retail offsets the .cpp accessors expect.
+    // See docs/decomp/near-miss-classification-2026-06-06.md lever #6.
+    int _retail_pad_after_colorxfm[3]; // +0xc
     /** "Number of levels for posterization, 0 turns off". Ranges from 0 to 255. */
     float mPosterLevels; // 0xf0
     /** "Minimum intensity to posterize, 1.0 is posterize all". Ranges from 0 to 1. */
