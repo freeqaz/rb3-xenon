@@ -876,9 +876,25 @@ Some mismatches are caused by linker or compiler behaviors we cannot reproduce. 
 
 The target binary is a **debug build** (XBDM present in static libraries) and does **not** use LTCG (`/GL` + `/LTCG`). However, the linker still applies **ICF (Identical COMDAT Folding)** via `/OPT:ICF`, which merges functions with identical machine code to a single address.
 
+> **VERIFIED 2026-06-06 (no-LTCG confirmed on the RB3 binary itself, not just inherited
+> from DC3):** 4 independent codegen signatures — 626 pinned TU `.text` spans with 0
+> overlaps/cross-TU intrusions (no `/ORDER` reorder), 326+ byte-exact matches that make
+> cross-TU `bl` (no cross-TU inlining), 97.6% of float loads use per-float `lis` (no
+> pooling), codegen character-identical to DC3. The "debug build" phrasing is
+> DC3-inherited and unverified for RB3 but irrelevant to the no-LTCG conclusion. ICF
+> is NOT meaningfully suppressing match% (the verified link-recoverable near-miss lever
+> is ~1 function; an earlier "+625" estimate was a measurement artifact). See
+> `docs/plans/lto-vs-icf-investigation-2026-06-06.md`.
+
 **We compare at the .obj level**, so linker-level optimizations like float constant pooling and ICF will never match. This explains persistent 0.5-1% gaps on some functions that are otherwise correct.
 
-### Float Constant Pooling (UNDER INVESTIGATION)
+### Float Constant Pooling (CLOSED 2026-06-06 — does NOT occur in RB3)
+
+> Investigation closed: binary-wide classification found **~0 true LTCG float-into-static
+> pooling sites** in RB3 retail. 97.6% of 1,959 float `@l` loads use a dedicated
+> `lis`-per-float; the 47 apparent "pooled" cases are a benign within-page base-register
+> reuse peephole (`/O1`), a 1–2 instruction artifact, not link-time pooling. The pattern
+> below describes the LTCG behavior (kept for reference) but it is NOT present here.
 
 The original linker places float literals adjacent to static arrays, allowing a single base register for both:
 
