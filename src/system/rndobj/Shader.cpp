@@ -104,9 +104,11 @@ void RndShader::Init() {
 
 void RndShader::CheckForceCull(ShaderType s) {
     int cullOverride = TheShaderMgr.CullModeOverride();
-    if (TheRnd.GetDrawMode() == Rnd::kDrawShadowColor || cullOverride == 1) {
+    // Retail RB3 X360 gates on raw Rnd::DrawMode values 2 and 7 here; dc3's
+    // newer source used kDrawShadowColor (3) and 8 for these two draw modes.
+    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)2 || cullOverride == 1) {
         TheRenderState.SetCullMode((RndRenderState::CullMode)0);
-    } else if (s != kShadowmapShader && cullOverride != 3 && TheRnd.GetDrawMode() != 8) {
+    } else if (s != kShadowmapShader && cullOverride != 3 && TheRnd.GetDrawMode() != (Rnd::DrawMode)7) {
         if (cullOverride == 2) {
             TheRenderState.SetCullMode((RndRenderState::CullMode)2);
         }
@@ -366,7 +368,8 @@ void CheckShadow() {
 }
 
 void CheckExtrude() {
-    if (TheRnd.GetDrawMode() == Rnd::kDrawShadowColor) {
+    // Retail RB3 X360 gates extrude on raw Rnd::DrawMode value 2 (dc3 used 3).
+    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)2) {
         TheRenderState.SetDepthTestEnable(true);
         TheRenderState.SetDepthWriteEnable(true);
         TheRenderState.SetBlendEnable(true);
@@ -1247,16 +1250,18 @@ void RndShaderParticles::Select(RndMat *mat, ShaderType s, bool b) {
 void RndShaderMultimesh::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
-    if (!RedundantState(mat, s, false, TheShaderMgr.UseAO(), b)) {
+    bool skinned = TheShaderMgr.BoneCount() != 0;
+    if (!RedundantState(mat, s, skinned, TheShaderMgr.UseAO(), b)) {
 #ifdef HX_NATIVE
         TheNgStats->mMats++;
 #endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
+        CheckShadow();
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
-        CheckForceCull(kMultimeshShader);
-        CheckDistortion(mat);
-        Cache(kMultimeshShader, ShaderOptions(optsVal), mat);
+        CheckExtrude();
+        CheckForceCull(kStandardShader);
+        Cache(kStandardShader, ShaderOptions(optsVal), mat);
     }
 }
 
@@ -1337,8 +1342,7 @@ void RndShaderUnwrapUV::Select(RndMat *mat, ShaderType s, bool b) {
 void RndShaderVelocity::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
-    bool skinned = TheShaderMgr.BoneCount() != 0;
-    if (!RedundantState(mat, s, skinned, false, b)) {
+    if (!RedundantState(mat, s, false, false, b)) {
 #ifdef HX_NATIVE
         TheNgStats->mMats++;
 #endif
