@@ -231,19 +231,14 @@ JoypadType SetupHXGuitar(int pad, const XINPUT_CAPABILITIES &c) {
         return u4 ? kJoypadXboxHxGuitarRb2 : kJoypadXboxHxGuitar;
 }
 
-// Identifies drum controller type based on XInput capabilities
-// Rock Band 2 drums have enhanced features when flag 2 is set,
-// but require either flag 1 or a high sThumbRX value for identification
+// Identifies drum controller type based on XInput capabilities.
+// RB2 drums are identified by flag 1 or a high sThumbRX value; Rock of Ages
+// drums by flag 2 without flag 1.
 JoypadType SetupHXDrums(int pad, const XINPUT_CAPABILITIES &c) {
     bool hasFlag1 = c.Flags & 1;
     bool hasFlag2 = c.Flags & 0x2;
-    bool isRb2Drums;
-    if (!hasFlag1) {
-        isRb2Drums = hasFlag2 && c.Gamepad.sThumbRX >= 0x100;
-    } else {
-        isRb2Drums = hasFlag2;
-    }
-    bool isRockOfAgesDrums = hasFlag2 && hasFlag1;
+    bool isRb2Drums = hasFlag1 || c.Gamepad.sThumbRX >= 0x100;
+    bool isRockOfAgesDrums = hasFlag2 && !hasFlag1;
     JoypadGetPadData(pad)->mIsWireless = hasFlag2;
     JoypadGetPadData(pad)->mHasCapFlag1 = hasFlag1;
     if (c.Gamepad.sThumbLX == 0x1BAD) {
