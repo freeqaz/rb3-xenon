@@ -11996,5 +11996,19 @@
  "0x82436B20": "?OnSetDrag@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82436B60": "?OnSetAlignment@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
  "0x8278AA30": "?Exit@MoviePanel@@UAAXXZ",
- "0x8278AC50": "?FinishLoad@MoviePanel@@UAAXXZ"
+ "0x8278AC50": "?FinishLoad@MoviePanel@@UAAXXZ",
+ "0x82B4F0E0": "?DataSymbol@TourDescProvider@@UBA?AVSymbol@@H@Z",
+ "0x824DFFA0": "?RandomInt@@YAHXZ",
+ "0x824E0040": "?RandomFloat@@YAMXZ",
+ "0x82B42528": "?processSamples@TDStretch@soundtouch@@IAAXXZ",
+ "0x82520888": "?UnlockCache@HDCache@@QAAXXZ",
+ "0x82520F80": "?ReadAsync@HDCache@@QAA_NHHPAX@Z",
+ "0x8246A260": "?DrawMultiMesh@RndGenerator@@IAAXAAVTransform@@M@Z",
+ "0x8279E790": "?ValidateChecksum@FileStream@@QAA_NXZ",
+ "0x824066E0": "?_M_create_node@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUInstance@RndMultiMesh@@@Z",
+ "0x82745A58": "?Data@DataLoader@@QAAPAVDataArray@@XZ",
+ "0x82745EE0": "?ThreadDone@DataLoader@@QAAXPAVDataArray@@@Z",
+ "0x8279FEC8": "?Seek@BinStream@@QAAXHW4SeekType@1@@Z",
+ "0x82543938": "?ConfigureAccomplishmentRewardData@AccomplishmentManager@@QAAXPAVDataArray@@@Z",
+ "0x8257BB48": "?TriggerEvent@UIEventMgr@@QAAXPAVUIEvent@@@Z"
 }
