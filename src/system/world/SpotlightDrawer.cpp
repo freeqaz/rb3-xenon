@@ -137,17 +137,17 @@ void SpotlightDrawer::DrawMeshVec(std::vector<SpotMeshEntry> &entries) {
         RndMesh *canMesh = it->mCanMesh;
         RndMultiMesh *multiMesh = canMesh->CreateMultiMesh();
         multiMesh->Instances().push_back(RndMultiMesh::Instance(it->mTransform));
-        RndMesh *envMesh = it->mEnvMesh;
-        reinterpret_cast<RndHighlightable *>(envMesh)->Highlight();
+        RndEnviron *curEnv = (RndEnviron *)it->mEnvMesh;
+        curEnv->Select(nullptr);
         std::vector<SpotMeshEntry>::iterator itEnd = entries.end();
         for (++it; it != itEnd; ++it) {
-            bool envChanged = it->mEnvMesh != envMesh;
+            bool envChanged = (RndEnviron *)it->mEnvMesh != curEnv;
             bool canChanged = it->mCanMesh != canMesh;
             if (envChanged || canChanged) {
                 multiMesh->DrawShowing();
-                if (envChanged && envMesh) {
-                    envMesh = it->mEnvMesh;
-                    reinterpret_cast<RndHighlightable *>(envMesh)->Highlight();
+                if (envChanged && curEnv) {
+                    curEnv = (RndEnviron *)it->mEnvMesh;
+                    curEnv->Select(nullptr);
                 }
                 if (canChanged) {
                     canMesh = it->mCanMesh;
@@ -639,14 +639,17 @@ SpotMeshEntry_* vector<SpotMeshEntry_, StlNodeAlloc<SpotMeshEntry_>>::_M_erase(
 ) {
     SpotMeshEntry_* __next = __pos + 1;
     if (__next != this->_M_finish) {
-        int __count = (this->_M_finish - __next) / 0x50;
+        int __count = ((char*)this->_M_finish - (char*)__next) / 0x50;
         SpotMeshEntry_* __dst = __pos;
-        do {
-            SpotMeshEntry_* __src = __dst + 1;
-            memcpy(__dst, __src, 0x50);
-            __count--;
-            __dst = __src;
-        } while (__count != 0);
+        if (__count > 0) {
+            int __remaining = __count;
+            do {
+                SpotMeshEntry_* __src = __dst + 1;
+                memcpy(__dst, __src, 0x50);
+                __remaining--;
+                __dst = __src;
+            } while (__remaining != 0);
+        }
     }
 
     this->_M_finish--;
