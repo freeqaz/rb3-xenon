@@ -37,4 +37,9 @@ protected:
     DancerSequence();
 
     std::vector<DancerFrame> mDancerFrames; // 0x10
+    // RB3 retail's DancerSequence carries 0x24 (36) bytes of derived members
+    // that DC3's newer source dropped. Placing the filler AFTER mDancerFrames
+    // pushes the virtual base 0x24 down while keeping the vector position; the
+    // retail dtor/vbase/vtable offsets then match.
+    char mRB3Pad[0x24]; // 0x1c
 };
