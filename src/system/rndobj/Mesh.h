@@ -121,8 +121,8 @@ public:
 
         Vert *mVerts; // 0x0
         int mNumVerts; // 0x4
-        int mCapacity; // 0x8
-        bool unkc;
+        unsigned short mCapacity; // 0x8 (short, not int — retail VertVector is 0xc)
+        unsigned short unkc; // 0xa (packs with mCapacity; was a bool at 0xc, oversizing the struct to 0x10)
     };
 
     virtual ~RndMesh();
@@ -256,7 +256,6 @@ protected:
     bool mHasAOCalc; // 0x170
     bool mKeepMeshData; // 0x171
     MotionBlurCache mMotionCache; // 0x174
-    int mMeshVersion; // mesh format version, initialized to 0x26
     unsigned char *mCompressedVerts; // 0x184
     unsigned int mNumCompressedVerts; // 0x188
 };
