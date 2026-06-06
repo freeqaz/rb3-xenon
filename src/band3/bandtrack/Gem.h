@@ -48,40 +48,38 @@ public:
     bool Released() const { return mReleased; }
     bool GetHit() const { return mHit; }
 
+    // Retail X360 layout reconstructed from operator=/InitChordInfo/AddInstance asm:
+    // bool flags are individual bytes (not bitfields); ints/floats full-width.
     GemManager *mGemManager; // 0x0
     const GameGem &mGameGem; // 0x4
     std::set<TrackWidget *> mWidgets; // 0x8
     float mStart; // 0x20
     float mEnd; // 0x24
     float mTailStart; // 0x28
-    unsigned int mSlots; // 0x2c
-    std::vector<Tail *> mTails; // 0x30
-    int mBeardTick; // 0x38
-    float mArrhythmicDurationSeconds; // 0x3c
-    float unk_0x40; // 0x40
-    unsigned int unk_0x44; // 0x44 - some RG chord shape
-    unsigned int unk_0x48; // 0x48 - some other RG chord shape
-    class String mChordLabel; // 0x4c
-    signed char unk_0x58; // 0x58
-    int mFirstFret; // 0x5c
-    int mFirstFretString; // 0x60
-    char mFretPos; // 0x64
-    char mKeyFingerNumber; // 0x65
-    bool mHit : 1;
-    bool mMissed : 1;
-    bool mReleased : 1;
-    bool mHopo : 1;
-    bool mInvisible : 1;
-    bool mBeard : 1;
-    bool mInArrhythmic : 1;
-    bool mIsCymbalLane : 1; // 0x66 bit 0 — gem is on a game-cymbal lane (was unk_0x66_7)
-    // byte 0x67 bitfield (MSB-first declaration order; first declared = bit 7)
-    bool mIsRepeatChord : 1; // 0x67 bit 7 — RG repeated chord (shows repeat indicator)
-    bool mInArpeggio : 1;    // 0x67 bit 6 — gem is inside an arpeggio phrase (shows section indicator)
-    bool mSuppressChordLabel : 1; // 0x67 bit 5 — hide chord label (arpeggio context)
-    bool mSuppressFretLabel : 1;  // 0x67 bit 4 — hide fret label (arpeggio context)
-    bool mSlideUp : 1;       // 0x67 bit 3 — left-hand slide direction (true=up, false=down)
-    bool unk_0x67_5 : 1;     // 0x67 bit 2
-    bool unk_0x67_6 : 1;     // 0x67 bit 1
-    bool unk_0x67_7 : 1;     // 0x67 bit 0
+    bool mHit; // 0x2c
+    bool mMissed; // 0x2d
+    bool mReleased; // 0x2e
+    bool mHopo; // 0x2f
+    bool mInvisible; // 0x30
+    unsigned int mSlots; // 0x34
+    std::vector<Tail *> mTails; // 0x38
+    bool mBeard; // 0x44
+    int mBeardTick; // 0x48
+    float mArrhythmicDurationSeconds; // 0x4c
+    bool mInArrhythmic; // 0x50
+    int unk_0x58; // 0x54 (copied as a word by operator=)
+    int unk_0x40; // 0x58
+    bool mIsCymbalLane; // 0x5c — gem is on a game-cymbal lane
+    unsigned int unk_0x44; // 0x60 - some RG chord shape
+    unsigned int unk_0x48; // 0x64 - some other RG chord shape
+    class String mChordLabel; // 0x68 (String = 0xC: vptr/cap/mStr)
+    int mFirstFret; // 0x74
+    int mFirstFretString; // 0x78
+    bool mIsRepeatChord; // 0x7c — RG repeated chord
+    bool mInArpeggio; // 0x7d — gem is inside an arpeggio phrase
+    bool mSuppressChordLabel; // 0x7e — hide chord label
+    bool mSuppressFretLabel; // 0x7f — hide fret label
+    int mFretPos; // 0x80
+    bool mSlideUp; // 0x84 — left-hand slide direction (true=up, false=down)
+    int mKeyFingerNumber; // 0x88
 };

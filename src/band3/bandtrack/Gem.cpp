@@ -105,8 +105,8 @@ void Gem::AddRep(
                 if (mGameGem.LeftHandSlide()) {
                     info.unk0 = true;
                     if (mSlideUp) {
-                        info.unk8 = startOffset;
                         info.unk4 = -startOffset;
+                        info.unk8 = startOffset;
                     } else {
                         info.unk4 = startOffset;
                         info.unk8 = -startOffset;
