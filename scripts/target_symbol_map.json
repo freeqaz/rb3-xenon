@@ -12043,5 +12043,12 @@
  "0x8226CC18": "?SetOwnerObj@?$ObjOwnerPtr@VBandCharDesc@@@@QAAXPAVBandCharDesc@@@Z",
  "0x8226DFC8": "?ValidateInterest@BandCharacter@@UAA_NPAVCharInterest@@PAVObjectDir@@@Z",
  "0x8226EA80": "?SetLipSync@BandCharacter@@QAAXPAVCharLipSync@@@Z",
- "0x8226EAE0": "?SetSongOwner@BandCharacter@@QAAXPAVCharLipSyncDriver@@@Z"
+ "0x8226EAE0": "?SetSongOwner@BandCharacter@@QAAXPAVCharLipSyncDriver@@@Z",
+ "0x82777E90": "?OnMsg@GuitarController@@QAAHABVButtonDownMsg@@@Z",
+ "0x82778070": "?Handle@GuitarController@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82778290": "??1GuitarController@@UAA@XZ",
+ "0x82778368": "?IsDisabled@GuitarController@@UBA_NXZ",
+ "0x82778378": "??_GGuitarController@@UAAPAXI@Z",
+ "0x827783D0": "??0GuitarController@@QAA@PAVUser@@PBVDataArray@@PAVBeatMatchControllerSink@@_N3@Z",
+ "0x82798E18": "??0String@@QAA@XZ"
 }
