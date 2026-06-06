@@ -56,4 +56,10 @@ protected:
     /** "Do we pass on running intensity to volume?" */
     bool mUseIntensity; // 0x9e
     float mCurrentIntensity; // 0xa0
+    // RB3 retail FlowSound carries 0x28 more bytes than DC3 models here:
+    // sizeof(FlowSound)==0xd4 (new(0xd4) at 0x82557840) and the FlowLabelProvider
+    // second base lands at 0xcc (??_GFlowSound subi 0xcc), vs 0xa4 without this.
+    // DC3 is newer and dropped these members; the exact fields are unknown (no
+    // rb3-Wii Flow oracle), so reserve the gap so derived/sibling layouts match.
+    char mUnkA4[0x28]; // 0xa4
 };
