@@ -327,14 +327,11 @@ BinStream &operator<<(BinStream &bs, const LightPreset::Keyframe &k) {
 #pragma region LightPreset
 
 LightPreset::LightPreset()
-    : mKeyframes(this), mSpotlights(this, (EraseMode)0, kObjListOwnerControl),
-      mEnvironments(this, (EraseMode)0, kObjListOwnerControl),
-      mLights(this, (EraseMode)0, kObjListOwnerControl),
-      mSpotlightDrawers(this, (EraseMode)0, kObjListOwnerControl), mLooping(0),
-      mPlatformOnly(kPlatformNone), mSelectTriggers(this), mManual(0),
-      mSpotlightState(this), mLastKeyframe(0), mLastBlend(-1), mStartBeat(0),
-      mManualFrameStart(0), mManualFrame(0), mLastManualFrame(-1), mManualFadeTime(0),
-      mEndFrame(0), mLocked(0), mHue(0) {}
+    : mKeyframes(this), mPlatformOnly(kPlatformNone), mSelectTriggers(this),
+      mLegacyFadeIn(0), mLooping(0), mManual(0), mLocked(0), mSpotlightState(this),
+      mLastKeyframe(0), mLastBlend(-1), mStartBeat(0), mManualFrameStart(0),
+      mManualFrame(0), mLastManualFrame(-1), mManualFadeTime(0), mEndFrame(0),
+      mHue(0) {}
 
 LightPreset::~LightPreset() { Clear(); }
 
@@ -352,8 +349,8 @@ END_HANDLERS
 void LightPreset::ResetEvents() { sManualEvents.clear(); }
 
 template <class T>
-__forceinline const char *GetObjName(const ObjPtrVec<T> &vec, int idx) {
-    if (idx >= vec.size())
+__forceinline const char *GetObjName(const std::vector<T *> &vec, int idx) {
+    if (idx >= (int)vec.size())
         return "<obj index out of bounds>";
     else if (!vec[idx])
         return "<obj not found>";
@@ -467,16 +464,24 @@ BEGIN_SAVES(LightPreset)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mKeyframes;
-    bs << mSpotlights;
-    bs << mEnvironments;
-    bs << mLights;
+    bs << (unsigned int)mSpotlights.size();
+    for (int i = 0; i != (unsigned)mSpotlights.size(); i++)
+        bs << PathName(mSpotlights[i]);
+    bs << (unsigned int)mEnvironments.size();
+    for (int i = 0; i != (unsigned)mEnvironments.size(); i++)
+        bs << PathName(mEnvironments[i]);
+    bs << (unsigned int)mLights.size();
+    for (int i = 0; i != (unsigned)mLights.size(); i++)
+        bs << PathName(mLights[i]);
     bs << mLooping;
     bs << mCategory;
     bs << mSelectTriggers;
     bs << mManual;
     bs << mLocked;
     bs << mPlatformOnly;
-    bs << mSpotlightDrawers;
+    bs << (unsigned int)mSpotlightDrawers.size();
+    for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++)
+        bs << PathName(mSpotlightDrawers[i]);
 END_SAVES
 
 BEGIN_COPYS(LightPreset)
@@ -486,10 +491,10 @@ BEGIN_COPYS(LightPreset)
     BEGIN_COPYING_MEMBERS
         Clear();
         COPY_MEMBER(mKeyframes)
-        COPY_MEMBER(mSpotlights)
-        COPY_MEMBER(mEnvironments)
-        COPY_MEMBER(mLights)
-        COPY_MEMBER(mSpotlightDrawers)
+        mSpotlights = c->mSpotlights;
+        mEnvironments = c->mEnvironments;
+        mLights = c->mLights;
+        mSpotlightDrawers = c->mSpotlightDrawers;
         mSpotlightState.resize(mSpotlights.size());
         mEnvironmentState.resize(mEnvironments.size());
         mLightState.resize(mLights.size());
@@ -729,31 +734,34 @@ DataNode LightPreset::OnViewKeyframe(DataArray *da) {
 void LightPreset::SyncKeyframeTargets() {
     for (ObjDirItr<Spotlight> it(Dir(), true); it; ++it) {
         Spotlight *key = it;
-        if (mSpotlights.find(key) == mSpotlights.end()) {
+        if (std::find(mSpotlights.begin(), mSpotlights.end(), key)
+            == mSpotlights.end()) {
             AddSpotlight(key, false);
         }
     }
     for (ObjDirItr<RndEnviron> it(Dir(), true); it; ++it) {
         RndEnviron *key = it;
-        if (mEnvironments.find(key) == mEnvironments.end()) {
+        if (std::find(mEnvironments.begin(), mEnvironments.end(), key)
+            == mEnvironments.end()) {
             AddEnvironment(key);
         }
         FOREACH (lit, key->mLightsReal) {
             RndLight *lkey = *lit;
-            if (mLights.find(lkey) == mLights.end()) {
+            if (std::find(mLights.begin(), mLights.end(), lkey) == mLights.end()) {
                 AddLight(lkey);
             }
         }
         FOREACH (lit, key->mLightsApprox) {
             RndLight *lkey = *lit;
-            if (mLights.find(lkey) == mLights.end()) {
+            if (std::find(mLights.begin(), mLights.end(), lkey) == mLights.end()) {
                 AddLight(lkey);
             }
         }
     }
     for (ObjDirItr<SpotlightDrawer> it(Dir(), true); it; ++it) {
         SpotlightDrawer *key = it;
-        if (mSpotlightDrawers.find(key) == mSpotlightDrawers.end()) {
+        if (std::find(mSpotlightDrawers.begin(), mSpotlightDrawers.end(), key)
+            == mSpotlightDrawers.end()) {
             AddSpotlightDrawer(key);
         }
     }
@@ -1224,7 +1232,8 @@ void LightPreset::Animate(float f) {
 
 void LightPreset::SyncNewSpotlights() {
     for (ObjDirItr<Spotlight> it(Dir(), true); it; ++it) {
-        if (mSpotlights.find(it) == mSpotlights.end()) {
+        if (std::find(mSpotlights.begin(), mSpotlights.end(), (Spotlight *)it)
+            == mSpotlights.end()) {
             AddSpotlight(it, true);
         }
     }
@@ -1250,9 +1259,28 @@ BEGIN_LOADS(LightPreset)
         mKeyframes.resize(1);
         mKeyframes[0].LegacyLoadP9(d);
     }
-    bs >> mSpotlights;
-    bs >> mEnvironments;
-    bs >> mLights;
+    char buf[0x80];
+    unsigned int spotlightcount;
+    bs >> spotlightcount;
+    mSpotlights.resize(spotlightcount);
+    for (int i = 0; i != (unsigned)mSpotlights.size(); i++) {
+        bs.ReadString(buf, 0x80);
+        mSpotlights[i] = Dir()->Find<Spotlight>(buf, false);
+    }
+    unsigned int envcount;
+    bs >> envcount;
+    mEnvironments.resize(envcount);
+    for (int i = 0; i != (unsigned)mEnvironments.size(); i++) {
+        bs.ReadString(buf, 0x80);
+        mEnvironments[i] = Dir()->Find<RndEnviron>(buf, false);
+    }
+    unsigned int lightcount;
+    bs >> lightcount;
+    mLights.resize(lightcount);
+    for (int i = 0; i != (unsigned)mLights.size(); i++) {
+        bs.ReadString(buf, 0x80);
+        mLights[i] = Dir()->Find<RndLight>(buf, false);
+    }
     if (d.rev < 5) {
         bool b;
         d >> b;
@@ -1311,7 +1339,13 @@ BEGIN_LOADS(LightPreset)
     if (d.rev > 0xC)
         bs >> (int &)mPlatformOnly;
     if (d.rev > 9) {
-        bs >> mSpotlightDrawers;
+        unsigned int sdrawercount;
+        bs >> sdrawercount;
+        mSpotlightDrawers.resize(sdrawercount);
+        for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++) {
+            bs.ReadString(buf, 0x80);
+            mSpotlightDrawers[i] = Dir()->Find<SpotlightDrawer>(buf, false);
+        }
     }
     if (d.rev == 0xB) {
         int dummy;
@@ -1351,41 +1385,46 @@ BEGIN_LOADS(LightPreset)
 END_LOADS
 
 bool LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
-    ObjPtrVec<Spotlight, ObjectDir>::iterator it = mSpotlights.FindRef(from);
-    if (it != mSpotlights.end()) {
-        mSpotlights.Set(it, to ? dynamic_cast<Spotlight *>(to) : 0);
-        if (!*it) {
-            RemoveSpotlight(it - mSpotlights.begin());
+    Hmx::Object *fromObj = from->GetObj();
+    for (uint idx = 0; idx != mSpotlights.size(); idx++) {
+        if (mSpotlights[idx] == fromObj) {
+            if (to)
+                mSpotlights[idx] = dynamic_cast<Spotlight *>(to);
+            else
+                RemoveSpotlight(idx);
+            CacheFrames();
+            return true;
         }
-        CacheFrames();
-        return true;
     }
-    ObjPtrVec<RndEnviron, ObjectDir>::iterator it2 = mEnvironments.FindRef(from);
-    if (it2 != mEnvironments.end()) {
-        mEnvironments.Set(it2, to ? dynamic_cast<RndEnviron *>(to) : 0);
-        if (!*it2) {
-            RemoveEnvironment(it2 - mEnvironments.begin());
+    for (uint idx = 0; idx != mEnvironments.size(); idx++) {
+        if (mEnvironments[idx] == fromObj) {
+            if (to)
+                mEnvironments[idx] = dynamic_cast<RndEnviron *>(to);
+            else
+                RemoveEnvironment(idx);
+            CacheFrames();
+            return true;
         }
-        CacheFrames();
-        return true;
     }
-    ObjPtrVec<RndLight, ObjectDir>::iterator it3 = mLights.FindRef(from);
-    if (it3 != mLights.end()) {
-        mLights.Set(it3, to ? dynamic_cast<RndLight *>(to) : 0);
-        if (!*it3) {
-            RemoveLight(it3 - mLights.begin());
+    for (uint idx = 0; idx != mLights.size(); idx++) {
+        if (mLights[idx] == fromObj) {
+            if (to)
+                mLights[idx] = dynamic_cast<RndLight *>(to);
+            else
+                RemoveLight(idx);
+            CacheFrames();
+            return true;
         }
-        CacheFrames();
-        return true;
     }
-    ObjPtrVec<SpotlightDrawer, ObjectDir>::iterator it4 = mSpotlightDrawers.FindRef(from);
-    if (it4 != mSpotlightDrawers.end()) {
-        mSpotlightDrawers.Set(it4, to ? dynamic_cast<SpotlightDrawer *>(to) : 0);
-        if (!*it4) {
-            RemoveSpotlightDrawer(it4 - mSpotlightDrawers.begin());
+    for (uint idx = 0; idx != mSpotlightDrawers.size(); idx++) {
+        if (mSpotlightDrawers[idx] == fromObj) {
+            if (to)
+                mSpotlightDrawers[idx] = dynamic_cast<SpotlightDrawer *>(to);
+            else
+                RemoveSpotlightDrawer(idx);
+            CacheFrames();
+            return true;
         }
-        CacheFrames();
-        return true;
     }
     return RndAnimatable::Replace(from, to);
 }

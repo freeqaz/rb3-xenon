@@ -228,34 +228,41 @@ protected:
 
     static std::deque<std::pair<KeyframeCmd, float> > sManualEvents;
 
+    // RB3 retail uses plain std::vector<T*> here (stride 4), NOT ObjPtrVec
+    // (0x1c-byte Node ring). Confirmed via asm: mSpotlights begin@member+0
+    // with stride-4 pointer iteration. Each plain vector is 0xc bytes, so the
+    // four together are 0x40 smaller than the ObjPtrVec form — that, minus the
+    // re-added mLegacyFadeIn (+4), is the +0x3C tail shift seen across the unit.
     ObjVector<Keyframe> mKeyframes; // 0x10
-    ObjPtrVec<Spotlight> mSpotlights; // 0x20
-    ObjPtrVec<RndEnviron> mEnvironments; // 0x3c
-    ObjPtrVec<RndLight> mLights; // 0x58
-    ObjPtrVec<SpotlightDrawer> mSpotlightDrawers; // 0x74
+    std::vector<Spotlight *> mSpotlights; // 0x20
+    std::vector<RndEnviron *> mEnvironments; // 0x2c
+    std::vector<RndLight *> mLights; // 0x38
+    std::vector<SpotlightDrawer *> mSpotlightDrawers; // 0x44
     /** "Whether this preset loops its animation" */
-    bool mLooping; // 0x90
+    bool mLooping; // 0x50
     /** "Category for preset-picking" */
-    Symbol mCategory; // 0x94
+    Symbol mCategory; // 0x54
     /** "Limit this shot to given platform" - the options are kPlatformNone/PS3/Xbox */
-    Platform mPlatformOnly; // 0x98
+    Platform mPlatformOnly; // 0x58
     /** "Triggers to fire upon selection (deprecated)" */
-    ObjPtrList<EventTrigger> mSelectTriggers; // 0x9c
+    ObjPtrList<EventTrigger> mSelectTriggers; // 0x5c
+    /** "How long this preset should fade in from the previous one" */
+    float mLegacyFadeIn; // 0x70
     /** "Whether this is a manual keyframe (keyframes controlled by MIDI)" */
-    bool mManual; // 0xb0
-    ObjVector<SpotlightEntry> mSpotlightState; // 0xb4
-    std::vector<EnvironmentEntry> mEnvironmentState; // 0xc4
-    std::vector<EnvLightEntry> mLightState; // 0xd0
-    std::vector<SpotlightDrawerEntry> mSpotlightDrawerState; // 0xdc
-    Keyframe *mLastKeyframe; // 0xe8
-    float mLastBlend; // 0xec
-    float mStartBeat; // 0xf0
-    float mManualFrameStart; // 0xf4
-    int mManualFrame; // 0xf8
-    int mLastManualFrame; // 0xfc
-    float mManualFadeTime; // 0x100
-    float mEndFrame; // 0x104
+    bool mManual; // 0x74
+    ObjVector<SpotlightEntry> mSpotlightState; // 0x78
+    std::vector<EnvironmentEntry> mEnvironmentState; // 0x88
+    std::vector<EnvLightEntry> mLightState; // 0x94
+    std::vector<SpotlightDrawerEntry> mSpotlightDrawerState; // 0xa0
+    Keyframe *mLastKeyframe; // 0xac
+    float mLastBlend; // 0xb0
+    float mStartBeat; // 0xb4
+    float mManualFrameStart; // 0xb8
+    int mManualFrame; // 0xbc
+    int mLastManualFrame; // 0xc0
+    float mManualFadeTime; // 0xc4
+    float mEndFrame; // 0xc8
     /** "Whether the keyframes are locked (no editing allowed)" */
-    bool mLocked; // 0x108
-    LightHue *mHue; // 0x10c
+    bool mLocked; // 0xcc
+    LightHue *mHue; // 0xd0
 };
