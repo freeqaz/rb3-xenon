@@ -107,10 +107,15 @@ extern const char *kAssertStr;
         }                                                                                \
     } while (0)
 #else
-// Retail RB3-360 compiled MILO_ASSERT out (CLAUDE.md: only 41 .cpp assert strings
-// survive). No-op the assert family for the match build (sizeof keeps cond
-// type-checked, zero runtime code). HX_NATIVE keeps real asserts.
-#define MILO_ASSERT(cond, line) ((void)sizeof(!(cond)))
+// Retail RB3-360 stripped the assert STRING + failure branch (only 41 .cpp assert
+// strings survive), but still EVALUATED the condition: `(void)(cond)` keeps
+// side-effect calls in the cond (e.g. MILO_ASSERT(i<NumData(),..) keeps the
+// NumData() virtual call) while DCE'ing pure conds to nothing. Verified
+// whole-binary A/B: (void)(cond) vs (void)sizeof() = +1 alone, zero regressions,
+// and unblocks body-ports whose asserts call into vtables (TourDescPanel +2).
+// (void)sizeof() was over-stripping. FMT keeps no-op (its args are the message,
+// not a side-effect cond). HX_NATIVE keeps real asserts.
+#define MILO_ASSERT(cond, line) ((void)(cond))
 #define MILO_ASSERT_FMT(cond, ...) ((void)sizeof(!(cond)))
 #endif
 
