@@ -270,7 +270,8 @@ bool XboxContentMgr::IsCorrupt(Symbol contentName, const char *&displayName) {
     bool ret = false;
     FOREACH (it, mContents) {
         if (contentName == (*it)->FileName()) {
-            ret = (*it)->IsCorrupt();
+            XboxContent *xc = dynamic_cast<XboxContent *>(*it);
+            if (xc) ret = xc->IsCorrupt();
             displayName = (*it)->DisplayName();
             break;
         }

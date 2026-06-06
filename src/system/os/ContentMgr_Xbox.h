@@ -14,7 +14,7 @@ public:
     virtual ContentLocT Location();
     virtual unsigned long LicenseBits() { return mLicenseBits; }
     virtual bool HasValidLicenseBits() { return mValidLicenseBits; }
-    virtual bool IsCorrupt() { return mState == 8 && mCorrupt; }
+    bool IsCorrupt() { return mState == 8 && mCorrupt; }
     virtual State GetState() { return mState; }
     virtual void Poll();
     virtual void Mount();

@@ -33,7 +33,6 @@ public:
     virtual ContentLocT Location() = 0;
     virtual unsigned long LicenseBits() { return 0; }
     virtual bool HasValidLicenseBits() { return true; }
-    virtual bool IsCorrupt() { return false; }
     virtual State GetState() = 0;
     virtual void Poll() {}
     virtual void Mount() {}
@@ -56,7 +55,6 @@ public:
     virtual ContentLocT Location() { return kLocationRoot; }
     virtual unsigned long LicenseBits() { return 0; }
     virtual bool HasValidLicenseBits() { return true; }
-    virtual bool IsCorrupt() { return false; }
     virtual State GetState() { return kAlwaysMounted; }
     virtual void Poll() {}
     virtual void Mount() {}
