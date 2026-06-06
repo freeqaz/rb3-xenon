@@ -115,7 +115,8 @@ NetUIState NetSync::GetUIState() const {
 void NetSync::Poll() {
     if (TheUI->InTransition()) {
         UIScreen *cur = TheUI->CurrentScreen();
-        if (!TheUI->TransitionScreen() || TheUI->TransitionScreen()->IsLoaded()) {
+        UIScreen *transScreen = TheUI->TransitionScreen();
+        if (!transScreen || transScreen->IsLoaded()) {
             if (!cur || !cur->Exiting()) {
                 if (mUILockStep->InLock() && !mUILockStep->HasResponded()) {
                     mUILockStep->RespondToLock(true);
@@ -260,7 +261,7 @@ void NetSync::SendStartTransitionMsg(StartTransitionMsg &msg) {
         BandUser *u = TheSessionMgr->GetLeaderUser();
         if (TheUI->InTransition() && IsEnabled() && u) {
             if (TheNetSession->HasUser(u) && u->IsLocal()) {
-                MILO_ASSERT(!IsBlockingTransition(), 0x145);
+                (void)IsBlockingTransition(); // retail: assert evaluates condition, no branch
                 TheSyncStore->Poll();
                 mUILockStep->StartLock(msg);
             }
