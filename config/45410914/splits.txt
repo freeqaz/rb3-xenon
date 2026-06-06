@@ -204,9 +204,17 @@ floor0.c:
 	.pdata      start:0x82257EE8 end:0x82257F20
 	.text       start:0x82C05FE0 end:0x82C066EC
 
+mapping0.c:
+	.pdata      start:0x82257DE0 end:0x82257E10
+	.text       start:0x82C01418 end:0x82C02AF0
+
+res0.c:
+	.pdata      start:0x82257E10 end:0x82257E80
+	.text       start:0x82C02AF0 end:0x82C04168
+
 floor1.c:
-	.pdata      start:0x82257DE0 end:0x82257EE8
-	.text       start:0x82C01418 end:0x82C05FDC
+	.pdata      start:0x82257E80 end:0x82257EE8
+	.text       start:0x82C04168 end:0x82C05FDC
 
 BeatMap.cpp:
 	.pdata      start:0x8223A678 end:0x8223A690
