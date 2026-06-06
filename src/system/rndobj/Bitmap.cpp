@@ -6,6 +6,13 @@
 #include "utl/MemMgr.h"
 #include "os/Endian.h"
 
+// Retail RB3 EVALUATED MILO_NOTIFY args in this TU (keeps side-effect vcalls like
+// bs->Name() in LoadBmp); the global (void)sizeof() form suppresses them. This is
+// a per-TU ODR (global eval regresses other TUs, e.g. TexBlender -3), so override
+// locally like the per-TU MILO_ASSERT overrides (LessonProvider/TrainerGemTab).
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
+
 unsigned char BITMAP_REV = 2;
 
 int RndBitmap::NumMips() const {
