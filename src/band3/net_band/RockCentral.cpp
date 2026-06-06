@@ -656,6 +656,12 @@ void RockCentral::UpdateFriendList(
 // Profile* overload (fn_824EA128 in the pinned retail range). Unlike the int
 // overload, the pid value is the server's player-id for the profile's pad.
 // rb3-Wii's dev .cpp never defined this overload; recovered from the target asm.
+// Retail recomputes friends.size() at the loop test each iteration (no cached
+// _tmp5): the target re-reads begin/end and re-derives (end-begin)>>2 on the
+// back-edge. Caching the size diverged (+the dropped recompute flipped the loop
+// iteration funclets). 96.3% -> 98.9%; residual is the by-value-vector EH
+// cleanup branch layout (bne body; b cleanup) + the coupled r22<->r25 callee-
+// saved rotation, which is permuter-resistant (at-limit MSVC EH codegen).
 void RockCentral::UpdateFriendList(
     Profile *profile, std::vector<Friend *> friends, DataResultList &results, Hmx::Object *o
 ) {
@@ -664,8 +670,7 @@ void RockCentral::UpdateFriendList(
         DP_KEYS1(pid)
         INIT_DATAPOINT("leaderboards/friends/update");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
-        unsigned int _tmp5 = friends.size();
-        for (int i = 0; i < _tmp5; i++) {
+        for (int i = 0; i < friends.size(); i++) {
             String str;
             str = friends[i]->mName.c_str();
             unsigned long long key = friends[i]->mXUID;
