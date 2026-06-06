@@ -17,8 +17,8 @@ namespace Quazal {
 
         bool SetKey(const Key &);
 
-        Key mChecksum; // 0xc
-        unsigned int mMinKeyLength; // 0x1c
-        unsigned int mMaxKeyLength; // 0x20
+        Key mChecksum; // 0xc, size 0x18
+        unsigned int mMinKeyLength; // 0x24
+        unsigned int mMaxKeyLength; // 0x28
     };
 }
