@@ -314,6 +314,18 @@ protected:
 protected:
   size_type _M_node_count; // keeps track of size of tree
   _Compare _M_key_compare;
+#if defined(RB3_RBTREE_0x1C)
+  // Some retail X360 TUs were built against an STLport _tree.h that carried an
+  // extra 4-byte member here, making sizeof(std::map/set/multimap) == 0x1c
+  // (vs 0x18 without it). This is a genuine per-TU ABI split in the shipped
+  // binary (an ODR situation): e.g. AccomplishmentManager wants 0x1c while
+  // AccomplishmentProgress wants 0x18. Gate it per-TU via RB3_RBTREE_0x1C
+  // (set in config/45410914/objects.json extra_cflags) so each TU gets the
+  // layout the retail object was actually linked from. Verified against the
+  // target binary: AM mGoalAcquisitionInfos at 0x170 (needs 0x1c maps);
+  // AP mBestSolo at 0x1b4 (needs 0x18 maps + real unk50 field).
+  size_type _M_unused;
+#endif
 
   _Base_ptr _M_root() const
   { return this->_M_header._M_data._M_parent; }
