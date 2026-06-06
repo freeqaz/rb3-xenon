@@ -78,11 +78,9 @@ extern Locale TheLocale;
 extern bool gShowTokensCheat;
 
 const char *Localize(Symbol token, bool *success, Locale &locale);
-// RB3 2-argument form (no Locale& parameter) — calls through to TheLocale.
-// Matches rb3-Wii Locale.h: const char *Localize(Symbol, bool *);
-inline const char *Localize(Symbol token, bool *success) {
-    return Localize(token, success, TheLocale);
-}
+// RB3 2-argument form (no Locale& parameter) — real out-of-line function that
+// uses TheLocale. Matches rb3-Wii Locale.h: const char *Localize(Symbol, bool *).
+const char *Localize(Symbol token, bool *success);
 const char *LocalizeSeparatedInt(int num, Locale &locale);
 const char *LocalizeFloat(const char *fmt, float num);
 void SyncReloadLocale();

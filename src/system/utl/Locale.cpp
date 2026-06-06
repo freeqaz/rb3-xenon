@@ -324,7 +324,7 @@ const char *LocalizeSeparatedInt(int num, Locale &locale) {
     static Symbol sSep("locale_separator");
     bool success = false;
     char digitBuf[2];
-    const char *sep = Localize(sSep, &success, locale);
+    const char *sep = Localize(sSep, &success);
     if (!success) {
         sep = ",";
     }
@@ -338,7 +338,7 @@ const char *LocalizeSeparatedInt(int num, Locale &locale) {
     int absNum = num;
     bool negative = num < 0;
     if (negative) {
-        absNum = (num ^ (num >> 31)) - (num >> 31);
+        absNum = abs(num);
     }
     int digitCount = 0;
     while (true) {
@@ -389,6 +389,22 @@ const char *Localize(Symbol token, bool *success, Locale &locale) {
         return token.Str();
     }
     const char *textStr = locale.Localize(token, false);
+    bool localized = textStr != 0;
+    if (!localized) {
+        textStr = token.Str();
+        Locale::sIgnoreMissingText = textStr;
+        if (Locale::sVerboseNotify) {
+            MILO_NOTIFY("\"%s\" needs localization", token);
+        }
+    }
+    if (success) {
+        *success = localized;
+    }
+    return textStr;
+}
+
+const char *Localize(Symbol token, bool *success) {
+    const char *textStr = TheLocale.Localize(token, false);
     bool localized = textStr != 0;
     if (!localized) {
         textStr = token.Str();
