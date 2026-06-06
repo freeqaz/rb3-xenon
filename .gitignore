@@ -63,6 +63,8 @@ core.*
 /proposed_splits_bindiff.txt
 # dc3_content_match.py output (regenerable: dtk xex split DC3 + content hash)
 /dc3_content_match.json
+# reveal_sweep.py output (regenerable: our-compiled bytes vs unmapped target)
+/reveal_candidates.json
 /proposed_splits_bindiff.spotcheck.csv
 # pin_candidates.py generated wave (regenerable from the oracle JSONs above)
 /pin_candidates.json
