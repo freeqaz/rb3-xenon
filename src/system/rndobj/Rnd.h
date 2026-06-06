@@ -195,6 +195,7 @@ public:
     void PreClearDrawAddOrRemove(RndDrawable *, bool, bool);
     RndTex *GetNullTexture();
     int CompressTexture(RndTex *, RndTex::AlphaCompress, CompressTextureCallback *);
+    void CompressTextureCancel(CompressTextureCallback *);
     void Modal(Debug::ModalType &, FixedString &, bool);
     void PushClipPlanes(ObjPtrVec<RndTransformable> &planes) {
         if (planes.size() > 0) {

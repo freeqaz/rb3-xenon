@@ -12038,5 +12038,10 @@
  "0x822E4780": "?Deploy@VocalTrackDir@@UAAXXZ",
  "0x822E7658": "?TutorialReset@VocalTrackDir@@UAAXXZ",
  "0x822E7208": "?PreLoad@VocalTrackDir@@UAAXAAVBinStream@@@Z",
- "0x822E4B40": "?ConfigPanels@VocalTrackDir@@QAAXXZ"
+ "0x822E4B40": "?ConfigPanels@VocalTrackDir@@QAAXXZ",
+ "0x8226CB28": "??_DCharBonesMeshes@@QAAXXZ",
+ "0x8226CC18": "?SetOwnerObj@?$ObjOwnerPtr@VBandCharDesc@@@@QAAXPAVBandCharDesc@@@Z",
+ "0x8226DFC8": "?ValidateInterest@BandCharacter@@UAA_NPAVCharInterest@@PAVObjectDir@@@Z",
+ "0x8226EA80": "?SetLipSync@BandCharacter@@QAAXPAVCharLipSync@@@Z",
+ "0x8226EAE0": "?SetSongOwner@BandCharacter@@QAAXPAVCharLipSyncDriver@@@Z"
 }

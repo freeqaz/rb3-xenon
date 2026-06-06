@@ -37,7 +37,11 @@ public:
     OBJ_MEM_OVERLOAD(0x15)
     NEW_OBJ(CharCollide)
 
+    void Deform();
+    void ClearMesh() { mMesh = 0; }
+    float Radius() const { return mCurRadius[0]; }
     void SyncShape();
+    friend class BandCharacter;
     void CopyOriginalToCur();
     float GetCurRadius() const { return mCurRadius[0]; }
     float GetCurRadius1() const { return mCurRadius[1]; }
@@ -94,4 +98,10 @@ protected:
     float unk1f8; // 0x1f8
     Vector3 unk1fc; // 0x1fc
     Vector3 unk20c; // 0x20c
+};
+
+struct ByRadius {
+    bool operator()(CharCollide *c1, CharCollide *c2) const {
+        return c2->Radius() > c1->Radius() ? true : false;
+    }
 };

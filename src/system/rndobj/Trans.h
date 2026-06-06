@@ -77,6 +77,13 @@ public:
     bool Dirty() const { return mDirty; }
     Constraint TransConstraint() const { return mConstraint; }
     const std::list<RndTransformable *> &Children() const { return mChildren; }
+    // dc3 lineage stores children as std::list (RB3-Wii used std::vector).
+    // Alias for RB3 game-code callers; same underlying container.
+    const std::list<RndTransformable *> &TransChildren() const { return mChildren; }
+    void ResetLocalXfm() {
+        mLocalXfm.Reset();
+        SetDirty();
+    }
 
     Transform &DirtyLocalXfm() {
         SetDirty();

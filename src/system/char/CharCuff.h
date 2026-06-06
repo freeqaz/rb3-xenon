@@ -4,6 +4,8 @@
 #include "rndobj/Trans.h"
 #include "utl/MemMgr.h"
 
+class FileMerger;
+
 /** "A cuff used to constrain colliding outfits against each other.
     for example boots against pants.  The widest cuff wins" */
 class CharCuff : public RndTransformable {
@@ -25,6 +27,7 @@ public:
     virtual void Highlight();
 
     float Eccentricity(const Vector2 &) const;
+    void Deform(SyncMeshCB *, FileMerger *);
 
     OBJ_MEM_OVERLOAD(0x1A)
     NEW_OBJ(CharCuff)

@@ -28,6 +28,7 @@ public:
 
     OBJ_MEM_OVERLOAD(0x15)
     static void Init();
+    static void HideAll(const ObjPtrList<CharMeshHide> &, int);
     NEW_OBJ(CharMeshHide)
 
 protected:

@@ -17,6 +17,7 @@ public:
     OBJ_MEM_OVERLOAD(0x14);
     NEW_OBJ(CharClipGroup)
 
+    CharClip *GetClip();
     CharClip *GetClip(int);
     void DeleteRemaining(int);
     bool HasClip(CharClip *) const;

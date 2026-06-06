@@ -24,6 +24,8 @@ public:
     OBJ_MEM_OVERLOAD(0x16)
     NEW_OBJ(CharBoneOffset)
 
+    void ApplyToLocal();
+
 protected:
     CharBoneOffset();
 

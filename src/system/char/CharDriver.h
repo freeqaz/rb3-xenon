@@ -66,8 +66,11 @@ public:
     void SetClipWeightMap();
     CharClip *FindClip(DataNode const &, bool notify = true);
     void SetBlendWidth(float w) { mBlendWidth = w; }
+    Symbol ClipType() const { return mClipType; }
+    bool Starved();
 
     friend class HamCharacter;
+    friend class BandCharacter;
 
 protected:
     CharDriver();

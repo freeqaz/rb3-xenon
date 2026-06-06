@@ -19,6 +19,7 @@ class FileMerger : public Hmx::Object,
                    public OriginalPathable {
     friend class FileMergerOrganizer; // tbh i'd rather do this than make everything
                                       // public
+    friend class BandCharacter;
 
 public:
     struct Merger { // taken from RB3 decomp

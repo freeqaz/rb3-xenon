@@ -16,6 +16,7 @@ class CharLipSyncDriver : public RndHighlightable,
                           public CharWeightable,
                           public CharPollable {
     friend class HamCharacter;
+    friend class BandCharacter;
 public:
     // Hmx::Object
     virtual ~CharLipSyncDriver();

@@ -10,6 +10,7 @@
 #include "utl/MemMgr.h"
 
 class RndMultiMesh;
+class RndMesh;
 
 class MotionBlurCache {
 public:
@@ -35,6 +36,25 @@ public:
     /** "Trans of the bone" */
     ObjPtr<RndTransformable> mBone; // 0x0
     Transform mOffset;
+};
+
+/** Callback interface for syncing/posing mesh vertex data (CharMeshCacheMgr,
+ *  head/outfit deform). Ported from rb3-Wii bandobj/char subsystem. */
+class SyncMeshCB {
+public:
+    class Vert {
+    public:
+        Vert() {}
+
+        Vector3 pos; // 0x0
+        Vector3 norm; // 0xc
+    };
+
+    SyncMeshCB() {}
+    virtual ~SyncMeshCB() {}
+    virtual void SyncMesh(RndMesh *, int) = 0;
+    virtual bool HasMesh(RndMesh *) = 0;
+    virtual const std::vector<SyncMeshCB::Vert> &GetVerts(RndMesh *) const = 0;
 };
 
 /**

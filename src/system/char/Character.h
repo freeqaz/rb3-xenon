@@ -16,6 +16,7 @@ class CharEyes;
 class CharInterest;
 class CharacterTest;
 class ShadowBone;
+class RndPollable;
 
 enum LODType {
     kLODPerFrame = -1,
@@ -118,6 +119,9 @@ public:
     void SetTeleported(bool t) { mTeleported = t; }
     void SetFrozen(bool b) { mFrozen = b; }
     void SetMinLod(int lod) { mForceLod = (LODType)lod; }
+    int MinLod() const { return mForceLod; }
+    void RepointSphereBase(ObjectDir *);
+    void RemoveFromPoll(RndPollable *);
     CharDriver *Driver() const { return mDriver; }
     bool DebugDrawInterestObjects() const { return mDebugDrawInterestObjects; }
     bool Synced() const { return mPollState == kCharSyncObject; }

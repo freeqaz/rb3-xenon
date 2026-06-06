@@ -183,6 +183,9 @@ public:
     int Flags() const { return mFlags; }
     Transitions &GetTransitions() { return mTransitions; }
     int InGroups();
+    bool InGroup(Hmx::Object *);
+    void MakeMRU();
+    static const char *BeatAlignString(int);
     bool SharesGroups(CharClip *);
     float LengthSeconds() const;
     float AverageBeatsPerSecond() const;

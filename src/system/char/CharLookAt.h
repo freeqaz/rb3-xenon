@@ -43,6 +43,11 @@ public:
         const ObjPtr<RndTransformable> &ptr = mSource ? mSource : mPivot;
         return ptr;
     }
+    // NOTE: dc3-lineage CharLookAt has no separate mDest member (RB3-Wii layout
+    // had mDest@0x40). Provide GetDest() returning the source/pivot so the
+    // BandCharacter port compiles; the head/neck-lookat target plumbing is a
+    // dc3-vs-RB3 layout divergence (see port notes).
+    RndTransformable *GetDest() const { return GetSource(); }
 
 protected:
     CharLookAt();

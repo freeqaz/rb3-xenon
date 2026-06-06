@@ -101,6 +101,9 @@ public:
     NEW_OBJ(RndMeshDeform)
     static void Init() { REGISTER_OBJ_FACTORY(RndMeshDeform) }
 
+    RndMesh *Mesh() const { return mMesh; }
+    void Reskin(SyncMeshCB *, bool);
+
 protected:
     RndMeshDeform();
 

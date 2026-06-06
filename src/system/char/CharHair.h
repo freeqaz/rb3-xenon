@@ -95,6 +95,7 @@ public:
 
     void FreezePoseRaw();
     void Hookup(ObjPtrList<CharCollide> &);
+    void SetManagedHookup(bool b) { mManagedHookup = b; }
 
 protected:
     CharHair();
