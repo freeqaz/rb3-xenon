@@ -61,10 +61,10 @@ AutoPrepTarget::AutoPrepTarget(CamShotFrame &frame)
     mFrame->mZoomFOV = 0;
     mShot->mFilter = 0.0f;
     mShot->mClampHeight = -1.0f;
-    mShot->mLastShakeOffset.Zero();
-    mShot->mLastShakeAngOffset.Zero();
-    mShot->mLastDesiredShakeOffset.Zero();
-    mShot->mLastDesiredShakeAngOffset.Zero();
+    mShot->mLastShakeOffset.Set(0.0f, 0.0f, 0.0f);
+    mShot->mLastShakeAngOffset.Set(0.0f, 0.0f, 0.0f);
+    mShot->mLastDesiredShakeOffset.Set(0.0f, 0.0f, 0.0f);
+    mShot->mLastDesiredShakeAngOffset.Set(0.0f, 0.0f, 0.0f);
     sChanging = true;
     mFrame->UpdateTarget();
     mShot->SetFrame(mFrame->mFrame, 1.0f);
