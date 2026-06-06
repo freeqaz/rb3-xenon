@@ -11965,5 +11965,13 @@
  "0x8236B5F0": "?Print@CharClip@@UAAXXZ",
  "0x824FE830": "?FormatTime@@YAPBDM@Z",
  "0x825110A0": "?ToString@OnlineID@@QBAPBDXZ",
- "0x82BFF1B0": "drftf1"
+ "0x82BFF1B0": "drftf1",
+ "0x82BFB000": "sort32a",
+ "0x82BFD678": "apsort",
+ "0x82B27E68": "longest_match",
+ "0x82B28020": "longest_match_fast",
+ "0x82B28310": "deflate_stored",
+ "0x82B28940": "deflate_slow",
+ "0x82B540D8": "?json_object_double_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+ "0x82B54250": "?json_object_string_delete@@YAXPAUjson_object@@@Z"
 }
