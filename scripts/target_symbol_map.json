@@ -11980,5 +11980,12 @@
  "0x82543B80": "?DidUserMakeProgressOnGoal@AccomplishmentManager@@QAA_NPAVLocalBandUser@@VSymbol@@@Z",
  "0x82548280": "?AddAssetAward@AccomplishmentManager@@QAAXVSymbol@@0@Z",
  "0x82549468": "?ConfigureFanScalingData@AccomplishmentManager@@QAAXPAVDataArray@@@Z",
- "0x82549BB0": "?InqGoalsAcquiredForSong@AccomplishmentManager@@QAA_NPAVBandUser@@VSymbol@@AAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+ "0x82549BB0": "?InqGoalsAcquiredForSong@AccomplishmentManager@@QAA_NPAVBandUser@@VSymbol@@AAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82498320": "?AdvanceManual@LightPreset@@IAAXW4KeyframeCmd@1@@Z",
+ "0x824A30E8": "?OnSetKeyframe@LightPreset@@IAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82405268": "?UpdateSphere@RndMesh@@UAAXXZ",
+ "0x824078C8": "?OnUnitizeNormals@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82409B88": "?SetKeepMeshData@RndMesh@@QAAX_N@Z",
+ "0x8240A150": "??_DRndMesh@@QAAXXZ",
+ "0x824C9438": "?BuildBoard@Spotlight@@KAXXZ"
 }
