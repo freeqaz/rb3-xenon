@@ -35,8 +35,76 @@ import re
 import sys
 from collections import defaultdict
 
+import struct  # noqa: E402
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fuzzy_content_match import read_coff_functions, word_eq_frac  # noqa: E402
+
+
+def read_coff_base(path, include_static=False):
+    """Like fuzzy_content_match.read_coff_functions, but the base side can also
+    include STATIC functions (COFF storage class 3). read_coff_functions only
+    yields externals (class 2/6); static C functions (e.g. oggvorbis sort32a,
+    _ilog) are skipped, so they can never be revealed. Section symbols (also
+    class 3, names starting with '.') are excluded; we prefer the first
+    function-named defining symbol per section."""
+    if not include_static:
+        yield from read_coff_functions(path)
+        return
+    data = open(path, "rb").read()
+    if len(data) < 20:
+        return
+    machine, nsec, ts, symptr, nsym, opt, chars = struct.unpack_from("<HHIIIHH", data, 0)
+    if machine != 0x01F2:
+        return
+    strtab_off = symptr + nsym * 18
+
+    def read_str_at(off):
+        end = data.index(b"\x00", strtab_off + off)
+        return data[strtab_off + off:end].decode("latin1")
+
+    def sym_name(raw):
+        if raw[0:4] == b"\x00\x00\x00\x00":
+            return read_str_at(struct.unpack_from("<I", raw, 4)[0])
+        return raw.rstrip(b"\x00").decode("latin1")
+
+    secs = []
+    for i in range(nsec):
+        o = 20 + i * 40
+        name, vsz, vaddr, rawsz, rawptr, relptr, lnptr, nrel, nln, sc = \
+            struct.unpack_from("<8sIIIIIIHHI", data, o)
+        if name[0:1] == b"/":
+            nm = read_str_at(int(name.rstrip(b"\x00")[1:]))
+        else:
+            nm = name.rstrip(b"\x00").decode("latin1")
+        secs.append((nm, rawsz, rawptr, relptr, nrel))
+    sec_sym = {}
+    i = 0
+    while i < nsym:
+        o = symptr + i * 18
+        nm_raw = data[o:o + 8]
+        val, sec, typ, cls, naux = struct.unpack_from("<IhHBB", data, o + 8)
+        # externals (2/6) and statics (3); val==0 => defining symbol at section
+        # start; skip section symbols (name starts with '.') and aux'd records.
+        if sec > 0 and cls in (2, 3, 6) and val == 0 and sec not in sec_sym:
+            nm = sym_name(nm_raw)
+            if not nm.startswith("."):
+                sec_sym[sec] = nm
+        i += 1 + naux
+    for idx, (nm, rawsz, rawptr, relptr, nrel) in enumerate(secs, start=1):
+        if not nm.startswith(".text") or rawsz == 0 or idx not in sec_sym:
+            continue
+        code = bytes(data[rawptr:rawptr + rawsz])
+        reloff = set()
+        if relptr and nrel:
+            for r in range(nrel):
+                ro = relptr + r * 10
+                if ro + 10 > len(data):
+                    break
+                rva, symidx, rtype = struct.unpack_from("<IIH", data, ro)
+                if rva % 4 == 0 and rva + 4 <= rawsz:
+                    reloff.add(rva)
+        yield {"name": sec_sym[idx], "code": code, "reloc": reloff, "size": rawsz}
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TSM = os.path.join(ROOT, "scripts", "target_symbol_map.json")
@@ -106,7 +174,7 @@ MIN_REAL_WORDS = 5       # >= 5 non-masked instruction words distinguish it
 
 
 def sweep(limit_units=None, verbose=False, min_size=MIN_SIZE,
-          min_real=MIN_REAL_WORDS, allow_ambiguous=False):
+          min_real=MIN_REAL_WORDS, allow_ambiguous=False, include_static=False):
     tsm = json.load(open(TSM))
     mapped = {k.lower() for k in tsm if str(k).lower().startswith("0x")}
     done = units_done_names()
@@ -139,7 +207,7 @@ def sweep(limit_units=None, verbose=False, min_size=MIN_SIZE,
         # Base pool: real symbols not already matched at 100% in this unit.
         done_here = done.get(uname, set())
         base_by_size = defaultdict(list)
-        for f in read_coff_functions(bpath):
+        for f in read_coff_base(bpath, include_static):
             n = f["name"]
             if is_non_real(n) or n in done_here or f["size"] < min_size:
                 continue
@@ -196,11 +264,15 @@ def main():
                     help="also write a {addr:name} list for safe_name_merge --gate "
                          "(same as --out shape; load_candidates accepts it)")
     ap.add_argument("--units", help="comma list of unit-name substrings to limit to")
+    ap.add_argument("--include-static", action="store_true",
+                    help="also reveal STATIC base functions (COFF class 3), e.g. "
+                         "oggvorbis/zlib static C helpers skipped by default")
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args()
 
     limit = args.units.split(",") if args.units else None
-    cands, stats, ambiguous = sweep(limit, args.verbose)
+    cands, stats, ambiguous = sweep(limit, args.verbose,
+                                    include_static=args.include_static)
 
     json.dump(cands, open(args.out, "w"), indent=1)
     if args.emit_fragment:
