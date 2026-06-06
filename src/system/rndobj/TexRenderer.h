@@ -44,6 +44,10 @@ public:
     virtual void DrawAfter() {}
     void SetOutputTexture(RndTex *tex) { mOutputTexture = tex; }
     RndTex* GetOutputTexture() const { return mOutputTexture; }
+    void SetDraw(RndDrawable *draw) {
+        mDrawable = draw;
+        mDirty = true;
+    }
 
 protected:
     RndTexRenderer();

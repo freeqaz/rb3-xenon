@@ -332,4 +332,9 @@ private:
         action;                                                                          \
     }
 
+// Read the PPC timebase into `name` (X360: __mftb intrinsic; native: emulated).
+#ifndef TIMER_GET_CYCLES
+#define TIMER_GET_CYCLES(name) unsigned int name = __mftb()
+#endif
+
 const char *FormatTime(float);

@@ -5,6 +5,8 @@
 // (not present in src/system) and its transitive tail.
 #include "ui/PanelDir.h"
 #include "bandobj/TrackInstruments.h"
+#include "rndobj/Group.h" // RndGroup used inline in Showing()
+#include "obj/ObjMacros.h" // DECLARE_REVS / NEW_OVERLOAD / DELETE_OVERLOAD
 
 class BandTrack;
 class TrackPanelInterface;
