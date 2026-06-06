@@ -143,7 +143,10 @@ RndParticleSys::RndParticleSys()
       mStretchWithVelocity(0), mConstantArea(0), mPerspectiveStretch(0), mStretchScale(1),
       mScreenAspect(1), mSubSamples(0), mGrowRatio(0), mShrinkRatio(1),
       mMidColorRatio(0.5), mMidColorLow(1, 1, 1), mMidColorHigh(1, 1, 1),
-      mBirthMomentum(0), mBirthMomentumAmount(1), mMaxBurst(0), mTimeTillBurst(0),
+#ifdef HX_NATIVE
+      mBirthMomentum(0), mBirthMomentumAmount(1),
+#endif
+      mMaxBurst(0), mTimeTillBurst(0),
       mBurstInterval(15, 35), mBurstPeak(4, 8), mBurstLength(20, 30), mExplicitParts(0),
       mElapsedTime(0), mAnimateUVs(0), mLoopUVAnim(1), mRandomAnimStart(0),
       mTileHoldTime(0), mNumTilesAcross(1), mNumTilesDown(1), mNumTilesTotal(1),
@@ -320,8 +323,10 @@ BEGIN_PROPSYNCS(RndParticleSys)
     SYNC_PROP(pre_spawn, mFastForward)
     SYNC_PROP_SET(pause_offscreen, mPauseOffscreen, SetPauseOffscreen(_val.Int()))
     SYNC_PROP(attractors, mAttractors)
+#ifdef HX_NATIVE
     SYNC_PROP(birth_momentum, mBirthMomentum)
     SYNC_PROP(birth_momentum_amount, mBirthMomentumAmount)
+#endif
     SYNC_SUPERCLASS(RndAnimatable)
     SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(RndDrawable)
@@ -394,8 +399,10 @@ BEGIN_SAVES(RndParticleSys)
     bs << mLoopUVAnim;
     bs << mRandomAnimStart;
     bs << mAttractors;
+#ifdef HX_NATIVE
     bs << mBirthMomentum;
     bs << mBirthMomentumAmount;
+#endif
     bs << mPreserveParticles;
     mNeedForward = mFastForward;
     if (mPreserveParticles) {
@@ -488,8 +495,10 @@ BEGIN_COPYS(RndParticleSys)
             COPY_MEMBER(mStartingTile)
             COPY_MEMBER(mTotalTileTime)
             COPY_MEMBER(mInvTotalTileTime)
+#ifdef HX_NATIVE
             COPY_MEMBER(mBirthMomentum)
             COPY_MEMBER(mBirthMomentumAmount)
+#endif
             mAttractors.clear();
             for (unsigned int i = 0; i != c->mAttractors.size(); i++) {
                 mAttractors.push_back(Attractor(c->mAttractors[i], this));
@@ -799,8 +808,10 @@ BEGIN_LOADS(RndParticleSys)
         d >> mAttractors;
     }
     if (rev > 0x28) {
+#ifdef HX_NATIVE
         d >> mBirthMomentum;
         (*stream) >> mBirthMomentumAmount;
+#endif
     }
 
     if (rev <= 0xA || (d >> mPreserveParticles, !mPreserveParticles)) {
@@ -1067,7 +1078,10 @@ void RndParticleSys::UpdateRelativeXfm() {
         Interp(mLastWorldXfm.v, worldXfm.v, mRelativeMotion, mLastWorldXfm.v);
         Add(mRelativeXfm.v, mLastWorldXfm.v, mRelativeXfm.v);
     }
+#ifdef HX_NATIVE
+    // DC3 birth-momentum cache. Retail RB3 has no mMotionParentDelta.
     Subtract(mMotionParent->WorldXfm().v, mLastWorldXfm.v, mMotionParentDelta);
+#endif
     mLastWorldXfm = mMotionParent->WorldXfm();
 }
 
@@ -1834,7 +1848,9 @@ void RndParticleSys::SetRelativeMotion(float motion, RndTransformable *parent) {
     } else {
         mRelativeXfm.Reset();
     }
+#ifdef HX_NATIVE
     mMotionParentDelta.Zero();
+#endif
 }
 
 DataNode RndParticleSys::OnSetStartColor(const DataArray *da) {

@@ -369,7 +369,15 @@ protected:
     float mRelativeMotion; // 0x29c
     /** "Makes particles move relative to this Trans" */
     ObjOwnerPtr<RndTransformable> mMotionParent; // 0x2a0
+#ifdef HX_NATIVE
+    // DC3 (newer engine) caches the motion-parent's per-frame world-space delta
+    // to feed birth-momentum. Retail RB3 has no birth momentum, so this Vector3
+    // does NOT exist in the retail X360 layout (verified: SetSubSamples stores
+    // mSubSamples at 0x2c4 in the target, which only holds if there is no
+    // mMotionParentDelta before mBounce — its presence shifts every member
+    // >=0x2c4 by +0x10). rb3-Wii's RndParticleSys also lacks it.
     Vector3 mMotionParentDelta;
+#endif
     /** "Specify a collide plane to reflect particles.
         Used to bounce particles off surfaces." */
     ObjPtr<RndTransformable> mBounce; // 0x2c4
@@ -402,6 +410,14 @@ protected:
     float mMidColorRatio; // 0x368
     Hmx::Color mMidColorLow; // 0x36c
     Hmx::Color mMidColorHigh; // 0x37c
+#ifdef HX_NATIVE
+    // DC3 (newer engine) birth-momentum feature. Retail RB3 has no birth
+    // momentum, so these two fields (bool padded to 4 + float = +0x08) do NOT
+    // exist in the retail X360 layout (verified: ExplicitParticles reads
+    // mExplicitParts at 0x360 in the target, which only holds if there are no
+    // mBirthMomentum/mBirthMomentumAmount between mMidColorHigh and mBursts —
+    // their presence shifts every member >=mBursts by +0x08). rb3-Wii's
+    // RndParticleSys also lacks them.
     /** "Add relative parent's momentum to each particle's initial speed.
         Fancy property must be true." */
     bool mBirthMomentum; // 0x38c
@@ -409,6 +425,7 @@ protected:
         2 is twice the momentum, -1 means use the opposite of the momentum
         relative to the motion parent. Fancy property must be true." */
     float mBirthMomentumAmount; // 0x390
+#endif
     std::vector<Burst> mBursts; // 0x394
     int mMaxBurst; // 0x3a0
     float mTimeTillBurst; // 0x3a4
