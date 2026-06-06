@@ -11960,5 +11960,10 @@
  "0x82578B70": "?GetNumCompletedInCategory@AccomplishmentProgress@@QBAHVSymbol@@@Z",
  "0x82579A48": "?HandleSuccessfulUpload@AccomplishmentProgress@@QAAXXZ",
  "0x8258BFB0": "?InqProgressValues@AccomplishmentTourConditional@@UAA_NPAVBandProfile@@AAH1@Z",
- "0x8264CF48": "?InqProgressValues@AccomplishmentSongConditional@@UAA_NPAVBandProfile@@AAH1@Z"
+ "0x8264CF48": "?InqProgressValues@AccomplishmentSongConditional@@UAA_NPAVBandProfile@@AAH1@Z",
+ "0x82487798": "?ShaderSourcePath@@YAPBDPBD@Z",
+ "0x8236B5F0": "?Print@CharClip@@UAAXXZ",
+ "0x824FE830": "?FormatTime@@YAPBDM@Z",
+ "0x825110A0": "?ToString@OnlineID@@QBAPBDXZ",
+ "0x82BFF1B0": "drftf1"
 }
