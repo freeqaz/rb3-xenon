@@ -661,7 +661,7 @@ DEF_DATA_FUNC(DataObject) {
         return n;
     else {
         const char *s = n.LiteralStr(array);
-        Hmx::Object *o = gDataDir->FindObject(s, true, true);
+        Hmx::Object *o = gDataDir->FindObject(s, true);
         if (!o && s[0]) {
             MILO_FAIL(
                 kNotObjectMsg, s, PathName(gDataDir) ? PathName(gDataDir) : "**no file**"
@@ -955,7 +955,7 @@ DEF_DATA_FUNC(DataHandleType) {
         if (n.Type() == kDataObject) {
             obj = n.UncheckedObj();
         } else {
-            obj = gDataDir->FindObject(n.LiteralStr(array), true, true);
+            obj = gDataDir->FindObject(n.LiteralStr(array), true);
         }
         if (obj)
             obj->HandleType(arr);
@@ -970,7 +970,7 @@ DEF_DATA_FUNC(DataHandleTypeRet) {
     if (n.Type() == kDataObject) {
         obj = n.UncheckedObj();
     } else {
-        obj = gDataDir->FindObject(n.LiteralStr(array), true, true);
+        obj = gDataDir->FindObject(n.LiteralStr(array), true);
     }
     if (!obj) {
         String str;
@@ -1003,7 +1003,7 @@ DEF_DATA_FUNC(DataExport) {
     if (n.Type() == kDataObject)
         obj = n.UncheckedObj();
     else
-        obj = gDataDir->FindObject(n.LiteralStr(array), true, true);
+        obj = gDataDir->FindObject(n.LiteralStr(array), true);
     if (obj)
         obj->Export(a, i);
     return 0;
@@ -1019,7 +1019,7 @@ DEF_DATA_FUNC(DataHandle) {
         else if (n.Type() == kDataInt)
             obj = nullptr;
         else
-            obj = gDataDir->FindObject(n.LiteralStr(array), true, true);
+            obj = gDataDir->FindObject(n.LiteralStr(array), true);
         if (obj)
             obj->Handle(handlo, false);
     }
@@ -1033,7 +1033,7 @@ DEF_DATA_FUNC(DataHandleRet) {
     if (n.Type() == kDataObject)
         o = n.UncheckedObj();
     else
-        o = gDataDir->FindObject(n.LiteralStr(array), true, true);
+        o = gDataDir->FindObject(n.LiteralStr(array), true);
     if (!o) {
         String str;
         n.Print(str, true, 0);
@@ -1528,7 +1528,7 @@ Symbol DataFuncName(DataFunc *func) {
 
 DEF_DATA_FUNC(DataExists) {
     const char *name = array->Str(1);
-    bool found = gDataDir->FindObject(name, true, true);
+    bool found = gDataDir->FindObject(name, true);
     if (!found) {
         found = gDataFuncs.find(name) != gDataFuncs.end();
     }
@@ -1546,7 +1546,7 @@ DataMergeFilter::DataMergeFilter(const DataNode &node, Subdirs subs)
     else if (mType == kDataSymbol) {
         const char *_name = node.UncheckedStr();
         Symbol name = STR_TO_SYM(_name);
-        mObj = gDataDir->FindObject(name.Str(), true, true);
+        mObj = gDataDir->FindObject(name.Str(), true);
         if (!mObj) {
             const std::map<Symbol, DataFunc *>::iterator func = gDataFuncs.find(name);
             MILO_ASSERT(func != gDataFuncs.end(), 0x7B7);

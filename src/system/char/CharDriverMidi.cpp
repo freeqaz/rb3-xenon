@@ -70,11 +70,11 @@ void CharDriverMidi::Enter() {
     mActive = true;
     CharDriver::Enter();
     Hmx::Object *msgParser =
-        Dir()->FindObject(mParser.Str(), true, true);
+        Dir()->FindObject(mParser.Str(), true);
     if (msgParser)
         msgParser->AddSink(this);
     Hmx::Object *msgFlagParser =
-        Dir()->FindObject(mFlagParser.Str(), true, true);
+        Dir()->FindObject(mFlagParser.Str(), true);
     if (msgFlagParser)
         msgFlagParser->AddSink(this);
 }

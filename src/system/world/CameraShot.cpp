@@ -1065,7 +1065,7 @@ void LoadDrawables(BinStream &bs, std::vector<RndDrawable *> &draws, ObjectDir *
         char name[0x80];
         bs.ReadString(name, 0x80);
         RndDrawable *draw =
-            dynamic_cast<RndDrawable *>(dir->FindObject(name, false, true));
+            dynamic_cast<RndDrawable *>(dir->FindObject(name, false));
         if (draw) {
             draws.push_back(draw);
         }

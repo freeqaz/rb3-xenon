@@ -884,7 +884,7 @@ DataNode DataArray::Execute(bool fail) {
         const char *rawSymbolText = node.UncheckedStr();
         Symbol commandSymbol = STR_TO_SYM(rawSymbolText);
         const char *symbolText = commandSymbol.Str();
-        Hmx::Object *obj = gDataDir->FindObject(symbolText, true, true);
+        Hmx::Object *obj = gDataDir->FindObject(symbolText, true);
         if (obj) {
             return obj->Handle(this, true);
         }
@@ -897,7 +897,7 @@ DataNode DataArray::Execute(bool fail) {
         break;
     }
     case kDataString: {
-        Hmx::Object *object = gDataDir->FindObject(node.UncheckedStr(), true, true);
+        Hmx::Object *object = gDataDir->FindObject(node.UncheckedStr(), true);
         if (object) {
             return object->Handle(this, true);
         }

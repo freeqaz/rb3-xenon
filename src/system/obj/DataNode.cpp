@@ -540,7 +540,7 @@ Hmx::Object *DataNode::GetObj(const DataArray *source) const {
         const char *str = n.LiteralStr(source);
         Hmx::Object *ret = 0;
         if (*str != '\0') {
-            ret = gDataDir->FindObject(str, true, true);
+            ret = gDataDir->FindObject(str, true);
             if (!ret) {
 #ifdef HX_NATIVE
                 // Native flow lacks many game objects (HUD, score, etc.) that
@@ -766,7 +766,7 @@ void DataNode::Load(BinStream &d) {
         break;
     case kDataObject:
         d.ReadString(buf, 0x80);
-        mValue.object = gDataDir->FindObject(buf, true, true);
+        mValue.object = gDataDir->FindObject(buf, true);
         if (!mValue.object && *buf) {
             MILO_NOTIFY("Couldn't find %s from %s", buf, gDataDir->Name());
         }

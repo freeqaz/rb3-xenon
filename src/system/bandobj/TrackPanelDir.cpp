@@ -226,7 +226,7 @@ void TrackPanelDir::RemoveTrack(int iSlot) {
 }
 
 void TrackPanelDir::ConfigureTracks(bool b) {
-    Hmx::Object *modeobj = FindObject("gamemode", true, true);
+    Hmx::Object *modeobj = FindObject("gamemode", true);
     bool b18 = false;
     if (modeobj) {
         if (modeobj->Property("is_practice", true)->Int())
@@ -298,7 +298,7 @@ void TrackPanelDir::ConfigureTrack(int i) {
 }
 
 void TrackPanelDir::ConfigureCrowdMeter() {
-    Hmx::Object *modeobj = FindObject("gamemode", true, true);
+    Hmx::Object *modeobj = FindObject("gamemode", true);
     bool practice = modeobj && modeobj->Property("is_practice", true)->Int();
     if (practice || (mTrackPanel && mTrackPanel->GetNoCrowdMeter())
         || (mTrackPanel && mTrackPanel->GameResumedNoScore())) {
@@ -426,7 +426,7 @@ void TrackPanelDir::DisablePlayer(int idx, bool enable) {
     if (idx != -1) {
         if (GetInstrument(idx) != kInstVocals)
             UnisonEnd();
-        static Hmx::Object *gameMode = FindObject("gamemode", true, true);
+        static Hmx::Object *gameMode = FindObject("gamemode", true);
         if (mCrowdMeter && gameMode) {
             if (gameMode->Property("update_crowd_meter", true)->Int()) {
                 if (enable) {
@@ -444,7 +444,7 @@ void TrackPanelDir::DisablePlayer(int idx, bool enable) {
 void TrackPanelDir::EnablePlayer(int idx) {
     if (idx != -1) {
         GetInstrument(idx);
-        static Hmx::Object *gameMode = FindObject("gamemode", true, true);
+        static Hmx::Object *gameMode = FindObject("gamemode", true);
         if (mCrowdMeter && gameMode) {
             if (gameMode->Property("update_crowd_meter", true)->Int()) {
                 mCrowdMeter->EnablePlayer(idx);
@@ -604,7 +604,7 @@ void TrackPanelDir::SetCrowdRating(float f) { mCrowdMeter->SetCrowd(f); }
 
 void TrackPanelDir::Coda() {
     if (!unk2ad) {
-        Hmx::Object *modeobj = FindObject("gamemode", true, true);
+        Hmx::Object *modeobj = FindObject("gamemode", true);
         if (modeobj) {
             if (!modeobj->Property("enable_coda", true)->Int())
                 return;

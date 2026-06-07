@@ -21,7 +21,7 @@ StreakMeter::StreakMeter()
 
 void StreakMeter::SyncObjects() {
     bool audible = true;
-    Hmx::Object *gamemodeObj = FindObject("gamemode", false, true);
+    Hmx::Object *gamemodeObj = FindObject("gamemode", false);
     if (gamemodeObj)
         audible = gamemodeObj->Property("play_streak_sfx", true)->Int();
     if (audible)

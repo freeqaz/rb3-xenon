@@ -1151,7 +1151,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
     mCurNames = &mVignetteNames;
     LoadPrefabPrefs();
     SetContexts(Symbol("vignette"));
-    ObjectDir *charsDir = dynamic_cast<ObjectDir *>(worldDir->FindObject("clips", false, true));
+    ObjectDir *charsDir = dynamic_cast<ObjectDir *>(worldDir->FindObject("clips", false));
     if (charsDir) {
         for (ObjDirItr<Character> it(worldDir, true); it; ++it) {
             CharDriver *driver = it->Driver();
@@ -1165,31 +1165,31 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                     driver->SetClipType(vignette);
                     it->BoneServo()->SetClipType(vignette);
                     ObjectDir *visemes = dynamic_cast<ObjectDir *>(
-                        it->FindObject("vignette_visemes", false, true)
+                        it->FindObject("vignette_visemes", false)
                     );
                     if (visemes) {
                         CharLipSyncDriver *lsd = dynamic_cast<CharLipSyncDriver *>(
-                            it->FindObject("vignette.lipdrv", false, true)
+                            it->FindObject("vignette.lipdrv", false)
                         );
                         if (lsd)
                             lsd->SetClips(visemes);
                         CharFaceServo *fs = dynamic_cast<CharFaceServo *>(
-                            it->FindObject("face.faceservo", false, true)
+                            it->FindObject("face.faceservo", false)
                         );
                         if (fs)
                             fs->SetClips(visemes);
                     }
                     CharWeightSetter *ws = dynamic_cast<CharWeightSetter *>(
-                        it->FindObject("venue.weight", false, true)
+                        it->FindObject("venue.weight", false)
                     );
                     if (ws)
                         ws->SetWeight(0.0f);
                     CharLipSyncDriver *lsd2 = dynamic_cast<CharLipSyncDriver *>(
-                        it->FindObject("vignette.lipdrv", false, true)
+                        it->FindObject("vignette.lipdrv", false)
                     );
                     if (lsd2) {
                         CharLipSync *ls = dynamic_cast<CharLipSync *>(
-                            charsDir->FindObject(MakeString("%s.lipsync", name), false, true)
+                            charsDir->FindObject(MakeString("%s.lipsync", name), false)
                         );
                         lsd2->SetLipSync(ls);
                         lsd2->Sync();
@@ -1230,7 +1230,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
             Symbol hints[4];
             for (int i = 0; i < 4; i++)
                 hints[i] = Symbol();
-            Hmx::Object *hintsDir = worldDir->FindObject("player_hints.obj", false, true);
+            Hmx::Object *hintsDir = worldDir->FindObject("player_hints.obj", false);
             if (hintsDir) {
                 for (int i = 0; i < 4; i++) {
                     const DataNode *prop = hintsDir->Property(
@@ -1253,7 +1253,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
     }
     SetDir(worldDir);
     BandRetargetVignette *brv = dynamic_cast<BandRetargetVignette *>(
-        worldDir->FindObject("BandRetargetVignette.brv", false, true)
+        worldDir->FindObject("BandRetargetVignette.brv", false)
     );
     if (brv)
         brv->EnterDir();
@@ -1262,11 +1262,11 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
             BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
             Symbol name = mVignetteNames.names[i];
             CharLipSyncDriver *lsd = dynamic_cast<CharLipSyncDriver *>(
-                bc->FindObject("vignette.lipdrv", false, true)
+                bc->FindObject("vignette.lipdrv", false)
             );
             if (lsd) {
                 CharLipSync *ls = dynamic_cast<CharLipSync *>(
-                    charsDir->FindObject(MakeString("%s.lipsync", name), false, true)
+                    charsDir->FindObject(MakeString("%s.lipsync", name), false)
                 );
                 lsd->SetLipSync(ls);
                 lsd->Sync();

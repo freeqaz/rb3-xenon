@@ -469,7 +469,7 @@ public:
      */
     template <class T>
     T *Find(const char *name, bool fail = true) {
-        T *castedObj = dynamic_cast<T *>(FindObject(name, false, true));
+        T *castedObj = dynamic_cast<T *>(FindObject(name, false));
         if (!castedObj && fail) {
             MILO_FAIL(
                 kNotObjectMsg, name, PathName(this) ? PathName(this) : "**no file**"
@@ -528,7 +528,7 @@ public:
      * @param [in] subDirs If true, search through this ObjectDir's subdirs.
      * @returns The object, or NULL if it wasn't found.
      */
-    Hmx::Object *FindObject(const char *name, bool parentDirs, bool subDirs);
+    Hmx::Object *FindObject(const char *name, bool parentDirs);
     bool InlineProxy(BinStream &);
     bool HasDirPtrs() const;
     void TransferLoaderState(ObjectDir *);

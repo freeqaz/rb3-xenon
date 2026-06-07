@@ -37,7 +37,7 @@ Hmx::Object *FlowPtrBase::GetObject() {
         if (owner2) {
             ObjectDir *dir = owner2->Dir();
             if (dir) {
-                Hmx::Object *obj = dir->FindObject(mObjName.Str(), false, true);
+                Hmx::Object *obj = dir->FindObject(mObjName.Str(), false);
                 if (obj) {
                     mState = -2;
                     return obj;
@@ -64,20 +64,20 @@ ObjectDir *FlowPtrGetLoadingDir(ObjectDir *dir) {
 Hmx::Object *FlowPtrBase::LoadObject(BinStream &bs) {
     bs >> mObjName;
     ObjectDir *loadingDir = mOwnerNode->Dir();
-    Hmx::Object *obj = loadingDir->FindObject(mObjName.Str(), false, true);
+    Hmx::Object *obj = loadingDir->FindObject(mObjName.Str(), false);
     if (!obj) {
         loadingDir = FlowPtrGetLoadingDir(loadingDir);
         if (!loadingDir)
             goto try_main;
-        obj = loadingDir->FindObject(mObjName.Str(), false, true);
+        obj = loadingDir->FindObject(mObjName.Str(), false);
         if (!obj) {
             loadingDir = FlowPtrGetLoadingDir(loadingDir);
             if (!loadingDir)
                 goto try_main;
-            obj = loadingDir->FindObject(mObjName.Str(), false, true);
+            obj = loadingDir->FindObject(mObjName.Str(), false);
             if (!obj) {
             try_main:
-                obj = ObjectDir::Main()->FindObject(mObjName.Str(), false, true);
+                obj = ObjectDir::Main()->FindObject(mObjName.Str(), false);
             }
         }
     }

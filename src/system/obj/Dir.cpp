@@ -164,7 +164,7 @@ BEGIN_HANDLERS(ObjectDir)
     HANDLE_ACTION(iterate_self, Iterate(_msg, false))
     HANDLE_ACTION(save_objects, DirLoader::SaveObjects(_msg->Str(2), this, false))
     HANDLE(find, OnFind)
-    HANDLE_EXPR(exists, FindObject(_msg->Str(2), false, true) != nullptr)
+    HANDLE_EXPR(exists, FindObject(_msg->Str(2), false) != nullptr)
     HANDLE_ACTION(sync_objects, SyncObjects())
     HANDLE_EXPR(is_proxy, IsProxy())
     HANDLE_EXPR(proxy_dir, ProxyDir())
@@ -202,7 +202,7 @@ ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
     ObjectDir *retDir = dirLoader->GetDir();
     if (retDir) {
         for (ObjDirItr<Hmx::Object> it(dir, false); it != nullptr; ++it) {
-            Hmx::Object *found = retDir->FindObject(it->Name(), false, true);
+            Hmx::Object *found = retDir->FindObject(it->Name(), false);
             if (found && found != retDir && &*it != dir) {
                 MILO_NOTIFY(
                     "%s exists in dir and subdir, so replacing %s with %s",
@@ -961,17 +961,15 @@ ObjectDir::Entry *ObjectDir::FindEntry(const char *name, bool add) {
     }
 }
 
-Hmx::Object *ObjectDir::FindObject(const char *name, bool parentDirs, bool subDirs) {
+Hmx::Object *ObjectDir::FindObject(const char *name, bool parentDirs) {
     Entry *entry = FindEntry(name, false);
     if (entry && entry->obj)
         return entry->obj;
-    if (subDirs) {
-        for (int i = 0; i < mSubDirs.size(); i++) {
-            if (mSubDirs[i]) {
-                Hmx::Object *found = mSubDirs[i]->FindObject(name, false, true);
-                if (found)
-                    return found;
-            }
+    for (int i = 0; i < mSubDirs.size(); i++) {
+        if (mSubDirs[i]) {
+            Hmx::Object *found = mSubDirs[i]->FindObject(name, false);
+            if (found)
+                return found;
         }
     }
     if (strlen(name) != 0) {
@@ -981,10 +979,10 @@ Hmx::Object *ObjectDir::FindObject(const char *name, bool parentDirs, bool subDi
     }
     if (parentDirs) {
         if (Dir() && Dir() != this) {
-            return Dir()->FindObject(name, parentDirs, true);
+            return Dir()->FindObject(name, parentDirs);
         }
         if (this != sMainDir) {
-            return sMainDir->FindObject(name, false, true);
+            return sMainDir->FindObject(name, false);
         }
     }
 #ifdef HX_NATIVE
@@ -993,15 +991,15 @@ Hmx::Object *ObjectDir::FindObject(const char *name, bool parentDirs, bool subDi
     // flattens all objects into the same scope so this isn't needed.
     // ProxyDir points to the parent dir that loaded this proxy object
     // (same fallback FlowPtr uses via FlowPtrGetLoadingDir).
-    if (!parentDirs && subDirs && Dir() == this && mLoader) {
+    if (!parentDirs && Dir() == this && mLoader) {
         ObjectDir *proxyDir = mLoader->ProxyDir();
         if (proxyDir && proxyDir != this) {
-            Hmx::Object *found = proxyDir->FindObject(name, false, true);
+            Hmx::Object *found = proxyDir->FindObject(name, false);
             if (found) return found;
         }
         DirLoader *loader = mLoader;
         if (loader->ParentDir() && loader->ParentDir() != this) {
-            Hmx::Object *found = loader->ParentDir()->FindObject(name, false, true);
+            Hmx::Object *found = loader->ParentDir()->FindObject(name, false);
             if (found) return found;
         }
     }
@@ -1028,7 +1026,7 @@ void ObjectDir::AppendSubDir(const ObjDirPtr<ObjectDir> &subdir) {
 }
 
 DataNode ObjectDir::OnFind(DataArray *da) {
-    Hmx::Object *found = FindObject(da->Str(2), false, true);
+    Hmx::Object *found = FindObject(da->Str(2), false);
     if (da->Size() > 3) {
         if (da->Int(3) != 0 && !found) {
             MILO_FAIL("Couldn't find %s in %s", da->Str(2), Name());
@@ -1208,12 +1206,12 @@ void ObjectDir::PreLoad(BinStream &bs) {
     if (d.rev > 1 && d.rev < 11) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
-        unk8c = FindObject(buf, false, true);
+        unk8c = FindObject(buf, false);
     }
     if (d.rev > 3 && d.rev < 11) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
-        mCurCam = FindObject(buf, false, true);
+        mCurCam = FindObject(buf, false);
         if (mCurCam == nullptr && (int)mCurViewportID == 7) {
             mCurViewportID = (ViewportId)0;
         }
@@ -1442,9 +1440,9 @@ void ObjectDir::PostLoad(BinStream &bs) {
     if (d.rev > 10) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
-        unk8c = FindObject(buf, false, true);
+        unk8c = FindObject(buf, false);
         bs.ReadString(buf, 0x80);
-        mCurCam = FindObject(buf, true, true);
+        mCurCam = FindObject(buf, true);
         if (mCurCam == nullptr && (int)mCurViewportID == 7) {
             mCurViewportID = (ViewportId)0;
         }

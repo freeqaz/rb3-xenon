@@ -119,7 +119,22 @@ extern const char *kAssertStr;
 #define MILO_ASSERT_FMT(cond, ...) ((void)sizeof(!(cond)))
 #endif
 
+#ifdef HX_NATIVE
 #define MILO_FAIL(...) TheDebugFailer << MakeString(__VA_ARGS__)
+#else
+// Retail RB3-360 compiled MILO_FAIL's emission (TheDebugFailer << MakeString)
+// to NO code: DebugFailer::operator<< (0x8235C970) has ZERO bl callers in the
+// whole binary, and the fail strings ("Could not find %s in dir", "**no file**")
+// are absent from .text/.rdata. But unlike the WARN family, the FAIL *arguments*
+// were still EVALUATED for side effects (Find<T>'s fail path calls PathName(this)
+// twice — the ternary — but never MakeString/Fail). So use (void)(args), a comma
+// expression that evaluates each arg and discards: side-effecting args (PathName
+// vcalls) survive, the format-string materialization + MakeString + Fail vanish.
+// This is what flips the ObjectDir::Find<T> template family to 100%.
+// (sizeof() — the WARN form — would strip arg evaluation too and regress inlined
+// Find<> fail-paths; (void)(args) keeps it. HX_NATIVE keeps the real fatal path.)
+#define MILO_FAIL(...) ((void)(__VA_ARGS__))
+#endif
 // Retail RB3-360 compiled the debug-OUTPUT family (WARN/NOTIFY/LOG/PRINT_ONCE/
 // NOTIFY_ONCE/WARN_ONCE) to NO code in release (verified: their format strings
 // are absent from orig band.exe, and gating them raises the match count +23

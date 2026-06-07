@@ -342,7 +342,7 @@ void WorldInstance::SyncDir() {
                 if (trig && trig->HasTriggerEvents()) {
                     MILO_NOTIFY("%s must be in shared.grp", PathName(it));
                 } else {
-                    Hmx::Object *foundObj = FindObject(it->Name(), false, true);
+                    Hmx::Object *foundObj = FindObject(it->Name(), false);
                     if (!foundObj) {
                         foundObj = Hmx::Object::NewObject(it->ClassName());
                         bool deep = true;

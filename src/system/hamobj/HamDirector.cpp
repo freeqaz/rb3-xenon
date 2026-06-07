@@ -1332,7 +1332,7 @@ DataNode HamDirector::OnFileLoaded(DataArray *a) {
 #ifdef HX_NATIVE
                 // DTA scripts expect video_recorder.srec in the venue world
                 // (Kinect video recording). Register a no-op stub so find_obj succeeds.
-                if (mVenue && !mVenue->FindObject("video_recorder.srec", false, false)) {
+                if (mVenue && !mVenue->FindObject("video_recorder.srec", false)) {
                     Hmx::Object *stub = Hmx::Object::NewObject("Object");
                     stub->SetName("video_recorder.srec", mVenue);
                 }
@@ -2195,7 +2195,7 @@ void HamDirector::LoadRoutineBuilderData(
             FOREACH (it, objects) {
                 Hmx::Object *cur = *it;
                 const char *name = cur->Name();
-                Hmx::Object *find = movesDir->FindObject(name, false, false);
+                Hmx::Object *find = movesDir->FindObject(name, false);
                 if (!find) {
                     cur->SetName(name, movesDir);
                     mRoutineBuilderObjects.insert(cur);
@@ -2212,7 +2212,7 @@ void HamDirector::LoadRoutineBuilderData(
             FOREACH (it, objects) {
                 Hmx::Object *cur = *it;
                 const char *name = cur->Name();
-                Hmx::Object *find = clipsDir->FindObject(name, false, false);
+                Hmx::Object *find = clipsDir->FindObject(name, false);
                 if (!find) {
                     cur->SetName(name, clipsDir);
                     mRoutineBuilderObjects.insert(cur);

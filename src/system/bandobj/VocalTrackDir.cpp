@@ -444,9 +444,7 @@ void VocalTrackDir::UpdateConfiguration() {
             mIsTop ? "_top" : "_bottom",
             widescreen ? "_wide" : ""
         ),
-        false,
-        true
-    );
+        false);
     bool b9 = false;
     if (mHarmLyrics && BandTrack::mParent && BandTrack::mParent->UseVocalHarmony())
         b9 = true;
@@ -846,7 +844,7 @@ void VocalTrackDir::ConfigPanels() {
     RndTransformable *lyrictrans =
         Find<RndTransformable>("static_lyric_phrase_splitter.trans", false);
     unk42c = lyrictrans ? lyrictrans->LocalXfm().v.x : mTrackRightX;
-    if (ObjectDir::sMainDir->FindObject("milo", false, true)) {
+    if (ObjectDir::sMainDir->FindObject("milo", false)) {
         if (mPitchArrow1)
             mPitchArrow1->SetLocalPos(0, 0, 0.25f * (mPitchTopZ * 3.0f + mPitchBottomZ));
         if (mPitchArrow2)
@@ -936,7 +934,7 @@ void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
             type_matched = 1;
     }
     if (type_matched) {
-        Hmx::Object *miloObj = ObjectDir::sMainDir->FindObject("milo", false, true);
+        Hmx::Object *miloObj = ObjectDir::sMainDir->FindObject("milo", false);
         bool objexists = (miloObj != 0);
         if (o->Property(lead_text, true)->NotNull()) {
             mLeadText = o->Property(lead_text, true)->Obj<RndText>();

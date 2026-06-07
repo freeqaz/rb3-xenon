@@ -405,7 +405,7 @@ static CharClip *MyFindClip(const DataNode &n, ObjectDir *dir) {
         obj = node.UncheckedObj();
     } else {
         MILO_ASSERT(node.Type() == kDataSymbol || node.Type() == kDataString, 0x12C);
-        obj = dir->FindObject(node.LiteralStr(), false, true);
+        obj = dir->FindObject(node.LiteralStr(), false);
     }
     if (!obj)
         return nullptr;

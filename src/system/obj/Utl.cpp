@@ -134,7 +134,7 @@ int SubDirStringUsed(ObjectDir *dir) {
 }
 
 const char *NextName(const char *old_name, ObjectDir *dir) {
-    if (!dir->FindObject(old_name, false, true))
+    if (!dir->FindObject(old_name, false))
         return old_name;
     const char *base = FileGetBase(old_name);
     const char *ext = FileGetExt(old_name);
@@ -159,7 +159,7 @@ const char *NextName(const char *old_name, ObjectDir *dir) {
         } else {
             strcpy(buf, base);
         }
-    } while (dir->FindObject(buf, false, true));
+    } while (dir->FindObject(buf, false));
 
     return MakeString(buf);
 }
@@ -394,7 +394,7 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
          entry = fromDir->mHashTable.Next(entry)) {
         Hmx::Object *curObj = entry->obj;
         if (curObj) {
-            Hmx::Object *foundObj = toDir->FindObject(curObj->Name(), false, true);
+            Hmx::Object *foundObj = toDir->FindObject(curObj->Name(), false);
             if (foundObj != curObj) {
                 MergeObject(curObj, foundObj, toDir, filt.Filter(curObj, foundObj, toDir));
             }
@@ -591,7 +591,7 @@ void CopyTypeProperties(Hmx::Object *from, Hmx::Object *to) {
                     } else if (fromType == kDataSymbol && toType == kDataObject) {
                         if (!fromVal->Sym().Null()) {
                             Hmx::Object *objProp =
-                                from->Dir()->FindObject(fromVal->Sym().Str(), false, true);
+                                from->Dir()->FindObject(fromVal->Sym().Str(), false);
                             if (objProp) {
                                 to->SetProperty(prop, objProp);
                             } else {

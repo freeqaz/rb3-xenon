@@ -141,7 +141,7 @@ void ScriptTask::UpdateVarsObjects(DataArray *d) {
         } else if (curType == kDataSymbol || curType == kDataString) {
             const char *name = d->LiteralStr(i);
             ObjectDir *search = mThis ? mThis->DataDir() : ObjectDir::Main();
-            obj = search->FindObject(name, true, true);
+            obj = search->FindObject(name, true);
         } else if (curType == kDataVar) {
             DataNode *var = d->UncheckedVar(i);
             FOREACH (it, mVars) {
