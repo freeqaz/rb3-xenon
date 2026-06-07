@@ -31,6 +31,7 @@
 #include "hamobj/RhythmDetector.h"
 #include "utl/BinStream.h"
 #include "utl/Loader.h"
+#include "utl/MakeString.h"
 #include "utl/MemMgr.h"
 #include "utl/Std.h"
 #include "utl/Symbol.h"
@@ -57,7 +58,7 @@ private:
 #pragma region Hmx::Object
 
 Character::Character()
-    : mLods(this), mLastLod(0), mForceLod(kLOD0), mShadow(this), mTranslucent(this),
+    : mLods(this), mLastLod(0), mForceLod(kLOD0), mShadow(this, 0), mTransGroup(this, 0),
       mDriver(0), mSelfShadow(0), mSpotCutout(0), mFloorShadow(1), mSphereBase(this, this),
       mBounding(Vector3(0, 0, 0), 0), mPollState(kCharCreated),
       mTest(new CharacterTest(this)), mFrozen(0), mDrawMode(kCharDrawAll), mTeleported(1),
@@ -102,8 +103,8 @@ END_HANDLERS
 
 BEGIN_CUSTOM_PROPSYNC(Character::Lod)
     SYNC_PROP(screen_size, o.mScreenSize)
-    SYNC_PROP(opaque, o.mOpaque)
-    SYNC_PROP(translucent, o.mTranslucent)
+    SYNC_PROP(group, o.mGroup)
+    SYNC_PROP(trans_group, o.mTransGroup)
 END_CUSTOM_PROPSYNC
 
 BEGIN_PROPSYNCS(Character)
@@ -112,11 +113,11 @@ BEGIN_PROPSYNCS(Character)
     )
     SYNC_PROP(lods, mLods)
     SYNC_PROP(force_lod, (int &)mForceLod)
-    SYNC_PROP(translucent, mTranslucent)
+    SYNC_PROP(trans_group, mTransGroup)
     SYNC_PROP(self_shadow, mSelfShadow)
     SYNC_PROP(bounding, mBounding)
     SYNC_PROP(frozen, mFrozen)
-    SYNC_PROP(shadow, mShadow)
+    SYNC_PROP_SET(shadow, mShadow.Ptr(), SetShadow(_val.Obj<RndGroup>()))
     SYNC_PROP_SET(driver, mDriver, )
     SYNC_PROP_MODIFY(
         interest_to_force, mInterestToForce, SetFocusInterest(mInterestToForce, 0)
@@ -141,8 +142,8 @@ BinStream &operator<<(BinStream &bs, const ObjPtrVec<RhythmDetector, ObjectDir> 
 
 BinStream &operator<<(BinStream &bs, const Character::Lod &lod) {
     bs << lod.mScreenSize;
-    bs << lod.mOpaque;
-    bs << lod.mTranslucent;
+    bs << lod.mGroup;
+    bs << lod.mTransGroup;
     return bs;
 }
 
@@ -159,7 +160,7 @@ BEGIN_SAVES(Character)
         bs << mBounding;
         bs << mFrozen;
         bs << mForceLod;
-        bs << mTranslucent;
+        bs << mTransGroup;
         bs << mShowableProps;
     }
     mTest->Save(bs);
@@ -178,7 +179,7 @@ BEGIN_COPYS(Character)
             COPY_MEMBER(mFrozen)
             COPY_MEMBER(mForceLod)
             COPY_MEMBER(mLods)
-            COPY_MEMBER(mTranslucent)
+            COPY_MEMBER(mTransGroup)
             COPY_MEMBER(mShadow)
             COPY_MEMBER(mShowableProps)
         }
@@ -208,30 +209,24 @@ void Character::PreLoad(BinStream &bs) {
     d.PushRev(this);
 }
 
-void OldGroupLoad(DrawPtrVec &vec, BinStream &bs) {
-    vec.clear();
-    ObjPtr<RndGroup> group(vec.Owner());
-    bs >> group;
-    if (group) {
-        vec.push_back(group);
-    }
-}
-
 BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {
     d >> lod.mScreenSize;
     if (d.rev < 6) {
         lod.mScreenSize *= (4.0f / 3.0f);
     }
     if (gCharMe) {
-        d >> lod.mOpaque;
-    } else if (d.rev < 0x12) {
-        OldGroupLoad(lod.mOpaque, d.stream);
-        if (d.rev > 0xD) {
-            OldGroupLoad(lod.mTranslucent, d.stream);
+        // pre-group revs: a flat list of drawables wrapped into a fresh group
+        ObjPtrList<RndDrawable> draws(gCharMe);
+        d.stream >> draws;
+        lod.mGroup = gCharMe->New<RndGroup>(MakeString("group%x", (int)&lod));
+        FOREACH (it, draws) {
+            lod.mGroup->AddObject(*it);
         }
     } else {
-        d >> lod.mOpaque;
-        d >> lod.mTranslucent;
+        d >> lod.mGroup;
+        if (d.rev > 0xD) {
+            d >> lod.mTransGroup;
+        }
     }
     return d;
 }
@@ -251,11 +246,7 @@ void Character::PostLoad(BinStream &bs) {
             } else {
                 d >> mLods;
             }
-            if (d.rev < 0x12) {
-                OldGroupLoad(mShadow, bs);
-            } else {
-                bs >> mShadow;
-            }
+            bs >> mShadow;
             if (d.rev > 2) {
                 d >> mSelfShadow;
             } else {
@@ -294,11 +285,7 @@ void Character::PostLoad(BinStream &bs) {
                 d >> (int &)mForceLod;
             }
             if (d.rev > 0x10) {
-                if (d.rev < 0x12) {
-                    OldGroupLoad(mTranslucent, bs);
-                } else {
-                    d >> mTranslucent;
-                }
+                bs >> mTransGroup;
             }
             if (d.rev == 0x13 || d.rev == 0x14) {
                 ObjPtrVec<RndGroup> vec(this);
@@ -330,11 +317,7 @@ void Character::PostLoad(BinStream &bs) {
             mLods.clear();
         }
         if (otherRev > 6) {
-            if (d.rev < 0x12) {
-                OldGroupLoad(mShadow, bs);
-            } else {
-                d >> mShadow;
-            }
+            d >> mShadow;
         }
     }
     if (d.rev < 8) {
@@ -360,7 +343,7 @@ void Character::UpdateSphere() {
 }
 
 void Character::DrawShadow(const Transform &xfm, float planeD) {
-    if (mShowing && !mShadow.empty()) {
+    if (mShowing && mShadow) {
         Vector3 worldPos = WorldXfm().v;
 
         Plane pl70;
@@ -386,7 +369,7 @@ void Character::DrawShadow(const Transform &xfm, float planeD) {
             Multiply(cur->Parent()->WorldXfm(), tfa0, cur->DirtyLocalXfm());
         }
 
-        mShadow.Draw();
+        mShadow->DrawShowing();
     }
 }
 
@@ -395,8 +378,8 @@ RndDrawable *Character::CollideShowing(const Segment &s, float &fl, Plane &pl) {
     RndDrawable *ret = nullptr;
     Segment mySegment = s;
     fl = 1;
-    if (mLastLod >= 0 && mLastLod < mLods.size()) {
-        RndDrawable *lodShowing = mLods[mLastLod].mOpaque.CollideShowing(s, v70.x, pl);
+    if (mLastLod >= 0 && mLastLod < mLods.size() && mLods[mLastLod].Group()) {
+        RndDrawable *lodShowing = mLods[mLastLod].Group()->Collide(s, v70.x, pl);
         if (lodShowing) {
             if (IsProxy()) {
                 fl = v70.x;
@@ -464,10 +447,10 @@ void Character::SyncObjects() {
     }
     RndDir::SyncObjects();
     if (!IsSubDir()) {
-        RemoveFromDraws(mTranslucent);
+        VectorRemove(mDraws, static_cast<RndDrawable *>(mTransGroup.Ptr()));
         for (int i = 0; i < mLods.size(); i++) {
-            RemoveFromDraws(mLods[i].mOpaque);
-            RemoveFromDraws(mLods[i].mTranslucent);
+            VectorRemove(mDraws, static_cast<RndDrawable *>(mLods[i].Group()));
+            VectorRemove(mDraws, static_cast<RndDrawable *>(mLods[i].TransGroup()));
         }
         SyncShadow();
         CharPollableSorter sorter;
@@ -500,8 +483,8 @@ void Character::RemovingObject(Hmx::Object *o) {
 void Character::CollideListSubParts(
     const Segment &s, std::list<RndDrawable::Collision> &c
 ) {
-    if (mLastLod >= 0 && mLastLod < mLods.size()) {
-        mLods[mLastLod].mOpaque.CollideList(s, c);
+    if (mLastLod >= 0 && mLastLod < mLods.size() && mLods[mLastLod].Group()) {
+        mLods[mLastLod].Group()->CollideList(s, c);
     }
     RndDir::CollideListSubParts(s, c);
 }
@@ -601,16 +584,18 @@ void Character::DrawOpaque() {
         (*it)->Draw();
     }
     Lod *lod = mLods.size() != 0 ? &mLods[mLastLod] : nullptr;
-    if (lod) {
-        lod->mOpaque.Draw();
+    if (lod && lod->Group()) {
+        lod->Group()->DrawShowing();
     }
 }
 
 void Character::DrawTranslucent() {
-    mTranslucent.Draw();
+    if (mTransGroup) {
+        mTransGroup->DrawShowing();
+    }
     Lod *lod = mLods.size() != 0 ? &mLods[mLastLod] : nullptr;
-    if (lod) {
-        lod->mTranslucent.Draw();
+    if (lod && lod->TransGroup()) {
+        lod->TransGroup()->DrawShowing();
     }
 }
 
@@ -688,11 +673,15 @@ void Character::MergeDraws(const Character *c) {
     int numLods = Max<int>(c->mLods.size(), mLods.size());
     mLods.resize(numLods);
     for (int i = 0; i < c->mLods.size(); i++) {
-        mLods[i].mOpaque.merge(c->mLods[i].mOpaque);
-        mLods[i].mTranslucent.merge(c->mLods[i].mTranslucent);
+        if (!mLods[i].Group())
+            mLods[i].mGroup = c->mLods[i].Group();
+        if (!mLods[i].TransGroup())
+            mLods[i].mTransGroup = c->mLods[i].TransGroup();
     }
-    mTranslucent.merge(c->mTranslucent);
-    mShadow.merge(c->mShadow);
+    if (!mTransGroup)
+        mTransGroup = c->mTransGroup.Ptr();
+    if (!mShadow)
+        mShadow = c->mShadow.Ptr();
     mShowableProps.merge(c->mShowableProps);
 }
 
@@ -759,10 +748,14 @@ void Character::CopyBoundingSphere(Character *c) {
     SetSphereBase(c->mSphereBase);
 }
 
-void Character::RemoveFromDraws(DrawPtrVec &vec) {
-    FOREACH (it, vec) {
-        RndDrawable *cur = *it;
-        VectorRemove(mDraws, cur);
+void Character::SetShadow(RndGroup *shadow) {
+    if (shadow != mShadow) {
+        MILO_ASSERT(!shadow || shadow->Dir() == this, 0x2BB);
+        if (mShadow) {
+            mDraws.push_back(static_cast<RndDrawable *>(mShadow.Ptr()));
+        }
+        mShadow = shadow;
+        VectorRemove(mDraws, static_cast<RndDrawable *>(mShadow.Ptr()));
     }
 }
 
@@ -894,11 +887,13 @@ void Character::UnhookShadow() {
 
 void Character::SyncShadow() {
     UnhookShadow();
-    if (!mShadow.empty()) {
+    if (mShadow) {
         if (GetGfxMode() == kOldGfx) {
-            FOREACH (it, mShadow) {
-                RndDrawable *drawable = *it;
-                RndMesh *mesh = dynamic_cast<RndMesh *>(drawable);
+            const std::vector<RndDrawable *> &draws = mShadow->Draws();
+            for (std::vector<RndDrawable *>::const_iterator it = draws.begin();
+                 it != draws.end();
+                 ++it) {
+                RndMesh *mesh = dynamic_cast<RndMesh *>(*it);
                 if (mesh) {
                     if (mesh->NumBones() != 0) {
                         for (int i = 0; i < mesh->NumBones(); i++) {
@@ -910,6 +905,7 @@ void Character::SyncShadow() {
                 }
             }
         }
+        VectorRemove(mDraws, static_cast<RndDrawable *>(mShadow.Ptr()));
     }
 }
 
@@ -942,22 +938,19 @@ void Character::DrawLod(int lod) {
 
 void Character::DrawLodOrShadow(int lod, DrawMode drawMode) {
     mPollState = (PollState)5;
-#ifdef HX_NATIVE
-    if (drawMode == 4) {
-        if (mShadow.size() != 0) {
-            mShadow.Draw();
-        }
+    if (drawMode == 4 && mShadow) {
+        mShadow->DrawShowing();
         return;
     }
 
     mLastLod = Clamp<int>(0, mLods.size() - 1, lod);
-    Lod *curLod = mLods.empty() ? nullptr : &mLods[mLastLod];
+    Lod *curLod = mLods.size() != 0 ? &mLods[mLastLod] : nullptr;
 
     if (drawMode & 1) {
         RndEnvironTracker tracker(mEnv, &WorldXfm().v);
         RndDir::DrawShowing();
-        if (curLod) {
-            curLod->mOpaque.Draw();
+        if (curLod && curLod->Group()) {
+            curLod->Group()->DrawShowing();
         }
         if (drawMode == 1) {
             unk2a0 = RndEnviron::Current();
@@ -968,46 +961,17 @@ void Character::DrawLodOrShadow(int lod, DrawMode drawMode) {
     if (drawMode & 2) {
         if (drawMode == 2) {
             RndEnvironTracker tracker(unk2a0, unk2b4);
-            mTranslucent.Draw();
-            if (curLod) {
-                curLod->mTranslucent.Draw();
-            }
+            if (mTransGroup)
+                mTransGroup->DrawShowing();
+            if (curLod && curLod->TransGroup())
+                curLod->TransGroup()->DrawShowing();
         } else {
-            mTranslucent.Draw();
-            if (curLod) {
-                curLod->mTranslucent.Draw();
-            }
+            if (mTransGroup)
+                mTransGroup->DrawShowing();
+            if (curLod && curLod->TransGroup())
+                curLod->TransGroup()->DrawShowing();
         }
     }
-#else
-    mLastLod = Clamp<int>(0, mLods.size() - 1, lod);
-    if (drawMode == 4) {
-        if (mShadow.size() != 0) {
-            mShadow.Draw();
-            return;
-        }
-    } else {
-        bool drawNormal = (drawMode & 1) != 0;
-        if (drawNormal) {
-            RndEnvironTracker tracker(mEnv, &WorldXfm().v);
-            DrawShowing();
-            if (drawMode == 1) {
-                unk2a0 = RndEnviron::Current();
-                unk2b4 = RndEnviron::CurrentPos();
-            }
-        }
-        if (drawMode & 2) {
-            if (drawMode == 2) {
-                RndEnvironTracker tracker(unk2a0, unk2b4);
-                DrawShowing();
-                return;
-            }
-            DrawShowing();
-            return;
-        }
-    }
-    DrawShowing();
-#endif
 }
 
 void DrawPtrVec::Draw() const {

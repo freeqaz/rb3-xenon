@@ -8,6 +8,7 @@
 #include "rndobj/Dir.h"
 #include "rndobj/Draw.h"
 #include "rndobj/Env.h"
+#include "rndobj/Group.h"
 #include "rndobj/Trans.h"
 #include "utl/MemMgr.h"
 
@@ -30,18 +31,21 @@ class Character : public RndDir {
     friend class BandWardrobe; // BandWardrobe.cpp calls OnGetCurrentInterests on its targets
 public:
     struct Lod {
-        Lod(Hmx::Object *owner) : mScreenSize(0), mOpaque(owner), mTranslucent(owner) {}
+        Lod(Hmx::Object *owner) : mScreenSize(0), mGroup(owner, 0), mTransGroup(owner, 0) {}
+
+        RndGroup *Group() const { return mGroup; }
+        RndGroup *TransGroup() const { return mTransGroup; }
 
         /** "when the unit sphere centered on the bounding sphere
             is smaller than this screen height fraction,
             it will draw the next lod". Ranges from 0 to 10000. */
         float mScreenSize; // 0x0
-        /** "Opaque drawables to show at this LOD.
-            Drawables not in any lod group will be drawn at every LOD" */
-        DrawPtrVec mOpaque; // 0x4
-        /** "Translucent drawables to show at this LOD.
-            Drawables in it are guaranteed to be drawn last." */
-        DrawPtrVec mTranslucent; // 0x20
+        /** "group to show at this LOD. Drawables not in any lod group
+            will be drawn at every LOD" */
+        ObjPtr<RndGroup> mGroup; // 0x4
+        /** "translucency group to show at this LOD. Drawables in it are
+            guaranteed to be drawn last." */
+        ObjPtr<RndGroup> mTransGroup; // 0x10
     };
 
     enum DrawMode {
@@ -143,8 +147,8 @@ protected:
     virtual void RemovingObject(Hmx::Object *);
 
     void UnhookShadow();
-    void RemoveFromDraws(DrawPtrVec &);
     void SyncShadow();
+    void SetShadow(RndGroup *);
 
     static Character *sCurrent;
 
@@ -154,43 +158,48 @@ protected:
     DataNode OnCopyBoundingSphere(DataArray *);
     DataNode OnGetCurrentInterests(DataArray *);
 
+    // Retail RB3 Character: mShadow / mTransGroup are single owned RndGroup
+    // pointers (ObjPtr<RndGroup>, 0xc) — NOT DrawPtrVec (0x1c). DC3 introduced
+    // the vec form later; RB3 retail (and the rb3-Wii oracle) use the single-
+    // pointer form, which shrinks Character by 0x20 and shifts every member
+    // after the shadow groups down toward the retail offsets.
     ObjVector<Lod> mLods; // 0x1fc
     int mLastLod; // 0x20c
     /** "Forces LOD, kLODPerFrame is normal behavior of picking per frame,
         the others force the lod (0 is highest res lod, 2 is lowest res lod)" */
     LODType mForceLod; // 0x210
     /** "Group containing shadow geometry" */
-    DrawPtrVec mShadow; // 0x214
-    /** "translucent objects to show independent of lod.
-        Drawables in it are guaranteed to be drawn last." */
-    DrawPtrVec mTranslucent; // 0x230
-    CharDriver *mDriver; // 0x24c
+    ObjPtr<RndGroup> mShadow; // 0x214
+    /** "translucency group to show independent of lod. Drawables in it are
+        guaranteed to be drawn last." */
+    ObjPtr<RndGroup> mTransGroup; // 0x220
+    CharDriver *mDriver; // 0x22c
     /** "Whether this character should be self-shadowed." */
-    bool mSelfShadow; // 0x250
+    bool mSelfShadow; // 0x230
     /** "Does the character have a spot-light cutout?" */
-    bool mSpotCutout; // 0x251
+    bool mSpotCutout; // 0x231
     /** "Does the character render a floor shadow?" */
-    bool mFloorShadow; // 0x252
+    bool mFloorShadow; // 0x232
     /** "Base for bounding sphere, such as bone_pelvis.mesh" */
-    ObjOwnerPtr<RndTransformable> mSphereBase; // 0x254
+    ObjOwnerPtr<RndTransformable> mSphereBase; // 0x234
     /** "bounding sphere for the character, fixed" */
-    Sphere mBounding; // 0x268
-    std::vector<ShadowBone *> mShadowBones; // 0x27c
-    PollState mPollState; // 0x288
+    Sphere mBounding; // 0x248
+    std::vector<ShadowBone *> mShadowBones; // 0x25c
+    PollState mPollState; // 0x268
     /** "Test Character by animating it" */
-    CharacterTest *mTest; // 0x28c
+    CharacterTest *mTest; // 0x26c
     /** "if true, is frozen in place, no polling happens" */
-    bool mFrozen; // 0x290
-    DrawMode mDrawMode; // 0x294
-    bool mTeleported; // 0x298
+    bool mFrozen; // 0x270
+    DrawMode mDrawMode; // 0x274
+    bool mTeleported; // 0x278
     /** "select an interest object here and select 'force_interest' below
         to force the character to look at it." */
-    Symbol mInterestToForce; // 0x29c
-    ObjPtr<RndEnviron> unk2a0;
-    Vector3 *unk2b4;
+    Symbol mInterestToForce; // 0x27c
+    ObjPtr<RndEnviron> unk2a0; // 0x280
+    Vector3 *unk2b4; // 0x294
     /** "Props to show and hide for cut scenes" */
-    DrawPtrVec mShowableProps; // 0x2b8
-    bool mDebugDrawInterestObjects; // 0x2d4
+    DrawPtrVec mShowableProps; // 0x298
+    bool mDebugDrawInterestObjects; // 0x2b4
 };
 
 class AutoSetCurrentCharacter {
