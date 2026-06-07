@@ -12096,5 +12096,9 @@
  "0x82272290": "?OnSavePrefab@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x8226EA58": "?GetPatchMesh@BandCharacter@@UAAPAVRndMesh@@AAVPatch@BandCharDesc@@@Z",
  "0x82271398": "?ClearGroup@BandCharacter@@QAAXXZ",
- "0x8226CBF8": "?SetInstrumentType@BandCharacter@@QAAXVSymbol@@@Z"
+ "0x8226CBF8": "?SetInstrumentType@BandCharacter@@QAAXVSymbol@@@Z",
+ "0x822F3230": "?RemoveTrack@TrackPanelDir@@UAAXH@Z",
+ "0x822F3880": "?SetConfiguration@TrackPanelDir@@UAAXPAVObject@Hmx@@_N@Z",
+ "0x822F38D0": "?ReapplyConfiguration@TrackPanelDir@@UAAX_N@Z",
+ "0x822F3CA0": "?CleanUpChordMeshes@TrackPanelDir@@UAAXXZ"
 }

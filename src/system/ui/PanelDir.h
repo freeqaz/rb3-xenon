@@ -71,32 +71,39 @@ private:
 protected:
     void SendTransition(Message const &, Symbol, Symbol);
 
+    // Offsets below are TRUE retail X360 offsets, reconstructed from target asm
+    // (e.g. PanelDir::RemovingObject: mTriggers@0x1f0, mComponents@0x1f8,
+    // mFocusComponent@0x1dc). The old `// 0xHEX` comments were stale Wii values.
     /** The currently focused-on component. */
-    UIComponent *mFocusComponent; // 0x1fc
-    class UIPanel *mOwnerPanel; // 0x200
+    UIComponent *mFocusComponent; // 0x1dc
+    class UIPanel *mOwnerPanel; // 0x1e0
     /** "Camera to use in game, else standard UI cam" */
-    ObjPtr<RndCam> mCam; // 0x204
+    ObjPtr<RndCam> mCam; // 0x1e4
     /** The list of UITriggers within this PanelDir. */
-    std::list<UITrigger *> mTriggers; // 0x218
-    std::list<Flow *> mFlows; // 0x220
+    std::list<UITrigger *> mTriggers; // 0x1f0
     /** The list of UIComponents within this PanelDir. */
-    std::list<UIComponent *> mComponents; // 0x228
+    std::list<UIComponent *> mComponents; // 0x1f8
+    // NOTE: DC3's PanelDir adds `std::list<Flow*> mFlows;` between mTriggers and
+    // mComponents; RB3 retail lacks it (target asm shows mTriggers@0x1f0 and
+    // mComponents@0x1f8 — adjacent 8-byte lists, no gap — and the rb3-Wii oracle
+    // has no mFlows anywhere). Removed to shrink PanelDir by 8 so every
+    // PanelDir-derived member lands at its retail offset. (+4 TrackPanelDir fns)
     /** "Trigger postprocs before drawing this panel.
      * If checked, this panel will not be affected by the postprocs." */
-    bool mCanEndWorld; // 0x230
+    bool mCanEndWorld; // 0x200
     /** "Forces the usage of the 'cam' property to render in milo. This is a milo only
      * feature." */
-    bool mUseSpecifiedCam; // 0x231
+    bool mUseSpecifiedCam; // 0x201
     /** "Additional panels to display behind this panel." */
-    std::vector<RndDir *> mBackPanels; // 0x234
+    std::vector<RndDir *> mBackPanels; // 0x204
     /** The file paths of the aforementioned back panels. */
-    std::vector<FilePath> mBackFilenames; // 0x240
+    std::vector<FilePath> mBackFilenames; // 0x210
     /** "Additional panels to display in front of this panel." */
-    std::vector<RndDir *> mFrontPanels; // 0x24c
+    std::vector<RndDir *> mFrontPanels; // 0x21c
     /** The file paths of the aforementioned front panels. */
-    std::vector<FilePath> mFrontFilenames; // 0x258
+    std::vector<FilePath> mFrontFilenames; // 0x228
     /** "Whether or no this panel displays its view only panels" */
-    bool mShowEditModePanels; // 0x264
+    bool mShowEditModePanels; // 0x234
     /** Whether or not to show the currently focused component. */
-    bool mShowFocusComponent; // 0x265
+    bool mShowFocusComponent; // 0x235
 };
