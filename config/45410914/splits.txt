@@ -91,8 +91,8 @@ OvershellPartSelectProvider.cpp:
 	.text       start:0x8264B5F8 end:0x8264C238
 
 GuitarController.cpp:
-	.pdata      start:0x82237270 end:0x822372C8
-	.text       start:0x82777E90 end:0x827786AC
+	.pdata      start:0x82237270 end:0x82237680
+	.text       start:0x82777E90 end:0x8277D790
 
 CalibrationPanel.cpp:
 	.pdata      start:0x8221FD30 end:0x8221FE78
@@ -494,8 +494,8 @@ Memory_Xbox.cpp:
 	.text       start:0x82262D70 end:0x82263544
 
 StreamNull.cpp:
-	.pdata      start:0x82230858 end:0x822308B0
-	.text       start:0x826FBD98 end:0x826FC11C
+	.pdata      start:0x82230858 end:0x82230E20
+	.text       start:0x826FBD98 end:0x82700E18
 
 RhythmBattlePlayer.cpp:
 	.pdata      start:0x821F5620 end:0x821F5638
@@ -645,8 +645,8 @@ CharClip.cpp:
 	.text       start:0x8236A918 end:0x8236E060
 
 CharClipSet.cpp:
-	.pdata      start:0x821FECD0 end:0x821FEDA0
-	.text       start:0x823BEA70 end:0x823BF930
+	.pdata      start:0x821FECD0 end:0x821FF198
+	.text       start:0x823BEA70 end:0x823C3FF0
 
 MidiParser.cpp:
 	.pdata      start:0x8223B8D8 end:0x8223BDA8
@@ -713,8 +713,8 @@ RenderState.cpp:
 	.text       start:0x82712160 end:0x82712204
 
 Dir.cpp:
-	.pdata      start:0x82233010 end:0x822331C0
-	.text       start:0x82728D00 end:0x8272A9B0
+	.pdata      start:0x82233010 end:0x82233608
+	.text       start:0x82728D00 end:0x8272FF10
 
 UIListState.cpp:
 	.pdata      start:0x8223DE18 end:0x8223DE88
@@ -952,8 +952,8 @@ CharIKHead.cpp:
 	.text       start:0x8233D2E8 end:0x8233D32C
 
 Anim.cpp:
-	.pdata      start:0x82201B88 end:0x82201BB0
-	.text       start:0x823EDA90 end:0x823EDCB8
+	.pdata      start:0x82201B88 end:0x82202098
+	.text       start:0x823EDA90 end:0x823F2D58
 
 Joypad_Xbox.cpp:
 	.pdata      start:0x822115F8 end:0x82211690
@@ -2270,8 +2270,8 @@ Pose.cpp:
 	.text       start:0x825B67B0 end:0x825B6804
 
 PhysicsVolume.cpp:
-	.pdata      start:0x8221F108 end:0x8221F1D8
-	.text       start:0x825E16D8 end:0x825E25CC
+	.pdata      start:0x8221F108 end:0x8221F7A0
+	.text       start:0x825E16D8 end:0x825E80F0
 
 ColorPalette.cpp:
 	.pdata      start:0x8222A4A8 end:0x8222A4E0
