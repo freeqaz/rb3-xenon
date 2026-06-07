@@ -1306,8 +1306,8 @@ StreamRecorder.cpp:
 	.text       start:0x825732D0 end:0x8257332C
 
 DirLoader.cpp:
-	.pdata      start:0x82233608 end:0x822337E8
-	.text       start:0x8272FF10 end:0x82731D08
+	.pdata      start:0x82233608 end:0x82233D38
+	.text       start:0x8272FF10 end:0x82737FE8
 
 LabelShrinkWrapper.cpp:
 	.pdata      start:0x822189A0 end:0x822189A8
@@ -1871,8 +1871,8 @@ OggMap.cpp:
 	.text       start:0x82B83858 end:0x82B83904
 
 AsyncFileHolmes.cpp:
-	.pdata      start:0x822122B8 end:0x822122D0
-	.text       start:0x825221D0 end:0x82522294
+	.pdata      start:0x822122B8 end:0x82212A10
+	.text       start:0x825221D0 end:0x82528C50
 
 BustAMoveData.cpp:
 	.pdata      start:0x821EEF10 end:0x821EEF28

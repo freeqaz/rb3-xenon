@@ -12207,5 +12207,6 @@
  "0x823EE240": "??$New@VRndAnimFilter@@@ObjectDir@@QAAPAVRndAnimFilter@@PBD@Z",
  "0x82391A88": "??_GCharBoneOffset@@UAAPAXI@Z",
  "0x82391AD0": "?PollDeps@CharBoneOffset@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
- "0x825E32E0": "??$?5VVector3@@@BinStreamRev@@QAAAAV0@AAVVector3@@@Z"
+ "0x825E32E0": "??$?5VVector3@@@BinStreamRev@@QAAAAV0@AAVVector3@@@Z",
+ "0x827F2728": "??4?$ObjDirPtr@VObjectDir@@@@QAAAAV0@PAVObjectDir@@@Z"
 }
