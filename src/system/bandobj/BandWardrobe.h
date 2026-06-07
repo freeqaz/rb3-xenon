@@ -74,6 +74,7 @@ public:
     void StartClipLoads(bool, BandCamShot *);
     void SelectExtra(FileMerger::Merger &);
     BandCharDesc *GetPrefab(int, int);
+    bool DemandLoad() const;
     bool DemandLoadSym() const { return !mDemandLoad.Null(); }
     bool PlayShot5() const { return mPlayShot5; }
     TargetNames &VenueNames() { return mVenueNames; }
@@ -101,6 +102,10 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandWardrobe); }
     NEW_OBJ(BandWardrobe);
+    // DECLARE_REVS expanded inline to avoid pulling obj/ObjMacros.h into this
+    // shared header (which would flip BandDirector.cpp's INIT_REVS arity).
+    static unsigned short gRev;
+    static unsigned short gAltRev;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

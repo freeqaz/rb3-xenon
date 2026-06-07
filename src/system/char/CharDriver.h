@@ -13,6 +13,7 @@
 #include "utl/Symbol.h"
 
 class CharDriver : public RndHighlightable, public CharWeightable, public CharPollable {
+    friend class BandWardrobe; // BandWardrobe::OnEnterVignette calls SetClipType
 public:
     enum ApplyMode { // from RB3 decomp
         kApplyBlend,

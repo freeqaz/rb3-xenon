@@ -27,6 +27,7 @@ enum LODType {
 };
 
 class Character : public RndDir {
+    friend class BandWardrobe; // BandWardrobe.cpp calls OnGetCurrentInterests on its targets
 public:
     struct Lod {
         Lod(Hmx::Object *owner) : mScreenSize(0), mOpaque(owner), mTranslucent(owner) {}
