@@ -67,7 +67,7 @@ public:
     UIScreen *ScreenAtDepth(int);
     int PushDepth() const;
     void UseJoypad(bool, bool);
-    bool OverloadHorizontalNav(JoypadAction, JoypadButton, bool) const;
+    bool OverloadHorizontalNav(JoypadAction, JoypadButton, Symbol) const;
     bool IsGameScreenActive();
     bool DefaultAllowEditText() const;
     bool DisableScreenBlacklight() const { return mDisableScreenBlacklight; }

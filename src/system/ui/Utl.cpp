@@ -15,15 +15,17 @@ bool IsNavAction(JoypadAction act) {
         || act == kAction_Right;
 }
 
-int ScrollDirection(const ButtonDownMsg &msg, bool b1, bool b2, int i) {
+int ScrollDirection(const ButtonDownMsg &msg, Symbol sym, bool b2, int i) {
     int action;
     bool overload;
 
     action = msg.mData->Int(4);
+    overload = false;
 
     if (!b2) {
         int button = msg.mData->Int(3);
-        overload = TheUI->OverloadHorizontalNav((JoypadAction)action, (JoypadButton)button, b1);
+        if (TheUI->OverloadHorizontalNav((JoypadAction)action, (JoypadButton)button, sym))
+            overload = true;
         if (overload) {
             if (action == kAction_Up) {
                 action = kAction_Left;

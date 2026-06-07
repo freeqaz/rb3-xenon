@@ -477,8 +477,7 @@ UIComponent *PanelDir::ComponentNav(
     UIComponent *comp, JoypadAction act, JoypadButton btn, Symbol controller_type
 ) {
     UIComponent *compIt = nullptr;
-    bool overloaded =
-        TheUI->OverloadHorizontalNav(act, btn, JoypadTypeHasLeftyFlip(controller_type));
+    bool overloaded = TheUI->OverloadHorizontalNav(act, btn, controller_type);
     if (act == kAction_Down)
         compIt = comp->NavDown();
     if (!compIt && (act == kAction_Right || (overloaded && act == kAction_Down))) {

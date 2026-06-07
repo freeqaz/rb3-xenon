@@ -1502,7 +1502,7 @@ DataNode HamNavList::OnMsg(const ButtonDownMsg &msg) {
 #endif
         bool gesturing = TheGestureMgr && TheGestureMgr->GesturingWithVoice();
         if (!gesturing && TheUI->FocusComponent() == this) {
-            int dir = ScrollDirection(msg, false, true, 1);
+            int dir = ScrollDirection(msg, Symbol(), true, 1);
             if (dir != 0) {
                 int selected = mListState.Selected();
                 do {

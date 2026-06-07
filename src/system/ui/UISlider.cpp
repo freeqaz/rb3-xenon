@@ -153,7 +153,7 @@ void UISlider::Update() {
 DataNode UISlider::OnMsg(const ButtonDownMsg &msg) {
     Symbol cnttype = JoypadControllerTypePadNum(msg.GetPadNum());
     if (CanScroll()) {
-        int act = ScrollDirection(msg, JoypadTypeHasLeftyFlip(cnttype), mVertical, 1);
+        int act = ScrollDirection(msg, cnttype, mVertical, 1);
         if (act != kAction_None) {
             if (mVertical) {
                 act = (JoypadAction)-act;

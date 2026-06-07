@@ -46,6 +46,7 @@
 #include "utl/Std.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
+#include "utl/Symbols.h"
 #ifdef HX_NATIVE
 #include <cstdlib>
 #include <cstring>
@@ -324,8 +325,23 @@ void UIManager::CancelTransition() {
     }
 }
 
-bool UIManager::OverloadHorizontalNav(JoypadAction act, JoypadButton btn, bool b) const {
-    return !(!mOverloadHorizontalNav || NavButtonToNavAction(btn) == act && !b);
+bool UIManager::OverloadHorizontalNav(JoypadAction act, JoypadButton btn, Symbol s) const {
+    bool ret = false;
+    if (mOverloadHorizontalNav) {
+        bool b2 = true;
+        if (act == NavButtonToNavAction(btn)) {
+            bool b1 = false;
+            if (s != none) {
+                if (JoypadTypeHasLeftyFlip(s))
+                    b1 = true;
+            }
+            if (!b1)
+                b2 = false;
+        }
+        if (b2)
+            ret = true;
+    }
+    return ret;
 }
 
 void UIManager::Terminate() {

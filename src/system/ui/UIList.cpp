@@ -661,7 +661,6 @@ void UIList::Update() {
 DataNode UIList::OnMsg(const ButtonDownMsg &msg) {
     mUser = msg.GetUser();
     Symbol cntType = JoypadControllerTypePadNum(msg.GetPadNum());
-    bool bLeftyFlip = JoypadTypeHasLeftyFlip(cntType);
     int gridspan = 0;
     UIList *childList = 0;
     UIListOrientation o = kUIListVertical;
@@ -683,7 +682,7 @@ DataNode UIList::OnMsg(const ButtonDownMsg &msg) {
 
             scrollDir = ScrollDirection(
                 msg,
-                bLeftyFlip,
+                cntType,
                 childList->GetUIListDir()->Orientation() == 0,
                 childList->GridSpan()
             );
@@ -695,7 +694,7 @@ DataNode UIList::OnMsg(const ButtonDownMsg &msg) {
             }
         }
 
-        scrollDir = ScrollDirection(msg, bLeftyFlip, o == 0, gridspan);
+        scrollDir = ScrollDirection(msg, cntType, o == 0, gridspan);
         if (scrollDir != 0) {
             if (gridspan == 1 || (scrollDir != 1 && scrollDir != -1)
                 || ((scrollDir == 1 && (mListState.SelectedDisplay() + 1) % gridspan)
