@@ -12132,5 +12132,8 @@
  "0x825569D0": "?OnRandomContext@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82556A20": "?OnRandomContextAllowFailure@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x8263C450": "??0DialogEvent@@QAA@PAVDataArray@@0@Z",
- "0x8263C608": "??_GUIEvent@@UAAPAXI@Z"
+ "0x8263C608": "??_GUIEvent@@UAAPAXI@Z",
+ "0x82679738": "??$__unguarded_insertion_sort_aux@PAU?$pair@HM@stlpmtx_std@@U12@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAXPAU?$pair@HM@0@00UPartPercentageSorter@SingerStats@@@Z",
+ "0x826798C0": "??$__make_heap@PAU?$pair@HM@stlpmtx_std@@UPartPercentageSorter@SingerStats@@U12@H@stlpmtx_std@@YAXPAU?$pair@HM@0@0UPartPercentageSorter@SingerStats@@0PAH@Z",
+ "0x82679940": "??$__pop_heap_aux@PAU?$pair@HM@stlpmtx_std@@U12@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAXPAU?$pair@HM@0@00UPartPercentageSorter@SingerStats@@@Z"
 }

@@ -2411,16 +2411,16 @@ band3/bandtrack/Gem.cpp:
 	.text       start:0x82B7A2A0 end:0x82B7B3BC
 
 band3/bandtrack/GemTrack.cpp:
-	.pdata      start:0x82254318 end:0x822543F8
-	.text       start:0x82B61E30 end:0x82B63268
+	.pdata      start:0x82254318 end:0x82254500
+	.text       start:0x82B61E30 end:0x82B64D38
 
 band3/game/GamePanel.cpp:
-	.pdata      start:0x822290D0 end:0x82229110
-	.text       start:0x826768D0 end:0x82676C8C
+	.pdata      start:0x822290D0 end:0x82229128
+	.text       start:0x826768D0 end:0x82676ED0
 
 band3/game/Stats.cpp:
-	.pdata      start:0x82229360 end:0x82229380
-	.text       start:0x82678FF8 end:0x82679738
+	.pdata      start:0x82229360 end:0x822293D8
+	.text       start:0x82678FF8 end:0x8267A138
 
 band3/bandtrack/Lyric.cpp:
 	.pdata      start:0x822554E8 end:0x82255510
