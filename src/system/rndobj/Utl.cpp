@@ -45,6 +45,16 @@
 
 #include "math/Rand.h"
 
+// Retail evaluated MILO_{NOTIFY,WARN,NOTIFY_ONCE} args (side-effecting calls
+// like PathName() survive, pure accessors are DCE'd) rather than dropping them
+// entirely via the global sizeof (unevaluated) no-op.
+#undef MILO_NOTIFY_ONCE
+#define MILO_NOTIFY_ONCE(...) ((void)(__VA_ARGS__))
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
+#undef MILO_WARN
+#define MILO_WARN(...) ((void)(__VA_ARGS__))
+
 typedef void (*SplashFunc)(void);
 
 class ResourceFileCacheHelper : public FileCacheHelper {
