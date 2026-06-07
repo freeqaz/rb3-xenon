@@ -128,7 +128,7 @@ public:
     void RepointSphereBase(ObjectDir *);
     void RemoveFromPoll(RndPollable *);
     CharDriver *Driver() const { return mDriver; }
-    bool DebugDrawInterestObjects() const { return mDebugDrawInterestObjects; }
+    bool DebugDrawInterestObjects() const { return false; }
     bool Synced() const { return mPollState == kCharSyncObject; }
     bool Teleported() const { return mTeleported; }
     // rename once you have a better idea of what this does
@@ -197,9 +197,16 @@ protected:
     Symbol mInterestToForce; // 0x27c
     ObjPtr<RndEnviron> unk2a0; // 0x280
     Vector3 *unk2b4; // 0x294
-    /** "Props to show and hide for cut scenes" */
-    DrawPtrVec mShowableProps; // 0x298
-    bool mDebugDrawInterestObjects; // 0x2b4
+    // NOTE: DC3 has a `DrawPtrVec mShowableProps` (showable_props) and a
+    // `bool mDebugDrawInterestObjects` here. RB3 retail has NEITHER: the
+    // "showable_props" / "prop_N_showing" / "debug_draw_interest_objects"
+    // property strings are all absent from the retail XEX, Character::Save/Copy
+    // stop at mFrozen, and rb3-Wii gates mDebugDrawInterestObjects behind
+    // MILO_DEBUG (off in retail). Together they add 0x20 to sizeof(Character),
+    // shifting every member of every subclass (BandCharacter/Char/Crowd/
+    // HamCharacter/...) down 0x20. Dropping both realigns the whole family.
+    // (This project's src/macros.h force-defines MILO_DEBUG, so the member must
+    // be removed outright rather than #ifdef-gated.)
 };
 
 class AutoSetCurrentCharacter {

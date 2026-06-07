@@ -55,7 +55,7 @@ HamCharacter::HamCharacter()
     : mCampaignVOBank(0), mCampaignVODir(0), mFileMerger(0), mIsCampaignChar(0), mShowBox(0),
       mNeedsAcquirePose(1), mEyes(this), mGender(kHamFemale), mAnimationState(0), mPollWhenHidden(0),
       mTexBlendersActive(1), mIKEffectors(this), mBaseLipsyncOffset(0), mNeutralSkelDir(0),
-      mSkeletonBones(0), mCrewCardMesh(nullptr), mUseCameraSkeleton(0) {
+      mSkeletonBones(0), mCrewCardMesh(nullptr), mUseCameraSkeleton(0), mShowableProps(this) {
     mWaypoint = Hmx::Object::New<Waypoint>();
     mWaypoint->SetAngRadius(0);
     mWaypoint->SetRadius(36);

@@ -151,4 +151,11 @@ protected:
     CharServoBone *mSkeletonBones; // 0x338
     ObjPtr<RndMesh> mCrewCardMesh; // 0x33c
     bool mUseCameraSkeleton; // 0x350
+    /** "Props to show and hide for cut scenes". In DC3 this lived on the base
+        Character; RB3 retail's base Character has no showable-props member (the
+        "showable_props"/"prop_N_showing" property strings are absent from the
+        retail XEX, and Character::Save/Copy stop at mFrozen). Keep it local to
+        HamCharacter so GetPropShowing/SetPropShowing stay self-consistent
+        without inflating sizeof(Character) for every other subclass. */
+    DrawPtrVec mShowableProps;
 };

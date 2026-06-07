@@ -62,7 +62,7 @@ Character::Character()
       mDriver(0), mSelfShadow(0), mSpotCutout(0), mFloorShadow(1), mSphereBase(this, this),
       mBounding(Vector3(0, 0, 0), 0), mPollState(kCharCreated),
       mTest(new CharacterTest(this)), mFrozen(0), mDrawMode(kCharDrawAll), mTeleported(1),
-      unk2a0(this), mShowableProps(this), mDebugDrawInterestObjects(false) {}
+      unk2a0(this) {}
 
 Character::~Character() {
     UnhookShadow();
@@ -96,8 +96,8 @@ BEGIN_HANDLERS(Character)
         EnableBlinks(_msg->Int(2), _msg->Int(3)),
         EnableBlinks(_msg->Int(2), false)
     )
-    HANDLE(list_interest_objects, OnGetCurrentInterests)
-    HANDLE_MEMBER_PTR(mTest)
+    // RB3 retail strips the debug-only handlers (no "list_interest_objects"
+    // string in the XEX; rb3-Wii gates these + mTest behind MILO_DEBUG).
     HANDLE_SUPERCLASS(RndDir)
 END_HANDLERS
 
@@ -122,9 +122,8 @@ BEGIN_PROPSYNCS(Character)
     SYNC_PROP_MODIFY(
         interest_to_force, mInterestToForce, SetFocusInterest(mInterestToForce, 0)
     )
-    SYNC_PROP(showable_props, mShowableProps)
-    SYNC_PROP(debug_draw_interest_objects, mDebugDrawInterestObjects)
-    SYNC_PROP(CharacterTesting, *mTest)
+    // RB3 retail strips the debug-only props (no "debug_draw_interest_objects"
+    // / "CharacterTesting" strings in the XEX; rb3-Wii gates them MILO_DEBUG).
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 
@@ -161,7 +160,6 @@ BEGIN_SAVES(Character)
         bs << mFrozen;
         bs << mForceLod;
         bs << mTransGroup;
-        bs << mShowableProps;
     }
     mTest->Save(bs);
 END_SAVES
@@ -181,7 +179,6 @@ BEGIN_COPYS(Character)
             COPY_MEMBER(mLods)
             COPY_MEMBER(mTransGroup)
             COPY_MEMBER(mShadow)
-            COPY_MEMBER(mShowableProps)
         }
     END_COPYING_MEMBERS
 END_COPYS
@@ -290,8 +287,6 @@ void Character::PostLoad(BinStream &bs) {
             if (d.rev == 0x13 || d.rev == 0x14) {
                 ObjPtrVec<RndGroup> vec(this);
                 d >> vec;
-            } else if (d.rev > 0x14) {
-                d >> mShowableProps;
             }
             if (d.rev > 9) {
                 mTest->Load(bs);
@@ -649,7 +644,10 @@ void Character::EnableBlinks(bool b1, bool b2) {
         eyes->SetEnableBlinks(b1, b2);
 }
 
-void Character::SetDebugDrawInterestObjects(bool b) { mDebugDrawInterestObjects = b; }
+void Character::SetDebugDrawInterestObjects(bool b) {
+    // RB3 retail Character has no mDebugDrawInterestObjects member (debug-only,
+    // stripped). Callers (BandDirector/HamDirector) remain but no-op.
+}
 
 CharServoBone *Character::BoneServo() {
     if (mDriver)
@@ -682,7 +680,6 @@ void Character::MergeDraws(const Character *c) {
         mTransGroup = c->mTransGroup.Ptr();
     if (!mShadow)
         mShadow = c->mShadow.Ptr();
-    mShowableProps.merge(c->mShowableProps);
 }
 
 void Character::SetInterestObjects(
@@ -786,11 +783,7 @@ DataNode Character::OnGetCurrentInterests(DataArray *da) {
 
 void Character::DrawShowing() {
     START_AUTO_TIMER("char_draw");
-    if (mDebugDrawInterestObjects) {
-        CharEyes *eyes = GetEyes();
-        if (eyes)
-            eyes->Highlight();
-    }
+    // RB3 retail: no mDebugDrawInterestObjects member (debug-only, stripped).
     float screenSize = ComputeScreenSize(RndCam::Current());
     int lod;
     if (mForceLod < 0) {
