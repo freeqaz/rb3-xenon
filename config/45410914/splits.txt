@@ -2402,16 +2402,16 @@ network/ObjDup/DuplicatedObject.cpp:
 	.text       start:0x82A46180 end:0x82A47228
 
 band3/bandtrack/Gem.cpp:
-	.pdata      start:0x82255330 end:0x822553C8
-	.text       start:0x82B7A2A0 end:0x82B7B3BC
+	.pdata      start:0x82255330 end:0x822553D8
+	.text       start:0x82B7A2A0 end:0x82B7B52C
 
 band3/bandtrack/GemTrack.cpp:
 	.pdata      start:0x82254318 end:0x82254500
 	.text       start:0x82B61E30 end:0x82B64D38
 
 band3/game/GamePanel.cpp:
-	.pdata      start:0x822290D0 end:0x82229128
-	.text       start:0x826768D0 end:0x82676ED0
+	.pdata      start:0x822290D0 end:0x82229280
+	.text       start:0x826768D0 end:0x82678358
 
 band3/game/Stats.cpp:
 	.pdata      start:0x82229360 end:0x822293D8
@@ -2426,12 +2426,12 @@ network/Plugins/SessionDiscovery/Interface/SessionDiscoveryTable.cpp:
 	.text       start:0x82A95648 end:0x82A958D4
 
 network/Plugins/Checksum/Interface/KeyedChecksumAlgorithm.cpp:
-	.pdata      start:0x82250FD8 end:0x82251000
-	.text       start:0x82B1AF48 end:0x82B1B0F4
+	.pdata      start:0x82250FD8 end:0x82251008
+	.text       start:0x82B1AF48 end:0x82B1B16C
 
 band3/game/NetGameMsgs.cpp:
-	.pdata      start:0x82228B68 end:0x82228C08
-	.text       start:0x826725F0 end:0x82672D18
+	.pdata      start:0x82228B68 end:0x82228E08
+	.text       start:0x826725F0 end:0x8267450C
 
 network/Plugins/Checksum/MD5/MD5.cpp:
 	.pdata      start:0x82250C70 end:0x82250C98
@@ -2450,8 +2450,8 @@ band3/meta_band/AccomplishmentManager.cpp:
 	.text       start:0x825426A0 end:0x8254BC90
 
 band3/meta_band/ContextChecker.cpp:
-	.pdata      start:0x822157F8 end:0x822159A0
-	.text       start:0x82555398 end:0x82556B48
+	.pdata      start:0x822157F8 end:0x82215DB0
+	.text       start:0x82555398 end:0x82558EAC
 
 band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x82217D78 end:0x82217FF0
