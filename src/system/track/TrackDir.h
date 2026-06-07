@@ -129,7 +129,11 @@ public:
     Transform unk308; // 0x308
     Transform unk338; // 0x338
     float unk368; // 0x368
-#ifdef MILO_DEBUG
-    TrackTest *mTest; // 0x36c
-#endif
+    // NOTE: rb3-Wii (a DEV/MILO_DEBUG build) has `TrackTest *mTest;` here, but
+    // RB3 retail (our X360 target) stripped MILO_DEBUG, so this 4-byte member is
+    // absent. We force-define MILO_DEBUG in macros.h, which would otherwise
+    // compile it in and inflate TrackDir by 4 — shifting the BandTrack base
+    // subobject (and every member after it, e.g. mInUse) +4 vs retail. Removed
+    // unconditionally to land BandTrack@0x40c / mInUse@0x429 like the target asm.
+    // No compiled TU references TrackDir::mTest.
 };

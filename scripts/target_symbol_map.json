@@ -12100,5 +12100,6 @@
  "0x822F3230": "?RemoveTrack@TrackPanelDir@@UAAXH@Z",
  "0x822F3880": "?SetConfiguration@TrackPanelDir@@UAAXPAVObject@Hmx@@_N@Z",
  "0x822F38D0": "?ReapplyConfiguration@TrackPanelDir@@UAAX_N@Z",
- "0x822F3CA0": "?CleanUpChordMeshes@TrackPanelDir@@UAAXXZ"
+ "0x822F3CA0": "?CleanUpChordMeshes@TrackPanelDir@@UAAXXZ",
+ "0x822F3858": "?ConfigureTrack@TrackPanelDir@@UAAXH@Z"
 }
