@@ -356,8 +356,8 @@ bool UIScreen::Entering() const {
 void UIScreen::Exit(UIScreen *to) {
 #ifdef HX_NATIVE
     printf("DC3 UI: Screen '%s' Exit (to '%s')\n", Name(), to ? to->Name() : "<null>");
-#endif
     TheGestureMgr->SetInVoiceMode(false);
+#endif
     static Message msg("exit", 0);
     msg[0] = to;
     HandleType(msg);
@@ -527,12 +527,6 @@ bool UIScreen::SharesPanels(UIScreen *screen) {
 
     return false;
 }
-template <class _T>
-__declspec(noinline) auto _outline_GetAction(_T* _obj) -> decltype(_obj->GetAction()) {
-    return _obj->GetAction();
-}
-
-
 DataNode UIScreen::OnMsg(ButtonDownMsg const &msg) {
 #ifdef HX_NATIVE
     // On Xbox, movie/overlay panels convert button presses to skip_selected
@@ -548,12 +542,12 @@ DataNode UIScreen::OnMsg(ButtonDownMsg const &msg) {
         }
     }
 #endif
-    if (mBack != nullptr && _outline_GetAction(&msg) == kAction_Cancel) {
+    if (mBack != nullptr && msg.GetAction() == kAction_Cancel) {
         DataNode n = mBack->Evaluate(1);
         if (n.Type() != kDataUnhandled) {
             static Symbol go_back_screen("go_back_screen");
             Message m(go_back_screen, n.Str(), msg.GetUser());
-            TheUI->Handle(m, false);
+            TheUI->Handle(m, true);
         }
     }
 

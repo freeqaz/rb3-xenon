@@ -40,7 +40,6 @@ public:
     virtual bool Unloading() const;
     virtual void Poll();
     virtual void SetPaused(bool paused) { mPaused = paused; }
-    virtual UIComponent *FocusComponent();
     virtual void FocusIn() {}
     virtual void FocusOut() {}
     virtual bool IsLoaded() const;
@@ -51,6 +50,7 @@ public:
     bool Paused() { return mPaused; }
     void CheckLoad();
     bool CheckIsLoaded();
+    UIComponent *FocusComponent();
     void SetFocusComponent(UIComponent *);
     void SetLoadedDir(PanelDir *, bool);
     void UnsetLoadedDir();
