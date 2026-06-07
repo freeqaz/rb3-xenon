@@ -12130,5 +12130,7 @@
  "0x82501D08": "?SymbolToPlatformRegion@@YA?AW4PlatformRegion@@VSymbol@@@Z",
  "0x827E4998": "?SetCurrent@UISlider@@UAAXH@Z",
  "0x825569D0": "?OnRandomContext@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x82556A20": "?OnRandomContextAllowFailure@@YA?AVDataNode@@PAVDataArray@@@Z"
+ "0x82556A20": "?OnRandomContextAllowFailure@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x8263C450": "??0DialogEvent@@QAA@PAVDataArray@@0@Z",
+ "0x8263C608": "??_GUIEvent@@UAAPAXI@Z"
 }
