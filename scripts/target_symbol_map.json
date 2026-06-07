@@ -12095,5 +12095,6 @@
  "0x8226CA78": "?SetTempoGenreVenue@BandCharacter@@QAAXVSymbol@@0PBD@Z",
  "0x82272290": "?OnSavePrefab@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x8226EA58": "?GetPatchMesh@BandCharacter@@UAAPAVRndMesh@@AAVPatch@BandCharDesc@@@Z",
- "0x82271398": "?ClearGroup@BandCharacter@@QAAXXZ"
+ "0x82271398": "?ClearGroup@BandCharacter@@QAAXXZ",
+ "0x8226CBF8": "?SetInstrumentType@BandCharacter@@QAAXVSymbol@@@Z"
 }
