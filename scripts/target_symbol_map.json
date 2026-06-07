@@ -12176,5 +12176,22 @@
  "0x82433640": "?ListDrawChildren@RndTexRenderer@@UAAXAAV?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82433690": "?ListPollChildren@RndTexRenderer@@UBAXAAV?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82451028": "?Copy@RndMatAnim@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
- "0x8278C368": "??_GFilePath@@UAAPAXI@Z"
+ "0x8278C368": "??_GFilePath@@UAAPAXI@Z",
+ "0x822A5548": "??0KeyFrame@EventAnim@@QAA@ABV01@@Z",
+ "0x822A6128": "??$?5VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x822A62B0": "?erase@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@0@Z",
+ "0x8252CBC8": "?OnMsg@MusicLibrary@@QAA?AVDataNode@@ABVPrimaryProfileChangedMsg@@@Z",
+ "0x823C69D8": "??_GCharBonesBlender@@UAAPAXI@Z",
+ "0x823C6A30": "?PollDeps@CharBonesBlender@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
+ "0x823C6DA0": "??_G?$ObjPtr@VCharBonesObject@@@@UAAPAXI@Z",
+ "0x823ABAE8": "?ClassName@CharEyeDartRuleset@@UBA?AVSymbol@@XZ",
+ "0x82491BF8": "?Copy@EventTrigger@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x8243C698": "?Poll@RndParticleSys@@UAAXXZ",
+ "0x823F8B28": "?PreSave@RndMeshDeform@@UAAXAAVBinStream@@@Z",
+ "0x823F8B40": "??1?$_Vector_base@UBoneDesc@RndMeshDeform@@V?$StlNodeAlloc@UBoneDesc@RndMeshDeform@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x823F8CD0": "??0BoneDesc@RndMeshDeform@@QAA@ABU01@@Z",
+ "0x823F9F28": "?ClassName@RndMeshDeform@@UBA?AVSymbol@@XZ",
+ "0x823FAC30": "??4?$ObjVector@UBoneDesc@RndMeshDeform@@@@QAAXABV0@@Z",
+ "0x823FAC90": "?Copy@RndMeshDeform@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x8270ED88": "??0SampleMarker@@QAA@XZ"
 }
