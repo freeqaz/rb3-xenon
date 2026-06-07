@@ -12135,5 +12135,7 @@
  "0x8263C608": "??_GUIEvent@@UAAPAXI@Z",
  "0x82679738": "??$__unguarded_insertion_sort_aux@PAU?$pair@HM@stlpmtx_std@@U12@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAXPAU?$pair@HM@0@00UPartPercentageSorter@SingerStats@@@Z",
  "0x826798C0": "??$__make_heap@PAU?$pair@HM@stlpmtx_std@@UPartPercentageSorter@SingerStats@@U12@H@stlpmtx_std@@YAXPAU?$pair@HM@0@0UPartPercentageSorter@SingerStats@@0PAH@Z",
- "0x82679940": "??$__pop_heap_aux@PAU?$pair@HM@stlpmtx_std@@U12@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAXPAU?$pair@HM@0@00UPartPercentageSorter@SingerStats@@@Z"
+ "0x82679940": "??$__pop_heap_aux@PAU?$pair@HM@stlpmtx_std@@U12@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAXPAU?$pair@HM@0@00UPartPercentageSorter@SingerStats@@@Z",
+ "0x826AAB38": "?ShouldStartEarly@TrainerPanel@@UBA_NXZ",
+ "0x826ABF98": "?ClassName@UIPanel@@UBA?AVSymbol@@XZ"
 }

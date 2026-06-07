@@ -1437,9 +1437,6 @@ SkeletonHistory.cpp:
 	.pdata      start:0x8222B920 end:0x8222B928
 	.text       start:0x826A2EA8 end:0x826A2F18
 
-HttpGet.cpp:
-	.text       start:0x826AAB38 end:0x826AAB60
-
 UIListDir.cpp:
 	.pdata      start:0x8223DB90 end:0x8223DD70
 	.text       start:0x827E57A0 end:0x827E77A8
@@ -1459,9 +1456,6 @@ FileMergerOrganizer.cpp:
 Faders.cpp:
 	.pdata      start:0x8222D598 end:0x8222D5A0
 	.text       start:0x826C1730 end:0x826C1794
-
-Sound.cpp:
-	.text       start:0x826C6D08 end:0x826C6D3C
 
 CheatProvider.cpp:
 	.pdata      start:0x8222EE00 end:0x8222EE08
@@ -2388,11 +2382,12 @@ band3/game/Player.cpp:
 	.text       start:0x826843F0 end:0x82686C50
 
 band3/game/TrainerPanel.cpp:
-	.text       start:0x826AAAE8 end:0x826AAB38
+	.pdata      start:0x8222BE68 end:0x8222C020
+	.text       start:0x826AAAE8 end:0x826AC438
 
 band3/game/VocalPlayer.cpp:
-	.pdata      start:0x8222D930 end:0x8222D9A8
-	.text       start:0x826C6328 end:0x826C6D08
+	.pdata      start:0x8222D930 end:0x8222DB28
+	.text       start:0x826C6328 end:0x826C8C44
 
 band3/game/Singer.cpp:
 	.pdata      start:0x8222E568 end:0x8222E608
