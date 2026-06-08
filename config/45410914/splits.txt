@@ -167,7 +167,7 @@ block.c:
 
 info.c:
 	.pdata      start:0x82257BE8 end:0x82257C20
-	.text       start:0x82BF97C8 end:0x82BFA198
+	.text       start:0x82BF97B0 end:0x82BFA198
 
 codebook.c:
 	.pdata      start:0x82257DA0 end:0x82257DE0
@@ -241,8 +241,8 @@ TDStretch.cpp:
 	.text       start:0x82B420A0 end:0x82B43E68
 
 SynapseAPO.cpp:
-	.pdata      start:0x822529C8 end:0x822529E0
-	.text       start:0x82B3EE30 end:0x82B3F088
+	.pdata      start:0x822529C8 end:0x82252A18
+	.text       start:0x82B3EE30 end:0x82B3F338
 
 inflate.c:
 	.pdata      start:0x82251718 end:0x82251738
@@ -258,15 +258,15 @@ json_object.c:
 
 linkhash.c:
 	.pdata      start:0x82253AD0 end:0x82253B08
-	.text       start:0x82B55E20 end:0x82B563EC
+	.text       start:0x82B55DE8 end:0x82B563F0
 
 printbuf.c:
 	.pdata      start:0x82253A78 end:0x82253A98
 	.text       start:0x82B54640 end:0x82B548C0
 
 CritSec.cpp:
-	.pdata      start:0x82211190 end:0x822111A8
-	.text       start:0x82510F00 end:0x82511020
+	.pdata      start:0x82211188 end:0x822111A8
+	.text       start:0x82510EC0 end:0x82511020
 
 DateTime.cpp:
 	.pdata      start:0x82210FE8 end:0x82211050
@@ -313,7 +313,7 @@ BoxMap.cpp:
 
 VelocityBuffer.cpp:
 	.pdata      start:0x82253B20 end:0x82253B70
-	.text       start:0x82B565F8 end:0x82B57044
+	.text       start:0x82B565E0 end:0x82B57048
 
 TexBlendController.cpp:
 	.pdata      start:0x82208BD8 end:0x82208D18
@@ -356,8 +356,8 @@ MicClientMapper.cpp:
 	.text       start:0x826F16E0 end:0x826F1BF4
 
 CharBonesBlender.cpp:
-	.pdata      start:0x821FF398 end:0x821FF410
-	.text       start:0x823C5F38 end:0x823C67A4
+	.pdata      start:0x821FF390 end:0x821FF410
+	.text       start:0x823C5EF8 end:0x823C67B8
 
 osfinfo.cpp:
 	.pdata      start:0x8223FF70 end:0x8223FFA0
@@ -419,7 +419,8 @@ MemStream.cpp:
 	.text       start:0x827A6508 end:0x827A67C8
 
 MemStats.cpp:
-	.text       start:0x827B3D40 end:0x827B3DB8
+	.pdata      start:0x8223AC00 end:0x8223AC08
+	.text       start:0x827B3D40 end:0x827B3FE8
 
 NetCacheMgr_Xbox.cpp:
 	.pdata      start:0x8223AA30 end:0x8223AA50
@@ -442,8 +443,8 @@ UsbMidiKeyboard.cpp:
 	.text       start:0x82507800 end:0x82507E3C
 
 json_tokener.c:
-	.pdata      start:0x82253A98 end:0x82253AB8
-	.text       start:0x82B548C0 end:0x82B55CEC
+	.pdata      start:0x82253A98 end:0x82253AC8
+	.text       start:0x82B548C0 end:0x82B55DA0
 
 arraylist.c:
 	.pdata      start:0x82253B08 end:0x82253B20
@@ -561,8 +562,8 @@ SfxMap.cpp:
 	.text       start:0x8270BBC8 end:0x8270BCB0
 
 aes.c:
-	.pdata      start:0x82255928 end:0x82255938
-	.text       start:0x82B84390 end:0x82B86A90
+	.pdata      start:0x82255920 end:0x82255938
+	.text       start:0x82B83EF0 end:0x82B86A98
 
 crypt.c:
 	.pdata      start:0x82255918 end:0x82255920
@@ -577,8 +578,8 @@ FilterCoeffs.cpp:
 	.text       start:0x82B462D0 end:0x82B46584
 
 HeadsetXferEffect.cpp:
-	.pdata      start:0x822527C0 end:0x822527E0
-	.text       start:0x82B3CBE0 end:0x82B3CD98
+	.pdata      start:0x822527B8 end:0x822527E0
+	.text       start:0x82B3CB80 end:0x82B3CD98
 
 FIFOSampleBuffer.cpp:
 	.pdata      start:0x82252FA0 end:0x82252FD8
@@ -610,7 +611,7 @@ Locale.cpp:
 
 NetCacheLoader.cpp:
 	.pdata      start:0x8223A440 end:0x8223A480
-	.text       start:0x827AB158 end:0x827AB598
+	.text       start:0x827AB0D0 end:0x827AB598
 
 NetLoader_Xbox.cpp:
 	.pdata      start:0x8223A3B8 end:0x8223A408
@@ -741,8 +742,8 @@ DataArray.cpp:
 	.text       start:0x82727460 end:0x82728D00
 
 JobMgr.cpp:
-	.pdata      start:0x82239FB0 end:0x82239FC8
-	.text       start:0x827A67D8 end:0x827A6AA4
+	.pdata      start:0x82239FB0 end:0x82239FD0
+	.text       start:0x827A67C8 end:0x827A6B3C
 
 FlowMultiSetProperty.cpp:
 	.pdata      start:0x821E9C38 end:0x821E9C40
@@ -836,8 +837,8 @@ Waypoint.cpp:
 	.text       start:0x822C8CA8 end:0x822C8CF8
 
 Font.cpp:
-	.pdata      start:0x821F0658 end:0x821F0660
-	.text       start:0x822CA2A0 end:0x822CA2F4
+	.pdata      start:0x822079E0 end:0x82207A50
+	.text       start:0x8245FC50 end:0x82460378
 
 XLSPConnection.cpp:
 	.pdata      start:0x821F0798 end:0x821F07A0
@@ -860,8 +861,8 @@ FilterQueue.cpp:
 	.text       start:0x82303530 end:0x82303594
 
 MoveAsyncDetector.cpp:
-	.pdata      start:0x821F4188 end:0x821F4190
-	.text       start:0x823054B8 end:0x82305528
+	.pdata      start:0x821F6E38 end:0x821F6E80
+	.text       start:0x823345F8 end:0x82334A40
 
 HamListRibbon.cpp:
 	.pdata      start:0x821F4500 end:0x821F4508
@@ -1016,8 +1017,8 @@ HamPlayerData.cpp:
 	.text       start:0x8237FBD8 end:0x8237FC74
 
 FileMerger.cpp:
-	.pdata      start:0x821FBBC0 end:0x821FBBC8
-	.text       start:0x82382A28 end:0x82382A80
+	.pdata      start:0x821FBA98 end:0x821FBBC8
+	.text       start:0x82381AE8 end:0x82382A88
 
 FlowAnimate.cpp:
 	.pdata      start:0x821FBDE0 end:0x821FBDE8
@@ -1044,8 +1045,8 @@ FlowSwitch.cpp:
 	.text       start:0x82397610 end:0x82397654
 
 CharUtl.cpp:
-	.pdata      start:0x821FCD38 end:0x821FCD40
-	.text       start:0x82398988 end:0x82398A2C
+	.pdata      start:0x821FCD30 end:0x821FCDA8
+	.text       start:0x82398858 end:0x823991E8
 
 FlowRun.cpp:
 	.pdata      start:0x821FD330 end:0x821FD338
@@ -1198,7 +1199,8 @@ MultiMesh.cpp:
 	.text       start:0x82472380 end:0x824723D8
 
 Mat_NG.cpp:
-	.text       start:0x82496294 end:0x824962DC
+	.pdata      start:0x8220A4A8 end:0x8220A4F8
+	.text       start:0x82496294 end:0x82497660
 
 HamMaster.cpp:
 	.text       start:0x824A6740 end:0x824A6758
@@ -1501,8 +1503,8 @@ Lit_NG.cpp:
 	.text       start:0x82712358 end:0x827123AC
 
 Splash.cpp:
-	.pdata      start:0x82232460 end:0x82232488
-	.text       start:0x8271C4C0 end:0x8271C938
+	.pdata      start:0x82232460 end:0x82232578
+	.text       start:0x8271C4C0 end:0x8271D7C8
 
 PoolAlloc.cpp:
 	.pdata      start:0x822327E0 end:0x822327E8
@@ -1612,8 +1614,8 @@ ChunkStream.cpp:
 	.text       start:0x827A4E88 end:0x827A6260
 
 NetCacheMgr.cpp:
-	.pdata      start:0x8223A1E8 end:0x8223A1F0
-	.text       start:0x827A8AC8 end:0x827A8DE8
+	.pdata      start:0x8223A1E8 end:0x8223A268
+	.text       start:0x827A8AC8 end:0x827A9470
 
 NetLoader.cpp:
 	.pdata      start:0x8223A3A0 end:0x8223A3A8
@@ -1748,8 +1750,8 @@ BinStream.cpp:
 	.text       start:0x8279FE58 end:0x827A0424
 
 ExternalMic.cpp:
-	.pdata      start:0x82252508 end:0x82252580
-	.text       start:0x82B37FD0 end:0x82B38D48
+	.pdata      start:0x82252508 end:0x82252588
+	.text       start:0x82B37FD0 end:0x82B38E00
 
 Compress.cpp:
 	.pdata      start:0x82247900 end:0x82247948
@@ -1835,8 +1837,8 @@ ThreadCall_Win.cpp:
 	.text       start:0x825141B0 end:0x82514284
 
 FxSendSynapse.cpp:
-	.pdata      start:0x822526E0 end:0x822526E8
-	.text       start:0x82B3B5A0 end:0x82B3B754
+	.pdata      start:0x822526D0 end:0x822526E8
+	.text       start:0x82B3B530 end:0x82B3B758
 
 PropertyEventProvider.cpp:
 	.pdata      start:0x8222E1B0 end:0x8222E1C0
@@ -1867,8 +1869,8 @@ ScreenMask.cpp:
 	.text       start:0x8246EBF8 end:0x8246ECB8
 
 OggMap.cpp:
-	.pdata      start:0x822558D0 end:0x822558E0
-	.text       start:0x82B83858 end:0x82B83904
+	.pdata      start:0x822558D0 end:0x822558E8
+	.text       start:0x82B83858 end:0x82B83990
 
 AsyncFileHolmes.cpp:
 	.pdata      start:0x822122B8 end:0x82212A10
@@ -1946,8 +1948,8 @@ MicNull.cpp:
 	.text       start:0x8270B778 end:0x8270B7F0
 
 UIButton.cpp:
-	.pdata      start:0x8223DF38 end:0x8223DF40
-	.text       start:0x827EA628 end:0x827EA6A4
+	.pdata      start:0x8223DF08 end:0x8223DF40
+	.text       start:0x827EA3B8 end:0x827EA6A8
 
 JsonMemory.cpp:
 	.text       start:0x82664890 end:0x826648AC
@@ -2454,8 +2456,8 @@ band3/meta_band/ContextChecker.cpp:
 	.text       start:0x82555398 end:0x82558EAC
 
 band3/meta_band/AccomplishmentProgress.cpp:
-	.pdata      start:0x82217D78 end:0x82217FF0
-	.text       start:0x825776E8 end:0x8257A960
+	.pdata      start:0x82217D70 end:0x82217FF0
+	.text       start:0x82577680 end:0x8257A960
 
 band3/meta_band/UIEventMgr.cpp:
 	.pdata      start:0x822180B0 end:0x82218138

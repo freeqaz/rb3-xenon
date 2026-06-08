@@ -12208,5 +12208,14 @@
  "0x82391A88": "??_GCharBoneOffset@@UAAPAXI@Z",
  "0x82391AD0": "?PollDeps@CharBoneOffset@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
  "0x825E32E0": "??$?5VVector3@@@BinStreamRev@@QAAAAV0@AAVVector3@@@Z",
- "0x827F2728": "??4?$ObjDirPtr@VObjectDir@@@@QAAAAV0@PAVObjectDir@@@Z"
+ "0x827F2728": "??4?$ObjDirPtr@VObjectDir@@@@QAAAAV0@PAVObjectDir@@@Z",
+ "0x82B3F088": "??_G?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@MAAPAXI@Z",
+ "0x827A44A8": "?Localize@@YAPBDVSymbol@@PA_N@Z",
+ "0x827AB100": "?IsSafeToDelete@NetCacheLoader@@QBA_NXZ",
+ "0x827AB128": "?GetSize@NetCacheLoader@@QAAHXZ",
+ "0x82398FB0": "?OnResetHair@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82497448": "?ClassName@NgMat@@UBA?AVSymbol@@XZ",
+ "0x824975A0": "??0NgMat@@QAA@XZ",
+ "0x827EA480": "?SyncProperty@UIButton@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x827953F0": "??_GConnectionStatusPanel@@UAAPAXI@Z"
 }
