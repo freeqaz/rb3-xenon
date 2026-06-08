@@ -593,6 +593,10 @@ UIColor.cpp:
 	.pdata      start:0x8223D308 end:0x8223D318
 	.text       start:0x827DCA50 end:0x827DCB4C
 
+UIListProvider.cpp:
+	.pdata      start:0x8223D240 end:0x8223D288
+	.text       start:0x827DBFB0 end:0x827DC388
+
 UIListArrow.cpp:
 	.pdata      start:0x8223EE18 end:0x8223EE28
 	.text       start:0x827F8820 end:0x827F8A90

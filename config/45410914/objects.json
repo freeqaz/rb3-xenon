@@ -193,6 +193,7 @@
       "system/synth_xbox/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp": "NonMatching",
       "system/synth_xbox/soundtouch/source/SoundTouch/FIRFilter.cpp": "NonMatching",
       "system/ui/UIColor.cpp": "NonMatching",
+      "system/ui/UIListProvider.cpp": "NonMatching",
       "system/ui/UIListArrow.cpp": "NonMatching",
       "system/ui/UIPicture.cpp": "NonMatching",
       "system/utl/BufStream.cpp": "NonMatching",
