@@ -678,8 +678,8 @@ Part.cpp:
 	.text       start:0x82433730 end:0x82439D8C
 
 Rnd.cpp:
-	.pdata      start:0x82202E08 end:0x822031B0
-	.text       start:0x823FFA78 end:0x82403BCC
+	.pdata      start:0x822029E8 end:0x822031E0
+	.text       start:0x823FC060 end:0x82403EC0
 
 MeterEffect.cpp:
 	.pdata      start:0x82252790 end:0x822527A0
@@ -901,8 +901,8 @@ HollaBackMinigame.cpp:
 	.text       start:0x82319A08 end:0x82319AAC
 
 PropAnim.cpp:
-	.pdata      start:0x821F5C20 end:0x821F5C28
-	.text       start:0x8231F9F8 end:0x8231FA54
+	.pdata      start:0x82203E50 end:0x822040A8
+	.text       start:0x824137A0 end:0x82415C78
 
 HamNavList.cpp:
 	.pdata      start:0x821F64F0 end:0x821F64F8
@@ -1085,8 +1085,8 @@ DingoSvr_Xbox.cpp:
 	.text       start:0x823CDEC8 end:0x823CDF20
 
 CharBonesMeshes.cpp:
-	.pdata      start:0x821FFA68 end:0x821FFA70
-	.text       start:0x823CDF48 end:0x823CDFA0
+	.pdata      start:0x821E9EB0 end:0x821EA020
+	.text       start:0x82265608 end:0x82266CE0
 
 DingoSvr.cpp:
 	.pdata      start:0x821FFAB8 end:0x821FFAC0
@@ -1738,8 +1738,8 @@ DataFile.cpp:
 	.text       start:0x82745928 end:0x827479AC
 
 system/rnddx9/ShaderMgr.cpp:
-	.pdata      start:0x82231B80 end:0x82231C80
-	.text       start:0x82710990 end:0x82712160
+	.pdata      start:0x82231B78 end:0x82231C80
+	.text       start:0x82710918 end:0x82712160
 
 Voice.cpp:
 	.pdata      start:0x822523C0 end:0x822524A8
@@ -1944,8 +1944,8 @@ StandingStillGestureFilter.cpp:
 	.text       start:0x827928C8 end:0x82792920
 
 MicNull.cpp:
-	.pdata      start:0x822317E8 end:0x822317F0
-	.text       start:0x8270B778 end:0x8270B7F0
+	.pdata      start:0x822317E8 end:0x82231808
+	.text       start:0x8270B778 end:0x8270B8C8
 
 UIButton.cpp:
 	.pdata      start:0x8223DF08 end:0x8223DF40

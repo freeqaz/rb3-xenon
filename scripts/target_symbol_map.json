@@ -12217,5 +12217,14 @@
  "0x82497448": "?ClassName@NgMat@@UBA?AVSymbol@@XZ",
  "0x824975A0": "??0NgMat@@QAA@XZ",
  "0x827EA480": "?SyncProperty@UIButton@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x827953F0": "??_GConnectionStatusPanel@@UAAPAXI@Z"
+ "0x827953F0": "??_GConnectionStatusPanel@@UAAPAXI@Z",
+ "0x827B3E30": "?Update@BlockStatTable@@QAAXPBDEHH@Z",
+ "0x823FC360": "?CopyWorldCam@Rnd@@QAAXPAVRndCam@@@Z",
+ "0x823FED18": "?OnMsg@ModalKeyListener@@QAA?AVDataNode@@ABVKeyboardKeyMsg@@@Z",
+ "0x823FFA00": "?UpdateOverlay@Rnd@@MAAMPAVRndOverlay@@M@Z",
+ "0x824142D0": "??0?$Key@VObjectStage@@@@QAA@XZ",
+ "0x82414400": "??$__median@VDataArrayPtr@@UForAllKeyframesSorter@@@stlpmtx_std@@YAABVDataArrayPtr@@ABV1@00UForAllKeyframesSorter@@@Z",
+ "0x82414528": "?EndFrame@RndPropAnim@@UAAMXZ",
+ "0x82414758": "?StartAnim@RndPropAnim@@UAAXXZ",
+ "0x82414BB0": "?OnReplaceKeyframe@RndPropAnim@@QAA?AVDataNode@@PAVDataArray@@@Z"
 }
