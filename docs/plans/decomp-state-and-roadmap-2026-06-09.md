@@ -357,3 +357,22 @@ strictly older) → removed. `rb3-sizedvec` KEPT (sized-vector refutation repro 
   (dump_vtable.py + Ghidra + ham_xbox_r.map), drop DC3-added virtuals if A/B clean.
 - Queued: Mat_NG +0x3c rev-member lever; struct_db + global_fuzzy_pairs regen;
   reveal refill sweep (incl. +2 byte-exact MeshAnim anons 0x8245BC78/0x8245DA30).
+
+## VTABLE_DIVERGENCE lever EXECUTED: Rnd +10 @100 (`30a4ae8`, 6586→6596)
+Slot-by-slot localization WITHOUT a pinned retail Rnd vtable: used accumulated
+slot-offset deltas in CALLERS as anchors (ScreenDump +0 → DrawRect +1 → GetFrameID
++5 → SetShadowMap +6 → DoWorldEnd +8). The 8 DC3-era virtuals retail lacks:
+`ScreenDumpUnique` (slot29), `GetSync`/`NumDrawPasses`/`BeginDrawPass`/`EndDrawPass`
+(37–40), `ShouldDrawPanel` (42), `Push`/`PopClipPlanesInternal` (60/61); rb3-Wii
+confirms none are virtual. Fix idiom: `RND_DC3_VIRTUAL` macro gates `virtual` behind
+HX_NATIVE (native keeps dispatch, matching build drops slots) — same as the existing
+ClearDepthForOverlay gate at rndobj/Rnd.h:170. Cascade: EndWorld, DrawStringScreen,
+DrawRectScreen, RndFlare::SetPointTest, RndShadowMap::EndShadow,
+SpotlightDrawer::UpdateBoxMap, 3 Utl draw helpers, CalibrationPanel::Exit.
+NOTE: earlier "Clear is the first insertion" hypothesis DISPROVEN (ScreenDump +0
+anchor); machine-code anchors beat source diffing for vtable work.
+**Deferred from this lever (different root causes):** RndEnviron 20-slot delta =
+secondary RndTransformable-base vtable under VIRTUAL inheritance (the foundational
+RndHighlightable/RndTransformable vbase wall, §3a — not droppable virtuals);
+TrainerGemTab::DrawStartFinish = separate 15-slot UILabel/UIComponent-MI delta
+(the documented UI base-layout wall, docs/plans/ui-base-layout-reconstruction.md).
