@@ -263,3 +263,97 @@ than 330); (b) PERMUTE-routed bucket via /permute (sanctioned, no hand-edits);
   findings, spatial_pin_probe + stub detector in common.py).
 - Workflows: `.claude/workflows/{engine-easy-wins,gameid-crossval,permuter-sweep-fresh,
   saverev-sweep,ultracode-levers}.js`.
+
+---
+
+# Session addendum 2026-06-09/10 (late night): first full playbook-driven wave
+
+Coordinator-orchestrated wave of 9 Opus/Sonnet agents executing the playbooks.
+**6577 → 6586 matched (+9, zero regressions), 9 commits (5b6b7a6..dc080dd), plus
+two major lever discoveries and three permanent refutations.** Operating model
+confirmed: coordinator selects/lands/verifies only; ALL implementation (even small
+tool fixes) delegated to agents (user directive, memory `feedback_coordinator_role`).
+
+## Matches landed (+9)
+- **FileMerger +7 cascade** (`dc080dd`): dropped DC3-added `Merger::filler`
+  Symbol@0x4 (rb3-Wii confirms retail lacks it) — cascaded across FileMerger +
+  BandWardrobe. The "DC3-added member RB3 lacks" pattern strikes again.
+- **ColorPalette +1** (`60eabed`): `ColorSet` padded 0x20→0x44 (retail-only
+  trailing non-serialized storage; DC3/rb3-Wii shrank it).
+- **Mesh +1** (`b766775`): `CompressedVertex_Xbox.mPosX/Y/Z` were `int`, retail+DC3
+  type them `float` (+rest `unsigned int`) — wrong types routed `BinStream<<` to the
+  int writer. Plus `817b8a5` BSPFace::Update 80→94.6 (oracle-faithful, residual is
+  FP-ordering) and `f97da90` SetBloomBlurWeights PShaderConstant base **0x2f**
+  (retail; DC3 moved it to 0x9a) — banked, flips +1 with a future .rdata
+  array-layout fix.
+
+## REFUTED: CameraShot "+25" banked lever → VBASE_WALL (`fe0aaaa`)
+Ghidra RTTI proof: retail `CamShot` is the **DC3-style virtual-base MI layout**
+(base-class descriptor vbase displacement 0x1a0; RndAnimatable + RndTransformable
+both deriving `virtual Hmx::Object`). The +4 IS DC3's `mShotStartedPending` —
+retail DOES carry it — but our header is flat single-inheritance, and re-adding the
+member is **verified net −3** (+7 funclet fns, −10 most-derived reads; two
+incompatible base anchors). Only a full MI/vbase reconstruction wins this (deep,
+out of scope). The handoff's "vtable 0x82077150 / fn_824AB3E0" attribution was a
+sub-object red herring; real owner = `~CamShot` fn_824B29B8. Header comment now
+records the wall. **New gate-zero rule: frame-recovered `this` that is then
+vbase-adjusted (`subi 0x1a0`) = VBASE_WALL, not MEMBER_DELTA.**
+
+## Grind-wave calibration: MEMBER_DELTA route was ~87% polluted
+48 non-CameraShot candidates ground per playbook → 2 real (the +8 above), 42 walls:
+24 FUNCLET_PAIRING (every size-44 `fn_` __unwind funclet; divergent `bl` callee =
+the tell), 10 VBASE (the ??_G deleting-dtor adjustor family — non-uniform per-class
+deltas, virtual inheritance, NOT member-addable; kills that queue item), 5
+**VTABLE_DIVERGENCE** (new class: vcall slot-load deltas — DC3 added 8 virtuals to
+Rnd, 20 to RndEnviron, that retail lacks), 3 PERMUTE (ChunkStream "+2084" was an
+offset-SWAP misparse; real member deltas are uniform SAME-SIGN), 1 DC3_REV_MEMBER
+(Mat_NG +0x3c — material-chain rev12/13 block, TexRenderer/PostProc precedent),
+1 no-oracle (Singer/VocalPlayer mVocalParts). Ground truth:
+/tmp/mdgrind_abandoned.jsonl; corrections: ~/tmp/mdgrind_wall_classify_corrections.md.
+
+## Body-port wave verdicts (pool nearly dry at the top)
+- **rndobj/Utl + LightPreset: net 0, unit at-limit.** All [40,95) named fns are
+  permuter-class regalloc, §3i structural mispairs (LegacyLoadP9, Save@Keyframe),
+  codegen-shape (EnvironmentEntry op!=), or split artifacts (PreMultiplyAlpha
+  truncated at 32B). Wave agent independently re-derived the **gRev/BinStreamRev
+  conversion** idea → already REFUTED 2026-06-07 (only 33 TUs use DC3-style
+  BinStreamRev; their near-misses are walls). Playbook defer-list updated so waves
+  stop re-proposing it.
+- **Geo/Mesh/MemTracker: +1.** Geo = FP-scheduling permuter-class throughout.
+  MemTracker = ONE shared wall (all 6 MemDiffEntry heap fns inline `operator<`
+  whose mSizeDiff tiebreaker compiles to the overflow-safe signed-compare idiom —
+  boolean-negation class; NOTE our tiebreaker is CORRECT for RB3, DC3's simpler
+  form is the wrong oracle there).
+
+## Tooling landed
+- `40deb7d` **DC3 obj-source unified**: canonical = `.dc3_text_scratch/named/obj`
+  (retail TARGET tree; the compiled-port tree substitutes dc3-decomp's own
+  unmatched ports as "truth" — 20 content diffs, all in <92%-matched units). New
+  shared tools/dc3_obj_source.py; deterministic ICF tie-break (352 contradictory
+  identities → 0, was nondeterministic run-to-run); non-real-name filter
+  (`merged_*`/`__unwind`). **Data debt: live global_fuzzy_pairs.json holds dead
+  `merged_*` top-identities + 746 dup rows — regenerate (`global_fuzzy_index.py 64
+  0.85`) at wave end. T4 fuzzy labels = ICF-ambiguous, never authoritative.**
+- `bf0d039` **struct_db gated members**: guard/guard_kind columns (45 real gated
+  members, 9 files: HX_NATIVE forks, RB3_RBTREE_0x1C, RB3_HAS_HUE_CONVERGE,
+  MILO_DEBUG); lookup returns all variants tagged, retail leads; MCP reader
+  guard-aware. DB regen deferred to wave end: `python3 tools/struct_db.py build src/`.
+- `5b6b7a6` **true_progress load_addr**: report `address` is NOT base+offset
+  recoverable (dtk drops alignment padding from cumulative offsets!) — resolve via
+  fn_ self-encoding + inverted target_symbol_map gated by splits ranges (99.2%).
+- `tools/fresh_report.sh` OOM: full-parallelism builds get code-137 killed on fresh
+  CoW worktrees (32 cores × MSVC-under-wibo); use `ninja -j 12` (fix in flight).
+
+## Worktree pool cleaned
+9 stale prior-session worktrees (fa-*, fm-*, xfer-recover) triaged read-only:
+all fully harvested (0 ahead-commits; uncommitted files byte-identical to main or
+strictly older) → removed. `rb3-sizedvec` KEPT (sized-vector refutation repro copy).
+
+## In flight at time of writing
+- **flowback agent**: wall_classify gains divergent-bl/same-sign/vtable-slot/vbase
+  gates (validate vs original 11 + the 48-fn confusion matrix) → regenerates
+  ~/tmp/hasreal_routed_v2.json; playbook §3/§4 updates; fresh_report.sh -j cap.
+- **vtable-lever agent**: slot-by-slot Rnd/RndEnviron RB3-vs-DC3 vtable comparison
+  (dump_vtable.py + Ghidra + ham_xbox_r.map), drop DC3-added virtuals if A/B clean.
+- Queued: Mat_NG +0x3c rev-member lever; struct_db + global_fuzzy_pairs regen;
+  reveal refill sweep (incl. +2 byte-exact MeshAnim anons 0x8245BC78/0x8245DA30).
