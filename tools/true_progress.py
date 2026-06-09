@@ -257,6 +257,70 @@ def bucket(classes):
     return 'OTHER'
 
 
+SPLITS = os.path.join(ROOT, 'config/45410914/splits.txt')
+TARGET_SYMBOL_MAP = os.path.join(ROOT, 'scripts/target_symbol_map.json')
+
+
+def load_text_ranges(path=SPLITS):
+    """Parse splits.txt -> {unit_stem: (text_start_va, text_end_va)}.
+
+    Unit stem matches report unit names with the leading 'default/' stripped
+    (e.g. splits 'system/rndobj/Utl.cpp' -> stem 'system/rndobj/Utl' pairs with
+    report unit 'default/system/rndobj/Utl')."""
+    ranges = {}
+    cur = None
+    try:
+        for line in open(path):
+            m = re.match(r'^(\S+)\.(?:cpp|c|cc)\s*:\s*$', line)
+            if m:
+                cur = m.group(1)
+                continue
+            if cur:
+                m = re.match(r'^\s+\.text\s+start:(0x[0-9A-Fa-f]+)\s+end:(0x[0-9A-Fa-f]+)', line)
+                if m:
+                    ranges[cur] = (int(m.group(1), 16), int(m.group(2), 16))
+    except OSError:
+        pass
+    return ranges
+
+
+def load_name_to_vas(path=TARGET_SYMBOL_MAP):
+    """Invert scripts/target_symbol_map.json (VA hex -> mangled name) into
+    {mangled name -> [VAs]}. Names can repeat across units (ICF), so callers
+    must disambiguate by the owning unit's .text range."""
+    inv = {}
+    try:
+        for va, name in json.load(open(path)).items():
+            if not va.startswith('0x'):
+                continue   # metadata keys like '_comment'
+            inv.setdefault(name, []).append(int(va, 16))
+    except OSError:
+        pass
+    return inv
+
+
+def load_addr_for(unit, sym, ranges, name_vas):
+    """Best-effort load address (hex str) for a function.
+
+    The report 'address' field is a SECTION OFFSET (decimal) into the unit's
+    .text, but NOT base+offset-recoverable (dtk drops alignment padding from
+    cumulative offsets) -- a documented confusion source. Resolve instead by:
+      1. fn_<hex>/lbl_<hex> symbol names encode their own VA;
+      2. named syms via the inverted target-symbol-rename map, disambiguated
+         by the unit's splits.txt .text range."""
+    m = re.match(r'^(?:fn|lbl)_([0-9A-Fa-f]{8})$', sym)
+    if m:
+        return '0x' + m.group(1).lower()
+    stem = unit[len('default/'):] if unit.startswith('default/') else unit
+    cands = name_vas.get(sym, [])
+    rng = ranges.get(stem)
+    if rng:
+        cands = [v for v in cands if rng[0] <= v < rng[1]]
+    if len(cands) == 1:
+        return hex(cands[0])
+    return None
+
+
 def diff_fn(unit, sym, tmp):
     r = subprocess.run(
         [CLI, 'diff', '-p', ROOT, '-u', unit, sym, '-f', 'json', '-o', tmp,
@@ -319,6 +383,8 @@ def main():
     print(f"classifying {len(targets)} fns in [{a.lo},{a.hi}) ...", file=sys.stderr)
 
     tmp = '/tmp/_tp_diff.json'
+    text_ranges = load_text_ranges()
+    name_vas = load_name_to_vas()
     rows = []
     buckets = Counter()
     # Sub-class counts across all functions for the summary
@@ -345,7 +411,8 @@ def main():
         row = {
             'unit': un,
             'sym': sym,
-            'address': addr,
+            'address': addr,           # report section offset (decimal) -- NOT a VA
+            'load_addr': load_addr_for(un, sym, text_ranges, name_vas),
             'mp': mp,
             'size': sz,
             'bucket': bk,
@@ -409,7 +476,8 @@ def _emit_worklist(rows, path):
         out.append({
             'unit': r['unit'],
             'sym': r['sym'],
-            'address': r['address'],
+            'address': r['address'],           # section offset (decimal), kept for compat
+            'load_addr': r.get('load_addr'),   # resolved VA (hex) via splits.txt .text base
             'mp': r['mp'],
             'size': r['size'],
             'diff_count': r['diff_count'],
