@@ -279,6 +279,10 @@ bool String::operator==(const char *str) const {
         return strcmp(str, mStr) == 0;
 }
 
+bool String::operator!=(const String &str) const { return strcmp(str.mStr, mStr); }
+
+bool String::operator==(const String &str) const { return strcmp(str.mStr, mStr) == 0; }
+
 String &String::erase() {
     *mStr = 0;
     return *this;

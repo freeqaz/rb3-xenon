@@ -84,8 +84,8 @@ public:
 
     bool operator<(const String &) const;
     bool operator==(const FixedString &) const;
-    bool operator==(const String &s) const { return strcmp(mStr, s.mStr) == 0; }
-    bool operator!=(const String &s) const { return strcmp(mStr, s.mStr) != 0; }
+    bool operator==(const String &) const;
+    bool operator!=(const String &) const;
 
     void reserve(unsigned int);
 
