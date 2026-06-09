@@ -156,14 +156,18 @@ thunks. Deep multi-TU reconstruction, no clean oracle. Defer.
    historic wins (DataArray::Node +37, Str +6) were n=20+ clustered. MakeShortAng
    inline test = NET −1, reverted. Candidate lists archived at
    `~/tmp/forcemult/inline_candidates_v2*.json`. Re-check only after the pool refills.
-6. ⭐ **NEW TOP LEVER (from the inline wave, UNVERIFIED): data-symbol renaming
-   (LBL_RENAME)** — `obj_target_symbol_renamer` maps only FUNCTION symbols; anonymous
-   `lbl_8XXXXXXX` data labels (e.g. `lbl_82C8ED88` ↔ `?sCurrent@RndEnviron@@1PAV1@A`)
-   leave reloc-arg diffs in callers. Claimed dominant blocker for **771 fns in
-   [99.9,100)** (~500 est. yield). MUST verify on a sample first (is data-label naming
-   the ONLY diff?) before extending the renamer (non-text `IMAGE_SYM_CLASS_STATIC`
-   symbols + a data-symbol map). Related: ICF multi-symbol grouping (one lbl_ = several
-   identical fns, reads 0%).
+6. ~~data-symbol renaming (LBL_RENAME)~~ — **REFUTED** (verify-first gate, full
+   probe of all 771 [99.9,100) fns + empirical rebuild). LBL_ONLY = **0%**; true
+   composition: **42.8% HAS_REAL** (genuine STRUCT_OFF/REG/OPCODE work), **36.6%
+   EH-funclet `bl lbl_<frameless dtor>` + frame-recon** (= the already-refuted
+   funclet wall; mapping the dtors resolved the bl diffs in all 282 and flipped 0 —
+   the `subi r31,r12` frame residual independently blocks every one), 13.9% anon fn_
+   callee, 5.1% named mismatch. Genuine data labels (44 fns) are all `__real@` float
+   pools / local statics co-occurring with real codegen diffs — never the sole
+   blocker. **Do NOT extend the renamer to data symbols (yield ~0).** Root cause of
+   the false hypothesis: true_progress's NAME_RELOC class conflates bl-lbl/code,
+   data-lbl, anon-fn, named-static (tool gap; a lbl_probe.py classifier existed in
+   the removed worktree — rebuild if the question recurs).
 7. Other gaps from the wave: UIComponent vtable +4 slot (5 confirmed fns; known wall,
    docs/plans/ui-base-layout-reconstruction.md); n=3 unnamed shared ctor body
    (CharBoneOffset/CharIKFoot) needs Ghidra+DC3 pair to identify.
