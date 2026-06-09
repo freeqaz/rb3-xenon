@@ -240,9 +240,18 @@ protected:
     float mClampHeight; // 0xf8
     /** "Category for shot-picking" */
     Symbol mCategory; // 0xfc
-    // NB(rb3-xenon): DC3-only mShotStartedPending dropped — retail RB3 lacks
-    // this field (rb3-Wii CameraShot has no equivalent; the +0x10 mDuration
-    // skew vs target collapses when this + mGenHideVector are removed).
+    // NB(rb3-xenon): retail RB3 CamShot is the DC3-style VIRTUAL-BASE MI layout
+    // (RTTI .?AVCamShot@@ has a virtual base at +0x1a0, plus RndAnimatable +
+    // RndTransformable both deriving virtual Hmx::Object). DC3 has
+    // `int mShotStartedPending; // 0x100` here, and the ~CamShot dtor funclet
+    // chain (vbase-relative, this-0x1a0) destroys mAnims at +0x44 — i.e. retail
+    // DOES carry this member. But our header models CamShot as SINGLE-inheritance
+    // RndAnimatable; re-adding mShotStartedPending here shifts every member after
+    // 0x100 and is net-NEGATIVE (verified: +7 funclets vs -10 incl. GetKey,
+    // CacheFrames, GetTotalDuration, OnRadio = net -3 whole-binary). The funclet
+    // +4 delta is a VBASE_WALL: it can only be fixed by reconstructing the true
+    // MI/vbase layout, not by adding this one member. See the layout report in
+    // docs/decomp (CamShot vbase reconstruction) before re-attempting.
     /** "animatables to be driven with the same frame" */
     ObjPtrList<RndAnimatable> mAnims;
     /** "Optional camera path to use" */
