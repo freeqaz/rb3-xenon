@@ -8,6 +8,8 @@
 #include "utl/BinStream.h"
 #include "utl/MemMgr.h"
 
+class Character;
+
 class CharSleeve : public RndHighlightable, public CharPollable {
 public:
     // Hmx::Object
@@ -41,6 +43,7 @@ public:
     float mNegLength; // 0x68
     float mPosLength; // 0x6c
     float mStiffness; // 0x70
+    ObjPtr<Character> mMe; // 0x74
 
 protected:
     CharSleeve();

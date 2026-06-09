@@ -12,7 +12,7 @@ void NormalizeScale(const Vector3 &, float, Vector3 &);
 CharSleeve::CharSleeve()
     : mSleeve(this), mTopSleeve(this), mPos(0, 0, 0), mLastPos(0, 0, 0), mLastDT(0),
       mInertia(0.5f), mGravity(1.0f), mRange(0), mNegLength(0), mPosLength(0),
-      mStiffness(0.02f) {}
+      mStiffness(0.02f), mMe(this) {}
 
 CharSleeve::~CharSleeve() {}
 

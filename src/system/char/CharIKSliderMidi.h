@@ -4,6 +4,8 @@
 #include "rndobj/Highlight.h"
 #include "rndobj/Trans.h"
 
+class Character;
+
 /** "Moves an RndTransformable (bone) to a percentage of the way between two spots." */
 class CharIKSliderMidi : public RndHighlightable,
                          public CharWeightable,
@@ -49,6 +51,7 @@ protected:
     float mFracPerBeat; // 0xa8
     bool mPercentageChanged; // 0xac
     bool mResetAll; // 0xad
+    ObjPtr<Character> mMe; // 0xb0
     /** "Only move if percentage changes more than this (0.0 - 1.0)" */
-    float mTolerance; // 0xb0
+    float mTolerance; // 0xbc
 };

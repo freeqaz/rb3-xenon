@@ -8,7 +8,7 @@
 #include "rndobj/Utl.h"
 
 CharIKSliderMidi::CharIKSliderMidi()
-    : mTarget(this), mFirstSpot(this), mSecondSpot(this) {
+    : mTarget(this), mFirstSpot(this), mSecondSpot(this), mMe(this) {
     mTargetPercentage = 1.0f;
     mTolerance = 0.0f;
     mPercentageChanged = false;
