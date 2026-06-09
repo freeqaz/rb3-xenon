@@ -1,0 +1,41 @@
+{
+  "experiment": "gameid-crossval — cross-arch BSim + anchored BinDiff for game-TU location",
+  "date": "2026-06-09",
+  "calibration_set": "25 known game pins (config/45410914/splits.txt under src/band3)",
+  "verdict": "NEGATIVE — neither signal calibrates well enough to bracket TU spans",
+  "signals": {
+    "bindiff_fresh": {
+      "tool": "source-built ../bindiff/build/bindiff, rb3wii.BinExport (primary) vs rb3xenon.BinExport (secondary)",
+      "per_fn_precision_at_conf": {"0.0": 0.093, "0.5": 0.176, "0.7": 0.315, "0.9": 0.525, "0.97": 0.542},
+      "per_fn_recall": "<=0.023 at all thresholds",
+      "TU_hit": "9-10 / 25",
+      "max_contiguous_correct_run_in_any_span": 3,
+      "note": "precision rises with confidence but recall is ~2%; correctly-labeled fns are sparse and non-contiguous"
+    },
+    "bsim_crossarch": {
+      "tool": "Ghidra 12.2 BSim medium_nosize, RB3Xenon sigs queried vs rb3wii.bsim H2 DB",
+      "per_fn_precision_at_sim": {"0.0": 0.162, "0.5": 0.270, "0.7": 0.320, "0.9": 0.267},
+      "TU_hit": "6-15 / 25",
+      "degenerate_match": "6759 of ~37k RB3Xenon fns top-match a single rb3-Wii class (BandMachineMgr msg-handler); 90% (6112) are 32-byte/8-insn coverage stubs with sim=1.0",
+      "precision_after_filtering_stubs_and_contaminant": "0.31-0.36 (still poor)"
+    },
+    "cross_validation_intersection": {
+      "definition": "BinDiff(conf>=0.7) AND BSim(sim>=0.5) agree on same .cpp stem, stub+BandMachineMgr filtered",
+      "pin_precision": 0.95,
+      "pin_correct": "18/19",
+      "agree_set_size_binary_wide": 146,
+      "unpinned_fns": 93,
+      "TU_coverage": "8 / 25 known TUs get >=1 cross-validated fn",
+      "max_unpinned_fns_per_stem": 4,
+      "can_bracket_spans": false,
+      "note": "high per-fn precision but too sparse and non-contiguous to define [start,end) TU spans"
+    }
+  },
+  "root_cause": "BSim/BinDiff correctly identify only the distinctive minority of each TU's functions (~2-13%); the trivial accessors and coverage-stub-shaped functions that fill out a TU span are either unmatched or collapse to degenerate generic matches. No contiguous block of correct labels exists to bracket a span. Confirms the roadmap's prior 'coverage-stub mirage + scattered band3 TUs' finding for BSim too.",
+  "deliverable_value": "crossval_agree.json — 93 unpinned, cross-validated (95%-precision) per-function game-code identity hints. Useful as per-fn LABELS for manual work, NOT as TU-span brackets. Mostly singletons (1-2 fns/stem).",
+  "commands": {
+    "binexport_target": "analyzeHeadless <proj>/RB3Xenon/RB3Xenon RB3Xenon -process -recursive -noanalysis -readOnly -scriptPath ~/tmp/gameid -postScript ExportBinExport.java ~/tmp/gameid/rb3xenon.BinExport",
+    "bindiff": "../bindiff/build/bindiff --primary=rb3wii.BinExport --secondary=rb3xenon.BinExport --output_dir=~/tmp/gameid --output_format=bin,log",
+    "bsim_query": "analyzeHeadless <proj> RB3Xenon -process -recursive -noanalysis -readOnly -scriptPath ~/tmp/gameid -postScript BSimQueryToJson.java file:~/tmp/gameid/rb3wii.bsim ~/tmp/gameid/bsim_query.json 5 0.0 0.0"
+  }
+}

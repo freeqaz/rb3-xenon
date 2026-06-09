@@ -1,0 +1,1423 @@
+{
+  "_meta": {
+    "method": "BinDiff(conf>=0.7) INTERSECT BSim(sim>=0.5), same-stem, stub+BMM filtered",
+    "calibration": "95% precision on 25 known pins (18/19), but only 8/25 TUs covered",
+    "total_agree_fns": 146,
+    "caveat": "high per-fn precision but cannot bracket TU spans (max contiguous run = 3)"
+  },
+  "agree_fns": [
+    {
+      "addr": "0x826438D8",
+      "stem": "Accomplishment",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 8
+    },
+    {
+      "addr": "0x823EDA20",
+      "stem": "Anim",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 112
+    },
+    {
+      "addr": "0x8251AAF0",
+      "stem": "ArkFile",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 40
+    },
+    {
+      "addr": "0x82520280",
+      "stem": "AsyncTask",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.823,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x8255E990",
+      "stem": "BandSongMgr",
+      "bindiff_conf": 0.992,
+      "bsim_sim": 0.986,
+      "already_pinned": false,
+      "size": 52
+    },
+    {
+      "addr": "0x8233AD18",
+      "stem": "BandTrack",
+      "bindiff_conf": 0.992,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 84
+    },
+    {
+      "addr": "0x82318A18",
+      "stem": "BandWardrobe",
+      "bindiff_conf": 0.958,
+      "bsim_sim": 0.732,
+      "already_pinned": false,
+      "size": 104
+    },
+    {
+      "addr": "0x822A9E98",
+      "stem": "BeatMatcher",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 20
+    },
+    {
+      "addr": "0x8276C8E8",
+      "stem": "BeatMatcher",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 64
+    },
+    {
+      "addr": "0x82BC2D08",
+      "stem": "BeatMatcher",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 20
+    },
+    {
+      "addr": "0x823E9178",
+      "stem": "Bitmap",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.616,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x82453080",
+      "stem": "BoxMap",
+      "bindiff_conf": 0.915,
+      "bsim_sim": 0.872,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x82A79AF8",
+      "stem": "Buffer",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 0.907,
+      "already_pinned": false,
+      "size": 68
+    },
+    {
+      "addr": "0x82A79C08",
+      "stem": "Buffer",
+      "bindiff_conf": 0.94,
+      "bsim_sim": 0.981,
+      "already_pinned": false,
+      "size": 56
+    },
+    {
+      "addr": "0x82A86C30",
+      "stem": "ChangeMasterStationOperation",
+      "bindiff_conf": 0.958,
+      "bsim_sim": 0.525,
+      "already_pinned": false,
+      "size": 244
+    },
+    {
+      "addr": "0x823A2468",
+      "stem": "CharBoneDir",
+      "bindiff_conf": 0.953,
+      "bsim_sim": 0.643,
+      "already_pinned": false,
+      "size": 64
+    },
+    {
+      "addr": "0x823CB7E0",
+      "stem": "CharBonesSamples",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.762,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x823871F0",
+      "stem": "CharIKScale",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 12
+    },
+    {
+      "addr": "0x82387208",
+      "stem": "CharIKScale",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x822BEB78",
+      "stem": "CharKeyHandMidi",
+      "bindiff_conf": 0.972,
+      "bsim_sim": 0.738,
+      "already_pinned": false,
+      "size": 128
+    },
+    {
+      "addr": "0x82679248",
+      "stem": "CharWeightSetter",
+      "bindiff_conf": 0.924,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 72
+    },
+    {
+      "addr": "0x82451318",
+      "stem": "Character",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 36
+    },
+    {
+      "addr": "0x82A27D58",
+      "stem": "ContentMgr_Wii",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 24
+    },
+    {
+      "addr": "0x823E97B0",
+      "stem": "Credentials",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 20
+    },
+    {
+      "addr": "0x826CFAA8",
+      "stem": "CrowdRating",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x827C8380",
+      "stem": "DataEventList",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x8250F480",
+      "stem": "DateTime",
+      "bindiff_conf": 0.953,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x824B7C78",
+      "stem": "Dir",
+      "bindiff_conf": 0.905,
+      "bsim_sim": 0.622,
+      "already_pinned": false,
+      "size": 200
+    },
+    {
+      "addr": "0x82728DB0",
+      "stem": "Dir",
+      "bindiff_conf": 0.966,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 56
+    },
+    {
+      "addr": "0x82B258F0",
+      "stem": "DupSpaceOperation",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 0.932,
+      "already_pinned": false,
+      "size": 96
+    },
+    {
+      "addr": "0x82B25950",
+      "stem": "DupSpaceOperation",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 0.932,
+      "already_pinned": false,
+      "size": 96
+    },
+    {
+      "addr": "0x82A46180",
+      "stem": "DuplicatedObject",
+      "bindiff_conf": 0.919,
+      "bsim_sim": 0.746,
+      "already_pinned": true,
+      "size": 276
+    },
+    {
+      "addr": "0x82AF8C48",
+      "stem": "DuplicationSpace",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 0.971,
+      "already_pinned": false,
+      "size": 308
+    },
+    {
+      "addr": "0x82AF4EB8",
+      "stem": "EncryptionAlgorithm",
+      "bindiff_conf": 0.924,
+      "bsim_sim": 0.519,
+      "already_pinned": false,
+      "size": 140
+    },
+    {
+      "addr": "0x82AC8950",
+      "stem": "EndPoint",
+      "bindiff_conf": 0.938,
+      "bsim_sim": 0.983,
+      "already_pinned": false,
+      "size": 184
+    },
+    {
+      "addr": "0x82B46BD0",
+      "stem": "FIRFilter",
+      "bindiff_conf": 0.763,
+      "bsim_sim": 0.737,
+      "already_pinned": false,
+      "size": 56
+    },
+    {
+      "addr": "0x827863B0",
+      "stem": "FixedSizeSaveableStream",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 52
+    },
+    {
+      "addr": "0x827863E8",
+      "stem": "FixedSizeSaveableStream",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 56
+    },
+    {
+      "addr": "0x826F8468",
+      "stem": "FxSend",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 36
+    },
+    {
+      "addr": "0x826768D0",
+      "stem": "GamePanel",
+      "bindiff_conf": 0.931,
+      "bsim_sim": 0.589,
+      "already_pinned": true,
+      "size": 72
+    },
+    {
+      "addr": "0x82676998",
+      "stem": "GamePanel",
+      "bindiff_conf": 0.912,
+      "bsim_sim": 0.702,
+      "already_pinned": true,
+      "size": 44
+    },
+    {
+      "addr": "0x82B78FD8",
+      "stem": "Gem",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x82B67E78",
+      "stem": "GemManager",
+      "bindiff_conf": 0.978,
+      "bsim_sim": 0.773,
+      "already_pinned": false,
+      "size": 64
+    },
+    {
+      "addr": "0x826A51C0",
+      "stem": "GemPlayer",
+      "bindiff_conf": 0.924,
+      "bsim_sim": 0.668,
+      "already_pinned": false,
+      "size": 124
+    },
+    {
+      "addr": "0x824DC9C0",
+      "stem": "Geo",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 76
+    },
+    {
+      "addr": "0x82B1B1B8",
+      "stem": "HMACChecksum",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 68
+    },
+    {
+      "addr": "0x827B3E08",
+      "stem": "HeapStats",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x826D5D68",
+      "stem": "HeldNote",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x82B52B40",
+      "stem": "IIRFilter",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.628,
+      "already_pinned": false,
+      "size": 124
+    },
+    {
+      "addr": "0x82A58388",
+      "stem": "InstanceControl",
+      "bindiff_conf": 0.902,
+      "bsim_sim": 0.733,
+      "already_pinned": false,
+      "size": 300
+    },
+    {
+      "addr": "0x827A67C8",
+      "stem": "Job",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 36
+    },
+    {
+      "addr": "0x82A67A88",
+      "stem": "JobExecuteDelayedRMC",
+      "bindiff_conf": 0.917,
+      "bsim_sim": 0.792,
+      "already_pinned": false,
+      "size": 172
+    },
+    {
+      "addr": "0x82A9C718",
+      "stem": "JobJoinSession",
+      "bindiff_conf": 0.94,
+      "bsim_sim": 0.654,
+      "already_pinned": false,
+      "size": 272
+    },
+    {
+      "addr": "0x82AC0D30",
+      "stem": "JobProcessJoinRequest",
+      "bindiff_conf": 0.858,
+      "bsim_sim": 0.615,
+      "already_pinned": false,
+      "size": 432
+    },
+    {
+      "addr": "0x82B092C8",
+      "stem": "KerberosEncryption",
+      "bindiff_conf": 0.709,
+      "bsim_sim": 0.864,
+      "already_pinned": false,
+      "size": 272
+    },
+    {
+      "addr": "0x8243F668",
+      "stem": "KeyboardTrackWatcherImpl",
+      "bindiff_conf": 0.858,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 92
+    },
+    {
+      "addr": "0x82B1AF48",
+      "stem": "KeyedChecksumAlgorithm",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 0.759,
+      "already_pinned": true,
+      "size": 116
+    },
+    {
+      "addr": "0x82A27E38",
+      "stem": "Leaderboard",
+      "bindiff_conf": 0.985,
+      "bsim_sim": 0.71,
+      "already_pinned": false,
+      "size": 36
+    },
+    {
+      "addr": "0x82B7C9C0",
+      "stem": "Lyric",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 16
+    },
+    {
+      "addr": "0x82B7C9D0",
+      "stem": "Lyric",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x82B7D078",
+      "stem": "Lyric",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x823E0E88",
+      "stem": "MatchmakingSettings",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x827966E8",
+      "stem": "MemMgr",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.716,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x82A7B5E8",
+      "stem": "Message",
+      "bindiff_conf": 0.94,
+      "bsim_sim": 0.731,
+      "already_pinned": false,
+      "size": 140
+    },
+    {
+      "addr": "0x827C6170",
+      "stem": "MidiParserMgr",
+      "bindiff_conf": 0.938,
+      "bsim_sim": 0.823,
+      "already_pinned": true,
+      "size": 132
+    },
+    {
+      "addr": "0x82672650",
+      "stem": "NetGameMsgs",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 20
+    },
+    {
+      "addr": "0x823D7B98",
+      "stem": "NetMessenger",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 44
+    },
+    {
+      "addr": "0x82A4DFD8",
+      "stem": "NetSession",
+      "bindiff_conf": 0.894,
+      "bsim_sim": 0.787,
+      "already_pinned": false,
+      "size": 304
+    },
+    {
+      "addr": "0x82583DD8",
+      "stem": "NetSync",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.555,
+      "already_pinned": true,
+      "size": 60
+    },
+    {
+      "addr": "0x82586258",
+      "stem": "NetSync",
+      "bindiff_conf": 0.903,
+      "bsim_sim": 0.718,
+      "already_pinned": true,
+      "size": 224
+    },
+    {
+      "addr": "0x82BF6570",
+      "stem": "NoteTube",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x82BF6580",
+      "stem": "NoteTube",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 20
+    },
+    {
+      "addr": "0x82A66CC8",
+      "stem": "ObjDupProtocol",
+      "bindiff_conf": 0.837,
+      "bsim_sim": 0.69,
+      "already_pinned": false,
+      "size": 424
+    },
+    {
+      "addr": "0x827358A8",
+      "stem": "Object",
+      "bindiff_conf": 0.966,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x82A870E0",
+      "stem": "Operation",
+      "bindiff_conf": 0.924,
+      "bsim_sim": 0.799,
+      "already_pinned": false,
+      "size": 172
+    },
+    {
+      "addr": "0x825BFB80",
+      "stem": "OvershellSlot",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x825C0008",
+      "stem": "OvershellSlot",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 68
+    },
+    {
+      "addr": "0x82B05480",
+      "stem": "PRUDPEndPoint",
+      "bindiff_conf": 0.894,
+      "bsim_sim": 0.866,
+      "already_pinned": false,
+      "size": 40
+    },
+    {
+      "addr": "0x82ACCD68",
+      "stem": "PRUDPStream",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 0.605,
+      "already_pinned": false,
+      "size": 860
+    },
+    {
+      "addr": "0x824370D8",
+      "stem": "Part",
+      "bindiff_conf": 0.858,
+      "bsim_sim": 0.757,
+      "already_pinned": true,
+      "size": 44
+    },
+    {
+      "addr": "0x8243C5B0",
+      "stem": "Part",
+      "bindiff_conf": 0.962,
+      "bsim_sim": 0.797,
+      "already_pinned": false,
+      "size": 144
+    },
+    {
+      "addr": "0x8243CBD0",
+      "stem": "PartLauncher",
+      "bindiff_conf": 0.894,
+      "bsim_sim": 0.983,
+      "already_pinned": false,
+      "size": 660
+    },
+    {
+      "addr": "0x8244A390",
+      "stem": "PatchPanel",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 36
+    },
+    {
+      "addr": "0x8250C4D0",
+      "stem": "Performer",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.703,
+      "already_pinned": true,
+      "size": 52
+    },
+    {
+      "addr": "0x822E06B0",
+      "stem": "PitchArrow",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 0.822,
+      "already_pinned": false,
+      "size": 52
+    },
+    {
+      "addr": "0x822E0DA0",
+      "stem": "PitchArrow",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x82683F78",
+      "stem": "Player",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 0.757,
+      "already_pinned": false,
+      "size": 96
+    },
+    {
+      "addr": "0x826843F0",
+      "stem": "Player",
+      "bindiff_conf": 0.963,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 40
+    },
+    {
+      "addr": "0x82684CA8",
+      "stem": "Player",
+      "bindiff_conf": 0.953,
+      "bsim_sim": 0.804,
+      "already_pinned": true,
+      "size": 96
+    },
+    {
+      "addr": "0x82686BB0",
+      "stem": "Player",
+      "bindiff_conf": 0.924,
+      "bsim_sim": 0.769,
+      "already_pinned": true,
+      "size": 160
+    },
+    {
+      "addr": "0x827B4058",
+      "stem": "Pool",
+      "bindiff_conf": 0.881,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x8241CFF8",
+      "stem": "PostProc",
+      "bindiff_conf": 0.983,
+      "bsim_sim": 0.828,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x82A83AE8",
+      "stem": "PseudoGlobalVariableList",
+      "bindiff_conf": 0.902,
+      "bsim_sim": 0.624,
+      "already_pinned": false,
+      "size": 340
+    },
+    {
+      "addr": "0x82A41428",
+      "stem": "PseudoSingleton",
+      "bindiff_conf": 0.858,
+      "bsim_sim": 0.772,
+      "already_pinned": false,
+      "size": 84
+    },
+    {
+      "addr": "0x82A780B0",
+      "stem": "RBDataDDL_Wii",
+      "bindiff_conf": 0.931,
+      "bsim_sim": 0.643,
+      "already_pinned": false,
+      "size": 152
+    },
+    {
+      "addr": "0x82A78360",
+      "stem": "RBDataDDL_Wii",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 0.527,
+      "already_pinned": false,
+      "size": 168
+    },
+    {
+      "addr": "0x82AE6A20",
+      "stem": "RC4Encryption",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 0.682,
+      "already_pinned": false,
+      "size": 204
+    },
+    {
+      "addr": "0x824000A8",
+      "stem": "RVNATRelay",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 68
+    },
+    {
+      "addr": "0x82B432D0",
+      "stem": "RateTransposer",
+      "bindiff_conf": 0.881,
+      "bsim_sim": 0.672,
+      "already_pinned": true,
+      "size": 108
+    },
+    {
+      "addr": "0x823FC2E8",
+      "stem": "Rnd",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 120
+    },
+    {
+      "addr": "0x82A99B90",
+      "stem": "Scheduler",
+      "bindiff_conf": 0.832,
+      "bsim_sim": 0.74,
+      "already_pinned": false,
+      "size": 152
+    },
+    {
+      "addr": "0x8230D328",
+      "stem": "ScoreDisplay",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.818,
+      "already_pinned": false,
+      "size": 32
+    },
+    {
+      "addr": "0x826D7DF0",
+      "stem": "Scoring",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 16
+    },
+    {
+      "addr": "0x82A957D0",
+      "stem": "SessionDiscoveryTable",
+      "bindiff_conf": 0.909,
+      "bsim_sim": 0.748,
+      "already_pinned": true,
+      "size": 260
+    },
+    {
+      "addr": "0x82A9CF78",
+      "stem": "SessionState",
+      "bindiff_conf": 0.969,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 180
+    },
+    {
+      "addr": "0x82A93EA8",
+      "stem": "SharedSessionDescription",
+      "bindiff_conf": 0.943,
+      "bsim_sim": 0.784,
+      "already_pinned": false,
+      "size": 108
+    },
+    {
+      "addr": "0x826D8D38",
+      "stem": "Singer",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x826D99B0",
+      "stem": "Singer",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 44
+    },
+    {
+      "addr": "0x82353B40",
+      "stem": "Stats",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 16
+    },
+    {
+      "addr": "0x82679550",
+      "stem": "Stats",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x82679868",
+      "stem": "Stats",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x82679998",
+      "stem": "Stats",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x826799B8",
+      "stem": "Stats",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x82798C30",
+      "stem": "Str",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 28
+    },
+    {
+      "addr": "0x826DDE50",
+      "stem": "Synth_Wii",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 48
+    },
+    {
+      "addr": "0x82A78CF0",
+      "stem": "SystemComponent",
+      "bindiff_conf": 0.731,
+      "bsim_sim": 0.638,
+      "already_pinned": false,
+      "size": 100
+    },
+    {
+      "addr": "0x82B424D8",
+      "stem": "TDStretch",
+      "bindiff_conf": 0.881,
+      "bsim_sim": 0.753,
+      "already_pinned": true,
+      "size": 76
+    },
+    {
+      "addr": "0x826DBAA8",
+      "stem": "TambourineManager",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.686,
+      "already_pinned": true,
+      "size": 24
+    },
+    {
+      "addr": "0x827227B8",
+      "stem": "Task",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 28
+    },
+    {
+      "addr": "0x827227D8",
+      "stem": "Task",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 28
+    },
+    {
+      "addr": "0x82722910",
+      "stem": "Task",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 20
+    },
+    {
+      "addr": "0x82722930",
+      "stem": "Task",
+      "bindiff_conf": 0.993,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x827AD170",
+      "stem": "TempoMap",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x827AD1A8",
+      "stem": "TempoMap",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": true,
+      "size": 68
+    },
+    {
+      "addr": "0x82B14FF8",
+      "stem": "Ticket",
+      "bindiff_conf": 0.931,
+      "bsim_sim": 0.587,
+      "already_pinned": false,
+      "size": 188
+    },
+    {
+      "addr": "0x82357450",
+      "stem": "TourSavable",
+      "bindiff_conf": 0.967,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 64
+    },
+    {
+      "addr": "0x82357490",
+      "stem": "TourSavable",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 20
+    },
+    {
+      "addr": "0x82344588",
+      "stem": "TrackPanelDirBase",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.71,
+      "already_pinned": false,
+      "size": 28
+    },
+    {
+      "addr": "0x827BF198",
+      "stem": "TrackWidget",
+      "bindiff_conf": 0.953,
+      "bsim_sim": 0.807,
+      "already_pinned": false,
+      "size": 36
+    },
+    {
+      "addr": "0x827BC090",
+      "stem": "TrackWidgetImp",
+      "bindiff_conf": 0.818,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 60
+    },
+    {
+      "addr": "0x826D2448",
+      "stem": "TrainerProgressMeter",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 52
+    },
+    {
+      "addr": "0x82B016C8",
+      "stem": "TransportSignatureGenerator",
+      "bindiff_conf": 0.769,
+      "bsim_sim": 0.534,
+      "already_pinned": false,
+      "size": 480
+    },
+    {
+      "addr": "0x827DD328",
+      "stem": "UI",
+      "bindiff_conf": 0.881,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x827DDA48",
+      "stem": "UI",
+      "bindiff_conf": 0.938,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 124
+    },
+    {
+      "addr": "0x827FA3E0",
+      "stem": "UIListLabel",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.819,
+      "already_pinned": true,
+      "size": 28
+    },
+    {
+      "addr": "0x827E9C58",
+      "stem": "UIListState",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 0.834,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x827FBAA0",
+      "stem": "UIListWidget",
+      "bindiff_conf": 0.971,
+      "bsim_sim": 0.815,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x827ED230",
+      "stem": "UIPanel",
+      "bindiff_conf": 0.991,
+      "bsim_sim": 0.859,
+      "already_pinned": false,
+      "size": 40
+    },
+    {
+      "addr": "0x827ED478",
+      "stem": "UIPanel",
+      "bindiff_conf": 0.924,
+      "bsim_sim": 0.698,
+      "already_pinned": false,
+      "size": 116
+    },
+    {
+      "addr": "0x827ED650",
+      "stem": "UIPanel",
+      "bindiff_conf": 0.929,
+      "bsim_sim": 0.927,
+      "already_pinned": false,
+      "size": 120
+    },
+    {
+      "addr": "0x826D3D68",
+      "stem": "VocalPart",
+      "bindiff_conf": 0.982,
+      "bsim_sim": 1.0,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x826D4C88",
+      "stem": "VocalPart",
+      "bindiff_conf": 0.75,
+      "bsim_sim": 0.526,
+      "already_pinned": false,
+      "size": 0
+    },
+    {
+      "addr": "0x826C6C58",
+      "stem": "VocalPlayer",
+      "bindiff_conf": 0.915,
+      "bsim_sim": 0.689,
+      "already_pinned": true,
+      "size": 160
+    },
+    {
+      "addr": "0x822E4A00",
+      "stem": "VocalTrackDir",
+      "bindiff_conf": 0.895,
+      "bsim_sim": 0.832,
+      "already_pinned": true,
+      "size": 0
+    },
+    {
+      "addr": "0x82A63A80",
+      "stem": "_DOC_Session",
+      "bindiff_conf": 0.929,
+      "bsim_sim": 0.712,
+      "already_pinned": false,
+      "size": 144
+    },
+    {
+      "addr": "0x82A64148",
+      "stem": "_DO_Session",
+      "bindiff_conf": 0.892,
+      "bsim_sim": 0.52,
+      "already_pinned": false,
+      "size": 680
+    }
+  ],
+  "unpinned_by_stem": {
+    "Task": [
+      "0x827227B8",
+      "0x827227D8",
+      "0x82722910",
+      "0x82722930"
+    ],
+    "BeatMatcher": [
+      "0x822A9E98",
+      "0x8276C8E8",
+      "0x82BC2D08"
+    ],
+    "UIPanel": [
+      "0x827ED230",
+      "0x827ED478",
+      "0x827ED650"
+    ],
+    "Buffer": [
+      "0x82A79AF8",
+      "0x82A79C08"
+    ],
+    "CharIKScale": [
+      "0x823871F0",
+      "0x82387208"
+    ],
+    "DupSpaceOperation": [
+      "0x82B258F0",
+      "0x82B25950"
+    ],
+    "FixedSizeSaveableStream": [
+      "0x827863B0",
+      "0x827863E8"
+    ],
+    "NoteTube": [
+      "0x82BF6570",
+      "0x82BF6580"
+    ],
+    "OvershellSlot": [
+      "0x825BFB80",
+      "0x825C0008"
+    ],
+    "PitchArrow": [
+      "0x822E06B0",
+      "0x822E0DA0"
+    ],
+    "RBDataDDL_Wii": [
+      "0x82A780B0",
+      "0x82A78360"
+    ],
+    "TourSavable": [
+      "0x82357450",
+      "0x82357490"
+    ],
+    "UI": [
+      "0x827DD328",
+      "0x827DDA48"
+    ],
+    "VocalPart": [
+      "0x826D3D68",
+      "0x826D4C88"
+    ],
+    "Accomplishment": [
+      "0x826438D8"
+    ],
+    "Anim": [
+      "0x823EDA20"
+    ],
+    "BandSongMgr": [
+      "0x8255E990"
+    ],
+    "BandTrack": [
+      "0x8233AD18"
+    ],
+    "BandWardrobe": [
+      "0x82318A18"
+    ],
+    "Bitmap": [
+      "0x823E9178"
+    ],
+    "ChangeMasterStationOperation": [
+      "0x82A86C30"
+    ],
+    "CharBoneDir": [
+      "0x823A2468"
+    ],
+    "CharKeyHandMidi": [
+      "0x822BEB78"
+    ],
+    "ContentMgr_Wii": [
+      "0x82A27D58"
+    ],
+    "Credentials": [
+      "0x823E97B0"
+    ],
+    "CrowdRating": [
+      "0x826CFAA8"
+    ],
+    "DataEventList": [
+      "0x827C8380"
+    ],
+    "Dir": [
+      "0x824B7C78"
+    ],
+    "DuplicationSpace": [
+      "0x82AF8C48"
+    ],
+    "EncryptionAlgorithm": [
+      "0x82AF4EB8"
+    ],
+    "EndPoint": [
+      "0x82AC8950"
+    ],
+    "FIRFilter": [
+      "0x82B46BD0"
+    ],
+    "FxSend": [
+      "0x826F8468"
+    ],
+    "GemManager": [
+      "0x82B67E78"
+    ],
+    "GemPlayer": [
+      "0x826A51C0"
+    ],
+    "HMACChecksum": [
+      "0x82B1B1B8"
+    ],
+    "HeldNote": [
+      "0x826D5D68"
+    ],
+    "IIRFilter": [
+      "0x82B52B40"
+    ],
+    "InstanceControl": [
+      "0x82A58388"
+    ],
+    "JobExecuteDelayedRMC": [
+      "0x82A67A88"
+    ],
+    "JobJoinSession": [
+      "0x82A9C718"
+    ],
+    "JobProcessJoinRequest": [
+      "0x82AC0D30"
+    ],
+    "KerberosEncryption": [
+      "0x82B092C8"
+    ],
+    "Leaderboard": [
+      "0x82A27E38"
+    ],
+    "MatchmakingSettings": [
+      "0x823E0E88"
+    ],
+    "Message": [
+      "0x82A7B5E8"
+    ],
+    "NetMessenger": [
+      "0x823D7B98"
+    ],
+    "NetSession": [
+      "0x82A4DFD8"
+    ],
+    "ObjDupProtocol": [
+      "0x82A66CC8"
+    ],
+    "Operation": [
+      "0x82A870E0"
+    ],
+    "PRUDPEndPoint": [
+      "0x82B05480"
+    ],
+    "PRUDPStream": [
+      "0x82ACCD68"
+    ],
+    "Part": [
+      "0x8243C5B0"
+    ],
+    "PartLauncher": [
+      "0x8243CBD0"
+    ],
+    "PatchPanel": [
+      "0x8244A390"
+    ],
+    "Player": [
+      "0x82683F78"
+    ],
+    "PseudoGlobalVariableList": [
+      "0x82A83AE8"
+    ],
+    "PseudoSingleton": [
+      "0x82A41428"
+    ],
+    "RC4Encryption": [
+      "0x82AE6A20"
+    ],
+    "Scheduler": [
+      "0x82A99B90"
+    ],
+    "ScoreDisplay": [
+      "0x8230D328"
+    ],
+    "Scoring": [
+      "0x826D7DF0"
+    ],
+    "SessionState": [
+      "0x82A9CF78"
+    ],
+    "SharedSessionDescription": [
+      "0x82A93EA8"
+    ],
+    "Stats": [
+      "0x82353B40"
+    ],
+    "SystemComponent": [
+      "0x82A78CF0"
+    ],
+    "Ticket": [
+      "0x82B14FF8"
+    ],
+    "TrackPanelDirBase": [
+      "0x82344588"
+    ],
+    "TrackWidget": [
+      "0x827BF198"
+    ],
+    "TrackWidgetImp": [
+      "0x827BC090"
+    ],
+    "TrainerProgressMeter": [
+      "0x826D2448"
+    ],
+    "TransportSignatureGenerator": [
+      "0x82B016C8"
+    ],
+    "UIListState": [
+      "0x827E9C58"
+    ],
+    "_DOC_Session": [
+      "0x82A63A80"
+    ],
+    "_DO_Session": [
+      "0x82A64148"
+    ]
+  }
+}

@@ -48,20 +48,24 @@ feedback loop: form a hypothesis → build/run a tool → measure → record ver
 - **DC3 byte-identical fingerprint transfer / reveal** — drained this session (+161 early)
   but REFILLS as the swarm body-ports (reveal cascade).
 
-### In-flight experiment (workflow `gameid-crossval`, run `wf_3505a3ec-069`)
-- **Game-ID = improve the per-fn LABEL** (the bottleneck), then bracket TU spans.
-  Two compiler-robust signals, CALIBRATED on the 25 known game pins, cross-validated:
-  - **BinDiff (modified)** — source at `../bindiff` (buildable; `../binexport` cloned).
-    Mods: mask 32/40-byte coverage stubs + seed the 627 pins as **fixed points** so the
-    call-graph + string-ref passes propagate. Stock bindiff already produced the noisy
-    `unified_id_rb3wii.json`; the mods are the untested lift.
-  - **BSim** — Ghidra decompiler p-code similarity (compiler-robust; same PPC family).
-- **Open research question (the gate):** does cross-arch BSim / anchored-BinDiff actually
-  re-locate the 25 known pins (precision/recall)? If neither calibrates, game-ID via these
-  signals is a negative result. If yes: ~15-40 game TUs / 300-1000 fns become *locatable*
-  (locating ≠ matching — matching is the downstream per-fn grind).
-- **Caveat in play:** RB3Xenon Ghidra project is locked by an in-progress import; the
-  workflow degrades to rb3-Wii-side artifacts + reports the target side blocked if so.
+### gameid-crossval experiment — **CLOSED NEGATIVE** (2026-06-09, calibrated)
+Research question was: does cross-arch BSim / anchored-BinDiff re-locate the 25 known
+game pins precisely enough to bracket TU spans? **NO — neither signal calibrates.**
+- BinDiff (fresh source-built): per-fn precision 0.54 @ conf≥0.97, recall ≤0.023,
+  max contiguous correct run = 3 fns. BSim (cross-arch): precision 0.32, recall ≤0.064.
+- Root cause = the coverage-stub mirage, now CONFIRMED for BSim: 6112 of 6759
+  top-matches to one rb3-Wii class are 32-byte coverage stubs at sim=1.0. The
+  distinctive minority (~2-13%/TU) matches; the stub-shaped filler doesn't → no
+  contiguity → no spans. Stub-masking/fixed-point BinDiff mods would NOT fix this
+  (the negative is structural, not matcher tuning) — do not build them.
+- **Salvage (the useful product): `docs/decomp/gameid/crossval_agree.json`** — 146
+  BinDiff∩BSim cross-validated per-fn game-code identity hints @ 0.95 precision
+  (93 not yet pinned). Usable as per-function LABELS for manual matching / as an
+  fn_resolver evidence tier; cannot bracket spans. Full verdict + repro commands:
+  `docs/decomp/gameid/VERDICT.json`; bulk artifacts remain at `~/tmp/gameid/`.
+- Infra fixed during the run: Ghidra dist now extracted persistently
+  (`../ghidra/build/ghidra` → `ghidra-dist/ghidra_12.2_DEV`, no longer via /tmp);
+  Ghidra MCP 8002 Ready.
 
 ## Tooling — built/fixed vs gaps
 **Built/fixed this campaign:**
