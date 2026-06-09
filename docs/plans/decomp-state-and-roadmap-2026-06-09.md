@@ -28,6 +28,12 @@ feedback loop: form a hypothesis → build/run a tool → measure → record ver
 - **Permuter on hard regalloc residuals** — ~0 even with m2c/BSF installed.
 - **Struct-layout grind on top engine units** — largely EXHAUSTED (headers already
   correct; engine-easy-wins 14 agents → only the Str force-multiplier).
+- **Sized-vector STLport gap** — REFUTED 2026-06-09 (calibrated worktree A/B, see
+  §"sized-vector experiment VERDICT" below). Retail RB3-360 uses the classic 12-byte
+  3-pointer `std::vector`; tree-wide sized flip = **NET −504** (−503/+2). Decisive:
+  223 retail `?$vector@` symbols match 100% at baseline in the 2-param (ptrs) mangled
+  form, not the 3-param sized form. VocalPlayer "+4" is ordinary member/base layout,
+  NOT vector sizing. Do not re-attempt.
 
 ### Live levers (yield this session)
 - **Engine force-multipliers** = "DC3 (newer) diverged from RB3" patterns. Three sub-types,
@@ -98,17 +104,25 @@ ran an apply wave → **+8 landed** (`9150f3c`):
 - **RndTexRenderer +6** — scaffolded from DC3 rev-13; retail is rev-11. Dropped mEnviron/
   mClearBuffer/mClearColor + restored bool order. (member-delta finder hit.)
 
-### NEW LEVER SURFACED (the science payoff): sized-vector STLport gap — TREE-WIDE
-VocalPlayer's "+4" is NOT a member add/remove — it's that rb3-Wii's STLport defines
-`_STLP_USE_SIZED_VECTOR` (std::vector = 8 bytes: ptr+u16 size+u16 cap) while our
-DC3-derived STLport dropped it (std::vector = 12 bytes / 3 ptrs). So EVERY class with a
-`std::vector` member is shifted +4 at/above that member. Oracle: rb3-Wii
-`src/system/stlport/stl_user_config.h:308` + the VecSize machinery in its `_vector.h`;
-annotation proof `StoreOfferContentsProvider.h:54` (mElements 8-byte). **This is likely
-the single biggest remaining engine force-multiplier** (VocalPlayer alone ~11 fns @99.9%;
-multiplies across all vector-member classes) BUT high regression surface (re-codegens every
-vector body tree-wide) → needs its own CALIBRATED experiment (port in a worktree, whole-
-binary A/B, measure net) before trusting. **TOP next experiment.**
+### sized-vector experiment VERDICT (2026-06-09, calibrated A/B): **REFUTED**
+Hypothesis was: rb3-Wii's `_STLP_USE_SIZED_VECTOR` (8-byte vector) vs our 12-byte =
+tree-wide +4 force-multiplier. Ported the full machinery (rb3-Wii `_vector_sized.{h,c}`,
+`_vector_ptrs.{h,c}`, dispatch wrapper, `RB3_PTRS_VECTOR` per-TU gate à la
+RB3_RBTREE_0x1C) into worktree `/home/free/code/milohax/rb3-sizedvec`; sanity gate
+passed (`sizeof(vector<int>)==8`). Whole-binary A/B: baseline 6576 → sized 6072,
+**NET −504** (−503 regressed / +2 improved, 77 units, no unit meaningfully gained).
+Decisive evidence beyond the number:
+1. 223 retail `std::vector` member fns match **100% at baseline** with 2-param ptrs
+   mangling (`?$vector@T V?$StlNodeAlloc@...`), not the 3-param sized form.
+2. Isolated control: AccomplishmentManager `_M_erase` 100%→0%→100% flipping just that
+   TU's vector layout.
+3. VocalPlayer (the poster child) *regresses* under sized; its +4s are ordinary
+   dropped/added-member or base-class layout. The 8-byte-stride annotation evidence
+   was an artifact of adjacent small members.
+MSVC breakers found mid-port (synth_xbox explicit-allocator forms, explicit
+`template class vector<>` instantiations, rndobj `_M_finish` internal pokes) were
+themselves corroborating evidence retail compiled ptrs. Worktree left in place
+(`#if 0`'d lever + refutation comment) for reproducibility; removable.
 
 ### Walls confirmed (not levers): GameMode/Player = vbase/coupled-base hierarchy
 (PropertyEventProvider→MsgSource differs RB3 vs DC3); ??_8 vbtable + ??_E/D/G adjustor
@@ -128,10 +142,20 @@ thunks. Deep multi-TU reconstruction, no clean oracle. Defer.
 5. diff_inspect asm_listing uses wrong obj path for game units (`default/band3/...` prefix).
 
 ### Updated next-experiment queue (post-wave)
-1. **sized-vector STLport experiment** (the tree-wide lever) — calibrated A/B in a worktree.
-2. **member_delta_finder v2** (classify sized-vector + vbase) → re-run over STRUCT_WORK 667.
-3. Integrate `gameid-crossval` (rb3-Wii artifacts ready; target side in progress) + restart Ghidra MCP.
-4. fn_-resolver tool (gap #2) → finishes the inline tail + aids game-ID.
+1. ~~sized-vector STLport experiment~~ — DONE, **REFUTED** (see verdict above).
+2. ~~member_delta_finder v2~~ — DONE, landed `d3fc934` (validation 3/3; STRUCT_WORK
+   sweep → 7 candidates: DxRnd MEMBER_DELTA actionable [agent in flight], 4 vbase
+   walls defer, VocalPlayer reclassified, 1 unknown).
+3. ~~fn_-resolver tool~~ — DONE, landed `013b7ae` (`tools/fn_resolver.py`; 4,146 named
+   + 5,932 strong ≥0.70-conf identities; 3/5 inline-policy unknowns resolved).
+4. Integrate `gameid-crossval` (rb3-Wii artifacts at `~/tmp/gameid/`; target side was
+   blocked on the stale RB3Xenon.lock — lock cleared, Ghidra MCP 8002 restarted).
+5. **Re-run `tools/inline_policy_finder.py` with fn_resolver wired in** — the inline
+   tail is now resolvable; the Str pattern remains the highest-yield repeatable lever.
+6. NEW tool ideas from the sized-vector refutation: (a) vector-layout classifier via
+   objdiff symbol-name arity (2- vs 3-param `?$vector@`) — answers layout questions
+   without a build; (b) `--force-fresh` full-report flag (partial-rebuild reports mix
+   old/new objects and mislead per-unit A/B).
 
 ## Key refs
 - Memory: `feedback_fuzzy_gap_needs_permuter`, `project_game_code_instrumentation`,
