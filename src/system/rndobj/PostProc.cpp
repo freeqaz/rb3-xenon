@@ -152,9 +152,16 @@ RndPostProc::RndPostProc()
       mGradientMapOpacity(0), mGradientMapIndex(0), mGradientMapStart(0),
       mGradientMapEnd(1), mRefractMap(this, 0), mRefractDist(0.05f), mRefractScale(1, 1),
       mRefractPanning(0, 0), mRefractVelocity(0, 0), mRefractAngle(0),
-      mChromaticAberrationOffset(0), mChromaticSharpen(0), mVignetteColor(0, 0, 0, 0),
+      mChromaticAberrationOffset(0), mChromaticSharpen(0), mVignetteColor(0, 0, 0, 0)
+#ifdef RB3_HAS_HUE_CONVERGE
+      ,
       mVignetteIntensity(0), mHueTarget(-75), mHueFocus(0.958), mBlendAmount(0),
-      mBrightnessPower(1) {
+      mBrightnessPower(1)
+#else
+      ,
+      mVignetteIntensity(0)
+#endif
+{
     mColorXfm.Reset();
 }
 
@@ -236,10 +243,12 @@ BEGIN_PROPSYNCS(RndPostProc)
     SYNC_PROP(chromatic_sharpen, mChromaticSharpen)
     SYNC_PROP(vignette_color, mVignetteColor)
     SYNC_PROP(vignette_intensity, mVignetteIntensity)
+#ifdef RB3_HAS_HUE_CONVERGE
     SYNC_PROP(hue_target, mHueTarget)
     SYNC_PROP(hue_focus, mHueFocus)
     SYNC_PROP(blend_amount, mBlendAmount)
     SYNC_PROP(brightness_power, mBrightnessPower)
+#endif
     SYNC_PROP(force_current_interp, mForceCurrentInterp)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
@@ -290,10 +299,12 @@ BEGIN_SAVES(RndPostProc)
     bs << mBloomStreak;
     bs << mBloomStreakAttenuation;
     bs << mBloomStreakAngle;
+#ifdef RB3_HAS_HUE_CONVERGE
     bs << mHueTarget;
     bs << mHueFocus;
     bs << mBlendAmount;
     bs << mBrightnessPower;
+#endif
 END_SAVES
 
 BEGIN_COPYS(RndPostProc)
@@ -349,10 +360,12 @@ BEGIN_COPYS(RndPostProc)
         COPY_MEMBER(mChromaticSharpen)
         COPY_MEMBER(mVignetteColor)
         COPY_MEMBER(mVignetteIntensity)
+#ifdef RB3_HAS_HUE_CONVERGE
         COPY_MEMBER(mHueTarget)
         COPY_MEMBER(mHueFocus)
         COPY_MEMBER(mBlendAmount)
         COPY_MEMBER(mBrightnessPower)
+#endif
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -541,9 +554,11 @@ void RndPostProc::LoadRev(BinStreamRev &d) {
     if (d.rev > 0x23) {
         d >> mBloomStreak >> mBloomStreakAttenuation >> mBloomStreakAngle;
     }
+#ifdef RB3_HAS_HUE_CONVERGE
     if (d.altRev > 1) {
         d >> mHueTarget >> mHueFocus >> mBlendAmount >> mBrightnessPower;
     }
+#endif
 }
 
 void RndPostProc::Select() {
@@ -769,11 +784,13 @@ void RndPostProc::Interp(const RndPostProc *from, const RndPostProc *to, float p
     ::Interp(from->mVignetteColor, to->mVignetteColor, pct, mVignetteColor);
     ::Interp(from->mVignetteIntensity, to->mVignetteIntensity, pct, mVignetteIntensity);
 
-    // DC3-specific members
+    // DC3-specific members (absent in RB3-2010 retail)
+#ifdef RB3_HAS_HUE_CONVERGE
     ::Interp(from->mHueTarget, to->mHueTarget, pct, mHueTarget);
     ::Interp(from->mHueFocus, to->mHueFocus, pct, mHueFocus);
     ::Interp(from->mBlendAmount, to->mBlendAmount, pct, mBlendAmount);
     ::Interp(from->mBrightnessPower, to->mBrightnessPower, pct, mBrightnessPower);
+#endif
 
     // Flicker bounds
     ::Interp(from->mFlickerTimeBounds, to->mFlickerTimeBounds, pct, mFlickerTimeBounds);

@@ -406,11 +406,13 @@ void NgPostProc::CheckGradientMap() {
 }
 
 void NgPostProc::CheckHueConverge() {
+#ifdef RB3_HAS_HUE_CONVERGE
     if (ColorXfmEnabled()) {
         Vector4 hueParams(mHueTarget * (1.0f / 360.0f) + 0.5f, mHueFocus, mBlendAmount, mBrightnessPower);
         TheShaderMgr.SetPConstant(kPS_HueConverge, hueParams);
         TheShaderMgr.unk2a = (0.0f < mBlendAmount);
     }
+#endif
 }
 
 void NgPostProc::CheckRefract() {

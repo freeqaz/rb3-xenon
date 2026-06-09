@@ -294,8 +294,19 @@ protected:
      * color". Ranges from 0 to 2. */
     float mVignetteIntensity; // 0x218
 
+    // RB3-2010 retail: the hue-converge / blend / brightness post-proc effect
+    // was ADDED in the newer DC3-2012 engine; rb3-Wii's RndPostProc ends at
+    // mVignetteIntensity (no mHueTarget/mHueFocus/mBlendAmount/mBrightnessPower),
+    // and the retail asm confirms it: NgPostProc's own members (mRandomSeed1 at
+    // target 0x20c, unk234/unk238) sit exactly 16 bytes (4 words = these 4
+    // floats) lower than our DC3-derived layout, while every RndPostProc member
+    // below the tail matches byte-for-byte. So these 4 members are DC3 additions
+    // RB3 lacks — gate them out for RB3 to shrink RndPostProc by 0x10.
+    // (force-multiplier: NgPostProc C=-16; PostProc_NG.cpp Select/CheckRefract.)
+#ifdef RB3_HAS_HUE_CONVERGE
     float mHueTarget; // 0x21c
     float mHueFocus; // 0x220
     float mBlendAmount; // 0x224
     float mBrightnessPower; // 0x228
+#endif
 };
