@@ -70,7 +70,7 @@ void RndTexRenderer::SetFrame(float frame, float blend) {
 }
 
 void RndTexRenderer::Save(BinStream &bs) {
-    bs << 13; // Major revision 13. No alternative revision.
+    bs << 11; // Retail RB3 major revision 11 (DC3's rev 13 adds environ/clear).
     Hmx::Object::Save(bs);
     RndAnimatable::Save(bs);
     RndDrawable::Save(bs);
@@ -87,9 +87,6 @@ void RndTexRenderer::Save(BinStream &bs) {
     bs << mForceMips;
     bs << mMirrorCam;
     bs << mNoPoll;
-    bs << mEnviron;
-    bs << mClearBuffer;
-    bs << mClearColor;
 }
 
 BEGIN_HANDLERS(RndTexRenderer)
@@ -119,7 +116,6 @@ BEGIN_COPYS(RndTexRenderer)
         COPY_MEMBER(mForceMips)
         COPY_MEMBER(mMirrorCam)
         COPY_MEMBER(mNoPoll)
-        COPY_MEMBER(mEnviron)
         InitTexture();
         mDirty = true;
     END_COPYING_MEMBERS
@@ -138,10 +134,6 @@ BEGIN_PROPSYNCS(RndTexRenderer)
     SYNC_PROP(prime_draw, mPrimeDraw)
     SYNC_PROP_MODIFY(force_mips, mForceMips, InitTexture())
     SYNC_PROP_MODIFY(mirror_cam, mMirrorCam, mDirty = true)
-    SYNC_PROP_MODIFY(environ, mEnviron, mDirty = true)
-    SYNC_PROP(clear_buffer, mClearBuffer)
-    SYNC_PROP(clear_color, mClearColor)
-    SYNC_PROP(clear_alpha, mClearColor.alpha)
     SYNC_SUPERCLASS(RndAnimatable)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndPollable)
@@ -168,11 +160,11 @@ void RndTexRenderer::ListPollChildren(std::list<RndPollable *> &list) const {
     }
 }
 
-INIT_REVS(13, 0)
+INIT_REVS(11, 0)
 
 BEGIN_LOADS(RndTexRenderer)
     LOAD_REVS(bs)
-    ASSERT_REVS(13, 0)
+    ASSERT_REVS(11, 0)
     LOAD_SUPERCLASS(Hmx::Object)
     if (2 < d.rev) {
         LOAD_SUPERCLASS(RndAnimatable)
@@ -222,13 +214,6 @@ BEGIN_LOADS(RndTexRenderer)
     if (d.rev > 10) {
         d >> mNoPoll;
     }
-    if (d.rev > 11) {
-        bs >> mEnviron;
-    }
-    if (d.rev > 12) {
-        d >> mClearBuffer;
-        bs >> mClearColor;
-    }
     mDirty = true;
 END_LOADS
 
@@ -246,7 +231,6 @@ void RndTexRenderer::DrawToTexture() {
         }
         Transform tf98;
         float f33 = 0;
-        RndEnvironTracker tracker((RndEnviron *)mEnviron, nullptr);
         if (!mForce) {
             static Message pre_render_msg("pre_render");
             HandleType(pre_render_msg);
@@ -425,8 +409,6 @@ void RndTexRenderer::DrawToTexture() {
         }
         cam->SetTargetTex(mOutputTexture);
         cam->Select();
-        if (mClearBuffer)
-            TheRnd.Clear(1, mClearColor);
         int cap = (mFirstDraw && mPrimeDraw) ? 2 : 1;
         if (cap > 0) {
             int j = cap;
@@ -466,7 +448,6 @@ void RndTexRenderer::DrawShowing() {
 }
 
 RndTexRenderer::RndTexRenderer()
-    : mImpostorHeight(0), mDirty(1), mForce(0), mDrawPreClear(1), mDrawWorldOnly(0),
-      mDrawResponsible(1), mNoPoll(0), mOutputTexture(this), mDrawable(this),
-      mCamera(this), mEnviron(this), mFirstDraw(1), mPrimeDraw(0), mForceMips(0),
-      mMirrorCam(this), mClearBuffer(0), mClearColor(0, 0, 0) {}
+    : mDirty(1), mForce(0), mDrawPreClear(1), mDrawWorldOnly(0), mDrawResponsible(1),
+      mNoPoll(0), mPrimeDraw(0), mFirstDraw(1), mForceMips(0), mImpostorHeight(0),
+      mOutputTexture(this), mDrawable(this), mCamera(this), mMirrorCam(this) {}

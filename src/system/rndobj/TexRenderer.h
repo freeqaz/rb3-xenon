@@ -55,43 +55,45 @@ protected:
 
     DataNode OnGetRenderTextures(DataArray *);
 
-    bool mDirty; // 0x58; -0x8C
+    // Retail RB3 is RndTexRenderer revision 11: the layout below is reconstructed
+    // from the retail ctor/Save (fn_82430F68 inits 4 ObjPtrs @0x48/0x54/0x60/0x70
+    // with bools @0x6c/0x6d/0x6e between the 3rd and 4th; Save fn_82431948 writes
+    // `li 0xb`). DC3 is newer (rev 13: it adds mEnviron @rev12 and
+    // mClearBuffer/mClearColor @rev13, and reorders the bools after mEnviron) —
+    // those three members do NOT exist in retail RB3, so they are removed here and
+    // the bools restored to their rev-11 position right after mCamera.
+    bool mDirty; // 0x3c
     /** "Force rendering every frame" */
-    bool mForce; // 0x59 / -0x8B
+    bool mForce; // 0x3d
     /** "Renders the texture before the rest of the scene is rendered.
         Useful for rendering large textures" */
-    bool mDrawPreClear; // 0x5A / -0x8A
+    bool mDrawPreClear; // 0x3e
     /** "Renders the texture only on 'world' frames,
        while skipping rendering on post processing frames" */
-    bool mDrawWorldOnly; // 0x5B / -0x89
+    bool mDrawWorldOnly; // 0x3f
     /** "If true, exclusively draws the draw,
         if false the scene will draw it too, use with caution!" */
-    bool mDrawResponsible; // 0x5C / -0x88
+    bool mDrawResponsible; // 0x40
     /** "If [draw] will not get enter, exit, or poll automatically,
         it will be up to script hooks to do any of that" */
-    bool mNoPoll; // 0x5D / -0x87
-    bool unk_0x5E, unk_0x5F; // 0x5E/5F; -0x86/85
+    bool mNoPoll; // 0x41
     /** "Height for imposter rendering with current camera" */
-    float mImpostorHeight; // 0x60; -0x84
+    float mImpostorHeight; // 0x44
     /** "Texture to write to" */
-    ObjPtr<RndTex> mOutputTexture; // 0x64; -0x80
+    ObjPtr<RndTex> mOutputTexture; // 0x48
     /** "Draw Object to render to texture" */
-    ObjPtr<RndDrawable> mDrawable; // 0x78; -0x6C
+    ObjPtr<RndDrawable> mDrawable; // 0x54
     /** "Camera to use, if you want specific one,
         defaults to proxy cam, if none and draw is proxy" */
-    ObjPtr<RndCam> mCamera; // 0x8C; -0x58
-    /** "Environment to set before rendering to texture" */
-    ObjPtr<RndEnviron> mEnviron; // 0xA0; -0x44
+    ObjPtr<RndCam> mCamera; // 0x60
     /** "Check this if rendering multiple characters to a texture.
         Will draw 2x if checked." */
-    bool mPrimeDraw; // 0xB4; -0x30
-    bool mFirstDraw; // 0xB5; -0x2F
+    bool mPrimeDraw; // 0x6c
+    bool mFirstDraw; // 0x6d
     /** "Generate mip maps for the texture." */
-    bool mForceMips; // 0xB6; -0x2E
+    bool mForceMips; // 0x6e
     /** "We will mirror this cam about whatever mesh is associated
         with our output texture to automatically position
         the render-2-tex cam for mirroring" */
-    ObjPtr<RndCam> mMirrorCam; // 0xB8; -0x2C
-    bool mClearBuffer; // 0xCC; -0x18
-    Hmx::Color mClearColor; // 0xD0; -0x14
+    ObjPtr<RndCam> mMirrorCam; // 0x70
 };
