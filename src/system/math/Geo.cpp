@@ -976,20 +976,16 @@ void BSPFace::Set(const Vector3 &p1, const Vector3 &p2, const Vector3 &p3) {
 void BSPFace::Update() {
     MILO_ASSERT(p.points.size() > 2, 0x6c2);
 
-    const Vector2 *anchor = p.points.begin();
-    const Vector2 *v1 = anchor + 1;
-    const Vector2 *v2 = anchor + 2;
+    const Vector2 *curr = p.points.begin();
+    const Vector2 *anchor = curr++;
+    const Vector2 *prev = curr++;
     area = 0.0f;
-    if (v2 != p.points.end()) {
-        const Vector2 *nextPt;
-        do {
-            nextPt = v2 + 1;
-            area += (v1->y * anchor->x - v1->x * anchor->y +
-                     v2->x * anchor->y - v2->y * anchor->x +
-                     v2->y * v1->x - v2->x * v1->y) * 0.5f;
-            v1 = v2;
-            v2 = nextPt;
-        } while (nextPt != p.points.end());
+    while (curr != p.points.end()) {
+        area += ((anchor->x * prev->y - anchor->y * prev->x) +
+                 (prev->x * curr->y - prev->y * curr->x) +
+                 (curr->x * anchor->y - curr->y * anchor->x)) * 0.5f;
+        prev = curr;
+        curr++;
     }
 
     planes.clear();
@@ -1008,15 +1004,16 @@ void BSPFace::Update() {
         Vector3 curPt(it->x, it->y, 0.0f);
         Multiply(curPt, t, curPt);
 
-        float dx = curPt.x - prevPt.x;
-        float dy = curPt.y - prevPt.y;
-        float dz = curPt.z - prevPt.z;
+        Vector3 d;
+        d.x = curPt.x - prevPt.x;
+        d.y = curPt.y - prevPt.y;
+        d.z = curPt.z - prevPt.z;
 
-        if (dx != 0.0f || dy != 0.0f || dz != 0.0f) {
+        if (d.x != 0.0f || d.y != 0.0f || d.z != 0.0f) {
             Vector3 normal;
-            normal.x = t.m.z.z * dy - t.m.z.y * dz;
-            normal.y = t.m.z.x * dz - t.m.z.z * dx;
-            normal.z = t.m.z.y * dx - t.m.z.x * dy;
+            normal.z = t.m.z.y * d.x - t.m.z.x * d.y;
+            normal.x = t.m.z.z * d.y - t.m.z.y * d.z;
+            normal.y = t.m.z.x * d.z - t.m.z.z * d.x;
             Normalize(normal, normal);
 
             Plane edgePlane;
