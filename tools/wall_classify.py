@@ -14,15 +14,20 @@ Wall classes (from playbook §3):
   NO_ORACLE_LAYOUT  — wildly different offset + inverted constant (3g); DEFER_DEEP
   SIZE_DIVERGENCE   — li r3, 0xNNN feeding operator new (3h); DEFER_DEEP
   FUNCLET_PAIRING   — r31 derived from r12 (funclet frame), offset diff is frame-slot noise (3i); DEFER_DEEP
-  MEMBER_DELTA      — clean uniform this-relative offset delta; MEMBER_DELTA_CANDIDATE
+                       ALSO: a funclet whose differing diff includes a DIVERGENT bl callee (dtk paired
+                       two structurally different funclets — mdgrind MISROUTE 1); DEFER_DEEP
+  VTABLE_DIVERGENCE — differing lwz slot off a vtable ptr (base loaded from 0x0) feeding mtctr/bctrl
+                       (DC3 added/removed virtual slots — mdgrind MISROUTE 3); DEFER_DEEP
+  MEMBER_DELTA      — clean UNIFORM SAME-SIGN this-relative offset delta; MEMBER_DELTA_CANDIDATE
   UNKNOWN           — unclassified residue; needs human/agent
 
 Routes:
-  PERMUTE               — FPR_SCHED; hand off to /permute skill
-  DEFER_VBASE           — VBASE_WALL; virtual-base layout artifact, multi-TU
+  PERMUTE               — FPR_SCHED, or an offset-swap / regswap pair (mdgrind MISROUTE 2); hand off to /permute
+  DEFER_VBASE           — VBASE_WALL; virtual-base layout artifact, multi-TU. Also a funclet-recovered
+                          `this` that is vbase-adjusted (subi rX,rX,<large imm>) before member access (1d).
   AT_LIMIT              — BOOL_NEG or SIGNEDNESS; no known fix
-  DEFER_DEEP            — UNVERIFIABLE or NO_ORACLE_LAYOUT or SIZE_DIVERGENCE or FUNCLET_PAIRING
-  MEMBER_DELTA_CANDIDATE — clean member offset delta; one-line header fix
+  DEFER_DEEP            — UNVERIFIABLE / NO_ORACLE_LAYOUT / SIZE_DIVERGENCE / FUNCLET_PAIRING / VTABLE_DIVERGENCE
+  MEMBER_DELTA_CANDIDATE — clean UNIFORM SAME-SIGN member offset delta; one-line header fix
   INLINE_POLICY         — bl vs inlined body
   UNKNOWN               — unclassified
 
@@ -297,10 +302,18 @@ def get_idb() -> InheritanceDB:
 # ── Symbol demangling helpers ─────────────────────────────────────────────────
 
 CLASS_RE = re.compile(r'^\?[~A-Za-z0-9_]+@([A-Za-z0-9_]+)@')
+# MSVC special member names begin with ?? then a code: ??0 ctor, ??1 dtor,
+# ??_G vector deleting dtor, ??_D scalar deleting dtor (alias), ??_E vector dtor,
+# ??4 operator=, etc.  The class name follows the special-name code.
+SPECIAL_CLASS_RE = re.compile(r'^\?\?(?:_[A-Z]|[0-9])([A-Za-z0-9_]+)@')
+
 
 def demangle_class(sym: str, unit: str = '') -> str:
     """Extract class name from MSVC mangled symbol."""
     m = CLASS_RE.match(sym)
+    if m:
+        return m.group(1)
+    m = SPECIAL_CLASS_RE.match(sym)
     if m:
         return m.group(1)
     # Free function — use unit basename
@@ -468,11 +481,13 @@ def _detect_vbase(insns: List[dict], unit: str, sym: str) -> Tuple[bool, List[st
 
     # Determine the class of this symbol (empty = free function)
     cls = demangle_class(sym, unit)
-    is_free_fn = not sym.startswith('?') or '@' not in sym[1:]
-    # More precise: free functions don't have a class name between @ delimiters
-    # ?Foo@Bar@@... → class=Bar; ?Foo@@... → free function
-    free_fn_re = re.compile(r'^\?[^@]+@@')  # ?name@@ = free (no class between @@)
-    is_free_fn = bool(free_fn_re.match(sym))
+    # Free functions don't have a class name between @ delimiters:
+    #   ?Foo@Bar@@...  → class=Bar (method)
+    #   ?Foo@@...      → free function (no class between @@)
+    # MSVC special members (??0 ctor, ??1 dtor, ??_G vector dtor, ??4 op=, …) ARE
+    # class methods even though they start with ??; SPECIAL_CLASS_RE extracts the class.
+    free_fn_re = re.compile(r'^\?[^@?]+@@')  # ?name@@ = free; exclude ?? special names
+    is_free_fn = bool(free_fn_re.match(sym)) and not SPECIAL_CLASS_RE.match(sym)
 
     # Check COFF symbols in the compiled base .obj, filtered by class name
     # Skip COFF check for free functions (they won't have ??_8<cls>@@ anyway)
@@ -521,19 +536,37 @@ def _detect_vbase(insns: List[dict], unit: str, sym: str) -> Tuple[bool, List[st
                         if len(evidence) < 6:
                             evidence.append(f'vtable-slot lwz {ta} vs {ba} delta={delta:+d}')
 
-    # Look for subi r29/r28, r3, N (base-subobject adjustor)
+    # Look for subi r29/r28/r31, r3, N (base-subobject / vbase adjustor).
+    # The DECISIVE signal for vector-deleting-dtor vbase walls (the mdgrind
+    # ??_G<Class> family) is a `subi rX, r3, <large imm>` whose IMMEDIATE DIFFERS
+    # between target and base — that diverging immediate IS the compiler-computed
+    # vbase/secondary-base offset, which a member edit cannot fix.
     for ins in insns:
         t = ins.get('target') or {}
+        b = ins.get('base') or {}
         top = t.get('opcode', '')
+        bop = b.get('opcode', '')
         ta = (t.get('args') or '').strip()
-        if top in ('subi', 'addi') and ta:
+        ba = (b.get('args') or '').strip()
+        if top in ('subi', 'addi') and ta and not is_free_fn:
             tt = _tokens(ta)
+            bt = _tokens(ba)
             if len(tt) >= 2 and tt[1] == 'r3':
-                # This is a base-subobject adjust — strong vbase signal
-                # Only if it's a class method (not a free function parameter pass)
-                if not is_free_fn:
-                    evidence.append(f'adjustor: {top} {ta} (base-subobject adjust)')
-                    has_vb_coff = True  # treat adjustor as strong signal
+                # Diverging large immediate off this = vbase adjustor (strong signal).
+                if (top == bop and len(tt) >= 3 and len(bt) >= 3 and bt[1] == 'r3'):
+                    ti = _toi(tt[2])
+                    bi = _toi(bt[2])
+                    if (ti is not None and bi is not None and ti != bi
+                            and min(abs(ti), abs(bi)) >= _VBASE_ADJUST_MIN_IMM):
+                        evidence.append(
+                            f'vbase adjustor: {top} {ta} vs {ba} '
+                            f'(diverging secondary-base offset)')
+                        has_vb_coff = True
+                        break
+                # Otherwise a plain subobject adjust is a weaker hint (kept for the
+                # legacy slot-pattern path); only escalate when corroborated below.
+                evidence.append(f'adjustor: {top} {ta} (base-subobject adjust)')
+                has_vb_coff = True  # treat adjustor as strong signal
                 break
 
     # Verdict: VBASE if COFF evidence OR header evidence, or strong slot-delta pattern
@@ -853,6 +886,317 @@ def _detect_funclet_pairing(all_insns: List[dict], diff_insns: List[dict],
     return True, evidence
 
 
+# Branch opcodes whose operand is a callee symbol (call / tail-call).
+_CALL_OPS = frozenset({'bl', 'b', 'bla', 'ba'})
+
+
+def _detect_divergent_call(diff_insns: List[dict],
+                           funclet_mode: bool = False) -> Tuple[bool, List[str]]:
+    """Detect a diverging CALL TARGET: a bl/b whose callee SYMBOL differs between
+    target and base (objdiff "Function Call Diff" — Target only / Base only).
+
+    This is the decisive signal that dtk address-paired two STRUCTURALLY DIFFERENT
+    functions (mdgrind MISROUTE 1): the bodies call different methods, so any
+    member-offset delta extracted from the pairing is meaningless.
+
+    We only count it as a divergence when BOTH sides emit a call opcode (so the
+    pairing is body-vs-body, not an inline-policy flip where one side has the bl
+    and the other inlines it — that is _detect_inline_policy's job).
+
+    Default (non-funclet) mode requires BOTH callee symbols to be NAMED (non-anon:
+    not fn_/lbl_) — a thunk/anon-ns naming difference is NOT a structural divergence.
+
+    Funclet mode (the size-44 mis-paired cleanup funclets) is more lenient: if AT
+    LEAST ONE side is a NAMED symbol and the two callees DIFFER (the other side may
+    be an unresolved `fn_`/`lbl_`), that is still a structural divergence — a genuine
+    member-delta funclet (CameraShot) keeps IDENTICAL callees on both sides, so a
+    differing named-vs-anon pair only happens when the two funclets call different
+    destructors and dtk merely failed to resolve one side's name.
+
+    Returns (has_divergent_call, evidence).
+    """
+    evidence: List[str] = []
+    found = False
+
+    def _callee(args: str) -> str:
+        """Extract the callee symbol from a bl/b args string ('?Foo@Bar@@...')."""
+        toks = _tokens(args)
+        return toks[0] if toks else ''
+
+    def _is_named(callee: str) -> bool:
+        if not callee:
+            return False
+        if callee.startswith(('fn_', 'lbl_')):
+            return False
+        # MSVC mangled name or a plain C symbol — treat as named.
+        return callee.startswith('?') or callee[0].isalpha() or callee.startswith('_')
+
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '').strip()
+        bop = b.get('opcode', '').strip()
+        if top in _CALL_OPS and bop in _CALL_OPS:
+            tc = _callee((t.get('args') or '').strip())
+            bc = _callee((b.get('args') or '').strip())
+            if not (tc and bc and tc != bc):
+                continue
+            if funclet_mode:
+                # at least one side named, callees differ ⇒ structural divergence
+                if _is_named(tc) or _is_named(bc):
+                    evidence.append(f'divergent call (funclet): {top} {tc} vs {bop} {bc}')
+                    found = True
+            else:
+                if _is_named(tc) and _is_named(bc):
+                    evidence.append(f'divergent call: {top} {tc} vs {bop} {bc}')
+                    found = True
+
+    return found, evidence[:4]
+
+
+def _detect_offset_swap(diff_insns: List[dict]) -> Tuple[bool, List[str]]:
+    """Detect a matched (+N, -N) offset-swap pair or a register swap — both are
+    PERMUTE-class (instruction-scheduling / regalloc), NOT a member delta.
+
+    mdgrind MISROUTE 2: a real member delta is a UNIFORM SAME-SIGN this-relative
+    shift across all differing accesses.  An offset SWAP is two (or more) accesses
+    whose offset deltas have EQUAL MAGNITUDE but OPPOSITE SIGN (e.g. -8 and +8, or
+    two loads that traded their displacements) — the net same-sign shift is zero,
+    so it is a reorder, not a layout difference.
+
+    Signature A (offset swap): among same-opcode mem/addi diffs, the set of deltas
+      (target_off - base_off) contains both +N and -N for the same magnitude N,
+      with no dominant uniform sign.
+    Signature B (regswap): same-opcode diff where the only difference is the
+      register operands being swapped (e.g. `fmuls f0,f1,f2` vs `fmuls f0,f2,f1`).
+
+    Returns (is_swap, evidence).
+    """
+    evidence: List[str] = []
+
+    # ── Signature A: mirrored offset deltas ────────────────────────────────────
+    deltas: List[int] = []
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '').strip()
+        bop = b.get('opcode', '').strip()
+        if top != bop:
+            continue
+        ta = (t.get('args') or '').strip()
+        ba = (b.get('args') or '').strip()
+        if top in MEM_LOADS_STORES:
+            tt = _tokens(ta)
+            bt = _tokens(ba)
+            if len(tt) >= 2 and len(bt) >= 2:
+                to = _toi(tt[1])
+                bo = _toi(bt[1])
+                if to is not None and bo is not None and to != bo:
+                    deltas.append(to - bo)
+        elif top in ('addi', 'subi', 'addic'):
+            tt = _tokens(ta)
+            bt = _tokens(ba)
+            if len(tt) >= 3 and len(bt) >= 3:
+                ti = _toi(tt[2])
+                bi = _toi(bt[2])
+                if ti is not None and bi is not None and ti != bi:
+                    deltas.append(ti - bi)
+
+    if len(deltas) >= 2:
+        mags = Counter(abs(d) for d in deltas)
+        for mag, _cnt in mags.items():
+            if mag == 0:
+                continue
+            has_pos = any(d == mag for d in deltas)
+            has_neg = any(d == -mag for d in deltas)
+            if has_pos and has_neg:
+                evidence.append(
+                    f'offset-swap: mirrored +/-0x{mag:x} deltas (net same-sign shift = 0)')
+                return True, evidence[:4]
+
+    # ── Signature B: register swap on a same-opcode diff ────────────────────────
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '').strip()
+        bop = b.get('opcode', '').strip()
+        if not top or top != bop:
+            continue
+        tt = _tokens((t.get('args') or '').strip())
+        bt = _tokens((b.get('args') or '').strip())
+        if len(tt) >= 2 and len(tt) == len(bt) and tt != bt:
+            # Same multiset of operands, different order ⇒ a swap (no immediates moved)
+            if sorted(tt) == sorted(bt) and any(x != y for x, y in zip(tt, bt)):
+                # Only count register operands (no numeric immediate moved)
+                if all(_toi(x) is None for x in tt):
+                    evidence.append(f'regswap: {top} {", ".join(tt)} vs {", ".join(bt)}')
+                    return True, evidence[:4]
+
+    return False, []
+
+
+# A "large" subtract immediate that signals a virtual-base / secondary-base adjust
+# (e.g. subi r29, r3, 0x1dc).  Member-field offsets are small; vbase adjustors are
+# large class-relative deltas.
+_VBASE_ADJUST_MIN_IMM = 0x80
+
+
+def _detect_vbase_funclet_adjust(all_insns: List[dict], diff_insns: List[dict],
+                                 funclet_reg: Optional[str]) -> Tuple[bool, List[str]]:
+    """1d (CameraShot Ghidra finding): a funclet-recovered `this` that is then
+    VBASE-ADJUSTED (`subi rX, rX, <large imm>`) before the differing member access
+    is a VBASE wall, NOT a member delta.
+
+    The frame-recovered object pointer (loaded from the funclet frame slot) does not
+    clear gate-zero on its own — the indirect load alone is what made the CameraShot
+    family look like a real member delta.  But when that pointer is run through a
+    large secondary-base/vbase adjustor (`subi r11, r11, 0x1a0`) before the member
+    addi/load, the differing offset is on a vbase-adjusted subobject pointer, whose
+    layout the compiler determines — not an addable data member.
+
+    Returns (is_vbase_adjust, evidence).
+    """
+    if funclet_reg is None:
+        return False, []
+
+    # Registers carrying a pointer LOADED FROM the funclet frame slot.
+    loaded_from_funclet: Set[str] = set()
+    for ins in all_insns:
+        t = ins.get('target') or {}
+        top = t.get('opcode', '').strip()
+        tt = _tokens((t.get('args') or '').strip())
+        if top == 'lwz' and len(tt) >= 3 and tt[2] == funclet_reg:
+            loaded_from_funclet.add(tt[0])
+
+    # Registers that have been vbase-adjusted via a large subi off a frame-loaded ptr.
+    vbase_adjusted: Set[str] = set()
+    for ins in all_insns:
+        t = ins.get('target') or {}
+        top = t.get('opcode', '').strip()
+        tt = _tokens((t.get('args') or '').strip())
+        if top in ('subi', 'addi') and len(tt) >= 3:
+            src = tt[1]
+            imm = _toi(tt[2])
+            if (src in loaded_from_funclet and imm is not None
+                    and abs(imm) >= _VBASE_ADJUST_MIN_IMM):
+                vbase_adjusted.add(tt[0])
+
+    if not vbase_adjusted:
+        return False, []
+
+    # Does any DIFFERING access land on a vbase-adjusted register?
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '').strip()
+        bop = b.get('opcode', '').strip()
+        if top != bop:
+            continue
+        tt = _tokens((t.get('args') or '').strip())
+        if top in MEM_LOADS_STORES and len(tt) >= 3 and tt[2] in vbase_adjusted:
+            return True, [
+                f'funclet-recovered this vbase-adjusted (subi {tt[2]}, ..., >=0x{_VBASE_ADJUST_MIN_IMM:x}) '
+                f'before member access {top} {", ".join(tt)}',
+                'vbase/secondary-base subobject layout is compiler-determined, not member-addable',
+            ]
+        if top in ('addi', 'subi') and len(tt) >= 3 and tt[1] in vbase_adjusted:
+            return True, [
+                f'funclet-recovered this vbase-adjusted before member addi {top} {", ".join(tt)}',
+                'vbase/secondary-base subobject layout is compiler-determined, not member-addable',
+            ]
+
+    return False, []
+
+
+def _detect_vtable_divergence(all_insns: List[dict],
+                              diff_insns: List[dict]) -> Tuple[bool, List[str]]:
+    """1c (mdgrind MISROUTE 3): a differing load whose base register was loaded from
+    OFFSET 0x0 (the vtable pointer) AND immediately feeds mtctr/bctrl is a VTABLE
+    SLOT divergence (DC3 added/removed virtual slots), NOT a data-member delta.
+
+    Signature:
+        lwz rV, 0x0, rObj        ; load vtable ptr (offset 0)
+        lwz rV, 0xNN, rV         ; <-- DIFFERS (vtable slot index, e.g. +0x20 = 8 slots)
+        mtctr rV
+        bctrl
+    The delta is often uniform (DC3 inserted N virtual functions before this slot).
+    Fixable only via a vtable-layout reconstruction pass, so route DEFER_DEEP.
+
+    Returns (is_vtable_divergence, evidence).
+    """
+    # Index the full stream so we can look at the surrounding instructions.
+    n = len(all_insns)
+
+    def _reg_loaded_from_zero(idx: int, reg: str) -> bool:
+        """True if `reg` was last written by `lwz reg, 0x0, rX` (a vtable-ptr load).
+
+        Back-scan from idx-1 to the MOST RECENT write of `reg`; if that write is a
+        load from offset 0x0, `reg` holds a vtable pointer.  This handles the common
+        case where the vtable ptr is loaded into a callee-save reg (e.g. r9) many
+        instructions before the slot load.
+        """
+        for j in range(idx - 1, -1, -1):
+            x = all_insns[j].get('target') or {}
+            op = x.get('opcode', '').strip()
+            xt = _tokens((x.get('args') or '').strip())
+            if not xt:
+                continue
+            # Does this instruction WRITE reg? (dest is first operand for our ops)
+            if xt[0] == reg and op in ('lwz', 'lbz', 'lhz', 'addi', 'subi', 'mr',
+                                       'li', 'lis', 'add', 'or', 'lwzx'):
+                if op == 'lwz' and len(xt) >= 3 and _toi(xt[1]) == 0:
+                    return True
+                # reg was last written by something other than a 0x0 load
+                return False
+        return False
+
+    def _feeds_ctr(idx: int, reg: str) -> bool:
+        """True if `reg` feeds mtctr;bctrl within a few insns after idx."""
+        for j in range(idx + 1, min(n, idx + 6)):
+            x = all_insns[j].get('target') or {}
+            op = x.get('opcode', '').strip()
+            if op == 'mtctr':
+                xt = _tokens((x.get('args') or '').strip())
+                if xt and xt[0] == reg:
+                    return True
+            if op in ('bctrl', 'bctr'):
+                return True
+        return False
+
+    evidence: List[str] = []
+    # Map diff instruction objects to their index in all_insns (by identity).
+    pos = {id(ins): i for i, ins in enumerate(all_insns)}
+
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '').strip()
+        bop = b.get('opcode', '').strip()
+        if top != 'lwz' or bop != 'lwz':
+            continue
+        tt = _tokens((t.get('args') or '').strip())
+        bt = _tokens((b.get('args') or '').strip())
+        if len(tt) < 3 or len(bt) < 3:
+            continue
+        dst, base_r = tt[0], tt[2]
+        to = _toi(tt[1])
+        bo = _toi(bt[1])
+        if to is None or bo is None or to == bo:
+            continue
+        idx = pos.get(id(ins))
+        if idx is None:
+            continue
+        # base register (rV) loaded from offset 0x0 just before, and result feeds ctr
+        if _reg_loaded_from_zero(idx, base_r) and _feeds_ctr(idx, dst):
+            evidence.append(
+                f'vtable-slot lwz {", ".join(tt)} vs {", ".join(bt)} '
+                f'(delta={to - bo:+d}); base {base_r} from 0x0, feeds mtctr/bctrl')
+
+    if evidence:
+        return True, evidence[:4]
+    return False, []
+
+
 def _detect_member_delta(insns: List[dict], unit: str, sym: str) -> Tuple[bool, List[str], int, int]:
     """MEMBER_DELTA: clean uniform this-relative offset delta.
     Returns (is_member_delta, evidence, dominant_delta, threshold).
@@ -963,6 +1307,13 @@ def _detect_member_delta(insns: List[dict], unit: str, sym: str) -> Tuple[bool, 
     if dominant_count < 1 or abs(dominant_delta) == 0:
         return False, [], 0, 0
 
+    # Reject MIRRORED (+N, -N) delta sets — that is an OFFSET-SWAP (two accesses that
+    # traded displacements), a PERMUTE-class reorder, NOT a uniform member shift.
+    # A real member delta is UNIFORM SAME-SIGN (mdgrind MISROUTE 2).
+    for d in deltas:
+        if d != 0 and -d in c and d != -d:
+            return False, [], 0, 0
+
     # Require reasonable consistency (≥50% or all single)
     if consistency < 0.5 and len(deltas) > 2:
         return False, [], 0, 0
@@ -1071,16 +1422,68 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
         classes.append('SIZE_DIVERGENCE')
         all_evidence['SIZE_DIVERGENCE'] = size_ev
 
+    # Funclet prologue register (used by the funclet gates below).  A funclet sets up
+    # a frame register from r12 (subi rX, r12, imm) — the offsets keyed off it (or off
+    # a vbase-adjusted derivative of it) are NOT plain member deltas.
+    funclet_reg = _get_funclet_frame_reg(all_insns_full)
+
+    # 1a (mdgrind MISROUTE 1) — DIVERGENT call target.  If this is a funclet AND the
+    # diff contains a bl/b whose NAMED callee differs between sides, dtk address-paired
+    # two structurally different funclets ⇒ FUNCLET_PAIRING regardless of direct-vs-
+    # indirect access.  Genuine member-delta funclets (the CameraShot family) keep
+    # IDENTICAL bl callees, so this gate won't steal them.
+    has_divergent_call, divcall_ev = _detect_divergent_call(
+        diff_insns, funclet_mode=(funclet_reg is not None))
+
     # 3i FUNCLET_PAIRING — check BEFORE MEMBER_DELTA (highest priority guard)
     # Uses all_insns_full for prologue detection (diff_insns don't show equal instructions).
     is_funclet, funclet_ev = _detect_funclet_pairing(all_insns_full, diff_insns, unit, sym)
+    if funclet_reg is not None and has_divergent_call and not is_funclet:
+        # Funclet with a divergent callee but indirect (looks-like-member) access:
+        # this is exactly the size-44 mis-paired-funclet bug.  Treat as FUNCLET_PAIRING.
+        is_funclet = True
+        funclet_ev = [
+            f'funclet prologue: subi {funclet_reg}, r12, <imm>',
+            'diff contains a DIVERGENT named bl callee ⇒ dtk paired two structurally '
+            'different funclets (mdgrind MISROUTE 1)',
+        ] + divcall_ev
     if is_funclet:
         classes.append('FUNCLET_PAIRING')
         all_evidence['FUNCLET_PAIRING'] = funclet_ev
 
+    # 1c (mdgrind MISROUTE 3) — VTABLE_DIVERGENCE: differing lwz slot off a vtable
+    # pointer (base loaded from offset 0x0) feeding mtctr/bctrl.  DC3 added/removed
+    # virtual slots.  Route DEFER_DEEP.  Check before MEMBER_DELTA so the uniform slot
+    # delta isn't mistaken for a data-member delta.
+    is_vtable_div, vtable_div_ev = _detect_vtable_divergence(all_insns_full, diff_insns)
+    if is_vtable_div:
+        classes.append('VTABLE_DIVERGENCE')
+        all_evidence['VTABLE_DIVERGENCE'] = vtable_div_ev
+
+    # 1d (CameraShot Ghidra finding) — VBASE adjust on a funclet-recovered `this`:
+    # a frame-loaded pointer run through a large subi (vbase/secondary-base adjustor)
+    # before the differing member access.  The indirect load alone does NOT clear
+    # gate-zero; the vbase-adjusted subobject layout is compiler-determined.  Route
+    # DEFER_VBASE.  Check before MEMBER_DELTA so these don't read as member deltas.
+    is_vbase_adj, vbase_adj_ev = _detect_vbase_funclet_adjust(
+        all_insns_full, diff_insns, funclet_reg)
+    if is_vbase_adj and 'VBASE_WALL' not in classes:
+        classes.append('VBASE_WALL')
+        all_evidence.setdefault('VBASE_WALL', vbase_adj_ev)
+
+    # 1b (mdgrind MISROUTE 2) — OFFSET_SWAP / regswap pair ⇒ PERMUTE, not member delta.
+    # A real member delta is a UNIFORM SAME-SIGN shift; a mirrored +/-N swap nets zero.
+    is_swap, swap_ev = _detect_offset_swap(diff_insns)
+    if is_swap and 'FPR_SCHED' not in classes:
+        classes.append('OFFSET_SWAP')
+        all_evidence['OFFSET_SWAP'] = swap_ev
+
     # MEMBER_DELTA (runs extra diff_fn call — skip if already wall-classified or funclet)
+    # Hard blockers that pre-empt MEMBER_DELTA: funclet pairing, vtable divergence,
+    # vbase adjust, and offset-swap (all routed elsewhere above).
+    _member_blockers = {'FUNCLET_PAIRING', 'VTABLE_DIVERGENCE', 'VBASE_WALL', 'OFFSET_SWAP'}
     is_member, member_ev, delta, threshold = (False, [], 0, 0)
-    if 'FUNCLET_PAIRING' not in classes:
+    if not (_member_blockers & set(classes)):
         is_member, member_ev, delta, threshold = _detect_member_delta(diff_insns, unit, sym)
         if is_member and 'VBASE_WALL' not in classes:
             classes.append('MEMBER_DELTA')
@@ -1098,13 +1501,16 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
     # funclet clusters (direct-r31 frame slot diffs look like struct offsets to the
     # fallback but are frame-slot index artifacts, not member deltas).
     # Condition: at least 1 struct-offset diff AND no hard blockers (VBASE/BOOL/etc.)
-    non_struct_classes = set(classes) - {'VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS',
-                                          'FPR_SCHED', 'SIZE_DIVERGENCE',
-                                          'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
-                                          'FUNCLET_PAIRING'}
+    # Hard blockers that must suppress the MEMBER_DELTA fallback (these are routed
+    # elsewhere; the fallback would otherwise re-tag them as member deltas).
+    _FALLBACK_BLOCKERS = {'VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS', 'FPR_SCHED',
+                          'SIZE_DIVERGENCE', 'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
+                          'FUNCLET_PAIRING', 'VTABLE_DIVERGENCE', 'OFFSET_SWAP'}
+    non_struct_classes = set(classes) - _FALLBACK_BLOCKERS
     already_has_member = 'MEMBER_DELTA' in classes
 
-    if not already_has_member and not is_member and 'FUNCLET_PAIRING' not in classes:
+    if (not already_has_member and not is_member
+            and not (_FALLBACK_BLOCKERS & set(classes))):
         # Check if all diff_insns are pure structural offset diffs (addi/mem w/ num delta)
         struct_count = 0
         total_diff = len(diff_insns)
@@ -1126,20 +1532,25 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
             elif top == bop and top in MEM_LOADS_STORES:
                 tt = _tokens(ta)
                 bt = _tokens(ba)
-                if len(tt) >= 2 and len(bt) >= 2:
+                # Same base register required — an offset delta is only a member delta
+                # when both sides dereference the SAME base (a `lwz r11,0x50,r1` vs
+                # `lwz r11,0x0,r3` is a different load entirely, not a +0x50 member).
+                if (len(tt) >= 3 and len(bt) >= 3 and tt[2] == bt[2]):
                     tv = _toi(tt[1])
                     bv = _toi(bt[1])
                     if tv is not None and bv is not None and tv != bv:
                         struct_count += 1
         # Allow mixed cases too: struct + anon/named-mismatch callee diffs
         # (the struct offset is still fixable; the callee naming is secondary)
-        has_hard_non_struct = any(
-            cls in classes for cls in ('VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS',
-                                        'FPR_SCHED', 'SIZE_DIVERGENCE',
-                                        'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
-                                        'FUNCLET_PAIRING')
-        )
-        if total_diff > 0 and struct_count >= 1 and not has_hard_non_struct:
+        has_hard_non_struct = bool(_FALLBACK_BLOCKERS & set(classes))
+        # Suppress the fallback if a FUNCLET diff carries a divergent named call —
+        # the struct-offset shift came from a mis-paired structurally different funclet.
+        # For NON-funclet functions, a divergent named call is usually ICF naming noise
+        # (e.g. _Destroy_Range@Cheat folded with @Merger): the uniform member-size
+        # delta is still the real signal, so do NOT suppress the fallback there.
+        funclet_divergent_call = (funclet_reg is not None) and has_divergent_call
+        if total_diff > 0 and struct_count >= 1 and not has_hard_non_struct \
+                and not funclet_divergent_call:
             # Has struct offsets — compute the uniform delta from the structural diffs
             offsets = []
             for ins in diff_insns:
@@ -1160,7 +1571,7 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
                 elif top == bop and top in MEM_LOADS_STORES:
                     tt = _tokens(ta)
                     bt = _tokens(ba)
-                    if len(tt) >= 2 and len(bt) >= 2:
+                    if len(tt) >= 3 and len(bt) >= 3 and tt[2] == bt[2]:
                         tv = _toi(tt[1])
                         bv = _toi(bt[1])
                         if tv is not None and bv is not None:
@@ -1185,28 +1596,34 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
                     threshold = fb_thresh
 
     # ── Route assignment ──────────────────────────────────────────────────────
-    # Priority: FUNCLET_PAIRING > VBASE > BOOL_NEG/SIGNEDNESS > FPR_SCHED
-    #           > INLINE_POLICY > MEMBER_DELTA > SIZE/NO_ORACLE/UNVERIFIABLE > UNKNOWN
+    # Priority: FUNCLET_PAIRING / VTABLE_DIVERGENCE > VBASE > OFFSET_SWAP
+    #           > BOOL_NEG/SIGNEDNESS > FPR_SCHED > INLINE_POLICY > MEMBER_DELTA
+    #           > SIZE/NO_ORACLE/UNVERIFIABLE > UNKNOWN
     route = 'UNKNOWN'
     confidence = 'medium'
 
-    # FUNCLET_PAIRING: highest priority — if the whole diff is a frame-slot artifact,
-    # no source edit can fix it.  Route to DEFER_DEEP (same as SIZE_DIVERGENCE / NO_ORACLE).
-    if 'FUNCLET_PAIRING' in classes:
+    # FUNCLET_PAIRING / VTABLE_DIVERGENCE: highest priority — if the whole diff is a
+    # frame-slot artifact (mis-paired funclet) or a DC3-added virtual slot, no source
+    # edit fixes it.  Route DEFER_DEEP (same as SIZE_DIVERGENCE / NO_ORACLE).
+    if 'FUNCLET_PAIRING' in classes or 'VTABLE_DIVERGENCE' in classes:
         route = 'DEFER_DEEP'
         confidence = 'high'
     else:
-        # VBASE routing: only hard-route to DEFER_VBASE if instruction diffs show
-        # vtable-slot deltas OR if the ONLY other class is nothing (pure VBASE).
+        # VBASE routing: hard-route to DEFER_VBASE if instruction diffs show vtable-slot
+        # deltas / a funclet vbase-adjust, OR if VBASE is the only/dominant class.
         # If VBASE was detected only from metadata (COFF/header) but another actionable
         # class is present in the diffs, let the other class route it.
         vbase_dominates = ('VBASE_WALL' in classes and
-                           (vbase_from_insn or
+                           (vbase_from_insn or is_vbase_adj or
                             set(classes) <= {'VBASE_WALL'} or
-                            set(classes) - {'VBASE_WALL'} <= {'MEMBER_DELTA'}))
+                            set(classes) - {'VBASE_WALL'} <= {'MEMBER_DELTA', 'OFFSET_SWAP'}))
 
         if vbase_dominates:
             route = 'DEFER_VBASE'
+            confidence = 'high'
+        elif 'OFFSET_SWAP' in classes and 'MEMBER_DELTA' not in classes:
+            # Mirrored +/-N offset swap or regswap = instruction-scheduling/regalloc.
+            route = 'PERMUTE'
             confidence = 'high'
         elif 'BOOL_NEG' in classes:
             route = 'AT_LIMIT'
@@ -1449,6 +1866,137 @@ def run_validation(proj: str = ROOT) -> None:
     return rows, correct
 
 
+# ── Validation against the mdgrind 48-fn ground-truth set ─────────────────────
+# Ground-truth verdicts from the 2026-06-09 MEMBER_DELTA_CANDIDATE grind wave
+# (~/tmp/mdgrind_abandoned.jsonl).  Maps each ground-truth wall_class to the coarse
+# route bucket the classifier should produce.  This is the regression suite for the
+# three mdgrind misroute corrections (funclet divergent-bl, offset-swap, vtable-slot)
+# plus the CameraShot vbase-adjust gate.
+
+_GT48_PATH = next((p for p in ('/tmp/mdgrind_abandoned.jsonl',
+                                os.path.expanduser('~/tmp/mdgrind_abandoned.jsonl'))
+                   if os.path.exists(p)), '/tmp/mdgrind_abandoned.jsonl')
+
+_GT48_TO_BUCKET = {
+    'VBASE_WALL': 'VBASE',
+    'FUNCLET_PAIRING': 'FUNCLET_PAIRING',
+    'VTABLE_DIVERGENCE_DC3': 'VTABLE_DIVERGENCE',
+    'VTABLE_WALL': 'VTABLE_DIVERGENCE',
+    'PERMUTE': 'PERMUTE',
+    'PERMUTE_PAIRING': 'PERMUTE',
+    'DC3_REV_MEMBER': 'DC3_REV_MEMBER',
+    'DEFER_LAYOUT': 'DEEP_OTHER',
+    'FIXED': 'MEMBER_DELTA',
+}
+
+
+def _route_bucket(res: dict) -> str:
+    classes = set(res['classes'])
+    route = res['route']
+    if route == 'DEFER_DEEP':
+        if 'FUNCLET_PAIRING' in classes:
+            return 'FUNCLET_PAIRING'
+        if 'VTABLE_DIVERGENCE' in classes:
+            return 'VTABLE_DIVERGENCE'
+        return 'DEEP_OTHER'
+    return {
+        'DEFER_VBASE': 'VBASE', 'PERMUTE': 'PERMUTE',
+        'MEMBER_DELTA_CANDIDATE': 'MEMBER_DELTA', 'AT_LIMIT': 'AT_LIMIT',
+        'INLINE_POLICY': 'INLINE_POLICY',
+    }.get(route, 'UNKNOWN')
+
+
+def run_validation48(proj: str = ROOT, gt_path: str = _GT48_PATH) -> None:
+    """Confusion matrix against the mdgrind 48-fn ground-truth set."""
+    if not os.path.exists(gt_path):
+        print(f"ERROR: ground-truth file not found: {gt_path}", file=sys.stderr)
+        sys.exit(1)
+
+    # Resolve truncated jsonl symbols ('...') against the report's full names.
+    unit_syms: Dict[str, List[str]] = {}
+    try:
+        rep = json.load(open(REPORT))
+        for u in rep.get('units', []):
+            unit_syms[u['name']] = [f['name'] for f in u.get('functions', [])]
+    except Exception:
+        pass
+
+    def _resolve(unit: str, sym: str) -> str:
+        if not sym.endswith('...'):
+            return sym
+        pre = sym[:-3]
+        for s in unit_syms.get(unit, []):
+            if s.startswith(pre):
+                return s
+        return sym
+
+    rows = [json.loads(l) for l in open(gt_path) if l.strip()]
+    confusion: Dict[str, Counter] = defaultdict(Counter)
+    misroutes = []
+    md_survival = []
+
+    print(f"\n=== mdgrind 48-fn validation ({len(rows)} entries) ===", file=sys.stderr)
+    for i, r in enumerate(rows):
+        unit, gt_class = r['unit'], r['wall_class']
+        gt = _GT48_TO_BUCKET.get(gt_class, 'UNKNOWN_GT')
+        sym = _resolve(unit, r['symbol'])
+        res = classify_fn(unit, sym, None, proj)
+        pred = _route_bucket(res)
+        is_clean = res['classes'] == ['CLEAN']
+        # FIXED entries whose fix landed on a later base read CLEAN here — acceptable.
+        if gt == 'MEMBER_DELTA' and is_clean:
+            pred = 'MEMBER_DELTA'
+        confusion[gt][pred] += 1
+        ok = (gt == pred)
+        if gt == 'DC3_REV_MEMBER':
+            ok = pred != 'MEMBER_DELTA'   # accept any non-member route
+        if gt == 'MEMBER_DELTA':
+            md_survival.append((sym, res['route'], is_clean, ok))
+        if not ok:
+            misroutes.append((gt, pred, res['route'], sym, unit))
+        print(f"  [{i+1}/{len(rows)}] {gt:<18} -> {pred:<18} {sym[:40]}", file=sys.stderr)
+
+    gt_order = ['FUNCLET_PAIRING', 'VBASE', 'VTABLE_DIVERGENCE', 'PERMUTE',
+                'MEMBER_DELTA', 'DC3_REV_MEMBER', 'DEEP_OTHER']
+    pred_order = ['FUNCLET_PAIRING', 'VBASE', 'VTABLE_DIVERGENCE', 'PERMUTE',
+                  'MEMBER_DELTA', 'DEEP_OTHER', 'AT_LIMIT', 'INLINE_POLICY', 'UNKNOWN']
+    print("\n=== CONFUSION MATRIX (ground-truth rows x predicted cols) ===\n")
+    hdr = "GT \\ PRED".ljust(20) + "".join(p[:6].ljust(7) for p in pred_order) + " | TOT"
+    print(hdr)
+    print('-' * len(hdr))
+    for g in gt_order:
+        if not confusion.get(g):
+            continue
+        line = g.ljust(20)
+        for p in pred_order:
+            n = confusion[g].get(p, 0)
+            line += (str(n) if n else '.').ljust(7)
+        print(line + f" | {sum(confusion[g].values())}")
+
+    print("\n=== Per-GT-bucket accuracy ===")
+    total_ok = total = 0
+    for g in gt_order:
+        c = confusion.get(g)
+        if not c:
+            continue
+        tot = sum(c.values())
+        ok = (tot - c.get('MEMBER_DELTA', 0)) if g == 'DC3_REV_MEMBER' else c.get(g, 0)
+        total_ok += ok
+        total += tot
+        print(f"  {g:<22} {ok}/{tot}")
+    print(f"\nOverall: {total_ok}/{total} = {total_ok/total*100:.1f}%")
+
+    print("\n=== CRITICAL: genuine MEMBER_DELTA must survive ===")
+    for sym, route, clean, ok in md_survival:
+        tag = ' (CLEAN/already-matched)' if clean else ''
+        print(f"  [{'OK' if ok else 'MISS'}] route={route}{tag}  {sym[:55]}")
+
+    if misroutes:
+        print("\n=== Remaining (non-critical) misroutes ===")
+        for gt, pred, route, sym, unit in misroutes:
+            print(f"  GT={gt:<18} PRED={pred:<16} route={route:<22} {sym[:45]}  [{unit}]")
+
+
 # ── Output formatting ──────────────────────────────────────────────────────────
 
 def print_summary(results: List[dict]) -> None:
@@ -1476,7 +2024,7 @@ def print_summary(results: List[dict]) -> None:
     print(f"Class breakdown (functions can have multiple):")
     for cls in ['VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS', 'FPR_SCHED', 'INLINE_POLICY',
                 'UNVERIFIABLE', 'NO_ORACLE_LAYOUT', 'SIZE_DIVERGENCE', 'FUNCLET_PAIRING',
-                'MEMBER_DELTA', 'UNKNOWN']:
+                'VTABLE_DIVERGENCE', 'OFFSET_SWAP', 'MEMBER_DELTA', 'UNKNOWN']:
         n = class_counts.get(cls, 0)
         if n:
             print(f"  {cls:<25} {n:>5}")
@@ -1523,7 +2071,11 @@ def main():
     ap.add_argument('--out', default=os.path.expanduser('~/tmp/hasreal_routed.json'),
                     help='Output routed JSON (default ~/tmp/hasreal_routed.json)')
     ap.add_argument('--validate', action='store_true',
-                    help='Run validation against pilot\'s 12 targets and exit')
+                    help='Run validation against pilot\'s 11 targets and exit')
+    ap.add_argument('--validate48', action='store_true',
+                    help='Run the mdgrind 48-fn confusion-matrix validation and exit')
+    ap.add_argument('--gt48', default=_GT48_PATH,
+                    help='Path to the 48-fn ground-truth jsonl (default ~/tmp/mdgrind_abandoned.jsonl)')
     ap.add_argument('--sym', default='',
                     help='Classify a single symbol (requires --unit)')
     ap.add_argument('--unit', default='',
@@ -1536,6 +2088,10 @@ def main():
 
     if a.validate:
         run_validation(a.proj)
+        return
+
+    if a.validate48:
+        run_validation48(a.proj, a.gt48)
         return
 
     if a.sym:
