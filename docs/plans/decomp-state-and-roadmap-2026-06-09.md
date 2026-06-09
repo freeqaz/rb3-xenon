@@ -150,12 +150,29 @@ thunks. Deep multi-TU reconstruction, no clean oracle. Defer.
    + 5,932 strong ≥0.70-conf identities; 3/5 inline-policy unknowns resolved).
 4. Integrate `gameid-crossval` (rb3-Wii artifacts at `~/tmp/gameid/`; target side was
    blocked on the stale RB3Xenon.lock — lock cleared, Ghidra MCP 8002 restarted).
-5. **Re-run `tools/inline_policy_finder.py` with fn_resolver wired in** — the inline
-   tail is now resolvable; the Str pattern remains the highest-yield repeatable lever.
-6. NEW tool ideas from the sized-vector refutation: (a) vector-layout classifier via
+5. ~~Re-run inline_policy_finder with fn_resolver~~ — DONE. Resolver integration landed
+   (`tools/inline_policy_finder.py`). **VERDICT: inline-policy lever TAPPED for the
+   current near-miss pool** — all [90,100) candidates are n=1 (single caller); the
+   historic wins (DataArray::Node +37, Str +6) were n=20+ clustered. MakeShortAng
+   inline test = NET −1, reverted. Candidate lists archived at
+   `~/tmp/forcemult/inline_candidates_v2*.json`. Re-check only after the pool refills.
+6. ⭐ **NEW TOP LEVER (from the inline wave, UNVERIFIED): data-symbol renaming
+   (LBL_RENAME)** — `obj_target_symbol_renamer` maps only FUNCTION symbols; anonymous
+   `lbl_8XXXXXXX` data labels (e.g. `lbl_82C8ED88` ↔ `?sCurrent@RndEnviron@@1PAV1@A`)
+   leave reloc-arg diffs in callers. Claimed dominant blocker for **771 fns in
+   [99.9,100)** (~500 est. yield). MUST verify on a sample first (is data-label naming
+   the ONLY diff?) before extending the renamer (non-text `IMAGE_SYM_CLASS_STATIC`
+   symbols + a data-symbol map). Related: ICF multi-symbol grouping (one lbl_ = several
+   identical fns, reads 0%).
+7. Other gaps from the wave: UIComponent vtable +4 slot (5 confirmed fns; known wall,
+   docs/plans/ui-base-layout-reconstruction.md); n=3 unnamed shared ctor body
+   (CharBoneOffset/CharIKFoot) needs Ghidra+DC3 pair to identify.
+8. NEW tool ideas from the sized-vector refutation: (a) vector-layout classifier via
    objdiff symbol-name arity (2- vs 3-param `?$vector@`) — answers layout questions
    without a build; (b) `--force-fresh` full-report flag (partial-rebuild reports mix
    old/new objects and mislead per-unit A/B).
+9. DxRnd MEMBER_DELTA — DONE (+1, `5770d95`+`22b5148`, 6577): mColorRampTex @0x394 +
+   DoPostProcess GPR literals; Present residual = boolean-negation unfixable class.
 
 ## Key refs
 - Memory: `feedback_fuzzy_gap_needs_permuter`, `project_game_code_instrumentation`,
