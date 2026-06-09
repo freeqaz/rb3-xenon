@@ -182,6 +182,65 @@ thunks. Deep multi-TU reconstruction, no clean oracle. Defer.
 9. DxRnd MEMBER_DELTA — DONE (+1, `5770d95`+`22b5148`, 6577): mColorRampTex @0x394 +
    DoPostProcess GPR literals; Present residual = boolean-negation unfixable class.
 
+## 2026-06-09 (evening session) — playbooks + tool-gap closure + 2 more vein verdicts
+
+Theme: **codify the subagent formulas** (docs/decomp/playbooks/) + close the tooling
+backlog. 6 agents, all landed. Matched count unchanged at **6577** (verified honest by
+the new fresh_report.sh: 6542 raw fuzzy==100 + 35 FP-anchor-normalized).
+
+**Playbooks established (`docs/decomp/playbooks/`)** — the in-repo subagent formulas:
+- `bodyport-wave.md` (`178a758`) — the body-port wave recipe distilled from the
+  +1500-scale campaigns (provenance, wall-defer list, per-fn loop, measurement
+  honesty, landing protocol, hard rules).
+- `hasreal-grind.md` (`008e53c`, from the grind pilot) — metric trap (§0), 8-signature
+  wall-recognition checklist (§3a–3h) with exact asm, offset root-causing tree,
+  time-boxing. **Pilot verdict: 0/12 hand-examined named near-misses were clean
+  source fixes** — the pool is walls+permuter-class; do NOT swarm it raw.
+  Also: UtilDrawAxes is ALREADY MATCHED (vtable-slot reloc normalized away;
+  `run_objdiff` live % ≠ report `match_percent_normalized` — always rank by the
+  report metric).
+
+**Tools landed:**
+- `b47025f` true_progress: NAME_RELOC split into BL_LBL_FUNCLET / ANON_FN_CALLEE /
+  NAMED_MISMATCH / DATA_LBL + HAS_REAL bucket + `--worklist`. Reproduces the 771-fn
+  probe exactly (330/282/107/39/0). Worklist: ~/tmp/hasreal_worklist.json (bands on
+  normalized %, so free of the §0 trap).
+- `b935d9e` fn_resolver T3b gameid_crossval tier: +69 new best-identities, 24
+  agreements, 6 conflicts (named wins; ~5% FP tail as expected).
+- `f82ed7f` fresh_report.sh + vector_arity.py (861 arity-2 / 0 arity-3 binary-wide —
+  sized-vector refutation now a one-command check) + asm_listing obj-path fix
+  (`default/` → `src/`; broke /FAs for ALL units) + struct_db refreshed (current
+  headers; MCP lookup_struct_offset serves it directly).
+- `tools/wall_classify.py` (in flight) — auto-tags the 330-fn worklist with the
+  playbook §3 signatures and routes PERMUTE/DEFER_VBASE/AT_LIMIT/MEMBER_DELTA_
+  CANDIDATE/UNKNOWN; validated against the pilot's 12 ground-truth targets. THE
+  prerequisite for any HAS_REAL swarm.
+
+**Vein verdict: unwired-DC3-engine residual = DRAINED** (`c13507f`,
+tools/dc3_residual_rank.py + docs/decomp/dc3-residual/ranked.json). 115 unwired
+engine TUs; content-match ceiling 57 fns total (2–10%/TU). The one real contiguous
+cluster (PlatformMgr_Xbox, 109 fns) diverged too far to wire (DC3 SmartGlass/store
+era; C1083 + 282-vs-109 fns). 3 "clusters" were trivial-collision noise (the ranker's
+promiscuity+contiguity filter catches these). Roadmap queue item 3 CLOSED.
+
+**New tool gaps (backlog):**
+1. struct_db parser ingests both `#ifdef HX_NATIVE` branches (last-write-wins
+   fragility).
+2. `global_fuzzy_pairs.json` and `dc3_content_match.py` source from DIFFERENT DC3
+   obj dirs and disagree on coverage — unify to one DC3 obj source.
+3. dc3_content_match default obj dir non-recursive (misses the 811 per-TU system/
+   objs).
+4. Ghidra MCP needs access serialization (single-process; ClosedException under
+   concurrent agents).
+5. true_progress worklist `address` field is section-offset decimal — parse the
+   `fn_<hex>` from sym for load addresses.
+
+**Where the next +N comes from (post-pilot view):** (a) wall_classify's
+MEMBER_DELTA_CANDIDATE + UNKNOWN residue = the real grind pool (likely far smaller
+than 330); (b) PERMUTE-routed bucket via /permute (sanctioned, no hand-edits);
+(c) body-port waves per the playbook (still the standing campaign — the named
+40–95% pool, NOT the near-miss pool); (d) reveal refill after each wave.
+
 ## Key refs
 - Memory: `feedback_fuzzy_gap_needs_permuter`, `project_game_code_instrumentation`,
   `project_lto_icf_investigation`, `project_scope_map`, `project_engine_split_relocation`.
