@@ -38,9 +38,16 @@ import struct
 import sys
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from dc3_obj_source import DC3_OBJ_DIR, iter_dc3_objs
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RB3_OBJ_GLOB = os.path.join(ROOT, "build", "45410914", "obj", "auto_03_*_text.obj")
-DC3_OBJ_DIR = os.path.join(ROOT, "..", "dc3-decomp", "build", "373307D9", "obj")
+# DC3_OBJ_DIR now comes from the shared dc3_obj_source module: the retail-DC3
+# TARGET tree (.dc3_text_scratch/named/obj), the byte-faithful oracle. Previously
+# this defaulted to dc3-decomp's COMPILED port (build/373307D9/obj), which
+# diverges from retail in unmatched units and carries ICF merged_* names — the
+# root cause of the global_fuzzy_pairs vs dc3_content_match disagreement.
 TSM = os.path.join(ROOT, "scripts", "target_symbol_map.json")
 
 
@@ -150,8 +157,7 @@ def main():
 
     # DC3: masked_hash -> {name: (obj, size)}  (dedup by name)
     dc3_by_hash = defaultdict(dict)
-    dc3_files = sorted(glob.glob(os.path.join(args.dc3_dir, "**", "*.obj"),
-                                 recursive=True))
+    dc3_files = iter_dc3_objs(args.dc3_dir)
     for f in dc3_files:
         obj = os.path.basename(f)
         for name, code, h, sz in read_coff_functions(f):

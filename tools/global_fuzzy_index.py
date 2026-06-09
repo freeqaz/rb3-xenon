@@ -13,12 +13,14 @@ Pipeline:
 """
 import sys, os, glob, struct, re, hashlib, random, bisect, json
 from collections import defaultdict
-sys.path.insert(0,'/home/free/code/milohax/rb3-xenon/tools')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fuzzy_content_match import read_coff_functions, opcodes, parse_splits
+from dc3_obj_source import DC3_OBJ_DIR, iter_dc3_objs
 
 ROOT='/home/free/code/milohax/rb3-xenon'
 RB3_GLOB=os.path.join(ROOT,'build/45410914/obj/auto_03_*_text.obj')
-DC3_DIR='/home/free/code/milohax/.dc3_text_scratch/named/obj'
+# Canonical retail-DC3 TARGET tree (shared with dc3_content_match / fuzzy_content_match).
+DC3_DIR=DC3_OBJ_DIR
 K=64; B=16; R=4   # 64 minhashes, 16 bands x 4 rows
 random.seed(1)
 PERMS=[(random.randint(1,2**61-1),random.randint(0,2**61-1)) for _ in range(K)]
@@ -41,6 +43,7 @@ def minhash(sh):
 def main():
     minsize=int(sys.argv[1]) if len(sys.argv)>1 else 64
     thr=float(sys.argv[2]) if len(sys.argv)>2 else 0.85
+    dc3_dir=sys.argv[3] if len(sys.argv)>3 else DC3_DIR  # CLI override of DC3 obj tree
     splits=parse_splits(os.path.join(ROOT,'config/45410914/splits.txt'))
     pins=[]
     for cpp,(lo,hi) in splits.items(): pins.append((lo,hi))
@@ -48,11 +51,16 @@ def main():
     def pinned(a):
         i=bisect.bisect_right(pstarts,a)-1
         return 0<=i<len(pins) and pins[i][0]<=a<pins[i][1]
-    # DC3 functions
+    # DC3 functions. Skip NON-REAL names: anonymous (fn_/sub_), guard/thunk ($),
+    # and dtk/linker ICF-fold artifacts (merged_<addr>, __unwind*, __catch*,
+    # __tls*) — these are not usable mangled symbols, so emitting one as an
+    # "identity" gives downstream (fn_resolver / target_symbol_map) a dead name
+    # (e.g. fn_82534F88 -> merged_828DC218). Both DC3 trees carry ~21k of these.
+    NONREAL=('fn_','sub_','$','merged_','__unwind','__catch','__tls')
     dc3=[]
-    for f in glob.glob(os.path.join(DC3_DIR,'**','*.obj'),recursive=True):
+    for f in iter_dc3_objs(dc3_dir):
         for fn in read_coff_functions(f):
-            if fn['size']<minsize or fn['name'].startswith(('fn_','sub_','$')): continue
+            if fn['size']<minsize or fn['name'].startswith(NONREAL): continue
             sh=shingles(fn['code'])
             if sh: dc3.append((fn['name'],os.path.basename(f),sh,len(fn['code'])))
     print(f"DC3 fns indexed: {len(dc3)}",file=sys.stderr)
@@ -85,10 +93,17 @@ def main():
         for b in range(B):
             cand.update(buckets.get((b,sig[b*R:(b+1)*R]),()))
         best=None
-        for ci in cand:
+        # Iterate candidates in a STABLE order and break Jaccard ties on a
+        # deterministic key (the DC3 name). Without this the winner among
+        # ICF-identical bodies (jaccard==1.0 across many functions) depends on
+        # Python set-iteration order and varies run-to-run — the same
+        # nondeterminism that made global_fuzzy_pairs disagree with itself and
+        # with dc3_content_match. We pick the lexicographically-smallest name so
+        # the output is reproducible regardless of obj enumeration.
+        for ci in sorted(cand):
             dn,do,dsh,dsz=dc3[ci]
             j=len(sh&dsh)/len(sh|dsh)
-            if best is None or j>best[0]:
+            if best is None or j>best[0] or (j==best[0] and dn<best[1]):
                 best=(j,dn,do,dsz)
         if best and best[0]>=thr:
             pairs.append({'rb3_addr':'0x%08X'%a,'dc3_name':best[1],'dc3_obj':best[2],

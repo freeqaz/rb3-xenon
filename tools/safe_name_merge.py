@@ -63,12 +63,14 @@ import re
 import sys
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from dc3_obj_source import DC3_OBJ_DIR as DC3_DIR  # canonical retail-DC3 target tree
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEF_TSM = os.path.join(ROOT, "scripts", "target_symbol_map.json")
 DEF_SPLITS = os.path.join(ROOT, "config", "45410914", "splits.txt")
 DEF_SYMBOLS = os.path.join(ROOT, "config", "45410914", "symbols.txt")
 DEF_OBJECTS = os.path.join(ROOT, "config", "45410914", "objects.json")
-DC3_DIR = "/home/free/code/milohax/.dc3_text_scratch/named/obj"
 DC3_CONTENT = os.path.join(ROOT, "dc3_content_match.json")
 GAME_CONTENT = os.path.join(ROOT, "game_content_match.json")
 

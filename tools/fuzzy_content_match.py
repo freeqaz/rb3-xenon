@@ -60,9 +60,13 @@ Usage
 import argparse, glob, hashlib, json, os, re, struct, sys, bisect
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from dc3_obj_source import DC3_OBJ_DIR as _DC3_CANON
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RB3_OBJ_GLOB = os.path.join(ROOT, "build", "45410914", "obj", "auto_03_*_text.obj")
-DC3_DIR = "/home/free/code/milohax/.dc3_text_scratch/named/obj"
+# Canonical retail-DC3 TARGET tree (shared via dc3_obj_source).
+DC3_DIR = _DC3_CANON
 TSM = os.path.join(ROOT, "scripts", "target_symbol_map.json")
 SPLITS = os.path.join(ROOT, "config", "45410914", "splits.txt")
 OBJECTS = os.path.join(ROOT, "config", "45410914", "objects.json")
