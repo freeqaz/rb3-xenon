@@ -49,6 +49,10 @@ candidate. **Defer without forcing** (note it, move on):
   stub with no `r3` use — retail STUBBED the accessor; porting the real body can never
   match. Recognize by size + shape, not by oracle similarity.
 - **vbase/coupled-base hierarchy** (`??_8` vbtable, adjustor thunks) → known deep wall.
+- **gRev/BinStreamRev Load-architecture conversion = REFUTED lever** (2026-06-07 campaign):
+  only ~33 TUs use DC3-style `BinStreamRev`, and their near-misses are walls, not body-ports.
+  The `LightPreset` conversion stalls at `operator>>` argument-passing and never matches.
+  **Do not re-propose converting RB3's Load path to DC3's `gRev`/`BinStreamRev` form.**
 - If EVERYTHING in a unit is a wall: report net 0 + "unit at-limit". That is a valid,
   useful result — record it so nobody re-attempts.
 

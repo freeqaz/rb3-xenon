@@ -225,19 +225,54 @@ cluster" (44 fns) was entirely this — `lwz X(r31)` where `r31` came from
 `subi r31, r12, 0x70` (funclet FRAME slot, not `this`). Decisive test: compare compiled
 body sizes + `new`-size immediates; if either differs, abandon.
 
+**Divergent-`bl`-callee tell (2026-06-09 mdgrind, the decisive funclet test):** a funclet
+(`subi rX, r12, <imm>` prologue) whose diff includes a `bl`/`b` to a **DIFFERENT callee**
+on each side is a mis-paired funclet — even when the differing member `addi` is on a
+register *loaded from* the frame slot (`addi r3, r11, 0x8` vs `0x170` where `r11` came
+from `lwz r11, OFF(r31)`). That "indirect access" looked like a real member delta and was
+the ~87%-polluting MISROUTE-1. **Rule:** funclet + differing `bl`/`b` target ⇒
+FUNCLET_PAIRING, abandon. A *genuine* member-delta funclet (the CameraShot family) keeps
+**identical `bl` callees** on both sides; only the trailing member offset differs. The
+callee may read `fn_<hex>` on one side and a resolved name on the other — that still
+counts as divergent when the names differ (dtk just failed to resolve one side).
+`tools/wall_classify.py` now routes these `FUNCLET_PAIRING`/`DEFER_DEEP` automatically.
+
 ---
 
 ## 4. Offset-delta root-causing decision tree (when it IS a member delta)
 
 **Gate zero — confirm the base register is really `this`:** trace where the base register
-comes from. `r3` at entry (or copied from it) = `this`. But `r31` derived via
-`subi r31, r12, <imm>` is a **funclet frame pointer** — `lwz/stw X(r31)` deltas there are
-frame-slot artifacts (§3i), NOT member deltas. wall_classify's MEMBER_DELTA route is
-unreliable for funclets until it learns this check.
+comes from. `r3` at entry (or copied from it) = `this`. The following are **NOT** `this`,
+and a uniform delta keyed off them is **not** a member delta — abandon/defer, do not "fix":
 
-Use `mode=offsets`. If you see a **single dominant uniform `this`-relative delta** (not r1/stack,
-not a vtable-slot, not a stack-frame `stwu r1,-0xNN` change), it's a real member-offset
-divergence. Decide the cause:
+- **Funclet frame pointer:** `r31` (or any reg) derived via `subi r31, r12, <imm>` is the
+  exception-runtime frame pointer — `lwz/stw X(r31)` deltas are frame-slot artifacts (§3i).
+- **Funclet + divergent `bl` callee (1a):** if the function is a funclet AND the diff has a
+  `bl`/`b` whose callee *differs* between sides, it's a mis-paired funclet (§3i tell). The
+  member `addi` being on a register *loaded from* the frame (`addi r3, r11, …` after
+  `lwz r11, OFF(r31)`) does **not** make it a real member — abandon.
+- **Vbase-adjusted `this` (1d):** a `this` that is run through a **large** `subi rX, rX,
+  <imm>` (e.g. `0x1a0`, `0xe8`) — a virtual-base / secondary-base adjustor — before the
+  member access is a **VBASE wall**, not a member delta. The diverging *adjustor immediate*
+  itself (`subi r31, r3, 0xa4` vs `0xe8` in a `??_G<Class>` vector-deleting dtor) IS the
+  compiler-computed vbase offset; you cannot add a member to fix it. The CameraShot
+  frame-recovered-`this`, when vbase-adjusted, behaves the same way: the indirect load alone
+  does **not** clear gate-zero. (Verified: treating the 21 CameraShot entries as a member-add
+  netted **−3** — retail CamShot is vbase MI per RTTI. Defer to vbase reconstruction.)
+- **Vtable slot (1c):** a differing `lwz rV, 0xNN(rV)` where `rV` was loaded from **offset
+  0x0** (the vtable ptr) and feeds `mtctr; bctrl` is a DC3-added/removed **virtual slot**
+  (e.g. Rnd uniform +0x20 = 8 slots), not a data member. Fixable only by vtable-layout
+  reconstruction — defer.
+
+`tools/wall_classify.py` encodes all four gates (run it first; `--validate48` is the
+regression suite). MEMBER_DELTA route was ~87% polluted by these before the 2026-06-09 fix.
+
+Use `mode=offsets`. If you see a **single dominant UNIFORM SAME-SIGN `this`-relative delta**
+(not r1/stack, not a vtable-slot, not a stack-frame `stwu r1,-0xNN` change), it's a real
+member-offset divergence. **Real member deltas are uniform same-sign** — a mirrored
+(`+N` here, `−N` there) pair is an OFFSET-SWAP / regswap (instruction reorder), which is
+PERMUTE-class, **not** a member delta (mdgrind MISROUTE 2; ChunkStream's "+2084" was this).
+Decide the cause:
 
 | Observation | Likely cause | Oracle that answers it |
 |---|---|---|

@@ -17,10 +17,17 @@
 # config.json mtime (the config.json mtime is load-bearing for the
 # target-symbol-renamer; see CLAUDE.md).  It only forces the report step.
 #
+# Parallelism cap: at full parallelism on 32 cores, wave agents running this on
+# fresh btrfs-CoW worktrees hit code-137 OOM kills under wibo/MSVC (each cl.exe
+# under wibo is memory-heavy).  We cap ninja's job count: honor $NINJA_JOBS if set,
+# else default to 12 (both -j 12 and -j 4 were verified safe).  Set NINJA_JOBS=0 to
+# pass no -j (use ninja's default).
+#
 # Usage:
 #   ./tools/fresh_report.sh [--dry-run] [--no-verify]
 #       --dry-run    Print what would be done but do not execute.
 #       --no-verify  Skip the post-build freshness verification.
+#   NINJA_JOBS=N ./tools/fresh_report.sh   # override the parallelism cap
 #
 # Output is tee'd to /tmp/rb3_build_fresh_report.log.
 
@@ -42,7 +49,15 @@ done
 REPORT="$REPO/build/45410914/report.json"
 NINJA="$REPO/tools/ninja-locked"
 
+# Parallelism cap (see header).  NINJA_JOBS overrides; 0 means "no -j".
+NINJA_JOBS="${NINJA_JOBS:-12}"
+JOBS_ARG=()
+if [ "$NINJA_JOBS" != "0" ]; then
+    JOBS_ARG=(-j "$NINJA_JOBS")
+fi
+
 echo "fresh_report.sh: starting (log: $LOG)" | tee -a "$LOG"
+echo "  parallelism: ninja ${JOBS_ARG[*]:-(default)}" | tee -a "$LOG"
 echo "  repo:   $REPO" | tee -a "$LOG"
 echo "  report: $REPORT" | tee -a "$LOG"
 
@@ -50,9 +65,9 @@ echo "  report: $REPORT" | tee -a "$LOG"
 echo "" | tee -a "$LOG"
 echo "Step 1: ensuring all_source is up-to-date..." | tee -a "$LOG"
 if [ "$DRY_RUN" -eq 1 ]; then
-    echo "  [dry-run] would run: $NINJA all_source" | tee -a "$LOG"
+    echo "  [dry-run] would run: $NINJA ${JOBS_ARG[*]} all_source" | tee -a "$LOG"
 else
-    "$NINJA" all_source 2>&1 | tee -a "$LOG"
+    "$NINJA" "${JOBS_ARG[@]}" all_source 2>&1 | tee -a "$LOG"
     echo "  all_source OK" | tee -a "$LOG"
 fi
 
@@ -70,9 +85,9 @@ fi
 echo "" | tee -a "$LOG"
 echo "Step 3: regenerating report.json..." | tee -a "$LOG"
 if [ "$DRY_RUN" -eq 1 ]; then
-    echo "  [dry-run] would run: $NINJA build/45410914/report.json" | tee -a "$LOG"
+    echo "  [dry-run] would run: $NINJA ${JOBS_ARG[*]} build/45410914/report.json" | tee -a "$LOG"
 else
-    "$NINJA" build/45410914/report.json 2>&1 | tee -a "$LOG"
+    "$NINJA" "${JOBS_ARG[@]}" build/45410914/report.json 2>&1 | tee -a "$LOG"
     if [ ! -f "$REPORT" ]; then
         echo "ERROR: report.json was not created by ninja" | tee -a "$LOG"
         exit 1
