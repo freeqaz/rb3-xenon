@@ -96,8 +96,21 @@ def classify_insn(ins):
             break
         if HEX_RE.match(x) and HEX_RE.match(y):
             # a differing immediate. frame vs struct vs other.
-            if to in ('subi', 'addi', 'addic', 'addic.') and any(r in tt for r in ('r31', 'r12', 'r1')):
-                cls = 'FRAME_RECON'
+            if to in ('subi', 'addi', 'addic', 'addic.'):
+                # True funclet frame-pointer RECONSTRUCTION: a frame reg (r31/r1) is
+                # set FROM a caller frame reg (r12/r1) — e.g. `subi r31,r12,N` or
+                # `addi r31,r1,N`; N == the PARENT frame size, so it's parent-gated,
+                # not a standalone lever. Everything else with an immediate delta is
+                # REAL work: `addi r3,r31,N` (member/local offset off the frame base)
+                # and `subi r31,r3,N` (this/vbase adjust) are struct-layout deltas,
+                # NOT funclet noise. (Was: any addi/subi mentioning r31/r12/r1 ->
+                # FRAME_RECON, which over-counted FRAME_ONLY by ~28% / ~174 fns.)
+                dest = tt[0] if tt else ''
+                srcs = tt[1:]
+                if dest in ('r31', 'r1') and any(s in ('r12', 'r1') for s in srcs):
+                    cls = 'FRAME_RECON'
+                else:
+                    cls = 'STRUCT_OFF'
             elif to in MEM_OPS:
                 cls = 'STRUCT_OFF'
             else:
