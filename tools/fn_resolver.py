@@ -7,18 +7,22 @@ best identity (mangled name + demangled + evidence source + confidence) for
 any fn_ address.
 
 Evidence tiers (highest → lowest confidence):
-  T1  decomp.db named — function is already a named symbol in our compiled
-      unit (renamed via target_symbol_map; COMPLETE or named in report.json).
-  T2  target_symbol_map.json — dtk split target obj renamed from leaked map
-      or identification campaign (0xADDR → mangled name).
-  T3  dc3_content_match / game_content_match — byte-identical SHA match to a
-      named DC3/game function.
-  T4  global_fuzzy_pairs.json — Jaccard-similar (fuzzy) DC3 match.
-  T5  unified_id (bindiff / vtable / rtti) — structural similarity or vtable
-      slot identification from the unified_id_*.json files.
-  T6  unified_id_rb3wii.json — cross-arch BinDiff match to rb3-Wii named fns.
-  T7  autoid.json — string-fingerprint source-file attribution (gives src file
-      only, no mangled name; lower confidence).
+  T1   decomp.db named — function is already a named symbol in our compiled
+       unit (renamed via target_symbol_map; COMPLETE or named in report.json).
+  T2   target_symbol_map.json — dtk split target obj renamed from leaked map
+       or identification campaign (0xADDR → mangled name).
+  T3   dc3_content_match / game_content_match — byte-identical SHA match to a
+       named DC3/game function.
+  T3b  gameid_crossval — BinDiff ∩ BSim dual-tool agreement on the same
+       rb3-Wii source stem; measured 0.95 precision on 25 known pins. Gives a
+       source-file stem only (no mangled name). From
+       docs/decomp/gameid/crossval_agree.json (146 functions, 93 unpinned).
+  T4   global_fuzzy_pairs.json — Jaccard-similar (fuzzy) DC3 match.
+  T5   unified_id (bindiff / vtable / rtti) — structural similarity or vtable
+       slot identification from the unified_id_*.json files.
+  T6   unified_id_rb3wii.json — cross-arch BinDiff match to rb3-Wii named fns.
+  T7   autoid.json — string-fingerprint source-file attribution (gives src file
+       only, no mangled name; lower confidence).
 
 Usage:
   tools/fn_resolver.py resolve <addr> [addr...]
@@ -120,6 +124,7 @@ UNIFIED_ID_FILES = [
 ]
 RB3WII_PATH     = _repo_path("unified_id_rb3wii.json")
 AUTOID_PATH     = _repo_path("autoid.json")
+GAMEID_XVAL_PATH = ROOT / "docs" / "decomp" / "gameid" / "crossval_agree.json"
 
 DEFAULT_INDEX   = Path.home() / "tmp" / "fn_resolver_index.json"
 
@@ -425,6 +430,25 @@ def _get_autoid_idx() -> dict[int, dict]:
     return _cache["autoid_idx"]
 
 
+def _get_gameid_xval_idx() -> dict[int, dict]:
+    """addr → entry from docs/decomp/gameid/crossval_agree.json.
+
+    Returns empty dict if the file is absent (graceful degradation in worktrees
+    that pre-date the file, though in practice docs/ is tracked and travels with
+    the repo).
+    """
+    if "gameid_xval_idx" not in _cache:
+        data = _load_json(GAMEID_XVAL_PATH)
+        idx: dict[int, dict] = {}
+        if data and isinstance(data, dict):
+            for entry in data.get("agree_fns", []):
+                a = _norm_rb3_addr(entry.get("addr", ""))
+                if a:
+                    idx[a] = entry
+        _cache["gameid_xval_idx"] = idx
+    return _cache["gameid_xval_idx"]
+
+
 # ---------------------------------------------------------------------------
 # Per-tier lookup helpers — now all O(1) via index tables
 # ---------------------------------------------------------------------------
@@ -471,6 +495,41 @@ def _t3_content_match(addr: int) -> list[Identity]:
                 extra={"unit": entry2.get("unit"), "sha": entry2.get("masked_sha")},
             ))
     return results
+
+
+def _t3b_gameid_crossval(addr: int) -> list[Identity]:
+    """T3b: docs/decomp/gameid/crossval_agree.json — dual-tool BinDiff∩BSim agreement.
+
+    Yields a file-stem identity (no mangled name) at confidence 0.95, which is
+    the measured precision on 25 known pins.  Placed between the byte-identical
+    content-match tier (also 0.95) and the fuzzy Jaccard tier (≤0.90).
+
+    NOTE: This tier gives only a source-file stem (e.g. "BandTrack"), not a
+    mangled symbol name.  The demangled field is rendered as "<in Stem.cpp>" so
+    callers can distinguish stem-only evidence from full-name evidence.
+    """
+    entry = _get_gameid_xval_idx().get(addr)
+    if entry is None:
+        return []
+    stem = entry.get("stem", "")
+    bindiff_conf = float(entry.get("bindiff_conf", 0.0))
+    bsim_sim = float(entry.get("bsim_sim", 0.0))
+    already_pinned = bool(entry.get("already_pinned", False))
+    # Confidence is the measured ensemble precision (0.95), not the per-tool scores.
+    conf = 0.95
+    mangled = fn_name(addr)  # no mangled name available; keep as fn_ placeholder
+    return [Identity(
+        mangled=mangled,
+        demangled=f"<in {stem}.cpp>",
+        source="gameid_crossval",
+        confidence=conf,
+        extra={
+            "stem": stem,
+            "bindiff_conf": bindiff_conf,
+            "bsim_sim": bsim_sim,
+            "already_pinned": already_pinned,
+        },
+    )]
 
 
 def _t4_fuzzy_pairs(addr: int) -> list[Identity]:
@@ -561,7 +620,7 @@ def _t7_autoid(addr: int) -> list[Identity]:
 # Master resolver
 # ---------------------------------------------------------------------------
 TIER_ORDER = ["decomp_db_named", "target_symbol_map", "dc3_content_match",
-              "game_content_match", "fuzzy_pairs",
+              "game_content_match", "gameid_crossval", "fuzzy_pairs",
               "bindiff_dc3", "vtable", "rtti", "rtti_low",
               "rb3wii_bindiff", "autoid_fingerprint", "decomp_db_unit"]
 TIER_RANK = {t: i for i, t in enumerate(TIER_ORDER)}
@@ -573,6 +632,7 @@ def resolve_all(addr: int) -> list[Identity]:
     candidates.extend(_t1_decomp_db(addr))
     candidates.extend(_t2_target_symbol_map(addr))
     candidates.extend(_t3_content_match(addr))
+    candidates.extend(_t3b_gameid_crossval(addr))
     candidates.extend(_t4_fuzzy_pairs(addr))
     candidates.extend(_t5_unified_id(addr))
     candidates.extend(_t6_rb3wii(addr))
@@ -758,6 +818,13 @@ def cmd_index(args):
     named_id = 0     # T1a (named symbol in report)
     unit_only = 0    # only decomp_db_unit evidence
 
+    # gameid_crossval stats
+    xval_new = 0         # addresses where gameid_crossval is the best (only) evidence
+    xval_agree = 0       # addresses already covered by a higher tier
+    xval_conflicts: list[tuple[int, str, str]] = []  # (addr, xval_stem, best_name)
+
+    xval_idx = _get_gameid_xval_idx()
+
     for addr, fn_info in all_addrs.items():
         ids = resolve_all(addr)
         sym = fn_info["name"]
@@ -775,6 +842,34 @@ def cmd_index(args):
             unit_only += 1
         elif best.confidence >= 0.70:
             strong_id += 1
+
+        # gameid_crossval accounting
+        if addr in xval_idx:
+            xval_stem = xval_idx[addr].get("stem", "")
+            xval_ids = [i for i in ids if i.source == "gameid_crossval"]
+            other_ids = [i for i in ids if i.source != "gameid_crossval"]
+            if best.source == "gameid_crossval":
+                xval_new += 1
+            else:
+                # Already covered by a higher-confidence tier
+                xval_agree += 1
+                # Check for conflict: if the best non-crossval tier gives a
+                # mangled name (not fn_), check whether its stem is inconsistent
+                # with the crossval stem.  We do a loose check: if the best
+                # identity's name does not contain the stem as a substring
+                # (case-insensitive) and the best identity is a real named
+                # symbol (not a unit-only or autoid placeholder), flag it.
+                if other_ids:
+                    top = other_ids[0]
+                    is_named = (
+                        top.source not in ("decomp_db_unit", "autoid_fingerprint")
+                        and not top.mangled.startswith("fn_")
+                        and top.confidence >= 0.90
+                    )
+                    if is_named:
+                        # demangled often contains class::method; check stem in it
+                        if xval_stem.lower() not in top.demangled.lower():
+                            xval_conflicts.append((addr, xval_stem, top.demangled))
 
         key = f"0x{addr:08X}"
         index[key] = {
@@ -802,6 +897,18 @@ def cmd_index(args):
         n = tier_counts.get(tier, 0)
         if n > 0:
             print(f"  {tier:30s}: {n:5d}")
+
+    total_xval = len(xval_idx)
+    xval_not_indexed = total_xval - xval_new - xval_agree
+    print(f"\ngameid_crossval tier stats ({total_xval} hint entries):")
+    print(f"  New identities (best=gameid_crossval)  : {xval_new}")
+    print(f"  Agreements (covered by higher tier)    : {xval_agree}")
+    print(f"  Not in indexed universe (unpinned TUs) : {xval_not_indexed}")
+    print(f"  Conflicts with named identity (≥0.90)  : {len(xval_conflicts)}")
+    if xval_conflicts:
+        print(f"\n  Conflict list (addr | xval_stem | named_identity):")
+        for caddr, stem, named in sorted(xval_conflicts):
+            print(f"    fn_{caddr:08X}  stem={stem!r:30s}  named={named!r}")
 
     with open(out_path, "w") as f:
         json.dump(index, f, indent=1)
