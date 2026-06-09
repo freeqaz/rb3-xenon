@@ -4,15 +4,15 @@
 #include "utl/BinStream.h"
 
 struct CompressedVertex_Xbox {
-    int mPosX;
-    int mPosY;
-    int mPosZ;
+    float mPosX;
+    float mPosY;
+    float mPosZ;
     int mColor; // 0xc - packed color
-    int mNormal;
-    int mTangent;
-    int mBinormal;
-    int mBoneIndices;
-    int mBoneWeights;
+    unsigned int mNormal;
+    unsigned int mTangent;
+    unsigned int mBinormal;
+    unsigned int mBoneIndices;
+    unsigned int mBoneWeights;
 };
 
 void PackVector(

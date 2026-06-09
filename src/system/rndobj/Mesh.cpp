@@ -91,9 +91,7 @@ bool RndMesh::PatchOkay(int numVerts, int numFaces) {
 }
 
 void SaveCompressedVertex(const CompressedVertex_Xbox &cv, BinStream &bs) {
-    bs << cv.mPosX;
-    bs << cv.mPosY;
-    bs << cv.mPosZ;
+    bs << cv.mPosX << cv.mPosY << cv.mPosZ;
     bs << cv.mColor;
     bs << cv.mNormal;
     bs << cv.mTangent;
