@@ -31,6 +31,15 @@ class Member:
     offset: int
     line_number: int
     raw_line: str = ""  # Original line for array detection
+    # Preprocessor guard this member is gated by, e.g. "#ifdef HX_NATIVE",
+    # "#ifndef HX_NATIVE", "#if defined(RB3_RBTREE_0x1C)". Empty string ("") for
+    # an ungated member (the common case). When a header carries two members at
+    # the same offset behind opposing #if/#else branches (a per-TU ODR split or
+    # a native-vs-retail layout fork), each gets its own guard string so a
+    # lookup can return BOTH candidates tagged by gate rather than silently
+    # picking one. See classify_guard() for how a guard maps to retail
+    # relevance.
+    guard: str = ""
 
 
 @dataclass
@@ -63,6 +72,68 @@ MEMBER_RE = re.compile(
 INHERIT_RE = re.compile(
     r'(virtual\s+)?(public|private|protected)\s+([\w:]+)'
 )
+
+# Preprocessor-conditional tracking.
+# A member that lives inside a #if / #ifdef / #ifndef block (other than the
+# file's own include guard) is "gated" — its offset is only present in the
+# binary when that condition holds. We record the gate so lookups can return
+# both branches of a dual-layout fork tagged by gate.
+COND_OPEN_RE = re.compile(r'^\s*#\s*(if|ifdef|ifndef)\b(.*)$')
+COND_ELSE_RE = re.compile(r'^\s*#\s*(else|elif)\b(.*)$')
+COND_END_RE = re.compile(r'^\s*#\s*endif\b')
+# Include-guard heuristic: a top-level `#ifndef SOMETHING_H` wrapping the whole
+# file. Members under it are NOT really gated, so we don't tag them.
+INCLUDE_GUARD_RE = re.compile(r'^\s*#\s*ifndef\s+\w*_H\b')
+
+# How a guard maps to the retail X360 matching build (struct_db's primary
+# consumer). The matching build is a release X360 build: HX_NATIVE off,
+# MILO_DEBUG off. RB3_RBTREE_0x1C / RB3_HAS_HUE_CONVERGE are defined PER-TU via
+# objects.json extra_cflags, so BOTH their branches are legitimate retail
+# layouts depending on the unit under diff.
+#  - "retail"     : present in the default retail X360 layout (ungated, or the
+#                   #ifndef HX_NATIVE / #else-of-#ifdef-HX_NATIVE branch).
+#  - "native"     : HX_NATIVE-only — NOT in the retail binary; native port only.
+#  - "debug"      : MILO_DEBUG-only — NOT in the retail release binary.
+#  - "per_tu"     : ODR split; present iff the TU sets the gate (RB3_* family).
+
+
+def classify_guard(guard: str) -> str:
+    """Map a member's preprocessor guard to retail-build relevance.
+
+    Returns one of: "retail", "native", "debug", "per_tu".
+    `guard` is the empty string for ungated members (-> "retail").
+    """
+    if not guard:
+        return "retail"
+    g = guard
+    # A member can sit under nested guards joined with " && "; the innermost /
+    # most specific one wins for classification. Walk them and let a stronger
+    # signal (native/debug/per_tu) override the default retail.
+    verdict = "retail"
+    for clause in g.split(" && "):
+        c = clause.strip()
+        low = c.lower()
+        if "rb3_rbtree_0x1c" in low or "rb3_has_" in low or "rb3_dc3" in low:
+            verdict = "per_tu"
+        elif "milo_debug" in low:
+            return "debug"
+        elif "hx_native" in low:
+            # `#ifndef HX_NATIVE` / `#else` of `#ifdef HX_NATIVE` is the retail
+            # branch; `#ifdef HX_NATIVE` / `#if HX_NATIVE` is native-only.
+            # The branch sense is encoded in the guard string we built:
+            #   "#ifndef HX_NATIVE"        -> retail
+            #   "#ifdef HX_NATIVE"         -> native
+            #   "#else::#ifdef HX_NATIVE"  -> retail (else of an ifdef)
+            #   "#else::#ifndef HX_NATIVE" -> native (else of an ifndef)
+            if "#ifndef hx_native" in low and "#else" not in low:
+                verdict = "retail"
+            elif "#else::#ifndef hx_native" in low:
+                return "native"
+            elif "#else::#ifdef hx_native" in low or "#else::#if hx_native" in low:
+                verdict = "retail"
+            else:
+                return "native"
+    return verdict
 
 
 class StructDB:
@@ -114,7 +185,14 @@ class StructDB:
                 class_id INTEGER REFERENCES classes(id),
                 name TEXT NOT NULL,
                 type_str TEXT,
-                offset INTEGER NOT NULL
+                offset INTEGER NOT NULL,
+                -- Preprocessor guard the member is gated by (empty string for
+                -- ungated members). Lets a dual-branch #if/#else layout fork
+                -- store both candidates at the same offset, each tagged.
+                guard TEXT NOT NULL DEFAULT '',
+                -- Retail-build relevance derived from `guard` via
+                -- classify_guard(): retail | native | debug | per_tu.
+                guard_kind TEXT NOT NULL DEFAULT 'retail'
             );
 
             CREATE INDEX IF NOT EXISTS idx_members_class_offset
@@ -137,6 +215,26 @@ class StructDB:
             CREATE INDEX IF NOT EXISTS idx_layout_issues_class
             ON layout_issues(class_id);
         """)
+        self.conn.commit()
+        self._migrate_members_guard()
+
+    def _migrate_members_guard(self):
+        """Add guard/guard_kind columns to a pre-existing members table.
+
+        CREATE TABLE IF NOT EXISTS won't alter an already-existing table, so an
+        older struct_db.sqlite would lack the new columns. Add them if missing
+        (backward compatible — defaults make every existing row 'retail').
+        """
+        cursor = self.conn.cursor()
+        cols = {row[1] for row in cursor.execute("PRAGMA table_info(members)")}
+        if "guard" not in cols:
+            cursor.execute(
+                "ALTER TABLE members ADD COLUMN guard TEXT NOT NULL DEFAULT ''"
+            )
+        if "guard_kind" not in cols:
+            cursor.execute(
+                "ALTER TABLE members ADD COLUMN guard_kind TEXT NOT NULL DEFAULT 'retail'"
+            )
         self.conn.commit()
 
     def clear(self):
@@ -176,9 +274,10 @@ class StructDB:
         # Insert members
         for member in info.members:
             cursor.execute("""
-                INSERT INTO members (class_id, name, type_str, offset)
-                VALUES (?, ?, ?, ?)
-            """, (class_id, member.name, member.type_str, member.offset))
+                INSERT INTO members (class_id, name, type_str, offset, guard, guard_kind)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (class_id, member.name, member.type_str, member.offset,
+                  member.guard, classify_guard(member.guard)))
 
         return class_id
 
@@ -216,7 +315,7 @@ class StructDB:
 
         # Get members
         cursor.execute("""
-            SELECT name, type_str, offset FROM members
+            SELECT name, type_str, offset, guard, guard_kind FROM members
             WHERE class_id = ? ORDER BY offset
         """, (class_id,))
         members = [dict(row) for row in cursor.fetchall()]
@@ -267,25 +366,59 @@ class StructDB:
         """
         Look up field at offset, checking inheritance chain.
         Returns (class_name, member_name, type_str) or None.
+
+        Backward-compatible single-answer form. When several members share an
+        offset behind opposing preprocessor gates (a dual-branch ODR/native
+        fork), this prefers the retail X360 member (guard_kind 'retail' or
+        'per_tu') so legacy callers keep getting the matching-build truth.
+        Use lookup_all() to see every gated candidate.
+        """
+        candidates = self.lookup_all(class_name, offset)
+        if not candidates:
+            return None
+        # Prefer retail, then per-TU ODR, then anything (native/debug last).
+        rank = {'retail': 0, 'per_tu': 1, 'native': 2, 'debug': 3}
+        candidates.sort(key=lambda c: rank.get(c['guard_kind'], 9))
+        best = candidates[0]
+        return (best['class_name'], best['member_name'], best['type_str'])
+
+    def lookup_all(self, class_name: str, offset: int) -> List[Dict]:
+        """
+        Look up ALL members at `offset` across the inheritance chain, including
+        every preprocessor-gated variant.
+
+        Returns a list of dicts:
+            {class_name, member_name, type_str, guard, guard_kind}
+        ordered so the defining class's own members come before inherited ones,
+        and within a class the first-declared variant comes first. An empty
+        list means no member is recorded at that exact offset.
         """
         cursor = self.conn.cursor()
-
-        # Classes to check: the class itself plus all parents
         classes_to_check = [class_name] + self.resolve_inheritance_chain(class_name)
 
+        results: List[Dict] = []
+        seen = set()
         for check_class in classes_to_check:
             cursor.execute("""
-                SELECT c.name, m.name, m.type_str
+                SELECT c.name, m.name, m.type_str, m.guard, m.guard_kind, m.rowid
                 FROM members m
                 JOIN classes c ON m.class_id = c.id
                 WHERE c.name = ? AND m.offset = ?
+                ORDER BY m.rowid
             """, (check_class, offset))
-
-            row = cursor.fetchone()
-            if row:
-                return (row[0], row[1], row[2])
-
-        return None
+            for row in cursor.fetchall():
+                key = (row[0], row[1], row[3])
+                if key in seen:
+                    continue
+                seen.add(key)
+                results.append({
+                    'class_name': row[0],
+                    'member_name': row[1],
+                    'type_str': row[2],
+                    'guard': row[3] or '',
+                    'guard_kind': row[4] or 'retail',
+                })
+        return results
 
     def list_classes(self, pattern: Optional[str] = None) -> List[Dict]:
         """List all classes, optionally filtered by pattern."""
@@ -436,9 +569,55 @@ def parse_header(path: Path) -> List[ClassInfo]:
     brace_depth = 0
     class_start_depth = 0
 
+    # Track preprocessor #if/#ifdef/#ifndef nesting so members can be tagged
+    # with the guard they live under. Each stack entry is a dict:
+    #   {kind, expr, branch, include_guard}
+    # `branch` flips to 'else'/'elif' when we cross a #else/#elif.
+    cond_stack: List[dict] = []
+
+    def current_guard() -> str:
+        """Build the guard string for members at the current nesting, skipping
+        the file's own include guard. Returns '' when unguarded."""
+        parts = []
+        for ent in cond_stack:
+            if ent['include_guard']:
+                continue
+            expr = ent['expr'].strip()
+            if ent['branch'] == 'if':
+                parts.append(f"#{ent['kind']} {expr}".strip())
+            else:
+                # In the #else/#elif region of this conditional. Encode the
+                # original condition so classify_guard() can read the sense.
+                parts.append(f"#else::#{ent['kind']} {expr}".strip())
+        return ' && '.join(parts)
+
     i = 0
     while i < len(lines):
         line = lines[i]
+
+        # --- Preprocessor conditional tracking ---------------------------
+        cond_open = COND_OPEN_RE.match(line)
+        if cond_open:
+            is_guard = (len(cond_stack) == 0
+                        and bool(INCLUDE_GUARD_RE.match(line)))
+            cond_stack.append({
+                'kind': cond_open.group(1),
+                'expr': cond_open.group(2).strip(),
+                'branch': 'if',
+                'include_guard': is_guard,
+            })
+            i += 1
+            continue
+        cond_else = COND_ELSE_RE.match(line)
+        if cond_else and cond_stack:
+            cond_stack[-1]['branch'] = cond_else.group(1)
+            i += 1
+            continue
+        if COND_END_RE.match(line):
+            if cond_stack:
+                cond_stack.pop()
+            i += 1
+            continue
 
         # Check for class/struct declaration
         # We need to be careful about forward declarations
@@ -514,7 +693,8 @@ def parse_header(path: Path) -> List[ClassInfo]:
                     type_str=type_str,
                     offset=offset,
                     line_number=i + 1,
-                    raw_line=line.strip()
+                    raw_line=line.strip(),
+                    guard=current_guard()
                 ))
 
         i += 1
@@ -762,13 +942,29 @@ def cmd_lookup(args):
         offset = int(args.offset)
 
     with StructDB(args.db) as db:
-        result = db.lookup(args.class_name, offset)
+        candidates = db.lookup_all(args.class_name, offset)
 
-    if result:
-        cls_name, member_name, type_str = result
-        print(f"{cls_name}::{member_name} ({type_str})")
-    else:
+    if not candidates:
         print(f"No field found at offset 0x{offset:x} in {args.class_name}")
+        return
+
+    if len(candidates) == 1 and candidates[0]['guard_kind'] == 'retail' \
+            and not candidates[0]['guard']:
+        c = candidates[0]
+        print(f"{c['class_name']}::{c['member_name']} ({c['type_str']})")
+        return
+
+    # Gated / multiple-variant case: show every candidate tagged by gate.
+    print(f"{len(candidates)} candidate(s) at offset 0x{offset:x} in "
+          f"{args.class_name} (gated layout fork):")
+    for c in candidates:
+        tag = c['guard_kind'].upper()
+        gate = f"  [{c['guard']}]" if c['guard'] else "  [ungated]"
+        print(f"  {tag:<7} {c['class_name']}::{c['member_name']} "
+              f"({c['type_str']}){gate}")
+    print("\nPick the variant matching the unit's objects.json extra_cflags "
+          "(RB3_RBTREE_0x1C etc.). 'native'/'debug' variants are NOT in the "
+          "retail X360 binary.")
 
 
 def cmd_info(args):
@@ -799,7 +995,10 @@ def cmd_info(args):
     if info['members']:
         print("  Members:")
         for m in info['members']:
-            print(f"    0x{m['offset']:02x}: {m['type_str']} {m['name']}")
+            guard = m.get('guard') or ''
+            gk = m.get('guard_kind') or 'retail'
+            tag = f"  [{gk}: {guard}]" if guard else ""
+            print(f"    0x{m['offset']:02x}: {m['type_str']} {m['name']}{tag}")
 
 
 def cmd_list(args):

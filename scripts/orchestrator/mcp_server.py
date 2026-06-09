@@ -2646,15 +2646,45 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
 
         try:
             with StructDB(str(struct_db_path)) as db:
-                result = db.lookup(class_name, offset)
+                # Guard-aware lookup: returns every member at this exact offset,
+                # including #if/#else dual-branch layout forks (HX_NATIVE native
+                # vs retail, RB3_RBTREE_0x1C / RB3_HAS_* per-TU ODR splits,
+                # MILO_DEBUG debug-only). Falls back to legacy single-answer
+                # text for the common ungated case.
+                candidates = db.lookup_all(class_name, offset)
 
-                if result:
-                    cls_name, member_name, type_str = result
-                    text = f"**{cls_name}::{member_name}** (`{type_str}`) at offset 0x{offset:x}"
-                    # Add wrapper sub-offset info
-                    sub_info = self._describe_wrapper_suboffset(type_str, 0)
+                if candidates:
+                    # Order so the matching-build (retail) truth leads.
+                    rank = {"retail": 0, "per_tu": 1, "native": 2, "debug": 3}
+                    candidates.sort(key=lambda c: rank.get(c["guard_kind"], 9))
+                    best = candidates[0]
+
+                    text = (f"**{best['class_name']}::{best['member_name']}** "
+                            f"(`{best['type_str']}`) at offset 0x{offset:x}")
+                    sub_info = self._describe_wrapper_suboffset(best["type_str"], 0)
                     if sub_info:
                         text += f"\n{sub_info}"
+
+                    # If this offset is a gated layout fork, surface every
+                    # variant tagged by gate so the agent can pick the one
+                    # matching the unit's objects.json extra_cflags.
+                    gated = [c for c in candidates if c["guard"]]
+                    if len(candidates) > 1 or gated:
+                        text += ("\n\n**Gated layout fork** — variants at this "
+                                 "offset (pick by the unit's objects.json "
+                                 "extra_cflags):")
+                        for c in candidates:
+                            gate = c["guard"] if c["guard"] else "ungated"
+                            note = ""
+                            if c["guard_kind"] == "native":
+                                note = " — native port ONLY, NOT in retail binary"
+                            elif c["guard_kind"] == "debug":
+                                note = " — MILO_DEBUG ONLY, NOT in retail release"
+                            elif c["guard_kind"] == "per_tu":
+                                note = " — present iff the TU sets this define (ODR split)"
+                            text += (f"\n  - [{c['guard_kind']}] "
+                                     f"{c['class_name']}::{c['member_name']} "
+                                     f"(`{c['type_str']}`)  «{gate}»{note}")
                     return [TextContent(type="text", text=text)]
 
                 # Exact match failed — try range-based lookup
@@ -2680,23 +2710,34 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
 
         cursor = db.conn.cursor()
         classes_to_check = [class_name] + db.resolve_inheritance_chain(class_name)
+        rank = {"retail": 0, "per_tu": 1, "native": 2, "debug": 3}
 
         for check_class in classes_to_check:
-            # Get all members for this class, ordered by offset descending
+            # Find the member with the greatest offset <= the queried offset.
+            # When a gated layout fork puts several members at that same base
+            # offset, prefer the retail (matching-build) variant rather than an
+            # arbitrary native/debug one.
             cursor.execute("""
-                SELECT c.name, m.name, m.type_str, m.offset
+                SELECT c.name, m.name, m.type_str, m.offset, m.guard, m.guard_kind
                 FROM members m
                 JOIN classes c ON m.class_id = c.id
                 WHERE c.name = ? AND m.offset <= ?
-                ORDER BY m.offset DESC
-                LIMIT 1
-            """, (check_class, offset))
+                  AND m.offset = (
+                      SELECT MAX(m2.offset) FROM members m2
+                      WHERE m2.class_id = m.class_id AND m2.offset <= ?
+                  )
+                ORDER BY (CASE m.guard_kind
+                            WHEN 'retail' THEN 0 WHEN 'per_tu' THEN 1
+                            WHEN 'native' THEN 2 ELSE 3 END), m.rowid
+            """, (check_class, offset, offset))
 
-            row = cursor.fetchone()
-            if not row:
+            rows = cursor.fetchall()
+            if not rows:
                 continue
 
+            row = rows[0]
             cls_name, member_name, type_str, member_offset = row[0], row[1], row[2], row[3]
+            guard, guard_kind = row[4] or "", row[5] or "retail"
             sub_offset = offset - member_offset
 
             # Estimate member size from type
@@ -2705,6 +2746,10 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
             if member_size and sub_offset < member_size:
                 text = f"**{cls_name}::{member_name}** (`{type_str}`) at base offset 0x{member_offset:x}"
                 text += f"\n  Queried offset 0x{offset:x} is at +0x{sub_offset:x} within this member"
+                if guard:
+                    text += (f"\n  Note: gated member [{guard_kind}] «{guard}». "
+                             f"Other variants exist at this base offset — check "
+                             f"the unit's objects.json extra_cflags.")
                 # Describe wrapper sub-offset if applicable
                 sub_info = self._describe_wrapper_suboffset(type_str, sub_offset)
                 if sub_info:

@@ -312,8 +312,9 @@ protected:
   }
 
 protected:
-  size_type _M_node_count; // keeps track of size of tree
-  _Compare _M_key_compare;
+  // Layout (after the 0x10-byte _Rb_tree_base::_M_header at 0x0):
+  size_type _M_node_count; // 0x10 keeps track of size of tree
+  _Compare _M_key_compare; // 0x14
 #if defined(RB3_RBTREE_0x1C)
   // Some retail X360 TUs were built against an STLport _tree.h that carried an
   // extra 4-byte member here, making sizeof(std::map/set/multimap) == 0x1c
@@ -324,7 +325,7 @@ protected:
   // layout the retail object was actually linked from. Verified against the
   // target binary: AM mGoalAcquisitionInfos at 0x170 (needs 0x1c maps);
   // AP mBestSolo at 0x1b4 (needs 0x18 maps + real unk50 field).
-  size_type _M_unused;
+  size_type _M_unused; // 0x18
 #endif
 
   _Base_ptr _M_root() const
