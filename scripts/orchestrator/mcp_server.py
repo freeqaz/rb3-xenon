@@ -2283,8 +2283,8 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
         if not source_path:
             return [TextContent(type="text", text=f"Error: Symbol '{symbol}' not found in report.json. Cannot determine source file.")]
 
-        # 2. Derive the obj target from source path (src/foo/Bar.cpp -> build/45410914/default/foo/Bar.obj)
-        obj_target = source_path.replace("src/", "build/45410914/default/").rsplit(".", 1)[0] + ".obj"
+        # 2. Derive the obj target from source path (src/foo/Bar.cpp -> build/45410914/src/foo/Bar.obj)
+        obj_target = source_path.replace("src/", "build/45410914/src/", 1).rsplit(".", 1)[0] + ".obj"
 
         # 3. Extract compile command from ninja
         ninja_result = subprocess.run(
