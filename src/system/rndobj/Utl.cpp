@@ -1804,7 +1804,9 @@ static float sBloomOffsets[15] = { -6.5f, -5.5f, -4.5f, -3.5f, -2.5f, -1.5f, -0.
 
 void SetBloomBlurWeights(bool horizontal, float width, float height) {
     int numTaps = 15;
-    int reg = 0x9a;
+    // RB3 retail's PShaderConstant base is 0x2f (verified: target `li r30,0x2f`);
+    // DC3 (newer, more shader constants) uses 0x9a. RB3-specific value.
+    int reg = 0x2f;
     float one = 1.0f;
     int i = 0;
     float invWidth = 1.0f / width;
