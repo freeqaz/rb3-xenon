@@ -150,6 +150,15 @@ protected:
     /** "Angle for light streak". Ranges from -360 to 360. */
     float mBloomStreakAngle; // 0x54
     bool mForceCurrentInterp; // 0x58
+    // RB3-360 retail places 12 bytes (3 words) BEFORE the embedded RndColorXfm
+    // (not after, as a prior fix assumed). This shifts the ColorXfm sub-object
+    // — and therefore its internal Transform — +0xc higher, which is what
+    // ModulateColorXfm expects (it reads mColorXfm.mColorXfm at target 0xb8,
+    // and our base placement without this would put it at 0xac). Placing the
+    // pad here rather than after mColorXfm keeps the entire mPosterLevels..
+    // vignette mid-region at the offsets the .cpp accessors already match.
+    // See docs/decomp/near-miss-classification-2026-06-06.md lever #6.
+    int _retail_pad_before_colorxfm[3]; // +0xc (0x5c..0x68)
     /** "Hue: -180 to 180, 0.0 is neutral" */
     /** "Saturation: -100 to 100, 0.0 is neutral" */
     /** "Lightness: -100 to 100, 0.0 is neutral" */
@@ -159,14 +168,7 @@ protected:
     /** "Input high end" */
     /** "Output low end" */
     /** "Output high end" */
-    RndColorXfm mColorXfm; // 0x5c
-    // Retail RB3-360 places mPosterLevels 0xc higher than sizeof(RndColorXfm)
-    // (0x84) would put it: the embedded RndColorXfm region effectively spans to
-    // 0xf0 in retail, 0xc more than DC3/rb3-Wii. Anonymous pad so the entire
-    // mid-region (poster/kaleidoscope/flicker/noise/gradient/refract/vignette)
-    // lands at the retail offsets the .cpp accessors expect.
-    // See docs/decomp/near-miss-classification-2026-06-06.md lever #6.
-    int _retail_pad_after_colorxfm[3]; // +0xc
+    RndColorXfm mColorXfm; // 0x68
     /** "Number of levels for posterization, 0 turns off". Ranges from 0 to 255. */
     float mPosterLevels; // 0xf0
     /** "Minimum intensity to posterize, 1.0 is posterize all". Ranges from 0 to 1. */
