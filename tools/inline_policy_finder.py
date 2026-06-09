@@ -29,18 +29,112 @@ near-miss functions exhibiting it (the multiplier). For each callee we emit a
 fix_hint: which header method to move out-of-line / inline, and — when locatable
 — whether it is CURRENTLY inline in our src/ header (the actionable signal).
 
+Anonymous fn_ callees are resolved using fn_resolver.py's identity index
+(~/tmp/fn_resolver_index.json) which aggregates 7 evidence tiers. Resolved
+anonymous callees become fully actionable candidates instead of dead-ends.
+
 Output: ~/tmp/forcemult/inline_candidates.json — ranked
   [{callee, callee_demangled, direction, n_affected, affected[], header,
-    current_form, fix_hint}]
+    current_form, fix_hint, resolved_from_fn (when resolved)}]
 
 Usage:
   tools/inline_policy_finder.py                 # band [90,100), named fns
   tools/inline_policy_finder.py --lo 95 --hi 100
   tools/inline_policy_finder.py --limit 50      # cap fns scanned (debug)
   tools/inline_policy_finder.py --sym '<one symbol>'   # single-fn dump
+  tools/inline_policy_finder.py --no-resolver   # skip fn_resolver (faster, old behavior)
 """
 import sys, os, re, json, subprocess, argparse
 from collections import defaultdict, Counter
+
+# fn_resolver integration: load the pre-built index once
+_FN_RESOLVER_INDEX_PATH = os.path.expanduser('~/tmp/fn_resolver_index.json')
+_fn_resolver_index: dict | None = None  # lazy loaded
+_fn_resolver_tried = False
+
+
+def _load_fn_resolver_index():
+    """Load (lazily) the fn_resolver identity index. Returns dict or None."""
+    global _fn_resolver_index, _fn_resolver_tried
+    if _fn_resolver_tried:
+        return _fn_resolver_index
+    _fn_resolver_tried = True
+    idx_path = _FN_RESOLVER_INDEX_PATH
+    if not os.path.exists(idx_path):
+        print(f'[fn_resolver] index not found at {idx_path}; skipping anonymous resolution',
+              file=sys.stderr)
+        _fn_resolver_index = None
+        return None
+    try:
+        with open(idx_path) as f:
+            raw = json.load(f)
+        # Normalise keys to uppercase 0x8XXXXXXX for lookup
+        _fn_resolver_index = {}
+        for k, v in raw.items():
+            # keys are already 0x8XXXXXXX (possibly upper or lower); normalise
+            try:
+                addr = int(k, 16)
+                _fn_resolver_index[f'0x{addr:08X}'] = v
+            except ValueError:
+                pass
+        print(f'[fn_resolver] loaded {len(_fn_resolver_index)} identities',
+              file=sys.stderr)
+    except Exception as e:
+        print(f'[fn_resolver] failed to load index: {e}', file=sys.stderr)
+        _fn_resolver_index = None
+    return _fn_resolver_index
+
+
+# Minimum confidence threshold for resolving an anonymous callee to a named identity.
+# We require >=0.75 so fuzzy/speculative matches don't produce false actionables.
+_RESOLVER_CONF_MIN = 0.75
+
+# Sources considered reliable enough to treat as "named" (not just unit-placement)
+_RELIABLE_SOURCES = {
+    'decomp_db_named', 'target_symbol_map', 'dc3_content_match',
+    'game_content_match', 'fuzzy_pairs', 'bindiff_dc3', 'vtable', 'rtti',
+}
+
+
+def resolve_fn_addr(fn_sym: str) -> tuple[str | None, str | None, float, str | None]:
+    """Attempt to resolve an anonymous fn_ symbol to a mangled name.
+
+    Returns (mangled, demangled, confidence, source) or (None, None, 0.0, None).
+    Only returns a result when confidence >= _RESOLVER_CONF_MIN and source is
+    considered reliable (not just unit-placement).
+    """
+    if not fn_sym.startswith('fn_') and not fn_sym.startswith('lbl_'):
+        return None, None, 0.0, None
+    try:
+        addr_hex = fn_sym[fn_sym.index('_') + 1:]  # strip 'fn_' or 'lbl_'
+        addr = int(addr_hex, 16)
+    except ValueError:
+        return None, None, 0.0, None
+
+    idx = _load_fn_resolver_index()
+    if idx is None:
+        return None, None, 0.0, None
+
+    key = f'0x{addr:08X}'
+    entry = idx.get(key)
+    if entry is None:
+        return None, None, 0.0, None
+
+    best = entry.get('best', {})
+    conf = float(best.get('confidence', 0.0))
+    source = best.get('source', '')
+    mangled = best.get('mangled', '')
+    demangled = best.get('demangled', mangled)
+
+    # Filter: must be reliable + confident + actually named (not just anon unit)
+    if conf < _RESOLVER_CONF_MIN:
+        return None, None, 0.0, None
+    if source not in _RELIABLE_SOURCES:
+        return None, None, 0.0, None
+    if not mangled or mangled.startswith('fn_') or mangled.startswith('<anon'):
+        return None, None, 0.0, None
+
+    return mangled, demangled, conf, source
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT = os.path.join(ROOT, 'build/45410914/report.json')
@@ -306,9 +400,14 @@ def main():
     ap.add_argument('--report', default=REPORT)
     ap.add_argument('--sym', default=None, help='dump one symbol and exit')
     ap.add_argument('--named-only', action='store_true', default=True)
+    ap.add_argument('--no-resolver', action='store_true', default=False,
+                    help='skip fn_resolver index (old behavior, faster)')
     ap.add_argument('--out',
                     default=os.path.expanduser('~/tmp/forcemult/inline_candidates.json'))
     a = ap.parse_args()
+    if a.no_resolver:
+        global _fn_resolver_tried
+        _fn_resolver_tried = True  # prevent loading
 
     if a.sym:
         d = run_diff(a.sym)
@@ -352,25 +451,58 @@ def main():
             body_tags[k][tag] += 1
             unnamed[k] = is_unnamed
 
+    # Pre-load fn_resolver index now (before building candidates) so the
+    # one-time load message appears before the per-candidate output.
+    if not a.no_resolver:
+        _load_fn_resolver_index()
+
     cands = []
+    n_resolved_anon = 0
     for (direction, callee), affected in by_key.items():
         dem = demangle(callee)
         is_unnamed = unnamed[(direction, callee)]
         tag = body_tags[(direction, callee)].most_common(1)[0][0]
+        resolved_from_fn = None   # set when an anonymous callee was resolved
+
         if is_unnamed:
-            klass, method, header, form = None, None, None, 'anonymous callee'
+            # Try fn_resolver to convert anonymous fn_ to a real identity
+            r_mangled, r_demangled, r_conf, r_source = resolve_fn_addr(callee)
+            if r_mangled:
+                # Successfully resolved: treat as a named callee from here on
+                n_resolved_anon += 1
+                resolved_from_fn = {
+                    'original_fn': callee,
+                    'resolved_mangled': r_mangled,
+                    'resolved_demangled': r_demangled,
+                    'resolver_conf': r_conf,
+                    'resolver_source': r_source,
+                }
+                # Override: use the resolved identity
+                callee_for_lookup = r_mangled
+                dem = r_demangled or r_mangled
+                klass, method = callee_basename(dem, r_mangled)
+                header, form = find_header_form(klass, method, r_mangled)
+                # It's no longer truly "unnamed" for actionability purposes
+                is_effectively_unnamed = False
+            else:
+                klass, method, header, form = None, None, None, 'anonymous callee'
+                callee_for_lookup = callee
+                is_effectively_unnamed = True
         else:
             klass, method = callee_basename(dem, callee)
             header, form = find_header_form(klass, method, callee)
+            callee_for_lookup = callee
+            is_effectively_unnamed = False
+
         # actionable now = a NAMED callee whose header form matches the lever:
         #   OUTLINE + currently INLINE-in-header  (the Str case: move it out)
         #   INLINE  + currently DECL-only         (the MakeShortAng case: inline it)
         actionable = (
             (direction == 'OUTLINE' and form.startswith('INLINE')) or
             (direction == 'INLINE' and form.startswith('DECL-only')))
-        name = (klass + '::' if klass else '') + (method or callee)
+        name = (klass + '::' if klass else '') + (method or callee_for_lookup)
         if direction == 'OUTLINE':
-            if is_unnamed:
+            if is_effectively_unnamed:
                 fix = (f'Retail calls OUT-OF-LINE `bl {callee}` (anonymous) where '
                        f'OUR build inlines a {tag}. Resolve {callee} (its body is a '
                        f'{tag}); if it maps to a header method we inline, move that '
@@ -379,18 +511,25 @@ def main():
                 fix = (f'Move {name} OUT-OF-LINE: change the header to a forward '
                        f'decl ( ...(args) const; ) and put the body in the matching '
                        f'.cpp. Retail emits `bl {callee}`; we inline a {tag}.')
+                if resolved_from_fn:
+                    fix += (f' [fn_resolver: {callee} → {dem} '
+                            f'conf={r_conf:.2f} via {r_source}]')
         else:
-            if is_unnamed:
+            if is_effectively_unnamed:
                 fix = (f'Retail INLINES a {tag} where OUR build emits `bl {callee}` '
                        f'(anonymous). Resolve {callee} and make it INLINE in the '
                        f'header so the body folds into callers.')
             else:
                 fix = (f'Make {name} INLINE: move its body from the .cpp into the '
                        f'header. Retail inlines a {tag}; we emit `bl {callee}`.')
+                if resolved_from_fn:
+                    fix += (f' [fn_resolver: {callee} → {dem} '
+                            f'conf={r_conf:.2f} via {r_source}]')
         cands.append({
             'callee': callee,
             'callee_demangled': dem,
             'callee_unnamed': bool(is_unnamed),
+            'resolved_from_fn': resolved_from_fn,
             'body_tag': tag,
             'direction': direction,
             'n_affected': len(affected),
@@ -404,6 +543,8 @@ def main():
                                 for (u, s, m) in affected],
                                key=lambda x: x['sym'])[:40],
         })
+    print(f'  fn_resolver resolved {n_resolved_anon} anonymous callees to named identities',
+          file=sys.stderr)
     # rank: actionable first, then named over anonymous, then by multiplier
     cands.sort(key=lambda c: (not c['actionable_now'], c['callee_unnamed'],
                               -c['n_affected']))
