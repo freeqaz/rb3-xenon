@@ -50,8 +50,8 @@ public:
     virtual void CaptureNextGpuFrame() { mCaptureNextFrame = true; }
     virtual void SetAspect(Aspect a);
     virtual void SetShrinkToSafeArea(bool shrink);
-    virtual void PushClipPlanesInternal(ObjPtrVec<RndTransformable> &);
-    virtual void PopClipPlanesInternal(ObjPtrVec<RndTransformable> &);
+    RND_DC3_VIRTUAL void PushClipPlanesInternal(ObjPtrVec<RndTransformable> &);
+    RND_DC3_VIRTUAL void PopClipPlanesInternal(ObjPtrVec<RndTransformable> &);
 
     virtual void SetViewport(const Viewport &v);
     virtual void DrawRect(

@@ -22,6 +22,20 @@ class RndMat;
 class RndTex;
 class UIPanel;
 
+// Retail X360 RB3 (rev-11-era) Rnd vtable lacks 8 virtuals that DC3's newer Rnd
+// added: ScreenDumpUnique, GetSync, NumDrawPasses, BeginDrawPass, EndDrawPass,
+// ShouldDrawPanel, Push/PopClipPlanesInternal. Verified by machine-code vtable-slot
+// anchors: ScreenDump @slot28 both; DrawRect/DrawString +1; GetFrameID +5;
+// SetShadowMap/RemovePointTest +6; DoWorldEnd/DoPostProcess +8. Keeping these
+// virtual shifts every later slot up 0x20 and breaks every Rnd vcall (EndWorld,
+// DrawStringScreen, ...). The native engine still wants them virtual, so gate the
+// `virtual` keyword behind HX_NATIVE (same idiom as ClearDepthForOverlay below).
+#ifdef HX_NATIVE
+#define RND_DC3_VIRTUAL virtual
+#else
+#define RND_DC3_VIRTUAL
+#endif
+
 class ModalKeyListener : public Hmx::Object {
 public:
     virtual DataNode Handle(DataArray *, bool);
@@ -95,7 +109,7 @@ public:
     virtual void Clear(unsigned int, const Hmx::Color &) = 0;
     virtual void ForceColorClear() {}
     virtual void ScreenDump(const char *);
-    virtual void ScreenDumpUnique(const char *);
+    RND_DC3_VIRTUAL void ScreenDumpUnique(const char *);
     virtual void DrawRect(
         const Hmx::Rect &,
         const Hmx::Color &,
@@ -111,12 +125,12 @@ public:
     virtual void EndDrawing();
     virtual void MakeDrawTarget() {}
     virtual void SetSync(int sync) { mSync = sync; }
-    virtual int GetSync() { return mSync; }
-    virtual int NumDrawPasses() const { return 1; }
-    virtual void BeginDrawPass() {}
-    virtual void EndDrawPass() {}
+    RND_DC3_VIRTUAL int GetSync() { return mSync; }
+    RND_DC3_VIRTUAL int NumDrawPasses() const { return 1; }
+    RND_DC3_VIRTUAL void BeginDrawPass() {}
+    RND_DC3_VIRTUAL void EndDrawPass() {}
     virtual unsigned int GetFrameID() const { return mFrameID; }
-    virtual bool ShouldDrawPanel(const UIPanel *) { return true; }
+    RND_DC3_VIRTUAL bool ShouldDrawPanel(const UIPanel *) { return true; }
     virtual RndTex *GetCurrentFrameTex(bool) { return nullptr; }
     virtual void ReleaseOwnership() {}
     virtual void AcquireOwnership() {}
@@ -214,8 +228,8 @@ protected:
     friend class NgPostProc;
     friend class RndSoftParticleBuffer;
 
-    virtual void PushClipPlanesInternal(ObjPtrVec<RndTransformable> &) {}
-    virtual void PopClipPlanesInternal(ObjPtrVec<RndTransformable> &) {}
+    RND_DC3_VIRTUAL void PushClipPlanesInternal(ObjPtrVec<RndTransformable> &) {}
+    RND_DC3_VIRTUAL void PopClipPlanesInternal(ObjPtrVec<RndTransformable> &) {}
     virtual void DoWorldBegin();
     virtual void DoWorldEnd();
     virtual void DoPostProcess();
