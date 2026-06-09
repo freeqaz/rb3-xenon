@@ -4,8 +4,15 @@
 #include "utl/MemMgr.h"
 
 struct ColorSet {
-    Hmx::Color mPrimary;
-    Hmx::Color mSecondary;
+    Hmx::Color mPrimary;   // 0x0
+    Hmx::Color mSecondary; // 0x10
+    // Retail RB3-360 sizes ColorSet at 0x44 (the vector<ColorSet> in
+    // ColorPalette::Load uses a 0x44 element stride / memcpy, see the three
+    // `li r5,0x44` sites in the target). DC3/rb3-Wii shrank ColorSet to just
+    // the two colors (0x20); RB3 retained 0x24 of trailing (non-serialized)
+    // storage. Only the two colors are read by operator>>; the tail is unused
+    // scratch, so it is represented as trailing padding to match the size.
+    char mPad[0x24]; // 0x20  (retail-only; not present in DC3/rb3-Wii ColorSet)
 };
 
 /**
