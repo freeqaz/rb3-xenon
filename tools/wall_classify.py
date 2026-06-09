@@ -2,7 +2,7 @@
 """wall_classify.py — Auto-tag HAS_REAL near-miss functions with playbook wall classes.
 
 Implements the 8 wall detectors from docs/decomp/playbooks/hasreal-grind.md §3 plus
-MEMBER_DELTA, and routes each function to an actionable decision.
+MEMBER_DELTA, FUNCLET_PAIRING, and routes each function to an actionable decision.
 
 Wall classes (from playbook §3):
   VBASE_WALL        — vtable-slot +4 delta via virtual base (3a); DEFER
@@ -13,6 +13,7 @@ Wall classes (from playbook §3):
   UNVERIFIABLE      — bl lbl_/fn_ in logic position (3f); DEFER_DEEP
   NO_ORACLE_LAYOUT  — wildly different offset + inverted constant (3g); DEFER_DEEP
   SIZE_DIVERGENCE   — li r3, 0xNNN feeding operator new (3h); DEFER_DEEP
+  FUNCLET_PAIRING   — r31 derived from r12 (funclet frame), offset diff is frame-slot noise (3i); DEFER_DEEP
   MEMBER_DELTA      — clean uniform this-relative offset delta; MEMBER_DELTA_CANDIDATE
   UNKNOWN           — unclassified residue; needs human/agent
 
@@ -20,7 +21,7 @@ Routes:
   PERMUTE               — FPR_SCHED; hand off to /permute skill
   DEFER_VBASE           — VBASE_WALL; virtual-base layout artifact, multi-TU
   AT_LIMIT              — BOOL_NEG or SIGNEDNESS; no known fix
-  DEFER_DEEP            — UNVERIFIABLE or NO_ORACLE_LAYOUT or SIZE_DIVERGENCE
+  DEFER_DEEP            — UNVERIFIABLE or NO_ORACLE_LAYOUT or SIZE_DIVERGENCE or FUNCLET_PAIRING
   MEMBER_DELTA_CANDIDATE — clean member offset delta; one-line header fix
   INLINE_POLICY         — bl vs inlined body
   UNKNOWN               — unclassified
@@ -724,6 +725,134 @@ def _detect_size_divergence(insns: List[dict]) -> Tuple[bool, List[str]]:
     return found, evidence[:4]
 
 
+def _get_funclet_frame_reg(all_insns: List[dict]) -> Optional[str]:
+    """Return the funclet frame register if this function has a funclet prologue.
+
+    A funclet prologue sets up a callee-save register from r12 (the funclet frame
+    pointer passed by the exception runtime), using: subi rX, r12, <imm>
+    This is distinct from r3-derived subobject adjustors like subi r31, r3, <imm>.
+
+    Returns the register name (e.g. 'r31') if found, else None.
+    """
+    # Check the first few instructions for the funclet pattern
+    for ins in all_insns[:6]:
+        t = ins.get('target') or {}
+        top = t.get('opcode', '').strip()
+        ta = (t.get('args') or '').strip()
+        if top in ('subi', 'addi'):
+            tt = _tokens(ta)
+            # subi rX, r12, imm  (3 tokens; src must be r12)
+            if len(tt) >= 3 and tt[1] == 'r12':
+                return tt[0]  # e.g. 'r31'
+    return None
+
+
+def _is_funclet_direct_access(all_insns: List[dict], funclet_reg: str,
+                               diff_insns: List[dict]) -> bool:
+    """Return True if the differing memory accesses are DIRECTLY on funclet_reg.
+
+    "Directly" means the base register of the differing lwz/stw/addi IS funclet_reg,
+    rather than being a register that was loaded FROM funclet_reg.
+
+    The CameraShot pattern is NOT direct: funclet dtor accesses look like:
+        lwz r11, FIXED_OFFSET, r31     (load a pointer from frame slot — same both sides)
+        subi r11, r11, CONST           (adjust to subobject — same both sides)
+        addi r3, r11, MEMBER_OFFSET    (offset HERE differs — on r11, not r31)
+    So r11 (the register loaded from r31) carries the real object pointer; the diff
+    is on r11, not r31. That IS a real member delta.
+
+    The Rnd funclet FP pattern IS direct:
+        lwz r3, 0x54, r31  vs  lwz r3, 0x50, r31
+    The differing offset is directly on r31 (frame slot index varies between
+    structurally different functions that happen to share prologue bytes).
+    """
+    # Build the set of registers that were loaded FROM funclet_reg via lwz/addi/subi
+    # (these carry dereferenced object pointers — their offsets are real member accesses)
+    loaded_from_funclet: Set[str] = set()
+    for ins in all_insns:
+        t = ins.get('target') or {}
+        top = t.get('opcode', '').strip()
+        ta = (t.get('args') or '').strip()
+        if top == 'lwz':
+            tt = _tokens(ta)
+            # lwz dst, offset, base  — if base is funclet_reg, dst = loaded from frame
+            if len(tt) >= 3 and tt[2] == funclet_reg:
+                loaded_from_funclet.add(tt[0])
+        elif top in ('subi', 'addi'):
+            tt = _tokens(ta)
+            # subi/addi dst, src, imm — if src is in loaded_from_funclet, dst inherits
+            if len(tt) >= 3 and tt[1] in loaded_from_funclet:
+                loaded_from_funclet.add(tt[0])
+            # Also: subi/addi dst, funclet_reg, imm (direct adjust from frame reg)
+            # Do NOT add dst to loaded_from_funclet here — dst is still "from frame"
+            # in the sense it's a frame-relative pointer, not a dereferenced heap obj
+
+    # Now check: do any differing accesses have base_reg == funclet_reg DIRECTLY?
+    has_direct = False
+    has_indirect = False
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '').strip()
+        bop = b.get('opcode', '').strip()
+        ta = (t.get('args') or '').strip()
+
+        if top in MEM_LOADS_STORES and bop == top:
+            tt = _tokens(ta)
+            if len(tt) >= 3:
+                base_r = tt[2]
+                if base_r == funclet_reg:
+                    has_direct = True
+                elif base_r in loaded_from_funclet:
+                    has_indirect = True
+
+        if top in ('addi', 'subi', 'addic') and bop == top:
+            tt = _tokens(ta)
+            if len(tt) >= 3:
+                src_r = tt[1]
+                if src_r == funclet_reg:
+                    has_direct = True
+                elif src_r in loaded_from_funclet:
+                    has_indirect = True
+
+    # FUNCLET_PAIRING: all differing accesses are directly on funclet_reg,
+    # with no indirect (loaded-from-funclet) accesses that would indicate real obj access.
+    # If there are ANY indirect accesses, do NOT flag as funclet pairing — those are real.
+    if has_direct and not has_indirect:
+        return True
+    return False
+
+
+def _detect_funclet_pairing(all_insns: List[dict], diff_insns: List[dict],
+                             unit: str, sym: str) -> Tuple[bool, List[str]]:
+    """3i: Funclet address-pairing artifact.
+
+    Detects when dtk paired our compiled function against a structurally different
+    retail funclet. Signature:
+    1. Prologue contains `subi rX, r12, <imm>` (funclet frame setup — r12 is the
+       exception runtime frame pointer, NOT this/r3).
+    2. The differing memory accesses are DIRECTLY on that funclet frame register
+       (i.e., frame-slot index noise), NOT on a register loaded from the frame reg
+       (which would be a real heap-object member access).
+
+    See docs/decomp/playbooks/hasreal-grind.md §3i and §4 "Gate zero".
+    """
+    funclet_reg = _get_funclet_frame_reg(all_insns)
+    if funclet_reg is None:
+        return False, []
+
+    is_direct = _is_funclet_direct_access(all_insns, funclet_reg, diff_insns)
+    if not is_direct:
+        return False, []
+
+    evidence = [
+        f'funclet prologue: subi {funclet_reg}, r12, <imm>',
+        f'diff accesses are directly on {funclet_reg} (frame-slot index, not member offset)',
+        'different retail function paired by coincidental prologue bytes',
+    ]
+    return True, evidence
+
+
 def _detect_member_delta(insns: List[dict], unit: str, sym: str) -> Tuple[bool, List[str], int, int]:
     """MEMBER_DELTA: clean uniform this-relative offset delta.
     Returns (is_member_delta, evidence, dominant_delta, threshold).
@@ -731,7 +860,7 @@ def _detect_member_delta(insns: List[dict], unit: str, sym: str) -> Tuple[bool, 
     Uses the same this-tracing logic as member_delta_finder.py:
     - r3 is `this` on entry; mr propagates; bl kills r3..r12
     - look for struct-offset diffs that are uniform across the function
-    - require the delta to be non-zero, consistent, and THIS-relative (not r1)
+    - require the delta to be non-zero, consistent, and THIS-relative (not r1/funclet-frame)
     """
     # Collect all structural offset diffs
     this_regs: Set[str] = {'r3'}
@@ -745,10 +874,23 @@ def _detect_member_delta(insns: List[dict], unit: str, sym: str) -> Tuple[bool, 
         return False, [], 0, 0
     all_insns = d.get('instructions', [])
 
+    # Gate: if this function has a funclet prologue (subi rX, r12, imm) AND the
+    # differing accesses are directly on that frame register, bail out — that's
+    # FUNCLET_PAIRING noise, not a member delta.  The caller (_classify_fn) runs
+    # _detect_funclet_pairing first, but this gate ensures the this-tracer also
+    # rejects those frame registers so they don't accidentally land in struct_accesses.
+    funclet_reg = _get_funclet_frame_reg(all_insns)
+    if funclet_reg is not None:
+        # Add the funclet frame register to frame_regs so it's excluded from
+        # this-tracking. If the diff accesses are on a register LOADED from
+        # funclet_reg (i.e., a real object pointer stored in the frame), those
+        # registers are NOT in frame_regs and will be tracked normally.
+        frame_regs.add(funclet_reg)
+
     # Collect (target_offset, base_offset, base_reg, access_type) tuples
     struct_accesses = []  # (t_off, b_off, base_reg, op)
 
-    # Reset this tracking
+    # Reset this tracking (frame_regs already has funclet reg if applicable)
     this_regs = {'r3'}
     param_regs = {'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10'}
 
@@ -855,8 +997,17 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
 
     diff_insns: pre-fetched differing instructions (optimization). If None, will fetch.
     """
+    # Fetch all instructions (needed for funclet prologue detection and this-tracing).
+    # diff_fn returns the full JSON including all instructions; get_diff_instructions
+    # already filters to mismatches only.  We need the full set here.
+    _full_diff = diff_fn(unit, sym, proj)
+    all_insns_full: List[dict] = _full_diff.get('instructions', []) if _full_diff else []
+
     if diff_insns is None:
-        diff_insns = get_diff_instructions(unit, sym, proj)
+        diff_insns = [ins for ins in all_insns_full
+                      if ins.get('match_type') not in ('equal', None)]
+        if not diff_insns and _full_diff is None:
+            diff_insns = get_diff_instructions(unit, sym, proj)
 
     if not diff_insns:
         return {
@@ -920,26 +1071,40 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
         classes.append('SIZE_DIVERGENCE')
         all_evidence['SIZE_DIVERGENCE'] = size_ev
 
-    # MEMBER_DELTA (runs extra diff_fn call — skip if already wall-classified)
-    is_member, member_ev, delta, threshold = _detect_member_delta(diff_insns, unit, sym)
-    if is_member and 'VBASE_WALL' not in classes:
-        classes.append('MEMBER_DELTA')
-        all_evidence['MEMBER_DELTA'] = {
-            'evidence': member_ev,
-            'delta': delta,
-            'threshold': threshold,
-        }
+    # 3i FUNCLET_PAIRING — check BEFORE MEMBER_DELTA (highest priority guard)
+    # Uses all_insns_full for prologue detection (diff_insns don't show equal instructions).
+    is_funclet, funclet_ev = _detect_funclet_pairing(all_insns_full, diff_insns, unit, sym)
+    if is_funclet:
+        classes.append('FUNCLET_PAIRING')
+        all_evidence['FUNCLET_PAIRING'] = funclet_ev
+
+    # MEMBER_DELTA (runs extra diff_fn call — skip if already wall-classified or funclet)
+    is_member, member_ev, delta, threshold = (False, [], 0, 0)
+    if 'FUNCLET_PAIRING' not in classes:
+        is_member, member_ev, delta, threshold = _detect_member_delta(diff_insns, unit, sym)
+        if is_member and 'VBASE_WALL' not in classes:
+            classes.append('MEMBER_DELTA')
+            all_evidence['MEMBER_DELTA'] = {
+                'evidence': member_ev,
+                'delta': delta,
+                'threshold': threshold,
+            }
 
     # STRUCT_OFF fallback: if struct-offset diffs exist and the only OTHER classes
     # are ANON_FN or NAMED_MISMATCH (not real blockers for layout), also classify
-    # as MEMBER_DELTA. Catches funclet/anonymous fn cases where this-tracing fails.
+    # as MEMBER_DELTA. Catches cases where this-tracing fails for legitimate reasons.
+    # GATE: skip if FUNCLET_PAIRING was already detected — the fallback path is
+    # exactly what produced false positives for the Rnd/MoveMgr/Archive/Overlay
+    # funclet clusters (direct-r31 frame slot diffs look like struct offsets to the
+    # fallback but are frame-slot index artifacts, not member deltas).
     # Condition: at least 1 struct-offset diff AND no hard blockers (VBASE/BOOL/etc.)
     non_struct_classes = set(classes) - {'VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS',
                                           'FPR_SCHED', 'SIZE_DIVERGENCE',
-                                          'NO_ORACLE_LAYOUT', 'UNVERIFIABLE'}
+                                          'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
+                                          'FUNCLET_PAIRING'}
     already_has_member = 'MEMBER_DELTA' in classes
 
-    if not already_has_member and not is_member:
+    if not already_has_member and not is_member and 'FUNCLET_PAIRING' not in classes:
         # Check if all diff_insns are pure structural offset diffs (addi/mem w/ num delta)
         struct_count = 0
         total_diff = len(diff_insns)
@@ -971,7 +1136,8 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
         has_hard_non_struct = any(
             cls in classes for cls in ('VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS',
                                         'FPR_SCHED', 'SIZE_DIVERGENCE',
-                                        'NO_ORACLE_LAYOUT', 'UNVERIFIABLE')
+                                        'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
+                                        'FUNCLET_PAIRING')
         )
         if total_diff > 0 and struct_count >= 1 and not has_hard_non_struct:
             # Has struct offsets — compute the uniform delta from the structural diffs
@@ -1019,62 +1185,68 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
                     threshold = fb_thresh
 
     # ── Route assignment ──────────────────────────────────────────────────────
-    # Priority: VBASE > BOOL_NEG/SIGNEDNESS > FPR_SCHED > INLINE_POLICY
-    #           > MEMBER_DELTA > SIZE/NO_ORACLE/UNVERIFIABLE > UNKNOWN
+    # Priority: FUNCLET_PAIRING > VBASE > BOOL_NEG/SIGNEDNESS > FPR_SCHED
+    #           > INLINE_POLICY > MEMBER_DELTA > SIZE/NO_ORACLE/UNVERIFIABLE > UNKNOWN
     route = 'UNKNOWN'
     confidence = 'medium'
 
-    # VBASE routing: only hard-route to DEFER_VBASE if instruction diffs show
-    # vtable-slot deltas OR if the ONLY other class is nothing (pure VBASE).
-    # If VBASE was detected only from metadata (COFF/header) but another actionable
-    # class is present in the diffs, let the other class route it.
-    vbase_dominates = ('VBASE_WALL' in classes and
-                       (vbase_from_insn or
-                        set(classes) <= {'VBASE_WALL'} or
-                        set(classes) - {'VBASE_WALL'} <= {'MEMBER_DELTA'}))
-
-    if vbase_dominates:
-        route = 'DEFER_VBASE'
-        confidence = 'high'
-    elif 'BOOL_NEG' in classes:
-        route = 'AT_LIMIT'
-        confidence = 'high'
-    elif 'SIGNEDNESS' in classes and 'MEMBER_DELTA' not in classes:
-        route = 'AT_LIMIT'
-        confidence = 'medium'
-    elif 'FPR_SCHED' in classes and 'MEMBER_DELTA' not in classes:
-        route = 'PERMUTE'
-        confidence = 'medium'
-    elif 'INLINE_POLICY' in classes and 'MEMBER_DELTA' not in classes:
-        route = 'INLINE_POLICY'
-        confidence = 'medium'
-    elif 'MEMBER_DELTA' in classes:
-        route = 'MEMBER_DELTA_CANDIDATE'
-        # Boost confidence if corroborated by multiple accesses; lower if fallback
-        md = all_evidence.get('MEMBER_DELTA', {})
-        ev_text = ' '.join(md.get('evidence', []))
-        if md.get('confidence') == 'low' or 'fallback:' in ev_text:
-            confidence = 'low'
-        elif '100%' in ev_text or 'consistency' in ev_text:
-            confidence = 'high'
-        else:
-            confidence = 'medium'
-    elif 'SIZE_DIVERGENCE' in classes or 'NO_ORACLE_LAYOUT' in classes:
+    # FUNCLET_PAIRING: highest priority — if the whole diff is a frame-slot artifact,
+    # no source edit can fix it.  Route to DEFER_DEEP (same as SIZE_DIVERGENCE / NO_ORACLE).
+    if 'FUNCLET_PAIRING' in classes:
         route = 'DEFER_DEEP'
-        confidence = 'medium'
-    elif 'UNVERIFIABLE' in classes:
-        route = 'DEFER_DEEP'
-        confidence = 'medium'
-    elif 'FPR_SCHED' in classes:
-        # FPR + something else (e.g. INLINE_POLICY) — still permute
-        route = 'PERMUTE'
-        confidence = 'low'
-    elif 'SIGNEDNESS' in classes:
-        route = 'AT_LIMIT'
-        confidence = 'low'
+        confidence = 'high'
     else:
-        route = 'UNKNOWN'
-        confidence = 'low'
+        # VBASE routing: only hard-route to DEFER_VBASE if instruction diffs show
+        # vtable-slot deltas OR if the ONLY other class is nothing (pure VBASE).
+        # If VBASE was detected only from metadata (COFF/header) but another actionable
+        # class is present in the diffs, let the other class route it.
+        vbase_dominates = ('VBASE_WALL' in classes and
+                           (vbase_from_insn or
+                            set(classes) <= {'VBASE_WALL'} or
+                            set(classes) - {'VBASE_WALL'} <= {'MEMBER_DELTA'}))
+
+        if vbase_dominates:
+            route = 'DEFER_VBASE'
+            confidence = 'high'
+        elif 'BOOL_NEG' in classes:
+            route = 'AT_LIMIT'
+            confidence = 'high'
+        elif 'SIGNEDNESS' in classes and 'MEMBER_DELTA' not in classes:
+            route = 'AT_LIMIT'
+            confidence = 'medium'
+        elif 'FPR_SCHED' in classes and 'MEMBER_DELTA' not in classes:
+            route = 'PERMUTE'
+            confidence = 'medium'
+        elif 'INLINE_POLICY' in classes and 'MEMBER_DELTA' not in classes:
+            route = 'INLINE_POLICY'
+            confidence = 'medium'
+        elif 'MEMBER_DELTA' in classes:
+            route = 'MEMBER_DELTA_CANDIDATE'
+            # Boost confidence if corroborated by multiple accesses; lower if fallback
+            md = all_evidence.get('MEMBER_DELTA', {})
+            ev_text = ' '.join(md.get('evidence', []))
+            if md.get('confidence') == 'low' or 'fallback:' in ev_text:
+                confidence = 'low'
+            elif '100%' in ev_text or 'consistency' in ev_text:
+                confidence = 'high'
+            else:
+                confidence = 'medium'
+        elif 'SIZE_DIVERGENCE' in classes or 'NO_ORACLE_LAYOUT' in classes:
+            route = 'DEFER_DEEP'
+            confidence = 'medium'
+        elif 'UNVERIFIABLE' in classes:
+            route = 'DEFER_DEEP'
+            confidence = 'medium'
+        elif 'FPR_SCHED' in classes:
+            # FPR + something else (e.g. INLINE_POLICY) — still permute
+            route = 'PERMUTE'
+            confidence = 'low'
+        elif 'SIGNEDNESS' in classes:
+            route = 'AT_LIMIT'
+            confidence = 'low'
+        else:
+            route = 'UNKNOWN'
+            confidence = 'low'
 
     if not classes:
         classes = ['UNKNOWN']
@@ -1293,11 +1465,18 @@ def print_summary(results: List[dict]) -> None:
     for route in ROUTE_ORDER:
         n = route_counts.get(route, 0)
         pct = n / len(results) * 100 if results else 0
-        print(f"  {route:<28} {n:>6}  {pct:>4.1f}%")
+        suffix = ''
+        if route == 'DEFER_DEEP':
+            fp_n = sum(1 for r in results if r['route'] == 'DEFER_DEEP'
+                       and 'FUNCLET_PAIRING' in r['classes'])
+            other_n = n - fp_n
+            suffix = f'  [{fp_n} FUNCLET_PAIRING + {other_n} other]'
+        print(f"  {route:<28} {n:>6}  {pct:>4.1f}%{suffix}")
     print()
     print(f"Class breakdown (functions can have multiple):")
     for cls in ['VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS', 'FPR_SCHED', 'INLINE_POLICY',
-                'UNVERIFIABLE', 'NO_ORACLE_LAYOUT', 'SIZE_DIVERGENCE', 'MEMBER_DELTA', 'UNKNOWN']:
+                'UNVERIFIABLE', 'NO_ORACLE_LAYOUT', 'SIZE_DIVERGENCE', 'FUNCLET_PAIRING',
+                'MEMBER_DELTA', 'UNKNOWN']:
         n = class_counts.get(cls, 0)
         if n:
             print(f"  {cls:<25} {n:>5}")

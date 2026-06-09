@@ -214,9 +214,26 @@ is N bytes bigger/smaller than retail. Reconstructing which members differ is a 
 job, not a one-liner. Defer to a dedicated layout pass. *Pilot:* `DataWriteFile`
 (`new TextFileStream`/`new Debug` size 0x144 ours vs 0x100 retail).
 
+### 3i. Different-function address-pairing artifact (dtk paired two distinct fns) — abandon
+**Signature:** target/base **body sizes differ** (e.g. ours 0x78 vs retail 0x54), or the
+`operator new` size immediates differ (`li r3, 0x1a4` vs `li r3, 0x20c`), yet objdiff reads
+99.9% because prologue/epilogue coincide. Common for `NewObject<T>` factory `__unwind$`
+funclets: dtk address-paired our function against a structurally different retail function.
+The diff is meaningless; **no source edit can fix it** — documented funclet wall /
+`project_jeff_asm_misnest` class. *First-executor find (2026-06-09):* the "Rnd +4@0x54
+cluster" (44 fns) was entirely this — `lwz X(r31)` where `r31` came from
+`subi r31, r12, 0x70` (funclet FRAME slot, not `this`). Decisive test: compare compiled
+body sizes + `new`-size immediates; if either differs, abandon.
+
 ---
 
 ## 4. Offset-delta root-causing decision tree (when it IS a member delta)
+
+**Gate zero — confirm the base register is really `this`:** trace where the base register
+comes from. `r3` at entry (or copied from it) = `this`. But `r31` derived via
+`subi r31, r12, <imm>` is a **funclet frame pointer** — `lwz/stw X(r31)` deltas there are
+frame-slot artifacts (§3i), NOT member deltas. wall_classify's MEMBER_DELTA route is
+unreliable for funclets until it learns this check.
 
 Use `mode=offsets`. If you see a **single dominant uniform `this`-relative delta** (not r1/stack,
 not a vtable-slot, not a stack-frame `stwu r1,-0xNN` change), it's a real member-offset

@@ -211,10 +211,25 @@ the new fresh_report.sh: 6542 raw fuzzy==100 + 35 FP-anchor-normalized).
   sized-vector refutation now a one-command check) + asm_listing obj-path fix
   (`default/` → `src/`; broke /FAs for ALL units) + struct_db refreshed (current
   headers; MCP lookup_struct_offset serves it directly).
-- `tools/wall_classify.py` (in flight) — auto-tags the 330-fn worklist with the
-  playbook §3 signatures and routes PERMUTE/DEFER_VBASE/AT_LIMIT/MEMBER_DELTA_
-  CANDIDATE/UNKNOWN; validated against the pilot's 12 ground-truth targets. THE
-  prerequisite for any HAS_REAL swarm.
+- `91b50c9`+followup wall_classify.py — auto-tags the 330-fn worklist with the
+  playbook §3 signatures (11/11 ground-truth validation). FIRST EXECUTION taught it
+  a new wall class: the headline "Rnd +4@0x54 cluster (44 fns)" was a **funclet
+  address-pairing artifact** (r31 from `subi r31,r12` = frame slot, not `this`;
+  dtk paired structurally different fns — body sizes 0x78-vs-0x54, `new` sizes
+  0x1a4-vs-0x20c). Playbook gained §3i + §4 "gate zero"; classifier gained
+  FUNCLET_PAIRING detection (direct-vs-indirect frame-reg access distinguishes
+  artifact from real). **Corrected routing of the 330: MEMBER_DELTA 69 (the honest
+  residue), FUNCLET_PAIRING 120, DEFER_VBASE 107, PERMUTE 9, UNKNOWN 19, other 6.**
+  Output: ~/tmp/hasreal_routed.json.
+
+**Banked deferred lever — CameraShot +25:** real uniform +4 member delta (retail has
+a 4-byte member at ~+0x40 we lack; shifts a 9-member ObjPtrList<RndDrawable> chain
++0x44..0xdc stride 0x14). Owning class = vtable `0x82077150` (copy-ctor fn_824AB3E0);
+offsets do NOT match the CamShot header → distinct/sub-object layout, needs Ghidra
+reconstruction. Handoff: ~/tmp/rnd54_findings.jsonl. No guessing into shared headers.
+Other surviving high-conf MEMBER_DELTA: ??_G deleting-dtor adjustor-delta family
+(CharInterest −68, Waypoint +592, HamCharacter +96, RndShockwave +724, …) and
+ChunkStream +2084 (size-divergence class).
 
 **Vein verdict: unwired-DC3-engine residual = DRAINED** (`c13507f`,
 tools/dc3_residual_rank.py + docs/decomp/dc3-residual/ranked.json). 115 unwired
