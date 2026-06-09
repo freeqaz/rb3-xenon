@@ -214,9 +214,8 @@ void DxRnd::DoPostProcess() {
     CopyPostProcess();
     if (mRegAlloc != 1) {
         mRegAlloc = (RegisterAlloc)1;
-        D3DDevice_SetShaderGPRAllocation(
-            mD3DDevice, 0, mDefaultVSRegAlloc, mDefaultPSRegAlloc
-        );
+        // retail hardcodes the default GPR split here; DC3 reads mDefaultVSRegAlloc/mDefaultPSRegAlloc
+        D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x20, 0x60);
     }
     mPostProcDone = true;
 }
@@ -275,6 +274,8 @@ void DxRnd::Present() {
         D3DDevice_BlockUntilIdle(mD3DDevice);
         D3DDevice_SetSwapMode(mD3DDevice, mAsyncSwapCurrent);
     }
+    // retail normalizes with subic/subfe; we emit extrwi (boolean-negation residual, see
+    // docs/decomp/patterns/INDEX.md "Boolean Negation") — semantically identical
     mPIXCaptureState = PIXGetCaptureState() & 2;
 }
 

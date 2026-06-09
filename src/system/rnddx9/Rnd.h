@@ -225,7 +225,7 @@ private:
     bool mSuspended;
     bool mPrintGlitches;
     bool mCaptureNextFrame;
-    u8 mPIXCaptureState;
+    bool mPIXCaptureState; // 0x39b
     RegisterAlloc mRegAlloc; // 0x3f8
     int mDefaultVSRegAlloc; // 0x3fc
     int mDefaultPSRegAlloc; // 0x400
