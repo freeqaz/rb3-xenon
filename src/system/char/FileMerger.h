@@ -41,7 +41,6 @@ public:
         ~Merger() {}
         Merger &operator=(const Merger &m) {
             mName = m.mName;
-            filler = m.filler;
             mSelected = m.mSelected;
             loading = m.loading;
             mLoaded = m.mLoaded;
@@ -78,25 +77,28 @@ public:
 
         /** "Name of the merger, just for identification" */
         Symbol mName; // 0x0
-        Symbol filler; // 0x4
+        // NOTE: DC3 (newer) has an extra `Symbol filler; // 0x4` here that
+        // retail RB3-360 lacks (rb3-Wii agrees: mSelected directly follows
+        // mName, and _M_fill_insert_aux's sizeof(Merger) is -4 vs retail).
+        // Dropped to match the retail layout.
         /** "The file you want to merge" */
-        FilePath mSelected; // 0x8
-        FilePath loading; // 0x10
+        FilePath mSelected; // 0x4
+        FilePath loading; // 0xc
         /** "currently loaded file" */
-        FilePath mLoaded; // 0x18
+        FilePath mLoaded; // 0x14
         /** "If true, merges the Dir in as a proxy, rather than the individual objects" */
-        bool mProxy; // 0x20
-        bool mForceReload; // 0x21
+        bool mProxy; // 0x1c
+        bool mForceReload; // 0x1d
         /** "Delete the old objects right at StartLoad time" */
-        bool mPreClear; // 0x22
+        bool mPreClear; // 0x1e
         /** "How to treat subdirs in the source" */
-        MergeFilter::Subdirs mSubdirs; // 0x24
+        MergeFilter::Subdirs mSubdirs; // 0x20
         /** "Dir to merge into, proxy, for instance" */
-        ObjPtr<ObjectDir> mDir; // 0x28
+        ObjPtr<ObjectDir> mDir; // 0x24
         /** "loaded objects that will be deleted when file changes" */
-        ObjPtrList<Hmx::Object> mLoadedObjects; // 0x3c
+        ObjPtrList<Hmx::Object> mLoadedObjects; // 0x38
         /** "moved subdirs that will be removed when file changes" */
-        ObjPtrList<ObjectDir> mLoadedSubdirs; // 0x50
+        ObjPtrList<ObjectDir> mLoadedSubdirs; // 0x4c
     };
     // Hmx::Object
     virtual ~FileMerger();
