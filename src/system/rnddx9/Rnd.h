@@ -221,6 +221,7 @@ private:
     int unk3e8;
     int unk3ec;
     int unk3f0;
+    D3DTexture *mColorRampTex; // 0x394 (retail only; removed in DC3)
     bool mSuspended;
     bool mPrintGlitches;
     bool mCaptureNextFrame;
