@@ -275,7 +275,10 @@ void DxRnd::Present() {
         D3DDevice_SetSwapMode(mD3DDevice, mAsyncSwapCurrent);
     }
     // retail normalizes with subic/subfe; we emit extrwi (boolean-negation residual, see
-    // docs/decomp/patterns/INDEX.md "Boolean Negation") — semantically identical
+    // docs/decomp/patterns/INDEX.md "Boolean Negation") — semantically identical.
+    // Tried (PIX()&2)!=0 and ?true:false: both still extrwi. The target masks the bit
+    // in place (rlwinm r3,0,30,30) then normalizes; no source form reproduces that
+    // without changing surrounding codegen. Documented unfixable boundary.
     mPIXCaptureState = PIXGetCaptureState() & 2;
 }
 
