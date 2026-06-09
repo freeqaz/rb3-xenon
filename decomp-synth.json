@@ -7,5 +7,7 @@
   "uses_cd_prefix": false,
   "obj_layout": "objdiff_map",
   "objdiff_cli": "bin/objdiff-cli",
-  "m2c_target": "ppc"
+  "m2c_target": "ppc",
+  "m2c_path": "/home/free/code/milohax/m2c/m2c.py",
+  "objdiff_to_m2c_path": null
 }
