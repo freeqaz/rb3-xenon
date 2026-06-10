@@ -88,7 +88,9 @@ BEGIN_COPYS(RndTex)
             return;
         }
         PresyncBitmap();
+#ifdef RB3_RNDTEX_DC3_CRC
         COPY_MEMBER(unk2c)
+#endif
         COPY_MEMBER(mType)
         COPY_MEMBER(mWidth)
         COPY_MEMBER(mHeight)

@@ -153,9 +153,16 @@ protected:
     DataNode OnSetRendered(const DataArray *);
     DataNode OnSetSize(int, int);
 
+    // NOTE: DC3 (newer) has `Hmx::CRC unk2c; // 0x2c` here that retail RB3-360
+    // lacks. rb3-Wii agrees (mBitmap follows the prior block directly, no CRC),
+    // and RndTex::Print/Save/~RndTex read mBitmap+every following member at +4 vs
+    // retail. Gated out (default) to match the retail layout; the only use is the
+    // COPY_MEMBER in Tex.cpp, gated to match. Native keeps the DC3 member.
+#ifdef RB3_RNDTEX_DC3_CRC
     Hmx::CRC unk2c; // 0x2c
+#endif
     /** The bitmap associated with this texture. */
-    RndBitmap mBitmap; // 0x30
+    RndBitmap mBitmap; // 0x2c
     float mMipMapK; // 0x50
     /** The texture's type. */
     Type mType; // 0x54
