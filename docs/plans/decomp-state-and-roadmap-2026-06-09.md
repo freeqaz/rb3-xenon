@@ -635,3 +635,28 @@ gap 35 unchanged; units 1582→1585 = BandIKEffector wired + MidiInstrument re-p
   gap CLOSED); fresh_report.sh warns on >10 no-source-change divergence (the
   −34 mis-score trap) and prints measures.matched_functions beside the raw
   count.
+
+## Wave-2 CLOSE: **6932 / 65544** (6851 → 6932, +81, 0 regressions, ~28 commits ..8bb12f0)
+Final micro-action `8bb12f0`: Player::SetEnergy static-Message port (56.71→99.93;
+retail uses a function-local `static Message send_update_energy(Symbol(...))`,
+NOT the Messages4.h extern — the corrected form vs first-attempt static Symbol
+matters: the Message ctor + ??__F atexit dtor thunk must pair). Net 0 count;
+residue = the Player +4 member wall, now bracketed by TWO independent
+observations (batch-2: all reads ≥0x260 shifted, mUser 0x260/0x264; SetEnergy:
+all fields ≥0x2a0 shifted, `unk2a0` prime candidate). Fixing it = dedicated
+member_delta campaign touching ~100 Player.cpp fns + cross-TU (est +7-10 per the
+force-mult dossier) — the highest-value SINGLE deferred lever now on the books.
+
+### Where the next +N comes from (post-wave-2 queue, in EV order)
+1. **Player.h +4 layout reconstruction** (+7-10 + frees SetEnergy & VocalPlayer/
+   Singer chain; two bracket observations on file; needs careful cross-TU A/B).
+2. **UIComponent 2-missing-virtuals reconstruction** (unlocks the banked
+   Draw-devirt +4 + cascade; docs/decomp/handoff/rnddrawable-devirt-banked.patch).
+3. **obj_orphan map cleanup vein** (1092 entries, per-unit gated via
+   tools/map_lint.py --check obj_orphan; only stable-source units).
+4. **AccomplishmentProgress compound fix** (find the 4-byte pre-rbtree member,
+   THEN RB3_RBTREE_0x1C).
+5. **OvershellSlot layout reconstruction** (retail logic fully decoded+banked;
+   multi-session). 6. Mat_NG (multi-session, matng-deferral.md). 7. New research
+   wave once these drain — the 40-95 bodyport pool was largely executed or
+   refuted this wave.
