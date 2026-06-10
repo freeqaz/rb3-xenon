@@ -9,6 +9,18 @@
 
 #define BUF_SIZE 512
 
+// Retail stripped the *_ONCE log macros to a side-effect-preserving no-op: they
+// evaluate their arguments (so the virtual Name() call survives) but discard the
+// format. This matches the rb3-Wii non-debug Debug.h form; our engine Debug.h's
+// retail forms use an unevaluated sizeof() no-op that drops the Name() call.
+#ifndef HX_NATIVE
+#undef MILO_NOTIFY_ONCE
+#define MILO_NOTIFY_ONCE(...) (void)(__VA_ARGS__)
+#define MILO_LOG_ONCE(...) (void)(__VA_ARGS__)
+#else
+#define MILO_LOG_ONCE(...) TheDebugNotifyOncePrinter << MakeString(__VA_ARGS__)
+#endif
+
 // RB3's BinStream has no per-instance rev stack member (sizeof==0xc). The rev
 // stack is process-wide here so PushRev/PopRev still compile while the derived
 // stream classes keep the target member offsets. See BinStream.h note.
@@ -18,7 +30,7 @@ const char *BinStream::Name() const { return "<unnamed>"; }
 
 BinStream::BinStream(bool b) : mLittleEndian(b), mCrypto(nullptr) {}
 
-void SwapData(const void *in, void *out, int size) {
+inline void SwapData(const void *in, void *out, int size) {
     switch (size) {
     case 2: {
         unsigned short *s1 = (unsigned short *)in;
@@ -51,13 +63,13 @@ void BinStream::DisableEncryption() {
 
 void BinStream::Write(const void *void_data, int bytes) {
     if (Fail()) {
-        MILO_PRINT_ONCE("Stream error: Can't write to %s\n", Name());
+        MILO_LOG_ONCE("Stream error: Can't write to %s\n", Name());
     } else {
-        const unsigned char *data = (u8 *)void_data;
         if (!mCrypto) {
             WriteImpl(void_data, bytes);
         } else {
-            char crypt[512];
+            const unsigned char *data = (u8 *)void_data;
+            u8 crypt[512];
             while (bytes > 0) {
                 int x = Min(512, bytes);
                 for (int i = 0; i < x; i++) {
@@ -167,14 +179,17 @@ void BinStream::Read(void *data, int bytes) {
         MILO_NOTIFY_ONCE("Stream error: Can't read from %s", Name());
         memset(data, 0, bytes);
     } else {
+#ifdef HX_NATIVE
         AutoGlitchReport report(50.0f, __FUNCTION__);
+#endif
+        unsigned char *ptr = (unsigned char *)data;
+        unsigned char *end;
         ReadImpl(data, bytes);
         if (mCrypto) {
-            for (unsigned char *ptr = (unsigned char *)data;
-                 ptr < (unsigned char *)data + bytes;
-                 ptr++) {
-                unsigned char cryptoInt = mCrypto->Int();
-                *ptr ^= cryptoInt;
+            end = ptr + bytes;
+            while (ptr < end) {
+                u8 bastard = mCrypto->Int();
+                *ptr++ ^= bastard;
             }
         }
     }
