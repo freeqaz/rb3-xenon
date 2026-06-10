@@ -1873,7 +1873,10 @@ def run_validation(proj: str = ROOT) -> None:
 # three mdgrind misroute corrections (funclet divergent-bl, offset-swap, vtable-slot)
 # plus the CameraShot vbase-adjust gate.
 
-_GT48_PATH = next((p for p in ('/tmp/mdgrind_abandoned.jsonl',
+# Canonical copy is in-repo (tools/testdata/) — /tmp copies are volatile AND were
+# appended to by a later agent with summary rows lacking the 'unit' key.
+_GT48_PATH = next((p for p in (os.path.join(ROOT, 'tools/testdata/mdgrind_gt48.jsonl'),
+                                '/tmp/mdgrind_abandoned.jsonl',
                                 os.path.expanduser('~/tmp/mdgrind_abandoned.jsonl'))
                    if os.path.exists(p)), '/tmp/mdgrind_abandoned.jsonl')
 
@@ -1930,7 +1933,10 @@ def run_validation48(proj: str = ROOT, gt_path: str = _GT48_PATH) -> None:
                 return s
         return sym
 
-    rows = [json.loads(l) for l in open(gt_path) if l.strip()]
+    # Skip rows without 'unit' — later agents appended unit-less summary rows
+    # to the shared /tmp jsonl (the canonical tools/testdata copy is clean).
+    rows = [r for r in (json.loads(l) for l in open(gt_path) if l.strip())
+            if 'unit' in r]
     confusion: Dict[str, Counter] = defaultdict(Counter)
     misroutes = []
     md_survival = []
