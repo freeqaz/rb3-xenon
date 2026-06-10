@@ -2163,9 +2163,13 @@ MoveGraph.cpp:
 	.pdata      start:0x821F5840 end:0x821F5848
 	.text       start:0x8231B9A8 end:0x8231BA48
 
-MidiInstrument.cpp:
+BandIKEffector.cpp:
 	.pdata      start:0x821EEC60 end:0x821EEF10
 	.text       start:0x822B0C60 end:0x822B3D28
+
+MidiInstrument.cpp:
+	.pdata      start:0x82230210 end:0x82230388
+	.text       start:0x826F5528 end:0x826F6C60
 
 CharCollide.cpp:
 	.pdata      start:0x821EF268 end:0x821EF2C0

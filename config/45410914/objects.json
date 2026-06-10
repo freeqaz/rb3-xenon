@@ -41,6 +41,7 @@
       "system/bandobj/BandCharacter.cpp": "NonMatching",
       "system/bandobj/BandCharDesc.cpp": "NonMatching",
       "system/bandobj/BandDirector.cpp": "NonMatching",
+      "system/bandobj/BandIKEffector.cpp": "NonMatching",
       "system/bandobj/BandLabel.cpp": "NonMatching",
       "system/bandobj/BandSongPref.cpp": "NonMatching",
       "system/bandobj/BandWardrobe.cpp": "NonMatching",
