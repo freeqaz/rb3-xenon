@@ -9,6 +9,21 @@
 #include "os/Debug.h"
 #include "rndobj/Trans.h"
 
+// Retail X360 RB3 (rev-11-era) PropKeys vtable has no RemoveRange virtual; DC3's
+// newer PropKeys inserted `virtual int RemoveRange(float, float)` at own-slot 10
+// (0x28) plus per-Keys<> overrides. rb3-Wii confirms zero RemoveRange in PropKeys.
+// Keeping it virtual shifts every later slot up 0x4 and breaks every PropKeys
+// vcall (verified: RndPropAnim::ValueFromIndex shows 8 PropKeys vcall slots all
+// uniformly +4 — target 0x2c..0x5c vs ours 0x30..0x60 — bracketing the insertion
+// at slot 10). RemoveRange is still called directly (RndPropAnim::RemoveRange ->
+// (*keys)->RemoveRange in PropAnim.cpp), so the native engine keeps virtual
+// dispatch by gating the keyword behind HX_NATIVE (same idiom as RND_DC3_VIRTUAL).
+#ifdef HX_NATIVE
+#define PROPKEYS_DC3_VIRTUAL virtual
+#else
+#define PROPKEYS_DC3_VIRTUAL
+#endif
+
 class ObjKeys : public Keys<ObjectStage, Hmx::Object *> {
 public:
     ObjKeys(Hmx::Object *o) : mOwner(o) {}
@@ -111,7 +126,7 @@ public:
      * @returns The new amount of keys.
      */
     virtual int RemoveKey(int idx) { return 0; }
-    virtual int RemoveRange(float, float) { return 0; }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float, float) { return 0; }
     /** Get the number of keys. */
     virtual int NumKeys() { return 0; }
     /** Set the value of the keyframe at the supplied index, to the current value of
@@ -309,7 +324,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
@@ -356,7 +371,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
@@ -404,7 +419,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
@@ -455,7 +470,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
@@ -502,7 +517,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
@@ -551,7 +566,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
@@ -602,7 +617,7 @@ public:
         Remove(idx);
         return size();
     }
-    virtual int RemoveRange(float start, float end) { return Remove(start, end); }
+    PROPKEYS_DC3_VIRTUAL int RemoveRange(float start, float end) { return Remove(start, end); }
     virtual int NumKeys() { return size(); }
     virtual void SetToCurrentVal(int);
     virtual void Save(BinStream &bs) {
