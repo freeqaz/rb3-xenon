@@ -597,3 +597,41 @@ gap 35 unchanged; units 1582→1585 = BandIKEffector wired + MidiInstrument re-p
 4. setup_worktree.sh: reflink unified_id_rb3wii.json + struct_db.sqlite +
    global_fuzzy_pairs.json (3 agents hit the gap); fresh_report.sh warn when
    count diverges >10 from pre-build report (the 6845-vs-6880 measurement trap).
+
+## Wave-2 batch 3 (tooling) LANDED: 7 commits, count stable 6932 ✓
+- `622f556`+`8c45119`+`1c36699` **tools/map_lint.py** (4 checks) + purged 12 stale
+  BandIKEffector orphan map entries (A/B 6932→6932). `obj_orphan` = the
+  zero-FP canonical cleanup gate (map name not defined by the unit's compiled
+  obj can never pair); whole-map 1092 orphans = future vein but PER-UNIT GATED
+  (don't remove names that will pair once source lands). `class_mixing` has a
+  known FP class (legit member-type instantiations). VERDICT CORRECTION:
+  VocalTrackDir::PreLoad map VA IS a real fn — the batch-2 "except_data mis-pin"
+  was a recon mis-read; bodies genuinely diverge (still not body-portable, but
+  the MAP is correct). gen_game_target_map regen for re-pinned ranges = N/A
+  (BandIKEffector/MidiInstrument are ENGINE TUs, outside the rb3-Wii game
+  oracle; batch-2's manual names are complete).
+- `9267730` **ICF alias machinery** + the core REFUTATION: the authoritative
+  report metric NEVER penalized [sym] reloc-name mismatches
+  (report path sets function_reloc_diffs=None → reloc_eq returns true before
+  name compare; MCP run_objdiff passes functionRelocDiffs=none too). The
+  bandik "highest-value lever" premise came from bare strict-config objdiff-cli
+  diff. Landed anyway as scripts/symbol_aliases.json (2 PROVEN folds: PoolAlloc
+  5-arg ← 2-arg @0x827960D8; MemOrPoolAlloc + STL variant @0x82798250) rendered
+  to a synthetic MSVC map (gen_symbol_alias_map.py) wired via
+  ProjectConfig.map_file → objdiff symbol_equivalences; icf_alias_finder.py
+  --validate/--scan/--report. Pre-neutralizes alias residue in strict dev
+  diffs; 0 pure-alias victims in the current pool. KNOWN GAP: objdiff report
+  cache hash OMITS map_file content — rm build/45410914/report.cache after
+  editing aliases (one-line fork fix possible).
+- `efb2046` **tools/static_symbol_finder.py** + worklist doc
+  (docs/decomp/research/2026-06-10-static-symbol-worklist.md). Pool at current
+  pin coverage: 3 candidates — Player::SetEnergy 56.71% CLEAN one-way (+1 EV,
+  send_update_energy_msg Messages4.h:6 extern vs retail function-local static),
+  OvershellSlot UpdateView/UpdateState correctly flagged two-sided WALLS
+  (agrees w/ batch-2 verdict). MESSAGE_TIMER (BEGIN_HANDLERS) pool EMPTY —
+  drained by batch 2. Lever re-arms as more game TUs get pinned.
+- `212488a`+`7d816b4` **infra**: setup_worktree.sh auto-copies
+  global_fuzzy_pairs.json/unified_id_rb3wii.json/struct_db.sqlite (4×-confirmed
+  gap CLOSED); fresh_report.sh warns on >10 no-source-change divergence (the
+  −34 mis-score trap) and prints measures.matched_functions beside the raw
+  count.
