@@ -520,3 +520,80 @@ exactly (6851+29; raw 6816→6845 in lockstep; FP-anchor gap still 35).
 - target_symbol_map consistency linter idea (from reloc-midi): a range with
   named symbols from >1 unrelated class family = mis-pin flag; would have
   caught MidiInstrument automatically.
+
+## Wave-2 batch 2 LANDED + verified: **6932 / 65544** (+52, 0 regressions, 8 commits)
+Composed fresh build confirms exact composition (6880+52; raw 6845→6897 lockstep;
+gap 35 unchanged; units 1582→1585 = BandIKEffector wired + MidiInstrument re-pinned).
+- `8c8face`..`b7bd316` **BandIKEffector campaign +30** (the reloc-midi 3-step
+  handoff EXECUTED): BandIKEffector.cpp ported from rb3-Wii owns the formerly
+  mis-pinned range (29/94), MidiInstrument re-pinned to true span (17/56), ADSR
+  Ps2ADSR mPacked tail member (+2 — DC3 dropped it, rb3-Wii has it; proven by
+  memcpy 0x28-vs-0x24), MidiInstrument drop DC3 SynthPollable base (+1, the
+  +0xc layout). PORT LESSONS in agent notes: RndHighlightable is OUR
+  rndobj/Highlight.h (no port needed); MWCC Multiply already __MWERKS__-gated;
+  ObjMacros.h vs Object.h REVS-macro arity trap (expand DECLARE_REVS inline);
+  retail access-specifier mangling (I vs Q) makes public-vs-protected a
+  false-0 — check map access letters when a port reads 0%.
+- `e4180d4`+`1e295f6` **Gem +8 / GuitarController +4**: dossier root cause was
+  WRONG (not missing logic) — retail uses FUNCTION-LOCAL `static Symbol x("x")`
+  lazy-init guard blocks (NEW GENERAL GAME LEVER: any TU referencing
+  Symbols-header externs where retail used file-local statics shows
+  ??0Symbol+guard-ori delete blocks); BEGIN_HANDLERS MILO_DEBUG-off per-TU
+  override (macros.h:3 force-defines MILO_DEBUG tree-wide → every BEGIN_HANDLERS
+  emits a MessageTimer block retail lacks — becomes a force-multiplier as more
+  Handle-bearing TUs get pinned; global flip = dedicated wave, layout-coupled);
+  MILO_WARN (void)(args) per-TU now validated on 3 units = documented idiom.
+- `1da6d01` **refill +9** (Tex +3, Crowd +3, TrackPanelDir +3 — batch-1 cascade
+  reveals; iter-2 drained). Pools: inline-policy STILL TAPPED (17, all n=1);
+  member-delta 0 actionable (1 SIZED_VECTOR VocalPlayer −4@0x278 = wall, our
+  STLport has NO sized-vector impl; 5 VBASE; 1 UNKNOWN FreestyleMotionFilter
+  −36@0x10).
+- `89d87d7` **Synth −0xc +1** (compound: DC3 unk5c list + mZombieInsts position
+  + ObjDirPtr 8-vs-0xc width pad; gate RB3_SYNTH_DC3_LISTS default-off).
+
+**BANKED / REFUTED from batch 2:**
+- **RndDrawable Draw devirt + DrawShadow drop = BANKED net-0** (patch:
+  docs/decomp/handoff/rnddrawable-devirt-banked.patch, applies cleanly).
+  Architecture PROVEN (retail Draw is non-virtual: direct `bl fn_823F3A80`
+  cull-wrapper in RndDir::DrawShowing; CollideList +8 = two slots). +4 gained
+  exactly offset by 4 UIComponent-MI losses (uniform −8 = retail UIComponent
+  keeps exactly 2 of rb3-Wii's 4 own-virtuals we lack; which 2 = the
+  ui-base-layout-reconstruction effort). DO NOT split the lever (DrawShadow
+  alone = −2). Becomes +4+cascade once UIComponent is reconstructed.
+- **VocalTrackDir PreLoad/Deploy/TutorialReset = target_symbol_map ICF
+  MIS-PINS, not body-ports** (PreLoad pinned onto except_data 0x8; Deploy onto a
+  "slider.sld" fn; TutorialReset onto a static-Symbol fn). The research
+  dossier's percents compared our source against WRONG retail bytes. TrackReset
+  99.989 = ObjectDir-vbase vtable single-slot wall (needs retail vtable order —
+  COFF split objs carry no ??_7; Ghidra or caller-anchor reconstruction).
+- **OvershellSlot = layout-reconstruction wall**: real retail logic divergence
+  (fully DECODED in agent evidence: drop go_to_wiiprofilecreator
+  HasTransitionEvent halves + TheServer/IsPrimaryProfileCritical blocks;
+  enter/exit_msg as function-local statics) sits UNDER an 8-byte member shift
+  (mSessionMgr retail 0x3c vs ours 0x44; the 2 enum members between mState and
+  mUserNameLabel). rb3-Wii header is byte-identical to ours = WRONG for
+  retail-360; no oracle. Multi-session (cf. Mat_NG). ShowState retail body is a
+  DIFFERENT function (DataArray/RTDynamicCast path) — no oracle, skip.
+- **Player base-chain −4 = vbase-MI wall** (dossier's unk260 vector hypothesis
+  refuted — our STLport vector is unconditionally 12B, no sized-vector branch;
+  the +4 sits in the vbase prefix below 0x260; header comments wholesale stale).
+- **CamShotFrame −0x8 premise REFUTED**: compiled mFocalTarget is ALREADY 0xf4
+  (CameraShot.h `// 0xfc` comment is stale); the 44% dtor = funclet frame +
+  ObjPtr-dtor inline-policy, both deferred classes.
+- **GemManager scaffold REFUSED correctly**: fingerprint span = 8.8 MB scatter
+  (oracle fns at 0.01–0.62 confidence across 9 MB, no contiguous cluster).
+
+**TOOLING QUEUE (multi-agent confirmed, next batch):**
+1. target_symbol_map consistency LINTER (3rd independent confirmation:
+   MidiInstrument, VocalTrackDir×3, GemManager) + regenerate map names for the
+   re-pinned ranges + purge stale MidiInstrument/SampleZone entries now inside
+   BandIKEffector (harmless 0% noise but pollutes unit fuzzy).
+2. PoolAlloc ICF-merged-symbol ALIASING (highest-value per bandik agent):
+   retail folded 2-arg POOL_OVERLOAD operator-new into the 5-arg debug
+   ?PoolAlloc@@YAPAXHHPBDH0@Z; our byte-identical `bl` reads [sym] mismatch.
+   Caps MakeNoteInst 97.1; likely binary-wide POOL_OVERLOAD sites. Renamer/
+   objdiff alias, NOT source (forcing 5-arg form would load r5-r7 and regress).
+3. static-Symbol-guard FINDER (the Gem +8 pattern, generalizable worklist).
+4. setup_worktree.sh: reflink unified_id_rb3wii.json + struct_db.sqlite +
+   global_fuzzy_pairs.json (3 agents hit the gap); fresh_report.sh warn when
+   count diverges >10 from pre-build report (the 6845-vs-6880 measurement trap).
