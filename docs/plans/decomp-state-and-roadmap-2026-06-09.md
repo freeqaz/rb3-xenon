@@ -376,3 +376,15 @@ secondary RndTransformable-base vtable under VIRTUAL inheritance (the foundation
 RndHighlightable/RndTransformable vbase wall, §3a — not droppable virtuals);
 TrainerGemTab::DrawStartFinish = separate 15-slot UILabel/UIComponent-MI delta
 (the documented UI base-layout wall, docs/plans/ui-base-layout-reconstruction.md).
+
+## Mat_NG DC3_REV_MEMBER lever: DEFERRED — retail material layout is SCRAMBLED, not block-shifted (`424412b`)
+The SetupShader +0x3c "clean delta" is only the tail facet. Ground truth =
+`SetRegularShaderConst` (34 member touches): retail RndMat/BaseMaterial is
+**reordered AND bool-repacked** vs our DC3-derived headers — 34 this-relative
+deltas with OPPOSITE signs (−188..+120). Retail packs bool flags low/tight
+(0x44/0x54/0xc2/0xc3, like rb3-Wii's packed-bitfield block); DC3 scattered them
+as bytes high in the class. NOT fixable by gating a 0x3c block in widely-shared
+Mat.h. Needs a dedicated multi-session retail-layout reconstruction validated
+against SetRegularShaderConst until all deltas zero. Full RETAIL↔OURS offset
+table: docs/decomp/matng-deferral.md (+ evidence rows matng-abandoned.jsonl).
+Header `// 0xNN` comments in Mat.h are STALE (mDirty says 0x228, compiles 0x188).
