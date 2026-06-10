@@ -1,0 +1,56 @@
+{
+  "_comment": [
+    "PROVEN ICF (identical-COMDAT-folding) symbol aliases for objdiff.",
+    "",
+    "Retail RB3's /O1 build folds the debug-stripped 2-arg POOL_OVERLOAD",
+    "operator-new path into the named 5-arg debug allocator: both spellings",
+    "live at ONE address in the XEX, so only the 5-arg mangled name appears in",
+    "scripts/target_symbol_map.json. Our compiled objs emit the byte-IDENTICAL",
+    "call site (li r3,N / li r4,N / bl) but reference the 2-arg name, so objdiff",
+    "(which compares bl relocations BY NAME via objdiff-core reloc_eq) flags a",
+    "[sym] mismatch even though the machine code matches exactly.",
+    "",
+    "This file declares the PROVEN folds. tools/gen_symbol_alias_map.py turns it",
+    "into an MSVC-linker-map-format file (build/45410914/icf_aliases.map) that",
+    "objdiff's existing symbol_equivalences mechanism (objdiff-core map_file.rs,",
+    "wired via objdiff.json 'map_file') consumes: symbols that share an address",
+    "in the map are treated as reloc-name-equal. NO objdiff source change needed.",
+    "",
+    "GATE: each group is seeded ONLY by byte-identical-call-site evidence",
+    "(a paired 'bl <5arg>' / 'bl <2arg>' diff row where the relocation type and",
+    "addend match and the surrounding bytes are equal), NEVER by fuzzy matching.",
+    "Each group must contain EXACTLY ONE symbol that exists at a real address in",
+    "scripts/target_symbol_map.json (the survivor the ICF fold kept); the others",
+    "are the spellings our compiled code emits that the fold absorbed.",
+    "",
+    "Each group's 'address' is the survivor's address in target_symbol_map.json",
+    "(used as the synthetic map address so parse_msvc_map groups them); it is NOT",
+    "load-bearing beyond being a unique per-group key.",
+    "",
+    "VALIDATION: tools/icf_alias_finder.py --validate confirms (a) exactly one",
+    "survivor per group is in target_symbol_map.json, (b) every other spelling is",
+    "referenced by at least one of our compiled objs, and (c) at least one",
+    "function exhibits the paired-bl byte-identical-call-site signature."
+  ],
+  "groups": [
+    {
+      "name": "PoolAlloc",
+      "address": "0x827960D8",
+      "survivor": "?PoolAlloc@@YAPAXHHPBDH0@Z",
+      "folded": [
+        "?PoolAlloc@@YAPAXHH@Z"
+      ],
+      "evidence": "POOL_OVERLOAD 2-arg operator-new (utl/PoolAlloc.h) folds onto the 5-arg debug PoolAlloc; target obj refs only the 5-arg name (142 objs), base emits the 2-arg (197 objs). Paired-bl signature confirmed in MidiParser/Utl/CharDriver."
+    },
+    {
+      "name": "MemOrPoolAlloc",
+      "address": "0x82798250",
+      "survivor": "?MemOrPoolAlloc@@YAPAXHPBDH0@Z",
+      "folded": [
+        "?MemOrPoolAlloc@@YAPAXH@Z",
+        "?MemOrPoolAllocSTL@@YAPAXH@Z"
+      ],
+      "evidence": "1-arg MemOrPoolAlloc/MemOrPoolAllocSTL (utl/MemMgr.h, debug-stripped) fold onto the 4-arg debug MemOrPoolAlloc; target obj refs only the 4-arg name (244 objs). Paired-bl diff_arg signature confirmed in DataArray (??0DataArray, LoadGlob, _M_create_node — including the cross-variant STL fold)."
+    }
+  ]
+}

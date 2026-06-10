@@ -15,6 +15,7 @@ import json
 import math
 import os
 import platform
+import subprocess
 import sys
 from pathlib import Path
 from typing import (
@@ -1302,6 +1303,29 @@ def generate_build_ninja(
         )
 
         ###
+        # Generate the synthetic ICF-alias map (PROVEN allocator folds) that
+        # objdiff's symbol_equivalences mechanism consumes via objdiff.json's
+        # `map_file`. Regenerated whenever scripts/symbol_aliases.json or the
+        # generator changes; the report depends on it so the alias map is always
+        # fresh before report.json is computed. See tools/gen_symbol_alias_map.py.
+        ###
+        icf_map_path = build_path / "icf_aliases.map"
+        n.comment("Generate synthetic ICF-alias map")
+        n.rule(
+            name="icf_alias_map",
+            command=f"{sys.executable} tools/gen_symbol_alias_map.py --out $out",
+            description="GEN ICF-ALIAS MAP",
+        )
+        n.build(
+            outputs=str(icf_map_path),
+            rule="icf_alias_map",
+            implicit=[
+                "tools/gen_symbol_alias_map.py",
+                "scripts/symbol_aliases.json",
+            ],
+        )
+        n.newline()
+
         # Generate progress report
         ###
         n.comment("Generate progress report")
@@ -1313,7 +1337,7 @@ def generate_build_ninja(
         n.build(
             outputs=report_path,
             rule="report",
-            implicit=[objdiff, "objdiff.json", "all_source"],
+            implicit=[objdiff, "objdiff.json", "all_source", str(icf_map_path)],
             order_only="post-build",
         )
 
@@ -1558,6 +1582,33 @@ def generate_objdiff_config(
         "units": [],
         "progress_categories": [],
     }
+
+    # ICF-merged-symbol alias map. Retail /O1 ICF-folds debug-stripped allocator
+    # overloads (2-arg PoolAlloc, 1-arg MemOrPoolAlloc) onto their named debug
+    # siblings: only the survivor spelling exists at one XEX address, but our
+    # objs emit the byte-identical call site under the folded spelling, so
+    # objdiff's by-name reloc_eq flags a [sym] mismatch. The objdiff fork already
+    # consumes ICF equivalences from an MSVC `map_file` (parse_msvc_map groups
+    # symbols sharing an address). tools/gen_symbol_alias_map.py renders the
+    # proven folds (scripts/symbol_aliases.json) into this synthetic map; declare
+    # it so `report generate` neutralizes the alias noise. Conditional: a fresh
+    # tree without the generated map still builds (no map -> no equivalences).
+    # Generate it here (best-effort) so objdiff.json references it even on the
+    # FIRST configure of a fresh tree; the ninja `icf_alias_map` rule keeps it
+    # fresh thereafter (and the report depends on it).
+    icf_map = config.build_dir / config.version / "icf_aliases.map"
+    gen_icf = Path("tools") / "gen_symbol_alias_map.py"
+    if gen_icf.is_file():
+        icf_map.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            subprocess.run(
+                [sys.executable, str(gen_icf), "--out", str(icf_map)],
+                check=True, stdout=subprocess.DEVNULL,
+            )
+        except Exception as e:
+            print(f"(icf alias map generation skipped: {e})")
+    if icf_map.is_file():
+        objdiff_config["map_file"] = str(icf_map)
 
     # decomp.me compiler name mapping
     COMPILER_MAP = {
