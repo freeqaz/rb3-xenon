@@ -417,3 +417,8 @@ loop needs a single driver (`tools/refill_loop.sh`) with the honesty A/B built i
   member_delta_finder2 default bucket STRUCT_WORK→HAS_REAL (the silent-0 bug) +
   loud 0-row warning. Playbook §9 updated with the driver one-liner.
 - struct_db + global_fuzzy_pairs both regenerated on the fixed tools (tasks 10/11).
+
+## Wave-close verification (main, fresh full build): **6851 / 65544 matched** ✓
+Independent main-tree fresh_report.sh confirms the composed wave result exactly
+(raw fuzzy==100 is 6816; +35 FP-anchor-normalized = the known objdiff-fork gap,
+unchanged). Session: 6577 → 6851 (+274), 0 regressions, 23 commits.
