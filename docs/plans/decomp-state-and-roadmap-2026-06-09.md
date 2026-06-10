@@ -474,3 +474,49 @@ lever-tex-crowd (Tex unk2c + Crowd gate), reloc-midi (verify-first re-pin),
 bodyport-binstream-rnd (+ DOFProc gate). Held for batch 2: Draw devirt (risk),
 Player-chain bracket, Gem/GemManager, OvershellSlot/VocalTrackDir, Synth bracket,
 PlatformMgr head. Per-lever A/B + worktree-branch commits; coordinator lands.
+
+## Wave-2 batch 1 LANDED + verified: **6880 / 65544** (+29, 0 regressions, 8 commits)
+Composed fresh build on main confirms the independent per-lever A/Bs compose
+exactly (6851+29; raw 6816→6845 in lockstep; FP-anchor gap still 35).
+- `4d3dddf` WorldCrowd drop DC3 mCharForceLod+unkd0 (+9 — cascade across
+  CamShotCrowd template/accessor family; dossier est was +1..+4) + `1d855ee`
+  RndTex drop DC3 unk2c CRC (+8; 84-file fan-out, zero regressions). Gate idiom:
+  `#ifdef RB3_WORLDCROWD_DC3_REV` / `RB3_RNDTEX_DC3_CRC` (off=retail).
+- `332a0b7` Anim.h OnListFlowLabels DC3-only virtual gated (+4: LightPreset::
+  StartAnim + 3 VocalTrackDir; slot 0x28→0x24) + `c8cbb32` PropKeys::RemoveRange
+  gated (+1: ValueFromIndex; 8 slots uniformly +4 bracketed insertion @0x28).
+- `b647c21` OnClearColor map off-by-one (+3) + `2c44ba5` CamShot _Destroy_Range
+  label swap + ??1CamShotFrame/??1CamShotCrowd reveals (+2; dtors at 44%/88% =
+  follow-up: CamShotFrame mFocalTarget retail 0xf4 vs ours 0xfc — 8-byte
+  upstream member to find).
+- `7e3f14f`+`c9dfbba` BinStream/Rnd body-ports (+2: Rnd::Terminate DOFProc gate,
+  WordWrap rb3-Wii form; BinStream Read 49.9→97.7 / Write 87.2→98.4 fuzzy).
+
+**REFUTED/walls from batch 1 (do not re-attempt as-is):**
+- AccomplishmentProgress `/DRB3_RBTREE_0x1C` alone = **−14** (reverted): the
+  stair-step is COMPOUND — a 4-byte member deficit BEFORE the first rbtree
+  (retail first tree @0x614 vs ours 0x610) AND the 0x18→0x1c split. Find the
+  member first, then flag. wall_classify gap: neighbor-bracket the first-tree
+  start address to detect compound cases.
+- MidiInstrument naive re-pin = net −2 (identity 100% CONFIRMED: pinned range is
+  the BandIKEffector TU — Constraint stride 0x1c proof; true cluster
+  0x826F5528–0x826F6C60 proven by re-pin diff: MakeNoteInst 15.7→99.97). Vacated
+  range loses ~19 accidental funclet folds. LANDABLE PATH (est +10–25):
+  (1) wire BandIKEffector.cpp from ../rb3 (needs RndHighlightable.h port + MWCC
+  paired-singles Multiply asm replaced), (2) apply
+  docs/decomp/handoff/midiinstrument-repin.patch, (3) close MidiInstrument
+  near-misses: layout excess +0xc before mFaders (suspect ObjPtrList width),
+  4-arg debug PoolAlloc, SampleZone +4 tail int (also lifts SampleZone.cpp).
+- BinStream Read/Write final residual = single extra `clrlwi` byte-mask =
+  COMPILER-VERSION codegen artifact (permuter 0; source-unfixable). WriteEndian
+  = jeff funclet mis-nest wall (machine code matches, caps 61%). Rnd
+  CreateDefaults = inline-policy (New<RndEnviron> inlined in retail only);
+  DrawTimers = frame-pointer/EH-scope divergence (dossier's rb3-Wii-port advice
+  was WRONG — target uses the DC3 form); UpdateRate = retail-specific
+  Symbol-typed source neither oracle has. All defer.
+- Tooling: diff_inspect --diagnose "Match estimate" is positional/UNnormalized —
+  it disagrees wildly with report match_percent_normalized (Tex::Print ~22% vs
+  real 99.9→100). NEVER judge a lever by diagnose's headline percent.
+- target_symbol_map consistency linter idea (from reloc-midi): a range with
+  named symbols from >1 unrelated class family = mis-pin flag; would have
+  caught MidiInstrument automatically.
