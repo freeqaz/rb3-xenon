@@ -422,3 +422,55 @@ loop needs a single driver (`tools/refill_loop.sh`) with the honesty A/B built i
 Independent main-tree fresh_report.sh confirms the composed wave result exactly
 (raw fuzzy==100 is 6816; +35 FP-anchor-normalized = the known objdiff-fork gap,
 unchanged). Session: 6577 → 6851 (+274), 0 regressions, 23 commits.
+
+---
+
+# ADDENDUM 2026-06-10 — wave 2 (research-first model)
+
+**Operating model update (user directive):** Fable subagents run research as the
+first phase of every wave; Opus implements; Sonnet does mechanical work. Docs are
+the handoff artifacts between phases. Permuter DEPRIORITIZED — targeted
+single-fn/unit subagent only, and only when blocking other work (PERMUTE bucket
+~14 fns stays parked).
+
+## Wave-2 research (3 Fable agents, `7767627`) — docs/decomp/research/2026-06-10-*.md
+- **bodyport-pool.md**: 261 named fns @40–95 across 146 units post-exclusions.
+  Launch list: BinStream (DC3 AutoGlitchReport RAII = the divergence; retail body
+  is the rb3-Wii form — HIGH), Rnd 5 fns (layout pre-fixed; DrawTimers needs the
+  rb3-Wii body not DC3's rewrite), Gem 3 fns + GemManager (top unported
+  fingerprint candidate) + GuitarController::Handle, OvershellSlot/VocalTrackDir.
+  DO-NOT-LAUNCH: SHA1/Quazal-MD5/FFT (regalloc-saturated), vorbis mapping0/psy
+  (library-version delta).
+- **routed-residue.md**: of 27 MEMBER_DELTA+UNKNOWN routed fns, 8 already matched,
+  19 live → 6 actionable. HEADLINE: **default/MidiInstrument is unit-level
+  MIS-PINNED** (pinned range 0x822B0C60–0x822B3D28 is really the BandIKEffector/
+  CharSignalApplier TU — vector elem stride 0x1c = BoneOp; true MidiInstrument
+  cluster sits unmatched in auto_03_826F42A8_text, ~169 fns). Levers: RndTex::unk2c
+  drop (+4 uniform, rb3-Wii lacks it), WorldCrowd mCharForceLod+unkd0 gate (+8
+  delta @0x90→0x98), AccomplishmentProgress RB3_RBTREE_0x1C, CamShot
+  _Destroy_Range map-label SWAP (mirrored ±232) + 2 dtor reveals, Synth −0xc
+  (needs bracketing). Parked w/ evidence: RndEnvironTracker (20-slot wall,
+  misrouted), Shader::Select (→ Mat_NG scramble; added as matng validation fn),
+  Locale (DATA_LBL tooling class), yylex (flex DFA version delta). +5 new
+  classifier patterns for wall_classify v3 documented in-doc.
+- **force-multipliers.md**: custom vcall-slot sweep found **36 vtable-slot-delta
+  sites wall_classify entirely missed** (its vtable gate reported 0 — tooling gap).
+  Levers: RndAnimatable::OnListFlowLabels DC3-only virtual (drop → fixes uniform
+  +4 on EventTrigger::Trigger, 5 anchors ≥99.96 + 42-site cascade),
+  PropKeys::RemoveRange DC3-only virtual (8 slots uniformly +4 in
+  PropAnim::ValueFromIndex bracket insertion @0x28), retail RndDrawable::Draw is
+  NON-virtual + no DrawShadow (direct-bl proof in RndDir::DrawShowing; UIComponent
+  +4 interplay must be A/B'd), Player base-chain plain-this −4 spanning
+  Player/VocalPlayer/Singer ~10 fns (retail mVocalParts@0x390 confirmed),
+  OnClearColor = target_symbol_map off-by-one (3 addrs, not a member delta),
+  Rnd::Terminate emits DC3-added DOFProc::Terminate call. Re-confirmed:
+  inline-policy tapped (all n=1), mdf2 0 actionable (rows collapse into the
+  Player-chain lever).
+
+## Wave-2 implementation batch 1 (launched, wf_9bb5eea6-0ab)
+5 worktree agents: mech-map (Sonnet: OnClearColor remap + CamShot swap/reveals +
+AccomplishmentProgress flag), lever-anim (OnListFlowLabels + RemoveRange),
+lever-tex-crowd (Tex unk2c + Crowd gate), reloc-midi (verify-first re-pin),
+bodyport-binstream-rnd (+ DOFProc gate). Held for batch 2: Draw devirt (risk),
+Player-chain bracket, Gem/GemManager, OvershellSlot/VocalTrackDir, Synth bracket,
+PlatformMgr head. Per-lever A/B + worktree-branch commits; coordinator lands.
