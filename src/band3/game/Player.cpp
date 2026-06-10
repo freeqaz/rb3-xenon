@@ -699,7 +699,8 @@ void Player::SetEnergy(float f) {
         float poll = PollMs();
         float pollDelta = poll - unk2a4;
         if (energyIncreased || pollDelta >= 100.0f || mBandEnergy == 0) {
-            Handle(send_update_energy_msg, true);
+            static Message send_update_energy(Symbol("send_update_energy"));
+            Handle(send_update_energy, true);
             unk2a4 = poll;
         }
     }
