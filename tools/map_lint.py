@@ -38,12 +38,22 @@ Checks
    catches engine ICF-ubiquity (Object/Symbol/DataNode inline everywhere), so it
    is opt-in and advisory -- see check_scatter() docstring.
 
+4. OBJ_ORPHAN (OPT-IN, ``--check obj_orphan``) -- the highest-precision check:
+   for each pinned unit, flag in-range map entries whose mangled name is NOT a
+   symbol defined by the unit's own *compiled* obj (build/45410914/src/...).
+   Such a name can never pair (the renamer writes it onto a dtk target symbol
+   our obj never produces), so it reads 0% and only pollutes unit fuzzy. This is
+   the criterion the BandIKEffector cleanup used (it caught all 12 stale
+   MidiInstrument/SampleZone/BoneOp entries with zero false positives, including
+   the one CLASS_MIXING kept because BoneOp has no dedicated home unit). Needs
+   the compiled objs present; that's why it is opt-in.
+
 The STRING-CONTRADICTION idea from the task brief (a mapped fn whose body
 references a string literal absent from the claimed source TU, e.g. Deploy's
 'slider.sld') was scoped out: the dtk-split asm references rdata by relocated
 label, not inline literal, so confirming it needs an rdata cross-ref pass that
-balloons scope for marginal extra coverage over CLASS_MIXING (which already
-catches the same mis-pins by class). Documented here, not implemented.
+balloons scope for marginal extra coverage over CLASS_MIXING/OBJ_ORPHAN (which
+already catch the same mis-pins by class/symbol). Documented here, not built.
 
 Outputs a human report to stdout and (with --json PATH) a machine report.
 Exit 1 when any finding is produced (0 with --no-fail or when clean).
@@ -79,10 +89,13 @@ DEFAULT_MAP = PROJECT_ROOT / "scripts" / "target_symbol_map.json"
 DEFAULT_SPLITS = PROJECT_ROOT / "config" / "45410914" / "splits.txt"
 DEFAULT_ASM_DIR = PROJECT_ROOT / "build" / "45410914" / "asm"
 
-# class_mixing + size_kind run by default; scatter is opt-in (it mostly
-# measures engine-ICF ubiquity, see check_scatter docstring).
-CHECKS = ("class_mixing", "size_kind", "scatter")
+# class_mixing + size_kind run by default; scatter + obj_orphan are opt-in
+# (scatter is engine-ICF-noisy; obj_orphan needs the compiled objs present).
+CHECKS = ("class_mixing", "size_kind", "scatter", "obj_orphan")
 DEFAULT_CHECKS = ("class_mixing", "size_kind")
+DEFAULT_OBJ_DIRS = (
+    PROJECT_ROOT / "build" / "45410914" / "src",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -408,6 +421,92 @@ def load_map(path: Path) -> Dict[int, str]:
 
 
 # ---------------------------------------------------------------------------
+# compiled-obj symbol cross-check (highest-precision: a map name our own
+# compiled obj never defines can never pair -> pure pollution)
+# ---------------------------------------------------------------------------
+
+import struct  # noqa: E402  (kept local to this section)
+
+
+def _coff_defined_names(data: bytes) -> set:
+    """Return the set of symbol names defined (section number > 0) in a COFF
+    .obj. Mirrors scripts/obj_target_symbol_renamer.parse_coff_symbols but only
+    needs names + section number."""
+    out: set = set()
+    if len(data) < 20:
+        return out
+    sym_off = struct.unpack_from("<I", data, 8)[0]
+    n = struct.unpack_from("<I", data, 12)[0]
+    if sym_off == 0 or n == 0:
+        return out
+    strt = sym_off + n * 18
+    i = 0
+    while i < n:
+        e = sym_off + i * 18
+        if e + 18 > len(data):
+            break
+        nb = data[e:e + 8]
+        if nb[:4] == b"\x00\x00\x00\x00":
+            so = struct.unpack_from("<I", nb, 4)[0]
+            a = strt + so
+            if a < len(data):
+                end = data.index(b"\x00", a)
+                name = data[a:end].decode("ascii", "replace")
+            else:
+                name = ""
+        else:
+            name = nb.split(b"\x00")[0].decode("ascii", "replace")
+        secnum = struct.unpack_from("<h", data, e + 12)[0]
+        aux = data[e + 17]
+        if secnum > 0 and name:
+            out.add(name)
+        i += 1 + aux
+    return out
+
+
+def find_compiled_obj(unit: Unit, obj_dirs: List[Path]) -> Optional[Path]:
+    stem = re.sub(r"\.cpp$", "", os.path.basename(unit.src))
+    for d in obj_dirs:
+        if not d.exists():
+            continue
+        hits = list(d.rglob(stem + ".obj"))
+        # exclude the dtk-split TARGET obj (build/.../obj/<stem>.obj); prefer
+        # the per-source compiled obj under .../src/.
+        hits = [h for h in hits if os.sep + "src" + os.sep in str(h)]
+        if hits:
+            hits.sort(key=lambda p: len(str(p)))
+            return hits[0]
+    return None
+
+
+def check_obj_orphan(unit: Unit, in_range: List[Tuple[int, str]],
+                     compiled_syms: set) -> List[dict]:
+    """Flag in-range map entries whose mangled name is NOT defined by the unit's
+    own compiled obj -- the renamer would write a name onto a dtk target symbol
+    that our compiled obj never produces, so it can never pair (reads 0% and
+    pollutes unit fuzzy). Zero-false-positive: a name absent from the compiled
+    obj is, by construction, unmatchable for this unit."""
+    findings: List[dict] = []
+    for va, name in in_range:
+        if not name.startswith("?"):
+            continue  # only mangled C++ names are renamer targets
+        if name in compiled_syms:
+            continue
+        owner = mangled_classes(name)
+        findings.append({
+            "check": "obj_orphan",
+            "unit": unit.name,
+            "va": "0x%08X" % va,
+            "symbol": name,
+            "owner_class": owner[0] if owner else None,
+            "detail": "name not defined by compiled %s -- unpairable, pollutes "
+                      "unit fuzzy" % (os.path.basename(str(unit.asm_path))
+                                      if unit.asm_path else unit.name),
+        })
+    return findings
+
+
+# ---------------------------------------------------------------------------
 # checks
 # ---------------------------------------------------------------------------
 
@@ -673,6 +772,9 @@ def main() -> int:
                     help="report a foreign class inside a unit only when it has "
                          ">= this many entries there (suppresses lone ICF-folded "
                          "engine ctors; default: 2)")
+    ap.add_argument("--obj-dir", action="append", default=[],
+                    help="compiled-obj search root for the obj_orphan check "
+                         "(repeatable; default: build/45410914/src)")
     ap.add_argument("--json", default=None, help="write machine report here")
     ap.add_argument("--no-fail", action="store_true",
                     help="always exit 0 even with findings")
@@ -696,6 +798,9 @@ def main() -> int:
         units = [u for u in all_units if needle in u.src.lower()]
     else:
         units = all_units
+
+    obj_dirs = [Path(d) for d in args.obj_dir] or list(DEFAULT_OBJ_DIRS)
+    obj_syms_cache: Dict[str, set] = {}
 
     all_findings: List[dict] = []
 
@@ -721,6 +826,25 @@ def main() -> int:
             else:
                 spans = parse_asm_spans(u.asm_path)
                 all_findings += check_size_kind(u, in_range, spans, args.min_fn_size)
+        if "obj_orphan" in checks:
+            obj = find_compiled_obj(u, obj_dirs)
+            if obj is None:
+                all_findings.append({
+                    "check": "obj_orphan", "unit": u.name,
+                    "detail": "no compiled obj found for unit (build it first)",
+                })
+            else:
+                key = str(obj)
+                if key not in obj_syms_cache:
+                    try:
+                        obj_syms_cache[key] = _coff_defined_names(obj.read_bytes())
+                    except Exception as exc:  # noqa: BLE001
+                        obj_syms_cache[key] = set()
+                        all_findings.append({
+                            "check": "obj_orphan", "unit": u.name,
+                            "detail": "could not read %s: %s" % (obj, exc),
+                        })
+                all_findings += check_obj_orphan(u, in_range, obj_syms_cache[key])
 
     # whole-map scatter (skip when --unit narrows scope, it's a global check)
     if "scatter" in checks and not args.unit:
@@ -791,6 +915,24 @@ def _report(findings: List[dict], units: List[Unit], amap: Dict[int, str],
             print("  [%-11s] %-18s %s  %s%s"
                   % (f["kind"], f["unit"], f.get("va", ""),
                      f.get("symbol", ""), extra))
+
+    if "obj_orphan" in by_check and not args.quiet:
+        oo = by_check["obj_orphan"]
+        by_unit2: Dict[str, List[dict]] = defaultdict(list)
+        for f in oo:
+            by_unit2[f["unit"]].append(f)
+        print("\n[OBJ_ORPHAN] %d map names NOT defined by the unit's compiled "
+              "obj (unpairable -> 0%% pollution):" % len(oo))
+        for unit in sorted(by_unit2):
+            fs = by_unit2[unit]
+            print("  %s  -> %d orphan entries" % (unit, len(fs)))
+            for f in fs[:8]:
+                if "va" in f:
+                    print("       %s  %s" % (f["va"], f["symbol"]))
+                else:
+                    print("       %s" % f["detail"])
+            if len(fs) > 8:
+                print("       ... +%d more" % (len(fs) - 8))
 
     if "scatter" in by_check and not args.quiet:
         print("\n[SCATTER] %d classes spanning > %s of VA (not contiguous TUs):"
