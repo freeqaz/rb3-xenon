@@ -53,10 +53,15 @@ def main():
         return 0<=i<len(pins) and pins[i][0]<=a<pins[i][1]
     # DC3 functions. Skip NON-REAL names: anonymous (fn_/sub_), guard/thunk ($),
     # and dtk/linker ICF-fold artifacts (merged_<addr>, __unwind*, __catch*,
-    # __tls*) — these are not usable mangled symbols, so emitting one as an
-    # "identity" gives downstream (fn_resolver / target_symbol_map) a dead name
-    # (e.g. fn_82534F88 -> merged_828DC218). Both DC3 trees carry ~21k of these.
-    NONREAL=('fn_','sub_','$','merged_','__unwind','__catch','__tls')
+    # __tls*, jumptable_*) — these are not usable mangled symbols, so emitting
+    # one as an "identity" gives downstream (fn_resolver / target_symbol_map) a
+    # dead name (e.g. fn_82534F88 -> merged_828DC218 or jumptable_82A1CDA4).
+    # Survey of .dc3_text_scratch/named/obj confirms only these prefixes occur
+    # as artifact names (lbl_, switchdata, jpt_, sub_ are NOT present in this
+    # tree; __unwind is the dominant noise at ~21k entries; jumptable_ ~23 entries
+    # but jaccard saturates to 1.0 on their short opcode patterns, poisoning T4).
+    NONREAL=('fn_','sub_','$','merged_','__unwind','__catch','__tls','jumptable_',
+             'lbl_','switchdata_','jpt_')
     dc3=[]
     for f in iter_dc3_objs(dc3_dir):
         for fn in read_coff_functions(f):
@@ -64,13 +69,21 @@ def main():
             sh=shingles(fn['code'])
             if sh: dc3.append((fn['name'],os.path.basename(f),sh,len(fn['code'])))
     print(f"DC3 fns indexed: {len(dc3)}",file=sys.stderr)
-    # RB3 functions (unpinned, unnamed)
+    # RB3 functions (unpinned, unnamed).
+    # IMPORTANT: read_coff_functions iterates multiple obj files (the RB3 text obj
+    # contains ICF-merged duplicate COMDAT sections), so the same fn_<addr> can
+    # appear multiple times in the raw stream. Deduplicate by address — keep the
+    # FIRST occurrence (arbitrary; all copies are byte-identical by definition of
+    # ICF merging) so each RB3 address produces exactly ONE output row.
+    rb3_seen=set()
     rb3=[]
     for f in sorted(glob.glob(RB3_GLOB)):
         for fn in read_coff_functions(f):
             m=re.match(r'fn_([0-9A-Fa-f]+)$',fn['name'])
             if not m or fn['size']<minsize: continue
             a=int(m.group(1),16)
+            if a in rb3_seen: continue   # deduplicate ICF copies
+            rb3_seen.add(a)
             if pinned(a): continue   # only UNPINNED
             sh=shingles(fn['code'])
             if sh: rb3.append((a,sh,len(fn['code'])))
@@ -106,6 +119,19 @@ def main():
             if best is None or j>best[0] or (j==best[0] and dn<best[1]):
                 best=(j,dn,do,dsz)
         if best and best[0]>=thr:
+            # Size-ratio sanity gate: drop pairs where one body is >3x the other.
+            # Short opcode patterns (ICF-saturated shingles) can produce jaccard==1.0
+            # false matches between bodies of wildly different size (e.g. a 92-byte
+            # DC3 stub matching inside a 316-byte RB3 function). A [0.33, 3.0] ratio
+            # window catches these without dropping any of the 4414 good real-name
+            # pairs observed in the current dataset (all surveyed known-good T4 pairs
+            # have ratio within [0.44, 2.78] — and the 7 boundary cases at the
+            # extremes are all ICF-saturation FPs confirmed not in dc3_content_match).
+            # fn_resolver.py T4 does NOT size-gate, so the gate here is the right place.
+            dc3sz=best[3]
+            if dc3sz>0 and sz>0:
+                ratio=sz/dc3sz
+                if ratio<0.33 or ratio>3.0: continue
             pairs.append({'rb3_addr':'0x%08X'%a,'dc3_name':best[1],'dc3_obj':best[2],
                           'jaccard':round(best[0],3),'rb3_size':sz,'dc3_size':best[3]})
     pairs.sort(key=lambda p:-p['jaccard'])
