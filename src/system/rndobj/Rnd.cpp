@@ -397,43 +397,38 @@ void Rnd::PreInit() {
 
 void WordWrap(const char *src, int lineWidth, char *dst, int dstSize) {
     char *dstEnd = dst + dstSize - 2;
-    const char *srcEnd = src;
-    while ('\0' != *srcEnd)
-        srcEnd++;
+    const char *srcEnd = src + strlen(src);
     while (true) {
         const char *lastSrcSpace = nullptr;
         char *lastSpace = nullptr;
         int col = 0;
-        while (col < lineWidth) {
-            if (src >= srcEnd || dst >= dstEnd || *src == '\n')
-                break;
+        while (col < lineWidth && src < srcEnd && dst < dstEnd && *src != '\n') {
             if (*src == ' ') {
-                lastSpace = dst;
                 lastSrcSpace = src;
+                lastSpace = dst;
             }
             *dst = *src;
             col++;
             src++;
             dst++;
         }
-        if (dst == dstEnd || src == srcEnd) {
-            *dst = '\0';
-            return;
-        }
-        char *wrapDst = dst;
+        if (dst == dstEnd)
+            break;
+        if (src == srcEnd)
+            break;
         if (*src != '\n') {
             if (lastSrcSpace == nullptr || (int)src - (int)lastSrcSpace > 10) {
-                wrapDst = dst;
                 src = src - 1;
             } else {
-                wrapDst = lastSpace;
                 src = lastSrcSpace;
+                dst = lastSpace;
             }
         }
         src = src + 1;
-        *wrapDst = '\n';
-        dst = wrapDst + 1;
+        *dst = '\n';
+        dst = dst + 1;
     }
+    *dst = '\0';
 }
 
 #ifndef HX_NATIVE
@@ -473,7 +468,11 @@ void Rnd::Terminate() {
     TheDebug.RemoveExitCallback(TerminateCallback);
     RndOverlay::Terminate();
     RndMultiMesh::Terminate();
+#ifdef HX_NATIVE
+    // DC3-era addition (also present in rb3-Wii dev); retail RB3-360 does not
+    // call DOFProc::Terminate here — its teardown goes straight to RndMat.
     DOFProc::Terminate();
+#endif
     RndMat::Terminate();
     SetName(nullptr, nullptr);
     HANDLE *handles = &gRndThread;
@@ -1307,11 +1306,11 @@ void Rnd::DrawPreClear() {
 }
 
 DataNode Rnd::OnToggleHeap(const DataArray *) {
-    int numHeaps = MemNumHeaps();
+    int numHeaps = MemNumHeaps() + 1;
     RndOverlay *overlay = mHeapOverlay;
     if (overlay->Showing()) {
         lbl_82F14008++;
-        if (lbl_82F14008 >= numHeaps + 1) {
+        if (lbl_82F14008 >= numHeaps) {
             lbl_82F14008 = -1;
             overlay->SetShowing(false);
         }
