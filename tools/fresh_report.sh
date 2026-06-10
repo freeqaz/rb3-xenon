@@ -56,10 +56,33 @@ if [ "$NINJA_JOBS" != "0" ]; then
     JOBS_ARG=(-j "$NINJA_JOBS")
 fi
 
+# ── Pre-run snapshot: capture measures.matched_functions BEFORE any build ─────
+# This is the normalized count (report.json::measures.matched_functions) used by
+# the orchestrator and batch-score tooling.  We snapshot it so we can warn agents
+# if the post-build count diverges by more than 10 WITHOUT any source changes
+# (the "warm-cache-vs-clean-baseline measurement trap" from batch-2 incident).
+PRE_MATCHED=""
+PRE_REPORT_MTIME=""
+if [ -f "$REPORT" ]; then
+    PRE_MATCHED="$(python3 -c "
+import json, sys
+try:
+    with open(sys.argv[1]) as f:
+        r = json.load(f)
+    print(r.get('measures', {}).get('matched_functions', ''))
+except Exception:
+    pass
+" "$REPORT" 2>/dev/null || true)"
+    PRE_REPORT_MTIME="$(stat -c %Y "$REPORT" 2>/dev/null || true)"
+fi
+
 echo "fresh_report.sh: starting (log: $LOG)" | tee -a "$LOG"
 echo "  parallelism: ninja ${JOBS_ARG[*]:-(default)}" | tee -a "$LOG"
 echo "  repo:   $REPO" | tee -a "$LOG"
 echo "  report: $REPORT" | tee -a "$LOG"
+if [ -n "$PRE_MATCHED" ]; then
+    echo "  pre-run measures.matched_functions: $PRE_MATCHED" | tee -a "$LOG"
+fi
 
 # ── Step 1: build all compiled objects ────────────────────────────────────────
 echo "" | tee -a "$LOG"
@@ -134,14 +157,34 @@ fi
 echo "" | tee -a "$LOG"
 echo "fresh_report.sh: done.  Report: $REPORT" | tee -a "$LOG"
 if [ -f "$REPORT" ]; then
-    python3 - "$REPORT" 2>/dev/null <<'EOF' | tee -a "$LOG" || true
+    python3 - "$REPORT" "$PRE_MATCHED" 2>/dev/null <<'EOF' | tee -a "$LOG" || true
 import json, sys
 with open(sys.argv[1]) as f:
     r = json.load(f)
 units = r.get("units", [])
 fns = sum(len(u.get("functions", [])) for u in units)
-matched = sum(1 for u in units for fn in u.get("functions", [])
-              if fn.get("fuzzy_match_percent", 0) == 100.0)
-print(f"  Units: {len(units)}  Functions: {fns}  Matched@100%: {matched}")
+matched_raw = sum(1 for u in units for fn in u.get("functions", [])
+                  if fn.get("fuzzy_match_percent", 0) == 100.0)
+matched_norm = r.get("measures", {}).get("matched_functions", matched_raw)
+print(f"  Units: {len(units)}  Functions: {fns}  Matched@100%: {matched_raw}  measures.matched_functions: {matched_norm}")
+# Warm-cache divergence check
+pre = sys.argv[2] if len(sys.argv) > 2 else ""
+if pre:
+    try:
+        delta = matched_norm - int(pre)
+        if abs(delta) > 10:
+            print(f"")
+            print(f"  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(f"  WARNING: measures.matched_functions changed by {delta:+d} ({pre} -> {matched_norm})")
+            print(f"  but no source files appear to have changed.  This is the")
+            print(f"  WARM-CACHE-VS-CLEAN-BASELINE MEASUREMENT TRAP:")
+            print(f"    A worktree reflinking main's build/ can inherit a warm object cache")
+            print(f"    from a DIFFERENT branch, making the first fresh_report.sh run appear")
+            print(f"    to score the worktree's source against main's objects.  The reported")
+            print(f"    delta may be misleading — do NOT use this run to judge a lever.")
+            print(f"  Fix: verify 'git diff HEAD' is empty, then re-run fresh_report.sh.")
+            print(f"  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    except ValueError:
+        pass
 EOF
 fi
