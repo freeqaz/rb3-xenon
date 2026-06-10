@@ -203,6 +203,47 @@ if [ -d "$MAIN_REPO/venv" ]; then
     ln -sfn "$MAIN_REPO/venv" "$WORKTREE_PATH/venv"
 fi
 
+# ---- gitignored analysis inputs : reflink-copy so agents don't have to hand-copy
+# These files live at the repo root and are gitignored (they are large or
+# machine-generated). Three consecutive batch-2 wave agents had to cp them
+# manually; we automate it here.  Each copy is non-fatal: if the source
+# doesn't exist yet the worktree is still usable (agents that don't need the
+# file won't hit the gap).
+#
+# Source resolution: prefer MAIN_REPO (= the repo containing this script).
+# Fallback: if MAIN_REPO is itself a worktree (e.g. wt-infra), scan
+# `git worktree list` for the primary tree (first entry = [main] branch or
+# whichever tree registered the worktree) so the files are always found
+# regardless of which worktree the caller is in.
+PRIMARY_REPO="$MAIN_REPO"
+if ! git -C "$MAIN_REPO" rev-parse --git-common-dir >/dev/null 2>&1; then
+    true  # no-op; MAIN_REPO is still the best we have
+else
+    # git --git-common-dir points to the shared .git in the main worktree.
+    # git worktree list's first line is always the main (linked) worktree path.
+    _primary="$(git -C "$MAIN_REPO" worktree list --porcelain 2>/dev/null \
+                | awk '/^worktree / {print $2; exit}')"
+    [ -n "$_primary" ] && [ -d "$_primary" ] && PRIMARY_REPO="$_primary"
+fi
+
+echo "==> Copying gitignored analysis inputs (non-fatal if absent)"
+for analysis_file in \
+        global_fuzzy_pairs.json \
+        unified_id_rb3wii.json \
+        struct_db.sqlite; do
+    # Try MAIN_REPO first, then PRIMARY_REPO fallback.
+    src="$MAIN_REPO/$analysis_file"
+    [ -e "$src" ] || src="$PRIMARY_REPO/$analysis_file"
+    dst="$WORKTREE_PATH/$analysis_file"
+    if [ -e "$src" ]; then
+        cp --reflink=auto "$src" "$dst" 2>/dev/null \
+            && echo "  copied $analysis_file (from $(dirname "$src"))" \
+            || echo "  WARN: could not copy $analysis_file (non-fatal)" >&2
+    else
+        echo "  skip $analysis_file (not present in main repo yet)"
+    fi
+done
+
 # ---- configure.py : bake absolute tool paths into this worktree's build.ninja
 # rb3-xenon's configure.py takes --wrapper (NOT --wibo). Passing the prebuilt
 # dtk binary avoids the cargo build edge (and the manifest-dirty loop).
