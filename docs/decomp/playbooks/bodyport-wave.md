@@ -110,9 +110,17 @@ Return exactly (the bodyport7 schema): `key`, `ported[] {fn, before, after}`,
    never a heredoc-fed `while read` loop (it truncated 17 files to 0 bytes once).
 
 ## 9. Post-wave refill sweep (the compounding step)
-After landing: `tools/reveal_sweep.py` → `tools/pin_identified.py`/relocate tools →
-re-run `tools/inline_policy_finder.py` (does the pool have n≥20 clusters now?) →
-`tools/member_delta_finder2.py` over the new near-misses. Update
+After landing, run the one-command driver (wraps pin_identified → renamer-refresh →
+build → reveal_sweep+gate+merge, loops until a reveal wave adds 0 safe names, then
+per-unit A/B via ab_measure; **exits 1 if any unit dropped — do not land**):
+```bash
+# from a buildable worktree, after the wave lands:
+NINJA_JOBS=12 tools/refill_loop.sh --map global_fuzzy_pairs.json
+```
+(2026-06-10 validation: the manual form of this loop produced +255 in one pass.)
+Then re-run `tools/inline_policy_finder.py` (does the pool have n≥2 clusters now?)
+and `tools/member_delta_finder2.py` over the new near-misses (default bucket is
+HAS_REAL; a 0-row scan prints a loud warning — don't ignore it). Update
 `docs/plans/decomp-state-and-roadmap-*.md` with the wave verdict.
 
 ## 10. Hard rules (each one cost a real incident)

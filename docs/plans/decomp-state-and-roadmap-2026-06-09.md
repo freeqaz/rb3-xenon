@@ -404,3 +404,16 @@ class, 6 vbase-wall, 1 low-confidence n=1).
 **Tool gaps:** member_delta_finder2 default `--bucket STRUCT_WORK` scans 0 fns
 (true_progress emits `HAS_REAL`) — align default; the pin→build→reveal→gate→merge
 loop needs a single driver (`tools/refill_loop.sh`) with the honesty A/B built in.
+
+## Wave-close tooling (final round)
+- `6862880` global_fuzzy_index residuals: `jumptable_` filter (394 rows; dtk
+  jump-table blocks saturate masked-jaccard as shingle-subsets), RB3 ICF-input
+  dedup (92,596 fn entries / 50,517 unique addrs → 2,100 identical output rows),
+  size-ratio gate [0.33,3.0] at emit (fn_resolver T4 has no size awareness).
+  Artifact regenerated + validated: 2000 rows, 0 non-real / 0 dups / 0 bad-ratio,
+  1781 strong (j≥0.97 same-size).
+- `ebff84b` `tools/refill_loop.sh`: the +255 manual loop is now one command with
+  the honesty A/B built in (exits 1 on any dropped unit; reuses tools/ab_measure.py).
+  member_delta_finder2 default bucket STRUCT_WORK→HAS_REAL (the silent-0 bug) +
+  loud 0-row warning. Playbook §9 updated with the driver one-liner.
+- struct_db + global_fuzzy_pairs both regenerated on the fixed tools (tasks 10/11).
