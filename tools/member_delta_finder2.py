@@ -577,8 +577,11 @@ def run_validation(proj: str, tp_path: str, hdb: HeaderDB):
     tp = json.load(open(tp_path))
 
     def pool_for_classes(cls_names):
+        # Accept either the current 'HAS_REAL' bucket or the legacy 'STRUCT_WORK'
+        # name (older true_progress outputs) -- otherwise validation silently
+        # scans 0 fns, exactly the bug we're fixing.
         return [r for r in tp['rows']
-                if r.get('bucket') == 'STRUCT_WORK'
+                if r.get('bucket') in ('HAS_REAL', 'STRUCT_WORK')
                 and any(cls in r.get('sym', '') for cls in cls_names)]
 
     all_cls = [cls for _, cls, _ in KNOWN_WINS + KNOWN_FALSE_POSITIVES]
@@ -692,7 +695,13 @@ def main():
     ap.add_argument('--out', default=os.path.expanduser('~/tmp/forcemult/mdf2_candidates.json'),
                     help='output JSON path')
     ap.add_argument('--limit', type=int, default=0, help='limit to first N fns by size')
-    ap.add_argument('--bucket', default='STRUCT_WORK', help='true_progress bucket to scan')
+    ap.add_argument('--bucket', default='HAS_REAL',
+                    help="true_progress bucket to scan. Default HAS_REAL: that is "
+                         "the bucket tools/true_progress.py emits for the "
+                         "struct/codegen near-miss pool (bucket_from_subs). "
+                         "'STRUCT_WORK' is accepted as a legacy alias (old "
+                         "true_progress.bucket() name) but current outputs have 0 "
+                         "STRUCT_WORK rows.")
     ap.add_argument('--top', type=int, default=20, help='top N to show in summary')
     ap.add_argument('--classify-only', action='store_true',
                     help='skip scan; re-classify from --v1-json')
@@ -728,11 +737,40 @@ def main():
             return True
 
         tp = json.load(open(a.tp))
-        pool = [r for r in tp['rows'] if r['bucket'] == a.bucket and keep(r)]
+        rows = tp.get('rows', [])
+        # Bucket selection. 'STRUCT_WORK' is the OLD true_progress.bucket() name;
+        # current true_progress.bucket_from_subs() emits 'HAS_REAL'. Accept the
+        # legacy alias so old true_progress JSONs still work, but fall back to the
+        # live name when the requested bucket has 0 rows.
+        bucket = a.bucket
+        if bucket == 'STRUCT_WORK' and not any(r.get('bucket') == 'STRUCT_WORK'
+                                               for r in rows):
+            if any(r.get('bucket') == 'HAS_REAL' for r in rows):
+                print("[member_delta_finder2] NOTE: requested bucket "
+                      "'STRUCT_WORK' has 0 rows; this true_progress output uses "
+                      "the current 'HAS_REAL' bucket name -- scanning HAS_REAL "
+                      "instead.", file=sys.stderr)
+                bucket = 'HAS_REAL'
+        pool = [r for r in rows if r.get('bucket') == bucket and keep(r)]
+
+        # LOUD empty-pool warning -- the silent-0 scan was the actual bug this
+        # tool used to hide behind (it would happily 'scan 0 fns' and emit 0
+        # candidates with no signal that the bucket name was wrong).
+        if not pool:
+            present = sorted({r.get('bucket') for r in rows})
+            print("\n" + "=" * 72, file=sys.stderr)
+            print(f"[member_delta_finder2] WARNING: bucket {bucket!r} matched "
+                  f"0 of {len(rows)} rows in {a.tp}.", file=sys.stderr)
+            print(f"  Buckets actually present: {present}", file=sys.stderr)
+            print("  Nothing to scan -> 0 candidates. If you meant the "
+                  "near-miss struct/codegen pool, use --bucket HAS_REAL "
+                  "(the default).", file=sys.stderr)
+            print("=" * 72 + "\n", file=sys.stderr)
+
         pool.sort(key=lambda r: -r.get('size', 0))
         if a.limit:
             pool = pool[:a.limit]
-        print(f"Scanning {len(pool)} {a.bucket} fns...", file=sys.stderr)
+        print(f"Scanning {len(pool)} {bucket} fns...", file=sys.stderr)
         candidates, per_fn_out = run_scan(pool, a.proj, hdb)
 
     print_summary(candidates, top_n=a.top)
