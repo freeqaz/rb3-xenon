@@ -12267,5 +12267,14 @@
  "0x8246E658": "?UpdatedWorldXfm@RndMultiMeshProxy@@MAAXXZ",
  "0x823B9B90": "?ClassName@CharDriverMidi@@UBA?AVSymbol@@XZ",
  "0x823B9EE0": "??$Find@VCharClipGroup@@@ObjectDir@@QAAPAVCharClipGroup@@PBD_N@Z",
- "0x82430D70": "?UpdatePreClearState@RndTexRenderer@@UAAXXZ"
+ "0x82430D70": "?UpdatePreClearState@RndTexRenderer@@UAAXXZ",
+ "0x822F3C50": "?FadeBotbBandNames@TrackPanelDir@@UAAX_N@Z",
+ "0x822F40C0": "?HideScore@TrackPanelDir@@UAAXXZ",
+ "0x822F44E0": "?CodaSuccess@TrackPanelDir@@UAAXXZ",
+ "0x823EBA48": "?LockBitmap@RndTex@@UAAXAAVRndBitmap@@H@Z",
+ "0x823EC348": "?Copy@RndTex@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x823ECB68": "?OnSetRendered@RndTex@@IAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x824D3EE0": "??_DWorldCrowd@@QAAXXZ",
+ "0x824D3F50": "?Copy@WorldCrowd@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x824D4640": "??_GWorldCrowd@@UAAPAXI@Z"
 }
