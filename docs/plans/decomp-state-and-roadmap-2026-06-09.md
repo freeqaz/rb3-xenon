@@ -388,3 +388,19 @@ Mat.h. Needs a dedicated multi-session retail-layout reconstruction validated
 against SetRegularShaderConst until all deltas zero. Full RETAIL↔OURS offset
 table: docs/decomp/matng-deferral.md (+ evidence rows matng-abandoned.jsonl).
 Header `// 0xNN` comments in Mat.h are STALE (mDirty says 0x228, compiles 0x188).
+
+## Refill sweep: +255 (6596→6851, 0 regressions) — the compounding loop delivers again
+(`e6769d3`+`36d5599`) pin_identified extended 33 under-pinned units (+50 jaccard=1.0
+byte-exact addrs; top: BandCamShot +50, CharHair +37, CharDriver +27, Tex +25,
+Flow +15) and two reveal waves added 39 safe map names (35→11 + 54→28 after gating;
+3rd wave = 0, cascade drained at this state). Honesty gates verified: per-unit A/B
+27 gained / 0 dropped; denominator FELL (65548→65544); flagged anon-zero runs all
+pre-existing; the 2 MeshAnim seeds were correctly REJECTED (name_collision_tsm —
+their mangled names live at other addrs).
+**Pool verdicts after refill:** inline_policy STILL TAPPED (17 candidates in
+[90,100), all n=1; the n≥2 clusters in [40,90) are ObjPtr/Symbol template ctors in
+forbidden hot headers). member_delta_finder2: 0 actionable (1 sized-vector DRAINED
+class, 6 vbase-wall, 1 low-confidence n=1).
+**Tool gaps:** member_delta_finder2 default `--bucket STRUCT_WORK` scans 0 fns
+(true_progress emits `HAS_REAL`) — align default; the pin→build→reveal→gate→merge
+loop needs a single driver (`tools/refill_loop.sh`) with the honesty A/B built in.
