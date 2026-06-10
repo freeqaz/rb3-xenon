@@ -107,7 +107,10 @@ BinStreamRev &operator>>(BinStreamRev &d, WorldCrowd::CharData &cd) {
 WorldCrowd::WorldCrowd()
     : mPlacementMesh(this), mCharacters(this), mNum(0), mCrowdRotate((CrowdRotate)0), mForce3DCrowd(0),
       mShow3DOnly(0), mCharFullness(1), mFlatFullness(1), mLod(0), mEnviron(this),
-      mEnviron3D(this), mFocus(this), mCharForceLod(kLODPerFrame), unkd0(0),
+      mEnviron3D(this), mFocus(this),
+#ifdef RB3_WORLDCROWD_DC3_REV
+      mCharForceLod(kLODPerFrame), unkd0(0),
+#endif
       mModifyStamp(0) {
     if (gNumCrowd++ == 0) {
         int w, h, bpp;
@@ -197,7 +200,9 @@ BEGIN_PROPSYNCS(WorldCrowd)
     SYNC_PROP_SET(lod, mLod, SetLod(_val.Int()))
     SYNC_PROP_SET(force_3D_crowd, mForce3DCrowd, Force3DCrowd(_val.Int()))
     SYNC_PROP(focus, mFocus)
+#ifdef RB3_WORLDCROWD_DC3_REV
     SYNC_PROP(char_force_lod, (int &)mCharForceLod)
+#endif
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
@@ -205,7 +210,13 @@ END_PROPSYNCS
 void WorldCrowd::SetLod(int lod) { mLod = Clamp(0, 2, lod); }
 
 BEGIN_SAVES(WorldCrowd)
+#ifdef RB3_WORLDCROWD_DC3_REV
     SAVE_REVS(0x10, 0)
+#else
+    // retail RB3-360 (rb3-Wii ASSERT_REVS(0xE,0)); DC3 bumped to 0x10 for the
+    // mCharForceLod/unkd0 members retail lacks.
+    SAVE_REVS(0xE, 0)
+#endif
     SAVE_SUPERCLASS(RndDrawable)
     bool force = mForce3DCrowd;
     Force3DCrowd(false);
@@ -225,8 +236,10 @@ BEGIN_SAVES(WorldCrowd)
     bs << force;
     bs << mShow3DOnly;
     bs << mFocus;
+#ifdef RB3_WORLDCROWD_DC3_REV
     bs << mCharForceLod;
     bs << unkd0;
+#endif
     Force3DCrowd(force);
     SAVE_SUPERCLASS(RndPollable)
 END_SAVES
@@ -248,8 +261,10 @@ BEGIN_COPYS(WorldCrowd)
         COPY_MEMBER(mForce3DCrowd)
         COPY_MEMBER(mShow3DOnly)
         COPY_MEMBER(mFocus)
+#ifdef RB3_WORLDCROWD_DC3_REV
         COPY_MEMBER(mCharForceLod)
         COPY_MEMBER(unkd0)
+#endif
 
         mCharacters.clear();
         mCharacters.resize(c->mCharacters.size());
@@ -376,12 +391,14 @@ BEGIN_LOADS(WorldCrowd)
     if (d.rev > 0xB) {
         d >> mFocus;
     }
+#ifdef RB3_WORLDCROWD_DC3_REV
     if (d.rev > 0xE) {
         d >> (int &)mCharForceLod;
     }
     if (d.rev > 0xF) {
         d >> unkd0;
     }
+#endif
     if (d.rev > 0) {
         LOAD_SUPERCLASS(RndPollable);
     }
@@ -676,13 +693,17 @@ void WorldCrowd::Draw3DChars() {
                 *(bool *)((char *)curChar + 0x252) = false;
                 *(bool *)((char *)curChar + 0x251) = false;
             }
+#ifdef RB3_WORLDCROWD_DC3_REV
             if (mCharForceLod != kLODPerFrame) {
                 curChar->SetLodType(mCharForceLod);
             }
+#endif
             curChar->DrawShowing();
+#ifdef RB3_WORLDCROWD_DC3_REV
             if (mCharForceLod != kLODPerFrame) {
                 curChar->SetLodType(kLODPerFrame);
             }
+#endif
             curChar->SetSelfShadow(savedSelfShadow);
             *(bool *)((char *)curChar + 0x252) = savedUnk252;
             *(bool *)((char *)curChar + 0x251) = savedUnk251;
@@ -1150,13 +1171,17 @@ void WorldCrowd::DrawShowing() {
                         RndEnvironTracker tracker(env, &charWorldXfm.v);
                         gImpostorCamera->Select();
                         curChar->SetShowing(true);
+#ifdef RB3_WORLDCROWD_DC3_REV
                         if (mCharForceLod != kLODPerFrame) {
                             curChar->SetLodType(mCharForceLod);
                         }
+#endif
                         curChar->DrawShowing();
+#ifdef RB3_WORLDCROWD_DC3_REV
                         if (mCharForceLod != kLODPerFrame) {
                             curChar->SetLodType(kLODPerFrame);
                         }
+#endif
                     }
                     if (env) {
                         env->SetUseApproxGlobal(savedApprox);
@@ -1335,13 +1360,17 @@ void WorldCrowd::DrawShowing() {
                         RndEnvironTracker tracker(env, &charWorldXfm.v);
                         gImpostorCamera->Select();
                         curChar->SetShowing(true);
+#ifdef RB3_WORLDCROWD_DC3_REV
                         if (mCharForceLod != kLODPerFrame) {
                             curChar->SetLodType(mCharForceLod);
                         }
+#endif
                         curChar->DrawShowing();
+#ifdef RB3_WORLDCROWD_DC3_REV
                         if (mCharForceLod != kLODPerFrame) {
                             curChar->SetLodType(kLODPerFrame);
                         }
+#endif
                     }
                     if (env) {
                         env->SetUseApproxGlobal(savedApprox);

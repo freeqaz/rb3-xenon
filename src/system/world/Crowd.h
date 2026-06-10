@@ -144,9 +144,16 @@ protected:
     ObjPtr<RndEnviron> mEnviron3D; // 0xa4
     /** "Optional crowd facing focus when rotate is set to kCrowdRotateNone" */
     ObjPtr<RndTransformable> mFocus; // 0xb8
+    // NOTE: DC3 (newer) has `LODType mCharForceLod; // 0xcc` + `int unkd0; // 0xd0`
+    // here that retail RB3-360 lacks. rb3-Wii agrees (mFocus is directly followed
+    // by mModifyStamp, ASSERT_REVS(0xE,0) with no rev>0xE/>0xF Load branches), and
+    // CamShotCrowd::Load's inlined GetModifyStamp reads mModifyStamp at +8 vs retail.
+    // Gated out (default) to match the retail layout; native keeps the DC3 members.
+#ifdef RB3_WORLDCROWD_DC3_REV
     /** "Force character Level of Detail.
         -1 means no LOD is forced." */
     LODType mCharForceLod; // 0xcc
     int unkd0; // 0xd0
-    int mModifyStamp; // 0xd4
+#endif
+    int mModifyStamp; // 0xcc
 };
