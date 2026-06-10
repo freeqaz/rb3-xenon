@@ -48,6 +48,8 @@ public:
     static void NeutralWorldXfm(RndTransformable *, Transform &);
     static void NeutralLocalPos(RndTransformable *, Vector3 &);
 
+protected:
+    // Retail mangles these as protected (IAA...) — match the target_symbol_map.
     int GetType();
     float GetGroundHeight(RndTransformable *);
     int MeasureLengths(
