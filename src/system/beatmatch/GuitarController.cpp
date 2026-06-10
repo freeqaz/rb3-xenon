@@ -8,6 +8,17 @@
 #include "os/User.h"
 #include <algorithm>
 
+// Retail RB3 compiled this TU's MILO_WARN with arguments EVALUATED for side
+// effects (the global sizeof()-form strips arg evaluation, which also kills the
+// HANDLE_CHECK `if (_warn)` guard in Handle). The retail target keeps the
+// _warn-conditional PathName(this) evaluation; mirror MILO_FAIL's (void)(args)
+// comma form per-TU so the side-effecting args (PathName vcall) survive while
+// the message string vanishes.
+#ifndef HX_NATIVE
+#undef MILO_WARN
+#define MILO_WARN(...) ((void)(__VA_ARGS__))
+#endif
+
 GuitarController::GuitarController(
     User *user,
     const DataArray *cfg,
@@ -280,6 +291,16 @@ bool GuitarController::IsShifted() const {
         return btns & mShiftButtonMask;
     }
 }
+
+// Retail RB3 did NOT compile the BEGIN_HANDLERS MessageTimer instrumentation
+// (our macros.h force-defines MILO_DEBUG tree-wide, which the #ifdef-MILO_DEBUG
+// arm of BEGIN_HANDLERS expands into a per-Handle MessageTimer + Timer::Restart;
+// the retail target's GuitarController::Handle has zero Timer references). Use
+// the MILO_DEBUG-off form of BEGIN_HANDLERS for this TU only.
+#undef BEGIN_HANDLERS
+#define BEGIN_HANDLERS(objType)                                                          \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);
 
 BEGIN_HANDLERS(GuitarController)
     HANDLE_MESSAGE(ButtonDownMsg)
