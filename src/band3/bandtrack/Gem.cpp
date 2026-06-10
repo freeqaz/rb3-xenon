@@ -15,6 +15,18 @@
 #include "utl/Symbols.h"
 #include "utl/TimeConversion.h"
 
+// Retail RB3 compiled this TU's MILO_WARN with arguments EVALUATED for side
+// effects (the global sizeof()-form strips arg evaluation). The optimizer then
+// DCE'd pure args (Symbol loads, inlined trivial accessors) but kept args with
+// un-analyzable side effects — e.g. CreateWidgetInstances' MILO_WARN evaluates
+// TickFormat(GetTick(), *TheSongDB->GetData()->GetMeasureMap()) where the
+// virtual GetMeasureMap() call survives. Mirror MILO_FAIL's (void)(args) comma
+// form per-TU so those args are emitted while the message string vanishes.
+#ifndef HX_NATIVE
+#undef MILO_WARN
+#define MILO_WARN(...) ((void)(__VA_ARGS__))
+#endif
+
 Gem::Gem(
     const GameGem &gg, unsigned int ui, float f1, float f2, bool hopo, int beardTick, int i2, bool b2
 )
@@ -171,6 +183,7 @@ void Gem::AddInstance(Symbol s1, int i2) {
 
         if (mBeard) {
             Symbol s1c0;
+            static Symbol beard("beard");
             if (mGemManager->GetWidgetName(s1c0, i2, beard)) {
                 TrackWidget *w2 = mGemManager->GetWidgetByName(s1c0);
                 Transform tf68;
@@ -181,6 +194,7 @@ void Gem::AddInstance(Symbol s1, int i2) {
 
         if (mArrhythmicDurationSeconds != 0) {
             Symbol s1c4;
+            static Symbol mash("mash");
             if (mGemManager->GetWidgetName(s1c4, i2, mash)) {
                 TrackWidget *w2 = mGemManager->GetWidgetByName(s1c4);
                 Transform tf98;
@@ -191,6 +205,7 @@ void Gem::AddInstance(Symbol s1, int i2) {
 
         if (mKeyFingerNumber != -1) {
             Symbol s1c8;
+            static Symbol fret_num("fret_num");
             if (mGemManager->GetWidgetName(s1c8, i2, fret_num)) {
                 TrackWidget *wcc = mGemManager->GetWidgetByName(s1c8);
                 Transform tfc8;
@@ -200,6 +215,7 @@ void Gem::AddInstance(Symbol s1, int i2) {
                     v164.x = -v164.x;
                 }
                 Multiply(v164, tfc8, tfc8.v);
+                static Symbol is_white("is_white");
                 bool i1 = mGemManager->GetSlotIntData(i2, is_white);
                 String str170(1, mKeyFingerNumber + 'A');
                 wcc->AddTextInstance(tfc8, str170, !i1);
@@ -209,6 +225,7 @@ void Gem::AddInstance(Symbol s1, int i2) {
 
         if (mGameGem.IsRealGuitar() && mGameGem.GetFret(i2) != -1) {
             Symbol s1d0;
+            static Symbol fret_num("fret_num");
             if (mGemManager->GetWidgetName(s1d0, i2, fret_num)) {
                 TrackWidget *w1d4 = mGemManager->GetWidgetByName(s1d0);
                 Transform tff8;
@@ -247,6 +264,7 @@ void Gem::AddChordInstance(Symbol s1) {
         TrackWidget *w60 = nullptr;
         TrackWidget *w10 = nullptr;
         Symbol s64;
+        static Symbol chord("chord");
         if (mGemManager->GetChordWidgetName(s1, chord, s64)) {
             w5c = mGemManager->GetWidgetByName(s64);
             mWidgets.insert(w5c);
@@ -260,6 +278,7 @@ void Gem::AddChordInstance(Symbol s1) {
 
         if (!mSuppressFretLabel && mFirstFretString != -1) {
             Symbol s68;
+            static Symbol chord_fret("chord_fret");
             if (mGemManager->GetChordWidgetName(s1, chord_fret, s68)) {
                 w60 = mGemManager->GetWidgetByName(s68);
                 mWidgets.insert(w60);
@@ -274,6 +293,7 @@ void Gem::AddChordInstance(Symbol s1) {
 
         if (!mSuppressChordLabel && !mIsRepeatChord && !mChordLabel.empty()) {
             Symbol s6c;
+            static Symbol chord_label("chord_label");
             if (mGemManager->GetChordWidgetName(s1, chord_label, s6c)) {
                 w10 = mGemManager->GetWidgetByName(s6c);
             } else
@@ -290,9 +310,7 @@ void Gem::AddChordInstance(Symbol s1) {
             fretNums.resize(6);
 
         bool mod = TheModifierMgr->IsModifierActive("mod_chord_numbers");
-        bool b2 = true;
-        if (!mGameGem.ShowChordNums() && !mod)
-            b2 = false;
+        bool b2 = mGameGem.ShowChordNums() || mod;
 
         for (int i = 0; i < 6; i++) {
             if (i == mFirstFretString || b2) {
@@ -458,6 +476,7 @@ void Gem::UpdateTailPositions() {
 
 void Gem::CreateWidgetInstances(Symbol s) {
     if (mGameGem.IsRealGuitar() && mGameGem.IsMuted() && mSlots != 0) {
+        static Symbol muted_strum("muted_strum");
         AddStrumInstance(s, muted_strum);
     } else {
         if (mGameGem.IsRealGuitarChord() && mSlots != 0) {
