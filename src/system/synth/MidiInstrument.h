@@ -60,7 +60,18 @@ private:
 
 /** "Basic sound effect object.  Plays several samples with a given volume, pan,
  * transpose, and envelope settings." */
-class MidiInstrument : public Hmx::Object, public SynthPollable {
+// Retail RB3 does NOT derive SynthPollable (rb3-Wii oracle: MidiInstrument is
+// driven by a MidiInstrumentMgr, with a NON-virtual Poll()). DC3 (newer) added
+// the SynthPollable base + global poll list, which inserts a vfptr+mItr+mIsActive
+// (0xc) before the first member and shifts every member down. Gate the DC3 form
+// behind HX_NATIVE so the native runtime keeps its working poll loop while the
+// matching build reproduces retail's layout/vtable.
+class MidiInstrument : public Hmx::Object
+#ifdef HX_NATIVE
+                       ,
+                       public SynthPollable
+#endif
+{
 public:
     // Hmx::Object
     virtual ~MidiInstrument();
@@ -71,8 +82,12 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+#ifdef HX_NATIVE
     // SynthPollable
     virtual void SynthPoll();
+#else
+    void Poll();
+#endif
 
     FxSend *GetSend() const { return mSend; }
     FaderGroup &Faders() { return mFaders; }

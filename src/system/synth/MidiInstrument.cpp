@@ -184,10 +184,16 @@ BEGIN_LOADS(MidiInstrument)
         d >> mReverbMixDb;
         d >> mReverbEnable;
     }
+#ifdef HX_NATIVE
     StartPolling();
+#endif
 END_LOADS
 
+#ifdef HX_NATIVE
 void MidiInstrument::SynthPoll() {
+#else
+void MidiInstrument::Poll() {
+#endif
     if (!mActiveVoices.empty()) {
         for (auto it = mActiveVoices.begin(); it != mActiveVoices.end();) {
             NoteVoiceInst *cur = *it++;
