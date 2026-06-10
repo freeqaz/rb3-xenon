@@ -12,6 +12,22 @@
 
 class AnimTask;
 
+// Retail X360 RB3 (rev-11-era) RndAnimatable vtable ends its own virtual slice at
+// ListAnimChildren; DC3's newer RndAnimatable appended `OnListFlowLabels` (Flow
+// integration). rb3-Wii's Anim.h confirms no such virtual exists in the RB3 era.
+// Keeping it virtual adds a 10th own-slot, shifting every later (derived-class)
+// slot up 0x4 and breaking EventTrigger::Trigger vcalls (target slot 0x24 vs ours
+// 0x28; verified via machine-code anchors in VocalTrackDir::PlayIntro/TrackReset/
+// SpotlightPhraseSuccess/CanChat + LightPreset::StartAnim). OnListFlowLabels is
+// HANDLE'd directly (Anim.cpp), so dropping the virtual keeps it callable. The
+// native engine still wants virtual dispatch, so gate the keyword behind HX_NATIVE
+// (same idiom as RND_DC3_VIRTUAL in rndobj/Rnd.h).
+#ifdef HX_NATIVE
+#define ANIM_DC3_VIRTUAL virtual
+#else
+#define ANIM_DC3_VIRTUAL
+#endif
+
 /**
  * @brief: An object that can be animated.
  * Original _objects description:
@@ -55,7 +71,7 @@ public:
     virtual void SetKey(float frame) {}
     /** Get the list of this Object's children that are animatable. */
     virtual void ListAnimChildren(std::list<RndAnimatable *> &) const {}
-    virtual DataNode OnListFlowLabels(DataArray *) { return 0; }
+    ANIM_DC3_VIRTUAL DataNode OnListFlowLabels(DataArray *) { return 0; }
 
     OBJ_MEM_OVERLOAD(0x1B)
     NEW_OBJ(RndAnimatable)

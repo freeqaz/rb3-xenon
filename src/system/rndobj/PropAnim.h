@@ -153,7 +153,9 @@ public:
 protected:
     RndPropAnim();
 
-    virtual DataNode OnListFlowLabels(DataArray *);
+    // DC3-added base virtual (RndAnimatable::OnListFlowLabels); gated out of the
+    // retail vtable in Anim.h, so this override is a non-virtual shadow there too.
+    ANIM_DC3_VIRTUAL DataNode OnListFlowLabels(DataArray *);
 
     void LoadPre7(BinStreamRev &);
 
