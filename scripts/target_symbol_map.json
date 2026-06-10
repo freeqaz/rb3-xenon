@@ -12226,5 +12226,16 @@
  "0x82414400": "??$__median@VDataArrayPtr@@UForAllKeyframesSorter@@@stlpmtx_std@@YAABVDataArrayPtr@@ABV1@00UForAllKeyframesSorter@@@Z",
  "0x82414528": "?EndFrame@RndPropAnim@@UAAMXZ",
  "0x82414758": "?StartAnim@RndPropAnim@@UAAXXZ",
- "0x82414BB0": "?OnReplaceKeyframe@RndPropAnim@@QAA?AVDataNode@@PAVDataArray@@@Z"
+ "0x82414BB0": "?OnReplaceKeyframe@RndPropAnim@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x8231DA60": "??$__make_heap@PAUMerger@FileMerger@@USortBySelected@12@U12@H@stlpmtx_std@@YAXPAUMerger@FileMerger@@0USortBySelected@12@0PAH@Z",
+ "0x827C2C38": "?OnDebugDraw@MidiParser@@AAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82730F00": "?Find@DirLoader@@SAPAV1@ABVFilePath@@@Z",
+ "0x82714768": "?GetCurrentFrameTex@DxRnd@@UAAPAVRndTex@@_N@Z",
+ "0x827153A0": "?Resume@DxRnd@@UAAXXZ",
+ "0x82715D08": "??_DDxTexRenderer@@QAAXXZ",
+ "0x827160D8": "?SetSync@DxRnd@@UAAXH@Z",
+ "0x827161E8": "?Terminate@DxRnd@@UAAXXZ",
+ "0x82431830": "?Copy@RndTexRenderer@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82431948": "?Save@RndTexRenderer@@UAAXAAVBinStream@@@Z",
+ "0x82431E38": "??_DRndTexRenderer@@QAAXXZ"
 }
