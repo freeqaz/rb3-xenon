@@ -168,12 +168,30 @@ protected:
     MidiSynth *mMidiSynth; // 0x48
     std::vector<Mic *> mMics; // 0x4c
     bool mMuted; // 0x58
-    std::list<ObjectDir *> unk5c; // 0x5c
+#ifdef RB3_SYNTH_DC3_LISTS
+    // DC3-era layout (gate ON). Retail RB3-360 differs: no leading ObjectDir*
+    // list (unk5c has ZERO uses in our tree), mZombieInsts placed AFTER the
+    // faders, and mCommonBank's ObjDirPtr is a full 0xc bytes — so mMasterFader
+    // is at 0x68, not the 0x74 this layout produces.
+    std::list<ObjectDir *> unk5c; // 0x5c (DC3-only)
     ObjDirPtr<ObjectDir> mCommonBank; // 0x64
     std::list<SampleInst *> mZombieInsts; // 0x78
     Fader *mMasterFader; // 0x80
     Fader *mSfxFader; // 0x84
     Fader *mMidiInstrumentFader; // 0x88
+#else
+    // Retail RB3-360 layout (default). Verified: rb3-Wii oracle Synth.h
+    // (mMuted@0x3c, ObjDirPtr unk40, mMasterFader@0x4c == retail offsets +0x1c,
+    // no lists in between) + retail Stream ctor `lwz r4, 0x68(TheSynth)` =
+    // mMasterFader. The +4 pad compensates our 8-byte ObjDirPtr vs retail's 0xc
+    // (a separate engine-wide ObjPtr-layout deficit; see obj/Object.h note).
+    ObjDirPtr<ObjectDir> mCommonBank; // 0x5c (8 bytes here; 0xc in retail)
+    int mCommonBankPad_Dc3Deficit; // +4 to push mMasterFader to retail 0x68
+    Fader *mMasterFader; // 0x68
+    Fader *mSfxFader; // 0x6c
+    Fader *mMidiInstrumentFader; // 0x70
+    std::list<SampleInst *> mZombieInsts; // 0x74
+#endif
     std::list<Hmx::Object *> mPlayHandlers; // 0x8c
     MicClientMapper *mMicClientMapper; // 0x94
     int unk98; // TranscodableMixer* mSecureMixer?
