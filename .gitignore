@@ -52,6 +52,7 @@ core
 core.*
 
 # fingerprint_match.py generated indexes (regenerable from build/ + source trees)
+/ghidriff_identities.json
 /fingerprints.json
 /autoid.json
 /unified_id.json
