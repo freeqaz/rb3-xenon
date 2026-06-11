@@ -25,7 +25,7 @@ public:
     virtual void Poll();
     virtual void Enter();
     // UIComponent
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     OBJ_MEM_OVERLOAD(0x16)
     NEW_OBJ(MeterDisplay)

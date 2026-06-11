@@ -10,6 +10,35 @@
 
 class RndCam;
 
+// Retail X360 RB3 (rev-11-era) RndDrawable own-vtable slice has TWO fewer slots
+// than DC3's newer Draw.h, proven by independent machine-code anchors:
+//   * the mMesh->DrawShowing() vcall (RndLine::DrawShowing, SpotlightDrawer) is
+//     at target slot 0x14 vs our 0x18 (+4 = one dropped slot before DrawShowing)
+//   * the (*it)->CollideList() vcall (RndGroup::CollideList) is at target slot
+//     0x24 vs our 0x2c (+8 = two dropped slots before CollideList)
+// The two dropped DC3 virtuals are:
+//   1. Draw() is NON-VIRTUAL in retail. Smoking gun: retail RndDir::DrawShowing
+//      emits `bl fn_823F3A80` (direct call) for `(*it)->Draw()` where a vcall
+//      would appear if Draw were virtual; fn_823F3A80 is the single cull-wrapper
+//      Draw body (tests mShowing@0x8, frustum-culls, vcalls DrawShowing@0x14).
+//      Every Draw call site in the binary is a direct bl to that one body.
+//   2. DrawShadow(const Transform&, float) is DC3-only. rb3-Wii has the unrelated
+//      DrawShowingBudget there; retail-360 has neither (else CollideList=0x28).
+// Both are called directly in retail (RndGroup::DrawShowing -> child->Draw();
+// SpotlightDrawer::DrawShadow -> draw->DrawShadow), so dropping the `virtual`
+// keyword keeps them callable. Subclass Draw() overrides (RndGroup/RndEnviron/
+// CharClipSet/HamCharacter) become non-virtual hiding functions: they don't sit
+// in the vtable and are never reached through a RndDrawable* (the direct bl
+// always hits RndDrawable::Draw), so the layout is correct without relocating
+// their bodies. The native engine needs virtual dispatch, so gate the keyword
+// behind HX_NATIVE (same idiom as ANIM_DC3_VIRTUAL / PROPKEYS_DC3_VIRTUAL).
+// See docs/decomp/research/2026-06-10-force-multipliers.md (RndDrawable section).
+#ifdef HX_NATIVE
+#define DRAW_DC3_VIRTUAL virtual
+#else
+#define DRAW_DC3_VIRTUAL
+#endif
+
 enum HighlightStyle {
     kHighlightWireframe,
     kHighlightSphere,
@@ -49,9 +78,9 @@ public:
     /** Get the current camera to use. */
     virtual RndCam *CamOverride() { return 0; }
     virtual void Mats(std::list<class RndMat *> &, bool) {}
-    virtual void Draw();
+    DRAW_DC3_VIRTUAL void Draw();
     virtual void DrawShowing() {}
-    virtual void DrawShadow(const Transform &light, float shadowPlane) {}
+    DRAW_DC3_VIRTUAL void DrawShadow(const Transform &light, float shadowPlane) {}
     /** Get the list of this Object's children that are drawable. */
     virtual void ListDrawChildren(std::list<RndDrawable *> &) {}
     virtual RndDrawable *CollideShowing(const Segment &s, float &dist, Plane &plane) {

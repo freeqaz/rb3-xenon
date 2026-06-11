@@ -78,7 +78,7 @@ public:
     // RndDrawable
     virtual void UpdateSphere();
     virtual void DrawShowing();
-    virtual void DrawShadow(const Transform &, float);
+    DRAW_DC3_VIRTUAL void DrawShadow(const Transform &, float);
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
     // RndPollable
     virtual void Poll();

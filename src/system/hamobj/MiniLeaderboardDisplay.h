@@ -22,7 +22,7 @@ public:
     // RndDrawable
     virtual void DrawShowing();
     // UIComponent
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     OBJ_MEM_OVERLOAD(0x11)
     NEW_OBJ(MiniLeaderboardDisplay)

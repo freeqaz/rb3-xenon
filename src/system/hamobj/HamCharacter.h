@@ -51,7 +51,7 @@ public:
     // ObjectDir
     virtual void SyncObjects();
     // RndDrawable
-    virtual void Draw();
+    DRAW_DC3_VIRTUAL void Draw();
     virtual void DrawShowing();
     // RndPollable
     virtual void Poll();

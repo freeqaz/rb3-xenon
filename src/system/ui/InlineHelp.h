@@ -72,7 +72,7 @@ private:
     static const float sRotateDuration;
 
 protected:
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     InlineHelp();
 

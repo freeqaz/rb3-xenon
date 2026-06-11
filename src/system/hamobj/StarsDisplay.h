@@ -39,7 +39,7 @@ public:
 protected:
     StarsDisplay();
 
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     void Update();
     void SetStars(int);

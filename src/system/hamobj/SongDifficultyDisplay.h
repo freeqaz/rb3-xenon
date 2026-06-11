@@ -33,7 +33,7 @@ protected:
     SongDifficultyDisplay();
 
     // UIComponent
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     void Update();
 

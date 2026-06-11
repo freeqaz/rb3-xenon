@@ -60,11 +60,17 @@ public:
     virtual void Poll();
     virtual void Enter();
     virtual void Exit();
-    virtual void SetState(UIComponent::State);
-    virtual Symbol StateSym() const;
-    virtual bool Entering() const { return false; }
-    virtual bool Exiting() const { return mState == kSelecting; }
-    virtual bool CanHaveFocus() { return true; }
+    // UIComponent own-virtuals — retail-360 order/set verified from the retail
+    // vtable @0x8211D4A4 (20 slots; own region slots 12-19 = 0x30..0x4c), see
+    // docs/decomp/research/2026-06-11-uicomponent-virtuals.md
+    virtual void ResourceCopy(const UIComponent *);              // slot 12, 0x30
+    virtual void SetState(UIComponent::State);                   // slot 13, 0x34
+    virtual Symbol StateSym() const;                             // slot 14, 0x38
+    virtual bool Entering() const { return false; }              // slot 15, 0x3c
+    virtual bool Exiting() const { return mState == kSelecting; }// slot 16, 0x40
+    virtual bool CanHaveFocus() { return true; }                 // slot 17, 0x44
+    virtual void CopyMembers(const UIComponent *, Hmx::Object::CopyType); // slot 18, 0x48
+    virtual void Update();                                       // slot 19, 0x4c
 
     OBJ_MEM_OVERLOAD(0x19);
     NEW_OBJ(UIComponent)
@@ -77,7 +83,18 @@ public:
     static void Init();
 
 protected:
-    virtual void OldResourcePreload(BinStream &);
+    // OldResourcePreload is a DC3-only virtual; retail-360 UIComponent has NO
+    // such vtable slot (verified: retail primary vtable @0x8211D4A4 is exactly
+    // 20 slots with no OldResourcePreload). Gate the `virtual` behind HX_NATIVE
+    // exactly like DRAW_DC3_VIRTUAL (rndobj/Draw.h). All derived-class
+    // OldResourcePreload overrides use the same macro so they don't insert a
+    // bogus first-class virtual slot.
+#ifdef HX_NATIVE
+#define UICOMP_DC3_VIRTUAL virtual
+#else
+#define UICOMP_DC3_VIRTUAL
+#endif
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
     UIComponent();
     void SendSelect(LocalUser *);
 
@@ -88,8 +105,8 @@ protected:
     ObjPtr<UIComponent> mNavDown; // 0xf0
     LocalUser *mSelectingUser; // 0xfc
     UIScreen *mSelectScreen; // 0x100
-    UIResource *mResource; // 0x104
-    int mSelected; // 0x108
+    int mSelected; // 0x104 (verified: Enter() stores 0 here; ResourceCopy reads c->[0x108]=mResource)
+    UIResource *mResource; // 0x108
     std::vector<UIMesh> mMeshes; // 0x10c (stride 0x18)
     String mResourceName; // 0x118
     ObjDirPtr<ObjectDir> mResourceDir; // 0x124 (ObjDirPtr is 0xc)

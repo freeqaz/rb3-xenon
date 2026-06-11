@@ -33,7 +33,7 @@ public:
     virtual float EndFrame();
 
     // RndDrawable
-    virtual void Draw();
+    DRAW_DC3_VIRTUAL void Draw();
     virtual void DrawShowing();
     virtual void ListDrawChildren(std::list<class RndDrawable *> &);
 

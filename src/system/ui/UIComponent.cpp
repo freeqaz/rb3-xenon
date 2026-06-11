@@ -5,6 +5,7 @@
 #include "rndobj/Poll.h"
 #include "rndobj/Trans.h"
 #include "ui/UI.h"
+#include "ui/UIResource.h"
 #include "utl/BinStream.h"
 
 int UIComponent::sSelectFrames = 0;
@@ -30,7 +31,7 @@ void UIComponent::Exit() { RndPollable::Exit(); }
 
 UIComponent::UIComponent()
     : mState(kNormal), mNavRight(this), mNavDown(this), mSelectingUser(nullptr),
-      mSelectScreen(nullptr), mResource(nullptr), mSelected(0),
+      mSelectScreen(nullptr), mSelected(0), mResource(nullptr),
       mResourceName(), mResourceDir(), mResourcePath(), mSelectCancelled(0),
       mLoading(0), mMockSelect(0) {}
 
@@ -52,6 +53,36 @@ BEGIN_COPYS(UIComponent)
         COPY_MEMBER(mNavDown)
     END_COPYING_MEMBERS
 END_COPYS
+
+void UIComponent::CopyMembers(const UIComponent *c, Hmx::Object::CopyType ty) {
+    RndTransformable::Copy(c, ty);
+    RndDrawable::Copy(c, ty);
+    mNavRight = c->mNavRight;
+    mNavDown = c->mNavDown;
+    mResourceName = c->mResourceName;
+    mResourceDir = c->mResourceDir;
+    mResourcePath = c->mResourcePath;
+}
+
+void UIComponent::ResourceCopy(const UIComponent *c) {
+    MILO_ASSERT(c, 0x94);
+    Hmx::Object::SetTypeDef((DataArray *)c->TypeDef());
+    CopyMembers(c, kCopyShallow);
+    if (mResourcePath.length() != 0) {
+        mResourceDir = c->mResourceDir;
+        MILO_ASSERT(mResourceDir.Ptr(), 0x9B);
+    } else {
+        mResource = c->mResource;
+        mResource->PostLoad();
+        MILO_ASSERT(mResource->Dir(), 0xA1);
+    }
+    Update();
+}
+
+// Phase-A stub for vtable-slot correctness (slot 19, 0x4c). The real body
+// (rb3-Wii UIComponent.cpp:233+, retail fn_827DB8C8 — decomp.me/3ya1L) needs
+// GetResourcesPath/ResourceFileUpdated/UpdateMeshes helpers not yet present.
+void UIComponent::Update() {}
 
 BEGIN_SAVES(UIComponent)
     SAVE_REVS(3, 0)

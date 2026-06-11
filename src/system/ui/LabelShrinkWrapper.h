@@ -36,7 +36,7 @@ public:
 
 protected:
     // UIComponent
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
     LabelShrinkWrapper();
     void Update();
     void UpdateAndDrawWrapper();

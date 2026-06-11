@@ -54,7 +54,7 @@ protected:
     UISlider();
 
     virtual void SetSelectedAux(int);
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     void Update();
     DataNode OnMsg(const ButtonDownMsg &);

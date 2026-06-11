@@ -103,7 +103,7 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(UIList) }
 
 private:
-    virtual void OldResourcePreload(BinStream &);
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     void Update();
 

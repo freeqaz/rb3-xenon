@@ -33,7 +33,7 @@ public:
 
     virtual float GetDistanceToPlane(const Plane &, Vector3 &);
     virtual bool MakeWorldSphere(Sphere &, bool);
-    virtual void Draw();
+    DRAW_DC3_VIRTUAL void Draw();
     virtual void DrawShowing();
     virtual void ListDrawChildren(std::list<RndDrawable *> &);
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);

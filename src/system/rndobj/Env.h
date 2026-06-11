@@ -25,7 +25,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
     virtual void Highlight() { RndTransformable::Highlight(); }
-    virtual void Draw();
+    DRAW_DC3_VIRTUAL void Draw();
     virtual void Select(const Vector3 *);
     virtual void UpdateApproxLighting(const Vector3 *);
     virtual int NumLights_Real() const { return mLightsReal.size(); }
