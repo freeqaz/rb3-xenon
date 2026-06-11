@@ -495,8 +495,8 @@ Memory_Xbox.cpp:
 	.text       start:0x82262D70 end:0x82263544
 
 StreamNull.cpp:
-	.pdata      start:0x82230858 end:0x82230E20
-	.text       start:0x826FBD98 end:0x82700E18
+	.pdata      start:0x82230850 end:0x82230E20
+	.text       start:0x826FBD28 end:0x82700E18
 
 RhythmBattlePlayer.cpp:
 	.pdata      start:0x821F5620 end:0x821F5638
@@ -1702,8 +1702,8 @@ Rnd_Xbox.cpp:
 	.text       start:0x827143D0 end:0x8271799C
 
 MidiSynth.cpp:
-	.pdata      start:0x82230708 end:0x82230858
-	.text       start:0x826FAAA8 end:0x826FBD98
+	.pdata      start:0x82230708 end:0x82230850
+	.text       start:0x826FAAA8 end:0x826FBD28
 
 Cache_Xbox.cpp:
 	.pdata      start:0x8223AC98 end:0x8223AE90
