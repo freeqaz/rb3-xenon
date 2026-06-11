@@ -2392,8 +2392,8 @@ band3/meta_band/NetSync.cpp:
 	.text       start:0x82583DD8 end:0x82586338
 
 band3/game/Player.cpp:
-	.pdata      start:0x82229DC8 end:0x82229F88
-	.text       start:0x826843F0 end:0x82686C50
+	.pdata      start:0x82229DC8 end:0x8222A4A8
+	.text       start:0x826843F0 end:0x8268C4A8
 
 band3/game/TrainerPanel.cpp:
 	.pdata      start:0x8222BE68 end:0x8222C020
