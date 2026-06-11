@@ -957,8 +957,8 @@ AnimFilter.cpp:
 	.text       start:0x8233CE48 end:0x8233CEBC
 
 CharIKHead.cpp:
-	.pdata      start:0x821F7610 end:0x821F7618
-	.text       start:0x8233D2E8 end:0x8233D32C
+	.pdata      start:0x821FDD28 end:0x821FDEC8
+	.text       start:0x823ADCF0 end:0x823AF410
 
 Anim.cpp:
 	.pdata      start:0x82201B88 end:0x82202098
