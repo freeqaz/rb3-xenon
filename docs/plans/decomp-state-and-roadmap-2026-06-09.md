@@ -771,8 +771,24 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   DOFProc, StartTransitionMsg/CurrentScreenChangedMsg message classes,
   RndSoftParticleBuffer) — splitting those out = a bigger future re-pin
   campaign; the 5 residual AFH orphans map to them.
-- IN FLIGHT: UIComponent-TU re-pin (worktree rb3-uirepin).
-- WAVE-3 QUEUE (remaining): AsyncFileHolmes-head foreign-TU split-out,
+- **UIComponent-TU re-pin: LANDED +38 (6989→7027 EXACT, stable re-run,
+  zero regressions)** (57910ac) — blew past the +5–9 estimate. Root cause:
+  UIComponent.cpp was pinned to a single ICF-displaced one-off
+  (?StaticClassName@ at 0x823D9AE0, 1 fn) while the REAL retail TU cluster
+  sat unsplit in the auto_03 blob. New pin .text 0x827D8DC8–0x827DBDB0
+  (+ dtk-derived pdata). Unit 1→39 matched (3 named + 36 anon byte-exact
+  auto-pairs). Boundary care: excluded the foreign ICF'd OptionsPanel guard
+  pair at head AND retail's ??__E dynamic-init thunks at tail (our build
+  inlines them — 0 ??__E in compiled obj, can never pair).
+  **PATTERN INSIGHT: re-pins went 3-for-3 ABOVE estimate this wave**
+  (mispin +24 vs "investigate", re-pin +38 vs +5–9). Mis-pinned/under-pinned
+  wired TUs are systematically undervalued — the next research wave should
+  hunt "pinned-to-a-sliver" TUs (tiny pinned range + large matched-source
+  obj) binary-wide.
+- IN FLIGHT: vtable-order walls via auto-rdata-obj slot dump (worktree
+  rb3-vtwalls; primary VocalTrackDir::TrackReset @99.989).
+- WAVE-3 QUEUE (remaining): pinned-to-a-sliver binary-wide hunt (NEW, high
+  EV per the 3-for-3 pattern), AsyncFileHolmes-head foreign-TU split-out,
   obj_orphan 911 cleanup-safe purge (hygiene +0), remaining obj_orphan
   INVESTIGATE cases (UIGuide/LabelNumberTicker, MidiSynth/StreamNull,
   Task/DataNode, UI/PanelDir, VocalTrack/Gem — per worklist dossier),
