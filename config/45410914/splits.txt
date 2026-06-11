@@ -833,8 +833,8 @@ Mesh.cpp:
 	.text       start:0x82404BE8 end:0x8240A428
 
 CharMeshHide.cpp:
-	.pdata      start:0x821EFCC0 end:0x821EFCC8
-	.text       start:0x822C1E58 end:0x822C1E9C
+	.pdata      start:0x821FC438 end:0x821FC5B8
+	.text       start:0x8238E770 end:0x8238FC68
 
 AmbientOcclusion.cpp:
 	.pdata      start:0x82208F30 end:0x82209310
