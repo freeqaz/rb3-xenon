@@ -644,8 +644,8 @@ crc32.c:
 	.text       start:0x82B29B60 end:0x82B29EDC
 
 CharBoneDir.cpp:
-	.pdata      start:0x821FD410 end:0x821FD5A0
-	.text       start:0x823A29A8 end:0x823A49E4
+	.pdata      start:0x821FD3C8 end:0x821FD6F8
+	.text       start:0x823A2468 end:0x823A6128
 
 CharClip.cpp:
 	.pdata      start:0x821FA540 end:0x821FA860
