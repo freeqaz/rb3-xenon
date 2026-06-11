@@ -1332,8 +1332,8 @@ MoveVariant.cpp:
 	.text       start:0x82588000 end:0x82588464
 
 Bitmap.cpp:
-	.pdata      start:0x822018C8 end:0x82201988
-	.text       start:0x823E98C0 end:0x823EB0C0
+	.pdata      start:0x82201890 end:0x822019D8
+	.text       start:0x823E9158 end:0x823EBA48
 
 MiniGameMgr.cpp:
 	.pdata      start:0x82219EB0 end:0x82219EB8
