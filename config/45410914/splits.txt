@@ -1388,8 +1388,8 @@ HeldButtonPanel.cpp:
 	.text       start:0x82788338 end:0x827894D8
 
 SoundTouch.cpp:
-	.pdata      start:0x82252A68 end:0x82252A70
-	.text       start:0x82B3F6D0 end:0x82B3F7C0
+	.pdata      start:0x82252A68 end:0x82252AD0
+	.text       start:0x82B3F6D0 end:0x82B3FE08
 
 HamCamShot.cpp:
 	.pdata      start:0x82224BF0 end:0x82224BF8
@@ -2127,9 +2127,6 @@ HamSkeletonConverter.cpp:
 GlitchFinder.cpp:
 	.pdata      start:0x82248628 end:0x82248630
 	.text       start:0x82A51508 end:0x82A5164C
-
-DirectionGestureFilter.cpp:
-	.text       start:0x82B3F7C0 end:0x82B3F7D4
 
 SessionJobs_Xbox.cpp:
 	.pdata      start:0x82200F28 end:0x82200F30
