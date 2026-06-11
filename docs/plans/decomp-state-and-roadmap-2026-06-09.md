@@ -655,8 +655,67 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
 3. **obj_orphan map cleanup vein** (1092 entries, per-unit gated via
    tools/map_lint.py --check obj_orphan; only stable-source units).
 4. **AccomplishmentProgress compound fix** (find the 4-byte pre-rbtree member,
-   THEN RB3_RBTREE_0x1C).
+   THEN RB3_RBTREE_0x1C). [SUPERSEDED by wave-3 research — see below]
 5. **OvershellSlot layout reconstruction** (retail logic fully decoded+banked;
    multi-session). 6. Mat_NG (multi-session, matng-deferral.md). 7. New research
    wave once these drain — the 40-95 bodyport pool was largely executed or
    refuted this wave.
+
+---
+
+# WAVE 3 (2026-06-11) — research-first model, round 2
+
+## Research phase: 4 dossiers (docs/decomp/research/2026-06-11-*.md), 3 MAJOR CORRECTIONS to prior verdicts
+
+- **Player +4 SOLVED** (`player-plus4-layout.md`): NOT a vbase-MI wall. The two
+  bracket observations (≥0x260, ≥0x2a0) were both loose lower bounds; true
+  onset = **Performer+0x224**, ours = retail + 4. Cause: our SongPos.h is
+  DC3's (0x18, has `int mPhrase`); retail RB3-360 SongPos = 0x14, NO mPhrase,
+  identical to rb3-Wii incl. the mTotalBeat-skipping default-ctor quirk
+  (retail Performer ctor fn_8267F0F0 reproduces it). Player.h needs NO edit;
+  fix = SongPos.h gate (`SONGPOS_DC3_PHRASE`) + HamSongData.cpp 6→5-arg ctor.
+  Retail Player ctor located @0x82688E40 (outside pinned range). Est +8–13.
+  BONUS LEVERS PARKED in dossier: **Band head +4** (band+0x90 vs 0x94) and
+  **Game head +4** (TheGame+0x3d vs 0x41) — independent DC3-delta levers in
+  uncompiled TUs, baked into compiled readers.
+- **UIComponent vtable RECOVERED** (`uicomponent-virtuals.md`): the "keeps
+  exactly 2 of 4" framing was the NET (+2 slots), not the set. Retail keeps
+  **3 of 4** Wii own-virtuals (ResourceCopy +0x30, CopyMembers +0x48, Update
+  +0x4c; SetTypeDef is slot-neutral) and **LACKS our DC3-only
+  OldResourcePreload slot**. Primary evidence: raw vtable words dumped from
+  `auto_00_82000400_rdata.obj` @0x8211D4A4 (20 slots; RndDrawable slice = 12,
+  no Draw/DrawShadow — confirms devirt). **The auto-rdata-obj dump technique
+  unlocks every "retail vtable order unknown" wall** (e.g. VocalTrackDir::
+  TrackReset). Also found: mSelected@0x104/mResource@0x108 SWAPPED in our
+  header. Traps: both levers (header + banked devirt patch) must land
+  together; 10 derived OldResourcePreload overrides gated in same edit.
+  Est +6–8 immediate + re-pin/porting follow-ups.
+- **AccomplishmentProgress REFRAMED** (`accomplishmentprogress-compound.md`):
+  NO missing game member. Retail's TU has sizeof(map)=0x1c AND sizeof(set)=
+  0x18 in the SAME TU → the queue's "member + THEN RB3_RBTREE_0x1C" plan was
+  wrong (flag grows sets too = the −14). Fix = new **RB3_MAP_0x1C** gate
+  (map/multimap-only pad), ungate unk50, per-TU cflag, +12 map entries.
+  Refines the rbtree-ODR story: unk50 was a compensation hack. FOLLOW-UP
+  VEIN: re-try previously-regressing rbtree TUs with the map-only flag.
+- **obj_orphan worklist** (`obj-orphan-worklist.md`): 1103 orphans → 911
+  CLEANUP-SAFE across 157 units (hygiene, +0), 92 DO-NOT-TOUCH, and **9
+  INVESTIGATE mis-pin cases** — top two are real +N candidates of the
+  BandIKEffector class: **MidiParser** range swallows 5 MidiParserMgr methods
+  (0x827C5E38–0x827C62D0, last 0x498 bytes), **AsyncFileHolmes** over-extends
+  0x6730 bytes into MusicLibrary (12 methods, 0x82527920–0x825285D0).
+
+## Implementation phase
+- **AccomplishmentProgress RB3_MAP_0x1C: LANDED +10 (6932→6942), VERIFIED on
+  fresh main build** (a811f7f, merged ff-only; fresh_report on main:
+  measures.matched_functions = 6942, raw 6907 = known 35 FP-anchor gap).
+  +4 layout (dtor + 3 funclets) +6 pairing entries (4 Set*, HasNewReward
+  VignetteFestival incl. fixing wrong ?IsRest@HamMove entry @0x825776D8,
+  SendHardCoreStatusUpdate). Agent correctly REFUSED 2 dossier-guessed
+  entries (0x82577978 = stats-accumulator not Clear; 0x8257A078 =
+  global-this init/reset not FakeFill — both left unmapped, identities
+  partially decoded in agent report). Residual near-misses for a future
+  bodyport batch: 4 Get* @76.85 (out-of-line find vs our inlined _M_find),
+  IsUploadDirty 71.4, ClearNewRewardVignetteFestival 11.0.
+- IN FLIGHT: SongPos +4 lever (worktree rb3-songpos), UIComponent virtuals +
+  banked devirt (worktree rb3-uicomp), MidiParser/AsyncFileHolmes mis-pin
+  fixes (worktree rb3-mispin).
