@@ -785,8 +785,24 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   wired TUs are systematically undervalued — the next research wave should
   hunt "pinned-to-a-sliver" TUs (tiny pinned range + large matched-source
   obj) binary-wide.
-- IN FLIGHT: vtable-order walls via auto-rdata-obj slot dump (worktree
-  rb3-vtwalls; primary VocalTrackDir::TrackReset @99.989).
+- **ObjectDir-vbase vtable wall: ROOT-CAUSED, fix BANKED net-0**
+  (c426ad4 research + 7583d04 patch docs/decomp/handoff/
+  objectdir-vbase-banked.patch — DO NOT land alone). The rdata-obj
+  slot-dump technique VALIDATED on its second wall: recovered the full
+  retail ObjectDir-vbase slot table (anchored via VocalTrackDir::
+  SyncObjects override 0x822E7D50 → vtable 0x82029D64; SyncObjects
+  universally +0xc across all 28 retail ObjectDir-vbase vtables). TWO
+  coordinated base-class bugs: (1) GetExposedProperties = DC3-only virtual
+  retail lacks → gate DIR_DC3_VIRTUAL; (2) AllowsInlineProxy IS virtual in
+  retail (+0x14), DC3 demoted it (BandCharacter already overrides). The
+  bugs cancel past InlineSubDirType — explains why some vcalls matched by
+  coincidence. Fix proven byte-exact on TrackReset + CharClipSet::
+  SyncProperty + resolves PanelDir::RemovingObject @99.978, but a 40-byte
+  CharClipSet DataNode-dtor unwind funclet (fn_823C2044) drops 100→94
+  (frame-layout/permuter class) → net 0. Becomes +2-3 when the funclet
+  realigns or in a coordinated campaign. Secondary scan: the 99.88 ??_G
+  vector-deleting-dtor cluster + 99.6 40-byte fn_ cluster = funclet noise,
+  NOT vtable walls; generalized single-slot-wall detector documented.
 - WAVE-3 QUEUE (remaining): pinned-to-a-sliver binary-wide hunt (NEW, high
   EV per the 3-for-3 pattern), AsyncFileHolmes-head foreign-TU split-out,
   obj_orphan 911 cleanup-safe purge (hygiene +0), remaining obj_orphan
