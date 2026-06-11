@@ -1468,8 +1468,8 @@ CheatProvider.cpp:
 	.text       start:0x826E1C78 end:0x826E1CD8
 
 CameraManager.cpp:
-	.pdata      start:0x8222EE58 end:0x8222EE60
-	.text       start:0x826E20E8 end:0x826E2170
+	.pdata      start:0x8220B1B8 end:0x8220B308
+	.text       start:0x824A6D08 end:0x824A83C0
 
 UITrigger.cpp:
 	.pdata      start:0x8222FC18 end:0x8222FC20
