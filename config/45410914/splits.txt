@@ -1230,12 +1230,12 @@ PropSync.cpp:
 	.text       start:0x824B71C8 end:0x824B7300
 
 SpotlightDrawer.cpp:
-	.pdata      start:0x8220C990 end:0x8220CBD0
-	.text       start:0x824C1C38 end:0x824C4D58
+	.pdata      start:0x8220C980 end:0x8220CBE0
+	.text       start:0x824C19F8 end:0x824C4E18
 
 Spotlight.cpp:
-	.pdata      start:0x8220CBF8 end:0x8220D1D0
-	.text       start:0x824C4ED8 end:0x824CCEC0
+	.pdata      start:0x8220CBE0 end:0x8220D1D0
+	.text       start:0x824C4E18 end:0x824CCEC0
 
 Crowd.cpp:
 	.pdata      start:0x8220D1D0 end:0x8220D850
