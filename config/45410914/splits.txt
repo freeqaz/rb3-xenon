@@ -1020,13 +1020,9 @@ Morph.cpp:
 	.pdata      start:0x821FB110 end:0x821FB178
 	.text       start:0x82377FC8 end:0x82378720
 
-HamPlayerData.cpp:
-	.pdata      start:0x821FB8D8 end:0x821FB8E0
-	.text       start:0x8237FBD8 end:0x8237FC74
-
 FileMerger.cpp:
-	.pdata      start:0x821FBA98 end:0x821FBBE8
-	.text       start:0x82381AE8 end:0x82382C20
+	.pdata      start:0x821FB790 end:0x821FBBE8
+	.text       start:0x8237E778 end:0x82382C20
 
 FlowAnimate.cpp:
 	.pdata      start:0x821FBDE0 end:0x821FBDE8
