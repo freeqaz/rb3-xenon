@@ -80,6 +80,11 @@ public:
     UIComponent *NavDown() const { return mNavDown; }
     bool Loading() const { return mLoading; }
 
+    const char *GetResourcesPath();
+    void ResourceFileUpdated(bool);
+    void UpdateResource();
+    void MockSelect();
+
     static void Init();
 
 protected:
@@ -111,9 +116,10 @@ protected:
     String mResourceName; // 0x118
     ObjDirPtr<ObjectDir> mResourceDir; // 0x124 (ObjDirPtr is 0xc)
     String mResourcePath; // 0x130
-    unsigned char mSelectCancelled; // 0x13c
-    bool mLoading; // 0x13d
-    bool mMockSelect; // 0x13e (1 byte, 0x13f padding)
+    bool mLoading; // 0x13c (verified: UpdateResource reads 0x13c twice as mLoading)
+    unsigned char mSelectCancelled; // 0x13d — Wii name mMockSelect, same byte:
+                                    // MockSelect() sets it, FinishSelecting() tests+clears.
+                                    // (no third flag; 0x13e/0x13f = padding)
 
 private:
     void FinishSelecting();
