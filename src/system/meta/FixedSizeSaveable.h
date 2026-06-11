@@ -6,6 +6,7 @@
 #include "os/Debug.h"
 #include "utl/Std.h"
 #include <set>
+#include <hash_map>
 
 enum {
     kSymbolSize = 0x32,
@@ -135,10 +136,13 @@ public:
             DepadStream(stream, savesize * (maxsize - vecsize));
     }
 
+    // These progress maps are STLport hash_map (Harmonix's original type; the
+    // "hash_map" notify strings above are the save-format proof). Only
+    // AccomplishmentProgress::SaveFixed/LoadFixed call these 4-arg overloads.
     template <class T>
     static void SaveStd(
         FixedSizeSaveableStream &stream,
-        const std::map<Symbol, T> &map,
+        const std::hash_map<Symbol, T> &map,
         int maxsize,
         int savesize
     ) {
@@ -152,7 +156,7 @@ public:
             mapsize = maxsize;
         }
         stream << mapsize;
-        for (std::map<Symbol, T>::const_iterator it = map.begin(); it != map.end();
+        for (std::hash_map<Symbol, T>::const_iterator it = map.begin(); it != map.end();
              ++it) {
             FixedSizeSaveable::SaveSymbolID(stream, it->first);
             stream << it->second;
@@ -164,7 +168,7 @@ public:
     template <class T1, class T2>
     static void SaveStd(
         FixedSizeSaveableStream &stream,
-        const std::map<T1, T2> &map,
+        const std::hash_map<T1, T2> &map,
         int maxsize,
         int savesize
     ) {
@@ -178,7 +182,8 @@ public:
             mapsize = maxsize;
         }
         stream << mapsize;
-        for (std::map<T1, T2>::const_iterator it = map.begin(); it != map.end(); ++it) {
+        for (std::hash_map<T1, T2>::const_iterator it = map.begin(); it != map.end();
+             ++it) {
             stream << it->first;
             stream << it->second;
         }
@@ -264,7 +269,7 @@ public:
     template <class T>
     static void LoadStd(
         FixedSizeSaveableStream &stream,
-        std::map<Symbol, T> &map,
+        std::hash_map<Symbol, T> &map,
         int maxsize,
         int savesize
     ) {
@@ -287,7 +292,10 @@ public:
 
     template <class T1, class T2>
     static void LoadStd(
-        FixedSizeSaveableStream &stream, std::map<T1, T2> &map, int maxsize, int savesize
+        FixedSizeSaveableStream &stream,
+        std::hash_map<T1, T2> &map,
+        int maxsize,
+        int savesize
     ) {
         if (map.size() > 0) {
             MILO_NOTIFY("hash_map is not empty!");

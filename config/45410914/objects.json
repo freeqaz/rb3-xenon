@@ -678,7 +678,7 @@
       "band3/meta_band/AccomplishmentManager.cpp": { "status": "NonMatching", "extra_cflags": ["/DRB3_RBTREE_0x1C"] },
       "band3/meta_band/AccomplishmentOneShot.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentPlayerConditional.cpp": "NonMatching",
-      "band3/meta_band/AccomplishmentProgress.cpp": { "status": "NonMatching", "extra_cflags": ["/DRB3_MAP_0x1C"] },
+      "band3/meta_band/AccomplishmentProgress.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentSetlist.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentSongConditional.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentSongFilterConditional.cpp": "NonMatching",

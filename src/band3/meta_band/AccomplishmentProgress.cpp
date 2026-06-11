@@ -28,14 +28,28 @@
 #include "utl/Symbols.h"
 #include "utl/Symbols2.h"
 #include "utl/Symbols4.h"
+#include "xdk/xapilibi/xbox.h"
+#include "xdk/xapilibi/winerror.h"
+#include <cstring>
 
 DataNode RockCentralOpCompleteMsg::Arg2() const { return mData->Node(4); }
 
 GamerAwardStatus::GamerAwardStatus() : unk8(-1), unkc(0), unk10(0) {
+    memset(&mOverlapped, 0, sizeof(mOverlapped));
     mSaveSizeMethod = &SaveSize;
 }
 
-GamerAwardStatus::~GamerAwardStatus() {}
+GamerAwardStatus::GamerAwardStatus(int award, GamerAwardType ty)
+    : unk8(award), unkc(ty), unk10(0) {
+    memset(&mOverlapped, 0, sizeof(mOverlapped));
+    mSaveSizeMethod = &SaveSize;
+}
+
+GamerAwardStatus::~GamerAwardStatus() {
+    if (mOverlapped.InternalLow == ERROR_IO_PENDING) {
+        XCancelOverlapped(&mOverlapped);
+    }
+}
 
 void GamerAwardStatus::SaveFixed(FixedSizeSaveableStream &stream) const {
     stream << unk8;
@@ -919,7 +933,7 @@ void AccomplishmentProgress::ClearStepTrackingMap() { mStepTrackingMap.clear(); 
 
 int AccomplishmentProgress::GetCurrentValue(Symbol s) {
     int val = 0;
-    std::map<Symbol, int>::iterator it = mStepTrackingMap.find(s);
+    std::hash_map<Symbol, int>::iterator it = mStepTrackingMap.find(s);
     if (it != mStepTrackingMap.end())
         val = it->second;
     return val;
@@ -936,7 +950,7 @@ int AccomplishmentProgress::GetTourTotalSongsPlayed() const {
 
 int AccomplishmentProgress::GetToursPlayed() const {
     int num = 0;
-    for (std::map<Symbol, int>::const_iterator it = mToursPlayedMap.begin();
+    for (std::hash_map<Symbol, int>::const_iterator it = mToursPlayedMap.begin();
          it != mToursPlayedMap.end();
          ++it) {
         num += it->second;
@@ -946,7 +960,7 @@ int AccomplishmentProgress::GetToursPlayed() const {
 
 int AccomplishmentProgress::GetToursPlayed(Symbol s) const {
     int val = 0;
-    std::map<Symbol, int>::const_iterator it = mToursPlayedMap.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = mToursPlayedMap.find(s);
     if (it != mToursPlayedMap.end())
         val = it->second;
     return val;
@@ -954,7 +968,7 @@ int AccomplishmentProgress::GetToursPlayed(Symbol s) const {
 
 int AccomplishmentProgress::GetTourMostStars(Symbol s) const {
     int val = 0;
-    std::map<Symbol, int>::const_iterator it = mTourMostStarsMap.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = mTourMostStarsMap.find(s);
     if (it != mTourMostStarsMap.end())
         val = it->second;
     return val;
@@ -962,7 +976,7 @@ int AccomplishmentProgress::GetTourMostStars(Symbol s) const {
 
 int AccomplishmentProgress::GetToursGotAllStars() const {
     int num = 0;
-    for (std::map<Symbol, int>::const_iterator it = mToursGotAllStarsMap.begin();
+    for (std::hash_map<Symbol, int>::const_iterator it = mToursGotAllStarsMap.begin();
          it != mToursGotAllStarsMap.end();
          ++it) {
         num += it->second;
@@ -972,7 +986,7 @@ int AccomplishmentProgress::GetToursGotAllStars() const {
 
 int AccomplishmentProgress::GetToursGotAllStars(Symbol s) const {
     int val = 0;
-    std::map<Symbol, int>::const_iterator it = mToursGotAllStarsMap.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = mToursGotAllStarsMap.find(s);
     if (it != mToursGotAllStarsMap.end())
         val = it->second;
     return val;
@@ -980,7 +994,7 @@ int AccomplishmentProgress::GetToursGotAllStars(Symbol s) const {
 
 int AccomplishmentProgress::GetQuestCompletedCount() const {
     int num = 0;
-    for (std::map<int, int>::const_iterator it = mGigTypeCompletedMap.begin();
+    for (std::hash_map<int, int>::const_iterator it = mGigTypeCompletedMap.begin();
          it != mGigTypeCompletedMap.end();
          ++it) {
         num += it->second;
@@ -990,7 +1004,7 @@ int AccomplishmentProgress::GetQuestCompletedCount() const {
 
 int AccomplishmentProgress::GetQuestCompletedCount(TourGameType ty) const {
     int val = 0;
-    std::map<int, int>::const_iterator it = mGigTypeCompletedMap.find(ty);
+    std::hash_map<int, int>::const_iterator it = mGigTypeCompletedMap.find(ty);
     if (it != mGigTypeCompletedMap.end())
         val = it->second;
     return val;

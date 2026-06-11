@@ -1072,7 +1072,7 @@ void RockCentral::RecordAccomplishmentData(
 
         ADD_DATA_PAIR(tot_songs_played, prog->GetTotalSongsPlayed());
         ADD_DATA_PAIR(tour_tot_songs_played, prog->GetTourTotalSongsPlayed());
-        std::map<Symbol, int>::const_iterator it;
+        std::hash_map<Symbol, int>::const_iterator it;
         for (it = prog->GetToursPlayedMap().begin();
              it != prog->GetToursPlayedMap().end();
              it++) {
@@ -1088,7 +1088,7 @@ void RockCentral::RecordAccomplishmentData(
              it++) {
             ADD_BUFFER_PAIR(buf, it->second, "tour_%s_got_all_stars", it->first.Str());
         }
-        std::map<int, int>::const_iterator git;
+        std::hash_map<int, int>::const_iterator git;
         for (git = prog->GetGigTypeCompletedMap().begin();
              git != prog->GetGigTypeCompletedMap().end();
              git++) {
@@ -1097,8 +1097,9 @@ void RockCentral::RecordAccomplishmentData(
 
         std::map<Symbol, int> goalLBData;
         prog->InqGoalLeaderboardData(goalLBData);
-        for (it = goalLBData.begin(); it != goalLBData.end(); it++) {
-            ADD_BUFFER_PAIR(buf, it->second, "lb_goal_value_%s", it->first.Str());
+        std::map<Symbol, int>::const_iterator lbit;
+        for (lbit = goalLBData.begin(); lbit != goalLBData.end(); lbit++) {
+            ADD_BUFFER_PAIR(buf, lbit->second, "lb_goal_value_%s", lbit->first.Str());
         }
         const std::set<Symbol> &goals = prog->GetNewGoalsSet();
         FOREACH_POST (it, goals) {

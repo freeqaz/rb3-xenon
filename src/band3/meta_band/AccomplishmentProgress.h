@@ -4,15 +4,38 @@
 #include "tour/TourGameRules.h"
 #include "game/Defines.h"
 #include "net_band/RockCentralMsgs.h"
+#include "xdk/xapilibi/xbase.h"
+#include "utl/Symbol.h"
+#include <hash_map>
+
+// The progress maps below were originally Harmonix `hash_map` (the save-format
+// "hash_map" MILO_NOTIFY strings in FixedSizeSaveable prove it). The Wii decomp
+// approximated them as std::map; retail X360 inlines STLport hashtable::find
+// (out-of-line find returning iterator-by-value, NULL miss sentinel, value at
+// slist node+0x8) — see ?GetToursPlayed etc. hash_map<Symbol,int> hashes the
+// interned char* word identity (retail: lwz key; divwu), matching exactly.
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
 
 class Band;
 class BandProfile;
 class Performer;
 struct Stats;
 
+// 360-only enum for the gamer-award async write path. The Wii build had no
+// equivalent (no XOVERLAPPED tail), so this type is reconstructed from the
+// retail mangled name ??0GamerAwardStatus@@QAA@HW4GamerAwardType@@@Z.
+enum GamerAwardType {
+    kGamerAwardTypeNone = 0,
+};
+
 class GamerAwardStatus : public FixedSizeSaveable {
 public:
     GamerAwardStatus();
+    GamerAwardStatus(int, GamerAwardType);
     virtual ~GamerAwardStatus();
     virtual void SaveFixed(FixedSizeSaveableStream &) const;
     virtual void LoadFixed(FixedSizeSaveableStream &, int);
@@ -22,6 +45,9 @@ public:
     int unk8; // 0x8
     int unkc; // 0xc
     bool unk10; // 0x10
+    int unk14; // 0x14 - never ctor-initialized (set by 360 async write path)
+    int unk18; // 0x18 - never ctor-initialized
+    XOVERLAPPED mOverlapped; // 0x1c - 360 async award write; memset-zeroed in ctors
 };
 
 class AccomplishmentProgress : public Hmx::Object, public FixedSizeSaveable {
@@ -134,14 +160,16 @@ public:
     void HandleUploadStarted();
     void HandleSuccessfulUpload();
     void FakeFill();
-    const std::map<Symbol, int> &GetToursMostStarsMap() const {
+    const std::hash_map<Symbol, int> &GetToursMostStarsMap() const {
         return mTourMostStarsMap;
     }
-    const std::map<Symbol, int> &GetToursPlayedMap() const { return mToursPlayedMap; }
-    const std::map<Symbol, int> &GetToursGotAllStarsMap() const {
+    const std::hash_map<Symbol, int> &GetToursPlayedMap() const {
+        return mToursPlayedMap;
+    }
+    const std::hash_map<Symbol, int> &GetToursGotAllStarsMap() const {
         return mToursGotAllStarsMap;
     }
-    const std::map<int, int> &GetGigTypeCompletedMap() const {
+    const std::hash_map<int, int> &GetGigTypeCompletedMap() const {
         return mGigTypeCompletedMap;
     }
     const std::set<Symbol> &GetNewGoalsSet() const { return mNewlyAcquiredAccomplishments; }
@@ -184,15 +212,9 @@ public:
 
     static int SaveSize(int);
 
-    std::map<Symbol, int> mStepTrackingMap; // 0x24
-    BandProfile *mParentProfile; // 0x3c
-    bool mHardCoreStatusUpdatePending; // 0x40
-#ifndef RB3_MAP_0x1C
-    // Compensation pad for TUs built with 0x18 maps. Retail truth: there is
-    // NO member here — retail std::map is 0x1c in this TU (RB3_MAP_0x1C), so
-    // mStepTrackingMap@0x30 already pushes mGamerAwardStatusList to 0x54.
-    int unk50; // 0x50 (retail-360 4-byte field before mGamerAwardStatusList; absent in Wii)
-#endif
+    std::hash_map<Symbol, int> mStepTrackingMap; // 0x30 (hashtable, 0x1c)
+    BandProfile *mParentProfile; // 0x4c
+    bool mHardCoreStatusUpdatePending; // 0x50
     std::list<GamerAwardStatus *> mGamerAwardStatusList; // 0x54
     std::set<Symbol> mAccomplishments; // 0x4c
     std::set<Symbol> mNewlyAcquiredAccomplishments; // 0x64
@@ -236,10 +258,10 @@ public:
     int mBestDrumRollPercent[kNumDifficulties]; // 0x5cc
     int mTotalSongsPlayed; // 0x5dc
     int mTourTotalSongsPlayed; // 0x5e0
-    std::map<Symbol, int> mToursPlayedMap; // 0x5e4
-    std::map<Symbol, int> mTourMostStarsMap; // 0x5fc
-    std::map<Symbol, int> mToursGotAllStarsMap; // 0x614
-    std::map<int, int> mGigTypeCompletedMap; // 0x62c
+    std::hash_map<Symbol, int> mToursPlayedMap; // 0x5e4 (hashtable, 0x1c)
+    std::hash_map<Symbol, int> mTourMostStarsMap; // 0x5fc
+    std::hash_map<Symbol, int> mToursGotAllStarsMap; // 0x614
+    std::hash_map<int, int> mGigTypeCompletedMap; // 0x62c
     bool mUploadDirty; // 0x644
     bool unk645; // 0x645
     int unk648; // 0x648

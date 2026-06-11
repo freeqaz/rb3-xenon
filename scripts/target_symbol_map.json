@@ -10192,6 +10192,7 @@
  "0x825773E8": "__unwind$125638",
  "0x825780D0": "??0GamerAwardStatus@@QAA@XZ",
  "0x82578190": "??0GamerAwardStatus@@QAA@HW4GamerAwardType@@@Z",
+ "0x82579510": "?GetCurrentValue@AccomplishmentProgress@@QAAHVSymbol@@@Z",
  "0x8257CD20": "?HasAward@Accomplishment@@QBA_NXZ",
  "0x82581898": "__unwind$254469",
  "0x82592060": "?AdvanceSong@MetaPerformer@@UAAXH@Z",
