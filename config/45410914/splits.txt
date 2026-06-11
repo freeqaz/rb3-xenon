@@ -1710,8 +1710,8 @@ Synapse_dsp.cpp:
 	.text       start:0x82B3FE08 end:0x82B41F80
 
 UIListSlot.cpp:
-	.pdata      start:0x822541A0 end:0x822541A8
-	.text       start:0x82B605A0 end:0x82B60638
+	.pdata      start:0x8223E510 end:0x8223E5D8
+	.text       start:0x827EFB08 end:0x827F06E8
 
 FontBase.cpp:
 	.pdata      start:0x82254C48 end:0x82254C50
