@@ -1104,8 +1104,8 @@ FlowLabel.cpp:
 	.text       start:0x823D8D40 end:0x823D8D48
 
 UIComponent.cpp:
-	.pdata      start:0x82200860 end:0x82200868
-	.text       start:0x823D9AE0 end:0x823D9B38
+	.pdata      start:0x8223CF58 end:0x8223D220
+	.text       start:0x827D8DC8 end:0x827DBDB0
 
 StandardStream.cpp:
 	.pdata      start:0x82200C58 end:0x82200C60
