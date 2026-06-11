@@ -70,13 +70,26 @@ private:
 
 class ContentMgr : public Hmx::Object {
 public:
+// retail RB3-360 ContentMgr::Callback has NO ContentTitleDiscovered vtable slot
+// (DC3-era addition; proven from the retail SongMgr Callback-subobject vtable
+// @0x8209cd1c which has a 14-slot prefix, ContentDiscovered directly followed by
+// ContentMountBegun with no bool-returning slot between). It is only ever called
+// through the base default (no overrides exist), so a non-virtual keeps the one
+// call site in ContentMgr_Xbox.cpp working while restoring the retail slot count.
+// Gated like DRAW_DC3_VIRTUAL so DC3-native keeps the virtual.
+#ifdef HX_NATIVE
+#define CONTENTMGR_DC3_VIRTUAL virtual
+#else
+#define CONTENTMGR_DC3_VIRTUAL
+#endif
+
     class Callback {
     public:
         Callback() {}
         virtual ~Callback() {}
         virtual void ContentStarted() {}
         virtual bool ContentDiscovered(Symbol contentName) { return true; }
-        virtual bool ContentTitleDiscovered(unsigned int, Symbol) { return true; }
+        CONTENTMGR_DC3_VIRTUAL bool ContentTitleDiscovered(unsigned int, Symbol) { return true; }
         virtual void ContentMountBegun(int) {}
         virtual void ContentAllMounted() {}
         virtual void ContentMounted(const char *contentName, const char *) {}

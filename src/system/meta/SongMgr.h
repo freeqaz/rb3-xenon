@@ -2,6 +2,7 @@
 #include "meta/SongMetadata.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
+#include "obj/Msg.h"
 #include "obj/Object.h"
 #include "os/ContentMgr.h"
 #include "utl/BufStream.h"
@@ -11,6 +12,22 @@
 #include <set>
 #include <vector>
 #include <map>
+
+// Retail RB3-360 SongMgr derives from MsgSource (virtual Hmx::Object base) +
+// ContentMgr::Callback, NOT plain Hmx::Object. Proven from the retail RTTI
+// Complete Object Locator @0x821d89ec (attr=0x3 = MI+virtual, 5 base classes)
+// and the retail primary vtable @0x8209cd1c (own-virtuals begin at slot 14/+0x38,
+// vs our former 21-slot Hmx::Object prefix). The MsgSource base shrinks the
+// vtable prefix by 0x1c and the object head by 0x10; combined with dropping the
+// DC3-era AlternateSongDir virtual slot (retail has no such slot), every member
+// offset and own-virtual slot then matches retail. The retail SongMgr.cpp TU
+// also uses sizeof(map)=0x1c with sizeof(set)=0x18 -> gate RB3_MAP_0x1C per-TU.
+// See docs/decomp/research/2026-06-11-bp4-songmgr.md.
+#ifdef HX_NATIVE
+#define SONGMGR_DC3_VIRTUAL virtual
+#else
+#define SONGMGR_DC3_VIRTUAL
+#endif
 
 // from RB2 taken from RB3 decomp
 enum SongMgrState {
@@ -26,12 +43,12 @@ enum SongMgrState {
 // SongID enum removed: DC3 had it here but RB3 only defines it in BandSongMgr.h
 // (with different values: Invalid=-2, Any=-1, Random=0). BandSongMgr.h includes
 // this header, causing a redefinition error. Removing from engine base.
-class SongMgr : public Hmx::Object, public ContentMgr::Callback {
+class SongMgr : public MsgSource, public ContentMgr::Callback {
 public:
     SongMgr() {}
-    // Hmx::Object
-    virtual ~SongMgr();
+    // MsgSource / Hmx::Object
     virtual DataNode Handle(DataArray *, bool);
+    virtual ~SongMgr();
 
     // ContentMgr::Callback
     virtual void ContentStarted();
@@ -51,7 +68,9 @@ public:
     virtual const SongMetadata *Data(int songID) const; // 0x60
     /** Get the song audio data associated with the supplied song ID. */
     virtual SongInfo *SongAudioData(int songID) const = 0;
-    virtual char const *AlternateSongDir() const { return "songs/updates/"; }
+    // retail RB3-360 has NO AlternateSongDir vtable slot (DC3-only virtual); kept
+    // non-virtual so SongPath() can still call it, gated like DRAW_DC3_VIRTUAL.
+    SONGMGR_DC3_VIRTUAL char const *AlternateSongDir() const { return "songs/updates/"; }
     /** Add a song's content name to the given vector of names.
      * @param [in] shortname The song's shortname.
      * @param [out] names The collection of song content names.
@@ -137,23 +156,25 @@ protected:
         DataArray *, DataLoader *loader, ContentLocT location, Symbol contentName
     );
 
+    // Offsets below are the retail RB3-360 layout (MsgSource head + per-TU
+    // RB3_MAP_0x1C map size 0x1c, set size 0x18); proven against the retail asm.
     /** The available songs we can select in-game. Key = song ID */
-    std::set<int> mAvailableSongs; // 0x30
-    std::map<int, SongMetadata *> mUncachedSongMetadata; // 0x48
+    std::set<int> mAvailableSongs; // 0x1c
+    std::map<int, SongMetadata *> mUncachedSongMetadata; // 0x34
     /** The current state of the SongMgr. */
-    SongMgrState mState; // 0x60
-    std::map<int, SongMetadata *> mCachedSongMetadata; // 0x64
+    SongMgrState mState; // 0x50
+    std::map<int, SongMetadata *> mCachedSongMetadata; // 0x54
     /** A collection of content files (CON/LIVES), and the song IDs inside each file.
         Key = content file name (i.e. RBMEGAPACK01OF10); Value = the song IDs.
     */
-    std::map<Symbol, std::vector<int> > mSongIDsInContent; // 0x7c
+    std::map<Symbol, std::vector<int> > mSongIDsInContent; // 0x70
     /** A collection of song IDs, and the contents they came from.
         Key = song ID;
         Value = the content file name (i.e. RBMEGAPACK01OF10) that houses this song
     */
-    std::map<int, Symbol> mContentUsedForSong; // 0x94
+    std::map<int, Symbol> mContentUsedForSong; // 0x8c
     // key = content file name. value = root name???
-    std::map<Symbol, String> unkmap5; // 0xac - mounted content?
+    std::map<Symbol, String> unkmap5; // 0xa8 - mounted content?
     CacheID *mSongCacheID; // 0xc4
     Cache *mSongCache; // 0xc8
     bool mHasNewContent; // 0xcc

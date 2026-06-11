@@ -67,7 +67,7 @@ BEGIN_HANDLERS(SongMgr)
     HANDLE_EXPR(num_songs_in_content, NumSongsInContent(_msg->Sym(2)))
     HANDLE_ACTION(dump_songs, DumpSongMgrContents(false))
     HANDLE_ACTION(dump_all_songs, DumpSongMgrContents(true))
-    HANDLE_SUPERCLASS(Hmx::Object)
+    HANDLE_SUPERCLASS(MsgSource)
 END_HANDLERS
 
 #pragma endregion
