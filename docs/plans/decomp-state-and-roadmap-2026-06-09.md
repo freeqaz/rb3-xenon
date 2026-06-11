@@ -830,11 +830,76 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   hunt dossier's EV column systematically overestimates wherever retail
   inlined/ICF'd a class** (2nd confirmation of the Object/DirLoader
   pitfall). UIListWidget REFUTED: 7 methods in a many-TU COMDAT interleave.
-- WAVE-3 QUEUE (remaining, ⚠ re-rank EV by retail-map named-method count
-  not oracle fn count): sliver batch 2 rest (SongDB+SongMgr relocations;
-  7-unit extension micro-batch Stats/FileMerger/CharHair/Song/MusicLibrary/
-  ButtonHolder/CharClip), batch 3 (VocalTrack/Gem boundary, TexBlender/AO
-  carve, Character+TypeProps compound, ~15 small relocations), pin_audit.py
-  detection tool, AsyncFileHolmes-head split-out, obj_orphan purge
-  (REVISED per refutation — re-gate before purging), OvershellSlot, Mat_NG,
-  banked ObjectDir-vbase patch (lands when its funclet realigns).
+## Sliver-vein EXHAUST workflow (ultracode, 42 agents): **+430 LANDED, composed verify 7631 EXACT (7201+430), stable; ZERO regressions**
+Structure: recon gate (12 sonnet, named-count EV rule — killed 4 NOGOs
+pre-build) → tier-1 Opus implements (chunks of 4, worktree A/B + honesty
+gate each) → 4 mechanical sonnet batches → pin_audit.py tool (opus,
+validated vs all wave-3 wins+refutations) → tool-fed round 2 (9 found,
+8 passed recon, 8 kept). 17 levers kept, 3 implementation refutations,
+4 recon NOGOs. All merged ff-only, zero rebase conflicts, zero splits
+overlaps (1232 ranges).
+**KEPT (17):** SongDB +32 (old pin was ICF-alias scatter graveyard; net
+exact); TexBlender/AO carve +39 (AO unit 0→67; TexBlender −28 were
+double-counted AO fns); SongMgr +14 (Option-A relocate; 10 named methods
+@99.8-99.97 = bodyport pool); Spotlight-triple +4; CharEyeDartRuleset/
+CharInterest +7; extensions batch +60 (Stats/FileMerger/CharHair/Song/
+MusicLibrary/ButtonHolder/CharClip); small-relocs batch +89 (HeldButton
+Panel +32!, UIListSlot +19, CharMeshHide +17, CharIKFingers +12,
+UITrigger +9, UIColor/LightPresetManager/SongMetadata; CharIKHand →
+deferred to r2); micro-trims +7 (Task/DataNode +2, UI/PanelDir +3,
+keygen/ByteGrinder +2); blind-extensions +87 (**Player +35** — unlocked
+by this wave's own SongPos fix, VocalPlayer +27, BandWardrobe +25;
+VocalTrackDir reverted); round-2 from pin_audit: CharBoneDir +23,
+PostProc +16, PropAnim +13 (evicted MessageTimer sliver), CharIKHead +12,
+CalibrationPanel +11, SoundTouch +9 (absorbed DirectionGestureFilter
+sliver), Bitmap +4, RenderState +3.
+**TOOL LANDED:** tools/pin_audit.py (da11049) + ranked worklist JSON
+(docs/decomp/research/2026-06-11-pin-audit-worklist.json). Validation:
+reproduces UIList/CharEyes/CameraManager exactly on pre-wave splits;
+filters/flags all known refutations; extra guards beyond spec (namespace
+over-claim, crosses-stub-farm, obj-defines pairing-readiness). Current
+state: 42 cands / 41 filtered / 118 deferred. RE-RUN after each landing
+wave (adjacency changes).
+**REFUTED (don't re-attempt, full evidence in workflow notes + temp
+/tmp/sliver_workflow_notes.md → key reasons here):** Waypoint relocate
+(superficial +31 = COMDAT-fold interleave, 18-fn foreign run, fuzzy-pairs
+ID'd Dir.obj/headdetect content; DC3 map corroborates Waypoint is
+template-scattered); UIGuide/LNT (boundaries asm-correct but net −1:
+UIGuide's over-pin currently harvests 2 CRT guard thunks the trim
+orphans + LNT sliver loses 1); Mic/FxSendDistortion (retail compiled
+FxSendDistortion into Mic's TU — single-TU compilation proven by shared
+vtable stores; attribution follows compiled obj, no honest boundary);
+VocalTrack+Gem NOGO (obj .text sizes == pin sizes EXACTLY both sides —
+the 22 'missing' named methods are UNPORTED source, extension = pure 0%
+dilution; FontBase sliver also blocks; dossier delta arithmetically
+inconsistent); MemHeap/Str NOGO (dossier premise wrong: both units
+currently 0/62+0/48 = source/struct wall-gated, not pin-gated);
+Character+TypeProps NOGO (FlowEventListener pinned INSIDE proposed range
+358 commits ago + region is Object.cpp-family interleave);
+StreamNull/MoggClipMap NOGO (MoggClipMap.obj 0xB30 vs 12.8KB multi-TU
+scatter range) — BUT its step-B MidiSynth/StreamNull trim [0x826FBD28,
+0x826FBD98) was assessed GO (+2, IsFinished/Resync ported) and never
+executed: cheap leftover for a micro-pass.
+
+# WAVE-3 CLOSE: **7631 / 65546** (6932 → 7631, **+699**, 0 regressions, all composed verifies EXACT)
+Ledger: research dossiers ×5 + accprog +10, songpos +17, uicomp-virtuals
++6, mispins +24, uicomp-repin +38, uilist +80, chareyes+cameramanager +91,
+uiliststate +3, sliver-exhaust workflow +430. Banked: ObjectDir-vbase
+two-virtual fix (net-0, funclet-coupled). New durable assets: pin_audit.py,
+rdata-obj vtable-dump technique (2-for-2), RB3_MAP_0x1C / SONGPOS_DC3_PHRASE
+/ UICOMP_DC3_VIRTUAL gates, map_lint INVESTIGATE→fix pipeline (2-for-2).
+
+### Post-wave-3 queue (EV order)
+1. **Re-run pin_audit.py on the new state** (adjacency changed; 118
+   deferred + 41 filtered re-rankable) → next re-pin round.
+2. **Bodyport pool REFILLED by the re-pins**: SongMgr 10 named @99.8+,
+   SongDB named near-misses, AccProg 4×Get* @76.85, Object.cpp 5-6
+   genuine methods (COFF-proven, pin-independent), VocalTrack 22 unported
+   named methods (port-then-extend), UIComponent::Update real body
+   (phase-A stub today).
+3. MidiSynth/StreamNull +2 trim (assessed GO, unexecuted).
+4. Banked ObjectDir-vbase patch (+2-3 when CharClipSet funclet realigns).
+5. AsyncFileHolmes-head identification (fingerprint/Ghidra, not boundary).
+6. Synth-belt pin+port campaign (0x826DE000–0x82909000 region, identified
+   but uncompiled). 7. obj_orphan purge (re-gate per refutations).
+8. OvershellSlot, Mat_NG (multi-session walls).
