@@ -1332,8 +1332,8 @@ MiniGameMgr.cpp:
 	.text       start:0x82595540 end:0x82595610
 
 LightPresetManager.cpp:
-	.pdata      start:0x82219FE8 end:0x82219FF0
-	.text       start:0x82596468 end:0x825964C0
+	.pdata      start:0x8220B0B0 end:0x8220B160
+	.text       start:0x824A59D8 end:0x824A6740
 
 Memcard_Xbox.cpp:
 	.pdata      start:0x822116B0 end:0x82211870
