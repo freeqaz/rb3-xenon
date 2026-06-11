@@ -483,8 +483,8 @@ SoftParticleBuffer.cpp:
 	.text       start:0x82495728 end:0x824961DC
 
 keygen_xbox.cpp:
-	.pdata      start:0x82231380 end:0x82231608
-	.text       start:0x82706A20 end:0x827091A8
+	.pdata      start:0x82231380 end:0x822315F8
+	.text       start:0x82706A20 end:0x827090A8
 
 NetworkSocket_Win.cpp:
 	.pdata      start:0x82211F08 end:0x82211FA8
@@ -1139,8 +1139,8 @@ ShaderProgram.cpp:
 	.text       start:0x823F2D58 end:0x823F2F98
 
 ByteGrinder.cpp:
-	.pdata      start:0x82231608 end:0x822317E8
-	.text       start:0x827091A8 end:0x8270B778
+	.pdata      start:0x822315F8 end:0x822317E8
+	.text       start:0x827090A8 end:0x8270B778
 
 UsbMidiKeyboardMsgs.cpp:
 	.pdata      start:0x822029B0 end:0x822029B8
