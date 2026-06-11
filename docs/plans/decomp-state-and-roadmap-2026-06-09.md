@@ -757,7 +757,23 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   vector/sized-vector ruled out). Re-arms only if the Player ctor gets
   pinned AND the per-TU divergence is root-caused. ⚠ open mystery worth a
   future research slot: same header, two layouts, same flags.
-- IN FLIGHT: MidiParser/AsyncFileHolmes mis-pin fixes (worktree rb3-mispin).
-- WAVE-3 QUEUE (remaining): UIComponent-TU re-pin +5–9 (held until mispin
-  lands — both edit splits.txt), obj_orphan 911 cleanup-safe purge
-  (hygiene +0), OvershellSlot, Mat_NG, fresh research wave.
+- **Split mis-pin fixes: LANDED +24, composed verify 6989 EXACT
+  (6965+24), stable on re-run** (386fe70 +5 MidiParser/MidiParserMgr
+  boundary 0x827C62D0→0x827C5E38; 5f05b23 +19 AsyncFileHolmes/MusicLibrary
+  boundary 0x82528C50→0x82527920 — AFH is a 44-line TU that was over-pinned
+  by ~0x6A80 bytes; +19 = 12 named MusicLibrary methods + 7 TU-anon fns).
+  Pure splits.txt shared-boundary moves, .text+.pdata edited together
+  (pdata-catch-22-safe), no map/source edits needed (map is VA-keyed).
+  obj_orphan counts dropped accordingly (validates the map_lint
+  INVESTIGATE gate as a +N detector, 2-for-2 this wave).
+- **NEW FOLLOW-ON LEVER (queued): AsyncFileHolmes HEAD** (0x82522248–
+  0x82527920) still contains several un-split foreign TUs (MetaPerformer,
+  DOFProc, StartTransitionMsg/CurrentScreenChangedMsg message classes,
+  RndSoftParticleBuffer) — splitting those out = a bigger future re-pin
+  campaign; the 5 residual AFH orphans map to them.
+- IN FLIGHT: UIComponent-TU re-pin (worktree rb3-uirepin).
+- WAVE-3 QUEUE (remaining): AsyncFileHolmes-head foreign-TU split-out,
+  obj_orphan 911 cleanup-safe purge (hygiene +0), remaining obj_orphan
+  INVESTIGATE cases (UIGuide/LabelNumberTicker, MidiSynth/StreamNull,
+  Task/DataNode, UI/PanelDir, VocalTrack/Gem — per worklist dossier),
+  OvershellSlot, Mat_NG, fresh research wave.
