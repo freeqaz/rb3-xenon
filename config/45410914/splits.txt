@@ -2404,8 +2404,8 @@ band3/game/Singer.cpp:
 	.text       start:0x826D8B98 end:0x826D9F10
 
 band3/game/SongDB.cpp:
-	.pdata      start:0x82234F28 end:0x822351D8
-	.text       start:0x8274BB34 end:0x8274E870
+	.pdata      start:0x82228070 end:0x82228338
+	.text       start:0x82666FE0 end:0x82669E50
 
 network/ObjDup/DuplicatedObject.cpp:
 	.pdata      start:0x82248010 end:0x822480A0
