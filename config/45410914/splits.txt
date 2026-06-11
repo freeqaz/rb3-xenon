@@ -654,8 +654,8 @@ CharClipSet.cpp:
 	.text       start:0x823BEA70 end:0x823C3FF0
 
 MidiParser.cpp:
-	.pdata      start:0x8223B8D8 end:0x8223BDA8
-	.text       start:0x827C1218 end:0x827C62D0
+	.pdata      start:0x8223B8D8 end:0x8223BD60
+	.text       start:0x827C1218 end:0x827C5E38
 
 DataFunc.cpp:
 	.pdata      start:0x821F8EB8 end:0x821F9190
@@ -1634,8 +1634,8 @@ JsonUtils.cpp:
 	.text       start:0x827B75C0 end:0x827B7650
 
 MidiParserMgr.cpp:
-	.pdata      start:0x8223BDA8 end:0x8223BF08
-	.text       start:0x827C62D0 end:0x827C7440
+	.pdata      start:0x8223BD60 end:0x8223BF08
+	.text       start:0x827C5E38 end:0x827C7440
 
 OriginalChoreoRemixer.cpp:
 	.pdata      start:0x8223BF50 end:0x8223BF58
