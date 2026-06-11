@@ -187,7 +187,12 @@ public:
     std::map<Symbol, int> mStepTrackingMap; // 0x24
     BandProfile *mParentProfile; // 0x3c
     bool mHardCoreStatusUpdatePending; // 0x40
+#ifndef RB3_MAP_0x1C
+    // Compensation pad for TUs built with 0x18 maps. Retail truth: there is
+    // NO member here — retail std::map is 0x1c in this TU (RB3_MAP_0x1C), so
+    // mStepTrackingMap@0x30 already pushes mGamerAwardStatusList to 0x54.
     int unk50; // 0x50 (retail-360 4-byte field before mGamerAwardStatusList; absent in Wii)
+#endif
     std::list<GamerAwardStatus *> mGamerAwardStatusList; // 0x54
     std::set<Symbol> mAccomplishments; // 0x4c
     std::set<Symbol> mNewlyAcquiredAccomplishments; // 0x64

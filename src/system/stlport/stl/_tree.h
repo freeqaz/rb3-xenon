@@ -319,12 +319,14 @@ protected:
   // Some retail X360 TUs were built against an STLport _tree.h that carried an
   // extra 4-byte member here, making sizeof(std::map/set/multimap) == 0x1c
   // (vs 0x18 without it). This is a genuine per-TU ABI split in the shipped
-  // binary (an ODR situation): e.g. AccomplishmentManager wants 0x1c while
-  // AccomplishmentProgress wants 0x18. Gate it per-TU via RB3_RBTREE_0x1C
-  // (set in config/45410914/objects.json extra_cflags) so each TU gets the
-  // layout the retail object was actually linked from. Verified against the
-  // target binary: AM mGoalAcquisitionInfos at 0x170 (needs 0x1c maps);
-  // AP mBestSolo at 0x1b4 (needs 0x18 maps + real unk50 field).
+  // binary (an ODR situation). RB3_RBTREE_0x1C grows EVERY tree (map AND set);
+  // use it only for TUs whose retail layout has both maps and sets at 0x1c
+  // (e.g. AccomplishmentManager mGoalAcquisitionInfos at 0x170 — all-maps so
+  // all-trees-0x1c). For TUs where retail std::map is 0x1c but std::set is 0x18
+  // in the SAME TU (e.g. AccomplishmentProgress: trailing maps spaced 0x1c at
+  // 0x5f8/0x614/0x630/0x64c, sets spaced 0x18 at 0x5c/0x74/0x9c/0xc4), do NOT
+  // use this flag (it grows sets too → −14); use RB3_MAP_0x1C in _map.h, which
+  // pads only std::map/std::multimap. Gate per-TU via objects.json extra_cflags.
   size_type _M_unused; // 0x18
 #endif
 

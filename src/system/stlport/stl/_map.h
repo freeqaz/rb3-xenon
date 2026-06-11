@@ -82,6 +82,14 @@ public:
                    value_type, _STLP_SELECT1ST(value_type, _Key), 
                    _MapTraits, _Alloc> _Rep_type;
   _Rep_type _M_t;  // red-black tree representing map
+#if defined(RB3_MAP_0x1C)
+  // Retail X360 RB3 (this TU): sizeof(std::map) == 0x1c while sizeof(std::set)
+  // == 0x18 in the SAME TU (AccomplishmentProgress dtor funclets: trailing
+  // maps spaced 0x1c at 0x5f8/0x614/0x630/0x64c, sets spaced 0x18 at
+  // 0x5c/0x74/0x9c/0xc4). The extra word is dead — never read or written
+  // anywhere in the unit. Pad the map class, NOT _Rb_tree (sets must stay 0x18).
+  size_t _M_retail_pad;
+#endif
 public:
   typedef typename _Rep_type::pointer pointer;
   typedef typename _Rep_type::const_pointer const_pointer;
@@ -269,6 +277,11 @@ public:
                    value_type, _STLP_SELECT1ST(value_type, _Key), 
                    _MultimapTraits, _Alloc> _Rep_type;
   _Rep_type _M_t;  // red-black tree representing multimap
+#if defined(RB3_MAP_0x1C)
+  // See class map above: retail std::map/multimap == 0x1c in this TU while
+  // std::set == 0x18. Pad the map class, NOT _Rb_tree. Dead word.
+  size_t _M_retail_pad;
+#endif
 public:
   typedef typename _Rep_type::pointer pointer;
   typedef typename _Rep_type::const_pointer const_pointer;
