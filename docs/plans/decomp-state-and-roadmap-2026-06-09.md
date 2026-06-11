@@ -716,6 +716,30 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   partially decoded in agent report). Residual near-misses for a future
   bodyport batch: 4 Get* @76.85 (out-of-line find vs our inlined _M_find),
   IsUploadDirty 71.4, ClearNewRewardVignetteFestival 11.0.
-- IN FLIGHT: SongPos +4 lever (worktree rb3-songpos), UIComponent virtuals +
-  banked devirt (worktree rb3-uicomp), MidiParser/AsyncFileHolmes mis-pin
-  fixes (worktree rb3-mispin).
+- **SongPos +4: LANDED +17 (6942→6959), zero regressions** (e64628e).
+  Main lever +13 (VocalPlayer +11 incl. 5 auto-revealed already-paired anon
+  fns — no refill needed; Player +1, Singer +1); micro-fix GetBandTrack
+  ptr-null `Track* t = ...; if (t != nullptr)` cmpwi→cmplwi +3 (inlines into
+  Rollback/SetMultiplierActive); micro-fix GetEnabledStateAt explicit
+  two-equality compare +1. 12 named flips incl. SetEnergy/GetFrameMatchType/
+  ChangeDifficulty. No compiled mPhrase user existed (BeatClock.cpp unwired).
+  Risk surfaces (Task/MasterAudio/TrackPanelDir/Stats/…) all unchanged.
+- **UIComponent virtuals + banked devirt: LANDED +6 (→6948 vs its baseline),
+  zero regressions** (f4f4d13, 18 files). ResourceCopy/CopyMembers/Update
+  added in Wii order (Update = phase-A stub); OldResourcePreload gated behind
+  new `UICOMP_DC3_VIRTUAL` (+ all 10 derived overrides); mSelected/mResource
+  swap fixed; rnddrawable-devirt-banked.patch applied clean. Flips: PanelDir
+  Entering/Exiting +2, RndLine::DrawShowing +1, TrainerGemTab +2,
+  BandCharacter +1 (cascade landed differently than predicted named list —
+  UIListSubList::Draw did NOT flip). Refill: none needed (no
+  unpaired-byte-exact gap). NOW UNBLOCKED: UIComponent-TU re-pin (+5–9),
+  GuitarController/UIGuide/UIEvent porting veins.
+- **Composed verify on main: 6965 EXACT (6942+17+6, zero composition loss),
+  stable on re-run.** (The fresh_report warm-cache warning fired on the first
+  post-merge run because the source delta arrived via merge with a clean
+  tree — benign here, cleared by the prescribed re-run.)
+- IN FLIGHT: MidiParser/AsyncFileHolmes mis-pin fixes (worktree rb3-mispin).
+- WAVE-3 QUEUE (remaining): Band head +4 + Game head +4 (player dossier §
+  bonus, uncompiled-TU levers baked into compiled readers), rbtree-regressor
+  retry with map-only RB3_MAP_0x1C, UIComponent-TU re-pin, obj_orphan 911
+  cleanup-safe purge (hygiene +0), OvershellSlot, Mat_NG.
