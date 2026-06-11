@@ -803,9 +803,29 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   realigns or in a coordinated campaign. Secondary scan: the 99.88 ??_G
   vector-deleting-dtor cluster + 99.6 40-byte fn_ cluster = funclet noise,
   NOT vtable walls; generalized single-slot-wall detector documented.
-- WAVE-3 QUEUE (remaining): pinned-to-a-sliver binary-wide hunt (NEW, high
-  EV per the 3-for-3 pattern), AsyncFileHolmes-head foreign-TU split-out,
-  obj_orphan 911 cleanup-safe purge (hygiene +0), remaining obj_orphan
-  INVESTIGATE cases (UIGuide/LabelNumberTicker, MidiSynth/StreamNull,
-  Task/DataNode, UI/PanelDir, VocalTrack/Gem — per worklist dossier),
-  OvershellSlot, Mat_NG, fresh research wave.
+## Sliver-pin vein (hunt dossier d922dad: ceiling +145–280; realizing ~3× estimates)
+- **Batch 1 LANDED +171, verify 7198 EXACT (7027→7198), stable, zero
+  regressions**: UIList re-pin **+80** (d2eb460; 0x58 ICF-StaticClassName
+  sliver → real cluster 0x827D2900–0x827D8D48 abutting UIComponent, unit
+  1→81; excluded same OptionsPanel guard pair at tail); CharEyes **+68**
+  (7a77b4c; → 0x82370FA0–0x82377048, unit 1→68); CameraManager **+23**
+  (8d7898b; → 0x824A6D08–0x824A83C0, unit 0→23). All honesty-gated.
+  Units count 1585→1581 (blob re-segmentation, denominator unchanged).
+- **Object/DirLoader/Dir triple: REFUTED by honesty gate** (fe603cc,
+  `2026-06-11-object-dirloader-boundary-refutation.md`) — boundary move
+  measured +17 but 51/54 newly-attributed fns were FOREIGN (unwired
+  obj/Utl.cpp free fns + DirLoader STL + 32-fn funclet farm; 15-contiguous
+  foreign run ≫ gate). Region is a THREE-WAY COMDAT INTERLEAVE — the /O1
+  TU-contiguity premise FAILS there; no honest pin exists. Reverted clean.
+  REAL levers recorded: per-fn body-port of 5–6 genuine Object methods
+  (COFF-proven real bodies, pin-independent); optionally wire obj/Utl.cpp.
+  ⚠ REVISES orphan-doc: do NOT bulk-delete DirLoader's Object/Symbol/
+  DataNode orphan names (real-body names, useful after porting).
+- WAVE-3 QUEUE (remaining): sliver batch 2 IN FLIGHT (UIListDir region
+  survey est +15–30; SongDB+SongMgr relocations; 7-unit extension
+  micro-batch Stats/FileMerger/CharHair/Song/MusicLibrary/ButtonHolder/
+  CharClip), then batch 3 (VocalTrack/Gem boundary, TexBlender/AO carve,
+  Character+TypeProps compound, ~15 small relocations), pin_audit.py
+  detection tool, AsyncFileHolmes-head split-out, obj_orphan purge
+  (REVISED per refutation — re-gate before purging), OvershellSlot, Mat_NG,
+  banked ObjectDir-vbase patch (lands when its funclet realigns).
