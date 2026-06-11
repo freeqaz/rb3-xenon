@@ -2152,6 +2152,10 @@ CharWeightable.cpp:
 	.pdata      start:0x821FCEE8 end:0x821FCF38
 	.text       start:0x8239C350 end:0x8239C8C8
 
+CharPollGroup.cpp:
+	.pdata      start:0x821FCF38 end:0x821FD0C0
+	.text       start:0x8239C8D0 end:0x8239E1F4
+
 FlowValueCase.cpp:
 	.pdata      start:0x821FD7D0 end:0x821FD890
 	.text       start:0x823A71D8 end:0x823A7EAC
