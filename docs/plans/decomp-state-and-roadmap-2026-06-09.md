@@ -738,8 +738,26 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   stable on re-run.** (The fresh_report warm-cache warning fired on the first
   post-merge run because the source delta arrived via merge with a clean
   tree — benign here, cleared by the prescribed re-run.)
+- **RB3_MAP_0x1C retry vein: CLOSED EMPTY** (7c24a93,
+  `2026-06-11-map0x1c-sweep.md`). Structural reason: map-only differs from
+  all-tree ONLY in TUs with BOTH map+set members; pinned such TUs =
+  AccomplishmentProgress (done) + 3 one-fn unported scaffolds (SongMgr/
+  HamDirector/DanceRemixer — re-arm only if their source lands). 12 TUs A/B:
+  VocalTrackDir −8 (genuine 0x18 cohort), 11 × +0. The 2 stair-step
+  fingerprint candidates were false (CharDriver = upstream ObjPtr chain;
+  Gem = stack-frame, set-only TU).
+- **Band/Game head +4: REFUTED** (e034445, `2026-06-11-bandgame-head4.md`).
+  Both deltas REAL (ours = retail+4: Band mCommonPhraseCapturer 0x94 vs
+  0x90; Game mProperties 0x30 vs 0x2c) but ZERO measured value — 0 genuine
+  readers among all 165 measured near-misses; the +4 is baked only into the
+  UNPINNED retail Player ctor (0x82688E40) + anon unpaired readers. NOT a
+  header fix: Band.h/Game.h byte-identical to Wii oracle, no DC3 class;
+  it's a PER-TU ODR DIVERGENCE — GemTrack.cpp compiles Game @ retail layout
+  while Player.cpp compiles the SAME header +4 (root cause unknown; SongPos/
+  vector/sized-vector ruled out). Re-arms only if the Player ctor gets
+  pinned AND the per-TU divergence is root-caused. ⚠ open mystery worth a
+  future research slot: same header, two layouts, same flags.
 - IN FLIGHT: MidiParser/AsyncFileHolmes mis-pin fixes (worktree rb3-mispin).
-- WAVE-3 QUEUE (remaining): Band head +4 + Game head +4 (player dossier §
-  bonus, uncompiled-TU levers baked into compiled readers), rbtree-regressor
-  retry with map-only RB3_MAP_0x1C, UIComponent-TU re-pin, obj_orphan 911
-  cleanup-safe purge (hygiene +0), OvershellSlot, Mat_NG.
+- WAVE-3 QUEUE (remaining): UIComponent-TU re-pin +5–9 (held until mispin
+  lands — both edit splits.txt), obj_orphan 911 cleanup-safe purge
+  (hygiene +0), OvershellSlot, Mat_NG, fresh research wave.
