@@ -740,8 +740,8 @@ CharDriver.cpp:
 	.text       start:0x823648E8 end:0x82366EC4
 
 PostProc.cpp:
-	.pdata      start:0x82204718 end:0x82204738
-	.text       start:0x8241C5D0 end:0x8241D3D8
+	.pdata      start:0x82204700 end:0x822047C8
+	.text       start:0x8241C498 end:0x8241DAC8
 
 DataArray.cpp:
 	.pdata      start:0x82232EA8 end:0x82233010
