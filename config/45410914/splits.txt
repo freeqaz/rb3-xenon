@@ -39,8 +39,8 @@ TrackPanelDir.cpp:
 	.text       start:0x822F2E68 end:0x822F5830
 
 VocalTrack.cpp:
-	.pdata      start:0x82254EC0 end:0x82255330
-	.text       start:0x82B727B8 end:0x82B7A2A0
+	.pdata      start:0x82254B80 end:0x82255330
+	.text       start:0x82B6D688 end:0x82B7A2A0
 
 MusicLibrary.cpp:
 	.pdata      start:0x82212910 end:0x82212F28
@@ -1680,10 +1680,6 @@ Synapse_dsp.cpp:
 UIListSlot.cpp:
 	.pdata      start:0x8223E510 end:0x8223E5D8
 	.text       start:0x827EFB08 end:0x827F06E8
-
-FontBase.cpp:
-	.pdata      start:0x82254C48 end:0x82254C50
-	.text       start:0x82B6E8E0 end:0x82B6E934
 
 DataPointMgr.cpp:
 	.pdata      start:0x8223A0E0 end:0x8223A1E8
