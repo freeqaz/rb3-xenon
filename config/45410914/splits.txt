@@ -95,8 +95,8 @@ GuitarController.cpp:
 	.text       start:0x82777E90 end:0x8277D790
 
 CalibrationPanel.cpp:
-	.pdata      start:0x8221FD30 end:0x8221FE78
-	.text       start:0x825ED848 end:0x825EF598
+	.pdata      start:0x8221FC48 end:0x8221FE78
+	.text       start:0x825EC708 end:0x825EF598
 
 TourDescPanel.cpp:
 	.pdata      start:0x822534B0 end:0x82253608
