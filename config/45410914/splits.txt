@@ -1606,8 +1606,8 @@ MakeString.cpp:
 	.text       start:0x8279EF68 end:0x8279F014
 
 Song.cpp:
-	.pdata      start:0x82239A68 end:0x82239B80
-	.text       start:0x827A0820 end:0x827A1708
+	.pdata      start:0x82239A58 end:0x82239B80
+	.text       start:0x827A0660 end:0x827A1708
 
 FlowSetProperty.cpp:
 	.pdata      start:0x82239B80 end:0x82239B88
