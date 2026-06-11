@@ -881,7 +881,24 @@ scatter range) — BUT its step-B MidiSynth/StreamNull trim [0x826FBD28,
 0x826FBD98) was assessed GO (+2, IsFinished/Resync ported) and never
 executed: cheap leftover for a micro-pass.
 
-# WAVE-3 CLOSE: **7631 / 65546** (6932 → 7631, **+699**, 0 regressions, all composed verifies EXACT)
+## Sliver-vein FINAL TAIL: **+134, verify 7765 EXACT-stable** (sv-tail ..5a34115, 6 of 6 KEPT, 0 refuted)
+FileMerger +54 (lo-extend to full cluster; blocker was the HamPlayerData
+1-fn 47% sliver interleaving it — evicted, this-unit-is-the-sliver);
+Stats +33 (hi-extend; evicted dead ClipDistMap + CamAnim slivers);
+CameraManager upper sub-cluster +23 (hi-extend over 3 evicted group
+slivers); MusicLibrary +15 (hi-extend; ErrorNode squatter had ZERO named
+methods anywhere — parked); LightPresetManager +6 (relocate from
+ObjDirItr ICF sliver); MidiSynth/StreamNull trim +2 (IsFinished/Resync
+already in source). DURABLE PATTERN: `requires_sliver_eviction` ≈ a dead
+displaced mf=0 sliver squatting in a real owner's TU; evicting it (when
+this-unit-IS-the-sliver) is the clean play. FOLLOW-ON: evicted
+RhythmDetectorGroup/CharClipGroup/CharPollGroup have real clusters @
+0x8257c728/0x822f8ea0/0x8239ce90 (final mini-pass in flight).
+**LANE VERDICT: clean single-.text-range sliver vein = DRY** after the
+mini-pass; what remains in pin_audit output is known-refuted residue,
+port-gated (VocalTrack-class), or obj_defines_none_yet mirages.
+
+# WAVE-3 CLOSE: **7765 / 65545** (6932 → 7765, **+833**, 0 regressions, all composed verifies EXACT)
 Ledger: research dossiers ×5 + accprog +10, songpos +17, uicomp-virtuals
 +6, mispins +24, uicomp-repin +38, uilist +80, chareyes+cameramanager +91,
 uiliststate +3, sliver-exhaust workflow +430. Banked: ObjectDir-vbase
