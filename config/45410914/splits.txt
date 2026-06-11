@@ -1205,14 +1205,6 @@ Mat_NG.cpp:
 HamMaster.cpp:
 	.text       start:0x824A6740 end:0x824A6758
 
-CharClipGroup.cpp:
-	.pdata      start:0x8220B310 end:0x8220B318
-	.text       start:0x824A8450 end:0x824A8498
-
-CharPollGroup.cpp:
-	.pdata      start:0x8220B458 end:0x8220B460
-	.text       start:0x824A9890 end:0x824A9934
-
 CameraShot.cpp:
 	.pdata      start:0x8220B598 end:0x8220BD00
 	.text       start:0x824AB028 end:0x824B3818
@@ -1456,8 +1448,8 @@ CheatProvider.cpp:
 	.text       start:0x826E1C78 end:0x826E1CD8
 
 CameraManager.cpp:
-	.pdata      start:0x8220B1B8 end:0x8220B308
-	.text       start:0x824A6D08 end:0x824A83C0
+	.pdata      start:0x8220B1B8 end:0x8220B4A8
+	.text       start:0x824A6D08 end:0x824AA230
 
 UITrigger.cpp:
 	.pdata      start:0x8223F598 end:0x8223F610
@@ -2119,10 +2111,6 @@ GlitchFinder.cpp:
 SessionJobs_Xbox.cpp:
 	.pdata      start:0x82200F28 end:0x82200F30
 	.text       start:0x823DFEE0 end:0x823DFF24
-
-RhythmDetectorGroup.cpp:
-	.pdata      start:0x8220B308 end:0x8220B310
-	.text       start:0x824A83C0 end:0x824A844C
 
 CharFeedback.cpp:
 	.pdata      start:0x821EC980 end:0x821EC988
