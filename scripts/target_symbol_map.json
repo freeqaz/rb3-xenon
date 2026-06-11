@@ -3529,6 +3529,7 @@
  "0x82712280": "?SetStencilFunc@RndRenderState@@QAAXW4TestFunc@1@E@Z",
  "0x827122E8": "?SetStencilOp@RndRenderState@@QAAXW4StencilOp@1@00@Z",
  "0x82712330": "?SetBlendEnable@RndRenderState@@QAAX_N@Z",
+ "0x82712358": "?SetBlend@RndRenderState@@QAAXW4Blend@1@000@Z",
  "0x827123B0": "?SetColorWriteMask@RndRenderState@@QAAXI@Z",
  "0x827123C0": "?Init@RndRenderState@@QAAXXZ",
  "0x82712410": "?CanDraw@DxMesh@@IBA_NXZ",

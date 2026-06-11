@@ -716,8 +716,8 @@ Str.cpp:
 	.text       start:0x827989F0 end:0x82799A00
 
 RenderState.cpp:
-	.pdata      start:0x82231C80 end:0x82231C88
-	.text       start:0x82712160 end:0x82712204
+	.pdata      start:0x82231C78 end:0x82231CA8
+	.text       start:0x82712010 end:0x82712410
 
 Dir.cpp:
 	.pdata      start:0x82233010 end:0x82233608
@@ -1502,10 +1502,6 @@ MoggClipMap.cpp:
 	.pdata      start:0x82231970 end:0x82231978
 	.text       start:0x8270D2D8 end:0x8270D368
 
-Lit_NG.cpp:
-	.pdata      start:0x82231C98 end:0x82231CA0
-	.text       start:0x82712358 end:0x827123AC
-
 Splash.cpp:
 	.pdata      start:0x82232460 end:0x82232578
 	.text       start:0x8271C4C0 end:0x8271D7C8
@@ -1742,8 +1738,8 @@ DataFile.cpp:
 	.text       start:0x82745928 end:0x827479AC
 
 system/rnddx9/ShaderMgr.cpp:
-	.pdata      start:0x82231B78 end:0x82231C80
-	.text       start:0x82710918 end:0x82712160
+	.pdata      start:0x82231B78 end:0x82231C78
+	.text       start:0x82710918 end:0x82712010
 
 Voice.cpp:
 	.pdata      start:0x822523C0 end:0x822524A8

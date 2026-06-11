@@ -91,6 +91,27 @@ void RndRenderState::SetStencilOp(StencilOp fail, StencilOp zfail, StencilOp pas
     D3DDevice_SetRenderState_StencilPass(TheDxRnd.Device(), (int)pass);
 }
 
+void RndRenderState::SetTextureFilter(uint sampler, FilterMode filter, bool) {
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), sampler, filter);
+    D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), sampler, filter);
+    DWORD *pWord = &TheDxRnd.Device()->m_Constants.TextureFetch[sampler].dword[3];
+    *pWord = (*pWord & ~0x01800000) | ((filter & 3) << 23);
+    TheDxRnd.Device()->m_Pending.m_Mask[3] |= 0x8000000000000000ull >> (sampler + 0x20);
+}
+
+void RndRenderState::SetTextureClamp(uint sampler, ClampMode clamp) {
+    UINT64 mask = 0x8000000000000000ull >> (sampler + 0x20);
+    DWORD *pWord = &TheDxRnd.Device()->m_Constants.TextureFetch[sampler].dword[0];
+    *pWord = (*pWord & ~0x00001C00) | ((clamp & 7) << 10);
+    TheDxRnd.Device()->m_Pending.m_Mask[3] |= mask;
+    pWord = &TheDxRnd.Device()->m_Constants.TextureFetch[sampler].dword[0];
+    *pWord = (*pWord & ~0x0000E000) | ((clamp & 7) << 13);
+    TheDxRnd.Device()->m_Pending.m_Mask[3] |= mask;
+    pWord = &TheDxRnd.Device()->m_Constants.TextureFetch[sampler].dword[0];
+    *pWord = (*pWord & ~0x00070000) | ((clamp & 7) << 16);
+    TheDxRnd.Device()->m_Pending.m_Mask[3] |= mask;
+}
+
 void RndRenderState::Init(void) {
     SetTextureClamp(4, (ClampMode)2);
     SetTextureClamp(5, (ClampMode)2);
