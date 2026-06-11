@@ -1586,8 +1586,8 @@ SongMetadata.cpp:
 	.text       start:0x82785848 end:0x82785C90
 
 ButtonHolder.cpp:
-	.pdata      start:0x82238DC0 end:0x82238DC8
-	.text       start:0x82793998 end:0x82793A24
+	.pdata      start:0x82238DC0 end:0x82238F38
+	.text       start:0x82793998 end:0x82794F10
 
 HolmesClient.cpp:
 	.pdata      start:0x82239040 end:0x82239048
