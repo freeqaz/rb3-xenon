@@ -1025,8 +1025,8 @@ HamPlayerData.cpp:
 	.text       start:0x8237FBD8 end:0x8237FC74
 
 FileMerger.cpp:
-	.pdata      start:0x821FBA98 end:0x821FBBC8
-	.text       start:0x82381AE8 end:0x82382A88
+	.pdata      start:0x821FBA98 end:0x821FBBE8
+	.text       start:0x82381AE8 end:0x82382C20
 
 FlowAnimate.cpp:
 	.pdata      start:0x821FBDE0 end:0x821FBDE8
