@@ -853,8 +853,8 @@ XLSPConnection.cpp:
 	.text       start:0x822CB7C8 end:0x822CB814
 
 CharIKFingers.cpp:
-	.pdata      start:0x821F3A68 end:0x821F3A70
-	.text       start:0x822FE498 end:0x822FE4DC
+	.pdata      start:0x821FD0F8 end:0x821FD200
+	.text       start:0x8239E5A0 end:0x823A06B0
 
 HamPhotoDisplay.cpp:
 	.pdata      start:0x821F3AC8 end:0x821F3AD0
