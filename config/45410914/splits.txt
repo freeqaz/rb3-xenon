@@ -722,8 +722,8 @@ Dir.cpp:
 	.text       start:0x82728D00 end:0x8272FF10
 
 UIListState.cpp:
-	.pdata      start:0x8223DE18 end:0x8223DE88
-	.text       start:0x827E8AA0 end:0x827E9678
+	.pdata      start:0x8223DE10 end:0x8223DF08
+	.text       start:0x827E8A50 end:0x827EA3B8
 
 UIListWidget.cpp:
 	.pdata      start:0x8223F188 end:0x8223F190
