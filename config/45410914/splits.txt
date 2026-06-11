@@ -833,8 +833,8 @@ Mesh.cpp:
 	.text       start:0x82404BE8 end:0x8240A428
 
 CharMeshHide.cpp:
-	.pdata      start:0x821FC438 end:0x821FC5B8
-	.text       start:0x8238E770 end:0x8238FC68
+	.pdata      start:0x821FC3E8 end:0x821FC5B8
+	.text       start:0x8238E328 end:0x8238FC68
 
 AmbientOcclusion.cpp:
 	.pdata      start:0x82208F30 end:0x82209310
@@ -853,8 +853,8 @@ XLSPConnection.cpp:
 	.text       start:0x822CB7C8 end:0x822CB814
 
 CharIKFingers.cpp:
-	.pdata      start:0x821FD0F8 end:0x821FD200
-	.text       start:0x8239E5A0 end:0x823A06B0
+	.pdata      start:0x821FD0F8 end:0x821FD260
+	.text       start:0x8239E5A0 end:0x823A1230
 
 HamPhotoDisplay.cpp:
 	.pdata      start:0x821F3AC8 end:0x821F3AD0
@@ -1021,8 +1021,8 @@ Morph.cpp:
 	.text       start:0x82377FC8 end:0x82378720
 
 FileMerger.cpp:
-	.pdata      start:0x821FB790 end:0x821FBBE8
-	.text       start:0x8237E778 end:0x82382C20
+	.pdata      start:0x821FB770 end:0x821FBDE0
+	.text       start:0x8237E610 end:0x82385F78
 
 FlowAnimate.cpp:
 	.pdata      start:0x821FBDE0 end:0x821FBDE8
@@ -1183,8 +1183,8 @@ Wind.cpp:
 	.text       start:0x8244A228 end:0x8244A500
 
 Line.cpp:
-	.pdata      start:0x82207F20 end:0x822080B0
-	.text       start:0x82466E60 end:0x82469A50
+	.pdata      start:0x82207EF8 end:0x822080B0
+	.text       start:0x824668F8 end:0x82469A50
 
 Font3d.cpp:
 	.pdata      start:0x82207A50 end:0x82207A58
@@ -1678,8 +1678,8 @@ Synapse_dsp.cpp:
 	.text       start:0x82B3FE08 end:0x82B41F80
 
 UIListSlot.cpp:
-	.pdata      start:0x8223E510 end:0x8223E5D8
-	.text       start:0x827EFB08 end:0x827F06E8
+	.pdata      start:0x8223E508 end:0x8223E5D8
+	.text       start:0x827EFAC0 end:0x827F06E8
 
 DataPointMgr.cpp:
 	.pdata      start:0x8223A0E0 end:0x8223A1E8
