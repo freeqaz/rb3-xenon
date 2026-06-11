@@ -1388,8 +1388,8 @@ CreditsPanel.cpp:
 	.text       start:0x82789950 end:0x8278A908
 
 HeldButtonPanel.cpp:
-	.pdata      start:0x82222E60 end:0x82222E68
-	.text       start:0x8261C5C8 end:0x8261C60C
+	.pdata      start:0x822381C0 end:0x82238318
+	.text       start:0x82788338 end:0x827894D8
 
 SoundTouch.cpp:
 	.pdata      start:0x82252A68 end:0x82252A70
