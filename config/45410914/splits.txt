@@ -1300,8 +1300,8 @@ ThreeDSoundManager.cpp:
 	.text       start:0x825540D0 end:0x8255414C
 
 UIList.cpp:
-	.pdata      start:0x82215F48 end:0x82215F50
-	.text       start:0x82559D10 end:0x82559D68
+	.pdata      start:0x8223C978 end:0x8223CF48
+	.text       start:0x827D2900 end:0x827D8D48
 
 MemTrack.cpp:
 	.pdata      start:0x82239928 end:0x822399A0
