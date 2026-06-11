@@ -664,8 +664,8 @@ DataFunc.cpp:
 	.text       start:0x823543A0 end:0x82357250
 
 Task.cpp:
-	.pdata      start:0x82232CA0 end:0x82232D78
-	.text       start:0x82724FE8 end:0x82725DA8
+	.pdata      start:0x82232CA0 end:0x82232D48
+	.text       start:0x82724FE8 end:0x82725988
 
 AsyncTask.cpp:
 	.pdata      start:0x82212170 end:0x82212178
@@ -1179,8 +1179,8 @@ PartLauncher.cpp:
 	.text       start:0x8243CAF0 end:0x8243D468
 
 DataNode.cpp:
-	.pdata      start:0x82232D78 end:0x82232EA8
-	.text       start:0x82725DA8 end:0x82727460
+	.pdata      start:0x82232D48 end:0x82232EA8
+	.text       start:0x82725988 end:0x82727460
 
 FileCache.cpp:
 	.pdata      start:0x822105C8 end:0x82210740
