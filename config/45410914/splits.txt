@@ -1476,8 +1476,8 @@ CameraManager.cpp:
 	.text       start:0x824A6D08 end:0x824A83C0
 
 UITrigger.cpp:
-	.pdata      start:0x8222FC18 end:0x8222FC20
-	.text       start:0x826EEF28 end:0x826EEF98
+	.pdata      start:0x8223F598 end:0x8223F610
+	.text       start:0x827FFC70 end:0x82800428
 
 FxSend.cpp:
 	.pdata      start:0x82230570 end:0x82230610
