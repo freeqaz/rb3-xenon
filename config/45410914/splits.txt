@@ -320,8 +320,8 @@ TexBlendController.cpp:
 	.text       start:0x82475FF8 end:0x82477160
 
 TexBlender.cpp:
-	.pdata      start:0x82208D18 end:0x822094E0
-	.text       start:0x82477160 end:0x824822D8
+	.pdata      start:0x82208D18 end:0x82208F30
+	.text       start:0x82477160 end:0x82479B60
 
 Shader.cpp:
 	.pdata      start:0x8220A350 end:0x8220A400
@@ -833,8 +833,8 @@ CharMeshHide.cpp:
 	.text       start:0x822C1E58 end:0x822C1E9C
 
 AmbientOcclusion.cpp:
-	.pdata      start:0x821EFD68 end:0x821EFD70
-	.text       start:0x822C2610 end:0x822C2690
+	.pdata      start:0x82208F30 end:0x82209310
+	.text       start:0x82479B60 end:0x82480660
 
 Waypoint.cpp:
 	.pdata      start:0x821F0508 end:0x821F0510
