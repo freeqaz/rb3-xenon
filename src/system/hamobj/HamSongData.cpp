@@ -49,7 +49,7 @@ SongPos HamSongData::CalcSongPos(HxMaster *master, float f1) {
     int m, b, t, bpm;
     mMeasureMap->TickToMeasureBeatTick(tick, m, b, t, bpm);
     float beat = mBeatMap->Beat((int)tick);
-    return SongPos(tick, beat, 0, m, b, t);
+    return SongPos(tick, beat, m, b, t);
 }
 
 void HamSongData::SetMaps() {

@@ -343,8 +343,7 @@ void Player::SetEnabledState(EnabledState estate, BandUser *user, bool b) {
 }
 
 EnabledState Player::GetEnabledStateAt(float f) const {
-    unsigned int state = (unsigned int)mEnabledState;
-    if (state - 2 <= 1) {
+    if (mEnabledState == kPlayerBeingSaved || mEnabledState == kPlayerDroppingIn) {
         if (f >= mEnableMs)
             return kPlayerEnabled;
     }
@@ -974,8 +973,9 @@ void Player::UpdateSectionStats(float hitFraction, float percentComplete) {
 }
 
 BandTrack *Player::GetBandTrack() const {
-    if (mUser->GetTrack()) {
-        return mUser->GetTrack()->GetBandTrack();
+    Track *track = mUser->GetTrack();
+    if (track != nullptr) {
+        return track->GetBandTrack();
     } else
         return nullptr;
 }
