@@ -1403,14 +1403,6 @@ PropKeys.cpp:
 	.pdata      start:0x82226110 end:0x82226288
 	.text       start:0x82649C38 end:0x8264B5F8
 
-ClipDistMap.cpp:
-	.pdata      start:0x822293D8 end:0x822293E0
-	.text       start:0x8267A138 end:0x8267A198
-
-CamAnim.cpp:
-	.pdata      start:0x82229460 end:0x82229468
-	.text       start:0x8267A9B8 end:0x8267AA24
-
 PartAnim.cpp:
 	.pdata      start:0x822082D8 end:0x82208458
 	.text       start:0x8246C2C0 end:0x8246E1B8
@@ -2413,8 +2405,8 @@ band3/game/GamePanel.cpp:
 	.text       start:0x826768D0 end:0x82678358
 
 band3/game/Stats.cpp:
-	.pdata      start:0x82229360 end:0x822293D8
-	.text       start:0x82678FF8 end:0x8267A138
+	.pdata      start:0x82229360 end:0x82229548
+	.text       start:0x82678FF8 end:0x8267BA08
 
 band3/bandtrack/Lyric.cpp:
 	.pdata      start:0x822554E8 end:0x82255510
