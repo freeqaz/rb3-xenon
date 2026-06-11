@@ -692,8 +692,8 @@ MeterEffect.cpp:
 	.text       start:0x82B3C8C0 end:0x82B3CA1C
 
 UI.cpp:
-	.pdata      start:0x8223D628 end:0x8223D788
-	.text       start:0x827DF8B8 end:0x827E1458
+	.pdata      start:0x8223D628 end:0x8223D738
+	.text       start:0x827DF8B8 end:0x827E0ED0
 
 system/rndobj/Utl.cpp:
 	.pdata      start:0x82205008 end:0x822054A8
@@ -1658,8 +1658,8 @@ PreloadPanel.cpp:
 	.text       start:0x827DD1D0 end:0x827DD228
 
 PanelDir.cpp:
-	.pdata      start:0x8223D788 end:0x8223D8C8
-	.text       start:0x827E1458 end:0x827E2930
+	.pdata      start:0x8223D738 end:0x8223D8C8
+	.text       start:0x827E0ED0 end:0x827E2930
 
 SpotlightDrawer_NG.cpp:
 	.pdata      start:0x8220C7E0 end:0x8220C980
