@@ -909,8 +909,8 @@ HollaBackMinigame.cpp:
 	.text       start:0x82319A08 end:0x82319AAC
 
 PropAnim.cpp:
-	.pdata      start:0x82203E50 end:0x822040A8
-	.text       start:0x824137A0 end:0x82415C78
+	.pdata      start:0x82203E50 end:0x82204148
+	.text       start:0x824137A0 end:0x824166D8
 
 HamNavList.cpp:
 	.pdata      start:0x821F64F0 end:0x821F64F8
@@ -1153,10 +1153,6 @@ Overlay.cpp:
 MeterDisplay.cpp:
 	.pdata      start:0x82203730 end:0x82203738
 	.text       start:0x8240A428 end:0x8240A478
-
-MessageTimer.cpp:
-	.pdata      start:0x822040A8 end:0x822040B0
-	.text       start:0x82415C78 end:0x82415CE8
 
 WaveFile.cpp:
 	.pdata      start:0x8223A6A0 end:0x8223A7D8
