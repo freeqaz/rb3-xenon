@@ -924,8 +924,92 @@ rdata-obj vtable-dump technique (2-for-2), RB3_MAP_0x1C / SONGPOS_DC3_PHRASE
    named methods (port-then-extend), UIComponent::Update real body
    (phase-A stub today).
 3. MidiSynth/StreamNull +2 trim (assessed GO, unexecuted).
+   [DONE — landed in the wave-3 tail; StreamNull pin starts 0x826FBD28.]
 4. Banked ObjectDir-vbase patch (+2-3 when CharClipSet funclet realigns).
 5. AsyncFileHolmes-head identification (fingerprint/Ghidra, not boundary).
 6. Synth-belt pin+port campaign (0x826DE000–0x82909000 region, identified
    but uncompiled). 7. obj_orphan purge (re-gate per refutations).
 8. OvershellSlot, Mat_NG (multi-session walls).
+
+# WAVE-4 CLOSE (2026-06-11): **7866 / 65545** (7785 → 7866, **+81**, 0 regressions, all composed verifies EXACT)
+
+Bodyport-pool wave (queue item 2), run as one ultracode workflow
+(`bodyport-wave4`, wf_10f83482-5c2, 11 agents): Fable recon-gate on 5 lanes
+(read-only, main repo, dossiers `docs/decomp/research/2026-06-11-bp4-*.md`,
+all 5 GO) → Opus implementation in worktrees chunked 3-wide → coordinator
+landed 4 branches sequentially (rebase + ff-only), composed fresh verify
+after each: 7831 → 7846 → 7855 → 7866, every count EXACT and stable on
+re-run.
+
+### Landed (+81)
+- **VocalTrack +46** (87f7869, splits-only): extension lo 0x82B727B8 →
+  0x82B6D688 + FontBase 0x54 dead-sliver eviction (mf=0, unit-IS-the-sliver;
+  fn_82B6E8E0 is VocalTrack's own ~_Deque_base ICF twin). **The wave-3
+  "port-then-extend / 22 unported methods" refutation was a MEASUREMENT
+  ERROR**: VocalTrack.cpp already defines every method in the range and the
+  compiled obj .text is 0x12628 COMDAT bytes (not the claimed 0x7AE8 ==
+  pin-size). 23 named + ~23 anon STL twins flipped 0→100; honesty gate
+  passed (longest anon run 12, bracketed by own named lyric/marker helpers).
+  LESSON: re-verify a refutation's load-bearing measurement before trusting
+  it across waves.
+- **SongMgr +15** (dba3312): real base is **MsgSource (+ ContentMgr::
+  Callback), not Hmx::Object** — proven by rdata vtable dump (technique now
+  3-for-3): RTTI COL @0x821d89ec attr=0x3 (MI+VI), 5 bases; own-virtual
+  prefix starts slot 14/+0x38 (Init); retail lacks DC3's
+  AlternateSongDir/ContentTitleDiscovered virtuals (gated). All 9 @99.8x
+  named + 6 anon helpers → 100. Files: SongMgr.{h,cpp}, ContentMgr.h,
+  objects.json.
+- **UIComponent +11** (0b7c656): retail tail has TWO flag bytes (mLoading
+  0x13c, mSelectCancelled 0x13d, NO mMockSelect) — proven from 3 target asm
+  fns; struct size unchanged 0x140, no derived cascade. FinishSelecting
+  99.98→100, MockSelect+UpdateResource ported, 7 wave-3 phase-A bodies
+  revealed (12 map entries). Update improved 0→69.8, ResourceFileUpdated
+  0→88.8 (remaining near-misses).
+- **AccomplishmentProgress +9** (e49d006): ⭐ **hash_map discovery — the
+  five "0x1c std::map" progress maps are genuinely STLport `hash_map`;
+  RB3_MAP_0x1C on this TU was a compensating impostor** (the "dead pad word"
+  = hashtable's float _M_max_load_factor @0x18; sizeof naturally 0x1c).
+  Retail's out-of-line find (sret, value@node+0x8 slist walk) ==
+  _hashtable.h verbatim. Added hash<Symbol> = (size_t)Str(). Gate removed
+  from objects.json:681. Plus GamerAwardStatus 360 tail (XOVERLAPPED @0x1c,
+  sizeof 0x14→0x38, ERROR_IO_PENDING dtor cancel). 4×Get* 78.85→100,
+  GetCurrentValue reveal, 3 GamerAwardStatus fns, LoadStdPtr.
+  **FOLLOW-UP LEVER: other 0x1c-gated map TUs whose fns still don't match
+  should be re-tried as hash_map.**
+
+### Not landed (honest)
+- **Object at-limit** (worktree reverted, net 0): dtor body restructure was
+  correct (63.3→97.06, all 5 recon deltas + mNote@0x14-not-mName pool-free)
+  but final 7 mismatches = register-allocation SPILL cascade (retail spills
+  &mRefs to 0x50(r31) twice; ours keeps callee-save) — permuter exhausted
+  134 candidates, wall. Ctor 74.58 unchanged. InitObject/SaveType/Save/
+  HandleProperty = ATTRIBUTION_ORPHANs (bodies already == DC3 text but
+  per-unit pairing can't register them inside DirLoader's unit; map carries
+  DC3 UAA vs our QAA for InitObject). Port = +0 until a pairing-layer fix.
+- **vbase-recompose net-0 re-confirmed** (haiku mechanical retest; TrackReset
+  +1 / CharClipSet fn_823C2044 −1 balance holds post-wave-3). Fable
+  deep-dive on the coupling mechanism in flight → dossier
+  `2026-06-11-bp4-vbase-deep.md`.
+- Stale queue items resolved: StreamNull trim already landed (wave-3 tail);
+  SongDB named-near-miss pool is EMPTY (only STL residue <100).
+
+### New walls catalogued (dossiers have asm evidence)
+- AccProg IsUploadDirty @71.43 = TARGET_BOUNDARY dtk size-divergence (target
+  symbol has a foreign 16-byte sret accessor glued on; jeff-side fix, not
+  source). UIComponent Handle-parent funclet family (fn_827D9D44..E24 @
+  92.5-99.9) flips iff Handle (fn_827D9928, retail frame +0x40) ever
+  matches. VocalTrack UpdateScrolling @52.34 sz8948 = body-divergence wall
+  (1015 I/D, retail-rederive only — DEFER).
+
+### Post-wave-4 queue (EV order)
+1. **refill_loop.sh sweep** (playbook §9 compounding step; new source landed
+   in 3 TUs + big VocalTrack reveal — pin_identified→reveal loop validated
+   +255 once).
+2. **hash_map re-try on remaining 0x1c-gated/0x18-deficit map TUs** (AccProg
+   precedent; check rbtree_blast.py-era TUs whose fns still read <100).
+3. Re-run pin_audit.py (source landed in SongMgr/AccProg/UIComponent;
+   VocalTrack pin moved).
+4. Synth-belt pin+port campaign; AFH-head identification; obj_orphan purge.
+5. UIComponent::Update 69.8 / ResourceFileUpdated 88.8 finishers; SongMgr
+   bonus reveals (recon step 7 list: 0x82784040 ContentName(int) etc.).
+6. vbase deep-dive verdict (in flight); OvershellSlot, Mat_NG.
