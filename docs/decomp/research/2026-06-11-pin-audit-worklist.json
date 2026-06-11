@@ -1,0 +1,5784 @@
+{
+ "meta": {
+  "generated": "2026-06-11 10:37:07",
+  "splits": "/home/free/code/milohax/rb3-sv-tool/config/45410914/splits.txt",
+  "map": "/home/free/code/milohax/rb3-sv-tool/scripts/target_symbol_map.json",
+  "report": "/home/free/code/milohax/rb3-sv-tool/build/45410914/report.json",
+  "n_units": 628,
+  "n_map_entries": 12272,
+  "baseline_matched": 7201,
+  "thresholds": {
+   "A": "own_text > 2x pin + 0x800",
+   "B": "pin > 1.5x total_text + 0x1000",
+   "cluster": "gap<=0x3000 n>=4 span<0x10000 substantive>=3"
+  }
+ },
+ "candidates": [
+  {
+   "unit": "VocalTrack",
+   "src": "VocalTrack.cpp",
+   "pin": {
+    "lo": "0x82B727B8",
+    "hi": "0x82B7A2A0",
+    "size": "0x7AE8"
+   },
+   "mf": 59,
+   "tf": 148,
+   "obj": {
+    "path": "build/45410914/src/band3/bandtrack/VocalTrack.obj",
+    "total_text": "0x12628",
+    "own_text": "0x9068",
+    "n_fns": 941,
+    "n_own_fns": 82
+   },
+   "sig": "C",
+   "action": "extend lo pin to [0x82B6D688..0x82B7A2A0) (AUTO-BLOB; prev band3/bandtrack/GemTrack.cpp@[0x82B61E30..0x82B64D38) nxt VocalTrack.cpp@[0x82B727B8..0x82B7A2A0))",
+   "range": {
+    "lo": "0x82B6D688",
+    "hi": "0x82B7A2A0"
+   },
+   "cluster": {
+    "lo": "0x82B6D688",
+    "hi": "0x82B72300",
+    "n_own": 22,
+    "own_substantive": 22,
+    "avg_spacing": "0x3A4"
+   },
+   "named": 22,
+   "substantive": 22,
+   "obj_defines": "22/22",
+   "sample": [
+    "?PushGameplayOptions@VocalTrack@@UAAXW4VocalParam@@H@Z",
+    "?ReadTimingData@VocalTrack@@QAAXPBVDataArray@@@Z",
+    "?ShowPitchCorrectionNotice@VocalTrack@@UBA_NXZ",
+    "?ConfigNoteTube@VocalTrack@@QAAX_NHH0M@Z",
+    "?SetDir@VocalTrack@@UAAXPAVRndDir@@@Z",
+    "?WantBeatLines@VocalTrack@@QAA_NH@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "band3/bandtrack/GemTrack.cpp@[0x82B61E30..0x82B64D38)",
+   "next_pin": "VocalTrack.cpp@[0x82B727B8..0x82B7A2A0)",
+   "est": "+11-44 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "FileMerger",
+   "src": "FileMerger.cpp",
+   "pin": {
+    "lo": "0x82381AE8",
+    "hi": "0x82382A88",
+    "size": "0xFA0"
+   },
+   "mf": 29,
+   "tf": 39,
+   "obj": {
+    "path": "build/45410914/src/system/char/FileMerger.obj",
+    "total_text": "0x9C8C",
+    "own_text": "0x39FC",
+    "n_fns": 431,
+    "n_own_fns": 50
+   },
+   "sig": "A+C",
+   "action": "extend lo+hi pin to [0x8237E778..0x82382DB0) (AUTO-BLOB; prev HAQManager.cpp@[0x8237DE28..0x8237DEA4) nxt FlowAnimate.cpp@[0x82385F78..0x82385FBC))",
+   "range": {
+    "lo": "0x8237E778",
+    "hi": "0x82382DB0"
+   },
+   "cluster": {
+    "lo": "0x8237E778",
+    "hi": "0x82382BB0",
+    "n_own": 13,
+    "own_substantive": 13,
+    "avg_spacing": "0x5AF"
+   },
+   "named": 13,
+   "substantive": 13,
+   "obj_defines": "13/13",
+   "sample": [
+    "?DeleteCurLoader@FileMerger@@IAAXXZ",
+    "?FindMergerIndex@FileMerger@@QAAHVSymbol@@_N@Z",
+    "?InMerger@FileMerger@@QAAPAUMerger@1@PAVObject@Hmx@@@Z",
+    "?OriginalPath@FileMerger@@UAA_NPAVObject@Hmx@@AAVString@@@Z",
+    "?FindMerger@FileMerger@@QAAPAUMerger@1@VSymbol@@_N@Z",
+    "?FilterSubdir@FileMerger@@MAA?AW4SubdirAction@MergeFilter@@PAVObjectDir@@0@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "HAQManager.cpp@[0x8237DE28..0x8237DEA4)",
+   "next_pin": "FlowAnimate.cpp@[0x82385F78..0x82385FBC)",
+   "est": "+6-26 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "TexBlender",
+   "src": "TexBlender.cpp",
+   "pin": {
+    "lo": "0x82477160",
+    "hi": "0x824822D8",
+    "size": "0xB178"
+   },
+   "mf": 70,
+   "tf": 281,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/TexBlender.obj",
+    "total_text": "0x58DC",
+    "own_text": "0x0",
+    "n_fns": 312,
+    "n_own_fns": 0
+   },
+   "sig": "B",
+   "action": "carve RndAmbientOcclusion TU out of TexBlender pin [0x82479B60..0x82480548] (.s recon to draw the boundary; no pinned home unit)",
+   "range": {
+    "lo": "0x82479B60",
+    "hi": "0x82480548"
+   },
+   "named": 12,
+   "substantive": 12,
+   "sample": [
+    "?TransformNormal@RndAmbientOcclusion@@IBAXABVVector3@@ABVMatrix3@Hmx@@AAV2@@Z",
+    "?DistanceSH@RndAmbientOcclusion@@IBAMABVVector4@@ABVVector3@@01@Z",
+    "?BlendVert@RndAmbientOcclusion@@SAXABVVert@RndMesh@@0AAV23@@Z",
+    "?IsValid_Mesh@RndAmbientOcclusion@@IBA_NPBVRndMesh@@@Z",
+    "?CalculateAOAtPoint@RndAmbientOcclusion@@IBAXABVVector3@@0PAM@Z",
+    "?IsValid_AOCast@RndAmbientOcclusion@@IBA_NPBVRndMesh@@@Z"
+   ],
+   "location": "INSIDE_PIN:TexBlender.cpp",
+   "flags": [
+    "carve"
+   ],
+   "carve_class": "RndAmbientOcclusion",
+   "carve_home_unit": null,
+   "est": "+6-24 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "SongDB",
+   "src": "band3/game/SongDB.cpp",
+   "pin": {
+    "lo": "0x8274BB34",
+    "hi": "0x8274E870",
+    "size": "0x2D3C"
+   },
+   "mf": 13,
+   "tf": 114,
+   "obj": {
+    "path": "build/45410914/src/band3/game/SongDB.obj",
+    "total_text": "0x77BC",
+    "own_text": "0x226C",
+    "n_fns": 613,
+    "n_own_fns": 74
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x82666FE0..0x8266A620) (AUTO-BLOB; prev ClipGraphGen.cpp@[0x82666EF0..0x82666F0C) nxt GameMode.cpp@[0x82671A60..0x826725F0))",
+   "range": {
+    "lo": "0x82666FE0",
+    "hi": "0x8266A620"
+   },
+   "cluster": {
+    "lo": "0x82666FE0",
+    "hi": "0x8266A420",
+    "n_own": 12,
+    "own_substantive": 11,
+    "avg_spacing": "0x4C0"
+   },
+   "named": 12,
+   "substantive": 11,
+   "obj_defines": "12/12",
+   "sample": [
+    "?GetGems@SongDB@@QBAABV?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@H@Z",
+    "?GetCommonPhraseTracks@SongDB@@QBAHH@Z",
+    "?GetMBT@SongDB@@QBA?AUMBT@@H@Z",
+    "?GetBeatsPerMeasure@SongDB@@QBAHH@Z",
+    "?GetNumTrackData@SongDB@@QBAHXZ",
+    "?GetPhraseID@SongDB@@QBAHHH@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:4"
+   ],
+   "prev_pin": "ClipGraphGen.cpp@[0x82666EF0..0x82666F0C)",
+   "next_pin": "GameMode.cpp@[0x82671A60..0x826725F0)",
+   "est": "+5-24 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "SoundTouch",
+   "src": "SoundTouch.cpp",
+   "pin": {
+    "lo": "0x82B3F6D0",
+    "hi": "0x82B3F7C0",
+    "size": "0xF0"
+   },
+   "mf": 3,
+   "tf": 5,
+   "obj": {
+    "path": "build/45410914/src/system/synth_xbox/soundtouch/source/SoundTouch/SoundTouch.obj",
+    "total_text": "0x904",
+    "own_text": "0x8F0",
+    "n_fns": 38,
+    "n_own_fns": 37
+   },
+   "sig": "C",
+   "action": "shared-boundary recon with TDStretch.cpp -- 8/15 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x82B3F828",
+    "hi": "0x82B43DB8"
+   },
+   "cluster": {
+    "lo": "0x82B3F828",
+    "hi": "0x82B43DB8",
+    "n_own": 15,
+    "own_substantive": 10,
+    "avg_spacing": "0x4F8"
+   },
+   "named": 15,
+   "substantive": 10,
+   "obj_defines": "7/15",
+   "sample": [
+    "?setSampleRate@SoundTouch@soundtouch@@QAAXI@Z",
+    "?flush@SoundTouch@soundtouch@@QAAXXZ",
+    "?setSetting@SoundTouch@soundtouch@@QAAHHH@Z",
+    "?clear@SoundTouch@soundtouch@@UAAXXZ",
+    "?numUnprocessedSamples@SoundTouch@soundtouch@@UBAIXZ",
+    "?enableAAFilter@RateTransposer@soundtouch@@QAAXH@Z"
+   ],
+   "location": "INTERLEAVE:TDStretch.cpp",
+   "flags": [
+    "foreign_named_in_range:34",
+    "interleave"
+   ],
+   "prev_pin": "DirectionGestureFilter.cpp@[0x82B3F7C0..0x82B3F7D4)",
+   "next_pin": "AAFilter.cpp@[0x82B43E68..0x82B440D8)",
+   "est": "+5-30 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "SongMgr",
+   "src": "SongMgr.cpp",
+   "pin": {
+    "lo": "0x824E6220",
+    "hi": "0x824E6274",
+    "size": "0x54"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/SongMgr.obj",
+    "total_text": "0x6F28",
+    "own_text": "0x20C4",
+    "n_fns": 544,
+    "n_own_fns": 50
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x827839C8..0x82785668) (AUTO-BLOB; prev SpeechMgr.cpp@[0x82781BB8..0x82781C1C) nxt BinkMovieImpl.cpp@[0x82785668..0x827856D4))",
+   "range": {
+    "lo": "0x827839C8",
+    "hi": "0x82785668"
+   },
+   "cluster": {
+    "lo": "0x827839C8",
+    "hi": "0x82785070",
+    "n_own": 10,
+    "own_substantive": 10,
+    "avg_spacing": "0x284"
+   },
+   "named": 10,
+   "substantive": 10,
+   "obj_defines": "10/10",
+   "sample": [
+    "?Init@SongMgr@@UAAXXZ",
+    "?SongAudioData@SongMgr@@QBAPAVSongInfo@@VSymbol@@@Z",
+    "?HasSong@SongMgr@@QBA_NVSymbol@@_N@Z",
+    "?GetCachedSongInfoSize@SongMgr@@QBAHXZ",
+    "?SaveCachedSongInfo@SongMgr@@QAA_NAAVBufStream@@@Z",
+    "?ContentName@SongMgr@@QBAPBDVSymbol@@_N@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "SpeechMgr.cpp@[0x82781BB8..0x82781C1C)",
+   "next_pin": "BinkMovieImpl.cpp@[0x82785668..0x827856D4)",
+   "est": "+5-20 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "Bitmap",
+   "src": "Bitmap.cpp",
+   "pin": {
+    "lo": "0x823E98C0",
+    "hi": "0x823EB0C0",
+    "size": "0x1800"
+   },
+   "mf": 16,
+   "tf": 34,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/Bitmap.obj",
+    "total_text": "0x35FC",
+    "own_text": "0x2C88",
+    "n_fns": 84,
+    "n_own_fns": 60
+   },
+   "sig": "C",
+   "action": "extend lo+hi pin to [0x823E9158..0x823EBA48) (AUTO-BLOB; prev HiResScreen.cpp@[0x823E4548..0x823E4644) nxt Tex.cpp@[0x823EBA48..0x823EDA90))",
+   "range": {
+    "lo": "0x823E9158",
+    "hi": "0x823EBA48"
+   },
+   "cluster": {
+    "lo": "0x823E9158",
+    "hi": "0x823EB4F8",
+    "n_own": 10,
+    "own_substantive": 10,
+    "avg_spacing": "0x3F5"
+   },
+   "named": 10,
+   "substantive": 10,
+   "obj_defines": "10/10",
+   "sample": [
+    "?NumMips@RndBitmap@@QBAHXZ",
+    "?PixelBytes@RndBitmap@@QBAHXZ",
+    "?DxtRowBytes@RndBitmap@@QBAHXZ",
+    "?AllocateBuffer@RndBitmap@@AAAXXZ",
+    "?PixelOffset@RndBitmap@@ABAHHHAA_N@Z",
+    "?PixelIndex@RndBitmap@@QBAEHH@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "HiResScreen.cpp@[0x823E4548..0x823E4644)",
+   "next_pin": "Tex.cpp@[0x823EBA48..0x823EDA90)",
+   "est": "+5-20 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "Stats",
+   "src": "band3/game/Stats.cpp",
+   "pin": {
+    "lo": "0x82678FF8",
+    "hi": "0x8267A138",
+    "size": "0x1140"
+   },
+   "mf": 15,
+   "tf": 38,
+   "obj": {
+    "path": "build/45410914/src/band3/game/Stats.obj",
+    "total_text": "0x851C",
+    "own_text": "0x1FCC",
+    "n_fns": 598,
+    "n_own_fns": 70
+   },
+   "sig": "C",
+   "action": "extend hi after relocating sliver(s) ClipDistMap pin to [0x82678FF8..0x8267E6E0) (AUTO-BLOB; prev ClipDistMap.cpp@[0x8267A138..0x8267A198) nxt nuidetroit.cpp@[0x8267E6E0..0x8267E744))",
+   "range": {
+    "lo": "0x82678FF8",
+    "hi": "0x8267E6E0"
+   },
+   "cluster": {
+    "lo": "0x8267A270",
+    "hi": "0x8267B750",
+    "n_own": 10,
+    "own_substantive": 10,
+    "avg_spacing": "0x251"
+   },
+   "named": 10,
+   "substantive": 10,
+   "obj_defines": "10/10",
+   "sample": [
+    "?AddFailurePoint@Stats@@QAAXM@Z",
+    "?AddToPlayersSaved@Stats@@QAAXHM@Z",
+    "?AddToTimesSaved@Stats@@QAAXMM@Z",
+    "?EndStreak@Stats@@QAAXAAVStreakInfo@1@AAV?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?SetFinalized@Stats@@QAAX_N@Z",
+    "?SetSingerPartPercentage@Stats@@QAAXHHM@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "requires_sliver_eviction"
+   ],
+   "prev_pin": "ClipDistMap.cpp@[0x8267A138..0x8267A198)",
+   "next_pin": "nuidetroit.cpp@[0x8267E6E0..0x8267E744)",
+   "est": "+5-20 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "CharHair",
+   "src": "CharHair.cpp",
+   "pin": {
+    "lo": "0x82394620",
+    "hi": "0x82397610",
+    "size": "0x2FF0"
+   },
+   "mf": 67,
+   "tf": 107,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharHair.obj",
+    "total_text": "0xBFF4",
+    "own_text": "0x3BA4",
+    "n_fns": 550,
+    "n_own_fns": 56
+   },
+   "sig": "C",
+   "action": "extend lo pin to [0x82391B80..0x82397610) (AUTO-BLOB; prev CharBoneOffset.cpp@[0x82391328..0x82391A28) nxt CharHair.cpp@[0x82394620..0x82397610))",
+   "range": {
+    "lo": "0x82391B80",
+    "hi": "0x82397610"
+   },
+   "cluster": {
+    "lo": "0x82391B80",
+    "hi": "0x82394370",
+    "n_own": 10,
+    "own_substantive": 9,
+    "avg_spacing": "0x470"
+   },
+   "named": 10,
+   "substantive": 9,
+   "obj_defines": "10/10",
+   "sample": [
+    "?GetFPS@CharHair@@IAAMXZ",
+    "?SetAngle@Strand@CharHair@@QAAXM@Z",
+    "?SetName@CharHair@@UAAXPBDPAVObjectDir@@@Z",
+    "?SetCloth@CharHair@@IAAX_N@Z",
+    "?FreezePoseRaw@CharHair@@QAAXXZ",
+    "?SimulateInternal@CharHair@@IAAXM@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:4"
+   ],
+   "prev_pin": "CharBoneOffset.cpp@[0x82391328..0x82391A28)",
+   "next_pin": "CharHair.cpp@[0x82394620..0x82397610)",
+   "est": "+4-20 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "RenderState",
+   "src": "RenderState.cpp",
+   "pin": {
+    "lo": "0x82712160",
+    "hi": "0x82712204",
+    "size": "0xA4"
+   },
+   "mf": 1,
+   "tf": 2,
+   "obj": {
+    "path": "build/45410914/src/system/rnddx9/RenderState.obj",
+    "total_text": "0xD54",
+    "own_text": "0x284",
+    "n_fns": 53,
+    "n_own_fns": 15
+   },
+   "sig": "C",
+   "action": "shared-boundary recon with system/rnddx9/ShaderMgr.cpp -- 3/9 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x82712010",
+    "hi": "0x827123C0"
+   },
+   "cluster": {
+    "lo": "0x82712010",
+    "hi": "0x827123C0",
+    "n_own": 9,
+    "own_substantive": 9,
+    "avg_spacing": "0x76"
+   },
+   "named": 9,
+   "substantive": 9,
+   "obj_defines": "6/9",
+   "sample": [
+    "?SetTextureFilter@RndRenderState@@QAAXIW4FilterMode@1@_N@Z",
+    "?SetTextureClamp@RndRenderState@@QAAXIW4ClampMode@1@@Z",
+    "?SetBorderColor@RndRenderState@@QAAXI_N@Z",
+    "?SetDepthFunc@RndRenderState@@QAAXW4TestFunc@1@@Z",
+    "?SetStencilFunc@RndRenderState@@QAAXW4TestFunc@1@E@Z",
+    "?SetStencilOp@RndRenderState@@QAAXW4StencilOp@1@00@Z"
+   ],
+   "location": "INTERLEAVE:system/rnddx9/ShaderMgr.cpp",
+   "flags": [
+    "no_rb3wii_oracle",
+    "interleave"
+   ],
+   "prev_pin": "SampleData.cpp@[0x8270D3A0..0x8270DBB0)",
+   "next_pin": "Rnd_Xbox.cpp@[0x827143D0..0x8271799C)",
+   "est": "+4-18 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "Waypoint",
+   "src": "Waypoint.cpp",
+   "pin": {
+    "lo": "0x822C8CA8",
+    "hi": "0x822C8CF8",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/Waypoint.obj",
+    "total_text": "0x5B04",
+    "own_text": "0x34FC",
+    "n_fns": 345,
+    "n_own_fns": 143
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x823C7CC8..0x823CA668) (AUTO-BLOB; prev CharBonesBlender.cpp@[0x823C5EF8..0x823C67B8) nxt FitnessFilter.cpp@[0x823CA668..0x823CA6AC))",
+   "range": {
+    "lo": "0x823C7CC8",
+    "hi": "0x823CA668"
+   },
+   "cluster": {
+    "lo": "0x823C7CC8",
+    "hi": "0x823CA598",
+    "n_own": 9,
+    "own_substantive": 9,
+    "avg_spacing": "0x51A"
+   },
+   "named": 9,
+   "substantive": 9,
+   "obj_defines": "9/9",
+   "sample": [
+    "?ShapeDeltaBox@Waypoint@@AAAXABVVector3@@MMAAV2@@Z",
+    "?ShapeDeltaAng@Waypoint@@AAAMMM@Z",
+    "?OnWaypointLast@Waypoint@@CA?AVDataNode@@PAVDataArray@@@Z",
+    "?Constrain@Waypoint@@QAAXAAVTransform@@@Z",
+    "?ShapeDelta@Waypoint@@QAAXABVVector3@@AAV2@@Z",
+    "?ShapeDelta@Waypoint@@QAAMM@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "CharBonesBlender.cpp@[0x823C5EF8..0x823C67B8)",
+   "next_pin": "FitnessFilter.cpp@[0x823CA668..0x823CA6AC)",
+   "est": "+4-18 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "Object",
+   "src": "Object.cpp",
+   "pin": {
+    "lo": "0x82737FE8",
+    "hi": "0x82738160",
+    "size": "0x178"
+   },
+   "mf": 0,
+   "tf": 2,
+   "obj": {
+    "path": "build/45410914/src/system/obj/Object.obj",
+    "total_text": "0x63BC",
+    "own_text": "0x4D80",
+    "n_fns": 262,
+    "n_own_fns": 147
+   },
+   "sig": "A+C",
+   "action": "shared-boundary recon with DirLoader.cpp -- 7/9 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x82733668",
+    "hi": "0x82738458"
+   },
+   "cluster": {
+    "lo": "0x82733668",
+    "hi": "0x82738458",
+    "n_own": 9,
+    "own_substantive": 8,
+    "avg_spacing": "0x9BE"
+   },
+   "named": 9,
+   "substantive": 8,
+   "obj_defines": "8/9",
+   "sample": [
+    "?DataDir@Object@Hmx@@UAAPAVObjectDir@@XZ",
+    "?SaveType@Object@Hmx@@QAAXAAVBinStream@@@Z",
+    "?Save@Object@Hmx@@UAAXAAVBinStream@@@Z",
+    "?HandleType@Object@Hmx@@QAA?AVDataNode@@PAVDataArray@@@Z",
+    "?HandleProperty@Object@Hmx@@QAA?AVDataNode@@PAVDataArray@@0_N@Z",
+    "?PropertyClear@Object@Hmx@@QAAXPAVDataArray@@@Z"
+   ],
+   "location": "INTERLEAVE:DirLoader.cpp",
+   "flags": [
+    "scatter_class",
+    "interleave"
+   ],
+   "prev_pin": "Dir.cpp@[0x82728D00..0x8272FF10)",
+   "next_pin": "FlowEventListener.cpp@[0x827418D0..0x82741950)",
+   "est": "+4-18 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "Part",
+   "src": "Part.cpp",
+   "pin": {
+    "lo": "0x82433730",
+    "hi": "0x82439D8C",
+    "size": "0x665C"
+   },
+   "mf": 69,
+   "tf": 113,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/Part.obj",
+    "total_text": "0x10AEC",
+    "own_text": "0x9908",
+    "n_fns": 610,
+    "n_own_fns": 106
+   },
+   "sig": "C",
+   "action": "extend hi pin to [0x82433730..0x8243CAF0) (AUTO-BLOB; prev Part.cpp@[0x82433730..0x82439D8C) nxt PartLauncher.cpp@[0x8243CAF0..0x8243D468))",
+   "range": {
+    "lo": "0x82433730",
+    "hi": "0x8243CAF0"
+   },
+   "cluster": {
+    "lo": "0x8243B7D8",
+    "hi": "0x8243C698",
+    "n_own": 8,
+    "own_substantive": 7,
+    "avg_spacing": "0x21B"
+   },
+   "named": 8,
+   "substantive": 7,
+   "obj_defines": "8/8",
+   "sample": [
+    "?CheckBursts@RndParticleSys@@IAAMM@Z",
+    "?CreateParticles@RndParticleSys@@IAAXMMABVTransform@@@Z",
+    "?RunFastForward@RndParticleSys@@IAAXXZ",
+    "?UpdateParticles@RndParticleSys@@IAAXXZ",
+    "?DrawShowing@RndParticleSys@@UAAXXZ",
+    "?SetFrame@RndParticleSys@@UAAXMM@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "crosses_stub_farm:Accomplishment",
+    "crosses_stub_farm:AccomplishmentProgress"
+   ],
+   "prev_pin": "Part.cpp@[0x82433730..0x82439D8C)",
+   "next_pin": "PartLauncher.cpp@[0x8243CAF0..0x8243D468)",
+   "est": "+3-16 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "PostProc",
+   "src": "PostProc.cpp",
+   "pin": {
+    "lo": "0x8241C5D0",
+    "hi": "0x8241D3D8",
+    "size": "0xE08"
+   },
+   "mf": 2,
+   "tf": 10,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/PostProc.obj",
+    "total_text": "0x70C8",
+    "own_text": "0x4860",
+    "n_fns": 218,
+    "n_own_fns": 45
+   },
+   "sig": "A+C",
+   "action": "extend lo+hi pin to [0x8241C498..0x8241E900) (AUTO-BLOB; prev MessageTimer.cpp@[0x82415C78..0x82415CE8) nxt BaseMaterial.cpp@[0x82422B28..0x824237A0))",
+   "range": {
+    "lo": "0x8241C498",
+    "hi": "0x8241E900"
+   },
+   "cluster": {
+    "lo": "0x8241C498",
+    "hi": "0x8241E708",
+    "n_own": 7,
+    "own_substantive": 7,
+    "avg_spacing": "0x5BD"
+   },
+   "named": 7,
+   "substantive": 7,
+   "obj_defines": "7/7",
+   "sample": [
+    "?Select@RndPostProc@@UAAXXZ",
+    "?Unselect@RndPostProc@@UAAXXZ",
+    "?Current@RndPostProc@@SAPAV1@XZ",
+    "?DoPost@RndPostProc@@UAAXXZ",
+    "?Copy@RndPostProc@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?OnSelect@RndPostProc@@MAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "MessageTimer.cpp@[0x82415C78..0x82415CE8)",
+   "next_pin": "BaseMaterial.cpp@[0x82422B28..0x824237A0)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "Character",
+   "src": "Character.cpp",
+   "pin": {
+    "lo": "0x822911F0",
+    "hi": "0x82291238",
+    "size": "0x48"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/Character.obj",
+    "total_text": "0x1410C",
+    "own_text": "0x5004",
+    "n_fns": 1204,
+    "n_own_fns": 86
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x8235B1D0..0x8235F180) (AUTO-BLOB; prev TypeProps.cpp@[0x8235B0F0..0x8235B138) nxt CharBlendBone.cpp@[0x8235F180..0x8235F1E4))",
+   "range": {
+    "lo": "0x8235B1D0",
+    "hi": "0x8235F180"
+   },
+   "cluster": {
+    "lo": "0x8235B1D0",
+    "hi": "0x8235CCA0",
+    "n_own": 7,
+    "own_substantive": 7,
+    "avg_spacing": "0x478"
+   },
+   "named": 7,
+   "substantive": 7,
+   "obj_defines": "7/7",
+   "sample": [
+    "?ForceBlink@Character@@QAAXXZ",
+    "?EnableBlinks@Character@@QAAX_N0@Z",
+    "?SetFocusInterest@Character@@UAA_NPAVCharInterest@@H@Z",
+    "?SetInterestFilterFlags@Character@@UAAXH@Z",
+    "?Teleport@Character@@UAAXPAVWaypoint@@@Z",
+    "?AddedObject@Character@@MAAXPAVObject@Hmx@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:7"
+   ],
+   "prev_pin": "TypeProps.cpp@[0x8235B0F0..0x8235B138)",
+   "next_pin": "CharBlendBone.cpp@[0x8235F180..0x8235F1E4)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "CharIKFingers",
+   "src": "CharIKFingers.cpp",
+   "pin": {
+    "lo": "0x822FE498",
+    "hi": "0x822FE4DC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharIKFingers.obj",
+    "total_text": "0x71DC",
+    "own_text": "0x3808",
+    "n_fns": 279,
+    "n_own_fns": 36
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x8239E5A0..0x823A1D88) (AUTO-BLOB; prev FlowSwitchCase.cpp@[0x8239E1F8..0x8239E23C) nxt FlowRun.cpp@[0x823A1D88..0x823A1DCC))",
+   "range": {
+    "lo": "0x8239E5A0",
+    "hi": "0x823A1D88"
+   },
+   "cluster": {
+    "lo": "0x8239E5A0",
+    "hi": "0x823A06B0",
+    "n_own": 7,
+    "own_substantive": 7,
+    "avg_spacing": "0x582"
+   },
+   "named": 7,
+   "substantive": 7,
+   "obj_defines": "7/7",
+   "sample": [
+    "?FixSingleFinger@CharIKFingers@@IAAXPAVRndTransformable@@00@Z",
+    "?CalculateHandDest@CharIKFingers@@IAAXHH@Z",
+    "?MoveFinger@CharIKFingers@@IAAXW4FingerNum@1@@Z",
+    "?CalculateFingerDest@CharIKFingers@@IAAXW4FingerNum@1@@Z",
+    "?MeasureLengths@CharIKFingers@@QAAXXZ",
+    "?Save@CharIKFingers@@UAAXAAVBinStream@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "FlowSwitchCase.cpp@[0x8239E1F8..0x8239E23C)",
+   "next_pin": "FlowRun.cpp@[0x823A1D88..0x823A1DCC)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "Rnd_Xbox",
+   "src": "Rnd_Xbox.cpp",
+   "pin": {
+    "lo": "0x827143D0",
+    "hi": "0x8271799C",
+    "size": "0x35CC"
+   },
+   "mf": 36,
+   "tf": 93,
+   "obj": {
+    "path": "build/45410914/src/system/rnddx9/Rnd_Xbox.obj",
+    "total_text": "0x75B0",
+    "own_text": "0x286C",
+    "n_fns": 459,
+    "n_own_fns": 61
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x8270DD00..0x82710918) (AUTO-BLOB; prev SampleData.cpp@[0x8270D3A0..0x8270DBB0) nxt system/rnddx9/ShaderMgr.cpp@[0x82710918..0x82712160))",
+   "range": {
+    "lo": "0x8270DD00",
+    "hi": "0x82710918"
+   },
+   "cluster": {
+    "lo": "0x8270DD00",
+    "hi": "0x8270E650",
+    "n_own": 7,
+    "own_substantive": 7,
+    "avg_spacing": "0x18D"
+   },
+   "named": 7,
+   "substantive": 7,
+   "obj_defines": "0/7",
+   "sample": [
+    "?MakeDrawTarget@DxRnd@@UAAXXZ",
+    "?GetDeviceCaps@DxRnd@@QAAJPAU_D3DCAPS9@@@Z",
+    "?BitmapOrderForD3DFormat@DxRnd@@QAAHW4_D3DFORMAT@@@Z",
+    "?DrawLine@DxRnd@@UAAXABVVector3@@0ABVColor@Hmx@@_N@Z",
+    "?PreDeviceReset@DxRnd@@AAAXXZ",
+    "?PostDeviceReset@DxRnd@@AAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "obj_defines_none_yet"
+   ],
+   "prev_pin": "SampleData.cpp@[0x8270D3A0..0x8270DBB0)",
+   "next_pin": "system/rnddx9/ShaderMgr.cpp@[0x82710918..0x82712160)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "UIListSlot",
+   "src": "UIListSlot.cpp",
+   "pin": {
+    "lo": "0x82B605A0",
+    "hi": "0x82B60638",
+    "size": "0x98"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/UIListSlot.obj",
+    "total_text": "0x302C",
+    "own_text": "0xE74",
+    "n_fns": 219,
+    "n_own_fns": 24
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x827EFB08..0x827F11F0) (AUTO-BLOB; prev UIListMesh.cpp@[0x827EF028..0x827EF30C) nxt UIPicture.cpp@[0x827F11F0..0x827F1AE8))",
+   "range": {
+    "lo": "0x827EFB08",
+    "hi": "0x827F11F0"
+   },
+   "cluster": {
+    "lo": "0x827EFB08",
+    "hi": "0x827F06E8",
+    "n_own": 8,
+    "own_substantive": 6,
+    "avg_spacing": "0x1B2"
+   },
+   "named": 8,
+   "substantive": 6,
+   "obj_defines": "8/8",
+   "sample": [
+    "?Save@UIListSlot@@UAAXAAVBinStream@@@Z",
+    "?SyncProperty@UIListSlot@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "?CompleteScroll@UIListSlot@@UAAXABVUIListState@@H@Z",
+    "?StartScroll@UIListSlot@@UAAXH_N@Z",
+    "?ClearElements@UIListSlot@@AAAXXZ",
+    "?CreateElements@UIListSlot@@UAAXPAVUIList@@H@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "UIListMesh.cpp@[0x827EF028..0x827EF30C)",
+   "next_pin": "UIPicture.cpp@[0x827F11F0..0x827F1AE8)",
+   "est": "+3-16 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "Synth",
+   "src": "Synth.cpp",
+   "pin": {
+    "lo": "0x82B2E770",
+    "hi": "0x82B2EE00",
+    "size": "0x690"
+   },
+   "mf": 2,
+   "tf": 5,
+   "obj": {
+    "path": "build/45410914/src/system/synth_xbox/Synth.obj",
+    "total_text": "0x4108",
+    "own_text": "0x364",
+    "n_fns": 369,
+    "n_own_fns": 39
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x826DEAB0..0x826E3660) (AUTO-BLOB; prev DepthBuffer3D.cpp@[0x826D9F60..0x826DE1E0) nxt UITrigger.cpp@[0x826EEF28..0x826EEF98))",
+   "range": {
+    "lo": "0x826DEAB0",
+    "hi": "0x826E3660"
+   },
+   "cluster": {
+    "lo": "0x826DEAB0",
+    "hi": "0x826E3460",
+    "n_own": 7,
+    "own_substantive": 6,
+    "avg_spacing": "0xC48"
+   },
+   "named": 7,
+   "substantive": 6,
+   "obj_defines": "1/7",
+   "sample": [
+    "?NewStream@Synth@@UAAPAVStream@@PBDMM_N@Z",
+    "?InitSecurity@Synth@@UAAXXZ",
+    "?OnNumConnectedMics@Synth@@AAA?AVDataNode@@PBVDataArray@@@Z",
+    "?CreatePitchShift@Synth@@UAAPAVFxSendPitchShift@@HW4SendChannels@@@Z",
+    "?StopAllSfx@Synth@@QAAX_N@Z",
+    "?Init@Synth@@UAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:4"
+   ],
+   "prev_pin": "DepthBuffer3D.cpp@[0x826D9F60..0x826DE1E0)",
+   "next_pin": "UITrigger.cpp@[0x826EEF28..0x826EEF98)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "PropKeys",
+   "src": "PropKeys.cpp",
+   "pin": {
+    "lo": "0x82649C38",
+    "hi": "0x8264B5F8",
+    "size": "0x19C0"
+   },
+   "mf": 17,
+   "tf": 51,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/PropKeys.obj",
+    "total_text": "0x134A4",
+    "own_text": "0x12DC",
+    "n_fns": 1011,
+    "n_own_fns": 43
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x8240ED70..0x824137A0) (AUTO-BLOB; prev Poll.cpp@[0x8240EA08..0x8240EB60) nxt PropAnim.cpp@[0x824137A0..0x82415C78))",
+   "range": {
+    "lo": "0x8240ED70",
+    "hi": "0x824137A0"
+   },
+   "cluster": {
+    "lo": "0x8240ED70",
+    "hi": "0x82410808",
+    "n_own": 7,
+    "own_substantive": 6,
+    "avg_spacing": "0x46E"
+   },
+   "named": 7,
+   "substantive": 6,
+   "obj_defines": "7/7",
+   "sample": [
+    "?SetKey@PropKeys@@UAAHM@Z",
+    "?Print@PropKeys@@QAAXXZ",
+    "?SetPropExceptionID@PropKeys@@QAAXXZ",
+    "?SetInterpHandler@PropKeys@@QAAXVSymbol@@@Z",
+    "?SetTarget@PropKeys@@QAAXPAVObject@Hmx@@@Z",
+    "?Save@PropKeys@@UAAXAAVBinStream@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:7"
+   ],
+   "prev_pin": "Poll.cpp@[0x8240EA08..0x8240EB60)",
+   "next_pin": "PropAnim.cpp@[0x824137A0..0x82415C78)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "NetCacheMgr_Xbox",
+   "src": "NetCacheMgr_Xbox.cpp",
+   "pin": {
+    "lo": "0x827B1D00",
+    "hi": "0x827B1FE0",
+    "size": "0x2E0"
+   },
+   "mf": 5,
+   "tf": 10,
+   "obj": {
+    "path": "build/45410914/src/system/utl/NetCacheMgr_Xbox.obj",
+    "total_text": "0x61C",
+    "own_text": "0x354",
+    "n_fns": 28,
+    "n_own_fns": 11
+   },
+   "sig": "C",
+   "action": "shared-boundary recon with DataPointMgr.cpp -- 6/6 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x827A83D8",
+    "hi": "0x827A8940"
+   },
+   "cluster": {
+    "lo": "0x827A83D8",
+    "hi": "0x827A8940",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x114"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "0/6",
+   "sample": [
+    "?IsReady@NetCacheMgr@@QBA_NXZ",
+    "?IsLocalFile@NetCacheMgr@@QBA_NPBD@Z",
+    "?SetFail@NetCacheMgr@@IAAXW4NetCacheMgrFailType@@@Z",
+    "?IsUnloadStateDone@NetCacheMgr@@ABA_NXZ",
+    "?DeleteNetCacheLoader@NetCacheMgr@@QAAXPAVNetCacheLoader@@@Z",
+    "?DeleteNetLoader@NetCacheMgr@@QAAXPAVNetLoader@@@Z"
+   ],
+   "location": "INTERLEAVE:DataPointMgr.cpp",
+   "flags": [
+    "interleave",
+    "obj_defines_none_yet",
+    "overlaps_cluster_of:NetCacheMgr"
+   ],
+   "prev_pin": "UTF8.cpp@[0x827A7448..0x827A7DAC)",
+   "next_pin": "NetCacheMgr.cpp@[0x827A8AC8..0x827A98C4)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "UIGuide",
+   "src": "UIGuide.cpp",
+   "pin": {
+    "lo": "0x82801070",
+    "hi": "0x82804770",
+    "size": "0x3700"
+   },
+   "mf": 19,
+   "tf": 166,
+   "obj": {
+    "path": "build/45410914/src/system/ui/UIGuide.obj",
+    "total_text": "0xCF4",
+    "own_text": "0x720",
+    "n_fns": 48,
+    "n_own_fns": 12
+   },
+   "sig": "B",
+   "action": "carve LabelNumberTicker TU out of UIGuide pin [0x82802F30..0x828036E8] (.s recon to draw the boundary; home unit LabelNumberTicker currently pinned at 0x82582F78)",
+   "range": {
+    "lo": "0x82802F30",
+    "hi": "0x828036E8"
+   },
+   "named": 6,
+   "substantive": 6,
+   "sample": [
+    "?Save@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
+    "?UpdateDisplay@LabelNumberTicker@@IAAXXZ",
+    "?Poll@LabelNumberTicker@@UAAXXZ",
+    "?SetDesiredValue@LabelNumberTicker@@AAAXH@Z",
+    "?CountUp@LabelNumberTicker@@QAAXXZ",
+    "?SyncProperty@LabelNumberTicker@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ],
+   "location": "INSIDE_PIN:UIGuide.cpp",
+   "flags": [
+    "carve",
+    "overlaps_cluster_of:LabelNumberTicker"
+   ],
+   "carve_class": "LabelNumberTicker",
+   "carve_home_unit": "LabelNumberTicker.cpp",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "PropAnim",
+   "src": "PropAnim.cpp",
+   "pin": {
+    "lo": "0x824137A0",
+    "hi": "0x82415C78",
+    "size": "0x24D8"
+   },
+   "mf": 51,
+   "tf": 75,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/PropAnim.obj",
+    "total_text": "0x14370",
+    "own_text": "0x5938",
+    "n_fns": 1179,
+    "n_own_fns": 66
+   },
+   "sig": "A+C",
+   "action": "extend hi after relocating sliver(s) MessageTimer pin to [0x824137A0..0x82416800) (AUTO-BLOB; prev MessageTimer.cpp@[0x82415C78..0x82415CE8) nxt PostProc.cpp@[0x8241C5D0..0x8241D3D8))",
+   "range": {
+    "lo": "0x824137A0",
+    "hi": "0x82416800"
+   },
+   "cluster": {
+    "lo": "0x82415E68",
+    "hi": "0x82416608",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x186"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "6/6",
+   "sample": [
+    "?Save@RndPropAnim@@UAAXAAVBinStream@@@Z",
+    "?RemoveKeys@RndPropAnim@@QAA_NPAVObject@Hmx@@PAVDataArray@@@Z",
+    "?OnGetIndexFromFrame@RndPropAnim@@QAA?AVDataNode@@PBVDataArray@@@Z",
+    "?OnGetValueFromIndex@RndPropAnim@@QAA?AVDataNode@@PBVDataArray@@@Z",
+    "?OnGetValueFromFrame@RndPropAnim@@QAA?AVDataNode@@PBVDataArray@@@Z",
+    "?ChangePropPath@RndPropAnim@@QAA_NPAVObject@Hmx@@PAVDataArray@@1@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "requires_sliver_eviction"
+   ],
+   "prev_pin": "MessageTimer.cpp@[0x82415C78..0x82415CE8)",
+   "next_pin": "PostProc.cpp@[0x8241C5D0..0x8241D3D8)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "LabelNumberTicker",
+   "src": "LabelNumberTicker.cpp",
+   "pin": {
+    "lo": "0x82582F78",
+    "hi": "0x82582FD0",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/LabelNumberTicker.obj",
+    "total_text": "0x48B8",
+    "own_text": "0x180C",
+    "n_fns": 257,
+    "n_own_fns": 37
+   },
+   "sig": "A+C",
+   "action": "shared-boundary recon with UIGuide.cpp -- 6/6 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x82802F30",
+    "hi": "0x828036E8"
+   },
+   "cluster": {
+    "lo": "0x82802F30",
+    "hi": "0x828036E8",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x18B"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "6/6",
+   "sample": [
+    "?Save@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
+    "?UpdateDisplay@LabelNumberTicker@@IAAXXZ",
+    "?Poll@LabelNumberTicker@@UAAXXZ",
+    "?SetDesiredValue@LabelNumberTicker@@AAAXH@Z",
+    "?CountUp@LabelNumberTicker@@QAAXXZ",
+    "?SyncProperty@LabelNumberTicker@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ],
+   "location": "INTERLEAVE:UIGuide.cpp",
+   "flags": [
+    "interleave"
+   ],
+   "prev_pin": "Screenshot.cpp@[0x827FF650..0x827FF990)",
+   "next_pin": "rtti.cpp@[0x82804770..0x82804F10)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "CameraManager",
+   "src": "CameraManager.cpp",
+   "pin": {
+    "lo": "0x824A6D08",
+    "hi": "0x824A83C0",
+    "size": "0x16B8"
+   },
+   "mf": 23,
+   "tf": 47,
+   "obj": {
+    "path": "build/45410914/src/system/world/CameraManager.obj",
+    "total_text": "0xAC6C",
+    "own_text": "0x3CAC",
+    "n_fns": 621,
+    "n_own_fns": 53
+   },
+   "sig": "A+C",
+   "action": "extend hi after relocating sliver(s) RhythmDetectorGroup,CharClipGroup pin to [0x824A6D08..0x824AB028) (AUTO-BLOB; prev CharClipGroup.cpp@[0x824A8450..0x824A8498) nxt CameraShot.cpp@[0x824AB028..0x824B3818))",
+   "range": {
+    "lo": "0x824A6D08",
+    "hi": "0x824AB028"
+   },
+   "cluster": {
+    "lo": "0x824A8F18",
+    "hi": "0x824A9AC0",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x254"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "6/6",
+   "sample": [
+    "?FindOrAddCategory@CameraManager@@AAAAAV?$ObjPtrList@VCamShot@@VObjectDir@@@@VSymbol@@@Z",
+    "?FindCameraShot@CameraManager@@QAAPAVCamShot@@VSymbol@@ABV?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?NumCameraShots@CameraManager@@QAAHVSymbol@@ABV?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@PAV?$list@PAVCamShot@@V?$StlNodeAlloc@PAVCamShot@@@stlpmtx_std@@@4@@Z",
+    "?Randomize@CameraManager@@QAAXXZ",
+    "?OnFindCameraShot@CameraManager@@AAA?AVDataNode@@PAVDataArray@@@Z",
+    "?OnNumCameraShots@CameraManager@@AAA?AVDataNode@@PAVDataArray@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "requires_sliver_eviction"
+   ],
+   "prev_pin": "CharClipGroup.cpp@[0x824A8450..0x824A8498)",
+   "next_pin": "CameraShot.cpp@[0x824AB028..0x824B3818)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "UITrigger",
+   "src": "UITrigger.cpp",
+   "pin": {
+    "lo": "0x826EEF28",
+    "hi": "0x826EEF98",
+    "size": "0x70"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/UITrigger.obj",
+    "total_text": "0x65C8",
+    "own_text": "0x1538",
+    "n_fns": 371,
+    "n_own_fns": 32
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x827FFC70..0x82801070) (AUTO-BLOB; prev Screenshot.cpp@[0x827FF650..0x827FF990) nxt UIGuide.cpp@[0x82801070..0x82804770))",
+   "range": {
+    "lo": "0x827FFC70",
+    "hi": "0x82801070"
+   },
+   "cluster": {
+    "lo": "0x827FFC70",
+    "hi": "0x82800428",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x18B"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "6/6",
+   "sample": [
+    "?Copy@UITrigger@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?IsDone@UITrigger@@QBA_NXZ",
+    "?Save@UITrigger@@UAAXAAVBinStream@@@Z",
+    "?IsBlocking@UITrigger@@QBA_NXZ",
+    "?StopAnimations@UITrigger@@QAAXXZ",
+    "?Poll@UITrigger@@UAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "Screenshot.cpp@[0x827FF650..0x827FF990)",
+   "next_pin": "UIGuide.cpp@[0x82801070..0x82804770)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "NetCacheMgr",
+   "src": "NetCacheMgr.cpp",
+   "pin": {
+    "lo": "0x827A8AC8",
+    "hi": "0x827A98C4",
+    "size": "0xDFC"
+   },
+   "mf": 0,
+   "tf": 33,
+   "obj": {
+    "path": "build/45410914/src/system/utl/NetCacheMgr.obj",
+    "total_text": "0x3CF4",
+    "own_text": "0x1E68",
+    "n_fns": 197,
+    "n_own_fns": 38
+   },
+   "sig": "C",
+   "action": "shared-boundary recon with DataPointMgr.cpp -- 6/6 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x827A83D8",
+    "hi": "0x827A8940"
+   },
+   "cluster": {
+    "lo": "0x827A83D8",
+    "hi": "0x827A8940",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x114"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "6/6",
+   "sample": [
+    "?IsReady@NetCacheMgr@@QBA_NXZ",
+    "?IsLocalFile@NetCacheMgr@@QBA_NPBD@Z",
+    "?SetFail@NetCacheMgr@@IAAXW4NetCacheMgrFailType@@@Z",
+    "?IsUnloadStateDone@NetCacheMgr@@ABA_NXZ",
+    "?DeleteNetCacheLoader@NetCacheMgr@@QAAXPAVNetCacheLoader@@@Z",
+    "?DeleteNetLoader@NetCacheMgr@@QAAXPAVNetLoader@@@Z"
+   ],
+   "location": "INTERLEAVE:DataPointMgr.cpp",
+   "flags": [
+    "interleave",
+    "overlaps_cluster_of:NetCacheMgr_Xbox"
+   ],
+   "prev_pin": "UTF8.cpp@[0x827A7448..0x827A7DAC)",
+   "next_pin": "NetCacheMgr.cpp@[0x827A8AC8..0x827A98C4)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "PlatformMgr",
+   "src": "PlatformMgr.cpp",
+   "pin": {
+    "lo": "0x82501880",
+    "hi": "0x82503258",
+    "size": "0x19D8"
+   },
+   "mf": 44,
+   "tf": 65,
+   "obj": {
+    "path": "build/45410914/src/system/os/PlatformMgr.obj",
+    "total_text": "0x3210",
+    "own_text": "0x2310",
+    "n_fns": 78,
+    "n_own_fns": 21
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x82508EC0..0x8250AFE8) (AUTO-BLOB; prev System_Xbox.cpp@[0x825085E8..0x825085FC) nxt ContentMgr.cpp@[0x8250AFE8..0x8250B558))",
+   "range": {
+    "lo": "0x82508EC0",
+    "hi": "0x8250AFE8"
+   },
+   "cluster": {
+    "lo": "0x82508EC0",
+    "hi": "0x82509570",
+    "n_own": 6,
+    "own_substantive": 6,
+    "avg_spacing": "0x156"
+   },
+   "named": 6,
+   "substantive": 6,
+   "obj_defines": "0/6",
+   "sample": [
+    "?SetPadContext@PlatformMgr@@QBAXHHH@Z",
+    "?SetPadPresence@PlatformMgr@@QBAXHH@Z",
+    "?IsInParty@PlatformMgr@@QAA_NXZ",
+    "?IsInPartyWithOthers@PlatformMgr@@QAA_NXZ",
+    "?SetScreenSaver@PlatformMgr@@QAAX_N@Z",
+    "?SetPadProperty@PlatformMgr@@QBAXHHPBG@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "obj_defines_none_yet"
+   ],
+   "prev_pin": "System_Xbox.cpp@[0x825085E8..0x825085FC)",
+   "next_pin": "ContentMgr.cpp@[0x8250AFE8..0x8250B558)",
+   "est": "+3-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "DataArray",
+   "src": "DataArray.cpp",
+   "pin": {
+    "lo": "0x82727460",
+    "hi": "0x82728D00",
+    "size": "0x18A0"
+   },
+   "mf": 32,
+   "tf": 49,
+   "obj": {
+    "path": "build/45410914/src/system/obj/DataArray.obj",
+    "total_text": "0x35B0",
+    "own_text": "0x2714",
+    "n_fns": 167,
+    "n_own_fns": 78
+   },
+   "sig": "C",
+   "action": "shared-boundary recon with DataNode.cpp -- 6/6 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x82725D28",
+    "hi": "0x827271A0"
+   },
+   "cluster": {
+    "lo": "0x82725D28",
+    "hi": "0x827271A0",
+    "n_own": 6,
+    "own_substantive": 5,
+    "avg_spacing": "0x418"
+   },
+   "named": 6,
+   "substantive": 5,
+   "obj_defines": "6/6",
+   "sample": [
+    "?Node@DataArray@@QAAAAVDataNode@@H@Z",
+    "?SetFileLine@DataArray@@QAAXVSymbol@@H@Z",
+    "?SetFile@DataArray@@SAXVSymbol@@@Z",
+    "?Insert@DataArray@@QAAXHABVDataNode@@@Z",
+    "?Resize@DataArray@@QAAXH@Z"
+   ],
+   "location": "INTERLEAVE:DataNode.cpp",
+   "flags": [
+    "scatter_class",
+    "interleave"
+   ],
+   "prev_pin": "Msg.cpp@[0x82724370..0x827243AC)",
+   "next_pin": "DataArray.cpp@[0x82727460..0x82728D00)",
+   "est": "+2-12 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "LightPresetManager",
+   "src": "LightPresetManager.cpp",
+   "pin": {
+    "lo": "0x82596468",
+    "hi": "0x825964C0",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/world/LightPresetManager.obj",
+    "total_text": "0x3624",
+    "own_text": "0xC40",
+    "n_fns": 257,
+    "n_own_fns": 15
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x824A59D8..0x824A6740) (AUTO-BLOB; prev FlowOutPort.cpp@[0x824A5990..0x824A59D4) nxt HamMaster.cpp@[0x824A6740..0x824A6758))",
+   "range": {
+    "lo": "0x824A59D8",
+    "hi": "0x824A6740"
+   },
+   "cluster": {
+    "lo": "0x824A59D8",
+    "hi": "0x824A5F20",
+    "n_own": 5,
+    "own_substantive": 5,
+    "avg_spacing": "0x152"
+   },
+   "named": 5,
+   "substantive": 5,
+   "obj_defines": "5/5",
+   "sample": [
+    "?Enter@LightPresetManager@@QAAXXZ",
+    "?ForcePreset@LightPresetManager@@QAAXPAVLightPreset@@M@Z",
+    "?Poll@LightPresetManager@@QAAXXZ",
+    "?OnToggleLightingEvents@LightPresetManager@@IAA?AVDataNode@@PAVDataArray@@@Z",
+    "?OnForcePreset@LightPresetManager@@IAA?AVDataNode@@PAVDataArray@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "FlowOutPort.cpp@[0x824A5990..0x824A59D4)",
+   "next_pin": "HamMaster.cpp@[0x824A6740..0x824A6758)",
+   "est": "+2-10 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "Song",
+   "src": "Song.cpp",
+   "pin": {
+    "lo": "0x827A0820",
+    "hi": "0x827A1708",
+    "size": "0xEE8"
+   },
+   "mf": 29,
+   "tf": 35,
+   "obj": {
+    "path": "build/45410914/src/system/utl/Song.obj",
+    "total_text": "0x75E8",
+    "own_text": "0x38A8",
+    "n_fns": 425,
+    "n_own_fns": 60
+   },
+   "sig": "A+C",
+   "action": "extend lo+hi pin to [0x827A0660..0x827A3A08) (AUTO-BLOB; prev BinStream.cpp@[0x8279FE58..0x827A0424) nxt StringTable.cpp@[0x827A3A08..0x827A4520))",
+   "range": {
+    "lo": "0x827A0660",
+    "hi": "0x827A3A08"
+   },
+   "cluster": {
+    "lo": "0x827A0660",
+    "hi": "0x827A2D08",
+    "n_own": 5,
+    "own_substantive": 5,
+    "avg_spacing": "0x9AA"
+   },
+   "named": 5,
+   "substantive": 5,
+   "obj_defines": "5/5",
+   "sample": [
+    "?Play@Song@@QAAXXZ",
+    "?Pause@Song@@QAAXXZ",
+    "?Unload@Song@@UAAXXZ",
+    "?AddSection@Song@@AAAXVSymbol@@M@Z",
+    "?JumpTo@Song@@AAAXVSymbol@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "BinStream.cpp@[0x8279FE58..0x827A0424)",
+   "next_pin": "StringTable.cpp@[0x827A3A08..0x827A4520)",
+   "est": "+2-10 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "InlineHelp",
+   "src": "InlineHelp.cpp",
+   "pin": {
+    "lo": "0x823024E8",
+    "hi": "0x82303530",
+    "size": "0x1048"
+   },
+   "mf": 29,
+   "tf": 38,
+   "obj": {
+    "path": "build/45410914/src/system/ui/InlineHelp.obj",
+    "total_text": "0x8860",
+    "own_text": "0x28B8",
+    "n_fns": 489,
+    "n_own_fns": 57
+   },
+   "sig": "A+C",
+   "action": "shared-boundary recon with CrowdAudio.cpp -- 5/7 entries inside its pin; interleave risk (Object/DirLoader precedent fe603cc: expect COMDAT interleave refutation unless per-fn .s proves contiguity)",
+   "range": {
+    "lo": "0x823018E0",
+    "hi": "0x82304880"
+   },
+   "cluster": {
+    "lo": "0x823018E0",
+    "hi": "0x82304880",
+    "n_own": 7,
+    "own_substantive": 4,
+    "avg_spacing": "0x7F0"
+   },
+   "named": 7,
+   "substantive": 4,
+   "obj_defines": "7/7",
+   "sample": [
+    "?SetToken@ActionElement@InlineHelp@@QAAXVSymbol@@_N@Z",
+    "?SetString@ActionElement@InlineHelp@@QAAXPBD_N@Z",
+    "?ClearActionToken@InlineHelp@@QAAXW4JoypadAction@@@Z",
+    "?SetActionToken@InlineHelp@@QAAXW4JoypadAction@@AAVDataNode@@@Z"
+   ],
+   "location": "INTERLEAVE:CrowdAudio.cpp",
+   "flags": [
+    "interleave"
+   ],
+   "prev_pin": "HamPhotoDisplay.cpp@[0x822FEA88..0x822FEAE0)",
+   "next_pin": "HamListRibbon.cpp@[0x82308EA0..0x82308EF0)",
+   "est": "+2-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "ButtonHolder",
+   "src": "ButtonHolder.cpp",
+   "pin": {
+    "lo": "0x82793998",
+    "hi": "0x82793A24",
+    "size": "0x8C"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/ButtonHolder.obj",
+    "total_text": "0x39B4",
+    "own_text": "0xED8",
+    "n_fns": 217,
+    "n_own_fns": 9
+   },
+   "sig": "A+C",
+   "action": "extend hi pin to [0x82793998..0x82794F10) (AUTO-BLOB; prev ButtonHolder.cpp@[0x82793998..0x82793A24) nxt MetaMusicScene.cpp@[0x82794F10..0x82795448))",
+   "range": {
+    "lo": "0x82793998",
+    "hi": "0x82794F10"
+   },
+   "cluster": {
+    "lo": "0x82793A28",
+    "hi": "0x82794A78",
+    "n_own": 5,
+    "own_substantive": 4,
+    "avg_spacing": "0x414"
+   },
+   "named": 5,
+   "substantive": 4,
+   "obj_defines": "5/5",
+   "sample": [
+    "?OnMsg@ButtonHolder@@AAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+    "?Poll@ButtonHolder@@QAAXXZ",
+    "?SetHoldActions@ButtonHolder@@QAAXAAV?$vector@VActionRec@@V?$StlNodeAlloc@VActionRec@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?ClearHeldButtons@ButtonHolder@@QAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "ButtonHolder.cpp@[0x82793998..0x82793A24)",
+   "next_pin": "MetaMusicScene.cpp@[0x82794F10..0x82795448)",
+   "est": "+2-10 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "MusicLibrary",
+   "src": "MusicLibrary.cpp",
+   "pin": {
+    "lo": "0x82527920",
+    "hi": "0x8252CD38",
+    "size": "0x5418"
+   },
+   "mf": 89,
+   "tf": 160,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/MusicLibrary.obj",
+    "total_text": "0x101B4",
+    "own_text": "0x82CC",
+    "n_fns": 854,
+    "n_own_fns": 141
+   },
+   "sig": "C",
+   "action": "extend hi after relocating sliver(s) ErrorNode pin to [0x82527920..0x8252E7A0) (AUTO-BLOB; prev ErrorNode.cpp@[0x8252CD38..0x8252CD9C) nxt Sequence.cpp@[0x82532110..0x82532168))",
+   "range": {
+    "lo": "0x82527920",
+    "hi": "0x8252E7A0"
+   },
+   "cluster": {
+    "lo": "0x8252CEF0",
+    "hi": "0x8252E5A0",
+    "n_own": 4,
+    "own_substantive": 4,
+    "avg_spacing": "0x790"
+   },
+   "named": 4,
+   "substantive": 4,
+   "obj_defines": "4/4",
+   "sample": [
+    "?OnUnload@MusicLibrary@@QAAXXZ",
+    "?ClearSetlist@MusicLibrary@@QAAXXZ",
+    "?SyncLoad@MusicLibrary@@UAAXAAVBinStream@@I@Z",
+    "?SelectHighlightedNode@MusicLibrary@@QAAXPAVLocalBandUser@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "requires_sliver_eviction"
+   ],
+   "prev_pin": "ErrorNode.cpp@[0x8252CD38..0x8252CD9C)",
+   "next_pin": "Sequence.cpp@[0x82532110..0x82532168)",
+   "est": "+2-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "CalibrationPanel",
+   "src": "CalibrationPanel.cpp",
+   "pin": {
+    "lo": "0x825ED848",
+    "hi": "0x825EF598",
+    "size": "0x1D50"
+   },
+   "mf": 17,
+   "tf": 45,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/CalibrationPanel.obj",
+    "total_text": "0x7080",
+    "own_text": "0x2F74",
+    "n_fns": 343,
+    "n_own_fns": 42
+   },
+   "sig": "C",
+   "action": "extend lo pin to [0x825EC708..0x825EF598) (AUTO-BLOB; prev Mat.cpp@[0x825EA080..0x825EA148) nxt CalibrationPanel.cpp@[0x825ED848..0x825EF598))",
+   "range": {
+    "lo": "0x825EC708",
+    "hi": "0x825EF598"
+   },
+   "cluster": {
+    "lo": "0x825EC708",
+    "hi": "0x825EC890",
+    "n_own": 4,
+    "own_substantive": 4,
+    "avg_spacing": "0x82"
+   },
+   "named": 4,
+   "substantive": 4,
+   "obj_defines": "4/4",
+   "sample": [
+    "?StartAudio@CalibrationPanel@@QAAXXZ",
+    "?TerminateHwCalibrationState@CalibrationPanel@@QAAXXZ",
+    "?GetAudioTimeMs@CalibrationPanel@@QBAMXZ",
+    "?GetTestRep@CalibrationPanel@@QBAHXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "Mat.cpp@[0x825EA080..0x825EA148)",
+   "next_pin": "CalibrationPanel.cpp@[0x825ED848..0x825EF598)",
+   "est": "+2-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "TexBlender",
+   "src": "TexBlender.cpp",
+   "pin": {
+    "lo": "0x82477160",
+    "hi": "0x824822D8",
+    "size": "0xB178"
+   },
+   "mf": 70,
+   "tf": 281,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/TexBlender.obj",
+    "total_text": "0x58DC",
+    "own_text": "0x0",
+    "n_fns": 312,
+    "n_own_fns": 0
+   },
+   "sig": "B",
+   "action": "carve kdTreeNode TU out of TexBlender pin [0x82479F60..0x8247A970] (.s recon to draw the boundary; no pinned home unit)",
+   "range": {
+    "lo": "0x82479F60",
+    "hi": "0x8247A970"
+   },
+   "named": 4,
+   "substantive": 3,
+   "sample": [
+    "?EvaluateSplit@kdTreeNode@?$kdTree@VTriangle@@@@QBAMABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@EM@Z",
+    "?FindSplit_Mean@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?FindSplit_SAH@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "location": "INSIDE_PIN:TexBlender.cpp",
+   "flags": [
+    "carve"
+   ],
+   "carve_class": "kdTreeNode",
+   "carve_home_unit": null,
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "CharBoneDir",
+   "src": "CharBoneDir.cpp",
+   "pin": {
+    "lo": "0x823A29A8",
+    "hi": "0x823A49E4",
+    "size": "0x203C"
+   },
+   "mf": 35,
+   "tf": 58,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharBoneDir.obj",
+    "total_text": "0x6A98",
+    "own_text": "0x23E4",
+    "n_fns": 401,
+    "n_own_fns": 40
+   },
+   "sig": "C",
+   "action": "extend lo+hi pin to [0x823A2468..0x823A6128) (AUTO-BLOB; prev FlowRun.cpp@[0x823A1D88..0x823A1DCC) nxt FlowTimer.cpp@[0x823A6128..0x823A616C))",
+   "range": {
+    "lo": "0x823A2468",
+    "hi": "0x823A6128"
+   },
+   "cluster": {
+    "lo": "0x823A2468",
+    "hi": "0x823A4F80",
+    "n_own": 4,
+    "own_substantive": 3,
+    "avg_spacing": "0xE5D"
+   },
+   "named": 4,
+   "substantive": 3,
+   "obj_defines": "3/4",
+   "sample": [
+    "?Terminate@CharBoneDir@@SAXXZ",
+    "?FindBoneDirResource@CharBoneDir@@SAPAV1@PBD@Z",
+    "?SyncProperty@CharBoneDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "FlowRun.cpp@[0x823A1D88..0x823A1DCC)",
+   "next_pin": "FlowTimer.cpp@[0x823A6128..0x823A616C)",
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "CharClip",
+   "src": "CharClip.cpp",
+   "pin": {
+    "lo": "0x8236A918",
+    "hi": "0x8236E060",
+    "size": "0x3748"
+   },
+   "mf": 73,
+   "tf": 103,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharClip.obj",
+    "total_text": "0xD6B8",
+    "own_text": "0x5418",
+    "n_fns": 730,
+    "n_own_fns": 111
+   },
+   "sig": "C",
+   "action": "extend lo pin to [0x8236A4B8..0x8236E060) (AUTO-BLOB; prev CharForeTwist.cpp@[0x82366F18..0x82366F5C) nxt CharClip.cpp@[0x8236A918..0x8236E060))",
+   "range": {
+    "lo": "0x8236A4B8",
+    "hi": "0x8236E060"
+   },
+   "cluster": {
+    "lo": "0x8236A4B8",
+    "hi": "0x8236A8C0",
+    "n_own": 4,
+    "own_substantive": 3,
+    "avg_spacing": "0x158"
+   },
+   "named": 4,
+   "substantive": 3,
+   "obj_defines": "4/4",
+   "sample": [
+    "?FindFirstNode@CharClip@@QBAPBUCharGraphNode@@PAV1@M@Z",
+    "?FindLastNode@CharClip@@QBAPBUCharGraphNode@@PAV1@M@Z",
+    "?AllocSize@CharClip@@QAAHXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "CharForeTwist.cpp@[0x82366F18..0x82366F5C)",
+   "next_pin": "CharClip.cpp@[0x8236A918..0x8236E060)",
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "CharIKHead",
+   "src": "CharIKHead.cpp",
+   "pin": {
+    "lo": "0x8233D2E8",
+    "hi": "0x8233D32C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharIKHead.obj",
+    "total_text": "0x5674",
+    "own_text": "0x2054",
+    "n_fns": 262,
+    "n_own_fns": 30
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x823ADCF0..0x823B0318) (AUTO-BLOB; prev FlowOnStop.cpp@[0x823ADA98..0x823ADADC) nxt CharPosConstraint.cpp@[0x823B0318..0x823B0D38))",
+   "range": {
+    "lo": "0x823ADCF0",
+    "hi": "0x823B0318"
+   },
+   "cluster": {
+    "lo": "0x823ADCF0",
+    "hi": "0x823AF610",
+    "n_own": 4,
+    "own_substantive": 3,
+    "avg_spacing": "0x860"
+   },
+   "named": 4,
+   "substantive": 3,
+   "obj_defines": "4/4",
+   "sample": [
+    "?Save@CharIKHead@@UAAXAAVBinStream@@@Z",
+    "?PollDeps@CharIKHead@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
+    "?UpdatePoints@CharIKHead@@IAAX_N@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "FlowOnStop.cpp@[0x823ADA98..0x823ADADC)",
+   "next_pin": "CharPosConstraint.cpp@[0x823B0318..0x823B0D38)",
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": false
+  },
+  {
+   "unit": "TypeProps",
+   "src": "TypeProps.cpp",
+   "pin": {
+    "lo": "0x8235B0F0",
+    "hi": "0x8235B138",
+    "size": "0x48"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/obj/TypeProps.obj",
+    "total_text": "0x222C",
+    "own_text": "0x1050",
+    "n_fns": 169,
+    "n_own_fns": 16
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x82740E40..0x82741D88) (AUTO-BLOB; prev Object.cpp@[0x82737FE8..0x82738160) nxt SkeletonDir.cpp@[0x82741D88..0x82741E44))",
+   "range": {
+    "lo": "0x82740E40",
+    "hi": "0x82741D88"
+   },
+   "cluster": {
+    "lo": "0x82740E40",
+    "hi": "0x82741A08",
+    "n_own": 4,
+    "own_substantive": 3,
+    "avg_spacing": "0x3ED"
+   },
+   "named": 4,
+   "substantive": 3,
+   "obj_defines": "4/4",
+   "sample": [
+    "?Size@TypeProps@@QBAHXZ",
+    "?ClearAll@TypeProps@@AAAXXZ",
+    "?InsertArrayValue@TypeProps@@QAAXVSymbol@@HABVDataNode@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "Object.cpp@[0x82737FE8..0x82738160)",
+   "next_pin": "SkeletonDir.cpp@[0x82741D88..0x82741E44)",
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "HeldButtonPanel",
+   "src": "HeldButtonPanel.cpp",
+   "pin": {
+    "lo": "0x8261C5C8",
+    "hi": "0x8261C60C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/HeldButtonPanel.obj",
+    "total_text": "0x34A8",
+    "own_text": "0x111C",
+    "n_fns": 208,
+    "n_own_fns": 16
+   },
+   "sig": "A+C",
+   "action": "relocate pin to [0x82788338..0x82789950) (AUTO-BLOB; prev MemcardMgr_Xbox.cpp@[0x82786D20..0x82787DA8) nxt CreditsPanel.cpp@[0x82789950..0x8278A908))",
+   "range": {
+    "lo": "0x82788338",
+    "hi": "0x82789950"
+   },
+   "cluster": {
+    "lo": "0x82788338",
+    "hi": "0x827894D8",
+    "n_own": 4,
+    "own_substantive": 3,
+    "avg_spacing": "0x5E0"
+   },
+   "named": 4,
+   "substantive": 3,
+   "obj_defines": "4/4",
+   "sample": [
+    "?Poll@HeldButtonPanel@@UAAXXZ",
+    "?OnMsg@HeldButtonPanel@@AAA?AVDataNode@@ABVProcessedButtonDownMsg@@@Z",
+    "?Exit@HeldButtonPanel@@UAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "MemcardMgr_Xbox.cpp@[0x82786D20..0x82787DA8)",
+   "next_pin": "CreditsPanel.cpp@[0x82789950..0x8278A908)",
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  },
+  {
+   "unit": "SongMetadata",
+   "src": "SongMetadata.cpp",
+   "pin": {
+    "lo": "0x82785848",
+    "hi": "0x82785C90",
+    "size": "0x448"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/SongMetadata.obj",
+    "total_text": "0x1520",
+    "own_text": "0xDB8",
+    "n_fns": 55,
+    "n_own_fns": 13
+   },
+   "sig": "C",
+   "action": "extend lo pin to [0x827855A8..0x82785C90) (AUTO-BLOB; prev MovieSys.cpp@[0x827839C8..0x82783A00) nxt SongMetadata.cpp@[0x82785848..0x82785C90))",
+   "range": {
+    "lo": "0x827855A8",
+    "hi": "0x82785C90"
+   },
+   "cluster": {
+    "lo": "0x827855A8",
+    "hi": "0x82785750",
+    "n_own": 4,
+    "own_substantive": 3,
+    "avg_spacing": "0x8D"
+   },
+   "named": 4,
+   "substantive": 3,
+   "obj_defines": "4/4",
+   "sample": [
+    "?InitSongMetadata@SongMetadata@@AAAXXZ",
+    "?GameOrigin@SongMetadata@@QBA?AVSymbol@@XZ",
+    "?PreviewTimes@SongMetadata@@QBAXAAM0@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [],
+   "prev_pin": "MovieSys.cpp@[0x827839C8..0x82783A00)",
+   "next_pin": "SongMetadata.cpp@[0x82785848..0x82785C90)",
+   "est": "+1-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "excluded": true
+  }
+ ],
+ "filtered": [
+  {
+   "unit": "GuitarController",
+   "src": "GuitarController.cpp",
+   "pin": {
+    "lo": "0x82777E90",
+    "hi": "0x8277D790",
+    "size": "0x5900"
+   },
+   "mf": 15,
+   "tf": 166,
+   "obj": {
+    "path": "build/45410914/src/system/beatmatch/GuitarController.obj",
+    "total_text": "0x2ADC",
+    "own_text": "0x1218",
+    "n_fns": 183,
+    "n_own_fns": 16
+   },
+   "sig": "B",
+   "reason": "F1_port_depth",
+   "detail": "raw over-pin but in-range census is 6 own vs 4 foreign (own_frac 0.60) -- pin correct, deficit is port depth"
+  },
+  {
+   "unit": "FFT",
+   "src": "FFT.cpp",
+   "pin": {
+    "lo": "0x82B47B38",
+    "hi": "0x82B4A52C",
+    "size": "0x29F4"
+   },
+   "mf": 0,
+   "tf": 12,
+   "obj": {
+    "path": "build/45410914/src/system/synth_xbox/FFT.obj",
+    "total_text": "0x940",
+    "own_text": "0x0",
+    "n_fns": 4,
+    "n_own_fns": 0
+   },
+   "sig": "B",
+   "reason": "F1_port_depth",
+   "detail": "raw over-pin but in-range census is 3 own vs 0 foreign (own_frac 1.00) -- pin correct, deficit is port depth"
+  },
+  {
+   "unit": "CacheMgr_Xbox",
+   "src": "CacheMgr_Xbox.cpp",
+   "pin": {
+    "lo": "0x827B2028",
+    "hi": "0x827B35E8",
+    "size": "0x15C0"
+   },
+   "mf": 21,
+   "tf": 40,
+   "obj": {
+    "path": "build/45410914/src/system/utl/CacheMgr_Xbox.obj",
+    "total_text": "0x1508",
+    "own_text": "0x11C0",
+    "n_fns": 45,
+    "n_own_fns": 18
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x827A9B08..0x827A9CD0] sits in CacheMgr's pin which legitimately owns class(es) ['CacheMgr']"
+  },
+  {
+   "unit": "keygen_xbox",
+   "src": "keygen_xbox.cpp",
+   "pin": {
+    "lo": "0x82706A20",
+    "hi": "0x827091A8",
+    "size": "0x2788"
+   },
+   "mf": 13,
+   "tf": 92,
+   "obj": {
+    "path": "build/45410914/src/keygen_xbox.obj",
+    "total_text": "0x998",
+    "own_text": "0x0",
+    "n_fns": 20,
+    "n_own_fns": 0
+   },
+   "sig": "B",
+   "reason": "F1_port_depth",
+   "detail": "raw over-pin but in-range census is 18 own vs 2 foreign (own_frac 0.90) -- pin correct, deficit is port depth"
+  },
+  {
+   "unit": "RhythmBattlePlayer",
+   "src": "RhythmBattlePlayer.cpp",
+   "pin": {
+    "lo": "0x82319810",
+    "hi": "0x82319A04",
+    "size": "0x1F4"
+   },
+   "mf": 0,
+   "tf": 3,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/RhythmBattlePlayer.obj",
+    "total_text": "0xA2FC",
+    "own_text": "0x56BC",
+    "n_fns": 322,
+    "n_own_fns": 43
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "AsyncFile_Win",
+   "src": "AsyncFile_Win.cpp",
+   "pin": {
+    "lo": "0x82521E88",
+    "hi": "0x825221D0",
+    "size": "0x348"
+   },
+   "mf": 5,
+   "tf": 7,
+   "obj": {
+    "path": "build/45410914/src/system/os/AsyncFile_Win.obj",
+    "total_text": "0x98C",
+    "own_text": "0x8A4",
+    "n_fns": 21,
+    "n_own_fns": 19
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x82519BF0..0x8251A748] sits in AsyncFile's pin which legitimately owns class(es) ['AsyncFile']"
+  },
+  {
+   "unit": "ContentMgr_Xbox",
+   "src": "ContentMgr_Xbox.cpp",
+   "pin": {
+    "lo": "0x8250C4D0",
+    "hi": "0x8250E3D0",
+    "size": "0x1F00"
+   },
+   "mf": 27,
+   "tf": 64,
+   "obj": {
+    "path": "build/45410914/src/system/os/ContentMgr_Xbox.obj",
+    "total_text": "0x40B8",
+    "own_text": "0x1A50",
+    "n_fns": 297,
+    "n_own_fns": 45
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x8250B0B0..0x8250B5C0] sits in ContentMgr's pin which legitimately owns class(es) ['ContentMgr']"
+  },
+  {
+   "unit": "HamMove",
+   "src": "HamMove.cpp",
+   "pin": {
+    "lo": "0x82295480",
+    "hi": "0x822954E4",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamMove.obj",
+    "total_text": "0xEA64",
+    "own_text": "0x3E54",
+    "n_fns": 834,
+    "n_own_fns": 66
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamNavProvider",
+   "src": "HamNavProvider.cpp",
+   "pin": {
+    "lo": "0x8229A2A0",
+    "hi": "0x8229A300",
+    "size": "0x60"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamNavProvider.obj",
+    "total_text": "0x65C8",
+    "own_text": "0x2184",
+    "n_fns": 358,
+    "n_own_fns": 45
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamDirector",
+   "src": "HamDirector.cpp",
+   "pin": {
+    "lo": "0x822AC718",
+    "hi": "0x822AC778",
+    "size": "0x60"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamDirector.obj",
+    "total_text": "0x225EC",
+    "own_text": "0x12864",
+    "n_fns": 1382,
+    "n_own_fns": 153
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamPhotoDisplay",
+   "src": "HamPhotoDisplay.cpp",
+   "pin": {
+    "lo": "0x822FEA88",
+    "hi": "0x822FEAE0",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamPhotoDisplay.obj",
+    "total_text": "0x3820",
+    "own_text": "0x104C",
+    "n_fns": 240,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamRibbon",
+   "src": "HamRibbon.cpp",
+   "pin": {
+    "lo": "0x82301F64",
+    "hi": "0x823020F0",
+    "size": "0x18C"
+   },
+   "mf": 0,
+   "tf": 5,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamRibbon.obj",
+    "total_text": "0x6480",
+    "own_text": "0x2544",
+    "n_fns": 324,
+    "n_own_fns": 29
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamListRibbon",
+   "src": "HamListRibbon.cpp",
+   "pin": {
+    "lo": "0x82308EA0",
+    "hi": "0x82308EF0",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamListRibbon.obj",
+    "total_text": "0xAE3C",
+    "own_text": "0x3AF8",
+    "n_fns": 580,
+    "n_own_fns": 48
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "GestureMgr",
+   "src": "GestureMgr.cpp",
+   "pin": {
+    "lo": "0x82309C98",
+    "hi": "0x82309CF0",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/GestureMgr.obj",
+    "total_text": "0x5034",
+    "own_text": "0x2CE8",
+    "n_fns": 229,
+    "n_own_fns": 47
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamScrollSpeedIndicator",
+   "src": "HamScrollSpeedIndicator.cpp",
+   "pin": {
+    "lo": "0x8230CC38",
+    "hi": "0x8230CC88",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamScrollSpeedIndicator.obj",
+    "total_text": "0x3784",
+    "own_text": "0x11C0",
+    "n_fns": 235,
+    "n_own_fns": 33
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HollaBackMinigame",
+   "src": "HollaBackMinigame.cpp",
+   "pin": {
+    "lo": "0x82319A08",
+    "hi": "0x82319AAC",
+    "size": "0xA4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HollaBackMinigame.obj",
+    "total_text": "0x88DC",
+    "own_text": "0x5590",
+    "n_fns": 308,
+    "n_own_fns": 36
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamNavList",
+   "src": "HamNavList.cpp",
+   "pin": {
+    "lo": "0x82329000",
+    "hi": "0x82329044",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamNavList.obj",
+    "total_text": "0x10824",
+    "own_text": "0x7FD4",
+    "n_fns": 774,
+    "n_own_fns": 98
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamLabel",
+   "src": "HamLabel.cpp",
+   "pin": {
+    "lo": "0x8232DB70",
+    "hi": "0x8232DC5C",
+    "size": "0xEC"
+   },
+   "mf": 1,
+   "tf": 3,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamLabel.obj",
+    "total_text": "0x383C",
+    "own_text": "0x15BC",
+    "n_fns": 224,
+    "n_own_fns": 37
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamWardrobe",
+   "src": "HamWardrobe.cpp",
+   "pin": {
+    "lo": "0x823325C8",
+    "hi": "0x82332620",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamWardrobe.obj",
+    "total_text": "0x86B0",
+    "own_text": "0x2DB8",
+    "n_fns": 438,
+    "n_own_fns": 42
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "SkeletonClip",
+   "src": "SkeletonClip.cpp",
+   "pin": {
+    "lo": "0x82334A40",
+    "hi": "0x82334A98",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/SkeletonClip.obj",
+    "total_text": "0x8D80",
+    "own_text": "0x399C",
+    "n_fns": 505,
+    "n_own_fns": 73
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamCharacter",
+   "src": "HamCharacter.cpp",
+   "pin": {
+    "lo": "0x827ECDC0",
+    "hi": "0x827ED040",
+    "size": "0x280"
+   },
+   "mf": 0,
+   "tf": 10,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamCharacter.obj",
+    "total_text": "0xA510",
+    "own_text": "0x4B2C",
+    "n_fns": 554,
+    "n_own_fns": 77
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "PoseFatalities",
+   "src": "PoseFatalities.cpp",
+   "pin": {
+    "lo": "0x82358390",
+    "hi": "0x823583E8",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/PoseFatalities.obj",
+    "total_text": "0x7914",
+    "own_text": "0x4C04",
+    "n_fns": 304,
+    "n_own_fns": 34
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "MoveDir",
+   "src": "MoveDir.cpp",
+   "pin": {
+    "lo": "0x82358910",
+    "hi": "0x82358968",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/MoveDir.obj",
+    "total_text": "0x13A6C",
+    "own_text": "0x8858",
+    "n_fns": 1049,
+    "n_own_fns": 85
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamPlayerData",
+   "src": "HamPlayerData.cpp",
+   "pin": {
+    "lo": "0x8237FBD8",
+    "hi": "0x8237FC74",
+    "size": "0x9C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamPlayerData.obj",
+    "total_text": "0x3CBC",
+    "own_text": "0x1AFC",
+    "n_fns": 172,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "Rnd_NG",
+   "src": "Rnd_NG.cpp",
+   "pin": {
+    "lo": "0x82386B70",
+    "hi": "0x82386BCC",
+    "size": "0x5C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/Rnd_NG.obj",
+    "total_text": "0x2C34",
+    "own_text": "0x230",
+    "n_fns": 232,
+    "n_own_fns": 23
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x823FC210..0x82402FA0] sits in Rnd's pin which legitimately owns class(es) ['Rnd']"
+  },
+  {
+   "unit": "HamIKEffector",
+   "src": "HamIKEffector.cpp",
+   "pin": {
+    "lo": "0x823B44A0",
+    "hi": "0x823B44E4",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamIKEffector.obj",
+    "total_text": "0x880C",
+    "own_text": "0x2ED0",
+    "n_fns": 387,
+    "n_own_fns": 51
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "RhythmBattle",
+   "src": "RhythmBattle.cpp",
+   "pin": {
+    "lo": "0x82276000",
+    "hi": "0x822760F0",
+    "size": "0xF0"
+   },
+   "mf": 0,
+   "tf": 3,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/RhythmBattle.obj",
+    "total_text": "0xEBBC",
+    "own_text": "0x97F0",
+    "n_fns": 437,
+    "n_own_fns": 40
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamMaster",
+   "src": "HamMaster.cpp",
+   "pin": {
+    "lo": "0x824A6740",
+    "hi": "0x824A6758",
+    "size": "0x18"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamMaster.obj",
+    "total_text": "0x334C",
+    "own_text": "0x1C78",
+    "n_fns": 198,
+    "n_own_fns": 25
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "MoveVariant",
+   "src": "MoveVariant.cpp",
+   "pin": {
+    "lo": "0x82588000",
+    "hi": "0x82588464",
+    "size": "0x464"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/MoveVariant.obj",
+    "total_text": "0x3468",
+    "own_text": "0x1DB0",
+    "n_fns": 151,
+    "n_own_fns": 46
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamCamShot",
+   "src": "HamCamShot.cpp",
+   "pin": {
+    "lo": "0x82635720",
+    "hi": "0x826357BC",
+    "size": "0x9C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamCamShot.obj",
+    "total_text": "0xDA5C",
+    "own_text": "0x5FD0",
+    "n_fns": 669,
+    "n_own_fns": 118
+   },
+   "sig": "A+C",
+   "reason": "F5_dc3_only_interleave",
+   "detail": "dc3-only class cluster [0x8229F178..0x822A34A0] inside BandCamShot.cpp's pin = content-transfer naming, not a TU"
+  },
+  {
+   "unit": "HamRegulate",
+   "src": "HamRegulate.cpp",
+   "pin": {
+    "lo": "0x82742D38",
+    "hi": "0x82742E48",
+    "size": "0x110"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamRegulate.obj",
+    "total_text": "0x35C4",
+    "own_text": "0x12A8",
+    "n_fns": 185,
+    "n_own_fns": 29
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamGameData",
+   "src": "HamGameData.cpp",
+   "pin": {
+    "lo": "0x8277DE30",
+    "hi": "0x8277DE98",
+    "size": "0x68"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamGameData.obj",
+    "total_text": "0x4484",
+    "own_text": "0x15F8",
+    "n_fns": 213,
+    "n_own_fns": 30
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "SpotlightDrawer_NG",
+   "src": "SpotlightDrawer_NG.cpp",
+   "pin": {
+    "lo": "0x824BE7A0",
+    "hi": "0x824C19F8",
+    "size": "0x3258"
+   },
+   "mf": 26,
+   "tf": 55,
+   "obj": {
+    "path": "build/45410914/src/system/world/SpotlightDrawer_NG.obj",
+    "total_text": "0x5C0C",
+    "own_text": "0x29F8",
+    "n_fns": 331,
+    "n_own_fns": 61
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x824C19F8..0x824C4C98] sits in SpotlightDrawer's pin which legitimately owns class(es) ['SpotlightDrawer']"
+  },
+  {
+   "unit": "HamDriver",
+   "src": "HamDriver.cpp",
+   "pin": {
+    "lo": "0x82A6ACF0",
+    "hi": "0x82A6AD34",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamDriver.obj",
+    "total_text": "0x4DC4",
+    "own_text": "0x1D2C",
+    "n_fns": 320,
+    "n_own_fns": 63
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "Rnd_Xbox",
+   "src": "Rnd_Xbox.cpp",
+   "pin": {
+    "lo": "0x827143D0",
+    "hi": "0x8271799C",
+    "size": "0x35CC"
+   },
+   "mf": 36,
+   "tf": 93,
+   "obj": {
+    "path": "build/45410914/src/system/rnddx9/Rnd_Xbox.obj",
+    "total_text": "0x75B0",
+    "own_text": "0x286C",
+    "n_fns": 459,
+    "n_own_fns": 61
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x823FC210..0x82402FA0] sits in Rnd's pin which legitimately owns class(es) ['Rnd']"
+  },
+  {
+   "unit": "FxSendReverb",
+   "src": "system/synth_xbox/FxSendReverb.cpp",
+   "pin": {
+    "lo": "0x82B38FD0",
+    "hi": "0x82B38FF8",
+    "size": "0x28"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/synth_xbox/FxSendReverb.obj",
+    "total_text": "0x388",
+    "own_text": "0x4",
+    "n_fns": 20,
+    "n_own_fns": 1
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x827015E0..0x82701940] sits in FxSendReverb's pin which legitimately owns class(es) ['FxSendReverb']"
+  },
+  {
+   "unit": "MemcardMgr",
+   "src": "MemcardMgr.cpp",
+   "pin": {
+    "lo": "0x82B2BCB8",
+    "hi": "0x82B2BD10",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/MemcardMgr.obj",
+    "total_text": "0xFF4",
+    "own_text": "0x110",
+    "n_fns": 60,
+    "n_own_fns": 5
+   },
+   "sig": "C",
+   "reason": "F4_class_home",
+   "detail": "cluster [0x82786D20..0x82787C58] sits in MemcardMgr_Xbox's pin which legitimately owns class(es) ['MemcardMgr']"
+  },
+  {
+   "unit": "MoveParent",
+   "src": "MoveParent.cpp",
+   "pin": {
+    "lo": "0x827697C8",
+    "hi": "0x82769810",
+    "size": "0x48"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/MoveParent.obj",
+    "total_text": "0x3D20",
+    "own_text": "0x1DEC",
+    "n_fns": 337,
+    "n_own_fns": 108
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamIKSkeleton",
+   "src": "HamIKSkeleton.cpp",
+   "pin": {
+    "lo": "0x822B0968",
+    "hi": "0x822B09F0",
+    "size": "0x88"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamIKSkeleton.obj",
+    "total_text": "0x24A0",
+    "own_text": "0xB40",
+    "n_fns": 146,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "HamSkeletonConverter",
+   "src": "HamSkeletonConverter.cpp",
+   "pin": {
+    "lo": "0x82675418",
+    "hi": "0x82675480",
+    "size": "0x68"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/HamSkeletonConverter.obj",
+    "total_text": "0x5B68",
+    "own_text": "0x2C40",
+    "n_fns": 269,
+    "n_own_fns": 43
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  },
+  {
+   "unit": "MoveGraph",
+   "src": "MoveGraph.cpp",
+   "pin": {
+    "lo": "0x8231B9A8",
+    "hi": "0x8231BA48",
+    "size": "0xA0"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/MoveGraph.obj",
+    "total_text": "0x4220",
+    "own_text": "0x10B4",
+    "n_fns": 353,
+    "n_own_fns": 18
+   },
+   "sig": "A",
+   "reason": "F5_dc3_only",
+   "detail": "no in-binary displaced cluster and no rb3-Wii oracle source -- DC3-only content-transfer pin, not a candidate"
+  }
+ ],
+ "deferred": [
+  {
+   "unit": "RockCentral",
+   "src": "RockCentral.cpp",
+   "pin": {
+    "lo": "0x824E8468",
+    "hi": "0x824EA844",
+    "size": "0x23DC"
+   },
+   "mf": 79,
+   "tf": 82,
+   "obj": {
+    "path": "build/45410914/src/band3/net_band/RockCentral.obj",
+    "total_text": "0x14F98",
+    "own_text": "0xEBEC",
+    "n_fns": 830,
+    "n_own_fns": 90
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xEBEC >> pin 0x23DC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x11B1C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Debug.cpp@[0x824FC360..0x824FE310)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "BandWardrobe",
+   "src": "BandWardrobe.cpp",
+   "pin": {
+    "lo": "0x8231C988",
+    "hi": "0x8231E258",
+    "size": "0x18D0"
+   },
+   "mf": 14,
+   "tf": 33,
+   "obj": {
+    "path": "build/45410914/src/system/bandobj/BandWardrobe.obj",
+    "total_text": "0xDFC0",
+    "own_text": "0x5C94",
+    "n_fns": 605,
+    "n_own_fns": 80
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x5C94 >> pin 0x18D0 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4B48). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "BandCharDesc.cpp@[0x82322DA0..0x82324884)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "BandCharDesc",
+   "src": "BandCharDesc.cpp",
+   "pin": {
+    "lo": "0x82322DA0",
+    "hi": "0x82324884",
+    "size": "0x1AE4"
+   },
+   "mf": 17,
+   "tf": 39,
+   "obj": {
+    "path": "build/45410914/src/system/bandobj/BandCharDesc.obj",
+    "total_text": "0x9514",
+    "own_text": "0x4C9C",
+    "n_fns": 379,
+    "n_own_fns": 112
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x4C9C >> pin 0x1AE4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x477C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamNavList.cpp@[0x82329000..0x82329044)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StreakMeter",
+   "src": "StreakMeter.cpp",
+   "pin": {
+    "lo": "0x822C9020",
+    "hi": "0x822C97C8",
+    "size": "0x7A8"
+   },
+   "mf": 0,
+   "tf": 11,
+   "obj": {
+    "path": "build/45410914/src/system/bandobj/StreakMeter.obj",
+    "total_text": "0x99CC",
+    "own_text": "0x2F44",
+    "n_fns": 492,
+    "n_own_fns": 46
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2F44 >> pin 0x7A8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x15E0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharLipSync.cpp@[0x822CADA8..0x822CB7C8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "OvershellSlot",
+   "src": "OvershellSlot.cpp",
+   "pin": {
+    "lo": "0x825C10D8",
+    "hi": "0x825C3A44",
+    "size": "0x296C"
+   },
+   "mf": 13,
+   "tf": 19,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/OvershellSlot.obj",
+    "total_text": "0xF1F8",
+    "own_text": "0xB734",
+    "n_fns": 438,
+    "n_own_fns": 140
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xB734 >> pin 0x296C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xD4AC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FixedSizeSaveable.cpp@[0x825D0EF0..0x825D0F34)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "Flare",
+   "src": "Flare.cpp",
+   "pin": {
+    "lo": "0x82463B28",
+    "hi": "0x82463F38",
+    "size": "0x410"
+   },
+   "mf": 3,
+   "tf": 9,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/Flare.obj",
+    "total_text": "0x3ED8",
+    "own_text": "0x1CBC",
+    "n_fns": 211,
+    "n_own_fns": 33
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1CBC >> pin 0x410 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x2F28). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Line.cpp@[0x82466E60..0x82469A50)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StreamNull",
+   "src": "StreamNull.cpp",
+   "pin": {
+    "lo": "0x826FBD98",
+    "hi": "0x82700E18",
+    "size": "0x5080"
+   },
+   "mf": 15,
+   "tf": 190,
+   "obj": {
+    "path": "build/45410914/src/system/synth/StreamNull.obj",
+    "total_text": "0xDA0",
+    "own_text": "0x488",
+    "n_fns": 115,
+    "n_own_fns": 43
+   },
+   "sig": "B",
+   "reason": "sparse_scatter",
+   "detail": "over-pin but in-range census is sparse scatter (4 own / 7 foreign, no coherent foreign cluster) -- needs fingerprint/Ghidra ID, not a boundary move (AsyncFileHolmes class)"
+  },
+  {
+   "unit": "CharUpperTwist",
+   "src": "CharUpperTwist.cpp",
+   "pin": {
+    "lo": "0x823B45D0",
+    "hi": "0x823B482C",
+    "size": "0x25C"
+   },
+   "mf": 2,
+   "tf": 2,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharUpperTwist.obj",
+    "total_text": "0x201C",
+    "own_text": "0xDB0",
+    "n_fns": 118,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xDB0 >> pin 0x25C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x3F4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowIf.cpp@[0x823B4C20..0x823B523C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowIf",
+   "src": "FlowIf.cpp",
+   "pin": {
+    "lo": "0x823B4C20",
+    "hi": "0x823B523C",
+    "size": "0x61C"
+   },
+   "mf": 3,
+   "tf": 18,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowIf.obj",
+    "total_text": "0x228C",
+    "own_text": "0x1674",
+    "n_fns": 89,
+    "n_own_fns": 22
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1674 >> pin 0x61C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xA24). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "PracticeSection.cpp@[0x823B5C60..0x823B5CA4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "UIListWidget",
+   "src": "UIListWidget.cpp",
+   "pin": {
+    "lo": "0x827FBA80",
+    "hi": "0x827FBB08",
+    "size": "0x88"
+   },
+   "mf": 1,
+   "tf": 3,
+   "obj": {
+    "path": "build/45410914/src/system/ui/UIListWidget.obj",
+    "total_text": "0x5304",
+    "own_text": "0x1D20",
+    "n_fns": 267,
+    "n_own_fns": 29
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1D20 >> pin 0x88 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x3B48). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Screenshot.cpp@[0x827FF650..0x827FF990)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowMultiSetProperty",
+   "src": "FlowMultiSetProperty.cpp",
+   "pin": {
+    "lo": "0x82262960",
+    "hi": "0x822629B0",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowMultiSetProperty.obj",
+    "total_text": "0x587C",
+    "own_text": "0xBEC",
+    "n_fns": 366,
+    "n_own_fns": 22
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xBEC >> pin 0x50 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x3C0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Memory_Xbox.cpp@[0x82262D70..0x82263544)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "SkeletonViz",
+   "src": "SkeletonViz.cpp",
+   "pin": {
+    "lo": "0x82264FE8",
+    "hi": "0x8226508C",
+    "size": "0xA4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/SkeletonViz.obj",
+    "total_text": "0x55EC",
+    "own_text": "0x2650",
+    "n_fns": 252,
+    "n_own_fns": 42
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2650 >> pin 0xA4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x57C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharBonesMeshes.cpp@[0x82265608..0x82266CE0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "SampleInst",
+   "src": "SampleInst.cpp",
+   "pin": {
+    "lo": "0x82291E08",
+    "hi": "0x82291E6C",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/synth/SampleInst.obj",
+    "total_text": "0x20B8",
+    "own_text": "0xBAC",
+    "n_fns": 141,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xBAC >> pin 0x64 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x3614). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamMove.cpp@[0x82295480..0x822954E4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharInterest",
+   "src": "CharInterest.cpp",
+   "pin": {
+    "lo": "0x8229D760",
+    "hi": "0x8229D7B0",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharInterest.obj",
+    "total_text": "0x2AF4",
+    "own_text": "0x160C",
+    "n_fns": 128,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x160C >> pin 0x50 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x18F0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "BandCamShot.cpp@[0x8229F0A0..0x822A71D8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "VorbisReader",
+   "src": "VorbisReader.cpp",
+   "pin": {
+    "lo": "0x822A71D8",
+    "hi": "0x822A727C",
+    "size": "0xA4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/synth/VorbisReader.obj",
+    "total_text": "0x1F50",
+    "own_text": "0x1450",
+    "n_fns": 126,
+    "n_own_fns": 39
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1450 >> pin 0xA4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x67C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "TexMovie.cpp@[0x822A78F8..0x822A7904)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "TexMovie",
+   "src": "TexMovie.cpp",
+   "pin": {
+    "lo": "0x822A78F8",
+    "hi": "0x822A7904",
+    "size": "0xC"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/movie/TexMovie.obj",
+    "total_text": "0x3BB0",
+    "own_text": "0x1944",
+    "n_fns": 196,
+    "n_own_fns": 36
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1944 >> pin 0xC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4E14). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamDirector.cpp@[0x822AC718..0x822AC778)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharCuff",
+   "src": "CharCuff.cpp",
+   "pin": {
+    "lo": "0x822AE1E0",
+    "hi": "0x822AE230",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharCuff.obj",
+    "total_text": "0x36E8",
+    "own_text": "0x16E8",
+    "n_fns": 150,
+    "n_own_fns": 24
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x16E8 >> pin 0x50 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1018). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CrazeHollaback.cpp@[0x822AF248..0x822AF2C8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "SongLayout",
+   "src": "SongLayout.cpp",
+   "pin": {
+    "lo": "0x822B5DC8",
+    "hi": "0x822B5E2C",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/SongLayout.obj",
+    "total_text": "0x8D2C",
+    "own_text": "0x1ED8",
+    "n_fns": 527,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1ED8 >> pin 0x64 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x18CC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharCollide.cpp@[0x822B76F8..0x822B7D54)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharMeshHide",
+   "src": "CharMeshHide.cpp",
+   "pin": {
+    "lo": "0x822C1E58",
+    "hi": "0x822C1E9C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharMeshHide.obj",
+    "total_text": "0x32E4",
+    "own_text": "0x984",
+    "n_fns": 173,
+    "n_own_fns": 20
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x984 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x774). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "AmbientOcclusion.cpp@[0x822C2610..0x822C2690)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "LiveCameraInput",
+   "src": "LiveCameraInput.cpp",
+   "pin": {
+    "lo": "0x8230D1D8",
+    "hi": "0x8230D230",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/LiveCameraInput.obj",
+    "total_text": "0x6224",
+    "own_text": "0x239C",
+    "n_fns": 394,
+    "n_own_fns": 59
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x239C >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xEB0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharacterTest.cpp@[0x8230E0E0..0x8230E308)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharacterTest",
+   "src": "CharacterTest.cpp",
+   "pin": {
+    "lo": "0x8230E0E0",
+    "hi": "0x8230E308",
+    "size": "0x228"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharacterTest.obj",
+    "total_text": "0x801C",
+    "own_text": "0x30A4",
+    "n_fns": 391,
+    "n_own_fns": 21
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x30A4 >> pin 0x228 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xDF8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CameraTilt.cpp@[0x8230F100..0x8230F158)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowTrigger",
+   "src": "FlowTrigger.cpp",
+   "pin": {
+    "lo": "0x823154D0",
+    "hi": "0x8231553C",
+    "size": "0x6C"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowTrigger.obj",
+    "total_text": "0x5118",
+    "own_text": "0x21BC",
+    "n_fns": 281,
+    "n_own_fns": 33
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x21BC >> pin 0x6C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x336C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharIKHand.cpp@[0x823188A8..0x823188EC)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharIKHand",
+   "src": "CharIKHand.cpp",
+   "pin": {
+    "lo": "0x823188A8",
+    "hi": "0x823188EC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharIKHand.obj",
+    "total_text": "0x8F94",
+    "own_text": "0x3808",
+    "n_fns": 373,
+    "n_own_fns": 34
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x3808 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xF24). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "RhythmBattlePlayer.cpp@[0x82319810..0x82319A04)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharLipSync",
+   "src": "CharLipSync.cpp",
+   "pin": {
+    "lo": "0x822CADA8",
+    "hi": "0x822CB7C8",
+    "size": "0xA20"
+   },
+   "mf": 4,
+   "tf": 19,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharLipSync.obj",
+    "total_text": "0xA060",
+    "own_text": "0x3194",
+    "n_fns": 582,
+    "n_own_fns": 108
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x3194 >> pin 0xA20 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "XLSPConnection.cpp@[0x822CB7C8..0x822CB814)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "Watcher",
+   "src": "Watcher.cpp",
+   "pin": {
+    "lo": "0x82336030",
+    "hi": "0x823360A0",
+    "size": "0x70"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/Watcher.obj",
+    "total_text": "0x1920",
+    "own_text": "0x9DC",
+    "n_fns": 84,
+    "n_own_fns": 9
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x9DC >> pin 0x70 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x38F8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "UILabel.cpp@[0x82339998..0x823399F4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "UILabel",
+   "src": "UILabel.cpp",
+   "pin": {
+    "lo": "0x82339998",
+    "hi": "0x823399F4",
+    "size": "0x5C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/UILabel.obj",
+    "total_text": "0xB3D8",
+    "own_text": "0x47BC",
+    "n_fns": 503,
+    "n_own_fns": 72
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x47BC >> pin 0x5C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x3454). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "AnimFilter.cpp@[0x8233CE48..0x8233CEBC)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharBones",
+   "src": "CharBones.cpp",
+   "pin": {
+    "lo": "0x82399850",
+    "hi": "0x8239C1D8",
+    "size": "0x2988"
+   },
+   "mf": 22,
+   "tf": 37,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharBones.obj",
+    "total_text": "0x4D0C",
+    "own_text": "0x236C",
+    "n_fns": 212,
+    "n_own_fns": 31
+   },
+   "sig": "C",
+   "action": "extend lo pin to [0x82399588..0x8239C1D8) (AUTO-BLOB; prev CharUtl.cpp@[0x82398858..0x823991E8) nxt CharBones.cpp@[0x82399850..0x8239C1D8))",
+   "range": {
+    "lo": "0x82399588",
+    "hi": "0x8239C1D8"
+   },
+   "cluster": {
+    "lo": "0x82399588",
+    "hi": "0x82399668",
+    "n_own": 4,
+    "own_substantive": 4,
+    "avg_spacing": "0x4A"
+   },
+   "named": 4,
+   "substantive": 4,
+   "obj_defines": "4/4",
+   "sample": [
+    "?Zero@CharBones@@QAAXXZ",
+    "?TypeSize@CharBones@@QBAHH@Z",
+    "?RecomputeSizes@CharBones@@IAAXXZ",
+    "?SetCompression@CharBones@@QAAXW4CompressionType@1@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "stub_farm_risk"
+   ],
+   "prev_pin": "CharUtl.cpp@[0x82398858..0x823991E8)",
+   "next_pin": "CharBones.cpp@[0x82399850..0x8239C1D8)",
+   "est": "+2-8 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "F6_stub_farm"
+  },
+  {
+   "unit": "SkeletonUpdate",
+   "src": "SkeletonUpdate.cpp",
+   "pin": {
+    "lo": "0x82350038",
+    "hi": "0x82350088",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/SkeletonUpdate.obj",
+    "total_text": "0x3828",
+    "own_text": "0x10E0",
+    "n_fns": 222,
+    "n_own_fns": 20
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x10E0 >> pin 0x50 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1CA8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "StubCameraInput.cpp@[0x82351D30..0x82351EB0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StarsDisplay",
+   "src": "StarsDisplay.cpp",
+   "pin": {
+    "lo": "0x82358C90",
+    "hi": "0x82358CE8",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/StarsDisplay.obj",
+    "total_text": "0x3F8C",
+    "own_text": "0x132C",
+    "n_fns": 241,
+    "n_own_fns": 36
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x132C >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x2408). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "TypeProps.cpp@[0x8235B0F0..0x8235B138)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharBlendBone",
+   "src": "CharBlendBone.cpp",
+   "pin": {
+    "lo": "0x8235F180",
+    "hi": "0x8235F1E4",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharBlendBone.obj",
+    "total_text": "0x41DC",
+    "own_text": "0x1260",
+    "n_fns": 218,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1260 >> pin 0x64 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x5704). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharDriver.cpp@[0x823648E8..0x82366EC4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharForeTwist",
+   "src": "CharForeTwist.cpp",
+   "pin": {
+    "lo": "0x82366F18",
+    "hi": "0x82366F5C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharForeTwist.obj",
+    "total_text": "0x2580",
+    "own_text": "0xF2C",
+    "n_fns": 133,
+    "n_own_fns": 24
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xF2C >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x39BC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharClip.cpp@[0x8236A918..0x8236E060)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharSignalApplier",
+   "src": "CharSignalApplier.cpp",
+   "pin": {
+    "lo": "0x82377048",
+    "hi": "0x8237708C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharSignalApplier.obj",
+    "total_text": "0x4394",
+    "own_text": "0x1064",
+    "n_fns": 229,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1064 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xF3C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Morph.cpp@[0x82377FC8..0x82378720)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowAnimate",
+   "src": "FlowAnimate.cpp",
+   "pin": {
+    "lo": "0x82385F78",
+    "hi": "0x82385FBC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowAnimate.obj",
+    "total_text": "0x4B14",
+    "own_text": "0x2584",
+    "n_fns": 207,
+    "n_own_fns": 32
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2584 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xBB4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Rnd_NG.cpp@[0x82386B70..0x82386BCC)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharLookAt",
+   "src": "CharLookAt.cpp",
+   "pin": {
+    "lo": "0x82391298",
+    "hi": "0x8239131C",
+    "size": "0x84"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharLookAt.obj",
+    "total_text": "0x47D4",
+    "own_text": "0x299C",
+    "n_fns": 180,
+    "n_own_fns": 31
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x299C >> pin 0x84 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharBoneOffset.cpp@[0x82391328..0x82391A28)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowSwitch",
+   "src": "FlowSwitch.cpp",
+   "pin": {
+    "lo": "0x82397610",
+    "hi": "0x82397654",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowSwitch.obj",
+    "total_text": "0x1CF8",
+    "own_text": "0x120C",
+    "n_fns": 112,
+    "n_own_fns": 26
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x120C >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1204). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharUtl.cpp@[0x82398858..0x823991E8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowRun",
+   "src": "FlowRun.cpp",
+   "pin": {
+    "lo": "0x823A1D88",
+    "hi": "0x823A1DCC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowRun.obj",
+    "total_text": "0x2C28",
+    "own_text": "0x10E0",
+    "n_fns": 148,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x10E0 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xBDC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharBoneDir.cpp@[0x823A29A8..0x823A49E4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowTimer",
+   "src": "FlowTimer.cpp",
+   "pin": {
+    "lo": "0x823A6128",
+    "hi": "0x823A616C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowTimer.obj",
+    "total_text": "0x320C",
+    "own_text": "0x1328",
+    "n_fns": 179,
+    "n_own_fns": 37
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1328 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x26C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharWeightSetter.cpp@[0x823A63D8..0x823A6538)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharWeightSetter",
+   "src": "CharWeightSetter.cpp",
+   "pin": {
+    "lo": "0x823A63D8",
+    "hi": "0x823A6538",
+    "size": "0x160"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharWeightSetter.obj",
+    "total_text": "0x554C",
+    "own_text": "0x1C90",
+    "n_fns": 268,
+    "n_own_fns": 39
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1C90 >> pin 0x160 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xCA0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowValueCase.cpp@[0x823A71D8..0x823A7EAC)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PracticeSection",
+   "src": "PracticeSection.cpp",
+   "pin": {
+    "lo": "0x823B5C60",
+    "hi": "0x823B5CA4",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/PracticeSection.obj",
+    "total_text": "0x4F8C",
+    "own_text": "0x11C0",
+    "n_fns": 286,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x11C0 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x50C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "TexProc.cpp@[0x823B61B0..0x823B6314)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "TexProc",
+   "src": "TexProc.cpp",
+   "pin": {
+    "lo": "0x823B61B0",
+    "hi": "0x823B6314",
+    "size": "0x164"
+   },
+   "mf": 0,
+   "tf": 2,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/TexProc.obj",
+    "total_text": "0x3020",
+    "own_text": "0x1BD4",
+    "n_fns": 148,
+    "n_own_fns": 34
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1BD4 >> pin 0x164 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x2A34). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharIKSliderMidi.cpp@[0x823B8D48..0x823B8DF4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowLabel",
+   "src": "FlowLabel.cpp",
+   "pin": {
+    "lo": "0x823D8D40",
+    "hi": "0x823D8D48",
+    "size": "0x8"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowLabel.obj",
+    "total_text": "0x1528",
+    "own_text": "0x9F4",
+    "n_fns": 88,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x9F4 >> pin 0x8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4B60). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "StandardStream.cpp@[0x823DD8A8..0x823DD8EC)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StandardStream",
+   "src": "StandardStream.cpp",
+   "pin": {
+    "lo": "0x823DD8A8",
+    "hi": "0x823DD8EC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": null,
+   "sig": "C",
+   "action": "relocate pin to [0x826E3B20..0x826E7200) (AUTO-BLOB; prev CheatProvider.cpp@[0x826E1C78..0x826E1CD8) nxt UITrigger.cpp@[0x826EEF28..0x826EEF98))",
+   "range": {
+    "lo": "0x826E3B20",
+    "hi": "0x826E7200"
+   },
+   "cluster": {
+    "lo": "0x826E3B20",
+    "hi": "0x826E7000",
+    "n_own": 16,
+    "own_substantive": 14,
+    "avg_spacing": "0x386"
+   },
+   "named": 16,
+   "substantive": 14,
+   "obj_defines": "0/16",
+   "sample": [
+    "?Fail@StandardStream@@UAA_NXZ",
+    "?IsReady@StandardStream@@UBA_NXZ",
+    "?IsFinished@StandardStream@@UBA_NXZ",
+    "?IsPaused@StandardStream@@UBA_NXZ",
+    "?CurrentJumpPoints@StandardStream@@UAA_NAAUMarker@@0@Z",
+    "?GetNumChannels@StandardStream@@UBAHXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "no_compiled_obj",
+    "obj_defines_none_yet"
+   ],
+   "prev_pin": "CheatProvider.cpp@[0x826E1C78..0x826E1CD8)",
+   "next_pin": "UITrigger.cpp@[0x826EEF28..0x826EEF98)",
+   "est": "+7-32 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "no_or_thin_obj_EV0"
+  },
+  {
+   "unit": "MeterDisplay",
+   "src": "MeterDisplay.cpp",
+   "pin": {
+    "lo": "0x8240A428",
+    "hi": "0x8240A478",
+    "size": "0x50"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/MeterDisplay.obj",
+    "total_text": "0x5198",
+    "own_text": "0x1B4C",
+    "n_fns": 267,
+    "n_own_fns": 35
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1B4C >> pin 0x50 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4590). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Poll.cpp@[0x8240EA08..0x8240EB60)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "BaseMaterial",
+   "src": "BaseMaterial.cpp",
+   "pin": {
+    "lo": "0x82422B28",
+    "hi": "0x824237A0",
+    "size": "0xC78"
+   },
+   "mf": 5,
+   "tf": 22,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/BaseMaterial.obj",
+    "total_text": "0x5794",
+    "own_text": "0x2318",
+    "n_fns": 270,
+    "n_own_fns": 29
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2318 >> pin 0xC78 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x2E8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "MetaMaterial.cpp@[0x82423A88..0x82424D50)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "MetaMaterial",
+   "src": "MetaMaterial.cpp",
+   "pin": {
+    "lo": "0x82423A88",
+    "hi": "0x82424D50",
+    "size": "0x12C8"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/MetaMaterial.obj",
+    "total_text": "0x8504",
+    "own_text": "0x5BE0",
+    "n_fns": 215,
+    "n_own_fns": 16
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x5BE0 >> pin 0x12C8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x21C0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "system/rndobj/Utl.cpp@[0x82426F10..0x82430AB8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PartLauncher",
+   "src": "PartLauncher.cpp",
+   "pin": {
+    "lo": "0x8243CAF0",
+    "hi": "0x8243D468",
+    "size": "0x978"
+   },
+   "mf": 4,
+   "tf": 13,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/PartLauncher.obj",
+    "total_text": "0x59CC",
+    "own_text": "0x288C",
+    "n_fns": 222,
+    "n_own_fns": 25
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x288C >> pin 0x978 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1B30). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "AccomplishmentCategory.cpp@[0x8243EF98..0x8243EFF8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharClipGroup",
+   "src": "CharClipGroup.cpp",
+   "pin": {
+    "lo": "0x824A8450",
+    "hi": "0x824A8498",
+    "size": "0x48"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharClipGroup.obj",
+    "total_text": "0x7508",
+    "own_text": "0x13D4",
+    "n_fns": 445,
+    "n_own_fns": 29
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x13D4 >> pin 0x48 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x13F8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharPollGroup.cpp@[0x824A9890..0x824A9934)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharPollGroup",
+   "src": "CharPollGroup.cpp",
+   "pin": {
+    "lo": "0x824A9890",
+    "hi": "0x824A9934",
+    "size": "0xA4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharPollGroup.obj",
+    "total_text": "0x6B80",
+    "own_text": "0x1124",
+    "n_fns": 487,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1124 >> pin 0xA4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x16F4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CameraShot.cpp@[0x824AB028..0x824B3818)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowManager",
+   "src": "FlowManager.cpp",
+   "pin": {
+    "lo": "0x824E60E8",
+    "hi": "0x824E6140",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowManager.obj",
+    "total_text": "0x6094",
+    "own_text": "0x10B8",
+    "n_fns": 399,
+    "n_own_fns": 9
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x10B8 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xE0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "SongMgr.cpp@[0x824E6220..0x824E6274)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "DanceRemixer",
+   "src": "DanceRemixer.cpp",
+   "pin": {
+    "lo": "0x82510718",
+    "hi": "0x825107BC",
+    "size": "0xA4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/DanceRemixer.obj",
+    "total_text": "0x74D8",
+    "own_text": "0x2334",
+    "n_fns": 502,
+    "n_own_fns": 37
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2334 >> pin 0xA4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x704). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CritSec.cpp@[0x82510EC0..0x82511020)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "Sequence",
+   "src": "Sequence.cpp",
+   "pin": {
+    "lo": "0x82532110",
+    "hi": "0x82532168",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": null,
+   "sig": "C",
+   "action": "relocate pin to [0x826E7A18..0x826E97D0) (AUTO-BLOB; prev CheatProvider.cpp@[0x826E1C78..0x826E1CD8) nxt UITrigger.cpp@[0x826EEF28..0x826EEF98))",
+   "range": {
+    "lo": "0x826E7A18",
+    "hi": "0x826E97D0"
+   },
+   "cluster": {
+    "lo": "0x826E7A18",
+    "hi": "0x826E95D0",
+    "n_own": 7,
+    "own_substantive": 7,
+    "avg_spacing": "0x49E"
+   },
+   "named": 7,
+   "substantive": 7,
+   "obj_defines": "0/7",
+   "sample": [
+    "?Save@Sequence@@UAAXAAVBinStream@@@Z",
+    "?Copy@Sequence@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?Stop@Sequence@@QAAX_N@Z",
+    "?SynthPoll@Sequence@@UAAXXZ",
+    "?Play@Sequence@@QAAPAVSeqInst@@MMM@Z",
+    "?OnPlay@Sequence@@IAA?AVDataNode@@PAVDataArray@@@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:18",
+    "no_compiled_obj",
+    "obj_defines_none_yet"
+   ],
+   "prev_pin": "CheatProvider.cpp@[0x826E1C78..0x826E1CD8)",
+   "next_pin": "UITrigger.cpp@[0x826EEF28..0x826EEF98)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "no_or_thin_obj_EV0"
+  },
+  {
+   "unit": "StreamRecorder",
+   "src": "StreamRecorder.cpp",
+   "pin": {
+    "lo": "0x825732D0",
+    "hi": "0x8257332C",
+    "size": "0x5C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/StreamRecorder.obj",
+    "total_text": "0x7A34",
+    "own_text": "0x24D4",
+    "n_fns": 436,
+    "n_own_fns": 41
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x24D4 >> pin 0x5C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4354). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "band3/meta_band/AccomplishmentProgress.cpp@[0x82577680..0x8257A960)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "LabelShrinkWrapper",
+   "src": "LabelShrinkWrapper.cpp",
+   "pin": {
+    "lo": "0x82582EF8",
+    "hi": "0x82582F50",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/LabelShrinkWrapper.obj",
+    "total_text": "0x4C08",
+    "own_text": "0x1798",
+    "n_fns": 270,
+    "n_own_fns": 36
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1798 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x28). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "LabelNumberTicker.cpp@[0x82582F78..0x82582FD0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "MiniGameMgr",
+   "src": "MiniGameMgr.cpp",
+   "pin": {
+    "lo": "0x82595540",
+    "hi": "0x82595610",
+    "size": "0xD0"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/MiniGameMgr.obj",
+    "total_text": "0x34B4",
+    "own_text": "0xFF8",
+    "n_fns": 208,
+    "n_own_fns": 12
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xFF8 >> pin 0xD0 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xE58). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "LightPresetManager.cpp@[0x82596468..0x825964C0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "MoggClip",
+   "src": "MoggClip.cpp",
+   "pin": {
+    "lo": "0x825B8670",
+    "hi": "0x825B86A0",
+    "size": "0x30"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": null,
+   "sig": "C",
+   "action": "relocate pin to [0x826EF9D8..0x826F16E0) (AUTO-BLOB; prev UITrigger.cpp@[0x826EEF28..0x826EEF98) nxt MicClientMapper.cpp@[0x826F16E0..0x826F1BF4))",
+   "range": {
+    "lo": "0x826EF9D8",
+    "hi": "0x826F16E0"
+   },
+   "cluster": {
+    "lo": "0x826EF9D8",
+    "hi": "0x826F0DA8",
+    "n_own": 7,
+    "own_substantive": 6,
+    "avg_spacing": "0x34D"
+   },
+   "named": 7,
+   "substantive": 6,
+   "obj_defines": "0/7",
+   "sample": [
+    "?UnloadWhenFinishedPlaying@MoggClip@@QAAX_N@Z",
+    "?UpdateFaders@MoggClip@@AAAXXZ",
+    "?UpdatePanInfo@MoggClip@@AAAXXZ",
+    "?AddFader@MoggClip@@QAAXPAVFader@@@Z",
+    "?SetPan@MoggClip@@QAAXHM@Z",
+    "?SetupPanInfo@MoggClip@@QAAXMM_N@Z"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "no_compiled_obj",
+    "obj_defines_none_yet"
+   ],
+   "prev_pin": "UITrigger.cpp@[0x826EEF28..0x826EEF98)",
+   "next_pin": "MicClientMapper.cpp@[0x826F16E0..0x826F1BF4)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "no_or_thin_obj_EV0"
+  },
+  {
+   "unit": "FreestyleMoveRecorder",
+   "src": "FreestyleMoveRecorder.cpp",
+   "pin": {
+    "lo": "0x825D26C8",
+    "hi": "0x825D2760",
+    "size": "0x98"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/FreestyleMoveRecorder.obj",
+    "total_text": "0x5CA4",
+    "own_text": "0x2890",
+    "n_fns": 401,
+    "n_own_fns": 40
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2890 >> pin 0x98 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x80E0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "PhysicsManager.cpp@[0x825DA840..0x825DAA18)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PhysicsManager",
+   "src": "PhysicsManager.cpp",
+   "pin": {
+    "lo": "0x825DA840",
+    "hi": "0x825DAA18",
+    "size": "0x1D8"
+   },
+   "mf": 0,
+   "tf": 4,
+   "obj": {
+    "path": "build/45410914/src/system/world/PhysicsManager.obj",
+    "total_text": "0x27AC",
+    "own_text": "0xDF4",
+    "n_fns": 200,
+    "n_own_fns": 47
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xDF4 >> pin 0x1D8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x6CC0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "PhysicsVolume.cpp@[0x825E16D8..0x825E80F0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharServoBone",
+   "src": "CharServoBone.cpp",
+   "pin": {
+    "lo": "0x825E80F0",
+    "hi": "0x825E8190",
+    "size": "0xA0"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharServoBone.obj",
+    "total_text": "0x40A8",
+    "own_text": "0x1750",
+    "n_fns": 251,
+    "n_own_fns": 35
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1750 >> pin 0xA0 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1EF0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Mat.cpp@[0x825EA080..0x825EA148)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "ClipDistMap",
+   "src": "ClipDistMap.cpp",
+   "pin": {
+    "lo": "0x8267A138",
+    "hi": "0x8267A198",
+    "size": "0x60"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/ClipDistMap.obj",
+    "total_text": "0x7490",
+    "own_text": "0x2494",
+    "n_fns": 448,
+    "n_own_fns": 17
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2494 >> pin 0x60 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x820). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CamAnim.cpp@[0x8267A9B8..0x8267AA24)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "LocalePanel",
+   "src": "LocalePanel.cpp",
+   "pin": {
+    "lo": "0x8269A240",
+    "hi": "0x8269A2A0",
+    "size": "0x60"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/LocalePanel.obj",
+    "total_text": "0x4120",
+    "own_text": "0xD84",
+    "n_fns": 277,
+    "n_own_fns": 15
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xD84 >> pin 0x60 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x98). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "RhythmDetector.cpp@[0x8269A338..0x8269A39C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "RhythmDetector",
+   "src": "RhythmDetector.cpp",
+   "pin": {
+    "lo": "0x8269A338",
+    "hi": "0x8269A39C",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/RhythmDetector.obj",
+    "total_text": "0x7854",
+    "own_text": "0x2820",
+    "n_fns": 416,
+    "n_own_fns": 50
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2820 >> pin 0x64 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x582C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharBoneTwist.cpp@[0x8269FBC8..0x8269FC3C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharBoneTwist",
+   "src": "CharBoneTwist.cpp",
+   "pin": {
+    "lo": "0x8269FBC8",
+    "hi": "0x8269FC3C",
+    "size": "0x74"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharBoneTwist.obj",
+    "total_text": "0x3000",
+    "own_text": "0xE0C",
+    "n_fns": 169,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xE0C >> pin 0x74 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x326C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "SkeletonHistory.cpp@[0x826A2EA8..0x826A2F18)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "UIFontImporter",
+   "src": "UIFontImporter.cpp",
+   "pin": {
+    "lo": "0x826B28F8",
+    "hi": "0x826B2968",
+    "size": "0x70"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/UIFontImporter.obj",
+    "total_text": "0x98F4",
+    "own_text": "0x4DD8",
+    "n_fns": 372,
+    "n_own_fns": 45
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x4DD8 >> pin 0x70 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x380). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "DrivenPropertyMathOps.cpp@[0x826B2CE8..0x826B2DA8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharMirror",
+   "src": "CharMirror.cpp",
+   "pin": {
+    "lo": "0x826B7B60",
+    "hi": "0x826B7BE4",
+    "size": "0x84"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharMirror.obj",
+    "total_text": "0x370C",
+    "own_text": "0x140C",
+    "n_fns": 241,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x140C >> pin 0x84 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x56D4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FileMergerOrganizer.cpp@[0x826BD2B8..0x826BD394)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FileMergerOrganizer",
+   "src": "FileMergerOrganizer.cpp",
+   "pin": {
+    "lo": "0x826BD2B8",
+    "hi": "0x826BD394",
+    "size": "0xDC"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/FileMergerOrganizer.obj",
+    "total_text": "0x3910",
+    "own_text": "0xF54",
+    "n_fns": 251,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xF54 >> pin 0xDC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x439C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Faders.cpp@[0x826C1730..0x826C1794)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CheatProvider",
+   "src": "CheatProvider.cpp",
+   "pin": {
+    "lo": "0x826E1C78",
+    "hi": "0x826E1CD8",
+    "size": "0x60"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/ui/CheatProvider.obj",
+    "total_text": "0x3AB4",
+    "own_text": "0x1680",
+    "n_fns": 223,
+    "n_own_fns": 21
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1680 >> pin 0x60 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xD250). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "UITrigger.cpp@[0x826EEF28..0x826EEF98)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "WebSvcMgr",
+   "src": "WebSvcMgr.cpp",
+   "pin": {
+    "lo": "0x826FA860",
+    "hi": "0x826FA864",
+    "size": "0x4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/net/WebSvcMgr.obj",
+    "total_text": "0x1D94",
+    "own_text": "0x834",
+    "n_fns": 158,
+    "n_own_fns": 14
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x834 >> pin 0x4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Pollable.cpp@[0x826FA868..0x826FA9E8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowEventListener",
+   "src": "FlowEventListener.cpp",
+   "pin": {
+    "lo": "0x827418D0",
+    "hi": "0x82741950",
+    "size": "0x80"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowEventListener.obj",
+    "total_text": "0x1528",
+    "own_text": "0xD38",
+    "n_fns": 87,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xD38 >> pin 0x80 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x438). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "SkeletonDir.cpp@[0x82741D88..0x82741E44)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "SkeletonDir",
+   "src": "SkeletonDir.cpp",
+   "pin": {
+    "lo": "0x82741D88",
+    "hi": "0x82741E44",
+    "size": "0xBC"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/SkeletonDir.obj",
+    "total_text": "0x3650",
+    "own_text": "0x137C",
+    "n_fns": 237,
+    "n_own_fns": 39
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x137C >> pin 0xBC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xEF4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamRegulate.cpp@[0x82742D38..0x82742E48)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "SongCollision",
+   "src": "SongCollision.cpp",
+   "pin": {
+    "lo": "0x8274B9D0",
+    "hi": "0x8274BA10",
+    "size": "0x40"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/SongCollision.obj",
+    "total_text": "0x57C0",
+    "own_text": "0x17C4",
+    "n_fns": 386,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x17C4 >> pin 0x40 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x124). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "band3/game/SongDB.cpp@[0x8274BB34..0x8274E870)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StorePreviewMgr",
+   "src": "StorePreviewMgr.cpp",
+   "pin": {
+    "lo": "0x82780628",
+    "hi": "0x82780784",
+    "size": "0x15C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/StorePreviewMgr.obj",
+    "total_text": "0x217C",
+    "own_text": "0x1230",
+    "n_fns": 107,
+    "n_own_fns": 13
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1230 >> pin 0x15C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xD7C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "StoreOffer.cpp@[0x82781500..0x82781BB8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "SpeechMgr",
+   "src": "SpeechMgr.cpp",
+   "pin": {
+    "lo": "0x82781BB8",
+    "hi": "0x82781C1C",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/SpeechMgr.obj",
+    "total_text": "0x54A8",
+    "own_text": "0x2808",
+    "n_fns": 261,
+    "n_own_fns": 40
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2808 >> pin 0x64 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1DAC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "MovieSys.cpp@[0x827839C8..0x82783A00)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowSetProperty",
+   "src": "FlowSetProperty.cpp",
+   "pin": {
+    "lo": "0x827A1708",
+    "hi": "0x827A177C",
+    "size": "0x74"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowSetProperty.obj",
+    "total_text": "0x66D0",
+    "own_text": "0x28AC",
+    "n_fns": 281,
+    "n_own_fns": 38
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x28AC >> pin 0x74 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x6F4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Loader.cpp@[0x827A1E70..0x827A1FB4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "Loader",
+   "src": "Loader.cpp",
+   "pin": {
+    "lo": "0x827A1E70",
+    "hi": "0x827A1FB4",
+    "size": "0x144"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/utl/Loader.obj",
+    "total_text": "0x2780",
+    "own_text": "0xE60",
+    "n_fns": 170,
+    "n_own_fns": 88
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xE60 >> pin 0x144 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1A54). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "StringTable.cpp@[0x827A3A08..0x827A4520)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "OriginalChoreoRemixer",
+   "src": "OriginalChoreoRemixer.cpp",
+   "pin": {
+    "lo": "0x827C7A18",
+    "hi": "0x827C7A7C",
+    "size": "0x64"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/OriginalChoreoRemixer.obj",
+    "total_text": "0x5DE4",
+    "own_text": "0x1318",
+    "n_fns": 474,
+    "n_own_fns": 21
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1318 >> pin 0x64 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xDCC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "MidiReader.cpp@[0x827C8848..0x827CA3D8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PreloadPanel",
+   "src": "PreloadPanel.cpp",
+   "pin": {
+    "lo": "0x827DD1D0",
+    "hi": "0x827DD228",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/PreloadPanel.obj",
+    "total_text": "0x35A4",
+    "own_text": "0x1750",
+    "n_fns": 220,
+    "n_own_fns": 30
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1750 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x2690). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "UI.cpp@[0x827DF8B8..0x827E1458)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PanelDir",
+   "src": "PanelDir.cpp",
+   "pin": {
+    "lo": "0x827E1458",
+    "hi": "0x827E2930",
+    "size": "0x14D8"
+   },
+   "mf": 24,
+   "tf": 42,
+   "obj": {
+    "path": "build/45410914/src/system/ui/PanelDir.obj",
+    "total_text": "0x95D4",
+    "own_text": "0x3608",
+    "n_fns": 588,
+    "n_own_fns": 49
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x3608 >> pin 0x14D8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1A38). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "UISlider.cpp@[0x827E4368..0x827E57A0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "AsyncFileHolmes",
+   "src": "AsyncFileHolmes.cpp",
+   "pin": {
+    "lo": "0x825221D0",
+    "hi": "0x82527920",
+    "size": "0x5750"
+   },
+   "mf": 7,
+   "tf": 212,
+   "obj": {
+    "path": "build/45410914/src/system/os/AsyncFileHolmes.obj",
+    "total_text": "0x29C",
+    "own_text": "0x238",
+    "n_fns": 20,
+    "n_own_fns": 13
+   },
+   "sig": "B",
+   "reason": "sparse_scatter",
+   "detail": "over-pin but in-range census is sparse scatter (2 own / 5 foreign, no coherent foreign cluster) -- needs fingerprint/Ghidra ID, not a boundary move (AsyncFileHolmes class)"
+  },
+  {
+   "unit": "CharLipSyncDriver",
+   "src": "CharLipSyncDriver.cpp",
+   "pin": {
+    "lo": "0x82263F38",
+    "hi": "0x82263F98",
+    "size": "0x60"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharLipSyncDriver.obj",
+    "total_text": "0x75A8",
+    "own_text": "0x2CF4",
+    "n_fns": 350,
+    "n_own_fns": 44
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x2CF4 >> pin 0x60 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1E0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Accomplishment.cpp@[0x82264178..0x82264FE8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StandingStillGestureFilter",
+   "src": "StandingStillGestureFilter.cpp",
+   "pin": {
+    "lo": "0x827928C8",
+    "hi": "0x82792920",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/StandingStillGestureFilter.obj",
+    "total_text": "0x1C04",
+    "own_text": "0xC14",
+    "n_fns": 92,
+    "n_own_fns": 13
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xC14 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x590). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "StoreEnumeration.cpp@[0x82792EB0..0x82792FC4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "DOFProc",
+   "src": "DOFProc.cpp",
+   "pin": {
+    "lo": "0x82453468",
+    "hi": "0x82453478",
+    "size": "0x10"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/DOFProc.obj",
+    "total_text": "0xCE8",
+    "own_text": "0x8D8",
+    "n_fns": 49,
+    "n_own_fns": 19
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x8D8 >> pin 0x10 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x2B8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Console.cpp@[0x82453730..0x82456970)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PostProcer",
+   "src": "PostProcer.cpp",
+   "pin": {
+    "lo": "0x824D6F88",
+    "hi": "0x824D6FF8",
+    "size": "0x70"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/world/PostProcer.obj",
+    "total_text": "0x1158",
+    "own_text": "0x9F0",
+    "n_fns": 74,
+    "n_own_fns": 22
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x9F0 >> pin 0x70 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x280). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Instance.cpp@[0x824D7278..0x824DA640)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharIKSliderMidi",
+   "src": "CharIKSliderMidi.cpp",
+   "pin": {
+    "lo": "0x823B8D48",
+    "hi": "0x823B8DF4",
+    "size": "0xAC"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharIKSliderMidi.obj",
+    "total_text": "0x3F10",
+    "own_text": "0x15D4",
+    "n_fns": 205,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x15D4 >> pin 0xAC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xBEC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharDriverMidi.cpp@[0x823B99E0..0x823BA0B0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowSwitchCase",
+   "src": "FlowSwitchCase.cpp",
+   "pin": {
+    "lo": "0x8239E1F8",
+    "hi": "0x8239E23C",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowSwitchCase.obj",
+    "total_text": "0x4C5C",
+    "own_text": "0x1B1C",
+    "n_fns": 226,
+    "n_own_fns": 30
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1B1C >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x3B4C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowRun.cpp@[0x823A1D88..0x823A1DCC)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowSequence",
+   "src": "FlowSequence.cpp",
+   "pin": {
+    "lo": "0x8237B4B8",
+    "hi": "0x8237B4FC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowSequence.obj",
+    "total_text": "0x1750",
+    "own_text": "0xD34",
+    "n_fns": 97,
+    "n_own_fns": 25
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xD34 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x292C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HAQManager.cpp@[0x8237DE28..0x8237DEA4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowOnStop",
+   "src": "FlowOnStop.cpp",
+   "pin": {
+    "lo": "0x823ADA98",
+    "hi": "0x823ADADC",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowOnStop.obj",
+    "total_text": "0x14C8",
+    "own_text": "0xBF0",
+    "n_fns": 95,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xBF0 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1934). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowDistance.cpp@[0x823AF410..0x823AF454)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharIKScale",
+   "src": "CharIKScale.cpp",
+   "pin": {
+    "lo": "0x8243F508",
+    "hi": "0x8243F570",
+    "size": "0x68"
+   },
+   "mf": 0,
+   "tf": 2,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharIKScale.obj",
+    "total_text": "0x372C",
+    "own_text": "0x12EC",
+    "n_fns": 177,
+    "n_own_fns": 25
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x12EC >> pin 0x68 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x60). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Group.cpp@[0x8243F5D0..0x8244169C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "ClipCollide",
+   "src": "ClipCollide.cpp",
+   "pin": {
+    "lo": "0x823E38D0",
+    "hi": "0x823E3914",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/ClipCollide.obj",
+    "total_text": "0x7FE0",
+    "own_text": "0x33B0",
+    "n_fns": 439,
+    "n_own_fns": 32
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x33B0 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xC34). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HiResScreen.cpp@[0x823E4548..0x823E4644)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "DingoJob",
+   "src": "DingoJob.cpp",
+   "pin": {
+    "lo": "0x827BBD68",
+    "hi": "0x827BBE40",
+    "size": "0xD8"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/net/DingoJob.obj",
+    "total_text": "0x1A88",
+    "own_text": "0xD00",
+    "n_fns": 104,
+    "n_own_fns": 20
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xD00 >> pin 0xD8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x53D8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "MidiParser.cpp@[0x827C1218..0x827C5E38)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "DefaultPhysicsManager",
+   "src": "DefaultPhysicsManager.cpp",
+   "pin": {
+    "lo": "0x824B70D8",
+    "hi": "0x824B714C",
+    "size": "0x74"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/world/DefaultPhysicsManager.obj",
+    "total_text": "0x3D3C",
+    "own_text": "0x994",
+    "n_fns": 313,
+    "n_own_fns": 14
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x994 >> pin 0x74 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x7C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "PropSync.cpp@[0x824B71C8..0x824B7300)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharGuitarString",
+   "src": "CharGuitarString.cpp",
+   "pin": {
+    "lo": "0x82352058",
+    "hi": "0x823520AC",
+    "size": "0x54"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharGuitarString.obj",
+    "total_text": "0x20E0",
+    "own_text": "0xF60",
+    "n_fns": 117,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xF60 >> pin 0x54 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xFBC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharTransDraw.cpp@[0x82353068..0x8235314C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PhotoSpotlightPositioner",
+   "src": "PhotoSpotlightPositioner.cpp",
+   "pin": {
+    "lo": "0x82358B10",
+    "hi": "0x82358B68",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/PhotoSpotlightPositioner.obj",
+    "total_text": "0x29EC",
+    "own_text": "0xBB0",
+    "n_fns": 152,
+    "n_own_fns": 25
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xBB0 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x28). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "PracticeOptionsProvider.cpp@[0x82358B90..0x82358BE8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "PracticeOptionsProvider",
+   "src": "PracticeOptionsProvider.cpp",
+   "pin": {
+    "lo": "0x82358B90",
+    "hi": "0x82358BE8",
+    "size": "0x58"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/PracticeOptionsProvider.obj",
+    "total_text": "0x1F6C",
+    "own_text": "0xE10",
+    "n_fns": 111,
+    "n_own_fns": 24
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xE10 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xA8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "StarsDisplay.cpp@[0x82358C90..0x82358CE8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "HAQManager",
+   "src": "HAQManager.cpp",
+   "pin": {
+    "lo": "0x8237DE28",
+    "hi": "0x8237DEA4",
+    "size": "0x7C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/meta/HAQManager.obj",
+    "total_text": "0x2B00",
+    "own_text": "0x1930",
+    "n_fns": 98,
+    "n_own_fns": 22
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1930 >> pin 0x7C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1D34). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamPlayerData.cpp@[0x8237FBD8..0x8237FC74)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "StreamRenderer",
+   "src": "StreamRenderer.cpp",
+   "pin": {
+    "lo": "0x82598C08",
+    "hi": "0x82598CD4",
+    "size": "0xCC"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/StreamRenderer.obj",
+    "total_text": "0x6440",
+    "own_text": "0x406C",
+    "n_fns": 212,
+    "n_own_fns": 38
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x406C >> pin 0xCC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xD96C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "band3/meta_band/StoreSongSortNode.cpp@[0x825A6640..0x825A7038)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "TransConstraint",
+   "src": "TransConstraint.cpp",
+   "pin": {
+    "lo": "0x8229A4E0",
+    "hi": "0x8229A5CC",
+    "size": "0xEC"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/TransConstraint.obj",
+    "total_text": "0x3B48",
+    "own_text": "0x1A18",
+    "n_fns": 166,
+    "n_own_fns": 26
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1A18 >> pin 0xEC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x103C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Flow.cpp@[0x8229B608..0x8229D760)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowWhile",
+   "src": "FlowWhile.cpp",
+   "pin": {
+    "lo": "0x8232FC88",
+    "hi": "0x8232FD00",
+    "size": "0x78"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowWhile.obj",
+    "total_text": "0x21FC",
+    "own_text": "0x139C",
+    "n_fns": 140,
+    "n_own_fns": 31
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x139C >> pin 0x78 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x28C8). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamWardrobe.cpp@[0x823325C8..0x82332620)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharTransDraw",
+   "src": "CharTransDraw.cpp",
+   "pin": {
+    "lo": "0x82353068",
+    "hi": "0x8235314C",
+    "size": "0xE4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharTransDraw.obj",
+    "total_text": "0x2DBC",
+    "own_text": "0xC04",
+    "n_fns": 163,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xC04 >> pin 0xE4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x1254). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "DataFunc.cpp@[0x823543A0..0x82357250)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "RhythmDetectorGroup",
+   "src": "RhythmDetectorGroup.cpp",
+   "pin": {
+    "lo": "0x824A83C0",
+    "hi": "0x824A844C",
+    "size": "0x8C"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/RhythmDetectorGroup.obj",
+    "total_text": "0x5380",
+    "own_text": "0x108C",
+    "n_fns": 326,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x108C >> pin 0x8C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharClipGroup.cpp@[0x824A8450..0x824A8498)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharFeedback",
+   "src": "CharFeedback.cpp",
+   "pin": {
+    "lo": "0x8228F6A8",
+    "hi": "0x8228F75C",
+    "size": "0xB4"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/hamobj/CharFeedback.obj",
+    "total_text": "0x4F6C",
+    "own_text": "0x17B0",
+    "n_fns": 248,
+    "n_own_fns": 30
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x17B0 >> pin 0xB4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xEE4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Spline.cpp@[0x82290640..0x822906A4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CharCollide",
+   "src": "CharCollide.cpp",
+   "pin": {
+    "lo": "0x822B76F8",
+    "hi": "0x822B7D54",
+    "size": "0x65C"
+   },
+   "mf": 2,
+   "tf": 12,
+   "obj": {
+    "path": "build/45410914/src/system/char/CharCollide.obj",
+    "total_text": "0x36F4",
+    "own_text": "0x1604",
+    "n_fns": 167,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1604 >> pin 0x65C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x673C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "MoveMgr.cpp@[0x822BE490..0x822C1E58)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "CameraTilt",
+   "src": "CameraTilt.cpp",
+   "pin": {
+    "lo": "0x8230F100",
+    "hi": "0x8230F158",
+    "size": "0x58"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/gesture/CameraTilt.obj",
+    "total_text": "0x2890",
+    "own_text": "0x14C4",
+    "n_fns": 102,
+    "n_own_fns": 17
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x14C4 >> pin 0x58 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x6378). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowTrigger.cpp@[0x823154D0..0x8231553C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowDistance",
+   "src": "FlowDistance.cpp",
+   "pin": {
+    "lo": "0x823AF410",
+    "hi": "0x823AF454",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowDistance.obj",
+    "total_text": "0x23B4",
+    "own_text": "0x10FC",
+    "n_fns": 125,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x10FC >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xEC4). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "CharPosConstraint.cpp@[0x823B0318..0x823B0D38)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowSlider",
+   "src": "FlowSlider.cpp",
+   "pin": {
+    "lo": "0x823D8818",
+    "hi": "0x823D8890",
+    "size": "0x78"
+   },
+   "mf": 1,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowSlider.obj",
+    "total_text": "0x4030",
+    "own_text": "0x138C",
+    "n_fns": 261,
+    "n_own_fns": 32
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x138C >> pin 0x78 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x4B0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowLabel.cpp@[0x823D8D40..0x823D8D48)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "HiResScreen",
+   "src": "HiResScreen.cpp",
+   "pin": {
+    "lo": "0x823E4548",
+    "hi": "0x823E4644",
+    "size": "0xFC"
+   },
+   "mf": 2,
+   "tf": 3,
+   "obj": {
+    "path": "build/45410914/src/system/rndobj/HiResScreen.obj",
+    "total_text": "0x1A84",
+    "own_text": "0x1714",
+    "n_fns": 53,
+    "n_own_fns": 26
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1714 >> pin 0xFC but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x527C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Bitmap.cpp@[0x823E98C0..0x823EB0C0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowNode",
+   "src": "FlowNode.cpp",
+   "pin": {
+    "lo": "0x824710A8",
+    "hi": "0x82472160",
+    "size": "0x10B8"
+   },
+   "mf": 15,
+   "tf": 40,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowNode.obj",
+    "total_text": "0x8EF0",
+    "own_text": "0x3BE4",
+    "n_fns": 490,
+    "n_own_fns": 121
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x3BE4 >> pin 0x10B8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "Movie.cpp@[0x82472160..0x824721A4)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowQueueable",
+   "src": "FlowQueueable.cpp",
+   "pin": {
+    "lo": "0x82474BA8",
+    "hi": "0x82474E9C",
+    "size": "0x2F4"
+   },
+   "mf": 0,
+   "tf": 9,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowQueueable.obj",
+    "total_text": "0x1D78",
+    "own_text": "0xEF8",
+    "n_fns": 143,
+    "n_own_fns": 28
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xEF8 >> pin 0x2F4 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x404). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "PollAnim.cpp@[0x824752A0..0x82475FF8)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowSound",
+   "src": "FlowSound.cpp",
+   "pin": {
+    "lo": "0x824E4AF0",
+    "hi": "0x824E542C",
+    "size": "0x93C"
+   },
+   "mf": 2,
+   "tf": 26,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowSound.obj",
+    "total_text": "0x32D8",
+    "own_text": "0x1D58",
+    "n_fns": 142,
+    "n_own_fns": 31
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1D58 >> pin 0x93C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xCBC). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowManager.cpp@[0x824E60E8..0x824E6140)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowCommand",
+   "src": "FlowCommand.cpp",
+   "pin": {
+    "lo": "0x8250B558",
+    "hi": "0x8250B768",
+    "size": "0x210"
+   },
+   "mf": 2,
+   "tf": 6,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowCommand.obj",
+    "total_text": "0x2E34",
+    "own_text": "0x1628",
+    "n_fns": 212,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1628 >> pin 0x210 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xD68). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "ContentMgr_Xbox.cpp@[0x8250C4D0..0x8250E3D0)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "Stream",
+   "src": "Stream.cpp",
+   "pin": {
+    "lo": "0x826F40C0",
+    "hi": "0x826F42A8",
+    "size": "0x1E8"
+   },
+   "mf": 6,
+   "tf": 7,
+   "obj": {
+    "path": "build/45410914/src/system/synth/Stream.obj",
+    "total_text": "0x2C4",
+    "own_text": "0x270",
+    "n_fns": 18,
+    "n_own_fns": 16
+   },
+   "sig": "C",
+   "action": "relocate pin to [0x82909D20..0x8290AC30) (AUTO-BLOB; prev osfinfo.cpp@[0x82811420..0x82811948) nxt Compress.cpp@[0x82A39A30..0x82A3A918))",
+   "range": {
+    "lo": "0x82909D20",
+    "hi": "0x8290AC30"
+   },
+   "cluster": {
+    "lo": "0x82909D20",
+    "hi": "0x8290AA38",
+    "n_own": 7,
+    "own_substantive": 7,
+    "avg_spacing": "0x22E"
+   },
+   "named": 7,
+   "substantive": 7,
+   "obj_defines": "0/7",
+   "sample": [
+    "?Indent@Stream@XGRAPHICS@@QAAXXZ",
+    "?EndChildren@Stream@XGRAPHICS@@QAAXPBD@Z",
+    "?EndChildrenBinary@Stream@XGRAPHICS@@QAAXPBD@Z",
+    "?AddInstructionAddress@Stream@XGRAPHICS@@QAAXPBDKHK@Z",
+    "?AddValue@Stream@XGRAPHICS@@QAAXPBD0@Z",
+    "?EndTag@Stream@XGRAPHICS@@QAAXXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "foreign_named_in_range:4",
+    "thin_obj_EV_low",
+    "drops_6_existing_matches",
+    "obj_defines_none_yet"
+   ],
+   "prev_pin": "osfinfo.cpp@[0x82811420..0x82811948)",
+   "next_pin": "Compress.cpp@[0x82A39A30..0x82A3A918)",
+   "est": "+3-14 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "no_or_thin_obj_EV0"
+  },
+  {
+   "unit": "StoreOffer",
+   "src": "StoreOffer.cpp",
+   "pin": {
+    "lo": "0x82781500",
+    "hi": "0x82781BB8",
+    "size": "0x6B8"
+   },
+   "mf": 12,
+   "tf": 23,
+   "obj": {
+    "path": "build/45410914/src/system/meta/StoreOffer.obj",
+    "total_text": "0x265C",
+    "own_text": "0x1B88",
+    "n_fns": 106,
+    "n_own_fns": 24
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x1B88 >> pin 0x6B8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "SpeechMgr.cpp@[0x82781BB8..0x82781C1C)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "ContentMgr",
+   "src": "ContentMgr.cpp",
+   "pin": {
+    "lo": "0x8250AFE8",
+    "hi": "0x8250B558",
+    "size": "0x570"
+   },
+   "mf": 17,
+   "tf": 20,
+   "obj": {
+    "path": "build/45410914/src/system/os/ContentMgr.obj",
+    "total_text": "0x2550",
+    "own_text": "0x13C4",
+    "n_fns": 132,
+    "n_own_fns": 20
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x13C4 >> pin 0x570 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "FlowCommand.cpp@[0x8250B558..0x8250B768)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "FlowOutPort",
+   "src": "FlowOutPort.cpp",
+   "pin": {
+    "lo": "0x824A5990",
+    "hi": "0x824A59D4",
+    "size": "0x44"
+   },
+   "mf": 0,
+   "tf": 1,
+   "obj": {
+    "path": "build/45410914/src/system/flow/FlowOutPort.obj",
+    "total_text": "0x1C90",
+    "own_text": "0xFD8",
+    "n_fns": 101,
+    "n_own_fns": 27
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xFD8 >> pin 0x44 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0xD6C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamMaster.cpp@[0x824A6740..0x824A6758)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "Accomplishment",
+   "src": "Accomplishment.cpp",
+   "pin": {
+    "lo": "0x82264178",
+    "hi": "0x82264FE8",
+    "size": "0xE70"
+   },
+   "mf": 4,
+   "tf": 34,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/Accomplishment.obj",
+    "total_text": "0x3DD4",
+    "own_text": "0x102C",
+    "n_fns": 325,
+    "n_own_fns": 52
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x8243A18C..0x8243CAF0) (AUTO-BLOB; prev Part.cpp@[0x82433730..0x82439D8C) nxt PartLauncher.cpp@[0x8243CAF0..0x8243D468))",
+   "range": {
+    "lo": "0x8243A18C",
+    "hi": "0x8243CAF0"
+   },
+   "cluster": {
+    "lo": "0x8243A18C",
+    "hi": "0x8243A5F4",
+    "n_own": 20,
+    "own_substantive": 19,
+    "avg_spacing": "0x3B"
+   },
+   "named": 20,
+   "substantive": 19,
+   "obj_defines": "20/20",
+   "sample": [
+    "?GetName@Accomplishment@@QBA?AVSymbol@@XZ",
+    "?ShowBestAfterEarn@Accomplishment@@UBA_NXZ",
+    "?HideProgress@Accomplishment@@QBA_NXZ",
+    "?GetSecretPrereqs@Accomplishment@@QBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+    "?GetDynamicPrereqsSongs@Accomplishment@@QBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+    "?GetDynamicPrereqsNumSongs@Accomplishment@@QBAHXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "stub_farm_risk"
+   ],
+   "prev_pin": "Part.cpp@[0x82433730..0x82439D8C)",
+   "next_pin": "PartLauncher.cpp@[0x8243CAF0..0x8243D468)",
+   "est": "+9-40 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "F6_stub_farm"
+  },
+  {
+   "unit": "AccomplishmentPlayerConditional",
+   "src": "AccomplishmentPlayerConditional.cpp",
+   "pin": {
+    "lo": "0x8243F178",
+    "hi": "0x8243F220",
+    "size": "0xA8"
+   },
+   "mf": 0,
+   "tf": 5,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/AccomplishmentPlayerConditional.obj",
+    "total_text": "0x3E98",
+    "own_text": "0xC18",
+    "n_fns": 269,
+    "n_own_fns": 13
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xC18 >> pin 0xA8 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x0). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "AccomplishmentSetlist.cpp@[0x8243F220..0x8243F330)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "VocalPlayer",
+   "src": "band3/game/VocalPlayer.cpp",
+   "pin": {
+    "lo": "0x826C6328",
+    "hi": "0x826C8C44",
+    "size": "0x291C"
+   },
+   "mf": 32,
+   "tf": 77,
+   "obj": {
+    "path": "build/45410914/src/band3/game/VocalPlayer.obj",
+    "total_text": "0xF07C",
+    "own_text": "0x7A68",
+    "n_fns": 861,
+    "n_own_fns": 131
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0x7A68 >> pin 0x291C but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x752C). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "band3/game/TrainerGemTab.cpp@[0x826D0170..0x826D1E68)",
+   "est": "+0-? (no named evidence)"
+  },
+  {
+   "unit": "AccomplishmentProgress",
+   "src": "band3/meta_band/AccomplishmentProgress.cpp",
+   "pin": {
+    "lo": "0x82577680",
+    "hi": "0x8257A960",
+    "size": "0x32E0"
+   },
+   "mf": 45,
+   "tf": 109,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/AccomplishmentProgress.obj",
+    "total_text": "0x89A4",
+    "own_text": "0x3618",
+    "n_fns": 641,
+    "n_own_fns": 108
+   },
+   "sig": "C",
+   "action": "second cluster -- recon pin to [0x82439E34..0x8243CAF0) (AUTO-BLOB; prev Part.cpp@[0x82433730..0x82439D8C) nxt PartLauncher.cpp@[0x8243CAF0..0x8243D468))",
+   "range": {
+    "lo": "0x82439E34",
+    "hi": "0x8243CAF0"
+   },
+   "cluster": {
+    "lo": "0x82439E34",
+    "hi": "0x82439FF4",
+    "n_own": 14,
+    "own_substantive": 14,
+    "avg_spacing": "0x22"
+   },
+   "named": 14,
+   "substantive": 14,
+   "obj_defines": "14/14",
+   "sample": [
+    "?IsHardCoreStatusUpdatePending@AccomplishmentProgress@@QAA_NXZ",
+    "?GetNumCompleted@AccomplishmentProgress@@QBAHXZ",
+    "?GetTotalGemsSmashed@AccomplishmentProgress@@QBAHXZ",
+    "?GetTotalBassHopos@AccomplishmentProgress@@QBAHXZ",
+    "?GetTotalUpstrums@AccomplishmentProgress@@QBAHXZ",
+    "?GetTotalTimesRevived@AccomplishmentProgress@@QBAHXZ"
+   ],
+   "location": "AUTO_BLOB",
+   "flags": [
+    "stub_farm_risk"
+   ],
+   "prev_pin": "Part.cpp@[0x82433730..0x82439D8C)",
+   "next_pin": "PartLauncher.cpp@[0x8243CAF0..0x8243D468)",
+   "est": "+7-28 (0.5x substantive .. 2x named; wave-3 calibration, low conf)",
+   "reason": "F6_stub_farm"
+  },
+  {
+   "unit": "AccomplishmentSongConditional",
+   "src": "band3/meta_band/AccomplishmentSongConditional.cpp",
+   "pin": {
+    "lo": "0x8264CEF0",
+    "hi": "0x8264D018",
+    "size": "0x128"
+   },
+   "mf": 3,
+   "tf": 3,
+   "obj": {
+    "path": "build/45410914/src/band3/meta_band/AccomplishmentSongConditional.obj",
+    "total_text": "0x19FC",
+    "own_text": "0xC58",
+    "n_fns": 86,
+    "n_own_fns": 23
+   },
+   "sig": "A",
+   "reason": "blind_extension",
+   "detail": "own .text 0xC58 >> pin 0x128 but no out-of-pin map cluster; TU may continue past hi (gap-to-next 0x6948). Blind extension + honesty gate only; zero named evidence -> rank bottom",
+   "next_pin": "HamSupereasyData.cpp@[0x82653960..0x826539E4)",
+   "est": "+0-? (no named evidence)"
+  }
+ ]
+}
