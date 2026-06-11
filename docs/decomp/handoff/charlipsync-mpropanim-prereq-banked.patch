@@ -1,0 +1,106 @@
+From 961b2e1086cd9af6c014b4cc5af5b4498371eb32 Mon Sep 17 00:00:00 2001
+From: freeqaz <me@freeqaz.com>
+Date: Thu, 11 Jun 2026 19:06:48 +0000
+Subject: [PATCH] =?UTF-8?q?lever(prereq,=200-delta=20@7785):=20CharLipSync?=
+ =?UTF-8?q?=20mPropAnim=20=E2=80=94=20restore=20retail=20RB3=20member=20DC?=
+ =?UTF-8?q?3=20dropped?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add ObjPtr<RndPropAnim> mPropAnim @0x28 (rb3-Wii oracle: first member before
+mVisemes; DC3 binary corroborates via ??_G?$ObjPtr@VRndPropAnim@@@@ in
+char:CharLipSync.obj of ham_xbox_r.map; retail RB3-360 ctor fn_823C1F80
+stores ??_7?$ObjPtr@VRndPropAnim@@VObjectDir@@@@6B@ at this+0x28).
+Members shift: mVisemes 0x2c->0x34, mFrames 0x38->0x40, mData 0x3c->0x44.
+Plus oracle-faithful body hooks: ctor init mPropAnim(this), Load rev==1
+reads INTO the member (was a discarded DC3-style local), COPY_MEMBER,
+SYNC_PROP(prop_anim).
+
+Whole-binary A/B vs this branch's own fresh baseline: 7785 -> 7785,
+ZERO per-fn deltas (no pinned fn reads these offsets yet) — pure
+prerequisite for the CharLipSync.cpp re-pin+port campaign. The retail ctor's
+member-unwind funclet (fn_823C2044's true identity) additionally needs
+ObjPtr ctor INLINING (retail inlines to 3 stores; our poly-ObjPtr ctor
+compiles out-of-line) — see
+docs/decomp/research/2026-06-11-bp4-vbase-deep.md.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ src/system/char/CharLipSync.cpp |  5 +++--
+ src/system/char/CharLipSync.h   | 15 ++++++++++++---
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/src/system/char/CharLipSync.cpp b/src/system/char/CharLipSync.cpp
+index 45c71b7..22448be 100644
+--- a/src/system/char/CharLipSync.cpp
++++ b/src/system/char/CharLipSync.cpp
+@@ -12,7 +12,7 @@
+ 
+ std::map<Symbol, CharLipSync *> *CharLipSync::sLipSyncMap;
+ 
+-CharLipSync::CharLipSync() : mFrames(0) {}
++CharLipSync::CharLipSync() : mPropAnim(this), mFrames(0) {}
+ CharLipSync::~CharLipSync() { UnregisterLipSync(this); }
+ 
+ BEGIN_HANDLERS(CharLipSync)
+@@ -34,6 +34,7 @@ BEGIN_PROPSYNCS(CharLipSync)
+         if (sym == _s && (_op & (kPropGet | kPropSize)))
+             return PropSync(mVisemes, _val, _prop, _i + 1, _op);
+     }
++    SYNC_PROP(prop_anim, mPropAnim)
+     SYNC_SUPERCLASS(Hmx::Object)
+ END_PROPSYNCS
+ 
+@@ -55,7 +56,6 @@ BEGIN_LOADS(CharLipSync)
+     d >> mFrames;
+     d >> mData;
+     if (d.rev == 1) {
+-        ObjPtr<RndPropAnim> mPropAnim(this);
+         d >> mPropAnim;
+     }
+     RegisterLipSync(this);
+@@ -68,6 +68,7 @@ BEGIN_COPYS(CharLipSync)
+         COPY_MEMBER(mVisemes)
+         COPY_MEMBER(mFrames)
+         COPY_MEMBER(mData)
++        COPY_MEMBER(mPropAnim)
+     END_COPYING_MEMBERS
+ END_COPYS
+ 
+diff --git a/src/system/char/CharLipSync.h b/src/system/char/CharLipSync.h
+index 6c4029b..a936182 100644
+--- a/src/system/char/CharLipSync.h
++++ b/src/system/char/CharLipSync.h
+@@ -73,6 +73,7 @@ public:
+     NEW_OBJ(CharLipSync)
+ 
+     float Duration() { return (float)(mFrames - 1) / 30.0f; }
++    RndPropAnim *GetPropAnim() const { return mPropAnim; }
+     void Print(TextStream &);
+     void Parse(DataArray *);
+ 
+@@ -90,9 +91,17 @@ protected:
+     DataNode OnParse(DataArray *);
+     DataNode OnParseArray(DataArray *);
+ 
++    /** "PropAnim to control this lipsync" — retail RB3-360 member, present in
++        rb3-Wii (src/system/char/CharLipSync.h: ObjPtr<RndPropAnim> mPropAnim)
++        and in the DC3 binary (ham_xbox_r.map: ??_G?$ObjPtr@VRndPropAnim@@@@ in
++        char:CharLipSync.obj), but dropped from dc3-decomp's header which we
++        inherited. Proven against the retail ctor fn_823C1F80: ObjPtr vtable
++        ??_7?$ObjPtr@VRndPropAnim@@VObjectDir@@@@6B@ stored at this+0x28.
++        See docs/decomp/research/2026-06-11-bp4-vbase-deep.md. */
++    ObjPtr<RndPropAnim> mPropAnim; // 0x28
+     /** "viseme names" */
+-    std::vector<String> mVisemes; // 0x2c
++    std::vector<String> mVisemes; // 0x34
+     /** "how many keyframes" */
+-    int mFrames; // 0x38
+-    std::vector<unsigned char> mData; // 0x3c
++    int mFrames; // 0x40
++    std::vector<unsigned char> mData; // 0x44
+ };
+-- 
+2.54.0
+
