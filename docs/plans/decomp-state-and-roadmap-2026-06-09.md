@@ -821,11 +821,20 @@ force-mult dossier) — the highest-value SINGLE deferred lever now on the books
   (COFF-proven real bodies, pin-independent); optionally wire obj/Utl.cpp.
   ⚠ REVISES orphan-doc: do NOT bulk-delete DirLoader's Object/Symbol/
   DataNode orphan names (real-body names, useful after porting).
-- WAVE-3 QUEUE (remaining): sliver batch 2 IN FLIGHT (UIListDir region
-  survey est +15–30; SongDB+SongMgr relocations; 7-unit extension
-  micro-batch Stats/FileMerger/CharHair/Song/MusicLibrary/ButtonHolder/
-  CharClip), then batch 3 (VocalTrack/Gem boundary, TexBlender/AO carve,
-  Character+TypeProps compound, ~15 small relocations), pin_audit.py
+- **UIListDir region: MOSTLY REFUTED, +3 kept** (2fad988, UIListState pin
+  extended to full TU cluster 0x827E8A50–0x827EA3B8, unit 16→19; ctor was
+  dtk-funclet-split 8 bytes off its VA map entry — renamer near-miss class).
+  UILabel REFUTED: only ONE real UILabel method exists in the whole retail
+  map; the "64-fn cluster" was UIListDir's ULabelSort STL instantiations +
+  ICF/inline dissolution — **oracle-obj-count ≠ retail-cluster-size; the
+  hunt dossier's EV column systematically overestimates wherever retail
+  inlined/ICF'd a class** (2nd confirmation of the Object/DirLoader
+  pitfall). UIListWidget REFUTED: 7 methods in a many-TU COMDAT interleave.
+- WAVE-3 QUEUE (remaining, ⚠ re-rank EV by retail-map named-method count
+  not oracle fn count): sliver batch 2 rest (SongDB+SongMgr relocations;
+  7-unit extension micro-batch Stats/FileMerger/CharHair/Song/MusicLibrary/
+  ButtonHolder/CharClip), batch 3 (VocalTrack/Gem boundary, TexBlender/AO
+  carve, Character+TypeProps compound, ~15 small relocations), pin_audit.py
   detection tool, AsyncFileHolmes-head split-out, obj_orphan purge
   (REVISED per refutation — re-gate before purging), OvershellSlot, Mat_NG,
   banked ObjectDir-vbase patch (lands when its funclet realigns).
