@@ -1250,8 +1250,8 @@ FlowManager.cpp:
 	.text       start:0x824E60E8 end:0x824E6140
 
 SongMgr.cpp:
-	.pdata      start:0x8220E488 end:0x8220E490
-	.text       start:0x824E6220 end:0x824E6274
+	.pdata      start:0x82237D00 end:0x82237ED0
+	.text       start:0x82783A00 end:0x82785668
 
 File.cpp:
 	.pdata      start:0x82210438 end:0x82210560
