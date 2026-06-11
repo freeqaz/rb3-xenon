@@ -503,8 +503,10 @@ RhythmBattlePlayer.cpp:
 	.text       start:0x82319810 end:0x82319A04
 
 CharEyeDartRuleset.cpp:
-	.pdata      start:0x821FDA40 end:0x821FDC38
-	.text       start:0x823AA590 end:0x823ACF28
+	.pdata      start:0x821FDA40 end:0x821FDAD8
+	.pdata      start:0x821FDB50 end:0x821FDC38
+	.text       start:0x823AA590 end:0x823AB078
+	.text       start:0x823ABAE8 end:0x823ACF28 rename:.text$yd
 
 CharIKRod.cpp:
 	.pdata      start:0x821FE188 end:0x821FE228
@@ -803,7 +805,9 @@ Flow.cpp:
 
 CharInterest.cpp:
 	.pdata      start:0x821ED8E0 end:0x821ED8E8
+	.pdata      start:0x821FDAD8 end:0x821FDB50
 	.text       start:0x8229D760 end:0x8229D7B0
+	.text       start:0x823AB078 end:0x823ABAE8 rename:.text$yd
 
 VorbisReader.cpp:
 	.pdata      start:0x821EE240 end:0x821EE248
