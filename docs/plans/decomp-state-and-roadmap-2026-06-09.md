@@ -1001,15 +1001,48 @@ re-run.
   matches. VocalTrack UpdateScrolling @52.34 sz8948 = body-divergence wall
   (1015 I/D, retail-rederive only — DEFER).
 
-### Post-wave-4 queue (EV order)
-1. **refill_loop.sh sweep** (playbook §9 compounding step; new source landed
-   in 3 TUs + big VocalTrack reveal — pin_identified→reveal loop validated
-   +255 once).
+### Refill sweep + vbase verdict (same session, post-close)
+
+- **refill_loop.sh sweep LANDED +172** (72faa36; queue item 1 executed
+  immediately): 7866 → **8038**, verified EXACT in main fresh+re-run.
+  2 iterations (143 safe names, then dry); 46 units gained / 0 dropped.
+  Top: FileMerger +19, VocalPlayer +17, Player +12, CharIKFingers +11,
+  AccProg +11, BandIKEffector +9, CharMeshHide +7, SongDB +7. Pool
+  re-checks: inline_policy_finder still TAPPED (22 candidates, all n=1);
+  member_delta_finder2 over new near-misses = 5 known VBASE_WALLs + 1
+  UNKNOWN, zero MEMBER_DELTA/SIZED_VECTOR — no struct leverage refilled.
+- **vbase deep-dive SOLVED the net-0 mechanism** (Fable, dossier
+  `2026-06-11-bp4-vbase-deep.md`, commit 24706f1): fn_823C2044 is retail
+  `??0CharLipSync`'s member-unwind funclet (the CharClipSet pin spans the
+  CharClipSet/CharLipSync TU boundary; wired CharLipSync pin at 0x822CADA8
+  is a displaced sliver). Its pre-patch "100%" was an ARTIFACT funded by
+  the bug itself: the DC3-only GetExposedProperties virtual forced a
+  `??0DataArrayPtr` COMDAT whose `__unwind$72600` objdiff masked-paired the
+  funclet against; retail's CharClipSet TU has no DataArrayPtr ctor at all.
+  So the patch's −1 is artifact-removal, not regression → patch is honest
+  net-0; **PARK standalone permanently**. Binary-wide delta is exactly 4
+  fns; PanelDir::RemovingObject claim in the old banked-doc is STALE
+  (99.978 both sides). Bonus finding: retail CharLipSync has
+  `ObjPtr<RndPropAnim> mPropAnim` @0x28 that DC3's header dropped —
+  restored + verified 0-delta, **banked** as
+  `docs/decomp/handoff/charlipsync-mpropanim-prereq-banked.patch`.
+  Remaining gate to the +1: ObjPtr-ctor inline-policy wall (retail inlines
+  to 3 stores). The honest composition = **CharLipSync re-pin+port campaign**
+  (~29 named-method EV per DC3 map; 7-step plan with boundary
+  B ∈ (0x823C0CD8, 0x823C11E8], shared-boundary re-pin coordinates, and the
+  CharSleeve under-pin sibling fix, all in the dossier).
+
+### Post-wave-4 queue v2 (EV order, after refill)
+1. **CharLipSync re-pin+port campaign** (~29 EV; plan + banked prereq ready,
+   apply both handoff patches together — vbase patch composes there).
 2. **hash_map re-try on remaining 0x1c-gated/0x18-deficit map TUs** (AccProg
    precedent; check rbtree_blast.py-era TUs whose fns still read <100).
 3. Re-run pin_audit.py (source landed in SongMgr/AccProg/UIComponent;
-   VocalTrack pin moved).
+   VocalTrack + refill pins moved).
 4. Synth-belt pin+port campaign; AFH-head identification; obj_orphan purge.
 5. UIComponent::Update 69.8 / ResourceFileUpdated 88.8 finishers; SongMgr
    bonus reveals (recon step 7 list: 0x82784040 ContentName(int) etc.).
-6. vbase deep-dive verdict (in flight); OvershellSlot, Mat_NG.
+6. OvershellSlot, Mat_NG (multi-session walls).
+
+**SESSION TOTAL 2026-06-11 (waves 3+4+refill): 6932 → 8038 (+1106, zero
+regressions, every composed verify EXACT).**
