@@ -648,8 +648,8 @@ CharBoneDir.cpp:
 	.text       start:0x823A29A8 end:0x823A49E4
 
 CharClip.cpp:
-	.pdata      start:0x821FA588 end:0x821FA860
-	.text       start:0x8236A918 end:0x8236E060
+	.pdata      start:0x821FA540 end:0x821FA860
+	.text       start:0x8236A4B8 end:0x8236E060
 
 CharClipSet.cpp:
 	.pdata      start:0x821FECD0 end:0x821FF198
