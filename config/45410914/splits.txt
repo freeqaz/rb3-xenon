@@ -31,8 +31,8 @@ BandDirector.cpp:
 	.text       start:0x8227C378 end:0x82285220
 
 BandWardrobe.cpp:
-	.pdata      start:0x821F5988 end:0x821F5A90
-	.text       start:0x8231C988 end:0x8231E258
+	.pdata      start:0x821F5988 end:0x821F5F80
+	.text       start:0x8231C988 end:0x82322DA0
 
 TrackPanelDir.cpp:
 	.pdata      start:0x821F2F30 end:0x821F3130
