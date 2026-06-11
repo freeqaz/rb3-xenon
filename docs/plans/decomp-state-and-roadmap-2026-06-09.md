@@ -894,11 +894,20 @@ displaced mf=0 sliver squatting in a real owner's TU; evicting it (when
 this-unit-IS-the-sliver) is the clean play. FOLLOW-ON: evicted
 RhythmDetectorGroup/CharClipGroup/CharPollGroup have real clusters @
 0x8257c728/0x822f8ea0/0x8239ce90 (final mini-pass in flight).
-**LANE VERDICT: clean single-.text-range sliver vein = DRY** after the
-mini-pass; what remains in pin_audit output is known-refuted residue,
-port-gated (VocalTrack-class), or obj_defines_none_yet mirages.
+**Groups mini-pass (91a7abc): CharPollGroup fresh-pin +20** (real cluster
+0x8239C8D0–0x8239E1F4 in the CharWeightable→CharIKFingers gap);
+CharClipGroup + RhythmDetectorGroup REFUTED (the tail agent's cited
+addresses were single ICF one-offs — an ObjDirItr operator++ our obj
+doesn't define, and a ??_E vector-dtor thunk in a UIEventMgr/
+Accomplishment thunk run; both classes' real methods are COMDAT-scattered
+binary-wide, no contiguous cluster exists).
+**LANE VERDICT: the sliver-pin lane is DRY.** Every honest single-
+.text-range candidate is landed; what remains in pin_audit output is
+known-refuted residue, port-gated work (VocalTrack-class: port THEN
+extend), or obj_defines_none_yet mirages. Re-run pin_audit when new
+source lands (porting creates new pairing-ready clusters).
 
-# WAVE-3 CLOSE: **7765 / 65545** (6932 → 7765, **+833**, 0 regressions, all composed verifies EXACT)
+# WAVE-3 CLOSE: **7785 / 65545** (6932 → 7785, **+853**, 0 regressions, all composed verifies EXACT)
 Ledger: research dossiers ×5 + accprog +10, songpos +17, uicomp-virtuals
 +6, mispins +24, uicomp-repin +38, uilist +80, chareyes+cameramanager +91,
 uiliststate +3, sliver-exhaust workflow +430. Banked: ObjectDir-vbase
