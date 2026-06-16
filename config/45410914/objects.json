@@ -283,6 +283,7 @@
       "system/os/UsbMidiGuitar.cpp": "NonMatching",
       "system/os/VirtualKeyboard_Xbox.cpp": "NonMatching",
       "system/rnddx9/CubeTex.cpp": "NonMatching",
+      "system/rnddx9/Rnd.cpp": "NonMatching",
       "system/rnddx9/Rnd_Xbox.cpp": "NonMatching",
       "system/rnddx9/ShaderMgr.cpp": "NonMatching",
       "system/rndobj/CubeTex.cpp": "NonMatching",

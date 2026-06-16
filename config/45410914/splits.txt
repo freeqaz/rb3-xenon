@@ -683,7 +683,7 @@ Part.cpp:
 	.pdata      start:0x82205690 end:0x822059D8
 	.text       start:0x82433730 end:0x82439D8C
 
-Rnd.cpp:
+system/rndobj/Rnd.cpp:
 	.pdata      start:0x822029E0 end:0x822031E0
 	.text       start:0x823FBFF8 end:0x82403EC0
 
@@ -1694,6 +1694,10 @@ PostProc_NG.cpp:
 Archive.cpp:
 	.pdata      start:0x82210080 end:0x82210248
 	.text       start:0x824FF168 end:0x82501880
+
+system/rnddx9/Rnd.cpp:
+	.pdata      start:0x822319F0 end:0x82231A68
+	.text       start:0x8270DBB0 end:0x8270ED88
 
 Rnd_Xbox.cpp:
 	.pdata      start:0x82231E48 end:0x822320B0
