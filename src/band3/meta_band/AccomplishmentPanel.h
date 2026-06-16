@@ -103,9 +103,9 @@ public:
 
     void Update() {
         mGroups.clear();
-        const std::map<Symbol, AccomplishmentGroup *> &groups =
+        const std::hash_map<Symbol, AccomplishmentGroup *> &groups =
             TheAccomplishmentMgr->GetGroups();
-        for (std::map<Symbol, AccomplishmentGroup *>::const_iterator it = groups.begin();
+        for (std::hash_map<Symbol, AccomplishmentGroup *>::const_iterator it = groups.begin();
              it != groups.end();
              ++it) {
             Symbol key = it->first;

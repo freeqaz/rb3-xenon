@@ -121,46 +121,46 @@ AccomplishmentManager::AccomplishmentManager() {
 AccomplishmentManager::~AccomplishmentManager() { Cleanup(); }
 
 void AccomplishmentManager::Cleanup() {
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         RELEASE(it->second);
     }
     mAccomplishments.clear();
-    for (std::map<Symbol, AccomplishmentCategory *>::iterator it =
+    for (std::hash_map<Symbol, AccomplishmentCategory *>::iterator it =
              mAccomplishmentCategory.begin();
          it != mAccomplishmentCategory.end();
          ++it) {
         RELEASE(it->second);
     }
     mAccomplishmentCategory.clear();
-    for (std::map<Symbol, std::set<Symbol> *>::iterator it =
+    for (std::hash_map<Symbol, std::set<Symbol> *>::iterator it =
              m_mapCategoryToAccomplishmentSet.begin();
          it != m_mapCategoryToAccomplishmentSet.end();
          ++it) {
         RELEASE(it->second);
     }
     m_mapCategoryToAccomplishmentSet.clear();
-    for (std::map<Symbol, std::list<Symbol> *>::iterator it =
+    for (std::hash_map<Symbol, std::list<Symbol> *>::iterator it =
              m_mapGroupToCategories.begin();
          it != m_mapGroupToCategories.end();
          ++it) {
         RELEASE(it->second);
     }
     m_mapGroupToCategories.clear();
-    for (std::map<Symbol, AccomplishmentGroup *>::iterator it =
+    for (std::hash_map<Symbol, AccomplishmentGroup *>::iterator it =
              mAccomplishmentGroups.begin();
          it != mAccomplishmentGroups.end();
          ++it) {
         RELEASE(it->second);
     }
     mAccomplishmentGroups.clear();
-    for (std::map<Symbol, Award *>::iterator it = mAwards.begin(); it != mAwards.end();
+    for (std::hash_map<Symbol, Award *>::iterator it = mAwards.begin(); it != mAwards.end();
          ++it) {
         RELEASE(it->second);
     }
     mAwards.clear();
-    for (std::map<Symbol, std::vector<Symbol> *>::iterator it = unkb0.begin();
+    for (std::hash_map<Symbol, std::vector<Symbol> *>::iterator it = unkb0.begin();
          it != unkb0.end();
          ++it) {
         RELEASE(it->second);
@@ -172,7 +172,7 @@ void AccomplishmentManager::Cleanup() {
     mTourSafeDiscSongs.clear();
     mFanValues.clear();
     m_vFanScalingData.clear();
-    for (std::map<Symbol, SongSortMgr::SongFilter *>::iterator it =
+    for (std::hash_map<Symbol, SongSortMgr::SongFilter *>::iterator it =
              mPrecachedFilters.begin();
          it != mPrecachedFilters.end();
          ++it) {
@@ -191,7 +191,7 @@ void AccomplishmentManager::InitializePrecachedFilters() {
         int songid = *it;
         BandSongMetadata *pSongData = (BandSongMetadata *)TheSongMgr.Data(songid);
         MILO_ASSERT(pSongData, 200);
-        for (std::map<Symbol, SongSortMgr::SongFilter *>::iterator it =
+        for (std::hash_map<Symbol, SongSortMgr::SongFilter *>::iterator it =
                  mPrecachedFilters.begin();
              it != mPrecachedFilters.end();
              ++it) {
@@ -277,7 +277,7 @@ void AccomplishmentManager::Init(DataArray *configure) {
 }
 
 void AccomplishmentManager::SanityCheckAwards() {
-    for (std::map<Symbol, Award *>::iterator it = mAwards.begin(); it != mAwards.end();
+    for (std::hash_map<Symbol, Award *>::iterator it = mAwards.begin(); it != mAwards.end();
          ++it) {
         Symbol key = it->first;
         Award *pAward = GetAward(key);
@@ -520,7 +520,7 @@ void AccomplishmentManager::ConfigureAccomplishmentData(DataArray *arr) {
 
 void AccomplishmentManager::ConfigureAccomplishmentCategoryGroupingData() {
     MILO_ASSERT(m_mapCategoryToAccomplishmentSet.empty(), 0x28F);
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         Accomplishment *pAccomplishment = it->second;
@@ -538,7 +538,7 @@ void AccomplishmentManager::ConfigureAccomplishmentCategoryGroupingData() {
 
 void AccomplishmentManager::ConfigureAccomplishmentGroupToCategoriesData() {
     MILO_ASSERT(m_mapGroupToCategories.empty(), 0x2AB);
-    for (std::map<Symbol, AccomplishmentCategory *>::iterator it =
+    for (std::hash_map<Symbol, AccomplishmentCategory *>::iterator it =
              mAccomplishmentCategory.begin();
          it != mAccomplishmentCategory.end();
          ++it) {
@@ -598,7 +598,7 @@ void AccomplishmentManager::ConfigureAccomplishmentRewardData(DataArray *arr) {
 }
 
 std::list<Symbol> *AccomplishmentManager::GetCategoryListForGroup(Symbol s) const {
-    std::map<Symbol, std::list<Symbol> *>::const_iterator it =
+    std::hash_map<Symbol, std::list<Symbol> *>::const_iterator it =
         m_mapGroupToCategories.find(s);
     if (it != m_mapGroupToCategories.end())
         return it->second;
@@ -607,7 +607,7 @@ std::list<Symbol> *AccomplishmentManager::GetCategoryListForGroup(Symbol s) cons
 }
 
 std::set<Symbol> *AccomplishmentManager::GetAccomplishmentSetForCategory(Symbol s) const {
-    std::map<Symbol, std::set<Symbol> *>::const_iterator it =
+    std::hash_map<Symbol, std::set<Symbol> *>::const_iterator it =
         m_mapCategoryToAccomplishmentSet.find(s);
     if (it != m_mapCategoryToAccomplishmentSet.end())
         return it->second;
@@ -646,7 +646,7 @@ bool AccomplishmentManager::HasFanValue(Symbol s) {
 }
 
 int AccomplishmentManager::GetMetaScoreValue(Symbol s) {
-    std::map<Symbol, int>::iterator it = mFanValues.find(s);
+    std::hash_map<Symbol, int>::iterator it = mFanValues.find(s);
     if (it != mFanValues.end())
         return it->second;
     else
@@ -690,7 +690,7 @@ bool AccomplishmentManager::HasAccomplishmentCategory(Symbol s) const {
 }
 
 AccomplishmentCategory *AccomplishmentManager::GetAccomplishmentCategory(Symbol s) const {
-    std::map<Symbol, AccomplishmentCategory *>::const_iterator it =
+    std::hash_map<Symbol, AccomplishmentCategory *>::const_iterator it =
         mAccomplishmentCategory.find(s);
     if (it != mAccomplishmentCategory.end())
         return it->second;
@@ -703,7 +703,7 @@ bool AccomplishmentManager::HasAccomplishmentGroup(Symbol s) const {
 }
 
 AccomplishmentGroup *AccomplishmentManager::GetAccomplishmentGroup(Symbol s) const {
-    std::map<Symbol, AccomplishmentGroup *>::const_iterator it =
+    std::hash_map<Symbol, AccomplishmentGroup *>::const_iterator it =
         mAccomplishmentGroups.find(s);
     if (it != mAccomplishmentGroups.end())
         return it->second;
@@ -712,7 +712,7 @@ AccomplishmentGroup *AccomplishmentManager::GetAccomplishmentGroup(Symbol s) con
 }
 
 int AccomplishmentManager::GetPrecachedFilterCount(Symbol s) const {
-    std::map<Symbol, int>::const_iterator it = mPrecachedFilterCounts.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = mPrecachedFilterCounts.find(s);
     if (it != mPrecachedFilterCounts.end())
         return it->second;
     else
@@ -724,7 +724,7 @@ void AccomplishmentManager::SetPrecachedFilterCount(Symbol s, int i) {
 }
 
 SongSortMgr::SongFilter *AccomplishmentManager::GetPrecachedFilter(Symbol s) const {
-    std::map<Symbol, SongSortMgr::SongFilter *>::const_iterator it =
+    std::hash_map<Symbol, SongSortMgr::SongFilter *>::const_iterator it =
         mPrecachedFilters.find(s);
     if (it != mPrecachedFilters.end())
         return it->second;
@@ -737,7 +737,7 @@ bool AccomplishmentManager::HasAward(Symbol s) const {
 }
 
 Award *AccomplishmentManager::GetAward(Symbol s) const {
-    std::map<Symbol, Award *>::const_iterator it = mAwards.find(s);
+    std::hash_map<Symbol, Award *>::const_iterator it = mAwards.find(s);
     if (it != mAwards.end())
         return it->second;
     else
@@ -745,7 +745,7 @@ Award *AccomplishmentManager::GetAward(Symbol s) const {
 }
 
 Symbol AccomplishmentManager::GetAwardSource(Symbol s) const {
-    std::map<Symbol, Symbol>::const_iterator it = mAwardToSource.find(s);
+    std::hash_map<Symbol, Symbol>::const_iterator it = mAwardToSource.find(s);
     if (it != mAwardToSource.end())
         return it->second;
     else
@@ -753,7 +753,7 @@ Symbol AccomplishmentManager::GetAwardSource(Symbol s) const {
 }
 
 std::vector<Symbol> *AccomplishmentManager::GetAwardSourceList(Symbol s) const {
-    std::map<Symbol, std::vector<Symbol> *>::const_iterator it = unkb0.find(s);
+    std::hash_map<Symbol, std::vector<Symbol> *>::const_iterator it = unkb0.find(s);
     if (it != unkb0.end())
         return it->second;
     else
@@ -802,7 +802,7 @@ bool AccomplishmentManager::InqAssetSourceList(
 }
 
 Symbol AccomplishmentManager::GetAssetAward(Symbol s) const {
-    std::map<Symbol, Symbol>::const_iterator it = mAssetToAward.find(s);
+    std::hash_map<Symbol, Symbol>::const_iterator it = mAssetToAward.find(s);
     if (it != mAssetToAward.end())
         return it->second;
     else
@@ -859,7 +859,7 @@ bool AccomplishmentManager::HasAccomplishment(Symbol s) const {
 }
 
 Accomplishment *AccomplishmentManager::GetAccomplishment(Symbol s) const {
-    std::map<Symbol, Accomplishment *>::const_iterator it = mAccomplishments.find(s);
+    std::hash_map<Symbol, Accomplishment *>::const_iterator it = mAccomplishments.find(s);
     if (it != mAccomplishments.end())
         return it->second;
     else
@@ -1007,7 +1007,7 @@ void AccomplishmentManager::CheckForFinishedTrainerAccomplishmentsForUser(LocalB
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(u);
     MILO_ASSERT(pProfile, 0x5A1);
     AccomplishmentProgress &prog = pProfile->AccessAccomplishmentProgress();
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         Symbol key = it->first;
@@ -1075,7 +1075,7 @@ void AccomplishmentManager::CheckForFinishedTourAccomplishmentsForProfile(
 ) {
     MILO_ASSERT(i_pProfile, 0x64E);
     AccomplishmentProgress &prog = i_pProfile->AccessAccomplishmentProgress();
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         Symbol key = it->first;
@@ -1107,7 +1107,7 @@ void AccomplishmentManager::CheckForFinishedAccomplishmentsForUser(
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(u);
     MILO_ASSERT(pProfile, 0x684);
     AccomplishmentProgress &pProgress = pProfile->AccessAccomplishmentProgress();
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         Symbol key = it->first;
@@ -1264,7 +1264,7 @@ void AccomplishmentManager::HandleSetlistCompletedForUser(
         EarnAccomplishmentForProfile(pProfile, acc_hmxrecommends);
     }
     AccomplishmentProgress &prog = pProfile->AccessAccomplishmentProgress();
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         Symbol key = it->first;
@@ -1310,7 +1310,7 @@ void AccomplishmentManager::CheckForOneShotAccomplishments(
     ScoreType scoreType = (ScoreType)pPerformer->GetScoreTypeForUser(u);
     Difficulty userDiff = (Difficulty)u->GetDifficulty();
     AccomplishmentProgress &prog = pProfile->AccessAccomplishmentProgress();
-    for (std::map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         Symbol key = it->first;
@@ -1441,7 +1441,7 @@ void AccomplishmentManager::InitializeSongIncrementalDataForUserGoal(
 
 int AccomplishmentManager::GetNumAccomplishments() const {
     int num = 0;
-    for (std::map<Symbol, Accomplishment *>::const_iterator it = mAccomplishments.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::const_iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
         if (IsAvailableToView(it->first))

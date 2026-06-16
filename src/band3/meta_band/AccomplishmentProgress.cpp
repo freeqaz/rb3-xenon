@@ -493,17 +493,17 @@ void AccomplishmentProgress::UpdateScoreTypeSpecificStats(
 }
 
 void AccomplishmentProgress::FakeFill() {
-    const std::map<Symbol, Accomplishment *> &accs =
+    const std::hash_map<Symbol, Accomplishment *> &accs =
         TheAccomplishmentMgr->GetAccomplishments();
-    for (std::map<Symbol, Accomplishment *>::const_iterator it = accs.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::const_iterator it = accs.begin();
          it != accs.end();
          ++it) {
         Symbol key = (*it).first;
         mStepTrackingMap[key] = 0;
         mAccomplishments.insert(key);
     }
-    const std::map<Symbol, Award *> &awards = TheAccomplishmentMgr->mAwards;
-    for (std::map<Symbol, Award *>::const_iterator it = awards.begin();
+    const std::hash_map<Symbol, Award *> &awards = TheAccomplishmentMgr->mAwards;
+    for (std::hash_map<Symbol, Award *>::const_iterator it = awards.begin();
          it != awards.end();
          ++it) {
         Symbol key = it->first;
@@ -1067,9 +1067,9 @@ bool AccomplishmentProgress::InqGoalLeaderboardData(
     );
     o_rLeaderboardGoalToValueMap[campaign_metascore] = fanvalue;
 
-    const std::map<Symbol, Accomplishment *> &accs =
+    const std::hash_map<Symbol, Accomplishment *> &accs =
         TheAccomplishmentMgr->GetAccomplishments();
-    for (std::map<Symbol, Accomplishment *>::const_iterator it = accs.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::const_iterator it = accs.begin();
          it != accs.end();
          ++it) {
         Accomplishment *pAccomplishment = it->second;

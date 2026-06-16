@@ -14,11 +14,14 @@
 // (out-of-line find returning iterator-by-value, NULL miss sentinel, value at
 // slist node+0x8) — see ?GetToursPlayed etc. hash_map<Symbol,int> hashes the
 // interned char* word identity (retail: lwz key; divwu), matching exactly.
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
 namespace stlpmtx_std {
 _STLP_TEMPLATE_NULL struct hash<Symbol> {
     size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
 };
 }
+#endif
 
 class Band;
 class BandProfile;

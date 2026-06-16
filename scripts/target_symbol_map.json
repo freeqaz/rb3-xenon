@@ -12434,5 +12434,18 @@
  "0x823C13A8": "??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z",
  "0x823C19E8": "??4?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x823C1C28": "?_M_clear_after_move@?$vector@UWeight@PlayBack@CharLipSync@@V?$StlNodeAlloc@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
- "0x823BE1C8": "?DrawShowing@CharClipSet@@UAAXXZ"
+ "0x823BE1C8": "?DrawShowing@CharClipSet@@UAAXXZ",
+ "0x82544EF8": "?GetCategoryListForGroup@AccomplishmentManager@@QBAPAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@@Z",
+ "0x82544F40": "?GetAccomplishmentSetForCategory@AccomplishmentManager@@QBAPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@VSymbol@@@Z",
+ "0x82544F88": "?GetMetaScoreValue@AccomplishmentManager@@QAAHVSymbol@@@Z",
+ "0x82544FD0": "?GetAccomplishmentCategory@AccomplishmentManager@@QBAPAVAccomplishmentCategory@@VSymbol@@@Z",
+ "0x82545018": "?GetAccomplishmentGroup@AccomplishmentManager@@QBAPAVAccomplishmentGroup@@VSymbol@@@Z",
+ "0x82545060": "?GetPrecachedFilterCount@AccomplishmentManager@@QBAHVSymbol@@@Z",
+ "0x825450A8": "?GetPrecachedFilter@AccomplishmentManager@@QBAPAVSongFilter@SongSortMgr@@VSymbol@@@Z",
+ "0x825450F0": "?HasAward@AccomplishmentManager@@QBA_NVSymbol@@@Z",
+ "0x82545130": "?GetAwardSource@AccomplishmentManager@@QBA?AVSymbol@@V2@@Z",
+ "0x82545198": "?GetAwardSourceList@AccomplishmentManager@@QBAPAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@@Z",
+ "0x825451E0": "?GetAssetAward@AccomplishmentManager@@QBA?AVSymbol@@V2@@Z",
+ "0x82545248": "?HasAccomplishment@AccomplishmentManager@@QBA_NVSymbol@@@Z",
+ "0x82545288": "?GetAccomplishment@AccomplishmentManager@@QBAPAVAccomplishment@@VSymbol@@@Z"
 }

@@ -9,10 +9,28 @@ class SongStatusMgr;
 #include "obj/Object.h"
 #include "os/ContentMgr.h"
 #include "system/obj/Data.h"
+#include "utl/Symbol.h"
 #include <map>
+#include <hash_map>
 #include "AccomplishmentCategory.h"
 #include "Accomplishment.h"
 #include "meta_band/Award.h"
+
+// The accomplishment maps below were originally Harmonix `hash_map` keyed on
+// Symbol. The Wii decomp approximated them as std::map; retail X360 inlines the
+// STLport hashtable::find COMDAT (out-of-line find returning iterator-by-value,
+// NULL-miss sentinel, value at slist node+0x8) — see the Has*/Get* accessors.
+// hash<Symbol> hashes the interned char* word identity, matching retail exactly.
+// Guarded so AccomplishmentProgress.h (which defines the same specialization)
+// and this header can both be included in one TU without an ODR clash.
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
 
 struct GoalAlpaCmp {
     GoalAlpaCmp();
@@ -158,38 +176,40 @@ public:
     bool HasNewRewardVignettes() const;
     void ClearGoalProgressionAcquisitionInfo();
     int GetScaledFanValue(int);
-    const std::map<Symbol, Accomplishment *> &GetAccomplishments() const {
+    const std::hash_map<Symbol, Accomplishment *> &GetAccomplishments() const {
         return mAccomplishments;
     }
-    const std::map<Symbol, AccomplishmentCategory *> &GetCategories() const {
+    const std::hash_map<Symbol, AccomplishmentCategory *> &GetCategories() const {
         return mAccomplishmentCategory;
     }
-    const std::map<Symbol, AccomplishmentGroup *> &GetGroups() const {
+    const std::hash_map<Symbol, AccomplishmentGroup *> &GetGroups() const {
         return mAccomplishmentGroups;
     }
     const std::vector<Symbol> &GetDiscSongs() const { return mDiscSongs; }
 
     DataNode OnEarnAccomplishment(const DataArray *);
 
-    std::map<Symbol, Accomplishment *> mAccomplishments; // 0x20
-    std::map<Symbol, AccomplishmentCategory *> mAccomplishmentCategory; // 0x38
-    std::map<Symbol, AccomplishmentGroup *> mAccomplishmentGroups; // 0x50
-    std::map<Symbol, Award *> mAwards; // 0x68
-    std::map<Symbol, Symbol> mAssetToAward; // 0x80
-    std::map<Symbol, Symbol> mAwardToSource; // 0x98
-    std::map<Symbol, std::vector<Symbol> *> unkb0; // 0xb0
-    std::map<Symbol, int> mFanValues; // 0xc8
-    std::vector<std::pair<int, int> > m_vFanScalingData; // 0xe0
-    std::map<Symbol, std::list<Symbol> *> m_mapGroupToCategories; // 0xe8
-    std::map<Symbol, std::set<Symbol> *> m_mapCategoryToAccomplishmentSet; // 0x100
-    int mAccomplishmentRewardLeaderboardThresholds[4]; // 0x118
-    int mAccomplishmentRewardIconThresholds[4]; // 0x128
-    std::vector<GoalAcquisitionInfo> mGoalAcquisitionInfos; // 0x138
-    std::vector<GoalProgressionInfo> mGoalProgressionInfos; // 0x140
-    std::vector<Symbol> mDiscSongs; // 0x148
-    std::vector<Symbol> mTourSafeDiscSongs; // 0x150
-    std::map<Symbol, SongSortMgr::SongFilter *> mPrecachedFilters; // 0x158
-    std::map<Symbol, int> mPrecachedFilterCounts; // 0x170
+    // Hmx::Object (0x28) + ContentMgr::Callback vptr (0x28) -> own data at 0x2c.
+    // hash_map sizeof is 0x1c (STLport _ht: _M_max_load_factor at +0x18).
+    std::hash_map<Symbol, Accomplishment *> mAccomplishments; // 0x2c
+    std::hash_map<Symbol, AccomplishmentCategory *> mAccomplishmentCategory; // 0x48
+    std::hash_map<Symbol, AccomplishmentGroup *> mAccomplishmentGroups; // 0x64
+    std::hash_map<Symbol, Award *> mAwards; // 0x80
+    std::hash_map<Symbol, Symbol> mAssetToAward; // 0x9c
+    std::hash_map<Symbol, Symbol> mAwardToSource; // 0xb8
+    std::hash_map<Symbol, std::vector<Symbol> *> unkb0; // 0xd4
+    std::hash_map<Symbol, int> mFanValues; // 0xf0
+    std::vector<std::pair<int, int> > m_vFanScalingData; // 0x10c
+    std::hash_map<Symbol, std::list<Symbol> *> m_mapGroupToCategories; // 0x118
+    std::hash_map<Symbol, std::set<Symbol> *> m_mapCategoryToAccomplishmentSet; // 0x134
+    int mAccomplishmentRewardLeaderboardThresholds[4]; // 0x150
+    int mAccomplishmentRewardIconThresholds[4]; // 0x160
+    std::vector<GoalAcquisitionInfo> mGoalAcquisitionInfos; // 0x170
+    std::vector<GoalProgressionInfo> mGoalProgressionInfos; // 0x17c
+    std::vector<Symbol> mDiscSongs; // 0x188
+    std::vector<Symbol> mTourSafeDiscSongs; // 0x194
+    std::hash_map<Symbol, SongSortMgr::SongFilter *> mPrecachedFilters; // 0x1a0
+    std::hash_map<Symbol, int> mPrecachedFilterCounts; // 0x1bc
 };
 
 extern AccomplishmentManager *TheAccomplishmentMgr;

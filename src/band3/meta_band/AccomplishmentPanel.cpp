@@ -247,9 +247,9 @@ void AccomplishmentPanel::Enter() {
 
 void AccomplishmentPanel::LoadCampaignIcons() {
     std::vector<Symbol> vec;
-    const std::map<Symbol, Accomplishment *> &accs =
+    const std::hash_map<Symbol, Accomplishment *> &accs =
         TheAccomplishmentMgr->GetAccomplishments();
-    for (std::map<Symbol, Accomplishment *>::const_iterator it = accs.begin();
+    for (std::hash_map<Symbol, Accomplishment *>::const_iterator it = accs.begin();
          it != accs.end();
          ++it) {
         Symbol key = it->first;
