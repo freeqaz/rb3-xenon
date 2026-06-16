@@ -841,8 +841,8 @@ AmbientOcclusion.cpp:
 	.text       start:0x82479B60 end:0x82480660
 
 Waypoint.cpp:
-	.pdata      start:0x821F0508 end:0x821F0510
-	.text       start:0x822C8CA8 end:0x822C8CF8
+	.pdata      start:0x821FF580 end:0x821FF7D8
+	.text       start:0x823C7CC8 end:0x823CA668
 
 Font.cpp:
 	.pdata      start:0x822079E0 end:0x82207A50
