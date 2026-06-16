@@ -12477,5 +12477,14 @@
  "0x82547EE0": "?ConfigureFanValueData@AccomplishmentManager@@QAAXPAVDataArray@@@Z",
  "0x825480B0": "?ConfigureAccomplishmentCategoryGroupingData@AccomplishmentManager@@QAAXXZ",
  "0x825481A0": "?ConfigureAccomplishmentGroupToCategoriesData@AccomplishmentManager@@QAAXXZ",
- "0x8254A150": "?Cleanup@AccomplishmentManager@@QAAXXZ"
+ "0x8254A150": "?Cleanup@AccomplishmentManager@@QAAXXZ",
+ "0x82783C88": "?_M_erase_after@?$_Slist_base@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@IAAPAU_Slist_node_base@23@PAU423@@Z",
+ "0x82783FA8": "?Data@SongMgr@@UBAPBVSongMetadata@@H@Z",
+ "0x82784208": "?IsContentUsedForSong@SongMgr@@QBA_NVSymbol@@H@Z",
+ "0x82784268": "?ContentNameRoot@SongMgr@@IBAPBDVSymbol@@@Z",
+ "0x827842B0": "?NumSongsInContent@SongMgr@@IBAHVSymbol@@@Z",
+ "0x827844A8": "?ContentUnmounted@SongMgr@@UAAXPBD@Z",
+ "0x82784688": "?ContentStarted@SongMgr@@UAAXXZ",
+ "0x827846E8": "?ClearCachedContent@SongMgr@@UAAXXZ",
+ "0x827847D0": "?ClearFromCache@SongMgr@@QAAXVSymbol@@@Z"
 }
