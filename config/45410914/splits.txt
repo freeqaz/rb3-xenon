@@ -1388,7 +1388,9 @@ TransAnim.cpp:
 	.text       start:0x82669E50 end:0x82669EBC
 
 PropKeys.cpp:
+	.pdata      start:0x82203AE8 end:0x82203E50
 	.pdata      start:0x82226110 end:0x82226288
+	.text       start:0x8240EB60 end:0x824137A0
 	.text       start:0x82649C38 end:0x8264B5F8
 
 PartAnim.cpp:
