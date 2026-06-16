@@ -42,7 +42,7 @@ public:
     virtual bool AllowContentToBeAdded(DataArray *, ContentLocT);
     virtual void AddSongData(DataArray *, DataLoader *, ContentLocT);
     virtual void
-    AddSongData(DataArray *, std::map<int, SongMetadata *> &, const char *, ContentLocT, std::vector<int> &);
+    AddSongData(DataArray *, std::hash_map<int, SongMetadata *> &, const char *, ContentLocT, std::vector<int> &);
     virtual void AddSongIDMapping(int, Symbol);
     virtual void ReadCachedMetadataFromStream(BinStream &, int);
     virtual void WriteCachedMetadataFromStream(BinStream &) const;

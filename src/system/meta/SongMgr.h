@@ -12,6 +12,26 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <hash_map>
+
+// Retail RB3-360 SongMgr's "map" members are actually STLport hash_map (the
+// find paths inline the out-of-line hashtable::find COMDAT — int-key find
+// lbl_82552CD0, Symbol-key find fn_82543F88 — returning iterator-by-value with
+// a NULL-miss sentinel and value at slist node+0x8, and the cache serialization
+// operator<< walks an slist (size at +0x14, key@+0x4, value@+0x8, next@+0x0),
+// not a red-black tree). sizeof(hash_map)=0x1c naturally (the _M_max_load_factor
+// float at +0x18) — which is what the former RB3_MAP_0x1C gate was compensating
+// for with a padded std::map. Converting all five maps to hash_map and dropping
+// the gate is the genuine layout. hash<Symbol> hashes the interned char* word
+// identity (matches retail: lwz key; divwu).
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
 
 // Retail RB3-360 SongMgr derives from MsgSource (virtual Hmx::Object base) +
 // ContentMgr::Callback, NOT plain Hmx::Object. Proven from the retail RTTI
@@ -131,7 +151,7 @@ protected:
     virtual void AddSongData(DataArray *, DataLoader *, ContentLocT) = 0;
     virtual void AddSongData(
         DataArray *,
-        std::map<int, SongMetadata *> &,
+        std::hash_map<int, SongMetadata *> &,
         const char *,
         ContentLocT,
         std::vector<int> &
@@ -159,22 +179,22 @@ protected:
     // Offsets below are the retail RB3-360 layout (MsgSource head + per-TU
     // RB3_MAP_0x1C map size 0x1c, set size 0x18); proven against the retail asm.
     /** The available songs we can select in-game. Key = song ID */
-    std::set<int> mAvailableSongs; // 0x1c
-    std::map<int, SongMetadata *> mUncachedSongMetadata; // 0x34
+    std::set<int> mAvailableSongs; // 0x1c (genuine std::set, size 0x18)
+    std::hash_map<int, SongMetadata *> mUncachedSongMetadata; // 0x34
     /** The current state of the SongMgr. */
     SongMgrState mState; // 0x50
-    std::map<int, SongMetadata *> mCachedSongMetadata; // 0x54
+    std::hash_map<int, SongMetadata *> mCachedSongMetadata; // 0x54
     /** A collection of content files (CON/LIVES), and the song IDs inside each file.
         Key = content file name (i.e. RBMEGAPACK01OF10); Value = the song IDs.
     */
-    std::map<Symbol, std::vector<int> > mSongIDsInContent; // 0x70
+    std::hash_map<Symbol, std::vector<int> > mSongIDsInContent; // 0x70
     /** A collection of song IDs, and the contents they came from.
         Key = song ID;
         Value = the content file name (i.e. RBMEGAPACK01OF10) that houses this song
     */
-    std::map<int, Symbol> mContentUsedForSong; // 0x8c
+    std::hash_map<int, Symbol> mContentUsedForSong; // 0x8c
     // key = content file name. value = root name???
-    std::map<Symbol, String> unkmap5; // 0xa8 - mounted content?
+    std::hash_map<Symbol, String> unkmap5; // 0xa8 - mounted content?
     CacheID *mSongCacheID; // 0xc4
     Cache *mSongCache; // 0xc8
     bool mHasNewContent; // 0xcc

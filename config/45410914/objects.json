@@ -476,7 +476,7 @@
       "system/world/Crowd.cpp": "NonMatching",
       "system/rndobj/LitAnim.cpp": "NonMatching",
       "system/flow/FlowManager.cpp": "NonMatching",
-      "system/meta/SongMgr.cpp": { "status": "NonMatching", "extra_cflags": ["/DRB3_MAP_0x1C"] },
+      "system/meta/SongMgr.cpp": "NonMatching",
       "system/os/File.cpp": "NonMatching",
       "system/os/Joypad.cpp": "NonMatching",
       "system/meta/StreamPlayer.cpp": "NonMatching",

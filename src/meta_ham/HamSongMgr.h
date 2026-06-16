@@ -82,7 +82,7 @@ protected:
     virtual void AddSongData(DataArray *, DataLoader *, ContentLocT);
     virtual void AddSongData(
         DataArray *,
-        std::map<int, SongMetadata *> &,
+        std::hash_map<int, SongMetadata *> &,
         const char *,
         ContentLocT,
         std::vector<int> &

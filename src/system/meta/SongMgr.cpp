@@ -19,6 +19,34 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <hash_map>
+
+// mSongIDsInContent is a hash_map (see SongMgr.h). The cache serialization
+// operator<< walks the STLport hashtable slist (size, then key/value pairs in
+// bucket order). Mirrors the std::map operator<< in BinStream.h; kept TU-local
+// so BinStream.h need not pull in <hash_map> for every consumer.
+template <class T1, class T2>
+BinStream &operator<<(BinStream &bs, const std::hash_map<T1, T2> &map) {
+    bs << map.size();
+    for (typename std::hash_map<T1, T2>::const_iterator it = map.begin();
+         it != map.end();
+         ++it) {
+        bs << it->first << it->second;
+    }
+    return bs;
+}
+
+template <class T1, class T2>
+BinStream &operator>>(BinStream &bs, std::hash_map<T1, T2> &map) {
+    unsigned int size;
+    bs >> size;
+    for (; size != 0; size--) {
+        T1 key;
+        bs >> key;
+        bs >> map[key];
+    }
+    return bs;
+}
 
 const char *SONG_CACHE_CONTAINER_NAME = "songcache";
 int gSongCacheSaveVer = 12;
