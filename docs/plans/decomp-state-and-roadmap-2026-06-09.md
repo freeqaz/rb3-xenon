@@ -1105,16 +1105,19 @@ mid-session — escalation rerouted to Opus on-disk as a safety net, unused).
   re-run again now that 4 more units changed.
 
 ### Post-wave-5 queue (EV order)
-1. **refill_loop.sh sweep** (compounding; CharLipSync re-pin + 2 new pins +
-   hash_map conversion all refill the reveal cascade — IN FLIGHT).
+1. **refill_loop.sh sweep** — DONE, **+26** (391ff48; 8147→8173, 2 iters,
+   5 units: AccomplishmentManager +11, PropKeys +8, rnddx9/Rnd +4,
+   ChunkStream +2, Mesh +1; 0 drops). Pool re-checks unchanged:
+   inline_policy still TAPPED (n=1), member_delta = 5 VBASE_WALLs + 1 UNKNOWN
+   (FreestyleMotionFilter −36@0x10) — no struct leverage.
 2. **hash_map sweep round 2**: CharClip.cpp + SongMgr 2-member surgical swap +
    any other gated map TU with find-using <100 fns (binary-wide fn_82543F88
    caller scan).
-3. Re-run pin_audit.py (4 units changed; PropKeys/rnddx9/CharLipSync moved).
+3. Re-run pin_audit.py (units changed; PropKeys/rnddx9/CharLipSync moved).
 4. UIComponent::Update 69.8 / ResourceFileUpdated 88.8 finishers; SongMgr
    ContentName(int)/GetSongsInContent/CacheSongData near-misses (68.9-96.5).
 5. Synth-belt pin+port campaign; AFH-head identification; obj_orphan purge.
 6. OvershellSlot, Mat_NG (multi-session walls).
 
-**SESSION TOTAL (waves 3+4+refill+5): 6932 → 8147 (+1215, zero regressions,
-every composed verify EXACT).**
+**SESSION TOTAL (waves 3+4+refill+5+refill): 6932 → 8173 (+1241, zero
+regressions, every composed verify EXACT).**
