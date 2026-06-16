@@ -1046,3 +1046,75 @@ re-run.
 
 **SESSION TOTAL 2026-06-11 (waves 3+4+refill): 6932 → 8038 (+1106, zero
 regressions, every composed verify EXACT).**
+
+# WAVE-5 CLOSE (2026-06-16): **8147 / 65543** (8038 → 8147, **+109**, 0 regressions, all composed verifies EXACT 8073→8129→8146→8147)
+
+Queue-v2 wave, one ultracode workflow (wave5-queue-v2, wf_401e1d45-d16,
+7 agents): Sonnet scope-gate on 3 under-explored lanes (all GO) → Opus
+implementation in worktrees (CharLipSync straight-to-Opus, no recon) →
+coordinator landed 4 branches sequentially (rebase + ff-only; one
+target_symbol_map.json union conflict resolved charlipsync+hashmap). NO lane
+blocked → Fable escalation never fired (and Fable went unavailable
+mid-session — escalation rerouted to Opus on-disk as a safety net, unused).
+
+### Landed (+109)
+- **CharLipSync campaign +35** (ef3a625, +prereq 967704f): executed the
+  vbase-deep dossier's 7-step plan. Applied BOTH banked patches (mPropAnim
+  prereq 0-delta + ObjectDir-vbase net-0-alone) → composed cleanly. Re-pinned
+  the displaced CharLipSync sliver (0x822CADA8, 4/19 generic-STL) to its real
+  cluster .text [0x823C0CD8,0x823C3FF0) (shared-boundary with CharClipSet),
+  +18; reveal_sweep +3; **ALSO fixed the CharSleeve→CharClipSet under-pin
+  sibling** (CharClipSet TU really starts 0x823BE0E8=ResetEditorState, was
+  pinned from 0x823BEA70 leaving ~9 fns squatting in CharSleeve's pin), +13;
+  TrackReset@VocalTrackDir 99.989→100 (the vbase patch composing as predicted
+  — the artifact-funded −1 is gone because the funclet now lands in its real
+  owner). The vbase patch is no longer "park standalone" — it LANDED here.
+- **PropKeys +48 + rnddx9/Rnd +8 = +56** (59a5fa4, b08a210, splits/objects
+  only): pin_audit was NOT dry after all on the new state. PropKeys had a
+  SECOND displaced .text cluster [0x8240EB60,0x824137A0) (Keys<T> template +
+  property code) in the auto-blob — pinned as a second range on the existing
+  split, no new map entries (dtk auto-pairs by VA). And wired a brand-new TU:
+  system/rnddx9/Rnd.cpp (DxRnd D3D9 renderer) compiled + pinned [0x8270DBB0,..)
+  for +8 first matches.
+- **AccomplishmentManager hash_map +17** (6dc368d): the AccProg discovery
+  scaled — all 12 std::map<Symbol,X> members are genuinely STLport hash_map
+  (find inlines the same fn_82543F88 hashtable-find COMDAT, called 34× in the
+  unit; RB3_RBTREE_0x1C was the compensating impostor). Switched members +
+  return types + iterator decls (AM.{h,cpp}, AccomplishmentPanel.{h,cpp},
+  AccomplishmentProgress.{h,cpp}); dropped the gate; hash<Symbol> guarded
+  RB3_HASH_SYMBOL_DEFINED so it coexists with AccProg's. 12 named Get/Has +
+  2 funclets.
+- **SongMgr SaveWrite +1** (15520e1): retail compiled `_MemAllocTemp` with
+  MemTrack debug instrumentation STRIPPED (2-arg, no __FILE__/__LINE__/name) —
+  same lever as the landed MemAlloc/MemFree macros. Added 2-arg overload +
+  macro rewriting all 26 inherited 5-arg sites in MemMgr.h. (Honest
+  correction: the other 3 SongMgr "reveals" — ContentName(int)/GetSongsInContent/
+  CacheSongData — are real near-misses 68.9-96.5%, NOT byte-exact stubs; not
+  landed.)
+
+### New levers / facts this wave
+- **hash_map vein is BROAD** (now 2-for-2: AccProg, AccomplishmentManager).
+  The tell: find() inlines fn_82543F88 (sret r3, &container r4, &key r5;
+  NULL-miss; value@node+0x8). Any 0x1c/0x18-gated map TU whose find-using fns
+  read <100 is a candidate — switch member type to hash_map + hash<K> spec +
+  drop the gate. STILL OPEN: CharClip.cpp (/DRB3_RBTREE_0x1C, objects.json:210)
+  was NOT swept this wave — check next. SongMgr partial: 2 of its members
+  (mSongIDsInContent@0x70, unkmap5@0xa8) are hash_map (7 fn_82543F88 calls) but
+  the surgical 2-member swap was deferred to keep the wave clean — TODO.
+- pin_audit re-run found honest candidates (PropKeys 2nd cluster + rnddx9);
+  re-run again now that 4 more units changed.
+
+### Post-wave-5 queue (EV order)
+1. **refill_loop.sh sweep** (compounding; CharLipSync re-pin + 2 new pins +
+   hash_map conversion all refill the reveal cascade — IN FLIGHT).
+2. **hash_map sweep round 2**: CharClip.cpp + SongMgr 2-member surgical swap +
+   any other gated map TU with find-using <100 fns (binary-wide fn_82543F88
+   caller scan).
+3. Re-run pin_audit.py (4 units changed; PropKeys/rnddx9/CharLipSync moved).
+4. UIComponent::Update 69.8 / ResourceFileUpdated 88.8 finishers; SongMgr
+   ContentName(int)/GetSongsInContent/CacheSongData near-misses (68.9-96.5).
+5. Synth-belt pin+port campaign; AFH-head identification; obj_orphan purge.
+6. OvershellSlot, Mat_NG (multi-session walls).
+
+**SESSION TOTAL (waves 3+4+refill+5): 6932 → 8147 (+1215, zero regressions,
+every composed verify EXACT).**
