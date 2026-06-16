@@ -101,6 +101,18 @@ void *MemAlloc(int size, int align);
 // definition likewise parenthesize the name. HX_NATIVE keeps the 5-arg debug
 // form above. NOTE: this macro must follow ALL MemAlloc declarations.
 #define MemAlloc(size, file, line, name, ...) (MemAlloc)((size), 0)
+// Retail/match 2-arg temp allocator (size, align) — no debug strings, mirroring
+// the MemAlloc lever above. The retail RB3-360 XEX strips MemTrack from
+// _MemAllocTemp too: SongMgr::SaveWrite calls it as fn_827979D8(size, align=0)
+// with NO __FILE__/__LINE__/name string loads (verified via objdiff: target
+// `li r4, 0x0; bl fn_827979D8` vs our 5-arg debug form with the "SongMgr" /
+// "src/system/meta/SongMgr.cpp" / line-733 literals). Unlike the MemAlloc macro
+// (which forces align 0), this PRESERVES the trailing align arg (StorePacked-
+// Metadata passes 0x20) and swallows the file/line/name. The definition and the
+// internal MemMgr plumbing parenthesize the name `(_MemAllocTemp)` to bypass the
+// macro. HX_NATIVE keeps the 5-arg debug form above.
+void *_MemAllocTemp(int size, int align);
+#define _MemAllocTemp(size, file, line, name, align) (_MemAllocTemp)((size), (align))
 #endif
 #ifdef HX_NATIVE
 void MemFree(

@@ -6,7 +6,8 @@
 #include "utl/Std.h"
 #include "utl/MemMgr.h"
 
-extern void *_MemAllocTemp(int, const char *, int, const char *, int);
+// _MemAllocTemp is declared in utl/MemMgr.h; the local redeclaration was removed
+// because the X360 call-site macro (5-arg -> retail 2-arg) would mangle it.
 extern "C" void XMemCpy(void *, const void *, int);
 
 extern "C" int lbl_8316C864;

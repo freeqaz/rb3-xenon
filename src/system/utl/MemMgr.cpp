@@ -355,12 +355,24 @@ __declspec(noinline) void *(MemAlloc)(int size, int align) {
 }
 #endif
 
-void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align) {
+// Parenthesized name bypasses the X360 call-site macro that rewrites 5-arg
+// `_MemAllocTemp(size, file, line, name, align)` down to the retail 2-arg form.
+void *(_MemAllocTemp)(int size, const char *file, int line, const char *name, int align) {
     MemTemp tmp;
     // Parenthesized: route to the 5-arg debug stub, bypassing the X360 call-site
     // macro (internal MemMgr plumbing, not an external retail call site).
     return (MemAlloc)(size, file, line, name, align);
 }
+
+#ifndef HX_NATIVE
+// Retail/match 2-arg temp allocator the X360 XEX actually calls (fn_827979D8):
+// MemTemp RAII push/pop around a 2-arg heap MemAlloc(size, align), no debug
+// strings. Parenthesized name so the call-site macro doesn't recurse.
+void *(_MemAllocTemp)(int size, int align) {
+    MemTemp tmp;
+    return (MemAlloc)(size, align);
+}
+#endif
 
 void *MemOrPoolAllocSTL(int size, const char *file, int line, const char *name) {
     if (size == 0)
