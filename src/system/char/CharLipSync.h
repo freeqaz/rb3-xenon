@@ -73,6 +73,7 @@ public:
     NEW_OBJ(CharLipSync)
 
     float Duration() { return (float)(mFrames - 1) / 30.0f; }
+    RndPropAnim *GetPropAnim() const { return mPropAnim; }
     void Print(TextStream &);
     void Parse(DataArray *);
 
@@ -90,9 +91,17 @@ protected:
     DataNode OnParse(DataArray *);
     DataNode OnParseArray(DataArray *);
 
+    /** "PropAnim to control this lipsync" — retail RB3-360 member, present in
+        rb3-Wii (src/system/char/CharLipSync.h: ObjPtr<RndPropAnim> mPropAnim)
+        and in the DC3 binary (ham_xbox_r.map: ??_G?$ObjPtr@VRndPropAnim@@@@ in
+        char:CharLipSync.obj), but dropped from dc3-decomp's header which we
+        inherited. Proven against the retail ctor fn_823C1F80: ObjPtr vtable
+        ??_7?$ObjPtr@VRndPropAnim@@VObjectDir@@@@6B@ stored at this+0x28.
+        See docs/decomp/research/2026-06-11-bp4-vbase-deep.md. */
+    ObjPtr<RndPropAnim> mPropAnim; // 0x28
     /** "viseme names" */
-    std::vector<String> mVisemes; // 0x2c
+    std::vector<String> mVisemes; // 0x34
     /** "how many keyframes" */
-    int mFrames; // 0x38
-    std::vector<unsigned char> mData; // 0x3c
+    int mFrames; // 0x40
+    std::vector<unsigned char> mData; // 0x44
 };

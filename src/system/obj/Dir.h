@@ -329,6 +329,23 @@ class ObjectDir;
 class MergeFilter;
 #endif
 
+// GetExposedProperties is a DC3-only virtual: retail RB3 (and the rb3-Wii dev
+// decomp, src/system/obj/Dir.h) has NO such slot in ObjectDir's vbase vtable —
+// its presence here pushed SyncObjects/ResetEditorState/InlineSubDirType (and
+// every ObjectDir-vbase virtual of every descendant) down one slot. Verified
+// against the retail vtable @0x82029D64 (slot 3 = SyncObjects, directly after
+// SetSubDir; no GetExposedProperties), which made VocalTrackDir::TrackReset's
+// SyncObjects() vcall load +0xc retail vs our +0x10. Gate the `virtual` keyword
+// behind HX_NATIVE (same idiom as DRAW_DC3_VIRTUAL); the method stays a normal
+// member so the TypeProps.cpp call site still compiles (nothing overrides it, so
+// non-virtual dispatch is behavior-identical). See
+// docs/decomp/research/2026-06-11-vtable-walls.md.
+#ifdef HX_NATIVE
+#define DIR_DC3_VIRTUAL virtual
+#else
+#define DIR_DC3_VIRTUAL
+#endif
+
 /**
  * @brief: A directory of Objects.
  * Original _objects description:
@@ -458,9 +475,16 @@ public:
     virtual const FilePath &ProxyFile() { return mProxyFile; }
     /** Set whether or not this ObjectDir is a subdir. */
     virtual void SetSubDir(bool isSubdir);
-    virtual DataArrayPtr GetExposedProperties() { return nullptr; }
+    DIR_DC3_VIRTUAL DataArrayPtr GetExposedProperties() { return nullptr; }
     virtual void SyncObjects();
     virtual void ResetEditorState();
+    // AllowsInlineProxy is a virtual in retail RB3 (rb3-Wii src/system/obj/Dir.h:
+    // between ResetEditorState and InlineSubDirType) — verified at the retail
+    // ObjectDir-vbase vtable +0x14 slot (0x822695A8). DC3 demoted it to a plain
+    // member; BandCharacter::AllowsInlineProxy already overrides it, so the base
+    // must declare it virtual or that override inserts a bogus slot. See
+    // docs/decomp/research/2026-06-11-vtable-walls.md.
+    virtual bool AllowsInlineProxy() { return mInlineProxy; }
     virtual InlineDirType InlineSubDirType();
 
     /** Find an Object of type T in this ObjectDir.
@@ -508,7 +532,6 @@ public:
     InlineDirType InlineProxyType() const {
         return mInlineProxy ? kInlineAlways : kInlineNever;
     }
-    bool AllowsInlineProxy() const { return mInlineProxy; }
 #endif
     FilePath &StoredFile() { return mStoredFile; }
     bool IsSubDir() const { return mIsSubDir; }

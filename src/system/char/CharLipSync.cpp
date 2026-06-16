@@ -12,7 +12,7 @@
 
 std::map<Symbol, CharLipSync *> *CharLipSync::sLipSyncMap;
 
-CharLipSync::CharLipSync() : mFrames(0) {}
+CharLipSync::CharLipSync() : mPropAnim(this), mFrames(0) {}
 CharLipSync::~CharLipSync() { UnregisterLipSync(this); }
 
 BEGIN_HANDLERS(CharLipSync)
@@ -34,6 +34,7 @@ BEGIN_PROPSYNCS(CharLipSync)
         if (sym == _s && (_op & (kPropGet | kPropSize)))
             return PropSync(mVisemes, _val, _prop, _i + 1, _op);
     }
+    SYNC_PROP(prop_anim, mPropAnim)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
@@ -55,7 +56,6 @@ BEGIN_LOADS(CharLipSync)
     d >> mFrames;
     d >> mData;
     if (d.rev == 1) {
-        ObjPtr<RndPropAnim> mPropAnim(this);
         d >> mPropAnim;
     }
     RegisterLipSync(this);
@@ -68,6 +68,7 @@ BEGIN_COPYS(CharLipSync)
         COPY_MEMBER(mVisemes)
         COPY_MEMBER(mFrames)
         COPY_MEMBER(mData)
+        COPY_MEMBER(mPropAnim)
     END_COPYING_MEMBERS
 END_COPYS
 
