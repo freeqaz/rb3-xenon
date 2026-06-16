@@ -12430,5 +12430,9 @@
  "0x82579C00": "??$LoadStd@HH@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$hash_map@HHU?$hash@H@stlpmtx_std@@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@HH@Z",
  "0x8257A078": "?Clear@AccomplishmentProgress@@QAAXXZ",
  "0x8257A230": "?LoadFixed@AccomplishmentProgress@@UAAXAAVFixedSizeSaveableStream@@H@Z",
- "0x825A6708": "?ClassName@Object@Hmx@@UBA?AVSymbol@@XZ"
+ "0x825A6708": "?ClassName@Object@Hmx@@UBA?AVSymbol@@XZ",
+ "0x823C13A8": "??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z",
+ "0x823C19E8": "??4?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+ "0x823C1C28": "?_M_clear_after_move@?$vector@UWeight@PlayBack@CharLipSync@@V?$StlNodeAlloc@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+ "0x823BE1C8": "?DrawShowing@CharClipSet@@UAAXXZ"
 }

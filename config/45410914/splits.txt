@@ -513,8 +513,8 @@ CharIKRod.cpp:
 	.text       start:0x823B27E8 end:0x823B3188
 
 CharSleeve.cpp:
-	.pdata      start:0x821FEBA0 end:0x821FECD0
-	.text       start:0x823BD6D8 end:0x823BEA70
+	.pdata      start:0x821FEBA0 end:0x821FEC28
+	.text       start:0x823BD6D8 end:0x823BE0E8
 
 CharUpperTwist.cpp:
 	.pdata      start:0x821FE348 end:0x821FE358
@@ -652,8 +652,8 @@ CharClip.cpp:
 	.text       start:0x8236A4B8 end:0x8236E060
 
 CharClipSet.cpp:
-	.pdata      start:0x821FECD0 end:0x821FF198
-	.text       start:0x823BEA70 end:0x823C3FF0
+	.pdata      start:0x821FEC28 end:0x821FEE78
+	.text       start:0x823BE0E8 end:0x823C0CD8
 
 MidiParser.cpp:
 	.pdata      start:0x8223B8D8 end:0x8223BD60
@@ -929,8 +929,8 @@ SkeletonClip.cpp:
 	.text       start:0x82334A40 end:0x82334A98
 
 CharLipSync.cpp:
-	.pdata      start:0x821F0760 end:0x821F0798
-	.text       start:0x822CADA8 end:0x822CB7C8
+	.pdata      start:0x821FEE78 end:0x821FF198
+	.text       start:0x823C0CD8 end:0x823C3FF0
 
 MoveMgr.cpp:
 	.pdata      start:0x821EF9C0 end:0x821EFCC0
