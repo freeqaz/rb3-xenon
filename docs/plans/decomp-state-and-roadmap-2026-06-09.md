@@ -1121,3 +1121,63 @@ mid-session — escalation rerouted to Opus on-disk as a safety net, unused).
 
 **SESSION TOTAL (waves 3+4+refill+5+refill): 6932 → 8173 (+1241, zero
 regressions, every composed verify EXACT).**
+
+# WAVE-6 CLOSE (2026-06-16): **8220 / 65543** (8173 → 8220, **+47**, 0 regressions, all composed verifies EXACT 8180→8189→8220)
+
+Queue-v2 round 2, one ultracode workflow (wave6-hashmap-pins,
+wf_a058cca0-75e, 5 agents): Sonnet scope 2 lanes (hashmap2 + pinaudit2, both
+GO) → Opus impl 3 lanes (+ finishers2 straight-to-Opus) → coordinator landed
+sequentially. NO lane blocked → Opus-escalation (Fable replacement) unused.
+
+### Landed (+47)
+- **SongMgr hash_map (finishers2 +7 then refill +9 = +16)** (f0829ef,
+  23afe4a): ⭐ **all FIVE SongMgr "std::map" members are STLport hash_map** —
+  not just the 2 the hashmap2 scout found. The int-key maps
+  (mUncachedSongMetadata@0x34, mCachedSongMetadata@0x54, mContentUsedForSong
+  @0x8c) use a SECOND find COMDAT (lbl_82552CD0) that the fn_82543F88-only
+  scan missed; ContentName(int)'s node-value-@0x8-vs-@0x14 tell proved it.
+  Converted all 5 + dropped RB3_MAP_0x1C + TU-local hash_map BinStream
+  operator<<//>> (NOT in the broadly-included BinStream.h). Got
+  ContentName(int)/CacheSongData/GetSongsInContent +7, then refill revealed
+  9 more SongMgr accessors (ContentNameRoot/NumSongsInContent/ContentUnmounted/
+  ContentStarted/ClearCachedContent/ClearFromCache/IsContentUsedForSong/Data +
+  STL helper). **The parallel hashmap2 lane (2-member, +6) was SUPERSEDED**;
+  its dossier retained.
+- **Waypoint relocation +31** (d087a94, splits-only): relocated the dead 0x50
+  ICF sliver [0x822C8CA8,..) to the real TU cluster [0x823C7CC8,0x823CA668).
+  ⭐ **THIS REVERSES THE CANONICAL "Waypoint +31 = dishonest" REFUTATION.**
+  Adversarial Opus audit (dossier 2026-06-16-w6-waypoint-audit.md): 25 anon
+  fns = 25 own / 0 foreign. DECISIVE: DC3 ham_xbox_r.map shows a CONTIGUOUS
+  char:Waypoint.obj TU (0x823CBAC0..0x823CEF60, same method order, ~0x4000
+  offset). The wave-3 "18-fn foreign run at 0x823C8A48" was a MISREAD of ICF
+  address-aliases — 0x823C8A48 IS Waypoint::Save. Composed verify on live main
+  = exactly +31, all in Waypoint, zero regressions (arithmetic-proven honest).
+  6 named methods @100 + 25 own funclets/registry-bit-ops; Save 99.9/Copy 99.8
+  are porting-incomplete tails (follow-up).
+
+### Refuted / not landed
+- hashmap2 SongMgr conversion (subset, superseded by finishers2's superset).
+- pin_audit2 also re-confirmed TypeProps/Character BLOCKED (FlowEventListener
+  0x827418D0 inside proposed range) and the PropKeys w6 "candidate" = FALSE
+  POSITIVE (inside the wave-5 2nd pin already).
+- finishers2's UIComponent ?Update@ (69.84) + ?ResourceFileUpdated@ (88.84) =
+  WALLS (not attempted / reveal-blocked), DEFER.
+
+### ⚠ REFUTATION-LIST CORRECTION (important for future sessions)
+"Waypoint relocate (COMDAT template-scatter)" and "Waypoint +31 = DISHONEST
+ATTRIBUTION, reverted" are **WRONG** — they rested on a misread DC3 map +
+misread ICF aliases on the DEAD sliver. The real Waypoint TU is contiguous and
+the +31 is honest (LANDED d087a94). Re-tag accordingly.
+
+### Post-wave-6 queue (EV order)
+1. **hash_map vein round 3**: binary-wide fn_82543F88 + lbl_82552CD0 (the
+   int-key find COMDAT) DUAL caller scan — the 5-member SongMgr finding means
+   the earlier scans under-counted; re-scan for both COMDATs. The big
+   auto_03_82272EB4 blob (76 fn_82543F88 calls) = future pin target.
+2. pin_audit round 3 (Waypoint method tail Save/Copy; other survivors).
+3. UIComponent Update/ResourceFileUpdated walls (need real port or defer).
+4. Synth-belt pin+port; AFH-head; obj_orphan purge.
+5. OvershellSlot, Mat_NG.
+
+**SESSION TOTAL (waves 3+4+5+6, 2026-06-11 & -16): 6932 → 8220 (+1288, zero
+regressions, every composed verify EXACT).**
