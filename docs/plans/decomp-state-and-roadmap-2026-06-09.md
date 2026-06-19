@@ -1190,21 +1190,29 @@ regressions, every composed verify EXACT).**
 # after each wave. Current state: main @ d6e1435, 8220/65543 matched.
 
 ## A. ACTIVE LEVERS (have a proven method, ready to execute — highest EV)
-A1. **hash_map vein round 3 — NEARLY TAPPED in pinned units** (DUAL-COMDAT scan
-    RUN 2026-06-19). Vein is 3-for-3 (AccProg, AccomplishmentManager, SongMgr —
-    all converted). Remaining PINNED-unit callers of either find COMDAT
-    (fn_82543F88 Symbol-key / lbl_82552CD0 int-key): only **MoviePanel** (1
-    fn_82543F88) and **FixedSizeSaveableStream** (1 lbl_82552CD0) — both thin,
-    ~+1-2 each, verify each is a member (not a stack-local) before converting.
-    Eliminated: PhysicsVolume, DataFunc (stack-local containers). CharClip.cpp
-    CONFIRMED genuine rbtree (0 calls — RB3_RBTREE_0x1C correct, DO NOT touch).
-    **The vein's remaining MASS is in UNPINNED auto_03 blobs (→ A6), gated on
-    pinning those TUs first.** Method: 2026-06-16-w6-hashmap2.md + bp4-accprog.md.
-A2. **pin_audit round 3.** Re-run `venv/bin/python tools/pin_audit.py --json
-    <out>` after wave-6's pin moves. The "pinned-to-a-sliver" hunt is now
-    4-for-4+ ABOVE estimate (UIComponent +38, CharLipSync re-pin, Waypoint
-    +31). Triage against the REFUTED ledger (NOTE: Waypoint is now REMOVED from
-    that ledger — see correction). Survivors → re-pin lane.
+A1. **hash_map vein — EXHAUSTED** (wave-7 closed it). 4-for-4 converted
+    (AccProg, AccomplishmentManager, SongMgr, FixedSizeSaveableStream +3).
+    MoviePanel fn was ELIMINATED (MetaMusicManager::GetSceneForScreen internal
+    helper, not a member). **The A6 "auto_03 blob mass" was a MIRAGE** — the big
+    fn_82543F88 call-counts were already-converted pins (825458DC inside
+    AccomplishmentManager, 82783A00 inside SongMgr), a stale label inside
+    BandCharacter's std::map<string,Transform> (82272EB4), or near-zero. Only
+    blob-82627200 remains (→ A6, big port-then-pin). CharClip = genuine rbtree
+    (DON'T touch); PhysicsVolume/DataFunc = stack-locals. Vein method recorded
+    (2026-06-16-w6-hashmap2.md) for any NEW TU that shows the find-COMDAT tell.
+A2. **pin_audit — mostly DRY** (round 3 run wave-7). Sliver-hunt is now 6-for-6
+    (UIComponent +38, CharLipSync, Waypoint +31, Part +11). Live survivor:
+    **A2a Character.cpp relocation (+9, RECON-GATED)** — relocate the dead 0x48
+    sliver [0x822911F0..0x82291238) to the real cluster [0x8235B1D0..0x8235F180)
+    (7 named Character methods: ForceBlink/EnableBlinks/SetFocusInterest/
+    SetInterestFilterFlags/Teleport/AddedObject/SetInterestObjects, all in
+    Character.obj). GATE: Ghidra-decompile fn_8235DC48 (1344B) + fn_8235E300
+    (1196B) in the 15-fn sub-gap [0x8235DBD8..0x8235E9A0] — if both are
+    CharPollableSorter sort bodies (own-TU), pin is clean +9; if foreign COMDATs,
+    refute. (w6's "depends on TypeProps eviction" was WRONG — Character cluster
+    is ~5MB from TypeProps.) Dossier: 2026-06-19-w7-pinaudit3.md. Everything else
+    re-confirmed refuted/blocked/FP (TypeProps FlowEventListener-inside,
+    UIGuide/LNT net-1, InlineHelp inside CrowdAudio, PropKeys-FP).
 A3. **refill_loop.sh** — standing compounding step; run in a worktree after ANY
     source-landing wave (`NINJA_JOBS=12 tools/refill_loop.sh --map
     global_fuzzy_pairs.json`). Gave +172/+26/+9 across this session.
@@ -1217,12 +1225,12 @@ A5. **Synth-belt: SCOPE first.** 0x826DE000–0x82909000 already has ~169 pins �
     NOT virgin. Needs a gap-scan (tools/scope_map.py / pin_audit) to find which
     synth TUs are still unpinned/uncompiled before any pin+port. Don't assume
     it's empty.
-A6. **UNPINNED hash_map-heavy auto_03 blobs — now the PRIMARY hash_map upside**
-    (A1 in pinned units is tapped). Top: auto_03_82272EB4 (76 fn_82543F88
-    calls), auto_03_825458DC (18), auto_03_82621968 (11), auto_03_82627200
-    (10), auto_03_82783A00 (7). Identify + pin each owning TU (pin_audit /
-    fingerprint_match), THEN the hash_map conversion (A1 method) applies to its
-    members. Two-step: pin → convert. Highest hash_map EV remaining.
+A6. **blob-82627200 port-then-pin (LOW priority, big).** Wave-7 DISPROVED the
+    other 4 "hash_map blobs" (mirages — already-converted or std::map). Only
+    this one is real unpinned work: gap [0x82627200, 0x82635720), 0xE520 bytes,
+    ~593 anon fns, MULTI-CLASS (GamePanel sliver + others) — a port-then-pin
+    campaign, not a clean pin. Needs COFF owner-split first. Defer unless a
+    fingerprint pass shows a tight single-TU sub-cluster.
 
 ## B. NEAR-MISS TAILS (small, specific, low-risk)
 B1. **Waypoint Save (99.9) / Copy (99.8)** — porting-incomplete tails of the
@@ -1283,3 +1291,38 @@ D2. **target_symbol_map consistency linter / stale-entry purge** — map_lint
   (→ C2, stale/gated).
 - StreamNull/MidiSynth trim, MsgSource SongMgr base, AccProg hash_map,
   UIComponent tail-bytes — all DONE earlier this session.
+
+# ============================================================
+# WAVE-7 CLOSE (2026-06-19): **8234 / 65543** (8220 → 8234, +14, 0 regressions)
+# ============================================================
+Tooling-first ultracode workflow (wave7-tooling-then-pins, wf_2a15a46b-5b4,
+5 agents): 3 focused Sonnet scouts (pin_audit3, hashmap-blobs, hashmap-thin) →
+13 candidates, only 2 ACTIONABLE → 2 focused Opus impl agents → both LANDED.
+NO blocked lanes. Composed verifies EXACT (8231 → 8234).
+- **Part dual-range +11** (9908b26, splits-only): second .text range for the
+  RndParticleSys cluster [0x8243B7D8..0x8243C858), bypassing the Accomplishment
+  stub farm (in the gap between range 1 and range 2) — the PropKeys dual-range
+  pattern. 11 RndParticleSys methods, perfect attribution.
+- **FixedSizeSaveableStream hash_map +3** (5596790): both symbol-table members
+  (m_mapSymbolToID@0x30, m_mapIDToSymbol@0x4c) were std::hash_map — vein's 4th
+  success. GetSymbol/InitializeTable/SetSymbolID 0→100.
+HIGH-VALUE NEGATIVE RESULTS (the tooling phase's main payoff — saved a wave of
+dead-end impl): hash_map vein EXHAUSTED (A1; the auto_03 blob "mass" was
+mirages); pin_audit mostly DRY (A2; Part was the only clean win, Character +9 is
+recon-gated A2a). Backlog A1/A2/A6 updated accordingly.
+
+**SESSION TOTAL (waves 3–7, 2026-06-11/16/19): 6932 → 8234 (+1302, zero
+regressions, every composed verify EXACT).**
+
+### Top of queue now (post-wave-7)
+1. **A2a Character.cpp relocation +9** — RECON-GATED: Ghidra fn_8235DC48 +
+   fn_8235E300 (own sort bodies vs foreign) → then pin [0x8235B1D0..0x8235F180).
+2. **C1 UIComponent base-layout reconstruction** — the key gated lever
+   (unblocks C2 rnddrawable-devirt +4+cascade, C3 finishers). Multi-step;
+   docs/plans/ui-base-layout-reconstruction.md.
+3. **B-tier near-misses**: Waypoint Save/Copy tails, FreestyleMotionFilter
+   −36@0x10. Small.
+4. **A4 AsyncFileHolmes HEAD split** — bigger re-pin campaign.
+Active veins (sliver-repin, hash_map) are now largely worked out; the frontier
+is shifting to gated reconstruction work (C1) + recon-gated re-pins (A2a) +
+bigger pin campaigns (A4/A6). Cost-per-match rising — expect smaller waves.
