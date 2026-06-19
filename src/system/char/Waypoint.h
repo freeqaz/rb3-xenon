@@ -70,5 +70,5 @@ protected:
         it will forcibly pull you back, ignored if <= 0" */
     float mStrictRadiusDelta; // 0xd8
     /** "Waypoints we can walk to" */
-    ObjPtrVec<Waypoint> mConnections; // 0xdc
+    ObjVector<ObjOwnerPtr<Waypoint> > mConnections; // 0xd0
 };

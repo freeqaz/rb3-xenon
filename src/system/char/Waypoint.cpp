@@ -16,7 +16,7 @@ std::list<Waypoint *> *Waypoint::sWaypoints;
 
 Waypoint::Waypoint()
     : mFlags(0), mRadius(12), mYRadius(0), mAngRadius(0), mPad(0), mStrictAngDelta(0),
-      mStrictRadiusDelta(0), mConnections(this, (EraseMode)1) {
+      mStrictRadiusDelta(0), mConnections(this) {
     if (RandomFloat() < 0.5f) {
         sWaypoints->push_back(this);
     } else
