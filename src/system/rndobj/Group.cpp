@@ -272,7 +272,7 @@ RndDrawable *RndGroup::CollideShowing(const Segment &seg, float &f, Plane &p) {
 }
 
 void RndGroup::CollideList(const Segment &seg, std::list<Collision> &colls) {
-    if (mShowing) {
+    if (CollideSphere(seg)) {
         for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
              ++it) {
             (*it)->CollideList(seg, colls);
