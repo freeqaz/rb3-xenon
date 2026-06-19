@@ -681,7 +681,9 @@ MeshAnim.cpp:
 
 Part.cpp:
 	.pdata      start:0x82205690 end:0x822059D8
+	.pdata      start:0x82205C88 end:0x82205D30
 	.text       start:0x82433730 end:0x82439D8C
+	.text       start:0x8243B7D8 end:0x8243C858
 
 system/rndobj/Rnd.cpp:
 	.pdata      start:0x822029E0 end:0x822031E0
