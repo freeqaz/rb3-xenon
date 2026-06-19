@@ -61,14 +61,14 @@ const char *MakeString(const char *c, T t) {
 }
 
 template <class T1, class T2>
-const char *MakeString(const char *c, const T1 &t1, const T2 &t2) {
+const char *MakeString(const char *c, T1 t1, T2 t2) {
     FormatString fs(c);
     fs << t1 << t2;
     return fs.Str();
 }
 
 template <class T1, class T2, class T3>
-const char *MakeString(const char *c, const T1 &t1, const T2 &t2, const T3 &t3) {
+const char *MakeString(const char *c, T1 t1, T2 t2, T3 t3) {
     FormatString fs(c);
     fs << t1 << t2 << t3;
     return fs.Str();
@@ -76,7 +76,7 @@ const char *MakeString(const char *c, const T1 &t1, const T2 &t2, const T3 &t3) 
 
 template <class T1, class T2, class T3, class T4>
 const char *
-MakeString(const char *c, const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4) {
+MakeString(const char *c, T1 t1, T2 t2, T3 t3, T4 t4) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4;
     return fs.Str();
@@ -84,7 +84,7 @@ MakeString(const char *c, const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4
 
 template <class T1, class T2, class T3, class T4, class T5>
 const char *MakeString(
-    const char *c, const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4, const T5 &t5
+    const char *c, T1 t1, T2 t2, T3 t3, T4 t4, T5 t5
 ) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4 << t5;
@@ -94,12 +94,12 @@ const char *MakeString(
 template <class T1, class T2, class T3, class T4, class T5, class T6>
 const char *MakeString(
     const char *c,
-    const T1 &t1,
-    const T2 &t2,
-    const T3 &t3,
-    const T4 &t4,
-    const T5 &t5,
-    const T6 &t6
+    T1 t1,
+    T2 t2,
+    T3 t3,
+    T4 t4,
+    T5 t5,
+    T6 t6
 ) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4 << t5 << t6;
@@ -109,13 +109,13 @@ const char *MakeString(
 template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 const char *MakeString(
     const char *c,
-    const T1 &t1,
-    const T2 &t2,
-    const T3 &t3,
-    const T4 &t4,
-    const T5 &t5,
-    const T6 &t6,
-    const T7 &t7
+    T1 t1,
+    T2 t2,
+    T3 t3,
+    T4 t4,
+    T5 t5,
+    T6 t6,
+    T7 t7
 ) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4 << t5 << t6 << t7;
@@ -125,14 +125,14 @@ const char *MakeString(
 template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 const char *MakeString(
     const char *c,
-    const T1 &t1,
-    const T2 &t2,
-    const T3 &t3,
-    const T4 &t4,
-    const T5 &t5,
-    const T6 &t6,
-    const T7 &t7,
-    const T8 &t8
+    T1 t1,
+    T2 t2,
+    T3 t3,
+    T4 t4,
+    T5 t5,
+    T6 t6,
+    T7 t7,
+    T8 t8
 ) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4 << t5 << t6 << t7 << t8;
@@ -142,15 +142,15 @@ const char *MakeString(
 template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9>
 const char *MakeString(
     const char *c,
-    const T1 &t1,
-    const T2 &t2,
-    const T3 &t3,
-    const T4 &t4,
-    const T5 &t5,
-    const T6 &t6,
-    const T7 &t7,
-    const T8 &t8,
-    const T9 &t9
+    T1 t1,
+    T2 t2,
+    T3 t3,
+    T4 t4,
+    T5 t5,
+    T6 t6,
+    T7 t7,
+    T8 t8,
+    T9 t9
 ) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4 << t5 << t6 << t7 << t8 << t9;
@@ -170,16 +170,16 @@ template <
     class T10>
 const char *MakeString(
     const char *c,
-    const T1 &t1,
-    const T2 &t2,
-    const T3 &t3,
-    const T4 &t4,
-    const T5 &t5,
-    const T6 &t6,
-    const T7 &t7,
-    const T8 &t8,
-    const T9 &t9,
-    const T10 &t10
+    T1 t1,
+    T2 t2,
+    T3 t3,
+    T4 t4,
+    T5 t5,
+    T6 t6,
+    T7 t7,
+    T8 t8,
+    T9 t9,
+    T10 t10
 ) {
     FormatString fs(c);
     fs << t1 << t2 << t3 << t4 << t5 << t6 << t7 << t8 << t9 << t10;
