@@ -782,8 +782,8 @@ Spline.cpp:
 	.text       start:0x82290640 end:0x822906A4
 
 Character.cpp:
-	.pdata      start:0x821ECAF8 end:0x821ECB00
-	.text       start:0x822911F0 end:0x82291238
+	.pdata      start:0x821F9790 end:0x821F9B08
+	.text       start:0x8235B1D0 end:0x8235F180
 
 SampleInst.cpp:
 	.pdata      start:0x821ECBC0 end:0x821ECBC8
