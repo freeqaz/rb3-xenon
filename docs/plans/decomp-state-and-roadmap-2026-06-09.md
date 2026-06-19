@@ -1181,3 +1181,100 @@ the +31 is honest (LANDED d087a94). Re-tag accordingly.
 
 **SESSION TOTAL (waves 3+4+5+6, 2026-06-11 & -16): 6932 → 8220 (+1288, zero
 regressions, every composed verify EXACT).**
+
+# ============================================================
+# CONSOLIDATED OPEN BACKLOG (as of 2026-06-19) — THE authoritative TODO
+# ============================================================
+# Supersedes the scattered per-wave "Post-wave-N queue" lists above. Anything
+# not here is either DONE or in the CLOSED/SPENT ledger at the bottom. Re-rank
+# after each wave. Current state: main @ d6e1435, 8220/65543 matched.
+
+## A. ACTIVE LEVERS (have a proven method, ready to execute — highest EV)
+A1. **hash_map vein round 3 — DUAL-COMDAT scan.** Wave-6 proved SongMgr's
+    int-key maps use a SECOND find COMDAT (lbl_82552CD0) the fn_82543F88-only
+    scan missed. Re-scan binary-wide for BOTH `fn_82543F88` (Symbol-key) AND
+    `lbl_82552CD0` (int-key) callers in PINNED units with find-using fns <100;
+    each is a member→hash_map conversion. Pinned candidates already eliminated:
+    PhysicsVolume, DataFunc (stack-local containers, not members). CharClip.cpp
+    CONFIRMED genuine rbtree (0 fn_82543F88 calls — RB3_RBTREE_0x1C correct,
+    DO NOT touch). Method: docs/decomp/research/2026-06-16-w6-hashmap2.md +
+    bp4-accprog.md. Vein is 3-for-3 (AccProg, AccomplishmentManager, SongMgr).
+A2. **pin_audit round 3.** Re-run `venv/bin/python tools/pin_audit.py --json
+    <out>` after wave-6's pin moves. The "pinned-to-a-sliver" hunt is now
+    4-for-4+ ABOVE estimate (UIComponent +38, CharLipSync re-pin, Waypoint
+    +31). Triage against the REFUTED ledger (NOTE: Waypoint is now REMOVED from
+    that ledger — see correction). Survivors → re-pin lane.
+A3. **refill_loop.sh** — standing compounding step; run in a worktree after ANY
+    source-landing wave (`NINJA_JOBS=12 tools/refill_loop.sh --map
+    global_fuzzy_pairs.json`). Gave +172/+26/+9 across this session.
+A4. **AsyncFileHolmes HEAD split** (0x82522248–0x82527920): still contains
+    un-split foreign TUs (MetaPerformer, DOFProc, StartTransitionMsg/
+    CurrentScreenChangedMsg message classes, RndSoftParticleBuffer). Split them
+    into their own pinned TUs → re-pin campaign; the 5 residual AFH orphans map
+    to them. Bigger multi-TU effort.
+A5. **Synth-belt: SCOPE first.** 0x826DE000–0x82909000 already has ~169 pins —
+    NOT virgin. Needs a gap-scan (tools/scope_map.py / pin_audit) to find which
+    synth TUs are still unpinned/uncompiled before any pin+port. Don't assume
+    it's empty.
+A6. **auto_03_82272EB4 blob** (76 fn_82543F88 calls) — a large unpinned
+    hash_map-heavy cluster; identify + pin its owning TU(s), then A1 applies.
+
+## B. NEAR-MISS TAILS (small, specific, low-risk)
+B1. **Waypoint Save (99.9) / Copy (99.8)** — porting-incomplete tails of the
+    now-landed Waypoint TU; finish the bodies.
+B2. **FreestyleMotionFilter −36 @0x10** — recurring member_delta_finder2 UNKNOWN
+    (medium confidence) across multiple refill pool-checks; pinned + NonMatching
+    (objects.json:254). Investigate the layout delta (no rb3-Wii oracle — it's
+    Kinect/gesture; cross-check retail asm; may be §3g RB3-vs-DC3 divergence).
+B3. **SongMgr ContentDiscovered (96.79) / ContentMounted residuals** — if any
+    remain <100 after the all-5 hash_map conversion + refill.
+
+## C. WALLS / GATED (need a prerequisite or deep reconstruction)
+C1. **UIComponent base-layout reconstruction** (docs/plans/ui-base-layout-
+    reconstruction.md) — THE key gated lever. Partially advanced (wave-3/4
+    UICOMP_DC3_VIRTUAL + tail-byte fix). Completing it UNBLOCKS C2 (+4+cascade)
+    and the Update/ResourceFileUpdated finishers (C3).
+C2. **rnddrawable-devirt-banked.patch — STALE (now conflicts:** CharClipSet/
+    Character/HamCharacter/Draw/Env/Group headers all moved under it). Architecture
+    proven (retail Draw non-virtual, +4 offset by UIComponent-MI losses). Must be
+    REGENERATED against current tree AFTER C1, not applied as-is.
+C3. **UIComponent ?Update@ (69.84) / ?ResourceFileUpdated@ (88.84)** — walls per
+    finishers2; need real port (gated on C1) or formal defer.
+C4. **VocalTrack ?UpdateScrolling@ (52.34, sz 8948)** — body-divergence wall
+    (1015 I/D, retail-rederive only). DEFER.
+C5. **Object.cpp** — dtor at 97.06 (regalloc spill-cascade, permuter exhausted
+    134 candidates); InitObject/SaveType/Save/HandleProperty = ATTRIBUTION_ORPHANs
+    (bodies == DC3 but per-unit pairing can't register them inside DirLoader's
+    unit — needs a pairing-layer fix, not a port).
+C6. **OvershellSlot** — layout-reconstruction wall (mSessionMgr retail 0x3c vs
+    ours 0x44; rb3-Wii header byte-identical = wrong for retail-360, NO oracle).
+    Multi-session. Logic divergence fully DECODED in batch-2 agent evidence.
+C7. **Mat_NG** — retail material layout SCRAMBLED (not block-shifted); DC3_REV_MEMBER
+    lever DEFERRED (424412b). Multi-session.
+C8. **Player base-chain −4** = vbase-MI prefix wall (unk260 vector hypothesis
+    refuted; header comments stale).
+C9. **CamShotFrame** — funclet frame + ObjPtr-dtor inline-policy, both deferred
+    classes (mFocalTarget already 0xf4, the // 0xfc comment was stale).
+
+## D. TOOLING / JEFF-SIDE
+D1. **AccProg ?IsUploadDirty@ (71.43)** = dtk TARGET_BOUNDARY divergence (target
+    symbol has a foreign 16-byte sret accessor glued on — a jeff-side .pdata/
+    boundary fix, NOT a source fix). Belongs to the jeff fork backlog.
+D2. **target_symbol_map consistency linter / stale-entry purge** — map_lint
+    exists; verify the purge of stale MidiInstrument/SampleZone entries now
+    inside BandIKEffector's range is done (harmless 0% noise, pollutes unit fuzzy).
+
+## E. CLOSED / SPENT this session (DO NOT re-attempt — record to prevent churn)
+- **Waypoint relocation +31** — LANDED honest (d087a94); the old "DISHONEST,
+  reverted" refutation is OVERTURNED (audit: 2026-06-16-w6-waypoint-audit.md).
+- **CharLipSync re-pin+port campaign** — DONE (wave-5, +35); composed the
+  ObjectDir-vbase patch; TrackReset@VocalTrackDir now 100.
+- **SongMgr** — all 5 map members → hash_map DONE (wave-6, +16 with refill).
+- **hash_map**: CharClip = genuine rbtree (don't touch); PhysicsVolume/DataFunc
+  = not members (eliminated).
+- **Banked patches SPENT**: objectdir-vbase + charlipsync-mpropanim-prereq
+  (consumed wave-5), midiinstrument-repin (already in splits.txt from a prior
+  session). Removed from docs/decomp/handoff/. Only rnddrawable-devirt remains
+  (→ C2, stale/gated).
+- StreamNull/MidiSynth trim, MsgSource SongMgr base, AccProg hash_map,
+  UIComponent tail-bytes — all DONE earlier this session.
