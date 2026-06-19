@@ -1190,16 +1190,21 @@ regressions, every composed verify EXACT).**
 # after each wave. Current state: main @ d6e1435, 8220/65543 matched.
 
 ## A. ACTIVE LEVERS (have a proven method, ready to execute — highest EV)
-A1. **hash_map vein — EXHAUSTED** (wave-7 closed it). 4-for-4 converted
-    (AccProg, AccomplishmentManager, SongMgr, FixedSizeSaveableStream +3).
-    MoviePanel fn was ELIMINATED (MetaMusicManager::GetSceneForScreen internal
-    helper, not a member). **The A6 "auto_03 blob mass" was a MIRAGE** — the big
-    fn_82543F88 call-counts were already-converted pins (825458DC inside
-    AccomplishmentManager, 82783A00 inside SongMgr), a stale label inside
-    BandCharacter's std::map<string,Transform> (82272EB4), or near-zero. Only
-    blob-82627200 remains (→ A6, big port-then-pin). CharClip = genuine rbtree
-    (DON'T touch); PhysicsVolume/DataFunc = stack-locals. Vein method recorded
-    (2026-06-16-w6-hashmap2.md) for any NEW TU that shows the find-COMDAT tell.
+A1. **hash_map vein — RE-OPENED, ACTIVE** (wave-8 PROVED "exhausted" WRONG;
+    REFUTATION_WRONG, dossier 2026-06-19-w8-hashmap-exhaustion.md). The wave-7
+    "exhausted" verdict was a SCOPING ARTIFACT — it scanned only 2 known COMDAT
+    addresses against 5 pre-pinned blob labels. GROUND TRUTH (auto_03 COFF,
+    411k relocs): there is a **THIRD 128-byte find-COMDAT at 82B23238** (never
+    scanned), plus insert/operator[]/rehash COMDATs; **75 fn_82543F88 callers
+    (40 in UNPINNED/unconverted units) + 43 lbl_82552CD0 callers (35 unpinned)**.
+    Find-only scans are ALSO structurally blind to iterate-only members (AccProg
+    ::Poll). Converted units have residuals too. REMAINING WORK (next wave):
+    **cluster-alpha [0x825B86A0,0x825C10D8)** = single-TU hash_map<int,short>@
+    this+0x38, 23 accessors, +20 (the w7 doc itself flagged this then DROPPED it);
+    **BandSongMgr port-then-pin** [~0x82631350,~0x82632C54], +16 (BandSongMgr.cpp
+    UNWIRED — genuine port-then-pin, NOT the "A6 mirage"); **datautl 3DSound
+    symbol cluster** +5; **82B23238 third-COMDAT scout**. Landed this wave:
+    accprog-iterate +2, fsss GetID +1. Method: 2026-06-16-w6-hashmap2.md.
 A2. **pin_audit — mostly DRY** (round 3 run wave-7). Sliver-hunt is now 6-for-6
     (UIComponent +38, CharLipSync, Waypoint +31, Part +11). Live survivor:
     **A2a Character.cpp relocation (+9, RECON-GATED)** — relocate the dead 0x48
@@ -1233,26 +1238,31 @@ A6. **blob-82627200 port-then-pin (LOW priority, big).** Wave-7 DISPROVED the
     fingerprint pass shows a tight single-TU sub-cluster.
 
 ## B. NEAR-MISS TAILS (small, specific, low-risk)
-B1. **Waypoint Save (99.9) / Copy (99.8)** — porting-incomplete tails of the
-    now-landed Waypoint TU; finish the bodies.
-B2. **FreestyleMotionFilter −36 @0x10** — recurring member_delta_finder2 UNKNOWN
-    (medium confidence) across multiple refill pool-checks; pinned + NonMatching
-    (objects.json:254). Investigate the layout delta (no rb3-Wii oracle — it's
-    Kinect/gesture; cross-check retail asm; may be §3g RB3-vs-DC3 divergence).
-B3. **SongMgr ContentDiscovered (96.79) / ContentMounted residuals** — if any
-    remain <100 after the all-5 hash_map conversion + refill.
+B1. **Waypoint Save/Copy — DONE** (+7, wave-8): mConnections was
+    ObjVector<ObjOwnerPtr<Waypoint>> (rb3-Wii oracle authoritative — DC3
+    false-friend had ObjPtrVec); header 0xdc→0xd0 + 1-arg ctor. Landed d3c6e4f.
+B2. **FreestyleMotionFilter::Deactivate (99.33) — CONFIRMED WALL** (wave-8
+    falsified it as fixable): retail is a 12-byte stub writing 1 @offset 0x10,
+    NO oracle, no triangulation — unmatchable without a base-class change. DEFER
+    permanently unless a base-layout oracle appears.
+B3. **SongMgr — TRULY EXHAUSTED** (wave-8: all 27 named methods at 100.0).
 
 ## C. WALLS / GATED (need a prerequisite or deep reconstruction)
-C1. **UIComponent base-layout reconstruction** (docs/plans/ui-base-layout-
-    reconstruction.md) — THE key gated lever. Partially advanced (wave-3/4
-    UICOMP_DC3_VIRTUAL + tail-byte fix). Completing it UNBLOCKS C2 (+4+cascade)
-    and the Update/ResourceFileUpdated finishers (C3).
-C2. **rnddrawable-devirt-banked.patch — STALE (now conflicts:** CharClipSet/
-    Character/HamCharacter/Draw/Env/Group headers all moved under it). Architecture
-    proven (retail Draw non-virtual, +4 offset by UIComponent-MI losses). Must be
-    REGENERATED against current tree AFTER C1, not applied as-is.
-C3. **UIComponent ?Update@ (69.84) / ?ResourceFileUpdated@ (88.84)** — walls per
-    finishers2; need real port (gated on C1) or formal defer.
+C1. **UIComponent base-layout reconstruction — DONE/CLOSED** (wave-8 proved it
+    ALREADY LANDED: commit f4f4d13 "+6", the full 8 own-virtuals at slots
+    0x30-0x4c in verified retail order + UICOMP_DC3_VIRTUAL on all 12 derived
+    sites). The "+4+cascade key gated lever (open)" framing was STALE — the
+    cascade already fired (DrawShowing@RndLine/PanelDir Entering/Exiting all 100).
+C2. **rnddrawable-devirt — DONE/CLOSED** (already in-tree: Draw.h has
+    DRAW_DC3_VIRTUAL on Draw/DrawShadow + all 5 subclass overrides; landed with
+    C1 in f4f4d13). The banked patch was a SPENT artifact identical to in-tree
+    code — DELETED from docs/decomp/handoff/.
+C3. **UIComponent ?ResourceFileUpdated@ — DONE** (+23, wave-8): root cause was
+    NOT a body port but the GLOBAL MakeString.h template convention (DC3
+    by-const-ref → rb3-Wii by-value) — landed 36b9817, broad win. ?Update@
+    (68.8, 304 instr) + ?GetResourcesPath@ (73.55) remain = PERMUTER-class
+    (regalloc), defer. ?Handle@ port (fn_827D9928, 956B, 0%) = +12 incl. funclet
+    unblock — NEXT-WAVE candidate (not a wall).
 C4. **VocalTrack ?UpdateScrolling@ (52.34, sz 8948)** — body-divergence wall
     (1015 I/D, retail-rederive only). DEFER.
 C5. **Object.cpp** — dtor at 97.06 (regalloc spill-cascade, permuter exhausted
@@ -1264,8 +1274,9 @@ C6. **OvershellSlot** — layout-reconstruction wall (mSessionMgr retail 0x3c vs
     Multi-session. Logic divergence fully DECODED in batch-2 agent evidence.
 C7. **Mat_NG** — retail material layout SCRAMBLED (not block-shifted); DC3_REV_MEMBER
     lever DEFERRED (424412b). Multi-session.
-C8. **Player base-chain −4** = vbase-MI prefix wall (unk260 vector hypothesis
-    refuted; header comments stale).
+C8. **Player base-chain −4 — DONE/CLOSED** (wave-8: ALREADY SOLVED+landed —
+    commit e64628e, SongPos 0x18→0x14 drop DC3 mPhrase, +17. The ledger entry
+    was DEAD/contradicted; not a wall).
 C9. **CamShotFrame** — funclet frame + ObjPtr-dtor inline-policy, both deferred
     classes (mFocalTarget already 0xf4, the // 0xfc comment was stale).
 
@@ -1326,3 +1337,64 @@ regressions, every composed verify EXACT).**
 Active veins (sliver-repin, hash_map) are now largely worked out; the frontier
 is shifting to gated reconstruction work (C1) + recon-gated re-pins (A2a) +
 bigger pin campaigns (A4/A6). Cost-per-match rising — expect smaller waves.
+[NOTE: wave-8 OVERTURNED the "largely worked out" + "smaller waves" framing —
+see WAVE-8 CLOSE below.]
+
+# ============================================================
+# WAVE-8 CLOSE (2026-06-19): **8314 / 65544** (8234 → 8314, +80, 0 regressions)
+# ============================================================
+All-Opus DYNAMIC workflow (wave8-opus-verify-and-advance, wf_beb07c14-625,
+23 agents): 5 Opus PLANNERS adversarially FALSIFIED every "exhausted/refuted/
+done" claim AND emitted executable work-items (planner-driven dynamic waves) →
+10 Opus impl → 2 adversarial honesty-audits of attribution-risk pins → 6
+follow-ups → escalation. Composed verifies EXACT (8279→8302→8314).
+
+### THE BIG STORY: the adversarial pass caught FOUR wrong claims (the Waypoint
+### lesson, generalized). This is why we re-verify our own verdicts.
+1. **hash_map "EXHAUSTED" = WRONG** → A1 RE-OPENED (3rd find-COMDAT 82B23238,
+   75+ unconverted callers, cluster-alpha +20 / BandSongMgr +16 / datautl +5
+   remaining). The w7 "exhausted" was a 2-COMDAT scoping artifact.
+2. **C1 UIComponent reconstruction "the key OPEN gated lever" = WRONG** →
+   already landed f4f4d13; cascade already fired. CLOSED.
+3. **C2 rnddrawable-devirt "banked, not landed" = WRONG** → already in-tree;
+   the banked patch was spent, DELETED.
+4. **C8 Player base-chain −4 "vbase-MI wall" = WRONG** → already solved e64628e.
+   CLOSED.
+Plus genuine confirmations (the refutations that HELD, re-verified with fresh
+COFF/DC3-map/Ghidra): InlineHelp, TypeProps, Mic/FxSend, Band/Game head,
+AsyncFileHolmes interleave walls; C5 Object port-bound; B2 FreestyleMotionFilter
+12-byte-stub wall; B3 SongMgr truly exhausted. Refutations aren't all wrong —
+but they MUST be re-checked, and ~30% were stale.
+
+### Landed (+80)
+- **Character relocation +45** (38a773a, splits-only): dead 0x48 sliver →
+  real cluster [0x8235B1D0,0x8235F180). Recon-then-pin (Ghidra-confirmed the
+  15-fn sub-gap = own CharPollableSorter sort bodies), then ADVERSARIAL
+  honesty-audited HONEST (45 own / 0 foreign). Far above the +9 estimate.
+- **MakeString.h by-value +23** (36b9817): GLOBAL header convention fix (DC3
+  by-const-ref template params → rb3-Wii by-value) — a broad inlining-keystone
+  win surfaced while chasing UIComponent::ResourceFileUpdated.
+- **Waypoint Save/Copy +7** (d3c6e4f), **AccProg iterate-bodyports +2**,
+  **fsss GetID pin-extend +1** (audited HONEST), **RndGroup CollideList +1**
+  (mShowing→mDrawing loop-gate fix), **AccProg IsUploadDirty +1** (config/
+  symbols.txt boundary fix, NOT jeff-side as D1 claimed — D1 corrected).
+
+### Process win: 2-stage honesty defense held
+Both attribution-risk pins (Character, fsss) passed an independent adversarial
+own-vs-foreign audit BEFORE landing, then composed-verified EXACT on main. The
+non-landable results (C6 OvershellSlot, C9 CamShot, several reveals) all
+refuted cleanly on contact = valid net-0, zero false-positive attribution.
+
+### NEXT WAVE (re-opened + surfaced, EV order)
+1. **hash_map re-opened vein**: cluster-alpha +20 (port-then-pin, identify
+   owner), BandSongMgr +16 (port BandSongMgr.cpp from rb3-Wii + wire + pin),
+   datautl +5, 82B23238 third-COMDAT scout.
+2. **UIComponent ?Handle@ port +12** (fn_827D9928, 956B, BEGIN_HANDLERS —
+   unblocks its funclet family).
+3. **A2a Character deepen** (the relocated TU has near-miss tails to finish).
+4. **Mat_NG reconstruction +8** (C7, multi-session, RB3_MATNG_LAYOUT plan in
+   the wall-ledger dossier).
+5. D2 map_lint stale-purge; A4 AsyncFileHolmes (confirmed interleave — bigger).
+
+**SESSION TOTAL (waves 3–8): 6932 → 8314 (+1382, zero regressions, every
+composed verify EXACT).**
