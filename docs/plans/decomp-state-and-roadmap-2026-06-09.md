@@ -1190,15 +1190,16 @@ regressions, every composed verify EXACT).**
 # after each wave. Current state: main @ d6e1435, 8220/65543 matched.
 
 ## A. ACTIVE LEVERS (have a proven method, ready to execute — highest EV)
-A1. **hash_map vein round 3 — DUAL-COMDAT scan.** Wave-6 proved SongMgr's
-    int-key maps use a SECOND find COMDAT (lbl_82552CD0) the fn_82543F88-only
-    scan missed. Re-scan binary-wide for BOTH `fn_82543F88` (Symbol-key) AND
-    `lbl_82552CD0` (int-key) callers in PINNED units with find-using fns <100;
-    each is a member→hash_map conversion. Pinned candidates already eliminated:
-    PhysicsVolume, DataFunc (stack-local containers, not members). CharClip.cpp
-    CONFIRMED genuine rbtree (0 fn_82543F88 calls — RB3_RBTREE_0x1C correct,
-    DO NOT touch). Method: docs/decomp/research/2026-06-16-w6-hashmap2.md +
-    bp4-accprog.md. Vein is 3-for-3 (AccProg, AccomplishmentManager, SongMgr).
+A1. **hash_map vein round 3 — NEARLY TAPPED in pinned units** (DUAL-COMDAT scan
+    RUN 2026-06-19). Vein is 3-for-3 (AccProg, AccomplishmentManager, SongMgr —
+    all converted). Remaining PINNED-unit callers of either find COMDAT
+    (fn_82543F88 Symbol-key / lbl_82552CD0 int-key): only **MoviePanel** (1
+    fn_82543F88) and **FixedSizeSaveableStream** (1 lbl_82552CD0) — both thin,
+    ~+1-2 each, verify each is a member (not a stack-local) before converting.
+    Eliminated: PhysicsVolume, DataFunc (stack-local containers). CharClip.cpp
+    CONFIRMED genuine rbtree (0 calls — RB3_RBTREE_0x1C correct, DO NOT touch).
+    **The vein's remaining MASS is in UNPINNED auto_03 blobs (→ A6), gated on
+    pinning those TUs first.** Method: 2026-06-16-w6-hashmap2.md + bp4-accprog.md.
 A2. **pin_audit round 3.** Re-run `venv/bin/python tools/pin_audit.py --json
     <out>` after wave-6's pin moves. The "pinned-to-a-sliver" hunt is now
     4-for-4+ ABOVE estimate (UIComponent +38, CharLipSync re-pin, Waypoint
@@ -1216,8 +1217,12 @@ A5. **Synth-belt: SCOPE first.** 0x826DE000–0x82909000 already has ~169 pins �
     NOT virgin. Needs a gap-scan (tools/scope_map.py / pin_audit) to find which
     synth TUs are still unpinned/uncompiled before any pin+port. Don't assume
     it's empty.
-A6. **auto_03_82272EB4 blob** (76 fn_82543F88 calls) — a large unpinned
-    hash_map-heavy cluster; identify + pin its owning TU(s), then A1 applies.
+A6. **UNPINNED hash_map-heavy auto_03 blobs — now the PRIMARY hash_map upside**
+    (A1 in pinned units is tapped). Top: auto_03_82272EB4 (76 fn_82543F88
+    calls), auto_03_825458DC (18), auto_03_82621968 (11), auto_03_82627200
+    (10), auto_03_82783A00 (7). Identify + pin each owning TU (pin_audit /
+    fingerprint_match), THEN the hash_map conversion (A1 method) applies to its
+    members. Two-step: pin → convert. Highest hash_map EV remaining.
 
 ## B. NEAR-MISS TAILS (small, specific, low-risk)
 B1. **Waypoint Save (99.9) / Copy (99.8)** — porting-incomplete tails of the
