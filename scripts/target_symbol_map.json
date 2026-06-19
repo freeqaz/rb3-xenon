@@ -3859,6 +3859,7 @@
  "0x82785070": "?LoadCachedSongInfo@SongMgr@@QAA_NAAVBufStream@@@Z",
  "0x82785708": "?GameOrigin@SongMetadata@@QBA?AVSymbol@@XZ",
  "0x82785718": "?PreviewTimes@SongMetadata@@QBAXAAM0@Z",
+ "0x82786420": "?GetID@FixedSizeSaveableStream@@QBAHVSymbol@@@Z",
  "0x82786468": "?GetSymbol@FixedSizeSaveableStream@@QBA?AVSymbol@@H@Z",
  "0x82786500": "?HasID@FixedSizeSaveableStream@@QBA_NH@Z",
  "0x82786550": "??0FixedSizeSaveableStream@@QAA@PAXH_N@Z",

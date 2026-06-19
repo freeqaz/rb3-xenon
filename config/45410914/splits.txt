@@ -1829,8 +1829,8 @@ Poll.cpp:
 	.text       start:0x8240EA08 end:0x8240EB60
 
 FixedSizeSaveableStream.cpp:
-	.pdata      start:0x82237FB8 end:0x82238008
-	.text       start:0x82786468 end:0x82786788
+	.pdata      start:0x82237FB0 end:0x82238008
+	.text       start:0x82786420 end:0x82786788
 
 VorbisMem.cpp:
 	.pdata      start:0x82257C40 end:0x82257C48
