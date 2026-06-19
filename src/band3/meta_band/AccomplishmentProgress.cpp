@@ -330,7 +330,8 @@ bool AccomplishmentProgress::HasNewRewardVignetteFestival() const { return !unk6
 
 void AccomplishmentProgress::ClearNewRewardVignetteFestival() {
     unk645 = true;
-    unkb0.insert(campaign_rewardvignette_festival_replay_screen);
+    static Symbol kFestivalReplay("campaign_rewardvignette_festival_replay_screen");
+    unkb0.insert(kFestivalReplay);
 }
 
 bool AccomplishmentProgress::AddAward(Symbol s1, Symbol s2) {
@@ -524,7 +525,25 @@ void AccomplishmentProgress::FakeFill() {
     }
 }
 
-void AccomplishmentProgress::Poll() {}
+void AccomplishmentProgress::Poll() {
+    std::list<GamerAwardStatus *>::iterator it = mGamerAwardStatusList.begin();
+    while (it != mGamerAwardStatusList.end()) {
+        GamerAwardStatus *status = *it;
+        if (status->unk10) {
+            DWORD result;
+            DWORD rc = XGetOverlappedResult(&status->mOverlapped, &result, 0);
+            if (rc == 0) {
+                mGamerAwardStatusList.erase(it++);
+                mParentProfile->MakeDirty();
+                continue;
+            }
+            if (rc != ERROR_IO_INCOMPLETE) {
+                status->unk10 = false;
+            }
+        }
+        ++it;
+    }
+}
 
 void AccomplishmentProgress::SaveFixed(FixedSizeSaveableStream &stream) const {
     stream << mUploadDirty;
