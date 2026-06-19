@@ -1,7 +1,7 @@
 #include "meta/FixedSizeSaveableStream.h"
 #include "meta/FixedSizeSaveable.h"
 
-std::map<Symbol, int> &FixedSizeSaveableStream::GetSymbolToIDMap() {
+std::hash_map<Symbol, int> &FixedSizeSaveableStream::GetSymbolToIDMap() {
     return m_mapSymbolToID;
 }
 
@@ -17,7 +17,7 @@ int FixedSizeSaveableStream::GetSymbolTableSize(int) {
 }
 
 int FixedSizeSaveableStream::GetID(Symbol s) const {
-    std::map<Symbol, int>::const_iterator it = m_mapSymbolToID.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = m_mapSymbolToID.find(s);
     if (it != m_mapSymbolToID.end())
         return it->second;
     else
@@ -25,7 +25,7 @@ int FixedSizeSaveableStream::GetID(Symbol s) const {
 }
 
 Symbol FixedSizeSaveableStream::GetSymbol(int i) const {
-    std::map<int, Symbol>::const_iterator it = m_mapIDToSymbol.find(i);
+    std::hash_map<int, Symbol>::const_iterator it = m_mapIDToSymbol.find(i);
     if (it != m_mapIDToSymbol.end())
         return it->second;
     else

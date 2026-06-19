@@ -162,11 +162,11 @@ operator>>(FixedSizeSaveableStream &fs, FixedSizeSaveable &saveable) {
 }
 
 void FixedSizeSaveable::SaveSymbolTable(FixedSizeSaveableStream &fs, int max, int j) {
-    std::map<Symbol, int> &symMap = fs.GetSymbolToIDMap();
+    std::hash_map<Symbol, int> &symMap = fs.GetSymbolToIDMap();
     int size = symMap.size();
     MILO_ASSERT(size <= max, 0x9A);
     fs << size;
-    for (std::map<Symbol, int>::iterator it = symMap.begin(); it != symMap.end(); it++) {
+    for (std::hash_map<Symbol, int>::iterator it = symMap.begin(); it != symMap.end(); it++) {
         SaveFixedSymbol(fs, it->first);
         fs << it->second;
     }
