@@ -675,6 +675,7 @@
       "band3/game/GameMode.cpp": "NonMatching",
       "band3/meta_band/Accomplishment.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentCategory.cpp": "NonMatching",
+      "band3/meta_band/Award.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentConditional.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentDiscSongConditional.cpp": "NonMatching",
       "band3/meta_band/AccomplishmentGroup.cpp": "NonMatching",

@@ -12800,5 +12800,15 @@
  "0x82608410": "?GetScreen@VignetteViewerProvider@@QAA?AVSymbol@@H@Z",
  "0x82608B28": "?ShowCharacter@ManageBandPanel@@QAAXXZ",
  "0x82608BF8": "?HideCharacter@ManageBandPanel@@QAAXXZ",
- "0x826097B0": "?Handle@ManageBandPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+ "0x826097B0": "?Handle@ManageBandPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x825D0380": "?GrantAward@Award@@QAAXABVAwardEntry@@PAVBandProfile@@@Z",
+ "0x825D0550": "?HasAssets@Award@@QBA_NXZ",
+ "0x825D05F8": "?GrantAwards@Award@@QAAXPAVBandProfile@@@Z",
+ "0x825D0648": "?GetDescription@Award@@QBA?AVSymbol@@XZ",
+ "0x825D0700": "?GetDisplayName@Award@@QBA?AVSymbol@@XZ",
+ "0x825D07A0": "?Configure@Award@@UAAXPAVDataArray@@@Z",
+ "0x825D0AA8": "??0Award@@QAA@PAVDataArray@@H@Z",
+ "0x825D0B68": "??1Award@@UAA@XZ",
+ "0x825D0BE8": "??_GAward@@UAAPAXI@Z",
+ "0x825D0C40": "?InqAssets@Award@@QAA_NAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z"
 }

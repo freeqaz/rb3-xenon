@@ -1363,6 +1363,10 @@ band3/meta_band/MusicLibraryNetSetlists.cpp:
 	.pdata      start:0x8221C2E0 end:0x8221C428
 	.text       start:0x825B6808 end:0x825B7C0C
 
+Award.cpp:
+	.pdata      start:0x8221DEA8 end:0x8221DF70
+	.text       start:0x825D0380 end:0x825D0D00
+
 FixedSizeSaveable.cpp:
 	.pdata      start:0x8221DFA0 end:0x8221DFA8
 	.text       start:0x825D0EF0 end:0x825D0F34

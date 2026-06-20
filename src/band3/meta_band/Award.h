@@ -1,5 +1,6 @@
 #pragma once
 #include "system/obj/Data.h"
+#include <list>
 
 class BandProfile;
 
@@ -30,6 +31,6 @@ public:
     Symbol mIcon; // 0x08
     int mIndex; // 0x0c
     bool mIsSecret; // 0x10
-    std::vector<AwardEntry> mAwardEntries; // 0x14
+    std::list<AwardEntry> mAwardEntries; // 0x14
     bool mIsBonus; // 0x1c
 };
