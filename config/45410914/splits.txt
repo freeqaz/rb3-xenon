@@ -2547,3 +2547,7 @@ band3/meta_band/AccomplishmentGroup.cpp:
 band3/meta_band/ViewSetting.cpp:
 	.pdata      start:0x8221C7A0 end:0x8221C9D0
 	.text       start:0x825BB5B8 end:0x825BD5F0
+
+band3/meta_band/PatchSelectPanel.cpp:
+	.pdata      start:0x82222288 end:0x82222350
+	.text       start:0x82611248 end:0x82611F28

@@ -49,11 +49,11 @@ public:
     void SetupForCharacterPatch();
     void Confirm(int);
 
-    PatchProvider *mPatchProvider; // 0x38
-    UIGridProvider *mGridProvider; // 0x3c
-    UIList *mPatchList; // 0x40
-    PatchDescriptor *mDescriptor; // 0x44
-    BandProfile *mSourceProfile; // 0x48
-    int mStartingPatchIx; // 0x4c
-    bool mStartWithMenu; // 0x50
+    PatchProvider *mPatchProvider; // 0x3c (UIPanel base ends 0x3c on retail)
+    UIGridProvider *mGridProvider; // 0x40
+    UIList *mPatchList; // 0x44
+    PatchDescriptor *mDescriptor; // 0x48
+    BandProfile *mSourceProfile; // 0x4c
+    int mStartingPatchIx; // 0x50
+    bool mStartWithMenu; // 0x54
 };
