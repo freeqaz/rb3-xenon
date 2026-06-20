@@ -12567,5 +12567,13 @@
  "0x8261B9B8": "?CancelLeaderboardTimer@SongSelectPanel@@QAAXXZ",
  "0x8261BB68": "?Handle@SongSelectPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8261C1F0": "?Poll@SongSelectPanel@@UAAXXZ",
- "0x8261AE08": "??0SongSelectPanel@@QAA@XZ"
+ "0x8261AE08": "??0SongSelectPanel@@QAA@XZ",
+ "0x825BB920": "?Text@ScoreTypeViewSetting@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x825BB9A0": "?SelectOption@ScoreTypeViewSetting@@UAAXH@Z",
+ "0x825BB9E8": "?StartingOption@ScoreTypeViewSetting@@UBAHXZ",
+ "0x825BBBF8": "?InitData@ViewSettingsProvider@@UAAXPAVRndDir@@@Z",
+ "0x825BC750": "?Custom@FilterViewSetting@@UBAXHHPAVUIListCustom@@PAVObject@Hmx@@@Z",
+ "0x825BC860": "??0FilterViewSetting@@QAA@W4FilterType@@@Z",
+ "0x825BCFF8": "??$sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z",
+ "0x825BD068": "?SetFilterData@FilterViewSetting@@QAAXABV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z"
 }

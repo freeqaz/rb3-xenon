@@ -2499,3 +2499,7 @@ band3/meta_band/AccomplishmentSongConditional.cpp:
 band3/meta_band/AccomplishmentGroup.cpp:
 	.pdata      start:0x8221DFD8 end:0x8221DFE8
 	.text       start:0x825D1198 end:0x825D1240
+
+band3/meta_band/ViewSetting.cpp:
+	.pdata      start:0x8221C7A0 end:0x8221C9D0
+	.text       start:0x825BB5B8 end:0x825BD5F0

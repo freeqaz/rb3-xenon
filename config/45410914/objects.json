@@ -720,6 +720,7 @@
       "band3/meta_band/UIEventMgr.cpp": "NonMatching",
       "band3/meta_band/UploadErrorMgr.cpp": "NonMatching",
       "band3/meta_band/Utl.cpp": "NonMatching",
+      "band3/meta_band/ViewSetting.cpp": "NonMatching",
       "band3/meta_band/WiiBufStreamMgr.cpp": "NonMatching",
       "band3/net_band/RockCentral.cpp": "NonMatching",
       "band3/tour/QuestFilterPanel.cpp": "NonMatching",
