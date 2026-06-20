@@ -139,6 +139,13 @@ public:
     // TU compiles. Append-only; does not alter existing PlatformMgr layout.
     void SetHomeMenuEnabled(bool);
     bool IsOnlineRestricted();
+    // Profanity-check entry points referenced by ported RB3-Wii game code
+    // (meta_band/EditSetlistPanel). Declaration-only, append-only — does not
+    // alter the existing PlatformMgr layout. The retail Xbox 360 build compiled
+    // these references into EditSetlistPanel; the link target lives in the
+    // platform layer (not part of this TU's match).
+    bool IsCheckingProfanity() const;
+    bool StartProfanity(const unsigned short **, int, char *, Hmx::Object *);
     bool IsConnected() { return mConnected; }
     bool ScreenSaver() { return mScreenSaver; }
     int SignInMask() const { return mSigninMask; }
@@ -184,6 +191,7 @@ END_MESSAGE
 DECLARE_MESSAGE(DWCProfanityResultMsg, "dwc_profanity_result_msg")
 DWCProfanityResultMsg() : Message(Type()) {}
 bool IsProfane() const { return mData->Int(2); }
+bool Success() const { return mData->Int(2); }
 END_MESSAGE
 
 // Wii platform-mgr op-complete message — referenced by RockCentralJobs.h / the

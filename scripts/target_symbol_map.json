@@ -12757,5 +12757,15 @@
  "0x825B83D8": "?SaveFixed@SongStatus@@UBAXAAVFixedSizeSaveableStream@@@Z",
  "0x825B9768": "?erase@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAIABH@Z",
  "0x8261FE68": "??$Find@VBandList@@@ObjectDir@@QAAPAVBandList@@PBD_N@Z",
- "0x82620E60": "??_GStoreMenuPanel@@UAAPAXI@Z"
+ "0x82620E60": "??_GStoreMenuPanel@@UAAPAXI@Z",
+ "0x825FED58": "?Unload@EditSetlistPanel@@UAAXXZ",
+ "0x825FED98": "?EditSetlist@EditSetlistPanel@@QAA_NPAVLocalBandUser@@PAVLocalSavedSetlist@@@Z",
+ "0x82600070": "?Enter@EditSetlistPanel@@UAAXXZ",
+ "0x826000C0": "?OnMsg@EditSetlistPanel@@QAA?AVDataNode@@ABVUITransitionCompleteMsg@@@Z",
+ "0x82600B98": "?VerifyStringsComplete@EditSetlistPanel@@QAAX_N0@Z",
+ "0x826002C0": "?MessageOK@EditSetlistPanel@@QAAXXZ",
+ "0x826006E8": "?OnMsg@EditSetlistPanel@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
+ "0x82600C38": "?Handle@EditSetlistPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x825FE180": "??0EditSetlistPanel@@QAA@XZ",
+ "0x825FFE80": "?SetEditState@EditSetlistPanel@@QAAXW4EditState@1@@Z"
 }

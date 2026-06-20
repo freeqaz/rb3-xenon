@@ -658,6 +658,7 @@
       "band3/meta_band/LessonProvider.cpp": "NonMatching",
       "band3/meta_band/SongSelectPanel.cpp": "NonMatching",
       "band3/meta_band/VoiceoverPanel.cpp": "NonMatching",
+      "band3/meta_band/EditSetlistPanel.cpp": "NonMatching",
       "band3/game/TrainerGemTab.cpp": "NonMatching",
       "band3/game/Stats.cpp": "NonMatching",
       "band3/game/GamePanel.cpp": "NonMatching",
