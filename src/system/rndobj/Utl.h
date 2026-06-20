@@ -98,6 +98,7 @@ int GenerationCount(RndTransformable *, RndTransformable *);
 bool GroupedUnder(RndGroup *, Hmx::Object *);
 
 void EndianSwapBitmap(RndBitmap &bmap);
+void SwapDxtEndianness(RndBitmap *bmap);
 
 void Clip(BuildPoly &, const Plane &, bool);
 

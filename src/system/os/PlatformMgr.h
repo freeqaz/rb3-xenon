@@ -159,6 +159,7 @@ public:
     bool GetServiceID(const String &, unsigned int &);
     void SignInUsers(int, unsigned long);
     ShowGamercardResult ShowGamercardForPadNum(int, const OnlineID *);
+    bool CanSeeUserCreatedContent(const OnlineID *) const;
 };
 
 extern PlatformMgr ThePlatformMgr;

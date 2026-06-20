@@ -12773,5 +12773,10 @@
  "0x82541d98": "??1PrefabMgr@@UAA@XZ",
  "0x82542418": "?Handle@PrefabMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82541138": "?AssignPrefabsToSlots@PrefabMgr@@QAAXXZ",
- "0x82542340": "?LoadPortraits@PrefabMgr@@QAAXPAVOvershellSlot@@@Z"
+ "0x82542340": "?LoadPortraits@PrefabMgr@@QAAXPAVOvershellSlot@@@Z",
+ "0x825B6808": "?IsSetlistArtReady@MusicLibraryNetSetlists@@QBA_NVSymbol@@@Z",
+ "0x825B6840": "?GetSetlistArt@MusicLibraryNetSetlists@@QBAPAVRndTex@@VSymbol@@@Z",
+ "0x825B6A40": "?FinishGettingSetlistArt@MusicLibraryNetSetlists@@QAAX_N@Z",
+ "0x825B70A8": "??_GBattleSavedSetlist@@UAAPAXI@Z",
+ "0x825B7100": "?CleanUp@MusicLibraryNetSetlists@@QAAXXZ"
 }

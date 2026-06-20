@@ -1359,6 +1359,10 @@ SongStatusMgr.cpp:
 	.pdata      start:0x8221C428 end:0x8221C740
 	.text       start:0x825B7C0C end:0x825BB090
 
+band3/meta_band/MusicLibraryNetSetlists.cpp:
+	.pdata      start:0x8221C2E0 end:0x8221C428
+	.text       start:0x825B6808 end:0x825B7C0C
+
 FixedSizeSaveable.cpp:
 	.pdata      start:0x8221DFA0 end:0x8221DFA8
 	.text       start:0x825D0EF0 end:0x825D0F34
