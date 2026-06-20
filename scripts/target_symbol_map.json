@@ -2873,7 +2873,7 @@
  "0x825BC7E8": "??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
  "0x825BCE20": "??$__introsort_loop@PAPAVAllocInfo@@PAV1@HP6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00HP6A_NABQAV1@1@Z@Z",
  "0x825BCF80": "?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z",
- "0x825BD6E0": "??_GFlowManager@@UAAPAXI@Z",
+ "0x825BD6E0": "??_GCriticalUserListener@@UAAPAXI@Z",
  "0x825BE388": "?DeleteDownloadedArts@MainMenuPanel@@AAAXXZ",
  "0x825C0700": "??4DataArrayPtr@@QAAXPAVDataArray@@@Z",
  "0x825C10D8": "?ShowState@OvershellSlot@@QAAXW4OvershellSlotStateID@@@Z",
@@ -12576,5 +12576,9 @@
  "0x825BC750": "?Custom@FilterViewSetting@@UBAXHHPAVUIListCustom@@PAVObject@Hmx@@@Z",
  "0x825BC860": "??0FilterViewSetting@@QAA@W4FilterType@@@Z",
  "0x825BCFF8": "??$sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z",
- "0x825BD068": "?SetFilterData@FilterViewSetting@@QAAXABV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z"
+ "0x825BD068": "?SetFilterData@FilterViewSetting@@QAAXABV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+ "0x825BD4B8": "??1CriticalUserListener@@UAA@XZ",
+ "0x825BD578": "?SetCriticalUser@CriticalUserListener@@QAAXPAVLocalBandUser@@@Z",
+ "0x825BD5D8": "?ClearCriticalUser@CriticalUserListener@@QAAXXZ",
+ "0x825BD5F0": "??0CriticalUserListener@@QAA@PAVSessionMgr@@@Z"
 }

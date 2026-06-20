@@ -17,7 +17,7 @@ public:
     DataNode OnMsg(const LocalUserLeftMsg &);
     DataNode OnMsg(const SigninChangedMsg &);
 
-    LocalBandUser *mCriticalUser; // 0x1c
-    SessionMgr *mSessionMgr; // 0x20
-    bool mCanSaveData; // 0x24
+    LocalBandUser *mCriticalUser; // 0x28
+    SessionMgr *mSessionMgr; // 0x2c
+    bool mCanSaveData; // 0x30
 };
