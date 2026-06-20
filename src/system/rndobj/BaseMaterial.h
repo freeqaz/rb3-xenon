@@ -185,6 +185,7 @@ public:
     bool GetIntensify() const { return mIntensify; }
     RndTex* GetEmissiveMap() const { return mEmissiveMap; }
     ShaderVariation GetShaderVariation() const { return mShaderVariation; }
+    void SetShaderVariation(ShaderVariation v) { mShaderVariation = v; }
     const Hmx::Color& GetSpecular2RGB() const { return mSpecular2RGB; }
     RndTex* GetSpecularMap() const { return mSpecularMap; }
     RndTex* GetRimMap() const { return mRimMap; }

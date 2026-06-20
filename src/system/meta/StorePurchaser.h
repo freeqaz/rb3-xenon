@@ -6,10 +6,12 @@
 #include "ui/UI.h"
 #include "utl/Symbol.h"
 
-enum PurchaseState { // just know the val of kSuccess
+enum PurchaseState { // just know the val of kPurchaseSuccess
     purchasestate0 = 0,
     purchasestate1 = 1,
-    kSuccess = 2,
+    kPurchaseSuccess = 2, // renamed from kSuccess to avoid colliding with the
+                          // unscoped JoinResponseError::kSuccess (net/SessionMessages.h)
+                          // when both headers land in one TU; value (2) preserved.
     purchasestate3 = 3,
 };
 

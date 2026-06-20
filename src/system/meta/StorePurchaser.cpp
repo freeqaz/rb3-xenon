@@ -57,11 +57,11 @@ void XboxPurchaser::Initiate() {
 
 bool XboxPurchaser::IsSuccess() const {
     MILO_ASSERT(!IsPurchasing(), 0x3c3);
-    return mState == kSuccess;
+    return mState == kPurchaseSuccess;
 }
 
 bool XboxPurchaser::PurchaseMade() const {
-    MILO_ASSERT(mState == kSuccess, 0x3c9);
+    MILO_ASSERT(mState == kPurchaseSuccess, 0x3c9);
     return false;
 }
 
@@ -75,7 +75,7 @@ DataNode XboxPurchaser::OnMsg(UIChangedMsg const &msg) {
             // UI closed - unregister from notifications and mark as successful
             static Symbol ui_changed("ui_changed");
             ThePlatformMgr.RemoveSink(this, ui_changed);
-            mState = kSuccess;
+            mState = kPurchaseSuccess;
         }
     }
     return DataNode();
@@ -90,16 +90,16 @@ END_HANDLERS
 
 bool XboxMultipleItemsPurchaser::IsSuccess() const {
     MILO_ASSERT(!IsPurchasing(), 0x365);
-    return mState == kSuccess;
+    return mState == kPurchaseSuccess;
 }
 
 bool XboxMultipleItemsPurchaser::PurchaseMade() const {
-    MILO_ASSERT(mState == kSuccess, 0x36b);
+    MILO_ASSERT(mState == kPurchaseSuccess, 0x36b);
     return false;
 }
 
 bool XboxMultipleItemsPurchaser::IsPurchasing() const {
-    return mState != purchasestate0 && mState != kSuccess && mState != purchasestate3;
+    return mState != purchasestate0 && mState != kPurchaseSuccess && mState != purchasestate3;
 }
 
 void XboxMultipleItemsPurchaser::Initiate() {
@@ -151,7 +151,7 @@ DataNode XboxMultipleItemsPurchaser::OnMsg(UIChangedMsg const &msg) {
             // UI closed successfully - unregister from notifications
             static Symbol ui_changed("ui_changed");
             ThePlatformMgr.RemoveSink(this, ui_changed);
-            mState = kSuccess;
+            mState = kPurchaseSuccess;
         }
     }
     return DataNode();

@@ -2464,6 +2464,10 @@ band3/meta_band/StandIn.cpp:
 	.pdata      start:0x8221DFE8 end:0x8221E038
 	.text       start:0x825D1250 end:0x825D1588
 
+band3/meta_band/StoreMainPanel.cpp:
+	.pdata      start:0x82223030 end:0x82223238
+	.text       start:0x8261E020 end:0x8261FE68
+
 band3/meta_band/StoreSongSortNode.cpp:
 	.pdata      start:0x8221AFD8 end:0x8221B078
 	.text       start:0x825A6640 end:0x825A7038
