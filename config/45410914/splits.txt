@@ -2460,6 +2460,10 @@ band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x82217D70 end:0x82217FF0
 	.text       start:0x82577680 end:0x8257A960
 
+band3/meta_band/AppMiniLeaderboardDisplay.cpp:
+	.pdata      start:0x82224548 end:0x82224678
+	.text       start:0x8262F530 end:0x82630988
+
 band3/meta_band/SongUpgradeMgr.cpp:
 	.pdata      start:0x82224678 end:0x82224818
 	.text       start:0x82630988 end:0x82632040

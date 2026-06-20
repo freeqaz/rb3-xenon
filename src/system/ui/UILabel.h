@@ -62,6 +62,7 @@ public:
     void SetFloat(char const *, float);
     void SetDateTime(DateTime const &, Symbol);
     void SetIcon(char);
+    void AppendIcon(char);
     void SetTokenFmt(const DataArray *);
     const RndText::Style &Style(int) const;
     RndText::Style &Style(int);
