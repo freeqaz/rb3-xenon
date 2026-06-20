@@ -9,6 +9,16 @@
 #define mem_fun mem_fn
 #endif
 
+// Retail RB3 EVALUATED MILO_NOTIFY args in this TU — the END_HANDLERS unhandled-msg
+// path emits the PathName(this) vcall (and every MILO_NOTIFY load-failure message
+// evaluates its arguments). The default no-op uses sizeof (unevaluated), which drops
+// those side-effecting calls. Redefine to evaluate-and-discard so the handler/load
+// funclets re-emit, matching retail. (Same idiom as Bitmap.cpp / Utl.cpp.)
+#ifndef HX_NATIVE
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
+#endif
+
 bool sForceSerialSequences;
 
 namespace {
@@ -589,7 +599,7 @@ GroupSeqInst::~GroupSeqInst() {
 void GroupSeqInst::UpdateVolume() {
     FOREACH (it, mSeqs) {
         if (*it) {
-            (*it)->SetVolume(mVolume + mRandVol + mOwner->Faders().GetVolume());
+            (*it)->SetVolume(mVolume + mRandVol + mOwner->Faders().GetVal());
         }
     }
 }

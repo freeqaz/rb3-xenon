@@ -1266,8 +1266,8 @@ UsbMidiGuitarMsgs.cpp:
 	.text       start:0x8251B528 end:0x8251B60C
 
 Sequence.cpp:
-	.pdata      start:0x82213328 end:0x82213330
-	.text       start:0x82532110 end:0x82532168
+	.pdata      start:0x8222F490 end:0x8222FAF0
+	.text       start:0x826E8048 end:0x826EDA74
 
 System.cpp:
 	.pdata      start:0x822564F8 end:0x822565F0
