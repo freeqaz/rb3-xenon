@@ -239,6 +239,22 @@ const char *UIComponent::GetResourcesPath() {
     }
 }
 
+ObjectDir *UIComponent::ResourceDir() {
+    if (mResourceDir)
+        return mResourceDir;
+    else if (mResource)
+        return mResource->Dir();
+    else
+        return 0;
+}
+
+DataNode UIComponent::OnGetResourcesPath(DataArray *da) {
+    if (mResourcePath.length() != 0) {
+        return DataNode(FileRelativePath(FileRoot(), mResourcePath.c_str()));
+    } else
+        return DataNode("");
+}
+
 void UIComponent::MockSelect() {
     MILO_ASSERT(sSelectFrames < 255, 0x13F);
     MILO_ASSERT(sSelectFrames >= 0, 0x140);
@@ -347,12 +363,25 @@ void UIComponent::FinishSelecting() {
         mSelectCancelled = false;
 }
 
+// Retail's END_HANDLERS still emits the PathName(this) side-effect call even
+// though the notify print is stripped. Our global Debug.h release MILO_NOTIFY is
+// ((void)sizeof(...)), and sizeof does NOT evaluate its operand, so PathName is
+// dropped and the unhandled-msg tail goes missing. Locally redefine MILO_NOTIFY
+// to comma-evaluate its args (matching rb3-Wii release Debug.h:151 MILO_WARN form)
+// so PathName(this) is emitted (bl fn_82732F68) while the print stays stripped.
+// NEVER edit global Debug.h — this is TU-local only.
+#pragma push_macro("MILO_NOTIFY")
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) (void)(__VA_ARGS__)
 BEGIN_HANDLERS(UIComponent)
     HANDLE_EXPR(get_state, GetState())
     HANDLE_ACTION(set_state, SetState((UIComponent::State)_msg->Int(2)))
     HANDLE_EXPR(can_have_focus, CanHaveFocus())
+    HANDLE_EXPR(get_resource_dir, ResourceDir())
+    HANDLE(get_resources_path, OnGetResourcesPath)
     HANDLE_SUPERCLASS(RndTransformable)
     HANDLE_SUPERCLASS(RndDrawable)
     HANDLE_SUPERCLASS(RndPollable)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
+#pragma pop_macro("MILO_NOTIFY")

@@ -922,6 +922,14 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
 // END SET TYPE MACRO --------------------------------------------------------------------
 
 // BEGIN HANDLE MACROS -------------------------------------------------------------------
+// Retail RB3 drops the per-handler MessageTimer profiling object entirely — every
+// ::Handle is just `Symbol sym = _msg->Sym(1);` then the handler body (no Timer
+// ctor / Restart / SplitMs / AddTime). Retail keeps MILO_ASSERT strings (so the
+// build is not a clean MILO_DEBUG-off build); only message-timer profiling is off.
+// Gate the timer on a dedicated MILO_MESSAGE_TIMERS macro (undefined by default =
+// retail shape); define it to restore handler profiling without disturbing the
+// rest of MILO_DEBUG.
+#ifdef MILO_MESSAGE_TIMERS
 #define BEGIN_HANDLERS(objType)                                                          \
     DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
         Symbol sym = _msg->Sym(1);                                                       \
@@ -936,6 +944,16 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
         MessageTimer timer(                                                              \
             (MessageTimer::Active()) ? dynamic_cast<Hmx::Object *>(this) : 0, sym        \
         );
+#else
+#define BEGIN_HANDLERS(objType)                                                          \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);
+
+// for handlers of objects that aren't directly Hmx::Objects (i.e. UIListProvider)
+#define BEGIN_CUSTOM_HANDLERS(objType)                                                   \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);
+#endif
 
 #define _NEW_STATIC_SYMBOL(str) static Symbol _s(#str);
 
@@ -1027,13 +1045,37 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
     if (ClassName() == StaticClassName())                                                \
     HANDLE_SUPERCLASS(parent)
 
+// Retail (release) END_HANDLERS still evaluates PathName(this) at the unhandled
+// tail — the warn message text is stripped, but the PathName(this) argument's
+// side effect (a virtual FindPathName call, fn_82732F68) is RETAINED in every
+// Family-B Handle. Our global release MILO_NOTIFY is ((void)sizeof(MakeString(...)))
+// and sizeof is UNEVALUATED, so it drops PathName(this) entirely — leaving our
+// Handle tails a superclass-forward where retail emits the bl PathName. Emit the
+// comma-evaluated form directly here (same shape as MILO_FAIL's (void)(__VA_ARGS__)
+// fix for Find<T>) so the PathName side effect lands without restoring the notifier
+// text. HX_NATIVE keeps the real notifier for the native build.
+#ifndef HX_NATIVE
+#define END_HANDLERS                                                                     \
+    if (_warn)                                                                           \
+        (void)(PathName(this), sym);                                                     \
+    return DATA_UNHANDLED;                                                               \
+    }
+#else
 #define END_HANDLERS                                                                     \
     if (_warn)                                                                           \
         MILO_NOTIFY("%s unhandled msg: %s", PathName(this), sym);                        \
     return DATA_UNHANDLED;                                                               \
     }
+#endif
 
 // for handlers of objects that aren't directly Hmx::Objects (i.e. UIListProvider)
+#ifndef HX_NATIVE
+#define END_CUSTOM_HANDLERS                                                              \
+    if (_warn)                                                                           \
+        (void)(PathName(dynamic_cast<Hmx::Object *>(this)), sym);                        \
+    return DATA_UNHANDLED;                                                               \
+    }
+#else
 #define END_CUSTOM_HANDLERS                                                              \
     if (_warn)                                                                           \
         MILO_NOTIFY(                                                                     \
@@ -1041,6 +1083,7 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
         );                                                                               \
     return DATA_UNHANDLED;                                                               \
     }
+#endif
 // END HANDLE MACROS ---------------------------------------------------------------------
 
 // BEGIN SYNCPROPERTY MACROS -------------------------------------------------------------

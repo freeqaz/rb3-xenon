@@ -81,6 +81,8 @@ public:
     bool Loading() const { return mLoading; }
 
     const char *GetResourcesPath();
+    DataNode OnGetResourcesPath(DataArray *);
+    class ObjectDir *ResourceDir();
     void ResourceFileUpdated(bool);
     void UpdateResource();
     void MockSelect();
