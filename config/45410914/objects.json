@@ -698,6 +698,7 @@
       "band3/meta_band/Campaign.cpp": "NonMatching",
       "band3/meta_band/CampaignKey.cpp": "NonMatching",
       "band3/meta_band/CampaignLevel.cpp": "NonMatching",
+      "band3/meta_band/CharData.cpp": "NonMatching",
       "band3/meta_band/ContextChecker.cpp": "NonMatching",
       "band3/meta_band/CriticalUserListener.cpp": "NonMatching",
       "band3/meta_band/CymbalSelectionProvider.cpp": "NonMatching",

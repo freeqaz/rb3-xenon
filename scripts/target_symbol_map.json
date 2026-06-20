@@ -12819,5 +12819,10 @@
  "0x825D0AA8": "??0Award@@QAA@PAVDataArray@@H@Z",
  "0x825D0B68": "??1Award@@UAA@XZ",
  "0x825D0BE8": "??_GAward@@UAAPAXI@Z",
- "0x825D0C40": "?InqAssets@Award@@QAA_NAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+ "0x825D0C40": "?InqAssets@Award@@QAA_NAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x825BE208": "??1CharData@@UAA@XZ",
+ "0x825BE438": "?GetPrefabName@PrefabChar@@QBA?AVSymbol@@XZ",
+ "0x825BE5D0": "??_GPrefabChar@@UAAPAXI@Z",
+ "0x825BE618": "??_GCharData@@UAAPAXI@Z",
+ "0x825BEB68": "?GetCharacterName@PrefabChar@@UBAPBDXZ"
 }

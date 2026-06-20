@@ -90,6 +90,10 @@ CriticalUserListener.cpp:
 	.pdata      start:0x8221C9D0 end:0x8221CA80
 	.text       start:0x825BD5F0 end:0x825BDF28
 
+CharData.cpp:
+	.pdata      start:0x8221CA80 end:0x8221CB70
+	.text       start:0x825BDF28 end:0x825BEBD8
+
 OvershellSlot.cpp:
 	.pdata      start:0x8221CD90 end:0x8221CE28
 	.text       start:0x825C10D8 end:0x825C3A44
