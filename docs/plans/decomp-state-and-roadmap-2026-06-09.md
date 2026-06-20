@@ -1523,3 +1523,40 @@ multi-range candidate fix.
 
 **SESSION TOTAL (waves 3–10): 6932 → 9155 (+2223, build green; every landed
 lever composed-verified EXACT).**
+
+# ============================================================
+# WAVE-10.5 refill + WAVE-11 CLOSE (2026-06-20): **9301 / 65546** (9155 → 9301, +146)
+# ============================================================
+- refill +4 (053d2d0): SongStatus::SaveFixed / StoreMenuPanel reveals (game-TU
+  pins cascade less than the keystone).
+- **WAVE-11 +142** (wave11-metaband-belt, wf_15cb30a1-abc, 15 agents): one
+  discover lane per distinct TU (TU-dedup structural — no same-TU overlap to
+  untangle). 4 meta_band belt port-then-pin TUs, all audited HONEST + splits-
+  clean: **Campaign +58** (port band3/meta_band/Campaign.cpp), **VoiceoverPanel
+  megacluster +41** (scout-then-port the first clean sub-TU = EditSetlistPanel.cpp,
+  rest deferred to frontier), **PrefabMgr +24**, **MusicLibraryNetSetlists +19**
+  (identified by UNIQUE string fingerprint s_id%03i/s_name%03i → exactly one
+  oracle file; head gap below SongStatusMgr). Pre-build splits overlap-check
+  clean; no build-break.
+  - WORKFLOW BUG NOTED: the audit-clearing key-match dropped Campaign (+58) from
+    the reducer's "cleared" set because the auditor keyed itself "w11-Campaign"
+    vs impl key "Campaign" — coordinator caught it (Campaign WAS landable+honest)
+    and landed it manually. NEXT WAVE: key audits by impl.key exactly.
+- DOC CHANGE: the "never touch math/Color.h/math/Utl.h/shared headers" rule is
+  now recorded as a **CAUTION, not a ban** (user-confirmed) — codebase-wide
+  changes are fine when principled + composed-verified net-positive (Handle
+  keystone, MakeString were exactly this). playbooks/bodyport-wave.md §10 updated.
+
+### NEXT WAVE (wave-11 reducer frontier — meta_band belt HEALTHY, all INDEPENDENT
+### port-then-pin, oracle-HAVE-in-rb3-Wii unwired TUs)
+1. MainHubPanel.cpp ~+25, 2. setlist-family (SavedSetlist/SongSortNode/SongSort,
+coupled to MusicLibraryNetSetlists.h) ~+24, 3. ManageBandPanel.cpp ~+18,
+4. PatchPanel-deepen+PatchSelectPanel ~+15, 5. SaveLoadManager.cpp ~+12,
+6. AppLabel real cluster (rb3-Wii 121 fns, NOT the refuted 0x825BB090 sliver
+which is a ViewSetting music_library_upsell subclass — reconstruct-from-disasm,
+deferred) ~+12. TWO BIG UN-BISECTED GAPS need a dedicated bisection sub-wave
+(auto_03 string-fingerprint): [0x825BDF28,0x825C10D8) ~110 fns +
+[0x825C3A44,0x825D0EF0) ~565 fns. Then re-run pin_audit.
+
+**SESSION TOTAL (waves 3–11): 6932 → 9301 (+2369, build green; every landed
+lever composed-verified EXACT).**
