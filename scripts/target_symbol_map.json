@@ -12714,5 +12714,13 @@
  "0x826329D0": "??_Glogic_error@stlpmtx_std@@UAAPAXI@Z",
  "0x82632CC0": "?ReadCachedMetadataFromStream@LicenseMgr@@QAA_NAAVBinStream@@H@Z",
  "0x82632D18": "?AddLicenses@LicenseMgr@@QAAXPAVDataArray@@PAVDataLoader@@W4ContentLocT@@VSymbol@@@Z",
- "0x82632E88": "?ContentLoaded@LicenseMgr@@UAAXPAVLoader@@W4ContentLocT@@VSymbol@@@Z"
+ "0x82632E88": "?ContentLoaded@LicenseMgr@@UAAXPAVLoader@@W4ContentLocT@@VSymbol@@@Z",
+ "0x8261FF18": "?FinishLoad@StoreMenuPanel@@UAAXXZ",
+ "0x826201C8": "?Poll@StoreMenuPanel@@UAAXXZ",
+ "0x826200E8": "?GetCrumbText@StoreMenuPanel@@QBAPBDXZ",
+ "0x826206A0": "?AddMenu@StoreMenuPanel@@QAAXPAVDataArray@@PBD@Z",
+ "0x82620830": "?OnMsg@StoreMenuPanel@@QAA?AVDataNode@@ABVMetadataLoadedMsg@@@Z",
+ "0x826209C8": "?Handle@StoreMenuPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82620EA8": "?Unload@StoreMenuPanel@@UAAXXZ",
+ "0x8261FFE0": "?OnBack@StoreMenuPanel@@QAA?AVDataNode@@PBVDataArray@@@Z"
 }

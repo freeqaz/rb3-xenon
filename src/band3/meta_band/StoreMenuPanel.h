@@ -1,7 +1,7 @@
 #pragma once
 #include "meta_band/StoreMenuProvider.h"
-#include "stl/pointers/_vector.h"
 #include "system/ui/UIPanel.h"
+#include <vector>
 
 class BandList;
 class MetadataLoadedMsg;
@@ -28,11 +28,11 @@ public:
 
     static StoreMenuPanel *sInstance() { return inst; }
 
-    std::vector<StoreMenuProvider *> mMenuStack; // 0x38
-    int mCurrentMenuIx; // 0x40
-    int mPendingMenuIx; // 0x44
-    BandList *mList; // 0x48
-    int mStartingHighlightIx; // 0x4c
+    std::vector<StoreMenuProvider *> mMenuStack; // 0x3c
+    int mCurrentMenuIx; // 0x48
+    int mPendingMenuIx; // 0x4c
+    BandList *mList; // 0x50
+    int mStartingHighlightIx; // 0x54
 
     static StoreMenuPanel *inst;
 };
