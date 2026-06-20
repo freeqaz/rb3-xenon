@@ -1260,7 +1260,8 @@ DanceRemixer.cpp:
 	.text       start:0x82510718 end:0x825107BC
 
 Joypad.cpp:
-	.text       start:0x82511548 end:0x8251158C
+	.pdata      start:0x822111D0 end:0x822113B8
+	.text       start:0x82511548 end:0x82514184
 
 StreamPlayer.cpp:
 	.pdata      start:0x82238FE0 end:0x82239028
