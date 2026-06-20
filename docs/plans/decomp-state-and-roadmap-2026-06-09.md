@@ -1398,3 +1398,77 @@ refuted cleanly on contact = valid net-0, zero false-positive attribution.
 
 **SESSION TOTAL (waves 3–8): 6932 → 8314 (+1382, zero regressions, every
 composed verify EXACT).**
+
+# ============================================================
+# WAVE-9 CLOSE (2026-06-20): **9037 / 65543** (8314 → 9037, +723, build green)
+# ============================================================
+DEEP 10-LAYER DYNAMIC OPUS LOOP (wave9-deep-dynamic-loop, wf_87949d74-f91,
+**152 agents, ~9.5h**): each layer fanned out (discover→execute) + fanned in
+(honesty-audit→reduce→regenerate frontier), tasks generated on-the-fly. It ran
+all 10 layers (vein stayed RICH) and produced 48 "land-ready" results nominally
+summing to **+3066** — but that was **~4.5× INFLATED by double-counting** (see
+LESSON). Real coordinator-de-duplicated, composed-verified gain = **+723**.
+
+### ⭐ THE KEYSTONE (+217, the dominant lever)
+**MILO_MESSAGE_TIMERS Handle-macro gate** (3b86e9a): retail RB3 compiled every
+Milo object's `::Handle` with the MessageTimer profiling instrumentation OFF
+(proven byte-exact on GuitarController). Gated the timer behind a new
+MILO_MESSAGE_TIMERS macro (undefined = retail shape) in Object.h/ObjMacros.h +
+HANDLE_CHECK comma-form (PathName vcall survives) + END_HANDLERS PathName tail.
+This is a BINARY-WIDE retail-stripping lever (like debug-output stripping but
+Handle is everywhere) — +217 spread across 10+ unit families (UI/Rnd/Char/
+Dancer/Quest/ArkFile/Instance), honesty-confirmed. Native port keeps real
+timers via HX_NATIVE. DURABLE: any future Handle near-miss is already covered.
+
+### Game-port TUs landed (real composed incrementals, +423)
+Sequence +111 (wire+pin core .text, evict ICF sliver), SongSortMgr +78,
+BandSongMgr +63 (std::map→hash_map), SongUpgradeMgr +41, SongSelectPanel +30,
+Instarank +28, StoreMainPanel +28, ViewSetting +22, MidiParser::Handle +16,
+CriticalUserListener +9, StreamPlayer/ConnStatusPanel +9, FSSS residuals +2.
+All band3/meta_band (or engine) TUs ported from rb3-Wii, wired+pinned, A/B'd
+individually on the growing keystone base.
+
+### Refill +83 (557622e)
+Post-keystone reveal harvest: 51 map entries for Handle funclets/message-
+handlers binary-wide (BandDirector/Character/Waypoint/UIComponent/Joypad/Seq
+family/StoreMainPanel/…) + Joypad.cpp pin extension. The keystone's cascade.
+
+### Deferred (re-derivable next session — branches kept, dossiers in research/)
+SongStatusMgr ~+45 (cascading multi-commit map conflicts; branch
+w9-songstatusmgr-base-rebase-plus-getpossiblestars-reveal), AppMiniLeaderboard
+~+20, LicenseMgr ~+27, StoreMenuPanel ~+8. RndParticleSys-port-dc3 = DISCARDED
+(it was a keystone Handle-macro variant, superseded, not a real TU port).
+
+### Build-break incident (fixed, 94b68b4)
+Two independently-developed adjacent ports (CriticalUserListener + ViewSetting,
+both ~0x825BDxxx) DISAGREED on their shared .text/.pdata boundary → splits
+overlap broke the build. Fixed: CUL .text start 0x825BD484→0x825BD5F0
+(ViewSetting owns up to 0x825BD5F0). LESSON: independently-developed adjacent
+pins can collide — run the splits overlap-checker before landing a batch.
+
+### ⭐⭐ DEEP-LOOP PROCESS LESSON (critical for future deep loops)
+A 10-layer loop measuring every work-item vs a FIXED baseline **double-counts
+foundational levers**: the Handle keystone got independently re-derived ~12×
+(each layer's agents kept finding it + measuring it +130/+196/+217 against
+8314), and every dependent work-item bundled it, inflating nominal +3066 →
+real +723. The rebase-auto-drop of duplicate commits + the synthesizer's
+de-dup guide + per-landing composed verify were ESSENTIAL to recover signal.
+MITIGATIONS next time: (a) keep deep loops to INDEPENDENT work only (the
+game-port TUs composed cleanly; the Handle-family swarm didn't); (b) have the
+reducer maintain a "virtually-applied" set and tell later layers to measure
+INCREMENTALLY on it, not vs fixed baseline; (c) land the foundational keystone
+FIRST (as its own short wave) THEN fan out dependents. The +723 is real and
+large, but the loop burned ~152 agents/~15M tokens for it — efficiency was
+poor; a keystone-first + independent-fan-out structure would get the same +723
+for ~1/4 the cost.
+
+### Backlog deltas from wave-9
+- UIComponent ?Handle@ / the whole Handle family (was C3/A-tier) = DONE
+  (keystone). hash_map vein: BandSongMgr/SongUpgradeMgr/SongSortMgr converted
+  (SongStatusMgr deferred). Many band3/meta_band TUs now wired+pinned.
+- NEXT: land the 4 deferred ports (clean re-derivation), then re-run pin_audit
+  (lots of new ported source = new sliver candidates), refill again, and the
+  remaining hash_map cluster-alpha [0x825B86A0,0x825C10D8) (still unowned).
+
+**SESSION TOTAL (waves 3–9): 6932 → 9037 (+2105, build green; every landed
+lever composed-verified EXACT; one build-break caught+fixed).**
