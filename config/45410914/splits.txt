@@ -1263,7 +1263,8 @@ Joypad.cpp:
 	.text       start:0x82511548 end:0x8251158C
 
 StreamPlayer.cpp:
-	.text       start:0x82511590 end:0x82511654
+	.pdata      start:0x82238FE0 end:0x82239028
+	.text       start:0x827957F8 end:0x82795C74
 
 Common_Xbox.cpp:
 	.pdata      start:0x822115E0 end:0x822115E8
@@ -2301,8 +2302,10 @@ StorePanel.cpp:
 	.text       start:0x8278FE70 end:0x827928C8
 
 ConnectionStatusPanel.cpp:
-	.pdata      start:0x82238F98 end:0x82239040
-	.text       start:0x82795448 end:0x82795DA0
+	.pdata      start:0x82238F98 end:0x82238FE0
+	.pdata      start:0x82239028 end:0x82239040
+	.text       start:0x82795448 end:0x827957F8
+	.text       start:0x82795C74 end:0x82795DA0
 
 FilePath.cpp:
 	.pdata      start:0x82239340 end:0x82239348

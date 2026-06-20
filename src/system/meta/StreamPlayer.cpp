@@ -1,10 +1,26 @@
 #include "meta/StreamPlayer.h"
-#include "macros.h"
 #include "obj/Data.h"
 #include "obj/Object.h"
+// Retail compiled this TU's message Handle WITHOUT the MILO_DEBUG MessageTimer
+// instrumentation: the target ?Handle@StreamPlayer@ goes straight from
+// `Symbol sym = _msg->Sym(1)` to the set_volume static-symbol compare (no Timer
+// construction, 0xD4 not 0x1BC). Object.h transitively defines MILO_DEBUG (via
+// macros.h) which forces ObjMacros.h's heavyweight BEGIN_HANDLERS; undef it
+// before ObjMacros.h so this TU gets the lean retail Handle.
+#undef MILO_DEBUG
+#include "obj/ObjMacros.h"
 #include "os/Debug.h"
 #include "synth/Stream.h"
 #include "synth/Synth.h"
+
+// Retail's HANDLE_CHECK kept the PathName(this) side-effect call in the _warn
+// branch (the target ?Handle@StreamPlayer@ unhandled path is `if (_warn)
+// PathName(this)`), but our default MILO_WARN is sizeof-stripped which discards
+// the argument evaluation. Locally evaluate-but-discard the args (comma expr) so
+// PathName is emitted while the format string / __FILE__ / line literal produce
+// no code, matching retail exactly.
+#undef MILO_WARN
+#define MILO_WARN(...) ((void)(__VA_ARGS__))
 
 StreamPlayer::StreamPlayer()
     : mMasterVol(1.0f), mStreamVol(1.0f), mLoop(0), mStarted(0), mPaused(0), mStream(0) {}
@@ -66,5 +82,6 @@ void StreamPlayer::SetVolume(float value) {
 }
 
 BEGIN_HANDLERS(StreamPlayer)
-    HANDLE_ACTION(set_volume, SetVolume(_msg->Float(2)))
+    HANDLE_ACTION_STATIC(set_volume, SetVolume(_msg->Float(2)))
+    HANDLE_CHECK(0xA9)
 END_HANDLERS

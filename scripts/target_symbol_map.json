@@ -2873,7 +2873,7 @@
  "0x825BC7E8": "??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
  "0x825BCE20": "??$__introsort_loop@PAPAVAllocInfo@@PAV1@HP6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00HP6A_NABQAV1@1@Z@Z",
  "0x825BCF80": "?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z",
- "0x825BD6E0": "??_GCriticalUserListener@@UAAPAXI@Z",
+ "0x825BD6E0": "??_GFlowManager@@UAAPAXI@Z",
  "0x825BE388": "?DeleteDownloadedArts@MainMenuPanel@@AAAXXZ",
  "0x825C0700": "??4DataArrayPtr@@QAAXPAVDataArray@@@Z",
  "0x825C10D8": "?ShowState@OvershellSlot@@QAAXW4OvershellSlotStateID@@@Z",
@@ -3937,7 +3937,7 @@
  "0x827955E8": "?OnMsg@ConnectionStatusPanel@@IAA?AVDataNode@@ABVConnectionStatusChangedMsg@@@Z",
  "0x82795858": "?Delete@StreamPlayer@@AAAXXZ",
  "0x82795A88": "?Poll@StreamPlayer@@QAAXXZ",
- "0x82795B48": "??_EStreamPlayer@@UAAPAXI@Z",
+ "0x82795B48": "??_GStreamPlayer@@UAAPAXI@Z",
  "0x82795E50": "?Alloc@FixedSizeAlloc@@QAAPAXXZ",
  "0x827960D8": "?PoolAlloc@@YAPAXHHPBDH0@Z",
  "0x82796440": "?FirstFit@MemHeap@@QAAXHHAAUFreeBlockInfo@1@@Z",
@@ -12580,5 +12580,10 @@
  "0x825BD4B8": "??1CriticalUserListener@@UAA@XZ",
  "0x825BD578": "?SetCriticalUser@CriticalUserListener@@QAAXPAVLocalBandUser@@@Z",
  "0x825BD5D8": "?ClearCriticalUser@CriticalUserListener@@QAAXXZ",
- "0x825BD5F0": "??0CriticalUserListener@@QAA@PAVSessionMgr@@@Z"
+ "0x825BD5F0": "??0CriticalUserListener@@QAA@PAVSessionMgr@@@Z",
+ "0x82795BA0": "?Handle@StreamPlayer@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x827958C8": "?PlayFile@StreamPlayer@@QAAXPBDMM_N@Z",
+ "0x82795938": "?Init@StreamPlayer@@AAAXXZ",
+ "0x82795A00": "?StopPlaying@StreamPlayer@@QAAXXZ",
+ "0x82795A10": "??1StreamPlayer@@UAA@XZ"
 }
