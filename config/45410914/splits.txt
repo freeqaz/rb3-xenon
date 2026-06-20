@@ -2385,8 +2385,8 @@ AccomplishmentPlayerConditional.cpp:
 	.text       start:0x8243F178 end:0x8243F220
 
 AccomplishmentSetlist.cpp:
-	.pdata      start:0x82205EF0 end:0x82205F30
-	.text       start:0x8243F220 end:0x8243F330
+	.pdata      start:0x8221D920 end:0x8221D968
+	.text       start:0x825CBC58 end:0x825CC010
 
 AccomplishmentSongFilterConditional.cpp:
 	.pdata      start:0x82205F40 end:0x82205F68
