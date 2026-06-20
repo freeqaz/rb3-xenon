@@ -1391,6 +1391,10 @@ band3/meta_band/EditSetlistPanel.cpp:
 	.pdata      start:0x82220E78 end:0x822213A0
 	.text       start:0x825FE180 end:0x82603030
 
+band3/meta_band/ManageBandPanel.cpp:
+	.pdata      start:0x82221910 end:0x82221B90
+	.text       start:0x82607EE0 end:0x8260A2F8
+
 CreditsPanel.cpp:
 	.pdata      start:0x82238360 end:0x82238450
 	.text       start:0x82789950 end:0x8278A908

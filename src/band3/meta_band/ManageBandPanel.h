@@ -5,6 +5,7 @@
 #include "meta_band/StandInProvider.h"
 #include "obj/Data.h"
 #include "obj/Object.h"
+#include "os/PlatformMgr.h"
 #include "rndobj/Tex.h"
 #include "ui/UIListProvider.h"
 #include "ui/UIPanel.h"

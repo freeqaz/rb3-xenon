@@ -12787,5 +12787,18 @@
  "0x82541018": "?PollPortraits@PrefabMgr@@QAAXXZ",
  "0x825412C0": "?GetPrefabs@PrefabMgr@@QBAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82541328": "?GetAvailablePrefabs@PrefabMgr@@QBAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x825422A8": "?GetFaceTypes@PrefabMgr@@QBAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@@Z"
+ "0x825422A8": "?GetFaceTypes@PrefabMgr@@QBAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@@Z",
+ "0x82608020": "?Unload@ManageBandPanel@@UAAXXZ",
+ "0x82608050": "?RefreshStandinList@ManageBandPanel@@QAAXXZ",
+ "0x82608CC0": "?Exit@ManageBandPanel@@UAAXXZ",
+ "0x82608DB0": "?UpdateCharacterFromStandInList@ManageBandPanel@@QAAXH@Z",
+ "0x82608E78": "?UpdateCharacterFromCharList@ManageBandPanel@@QAAXH@Z",
+ "0x82608FC0": "?Text@VignetteViewerProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x826080A0": "?SetStandIn@ManageBandPanel@@QAAXH@Z",
+ "0x82608380": "?IsLocked@VignetteViewerProvider@@QAA_NH@Z",
+ "0x826084D8": "?Handle@VignetteViewerProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82608410": "?GetScreen@VignetteViewerProvider@@QAA?AVSymbol@@H@Z",
+ "0x82608B28": "?ShowCharacter@ManageBandPanel@@QAAXXZ",
+ "0x82608BF8": "?HideCharacter@ManageBandPanel@@QAAXXZ",
+ "0x826097B0": "?Handle@ManageBandPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }
