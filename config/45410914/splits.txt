@@ -2540,6 +2540,10 @@ band3/meta_band/Campaign.cpp:
 	.pdata      start:0x822193C0 end:0x822198D0
 	.text       start:0x8258C3D8 end:0x82590C70
 
+band3/meta_band/SavedSetlist.cpp:
+	.pdata      start:0x822198D0 end:0x82219A98
+	.text       start:0x82590C70 end:0x82592270
+
 band3/meta_band/AccomplishmentSongConditional.cpp:
 	.pdata      start:0x82226428 end:0x82226440
 	.text       start:0x8264CEF0 end:0x8264D018
