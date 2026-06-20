@@ -12778,5 +12778,14 @@
  "0x825B6840": "?GetSetlistArt@MusicLibraryNetSetlists@@QBAPAVRndTex@@VSymbol@@@Z",
  "0x825B6A40": "?FinishGettingSetlistArt@MusicLibraryNetSetlists@@QAAX_N@Z",
  "0x825B70A8": "??_GBattleSavedSetlist@@UAAPAXI@Z",
- "0x825B7100": "?CleanUp@MusicLibraryNetSetlists@@QAAXXZ"
+ "0x825B7100": "?CleanUp@MusicLibraryNetSetlists@@QAAXXZ",
+ "0x825FFAD0": "??_GEditSetlistPanel@@UAAPAXI@Z",
+ "0x82601B98": "??_GUIPanel@@UAAPAXI@Z",
+ "0x82540968": "?GetFaceType@PrefabMgr@@QAAPAVBandCharDesc@@VSymbol@@@Z",
+ "0x825409D0": "??$__median@PAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAABQAVPrefabChar@@ABQAV1@00USortPrefabByPortraitFileName@@@Z",
+ "0x82540AE0": "??$__push_heap@PAPAVPrefabChar@@HPAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@HHPAV1@USortPrefabByPortraitFileName@@@Z",
+ "0x82541018": "?PollPortraits@PrefabMgr@@QAAXXZ",
+ "0x825412C0": "?GetPrefabs@PrefabMgr@@QBAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82541328": "?GetAvailablePrefabs@PrefabMgr@@QBAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x825422A8": "?GetFaceTypes@PrefabMgr@@QBAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@@Z"
 }
