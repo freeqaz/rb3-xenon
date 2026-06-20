@@ -35,10 +35,12 @@ Single-pass INDEPENDENT-fanout Opus wave (NOT a deep loop). Per wave:
 2. **De-dup**: trust the reducer's "winning variant per TU"; NEVER land a sibling
    that regenerated target_symbol_map.json wholesale (poison — re-pairs whole binary).
 3. Land each cleared winner sequentially (rebase onto growing main → ff-merge):
-   - Helper: `/tmp/land2.sh <branch-suffix>` rebases + auto-resolves JSON unions +
-     splits union; defers on cascade. Uses `/tmp/resolve_json_union.py <wt> <relpath>`
-     (stage-2/3 dict merge for target_symbol_map.json / objects.json) and
-     `/tmp/resolve_splits_union.py <wt>` (stage-2 + theirs-added splits block).
+   - Helper: `scripts/harvest/land.sh <worktree|branch>` rebases + auto-resolves
+     JSON unions + splits union; defers on cascade. Uses
+     `scripts/harvest/resolve_json_union.py <wt> <relpath>` (stage-2/3 dict merge
+     for target_symbol_map.json / objects.json) and
+     `scripts/harvest/resolve_splits_union.py <wt>` (stage-2 + theirs-added splits
+     block). (These were `/tmp/*` through wave 12; now committed in-repo.)
    - If a branch is "up to date" (based on current main), just `git merge --ff-only`.
    - Branch names: `w<N>-<tu>` (note: some keys already carry a `w<N>-` prefix →
      double prefix like `w10-w10-…`; check `git branch | grep wN-`).
