@@ -12767,5 +12767,11 @@
  "0x826006E8": "?OnMsg@EditSetlistPanel@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
  "0x82600C38": "?Handle@EditSetlistPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x825FE180": "??0EditSetlistPanel@@QAA@XZ",
- "0x825FFE80": "?SetEditState@EditSetlistPanel@@QAAXW4EditState@1@@Z"
+ "0x825FFE80": "?SetEditState@EditSetlistPanel@@QAAXW4EditState@1@@Z",
+ "0x82540840": "?PrefabIsCustomizable@PrefabMgr@@SA_NXZ",
+ "0x82541658": "??0PrefabMgr@@QAA@XZ",
+ "0x82541d98": "??1PrefabMgr@@UAA@XZ",
+ "0x82542418": "?Handle@PrefabMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82541138": "?AssignPrefabsToSlots@PrefabMgr@@QAAXXZ",
+ "0x82542340": "?LoadPortraits@PrefabMgr@@QAAXPAVOvershellSlot@@@Z"
 }

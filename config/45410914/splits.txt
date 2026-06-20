@@ -2452,6 +2452,10 @@ band3/game/TrainerGemTab.cpp:
 	.pdata      start:0x8222E0F0 end:0x8222E168
 	.text       start:0x826D0170 end:0x826D1E68
 
+band3/meta_band/PrefabMgr.cpp:
+	.pdata      start:0x82214278 end:0x82214490
+	.text       start:0x82540840 end:0x825426A0
+
 band3/meta_band/AccomplishmentManager.cpp:
 	.pdata      start:0x82214490 end:0x82214DF8
 	.text       start:0x825426A0 end:0x8254BC90
