@@ -4,6 +4,18 @@
 #include "system/meta/SongMgr.h"
 #include "meta_band/SongUpgradeMgr.h"
 #include "meta_band/LicenseMgr.h"
+#include <hash_map>
+
+// Retail RB3-360's BandSongMgr lookup members are STLport hash_map, not std::map
+// (the Wii dev decomp's approximation). GetShortNameFromSongID (fn_8255F858)
+// inlines the int-keyed hashtable::find COMDAT (FUN_82552CD0) against this+0xd4
+// and this+0x10c, and the destructor (fn_825632E0) destroys the lookup members
+// at +0xd4/+0xf0/+0x10c via the hash_map dtor (Function_82547CC8). sizeof(hash_map)
+// is 0x1c naturally (the _M_max_load_factor float at +0x18) — exactly the offset
+// stride between the three lookup members in retail, so NO 0x1c gate pad is
+// needed. hash<Symbol> hashes the interned char* word identity (the guarded
+// RB3_HASH_SYMBOL_DEFINED spec comes from SongMgr.h); hash<int> is the STLport
+// built-in. See docs/decomp/research/2026-06-19-w8-hashmap-exhaustion.md.
 
 enum SongID {
     kSongID_Invalid = -2,
@@ -45,7 +57,7 @@ public:
     AddSongData(DataArray *, std::hash_map<int, SongMetadata *> &, const char *, ContentLocT, std::vector<int> &);
     virtual void AddSongIDMapping(int, Symbol);
     virtual void ReadCachedMetadataFromStream(BinStream &, int);
-    virtual void WriteCachedMetadataFromStream(BinStream &) const;
+    virtual void WriteCachedMetadataToStream(BinStream &) const;
     virtual const char *ContentPattern();
     virtual const char *ContentDir();
     virtual bool HasContentAltDirs() { return !mContentAltDirs.empty(); }
@@ -62,7 +74,7 @@ public:
     int NumRankTiers(Symbol) const;
     Symbol RankTierToken(int) const;
     void GetRankedSongs(std::vector<int> &, bool, bool) const;
-    int GetValidSongCount(const std::map<int, SongMetadata *> &) const;
+    int GetValidSongCount(const std::hash_map<int, SongMetadata *> &) const;
     int GetValidSongs(
         const std::vector<int> &,
         BandUserMgr &,
@@ -88,7 +100,6 @@ public:
     int GetPosInRecentList(int);
     bool IsInExclusionList(const char *, int) const;
     bool RemoveOldestCachedContent();
-    void WriteCachedMetadataToStream(BinStream &) const;
     int GetPartDifficulty(Symbol, Symbol) const;
     bool IsSongUnplayable(int, BandUserMgr &, bool) const;
 
@@ -98,20 +109,20 @@ public:
     static void SetFakeSongsAllowed(bool);
     static bool sFakeSongsAllowed;
 
-    mutable DataArraySongInfo *unkc0; // 0xc0
-    std::map<int, Symbol> mSongNameLookup; // 0xc4
-    std::map<Symbol, int> mSongIDLookup; // 0xdc
-    std::map<int, Symbol> mExtraSongIDMap; // 0xf4
-    std::list<SongRanking> mSongRankings; // 0x10c
-    std::list<int> unk114; // 0x114
-    std::vector<Symbol> unk11c; // 0x11c
-    bool unk124; // 0x124
-    SongUpgradeMgr *mUpgradeMgr; // 0x128
-    LicenseMgr *mLicenseMgr; // 0x12c
-    std::vector<String> mContentAltDirs; // 0x130
-    int mMaxSongCount; // 0x138
-    bool unk13c; // 0x13c
-    int unk140; // 0x140 - num valid songs
+    mutable DataArraySongInfo *unkc0; // 0xd0
+    std::hash_map<int, Symbol> mSongNameLookup; // 0xd4
+    std::hash_map<Symbol, int> mSongIDLookup; // 0xf0
+    std::hash_map<int, Symbol> mExtraSongIDMap; // 0x10c
+    std::list<SongRanking> mSongRankings; // 0x128
+    std::list<int> unk114; // 0x130
+    std::vector<Symbol> unk11c; // 0x138
+    bool unk124; // 0x144
+    SongUpgradeMgr *mUpgradeMgr; // 0x148
+    LicenseMgr *mLicenseMgr; // 0x14c
+    std::vector<String> mContentAltDirs; // 0x150
+    int mMaxSongCount; // 0x15c
+    bool unk13c; // 0x160
+    int unk140; // 0x164 - num valid songs
 };
 
 extern BandSongMgr &TheSongMgr;

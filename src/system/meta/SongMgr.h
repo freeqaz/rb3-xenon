@@ -205,3 +205,9 @@ protected:
 // TheSongMgr removed from engine header: RB3's BandSongMgr.h redeclares it as
 // BandSongMgr& (the actual subclass), causing a type redefinition error.
 // BandSongMgr.h includes this header, so both decls would be visible.
+
+// Free helpers defined in SongMgr.cpp; BandSongMgr.cpp needs the prototypes.
+// TheBaseSongManger is defined by BandSongMgr.cpp (its ctor sets it = this).
+int GetSongID(DataArray *, DataArray *);
+int CountSongsInArray(DataArray *);
+extern SongMgr *TheBaseSongManger;

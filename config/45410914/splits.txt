@@ -2460,6 +2460,10 @@ band3/meta_band/StoreSongSortNode.cpp:
 	.pdata      start:0x8221AFD8 end:0x8221B078
 	.text       start:0x825A6640 end:0x825A7038
 
+band3/meta_band/BandSongMgr.cpp:
+	.pdata      start:0x82216428 end:0x82216930
+	.text       start:0x8255DE88 end:0x82563500
+
 band3/meta_band/NameGenerator.cpp:
 	.pdata      start:0x82223A28 end:0x82223A50
 	.text       start:0x82626F80 end:0x82627200

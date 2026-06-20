@@ -12503,5 +12503,18 @@
  "0x827847D0": "?ClearFromCache@SongMgr@@QAAXVSymbol@@@Z",
  "0x825808D8": "?ClearInternalSetlists@SongSortMgr@@QAAXXZ",
  "0x82580BE8": "??5@YAAAVBinStream@@AAV0@AAVSongFilter@SongSortMgr@@@Z",
- "0x825819B0": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSongRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
+ "0x825819B0": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSongRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+ "0x8255DF58": "?MidiFile@BandSongMgr@@QBAPBDVSymbol@@@Z",
+ "0x8255E148": "??$__median@HUSongRankCmp@@@stlpmtx_std@@YAABHABH00USongRankCmp@@@Z",
+ "0x8255EA60": "??$?6HV?$StlNodeAlloc@H@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x8255EC40": "??1?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x8255F768": "??$__uninitialized_fill_n@PAU?$pair@MM@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PAU10@IABU10@ABU__false_type@0@@Z",
+ "0x8255F8F8": "?GetSongIDFromShortName@BandSongMgr@@UBAHVSymbol@@_N@Z",
+ "0x82561108": "??$ClearAndShrink@VString@@@@YAXAAV?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82561158": "??1SongRanking@BandSongMgr@@QAA@XZ",
+ "0x82561180": "??A?$hash_map@HVSymbol@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAVSymbol@@ABH@Z",
+ "0x825613F0": "??_GSongRanking@BandSongMgr@@QAAPAXI@Z",
+ "0x82561858": "?push_back@?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@MM@2@@Z",
+ "0x825626C0": "?clear@?$_List_base@VSongRanking@BandSongMgr@@V?$StlNodeAlloc@VSongRanking@BandSongMgr@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+ "0x825629E0": "??_GSongMgr@@UAAPAXI@Z"
 }
