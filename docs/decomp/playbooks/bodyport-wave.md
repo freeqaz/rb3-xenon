@@ -124,9 +124,16 @@ HAS_REAL; a 0-row scan prints a loud warning — don't ignore it). Update
 `docs/plans/decomp-state-and-roadmap-*.md` with the wave verdict.
 
 ## 10. Hard rules (each one cost a real incident)
-- NEVER touch hot widely-included headers (`math/Color.h`, `math/Utl.h`) — shifts
-  MSVC inlining binary-wide. New decls go in NEW headers; engine-class members
-  tail-append only, gated (`#if RB3_…` / `// 0xNNN (retail only; removed in DC3)`).
+- Hot widely-included headers (`math/Color.h`, `math/Utl.h`) shift MSVC inlining
+  binary-wide — **CAUTION, not a hard ban**. Codebase-wide / shared-header changes
+  ARE allowed when principled and sound and proven net-positive by a full-binary
+  composed verify (the MILO_MESSAGE_TIMERS Handle keystone +217 and the
+  MakeString by-value lever +23 were exactly this). The discipline is: prefer
+  new decls in NEW headers and tail-append gated engine-class members
+  (`#if RB3_…` / `// 0xNNN (retail only; removed in DC3)`) by DEFAULT to avoid
+  accidental ripple; but when a shared/hot-header edit is the correct fix, make
+  it — and ALWAYS gate the judgment on a whole-binary A/B (net>0, zero
+  unexplained regressions), never on the file it touches.
 - Per-TU divergences gate via `objects.json` `extra_cflags` defines (the
   `RB3_RBTREE_0x1C` ODR-split pattern), not global flags.
 - `config.json` mtime is load-bearing (re-runs the target-symbol-renamer). No mtime
