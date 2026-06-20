@@ -693,6 +693,7 @@
       "band3/meta_band/AccomplishmentTrainerListConditional.cpp": "NonMatching",
       "band3/meta_band/AppMiniLeaderboardDisplay.cpp": "NonMatching",
       "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
+      "band3/meta_band/Campaign.cpp": "NonMatching",
       "band3/meta_band/CampaignKey.cpp": "NonMatching",
       "band3/meta_band/CampaignLevel.cpp": "NonMatching",
       "band3/meta_band/ContextChecker.cpp": "NonMatching",
