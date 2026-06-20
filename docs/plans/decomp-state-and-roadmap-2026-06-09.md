@@ -1472,3 +1472,54 @@ for ~1/4 the cost.
 
 **SESSION TOTAL (waves 3–9): 6932 → 9037 (+2105, build green; every landed
 lever composed-verified EXACT; one build-break caught+fixed).**
+
+# ============================================================
+# WAVE-10 CLOSE (2026-06-20): **9155 / 65546** (9037 → 9155, +118, build green)
+# ============================================================
+LESSON-APPLIED single-pass INDEPENDENT-fanout wave (wave10-independent-fanout,
+wf_9b33e64e-5b4, 24 agents): explicitly NOT a deep loop — keystone-done, so
+independent game-TU ports fan out without double-counting. Discover (4 Opus
+lanes) → execute (self-contained) → honesty-audit (all 9 HONEST) → reduce.
+PROVED THE LESSON: the reducer de-duped same-TU variants (the discover lanes
+overlapped, spawning SongStatusMgr ×3 / LicenseMgr ×2 / AppMini ×2) down to the
+5 REAL winners (+118), and the pre-build splits overlap-check came back clean
+(0 overlaps) — NO build-break this time (vs wave-9). Zero foundational levers
+bundled (flag_foundational machinery unused — none found).
+
+### Landed (+118, 5 independent meta_band game-TU ports, all audited HONEST)
+- **SongStatusMgr +49** (port + retail hash_map<int,SongStatus*>@0x38 cache
+  re-layout replacing Wii SongStatusCacheMgr[1000] + 15000 star-cap + evict
+  dead MoggClip orphan sliver). LAND-FIRST anchor. ⚠ picked port-then-pin; the
+  `clusteralpha-reapply-extend` sibling REGENERATED target_symbol_map wholesale
+  (+12679 entries, whole-binary re-pair) = would-be poison, correctly rejected.
+- **LicenseMgr +27** (reconstruct content-cache layout: hash_map<Symbol,
+  vector<Symbol>>@0x1c + set<Symbol>@0x4 + dirty bool@0x38; pin between
+  SongUpgradeMgr & Instarank). 4 residual fns are jeff-asm-misnest-truncation
+  (→ tooling queue).
+- **AppMiniLeaderboardDisplay +19**, **StoreMenuPanel +14**, **VoiceoverPanel
+  +9** (evict dead Cam.cpp sliper pinned inside its cluster). All
+  port+wire+pin+map self-contained.
+
+### Process: lessons held
+2-stage honesty defense (per-item overlap self-check + own-vs-foreign audit
+before land) + reducer de-dup + binary-wide overlap check before build = clean
+land, no incident. Efficiency far better than wave-9's deep loop (24 agents for
+the same shape of win vs 152).
+
+### NEXT WAVE (reducer next_frontier — the meta_band belt is still RICH; each
+### landing opens adjacent seams; all INDEPENDENT port-then-pin, no keystone)
+1. MusicLibraryNetSetlists port+pin (head gap below SongStatusMgr) ~+15
+2. AppLabel.cpp body [0x825BB090,0x825BB5B8) ~+12 (boundary: starts 0x825BB090
+   NOT 0x825BADD0 — SongStatusMgr absorbed up to 0x825BB090)
+3. engine MiniLeaderboardDisplay.cpp pin [0x8262E974,0x8262F530) ~+10
+4. PrefabMgr.cpp unwired TU ~0x825BE7A8 ~+10
+5. VoiceoverPanel megacluster [0x825FC080,0x8261AAF0) boundary-derive scout
+   (~12 interleaved panels, ~+15 first batch + tail)
+6. Campaign.cpp ~0x82590910 boundary recon ~+12
+7. re-run pin_audit (multi-range fix first) after these land
+COORDINATOR-QUEUE (parallel, non-blocking): jeff asm-misnest truncation fix
+(../jeff src/cmd/xex.rs — LicenseMgr +4 + binary-wide tail); pin_audit.py
+multi-range candidate fix.
+
+**SESSION TOTAL (waves 3–10): 6932 → 9155 (+2223, build green; every landed
+lever composed-verified EXACT).**
