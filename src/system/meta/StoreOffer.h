@@ -61,6 +61,16 @@ public:
     bool HasSong(StoreOffer const *) const;
     DataNode OnGetData(DataArray *);
     StoreOffer(DataArray *, SongMgr *);
+    // RB3 song-filter accessors (declarations only — layout-neutral; used by
+    // SongSortMgr::DoesOfferMatchFilter). Defined out of this TU.
+    Symbol Genre() const;
+    Symbol Decade() const;
+    Symbol LengthSym() const;
+    Symbol RatingSym() const;
+    Symbol VocalPartsSym() const;
+    bool HasSolo() const;
+    int Rating() const;
+    bool IsRbn() const;
 
     DataArray *StoreOfferData() const { return mStoreOfferData; }
 

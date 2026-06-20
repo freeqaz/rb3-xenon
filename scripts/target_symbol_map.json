@@ -12500,5 +12500,8 @@
  "0x827844A8": "?ContentUnmounted@SongMgr@@UAAXPBD@Z",
  "0x82784688": "?ContentStarted@SongMgr@@UAAXXZ",
  "0x827846E8": "?ClearCachedContent@SongMgr@@UAAXXZ",
- "0x827847D0": "?ClearFromCache@SongMgr@@QAAXVSymbol@@@Z"
+ "0x827847D0": "?ClearFromCache@SongMgr@@QAAXVSymbol@@@Z",
+ "0x825808D8": "?ClearInternalSetlists@SongSortMgr@@QAAXXZ",
+ "0x82580BE8": "??5@YAAAVBinStream@@AAV0@AAVSongFilter@SongSortMgr@@@Z",
+ "0x825819B0": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSongRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
 }

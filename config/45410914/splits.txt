@@ -1309,6 +1309,14 @@ LabelNumberTicker.cpp:
 	.pdata      start:0x822189B0 end:0x822189B8
 	.text       start:0x82582F78 end:0x82582FD0
 
+SongSortMgr.cpp:
+	.pdata      start:0x82218618 end:0x822189A0
+	.pdata      start:0x822189A8 end:0x822189B0
+	.pdata      start:0x822189B8 end:0x82218B30
+	.text       start:0x82580040 end:0x82582EF8
+	.text       start:0x82582F50 end:0x82582F78
+	.text       start:0x82582FD0 end:0x82583DD8
+
 MoveVariant.cpp:
 	.pdata      start:0x82218F78 end:0x82218F80
 	.text       start:0x82588000 end:0x82588464
