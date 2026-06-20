@@ -6,6 +6,33 @@
 #include "system/utl/BinStream.h"
 #include "system/meta/FixedSizeSaveableStream.h"
 #include "game/BandUser.h"
+#include <hash_map>
+
+// Retail RB3-360 SongStatusMgr replaced the Wii build's `SongStatusLookup
+// mLookups[1000]` linear-scan cache (an embedded SongStatusCacheMgr sub-object,
+// 0x1f48 bytes) with an STLport `hash_map<int, SongStatus*>` song-index cache
+// living directly at the manager (this+0x38). Proven from the retail asm:
+//  - 23 accessors decode `addi rX, r3, 0x38; bl <int-key hashtable::find>`
+//    (find COMDAT lbl_82552CD0 = STLport hashtable<int,...>::find returning an
+//    iterator-by-value, NULL-miss sentinel, value pointer at slist node+0x8).
+//  - CreateOrAccessSongStatus (fn_825B9ED0) reads the slist count at this+0x4c
+//    (= map+0x14), caps at 3000, news a 0x200-byte SongStatus, inserts.
+//  - UpdateSong (fn_825BA440) / UploadDirtyScores (fn_825BA680) read
+//    mUpdatingStatus@this+0xd8, mUpdatingScoreType@0xdc, mUpdatingDifficulty@0xe0,
+//    mLocalUser@0x30, mSongMgr@0x34, the map slist head at +0x3c (map+0x4).
+// hash<int> is provided by STLport by default (stl/_hash_fun.h) so no custom
+// specialization is needed (unlike the Symbol-key maps elsewhere).
+//
+// Layout (Hmx::Object base 0x0..0x28, FixedSizeSaveable base 0x28..0x30):
+//   mLocalUser            0x30
+//   mSongMgr              0x34
+//   mSongStatusCache      0x38  (hash_map<int,SongStatus*>, 0x1c)
+//   mCachedTotalScores    0x54  (int[11], 0x2c)
+//   mCachedTotalDiscScores 0x80 (int[11], 0x2c)
+//   mCachedTotalStars     0xac  (int[11], 0x2c)
+//   mUpdatingStatus       0xd8
+//   mUpdatingScoreType    0xdc
+//   mUpdatingDifficulty   0xe0   (sizeof = 0xe4)
 
 class PlayerScore {
 public:
@@ -155,51 +182,6 @@ public:
     SongStatusData mSongData[11][4]; // 0xa0
 };
 
-class SongStatusLookup {
-public:
-    SongStatusLookup();
-    ~SongStatusLookup();
-    void Clear();
-    void Save(FixedSizeSaveableStream &) const;
-    void Load(FixedSizeSaveableStream &, int);
-    bool Empty() const { return mSongID == 0; }
-    void SetSongID(int id) { mSongID = id; }
-    void SetLastPlayed(int played) { mLastPlayed = played; }
-
-    int mSongID; // 0x0
-    int mLastPlayed; // 0x4
-};
-
-class SongStatusCacheMgr : public FixedSizeSaveable {
-public:
-    SongStatusCacheMgr(const LocalBandUser **);
-    virtual ~SongStatusCacheMgr();
-    virtual void SaveFixed(FixedSizeSaveableStream &) const;
-    virtual void LoadFixed(FixedSizeSaveableStream &, int);
-
-    void Clear();
-    SongStatus **GetFullCachePtr();
-    int GetSongID(int);
-    int GetSongStatusIndex(int);
-    SongStatus *GetSongStatusPtrForIndex(int);
-    void SetLastPlayed(int);
-    bool HasSongStatus(int);
-    SongStatus *AccessSongStatus(int);
-    SongStatus *CreateOrAccessSongStatus(int);
-    int GetEmptyIndex();
-    int ClearLeastImportantSongStatusEntry();
-    void ClearIndex(int);
-    SongStatus *GetSongStatus(int);
-
-    static int SaveSize(int);
-
-    SongStatusLookup mLookups[1000];
-    SongStatus *mpSongStatusFull; // 0x1f48
-    int mCurrentIndex; // 0x1f4c
-    const LocalBandUser **mUser; // 0x1f50
-    bool unk1f54; // 0x1f54
-};
-
 class BandSongMgr;
 
 class SongStatusMgr : public Hmx::Object, public FixedSizeSaveable {
@@ -270,13 +252,26 @@ public:
     void UploadDirtyScores();
     void FakeFill();
 
-    bool HasSongStatus(int songID) const { return mCacheMgr.HasSongStatus(songID); }
+    // Cache index. Retail inlines STLport hash_map<int,SongStatus*>::find at
+    // this+0x38 (the find COMDAT returns an iterator-by-value with a NULL-miss
+    // sentinel; the value pointer is at slist node+0x8). The Wii build's
+    // GetSongStatusIndex/HasSongStatus/AccessSongStatus linear scan over
+    // mLookups[1000] is replaced by these map lookups.
+    bool HasSongStatus(int songID) const {
+        return mSongStatusCache.find(songID) != mSongStatusCache.end();
+    }
     SongStatus *GetSongStatus(int songID) const {
-        return mCacheMgr.GetSongStatus(songID);
+        // Retail inlines this after a dominating HasSongStatus(songID) (same
+        // inlined find), so MSVC value-numbers away the miss-branch: the
+        // accessor reads the find node's value (node+0x8) unconditionally on
+        // the hit path. Returning it->second directly (no end() re-check)
+        // reproduces that inlined codegen byte-for-byte.
+        return mSongStatusCache.find(songID)->second;
     }
-    SongStatus *CreateOrAccessSongStatus(int songID) const {
-        return mCacheMgr.CreateOrAccessSongStatus(songID);
-    }
+    SongStatus *AccessSongStatus(int songID) const { return GetSongStatus(songID); }
+    SongStatus *CreateOrAccessSongStatus(int songID) const;
+    void ClearLeastImportantSongStatusEntry();
+
     void SetLocalUser(LocalBandUser *u) { mLocalUser = u; }
 
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
@@ -284,13 +279,13 @@ public:
     static int SaveSize(int);
     static bool sFakeLeaderboardUploadFailure;
 
-    LocalBandUser *mLocalUser; // 0x24
-    BandSongMgr *mSongMgr; // 0x28
-    mutable SongStatusCacheMgr mCacheMgr; // 0x2c
-    int mCachedTotalScores[11]; // 0x1f84
-    int mCachedTotalDiscScores[11]; // 0x1fb0
-    int mCachedTotalStars[11]; // 0x1fdc
-    SongStatus *mUpdatingStatus; // 0x2008
-    ScoreType mUpdatingScoreType; // 0x200c
-    Difficulty mUpdatingDifficulty; // 0x2010
+    LocalBandUser *mLocalUser; // 0x30
+    BandSongMgr *mSongMgr; // 0x34
+    mutable std::hash_map<int, SongStatus *> mSongStatusCache; // 0x38
+    int mCachedTotalScores[11]; // 0x54
+    int mCachedTotalDiscScores[11]; // 0x80
+    int mCachedTotalStars[11]; // 0xac
+    SongStatus *mUpdatingStatus; // 0xd8
+    ScoreType mUpdatingScoreType; // 0xdc
+    Difficulty mUpdatingDifficulty; // 0xe0
 };

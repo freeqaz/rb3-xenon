@@ -1355,9 +1355,9 @@ OSCMessenger.cpp:
 	.pdata      start:0x8221B7C0 end:0x8221B7C8
 	.text       start:0x825ACEA8 end:0x825ACF60
 
-MoggClip.cpp:
-	.pdata      start:0x8221C4B0 end:0x8221C4B8
-	.text       start:0x825B8670 end:0x825B86A0
+SongStatusMgr.cpp:
+	.pdata      start:0x8221C428 end:0x8221C740
+	.text       start:0x825B7C0C end:0x825BB090
 
 FixedSizeSaveable.cpp:
 	.pdata      start:0x8221DFA0 end:0x8221DFA8
