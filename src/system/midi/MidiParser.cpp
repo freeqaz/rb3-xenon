@@ -49,6 +49,25 @@ MidiParser::~MidiParser() {
     RELEASE(mEvents);
 }
 
+// Retail RB3 did NOT compile the BEGIN_HANDLERS MessageTimer instrumentation
+// (our macros force-define MILO_DEBUG tree-wide, whose BEGIN_HANDLERS arm expands
+// into a per-Handle MessageTimer; the retail target's MidiParser::Handle has zero
+// Timer references). Use the MILO_DEBUG-off form of BEGIN_HANDLERS for this TU.
+#undef BEGIN_HANDLERS
+#define BEGIN_HANDLERS(objType)                                                          \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);
+
+// Retail RB3 compiled END_HANDLERS' unhandled-message MILO_NOTIFY with arguments
+// EVALUATED for side effects (the global sizeof()-form strips arg evaluation, which
+// also kills the `if (_warn)` PathName(this) vcall the retail target keeps). Mirror
+// MILO_FAIL's (void)(args) comma form per-TU so the PathName(this) eval survives
+// while the message string vanishes.
+#ifndef HX_NATIVE
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
+#endif
+
 BEGIN_HANDLERS(MidiParser)
     HANDLE_EXPR(
         add_message,
@@ -71,9 +90,17 @@ BEGIN_HANDLERS(MidiParser)
     HANDLE(has_space, OnHasSpace)
     HANDLE(rt_compute_space, OnRtComputeSpace)
     HANDLE_ACTION(reset_to_beat, Reset(_msg->Float(2)))
-    HANDLE_ACTION(print_events, PrintEvents())
     HANDLE_SUPERCLASS(Hmx::Object)
+    HANDLE_SUPERCLASS(MsgSource)
 END_HANDLERS
+
+// Restore the global sizeof()-form for the rest of the TU: the other MILO_NOTIFY
+// sites (SetIndex/GetStart/GetEnd/SetGlobalVars) keep the stripped (no-arg-eval)
+// form that matches their retail bodies.
+#ifndef HX_NATIVE
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#endif
 
 BEGIN_PROPSYNCS(MidiParser)
     SYNC_PROP(zero_length, mProcess.zeroLength)

@@ -4234,6 +4234,7 @@
  "0x827C2478": "?InsertDataEvent@MidiParser@@AAAXMMABVDataNode@@@Z",
  "0x827C2598": "?AddMessage@MidiParser@@AAA_NMMPAVDataArray@@H@Z",
  "0x827C2AF8": "?OnNextStartDelta@MidiParser@@AAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x827c3c10": "?Handle@MidiParser@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x827C49F0": "?_M_fill_insert_aux@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFace@RndMesh@@IABV34@ABU__false_type@2@@Z",
  "0x827C4BA8": "?ClearManagedParsers@MidiParser@@SAXXZ",
  "0x827C4CF0": "?_M_insert_overflow_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUNote@MidiParser@@ABU34@ABU__false_type@2@I_N@Z",
