@@ -1560,3 +1560,24 @@ deferred) ~+12. TWO BIG UN-BISECTED GAPS need a dedicated bisection sub-wave
 
 **SESSION TOTAL (waves 3–11): 6932 → 9301 (+2369, build green; every landed
 lever composed-verified EXACT).**
+
+# WAVE-12 CLOSE (2026-06-20): **9404 / 65546** (9310 → 9404, +94, build green)
+wave12-metaband-belt-2 (15 agents, audit-key bug FIXED via TU-keyed clearing): 3
+meta_band ports, all audited HONEST+splits-clean — ManageBandPanel +62,
+Award.cpp +23 (the bisection-scout lane PORTED the first clean sub-TU out of the
+big [0x825C3A44,0x825D0EF0) gap), PatchSelectPanel +9. DEFERRED with evidence:
+MainHubPanel (scattered ~9MB, NO contiguous span — documented big-scattered-TU
+negative, do NOT span-pin; its 44/45 fns are ICF aliases = reveal-sweep territory
+under foreign pins, never its own pin). SavedSetlist +0 (needs additive
+FixedSizeSaveable.h 4-arg SaveStd/LoadStd vector template overloads — flagged
+foundational, gate on composed A/B; didn't land this pass).
+NEXT (wave-12 reducer, belt MATURING — character shifting to scatter/relocate/
+dependency-chain): the two big gaps still need full string-fingerprint bisection
+([0x825BDF28,0x825C10D8)~110fn + rest of [0x825C3A44,0x825D0EF0)~565fn, Award
+carved a piece); AccomplishmentPlayerConditional/SongConditional sliver-evict in
+GAP B; ProfileMgr→SaveLoadManager + NavListSortNode→SongSort dependency chains;
+SavedSetlist (retry with the header overload). Re-run pin_audit (each port adds
+sliver candidates). Cost-per-match rising (panels scatter, oracle thinning).
+
+**SESSION TOTAL (waves 3–12): 6932 → 9404 (+2472, build green; every landed
+lever composed-verified EXACT).**
