@@ -1,5 +1,5 @@
 #pragma once
-#include "bandobj/MiniLeaderboardDisplay.h"
+#include "hamobj/MiniLeaderboardDisplay.h"
 #include "meta/Profile.h"
 #include "meta_band/AppLabel.h"
 #include "meta_band/Leaderboard.h"

@@ -2472,6 +2472,10 @@ band3/meta_band/NameGenerator.cpp:
 	.pdata      start:0x82223A28 end:0x82223A50
 	.text       start:0x82626F80 end:0x82627200
 
+band3/meta_band/SongSelectPanel.cpp:
+	.pdata      start:0x82222C78 end:0x82222E78
+	.text       start:0x8261AAF0 end:0x8261C660
+
 band3/meta_band/CampaignKey.cpp:
 	.pdata      start:0x82225918 end:0x82225928
 	.text       start:0x826421B8 end:0x82642270
