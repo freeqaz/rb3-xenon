@@ -70,7 +70,15 @@ const char *PathName(const class Hmx::Object *obj);
 // BEGIN HANDLE MACROS
 // ---------------------------------------------------------------------------------
 
-#ifdef MILO_DEBUG
+// Retail RB3 (Family-A) compiled Object::Handle with the MessageTimer
+// instrumentation OFF — every retail Handle frame has zero Timer/MessageTimer
+// references (proven in-source on GuitarController: its TU-local `#undef
+// BEGIN_HANDLERS` to the timer-off form flips Handle to byte-exact, frame 0xc0,
+// no timer). macros.h force-defines MILO_DEBUG tree-wide, which would otherwise
+// expand the timer arm; gate the timer behind HX_NATIVE so the match build is
+// uniformly timer-off (no per-TU restore needed, unlike Family-B's HANDLE_CHECK).
+// The native port (HX_NATIVE) keeps the real MessageTimer for debug profiling.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 #define BEGIN_HANDLERS(objType)                                                          \
     DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
         Symbol sym = _msg->Sym(1);                                                       \
@@ -188,11 +196,27 @@ const char *PathName(const class Hmx::Object *obj);
     if ((cond) && _warn)                                                                 \
         MILO_WARN(__VA_ARGS__);
 
+// Retail RB3 (rb3-Wii release Debug.h:151) compiled MILO_WARN as the comma form
+// `(void)(__VA_ARGS__)` — message string dropped, but the PathName(this) vcall
+// argument is still EVALUATED for its side effect. Our global MILO_WARN is the
+// `((void)sizeof(...))` form, which strips ALL arg evaluation (worth +23 on
+// WARN/NOTIFY-heavy TUs, so we keep it globally). But HANDLE_CHECK's _warn arm
+// specifically needs the surviving PathName(this) vcall to byte-match Family-A's
+// Handle tail (proven on GuitarController idx 83-87: clrlwi./beq/PathName/li 6).
+// Emit the comma form here directly so the vcall survives without touching the
+// global MILO_WARN. The native port keeps the real warner.
+#ifndef HX_NATIVE
+#define HANDLE_CHECK(line_num)                                                           \
+    if (_warn)                                                                           \
+        ((void)("%s(%d): %s unhandled msg: %s", __FILE__, line_num, PathName(this), sym  \
+        ));
+#else
 #define HANDLE_CHECK(line_num)                                                           \
     if (_warn)                                                                           \
         MILO_WARN(                                                                       \
             "%s(%d): %s unhandled msg: %s", __FILE__, line_num, PathName(this), sym      \
         );
+#endif
 
 #define END_HANDLERS                                                                     \
     return DataNode(kDataUnhandled, 0);                                                  \

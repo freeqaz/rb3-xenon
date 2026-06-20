@@ -2726,6 +2726,19 @@ int VocalTrack::GetNumVocalParts() {
     }
 }
 
+// Family-A counterexample: retail VocalTrack::Handle carries the MessageTimer
+// (a String-dtor unwind funclet fn_82B71AA4 only byte-matches with the timer's
+// frame). Restore the timer for this TU only, the inverse of GuitarController.
+#ifndef HX_NATIVE
+#undef BEGIN_HANDLERS
+#define BEGIN_HANDLERS(objType)                                                          \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);                                                       \
+        MessageTimer timer(                                                              \
+            (MessageTimer::Active()) ? static_cast<Hmx::Object *>(this) : 0, sym         \
+        );
+#endif
+
 BEGIN_HANDLERS(VocalTrack)
     HANDLE_ACTION(initialize, Init())
     HANDLE(set_display_mode, OnSetDisplayMode)

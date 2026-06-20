@@ -1950,6 +1950,20 @@ void VocalPlayer::AddTambourineSeen() { mStats.AddTambourineSeen(); }
 void VocalPlayer::AddTambourineHit() { mStats.AddTambourineHit(); }
 void VocalPlayer::EndTambourineSection(int i) { mStats.UpdateBestTambourineSection(i); }
 
+// Family-A counterexample: retail VocalPlayer::Handle carries the MessageTimer
+// (proven: the unwind funclet fn_826CDB88 only byte-matches with the timer's
+// frame; dropping the global timer regresses it 100->stub). Restore the timer
+// for this TU only, the inverse of GuitarController.
+#ifndef HX_NATIVE
+#undef BEGIN_HANDLERS
+#define BEGIN_HANDLERS(objType)                                                          \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);                                                       \
+        MessageTimer timer(                                                              \
+            (MessageTimer::Active()) ? static_cast<Hmx::Object *>(this) : 0, sym         \
+        );
+#endif
+
 #pragma push
 #pragma dont_inline on
 BEGIN_HANDLERS(VocalPlayer)

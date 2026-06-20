@@ -13,6 +13,21 @@
 #include "utl/Loader.h"
 #include "utl/Std.h"
 #include "world/EventAnim.h"
+
+// Family-A counterexample: retail compiled BandCamShot::Handle WITH the
+// MessageTimer instrumentation (frame 0xc0; small functions ICF-fold into its
+// timer-bearing prologue — fn_822A4664 et al. carry a 0xc0 subi). The global
+// match-build BEGIN_HANDLERS is timer-off (most Family-A is), so restore the
+// timer arm for THIS TU only, the inverse of GuitarController.
+#ifndef HX_NATIVE
+#undef BEGIN_HANDLERS
+#define BEGIN_HANDLERS(objType)                                                          \
+    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
+        Symbol sym = _msg->Sym(1);                                                       \
+        MessageTimer timer(                                                              \
+            (MessageTimer::Active()) ? static_cast<Hmx::Object *>(this) : 0, sym         \
+        );
+#endif
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
 #include "utl/Messages2.h"
