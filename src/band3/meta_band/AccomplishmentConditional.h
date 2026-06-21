@@ -1,5 +1,6 @@
 #pragma once
 #include "Accomplishment.h"
+#include <list>
 
 struct AccomplishmentCondition {
     Symbol mCondition; // 0x00
@@ -18,5 +19,5 @@ public:
     virtual bool InqRequiredScoreTypes(std::set<ScoreType> &) const;
     virtual Difficulty GetRequiredDifficulty() const;
 
-    std::vector<AccomplishmentCondition> m_lConditions; // 0x74
+    std::list<AccomplishmentCondition> m_lConditions; // 0x90
 };

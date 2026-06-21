@@ -117,4 +117,11 @@ public:
     bool mHideProgress; // 0x71
     bool mCanBeEarnedWithNoFail; // 0x72
     bool mIsTrackedInLeaderboard; // 0x73
+    // Retail-360 places AccomplishmentConditional::m_lConditions (std::list) at
+    // this+0x90, i.e. 0x10 bytes past where our member sum lands. The rb3-Wii DEV
+    // header dropped these tail members; their exact identity is unknown, but the
+    // size is load-bearing for every Accomplishment subclass's member offsets.
+    // Padded to recover correct derived-class layout (verified: list lands at 0x90,
+    // conditional family member offsets match retail).
+    int mUnkTail[4]; // 0x74..0x84 (size-only; identity TBD)
 };

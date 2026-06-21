@@ -157,7 +157,7 @@ bool AccomplishmentSongConditional::CheckConditionsForSong(SongStatusMgr *mgr, S
     if (!TheSongMgr.HasSong(s, false))
         return false;
     else {
-        for (std::vector<AccomplishmentCondition>::const_iterator it =
+        for (std::list<AccomplishmentCondition>::const_iterator it =
                  m_lConditions.begin();
              it != m_lConditions.end();
              ++it) {
@@ -248,7 +248,7 @@ bool AccomplishmentSongConditional::ShowBestAfterEarn() const { return false; }
 void AccomplishmentSongConditional::InitializeTrackerDesc(TrackerDesc &desc) const {
     Accomplishment::InitializeTrackerDesc(desc);
     MILO_ASSERT(!m_lConditions.empty(), 0x18B);
-    const AccomplishmentCondition &condition = m_lConditions[0];
+    const AccomplishmentCondition &condition = m_lConditions.front();
     Symbol cond = condition.mCondition;
     if (cond == streak) {
         desc.mType = kTrackerType_StreakCount;

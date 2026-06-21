@@ -12857,5 +12857,11 @@
  "0x825cdca8": "?InqProgressValues@AccomplishmentPlayerConditional@@UAA_NPAVBandProfile@@AAH1@Z",
  "0x825ce628": "??_GAccomplishmentTrainerConditional@@UAAPAXI@Z",
  "0x825ce950": "??_GAccomplishmentTrainerCategoryConditional@@UAAPAXI@Z",
- "0x825cee38": "??_GAccomplishmentTrainerListConditional@@UAAPAXI@Z"
+ "0x825cee38": "??_GAccomplishmentTrainerListConditional@@UAAPAXI@Z",
+ "0x825ccbe0": "?InqConditionProgress@AccomplishmentPlayerConditional@@QBA_NPAVBandProfile@@ABUAccomplishmentCondition@@AAH2@Z",
+ "0x825cdb40": "?IsConditionMet@AccomplishmentPlayerConditional@@QBA_NPAVBandProfile@@ABUAccomplishmentCondition@@@Z",
+ "0x825cdb90": "?IsFulfilled@AccomplishmentPlayerConditional@@UBA_NPAVBandProfile@@@Z",
+ "0x825cdbe8": "?InqBestProgressValues@AccomplishmentPlayerConditional@@QAA_NPAVBandProfile@@AAH1@Z",
+ "0x825cdcd8": "?Configure@AccomplishmentPlayerConditional@@QAAXPAVDataArray@@@Z",
+ "0x825cde50": "?InitializeTrackerDesc@AccomplishmentPlayerConditional@@UBAXAAVTrackerDesc@@@Z"
 }

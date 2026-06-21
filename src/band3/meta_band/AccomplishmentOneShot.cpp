@@ -35,7 +35,7 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
 ) {
     MILO_ASSERT(i_pPerformer, 0x3c);
     const Stats &stats = i_pPerformer->GetStats();
-    for (std::vector<AccomplishmentCondition>::iterator it = m_lConditions.begin();
+    for (std::list<AccomplishmentCondition>::iterator it = m_lConditions.begin();
          it != m_lConditions.end();
          ++it) {
         Symbol sym = it->mCondition;
@@ -102,7 +102,7 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
 void AccomplishmentOneShot::InitializeTrackerDesc(TrackerDesc &desc) const {
     Accomplishment::InitializeTrackerDesc(desc);
     MILO_ASSERT(!m_lConditions.empty(), 0xe6);
-    const AccomplishmentCondition &condition = m_lConditions[0];
+    const AccomplishmentCondition &condition = m_lConditions.front();
     MILO_ASSERT(TheCampaign, 0xe9);
     LocalBandUser *pUser = TheCampaign->GetUser();
     MILO_ASSERT(pUser, 0xeb);

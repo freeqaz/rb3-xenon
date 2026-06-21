@@ -63,7 +63,7 @@ bool AccomplishmentConditional::InqRequiredScoreTypes(std::set<ScoreType> &o_rSc
     MILO_ASSERT(!m_lConditions.empty(), 0x70);
     MILO_ASSERT(o_rScoreTypes.empty(), 0x71);
 
-    for (std::vector<AccomplishmentCondition>::const_iterator i = m_lConditions.begin();
+    for (std::list<AccomplishmentCondition>::const_iterator i = m_lConditions.begin();
          i != m_lConditions.end();
          i++) {
         ScoreType mScoreType = i->mScoreType;
@@ -84,7 +84,7 @@ Difficulty AccomplishmentConditional::GetRequiredDifficulty() const {
 
     Difficulty requiredDifficulty = (Difficulty)3;
 
-    for (std::vector<AccomplishmentCondition>::const_iterator i = m_lConditions.begin();
+    for (std::list<AccomplishmentCondition>::const_iterator i = m_lConditions.begin();
          i != m_lConditions.end();
          i++) {
         const AccomplishmentCondition &cond = *i;

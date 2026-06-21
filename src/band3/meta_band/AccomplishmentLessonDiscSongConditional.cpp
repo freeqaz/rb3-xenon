@@ -56,7 +56,7 @@ bool AccomplishmentLessonDiscSongConditional::CheckLessonCompleteCondition(
 bool AccomplishmentLessonDiscSongConditional::CheckConditionsForSong(
     SongStatusMgr *mgr, Symbol s
 ) const {
-    for (std::vector<AccomplishmentCondition>::const_iterator it = m_lConditions.begin();
+    for (std::list<AccomplishmentCondition>::const_iterator it = m_lConditions.begin();
          it != m_lConditions.end();
          ++it) {
         const AccomplishmentCondition &cond = *it;

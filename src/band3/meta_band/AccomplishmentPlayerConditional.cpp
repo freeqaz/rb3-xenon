@@ -35,7 +35,9 @@ void AccomplishmentPlayerConditional::InitializeMusicLibraryTask(
 
 void AccomplishmentPlayerConditional::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x21);
+    static Symbol launch_part_difficulty_sym = "launch_part_difficulty_sym";
     i_pConfig->FindData(launch_part_difficulty_sym, mLaunchPartDifficultySym, false);
+    static Symbol launch_filter = "launch_filter";
     DataArray *pLaunchFilterArr = i_pConfig->FindArray(launch_filter, false);
     if (pLaunchFilterArr) {
         for (int i = 1; i < pLaunchFilterArr->Size(); i++) {
@@ -55,7 +57,7 @@ AccomplishmentType AccomplishmentPlayerConditional::GetType() const {
 bool AccomplishmentPlayerConditional::IsRelevantForSong(Symbol) const { return true; }
 
 bool AccomplishmentPlayerConditional::IsFulfilled(BandProfile *profile) const {
-    for (std::vector<AccomplishmentCondition>::const_iterator it = m_lConditions.begin();
+    for (std::list<AccomplishmentCondition>::const_iterator it = m_lConditions.begin();
          it != m_lConditions.end();
          ++it) {
         if (IsConditionMet(profile, *it))
@@ -68,7 +70,7 @@ bool AccomplishmentPlayerConditional::InqBestProgressValues(
     BandProfile *profile, int &i1, int &i2
 ) {
     float f1 = -1.0f;
-    for (std::vector<AccomplishmentCondition>::iterator it = m_lConditions.begin();
+    for (std::list<AccomplishmentCondition>::iterator it = m_lConditions.begin();
          it != m_lConditions.end();
          ++it) {
         int i64 = 0;
@@ -95,6 +97,41 @@ bool AccomplishmentPlayerConditional::InqProgressValues(
 bool AccomplishmentPlayerConditional::InqConditionProgress(
     BandProfile *profile, const AccomplishmentCondition &cond, int &i1, int &i2
 ) const {
+    static Symbol career_score = "career_score";
+    static Symbol career_score_capped = "career_score_capped";
+    static Symbol total_gems = "total_gems";
+    static Symbol total_hopos = "total_hopos";
+    static Symbol total_upstrums = "total_upstrums";
+    static Symbol total_times_revived = "total_times_revived";
+    static Symbol total_saves = "total_saves";
+    static Symbol total_awesomes = "total_awesomes";
+    static Symbol total_double_awesomes = "total_double_awesomes";
+    static Symbol total_triple_awesomes = "total_triple_awesomes";
+    static Symbol stars = "stars";
+    static Symbol best_solo = "best_solo";
+    static Symbol best_accuracy = "best_accuracy";
+    static Symbol best_streak = "best_streak";
+    static Symbol total_overdrive_deploys = "total_overdrive_deploys";
+    static Symbol total_overdrive_time = "total_overdrive_time";
+    static Symbol total_overdrive_phrases = "total_overdrive_phrases";
+    static Symbol total_unison_phrases = "total_unison_phrases";
+    static Symbol most_overdrive_deploys = "most_overdrive_deploys";
+    static Symbol most_overdrive_time = "most_overdrive_time";
+    static Symbol most_unison_phrases = "most_unison_phrases";
+    static Symbol total_bre_hits = "total_bre_hits";
+    static Symbol total_songs_played = "total_songs_played";
+    static Symbol tour_total_songs_played = "tour_total_songs_played";
+    static Symbol best_percussion_percent = "best_percussion_percent";
+    static Symbol total_drumrolls = "total_drumrolls";
+    static Symbol total_pro_drumrolls = "total_pro_drumrolls";
+    static Symbol best_kick_percent = "best_kick_percent";
+    static Symbol best_pro_kick_percent = "best_pro_kick_percent";
+    static Symbol best_drumroll_percent = "best_drumroll_percent";
+    static Symbol solo_button_percent = "solo_button_percent";
+    static Symbol best_hopos_percent = "best_hopos_percent";
+    static Symbol career_fills = "career_fills";
+    static Symbol best_score = "best_score";
+    static Symbol best_band_score = "best_band_score";
     i2 = cond.mValue;
     Symbol sym = cond.mCondition;
     i1 = 0;
@@ -198,9 +235,23 @@ bool AccomplishmentPlayerConditional::IsConditionMet(
 }
 
 void AccomplishmentPlayerConditional::InitializeTrackerDesc(TrackerDesc &desc) const {
+    static Symbol best_streak = "best_streak";
+    static Symbol most_overdrive_time = "most_overdrive_time";
+    static Symbol most_overdrive_deploys = "most_overdrive_deploys";
+    static Symbol total_overdrive_time = "total_overdrive_time";
+    static Symbol total_hopos = "total_hopos";
+    static Symbol best_hopos_percent = "best_hopos_percent";
+    static Symbol hopos_percent = "hopos_percent";
+    static Symbol best_accuracy = "best_accuracy";
+    static Symbol total_unison_phrases = "total_unison_phrases";
+    static Symbol solo_button_percent = "solo_button_percent";
+    static Symbol best_band_score = "best_band_score";
+    static Symbol best_score = "best_score";
+    static Symbol career_fills = "career_fills";
+    static Symbol stars = "stars";
     Accomplishment::InitializeTrackerDesc(desc);
     MILO_ASSERT(!m_lConditions.empty(), 0x174);
-    const AccomplishmentCondition &condition = m_lConditions[0];
+    const AccomplishmentCondition &condition = m_lConditions.front();
     MILO_ASSERT(TheCampaign, 0x177);
     LocalBandUser *pUser = TheCampaign->GetUser();
     MILO_ASSERT(pUser, 0x179);
