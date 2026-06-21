@@ -127,13 +127,6 @@ END_LOADS
 #pragma endregion
 #pragma region RndAnimatable
 
-void RndAnimatable::SetFrame(float frame, float blend) {
-    if (mFrame != frame) {
-        static Symbol frameSym("frame");
-        mFrame = frame;
-        BroadcastPropertyChange(frameSym);
-    }
-}
 
 TaskUnits RndAnimatable::RateToTaskUnits(Rate myRate) { return gRateUnits[myRate]; }
 TaskUnits RndAnimatable::Units() const { return gRateUnits[mRate]; }

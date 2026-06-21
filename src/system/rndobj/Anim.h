@@ -59,7 +59,7 @@ public:
     virtual void StartAnim() {}
     /** End the animation. */
     virtual void EndAnim() {}
-    virtual void SetFrame(float frame, float blend);
+    virtual void SetFrame(float frame, float blend) { mFrame = frame; }
     /** Get this animatable's first frame. */
     virtual float StartFrame() { return 0; }
     /** Get this animatable's last frame. */
