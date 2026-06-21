@@ -56,6 +56,7 @@ public:
     char const *Artist() const;
     Symbol ShortName() const;
     bool IsCover() const;
+    bool HasArtist() const;
     float PartRank(Symbol) const;
     DataNode GetData(DataArray const *, bool) const;
     bool HasSong(StoreOffer const *) const;

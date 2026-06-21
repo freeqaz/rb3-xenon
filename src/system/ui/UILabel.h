@@ -44,6 +44,7 @@ public:
     virtual void Poll() { UIComponent::Poll(); }
     virtual void Highlight();
     virtual void DrawShowing();
+    virtual bool CanHaveFocus();
     // text-holder semantics (was TextHolder, now plain forwarding)
     virtual Symbol TextToken() { return mTextToken; }
     virtual void SetCreditsText(DataArray *, class UIListSlot *) {

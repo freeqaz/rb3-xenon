@@ -2648,6 +2648,10 @@ band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.pdata      start:0x82224548 end:0x82224678
 	.text       start:0x8262F530 end:0x82630988
 
+band3/meta_band/AppLabel.cpp:
+	.pdata      start:0x8221B7D0 end:0x8221BAE8
+	.text       start:0x825ACF88 end:0x825AF938
+
 band3/meta_band/SongUpgradeMgr.cpp:
 	.pdata      start:0x82224678 end:0x82224818
 	.text       start:0x82630988 end:0x82632040
