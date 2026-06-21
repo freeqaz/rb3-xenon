@@ -1854,3 +1854,57 @@ B. **Tooling (objdiff global-byte-equality fork)** — Understand→Design→Pro
 
 **SESSION TOTAL (waves 3–16): 6932 → 9558 (+2626; wave-16 +0 = honest negatives that redrew the
 frontier; tooling: icf_alias_check.py landed).**
+
+# ============================================================
+# WAVE-17 CLOSE (2026-06-21): **9598 / 65564** (9558 → 9598, +40 matching; build green)
+#   + WAVE-17B tooling (identity_transfer fixes landed, objdiff case-B fork BANKED)
+# ============================================================
+WIDE 2-track wave (user: "double the threads"). 17A = 8-lane struct-lever body-port hunt
+(wf_62bf7d30); 17B = objdiff case-B fork + identity_transfer fixes (wf_547dda28).
+
+## 17A MATCHING +40 (4 honest lanes; 4 families flat AT-LIMIT)
+- **uicomponent +14** (struct lever): UIList::mListDir is a raw UIListDir* (4B) where DC3 has a
+  fatter member → uniform +0xC this-relative member-offset shift. UIList.h/.cpp only, clean.
+- **metaband +14** (struct lever): OnlineID 0x10 size fix (XUID-based 360 OnlineID 8B larger) +
+  UIListProvider non-virtual tail; the one GENUINELY CASCADING lever (leaderboard family). Also
+  SongUpgradeMgr/SongSelectPanel body-ports. (Touches OnlineID.h, UIListProvider.h.)
+- **object +1** (struct lever): dropped the DC3-added `int indent` from Data{Node,Array}::Print
+  (4→3 args, RB3-retail sig). Wide-touch (Data.h + 13 callers) but zero regressions.
+- songmgr +2 DROPPED at landing (its SongUpgradeMgr work overlapped metaband's 6ee483f — the
+  double-count; took metaband's superset to avoid a .cpp conflict).
+- ⭐ The 3 landed levers CASCADE FURTHER IN COMBINATION: individually +14/+14/+1 but the combined
+  composed-verify = **+40** (shared UI-list / OnlineID / Data headers compound). composed run1=run2=9598.
+- AT-LIMIT families (net 0, all walls): **vocaltrack** (VocalTrackDir = retail-vs-Wii-DEV version
+  divergence — wrong oracle, needs Ghidra reconstruction), **player** (member-base/vbase/regalloc),
+  **gemtrack** (see follow-ups), **character** (CharHair struct lever found but needs full TU revert).
+
+## 17B TOOLING
+- **identity_transfer.py FIXED + landed** (6b138ec): hard-skips span-pinned TUs (the wave-16 −14
+  collision root — appending micro-pins to a span-pinned TU steals pairing) + truthful `--estimate`
+  vs the current 100-set (the dry-run "named bodies" metric was non-predictive).
+- **objdiff case-B fork BANKED** (doc docs/decomp/handoff/objdiff-caseb-fork-banked.md, a116553):
+  branch `caseb-global-byteeq @ b1c92be` in ../objdiff, built ISOLATED to /tmp (shared binary
+  untouched). Global byte-equality pass in the report driver (NOT diff_objs); honest gate =
+  masked-bytes + reloc-target-NAME equality + REQUIRED oracle (sim≥0.5, attributes to unit).
+  Honest unlock now = +0 (do-no-harm, off-by-default); +150–220 ceiling gated upstream on porting
+  scattered TUs. Full integration checklist in the doc. (Captured ~362 lines of pre-existing WIP.)
+
+⭐ VEIN STATUS — APPROACHING STUCK on the CURRENTLY-MINED families (meta_band belt + core engine
+near-misses), NOT globally stuck. Struct levers are now isolated single-class fixes (not wave-9
+keystones); 4/8 families flat; body-port tail thinning to permuter/ICF-class. The struct-lever
+hunt's remaining value is in NEWLY-PINNED units → PIN FRESH INVENTORY before the next struct-lever wave.
+
+### WAVE-18 FRONTIER (PIVOT to fresh inventory + cheap reveals + orthogonal tooling; WIDE 2-track):
+A. MATCHING/FRESH-INVENTORY (wide): (1) **gemtrack map-augmentation** — ~53 GemTrack methods are
+   byte-identical to the oracle but UNPAIRED (missing target_symbol_map entries) → `gen_game_target_map.py
+   --tu GemTrack.cpp` + reveal = cheap; (2) **map-aug SWEEP** generalize that across wired game TUs;
+   (3) **CharHair full-revert** struct lever (DC3-newer → rb3-Wii form, −8 cascade, 4 asm anchors);
+   (4) **SongStatusMgr** index-loop body-port; (5) **pin_audit refresh** (new re-pins from all
+   wave-13..17 pins); (6) **belt-gap bisection** + new un-pinned contiguous game-TU pins (BinDiff-
+   confirmed) — fresh inventory the struct-lever hunt can then mine.
+B. TOOLING (orthogonal unstick): **jeff funclet-truncation fix** — the recurring dtk asm-misnest
+   bug (GemTrack::See, Award ctor, LicenseMgr) truncates a function at a premature .endfn → false
+   0% + lost binary tail. ../jeff src/cmd/xex.rs. Build ISOLATED, validate do-no-harm before integrating.
+
+**SESSION TOTAL (waves 3–17): 6932 → 9598 (+2666; wave-17 +40 matching + tooling: identity_transfer
+fixes, objdiff case-B fork banked, icf_alias_check.py).**
