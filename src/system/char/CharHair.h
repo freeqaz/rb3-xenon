@@ -9,6 +9,8 @@
 #include "utl/BinStream.h"
 #include "utl/MemMgr.h"
 
+class Character;
+
 /** "Hair physics, deals with strands of hair" */
 class CharHair : public RndHighlightable, public CharPollable {
 public:
@@ -17,24 +19,24 @@ public:
         Point(const Point &);
 
         Vector3 pos; // 0x0
-        Vector3 force; // 0x10
-        Vector3 lastFriction; // 0x20
-        Vector3 lastZ; // 0x30
+        Vector3 force; // 0xc
+        Vector3 lastFriction; // 0x18
+        Vector3 lastZ; // 0x24
         /** "hair bone we set the transform of" */
-        ObjPtr<RndTransformable> bone; // 0x40
+        ObjPtr<RndTransformable> bone; // 0x30
         /** "the length of this strand bone" */
-        float length; // 0x54
+        float length; // 0x3c
         /** "things to collide against" */
-        ObjPtrList<CharCollide> collides; // 0x58
+        ObjPtrList<CharCollide> collides; // 0x40
         /** "collision radius" */
-        float radius; // 0x6c
+        float radius; // 0x50
         /** "if > radius, is the distance the hair bone should start aligning itself
             with the collision primitive, so that once touching it,
             it will be totally flattened against it." */
-        float outerRadius; // 0x70
+        float outerRadius; // 0x54
         /** "if >= 0 the base length to the side modified by min_slack and max_slack" */
-        float sideLength; // 0x74
-        Vector3 unk78; // 0x78
+        float sideLength; // 0x58
+        Vector3 unk5c; // 0x5c
     };
 
     class Strand {
@@ -67,11 +69,11 @@ public:
         ObjPtr<RndTransformable> mRoot; // 0x4
         /** "Angle in degrees of starting flip, this is to counter gravity,
             because mostly models are authored under gravitational load" */
-        float mAngle; // 0x18
-        ObjVector<Point> mPoints; // 0x1c
-        Hmx::Matrix3 mBaseMat; // 0x2c
-        Hmx::Matrix3 mRootMat; // 0x5c
-        int mHookupFlags; // 0x8c
+        float mAngle; // 0x10
+        ObjVector<Point> mPoints; // 0x14
+        Hmx::Matrix3 mBaseMat; // 0x20
+        Hmx::Matrix3 mRootMat; // 0x44
+        int mHookupFlags; // 0x68
     };
     // Hmx::Object
     virtual ~CharHair();
@@ -131,27 +133,20 @@ protected:
     /** "Hair friction against each other, is proportional to bending speed,
         0 means hair is a perfect spring, .1 or so is normal". Ranges from 0 to 1. */
     float mFriction; // 0x24
-    /** "Wind resistance on hair, 1 is normal, used even if no wind_obj,
-        proportional to surface area per point divided by mass per point."
-        Ranges from 0 to 1. */
-    float mWind; // 0x28
-    /** "How flat the surface is, for purposes of wind resistance,
-        1 means zero wind resistance perpendicular to z axis
-        (the blue highlight segments)" */
-    float mFlat; // 0x2c
     /** "If using sides, determines how far in it could go" */
-    float mMinSlack; // 0x30
+    float mMinSlack; // 0x28
     /** "If using sides, determines how far out it could go" */
-    float mMaxSlack; // 0x34
-    ObjVector<Strand> mStrands; // 0x38
-    int mReset; // 0x48
+    float mMaxSlack; // 0x2c
+    ObjVector<Strand> mStrands; // 0x30
+    int mReset; // 0x3c
     /** "Simulate physics or not" */
-    bool mSimulate; // 0x4c
-    bool mUsePostProc; // 0x4d
+    bool mSimulate; // 0x40
+    bool mUsePostProc; // 0x41
+    ObjPtr<Character> mMe; // 0x44
     /** "wind object to use" */
-    ObjPtr<RndWind> mWindObj; // 0x50
-    ObjPtrList<CharCollide> mCollides; // 0x64
-    bool mManagedHookup; // 0x78
+    ObjPtr<RndWind> mWind; // 0x50
+    ObjPtrList<CharCollide> mCollides; // 0x5c
+    bool mManagedHookup; // 0x6c
 };
 
 inline BinStream &operator<<(BinStream &bs, const CharHair::Strand &s) {

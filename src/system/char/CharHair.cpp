@@ -28,9 +28,9 @@ CharHair::Strand *gStrand;
 #pragma region CharHair
 
 CharHair::CharHair()
-    : mStiffness(0.04), mTorsion(0.1), mInertia(0.7), mGravity(1), mWeight(0.5),
-      mFriction(0.3), mWind(1), mFlat(1), mMinSlack(0), mMaxSlack(0), mStrands(this),
-      mReset(1), mSimulate(1), mUsePostProc(1), mWindObj(this), mCollides(this),
+    : mStiffness(0.04f), mTorsion(0.1f), mInertia(0.7f), mGravity(1.0f), mWeight(0.5f),
+      mFriction(0.3f), mMinSlack(0.0f), mMaxSlack(0.0f), mStrands(this), mReset(1),
+      mSimulate(1), mUsePostProc(1), mMe(this), mWind(this), mCollides(this),
       mManagedHookup(0) {}
 
 CharHair::~CharHair() {}
@@ -52,18 +52,16 @@ BEGIN_PROPSYNCS(CharHair)
     SYNC_PROP(gravity, mGravity)
     SYNC_PROP(weight, mWeight)
     SYNC_PROP(friction, mFriction)
-    SYNC_PROP(wind_obj, mWindObj)
-    SYNC_PROP(wind, mWind)
-    SYNC_PROP(flat, mFlat)
-    SYNC_PROP(strands, mStrands)
-    SYNC_PROP(simulate, mSimulate)
     SYNC_PROP(min_slack, mMinSlack)
     SYNC_PROP(max_slack, mMaxSlack)
+    SYNC_PROP(strands, mStrands)
+    SYNC_PROP(simulate, mSimulate)
+    SYNC_PROP(wind, mWind)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
 BEGIN_SAVES(CharHair)
-    SAVE_REVS(0xD, 0)
+    SAVE_REVS(0xB, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mStiffness;
     bs << mTorsion;
@@ -75,9 +73,7 @@ BEGIN_SAVES(CharHair)
     bs << mMaxSlack;
     bs << mStrands;
     bs << mSimulate;
-    bs << mWindObj;
     bs << mWind;
-    bs << mFlat;
 END_SAVES
 
 BEGIN_COPYS(CharHair)
@@ -94,27 +90,25 @@ BEGIN_COPYS(CharHair)
         COPY_MEMBER(mSimulate)
         COPY_MEMBER(mMinSlack)
         COPY_MEMBER(mMaxSlack)
-        COPY_MEMBER(mWindObj)
         COPY_MEMBER(mWind)
-        COPY_MEMBER(mFlat)
     END_COPYING_MEMBERS
 END_COPYS
 
 void CharHair::SetName(const char *name, ObjectDir *dir) {
     Hmx::Object::SetName(name, dir);
-    mUsePostProc = dynamic_cast<Character *>(dir) || dynamic_cast<WorldDir *>(dir);
+    mMe = dynamic_cast<Character *>(dir);
+    mUsePostProc = mMe || dynamic_cast<WorldDir *>(dir);
 }
 
 void CharHair::Poll() {
-    Character *cur = Character::Current();
-    if (cur) {
-        if (cur->Synced()) {
+    if (mMe) {
+        if (mMe->GetPollState() == Character::kCharSyncObject) {
             Hookup();
         }
-        if (cur->Teleported()) {
+        if (mMe->Teleported()) {
             mReset = 1;
         }
-        if (cur->LODCheck()) {
+        if (mMe->MinLod() > 0) {
             DoReset(0);
             return;
         }
@@ -175,7 +169,7 @@ void CharHair::FreezePoseRaw() {
             Transform parentXfm(strand.Root()->TransParent()->WorldXfm());
             Invert(parentXfm, parentXfm);
             for (int j = 0; j < pts.size(); j++) {
-                Multiply(pts[j].pos, parentXfm, pts[j].unk78);
+                Multiply(pts[j].pos, parentXfm, pts[j].unk5c);
             }
         }
     }
@@ -191,7 +185,7 @@ void CharHair::DoReset(int reset) {
             Vector3 strandRootX(strand.Root()->WorldXfm().m.x);
             for (int j = 0; j < pts.size(); j++) {
                 Point &pt = pts[j];
-                Multiply(pt.unk78, parentXfm, pt.pos);
+                Multiply(pt.unk5c, parentXfm, pt.pos);
                 Vector3 fromPrev;
                 Subtract(pt.pos, strandRootPos, fromPrev);
                 strandRootPos = pt.pos;
@@ -239,24 +233,25 @@ static inline float RecipSqrtAccurate(float x) {
 
 void CharHair::SimulateInternal(float fps) {
     float sixtyOver = 60.0f / fps;
-    float recipFps = 1.0f / fps;
-    float gravity = (1.0f / (fps * fps)) * mGravity * gUnitsPerMeter * -9.8f;
+    float recipFps = (1.0f / fps) * sixtyOver;
+    float gravTerm = -3.85826778f * (mGravity * recipFps);
     float stiffPow = std::pow(1.0f - mStiffness, sixtyOver * sixtyOver);
-    float halfWeight = mWeight * -0.5f;
-    Vector3 windForce;
-    windForce.Zero();
-    auto& _ref0 = mWindObj;
-    if (_ref0) {
-        auto& _sub0 = mStrands[0];
-        if (_sub0.Root()) {
-            float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime);
-            _ref0->GetWind(_sub0.Root()->WorldXfm().v, secs, windForce);
-            windForce.x *= recipFps;
-            windForce.y *= recipFps;
-            windForce.z *= recipFps;
+    float stiffFriction = 1.0f - stiffPow;
+    float halfWeight = 0.5f * -mWeight;
+    Vector3 windForce(0, 0, 0);
+    if (mWind) {
+        if (mStrands[0].Root()) {
+            mWind->GetWind(
+                mStrands[0].Root()->WorldXfm().v,
+                TheTaskMgr.Seconds(TaskMgr::kRealTime),
+                windForce
+            );
+            windForce *= recipFps * 0.5f;
         }
     }
-        for (int i = 0; i < mStrands.size(); i++) {
+    windForce.z = windForce.z + gravTerm;
+
+    for (int i = 0; i < mStrands.size(); i++) {
         Strand &modStrand = mStrands[Mod(i + 1, mStrands.size())];
         Strand &curStrand = mStrands[i];
         if (curStrand.Root() && curStrand.Root()->TransParent()) {
@@ -272,25 +267,27 @@ void CharHair::SimulateInternal(float fps) {
                 Point &pt = points[j];
                 Vector3 oldPos(pt.pos);
                 pt.pos += pt.force;
-                pt.pos.z = pt.pos.z + gravity;
+                pt.pos.x += windForce.x;
+                pt.pos.y += windForce.y;
+                pt.pos.z += windForce.z;
                 if (pt.sideLength >= 0.0f) {
-                    float minLen = pt.sideLength - mMinSlack;
-                    Point &modPt = modStrand.Points()[j];
                     Vector3 vRes;
+                    Point &modPt = modStrand.Points()[j];
                     Subtract(pt.pos, modPt.pos, vRes);
                     float lensq = LengthSquared(vRes);
+                    float minLen = pt.sideLength - mMinSlack;
                     float minLenSq = minLen * minLen;
                     if (lensq < minLenSq) {
                         vRes *= (minLenSq / (minLenSq + lensq) - 0.5f);
                         pt.pos += vRes;
-                        modPt.pos -= vRes;
+                        modPt.force -= vRes;
                     } else {
                         float maxLen = pt.sideLength + mMaxSlack;
                         float maxLenSq = maxLen * maxLen;
                         if (lensq > maxLenSq) {
                             vRes *= (maxLenSq / (maxLenSq + lensq) - 0.5f);
                             pt.pos += vRes;
-                            modPt.pos -= vRes;
+                            modPt.force -= vRes;
                         }
                     }
                 }
@@ -299,7 +296,7 @@ void CharHair::SimulateInternal(float fps) {
                 float rsa = RecipSqrtAccurate(LengthSquared(m128.y));
                 float rsalen = pt.length * rsa - 1.0f;
                 if (j > 0) {
-                    ScaleAddEq(points[j - 1].force, m128.y, -sixtyOver * 0.5f * rsalen);
+                    ScaleAddEq(points[j - 1].force, m128.y, halfWeight * rsalen);
                 }
                 ScaleAddEq(pt.pos, m128.y, rsalen);
                 Vector3 idealPos;
@@ -308,9 +305,7 @@ void CharHair::SimulateInternal(float fps) {
 
                 if (pt.collides.size() != 0) {
                     float diffRad = pt.outerRadius - pt.radius;
-                    float maxRad;
-                    if (pt.radius < pt.outerRadius) maxRad = pt.outerRadius;
-                    else maxRad = pt.radius;
+                    float maxRad = Max(pt.radius, pt.outerRadius);
                     for (ObjPtrList<CharCollide>::iterator it = pt.collides.begin();
                          it != pt.collides.end();
                          ++it) {
@@ -319,12 +314,12 @@ void CharHair::SimulateInternal(float fps) {
                         float colRad = col->GetRadius(pt.pos, v164);
                         switch (col->GetShape()) {
                         case CharCollide::kCollidePlane:
-                            if (colRad < maxRad) {
+                            if (maxRad > colRad) {
                                 ScaleAddEq(pt.pos, col->Axis(), maxRad - colRad);
                             }
                             break;
-                        case CharCollide::kCollideSphere:
-                        case CharCollide::kCollideCigar: {
+                        case CharCollide::kCollideCigar:
+                        case CharCollide::kCollideSphere: {
                             float v164sq = LengthSquared(v164);
                             float sumRad = colRad + maxRad;
                             if (v164sq < sumRad * sumRad) {
@@ -348,8 +343,8 @@ void CharHair::SimulateInternal(float fps) {
                             }
                             break;
                         }
-                        case CharCollide::kCollideInsideSphere:
-                        case CharCollide::kCollideInsideCigar: {
+                        case CharCollide::kCollideInsideCigar:
+                        case CharCollide::kCollideInsideSphere: {
                             float v164sq = LengthSquared(v164);
                             float minRad = colRad - maxRad;
                             if (v164sq > minRad * minRad) {
@@ -377,35 +372,26 @@ void CharHair::SimulateInternal(float fps) {
                             break;
                         }
                     }
+
+                    Scale(m128.y, rsa, t100.m.y);
+                    Cross(t100.m.y, m128.z, t100.m.x);
+                    t100.m.x *= RecipSqrtAccurate(LengthSquared(t100.m.x));
+                    Normalize(t100.m.x, t100.m.x);
+                    Cross(t100.m.x, t100.m.y, t100.m.z);
+                    pt.lastZ = t100.m.z;
+                    if (pt.bone)
+                        pt.bone->SetWorldXfm(t100);
+                    Subtract(idealPos, pt.pos, pt.force);
+                    Vector3 frictionDiff;
+                    Subtract(pt.lastFriction, pt.force, frictionDiff);
+                    pt.lastFriction = pt.force;
+                    pt.force *= stiffFriction;
+                    ScaleAddEq(pt.force, frictionDiff, -mFriction);
+                    Vector3 movement;
+                    Subtract(pt.pos, oldPos, movement);
+                    ScaleAddEq(pt.force, movement, mInertia);
+                    t100.v = pt.pos;
                 }
-
-                Scale(m128.y, rsa, t100.m.y);
-                Cross(t100.m.y, m128.z, t100.m.x);
-                t100.m.x *= RecipSqrtAccurate(LengthSquared(t100.m.x));
-                Normalize(t100.m.x, t100.m.x);
-                Cross(t100.m.x, t100.m.y, t100.m.z);
-                pt.lastZ = t100.m.z;
-                if (pt.bone)
-                    pt.bone->SetWorldXfm(t100);
-                Subtract(idealPos, pt.pos, pt.force);
-                Vector3 frictionDiff;
-                Subtract(pt.lastFriction, pt.force, frictionDiff);
-                pt.lastFriction = pt.force;
-                pt.force *= stiffPow = 1.0f - stiffPow;
-                ScaleAddEq(pt.force, frictionDiff, -mFriction);
-                Vector3 movement;
-                Subtract(pt.pos, oldPos, movement);
-                ScaleAddEq(pt.force, movement, mInertia);
-
-                Vector3 windRelative;
-                Subtract(windForce, movement, windRelative);
-                float windRelLen = Length(windRelative);
-                float perpComponent = std::fabs(Dot(windRelative, t100.m.z));
-                float windScale =
-                    ((perpComponent - windRelLen) * mFlat + windRelLen) * mWind;
-                ScaleAddEq(pt.force, windRelative, windScale);
-
-                t100.v = pt.pos;
             }
         }
     }
@@ -428,35 +414,34 @@ void CharHair::Hookup(ObjPtrList<CharCollide> &collides) {
              it != collides.end();
              ++it) {
             CharCollide *col = *it;
-            bool passAll = (col->GetFlags() == 0 && strand.HookupFlags() == 0);
-            if ((strand.HookupFlags() & col->GetFlags()) == 0 && !passAll)
+            if ((strand.HookupFlags() & col->GetFlags()) == 0)
                 continue;
 
             col->SyncWorldState();
 
             Vector3 colPos(col->WorldXfm().v);
-            float colAdjust = 0.0f;
 
-            if (col->GetFlags() != 0) {
-                int shape = (int)col->GetShape();
-                if (shape > 0) {
-                    if (shape > 2) {
-                        if (shape <= 4) {
-                            float len0 = col->GetCurLength0();
-                            float rad0 = col->GetCurRadius();
-                            Vector3 p1;
-                            ScaleAdd(col->WorldXfm().v, col->WorldXfm().m.x, len0 - rad0, p1);
-                            float len1 = col->GetCurLength1();
-                            float rad1 = col->GetCurRadius1();
-                            Vector3 p2;
-                            ScaleAdd(col->WorldXfm().v, col->WorldXfm().m.x, rad1 + len1, p2);
-                            Interp(p1, p2, 0.5f, colPos);
-                            colAdjust = Distance(p1, p2) * 0.5f;
-                        }
-                    } else {
-                        colAdjust = col->GetCurRadius();
-                    }
-                }
+            int shape = (int)col->GetShape();
+            float colAdjust = col->GetCurRadius();
+            if (shape >= 3) {
+                Vector3 p1;
+                ScaleAdd(
+                    col->WorldXfm().v,
+                    col->WorldXfm().m.x,
+                    col->GetCurLength0() - col->GetCurRadius(),
+                    p1
+                );
+                Vector3 p2;
+                ScaleAdd(
+                    col->WorldXfm().v,
+                    col->WorldXfm().m.x,
+                    col->GetCurLength1() + col->GetCurRadius1(),
+                    p2
+                );
+                Interp(p1, p2, 0.5f, colPos);
+                colAdjust = Distance(p1, p2) * 0.5f;
+            } else if (shape == 0) {
+                colAdjust = kHugeFloat;
             }
 
             const Transform &rootXfm = strand.Root()->WorldXfm();
@@ -468,7 +453,6 @@ void CharHair::Hookup(ObjPtrList<CharCollide> &collides) {
                 float maxRad = Max(pt.radius, pt.outerRadius);
                 if (maxRad > dist) {
                     pt.collides.push_back(col);
-
                     if (mCollides.find(col) == mCollides.end()) {
                         mCollides.push_back(col);
                     }
@@ -504,7 +488,7 @@ void CharHair::SimulateZeroTime() {
             RndTransformable *root = curStrand.Root();
             if (root && curStrand.Root()->TransParent()) {
                 Transform tf50;
-                Vector3 v2c = curStrand.Root()->WorldXfm().v;
+                tf50.v = curStrand.Root()->WorldXfm().v;
                 Multiply(
                     curStrand.RootMat(),
                     curStrand.Root()->TransParent()->WorldXfm().m,
@@ -514,13 +498,13 @@ void CharHair::SimulateZeroTime() {
                 for (int j = 0; j < points.size(); j++) {
                     Point &curPoint = points[j];
                     Hmx::Matrix3 m78;
-                    Subtract(curPoint.pos, v2c, m78.y);
+                    Subtract(curPoint.pos, tf50.v, m78.y);
                     m78.z = curPoint.lastZ;
                     Normalize(m78, tf50.m);
                     if (curPoint.bone) {
                         curPoint.bone->SetWorldXfm(tf50);
                     }
-                    v2c = curPoint.pos;
+                    tf50.v = curPoint.pos;
                 }
             }
         }
@@ -531,7 +515,7 @@ INIT_REVS(11, 0)
 
 void CharHair::Load(BinStream &bs) {
     LOAD_REVS(bs);
-    ASSERT_REVS(13, 0);
+    ASSERT_REVS(11, 0);
     LOAD_SUPERCLASS(Hmx::Object)
     bs >> mStiffness >> mTorsion >> mInertia >> mGravity >> mWeight >> mFriction;
     if (d.rev < 8) {
@@ -542,11 +526,7 @@ void CharHair::Load(BinStream &bs) {
     d >> mStrands;
     d >> mSimulate;
     if (d.rev > 10)
-        bs >> mWindObj;
-    if (d.rev > 11)
         bs >> mWind;
-    if (d.rev > 12)
-        bs >> mFlat;
 }
 
 #pragma endregion CharHair
@@ -568,22 +548,7 @@ void operator<<(BinStream &bs, const CharHair::Point &p) {
     bs << p.radius;
     bs << p.outerRadius;
     bs << p.sideLength;
-    bs << p.unk78;
-}
-
-BinStream &operator>>(BinStream &bs, CharHair::Point &pt) {
-    bs >> pt.pos;
-    bs >> pt.bone;
-    bs >> pt.length;
-    bs >> pt.radius;
-    bs >> pt.outerRadius;
-    bs >> pt.sideLength;
-    bs >> pt.unk78;
-    pt.collides.clear();
-    pt.force.Zero();
-    pt.lastFriction.Zero();
-    pt.lastZ.Zero();
-    return bs;
+    bs << p.unk5c;
 }
 
 void operator>>(BinStreamRev &d, CharHair::Point &pt) {
@@ -630,7 +595,7 @@ void operator>>(BinStreamRev &d, CharHair::Point &pt) {
         }
     }
     if (d.rev > 9) {
-        d >> pt.unk78;
+        d >> pt.unk5c;
     }
     pt.collides.clear();
     pt.force.Zero();
@@ -639,13 +604,12 @@ void operator>>(BinStreamRev &d, CharHair::Point &pt) {
 }
 
 CharHair::Point::Point(Hmx::Object *owner)
-    : bone(owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(0.0f),
-      sideLength(-1.0f) {
+    : bone(owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(-1.0f) {
     pos.Zero();
     force.Zero();
     lastFriction.Zero();
     lastZ.Zero();
-    unk78.Zero();
+    unk5c.Zero();
 }
 
 CharHair::Point::Point(const Point &p) : bone(p.bone), collides(p.collides) {
@@ -659,7 +623,7 @@ CharHair::Point::Point(const Point &p) : bone(p.bone), collides(p.collides) {
     lastFriction = p.lastFriction;
     lastZ = p.lastZ;
     sideLength = p.sideLength;
-    unk78 = p.unk78;
+    unk5c = p.unk5c;
 }
 
 #pragma endregion CharHair::Point
@@ -676,7 +640,7 @@ CharHair::Strand::Strand(const Strand &rhs)
     : mShowSpheres(rhs.mShowSpheres), mShowCollide(rhs.mShowCollide),
       mShowPose(rhs.mShowPose), mRoot(rhs.mRoot), mAngle(rhs.mAngle),
       mPoints(rhs.mPoints), mHookupFlags(rhs.mHookupFlags) {
-    const Hmx::Matrix3& src = rhs.mBaseMat;
+    const Hmx::Matrix3 &src = rhs.mBaseMat;
     mBaseMat = src;
     mRootMat = rhs.mRootMat;
 }
@@ -721,7 +685,7 @@ void CharHair::Strand::SetRoot(RndTransformable *trans) {
         } else if (prevPt) {
             len = prevPt->length;
         } else {
-            len = gUnitsPerMeter * 0.127f;
+            len = 5.0f;
         }
         lastPt.length = len;
         ScaleAdd(lastPt.bone->WorldXfm().v, lastPt.bone->WorldXfm().m.y, lastPt.length, lastPt.pos);
