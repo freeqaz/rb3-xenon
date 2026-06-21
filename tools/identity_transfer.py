@@ -247,6 +247,58 @@ def _truthful_estimate(args, case_a, sizes, all_entries, final_carved):
           f"({len(ceiling) - len(floor)} of them low-sim<0.5)")
 
 
+def _load_pin_only(spec):
+    """Parse the --pin-only argument into a set of int VAs, or None on failure.
+
+    Three accepted forms (auto-detected):
+      * a path to a JSON list of VA strings (what field_offset_gate
+        --emit-pin-only writes), e.g. ``["0x822765C0", ...]``;
+      * a path to a newline-delimited file of VAs (``#`` comments allowed);
+      * an inline comma-separated VA list, e.g. ``0x822765C0,0x82276B10``.
+    Returns an empty set only when the source held zero parseable VAs (the
+    caller treats that as an error -- a partial port with no pins is a no-op)."""
+    def _parse_va(tok):
+        tok = tok.strip().strip(",")
+        if not tok or tok.startswith("#"):
+            return None
+        try:
+            return int(tok, 16)
+        except ValueError:
+            return None
+
+    vas = set()
+    if os.path.isfile(spec):
+        try:
+            data = json.load(open(spec))
+            if isinstance(data, list):
+                for item in data:
+                    v = _parse_va(item) if isinstance(item, str) else (
+                        int(item) if isinstance(item, int) else None)
+                    if v is not None:
+                        vas.add(v)
+            elif isinstance(data, dict):
+                # tolerate the {VA: ...} sidecar shape too
+                for k in data:
+                    v = _parse_va(k)
+                    if v is not None:
+                        vas.add(v)
+        except (ValueError, OSError):
+            # not JSON -> treat as a newline-delimited VA file
+            try:
+                for line in open(spec):
+                    v = _parse_va(line)
+                    if v is not None:
+                        vas.add(v)
+            except OSError:
+                return None
+    else:
+        for tok in spec.split(","):
+            v = _parse_va(tok)
+            if v is not None:
+                vas.add(v)
+    return vas if vas else None
+
+
 def main():
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -290,6 +342,21 @@ def main():
     ap.add_argument("--force", action="store_true",
                     help="bypass the locator confidence gate (legacy blind "
                          "transfer; only when the VAs are independently verified)")
+    # --- PARTIAL-PORT PIN-ONLY SET (B1) --------------------------------------
+    # A partial port (PIPELINE-DESIGN.md S3 Phase 5 / S6) compiles the WHOLE TU
+    # so the obj DEFINES every symbol, but only PINS the subset that can byte-
+    # match (the field_offset_gate clean pin-set). --pin-only restricts the
+    # case-A carve to an EXPLICIT VA subset. It is an ADDITIONAL filter applied
+    # on top of (not instead of) the case-A/SELF/case-B classification, the span-
+    # pin HARD GATE, the FIX-1 name-collision drop, and the boundary-snap -- a
+    # VA must be case-A AND in the pin-only set AND survive every existing gate.
+    # Accepts a comma-separated VA list OR a path to a JSON list (the format
+    # field_offset_gate --emit-pin-only writes) OR a path to a newline file.
+    ap.add_argument("--pin-only", default=None,
+                    help="restrict the case-A carve to this explicit VA subset "
+                         "(partial port). Comma-list of 0xVA, OR a path to a JSON "
+                         "VA list (field_offset_gate --emit-pin-only), OR a "
+                         "newline-delimited file. Composes with all other gates.")
     args = ap.parse_args()
 
     tu = args.tu if args.tu.endswith((".cpp", ".c", ".cc")) else args.tu + ".cpp"
@@ -321,6 +388,17 @@ def main():
         print(f"[gate] locator sidecar {args.locator_gate}: "
               f"{len(gate_allowed)} VA(s) pass class in {sorted(allowed_classes)} "
               f"+ conf>={args.min_confidence} (of {len(sidecar)} classified)")
+
+    # --- partial-port --pin-only set: explicit case-A subset to carve --------
+    pin_only = None
+    if args.pin_only:
+        pin_only = _load_pin_only(args.pin_only)
+        if pin_only is None:
+            print(f"ERROR: --pin-only {args.pin_only} unreadable / no valid VAs",
+                  file=sys.stderr)
+            return 2
+        print(f"[pin-only] partial-port subset: {len(pin_only)} VA(s) "
+              f"(case-A carves OUTSIDE this set are dropped as pin-filtered)")
 
     # --- 1. oracle records for this TU; drop size==0 (ICF aliases / stubs) ---
     oracle = json.load(open(args.oracle))
@@ -386,6 +464,7 @@ def main():
     # --- 4. classify each method ---------------------------------------------
     case_a, case_b, self_owned, no_size = [], [], [], []
     gate_dropped = []        # case-A VAs the locator gate refused (WALL/MISATTR/...)
+    pin_filtered = []        # case-A VAs dropped by the --pin-only partial subset
     for e in bodies:
         addr = int(e["rb3_addr"], 16)
         cov = covering_pin(addr)
@@ -395,6 +474,14 @@ def main():
             # confidence. gate_allowed is None => gate off (--force/no sidecar).
             if gate_allowed is not None and addr not in gate_allowed:
                 gate_dropped.append(e)
+                continue
+            # PARTIAL-PORT --pin-only: drop any case-A VA outside the explicit
+            # subset (a field_offset_gate clean pin-set excludes POISONED-TAIL /
+            # stub / WALL methods that a full-TU carve would wrongly pin). This
+            # filter ONLY narrows case-A; it never widens it, and it composes
+            # with every downstream gate (boundary-snap, FIX-1, span HARD GATE).
+            if pin_only is not None and addr not in pin_only:
+                pin_filtered.append(e)
                 continue
             case_a.append(e)
         elif tu_base(cov).lower() == tu.lower():
@@ -549,6 +636,10 @@ def main():
         print(f"  GATE-DROPPED (case-A)    : {len(gate_dropped)}  "
               f"(locator class not in {args.require_class} or conf<"
               f"{args.min_confidence}; NOT carved -- wave-16 mis-carve guard)")
+    if pin_only is not None:
+        print(f"  PIN-FILTERED (case-A)    : {len(pin_filtered)}  "
+              f"(outside --pin-only partial-port subset of {len(pin_only)}; "
+              f"NOT carved -- field_offset_gate POISONED-TAIL/stub/WALL skip)")
     print(f"  SELF (already in own pin): {len(self_owned)}  (reveal_sweep territory, skip)")
     print(f"  CASE-B foreign-pinned    : {len(case_b)}  (eviction-gated, SKIP -> deferred)")
     if rejected_bisect:
