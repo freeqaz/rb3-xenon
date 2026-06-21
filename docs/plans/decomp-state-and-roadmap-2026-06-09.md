@@ -2063,3 +2063,11 @@ parallel fan-out. WAVE 21 = the MidiParser/MemMgr MemTemp-RAII keystone campaign
 remaining force-multiplier); if it walls, that confirms full practical exhaustion of tractable levers.
 
 **SESSION TOTAL (waves 3–20): 6932 → 9793 (+2861). Wave-20 +1.**
+
+> 📄 **The fuzzy reconstruction frontier** (full findings + the fuzzy-metric proposal + the
+> reconstruction-workbench design + EV-ranked path) is written up in
+> `docs/decomp/fuzzy-reconstruction-frontier-2026-06-21.md`. It quantifies the body-divergence wall,
+> the 610 scattered TUs / 9146 fns the cheap veins can't reach, and the already-emitted
+> `fuzzy_match_percent` (10.07% vs 7.56% strict) the headline currently discards. Recommended sequence:
+> adopt the tiered fuzzy metric now (`tools/fuzzy_progress.py`) → run the MemTemp-RAII go/no-go →
+> build the reconstruction workbench → pilot ONE small scattered TU → only then land the case-B fork.
