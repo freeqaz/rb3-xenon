@@ -1727,3 +1727,80 @@ LANDED (the ONLY honest lane):
 
 **SESSION TOTAL (waves 3–14): 6932 → 9477 (+2545, build green; every landed lever
 composed-verified EXACT; honesty audit refuted +57 ICF-alias inflation this wave).**
+
+# ============================================================
+# WAVE-15 CLOSE + IDENTITY-TRANSFER MILESTONE (2026-06-21):
+#   **9552 / 65564** (9477 → 9535 wave-15 +58, → 9552 idtransfer +17; build green)
+# ============================================================
+
+## WAVE 15 (matching) — gapb-bodyport +58 (wf_66a1ebb1-2cd)
+- **gapb-bodyport +58** (9477→9535, composed-verified, ZERO regressions). PURE BODY-PORT
+  (splits.txt byte-identical). ⭐ STRUCT LEVER (cascaded across the AccomplishmentConditional
+  family as predicted): retail-360 stores conditions in **std::list<AccomplishmentCondition>**
+  (sentinel _M_node at this+0x90), NOT the std::vector the rb3-Wii DEV oracle was converted to.
+  Fix = vector→std::list in AccomplishmentConditional.h + a **+0x10 base tail pad on the shared
+  Accomplishment.h** (retail places the derived list at 0x90 vs our base-sum 0x80). Cascaded:
+  PlayerConditional 1/58→55/58 (Configure 62→100, IsFulfilled 79→100, InqBestProgressValues→100)
+  across OneShot/SongConditional/LessonDiscSong/LessonSongList. Shared-header change → gated on
+  whole-binary composed A/B (soft-rule), held +58/0. Commit landed.
+- profilemgr **self-refuted/DEFERRED** (NOT a span-pin failure — ownership PROVEN): span
+  [0x82534D38,0x825395B8) is genuinely ProfileMgr.cpp, contiguous + overlap-clean (the wave-13
+  SaveLoadManager scout over-swallowed it; ProfileMgr = lower portion). Blocked on (A) gen_game_target_map
+  produced 0 oracle pairs → needs HAND-BUILT target-map entries; (B) Wii-divergent substantial
+  methods (Rnd::SetOverscan/ConfigureRenderMode, WiiFriendMgr, Mic APIs) need per-method 360
+  reconstruction. Multi-hour; deferred with the span pre-verified.
+- saveload-sib **self-refuted/DEFERRED + IDENTIFIED**: the cluster [0x8252E6B0,0x82532068) is
+  **MusicLibrary.cpp's 2nd .text cluster** (vtable 0x8209002C 4-base shape matches
+  `MusicLibrary : UIListProvider, Hmx::Object, ContentMgr::Callback, Synchronizable`; ctor
+  allocates ViewSettingsProvider/SetlistProvider/MusicLibraryNetSetlists/SetlistScoresProvider).
+  A dual-range pin scored +57 but the lane's OWN ICF-alias self-check REFUTED it (56/57 are
+  ≤44B stub folds, 1 foreign ProfileChangedMsg) → REQUEUE as a real port-then-pin of range-2.
+- scout: **B1 [0x825C3A44,0x825CB590) = REFUTED-mixed-blob** (87% ≤40B stub farm, 49 oracle hits
+  across 30 TUs, ZERO OvershellSlot) — the BinDiff gate correctly killed the wave-14 string-based
+  "OvershellSlot tail" premise. SaveLoadManager-upper also refuted (scatters). pin_audit re-ran DRY.
+
+⭐ STRATEGIC (the wave's headline): **contiguous-port inventory is near-exhausted for the
+meta_band priority tier.** The belt has MATURED to the SCATTER PHASE — OvershellSlot/ProfileMgr/
+SaveLoadManager/MusicLibrary-2/MainHubPanel are all ICF-folded binary-wide. What still produces
+matches: (a) **BODY-PORTS with a real oracle + struct lever** (the +58), and (b) **identity-transfer
+for scattered TUs** (below).
+
+⭐ LESSONS:
+- The ICF-alias **self-check works** — saveload-sib refuted its OWN +57 before the audit ran, and
+  the B1 BinDiff gate refuted a string-based premise. Honesty is now self-enforcing in the lanes.
+- Workflow filter bug (coordinator caught, like wave-11 Campaign): the auditor set
+  `stub_dominated=true` on the +58 body-port (a span-pin concept misapplied — its own verdict said
+  "HONEST/LANDABLE"), which dropped the wave's only winner from `cleared`. NEXT: gate stub_dominated
+  on span-pins ONLY, never body-ports.
+
+## IDENTITY-TRANSFER TOOLING MILESTONE — tool PROVEN + RockCentral +17 (wf_f290fa44-aae)
+- Built **`tools/identity_transfer.py`** (410 LOC) + the full mechanism spec
+  (**docs/decomp/identity-transfer.md**). Multi-range micro-pinning works for arbitrary N
+  (verified against jeff `apply_splits` RAW push / `split_obj` name-grouping / `create_gap_splits`
+  auto-gap-ownership). Each scattered method → one `.text [VA,VA+pdata_len)` micro-range under the
+  TU header; all merge into one TU obj; oracle-named; objdiff pairs. **Feasible with CURRENT tools,
+  NO fork** for case-A.
+- **RockCentral.cpp +17** (9535→9552, composed-verified run1=run2, 0 regressions): the tool
+  classified 129 bodies → 104 case-A / 25 case-B (SKIPPED to worklist), coalesced 102 into 80
+  `.text` micro-ranges, dtk auto-backfilled 77 `.pdata` entries, +17 all genuine RockCentral bodies.
+  (RockCentral chosen over BandProfile for a zero-port-cost mechanism proof — already wired at 96%.)
+- **case-A** (method in unowned auto_ blob) = works now. **case-B** (method inside a foreign pin) =
+  deferred (objdiff pairs within-unit); an optional objdiff "global byte-equality" fork would unlock it.
+- ⭐ This UNBLOCKS THE SCATTER PHASE: BandProfile (70 case-A), SongSortNode, LockStepMgr, MainHubPanel
+  — gated only on porting each TU's MWCC source so the obj defines the methods, NOT on the mechanism.
+
+### WAVE-16 FRONTIER (frontier now = body-ports + identity-transfer; span-pins spent):
+1. **Identity-transfer generalization**: port BandProfile.cpp source → `identity_transfer --tu
+   BandProfile.cpp --apply` (70 case-A methods). Then SongSortNode/LockStepMgr/MainHubPanel. Honesty:
+   per-unit A/B, confirm newly-100 are real bodies not ≤44B stub folds (STL-heavy clusters = ICF risk).
+2. **MusicLibrary.cpp range-2 port-then-pin** [0x8252E6B0,0x82532068) from rb3-Wii (123 named methods;
+   ctor/OnEnter/InitData-already-100 confirm source alignment) — real per-method porting, not splits-only.
+3. **ProfileMgr.cpp** [0x82534D38,0x825395B8) (span pre-verified): hand-build target-map entries +
+   reconstruct ~6 Wii-divergent methods (clean getters cheap).
+4. **More struct-lever BODY-PORTS** in already-pinned-but-0% clusters (the AccomplishmentConditional
+   std::list win is the template — look for other vector-vs-list / member-layout divergences).
+5. Generalize the ICF-alias name-set-diff self-check into the wave SOP (saveload-sib's follow-up).
+6. (Later/optional) objdiff global byte-equality fork → unlocks identity-transfer case-B methods.
+
+**SESSION TOTAL (waves 3–15 + idtransfer): 6932 → 9552 (+2620, build green; every landed lever
+composed-verified EXACT; honesty self-checks refuted span-pin ICF-alias inflation throughout).**
