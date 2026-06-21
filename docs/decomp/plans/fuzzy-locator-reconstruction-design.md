@@ -103,3 +103,42 @@ per TU class), not cheap reveals — but it is the endgame lever, not a marginal
    + a ~30-LOC `BSimQueryToJson.java` → a static BSim-sim JSON the fusion consumes. Run once, serialized.
 3. [medium] the per-method reconstruction (the SongSortNode pilot is proving this loop now).
 4. [med-high] calibrate the fusion weights against the 25 pins + SongSortNode ground truth.
+
+## ⚠ PILOT RESULT (2026-06-21, wf_bf9851ca) — HONEST NEGATIVE: the rb3-Wii oracle alone is INSUFFICIENT; BSim is now REQUIRED, not optional
+
+SongSortNode end-to-end pilot = **NET ZERO** honest gain (STRICT 9801→9801; WIRED-fuzzy actually
+slipped −0.011 because the misattributed pins drag the mean DOWN). Of all 15 RECON-tier VAs
+micro-pinned + reconstruction-attempted across batches: **0 reached 100%, 0 showed a
+reconstruction-driven fuzzy climb.** Even GetIsCover (best, 57.8% fuzzy) was PROLOGUE/EPILOGUE
+COINCIDENCE + a virtual-dispatch body, not a located function.
+
+ROOT FINDING (sharpens #2): the rb3-Wii BinDiff oracle's **sim~0.42 "RECON" band is the SAME
+near-random guard-thunk-resemblance band the table flags UNPLACEABLE** — it carries MISATTRIBUTED
+/ FOREIGN bodies (GetTotalMs→float-vcall fn, GetTier→vbase return-this thunk; GetDateTime/Handle
+land INSIDE MatAnim/SavedSetlist pins; the SubheaderSortNode ctor empirically pins to a
+D3DXShader::Compiler method). The hand VA-confirmation table's RECON tier was OPTIMISTIC; the
+locator faithfully reproduced it (96.2%), so the locator inherits a flawed ground truth on the
+sim~0.42 band. SongSortNode has 0 CONFIRMED (cross-compiler sim never clears 0.5).
+
+WHAT THE PILOT VALIDATED (the real deliverable): the **recon-GATE / identity_transfer confidence
+gate WORKS** — it correctly REJECTED all 5 fake-fuzzy/overlapping pins, preventing a wave-16-style
+inflation. The micro-pin + fuzzy-measure MECHANISM works (methods pair, get real per-fn fuzzy).
+But identification from the rb3-Wii oracle + string/callee/size/CFG fusion ALONE is too weak.
+
+⭐ DECISIVE IMPLICATION: **BSim ∩ BinDiff is now REQUIRED, not an optional extra tier.** The pilot
+used everything EXCEPT the BSim confirmer (../ghidra bsim-xenon-patches, already built; the
+2026-06-09 gameid crossval proved BSim∩BinDiff = 95% per-method precision = the 146 crossval_agree
+fns). The fusion locator's sim~0.42 band is exactly what BSim must disambiguate. NEXT (corrected
+build order):
+1. WIRE BSim: generatesigs on the imported RB3Xenon + rebuild the rb3-Wii H2 BSim DB (gameid
+   VERDICT.json cmds) + BSimQueryToJson → a per-VA BSim-sim signal; intersect with BinDiff(conf>=0.7)
+   to produce the HIGH-PRECISION confirmed-VA set (the 95% tier), and feed it into locator.py as the
+   CONFIRMED source (not the sim~0.42 oracle band).
+2. RE-RUN the SongSortNode pilot on the BSim∩BinDiff-confirmed VAs ONLY. If THOSE reconstruct, the
+   approach is validated; if even those are sparse, the honest prize is much smaller than ~6-8k.
+3. ⚠ REVISE THE PRIZE: the ~6-8k ceiling assumed the RECON band is reconstructable; the pilot shows
+   it is NOT without better identification. The realistic recoverable set = the BSim∩BinDiff
+   high-precision tier (146 crossval fns binary-wide were the proven set) + whatever BSim adds —
+   re-estimate AFTER step 1, do not promise ~6-8k until BSim-confirmed.
+
+Pilot branch pilot-ssn = net-0, NOT landed (kept as the documented honest-negative + recon-gate validation).
