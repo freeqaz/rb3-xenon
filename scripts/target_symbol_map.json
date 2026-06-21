@@ -12852,5 +12852,10 @@
  "0x82591120": "?GetIdentifyingToken@BattleSavedSetlist@@UBA?AVSymbol@@XZ",
  "0x82591840": "?GetSongTitle@NetSavedSetlist@@QBAPBDH@Z",
  "0x825912A8": "?Handle@LocalSavedSetlist@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x825921F0": "?AddSongTitle@NetSavedSetlist@@QAAXPBD@Z"
+ "0x825921F0": "?AddSongTitle@NetSavedSetlist@@QAAXPBD@Z",
+ "0x825cc1c0": "??_GAccomplishmentOneShot@@UAAPAXI@Z",
+ "0x825cdca8": "?InqProgressValues@AccomplishmentPlayerConditional@@UAA_NPAVBandProfile@@AAH1@Z",
+ "0x825ce628": "??_GAccomplishmentTrainerConditional@@UAAPAXI@Z",
+ "0x825ce950": "??_GAccomplishmentTrainerCategoryConditional@@UAAPAXI@Z",
+ "0x825cee38": "??_GAccomplishmentTrainerListConditional@@UAAPAXI@Z"
 }

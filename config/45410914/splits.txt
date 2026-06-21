@@ -1368,8 +1368,8 @@ band3/meta_band/MusicLibraryNetSetlists.cpp:
 	.text       start:0x825B6808 end:0x825B7C0C
 
 Award.cpp:
-	.pdata      start:0x8221DEA8 end:0x8221DF70
-	.text       start:0x825D0380 end:0x825D0D00
+	.pdata      start:0x8221DEA8 end:0x8221DF90
+	.text       start:0x825D0380 end:0x825D0E50
 
 FixedSizeSaveable.cpp:
 	.pdata      start:0x8221DFA0 end:0x8221DFA8
@@ -2377,20 +2377,20 @@ Accomplishment.cpp:
 	.text       start:0x82264178 end:0x82264FE8
 
 AccomplishmentCategory.cpp:
-	.pdata      start:0x82205E58 end:0x82205E70
-	.text       start:0x8243EF98 end:0x8243EFF8
+	.pdata      start:0x8221DF90 end:0x8221DFA0
+	.text       start:0x825D0E50 end:0x825D0EF0
 
 AccomplishmentPlayerConditional.cpp:
-	.pdata      start:0x82205EC8 end:0x82205EF0
-	.text       start:0x8243F178 end:0x8243F220
+	.pdata      start:0x8221DA60 end:0x8221DC30
+	.text       start:0x825CCBE0 end:0x825CE5A8
 
 AccomplishmentSetlist.cpp:
 	.pdata      start:0x8221D920 end:0x8221D968
 	.text       start:0x825CBC58 end:0x825CC010
 
 AccomplishmentSongFilterConditional.cpp:
-	.pdata      start:0x82205F40 end:0x82205F68
-	.text       start:0x8243F378 end:0x8243F418
+	.pdata      start:0x8221DD68 end:0x8221DDB8
+	.text       start:0x825CF390 end:0x825CF8F8
 
 UIEvent.cpp:
 	.pdata      start:0x822251B0 end:0x82225290
@@ -2547,6 +2547,30 @@ band3/meta_band/SavedSetlist.cpp:
 band3/meta_band/AccomplishmentSongConditional.cpp:
 	.pdata      start:0x82226428 end:0x82226440
 	.text       start:0x8264CEF0 end:0x8264D018
+
+band3/meta_band/AccomplishmentOneShot.cpp:
+	.pdata      start:0x8221D968 end:0x8221D9A0
+	.text       start:0x825CC010 end:0x825CC220
+
+band3/meta_band/AccomplishmentTrainerConditional.cpp:
+	.pdata      start:0x8221DC30 end:0x8221DC68
+	.text       start:0x825CE5A8 end:0x825CE788
+
+band3/meta_band/AccomplishmentTrainerCategoryConditional.cpp:
+	.pdata      start:0x8221DC68 end:0x8221DCE0
+	.text       start:0x825CE788 end:0x825CED70
+
+band3/meta_band/AccomplishmentTrainerListConditional.cpp:
+	.pdata      start:0x8221DCE0 end:0x8221DD38
+	.text       start:0x825CED70 end:0x825CF0F0
+
+band3/meta_band/AccomplishmentSongListConditional.cpp:
+	.pdata      start:0x8221DD38 end:0x8221DD68
+	.text       start:0x825CF0F0 end:0x825CF390
+
+band3/meta_band/AccomplishmentDiscSongConditional.cpp:
+	.pdata      start:0x8221DDB8 end:0x8221DEA8
+	.text       start:0x825CF8F8 end:0x825D0380
 
 band3/meta_band/AccomplishmentGroup.cpp:
 	.pdata      start:0x8221DFD8 end:0x8221DFE8
