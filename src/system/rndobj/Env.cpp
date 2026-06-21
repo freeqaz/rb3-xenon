@@ -38,8 +38,6 @@ const Transform &RndEnviron::ColorXfm() const {
 void RndEnviron::Save(BinStream &bs) {
     bs << 0x10;
     SAVE_SUPERCLASS(Hmx::Object);
-    SAVE_SUPERCLASS(RndDrawable);
-    SAVE_SUPERCLASS(RndTransformable);
     bs << mLightsReal << mLightsApprox;
     bs << (const Vector4 &)mAmbientColor << mFogStart << mFogEnd
        << (const Vector4 &)mFogColor;
@@ -95,7 +93,7 @@ bool RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
         }
         return true;
     }
-    return RndTransformable::Replace(from, to);
+    return Hmx::Object::Replace(from, to);
 }
 
 INIT_REVS(0x10, 0)
@@ -107,9 +105,6 @@ BEGIN_LOADS(RndEnviron)
         LOAD_SUPERCLASS(Hmx::Object)
     if (d.rev < 3) {
         RndDrawable::DumpLoad(bs);
-    } else {
-        LOAD_SUPERCLASS(RndDrawable)
-        LOAD_SUPERCLASS(RndTransformable)
     }
     if (d.rev < 0xF) {
         d >> mLightsOld;
@@ -212,15 +207,11 @@ BEGIN_PROPSYNCS(RndEnviron)
     SYNC_PROP_MODIFY(out_lo, mColorXfm.mLevelOutLo, mColorXfm.AdjustColorXfm())
     SYNC_PROP_MODIFY(out_hi, mColorXfm.mLevelOutHi, mColorXfm.AdjustColorXfm())
     SYNC_PROP(animate_from_preset, mAnimateFromPreset)
-    SYNC_SUPERCLASS(RndDrawable)
-    SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
 BEGIN_COPYS(RndEnviron)
     COPY_SUPERCLASS(Hmx::Object)
-    COPY_SUPERCLASS(RndDrawable)
-    COPY_SUPERCLASS(RndTransformable)
     if (ty != kCopyFromMax) {
         CREATE_COPY(RndEnviron)
         BEGIN_COPYING_MEMBERS
@@ -342,21 +333,12 @@ BEGIN_HANDLERS(RndEnviron)
     HANDLE(allowable_lights_real, OnAllowableLights_Real)
     HANDLE(allowable_lights_approx, OnAllowableLights_Approx)
     HANDLE_ACTION(select, Select(nullptr))
-    HANDLE_SUPERCLASS(RndDrawable)
-    HANDLE_SUPERCLASS(RndTransformable)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
-void RndEnviron::Draw() {
-    if (Showing()) {
-        const Transform &xfm = WorldXfm();
-        const Vector3 &pos = xfm.v;
-        if (sCurrent == this && sCurrentPosSet && !(sCurrentPos != pos)) {
-            return;
-        }
-        Select(&pos);
-    }
-}
+// Retail RB3-360 RndEnviron derives from Hmx::Object, not RndDrawable/
+// RndTransformable, so it has no Draw()/Showing()/WorldXfm(). Selection is
+// driven directly through Select() by the venue render path.
 
 RndEnviron::~RndEnviron() {
     if (sCurrent == this) {

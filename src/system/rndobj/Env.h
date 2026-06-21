@@ -6,12 +6,30 @@
 #include "obj/Object.h"
 #include "os/Timer.h"
 #include "rndobj/ColorXfm.h"
-#include "rndobj/Draw.h"
 #include "rndobj/Trans.h"
 #include "rndobj/Lit.h"
 #include "utl/MemMgr.h"
 
-class RndEnviron : public RndTransformable, public RndDrawable {
+// Retail RB3-360 RndEnviron derives DIRECTLY from Hmx::Object — NOT from
+// RndTransformable + RndDrawable (DC3's newer lineage). Verified from the retail
+// machine code:
+//   * RndEnviron::Save (fn_823F51C0) streams members starting at 0x28 — exactly
+//     where the Hmx::Object base ends (vtable@0, mTypeProps@4..0x10, mTypeDef@0x10,
+//     mNote@0x14, mName@0x18, mDir@0x1c, mRefs ring@0x20 = size 0x28). A
+//     RndTransformable+RndDrawable base would push the first member to ~0xd8.
+//   * LightPreset::FillEnvPresetData / AnimateEnvFromPreset load the ambient-fog
+//     owner pointer at [env+0x7c] (ObjOwnerPtr mAmbientFogOwner@0x74, .Ptr()@0x7c)
+//     and the owned env's fog floats at +0x84/+0x88 — DC3's layout had these
+//     ~0xB0 higher (mAmbientFogOwner@0x14c).
+//   * RndEnviron::OnRemoveAllLights (fn_823F5430) compares [this+0x7c] to confirm
+//     mAmbientFogOwner.Ptr()@0x7c.
+//   * The ctor (fn_823F5BB8) + Save + SyncProperty pin the tail: three byte-packed
+//     bools @0x15c/0x15d/0x15e, mAOStrength@0x160, Timer@0x168, tail floats
+//     @0x198..0x1a4, mUseToneMapping@0x1a8.
+// rb3-Wii's Env.h is the same Hmx::Object lineage; retail differs only by the
+// larger 0x28 Object base (Wii's is 0x1c) and by carrying mNumLights*/mHasPointCubeTex
+// in the NgEnviron subclass rather than in RndEnviron itself.
+class RndEnviron : public Hmx::Object {
     friend class LightPreset;
     friend class SpotlightDrawer;
 public:
@@ -24,8 +42,6 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual void Highlight() { RndTransformable::Highlight(); }
-    DRAW_DC3_VIRTUAL void Draw();
     virtual void Select(const Vector3 *);
     virtual void UpdateApproxLighting(const Vector3 *);
     virtual int NumLights_Real() const { return mLightsReal.size(); }
@@ -101,38 +117,40 @@ protected:
     static Vector3 sCurrentPos;
     static bool sCurrentPosSet;
 
-    ObjPtrList<RndLight> mLightsReal; // 0x100
-    ObjPtrList<RndLight> mLightsApprox; // 0x114
-    ObjPtrList<RndLight> mLightsOld; // 0x128
-    Hmx::Color mAmbientColor; // 0x13c
-    ObjOwnerPtr<RndEnviron> mAmbientFogOwner; // 0x14c
-    bool mFogEnable; // 0x160
-    float mFogStart; // 0x164
-    float mFogEnd; // 0x168
-    Hmx::Color mFogColor; // 0x16c
-    bool mFadeOut; // 0x17c
-    float mFadeStart; // 0x180
-    float mFadeEnd; // 0x184
-    float mFadeMax; // 0x188
-    ObjPtr<RndTransformable> mFadeRef; // 0x18c
-    Vector4 mLRFade; // 0x1a0, mLeftOut, mLeftOpaque, mRightOpaque, mRightOut
-    RndColorXfm mColorXfm; // 0x1b0
-    bool mUseColorAdjust; // 0x244
-    bool mAnimateFromPreset; // 0x245
+    // Retail RB3-360 member layout (verified from RndEnviron::Save / ctor /
+    // LightPreset anchors). Hmx::Object base ends at 0x28.
+    ObjPtrList<RndLight> mLightsReal; // 0x28
+    ObjPtrList<RndLight> mLightsApprox; // 0x3c
+    ObjPtrList<RndLight> mLightsOld; // 0x50
+    Hmx::Color mAmbientColor; // 0x64
+    ObjOwnerPtr<RndEnviron> mAmbientFogOwner; // 0x74 (.Ptr()@0x7c)
+    bool mFogEnable; // 0x80
+    float mFogStart; // 0x84
+    float mFogEnd; // 0x88
+    Hmx::Color mFogColor; // 0x8c
+    bool mFadeOut; // 0x9c
+    float mFadeStart; // 0xa0
+    float mFadeEnd; // 0xa4
+    float mFadeMax; // 0xa8
+    ObjPtr<RndTransformable> mFadeRef; // 0xac
+    Vector4 mLRFade; // 0xb8, mLeftOut, mLeftOpaque, mRightOpaque, mRightOut
+    RndColorXfm mColorXfm; // 0xc8 (size 0x94 -> ends 0x15c)
+    bool mUseColorAdjust; // 0x15c
+    bool mAnimateFromPreset; // 0x15d
     friend class LightPreset;
 public:
     bool GetAnimateFromPreset() const { return mAnimateFromPreset; }
 protected:
-    bool mAOEnabled; // 0x246
-    float mAOStrength; // 0x248
-    Timer mUpdateTimer; // 0x250
-    float mIntensityAverage; // 0x280
-    float mIntensityRate; // 0x284
-    float mExposure; // 0x288
-    float mWhitePoint; // 0x28c
-    bool mUseToneMapping; // 0x290
-    bool mUseApprox_Local; // 0x291
-    bool mUseApprox_Global; // 0x292
+    bool mAOEnabled; // 0x15e
+    float mAOStrength; // 0x160
+    Timer mUpdateTimer; // 0x168 (size 0x30 -> ends 0x198)
+    float mIntensityAverage; // 0x198
+    float mIntensityRate; // 0x19c
+    float mExposure; // 0x1a0
+    float mWhitePoint; // 0x1a4
+    bool mUseToneMapping; // 0x1a8
+    bool mUseApprox_Local; // 0x1a9
+    bool mUseApprox_Global; // 0x1aa
 };
 
 class RndEnvironTracker {
