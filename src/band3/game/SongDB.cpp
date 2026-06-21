@@ -587,14 +587,14 @@ void SongDB::SetupPracticeSections() {
         DataArray *msg = curEvent.Msg();
         Symbol sym = msg->Sym(1);
         if (sym == section) {
-            MemDoTempAllocations m(true, false);
+            MemDoTempAllocations m;
             PracticeSection sect;
             sect.unk0 = msg->Sym(2);
             sect.unk4 = BeatToTickInt(curEvent.start);
             sect.unk8 = -1;
             mPracticeSections.push_back(sect);
         } else if (strncmp(sym.Str(), "prc_", 4) == 0) {
-            MemDoTempAllocations m(true, false);
+            MemDoTempAllocations m;
             PracticeSection sect;
             sect.unk0 = Symbol(sym.Str());
             sect.unk4 = BeatToTickInt(curEvent.start);

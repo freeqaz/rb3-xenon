@@ -54,6 +54,7 @@ MemHeapStack &ThreadMemStack(bool);
 void MemPushTemp();
 void MemPopTemp();
 
+#ifdef HX_NATIVE
 struct MemTemp {
     MemTemp() { MemPushTemp(); }
     ~MemTemp() { MemPopTemp(); }
@@ -61,11 +62,41 @@ struct MemTemp {
 
 class MemDoTempAllocations {
 public:
-    MemDoTempAllocations(bool, bool);
+    // Args defaulted so the no-arg call sites (rewritten for the X360 match,
+    // where retail folds these to the no-arg MemTemp guard) still compile on the
+    // native host, which keeps the push/pop temp-allocation mechanism.
+    MemDoTempAllocations(bool = true, bool = false);
     ~MemDoTempAllocations();
 
     int mOld;
 };
+#else
+// Retail/match: the no-arg temp-allocation scope guard. The retail RB3-360 XEX
+// compiles BOTH the engine `MemTemp tmp;` spelling and the game-code
+// `MemDoTempAllocations m(true, false);` spelling down to ONE out-of-line
+// no-arg RAII guard (ctor fn_82797500, dtor fn_827975C8): it locks
+// gMemStackLock, captures the current heap's strategy into mOld, and forces the
+// heap to MemHeap::kLastFit for the duration of the scope; the dtor restores
+// mOld. There is NO MemPushTemp/MemTempRefs mechanism (that is a DC3-newer
+// divergence) and NO `enabled` static in retail. Every call site is just
+// `addi r3, <frame>; bl <ctor>` with no argument regs — verified across
+// MidiParser/DataArray/Tex/CameraManager/SongDB. MemDoTempAllocations is a
+// typedef alias of the same guard so the (true,false) game call sites collapse
+// to the no-arg form. HX_NATIVE keeps the legacy push/pop form above.
+struct MemTemp {
+    MemTemp();
+    ~MemTemp();
+
+    int mOld; // 0x0 — saved MemHeap::Strategy
+};
+
+// The game-code spelling `MemDoTempAllocations m(true, false)` (rb3-Wii) folds
+// to the SAME retail no-arg guard — verified: the SongDB/SongSort* call sites
+// emit no argument regs, identical to the engine `MemTemp tmp;` sites. Alias it
+// so both spellings share the one out-of-line ctor/dtor (fn_82797500/827975C8).
+// The (true,false) call sites are rewritten to the no-arg form for the match.
+typedef MemTemp MemDoTempAllocations;
+#endif
 
 struct MemHeapTracker {
     MemHeapTracker(int x) { MemPushHeap(x); }

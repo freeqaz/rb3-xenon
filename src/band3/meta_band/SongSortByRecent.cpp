@@ -83,7 +83,7 @@ int RecentCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
 }
 
 OwnedSongSortNode *SongSortByRecent::NewSongNode(SongRecord *record) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const BandSongMetadata *data = record->Data();
     int id = data->ID();
     int pos = TheSongMgr.GetPosInRecentList(id);
@@ -94,7 +94,7 @@ OwnedSongSortNode *SongSortByRecent::NewSongNode(SongRecord *record) const {
 }
 
 StoreSongSortNode *SongSortByRecent::NewSongNode(StoreOffer *offer) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *name = offer->OfferName();
     RecentCmp *cmp = new RecentCmp(-1, name, gNullStr, true);
     StoreSongSortNode *node = new StoreSongSortNode(cmp, offer);
@@ -102,7 +102,7 @@ StoreSongSortNode *SongSortByRecent::NewSongNode(StoreOffer *offer) const {
 }
 
 ShortcutNode *SongSortByRecent::NewShortcutNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     RecentCmp *other = (RecentCmp *)node->Cmp();
     RecentCmp::RecentType ty = other->mType;
     int pos = ((-ty) | ty) >> 31;
@@ -131,7 +131,7 @@ ShortcutNode *SongSortByRecent::NewShortcutNode(SongSortNode *node) const {
 }
 
 HeaderSortNode *SongSortByRecent::NewHeaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     RecentCmp *other = (RecentCmp *)node->Cmp();
     RecentCmp::RecentType ty = other->mType;
     int pos = ((-ty) | ty) >> 31;

@@ -255,7 +255,7 @@ void WorldInstance::DeleteTransientObjects() {
                 Hmx::Object *to = mDir->Find<Hmx::Object>(obj->Name(), true);
                 MILO_ASSERT(obj->ClassName() == to->ClassName(), 0x1CB);
                 {
-                    MemDoTempAllocations m(true, false);
+                    MemDoTempAllocations m;
                     for (ObjRef::iterator it = refs.begin(); it != refs.end(); ++it) {
                         if ((*it).RefOwner() && (*it).RefOwner()->Dir() == this) {
                             (*it).Replace(to);

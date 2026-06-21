@@ -617,6 +617,7 @@ void MemPopTemp() {
     }
 }
 
+#ifdef HX_NATIVE
 MemDoTempAllocations::MemDoTempAllocations(bool b1, bool b2) {
     mOld = gNumHeaps;
     if (b1 && gNumHeaps > 0) {
@@ -629,6 +630,34 @@ MemDoTempAllocations::~MemDoTempAllocations() {
         MemPopTemp();
     }
 }
+#else
+// Retail/match no-arg temp-allocation scope guard (fn_82797500 / fn_827975C8).
+// Locks gMemStackLock, captures the current heap's strategy into mOld, forces
+// MemHeap::kLastFit for the scope; the dtor restores mOld. Matches the rb3-Wii
+// MemDoTempAllocations ctor/dtor shape (CritSecTracker + GetCurrentHeapNum +
+// gHeaps[]) but with the retail unconditional kLastFit strategy and no
+// `enabled` static (verified byte-for-byte against the retail XEX).
+MemTemp::MemTemp() {
+    CritSecTracker tracker(gMemStackLock);
+    int heapNum = GetCurrentHeapNum();
+    MemHeap *heap = heapNum > -1 ? &gHeaps[heapNum] : nullptr;
+    if (heap) {
+        mOld = heap->mStrategy;
+        heap->mStrategy = MemHeap::kLastFit;
+    } else {
+        mOld = -1;
+    }
+}
+
+MemTemp::~MemTemp() {
+    CritSecTracker tracker(gMemStackLock);
+    if (mOld != -1) {
+        int heapNum = GetCurrentHeapNum();
+        MemHeap *heap = heapNum > -1 ? &gHeaps[heapNum] : nullptr;
+        heap->mStrategy = (MemHeap::Strategy)mOld;
+    }
+}
+#endif
 
 void MemFreeBlockStats(
     int heapNum, int &i2, int &i3, int &numFreeBytes, int &i5, int &biggestFreeBlock

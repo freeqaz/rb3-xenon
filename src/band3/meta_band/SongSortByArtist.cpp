@@ -64,7 +64,7 @@ void SongSortByArtist::Init() {
     DataArray *cfg = SystemConfig(song_select);
     DataArray *alphas = cfg->FindArray(alpha_shortcuts);
     for (int i = 1; i < alphas->Size(); i++) {
-        MemDoTempAllocations m(true, false);
+        MemDoTempAllocations m;
         Symbol curSym = alphas->Sym(i);
         ArtistCmp *cmp = new ArtistCmp(curSym, "", false, "", -1, "");
         mTree.push_back(new ShortcutNode(cmp, curSym, false));
@@ -72,7 +72,7 @@ void SongSortByArtist::Init() {
 }
 
 OwnedSongSortNode *SongSortByArtist::NewSongNode(SongRecord *record) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *artist = record->Data()->Artist();
     Symbol firstChar = NodeSort::FirstChar(artist, true);
     const char *album = record->Data()->Album();
@@ -86,7 +86,7 @@ OwnedSongSortNode *SongSortByArtist::NewSongNode(SongRecord *record) const {
 }
 
 StoreSongSortNode *SongSortByArtist::NewSongNode(StoreOffer *offer) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *artist = offer->Artist();
     Symbol firstChar = NodeSort::FirstChar(artist, true);
     const char *album = offer->AlbumName();
@@ -103,7 +103,7 @@ ShortcutNode *SongSortByArtist::NewShortcutNode(SongSortNode *) const {
 }
 
 HeaderSortNode *SongSortByArtist::NewHeaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *artist = node->GetArtist();
     ArtistCmp *cmp = new ArtistCmp(gNullStr, artist, node->GetIsCover(), "", -1, "");
     HeaderSortNode *headerNode = new HeaderSortNode(cmp, artist, false);
@@ -112,7 +112,7 @@ HeaderSortNode *SongSortByArtist::NewHeaderNode(SongSortNode *node) const {
 }
 
 SubheaderSortNode *SongSortByArtist::NewSubheaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *album = node->GetAlbum();
     ArtistCmp *cmp = new ArtistCmp(gNullStr, "", node->GetIsCover(), album, -1, "");
     SubheaderSortNode *headerNode = new SubheaderSortNode(cmp, album, false);

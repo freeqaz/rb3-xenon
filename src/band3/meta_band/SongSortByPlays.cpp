@@ -27,7 +27,7 @@ int PlaysCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
 }
 
 OwnedSongSortNode *SongSortByPlays::NewSongNode(SongRecord *record) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *title = record->Data()->Title();
     PlaysCmp *cmp = new PlaysCmp(record->mPlays, title);
     OwnedSongSortNode *node = new OwnedSongSortNode(cmp, record);
@@ -35,7 +35,7 @@ OwnedSongSortNode *SongSortByPlays::NewSongNode(SongRecord *record) const {
 }
 
 StoreSongSortNode *SongSortByPlays::NewSongNode(StoreOffer *offer) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *name = offer->OfferName();
     PlaysCmp *cmp = new PlaysCmp(0, name);
     StoreSongSortNode *node = new StoreSongSortNode(cmp, offer);
@@ -43,7 +43,7 @@ StoreSongSortNode *SongSortByPlays::NewSongNode(StoreOffer *offer) const {
 }
 
 ShortcutNode *SongSortByPlays::NewShortcutNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     PlaysCmp *other = (PlaysCmp *)node->Cmp();
     int plays = other->mPlays;
     PlaysCmp *cmp = new PlaysCmp(plays, "");
@@ -52,7 +52,7 @@ ShortcutNode *SongSortByPlays::NewShortcutNode(SongSortNode *node) const {
 }
 
 HeaderSortNode *SongSortByPlays::NewHeaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     PlaysCmp *other = (PlaysCmp *)node->Cmp();
     int plays = other->mPlays;
     PlaysCmp *cmp = new PlaysCmp(plays, "");

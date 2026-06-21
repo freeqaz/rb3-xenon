@@ -46,6 +46,9 @@ public:
     int *Alloc(int, int, int &);
     int *TryAlloc(int, int, int &);
 
+    // The temp-allocation scope guard pushes/restores mStrategy directly.
+    friend struct MemTemp;
+
 private:
     void InsertFreeBlock(FreeBlock *, int, FreeBlock *, FreeBlock *, int);
 

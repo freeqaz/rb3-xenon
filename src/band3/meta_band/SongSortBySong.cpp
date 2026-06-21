@@ -31,7 +31,7 @@ void SongSortBySong::Init() {
     DataArray *cfg = SystemConfig(song_select);
     DataArray *alphas = cfg->FindArray(alpha_shortcuts);
     for (int i = 1; i < alphas->Size(); i++) {
-        MemDoTempAllocations m(true, false);
+        MemDoTempAllocations m;
         Symbol curSym = alphas->Sym(i);
         SongCmp *cmp = new SongCmp(gNullStr, curSym);
         mTree.push_back(new ShortcutNode(cmp, curSym, false));
@@ -39,7 +39,7 @@ void SongSortBySong::Init() {
 }
 
 OwnedSongSortNode *SongSortBySong::NewSongNode(SongRecord *record) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *title = record->Data()->Title();
     Symbol firstChar = NodeSort::FirstChar(title, true);
     SongCmp *cmp = new SongCmp(title, firstChar);
@@ -48,7 +48,7 @@ OwnedSongSortNode *SongSortBySong::NewSongNode(SongRecord *record) const {
 }
 
 StoreSongSortNode *SongSortBySong::NewSongNode(StoreOffer *offer) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *name = offer->OfferName();
     Symbol firstChar = NodeSort::FirstChar(name, true);
     SongCmp *cmp = new SongCmp(name, firstChar);
@@ -57,7 +57,7 @@ StoreSongSortNode *SongSortBySong::NewSongNode(StoreOffer *offer) const {
 }
 
 ShortcutNode *SongSortBySong::NewShortcutNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *title = node->GetTitle();
     Symbol firstChar = NodeSort::FirstChar(title, true);
     SongCmp *cmp = new SongCmp(gNullStr, firstChar);
@@ -66,7 +66,7 @@ ShortcutNode *SongSortBySong::NewShortcutNode(SongSortNode *node) const {
 }
 
 HeaderSortNode *SongSortBySong::NewHeaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     const char *title = node->GetTitle();
     Symbol firstChar = NodeSort::FirstChar(title, true);
     SongCmp *cmp = new SongCmp(gNullStr, firstChar);

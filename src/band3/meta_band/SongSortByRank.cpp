@@ -100,7 +100,7 @@ void SongSortByRank::CancelSongRankingRequest() {
 }
 
 OwnedSongSortNode *SongSortByRank::NewSongNode(SongRecord *record) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     MILO_ASSERT(!mRankings.empty(), 0x80);
     const BandSongMetadata *data = record->mData;
     int songId = data->ID();
@@ -121,7 +121,7 @@ OwnedSongSortNode *SongSortByRank::NewSongNode(SongRecord *record) const {
 }
 
 StoreSongSortNode *SongSortByRank::NewSongNode(StoreOffer *offer) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     MILO_ASSERT(!mRankings.empty(), 0xA9);
     RankCmp *cmp = new RankCmp(-1, offer->OfferName(), RankCmp::kNoData);
     StoreSongSortNode *node = new StoreSongSortNode(cmp, offer);
@@ -129,7 +129,7 @@ StoreSongSortNode *SongSortByRank::NewSongNode(StoreOffer *offer) const {
 }
 
 ShortcutNode *SongSortByRank::NewShortcutNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     RankCmp *other = (RankCmp *)node->Cmp();
     RankCmp::RankType type = other->mType;
     int val;
@@ -162,7 +162,7 @@ ShortcutNode *SongSortByRank::NewShortcutNode(SongSortNode *node) const {
 }
 
 HeaderSortNode *SongSortByRank::NewHeaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     RankCmp *other = (RankCmp *)node->Cmp();
     RankCmp::RankType type = other->mType;
     int val;

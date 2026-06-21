@@ -22,7 +22,7 @@ public:
         mFlags |= mask;
         if (mFlags & 0x1F) {
             if (mVerts.size() == 0) {
-                MemDoTempAllocations temp(true, false);
+                MemDoTempAllocations temp;
                 mVerts.resize(mMesh->Verts().size());
                 for (int i = 0; i < mVerts.size(); i++) {
                     mVerts[i].pos = mMesh->Verts(i).pos;
@@ -36,7 +36,7 @@ public:
             }
         }
         if (mFlags & 0x400 && mColors.size() == 0) {
-            MemDoTempAllocations temp(true, false);
+            MemDoTempAllocations temp;
             mColors.resize(mMesh->Verts().size());
             for (int i = 0; i < mVerts.size(); i++) {
                 mColors[i] = mMesh->Verts(i).color;

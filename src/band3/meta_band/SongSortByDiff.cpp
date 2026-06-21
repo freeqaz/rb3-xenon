@@ -47,7 +47,7 @@ int DifficultyCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
 void SongSortByDiff::Init() { mSortPart = TheMusicLibrary->DifficultySortPart(); }
 
 OwnedSongSortNode *SongSortByDiff::NewSongNode(SongRecord *record) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     int tier = record->GetTier(mSortPart);
     float rank = record->Data()->Rank(mSortPart);
     if (rank == 0)
@@ -59,7 +59,7 @@ OwnedSongSortNode *SongSortByDiff::NewSongNode(SongRecord *record) const {
 }
 
 StoreSongSortNode *SongSortByDiff::NewSongNode(StoreOffer *offer) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     float rank = offer->PartRank(mSortPart);
     int tier = TheSongMgr.RankTier(rank, mSortPart);
     if (rank == 0)
@@ -71,7 +71,7 @@ StoreSongSortNode *SongSortByDiff::NewSongNode(StoreOffer *offer) const {
 }
 
 ShortcutNode *SongSortByDiff::NewShortcutNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     DifficultyCmp *other = (DifficultyCmp *)node->Cmp();
     int tier = other->mTier;
     DifficultyCmp *cmp = new DifficultyCmp(tier, 0, "");
@@ -81,7 +81,7 @@ ShortcutNode *SongSortByDiff::NewShortcutNode(SongSortNode *node) const {
 }
 
 HeaderSortNode *SongSortByDiff::NewHeaderNode(SongSortNode *node) const {
-    MemDoTempAllocations m(true, false);
+    MemDoTempAllocations m;
     DifficultyCmp *other = (DifficultyCmp *)node->Cmp();
     int tier = other->mTier;
     DifficultyCmp *cmp = new DifficultyCmp(tier, 0, "");
