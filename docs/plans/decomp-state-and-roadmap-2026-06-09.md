@@ -1970,3 +1970,9 @@ truncation fix (wf_6b96aa50).
 4. objdiff case-B fork (banked) + the now-integrated truncation fix together unstick more.
 
 **SESSION TOTAL (waves 3–18): 6932 → 9739 (+2807). Wave-18 +122 (charhair +14, truncation fix +108).**
+
+## WAVE-18 REFILL ADDENDUM (main @44de4c1): **9772** (9739 → 9772, +33)
+The truncation fix cascaded a strong reveal wave: +33 = 33 restored full-bodied functions now
+byte-exact + named via pin_identified/reveal_sweep (map-only, ADD-only, 0 regressions). Confirms
+the truncation fix REFILLS the reveal pool, not just the body-port pool.
+**WAVE-18 TOTAL = +155 (9617 → 9772). SESSION (waves 3–18): 6932 → 9772 (+2840).**
