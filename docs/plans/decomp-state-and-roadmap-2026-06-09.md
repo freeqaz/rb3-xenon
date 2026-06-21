@@ -1908,3 +1908,10 @@ B. TOOLING (orthogonal unstick): **jeff funclet-truncation fix** — the recurri
 
 **SESSION TOTAL (waves 3–17): 6932 → 9598 (+2666; wave-17 +40 matching + tooling: identity_transfer
 fixes, objdiff case-B fork banked, icf_alias_check.py).**
+
+## WAVE-17 REFILL ADDENDUM (main @0cd9116): **9617** (9598 → 9617, +19)
+The OnlineID 0x10 struct-lever CASCADED through reveal_sweep (refill was NOT a no-op this time,
+unlike the belt-pin waves): +19 = UIList +10 (ChildList/Poll/SelectedSym/SetSelected/OnScroll…),
+ViewSettingsProvider +7 (RefreshAllSettings/Mat/Text/SelectSetting…), MusicLibrary +2. Confirms
+struct-lever body-ports refill the reveal pool (vs relocate/belt pins which cascade ~0).
+**WAVE-17 TOTAL = +59 (9558 → 9617). SESSION (waves 3–17): 6932 → 9617 (+2685).**
