@@ -72,7 +72,7 @@ GemManager::GemManager(const TrackConfig &cfg, TrackDir *dir)
     SetupGems(0);
     UpdateLeftyFlip(false);
     DataRegisterFunc("set_key_glow", SetKeyGlow);
-    unk12c = mTrackDir->Find<RndDir>("chord_shape_outline", true)->mLocalXfm.v.y + 0.01f;
+    unk12c = mTrackDir->Find<RndDir>("chord_shape_outline", true)->LocalXfm().v.y + 0.01f;
     unkd8.reserve(10);
 }
 
@@ -1599,7 +1599,7 @@ void GemManager::ClearMissedPhrases() {
 
 TrackWidget *GemManager::GetWidgetByName(Symbol name) {
     if (mWidgets.find(name) == mWidgets.end()) {
-        mWidgets[name] = mTrackDir->Find<TrackWidget>(name.mStr, true);
+        mWidgets[name] = mTrackDir->Find<TrackWidget>(name.Str(), true);
     }
     return mWidgets[name];
 }

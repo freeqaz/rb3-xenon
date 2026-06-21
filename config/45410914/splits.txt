@@ -2589,6 +2589,7 @@ band3/bandtrack/GemTrack.cpp:
 	.text       start:0x82B61E30 end:0x82B64D38
 
 band3/bandtrack/GemManager.cpp:
+	.pdata      start:0x82254788 end:0x82254B80
 	.text       start:0x82B67448 end:0x82B6D688
 
 band3/game/GamePanel.cpp:
