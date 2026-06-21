@@ -30,6 +30,7 @@ Single-pass INDEPENDENT-fanout Opus wave (NOT a deep loop). Per wave:
 3. **Audit** (Opus): own-vs-foreign honesty audit of every pin (Waypoint method:
    COFF auto_03 by VA + DC3 ham_xbox_r.map contiguous owner; longest foreign run)
    + splits-clean. Key audits by **TU name** (not branch — the wave-11 audit-key bug).
+   - **ICF-alias gate (automated): `tools/icf_alias_check.py --worktree <wt> --baseline-report <pre-build report.json>`** — exit 1 = ICF-ALIAS INFLATION (the newly-100% set is ≤44B stub-folds with no real-bodied anchors, the wave-14/15 +57 fake-match shape). Use the **`--worktree` NEWLY-matched diff** mode (the strongest gate — catches a pin that ADDS only stub-folds even if the TU has anchors elsewhere); `--tu`/`--range` are lenient, for quick checks. byte-match ≠ ownership under ICF folding. Body-port lanes (splits unchanged) are exempt — stub-dominated is a span-pin concept only (the wave-15 false-drop).
 4. **Reduce** (Opus fan-in): landing guide (EV order + adjacent-pin overlap risk),
    same-file unions, regenerated next_frontier, vein_status.
 
