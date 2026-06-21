@@ -12968,5 +12968,9 @@
  "0x825464F0": "?HandlePreSongCompletedForUser@AccomplishmentManager@@QAAXVSymbol@@PAVLocalBandUser@@@Z",
  "0x826323C8": "?_M_erase_after@?$_Slist_base@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@IAAPAU_Slist_node_base@23@PAU423@@Z",
  "0x82632628": "?insert_unique_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
- "0x8255F858": "?GetShortNameFromSongID@BandSongMgr@@UBA?AVSymbol@@H_N@Z"
+ "0x8255F858": "?GetShortNameFromSongID@BandSongMgr@@UBA?AVSymbol@@H_N@Z",
+ "0x8245B940": "?SetFrame@RndMeshAnim@@UAAXMM@Z",
+ "0x824A5DE8": "?ForcePresets@LightPresetManager@@QAAXPAVLightPreset@@0M@Z",
+ "0x8246D090": "?SetFrame@RndParticleSysAnim@@UAAXMM@Z",
+ "0x82B2F578": "?RequirePushToTalk@MicManagerXbox@@QAAX_NH@Z"
 }
