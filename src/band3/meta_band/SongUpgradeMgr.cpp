@@ -216,11 +216,7 @@ void SongUpgradeMgr::ContentLoaded(Loader *loader, ContentLocT loct, Symbol s) {
 }
 
 const char *SongUpgradeMgr::ContentName(int i) const {
-    std::hash_map<int, Symbol>::const_iterator it = unk4c.find(i);
-    if (it != unk4c.end())
-        return it->second.Str();
-    else
-        return 0;
+    return unk4c.find(i)->second.Str();
 }
 
 bool SongUpgradeMgr::SongCacheNeedsWrite() const { return mSongCacheNeedsWrite; }
@@ -265,11 +261,8 @@ void SongUpgradeMgr::ClearCachedContent() {
 
 void SongUpgradeMgr::ClearFromCache(Symbol s) {
     std::hash_map<Symbol, std::vector<int> >::iterator it = unk34.find(s);
-    if (it == unk34.end())
-        MILO_FAIL("Content %s isn't cached!", s);
-    if (it != unk34.end()) {
-        unk34.erase(it);
-    }
+    MILO_ASSERT_FMT(it != unk34.end(), "Content %s isn't cached!", s);
+    unk34.erase(it);
 }
 
 void SongUpgradeMgr::GetUpgradeSongsInContent(Symbol key, std::vector<int> &upgradeSongs)
@@ -322,11 +315,9 @@ void SongUpgradeMgr::AddUpgradeData(
 void SongUpgradeMgr::MarkAvailable(int i, Symbol s) {
     std::hash_map<int, SongUpgradeData *>::iterator it = mUpgradeData.find(i);
     MILO_ASSERT(it != mUpgradeData.end(), 0x220);
-    bool canInsert = false;
-    if ((size_t)it->second->mUpgradeVersion <= 1U) canInsert = true;
+    bool canInsert = it->second->mUpgradeVersion >= 0 && it->second->mUpgradeVersion <= 1;
     if (canInsert) {
         mAvailableUpgrades.insert(i);
-        int key = i;
-        unk4c[key] = s;
+        unk4c[i] = s;
     }
 }

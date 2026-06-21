@@ -137,8 +137,9 @@ void SongSelectPanel::Poll() {
         mLeaderboard->Poll();
     if (unk58 >= 0.0f && GetState() == kUp) {
         float diff = TheTaskMgr.UISeconds() - unk58;
-        if (!unk54 && diff > unk4c && unk48 && unk48->IsReady() && unk48->HasRows()) {
+        if (!unk54 && diff > unk4c && unk48->IsReady() && unk48->HasRows()) {
             unk58 = TheTaskMgr.UISeconds();
+            static Symbol set_mini_leaderboard_showing("set_mini_leaderboard_showing");
             static Message msg(set_mini_leaderboard_showing, 0);
             unk54 = true;
             msg[0] = 1;
@@ -156,6 +157,7 @@ void SongSelectPanel::Poll() {
 
 void SongSelectPanel::RestartLeaderboardTimer() {
     unk58 = TheTaskMgr.UISeconds();
+    static Symbol set_mini_leaderboard_showing("set_mini_leaderboard_showing");
     static Message msg(set_mini_leaderboard_showing, 0);
     unk54 = false;
     msg[0] = 0;
@@ -167,6 +169,7 @@ void SongSelectPanel::RestartLeaderboardTimer() {
 
 void SongSelectPanel::CancelLeaderboardTimer() {
     unk58 = -1.0f;
+    static Symbol set_mini_leaderboard_showing("set_mini_leaderboard_showing");
     static Message msg(set_mini_leaderboard_showing, 0);
     unk54 = false;
     msg[0] = 0;
