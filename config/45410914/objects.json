@@ -494,7 +494,7 @@
       "system/ui/LabelShrinkWrapper.cpp": "NonMatching",
       "system/ui/LabelNumberTicker.cpp": "NonMatching",
       "system/rndobj/Bitmap.cpp": "NonMatching",
-      "system/world/LightPresetManager.cpp": "NonMatching",
+      "system/world/LightPresetManager.cpp": { "status": "NonMatching", "extra_cflags": ["/DRB3_MAP_0x1C"] },
       "system/os/Memcard_Xbox.cpp": "NonMatching",
       "system/gesture/IdentityInfo.cpp": "NonMatching",
       "system/utl/OSCMessenger.cpp": "NonMatching",
