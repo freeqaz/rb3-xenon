@@ -1915,3 +1915,58 @@ unlike the belt-pin waves): +19 = UIList +10 (ChildList/Poll/SelectedSym/SetSele
 ViewSettingsProvider +7 (RefreshAllSettings/Mat/Text/SelectSetting…), MusicLibrary +2. Confirms
 struct-lever body-ports refill the reveal pool (vs relocate/belt pins which cascade ~0).
 **WAVE-17 TOTAL = +59 (9558 → 9617). SESSION (waves 3–17): 6932 → 9617 (+2685).**
+
+# ============================================================
+# WAVE-18 CLOSE (2026-06-21): **9739 / 65547** (9617 → 9739, +122; build green)
+#   18A matching +14 (charhair) + 18B TRUNCATION FIX +108
+# ============================================================
+WIDE 2-track. 18A = 8-lane fresh-inventory pivot (wf_f4ad9d22); 18B = jeff funclet-
+truncation fix (wf_6b96aa50).
+
+## 18A FRESH-INVENTORY PIVOT: +14 (charhair only; 7/8 lanes refuted entire classes)
+- **charhair-revert +14** (DC3-drift STRUCT LEVER): CharHair.cpp/.h in our tree were the
+  DC3-newer (rev-13) revision (extra mWind/mFlat/mWindObj members); RB3-retail is rev-11.
+  Reverting to the rb3-Wii form fixed a −8 this-relative member cascade across the CharHair
+  cluster. SAME mechanism class as wave-17 OnlineID/UIList/Data. Landed via cherry-pick (a6e4fb9).
+- ⭐ DECISIVE NEGATIVES (7 lanes closed candidate CLASSES): **fresh-inventory contiguous-TU
+  ports EXHAUSTED** (belt-gap-bisect + 2 fresh-TU lanes agree: no unwired band3 TU forms a
+  contiguous oracle-backed span — all remaining unpinned game code is ICF-scattered);
+  **map-augmentation NOT a broad vein** (72-TU exhaustive scan: gemtrack's "byte-identical
+  unpaired" claim is FALSE — they're divergent near-misses, not free reveals; one-off at best);
+  **pin_audit DRY** (16 candidates all fail own-vs-foreign). The ONLY productive matching vein
+  is **DC3-vs-RB3 version-drift struct levers** (revert DC3-newer members RB3-retail lacks).
+
+## 18B ⭐⭐ TRUNCATION FIX +108 (biggest single lever since the Handle keystone)
+- ROOT CAUSE (not a live dtk bug): a STALE committed **symbols.txt** cache. dtk's CFA derives
+  the correct length from .pdata, but `Symbols::add(replace=false)` kept the existing stale
+  `size:0x28` for same-named auto `fn_` symbols, and clamp only SHRINKS. 1207 functions carried
+  a truncated size frozen by an older jeff → each split into a 40-byte stub + an orphan tail
+  objdiff couldn't pair (false 0%); some truncation stubs even FALSELY byte-matched (ICF-stub class).
+- FIX (data-level, **stock-dtk-compatible**): regenerated symbols.txt via the
+  `grow_undersized_function_symbols` pass (jeff branch `fix-funclet-truncation @39e482f`,
+  do-no-harm validated: 1207 grow pairs, 0 shrinks, function set identical, 0 overlaps) forcing
+  each size to its pdata length, + 5 splits.txt .text-end extensions (Rand/JoypadClient/HDCache/
+  SongPreview/FlowSetProperty, pins authored around the old truncated sizes). Committed 548fbf9.
+- Honest +108 = full-body restorations now byte-matching (GemTrack::See 0%→100%, Award ctor
+  0x28→0x8C, RndPropAnim::ValueFromFrame, Sequence::OnPlay, LicenseMgr::ContentLoaded…). The fix
+  REDUCES stub-fold risk (eliminates truncation stubs). Stable run1=run2=9739; stock dtk + the
+  committed symbols.txt also yields 9739 (the committed artifact is self-sufficient — the fixed
+  dtk is kept locally as a future-truncation safety net only).
+- ⭐ REFILLS THE FRONTIER: 1875 functions were truncated (649 in pinned ranges); only ~108 now
+  match — the rest are now FULL-BODIED NEAR-MISSES previously hidden by truncation = a fresh
+  body-port pool. So we are NOT stuck — the truncation fix opened new inventory.
+- BUILD INCIDENT (recovered): an 18B reader's grown-size analysis leaked into main's gitignored
+  `function_analysis/` cache, corrupting dtk symbol-sizing → a phantom "Rand.cpp ends within
+  symbol" split abort. Cleared by removing the stray cache. (Lesson: read-only analysis lanes
+  must not write analysis caches into the MAIN tree.)
+
+### WAVE-19 FRONTIER:
+1. **Truncation-refilled body-port pool** — the ~541 now-visible full-bodied near-misses in pinned
+   ranges (1875 truncated − ~108 matched − unpinned). Many are real methods (RndPropAnim/Geo/
+   Sequence/LicenseMgr…) that were hidden; objdiff + port the divergent ones. NEW cheap-ish inventory.
+2. **DC3-drift struct-lever hunt** (the proven matching vein): more classes where our DC3-sourced
+   tree carries later-revision members RB3-retail lacks (CharHair/OnlineID/UIList/Data pattern).
+3. gemtrack permuter near-misses (NextKickNoteMs 99.97%, SetEnableSlot 99%, …) — low-EV permuter pass.
+4. objdiff case-B fork (banked) + the now-integrated truncation fix together unstick more.
+
+**SESSION TOTAL (waves 3–18): 6932 → 9739 (+2807). Wave-18 +122 (charhair +14, truncation fix +108).**
