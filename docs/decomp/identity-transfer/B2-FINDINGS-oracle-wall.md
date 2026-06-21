@@ -53,6 +53,44 @@ Stats-struct-lever-gated — field-gate pins their non-tail head).
 4. byte-equality is the only positive gate; `body_divergence_killed` (good-oracle
    methods that pinned clean but stayed <100%) measures the residual axis-B/D wall.
 
+## UPDATE — harvest validation on GOOD-oracle targets: reframe FALSIFIED at scale
+
+Ran the corrected procedure (oracle_quality-selected GOOD targets, PIN-SET = GOOD ∩
+field-gate ∩ obj-defined) on 5 high-good-oracle TUs: OvershellPanel(18), MetaPanel(11),
+AppLabel(11), TourProgress(9), MetaPerformer(6). **Result: 0/5 landable, good-oracle
+hit-rate 0/55, 28 methods body-diverged.** The pins were CLEAN (no misattribution —
+oracle_quality worked), but the **compiled bodies diverge from retail**:
+
+| TU | wall | evidence |
+|---|---|---|
+| OvershellPanel | axis-B/D (inlining+regalloc) | heavy state-machine bodies; `AttemptToAddUser` 99.57% size-exact, blocked only by source-immune ICF merges |
+| MetaPanel | **axis-A struct-layout** | DC3-newer headers ≠ retail (`mMusic` 0x60 vs 0x64; object ~0x344B vs ~0xd8B); `Exiting` **99.93%** on a single offset |
+| AppLabel/TourProgress/MetaPerformer | axis-A version-drift / axis-B inlining / residual misattribution | — |
+
+**Conclusion: good-oracle is NECESSARY BUT NOT SUFFICIENT.** oracle_quality screens
+misattribution (B2's wall) but does NOT predict BODY PORTABILITY. Across **10 fresh
+TUs** (B2 5 + harvest 5), **0 landed**. RockCentral (+17) was genuinely exceptional —
+good-oracle AND simple-accessor bodies AND matching layout. The "1169 good-oracle
+methods" backlog is a CEILING gated by body-divergence; realized yield on non-RockCentral
+TUs ≈ 0.
+
+**THREE walls, ranked by tractability:**
+1. Oracle misattribution → screened by `oracle_quality.py` (mostly).
+2. **axis-A struct-layout** (MetaPanel-class) → STRUCT-LEVER territory (B5). The
+   near-misses (`Exiting` 99.93%, single `mMusic` offset) WOULD land if the DC3-newer
+   panel headers were corrected to retail layout — but that is a substantial
+   header-reconstruction job (MetaPanel object is ~600B larger in retail), a
+   struct-lever-lane effort, NOT identity-transfer.
+3. **axis-B/D codegen** (OvershellPanel-class) → permuter (axis-D regalloc) or
+   source-immune (ICF merges); the hardest, lowest-EV wall.
+
+**STATUS: identity-transfer harvest = TOOLED + BANKED, vein THIN.** The pipeline is
+built and correct; new wins require the oracle to improve OR struct-levers to fix the
+axis-A layouts OR the permuter for axis-D. None is identity-transfer work per se. Do
+not run more blind harvest waves — they hit the body-divergence ceiling (0/10 proven).
+The tooling stands ready for when a struct-lever lands a panel-class layout (then
+re-harvest that family) or the oracle gets better VAs.
+
 ## Pipeline friction fixed forward (from B2 agents)
 - Fresh CoW worktrees lack `build/tools/wibo` → symlink from main (the harvest
   workflow does this); building a single `.obj` target avoids the `tools` phony's
