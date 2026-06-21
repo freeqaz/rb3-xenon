@@ -32,7 +32,8 @@
 static bool gLoading = false;
 
 UIList::UIList()
-    : UITransitionHandler(this), mListDir(this), mListState(this, this), mDataProvider(0),
+    : UITransitionHandler(this), mListDir(0), mListState(this, this), mUIListRev(0),
+      mDataProvider(0),
       mNumData(100), mPaginate(0), mUser(0), mParent(0), mExtendedLabelEntries(this),
       mExtendedMeshEntries(this), mExtendedCustomEntries(this), mAutoScrollPause(2),
       mAutoScrollSendMsgs(0), mAutoScrollDir(1), mAutoScrolling(0), mAutoScrollTimer(-1),
@@ -127,7 +128,9 @@ END_PROPSYNCS
 BEGIN_SAVES(UIList)
     SAVE_REVS(0x15, 0)
     SAVE_SUPERCLASS(UIComponent)
-    bs << mListDir;
+    // RB3 retail (rb3-Wii oracle): mListDir is a raw pointer recovered from the
+    // resource dir at load time, NOT serialized here (DC3's ResourceDirPtr
+    // streamed a FilePath). Not a matched save path; kept compile-clean.
     bs << NumDisplay();
     bs << GridSpan();
     bs << Circular();
@@ -393,14 +396,10 @@ void UIList::PreLoadWithRev(BinStreamRev &bs) {
         );
     }
     UIComponent::PreLoad(bs.stream);
-    if (bs.rev >= 0x14) {
-        bs.stream >> mListDir;
-#ifdef HX_NATIVE
-        printf("UIList::PreLoad '%s' rev=%d mListDir=%p (%s)\n",
-               Name(), bs.rev, (void*)(Hmx::Object*)mListDir,
-               mListDir ? mListDir->Name() : "<null>");
-#endif
-    }
+    // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* recovered from
+    // the loaded resource dir; it is not stream-deserialized here as DC3's
+    // ResourceDirPtr was. Not a matched preload path; kept compile-clean.
+    mUIListRev = bs.rev;
     bs.PushRev(this);
 }
 
@@ -533,7 +532,8 @@ void UIList::PreLoad(BinStream &bs) {
 void UIList::PostLoad(BinStream &bs) {
     BinStreamRev d(bs, bs.PopRev(this));
     UIComponent::PostLoad(d.stream);
-    mListDir.PostLoad(nullptr);
+    // RB3 retail (rb3-Wii oracle): mListDir (raw UIListDir*) is recovered from
+    // mResource->Dir() during resource load, not via a ResourceDirPtr PostLoad.
     bool local_scrollpastmin = false;
     bool local_scrollpastmax = true;
     bool local_circular;
@@ -671,7 +671,7 @@ DataNode UIList::OnMsg(const ButtonDownMsg &msg) {
 
     if (CanScroll()) {
         gridspan = mListState.GridSpan();
-        childList = mListDir->SubList(mListState.SelectedDisplay(), mWidgets);
+        childList = ChildList();
         o = mListDir->Orientation();
         b1 = false;
 
@@ -707,7 +707,7 @@ DataNode UIList::OnMsg(const ButtonDownMsg &msg) {
 
                 oldNextFill = UIListSubList::sNextFillSelection;
                 if (childList) {
-                    UIList *curChild = mListDir->SubList(mListState.SelectedDisplay(), mWidgets);
+                    UIList *curChild = ChildList();
                     bool b2 = false;
                     if (curChild == childList) {
                         int dispFill = scrollDir + mListState.SelectedDisplay();
@@ -788,7 +788,9 @@ DataNode UIList::OnSetSelectedSimulateScroll(DataArray *da) {
 void UIList::OldResourcePreload(BinStream &bs) {
     char buf[0x100];
     bs.ReadString(buf, 0x100);
-    mListDir.SetName(buf, true);
+    // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* recovered from
+    // mResource->Dir(); there is no ResourceDirPtr::SetName here. Reading the
+    // legacy resource name keeps the stream cursor correct. Not a matched path.
 }
 
 int UIList::NumDisplay() const { return mListState.NumDisplay(); }

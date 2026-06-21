@@ -130,10 +130,17 @@ protected:
     void PreLoadWithRev(BinStreamRev &);
     void BoundingBoxTriangles(std::vector<std::vector<Vector3> > &);
 
-    ResourceDirPtr<UIListDir> mListDir; // 0x8c
-    std::vector<UIListWidget *> mWidgets; // 0xa4
-    UIListState mListState; // 0xb0
-    DataProvider *mDataProvider; // 0xf8
+    // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* assigned from
+    // mResource->Dir() in PostLoad — NOT DC3's ResourceDirPtr<UIListDir>
+    // (the DC3-newer divergence). The raw pointer is 0xc bytes smaller than
+    // ResourceDirPtr, shrinking mWidgets/mListState back to retail offsets.
+    UIListDir *mListDir; // 0x8c
+    std::vector<UIListWidget *> mWidgets;
+    UIListState mListState;
+    // RB3 retail load-revision tracker, between mListState and mDataProvider
+    // (rb3-Wii: int mUIListRev). DC3 dropped this member.
+    int mUIListRev;
+    DataProvider *mDataProvider;
     /** "Num data to show (only for milo)". Ranges from 1 to 1000. */
     int mNumData; // 0xfc
     /** "Allow scrolling by pages?" */
