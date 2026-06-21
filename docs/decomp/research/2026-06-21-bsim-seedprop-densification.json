@@ -1,0 +1,83 @@
+{
+  "experiment": "VT-BSim seed-propagation densification for scattered RB3-specific game-TU identification",
+  "date": "2026-06-21",
+  "verdict": "NO-GO",
+  "one_line": "VT seed propagation does NOT densify per-TU clusters and DEGRADES precision vs a plain BSim query; neither method recovers the BinDiff-BSim 95% regime. No scattered game TU reaches the GO bar (>=8 newly-located real-bodied fns at >=90% precision).",
+
+  "stage0_mechanism": {
+    "finding": "The fork's BSim correlator is a Version-Tracking PROGRAM-CORRELATOR, not an H2-DB query. It computes feature vectors IN-SESSION via the decompiler for BOTH programs, reads ACCEPTED VTAssociations as seeds (findAcceptedSeeds), and extends along the call graph (Children/Parents round 0; GrandChildren/Siblings/Spouses/GrandParents round 1; plus single-parent hole-patching).",
+    "external_h2_db_needed_for_treatment": false,
+    "external_h2_db_needed_for_baseline": true,
+    "cross_arch_ok": "getWeightsFile(PowerPC:BE:64:A2ALT-32addr, PowerPC:BE:32:Gekko_Broadway) returns lshweights_nosize.xml (different sizes, both in {32,64}) -> the correlator RUNS cross-architecture using the size-independent (nosize) weights. Not a blocker.",
+    "driver": "tools/ghidra/VTSeedPropDriver.java (new VTSessionDB(src=Wii, dst=RB3Xenon); add seeds as ACCEPTED manual matches; BSimProgramCorrelatorFactory with USE_ACCEPTED_MATCHES_AS_SEEDS=true; correlate; export all matches)."
+  },
+
+  "setup": {
+    "source_program": "band_r_wii.elf-781439 (rb3-Wii dev decomp, MWCC PPC, NAMED functions; 36343 fns / 23729 real-bodied)",
+    "dest_program": "default.xex / RB3Xenon (retail XEX, MSVC VMX128, anonymous fn_8...; 35460 fns / 23185 real-bodied)",
+    "seeds": "150 high-confidence Wii<->Xenon anchors from unified_id_rb3wii.json (conf>=0.85 & sim>=0.70 & size>=32) UNION crossval agree-fns; 146 applied as ACCEPTED (4 dest fns missing)",
+    "isolation": "Both shared MCP-locked projects left untouched. Worked on reflinked btrfs copies under /home/free/tmp/bsim_seed_work; Wii program exported to gzf and imported into the RB3Xenon project copy."
+  },
+
+  "treatment_result": {
+    "correlate_runtime_s": 119,
+    "potential_pairs_discovered": 394861,
+    "result_matches": 3735,
+    "new_status_accepted": 0,
+    "all_results_status": "AVAILABLE (3627) / BLOCKED (41) / ACCEPTED=seeds only (67)",
+    "new_nonseed_realbodied_sim_ge_0.90": 163,
+    "new_nonseed_realbodied_sim_ge_0.95": 127,
+    "category_of_new_high_sim": {"quazal_net": 61, "game_or_other": 50, "stl": 7, "engine": 5, "zlib": 2}
+  },
+
+  "cross_tool_precision_vs_bindiff_ground_truth": {
+    "method": "non-seed propagated matches whose Xenon VA is ALSO covered by BinDiff(conf>=0.9); agree if same Wii class or same normalized name",
+    "note": "high-sim verifiable subsets are statistically thin (n=3..41) because propagated NEW matches rarely land on VAs BinDiff opined on; broad-threshold (oracle conf>=0.7) gave n=55..203 and the SAME ~18-24% precision",
+    "treatment": {"sim_ge_0.5": 0.26, "sim_ge_0.7": 0.30, "sim_ge_0.9": 0.24, "broad_n203": 0.187},
+    "baseline_plain_query": {"sim_ge_0.5": 0.04, "sim_ge_0.7": 0.10, "sim_ge_0.9": 0.14, "sim_ge_0.95": 0.17, "robust_sim_ge_0.9_n18": 0.39},
+    "interpretation": "Both are far below the prior BinDiff-INTERSECT-BSim 95%. Disagreements are real errors: _restgpr_23/25/26 compiler stubs propagated onto unrelated fns; BandCharacter::StartLoadClips mapped where BinDiff says DirectInstrument::NoteOff; many cross-class mismatches."
+  },
+
+  "densification_per_stem": {
+    "metric": "NEW (non-seed) located real-bodied (>44B) fns at sim>=0.90, non-Quazal game stems, stem derived from Wii class->source map",
+    "treatment": {"stems_ge_8": 0, "stems_ge_5": 0, "stems_ge_3": 6, "densest": [[3,"NetGameMsgs"],[3,"GemManager"],[2,"Stats"],[2,"Band"]]},
+    "baseline_plain_query": {"stems_ge_8": 8, "stems_ge_5": 11, "stems_ge_3": 16, "densest": [[36,"BandOffline"],[21,"GemManager"],[17,"NetGameMsgs"],[16,"Band"],[13,"MusicLibraryNetSetlists"],[13,"LockStepMgr"]]},
+    "key_finding": "Seed propagation produced LESS dense per-stem clusters than the plain query, AND those clusters are still low-precision. Propagation did NOT turn singletons into clusters. The plain query is denser but ~40%-precision contaminated -> its dense clusters are unusable without an intersection filter."
+  },
+
+  "go_no_go": {
+    "bar": ">=1 scattered game TU with >=8 newly-located unpinned real-bodied fns at >=90% calibrated precision, materially exceeding the 57 the plain crossval already gives",
+    "met": false,
+    "reasons": [
+      "0 game stems reach >=8 (or even >=5) newly-located fns under propagation",
+      "calibrated cross-tool precision ~20-24% (treatment) / ~40% (baseline), nowhere near 90%",
+      "propagation DEGRADES precision relative to the plain baseline (call-graph extension drags in wrong neighbors)",
+      "the densest treatment GAME cluster is 3-4 fns and itself error-prone"
+    ]
+  },
+
+  "calibration_caveat_important": {
+    "finding": "splits.txt .text-range stem-equality is INVALID as a precision oracle for SCATTERED game TUs.",
+    "evidence": "Known-correct seeds fail it: GemTrainerPanel::GemTrainerPanel() (a conf>=0.85 BinDiff pair) sits at Xenon 0x82266818, INSIDE the CharBonesMeshes pin [0x82265608,0x82266ce0). GemTrainerPanel is unpinned/scattered and physically interleaved into another TU's carved span. 39/40 seeds-in-pinned-ranges 'failed' the range test -> the test is wrong, not the seeds. This is the ICF-scatter wall itself. Precision must be measured against the independent BinDiff oracle, NOT pinned ranges."
+  },
+
+  "what_would_change_it": [
+    "An INTERSECTION gate (BinDiff(conf>=0.7) AND BSim/VT-prop AND a third independent signal e.g. string/callee fingerprint) restores ~95% precision but the prior experiment already showed that only yields ~146 fns binary-wide, mostly singletons -- propagation does not add recall to that intersection.",
+    "A HIGH-CONFIDENCE LOCATOR that fuses multiple signals (BinDiff + string/callee fingerprint + Ghidra BSim + size/CFG) BEFORE per-method reconstruction -- the standing reframe in the roadmap (fuzzy-locator-reconstruction-design.md). VT seed propagation is NOT that locator: it trades precision for a small, noisy recall bump.",
+    "Better seeds: the 150 anchors are sparse and scattered (110 stems, mostly singletons), so the call graph offers little dense local structure to propagate through. A locator producing many correct same-TU anchors first could give propagation real clusters to extend -- but that is circular (you need the locator the experiment was meant to provide)."
+  ],
+
+  "reproduce": {
+    "scratch_root": "/home/free/tmp/bsim_seed_work (btrfs reflinked project copies; gzf export/import; H2 DB) + /tmp/bsim_seed (small artifacts + scripts)",
+    "fork_dist": "/home/free/code/milohax/ghidra/build/ghidra-dist/ghidra_12.2_DEV",
+    "steps": [
+      "reflink copy RB3Xenon.rep (top-level, UNLOCKED) and RB3.rep into /home/free/tmp/bsim_seed_work",
+      "analyzeHeadless ... RB3 -process band_r_wii.elf-781439 -postScript ExportToGzf.java <out.gzf>",
+      "analyzeHeadless ... RB3Xenon -import <out.gzf>   (no reanalysis; program imported as /wii)",
+      "BASELINE: bsim createdatabase file:.../rb3wii.bsim medium_nosize; bsim generatesigs 'ghidra:.../RB3Xenon?/wii' <xmldir> --bsim file:.../rb3wii.bsim --commit (commit hits a JDK26 XML entity limit -> rerun `bsim commitsigs` with JAVA_TOOL_OPTIONS=-Djdk.xml.maxGeneralEntitySizeLimit=0); analyzeHeadless RB3Xenon -process default.xex -postScript BSimQueryToJson.java file:.../rb3wii.bsim baseline_matches.json 5 0.0 0.0",
+      "TREATMENT: analyzeHeadless RB3Xenon -process default.xex -postScript VTSeedPropDriver.java seeds.json /wii seedprop_matches.json 0.0 0.0",
+      "MEASURE: cross-tool precision vs unified_id_rb3wii.json + per-stem densification via Wii class->stem map"
+    ],
+    "scripts": "tools/ghidra/VTSeedPropDriver.java, tools/ghidra/BSimQueryToJson.java, tools/ghidra/ExportToGzf.java, tools/ghidra/SpotCheck.java (NOT committed; left for review)"
+  }
+}
