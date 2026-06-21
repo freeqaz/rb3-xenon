@@ -2019,3 +2019,47 @@ the inline-policy force-multiplier hunt, (b) a permuter sweep on the accumulated
 3. Remaining truncation near-misses + DC3-drift residue (lower EV).
 
 **SESSION TOTAL (waves 3–19): 6932 → 9788 (+2856). Wave-19 +16.**
+
+# ============================================================
+# WAVE-20 CLOSE (2026-06-21): **9793 / 65547** (9792 → 9793, +1; build green)
+#   ⭐ PRACTICAL EXHAUSTION OF THE CHEAP-MATCHING WAVE FORMAT declared
+# ============================================================
+8-lane inline-policy hunt + permuter sweep. Yield = +1 (CubeTex MILO_NOTIFY arg-eval, trunc-residue).
+7/8 lanes refuted/all-walls. THE TREND IS DECISIVE: W9 +723 → W12 +103 → W19 +16 → **W20 +1**.
+
+## What's EXHAUSTED (this wave's dedicated hunts confirmed it)
+- **INLINE-POLICY force-multiplier vein**: 3 dedicated lanes (mem/engine/game, full scan of 299
+  band3 headers + Mem/Heap family + engine base classes) found ZERO new force-multipliers and ZERO
+  landable singles. The SetFrame +4 (wave-19) was the prize; it's harvested. ⭐ LESSON: header-text
+  comparison produces mostly FALSE positives (overloading + the payoff is a BINARY fact not a source
+  fact) — the true gate is (a) retail emits NO matched standalone symbol AND (b) cross-TU callers
+  emit `bl`. A productive inline finder must drive off OBJDIFF (a near-miss whose mismatch is a
+  spurious `bl` to a trivial accessor with no matched standalone), NOT header grep.
+- **PERMUTER as a wave-driver**: 4 dedicated lanes (math/util/rndobj/bandtrack, aggressive settings)
+  converged 0/all to 100%. Every residual is FP-regalloc / instruction-scheduling / SHA1-K-constant
+  (permuter-stuck class); the signed/unsigned + var-extraction wins were harvested in earlier sweeps.
+  Retire as a wave-driver; keep ONLY as a per-function spot-tool after a body/struct fix opens a new
+  permutable surface.
+- Span-pin / relocate / sliver / hash_map / map-aug / fresh-inventory contiguous-port: all exhausted
+  (waves 13–18). The cheap reveal/sliver/permuter/inline ERA IS OVER.
+
+## ⭐ THE HARD FRONTIER (what remains — deliberate mini-campaigns, NOT fan-out)
+1. **MidiParser/MemMgr no-arg MemTemp RAII force-multiplier** (HIGHEST EV remaining, a TRUE keystone):
+   fn_82797500 no-arg MemTemp RAII = ~36 `bl` callers + ~30 existing matched callsites to re-verify.
+   One careful keystone-style campaign with full whole-binary composed verify (soft-rule shared-edit gate).
+2. **Big-belt string-fingerprint bisection + scattered-TU ports** (wave-13 frontier, largest untapped
+   contiguous-match surface; two big un-bisected belt gaps; MainHubPanel-class scattered TUs) —
+   gated on the body-divergence wall (BandProfile proved ported MWCC→MSVC bodies diverge).
+3. **objdiff case-B fork** (BANKED, doc handoff/objdiff-caseb-fork-banked.md, +150-220 ceiling) — but
+   gated on (2) succeeding first (needs the scattered TUs ported so case-B methods are oracle-named).
+4. **Body-divergence reconstructions, one at a time**: EditSetlistPanel SetEditState case-4
+   (fn_825FF380), MoveParent CacheLinks/StepMoves (DC3 oracle WRONG, retail divergence), FileStream
+   DeleteChecksum (blocked on StreamChecksumValidator dtor-triviality prereq). +1-each, high effort.
+
+⭐ VERDICT: the cheap-matching wave format is PRACTICALLY EXHAUSTED. Cost-per-match has risen ~3 orders
+of magnitude since the wave-9 keystone era. Remaining work is REAL RECONSTRUCTION (force-multiplier
+keystones done as single careful campaigns + scattered-TU body-ports + the gated case-B fork), not
+parallel fan-out. WAVE 21 = the MidiParser/MemMgr MemTemp-RAII keystone campaign (the one clear
+remaining force-multiplier); if it walls, that confirms full practical exhaustion of tractable levers.
+
+**SESSION TOTAL (waves 3–20): 6932 → 9793 (+2861). Wave-20 +1.**
