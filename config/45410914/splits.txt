@@ -15,8 +15,8 @@ MasterAudio.cpp:
 	.text       start:0x82758380 end:0x8275A534
 
 Object.cpp:
-	.pdata      start:0x82233D38 end:0x82233D40
-	.text       start:0x82737FE8 end:0x82738160
+	.pdata      start:0x82233D38 end:0x82233D60
+	.text       start:0x82737FE8 end:0x82738220
 
 RockCentral.cpp:
 	.pdata      start:0x821EAED0 end:0x821EAED8
@@ -183,8 +183,8 @@ BandCamShot.cpp:
 	.text       start:0x8229F0A0 end:0x822A71D8
 
 BandDirector.cpp:
-	.pdata      start:0x821EB640 end:0x821EBF48
-	.text       start:0x8227C378 end:0x82285220
+	.pdata      start:0x821EB640 end:0x821EBF70
+	.text       start:0x8227C378 end:0x82285300
 
 BandWardrobe.cpp:
 	.pdata      start:0x821F5988 end:0x821F5F80
@@ -207,8 +207,8 @@ Instarank.cpp:
 	.text       start:0x82632F00 end:0x826340F0
 
 BandCharacter.cpp:
-	.pdata      start:0x821EA6E8 end:0x821EAE20
-	.text       start:0x8226C738 end:0x82275EA8
+	.pdata      start:0x821EA6E8 end:0x821EAE60
+	.text       start:0x8226C738 end:0x82276000
 
 Console.cpp:
 	.pdata      start:0x82206EF0 end:0x82207168
@@ -409,8 +409,8 @@ TDStretch.cpp:
 	.text       start:0x82B420A0 end:0x82B43E68
 
 SynapseAPO.cpp:
-	.pdata      start:0x822529C8 end:0x82252A18
-	.text       start:0x82B3EE30 end:0x82B3F338
+	.pdata      start:0x822529C8 end:0x82252A28
+	.text       start:0x82B3EE30 end:0x82B3F3AC
 
 inflate.c:
 	.pdata      start:0x82251718 end:0x82251738
@@ -816,8 +816,8 @@ CharBoneDir.cpp:
 	.text       start:0x823A2468 end:0x823A6128
 
 CharClip.cpp:
-	.pdata      start:0x821FA540 end:0x821FA860
-	.text       start:0x8236A4B8 end:0x8236E060
+	.pdata      start:0x821FA540 end:0x821FA868
+	.text       start:0x8236A4B8 end:0x8236E194
 
 CharClipSet.cpp:
 	.pdata      start:0x821FEC28 end:0x821FEE78
@@ -878,8 +878,8 @@ LightPreset.cpp:
 	.text       start:0x824981C8 end:0x824A5990
 
 Timer.cpp:
-	.pdata      start:0x8220FFF0 end:0x82210058
-	.text       start:0x824FE310 end:0x824FEE18
+	.pdata      start:0x8220FFF0 end:0x82210068
+	.text       start:0x824FE310 end:0x824FEED4
 
 Str.cpp:
 	.pdata      start:0x82239230 end:0x82239340
@@ -1003,8 +1003,8 @@ Mesh.cpp:
 	.text       start:0x82404BE8 end:0x8240A428
 
 CharMeshHide.cpp:
-	.pdata      start:0x821FC3E8 end:0x821FC5B8
-	.text       start:0x8238E328 end:0x8238FC68
+	.pdata      start:0x821FC3E8 end:0x821FC5C0
+	.text       start:0x8238E328 end:0x8238FCDC
 
 AmbientOcclusion.cpp:
 	.pdata      start:0x82208F30 end:0x82209310
@@ -1023,8 +1023,8 @@ XLSPConnection.cpp:
 	.text       start:0x822CB7C8 end:0x822CB814
 
 CharIKFingers.cpp:
-	.pdata      start:0x821FD0F8 end:0x821FD260
-	.text       start:0x8239E5A0 end:0x823A1230
+	.pdata      start:0x821FD0F8 end:0x821FD280
+	.text       start:0x8239E5A0 end:0x823A137C
 
 HamPhotoDisplay.cpp:
 	.pdata      start:0x821F3AC8 end:0x821F3AD0
@@ -1079,8 +1079,8 @@ HollaBackMinigame.cpp:
 	.text       start:0x82319A08 end:0x82319AAC
 
 PropAnim.cpp:
-	.pdata      start:0x82203E50 end:0x82204148
-	.text       start:0x824137A0 end:0x824166D8
+	.pdata      start:0x82203E50 end:0x82204170
+	.text       start:0x824137A0 end:0x82416994
 
 HamNavList.cpp:
 	.pdata      start:0x821F64F0 end:0x821F64F8
@@ -1231,8 +1231,8 @@ FlowTimer.cpp:
 	.text       start:0x823A6128 end:0x823A616C
 
 CharWeightSetter.cpp:
-	.pdata      start:0x821FD718 end:0x821FD720
-	.text       start:0x823A63D8 end:0x823A6538
+	.pdata      start:0x821FD718 end:0x821FD728
+	.text       start:0x823A63D8 end:0x823A6650
 
 HamIKEffector.cpp:
 	.pdata      start:0x821FE338 end:0x821FE340
@@ -1337,8 +1337,8 @@ MetaMaterial.cpp:
 	.text       start:0x82423A88 end:0x82424D50
 
 PartLauncher.cpp:
-	.pdata      start:0x82205D38 end:0x82205D98
-	.text       start:0x8243CAF0 end:0x8243D468
+	.pdata      start:0x82205D38 end:0x82205DC8
+	.text       start:0x8243CAF0 end:0x8243D57C
 
 DataNode.cpp:
 	.pdata      start:0x82232D48 end:0x82232EA8
@@ -1564,8 +1564,8 @@ CreditsPanel.cpp:
 	.text       start:0x82789950 end:0x8278A908
 
 HeldButtonPanel.cpp:
-	.pdata      start:0x822381C0 end:0x82238318
-	.text       start:0x82788338 end:0x827894D8
+	.pdata      start:0x822381C0 end:0x82238328
+	.text       start:0x82788338 end:0x82789560
 
 SoundTouch.cpp:
 	.pdata      start:0x82252A68 end:0x82252AD0
@@ -1646,8 +1646,8 @@ CameraManager.cpp:
 	.text       start:0x824A6D08 end:0x824AA230
 
 UITrigger.cpp:
-	.pdata      start:0x8223F598 end:0x8223F610
-	.text       start:0x827FFC70 end:0x82800428
+	.pdata      start:0x8223F598 end:0x8223F620
+	.text       start:0x827FFC70 end:0x828004F8
 
 FxSend.cpp:
 	.pdata      start:0x82230570 end:0x82230610
@@ -1876,8 +1876,8 @@ Synapse_dsp.cpp:
 	.text       start:0x82B3FE08 end:0x82B41F80
 
 UIListSlot.cpp:
-	.pdata      start:0x8223E508 end:0x8223E5D8
-	.text       start:0x827EFAC0 end:0x827F06E8
+	.pdata      start:0x8223E508 end:0x8223E5F0
+	.text       start:0x827EFAC0 end:0x827F07B4
 
 DataPointMgr.cpp:
 	.pdata      start:0x8223A0E0 end:0x8223A1E8
@@ -2098,8 +2098,8 @@ Screenshot.cpp:
 	.text       start:0x827FF650 end:0x827FF990
 
 SpotlightEnder.cpp:
-	.pdata      start:0x8220DAA0 end:0x8220DAA8
-	.text       start:0x824D6CD0 end:0x824D6DE0
+	.pdata      start:0x8220DAA0 end:0x8220DAB8
+	.text       start:0x824D6CD0 end:0x824D6E68
 
 system/synth_xbox/FxSendPitchShift.cpp:
 	.pdata      start:0x822526B8 end:0x822526C0
@@ -2110,8 +2110,8 @@ system/synth_xbox/FxSendCompress.cpp:
 	.text       start:0x82B34128 end:0x82B341BC
 
 MultiMeshProxy.cpp:
-	.pdata      start:0x82208488 end:0x82208498
-	.text       start:0x8246E658 end:0x8246E808
+	.pdata      start:0x82208488 end:0x822084B8
+	.text       start:0x8246E658 end:0x8246E8E4
 
 StandingStillGestureFilter.cpp:
 	.pdata      start:0x82238C90 end:0x82238C98
