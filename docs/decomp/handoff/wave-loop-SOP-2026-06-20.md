@@ -1,18 +1,22 @@
 # Wave-loop SOP + live state (2026-06-20, pre-compaction handoff)
 
 ## EXACT STATE
-- main @ `c00664c`, **9404 / 65546 matched**, build green, tree clean (only
-  untracked auto_*.obj/global_fuzzy_pairs.json/function_analysis/dc3_content_match.json).
-- Worktrees: just main + pre-existing `rb3-sizedvec`. All wave 3–12 branches pruned.
-- **Session 6932 → 9404 (+2472)** across waves 3–12, every landed lever composed-verified EXACT.
+- main @ `b43162c` (+ a roadmap/SOP docs commit on top), **9454 / 65552 matched**,
+  build green, tree clean (only untracked auto_*.obj/global_fuzzy_pairs.json/
+  function_analysis/dc3_content_match.json).
+- Worktrees: main + pre-existing `rb3-sizedvec` + `wt-w13-refill` (refill sweep in
+  flight as of wave-13 close — harvest/remove it when it returns). Wave 3–13 lane
+  branches pruned.
+- **Session 6932 → 9454 (+2522)** across waves 3–13, every landed lever composed-verified EXACT.
 
-## ⚠ IN-FLIGHT: WAVE 13 is RUNNING
-- Workflow `wf_6e9aaa4c-105`, task id `wxj0w8jxu`.
-- Result lands at `/home/free/tmp/claude-1000/-home-free-code-milohax-rb3-xenon/e8dfac0c-3411-4ec7-a6ed-8da30a81c451/tasks/wxj0w8jxu.output` (JSON doc; access `doc["result"]`).
-- Script: `…/workflows/scripts/wave12-metaband-belt-2-wf_98c92d16-cd2.js` (reused, retargeted to wave-13 @ BASELINE 9404).
-- 7 lanes: gapA-bisect-port, gapB-bisect-port, SaveLoadManager, SongSortNode,
-  SavedSetlist-retry (FixedSizeSaveable.h template overload — soft-rule, gate on composed A/B),
-  AccomplishmentConditional-evict. On completion: HARVEST via the SOP below.
+## WAVE 13 — LANDED (2026-06-20): 9404 → 9454 (+50)
+- gapA/CharData.cpp +14, SavedSetlist-retry +33, gapB/AccomplishmentSetlist relocate +3;
+  SongSortNode honest-negative (ICF-scattered); SaveLoadManager foundational-flagged (deferred).
+- Harvest tooling now lives in `scripts/harvest/` (was /tmp). See WAVE-13 CLOSE in the roadmap doc.
+- **WAVE-14 FRONTIER = the gapB conditional RELOCATE belt** (~+60 mechanical relocates:
+  AccomplishmentPlayerConditional +20, fresh-pin batch +25, smaller Acc* relocates) +
+  OvershellSlot-head extension +10 + LockStepMgr +20. Keystone chain (own short wave,
+  sequence): ProfileMgr → BandProfile → SaveLoadManager. Full list = roadmap WAVE-13 CLOSE.
 
 ## THE WAVE LOOP (proven, repeatable — this is the engine)
 Single-pass INDEPENDENT-fanout Opus wave (NOT a deep loop). Per wave:

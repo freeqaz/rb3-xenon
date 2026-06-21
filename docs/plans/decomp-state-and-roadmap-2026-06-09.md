@@ -1581,3 +1581,67 @@ sliver candidates). Cost-per-match rising (panels scatter, oracle thinning).
 
 **SESSION TOTAL (waves 3–12): 6932 → 9404 (+2472, build green; every landed
 lever composed-verified EXACT).**
+
+# ============================================================
+# WAVE-13 CLOSE (2026-06-20): **9454 / 65552** (9404 → 9454, +50, build green)
+# ============================================================
+wave13-belt-bisection (wf_6e9aaa4c-105, 14 agents; single-pass INDEPENDENT
+fan-out, one TU per discover lane). 3 land-ready lanes, all audited HONEST +
+splits-clean, composed-verified EXACT (run1=run2=9454, no divergence):
+- **SavedSetlist-retry +33** — ported band3/meta_band/SavedSetlist.cpp, the W12
+  deferral RESOLVED (byte-exact pair via content-match; the FixedSizeSaveable
+  overload worry didn't block the contiguous cluster). .text [0x82590C70,
+  0x82592270), abuts Campaign.cpp end exactly at 0x82590C70. Largest gain.
+- **gapA / CharData.cpp +14** — the GAP A [0x825BDF28,0x825C10D8) bisection-scout
+  lane proved the gap is exactly TWO sub-TUs: (1) CharData.cpp [0x825BDF28,
+  0x825BEBD8) 36 fns UNWIRED = ported here; (2) OvershellSlot.cpp HEAD
+  [0x825BEBD8,0x825C10D8) 74 fns WIRED-but-under-pinned = frontier. Boundary
+  proven by string fingerprints (prefab_* end the lower, msg_duration/state_handlers
+  begin the upper) + IsQuitToken@0x825BFB08 byte-matching the compiled
+  OvershellSlot.obj. CharData now ABUTS CriticalUserListener below and unblocks
+  the OvershellSlot-head extension above.
+- **gapB / AccomplishmentSetlist +3** — RELOCATE (Waypoint pattern): dead sliver
+  pin [0x8243F220,0x8243F330) (0/8 matched) → real cluster [0x825CBC58,0x825CC010).
+  Splits-relocate + 5 ADD-only map entries, NO .cpp change (already wired+compiling).
+  Proved the GAP B vein: the Accomplishment*Conditional family is mostly
+  DEAD-SLIVER pins whose real clusters sit contiguously in [0x825cc010,0x825d0ef0).
+- SongSortNode = HONEST NEGATIVE (+0): its 53 methods are ICF-scattered binary-wide
+  (0x8226f…–0x82b4af…), NOT a contiguous cluster — the proposed 0x826438C0 span is
+  empty. Classic Waypoint/Object scatter. Lever (deferred) = per-fn identity transfer
+  across the scattered owning TUs (multi-TU, not self-contained). Fold with SongSort.cpp.
+- SaveLoadManager = FOUNDATIONAL-FLAGGED (not landed): match ceiling gated by
+  ProfileMgr.cpp (TheProfileMgr.* calls need ProfileMgr's interface+layout first).
+  Sequence the keystone chain ProfileMgr → BandProfile → SaveLoadManager; do NOT bundle.
+
+TOOLING: the coordinator harvest/land helpers were promoted /tmp → **scripts/harvest/**
+(land.sh + resolve_json_union.py + resolve_splits_union.py + README), generalized to
+derive repo-root/script-dir and accept a worktree-path OR branch-name. SOP doc updated.
+
+### NEXT WAVE (wave-13 reducer frontier — gapB conditional RELOCATE belt is the
+### single richest near-term seam, ~+60 of mostly-MECHANICAL relocates, no body work
+### for already-matching fns; all wired+compiling, just splits-relocate + map-add):
+1. **AccomplishmentPlayerConditional relocate(+bodyport) +20** — dead sliver
+   @0x8243F178 (0/5) → real cluster [0x825ccbe0,0x825ce5a8) 58 fns (best_score/
+   career_fills/total_bre_hits anchors); some bodies diverge (Configure 0x130 vs
+   0xD8) so couple relocate with a small body-port.
+2. **gapB-conditionals fresh-pin batch +25** — OneShot [0x825cc010,0x825cc220),
+   TrainerConditional/TrainerCategory/TrainerList, SongListConditional,
+   DiscSongConditional — unpinned-no-sliver wired+compiling conditionals filling
+   GAP B around the relocated AccomplishmentSetlist.
+3. **overshellslot-head-extension +10** — extend the existing OvershellSlot .text
+   pin DOWN from 0x825C10D8 to 0x825BEBD8 (now abuts CharData); gen_game_target_map
+   --tu OvershellSlot.cpp --apply for the head addrs; body-port divergent head fns.
+4. **LockStepMgr +20** — upper neighbour to SavedSetlist [0x82592270,~0x82595540)
+   ~136 anon fns, unpinned+unwired net-message TU (releasing_lock_step/
+   BasicStartLockMsg/EndLockMsg/LockResponseMsg). Port-then-pin.
+5. Smaller Acc* relocates: AccomplishmentSongFilterConditional [0x825cf390,0x825cf8f8),
+   AccomplishmentSongConditional [0x825cc220,0x825ccbe0) (modest), AccomplishmentCategory
+   tail [0x825d0e50,0x825d0ef0) + Award 0xD00→0xE50 tail-extend.
+6. KEYSTONE CHAIN (own short wave, sequence don't bundle): ProfileMgr.cpp +20 →
+   BandProfile.cpp +12 → SaveLoadManager; + saveload-sibling-cluster [0x8252E6B0,
+   0x82532068) +15 (vtable 0x8209002C). SongSort.cpp co-located with SongSortNode.
+7. Region B1 [0x825C3A44,0x825CB590) (~30KB OvershellSlot strings) needs a decision:
+   OvershellSlot unpinned tail (extension) vs a coupled provider TU. Re-run pin_audit.
+
+**SESSION TOTAL (waves 3–13): 6932 → 9454 (+2522, build green; every landed
+lever composed-verified EXACT).**
