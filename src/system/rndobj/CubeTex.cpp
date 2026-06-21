@@ -172,6 +172,16 @@ void RndCubeTex::PostLoad(BinStream &bs) {
     Update();
 }
 
+// Retail RB3 compiled this TU's LoadBitmap MILO_NOTIFY with its arguments
+// EVALUATED for side effects (the (void)(args) comma form) — the retail target
+// keeps the PathName(this) free-function call while the message string vanishes.
+// (ValidateBitmapProperties below keeps the global sizeof()-stripped form, which
+// matches its retail body, so the redefine is scoped to LoadBitmap only.)
+#ifndef HX_NATIVE
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
+#endif
+
 bool RndCubeTex::LoadBitmap(const FilePath &fp, RndBitmap &bmap) {
     const char *cc;
     bool ret = true;
@@ -199,6 +209,12 @@ bool RndCubeTex::LoadBitmap(const FilePath &fp, RndBitmap &bmap) {
     }
     return ret;
 }
+
+// Restore the global sizeof()-stripped form for the rest of the TU.
+#ifndef HX_NATIVE
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#endif
 
 bool RndCubeTex::ValidateBitmapProperties(std::vector<CubeFace> &faces) {
     if (props.mWidth == 0 || props.mHeight == 0)
