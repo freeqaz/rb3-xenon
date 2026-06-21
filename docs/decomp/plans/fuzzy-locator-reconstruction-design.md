@@ -61,3 +61,45 @@ branch hf2-begin1) — finishing it end-to-end validates the loop before scaling
 - Build order: (0) identity_transfer confidence gate [quick] → (1) the locator [the keystone] →
   (2) workbench + the SongSortNode pilot → scale to LockStepMgr/MainHubPanel/BandProfile.
 - The objdiff case-B fork (banked) only pays off AFTER Stage 1+2 produce byte-matching bodies; keep banked.
+
+## UPDATE (2026-06-21) — the confirmer ALREADY EXISTS, and the prize is huge
+
+The Ghidra/BSim survey (wf_237928af) settled the Stage-1 locator design with on-disk evidence:
+
+### The semantic confirmer is built + validated
+- `../ghidra` (branch `bsim-xenon-patches`) ships a complete, runnable **BSim + Version-Tracking
+  "Function Matching" correlator** (LSH p-code feature seeds + `USE_ACCEPTED_MATCHES_AS_SEEDS` +
+  call-graph propagation), with freeqaz's scale/determinism patches making it tractable on a 65k-fn
+  binary. Built dist at `../ghidra/build/ghidra-dist/.../support/bsim` (embedded H2, no postgres,
+  VMX128 p-code, MSVC-switch CFG fixes). **No build needed.**
+- Prior experiment `docs/decomp/gameid/{VERDICT.json,crossval_agree.json}` (2026-06-09): BSim ALONE
+  is degenerate (per-fn precision 0.16–0.36; BandMachineMgr sink absorbs 6759 fns; ~6112 ≤32B stubs
+  at sim=1.0). **But BinDiff(conf≥0.7) ∩ BSim(sim≥0.5) = 0.95 per-FUNCTION precision** (18/19 pins),
+  producing `crossval_agree.json` = 146 high-precision per-method labels. The old "negative" verdict
+  was ONLY against TU-span bracketing — it is **POSITIVE for per-method confirmation**, the exact
+  locator-first use case. Do not re-litigate BSim-alone.
+
+### Stage-1 LOCATOR = a weighted-fusion scorer over EXISTING maps (wiring + calibration)
+Candidate maps already on disk: `unified_id_rb3wii.json` (BinDiff, 9301), `ghidriff_identities.json`
+(978; 913 BSim-derived), `unified_id_callgraph.json` (1555 topology), `fingerprints.json` (string).
+`tools/locator.py` = fuse {BinDiff conf, string-fingerprint overlap, callgraph-neighbor agreement,
+size ratio, BSim sim} → {va, method, fused_score, class}. **Calibrate weights against the 25 known
+game pins + the SongSortNode hand table — do NOT guess.** Tier-1 auto-accept = the crossval ∩ set.
+MANDATORY filters: drop ≤32B coverage stubs + the BandMachineMgr sink. Seeds for VT-BSim =
+`tools/ghidra/rb3_symbol_map.json` (1139 anchors). The MCP (port 8002) does NOT expose p-code/BSim —
+drive headless (`support/bsim` CLI + `GenerateSignatures`/`BSimQueryToJson.java`), serialized (single-process projects).
+
+### THE PRIZE (honest EV)
+**589 of 590 game TUs are ICF-scattered (9,126 fns); exactly 1 is contiguous.** A per-method locator
+is structurally required for the WHOLE RB3 game layer. Honest recoverable ceiling **~6,000–8,000 fns
+(~doubling matched_functions from 9,801)**: per the SongSortNode bands, ~28% RECON (real-bodied,
+oracle supplies body) ≈ **2,500–2,700 strongly-recoverable own-method matches**, ~43% UNPLACEABLE-stub
+(coverage stubs — fuzzy/denominator only), rest mixed. This is REAL reconstruction effort (15 body-ports
+per TU class), not cheap reveals — but it is the endgame lever, not a marginal one.
+
+### EV-ranked build steps (from the survey)
+1. [hours] tools/locator.py JSON-fusion over existing maps + the mandatory stub/BandMachineMgr filters.
+2. [hours] `generatesigs` on the imported RB3Xenon + rebuild the rb3-Wii H2 BSim DB (VERDICT.json cmds)
+   + a ~30-LOC `BSimQueryToJson.java` → a static BSim-sim JSON the fusion consumes. Run once, serialized.
+3. [medium] the per-method reconstruction (the SongSortNode pilot is proving this loop now).
+4. [med-high] calibrate the fusion weights against the 25 pins + SongSortNode ground truth.
