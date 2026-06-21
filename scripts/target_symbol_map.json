@@ -12910,5 +12910,11 @@
  "0x82663808": "?RecordScore@RockCentral@@QAAXHHAAV?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@HH_NPAVObject@Hmx@@AAVDataResultList@@@Z",
  "0x82663918": "?UpdateSetlist@RockCentral@@QAAXPAVLocalSavedSetlist@@AAVDataResultList@@PAVObject@Hmx@@HH@Z",
  "0x826B5F58": "??1IdUpdater@@UAA@XZ",
- "0x826BE160": "?GetTimesSaved@Stats@@QBAHXZ"
+ "0x826BE160": "?GetTimesSaved@Stats@@QBAHXZ",
+ "0x8258BE98": "?IsFulfilled@AccomplishmentTourConditional@@UBA_NPAVBandProfile@@@Z",
+ "0x8258BEF0": "?InqBestProgressValues@AccomplishmentTourConditional@@QAA_NPAVBandProfile@@AAH1@Z",
+ "0x825CC0F8": "?HasSpecificSongsToLaunch@AccomplishmentOneShot@@UBA_NXZ",
+ "0x825CE870": "?IsFulfilled@AccomplishmentTrainerCategoryConditional@@UBA_NPAVBandProfile@@@Z",
+ "0x825CE9A8": "?GetFirstUnfinishedAccomplishmentEntry@AccomplishmentTrainerCategoryConditional@@UBA?AVSymbol@@PAVBandProfile@@@Z",
+ "0x825CEB78": "?InqCompletedLessons@AccomplishmentTrainerCategoryConditional@@QBA_NPAVBandProfile@@AAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z"
 }
