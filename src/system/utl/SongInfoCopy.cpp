@@ -74,9 +74,16 @@ SongInfoCopy::SongInfoCopy(const SongInfo *info) {
     mName = info->GetName();
     mBaseFileName = info->GetBaseFileName();
     mPackageName = info->GetPackageName();
+    mNumVocalParts = info->GetNumVocalParts();
+    mHopoThreshold = info->GetHopoThreshold();
+    mMuteVolume = info->GetMuteVolume();
+    mVocalMuteVolume = info->GetVocalMuteVolume();
     mPans = info->GetPans();
     mVols = info->GetVols();
     mCores = info->GetCores();
+    mCrowdChannels = info->GetCrowdChannels();
+    mDrumSoloSamples = info->GetDrumSoloSamples();
+    mDrumFreestyleSamples = info->GetDrumFreestyleSamples();
     mTrackChannels = info->GetTracks();
     int num_midis = info->NumExtraMidiFiles();
     mExtraMidiFiles.reserve(num_midis);
