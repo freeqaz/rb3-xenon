@@ -501,7 +501,7 @@ Gen.cpp:
 
 ScrollSelect.cpp:
 	.pdata      start:0x8223ED38 end:0x8223EDF0
-	.text       start:0x827F7CB8 end:0x827F8748
+	.text       start:0x827F7CB8 end:0x827F8758
 
 UIScreen.cpp:
 	.pdata      start:0x8223C1D8 end:0x8223C360
@@ -596,7 +596,7 @@ NetCacheMgr_Xbox.cpp:
 
 AppChild.cpp:
 	.pdata      start:0x822114B8 end:0x82211508
-	.text       start:0x82514E68 end:0x825152EC
+	.text       start:0x82514E68 end:0x825152F0
 
 MapFile_Xbox.cpp:
 	.pdata      start:0x82211EA0 end:0x82211F00
@@ -620,7 +620,7 @@ arraylist.c:
 
 StoreEnumeration.cpp:
 	.pdata      start:0x82238D08 end:0x82238D28
-	.text       start:0x82792EB0 end:0x82792FC4
+	.text       start:0x82792EB0 end:0x82792FC8
 
 Jukebox.cpp:
 	.pdata      start:0x82238668 end:0x82238680
@@ -628,7 +628,7 @@ Jukebox.cpp:
 
 Sorting.cpp:
 	.pdata      start:0x82238800 end:0x82238810
-	.text       start:0x8278DD80 end:0x8278DFFC
+	.text       start:0x8278DD80 end:0x8278E008
 
 UIGuide.cpp:
 	.pdata      start:0x8223F6D8 end:0x8223FA40
@@ -773,7 +773,7 @@ UIListArrow.cpp:
 
 UIPicture.cpp:
 	.pdata      start:0x8223E6C0 end:0x8223E720
-	.text       start:0x827F11F0 end:0x827F1AE8
+	.text       start:0x827F11F0 end:0x827F1B00
 
 BufStream.cpp:
 	.pdata      start:0x8223A018 end:0x8223A048
