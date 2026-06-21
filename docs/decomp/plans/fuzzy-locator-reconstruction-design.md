@@ -142,3 +142,71 @@ build order):
    re-estimate AFTER step 1, do not promise ~6-8k until BSim-confirmed.
 
 Pilot branch pilot-ssn = net-0, NOT landed (kept as the documented honest-negative + recon-gate validation).
+
+## ⛔ CONSOLIDATED VERDICT (2026-06-21) — the scattered game layer is MOSTLY NOT recoverable with current oracles; it splits into class A (thin, recoverable) + class B (un-anchorable)
+
+Three rigorous experiments + probes now converge on a single, evidence-backed conclusion.
+The "589/590 scattered, ~6-8k prize" framing is **REFUTED**. Do not re-litigate it.
+
+**Experiment 2 — VT-BSim seed propagation: NO-GO** (`research/2026-06-21-bsim-seedprop-densification.{json,md}`).
+The fork's `USE_ACCEPTED_MATCHES_AS_SEEDS` call-graph correlator **degrades** precision
+(0.24 vs plain-query 0.39 @ sim≥0.9) and produces *fewer/smaller* clusters than a plain
+BSim query — it spreads `_restgpr_*` compiler stubs + cross-class mismatches along the
+call graph. The 95% regime exists ONLY as the sparse BinDiff(conf≥0.7)∩BSim(sim≥0.5)
+intersection (146 fns binary-wide; BSim-alone dense clusters like BandOffline-36 do NOT
+survive the BinDiff corroboration). Seed propagation is REMOVED from the menu with hard
+numbers. ⭐ Methodology correction baked in: splits.txt `.text`-range stem-equality is an
+INVALID precision oracle for scattered TUs (a TU's methods sit physically INSIDE other
+TUs' pins — GemTrainerPanel ctor lives inside the CharBonesMeshes pin), so precision must
+be measured vs the independent BinDiff oracle, never vs pin-range membership.
+
+**Experiment 3 — string/symbol-literal anchoring** (`research/2026-06-21-string-anchor-recall-probe.md`
++ the span-clustering / fresh-core scan). String literals are SPARSE binary-wide (only
+3,921 of 66,838 fns reference any usable string; 1,067 have a unique-string anchor). The
+span-clustering probe DID partially overturn "fully scattered": string-rich game TUs have
+a loose CONTIGUOUS CORE (BandWardrobe 7/19KB, BandDirector 12/51KB, BandCharacter 8/36KB),
+same order of magnitude as MasterAudio's 8KB — TU grouping is partly preserved, and the
+per-method BinDiff oracle OVER-STATED scatter for these. BUT the high-confidence unique
+anchors are only 1-4 per TU (too thin to bracket spans alone), and most string-rich cores
+(BandDirector/Player/BandWardrobe) are ALREADY PINNED.
+
+⭐⭐ **THE TWO CLASSES** (the durable taxonomy):
+- **Class A — string-rich, locatable core.** A systematic scan of 551 game `.cpp`: only
+  **26 have a ≥3-fn string-anchored core; just 15 are FRESH (unpinned)**. The harvest list
+  (core size / KB-span / VA): GemPlayer 7/76KB @0x826966f0, ChordbookPanel 5/51KB
+  @0x82691990, FreestylePanel 5/31KB @0x826966f0, TrackPanelDirBase 5/7KB @0x823445d8,
+  RGTrainerPanel 4/28KB @0x82690408, PitchArrow 4/8KB @0x822e0158, GemManager 3/9KB
+  @0x82b6aac8 (corroborated by the BSim baseline dense-list), TrainerPanel 3, AppLabel 3,
+  Matchmaker 3, OvershellSlot 3, RockCentral 3 (partly harvested), BandwidthCounter 3,
+  TournamentDDL 3. This IS recoverable via **string-anchored span detection** (fuse the
+  thin string anchors + BinDiff∩BSim + the contiguous-core prior to bracket a span, then
+  port-then-pin). But it is THIN + GRINDY: ~15 multi-hour TU ports, realistic +15-40 after
+  attrition (cores aren't guaranteed fully contiguous; ported bodies may diverge per the
+  pilot). The string-rich `.game/` panel cluster around 0x82690000-0x826970000 (GemPlayer/
+  ChordbookPanel/FreestylePanel/RGTrainerPanel all start near 0x8269xxxx) suggests a
+  genuinely contiguous belt worth a focused bisection.
+- **Class B — string-poor, structurally-generic panels/STL.** SongSortNode, BandProfile,
+  Campaign, OvershellPanel, the meta_band UI-panel bulk: **ZERO string anchors**, near-random
+  cross-arch BinDiff (median 0.16), 39% BSim, seed-prop NO-GO. **Un-locatable by ANY current
+  oracle.** This is the BULK of the scattered prize and it is genuinely **not recoverable**
+  without a fundamentally better oracle (decompile-and-recompile semantic matching, or a
+  hand-seeded VT campaign per high-value panel). SongSortNode's pilot failure is now
+  explained: it is a pure class-B TU (0 strings, 0 CONFIRMED).
+
+**REVISED PRIZE (final):** NOT ~6-8k. The cheaply-recoverable scattered set = the ~57
+unpinned real-bodied BinDiff∩BSim singletons + the class-A fresh cores (~15 TUs) =
+realistic **+30-80 total, at high per-method cost**, NOT a doubling. The class-B bulk is
+unrecoverable with current oracles.
+
+**FORWARD OPTIONS (for the owner to weigh):**
+1. **Harvest class A** — build the string-anchored span-detection tool, pilot GemManager/
+   GemPlayer (corroborated by BSim), sweep the 15 fresh TUs + the 0x8269xxxx `.game/` belt.
+   Modest, real, grindy.
+2. **Pivot to the DC3 engine body-oracle** (feedback sub-problem A) — for `src/system/*`
+   engine code, DC3 (same Xbox-360/MSVC platform+compiler) is a FAR better oracle than the
+   cross-arch Wii one; bodies byte-match. Likely a RICHER untapped MATCHING vein than the
+   thin class-A game harvest, and it sidesteps the entire scatter/cross-arch wall. Needs a
+   feasibility read on how much `src/system` remains unmatched.
+3. **Bank the scattered layer as characterized** — the durable deliverables (locator,
+   fuzzy_progress, the two-class taxonomy, the negative-result harness) ARE the output;
+   accept byte-exact won't reach class B and report progress via the fuzzy metric.
