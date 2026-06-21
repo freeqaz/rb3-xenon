@@ -1804,3 +1804,53 @@ for scattered TUs** (below).
 
 **SESSION TOTAL (waves 3–15 + idtransfer): 6932 → 9552 (+2620, build green; every landed lever
 composed-verified EXACT; honesty self-checks refuted span-pin ICF-alias inflation throughout).**
+
+# ============================================================
+# WAVE-16 CLOSE (2026-06-21): **9558 / 65564** (UNCHANGED — 3 honest self-refutes, +0 landed)
+# ============================================================
+wave16-identity-transfer-sweep (wf_11185ca4-a07). A PRODUCTIVE NEGATIVE wave — redrew the
+frontier. Nothing landable; all three execute lanes self-refuted honestly:
+- **idt-sweep +0**: the "RockCentral +17 for free" pattern does NOT generalize. ~90 of 94 wired
+  game TUs ALREADY carry a contiguous span pin; appending identity-transfer micro-pins to a
+  span-pinned TU mints duplicate mangled-name target fragments that STEAL objdiff pairing from
+  the already-matching real method → **net regressions** (−14 across VocalTrack/GemTrack/SongDB/
+  VocalPlayer/Player). The 4 unpinned wired TUs (SongRecord/OvershellSlotState/SongSortByRank/
+  CampaignLevel) yielded 0 real byte-matches. ⭐ identity_transfer.py needs two fixes: (1) DETECT
+  a TU that already has a span pin → skip/filter colliding micro-pins; (2) the dry-run "named
+  bodies" metric is NON-PREDICTIVE (counts already-matched methods) → a truthful estimator must
+  diff against the current whole-binary 100-set and count only NOT-yet-matched real-bodied (>44B,
+  sim≥0.5) methods.
+- **BandProfile +0**: mechanism worked END-TO-END (ported 1013-line MWCC→MSVC, obj defines 115
+  symbols, carved 64 micro-ranges, named 23) but **ZERO reached 100%** (best fuzzy 47.8%, ctor
+  1.7%). ⭐ NEW WALL — **ported-body-divergence**: ported MWCC→MSVC bodies diverge from retail
+  everywhere; + oracle VA mis-attribution on tiny ICF stubs (oracle maps accessors to WRONG VAs).
+  Port branch **w16-bandprofile @ ec65595 KEPT** for re-derivation under a different body-port strategy.
+- **musiclib-r2 +0**: the range-2 dual-range pin scores +57 but it's the **FAKE ICF-stub fold**
+  (113/125 range-2 fns are ≤44B stubs; only 1 — MusicLibraryTask::operator= @0x8252E998 156B —
+  uniquely byte-matches our obj). Same shape as the wave-15 +57. The new `icf_alias_check.py` flags it.
+
+## TOOLING DELIVERABLE (lesson → automation)
+- **`tools/icf_alias_check.py`** (committed 23bb6ee, wired into the SOP audit step 1d95113): automates
+  the ICF-alias inflation gate (waves 14/15/16's recurring +57 fake-match shape). `--worktree` newly-
+  matched-diff mode = exit 1 on stub-fold-dominated gains. byte-match ≠ ownership under ICF folding.
+
+## VEIN STATUS — cheap matching levers DRY; two real levers remain
+- **Contiguous-port-then-pin: EXHAUSTED.** **identity-transfer: THIN** (RockCentral was a special
+  case — wired+96%+unowned-blob+no-competing-span; that combination is rare). Relocate/sliver: spent.
+- ⭐ **(1) STRUCT-LEVER BODY-PORTS** = the best remaining MATCHING lever. The AccomplishmentConditional
+  std::list +58 is the template: a single wrong this-relative member offset / vector-vs-list / base-size
+  delta that CASCADES across a class family. Hunt near-miss clusters for the single-member tell.
+- ⭐ **(2) objdiff GLOBAL BYTE-EQUALITY FORK** = the highest-CEILING lever (+100 potential binary-wide):
+  unlocks identity-transfer **case-B** (methods physically inside a foreign pin, which objdiff can't
+  pair within-unit today). A freeqaz objdiff-core fork — a global second pass matching an unmatched
+  named target fn against a byte-identical base symbol in ANY unit's obj (report.rs reads all base objs).
+  Substantial Rust fork; the "build new tooling" path.
+
+### WAVE-17 PLAN (WIDER — 2× threads, two concurrent ultracode workflows):
+A. **Matching (wide struct-lever body-port hunt)** — many lanes, each scanning a different already-
+   pinned near-miss cluster family for a cascading member-offset divergence + porting the fix.
+B. **Tooling (objdiff global-byte-equality fork)** — Understand→Design→Prototype the case-B unlock +
+   the identity_transfer.py collision-safety + truthful-estimator fixes.
+
+**SESSION TOTAL (waves 3–16): 6932 → 9558 (+2626; wave-16 +0 = honest negatives that redrew the
+frontier; tooling: icf_alias_check.py landed).**
