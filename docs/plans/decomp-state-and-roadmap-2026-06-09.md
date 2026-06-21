@@ -1976,3 +1976,46 @@ The truncation fix cascaded a strong reveal wave: +33 = 33 restored full-bodied 
 byte-exact + named via pin_identified/reveal_sweep (map-only, ADD-only, 0 regressions). Confirms
 the truncation fix REFILLS the reveal pool, not just the body-port pool.
 **WAVE-18 TOTAL = +155 (9617 → 9772). SESSION (waves 3–18): 6932 → 9772 (+2840).**
+
+# ============================================================
+# WAVE-19 CLOSE (2026-06-21): **9788 / 65547** (9772 → 9788, +16; build green)
+#   truncation-refilled body-port harvest + DC3-drift struct-lever hunt (8 wide lanes)
+# ============================================================
+5 lanes landed (composed run1=run2=9788, +16 = clean sum, no cascade surprises), 3 refuted:
+- **trunc-sequence +6**: MidiInstrument::Save (missing mFaders.Save line + Faders.h decl),
+  DelayEffect::SetParameter (clamp-order), Mic.cpp. synth family truncation near-misses.
+- **trunc-rndobj +4** ⭐ INLINE-POLICY FORCE-MULTIPLIER: RndAnimatable::SetFrame was defined
+  OUT-OF-LINE in Anim.cpp with the DC3-newer body (mFrame!=frame guard + BroadcastPropertyChange);
+  retail RB3 + rb3-Wii define it INLINE (`{mFrame=frame;}`). Without LTCG, cross-TU callers
+  (Gen/PropAnim/Group/Part) emitted `bl SetFrame` where retail inlines `stfs`. Moving it inline
+  into Anim.h cascaded +4 across the family. SAME CLASS as CharHair/OnlineID DC3-drift but on
+  INLINE-POLICY not member-offset.
+- **dc3drift-engine +3**, **trunc-obj-engine +2** (ctor methods), **trunc-math-geo +1**
+  (Rand::Gaussian: Float(float,float) is __declspec(noinline), retail inlines the [-1,1] map →
+  rewrote Float(-1,1) as Float()*2-1 = another inline-policy fix).
+- REFUTED: trunc-metaband (struct lever found, composed net 0), trunc-bandtrack (permuter-class:
+  GemTrack Poll/CheckShifts FP-regalloc), dc3drift-game (struct lever found, net 0).
+
+⭐ NEW VEIN — **INLINE-POLICY FORCE-MULTIPLIER**: a method DC3 defines OUT-OF-LINE (often with a
+DC3-added guard/broadcast body) that retail RB3 + rb3-Wii define INLINE in the header. Without
+LTCG, every cross-TU caller emits a `bl` where retail inlines the body → fixing ONE header inline
+cascades to ALL callers. The only force-multiplier still firing. QUEUED: MemDoTempAllocations
+(MemMgr.h, frontier rank 1) + a binary-wide hunt for the pattern.
+
+⭐ VEIN STATUS — THINNING, cost-per-match RISING. The truncation fix refilled the body-port pool
+and wave-19 harvested ~50-60% (+13); the remainder (~13) is dominated by PERMUTER-CLASS residue
+(FP regalloc cascades, commutative-operand swaps, char-signedness codegen) that does NOT respond
+to source reordering — needs the permuter tool, low EV. The remaining productive levers are: (a)
+the inline-policy force-multiplier hunt, (b) a permuter sweep on the accumulated >=97% near-misses,
+(c) the HARD frontier (objdiff case-B fork [banked] + scattered-TU ports w/ body-divergence wall).
+
+### WAVE-20 FRONTIER:
+1. **INLINE-POLICY FORCE-MULTIPLIER HUNT** (binary-wide): find methods DC3 defines out-of-line that
+   retail/rb3-Wii inline (the SetFrame/Gaussian pattern) — each cascades to all cross-TU callers.
+   Start MemDoTempAllocations (MemMgr.h); scan base-class headers (Rnd*/Obj/Char/UI/math value types).
+2. **PERMUTER SWEEP** on the accumulated >=97% near-misses (math/geo Multiply/OnSide/CheckBSPTree,
+   SHA1 Update/Final/ReportHash, RndGenerator::SetFrame commutative-fadds, gemtrack NextKickNoteMs
+   99.97%/SetEnableSlot 99%) — automated `decomp_synth` permuter, harvest whatever converges.
+3. Remaining truncation near-misses + DC3-drift residue (lower EV).
+
+**SESSION TOTAL (waves 3–19): 6932 → 9788 (+2856). Wave-19 +16.**
