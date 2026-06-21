@@ -788,7 +788,7 @@ DataNode Rnd::OnOverlayPrint(const DataArray *da) {
     RndOverlay *o = RndOverlay::Find(da->Str(2), true);
     String str;
     for (int i = 3; i < da->Size(); i++) {
-        da->Evaluate(i).Print(str, true, 0);
+        da->Evaluate(i).Print(str, true);
     }
     o->Print(str.c_str());
     return 0;

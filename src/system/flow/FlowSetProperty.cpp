@@ -382,7 +382,7 @@ void FlowSetProperty::Execute(QueueState qs) {
                 } else {
                     StackString<32> ss;
                     DataNode valueNode = mValue.Node();
-                    valueNode.Print(ss, false, 0);
+                    valueNode.Print(ss, false);
                     MILO_NOTIFY(
                         "%s has bad property %s for %s",
                         PathName(this),

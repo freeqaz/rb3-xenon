@@ -183,7 +183,7 @@ inline bool HasChar(const char *str, char c) {
     return false;
 }
 
-void DataNode::Print(TextStream &ts, bool b, int i3) const {
+void DataNode::Print(TextStream &ts, bool b) const {
     switch (mType) {
     case kDataUnhandled:
         ts << "kDataUnhandled";
@@ -224,7 +224,7 @@ void DataNode::Print(TextStream &ts, bool b, int i3) const {
     case kDataArray:
     case kDataCommand:
     case kDataProperty:
-        mValue.array->Print(ts, mType, b, i3);
+        mValue.array->Print(ts, mType, b);
         break;
     case kDataObject:
         ts << mValue.object;
@@ -323,7 +323,7 @@ int DataNode::Int(const DataArray *source) const {
     const DataNode &n = Evaluate();
     if (n.mType != kDataInt) {
         String s;
-        n.Print(s, true, 0);
+        n.Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Int (file %s, line %d)",
@@ -340,7 +340,7 @@ int DataNode::Int(const DataArray *source) const {
 int DataNode::LiteralInt(const DataArray *source) const {
     if (mType != kDataInt) {
         String s;
-        Print(s, true, 0);
+        Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Int (file %s, line %d)",
@@ -358,7 +358,7 @@ Symbol DataNode::Sym(const DataArray *source) const {
     const DataNode &n = Evaluate();
     if (n.mType != kDataSymbol) {
         String s;
-        n.Print(s, true, 0);
+        n.Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Symbol (file %s, line %d)",
@@ -378,7 +378,7 @@ Symbol DataNode::Sym(const DataArray *source) const {
 Symbol DataNode::LiteralSym(const DataArray *source) const {
     if (mType != kDataSymbol) {
         String s;
-        Print(s, true, 0);
+        Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Symbol (file %s, line %d)",
@@ -402,7 +402,7 @@ Symbol DataNode::ForceSym(const DataArray *source) const {
     } else {
         if (n.mType != kDataString) {
             String s;
-            n.Print(s, true, 0);
+            n.Print(s, true);
             if (source)
                 MILO_FAIL_DTA(
                     "Data %s is not String (file %s, line %d)",
@@ -427,7 +427,7 @@ const char *DataNode::Str(const DataArray *source) const {
     } else {
         if (n.mType != kDataString) {
             String s;
-            n.Print(s, true, 0);
+            n.Print(s, true);
             if (source)
                 MILO_FAIL_DTA(
                     "Data %s is not String (file %s, line %d)",
@@ -451,7 +451,7 @@ const char *DataNode::LiteralStr(const DataArray *source) const {
     } else {
         if (mType != kDataString) {
             String s;
-            Print(s, true, 0);
+            Print(s, true);
             if (source)
                 MILO_FAIL_DTA(
                     "Data %s is not String (file %s, line %d)",
@@ -476,7 +476,7 @@ float DataNode::Float(const DataArray *source) const {
     } else {
         if (n.mType != kDataFloat) {
             String s;
-            n.Print(s, true, 0);
+            n.Print(s, true);
             if (source)
                 MILO_FAIL_DTA(
                     "Data %s is not Float (file %s, line %d)",
@@ -497,7 +497,7 @@ float DataNode::LiteralFloat(const DataArray *source) const {
     } else {
         if (mType != kDataFloat) {
             String s;
-            Print(s, true, 0);
+            Print(s, true);
             if (source)
                 MILO_FAIL_DTA(
                     "Data %s is not Float (file %s, line %d)",
@@ -515,7 +515,7 @@ float DataNode::LiteralFloat(const DataArray *source) const {
 DataFunc *DataNode::Func(const DataArray *source) const {
     if (mType != kDataFunc) {
         String s;
-        Print(s, true, 0);
+        Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Func (file %s, line %d)",
@@ -564,7 +564,7 @@ DataArray *DataNode::Array(const DataArray *source) const {
     const DataNode &n = Evaluate();
     if (n.mType != kDataArray) {
         String s;
-        n.Print(s, true, 0);
+        n.Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Array (file %s, line %d)",
@@ -584,7 +584,7 @@ DataArray *DataNode::Array(const DataArray *source) const {
 DataArray *DataNode::LiteralArray(const DataArray *source) const {
     if (mType != kDataArray) {
         String s;
-        Print(s, true, 0);
+        Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Array (file %s, line %d)",
@@ -604,7 +604,7 @@ DataArray *DataNode::LiteralArray(const DataArray *source) const {
 DataArray *DataNode::Command(const DataArray *source) const {
     if (mType != kDataCommand) {
         String s;
-        Print(s, true, 0);
+        Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Command (file %s, line %d)",
@@ -624,7 +624,7 @@ DataArray *DataNode::Command(const DataArray *source) const {
 DataNode *DataNode::Var(const DataArray *source) const {
     if (mType != kDataVar) {
         String s;
-        Print(s, true, 0);
+        Print(s, true);
         if (source)
             MILO_FAIL_DTA(
                 "Data %s is not Var (file %s, line %d)",
@@ -698,8 +698,8 @@ bool DataNode::Equal(const DataNode &n, DataArray *a, bool warn) const {
         if (warn) {
             StackString<32> str1;
             StackString<32> str2;
-            first.Print(str1, true, 0);
-            second.Print(str2, true, 0);
+            first.Print(str1, true);
+            second.Print(str2, true);
             MILO_NOTIFY_ONCE(
                 "DataNode::Equal: DataNodes %s and %s (%s and %s) are not compatible (file %s, line %d)",
                 str1,

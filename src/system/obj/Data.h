@@ -291,7 +291,7 @@ public:
      * @param [in] s The TextStream to print to.
      * @param [in] compact If true, print any strings in a compact manner.
      */
-    void Print(TextStream &s, bool compact, int indent) const;
+    void Print(TextStream &s, bool compact) const;
     /** As the name would indicate, this goes unused. */
     bool PrintUnused(TextStream &, bool) const;
     /** Saves this DataNode into a BinStream. */
@@ -536,7 +536,7 @@ public:
      * @param [in] type The type of this DataArray (array, command, property, etc)
      * @param [in] compact If true, print any strings in a compact manner.
      */
-    void Print(TextStream &s, DataType type, bool compact, int indent) const;
+    void Print(TextStream &s, DataType type, bool compact) const;
     /** As the name would indicate, this goes unused. */
     bool PrintUnused(TextStream &, DataType, bool) const;
 
@@ -660,7 +660,7 @@ public:
 };
 
 inline TextStream &operator<<(TextStream &ts, const DataNode &node) {
-    node.Print(ts, false, 0);
+    node.Print(ts, false);
     return ts;
 }
 

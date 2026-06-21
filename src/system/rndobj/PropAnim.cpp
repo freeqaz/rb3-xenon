@@ -692,9 +692,9 @@ void RndPropAnim::SetKeyVal(
         default: {
             String text;
             text << "Unable to set key value pair for ";
-            da->Print(text, kDataArray, true, 0);
+            da->Print(text, kDataArray, true);
             text << " value is ";
-            node.Print(text, true, 0);
+            node.Print(text, true);
             MILO_NOTIFY(text.c_str());
             break;
         }

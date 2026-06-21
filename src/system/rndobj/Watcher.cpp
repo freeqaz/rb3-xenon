@@ -29,11 +29,11 @@ void Watcher::Update() {
             DataArray *arr = it->first;
             *mOverlay << idx;
             *mOverlay << ": ";
-            arr->Print(*mOverlay, kDataArray, true, 0);
+            arr->Print(*mOverlay, kDataArray, true);
             *mOverlay << "\n";
             MILO_TRY { it->second = arr->Execute(false); }
             MILO_CATCH(msg) { it->second = msg; }
-            it->second.Print(*mOverlay, false, 0);
+            it->second.Print(*mOverlay, false);
             *mOverlay << "\n";
         }
     } else {

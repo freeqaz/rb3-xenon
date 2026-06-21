@@ -64,7 +64,7 @@ DEF_DATA_FUNC(DataPrintf) {
 
 DEF_DATA_FUNC(DataPrint) {
     for (int i = 1; i < array->Size(); i++) {
-        array->Evaluate(i).Print(TheDebug, true, 0);
+        array->Evaluate(i).Print(TheDebug, true);
     }
     return 0;
 }
@@ -72,7 +72,7 @@ DEF_DATA_FUNC(DataPrint) {
 DEF_DATA_FUNC(DataSprint) {
     class String str;
     for (int i = 1; i < array->Size(); i++) {
-        array->Evaluate(i).Print(str, true, 0);
+        array->Evaluate(i).Print(str, true);
     }
     return str.c_str();
 }
@@ -712,7 +712,7 @@ DEF_DATA_FUNC(DataTime) {
         DataNode &eval = array->Node(i);
         if (eval.Type() == kDataCommand)
             break;
-        eval.Print(TheDebug, true, 0);
+        eval.Print(TheDebug, true);
     }
 
     if (i == 1) {
@@ -763,7 +763,7 @@ DEF_DATA_FUNC(DataRandomSort) {
 DEF_DATA_FUNC(DataWarn) {
     String str;
     for (int i = 1; i < array->Size(); i++) {
-        array->Evaluate(i).Print(str, true, 0);
+        array->Evaluate(i).Print(str, true);
     }
     TheDebug.Warn(str.c_str());
     return 0;
@@ -772,7 +772,7 @@ DEF_DATA_FUNC(DataWarn) {
 DEF_DATA_FUNC(DataNotify) {
     String str;
     for (int i = 1; i < array->Size(); i++) {
-        array->Evaluate(i).Print(str, true, 0);
+        array->Evaluate(i).Print(str, true);
     }
     TheDebug.Notify(str.c_str());
     return 0;
@@ -781,7 +781,7 @@ DEF_DATA_FUNC(DataNotify) {
 DEF_DATA_FUNC(DataFail) {
     String str;
     for (int i = 1; i < array->Size(); i++) {
-        array->Evaluate(i).Print(str, true, 0);
+        array->Evaluate(i).Print(str, true);
     }
     TheDebug << MakeString("%d\n", array->Line());
     TheDebug.Fail(str.c_str(), nullptr);
@@ -793,7 +793,7 @@ DEF_DATA_FUNC(DataAssert) {
     if (!pass) {
         String str("");
         for (int i = 2; i < array->Size(); i++) {
-            array->Evaluate(i).Print(str, true, 0);
+            array->Evaluate(i).Print(str, true);
         }
         MILO_FAIL("DataAssert %s (file %s, line %d)", str, array->File(), array->Line());
     }
@@ -844,7 +844,7 @@ DEF_DATA_FUNC(DataInsertElem) {
 }
 
 DEF_DATA_FUNC(DataPrintArray) {
-    array->Array(1)->Print(TheDebug, kDataArray, false, 0);
+    array->Array(1)->Print(TheDebug, kDataArray, false);
     return 0;
 }
 
@@ -853,7 +853,7 @@ DEF_DATA_FUNC(DataArrayToString) {
     if (array->Size() > 2)
         compact = array->Int(2);
     String str;
-    array->Array(1)->Print(str, kDataArray, compact, 0);
+    array->Array(1)->Print(str, kDataArray, compact);
     return MakeString("%s", str.c_str());
 }
 
@@ -974,7 +974,7 @@ DEF_DATA_FUNC(DataHandleTypeRet) {
     }
     if (!obj) {
         String str;
-        n.Print(str, true, 0);
+        n.Print(str, true);
 #ifdef HX_NATIVE
         MILO_WARN(
             "Object %s not found (file %s, line %d)",
@@ -1036,7 +1036,7 @@ DEF_DATA_FUNC(DataHandleRet) {
         o = gDataDir->FindObject(n.LiteralStr(array), true);
     if (!o) {
         String str;
-        n.Print(str, true, 0);
+        n.Print(str, true);
 #ifdef HX_NATIVE
         MILO_WARN(
             "Object %s not found (file %s, line %d)",
@@ -1139,7 +1139,7 @@ DataNode DataFindExists(DataArray *array, bool fail) {
             if (!arr) {
                 if (fail) {
                     String str;
-                    n.Print(str, true, 0);
+                    n.Print(str, true);
                     MILO_FAIL(
                         "Failed to find %s (file %s, line %d)",
                         str.c_str(),
@@ -1151,7 +1151,7 @@ DataNode DataFindExists(DataArray *array, bool fail) {
             }
         } else {
             String str;
-            n.Print(str, true, 0);
+            n.Print(str, true);
             MILO_FAIL(
                 "Bad key %s (file %s, line %d)", str.c_str(), array->File(), array->Line()
             );
@@ -1485,15 +1485,15 @@ DEF_DATA_FUNC(DataFilterNotify) {
 
 DEF_DATA_FUNC(DataMemoryUsageReport) {
     if (array->Size() > 1) {
-        array->Print(TheDebug, kDataArray, false, 0);
+        array->Print(TheDebug, kDataArray, false);
         DataNode &n = array->Node(1);
         String str;
-        n.Print(str, true, 0);
+        n.Print(str, true);
         MemTrackReportMemoryUsage(str.c_str());
         if (array->Size() > 2) {
             DataNode &n2 = array->Node(2);
             String str2;
-            n2.Print(str2, true, 0);
+            n2.Print(str2, true);
             MemTrackReportClose(str2.c_str());
         }
     }
@@ -1590,7 +1590,7 @@ void DataRegisterFunc(Symbol s, DataFunc *func) {
 DEF_DATA_FUNC(DataNotifyOnce) {
     String str;
     for (int i = 1; i < array->Size(); i++) {
-        array->Evaluate(i).Print(str, true, 0);
+        array->Evaluate(i).Print(str, true);
     }
     MILO_NOTIFY_ONCE(str.c_str())
     return 0;

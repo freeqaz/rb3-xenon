@@ -211,7 +211,9 @@ bool strncat_tofit(FixedString &str, const char *cc, int i) {
 // mNodes[i] access in-place (matching retail, where Node never appears as an
 // out-of-line call). The out-of-line definitions were removed from here.
 
-void DataArray::Print(TextStream &ts, DataType type, bool b, int i3) const {
+static int gIndent;
+
+void DataArray::Print(TextStream &ts, DataType type, bool b) const {
     DataNode *end = &mNodes[mSize];
     MILO_ASSERT(type & kDataArray, 0xA3);
     char open = '\0';
@@ -239,24 +241,24 @@ void DataArray::Print(TextStream &ts, DataType type, bool b, int i3) const {
             if (n != mNodes) {
                 ts << " ";
             }
-            n->Print(ts, b, i3);
+            n->Print(ts, b);
         }
     } else {
         ts << open;
         n = mNodes;
         if (n->Type() == kDataSymbol) {
-            n->Print(ts, b, i3);
+            n->Print(ts, b);
             n++;
         }
         ts << "\n";
-        i3 += 3;
+        gIndent += 3;
         for (; n < end; n++) {
-            ts.Space(i3);
-            n->Print(ts, b, i3);
+            ts.Space(gIndent);
+            n->Print(ts, b);
             ts << "\n";
         }
-        i3 -= 3;
-        ts.Space(i3);
+        gIndent -= 3;
+        ts.Space(gIndent);
     }
     ts << close;
 }
@@ -457,7 +459,7 @@ void DataArray::SortNodes(int idx) {
 
 void DataArrayGlitchCB(float f, void *v) {
     DataArray *arr = (DataArray *)v;
-    arr->Node(0).Print(TheDebug, true, 0);
+    arr->Node(0).Print(TheDebug, true);
     MILO_LOG(" took %.2f ms (File: %s Line: %d)\n", f, arr->File(), arr->Line());
 }
 
@@ -627,7 +629,7 @@ void DataArray::LoadGlob(BinStream &bs, bool b) {
 
 TextStream &operator<<(TextStream &ts, const DataArray *da) {
     if (da)
-        da->Print(ts, kDataArray, false, 0);
+        da->Print(ts, kDataArray, false);
     else
         ts << "<null>";
     return ts;
@@ -657,7 +659,7 @@ void DataAppendStackTrace(FixedString &msg) {
 
         String s;
         if (a->Size() > 0) {
-            a->Node(0).Print(s, true, 0);
+            a->Node(0).Print(s, true);
         }
 
         memcpy(visualStudioFmt, "\n   %s(%d):%s", 0xe);
@@ -921,9 +923,9 @@ DataNode DataArray::Execute(bool fail) {
         }
         if (fail) {
             String str;
-            Node(0).Print(str, true, 0);
+            Node(0).Print(str, true);
             String str2;
-            node.Print(str2, true, 0);
+            node.Print(str2, true);
             const char *msg;
             bool sameText = (str == str2);
             if (sameText) {

@@ -39,7 +39,7 @@ void TextFile::Print(const char *str) {
 DataNode TextFile::OnPrint(DataArray *array) {
     if (mFile) {
         for (int i = 2; i < array->Size(); i++) {
-            array->Evaluate(i).Print(*this, true, 0);
+            array->Evaluate(i).Print(*this, true);
         }
     }
     return 0;

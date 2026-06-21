@@ -473,7 +473,7 @@ void DataWriteFile(const char *file, const DataArray *da, int i) {
     }
     idx = i;
     for (; idx < da->Size(); idx++) {
-        da->Node(idx).Print(*stream, false, 0);
+        da->Node(idx).Print(*stream, false);
         stream->operator<<("\n");
     }
     if (stream) {

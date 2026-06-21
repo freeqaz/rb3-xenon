@@ -184,7 +184,7 @@ void CheatsManager::AppendLog(FixedString &str) {
         FOREACH (it, mBuffer) {
             CheatLog &cur = *it;
             String curStr;
-            cur.mScript.Print(curStr, true, 0);
+            cur.mScript.Print(curStr, true);
             str += MakeString(buffer, curStr);
         }
         if (mBuffer.size() == mMaxBuffer) {

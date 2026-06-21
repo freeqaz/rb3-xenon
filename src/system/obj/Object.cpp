@@ -1065,7 +1065,7 @@ DataNode Hmx::Object::OnGet(const DataArray *a) {
     } else {
         if (node.Type() != kDataArray) {
             String str;
-            node.Print(str, true, 0);
+            node.Print(str, true);
             MILO_FAIL(
                 "Data %s is not array or symbol (file %s, line %d)",
                 str.c_str(),
@@ -1102,7 +1102,7 @@ DataNode Hmx::Object::OnSet(const DataArray *a) {
         } else {
             if (n.Type() != kDataArray) {
                 String str;
-                n.Print(str, true, 0);
+                n.Print(str, true);
                 MILO_FAIL(
                     "Data %s is not array or symbol (file %s, line %d)",
                     str.c_str(),
