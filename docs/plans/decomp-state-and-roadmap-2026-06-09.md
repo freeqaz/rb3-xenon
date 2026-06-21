@@ -1645,3 +1645,85 @@ derive repo-root/script-dir and accept a worktree-path OR branch-name. SOP doc u
 
 **SESSION TOTAL (waves 3–13): 6932 → 9454 (+2522, build green; every landed
 lever composed-verified EXACT).**
+
+# ============================================================
+# WAVE-14 CLOSE (2026-06-20): **9477 / 65554** (9454 → 9477, +23, build green)
+# ============================================================
+wave14-gapb-relocate-belt (wf_ff7c3d73-07b, 8 agents: 3 execute + 1 read-only
+scout + audits + reduce). composed-verified EXACT (run1=run2=9477).
+
+LANDED (the ONLY honest lane):
+- **gapb-belt +23** (one-owner of the contiguous GAP B tiling [0x825cc010,0x825d0ef0)).
+  3 dead-sliver RELOCATES → real clusters (AccomplishmentCategory tail @0x8243EF98→
+  [0x825D0E50,0x825D0EF0); AccomplishmentPlayerConditional @0x8243F178→[0x825CCBE0,
+  0x825CE5A8); AccomplishmentSongFilterConditional @0x8243F378→[0x825CF390,0x825CF8F8))
+  + Award.cpp own-tail extend (.text 0xD00→0xE50, +2) + 6 fresh-pins (OneShot,
+  Trainer/TrainerCategory/TrainerList Conditional, SongList(+0), DiscSong). Audited
+  HONEST (longest foreign run = 0; PlayerConditional fns ref best_hopos_percent/
+  career_fills = conclusively own; byte-unique own funclets; BinDiff hits onto them =
+  ICF address-alias FPs). Agent honestly REVERTED a net-negative relocate
+  (AccomplishmentSongConditional → [0x825CC220,0x825CCBE0) gains 0 while losing 3
+  sliver trivials; left unpinned). map +5 ADD-only.
+
+⭐⭐ HONESTY AUDIT CAUGHT +57 OF ICF-ALIAS INFLATION — two span-pins REFUTED, NOT landed:
+- **OvershellSlot-head +18 = REFUTED.** The "head" [0x825BEBD8,0x825C10D8) is a MIXED
+  multi-TU blob, NOT a clean OvershellSlot cluster: the rb3-Wii BinDiff oracle maps the
+  confident named hits to FIVE TUs (MetaPerformer/SaveLoadManager/BandMemberProvider/
+  ClosetPanel + one OvershellSlot hit itself at 0%); the 15 "matches" are all sim-0.00
+  ICF-foldable trivia. The +18 is swept-in foreign code. ⚠ This OVERTURNS the wave-13
+  gapA frontier item "OvershellSlot owns the head": IsQuitToken@0x825BFB08 byte-matching
+  the compiled obj was REAL but only proves a FEW OvershellSlot fns are interleaved
+  there — the head is mixed. DO NOT span-pin it.
+- **LockStepMgr +39 = REFUTED.** [0x82592270,0x82595540) is Quazal/network FOREIGN code
+  (Quazal::DuplicationSpace/DORef/StationURL, AccountManagementProtocolDDL, BudgetScreen,
+  NetSync, OvershellPanel). LockStepMgr is ICF-scattered binary-wide (Init@0x82598d80,
+  StartLock@0x82b7f3b0, OnMsg@0x8253d040 … NOT ONE method in the span) — same negative
+  as SongSortNode/MainHubPanel. The +39 are all ≤44B ICF stubs with no LockStepMgr
+  identity. The fresh port compiled fine but is useless without per-fn identity work.
+  ⚠ OVERTURNS the wave-13 "LockStepMgr +20" frontier item. DO NOT span-pin.
+
+⭐ LESSONS (this wave's main payoff):
+- **byte-match ≠ ownership when ICF folding is in play.** Trivial ≤44B stubs (??_E
+  deleting-dtor thunks, one-line getters) fold byte-identically across unrelated TUs, so
+  "our compiled obj byte-matches N fns in this span" does NOT prove the span is our TU.
+  The decisive test is the BinDiff oracle's named-hit attribution + fn SIZE (real method
+  bodies, not stubs) + a >=8-contiguous-foreign-0% check.
+- **string presence ≠ contiguous ownership** in a mixed/scattered blob (OvershellSlot
+  head had OvershellSlot-only strings yet was a 5-TU blob). Gate "extend on strings"
+  claims on a BinDiff own-vs-foreign pass.
+- **splits-clean ≠ honest.** The reducer's landing_guide ranked LockStepMgr #1 on
+  "clean splits / zero collision" — but that's orthogonal to attribution. The AUDIT is
+  the gate; trust it over the EV ranking.
+- gapb-belt over-estimated (+23 not the briefed ~+45-55): the big conditional TUs
+  (Player 58 / DiscSong 31 / SongConditional 24) are content-divergent STL (non-inlined
+  vector/set<Symbol> instantiations whose mangled names have no in-cluster oracle entry);
+  only reveal-byte-exact fns + clean small relocates register. The cheap relocate vein is
+  bottoming out — remaining GAP B value is BODY-PORT work.
+
+### WAVE-15 FRONTIER (scout-corrected; cheap span-pin vein THINNING, frontier
+### bifurcating into (a) genuine-contiguous ports + (b) body-ports):
+1. **ProfileMgr.cpp port-then-pin** @[0x82534D38,0x825395B8) (~162 fns / 18960B, 12
+   substantial >=200B fns) — a REAL contiguous cluster (fn_82534D38 refs `profile_mgr`
+   @0x82091630). Wave-13's SaveLoadManager scout WRONGLY swallowed this into its span;
+   ProfileMgr is the lower portion, SaveLoadManager the upper. The keystone that unblocks
+   SaveLoadManager. Oracle ../rb3/src/band3/meta_band/ProfileMgr.cpp. EV ~+20-30.
+2. **saveload-sibling = MusicLibrary-family panel** [0x8252E6B0,0x82532068) (vtable
+   0x8209002C; strings qp_party_shuffle/can_headers_be_selected/get_back_screen/sort/
+   profile_pre_delete_msg → MusicLibrary.cpp family). Identify exact class via vtable
+   dump + wire+pin from rb3-Wii. EV ~+15.
+3. **GAP B conditional BODY-PORT sub-wave** — clusters now pinned+confirmed but ~150 fns
+   at 0% need body-ports. PlayerConditional Configure 0x130-vs-0xD8 = a struct-layout
+   lever (condition/tracker vector member-count delta) LIKELY CASCADING across the family.
+   Port Configure/IsFulfilled/Inq* from ../rb3/src/band3/meta_band/. EV ~+30-50 if the
+   struct fix cascades. This is the real remaining GAP B value.
+4. **Region B1 [0x825C3A44,0x825CB590)** — scout says OvershellSlot's own unpinned tail
+   (strings swap_user/p_providers/setup_providers @ OvershellSlot.cpp line nums). ⚠ GATE
+   on a BinDiff own-vs-foreign pass FIRST (the head burned us on identical string
+   reasoning); only extend if BinDiff confirms a contiguous OvershellSlot run.
+5. DEFERRED — ICF-scattered, per-fn identity-transfer ONLY (no contiguous span; do NOT
+   span-pin): BandProfile (104 fns 0x822639F0..0x82BD66B0), SongSort (14 fns), SongSortNode
+   (60 fns), LockStepMgr. Same class as MainHubPanel.
+6. Re-run pin_audit.py on the post-wave-14 state (new pinned source = new sliver candidates).
+
+**SESSION TOTAL (waves 3–14): 6932 → 9477 (+2545, build green; every landed lever
+composed-verified EXACT; honesty audit refuted +57 ICF-alias inflation this wave).**
