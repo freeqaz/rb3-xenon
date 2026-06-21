@@ -58,9 +58,14 @@ public:
     virtual void PreDraw(int, int, UIListSlot *) const {}
     virtual int SnappableAtOrBeforeData(int) const { return -1; }
     virtual bool IsSnappableAtData(int) const { return false; }
-    virtual bool IsHeader(int) { return false; }
-    virtual void UnHighlightCurrent() {}
-    virtual void ClearIconLabels() {}
+    // Retail RB3 does not place these in the UIListProvider vtable (verified via
+    // the Leaderboard ctor @0x826561F0: derived virtuals like Poll sit 3 slots
+    // earlier than a layout with these as trailing virtuals would produce). No
+    // subclass overrides them, so non-virtual is behavior-equivalent and keeps
+    // the derived-class vtables (Leaderboard family) byte-matching retail.
+    bool IsHeader(int) { return false; }
+    void UnHighlightCurrent() {}
+    void ClearIconLabels() {}
 };
 
 class DataProvider : public UIListProvider {

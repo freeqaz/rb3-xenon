@@ -14,7 +14,8 @@ void OnlineID::SetXUID(const XUID &id) {
 void OnlineID::SetPlayerName(const char *player_name) {
     MILO_ASSERT(player_name, 0x34);
     MILO_ASSERT(strlen(player_name), 0x35);
-    mPlayerName = player_name;
+    // Retail OnlineID has no inline player-name String (size 0x10); name is not
+    // stored here.
 }
 
 XUID OnlineID::GetXUID() const {

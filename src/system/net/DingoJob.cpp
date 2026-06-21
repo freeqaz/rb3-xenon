@@ -12,7 +12,7 @@
 #include "utl/UrlEncode.h"
 
 OnlineID::OnlineID(const OnlineID &other)
-    : mXUID(other.mXUID), mPlayerName(other.mPlayerName), mValid(other.mValid) {}
+    : mXUID(other.mXUID), mValid(other.mValid) {}
 
 extern const char *lbl_82066608;
 
