@@ -153,6 +153,7 @@ BEGIN_SAVES(MidiInstrument)
     bs << mMultiSampleMap;
     bs << mSend;
     bs << mPatchNumber;
+    mFaders.Save(bs);
     bs << mReverbMixDb;
     bs << mReverbEnable;
 END_SAVES

@@ -103,16 +103,12 @@ void MicXbox::Stop() {
 }
 
 void MicXbox::SetFxSend(FxSend *fx) {
-    CriticalSection *cs = &MicManagerXbox::GetInstance()->unk68;
-    if (cs)
-        cs->Enter();
+    CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
     mFxSend = fx;
     if (mPlaybackVoice) {
         StopPlayback();
         StartPlayback();
     }
-    if (cs)
-        cs->Exit();
 }
 
 bool MicXbox::IsRunning() const { return mRunning; }
@@ -168,15 +164,13 @@ MicManagerXbox::MicManagerXbox()
 MicManagerXbox::~MicManagerXbox() {}
 
 void MicManagerXbox::RequirePushToTalk(bool b, int pad) {
-    unk68.Enter();
+    CritSecTracker t(&unk68);
     if (b) {
         MILO_ASSERT(pad >= 0, 0x2c7);
         mPushToTalkPad = pad;
     } else {
         mPushToTalkPad = -1;
     }
-
-    unk68.Exit();
 }
 
 #pragma endregion MicManagerXbox

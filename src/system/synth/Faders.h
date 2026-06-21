@@ -83,6 +83,7 @@ public:
     void ClearDirty();
     float GetVal();
     void Print(TextStream &);
+    void Save(BinStream &);
     void Load(BinStream &);
 
     ObjPtrList<Fader> mFaders; // 0x0
