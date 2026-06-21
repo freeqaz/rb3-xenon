@@ -268,10 +268,59 @@ def main():
                          "fail-closed = emit nothing, the wave-16 demand)")
     ap.add_argument("--apply", action="store_true",
                     help="write splits.txt + map (ADD-ONLY); default dry-run")
+    # --- CONFIDENCE GATE (the missing wave-16 mis-carve guard) ---------------
+    # tools/locator.py classifies every scattered-TU method CONFIRMED / RECON /
+    # WALL / UNPLACEABLE / MISATTRIBUTED and writes a {VA:{class,confidence}}
+    # sidecar (locator --emit-gate). This consumer DROPS any case-A carve whose
+    # locator class is not allowed (default: CONFIRMED,RECON) or whose confidence
+    # is below the floor -- so identity_transfer can no longer mint WRONG pins on
+    # near-random BinDiff sim (the wave-16 BandProfile 0/64 disaster). The gate is
+    # ON when a sidecar is supplied; --force overrides it (legacy blind transfer).
+    ap.add_argument("--locator-gate", default=None,
+                    help="locator --emit-gate sidecar JSON ({VA:{class,confidence}}); "
+                         "when present (and not --force) only carve VAs whose "
+                         "class is in --require-class and confidence >= "
+                         "--min-confidence")
+    ap.add_argument("--require-class", default="CONFIRMED,RECON",
+                    help="comma list of locator classes allowed to carve "
+                         "(default: CONFIRMED,RECON). WALL/MISATTRIBUTED/"
+                         "UNPLACEABLE are NEVER carved.")
+    ap.add_argument("--min-confidence", type=float, default=0.0,
+                    help="drop any carve whose locator confidence is below this")
+    ap.add_argument("--force", action="store_true",
+                    help="bypass the locator confidence gate (legacy blind "
+                         "transfer; only when the VAs are independently verified)")
     args = ap.parse_args()
 
     tu = args.tu if args.tu.endswith((".cpp", ".c", ".cc")) else args.tu + ".cpp"
     stem = os.path.splitext(tu)[0]
+
+    # --- locator confidence gate: load the allowed-VA set --------------------
+    # A carve survives the gate iff its VA's locator class is in --require-class
+    # AND its confidence >= --min-confidence. Missing sidecar entries are DROPPED
+    # (fail-closed: an un-classified VA is not trusted) unless --force. With
+    # --force, the gate is fully bypassed (gate_allowed=None means "allow all").
+    gate_allowed = None
+    if args.locator_gate and not args.force:
+        try:
+            sidecar = json.load(open(args.locator_gate))
+        except (OSError, ValueError) as ex:
+            print(f"ERROR: --locator-gate {args.locator_gate} unreadable: {ex}",
+                  file=sys.stderr)
+            return 2
+        allowed_classes = {c.strip() for c in args.require_class.split(",") if c.strip()}
+        gate_allowed = set()
+        for va_str, info in sidecar.items():
+            try:
+                va_int = int(va_str, 16)
+            except ValueError:
+                continue
+            if (info.get("class") in allowed_classes
+                    and (info.get("confidence", 0.0) or 0.0) >= args.min_confidence):
+                gate_allowed.add(va_int)
+        print(f"[gate] locator sidecar {args.locator_gate}: "
+              f"{len(gate_allowed)} VA(s) pass class in {sorted(allowed_classes)} "
+              f"+ conf>={args.min_confidence} (of {len(sidecar)} classified)")
 
     # --- 1. oracle records for this TU; drop size==0 (ICF aliases / stubs) ---
     oracle = json.load(open(args.oracle))
@@ -336,10 +385,17 @@ def main():
 
     # --- 4. classify each method ---------------------------------------------
     case_a, case_b, self_owned, no_size = [], [], [], []
+    gate_dropped = []        # case-A VAs the locator gate refused (WALL/MISATTR/...)
     for e in bodies:
         addr = int(e["rb3_addr"], 16)
         cov = covering_pin(addr)
         if cov is None:
+            # CONFIDENCE GATE: an UNOWNED-blob (case-A) carve is only trusted if
+            # the locator placed it in an allowed class with sufficient
+            # confidence. gate_allowed is None => gate off (--force/no sidecar).
+            if gate_allowed is not None and addr not in gate_allowed:
+                gate_dropped.append(e)
+                continue
             case_a.append(e)
         elif tu_base(cov).lower() == tu.lower():
             self_owned.append(e)
@@ -489,6 +545,10 @@ def main():
     print(f"  bodies (size>0)          : {len(bodies)}")
     print(f"classification:")
     print(f"  CASE-A unowned-blob      : {len(case_a)}  <- micro-pin candidates")
+    if gate_allowed is not None:
+        print(f"  GATE-DROPPED (case-A)    : {len(gate_dropped)}  "
+              f"(locator class not in {args.require_class} or conf<"
+              f"{args.min_confidence}; NOT carved -- wave-16 mis-carve guard)")
     print(f"  SELF (already in own pin): {len(self_owned)}  (reveal_sweep territory, skip)")
     print(f"  CASE-B foreign-pinned    : {len(case_b)}  (eviction-gated, SKIP -> deferred)")
     if rejected_bisect:
