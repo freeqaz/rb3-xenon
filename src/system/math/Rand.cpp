@@ -81,8 +81,8 @@ float Rand::Gaussian() {
     } else {
         do {
             do {
-                f2 = Float(-1.0f, 1.0f);
-                f3 = Float(-1.0f, 1.0f);
+                f2 = Float() * 2.0f - 1.0f;
+                f3 = Float() * 2.0f - 1.0f;
                 f5 = f2 * f2 + f3 * f3;
             } while (f5 >= 1.0f);
         } while (0 == f5);
