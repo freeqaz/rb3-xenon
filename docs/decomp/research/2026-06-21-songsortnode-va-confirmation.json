@@ -1,0 +1,491 @@
+{
+ "tu": "band3/src/meta_band/SongSortNode.cpp",
+ "total": 53,
+ "summary": {
+  "CONFIRMED": 0,
+  "RECON": 15,
+  "WALL": 13,
+  "UNPLACEABLE": 23,
+  "MISATTRIBUTED": 2
+ },
+ "gate_verdict": "0/53 reach CONFIRMED (sim>=0.5 + shape-match). ALL 53 oracle entries have BinDiff sim<0.5. VAs are correctly attributed to the right NAMED method (body-shape confirms kind) EXCEPT 2 hand-verified MISATTRIBUTIONS. Reconstruction is a body-divergence problem, not a VA-finding problem.",
+ "table": [
+  {
+   "va": "0x8226fcf8",
+   "method": "FunctionSortNode::GetToken()_const",
+   "sim": 0.4131,
+   "oracle_size": 8,
+   "true_size": 80,
+   "class": "RECON",
+   "reason": "80B sim 0.413; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x822ab970",
+   "method": "SetlistSortNode::GetTotalMs()",
+   "sim": 0.4363,
+   "oracle_size": 0,
+   "true_size": 96,
+   "class": "RECON",
+   "reason": "96B sim 0.436; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x8236bc48",
+   "method": "ShortcutNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0493,
+   "oracle_size": 52,
+   "true_size": 284,
+   "class": "WALL",
+   "reason": "284B but sim 0.049 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x82389698",
+   "method": "SortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0078,
+   "oracle_size": 140,
+   "true_size": 908,
+   "class": "WALL",
+   "reason": "908B Handle/Renumber/Dispatch; codegen-heavy switch-on-Symbol; defer"
+  },
+  {
+   "va": "0x82394d78",
+   "method": "FunctionSortNode::GetTier()_const",
+   "sim": 0.4156,
+   "oracle_size": 8,
+   "true_size": 64,
+   "class": "RECON",
+   "reason": "64B sim 0.416; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x823b3480",
+   "method": "HeaderSortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0127,
+   "oracle_size": 168,
+   "true_size": 640,
+   "class": "WALL",
+   "reason": "640B Handle/Renumber/Dispatch; codegen-heavy switch-on-Symbol; defer"
+  },
+  {
+   "va": "0x823ba6a0",
+   "method": "FunctionSortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0136,
+   "oracle_size": 104,
+   "true_size": 564,
+   "class": "WALL",
+   "reason": "564B Handle/Renumber/Dispatch; codegen-heavy switch-on-Symbol; defer"
+  },
+  {
+   "va": "0x823bb7a8",
+   "method": "SongSortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0265,
+   "oracle_size": 116,
+   "true_size": 556,
+   "class": "WALL",
+   "reason": "556B Handle/Renumber/Dispatch; codegen-heavy switch-on-Symbol; defer"
+  },
+  {
+   "va": "0x823c23c8",
+   "method": "ShortcutNode::Renumber(stlpmtx_std::vector<SortNode_*,_stlpmtx_std::StlNodeAlloc<SortNode_*>>_&)",
+   "sim": 0.0951,
+   "oracle_size": 24,
+   "true_size": 392,
+   "class": "WALL",
+   "reason": "392B but sim 0.095 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x823c2600",
+   "method": "SortNode::Renumber(stlpmtx_std::vector<SortNode_*,_stlpmtx_std::StlNodeAlloc<SortNode_*>>_&)",
+   "sim": 0.1524,
+   "oracle_size": 20,
+   "true_size": 336,
+   "class": "RECON",
+   "reason": "336B sim 0.152; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x823d0c08",
+   "method": "OwnedSongSortNode::GetTier(Symbol)_const",
+   "sim": 0.4279,
+   "oracle_size": 24,
+   "true_size": 72,
+   "class": "RECON",
+   "reason": "72B sim 0.428; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x823d6c48",
+   "method": "SortNode::SetShortcut(ShortcutNode_*)",
+   "sim": 0.4163,
+   "oracle_size": 8,
+   "true_size": 64,
+   "class": "RECON",
+   "reason": "64B sim 0.416; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x823d8d08",
+   "method": "FunctionSortNode::GetAlbumArtPath()",
+   "sim": 0.4163,
+   "oracle_size": 8,
+   "true_size": 64,
+   "class": "RECON",
+   "reason": "64B sim 0.416; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x82450208",
+   "method": "ShortcutNode::GetDateTime()_const",
+   "sim": 0.4179,
+   "oracle_size": 8,
+   "true_size": 88,
+   "class": "RECON",
+   "reason": "88B sim 0.418; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x824eeaa0",
+   "method": "OwnedSongSortNode::GetTotalMs()_const",
+   "sim": 0.0003,
+   "oracle_size": 0,
+   "true_size": 4676,
+   "class": "MISATTRIBUTED",
+   "reason": "4676B body claimed as GetTotalMs accessor + sim 0.000 -> wrong VA"
+  },
+  {
+   "va": "0x82510308",
+   "method": "OwnedSongSortNode::GetIsCover()_const",
+   "sim": 0.4318,
+   "oracle_size": 28,
+   "true_size": 112,
+   "class": "RECON",
+   "reason": "112B sim 0.432; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x825457f0",
+   "method": "HeaderSortNode::GetToken()_const",
+   "sim": 0.4233,
+   "oracle_size": 8,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82545810",
+   "method": "HeaderSortNode::LocalizeToken()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82545830",
+   "method": "HeaderSortNode::GetDateTime()_const",
+   "sim": 0.4233,
+   "oracle_size": 8,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82545850",
+   "method": "FunctionSortNode::IsActive()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82546344",
+   "method": "SetlistSortNode::IsEnabled()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82547c20",
+   "method": "OwnedSongSortNode::GetType()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82548ea4",
+   "method": "FunctionSortNode::GetSongCount()",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82548ec4",
+   "method": "FunctionSortNode::GetFirstActive()",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82548ee4",
+   "method": "SubheaderSortNode::GetType()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82548f04",
+   "method": "HeaderSortNode::GetType()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82548f44",
+   "method": "ShortcutNode::GetType()_const",
+   "sim": 0.4139,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82564358",
+   "method": "ShortcutNode::FinishSort(NodeSort_*)",
+   "sim": 0.3038,
+   "oracle_size": 16,
+   "true_size": 96,
+   "class": "RECON",
+   "reason": "96B sim 0.304; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x8256d9a8",
+   "method": "OwnedSongSortNode::GetToken()_const",
+   "sim": 0.4216,
+   "oracle_size": 8,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x8256da48",
+   "method": "SetlistSortNode::GetToken()_const",
+   "sim": 0.4216,
+   "oracle_size": 8,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x8256dac8",
+   "method": "FunctionSortNode::GetShortcutStr()",
+   "sim": 0.4301,
+   "oracle_size": 12,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x8258c950",
+   "method": "HeaderSortNode::GetAlbumArtPath()",
+   "sim": 0.4279,
+   "oracle_size": 12,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x8258d0ac",
+   "method": "FunctionSortNode::IsEnabled()_const",
+   "sim": 0.4124,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x8258d648",
+   "method": "SetlistSortNode::GetAlbumArtPath()",
+   "sim": 0.4279,
+   "oracle_size": 12,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x82591860",
+   "method": "SubheaderSortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.2671,
+   "oracle_size": 44,
+   "true_size": 364,
+   "class": "RECON",
+   "reason": "364B sim 0.267; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x82598848",
+   "method": "OwnedSongSortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0169,
+   "oracle_size": 20,
+   "true_size": 396,
+   "class": "WALL",
+   "reason": "396B but sim 0.017 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x825a40a8",
+   "method": "SetlistSortNode::Handle(DataArray_*,_bool)",
+   "sim": 0.0495,
+   "oracle_size": 60,
+   "true_size": 276,
+   "class": "WALL",
+   "reason": "276B but sim 0.050 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x825caaf4",
+   "method": "Node::Compare(const_Node_*,_SongNodeType)_const",
+   "sim": 0.4113,
+   "oracle_size": 4,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x825cad14",
+   "method": "OwnedSongSortNode::GetTotalScore()",
+   "sim": 0.4246,
+   "oracle_size": 12,
+   "true_size": 32,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x8264f2a0",
+   "method": "ShortcutNode::ShortcutNode(SongSortCmp_*,_Symbol,_bool)",
+   "sim": 0.4238,
+   "oracle_size": 64,
+   "true_size": 168,
+   "class": "MISATTRIBUTED",
+   "reason": "disasm = memberwise COPY-ctor (mr r30,r4; field-copy 0xc..0x38), not the (SongSortCmp*,Symbol,bool) value-ctor"
+  },
+  {
+   "va": "0x8267e9d8",
+   "method": "SongSortNode::GetSongCount()",
+   "sim": 0.4279,
+   "oracle_size": 4,
+   "true_size": null,
+   "class": "UNPLACEABLE",
+   "reason": "no pdata fn-start (ICF-folded leaf / mid-blob); <=8B; defer case-B byte-transport"
+  },
+  {
+   "va": "0x826e8048",
+   "method": "SetlistSortNode::GetTotalScore()",
+   "sim": 0.0413,
+   "oracle_size": 16,
+   "true_size": 80,
+   "class": "WALL",
+   "reason": "80B but sim 0.041 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x826ecc50",
+   "method": "SetlistSortNode::GetTotalStars()",
+   "sim": 0.0075,
+   "oracle_size": 0,
+   "true_size": 72,
+   "class": "WALL",
+   "reason": "72B but sim 0.007 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x827575a8",
+   "method": "OwnedSongSortNode::GetTitle()_const",
+   "sim": 0.4235,
+   "oracle_size": 0,
+   "true_size": 120,
+   "class": "RECON",
+   "reason": "120B sim 0.423; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x8282c6e0",
+   "method": "OwnedSongSortNode::GetAlbumArtPath()",
+   "sim": 0.3833,
+   "oracle_size": 40,
+   "true_size": 88,
+   "class": "RECON",
+   "reason": "88B sim 0.383; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x82863fe8",
+   "method": "stlpmtx_std::__equal_range<stlpmtx_std::_List_iterator<SortNode_*,_stlpmtx_std::_Nonconst_traits<SortNode_*>>,_LeafSortNode_*,_CompareHeaders,_long>(stlpmtx_std::_List_iterator<SortNode_*,_stlpmtx_std::_Nonconst_traits<SortNode_*>>,_stlpmtx_std::_List_iterator<SortNode_*,_stlpmtx_std::_Nonconst_traits<SortNode_*>>,_LeafSortNode_*const_&,_CompareHeaders,_long_*)",
+   "sim": 0.0329,
+   "oracle_size": 20,
+   "true_size": 280,
+   "class": "WALL",
+   "reason": "280B but sim 0.033 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x82864100",
+   "method": "ShortcutNode::Insert(LeafSortNode_*,_NodeSort_*)",
+   "sim": 0.0068,
+   "oracle_size": 32,
+   "true_size": 80,
+   "class": "WALL",
+   "reason": "80B but sim 0.007 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x82896f00",
+   "method": "SetlistSortNode::GetPotentialStars()",
+   "sim": 0.4139,
+   "oracle_size": 8,
+   "true_size": 40,
+   "class": "UNPLACEABLE",
+   "reason": "<=44B; disasm = MILO Symbol/singleton static-init GUARD-THUNK (ICF-folds binary-wide, sim~0.41 = guard resemblance not body); defer case-B"
+  },
+  {
+   "va": "0x829ba998",
+   "method": "SubheaderSortNode::SubheaderSortNode(SongSortCmp_*,_Symbol,_bool)",
+   "sim": 0.422,
+   "oracle_size": 64,
+   "true_size": 176,
+   "class": "RECON",
+   "reason": "176B sim 0.422; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x82a451b0",
+   "method": "ShortcutNode::GetFirstActive()",
+   "sim": 0.0309,
+   "oracle_size": 28,
+   "true_size": 216,
+   "class": "WALL",
+   "reason": "216B but sim 0.031 -> retail body almost unrelated to Wii oracle; recon-heavy, defer"
+  },
+  {
+   "va": "0x82a51b60",
+   "method": "ShortcutNode::IsActive()_const",
+   "sim": 0.2351,
+   "oracle_size": 28,
+   "true_size": null,
+   "class": "UNPLACEABLE",
+   "reason": "no pdata fn-start (ICF-folded leaf / mid-blob); <=8B; defer case-B byte-transport"
+  },
+  {
+   "va": "0x82aeef10",
+   "method": "OwnedSongSortNode::GetAlbum()_const",
+   "sim": 0.4235,
+   "oracle_size": 0,
+   "true_size": 48,
+   "class": "RECON",
+   "reason": "48B sim 0.423; oracle body simple; body-port candidate (gated on STEP-2 build)"
+  },
+  {
+   "va": "0x82b4af10",
+   "method": "SetlistSortNode::GetSongCount()",
+   "sim": 0.4163,
+   "oracle_size": 8,
+   "true_size": null,
+   "class": "UNPLACEABLE",
+   "reason": "no pdata fn-start (ICF-folded leaf / mid-blob); <=8B; defer case-B byte-transport"
+  }
+ ]
+}
