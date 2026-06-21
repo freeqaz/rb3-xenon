@@ -292,7 +292,7 @@ Geo.cpp:
 
 Rand.cpp:
 	.pdata      start:0x8220DFC0 end:0x8220DFF8
-	.text       start:0x824DFE08 end:0x824E0148
+	.text       start:0x824DFE08 end:0x824E01A0
 
 SHA1.cpp:
 	.pdata      start:0x8220E000 end:0x8220E030
@@ -446,7 +446,7 @@ BlockMgr.cpp:
 
 JoypadClient.cpp:
 	.pdata      start:0x82211538 end:0x822115D0
-	.text       start:0x82515438 end:0x82516120
+	.text       start:0x82515438 end:0x82516124
 
 Joypad_Xinput.cpp:
 	.pdata      start:0x82211FB0 end:0x82211FE0
@@ -458,7 +458,7 @@ AsyncFile.cpp:
 
 HDCache.cpp:
 	.pdata      start:0x822121A0 end:0x82212268
-	.text       start:0x82520730 end:0x82521E08
+	.text       start:0x82520730 end:0x82521E10
 
 CacheMgr_Xbox.cpp:
 	.pdata      start:0x8223AA58 end:0x8223AB98
@@ -1595,7 +1595,7 @@ PartAnim.cpp:
 
 SongPreview.cpp:
 	.pdata      start:0x8222A900 end:0x8222A908
-	.text       start:0x826911D0 end:0x82691220
+	.text       start:0x826911D0 end:0x82691274
 
 HamAudio.cpp:
 	.pdata      start:0x8222B0B8 end:0x8222B0C0
@@ -1777,7 +1777,7 @@ Song.cpp:
 
 FlowSetProperty.cpp:
 	.pdata      start:0x82239B80 end:0x82239B88
-	.text       start:0x827A1708 end:0x827A177C
+	.text       start:0x827A1708 end:0x827A1780
 
 Loader.cpp:
 	.pdata      start:0x82239C00 end:0x82239C08
