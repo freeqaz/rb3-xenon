@@ -238,6 +238,10 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821F1FA8 end:0x821F22A0
 	.text       start:0x822E4180 end:0x822E847C
 
+BandCrowdMeter.cpp:
+	.pdata      start:0x821EEA60 end:0x821EEB30
+	.text       start:0x822AE238 end:0x822AF160
+
 CrowdAudio.cpp:
 	.pdata      start:0x821F3B10 end:0x821F3E30
 	.text       start:0x822FEDF8 end:0x82301F64

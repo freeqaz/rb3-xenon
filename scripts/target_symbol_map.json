@@ -12997,5 +12997,8 @@
  "0X82671060": "?DefaultDifficulty@@YA?AW4Difficulty@@XZ",
  "0X826710D0": "?DifficultyToSym@@YA?AVSymbol@@W4Difficulty@@@Z",
  "0X82671140": "?DifficultyToShortSym@@YA?AVSymbol@@W4Difficulty@@@Z",
- "0X826711B0": "?ControllerHasRepresentativePartPriority@@YA_NW4ControllerType@@W4TrackType@@@Z"
+ "0X826711B0": "?ControllerHasRepresentativePartPriority@@YA_NW4ControllerType@@W4TrackType@@@Z",
+ "0x822AE810": "?push_back@?$vector@VIconData@BandCrowdMeter@@V?$StlNodeAlloc@VIconData@BandCrowdMeter@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVIconData@BandCrowdMeter@@@Z",
+ "0x822AE920": "?resize@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjPtr@VRndGroup@@@@@Z",
+ "0x822AEFA8": "??$?5V?$ObjPtr@VRndGroup@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndGroup@@@@@@@Z"
 }
