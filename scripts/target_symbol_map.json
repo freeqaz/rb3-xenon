@@ -12985,5 +12985,17 @@
  "0x825AE890": "??$Find@VUIPanel@@@ObjectDir@@QAAPAVUIPanel@@PBD_N@Z",
  "0x825AE938": "?OnSetUserName@AppLabel@@QAA?AVDataNode@@PBVDataArray@@@Z",
  "0x825AEA58": "?OnSetBandName@AppLabel@@QAA?AVDataNode@@PBVDataArray@@@Z",
- "0x825AF180": "?SetFormattedProfileName@AppLabel@@QAAXVSymbol@@PAVBandUser@@@Z"
+ "0x825AF180": "?SetFormattedProfileName@AppLabel@@QAAXVSymbol@@PAVBandUser@@@Z",
+ "0X82670CB0": "?TrackTypeToControllerType@@YA?AW4ControllerType@@W4TrackType@@@Z",
+ "0X82670D10": "?ScoreTypeToTrackType@@YA?AW4TrackType@@W4ScoreType@@@Z",
+ "0X82670D90": "?ControllerTypeToSym@@YA?AVSymbol@@W4ControllerType@@@Z",
+ "0X82670E00": "?SymToControllerType@@YA?AW4ControllerType@@VSymbol@@@Z",
+ "0X82670E70": "?TrackTypeToScoreType@@YA?AW4ScoreType@@W4TrackType@@_N1@Z",
+ "0X82670F84": "?CensorString@@YAXAAVString@@@Z",
+ "0X82670F88": "?ScoreTypeToSym@@YA?AVSymbol@@W4ScoreType@@@Z",
+ "0X82670FF8": "?SymToScoreType@@YA?AW4ScoreType@@VSymbol@@@Z",
+ "0X82671060": "?DefaultDifficulty@@YA?AW4Difficulty@@XZ",
+ "0X826710D0": "?DifficultyToSym@@YA?AVSymbol@@W4Difficulty@@@Z",
+ "0X82671140": "?DifficultyToShortSym@@YA?AVSymbol@@W4Difficulty@@@Z",
+ "0X826711B0": "?ControllerHasRepresentativePartPriority@@YA_NW4ControllerType@@W4TrackType@@@Z"
 }

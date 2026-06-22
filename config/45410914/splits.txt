@@ -222,6 +222,10 @@ QuestFilterPanel.cpp:
 	.pdata      start:0x82253238 end:0x822533B8
 	.text       start:0x82B4B850 end:0x82B4CED0
 
+Defines.cpp:
+	.pdata      start:0x82228A00 end:0x82228A38
+	.text       start:0x82670CB0 end:0x82671230
+
 GameMode.cpp:
 	.pdata      start:0x82228AA8 end:0x82228B68
 	.text       start:0x82671A60 end:0x826725F0
