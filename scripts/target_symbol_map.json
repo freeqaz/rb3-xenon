@@ -13005,5 +13005,11 @@
  "0X82663C78": "?SetSynapseSlackyness@GameMicManager@@QAAXM@Z",
  "0X82663CF0": "?SetSynapseFocus@GameMicManager@@QAAXM@Z",
  "0X82663E40": "?SetAmount@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0X82664820": "?Terminate@GameMicManager@@SAXXZ"
+ "0X82664820": "?Terminate@GameMicManager@@SAXXZ",
+ "0x82267DB0": "?UsesSticker@PatchDir@@QBA_NPBVPatchSticker@@@Z",
+ "0x82267E38": "?LoadLayerStickers@PatchDir@@QAAXXZ",
+ "0x82268380": "?Init@PatchLayer@@SAXXZ",
+ "0x82268430": "?Init@PatchDir@@SAXXZ",
+ "0x82268480": "??4PatchLayer@@QAAAAV0@ABV0@@Z",
+ "0x82268A08": "?_M_erase@?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPatchLayer@@PAV3@0ABU__false_type@2@@Z"
 }

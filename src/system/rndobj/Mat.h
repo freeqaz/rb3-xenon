@@ -114,6 +114,10 @@ public:
         mDirty |= 2;
     }
     void SetPointLights(bool lit) { mPointLights = lit; }
+    void SetColor(const Hmx::Color &col) {
+        mColor.Set(col.red, col.green, col.blue);
+        mDirty |= 1;
+    }
     void SetColor(float r, float g, float b) {
         mColor.Set(r, g, b);
         mDirty |= 1;

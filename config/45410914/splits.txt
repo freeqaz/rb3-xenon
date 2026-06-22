@@ -246,6 +246,10 @@ CrowdAudio.cpp:
 	.pdata      start:0x821F3B10 end:0x821F3E30
 	.text       start:0x822FEDF8 end:0x82301F64
 
+PatchDir.cpp:
+	.pdata      start:0x821EA0B0 end:0x821EA270
+	.text       start:0x822677C8 end:0x82269450
+
 StreakMeter.cpp:
 	.pdata      start:0x821F0560 end:0x821F05B0
 	.text       start:0x822C9020 end:0x822C97C8
