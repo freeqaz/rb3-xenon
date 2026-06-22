@@ -2755,3 +2755,7 @@ band3/meta_band/ViewSetting.cpp:
 band3/meta_band/PatchSelectPanel.cpp:
 	.pdata      start:0x82222288 end:0x82222350
 	.text       start:0x82611248 end:0x82611F28
+
+GameMicManager.cpp:
+	.pdata      start:0x82227D00 end:0x82227E08
+	.text       start:0x82663A1C end:0x82664890

@@ -13,6 +13,12 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
+    void SetAttackSmoothing(float);
+    void SetReleaseSmoothing(float);
+    void SetAmount(float);
+    void SetProximityEffect(float);
+    void SetProximityFocus(float);
+
     OBJ_MEM_OVERLOAD(0x10);
     NEW_OBJ(FxSendSynapse)
 

@@ -99,6 +99,7 @@ public:
     Fader *InstFader() const { return mMidiInstrumentFader; }
     void SetDir(ObjectDir *dir) { mCommonBank = dir; }
     ByteGrinder &Grinder() { return mByteGrinder; }
+    MicClientMapper *GetMicClientMapper() { return mMicClientMapper; }
     std::vector<LevelData> &GetLevelData() { return mLevelData; }
     bool CheckCommonBank(bool);
     void SetMasterVolume(float);
