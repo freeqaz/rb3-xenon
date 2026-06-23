@@ -19,7 +19,10 @@ const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchAr
   'PatchPanel.cpp','CampaignLevel.cpp','BandMachineMgr.cpp','CharacterCreatorPanel.cpp','BandStorePanel.cpp','BandHeadShaper.cpp','UIProxy.cpp','Game.cpp',
   // wave-5 (main @70d60d5): landed UIPanel/FocusTracker/TrackWidget/EntityUploader/StarDisplay (+152);
   // rejects incl MetaPanel (now FOREIGN frun=124, supersedes wave-3 deferral), BandLabel/NewAwardPanel FOREIGN
-  'UIPanel.cpp','FocusTracker.cpp','TrackWidget.cpp','EntityUploader.cpp','StarDisplay.cpp','AccomplishmentOneShot.cpp','BandSongMetadata.cpp','BandLabel.cpp','NewAwardPanel.cpp','MetaPanel.cpp']
+  'UIPanel.cpp','FocusTracker.cpp','TrackWidget.cpp','EntityUploader.cpp','StarDisplay.cpp','AccomplishmentOneShot.cpp','BandSongMetadata.cpp','BandLabel.cpp','NewAwardPanel.cpp','MetaPanel.cpp',
+  // wave-6 (main @895b7e9): landed MetaMusic/CheckboxDisplay/BandWardrobe (+50); rejects NextSongPanel
+  // (not TU-pure), MicInputArrow/BandButton/BandTrack/Utl/Loader/GuitarController FOREIGN/MIXED
+  'MetaMusic.cpp','CheckboxDisplay.cpp','BandWardrobe.cpp','NextSongPanel.cpp','MicInputArrow.cpp','BandButton.cpp','BandTrack.cpp','Utl.cpp','Loader.cpp','GuitarController.cpp']
 
 const SCAN_SCHEMA = {
   type: 'object', additionalProperties: false,

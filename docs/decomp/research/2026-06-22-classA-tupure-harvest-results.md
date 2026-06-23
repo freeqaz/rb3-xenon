@@ -134,6 +134,32 @@ system/ui, band3/net_band, system/bandobj) still finds TU-pure spans. The `max_f
 distinctive-string/line-const gate keeps it honest (5/5 winners real-bodied, icf-clean). Yield by wave:
 +52/+49/+26/+22 / **w3 +126 / w4 +53 / w5 +152**. Cumulative class-A: **+568**. Still productive → keep going.
 
+## Wave-6 (2026-06-23, main @895b7e9) — +50 composed (3 winners / 10 scanned)
+| TU | + | note |
+|---|---:|---|
+| MetaMusic.cpp | +37 | system/synth; rewrote existing .cpp/.h + shared MemMgr.h (+25), 0 regressions |
+| CheckboxDisplay.cpp | +8 | system/bandobj; new TU, tight 36-fn span |
+| BandWardrobe.cpp | +5 | system/bandobj; pin-only (already wired) |
+| **composed** | **+50** | 10582→10632, run1==run2 deterministic, 0 regressions |
+
+Rejected: NextSongPanel +42 (honest=false, span not TU-pure — BinDiff attributes 1 fn; correctly NOT
+landed despite the tempting raw number), MicInputArrow/BandButton/BandTrack/Utl/Loader/GuitarController
+all FOREIGN/MIXED. Cumulative class-A: **+618**.
+
+## ⚠ CROSS-AGENT objects.json-DROP HAZARD (bit twice — durable lesson)
+The union-replace-not-merge bug is NOT just an internal land.sh issue — a CONCURRENT agent landing its
+own work can rewrite objects.json from a pre-your-wave base and silently DROP your entries. Wave-6
+caught this: after wave-5 landed (+152, verified 10582), a concurrent GemPlayer-revert-era landing
+rewrote objects.json and dropped ALL 5 wave-5 entries (UIPanel/FocusTracker/TrackWidget/EntityUploader/
+StarDisplay) — splits pins survived, so `configure.py` printed "Missing configuration for X.cpp" and the
+build silently read the wave back to +0 (10582→10430). **DETECTION:** after ANY wave lands, re-run
+`configure.py` and grep its output for "Missing configuration for <your TUs>"; if present, your
+objects.json entries were dropped. **FIX:** re-add them idempotently to their correct cflags groups (an
+atomic python read-modify-write beats the Edit tool when a concurrent writer is live — the Edit tool will
+refuse with "file modified since read") and commit IMMEDIATELY to shrink the race window. The splits pin
++ a fresh build (configure.py + fresh_report) is the only reliable truth — never trust a matched count
+until configure.py is clean of "Missing configuration" for your TUs.
+
 ## How to resume (for a future session that wants the marginal tail)
 Edit the `DONE_OR_MIXED` exclusion in `scripts/wf_classa_harvest.js` (now includes TrackDir/
 TrackerDisplay/StoreInfoPanel/NetworkEmulator/BandUserMgr/OutfitConfig/AccomplishmentPanel/NetSession;
