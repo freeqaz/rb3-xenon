@@ -13241,5 +13241,7 @@
  "0x826D50A8": "?GetBestHit@VocalPart@@QAAMMHHPAVTalkyMatcher@@AAMMAAH211AA_N@Z",
  "0x826D52B8": "?HandlePhraseEnd@VocalPart@@QAAXAAHAAM10M@Z",
  "0x826D5A80": "?CalcNoteWeights@VocalPart@@QAAXXZ",
- "0x826D5BE0": "?PostLoad@VocalPart@@QAAXXZ"
+ "0x826D5BE0": "?PostLoad@VocalPart@@QAAXXZ",
+ "0x82357450": "?SetDirty@TourSavable@@UAAX_NH@Z",
+ "0x82357490": "?SaveLoadComplete@TourSavable@@QAAXW4ProfileSaveState@@@Z"
 }

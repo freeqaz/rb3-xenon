@@ -46,6 +46,7 @@ public:
     static void PreInit(int, int);
     static void Init(void);
     static void Terminate(void);
+    static void UploadDebugStats();
 };
 
 inline void Interp(const Symbol &s1, const Symbol &s2, float f, Symbol &s3) {

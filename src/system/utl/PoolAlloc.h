@@ -39,6 +39,7 @@ public:
     void *Alloc(int);
     void Free(void *, int);
     void Print(TextStream &);
+    static void UploadDebugStats();
 
     MEM_OVERLOAD(ChunkAllocator, 0x38);
 

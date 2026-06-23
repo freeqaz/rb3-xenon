@@ -180,6 +180,7 @@ public:
     void ShowConsole(bool);
     bool ConsoleShowing();
     void EndWorld();
+    void UploadDebugStats();
 #ifdef HX_NATIVE
     virtual void ClearDepthForOverlay() {} // Override in WgpuRnd
 #endif
