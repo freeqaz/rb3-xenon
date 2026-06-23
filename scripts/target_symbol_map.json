@@ -13316,5 +13316,14 @@
  "0x8260F538": "?SlotColorOverride@LayerProvider@@UBAPAVUIColor@@HHPAVUIListWidget@@PAV2@@Z",
  "0x8260F5E0": "?Mat@LayerProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
  "0x8260F910": "??$DeleteAll@V?$vector@PAVRndMat@@V?$StlNodeAlloc@PAVRndMat@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVRndMat@@V?$StlNodeAlloc@PAVRndMat@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x8260FEC8": "?SetStickerCategory@PatchPanel@@QAAXVSymbol@@@Z"
+ "0x8260FEC8": "?SetStickerCategory@PatchPanel@@QAAXVSymbol@@@Z",
+ "0x8233AA68": "?SetMaxMultiplier@BandTrack@@QAAXH@Z",
+ "0x8233AA80": "?PlayerDisabled@BandTrack@@QAAXXZ",
+ "0x8233AB90": "?SetBandMultiplier@BandTrack@@QAAXH@Z",
+ "0x8233ABB0": "?CombineStreakMultipliers@BandTrack@@QAAX_N@Z",
+ "0x8233AD18": "?GetTrackIcon@BandTrack@@QBAPBDXZ",
+ "0x8233AD70": "?UserName@BandTrack@@QBAPBDXZ",
+ "0x8233CB38": "?DropIn@BandTrack@@QAAXXZ",
+ "0x8233CB98": "?DropOut@BandTrack@@QAAXXZ",
+ "0x8233CCE0": "?Deploy@BandTrack@@UAAXXZ"
 }

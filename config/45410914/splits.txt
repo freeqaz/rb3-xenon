@@ -2906,3 +2906,19 @@ TrackDir.cpp:
 NetworkEmulator.cpp:
 	.pdata      start:0x822007A0 end:0x822007F8
 	.text       start:0x823D8F00 end:0x823D97F8
+
+system/bandobj/BandTrack.cpp:
+	.pdata      start:0x821F7318 end:0x821F7320
+	.pdata      start:0x821F7320 end:0x821F7328
+	.pdata      start:0x821F75A0 end:0x821F75A8
+	.pdata      start:0x821F75A8 end:0x821F75B0
+	.pdata      start:0x821F75B8 end:0x821F75C0
+	.text       start:0x8233AA68 end:0x8233AA80
+	.text       start:0x8233AA80 end:0x8233AAA8
+	.text       start:0x8233AB90 end:0x8233ABAC
+	.text       start:0x8233ABB0 end:0x8233ABC4
+	.text       start:0x8233AD18 end:0x8233AD6C
+	.text       start:0x8233AD70 end:0x8233ADC4
+	.text       start:0x8233CB38 end:0x8233CB98
+	.text       start:0x8233CB98 end:0x8233CC18
+	.text       start:0x8233CCE0 end:0x8233CD74
