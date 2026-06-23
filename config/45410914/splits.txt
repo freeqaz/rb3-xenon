@@ -1555,6 +1555,10 @@ FreestyleMoveRecorder.cpp:
 	.pdata      start:0x8221E160 end:0x8221E168
 	.text       start:0x825D26C8 end:0x825D2760
 
+AssetTypes.cpp:
+	.pdata      start:0x8221E1E0 end:0x8221E3B0
+	.text       start:0x825D2E30 end:0x825D43B0
+
 PhysicsManager.cpp:
 	.pdata      start:0x8221EA20 end:0x8221EA40
 	.text       start:0x825DA840 end:0x825DAA18
