@@ -2604,6 +2604,10 @@ band3/bandtrack/Gem.cpp:
 	.pdata      start:0x82255330 end:0x822553D8
 	.text       start:0x82B7A2A0 end:0x82B7B52C
 
+band3/bandtrack/TrackPanel.cpp:
+	.pdata      start:0x82253F90 end:0x82254318
+	.text       start:0x82B5E0B8 end:0x82B61E30
+
 band3/bandtrack/GemTrack.cpp:
 	.pdata      start:0x82254318 end:0x82254500
 	.text       start:0x82B61E30 end:0x82B64D38
