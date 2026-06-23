@@ -86,6 +86,30 @@ FULL-PATH objects.json entry + re-add any dropped one to its correct cflags grou
 (3) `build.ninja` is gitignored → after landing newly-ADDED TUs you MUST run `configure.py` before the
 composed verify, else the new objs never compile and the delta reads ~+0.
 
+## Wave-4 (2026-06-23, main @a38ef1b) — +53 composed (2 winners / 8 scanned), vein THINNING HARD
+Same fresh-scan workflow. 8 candidates → only 3 OWN+feasible → **2 honest winners**:
+
+| TU | + | note |
+|---|---:|---|
+| PatchPanel.cpp | +50 | band3/meta_band; new 722-line port + small TexRenderer.h/InlineHelp.h adds |
+| CampaignLevel.cpp | +3 | band3/meta_band; pinned an already-wired (concurrent-scaffolded) TU |
+| **composed** | **+53** | 10364→10417, run1==run2 deterministic, 0 regressions |
+
+REJECTED honestly: **BandHeadShaper.cpp +0** (OWN span but the +10 = ICF-stub-fold inflation — `bandobj/`
+TUs have ZERO oracle coverage in unified_id_rb3wii.json [it indexes only `band3/` game code] so
+gen_game_target_map names nothing, only positional stub-folds pair; PLUS DC3-engine-header body
+divergence: RndTransformable::TransChildren std::list-not-vector, Hmx::Object::Refs ObjRef-ring-not-vector
+→ real method bodies stay <100%). Validate-stage rejects: BandMachineMgr (FOREIGN, 79-fn run + phantom
+IdentityInfo mis-pin + RockCentral micro-pin interleave), CharacterCreatorPanel (MIXED, multi-TU blob,
+28-fn unattributable run), BandStorePanel (MIXED, 125/150 foreign song-score/NetCache), UIProxy (MIXED,
+22-fn run), Game.cpp (FOREIGN, 235-fn run = a god-TU belt). ⭐ TWO STRUCTURAL WALLS now dominate the
+reject pile: (i) the **meta_band panel belt is ICF-scattered class-B** (BandStorePanel/CharacterCreatorPanel/
+BandMachineMgr = interleaved multi-TU, un-span-pinnable — identity-transfer territory, not span harvest);
+(ii) **`bandobj/`/`system/` engine TUs have NO rb3-Wii game oracle** → even TU-pure spans yield only
+stub-folds unless DC3 names them (and DC3 engine-naming is dead for strict). Yield trend across all waves:
+batch1 +52 → broaden1 +49 → broaden2 +26 → broaden3 +22 → **wave-3 +126** (broadened to network/track/game/
+meta_band = a fresh vein) → **wave-4 +53** (same broad scan, now 75% reject). Cumulative class-A: **+416**.
+
 ## How to resume (for a future session that wants the marginal tail)
 Edit the `DONE_OR_MIXED` exclusion in `scripts/wf_classa_harvest.js` (now includes TrackDir/
 TrackerDisplay/StoreInfoPanel/NetworkEmulator/BandUserMgr/OutfitConfig/AccomplishmentPanel/NetSession;

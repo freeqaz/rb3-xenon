@@ -14,7 +14,9 @@ const SOP = `${REPO}/docs/decomp/handoff/wave-loop-SOP-2026-06-20.md`
 // (wave-3 deferred it on tmpfs-quota env failure, not a port outcome — it is the retry candidate).
 const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchArrow.cpp','OvershellSlot.cpp','TrackPanelDirBase.cpp','TrackPanel.cpp','GemPlayer.cpp','ChordbookPanel.cpp','FreestylePanel.cpp','RGTrainerPanel.cpp','TrainerPanel.cpp','BandwidthCounter.cpp','TournamentDDL.cpp','RockCentral.cpp','Defines.cpp','BandCrowdMeter.cpp','GameMicManager.cpp','PatchDir.cpp','GemTrackDir.cpp','ChordShapeGenerator.cpp','BandScoreboard.cpp','VocalTrainerPanel.cpp','ClosetMgr.cpp','MainHubPanel.cpp','OverdriveMeter.cpp','TrainerProgressMeter.cpp','TrainerGemTab.cpp','StreakMeter.cpp',
   // wave-3 (main @25ed686): landed winners + honest rejects
-  'TrackDir.cpp','TrackerDisplay.cpp','StoreInfoPanel.cpp','NetworkEmulator.cpp','BandUserMgr.cpp','OutfitConfig.cpp','AccomplishmentPanel.cpp','NetSession.cpp']
+  'TrackDir.cpp','TrackerDisplay.cpp','StoreInfoPanel.cpp','NetworkEmulator.cpp','BandUserMgr.cpp','OutfitConfig.cpp','AccomplishmentPanel.cpp','NetSession.cpp',
+  // wave-4 (main @a38ef1b): landed PatchPanel/CampaignLevel; rejects (FOREIGN/MIXED/no-oracle ICF-stub)
+  'PatchPanel.cpp','CampaignLevel.cpp','BandMachineMgr.cpp','CharacterCreatorPanel.cpp','BandStorePanel.cpp','BandHeadShaper.cpp','UIProxy.cpp','Game.cpp']
 
 const SCAN_SCHEMA = {
   type: 'object', additionalProperties: false,
