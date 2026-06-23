@@ -25,7 +25,6 @@ RockCentral.cpp:
 	.pdata      start:0x821EAF40 end:0x821EAF48
 	.pdata      start:0x821EAF60 end:0x821EAF68
 	.pdata      start:0x821EAF70 end:0x821EAF78
-	.pdata      start:0x821EC250 end:0x821EC258
 	.pdata      start:0x821EF090 end:0x821EF098
 	.pdata      start:0x821EF8F0 end:0x821EF8F8
 	.pdata      start:0x821F1348 end:0x821F1350
@@ -102,7 +101,6 @@ RockCentral.cpp:
 	.text       start:0x82276978 end:0x822769CC
 	.text       start:0x82276A88 end:0x82276ADC
 	.text       start:0x82276B10 end:0x82276B64
-	.text       start:0x82287908 end:0x82287B9C
 	.text       start:0x822B5820 end:0x822B5870
 	.text       start:0x822BD618 end:0x822BD66C
 	.text       start:0x822D93D8 end:0x822D9440
@@ -188,7 +186,9 @@ BandCamShot.cpp:
 
 BandDirector.cpp:
 	.pdata      start:0x821EB640 end:0x821EBF70
+	.pdata      start:0x821EBF70 end:0x821EC8A8
 	.text       start:0x8227C378 end:0x82285300
+	.text       start:0x82285300 end:0x8228E468
 
 BandWardrobe.cpp:
 	.pdata      start:0x821F5988 end:0x821F5F80
