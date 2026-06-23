@@ -13325,5 +13325,7 @@
  "0x8233AD70": "?UserName@BandTrack@@QBAPBDXZ",
  "0x8233CB38": "?DropIn@BandTrack@@QAAXXZ",
  "0x8233CB98": "?DropOut@BandTrack@@QAAXXZ",
- "0x8233CCE0": "?Deploy@BandTrack@@UAAXXZ"
+ "0x8233CCE0": "?Deploy@BandTrack@@UAAXXZ",
+ "0x822E6D08": "?OnSetDisplayMode@VocalTrackDir@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x822E9598": "?SetupNetVocals@VocalTrackDir@@QAAXXZ"
 }

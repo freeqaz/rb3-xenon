@@ -245,8 +245,8 @@ BandCharDesc.cpp:
 	.text       start:0x82322DA0 end:0x82324884
 
 VocalTrackDir.cpp:
-	.pdata      start:0x821F1FA8 end:0x821F22A0
-	.text       start:0x822E4180 end:0x822E847C
+	.pdata      start:0x821F1FA8 end:0x821F2330
+	.text       start:0x822E4180 end:0x822E95FC
 
 BandCrowdMeter.cpp:
 	.pdata      start:0x821EEA60 end:0x821EEB30
