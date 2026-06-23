@@ -4572,6 +4572,9 @@
   "0x825BEB68": "?GetCharacterName@PrefabChar@@UBAPBDXZ",
   "0x825BF170": "?ToggleHiHatPedal@OvershellSlot@@QAAXXZ",
   "0x825BFB08": "?IsQuitToken@OvershellSlot@@QBA_NVSymbol@@@Z",
+  "0x825C0008": "?LookupUserInJoinList@OvershellSlot@@QAA_NPBVLocalBandUser@@PAW4JoinState@@@Z",
+  "0x825C0050": "?GenerateCurrentState@OvershellSlot@@QAAPAVOvershellSlotState@@XZ",
+  "0x825C04E0": "?IsValidUser@OvershellSlot@@QBA_NPAVBandUser@@@Z",
   "0x825C0700": "??4DataArrayPtr@@QAAXPAVDataArray@@@Z",
   "0x825C0C40": "?GetAccLeaderboardByRankRange@RockCentral@@QAAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVSymbol@@HHAAVDataResultList@@PAVObject@Hmx@@@Z",
   "0x825C0EC0": "?OnMsg@OvershellSlot@@QAA?AVDataNode@@ABVVirtualKeyboardResultMsg@@@Z",
@@ -4613,6 +4616,14 @@
   "0x825D1480": "?IsNone@StandIn@@QBA_NXZ",
   "0x825D14D8": "?IsPrefabCharacter@StandIn@@QBA_NXZ",
   "0x825D1530": "?IsCustomCharacter@StandIn@@QBA_NXZ",
+  "0x825D2E30": "?GetSymbolFromAssetType@@YA?AVSymbol@@W4AssetType@@@Z",
+  "0x825D34E8": "?GetSymbolFromAssetBoutique@@YA?AVSymbol@@W4AssetBoutique@@@Z",
+  "0x825D3958": "?GetDefaultAssetFromAssetType@@YA?AVSymbol@@W4AssetType@@W4AssetGender@@@Z",
+  "0x825D3F50": "?GetPatchCategoryFromAssetType@@YA?AW4Category@Patch@BandCharDesc@@W4AssetType@@@Z",
+  "0x825D3FE8": "?GetAssetTypeFromSymbol@@YA?AW4AssetType@@VSymbol@@@Z",
+  "0x825D4058": "?GetAssetGenderFromSymbol@@YA?AW4AssetGender@@VSymbol@@@Z",
+  "0x825D4160": "?GetAssetBoutiqueFromSymbol@@YA?AW4AssetBoutique@@VSymbol@@@Z",
+  "0x825D41D0": "?GetConfigNameFromAssetType@@YAPBDW4AssetType@@@Z",
   "0x825D6F70": "??1DynamicTex@@UAA@XZ",
   "0x825D72F0": "?NextDLCTex@TexLoadPanel@@IAAPAVDLCTex@@XZ",
   "0x825D7368": "?TexturesLoaded@TexLoadPanel@@IBA_NXZ",
@@ -13203,13 +13214,5 @@
   "_denylist": [
     "0x82759310"
   ],
-  "_denylist_comment": "Addresses that gen_target_map must never auto-emit (hand-flagged bad bindiff guesses / fingerprint collisions). 0x82759310 was a known DrawBounds collision (similarity 0.91).",
-  "0x825D2E30": "?GetSymbolFromAssetType@@YA?AVSymbol@@W4AssetType@@@Z",
-  "0x825D3FE8": "?GetAssetTypeFromSymbol@@YA?AW4AssetType@@VSymbol@@@Z",
-  "0x825D4058": "?GetAssetGenderFromSymbol@@YA?AW4AssetGender@@VSymbol@@@Z",
-  "0x825D34E8": "?GetSymbolFromAssetBoutique@@YA?AVSymbol@@W4AssetBoutique@@@Z",
-  "0x825D4160": "?GetAssetBoutiqueFromSymbol@@YA?AW4AssetBoutique@@VSymbol@@@Z",
-  "0x825D41D0": "?GetConfigNameFromAssetType@@YAPBDW4AssetType@@@Z",
-  "0x825D3958": "?GetDefaultAssetFromAssetType@@YA?AVSymbol@@W4AssetType@@W4AssetGender@@@Z",
-  "0x825D3F50": "?GetPatchCategoryFromAssetType@@YA?AW4Category@Patch@BandCharDesc@@W4AssetType@@@Z"
+  "_denylist_comment": "Addresses that gen_target_map must never auto-emit (hand-flagged bad bindiff guesses / fingerprint collisions). 0x82759310 was a known DrawBounds collision (similarity 0.91)."
 }
