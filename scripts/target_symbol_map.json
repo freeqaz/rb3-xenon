@@ -13450,5 +13450,7 @@
  "0x8267C088": "?LocalFinishedCoda@Band@@QAAXPAVPlayer@@@Z",
  "0x8267C830": "?EnergyCrowdBoost@Band@@QBAHXZ",
  "0X82B7DBB0": "?StopBurn@GemSmasher@@QAAXXZ",
- "0X82B7DD48": "?FillHit@GemSmasher@@QAAXH@Z"
+ "0X82B7DD48": "?FillHit@GemSmasher@@QAAXH@Z",
+ "0X82693818": "?SetPitchShiftRatio@PracticePanel@@QAAXM@Z",
+ "0X826943D0": "?MarkGemsAsProcessed@PracticePanel@@QAAXXZ"
 }
