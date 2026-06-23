@@ -3156,3 +3156,9 @@ PracticePanel.cpp:
 	.pdata      start:0x8222ABC0 end:0x8222ABC8
 	.text       start:0x82693818 end:0x82693880
 	.text       start:0x826943D0 end:0x82694524
+
+band3/meta_band/ProfileMgr.cpp:
+	.pdata      start:0x822133B8 end:0x822133C0
+	.text       start:0x82532198 end:0x825321B4
+	.text       start:0x82532280 end:0x8253229C
+	.text       start:0x82532B48 end:0x82532D5C

@@ -4,6 +4,7 @@
 // On X360, these paths are unreachable; forward declarations suffice.
 #include "obj/Object.h"
 #include "utl/BinStream.h"
+class LocalUser;
 
 class WiiProfile : public Hmx::Object {
 public:
@@ -40,6 +41,10 @@ public:
     void RemovePad(int);
     bool IsSlotAvailable() const;
     bool IsDeleteQueueFull() const;
+    // ProfileMgr-specific Wii APIs (decl-only for X360 compilation)
+    int Count(int) const { return 0; }
+    int GetHasSeenFirstTimeInstrumentFlagsForUser(const LocalUser *) const { return 0; }
+    void SetHasSeenFirstTimeInstrumentFlagsForUser(const LocalUser *, int, bool) {}
 };
 
 extern WiiProfileMgr TheWiiProfileMgr;

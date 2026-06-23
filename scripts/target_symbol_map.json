@@ -13452,5 +13452,8 @@
  "0X82B7DBB0": "?StopBurn@GemSmasher@@QAAXXZ",
  "0X82B7DD48": "?FillHit@GemSmasher@@QAAXH@Z",
  "0X82693818": "?SetPitchShiftRatio@PracticePanel@@QAAXM@Z",
- "0X826943D0": "?MarkGemsAsProcessed@PracticePanel@@QAAXXZ"
+ "0X826943D0": "?MarkGemsAsProcessed@PracticePanel@@QAAXXZ",
+ "0x82532198": "?GlobalOptionsNeedsSave@ProfileMgr@@QAA_NXZ",
+ "0x82532280": "?GetFxVolume@ProfileMgr@@QBAHXZ",
+ "0x82532B48": "?SaveGlobalOptions@ProfileMgr@@QAAXAAVFixedSizeSaveableStream@@@Z"
 }

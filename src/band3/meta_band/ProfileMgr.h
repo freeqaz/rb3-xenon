@@ -180,46 +180,49 @@ public:
     float mPlatformVideoLatency; // 0x20
     float mInGameExtraVideoLatency; // 0x24
     float mInGameSyncOffsetAdjustment; // 0x28
-    float mJoypadExtraLagOffsets[kJoypadNumTypes][kNumLagContexts]; // 0x2c
-    int unk550;
-    ProfileSaveState mGlobalOptionsSaveState; // 0x554
-    bool mGlobalOptionsDirty; // 0x558
-    int mBackgroundVolume; // 0x55c
-    int mForegroundVolume; // 0x560
-    int mFxVolume; // 0x564
-    int mCrowdVolume; // 0x568
-    int mVocalCueVolume; // 0x56c
-    int mVoiceChatVolume; // 0x570
-    bool mHasSeenFirstTimeCalibration; // 0x574
-    bool mHasConnectedProGuitar; // 0x575
-    float mSyncOffset; // 0x578
-    float mSongToTaskMgrMs; // 0x57c
-    bool mBassBoost; // 0x580
-    bool mDolby; // 0x581
-    bool unk582;
-    int mSyncPresetIx; // 0x584
-    bool mOverscan; // 0x588
-    bool mSynapseEnabled; // 0x589
-    bool unk58a;
-    bool mSecondPedalHiHat; // 0x58b
-    DataResultList mDataResults; // 0x58c
-    bool mWiiSpeakToggle; // 0x5a4
-    int mWiiSpeakFriendsVolume; // 0x5a8
-    int mWiiSpeakMicrophoneSensitivity; // 0x5ac
-    bool mWiiSpeakHeadphoneMode; // 0x5b0
-    bool mWiiSpeakEchoSuppression; // 0x5b1
-    bool mHasLoaded; // 0x5b2
-    bool mWiiFriendsPromptShown; // 0x5b3
-    bool mUsingWiiFriends; // 0x5b4
-    int unk5b8;
-    std::vector<int> mMicVolumes; // 0x5bc
-    DataArray *mSliderConfig; // 0x5c4
-    DataArray *mVoiceChatSliderConfig; // 0x5c8
-    unsigned int mCymbalConfiguration; // 0x5cc
-    std::vector<BandProfile *> mProfiles; // 0x5d0
-    BandProfile *mPrimaryProfile; // 0x5d8
-    bool mAllUnlocked; // 0x5dc
-    std::vector<float> mForcedMicGains; // 0x5e0
+    // Retail X360: the inline array is heap-allocated behind a float** pointer.
+    // Each mJoypadExtraLagOffsets[type] is a separately allocated float[kNumLagContexts].
+    // Layout verified from ctor (fn_82534980) and GetPadExtraLag (fn_825323D0).
+    float **mJoypadExtraLagOffsets; // 0x2c
+    int unk30; // 0x30
+    ProfileSaveState mGlobalOptionsSaveState; // 0x34
+    bool mGlobalOptionsDirty; // 0x38
+    int mBackgroundVolume; // 0x3c
+    int mForegroundVolume; // 0x40
+    int mFxVolume; // 0x44
+    int mCrowdVolume; // 0x48
+    int mVocalCueVolume; // 0x4c
+    int mVoiceChatVolume; // 0x50
+    bool mHasSeenFirstTimeCalibration; // 0x54
+    bool mHasConnectedProGuitar; // 0x55
+    float mSyncOffset; // 0x58
+    float mSongToTaskMgrMs; // 0x5c
+    bool mBassBoost; // 0x60
+    bool mDolby; // 0x61
+    bool unk582; // 0x62
+    int mSyncPresetIx; // 0x64
+    bool mOverscan; // 0x68
+    bool mSynapseEnabled; // 0x69
+    bool unk58a; // 0x6a
+    bool mSecondPedalHiHat; // 0x6b
+    DataResultList mDataResults; // 0x6c
+    bool mWiiSpeakToggle; // 0x84
+    int mWiiSpeakFriendsVolume; // 0x88
+    int mWiiSpeakMicrophoneSensitivity; // 0x8c
+    bool mWiiSpeakHeadphoneMode; // 0x90
+    bool mWiiSpeakEchoSuppression; // 0x91
+    bool mHasLoaded; // 0x92
+    bool mWiiFriendsPromptShown; // 0x93
+    bool mUsingWiiFriends; // 0x94
+    int unk5b8; // 0x98
+    std::vector<int> mMicVolumes; // 0x9c
+    DataArray *mSliderConfig; // 0xa8
+    DataArray *mVoiceChatSliderConfig; // 0xac
+    unsigned int mCymbalConfiguration; // 0xb0
+    std::vector<BandProfile *> mProfiles; // 0xb4
+    BandProfile *mPrimaryProfile; // 0xc0
+    bool mAllUnlocked; // 0xc4
+    std::vector<float> mForcedMicGains; // 0xc8
 };
 
 extern ProfileMgr TheProfileMgr;
