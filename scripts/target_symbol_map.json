@@ -13281,5 +13281,11 @@
  "0x827BA7F8": "??_DTrackDir@@QAAXXZ",
  "0x827BA868": "?Poll@TrackDir@@UAAXXZ",
  "0x827BAA78": "??_GTrackDir@@UAAPAXI@Z",
- "0x827BAFE0": "??$?5VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+ "0x827BAFE0": "??$?5VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x8261CC10": "??$__destroy_range_aux@V?$reverse_iterator@PAVRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVRecommendedEntry@StoreInfoPanel@@@0@0ABU__false_type@0@@Z",
+ "0x8261CF00": "?_M_clear_after_move@?$vector@VRecommendedEntry@StoreInfoPanel@@V?$StlNodeAlloc@VRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+ "0x8261D260": "??$ClearAndShrink@VRecommendedEntry@StoreInfoPanel@@@@YAXAAV?$vector@VRecommendedEntry@StoreInfoPanel@@V?$StlNodeAlloc@VRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x8261D3D0": "?ClassName@StoreInfoPanel@@UBA?AVSymbol@@XZ",
+ "0x8261DB50": "?Unload@StoreInfoPanel@@UAAXXZ",
+ "0x8261DB88": "?push_back@?$vector@VRecommendedEntry@StoreInfoPanel@@V?$StlNodeAlloc@VRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVRecommendedEntry@StoreInfoPanel@@@Z"
 }

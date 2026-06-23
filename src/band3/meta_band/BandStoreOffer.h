@@ -1,6 +1,8 @@
 #pragma once
 #include "meta/StoreOffer.h"
 
+class StorePackedOfferBase;
+
 class BandStoreOffer : public StoreOffer {
 public:
     BandStoreOffer(const StorePackedOfferBase *, SongMgr *, bool);

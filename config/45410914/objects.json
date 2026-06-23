@@ -781,6 +781,7 @@
    "band3/meta_band/SongSortBySong.cpp": "NonMatching",
    "band3/meta_band/SongSortMgr.cpp": "NonMatching",
    "band3/meta_band/StandIn.cpp": "NonMatching",
+   "band3/meta_band/StoreInfoPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMainPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMenuPanel.cpp": "NonMatching",
    "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
