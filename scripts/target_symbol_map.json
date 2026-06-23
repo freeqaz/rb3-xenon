@@ -13344,5 +13344,8 @@
  "0x827BD028": "?RemoveInstances@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@3@1@Z",
  "0x827BD350": "?RemoveInstances@?$TrackWidgetImp@VMeshInstance@@@@UAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@U?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@3@1@Z",
  "0x827BD3B8": "?DoPushInstance@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@QAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@AAUInstance@RndMultiMesh@@@Z",
- "0x827BD410": "?DoPushInstance@?$TrackWidgetImp@VMeshInstance@@@@QAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@AAVMeshInstance@@@Z"
+ "0x827BD410": "?DoPushInstance@?$TrackWidgetImp@VMeshInstance@@@@QAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@AAVMeshInstance@@@Z",
+ "0x8230B1C8": "?Init@StarDisplay@@SAXXZ",
+ "0x8230B498": "?SetToToken@StarDisplay@@QAAXVSymbol@@@Z",
+ "0x8230BF68": "?Enter@StarDisplay@@UAAXXZ"
 }

@@ -78,6 +78,7 @@ public:
     // Forwards to text caps mode; referenced by game code (OvershellSlot::ShowState).
     // Decl-only, mirrors rb3-Wii UILabel::SetCapsMode(RndText::CapsMode).
     void SetCapsMode(RndText::CapsMode);
+    void SetAlignment(RndText::Alignment);
 
     RndText *TextObj() { return mText; }
     const RndText *TextObj() const { return mText; }
