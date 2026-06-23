@@ -42,6 +42,7 @@
    "system/bandobj/BandCharDesc.cpp": "NonMatching",
    "system/bandobj/BandScoreboard.cpp": "NonMatching",
    "system/bandobj/BandCrowdMeter.cpp": "NonMatching",
+   "system/bandobj/BandLeadMeter.cpp": "NonMatching",
    "system/bandobj/BandDirector.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

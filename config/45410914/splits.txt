@@ -262,6 +262,10 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821EEA60 end:0x821EEB30
 	.text       start:0x822AE238 end:0x822AF160
 
+BandLeadMeter.cpp:
+	.pdata      start:0x821EF2C0 end:0x821EF3F8
+	.text       start:0x822B7D54 end:0x822B8B90
+
 CrowdAudio.cpp:
 	.pdata      start:0x821F3B10 end:0x821F3E30
 	.text       start:0x822FEDF8 end:0x82301F64
