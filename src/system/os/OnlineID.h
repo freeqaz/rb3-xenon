@@ -25,6 +25,7 @@ public:
     const char *ToString() const;
     bool GetIsValid() const { return mValid; }
     bool IsInvalid() const { return !mValid; }
+    bool operator==(const OnlineID &) const;
 
     MEM_OVERLOAD(OnlineID, 0x1E)
 };

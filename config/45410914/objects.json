@@ -753,6 +753,7 @@
    "band3/meta_band/AccomplishmentTrainerListConditional.cpp": "NonMatching",
    "band3/meta_band/AssetTypes.cpp": "NonMatching",
    "band3/meta_band/AppLabel.cpp": "NonMatching",
+   "band3/meta_band/UIStats.cpp": "NonMatching",
    "band3/meta_band/AppMiniLeaderboardDisplay.cpp": "NonMatching",
    "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
    "band3/meta_band/Campaign.cpp": "NonMatching",

@@ -2779,6 +2779,10 @@ band3/meta_band/AppLabel.cpp:
 	.pdata      start:0x8221B7D0 end:0x8221BAE8
 	.text       start:0x825ACF88 end:0x825AF938
 
+band3/meta_band/UIStats.cpp:
+	.pdata      start:0x82214E58 end:0x82214ED0
+	.text       start:0x8254C130 end:0x8254CD78
+
 band3/meta_band/PatchPanel.cpp:
 	.pdata      start:0x82221EC0 end:0x82222198
 	.text       start:0x8260D168 end:0x826103D0

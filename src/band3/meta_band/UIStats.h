@@ -3,6 +3,7 @@
 #include "obj/Object.h"
 #include "os/JoypadMsgs.h"
 #include "os/OnlineID.h"
+#include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UIScreen.h"
 #include "utl/Str.h"

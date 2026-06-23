@@ -13383,5 +13383,7 @@
  "0x826F3850": "?Stop@MetaMusic@@QAAXXZ",
  "0x826F3D90": "?SetScene@MetaMusic@@QAAXPAVMetaMusicScene@@@Z",
  "0x82318DC8": "?FlagString@@YAPBDH@Z",
- "0x823191D8": "?GetGroupArray@BandWardrobe@@SAPAVDataArray@@W4CharInstrumentType@BandCharDesc@@@Z"
+ "0x823191D8": "?GetGroupArray@BandWardrobe@@SAPAVDataArray@@W4CharInstrumentType@BandCharDesc@@@Z",
+ "0x8254CD10": "?OnMsg@UIStats@@QAA?AVDataNode@@ABVUIScreenChangeMsg@@@Z",
+ "0x8254C130": "?MaybePublish@UIStats@@QAAXPAVUIScreen@@@Z"
 }

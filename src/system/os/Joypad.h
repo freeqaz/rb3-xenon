@@ -316,6 +316,7 @@ void JoypadTerminate();
 JoypadData *JoypadGetPadData(int);
 Symbol JoypadControllerTypePadNum(int);
 bool JoypadTypeHasLeftyFlip(Symbol);
+const char *JoypadGetBreedString(int);
 
 void JoypadSubscribe(Hmx::Object *);
 void JoypadUnsubscribe(Hmx::Object *);

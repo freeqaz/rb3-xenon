@@ -107,6 +107,7 @@ public:
     void DebugFakeSigninChangeMsg(int);
     bool IsEthernetCableConnected();
     const char *GetName(int) const;
+    void GetOnlineID(int, OnlineID *) const;
     bool HasCreatedContentPrivilege() const;
     bool HasKinectSharePrvilege() const;
     void ShowControllerRequiredUI(Hmx::Object *);
