@@ -2739,6 +2739,10 @@ band3/meta_band/AppLabel.cpp:
 	.pdata      start:0x8221B7D0 end:0x8221BAE8
 	.text       start:0x825ACF88 end:0x825AF938
 
+band3/meta_band/PatchPanel.cpp:
+	.pdata      start:0x82221EC0 end:0x82222198
+	.text       start:0x8260D168 end:0x826103D0
+
 band3/game/TrackerDisplay.cpp:
 	.pdata      start:0x8222C630 end:0x8222C898
 	.text       start:0x826B3268 end:0x826B4B30

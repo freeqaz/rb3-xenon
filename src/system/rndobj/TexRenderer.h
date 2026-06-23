@@ -48,6 +48,10 @@ public:
         mDrawable = draw;
         mDirty = true;
     }
+    void SetForce(bool force) {
+        mForce = force;
+        mDirty = true;
+    }
 
 protected:
     RndTexRenderer();

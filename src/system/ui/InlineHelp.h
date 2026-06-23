@@ -58,6 +58,7 @@ public:
     void UpdateTextColors();
     void ClearActionToken(JoypadAction);
     void SetActionToken(JoypadAction, DataNode &);
+    void ResetConfig() { mConfig.clear(); }
     void SetLabelRotationPcts(float f);
     DataNode OnSetConfig(DataArray const *);
 
