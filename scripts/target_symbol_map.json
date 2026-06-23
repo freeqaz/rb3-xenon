@@ -13267,5 +13267,12 @@
  "0x82B67108": "?IsInFill@GemManager@@QAA_NH@Z",
  "0x825B6500": "?CleanUpArt@MusicLibraryNetSetlists@@QAAXXZ",
  "0x825B6590": "?RefreshSetlistArt@MusicLibraryNetSetlists@@QAAXXZ",
- "0x827BC190": "?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
+ "0x827BC190": "?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+ "0x82527AC8": "?ComponentStateOverride@MusicLibrary@@UBA?AW4State@UIComponent@@HHW423@@Z",
+ "0x8252A8F8": "?RebuildRestrictedData@MusicLibrary@@QAAXXZ",
+ "0x8252A9F0": "?RebuildSharedSongData@MusicLibrary@@QAAXXZ",
+ "0x8252BF10": "?UpdateHeaderData@MusicLibrary@@QAAXXZ",
+ "0x8252C130": "?RebuildProfileData@MusicLibrary@@QAAXXZ",
+ "0x8252C728": "?DifficultySortPart@MusicLibrary@@QBA?AVSymbol@@XZ",
+ "0x8252CDF8": "?Poll@MusicLibrary@@QAAXXZ"
 }
