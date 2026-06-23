@@ -1554,8 +1554,14 @@ SongStatusMgr.cpp:
 	.text       start:0x825B7C0C end:0x825BB090
 
 band3/meta_band/MusicLibraryNetSetlists.cpp:
+	.pdata      start:0x8221C2C8 end:0x8221C2D0
+	.pdata      start:0x8221C2D0 end:0x8221C2D8
 	.pdata      start:0x8221C2E0 end:0x8221C428
+	.pdata      start:0x8223B3F0 end:0x8223B3F8
+	.text       start:0x825B6500 end:0x825B6590
+	.text       start:0x825B6590 end:0x825B67B0
 	.text       start:0x825B6808 end:0x825B7C0C
+	.text       start:0x827BC190 end:0x827BC1E8
 
 Award.cpp:
 	.pdata      start:0x8221DEA8 end:0x8221DF90

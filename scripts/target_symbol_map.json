@@ -13264,5 +13264,8 @@
  "0x82B67448": "?SetupRealGuitarImportantStrings@GemManager@@QAAXXZ",
  "0x82B684E8": "?SlotEnabled@GemManager@@QBA_NH@Z",
  "0x82B6AAC8": "?AddChordBracket@GemManager@@QAAXVSymbol@@IM@Z",
- "0x82B67108": "?IsInFill@GemManager@@QAA_NH@Z"
+ "0x82B67108": "?IsInFill@GemManager@@QAA_NH@Z",
+ "0x825B6500": "?CleanUpArt@MusicLibraryNetSetlists@@QAAXXZ",
+ "0x825B6590": "?RefreshSetlistArt@MusicLibraryNetSetlists@@QAAXXZ",
+ "0x827BC190": "?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
 }
