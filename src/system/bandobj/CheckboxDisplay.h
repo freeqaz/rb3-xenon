@@ -1,4 +1,5 @@
 #pragma once
+#include "obj/ObjMacros.h"
 #include "ui/UIComponent.h"
 
 class CheckboxDisplay : public UIComponent {

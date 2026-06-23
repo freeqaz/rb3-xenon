@@ -1116,6 +1116,10 @@ CharacterTest.cpp:
 	.pdata      start:0x821F4AC0 end:0x821F4AC8
 	.text       start:0x8230E0E0 end:0x8230E308
 
+CheckboxDisplay.cpp:
+	.pdata      start:0x821F4AF8 end:0x821F4BC8
+	.text       start:0x8230E460 end:0x8230F0F8
+
 FlowTrigger.cpp:
 	.pdata      start:0x821F51C0 end:0x821F51C8
 	.text       start:0x823154D0 end:0x8231553C
