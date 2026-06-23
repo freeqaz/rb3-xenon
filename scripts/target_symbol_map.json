@@ -13247,5 +13247,7 @@
  "0x824E4580": "??0RockCentralOpCompleteMsg@@QAA@PAVDataArray@@@Z",
  "0x82572980": "?SaveSize@BandProfile@@SAHH@Z",
  "0x82572E08": "?SetLastCharUsed@BandProfile@@QAAXPAVCharData@@@Z",
- "0x825739F0": "?GetBandLogoTex@BandProfile@@QAAPAVRndTex@@XZ"
+ "0x825739F0": "?GetBandLogoTex@BandProfile@@QAAPAVRndTex@@XZ",
+ "0X824F8F98": "?Reset@ContextWrapper@@QAAXXZ",
+ "0X824F95D8": "?Poll@ContextWrapperPool@@QAAXXZ"
 }

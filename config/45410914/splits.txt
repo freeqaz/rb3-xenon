@@ -18,6 +18,12 @@ Object.cpp:
 	.pdata      start:0x82233D38 end:0x82233D60
 	.text       start:0x82737FE8 end:0x82738220
 
+ContextWrapper.cpp:
+	.pdata      start:0x8220FAD0 end:0x8220FAD8
+	.pdata      start:0x8220FB38 end:0x8220FB40
+	.text       start:0x824F8F98 end:0x824F9028
+	.text       start:0x824F95D8 end:0x824F96A4
+
 RockCentral.cpp:
 	.pdata      start:0x821EAED0 end:0x821EAED8
 	.pdata      start:0x821EAEF0 end:0x821EAEF8
