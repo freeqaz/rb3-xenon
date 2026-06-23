@@ -11,6 +11,7 @@
 #include "synth/FxSendPitchShift.h"
 #include "synth/Mic.h"
 #include "synth/MicClientMapper.h"
+#include "synth/MidiInstrumentMgr.h"
 #include "synth/MidiSynth.h"
 #include "synth/Sfx.h"
 #include "synth/Sound.h"
@@ -100,6 +101,7 @@ public:
     void SetDir(ObjectDir *dir) { mCommonBank = dir; }
     ByteGrinder &Grinder() { return mByteGrinder; }
     MicClientMapper *GetMicClientMapper() { return mMicClientMapper; }
+    MidiInstrumentMgr *GetMidiInstrumentMgr() const { return mMidiInstrumentMgr; }
     std::vector<LevelData> &GetLevelData() { return mLevelData; }
     bool CheckCommonBank(bool);
     void SetMasterVolume(float);
@@ -200,6 +202,7 @@ protected:
     RndOverlay *mHud; // 0xa0
     ADSRImpl *mADSR; // 0xa4
     String unka8; // 0xa8
+    MidiInstrumentMgr *mMidiInstrumentMgr; // appended for VocalGuidePitch Init/Terminate
 };
 
 void SynthPreInit();

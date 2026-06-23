@@ -3162,3 +3162,10 @@ band3/meta_band/ProfileMgr.cpp:
 	.text       start:0x82532198 end:0x825321B4
 	.text       start:0x82532280 end:0x8253229C
 	.text       start:0x82532B48 end:0x82532D5C
+
+band3/game/VocalGuidePitch.cpp:
+	.pdata      start:0x8222E200 end:0x8222E208
+	.pdata      start:0x8222E210 end:0x8222E218
+	.text       start:0x826D3088 end:0x826D30F0
+	.text       start:0x826D3168 end:0x826D33A4
+	.text       start:0x826D34D0 end:0x826D34F8
