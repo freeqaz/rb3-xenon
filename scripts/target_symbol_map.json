@@ -13446,5 +13446,7 @@
  "0x8265EA78": "?IsLoaded@Game@@QAA_NXZ",
  "0x8265C250": "?HandleAudioLoad@Game@@QAA_NXZ",
  "0x8265A278": "?E3CheatAutoplayAccuracy@Game@@QAAXXZ",
- "0x8265C3B0": "?AdjustForVocalPhrases@Game@@QBAXAAM0@Z"
+ "0x8265C3B0": "?AdjustForVocalPhrases@Game@@QBAXAAM0@Z",
+ "0x8267C088": "?LocalFinishedCoda@Band@@QAAXPAVPlayer@@@Z",
+ "0x8267C830": "?EnergyCrowdBoost@Band@@QBAHXZ"
 }
