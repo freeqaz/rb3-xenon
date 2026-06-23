@@ -15,15 +15,17 @@ public:
     void SetLatency(int, int);
     void SetPacketDropProbability(int, int);
 
-    Quazal::EmulationDevice *mInDevice; // 0x1c
-    Quazal::EmulationDevice *mOutDevice; // 0x20
-    int mInBandwidth; // 0x24
-    int mOutBandwidth; // 0x28
-    int mInJitter; // 0x2c
-    int mOutJitter; // 0x30
-    int mInLatency; // 0x34
-    int mOutLatency; // 0x38
-    int mInDropProb; // 0x3c
-    int mOutDropProb; // 0x40
-    int mEnabled; // 0x44
+    // Offsets confirmed against retail X360 (Hmx::Object base is 0x28 after the
+    // 44fae9c reconstruction; method bodies at 0x823D90B0.. byte-match these).
+    Quazal::EmulationDevice *mInDevice; // 0x28
+    Quazal::EmulationDevice *mOutDevice; // 0x2c
+    int mInBandwidth; // 0x30
+    int mOutBandwidth; // 0x34
+    int mInJitter; // 0x38
+    int mOutJitter; // 0x3c
+    int mInLatency; // 0x40
+    int mOutLatency; // 0x44
+    int mInDropProb; // 0x48
+    int mOutDropProb; // 0x4c
+    int mEnabled; // 0x50
 };

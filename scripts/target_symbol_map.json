@@ -13287,5 +13287,12 @@
  "0x8261D260": "??$ClearAndShrink@VRecommendedEntry@StoreInfoPanel@@@@YAXAAV?$vector@VRecommendedEntry@StoreInfoPanel@@V?$StlNodeAlloc@VRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8261D3D0": "?ClassName@StoreInfoPanel@@UBA?AVSymbol@@XZ",
  "0x8261DB50": "?Unload@StoreInfoPanel@@UAAXXZ",
- "0x8261DB88": "?push_back@?$vector@VRecommendedEntry@StoreInfoPanel@@V?$StlNodeAlloc@VRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVRecommendedEntry@StoreInfoPanel@@@Z"
+ "0x8261DB88": "?push_back@?$vector@VRecommendedEntry@StoreInfoPanel@@V?$StlNodeAlloc@VRecommendedEntry@StoreInfoPanel@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVRecommendedEntry@StoreInfoPanel@@@Z",
+ "0X823D8F00": "?Enable@NetworkEmulator@@QAAXXZ",
+ "0X823D9000": "?Disable@NetworkEmulator@@QAAXXZ",
+ "0X823D90B0": "?SetBandwidth@NetworkEmulator@@QAAXHH@Z",
+ "0X823D9100": "?SetJitter@NetworkEmulator@@QAAXHH@Z",
+ "0X823D9150": "?SetLatency@NetworkEmulator@@QAAXHH@Z",
+ "0X823D91A0": "?SetPacketDropProbability@NetworkEmulator@@QAAXHH@Z",
+ "0X823D94D0": "??_GNetworkEmulator@@UAAPAXI@Z"
 }

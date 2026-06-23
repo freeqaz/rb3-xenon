@@ -57,7 +57,6 @@
    "system/bandobj/StreakMeter.cpp": "NonMatching",
    "system/bandobj/TrackPanelDir.cpp": "NonMatching",
    "system/bandobj/VocalTrackDir.cpp": "NonMatching",
-   "system/track/TrackDir.cpp": "NonMatching",
    "system/beatmatch/GuitarController.cpp": "NonMatching",
    "system/beatmatch/MasterAudio.cpp": "NonMatching",
    "system/rndobj/Console.cpp": "NonMatching",
@@ -699,7 +698,6 @@
   "cflags": "base",
   "objects": {
    "band3/game/Defines.cpp": "NonMatching",
-   "band3/game/TrackerDisplay.cpp": "NonMatching",
    "band3/game/NetGameMsgs.cpp": "NonMatching",
    "band3/game/GameMicManager.cpp": "NonMatching",
    "band3/meta_band/LessonProvider.cpp": "NonMatching",
@@ -718,7 +716,6 @@
    "band3/bandtrack/Gem.cpp": "NonMatching",
    "band3/bandtrack/TrackPanel.cpp": "NonMatching",
    "band3/game/Singer.cpp": "NonMatching",
-   "band3/game/VocalPart.cpp": "NonMatching",
    "band3/game/VocalPlayer.cpp": "NonMatching",
    "band3/game/TrainerPanel.cpp": "NonMatching",
    "band3/game/VocalTrainerPanel.cpp": "NonMatching",
@@ -768,7 +765,6 @@
    "band3/meta_band/SongStatusMgr.cpp": "NonMatching",
    "band3/meta_band/MusicLibraryNetSetlists.cpp": "NonMatching",
    "band3/meta_band/OvershellSlotState.cpp": "NonMatching",
-   "band3/meta_band/BandProfile.cpp": "NonMatching",
    "band3/meta_band/BandSongMgr.cpp": "NonMatching",
    "band3/meta_band/PatchPanel.cpp": "NonMatching",
    "band3/meta_band/PatchSelectPanel.cpp": "NonMatching",
@@ -781,7 +777,6 @@
    "band3/meta_band/SongSortBySong.cpp": "NonMatching",
    "band3/meta_band/SongSortMgr.cpp": "NonMatching",
    "band3/meta_band/StandIn.cpp": "NonMatching",
-   "band3/meta_band/StoreInfoPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMainPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMenuPanel.cpp": "NonMatching",
    "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
@@ -791,11 +786,9 @@
    "band3/meta_band/Utl.cpp": "NonMatching",
    "band3/meta_band/ViewSetting.cpp": "NonMatching",
    "band3/meta_band/WiiBufStreamMgr.cpp": "NonMatching",
-   "band3/net_band/ContextWrapper.cpp": "NonMatching",
    "band3/net_band/RockCentral.cpp": "NonMatching",
    "band3/tour/QuestFilterPanel.cpp": "NonMatching",
-   "band3/tour/TourDescPanel.cpp": "NonMatching",
-   "band3/tour/TourSavable.cpp": "NonMatching"
+   "band3/tour/TourDescPanel.cpp": "NonMatching"
   }
  },
  "network": {
@@ -825,7 +818,8 @@
     ]
    },
    "network/Core/TimedSignal.cpp": "NonMatching",
-   "network/Core/PeriodicJob.cpp": "NonMatching"
+   "network/Core/PeriodicJob.cpp": "NonMatching",
+   "network/net/NetworkEmulator.cpp": "NonMatching"
   }
  },
  "curl": {
