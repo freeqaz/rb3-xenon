@@ -25,7 +25,11 @@ const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchAr
   'MetaMusic.cpp','CheckboxDisplay.cpp','BandWardrobe.cpp','NextSongPanel.cpp','MicInputArrow.cpp','BandButton.cpp','BandTrack.cpp','Utl.cpp','Loader.cpp','GuitarController.cpp',
   // wave-7 (main @39a2199): landed BandLeadMeter/UIStats (+22); rejects ClosetPanel (not TU-pure),
   // DirectInstrument/GameConfig FOREIGN, Performer MIXED (vbase wall), + scanned-not-OWN
-  'BandLeadMeter.cpp','UIStats.cpp','ClosetPanel.cpp','DirectInstrument.cpp','GameConfig.cpp','Performer.cpp','TourBand.cpp','BandHighlight.cpp','SongSectionController.cpp','SongSortByRank.cpp']
+  'BandLeadMeter.cpp','UIStats.cpp','ClosetPanel.cpp','DirectInstrument.cpp','GameConfig.cpp','Performer.cpp','TourBand.cpp','BandHighlight.cpp','SongSectionController.cpp','SongSortByRank.cpp',
+  // wave-8 (main @4a5b805): +0 — PRACTICAL EXHAUSTION. All 4 validate-OWN (OvershellSlotState/Leaderboard/
+  // SessionUsersProviders/ModifierMgr) REFUTED at port stage (class-B ICF-scatter/mixed). STOP broad waves;
+  // remaining string-rich gaps are class-B/mixed, not span-pinnable. See the results doc VERDICT.
+  'OvershellSlotState.cpp','Leaderboard.cpp','SessionUsersProviders.cpp','ModifierMgr.cpp','WaitingUserGate.cpp','CampaignCareerLeaderboardPanel.cpp','EndingBonus.cpp','Tour.cpp','CymbalSelectionProvider.cpp','MoggClip.cpp']
 
 const SCAN_SCHEMA = {
   type: 'object', additionalProperties: false,

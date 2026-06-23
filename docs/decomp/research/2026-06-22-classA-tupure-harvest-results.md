@@ -167,6 +167,24 @@ until configure.py is clean of "Missing configuration" for your TUs.
 underlying trend is declining as the finite pool of string-rich contiguous unpinned game/engine TUs
 gets mined out. Cumulative class-A all-sessions: **+640**. Session class-A: +403 / 5 waves.
 
+## Wave-8 (2026-06-23, main @4a5b805) — +0: PRACTICAL EXHAUSTION DECLARED
+4/10 validated OWN (OvershellSlotState/Leaderboard/SessionUsersProviders/ModifierMgr) but **ALL 4
+REFUTED at the PORT stage** as not-actually-TU-pure (foreign Quazal DDL / class-B ICF-scattered / mixed).
+**0 honest winners, 0 fake matches** — the honesty gate held perfectly even with 4 over-claimed OWN
+validations. This is the documented failure mode at saturation: the validate-stage string-content
+heuristic OVER-CLAIMS OWN as the pool thins (strings appear in class-B gaps but the TU isn't contiguous),
+and the port stage catches every false-OWN. Yield: **w5 +152 → w6 +50 → w7 +22 → w8 +0**.
+
+⭐⭐ VERDICT: the cheap class-A TU-pure span harvest is **PRACTICALLY EXHAUSTED** (this session: +403 over
+5 productive waves, cumulative all-sessions +640). The remaining string-rich gaps are class-B
+ICF-scattered (OvershellSlotState/SessionUsersProviders) or multi-TU mixed (Leaderboard/ModifierMgr) —
+NOT span-pinnable. Further `wf_classa_harvest.js` waves will keep returning validate-OWN→port-refuted
++0. **STOP running broad span-harvest waves.** FORWARD PIVOTS (owner to weigh): (1) class-B
+ICF-scattered belt via per-method identity-transfer (tools/identity_transfer.py — the harder, lower-EV
+frontier already characterized in the fuzzy-reconstruction docs); (2) body-port the near-miss tails the
+honest gate flagged (e.g. UIStats::MaybePublish 67.5%, FocusTracker Rb_tree bodies, MetaMusic tail);
+(3) the DC3 engine body-oracle for src/system/* (separate vein). None is cheap span-harvest.
+
 ## How to resume (for a future session that wants the marginal tail)
 Edit the `DONE_OR_MIXED` exclusion in `scripts/wf_classa_harvest.js` (now includes TrackDir/
 TrackerDisplay/StoreInfoPanel/NetworkEmulator/BandUserMgr/OutfitConfig/AccomplishmentPanel/NetSession;
