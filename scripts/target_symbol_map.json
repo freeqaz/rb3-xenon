@@ -13231,5 +13231,10 @@
  "0X8268DB88": "?StartSectionImpl@GemTrainerPanel@@UAAXXZ",
  "0x826B1538": "?UpdateSource@Tracker@@QAAXPAVTrackerSource@@@Z",
  "0x826B1F50": "?Poll@Tracker@@QAAXM@Z",
- "0x826B3178": "?HandleRemovePlayer@Tracker@@QAAXPAVPlayer@@@Z"
+ "0x826B3178": "?HandleRemovePlayer@Tracker@@QAAXPAVPlayer@@@Z",
+ "0x825A1BA8": "?UpdatePerformanceData@SongRecord@@QAA_NXZ",
+ "0x825A1D90": "?UpdateReview@SongRecord@@QAA_NXZ",
+ "0x825A1E00": "?UpdateScoreType@SongRecord@@QAA_NXZ",
+ "0x825A2038": "?IsLocal@SetlistRecord@@QBA_NXZ",
+ "0x825A20E0": "?IsProfileOwner@SetlistRecord@@QBA_NPBVBandProfile@@@Z"
 }

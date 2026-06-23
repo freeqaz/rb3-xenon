@@ -2832,3 +2832,15 @@ band3/game/Tracker.cpp:
 	.text       start:0x826B1538 end:0x826B1590
 	.text       start:0x826B1F50 end:0x826B2000
 	.text       start:0x826B3178 end:0x826B322C
+
+band3/meta_band/SongRecord.cpp:
+	.pdata      start:0x8221AAF8 end:0x8221AB00
+	.pdata      start:0x8221AB00 end:0x8221AB08
+	.pdata      start:0x8221AB08 end:0x8221AB10
+	.pdata      start:0x8221AB30 end:0x8221AB38
+	.pdata      start:0x8221AB40 end:0x8221AB48
+	.text       start:0x825A1BA8 end:0x825A1D90
+	.text       start:0x825A1D90 end:0x825A1DFC
+	.text       start:0x825A1E00 end:0x825A1E50
+	.text       start:0x825A2038 end:0x825A2070
+	.text       start:0x825A20E0 end:0x825A2150
