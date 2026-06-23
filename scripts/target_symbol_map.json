@@ -13196,5 +13196,8 @@
   "0X8229A2A0": "?Copy@HamNavProvider@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
   "0X8277DE30": "?GetCharacterOutfit@@YA?AVSymbol@@V1@H_N@Z",
   "0X82510718": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAXXZ",
-  "0X8229A4E0": "?Copy@TransConstraint@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+  "0X8229A4E0": "?Copy@TransConstraint@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "0X824E2080": "?DataASin@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "0X824E2108": "?DataACos@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "0X824E2190": "?DataATan@@YA?AVDataNode@@PAVDataArray@@@Z"
 }

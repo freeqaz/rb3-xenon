@@ -314,6 +314,10 @@ SHA1.cpp:
 	.pdata      start:0x8220E000 end:0x8220E030
 	.text       start:0x824E0210 end:0x824E1E04
 
+Trig.cpp:
+	.pdata      start:0x8220E050 end:0x8220E068
+	.text       start:0x824E2080 end:0x824E2218
+
 Key.cpp:
 	.pdata      start:0x8220E078 end:0x8220E090
 	.text       start:0x824E2900 end:0x824E2E0C
