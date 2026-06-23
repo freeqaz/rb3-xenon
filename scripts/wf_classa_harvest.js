@@ -22,7 +22,10 @@ const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchAr
   'UIPanel.cpp','FocusTracker.cpp','TrackWidget.cpp','EntityUploader.cpp','StarDisplay.cpp','AccomplishmentOneShot.cpp','BandSongMetadata.cpp','BandLabel.cpp','NewAwardPanel.cpp','MetaPanel.cpp',
   // wave-6 (main @895b7e9): landed MetaMusic/CheckboxDisplay/BandWardrobe (+50); rejects NextSongPanel
   // (not TU-pure), MicInputArrow/BandButton/BandTrack/Utl/Loader/GuitarController FOREIGN/MIXED
-  'MetaMusic.cpp','CheckboxDisplay.cpp','BandWardrobe.cpp','NextSongPanel.cpp','MicInputArrow.cpp','BandButton.cpp','BandTrack.cpp','Utl.cpp','Loader.cpp','GuitarController.cpp']
+  'MetaMusic.cpp','CheckboxDisplay.cpp','BandWardrobe.cpp','NextSongPanel.cpp','MicInputArrow.cpp','BandButton.cpp','BandTrack.cpp','Utl.cpp','Loader.cpp','GuitarController.cpp',
+  // wave-7 (main @39a2199): landed BandLeadMeter/UIStats (+22); rejects ClosetPanel (not TU-pure),
+  // DirectInstrument/GameConfig FOREIGN, Performer MIXED (vbase wall), + scanned-not-OWN
+  'BandLeadMeter.cpp','UIStats.cpp','ClosetPanel.cpp','DirectInstrument.cpp','GameConfig.cpp','Performer.cpp','TourBand.cpp','BandHighlight.cpp','SongSectionController.cpp','SongSortByRank.cpp']
 
 const SCAN_SCHEMA = {
   type: 'object', additionalProperties: false,

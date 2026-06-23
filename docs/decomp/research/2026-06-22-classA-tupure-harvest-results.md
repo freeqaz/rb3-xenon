@@ -160,6 +160,13 @@ refuse with "file modified since read") and commit IMMEDIATELY to shrink the rac
 + a fresh build (configure.py + fresh_report) is the only reliable truth — never trust a matched count
 until configure.py is clean of "Missing configuration" for your TUs.
 
+## Wave-7 (2026-06-23, main @39a2199) — +22 (BandLeadMeter +15, UIStats +7); decline confirmed
+3/10 validated OWN, 2 landable. Rejects: ClosetPanel (not TU-pure), DirectInstrument/GameConfig FOREIGN
+(177-fn run!), Performer MIXED (virtual-base wall). Yield trend across the productive waves:
+**w3 +126 → w4 +53 → w5 +152 → w6 +50 → w7 +22**. The +152 was a spike (a fresh rich dir); the
+underlying trend is declining as the finite pool of string-rich contiguous unpinned game/engine TUs
+gets mined out. Cumulative class-A all-sessions: **+640**. Session class-A: +403 / 5 waves.
+
 ## How to resume (for a future session that wants the marginal tail)
 Edit the `DONE_OR_MIXED` exclusion in `scripts/wf_classa_harvest.js` (now includes TrackDir/
 TrackerDisplay/StoreInfoPanel/NetworkEmulator/BandUserMgr/OutfitConfig/AccomplishmentPanel/NetSession;
