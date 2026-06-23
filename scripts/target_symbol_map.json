@@ -13274,5 +13274,12 @@
  "0x8252BF10": "?UpdateHeaderData@MusicLibrary@@QAAXXZ",
  "0x8252C130": "?RebuildProfileData@MusicLibrary@@QAAXXZ",
  "0x8252C728": "?DifficultySortPart@MusicLibrary@@QBA?AVSymbol@@XZ",
- "0x8252CDF8": "?Poll@MusicLibrary@@QAAXXZ"
+ "0x8252CDF8": "?Poll@MusicLibrary@@QAAXXZ",
+ "0x827B91B0": "?AddActiveWidget@TrackDir@@QAAXPAVTrackWidget@@@Z",
+ "0x827BA648": "?Copy@TrackDir@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x827BA6E0": "?PollActiveWidgets@TrackDir@@QAAXXZ",
+ "0x827BA7F8": "??_DTrackDir@@QAAXXZ",
+ "0x827BA868": "?Poll@TrackDir@@UAAXXZ",
+ "0x827BAA78": "??_GTrackDir@@UAAPAXI@Z",
+ "0x827BAFE0": "??$?5VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z"
 }

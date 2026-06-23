@@ -2882,3 +2882,7 @@ band3/meta_band/BandProfile.cpp:
 	.text       start:0x82572980 end:0x82572A94
 	.text       start:0x82572E08 end:0x82572E74
 	.text       start:0x825739F0 end:0x82573A44
+
+TrackDir.cpp:
+	.pdata      start:0x8223B038 end:0x8223B328
+	.text       start:0x827B89B0 end:0x827BB078
