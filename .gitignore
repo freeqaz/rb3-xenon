@@ -77,6 +77,8 @@ core.*
 /game_splits.json
 /game_splits.append
 /game_splits.objects.append
+# gen_band3_port_worklist.py output (regenerable; net-new Wii->Xenon band3 identities porting feed; human .md is tracked under docs/plans/)
+/band3_port_worklist.json
 # permuter_targets.py generated work queue (regenerable from report.json)
 /permuter_targets.json
 /permuter_targets.txt
