@@ -2593,8 +2593,14 @@ band3/game/TrainerPanel.cpp:
 	.text       start:0x826AAAE8 end:0x826AC438
 
 band3/game/VocalPlayer.cpp:
+	.pdata      start:0x8222D890 end:0x8222D898
+	.pdata      start:0x8222D8A8 end:0x8222D8B0
+	.pdata      start:0x8222D900 end:0x8222D908
 	.pdata      start:0x8222D930 end:0x8222E0F0
-	.text       start:0x826C6328 end:0x826D0170
+	.text       start:0x826C5680 end:0x826C56C4
+	.text       start:0x826C57B0 end:0x826C582C
+	.text       start:0x826C5F10 end:0x826C5FA0
+	.text       start:0x826C6318 end:0x826D0170
 
 band3/game/Singer.cpp:
 	.pdata      start:0x8222E568 end:0x8222E608
