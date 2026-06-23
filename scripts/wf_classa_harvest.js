@@ -10,8 +10,11 @@ export const meta = {
 
 const REPO = '/home/free/code/milohax/rb3-xenon'
 const SOP = `${REPO}/docs/decomp/handoff/wave-loop-SOP-2026-06-20.md`
-// done (landed) OR proven-mixed/rejected across waves 1-2 + this wave's adds (TrackPanel landed, MainHubPanel port-refuted)
-const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchArrow.cpp','OvershellSlot.cpp','TrackPanelDirBase.cpp','TrackPanel.cpp','GemPlayer.cpp','ChordbookPanel.cpp','FreestylePanel.cpp','RGTrainerPanel.cpp','TrainerPanel.cpp','BandwidthCounter.cpp','TournamentDDL.cpp','RockCentral.cpp','Defines.cpp','BandCrowdMeter.cpp','GameMicManager.cpp','PatchDir.cpp','GemTrackDir.cpp','ChordShapeGenerator.cpp','BandScoreboard.cpp','VocalTrainerPanel.cpp','ClosetMgr.cpp','MainHubPanel.cpp','OverdriveMeter.cpp','TrainerProgressMeter.cpp','TrainerGemTab.cpp','StreakMeter.cpp']
+// done (landed) OR proven-mixed/rejected across waves 1-3. NOTE: MetaPanel.cpp deliberately OMITTED
+// (wave-3 deferred it on tmpfs-quota env failure, not a port outcome — it is the retry candidate).
+const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchArrow.cpp','OvershellSlot.cpp','TrackPanelDirBase.cpp','TrackPanel.cpp','GemPlayer.cpp','ChordbookPanel.cpp','FreestylePanel.cpp','RGTrainerPanel.cpp','TrainerPanel.cpp','BandwidthCounter.cpp','TournamentDDL.cpp','RockCentral.cpp','Defines.cpp','BandCrowdMeter.cpp','GameMicManager.cpp','PatchDir.cpp','GemTrackDir.cpp','ChordShapeGenerator.cpp','BandScoreboard.cpp','VocalTrainerPanel.cpp','ClosetMgr.cpp','MainHubPanel.cpp','OverdriveMeter.cpp','TrainerProgressMeter.cpp','TrainerGemTab.cpp','StreakMeter.cpp',
+  // wave-3 (main @25ed686): landed winners + honest rejects
+  'TrackDir.cpp','TrackerDisplay.cpp','StoreInfoPanel.cpp','NetworkEmulator.cpp','BandUserMgr.cpp','OutfitConfig.cpp','AccomplishmentPanel.cpp','NetSession.cpp']
 
 const SCAN_SCHEMA = {
   type: 'object', additionalProperties: false,
