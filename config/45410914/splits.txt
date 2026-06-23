@@ -2810,3 +2810,11 @@ band3/meta_band/PatchSelectPanel.cpp:
 GameMicManager.cpp:
 	.pdata      start:0x82227D00 end:0x82227E08
 	.text       start:0x82663A1C end:0x82664890
+
+band3/meta_band/ClosetMgr.cpp:
+	.pdata      start:0x82215140 end:0x82215148
+	.pdata      start:0x82215148 end:0x82215150
+	.text       start:0x8254F240 end:0x8254F298
+	.text       start:0x8254F298 end:0x8254F2F8
+	.text       start:0x825508C8 end:0x8255090C
+	.text       start:0x82550D58 end:0x82550D6C

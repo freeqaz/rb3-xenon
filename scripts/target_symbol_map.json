@@ -13222,5 +13222,9 @@
  "0X82B65CA0": "?PlayerDisconnectedAtStart@Track@@UBA_NXZ",
  "0X82B65E98": "?PushGameplayOptions@Track@@UAAXW4VocalParam@@H@Z",
  "0X82B65FD0": "?FailedAtStart@Track@@UAA_NXZ",
- "0X82B66238": "?Poll@Track@@UAAXM@Z"
+ "0X82B66238": "?Poll@Track@@UAAXM@Z",
+ "0x825508c8": "?ShowClothes@ClosetMgr@@QAAXXZ",
+ "0x82550d58": "?ResetPatches@ClosetMgr@@QAAXXZ",
+ "0x8254f298": "?UpdateCharacterPatch@ClosetMgr@@QAAXW4Category@Patch@BandCharDesc@@PBD@Z",
+ "0x8254f240": "?ForceClosetPoll@ClosetMgr@@QAAXXZ"
 }
