@@ -24,6 +24,10 @@ ContextWrapper.cpp:
 	.text       start:0x824F8F98 end:0x824F9028
 	.text       start:0x824F95D8 end:0x824F96A4
 
+EntityUploader.cpp:
+	.pdata      start:0x8220FC00 end:0x8220FDF8
+	.text       start:0x824F9FA8 end:0x824FC250
+
 RockCentral.cpp:
 	.pdata      start:0x821EAED0 end:0x821EAED8
 	.pdata      start:0x821EAEF0 end:0x821EAEF8
