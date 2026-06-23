@@ -541,6 +541,10 @@ UIScreen.cpp:
 	.pdata      start:0x8223C1D8 end:0x8223C360
 	.text       start:0x827CA9B0 end:0x827CC520
 
+UIPanel.cpp:
+	.pdata      start:0x8223E260 end:0x8223E440
+	.text       start:0x827ED130 end:0x827EF018
+
 LightHue.cpp:
 	.pdata      start:0x8220D850 end:0x8220DAA0
 	.text       start:0x824D46F8 end:0x824D6CD0

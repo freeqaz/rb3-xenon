@@ -132,6 +132,7 @@
    "system/rndobj/Gen.cpp": "NonMatching",
    "system/ui/ScrollSelect.cpp": "NonMatching",
    "system/ui/UIScreen.cpp": "NonMatching",
+   "system/ui/UIPanel.cpp": "NonMatching",
    "system/world/EventAnim.cpp": "NonMatching",
    "system/world/FreeCamera.cpp": "NonMatching",
    "system/world/LightHue.cpp": "NonMatching",
