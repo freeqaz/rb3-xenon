@@ -2824,3 +2824,11 @@ band3/game/GemTrainerPanel.cpp:
 	.pdata      start:0x8222A5C0 end:0x8222A5C8
 	.text       start:0x8268D410 end:0x8268D728
 	.text       start:0x8268DB88 end:0x8268DEE8
+
+band3/game/Tracker.cpp:
+	.pdata      start:0x8222C458 end:0x8222C460
+	.pdata      start:0x8222C500 end:0x8222C508
+	.pdata      start:0x8222C628 end:0x8222C630
+	.text       start:0x826B1538 end:0x826B1590
+	.text       start:0x826B1F50 end:0x826B2000
+	.text       start:0x826B3178 end:0x826B322C
