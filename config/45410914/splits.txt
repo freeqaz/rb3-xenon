@@ -2799,6 +2799,10 @@ band3/meta_band/AccomplishmentTourConditional.cpp:
 	.pdata      start:0x82219348 end:0x82219378
 	.text       start:0x8258BE40 end:0x8258C0C0
 
+band3/meta_band/CampaignLevel.cpp:
+	.pdata      start:0x82225150 end:0x822251A0
+	.text       start:0x8263BC10 end:0x8263BF94
+
 band3/meta_band/Campaign.cpp:
 	.pdata      start:0x822193C0 end:0x822198D0
 	.text       start:0x8258C3D8 end:0x82590C70
