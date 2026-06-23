@@ -674,6 +674,7 @@
       "band3/bandtrack/GemTrack.cpp": "NonMatching",
       "band3/bandtrack/GemManager.cpp": "NonMatching",
       "band3/bandtrack/Gem.cpp": "NonMatching",
+      "band3/bandtrack/Track.cpp": "NonMatching",
       "band3/bandtrack/TrackPanel.cpp": "NonMatching",
       "band3/game/Singer.cpp": "NonMatching",
       "band3/game/VocalPlayer.cpp": "NonMatching",

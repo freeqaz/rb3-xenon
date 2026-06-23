@@ -2633,6 +2633,20 @@ band3/bandtrack/GemTrack.cpp:
 	.pdata      start:0x82254318 end:0x82254500
 	.text       start:0x82B61E30 end:0x82B64D38
 
+band3/bandtrack/Track.cpp:
+	.pdata      start:0x822545D8 end:0x822545E0
+	.pdata      start:0x822545F0 end:0x822545F8
+	.pdata      start:0x82254610 end:0x82254618
+	.pdata      start:0x82254640 end:0x82254648
+	.pdata      start:0x82254658 end:0x82254660
+	.pdata      start:0x82254688 end:0x82254690
+	.text       start:0x82B65A88 end:0x82B65AB0
+	.text       start:0x82B65B70 end:0x82B65BAC
+	.text       start:0x82B65CA0 end:0x82B65CDC
+	.text       start:0x82B65E98 end:0x82B65ED8
+	.text       start:0x82B65FD0 end:0x82B66024
+	.text       start:0x82B66238 end:0x82B66494
+
 band3/bandtrack/GemManager.cpp:
 	.pdata      start:0x82254788 end:0x82254B80
 	.text       start:0x82B67448 end:0x82B6D688
