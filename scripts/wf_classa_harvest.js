@@ -16,7 +16,10 @@ const DONE_OR_MIXED = ['GemManager.cpp','AppLabel.cpp','Matchmaker.cpp','PitchAr
   // wave-3 (main @25ed686): landed winners + honest rejects
   'TrackDir.cpp','TrackerDisplay.cpp','StoreInfoPanel.cpp','NetworkEmulator.cpp','BandUserMgr.cpp','OutfitConfig.cpp','AccomplishmentPanel.cpp','NetSession.cpp',
   // wave-4 (main @a38ef1b): landed PatchPanel/CampaignLevel; rejects (FOREIGN/MIXED/no-oracle ICF-stub)
-  'PatchPanel.cpp','CampaignLevel.cpp','BandMachineMgr.cpp','CharacterCreatorPanel.cpp','BandStorePanel.cpp','BandHeadShaper.cpp','UIProxy.cpp','Game.cpp']
+  'PatchPanel.cpp','CampaignLevel.cpp','BandMachineMgr.cpp','CharacterCreatorPanel.cpp','BandStorePanel.cpp','BandHeadShaper.cpp','UIProxy.cpp','Game.cpp',
+  // wave-5 (main @70d60d5): landed UIPanel/FocusTracker/TrackWidget/EntityUploader/StarDisplay (+152);
+  // rejects incl MetaPanel (now FOREIGN frun=124, supersedes wave-3 deferral), BandLabel/NewAwardPanel FOREIGN
+  'UIPanel.cpp','FocusTracker.cpp','TrackWidget.cpp','EntityUploader.cpp','StarDisplay.cpp','AccomplishmentOneShot.cpp','BandSongMetadata.cpp','BandLabel.cpp','NewAwardPanel.cpp','MetaPanel.cpp']
 
 const SCAN_SCHEMA = {
   type: 'object', additionalProperties: false,

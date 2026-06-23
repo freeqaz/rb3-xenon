@@ -110,6 +110,30 @@ stub-folds unless DC3 names them (and DC3 engine-naming is dead for strict). Yie
 batch1 +52 → broaden1 +49 → broaden2 +26 → broaden3 +22 → **wave-3 +126** (broadened to network/track/game/
 meta_band = a fresh vein) → **wave-4 +53** (same broad scan, now 75% reject). Cumulative class-A: **+416**.
 
+## Wave-5 (2026-06-23, main @70d60d5) — +152 composed (5 winners / 10 scanned), THINNING REVERSED
+The thinning was about the SCAN POOL, not the method: broadening to fresh game+engine TUs hit a rich seam.
+
+| TU | + | note |
+|---|---:|---|
+| UIPanel.cpp | +48 | system/ui; already in src, just WIRE+PIN (not yet wired) |
+| FocusTracker.cpp | +42 | band3/game; decisive MILO_ASSERT line-const contiguity 0x31b9d..0x31c21 |
+| TrackWidget.cpp | +26 | system/track |
+| EntityUploader.cpp | +24 | band3/net_band; ~0xC base-size drift body caveat (still won) |
+| StarDisplay.cpp | +12 | system/bandobj; +StarDisplay.h layout + UILabel.h |
+| **composed** | **+152** | 10430→10582, run1==run2 deterministic, **0 regressions, full additive** |
+
+REJECTED honestly: AccomplishmentOneShot +0 (retail-vs-Wii-DEV body divergence, 2 real bodies <100%),
+BandSongMetadata refuted (span not TU-pure, oracle attributes 2/78). FOREIGN: BandLabel (30-fn run),
+NewAwardPanel (51-fn run), and ⚠ **MetaPanel = FOREIGN @0.93, frun=124** — this SUPERSEDES the wave-3
+"MetaPanel deferred OWN@0.62 retry candidate" note: deeper validation shows it is ICF-scattered, NOT a
+clean span. Do NOT retry MetaPanel as a class-A span (it's identity-transfer/class-B territory).
+
+⭐ KEY INSIGHT: the wave-4 "thinning" was the EXCLUSION LIST exhausting the meta_band panel belt, NOT the
+method drying up. Each fresh broad scan that reaches into under-mined dirs (band3/game, system/track,
+system/ui, band3/net_band, system/bandobj) still finds TU-pure spans. The `max_foreign_zero_run=0` +
+distinctive-string/line-const gate keeps it honest (5/5 winners real-bodied, icf-clean). Yield by wave:
++52/+49/+26/+22 / **w3 +126 / w4 +53 / w5 +152**. Cumulative class-A: **+568**. Still productive → keep going.
+
 ## How to resume (for a future session that wants the marginal tail)
 Edit the `DONE_OR_MIXED` exclusion in `scripts/wf_classa_harvest.js` (now includes TrackDir/
 TrackerDisplay/StoreInfoPanel/NetworkEmulator/BandUserMgr/OutfitConfig/AccomplishmentPanel/NetSession;
