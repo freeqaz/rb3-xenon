@@ -2609,6 +2609,17 @@ band3/game/VocalPlayer.cpp:
 	.text       start:0x826C5F10 end:0x826C5FA0
 	.text       start:0x826C6318 end:0x826D0170
 
+band3/game/VocalPart.cpp:
+	.pdata      start:0x8222E2C8 end:0x8222E2D0
+	.pdata      start:0x8222E2D0 end:0x8222E2D8
+	.pdata      start:0x8222E2F0 end:0x8222E2F8
+	.pdata      start:0x8222E300 end:0x8222E308
+	.text       start:0x826D4B18 end:0x826D4B40
+	.text       start:0x826D50A8 end:0x826D52B8
+	.text       start:0x826D52B8 end:0x826D5718
+	.text       start:0x826D5A80 end:0x826D5BA4
+	.text       start:0x826D5BE0 end:0x826D5C44
+
 band3/game/Singer.cpp:
 	.pdata      start:0x8222E568 end:0x8222E608
 	.text       start:0x826D8B98 end:0x826D9F10

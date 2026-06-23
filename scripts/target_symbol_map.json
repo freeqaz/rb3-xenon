@@ -13236,5 +13236,10 @@
  "0x825A1D90": "?UpdateReview@SongRecord@@QAA_NXZ",
  "0x825A1E00": "?UpdateScoreType@SongRecord@@QAA_NXZ",
  "0x825A2038": "?IsLocal@SetlistRecord@@QBA_NXZ",
- "0x825A20E0": "?IsProfileOwner@SetlistRecord@@QBA_NPBVBandProfile@@@Z"
+ "0x825A20E0": "?IsProfileOwner@SetlistRecord@@QBA_NPBVBandProfile@@@Z",
+ "0x826D4B18": "?IsEmptyPhrase@VocalPart@@QBA_NABQBVVocalPhrase@@@Z",
+ "0x826D50A8": "?GetBestHit@VocalPart@@QAAMMHHPAVTalkyMatcher@@AAMMAAH211AA_N@Z",
+ "0x826D52B8": "?HandlePhraseEnd@VocalPart@@QAAXAAHAAM10M@Z",
+ "0x826D5A80": "?CalcNoteWeights@VocalPart@@QAAXXZ",
+ "0x826D5BE0": "?PostLoad@VocalPart@@QAAXXZ"
 }
