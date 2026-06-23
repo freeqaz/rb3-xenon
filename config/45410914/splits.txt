@@ -2617,7 +2617,16 @@ band3/meta_band/NetSync.cpp:
 	.text       start:0x82583DD8 end:0x82586338
 
 band3/game/Player.cpp:
+	.pdata      start:0x82229D60 end:0x82229D68
+	.pdata      start:0x82229D90 end:0x82229D98
+	.pdata      start:0x82229DA8 end:0x82229DB0
+	.pdata      start:0x82229DB8 end:0x82229DC0
 	.pdata      start:0x82229DC8 end:0x8222A4A8
+	.text       start:0x82683B98 end:0x82683C20
+	.text       start:0x82683DE0 end:0x82683E00
+	.text       start:0x82683F78 end:0x82683FD8
+	.text       start:0x82684078 end:0x826840D8
+	.text       start:0x82684130 end:0x82684214
 	.text       start:0x826843F0 end:0x8268C4A8
 
 band3/game/VocalTrainerPanel.cpp:
