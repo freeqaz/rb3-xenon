@@ -13011,5 +13011,9 @@
  "0x82268380": "?Init@PatchLayer@@SAXXZ",
  "0x82268430": "?Init@PatchDir@@SAXXZ",
  "0x82268480": "??4PatchLayer@@QAAAAV0@ABV0@@Z",
- "0x82268A08": "?_M_erase@?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPatchLayer@@PAV3@0ABU__false_type@2@@Z"
+ "0x82268A08": "?_M_erase@?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPatchLayer@@PAV3@0ABU__false_type@2@@Z",
+ "0X822BD738": "?SetupScore@BandScoreboard@@QAAXXZ",
+ "0X822BD9D8": "?SetScore@BandScoreboard@@QAAXH@Z",
+ "0X822BDB00": "?SyncProperty@BandScoreboard@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0X822BDE50": "?Handle@BandScoreboard@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }

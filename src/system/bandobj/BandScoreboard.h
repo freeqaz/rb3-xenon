@@ -1,13 +1,40 @@
 #pragma once
-// Minimal stub for BandScoreboard — referenced as ObjPtr member in TrackPanel.h.
-// Full class body deferred; needs RndDir, RndMesh, BandStarDisplay dependencies.
+#include "obj/ObjMacros.h"
 #include "rndobj/Dir.h"
+#include "rndobj/Mesh.h"
+#include "bandobj/BandStarDisplay.h"
 
 class BandScoreboard : public RndDir {
 public:
-    BandScoreboard() {}
-    OBJ_CLASSNAME(BandScoreboard);
-    OBJ_SET_TYPE(BandScoreboard);
+    BandScoreboard();
+    OBJ_CLASSNAME(BandScoreboard)
+    OBJ_SET_TYPE(BandScoreboard)
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~BandScoreboard() {}
+    virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
+    virtual void Save(BinStream &);
+    virtual void Copy(const Hmx::Object *, CopyType);
+    virtual ~BandScoreboard();
+    virtual void PreLoad(BinStream &);
+    virtual void PostLoad(BinStream &);
+
+    void SetScore(int);
+    void SetNumStars(float, bool);
+    float GetNumStars() const;
+    void Reset();
+    void SetupScore();
+    void ResetScore();
+
+    DECLARE_REVS;
+    NEW_OVERLOAD;
+    DELETE_OVERLOAD;
+    NEW_OBJ(BandScoreboard)
+    static void Init() { Register(); }
+    REGISTER_OBJ_FACTORY_FUNC(BandScoreboard)
+
+    int mScore; // 0x18c
+    ObjPtr<RndMesh> mThousandsCommaMesh; // 0x190
+    ObjPtr<RndMesh> mMillionsCommaMesh; // 0x19c
+    ObjVector<ObjPtr<RndMesh> > mNumMeshes; // 0x1a8
+    ObjVector<ObjPtr<RndMesh> > mSrcMeshes; // 0x1b4
+    ObjPtr<BandStarDisplay> mStarDisplay; // 0x1c0
 };

@@ -178,6 +178,10 @@ RockCentral.cpp:
 	.text       start:0x82B8E0C0 end:0x82B8E110
 	.text       start:0x82BB2048 end:0x82BB2180
 
+BandScoreboard.cpp:
+	.pdata      start:0x821EF8F8 end:0x821EF988
+	.text       start:0x822BD66C end:0x822BDFB4
+
 BandCamShot.cpp:
 	.pdata      start:0x821ED9F8 end:0x821EE240
 	.text       start:0x8229F0A0 end:0x822A71D8
