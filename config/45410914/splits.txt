@@ -232,6 +232,10 @@ QuestFilterPanel.cpp:
 	.pdata      start:0x82253238 end:0x822533B8
 	.text       start:0x82B4B850 end:0x82B4CED0
 
+FocusTracker.cpp:
+	.pdata      start:0x8222CC80 end:0x8222CF00
+	.text       start:0x826B7BF0 end:0x826BA270
+
 Defines.cpp:
 	.pdata      start:0x82228A00 end:0x82228A38
 	.text       start:0x82670CB0 end:0x82671230

@@ -700,6 +700,7 @@
   "mw_version": "X360/16.00.11886.00",
   "cflags": "base",
   "objects": {
+   "band3/game/FocusTracker.cpp": "NonMatching",
    "band3/game/Defines.cpp": "NonMatching",
    "band3/game/TrackerDisplay.cpp": "NonMatching",
    "band3/game/NetGameMsgs.cpp": "NonMatching",

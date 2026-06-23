@@ -13327,5 +13327,14 @@
  "0x8233CB98": "?DropOut@BandTrack@@QAAXXZ",
  "0x8233CCE0": "?Deploy@BandTrack@@UAAXXZ",
  "0x822E6D08": "?OnSetDisplayMode@VocalTrackDir@@QAA?AVDataNode@@PAVDataArray@@@Z",
- "0x822E9598": "?SetupNetVocals@VocalTrackDir@@QAAXXZ"
+ "0x822E9598": "?SetupNetVocals@VocalTrackDir@@QAAXXZ",
+ "0x826B85A0": "?_M_create_node@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBUTrackerPlayerID@@H@2@@Z",
+ "0x826B8A38": "?_M_insert@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBUTrackerPlayerID@@H@2@00@Z",
+ "0x826B8B18": "?insert_unique@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBUTrackerPlayerID@@H@2@@Z",
+ "0x826B8BF8": "?HandleRemovePlayer_@FocusTracker@@UAAXPAVPlayer@@@Z",
+ "0x826B8E50": "?insert_unique@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBUTrackerPlayerID@@H@2@@Z",
+ "0x826B9390": "??0StreakFocusTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
+ "0x826B9770": "??A?$map@UTrackerPlayerID@@HU?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAHABUTrackerPlayerID@@@Z",
+ "0x826B9800": "?FirstFrame_@FocusTracker@@UAAXM@Z",
+ "0x826B9EE0": "?HandleFocusSwitch@StreakFocusTracker@@UAAXM@Z"
 }
