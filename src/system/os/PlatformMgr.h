@@ -148,6 +148,7 @@ public:
     bool StartProfanity(const unsigned short **, int, char *, Hmx::Object *);
     bool IsConnected() { return mConnected; }
     bool ScreenSaver() { return mScreenSaver; }
+    DiskError GetDiskError() const { return mDiskError; }
     int SignInMask() const { return mSigninMask; }
     void QueueEnumJob(Job *);
     void CancelEnumJob(int);

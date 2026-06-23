@@ -30,6 +30,11 @@ float ATanInterpolator::Eval(float f1) const {
     return mScale * tanned + mOffset;
 }
 
+ATanInterpolator::ATanInterpolator() : mP0(0, 0), mP1(1, 1) {
+    mSeverity = 2.0f;
+    Sync();
+}
+
 ATanInterpolator::ATanInterpolator(const char *, const char *) : mP0(0, 0), mP1(1, 1) {
     mSeverity = 2.0;
     Sync();

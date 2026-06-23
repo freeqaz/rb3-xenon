@@ -17,11 +17,14 @@ protected:
 
 class ATanInterpolator : public Interpolator {
 public:
+    ATanInterpolator();
     ATanInterpolator(const char *, const char *);
     virtual float Eval(float) const;
     virtual void Reset(const DataArray *);
 
     void Reset(const Vector2 &, const Vector2 &, float);
+
+    float X1() const { return mP1.x; }
 
 protected:
     void Sync();

@@ -13439,5 +13439,12 @@
  "0x82B66F70": "?IsReady@GemPlayer@@UBA_NXZ",
  "0x82B67068": "?FillInProgress@GemPlayer@@UAAXHH@Z",
  "0x82B67188": "?FillReset@GemPlayer@@UAAXXZ",
- "0x82BB0EB0": "?Ignore@GemPlayer@@UAAXHMHABVUserGuid@@@Z"
+ "0x82BB0EB0": "?Ignore@GemPlayer@@UAAXHMHABVUserGuid@@@Z",
+ "0x82659E60": "?CanUserPause@Game@@QBA_NXZ",
+ "0x8265A168": "?SetGameOver@Game@@QAAX_N@Z",
+ "0x8265BAF0": "?GetScoringTracks@Game@@QBAHXZ",
+ "0x8265EA78": "?IsLoaded@Game@@QAA_NXZ",
+ "0x8265C250": "?HandleAudioLoad@Game@@QAA_NXZ",
+ "0x8265A278": "?E3CheatAutoplayAccuracy@Game@@QAAXXZ",
+ "0x8265C3B0": "?AdjustForVocalPhrases@Game@@QBAXAAM0@Z"
 }
