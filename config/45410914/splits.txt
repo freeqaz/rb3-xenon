@@ -2818,3 +2818,9 @@ band3/meta_band/ClosetMgr.cpp:
 	.text       start:0x8254F298 end:0x8254F2F8
 	.text       start:0x825508C8 end:0x8255090C
 	.text       start:0x82550D58 end:0x82550D6C
+
+band3/game/GemTrainerPanel.cpp:
+	.pdata      start:0x8222A580 end:0x8222A588
+	.pdata      start:0x8222A5C0 end:0x8222A5C8
+	.text       start:0x8268D410 end:0x8268D728
+	.text       start:0x8268DB88 end:0x8268DEE8

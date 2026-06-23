@@ -13226,5 +13226,7 @@
  "0x825508c8": "?ShowClothes@ClosetMgr@@QAAXXZ",
  "0x82550d58": "?ResetPatches@ClosetMgr@@QAAXXZ",
  "0x8254f298": "?UpdateCharacterPatch@ClosetMgr@@QAAXW4Category@Patch@BandCharDesc@@PBD@Z",
- "0x8254f240": "?ForceClosetPoll@ClosetMgr@@QAAXXZ"
+ "0x8254f240": "?ForceClosetPoll@ClosetMgr@@QAAXXZ",
+ "0X8268D410": "?Poll@GemTrainerPanel@@UAAXXZ",
+ "0X8268DB88": "?StartSectionImpl@GemTrainerPanel@@UAAXXZ"
 }
