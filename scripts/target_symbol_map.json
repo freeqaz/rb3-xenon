@@ -13373,5 +13373,13 @@
  "0x82532B48": "?SaveGlobalOptions@ProfileMgr@@QAAXAAVFixedSizeSaveableStream@@@Z",
  "0X826D3088": "?EnableGuideTrack@VocalGuidePitch@@QAAXH@Z",
  "0X826D3168": "?Poll@VocalGuidePitch@@QAAXM@Z",
- "0X826D34D0": "??0VocalGuidePitch@@QAA@XZ"
+ "0X826D34D0": "??0VocalGuidePitch@@QAA@XZ",
+ "0x826F1E78": "?LoadFile@MetaMusicLoader@@QAAXXZ",
+ "0x826F1ED0": "??$Find@VFxSendEQ@@@ObjectDir@@QAAPAVFxSendEQ@@PBD_N@Z",
+ "0x826F1FD8": "?OpenFile@MetaMusicLoader@@QAAXXZ",
+ "0x826F2028": "?ChooseStartMs@MetaMusic@@QBAHXZ",
+ "0x826F2168": "?IsLoaded@MetaMusicLoader@@UBA_NXZ",
+ "0x826F32A8": "?UnloadStreamFx@MetaMusic@@QAAXXZ",
+ "0x826F3850": "?Stop@MetaMusic@@QAAXXZ",
+ "0x826F3D90": "?SetScene@MetaMusic@@QAAXPAVMetaMusicScene@@@Z"
 }

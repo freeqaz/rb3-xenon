@@ -103,6 +103,31 @@ struct MemHeapTracker {
     ~MemHeapTracker() { MemPopHeap(); }
 };
 
+// rb3-Wii locked-heap handle API (used by MetaMusic's mRndHeap streaming path).
+// Declarations only — additive, no codegen impact on other TUs.
+struct MemHandleAlloc {
+    class MemHandle *mBack; // 0x0
+    int mLockCount;         // 0x4
+};
+
+class MemHandle {
+public:
+    MemHandle(void *);
+    void *Lock();
+    void Unlock();
+
+    MemHandleAlloc *mAlloc;
+};
+
+MemHandle *_MemAllocH(int);
+void MemFreeH(MemHandle *);
+
+class MemTempHeap {
+public:
+    MemTempHeap(int x) { MemPushHeap(x); }
+    ~MemTempHeap() { MemPopHeap(); }
+};
+
 void *MemTruncate(
     void *mem,
     int size,

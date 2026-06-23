@@ -1761,8 +1761,8 @@ HamRegulate.cpp:
 	.text       start:0x82742D38 end:0x82742E48
 
 MetaMusic.cpp:
-	.pdata      start:0x82234CE8 end:0x82234CF0
-	.text       start:0x82749660 end:0x827496C0
+	.pdata      start:0x8222FEB0 end:0x822300A8
+	.text       start:0x826F1BF4 end:0x826F40C0
 
 SongCollision.cpp:
 	.pdata      start:0x82234F10 end:0x82234F18
