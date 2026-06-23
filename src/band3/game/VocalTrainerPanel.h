@@ -38,7 +38,6 @@ public:
     bool unkc0;
     bool unkc1;
     int unkc4;
-    int unkc8;
     float unkcc;
     float unkd0;
 };

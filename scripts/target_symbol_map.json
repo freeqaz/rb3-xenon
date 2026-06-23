@@ -13015,5 +13015,7 @@
  "0X822BD738": "?SetupScore@BandScoreboard@@QAAXXZ",
  "0X822BD9D8": "?SetScore@BandScoreboard@@QAAXH@Z",
  "0X822BDB00": "?SyncProperty@BandScoreboard@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0X822BDE50": "?Handle@BandScoreboard@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+ "0X822BDE50": "?Handle@BandScoreboard@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0X82699D08": "?Handle@VocalTrainerPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0X82699FD8": "?UpdateScore@VocalTrainerPanel@@QAAXXZ"
 }
