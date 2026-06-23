@@ -13336,5 +13336,9 @@
  "0x826B9390": "??0StreakFocusTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
  "0x826B9770": "??A?$map@UTrackerPlayerID@@HU?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAHABUTrackerPlayerID@@@Z",
  "0x826B9800": "?FirstFrame_@FocusTracker@@UAAXM@Z",
- "0x826B9EE0": "?HandleFocusSwitch@StreakFocusTracker@@UAAXM@Z"
+ "0x826B9EE0": "?HandleFocusSwitch@StreakFocusTracker@@UAAXM@Z",
+ "0x827BD028": "?RemoveInstances@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@3@1@Z",
+ "0x827BD350": "?RemoveInstances@?$TrackWidgetImp@VMeshInstance@@@@UAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@U?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@3@1@Z",
+ "0x827BD3B8": "?DoPushInstance@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@QAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@AAUInstance@RndMultiMesh@@@Z",
+ "0x827BD410": "?DoPushInstance@?$TrackWidgetImp@VMeshInstance@@@@QAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@AAVMeshInstance@@@Z"
 }

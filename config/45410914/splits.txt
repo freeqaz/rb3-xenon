@@ -2911,6 +2911,10 @@ TrackDir.cpp:
 	.pdata      start:0x8223B038 end:0x8223B328
 	.text       start:0x827B89B0 end:0x827BB078
 
+TrackWidget.cpp:
+	.pdata      start:0x8223B3F8 end:0x8223B698
+	.text       start:0x827BC1F0 end:0x827BE9D8
+
 NetworkEmulator.cpp:
 	.pdata      start:0x822007A0 end:0x822007F8
 	.text       start:0x823D8F00 end:0x823D97F8

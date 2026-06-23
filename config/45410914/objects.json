@@ -59,6 +59,7 @@
    "system/bandobj/TrackPanelDir.cpp": "NonMatching",
    "system/bandobj/VocalTrackDir.cpp": "NonMatching",
    "system/track/TrackDir.cpp": "NonMatching",
+   "system/track/TrackWidget.cpp": "NonMatching",
    "system/beatmatch/GuitarController.cpp": "NonMatching",
    "system/beatmatch/MasterAudio.cpp": "NonMatching",
    "system/rndobj/Console.cpp": "NonMatching",
