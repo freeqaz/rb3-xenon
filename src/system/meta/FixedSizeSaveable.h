@@ -165,6 +165,36 @@ public:
             PadStream(stream, savesize * (maxsize - mapsize));
     }
 
+    // std::map<Symbol, T> 4-arg overload (BandProfile::mLessonCompletions is a
+    // genuine rbtree std::map per the BandProfile.h offset annotations: 0x30
+    // map -> 0x48 mScores = 0x18 = sizeof(rbtree), not 0x1c hashtable). Mirrors
+    // the rb3-Wii oracle's std::map<Symbol,T> SaveStd.
+    template <class T>
+    static void SaveStd(
+        FixedSizeSaveableStream &stream,
+        const std::map<Symbol, T> &map,
+        int maxsize,
+        int savesize
+    ) {
+        int mapsize = map.size();
+        if (mapsize > maxsize) {
+            MILO_NOTIFY(
+                "The hash_map size is greater than the maximum supplied! size=%i max=%i\n",
+                mapsize,
+                maxsize
+            );
+            mapsize = maxsize;
+        }
+        stream << mapsize;
+        for (std::map<Symbol, T>::const_iterator it = map.begin(); it != map.end();
+             ++it) {
+            FixedSizeSaveable::SaveSymbolID(stream, it->first);
+            stream << it->second;
+        }
+        if (maxsize > mapsize)
+            PadStream(stream, savesize * (maxsize - mapsize));
+    }
+
     template <class T1, class T2>
     static void SaveStd(
         FixedSizeSaveableStream &stream,
@@ -274,6 +304,31 @@ public:
         int savesize
     ) {
         if (map.size() > 0) {
+            MILO_NOTIFY("hash_map is not empty!");
+            map.clear();
+        }
+        int mapsize;
+        stream >> mapsize;
+        for (int i = 0; i < mapsize; i++) {
+            Symbol key;
+            FixedSizeSaveable::LoadSymbolFromID(stream, key);
+            T value;
+            stream >> value;
+            map[key] = value;
+        }
+        if (maxsize > mapsize)
+            DepadStream(stream, savesize * (maxsize - mapsize));
+    }
+
+    // std::map<Symbol, T> 4-arg overload (see SaveStd note above).
+    template <class T>
+    static void LoadStd(
+        FixedSizeSaveableStream &stream,
+        std::map<Symbol, T> &map,
+        int maxsize,
+        int savesize
+    ) {
+        if (map.size() != 0) {
             MILO_NOTIFY("hash_map is not empty!");
             map.clear();
         }

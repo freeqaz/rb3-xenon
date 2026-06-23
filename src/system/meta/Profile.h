@@ -38,8 +38,8 @@ public:
     const char *GetName() const;
 
 protected:
-    bool mDirty; // 0xc
-    int mPadNum; // 0x10
+    mutable bool mDirty; // 0xc (mutable: written from const SaveFixed, per rb3-Wii oracle)
+    mutable int mPadNum; // 0x10
     ProfileSaveState mState; // 0x14
 };
 

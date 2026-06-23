@@ -2858,3 +2858,13 @@ band3/meta_band/SongRecord.cpp:
 	.text       start:0x825A1E00 end:0x825A1E50
 	.text       start:0x825A2038 end:0x825A2070
 	.text       start:0x825A20E0 end:0x825A2150
+
+band3/meta_band/BandProfile.cpp:
+	.pdata      start:0x8220E238 end:0x8220E240
+	.pdata      start:0x82217878 end:0x82217880
+	.pdata      start:0x822178C8 end:0x822178D0
+	.pdata      start:0x82217990 end:0x82217998
+	.text       start:0x824E4580 end:0x824E45F8
+	.text       start:0x82572980 end:0x82572A94
+	.text       start:0x82572E08 end:0x82572E74
+	.text       start:0x825739F0 end:0x82573A44
