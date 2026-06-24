@@ -48,6 +48,7 @@ RockCentral.cpp:
 	.pdata      start:0x82200EE8 end:0x82200EF0
 	.pdata      start:0x822099F0 end:0x822099F8
 	.pdata      start:0x82209A58 end:0x82209A68
+	.pdata      start:0x8220E3D0 end:0x8220E3D8
 	.pdata      start:0x8220E498 end:0x8220E4A0
 	.pdata      start:0x8220E6E8 end:0x8220E978
 	.pdata      start:0x82215228 end:0x82215230
@@ -126,6 +127,7 @@ RockCentral.cpp:
 	.text       start:0x82449EE0 end:0x82449EF8
 	.text       start:0x82488A50 end:0x82488B38
 	.text       start:0x82488FE8 end:0x824891B8
+	.text       start:0x824E57A0 end:0x824E596C
 	.text       start:0x824E62C8 end:0x824E6318
 	.text       start:0x824E8468 end:0x824EA844
 	.text       start:0x8254FFF8 end:0x82550078
@@ -211,7 +213,9 @@ TrackPanelDir.cpp:
 	.text       start:0x822F2E68 end:0x822F5830
 
 VocalTrack.cpp:
+	.pdata      start:0x8223C1A8 end:0x8223C1B0
 	.pdata      start:0x82254B80 end:0x82255330
+	.text       start:0x827CA508 end:0x827CA564
 	.text       start:0x82B6D688 end:0x82B7A2A0
 
 MusicLibrary.cpp:
@@ -235,11 +239,15 @@ ShaderOptions.cpp:
 	.text       start:0x82487438 end:0x824884C4
 
 QuestFilterPanel.cpp:
+	.pdata      start:0x82253220 end:0x82253228
 	.pdata      start:0x82253238 end:0x822533B8
+	.text       start:0x82B4B768 end:0x82B4B7C0
 	.text       start:0x82B4B850 end:0x82B4CED0
 
 FocusTracker.cpp:
+	.pdata      start:0x8222CC70 end:0x8222CC78
 	.pdata      start:0x8222CC80 end:0x8222CF00
+	.text       start:0x826B7B08 end:0x826B7B5C
 	.text       start:0x826B7BF0 end:0x826BA270
 
 Defines.cpp:
@@ -308,7 +316,9 @@ GuitarController.cpp:
 	.text       start:0x82777E90 end:0x8277D790
 
 CalibrationPanel.cpp:
+	.pdata      start:0x8221FC40 end:0x8221FC48
 	.pdata      start:0x8221FC48 end:0x8221FE78
+	.text       start:0x825EC650 end:0x825EC704
 	.text       start:0x825EC708 end:0x825EF598
 
 TourDescPanel.cpp:
@@ -1540,9 +1550,11 @@ LabelNumberTicker.cpp:
 	.text       start:0x82582F78 end:0x82582FD0
 
 SongSortMgr.cpp:
+	.pdata      start:0x82218458 end:0x82218460
 	.pdata      start:0x82218618 end:0x822189A0
 	.pdata      start:0x822189A8 end:0x822189B0
 	.pdata      start:0x822189B8 end:0x82218B30
+	.text       start:0x8257E968 end:0x8257EA08
 	.text       start:0x82580040 end:0x82582EF8
 	.text       start:0x82582F50 end:0x82582F78
 	.text       start:0x82582FD0 end:0x82583DD8
@@ -3010,3 +3022,11 @@ band3/game/VocalGuidePitch.cpp:
 	.text       start:0x826D3088 end:0x826D30F0
 	.text       start:0x826D3168 end:0x826D33A4
 	.text       start:0x826D34D0 end:0x826D34F8
+
+Singer.cpp:
+	.pdata      start:0x8222E560 end:0x8222E568
+	.text       start:0x826D8A80 end:0x826D8B80
+
+UIStats.cpp:
+	.pdata      start:0x82214E08 end:0x82214E10
+	.text       start:0x8254BD10 end:0x8254BD64
