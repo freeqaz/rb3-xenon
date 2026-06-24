@@ -373,8 +373,8 @@ bool VectorSort<RndMesh *>::operator()(RndMesh *item1, RndMesh *item2) {
     return (it1 - vector.begin()) < (it2 - vector.begin());
 }
 
-void RndAmbientOcclusion::BuildObjectLists() {
-    ObjectDir *myDir = Dir();
+void RndAmbientOcclusion::BuildObjectLists(ObjectDir *dir) {
+    ObjectDir *myDir = dir ? dir : Dir();
     Clean();
     MILO_ASSERT(mObjectsCast.empty(), 0x199);
     MILO_ASSERT(mObjectsReceive.empty(), 0x19A);
@@ -1628,7 +1628,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 }
 
 DataNode RndAmbientOcclusion::OnGetRecvMeshes(DataArray *) {
-    BuildObjectLists();
+    BuildObjectLists(Dir());
     unsigned int numReceives = mObjectsReceive.size();
     DataArrayPtr ptr(new DataArray(numReceives));
     for (int i = 0; i < numReceives; i++) {

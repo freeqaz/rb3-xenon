@@ -35,7 +35,7 @@ public:
 
     void Clean();
     void BuildTrees(Quality);
-    void BuildObjectLists();
+    void BuildObjectLists(ObjectDir *dir = NULL);
     bool IsSerializable(const RndMesh *) const;
     void CalculateAO(float *);
     void Tessellate(float *, float *);
