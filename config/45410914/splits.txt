@@ -3030,3 +3030,7 @@ Singer.cpp:
 UIStats.cpp:
 	.pdata      start:0x82214E08 end:0x82214E10
 	.text       start:0x8254BD10 end:0x8254BD64
+
+OvershellSlotState.cpp:
+	.pdata      start:0x82225AE0 end:0x82225AE8
+	.text       start:0x82643628 end:0x82643698
