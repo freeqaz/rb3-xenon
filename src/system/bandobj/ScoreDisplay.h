@@ -13,6 +13,7 @@ public:
     virtual ~ScoreDisplay() {}
     // UIListCustomTemplate pure virtuals
     virtual void Custom(int, int, UIListCustom *, Hmx::Object *) {}
+    void SetValues(short, int, int, bool);
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 };
