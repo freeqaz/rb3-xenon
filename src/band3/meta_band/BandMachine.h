@@ -20,16 +20,14 @@ public:
     NetUIState GetNetUIState() const;
     int GetNetUIStateParam() const;
     bool HasSong(int) const;
-    bool HasProGuitarOrBass(int) const;
 
-    NetUIState mNetUIState; // 0x1c
-    int mNetUIStateParam; // 0x20
-    std::set<int> mAvailableSongs; // 0x24
-    std::set<int> mProGuitarOrBassSongs; // 0x3c
-    String mCurrentSongPreview; // 0x54
-    String mPrimaryBandName; // 0x60
-    String mPrimaryProfileName; // 0x6c
-    int mPrimaryMetaScore; // 0x78
+    NetUIState mNetUIState; // 0x28
+    int mNetUIStateParam; // 0x2c
+    std::set<int> mAvailableSongs; // 0x30
+    String mCurrentSongPreview; // 0x48
+    String mPrimaryBandName; // 0x54
+    String mPrimaryProfileName; // 0x60
+    int mPrimaryMetaScore; // 0x6c
 };
 
 class LocalBandMachine : public BandMachine {
@@ -48,7 +46,7 @@ public:
     void SetProGuitarOrBassSongs(const std::set<int> &);
     void SetCurrentSongPreview(const char *);
 
-    BandMachineMgr *mMachineMgr; // 0x78
+    BandMachineMgr *mMachineMgr; // 0x70
 };
 
 class RemoteBandMachine : public BandMachine {
@@ -62,8 +60,8 @@ public:
     bool IsActive() const;
     unsigned int GetMachineID() const;
 
-    unsigned int mID; // 0x7c
-    bool mActive; // 0x80
+    unsigned int mID; // 0x70
+    bool mActive; // 0x74
 };
 
 #include "obj/Msg.h"

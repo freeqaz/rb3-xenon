@@ -3103,3 +3103,5 @@ TrackerUtils.cpp:
 	.text       start:0x826D7BE0 end:0x826D7C4C
 	.text       start:0x826D7E00 end:0x826D7E14
 	.text       start:0x826D8478 end:0x826D84EC
+BandMachine.cpp:
+	.text       start:0x825A8520 end:0x825A8540
