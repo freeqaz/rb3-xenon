@@ -3034,3 +3034,7 @@ UIStats.cpp:
 OvershellSlotState.cpp:
 	.pdata      start:0x82225AE0 end:0x82225AE8
 	.text       start:0x82643628 end:0x82643698
+
+BandSongMetadata.cpp:
+	.pdata      start:0x8223E880 end:0x8223E888
+	.text       start:0x827F2EE8 end:0x827F3184
