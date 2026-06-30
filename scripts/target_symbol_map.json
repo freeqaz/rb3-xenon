@@ -13427,4 +13427,7 @@
  "0x82566a78": "?OnSynchronized@MetaPerformer@@UAAXI@Z",
  "0x825691d0": "?SetBattle@MetaPerformer@@QAAXPBVBattleSavedSetlist@@@Z"
  "0x8267ec30": "?LoseGame@Performer@@QAA_NXZ"
+ "0x826d7be0": "?CountVocalPhrasesInSong@TrackerUtils@@SAHH@Z",
+ "0x826d7e00": "?GetSectionEndTick@TrackerSectionManager@@QBAHH@Z",
+ "0x826d8478": "?FindEntry@TrackerMultiplierMap@@QBAABVMultiplierEntry@1@M@Z"
 }

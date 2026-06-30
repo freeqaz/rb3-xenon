@@ -3097,3 +3097,9 @@ Performer.cpp:
 	.text       start:0x82353B40 end:0x82353B50
 	.text       start:0x8267E578 end:0x8267E5D0
 	.text       start:0x8267EC30 end:0x8267ECC4
+TrackerUtils.cpp:
+	.pdata      start:0x8222E4D8 end:0x8222E4E0
+	.pdata      start:0x8222E518 end:0x8222E520
+	.text       start:0x826D7BE0 end:0x826D7C4C
+	.text       start:0x826D7E00 end:0x826D7E14
+	.text       start:0x826D8478 end:0x826D84EC
