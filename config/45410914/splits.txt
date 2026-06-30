@@ -3034,3 +3034,38 @@ UIStats.cpp:
 OvershellSlotState.cpp:
 	.pdata      start:0x82225AE0 end:0x82225AE8
 	.text       start:0x82643628 end:0x82643698
+
+GemPlayer.cpp:
+	.pdata      start:0x8222B448 end:0x8222B450
+	.pdata      start:0x8222B458 end:0x8222B460
+	.pdata      start:0x8222B4A0 end:0x8222B4A8
+	.pdata      start:0x8222B4E8 end:0x8222B4F0
+	.pdata      start:0x8222B518 end:0x8222B520
+	.pdata      start:0x8222B560 end:0x8222B568
+	.pdata      start:0x8222B568 end:0x8222B570
+	.pdata      start:0x8222B578 end:0x8222B580
+	.pdata      start:0x8222B598 end:0x8222B5A0
+	.pdata      start:0x8222B5A0 end:0x8222B5A8
+	.pdata      start:0x8222B5F8 end:0x8222B600
+	.pdata      start:0x8222B608 end:0x8222B610
+	.pdata      start:0x8222B640 end:0x8222B648
+	.pdata      start:0x8222B668 end:0x8222B670
+	.pdata      start:0x8222BA98 end:0x8222BAA0
+	.text       start:0x8269D670 end:0x8269D724
+	.text       start:0x8269D780 end:0x8269D858
+	.text       start:0x8269DB38 end:0x8269DB94
+	.text       start:0x8269E0A0 end:0x8269E118
+	.text       start:0x8269E138 end:0x8269E14C
+	.text       start:0x8269E3D8 end:0x8269E43C
+	.text       start:0x8269EA00 end:0x8269EB5C
+	.text       start:0x8269EB60 end:0x8269EB74
+	.text       start:0x8269EB78 end:0x8269EBFC
+	.text       start:0x8269ECF0 end:0x8269ED68
+	.text       start:0x8269F028 end:0x8269F098
+	.text       start:0x8269F098 end:0x8269F0FC
+	.text       start:0x8269F5C8 end:0x8269F6D0
+	.text       start:0x8269F860 end:0x8269F8CC
+	.text       start:0x8269FD60 end:0x8269FEC8
+	.text       start:0x826A0498 end:0x826A0568
+	.text       start:0x826A1988 end:0x826A19EC
+	.text       start:0x826A51C0 end:0x826A523C
