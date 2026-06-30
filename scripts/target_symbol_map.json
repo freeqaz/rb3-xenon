@@ -13404,5 +13404,16 @@
  "0x8254bd10": "?Init@UIStats@@QAAXXZ",
  "0x82b6e140": "?ProcessStaticLyrics@VocalTrack@@QAAX_NPAVLyric@@AAM2AAPAV2@320PAVLyricPlate@@@Z",
  "0x82b73370": "?BuildStaticDeployZone@VocalTrack@@QAAXHABU?$pair@MM@stlpmtx_std@@MAAMAAV?$deque@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@3@@Z",
- "0x82b743e8": "?UpdateVocalStyle@VocalTrack@@QAAXXZ"
+ "0x82b743e8": "?UpdateVocalStyle@VocalTrack@@QAAXXZ",
+ "0x8269d670": "?CanFlail@GemPlayer@@QAA_NM@Z",
+ "0x8269d780": "?PlayMissSound@GemPlayer@@QAAXH@Z",
+ "0x8269db38": "?GetPitchShift@GemPlayer@@QAAPAVFxSendPitchShift@@XZ",
+ "0x8269e0a0": "?PlayDrum@GemPlayer@@QAAXHHMH@Z",
+ "0x8269e3d8": "?HandleFirstGemAfterRollback@GemPlayer@@QAAXH@Z",
+ "0x8269ea00": "?UpdateGameCymbalLanes@GemPlayer@@QAAXXZ",
+ "0x8269eb78": "?LocalSoloStart@GemPlayer@@QAAXXZ",
+ "0x8269ecf0": "?LocalSetGuitarFx@GemPlayer@@QAAXH@Z",
+ "0x8269f5c8": "?IsCodaMiss@GemPlayer@@QAA_NM@Z",
+ "0x826a1988": "?IgnoreGem@GemPlayer@@QAAXH@Z",
+ "0x826a51c0": "?Jump@GemPlayer@@UAAXM_N@Z"
 }
