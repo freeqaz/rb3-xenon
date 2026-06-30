@@ -3069,6 +3069,7 @@ GemPlayer.cpp:
 	.text       start:0x826A0498 end:0x826A0568
 	.text       start:0x826A1988 end:0x826A19EC
 	.text       start:0x826A51C0 end:0x826A523C
+
 TrackerManager.cpp:
 	.pdata      start:0x82228F08 end:0x82228F10
 	.pdata      start:0x82228F10 end:0x82228F18
@@ -3082,6 +3083,7 @@ TrackerManager.cpp:
 	.text       start:0x82675330 end:0x82675344
 	.text       start:0x826753A8 end:0x826753BC
 	.text       start:0x82675EE8 end:0x82675F58
+
 MetaPerformer.cpp:
 	.pdata      start:0x82216A50 end:0x82216A58
 	.pdata      start:0x82216A58 end:0x82216A60
@@ -3091,23 +3093,28 @@ MetaPerformer.cpp:
 	.text       start:0x82564498 end:0x825644C8
 	.text       start:0x82566A78 end:0x82566ACC
 	.text       start:0x825691D0 end:0x82569238
+
 Performer.cpp:
 	.pdata      start:0x822297D8 end:0x822297E0
 	.pdata      start:0x82229848 end:0x82229850
 	.text       start:0x82353B40 end:0x82353B50
 	.text       start:0x8267E578 end:0x8267E5D0
 	.text       start:0x8267EC30 end:0x8267ECC4
+
 TrackerUtils.cpp:
 	.pdata      start:0x8222E4D8 end:0x8222E4E0
 	.pdata      start:0x8222E518 end:0x8222E520
 	.text       start:0x826D7BE0 end:0x826D7C4C
 	.text       start:0x826D7E00 end:0x826D7E14
 	.text       start:0x826D8478 end:0x826D84EC
+
 BandMachine.cpp:
 	.text       start:0x825A8520 end:0x825A8540
+
 BandSongMetadata.cpp:
 	.pdata      start:0x8223E880 end:0x8223E888
 	.text       start:0x827F2EE8 end:0x827F3184
+
 BandUser.cpp:
 	.pdata      start:0x82228678 end:0x82228680
 	.pdata      start:0x82228800 end:0x82228808
