@@ -13404,5 +13404,8 @@
  "0x8254bd10": "?Init@UIStats@@QAAXXZ",
  "0x82b6e140": "?ProcessStaticLyrics@VocalTrack@@QAAX_NPAVLyric@@AAM2AAPAV2@320PAVLyricPlate@@@Z",
  "0x82b73370": "?BuildStaticDeployZone@VocalTrack@@QAAXHABU?$pair@MM@stlpmtx_std@@MAAMAAV?$deque@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@3@@Z",
- "0x82b743e8": "?UpdateVocalStyle@VocalTrack@@QAAXXZ"
+ "0x82b743e8": "?UpdateVocalStyle@VocalTrack@@QAAXXZ",
+ "0x826d7be0": "?CountVocalPhrasesInSong@TrackerUtils@@SAHH@Z",
+ "0x826d7e00": "?GetSectionEndTick@TrackerSectionManager@@QBAHH@Z",
+ "0x826d8478": "?FindEntry@TrackerMultiplierMap@@QBAABVMultiplierEntry@1@M@Z"
 }
