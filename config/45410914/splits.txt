@@ -3108,3 +3108,8 @@ BandMachine.cpp:
 BandSongMetadata.cpp:
 	.pdata      start:0x8223E880 end:0x8223E888
 	.text       start:0x827F2EE8 end:0x827F3184
+BandUser.cpp:
+	.pdata      start:0x82228678 end:0x82228680
+	.pdata      start:0x82228800 end:0x82228808
+	.text       start:0x8266CF60 end:0x8266D070
+	.text       start:0x8266ECB0 end:0x8266ECFC
