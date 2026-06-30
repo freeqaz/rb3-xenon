@@ -721,6 +721,7 @@
    "band3/game/SongDB.cpp": "NonMatching",
    "band3/game/Player.cpp": "NonMatching",
    "band3/game/GemPlayer.cpp": "NonMatching",
+   "band3/game/Performer.cpp": "NonMatching",
    "band3/meta_band/NetSync.cpp": "NonMatching",
    "band3/bandtrack/GemTrack.cpp": "NonMatching",
    "band3/bandtrack/GemManager.cpp": "NonMatching",

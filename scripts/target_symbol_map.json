@@ -13426,4 +13426,5 @@
  "0x82675ee8": "?Restart@TrackerManager@@QAAXXZ"
  "0x82566a78": "?OnSynchronized@MetaPerformer@@UAAXI@Z",
  "0x825691d0": "?SetBattle@MetaPerformer@@QAAXPBVBattleSavedSetlist@@@Z"
+ "0x8267ec30": "?LoseGame@Performer@@QAA_NXZ"
 }
