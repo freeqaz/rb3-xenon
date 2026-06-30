@@ -3120,3 +3120,7 @@ BandUser.cpp:
 	.pdata      start:0x82228800 end:0x82228808
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266ECB0 end:0x8266ECFC
+
+TourProgress.cpp:
+	.text       start:0x8234FF50 end:0x8234FF68
+	.text       start:0x8234FF68 end:0x8234FF80
