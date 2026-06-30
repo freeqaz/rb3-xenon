@@ -80,3 +80,35 @@ SECONDARY KILL — harvest yield: if Stage-3 produces fewer than ~8 located VAs 
 CLASS-B KILL (already effectively MET, confirms the wall by design): if SongSortNode AND BandProfile each yield < 3 methods with N>=2 anchored callees (MEASURED: SongSortNode = ~0; only 2 anchored callees total across 99 fns), then class-B is DECLARED un-recoverable by topology and we do NOT attempt the panel bulk with this tool. This is a CONFIRMING negative, not a failure of the tool — it precisely characterizes the boundary the consolidated verdict asserted.
 
 OVERALL STOP CONDITION: if PRIMARY kill fires (precision < 0.55) the entire approach is dead — do not graft P2/P3/P4 signals on top to rescue it, because the recall ceiling (28-161 methods binary-wide) means even perfect precision caps the prize in the low double digits, and the verdict already proved no current oracle cracks the string-poor class-B bulk. In that case the deliverable is the hard-numbers negative: 'confirmed-anchor call-graph topology re-finds only N of M held-out game anchors at precision P; class-B yields ~0; the scattered-TU identification wall stands.'
+---
+
+## ⛔ BUILD VERDICT (2026-06-30) — PRIMARY KILL; the design's pilot was non-reproducible
+
+Built tools/topo_locate.py (693 LOC, landed @e318789) and ran the ground-truth gate. **The
+approach is DEAD on recall, and the design panel's prototype number was wrong.**
+
+- **Held-out precision@1 = 3/23 = 0.13** (kill threshold 0.55). The design's claimed 17/28=0.61
+  was NON-REPRODUCIBLE: the prototype counted the trivial self-anchor as a hit. The honest
+  held-out (hide the method's own true VA but keep it a valid candidate) gives 3/23; **18/23
+  produce NO candidate at all**.
+- **Root cause = structural recall wall, NOT tuning**: a forward ground-truth check (does the true
+  retail VA's own fingerprint call ≥2 oracle-anchored callee VAs?) gives the same ~4/23 ceiling.
+  Wii→retail callee VAs DRIFT — a method's anchored callees ICF-fold/inline/devirt to DIFFERENT
+  VAs than the true caller targets (e.g. AppLabel::Handle calls SetSongName@82B5F808 but the oracle
+  picked SetOfferCost@8250C690, reached only by 8250CC78). This is the doc's own flagged constraint
+  (only 3,089/10,664 anchors are EVER a callee) biting per-method. No signal graft fixes recall.
+- **Class-B floor (confirming negative)**: SongSortNode (99 fns) + BandProfile (109 fns) BOTH emit
+  0 N≥2 anchored-callee methods. classb_floor_ok=true.
+- **Harvest**: 5 candidates pass the self-consistency guard but 0 agree with the oracle rb3_addr and
+  0 agree with crossval_agree.json — none independently confirmed (secondary kill also met). --pin-only
+  correctly emitted 0 (strictly additive/honest).
+- **ONE bright spot**: precision 1.0 at vote_margin≥2 (3/3) — the signal is REAL but recall is
+  catastrophic (only 3/23 reach that confidence). topo_locate is BANKED as a one-shot high-confidence
+  confirmer (margin≥2 only), NOT a harvest engine.
+
+**This is the THIRD independent confirmation of the class-B identification wall** (after BSim seed-prop
+NO-GO and string-anchor sparsity). The recall wall is fundamental + chicken-and-egg: triangulating a
+scattered method needs anchored callees, but class-B methods' callees are themselves unmatched scattered
+methods. Per the design's OVERALL STOP CONDITION: do NOT graft P2/P3/P4 signals to rescue it — the recall
+ceiling caps the prize regardless of precision. The scattered-TU identification wall STANDS, now with a
+specific, measured root cause.
