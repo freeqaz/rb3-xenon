@@ -13404,5 +13404,13 @@
  "0x8254bd10": "?Init@UIStats@@QAAXXZ",
  "0x82b6e140": "?ProcessStaticLyrics@VocalTrack@@QAAX_NPAVLyric@@AAM2AAPAV2@320PAVLyricPlate@@@Z",
  "0x82b73370": "?BuildStaticDeployZone@VocalTrack@@QAAXHABU?$pair@MM@stlpmtx_std@@MAAMAAV?$deque@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@3@@Z",
- "0x82b743e8": "?UpdateVocalStyle@VocalTrack@@QAAXXZ"
+ "0x82b743e8": "?UpdateVocalStyle@VocalTrack@@QAAXXZ",
+ "0x82674ec8": "?HandleAddPlayer@TrackerManager@@QAAXPAVPlayer@@@Z",
+ "0x82674ee0": "?StartIntro@TrackerManager@@QAAXXZ",
+ "0x82674f68": "?Poll@TrackerManager@@QAAXM@Z",
+ "0x82675220": "?OnPlayerAddEnergy@TrackerManager@@QAAXPAVPlayer@@M@Z",
+ "0x826752a0": "?OnPlayerSaved@TrackerManager@@QAAXPAVPlayer@@@Z",
+ "0x82675330": "?OnRemoteTrackerPlayerProgress@TrackerManager@@QAAXPAVPlayer@@M@Z",
+ "0x826753a8": "?OnRemoteTrackerPlayerDisplay@TrackerManager@@QAAXPAVPlayer@@HHH@Z",
+ "0x82675ee8": "?Restart@TrackerManager@@QAAXXZ"
 }
