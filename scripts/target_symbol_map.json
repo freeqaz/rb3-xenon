@@ -13433,5 +13433,6 @@
  "0x825a8520": "?SetPrimaryMetaScore@LocalBandMachine@@QAAXH@Z",
  "0x827f2ee8": "?Save@BandSongMetadata@@UAAXAAVBinStream@@@Z",
  "0x8266ecb0": "?SetLoadedPrefabChar@BandUser@@QAAXH@Z",
- "0x8266cf60": "?GetTrackIcon@BandUser@@QBAPBDXZ"
+ "0x8266cf60": "?GetTrackIcon@BandUser@@QBAPBDXZ",
+ "0x826d8b80": "?Dispatch@SyncLocalMachineMsg@?A0x951deeb9@@UAAXXZ"
 }

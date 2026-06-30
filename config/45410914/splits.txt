@@ -3120,3 +3120,6 @@ BandUser.cpp:
 	.pdata      start:0x82228800 end:0x82228808
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266ECB0 end:0x8266ECFC
+
+BandMachineMgr.cpp:
+	.text       start:0x826D8B80 end:0x826D8B94
