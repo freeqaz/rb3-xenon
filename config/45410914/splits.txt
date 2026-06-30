@@ -3034,3 +3034,10 @@ UIStats.cpp:
 OvershellSlotState.cpp:
 	.pdata      start:0x82225AE0 end:0x82225AE8
 	.text       start:0x82643628 end:0x82643698
+
+Performer.cpp:
+	.pdata      start:0x822297D8 end:0x822297E0
+	.pdata      start:0x82229848 end:0x82229850
+	.text       start:0x82353B40 end:0x82353B50
+	.text       start:0x8267E578 end:0x8267E5D0
+	.text       start:0x8267EC30 end:0x8267ECC4
