@@ -3120,3 +3120,9 @@ BandUser.cpp:
 	.pdata      start:0x82228800 end:0x82228808
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266ECB0 end:0x8266ECFC
+
+CustomizePanel.cpp:
+	.pdata      start:0x82220B78 end:0x82220B80
+	.pdata      start:0x82220B80 end:0x82220B88
+	.text       start:0x825FB3D0 end:0x825FB52C
+	.text       start:0x825FB548 end:0x825FB590
