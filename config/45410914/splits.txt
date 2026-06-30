@@ -3120,3 +3120,7 @@ BandUser.cpp:
 	.pdata      start:0x82228800 end:0x82228808
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266ECB0 end:0x8266ECFC
+
+AccomplishmentPanel.cpp:
+	.pdata      start:0x8221EBB0 end:0x8221EBB8
+	.text       start:0x825DBD78 end:0x825DBE68

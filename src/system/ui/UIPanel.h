@@ -56,7 +56,7 @@ public:
     void UnsetLoadedDir();
     PanelDir *LoadedDir() { return mDir; }
     void CheckUnload();
-    State GetState() { return mState; }
+    State GetState() const { return mState; }
     bool ForceExit() const { return mForceExit; }
 
     static bool GetFinalDrawPass() { return sIsFinalDrawPass; }
