@@ -3120,3 +3120,9 @@ BandUser.cpp:
 	.pdata      start:0x82228800 end:0x82228808
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266ECB0 end:0x8266ECFC
+
+SetlistMergePanel.cpp:
+	.pdata      start:0x82222908 end:0x82222910
+	.pdata      start:0x82222918 end:0x82222920
+	.text       start:0x82617730 end:0x8261778C
+	.text       start:0x82617830 end:0x82617978
