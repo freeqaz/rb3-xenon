@@ -783,6 +783,7 @@
    "band3/meta_band/OvershellSlotState.cpp": "NonMatching",
    "band3/meta_band/BandSongMgr.cpp": "NonMatching",
    "band3/meta_band/MetaPerformer.cpp": "NonMatching",
+   "band3/meta_band/BandSongMetadata.cpp": "NonMatching",
    "band3/meta_band/PatchPanel.cpp": "NonMatching",
    "band3/meta_band/PatchSelectPanel.cpp": "NonMatching",
    "band3/meta_band/SongRecord.cpp": "NonMatching",

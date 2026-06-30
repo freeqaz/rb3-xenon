@@ -13431,4 +13431,5 @@
  "0x826d7e00": "?GetSectionEndTick@TrackerSectionManager@@QBAHH@Z",
  "0x826d8478": "?FindEntry@TrackerMultiplierMap@@QBAABVMultiplierEntry@1@M@Z"
  "0x825a8520": "?SetPrimaryMetaScore@LocalBandMachine@@QAAXH@Z"
+ "0x827f2ee8": "?Save@BandSongMetadata@@UAAXAAVBinStream@@@Z"
 }

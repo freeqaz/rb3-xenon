@@ -3105,3 +3105,6 @@ TrackerUtils.cpp:
 	.text       start:0x826D8478 end:0x826D84EC
 BandMachine.cpp:
 	.text       start:0x825A8520 end:0x825A8540
+BandSongMetadata.cpp:
+	.pdata      start:0x8223E880 end:0x8223E888
+	.text       start:0x827F2EE8 end:0x827F3184
