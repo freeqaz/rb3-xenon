@@ -21,12 +21,26 @@ Usage:
 import argparse, json, re, subprocess, sys
 from pathlib import Path
 
-ROOT = Path("/home/free/code/milohax/rb3-xenon")
+# Worktree-aware: default ROOT is the repo containing THIS script (so the tool
+# operates on whatever tree it's invoked from — main or a setup_worktree.sh
+# worktree). Override with --root for an explicit tree.
+ROOT = Path(__file__).resolve().parents[1]
 WORKLIST = ROOT / "band3_port_worklist.json"
 SPLITS = ROOT / "config/45410914/splits.txt"
 OBJECTS = ROOT / "config/45410914/objects.json"
 SYMBOLS = ROOT / "config/45410914/symbols.txt"
 TMAP = ROOT / "scripts/target_symbol_map.json"
+
+
+def _rebind_root(root):
+    """Re-point all path globals at an explicit tree (for --root)."""
+    global ROOT, WORKLIST, SPLITS, OBJECTS, SYMBOLS, TMAP
+    ROOT = Path(root).resolve()
+    WORKLIST = ROOT / "band3_port_worklist.json"
+    SPLITS = ROOT / "config/45410914/splits.txt"
+    OBJECTS = ROOT / "config/45410914/objects.json"
+    SYMBOLS = ROOT / "config/45410914/symbols.txt"
+    TMAP = ROOT / "scripts/target_symbol_map.json"
 
 
 def load_pins():
@@ -68,7 +82,10 @@ def main():
     ap.add_argument("--tu", action="append", default=[])
     ap.add_argument("--all-wired", action="store_true")
     ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--root", default=None, help="operate on this tree (default: script's repo)")
     args = ap.parse_args()
+    if args.root:
+        _rebind_root(args.root)
 
     rows = json.loads(WORKLIST.read_text())["worklist"]
     objects = OBJECTS.read_text()
