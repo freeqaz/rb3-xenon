@@ -52,3 +52,19 @@ hard one (the structural-levers-exhausted capstone + fuzzy-reconstruction docs):
 identification + body-divergence reconstruction needs a better identifier/codegen-match than any current
 oracle. Session matching total: +413 (class-A +403 / class-B +1 / body-port +2 / OvershellSlotState in
 class-B counted once / wave-7 etc. included), main @fb13b46 = 10664 matched.
+
+---
+
+## ⛔ COMPILER-FLAG /J test (2026-06-30) — KILL (closes the flag avenue for the strcpy wall)
+Hypothesis: the strcpy NUL-test `extsb.`(signed) vs retail `cmplwi`(unsigned) is the signature of MSVC
+`/J` (default char unsigned); the body-port agents tried source forms but never the FLAG. RESULT = KILL:
+- **Base cflags AUDIT: rb3-xenon == dc3 EXACTLY** (`/nologo /wd4355 /wd4164 /c /GR /O1 /Oi /EHsc`; /GS only on
+  per-config curl/net/jpeg sub-flags in BOTH; neither uses /J). No systematic flag-divergence — our build
+  is correctly configured vs the oracle.
+- Adding `/J` to base = **−18 net** (10664→10646, deterministic 2×). objdiff on OnChangeFaceGroup +
+  FirstSortChar: the strcpy NUL-test STILL emits signed `extsb.` under /J (target wants `cmplwi`) — /J does
+  NOT reach the strcpy intrinsic's internal NUL-test codegen, doesn't even flip it to `mr.`. Meanwhile /J
+  reinterprets char elsewhere, breaking 18 signed-char-dependent fns.
+- CONCLUSION: the inlined-strcpy `extsb`/`cmplwi` wall is INTERNAL to the X360 strcpy intrinsic codegen,
+  NOT governed by the char-signedness flag. Flag avenue CLOSED. Confirms body-divergence wall #2 is a
+  compiler-codegen wall, not a config/source/flag-fixable one.
