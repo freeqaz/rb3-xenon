@@ -88,6 +88,15 @@ out from under them will *deeply break* concurrent work. Hard rules:
   `build.ninja` via `configure.py`, and primes ninja state. Add `--cold-cache`
   for a guaranteed-clean A/B baseline. Remove with
   `git worktree remove --force <path>`.
+- **Put worktrees + all scratch under `~/tmp` (= `/home/free/tmp`), NEVER `/tmp`.**
+  `/tmp` is a RAM-backed **tmpfs** (47 GB, shared across everything, fills fast —
+  we hit "Disk quota exceeded" mid-build this way), *and* tmpfs has no btrfs
+  reflink, so `setup_worktree.sh`'s CoW fast-path silently falls back to full
+  ~660 MB copies there. `~/tmp` is on the **same btrfs as the repo** → CoW
+  reflinks work (cheap, fast) and there's ~300 GB+ free. So
+  `scripts/setup_worktree.sh ~/tmp/wt-foo foo`, build logs to
+  `~/tmp/rb3_build_{task}.log`, etc. (The harness's own task/transcript files
+  already live under `~/tmp` — follow suit for worktrees and logs.)
 - The orchestrator MCP manages a pool of these worktrees
   (`scripts/orchestrator/worktree_pool.py`) for its agents; `setup_worktree.sh`
   is the same machinery you can drive by hand.
@@ -97,12 +106,13 @@ out from under them will *deeply break* concurrent work. Hard rules:
 **1. X360 decomp-matching build** — compile-to-match the retail XEX (MSVC X360).
 
 ```bash
-./tools/ninja-locked 2>&1 | tee /tmp/rb3_build_{task}.log
+./tools/ninja-locked 2>&1 | tee ~/tmp/rb3_build_{task}.log
 python3 configure.py     # regenerate build.ninja (after editing objects.json/splits.txt)
 ```
 
-**ALWAYS `tee` the build output to a log file** (`/tmp/rb3_build_{task}.log` or
-similar). Makes debugging easier.
+**ALWAYS `tee` the build output to a log file** (`~/tmp/rb3_build_{task}.log` or
+similar — use `~/tmp`, not the RAM-backed `/tmp`; see the worktree note above).
+Makes debugging easier.
 
 dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
 there. **objdiff is also a local fork** at `../objdiff` (freeqaz/objdiff,
