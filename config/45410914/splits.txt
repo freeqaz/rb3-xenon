@@ -3069,3 +3069,16 @@ GemPlayer.cpp:
 	.text       start:0x826A0498 end:0x826A0568
 	.text       start:0x826A1988 end:0x826A19EC
 	.text       start:0x826A51C0 end:0x826A523C
+TrackerManager.cpp:
+	.pdata      start:0x82228F08 end:0x82228F10
+	.pdata      start:0x82228F10 end:0x82228F18
+	.pdata      start:0x82228F28 end:0x82228F30
+	.pdata      start:0x82229018 end:0x82229020
+	.text       start:0x82674EC8 end:0x82674EDC
+	.text       start:0x82674EE0 end:0x82674F68
+	.text       start:0x82674F68 end:0x826750D4
+	.text       start:0x82675220 end:0x8267529C
+	.text       start:0x826752A0 end:0x826752A8
+	.text       start:0x82675330 end:0x82675344
+	.text       start:0x826753A8 end:0x826753BC
+	.text       start:0x82675EE8 end:0x82675F58
