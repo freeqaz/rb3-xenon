@@ -3120,3 +3120,9 @@ BandUser.cpp:
 	.pdata      start:0x82228800 end:0x82228808
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266ECB0 end:0x8266ECFC
+
+Tail.cpp:
+	.pdata      start:0x82255610 end:0x82255618
+	.pdata      start:0x82255620 end:0x82255628
+	.text       start:0x82B7E3D0 end:0x82B7E448
+	.text       start:0x82B7E618 end:0x82B7E684
