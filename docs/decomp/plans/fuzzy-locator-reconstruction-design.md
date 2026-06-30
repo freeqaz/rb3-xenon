@@ -210,3 +210,16 @@ unrecoverable with current oracles.
 3. **Bank the scattered layer as characterized** — the durable deliverables (locator,
    fuzzy_progress, the two-class taxonomy, the negative-result harness) ARE the output;
    accept byte-exact won't reach class B and report progress via the fuzzy metric.
+
+
+## ⛔⛔ THIRD CONFIRMATION (2026-06-30) — confirmed-anchor call-graph TOPOLOGY also fails (recall wall)
+Built + ground-truth-tested tools/topo_locate.py (confirmed-anchor call-bag intersection, NO similarity
+diffusion). PRIMARY KILL: held-out precision@1 = 3/23 = 0.13 (bar 0.55); 18/23 emit no candidate.
+ROOT CAUSE = structural recall: Wii->retail callee VAs DRIFT (ICF/inline/devirt) so anchored-callee
+triangulation almost never fires; only 3089/10664 anchors are ever a callee. Class-B floor: SongSortNode
+(99 fns) + BandProfile (109 fns) both yield 0 N>=2 methods. The wall is chicken-and-egg: triangulating a
+scattered method needs anchored callees, but class-B callees are themselves unmatched. ALL seed channels
+now refuted for class-B: BinDiff (near-random), BSim seed-prop (degrades), strings (sparse 1067),
+const-fingerprint (8% ceiling, ~0 in class-B game), call-graph topology (recall 0.13). topo_locate banked
+as a one-shot confirmer (precision 1.0 at vote_margin>=2 only). Full record:
+docs/decomp/research/2026-06-30-topo-locator-design.md. The scattered-TU identification wall STANDS.
