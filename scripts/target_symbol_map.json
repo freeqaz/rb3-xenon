@@ -6151,6 +6151,8 @@
  "0x8275C6C8": "?_M_fill_insert_aux@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBeatCollisionData@@IABU3@ABU__false_type@2@@Z",
  "0x8275C860": "?_M_fill_insert_aux@?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFlowMathOp@@IABV3@ABU__false_type@2@@Z",
  "0x8275CF28": "?ClearData@RhythmDetector@@QAAXXZ",
+ "0x8275dfd0": "?GetNoStrumState@SongParser@@QAA?AW4NoStrumState@@HAAVDifficultyInfo@1@@Z",
+ "0x8275f8b8": "?IsPartTrackName@SongParser@@QBA_NPBDPAPBD@Z",
  "0x82762AC0": "??$__uninitialized_copy@PAUSongCollisionOutput@@PAU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@00ABU__false_type@0@@Z",
  "0x82762B68": "??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z",
  "0x82762D50": "?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z",
