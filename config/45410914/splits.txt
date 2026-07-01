@@ -885,6 +885,12 @@ CharClip.cpp:
 	.pdata      start:0x821FA540 end:0x821FA868
 	.text       start:0x8236A4B8 end:0x8236E194
 
+CharClipGroup.cpp:
+	.pdata      start:0x821FB498 end:0x821FB4A0
+	.pdata      start:0x821FB598 end:0x821FB5A0
+	.text       start:0x8237B698 end:0x8237B728
+	.text       start:0x8237C598 end:0x8237C638
+
 CharClipSet.cpp:
 	.pdata      start:0x821FEC28 end:0x821FEE78
 	.text       start:0x823BE0E8 end:0x823C0CD8
