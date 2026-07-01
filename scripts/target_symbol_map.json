@@ -13455,5 +13455,6 @@
  "0x825fb548": "?UpdateAssetProvider@CustomizePanel@@QAAXXZ",
  "0x8276fd08": "?CheckForCodaLanes@TrackWatcherImpl@@QAAXH@Z",
  "0x827700f8": "?InSlopWindow@TrackWatcherImpl@@QBA_NMM@Z",
- "0x82770900": "?SendWhammy@TrackWatcherImpl@@QAAXM@Z"
+ "0x82770900": "?SendWhammy@TrackWatcherImpl@@QAAXM@Z",
+ "0x82334af8": "??$__unguarded_partition@PAPAVVert@RndMesh@@PAV12@USortByZ@@@stlpmtx_std@@YAPAPAVVert@RndMesh@@PAPAV12@0PAV12@USortByZ@@@Z"
 }

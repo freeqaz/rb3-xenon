@@ -3181,3 +3181,6 @@ BeatMatchController.cpp:
 	.text       start:0x8276AE60 end:0x8276AEE8
 	.text       start:0x8276B300 end:0x8276B384
 	.text       start:0x8276B388 end:0x8276B3F8
+
+BandPatchMesh.cpp:
+	.text       start:0x82334AF8 end:0x82334BC4
