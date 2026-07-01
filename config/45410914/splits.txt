@@ -3222,3 +3222,6 @@ SlipTrack.cpp:
 	.text       start:0x82B7F628 end:0x82B7F644
 	.text       start:0x82B7F648 end:0x82B7F6B8
 	.text       start:0x82B7F6B8 end:0x82B7F714
+
+GemTrackDir.cpp:
+	.text       start:0x822D17F8 end:0x822D181C
