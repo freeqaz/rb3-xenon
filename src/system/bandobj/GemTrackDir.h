@@ -199,6 +199,13 @@ public:
     std::map<unsigned int, std::pair<int, RndMesh *> > unk6cc; // 0x6cc
     ArpeggioShapePool *mArpShapePool; // 0x6e4
     bool unk6e8; // 0x6e8
+    // LATENT LAYOUT LANDMINE: macros.h force-defines MILO_DEBUG, so this block is
+    // ACTIVE here and inflates sizeof(GemTrackDir) to 0x708 vs retail 0x6ec (retail
+    // RB3-360 built MILO_DEBUG-off; rb3-Wii gates the identical member list).
+    // Harmless today: end-of-class + data-only, no subclasses, no sizeof/new in any
+    // compiled TU, and GemTrackDir.cpp is unwired. The moment GemTrackDir.cpp is
+    // ported/wired (ctor inits these, factory bakes sizeof), REMOVE this block
+    // outright (4+ TUs see the layout — the per-TU #undef trick is invalid here).
 #ifdef MILO_DEBUG
     bool mFakeFingerShape; // 0x6e9
     bool mCycleFakeFingerShapes; // 0x6ea
