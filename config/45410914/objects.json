@@ -64,6 +64,7 @@
    "system/track/TrackDir.cpp": "NonMatching",
    "system/track/TrackWidget.cpp": "NonMatching",
    "system/beatmatch/GuitarController.cpp": "NonMatching",
+   "system/beatmatch/JoypadController.cpp": "NonMatching",
    "system/beatmatch/MasterAudio.cpp": "NonMatching",
    "system/beatmatch/SongData.cpp": "NonMatching",
    "system/beatmatch/TrackWatcherImpl.cpp": "NonMatching",

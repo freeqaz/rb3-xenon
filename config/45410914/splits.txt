@@ -315,6 +315,16 @@ GuitarController.cpp:
 	.pdata      start:0x82237270 end:0x82237680
 	.text       start:0x82777E90 end:0x8277D790
 
+JoypadController.cpp:
+	.pdata      start:0x82237198 end:0x822371A0
+	.pdata      start:0x822371E8 end:0x822371F0
+	.pdata      start:0x822371F0 end:0x822371F8
+	.pdata      start:0x82237200 end:0x82237208
+	.text       start:0x827767E0 end:0x827768C4
+	.text       start:0x82776CF0 end:0x82776D90
+	.text       start:0x82776D90 end:0x82776DF4
+	.text       start:0x82776E30 end:0x82776EBC
+
 CalibrationPanel.cpp:
 	.pdata      start:0x8221FC40 end:0x8221FC48
 	.pdata      start:0x8221FC48 end:0x8221FE78

@@ -279,6 +279,7 @@ public:
     float GetSY() const { return mSensors[1]; }
     float GetSZ() const { return mSensors[2]; }
     bool IsButtonInMask(int i) const { return (mButtons & 1 << i); }
+    bool IsButtonNewlyPressed(int i) const { return (mNewPressed & 1 << i); }
 
 private:
     int FloatToBucket(float) const;

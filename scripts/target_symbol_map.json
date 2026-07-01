@@ -13479,5 +13479,9 @@
  "0x82b7f5b8": "?SetOffset@SlipTrack@@QAAXM@Z",
  "0x82b7f628": "?GetCurrentOffset@SlipTrack@@QAAMXZ",
  "0x82b7f648": "?Poll@SlipTrack@@QAAXXZ",
- "0x82b7f6b8": "?VolumeOn@SlipTrack@@QAAXM@Z"
+ "0x82b7f6b8": "?VolumeOn@SlipTrack@@QAAXM@Z",
+ "0x827767e0": "?ReconcileFretState@JoypadController@@QAAXXZ",
+ "0x82776cf0": "?MapSlot@JoypadController@@QBAHH@Z",
+ "0x82776d90": "?ButtonToSlot@JoypadController@@UBAHW4JoypadButton@@@Z",
+ "0x82776e30": "?Disable@JoypadController@@UAAX_N@Z"
 }
