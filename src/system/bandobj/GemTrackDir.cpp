@@ -34,12 +34,7 @@ GemTrackDir::GemTrackDir()
       mMissOutofRangeRightTrig(this, 0), mMissOutofRangeLeftTrig(this, 0),
       unk654(this, 0), mKeysShiftAnim(this, 0), mKeysMashAnim(this, 0), mKeyRange(-1.0f),
       mKeyOffset(-1.0f), mFingerShape(0), mChordLabelPosOffset(0),
-      mChordShapeGen(this, 0), mArpShapePool(0), unk6e8(0)
-#ifdef MILO_DEBUG
-      ,
-      mFakeFingerShape(0), mCycleFakeFingerShapes(0), mRandomShapeFrameCount(0x96)
-#endif
-{
+      mChordShapeGen(this, 0), mArpShapePool(0), unk6e8(0) {
     ObjPtr<RndPropAnim> propAnim(this, 0);
     ObjPtr<EventTrigger> trig(this, 0);
     for (int i = 0; i < 6; i++) {
@@ -56,18 +51,8 @@ GemTrackDir::GemTrackDir()
     for (int i = 0; i < 5; i++) {
         mFretPosOffsets.push_back(0);
     }
-#ifdef MILO_DEBUG
-    DataArray *cfg = SystemConfig();
-    DataArray *arr = cfg->FindArray("fake_finger_shape", false);
-    if (arr) {
-        for (int i = 0; i < 6; i++) {
-            mRGState.FretDown(i, arr->Int(i + 1));
-        }
-        mFakeFingerShape = true;
-        if (arr->Size() > 7)
-            mCycleFakeFingerShapes = arr->Int(7);
-    }
-#endif
+    // rb3-Wii (dev) additionally reads the fake_finger_shape SystemConfig array
+    // into the MILO_DEBUG-only members here; retail ctor ends at the loops.
 }
 
 GemTrackDir::~GemTrackDir() {
@@ -116,11 +101,7 @@ END_COPYS
 
 SAVE_OBJ(GemTrackDir, 0xBC)
 
-#ifdef MILO_DEBUG
-DECOMP_FORCEACTIVE(GemTrackDir, "ObjPtr_p.h", "f.Owner()", "")
-#else
 DECOMP_FORCEACTIVE(GemTrackDir, "")
-#endif
 
 BEGIN_LOADS(GemTrackDir)
     PreLoad(bs);
@@ -1134,25 +1115,10 @@ float GemTrackDir::GetKeyRange() { return mKeyRange; }
 float GemTrackDir::GetKeyOffset() { return mKeyOffset; }
 
 void GemTrackDir::UpdateFingerFeedback(const RGState &state) {
-#ifdef MILO_DEBUG
-    static int count;
-    const RGState *touse = &state;
-    if (mFakeFingerShape) touse = &mRGState;
-    if (mCycleFakeFingerShapes) {
-        count++;
-        if (count == mRandomShapeFrameCount) {
-            for (int i = 0; i < 6; i++) {
-                mRGState.FretDown(i, RandomInt(0, 5));
-            }
-            count = 0;
-        }
-    }
-    if (mFingerShape)
-        mFingerShape->Update(*touse, true, false);
-#else
+    // rb3-Wii (dev) can substitute/cycle a fake RGState here via the
+    // MILO_DEBUG-only members; retail passes the caller's state straight through.
     if (mFingerShape)
         mFingerShape->Update(state, true, false);
-#endif
 }
 
 void GemTrackDir::UpdateLeftyFlip(bool b) {
@@ -1327,9 +1293,7 @@ BEGIN_HANDLERS(GemTrackDir)
     HANDLE(draw_sample_chord, OnDrawSampleChord)
     HANDLE_ACTION(set_key_range, SetDisplayRange(_msg->Float(2)))
     HANDLE_ACTION(set_key_offset, SetDisplayOffset(_msg->Float(2), false))
-#ifdef MILO_DEBUG
-    HANDLE_EXPR(toggle_key_shifting, ToggleKeyShifting())
-#endif
+    // rb3-Wii (dev) exposes a MILO_DEBUG-only toggle_key_shifting handler here.
     HANDLE_SUPERCLASS(BandTrack)
     HANDLE_SUPERCLASS(TrackDir)
     HANDLE_CHECK(0x7B4)
@@ -1392,11 +1356,7 @@ BEGIN_PROPSYNCS(GemTrackDir)
     SYNC_PROP(fret_pos_offset_4, mFretPosOffsets[4])
     SYNC_PROP(chord_label_pos_offset, mChordLabelPosOffset)
     SYNC_PROP(gem_track_dir_id, mGemTrackDirID)
-#ifdef MILO_DEBUG
-    SYNC_PROP(fake_finger_shape, mFakeFingerShape)
-    SYNC_PROP(cycle_fake_finger_shapes, mCycleFakeFingerShapes)
-    SYNC_PROP(random_shape_frame_count, mRandomShapeFrameCount)
-#endif
+    // rb3-Wii (dev) syncs the MILO_DEBUG-only fake-finger-shape props here.
     SYNC_SUPERCLASS(BandTrack)
     SYNC_SUPERCLASS(TrackDir)
 END_PROPSYNCS
