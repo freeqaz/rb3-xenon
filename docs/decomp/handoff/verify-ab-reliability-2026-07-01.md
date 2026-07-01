@@ -68,7 +68,31 @@ over-optimistic. Edits are preserved in the shared stash stack for a cold re-ver
 - LESSON: the "DC3-cluster port-then-pin" GO vein yields NonMatching for these units; pinning
   a NonMatching port grows the denominator but 0 matched — gate on ">=1 fn reaching 100%".
 
+## ⭐ POLICY CHANGE (owner, 2026-07-01): PARTIAL MATCHES ARE LANDABLE
+The strict "true-100 byte-equal only; NEVER commit a partial" gate in
+`post-codegen-kill-streams-2026-06-30.md` is SUPERSEDED. Partial progress counts:
+- **New land gate = FUZZY-positive AND 0 regressions** (not strict-100). A struct/layout
+  edit that raises fuzzy% (moves near-misses closer) without flipping to 100 is a WIN worth
+  landing. A NonMatching TU PORT that compiles + pins real source at high fuzzy (CharClipGroup
+  99.9%, MoggClip 99.93%) is LANDABLE — it adds the real source to the tree + grows fuzzy/pin
+  coverage. Still NEVER land a regression (don't break an existing strict-100).
+- Re-evaluate the option-C ports as LANDABLE under this gate (resolve MoggClip's tsm
+  case-collision at 0x82482288 first; verify 0 regressions).
+- Measure BOTH: strict-100 net (`measure_delta.py`) AND fuzzy delta
+  (`tools/fuzzy_progress.py` / sum of fuzzy_match_percent). Gate on fuzzy>0 && 0 strict-regr.
+
+## TOOLING FIXED (owner, 2026-07-01)
+- **setup_worktree.sh now validates the warm object cache** (`d66dae0`) → the mtime-trap
+  false-net-zero (finding #1) is FIXED at the tool level; fresh worktrees build incrementally
+  and A/B reliably. The manual `touch <sources>` workaround is no longer needed.
+- **setup_worktree neutralizes the build/compilers download edge** (`ef0fad0`, offline
+  worktree build) → the per-worktree `tools/download_tool.py` hack agents were carrying is
+  now redundant (don't stage it).
+
 ## Next
-1. Re-verify the 4 Stream-1 struct edits via `--cold-cache` (reliable); land cold-verified only.
-2. Fix the stamp glob + `fresh_report` false-negative check + per-worktree log (tooling).
-3. Recycle the spent option-C worktrees (AccomplishmentProgress/CharClipGroup/MoggClip).
+1. Re-verify the 4 Stream-1 struct edits (CharEyes/Character/CreditsPanel/GamePanel — edits
+   preserved in the shared stash stack) via the FIXED setup_worktree, land on the FUZZY gate.
+2. Land the option-C ports (CharClipGroup/MoggClip) under the partials-landable policy.
+3. Fix the stamp glob + `fresh_report` false-negative check + per-worktree log.
+4. Recycle spent worktrees. Run the verify+land wave when the owner's build storm subsides
+   (load was 266 — concurrent heavy builds starve each other; coordinate cadence).
