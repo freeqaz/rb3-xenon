@@ -772,6 +772,7 @@
    "band3/meta_band/Leaderboard.cpp": "NonMatching",
    "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
    "band3/meta_band/Campaign.cpp": "NonMatching",
+   "band3/meta_band/GameplayOptions.cpp": "NonMatching",
    "band3/meta_band/SavedSetlist.cpp": "NonMatching",
    "band3/meta_band/CampaignKey.cpp": "NonMatching",
    "band3/meta_band/CampaignLevel.cpp": "NonMatching",
