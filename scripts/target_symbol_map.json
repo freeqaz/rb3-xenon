@@ -13447,5 +13447,8 @@
  "0x825dbd78": "?Unload@AccomplishmentPanel@@UAAXXZ",
  "0x826d8b80": "?Dispatch@SyncLocalMachineMsg@?A0x951deeb9@@UAAXXZ",
  "0x825fb3d0": "?Unload@CustomizePanel@@UAAXXZ",
- "0x825fb548": "?UpdateAssetProvider@CustomizePanel@@QAAXXZ"
+ "0x825fb548": "?UpdateAssetProvider@CustomizePanel@@QAAXXZ",
+ "0x8276fd08": "?CheckForCodaLanes@TrackWatcherImpl@@QAAXH@Z",
+ "0x827700f8": "?InSlopWindow@TrackWatcherImpl@@QBA_NMM@Z",
+ "0x82770900": "?SendWhammy@TrackWatcherImpl@@QAAXM@Z"
 }

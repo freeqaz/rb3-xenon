@@ -3161,3 +3161,10 @@ CustomizePanel.cpp:
 	.pdata      start:0x82220B80 end:0x82220B88
 	.text       start:0x825FB3D0 end:0x825FB52C
 	.text       start:0x825FB548 end:0x825FB590
+
+TrackWatcherImpl.cpp:
+	.pdata      start:0x82236C70 end:0x82236C78
+	.pdata      start:0x82236CF8 end:0x82236D00
+	.text       start:0x8276FD08 end:0x8276FD74
+	.text       start:0x827700F8 end:0x82770124
+	.text       start:0x82770900 end:0x82770978
