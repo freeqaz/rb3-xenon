@@ -13440,4 +13440,6 @@
  "0x826051b0": "?CycleNextMessage@MainHubPanel@@QAAXXZ"
  "0x82617730": "?SetLocalsMerging@SetlistMergePanel@@QAAX_N@Z",
  "0x82617830": "?SendSongsToMetaPerformer@SetlistMergePanel@@QAAXABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z"
+ "0x82b7e3d0": "?ReleaseMeshes@Tail@@QAAXXZ",
+ "0x82b7e618": "?Hit@Tail@@QAAXXZ"
 }
