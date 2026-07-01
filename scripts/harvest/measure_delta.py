@@ -24,13 +24,22 @@ STRICT = 99.999
 
 
 def pct_map(path):
-    """(unit, fn) -> normalized match percent, for every function."""
+    """(unit, fn, occurrence) -> normalized match percent, for every function.
+
+    The occurrence index disambiguates duplicate function names within a unit
+    (~11 binary-wide) — without it the dict collapses twins, undercounting the
+    strict level and potentially masking a regression in one twin.
+    """
     d = json.load(open(path))
     m = {}
+    seen = {}
     for u in d["units"]:
         un = u.get("name")
         for f in (u.get("functions") or []):
-            m[(un, f["name"])] = f["match_percent_normalized"]
+            k = (un, f["name"])
+            i = seen.get(k, 0)
+            seen[k] = i + 1
+            m[(un, f["name"], i)] = f["match_percent_normalized"]
     return m
 
 
@@ -68,8 +77,8 @@ def main():
 
     if regressed:
         print("\nSTRICT REGRESSED (was 100, now <100) — MUST be zero/explained for a win:")
-        for un, nm in regressed[:60]:
-            print(f"  - {un}  {nm}  ({bmap.get((un,nm),0):.3f} -> {nmap.get((un,nm),0):.3f})")
+        for k in regressed[:60]:
+            print(f"  - {k[0]}  {k[1]}  ({bmap.get(k,0):.3f} -> {nmap.get(k,0):.3f})")
         if len(regressed) > 60:
             print(f"  ... +{len(regressed)-60} more")
 
@@ -83,8 +92,8 @@ def main():
 
     if gained:
         print("\nGAINED (now 100):")
-        for un, nm in gained[:60]:
-            print(f"  + {un}  {nm}")
+        for k in gained[:60]:
+            print(f"  + {k[0]}  {k[1]}")
         if len(gained) > 60:
             print(f"  ... +{len(gained)-60} more")
 
