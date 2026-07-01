@@ -13473,5 +13473,6 @@
  "0x82564468": "?IsRandomSetList@MetaPerformer@@QBA_NXZ",
  "0x82564498": "?HasSyncPermission@MetaPerformer@@UBA_NXZ",
  "0x82353b40": "?GetVocalPartPercentage@Stats@@QBAMH@Z",
- "0x8267e578": "?GetMultiplier@Performer@@UBAH_NAAH11@Z"
+ "0x8267e578": "?GetMultiplier@Performer@@UBAH_NAAH11@Z",
+ "0x82655768": "?ClearData@MainHubMessageProvider@@QAAXXZ"
 }

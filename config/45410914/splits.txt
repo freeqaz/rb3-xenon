@@ -3199,3 +3199,6 @@ SongData.cpp:
 	.text       start:0x8274CB58 end:0x8274CB70
 	.text       start:0x8274DA90 end:0x8274DBBC
 	.text       start:0x82753FD0 end:0x827541C0
+
+MainHubMessageProvider.cpp:
+	.text       start:0x82655768 end:0x8265577C

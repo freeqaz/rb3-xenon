@@ -782,6 +782,7 @@
    "band3/meta_band/CymbalSelectionProvider.cpp": "NonMatching",
    "band3/meta_band/Instarank.cpp": "NonMatching",
    "band3/meta_band/LicenseMgr.cpp": "NonMatching",
+   "band3/meta_band/MainHubMessageProvider.cpp": "NonMatching",
    "band3/meta_band/MainHubPanel.cpp": "NonMatching",
    "band3/meta_band/ManageBandPanel.cpp": "NonMatching",
    "band3/meta_band/MusicLibrary.cpp": "NonMatching",
