@@ -181,22 +181,31 @@ protected:
     ObjPtr<CharInterest> mFocusInterest; // 0x114
     int mFocusTimer; // 0x128
     bool mNeedRecalc; // 0x12c
-    Vector3 mDartOffset; // 0x130
-    float mDartTimer; // 0x140
-    CharEyeDartRuleset::EyeDartRulesetData mData; // 0x144
-    bool mDartEnabled; // 0x170
-    float mDartInterval; // 0x174
-    int mEyeClampCount; // 0x178
-    float mCurrentDartOffsetX; // 0x17c
-    float mCurrentDartOffsetY; // 0x180
-    float mCurrentDartOffsetZ; // 0x184
-    int unk188; // 0x188
-    bool mBlinkEnabled; // 0x18c
-    float mBlinkTimer; // 0x190
-    int mBlinkCount; // 0x194
-    float mUpperBlinkAngle; // 0x198
-    float mLowerBlinkAngle; // 0x19c
-    Vector3 mHeadForward; // 0x1a0
-    bool mEnabled; // 0x1ac
-    bool mHeadIKActive; // 0x1ad
+    // NOTE: rb3-Wii declares a debug-only `Vector3 mDartOffset` here under
+    // #ifdef MILO_DEBUG (ctor-inited to (0,1,0); read only by the
+    // MILO_DEBUG-only Highlight() overlay). Retail RB3-360 was built with
+    // MILO_DEBUG off, so the member does not exist: retail asm places
+    // mDartTimer/mData directly after mNeedRecalc (SetFocusInterest strict-100
+    // shows mNeedRecalc at this+0xf4; GenerateDartOffset shows mData at
+    // this+0xfc), and every member below compiled +0x10 too high. Removed
+    // outright rather than #ifdef'd per-TU because multiple TUs see this
+    // layout (CharEyes.cpp, Character.cpp, Char.cpp, HamCharacter,
+    // BandCharacter.h, ...). Precedent: Character.h / TrackDir.h.
+    float mDartTimer; // 0x130
+    CharEyeDartRuleset::EyeDartRulesetData mData; // 0x134
+    bool mDartEnabled; // 0x160
+    float mDartInterval; // 0x164
+    int mEyeClampCount; // 0x168
+    float mCurrentDartOffsetX; // 0x16c
+    float mCurrentDartOffsetY; // 0x170
+    float mCurrentDartOffsetZ; // 0x174
+    int unk188; // 0x178
+    bool mBlinkEnabled; // 0x17c
+    float mBlinkTimer; // 0x180
+    int mBlinkCount; // 0x184
+    float mUpperBlinkAngle; // 0x188
+    float mLowerBlinkAngle; // 0x18c
+    Vector3 mHeadForward; // 0x190
+    bool mEnabled; // 0x19c
+    bool mHeadIKActive; // 0x19d
 };

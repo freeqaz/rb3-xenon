@@ -45,7 +45,7 @@ CharEyes::CharEyes()
       mLowerLidTrackRotate(false), mInterestFilterFlags(0), mLastFacing(0, 0, 0),
       mLastLook(0), mLastBlinkWeight(0),
       mBlinkDetect(0), mBlinkActive(0), mCurrentInterest(this), mFocusInterest(this),
-      mFocusTimer(-1), mNeedRecalc(0), mDartOffset(0, 1, 0), mDartTimer(0),
+      mFocusTimer(-1), mNeedRecalc(0), mDartTimer(0),
       mDartEnabled(0), mDartInterval(-1), mEyeClampCount(-1),
       mBlinkEnabled(0), mBlinkTimer(-1), mBlinkCount(0),
       mUpperBlinkAngle(-1), mLowerBlinkAngle(-1), mEnabled(0), mHeadIKActive(1) {
@@ -909,7 +909,10 @@ void CharEyes::NextLook() {
                         mData.ClearToDefaults();
                     }
 
-                    mDartOffset = targetDir;
+                    // rb3-Wii (dev) assigns the MILO_DEBUG-only mDartOffset
+                    // (`mDartOffset = targetDir;`) here; retail NextLook
+                    // (fn_82373240) has no store at this point -- both branches
+                    // jump straight to stateReset.
                     goto stateReset;
                 }
             }
