@@ -49,6 +49,15 @@ Single-pass INDEPENDENT-fanout Opus wave (NOT a deep loop). Per wave:
    - If a branch is "up to date" (based on current main), just `git merge --ff-only`.
    - Branch names: `w<N>-<tu>` (note: some keys already carry a `w<N>-` prefix →
      double prefix like `w10-w10-…`; check `git branch | grep wN-`).
+   - ⚠ **After the LAST lane lands, verify every lane's objects.json wiring
+     survived**: `for each landed TU: grep '<TU>.cpp' config/45410914/objects.json`.
+     2026-07-01 incident: resolve_json_union.py's union was SHALLOW — objects.json
+     is nested (module→objects{}), so two lanes touching the same module hit
+     "same key → keep theirs" at the MODULE level and the last-landed lane
+     clobbered 4 earlier TUs' wirings (splits + map pins survived → units report
+     0% = "silently zeroed wave"). Fixed with a recursive union (136553b) and
+     land.sh no longer swallows the resolver's CONFLICT warnings — but keep the
+     post-land grep as the cheap belt-and-suspenders.
 4. **ALWAYS run the splits overlap self-check BEFORE building** (wave-9 build-break
    was two independent adjacent pins colliding):
    ```python
