@@ -150,12 +150,11 @@ BEGIN_LOADS(TrackWidget)
     SyncImp();
 END_LOADS
 
-#ifdef MILO_DEBUG
-void TrackWidget::CheckValid() const {
-    if (LOADMGR_EDITMODE && mImp)
-        mImp->CheckValid(Name());
-}
-#endif
+// Retail X360 (MILO_DEBUG off) has no TrackWidgetImpBase::CheckValid virtual
+// (see TrackWidgetImp.h), so this reduces to an empty no-op that /Ob2 inlines
+// away at the SyncImp() call site. Kept unconditional because macros.h forces
+// MILO_DEBUG on tree-wide.
+void TrackWidget::CheckValid() const {}
 
 void TrackWidget::Init() { mImp->Init(); }
 

@@ -1293,8 +1293,8 @@ CharClipDriver.cpp:
 	.text       start:0x8238D208 end:0x8238DD28
 
 CharLookAt.cpp:
-	.pdata      start:0x821FC720 end:0x821FC728
-	.text       start:0x82391298 end:0x8239131C
+	.pdata      start:0x821FD898 end:0x821FDA38
+	.text       start:0x823A8224 end:0x823AA560
 
 CharHair.cpp:
 	.pdata      start:0x821FC7B0 end:0x821FCC28

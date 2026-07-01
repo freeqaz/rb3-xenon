@@ -47,9 +47,12 @@ public:
     virtual void Poll() {} // 0x40
     virtual void Init() {} // 0x44
     virtual void SetScale(float) {} // 0x48
-#ifdef MILO_DEBUG
-    virtual void CheckValid(const char *) const {} // 0x4C
-#endif
+    // Retail X360 was built with MILO_DEBUG off: the debug-only virtual
+    // CheckValid(const char*) has NO vtable slot in retail (retail vcalls show
+    // Instances at vtable+0x44, RemoveInstances +0x48, PushInstance +0x4C —
+    // one slot EARLIER than with CheckValid). Removed outright (not #ifdef'd)
+    // because macros.h force-defines MILO_DEBUG tree-wide and multiple TUs see
+    // this layout via track/TrackWidget.h. Do not re-add.
 
     NEW_OVERLOAD
     DELETE_OVERLOAD
@@ -195,16 +198,8 @@ public:
     virtual void SetDirty(bool dirty) { mNeedRebuild = dirty; }
     virtual void Poll();
     virtual void SetScale(float);
-#ifdef MILO_DEBUG
-    virtual void CheckValid(const char *name) const {
-        if (!Valid()) {
-            MILO_WARN(
-                "WARNING: Text widget \"%s\" won't be drawn under the current parameters.  It needs a valid text obj, valid font, max instances > 0 , and chars per instance > 0.",
-                name
-            );
-        }
-    }
-#endif
+    // CheckValid(const char*) override removed with the base virtual (retail
+    // MILO_DEBUG-off vtable has no such slot; see TrackWidgetImpBase above).
     virtual std::list<TextInstance> &Instances();
     virtual void RemoveInstances(
         std::list<TextInstance> &,

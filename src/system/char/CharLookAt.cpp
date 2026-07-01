@@ -17,8 +17,7 @@ CharLookAt::CharLookAt()
     : mSource(this), mPivot(this), mTarget(this), mHalfTime(0), mMinYaw(-80), mMaxYaw(80),
       mMinPitch(-80), mMaxPitch(sMaxThreshold), mMinWeightYaw(-1), mMaxWeightYaw(-1),
       mWeightYawSpeed(10000), mPivotLookTarget(kHugeFloat, 0, 0), mPivotLookWeight(1), mSourceRadius(0),
-      unka4(0, 0, 0), mShowRange(false), mTestRange(false), mTestRangePitch(0.5),
-      mTestRangeYaw(0.5), mAllowRoll(true), mDisableRoll(false), mEnableJitter(false),
+      unka4(0, 0, 0), mShowRange(false), mAllowRoll(true), mDisableRoll(false), mEnableJitter(false),
       mYawJitterLimit(0), mPitchJitterLimit(0) {
     SyncLimits();
 }
@@ -48,9 +47,6 @@ BEGIN_PROPSYNCS(CharLookAt)
     SYNC_PROP(enable_jitter, mEnableJitter)
     SYNC_PROP(yaw_jitter_limit, mYawJitterLimit)
     SYNC_PROP(pitch_jitter_limit, mPitchJitterLimit)
-    SYNC_PROP(test_range, mTestRange)
-    SYNC_PROP(test_range_pitch, mTestRangePitch)
-    SYNC_PROP(test_range_yaw, mTestRangeYaw)
     SYNC_SUPERCLASS(CharWeightable)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
@@ -243,12 +239,9 @@ void CharLookAt::Poll() {
                     Interp(mPivotLookTarget, lookDir, deltasecs / (deltasecs + mHalfTime), lookDir);
                 }
                 mPivotLookTarget = lookDir;
-                if (mTestRange) {
-                    float interpYaw, interpPitch;
-                    Interp(mLookLimits.mMin.z, mLookLimits.mMax.z, mTestRangeYaw, interpYaw);
-                    Interp(mLookLimits.mMin.x, mLookLimits.mMax.x, mTestRangePitch, interpPitch);
-                    lookDir.Set(interpPitch, mLookLimits.mMin.y, interpYaw);
-                } else if (mShowRange) {
+                // retail (MILO_DEBUG off) lacks the rb3-Wii debug-only
+                // mTestRange preview branch that preceded this if
+                if (mShowRange) {
                     charWeight = 1.0f;
                     switch (((int)TheTaskMgr.Seconds(TaskMgr::kRealTime)) & 7) {
                     case 0:

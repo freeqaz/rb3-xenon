@@ -84,26 +84,29 @@ protected:
     Vector3 unka4; // 0xa4
     Box mLookLimits; // 0xb4
     /** "Graphically show the extreme ranges of motion" */
-    bool mShowRange; // 0xd4
-    /** "Graphically show range of motion with user specified values" */
-    bool mTestRange; // 0xd5
-    /** "if test_range is on, adjusts current pitch". Ranges from 0 to 1. */
-    float mTestRangePitch; // 0xd8
-    /** "if test_range is on, adjusts current yaw". Ranges from 0 to 1. */
-    float mTestRangeYaw; // 0xdc
+    bool mShowRange; // 0xb4
+    // NOTE: retail RB3-360 (MILO_DEBUG off) does NOT contain the three
+    // debug-only members that rb3-Wii gates under #ifdef MILO_DEBUG here
+    // (bool mTestRange; float mTestRangePitch; float mTestRangeYaw;).
+    // Retail-verified via CharLookAt::Copy @0x823a95d0 and RTTI COL
+    // 0x821cefd4: tail bools are consecutive at 0xb5-0xb7, jitter floats at
+    // 0xb8/0xbc, virtual base Hmx::Object at 0xc4. Multiple TUs see this
+    // layout (Char/CharEyes/Character/BandCharacter/HamCharacter), so the
+    // members are removed outright — do not re-add or re-gate (our build
+    // force-defines MILO_DEBUG in macros.h).
     /** "If true allows rolling, if false,
         keeps the local pivot z axis down to prevent rolling.
         Eyeballs can't roll, for instance, but heads can." */
-    bool mAllowRoll; // 0xe0
-    bool mDisableRoll;
+    bool mAllowRoll; // 0xb5
+    bool mDisableRoll; // 0xb6
     /** "If enabled, high frequency noise is added to pitch and/or yaw each frame" */
-    bool mEnableJitter; // 0xe2
+    bool mEnableJitter; // 0xb7
     /** "if enable_jitter is on, random noise from
         [-yaw_jitter_limit, yaw_jitter_limit] (in degrees)
         is applied to the yaw of the lookat". Ranges from 0 to 10. */
-    float mYawJitterLimit; // 0xe4
+    float mYawJitterLimit; // 0xb8
     /** "if enable_jitter is on, random noise from
         [-pitch_jitter_limit, pitch_jitter_limit] (in degrees)
         is applied to the pitch of the lookat". Ranges from 0 to 10. */
-    float mPitchJitterLimit; // 0xe8
+    float mPitchJitterLimit; // 0xbc
 };
