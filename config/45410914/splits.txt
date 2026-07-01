@@ -3199,3 +3199,16 @@ SongData.cpp:
 	.text       start:0x8274CB58 end:0x8274CB70
 	.text       start:0x8274DA90 end:0x8274DBBC
 	.text       start:0x82753FD0 end:0x827541C0
+
+SlipTrack.cpp:
+	.pdata      start:0x82255688 end:0x82255690
+	.pdata      start:0x82255690 end:0x82255698
+	.pdata      start:0x82255698 end:0x822556A0
+	.pdata      start:0x822556A0 end:0x822556A8
+	.pdata      start:0x822556A8 end:0x822556B0
+	.text       start:0x82B7F4D8 end:0x82B7F548
+	.text       start:0x82B7F548 end:0x82B7F5B8
+	.text       start:0x82B7F5B8 end:0x82B7F628
+	.text       start:0x82B7F628 end:0x82B7F644
+	.text       start:0x82B7F648 end:0x82B7F6B8
+	.text       start:0x82B7F6B8 end:0x82B7F714

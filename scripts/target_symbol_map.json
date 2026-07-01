@@ -13473,5 +13473,11 @@
  "0x82564468": "?IsRandomSetList@MetaPerformer@@QBA_NXZ",
  "0x82564498": "?HasSyncPermission@MetaPerformer@@UBA_NXZ",
  "0x82353b40": "?GetVocalPartPercentage@Stats@@QBAMH@Z",
- "0x8267e578": "?GetMultiplier@Performer@@UBAH_NAAH11@Z"
+ "0x8267e578": "?GetMultiplier@Performer@@UBAH_NAAH11@Z",
+ "0x82b7f4d8": "?VolumeOff@SlipTrack@@QAAXXZ",
+ "0x82b7f548": "?SetSpeed@SlipTrack@@QAAXM@Z",
+ "0x82b7f5b8": "?SetOffset@SlipTrack@@QAAXM@Z",
+ "0x82b7f628": "?GetCurrentOffset@SlipTrack@@QAAMXZ",
+ "0x82b7f648": "?Poll@SlipTrack@@QAAXXZ",
+ "0x82b7f6b8": "?VolumeOn@SlipTrack@@QAAXM@Z"
 }

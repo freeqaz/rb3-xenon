@@ -582,6 +582,7 @@
    "system/synth/Emitter.cpp": "NonMatching",
    "system/synth/FxSendDelay.cpp": "NonMatching",
    "system/synth/ADSR.cpp": "NonMatching",
+   "system/synth/SlipTrack.cpp": "NonMatching",
    "system/synth/StreamReceiver.cpp": "NonMatching",
    "system/synth/MoggClipMap.cpp": "NonMatching",
    "system/rndobj/Lit_NG.cpp": "NonMatching",
