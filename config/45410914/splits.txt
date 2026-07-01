@@ -3199,3 +3199,7 @@ SongData.cpp:
 	.text       start:0x8274CB58 end:0x8274CB70
 	.text       start:0x8274DA90 end:0x8274DBBC
 	.text       start:0x82753FD0 end:0x827541C0
+
+OverdriveTracker.cpp:
+	.pdata      start:0x8222D250 end:0x8222D258
+	.text       start:0x826BE0E0 end:0x826BE160
