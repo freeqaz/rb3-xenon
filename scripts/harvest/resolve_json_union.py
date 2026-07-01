@@ -31,17 +31,32 @@ if ours is None or theirs is None:
     print(f"  {relpath}: missing stage (not both-modified?) — skip")
     sys.exit(2)
 
-merged = collections.OrderedDict(ours)
 added = 0
-for k, v in theirs.items():
-    if k not in merged:
-        merged[k] = v
-        added += 1
-    elif merged[k] != v:
-        # same key, different value — keep theirs (branch's intent) but warn
-        print(f"  {relpath}: CONFLICT key {k}: "
-              f"ours={str(merged[k])[:30]} theirs={str(v)[:30]} -> keeping theirs")
-        merged[k] = v
+
+
+def union(a, b, path=""):
+    """Recursive dict union: ours-first, new-from-theirs added; when BOTH sides
+    hold a dict under the same key, recurse instead of replacing. A shallow
+    keep-theirs on objects.json's nested module dicts silently dropped every
+    main-side TU wiring under the colliding module (2026-07-01 'zeroed wave':
+    the SongData lane clobbered 4 TUs landed minutes earlier)."""
+    global added
+    merged = collections.OrderedDict(a)
+    for k, v in b.items():
+        if k not in merged:
+            merged[k] = v
+            added += 1
+        elif isinstance(merged[k], dict) and isinstance(v, dict):
+            merged[k] = union(merged[k], v, f"{path}{k}.")
+        elif merged[k] != v:
+            # same LEAF key, different value — keep theirs (branch's intent) but warn
+            print(f"  {relpath}: CONFLICT key {path}{k}: "
+                  f"ours={str(merged[k])[:30]} theirs={str(v)[:30]} -> keeping theirs")
+            merged[k] = v
+    return merged
+
+
+merged = union(ours, theirs)
 
 with open(os.path.join(wt, relpath), "w") as f:
     json.dump(merged, f, indent=1, ensure_ascii=False)

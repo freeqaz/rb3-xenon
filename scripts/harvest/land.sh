@@ -36,7 +36,9 @@ while echo "$out" | grep -qi "conflict\|could not apply"; do
   if [ $tries -gt 5 ]; then git -C "$W" rebase --abort 2>/dev/null; echo "DEFER:$b cascade"; exit 2; fi
   for f in scripts/target_symbol_map.json config/45410914/objects.json; do
     git -C "$W" status --short "$f" 2>/dev/null | grep -q "^UU" && {
-      python3 "$HERE/resolve_json_union.py" "$W" "$f" >/dev/null 2>&1 && git -C "$W" add "$f" \
+      # resolver output (incl. CONFLICT warnings) goes to stderr, not /dev/null —
+      # a swallowed keep-theirs warning is how the 2026-07-01 zeroed wave slipped by
+      python3 "$HERE/resolve_json_union.py" "$W" "$f" 1>&2 && git -C "$W" add "$f" \
         || { git -C "$W" rebase --abort; echo "DEFER:$b $f"; exit 2; }; }
   done
   git -C "$W" status --short config/45410914/splits.txt 2>/dev/null | grep -q "^UU" && {
