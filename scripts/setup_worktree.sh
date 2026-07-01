@@ -195,6 +195,19 @@ done
 # ---- build/<VERSION>/ : reflink copy (build WRITES here; warm cache) --------
 WT_BUILD="$WORKTREE_PATH/build/$VERSION"
 if [ "$WARM_CACHE" -eq 1 ]; then
+    # Bring main's object cache up to date BEFORE snapshotting it. ff-merge
+    # landings advance main's HEAD but do NOT rebuild, so the shared cache goes
+    # stale and every worktree would otherwise recompile the newly-landed TUs
+    # (cold-cache contention — builds crawl). `ninja-locked all_source` builds
+    # the objects only (skips the slow report regen), serializes across
+    # concurrent worktree creations, and is a NO-OP once main is current — so
+    # only the FIRST creation after a landing pays the small incremental rebuild
+    # and every other worktree reflinks an already-warm cache for free. Non-fatal:
+    # main may be mid-repair (a common reason to spin up a worktree).
+    echo "==> Refreshing main's object cache (amortized; no-op if already current)"
+    ( cd "$MAIN_REPO" && ./tools/ninja-locked all_source ) >/dev/null 2>&1 \
+        || echo "  WARN: main cache refresh failed (non-fatal; worktree will rebuild what's stale)" >&2
+
     echo "==> build/$VERSION/  (reflink copy — private build dir + WARM object cache)"
     reflink_dir_besteffort "$MAIN_REPO/build/$VERSION" "$WT_BUILD"
     # Critical build inputs must survive the (possibly partial) copy. If a temp
@@ -260,6 +273,20 @@ if [ "$WARM_CACHE" -eq 1 ]; then
                  | grep -cE '^(src/|config/)' || true )"
     if [ "$_changed" -eq 0 ]; then
         echo "==> Validating warm object cache (worktree == $BASE_REF; marking outputs current)"
+        # Set every tracked source OLDER than the reflinked outputs. The output
+        # touch below can't reach tracked INPUTS to non-object targets — notably
+        # tools/download_tool.py, which feeds the build/compilers rule. A fresh
+        # `git worktree add` stamps sources "now", so download_tool.py ends up
+        # newer than the build/compilers toolchain => ninja marks the TOOLCHAIN
+        # dirty and cascades a full recompile even for single-obj builds. A fixed
+        # old timestamp (not main's, which may itself be recent) guarantees the
+        # toolchain isn't rebuilt; a later source EDIT still gets a fresh mtime and
+        # rebuilds normally.
+        # NB: run FROM the worktree — `git ls-files` prints worktree-relative
+        # paths, so touch must resolve them against the worktree, not the setup
+        # script's CWD (main), or it silently touches main's copies instead.
+        ( cd "$WORKTREE_PATH" && git ls-files -z 2>/dev/null \
+            | xargs -0 -r touch -h -d '2020-01-01' 2>/dev/null ) || true
         find "$WT_BUILD" -type f -exec touch {} + 2>/dev/null || true
         echo "  reflinked cache marked current — incremental (single-obj) builds are warm"
     else
@@ -411,6 +438,17 @@ else:
     sys.stderr.write("WARN: could not patch download_tool.py (unexpected layout); "
                      "worktree builds may fail at the build/compilers download edge.\n")
 PYEOF
+    # The patch rewrite above stamps download_tool.py "now" — NEWER than the
+    # build/compilers output (a symlink whose TARGET, main's toolchain dir, ninja
+    # stats). `rule download_tool` has NO restat, and build/compilers is an
+    # implicit input to all ~727 compile edges, so a perpetually-newer input
+    # means: every ninja run re-fires the (no-op'd) download edge, ninja assumes
+    # its output changed, and EVERY downstream compile requested in that run goes
+    # dirty — repeated full builds re-pay the 727-obj tax and even repeated
+    # single-obj builds recompile every time (the measured 3-10s "warm" builds).
+    # Old-stamping the patched file makes the edge mtime-clean after its first
+    # (unavoidable, missing-log-entry) run, so the cascade stops permanently.
+    touch -d '2020-01-01' "$DL_TOOL" 2>/dev/null || true
 fi
 
 # ---- prime ninja state : trigger SPLIT + configure.py regeneration ----------
