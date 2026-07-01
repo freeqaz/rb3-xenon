@@ -53,3 +53,23 @@ engine TUs (un-locatable); bulk oracle-naming (dc3-naming-pilot +0); XDK xgraphi
 ## Reusable artifact to build (future): a STUB-FILTERED CONTIGUITY SCAN tool
 oracle dense-cluster ∩ fingerprints.json real-body sizes -> rank unpinned TUs by HONEST matchable
 bodies (not inflated oracle counts). Would make target-selection rigorous for future waves.
+
+---
+
+## ObjPtrVec/ObjRef layout wall (2026-07-01) — DEFER: keystone ALREADY LANDED; residual is +0/high-risk
+The CharClipGroup harvest's "engine-wide ObjPtrVec::Node struct wall" finding was investigated:
+- ⭐ The ObjPtr size-cascade KEYSTONE is **already landed on main** (prior sessions P2-P5 @9e25ac2/dc2e50b,
+  f09aab3 +85, +54): scalar ObjPtr/ObjOwnerPtr/ObjDirPtr = retail 0xc thin {vtable,mOwner,mObject};
+  ObjPtrList::Node = retail 0xc thin non-poly. The objptr-migration/objptr-relayout/charclip-fix branches
+  are all ANCESTORS of main (merged).
+- RESIDUAL = only the **ObjPtrVec vec-node**: ours polymorphic 0x10 (mObject@8, Object.h:488 derives
+  ObjRefConcrete) vs retail thin non-poly 0x8 (mObject@0). The engine-wide reshape is EXPLICITLY DEFERRED +
+  high-risk in docs/plans/objptr-family-relayout-migration.md §12.3/§13.2 (regresses across 399 src files
+  if wrong) AND yields **+0 even when correct** (gated on the whole flow-family flipping together —
+  DataNodeObjTrack/FlowIf landed +0 for exactly this). NOT a keystone wave.
+- ⭐ The PRODUCTIVE lever is SURGICAL, not engine-wide: per-member `ObjPtrVec<T>` -> `ObjVector<ObjOwnerPtr<T>>`
+  flips (Waypoint template d3c6e4f, 0x1c->0x10, +7 @100%), each on an ALREADY-PINNED CONTIGUOUS TU, +3-7 each.
+- CharClipGroup itself is UNPINNABLE cleanly: ICF-interleaved inside CameraManager's pin [0x824A6D08,0x824AA230)
+  (evicted 9c31c72) = a case-B identity-transfer problem, not a struct-layout one. Blast radius: ObjPtrVec 38 /
+  ObjPtrList 123 / scalar 300 / ObjRef* 99 = 399 union files.
+VERDICT: bank as characterized-DEFER. Forward = surgical ObjVector member-flips on pinned TUs (Waypoint template).
