@@ -3168,3 +3168,10 @@ TrackWatcherImpl.cpp:
 	.text       start:0x8276FD08 end:0x8276FD74
 	.text       start:0x827700F8 end:0x82770124
 	.text       start:0x82770900 end:0x82770978
+
+SongParser.cpp:
+	.pdata      start:0x82235F18 end:0x82235F20
+	.pdata      start:0x82235F60 end:0x82235F68
+	.text       start:0x8275DFD0 end:0x8275E028
+	.text       start:0x8275F2C8 end:0x8275F390
+	.text       start:0x8275F8B8 end:0x8275F950
