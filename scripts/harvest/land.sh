@@ -30,6 +30,20 @@ b="$(git -C "$W" rev-parse --abbrev-ref HEAD)"
 cd "$REPO"
 
 git -C "$W" rebase --abort 2>/dev/null
+
+# setup_worktree.sh plants an offline short-circuit into tools/download_tool.py
+# in EVERY worktree (documented do-not-commit env patch) — it blocks rebase as
+# an unstaged change. Discard it iff it is the ONLY tracked modification; any
+# other dirt defers (we never guess at an agent's WIP).
+dirty="$(git -C "$W" status --porcelain --untracked-files=no)"
+if [ -n "$dirty" ]; then
+  if [ "$dirty" = " M tools/download_tool.py" ]; then
+    git -C "$W" checkout -- tools/download_tool.py
+  else
+    echo "DEFER:$b dirty-worktree:$(echo "$dirty" | awk '{print $2}' | tr '\n' ' ')"; exit 2
+  fi
+fi
+
 out=$(git -C "$W" rebase main 2>&1); tries=0
 while echo "$out" | grep -qi "conflict\|could not apply"; do
   tries=$((tries+1))
@@ -49,4 +63,10 @@ while echo "$out" | grep -qi "conflict\|could not apply"; do
     exit 2; }
   out=$(GIT_EDITOR=true git -C "$W" rebase --continue 2>&1)
 done
+# READY invariant: the branch must now actually contain main. Catches every
+# silent-rebase-failure mode (e.g. the pre-fix "cannot rebase: unstaged
+# changes" false-READY of 2026-07-01) instead of pattern-matching error text.
+if ! git -C "$W" merge-base --is-ancestor main "$b" 2>/dev/null; then
+  echo "DEFER:$b rebase-did-not-land:$(echo "$out" | head -1)"; exit 2
+fi
 echo "READY:$b"
