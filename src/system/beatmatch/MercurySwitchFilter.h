@@ -39,7 +39,7 @@ public:
         } else if (mAccum < mOffThreshold)
             mState = false;
 #ifdef MILO_DEBUG
-        if (gGuitarOverlay->mShowing) {
+        if (gGuitarOverlay->Showing()) {
             *gGuitarOverlay
                 << MakeString("    raw %4.2f avg %4.2f out %d\n", f2, mAccum, mState);
         }
@@ -76,7 +76,7 @@ public:
         if (mNumFrames >= mNumFramesThreshold)
             mLastOn = f1;
         bool asdf = f1 - mLastOn < mWindow;
-        if (gGuitarOverlay && gGuitarOverlay->mShowing) {
+        if (gGuitarOverlay && gGuitarOverlay->Showing()) {
             *gGuitarOverlay << MakeString(
                 " val %4.2f    frames %4d   ->   %d\n", f2, mNumFrames, asdf
             );
