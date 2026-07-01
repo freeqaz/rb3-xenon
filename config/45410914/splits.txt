@@ -3126,29 +3126,36 @@ Leaderboard.cpp:
 	.pdata      start:0x822266E8 end:0x822266F0
 	.text       start:0x8264EE00 end:0x8264EE78
 	.text       start:0x8264F170 end:0x8264F1D4
+
 MainHubPanel.cpp:
 	.pdata      start:0x82221460 end:0x82221468
 	.pdata      start:0x82221660 end:0x82221668
 	.text       start:0x82603958 end:0x826039B0
 	.text       start:0x826051B0 end:0x8260524C
+
 SetlistMergePanel.cpp:
 	.pdata      start:0x82222908 end:0x82222910
 	.pdata      start:0x82222918 end:0x82222920
 	.text       start:0x82617730 end:0x8261778C
 	.text       start:0x82617830 end:0x82617978
+
 Tail.cpp:
 	.pdata      start:0x82255610 end:0x82255618
 	.pdata      start:0x82255620 end:0x82255628
 	.text       start:0x82B7E3D0 end:0x82B7E448
 	.text       start:0x82B7E618 end:0x82B7E684
+
 TourProgress.cpp:
 	.text       start:0x8234FF50 end:0x8234FF68
 	.text       start:0x8234FF68 end:0x8234FF80
+
 AccomplishmentPanel.cpp:
 	.pdata      start:0x8221EBB0 end:0x8221EBB8
 	.text       start:0x825DBD78 end:0x825DBE68
+
 BandMachineMgr.cpp:
 	.text       start:0x826D8B80 end:0x826D8B94
+
 CustomizePanel.cpp:
 	.pdata      start:0x82220B78 end:0x82220B80
 	.pdata      start:0x82220B80 end:0x82220B88
