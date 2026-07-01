@@ -53,7 +53,7 @@ function prompt(t) {
 7. **PIN-SET = GOOD-oracle VAs (step 2) ∩ field-gate-clean (step 6) ∩ methods-DEFINED-in-obj.** This triple intersection is the B2 fix (don't pin misattributed or undefined VAs). DRY-RUN identity_transfer first; keep only VAs it reports as nameable (named>0).
 8. **MICRO-PIN+MAP**: \`python3 tools/identity_transfer.py --tu ${base}.cpp --oracle unified_id_rb3wii.json --pin-only <intersected-set> --apply\` (STRICT add-only; never gen_game_target_map.py --apply).
 9. **OVERLAP**: \`python3 scripts/harvest/overlap_check.py config/45410914/splits.txt --text-only\` (abort on overlap).
-10. **BUILD+MEASURE**: \`rm -f build/45410914/*/target_symbol_renames.stamp; touch config/45410914/config.yml; ./tools/ninja-locked\`; delta vs baseline.
+10. **BUILD+MEASURE**: \`rm -f build/45410914/target_symbol_renames.stamp; touch config/45410914/config.yml; ./tools/ninja-locked\`; delta vs baseline.
 11. **AUDIT** (HARD): \`python3 tools/icf_alias_check.py --worktree .\` — newly-100 must be REAL (>44B) bodies, not <=44B stub-folds. Count body_divergence_killed = GOOD-oracle methods that pinned cleanly but stayed <100% (real-bodied near-misses = the body-divergence wall, distinct from misattribution).
 12. **VERDICT**: LANDABLE:+N (N = REAL non-stub matched delta, no regressions) or DEFER:<reason>. Save the splits.txt + target_symbol_map.json diff to /tmp/h-${base}.patch.
 

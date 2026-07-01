@@ -33,7 +33,7 @@ READ FIRST: docs/decomp/identity-transfer/PIPELINE-DESIGN.md + B2-FINDINGS-oracl
 Work in your OWN CoW worktree (scripts/setup_worktree.sh /tmp/wt-idtb-${base} idtb-${base}; download_tool.py skip-guard + ln -sf ${REPO}/build/tools/wibo build/tools/wibo). NEVER edit main. Do NOT land — commit to your branch + RETURN it.
 
 PROCEDURE:
-1. baseline fresh_report (rm -f build/45410914/*/target_symbol_renames.stamp; touch config/45410914/config.yml; ./tools/ninja-locked once) -> baseline matched.
+1. baseline fresh_report (rm -f build/45410914/target_symbol_renames.stamp; touch config/45410914/config.yml; ./tools/ninja-locked once) -> baseline matched.
 2. ${t.wired ? 'The TU is ALREADY wired in objects.json and the .cpp is in src — skip porting unless it does not compile.' : `PORT ../rb3/src/${t.tu} -> src/${t.tu} (MWCC->MSVC X360; whole file compiles+defines; copy missing headers from oracle). Add "${t.tu}":"NonMatching" to config/45410914/objects.json; python3 configure.py; build.`}
 3. PRE-SCREEN: python3 tools/oracle_quality.py --tu ${base}.cpp -> the GOOD methods (real-bodied >44B, size-consistent, not foreign-owned). FIELD-GATE: python3 tools/field_offset_gate.py --tu ${base}.cpp --oracle unified_id_rb3wii.json --emit-pin-only /tmp/fg-${base}.json.
 4. PIN-SET = GOOD-oracle ∩ field-gate-clean ∩ methods-DEFINED-in-obj. DRY-RUN tools/identity_transfer.py first; keep only VAs it reports nameable (named>0).
