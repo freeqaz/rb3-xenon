@@ -13484,5 +13484,8 @@
  "0x82776cf0": "?MapSlot@JoypadController@@QBAHH@Z",
  "0x82776d90": "?ButtonToSlot@JoypadController@@UBAHW4JoypadButton@@@Z",
  "0x82776e30": "?Disable@JoypadController@@UAAX_N@Z",
- "0x822d17f8": "?GemHit@GemTrackDir@@QAAXH@Z"
+ "0x822d17f8": "?GemHit@GemTrackDir@@QAAXH@Z",
+ "0x8257e968": "??6@YAAAVBinStream@@AAV0@ABVSongFilter@SongSortMgr@@@Z",
+ "0x827ca508": "??$MakeString@MPBD@@YAPBDPBDM0@Z",
+ "0x82b710f8": "?_M_push_back_aux_v@?$deque@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXABVRangeShift@VocalTrack@@@Z"
 }
