@@ -302,7 +302,17 @@ def to_json(s):
             "whole_binary_pct": _fuzzy_code_pct(whole),
             "wired_pct": _fuzzy_code_pct(whole, wired=True),
             "wired_fns": whole["wired"],
-            "credit_bytes": whole["code_fuzzy"] - _i(m.get("matched_code")),
+            # total_bytes = size-weighted fuzzy-matched code (sum of sz*pct/100).
+            # THIS is the fuzzy-positive signal for a wave gate: it only goes up
+            # when code matches better. Diff two snapshots' total_bytes for a wave
+            # delta. wired_total_bytes is the same over pinned/wired units only.
+            "total_bytes": round(whole["code_fuzzy"], 2),
+            "wired_total_bytes": round(whole["wired_code_fuzzy"], 2),
+            # credit_bytes = SURPLUS over strict (code_fuzzy - matched_code). It
+            # MECHANICALLY DROPS when a near-100 fn graduates to strict-100 (matched
+            # _code jumps by full size, code_fuzzy barely moves) -> reads NEGATIVE
+            # for the best patches. Do NOT use as a gate; use total_bytes/staircase.
+            "credit_bytes": round(whole["code_fuzzy"] - _i(m.get("matched_code")), 2),
         },
         "staircase": {f"ge{t}": whole["stair"][t] for t in STAIRCASE},
         "histogram": dict(whole["bands"]),
