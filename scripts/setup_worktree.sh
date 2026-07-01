@@ -121,10 +121,37 @@ done
 # transparently), but we warn so the operator knows the "instant + free"
 # property was lost.
 reflink_dir() {
-    local src="$1" dst="$2"
-    rm -rf "$dst"
+    local src="$1" dst="$2" tries="${3:-4}" i
     mkdir -p "$(dirname "$dst")"
-    cp -a --reflink=auto "$src" "$dst"
+    # Retry transient failures: when $src is a shared build dir being written by
+    # concurrent builds, `cp -a` can abort with "file changed as we read it" or a
+    # vanished temp .obj ("cannot stat ...: No such file or directory"). A retry
+    # after a short pause usually lands in a quiet window.
+    for ((i=1; i<=tries; i++)); do
+        rm -rf "$dst"
+        if cp -a --reflink=auto "$src" "$dst" 2>/dev/null; then
+            return 0
+        fi
+        sleep $((i))
+    done
+    return 1
+}
+
+# Best-effort reflink for a REGENERABLE cache (the build dir): tolerate a partial
+# copy — a few temp objs that vanished mid-copy under concurrent writes just get
+# recompiled by ninja. Fails only if the copy produced nothing.
+reflink_dir_besteffort() {
+    local src="$1" dst="$2" i
+    mkdir -p "$(dirname "$dst")"
+    rm -rf "$dst"
+    for i in 1 2 3 4; do
+        if cp -a --reflink=auto "$src" "$dst" 2>/dev/null; then return 0; fi
+        # partial copy left in place is fine; retry to fill in more, then accept
+        sleep "$i"
+    done
+    # accept a partial cache as long as SOMETHING copied
+    [ -d "$dst" ] && return 0
+    return 1
 }
 
 # Warn if the destination isn't on a reflink-capable fs (script still works,
@@ -169,7 +196,13 @@ done
 WT_BUILD="$WORKTREE_PATH/build/$VERSION"
 if [ "$WARM_CACHE" -eq 1 ]; then
     echo "==> build/$VERSION/  (reflink copy — private build dir + WARM object cache)"
-    reflink_dir "$MAIN_REPO/build/$VERSION" "$WT_BUILD"
+    reflink_dir_besteffort "$MAIN_REPO/build/$VERSION" "$WT_BUILD"
+    # Critical build inputs must survive the (possibly partial) copy. If a temp
+    # obj vanished mid-copy that's fine (ninja recompiles), but obj/ (target
+    # split objects) and config.json are required — reflink them individually if
+    # the best-effort pass dropped them.
+    [ -d "$WT_BUILD/obj" ] || reflink_dir "$MAIN_REPO/build/$VERSION/obj" "$WT_BUILD/obj"
+    [ -f "$WT_BUILD/config.json" ] || cp --reflink=auto "$MAIN_REPO/build/$VERSION/config.json" "$WT_BUILD/config.json" 2>/dev/null || true
 else
     echo "==> build/$VERSION/  (cold: copying only obj/ + config.json, no object cache)"
     rm -rf "$WT_BUILD"
@@ -208,10 +241,14 @@ if [ "$WARM_CACHE" -eq 1 ]; then
     # Only BUILD INPUTS matter for cache validity — a compiled source/header
     # (src/) or a split/objects/symbols config (config/). Dirty scripts, docs,
     # or tooling in main don't make any reflinked object stale, so exclude them.
+    # NB: `grep -c` exits 1 when the count is 0 -- WITHOUT the `|| true` that
+    # non-zero exit propagates through the command substitution and (under
+    # `set -e`) aborts the whole script whenever main has no dirty src/config
+    # files (e.g. only docs/tooling changed). The `|| true` keeps the count (0).
     _changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
                    git -C "$MAIN_REPO" diff --name-only --cached 2>/dev/null;
                    git -C "$WORKTREE_PATH" diff --name-only "$BASE_REF" 2>/dev/null; } \
-                 | grep -cE '^(src/|config/)' )"
+                 | grep -cE '^(src/|config/)' || true )"
     if [ "$_changed" -eq 0 ]; then
         echo "==> Validating warm object cache (worktree == $BASE_REF; marking outputs current)"
         find "$WT_BUILD" -type f -exec touch {} + 2>/dev/null || true
