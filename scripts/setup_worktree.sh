@@ -189,6 +189,38 @@ fi
 rm -f "$WORKTREE_PATH/.ninja_log" "$WORKTREE_PATH/.ninja_deps" \
       "$WORKTREE_PATH/.ninja_lock" "$WORKTREE_PATH/.ninja-build.lock" 2>/dev/null || true
 
+# ---- warm-cache validation : make the reflinked object cache VALID under ninja
+# `git worktree add` stamps every checked-out source with a fresh (now) mtime,
+# and the toolchain symlink build/compilers resolves to main's dir (recent
+# mtime, a shared implicit input to every compile). Ninja is mtime-only (no
+# content hashing), so it treats every reflinked object as stale vs those
+# inputs and does a FULL REBUILD in the priming step below — 10+ worktrees per
+# workflow => 10+ redundant full rebuilds + machine saturation.
+#
+# A fresh worktree is byte-identical to its base ($BASE_REF) — that's exactly
+# what produced the reflinked objects — so the whole reflinked cache IS current.
+# Bump every build output newer than all of its inputs (sources, headers,
+# toolchain) so ninja sees the cache as up-to-date and the prime (and the
+# agent's first build) become no-ops; a later source EDIT gets a newer mtime and
+# rebuilds normally. If the worktree DIFFERS from its base (branch reuse, or main
+# has local mods) we skip this and let ninja rebuild — correctness over speed.
+if [ "$WARM_CACHE" -eq 1 ]; then
+    # Only BUILD INPUTS matter for cache validity — a compiled source/header
+    # (src/) or a split/objects/symbols config (config/). Dirty scripts, docs,
+    # or tooling in main don't make any reflinked object stale, so exclude them.
+    _changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
+                   git -C "$MAIN_REPO" diff --name-only --cached 2>/dev/null;
+                   git -C "$WORKTREE_PATH" diff --name-only "$BASE_REF" 2>/dev/null; } \
+                 | grep -cE '^(src/|config/)' )"
+    if [ "$_changed" -eq 0 ]; then
+        echo "==> Validating warm object cache (worktree == $BASE_REF; marking outputs current)"
+        find "$WT_BUILD" -type f -exec touch {} + 2>/dev/null || true
+        echo "  reflinked cache marked current — prime + agent's first build are no-ops"
+    else
+        echo "==> Warm cache NOT validated: worktree differs from $BASE_REF ($_changed path(s)); first build will rebuild"
+    fi
+fi
+
 # ---- clangd config + bin/objdiff-cli + venv : read-only symlinks ------------
 echo "==> Symlinking clangd config"
 [ -e "$MAIN_REPO/compile_commands.json" ] && ln -sfn "$MAIN_REPO/compile_commands.json" "$WORKTREE_PATH/compile_commands.json"
