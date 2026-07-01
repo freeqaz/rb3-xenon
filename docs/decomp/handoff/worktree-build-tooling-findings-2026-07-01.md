@@ -1,8 +1,10 @@
 # Worktree build-tooling findings (2026-07-01)
 
-Coordinator session under an extreme owner build-storm (load ~292, **35 concurrent
-`all_source` full builds**). Verify+land of the staged struct candidates was blocked
-by build-infra friction; the durable output is two tooling findings + one fix.
+Coordinator session under an extreme owner build-storm (load ~290–350, **35+
+concurrent `all_source` full builds**). What began as verify+land friction turned
+into a full root-cause of the worktree "full-rebuild tax." Two bugs found and
+fixed; the second one's mechanism is now proven by experiment (the earlier PCH
+guess in this doc was WRONG — corrected below).
 
 ## FINDING 1 — setup_worktree SIGPIPE abort (FIXED, committed 8d8d257)
 The 4-lane parallel `verify-stage-fuzzy` workflow "failed" (all agents completed
@@ -15,71 +17,96 @@ Why no build.ninja: `setup_worktree.sh` did
 under `set -euo pipefail`. `awk ... exit` closes the pipe after the first line; under
 load (scheduling) `git` is still writing when the pipe closes → **SIGPIPE (141)** →
 pipefail propagates → `set -e` aborts the whole script **right before `configure.py`
-+ the ninja prime**. Load-dependent race: fine at low load / few worktrees (git's
-output fits the 64 KB pipe buffer and it finishes before awk exits), trips at
-load-292 with ~38 worktrees. Same class as the `grep -c` abort fixed in f1f7d0d.
++ the ninja prime**. Load-dependent race: fine at low load / few worktrees, trips at
+load-290 with ~38 worktrees. Same class as the `grep -c` abort fixed in f1f7d0d.
 
 **Fix (8d8d257):** `awk '/^worktree /{if(!seen++) print $2}'` — prints the first
 match but reads to EOF, so `git` never gets SIGPIPE. Verified: setup now reaches
-configure + prime and emits `build.ninja`.
+configure + prime and emits `build.ninja`. A post-configure `build.ninja` existence
+assertion was added as a permanent backstop so this failure mode can never again be
+silent (it would previously yield an unbuildable worktree + false-0 stale reports).
 
 ⚠ This likely also bit the OWNER's wave — any worktree created under load got a
 silent no-`build.ninja` and a false-0 stale report. Worth a broad re-check.
 
-## FINDING 2 — warm-cache "first build is a no-op" is NOT holding (real setup full-rebuilds all 733)
-`setup_worktree.sh` reflinks main's `build/45410914` and (line 254)
-`find "$WT_BUILD" -type f -exec touch {} +` to mark outputs current, claiming
-"prime + agent's first build are no-ops." **Empirically every fresh full-setup
-worktree does a full 733-step MSVC rebuild** — under this load that is 30–60+ min
-and starves everything. This is the single biggest tax on wave throughput.
+## FINDING 2 — the "full 727-obj rebuild" tax: ROOT CAUSE = absolute tool paths (FIXED, scoped prime)
+Every fresh full-setup worktree's **prime recompiled all ~727 objs** — 30–60+ min
+under storm load, on *every* orchestrator-pool worktree, not just verify lanes. This
+is the single biggest wave-throughput tax. (An earlier draft of this doc guessed the
+PCH; that was wrong. The real mechanism is below, proven by dry-run experiments in a
+warm worktree — no builds needed.)
 
-### The no-op IS achievable (proven)
-build.ninja compile commands use **relative** include paths (`/I src`,
-`/I src/system`) — there are **zero** absolute worktree paths in build.ninja, so the
-command TEXT is identical across worktrees and the reflinked cache is genuinely
-valid. In a hand-built worktree (reflink `build/45410914` + `configure.py` with the
-prebuilt `--dtk/--objdiff/--wrapper` paths + `find -exec touch`), a dry-run
-`ninja -n build/45410914/report.json` and even bare `ninja -n` (the prime's default
-target) both want **0 MSVC recompiles** — only `SPLIT config.yml` + `RUN
-configure.py`. `.ninja_log` presence made no difference (mtime governs these edges).
+### The experiments (all via `ninja -n -d explain`, no compiles)
+1. **Fresh worktree, both `.ninja_log` + `.ninja_deps` absent, outputs touched
+   current → `ninja -n` reports 0 dirty compiles.** So the reflinked cache + touch is
+   mtime-valid. (This is what the earlier draft mistook for "the no-op works".)
+2. **But the real bare-`ninja` prime compiled 727 anyway.** The `-n` dry-run lies
+   because it never executes the intermediate edges. The real sequence:
+   `ninja` (default target = `report.json`, depends on ALL objs) → runs SPLIT →
+   regenerates `config.json` → the `configure.py` generator edge fires → `build.ninja`
+   is regenerated → **ninja reloads and recomputes the plan** → now `.ninja_log`
+   exists (SPLIT wrote it) but the compile edges have no `.ninja_deps` entry →
+   `ninja explain: deps for '…obj' are missing` → **all 727 rebuild.**
+3. **Copying main's `.ninja_log` + `.ninja_deps` into the worktree did NOT help** —
+   still 727 dirty, but now the reason flips to `"is dirty"` (command-hash), not
+   "deps missing". The diff of the two `build.ninja` files shows why:
+   - worktree compile command: `--wrapper /home/free/code/milohax/wibo/build/release/wibo` (**absolute**)
+   - main compile command:      `build/tools/wibo` (**relative**)
 
-So the reflinked cache + touch is sufficient in principle. The real
-`setup_worktree.sh` path nonetheless triggers 733 recompiles → something in the
-setup/prime sequence re-dirties a shared input AFTER the touch.
+### Root cause (confirmed)
+`setup_worktree.sh` runs `configure.py --dtk/--objdiff/--wrapper <ABSOLUTE sibling
+paths>` on purpose — to dodge the cargo (`dtk`, `objdiff-cli`) and download (`wibo`)
+edges that main's relative `build/tools/*` references would drag in (the documented
+manifest-dirty loop). The unavoidable side effect: **every compile command's text —
+hence its ninja command-hash — differs from main's relative-path `.ninja_log`.** So
+the reflinked objs, though byte-valid, can never be command-hash-validated against
+main's log; the first full build recompiles all of them. It is a genuine design
+tension (absolute paths buy "no cargo/download edges" at the cost of "cannot reuse
+main's command hashes"), not a simple bug.
 
-### Leading suspect: the PCH (`build/45410914/pch/system.pch`)
-Every MSVC compile depends on `system.pch`. If the prime rebuilds it (its header
-inputs' mtimes vs the reflinked pch), all 733 compiles cascade. The warm path
-reflinks the pch (main's mtime) and line 254 touches it to NOW, but a later
-`configure.py`/`SPLIT`/prime step can re-dirty it (the `RUN configure.py` edge
-re-fires and regenerates build.ninja; SPLIT regenerates config.json + target objs).
-Unverified — needs `ninja -d explain` on a FRESH real-setup worktree BEFORE its
-first build to read the exact dirty reason (couldn't run cleanly mid-storm without
-lock contention).
+### Fix shipped — scope the prime to `config.json`
+Bare `ninja` builds `report.json` (all 727 objs) and triggers the SPLIT→reload→
+deps-missing cascade. Building **`build/<VERSION>/config.json`** alone performs the
+SPLIT + graph-settle (the actual determinism goal the prime exists for) with **ZERO
+obj compiles.** Measured on the fixed script:
+- prime MSVC compiles: **727 → 0**
+- single-obj objdiff build afterward (the common agent case): **1** recompile
+- a later full `ninja` (e.g. verify A/B needing report.json): still 727 **once**,
+  amortized in the serial-one-worktree pattern (Finding 3).
 
-### Proposed fix direction (for the owner — this is their actively-iterated script)
-- Capture `ninja -d explain -n` on a just-setup worktree to confirm the pch (or
-  which edge) is the dirty root.
-- If pch: rebuild/settle the pch ONCE during setup, then re-touch all outputs
-  current AFTER configure + the prime's SPLIT, so nothing downstream is newer.
-- Payoff is large: 35 full rebuilds → 35 no-ops. Every wave gets ~10× cheaper.
+`WT_SKIP_PRIME=1` env gate was also added (skip the prime entirely for pure-config
+diagnostics / fast worktree creation).
+
+### Option NOT taken (documented for the owner to weigh)
+A *comprehensive* warm — making even the first full build a no-op — would require the
+worktree's compile commands to be byte-identical to main's: reflink main's
+`build/tools/{wibo,dtk,objdiff-cli}` into the worktree as private copies, configure
+with main's **relative** paths, copy main's `.ninja_log`+`.ninja_deps`, and re-touch.
+That re-introduces exactly the cargo/download edges the absolute-path design was
+built to avoid, and must be validated carefully against the manifest-dirty loop. Not
+done here (too risky mid-storm, on the owner's actively-iterated script). The scoped
+prime captures ~all the value for the single-obj agent fleet without that risk.
 
 ## FINDING 3 — full builds don't compose; verify lanes must serialize
-4 concurrent full `ninja-locked` builds (each 733 steps) + the owner's 35 +
-wt-lyric ×2 = lock waits and starvation; none of my lanes finished. Until Finding 2
-is fixed, a verify wave that spins a fresh worktree per candidate is self-defeating.
-**Do all candidates serially in ONE warm worktree** (one full baseline build, then
-each patch is a fast incremental: 1 TU recompile + report). The
-`verify-stage-fuzzy` workflow should cap full-build concurrency at 1.
+4 concurrent full `ninja-locked` builds (each 727 steps) + the owner's 35 = lock
+waits and starvation. A verify wave that spins a fresh worktree per candidate is
+self-defeating for anything needing a full report.json. **Do all candidates serially
+in ONE warm worktree** (one full baseline build, then each patch is a fast
+incremental: 1 TU recompile + report). With the scoped prime, single-obj objdiff
+lanes no longer pay the 727 at all.
 
 ## PROCESS LESSONS (re-confirmed)
 - Never `pgrep -f <str>` where `<str>` appears in the kill command → self-kill
   (exit 144). Kill by explicit PID or match `/proc/<pid>/cwd` inode.
-- Don't kill a build that's 637/733 to chase an optimization — restart re-runs the
+- Don't kill a build that's 600+/727 to chase an optimization — restart re-runs the
   full build (reconfigure cascade loses `.ninja_log` progress). Let baselines finish.
+- `ninja -n` (dry-run) is NOT a faithful predictor of a real build when SPLIT/
+  configure generator edges are in play — it skips the reload that flips deps state.
+  Confirm rebuild counts with a real (scoped) run.
 
 ## STATE
-- main @8d8d257 (SIGPIPE fix). ~10682 matched.
-- Staged struct candidates (CreditsPanel/GamePanel/Character/CharEyes) exported as
-  patch files in `~/tmp/verify_patches/`; serial A/B in `~/tmp/vf3` in progress.
+- Script fixes committed on main: SIGPIPE (8d8d257) + scoped prime + build.ninja
+  assertion + `WT_SKIP_PRIME` gate + honest comments (this commit).
+- ~10682 matched. Staged struct candidates (CreditsPanel/GamePanel/Character/
+  CharEyes) remain as patch files in `~/tmp/verify_patches/`; serial A/B pending.
 - Land gate (owner policy): fuzzy-positive AND 0 strict-100 regressions.

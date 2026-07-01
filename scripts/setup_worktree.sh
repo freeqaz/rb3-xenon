@@ -233,10 +233,19 @@ rm -f "$WORKTREE_PATH/.ninja_log" "$WORKTREE_PATH/.ninja_deps" \
 # A fresh worktree is byte-identical to its base ($BASE_REF) — that's exactly
 # what produced the reflinked objects — so the whole reflinked cache IS current.
 # Bump every build output newer than all of its inputs (sources, headers,
-# toolchain) so ninja sees the cache as up-to-date and the prime (and the
-# agent's first build) become no-ops; a later source EDIT gets a newer mtime and
-# rebuilds normally. If the worktree DIFFERS from its base (branch reuse, or main
-# has local mods) we skip this and let ninja rebuild — correctness over speed.
+# toolchain) so ninja sees the cache as up-to-date by MTIME; a later source EDIT
+# gets a newer mtime and rebuilds normally. If the worktree DIFFERS from its base
+# (branch reuse, or main has local mods) we skip this and let ninja rebuild —
+# correctness over speed.
+#
+# SCOPE OF THIS OPTIMIZATION (measured — see worktree-build-tooling-findings):
+# The touch makes INCREMENTAL builds warm — a single-obj `ninja <X>.obj` rebuilds
+# only X (its deps log is missing, ~1 recompile) and everything else stays cached.
+# It does NOT make a full `ninja` (report.json) a no-op: the worktree's compile
+# commands carry ABSOLUTE tool paths (configure.py bakes --dtk/--objdiff/--wrapper
+# to dodge cargo/download edges) whose command-hash differs from main's
+# relative-path .ninja_log, so a full build recompiles all ~727 objs once. That is
+# why the prime below is scoped to config.json rather than the bare-ninja default.
 if [ "$WARM_CACHE" -eq 1 ]; then
     # Only BUILD INPUTS matter for cache validity — a compiled source/header
     # (src/) or a split/objects/symbols config (config/). Dirty scripts, docs,
@@ -252,7 +261,7 @@ if [ "$WARM_CACHE" -eq 1 ]; then
     if [ "$_changed" -eq 0 ]; then
         echo "==> Validating warm object cache (worktree == $BASE_REF; marking outputs current)"
         find "$WT_BUILD" -type f -exec touch {} + 2>/dev/null || true
-        echo "  reflinked cache marked current — prime + agent's first build are no-ops"
+        echo "  reflinked cache marked current — incremental (single-obj) builds are warm"
     else
         echo "==> Warm cache NOT validated: worktree differs from $BASE_REF ($_changed path(s)); first build will rebuild"
     fi
@@ -337,6 +346,19 @@ if [ -L "$WT_BUILD" ]; then
     exit 1
 fi
 
+# ---- safety assertion : configure.py must have produced build.ninja ---------
+# A SIGPIPE-class abort (or any silent configure failure) that leaves no
+# build.ninja produces an UNBUILDABLE worktree: every build dies with
+# `ninja: error: loading 'build.ninja'`, workflows spin on the lock, and stale
+# reports read as false NET +0. Fail LOUD here instead of downstream. (The
+# git-worktree-list SIGPIPE that caused exactly this was fixed in 8d8d257; this
+# assertion is the backstop so the failure mode can never again be silent.)
+if [ ! -f "$WORKTREE_PATH/build.ninja" ]; then
+    echo "FATAL: configure.py did not produce $WORKTREE_PATH/build.ninja." >&2
+    echo "       The worktree is unbuildable; refusing to hand back a broken tree." >&2
+    exit 1
+fi
+
 # ---- prune zero-byte orphan .obj files --------------------------------------
 # The main build dir can accumulate zero-byte orphan objects with no ninja rule.
 # Reflinking them into the worktree can confuse the post-build .obj patchers
@@ -396,25 +418,43 @@ fi
 # the permuter, MCP orchestrator, and objdiff scripts) can return commands
 # derived from a not-yet-fully-consistent build.ninja, leading to baseline
 # match% returning 0.00% on the first invocation of every function in the unit.
-# Running ninja once here re-runs SPLIT (regenerates config.json from config.yml)
-# and the configure.py edge inside build.ninja, leaving the build graph fully
-# consistent. With the warm reflinked object cache, this is a near-no-op rebuild
-# but updates `.ninja_log` and `.ninja_deps` so subsequent queries are
+# Priming re-runs SPLIT (regenerates config.json from config.yml) and settles
+# the configure.py edge inside build.ninja, leaving the build graph fully
+# consistent + `.ninja_log`/`.ninja_deps` initialized so subsequent queries are
 # deterministic. Use ninja-locked (per CLAUDE.md, never bare ninja) so the
 # worktree's own .ninja-build.lock serializes concurrent builds.
+#
+# CRITICAL — prime the `config.json` target, NOT the bare-ninja default.
+# Bare `ninja` builds the report.json default target, which depends on ALL ~727
+# objs. The reflinked cache is byte-valid, but the worktree's compile commands
+# carry ABSOLUTE tool paths (--dtk/--objdiff/--wrapper, baked by configure.py
+# above to dodge the cargo/download edges) that differ from main's relative-path
+# commands recorded in main's .ninja_log. Fresh worktree => no local .ninja_log
+# => SPLIT regenerates config.json => the configure generator edge fires =>
+# build.ninja reloads => ninja recomputes and now finds every compile edge dirty
+# ("deps missing" post-reload) => a full 727-obj rebuild, on EVERY worktree.
+# Building `config.json` alone performs the SPLIT + graph-settle (the actual
+# determinism goal) with ZERO obj compiles — the single largest wave-throughput
+# win. A later full `ninja` (e.g. a verify A/B needing report.json) still does
+# that one-time 727 rebuild, but single-obj objdiff agents (the common case) now
+# rebuild only the obj they touch. See docs/decomp/handoff/
+# worktree-build-tooling-findings-2026-07-01.md for the experiments.
 #
 # NOTE (rb3-xenon divergence from DC3): a failed prime is a loud WARNING, not
 # fatal. The main tree is frequently mid-repair (the whole point of spinning up
 # a worktree is often to FIX the broken build), so a prime failure must not
 # block worktree creation. The full error is printed so the operator sees it,
 # but the worktree is left fully configured and usable.
-echo "==> Priming ninja state (regenerates config.json + warms .ninja_log)"
+if [ "${WT_SKIP_PRIME:-0}" -eq 1 ]; then
+    echo "==> WT_SKIP_PRIME=1 : skipping ninja prime (worktree configured but not primed)"
+else
+echo "==> Priming ninja state (SPLIT + config.json — scoped to avoid a full 727-obj rebuild)"
 (
     cd "$WORKTREE_PATH"
     NINJA="./tools/ninja-locked"
     [ -x "$NINJA" ] || NINJA="ninja"
     prime_log="$(mktemp)"
-    if "$NINJA" >"$prime_log" 2>&1; then
+    if "$NINJA" "build/$VERSION/config.json" >"$prime_log" 2>&1; then
         tail -5 "$prime_log"
     else
         echo "WARN: ninja prime failed (the main tree may not build yet)." >&2
@@ -425,6 +465,7 @@ echo "==> Priming ninja state (regenerates config.json + warms .ninja_log)"
     fi
     rm -f "$prime_log"
 )
+fi
 
 echo ""
 echo "Worktree ready:  $WORKTREE_PATH"
