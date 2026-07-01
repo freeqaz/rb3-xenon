@@ -290,8 +290,14 @@ if ! git -C "$MAIN_REPO" rev-parse --git-common-dir >/dev/null 2>&1; then
 else
     # git --git-common-dir points to the shared .git in the main worktree.
     # git worktree list's first line is always the main (linked) worktree path.
+    # NB: awk must NOT `exit` on the first match — under `set -o pipefail` an early
+    # exit closes the pipe while `git` is still writing (a race that only trips
+    # under load / many worktrees), so `git` dies with SIGPIPE(141) and `set -e`
+    # aborts the whole script right before configure.py + prime (leaving an
+    # unbuildable worktree with no build.ninja). Print the first match but keep
+    # reading to EOF so `git` always finishes cleanly.
     _primary="$(git -C "$MAIN_REPO" worktree list --porcelain 2>/dev/null \
-                | awk '/^worktree / {print $2; exit}')"
+                | awk '/^worktree / {if (!seen++) print $2}')"
     [ -n "$_primary" ] && [ -d "$_primary" ] && PRIMARY_REPO="$_primary"
 fi
 
