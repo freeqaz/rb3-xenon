@@ -3,6 +3,7 @@
 #include "AccomplishmentPanel.h"
 #include "BandProfile.h"
 #include "Campaign.h"
+#include "ui/PanelDir.h"
 #include "bandobj/MeterDisplay.h"
 #include "decomp.h"
 #include "game/Band.h"
@@ -332,9 +333,11 @@ DataNode AccomplishmentPanel::Group_HandleButtonDownMsg(const ButtonDownMsg &msg
         HandleSoundSelect(msg.GetUser());
         return 0;
     case kAction_Cancel:
-        static Message cMsg("handle_exit_career");
-        Handle(cMsg, true);
-        HandleSoundBack(msg.GetUser());
+        {
+            static Message cMsg("handle_exit_career");
+            Handle(cMsg, true);
+            HandleSoundBack(msg.GetUser());
+        }
         break;
     case kAction_Option:
         Handle(handle_goto_leaderboard_hub_msg, true);

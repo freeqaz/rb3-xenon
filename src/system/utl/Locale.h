@@ -82,5 +82,9 @@ const char *Localize(Symbol token, bool *success, Locale &locale);
 // uses TheLocale. Matches rb3-Wii Locale.h: const char *Localize(Symbol, bool *).
 const char *Localize(Symbol token, bool *success);
 const char *LocalizeSeparatedInt(int num, Locale &locale);
+// RB3 1-argument form — real out-of-line function in rb3-Wii; inline wrapper here.
+inline const char *LocalizeSeparatedInt(int num) {
+    return LocalizeSeparatedInt(num, TheLocale);
+}
 const char *LocalizeFloat(const char *fmt, float num);
 void SyncReloadLocale();

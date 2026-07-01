@@ -3144,3 +3144,6 @@ Tail.cpp:
 TourProgress.cpp:
 	.text       start:0x8234FF50 end:0x8234FF68
 	.text       start:0x8234FF68 end:0x8234FF80
+AccomplishmentPanel.cpp:
+	.pdata      start:0x8221EBB0 end:0x8221EBB8
+	.text       start:0x825DBD78 end:0x825DBE68
