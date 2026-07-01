@@ -56,6 +56,24 @@ across all access sites. Ranked candidates (delta = base−target, count):
 REGRESS (RndMat/RndFont/RndWind are confirmed RB3-360==DC3 — do NOT re-base).
 Recon must verify direction via objdiff anchor + oracle header diff BEFORE apply.
 
+## RESULTS (2026-07-01)
+- ⭐ **+2 LANDED (main @c336c46)**: FileMerger::Clear + RndParticleSys::CheckBursts
+  to strict-100 (whole-binary A/B verified NET +2, 0 regressions). Both DC3-drift
+  reverts (arg-count / POD-ctor). **The bodyport recon hypotheses are RELIABLE** —
+  unlike the struct-cascade (below).
+- ⛔ **CharEyes struct-cascade = NET +0 (DISCARDED)**: the +16 IMM_OFFSET "delta"
+  was NOT a removable-member drift. Shrinking CharEyes (mDartOffset #ifdef
+  MILO_DEBUG) made near-misses WORSE (EnforceMinimumTargetDistance 99.87→97.37) —
+  retail-360's CharEyes HAS that 0x10 (the rb3-Wii MILO_DEBUG guard does not apply
+  to retail-360). ⚠ LESSON: IMM_OFFSET "uniform delta" clusters are NOT reliable
+  struct-lever candidates — the classifier sees immediate diffs that are a minority
+  of the residual, not a clean cascadeable member drift. Prefer the bodyport
+  recon's mechanism-level analysis over the classifier's offset-delta heuristic.
+- ⏳ SortNodes (+6, Data.h 1-arg→0-arg) building (full recompile).
+- STREAM 1 (struct-offset clusters) DE-PRIORITIZED after CharEyes disproof; the
+  IMM_OFFSET buckets need per-fn mechanism recon (like Stream 2), not the
+  offset-delta heuristic, to avoid false positives.
+
 ## STREAM 2 — BODY-divergence per-fn ports (bodyport lever)
 Genuine oracle logic/guard/arg divergences (port the real body from the oracle
 to strict-100). Best non-STL named candidates:
