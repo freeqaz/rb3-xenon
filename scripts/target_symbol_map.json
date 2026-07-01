@@ -13438,4 +13438,6 @@
  "0x8264f170": "?SetMode@Leaderboard@@QAAXW4Mode@1@_N@Z"
  "0x82603958": "?Load@MainHubAdvanceMsg@?A0xfca6df48@@UAAXAAVBinStream@@@Z",
  "0x826051b0": "?CycleNextMessage@MainHubPanel@@QAAXXZ"
+ "0x82617730": "?SetLocalsMerging@SetlistMergePanel@@QAAX_N@Z",
+ "0x82617830": "?SendSongsToMetaPerformer@SetlistMergePanel@@QAAXABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z"
 }

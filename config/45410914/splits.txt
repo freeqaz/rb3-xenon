@@ -3131,3 +3131,8 @@ MainHubPanel.cpp:
 	.pdata      start:0x82221660 end:0x82221668
 	.text       start:0x82603958 end:0x826039B0
 	.text       start:0x826051B0 end:0x8260524C
+SetlistMergePanel.cpp:
+	.pdata      start:0x82222908 end:0x82222910
+	.pdata      start:0x82222918 end:0x82222920
+	.text       start:0x82617730 end:0x8261778C
+	.text       start:0x82617830 end:0x82617978
