@@ -13445,4 +13445,5 @@
  "0x8234ff50": "?RemoveStars@TourProgress@@QAAXH@Z",
  "0x8234ff68": "?EarnStars@TourProgress@@QAAXH@Z"
  "0x825dbd78": "?Unload@AccomplishmentPanel@@UAAXXZ"
+ "0x826d8b80": "?Dispatch@SyncLocalMachineMsg@?A0x951deeb9@@UAAXXZ"
 }

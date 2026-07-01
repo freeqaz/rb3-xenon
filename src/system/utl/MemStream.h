@@ -22,12 +22,12 @@ public:
     const char *Buffer() const { return mBuffer.begin(); }
 #endif
 
+    bool mFail; // 0x10
+    int mTell; // 0x14
+    std::vector<char> mBuffer; // 0x18
+
 private:
     virtual void ReadImpl(void *, int);
     virtual void WriteImpl(const void *, int);
     virtual void SeekImpl(int, SeekType);
-
-    bool mFail; // 0x10
-    int mTell; // 0x14
-    std::vector<char> mBuffer; // 0x18
 };
