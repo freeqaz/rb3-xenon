@@ -3126,3 +3126,8 @@ Leaderboard.cpp:
 	.pdata      start:0x822266E8 end:0x822266F0
 	.text       start:0x8264EE00 end:0x8264EE78
 	.text       start:0x8264F170 end:0x8264F1D4
+MainHubPanel.cpp:
+	.pdata      start:0x82221460 end:0x82221468
+	.pdata      start:0x82221660 end:0x82221668
+	.text       start:0x82603958 end:0x826039B0
+	.text       start:0x826051B0 end:0x8260524C
