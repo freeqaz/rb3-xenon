@@ -54,7 +54,7 @@ public:
             return *this;
         }
 
-        void Clear(bool);
+        void Clear();
 
         ObjectDir *MergerDir() {
             if (mDir)

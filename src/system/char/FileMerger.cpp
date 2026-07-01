@@ -49,7 +49,7 @@ protected:
     Loader::Callback *mCallback; // 0x18
 };
 
-void FileMerger::Merger::Clear(bool shouldDraw) {
+void FileMerger::Merger::Clear() {
     mLoaded.Set(FilePath::Root().c_str(), "");
 #ifdef HX_NATIVE
     if (!ObjectDir::InDeleteObjects())
@@ -92,11 +92,6 @@ void FileMerger::Merger::Clear(bool shouldDraw) {
         } else {
             mLoadedSubdirs.clear();
         }
-    }
-    // Finish any pending drawing operations
-    if (shouldDraw && !TheRnd.GetReleaseImmediate()) {
-        TheRnd.BeginDrawing();
-        TheRnd.EndDrawing();
     }
 }
 
@@ -290,7 +285,7 @@ bool FileMerger::OriginalPath(Hmx::Object *obj, String &str) {
 
 void FileMerger::Clear() {
     for (int i = 0; i < mMergers.size(); i++) {
-        mMergers[i].Clear(false);
+        mMergers[i].Clear();
     }
     if (mCurLoader) {
         Merger *merger = mFilesPending.front();
@@ -516,7 +511,7 @@ FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, DirLoader *dl) {
     );
     MILO_ASSERT(l == mCurLoader, 0x217);
     Merger *m = mFilesPending.front();
-    m->Clear(false);
+    m->Clear();
     if (!sDisableAll) {
         static Message msg("on_pre_merge", 0, 0, 0);
         msg[0] = m->mName;
@@ -546,7 +541,7 @@ void FileMerger::AppendLoader(FileMerger::Merger &merger) {
     }
     merger.loading = merger.mSelected;
     if (merger.mPreClear)
-        merger.Clear(!mAsyncLoad);
+        merger.Clear();
     mFilesPending.push_back(&merger);
     if (TheLoadMgr.EditMode()) {
         static Message checkSync("check_sync", "", "");

@@ -144,7 +144,6 @@ public:
     };
     class Burst {
     public:
-        Burst() : mPeakRate(0), mHalfDuration(0), mInvHalfDuration(0), mRemainingDuration(0) {}
         bool Set(float, float);
         float Emit(float);
         float mPeakRate;
