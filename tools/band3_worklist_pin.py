@@ -17,6 +17,10 @@ Usage:
   tools/band3_worklist_pin.py --tu VocalTrack.cpp [--tu Gem.cpp ...]   # specific
   tools/band3_worklist_pin.py --all-wired                              # all wired+unnamed
   (--apply writes splits.txt + runs gen_game_target_map; default is dry-run)
+
+  --worklist PATH   consume a different worklist JSON (default: band3_port_worklist.json
+                     in ROOT). Same {rb3_addr, wii_demangled, src_path} schema, e.g.:
+  tools/band3_worklist_pin.py --worklist sysnet_port_worklist.json --all-wired
 """
 import argparse, json, re, subprocess, sys
 from pathlib import Path
@@ -83,9 +87,18 @@ def main():
     ap.add_argument("--all-wired", action="store_true")
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--root", default=None, help="operate on this tree (default: script's repo)")
+    ap.add_argument("--worklist", default=None,
+                     help="worklist JSON to consume (default: band3_port_worklist.json in ROOT; "
+                          "e.g. sysnet_port_worklist.json — same {rb3_addr,wii_demangled,src_path} schema)")
     args = ap.parse_args()
     if args.root:
         _rebind_root(args.root)
+    global WORKLIST
+    if args.worklist:
+        wl_path = Path(args.worklist)
+        if not wl_path.is_absolute():
+            wl_path = ROOT / wl_path
+        WORKLIST = wl_path
 
     rows = json.loads(WORKLIST.read_text())["worklist"]
     objects = OBJECTS.read_text()
