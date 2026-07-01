@@ -76,15 +76,16 @@ public:
     virtual ObjectDir *ThisDir() { return this; }
     virtual ObjectDir *ThisDir() const { return const_cast<GemTrackDir *>(this); }
 #else
-    virtual ObjectDir *ThisDir() {}
-    virtual ObjectDir *ThisDir() const {}
+    // MSVC X360 rejects empty non-void bodies (C4716). A Dir's ThisDir is itself.
+    virtual ObjectDir *ThisDir() { return this; }
+    virtual ObjectDir *ThisDir() const { return const_cast<GemTrackDir *>(this); }
 #endif
     virtual void RefreshStreakMeter(int, int, int);
     virtual void SpotlightPhraseSuccess();
 #ifdef HX_NATIVE
     virtual GemTrackDir *AsGemTrackDir() { return this; }
 #else
-    virtual GemTrackDir *AsGemTrackDir() {}
+    virtual GemTrackDir *AsGemTrackDir() { return this; }
 #endif
     virtual RndDir *AsRndDir() { return AsGemTrackDir(); }
     virtual void SetPerformanceMode(bool);
