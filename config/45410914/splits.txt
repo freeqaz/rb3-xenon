@@ -3149,3 +3149,8 @@ AccomplishmentPanel.cpp:
 	.text       start:0x825DBD78 end:0x825DBE68
 BandMachineMgr.cpp:
 	.text       start:0x826D8B80 end:0x826D8B94
+CustomizePanel.cpp:
+	.pdata      start:0x82220B78 end:0x82220B80
+	.pdata      start:0x82220B80 end:0x82220B88
+	.text       start:0x825FB3D0 end:0x825FB52C
+	.text       start:0x825FB548 end:0x825FB590
