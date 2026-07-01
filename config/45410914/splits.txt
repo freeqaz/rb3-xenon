@@ -3199,3 +3199,7 @@ SongData.cpp:
 	.text       start:0x8274CB58 end:0x8274CB70
 	.text       start:0x8274DA90 end:0x8274DBBC
 	.text       start:0x82753FD0 end:0x827541C0
+
+DirectInstrument.cpp:
+	.pdata      start:0x8222D7C8 end:0x8222D7D0
+	.text       start:0x826C4890 end:0x826C48F4
