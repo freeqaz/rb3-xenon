@@ -11,7 +11,10 @@ template <class T>
 class TickedInfo {
 public:
     TickedInfo(int i, T t) : mTick(i), mInfo(t) {}
-    TickedInfo<T> &operator=(const T &item) { mInfo = item; }
+    TickedInfo<T> &operator=(const T &item) {
+        mInfo = item;
+        return *this;
+    }
     int mTick;
     T mInfo;
 };

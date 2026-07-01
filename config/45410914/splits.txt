@@ -3184,3 +3184,12 @@ BeatMatchController.cpp:
 
 BandPatchMesh.cpp:
 	.text       start:0x82334AF8 end:0x82334BC4
+
+SongData.cpp:
+	.pdata      start:0x822350B8 end:0x822350C0
+	.pdata      start:0x82235728 end:0x82235730
+	.text       start:0x8274BB20 end:0x8274BB34
+	.text       start:0x8274C500 end:0x8274C518
+	.text       start:0x8274CB58 end:0x8274CB70
+	.text       start:0x8274DA90 end:0x8274DBBC
+	.text       start:0x82753FD0 end:0x827541C0
