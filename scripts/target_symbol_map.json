@@ -13545,7 +13545,6 @@
  "0x827ca2f0": "?ReadNextEventImpl@MidiReader@@AAAXXZ",
  "0x827ca3d8": "?ReadTrack@MidiReader@@AAA_NXZ",
  "0x827ca438": "?ReadAllTracks@MidiReader@@QAAXXZ",
- "0x827aa8f8": "?DetachBuffer@NetLoader@@QAAPADXZ",
  "0x82433ba8": "?AllocParticle@RndParticleSys@@QAAPAVRndParticle@@XZ",
  "0x822637c8": "?Unload@PatchSticker@@QAAXXZ",
  "0x82263ac0": "?SetPosition@PatchLayer@@QAAXABVVector3@@@Z",

@@ -2002,7 +2002,6 @@ NetCacheMgr.cpp:
 NetLoader.cpp:
 	.pdata      start:0x8223A3A0 end:0x8223A3A8
 	.text       start:0x827AA860 end:0x827AA8C4
-	.text       start:0x827AA8F8 end:0x827AA920
 
 SongInfoCopy.cpp:
 	.pdata      start:0x8223A4F0 end:0x8223A660
