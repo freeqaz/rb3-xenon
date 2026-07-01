@@ -71,6 +71,7 @@
    "system/beatmatch/TrackWatcherImpl.cpp": "NonMatching",
    "system/beatmatch/SongParser.cpp": "NonMatching",
    "system/beatmatch/BeatMatchController.cpp": "NonMatching",
+   "system/beatmatch/BeatMatcher.cpp": "NonMatching",
    "system/rndobj/Console.cpp": "NonMatching",
    "system/rndobj/ShaderOptions.cpp": "NonMatching",
    "system/oggvorbis/framing.c": "NonMatching",
