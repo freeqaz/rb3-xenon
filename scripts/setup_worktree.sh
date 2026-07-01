@@ -304,6 +304,50 @@ if [ -d "$WT_BUILD/src" ]; then
     [ "$pruned" -gt 0 ] && echo "==> Pruned $pruned zero-byte orphan .obj file(s)"
 fi
 
+# ---- neutralize the build/compilers download edge (offline worktree) --------
+# build.ninja has a `build/compilers: download_tool | tools/download_tool.py`
+# edge that (re)downloads the MSVC X360 toolchain from files.decomp.dev. In a
+# fresh worktree ninja has no .ninja_log entry for it, so it ALWAYS re-runs the
+# edge (this is a missing-log-entry issue, not mtime — touching does not help).
+# But the toolchain is already symlinked above (build/compilers -> main), and
+# this environment has no cert path to the download host (the request dies with
+# `SSL: CERTIFICATE_VERIFY_FAILED`, and download_tool.py's certifi retry also
+# fails). Result without this step: the prime below and EVERY subsequent build
+# fail at the download edge, silently blocking all matching work in the worktree
+# (stale report.json => false NET +0). Fix: patch the worktree's copy of
+# download_tool.py to no-op when the requested output already exists (which it
+# always does here — it is symlinked). This dirties the worktree's
+# download_tool.py; that is expected and the land/verify-stage tooling already
+# excludes it from commits.
+DL_TOOL="$WORKTREE_PATH/tools/download_tool.py"
+if [ -f "$DL_TOOL" ]; then
+    python3 - "$DL_TOOL" <<'PYEOF'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+if "already present; skipping download" in s:
+    sys.exit(0)  # already patched (idempotent)
+old = "    url = TOOLS[args.tool](args.tag)\n    output = Path(args.output)\n"
+new = (
+    "    output = Path(args.output)\n"
+    "    # setup_worktree offline short-circuit: skip the network download when the\n"
+    "    # tool is already present (e.g. build/compilers symlinked from the main\n"
+    "    # tree). This env has no cert path to the download host, and re-downloading\n"
+    "    # an already-present toolchain is unnecessary.\n"
+    "    if output.exists() and (not output.is_dir() or any(output.iterdir())):\n"
+    "        print(f\"{output} already present; skipping download\")\n"
+    "        return\n"
+    "    url = TOOLS[args.tool](args.tag)\n"
+)
+if old in s:
+    open(p, "w").write(s.replace(old, new, 1))
+    print("==> Neutralized build/compilers download edge (download_tool.py offline short-circuit)")
+else:
+    sys.stderr.write("WARN: could not patch download_tool.py (unexpected layout); "
+                     "worktree builds may fail at the build/compilers download edge.\n")
+PYEOF
+fi
+
 # ---- prime ninja state : trigger SPLIT + configure.py regeneration ----------
 # Without this, the worktree's first `ninja -t commands <obj>` query (used by
 # the permuter, MCP orchestrator, and objdiff scripts) can return commands

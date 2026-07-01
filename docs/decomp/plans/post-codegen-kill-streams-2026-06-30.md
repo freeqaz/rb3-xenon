@@ -91,4 +91,44 @@ Touches shared `../decomp-synth` → isolate + do-no-harm. Deprioritized.
 
 ## EXECUTION LOG
 - 2026-06-30: streams identified + documented. Codegen-tool effort KILLED.
-  Wave 1 launching: Stream 1 recon→apply on the top struct clusters.
+  Wave 1 launched: Stream 1 recon→apply on the top struct clusters.
+- 2026-07-01: Wave-1 struct-cascade results (⚠ ran concurrent with a heavy owner
+  bodyport wave → IO storm load 200+ blocked/rate-limited several lanes):
+  - **CharEyes +~32 READY**: edit applied+dual-oracle-confirmed in wt-s1-CharEyes
+    (mDartOffset is MILO_DEBUG-only → wrap in #ifdef; our retail carries it = +0x10
+    drift; CharEyes-OWN, no cascade; retarget line 912 write to mCurrentDartOffset
+    using the existing 626/640 cast idiom). Verification storm-blocked → COORDINATOR
+    to A/B + land. Independently sanity-checked read-only: sound.
+  - **CharIKHead DEFER**: the +4 is a shared-base (RndPollable/CharWeightable)
+    vtordisp/virtual-decl drift = the RndMat/RndFont re-base hazard. High regression
+    risk, low EV. Not a clean member edit.
+  - **Character / GamePanel / CreditsPanel**: apply agents rate-limited (transient),
+    incomplete → re-run recon+apply at LOW concurrency later.
+  - Bodyport-recon (read-only) landed 5 PORTABLE_WINs (saved
+    ~/tmp/bodyport_recon_results.json): CharBoneDir/SortNodes Data.h 1-arg→0-arg
+    (+6 cascade, shared header), FileMerger::Clear bool→no-arg (+2), Part Burst POD
+    (+1), EditSetlistPanel VerifyStrings case-4 (+1), MusicLibrary inline-policy
+    (+1/2). Plus 4 confirmed DEFER_CODEGEN (AppChild/RenderState/Bitmap/FftIpp) =
+    more corroboration of the wall-#2 KILL.
+  - ⚠ LESSON: never run my heavy build-wave concurrent with the owner's active
+    wave (14 concurrent builds = load-200 storm that starves ALL builds). Switch to
+    COORDINATOR-DRIVEN SERIAL landing in ONE worktree (incremental A/B), light
+    footprint. Note: clean HEAD now builds to ~10682 (owner landed +18); measure
+    NET via in-worktree A/B, not the absolute count.
+  - ⚠⚠ CRITICAL ENV UNBLOCK: fresh worktree builds FAIL at the `build/compilers`
+    ninja edge — it runs `tools/download_tool.py` which tries to download the MSVC
+    toolchain from files.decomp.dev and dies on `SSL: CERTIFICATE_VERIFY_FAILED`
+    (no cert path in this env; certifi retry also fails). ninja rebuilds the edge
+    because a fresh worktree has no .ninja_log entry (NOT mtime — touching doesn't
+    help). This silently blocked the whole struct apply wave (stale-report false
+    +0, "frozen priming"). FIX (per-worktree, do NOT commit — this is the
+    download_tool.py the verify-stage-wave skill says to EXCLUDE): short-circuit
+    download_tool.py `main()` to `return` early when the output already exists
+    (setup_worktree symlinks build/compilers from main). Apply this in EVERY
+    worktree before building. TODO: bake into setup_worktree.sh (shared-tool change).
+  - ⚠ PROCESS-HYGIENE LESSON: `pgrep -f 'wt-s1-CharEyes'` MATCHES MY OWN SHELL
+    (pattern in the command line) → `kill` self-terminates the command (exit 144 /
+    no output). Never pattern-kill on a string that appears in the kill command;
+    kill by explicit PID. Also: when taking over an agent's worktree, its leftover
+    verify script keeps building → two drivers fight the ninja lock → stale objs /
+    corrupt build dir. Recreate the worktree clean instead of fighting it.
