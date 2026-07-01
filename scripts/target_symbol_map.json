@@ -13462,5 +13462,16 @@
  "0x8274c500": "?GetPhraseList@SongData@@QBAABVPhraseList@@HW4BeatmatchPhraseType@@@Z",
  "0x8274cb58": "?GetSubmixes@SongData@@QBAAAV?$TickedInfoCollection@VString@@@@H@Z",
  "0x8274bb20": "?GetGemListByDiff@SongData@@QAAPAVGameGemList@@HH@Z",
- "0x82b7caa8": "?EndPos@Lyric@@QBAMXZ"
+ "0x82b7caa8": "?EndPos@Lyric@@QBAMXZ",
+ "0x8269e138": "?GetMaxSlots@GemPlayer@@QBAHXZ",
+ "0x8269eb60": "?GetRGFret@GemPlayer@@QBAHH@Z",
+ "0x8269f028": "?InRGTrill@GemPlayer@@QBA_NH@Z",
+ "0x8269f098": "?InRoll@GemPlayer@@QBA_NH@Z",
+ "0x8269f860": "?InTrill@GemPlayer@@QBA_NH@Z",
+ "0x8269fd60": "?OnGetPercentHitGemsPractice@GemPlayer@@QBAMHMM@Z",
+ "0x826a0498": "?AllCodaGemsHit@GemPlayer@@QBA_NXZ",
+ "0x82564468": "?IsRandomSetList@MetaPerformer@@QBA_NXZ",
+ "0x82564498": "?HasSyncPermission@MetaPerformer@@UBA_NXZ",
+ "0x82353b40": "?GetVocalPartPercentage@Stats@@QBAMH@Z",
+ "0x8267e578": "?GetMultiplier@Performer@@UBAH_NAAH11@Z"
 }
