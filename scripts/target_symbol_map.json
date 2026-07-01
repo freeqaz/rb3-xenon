@@ -13442,4 +13442,6 @@
  "0x82617830": "?SendSongsToMetaPerformer@SetlistMergePanel@@QAAXABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z"
  "0x82b7e3d0": "?ReleaseMeshes@Tail@@QAAXXZ",
  "0x82b7e618": "?Hit@Tail@@QAAXXZ"
+ "0x8234ff50": "?RemoveStars@TourProgress@@QAAXH@Z",
+ "0x8234ff68": "?EarnStars@TourProgress@@QAAXH@Z"
 }
