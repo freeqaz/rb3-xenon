@@ -456,6 +456,7 @@ void EditSetlistPanel::SetEditState(EditState s) {
             break;
         case 4:
             SetUIState((UIState)1);
+            VerifyStrings(mSetlistName.c_str(), mSetlistDescription.c_str());
             break;
         case 5:
             SetUIState((UIState)1);
