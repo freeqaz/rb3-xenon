@@ -204,6 +204,12 @@ def parse_wii_name(name: str) -> Optional[Tuple[Optional[str], str, Optional[int
     else:
         cls = None
         method = parts[-1]
+    # The worklist's `wii_demangled` renders const methods as the space form
+    # "Class const::method" (vs Ghidra's `_const` suffix stripped above), so the
+    # const qualifier leaks into the class token — strip it or the (class,method)
+    # lookup silently misses every const member function.
+    if cls is not None:
+        cls = re.sub(r"[ _]const$", "", cls)
     argc: Optional[int] = None
     if args is not None:
         a = args.strip()

@@ -13461,5 +13461,6 @@
  "0x8274da90": "?MakeBackupTracks@SongData@@QAAXXZ",
  "0x8274c500": "?GetPhraseList@SongData@@QBAABVPhraseList@@HW4BeatmatchPhraseType@@@Z",
  "0x8274cb58": "?GetSubmixes@SongData@@QBAAAV?$TickedInfoCollection@VString@@@@H@Z",
- "0x8274bb20": "?GetGemListByDiff@SongData@@QAAPAVGameGemList@@HH@Z"
+ "0x8274bb20": "?GetGemListByDiff@SongData@@QAAPAVGameGemList@@HH@Z",
+ "0x82b7caa8": "?EndPos@Lyric@@QBAMXZ"
 }
