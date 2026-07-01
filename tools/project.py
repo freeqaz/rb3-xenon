@@ -510,28 +510,33 @@ def generate_build_ninja(
         nonlocal cargo_rule_written
         if not cargo_rule_written:
             n.pool("cargo", 1)
-            # Cargo emits a depfile whose TARGET line is an absolute path
-            # (e.g. "/home/.../build/tools/release/dtk: ...") while ninja's
-            # build edge declares the output with a relative path
-            # ("build/tools/release/dtk"). Ninja rejects the depfile with
-            # "expected depfile to mention X, got <abs path>" and treats it
-            # as if the input changed -- so cargo re-fires every ninja pass.
-            # That update bumps the depfile's mtime, dtk binary stays unchanged
-            # but ninja's generator-rule churn then re-fires SPLIT + configure
-            # in an infinite manifest-regeneration loop.
+            # NO depfile on purpose. Cargo emits a depfile whose TARGET line is
+            # an absolute path (e.g. "/home/.../build/tools/release/dtk: ...")
+            # while ninja's build edge declares the output with a relative path
+            # ("build/tools/release/dtk"). Ninja rejects the mismatched depfile
+            # ("expected depfile to mention X, got <abs path>") and treats the
+            # target as perpetually dirty, so `cargo` re-fires on EVERY ninja
+            # pass (a ~0.15s no-op) and -- if cargo ever bumps the binary mtime
+            # -- cascades into re-SPLIT + reconfigure (config.json -> build.ninja),
+            # i.e. a manifest-regeneration loop.
             #
-            # restat=True breaks the loop: ninja re-stats $out after cargo
-            # runs, sees the binary mtime didn't change (cargo's incremental
-            # build is a no-op), and absorbs the dirtiness instead of
-            # cascading it to dependents (config.json -> build.ninja).
+            # Dropping the depfile makes ninja track dtk/objdiff-cli via their
+            # explicit input (Cargo.toml) + implicit input (Cargo.lock) only, so
+            # cargo no longer re-fires when nothing changed. TRADE-OFF: editing
+            # the jeff / objdiff *Rust sources* (`.rs`) will NOT be picked up by
+            # ninja (Cargo.toml/lock are unchanged). We rarely touch those forks,
+            # so this is a documented manual step -- after editing them, force a
+            # rebuild with e.g. `touch ../jeff/Cargo.toml && ninja` (dtk) or
+            # `touch ../objdiff/Cargo.toml && ninja` (objdiff-cli). See CLAUDE.md
+            # "Two build tracks".
             n.rule(
                 name="cargo",
                 command="cargo build --release --manifest-path $in --bin $bin --target-dir $target",
                 description="CARGO $bin",
                 pool="cargo",
-                depfile=Path("$target") / "release" / "$bin.d",
-                # No deps="gcc" -- ninja's binary deps cache is unsafe under
-                # concurrent ninja invocations (matches rb3-Wii).
+                # No depfile (see above) and no deps="gcc" -- ninja's binary
+                # deps cache is unsafe under concurrent ninja invocations
+                # (matches rb3-Wii).
                 restat=True,
             )
             cargo_rule_written = True

@@ -118,6 +118,17 @@ dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
 there. **objdiff is also a local fork** at `../objdiff` (freeqaz/objdiff,
 with custom pattern-detector work and normalized-diff changes)
 
+> **Editing the jeff/objdiff Rust sources? Rebuild manually.** The `cargo`
+> build rule intentionally has **no depfile** (cargo emits absolute-path
+> depfiles that ninja rejects — the mismatch made `cargo` re-fire on *every*
+> `ninja` and risked a re-SPLIT/reconfigure cascade; see the comment in
+> `tools/project.py write_cargo_rule`). Consequently ninja tracks the tool
+> binaries only via `Cargo.toml`/`Cargo.lock`, so edits to the forks' `.rs`
+> sources are **not** auto-detected. After changing jeff/objdiff source, force
+> the rebuild: `touch ../jeff/Cargo.toml && ninja` (dtk) or
+> `touch ../objdiff/Cargo.toml && ninja` (objdiff-cli). Dependency changes
+> (which touch `Cargo.toml`/`Cargo.lock`) are still picked up automatically.
+
 **2. Native engine build** (`native/`, x86_64 Linux + clang) — runs the engine
 on the host. Currently boots headlessly and loads RB3 `songs.dta`.
 
