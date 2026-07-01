@@ -69,7 +69,17 @@ Recon must verify direction via objdiff anchor + oracle header diff BEFORE apply
   struct-lever candidates — the classifier sees immediate diffs that are a minority
   of the residual, not a clean cascadeable member drift. Prefer the bodyport
   recon's mechanism-level analysis over the classifier's offset-delta heuristic.
-- ⏳ SortNodes (+6, Data.h 1-arg→0-arg) building (full recompile).
+- ⭐ **+1 MORE LANDED (main @2bc9830)**: EditSetlistPanel::SetEditState (retail
+  VerifyStrings in case 4). **Session total = +3 matched** (main-verify full
+  pipeline confirms FileMerger/Part/EditSetlistPanel all 100%, 0 regressions).
+- ⛔ SortNodes (+6 predicted) = NET +0 DISCARDED: Data.h SortNodes(int)→() only
+  nudged GetContextFlags 99.38→99.44 (not 100) — the residual is dominated by
+  something other than the SortNodes arg; rb3-Wii oracle over-predicted (like
+  CharEyes). Recon hit-rate this wave = 3/5 (FileMerger/Part/EditSetlist hit;
+  CharEyes/SortNodes missed). LESSON: cascade predictions from arg-count reverts
+  are optimistic — a caller reaches 100 only if the arg diff is its ONLY residual.
+- DEFERRED: MusicLibrary (+1/2, inline-policy + needs target_symbol_map entry;
+  more complex than a clean revert — pick up in a calmer window).
 - STREAM 1 (struct-offset clusters) DE-PRIORITIZED after CharEyes disproof; the
   IMM_OFFSET buckets need per-fn mechanism recon (like Stream 2), not the
   offset-delta heuristic, to avoid false positives.
