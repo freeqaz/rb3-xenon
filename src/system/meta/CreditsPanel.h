@@ -47,7 +47,9 @@ private:
     void DebugToggleAutoScroll();
     void SetAutoScroll(bool);
 
-    bool mCheatOn; // 0x3c
+#ifdef MILO_DEBUG
+    bool mCheatOn; // 0x3c (MILO_DEBUG-only; retail RB3-360 release lacks it)
+#endif
     DataLoader *mLoader; // 0x40
     DataArray *mNames; // 0x44
     UIList *mList; // 0x48

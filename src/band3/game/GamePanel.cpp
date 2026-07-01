@@ -1,3 +1,5 @@
+#include "macros.h"
+#undef MILO_DEBUG
 #include "game/GamePanel.h"
 #include "GamePanel.h"
 #include "bandobj/BandDirector.h"

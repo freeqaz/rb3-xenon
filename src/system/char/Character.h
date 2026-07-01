@@ -94,8 +94,8 @@ public:
     virtual void CalcBoundingSphere();
     virtual bool MakeWorldSphere(Sphere &, bool);
     virtual float ComputeScreenSize(RndCam *);
-    virtual void DrawOpaque();
-    virtual void DrawTranslucent();
+    DRAW_DC3_VIRTUAL void DrawOpaque();
+    DRAW_DC3_VIRTUAL void DrawTranslucent();
     virtual CharEyes *GetEyes();
     virtual bool ValidateInterest(CharInterest *, ObjectDir *) { return true; }
     virtual bool SetFocusInterest(CharInterest *, int);

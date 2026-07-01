@@ -1,5 +1,12 @@
-#include "CreditsPanel.h"
+// Retail RB3-360 compiled this TU with MILO_DEBUG OFF: CreditsPanel::mCheatOn is a
+// MILO_DEBUG-only member (rb3-Wii gates it), so retail's layout lacks it (every own
+// member + the UIPanel 2nd-base subobject sit -4 vs a MILO_DEBUG build) and the
+// is_cheat_on / debug_toggle handlers drop out. macros.h (#pragma once) force-defines
+// MILO_DEBUG tree-wide; undef it here AFTER macros.h sets its include guard so the
+// transitive re-include inside CreditsPanel.h is a no-op and the member actually drops.
 #include "macros.h"
+#undef MILO_DEBUG
+#include "CreditsPanel.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
 #include "obj/Object.h"
@@ -32,8 +39,14 @@ CreditsPanel::~CreditsPanel() {}
 
 BEGIN_HANDLERS(CreditsPanel)
     HANDLE_ACTION(pause_panel, PausePanel(_msg->Int(2)))
+#ifdef MILO_DEBUG
     HANDLE_EXPR(is_cheat_on, mCheatOn)
+#else
+    HANDLE_EXPR(is_cheat_on, false)
+#endif
+#ifdef MILO_DEBUG
     HANDLE_ACTION(debug_toggle_autoscroll, DebugToggleAutoScroll())
+#endif
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_SUPERCLASS(UIPanel)
 END_HANDLERS
@@ -74,7 +87,9 @@ void CreditsPanel::Load() {
 
 void CreditsPanel::Enter() {
     UIPanel::Enter();
+#ifdef MILO_DEBUG
     mCheatOn = false;
+#endif
     mPaused = false;
     mList->SetSelected(0, -1);
     mAutoScroll = 1;
@@ -163,6 +178,7 @@ void CreditsPanel::PausePanel(bool b) {
     }
 }
 
+#ifdef MILO_DEBUG
 void CreditsPanel::DebugToggleAutoScroll() {
     if (!mAutoScroll) {
         mList->SetSpeed(mSavedSpeed);
@@ -175,6 +191,7 @@ void CreditsPanel::DebugToggleAutoScroll() {
         mCheatOn = true;
     }
 }
+#endif
 
 DataNode CreditsPanel::OnMsg(const ButtonDownMsg &msg) {
     if (mAutoScroll)
