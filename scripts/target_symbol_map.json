@@ -13433,5 +13433,7 @@
  "0x825a8520": "?SetPrimaryMetaScore@LocalBandMachine@@QAAXH@Z",
  "0x827f2ee8": "?Save@BandSongMetadata@@UAAXAAVBinStream@@@Z",
  "0x8266ecb0": "?SetLoadedPrefabChar@BandUser@@QAAXH@Z",
- "0x8266cf60": "?GetTrackIcon@BandUser@@QBAPBDXZ"
+ "0x8266cf60": "?GetTrackIcon@BandUser@@QBAPBDXZ",
+ "0x8264ee00": "??0LeaderboardRow@@QAA@XZ",
+ "0x8264f170": "?SetMode@Leaderboard@@QAAXW4Mode@1@_N@Z"
 }
