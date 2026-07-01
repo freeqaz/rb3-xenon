@@ -3173,3 +3173,11 @@ SongParser.cpp:
 	.pdata      start:0x82235F60 end:0x82235F68
 	.text       start:0x8275DFD0 end:0x8275E028
 	.text       start:0x8275F8B8 end:0x8275F950
+
+BeatMatchController.cpp:
+	.pdata      start:0x822367C8 end:0x822367D0
+	.pdata      start:0x82236810 end:0x82236818
+	.pdata      start:0x82236818 end:0x82236820
+	.text       start:0x8276AE60 end:0x8276AEE8
+	.text       start:0x8276B300 end:0x8276B384
+	.text       start:0x8276B388 end:0x8276B3F8
