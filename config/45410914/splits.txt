@@ -3471,3 +3471,6 @@ WaitingUserGate.cpp:
 OvershellPanel.cpp:
 	.pdata      start:0x8221A740 end:0x8221A748
 	.text       start:0x8259DF90 end:0x8259E538
+MetaPanel.cpp:
+	.pdata      start:0x82216098 end:0x822160A0
+	.text       start:0x8255A890 end:0x8255A8F0

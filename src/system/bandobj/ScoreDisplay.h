@@ -13,6 +13,8 @@ public:
     virtual ~ScoreDisplay() {}
     // UIListCustomTemplate pure virtuals
     virtual void Custom(int, int, UIListCustom *, Hmx::Object *) {}
+    virtual void SetAlphaColor(float, class UIColor *) {}
+    virtual void GrowBoundingBox(Box &) const {}
     void SetValues(short, int, int, bool);
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
