@@ -97,3 +97,39 @@ The LINKER_MERGED lines objdiff attributes here are partly mis-attributed (the
 - Pause is the only strict add. If policy wants map entries at true-100 ONLY, drop
   the Load + UpdateVolume keys (both are confirmed-identity fuzzy-paired, safe to
   keep as progress or drop — they report their real %; neither is a false identity).
+
+## WAVE-5 AUDIT (auditor, 2026-07-02) — VERDICT: CLEAR (landable as-is)
+
+Independently re-verified every claim with the main repo's objdiff-cli against the
+lane's freshly-built objects, plus a fresh direct-cl.exe compile.
+
+1. **Pause strict pin — REPRODUCED, HONEST.** 99.75% normalized, size 80/80 exact.
+   objdiff `--analyze --verdict` isolates the ONE mismatch (index 10):
+   `bl fn_826FCB80` (target) vs `bl ?Pause@SfxInst@@QAAX_N@Z` (base) → classified
+   **LINKER_MERGED ICF** (`ICF:?Pause@SfxInst@@QAAX_N@Z cross-function merge`),
+   verdict **AtLimit (High confidence), source-immune**. Legit report-normalized-100.
+2. **Fuzzy entries — REPRODUCED.** Load 75.84% (304/304 size-exact), UpdateVolume
+   53.08% (148/192). Both match the target `fn_` sizes exactly (0x130 / 0x94) and
+   slot into a **contiguous Sfx/SfxInst/SfxMap symbol cluster** in the map
+   (SetReverbMixDb SfxInst → operator>> SfxMap → [UpdateVolume, Pause] → PropSync
+   SfxMap → Save Sfx). Own-attribution confirmed, not foreign. Load's identity is
+   proven by source-derived size-exact %; UpdateVolume is the weakest (base_size
+   192 ≠ target 148) but well-supported by size 0x94 + adjacency + FaderGroup::GetVal.
+3. **Own-vs-foreign / no regression.** StreamNull's own retained-range fns still
+   100% (IsFinished 20/20, Resync 72/72). Carving foreign Sfx VAs out of StreamNull
+   cannot regress it. icf_alias_check --tu Sfx.cpp = HONEST.
+4. **Map ADD-ONLY** (0 removed / 3 added). **Splits: 0 text + 0 pdata overlaps**,
+   full contiguous coverage FBD28..700E18 (text) & 82230850..82230E20 (pdata),
+   respects both neighbours. **Doc-vs-commit nit:** §Splits says "Sfx.cpp given no
+   .pdata" but the committed splits DO hand Sfx.cpp two pdata slivers
+   (82230980-90, 82230CE0-C8) — the committed state is correct & overlap-free; the
+   prose is stale.
+5. **Compile-gate** re-run with direct cl.exe: Sfx.cpp compiles clean (benign
+   intrinsic warns only). **MILO_DEBUG landmine handled:** MILO_WARN is gated on
+   `HX_NATIVE` → `((void)sizeof(...))` no-op in the match build (corroborated by
+   Load being size-exact 304/304 — an active warn would inflate base_size).
+
+**Coordinator note:** the below-100 Load/UpdateVolume map keys are honest
+confirmed-identity progress (never counted as matched; no inflation risk). Keeping
+them is policy-aligned ("partial matches count", they register the fuzzy %); the
+OWNER hard-line map=report-100-only reading would drop both. Either is landable.
