@@ -683,6 +683,15 @@ void MemHeap::FreeBlockStats(int &maxIdx, int &rFrags, int &totalFree, int &bigg
     rFrags = (idx - maxBlock) - 1;
 }
 
+// Retail/match MemHandle::Lock (fn_827966E8, ExactInstructions, TU=MemMgr.o).
+// mAlloc points at a MemHandleAlloc header (mBack@0, mLockCount@4) followed by
+// the relocatable user data at +0x10. Lock bumps the lock count and hands back
+// the data pointer.
+void *MemHandle::Lock() {
+    ++mAlloc->mLockCount;
+    return (char *)mAlloc + 0x10;
+}
+
 void MemFreeBlockStats(
     int heapNum, int &i2, int &i3, int &numFreeBytes, int &i5, int &biggestFreeBlock
 ) {

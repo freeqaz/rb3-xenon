@@ -13636,5 +13636,6 @@
  "0x8255a890": "?Unload@MetaPanel@@UAAXXZ",
  "0x826aa958": "?GetCurrentStartTick@TrainerPanel@@QBAHXZ",
  "0x825bfb80": "?InOverrideFlow@OvershellSlot@@QBA_NW4OvershellOverrideFlow@@@Z",
- "0x827963d8": "?FreeBlockStats@MemHeap@@QAAXAAH000@Z"
+ "0x827963d8": "?FreeBlockStats@MemHeap@@QAAXAAH000@Z",
+ "0x827966e8": "?Lock@MemHandle@@QAAPAXXZ"
 }
