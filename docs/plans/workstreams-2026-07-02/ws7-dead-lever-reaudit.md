@@ -498,7 +498,9 @@ Verdict: **LANDED**. Deliverables (commit bb4cc60):
 
 - `tools/span_confirm.py` — 459 LOC, stdlib-only, read-only over the committed
   `dc3_oracle.json` (33,987 rows). Modes: `--span`, `--candidates`,
-  `--calibrate`, `--triage`. Circularity warning in every output header.
+  `--calibrate`, `--triage`. Circularity warning in the three
+  candidate-evaluation mode headers (`--span`/`--candidates`/`--triage`;
+  intentionally absent from `--calibrate`, which is pinned ground-truth eval).
 - Acceptance gate reproduced by reviewer from the committed tool:
   margin-gated precision **83.9% (161/192)** at coverage **67.6% (192/284)**
   on DC3-shared pinned TUs — clears the ≥80%/≥50% kill bar with the audited

@@ -102,7 +102,11 @@ All key numbers independently reproduced in this worktree (@bb4cc60):
   flag); dir span 0x824b7c78–0x824b8e28 → `world:Dir.obj` ×6 of 19 (CONFIRM
   correct).
 - All four modes exercised live (`--span`, `--candidates`, `--calibrate`,
-  `--triage`); the circularity warning prints in every mode header.
+  `--triage`). Correction (second reviewer): the circularity warning prints in
+  the three candidate-evaluation modes (`--span`, `--candidates`, `--triage`),
+  NOT in `--calibrate` — correct by design, since calibrate evaluates the
+  oracle against pinned ground truth where self-voting circularity is the
+  point, not a hazard.
 - **Composed A/B: N/A by design.** `git diff 06938a5..bb4cc60 -- src config
   configure.py tools/project.py` is empty — zero build inputs touched, no
   matching impact possible. Per stream rules, deliverable-working-end-to-end
@@ -116,3 +120,28 @@ All key numbers independently reproduced in this worktree (@bb4cc60):
 R3 reopen ruling stands: **LAND (not dead)**. Remaining kill criterion is
 downstream: if the confirmer flips zero decisions across one full ws2/ws5
 target-selection wave, bank it as permanently dead (per ws7 R3 spec).
+
+## Second review pass (Fable integration agent, 2026-07-02) — CONFIRMED
+
+Independent re-verification on the committed branch (@02f0c2c + this commit):
+
+- `--calibrate` re-run live: 206/284 = 72.5% (n≥5), 135/202 = 66.8% (n≥10),
+  87/142 = 61.3% (n≥20); margin-gated 161/192 = 83.9% precision at
+  192/284 = 67.6% coverage, ACCEPTANCE PASS. Exact match to report + verdict.
+- `--triage` re-run live: TOTAL CONFIRM=5 CONTRA=20 ABSTAIN=131 (n=156);
+  sysnet summary 0/9/60 confirmed from live output.
+- All three spot-check spans re-counted from raw `dc3_oracle.json` (33,987
+  rows) with an independent script, bypassing the tool: task 0x827227d8
+  → `obj:Task.obj` ×8/16 (CONFIRM), vocaltrackdir 0x822e3788 →
+  `os:System_Xbox.obj` ×8/9 (CONTRA), dir 0x824b7c78 → `world:Dir.obj` ×6/19
+  (CONFIRM). All correct.
+- `--span` and `--candidates` modes exercised live; warning-header claim
+  corrected above (3 of 4 modes, by design).
+- Tool confirmed stdlib-only (argparse/bisect/json/os/collections).
+- Hygiene re-confirmed: working tree clean, zero untracked scratch,
+  `tools/download_tool.py` still assume-unchanged and untouched,
+  `git diff main...HEAD` touches only the 4 intended tool/doc files —
+  no src/, config/, configure.py, or tools/project.py edits, hence no
+  matching impact and no composed A/B required.
+
+Final verdict: **LAND**. netStrict = 0 (tool/doc-only stream, by design).
