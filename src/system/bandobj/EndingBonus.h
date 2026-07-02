@@ -1,5 +1,6 @@
 #pragma once
 // Ported from rb3-Wii src/system/bandobj/EndingBonus.h (ObjPtr<T,ObjectDir> -> ObjPtr<T>).
+#include "obj/ObjMacros.h"
 #include "rndobj/Dir.h"
 #include "rndobj/EventTrigger.h"
 #include "obj/Task.h"

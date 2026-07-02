@@ -3535,3 +3535,11 @@ BaseGuitarTrackWatcherImpl.cpp:
 	.pdata      start:0x82237648 end:0x82237660
 	.text       start:0x8277CFE0 end:0x8277D0D0
 	.text       start:0x8277D278 end:0x8277D5E0
+
+EndingBonus.cpp:
+	.pdata      start:0x821EFCC8 end:0x821EFCD0
+	.pdata      start:0x821EFCD0 end:0x821EFCD8
+	.pdata      start:0x821EFE10 end:0x821EFE18
+	.text       start:0x822C1EA0 end:0x822C1EE4
+	.text       start:0x822C1F18 end:0x822C1F74
+	.text       start:0x822C2FE8 end:0x822C3064
