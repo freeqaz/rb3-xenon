@@ -133,3 +133,44 @@ lane's freshly-built objects, plus a fresh direct-cl.exe compile.
 confirmed-identity progress (never counted as matched; no inflation risk). Keeping
 them is policy-aligned ("partial matches count", they register the fuzzy %); the
 OWNER hard-line map=report-100-only reading would drop both. Either is landable.
+
+## WAVE-5 AUDIT #2 (independent auditor, 2026-07-02) — VERDICT: DEFER (narrow map-key ruling)
+
+Re-verified from scratch: rebuilt Sfx.obj (ninja-locked single-target, no whole-binary
+build), diffed all three fns with the MAIN repo's objdiff-cli (JSON→file), re-ran the
+direct wibo cl.exe compile, re-checked splits overlaps + non-regression. Every technical
+claim REPRODUCES:
+
+- **Pause** 99.75% norm, size-exact 80/80, `--analyze`: 19/20 equal, the 1 `diff_arg`
+  is `bl fn_826FCB80` vs base `?Pause@SfxInst@@QAAX_N@Z`, classified **LINKER_MERGED
+  ICF (RarelyHandFixable) — cross-function merge**, 0 unattributed. Legit
+  report-normalized-100, source-immune. **HONEST — landable pin.**
+- **Load** 75.84% (304/304 size-exact); **UpdateVolume** 53.08% (target 148 / base 192,
+  NOT size-exact). Both reproduce exactly.
+- Splits: **0 text + 0 pdata overlaps GLOBALLY**; Sfx region [826FBD28..82700E18)
+  partitioned cleanly StreamNull↔Sfx↔StreamNull↔Sfx↔StreamNull, contiguous, both
+  neighbours respected.
+- Non-regression: StreamNull `IsFinished` 100 (20/20), `Resync` 100 (72/72),
+  `~StreamNull` 99.26 (108/108), SfxMap `Save` 99.88 (172/172) — all unchanged.
+- Map ADD-ONLY (3 add / 0 remove). `icf_alias_check --tu Sfx.cpp` = HONEST (empty set).
+- Compile-gate clean (wibo cl.exe → 205060 B obj). MILO_WARN confirmed
+  `((void)sizeof(...))` no-op without HX_NATIVE (Debug.h:149) — MILO_DEBUG landmine
+  handled; corroborated by Load size-exact.
+
+**Why DEFER (not CLEAR):** the deliverable is honest and non-regressing, but the two
+sub-100 `target_symbol_map.json` keys are identity pins **below** the OWNER hard-line
+("map pins only at true-100 / report-norm-100-with-size-exact — never a guessed identity
+below that"). Read literally, **both** Load (75.84%) and UpdateVolume (53.08%) breach it
+(Load is size-exact but only 75.84%, so it is neither true-100 nor report-norm-100).
+There is no inflation and the Load identity is strong (size-exact port of a well-known
+virtual in the Sfx cluster); UpdateVolume is the genuinely guess-flavoured one (size
+148≠192, bsim15-20 weakest). This is a one-line coordinator ruling, not a defect:
+
+- **Keep** both as tracked no-inflation fuzzy progress ("partials count") → land as-is; OR
+- **Enforce** the hard-line literally → drop both Load + UpdateVolume keys, keep ONLY the
+  Pause key (report-norm-100). At minimum drop **UpdateVolume** (not size-exact).
+
+Everything except that map-key policy call is CLEAR. Pause pin + Sfx.cpp source + splits
+carve + objects.json add are all independently verified landable. I did not edit the map
+(dropping keys would destroy owner-visible tracked progress — the owner's land tooling
+should apply their standing keep-or-drop rule).
