@@ -121,8 +121,15 @@ def main() -> None:
     parser.add_argument("--tag", help="GitHub tag", required=True)
     args = parser.parse_args()
 
-    url = TOOLS[args.tool](args.tag)
     output = Path(args.output)
+    # setup_worktree offline short-circuit: skip the network download when the
+    # tool is already present (e.g. build/compilers symlinked from the main
+    # tree). This env has no cert path to the download host, and re-downloading
+    # an already-present toolchain is unnecessary.
+    if output.exists() and (not output.is_dir() or any(output.iterdir())):
+        print(f"{output} already present; skipping download")
+        return
+    url = TOOLS[args.tool](args.tag)
 
     print(f"Downloading {url} to {output}")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
