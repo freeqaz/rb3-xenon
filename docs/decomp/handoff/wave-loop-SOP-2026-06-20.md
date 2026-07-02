@@ -58,6 +58,18 @@ Single-pass INDEPENDENT-fanout Opus wave (NOT a deep loop). Per wave:
      0% = "silently zeroed wave"). Fixed with a recursive union (136553b) and
      land.sh no longer swallows the resolver's CONFLICT warnings — but keep the
      post-land grep as the cheap belt-and-suspenders.
+   - ⚠ **Also check every landed pin reports in its OWN unit** (not a foreign
+     one). 2026-07-01 incident #2: resolve_splits_union.py appended theirs'
+     new lines as one flat EOF block; dtk attributes range lines to the nearest
+     unit header ABOVE, so a pins lane's 137 micro-pins across 47 TUs all
+     landed inside whatever unit happened to be last (GemTrackDir) → every
+     pinned fn reported 0% "in default/GemTrackDir". Fixed unit-aware
+     (7951cb5); symptom to grep for: a unit block in splits.txt containing
+     .text ranges far outside its own address neighborhood, or report fns at
+     0% in a unit that doesn't own them. land.sh got two more guards the same
+     day (baa6fb7): discards the setup_worktree-planted download_tool.py patch
+     (blocks rebase in EVERY worktree) and enforces READY via
+     merge-base --is-ancestor instead of grepping rebase error text.
 4. **ALWAYS run the splits overlap self-check BEFORE building** (wave-9 build-break
    was two independent adjacent pins colliding):
    ```python
