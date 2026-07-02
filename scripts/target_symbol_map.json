@@ -13643,5 +13643,9 @@
  "0x82798278": "?MemOrPoolFreeSTL@@YAXHPAX@Z",
  "0x82797aa0": "?MemFree@@YAXPAX@Z",
  "0x82795da0": "?PoolFree@@YAXHPAX@Z",
- "0X826DBAA8": "?TambourineGems@TambourineManager@@QBAABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@XZ"
+ "0X826DBAA8": "?TambourineGems@TambourineManager@@QBAABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@XZ",
+ "0x822E4B40": "?ConfigPanels@VocalTrackDir@@QAAXXZ",
+ "0x8270C188": "?SyncPacked@ADSRImpl@@QAAXXZ",
+ "0x8270C1D0": "?Load@ADSRImpl@@QAAXAAVBinStream@@PAVADSR@@@Z",
+ "0x8270C060": "?Set@Ps2ADSR@@QAAXABVADSRImpl@@@Z"
 }
