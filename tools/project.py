@@ -492,6 +492,11 @@ def generate_build_ninja(
         name="download_tool",
         command=f"$python {download_tool} $tool $out --tag $tag",
         description="TOOL $out",
+        # restat: in worktrees the download edge re-fires once (no .ninja_log
+        # entry) but the setup-script-patched download_tool.py no-ops when the
+        # output already exists; restat lets ninja see the unchanged mtime and
+        # skip dirtying downstream compile edges for that run. Matches dc3.
+        restat=True,
     )
 
     decompctx = config.tools_dir / "decompctx.py"
