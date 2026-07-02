@@ -265,7 +265,17 @@ void Splash::Draw() {
                     TheRnd.EndDrawing();
                 }
 #endif
+#ifdef HX_NATIVE
             } else if (mCurrentCam) {
+#else
+            }
+            // The cam-draw loop runs unconditionally after the movie block in
+            // the original (non-native) build: when a movie is present and its
+            // Poll() succeeds, control falls THROUGH into this loop (the target
+            // `bne` after Movie::Poll jumps into the loop head, not past it), and
+            // there is no `mCurrentCam` null-guard before the loop.
+            {
+#endif
                 int i = 0;
                 do {
                     TheRnd.BeginDrawing();
@@ -275,7 +285,10 @@ void Splash::Draw() {
                     if (mCurrentMovie != NULL) break;
                 } while (mCurrentTrigger == NULL && ++i < 2);
                 if (mCurrentMovie == NULL && mCurrentTrigger == NULL) {
-                    TheNgRnd.Resume();
+                    // Cross-dispatch: splash hands the device back to the main
+                    // renderer, which SUSPENDS here (target dispatches
+                    // vtable+0x114 = NgRnd::Suspend).
+                    TheNgRnd.Suspend();
                 }
             }
             mHasDrawn = 1;

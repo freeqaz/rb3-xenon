@@ -316,7 +316,9 @@ void ManageBandPanel::QueueRewardVignette(Symbol s) {
 #pragma dont_inline on
 BEGIN_HANDLERS(ManageBandPanel)
     HANDLE_ACTION_STATIC(set_profile, SetProfile(_msg->Obj<BandProfile>(2)))
-    HANDLE_ACTION_STATIC(clear_profile, ClearProfile())
+    // retail X360 drops the Wii dev build's HANDLE_ACTION_STATIC(clear_profile,
+    // ClearProfile()) here (18 vs 19 Symbol ctors; later guard bits shift by
+    // one; the surviving handler body reads + returns mProfile = get_profile)
     HANDLE_EXPR_STATIC(get_profile, GetProfile())
     HANDLE_EXPR_STATIC(get_band_logo_tex, GetBandLogoTex())
     HANDLE_ACTION_STATIC(refresh_to_main_state, RefreshToMainState())

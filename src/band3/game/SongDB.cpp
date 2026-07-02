@@ -492,10 +492,8 @@ int SongDB::GetSoloGemCount(int track) const {
 
 int SongDB::GetSustainGemCount(int track) const {
     int count = 0;
-    GameGemList *gemList = mSongData->GetGemList(track);
-    for (std::vector<GameGem>::iterator it = gemList->mGems.begin();
-         it != gemList->mGems.end();
-         ++it) {
+    std::vector<GameGem> &gems = mSongData->GetGemList(track)->mGems;
+    for (std::vector<GameGem>::iterator it = gems.begin(); it != gems.end(); ++it) {
         if (!it->mIgnoreDuration)
             count++;
     }

@@ -269,7 +269,7 @@ void RndGenerator::Generate(float frame) {
     if (scale < mScaleGenHigh)
         scale = RandomFloat(scale, mScaleGenHigh);
     inst.scale.Set(scale, scale, scale);
-    mInstances.push_back(inst);
+    mInstances.push_front(inst);
     if (mParticleSys) {
         mCurParticle = mParticleSys->AllocParticle();
         mParticleSys->InitParticle(mCurParticle, NULL);

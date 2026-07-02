@@ -1,5 +1,6 @@
 #include "SynapseAPO.h"
 #include "Synapse_dsp.h"
+#include "oggvorbis/VorbisMem.h"
 
 extern "C" void XMemSet(void* dst, int val, int size);
 
@@ -14,8 +15,12 @@ SynapseAPO::SynapseAPO() : ATG::CSampleXAPOBase<SynapseAPO, SynapseAPOParams>(),
 }
 
 SynapseAPO::~SynapseAPO() {
-    if (mSynapse) {
-        delete mSynapse;
+    // Retail destroys in place and frees through the ogg allocator
+    // (target: bl ??1Synapse then bl OggFree, no operator delete).
+    Synapse::Synapse* synapse = mSynapse;
+    if (synapse) {
+        synapse->~Synapse();
+        OggFree(synapse);
     }
 }
 

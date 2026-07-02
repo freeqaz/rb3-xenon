@@ -38,7 +38,8 @@ public:
     public:
         SpotMeshEntry() : mCanMesh(0), mEnvMesh(0), mSpotlight(0) {}
         SpotMeshEntry &operator=(const SpotMeshEntry &o) {
-            memcpy(this, &o, sizeof(*this));
+            const SpotMeshEntry *src = &o;
+            memcpy(this, src, sizeof(*this));
             return *this;
         }
         RndMesh *mCanMesh;

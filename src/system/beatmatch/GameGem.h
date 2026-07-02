@@ -172,4 +172,7 @@ public:
     int mRGChordID;
     Symbol mChordNameOverride;
     unsigned char mImportantStrings;
+    // Retail X360 GameGem is 0x44 bytes (mulli/stride 0x44 in GemPlayer +
+    // SongDB target asm); rb3-Wii dev header ends at 0x2c. Unknown tail fields.
+    int unk2c[6]; // 0x2c
 };
