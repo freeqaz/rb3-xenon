@@ -3451,3 +3451,6 @@ QuestManager.cpp:
 SongSortNode.cpp:
 	.pdata      start:0x82225B38 end:0x82225B40
 	.text       start:0x82643AE8 end:0x82643BD0
+StatCollector.cpp:
+	.pdata      start:0x8222E4C0 end:0x8222E4C8
+	.text       start:0x826D7970 end:0x826D79C0
