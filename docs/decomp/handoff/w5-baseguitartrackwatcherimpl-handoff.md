@@ -112,3 +112,68 @@ target addresses.
 - `config/45410914/splits.txt` (GuitarController carve + BGTWI block)
 - `scripts/target_symbol_map.json` (ADD-ONLY, +4 pins)
 - `docs/decomp/handoff/w5-baseguitartrackwatcherimpl-handoff.md` (this doc)
+
+---
+
+## AUDIT VERDICT (wave-5 auditor, 2026-07-02) — **CLEAR**
+
+Independently re-verified in this worktree (objdiff-cli-direct, JSON→file; direct
+cl.exe compile-gate; instruction-level residual inspection). Every lane claim
+reproduces. Landable as-is through the normal land.sh flow — **with the two
+coordinator MUST-DOs below (already documented above; restated as land gates).**
+
+### 1. Pins re-verified (all 4 reproduce, size-exact)
+| fn | tgt/base size | normalized | score | note |
+|---|---|---|---|---|
+| Slop | 80/80 | **100.0000** | 0/2000 | true 100 (callee CanHopo pinned) |
+| CanHopo | 240/240 | 99.8333 | 10/6000 | report-normalized-100 |
+| TryToHopo | 580/580 | 99.8621 | 20/14500 | report-normalized-100 |
+| NonStrumSwing | 204/204 | 99.8039 | 10/5100 | report-normalized-100 |
+
+### 2. Honesty gate — PASS (residuals are 100% source-immune)
+Instruction-by-instruction diff of every non-`equal` row confirms the ENTIRE
+residual is `bl`-target *naming*, not code:
+- CanHopo: idx10 `bl fn_82769D48` / idx14 `bl fn_82769DFC` ↔ base names
+  `GameGem::IsRealGuitar` / `GameGem::RightHandTap` (other unit, unnamed in map).
+- TryToHopo: idx29/33/50 `bl fn_82767E08/fn_82767E18/fn_82771208` ↔
+  `GameGemList::TimeAt` / `TimeAtNext` / `TrackWatcherImpl::Playable`; idx24 is an
+  intra-unit `bl CanHopo` (same name BOTH sides).
+- NonStrumSwing: idx39 `bl fn_8276FC98` ↔ `TrackWatcherImpl::IsTrillActive`;
+  idx47 intra-unit `bl TryToHopo` (same name BOTH sides).
+Branch **addresses are identical** on both sides — only the symbol objdiff prints
+differs (unnamed cross-unit callees). Standard report-normalized-100.
+
+**No ICF/sibling-aliasing.** These are large real-bodied fns (240/580/204/80B)
+with distinct call graphs, not ≤44B stub-folds → structurally cannot be
+stub-fold inflation. Ownership proven: the ported source's call graph
+(CanHopo→IsRealGuitar/RightHandTap; TryToHopo→CanHopo/TimeAt/TimeAtNext/Playable;
+NonStrumSwing→IsTrillActive/TryToHopo) matches the TARGET disasm's `bl` targets
+exactly → the pinned addresses house genuine BGTWI code (own, not foreign).
+(icf_alias_check --range/--worktree needs a fresh whole-binary report, which is
+owner-contended and off-limits in-lane; the direct evidence above is conclusive.)
+
+### 3. Map + splits — clean
+- Map diff vs 5cb96d4: **ADD-ONLY +4** (3 sorted-head + CanHopo at tail). No edits/removals.
+- Splits overlap self-check: **0 pdata / 0 text overlaps.** Carve is complementary
+  to GuitarController (function-boundary-exact, full original range covered, no gaps).
+- objects.json: +1 NonMatching wire (BGTWI after TrackWatcherImpl). GameGem.h
+  byte-identical to main HEAD `aa58cee` → clean rebase dedup.
+- Commit `ba763ce` touches only the 7 declared paths; **no forbidden/owner file**
+  (TourSavable/global_fuzzy_pairs/auto_*.obj/etc.) touched; global_fuzzy_pairs.json
+  correctly left untracked.
+
+### 4. Compile-gate — PASS (direct cl.exe, no audit-time drift). MILO_DEBUG: N/A
+(no MILO_DEBUG conditionals in this TU; the only sizeof lever is GameGem 0x44, handled).
+
+### ⛳ COORDINATOR LAND GATES (must-do, do not shallow-merge)
+1. **GuitarController.cpp splits union with the sibling w5 TrackWatcher lane.**
+   BOTH lanes rewrite the SAME unit's existing splits block (this lane carves
+   0x8277CFE0-0x8277D0D0 + 0x8277D278-0x8277D5E0; sibling carves ~0x82778738-…).
+   The carves are DISJOINT, but this is TWO independent MODIFICATIONS of the same
+   block — the additive "theirs-added" resolver may NOT merge it cleanly. Union by
+   hand if needed, **re-run the 0-overlap self-check**, and (per the 7951cb5
+   unit-attribution incident) **confirm each of the 4 pins reports in
+   `default/BaseGuitarTrackWatcherImpl`, not `default/GuitarController`,** on the
+   composed build.
+2. **Rebase onto current main for GameGem 0x44** (trivial — worktree GameGem.h ==
+   main HEAD; hunk dedupes). Pins are only valid on a 0x44 build.
