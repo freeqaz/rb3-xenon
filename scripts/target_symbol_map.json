@@ -13762,5 +13762,7 @@
  "0X82646220": "?Insert@ShortcutNode@@QAAXPAVLeafSortNode@@PAVNodeSort@@@Z",
  "0x82693ff0": "?ToggleGuidePart@PracticePanel@@QAAXXZ",
  "0x82b79348": "?ReleaseSlot@Gem@@QAAXH@Z",
- "0x82b79d18": "?RemoveAllInstances@Gem@@QAAXXZ"
+ "0x82b79d18": "?RemoveAllInstances@Gem@@QAAXXZ",
+ "0x82b78200": "?AllowsOverlappingGems@TrackConfig@@QBA_NXZ",
+ "0x82b78288": "?IsRealGuitarTrack@TrackConfig@@QBA_NXZ"
 }

@@ -760,6 +760,7 @@
    "band3/bandtrack/GemTrack.cpp": "NonMatching",
    "band3/bandtrack/GemManager.cpp": "NonMatching",
    "band3/bandtrack/Gem.cpp": "NonMatching",
+   "band3/bandtrack/TrackConfig.cpp": "NonMatching",
    "band3/bandtrack/TrackPanel.cpp": "NonMatching",
    "band3/bandtrack/Tail.cpp": "NonMatching",
    "band3/game/BandUser.cpp": "NonMatching",
