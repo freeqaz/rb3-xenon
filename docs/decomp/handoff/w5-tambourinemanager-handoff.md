@@ -96,3 +96,41 @@ Files touched: `src/band3/game/TambourineManager.cpp` (new), `config/45410914/ob
 - After land: grep `TambourineManager.cpp` in objects.json survived (shallow-union
   incident guard); confirm 0x826dbaa8 + 0x826dd6f0 report inside `TambourineManager`
   unit (not a foreign one). Both pins byte/size verified.
+
+## AUDIT (WAVE-5 auditor, 2026-07-02) — VERDICT: DEFER
+Re-verified independently in this worktree (per-fn objdiff-cli-direct, JSON→file;
+build via `tools/ninja-locked` single-target, no whole-binary build):
+- **TambourineGems @0x826dbaa8 — CONFIRMED true-100 strict.** normalized=100.0,
+  raw=100.0, target=base=24B, diff_score 0/600. dtk auto-split gives a real 0x18
+  fn boundary there; VA absent from `icf_aliases.map` (not a fold survivor); the
+  24B getter's `0x28→0x390→0→8→+0x24` chain is layout-specific to TambourineManager
+  and is the SAME chain inlined into the adjacent HandleButtonDown (own-body, not a
+  foreign stub-fold). Honest +1 strict.
+- **HandleButtonDown @0x826dd6f0 — proven identity, but report %=99.22, NOT 100.**
+  normalized=raw=99.21875, target=base=256B, diff_score 50/6400. All 64 instrs
+  match opcode+register; every one of the 10 diffs is reloc-NAMING only (sdata
+  `lbl_82DA0017`↔TheProfileMgr/TheTaskMgr; unnamed callees fn_82532E30=GetSyncOffset,
+  fn_82722928=Seconds, fn_826DD580=TambourineSwing; rodata `lbl_820010A8`=1000.0f;
+  and the `Movie::Terminate`↔`MsToTick` ICF fold). Identity is CERTAIN (size-exact,
+  unique body, adjacency) — NOT a guess. dtk gives a real 0x100 fn boundary; VA
+  absent from icf_aliases.map.
+- Compile-gate re-run (direct cl.exe 16.00.11886.00): PASS (only benign C4005/C4003
+  macro-redef warnings; 94KB obj). Splits carve re-checked arithmetically: DepthBuffer3D
+  `.text[0x826D9F60,0x826DE1E0)` + `.pdata[0x8222E610,0x8222E9B0)` fully covered,
+  0 overlaps / 0 gaps, both TambourineManager fragments bounded by both neighbours.
+  Map diff is ADD-only (2 lowercase-hex entries). objects.json +1 NonMatching.
+  `global_fuzzy_pairs.json` correctly untracked. No MILO_DEBUG members in this TU.
+- **WHY DEFER (one coordinator/owner call needed):** the HandleButtonDown map entry
+  sits in the ADD-ONLY `target_symbol_map.json` at report ~99.22 — below the stated
+  HARD LINE ("map pins only at true-100 or report-normalized-100 with size-exact").
+  The lane's own note concedes it "likely stays ~99.2 in the report" and "counts
+  fuzzy not strict." It fits the owner's "size-exact + reloc-only → note it, don't
+  drop it" class and is a CORRECT name (helps downstream bl relocs resolve), so the
+  auditor recommends KEEPING it — but whether a proven-but-sub-report-100 identity
+  may occupy an add-only map slot is an owner-policy call, not the auditor's.
+  RECOMMENDED RESOLUTION: land the port + TambourineGems strict pin + wiring/splits
+  as-is (all CLEAR); keep the HandleButtonDown map line as a named-fuzzy pin (it will
+  trend to report-100 once GetSyncOffset/Seconds/TambourineSwing/the sdata globals
+  are named and the MsToTick↔Movie::Terminate ICF group is registered in
+  symbol_aliases.json); drop ONLY that one map line if the landing gate strictly
+  enforces report-100 for map entries. Nothing here is dishonest or broken.
