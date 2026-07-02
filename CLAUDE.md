@@ -184,6 +184,24 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
   `/I src/system`, so a file at `src/os/Foo.h` will shadow `src/system/os/Foo.h`.
   (A stub `src/os/Debug.h` once shadowed the real engine `Debug.h` and broke
   every macro-using header — don't reintroduce stubs at `src/` root.)
+- **PCH (precompiled header, dc3 port).** 9 engine dirs (`hamobj synth flow
+  gesture meta obj os utl movie`, ~281 TUs under `src/system`) compile through a
+  `/Yc//Yu` PCH at `build/45410914/pch/system.pch`, built from
+  `src/system/decomp_pch.h` (= only `obj/Object.h` + `os/Debug.h`). Config lives in
+  `configure.py` (`config.pch_header/pch_source/pch_eligible_dirs`); the
+  `msvc_pch_create`//`msvc_pch` rules + PCH edge + per-object eligibility switch are
+  in `tools/project.py`. `deps="msvc"` makes ninja auto-track the PCH's headers, so
+  touching `os/Debug.h` rebuilds the PCH and cascades to all eligible objs (proven
+  staleness chain). **Matching-safe, gated:** whole-binary `matched_functions` is
+  equal PCH-on vs PCH-off (W1-C worktree A/B + re-verified on main). NOTE: unlike
+  dc3, `/FI"decomp_pch.h"` here is NOT strict-`.text`-byte-identical (it perturbs
+  *untracked* helper/template inlining) — that is why `char rndobj world ui` are
+  **excluded** (they regressed tracked matches, net -10); do not add them without a
+  fresh 3-gate A/B. **`decomp_pch.h` is codegen-load-bearing — keep it sacred**
+  (Object.h + Debug.h only; native-only edits must be `#ifdef HX_NATIVE`).
+  **Instant disable:** `config.pch_eligible_dirs = set()` in `configure.py` +
+  `python3 configure.py` → every TU reverts to the plain `msvc` rule, byte-identical
+  to pre-PCH (`decomp_pch.h/.cpp` stay, unreferenced).
 
 ## Known issues / expected noise
 

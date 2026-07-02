@@ -189,6 +189,10 @@ class ProjectConfig:
             True  # Generate compile_commands.json for clangd
         )
         self.extra_clang_flags: List[str] = []  # Extra flags for clangd
+        # Precompiled header (PCH) support (ported from dc3-decomp)
+        self.pch_header: Optional[str] = None       # e.g. "decomp_pch.h"
+        self.pch_source: Optional[Path] = None      # e.g. Path("src/system/decomp_pch.cpp")
+        self.pch_eligible_dirs: Optional[Set[str]] = None  # parent-dir basenames eligible for PCH
         self.scratch_preset_id: Optional[int] = (
             None  # Default decomp.me preset ID for scratches
         )
@@ -780,6 +784,28 @@ def generate_build_ninja(
     )
     n.newline()
 
+    # MSVC PCH create rule (ported from dc3 tools/project.py:777-789)
+    msvc_pch_create_cmd = msvc_cmd.replace(
+        "$cflags /showIncludes /Fo$out $in",
+        '/Yc"decomp_pch.h" /Fp$pch_out $cflags /showIncludes /Fo$out $in',
+    )
+    n.comment("MSVC PCH create")
+    n.rule(name="msvc_pch_create", command=msvc_pch_create_cmd,
+           description="PCH $pch_out", deps="msvc")
+    n.newline()
+
+    # MSVC build-with-PCH rule (ported from dc3 tools/project.py:792-803)
+    msvc_pch_cmd = msvc_cmd.replace(
+        "$cflags /showIncludes /Fo$out $in",
+        '/Yu"decomp_pch.h" /FI"decomp_pch.h" /Fp$pch_file $cflags /showIncludes /Fo$out $in',
+    )
+    n.comment("MSVC build with PCH")
+    n.rule(name="msvc_pch", command=msvc_pch_cmd, description="MSVC $out", deps="msvc")
+    n.newline()
+
+    assert "/Yc" in msvc_pch_create_cmd and "/Yu" in msvc_pch_cmd, \
+        "PCH replace anchor missing from msvc_cmd"
+
     # n.comment("MWCC build (with UTF-8 to Shift JIS wrapper)")
     # n.rule(
     #     name="mwcc_sjis",
@@ -870,6 +896,37 @@ def generate_build_ninja(
 
     # Add all build steps needed before we compile (e.g. processing assets)
     write_custom_step("pre-compile")
+
+    ###
+    # PCH build edge
+    ###
+    pch_path: Optional[Path] = None
+    if config.pch_source and config.pch_header:
+        pch_dir = build_path / "pch"
+        pch_path = pch_dir / "system.pch"
+        pch_obj = pch_dir / "decomp_pch.obj"
+        # The PCH MUST compile with the SAME flags eligible TUs use. All eligible
+        # libs share the resolved 'base' cflags (objects.json: every lib uses
+        # cflags key 'base'; zero per-object overrides), so take the 'engine'
+        # lib's cflags + /TP -- byte-identical to what c_build produces for an
+        # eligible .cpp. Do NOT absolutize /I (dc3 does; we must not): consuming
+        # compiles use relative /I from the repo-root cwd and MSVC's PCH
+        # consistency check requires create/use include sets to match exactly.
+        pch_cflags_str = ""
+        if config.libs:
+            pch_lib = next((l for l in config.libs if l["lib"] == "engine"), config.libs[0])
+            pch_cflags_str = make_flags_str([*pch_lib["cflags"], "/TP"])
+        n.comment("Precompiled header")
+        n.build(
+            outputs=[pch_obj],
+            rule="msvc_pch_create",
+            inputs=config.pch_source,
+            implicit=[*mwcc_implicit],
+            implicit_outputs=[pch_path],
+            variables={"cflags": pch_cflags_str, "pch_out": str(pch_path.resolve())},
+            order_only="pre-compile",
+        )
+        n.newline()
 
     ###
     # Source files
@@ -1020,13 +1077,28 @@ def generate_build_ninja(
                 build_rule = "mwcc_extab"
                 build_implcit = mwcc_extab_implicit
                 variables["extab_padding"] = "".join(f"{i:02x}" for i in obj.options["extab_padding"])
+
+            # Use PCH for eligible files (plain msvc rule, C++ mode, eligible dir)
+            pch_implicit: List[Optional[Path]] = []
+            if (
+                pch_path is not None
+                and build_rule == "msvc"
+                and file_is_cpp(src_path)
+                and "/TC" not in all_cflags
+                and config.pch_eligible_dirs
+                and src_path.parent.name in config.pch_eligible_dirs
+            ):
+                build_rule = "msvc_pch"
+                variables["pch_file"] = str(pch_path.resolve())
+                pch_implicit = [pch_path]
+
             n.comment(f"{obj.name}: {lib_name} (linked {obj.completed})")
             n.build(
                 outputs=obj.src_obj_path,
                 rule=build_rule,
                 inputs=src_path,
                 variables=variables,
-                implicit=build_implcit,
+                implicit=[*build_implcit, *pch_implicit],
                 order_only="pre-compile",
             )
 

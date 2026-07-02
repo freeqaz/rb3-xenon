@@ -437,6 +437,19 @@ config.linker_version = "X360/16.00.11886.00"
 config.shift_jis = False
 config.progress_all = False
 
+# Precompiled header (PCH): engine dirs whose tracked functions are unaffected
+# by /FI"decomp_pch.h" force-including Object.h. dc3's full engine set minus the
+# four dirs that regress tracked matches on rb3-xenon (char, rndobj, world, ui);
+# see W1-C gate evidence. /FI changes inlining of *untracked* helper/template
+# code (dc3 saw byte-identical .text; rb3-xenon does not), but no tracked
+# function in these nine dirs changes match% (Gate-2/3 per-function equality).
+config.pch_header = "decomp_pch.h"
+config.pch_source = Path("src/system/decomp_pch.cpp")
+config.pch_eligible_dirs = {
+    "hamobj", "synth", "flow", "gesture", "meta",
+    "obj", "os", "utl", "movie",
+}
+
 # Post-compile patchers: run after all .obj files are compiled, before linking.
 # These patch decomp .obj files to match original binary patterns (anonymous
 # namespace hashes, ??__E dynamic initializers, $S guard variables, bool
