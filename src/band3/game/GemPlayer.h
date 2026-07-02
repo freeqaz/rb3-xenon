@@ -484,23 +484,22 @@ public:
     float unk390;
     float unk394;
     int unk398;
-    int unk39c;
-    int unk3a0;
-    bool unk3a4;
-    bool unk3a5;
-    bool unk3a6;
-    bool unk3a7;
-    bool unk3a8;
-    float unk3ac;
-    float mAutoMissSoundTimeoutMs; // 0x3b0
-    float mFirstGemMs; // 0x3b4
-    bool mAnnoyingMode; // 0x3b8
-    bool unk3b9;
-    int unk3bc;
-    int unk3c0;
-    int mAutoMissSoundTimeoutGems; // 0x3c4
-    int mAutoMissSoundTimeoutGemsRemote; // 0x3c8
-    StatCollector mStatCollector; // 0x3cc
+    // NOTE: retail Xbox drops the Wii guitar-FX-core block that lived here
+    // (unk39c FXCore index, unk3a0 mFxPos cache, unk3a4/unk3a8 SetFX/SetReverb
+    // gate bools). Xbox routes guitar FX through mPitchShift (0x38c) instead, so
+    // these 16 bytes are absent in the retail layout — verified against the
+    // retail disassembly (member-delta R1). Everything below is therefore 0x10
+    // lower than the old Wii-derived comments.
+    float unk3ac; // 0x3a0
+    float mAutoMissSoundTimeoutMs; // 0x3a4
+    float mFirstGemMs; // 0x3a8
+    bool mAnnoyingMode; // 0x3ac
+    bool unk3b9; // 0x3ad
+    int unk3bc; // 0x3b0
+    int unk3c0; // 0x3b4
+    int mAutoMissSoundTimeoutGems; // 0x3b8
+    int mAutoMissSoundTimeoutGemsRemote; // 0x3bc
+    StatCollector mStatCollector; // 0x3c0
     bool unk3d8;
     int unk3dc;
     bool unk3e0;

@@ -61,16 +61,17 @@ public:
     float mVolume; // 0x34
     bool mLoop; // 0x38
     bool mPreload; // 0x39
-    StandardStream *mStream; // 0x3c
-    float mPlaybackVolumeOffset; // 0x40
-    void *mData; // 0x44
-    int mSize; // 0x48
-    FileLoader *mLoader; // 0x4c
-    std::vector<Fader *> mFaders; // 0x50
-    std::vector<PanInfo> mPanInfo; // 0x58
-    Fader *mFadeOutFader; // 0x60
-    bool mFadingOut; // 0x64
-    bool mUnloadWhenFinishedPlaying; // 0x65
-    bool mPlaying; // 0x66
-    Loader *mStreamLoader; // 0x68
+    int mUnk3c; // 0x3c — retail RB3-360 member absent from the rb3-Wii decomp (member-delta R1)
+    StandardStream *mStream; // 0x40
+    float mPlaybackVolumeOffset; // 0x44
+    void *mData; // 0x48
+    int mSize; // 0x4c
+    FileLoader *mLoader; // 0x50
+    std::vector<Fader *> mFaders; // 0x54
+    std::vector<PanInfo> mPanInfo; // 0x5c
+    Fader *mFadeOutFader; // 0x64
+    bool mFadingOut; // 0x68
+    bool mUnloadWhenFinishedPlaying; // 0x69
+    bool mPlaying; // 0x6a
+    Loader *mStreamLoader; // 0x6c
 };

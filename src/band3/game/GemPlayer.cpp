@@ -143,8 +143,8 @@ GemPlayer::GemPlayer(
       mGuitarOverlay(RndOverlay::Find("guitar", true)), unk348(0), unk354(0), unk358(0),
       unk35c(0), mLastTimeWhammyVelWasHigh(-10000.0f), unk364(0), mTrack(0),
       mController(0), mSyncOffset(0), mGuitarFx(0), mKeysFx(0), mFxPos(4), unk388(0),
-      mPitchShift(0), unk390(0), unk394(0), unk398(0), unk39c(-1), unk3a0(-1), unk3a4(0),
-      unk3a8(0), unk3ac(0), mAutoMissSoundTimeoutMs(kHugeFloat), mFirstGemMs(0),
+      mPitchShift(0), unk390(0), unk394(0), unk398(0),
+      unk3ac(0), mAutoMissSoundTimeoutMs(kHugeFloat), mFirstGemMs(0),
       mAnnoyingMode(0), unk3b9(0), unk3bc(0), unk3c0(0),
       mAutoMissSoundTimeoutGems(100000), mAutoMissSoundTimeoutGemsRemote(100000),
       mStatCollector(*this), unk3d8(0), unk3dc(-1), unk3e0(0), unk3e1(0),
@@ -199,10 +199,7 @@ GemPlayer::GemPlayer(
         mGuitarFx = new GuitarFx(ty);
         mGuitarFx->Load();
         SetGuitarFx();
-        if (ty == 1) {
-            unk39c = 1;
-            // TheWiiFX.SetFX(1, mFxPos); // Wii-only
-        }
+        // (Wii-only guitar FXCore init removed — retail Xbox has no unk39c member)
     }
     if (ty - 4U <= 1 && !TheGame->mProperties.mDisableKeysFx) {
         mKeysFx = new KeysFx(ty);
@@ -1147,10 +1144,7 @@ void GemPlayer::Poll(float ms, const SongPos &pos) {
                 mFxPos = force_guitar_fx.Int(0) - 1;
             }
 
-            if (mFxPos != unk3a0) {
-                // TheWiiFX.SetFX(unk39c, mFxPos); // Wii-only
-                unk3a0 = mFxPos;
-            }
+            // (Wii-only mFxPos->FXCore cache removed — retail Xbox has no unk3a0)
 
             if (TheGame->mProperties.mEnableWhammy) {
                 int fxBank = 4;
@@ -1164,27 +1158,8 @@ void GemPlayer::Poll(float ms, const SongPos &pos) {
                 );
             }
 
-            if (/*!TheWiiFX.IsReverb(unk39c == 0) &&*/ deploying) { // Wii-only FX check removed
-                // TheWiiFX.SetReverb(unk39c == 0, true); // Wii-only
-            }
-
-            if (!unk3a8 && deploying) {
-                // TheWiiFX.SetReverb(unk39c == 0, true); // Wii-only
-                unk3a8 = true;
-            } else if (unk3a8 && !deploying) {
-                // TheWiiFX.SetReverb(unk39c == 0, false); // Wii-only
-                unk3a8 = false;
-            }
-
-            if (mTrackType == kTrackGuitar) {
-                if (!unk3a4 && (deploying || soloFx)) {
-                    unk3a4 = true;
-                    mBeatMaster->GetAudio()->SetFX(mTrackNum, (FXCore)unk39c, true);
-                } else if (unk3a4 && !deploying && !soloFx) {
-                    unk3a4 = false;
-                    mBeatMaster->GetAudio()->SetFX(mTrackNum, (FXCore)unk39c, false);
-                }
-            }
+            // (Wii-only guitar-FX-core reverb/SetFX routing removed — retail Xbox
+            //  has no unk39c/unk3a4/unk3a8 members; it uses mPitchShift instead.)
         }
 
         if (mKeysFx && !TheGame->mProperties.mDisableKeysFx) {

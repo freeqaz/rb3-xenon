@@ -437,3 +437,27 @@ on the table.
    `tools/gen_game_target_map.py` internals.
 4. Master doc still says main @44f57c6 / 10,870 — needs a state-refresh pass
    once today's landing wave stops (10,936 @385182b as of this writing).
+
+# R1 execution results (exec/r1-member-delta-0702, 2026-07-02)
+
+R1 member-delta apply mini-wave executed and reviewed (handoff:
+`docs/decomp/handoff/exec-r1-member-delta-run-2026-07-02.md`). Composed A/B:
+**10,936 → 10,941 (+5 strict, 0 regressions)**.
+
+- **GemPlayer −0x10: LANDED (+3).** Phantom = the Wii guitar-FX-core block
+  (unk39c/unk3a0/unk3a4-a8); retail Xbox drops it and routes FX via
+  mPitchShift. Verified by direct retail disassembly, not oracle inference.
+- **BinkClip +0x4: LANDED (+2).** New retail-360-only 4-byte member at 0x3c
+  (absent in both rb3-Wii and DC3 — DC3 lacks BinkClip entirely).
+- **OvershellSlot −0x8: KILLED (coupled-code).** All drop candidates are used
+  by the compiled .cpp; needs a full Wii→360 body port, no retail oracle.
+- **CameraManager −0x30: KILLED (coupled-base).** DC3 promoted it to
+  Hmx::Object (+0x24) and inserted a 12-byte blend block; retail is a
+  non-Object class embedded by value in WorldDir — architectural wall.
+
+Answers to open questions 1-2 above: (1) GemPlayer was a single contiguous
+16-byte used-member block, settled by retail disasm; (2) the two walls are
+INDEPENDENT (one coupled-code in game UI, one coupled-base in engine world),
+not a shared base delta. **Member-delta lever now CLOSED** — all 4 mdf2
+candidates dispositioned; re-run the finder only after the next ≥ +500
+strict refill.
