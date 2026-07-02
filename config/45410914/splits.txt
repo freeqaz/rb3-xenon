@@ -3547,3 +3547,7 @@ EndingBonus.cpp:
 	.text       start:0x822C25C0 end:0x822C2610
 	.text       start:0x822C2610 end:0x822C2690
 	.text       start:0x822C2FE8 end:0x822C3064
+
+NoteTube.cpp:
+	.pdata      start:0x82257AE0 end:0x82257B00
+	.text       start:0x82BF6570 end:0x82BF6938

@@ -13664,5 +13664,11 @@
  "0X8277D278": "?Slop@BaseGuitarTrackWatcherImpl@@UAAMH@Z",
  "0X8277D2C8": "?TryToHopo@BaseGuitarTrackWatcherImpl@@QAAXMH_N0@Z",
  "0X8277D510": "?NonStrumSwing@BaseGuitarTrackWatcherImpl@@UAAXH_N0@Z",
- "0X8277CFE0": "?CanHopo@BaseGuitarTrackWatcherImpl@@QBA_NH@Z"
+ "0X8277CFE0": "?CanHopo@BaseGuitarTrackWatcherImpl@@QBA_NH@Z",
+ "0x82bf6570": "?CurrentStartX@TubePlate@@QBAMM@Z",
+ "0x82bf6580": "?CurrentEndX@TubePlate@@QBAMM@Z",
+ "0x82bf6598": "?SetDeployTiming@NoteTube@@QAAXMM@Z",
+ "0x82bf65d0": "?InitializePlate@NoteTube@@QAAXPAVTubePlate@@PAVRndMat@@PAVRndGroup@@@Z",
+ "0x82bf6818": "?PollDeploy@TubePlate@@QAAXM@Z",
+ "0x82bf68a0": "?SetPointPos@NoteTube@@QAAXHVVector3@@@Z"
 }
