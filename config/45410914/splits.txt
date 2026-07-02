@@ -3438,3 +3438,7 @@ NextSongPanel.cpp:
 DirectInstrument.cpp:
 	.pdata      start:0x8222D7C8 end:0x8222D7D0
 	.text       start:0x826C4890 end:0x826C48F4
+
+PerformanceData.cpp:
+	.pdata      start:0x822250A8 end:0x822250B0
+	.text       start:0x8263B038 end:0x8263B0F8
