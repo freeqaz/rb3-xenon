@@ -1078,7 +1078,7 @@ UIListWidget.cpp:
 	.pdata      start:0x8223F188 end:0x8223F190
 	.text       start:0x827FBA80 end:0x827FBB08
 
-Synth.cpp:
+system/synth_xbox/Synth.cpp:
 	.pdata      start:0x82251C18 end:0x82251C40
 	.text       start:0x82B2E770 end:0x82B2EE00
 
@@ -3643,3 +3643,9 @@ TrackConfig.cpp:
 	.pdata      start:0x82255190 end:0x82255198
 	.text       start:0x82B78200 end:0x82B78254
 	.text       start:0x82B78288 end:0x82B782C8
+
+system/synth/Synth.cpp:
+	.pdata      start:0x8222EA98 end:0x8222EAA0
+	.pdata      start:0x8222EAB0 end:0x8222EAB8
+	.text       start:0x826DEA48 end:0x826DEAA8
+	.text       start:0x826DEB30 end:0x826DEBC8

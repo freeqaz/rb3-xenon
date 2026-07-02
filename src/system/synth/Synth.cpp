@@ -223,7 +223,7 @@ void Synth::Poll() {
         }
     }
     if (mMuted)
-        mMasterFader->SetVolume(-96.0f);
+        mMasterFader->SetVal(-96.0f);
     SynthPollable::PollAll();
     if (DidMicsChange()) {
         MILO_ASSERT(mMicClientMapper, 0x14E);
@@ -301,12 +301,12 @@ float Synth::UpdateOverlay(RndOverlay *o, float y) {
     float f24 = (float)TheRnd.Width() * (y + 0.265f);
     if (mDebugStream) {
         DrawMeterScale(f24);
-        float volume = mDebugStream->Faders()->GetVolume();
+        float volume = mDebugStream->Faders()->GetVal();
         DrawMeter(f24, volume, 0, "stream");
         for (int i = 0; i < mDebugStream->GetNumChannels(); i++) {
             DrawMeter(
                 f24,
-                mDebugStream->ChannelFaders(i).GetVolume(),
+                mDebugStream->ChannelFaders(i)->GetVal(),
                 0,
                 MakeString("chan %i", i)
             );
@@ -337,15 +337,13 @@ float Synth::UpdateOverlay(RndOverlay *o, float y) {
     return f12 / (float)TheRnd.Width();
 }
 
-void Synth::SetMasterVolume(float volume) { mMasterFader->SetVolume(volume); }
+void Synth::SetMasterVolume(float volume) { mMasterFader->SetVal(volume); }
 
-float Synth::GetMasterVolume() { return mMasterFader->DuckedValue(); }
+float Synth::GetMasterVolume() { return mMasterFader->GetVal(); }
 
 void Synth::ToggleHud() {
     mHud->SetShowing(!mHud->Showing());
-    if (!mTrackLevels) {
-        EnableLevels(mHud->Showing());
-    }
+    EnableLevels(mHud->Showing());
 }
 
 const ADSRImpl *Synth::DefaultADSR() {
@@ -633,7 +631,7 @@ void SynthInit() {
     TheSynth->Init();
     TheSynth->SetMic(cfg->FindArray("mic"));
     TheSynth->SetFX(cfg->FindArray("fx"));
-    TheSynth->MasterFader()->SetVolume(cfg->FindFloat("master_vol"));
+    TheSynth->MasterFader()->SetVal(cfg->FindFloat("master_vol"));
     TheDebug.AddExitCallback(SynthTerminate);
     PreloadSharedSubdirs("synth");
 }

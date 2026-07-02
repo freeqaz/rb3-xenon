@@ -46,6 +46,7 @@ public:
     virtual void SetSlipSpeed(int, float) {}
     virtual FaderGroup *ChannelFaders(int);
     virtual void SetJumpSamples(int, int, const char *) {}
+    virtual void AbandonLoop() {}
 
 private:
     VarTimer mTimer; // 0x8

@@ -97,6 +97,7 @@
    "system/utl/MemHeap.cpp": "NonMatching",
    "system/obj/DataFlex.c": "NonMatching",
    "system/obj/Object.cpp": "NonMatching",
+   "system/synth/Synth.cpp": "NonMatching",
    "system/synth/DelayEffect.cpp": "NonMatching",
    "system/synth/MetaMusic.cpp": "NonMatching",
    "system/synth/Sequence.cpp": "NonMatching",
