@@ -837,6 +837,7 @@
    "band3/net_band/EntityUploader.cpp": "NonMatching",
    "band3/net_band/RockCentral.cpp": "NonMatching",
    "band3/tour/QuestFilterPanel.cpp": "NonMatching",
+   "band3/tour/QuestManager.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
    "band3/tour/TourProgress.cpp": "NonMatching",
    "band3/game/PracticePanel.cpp": "NonMatching"
