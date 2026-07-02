@@ -795,6 +795,7 @@
    "band3/meta_band/MainHubMessageProvider.cpp": "NonMatching",
    "band3/meta_band/MainHubPanel.cpp": "NonMatching",
    "band3/meta_band/ManageBandPanel.cpp": "NonMatching",
+   "band3/meta_band/NextSongPanel.cpp": "NonMatching",
    "band3/meta_band/MusicLibrary.cpp": "NonMatching",
    "band3/meta_band/NameGenerator.cpp": "NonMatching",
    "band3/meta_band/OvershellPartSelectProvider.cpp": "NonMatching",

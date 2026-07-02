@@ -3423,3 +3423,6 @@ OverdriveTracker.cpp:
 GameConfig.cpp:
 	.pdata      start:0x82228450 end:0x82228458
 	.text       start:0x8266ACA8 end:0x8266ACF4
+NextSongPanel.cpp:
+	.pdata      start:0x82224530 end:0x82224538
+	.text       start:0x8262F3A8 end:0x8262F4A4
