@@ -102,3 +102,42 @@ subtler than the usual CharEyes/GemTrackDir landmine.
 - Port: `/home/free/tmp/wt-w5-bandlist/src/system/bandobj/BandList.cpp`
 - Oracle: `cd /home/free/code/milohax/rb3 && bin/analyze-function Conceal__8BandListFv`
 - Wii source: `/home/free/code/milohax/rb3/src/system/bandobj/BandList.cpp`
+
+---
+
+## AUDIT (WAVE-5 auditor, 2026-07-02) — VERDICT: CLEAR
+
+Independently re-verified every claim; all reproduce. Landable as-is.
+
+1. **Strict claims** — lane claims 0 strict, honest. Re-diffed all 3 with
+   objdiff-cli-direct (JSON→file): per-fn norm=fuzzy `99.05 / 98.94 / 98.78`;
+   report-generate normalized `99.84 / 99.88 / 99.89`. Both views **< 100** →
+   correctly NOT map-pinned. Nothing to downgrade.
+2. **Honesty gate** — `icf_alias_check.py --tu BandList.cpp` = HONEST (empty set,
+   no 100% fns → no stub-fold/ICF inflation possible). Own-vs-foreign clean: the
+   unit contains EXACTLY the 3 own fns (sizes 76/64/72 = exact target sizes); the
+   two carved .text ranges bound them precisely (76+4pad+64=0x90; 72=0x48) — zero
+   foreign functions folded in.
+3. **Map/splits** — `scripts/target_symbol_map.json` + `config/.../symbols.txt`
+   byte-identical to base `5cb96d4` (empty diff = ADD-ONLY satisfied trivially,
+   nothing added). Splits overlap self-check: 0 pdata / 0 text; both text ranges
+   sit cleanly in-gap (below: BandCharDesc `<0x82324884`; above region-1
+   `0x82329000`; region-2 between `0x82329044` and `0x8232DB70`).
+4. **Compile gate** — re-compiled with direct `cl.exe X360/16.00.11886.00`: clean
+   (only benign C4005 macro-redef + C4258 for-loop-var), 283 KB obj produced.
+   No fake `ASM_BLOCK`/`__asm` in the port (grep clean) — genuine C++ bodies.
+5. **MILO_DEBUG landmine** — confirmed lane's grep: no `#ifdef MILO_DEBUG`
+   conditional member in UIList/UIComponent/Object/Draw base chain (`macros.h`
+   force-defines MILO_DEBUG; Object.h only comments on it). No dev members were
+   removed (none exist to remove) → nothing to annotate, appropriate.
+
+**+8 drift is REAL and honestly documented.** Instruction-level diff on Conceal:
+`lwz/stw r11,0x33c` (tgt) vs `0x344` (base) on mBandListState; `stfs f1,0x340`
+vs `0x348` on the timestamp — a genuine base-layout delta, not a fake-match dodge.
+The other 3 mismatches are reloc-naming residue on FOREIGN symbols out of this
+lane's scope (`lbl_82DA0017`=TheTaskMgr ×2, `fn_82722790`=UISeconds).
+
+**Follow-up lead for coordinator (NOT a blocker):** the +8 is a shared UIList-family
+layout keystone — a fix there flips all 3 to strict-100 at once. Worth a dedicated
+keystone lane (cross-check whether other UIList-derived wired classes carry the
+same +8). Out of port-lane scope; do not gate this landing on it.
