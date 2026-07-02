@@ -80,3 +80,65 @@ of the 5 addrs appear in icf_aliases.map; the two >44B true-cli-100 anchors
 ## Placement
 Clean gap between MoveMgr.cpp `.text` end 0x822C1E58 and StreakMeter.cpp start
 0x822C4930. No carving of a neighbour unit. All claimed ranges < 0x822C4930.
+
+---
+
+## WAVE-5 AUDIT (independent re-verification) — VERDICT: CLEAR
+
+Audited the lane in-worktree against the merge-base (`5cb96d4`). Every claim reproduced.
+
+**1. Strict-100 re-verify (objdiff-cli-direct, JSON→file).** Ran per-symbol `diff`
+with both the report's binary (v4.2.3) and the repo's (v4.2.1); results identical:
+- `?UnisonEnd@EndingBonus@@QAAXXZ` — **raw/norm/fuzzy 100.0** (true anchor, 92B)
+- `?Reset@EndingBonus@@QAAXXZ` — **raw/norm/fuzzy 100.0** (true anchor, 128B)
+- `?UnisonStart@EndingBonus@@QAAXH@Z` — interactive 99.83871, size-exact 124/124
+- `?Failed@MiniIconData@EndingBonus@@QAAXXZ` — interactive 99.70588, size-exact 68/68
+- `?Reset@MiniIconData@EndingBonus@@QAAXXZ` — interactive 99.5, size-exact 80/80
+
+The three sub-100 interactive scores are each a SINGLE `diff_arg` on a `bl` whose
+target callee is unnamed in the split (cross-TU `UnisonIcon::Fail/UnisonEnd/Reset`,
+and same-TU unpinned `SetIconOrder`). Every non-`bl` byte (opcodes, operands,
+registers, field load/store offsets) is identical. This is the documented
+"cli 99.4-99.7 + size-exact = report-normalized 100" reloc-naming residue.
+
+**2. Composed report is the truth and it reproduces.** Regenerated a FRESH
+`report generate` in the isolated worktree (2243 units, COLD cache 0 hits/2243
+misses, 24.9s): `default/EndingBonus` = **5/5 matched, unit fuzzy 100.0**, all five
+functions fuzzy 100.0. Whole-binary **matched_functions = 10902** (matches the
+claimed 10897→10902 delta). The five symbols appear in NO other unit (no
+double-count). The on-disk report.json (04:51) is consistent with this regen.
+
+**3. ICF honesty gate — HONEST.** `icf_alias_check.py --tu EndingBonus.cpp`:
+5 REAL-BODIED / 0 STUB-FOLD, longest contiguous stub/foreign run = 0, verdict
+HONEST (real-bodied-dominated, 5 anchors, all >44B). None of the five VAs appear
+in `icf_aliases.map` (which holds only PoolAlloc/MemOrPoolAlloc). Sibling-aliasing
+byte-check: `MiniIconData::Failed` (68B) has a same-size near-twin `Succeeded`
+(68B) — DISAMBIGUATED, because the Failed diff has ONLY the single `bl` mismatch;
+its `mFailed` load/store offsets match base, so 0x822C1EA0 is honestly Failed
+(a Succeeded body would mismatch the field offset too).
+
+**4. Splits/map clean.** Map diff = 5 ADD-ONLY entries (no deletions/edits);
+identities confirmed present in the compiled COFF symtab. Splits: EndingBonus
+span 0x822C1EA0..0x822C3064 sits strictly between MoveMgr.cpp `.text` end
+0x822C1E58 and StreakMeter.cpp `.text` start 0x822C4930; global overlap self-check
+= 0 pdata / 0 text; no foreign range intersects the span.
+
+**5. Compile-gate re-run (direct cl.exe).** Clean object produced; only the benign
+C4005 ObjMacros-vs-Object macro-redef warnings (same pattern BandScoreboard emits)
++ a C4003 in rndobj/Part.h (not this TU). `EndingBonus.h`'s `#include
+"obj/ObjMacros.h"` fix is required and correct.
+
+**6. MILO_DEBUG landmine.** None — size-exact matches (68/68, 80/80, 92/92, 128/128,
+124/124) prove `sizeof(MiniIconData)`/layout are retail-correct; MILO_ASSERT/WARN
+lower to no-ops. No dev-only members removed.
+
+**Minor doc nit (non-blocking):** the bullet describing MiniIconData::Reset's
+residual says its callees are `MiniIconData::SetUsed (same-TU) + UnisonIcon::Reset`;
+the actual diff shows `UnisonIcon::UnisonEnd + UnisonIcon::Reset` (SetUsed(false)
+was inlined). Cosmetic — the pin identity and match are correct.
+
+**Lander note:** branch is based on `5cb96d4`; main has since advanced (`aa58cee`).
+Rebase is ADD-ONLY on objects.json / splits.txt / target_symbol_map.json against a
+clean address gap (new file, no owner collision expected) — standard union land.
+
+**AUDIT VERDICT: CLEAR — landable as-is (+5 strict, honesty-clean).**
