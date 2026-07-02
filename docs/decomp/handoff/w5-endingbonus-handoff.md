@@ -142,3 +142,45 @@ Rebase is ADD-ONLY on objects.json / splits.txt / target_symbol_map.json against
 clean address gap (new file, no owner collision expected) — standard union land.
 
 **AUDIT VERDICT: CLEAR — landable as-is (+5 strict, honesty-clean).**
+
+---
+
+## WAVE-5 AUDIT — 2nd independent pass (2026-07-02) — VERDICT: CLEAR
+
+Fully re-derived from the artifacts (not from the section above). All claims hold.
+
+- **objdiff-cli-direct, per-symbol JSON→file** (same objects the report used;
+  base obj 04:34 is newer than source 04:27 = reflects committed source):
+  | symbol | tgt/base | fuzzy | norm | raw | diff_score |
+  |---|---|---|---|---|---|
+  | UnisonEnd | 92/92 | 100.0 | 100.0 | 100.0 | **0/2300** (true anchor) |
+  | Reset (EndingBonus) | 128/128 | 100.0 | 100.0 | 100.0 | **0/3200** (true anchor) |
+  | UnisonStart | 124/124 | 99.8387 | 99.8387 | 99.6774 | **5/3100** (1 bl→unpinned SetIconOrder) |
+  | Failed (MiniIconData) | 68/68 | 99.7059 | 99.7059 | 99.7059 | **5/1700** (1 bl→unnamed UnisonIcon::Fail) |
+  | Reset (MiniIconData) | 80/80 | 99.5 | 99.5 | 99.5 | **10/2000** (2 bl→unnamed callees) |
+- **Composed report.json (04:51, 2243 units, whole-binary) is the gate and it reproduces:**
+  `matched_functions = 10902/65596`; `default/EndingBonus = 5/5 @ fuzzy 100.0`; every one
+  of the 5 reports at 100.0 in its OWN unit, appears in NO other unit (no double-count).
+  The 3 sub-100 interactive scores normalize to 100 in the composed report (documented
+  size-exact reloc-naming residue). All 5 pins satisfy the OWNER bar
+  (true-100 ×2, report-normalized-100 + size-exact ×3).
+- **ICF honesty — HONEST (exit 0):** `icf_alias_check.py --tu EndingBonus.cpp` = 5 REAL-BODIED,
+  0 STUB-FOLD, longest contiguous stub/foreign run 0, all anchors >44B. None of the 5 VAs
+  appear in `icf_aliases.map` (15-line PoolAlloc-only fold list). (`--worktree` newly-matched
+  mode needs a 5cb96d4 baseline report = whole-binary build, skipped for owner contention;
+  `--tu` is conclusive here — the stub-fold inflation shape is absent, all 5 bodies 68-128B.)
+- **Sibling-aliasing ruled out:** MiniIconData::Failed(68B)/Succeeded(68B) differ only in
+  field offset (mFailed vs mSucceeded) + callee. The Failed diff_score is 5 (single bl only) —
+  a wrong-sibling identity would also mismatch the field load/store offset and score far
+  higher. Field offsets match base ⇒ 0x822C1EA0 is honestly Failed. Both true anchors score 0.
+- **Map ADD-ONLY** (5 entries, all 0x822C1EA0-0x822C2FE8, no deletions/edits). **Splits clean:**
+  global overlap self-check 0 pdata / 0 text; EndingBonus text span 0x822C1EA0..0x822C3064 sits
+  strictly in the MoveMgr .text-end 0x822C1E58 → StreakMeter .text-start 0x822C4930 gap; pdata in
+  the matching gap; no foreign range intersects. objects.json = 1 add-only NonMatching line.
+- **Compile-gate re-run (direct cl.exe, RC=0):** only benign C4005 ObjMacros-vs-Object redefs +
+  one C4003 in rndobj/Part.h (not this TU). `EndingBonus.h`'s `#include "obj/ObjMacros.h"` fix
+  is present and required.
+- **No MILO_DEBUG landmine:** all 5 size-exact ⇒ sizeof/layout retail-correct; no dev members removed.
+
+**2ND-PASS VERDICT: CLEAR — landable as-is. +5 whole-binary (10897→10902), 2 true byte-100
+anchors + 3 size-exact report-normalized-100, ICF-honest, splits/map ADD-ONLY & non-overlapping.**
