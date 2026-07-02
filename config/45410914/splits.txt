@@ -3462,3 +3462,6 @@ TourBand.cpp:
 TourPerformer.cpp:
 	.pdata      start:0x821F8810 end:0x821F8818
 	.text       start:0x8234E678 end:0x8234E708
+TrainingPanel.cpp:
+	.pdata      start:0x82223418 end:0x82223420
+	.text       start:0x82621988 end:0x82621A00
