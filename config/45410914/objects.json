@@ -732,6 +732,7 @@
    "band3/meta_band/SetlistMergePanel.cpp": "NonMatching",
    "band3/game/TrainerGemTab.cpp": "NonMatching",
    "band3/game/Stats.cpp": "NonMatching",
+   "band3/game/StatCollector.cpp": "NonMatching",
    "band3/game/GamePanel.cpp": "NonMatching",
    "band3/bandtrack/Lyric.cpp": "NonMatching",
    "band3/game/SongDB.cpp": "NonMatching",
