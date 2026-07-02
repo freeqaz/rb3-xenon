@@ -67,12 +67,14 @@ bool SfxInst::IsRunning() {
 
 void SfxInst::UpdateVolume() {
     FOREACH (it, mSamples) {
-        (*it)->SetVolume(mOwner->Faders().GetVolume() + mVolume);
+        (*it)->SetVolume(mVolume + mOwner->Faders().GetVal());
     }
     FOREACH (it, mSfx->MoggClipMaps()) {
         MoggClip *clip = it->GetMoggClip();
         if (clip) {
-            clip->SetVolume(mOwner->Faders().GetVolume() + mVolume + mRandVol);
+            // rb3-Wii calls MoggClip::SetControllerVolume here; RB3-360's xenon
+            // MoggClip lacks it (value-stored MoggClipMap drift) -> SetVolume.
+            clip->SetVolume(mRandVol + mVolume + mOwner->Faders().GetVal());
         }
     }
 }
@@ -217,29 +219,34 @@ END_COPYS
 INIT_REVS(0xD, 0)
 
 BEGIN_LOADS(Sfx)
+    // rb3-Wii shape: manual rev check with a (retail no-op) MILO_WARN rather than
+    // ASSERT_REVS' MILO_FAIL — RB3-360 compares rev>0xC (12), not ASSERT_REVS' 0xD.
     LOAD_REVS(bs)
-    ASSERT_REVS(0xD, 0)
-    if (d.rev >= 6) {
-        LOAD_SUPERCLASS(Sequence)
-    } else if (d.rev >= 2) {
-        LOAD_SUPERCLASS(Hmx::Object)
-    }
-    d >> mMaps;
-    if (d.rev >= 10) {
-        d >> mMoggClipMaps;
-    }
-    if (d.rev > 4) {
-        d >> mSend;
-        if (d.rev <= 7) {
-            int x;
-            d >> x;
+    if (d.rev > 0xC) {
+        MILO_WARN("Can't load new Sfx");
+    } else {
+        if (d.rev >= 6) {
+            LOAD_SUPERCLASS(Sequence)
+        } else if (d.rev >= 2) {
+            LOAD_SUPERCLASS(Hmx::Object)
         }
-    }
-    if (d.rev >= 9) {
-        mFaders.Load(d.stream);
-    }
-    if (d.rev >= 0xC) {
-        d >> mReverbMixDb >> mReverbEnable;
+        d >> mMaps;
+        if (d.rev >= 10) {
+            d >> mMoggClipMaps;
+        }
+        if (d.rev > 4) {
+            d >> mSend;
+            if (d.rev <= 7) {
+                int x;
+                d >> x;
+            }
+        }
+        if (d.rev >= 9) {
+            mFaders.Load(d.stream);
+        }
+        if (d.rev >= 0xC) {
+            bs >> mReverbMixDb >> mReverbEnable;
+        }
     }
 END_LOADS
 

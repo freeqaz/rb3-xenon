@@ -809,8 +809,12 @@ Memory_Xbox.cpp:
 	.text       start:0x82262D70 end:0x82263544
 
 StreamNull.cpp:
-	.pdata      start:0x82230850 end:0x82230E20
-	.text       start:0x826FBD28 end:0x82700E18
+	.pdata      start:0x82230850 end:0x82230980
+	.pdata      start:0x82230990 end:0x82230CE0
+	.pdata      start:0x82230CE8 end:0x82230E20
+	.text       start:0x826FBD28 end:0x826FCBF8
+	.text       start:0x826FCCE0 end:0x826FFB28
+	.text       start:0x826FFC58 end:0x82700E18
 
 RhythmBattlePlayer.cpp:
 	.pdata      start:0x821F5620 end:0x821F5638
@@ -1578,8 +1582,10 @@ CameraShot.cpp:
 	.text       start:0x824AB028 end:0x824B3818
 
 Sfx.cpp:
-	.pdata      start:0x8220BD00 end:0x8220BD08
-	.text       start:0x824B3818 end:0x824B3874
+	.pdata      start:0x82230980 end:0x82230990
+	.pdata      start:0x82230CE0 end:0x82230CE8
+	.text       start:0x826FCBF8 end:0x826FCCE0
+	.text       start:0x826FFB28 end:0x826FFC58
 
 PropSync.cpp:
 	.pdata      start:0x8220C018 end:0x8220C020

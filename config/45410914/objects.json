@@ -213,6 +213,7 @@
    "system/os/SynchronizationEvent.cpp": "NonMatching",
    "system/os/UserMgr.cpp": "NonMatching",
    "system/synth/DistortionEffect.cpp": "NonMatching",
+   "system/synth/Sfx.cpp": "NonMatching",
    "system/synth/SfxMap.cpp": "NonMatching",
    "system/synth/tomcrypt/aes.c": "NonMatching",
    "system/synth/tomcrypt/crypt.c": "NonMatching",
