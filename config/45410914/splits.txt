@@ -493,9 +493,11 @@ BeatMap.cpp:
 
 MemHeap.cpp:
 	.pdata      start:0x822390B8 end:0x822390C0
-	.pdata      start:0x822390C0 end:0x82239230
+	.pdata      start:0x822390C0 end:0x822391F8
+	.pdata      start:0x822391F8 end:0x82239230
 	.text       start:0x82796440 end:0x827966E8
-	.text       start:0x82796704 end:0x827989F0
+	.text       start:0x82796704 end:0x82798278
+	.text       start:0x82798298 end:0x827989F0
 
 SampleZone.cpp:
 	.pdata      start:0x82231918 end:0x82231948
@@ -1453,6 +1455,7 @@ MemMgr.cpp:
 	.text       start:0x823DED68 end:0x823DED84
 	.text       start:0x827963D8 end:0x82796440
 	.text       start:0x827966E8 end:0x82796704
+	.text       start:0x82798278 end:0x82798298
 
 StorePurchaser.cpp:
 	.pdata      start:0x82200F58 end:0x82200F60

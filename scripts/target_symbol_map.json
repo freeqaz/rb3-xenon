@@ -13637,5 +13637,8 @@
  "0x826aa958": "?GetCurrentStartTick@TrainerPanel@@QBAHXZ",
  "0x825bfb80": "?InOverrideFlow@OvershellSlot@@QBA_NW4OvershellOverrideFlow@@@Z",
  "0x827963d8": "?FreeBlockStats@MemHeap@@QAAXAAH000@Z",
- "0x827966e8": "?Lock@MemHandle@@QAAPAXXZ"
+ "0x827966e8": "?Lock@MemHandle@@QAAPAXXZ",
+ "0x82798278": "?MemOrPoolFreeSTL@@YAXHPAX@Z",
+ "0x82797aa0": "?MemFree@@YAXPAX@Z",
+ "0x82795da0": "?PoolFree@@YAXHPAX@Z"
 }
