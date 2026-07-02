@@ -87,8 +87,7 @@ out from under them will *deeply break* concurrent work. Hard rules:
   read-only toolchain, baks absolute tool paths into the worktree's
   `build.ninja` via `configure.py`, and primes ninja state. A fresh **warm**
   worktree also **seeds main's `.ninja_log`/`.ninja_deps`** so its first full
-  `ninja` is a ~0-compile no-op (only the 5 perpetually-dirty soundtouch TUs
-  rebuild) instead of recompiling all ~745 objs. Seeding is gated: it only
+  `ninja` is a true 0-compile no-op instead of recompiling all ~745 objs. Seeding is gated: it only
   happens when main is clean (no `src/`/`config/` or `configure.py`/
   `tools/project.py` diffs), the worktree's msvc rule blocks are byte-identical
   to main's, and main's deps are uniformly repo-root-relative; if any gate
@@ -177,14 +176,14 @@ plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
   match-irrelevant (whole-binary `matched_functions` holds equal through all-hits
   rebuilds). objcache also normalizes recorded deps to **repo-root-relative** (no
   absolute src paths in `ninja -t deps` → enables warm-worktree `.ninja_deps` seeding).
-- **Known gotcha (not objcache's fault):** the synth/soundtouch TUs
-  (`AAFilter`/`FIFOSampleBuffer`/`FIRFilter`/`SoundTouch`/`RateTransposer`) do
-  `#include <memory.h>` but the on-disk file is `src/Memory.h` (capital M); wibo's
-  case-insensitive resolve reports the dep as lowercase `src/memory.h`, which
-  doesn't exist on the case-sensitive Linux FS → ninja marks them perpetually dirty
-  and they real-compile every build (reproduces with `OBJCACHE=off`). Harmless to
-  matching; fix belongs to the synth-family owner (rename the includes to
-  `"Memory.h"` or add a lowercase shim).
+- **Resolved gotcha (7956af7):** `<memory.h>` used to have no real match on the
+  include path, so wibo's case-insensitive resolve fell through to the game's
+  `src/Memory.h` and recorded a lowercase dep that doesn't exist on Linux —
+  leaving 5 soundtouch TUs perpetually ninja-dirty. Fixed by adding the CRT
+  compat header `src/xdk/LIBCMT/memory.h` (defers to `string.h`); LIBCMT
+  precedes `src` in the include order so it wins with exact casing. Lesson: a
+  header include that only resolves case-insensitively will churn forever —
+  give it a real exact-case target on the include path.
 
 > **Editing the jeff/objdiff/wibo/objcache sources? Rebuild the release binary
 > manually** — ninja no longer builds or tracks the tools:
