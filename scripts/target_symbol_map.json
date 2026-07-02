@@ -13766,5 +13766,6 @@
  "0x82b78200": "?AllowsOverlappingGems@TrackConfig@@QBA_NXZ",
  "0x82b78288": "?IsRealGuitarTrack@TrackConfig@@QBA_NXZ",
  "0x8268a058": "?Unload@FadePanel@@UAAXXZ",
- "0x8268a150": "?Enter@FadePanel@@UAAXXZ"
+ "0x8268a150": "?Enter@FadePanel@@UAAXXZ",
+ "0x826efe08": "?SynthPoll@MoggClip@@UAAXXZ"
 }
