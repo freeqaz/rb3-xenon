@@ -779,6 +779,7 @@
    "band3/meta_band/UIStats.cpp": "NonMatching",
    "band3/meta_band/AppMiniLeaderboardDisplay.cpp": "NonMatching",
    "band3/meta_band/Leaderboard.cpp": "NonMatching",
+   "band3/meta_band/PlayerLeaderboards.cpp": "NonMatching",
    "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
    "band3/meta_band/Campaign.cpp": "NonMatching",
    "band3/meta_band/GameplayOptions.cpp": "NonMatching",
