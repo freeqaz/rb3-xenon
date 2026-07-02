@@ -1,5 +1,5 @@
 #include "rndobj/ShaderProgram.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "ShaderMgr.h"
 #include "os/Debug.h"
 #include "os/File.h"

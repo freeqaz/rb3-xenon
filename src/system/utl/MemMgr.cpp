@@ -2,7 +2,7 @@
 #include "MemHeap.h"
 #include "MemStats.h"
 #include "MemTracker.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "obj/Data.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"

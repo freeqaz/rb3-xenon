@@ -4,7 +4,7 @@
 #include "os/Debug.h"
 #include "os/System.h"
 #include "rndobj/Draw.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "rndobj/Lit.h"
 #include "rndobj/Cam.h"
 #include "rndobj/Mat.h"

@@ -100,3 +100,64 @@ icf_alias_check (composed newly-matched set): VERDICT HONEST, exit 0 —
 36 real-bodied, 32 own-unit stub-folds interspersed, longest stub run 6.
 
 Verdict: **LAND**. Stream landed above the expected-yield band (+85 vs ~+32-70).
+
+---
+
+## REVIEW PASS 2 (integration reviewer, 2026-07-02, post-compose)
+
+Independent re-verification of the composed commit `6d86b7c` on branch
+`exec/ws3-optionc-0702` (worktree /home/free/tmp/wt-exec-ws3-optionc).
+
+**Per-packet reproduction (MCP run_objdiff, project_dir = composed worktree,
+stub-fold guard applied — every sample is 30-107 instructions, far above 44B):**
+
+- p1: FindClip 100.0n/100.0r (36 instr), Save@CharClipGroup 100.0n/99.9r (40).
+- p2: CanMotionBlur 100.0n/98.7r (43), Copy@RndMotionBlur 100.0n/99.0r (30),
+  Save@RndSoftParticles 100.0n/99.7r (37), Copy@RndSoftParticles 100.0n/99.1r (32).
+- p3: ??0MoggClip 100.0n/99.2r (61), Save 100.0n/99.6r (59), PreLoad 100.0n/99.9r
+  (45). BinkClip carve no-regress: SetLoop 88.4% == frozen baseline (88.3, rounding).
+- p4: Insert@ShortcutNode 100.0n/99.8r (53), __equal_range<CompareHeaders>
+  100.0n/100.0r (107), pre-existing IsEnabled@OwnedSongSortNode still 100.0n.
+- Composition completeness verified file-by-file: p2/p3/p4 splits + objects.json +
+  map add/remove sets all present in the composed tree; remaining `NavList*` map
+  entries are at out-of-cluster addresses (correct).
+
+**NEW FINDING — latent `Memory.h` include shadowing, unmasked by this stream:**
+The composed A/B build FAILED on 5 TUs (SpotlightDrawer_NG, PostProc_NG,
+RhythmBattle, RhythmBattlePlayer, Ham): `'PhysicalFreeTracked': identifier not
+found` at rnddx9/Rnd.h(110). Root cause (reproduced by manual cl.exe invocation
+on PRISTINE main @c5632f9 — the breakage is pre-existing on main, NOT caused by
+this stream): `#include "Memory.h"` from any file not in `src/` root resolves
+case-insensitively to **`src/xdk/LIBCMT/memory.h`** (the C CRT header), because
+`/I src/xdk/LIBCMT` precedes `/I src` — `src/Memory.h` (PhysMemTypeTracker /
+PhysicalAllocTracked / PhysicalFreeTracked) is shadowed. Main's incremental
+builds mask this via the objcache (stale-but-valid cached objs); this stream's
+CharClipGroup.h/MoggClip.h edits changed those 5 TUs' dep-chain cache keys,
+forcing real recompiles that surfaced the error. Wibo's FS cache is in-process
+only (no persistent poisoned state; verified in ../wibo/src/files.cpp).
+
+**Fix applied (codegen-neutral, this branch):** the 17 `src/system/**` files
+that intend `src/Memory.h` now include it as `#include "../../Memory.h"`
+(quote-include resolves via the including file's directory — unambiguous,
+cannot be shadowed). `src/Memory_Xbox.cpp` (src root, resolves correctly) and
+`native/` untouched. A/B confirms 0 regressions from the mass recompile this
+triggers. Follow-up recommendation for the coordinator: rename `src/Memory.h`
+-> `src/Memory_Xbox.h` repo-wide as permanent hygiene (this fix is minimal to
+keep the stream reviewable).
+
+**Composed whole-binary A/B (reviewer 2, full rebuild after fix, teed to
+~/tmp/rb3_build_exec-ws3-optionc-ab.log, reproduced twice run1==run2):**
+
+    baseline 10936 (frozen @00c5b19) -> candidate 11080   NET +144   (26 up, 0 down)
+
+Stream-attributable: **+85** — MoggClip +38, SongSortNode +20, SoftParticles
++14, MotionBlur +11, CharClipGroup +2 (matches reviewer 1's +85 exactly).
+The remaining +59 is NOT this stream: intervening main lands in the branch
+ancestry that postdate the frozen baseline (ws1-waveA +46 incl. VocalTrackDir
++24, member-delta R1 +5 incl. GemPlayer/BinkClip, MetaPanel +8) plus stale-obj
+refresh surfaced by the Memory.h-fix recompile cascade. **0 units down.**
+
+Gates re-run on the composed tree: overlap_check clean (.text 1103/0 overlaps,
+.pdata 1004/0), icf_alias_check exit 0 VERDICT HONEST.
+
+Verdict: **LAND** (composed +85 stream net, 0 regressions, hygiene clean).

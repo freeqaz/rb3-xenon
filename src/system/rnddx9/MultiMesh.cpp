@@ -8,7 +8,7 @@
 #include "xdk/d3d9i/d3d9types.h"
 #include "utl/Symbol.h"
 #include "os/Debug.h"
-#include "Memory.h"
+#include "../../Memory.h"
 
 DxMultiMesh::DxMultiMesh() : mGeomDirtyFlags(0), mBufferCycleIndex(0) {
     for (int i = 0; i < 3; i++) {

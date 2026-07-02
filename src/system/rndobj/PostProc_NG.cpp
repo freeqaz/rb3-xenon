@@ -1,5 +1,5 @@
 #include "rndobj/PostProc_NG.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "Tex.h"
 #include "hamobj/HamDirector.h"
 #include "math/Color.h"

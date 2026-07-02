@@ -390,3 +390,21 @@ SongSortNode.cpp itself.
 Next-wave feed (scan-tool top ranks, pre-consumption config): Cam(13 bodies),
 PlatformMgr_Xbox(10), StandardStream(9), Lit_NG(5), Faders(9), HamStorePanel(7),
 HamSongMgr(5), PartyModeMgr(5), App(6), TexLoadPanel(4).
+
+### Review pass 2 (integration reviewer, 2026-07-02)
+
+Composed commit `6d86b7c` re-verified end-to-end: all packet spot-checks
+reproduce at 100% normalized in the composed tree (real bodies 30-107 instr),
+BinkClip carve no-regress holds (SetLoop 88.4 == baseline). Composed A/B
+(full rebuild, run1==run2): baseline 10936 -> 11080, NET +144, 0 units down;
+stream-attributable **+85** (MoggClip +38, SongSortNode +20, SoftParticles +14,
+MotionBlur +11, CharClipGroup +2) — remainder is intervening main lands
+(ws1-waveA/member-delta/MetaPanel) + stale-obj refresh.
+
+Bonus fix landed on this branch: pre-existing latent breakage where
+`#include "Memory.h"` resolves to `src/xdk/LIBCMT/memory.h` (case-insensitive,
+LIBCMT precedes src in /I order), shadowing `src/Memory.h` — cold compiles of
+SpotlightDrawer_NG/PostProc_NG/RhythmBattle(Player)/Ham fail on main, masked by
+the objcache. 17 system TUs/headers now use `#include "../../Memory.h"`
+(unambiguous). Recommend a follow-up repo-wide rename `src/Memory.h` ->
+`src/Memory_Xbox.h`. Verdict: LAND.

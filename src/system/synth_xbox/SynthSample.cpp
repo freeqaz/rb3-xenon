@@ -1,5 +1,5 @@
 #include "synth_xbox/SynthSample.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "synth/SampleData.h"

@@ -1,5 +1,5 @@
 #include "rndobj/ShadowMap.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "macros.h"
 #include "math/Mtx.h"
 #include "math/Rot.h"

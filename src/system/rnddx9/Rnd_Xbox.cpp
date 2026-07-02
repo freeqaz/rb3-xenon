@@ -2,7 +2,7 @@
 #include "Env.h"
 #include "Lit.h"
 #include "Mat.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "Mesh.h"
 #include "Movie.h"
 #include "MultiMesh.h"

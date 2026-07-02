@@ -26,7 +26,7 @@
 #include "utl/FilePath.h"
 #include "utl/FileStream.h"
 #include "utl/Loader.h"
-#include "Memory.h"
+#include "../../Memory.h"
 
 class DxRnd {
 public:

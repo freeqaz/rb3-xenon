@@ -1,5 +1,5 @@
 #include "rnddx9/Lit.h"
-#include "Memory.h"
+#include "../../Memory.h"
 #include "obj/Object.h"
 
 DxLight::DxLight() {}
