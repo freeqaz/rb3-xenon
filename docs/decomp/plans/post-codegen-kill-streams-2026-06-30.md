@@ -84,6 +84,54 @@ Recon must verify direction via objdiff anchor + oracle header diff BEFORE apply
   IMM_OFFSET buckets need per-fn mechanism recon (like Stream 2), not the
   offset-delta heuristic, to avoid false positives.
 
+## RESULTS (2026-07-02) — Stream-3 mislabel harvest round 1: **+5 LANDED (main @ddb8e6a)**
+- Stream-3 recon (read-only agent over the cached JSONLs): **51 true mislabels**,
+  top 22 ranked+oracle-checked → `~/tmp/stream3_mislabel_candidates.json`
+  (raw 51-list at /tmp/claude/stream3_mislabeled.json).
+- ⭐ **MusicLibrary +2** (the deferred candidate): PushHeaderDataToScreen rewritten
+  with function-local statics (Symbol+Message) → MSVC emits the out-of-line body
+  retail has; UpdateHeaderData's trailing call becomes bl. Map entry 0x8252A5C8
+  pairs the reconstructed body. BOTH → 100.
+- ⭐ **OutfitPiece operator>> 92.1→100**: retail evaluates `gRev > 0xB` BEFORE the
+  mColors[1] store; hoisting the gRev read into a local (`unsigned short rev`)
+  reproduces the order. NOT the lbz→lhz member-width the classifier suggested.
+- ⭐ **GetDefaultMatShaderOpts 95.7→100** via TWO shared-header fixes:
+  (a) Mesh.h HasAOCalc/SetHasAOCalc direct-member (rb3-Wii + retail asm agree;
+  the mGeomOwner-> indirection is DC3 drift), (b) Mat.h SetHasAOCalc single-assign
+  (the `=0; =calc;` double-assign left a dead `mr`). Cascaded clean binary-wide.
+- ⭐ **FaceCenter 93.7→100**: retail interleave = split the mGeomOwner/mVerts
+  derefs around x,y,z zero-stores (`owner` local first, zeros, then verts deref).
+  Pure statement-order sculpting — worked on the 3rd shape attempt.
+- **InitMakeString 99.65→~99.9 PARTIAL (landed)**: retail allocates 0x800 buffers
+  (rb3-Wii agrees; our 0x1000 was wrong). Residual = MSVC .bss ANCHOR-selection
+  (r29 anchored at gBuf vs retail gLock) — decl-order swap does NOT flip it;
+  at-limit for hand-fixing.
+- ⛔ **RndFlare::CalcScale (99.1) DEAD — codegen cliff**: residual = lfd(double 0.0)
+  vs retail lfs(float 0.0) + 1 fmadds swap. ANY float-typed compare (`0.0f<x`,
+  `x>0.0f`, inline or via temp) RESTRUCTURES the whole FP schedule → 93-94%.
+  The double-literal shape is the fixed point. Corroborates the wall-#2 KILL:
+  a 2-instruction residual that is provably source-unreachable.
+- ⛔ **MsgSinks _Copy_Construct SKIPPED**: MsgSinks doesn't exist in rb3-Wii (it's
+  DC3-era); the lfs-at-0xC "float member" evidence may be a different ICF-folded
+  instantiation. A type flip on this evidence would be a guess — needs identity
+  work first.
+- Gates: whole-binary composed A/B NET +5, 0 strict / 0 fuzzy regressions;
+  icf_alias_check HONEST (5 real-bodied, 0 stub-folds). Cherry-picked onto main
+  over the owner's wave-3 integ; map conflict resolved by json-union (+1 key).
+- ⚠ ENV: three of my worktree builds were killed mid-flight by an external sweep
+  (SIGINT/kill, no OOM, no error in log — likely concurrent-session cleanup
+  pkills). WORKAROUND that held: supervisor retry loop + ninja incrementality
+  (~/tmp/musiclib_supervise.sh pattern) + marker-based monitors (grep for
+  "fresh_report.sh: done"), NOT PID-based. Also: do NOT build in main while the
+  owner's wave is mid-landing (renamer crashed on a mid-write zero-byte obj race;
+  "Missing configuration" TUs are the owner's pinned-but-unwired in-flight state).
+- REMAINING Stream-3 queue (next round): Vector3Keys::SetFrame 98.42 (extra-bl,
+  possibly SetFrame inline-policy family), ArkHash::Read 98.31 (body-indel),
+  LightHue::Sync 99.15 (+0x10 LightHue delta + extra-bl), SpotlightDrawer
+  SpotMeshEntry mulli-sizeof (rank 6), fn_82385BD4 FileMerger-unit 96.0 (rank 8),
+  + ~10 more ranked in the candidates file. HamCamTransform ranks 7/9 look like
+  DC3-misattribution (hamobj) — verify identity before touching.
+
 ## STREAM 2 — BODY-divergence per-fn ports (bodyport lever)
 Genuine oracle logic/guard/arg divergences (port the real body from the oracle
 to strict-100). Best non-STL named candidates:
