@@ -462,6 +462,16 @@ not a shared base delta. **Member-delta lever now CLOSED** — all 4 mdf2
 candidates dispositioned; re-run the finder only after the next ≥ +500
 strict refill.
 
+**Re-run verification (2026-07-02 late):** a duplicate worker dispatch of the
+four R1 packets found the two live levers already landed on main (ad2daa5)
+and made zero edits; the reviewer independently re-reproduced all per-symbol
+numbers (GemPlayer/BinkClip gated fns at 100 norm incl. two TRUE-100; both
+KILL recons unchanged at 99.9 with the same off:+8 / +36/+48 signatures) and
+re-ran a composed A/B on main head c5632f9: 10,936 (stale baseline) → 10,995,
+0 regressions, all gains attributable to already-landed commits. Net new from
+the re-run: **0**. R1 disposition stands; see the RE-RUN VERIFICATION section
+of the handoff doc.
+
 # R2 MetaPanel axis-A — RESULTS (exec/r2-metapanel-0702, 2026-07-02)
 
 **LANDED-QUALITY: +5 net strict (report +8), 0 regressions.** Composed A/B:

@@ -116,3 +116,27 @@ stub-fold threshold — all real matches.
   is now CLOSED** — the mdf2 finder's four candidates are fully dispositioned
   (2 landed, 2 killed with reproducible evidence). Re-run the finder only
   after the next ≥ +500 strict refill per the institutional rule.
+
+## RE-RUN VERIFICATION (second dispatch, reviewer 2026-07-02 late)
+
+A second worker wave was dispatched against this stream after the first-run
+result had already landed on main as **ad2daa5** ("lever(member-delta R1):
+GemPlayer −0x10 + BinkClip +0x4 (+5 strict, 0 regressions)"). All four
+workers correctly identified the situation and made **zero edits**; this
+reviewer independently re-reproduced every claim (MCP run_objdiff,
+project_dir = each packet worktree at main head c5632f9; stub-fold guard
+applied — every gated fn is 16-54 instrs, 64-216 bytes, named symbol pairs):
+
+| packet | re-run verdict | reproduced |
+|---|---|---|
+| gemplayer-m10 | **DUPLICATE / already landed (ad2daa5)** | PlayMissSound 100.0 norm (98.0 raw, 54 eq), LocalSoloStart 100.0 norm (99.5 raw, 33 eq), HandleFirstGemAfterRollback TRUE 100 (25 eq) |
+| binkclip-p4 | **DUPLICATE / already landed (ad2daa5)** | Stop 100.0 norm (99.4 raw, 16 eq), KillStream TRUE 100 (23 eq); measured vs main (p2 worktree pruned post-first-review) |
+| overshellslot-m8 | **KILL re-confirmed (coupled-code)** | IsValidUser 99.9 (4× lwz off:+8), GenerateCurrentState 99.9 (5× off:+8), LookupUserInJoinList 99.9 (2× off:+8) — unchanged, no compilable drop exists |
+| cameramanager-m30 | **KILL re-confirmed (coupled-base)** | DeleteFreeCam 99.9 (2× off:+48), CalcFrame 99.9 (3× off:+48), Randomize 99.9 (2× off:+36) — +36/+48 staircase intact |
+
+Re-run composed A/B (primary worktree = clean main head c5632f9, full build,
+log `~/tmp/rb3_build_exec-r1-member-delta-ab.log`): baseline snapshot 10,936 →
+**10,995 matched, 0 regressions**. The +59 is entirely commits already landed
+on main between the baseline snapshot and c5632f9 (ws1-waveA +46, ad2daa5 +5
+— GemPlayer 10→13 + BinkClip 0→2 — MetaPanel +5, misc). **Net strict
+attributable to this re-run: 0.** Stream remains CLOSED; nothing left to land.
