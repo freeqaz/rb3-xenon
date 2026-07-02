@@ -177,3 +177,39 @@ owner-contended and off-limits in-lane; the direct evidence above is conclusive.
    composed build.
 2. **Rebase onto current main for GameGem 0x44** (trivial — worktree GameGem.h ==
    main HEAD; hunk dedupes). Pins are only valid on a 0x44 build.
+
+---
+
+## INDEPENDENT RE-AUDIT (second wave-5 auditor, 2026-07-02) — **CLEAR**
+
+Fresh reproduction in this worktree (no reliance on the prior audit section above).
+Every lane claim reproduces byte-for-byte.
+
+- **Pins (objdiff-cli-direct, JSON→file):** Slop 100.0000 / 80B·80B; CanHopo
+  99.8333 / 240B·240B; TryToHopo 99.8621 / 580B·580B; NonStrumSwing 99.8039 /
+  204B·204B. All size-exact, all report in unit `default/BaseGuitarTrackWatcherImpl`.
+- **Honesty (instruction-level, `--include-instructions`):** every non-`equal` row
+  is a `bl`-target *name* only, with the target's `fn_XXXX` matching the ported
+  source's call graph exactly — CanHopo→IsRealGuitar/RightHandTap;
+  TryToHopo→CanHopo(intra)/TimeAt/TimeAtNext/Playable;
+  NonStrumSwing→IsTrillActive/TryToHopo(intra). No opcode/register/immediate diffs.
+  ICF: **0 of the 4 symbols appear in `icf_aliases.map`** (nothing folded) — refutes
+  any ICF-alias inflation; own-vs-foreign PASS. Real 80–580B bodies, not stub-folds.
+- **Map:** ADD-ONLY +4 vs base (3 sorted-head + CanHopo at tail); no edits/removals.
+- **Splits:** hand-verified full complementary coverage of the original
+  GuitarController `.text [0x82777E90,0x8277D790)` + `.pdata [0x82237270,0x82237680)`
+  with the 2 BGTWI ranges — **0 gaps, 0 overlaps**.
+- **GameGem.h:** byte-identical to current main HEAD (`0473e17`) → clean rebase dedup.
+- **Compile-gate:** direct `wibo cl.exe` PASS (only benign C4391/C4392 xdk intrinsic
+  warnings); obj emitted. No audit-time drift.
+- **MILO_DEBUG:** N/A — no conditionals in this TU; the only sizeof lever is
+  GameGem 0x44, handled in GameGem.h.
+
+**Coordinator land gates (unchanged, both real):** (1) current main still carries the
+un-carved GuitarController block, so this carve applies cleanly *if landed against
+main as-is*; if the sibling w5 TrackWatcher lane lands its GuitarController carve
+first, hand-union the two carves, re-run the 0-overlap self-check, and confirm the 4
+pins still report in `default/BaseGuitarTrackWatcherImpl` (7951cb5 attribution
+incident). (2) rebase for GameGem 0x44 (already dedup-clean). Neither is a lane defect.
+
+**Verdict: CLEAR — landable as-is through land.sh with the two coordinator gates carried forward.**
