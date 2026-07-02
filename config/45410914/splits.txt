@@ -282,8 +282,12 @@ BandList.cpp:
 	.text       start:0x8232C410 end:0x8232C458
 
 VocalTrackDir.cpp:
+	.pdata      start:0x821F1ED0 end:0x821F1ED8
 	.pdata      start:0x821F1FA8 end:0x821F2330
+	.pdata      start:0x8223C650 end:0x8223C658
+	.text       start:0x822E3788 end:0x822E3A78
 	.text       start:0x822E4180 end:0x822E95FC
+	.text       start:0x827CF2E0 end:0x827CF478
 
 BandCrowdMeter.cpp:
 	.pdata      start:0x821EE6C0 end:0x821EE6C8
@@ -1115,6 +1119,7 @@ Spline.cpp:
 
 Character.cpp:
 	.pdata      start:0x821F9790 end:0x821F9B08
+	.text       start:0x8235B138 end:0x8235B1CC
 	.text       start:0x8235B1D0 end:0x8235F180
 
 SampleInst.cpp:
@@ -1958,7 +1963,9 @@ StorePreviewMgr.cpp:
 	.text       start:0x82780628 end:0x82780784
 
 CharEyes.cpp:
+	.pdata      start:0x821FAB38 end:0x821FAB40
 	.pdata      start:0x821FAB40 end:0x821FB010
+	.text       start:0x82370ED8 end:0x82370F28
 	.text       start:0x82370FA0 end:0x82377048
 
 SpeechMgr.cpp:
@@ -2018,12 +2025,15 @@ ChunkStream.cpp:
 	.text       start:0x827A4E88 end:0x827A6260
 
 NetCacheMgr.cpp:
+	.pdata      start:0x822345A8 end:0x822345B0
 	.pdata      start:0x8223A1E8 end:0x8223A2B0
+	.text       start:0x82741B78 end:0x82741BD0
 	.text       start:0x827A8AC8 end:0x827A98C4
 
 NetLoader.cpp:
 	.pdata      start:0x8223A3A0 end:0x8223A3A8
 	.text       start:0x827AA860 end:0x827AA8C4
+	.text       start:0x827AA8F8 end:0x827AA920
 
 SongInfoCopy.cpp:
 	.pdata      start:0x8223A4F0 end:0x8223A660
@@ -3388,10 +3398,16 @@ BandPatchMesh.cpp:
 	.text       start:0x82337AA0 end:0x82337FA0
 
 SongData.cpp:
+	.pdata      start:0x82234F68 end:0x82234F70
+	.pdata      start:0x82234F80 end:0x82234F88
+	.pdata      start:0x82234F88 end:0x82234F90
 	.pdata      start:0x822350B8 end:0x822350C0
 	.pdata      start:0x82235728 end:0x82235730
 	.text       start:0x8274BB20 end:0x8274BB34
+	.text       start:0x8274BF50 end:0x8274C1E0
+	.text       start:0x8274C230 end:0x8274C500
 	.text       start:0x8274C500 end:0x8274C518
+	.text       start:0x8274C518 end:0x8274C5D0
 	.text       start:0x8274CB58 end:0x8274CB70
 	.text       start:0x8274DA90 end:0x8274DBBC
 	.text       start:0x82753FD0 end:0x827541C0
@@ -3453,10 +3469,12 @@ BeatMatcher.cpp:
 	.pdata      start:0x822368A8 end:0x822368B0
 	.pdata      start:0x82236920 end:0x82236928
 	.pdata      start:0x82236928 end:0x82236930
+	.pdata      start:0x82236938 end:0x82236940
 	.text       start:0x8276BA08 end:0x8276BA48
 	.text       start:0x8276BF98 end:0x8276C01C
 	.text       start:0x8276CAD8 end:0x8276CB48
 	.text       start:0x8276CB48 end:0x8276CBEC
+	.text       start:0x8276CCF8 end:0x8276CD80
 
 CampaignSongInfoPanel.cpp:
 	.pdata      start:0x82221420 end:0x82221428
@@ -3541,8 +3559,10 @@ MetaPanel.cpp:
 	.text       start:0x8255A890 end:0x8255A8F0
 
 BaseGuitarTrackWatcherImpl.cpp:
+	.pdata      start:0x82236890 end:0x82236898
 	.pdata      start:0x82237628 end:0x82237630
 	.pdata      start:0x82237648 end:0x82237660
+	.text       start:0x8276BE50 end:0x8276BEC0
 	.text       start:0x8277CFE0 end:0x8277D0D0
 	.text       start:0x8277D278 end:0x8277D5E0
 
@@ -3561,3 +3581,15 @@ EndingBonus.cpp:
 NoteTube.cpp:
 	.pdata      start:0x82257AE0 end:0x82257B00
 	.text       start:0x82BF6570 end:0x82BF6938
+
+Faders.cpp:
+	.text       start:0x826EDAB0 end:0x826EDAD0
+	.text       start:0x826EDE48 end:0x826EDE74
+
+SongPreview.cpp:
+	.pdata      start:0x82237960 end:0x82237968
+	.text       start:0x82780788 end:0x827808AC
+
+StandardStream.cpp:
+	.pdata      start:0x8222F348 end:0x8222F350
+	.text       start:0x826E6D08 end:0x826E6FA4
