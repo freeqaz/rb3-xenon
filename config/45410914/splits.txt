@@ -3406,3 +3406,6 @@ BeatMatcher.cpp:
 CampaignSongInfoPanel.cpp:
 	.pdata      start:0x82221420 end:0x82221428
 	.text       start:0x826035A8 end:0x826035FC
+ChordbookPanel.cpp:
+	.pdata      start:0x8222ADF0 end:0x8222ADF8
+	.text       start:0x826966F0 end:0x826967D8
