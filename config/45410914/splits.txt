@@ -275,6 +275,12 @@ BandCharDesc.cpp:
 	.text       start:0x82322DA0 end:0x82324884
 	.text       start:0x82447130 end:0x8244714C
 
+BandList.cpp:
+	.pdata      start:0x821F64D0 end:0x821F64E0
+	.pdata      start:0x821F67F8 end:0x821F6800
+	.text       start:0x82328EA0 end:0x82328F30
+	.text       start:0x8232C410 end:0x8232C458
+
 VocalTrackDir.cpp:
 	.pdata      start:0x821F1FA8 end:0x821F2330
 	.text       start:0x822E4180 end:0x822E95FC

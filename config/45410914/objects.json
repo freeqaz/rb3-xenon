@@ -40,6 +40,7 @@
    "system/bandobj/BandCamShot.cpp": "NonMatching",
    "system/bandobj/BandCharacter.cpp": "NonMatching",
    "system/bandobj/BandCharDesc.cpp": "NonMatching",
+   "system/bandobj/BandList.cpp": "NonMatching",
    "system/bandobj/BandScoreboard.cpp": "NonMatching",
    "system/bandobj/BandCrowdMeter.cpp": "NonMatching",
    "system/bandobj/BandLeadMeter.cpp": "NonMatching",
