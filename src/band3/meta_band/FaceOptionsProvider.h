@@ -14,7 +14,7 @@ public:
     virtual int NumData() const;
 
     void Update(Symbol s) {
-        mFaceOption = s.mStr;
+        mFaceOption = s.Str();
         mFaceOptionCount = BandHeadShaper::GetCount(s);
     }
 

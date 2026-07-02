@@ -45,6 +45,8 @@ public:
     int Count(int) const { return 0; }
     int GetHasSeenFirstTimeInstrumentFlagsForUser(const LocalUser *) const { return 0; }
     void SetHasSeenFirstTimeInstrumentFlagsForUser(const LocalUser *, int, bool) {}
+    // CharacterCreatorPanel uses this on X360 in an unreachable Wii sign-in path
+    int GetIndexForUser(const LocalUser *) const { return -1; }
 };
 
 extern WiiProfileMgr TheWiiProfileMgr;
