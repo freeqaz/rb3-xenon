@@ -125,12 +125,40 @@ Recon must verify direction via objdiff anchor + oracle header diff BEFORE apply
   "fresh_report.sh: done"), NOT PID-based. Also: do NOT build in main while the
   owner's wave is mid-landing (renamer crashed on a mid-write zero-byte obj race;
   "Missing configuration" TUs are the owner's pinned-but-unwired in-flight state).
-- REMAINING Stream-3 queue (next round): Vector3Keys::SetFrame 98.42 (extra-bl,
-  possibly SetFrame inline-policy family), ArkHash::Read 98.31 (body-indel),
-  LightHue::Sync 99.15 (+0x10 LightHue delta + extra-bl), SpotlightDrawer
-  SpotMeshEntry mulli-sizeof (rank 6), fn_82385BD4 FileMerger-unit 96.0 (rank 8),
-  + ~10 more ranked in the candidates file. HamCamTransform ranks 7/9 look like
-  DC3-misattribution (hamobj) — verify identity before touching.
+## RESULTS (2026-07-02) — Stream-3 mislabel harvest round 2+3: **+9 LANDED (main @2158b35)**
+Round-2 (coordinator, per-fn): ArkHash::Read (CSE heapSize+len local), MakeString
+0x800 (partial, at-limit). Round-3 = **5 Fable subagents** (3 lanes of ranked
+candidates + identity check + HamCam sizeof lane) worked the top-22 in one
+worktree. 10 fns hit 100 in-worktree, but the FULL batch A/B = **NET +32 /
+23 strict + 14 fuzzy regressions** (three shared-header changes with incomplete
+cascade). BISECTED → landed only the **regression-free isolated subset (+9,
+run1==run2, 0 regressions, icf HONEST 8 real-bodied)**:
+  ArkHash::Read, RndBitmap::PixelColor (hoist mPalette across PixelIndex),
+  RndGenerator::Generate (push_back→push_front DC3-drift), SongDB::GetSustainGemCount
+  (+ GameGem.h sizeof 0x2c→0x44, which also flipped PracticePanel::MarkGemsAsProcessed
+  for free), ManageBandPanel::Handle (retail dropped clear_profile HANDLE entry),
+  Splash::Draw (retail Suspend + no cam-guard), SynapseAPO dtor (in-place +OggFree),
+  SpotMeshEntry::operator= (hoist memcpy src).
+⚠ **PRESERVED for follow-up** (branch `followup/round3-full-batch @ 3879248`, doc
+`docs/decomp/handoff/round3-shared-header-followups-2026-07-02.md`):
+  - **FileLoader + ObjDirItr DC3-drift reverts** (16 files) — MIXED: real gains
+    (LightHue::Sync→100, GetNormalMapTextures→100, Char*/AmbientOcclusion cascade)
+    but ~6 funclet STUBS (DirLoader/BandWardrobe/TrackDir → 0%) from incomplete
+    call-site cascade. Correct direction (oracle+retail agree), just unfinished —
+    repair the stubs then re-A/B. **This is the highest-value follow-up.**
+  - **CollideListSubParts devirt** — NET-NEGATIVE (broke 15+ vtable functions to
+    help 0). Do NOT re-attempt without new vtable evidence.
+  - **HamCamTransform sizeof lever** — real (TransformCrowd 0x10→0xc) but net −3
+    unit-wide due to target_symbol_map misnaming; needs the map fix first.
+⭐ METHOD that keeps working (now 8/9 hit rate this session): read the 3-6 instr
+residual, reconstruct retail EVALUATION ORDER (hoist a global/member read into a
+local, CSE a reused subexpression, split a pointer chain, single-assign setters).
+Fable subagents are effective at this per-fn work; the DANGER is shared-header
+edits — gate EVERY wave with a full composed A/B and bisect before landing.
+
+REMAINING Stream-3 queue: Vector3Keys::SetFrame 98.42 (dst-addr-hoist codegen
+cliff, likely at-limit), LightHue::Sync (in the loader follow-up bundle),
++ ~8 more ranked in `~/tmp/stream3_mislabel_candidates.json`.
 
 ## STREAM 2 — BODY-divergence per-fn ports (bodyport lever)
 Genuine oracle logic/guard/arg divergences (port the real body from the oracle
