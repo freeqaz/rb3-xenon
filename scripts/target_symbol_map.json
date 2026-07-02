@@ -13759,5 +13759,6 @@
  "0X82646090": "??0SubheaderSortNode@@QAA@PAVSongSortCmp@@VSymbol@@_N@Z",
  "0X826460D8": "?Insert@SubheaderSortNode@@UAAXPAVLeafSortNode@@PAVNodeSort@@_N@Z",
  "0X82646178": "??_GSubheaderSortNode@@UAAPAXI@Z",
- "0X82646220": "?Insert@ShortcutNode@@QAAXPAVLeafSortNode@@PAVNodeSort@@@Z"
+ "0X82646220": "?Insert@ShortcutNode@@QAAXPAVLeafSortNode@@PAVNodeSort@@@Z",
+ "0x82693ff0": "?ToggleGuidePart@PracticePanel@@QAAXXZ"
 }

@@ -2713,10 +2713,6 @@ ColorPalette.cpp:
 	.pdata      start:0x8222A4A8 end:0x8222A4E0
 	.text       start:0x8268C4A8 end:0x8268C844
 
-BaseSkeleton.cpp:
-	.pdata      start:0x8222AB40 end:0x8222AB90
-	.text       start:0x82693C20 end:0x826940A0
-
 Stream.cpp:
 	.pdata      start:0x822300A8 end:0x822300D8
 	.text       start:0x826F40C0 end:0x826F42A8
@@ -3209,8 +3205,10 @@ GemSmasher.cpp:
 
 PracticePanel.cpp:
 	.pdata      start:0x8222AB00 end:0x8222AB08
+	.pdata      start:0x8222AB80 end:0x8222AB88
 	.pdata      start:0x8222ABC0 end:0x8222ABC8
 	.text       start:0x82693818 end:0x82693880
+	.text       start:0x82693FF0 end:0x82694048
 	.text       start:0x826943D0 end:0x82694524
 
 band3/meta_band/ProfileMgr.cpp:
