@@ -134,3 +134,36 @@ build via `tools/ninja-locked` single-target, no whole-binary build):
   are named and the MsToTick↔Movie::Terminate ICF group is registered in
   symbol_aliases.json); drop ONLY that one map line if the landing gate strictly
   enforces report-100 for map entries. Nothing here is dishonest or broken.
+
+## INDEPENDENT RE-AUDIT (2nd auditor pass, 2026-07-02) — CONCUR: DEFER
+Reproduced from scratch in this worktree (objdiff-cli-direct, JSON→file; unit obj
+rebuilt via `tools/ninja-locked` single-target — no whole-binary build):
+- **TambourineGems @0x826dbaa8 — CONFIRMED true-100 strict.** normalized_match_percent
+  = 100.0, fuzzy = 100.0, target_size = base_size = 24. dtk real 0x18 boundary; VA
+  absent from `icf_aliases.map` (5-entry debug map, ICF mostly off); own-body match
+  in `default/TambourineManager` unit (not a foreign fold). Honest +1 strict.
+- **HandleButtonDown @0x826dd6f0 — CONFIRMED proven-identity, report 99.22 (NOT 100).**
+  normalized_match_percent = fuzzy = 99.21875, target_size = base_size = 256. Full
+  listing: 64/64 instrs match opcode+register (54 equal, 10 `diff_arg`); I extracted
+  all 10 differing args and every one is reloc-NAMING only — `lbl_82DA0017` (unnamed
+  target sdata) vs TheProfileMgr/TheTaskMgr, `fn_82532E30`/`fn_82722928`/`fn_826DD580`
+  (unnamed callees GetSyncOffset/Seconds/TambourineSwing), `lbl_820010A8` vs
+  `__real@447a0000` (1000.0f), and `Movie::Terminate`↔`MsToTick` ICF fold. No
+  opcode/register/immediate mismatch. Identity certain; NOT a guessed pin.
+- Honesty gate: `icf_alias_check.py --tu TambourineManager.cpp` → HONEST (empty set;
+  report.json stale in per-fn build). Own-vs-foreign checked by hand: both pins absent
+  from `icf_aliases.map`, both resolve to own-TU base symbols. Compile-gate re-run
+  (wibo cl.exe 16.00.11886.00): PASS (benign C4005/C4003 only, 94KB obj). Splits carve
+  re-verified: `.text` 0x826D9F60→BAA8(DB)→BAC0(Tamb)→DD6F0(DB)→DD7F8(Tamb)→DE1E0(DB),
+  `.pdata` 0x8222E610→E7A8→E908(DB)→E910(Tamb)→E9B0(DB); full coverage, 0 overlaps,
+  0 gaps, both Tamb fragments bounded by both neighbours. Map diff = ADD-only (2
+  lowercase-hex lines, no existing entry modified/removed). objects.json +1 NonMatching.
+- **VERDICT: DEFER — concur with the 1st audit.** Core deliverable (clean-compiling
+  port + TambourineGems strict-100 + wiring + splits carve) is fully CLEAR to land.
+  The single item needing a coordinator/owner bit: the HandleButtonDown add-only map
+  entry is report-normalized 99.22, literally below the "map pins only at true-100 /
+  report-normalized-100" hard line — even though the identity is CERTAIN (the hard
+  line's real guard is against *guessed* identities). Auditor recommends KEEP (correct
+  name, aids reloc resolution, trends to 100 once the sdata globals + the
+  Movie::Terminate↔MsToTick ICF group are named); drop ONLY that one line if the gate
+  strictly enforces report-100 for map entries. Nothing dishonest or broken.
