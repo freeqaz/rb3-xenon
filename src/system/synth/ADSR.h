@@ -4,12 +4,32 @@
 #include "utl/MemMgr.h"
 
 class ADSR; // forward declaration for ADSRImpl::Load
+class ADSRImpl;
 
 /** PS2-packed ADSR register pair. RB3 retail embeds this in ADSRImpl (the
  *  rb3-Wii oracle layout); DC3's newer header dropped it. 4 bytes. */
 class Ps2ADSR {
 public:
-    Ps2ADSR() : mReg1(0), mReg2(0) {}
+    Ps2ADSR() : mReg1(0x8F1F), mReg2(0x3C7) {}
+
+    void SetAttackMode(int);
+    void SetAttackRate(unsigned int);
+    void SetDecayRate(unsigned int);
+    void SetSustainMode(int);
+    void SetSustainRate(unsigned int);
+    void SetSustainLevel(unsigned int);
+    void SetReleaseMode(int);
+    void SetReleaseRate(unsigned int);
+
+    int GetAttackMode() const;
+    int GetSustainMode() const;
+    int GetReleaseMode() const;
+
+    int NearestAttackRate(float) const;
+    int NearestSustainRate(float) const;
+    int NearestReleaseRate(float) const;
+
+    void Set(const ADSRImpl &);
 
     unsigned short mReg1; // 0x0
     unsigned short mReg2; // 0x2
@@ -18,6 +38,7 @@ public:
 /** Implementation of ADSR envelope */
 class ADSRImpl {
     friend class ADSR;
+    friend class Ps2ADSR;
     friend bool PropSync(ADSRImpl &, DataNode &, DataArray *, int, PropOp);
 
 public:
@@ -73,6 +94,8 @@ public:
      * @milofail When trying to load where rev > 1 or altRev > 0
      */
     void Load(BinStream &, ADSR *);
+    /** Lazily bakes the float/mode envelope into the PS2-packed register pair. */
+    void SyncPacked();
 
 private:
     /** @hmx{Duration of attack in seconds} */
