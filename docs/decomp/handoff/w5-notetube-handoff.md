@@ -147,3 +147,41 @@ __va_start/__frsqrte intrinsic warnings).
 path-limited (6 files). global_fuzzy_pairs.json left untracked. No contamination.
 
 — WAVE-5 auditor
+
+---
+
+## WAVE-5 AUDIT #2 (independent re-verify, fresh rebuild) — VERDICT: CLEAR
+
+Second independent auditor. Rebuilt the base obj from the committed source
+(`ninja-locked`, CoW worktree) and re-ran all 5 audit tasks against c258d89.
+Confirms the prior audit; no downgrade.
+
+1. **Per-fn re-verify (objdiff-cli-direct, JSON→file):** 5 of 6 reproduce
+   strict — CurrentStartX(12/12), CurrentEndX(20/20), SetDeployTiming(56/56),
+   PollDeploy(136/136), SetPointPos(84/84) all `raw=norm=fuzzy=100.0`, `score 0`.
+   InitializePlate = 256/256 size-exact, `raw=norm=fuzzy=99.453125`, score
+   35/6400. raw==norm here means objdiff does NOT auto-resolve the residual —
+   it's 7 `diff_arg` on `bl` to *unnamed* engine callees (fn_82405660/823E66C8/
+   824410F0) + float-pool loads; composes to true-100 only once those callees
+   are named. HONEST, size-exact, landable per SOP (99.4-99.7 reloc residue).
+   **Count = 5 strict + 1 near-strict, NOT 6 strict** (matches prior audit).
+
+2. **ICF honesty:** none of the 6 addrs in build/45410914/icf_aliases.map;
+   4 anchors ≥56B real bodies (not stub-folds); the 2 getters are `raw=100`
+   byte-exact at DISTINCT sizes (12 vs 20) and distinct addrs → no
+   sibling-aliasing. Source is real C++ (no ASM_BLOCK/__asm) → not a fake match.
+
+3. **Map ADD-only + splits:** map = 6 pure EOF additions, no key collisions.
+   Overlap scan (all splits vs new ranges): pdata [0x82257AE0,0x82257B00) and
+   text [0x82BF6570,0x82BF6938) each hit ONLY their own entry, 0 foreign
+   overlaps. symbols.txt split 0x28+0xC=0x34 arithmetic correct.
+
+4. **Compile gate (wibo cl.exe 16.00.11886):** exit 0, obj produced
+   (114727 B), only the expected __va_start/__frsqrte intrinsic warnings.
+
+5. **MILO_DEBUG:** N/A — no dev-only members / #ifdef blocks in NoteTube.h/.cpp.
+
+**Safety:** main repo confirmed clean of NoteTube (splits/objects grep = 0,
+no unstaged status on the 3 config files). No contamination.
+
+— WAVE-5 auditor #2
