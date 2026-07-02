@@ -13726,5 +13726,9 @@
  "0x8245b158": "??$?6V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
  "0x8245b1d0": "??$?6V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
  "0x8245b248": "??$?6V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
- "0x823fc558": "??$MakeString@VSymbol@@MMMM@@YAPBDPBDVSymbol@@MMMM@Z"
+ "0x823fc558": "??$MakeString@VSymbol@@MMMM@@YAPBDPBDVSymbol@@MMMM@Z",
+ "0x8255a940": "?Exit@MetaPanel@@UAAXXZ",
+ "0x8255a980": "?Exiting@MetaPanel@@UBA_NXZ",
+ "0x8255a8f0": "?Enter@MetaPanel@@UAAXXZ",
+ "0x8255a9f8": "?SyncGameTimer@MetaPanel@@QAAXXZ"
 }

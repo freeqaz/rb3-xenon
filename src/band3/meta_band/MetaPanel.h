@@ -48,7 +48,9 @@ public:
     static DataNode ToggleLaunchedGoalMsgsOnly(DataArray *);
 
     void SyncGameTimer();
+protected:
     int PickLoopIndex(int);
+public:
     void UpdatePostProc();
     void OnSendBackSoundMsgToAll();
     void UpdateMusicMuteState();
@@ -56,15 +58,14 @@ public:
     DataNode OnMsg(const CurrentScreenChangedMsg &);
     DataNode OnMsg(const XMPStateChangedMsg &);
 
-    Tour *mTour; // 0x38
-    Campaign *mCampaign; // 0x3c
-    NameGenerator *mNameGenerator; // 0x40
-    int unk44; // 0x44
+    Tour *mTour; // 0x3c
+    Campaign *mCampaign; // 0x40
+    NameGenerator *mNameGenerator; // 0x44
     MetaMusicManager *mMetaMusicMgr; // 0x48
     HAQManager *mHAQMgr; // 0x4c
     std::vector<int> mRecentIndices; // 0x50
-    int unk58;
-    MetaMusic *mMusic; // 0x5c
-    SongPreview mSongPreview; // 0x60
-    bool unkd4;
+    int unk58; // 0x5c
+    MetaMusic *mMusic; // 0x60
+    SongPreview mSongPreview; // 0x64
+    bool unkd4; // 0xd8
 };

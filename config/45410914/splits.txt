@@ -3558,8 +3558,8 @@ OvershellPanel.cpp:
 	.text       start:0x8259DF90 end:0x8259E538
 
 MetaPanel.cpp:
-	.pdata      start:0x82216098 end:0x822160A0
-	.text       start:0x8255A890 end:0x8255A8F0
+	.pdata      start:0x82216098 end:0x82216178
+	.text       start:0x8255A890 end:0x8255B42C
 
 BaseGuitarTrackWatcherImpl.cpp:
 	.pdata      start:0x82236890 end:0x82236898

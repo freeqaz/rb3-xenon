@@ -364,12 +364,11 @@ int MetaPanel::PickLoopIndex(int numLoops) {
     while (true) {
         idx = RandomInt(1, numLoops);
         if (numLoops < prevSize + 2)
-            break;
+            return idx;
         int count = 0;
-        for (int i = 0; i < prevSize; i++) {
-            if (mRecentIndices[i] == idx)
+        for (; count < prevSize; count++) {
+            if (idx == mRecentIndices[count])
                 break;
-            count++;
         }
         if (count == prevSize)
             break;

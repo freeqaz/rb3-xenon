@@ -461,3 +461,22 @@ INDEPENDENT (one coupled-code in game UI, one coupled-base in engine world),
 not a shared base delta. **Member-delta lever now CLOSED** — all 4 mdf2
 candidates dispositioned; re-run the finder only after the next ≥ +500
 strict refill.
+
+# R2 MetaPanel axis-A — RESULTS (exec/r2-metapanel-0702, 2026-07-02)
+
+**LANDED-QUALITY: +5 net strict (report +8), 0 regressions.** Composed A/B:
+10,936 → 10,944 matched (only `default/MetaPanel` moved). Details in
+`docs/decomp/handoff/exec-r2-metapanel-run-2026-07-02.md`.
+
+- The lever was real but not the doc's "insert before mMusic" — the phantom
+  `int unk44` (referenced nowhere) did not exist in retail; deleting it zeroed
+  every offset diff. Final retail layout: 0x3c mTour … 0x50 mRecentIndices,
+  0x5c unk58, 0x60 mMusic, 0x64 mSongPreview, 0xd8 unkd4 (UIPanel base → 0x3c).
+- Strict wins: Unload, PickLoopIndex (two body rewrites: single-counter inner
+  loop + early `return idx`), Exiting (fn_8255A980), Enter (fn_8255A8F0 — the
+  planner's fn_8255AA48 candidate was wrong), SyncGameTimer (fn_8255A9F8).
+- Exit (fn_8255A940) = 81.2%: retail-only extra call (thunk fn_8250916C /
+  XamGetSystemVersion path) absent from the rb3-Wii DEV oracle. Mapped, not counted.
+- AppLabel: NO axis-A lever — 52/100 already perfect, layout retail-correct;
+  oracle GOOD rows are VA-misattributed outside the span. Remaining 48@0% =
+  manual ID grind, deferred.
