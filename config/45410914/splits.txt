@@ -633,8 +633,10 @@ Instance.cpp:
 	.text       start:0x824D7278 end:0x824DA640
 
 DepthBuffer3D.cpp:
-	.pdata      start:0x8222E610 end:0x8222E9B0
-	.text       start:0x826D9F60 end:0x826DE1E0
+	.pdata      start:0x8222E610 end:0x8222E7A8
+	.pdata      start:0x8222E7A8 end:0x8222E9B0
+	.text       start:0x826D9F60 end:0x826DBAA8
+	.text       start:0x826DBAC0 end:0x826DE1E0
 
 MicClientMapper.cpp:
 	.pdata      start:0x8222FE68 end:0x8222FE70
@@ -2828,6 +2830,9 @@ band3/game/VocalPart.cpp:
 band3/game/Singer.cpp:
 	.pdata      start:0x8222E568 end:0x8222E608
 	.text       start:0x826D8B98 end:0x826D9F10
+
+band3/game/TambourineManager.cpp:
+	.text       start:0x826DBAA8 end:0x826DBAC0
 
 band3/game/SongDB.cpp:
 	.pdata      start:0x82228070 end:0x82228338

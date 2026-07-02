@@ -13640,5 +13640,6 @@
  "0x827966e8": "?Lock@MemHandle@@QAAPAXXZ",
  "0x82798278": "?MemOrPoolFreeSTL@@YAXHPAX@Z",
  "0x82797aa0": "?MemFree@@YAXPAX@Z",
- "0x82795da0": "?PoolFree@@YAXHPAX@Z"
+ "0x82795da0": "?PoolFree@@YAXHPAX@Z",
+ "0X826DBAA8": "?TambourineGems@TambourineManager@@QBAABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@XZ"
 }
