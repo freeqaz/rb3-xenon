@@ -396,3 +396,17 @@ reproduced twice, ICF gate HONEST. Details + per-packet verdicts:
 - Post-land TODO: re-run `tools/gen_sysnet_port_worklist.py` (roster regen) on
   main after merge; shared `utl/MakeString.h` +0x800 buffer fix would close 3
   more MakeString stricts.
+
+### Wave A round-2 re-run (2026-07-02, same branch name `exec/ws1-waveA-0702`)
+
+A duplicate dispatch re-ran the wave post-land. p1-p5 were verified no-ops
+(worktrees clean vs main; reviewer re-reproduced 5 landed stricts per-symbol).
+p6 produced net-new pin/name hygiene, composed and landed here: 3 lbl->fn
+size fixes + micro-pins (Str/UILabel/ADSR), ADSR head fragment named
+NearestSustainRate (0.0%, dtk over-split — boundary surgery TODO), UILabel::
+Poll map re-add DROPPED (conflicts with landed p1 removal at 3.4%).
+Composed A/B: 10995 -> 10995, 0 regressions, +0 strict by design.
+Residue confirmed unchanged: MakeString +0x800 shared-buffer wall (4 ids),
+RndText flat-layout rewrite (4 Text ids), VocalTrackDir::Copy ObjPtr
+template semantics, Task _S_remove_if container model, JoypadGetCalbertValue
+(no oracle body).

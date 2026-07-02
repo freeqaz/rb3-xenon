@@ -1050,6 +1050,7 @@ Timer.cpp:
 
 Str.cpp:
 	.pdata      start:0x82239230 end:0x82239340
+	.text       start:0x8254F660 end:0x8254F668
 	.text       start:0x827989F0 end:0x82799A00
 
 RenderState.cpp:
@@ -1308,6 +1309,7 @@ UILabel.cpp:
 	.pdata      start:0x8223C658 end:0x8223C660
 	.text       start:0x82339998 end:0x823399F4
 	.text       start:0x827CCD80 end:0x827CCDF0
+	.text       start:0x827CD310 end:0x827CD338
 	.text       start:0x827CDCE8 end:0x827CDF3C
 	.text       start:0x827CF478 end:0x827CF6CC
 
@@ -1889,6 +1891,7 @@ ADSR.cpp:
 	.pdata      start:0x82231878 end:0x82231880
 	.pdata      start:0x82231880 end:0x82231888
 	.text       start:0x8270BDC4 end:0x8270BEF4
+	.text       start:0x8270C008 end:0x8270C018
 	.text       start:0x8270C188 end:0x8270C1D0
 	.text       start:0x8270C1D0 end:0x8270C2C8
 

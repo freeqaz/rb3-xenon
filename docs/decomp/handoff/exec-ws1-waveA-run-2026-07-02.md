@@ -147,3 +147,52 @@ Jump/NonStrumSwing/Enable, SelectedDisplay, Decrypt, DoFileRead.
 - VocalTrackDir::Copy named at 0% (retail-360 layout diverges from Wii; deep).
 - UILabel highlight-mesh infra absent; DirLoader MakeString<FilePath,f> gated
   by MILO_LOG no-op; Task _S_remove_if needs ThreadTask::Replace restructure.
+
+## Round-2 re-run review (2026-07-02, later same day)
+
+A second execution wave was dispatched against the same packet list after the
+original wave had already landed on main (44a00a8, then 89c3038 / ad2daa5 /
+c5632f9). Reviewer verdicts:
+
+- **p1-verify-applied — ACCEPT (no-op).** Verdict table already merged
+  (`exec-ws1-waveA-p1-verdicts.md`); reviewer cross-checked current main map:
+  all 21 kept names PRESENT, all 10 FAIL names ABSENT. Consistent.
+- **p2-port-rndobj — ACCEPT (no-op).** Worktree clean vs main. Reviewer
+  reproduced MatAnim `op<< Key<Vector3>` 100.0 norm (30 insns, name-paired).
+  4 Text ids remain walled behind the RndText flat-layout rewrite (DC3
+  ObjVector<Style> model vs retail flat single-Style, class end ~0xc8 vs
+  0x158+) — separate structural packet.
+- **p3-port-char-world-ui — ACCEPT (no-op).** Worktree gone (post-land
+  removal); reviewer reproduced GetCurrentPostProc 100.0/100.0 (21 insns)
+  from a clean-at-main worktree.
+- **p4-port-os-utl-obj-math — ACCEPT (no-op).** Worktree clean vs main;
+  3 residue defers documented with root cause (JoypadGetCalbertValue: no
+  oracle body anywhere; DirLoader MakeString<FilePath,f>: gated by no-op
+  MILO_LOG in PCH-load-bearing os/Debug.h; Task _S_remove_if: needs
+  std::list-vs-ObjPtrList container restructure).
+- **p5-port-synth-bm-track — ACCEPT (no-op).** Worktree clean vs main;
+  reviewer reproduced PressNote 100.0 norm (44 insns) and Decrypt 100.0 norm
+  (71 insns). VocalTrackDir::Copy 0% root-caused to ObjMacros/ObjPtr
+  template semantics (retail direct-stw copy + ~90-insn inlined deep-copy
+  tail), not a missing body.
+- **p6-nosize-salvage (round 2) — ACCEPT with 1 drop.** New edits, composed
+  into this branch:
+  - 3 symbols.txt lbl->fn conversions + 3 splits.txt micro-pins:
+    Str 0x8254F660 (8B, unnamed — target overload not emitted standalone),
+    UILabel 0x827CD310 (0x28, unnamed — InqMinMaxFromWidthAndHeight, not
+    standalone in our obj), ADSR 0x8270C008 (0x10).
+  - ADSR named `?NearestSustainRate@Ps2ADSR@@QBAHM@Z`; reviewer reproduced
+    0.0% (target 16B head fragment / base 88B — dtk over-split the true
+    [0x8270C008,0x8270C060) body into lbl+fn_8270C018+fn_8270C040). Kept as
+    a named near-miss marker; full match needs boundary surgery + body port.
+  - **DROPPED: `0x827ccd80 -> ?Poll@UILabel@@UAAXXZ` map re-add.** The
+    landed p1 verdict explicitly removed this exact entry at 3.4% full-body
+    match; re-adding without new identity evidence contradicts it.
+  - Correct SKIPs confirmed: TrackWidget 0x827bb458 trap (slot 0x3c =
+    SetDirty, not Init), CharClipGroup inlined no-arg GetClip, NetStream
+    forwarder, MasterAudio owner-WIP overlap.
+
+**Round-2 composed A/B (this branch vs main c5632f9): 10995 -> 10995 matched,
+0 regressions, +2 total functions (micro-pins registering as target-only).**
+Net strict +0 by design — round 2 is pin/name hygiene only; all match gains
+were already banked in the original wave land (44a00a8).
