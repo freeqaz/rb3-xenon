@@ -652,6 +652,16 @@ DepthBuffer3D.cpp:
 	.pdata      start:0x8222E7A8 end:0x8222E9B0
 	.text       start:0x826D9F60 end:0x826DBAA8
 	.text       start:0x826DBAC0 end:0x826DE1E0
+	.pdata      start:0x8222E610 end:0x8222E830
+	.pdata      start:0x8222E838 end:0x8222E860
+	.pdata      start:0x8222E868 end:0x8222E8F8
+	.pdata      start:0x8222E900 end:0x8222E908
+	.pdata      start:0x8222E910 end:0x8222E9B0
+	.text       start:0x826DBAC0 end:0x826DC7C0
+	.text       start:0x826DCAC8 end:0x826DCB88
+	.text       start:0x826DCDF4 end:0x826DD580
+	.text       start:0x826DD6A0 end:0x826DD6F0
+	.text       start:0x826DD7F8 end:0x826DE1E0
 
 MicClientMapper.cpp:
 	.pdata      start:0x8222FE68 end:0x8222FE70
@@ -3551,3 +3561,14 @@ EndingBonus.cpp:
 NoteTube.cpp:
 	.pdata      start:0x82257AE0 end:0x82257B00
 	.text       start:0x82BF6570 end:0x82BF6938
+
+TambourineManager.cpp:
+	.pdata      start:0x8222E830 end:0x8222E838
+	.pdata      start:0x8222E860 end:0x8222E868
+	.pdata      start:0x8222E8F8 end:0x8222E900
+	.pdata      start:0x8222E908 end:0x8222E910
+	.text       start:0x826DBAA8 end:0x826DBAC0
+	.text       start:0x826DC7C0 end:0x826DCAC8
+	.text       start:0x826DCB88 end:0x826DCDF4
+	.text       start:0x826DD580 end:0x826DD6A0
+	.text       start:0x826DD6F0 end:0x826DD7F8

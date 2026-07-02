@@ -13670,5 +13670,10 @@
  "0x82bf6598": "?SetDeployTiming@NoteTube@@QAAXMM@Z",
  "0x82bf65d0": "?InitializePlate@NoteTube@@QAAXPAVTubePlate@@PAVRndMat@@PAVRndGroup@@@Z",
  "0x82bf6818": "?PollDeploy@TubePlate@@QAAXM@Z",
- "0x82bf68a0": "?SetPointPos@NoteTube@@QAAXHVVector3@@@Z"
+ "0x82bf68a0": "?SetPointPos@NoteTube@@QAAXHVVector3@@@Z",
+ "0x826dbaa8": "?TambourineGems@TambourineManager@@QBAABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@XZ",
+ "0x826dc7c0": "?TambourineSucceed@TambourineManager@@QAAXH@Z",
+ "0x826dcb88": "?TambourineFail@TambourineManager@@QAAXH_N@Z",
+ "0x826dd580": "?TambourineSwing@TambourineManager@@QAAHH@Z",
+ "0x826dd6f0": "?HandleButtonDown@TambourineManager@@QAAXXZ"
 }
