@@ -170,6 +170,11 @@ version_num = VERSIONS.index(config.version)
 _FORK_FALLBACK = {
     "jeff": ("/home/free/code/milohax/jeff", "dtk"),
     "objdiff": ("/home/free/code/milohax/objdiff", "objdiff-cli"),
+    # objcache: the content-addressed MSVC obj cache wrapping the compile edge
+    # (sibling repo, rebuilt manually like jeff/objdiff -- see CLAUDE.md). Same
+    # resolver so main and every worktree bake the IDENTICAL absolute path into
+    # the msvc rule -> byte-identical command strings (warm-worktree parity).
+    "objcache": ("/home/free/code/milohax/objcache", "objcache"),
 }
 
 
@@ -233,6 +238,11 @@ def _default_dtk_path() -> Optional[Path]:
 
 def _default_objdiff_path() -> Optional[Path]:
     return _find_local_fork("objdiff")
+
+def _default_objcache_path() -> Optional[Path]:
+    # Prefer the prebuilt release binary; None if the fork/binary is absent
+    # (then the msvc rule simply omits the cache prefix -> uncached but correct).
+    return _find_local_fork("objcache")
 
 # Absolute fallback dir for the sibling freeqaz/wibo fork checkout (overridable
 # via env RB3_WIBO_DIR). The release binary is looked for at
@@ -304,6 +314,32 @@ def _gate_wibo_wrapper(wrapper_path: Path) -> None:
 config.build_dir = args.build_dir
 config.dtk_path = args.dtk if args.dtk is not None else _default_dtk_path()
 config.objdiff_path = args.objdiff if args.objdiff is not None else _default_objdiff_path()
+# objcache: content-addressed MSVC obj cache wrapping every compile edge. Resolve
+# the prebuilt binary via the SAME _find_local_fork resolver as dtk/objdiff, so
+# main and every worktree bake the identical absolute path into the msvc rule
+# (byte-identical command strings -> warm-worktree command-hash parity).
+config.objcache_path = _default_objcache_path()
+# Existence gate (mirrors _gate_wibo_wrapper): the cache prefix is a permanent
+# part of the msvc rule and every worktree resolves this same absolute binary, so
+# a missing binary is a real misconfiguration to surface LOUDLY, not to silently
+# skip (a skip would emit a different, uncached command string -> break warm
+# parity and quietly de-optimize the fleet). Runtime kill switch stays `objcache
+# off` / OBJCACHE=off (keeps the prefix; the binary itself passes through to a
+# real compile). Escape hatch for a genuinely cache-less environment:
+# RB3_OBJCACHE_OPTIONAL=1 -> omit the prefix (plain uncached compile, still
+# correct). Explicit --wrapper/other overrides are unaffected.
+if os.environ.get("RB3_OBJCACHE_OPTIONAL") not in (None, "", "0"):
+    config.objcache_path = None  # opt out: msvc rule omits the prefix
+elif config.objcache_path is None:
+    sys.exit(
+        "FATAL: objcache binary not found (looked upward for <ancestor>/objcache/"
+        "target/release/objcache, then $RB3_OBJCACHE_DIR, then the baked default "
+        "/home/free/code/milohax/objcache/target/release/objcache). The msvc rule "
+        "prefixes every compile with the object cache; a missing binary would "
+        "either break warm-worktree command parity or silently de-optimize. Build "
+        "it: cd ../objcache && cargo build --release  (or set "
+        "RB3_OBJCACHE_OPTIONAL=1 to build uncached on a cache-less box)."
+    )
 
 # "Always use our forks": warn loudly if a local fork checkout couldn't be found
 # and no explicit override was given, so we notice when a build silently falls

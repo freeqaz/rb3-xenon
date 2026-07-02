@@ -132,13 +132,56 @@ silently corrupt `deps = msvc` dependency tracking), not a bug.
 `tools/transform_dep.py` is no longer in the msvc rule (wibo rewrites
 `/showIncludes` output in-process).
 
-> **Editing the jeff/objdiff/wibo sources? Rebuild the release binary
+**wibo staging discipline (important).** The live `build/release/wibo` is invoked
+by *every* MSVC compile in main AND all worktrees, and now includes the
+residual-perf merge (readlink storm fix, scoped negative-exists cache, in-process
+stats reporter, `current_path()` memo). Because a stock/regressed wibo silently
+corrupts obj bytes fleet-wide, **never overwrite `build/release/wibo` directly**:
+rebuild to `build/staging/wibo`, run the byte gate (compile ≥3 TUs with the staged
+vs live binary → 0 differing bytes beyond the COFF timestamp), then atomically
+swap (`mv release/wibo <backup>; mv staging/wibo release/wibo`). The binary is not
+a ninja input, so the swap triggers no recompiles — which is exactly why a bad one
+goes unnoticed until objs are wrong. Rollback = `mv <backup> release/wibo`.
+
+**objcache — shared content-addressed MSVC object cache.** Sibling Rust repo at
+`/home/free/code/milohax/objcache` (rebuilt manually like jeff/objdiff:
+`cargo build --release`). Every `msvc`/`msvc_pch`/`msvc_pch_create` rule is
+prefixed with `objcache exec --fo $out -- <wibo> cl.exe …` (resolved to the same
+absolute path in main and every worktree via `configure.py`'s `_find_local_fork`,
+so command strings stay byte-identical → warm-worktree hits). configure.py
+**hard-fails** if the binary is missing (`RB3_OBJCACHE_OPTIONAL=1` opts out to a
+plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
+(config, manifests, objects, stats).
+- **What it buys:** a cold `rm -rf build/45410914/src && ./tools/ninja-locked` is
+  now all-cache-hits — measured **3.5 s / 778 hits / 5 misses** vs a full ~5-min
+  recompile. Cold A/B baselines and fresh worktrees are near-free.
+- **Kill switch (no re-log):** `objcache off` (or `OBJCACHE=off` env) → the prefix
+  stays in the rule but the binary passes straight through to the real compiler.
+  `objcache on` re-enables. `objcache stats [--reset]`, `objcache gc --max-size 10G`.
+- **Correctness model:** key = compiler-DLL identity + full cflags + source +
+  validated dep-closure hashes (+ PCH identity for PCH TUs); any anomaly (e.g. a
+  missing dep file) → passthrough, never a stale serve. Served objs are
+  byte-identical to a real compile except (a) the 4-byte COFF timestamp (zeroed on
+  hits) and (b) for cross-root hits, the single embedded `/Fo` path string — both
+  match-irrelevant (whole-binary `matched_functions` holds equal through all-hits
+  rebuilds). objcache also normalizes recorded deps to **repo-root-relative** (no
+  absolute src paths in `ninja -t deps` → enables warm-worktree `.ninja_deps` seeding).
+- **Known gotcha (not objcache's fault):** the synth/soundtouch TUs
+  (`AAFilter`/`FIFOSampleBuffer`/`FIRFilter`/`SoundTouch`/`RateTransposer`) do
+  `#include <memory.h>` but the on-disk file is `src/Memory.h` (capital M); wibo's
+  case-insensitive resolve reports the dep as lowercase `src/memory.h`, which
+  doesn't exist on the case-sensitive Linux FS → ninja marks them perpetually dirty
+  and they real-compile every build (reproduces with `OBJCACHE=off`). Harmless to
+  matching; fix belongs to the synth-family owner (rename the includes to
+  `"Memory.h"` or add a lowercase shim).
+
+> **Editing the jeff/objdiff/wibo/objcache sources? Rebuild the release binary
 > manually** — ninja no longer builds or tracks the tools:
-> `cargo build --release` in `../jeff` or `../objdiff`;
+> `cargo build --release` in `../jeff`, `../objdiff`, or `../objcache`;
 > `cmake --preset release && cmake --build --preset release` in `../wibo`.
-> None of the three binaries is an implicit ninja input, so a tool rebuild
+> None of these binaries is an implicit ninja input, so a tool rebuild
 > does not retrigger compiles (wibo is byte-neutral to objs — verified fork
-> vs stock objs = 0 differing bytes).
+> vs stock objs = 0 differing bytes; objcache serves timestamp-only-different objs).
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang) — runs the engine
 on the host. Currently boots headlessly and loads RB3 `songs.dta`.

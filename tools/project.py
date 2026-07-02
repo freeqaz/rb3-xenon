@@ -155,6 +155,7 @@ class ProjectConfig:
         self.ninja_path: Optional[Path] = None  # If None, use system PATH
         self.objdiff_tag: Optional[str] = None  # Git tag
         self.objdiff_path: Optional[Path] = None  # If None, download
+        self.objcache_path: Optional[Path] = None  # Prebuilt objcache binary; None disables the cache
 
         # Project config
         self.non_matching: bool = False
@@ -771,7 +772,22 @@ def generate_build_ninja(
         # ships together with the wrapper default. No bash -c / pipe needed: ninja
         # runs the command through sh -c, so the VAR=1 VAR2=1 env prefix applies
         # to the single cl.exe process.
-        msvc_cmd = f"WIBO_FS_CACHE=1 WIBO_REWRITE_SHOWINCLUDES=1 {msvc_cmd}"
+        # objcache: content-addressed obj cache wrapping the compile edge. The
+        # prefix goes BETWEEN the WIBO_* env words and the wrapper+cl so (a) ninja
+        # runs the whole line via sh -c, setting WIBO_* env for the objcache
+        # process, which propagates the entire environment to the child compile
+        # (a W1-B guarantee), and (b) the PCH `.replace()` anchor
+        # "$cflags /showIncludes /Fo$out $in" lives at the TAIL of msvc_cmd,
+        # untouched, so msvc_pch_create/msvc_pch inherit the prefix and their
+        # /Yc//Yu asserts still pass. `objcache exec --fo $out` is authoritative
+        # for the output path. Absolute binary path from the same
+        # _find_local_fork resolver as dtk/objdiff, so main and worktrees emit
+        # identical command strings; if the fork/binary is absent the prefix is
+        # empty -> a plain (uncached) compile. Runtime kill switch: `objcache off`.
+        objcache_prefix = ""
+        if config.objcache_path is not None and config.objcache_path.is_file():
+            objcache_prefix = f"{config.objcache_path} exec --fo $out -- "
+        msvc_cmd = f"WIBO_FS_CACHE=1 WIBO_REWRITE_SHOWINCLUDES=1 {objcache_prefix}{msvc_cmd}"
 
     n.comment("MSVC build")
     n.variable("msvc_deps_prefix", "Note: including file:")
