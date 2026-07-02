@@ -922,7 +922,10 @@
    },
    "network/Core/TimedSignal.cpp": "NonMatching",
    "network/Core/PeriodicJob.cpp": "NonMatching",
-   "network/net/NetworkEmulator.cpp": "NonMatching"
+   "network/net/NetworkEmulator.cpp": "NonMatching",
+   "network/Platform/StringConversion.cpp": "NonMatching",
+   "network/Core/Scheduler.cpp": "NonMatching",
+   "network/Plugins/ChecksumAlgorithm.cpp": "NonMatching"
   }
  },
  "curl": {

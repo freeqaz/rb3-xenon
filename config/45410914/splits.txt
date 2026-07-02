@@ -3674,3 +3674,18 @@ PitchArrow.cpp:
 BandHighlight.cpp:
 	.pdata      start:0x821F6B58 end:0x821F6B60
 	.text       start:0x8232FAB0 end:0x8232FB8C
+
+StringConversion.cpp:
+	.text       start:0x82AB8118 end:0x82AB8158
+
+Scheduler.cpp:
+	.pdata      start:0x8224B340 end:0x8224B348
+	.pdata      start:0x8224B3E8 end:0x8224B3F0
+	.pdata      start:0x8224B400 end:0x8224B408
+	.text       start:0x82A97AD8 end:0x82A97E8C
+	.text       start:0x82A99878 end:0x82A99A60
+	.text       start:0x82A99B90 end:0x82A99C28
+
+ChecksumAlgorithm.cpp:
+	.pdata      start:0x8224F3D0 end:0x8224F3D8
+	.text       start:0x82AF4360 end:0x82AF4478
