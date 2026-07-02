@@ -749,8 +749,15 @@ def generate_build_ninja(
     msvc_cmd = f"{wrapper_cmd}{msvc} $cflags /showIncludes /Fo$out $in"
     if transform_dep is not None:
         msvc_cmd = (
-            "bash -lc 'set -o pipefail; "
-            f"{msvc_cmd} | $python {transform_dep}'"
+            # WIBO_FS_CACHE=1: cache wibo's case-insensitive path resolution.
+            # Without it every header open in cl.exe pays a directory scan --
+            # measured 6.8s vs 0.65s per TU (10.5x) on the same compile, with
+            # byte-identical output (only the COFF timestamp bytes differ,
+            # same as any recompile). dc3 has run with this cache fleet-wide.
+            # Plain bash -c (not -lc): a LOGIN shell per TU sources the whole
+            # profile for nothing (~55ms/TU).
+            "bash -c 'set -o pipefail; "
+            f"WIBO_FS_CACHE=1 {msvc_cmd} | $python {transform_dep}'"
         )
 
     n.comment("MSVC build")
