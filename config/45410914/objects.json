@@ -640,7 +640,10 @@
    "system/os/HolmesClient.cpp": "NonMatching",
    "system/utl/NetCacheMgr.cpp": "NonMatching",
    "system/beatmatch/BaseGuitarTrackWatcherImpl.cpp": "NonMatching",
-   "system/bandobj/EndingBonus.cpp": "NonMatching"
+   "system/bandobj/EndingBonus.cpp": "NonMatching",
+   "system/synth/Faders.cpp": "NonMatching",
+   "system/synth/StandardStream.cpp": "NonMatching",
+   "system/meta/SongPreview.cpp": "NonMatching"
   }
  },
  "hamobj": {
@@ -704,7 +707,8 @@
    "system/hamobj/HamBattleData.cpp": "NonMatching",
    "system/hamobj/HamGameData.cpp": "NonMatching",
    "system/hamobj/OriginalChoreoRemixer.cpp": "NonMatching",
-   "system/hamobj/HamDriver.cpp": "NonMatching"
+   "system/hamobj/HamDriver.cpp": "NonMatching",
+   "system/hamobj/HamAudio.cpp": "NonMatching"
   }
  },
  "xdk": {

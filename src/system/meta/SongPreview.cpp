@@ -71,7 +71,7 @@ void SongPreview::SetMusicVol(float f) {
     if (mInitted == 0) {
         return;
     }
-    if (f < mMusicFader->GetLevelTarget()) {
+    if (f < mMusicFader->GetTargetDb()) {
         mMusicFader->DoFade(f, 250.0f);
     } else {
         mMusicFader->DoFade(f, 1000.0f);
@@ -101,7 +101,7 @@ void SongPreview::Init() {
         mFader = Hmx::Object::New<Fader>();
         mMusicFader = Hmx::Object::New<Fader>();
         mCrowdSingFader = Hmx::Object::New<Fader>();
-        mCrowdSingFader->SetVolume(kDbSilence);
+        mCrowdSingFader->SetVal(kDbSilence);
     }
 }
 
@@ -151,8 +151,8 @@ void SongPreview::Start(Symbol song, TexMovie *texMovie) {
             }
             mSong = song;
             mRestart = true;
-            mMusicFader->SetVolume(mPreviewDb);
-            mCrowdSingFader->SetVolume(kDbSilence);
+            mMusicFader->SetVal(mPreviewDb);
+            mCrowdSingFader->SetVal(kDbSilence);
             switch (mState) {
             case kIdle:
             case kMountingSong:
@@ -224,15 +224,15 @@ DataNode SongPreview::OnStart(DataArray *arr) {
 void SongPreview::DetachFader(Fader *f) {
     if (mStream && f) {
         for (int i = 0; i < mNumChannels; i++) {
-            mStream->ChannelFaders(i).Remove(f);
+            mStream->ChannelFaders(i)->Remove(f);
         }
     }
 }
 
 void SongPreview::PrepareFaders(const SongInfo *info) {
     for (int i = 0; i < mNumChannels; i++) {
-        FaderGroup &f = mStream->ChannelFaders(i);
-        f.Add(mMusicFader);
+        FaderGroup *f = mStream->ChannelFaders(i);
+        f->Add(mMusicFader);
     }
 }
 
@@ -312,12 +312,12 @@ void SongPreview::Poll() {
     }
     case kPreparingSong: {
         if (HasMovie()) {
-            mFader->SetVolume(0);
+            mFader->SetVal(0);
         } else {
             if (!mStream->IsReady()) {
                 return;
             }
-            mFader->SetVolume(kSilenceVal);
+            mFader->SetVal(kSilenceVal);
             mFader->DoFade(0, mFadeTime);
             mStream->Play();
         }

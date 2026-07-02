@@ -31,8 +31,8 @@ StandardStream::ChannelParams::ChannelParams()
       mFxSend(nullptr) {
     static Symbol _parent("_parent");
     static Symbol _default("_default");
-    mFaders.AddLocal(_parent)->SetVolume(0);
-    mFaders.AddLocal(_default)->SetVolume(0);
+    mFaders.AddLocal(_parent)->SetVal(0);
+    mFaders.AddLocal(_default)->SetVal(0);
 }
 
 StandardStream::StandardStream(
@@ -211,12 +211,12 @@ float StandardStream::GetInSongTime() {
 void StandardStream::SetVolume(int chan, float vol) {
     MILO_ASSERT_RANGE(chan, 0, mChanParams.size(), 0x41E);
     static Symbol _default("_default");
-    mChanParams[chan]->mFaders.FindLocal(_default, true)->SetVolume(vol);
+    mChanParams[chan]->mFaders.FindLocal(_default, true)->SetVal(vol);
 }
 
 float StandardStream::GetVolume(int chan) const {
     MILO_ASSERT_RANGE(chan, 0, mChanParams.size(), 0x444);
-    return mChanParams[chan]->mFaders.GetVolume();
+    return mChanParams[chan]->mFaders.GetVal();
 }
 
 void StandardStream::SetPan(int chan, float pan) {
@@ -357,9 +357,9 @@ void StandardStream::SetSlipSpeed(int channel, float speed) {
     }
 }
 
-FaderGroup &StandardStream::ChannelFaders(int channel) {
+FaderGroup *StandardStream::ChannelFaders(int channel) {
     MILO_ASSERT_RANGE(channel, 0, mChanParams.size(), 0x48D);
-    return mChanParams[channel]->mFaders;
+    return &mChanParams[channel]->mFaders;
 }
 
 void StandardStream::AddVirtualChannels(int i) {
@@ -687,10 +687,10 @@ void StandardStream::UpdateVolumes() {
 
     // If the master faders are dirty, propagate to each channel's _parent local fader
     if (mFaders->Dirty()) {
-        float masterVol = mFaders->GetVolume();
+        float masterVol = mFaders->GetVal();
         for (std::vector<ChannelParams *>::iterator it = mChanParams.begin();
              it != mChanParams.end(); ++it) {
-            (*it)->mFaders.FindLocal(_parent, true)->SetVolume(masterVol);
+            (*it)->mFaders.FindLocal(_parent, true)->SetVal(masterVol);
         }
         mFaders->ClearDirty();
     }
@@ -698,7 +698,7 @@ void StandardStream::UpdateVolumes() {
     // Apply per-channel volume to StreamReceiver
     for (int i = 0; i < mChannels.size(); i++) {
         if (mChanParams[i]->mFaders.Dirty()) {
-            float vol = mChanParams[i]->mFaders.GetVolume();
+            float vol = mChanParams[i]->mFaders.GetVal();
             float ratio = DbToRatio(vol);
             ClampEq(ratio, 0.0f, 1.0f);
             mChannels[i]->SetVolume(ratio);

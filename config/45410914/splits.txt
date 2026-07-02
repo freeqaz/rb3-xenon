@@ -1475,10 +1475,6 @@ UIComponent.cpp:
 	.pdata      start:0x8223CF58 end:0x8223D220
 	.text       start:0x827D8DC8 end:0x827DBDB0
 
-StandardStream.cpp:
-	.pdata      start:0x82200C58 end:0x82200C60
-	.text       start:0x823DD8A8 end:0x823DD8EC
-
 MemMgr.cpp:
 	.pdata      start:0x822390B0 end:0x822390B8
 	.text       start:0x823DED68 end:0x823DED84
@@ -1815,14 +1811,6 @@ PartAnim.cpp:
 	.pdata      start:0x822082D8 end:0x82208458
 	.text       start:0x8246C2C0 end:0x8246E1B8
 
-SongPreview.cpp:
-	.pdata      start:0x8222A900 end:0x8222A908
-	.text       start:0x826911D0 end:0x82691274
-
-HamAudio.cpp:
-	.pdata      start:0x8222B0B8 end:0x8222B0C0
-	.text       start:0x82699410 end:0x82699484
-
 LocalePanel.cpp:
 	.pdata      start:0x8222B1C0 end:0x8222B1C8
 	.text       start:0x8269A240 end:0x8269A2A0
@@ -1856,10 +1844,6 @@ FileMergerOrganizer.cpp:
 	.pdata      start:0x8222D1A8 end:0x8222D1B0
 	.text       start:0x823C6EA8 end:0x823C6F5C
 	.text       start:0x826BD2B8 end:0x826BD394
-
-Faders.cpp:
-	.pdata      start:0x8222D598 end:0x8222D5A0
-	.text       start:0x826C1730 end:0x826C1794
 
 CheatProvider.cpp:
 	.pdata      start:0x8222EE00 end:0x8222EE08

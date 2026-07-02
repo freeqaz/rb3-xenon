@@ -41,7 +41,7 @@ BEGIN_HANDLERS(HamAudio)
     HANDLE_ACTION_IF(
         set_track_volume,
         mTrackFaders[_msg->Sym(2)],
-        mTrackFaders[_msg->Sym(2)]->SetVolume(_msg->Float(3))
+        mTrackFaders[_msg->Sym(2)]->SetVal(_msg->Float(3))
     )
     HANDLE_ACTION(set_loop, SetLoop(_msg->Float(2), _msg->Float(3)))
     HANDLE_ACTION(clear_loop, ClearLoop())
@@ -114,7 +114,7 @@ void HamAudio::SetMasterVolume(float vol) {
 }
 
 void HamAudio::SetChannelVolume(int channel, float volume) {
-    mChannelFaders[channel]->SetVolume(volume);
+    mChannelFaders[channel]->SetVal(volume);
 }
 
 void HamAudio::SetMuteMaster(bool mute) {
@@ -134,7 +134,7 @@ void HamAudio::UpdateMasterFader() {
     } else {
         masterVolume = mMasterVolume;
     }
-    mMasterFader->SetVolume(masterVolume);
+    mMasterFader->SetVal(masterVolume);
 }
 
 bool HamAudio::Fail() { return mSongStream && mSongStream->Fail(); }
@@ -143,8 +143,8 @@ bool HamAudio::IsFinished() const { return mSongStream && mSongStream->IsFinishe
 void HamAudio::Jump(float f1) {
     if (mSongStream) {
         mSongStream->Stop();
-        mCrossFaders[0]->SetVolume(0);
-        mCrossFaders[1]->SetVolume(kDbSilence);
+        mCrossFaders[0]->SetVal(0);
+        mCrossFaders[1]->SetVal(kDbSilence);
         mCrossfadeState = 0;
         if (mStreams[1]) {
             mStreams[1]->Stop();
@@ -227,9 +227,13 @@ void HamAudio::Play() {
 }
 
 void HamAudio::PrintFaders() {
-    MILO_LOG("MasterFader %.2f\n", mMasterFader->DuckedValue());
-    MILO_LOG("CrossFaders[0] %.2f\n", mCrossFaders[0]->DuckedValue());
-    MILO_LOG("CrossFaders[1] %.2f\n", mCrossFaders[1]->DuckedValue());
+    // DC3's Fader::DuckedValue() (base fader level + ducking contributions) has
+    // no RB3 equivalent on Fader itself (ducking lives in AudioDucker/AudioDuckerGroup
+    // instead, applied to whichever Fader they wrap). GetVal() is the closest
+    // analog available directly on Fader for this debug dump.
+    MILO_LOG("MasterFader %.2f\n", mMasterFader->GetVal());
+    MILO_LOG("CrossFaders[0] %.2f\n", mCrossFaders[0]->GetVal());
+    MILO_LOG("CrossFaders[1] %.2f\n", mCrossFaders[1]->GetVal());
 }
 
 // intentionally unimplemented
@@ -364,17 +368,9 @@ void HamAudio::FinishLoad() {
     do {
         if (*pStream) {
             (*pStream)->Faders()->Add(mMasterFader);
-#ifdef HX_NATIVE
             Fader *crossFader = mCrossFaders[pStream - mStreams];
             (*pStream)->Faders()->Add(crossFader);
-            crossFader->SetVolume(0.0f);
-#else
-            // PPC compiler strength-reduces this to lwz r4, 0x38, rPStream
-            // but only with hardcoded byte offset — pointer subtraction generates
-            // srawi/addi/slwi (5 extra instructions) that the compiler won't fold
-            (*pStream)->Faders()->Add(*(Fader**)((char*)pStream + 0x38));
-            (*(Fader**)((char*)pStream + 0x38))->SetVolume(0.0f);
-#endif
+            crossFader->SetVal(0.0f);
 
             const std::vector<float> &vols = mSongInfo->GetVols();
             const std::vector<float> &pans = mSongInfo->GetPans();
@@ -385,12 +381,12 @@ void HamAudio::FinishLoad() {
                 Fader *fader;
                 if (!((unsigned int)ch < mChannelFaders.size())) {
                     fader = Hmx::Object::New<Fader>();
-                    fader->SetVolume(vols[ch]);
+                    fader->SetVal(vols[ch]);
                     mChannelFaders.push_back(fader);
                 } else {
                     fader = mChannelFaders[ch];
                 }
-                (*pStream)->ChannelFaders(ch).Add(fader);
+                (*pStream)->ChannelFaders(ch)->Add(fader);
                 (*pStream)->SetPan(ch, pans[ch]);
             }
 
@@ -409,21 +405,21 @@ void HamAudio::FinishLoad() {
 
                 const std::vector<int> &channels = tracks[t].mChannels;
                 for (unsigned int c = 0; c < channels.size(); c++) {
-                    (*pStream)->ChannelFaders(channels[c]).Add(trackFader);
+                    (*pStream)->ChannelFaders(channels[c])->Add(trackFader);
                 }
 
                 if (TheSynth->CheckCommonBank(false)) {
                     Fader *vocalsFader = TheSynth->Find<Fader>("vocals_level.fade", false);
                     if (vocalsFader && audioType == kAudioTypeVocals) {
                         for (unsigned int c = 0; c < channels.size(); c++) {
-                            (*pStream)->ChannelFaders(channels[c]).Add(vocalsFader);
+                            (*pStream)->ChannelFaders(channels[c])->Add(vocalsFader);
                         }
                     }
 
                     Fader *multiFader = TheSynth->Find<Fader>("multi_level.fade", false);
                     if (multiFader && audioType == kAudioTypeMulti) {
                         for (unsigned int c = 0; c < channels.size(); c++) {
-                            (*pStream)->ChannelFaders(channels[c]).Add(multiFader);
+                            (*pStream)->ChannelFaders(channels[c])->Add(multiFader);
                         }
                     }
 
@@ -502,7 +498,7 @@ void HamAudio::PollCrossfade() {
         if (!ready) {
             goto done;
         }
-        mCrossFaders[0]->SetVolume(0);
+        mCrossFaders[0]->SetVal(0);
         mStreams[1]->Stop();
         mStreams[1]->ClearJump();
         state = 0;
@@ -547,9 +543,9 @@ void HamAudio::PollCrossfade() {
         }
         float vol = (float)fadePos;
         float db0 = (float)log10((double)vol) * 10.0f;
-        mCrossFaders[0]->SetVolume(db0);
+        mCrossFaders[0]->SetVal(db0);
         float db1 = (float)log10((double)(1.0f - vol)) * 10.0f;
-        mCrossFaders[1]->SetVolume(db1);
+        mCrossFaders[1]->SetVal(db1);
     }
 }
 
