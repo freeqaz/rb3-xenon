@@ -3414,3 +3414,6 @@ GameplayOptions.cpp:
 	.text       start:0x82637F48 end:0x82637FB0
 MainHubMessageProvider.cpp:
 	.text       start:0x82655768 end:0x8265577C
+Metronome.cpp:
+	.pdata      start:0x8222E168 end:0x8222E170
+	.text       start:0x826D1E98 end:0x826D1EE8
