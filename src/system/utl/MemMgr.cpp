@@ -659,6 +659,30 @@ MemTemp::~MemTemp() {
 }
 #endif
 
+// Retail/match 4-arg FreeBlockStats (fn_827963D8). Per the rb3-Wii oracle this
+// is Heap::FreeBlockStats(int&,int&,int&,int&), grouped into the MemMgr.o TU.
+// Walks the free-block chain: totalFree = sum of block bytes, biggest = largest
+// block bytes, maxIdx = index of the largest block, rFrags = (count-maxIdx-1).
+// No member-variable writes (unlike the 5-arg overload in MemHeap.cpp).
+void MemHeap::FreeBlockStats(int &maxIdx, int &rFrags, int &totalFree, int &biggest) {
+    int idx = 0;
+    int maxBytes = 0;
+    int sumBytes = 0;
+    int maxBlock = -1;
+    for (FreeBlock *it = mFreeBlockChain; it != nullptr; it = it->mNextBlock, idx++) {
+        int bytes = it->mSizeWords * 4;
+        if (maxBytes < bytes) {
+            maxBytes = bytes;
+            maxBlock = idx;
+        }
+        sumBytes += bytes;
+    }
+    totalFree = sumBytes;
+    biggest = maxBytes;
+    maxIdx = maxBlock;
+    rFrags = (idx - maxBlock) - 1;
+}
+
 void MemFreeBlockStats(
     int heapNum, int &i2, int &i3, int &numFreeBytes, int &i5, int &biggestFreeBlock
 ) {

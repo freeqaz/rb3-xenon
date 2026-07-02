@@ -30,6 +30,12 @@ public:
     void Init(const char *, int, int *, int, bool, Strategy, int, bool);
     int AllocSize(int *);
     void FreeBlockStats(int &, int &, int &, int &, int &);
+    // Retail/match 4-arg overload (fn_827963D8, TU=MemMgr.o per the rb3-Wii
+    // oracle Heap::FreeBlockStats(int&,int&,int&,int&)). Walks the free-block
+    // chain computing maxIdx / rFrags / totalFree / biggest, with NO member
+    // bookkeeping writes (the 5-arg version above does mMinFreeBytes). Defined
+    // in MemMgr.cpp so it lands in MemMgr.obj, matching the retail TU grouping.
+    void FreeBlockStats(int &, int &, int &, int &);
     void FirstFit(int, int, FreeBlockInfo &);
     void BestFit(int, int, FreeBlockInfo &);
     void LRUFit(int, int, FreeBlockInfo &);
