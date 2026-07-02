@@ -632,7 +632,9 @@
    "system/ui/UIListSlot.cpp": "NonMatching",
    "system/rndobj/FontBase.cpp": "NonMatching",
    "system/utl/DataPointMgr.cpp": "NonMatching",
-   "system/rndobj/PostProc_NG.cpp": "NonMatching"
+   "system/rndobj/PostProc_NG.cpp": "NonMatching",
+   "system/os/HolmesClient.cpp": "NonMatching",
+   "system/utl/NetCacheMgr.cpp": "NonMatching"
   }
  },
  "hamobj": {
@@ -853,7 +855,17 @@
    "band3/tour/TourProgress.cpp": "NonMatching",
    "band3/tour/TourBand.cpp": "NonMatching",
    "band3/tour/TourPerformer.cpp": "NonMatching",
-   "band3/game/PracticePanel.cpp": "NonMatching"
+   "band3/game/PracticePanel.cpp": "NonMatching",
+   "band3/game/Game.cpp": "NonMatching",
+   "band3/game/Band.cpp": "NonMatching",
+   "band3/game/Tracker.cpp": "NonMatching",
+   "band3/game/GemTrainerPanel.cpp": "NonMatching",
+   "band3/bandtrack/Track.cpp": "NonMatching",
+   "band3/bandtrack/GemSmasher.cpp": "NonMatching",
+   "band3/meta_band/ClosetMgr.cpp": "NonMatching",
+   "band3/meta_band/BandProfile.cpp": "NonMatching",
+   "band3/net_band/ContextWrapper.cpp": "NonMatching",
+   "band3/tour/TourSavable.cpp": "NonMatching"
   }
  },
  "network": {
@@ -893,6 +905,12 @@
   "cflags": "curl",
   "objects": {
    "system/net/curl/lib/sslgen.c": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/I src/system/net/curl/include"
+    ]
+   },
+   "system/net/curl/lib/ssluse.c": {
     "status": "NonMatching",
     "extra_cflags": [
      "/I src/system/net/curl/include"

@@ -6,6 +6,7 @@
 #include "os/Debug.h"
 #include "os/File.h"
 #include "os/HolmesUtl.h"
+#include "os/NetStream.h"
 #include "os/NetworkSocket.h"
 #include "os/System.h"
 #include "os/Timer.h"
@@ -48,7 +49,7 @@ namespace {
         int mBytes;
     };
 
-    BinStream *gHolmesStream;
+    NetStream *gHolmesStream;
     MemStream *gStreamBuffer;
 
     char gMachineName[NETBIOS_NAME_MAX] = { 0 };
@@ -435,7 +436,8 @@ void HolmesClientInit() {
         String share(gShareName);
         share = OptionStr("holmes_share", share.c_str());
         share = OptionStr("xb_share", share.c_str());
-        gHolmesStream = HolmesClient::PlatformCreateServerStream(unk, share.c_str());
+        gHolmesStream =
+            static_cast<NetStream *>(HolmesClient::PlatformCreateServerStream(unk, share.c_str()));
         if (gHolmesStream == nullptr) {
             if (!unk) {
                 MILO_FAIL("COULD NOT CONNECT TO HOLMES");

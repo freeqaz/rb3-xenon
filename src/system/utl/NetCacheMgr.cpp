@@ -16,7 +16,7 @@
 NetCacheMgr *TheNetCacheMgr;
 
 NetCacheMgr::NetCacheMgr()
-    : mState(-1), mHasFailed(0), mFailType(kNCMFT_Unknown), mServiceId(0), mServiceIDObtained(0),
+    : mState(-1), mHasFailed(0), mFailType(kNCMFT_Unknown), mServiceId(0),
       mLoadCacheSize(0), mCache(0), mLoadCount(0) {
     SetName("net_cache_mgr", ObjectDir::Main());
 }
@@ -32,9 +32,6 @@ BEGIN_HANDLERS(NetCacheMgr)
 END_HANDLERS
 
 void NetCacheMgr::Poll() {
-    if (!mServiceIDObtained) {
-        mServiceIDObtained = ThePlatformMgr.GetServiceID("store", mServiceId);
-    }
     PollLoaders();
     switch (mState) {
     case 0:
