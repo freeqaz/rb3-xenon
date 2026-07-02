@@ -3468,3 +3468,6 @@ TrainingPanel.cpp:
 WaitingUserGate.cpp:
 	.pdata      start:0x82219E60 end:0x82219E68
 	.text       start:0x825951A0 end:0x825951F8
+OvershellPanel.cpp:
+	.pdata      start:0x8221A740 end:0x8221A748
+	.text       start:0x8259DF90 end:0x8259E538

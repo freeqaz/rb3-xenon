@@ -38,6 +38,10 @@ public:
     WiiProfile *GetProfileForPad(int);
     bool IsPadAGuest(int) const;
     bool IsPadRegistered(int) const;
+    void SetIndexRegistered(int, bool);
+    bool IsIndexLoaded(int) const;
+    bool IsIndexLocked(int) const;
+    bool IsIndexRegistered(int) const;
     void RemovePad(int);
     bool IsSlotAvailable() const;
     bool IsDeleteQueueFull() const;

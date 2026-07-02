@@ -4,10 +4,22 @@
 #include "obj/Msg.h"
 #include "obj/Object.h"
 #include "os/OnlineID.h"
+#include "os/Timer.h"
 #include "os/User.h"
 #include "stl/_vector.h"
 #include "utl/JobMgr.h"
 #include "xdk/XSOCIAL.h"
+
+// Wii-origin HomeMenu stub — referenced by ported RB3-Wii game code
+// (meta_band/OvershellPanel). On Xbox 360 this object is never instantiated;
+// mHomeMenuWii points to a zeroed placeholder so the ported code compiles.
+struct HomeMenu {
+    bool mHomeMenuActive; // 0x0
+    bool mForcedHomeMenu; // 0x1
+};
+
+// Callback type used by OvershellPanel::Init() on Wii.
+typedef bool SignInUserCallbackFunc(User *, unsigned long);
 
 enum DiskError {
     kNoDiskError,
@@ -162,6 +174,15 @@ public:
     void SignInUsers(int, unsigned long);
     ShowGamercardResult ShowGamercardForPadNum(int, const OnlineID *);
     bool CanSeeUserCreatedContent(const OnlineID *) const;
+    // Wii-origin entry points referenced by ported meta_band/OvershellPanel code.
+    // Declaration-only; append-only — does not alter existing PlatformMgr layout.
+    void RegisterSignInserCallback(SignInUserCallbackFunc *);
+
+    // Wii-origin data members referenced by ported meta_band/OvershellPanel.
+    // Added at the end to avoid disturbing the existing X360 layout; these are
+    // never accessed in a matching TU.
+    HomeMenu *mHomeMenuWii; // Wii: pointer to Wii home-menu object
+    Timer mTimer;           // Wii: net-start-utility retry timer
 };
 
 extern PlatformMgr ThePlatformMgr;
