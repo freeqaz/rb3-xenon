@@ -13621,5 +13621,6 @@
  "0x8266aca8": "?GetSectionBoundsTick@GameConfig@@QBAXHAAH0@Z",
  "0x8262f3a8": "?Enter@NextSongPanel@@UAAXXZ",
  "0x826c4890": "?Disable@DirectInstrument@@QAAXXZ",
- "0x8252A5C8": "?PushHeaderDataToScreen@MusicLibrary@@QAAXXZ"
+ "0x8252A5C8": "?PushHeaderDataToScreen@MusicLibrary@@QAAXXZ",
+ "0x82621988": "?LeaveState@TrainingPanel@@QAA?AVDataNode@@XZ"
 }

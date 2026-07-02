@@ -3403,29 +3403,42 @@ BeatMatcher.cpp:
 	.text       start:0x8276BF98 end:0x8276C01C
 	.text       start:0x8276CAD8 end:0x8276CB48
 	.text       start:0x8276CB48 end:0x8276CBEC
+
 CampaignSongInfoPanel.cpp:
 	.pdata      start:0x82221420 end:0x82221428
 	.text       start:0x826035A8 end:0x826035FC
+
 ChordbookPanel.cpp:
 	.pdata      start:0x8222ADF0 end:0x8222ADF8
 	.text       start:0x826966F0 end:0x826967D8
+
 GameplayOptions.cpp:
 	.pdata      start:0x82224E68 end:0x82224E70
 	.text       start:0x82637F48 end:0x82637FB0
+
 MainHubMessageProvider.cpp:
 	.text       start:0x82655768 end:0x8265577C
+
 Metronome.cpp:
 	.pdata      start:0x8222E168 end:0x8222E170
 	.text       start:0x826D1E98 end:0x826D1EE8
+
 OverdriveTracker.cpp:
 	.pdata      start:0x8222D250 end:0x8222D258
 	.text       start:0x826BE0E0 end:0x826BE160
+
 GameConfig.cpp:
 	.pdata      start:0x82228450 end:0x82228458
 	.text       start:0x8266ACA8 end:0x8266ACF4
+
 NextSongPanel.cpp:
 	.pdata      start:0x82224530 end:0x82224538
 	.text       start:0x8262F3A8 end:0x8262F4A4
+
 DirectInstrument.cpp:
 	.pdata      start:0x8222D7C8 end:0x8222D7D0
 	.text       start:0x826C4890 end:0x826C48F4
+
+TrainingPanel.cpp:
+	.pdata      start:0x82223418 end:0x82223420
+	.text       start:0x82621988 end:0x82621A00
