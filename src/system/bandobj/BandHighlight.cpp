@@ -165,7 +165,19 @@ void BandHighlight::SetTarget(UIComponent *c, bool b) {
     if (unk148)
         UpdateTargetEdge(c);
 }
-
+// NOTE (r2-ws1bc-p5 cleanup, 96.7% named pin): the dynamic_cast (idx 9-17) and
+// the whole tail match retail byte-for-byte. The residual 3.3% is TWO SHARED
+// ENGINE-HEADER levers, NOT anything editable from this TU:
+//   1. UILabel::TextObj() is inline in our ui/UILabel.h (`return mText;`), so
+//      `lbl->TextObj()` folds to `lwz r3,<mText>,r3`; retail keeps it out-of-line
+//      (`bl fn_827CCF10`), which also flips the null-test cr6->cr0 (idx 18-20).
+//   2. rndobj/Text.h declares `RndText : public RndDrawable, public RndTransformable`
+//      (non-virtual); DC3's same-compiler oracle uses `public virtual` for both
+//      bases. The vbase overhead pushes RndText::mText 0xe0->0x108, which is the
+//      lone diff_arg at idx 22 (`lwz r4,0x108,r3` vs our `0xe0`).
+// Both fixes ripple across the whole binary (every UILabel/RndText user) and must
+// go through a dedicated engine-header lane with a whole-binary A/B — out of this
+// bandobj packet's sanctioned file scope.
 void BandHighlight::UpdateTargetEdge(RndTransformable *t) {
     if (unk148) {
         UILabel *lbl = dynamic_cast<UILabel *>(t);
