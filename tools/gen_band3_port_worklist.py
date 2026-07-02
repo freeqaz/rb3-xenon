@@ -30,8 +30,9 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-# --- repo roots (absolute; cwd-independent) -----------------------------------
-RB3X = "/home/free/code/milohax/rb3-xenon"
+# --- repo roots (cwd-independent; derived from THIS file so a worktree copy
+#     writes into its own worktree, not the shared main tree) ----------------
+RB3X = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RB3 = "/home/free/code/milohax/rb3"
 IDENT_PATH = os.path.join(RB3X, "ghidriff_identities.json")
 TSM_PATH = os.path.join(RB3X, "scripts", "target_symbol_map.json")
@@ -71,11 +72,15 @@ def confidence_label(e):
         return "bsim>=30"
     if sc >= 20:
         return "bsim20-30"
-    return "bsim15-20"
+    if sc >= 15:
+        return "bsim15-20"
+    return "bsim10-15"
 
 
-# Rank weight: HIGH and bsim>=30 are the "safest first" tier.
-LABEL_ORDER = {"high": 0, "bsim>=30": 1, "bsim20-30": 2, "bsim15-20": 3, "unknown": 4}
+# Rank weight: HIGH and bsim>=30 are the "safest first" tier. bsim10-15 is the
+# ws2 loose band (calibrated ~0.85), ranked below the strict 15-20 tier.
+LABEL_ORDER = {"high": 0, "bsim>=30": 1, "bsim20-30": 2, "bsim15-20": 3,
+               "bsim10-15": 4, "unknown": 5}
 
 
 def parse_cw_map(symbols):
@@ -112,8 +117,34 @@ def src_relpath(tu, raw_o_path):
     return f"src/band3/{sub}/{cpp}"
 
 
+def _suffix_path(p, suffix):
+    """Insert `suffix` before the file extension of path p."""
+    if not suffix:
+        return p
+    base, ext = os.path.splitext(p)
+    return base + suffix + ext
+
+
 def main():
-    ident = json.load(open(IDENT_PATH))
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--ident", default=IDENT_PATH,
+                    help="Identities JSON to consume (default: ghidriff_identities.json). "
+                         "Pass ghidriff_identities_loose.json for the ws2 loose band.")
+    ap.add_argument("--out-suffix", default="",
+                    help="Suffix inserted before the extension of both outputs "
+                         "(e.g. _loose -> band3_port_worklist_loose.json + "
+                         "docs/plans/band3-port-worklist-loose.md). Additive: does "
+                         "not touch the live strict worklists.")
+    args = ap.parse_args()
+
+    ident_path = args.ident if os.path.isabs(args.ident) else os.path.join(RB3X, args.ident)
+    # md uses a dash-style suffix (band3-port-worklist-loose.md) to match convention
+    out_json = _suffix_path(OUT_JSON, args.out_suffix)
+    md_suffix = args.out_suffix.replace("_", "-")
+    out_md = _suffix_path(OUT_MD, md_suffix)
+
+    ident = json.load(open(ident_path))
     tsm_n = {norm(k) for k in json.load(open(TSM_PATH))}
 
     band3 = [
@@ -157,6 +188,7 @@ def main():
             "match_types": e.get("match_types", []),
             "confidence_label": confidence_label(e),
             "simconf": e.get("bsim_simconf"),
+            "rb3wii_check": e.get("rb3wii_check"),
             "dc3_cannot_provide": True,
         }
         rows.append(row)
@@ -176,6 +208,8 @@ def main():
             "bsim>=30": c.get("bsim>=30", 0),
             "bsim20-30": c.get("bsim20-30", 0),
             "bsim15-20": c.get("bsim15-20", 0),
+            "bsim10-15": c.get("bsim10-15", 0),
+            "contradicted": sum(1 for r in tu_rows if r.get("rb3wii_check") == "contradicted"),
             "src_path": tu_rows[0]["src_path"],
         }
 
@@ -185,6 +219,8 @@ def main():
         tu_summary,
         key=lambda tu: (
             -(tu_summary[tu]["high"] + tu_summary[tu]["bsim>=30"]),
+            # non-contradicted yield (loose band has no high/>=30, so this drives it)
+            -(tu_summary[tu]["n"] - tu_summary[tu]["contradicted"]),
             -tu_summary[tu]["n"],
             tu,
         ),
@@ -197,7 +233,7 @@ def main():
             "description": "Net-new band3 Wii->Xenon identities (RB3 game code DC3 cannot provide). "
             "Porting worklist + per-fn identity oracle. NOT a target_symbol_map injection.",
             "generated_by": "tools/gen_band3_port_worklist.py",
-            "source_identities": "ghidriff_identities.json (ACCEPT tier, ghidriff-run3)",
+            "source_identities": os.path.basename(ident_path),
             "net_new_filter": "rb3_addr not a key in scripts/target_symbol_map.json (normalized join)",
             "precision_band3_human_judged": 0.900,
             "dominant_failure_mode": "same-TU sibling aliasing (~10%): near-identical bodies "
@@ -210,33 +246,51 @@ def main():
                 "bsim>=30": "BSim simconf >= 30",
                 "bsim20-30": "BSim simconf 20-30",
                 "bsim15-20": "BSim simconf 15-20",
+                "bsim10-15": "BSim simconf 10-15 (ws2 loose band, ~0.85 calibrated)",
             },
+            "rb3wii_check_note": "Per-row BinDiff/rb3wii cross-check: 'contradicted' "
+            "rows are excluded from confirm-on-consume handoff by default (judged 2/3 "
+            "still correct in the ws2 sample, so they are a labels-only reserve, not junk).",
         },
         "tu_summary": tu_summary,
         "ranked_tus": ranked_tus,
         "worklist": rows,
     }
-    with open(OUT_JSON, "w") as f:
+    with open(out_json, "w") as f:
         json.dump(feed, f, indent=2)
-    print(f"wrote {OUT_JSON}  ({len(rows)} rows, {len(by_tu)} TUs)")
+    print(f"wrote {out_json}  ({len(rows)} rows, {len(by_tu)} TUs)")
 
     # ---- emit markdown checklist --------------------------------------------
-    write_markdown(OUT_MD, rows, by_tu, tu_summary, ranked_tus, totals)
-    print(f"wrote {OUT_MD}")
+    write_markdown(out_md, rows, by_tu, tu_summary, ranked_tus, totals,
+                   source_name=os.path.basename(ident_path),
+                   json_name=os.path.basename(out_json))
+    print(f"wrote {out_md}")
 
 
-def write_markdown(path, rows, by_tu, tu_summary, ranked_tus, totals):
+def write_markdown(path, rows, by_tu, tu_summary, ranked_tus, totals,
+                   source_name="ghidriff_identities.json", json_name="band3_port_worklist.json"):
     high_total = totals.get("high", 0)
     s30 = totals.get("bsim>=30", 0)
     s2030 = totals.get("bsim20-30", 0)
     s1520 = totals.get("bsim15-20", 0)
+    s1015 = totals.get("bsim10-15", 0)
+    is_loose = "loose" in source_name or s1015 > 0
     L = []
     A = L.append
     A("# band3 porting worklist — net-new Wii→Xenon identities (DC3-cannot-provide)")
     A("")
     A("**Generated:** `tools/gen_band3_port_worklist.py` (regenerable). "
-      "**Source:** `ghidriff_identities.json` (ACCEPT tier) minus `scripts/target_symbol_map.json`.")
-    A("**Data feed:** `band3_port_worklist.json` (machine-readable, one row per fn; gitignored/regenerable).")
+      f"**Source:** `{source_name}` (ACCEPT tier) minus `scripts/target_symbol_map.json`.")
+    A(f"**Data feed:** `{json_name}` (machine-readable, one row per fn; gitignored/regenerable).")
+    if is_loose:
+        A("")
+        A("> **LOOSE BAND (ws2, BSim simconf 10–15).** These are CANDIDATES from the "
+          "run-3 archive re-vetted at the looser ≥10 operating point (sibling-check REJECT "
+          "applied). Measured band precision ≈ **0.85** (ws2 20-pair judging: 18 confirmed / "
+          "2 plausible / 0 wrong on non-contradicted rows). **Confirm-on-consume every id** "
+          "(diff vtable-slot/type-tag/node-size immediates + strings + resolved callees vs the "
+          "Wii body); **skip `rb3wii=contradicted` rows** unless separately judged. This is a "
+          "future-round candidate pool — no strict matches are minted from it directly.")
     A("")
     A("## What this is")
     A("")
@@ -270,8 +324,14 @@ def write_markdown(path, rows, by_tu, tu_summary, ranked_tus, totals):
     A("")
     A("## Confidence strata (the measured prior)")
     A("")
-    A(f"Band3 human-judged precision (round 2, n=30) = **0.900**. Totals here: "
-      f"**{high_total} high** · **{s30} bsim≥30** · **{s2030} bsim20-30** · **{s1520} bsim15-20**.")
+    if is_loose:
+        A(f"Loose-band (ws2) judged precision (n=20 non-contradicted) ≈ **0.85–1.00** "
+          f"(18 confirmed / 2 plausible / 0 wrong). Totals here: "
+          f"**{high_total} high** · **{s30} bsim≥30** · **{s2030} bsim20-30** · "
+          f"**{s1520} bsim15-20** · **{s1015} bsim10-15**.")
+    else:
+        A(f"Band3 human-judged precision (round 2, n=30) = **0.900**. Totals here: "
+          f"**{high_total} high** · **{s30} bsim≥30** · **{s2030} bsim20-30** · **{s1520} bsim15-20**.")
     A("")
     A("- **high** — `ExactInstructions`/`SwitchSig`/`Implied`/`SymbolsHash`, or BSim simconf ≥ 30. "
       "The safest-first targets.")
@@ -303,12 +363,13 @@ def write_markdown(path, rows, by_tu, tu_summary, ranked_tus, totals):
     # ---- TU ranking ---------------------------------------------------------
     A("## TU ranking (port these first — by #high+#bsim≥30 desc, then total desc)")
     A("")
-    A("| Rank | TU | src | #ids | high | ≥30 | 20-30 | 15-20 | DC3? |")
-    A("|---|---|---|---|---|---|---|---|---|")
+    A("| Rank | TU | src | #ids | high | ≥30 | 20-30 | 15-20 | 10-15 | contra | DC3? |")
+    A("|---|---|---|---|---|---|---|---|---|---|---|")
     for i, tu in enumerate(ranked_tus, 1):
         s = tu_summary[tu]
         A(f"| {i} | {tu} | `{s['src_path']}` | {s['n']} | {s['high']} | "
-          f"{s['bsim>=30']} | {s['bsim20-30']} | {s['bsim15-20']} | cannot-provide |")
+          f"{s['bsim>=30']} | {s['bsim20-30']} | {s['bsim15-20']} | {s['bsim10-15']} | "
+          f"{s['contradicted']} | cannot-provide |")
     A("")
 
     # ---- per-TU rosters -----------------------------------------------------
@@ -320,10 +381,11 @@ def write_markdown(path, rows, by_tu, tu_summary, ranked_tus, totals):
     for tu in ranked_tus:
         s = tu_summary[tu]
         A(f"### {tu} — {s['n']} ids "
-          f"(high {s['high']}, ≥30 {s['bsim>=30']}, 20-30 {s['bsim20-30']}, 15-20 {s['bsim15-20']})  ·  `{s['src_path']}`")
+          f"(high {s['high']}, ≥30 {s['bsim>=30']}, 20-30 {s['bsim20-30']}, 15-20 {s['bsim15-20']}, "
+          f"10-15 {s['bsim10-15']}, contra {s['contradicted']})  ·  `{s['src_path']}`")
         A("")
-        A("| Xenon addr | Bank-8 | confidence | match | Wii signature | wii_symbol |")
-        A("|---|---|---|---|---|---|")
+        A("| Xenon addr | Bank-8 | confidence | rb3wii | match | Wii signature | wii_symbol |")
+        A("|---|---|---|---|---|---|---|")
         tu_rows = sorted(
             by_tu[tu],
             key=lambda r: (LABEL_ORDER[r["confidence_label"]], r["rb3_addr"]),
@@ -331,8 +393,9 @@ def write_markdown(path, rows, by_tu, tu_summary, ranked_tus, totals):
         for r in tu_rows:
             conf = r["confidence_label"]
             if conf.startswith("bsim") and r["simconf"] is not None:
-                conf = f"bsim {r['simconf']:.0f}"
-            A(f"| `{r['rb3_addr']}` | `{r['wii_addr_bank8']}` | {conf} | {r['match_type']} | "
+                conf = f"bsim {r['simconf']:.1f}"
+            chk = r.get("rb3wii_check") or "-"
+            A(f"| `{r['rb3_addr']}` | `{r['wii_addr_bank8']}` | {conf} | {chk} | {r['match_type']} | "
               f"{md_esc(r['wii_demangled'])} | `{r['wii_symbol']}` |")
         A("")
 

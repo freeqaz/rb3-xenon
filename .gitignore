@@ -53,6 +53,11 @@ core.*
 
 # fingerprint_match.py generated indexes (regenerable from build/ + source trees)
 /ghidriff_identities.json
+# ws2 loose-band (BSim 10-15) identities + worklist feeds (regenerable from the run-3
+# archive via ingest_ghidriff_accepts.py --only-band 10,15; human .md is tracked under docs/plans/)
+/ghidriff_identities_loose.json
+/band3_port_worklist_loose.json
+/sysnet_port_worklist_loose.json
 /fingerprints.json
 /autoid.json
 /unified_id.json
