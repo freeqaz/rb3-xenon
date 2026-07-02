@@ -839,6 +839,7 @@
    "band3/tour/QuestFilterPanel.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
    "band3/tour/TourProgress.cpp": "NonMatching",
+   "band3/tour/TourBand.cpp": "NonMatching",
    "band3/game/PracticePanel.cpp": "NonMatching"
   }
  },
