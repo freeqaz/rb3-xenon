@@ -141,3 +141,36 @@ lane's scope (`lbl_82DA0017`=TheTaskMgr ×2, `fn_82722790`=UISeconds).
 layout keystone — a fix there flips all 3 to strict-100 at once. Worth a dedicated
 keystone lane (cross-check whether other UIList-derived wired classes carry the
 same +8). Out of port-lane scope; do not gate this landing on it.
+
+---
+
+## RE-AUDIT (WAVE-5 auditor, 2026-07-02, independent second pass) — VERDICT: CLEAR
+
+Re-spawned auditor; independently re-derived every claim from scratch (did not
+trust the section above). All reproduce.
+
+1. **Strict claims (0)** — objdiff-cli-direct (JSON→file) on all 3 vs the lane's
+   built objs (04:32, source unchanged since): sizes EXACT (76/64/72 both sides),
+   fuzzy=norm=raw `99.05 / 98.94 / 98.78`. All <100 → correctly NOT map-pinned.
+   (Note: the first audit section's "report-normalized 99.84/99.88/99.89" is a
+   report.json-generation figure I did not reproduce via cli-direct — cli-direct
+   norm equals fuzzy here; immaterial to verdict, both views are <100.)
+2. **+8 drift is REAL** — instruction diff on Conceal shows `lwz/stw r11,0x33c(r3)`
+   (tgt) vs `0x344` (base) on mBandListState and `stfs f1,0x340(r31)` vs `0x348`
+   on the timestamp: a genuine base-layout delta, not a fake-match dodge. Other 3
+   mismatches are foreign reloc-naming (`lbl_82DA0017`=TheTaskMgr ×2,
+   `fn_82722790`=UISeconds). `grep __asm|ASM_BLOCK` = 0 → genuine C++ bodies.
+3. **Honesty gate** — `icf_alias_check.py --tu BandList.cpp` = HONEST (empty set;
+   no 100% fns → no stub-fold possible). Own-vs-foreign clean.
+4. **Map/splits** — `git diff 5cb96d4 HEAD`: `target_symbol_map.json` and
+   `symbols.txt` byte-identical to base (ADD-ONLY trivially met). splits.txt adds
+   the BandList block only; both `.text` ranges sit strictly in-gap (0x82328EA0–F30
+   above BandCharDesc end 0x82324884, below 0x82329000; 0x8232C410–458 between
+   0x82329044 and 0x8232DB70) — no neighbour overlap.
+5. **Compile gate** — re-compiled with direct `cl.exe X360/16.00.11886.00`: EXIT 0,
+   clean (benign C4005/C4258 only), fresh 283 KB obj.
+6. **MILO_DEBUG** — no `#ifdef MILO_DEBUG` conditional member in the UIList base
+   chain; no dev members exist to remove → nothing to annotate, appropriate.
+
+Landable as-is: clean-compiling fuzzy-paired source at strict-0 (OWNER POLICY:
+partial matches count). +8 keystone is a real follow-up, not a landing gate.
