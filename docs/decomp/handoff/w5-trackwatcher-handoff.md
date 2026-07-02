@@ -117,3 +117,48 @@ symbols.txt boundary fix, which IS committed on this branch):
   auto-analysis (it had merged thunk pairs into 0x2C "functions"). It is correct/honest
   regardless of pins and enables clean future pinning. Localized diff: 16 ins / 9 del.
 - Overlap self-check on this branch: 0 pdata / 0 text overlaps.
+
+---
+
+## WAVE-5 AUDIT (2026-07-02) — VERDICT: CLEAR
+
+Independently re-verified in this worktree. All five audit tasks pass.
+
+1. **Strict claims (0) reproduce.** `strictClaimed=0` — nothing to reproduce.
+   `git diff 5cb96d4..HEAD -- scripts/target_symbol_map.json` = EMPTY: the map is
+   byte-identical to base. No false strict claim, no guessed sub-100 identity pinned.
+2. **Honesty gate PASS (no ICF-alias inflation).** `tools/icf_alias_check.py
+   --range 0x82778700-0x82778860 --list` → "no 100%-matched functions in the
+   selected set … VERDICT: HONEST (empty set)". Because zero map pins were added
+   and TrackWatcher.cpp is NonMatching, no function in the cluster reports 100% —
+   so there is nothing to inflate. The 12 stub-folds were correctly identified and
+   DROPPED (recorded above for a future lander only). Body-port lane, own-TU only.
+3. **Map ADD-ONLY / splits respect both neighbours.** Map unchanged. SOP overlap
+   self-check on the full splits.txt = **0 pdata / 0 text overlaps**. TrackWatcher's
+   carve `[0x82778700,0x82778860)` fits exactly in the gap between GuitarController's
+   two remaining ranges (`…end:0x82778700` and `start:0x82778860…`) — disjoint.
+4. **Compile gate PASS.** Direct `cl.exe 16.00.11886.00` on TrackWatcher.cpp →
+   only the expected va_list(C4392)/frsqrte(C4391) intrinsic warnings; 31,435-byte
+   .obj produced. Port matches the Wii source structurally (include-path prefixing +
+   `nullptr`→`NULL` + added macros.h/os/Debug.h only).
+5. **MILO_DEBUG landmine N/A.** No dev-only members or debug-only blocks in the
+   ported .cpp or the 7 impl headers. strict=0 (NonMatching) means no sizeof-driven
+   false-100 risk anyway.
+
+**Extra checks:** symbols.txt boundary fix is an honest correction of dtk's
+misalignment (it had made 0x2C "functions" spanning 1.5 thunks off a 4B pad; the fix
+lays down clean 0x14-stride thunk entries covering the cluster exactly). None of the
+8 removed dtk labels (lbl_82778708, fn_8277870C/764/790/7BC/7E8/814/840) are
+referenced anywhere in config/ or scripts/. objects.json wiring is a single-line add
+in the correct engine module beside TrackWatcherImpl.cpp. No forbidden/owner files
+in either commit; global_fuzzy_pairs.json correctly left untracked.
+
+**FOR THE LANDER:** the GuitarController `.text` split IS shared with lane 2
+(BaseGuitarTrackWatcherImpl near 0x8277D278, inside `[0x82778860,0x8277D790)`).
+This lane's carve is disjoint from lane 2's, so union-merge is safe — but after
+merging, re-run the SOP overlap self-check and grep GuitarController still reports
+17/158. The `.pdata` split (0x82237270 → …0x822372D8 + 0x822372D8…) keeps BOTH
+halves under GuitarController — content-neutral (contiguous, same owner); harmless
+to keep or collapse.
+
+Verdict: **CLEAR** — landable as-is (strict-0, fuzzy-paired TU source per owner policy).
