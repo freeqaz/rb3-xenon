@@ -3649,3 +3649,11 @@ system/synth/Synth.cpp:
 	.pdata      start:0x8222EAB0 end:0x8222EAB8
 	.text       start:0x826DEA48 end:0x826DEAA8
 	.text       start:0x826DEB30 end:0x826DEBC8
+
+RGGemMatcher.cpp:
+	.pdata      start:0x822367A8 end:0x822367B0
+	.text       start:0x8276A848 end:0x8276ABDC
+
+VocalNoteList.cpp:
+	.text       start:0x8275C030 end:0x8275C0DC
+	.text       start:0x8275C0E0 end:0x8275C128
