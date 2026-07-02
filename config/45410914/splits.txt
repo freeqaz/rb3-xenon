@@ -662,6 +662,8 @@ DepthBuffer3D.cpp:
 	.text       start:0x826DCDF4 end:0x826DD580
 	.text       start:0x826DD6A0 end:0x826DD6F0
 	.text       start:0x826DD7F8 end:0x826DE1E0
+	.pdata      start:0x8222E7A8 end:0x8222E908
+	.text       start:0x826DBAC0 end:0x826DD6F0
 
 MicClientMapper.cpp:
 	.pdata      start:0x8222FE68 end:0x8222FE70
