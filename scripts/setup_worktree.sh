@@ -231,9 +231,13 @@ else
     touch "$WT_BUILD/pch/system.pch"
 fi
 
-# Drop stale ninja state copied from main (own lock + logs per build dir).
-rm -f "$WORKTREE_PATH/.ninja_log" "$WORKTREE_PATH/.ninja_deps" \
-      "$WORKTREE_PATH/.ninja_lock" "$WORKTREE_PATH/.ninja-build.lock" 2>/dev/null || true
+# Drop stale ninja LOCK files copied from main (own lock per build dir).
+# NOTE: .ninja_log/.ninja_deps are deliberately NOT removed here — they may be
+# seeded from main's warm state AFTER configure.py has produced this worktree's
+# build.ninja (see the "seed warm ninja state" block below, which can only run
+# post-configure because it gates on msvc-rule parity). If any seeding gate
+# fails, that block removes them, preserving the old rm-and-rebuild behavior.
+rm -f "$WORKTREE_PATH/.ninja_lock" "$WORKTREE_PATH/.ninja-build.lock" 2>/dev/null || true
 
 # ---- warm-cache validation : make the reflinked object cache VALID under ninja
 # `git worktree add` stamps every checked-out source with a fresh (now) mtime,
@@ -287,8 +291,21 @@ if [ "$WARM_CACHE" -eq 1 ]; then
         # script's CWD (main), or it silently touches main's copies instead.
         ( cd "$WORKTREE_PATH" && git ls-files -z 2>/dev/null \
             | xargs -0 -r touch -h -d '2020-01-01' 2>/dev/null ) || true
-        find "$WT_BUILD" -type f -exec touch {} + 2>/dev/null || true
-        echo "  reflinked cache marked current — incremental (single-obj) builds are warm"
+        # DO NOT bump the reflinked build outputs to "now". `cp -a --reflink`
+        # already preserved main's exact output mtimes, which is precisely what
+        # makes them (a) newer than the 2020-stamped sources above and (b) EQUAL
+        # to the per-output mtimes recorded in main's .ninja_deps. The seeding
+        # block below copies main's .ninja_deps verbatim, and ninja invalidates
+        # a stored dep set when `output->mtime() > deps->mtime` — so touching the
+        # objs to "now" (as this step used to) makes every output newer than its
+        # recorded deps mtime, marking ALL ~745 edges "stored deps out of date"
+        # and re-running them on the first full build (they hit objcache, so it's
+        # fast, but it is NOT the 0-compile no-op seeding is meant to produce).
+        # In the NON-seeded warm path there is no .ninja_log, so ninja rebuilds a
+        # requested obj via "command not in log" regardless of its mtime — i.e.
+        # the old "now" touch was a no-op there anyway. Leaving reflink mtimes
+        # intact is correct for both paths.
+        echo "  reflinked cache marked current (reflink mtimes preserved — seed-compatible)"
     else
         echo "==> Warm cache NOT validated: worktree differs from $BASE_REF ($_changed path(s)); first build will rebuild"
     fi
@@ -384,6 +401,96 @@ if [ ! -f "$WORKTREE_PATH/build.ninja" ]; then
     echo "FATAL: configure.py did not produce $WORKTREE_PATH/build.ninja." >&2
     echo "       The worktree is unbuildable; refusing to hand back a broken tree." >&2
     exit 1
+fi
+
+# ---- seed warm ninja state (.ninja_log/.ninja_deps) from main ---------------
+# A fresh worktree has NO ninja log, so ninja treats every output as never-built
+# and a full `ninja` recompiles all ~745 objs even though the reflinked object
+# cache is byte-valid. When ALL of the following hold, main's .ninja_log +
+# .ninja_deps are a CORRECT warm state for this worktree, so seeding them makes
+# the first full build a ~0-compile no-op:
+#   a) WARM_CACHE==1 AND main/worktree is clean (no src/|config/ diffs — the
+#      existing `_changed` gate) AND main has no uncommitted configure.py /
+#      tools/project.py diffs (a dirty wiring file means main's .ninja_log may
+#      encode commands that differ from what this worktree's regenerated
+#      build.ninja would run);
+#   b) rule parity: the msvc/msvc_pch/msvc_pch_create rule blocks are
+#      byte-identical between main and worktree build.ninja (same absolute tool
+#      paths => identical command strings => identical command hashes);
+#   c) main's deps are uniformly repo-root-relative: `ninja -t deps` on 3 probe
+#      objs (incl. PCH-eligible units) yields ZERO absolute (`^    /`) dep lines
+#      — an absolute dep would pin the copied .ninja_deps to MAIN's files, so a
+#      worktree header edit to those paths would be silently missed;
+#   d) main's .ninja_log and .ninja_deps both exist and are non-empty.
+# Any gate failing => remove the two files (old rm-and-rebuild behavior) and
+# print EXACTLY which gate failed (observability > silent fallback). The
+# --cold-cache path (WARM_CACHE==0) always lands in the else branch, so cold
+# baselines stay honestly cold.
+_seed_ok=1
+_seed_reason=""
+if [ "$WARM_CACHE" -ne 1 ]; then
+    _seed_ok=0
+    _seed_reason="cold-cache (--cold-cache): warm seeding disabled by design"
+elif [ "${_changed:-1}" -ne 0 ]; then
+    _seed_ok=0
+    _seed_reason="main/worktree has src/|config/ diffs vs $BASE_REF (_changed=${_changed:-unset})"
+else
+    # Gate a (wiring): no uncommitted configure.py / tools/project.py diffs in main.
+    _wiring_changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
+                          git -C "$MAIN_REPO" diff --name-only --cached 2>/dev/null; } \
+                        | grep -cE '^(configure\.py|tools/project\.py)$' || true )"
+    if [ "$_wiring_changed" -ne 0 ]; then
+        _seed_ok=0
+        _seed_reason="main has uncommitted configure.py/tools/project.py diffs ($_wiring_changed) — wiring may differ"
+    fi
+fi
+
+# Gate b (rule parity): extract the msvc rule blocks from both build.ninja files
+# (each block runs from its `rule <name>` header through the blank line that
+# terminates it) and require them byte-identical.
+if [ "$_seed_ok" -eq 1 ]; then
+    _rule_awk='/^rule (msvc|msvc_pch|msvc_pch_create)$/{p=1} p{print} p&&/^$/{p=0}'
+    if ! cmp -s \
+         <(awk "$_rule_awk" "$MAIN_REPO/build.ninja") \
+         <(awk "$_rule_awk" "$WORKTREE_PATH/build.ninja"); then
+        _seed_ok=0
+        _seed_reason="msvc rule block(s) differ between main and worktree build.ninja"
+    fi
+fi
+
+# Gate c (relative deps): 3 probe objs incl. PCH-eligible units must have zero
+# absolute src dep paths in main's .ninja_deps.
+if [ "$_seed_ok" -eq 1 ]; then
+    _abs_deps=0
+    for _probe in \
+        "build/$VERSION/src/system/beatmatch/MasterAudio.obj" \
+        "build/$VERSION/src/system/os/Debug.obj" \
+        "build/$VERSION/src/system/obj/Object.obj"; do
+        _n="$( ( cd "$MAIN_REPO" && ninja -t deps "$_probe" 2>/dev/null ) \
+               | grep -c '^    /' || true )"
+        _abs_deps=$(( _abs_deps + _n ))
+    done
+    if [ "$_abs_deps" -ne 0 ]; then
+        _seed_ok=0
+        _seed_reason="main's .ninja_deps has $_abs_deps absolute src dep path(s) — not portable to a worktree"
+    fi
+fi
+
+# Gate d (non-empty state): main's .ninja_log and .ninja_deps exist + non-empty.
+if [ "$_seed_ok" -eq 1 ]; then
+    if [ ! -s "$MAIN_REPO/.ninja_log" ] || [ ! -s "$MAIN_REPO/.ninja_deps" ]; then
+        _seed_ok=0
+        _seed_reason="main's .ninja_log/.ninja_deps missing or empty"
+    fi
+fi
+
+if [ "$_seed_ok" -eq 1 ]; then
+    cp --reflink=auto "$MAIN_REPO/.ninja_log"  "$WORKTREE_PATH/.ninja_log"
+    cp --reflink=auto "$MAIN_REPO/.ninja_deps" "$WORKTREE_PATH/.ninja_deps"
+    echo "==> Seeded warm ninja state from main (.ninja_log + .ninja_deps) — first full build should be ~0 compiles"
+else
+    rm -f "$WORKTREE_PATH/.ninja_log" "$WORKTREE_PATH/.ninja_deps" 2>/dev/null || true
+    echo "==> Warm ninja state NOT seeded: $_seed_reason (first build will rebuild)"
 fi
 
 # ---- prune zero-byte orphan .obj files --------------------------------------

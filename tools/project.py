@@ -928,6 +928,15 @@ def generate_build_ninja(
         # eligible .cpp. Do NOT absolutize /I (dc3 does; we must not): consuming
         # compiles use relative /I from the repo-root cwd and MSVC's PCH
         # consistency check requires create/use include sets to match exactly.
+        # Likewise keep /Fp (pch_out / pch_file below) REPO-ROOT-RELATIVE, not
+        # .resolve()'d: an absolute /Fp bakes the checkout path into the PCH
+        # create+use commands, so main and every worktree get different command
+        # hashes for the PCH edge + all ~281 dependents — defeating
+        # setup_worktree.sh's .ninja_log seeding (the PCH would rebuild and
+        # cascade on every fresh worktree's first build). Relative /Fp is
+        # byte-neutral to the compiled dependent objs (verified: only the PCH
+        # byproduct decomp_pch.obj, which is not a match target, embeds the
+        # path string); cl.exe resolves it against the repo-root cwd like /Fo.
         pch_cflags_str = ""
         if config.libs:
             pch_lib = next((l for l in config.libs if l["lib"] == "engine"), config.libs[0])
@@ -939,7 +948,7 @@ def generate_build_ninja(
             inputs=config.pch_source,
             implicit=[*mwcc_implicit],
             implicit_outputs=[pch_path],
-            variables={"cflags": pch_cflags_str, "pch_out": str(pch_path.resolve())},
+            variables={"cflags": pch_cflags_str, "pch_out": str(pch_path)},
             order_only="pre-compile",
         )
         n.newline()
@@ -1105,7 +1114,7 @@ def generate_build_ninja(
                 and src_path.parent.name in config.pch_eligible_dirs
             ):
                 build_rule = "msvc_pch"
-                variables["pch_file"] = str(pch_path.resolve())
+                variables["pch_file"] = str(pch_path)
                 pch_implicit = [pch_path]
 
             n.comment(f"{obj.name}: {lib_name} (linked {obj.completed})")

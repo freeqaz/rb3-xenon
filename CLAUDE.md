@@ -85,8 +85,19 @@ out from under them will *deeply break* concurrent work. Hard rules:
   `build/45410914/` (a *private* warm-cache build dir — never a symlink into
   main, so the worktree's build can't corrupt the shared one), symlinks the
   read-only toolchain, baks absolute tool paths into the worktree's
-  `build.ninja` via `configure.py`, and primes ninja state. Add `--cold-cache`
-  for a guaranteed-clean A/B baseline. Remove with
+  `build.ninja` via `configure.py`, and primes ninja state. A fresh **warm**
+  worktree also **seeds main's `.ninja_log`/`.ninja_deps`** so its first full
+  `ninja` is a ~0-compile no-op (only the 5 perpetually-dirty soundtouch TUs
+  rebuild) instead of recompiling all ~745 objs. Seeding is gated: it only
+  happens when main is clean (no `src/`/`config/` or `configure.py`/
+  `tools/project.py` diffs), the worktree's msvc rule blocks are byte-identical
+  to main's, and main's deps are uniformly repo-root-relative; if any gate
+  fails it auto-skips with a printed reason and falls back to the old
+  rm-and-rebuild path. (Portability requires the PCH `/Fp` path to stay
+  repo-root-relative — see `tools/project.py`; an absolute `/Fp` would make the
+  PCH command worktree-specific and re-trigger the full cascade.) Add
+  `--cold-cache` for a guaranteed-clean A/B baseline — seeding is disabled on
+  that path, so cold baselines stay honestly cold. Remove with
   `git worktree remove --force <path>`.
 - **Put worktrees + all scratch under `~/tmp` (= `/home/free/tmp`), NEVER `/tmp`.**
   `/tmp` is a RAM-backed **tmpfs** (47 GB, shared across everything, fills fast —
