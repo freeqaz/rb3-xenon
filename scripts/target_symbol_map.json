@@ -13633,5 +13633,6 @@
  "0x82621988": "?LeaveState@TrainingPanel@@QAA?AVDataNode@@XZ",
  "0x825951a0": "?Load@EnterFlowMsg@@UAAXAAVBinStream@@@Z",
  "0x8259df90": "?ResolveSlotStates@OvershellPanel@@QAAXXZ",
- "0x8255a890": "?Unload@MetaPanel@@UAAXXZ"
+ "0x8255a890": "?Unload@MetaPanel@@UAAXXZ",
+ "0x826aa958": "?GetCurrentStartTick@TrainerPanel@@QBAHXZ"
 }
