@@ -49,6 +49,9 @@ public:
     virtual bool IsBlockingTransition() { return false; }
     virtual bool IsTimelineResetAllowed() const { return true; }
 
+    // Wii-origin net-error dialog; referenced by ported RB3-Wii game code
+    // (meta_band/OvershellPanel). Decl-only on X360.
+    void ShowNetError();
     UIScreen *CurrentScreen() { return mCurrentScreen; }
     UIScreen *TransitionScreen() { return mTransitionScreen; }
     bool InTransition() { return mTransitionState != kTransitionNone; }

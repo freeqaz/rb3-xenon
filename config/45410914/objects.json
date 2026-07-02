@@ -800,6 +800,7 @@
    "band3/meta_band/MusicLibrary.cpp": "NonMatching",
    "band3/meta_band/NameGenerator.cpp": "NonMatching",
    "band3/meta_band/OvershellPartSelectProvider.cpp": "NonMatching",
+   "band3/meta_band/OvershellPanel.cpp": "NonMatching",
    "band3/meta_band/OvershellSlot.cpp": "NonMatching",
    "band3/meta_band/PrefabMgr.cpp": "NonMatching",
    "band3/meta_band/SongUpgradeMgr.cpp": "NonMatching",
