@@ -753,6 +753,7 @@
    "band3/game/VocalGuidePitch.cpp": "NonMatching",
    "band3/game/VocalPlayer.cpp": "NonMatching",
    "band3/game/VocalPart.cpp": "NonMatching",
+   "band3/game/TambourineManager.cpp": "NonMatching",
    "band3/game/TrainerPanel.cpp": "NonMatching",
    "band3/game/VocalTrainerPanel.cpp": "NonMatching",
    "band3/bandtrack/VocalTrack.cpp": "NonMatching",
