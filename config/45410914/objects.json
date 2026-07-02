@@ -826,6 +826,7 @@
    "band3/meta_band/StoreInfoPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMainPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMenuPanel.cpp": "NonMatching",
+   "band3/meta_band/SongSortNode.cpp": "NonMatching",
    "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
    "band3/meta_band/UIEvent.cpp": "NonMatching",
    "band3/meta_band/UIEventMgr.cpp": "NonMatching",
