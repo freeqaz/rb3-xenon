@@ -635,7 +635,8 @@
    "system/utl/DataPointMgr.cpp": "NonMatching",
    "system/rndobj/PostProc_NG.cpp": "NonMatching",
    "system/os/HolmesClient.cpp": "NonMatching",
-   "system/utl/NetCacheMgr.cpp": "NonMatching"
+   "system/utl/NetCacheMgr.cpp": "NonMatching",
+   "system/beatmatch/BaseGuitarTrackWatcherImpl.cpp": "NonMatching"
   }
  },
  "hamobj": {

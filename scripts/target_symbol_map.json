@@ -13655,5 +13655,9 @@
  "0x827704e8": "?SendMiss@TrackWatcherImpl@@QAAXMHHHW4GemHitFlags@@@Z",
  "0x8276fbb0": "?RecalcGemList@TrackWatcherImpl@@QAAXXZ",
  "0x827720d8": "?KillSustainForSlot@TrackWatcherImpl@@QAAXH@Z",
- "0x8276fd78": "?EndSustainedNote@TrackWatcherImpl@@QAAXAAUGemInProgress@@@Z"
+ "0x8276fd78": "?EndSustainedNote@TrackWatcherImpl@@QAAXAAUGemInProgress@@@Z",
+ "0X8277D278": "?Slop@BaseGuitarTrackWatcherImpl@@UAAMH@Z",
+ "0X8277D2C8": "?TryToHopo@BaseGuitarTrackWatcherImpl@@QAAXMH_N0@Z",
+ "0X8277D510": "?NonStrumSwing@BaseGuitarTrackWatcherImpl@@UAAXH_N0@Z",
+ "0X8277CFE0": "?CanHopo@BaseGuitarTrackWatcherImpl@@QBA_NH@Z"
 }
