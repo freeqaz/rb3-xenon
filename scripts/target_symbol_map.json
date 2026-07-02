@@ -13778,5 +13778,7 @@
  "0x8232fab0": "?UpdateTargetEdge@BandHighlight@@QAAXPAVRndTransformable@@@Z",
  "0x8228b4f8": "?Terminate@OutfitConfig@@SAXXZ",
  "0x8228b5e8": "?CompressTextures@OutfitConfig@@QAAXXZ",
- "0x82a97ad8": "??0Scheduler@Quazal@@QAA@EPAVSchedulerWorkerThread@01@@Z"
+ "0x82a97ad8": "??0Scheduler@Quazal@@QAA@EPAVSchedulerWorkerThread@01@@Z",
+ "0x82ab8118": "?Latin1ToUtf8@?A0xfea654e8@@YAXPBDPADI@Z",
+ "0x82af4360": "?DeriveKey@ChecksumAlgorithm@Quazal@@QAA?AVKey@2@ABVBuffer@2@I@Z"
 }
