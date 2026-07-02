@@ -52,6 +52,7 @@
    "system/bandobj/BandIKEffector.cpp": "NonMatching",
    "system/bandobj/BandLabel.cpp": "NonMatching",
    "system/bandobj/BandSongPref.cpp": "NonMatching",
+   "system/bandobj/BandTrack.cpp": "NonMatching",
    "system/bandobj/BandWardrobe.cpp": "NonMatching",
    "system/bandobj/CheckboxDisplay.cpp": "NonMatching",
    "system/bandobj/CrowdAudio.cpp": "NonMatching",
