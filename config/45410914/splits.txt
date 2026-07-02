@@ -3465,3 +3465,6 @@ TourPerformer.cpp:
 TrainingPanel.cpp:
 	.pdata      start:0x82223418 end:0x82223420
 	.text       start:0x82621988 end:0x82621A00
+WaitingUserGate.cpp:
+	.pdata      start:0x82219E60 end:0x82219E68
+	.text       start:0x825951A0 end:0x825951F8
