@@ -13764,5 +13764,7 @@
  "0x82b79348": "?ReleaseSlot@Gem@@QAAXH@Z",
  "0x82b79d18": "?RemoveAllInstances@Gem@@QAAXXZ",
  "0x82b78200": "?AllowsOverlappingGems@TrackConfig@@QBA_NXZ",
- "0x82b78288": "?IsRealGuitarTrack@TrackConfig@@QBA_NXZ"
+ "0x82b78288": "?IsRealGuitarTrack@TrackConfig@@QBA_NXZ",
+ "0x8268a058": "?Unload@FadePanel@@UAAXXZ",
+ "0x8268a150": "?Enter@FadePanel@@UAAXXZ"
 }

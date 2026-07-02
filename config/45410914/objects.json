@@ -770,6 +770,7 @@
    "band3/game/VocalPart.cpp": "NonMatching",
    "band3/game/TrainerPanel.cpp": "NonMatching",
    "band3/game/VocalTrainerPanel.cpp": "NonMatching",
+   "band3/game/FadePanel.cpp": "NonMatching",
    "band3/bandtrack/VocalTrack.cpp": "NonMatching",
    "band3/game/GameMode.cpp": "NonMatching",
    "band3/meta_band/Accomplishment.cpp": "NonMatching",

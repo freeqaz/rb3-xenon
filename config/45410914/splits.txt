@@ -2829,13 +2829,23 @@ band3/game/Player.cpp:
 	.pdata      start:0x82229D90 end:0x82229D98
 	.pdata      start:0x82229DA8 end:0x82229DB0
 	.pdata      start:0x82229DB8 end:0x82229DC0
-	.pdata      start:0x82229DC8 end:0x8222A4A8
+	.pdata      start:0x82229DC8 end:0x8222A290
+	.pdata      start:0x8222A298 end:0x8222A2A0
+	.pdata      start:0x8222A2A8 end:0x8222A4A8
 	.text       start:0x82683B98 end:0x82683C20
 	.text       start:0x82683DE0 end:0x82683E00
 	.text       start:0x82683F78 end:0x82683FD8
 	.text       start:0x82684078 end:0x826840D8
 	.text       start:0x82684130 end:0x82684214
-	.text       start:0x826843F0 end:0x8268C4A8
+	.text       start:0x826843F0 end:0x8268A058
+	.text       start:0x8268A0A4 end:0x8268A150
+	.text       start:0x8268A190 end:0x8268C4A8
+
+band3/game/FadePanel.cpp:
+	.pdata      start:0x8222A290 end:0x8222A298
+	.pdata      start:0x8222A2A0 end:0x8222A2A8
+	.text       start:0x8268A058 end:0x8268A0A4
+	.text       start:0x8268A150 end:0x8268A190
 
 band3/game/VocalTrainerPanel.cpp:
 	.pdata      start:0x8222B160 end:0x8222B1C0

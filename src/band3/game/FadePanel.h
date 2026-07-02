@@ -1,5 +1,6 @@
 #pragma once
 #include "obj/Data.h"
+#include "obj/ObjMacros.h" // DECLARE_REVS
 #include "ui/UIPanel.h"
 
 class FadePanel : public UIPanel {
