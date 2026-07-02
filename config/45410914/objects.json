@@ -70,6 +70,7 @@
    "system/beatmatch/MasterAudio.cpp": "NonMatching",
    "system/beatmatch/SongData.cpp": "NonMatching",
    "system/beatmatch/TrackWatcherImpl.cpp": "NonMatching",
+   "system/beatmatch/TrackWatcher.cpp": "NonMatching",
    "system/beatmatch/SongParser.cpp": "NonMatching",
    "system/beatmatch/BeatMatchController.cpp": "NonMatching",
    "system/beatmatch/BeatMatcher.cpp": "NonMatching",

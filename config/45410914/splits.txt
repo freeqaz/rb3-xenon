@@ -338,10 +338,15 @@ OvershellPartSelectProvider.cpp:
 GuitarController.cpp:
 	.pdata      start:0x82237248 end:0x82237250
 	.pdata      start:0x82237250 end:0x82237258
-	.pdata      start:0x82237270 end:0x82237680
+	.pdata      start:0x82237270 end:0x822372D8
+	.pdata      start:0x822372D8 end:0x82237680
 	.text       start:0x82777698 end:0x82777828
 	.text       start:0x82777828 end:0x827778C8
-	.text       start:0x82777E90 end:0x8277D790
+	.text       start:0x82777E90 end:0x82778700
+	.text       start:0x82778860 end:0x8277D790
+
+TrackWatcher.cpp:
+	.text       start:0x82778700 end:0x82778860
 
 JoypadController.cpp:
 	.pdata      start:0x82237198 end:0x822371A0
