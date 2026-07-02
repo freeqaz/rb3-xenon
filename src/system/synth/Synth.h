@@ -183,26 +183,35 @@ protected:
     Fader *mSfxFader; // 0x84
     Fader *mMidiInstrumentFader; // 0x88
 #else
-    // Retail RB3-360 layout (default). Verified: rb3-Wii oracle Synth.h
-    // (mMuted@0x3c, ObjDirPtr unk40, mMasterFader@0x4c == retail offsets +0x1c,
-    // no lists in between) + retail Stream ctor `lwz r4, 0x68(TheSynth)` =
-    // mMasterFader. The +4 pad compensates our 8-byte ObjDirPtr vs retail's 0xc
-    // (a separate engine-wide ObjPtr-layout deficit; see obj/Object.h note).
-    ObjDirPtr<ObjectDir> mCommonBank; // 0x5c (8 bytes here; 0xc in retail)
+    // Retail RB3-360 layout (default). VERIFIED from the retail binary
+    // (2026-07-02): Synth ctor fn_826E2F10, Init fn_826E2668, Terminate
+    // fn_826E3A30, Poll fn_826E0658, and DirectInstrument::Disable (0x826c4890,
+    // `lwz r3, 0x78(TheSynth)`) — see the offset table in the branch commit.
+    // Retail order after the faders is mMicClientMapper (0x74) then
+    // mMidiInstrumentMgr (0x78) — NOT the DC3 interposition of two std::lists +
+    // unk98/mDebugStream/mHud/mADSR/String that pushed mMidiInstrumentMgr to
+    // 0xa4. The DC3-ish members are kept (the .cpp still uses them) but relocated
+    // AFTER mMidiInstrumentMgr where they don't perturb the retail-critical
+    // 0x74/0x78 slots. The +4 pad keeps the faders at retail 0x68/0x6c/0x70
+    // (empirically our ObjDirPtr lands mMasterFader at 0x68 with this pad).
+    ObjDirPtr<ObjectDir> mCommonBank; // 0x5c
     int mCommonBankPad_Dc3Deficit; // +4 to push mMasterFader to retail 0x68
     Fader *mMasterFader; // 0x68
     Fader *mSfxFader; // 0x6c
     Fader *mMidiInstrumentFader; // 0x70
-    std::list<SampleInst *> mZombieInsts; // 0x74
+    MicClientMapper *mMicClientMapper; // 0x74 (retail: fn_82664760 reads +0x74)
+    MidiInstrumentMgr *mMidiInstrumentMgr; // 0x78 (retail: Disable reads +0x78)
+    std::list<SampleInst *> mZombieInsts; // 0x7c
 #endif
-    std::list<Hmx::Object *> mPlayHandlers; // 0x8c
-    MicClientMapper *mMicClientMapper; // 0x94
-    int unk98; // TranscodableMixer* mSecureMixer?
-    Stream *mDebugStream; // 0x9c
-    RndOverlay *mHud; // 0xa0
-    ADSRImpl *mADSR; // 0xa4
-    String unka8; // 0xa8
-    MidiInstrumentMgr *mMidiInstrumentMgr; // appended for VocalGuidePitch Init/Terminate
+    // DC3-era members retail RB3-360 lacks at these positions; kept for source
+    // compatibility, parked after mMidiInstrumentMgr so they don't shift the
+    // retail-verified 0x74/0x78 slots.
+    std::list<Hmx::Object *> mPlayHandlers; // 0x84
+    int unk98; // 0x8c  TranscodableMixer* mSecureMixer?
+    Stream *mDebugStream; // 0x90
+    RndOverlay *mHud; // 0x94
+    ADSRImpl *mADSR; // 0x98
+    String unka8; // 0x9c
 };
 
 void SynthPreInit();
