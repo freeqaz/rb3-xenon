@@ -490,3 +490,28 @@ of the handoff doc.
 - AppLabel: NO axis-A lever — 52/100 already perfect, layout retail-correct;
   oracle GOOD rows are VA-misattributed outside the span. Remaining 48@0% =
   manual ID grind, deferred.
+
+# Results — R3 executed and verified (2026-07-02, branch exec/r3-span-confirm-0702)
+
+R3 ran as stream **exec-r3-span-confirm** (1 Opus packet + Fable review).
+Verdict: **LANDED**. Deliverables (commit bb4cc60):
+
+- `tools/span_confirm.py` — 459 LOC, stdlib-only, read-only over the committed
+  `dc3_oracle.json` (33,987 rows). Modes: `--span`, `--candidates`,
+  `--calibrate`, `--triage`. Circularity warning in every output header.
+- Acceptance gate reproduced by reviewer from the committed tool:
+  margin-gated precision **83.9% (161/192)** at coverage **67.6% (192/284)**
+  on DC3-shared pinned TUs — clears the ≥80%/≥50% kill bar with the audited
+  gate (n≥5 / top≥3 / top ≥ 2× second + ham↔band twins), no gate weakening.
+  Raw plurality n≥5 = 72.5%, consistent with the audit's 67–71% band.
+- Triage report `docs/decomp/research/2026-07-02-span-confirm-triage.md`:
+  156 unpinned candidate spans from independent (non-oracle) sources →
+  **CONFIRM=5 CONTRA=20 ABSTAIN=131** (ghidriff 3/9/63, crossval 2/2/7,
+  sysnet 0/9/60, band3 0/0/1). Quazal region is honestly ABSTAIN-heavy
+  (oracle desert). Reviewer spot-verified 2 CONFIRMs + 1 CONTRA against raw
+  `dc3_oracle.json` rows, bypassing the tool — all correct.
+- No matching impact (zero build-input edits; netStrict 0 as designed).
+
+Remaining R3 kill criterion is downstream only: if the confirmer flips zero
+decisions across one full ws2/ws5 target-selection wave, bank as permanently
+dead. ws2/ws5 docs should add a one-line pointer to the tool on land.

@@ -81,3 +81,38 @@ a circularity warning in its output header.
   claimed numbers; spot-check 2–3 CONFIRM and 1 CONTRA row by hand against
   `dc3_oracle.json`.
 - The ws2/ws5 docs should get a one-line pointer to the tool when this lands.
+
+## Review verdict (integration agent, 2026-07-02) — packet span-confirm-tool: ACCEPTED, stream LANDS
+
+All key numbers independently reproduced in this worktree (@bb4cc60):
+
+- `python3 tools/span_confirm.py --calibrate` — margin-gated precision
+  **161/192 = 83.9%**, coverage **192/284 = 67.6%**, ACCEPTANCE **PASS**
+  (population 284 = n≥5 DC3-shared pinned TUs at 06938a5; the planner's
+  84%/63% was measured @00c5b19 with population 250 — same regime, more pins).
+  Raw plurality: n≥5 206/284 = 72.5%, n≥10 66.8%, n≥20 61.3%. Gate family
+  unmodified (n≥5 / top≥3 / top ≥ 2× second + ham↔band twin normalization).
+- `--triage` TOTAL: **CONFIRM=5 CONTRA=20 ABSTAIN=131 (n=156)**; per-source
+  ghidriff 3/9/63, crossval 2/2/7, sysnet 0/9/60, band3 0/0/1 — matches the
+  committed report exactly.
+- Spot-checks done **bypassing the tool** (raw row counts straight from
+  `dc3_oracle.json`): task span 0x827227d8–0x82722d30 → `obj:Task.obj` ×8 of
+  16 in-span rows (CONFIRM correct); vocaltrackdir span 0x822e3788–0x822e3b88
+  → `os:System_Xbox.obj` ×8 of 9 (CONTRA correct — genuine ghidriff mislabel
+  flag); dir span 0x824b7c78–0x824b8e28 → `world:Dir.obj` ×6 of 19 (CONFIRM
+  correct).
+- All four modes exercised live (`--span`, `--candidates`, `--calibrate`,
+  `--triage`); the circularity warning prints in every mode header.
+- **Composed A/B: N/A by design.** `git diff 06938a5..bb4cc60 -- src config
+  configure.py tools/project.py` is empty — zero build inputs touched, no
+  matching impact possible. Per stream rules, deliverable-working-end-to-end
+  substitutes for the whole-binary A/B. netStrict = 0 (as planned).
+- Hygiene: commit bb4cc60 contains exactly the 3 intended files (tool, triage
+  report, this handoff doc). Gitignored triage inputs (`ghidriff_identities`,
+  worklists) left untracked as intended; the stray untracked
+  `global_fuzzy_pairs.json` scratch copy was removed by the reviewer. No
+  owner-WIP TUs touched, no main-repo writes.
+
+R3 reopen ruling stands: **LAND (not dead)**. Remaining kill criterion is
+downstream: if the confirmer flips zero decisions across one full ws2/ws5
+target-selection wave, bank it as permanently dead (per ws7 R3 spec).
