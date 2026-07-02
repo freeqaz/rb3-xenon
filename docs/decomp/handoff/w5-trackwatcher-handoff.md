@@ -162,3 +162,18 @@ halves under GuitarController — content-neutral (contiguous, same owner); harm
 to keep or collapse.
 
 Verdict: **CLEAR** — landable as-is (strict-0, fuzzy-paired TU source per owner policy).
+
+## WAVE-5 AUDIT (independent re-run, 2026-07-02) — VERDICT: CLEAR
+
+Second, independent auditor. All five gates re-run from scratch in this worktree;
+all pass. Adds one check the first audit did not: byte-level ground-truth.
+
+- **Map is byte-identical to base** (`git diff 5cb96d4..HEAD scripts/target_symbol_map.json` = empty). strict=0, nothing to downgrade.
+- **Honesty gate:** `icf_alias_check.py --range 0x82778700-0x82778860` = HONEST (empty set); zero pins, TrackWatcher.cpp NonMatching. The 12 stub-folds were correctly dropped.
+- **Splits:** full-file overlap self-check = 0 text / 0 pdata overlaps; carve `[0x82778700,0x82778860)` is disjoint and fits exactly between GuitarController's two remaining ranges.
+- **Compile gate:** direct cl.exe 16.00.11886.00 → 31,435-byte .obj, only the expected C4392/C4391 intrinsic warnings.
+- **MILO_DEBUG:** N/A (no dev-only members in the .cpp or 7 headers).
+- **No forbidden/owner files** in either commit; 8 removed dtk labels have 0 remaining references in config/scripts/src.
+- **Ground-truth byte verification (new):** disassembled the cluster from `orig/45410914/band.exe` (imgbase 0x82000000). 0x82778708→`lwz r11,0xc(r11)` slot 0x0c; 0x82778720→slot 0x1c (Poll); 0x82778838→slot 0x4c; 0x82778700/0x82778850→`lwz r3,0(r3); b` 8-byte direct thunks. The committed symbols.txt (0x14 body / 0x18 stride vtable thunks + 0x8 direct) matches the real bytes exactly; dtk's prior 0x2C-merged, +4-offset labels were genuinely wrong. The boundary fix is honest and correct.
+
+Verdict: **CLEAR** — landable as-is. Lander: union-merge the GuitarController carve with lane 2, re-run the overlap self-check, confirm GuitarController stays 17/158.
