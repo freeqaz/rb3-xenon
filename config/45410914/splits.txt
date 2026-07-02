@@ -3457,3 +3457,5 @@ StatCollector.cpp:
 Tour.cpp:
 	.pdata      start:0x821F81B0 end:0x821F81B8
 	.text       start:0x82348D08 end:0x82348DB0
+TourBand.cpp:
+	.text       start:0x82B4A6A0 end:0x82B4A6F0
