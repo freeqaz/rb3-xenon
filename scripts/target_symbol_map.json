@@ -13607,5 +13607,9 @@
  "0x823A9B60": "?SyncProperty@CharLookAt@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823AA3F8": "?SyncProperty@CharLookAt@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823AA408": "?Load@CharLookAt@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
- "0x823AA418": "??_GCharLookAt@@UAAPAXI@Z"
+ "0x823AA418": "??_GCharLookAt@@UAAPAXI@Z",
+ "0x8276ba08": "?InSolo@BeatMatcher@@UAA_NH@Z",
+ "0x8276bf98": "?PostDynamicAdd@BeatMatcher@@QAAXHM@Z",
+ "0x8276cad8": "?Poll@BeatMatcher@@QAAXM@Z",
+ "0x8276cb48": "?Jump@BeatMatcher@@QAAXM@Z"
 }
