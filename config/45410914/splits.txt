@@ -202,9 +202,9 @@ BandCamShot.cpp:
 
 BandDirector.cpp:
 	.pdata      start:0x821EB640 end:0x821EBF70
-	.text       start:0x8227C378 end:0x82285300
 	.pdata      start:0x821EBF70 end:0x821EC610
 	.pdata      start:0x821EC618 end:0x821EC8A8
+	.text       start:0x8227C378 end:0x82285300
 	.text       start:0x82285300 end:0x8228B4F8
 	.text       start:0x8228B5B8 end:0x8228B5E8
 	.text       start:0x8228B600 end:0x8228E468
