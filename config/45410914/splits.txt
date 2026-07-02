@@ -218,9 +218,13 @@ TrackPanelDir.cpp:
 
 VocalTrack.cpp:
 	.pdata      start:0x8223C1A8 end:0x8223C1B0
-	.pdata      start:0x82254B80 end:0x82255330
+	.pdata      start:0x82254B80 end:0x82255260
+	.pdata      start:0x82255268 end:0x822552D0
+	.pdata      start:0x822552D8 end:0x82255330
 	.text       start:0x827CA508 end:0x827CA564
-	.text       start:0x82B6D688 end:0x82B7A2A0
+	.text       start:0x82B6D688 end:0x82B79348
+	.text       start:0x82B793E4 end:0x82B79D18
+	.text       start:0x82B79EB8 end:0x82B7A2A0
 
 MusicLibrary.cpp:
 	.pdata      start:0x82212910 end:0x82212F28
@@ -2885,7 +2889,11 @@ network/ObjDup/DuplicatedObject.cpp:
 	.text       start:0x82A46180 end:0x82A47228
 
 band3/bandtrack/Gem.cpp:
+	.pdata      start:0x82255260 end:0x82255268
+	.pdata      start:0x822552D0 end:0x822552D8
 	.pdata      start:0x82255330 end:0x822553D8
+	.text       start:0x82B79348 end:0x82B793E4
+	.text       start:0x82B79D18 end:0x82B79EB8
 	.text       start:0x82B7A2A0 end:0x82B7B52C
 
 band3/bandtrack/TrackPanel.cpp:

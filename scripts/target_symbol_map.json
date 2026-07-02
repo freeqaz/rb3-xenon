@@ -13760,5 +13760,7 @@
  "0X826460D8": "?Insert@SubheaderSortNode@@UAAXPAVLeafSortNode@@PAVNodeSort@@_N@Z",
  "0X82646178": "??_GSubheaderSortNode@@UAAPAXI@Z",
  "0X82646220": "?Insert@ShortcutNode@@QAAXPAVLeafSortNode@@PAVNodeSort@@@Z",
- "0x82693ff0": "?ToggleGuidePart@PracticePanel@@QAAXXZ"
+ "0x82693ff0": "?ToggleGuidePart@PracticePanel@@QAAXXZ",
+ "0x82b79348": "?ReleaseSlot@Gem@@QAAXH@Z",
+ "0x82b79d18": "?RemoveAllInstances@Gem@@QAAXXZ"
 }

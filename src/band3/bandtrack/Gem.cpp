@@ -438,6 +438,7 @@ void Gem::RemoveAllInstances() {
                         (*it)->RemoveAt(f1, i);
                     }
                     if (mBeardTick != -1) {
+                        static Symbol beard("beard");
                         Symbol s40;
                         if (mGemManager->GetWidgetName(s40, i, beard)) {
                             TrackWidget *w = mGemManager->GetWidgetByName(s40);
