@@ -174,32 +174,53 @@ _FORK_FALLBACK = {
 
 
 def _find_local_fork(repo_name: str) -> Optional[Path]:
-    """Return the sibling fork checkout `<repo_name>/` (the directory holding
-    its Cargo.toml), searching upward from this file's directory. Walks parents
-    -- not just the direct sibling -- so worktrees nested under
-    .claude/worktrees/<name>/ still resolve up to the shared ../../../../jeff
-    and ../../../../objdiff checkouts. If the walk fails (e.g. a detached /tmp
-    worktree with no sibling checkout), falls back to a known absolute path
-    (env var RB3_<REPO>_DIR, else a baked-in default): the prebuilt release
-    binary if present (no cargo edge), else the source dir. This lets a bare
-    `configure.py` resolve the real fork instead of downloading a broken
-    release. Returns None only if nothing resolves."""
+    """Return the sibling fork's tool for `<repo_name>`, PREFERRING the prebuilt
+    release binary at `<fork>/target/release/<bin>` over the source dir.
+
+    Searches upward from this file's directory for the fork checkout (the dir
+    holding its Cargo.toml) -- walking parents, not just the direct sibling, so
+    worktrees nested under .claude/worktrees/<name>/ still resolve up to the
+    shared ../../../../jeff and ../../../../objdiff checkouts. If the walk fails
+    (e.g. a detached ~/tmp worktree with no sibling checkout), falls back to a
+    known absolute path (env var RB3_<REPO>_DIR, else a baked-in default).
+
+    In BOTH the walk and the fallback we return the prebuilt release binary when
+    it exists (emitting NO cargo build edge), else the source dir (cargo edge).
+    Preferring the prebuilt is what makes bare `configure.py` produce a
+    byte-identical build.ninja in the main repo (walk succeeds) and in a
+    detached worktree (walk fails -> absolute fallback): both resolve to the
+    SAME absolute binary path, e.g. /home/free/code/milohax/jeff/target/release/dtk.
+    That parity is load-bearing for the fully-warm (0-compile) worktree flow in
+    scripts/setup_worktree.sh, and it survives the constant bare-reconfigure
+    churn (agents run `python3 configure.py` after every splits.txt/objects.json
+    edit). Trade-off: editing the jeff/objdiff *Rust sources* is no longer
+    auto-picked-up -- rebuild the release binary manually (`cargo build
+    --release` in the fork). See CLAUDE.md "Git & worktrees".
+    Returns None only if nothing resolves."""
+    # bin_name = the fork's release binary; used to prefer a prebuilt binary in
+    # BOTH resolution paths below.
+    src_default, bin_name = _FORK_FALLBACK.get(repo_name, (None, None))
+
+    def _prefer_prebuilt(fork_dir: Path) -> Path:
+        if bin_name:
+            prebuilt = fork_dir / "target" / "release" / bin_name
+            if prebuilt.is_file():
+                return prebuilt
+        return fork_dir
+
     cur = Path(__file__).resolve().parent
     while True:
-        candidate = cur.parent / repo_name / "Cargo.toml"
-        if candidate.is_file():
-            return candidate.parent
+        fork_dir = cur.parent / repo_name
+        if (fork_dir / "Cargo.toml").is_file():
+            return _prefer_prebuilt(fork_dir)
         if cur.parent == cur:
             break
         cur = cur.parent
     # Upward walk failed -- resolve from a known fork dir: env var override
     # (authoritative if set), else the baked-in absolute default.
-    src_default, bin_name = _FORK_FALLBACK.get(repo_name, (None, None))
     src_dir = os.environ.get(f"RB3_{repo_name.upper()}_DIR") or src_default
     if src_dir and bin_name:
         sd = Path(src_dir)
-        # Prefer the prebuilt release binary (avoids a cargo build edge in
-        # worktrees); else the source dir (cargo edge, same as the main default).
         prebuilt = sd / "target" / "release" / bin_name
         if prebuilt.is_file():
             return prebuilt
@@ -212,6 +233,72 @@ def _default_dtk_path() -> Optional[Path]:
 
 def _default_objdiff_path() -> Optional[Path]:
     return _find_local_fork("objdiff")
+
+# Absolute fallback dir for the sibling freeqaz/wibo fork checkout (overridable
+# via env RB3_WIBO_DIR). The release binary is looked for at
+# <dir>/build/release/wibo -- the SAME layout scripts/setup_worktree.sh passes
+# via --wrapper "$TOOL_DIR/wibo/build/release/wibo".
+_WIBO_DEFAULT_DIR = "/home/free/code/milohax/wibo"
+_WIBO_BIN_SUBPATH = ("build", "release", "wibo")
+
+
+def _find_local_wibo() -> Optional[Path]:
+    """Return the ABSOLUTE path to the freeqaz/wibo fork release binary at
+    <wibo>/build/release/wibo, or None if it cannot be found.
+
+    Mirrors _find_local_fork's resolution so behaviour is uniform: upward-walk
+    from this file's directory for a sibling `wibo/` checkout (so a worktree
+    nested under .claude/worktrees/<name>/ still resolves up to the shared
+    ../../../../wibo), then env RB3_WIBO_DIR, then a baked-in absolute default.
+
+    ALWAYS resolves to an absolute path (Path(...).resolve()). This is
+    load-bearing: scripts/setup_worktree.sh passes the absolute
+    $TOOL_DIR/wibo/build/release/wibo, and main's default must produce the
+    IDENTICAL string in the msvc rule command, or command-hash parity (and the
+    fully-warm worktree seeding) is dead. dc3 uses a relative Path("..") default
+    -- we deliberately do NOT, for exactly this reason."""
+    cur = Path(__file__).resolve().parent
+    while True:
+        cand = cur.parent.joinpath("wibo", *_WIBO_BIN_SUBPATH)
+        if cand.is_file():
+            return cand.resolve()
+        if cur.parent == cur:
+            break
+        cur = cur.parent
+    # Upward walk failed (e.g. a detached ~/tmp worktree) -- env override, else
+    # the baked-in absolute default.
+    wibo_dir = os.environ.get("RB3_WIBO_DIR") or _WIBO_DEFAULT_DIR
+    cand = Path(wibo_dir).joinpath(*_WIBO_BIN_SUBPATH)
+    if cand.is_file():
+        return cand.resolve()
+    return None
+
+
+def _gate_wibo_wrapper(wrapper_path: Path) -> None:
+    """Hard-fail unless wrapper_path is the freeqaz/wibo fork build: it must
+    exist AND carry the WIBO_FS_CACHE + WIBO_REWRITE_SHOWINCLUDES feature bytes.
+
+    Rationale: tools/project.py drops the out-of-process transform_dep.py pipe
+    and instead passes WIBO_REWRITE_SHOWINCLUDES=1 so wibo rewrites the
+    "Note: including file:" lines in-process. A STOCK wibo silently ignores that
+    env var and feeds raw backslash/wrong-case Windows paths to ninja's
+    deps=msvc parser -> corrupted dependency tracking (a silent, insidious
+    failure). A loud configure failure is the only acceptable fallback."""
+    if not wrapper_path.is_file():
+        sys.exit(
+            f"FATAL: wrapper {wrapper_path} does not exist. Build the "
+            "freeqaz/wibo fork: cd ../wibo && cmake --preset release && "
+            "cmake --build --preset release"
+        )
+    data = wrapper_path.read_bytes()
+    if b"WIBO_REWRITE_SHOWINCLUDES" not in data or b"WIBO_FS_CACHE" not in data:
+        sys.exit(
+            f"FATAL: {wrapper_path} is not the freeqaz/wibo fork build "
+            "(missing WIBO_FS_CACHE/WIBO_REWRITE_SHOWINCLUDES). The msvc rule "
+            "relies on the fork's in-process showIncludes rewrite; a stock "
+            "binary would corrupt ninja's deps=msvc tracking. Build it: "
+            "cd ../wibo && cmake --preset release && cmake --build --preset release"
+        )
 
 # Apply arguments
 config.build_dir = args.build_dir
@@ -242,7 +329,34 @@ config.sjiswrap_path = args.sjiswrap
 config.ninja_path = args.ninja
 config.progress = args.progress
 if not is_windows():
-    config.wrapper = args.wrapper
+    # Compiler wrapper resolution (Linux). Order: explicit --wrapper -> the
+    # freeqaz/wibo fork release binary (upward-walk -> RB3_WIBO_DIR -> baked-in
+    # absolute default). Resolving to an absolute path makes main's msvc command
+    # string byte-identical to what scripts/setup_worktree.sh bakes into a
+    # worktree (--wrapper "$TOOL_DIR/wibo/build/release/wibo"), which is what
+    # kills the per-worktree "recompile all ~745 objs once" and enables warm
+    # seeding. Setting config.wrapper makes use_wibo() False, so tools/project.py
+    # emits NO stock-wibo download edge and NO build/tools/wibo implicit dep --
+    # the download-clobber-the-fork mechanism is structurally gone.
+    if args.wrapper is not None:
+        wrapper_path = Path(args.wrapper).resolve()
+        # Only feature-gate wibo wrappers; wine / other wrappers are out of scope.
+        if "wibo" in str(wrapper_path):
+            _gate_wibo_wrapper(wrapper_path)
+        config.wrapper = wrapper_path
+    else:
+        wrapper_path = _find_local_wibo()
+        if wrapper_path is None:
+            sys.exit(
+                "FATAL: freeqaz/wibo fork binary not found (looked upward for "
+                "<ancestor>/wibo/build/release/wibo, then $RB3_WIBO_DIR/build/"
+                f"release/wibo, then {_WIBO_DEFAULT_DIR}/build/release/wibo). The "
+                "msvc rule requires the fork's in-process showIncludes rewrite; "
+                "there is no safe stock-wibo fallback. Build it: cd ../wibo && "
+                "cmake --preset release && cmake --build --preset release"
+            )
+        _gate_wibo_wrapper(wrapper_path)
+        config.wrapper = wrapper_path
 # Don't build asm unless we're --non-matching
 if not config.non_matching:
     config.asm_dir = None

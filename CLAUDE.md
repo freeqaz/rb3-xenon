@@ -114,20 +114,31 @@ python3 configure.py     # regenerate build.ninja (after editing objects.json/sp
 similar — use `~/tmp`, not the RAM-backed `/tmp`; see the worktree note above).
 Makes debugging easier.
 
-dtk is the local **jeff** fork at `../jeff`; `configure.py` defaults `--dtk`
-there. **objdiff is also a local fork** at `../objdiff` (freeqaz/objdiff,
-with custom pattern-detector work and normalized-diff changes)
+dtk is the local **jeff** fork at `../jeff`; **objdiff is also a local fork**
+at `../objdiff` (freeqaz/objdiff, with custom pattern-detector work and
+normalized-diff changes). `configure.py` resolves BOTH to their **prebuilt
+release binaries** (`<fork>/target/release/{dtk,objdiff-cli}`, absolute paths)
+— there are no cargo build edges in build.ninja anymore. That absolute-path
+parity (main and worktrees bake the identical command strings) is what enables
+warm-worktree command-hash reuse.
 
-> **Editing the jeff/objdiff Rust sources? Rebuild manually.** The `cargo`
-> build rule intentionally has **no depfile** (cargo emits absolute-path
-> depfiles that ninja rejects — the mismatch made `cargo` re-fire on *every*
-> `ninja` and risked a re-SPLIT/reconfigure cascade; see the comment in
-> `tools/project.py write_cargo_rule`). Consequently ninja tracks the tool
-> binaries only via `Cargo.toml`/`Cargo.lock`, so edits to the forks' `.rs`
-> sources are **not** auto-detected. After changing jeff/objdiff source, force
-> the rebuild: `touch ../jeff/Cargo.toml && ninja` (dtk) or
-> `touch ../objdiff/Cargo.toml && ninja` (objdiff-cli). Dependency changes
-> (which touch `Cargo.toml`/`Cargo.lock`) are still picked up automatically.
+The compiler wrapper is the **freeqaz/wibo fork** release binary at
+`/home/free/code/milohax/wibo/build/release/wibo` (configure.py resolves it by
+default; the old `build/tools/wibo` download edge is gone — it used to fetch
+stock upstream wibo and silently disable the FS cache). configure.py
+**hard-fails** on a wrapper binary lacking the fork's `WIBO_FS_CACHE` /
+`WIBO_REWRITE_SHOWINCLUDES` feature bytes — intentional (a stock binary would
+silently corrupt `deps = msvc` dependency tracking), not a bug.
+`tools/transform_dep.py` is no longer in the msvc rule (wibo rewrites
+`/showIncludes` output in-process).
+
+> **Editing the jeff/objdiff/wibo sources? Rebuild the release binary
+> manually** — ninja no longer builds or tracks the tools:
+> `cargo build --release` in `../jeff` or `../objdiff`;
+> `cmake --preset release && cmake --build --preset release` in `../wibo`.
+> None of the three binaries is an implicit ninja input, so a tool rebuild
+> does not retrigger compiles (wibo is byte-neutral to objs — verified fork
+> vs stock objs = 0 differing bytes).
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang) — runs the engine
 on the host. Currently boots headlessly and loads RB3 `songs.dta`.

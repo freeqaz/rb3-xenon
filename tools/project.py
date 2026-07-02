@@ -748,17 +748,26 @@ def generate_build_ninja(
     msvc = compiler_path / "cl.exe"
     msvc_cmd = f"{wrapper_cmd}{msvc} $cflags /showIncludes /Fo$out $in"
     if transform_dep is not None:
-        msvc_cmd = (
-            # WIBO_FS_CACHE=1: cache wibo's case-insensitive path resolution.
-            # Without it every header open in cl.exe pays a directory scan --
-            # measured 6.8s vs 0.65s per TU (10.5x) on the same compile, with
-            # byte-identical output (only the COFF timestamp bytes differ,
-            # same as any recompile). dc3 has run with this cache fleet-wide.
-            # Plain bash -c (not -lc): a LOGIN shell per TU sources the whole
-            # profile for nothing (~55ms/TU).
-            "bash -c 'set -o pipefail; "
-            f"WIBO_FS_CACHE=1 {msvc_cmd} | $python {transform_dep}'"
-        )
+        # WIBO_FS_CACHE=1: cache wibo's case-insensitive path resolution.
+        # Without it every header open in cl.exe pays a directory scan --
+        # measured 6.8s vs 0.65s per TU (10.5x) on the same compile, with
+        # byte-identical output (only the COFF timestamp bytes differ,
+        # same as any recompile). dc3 has run with this cache fleet-wide.
+        # WIBO_REWRITE_SHOWINCLUDES=1: wibo rewrites the "Note: including file:"
+        # lines in-process -- the same z:-strip + case-fix tools/transform_dep.py
+        # did out-of-process, minus the pipe (~29ms/TU) and the per-TU python
+        # process. dc3 runs this exact path in production. Verified deps-equivalent
+        # to the pipe: the recorded dep path SETS are byte-identical (the only
+        # per-line difference is a trailing \r the pipe emits, which ninja's
+        # deps=msvc parser strips). REQUIRES the freeqaz/wibo fork binary;
+        # configure.py hard-gates the wrapper on the WIBO_FS_CACHE /
+        # WIBO_REWRITE_SHOWINCLUDES feature bytes. A stock wibo would silently
+        # ignore WIBO_REWRITE_SHOWINCLUDES and feed raw Windows paths to ninja's
+        # deps=msvc parser (broken dep tracking) -- which is why this pipe removal
+        # ships together with the wrapper default. No bash -c / pipe needed: ninja
+        # runs the command through sh -c, so the VAR=1 VAR2=1 env prefix applies
+        # to the single cl.exe process.
+        msvc_cmd = f"WIBO_FS_CACHE=1 WIBO_REWRITE_SHOWINCLUDES=1 {msvc_cmd}"
 
     n.comment("MSVC build")
     n.variable("msvc_deps_prefix", "Note: including file:")
