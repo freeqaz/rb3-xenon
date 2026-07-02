@@ -3448,3 +3448,6 @@ PlayerLeaderboards.cpp:
 QuestManager.cpp:
 	.pdata      start:0x821F7F50 end:0x821F7F58
 	.text       start:0x82346E18 end:0x82346F08
+SongSortNode.cpp:
+	.pdata      start:0x82225B38 end:0x82225B40
+	.text       start:0x82643AE8 end:0x82643BD0
