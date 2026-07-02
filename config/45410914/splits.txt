@@ -3454,3 +3454,6 @@ SongSortNode.cpp:
 StatCollector.cpp:
 	.pdata      start:0x8222E4C0 end:0x8222E4C8
 	.text       start:0x826D7970 end:0x826D79C0
+Tour.cpp:
+	.pdata      start:0x821F81B0 end:0x821F81B8
+	.text       start:0x82348D08 end:0x82348DB0
