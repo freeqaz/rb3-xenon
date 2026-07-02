@@ -8,22 +8,15 @@
 #include "os/Debug.h"
 #include "rndobj/Mat.h"
 #include "utl/Str.h"
+#include <algorithm>
 #include <cstring>
 
-#ifndef HX_NATIVE
-// Explicit template instantiation (STLport only)
-namespace stlpmtx_std {
-    template class vector<ObjPtrVec<CharClip, ObjectDir>::Node, StlNodeAlloc<ObjPtrVec<CharClip, ObjectDir>::Node>>;
-}
-#endif
-
-CharClipGroup::CharClipGroup()
-    : mClips(this, (EraseMode)1), mWhich(0), unk24(0), mFlags(0) {}
+CharClipGroup::CharClipGroup() : mClips(this), mWhich(0), mFlags(0) {}
 
 BEGIN_HANDLERS(CharClipGroup)
     HANDLE_EXPR(get_clip, GetClip(0))
     HANDLE_ACTION(delete_remaining, DeleteRemaining(_msg->Int(2)))
-    HANDLE_EXPR(get_size, mClips.size())
+    HANDLE_EXPR(get_size, (int)mClips.size())
     HANDLE_EXPR(has_clip, HasClip(_msg->Obj<CharClip>(2)))
     HANDLE_EXPR(find_clip, GetClip(_msg->Int(2)))
     HANDLE_ACTION(add_clip, AddClip(_msg->Obj<CharClip>(2)))
@@ -69,7 +62,7 @@ BEGIN_LOADS(CharClipGroup)
     LOAD_REVS(bs)
     ASSERT_REVS(2, 0)
     LOAD_SUPERCLASS(Hmx::Object)
-    mClips.Load(d.stream, true, nullptr);
+    d.stream >> mClips;
     d >> mWhich;
     mWhich = Max(mWhich, 0);
     if (d.rev > 1) {
@@ -86,79 +79,67 @@ void CharClipGroup::AddClip(CharClip *clip) {
 }
 
 bool CharClipGroup::HasClip(CharClip *clip) const {
-    return mClips.end() != mClips.find(clip);
+    for (int i = 0; i < mClips.size(); i++) {
+        if ((CharClip *)mClips[i] == clip)
+            return true;
+    }
+    return false;
 }
 
-int CharClipGroup::QueueRandom(int pos, int end) const {
-    int diff = end - pos;
-    int range = (diff < 0 ? mClips.size() : 0) + diff;
-    int result = Rand::sRand.FastInt(0, range) + pos;
-    int size = mClips.size();
-    return result - ((result >= size) ? size : 0);
+CharClip *CharClipGroup::GetClip() {
+    if (mClips.empty())
+        return nullptr;
+    mWhich++;
+    if (mWhich >= mClips.size())
+        mWhich = 0;
+    return mClips[mWhich];
 }
 
 CharClip *CharClipGroup::GetClip(int flags) {
-    if (!mClips.size()) {
+    int size = mClips.size();
+    if (size == 0)
         return nullptr;
+    int which = mWhich;
+    for (int i = which + 1; i < size; i++) {
+        CharClip *clip = mClips[i];
+        if ((clip->Flags() & flags) == flags) {
+            MakeMRU(i);
+            return clip;
+        }
     }
-
-    {
-        int sz = (int)mClips.size() - 1;
-        if (sz < mWhich) mWhich = sz;
+    for (int i = 0; i <= which; i++) {
+        CharClip *clip = mClips[i];
+        if ((clip->Flags() & flags) == flags) {
+            MakeMRU(i);
+            return clip;
+        }
     }
-    unk24 = Min((int)mClips.size() - 1, unk24);
-
-    int origWhich = mWhich;
-    int origUnk24 = unk24;
-
-    int pos = mWhich + 1;
-    pos -= (pos >= mClips.size()) ? mClips.size() : 0;
-    mWhich = pos;
-
-    if (pos != origUnk24) {
-        do {
-            int swapIdx = QueueRandom(pos, origUnk24);
-            mClips.swap(pos, swapIdx);
-            CharClip *clip = mClips[pos];
-            if ((clip->Flags() & flags) == flags) {
-                mClips.swap(pos, mWhich);
-                return clip;
-            }
-            pos++;
-            pos -= (pos >= mClips.size()) ? mClips.size() : 0;
-        } while (pos != origUnk24);
-    }
-
-    CharClip *clip = nullptr;
-    if (pos != origWhich) {
-        do {
-            int swapIdx = QueueRandom(pos, origWhich);
-            mClips.swap(pos, swapIdx);
-            clip = mClips[pos];
-            if ((clip->Flags() & flags) == flags) {
-                mClips.swap(pos, mWhich);
-                mClips.swap(pos, unk24);
-                int newUnk24 = unk24 + 1;
-                newUnk24 -= (newUnk24 >= mClips.size()) ? mClips.size() : 0;
-                unk24 = newUnk24;
-                return clip;
-            }
-            pos++;
-            pos -= (pos >= mClips.size()) ? mClips.size() : 0;
-        } while (pos != origWhich);
-    }
-
-    clip = mClips[pos];
-    if ((clip->Flags() & flags) == flags) {
-        mClips.swap(pos, mWhich);
-        mClips.swap(pos, unk24);
-        int newUnk24 = unk24 + 1;
-        newUnk24 -= (newUnk24 >= mClips.size()) ? mClips.size() : 0;
-        unk24 = newUnk24;
-        return clip;
-    }
-
     return nullptr;
+}
+
+void CharClipGroup::MakeMRU(int i) {
+    int which = mWhich;
+    if (i == which)
+        return;
+    unsigned int next = which + 1;
+    if (next >= mClips.size())
+        next = 0;
+    if ((int)next == i) {
+        mWhich = i;
+        return;
+    }
+    CharClip *temp = mClips[i];
+    if (i > which) {
+        mWhich++;
+        for (int k = i; k > mWhich; k--) {
+            mClips[k] = mClips[k - 1];
+        }
+    } else {
+        for (int k = i; k < mWhich; k++) {
+            mClips[k] = mClips[k + 1];
+        }
+    }
+    mClips[mWhich] = temp;
 }
 
 struct Alphabetically {
@@ -167,7 +148,7 @@ struct Alphabetically {
     }
 };
 
-void CharClipGroup::Sort() { mClips.sort(Alphabetically()); }
+void CharClipGroup::Sort() { std::sort(mClips.begin(), mClips.end(), Alphabetically()); }
 
 void CharClipGroup::DeleteRemaining(int i1) {
     CharClip *clips[256];
@@ -181,7 +162,7 @@ void CharClipGroup::DeleteRemaining(int i1) {
 CharClip *CharClipGroup::FindClip(const char *clipName) const {
     for (int i = 0; i < mClips.size(); i++) {
         if (streq(clipName, mClips[i]->Name())) {
-            return (CharClip *)mClips[i];
+            return mClips[i];
         }
     }
     return nullptr;

@@ -1190,6 +1190,14 @@ AmbientOcclusion.cpp:
 	.pdata      start:0x82208F30 end:0x82209310
 	.text       start:0x82479B60 end:0x82480660
 
+system/rndobj/MotionBlur.cpp:
+	.pdata      start:0x82209370 end:0x822093E0
+	.text       start:0x82480A90 end:0x82481300
+
+system/rndobj/SoftParticles.cpp:
+	.pdata      start:0x82209448 end:0x822094E0
+	.text       start:0x824818E0 end:0x824822D8
+
 Waypoint.cpp:
 	.pdata      start:0x821FF580 end:0x821FF7D8
 	.text       start:0x823C7CC8 end:0x823CA668
@@ -3458,6 +3466,15 @@ BinkClip.cpp:
 	.text       start:0x826EFA28 end:0x826EFA84
 	.text       start:0x826EFB20 end:0x826EFB60
 
+system/synth/MoggClip.cpp:
+	.pdata      start:0x8222FC98 end:0x8222FCB0
+	.pdata      start:0x8222FCC0 end:0x8222FCD0
+	.pdata      start:0x8222FCD8 end:0x8222FE40
+	.text       start:0x826EF6E8 end:0x826EF948
+	.text       start:0x826EF9BC end:0x826EFA28
+	.text       start:0x826EFA84 end:0x826EFB20
+	.text       start:0x826EFB60 end:0x826F1088
+
 Color.cpp:
 	.pdata      start:0x8220E070 end:0x8220E078
 	.text       start:0x824E22F8 end:0x824E23A4
@@ -3531,7 +3548,9 @@ QuestManager.cpp:
 
 SongSortNode.cpp:
 	.pdata      start:0x82225B38 end:0x82225B40
+	.pdata      start:0x82225CE0 end:0x82225D98
 	.text       start:0x82643AE8 end:0x82643BD0
+	.text       start:0x826454E8 end:0x826462F4
 
 StatCollector.cpp:
 	.pdata      start:0x8222E4C0 end:0x8222E4C8

@@ -5,7 +5,6 @@
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "os/File.h"
-#include "synth/FxSend.h"
 #include "synth/Stream.h"
 #include "synth/Synth.h"
 #include "utl/BinStream.h"
@@ -14,34 +13,17 @@
 #include "utl/MemMgr.h"
 #include "utl/Symbol.h"
 
-bool IsLoadingMusicMogg(const char *mogg) {
-    static Symbol is_loading_music_mogg("is_loading_music_mogg");
-    static DataArrayPtr func(new DataArray(2));
-    func->Node(0) = is_loading_music_mogg;
-    func->Node(1) = mogg;
-    DataNode exec = func->Execute(false);
-    return exec.Int();
-}
-
-bool IsUselessMogg(const char *mogg) {
-    static Symbol is_useless_mogg_load("is_useless_mogg_load");
-    static DataArrayPtr func(new DataArray(2));
-    func->Node(0) = is_useless_mogg_load;
-    func->Node(1) = mogg;
-    DataNode exec = func->Execute(false);
-    return exec.Int();
-}
-
-#pragma region Hmx::Object
+MoggClip::PanInfo::PanInfo(int c, float p) : channel(c), panning(p) {}
 
 MoggClip::MoggClip()
-    : mVolume(0), mControllerVolume(0), mStream(nullptr), unk4c(0), mData(nullptr), mDataSize(0),
-      mLoader(nullptr), mFxSend(this), mFader(Hmx::Object::New<Fader>()),
-      mUnloadWhenFinished(false), mPlaying(false), mLoop(false), mLoopStartSample(0), mLoopEndSample(-1),
-      mBufSecs(0) {
+    : mControllerVolume(0), mLoop(false), mVolume(0), mStream(nullptr), unk50(0),
+      mData(nullptr), mDataSize(0), mLoader(nullptr), mFader(Hmx::Object::New<Fader>()),
+      mUnloadWhenFinished(false), mPlaying(false), mLoopStartSample(0), mLoopEndSample(-1) {
     mFaders.push_back(mFader);
     StartPolling();
 }
+
+void MoggClip::SetSend(FxSend *send) { mFxSend = send; }
 
 MoggClip::~MoggClip() {
     RELEASE(mLoader);
@@ -59,18 +41,16 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(MoggClip)
     SYNC_PROP_SET(file, mMoggFile, SetFile(_val.Str()))
-    SYNC_PROP_SET(volume, mVolume, MoggClip::SetVolume(_val.Float()))
-    SYNC_PROP(buf_secs, mBufSecs)
+    SYNC_PROP_SET(volume, mControllerVolume, SetControllerVolume(_val.Float()))
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
 BEGIN_SAVES(MoggClip)
-    SAVE_REVS(3, 2)
+    SAVE_REVS(2, 0)
     SAVE_SUPERCLASS(Hmx::Object)
-    bs << mMoggFile << mVolume;
-    bs << mBufSecs;
-    bool loading = IsLoadingMusicMogg(mMoggFile.c_str());
-    if (bs.Cached() && !loading) {
+    bs << mMoggFile << mControllerVolume << mLoop;
+    bs << mLoopStartSample << mLoopEndSample;
+    if (bs.Cached()) {
         FileLoader::SaveData(bs, mData, mDataSize);
     }
 END_SAVES
@@ -81,7 +61,9 @@ BEGIN_COPYS(MoggClip)
     BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mMoggFile)
         COPY_MEMBER(mControllerVolume)
-        COPY_MEMBER(mBufSecs)
+        COPY_MEMBER(mLoop)
+        COPY_MEMBER(mLoopStartSample)
+        COPY_MEMBER(mLoopEndSample)
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -90,28 +72,19 @@ BEGIN_LOADS(MoggClip)
     PostLoad(bs);
 END_LOADS
 
-INIT_REVS(3, 2)
+INIT_REVS(2, 0)
 
 void MoggClip::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 2)
-    LOAD_SUPERCLASS(Hmx::Object)
-    bs >> mMoggFile;
-    bs >> mVolume;
-    if (d.rev <= 2) {
-        bool b60;
-        d >> b60;
-        if (d.rev > 1) {
-            int x, y;
-            bs >> x >> y;
-        }
-    }
-    if (d.altRev > 1) {
-        bs >> mBufSecs;
-    }
-    LoadFile(d.rev > 0 ? &bs : 0);
-    if (d.altRev == 1) {
-        bs >> mBufSecs;
+    int rev;
+    bs >> rev;
+    if (rev > 2)
+        MILO_WARN("Can't load new MoggClip");
+    else {
+        Hmx::Object::Load(bs);
+        bs >> mMoggFile >> mControllerVolume >> mLoop;
+        if (rev > 1)
+            bs >> mLoopStartSample >> mLoopEndSample;
+        LoadFile(rev > 0 ? &bs : 0);
     }
 }
 
@@ -120,12 +93,9 @@ void MoggClip::PostLoad(BinStream &bs) {
     LoadNumChannels();
 }
 
-#pragma endregion
-#pragma region SynthPollable
-
 const char *MoggClip::GetSoundDisplayName() {
-    return !IsPlaying() ? gNullStr
-                        : MakeString("MoggClip: %s", FileGetName(mMoggFile.c_str()));
+    return !mPlaying ? gNullStr
+                     : MakeString("MoggClip: %s", FileGetName(mMoggFile.c_str()));
 }
 
 void MoggClip::SynthPoll() {
@@ -142,46 +112,35 @@ void MoggClip::SynthPoll() {
                 }
             }
             mStream->Play();
-            static Message msg("mogg_ready");
-            Export(msg, true);
         } else {
-            if (mStream->IsFinished() || mFader->DuckedValue() == kDbSilence)
-                Stop(0);
+            if (mStream->IsFinished() || mFader->mVal == -96.0f) {
+                KillStream();
+                if (mUnloadWhenFinished) {
+                    UnloadData();
+                }
+            }
         }
     }
 }
 
-#pragma endregion
-#pragma region PlayableSample
-
 void MoggClip::Play(float f1) {
-
     if (EnsureLoaded()) {
         KillStream();
         Stream *stream = TheSynth->NewBufStream(mData, mDataSize, "mogg", 0, false);
         mStream = dynamic_cast<StandardStream *>(stream);
-        if (mBufSecs > 0) {
-            mStream->SetBufSecs(mBufSecs);
-        }
         if (!mStream) {
             delete stream;
         } else {
-#ifdef HX_WEB
-            mStream->SetDebugTag(MakeString("MoggClip[%s]", mMoggFile.c_str()));
-#endif
-            mFader->SetVolume(0);
+            mFader->SetVal(0);
             SetVolume(f1);
-            MoggClip::SetVolume(mVolume);
+            SetControllerVolume(mControllerVolume);
             UpdateFaders();
             UpdatePanInfo();
             ApplyLoop(mLoop, mLoopStartSample, mLoopEndSample);
-            for (int i = 0; i < mStream->GetNumChanParams(); i++) {
-                mStream->SetFXSend(i, mFxSend);
-            }
             mPlaying = true;
         }
     } else
-        MILO_NOTIFY("Mogg file not loaded: '%s'", mMoggFile.c_str());
+        MILO_WARN("Mogg file not loaded: '%s'", mMoggFile.c_str());
 }
 
 void MoggClip::Stop(bool b1) {
@@ -213,19 +172,7 @@ void MoggClip::SetPan(float f1) {
     }
 }
 
-void MoggClip::SetSend(FxSend *send) { mFxSend = send; }
-
 void MoggClip::EndLoop() { SetLoop(false, mLoopStartSample, mLoopEndSample); }
-
-float MoggClip::ElapsedTime() {
-    if (!IsStreaming())
-        return 0;
-    else
-        return mStream->GetTime() / 1000;
-}
-
-#pragma endregion
-#pragma region MoggClip
 
 bool MoggClip::IsStreaming() const { return mStream && mStream->IsPlaying(); }
 
@@ -238,7 +185,7 @@ void MoggClip::ApplyLoop(bool b1, int i2, int i3) {
     }
 }
 
-void MoggClip::FadeOut(float f1) { mFader->DoFade(kDbSilence, f1); }
+void MoggClip::FadeOut(float f1) { mFader->DoFade(-96.0f, f1); }
 
 void MoggClip::UnloadWhenFinishedPlaying(bool unload) { mUnloadWhenFinished = unload; }
 
@@ -272,7 +219,7 @@ void MoggClip::SetLoop(bool b1, int i2, int i3) {
 bool MoggClip::EnsureLoaded() {
     if (mLoader) {
         if (!mLoader->IsLoaded()) {
-            MILO_NOTIFY("MoggClip blocked while loading '%s'", mMoggFile.c_str());
+            MILO_WARN("MoggClip blocked while loading '%s'", mMoggFile.c_str());
             TheLoadMgr.PollUntilLoaded(mLoader, nullptr);
         }
         mData = mLoader->GetBuffer(&mDataSize);
@@ -283,7 +230,8 @@ bool MoggClip::EnsureLoaded() {
 
 void MoggClip::UpdateFaders() {
     if (mStream) {
-        FOREACH (it, mFaders) {
+        for (std::vector<Fader *>::iterator it = mFaders.begin(); it != mFaders.end();
+             ++it) {
             mStream->Faders()->Add(*it);
         }
     }
@@ -291,35 +239,29 @@ void MoggClip::UpdateFaders() {
 
 void MoggClip::UpdatePanInfo() {
     if (mStream) {
-        FOREACH (it, mPanInfos) {
+        for (std::vector<PanInfo>::iterator it = mPanInfos.begin(); it != mPanInfos.end();
+             ++it) {
             mStream->SetPan(it->channel, it->panning);
         }
     }
 }
 
 void MoggClip::LoadNumChannels() {
-    // Early exit if no mogg file configured
     if (mMoggFile.empty()) {
         mNumChannels = -1;
         return;
     }
-
-    // Ensure loader has completed if present
     if (mLoader && !mLoader->IsLoaded()) {
         TheLoadMgr.PollUntilLoaded(mLoader, nullptr);
     }
-
-    // Poll to initialize stream
     SynthPoll();
     if (!mStream) {
         mNumChannels = -1;
         return;
     }
-
-    // Poll synth up to 200 times waiting for channel count to become available
     int retries = 0;
     int numChannels = 0;
-    while ((int)retries < 200) {
+    while (retries < 200) {
         Timer::Sleep(1);
         TheSynth->Poll();
         numChannels = mStream->GetNumChannels();
@@ -328,15 +270,9 @@ void MoggClip::LoadNumChannels() {
         }
         retries++;
     }
-
     mNumChannels = numChannels;
-    Pause(0);
-
-    // Log error if channel count retrieval failed
+    Stop(false);
     if (mNumChannels < 0) {
-        TheDebug.Notify(
-            MakeString("[GetNumChannels] Ret = %d.  Unable to get num channels from '%s'.\n",
-                       mNumChannels, mMoggFile));
         mNumChannels = -1;
     }
 }
@@ -345,30 +281,18 @@ void MoggClip::LoadFile(BinStream *bs) {
     RELEASE(mLoader);
     KillStream();
     UnloadData();
-    mNumChannels = -1;
     if (!mMoggFile.empty()) {
-        bool loadingMusic = IsLoadingMusicMogg(mMoggFile.c_str());
-        bool useless = IsUselessMogg(mMoggFile.c_str());
-        if (!useless) {
-            if (!(bs && bs->Cached()) || loadingMusic) {
-                bs = nullptr;
-            }
-            mLoader = new FileLoader(
-                mMoggFile,
-                FileLocalize(mMoggFile.c_str(), nullptr),
-                kLoadFront,
-                0,
-                false,
-                true,
-                bs,
-                0
-            );
-            if (!mLoader) {
-                MILO_NOTIFY("Could not load mogg file '%s'", mMoggFile.c_str());
-            }
-        } else {
-            MILO_ASSERT(!mLoader && !mData, 0x23C);
-        }
+        BinStream *toUse = (bs && bs->Cached()) ? bs : 0;
+        mLoader = new FileLoader(
+            mMoggFile,
+            FileLocalize(mMoggFile.c_str(), nullptr),
+            kLoadFront,
+            0,
+            false,
+            true,
+            toUse,
+            nullptr
+        );
     }
 }
 
@@ -376,19 +300,34 @@ void MoggClip::SetFile(const char *file) {
     MILO_ASSERT(file != NULL, 0x14C);
     mMoggFile.Set(FilePath::Root().c_str(), file);
     LoadFile(nullptr);
-    LoadNumChannels();
+}
+
+void MoggClip::RemoveFader(Fader *fader) {
+    if (fader) {
+        for (std::vector<Fader *>::iterator it = mFaders.begin(); it != mFaders.end();
+             ++it) {
+            if (*it == fader) {
+                mFaders.erase(it);
+                break;
+            }
+        }
+        if (mStream) {
+            mStream->Faders()->Remove(fader);
+        }
+    }
 }
 
 void MoggClip::AddFader(Fader *fader) {
     if (fader) {
-        bool b1 = false;
-        FOREACH (it, mFaders) {
+        bool found = false;
+        for (std::vector<Fader *>::iterator it = mFaders.begin(); it != mFaders.end();
+             ++it) {
             if (*it == fader) {
-                b1 = true;
+                found = true;
                 break;
             }
         }
-        if (!b1) {
+        if (!found) {
             mFaders.push_back(fader);
         }
         if (mStream) {
@@ -398,11 +337,10 @@ void MoggClip::AddFader(Fader *fader) {
 }
 
 void MoggClip::SetPan(int i1, float f2) {
+    PanInfo info(i1, f2);
     bool found = false;
-    PanInfo info;
-    info.channel = i1;
-    info.panning = f2;
-    FOREACH (it, mPanInfos) {
+    for (std::vector<PanInfo>::iterator it = mPanInfos.begin(); it != mPanInfos.end();
+         ++it) {
         if (it->channel == i1) {
             found = true;
             *it = info;
@@ -413,14 +351,14 @@ void MoggClip::SetPan(int i1, float f2) {
         mPanInfos.push_back(info);
     }
     if (mStream) {
-        mStream->SetPan(i1, f2);
+        mStream->SetPan(info.channel, info.panning);
     }
 }
 
 void MoggClip::SetupPanInfo(float f1, float f2, bool stereo) {
     if (stereo) {
-        SetPan(0, -f2 / 2.0 + f1);
-        SetPan(1, f2 / 2.0f + f1);
+        SetPan(0, f2 / 2.0f + f1);
+        SetPan(1, -f2 / 2.0 + f1);
     } else {
         SetPan(0, f1);
     }

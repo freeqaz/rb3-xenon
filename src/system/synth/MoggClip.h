@@ -1,24 +1,23 @@
 #pragma once
 #include "obj/Object.h"
 #include "synth/Faders.h"
-#include "synth/FxSend.h"
-#include "synth/PlayableSample.h"
+#include "synth/Pollable.h"
 #include "synth/StandardStream.h"
-#include "utl/BinStream.h"
 #include "utl/FilePath.h"
-#include "utl/MemMgr.h"
+
+class FileLoader;
+class FxSend;
 
 /** "Allows dynamic playback of Mogg-based audio clips, most notably crowd audio loops."
  */
-class MoggClip : public Hmx::Object, public PlayableSample {
+class MoggClip : public Hmx::Object, public SynthPollable {
 public:
     struct PanInfo {
-        PanInfo() : channel(0), panning(0) {}
-        PanInfo(int c, float p) : channel(c), panning(p) {}
+        PanInfo(int, float);
         int channel;
         float panning;
     };
-    // Hmx::Object
+
     virtual ~MoggClip();
     OBJ_CLASSNAME(MoggClip);
     OBJ_SET_TYPE(MoggClip);
@@ -33,38 +32,40 @@ public:
     // SynthPollable
     virtual const char *GetSoundDisplayName();
     virtual void SynthPoll();
-    // PlayableSample
+    // Playable
     virtual void Play(float);
     virtual void Stop(bool);
     virtual void Pause(bool);
     virtual bool DonePlaying();
     virtual void SetVolume(float);
     virtual void SetPan(float);
-    virtual void SetADSR(const ADSRImpl &) {}
-    virtual void SetSpeed(float) {}
-    virtual void SetReverbMixDb(float) {}
-    virtual void SetReverbEnable(bool) {}
     virtual void SetSend(FxSend *);
-    virtual void SetEventReceiver(Hmx::Object *o) { mEventReceiver = o; }
-    virtual Hmx::Object *GetEventReceiver() { return mEventReceiver; }
-    virtual void EndLoop();
-    virtual float ElapsedTime();
 
-    OBJ_MEM_OVERLOAD(0x18);
-    NEW_OBJ(MoggClip)
-
+    void SetLoop(bool, int, int);
+    void EndLoop();
+    void SetControllerVolume(float vol) {
+        mControllerVolume = vol;
+        if (mStream) {
+            mStream->Stream::SetVolume(mControllerVolume + mVolume);
+        }
+    }
     bool IsStreaming() const;
     void FadeOut(float);
     void UnloadWhenFinishedPlaying(bool);
     bool IsReadyToPlay() const;
-    void SetLoop(bool, int, int);
     void SetFile(const char *);
     void SetPan(int, float);
     void SetupPanInfo(float, float, bool);
     void AddFader(Fader *);
+    void RemoveFader(Fader *);
     const FilePath Path() const { return mMoggFile; }
     StandardStream *GetStream() const { return mStream; }
     int NumChannels() const { return mNumChannels; }
+
+    NEW_OVERLOAD;
+    DELETE_OVERLOAD;
+    NEW_OBJ(MoggClip)
+    static void Init() { REGISTER_OBJ_FACTORY(MoggClip) }
 
 private:
     void ApplyLoop(bool, int, int);
@@ -80,27 +81,24 @@ protected:
     MoggClip();
 
     /** "The mogg audio file to be played." */
-    FilePath mMoggFile; // 0x38
+    FilePath mMoggFile; // 0x34
     /** "Volume in dB (0 is full volume, -96 is silence)." */
     float mControllerVolume; // 0x40
-    float mVolume; // 0x44
-    StandardStream *mStream; // 0x48
-    float unk4c;
-    void *mData; // 0x50
-    int mDataSize;
-    int mNumChannels; // 0x58
+    bool mLoop; // 0x44
+    float mVolume; // 0x48
+    StandardStream *mStream; // 0x4c
+    float unk50; // 0x50
+    void *mData; // 0x54
+    int mDataSize; // 0x58
     FileLoader *mLoader; // 0x5c
     std::vector<Fader *> mFaders; // 0x60
     std::vector<PanInfo> mPanInfos; // 0x6c
-    ObjPtr<FxSend> mFxSend; // 0x78
-    Fader *mFader; // 0x8c
-    bool unk90;
-    bool mUnloadWhenFinished; // 0x91
-    bool mPlaying; // 0x92
-    bool mLoop; // 0x93
-    int mLoopStartSample; // 0x94
-    int mLoopEndSample; // 0x98
-    Hmx::Object *mEventReceiver; // 0x9c
-    /** "Number of seconds to buffer (uses default value if set to 0.0)" */
-    float mBufSecs; // 0xa0
+    Fader *mFader; // 0x78
+    bool unk7c; // 0x7c
+    bool mUnloadWhenFinished; // 0x7d
+    bool mPlaying; // 0x7e
+    int mLoopStartSample; // 0x80
+    int mLoopEndSample; // 0x84
+    int mNumChannels; // 0x88
+    FxSend *mFxSend; // 0x8c
 };

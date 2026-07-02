@@ -363,3 +363,30 @@ MetaMusic (+37) and AccomplishmentProgress portions.
 4. Does the funclet-island secondary signal (scan step 1) reliably border its
    TU's bodies on this binary? Calibrate on landed TUs (MetaMusic, MasterAudio,
    CharClipSet) before using it to propose spans.
+
+## RESULTS (executed 2026-07-02, branch exec/ws3-optionc-0702)
+
+**Composed A/B (reviewer-run, authoritative): baseline 10936 -> 11021, NET +85
+strict matched functions, 5 units up / 0 units down, deterministic (run1==run2,
+full resplit rebuilds).** Gates: `icf_alias_check --worktree` VERDICT HONEST
+exit 0 (36 real-bodied / 32 own-unit stub-folds in the newly-matched set);
+`overlap_check` clean (.text 0/1085, .pdata 0/994).
+
+Per-packet verdicts (every key number reproduced by the reviewer via MCP
+run_objdiff against the packet worktree):
+
+| Packet | Verdict | Composed yield | Notes |
+|---|---|---|---|
+| p1 charclipgroup-flip | ACCEPT | +2 (CharClipGroup 0->2) | FindClip 100/100, Save 100 norm (99.9 raw, reloc-name residual). Handoff's "keep unk24" was WRONG (DC3 drift): retail has no unk24; vtordisp@0x1c + vbase@0x20. GetClip/MakeMRU ported from rb3-Wii. |
+| p2 motionblur-softparticles | ACCEPT | +25 (MotionBlur 0->11, SoftParticles 0->14) | Copy x2 + ctor + Save spot-checked 100 norm. Fixed 4 pre-existing map mislabels (Copy/ClassName ICF twins). Conservative pin start 0x82480A90 (gap head is a foreign AO-sibling TU). |
+| p3 moggclip | ACCEPT | +38 (MoggClip 0->38) | ctor/Save/PreLoad spot-checked 100 norm. BinkClip carve verified no-regress (SetLoop 88.3 == frozen baseline). 36 real-bodied anchors in composed ICF audit. Deferred: SynthPoll 97.6, LoadFile 95.8, SetupPanInfo 92.9, Play/Handle/SyncProperty/LoadNumChannels walls. |
+| p4 navlist-scantool | ACCEPT | +20 (SongSortNode 1->21) | 17 real-bodied named (Insert@ShortcutNode/Renumber/ctor spot-checked 100 norm) + 3 small own stub-folds. KEY: 0x826454E8 cluster is SongSortNode.cpp's own unpinned code (DC3 renamed the classes NavList*), not a fresh NavListNode TU — 11 dormant DC3 NavList map names removed. Scan tool `tools/oracle_contiguity_scan.py --validate` = ALL GATES PASS **against the pre-p4 baseline config** (post-consumption the NavListNode/MoggClip gates report rank=None — expected, the self-test's expectations are baseline-state-dependent; run with `--splits/--map` pointing at a pre-consumption config to re-validate). |
+
+Open question 1 (MoggClip vs BinkClip micro-pins) resolved: CARVE (multi-range
+.text pin around the 3 landed BinkClip ICF micro-pins), zero BinkClip movement.
+Open question 3 partially resolved: the STL/node cluster belongs to
+SongSortNode.cpp itself.
+
+Next-wave feed (scan-tool top ranks, pre-consumption config): Cam(13 bodies),
+PlatformMgr_Xbox(10), StandardStream(9), Lit_NG(5), Faders(9), HamStorePanel(7),
+HamSongMgr(5), PartyModeMgr(5), App(6), TexLoadPanel(4).

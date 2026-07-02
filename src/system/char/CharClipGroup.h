@@ -25,14 +25,13 @@ public:
     void SetClipFlags(int);
     CharClip *FindClip(const char *) const;
     void Sort();
+    void MakeMRU(int);
 
 protected:
     CharClipGroup();
-    int QueueRandom(int pos, int end) const;
 
     /** "LRU list of clips belonging to this group" */
-    ObjPtrVec<CharClip> mClips; // 0x4
-    int mWhich; // 0x20
-    int unk24;
-    int mFlags; // 0x28
+    ObjVector<ObjOwnerPtr<CharClip> > mClips; // 0x4
+    int mWhich; // 0x14
+    int mFlags; // 0x18
 };
