@@ -315,6 +315,7 @@
    "system/meta/Meta.cpp": "NonMatching",
    "system/meta/MetaMusicScene.cpp": "NonMatching",
    "system/midi/MidiVarLen.cpp": "NonMatching",
+   "system/movie/Movie.cpp": "NonMatching",
    "system/movie/MovieSys.cpp": "NonMatching",
    "system/moviebink/BinkMovieSys_Xbox.cpp": "NonMatching",
    "system/net/DingoJob.cpp": "NonMatching",
@@ -647,6 +648,7 @@
    "system/bandobj/EndingBonus.cpp": "NonMatching",
    "system/synth/Faders.cpp": "NonMatching",
    "system/synth/StandardStream.cpp": "NonMatching",
+   "system/synth/SynthSample.cpp": "NonMatching",
    "system/meta/SongPreview.cpp": "NonMatching"
   }
  },

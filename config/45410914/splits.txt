@@ -1583,7 +1583,7 @@ Font3d.cpp:
 	.pdata      start:0x82207A50 end:0x82207A58
 	.text       start:0x82460378 end:0x824603E8
 
-Movie.cpp:
+system/rndobj/Movie.cpp:
 	.pdata      start:0x82208808 end:0x82208810
 	.text       start:0x82472160 end:0x824721A4
 
@@ -2343,7 +2343,7 @@ UsbMidiGuitar.cpp:
 BinkMovieSys_Xbox.cpp:
 	.text       start:0x82721138 end:0x82721160
 
-SynthSample.cpp:
+system/synth_xbox/SynthSample.cpp:
 	.pdata      start:0x822528A8 end:0x822528B0
 	.text       start:0x82B3DB18 end:0x82B3DB88
 
