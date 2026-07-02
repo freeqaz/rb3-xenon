@@ -3442,35 +3442,46 @@ DirectInstrument.cpp:
 PerformanceData.cpp:
 	.pdata      start:0x822250A8 end:0x822250B0
 	.text       start:0x8263B038 end:0x8263B0F8
+
 PlayerLeaderboards.cpp:
 	.pdata      start:0x82226EE8 end:0x82226EF0
 	.text       start:0x82656348 end:0x826563A0
+
 QuestManager.cpp:
 	.pdata      start:0x821F7F50 end:0x821F7F58
 	.text       start:0x82346E18 end:0x82346F08
+
 SongSortNode.cpp:
 	.pdata      start:0x82225B38 end:0x82225B40
 	.text       start:0x82643AE8 end:0x82643BD0
+
 StatCollector.cpp:
 	.pdata      start:0x8222E4C0 end:0x8222E4C8
 	.text       start:0x826D7970 end:0x826D79C0
+
 Tour.cpp:
 	.pdata      start:0x821F81B0 end:0x821F81B8
 	.text       start:0x82348D08 end:0x82348DB0
+
 TourBand.cpp:
 	.text       start:0x82B4A6A0 end:0x82B4A6F0
+
 TourPerformer.cpp:
 	.pdata      start:0x821F8810 end:0x821F8818
 	.text       start:0x8234E678 end:0x8234E708
+
 TrainingPanel.cpp:
 	.pdata      start:0x82223418 end:0x82223420
 	.text       start:0x82621988 end:0x82621A00
+
 WaitingUserGate.cpp:
 	.pdata      start:0x82219E60 end:0x82219E68
 	.text       start:0x825951A0 end:0x825951F8
+
 OvershellPanel.cpp:
 	.pdata      start:0x8221A740 end:0x8221A748
 	.text       start:0x8259DF90 end:0x8259E538
+
 MetaPanel.cpp:
 	.pdata      start:0x82216098 end:0x822160A0
 	.text       start:0x8255A890 end:0x8255A8F0
