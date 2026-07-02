@@ -13622,5 +13622,5 @@
  "0x8262f3a8": "?Enter@NextSongPanel@@UAAXXZ",
  "0x826c4890": "?Disable@DirectInstrument@@QAAXXZ",
  "0x8252A5C8": "?PushHeaderDataToScreen@MusicLibrary@@QAAXXZ",
- "0x82b4a6a0": "?ChooseBandLogo@TourBand@@QAAXHH@Z"
+ "0x8234e678": "?GetQuestSuccessfulSongCount@TourPerformerImpl@@QBAHXZ"
 }

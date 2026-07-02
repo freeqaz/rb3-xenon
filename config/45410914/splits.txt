@@ -3459,3 +3459,6 @@ Tour.cpp:
 	.text       start:0x82348D08 end:0x82348DB0
 TourBand.cpp:
 	.text       start:0x82B4A6A0 end:0x82B4A6F0
+TourPerformer.cpp:
+	.pdata      start:0x821F8810 end:0x821F8818
+	.text       start:0x8234E678 end:0x8234E708
