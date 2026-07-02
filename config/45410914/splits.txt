@@ -3320,11 +3320,27 @@ CustomizePanel.cpp:
 	.text       start:0x825FB548 end:0x825FB590
 
 TrackWatcherImpl.cpp:
+	.pdata      start:0x82236C58 end:0x82236C60
 	.pdata      start:0x82236C70 end:0x82236C78
+	.pdata      start:0x82236C78 end:0x82236C80
+	.pdata      start:0x82236CC0 end:0x82236CC8
+	.pdata      start:0x82236CC8 end:0x82236CD0
 	.pdata      start:0x82236CF8 end:0x82236D00
+	.pdata      start:0x82236D50 end:0x82236D58
+	.pdata      start:0x82236D58 end:0x82236D60
+	.pdata      start:0x82236D80 end:0x82236D88
+	.pdata      start:0x82236D98 end:0x82236DA0
+	.text       start:0x8276FBB0 end:0x8276FBFC
 	.text       start:0x8276FD08 end:0x8276FD74
+	.text       start:0x8276FD78 end:0x8276FDE4
 	.text       start:0x827700F8 end:0x82770124
+	.text       start:0x82770428 end:0x827704E4
+	.text       start:0x827704E8 end:0x8277064C
 	.text       start:0x82770900 end:0x82770978
+	.text       start:0x82771328 end:0x827714F4
+	.text       start:0x827714F8 end:0x827717C4
+	.text       start:0x82771CB8 end:0x82771FA0
+	.text       start:0x827720D8 end:0x82772110
 
 SongParser.cpp:
 	.pdata      start:0x82235F18 end:0x82235F20

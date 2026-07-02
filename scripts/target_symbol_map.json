@@ -13647,5 +13647,13 @@
  "0x822E4B40": "?ConfigPanels@VocalTrackDir@@QAAXXZ",
  "0x8270C188": "?SyncPacked@ADSRImpl@@QAAXXZ",
  "0x8270C1D0": "?Load@ADSRImpl@@QAAXAAVBinStream@@PAVADSR@@@Z",
- "0x8270C060": "?Set@Ps2ADSR@@QAAXABVADSRImpl@@@Z"
+ "0x8270C060": "?Set@Ps2ADSR@@QAAXABVADSRImpl@@@Z",
+ "0x82771cb8": "?CheckForAutoplay@TrackWatcherImpl@@QAAXM@Z",
+ "0x82771328": "?OnHit@TrackWatcherImpl@@UAAXMHHIW4GemHitFlags@@@Z",
+ "0x827714f8": "?OnMiss@TrackWatcherImpl@@UAAXMHHIW4GemHitFlags@@@Z",
+ "0x82770428": "?SendHit@TrackWatcherImpl@@QAAXMHIW4GemHitFlags@@@Z",
+ "0x827704e8": "?SendMiss@TrackWatcherImpl@@QAAXMHHHW4GemHitFlags@@@Z",
+ "0x8276fbb0": "?RecalcGemList@TrackWatcherImpl@@QAAXXZ",
+ "0x827720d8": "?KillSustainForSlot@TrackWatcherImpl@@QAAXH@Z",
+ "0x8276fd78": "?EndSustainedNote@TrackWatcherImpl@@QAAXAAUGemInProgress@@@Z"
 }
