@@ -290,8 +290,7 @@ void MoggClip::LoadFile(BinStream *bs) {
             0,
             false,
             true,
-            toUse,
-            nullptr
+            toUse
         );
     }
 }

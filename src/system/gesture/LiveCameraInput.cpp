@@ -58,7 +58,7 @@ namespace {
         FilePath fp("../../system/run/gesture/dev_depth.data");
         FileLoader loader(
             fp, "../../system/run/gesture/dev_depth.data", kLoadFront, 0, false, true,
-            nullptr, nullptr
+            nullptr
         );
         TheLoadMgr.PollUntilLoaded(&loader, nullptr);
         int sz;

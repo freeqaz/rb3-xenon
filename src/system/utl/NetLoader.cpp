@@ -71,7 +71,7 @@ NetLoaderStub::NetLoaderStub(const String &str) : NetLoader(str), mFileLoader(nu
         MakeString("%s/%s", TheNetCacheMgr->GetServerRoot(), mStrRemotePath.c_str())
     );
     mFileLoader =
-        new FileLoader(path, path.c_str(), kLoadFront, 0, false, true, nullptr, nullptr);
+        new FileLoader(path, path.c_str(), kLoadFront, 0, false, true, nullptr);
     MILO_ASSERT(mFileLoader, 0xA0);
     float size = mFileLoader->GetSize() * 0.0009765625f;
     mNetSimEndTime = size * 0.03125f + TheTaskMgr.UISeconds() + kNetSimInitialDelay;

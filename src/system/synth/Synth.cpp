@@ -69,9 +69,7 @@ namespace {
 
 Loader *WavFactory(const FilePath &path, LoaderPos pos) {
     CacheResourceResult res;
-    return new FileLoader(
-        path, CacheWav(path.c_str(), res), pos, 0, false, true, nullptr, nullptr
-    );
+    return new FileLoader(path, CacheWav(path.c_str(), res), pos, 0, false, true, nullptr);
 }
 
 DataNode returnMasterKey(DataArray *a) {

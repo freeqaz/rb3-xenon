@@ -149,7 +149,6 @@ void RndTex::PreLoad(BinStream &bs) {
                 0,
                 false,
                 true,
-                nullptr,
                 nullptr
             );
         }

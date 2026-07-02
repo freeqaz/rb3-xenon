@@ -160,9 +160,7 @@ void RndSplasherResume() {
 const char *CacheResource(const char *, CacheResourceResult &);
 
 Loader *ResourceFactory(const FilePath &f, LoaderPos p) {
-    return new FileLoader(
-        f, CacheResource(f.c_str(), nullptr), p, 0, false, true, nullptr, nullptr
-    );
+    return new FileLoader(f, CacheResource(f.c_str(), nullptr), p, 0, false, true, nullptr);
 }
 
 void RndUtlPreInit() {

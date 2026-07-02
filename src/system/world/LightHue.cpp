@@ -83,7 +83,7 @@ void LightHue::PreLoad(BinStream &bs) {
     if (bs.Cached()) {
         d >> mKeys;
     } else if (!mPath.empty()) {
-        mLoader = new FileLoader(mPath, mPath.c_str(), kLoadFront, 0, false, true, 0, 0);
+        mLoader = new FileLoader(mPath, mPath.c_str(), kLoadFront, 0, false, true, 0);
     }
 }
 
@@ -96,9 +96,8 @@ void LightHue::Sync() {
     mKeys.clear();
     if (!mPath.empty()) {
         if (!mLoader) {
-            mLoader = new FileLoader(
-                mPath, mPath.c_str(), kLoadFront, 0, false, true, nullptr, nullptr
-            );
+            mLoader =
+                new FileLoader(mPath, mPath.c_str(), kLoadFront, 0, false, true, nullptr);
         }
         TheLoadMgr.PollUntilLoaded(mLoader, nullptr);
         int ibuf;

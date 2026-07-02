@@ -202,7 +202,7 @@ void HamAudio::Load(SongInfo *info, bool b2) {
     } else {
         String moggStr(MakeString("%s.mogg", str.c_str()));
         mFileLoader =
-            new FileLoader(moggStr.c_str(), moggStr.c_str(), kLoadFront, 0, false, true, 0, 0);
+            new FileLoader(moggStr.c_str(), moggStr.c_str(), kLoadFront, 0, false, true, 0);
     }
 }
 

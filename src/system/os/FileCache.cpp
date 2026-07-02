@@ -60,7 +60,7 @@ void FileCacheEntry::StartRead(LoaderPos lp, bool b) {
     MILO_ASSERT(!mBuf, 0x9c);
     MILO_ASSERT(mSize == -1, 0x9d);
     mLoader =
-        new FileLoader(mReadFileName, mReadFileName.c_str(), lp, 0x20000, b, false, 0, 0);
+        new FileLoader(mReadFileName, mReadFileName.c_str(), lp, 0x20000, b, false, 0);
 }
 
 File *FileCacheEntry::MakeFile() {

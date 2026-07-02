@@ -86,7 +86,7 @@ lab:
         MILO_ASSERT(!mFileLoader, 0xe3);
         const char *strPath = mRemotePath.c_str();
         MILO_ASSERT(TheNetCacheMgr->IsLocalFile(strPath), 0xe6);
-        mFileLoader = new FileLoader(FilePath(strPath), strPath, kLoadFront, 0, false, true, nullptr, nullptr);
+        mFileLoader = new FileLoader(FilePath(strPath), strPath, kLoadFront, 0, false, true, nullptr);
     }
 }
 

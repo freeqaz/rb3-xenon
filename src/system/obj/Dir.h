@@ -522,6 +522,22 @@ public:
     int HashTableUsedSize() const { return mHashTable.UsedSize(); }
     int StrTableUsedSize() const { return mStringTable.UsedSize(); }
     KeylessHash<const char *, Entry> &HashTable() { return mHashTable; }
+    /** Depth-first subdir walk used by ObjDirItr (retail shape, ported from
+     * rb3-Wii Dir.cpp). which==0 returns this; otherwise recurses into
+     * mSubDirs, decrementing which at each visited dir. */
+    ObjectDir *NextSubDir(int &which) {
+        if (which == 0)
+            return this;
+        which--;
+        for (int i = 0; i < mSubDirs.size(); i++) {
+            if (mSubDirs[i]) {
+                ObjectDir *ret = mSubDirs[i]->NextSubDir(which);
+                if (ret)
+                    return ret;
+            }
+        }
+        return nullptr;
+    }
     const char *GetPathName() const { return mPathName; }
     const std::vector<ObjDirPtr<ObjectDir> > &SubDirs() const { return mSubDirs; }
 #ifdef HX_NATIVE
@@ -666,70 +682,30 @@ protected:
 
 extern const char *kNotObjectMsg;
 
-/** Iterates through each Object in an ObjectDir that is of type T. */
+/** Iterates through each Object in an ObjectDir that is of type T.
+ * Retail RB3 shape (== rb3-Wii): flat 0x14-byte iterator walking subdirs via
+ * ObjectDir::NextSubDir — NOT the DC3 std::list-based recursive collector. */
 template <class T>
 class ObjDirItr {
-private:
-    void Advance() {
-        for (; mEntry != nullptr; mEntry = mSubDirs.front()->HashTable().Next(mEntry)) {
-#ifdef HX_NATIVE
-            // During DeleteObjects, ~Object() nulls entry->obj via RemoveFromDir().
-            // Skip null entries so we never touch freed memory.
-            if (!mEntry->obj)
-                continue;
-#endif
-            mObj = dynamic_cast<T *>(mEntry->obj);
-            if (mObj)
-                return;
-        }
-        if (mSubDirs.size() != 0) {
-            mSubDirs.pop_front();
-            if (mSubDirs.size() != 0) {
-                mEntry = mSubDirs.front()->HashTable().Begin();
-                Advance();
-                return;
-            }
-        }
-        mObj = nullptr;
-    }
-    void RecurseSubdirs(ObjectDir *dir) {
-        if (dir && std::find(mSubDirs.begin(), mSubDirs.end(), dir) == mSubDirs.end()) {
-            mSubDirs.push_back(dir);
-            for (int i = 0; i < dir->SubDirs().size(); i++) {
-                RecurseSubdirs(dir->SubDirs()[i]);
-            }
-        }
-    }
-
-    /** The current ObjectDir::Entry in the iterator. */
-    ObjectDir::Entry *mEntry; // 0x0
-    /** The current object in the iterator. */
-    T *mObj; // 0x4
-    /** All the subdirs we need to iterate through. */
-    std::list<ObjectDir *> mSubDirs; // 0x8
-
 public:
     /** Create an ObjDirItr (ObjectDir iterator).
      @param [in] dir The ObjectDir we're iterating inside.
      @param [in] recurse If true, we want to iterate through the ObjectDir's subdirs too.
      */
-    ObjDirItr(ObjectDir *dir, bool recurse) {
+    ObjDirItr(ObjectDir *dir, bool recurse)
+        : mDir(recurse ? dir : nullptr), mSubDir(dir), mWhich(0) {
         if (dir) {
-            if (recurse) {
-                RecurseSubdirs(dir);
-            } else {
-                mSubDirs.push_back(dir);
-            }
-            mEntry = mSubDirs.front()->HashTable().Begin();
+            mEntry = dir->HashTable().Begin();
             Advance();
         } else {
             mObj = nullptr;
             mEntry = nullptr;
         }
     }
+
     ObjDirItr &operator++() {
         if (mEntry) {
-            mEntry = mSubDirs.front()->HashTable().Next(mEntry);
+            mEntry = mSubDir->HashTable().Next(mEntry);
             Advance();
         }
         return *this;
@@ -737,6 +713,44 @@ public:
 
     operator T *() { return mObj; }
     T *operator->() { return mObj; }
+
+private:
+    void Advance() {
+        while (mEntry) {
+#ifdef HX_NATIVE
+            // During DeleteObjects, ~Object() nulls entry->obj via RemoveFromDir().
+            // Skip null entries so we never touch freed memory.
+            if (mEntry->obj)
+#endif
+            {
+                mObj = dynamic_cast<T *>(mEntry->obj);
+                if (mObj)
+                    return;
+            }
+            mEntry = mSubDir->HashTable().Next(mEntry);
+        }
+        if (mDir) {
+            int nextwhich = ++mWhich;
+            mSubDir = mDir->NextSubDir(nextwhich);
+            if (mSubDir) {
+                mEntry = mSubDir->HashTable().Begin();
+                Advance();
+                return;
+            }
+        }
+        mObj = nullptr;
+    }
+
+    /** Root dir when recursing, null otherwise. */
+    ObjectDir *mDir; // 0x0
+    /** The dir currently being iterated. */
+    ObjectDir *mSubDir; // 0x4
+    /** The current ObjectDir::Entry in the iterator. */
+    ObjectDir::Entry *mEntry; // 0x8
+    /** The current object in the iterator. */
+    T *mObj; // 0xc
+    /** Depth-first subdir cursor fed to NextSubDir. */
+    int mWhich; // 0x10
 };
 
 void PreloadSharedSubdirs(Symbol s);

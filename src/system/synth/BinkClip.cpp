@@ -193,8 +193,7 @@ void BinkClip::LoadFile(BinStream *bs) {
     if (mPreload) {
         BinStream *toUse = bs && bs->Cached() ? bs : 0;
         mLoader = new FileLoader(
-            mFile, FileLocalize(mFile.c_str(), 0), kLoadFront, 0, false, true, toUse,
-            nullptr
+            mFile, FileLocalize(mFile.c_str(), 0), kLoadFront, 0, false, true, toUse
         );
         if (!mLoader)
             MILO_WARN("Could not load bik file '%s'", mFile.c_str());

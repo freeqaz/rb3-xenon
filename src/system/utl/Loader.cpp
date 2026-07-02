@@ -93,13 +93,11 @@ FileLoader::FileLoader(
     int i4,
     bool b5,
     bool b6,
-    BinStream *bs,
-    const char *cc8
+    BinStream *bs
 )
     : Loader(fp, pos), mFile(nullptr), mStream(bs), mBuffer(nullptr), mBufLen(0),
       mAccessed(false), mTemp(b5), mWarn(b6), mFlags(i4), mFilename(cc), mBytesLoaded(0),
       mChunkSize(-1), mState(nullptr) {
-    mHeapName = cc8 ? cc8 : "main";
     if (mStream) {
         mState = &FileLoader::LoadStream;
     } else {
@@ -124,7 +122,7 @@ void FileLoader::DoneLoading() {}
 
 void FileLoader::AllocBuffer() {
     const char *filename = mFilename.c_str();
-    MemHeapTracker tmp(MemFindHeap(mHeapName.c_str()));
+    MemHeapTracker tmp(MemFindHeap("main"));
     BeginMemTrackFileName(filename);
     if (mTemp) {
         mBuffer =
@@ -423,7 +421,7 @@ Loader *LoadMgr::AddLoader(const FilePath &file, LoaderPos pos) {
             return (it->second)(file, pos);
         }
     }
-    return new FileLoader(file, file.c_str(), pos, 0, false, true, nullptr, nullptr);
+    return new FileLoader(file, file.c_str(), pos, 0, false, true, nullptr);
 }
 
 void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {

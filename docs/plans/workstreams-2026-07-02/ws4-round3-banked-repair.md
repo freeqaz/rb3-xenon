@@ -459,3 +459,28 @@ re-attributes false-100s → strict count *drops*; the source fix alone is net
    empirically by step A3's first A/B.
 5. `MetaMusic fn_826F1C20` frame Δ −0x20 direction (whose frame is bigger,
    target or ours?) — the handoff doesn't say; `/stack-layout` will.
+
+---
+
+## RESULTS (2026-07-02 execution, ws4-round3 review agent)
+
+- **Item A (Bundle 2): LANDED, +25 net strict** (10936 → 10961; 43 gained /
+  18 strict + 12 real-fuzzy regressed). The zero-regression bar proved
+  unmeetable: the correct flat-0x14 ObjDirItr revert perturbs MSVC regalloc in
+  every inlining TU; regressed target EH funclets have NO byte-identical twin
+  in our objs (A5 map-pairing inapplicable) and frame deltas are mixed-direction
+  (regalloc ripple, not a size bug). Reviewer landed on the net-positive gate
+  with regressions documented as honest re-pricing of matches against DC3-drift
+  source. Follow-up lever: permuter on MetaMusic/CharBoneDir/Dir/CameraManager/
+  CharClipSet (frame sizes match, extra BASE_ONLY spill). NetSync/DirLoader/
+  TrackDir/BandWardrobe funclet losses: no source lever, accepted.
+- **Item B (HamCamTransform TransformCrowd 0x10→0xc): KILLED for this round /
+  re-banked.** Edits verified correct (op= →100 at 0xc; 0x82298800 is a
+  misnamed 0x10-stride vector; ~TransformCrowd funclet matches only at 0xc) but
+  net −3 is unrecoverable in isolation: HamCamTransform.obj compiles no
+  0x10-element vector to rename to, the true-0xc `_M_clear` is ICF-folded under
+  a foreign survivor, and 4 funclet losses are positional ICF-soup phantoms.
+  Banked at `/home/free/tmp/hct_edited.{h,cpp}`; revisit in a combined
+  map-hygiene pass. Expected-yield estimate (+2–6) was wrong: the false-100s it
+  would honestly remove exceed the real gains on current pairing.
+- Full ledger + verdict detail: `docs/decomp/handoff/exec-ws4-round3-run-2026-07-02.md`.

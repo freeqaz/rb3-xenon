@@ -123,16 +123,7 @@ typedef void (FileLoader::*FileLoaderStateFunc)(void);
 
 class FileLoader : public Loader {
 public:
-    FileLoader(
-        const FilePath &,
-        const char *,
-        LoaderPos,
-        int,
-        bool,
-        bool,
-        BinStream *,
-        const char *
-    );
+    FileLoader(const FilePath &, const char *, LoaderPos, int, bool, bool, BinStream *);
     virtual ~FileLoader();
     virtual const char *DebugText();
     virtual bool IsLoaded() const;
@@ -161,6 +152,5 @@ private:
     String mFilename; // 0x30
     int mBytesLoaded; // 0x3c
     int mChunkSize; // 0x40
-    String mHeapName; // 0x44
-    FileLoaderStateFunc mState; // 0x50
+    FileLoaderStateFunc mState; // 0x44
 };
