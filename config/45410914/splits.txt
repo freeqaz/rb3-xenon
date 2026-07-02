@@ -3399,7 +3399,6 @@ BeatMatcher.cpp:
 	.pdata      start:0x822368A8 end:0x822368B0
 	.pdata      start:0x82236920 end:0x82236928
 	.pdata      start:0x82236928 end:0x82236930
-	.pdata      start:0x82236938 end:0x82236940
 	.text       start:0x8276BA08 end:0x8276BA48
 	.text       start:0x8276BF98 end:0x8276C01C
 	.text       start:0x8276CAD8 end:0x8276CB48
