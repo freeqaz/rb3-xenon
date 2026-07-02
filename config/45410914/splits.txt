@@ -3445,3 +3445,6 @@ PerformanceData.cpp:
 PlayerLeaderboards.cpp:
 	.pdata      start:0x82226EE8 end:0x82226EF0
 	.text       start:0x82656348 end:0x826563A0
+QuestManager.cpp:
+	.pdata      start:0x821F7F50 end:0x821F7F58
+	.text       start:0x82346E18 end:0x82346F08
