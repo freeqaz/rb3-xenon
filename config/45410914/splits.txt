@@ -3426,7 +3426,11 @@ SlipTrack.cpp:
 	.text       start:0x82B7F6B8 end:0x82B7F714
 
 GemTrackDir.cpp:
+	.pdata      start:0x821F0CB8 end:0x821F0CC0
+	.pdata      start:0x821F0ED0 end:0x821F0ED8
 	.text       start:0x822D17F8 end:0x822D181C
+	.text       start:0x822D1FF8 end:0x822D20E8
+	.text       start:0x822D4598 end:0x822D46C0
 
 DuplicatedObject.cpp:
 	.pdata      start:0x82247F10 end:0x82247F18
