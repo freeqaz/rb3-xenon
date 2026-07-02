@@ -619,8 +619,9 @@ BinStream &operator>>(BinStream &bs, BandCharDesc::OutfitPiece &piece) {
     bs >> col;
     piece.mColors[0] = col;
     bs >> col;
+    unsigned short rev = BandCharDesc::gRev;
     piece.mColors[1] = col;
-    if (BandCharDesc::gRev > 0xB) {
+    if (rev > 0xB) {
         bs >> col;
         piece.mColors[2] = col;
     }

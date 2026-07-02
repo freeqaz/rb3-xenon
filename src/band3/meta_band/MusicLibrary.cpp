@@ -1551,6 +1551,8 @@ void MusicLibrary::PushSetlistSaveDialog() {
 }
 
 void MusicLibrary::PushHeaderDataToScreen() {
+    static Symbol refresh_summary("refresh_summary");
+    static Message refresh_summary_msg(refresh_summary);
     SendMessageToSongSelectPanel(refresh_summary_msg);
 }
 

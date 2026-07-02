@@ -102,10 +102,11 @@ void SaveCompressedVertex(const CompressedVertex_Xbox &cv, BinStream &bs) {
 
 /** Calculate the centroid of a triangle face by averaging its three vertex positions. */
 void FaceCenter(RndMesh *mesh, RndMesh::Face *face, Vector3 &center) {
-    center.z = 0.0f;
-    center.y = 0.0f;
+    RndMesh *owner = mesh->mGeomOwner;
     center.x = 0.0f;
-    RndMesh::Vert *verts = mesh->mGeomOwner->mVerts.mVerts;
+    center.y = 0.0f;
+    center.z = 0.0f;
+    RndMesh::Vert *verts = owner->mVerts.mVerts;
     // Accumulate positions of all three vertices
     for (int i = 0; i < 3; i++) {
         RndMesh::Vert &v = verts[(*face)[i]];

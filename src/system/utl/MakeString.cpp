@@ -11,7 +11,7 @@
 #include "xdk/xapilibi/processthreadsapi.h"
 
 #define MAX_BUF_THREADS 6
-#define MAX_BUF_SIZE 0x1000
+#define MAX_BUF_SIZE 0x800
 
 bool bufExceeded = false;
 static CriticalSection *gLock = nullptr;
@@ -29,7 +29,7 @@ void InitMakeString() {
             gBuf[i] = (char **)MemAlloc(16 * sizeof(char *), __FILE__, 0x97, "MakeString Buffer", 0);
             for (int j = 0; j < 16; j++) {
                 gBuf[i][j] =
-                    (char *)MemAlloc(0x1000, __FILE__, 0x9B, "MakeString Buffer", 0);
+                    (char *)MemAlloc(MAX_BUF_SIZE, __FILE__, 0x9B, "MakeString Buffer", 0);
             }
         }
     }

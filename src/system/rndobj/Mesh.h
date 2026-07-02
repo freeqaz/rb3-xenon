@@ -199,8 +199,11 @@ public:
     const Transform& BoneOffsetAt(int idx) const { return mBones[idx].mOffset; }
     void SetMutable(int m) { mGeomOwner->mMutable = m; }
     int Mutable() const { return mGeomOwner->mMutable; }
-    bool HasAOCalc() const { return mGeomOwner->mHasAOCalc; }
-    void SetHasAOCalc(bool calc) { mGeomOwner->mHasAOCalc = calc; }
+    // rb3-Wii (and retail-360, per GetDefaultMatShaderOpts asm: lbz this+0x134
+    // direct, no owner indirection) reads mHasAOCalc on this; DC3 later added
+    // the mGeomOwner-> indirection. Keep the RB3 form.
+    bool HasAOCalc() const { return mHasAOCalc; }
+    void SetHasAOCalc(bool calc) { mHasAOCalc = calc; }
     RndMesh *GetGeomOwner() const { return mGeomOwner; }
     MotionBlurCache &GetBlurCache() { return mMotionCache; }
     unsigned int NumCompressedVerts() const { return mGeomOwner->mNumCompressedVerts; }

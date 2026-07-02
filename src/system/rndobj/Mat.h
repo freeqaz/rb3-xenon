@@ -47,10 +47,7 @@ struct MatShaderOptions {
         shader_struct.mHasBones = bones;
     }
 
-    void SetHasAOCalc(bool calc) {
-        shader_struct.mHasAOCalc = 0;
-        shader_struct.mHasAOCalc = calc;
-    }
+    void SetHasAOCalc(bool calc) { shader_struct.mHasAOCalc = calc; }
 };
 
 class RndMat : public BaseMaterial {
