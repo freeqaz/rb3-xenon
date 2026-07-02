@@ -26,6 +26,7 @@ private:
     void InitDecoder();
     bool DoSeek();
     bool DoFileRead();
+    void Decrypt(unsigned char *, int);
     int QueuedOutputSamples();
     bool TryDecode();
     bool CheckHmxHeader();

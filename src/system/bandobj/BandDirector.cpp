@@ -1791,7 +1791,6 @@ END_PROPSYNCS
 // dc3-derived 360 tree. Defined here (rather than touching engine .cpps) so
 // BandDirector.cpp can compile; behavior matches "no music-video presets".
 // Port the real implementations as part of the world/LightPreset Wii->360 wave.
-RndPostProc *LightPreset::GetCurrentPostProc() { return nullptr; }
 float LightPreset::LegacyFadeIn() const { return 0.0f; }
 void LightPreset::StaticResetEvents() {}
 void LightPresetManager::GetPresets(LightPreset *&a, LightPreset *&b) { a = nullptr; b = nullptr; }

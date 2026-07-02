@@ -539,6 +539,14 @@ int LightPreset::GetCurrentKeyframe() const {
     }
 }
 
+RndPostProc *LightPreset::GetCurrentPostProc() const {
+    RndPostProc *ret = 0;
+    int frame = GetCurrentKeyframe();
+    if (frame >= 0)
+        ret = mKeyframes[frame].mVideoVenuePostProc;
+    return ret;
+}
+
 bool LightPreset::PlatformOk() const {
     if (TheLoadMgr.EditMode() || !mPlatformOnly
         || TheLoadMgr.GetPlatform() == kPlatformNone) {

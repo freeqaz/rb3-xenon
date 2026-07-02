@@ -319,6 +319,7 @@ StreakMeter.cpp:
 	.pdata      start:0x821F0218 end:0x821F0220
 	.pdata      start:0x821F0560 end:0x821F05B0
 	.text       start:0x822C4930 end:0x822C495C
+	.text       start:0x822C56E8 end:0x822C57C4
 	.text       start:0x822C6B60 end:0x822C6BC0
 	.text       start:0x822C6BC0 end:0x822C6C34
 	.text       start:0x822C9020 end:0x822C97C8
@@ -1061,6 +1062,7 @@ Dir.cpp:
 
 UIListState.cpp:
 	.pdata      start:0x8223DE10 end:0x8223DF08
+	.text       start:0x827E89F8 end:0x827E8A18
 	.text       start:0x827E8A50 end:0x827EA3B8
 
 UIListWidget.cpp:
@@ -1859,6 +1861,7 @@ CameraManager.cpp:
 	.pdata      start:0x8224DC40 end:0x8224DC48
 	.text       start:0x824A6D08 end:0x824AA230
 	.text       start:0x82AD4578 end:0x82AD4654
+	.text       start:0x82AD4B10 end:0x82AD4CD0
 
 UITrigger.cpp:
 	.pdata      start:0x8223F598 end:0x8223F620
@@ -2431,6 +2434,7 @@ MemcardMgr.cpp:
 CharIKScale.cpp:
 	.pdata      start:0x82205F98 end:0x82205FA0
 	.text       start:0x823871F0 end:0x823871FC
+	.text       start:0x82387208 end:0x82387228
 	.text       start:0x8243F508 end:0x8243F570
 
 system/synth/FxSendPitchShift.cpp:
@@ -3400,14 +3404,12 @@ BandPatchMesh.cpp:
 SongData.cpp:
 	.pdata      start:0x82234F68 end:0x82234F70
 	.pdata      start:0x82234F80 end:0x82234F88
-	.pdata      start:0x82234F88 end:0x82234F90
 	.pdata      start:0x822350B8 end:0x822350C0
 	.pdata      start:0x82235728 end:0x82235730
 	.text       start:0x8274BB20 end:0x8274BB34
 	.text       start:0x8274BF50 end:0x8274C1E0
 	.text       start:0x8274C230 end:0x8274C500
 	.text       start:0x8274C500 end:0x8274C518
-	.text       start:0x8274C518 end:0x8274C5D0
 	.text       start:0x8274CB58 end:0x8274CB70
 	.text       start:0x8274DA90 end:0x8274DBBC
 	.text       start:0x82753FD0 end:0x827541C0
@@ -3429,6 +3431,7 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F0CB8 end:0x821F0CC0
 	.pdata      start:0x821F0ED0 end:0x821F0ED8
 	.text       start:0x822D17F8 end:0x822D181C
+	.text       start:0x822D1A58 end:0x822D1A6C
 	.text       start:0x822D1FF8 end:0x822D20E8
 	.text       start:0x822D4598 end:0x822D46C0
 
@@ -3583,7 +3586,6 @@ NoteTube.cpp:
 	.text       start:0x82BF6570 end:0x82BF6938
 
 Faders.cpp:
-	.text       start:0x826EDAB0 end:0x826EDAD0
 	.text       start:0x826EDE48 end:0x826EDE74
 
 SongPreview.cpp:

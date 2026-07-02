@@ -71,6 +71,10 @@ unsigned int DateTime::ToCode() const {
         + (mHour * 0xE10) + (mMin * 0x3C) + mSec;
 }
 
+void DateTime::ToMiniDateString(class String &str) const {
+    str += MakeString("%02d/%02d", mMonth + 1, mDay);
+}
+
 int DateTime::Year() const { return mYear + 1900; }
 int DateTime::Month() const { return mMonth + 1; }
 

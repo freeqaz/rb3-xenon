@@ -82,3 +82,68 @@ double `tools/fresh_report.sh`, `scripts/harvest/measure_delta.py
 name did not resolve, e.g. NetCacheMgr 0x82741b78 until p4 lands) are harmless:
 new spans, previously uncounted, cannot regress the delta. After landing, re-run
 `tools/gen_sysnet_port_worklist.py` (rewrites the tracked roster md — commit it).
+
+## Review + integration results (reviewer, 2026-07-02)
+
+**Composed A/B (this worktree, branch `exec/ws1-waveA-0702`): NET +46 strict
+(10936 -> 10982), 0 strict regressions, 0 fuzzy regressions.** Reproduced twice
+via `tools/fresh_report.sh` (identical NET both runs); log
+`~/tmp/rb3_build_exec-ws1-waveA-ab.log`. ICF alias gate: HONEST
+(14 real-bodied anchors; 32 tiny guard/getter funclets, the VocalTrackDir run
+below is the TypeToString static-Symbol guard cascade).
+
+### Per-packet verdicts
+
+- **p1-verify-applied — ACCEPT.** 21/31 names kept, 10 removed (verdict table:
+  `exec-ws1-waveA-p1-verdicts.md`). Spot-reproduced: GetVal 100, DetachBuffer 100,
+  UnflipGems 95.1. Kept names contribute 8 of the composed stricts (GetVal,
+  DetachBuffer, Jump/NonStrumSwing/Enable, UnflipGems stayed fuzzy, etc.).
+- **p2-port-rndobj — ACCEPT (reviewer-harvested).** Worker committed nothing
+  (pin-tool namer gap: free-function templates); reviewer added the 6 verified
+  {addr: mangled} pairs directly (manglings re-extracted from the compiled objs).
+  Composed A/B confirms all 5 op<< Key<T> stricts (MatAnim, TransAnim, MeshAnim x3);
+  Rnd MakeString<Symbol,f4> stays 97 (MakeString.h +0x800 frame wall).
+  Namer-gap fix largely covered by p5's tool patch (landed here).
+- **p3-port-char-world-ui — ACCEPT with 1 repair + 1 drop.** LightPreset::
+  GetCurrentPostProc strict 100 reproduced. REPAIR: p3 left a stale non-const
+  nullptr stub in BandDirector.cpp:1794 that broke the composed build (C2511)
+  once the header went const — deleted (p3 had flagged it). DROP: 0x82ad4578
+  CameraManager __unguarded_partition name removed (20.5%, identity UNCONFIRMED
+  per p3's own measurement — misname risk). Kept: CharClipDriver ctor 96.7,
+  CharBones MakeString 97.3, CharServoBone::RegulateInternal 78.4 named near-misses.
+- **p4-port-os-utl-obj-math — ACCEPT.** All 5 stricts reproduced per-symbol
+  (HasJob, OnlineID op==, Color op<<, Rot Interp, NetCacheMgr _List_base clear).
+  In the composed report ToMiniDateString (lane 98.7) landed TRUE 100;
+  NetCacheMgr clear + UserHasGHDrums (99.9) stayed fuzzy (ServerData/JoypadData
+  struct walls) — as predicted.
+- **p5-port-synth-bm-track — ACCEPT incl. tool patch.** PressNote, DoFileRead,
+  Decrypt stricts reproduced. TypeToString 97.2 rewrite additionally revealed the
+  24-fn VocalTrackDir guard/getter cascade (all inside the pre-existing pinned
+  span). Tool patch (band3_worklist_pin.py + gen_game_target_map.py: overload
+  argcount disambig, $4-thunk exclusion, anon-ns free fns, ??$ templates) is
+  build-inert (not in any ninja rule) and fixes the namer gaps p2/p3 hit — landed.
+- **p6-nosize-salvage — ACCEPT.** All 3 tiny stricts reproduced at 100
+  (CaptureAfter 32B, UpdateLeftyFlip 20B, SelectedDisplay 28B); none in
+  icf_aliases.map, all name-paired with distinctive bodies — stub-fold guard
+  satisfied. SetPartActive 88.0 named near-miss kept. TrackWidget::Init trap
+  correctly refused.
+
+### Composed strict gains (46)
+
+22 named: CaptureAfter, Color op<<, ToMiniDateString, FaderGroup::GetVal,
+UpdateLeftyFlip, HasJob, GetCurrentPostProc, Key<T> op<< x5 (MatAnim/TransAnim/
+MeshAnim), PressNote, DetachBuffer, OnlineID op==, Rot Interp, TrackWatcher
+Jump/NonStrumSwing/Enable, SelectedDisplay, Decrypt, DoFileRead.
+24 anonymous VocalTrackDir funclets (TypeToString guard cascade).
+
+### Residue
+
+- Rnd MakeString<Symbol,f4> 97.0 / CharBones MakeString<f7> 97.3 /
+  BaseGuitarTrackWatcherImpl MakeString<i,f,i> 96.4: shared utl MakeString.h
+  buffer (+0x800 frame) — one shared-header fix would close all three.
+- JoypadData 8-byte struct wall (UserHasGHDrums 99.9, JoypadGetCalbertValue).
+- CharClip::BeatAlignString body correct but unmeasurable (dtk exception-region
+  boundary fragmentation at 0x8236A628) — needs symbols surgery.
+- VocalTrackDir::Copy named at 0% (retail-360 layout diverges from Wii; deep).
+- UILabel highlight-mesh infra absent; DirLoader MakeString<FilePath,f> gated
+  by MILO_LOG no-op; Task _S_remove_if needs ThreadTask::Replace restructure.

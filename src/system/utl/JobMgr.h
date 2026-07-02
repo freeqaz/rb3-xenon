@@ -30,6 +30,7 @@ public:
     void CancelJob(int);
     JobMgr(Hmx::Object *);
     void QueueJob(Job *);
+    bool HasJob(int);
     ~JobMgr();
 
     MEM_OVERLOAD(JobMgr, 0x2A);

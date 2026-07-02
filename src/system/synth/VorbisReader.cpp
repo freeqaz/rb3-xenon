@@ -411,6 +411,66 @@ bool VorbisReader::CheckHmxHeader() {
     }
 }
 
+#ifndef HX_NATIVE
+
+void VorbisReader::Decrypt(unsigned char *data, int bytes) {
+    if (mCtrState) {
+        for (int i = 0; i < bytes;) {
+            unsigned char in[0x400];
+            unsigned char out[0x400];
+            int n = bytes - i;
+            if (n > 0x400)
+                n = 0x400;
+            memcpy(in, data + i, n);
+            int ret = ctr_decrypt(in, out, n, mCtrState);
+            if ((mMagicHashA != 0 || mMagicHashB != 0) && out[0] == 'H' && out[1] == 'M'
+                && out[2] == 'X' && out[3] == 'A') {
+                out[2] = 'g';
+                out[1] = 'g';
+                out[0] = 'O';
+                out[3] = 'S';
+                if (n >= 16) {
+                    *(unsigned int *)&out[12] ^= mMagicHashA;
+                }
+                if (n >= 24) {
+                    *(unsigned int *)&out[20] ^= mMagicHashB;
+                }
+            }
+            MILO_ASSERT(ret == 0, 0x234);
+            memcpy(data + i, out, n);
+            i += n;
+        }
+    }
+}
+
+bool VorbisReader::DoFileRead() {
+    bool ret = false;
+    if (mFail) {
+        return false;
+    }
+    if (mEnableReads && !mReadBuffer && !mFile->Eof()
+        && mOggSync->fill - mOggSync->returned < 0x10000) {
+        mReadBuffer = ogg_sync_buffer(mOggSync, 0x4000);
+        mFile->ReadAsync(mReadBuffer, 0x4000);
+        mFail = mFile->Fail();
+        ret = true;
+    }
+    int bytes = 0;
+    if (!mFail && mReadBuffer && mFile->ReadDone(bytes) && unk40 == 0) {
+        mFail = mFile->Fail();
+        if (mFail) {
+            return false;
+        }
+        MILO_ASSERT(bytes > 0, 0x1F9);
+        ret = true;
+        unk40 = bytes;
+    }
+    mFail = mFile->Fail();
+    return ret;
+}
+
+#endif // !HX_NATIVE
+
 #ifdef HX_NATIVE
 
 static void Decrypt(VorbisReader *reader, unsigned char *data, int bytes,

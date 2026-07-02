@@ -138,12 +138,20 @@ def msvc_class_method(mangled: str) -> Optional[Tuple[Optional[str], str, str]]:
         op = body[:1]
         rest = body[1:]
         head = rest.split("@@", 1)[0]
+        tail = rest.split("@@", 1)[1] if "@@" in rest else ""
         segs = [s for s in head.split("@") if s]
         cls = segs[0] if segs else None
         if op == "0":
             return (cls, cls or "", "ctor")
         if op == "1":
             return (cls, ("~" + cls) if cls else "", "dtor")
+        if op == "$":  # template function: ??$Name@<targs>@@...
+            # Free template fn has calling-convention 'Y' right after '@@'
+            # (e.g. ??$MakeString@HMH@@YAPBD...). Template *methods* have a
+            # member-access code there instead -> leave those unhandled.
+            if tail[:1] == "Y" and segs:
+                return (None, segs[0], "free")
+            return None
         # other special names (operators, vtables, etc) -- not matched by name
         return None
     body = mangled[1:]
@@ -176,9 +184,101 @@ def msvc_argcount(mangled: str) -> Optional[int]:
     # Void arg list ends in 'XZ' (return-then-X-then-Z) e.g. ?Foo@C@@QBA_NXZ.
     if suffix.endswith("XZ"):
         return 0
-    # Otherwise: arg list is the codes between return type and trailing @Z / Z.
-    # We can't robustly split return-vs-args without full demangling, so bail.
-    return None
+
+    # General (conservative) arg counter. We parse: [access/storage prefix]
+    # [return-type][arg-types...]@Z. We only return a count if EVERY token is
+    # cleanly parseable (primitive / _-prefixed / simple pointer-to-primitive);
+    # any class/enum/complex type makes us bail (None) to stay conservative.
+    def _tok(s, i):
+        # length of one type token at s[i], or None if not simply parseable
+        if i >= len(s):
+            return None
+        c = s[i]
+        if c in "CDEFGHIJKMNOX":  # primitives incl void
+            return 1
+        if c == "_":  # _J int64, _K uint64, _N bool, _W wchar, ...
+            return 2 if i + 1 < len(s) else None
+        if c in "PQRSA":  # pointer/reference: <ptr><cv><pointee>
+            inner = _tok(s, i + 2)  # skip ptr + cv-modifier char
+            return None if inner is None else 2 + inner
+        return None  # V/U/T/W (class/enum/union/...) -> bail
+
+    s = suffix
+    c0 = s[0]
+    if c0 == "Y":  # free/global function: Y + callconv
+        p = 2
+    elif c0 in "CDKLST":  # static member: access + callconv (no this-cv)
+        p = 2
+    elif c0 in "ABEFGHIJMNOPQRUVWX":  # nonstatic member: access + cv + callconv
+        p = 3
+    else:
+        return None
+    rt = _tok(s, p)  # return type
+    if rt is None:
+        return None
+    i = p + rt
+    count = 0
+    while i < len(s) and s[i] not in "@Z":
+        tl = _tok(s, i)
+        if tl is None:
+            return None
+        count += 1
+        i += tl
+    return count
+
+
+def wii_argcount(mangled: str) -> Optional[int]:
+    """Best-effort argument count from an MWCC/cfront-mangled RB3-Wii symbol
+    (e.g. ``RemoveAt__11TrackWidgetFf`` -> 1, ``...Ffi`` -> 2, free fn
+    ``TypeToString__F8DataType`` -> 1). Conservative: returns None on anything
+    it can't cleanly parse. Used only to break same-class/method overload ties
+    when the worklist's demangled name is a lossy ``(...)`` placeholder."""
+    if not mangled or "__" not in mangled:
+        return None
+    rest = mangled.split("__", 1)[1]
+    i = 0
+    # optional class qualifier before the 'F' arg-list marker
+    if rest[:1] == "Q":  # Q<n><len><name>... nested — too complex, bail
+        return None
+    if rest[:1].isdigit():
+        n = 0
+        while i < len(rest) and rest[i].isdigit():
+            n = n * 10 + int(rest[i]); i += 1
+        i += n  # skip class name
+    if i >= len(rest) or rest[i] != "F":
+        return None
+    i += 1  # skip 'F' arg-list marker
+    args = rest[i:]
+
+    def atom(s, j):  # length of one arg type atom, or None
+        if j >= len(s):
+            return None
+        c = s[j]
+        if c in "csilxfdbwevr":  # primitives / void / ellipsis
+            return 1
+        if c in "USCVPRM":  # unsigned/signed/const/volatile/ptr/ref/ptr-mem
+            inner = atom(s, j + 1)
+            return None if inner is None else 1 + inner
+        if c == "T":  # back-ref T<digit>
+            return 2 if j + 1 < len(s) else None
+        if c.isdigit():  # <len><name> class type
+            k = j; n = 0
+            while k < len(s) and s[k].isdigit():
+                n = n * 10 + int(s[k]); k += 1
+            return (k - j) + n
+        return None
+
+    if args == "" or args == "v":
+        return 0
+    count = 0
+    j = 0
+    while j < len(args):
+        al = atom(args, j)
+        if al is None:
+            return None
+        count += 1
+        j += al
+    return count
 
 
 def parse_wii_name(name: str) -> Optional[Tuple[Optional[str], str, Optional[int], str]]:

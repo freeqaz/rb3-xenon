@@ -152,6 +152,7 @@ def main():
             mini_oracle.append({
                 "rb3_addr": r["rb3_addr"],
                 "wii_name": r["wii_demangled"].replace("(...)", "()"),  # placeholder args -> ()
+                "wii_symbol": r.get("wii_symbol", ""),  # mangled — retains real argcount
                 "bindiff_src": src,
                 "similarity": float(r.get("simconf", 30) or 30) / 100.0,
                 "confidence": 0.9,
@@ -205,12 +206,24 @@ def main():
             print(f"  {tu}: no compiled obj — skip naming"); continue
         syms = ggtm.parse_coff_defined(obj_path.read_bytes())
         by_cm = defaultdict(list)
+        by_method_free = defaultdict(list)  # method -> free/anon-ns free-fn names
         for name, secnum in syms:
             if secnum <= 0 or not name.startswith("?"):
+                continue
+            # Skip adjustor/vtordisp/vcall thunks: after '@@' a '$' marks a thunk
+            # (e.g. ?Copy@C@@$4PPPP...); ??_9 are vcall thunks. These are not the
+            # real function body and must never win the (class,method) tie-break.
+            suf = name.split("@@", 1)[1] if "@@" in name else ""
+            if suf.startswith("$") or name.startswith("??_9"):
                 continue
             cm = ggtm.msvc_class_method(name)
             if cm:
                 by_cm[(cm[0], cm[1])].append(name)
+                # A free function the source placed in an anonymous namespace is
+                # mangled with an ?A0x<hash> "class"; the Wii oracle sees it as a
+                # bare free function (class=None), so index it for that fallback.
+                if cm[0] is None or (cm[0] or "").startswith("?A0x"):
+                    by_method_free[cm[1]].append(name)
         for e in entries:
             if e["rb3_addr"].lower() in {k.lower() for k in cur_map}:
                 continue
@@ -219,11 +232,22 @@ def main():
                 continue
             cls, method, argc, kind = p
             cands = by_cm.get((cls, method))
+            if not cands and cls is None:  # free fn: also try anon-ns free fns
+                cands = by_method_free.get(method)
+                if not cands and "<" in method:
+                    # template free fn: Wii method carries the <targs> (e.g.
+                    # MakeString<i,f,i>); MSVC indexes it under the base name.
+                    cands = by_method_free.get(method.split("<", 1)[0])
             if not cands:
                 continue
+            # Prefer the real argcount from the mangled Wii symbol; the demangled
+            # worklist name is a lossy "(...)" placeholder that collapses to 0.
+            wii_ac = ggtm.wii_argcount(e.get("wii_symbol", "")) if e.get("wii_symbol") else None
+            if wii_ac is None:
+                wii_ac = argc
             chosen = cands[0] if len(cands) == 1 else None
-            if chosen is None and argc is not None:  # disambiguate by argcount
-                ac = [c for c in cands if ggtm.msvc_argcount(c) == argc]
+            if chosen is None and wii_ac is not None:  # disambiguate by argcount
+                ac = [c for c in cands if ggtm.msvc_argcount(c) == wii_ac]
                 if len(ac) == 1:
                     chosen = ac[0]
             if chosen:

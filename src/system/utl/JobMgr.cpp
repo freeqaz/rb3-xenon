@@ -27,6 +27,15 @@ void JobMgr::Poll() {
     }
 }
 
+bool JobMgr::HasJob(int id) {
+    for (std::list<Job *>::const_iterator it = mJobQueue.begin(); it != mJobQueue.end();
+         ++it) {
+        if ((*it)->ID() == id)
+            return true;
+    }
+    return false;
+}
+
 void JobMgr::CancelJob(int id) {
     std::list<Job *>::iterator it = mJobQueue.begin();
     while (it != mJobQueue.end()) {

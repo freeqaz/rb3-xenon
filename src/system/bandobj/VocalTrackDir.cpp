@@ -154,33 +154,46 @@ void VocalTrackDir::PreLoad(BinStream &bs) {
 
 namespace {
 Symbol TypeToString(DataType ty) {
+    static Symbol int_str("int");
+    static Symbol float_str("float");
+    static Symbol var_str("var");
+    static Symbol func_str("func");
+    static Symbol object_str("object");
+    static Symbol symbol_str("symbol");
+    static Symbol unhandled_str("unhandled");
+    static Symbol array_str("array");
+    static Symbol command_str("command");
+    static Symbol string_str("string");
+    static Symbol property_str("property");
+    static Symbol glob_str("glob");
+    static Symbol unexpected_str("UNEXPECTED");
     switch (ty) {
     case kDataInt:
-        return "int";
+        return int_str;
     case kDataFloat:
-        return "float";
+        return float_str;
     case kDataVar:
-        return "var";
+        return var_str;
     case kDataFunc:
-        return "func";
+        return func_str;
     case kDataObject:
-        return "object";
+        return object_str;
     case kDataSymbol:
-        return "symbol";
+        return symbol_str;
     case kDataUnhandled:
-        return "unhandled";
+        return unhandled_str;
     case kDataArray:
-        return "array";
+        return array_str;
     case kDataCommand:
-        return "command";
+        return command_str;
     case kDataString:
-        return "string";
+        return string_str;
     case kDataProperty:
-        return "property";
+        return property_str;
     case kDataGlob:
-        return "glob";
+        return glob_str;
     default:
-        return "UNEXPECTED";
+        return unexpected_str;
     }
 }
 

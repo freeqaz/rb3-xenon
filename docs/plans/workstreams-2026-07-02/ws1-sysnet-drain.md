@@ -375,3 +375,24 @@ approved (composed renamer often lifts 98–99.9% to TRUE 100).
 6. The worklist json on disk is a snapshot (`ghidriff-run3` per `_meta`); if it is
    ever absent or suspected stale, regen is cheap but rewrites the tracked roster —
    coordinate the commit.
+
+## Wave A results (2026-07-02, branch `exec/ws1-waveA-0702`)
+
+**Composed A/B: +46 strict (10936 -> 10982), 0 strict / 0 fuzzy regressions**,
+reproduced twice, ICF gate HONEST. Details + per-packet verdicts:
+`docs/decomp/handoff/exec-ws1-waveA-run-2026-07-02.md` (+ p1 verdict table in
+`exec-ws1-waveA-p1-verdicts.md`).
+
+- Open question 1 answered: of the 31 pre-applied names, 21 survived per-symbol
+  verification (10 removed: wrong-fn / not-a-boundary / <50%); 8 of the keeps
+  landed strict in the composed report.
+- Open question 2 answered: 4 of the 12 no-size skips were salvageable by
+  symbols.txt size surgery (3 strict + 1 named near-miss); 6 are genuinely not
+  function boundaries; 1 misID reverted; 1 parked (Quazal).
+- Port packets landed 14 named stricts + the 24-fn VocalTrackDir guard cascade.
+- Pin-tool namer gaps (ctors, template/free fns, overloads, $4 thunks) fixed in
+  `tools/band3_worklist_pin.py` + `tools/gen_game_target_map.py` (p5 patch) —
+  unblocks the same walls for Waves B/C.
+- Post-land TODO: re-run `tools/gen_sysnet_port_worklist.py` (roster regen) on
+  main after merge; shared `utl/MakeString.h` +0x800 buffer fix would close 3
+  more MakeString stricts.

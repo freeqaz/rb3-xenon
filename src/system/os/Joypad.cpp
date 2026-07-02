@@ -308,6 +308,15 @@ bool JoypadIsCalbertGuitar(int padNum) {
         return false;
 }
 
+bool UserHasGHDrums(LocalUser *user) {
+    int padNum = GetUsersPadNum(user);
+    if (padNum != -1) {
+        JoypadType ty = gJoypadData[padNum].mType;
+        return (ty == kJoypadXboxRoDrums || ty == kJoypadPs3RoDrums);
+    } else
+        return false;
+}
+
 int JoypadData::GetPressureBucket(JoypadButton b) const {
     MILO_ASSERT(int(b) < kNumPressureButtons, 0x154);
     float val = mPressures[b];

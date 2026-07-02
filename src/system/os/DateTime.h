@@ -32,6 +32,7 @@ struct DateTime {
     unsigned int ToCode() const;
     void ToString(class String &) const;
     void ToDateString(class String &) const;
+    void ToMiniDateString(class String &) const;
     void Format(class String &) const;
     int Year() const;
     int Month() const;

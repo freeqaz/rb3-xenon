@@ -226,6 +226,26 @@ NoteVoiceInst *MidiInstrument::MakeNoteInst(
     return inst;
 }
 
+void MidiInstrument::PressNote(
+    unsigned char note, unsigned char vel, int glideID, int glideFrames
+) {
+    if (glideID != -1) {
+        bool found = false;
+        for (ObjPtrList<NoteVoiceInst>::iterator it = mActiveVoices.begin();
+             it != mActiveVoices.end();
+             it++) {
+            if ((*it)->GlideID() == glideID && !(*it)->Stopped()) {
+                found = true;
+                (*it)->GlideToNote(note, glideFrames);
+                (*it)->SetFineTune(mFineTuneCents);
+            }
+        }
+        if (found)
+            return;
+    }
+    StartSample(note, vel, -1, glideID);
+}
+
 void MidiInstrument::SetReverbMixDb(float db) {
     mReverbMixDb = db;
     FOREACH (it, mActiveVoices) {

@@ -30,6 +30,13 @@ const char *OnlineID::ToString() const {
         return "";
 }
 
+bool OnlineID::operator==(const OnlineID &oid) const {
+    if (!mValid || !oid.mValid)
+        return mValid == oid.mValid;
+    else
+        return mXUID == oid.mXUID;
+}
+
 BinStream &operator<<(BinStream &bs, const OnlineID &ssm) {
     MILO_ASSERT(ssm.mValid, 0xE6);
     bs << ssm.mXUID;

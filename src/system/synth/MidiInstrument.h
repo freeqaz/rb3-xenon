@@ -34,6 +34,9 @@ public:
     virtual void SetVolume(float);
 
     void Poll();
+    void GlideToNote(unsigned char, int);
+    void SetFineTune(float);
+    int GlideID() const { return mGlideID; }
     SampleInst *Sample() const { return mSample; }
 
     POOL_OVERLOAD(NoteVoiceInst, 0x1E);

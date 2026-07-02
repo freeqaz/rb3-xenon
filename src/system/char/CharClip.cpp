@@ -25,6 +25,25 @@ const float CharClip::kBeatAccuracy = 0.02;
 CharClip::FacingSet::FacingBones CharClip::FacingSet::sFacingPos;
 CharClip::FacingSet::FacingBones CharClip::FacingSet::sFacingRotAndPos;
 
+const char *CharClip::BeatAlignString(int mask) {
+    switch (mask & 0xF600) {
+    case 0x200:
+        return "RealTime";
+    case 0x400:
+        return "UserTime";
+    case 0x1000:
+        return "BeatAlign1";
+    case 0x2000:
+        return "BeatAlign2";
+    case 0x4000:
+        return "BeatAlign4";
+    case 0x8000:
+        return "BeatAlign8";
+    default:
+        return "NoAlign";
+    }
+}
+
 #pragma region Transitions
 
 bool CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
