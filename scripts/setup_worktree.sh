@@ -449,6 +449,12 @@ PYEOF
     # Old-stamping the patched file makes the edge mtime-clean after its first
     # (unavoidable, missing-log-entry) run, so the cascade stops permanently.
     touch -d '2020-01-01' "$DL_TOOL" 2>/dev/null || true
+    # The patch dirties a TRACKED file in the worktree, and agents doing
+    # `git commit -a` / `git add -A` then LEAK it into their branches (two
+    # wave-3 lanes were rejected on exactly this). assume-unchanged hides the
+    # local patch from status/diff/commit machinery so branch diffs stay clean;
+    # the working-copy patch still applies for builds.
+    git -C "$WORKTREE_PATH" update-index --assume-unchanged tools/download_tool.py 2>/dev/null || true
 fi
 
 # ---- prime ninja state : trigger SPLIT + configure.py regeneration ----------
