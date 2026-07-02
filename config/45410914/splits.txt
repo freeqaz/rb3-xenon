@@ -3426,3 +3426,6 @@ GameConfig.cpp:
 NextSongPanel.cpp:
 	.pdata      start:0x82224530 end:0x82224538
 	.text       start:0x8262F3A8 end:0x8262F4A4
+DirectInstrument.cpp:
+	.pdata      start:0x8222D7C8 end:0x8222D7D0
+	.text       start:0x826C4890 end:0x826C48F4
