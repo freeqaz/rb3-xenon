@@ -13772,5 +13772,10 @@
  "0x826deb30": "?NewStreamFile@Synth@@UAAXPBDAAPAVFile@@AAVSymbol@@@Z",
  "0x8276a848": "?FretMatchImpl@RGGemMatcher@@QBA_NABVGameGem@@MMMM_N1W4RGMatchType@@@Z",
  "0x8275c030": "?UpdatePitchRangeTickDelimited@VocalNoteList@@QAAXHHAAM0@Z",
- "0x8275c0e0": "?HasNoteInRange@VocalNoteList@@QBAHHH@Z"
+ "0x8275c0e0": "?HasNoteInRange@VocalNoteList@@QBAHHH@Z",
+ "0x822e0640": "?PollHelix@PitchArrow@@QAAXXZ",
+ "0x822e0c80": "?SetFrameScore@PitchArrow@@QAAXMW4VocalHUDColor@@M@Z",
+ "0x8232fab0": "?UpdateTargetEdge@BandHighlight@@QAAXPAVRndTransformable@@@Z",
+ "0x8228b4f8": "?Terminate@OutfitConfig@@SAXXZ",
+ "0x8228b5e8": "?CompressTextures@OutfitConfig@@QAAXXZ"
 }
