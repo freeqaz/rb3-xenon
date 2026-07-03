@@ -110,3 +110,54 @@ lanes no longer pay the 727 at all.
 - ~10682 matched. Staged struct candidates (CreditsPanel/GamePanel/Character/
   CharEyes) remain as patch files in `~/tmp/verify_patches/`; serial A/B pending.
 - Land gate (owner policy): fuzzy-positive AND 0 strict-100 regressions.
+
+## FINDING 4 — reflinked PCH breaks fresh-worktree recompiles of PCH-eligible TUs (2026-07-03)
+
+**Symptom (round-2 workers, hit independently in ≥3 port lanes p1/p2/p3):** editing a
+PCH-eligible TU (dirs `hamobj synth flow gesture meta obj os utl movie`) in a warm
+worktree and recompiling it throws a **C2011 (type redefinition) / C2084 (function
+already has a body)** cascade. Pin-only / non-PCH-eligible lanes never see it (no
+source recompile of an eligible unit) — which is why round-1 and the ws1bc synth
+lanes that *did* hit it had to work around it per-lane.
+
+**Inferred mechanism (NOT yet reproduced under controlled A/B — treat as hypothesis):**
+the warm path reflinks all of `build/45410914/` including `pch/system.pch`
+(confirmed present in live worktrees, e.g. `/home/free/tmp/wt-loader/.../system.pch`,
+7.8 MB). That `.pch` is a binary snapshot **built in main**; MSVC bakes the absolute
+canonical paths of every header it absorbed into the PCH's `#pragma once` seen-set.
+When a worktree recompiles an eligible TU with `/Yu"decomp_pch.h"`, headers re-included
+via the *worktree's* absolute path don't dedup against main's baked paths → the header
+is re-parsed → redefinition. The `/Fp` path itself is repo-root-relative (correct, and
+required for warm command-hash parity — see FINDING 2 / CLAUDE.md), so the *command* is
+portable; the *baked-in absolute paths inside the binary artifact* are not.
+
+**Why the obvious fix is not free:** rebuilding `system.pch` in the worktree gives it a
+new mtime → all ~281 PCH-eligible objs go stale → full recompile of the eligible set
+(objcache misses too: its key includes PCH-identity, which changed). That is exactly
+the cascade the scoped-prime / warm-seed design (FINDING 1-2, buildspeed round 2)
+engineered away. So this needs a measured A/B, not a blind edit to the owner's
+actively-iterated shared script.
+
+**Candidate fixes, cheapest-risk first (for a dedicated pass with a spare warm worktree):**
+1. **Lazy per-worktree PCH rebuild only when an eligible TU is actually edited.** Leave
+   the reflinked PCH in place for the common (pin-only / non-eligible / read-only) case;
+   a wrapper detects the first eligible-TU edit and rebuilds just the PCH then. Preserves
+   warm-cache for the majority of lanes; pays the ~281 cascade only in eligible-edit lanes
+   (which already recompile that TU anyway). Complexity: needs an edit-detection hook.
+2. **Rebuild PCH at setup but backdate its mtime** to the reflinked objs' mtime so ninja
+   doesn't cascade, relying on objcache/PCH-identity for correctness. RISK: if the new
+   PCH is byte-different from main's, the eligible objs are genuinely stale and a
+   backdate would serve wrong objs — must verify the rebuilt PCH is byte-identical to
+   main's (it may not be, since the seen-paths differ). Likely unsafe; measure first.
+3. **Verify whether the bug even reproduces** on current main first — the diagnosis is
+   inferred from worker reports, not a controlled repro. Recipe: fresh warm worktree →
+   `touch src/system/synth/Synth.cpp` (eligible) → `ninja build/.../synth_xbox/Synth.obj`
+   → observe C2011/C2084 vs clean. If it does NOT reproduce (e.g. objcache serves it, or
+   `/FI` re-include is guarded), this finding is moot and the round-2 hits had another cause.
+
+**Recommendation:** do NOT patch `setup_worktree.sh` for this speculatively — it is the
+fleet-wide worktree entry point and a wrong change breaks every agent's worktree
+creation. Reproduce first (candidate 3), then prototype candidate 1 behind `WT_*` gate
+with a 3-TU eligible-edit A/B (warm-cache benefit preserved for pin-only lanes, C2011
+gone for eligible-edit lanes) before landing. Until then, eligible-TU port lanes should
+expect the workaround the round-2 workers used (per-lane PCH touch/rebuild).
