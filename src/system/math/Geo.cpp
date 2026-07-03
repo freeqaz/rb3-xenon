@@ -365,13 +365,13 @@ bool Intersect(const Vector3 &origin, const Vector3 &dir, const Box &box, float 
 }
 
 bool Intersect(const Plane &plane, const Box &box) {
-    float hx = (box.mMax.x - box.mMin.x) * 0.5f;
-    float hy = (box.mMax.y - box.mMin.y) * 0.5f;
-    float hz = (box.mMax.z - box.mMin.z) * 0.5f;
     Vector3 halfExtent;
-    halfExtent.x = box.mMax.x - (box.mMin.x + hx);
-    halfExtent.y = box.mMax.y - (box.mMin.y + hy);
-    halfExtent.z = box.mMax.z - (box.mMin.z + hz);
+    halfExtent.x = (box.mMax.x - box.mMin.x) * 0.5f;
+    halfExtent.y = (box.mMax.y - box.mMin.y) * 0.5f;
+    halfExtent.z = (box.mMax.z - box.mMin.z) * 0.5f;
+    halfExtent.x = box.mMax.x - (box.mMin.x + halfExtent.x);
+    halfExtent.y = box.mMax.y - (box.mMin.y + halfExtent.y);
+    halfExtent.z = box.mMax.z - (box.mMin.z + halfExtent.z);
 
     Vector3 pMin, pMax;
     for (unsigned int i = 0; i < 3; i++) {
@@ -385,9 +385,7 @@ bool Intersect(const Plane &plane, const Box &box) {
         }
     }
 
-    const Vector3 &normal = *(const Vector3 *)&plane.a;
-    if (0.0f < normal.x * pMin.x + normal.y * pMin.y + normal.z * pMin.z + plane.d
-        || normal.x * pMax.x + normal.y * pMax.y + normal.z * pMax.z + plane.d < 0.0f) {
+    if (0.0f < plane.Dot(pMin) || plane.Dot(pMax) < 0.0f) {
         return false;
     }
     return true;

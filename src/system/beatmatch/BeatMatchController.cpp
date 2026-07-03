@@ -42,5 +42,7 @@ void BeatMatchController::RegisterRGStrum(int i) const {
 }
 
 bool BeatMatchController::IsOurPadNum(int i) const {
-    return !mUser->IsLocal() ? false : mUser->GetLocalUser()->GetPadNum() == i;
+    if (!mUser->IsLocal())
+        return false;
+    return mUser->GetLocalUser()->GetPadNum() == i;
 }

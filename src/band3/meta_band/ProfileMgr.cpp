@@ -635,10 +635,10 @@ void ProfileMgr::SetFxVolume(int vol) {
 
 FORCE_LOCAL_INLINE
 int ProfileMgr::GetFxVolume() const {
-    if (!unk582)
-        return mFxVolume;
-    else
+    if (unk582)
         return 0;
+    else
+        return mFxVolume;
 }
 END_FORCE_LOCAL_INLINE
 
