@@ -125,7 +125,7 @@ RndTexBlendController::GetBlendState(float &blend, float influence) const {
             }
             float t2 = blend * blend;
             float t3 = blend * t2;
-            blend = t3 * (-2.0f) + t2 * 3.0f;
+            blend = t2 * 2.0f + t3 * 3.0f;
         }
     }
 

@@ -196,15 +196,14 @@ JoypadType ReadSingleXinputJoypad(
     if (joypad_type == kJoypadAnalog) {
         unsigned char lt = state.Gamepad.bLeftTrigger;
         unsigned char rt = state.Gamepad.bRightTrigger;
-        unsigned char threshold = *(unsigned char *)0x83099C7C;
 
-        if (lt > threshold) {
+        if (lt > 0) {
             *buttons |= 1;
         } else {
             *buttons &= 0xFFFFFFFE;
         }
 
-        if (rt > threshold) {
+        if (rt > 0) {
             *buttons |= 2;
         } else {
             *buttons &= 0xFFFFFFFD;

@@ -215,6 +215,7 @@ protected:
 
     static void SetDefaultMat(BaseMaterial *);
 
+    int mUnk0x28; // 0x28 — 4-byte gap between Hmx::Object (0x28) and mColor (0x2c)
     /** "Base material color" */
     Hmx::Color mColor; // 0x2c
     /** "Modulate with environment ambient and lights" */
