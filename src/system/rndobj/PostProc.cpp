@@ -659,8 +659,14 @@ void RndPostProc::UpdateColorModulation() {
             mFlickerSeconds.x = Max(diff, 0.0f);
             mColorModulation =
                 1.0f - RandomFloat(mFlickerModBounds.x, mFlickerModBounds.y);
-            mFlickerSeconds.y = RandomFloat(mFlickerTimeBounds.x, mFlickerTimeBounds.y);
-            mFlickerSeconds.y = Max(mFlickerSeconds.x, mFlickerSeconds.y);
+            // Store .y through a pointer: keeps the compiler from CSE'ing the
+            // mFlickerSeconds.x load across this store, matching retail's
+            // reload of .x in the += below (fsel result lands in f0).
+            float *py = &mFlickerSeconds.y;
+            *py = Max(
+                mFlickerSeconds.x,
+                RandomFloat(mFlickerTimeBounds.x, mFlickerTimeBounds.y)
+            );
         }
         mFlickerSeconds.x += mDeltaSecs;
     } else {

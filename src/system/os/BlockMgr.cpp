@@ -29,9 +29,9 @@ namespace {
     }
 }
 
-static int gReadCount;
-static int gSeekCount;
-static float gAccumSeekTime;
+static int gReadCount = 0;
+static int gSeekCount = 0;
+static float gAccumSeekTime = 0.0f;
 static int gLastBlockNum = -1;
 static int gLastArkFileNum = -1;
 
@@ -178,9 +178,9 @@ void BlockMgr::GetAssociatedBlocks(
 }
 
 void BlockMgr::AddTask(const AsyncTask &task) {
-    std::list<BlockRequest>::iterator it;
     int arkNum = task.GetArkfileNum();
     int blockNum = task.GetBlockNum();
+    std::list<BlockRequest>::iterator it;
     for (it = mRequests.begin(); it != mRequests.end(); ++it) {
         bool match = (arkNum == it->mArkfileNum && blockNum == it->mBlockNum);
         if (match) {
@@ -225,8 +225,7 @@ void BlockMgr::KillBlockRequests(ArkFile *arkFile) {
 }
 
 void BlockMgr::Poll() {
-    if (!MainThread())
-        return;
+    MainThread();
 
     TheHDCache.Poll();
     mSpinDownTimer.Split();

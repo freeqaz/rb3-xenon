@@ -127,10 +127,10 @@ PrefabMgr::~PrefabMgr() {
 
 static void Randomize(int *arr, int n, int start) {
     for (int i = start; i < n; i++) {
-        int j = RandomInt(i, n);
+        int j = RandomInt(i, n) << 2;
         int tmp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = tmp;
+        arr[i] = *(int *)((char *)arr + j);
+        *(int *)((char *)arr + j) = tmp;
     }
 }
 

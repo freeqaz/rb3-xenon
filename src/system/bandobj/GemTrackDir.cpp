@@ -692,7 +692,7 @@ void GemTrackDir::GemPass(int i1, int i2) {
     unk494++;
     if ((i2 & 1U) && mTrackInstrument == kInstDrum) {
         TrackInterface *par = BandTrack::mParent;
-        if (par) {
+        if ((int)par) {
             mKickPassCounter++;
             if (mKickPassCounter >= 8) {
                 float kickms = par->NextKickNoteMs();

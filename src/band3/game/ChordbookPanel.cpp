@@ -348,9 +348,8 @@ void ChordbookPanel::CreateController() {
     MILO_ASSERT(mGemPlayer, 0x374);
     BandUser *user = mGemPlayer->GetUser();
     MILO_ASSERT(user, 0x377);
-    DataArray *cfg = SystemConfig(
-        "beatmatcher", "controller", TheGameConfig->GetController(mGemPlayer->GetUser())
-    );
+    Symbol ctrl = TheGameConfig->GetController(user);
+    DataArray *cfg = SystemConfig("beatmatcher", "controller", ctrl);
     mController = NewController(
         user, cfg, this, false, user->GetGameplayOptions()->GetLefty(), kNumTrackTypes
     );

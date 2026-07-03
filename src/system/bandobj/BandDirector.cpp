@@ -840,8 +840,8 @@ DataNode BandDirector::OnMidiShotCategory(DataArray *da) {
     }
 
     if ((mask & 0x20) || bits == 4) {
-        bits = 4;
         mask |= 0x2F;
+        bits = 4;
     } else
         fls[2] = 0.0f;
 
@@ -876,7 +876,8 @@ DataNode BandDirector::OnMidiShotCategory(DataArray *da) {
         }
         buf[u5] = 0;
     }
-    return Symbol(MakeString("coop_%s_%s%s", buf, PickDist(fls, buf, buf2), buf2));
+    const char *dist = PickDist(fls, buf, buf2);
+    return Symbol(MakeString("coop_%s_%s%s", buf, dist, buf2));
 }
 
 DataNode BandDirector::OnCycleShot(DataArray *da) {

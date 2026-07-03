@@ -321,7 +321,13 @@ String &String::operator+=(const char *str) {
         return *this;
     int len = length();
     reserve(len + strlen(str));
-    strcpy(&mStr[len], str);
+    unsigned char *d = (unsigned char *)&mStr[len] - 1;
+    const unsigned char *s = (const unsigned char *)str - 1;
+    unsigned int c;
+    do {
+        c = *++s;
+        *++d = (unsigned char)c;
+    } while (c != 0);
     return *this;
 }
 
@@ -443,7 +449,13 @@ String &String::operator=(const char *str) {
         resize(0);
     } else {
         reserve(strlen(str));
-        strcpy(mStr, str);
+        unsigned char *d = (unsigned char *)mStr - 1;
+        const unsigned char *s = (const unsigned char *)str - 1;
+        unsigned int c;
+        do {
+            c = *++s;
+            *++d = (unsigned char)c;
+        } while (c != 0);
     }
     return *this;
 }
