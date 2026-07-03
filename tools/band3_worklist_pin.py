@@ -81,6 +81,63 @@ def locate(va, ranges):
     return ("unowned", None)
 
 
+def _wii_arg_class_tokens(sym):
+    """Extract class-name tokens from the ARG region of a cfront/MWCC mangled
+    Wii symbol (used only as an overload tie-break when argcount is ambiguous).
+
+    e.g. ``DeriveKey__Q26Quazal17ChecksumAlgorithmFRCQ26Quazal6BufferUi`` ->
+    args = ``RCQ26Quazal6BufferUi`` -> {'Quazal', 'Buffer'}. The class qualifier
+    before the top-level 'F' is skipped so only argument types contribute.
+    """
+    if not sym or "__" not in sym:
+        return set()
+    rest = sym.split("__", 1)[1]
+    i, n = 0, len(rest)
+
+    def _skip_qualified(i):
+        # skip one leading class qualifier: Q<count><comp...> or <len><name>
+        if i < n and rest[i] == "Q":
+            i += 1
+            cnt = int(rest[i]) if i < n and rest[i].isdigit() else 0
+            i += 1
+            for _ in range(cnt):
+                l = 0
+                while i < n and rest[i].isdigit():
+                    l = l * 10 + int(rest[i]); i += 1
+                i += l
+        elif i < n and rest[i].isdigit():
+            l = 0
+            while i < n and rest[i].isdigit():
+                l = l * 10 + int(rest[i]); i += 1
+            i += l
+        return i
+
+    i = _skip_qualified(i)
+    if i < n and rest[i] == "F":  # top-level arg-list marker
+        i += 1
+    region = rest[i:]
+    toks, j, m = set(), 0, len(region)
+    while j < m:
+        c = region[j]
+        if c == "Q":  # nested class Q<count><comp...>
+            j += 1
+            cnt = int(region[j]) if j < m and region[j].isdigit() else 0
+            j += 1
+            for _ in range(cnt):
+                l = 0
+                while j < m and region[j].isdigit():
+                    l = l * 10 + int(region[j]); j += 1
+                toks.add(region[j:j + l]); j += l
+        elif c.isdigit():
+            l = 0
+            while j < m and region[j].isdigit():
+                l = l * 10 + int(region[j]); j += 1
+            toks.add(region[j:j + l]); j += l
+        else:
+            j += 1
+    return {t for t in toks if t}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tu", action="append", default=[])
@@ -231,6 +288,14 @@ def main():
             if not p:
                 continue
             cls, method, argc, kind = p
+            # Wii anon-namespace free functions demangle as
+            # "@unnamed@File_cpp@::Fn" -> parse_wii_name returns a NON-None class
+            # token, so the anon-ns free-fn fallback below never fires. MSVC
+            # indexes the same function under an ?A0x<hash> pseudo-class (see
+            # by_method_free). Normalize the Wii unnamed-namespace marker to None
+            # so the fallback matches it by bare method name.
+            if cls is not None and "unnamed" in cls:
+                cls = None
             cands = by_cm.get((cls, method))
             if not cands and cls is None:  # free fn: also try anon-ns free fns
                 cands = by_method_free.get(method)
@@ -250,6 +315,21 @@ def main():
                 ac = [c for c in cands if ggtm.msvc_argcount(c) == wii_ac]
                 if len(ac) == 1:
                     chosen = ac[0]
+            # Argcount tie-break fails for same-argcount overloads (e.g.
+            # DeriveKey(const Buffer&,uint) vs DeriveKey(const char*,uint) — both
+            # 2 args) AND when the return type is a by-value UDT (msvc_argcount
+            # bails on 'V'/'?A...'). Fall back to arg-TYPE discrimination: pull
+            # the class-name tokens out of the Wii mangled symbol's arg region
+            # and pick the MSVC candidate whose mangling contains the most of
+            # them (Buffer discriminates the ABVBuffer overload from PBD char*).
+            if chosen is None and len(cands) > 1:
+                arg_toks = _wii_arg_class_tokens(e.get("wii_symbol", ""))
+                if arg_toks:
+                    scored = sorted(
+                        ((sum(1 for t in arg_toks if t in c), c) for c in cands),
+                        key=lambda x: x[0], reverse=True)
+                    if scored[0][0] > 0 and (len(scored) == 1 or scored[0][0] > scored[1][0]):
+                        chosen = scored[0][1]
             if chosen:
                 cur_map[e["rb3_addr"]] = chosen
                 added += 1
