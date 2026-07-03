@@ -981,8 +981,9 @@ BandTrack *Player::GetBandTrack() const {
 }
 
 void Player::UnisonMiss(int i) const {
-    if (mUser->GetTrack()) {
-        mUser->GetTrack()->OnMissPhrase(i);
+    Track *track = mUser->GetTrack();
+    if (track) {
+        track->OnMissPhrase(i);
     }
 }
 
