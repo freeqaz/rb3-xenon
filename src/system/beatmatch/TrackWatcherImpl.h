@@ -71,8 +71,8 @@ public:
     virtual bool Swing(int slot, bool guitar, bool provisional, GemHitFlags flags) = 0;
     virtual void NonStrumSwing(int slot, bool button_down, bool solo) = 0;
     virtual void FretButtonDown(int slot) = 0;
-    virtual void FretButtonUp(int slot) = 0;
     virtual void RGFretButtonDown(int) {}
+    virtual void FretButtonUp(int slot) = 0;
     virtual void OutOfRangeSwing() {}
     virtual void SetGemsPlayedUntil(int end_gem);
     virtual void Enable(bool);
