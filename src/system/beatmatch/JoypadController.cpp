@@ -46,15 +46,16 @@ JoypadController::~JoypadController() {}
 int JoypadController::MapSlot(int i) const {
     int ret = i;
     if (mLefty) {
-        if (mGemMapping == kDrumGemMapping) {
+        if (mGemMapping != kDrumGemMapping)
+            return 4 - ret;
+        else {
             if (ret == 0)
                 return 0;
             else if (ret == 4 && IsCymbal(4) && mCymbalShiftButton != kPad_NumButtons) {
                 return 4;
             } else
                 return 5 - ret;
-        } else
-            return 4 - ret;
+        }
     }
     return ret;
 }
