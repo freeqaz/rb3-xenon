@@ -977,15 +977,15 @@ void DecodeDxt5Alpha(unsigned char *uc, int i, int j, unsigned char &alpha) {
     unsigned char bitPos = local_60[i + iVar3 + 16];
 
     // Calculate adjusted offset
-    unsigned int adjustedOff;
+    unsigned char adjustedOff;
                                 adjustedOff = (!(!((int)(byteOff & 1) == 0))) == 0 ? byteOff + 0xFF : byteOff + 1;
 
-    unsigned int index;
+    int index;
     if (bitPos < 6) {
         index = (uc[adjustedOff + 2] >> bitPos) & 7;
     } else {
-        unsigned int off2 = byteOff + 1;
-        unsigned int adjustedOff2;
+        unsigned char off2 = byteOff + 1;
+        unsigned char adjustedOff2;
         if (!((off2 & 1) == 0)) {
             adjustedOff2 = off2 + 1;
         } else {
