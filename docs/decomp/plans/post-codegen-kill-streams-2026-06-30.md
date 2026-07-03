@@ -236,3 +236,51 @@ Touches shared `../decomp-synth` → isolate + do-no-harm. Deprioritized.
     kill by explicit PID. Also: when taking over an agent's worktree, its leftover
     verify script keeps building → two drivers fight the ninja lock → stale objs /
     corrupt build dir. Recreate the worktree clean instead of fighting it.
+
+## RESULTS (2026-07-03) — Fresh harvest wave on main@11120: **+11 LANDED (main @94c02c5)**
+Owner had already landed the round-3 FileLoader/ObjDirItr follow-up (commit
+`69d4216`, +25) — that bundle is DONE. Ran a fresh near-miss scan on main@11120
+(315 named real-bodied [95,99.999); 91 non-STL in the 96-99.5 harvestable band)
+and delegated the top 16 to **4 Fable subagent lanes** with a STRICTER rule this
+round: **local .cpp edits ONLY, no header edits** (report header-needs instead).
+Result: 12 in-worktree 100s; composed A/B = +12 with **1 coupled regression**
+(MidiParser funclet), dropped that one edit → **+11, run1==run2, 0 regressions,
+icf HONEST**. Landed: String::operator= / operator+=, RandomIntervalGroupSeqInst::
+Poll / ComputeNextTime, RndPostProc::UpdateColorModulation, GemTrackDir::GemPass,
+GuitarController::Handle, ChordbookPanel::CreateController, PrefabMgr::
+AssignPrefabsToSlots, BlockMgr::Poll, BandDirector::OnMidiShotCategory.
+
+⭐ NEW REUSABLE TECHNIQUES (all .cpp-local, evaluation-order class):
+- **unsigned-int char temp** in a manual copy loop reproduces retail's `cmplwi`
+  where `strcpy` emits signed `extsb.` (String::operator=/+=). Widen the loop
+  char to `unsigned int` — `unsigned char` gives `mr.` not `cmplwi`.
+- **`(int)` cast on a pointer null-check** forces signed `cmpwi` where the
+  pointer test defaults to unsigned `cmplwi` (GemTrackDir::GemPass).
+- **explicit `= 0` init on a global** moves it .bss→.data (ascending vs
+  reverse-declaration layout), a lever for retail anchor displacements when a
+  cluster of stat globals is read at fixed offsets (BlockMgr::Poll gRead/gSeek).
+- **per-TU `#undef HANDLE_MESSAGE` + redefine** adding `(unsigned char)` on the
+  OnMsg return reproduces retail's bool-return truncation (`clrlwi r3,24`) where
+  the rb3-Wii oracle's `int` is MWCC-indistinguishable (GuitarController::Handle).
+- **opaque-pointer store** (`float *p=&m.y; *p=...`) blocks the compiler from
+  CSE-ing an adjacent member load across the store (PostProc).
+- lift a nested sret temp into a named local to kill the `mr r28,r3` save
+  (ChordbookPanel::CreateController); hoist a call-arg temp before a MakeString to
+  fix arg-materialization order (BandDirector).
+
+⚠ FOLLOW-UPS surfaced (deferred):
+- **AppChild::Poll 97.9%** — needs `src/system/obj/Data.h` `Execute(bool fail=true)`
+  → Wii-era no-arg `Execute()` (DC3-drift API addition; sole mismatch is base's
+  extra `li r5,0x1`). Shared-header + possible positive cascade (every `Execute`
+  caller) — do it as its own A/B-gated change, audit `Execute(false)` call sites.
+- **MidiParser::AddMessage** — body reaches 100 (keep msg/firstArg params live +
+  separate `arr`/`first` locals) but the +8 stack shifts its EH-cleanup funclet's
+  DataArray temp 0x50→0x54 (one `lwz` off-by-4). Needs the retail source shape
+  that gets the body WITHOUT the frame growth. Near-win.
+- WALLS (don't re-attempt): SkinVertex (regalloc cycle, permuter-refuted),
+  BinStream::Write (u8-narrow mask, compiler value-range prop), BlockMgr::AddTask
+  (CSE reload wall), RndFlare::CalcScale (lfd/lfs codegen cliff).
+
+⭐ PROCESS: the local-.cpp-only rule made this wave clean — the ONLY regression
+was a same-TU funclet coupling (not a shared-header cascade like round-3). The
+per-fn hit rate held (12/16 to 100; ~2 walls, 1 header-deferred, 1 dropped).
