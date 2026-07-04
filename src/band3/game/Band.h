@@ -69,9 +69,9 @@ public:
     int mMaxMultiplier; // 0x50
     float mMsWithMultiplier; // 0x54
     float mMsWhenMultiplierStarted; // 0x58
-    bool mMultiplierActive; // 0x5c
-    int unk60; // 0x60
-    int mMaxBonusLevel; // 0x64
+    bool mMultiplierActive; // 0x70
+    char unk60; // 0x71 (byte; packs into mMultiplierActive word so mMaxBonusLevel lands at 0x74)
+    int mMaxBonusLevel; // 0x74
     std::vector<int> unk68; // 0x68
     std::vector<int> unk70; // 0x6c
     CommonPhraseCapturer *mCommonPhraseCapturer; // 0x78
