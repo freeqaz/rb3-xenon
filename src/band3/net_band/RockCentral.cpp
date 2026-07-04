@@ -100,7 +100,7 @@ extern "C" int NWC24GetMyUserId(unsigned long long &);
 // Runtime-key variant: the buffer is filled at run time, so the Symbol is built
 // from the runtime char* each iteration (a per-call temp, not a static).
 #define ADD_BUFFER_PAIR(buffer, second, ...)                                             \
-    snprintf(buffer, sizeof(buffer), __VA_ARGS__);                                       \
+    _snprintf(buffer, sizeof(buffer), __VA_ARGS__);                                      \
     dataPoint.mNameValPairs.insert(std::make_pair(buffer, second));
 
 #define RECORD_DATA_POINT(num, results, obj) RecordDataPoint(dataPoint, num, results, obj)
@@ -676,9 +676,10 @@ void RockCentral::UpdateFriendList(
             unsigned long long key = friends[i]->mXUID;
             char buf[8];
             char buf2[0x18];
-            ADD_BUFFER_PAIR(buf, str, "name%03d", i);
-            snprintf(buf, 8, "guid%03d", i);
-            snprintf(buf2, 0x18, "%lld", key);
+            _snprintf(buf, sizeof(buf), "name%03d", i);
+            dataPoint.mNameValPairs.insert(std::make_pair(buf, str));
+            _snprintf(buf, 8, "guid%03d", i);
+            _snprintf(buf2, 0x18, "%lld", key);
             dataPoint.mNameValPairs.insert(std::make_pair(buf, buf2));
         }
         RECORD_DATA_POINT(0, results, o);

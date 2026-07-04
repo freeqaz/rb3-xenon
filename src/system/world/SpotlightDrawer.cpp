@@ -494,7 +494,7 @@ void DrawAccessories<LensExtract>(
             } else {
                 Sphere sphere = disk->GetSphere();
                 if (sphere.radius > 0.0f) {
-                    Multiply(sphere, lensXfm, sphere);
+                    Multiply(sphere.center, lensXfm, sphere.center);
                     visible = !(sphere > RndCam::Current()->WorldFrustum());
                 } else {
                     visible = true;

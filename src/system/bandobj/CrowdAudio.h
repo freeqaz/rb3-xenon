@@ -5,7 +5,7 @@
 #include "synth/Faders.h"
 #include "utl/TimeConversion.h"
 
-#include "synth/BinkClip.h"
+#include "synth/MoggClip.h"
 
 enum ExcitementLevel {
     kExcitementBoot,
@@ -58,9 +58,9 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(CrowdAudio) }
     NEW_OBJ(CrowdAudio);
 
-    ObjPtr<BinkClip> mCurrentMogg; // 0x8
-    ObjPtr<BinkClip> mOldMogg; // 0x14
-    ObjPtr<BinkClip> mFadingMogg; // 0x20
+    ObjPtr<MoggClip> mCurrentMogg; // 0x8
+    ObjPtr<MoggClip> mOldMogg; // 0x14
+    ObjPtr<MoggClip> mFadingMogg; // 0x20
     Fader *mMainFader; // 0x2c
     bool mWantDuck; // 0x30
     float mResultsDuck; // 0x34

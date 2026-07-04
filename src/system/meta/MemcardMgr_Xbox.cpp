@@ -42,9 +42,7 @@ void MemcardMgr::Init() {
         mContainerIDs[i].Set(i, 0);
     }
     WCHAR wideName[128];
-    MultiByteToWideChar(
-        0, 0, Localize(title_name, nullptr, TheLocale), -1, wideName, DIM(wideName)
-    );
+    MultiByteToWideChar(0, 0, Localize(title_name, nullptr), -1, wideName, DIM(wideName));
     TheMC.SetContainerDisplayName(wideName);
     ThePlatformMgr.AddSink(this);
 }

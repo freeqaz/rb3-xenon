@@ -550,13 +550,13 @@ void UIList::PostLoad(BinStream &bs) {
             if (d.rev > 6)
                 d >> k;
             else
-                d >> b8;
+                bs >> b8;
         }
         if (d.rev > 6) {
-            d >> b9;
+            bs >> b9;
         }
         if (d.rev > 8) {
-            d >> ba;
+            bs >> ba;
         }
         int b;
         if (d.rev > 10) {
@@ -568,18 +568,18 @@ void UIList::PostLoad(BinStream &bs) {
     d >> local_numdisplay;
     if (d.rev > 0x11)
         d >> local_gridspan;
-    d >> local_circular;
+    bs >> local_circular;
     d >> local_speed;
     if (d.rev > 0xC) {
-        d >> local_scrollpastmin;
+        bs >> local_scrollpastmin;
     }
     if (d.rev > 7) {
-        d >> local_scrollpastmax;
+        bs >> local_scrollpastmax;
     }
     if (d.rev > 2)
-        d >> mPaginate;
+        bs >> mPaginate;
     if (d.rev > 3)
-        d >> mSelectToScroll;
+        bs >> mSelectToScroll;
     if (d.rev >= 10)
         d >> local_mindisplay;
     if (d.rev >= 6)
@@ -605,7 +605,7 @@ void UIList::PostLoad(BinStream &bs) {
     if (d.rev < 0x13)
         mAutoScrollSendMsgs = true;
     else
-        d >> mAutoScrollSendMsgs;
+        bs >> mAutoScrollSendMsgs;
     if (d.rev >= 0x10) {
         d >> mExtendedLabelEntries;
         d >> mExtendedMeshEntries;
@@ -614,7 +614,7 @@ void UIList::PostLoad(BinStream &bs) {
     if (d.rev >= 0x11)
         LoadHandlerData(d.stream);
     if (d.rev >= 0x15) {
-        d >> mLimitCircularDisplayNumToDataNum;
+        bs >> mLimitCircularDisplayNumToDataNum;
     } else {
         mLimitCircularDisplayNumToDataNum = false;
     }
@@ -627,7 +627,7 @@ void UIList::SetSelectedSimulateScroll(int i) {
     mListState.SetSelectedSimulateScroll(i);
     Refresh(false);
     mListDir->Poll();
-    if (mListDir->SubList(mListState.SelectedDisplay(), mWidgets) != 0) {
+    if (ChildList() != 0) {
         Poll();
     }
 }

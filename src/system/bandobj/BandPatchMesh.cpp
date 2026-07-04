@@ -106,13 +106,13 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
     int count = 0;
     for (int i = 0; i < mMeshVerts.size(); i++) {
         int c = (int)mMeshVerts[i];
-        mMeshVerts[i] = (MeshVert *)count;
+        mMeshVerts[i] = count;
         count += (((c + 1) & ~1) - 2) * 2 + kMVSlotBase;
     }
     unkc = new char[count];
     for (int i = 0; i < mMeshVerts.size(); i++) {
-        mMeshVerts[i] = (MeshVert *)((char *)unkc + (int)mMeshVerts[i]);
-        MeshVert *v = mMeshVerts[i];
+        mMeshVerts[i] = (unsigned int)((char *)unkc + (int)mMeshVerts[i]);
+        MeshVert *v = (MeshVert *)mMeshVerts[i];
         *((unsigned char *)v + kMVTwinFlag) = 0;
         v->unk28 = -1;
         v->unk2c = -1;
@@ -123,7 +123,7 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
     for (int i = 0; i < mMesh->Faces().size(); i++) {
         RndMesh::Face &curface = mMesh->Faces()[i];
         for (int j = 0; j < 3; j++) {
-            MeshVert *mv = mMeshVerts[curface[j]];
+            MeshVert *mv = (MeshVert *)mMeshVerts[curface[j]];
             int n = mv->unk30;
             ((unsigned short *)((char *)mv + kMVFaceList))[n] = i;
             mv->unk30 = n + 1;
@@ -133,7 +133,7 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
     for (int i = 0; i < unk18.size(); i++) {
         RndMesh::Vert *v1 = unk18[i];
         int vi = v1 - base;
-        MeshVert *mv = mMeshVerts[vi];
+        MeshVert *mv = (MeshVert *)mMeshVerts[vi];
         if (mv->unk28 == -1) {
             mv->unk28 = vi;
             int prev = vi;
@@ -144,9 +144,9 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
                 if (diff)
                     break;
                 int vi2 = v2 - base;
-                mMeshVerts[vi2]->unk28 = vi;
+                ((MeshVert *)mMeshVerts[vi2])->unk28 = vi;
                 *((unsigned char *)mMeshVerts[vi2] + kMVTwinFlag) = 1;
-                mMeshVerts[prev]->unk2c = vi2;
+                ((MeshVert *)mMeshVerts[prev])->unk2c = vi2;
                 prev = vi2;
             }
             if (prev != vi) {

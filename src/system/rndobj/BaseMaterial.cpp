@@ -71,19 +71,19 @@ END_PROPSYNCS
 BEGIN_SAVES(BaseMaterial)
     SAVE_REVS(8, 0)
     SAVE_SUPERCLASS(Hmx::Object)
-    bs << mBlend << mColor << mUseEnviron << mPrelit;
+    bs << mBlend << (const Vector4 &)mColor << mUseEnviron << mPrelit;
     bs << mZMode << mAlphaCut << mAlphaThreshold << mAlphaWrite;
     bs << mTexGen << mTexWrap << mTexXfm << mDiffuseTex << mNextPass;
     bs << mIntensify << mCull << mEmissiveMultiplier;
-    bs << mSpecularRGB << mNormalMap;
+    bs << (const Vector4 &)mSpecularRGB << mNormalMap;
     bs << mEmissiveMap << mSpecularMap;
     bs << mEnvironMap << mEnvironMapFalloff << mEnvironMapSpecMask;
     bs << mPerPixelLit << mStencilMode;
     bs << mFur << mDeNormal << mAnisotropy;
     bs << mNormDetailTiling << mNormDetailStrength << mNormDetailMap;
     bs << mPointLights << mFog << mFadeout << mColorAdjust;
-    bs << mRimRGB << mRimMap << mRimLightUnder;
-    bs << mScreenAligned << mShaderVariation << mSpecular2RGB;
+    bs << (const Vector4 &)mRimRGB << mRimMap << mRimLightUnder;
+    bs << mScreenAligned << mShaderVariation << (const Vector4 &)mSpecular2RGB;
     mPerfSettings.Save(bs);
     bs << mRefractEnabled << mRefractStrength << mRefractNormalMap;
     bs << mBloomMultiplier << mNeverFitToSpline;

@@ -130,7 +130,7 @@ void UIListSlot::Draw(
         const Transform &rootWorldXfm = root->WorldXfm();
         Transform tf78(rootWorldXfm);
         Transform tfa8;
-        UIListProvider *prov = liststate.Provider();
+        UIListProvider *prov = const_cast<UIListState &>(liststate).Provider();
         float d10;
         UIColor *uicolor;
         for (int i = 0; i < thesize; i++) {

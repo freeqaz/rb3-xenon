@@ -545,8 +545,8 @@ const char *FileMakePath(const char *root, const char *file) {
 const char *FileLocalize(const char *iFilename, char *buffer) {
     GfxMode mode = GetGfxMode();
     bool isOg = (mode == kNewGfx);
-    if (!SystemLanguage().Null() || isOg) {
-        Symbol lang2 = SystemLanguage();
+    if (!SystemLocale().Null() || isOg) {
+        Symbol lang2 = SystemLocale();
         if (!lang2.Null()) {
             for (const char *p = iFilename; *p != '\0'; p++) {
                 if (*p == '/' && p[1] == 'e' && p[2] == 'n' && p[3] == 'g'
@@ -558,7 +558,7 @@ const char *FileLocalize(const char *iFilename, char *buffer) {
                     if (!HongKongExceptionMet()
                         || (strstr(iFilename, "locale") == 0
                             && strstr(iFilename, "ui/eng") == 0)) {
-                        Symbol lang3 = SystemLanguage();
+                        Symbol lang3 = SystemLocale();
                         const char *langStr = lang3.Str();
                         buffer[p + 1 - iFilename] = langStr[0];
                         buffer[p + 2 - iFilename] = langStr[1];

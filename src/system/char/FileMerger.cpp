@@ -460,8 +460,6 @@ void FileMerger::Select(Symbol name, const FilePath &fp, bool b3) {
 }
 
 bool FileMerger::StartLoadInternal(bool async, bool loading) {
-    mAsyncLoad = async;
-    mLoadingLoad = loading;
 #if !defined(MILO_VIEWER)
     // The game relies on change_files to translate high-level selections like
     // HamCharacter::mOutfit into concrete merger paths before loading.
@@ -486,6 +484,8 @@ bool FileMerger::StartLoadInternal(bool async, bool loading) {
     mFilesPending.sort(FileMergerSort());
     if (mCurLoader)
         mFilesPending.push_front(tmp);
+    mAsyncLoad = async;
+    mLoadingLoad = loading;
     if (mFilesPending.empty() || mCurLoader || mOrganizer != this) {
         return false;
     } else {

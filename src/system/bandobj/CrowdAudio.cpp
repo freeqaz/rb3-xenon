@@ -2,7 +2,7 @@
 #include "obj/Data.h"
 #include "obj/Msg.h"
 #include "obj/Task.h"
-#include "synth/BinkClip.h"
+#include "synth/MoggClip.h"
 #include "synth/Sequence.h"
 #include "utl/Messages.h"
 #include "utl/Symbols.h"
@@ -86,7 +86,7 @@ void CrowdAudio::Poll() {
         if (secs > mLoopChangeTime)
             PlayExcitementLoop();
         if (mOldMogg && mReleaseFader->mVal == -96.0f) {
-            mOldMogg->Stop();
+            mOldMogg->Stop(false);
             mOldMogg = 0;
         }
         if (mCurrentMogg && mCurrentMogg->IsStreaming() && mOldMogg
@@ -96,7 +96,7 @@ void CrowdAudio::Poll() {
             mReleaseFader->DoFade(-96.0f, mReleaseTime);
         }
         if (mFadingMogg && mOtherBankFader->mVal == -96.0f) {
-            mFadingMogg->Stop();
+            mFadingMogg->Stop(false);
             mFadingMogg = 0;
         }
         MaybeClap(othersecs);
@@ -108,13 +108,13 @@ void CrowdAudio::SetPaused(bool b) {
         if (mState < 4) {
             mPaused = b;
             if (mPaused && mOldMogg) {
-                mOldMogg->Stop();
+                mOldMogg->Stop(false);
                 mOldMogg = 0;
             }
             if (mCurrentMogg)
-                mCurrentMogg->Pause(mPaused);
+                mCurrentMogg->MoggClip::Pause(mPaused);
             if (mFadingMogg) {
-                mFadingMogg->Pause(mPaused);
+                mFadingMogg->MoggClip::Pause(mPaused);
                 if (mPaused) {
                     mCurrentBankFader->CancelFade();
                     mOtherBankFader->CancelFade();
@@ -163,10 +163,10 @@ bool CrowdAudio::PlayExcitementLoop() {
 
 bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
     MILO_ASSERT(loopInfo != NULL, 0x163);
-    BinkClip *clip = 0;
+    MoggClip *clip = 0;
     const char *clipname = loopInfo->Str(1);
     if (mBank) {
-        clip = mBank->Find<BinkClip>(clipname, false);
+        clip = mBank->Find<MoggClip>(clipname, false);
         if (!clip) {
             MILO_WARN("%s not found in %s_bank.milo", clipname, mBank->Name());
         }
@@ -180,7 +180,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
                 b2 = true;
             } else {
                 if (mCurrentMogg)
-                    mCurrentMogg->Stop();
+                    mCurrentMogg->Stop(false);
                 mOldMogg->RemoveFader(mReleaseFader);
                 mCurrentMogg = mOldMogg;
                 mOldMogg = 0;
@@ -189,7 +189,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
         if (b2 || force) {
             if (mOldMogg) {
                 if (mCurrentMogg)
-                    mCurrentMogg->Stop();
+                    mCurrentMogg->Stop(false);
             } else if (clip == mCurrentMogg) {
                 MILO_ASSERT(force, 0x1AA);
             } else {
@@ -210,7 +210,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
             mCurrentMogg->AddFader(mCurrentBankFader);
             mCurrentMogg->RemoveFader(mOtherBankFader);
             mCurrentMogg->RemoveFader(mReleaseFader);
-            mCurrentMogg->Play();
+            mCurrentMogg->Play(0.0f);
             SetPaused(mPaused);
         }
         return true;
@@ -283,15 +283,15 @@ void CrowdAudio::SetEnabled(bool b) {
 
 void CrowdAudio::StopAllMoggs() {
     if (mCurrentMogg) {
-        mCurrentMogg->Stop();
+        mCurrentMogg->Stop(false);
         mCurrentMogg = 0;
     }
     if (mOldMogg) {
-        mOldMogg->Stop();
+        mOldMogg->Stop(false);
         mOldMogg = 0;
     }
     if (mFadingMogg) {
-        mFadingMogg->Stop();
+        mFadingMogg->Stop(false);
         mFadingMogg = 0;
     }
 }
@@ -365,7 +365,7 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
         }
         if (mState == 2) {
             if (mFadingMogg) {
-                mFadingMogg->Stop();
+                mFadingMogg->Stop(false);
                 mFadingMogg = 0;
             }
             if (PlayExcitementLoop()) {
@@ -375,7 +375,7 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
                 if (mOldMogg) {
                     mFadingMogg = mOldMogg;
                     if (mCurrentMogg) {
-                        mCurrentMogg->Stop();
+                        mCurrentMogg->Stop(false);
                     }
                 }
                 mCurrentMogg = 0;

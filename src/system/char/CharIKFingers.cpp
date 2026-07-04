@@ -256,7 +256,7 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
                         float thumbRot = mHandThumbRotation;
                         if (!mIsRightHand)
                             thumbRot *= -1.0f;
-                        thumbRotMat.RotateAboutY(thumbRot);
+                        MakeRotMatrixY(thumbRot, thumbRotMat);
                         Multiply(thumbRotMat, refRotMat, mDestHandTrans.m);
                         hasSpecialRotation = true;
                     } else if (i == 4) {
@@ -264,7 +264,7 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
                         float pinkyRot = mHandPinkyRotation;
                         if (!mIsRightHand)
                             pinkyRot *= -1.0f;
-                        pinkyRotMat.RotateAboutY(pinkyRot);
+                        MakeRotMatrixY(pinkyRot, pinkyRotMat);
                         Multiply(pinkyRotMat, refRotMat, mDestHandTrans.m);
                         hasSpecialRotation = true;
                     }
@@ -343,7 +343,8 @@ void CharIKFingers::CalculateFingerDest(FingerNum num) {
                 }
                 finger.mDestFinger02Angle = PI - angle02;
                 finger.mDestFinger03Angle = PI - angle02;
-                Hmx::Quat curl03(f1z, -(angle02 * 2.0f - 2 * PI));
+                Hmx::Quat curl03;
+                curl03.Set(f1z, -(angle02 * 2.0f - 2 * PI));
                 Multiply(f1x, curl03, f1x);
                 Hmx::Quat alignQuat;
                 MakeRotQuat(f1x, toTarget, alignQuat);

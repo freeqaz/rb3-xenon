@@ -509,10 +509,10 @@ bool RndAmbientOcclusion::IsValid_AOCast(const RndMesh *mesh) const {
 bool RndAmbientOcclusion::IsValid_AOReceive(const RndMesh *mesh) const {
     bool isTransparent = false;
     bool isPrelit = false;
-    if (!IsSerializable(mesh)) {
+    if (!IsValid_Mesh(mesh)) {
         return false;
     }
-    if (!IsValid_Mesh(mesh)) {
+    if (!IsSerializable(mesh)) {
         return false;
     }
     RndMat *mat = mesh->Mat();
@@ -848,8 +848,8 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
     int numFaces = mesh->Faces().size();
 
     // Phase 1: Compute AO at each face center
-    Hmx::Color aoResult;
-    std::vector<Hmx::Color> faceAO(numFaces, aoResult);
+    Vector4 aoResult;
+    std::vector<Vector4> faceAO(numFaces, aoResult);
     unsigned int f = 0;
     if (numFaces != 0) {
         float oneThird = 1.0f / 3.0f;

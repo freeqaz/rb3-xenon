@@ -75,7 +75,7 @@ public:
         bool SetSameVerts(WorkVerts *);
 
         int unk0;
-        std::vector<MeshVert *> mMeshVerts; // 0x4
+        std::vector<unsigned int> mMeshVerts; // 0x4
         void *unkc;
         std::vector<MeshVert *> unk10;
         std::vector<RndMesh::Vert *> unk18;

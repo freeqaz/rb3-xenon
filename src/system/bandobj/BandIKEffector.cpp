@@ -633,9 +633,7 @@ float BandIKEffector::ApplyConstraints(
             Transform targetWorld = c.mTarget->WorldXfm();
             Normalize(targetWorld.m, targetWorld.m);
             Multiply(local, targetWorld, local);
-            QuatXfm newQ;
-            newQ.v = local.v;
-            newQ.q.Set(local.m);
+            QuatXfm newQ(local);
             ScaleAdd(q.v, newQ.v, w, q.v);
             ScaleAddEq(q.q, newQ.q, w);
         }
