@@ -1867,7 +1867,7 @@ DataNode MusicLibrary::OnMsg(const NewRemoteUserMsg &) {
 
 DataNode MusicLibrary::OnMsg(const RemoteMachineUpdatedMsg &msg) {
     if (msg.GetMask() & 2U) {
-        RebuildSharedSongData();
+        RebuildRestrictedData();
     }
     return 1;
 }
