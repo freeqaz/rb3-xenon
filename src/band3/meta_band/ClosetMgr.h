@@ -91,6 +91,7 @@ public:
     Symbol unk44;
     BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x48
     OutfitConfig *mCurrentOutfitConfig; // 0x4c
+    char mAssetStore[0x4c]; // 0x50 - AssetStore (RTTI ".?AVAssetStore@@"), sizeof==0x4c; retail ctor @0x825D1A38
     PatchDescriptor unk50;
     Symbol mReturnScreen; // 0x58
     Symbol mGender; // 0x5c
