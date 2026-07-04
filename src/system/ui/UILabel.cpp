@@ -530,6 +530,15 @@ void UILabel::Highlight() {
     UtilDrawBox(xfm, box, color, false);
 }
 
+// retail-360 UILabel::Draw (vtable slot 0x50, fn 0x827CCDF0). Retail gates on an
+// alpha member at this+0x1bc (`if (mAlpha <= 0) return; RndDrawable::Draw();`),
+// but this port's UILabel layout has no such scalar mAlpha member; the font-color
+// alpha gate lives inside DrawShowing (Style(0).mFontColor.alpha > 0), which
+// RndDrawable::Draw reaches. Forwarding to RndDrawable::Draw is the faithful port
+// form and matches what the (previously devirtualized) mStartLabel->Draw() call
+// already executed — this change only restores the virtual dispatch.
+void UILabel::Draw() { RndDrawable::Draw(); }
+
 void UILabel::SetTextToken(Symbol s) {
     mTextToken = s;
     if (TheLoadMgr.EditMode()) {

@@ -45,8 +45,20 @@ public:
     virtual void Highlight();
     virtual void DrawShowing();
     virtual bool CanHaveFocus();
-    // text-holder semantics (was TextHolder, now plain forwarding)
-    virtual Symbol TextToken() { return mTextToken; }
+    // retail-360 UILabel own-virtual @ vtable slot 0x50 (first UILabel own slot).
+    // RndDrawable::Draw is NON-virtual in retail-360 (rndobj/Draw.h), so this is
+    // a NEW own-virtual, not an override. Verified against the retail UILabel
+    // vtable @0x8211AEB4: slot 0x50 = fn 0x827CCDF0 (the alpha-gated Draw body).
+    // Placed FIRST among the UILabel own-virtuals so SetCreditsText stays 0x54
+    // and SetDisplayText stays 0x58 (matches retail; no AppLabel slot shift).
+    virtual void Draw();
+    // text-holder semantics (was TextHolder, now plain forwarding).
+    // NON-virtual in retail-360: the retail UILabel vtable has NO TextToken slot
+    // (own-virtuals are exactly Draw/SetCreditsText/SetDisplayText @0x50/54/58).
+    // TextToken overrides nothing (RndText::TextToken is on the mText *member*,
+    // not a base) and is overridden by nothing (AppLabel does not override it),
+    // so de-virtualizing is behavior-preserving and retail-faithful.
+    Symbol TextToken() { return mTextToken; }
     virtual void SetCreditsText(DataArray *, class UIListSlot *) {
         MILO_ASSERT(false, 0x50);
     }
