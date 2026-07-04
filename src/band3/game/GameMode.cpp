@@ -68,23 +68,6 @@ void GameMode::SetMode(Symbol mode) {
         cloned->Release();
         static Message enter_msg("enter");
         HandleType(enter_msg);
-        ThePlatformMgr.mNetworkPlay = Property("online_play_required", true)->Int();
-        mOverdriveEnabled = Property("enable_overdrive", true)->Int();
-        mH2HArrangement = InMode("h2h");
-        mIsPractice = InMode("practice");
-        mCanLose = Property("can_lose", true)->Int();
-        mCrowdReacts = Property("crowd_reacts", true)->Int();
-        mIsSolo = Property("is_solo", true)->Int();
-        mDisableGuitarFx = Property("disable_guitar_fx", true)->Int();
-        mIsDrumTrainer = InMode("drum_trainer");
-        mEnableStreak = Property("enable_streak", true)->Int();
-        mIsTutorial = InMode("tutorial");
-        mLoadChars = Property("load_chars", true)->Int();
-        mShowStars = Property("show_stars", true)->Int();
-        mHasSongSections = Property("has_song_sections", true)->Int();
-        mEnableWhammy = Property("enable_whammy", true)->Int();
-        mEndWithSong = Property("end_with_song", true)->Int();
-        mIsStory = InMode("story");
         static ModeChangedMsg msg;
         MsgSource::Handle(msg, false);
     }
