@@ -119,3 +119,18 @@ core.*
 # Generated decomp scope-map (~8 MB; rebuild via tools/scope_map.py build)
 /config/45410914/scope_map.json
 /game_content_match.json
+
+# Local analysis + run artifacts (regenerable; never commit)
+# objdiff per-unit report cache
+/.objdiff_report_cache
+# orchestrator learned/strategy DB (under scripts/orchestrator; never commit)
+/scripts/orchestrator/decomp.db
+/scripts/orchestrator/decomp.db-journal
+/scripts/orchestrator/decomp.db-wal
+/scripts/orchestrator/decomp.db-shm
+# dtk-extracted section objs dropped in repo root (real ones live under build/)
+/auto_*.obj
+# permuter scratch copies left beside sources
+.permuter_work_*
+# dc3<->rb3 fuzzy-pair analysis snapshot (regenerable via the fuzzy-drain tooling)
+/global_fuzzy_pairs.json
