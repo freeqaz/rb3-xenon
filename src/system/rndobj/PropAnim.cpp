@@ -127,7 +127,7 @@ BEGIN_PROPSYNCS(RndPropAnim)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndPropAnim)
-    SAVE_REVS(15, 0)
+    SAVE_REVS(13, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mPropKeys.size();
@@ -136,8 +136,6 @@ BEGIN_SAVES(RndPropAnim)
         (*it)->Save(bs);
     }
     bs << mLoop;
-    bs << mFlowLabels;
-    bs << mIntensity;
 END_SAVES
 
 BEGIN_COPYS(RndPropAnim)
