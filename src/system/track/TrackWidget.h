@@ -66,47 +66,47 @@ public:
 
     static void Register() { REGISTER_OBJ_FACTORY(TrackWidget); }
 
+    bool mActive; // 0x24
     /** "Meshes used to draw widgets, drawn in order" */
-    ObjPtrList<RndMesh> mMeshes; // 0x20
-    ObjPtrList<RndMesh> mMeshesLeft; // 0x30
-    ObjPtrList<RndMesh> mMeshesSpan; // 0x40
-    ObjPtrList<RndMesh> mMeshesRight; // 0x50
+    ObjPtrList<RndMesh> mMeshes; // 0x28
+    bool mWideWidget; // 0x3c
+    ObjPtrList<RndMesh> mMeshesLeft; // 0x40
+    ObjPtrList<RndMesh> mMeshesSpan; // 0x54
+    ObjPtrList<RndMesh> mMeshesRight; // 0x68
     /** "Environment used to draw widget" */
-    ObjPtr<RndEnviron> mEnviron; // 0x60
+    ObjPtr<RndEnviron> mEnviron; // 0x7c
     /** "Length of unscaled geometry, should be 0 if no duration".
      * Ranges from 1e-2 to 1000. */
-    float mBaseLength; // 0x6c
+    float mBaseLength; // 0x88
     /** "Width of unscaled geometry, should be 0 if no scaling".
      * Ranges from 1e-2 to 1000. */
-    float mBaseWidth; // 0x70
-    /** "X offset to be applied to all widget instances" */
-    float mXOffset; // 0x74
-    /** "Y offset to be applied to all widget instances" */
-    float mYOffset; // 0x78
-    /** "Z offset to be applied to all widget instances" */
-    float mZOffset; // 0x7c
-    TrackDir *mTrackDir; // 0x80
-    TrackWidgetImpBase *mImp; // 0x84
-    ObjPtr<RndFont> mFont; // 0x88
-    ObjPtr<RndText> mTextObj; // 0x94
-    RndText::Alignment mTextAlignment; // 0xa0
-    /** "Primary color for text instances" */
-    Hmx::Color mTextColor; // 0xa4
-    /** "Secondary color for text instances" */
-    Hmx::Color mAltTextColor; // 0xb4
-    ObjPtr<RndMat> mMat; // 0xc4
-    // 0xd0
-    bool mActive : 1; // 0xd0 >> 7 & 1
-    bool mWideWidget : 1; // 0xd0 >> 6 & 1
+    float mBaseWidth; // 0x8c
     /** "Allow meshes to be rotated/scaled" */
-    bool mAllowRotation : 1; // 0xd0 >> 5 & 1
+    bool mAllowRotation; // 0x90
+    int mMaxMeshes; // 0x94
+    /** "X offset to be applied to all widget instances" */
+    float mXOffset; // 0x98
+    /** "Y offset to be applied to all widget instances" */
+    float mYOffset; // 0x9c
+    /** "Z offset to be applied to all widget instances" */
+    float mZOffset; // 0xa0
     /** "Allow widget instances to shift their X/Z coordinates in coordination with their
      * smasher during a keyboard lane shift" */
-    bool mAllowShift : 1; // 0xd0 >> 4 & 1
+    bool mAllowShift; // 0xa4
+    TrackDir *mTrackDir; // 0xa8
+    TrackWidgetImpBase *mImp; // 0xac
+    int mWidgetType; // 0xb0
+    int mCharsPerInst; // 0xb4
+    int mMaxTextInstances; // 0xb8
+    ObjPtr<RndFont> mFont; // 0xbc
+    ObjPtr<RndText> mTextObj; // 0xc8
+    RndText::Alignment mTextAlignment; // 0xd4
+    /** "Primary color for text instances" */
+    Hmx::Color mTextColor; // 0xd8
+    /** "Secondary color for text instances" */
+    Hmx::Color mAltTextColor; // 0xe8
     /** "Individual lines can have different rotations" */
-    bool mAllowLineRotation : 1; // 0xd0 >> 3 & 1
-    int mWidgetType : 3; // 0xd0 & 7?
-    int mMaxMeshes : 9;
-    int mCharsPerInst : 10;
-    int mMaxTextInstances : 10;
+    bool mAllowLineRotation; // 0xf8
+    ObjPtr<RndMat> mMat; // 0xfc
+    // vtordisp 0x108 | Hmx::Object vbase 0x10c | vtordisp 0x134 | RndHighlightable 0x138 | sizeof 0x140
 };
