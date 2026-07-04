@@ -102,6 +102,7 @@ GameMic *GameMicManager::GetMic(const MicClientID &id) {
     MILO_ASSERT(TheSynth, 0xCA);
     int nMicID = TheSynth->GetMicClientMapper()->GetMicIDForClientID(id);
     if (nMicID == -1) {
+#ifdef HX_NATIVE
         if (TheGameMode && TheGameMode->InMode(frame_rate)) {
             if (mFakeMics.empty()) {
                 InitFakeMics();
@@ -109,6 +110,9 @@ GameMic *GameMicManager::GetMic(const MicClientID &id) {
             return mFakeMics[id.mClientID];
         } else
             return nullptr;
+#else
+        return nullptr;
+#endif
     } else
         return mMics[nMicID];
 }
@@ -230,6 +234,7 @@ void GameMicManager::SetSynapseFocus(float f1) {
     send->SetProximityFocus(f1);
 }
 
+#ifdef HX_NATIVE
 void GameMicManager::InitFakeMics() {
     if (mFakeMics.empty()) {
         mFakeMics.resize(4);
@@ -238,3 +243,4 @@ void GameMicManager::InitFakeMics() {
         }
     }
 }
+#endif
