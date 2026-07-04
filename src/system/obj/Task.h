@@ -57,10 +57,10 @@ public:
 
 protected:
     std::list<Var> mVars; // 0x2c
-    ObjPtrList<Hmx::Object> mObjects; // 0x34
-    ObjOwnerPtr<Hmx::Object> mThis; // 0x48
-    DataArray *mScript; // 0x5c
-    bool mOnce; // 0x60
+    std::list<Hmx::Object *> mObjects; // 0x34
+    ObjOwnerPtr<Hmx::Object> mThis; // 0x3c
+    DataArray *mScript; // 0x48
+    bool mOnce; // 0x4c
 
     void SwapVars();
     void UpdateVarsObjects(DataArray *);
@@ -68,11 +68,11 @@ protected:
 
 class ThreadTask : public ScriptTask {
 private:
-    bool mWait; // 0x64
-    int mCurrent; // 0x68
-    float mTime; // 0x6c
-    bool mExecuting; // 0x70
-    float mTimeout; // 0x74
+    bool mWait; // 0x4d
+    int mCurrent; // 0x50
+    float mTime; // 0x54
+    bool mExecuting; // 0x58
+    float mTimeout; // 0x5c
 
     DataNode OnWait(DataArray *);
     DataNode OnWaitTimeout(DataArray *);

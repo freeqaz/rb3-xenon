@@ -7,6 +7,7 @@
 #include "os/Debug.h"
 #include "os/Timer.h"
 #include "utl/BeatMap.h"
+#include "utl/Std.h"
 #include "utl/TempoMap.h"
 
 #ifdef HX_NATIVE
@@ -74,8 +75,7 @@ void MessageTask::Poll(float) {
 #pragma region ScriptTask
 
 ScriptTask::ScriptTask(DataArray *script, bool once, DataArray *updateVarsObjs)
-    : mObjects(this, kObjListOwnerControl), mThis(this, DataThis()), mScript(script),
-      mOnce(once) {
+    : mThis(this, DataThis()), mScript(script), mOnce(once) {
     script->AddRef();
     static DataNode &taskvar = DataVariable("task");
     DataNode old = taskvar;
@@ -87,7 +87,25 @@ ScriptTask::ScriptTask(DataArray *script, bool once, DataArray *updateVarsObjs)
     taskvar = old;
 }
 
-ScriptTask::~ScriptTask() { mScript->Release(); }
+ScriptTask::~ScriptTask() {
+#ifndef HX_NATIVE
+    // Retail: mObjects entries are ring-referenced via AddRef(this) in
+    // UpdateVarsObjects, so release them here (matches og-rb3/rb3-Wii, where
+    // Hmx::Object derives ObjRef and `this` is a valid ring referrer). The X360
+    // ring dispatches this ScriptTask's Replace when a held object dies.
+    for (std::list<Hmx::Object *>::iterator it = mObjects.begin(); it != mObjects.end();
+         it++) {
+        (*it)->Release(this);
+    }
+#else
+    // Native (HX_NATIVE): Hmx::Object derives ObjRefOwner (not ObjRef), so it
+    // cannot register itself as a ring referrer via AddRef(ObjRef*). mObjects
+    // holds untracked raw pointers used only for identity comparison
+    // (ListFind / remove_if / Replace) — never dereferenced — so there is
+    // nothing to release here.
+#endif
+    mScript->Release();
+}
 
 bool ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mThis)) {
@@ -95,12 +113,8 @@ bool ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
         if (mThis) {
             return true;
         }
-    } else {
-        if (from->Parent() != &mObjects) {
-            // mObjects = to;
-            return true;
-        } else
-            return Hmx::Object::Replace(from, to);
+    } else if (to || !ListFind(mObjects, reinterpret_cast<Hmx::Object *>(from))) {
+        return Hmx::Object::Replace(from, to);
     }
     delete this;
     return true;
@@ -157,8 +171,16 @@ void ScriptTask::UpdateVarsObjects(DataArray *d) {
             UpdateVarsObjects(d->UncheckedArray(i));
         }
 
-        if (obj && obj != mThis && mObjects.find(obj) == mObjects.end()) {
+        if (obj && obj != mThis && !ListFind(mObjects, obj)) {
             mObjects.push_back(obj);
+#ifndef HX_NATIVE
+            // Retail: register this ScriptTask as a ring referrer of `obj` so
+            // the ring dispatches our Replace when `obj` dies (matches
+            // og-rb3/rb3-Wii). Native's Hmx::Object is an ObjRefOwner, not an
+            // ObjRef, so it cannot self-register; the raw pointer is tracked
+            // for identity only (see ~ScriptTask).
+            obj->AddRef(this);
+#endif
         }
     }
 }
@@ -172,10 +194,9 @@ ThreadTask::ThreadTask(DataArray *script, DataArray *updateVarsObjs)
 
 bool ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (mExecuting) {
-        if (&mObjects == from->Parent() && from) {
-            mObjects.remove(to);
-            return true;
-        }
+        Hmx::Object::Replace(from, to);
+        mObjects.remove_if(ObjMatchPr(reinterpret_cast<Hmx::Object *>(from)));
+        return true;
     }
     return ScriptTask::Replace(from, to);
 }
