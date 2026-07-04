@@ -66,7 +66,7 @@ public:
     virtual void SetIsCurrentTrack(bool);
     virtual void AddSink(BeatMatchSink *);
     virtual void Jump(float ms);
-    virtual void Restart();
+    virtual void SetAutoplayError(int);
     virtual void Poll(float ms);
     virtual bool Swing(int slot, bool guitar, bool provisional, GemHitFlags flags) = 0;
     virtual void NonStrumSwing(int slot, bool button_down, bool solo) = 0;
@@ -78,7 +78,7 @@ public:
     virtual void Enable(bool);
     virtual bool IsCheating() const;
     virtual void SetCheating(bool);
-    virtual void SetAutoplayError(int);
+    virtual void Restart();
     virtual void SetSyncOffset(float);
     virtual void
     OnHit(float ms, int slot, int gemID, unsigned int slots, GemHitFlags flags);
