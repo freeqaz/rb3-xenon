@@ -187,9 +187,12 @@ public:
     void SetSubSamples(int);
     void SetMesh(RndMesh *);
     void FreeAllParticles();
+#ifdef HX_NATIVE
+    // DC3-era UV-tile-animation setters; retail RB3 has no tile animation.
     void SetAnimatedUV(bool);
     void SetTileHoldTime(float);
     void SetNumTiles(int);
+#endif
     void SetGrowRatio(float);
     void SetShrinkRatio(float);
     void SetFrameDrive(bool);
@@ -433,6 +436,15 @@ protected:
     Vector2 mBurstLength; // 0x3b8
     int mExplicitParts; // 0x3c0
     float mElapsedTime; // 0x3c4
+#ifdef HX_NATIVE
+    // DC3 (newer engine) UV-tile-animation + particle-attractor block. Retail RB3
+    // has neither feature, so this entire tail (0x30 = 48B) does NOT exist in the
+    // retail X360 layout: retail's last own member is mElapsedTime, with the
+    // Hmx::Object virtual base immediately following (funclet fn_8243BCD8 puts
+    // Object at 0x36c). Its presence shifts the Object vbase +0x30 to 0x39c and
+    // breaks every RndParticleSys funclet/ctor offset. rb3-Wii's Part.h also ends
+    // at mElapsedTime. Per-particle tile state (RndParticle::mCurrentTileIndex/
+    // mTileTime) is likewise HX_NATIVE-only.
     /** "uses material texture as page tiles to animated through" */
     bool mAnimateUVs; // 0x3c8
     /** "animation loops to beginning if true" */
@@ -453,6 +465,7 @@ protected:
     float mInvTotalTileTime; // 0x3e4
     /** "Add point forces which attract or repel particles" */
     ObjVector<Attractor> mAttractors; // 0x3e8
+#endif
 };
 
 extern ParticleCommonPool *gParticlePool;

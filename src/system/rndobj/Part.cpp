@@ -148,9 +148,15 @@ RndParticleSys::RndParticleSys()
 #endif
       mMaxBurst(0), mTimeTillBurst(0),
       mBurstInterval(15, 35), mBurstPeak(4, 8), mBurstLength(20, 30), mExplicitParts(0),
-      mElapsedTime(0), mAnimateUVs(0), mLoopUVAnim(1), mRandomAnimStart(0),
+      mElapsedTime(0)
+#ifdef HX_NATIVE
+      // DC3-era UV-tile-animation + attractor members (absent in retail RB3).
+      ,
+      mAnimateUVs(0), mLoopUVAnim(1), mRandomAnimStart(0),
       mTileHoldTime(0), mNumTilesAcross(1), mNumTilesDown(1), mNumTilesTotal(1),
-      mStartingTile(0), mTotalTileTime(1), mInvTotalTileTime(1), mAttractors(this) {
+      mStartingTile(0), mTotalTileTime(1), mInvTotalTileTime(1), mAttractors(this)
+#endif
+{
     SetRelativeMotion(0, this);
     SetSubSamples(0);
 }
@@ -241,6 +247,8 @@ bool AngleVectorSync(Vector2 &vec, DataNode &_val, DataArray *_prop, int _i, Pro
 
 BEGIN_PROPSYNCS(RndParticleSys)
     SYNC_PROP(mat, mMat)
+#ifdef HX_NATIVE
+    // DC3-era UV-tile-animation properties (absent in retail RB3).
     SYNC_PROP_SET(animate_uvs, mAnimateUVs, SetAnimatedUV(_val.Int()))
     SYNC_PROP(loop_uv_anim, mLoopUVAnim)
     SYNC_PROP(random_anim_start, mRandomAnimStart)
@@ -249,6 +257,7 @@ BEGIN_PROPSYNCS(RndParticleSys)
     SYNC_PROP_SET(num_tiles_down, mNumTilesDown, mNumTilesDown = Max(_val.Int(), 1))
     SYNC_PROP_SET(num_tiles_total, mNumTilesTotal, SetNumTiles(_val.Int()))
     SYNC_PROP(starting_tile, mStartingTile)
+#endif
     SYNC_PROP_SET(max_parts, mMaxParticles, SetPool(_val.Int(), mType))
     SYNC_PROP(emit_rate, mEmitRate)
     SYNC_PROP(screen_aspect, mScreenAspect)
@@ -322,8 +331,9 @@ BEGIN_PROPSYNCS(RndParticleSys)
     SYNC_PROP_SET(frame_drive, mFrameDrive, SetFrameDrive(_val.Int()))
     SYNC_PROP(pre_spawn, mFastForward)
     SYNC_PROP_SET(pause_offscreen, mPauseOffscreen, SetPauseOffscreen(_val.Int()))
-    SYNC_PROP(attractors, mAttractors)
 #ifdef HX_NATIVE
+    // DC3-era particle attractors (absent in retail RB3).
+    SYNC_PROP(attractors, mAttractors)
     SYNC_PROP(birth_momentum, mBirthMomentum)
     SYNC_PROP(birth_momentum_amount, mBirthMomentumAmount)
 #endif
@@ -390,6 +400,10 @@ BEGIN_SAVES(RndParticleSys)
     bs << mFrameDrive;
     bs << mPauseOffscreen;
     bs << mFastForward;
+#ifdef HX_NATIVE
+    // DC3-era UV-tile-animation + attractor + birth-momentum fields (absent in
+    // retail RB3 — retail Save writes nothing between mFastForward and
+    // mPreserveParticles).
     bs << mAnimateUVs;
     bs << mTileHoldTime;
     bs << mNumTilesAcross;
@@ -399,7 +413,6 @@ BEGIN_SAVES(RndParticleSys)
     bs << mLoopUVAnim;
     bs << mRandomAnimStart;
     bs << mAttractors;
-#ifdef HX_NATIVE
     bs << mBirthMomentum;
     bs << mBirthMomentumAmount;
 #endif
@@ -485,6 +498,9 @@ BEGIN_COPYS(RndParticleSys)
             COPY_MEMBER(mFrameDrive)
             COPY_MEMBER(mPauseOffscreen)
             mElapsedTime = mPausedTime = 0;
+#ifdef HX_NATIVE
+            // DC3-era UV-tile-animation + birth-momentum + attractor copy (absent
+            // in retail RB3).
             COPY_MEMBER(mAnimateUVs)
             COPY_MEMBER(mLoopUVAnim)
             COPY_MEMBER(mRandomAnimStart)
@@ -495,14 +511,13 @@ BEGIN_COPYS(RndParticleSys)
             COPY_MEMBER(mStartingTile)
             COPY_MEMBER(mTotalTileTime)
             COPY_MEMBER(mInvTotalTileTime)
-#ifdef HX_NATIVE
             COPY_MEMBER(mBirthMomentum)
             COPY_MEMBER(mBirthMomentumAmount)
-#endif
             mAttractors.clear();
             for (unsigned int i = 0; i != c->mAttractors.size(); i++) {
                 mAttractors.push_back(Attractor(c->mAttractors[i], this));
             }
+#endif
             if (!mPreserveParticles) {
                 SetPool(c->mMaxParticles, c->mType);
             }
@@ -790,6 +805,8 @@ BEGIN_LOADS(RndParticleSys)
     mNeedForward = mFastForward;
 
     if (rev > 0x26) {
+#ifdef HX_NATIVE
+        // DC3-era UV-tile-animation load (absent in retail RB3).
         d >> mAnimateUVs;
         (*stream) >> mTileHoldTime;
         (*stream) >> mNumTilesAcross;
@@ -803,9 +820,13 @@ BEGIN_LOADS(RndParticleSys)
             mTotalTileTime = 0.0001f;
         }
         mInvTotalTileTime = 1.0f / mTotalTileTime;
+#endif
     }
     if (rev > 0x27) {
+#ifdef HX_NATIVE
+        // DC3-era particle attractors (absent in retail RB3).
         d >> mAttractors;
+#endif
     }
     if (rev > 0x28) {
 #ifdef HX_NATIVE
@@ -907,6 +928,8 @@ void RndParticleSys::SetPersistentPool(int max, Type ty) {
     mEmitCount = 0;
 }
 
+#ifdef HX_NATIVE
+// DC3-era UV-tile-animation setters (absent in retail RB3).
 void RndParticleSys::SetTileHoldTime(float f1) {
     mTileHoldTime = f1;
     mTotalTileTime = mNumTilesTotal * mTileHoldTime;
@@ -920,6 +943,7 @@ void RndParticleSys::SetNumTiles(int num) {
     mTotalTileTime = Max(mTotalTileTime, 0.0001f);
     mInvTotalTileTime = 1.0f / mTotalTileTime;
 }
+#endif
 
 void RndParticleSys::SetGrowRatio(float f) {
     if (f >= 0 && f <= mGrowRatio)
@@ -945,12 +969,15 @@ void RndParticleSys::SetPauseOffscreen(bool b) {
     mPausedTime = 0;
 }
 
+#ifdef HX_NATIVE
+// DC3-era UV-tile-animation setter (absent in retail RB3).
 void RndParticleSys::SetAnimatedUV(bool b) {
     if (mAnimateUVs != b) {
         SetPool(mMaxParticles, mType);
     }
     mAnimateUVs = b;
 }
+#endif
 
 void RndParticleSys::SetMesh(RndMesh *mesh) {
     if (mesh) {
@@ -1180,7 +1207,10 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
     }
 
     RndParticle *p = mActiveParticles;
+#ifdef HX_NATIVE
+    // DC3-era UV-tile-animation bound (absent in retail RB3).
     int endTile = mNumTilesTotal + mStartingTile;
+#endif
 
     if (p != NULL) {
         float sixf = 6.0f;
@@ -1255,7 +1285,8 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                     }
                 }
 
-                // Attractors
+#ifdef HX_NATIVE
+                // Attractors (DC3-era feature; absent in retail RB3).
                 unsigned int numAttractors = mAttractors.size();
                 for (unsigned int i = 0; i < numAttractors; i++) {
                     Attractor &a = mAttractors[i];
@@ -1292,6 +1323,7 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                         p->vel.y += scale * dy;
                     }
                 }
+#endif
 
                 p->vel.y += relForceRow1;
                 p->vel.x += relForceRow0;
