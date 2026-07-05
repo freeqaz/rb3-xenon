@@ -18,7 +18,10 @@
 #include "world/CameraShot.h"
 
 CharDriver::CharDriver()
-    : mBones(this), mClips(this), mFirst(), mTestClip(this), mDefaultClip(this), mClipGroup(this),
+    : mBones(this), mClips(this), mFirst(), mTestClip(this), mDefaultClip(this),
+#ifdef HX_NATIVE
+      mClipGroup(this),
+#endif
       mDefaultPlayStarved(false), mOldBeat(1e+30), mRealign(false), mBeatScale(1.0f), mBlendWidth(1.0f),
       mApply(kApplyBlend), mInternalBones(), mPlayMultipleClips(false) {}
 
@@ -262,7 +265,9 @@ CharDriver::PlayGroup(const char *cc, int i, float f1, float f2, float f3) {
 
 CharClipDriver *
 CharDriver::PlayGroup(CharClipGroup *grp, int i, float f1, float f2, float f3) {
+#ifdef HX_NATIVE
     mClipGroup = grp;
+#endif
     CharClip *clip = grp->GetClip(0);
 #ifdef HX_NATIVE
     if (!clip) return nullptr;
@@ -284,6 +289,7 @@ void CharDriver::SyncInternalBones() {
     }
 }
 
+#ifdef HX_NATIVE
 void CharDriver::SetClipWeightMap() {
     mClipWeightMap.clear();
     for (CharClipDriver *it = mFirst; it != nullptr; it = it->Next()) {
@@ -296,6 +302,7 @@ void CharDriver::SetClipWeightMap() {
         }
     }
 }
+#endif
 
 float CharDriver::EvaluateFlags(int flags) {
     float weight = 1;
@@ -736,7 +743,7 @@ BEGIN_PROPSYNCS(CharDriver)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
-#ifndef HX_NATIVE
+#ifdef HX_NATIVE
 // Template instantiation for std::map<CharClip*, float>
 namespace stlpmtx_std {
 

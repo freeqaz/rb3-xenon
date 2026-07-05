@@ -46,7 +46,9 @@ public:
     ObjectDir *ClipDir() const { return mClips; }
     CharBonesObject *GetBones() const { return mBones; }
     CharClipDriver *First() { return mFirst; }
+#ifdef HX_NATIVE
     CharClipGroup *GetClipGroup() const { return mClipGroup; }
+#endif
     CharClip *FirstClip();
     CharClipDriver *FirstPlaying();
     CharClipDriver *Last();
@@ -64,7 +66,9 @@ public:
     CharClipDriver *Play(const DataNode &, int, float, float, float);
     CharClipDriver *PlayGroup(CharClipGroup *, int, float, float, float);
     CharClipDriver *PlayGroup(const char *, int, float, float, float);
+#ifdef HX_NATIVE
     void SetClipWeightMap();
+#endif
     CharClip *FindClip(DataNode const &, bool notify = true);
     void SetBlendWidth(float w) { mBlendWidth = w; }
     Symbol ClipType() const { return mClipType; }
@@ -108,7 +112,11 @@ protected:
     /** "Pick a clip to play" */
     ObjPtr<CharClip> mTestClip; // 0x5c / -0x88
     ObjPtr<Hmx::Object> mDefaultClip; // 0x70
-    ObjPtr<CharClipGroup> mClipGroup; // 0x84
+#ifdef HX_NATIVE
+    // DC3-only: retail RB3 X360 CharDriver has no clip-group member (the +0x24
+    // oversize is this ObjPtr + mClipWeightMap below). Wii retail also lacks it.
+    ObjPtr<CharClipGroup> mClipGroup;
+#endif
     /** "If true, plays the default_clip_or_group whenever starved" */
     bool mDefaultPlayStarved; // 0x98 / -0x74
     Symbol mStarvedHandler;
@@ -121,5 +129,9 @@ protected:
     ApplyMode mApply; // 0xbc / -0x28;
     CharBonesAlloc *mInternalBones; // 0xc0
     bool mPlayMultipleClips; // 0xc4 / -0x20
+#ifdef HX_NATIVE
+    // DC3-only: retail RB3 X360 CharDriver has no clip-weight map (part of the
+    // +0x24 oversize; retail dtor destroys 4 ObjPtrs and no map).
     std::map<CharClip *, float> mClipWeightMap;
+#endif
 };

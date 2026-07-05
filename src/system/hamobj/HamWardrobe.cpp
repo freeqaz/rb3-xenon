@@ -339,6 +339,9 @@ void HamWardrobe::UpdateOverlay() {
         *mOverlay << cur->Name() << ": ";
         CharDriver *driver = cur->Driver();
         if (!driver) goto output_newline;
+#ifdef HX_NATIVE
+        // CharDriver::GetClipGroup() is a DC3-only accessor (retail RB3 X360 has
+        // no mClipGroup member); the clip-group overlay row is native-only.
         {
             CharClipGroup *clipGroup = driver->GetClipGroup();
             if (!clipGroup) goto output_newline;
@@ -356,6 +359,7 @@ void HamWardrobe::UpdateOverlay() {
             *mOverlay << "]\n";
             continue;
         }
+#endif
     output_newline:
         *mOverlay << "\n";
     }

@@ -654,8 +654,13 @@ ObjectDir *HamCharacter::GetNeutralSkeleton() {
                 goto zero_and_scale;
             }
             bones->Zero();
+            std::map<CharClip *, float> clipMap;
+#ifdef HX_NATIVE
+            // CharDriver's clip-weight map is DC3-only (retail RB3 X360 has no
+            // such member); on retail this path leaves the map empty.
             Driver()->SetClipWeightMap();
-            std::map<CharClip *, float> clipMap(Driver()->mClipWeightMap);
+            clipMap = Driver()->mClipWeightMap;
+#endif
             float totalWeight = 0.0f;
             for (std::map<CharClip *, float>::iterator it = clipMap.begin();
                  it != clipMap.end(); ++it) {
