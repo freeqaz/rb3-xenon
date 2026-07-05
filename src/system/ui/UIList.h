@@ -164,9 +164,15 @@ protected:
     bool mDrawManuallyControlledWidgets; // 0x15c
     bool mAllowHighlight; // 0x15d
     /** "Allow multiple instances of same option to be displayed?" */
-    bool mLimitCircularDisplayNumToDataNum; // 0x15e
-    int mUncappedNumDisplay; // 0x160
-    bool mScrolling; // 0x164
+    bool mLimitCircularDisplayNumToDataNum; // 0x23a
+#ifdef HX_NATIVE
+    // DC3-only: caches the pre-cap display count so LimitCircularDisplay can
+    // restore it. Retail RB3 X360 has no such member (ctor vtordisp places the
+    // member block end at 0x23c, two trailing bools only); the "uncapped" value
+    // is taken from mListState.NumDisplay() there.
+    int mUncappedNumDisplay;
+#endif
+    bool mScrolling; // 0x23b
 };
 
 class UIListCustomTemplate {

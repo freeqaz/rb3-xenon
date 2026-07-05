@@ -38,7 +38,10 @@ UIList::UIList()
       mExtendedMeshEntries(this), mExtendedCustomEntries(this), mAutoScrollPause(2),
       mAutoScrollSendMsgs(0), mAutoScrollDir(1), mAutoScrolling(0), mAutoScrollTimer(-1),
       mDrawManuallyControlledWidgets(0), mAllowHighlight(1),
-      mUncappedNumDisplay(1), mScrolling(0) {}
+#ifdef HX_NATIVE
+      mUncappedNumDisplay(1),
+#endif
+      mScrolling(0) {}
 
 UIList::~UIList() {
     DeleteAll(mWidgets);
@@ -183,7 +186,9 @@ void UIList::Copy(const Hmx::Object *obj, CopyType ty) {
         mExtendedCustomEntries = c->mExtendedCustomEntries;
 
         mLimitCircularDisplayNumToDataNum = c->mLimitCircularDisplayNumToDataNum;
+#ifdef HX_NATIVE
         mUncappedNumDisplay = c->mUncappedNumDisplay;
+#endif
     }
 
     const UIList *c2 = dynamic_cast<const UIList *>(obj);
@@ -585,11 +590,20 @@ void UIList::PostLoad(BinStream &bs) {
     if (d.rev >= 6)
         d >> local_maxdisplay;
     gLoading = true;
+#ifdef HX_NATIVE
     mListState.SetNumDisplay(local_numdisplay, false);
     mUncappedNumDisplay = local_numdisplay;
     mListState.SetGridSpan(local_gridspan, false);
     mListState.SetCircular(local_circular, false);
     mListState.SetSpeed(local_speed);
+#else
+    // Retail (rev 0x13) distributes the loaded display config through the
+    // UIList-level setters rather than storing an uncapped-count member.
+    SetNumDisplay(local_numdisplay);
+    SetGridSpan(local_gridspan);
+    SetCircular(local_circular);
+    SetSpeed(local_speed);
+#endif
     mListState.SetScrollPastMinDisplay(local_scrollpastmin);
     mListState.SetScrollPastMaxDisplay(local_scrollpastmax);
     mListState.SetMinDisplay(local_mindisplay);
@@ -818,11 +832,19 @@ void UIList::LimitCircularDisplay(bool b) {
         mLimitCircularDisplayNumToDataNum = b;
         if (b) {
             int numprov = NumProviderData();
+#ifdef HX_NATIVE
             int uncapped = mUncappedNumDisplay;
+#else
+            int uncapped = NumDisplay();
+#endif
             int val = numprov < uncapped ? numprov : uncapped;
             SetNumDisplay(val < 1 ? 1 : val);
         } else {
+#ifdef HX_NATIVE
             SetNumDisplay(mUncappedNumDisplay);
+#else
+            SetNumDisplay(NumDisplay());
+#endif
         }
         Refresh(false);
     }
