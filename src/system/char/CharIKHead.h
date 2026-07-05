@@ -6,6 +6,8 @@
 #include "rndobj/Trans.h"
 #include "utl/MemMgr.h"
 
+class Character;
+
 /** "Puts a head bone into a position, doing IK on the spine to achieve it." */
 class CharIKHead : public RndHighlightable, public CharWeightable, public CharPollable {
 public:
@@ -28,6 +30,7 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    virtual void SetName(const char *, ObjectDir *);
     // RndHighlightable
     virtual void Highlight();
     // CharPollable
@@ -62,5 +65,7 @@ protected:
     Vector3 mOffsetScale; // 0xbc
     float mSpineLength; // 0xcc
     bool mUpdatePoints; // 0xd0
-    Vector3 mDebugTarget; // 0xd4
+    /** retail: 12B ObjPtr<Character> (DC3 replaced this slot with a 16B
+        Vector3 mDebugTarget for editor debug-draw). */
+    ObjPtr<Character> mMe; // 0xa4
 };

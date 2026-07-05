@@ -16,16 +16,20 @@ void NormalizeScale(const Vector3 &, float, Vector3 &);
 CharIKHead::CharIKHead()
     : mPoints(this), mHead(this), mSpine(this), mMouth(this), mTarget(this),
       mHeadFilter(0, 0, 0), mTargetRadius(0.75), mHeadMat(0.5), mOffset(this),
-      mOffsetScale(1, 1, 1), mUpdatePoints(1) {}
+      mOffsetScale(1, 1, 1), mUpdatePoints(1), mMe(this) {}
 
 CharIKHead::~CharIKHead() {}
+
+void CharIKHead::SetName(const char *name, ObjectDir *dir) {
+    Hmx::Object::SetName(name, dir);
+    mMe = dynamic_cast<Character *>(dir);
+}
 
 void CharIKHead::Poll() {
     if (!mHead || !mTarget || !mSpine)
         return;
     UpdatePoints(false);
-    Character *me = Character::Current();
-    if (me && me->Teleported()) {
+    if (mMe && mMe->Teleported()) {
         mHeadFilter = mHead->WorldXfm().v;
     } else if (TheTaskMgr.DeltaSeconds() > 0) {
         Interp(mHeadFilter, mHead->WorldXfm().v, 0.5f, mHeadFilter);
@@ -41,7 +45,6 @@ void CharIKHead::Poll() {
             float blendDist = Min(headOffsetLen, mTargetRadius * weight);
             ScaleAddEq(targetPos, headOffset, blendDist / headOffsetLen);
         }
-        mDebugTarget = targetPos;
         Interp(mPoints[0].mBone->WorldXfm().v, targetPos, weight, targetPos);
         Vector3 spineToTarget;
         Subtract(targetPos, mSpine->TransParent()->WorldXfm().v, spineToTarget);
@@ -218,11 +221,13 @@ void CharIKHead::UpdatePoints(bool b) {
 }
 
 void CharIKHead::Highlight() {
+    // Retail RB3 X360 folds this to an empty body (no mDebugTarget debug-draw
+    // exists; that member is DC3-only and was removed here). The bone-chain
+    // visualization is kept for the native editor build only.
+#ifdef HX_NATIVE
     float weight = Weight();
     if (weight == 0 || !mHead || !mTarget || !mSpine)
         return;
-    UtilDrawSphere(mDebugTarget, mTargetRadius, Hmx::Color(0, 1, 0), 0);
-    UtilDrawString(MakeString("%.2f", weight), mDebugTarget, Hmx::Color(1, 1, 1));
     for (int i = 1; i < mPoints.size(); i++) {
         TheRnd.DrawLine(
             mPoints[i].mWorldPos, mPoints[i - 1].mWorldPos, Hmx::Color(1, 0, 0), false
@@ -231,6 +236,7 @@ void CharIKHead::Highlight() {
             mPoints[i].mPos, mPoints[i - 1].mPos, Hmx::Color(0, 1, 0), false
         );
     }
+#endif
 }
 
 #pragma endregion CharIKHead
