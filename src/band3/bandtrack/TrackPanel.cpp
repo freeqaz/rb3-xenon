@@ -61,10 +61,10 @@ TrackPanel *GetTrackPanel() { return TheTrackPanel; }
 TrackPanelDirBase *GetTrackPanelDir() { return TheTrackPanel->mTrackPanelDir; }
 
 TrackPanel::TrackPanel()
-    : mConfig(SystemConfig("track_graphics")), mReservedVocalSlot(2),
-      mScoreboard(this, 0), unk5c(0), unk5d(0), unk5e(0), unk5f(0), unk60(0), unk61(1),
-      unk62(0), mAutoVocals(0), mNextReloadTime(0), mTrackPanelDir(0), unk84(0),
-      mTourGoalConfig(kConfigInvalid), mLastCrowdRating(-1.0f) {
+    : unk5c(0), mConfig(SystemConfig("track_graphics")), mReservedVocalSlot(2),
+      mScoreboard(this, 0), unk5d(0), mNextReloadTime(0), mTrackPanelDir(0), unk84(0),
+      unk5f(0), unk60(0), mTourGoalConfig(kConfigInvalid), mLastCrowdRating(-1.0f),
+      unk62(0), mAutoVocals(0) {
     for (int i = 0; i < 5; i++) {
         mTrackSlots.push_back(TrackSlot());
     }
@@ -615,16 +615,14 @@ void TrackPanel::Poll() {
     unk62 = soloing;
     if (mScoreboard) {
         Performer *mainPerformer = TheGame->GetMainPerformer();
-        if (unk61) {
-            MetaPerformer::Current();
-            auto _tmp1 = mainPerformer->GetAccumulatedScore();
-            mScoreboard->SetScore(_tmp1);
-        } else if (TheGame->mProperties.mShowStars) {
+        MetaPerformer::Current();
+        auto _tmp1 = mainPerformer->GetAccumulatedScore();
+        mScoreboard->SetScore(_tmp1);
+        if (TheGame->mProperties.mShowStars) {
             mScoreboard->SetNumStars(
                 mainPerformer->GetNumStarsFloat(), TheGame->mProperties.mPlayStarSfx
             );
         }
-        unk61 = !unk61;
     }
     Performer *mainPerformer = TheGame->GetMainPerformer();
     Band *band = mainPerformer->GetBand();

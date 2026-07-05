@@ -99,25 +99,33 @@ public:
 
     DataNode ForEachTrack(const DataArray *);
 
-    DataArray *mConfig; // 0x38
-    std::vector<Track *> mTracks; // 0x3c
-    std::vector<TrackSlot> mTrackSlots; // 0x44
-    int mReservedVocalSlot; // 0x4c
-    ObjPtr<BandScoreboard> mScoreboard; // 0x50
-    bool unk5c; // 0x5c
-    bool unk5d; // 0x5d
-    bool unk5e; // 0x5e
-    bool unk5f; // 0x5f
-    bool unk60; // 0x60
-    bool unk61; // 0x61
-    bool unk62; // 0x62
-    bool mAutoVocals; // 0x63
-    std::map<Symbol, DepChecker *> mReloadChecks; // 0x64
-    float mNextReloadTime;
-    TrackPanelDirBase *mTrackPanelDir; // 0x80
-    int unk84;
-    TourGoalConfig mTourGoalConfig; // 0x88
-    float mLastCrowdRating;
+    // Layout re-rooted from retail ctor fn_82B61AD0 (vbase K=0xa8). Retail has a
+    // leading bool at 0x3c (before mConfig) and 6 bools total, distributed at
+    // 0x3c/0x6c/0x94/0x95/0xa0/0xa1 (all stb 0 in the ctor). Our old 8-bool block
+    // packed at 0x68 was 2 phantoms over (unk5e: unused; unk61: our Poll-only
+    // alternation, absent from retail Poll fn_82B60080). mReservedVocalSlot is the
+    // "@0x5c = 2" member. Bool identities pinned from accessors: unk5c@0x3c
+    // (Reset/Draw/Poll gate, fn_82B603B8/fn_82B5E978), unk5f@0x94 (StartPulseAnims
+    // fn_82B5ED48), unk60@0x95 (MainGoalReset fn_82B5F8C8), unk62@0xa0
+    // (SendTrackerBroadcast/Poll fn_82B5FA48/fn_82B60080), mAutoVocals@0xa1
+    // (AutoVocals fn_82B60D50); unk5d@0x6c by elimination.
+    bool unk5c; // 0x3c
+    DataArray *mConfig; // 0x40
+    std::vector<Track *> mTracks; // 0x44
+    std::vector<TrackSlot> mTrackSlots; // 0x50
+    int mReservedVocalSlot; // 0x5c
+    ObjPtr<BandScoreboard> mScoreboard; // 0x60
+    bool unk5d; // 0x6c
+    std::map<Symbol, DepChecker *> mReloadChecks; // 0x70
+    float mNextReloadTime; // 0x88
+    TrackPanelDirBase *mTrackPanelDir; // 0x8c
+    int unk84; // 0x90
+    bool unk5f; // 0x94
+    bool unk60; // 0x95
+    TourGoalConfig mTourGoalConfig; // 0x98
+    float mLastCrowdRating; // 0x9c
+    bool unk62; // 0xa0
+    bool mAutoVocals; // 0xa1
 };
 
 TrackPanel *GetTrackPanel();
