@@ -21,7 +21,7 @@
 StoreInfoPanel *TheStoreInfoPanel;
 
 StoreInfoPanel::StoreInfoPanel()
-    : mOffer(this), mLoader(0), mCurRecommendationIdx(0), unk5c(0) {
+    : mOffer(0), mLoader(0), mCurRecommendationIdx(0), unk5c(0) {
     TheStoreInfoPanel = this;
 }
 
@@ -92,7 +92,7 @@ void StoreInfoPanel::ClearData() {
 void StoreInfoPanel::FetchRecommendations() {
     if (!mLoader) {
         MILO_ASSERT(mOffer, 0x98);
-        BandStoreOffer *offer = dynamic_cast<BandStoreOffer *>(mOffer.Ptr());
+        BandStoreOffer *offer = dynamic_cast<BandStoreOffer *>(mOffer);
         MILO_ASSERT(offer, 0x9C);
         String str20;
         if (offer->Exists()) {

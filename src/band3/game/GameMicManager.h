@@ -21,7 +21,9 @@ public:
     void CreateMic(int);
     bool HasMic(const MicClientID &) const;
     GameMic *GetMic(const MicClientID &);
+#ifdef HX_NATIVE
     void InitFakeMics();
+#endif
     void ApplyPlayback(bool, GameMic *) const;
     void HookUpFxForMicId(GameMic *);
     int GetMicCount() const;
@@ -41,8 +43,14 @@ public:
     float mSynapseFocus; // 0x34
     int mMicCount; // 0x38
     std::vector<GameMic *> mMics; // 0x3c
-    std::vector<GameMic *> mFakeMics; // 0x44
-    bool mPlayback; // 0x4c
+#ifdef HX_NATIVE
+    // DC3-only fake-mic feature (frame_rate mode). Retail RB3 X360 has no
+    // mFakeMics: the retail funclet places the Hmx::Object vbase at 0x4c, which
+    // only holds if mPlayback follows mMics directly (no intervening vector).
+    // rb3-Wii's GameMicManager also does not carry this in the retail build.
+    std::vector<GameMic *> mFakeMics;
+#endif
+    bool mPlayback; // 0x44
 };
 
 extern GameMicManager *TheGameMicManager;

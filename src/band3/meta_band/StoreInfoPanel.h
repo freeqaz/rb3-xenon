@@ -32,7 +32,7 @@ public:
     void PushRecommendationFailure();
     void PushRecommendationsReady();
 
-    ObjPtr<StoreOffer> mOffer; // 0x40, 0x44, 0x48
+    StoreOffer *mOffer; // 0x48 (retail: raw StoreOffer*, not ObjPtr)
     std::vector<RecommendedEntry> mRecommendations; // 0x4c, 0x50, 0x52
     DataNetLoader *mLoader; // 0x54
     int mCurRecommendationIdx; // 0x58
