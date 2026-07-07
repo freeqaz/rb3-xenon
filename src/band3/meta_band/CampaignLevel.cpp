@@ -15,11 +15,26 @@ CampaignLevel::~CampaignLevel() {}
 void CampaignLevel::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x1F);
     mName = i_pConfig->Sym(0);
-    i_pConfig->FindData(point_value, mPointValue, true);
-    i_pConfig->FindData(advertisement, mAdvertisement, true);
-    i_pConfig->FindData(requirement_token, mRequirementToken, false);
-    i_pConfig->FindData(award, mAward, false);
-    i_pConfig->FindData(is_major_level, mIsMajorLevel, false);
+    {
+        static Symbol point_value("point_value");
+        i_pConfig->FindData(point_value, mPointValue, true);
+    }
+    {
+        static Symbol advertisement("advertisement");
+        i_pConfig->FindData(advertisement, mAdvertisement, true);
+    }
+    {
+        static Symbol requirement_token("requirement_token");
+        i_pConfig->FindData(requirement_token, mRequirementToken, false);
+    }
+    {
+        static Symbol award("award");
+        i_pConfig->FindData(award, mAward, false);
+    }
+    {
+        static Symbol is_major_level("is_major_level");
+        i_pConfig->FindData(is_major_level, mIsMajorLevel, false);
+    }
 }
 
 Symbol CampaignLevel::GetName() const { return mName; }

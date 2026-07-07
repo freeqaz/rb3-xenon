@@ -18,6 +18,15 @@
 #include "utl/Symbols4.h"
 
 Symbol SavedSetlist::SetlistTypeToSym(SetlistType ty) {
+    static Symbol setlist_internal("setlist_internal");
+    static Symbol setlist_local("setlist_local");
+    static Symbol setlist_friend("setlist_friend");
+    static Symbol setlist_harmonix("setlist_harmonix");
+    static Symbol battle_harmonix("battle_harmonix");
+    static Symbol battle_harmonix_archived("battle_harmonix_archived");
+    static Symbol battle_friend("battle_friend");
+    static Symbol battle_friend_archived("battle_friend_archived");
+
     switch (ty) {
     case kSetlistInternal:
         return setlist_internal;
@@ -36,7 +45,6 @@ Symbol SavedSetlist::SetlistTypeToSym(SetlistType ty) {
     case kBattleFriendArchived:
         return battle_friend_archived;
     default:
-        MILO_FAIL("bad SetlistType");
         return gNullStr;
     }
 }
