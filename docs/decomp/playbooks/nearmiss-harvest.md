@@ -66,6 +66,10 @@ A/B-gated single change (see `hasreal-grind.md` / the struct campaigns).
 Other lane rules:
 - One shared worktree per wave (`scripts/setup_worktree.sh ~/tmp/wt-<wave>`),
   lanes partitioned by TU so they never touch the same file.
+- **Worktree PCH trap:** the reflinked PCH embeds main-repo paths; the first
+  real recompile of a PCH-eligible TU (most of `src/system`) fails with
+  double-include / type-redefinition errors. Fix once per worktree:
+  `touch src/system/decomp_pch.cpp && ./tools/ninja-locked build/45410914/pch/system.pch`.
 - **Always pass `project_dir=<worktree>` to `run_objdiff`/`run_analyze_function`**
   — without it the tool builds main and your edits are invisible (reads as a
   mysterious frozen %).
@@ -101,7 +105,28 @@ Ordering / CSE levers:
   the compiler folding an adjacent `m.x` load across the store when retail
   reloads it.
 
+CSE / call-shape levers (round-5 additions):
+- **Syntax-form CSE defeat** — MSVC /O1's CSE is *syntax-form-sensitive*: when
+  retail computes a value twice (two `slwi`), mix the forms (`x * 8` in one
+  spot, `x << 3` in the other) to force both computations (SHA1::Update).
+- **Qualified devirtualized call** — `MoggClip::Stop(0);` (explicitly
+  qualified) inlines the virtual's body in place, reproducing retail's
+  this-adjust + frame shape; the unqualified call emits a vcall.
+- **Separate file statics vs struct members** — statics are leaf
+  section-relative addresses scheduled *before* `li` arg setup; struct-member
+  addresses are derived arithmetic scheduled *after*. Retail config blobs that
+  look like a struct may be N separate statics (MicManagerXbox).
+- **Address-shape for indexed byte access** — keep `base + 4` as its own
+  pointer and index with the *variable* (`rowPtr[pixelY]` → `lbzx`) instead of
+  folding to a constant displacement (`lbz 0x4`) (DecodeDxtColor).
+- **Ctor-arg-order diagnosis** — when a 2-int ctor's args could be swapped,
+  retail's `(bool)` normalization (`subic`/`subfe`) pins which position the
+  bool-typed value occupies (UsbMidiGuitar RG messages).
+
 Type-width / instruction-selection levers:
+- **`(unsigned int)` cast on an index bounds check** — `(unsigned)idx >=
+  vec.size()` flips signed `cmpw` → retail's unsigned `cmplw` (closed the
+  entire LightPreset PropSync ×4 family in one edit).
 - **`unsigned int` char-loop temp** reproduces retail `cmplwi` where
   `strcpy`-style code emits signed `extsb.`.
 - **`(int)` cast on a pointer null-check** flips unsigned `cmplwi` → signed

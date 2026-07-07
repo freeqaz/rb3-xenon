@@ -11,5 +11,17 @@
  "AppChild::Poll": {"verdict": "header_need", "date": "2026-07-03", "why": "Data.h Execute(bool fail=true) -> Wii-era Execute(); shared header, own A/B-gated change"},
  "InitMakeString": {"verdict": "at_limit", "date": "2026-07-02", "why": "anchor-selection residual (0x800 partial)"},
  "PanelDir::PanelNav": {"verdict": "at_limit", "date": "2026-07-02", "why": "genuine retail-source body divergence (dc3 same source = Matching; RB3 source differed)"},
- "FftIpp": {"verdict": "deferred_codegen", "date": "2026-07-01", "why": "bodyport recon DEFER_CODEGEN verdict"}
+ "FftIpp": {"verdict": "deferred_codegen", "date": "2026-07-01", "why": "bodyport recon DEFER_CODEGEN verdict"},
+ "VocalTrack::ProcessStaticLyrics": {"verdict": "at_limit", "date": "2026-07-07", "why": "CSE-reload wall: retail reloads f3 post-store, our store-forward is a fixed point; opaque-store lever byte-identical"},
+ "BandCharacter::OnChangeFaceGroup": {"verdict": "at_limit", "date": "2026-07-07", "why": "strcpy extsb. wall, 1-insn residual; unsigned-temp ladder exhausted (5 shapes)"},
+ "CharUtlFindBoneTrans": {"verdict": "at_limit", "date": "2026-07-07", "why": "strcpy extsb. wall; open-code always leaves a dead mr/mr."},
+ "CharUtlFindBone": {"verdict": "at_limit", "date": "2026-07-07", "why": "same strcpy extsb. wall as CharUtlFindBoneTrans, same TU"},
+ "FirstSortChar": {"verdict": "at_limit", "date": "2026-07-07", "why": "strcpy extsb. wall"},
+ "?Final@CSHA1": {"verdict": "at_limit", "date": "2026-07-07", "why": "2x clrlwi u8-narrowing masks (value-range prop wall)"},
+ "ReportHash@Digest@CSHA1": {"verdict": "at_limit", "date": "2026-07-07", "why": "2x strcpy extsb. sites; unsigned-buffer theory tested dead"},
+ "Synapse::ProcessInPlace": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 96.0->99.8; single commutative add operand order = VN fixed point"},
+ "CharIKFingers::CalculateHandDest": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 95.8->99.7; residual 3-cycle FPR result rotation, permuter-class"},
+ "UsbMidiGuitar::Poll": {"verdict": "header_need", "date": "2026-07-07", "why": "banked 99.16->99.9; residual needs Joypad.h mType 0x74->0x6c (-8 in 0x5c-0x70 mask block) + ProGuitarData bitfields"},
+ "CharBoneDir::GetContextFlags": {"verdict": "header_need", "date": "2026-07-07", "why": "Data.h SortNodes(int)->SortNodes() DC3 drift; rb3-Wii Data.h:477 no-arg; +6 cascade candidate, own gated change"},
+ "StandardStream::Init": {"verdict": "header_need", "date": "2026-07-07", "why": "StandardStream.h +8: mAccumulatedLoopbacks@0x164 (Wii oracle) + 4B in 0xf4-0x160 marker region; then add mAccumulatedLoopbacks=0.0f in Init"}
 }
