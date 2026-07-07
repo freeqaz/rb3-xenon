@@ -873,21 +873,21 @@ void DecodeDxtColor(
     unsigned char &b,
     unsigned char &a
 ) {
-    unsigned char *rowPtr;
     unsigned short color0 = *(unsigned short *)blockData;
     unsigned short color1 = *((unsigned short *)blockData + 1);
+    unsigned char *rowPtr = blockData + 4;
 
     if (pixelY & 1) {
-        rowPtr = blockData + pixelY - 1;
+        pixelY = pixelY - 1;
     } else {
-        rowPtr = blockData + pixelY + 1;
+        pixelY = pixelY + 1;
     }
 
     unsigned char r0 = (color0 >> 8) & 0xF8;
     unsigned char r1 = (color1 >> 8) & 0xF8;
     unsigned char g0 = (color0 >> 3) & 0xFC;
     unsigned char g1 = (color1 >> 3) & 0xFC;
-    int colorIdx = (rowPtr[4] >> ((pixelX << 1) & 0xFE)) & 3;
+    int colorIdx = (rowPtr[pixelY] >> ((pixelX << 1) & 0xFE)) & 3;
     unsigned char b0 = (color0 << 3) & 0xF8;
     unsigned char b1 = (color1 << 3) & 0xF8;
 

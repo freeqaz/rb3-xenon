@@ -135,8 +135,7 @@ void CSHA1::Update(const unsigned char *data, unsigned int len) {
 
     j = m_count[0];
     j = (j / 8) % 64;
-    m_count[0] += len * 8;
-    if (m_count[0] < len * 8) {
+    if ((m_count[0] += len * 8) < (len << 3)) {
         m_count[1]++;
     }
     m_count[1] += (len >> 29);

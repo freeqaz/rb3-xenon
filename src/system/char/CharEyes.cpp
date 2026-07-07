@@ -676,20 +676,18 @@ void CharEyes::AddInterestObject(CharInterest *interest) {
 bool CharEyes::EyesOnTarget(float f) {
     for (ObjVector<EyeDesc>::iterator it = mEyes.begin(); it != mEyes.end(); ++it) {
         CharLookAt *eye = it->mEye;
-        if (eye) {
-            RndTransformable *src = eye->GetSource();
-            if (src) {
-                Vector3 diff;
-                Subtract(mTarget, src->WorldXfm().v, diff);
-                Vector3 fwd(src->WorldXfm().m.y);
-                Vector3 diff2d(diff);
-                diff2d.z = 0;
-                fwd.z = 0;
-                float dot = Dot(fwd, diff2d);
-                float angle = std::acos(Clamp<float>(-1, 1, dot / (Length(fwd) * Length(diff2d))));
-                if (angle * 57.295776f > f) {
-                    return false;
-                }
+        RndTransformable *src = eye->GetSource();
+        if (src) {
+            Vector3 diff;
+            Subtract(mTarget, src->WorldXfm().v, diff);
+            Vector3 fwd(src->WorldXfm().m.y);
+            Vector3 diff2d(diff);
+            diff2d.z = 0;
+            fwd.z = 0;
+            float dot = Dot(fwd, diff2d);
+            float angle = std::acos(Clamp<float>(-1, 1, dot / (Length(fwd) * Length(diff2d))));
+            if (angle * 57.295776f > f) {
+                return false;
             }
         }
     }

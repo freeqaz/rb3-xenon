@@ -1375,12 +1375,13 @@ bool GemManager::IsSpotlightGem(int gemId, bool &outUnison) {
         if (TheGame->InTrainer() && TheGemTrainerPanel->IsGemInFutureLoop(gemId)) {
             inFutureLoop = true;
         }
-        CommonPhraseCapturer *capturer = band->mCommonPhraseCapturer;
-        if (inFutureLoop ||
-            !capturer->DidTrackFail(phrase_id, mTrackConfig.TrackNum())) {
-            outUnison = TheSongDB->IsUnisonPhrase(phrase_id);
-            return true;
+        if (!inFutureLoop) {
+            CommonPhraseCapturer *capturer = band->mCommonPhraseCapturer;
+            if (capturer->DidTrackFail(phrase_id, mTrackConfig.TrackNum()))
+                return false;
         }
+        outUnison = TheSongDB->IsUnisonPhrase(phrase_id);
+        return true;
     }
     return false;
 }

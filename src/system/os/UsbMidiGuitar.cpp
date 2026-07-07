@@ -140,8 +140,8 @@ void UsbMidiGuitar::Poll() {
                     SendMessage(swMsg);
                 }
                 int axisVal11 = proData->mAccelX;
-                int axisVal10 = proData->mAccelZ;
                 int axisVal12 = proData->mAccelY;
+                int axisVal10 = proData->mAccelZ;
                 if (axisVal11 != TheGuitar->CurrentAccelAxisVal(i, 0)
                     || axisVal12 != TheGuitar->CurrentAccelAxisVal(i, 1)
                     || axisVal10 != TheGuitar->CurrentAccelAxisVal(i, 2)) {
@@ -152,33 +152,33 @@ void UsbMidiGuitar::Poll() {
                 int connAcc = proData->mPitchBend;
                 if (connAcc != TheGuitar->GetConnectedAccessory(i)) {
                     TheGuitar->SetConnectedAccessories(i, connAcc);
-                    RGConnectedAccessoriesMsg caMsg(connAcc, i);
+                    RGConnectedAccessoriesMsg caMsg(i, connAcc); // retail arg order: (pad, value)
                     SendMessage(caMsg);
                 }
                 int pitchBend = proData->mPitchBend;
                 if (pitchBend != TheGuitar->GetPitchBend(i)) {
                     TheGuitar->SetPitchBend(i, pitchBend);
-                    RGPitchBendMsg pbMsg(pitchBend, i);
+                    RGPitchBendMsg pbMsg(i, pitchBend); // retail arg order: (pad, value)
                     SendMessage(pbMsg);
                 }
                 int muting = proData->mMuting;
                 if (muting != TheGuitar->GetMuting(i)) {
                     TheGuitar->SetMuting(i, muting);
-                    RGMutingMsg mutMsg(muting, i);
+                    RGMutingMsg mutMsg(i, muting); // retail arg order: (pad, value)
                     SendMessage(mutMsg);
                 }
                 bool stompBox = proData->mStompBox;
                 if (stompBox != TheGuitar->GetStompBox(i)) {
                     TheGuitar->SetStompBox(i, stompBox);
-                    RGStompBoxMsg sbMsg(stompBox, i);
+                    RGStompBoxMsg sbMsg(i, stompBox); // retail arg order: (pad, value)
                     SendMessage(sbMsg);
                 }
                 unsigned char *pgRaw = (unsigned char *)proData;
-                int programChange = (pgRaw[0xb] >> 6 & 2)
-                    + (pgRaw[0xc] >> 5 & 4) + (pgRaw[0xa] >> 7);
+                int programChange = (pgRaw[0xa] >> 7)
+                    + (pgRaw[0xb] >> 6 & 2) + (pgRaw[0xc] >> 5 & 4);
                 if (programChange != TheGuitar->GetProgramChange(i)) {
                     TheGuitar->SetProgramChange(i, programChange);
-                    RGProgramChangeMsg pcMsg(programChange, i);
+                    RGProgramChangeMsg pcMsg(i, programChange); // retail arg order: (pad, value)
                     SendMessage(pcMsg);
                 }
             }

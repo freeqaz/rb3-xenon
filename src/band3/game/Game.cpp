@@ -957,10 +957,10 @@ static const char *gStrPlayerStates[16] = {
 void Game::E3CheatAutoplayAccuracy() {
     for (int slot = 0; slot < 4; slot++) {
         BandUser *user = TheBandUserMgr->GetUserFromSlot(slot);
-        if (user && user->mPlayer) {
+        if (user && (int)user->mPlayer) {
             if (user->IsLocal()) {
-                RealGuitarGemPlayer *rggp =
-                    dynamic_cast<RealGuitarGemPlayer *>(user->mPlayer);
+                Player *player = user->mPlayer;
+                RealGuitarGemPlayer *rggp = dynamic_cast<RealGuitarGemPlayer *>(player);
                 if (rggp) {
                     rggp->SetAutoplay(true);
                     rggp->SetAutoplayAccuracy(0.95f);

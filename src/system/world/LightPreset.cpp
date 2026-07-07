@@ -350,7 +350,7 @@ void LightPreset::ResetEvents() { sManualEvents.clear(); }
 
 template <class T>
 __forceinline const char *GetObjName(const std::vector<T *> &vec, int idx) {
-    if (idx >= (int)vec.size())
+    if ((unsigned int)idx >= vec.size())
         return "<obj index out of bounds>";
     else if (!vec[idx])
         return "<obj not found>";
@@ -381,7 +381,8 @@ BEGIN_CUSTOM_PROPSYNC(LightPreset::EnvironmentEntry)
     SYNC_PROP_SET(fog_enable, o.mFogEnable, )
     SYNC_PROP_SET(fog_start, o.mFogStart, )
     SYNC_PROP_SET(fog_end, o.mFogEnd, )
-    SYNC_PROP(fog_color, o.mFogColor)
+    // retail bug: fog_color syncs mAmbientColor (copy-paste), not mFogColor
+    SYNC_PROP(fog_color, o.mAmbientColor)
 END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(LightPreset::EnvLightEntry)

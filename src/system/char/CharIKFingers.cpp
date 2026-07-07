@@ -240,7 +240,26 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
             if (!mIsRightHand) {
                 Scale(sideOffsetBase, -1.0f, sideOffsetBase);
             }
-            Multiply(sideOffsetBase, mKeyboardRefBone->WorldXfm().m, sideOffsetBase);
+            {
+                const Hmx::Matrix3 &m = mKeyboardRefBone->WorldXfm().m;
+                Vector3 tmp;
+                tmp.Set(
+                    m.z.x * sideOffsetBase.z,
+                    m.z.y * sideOffsetBase.z,
+                    m.z.z * sideOffsetBase.z
+                );
+                tmp.Set(
+                    tmp.x + m.x.x * sideOffsetBase.x,
+                    tmp.y + m.x.y * sideOffsetBase.x,
+                    tmp.z + m.x.z * sideOffsetBase.x
+                );
+                tmp.Set(
+                    tmp.x + m.y.x * sideOffsetBase.y,
+                    tmp.y + m.y.y * sideOffsetBase.y,
+                    tmp.z + m.y.z * sideOffsetBase.y
+                );
+                sideOffsetBase = tmp;
+            }
             Hmx::Matrix3 refRotMat;
             Multiply(mtx, mKeyboardRefBone->WorldXfm().m, refRotMat);
             Normalize(refRotMat, mDestHandTrans.m);

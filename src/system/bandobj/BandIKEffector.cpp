@@ -627,8 +627,9 @@ float BandIKEffector::ApplyConstraints(
             Transform local;
             Multiply(tf, tpose, local);
             float lensq = LengthSquared(local.v);
-            float clamped = Max(lensq, 0.001f);
-            float w = 144.0f * c.mWeight / clamped;
+            float scaled = c.mWeight * 144.0f;
+            float clamped = Max(0.001f, lensq);
+            float w = scaled / clamped;
             totalWeight += w;
             Transform targetWorld = c.mTarget->WorldXfm();
             Normalize(targetWorld.m, targetWorld.m);

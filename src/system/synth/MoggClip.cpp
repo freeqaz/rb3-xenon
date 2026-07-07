@@ -114,10 +114,7 @@ void MoggClip::SynthPoll() {
             mStream->Play();
         } else {
             if (mStream->IsFinished() || mFader->mVal == -96.0f) {
-                KillStream();
-                if (mUnloadWhenFinished) {
-                    UnloadData();
-                }
+                MoggClip::Stop(0);
             }
         }
     }

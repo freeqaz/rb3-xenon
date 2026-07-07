@@ -289,11 +289,10 @@ void Synapse::ProcessInPlace(unsigned int arg1, float *arg2) {
             if (!((mDetectionInterval - 1) & temp_r11_2)) {
                 (*(PitchDetector **)((char *)this + 0x28))->Detect(temp_r11_2 >> 2);
                 PitchDetector *pd = *(PitchDetector **)((char *)this + 0x28);
-                float temp_f0 = pd->mPitchConfidence;
-                mPitchConfidence = temp_f0;
+                mPitchConfidence = pd->mPitchConfidence;
                 mPitchClarity = pd->mPitchClarity;
 
-                if (temp_f0 > mPitchThreshold) {
+                if (mPitchConfidence > mPitchThreshold) {
                     float temp_f0_2 = pd->mDetectedPitch * temp_f31;
                     mDetectedPitch = temp_f0_2;
 
@@ -306,27 +305,16 @@ void Synapse::ProcessInPlace(unsigned int arg1, float *arg2) {
                     (*(GranularSynth **)((char *)this + 0x68))->mPitchConfidence = mPitchConfidence;
                 }
 
-                void *vp = (char *)this + 0x5C;
-                unsigned int var_r27 = 0;
-                if ((int)((int)(*(void **)((char *)vp + 0x4)) - (int)(*(void **)vp)) / 56 != 0) {
-                    int var_r28 = 0;
-                    int var_r29 = 0;
-
-                    do {
-                        *(float *)((char *)(*(void **)vp) + var_r29) = mTargetPitch / mDetectedPitch;
-                        *(float *)((char *)(*(void **)vp) + var_r29 + 0x28) = mPitchConfidence;
-                        *(float *)((char *)(*(void **)vp) + var_r29 + 0x2C) = mPitchClarity;
-
-                        GranularSynth *gs = *(GranularSynth **)((char *)this + 0x68);
-                        float temp_f1 = ((PitchCorrectedVoice *)((char *)(*(void **)vp) + var_r29))->GetCorrection();
-
-                        var_r27++;
-                        GranularVoice *gv = (GranularVoice *)((char *)gs->mVoices + var_r28);
-                        var_r29 += 0x38;
-                        var_r28 += 0x18;
-
-                        gv->mCorrection = temp_f1;
-                    } while (var_r27 < (unsigned int)((int)((int)(*(void **)((char *)vp + 0x4)) - (int)(*(void **)vp)) / 56));
+                for (unsigned int i = 0; i < mVoices.size(); i++) {
+                    mVoices[i].mFreq0 = mTargetPitch / mDetectedPitch;
+                    mVoices[i].mField_0x28 = mPitchConfidence;
+                    mVoices[i].mFreqCounter = mPitchClarity;
+                    GranularSynth *gs = mGranularSynth.get();
+                    // NOTE: the cast form (not mVoices[i]) keeps the address add as
+                    // (begin, offset); one residual commutative swap remains on the
+                    // GetCorrection receiver add (add r3, off, begin vs begin, off).
+                    gs->mVoices[i].mCorrection =
+                        ((PitchCorrectedVoice *)((char *)mVoices.begin() + i * 56))->GetCorrection();
                 }
             }
 

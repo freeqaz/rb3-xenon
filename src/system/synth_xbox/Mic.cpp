@@ -15,17 +15,15 @@ namespace GainEffect {
 static float sGain;
 }
 
-struct HeadsetConfig {
-    float noiseThreshold;
-    float pad;
-    float lowCut;
-    float localGain;
-    float remoteGain;
-};
-
-extern "C" {
-extern HeadsetConfig lbl_82F474C8;
-}
+// Separate file statics (not a struct): leaf global addresses schedule the
+// addi r5 before the li r6 in the FindData arg setup, matching retail
+// (same model DC3 verified vs its target asm). gNoiseInt provides the
+// 4-byte gap between gNoiseThreshold (+0) and gLowCut (+8).
+static float gNoiseThreshold = -10;
+static int gNoiseInt = 5;
+static float gLowCut = 800;
+static float gLocalGain = -3;
+static float gRemoteGain = 3;
 
 #pragma region MicXbox
 
@@ -152,13 +150,13 @@ MicManagerXbox::MicManagerXbox()
 
     // Load headset configuration from system config
     DataArray *arr = SystemConfig(Symbol("synth"), Symbol("xbox_headset"));
-    arr->FindData(Symbol("noise_threshold"), lbl_82F474C8.noiseThreshold, true);
-    arr->FindData(Symbol("low_cut"), lbl_82F474C8.lowCut, true);
-    arr->FindData(Symbol("local_gain"), lbl_82F474C8.localGain, true);
-    arr->FindData(Symbol("remote_gain"), lbl_82F474C8.remoteGain, true);
+    arr->FindData(Symbol("noise_threshold"), gNoiseThreshold, true);
+    arr->FindData(Symbol("low_cut"), gLowCut, true);
+    arr->FindData(Symbol("local_gain"), gLocalGain, true);
+    arr->FindData(Symbol("remote_gain"), gRemoteGain, true);
 
     // Convert remote gain from dB to linear ratio
-    GainEffect::sGain = DbToRatio(lbl_82F474C8.remoteGain);
+    GainEffect::sGain = DbToRatio(gRemoteGain);
 }
 
 MicManagerXbox::~MicManagerXbox() {}

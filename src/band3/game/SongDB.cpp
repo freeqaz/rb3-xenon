@@ -166,24 +166,23 @@ int SongDB::GetVocalNoteListCount() const { return mSongData->GetVocalNoteListCo
 bool SongDB::GetPhraseExtents(
     BeatmatchPhraseType ty, int track, int i3, int &i4, int &i5
 ) {
-    int i38 = i3;
     MILO_ASSERT(mTrackData.size() > track, 0xF1);
     if (ty == kNoPhrase)
         return false;
     else {
-        int i1 = i38;
+        int i1 = i3;
         int i9 = 0;
         int i8 = 0;
         if (TheGame->InTrainer() && TheTrainerPanel) {
             i9 = TheTrainerPanel->GetCurrentStartTick();
             i8 = TheTrainerPanel->GetCurrentEndTick();
-            if (i38 >= i8 && i8 != 0) {
-                i38 -= ((i38 - i9) / (i8 - i9)) * (i8 - i9);
+            if (i3 >= i8 && i8 != 0) {
+                i3 -= ((i3 - i9) / (i8 - i9)) * (i8 - i9);
             }
         }
         std::vector<Extent> &extents = GetExtents(track, ty);
         std::vector<Extent>::iterator it =
-            std::lower_bound(extents.begin(), extents.end(), i38, ExtentCmp);
+            std::lower_bound(extents.begin(), extents.end(), i3, ExtentCmp);
         if (it == extents.end())
             return false;
         else {

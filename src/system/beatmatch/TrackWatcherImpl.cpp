@@ -346,7 +346,7 @@ void TrackWatcherImpl::CheckForPasses(float ms) {
         int next = NextGemAfter(i3, false);
         if (next != -1) {
             float other = (f5 + mGemList->TimeAt(next)) / 2.0f - mSyncOffset;
-            if (other < f6) f6 = other;
+            f6 = Min(f6, other);
         }
         if (!Playable(i3))
             f6 = f5;
@@ -493,15 +493,16 @@ void TrackWatcherImpl::CheckForPitchBend(float ms) {
     float whammy = _ref0->GetWhammyBar();
     if (whammy >= -0.34999999f) {
         mPitchBendReady = true;
-        if (mBiggestWhammy < whammy) mBiggestWhammy = whammy;
+        mBiggestWhammy = Max(mBiggestWhammy, whammy);
     }
     if (HasAnyGemInProgress()) {
         if (mPitchBendReady && mBiggestWhammy != -1.0f) {
             float f3 = (whammy - mBiggestWhammy) / (1.0f + mBiggestWhammy);
             SendWhammy(f3);
             float range = (float)mPitchBendRange;
-            _ref0->SetPitchBend(mTrack, range *
-                (f3 * Clamp<float>(0, 1, (ms - mPitchBendMsHit) / mPitchBendMsToFull)), false);
+            _ref0->SetPitchBend(mTrack,
+                Clamp<float>(0, 1, (ms - mPitchBendMsHit) / mPitchBendMsToFull) * range
+                    * f3, false);
         } else
             SendWhammy(0);
     } else {

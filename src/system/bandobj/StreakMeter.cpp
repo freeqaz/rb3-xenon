@@ -165,7 +165,7 @@ void StreakMeter::SetPartColor(int i, VocalHUDColor col) {
         SetPartActive(i, false);
     else if (i < mPartColorAnims.size()) {
         RndPropAnim *curanim = mPartColorAnims[i];
-        if (curanim)
+        if ((int)curanim)
             curanim->SetFrame(col, 1.0f);
     }
 }
