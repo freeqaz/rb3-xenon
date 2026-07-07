@@ -1,0 +1,15 @@
+{
+ "_comment": "Machine-readable at-limit/deferred verdicts for the nearmiss-harvest playbook. gen_nearmiss_pool.py excludes these so lanes never re-attempt proven walls. Key = substring matched against the demangled name. Sources: docs/decomp/plans/post-codegen-kill-streams-2026-06-30.md RESULTS blocks + round handoffs.",
+ "RndMesh::SkinVertex": {"verdict": "at_limit", "date": "2026-07-03", "why": "volatile-regalloc cycle, permuter-refuted (97.5 ceiling)"},
+ "BinStream::Write": {"verdict": "at_limit", "date": "2026-07-03", "why": "u8-narrowing mask, compiler value-range propagation"},
+ "BlockMgr::AddTask": {"verdict": "at_limit", "date": "2026-07-03", "why": "CSE-reload wall (retail reloads what our CSE folds)"},
+ "RndFlare::CalcScale": {"verdict": "at_limit", "date": "2026-07-02", "why": "lfd/lfs zero codegen cliff; any FP-compare rewrite reschedules whole DAG"},
+ "Waypoint::ShapeDeltaBox": {"verdict": "at_limit", "date": "2026-07-01", "why": "lfd/lfs zero cliff"},
+ "Geo::CheckBSPTree": {"verdict": "at_limit", "date": "2026-06-30", "why": "permuter 231 runs never >99.03"},
+ "MidiParser::PushIdle": {"verdict": "at_limit", "date": "2026-06-30", "why": "permuter 185 runs 0 wins, 99.74 ceiling"},
+ "MidiParser::AddMessage": {"verdict": "deferred_nearwin", "date": "2026-07-03", "why": "body reaches 100 but +8 frame shifts EH funclet DataArray slot 0x50->0x54; needs no-frame-growth shape"},
+ "AppChild::Poll": {"verdict": "header_need", "date": "2026-07-03", "why": "Data.h Execute(bool fail=true) -> Wii-era Execute(); shared header, own A/B-gated change"},
+ "InitMakeString": {"verdict": "at_limit", "date": "2026-07-02", "why": "anchor-selection residual (0x800 partial)"},
+ "PanelDir::PanelNav": {"verdict": "at_limit", "date": "2026-07-02", "why": "genuine retail-source body divergence (dc3 same source = Matching; RB3 source differed)"},
+ "FftIpp": {"verdict": "deferred_codegen", "date": "2026-07-01", "why": "bodyport recon DEFER_CODEGEN verdict"}
+}
