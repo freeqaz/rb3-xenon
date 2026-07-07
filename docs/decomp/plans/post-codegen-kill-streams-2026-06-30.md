@@ -284,3 +284,36 @@ AssignPrefabsToSlots, BlockMgr::Poll, BandDirector::OnMidiShotCategory.
 ⭐ PROCESS: the local-.cpp-only rule made this wave clean — the ONLY regression
 was a same-TU funclet coupling (not a shared-header cascade like round-3). The
 per-fn hit rate held (12/16 to 100; ~2 walls, 1 header-deferred, 1 dropped).
+
+## RESULTS (2026-07-07) — r5 harvest wave on main@11240: **+15 LANDED (main @b78b194)**
+First wave run off the new playbook (`docs/decomp/playbooks/nearmiss-harvest.md`)
+with the pool generator + verdict registry (`scripts/harvest/gen_nearmiss_pool.py`).
+4 Fable lanes, 23 candidates, 16 in-worktree wins; composed A/B x2 = **+15 gained,
+0 regressed, run1==run2 (11240→11255), icf HONEST**. Third consecutive
+zero-regression wave under the local-.cpp-only rule.
+
+Landed: LightPreset PropSync x4 (ONE edit — `(unsigned)idx >= size()` bounds-check
+cast — closed the family; EnvironmentEntry also reproduces a retail copy-paste bug:
+fog_color PropSync reads mAmbientColor), SHA1::Update (syntax-form CSE defeat:
+mix `x*8` with `x<<3`), DecodeDxtColor (address-shape lbzx), MoggClip::SynthPoll
+(qualified devirtualized `MoggClip::Stop(0)`), MicManagerXbox ctor (struct → 5
+file statics, DC3 model), Synapse::ProcessInPlace, CharEyes::EyesOnTarget (drop
+null-guard), BandIKEffector::ApplyConstraints (Max operand polarity + split
+mul/div reassociation), TrackWatcherImpl::CheckForPasses/CheckForPitchBend
+(Min/Max → fsel), Game::E3CheatAutoplayAccuracy, StreakMeter::SetPartColor,
+SongDB::GetPhraseExtents + GemManager::IsSpotlightGem (big fuzzy wins, strict
+blocked on Game.h — see below). Banked fuzzy: CharIKFingers 95.8→99.7,
+UsbMidiGuitar::Poll 99.16→99.9.
+
+⭐ HEADER-NEEDS (4, queued as own gated changes —
+`docs/decomp/handoff/round5-header-needs-2026-07-07.md`): (1) **Game.h drop
+Wii-only DiscErrorMgrWii::Callback base** (mProperties 0x30→0x2c, two witnesses,
+binary-wide cascade candidate); (2) Data.h SortNodes(int)→SortNodes() (+6
+cascade, second witness — pair with the round-4 Execute(bool) finding); (3)
+StandardStream.h +8 (mAccumulatedLoopbacks@0x164 + 4B marker region); (4)
+Joypad.h mType 0x74→0x6c (stride 0xd4 verified).
+
+New walls registered in scripts/harvest/nearmiss_verdicts.json (auto-excluded
+from future pools): VocalTrack::ProcessStaticLyrics (CSE-reload), 5x strcpy
+extsb. members (CharUtl pair, FirstSortChar, ReportHash, OnChangeFaceGroup),
+CSHA1::Final (u8-narrow).
