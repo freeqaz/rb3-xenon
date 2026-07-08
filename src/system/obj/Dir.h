@@ -484,7 +484,11 @@ public:
     // member; BandCharacter::AllowsInlineProxy already overrides it, so the base
     // must declare it virtual or that override inserts a bogus slot. See
     // docs/decomp/research/2026-06-11-vtable-walls.md.
+#ifdef HX_NATIVE
+    virtual bool AllowsInlineProxy() { return mInlineProxyType != kInlineNever; }
+#else
     virtual bool AllowsInlineProxy() { return mInlineProxy; }
+#endif
     virtual InlineDirType InlineSubDirType();
 
     /** Find an Object of type T in this ObjectDir.

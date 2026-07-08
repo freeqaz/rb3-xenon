@@ -82,7 +82,11 @@ static bool ShouldSkipCascadeNullify(Hmx::Object *obj, const std::vector<ObjectD
 
 ObjectDir::ObjectDir()
     : mHashTable(0, Entry(), Entry(), 0), mStringTable(0), mProxyOverride(false),
+#ifdef HX_NATIVE
+      mInlineProxyType(kInlineCached), mLoader(nullptr), mIsSubDir(false),
+#else
       mInlineProxy(true), mLoader(nullptr), mIsSubDir(false),
+#endif
       mInlineSubDirType(kInlineNever), mPathName(gNullStr), mViewports(7),
       mCurViewportID((ViewportId)0), unk8c(nullptr), mCurCam(nullptr), mAlwaysInlined(0),
       mAlwaysInlineHash(gNullStr) {
@@ -292,7 +296,11 @@ BEGIN_PROPSYNCS(ObjectDir)
         FileRelativePath(FilePath::Root().c_str(), ProxyFile().c_str()),
         SetProxyFile(_val.Str(), false)
     )
+#ifdef HX_NATIVE
+    SYNC_PROP(inline_proxy, (int &)mInlineProxyType)
+#else
     SYNC_PROP(inline_proxy, mInlineProxy)
+#endif
     SYNC_PROP_SET(path_name, mPathName, )
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
@@ -463,7 +471,11 @@ BEGIN_COPYS(ObjectDir)
                 }
 #endif
             }
+#ifdef HX_NATIVE
+            COPY_MEMBER(mInlineProxyType)
+#else
             COPY_MEMBER(mInlineProxy)
+#endif
             COPY_MEMBER(mInlineSubDirType)
         END_COPYING_MEMBERS
     }
@@ -561,10 +573,14 @@ bool ObjectDir::ShouldSaveProxy(BinStream &bs) {
 
 void ObjectDir::SetInlineProxyType(InlineDirType t) {
     MILO_ASSERT(t != kInlineCachedShared, 0x198);
+#ifdef HX_NATIVE
+    mInlineProxyType = t;
+#else
     // RB3 retail stores inline-proxy as a single bool (Dir.h mInlineProxy@0x49);
     // map the enum setter onto it as the inverse of InlineProxyType():
     // kInlineNever -> false, anything else -> true.
     mInlineProxy = (t != kInlineNever);
+#endif
 }
 
 BinStreamRev &operator>>(BinStreamRev &bs, ObjectDir::Viewport &v) {
@@ -1085,10 +1101,15 @@ void ObjectDir::SetCurViewport(ViewportId id, Hmx::Object *o) {
 void ObjectDir::SetSubDirFlag(bool flag) { mIsSubDir = flag; }
 
 bool ObjectDir::InlineProxy(BinStream &bs) {
+#ifdef HX_NATIVE
+    return (mInlineProxyType == kInlineCached && bs.Cached())
+        || mInlineProxyType == kInlineAlways;
+#else
     // RB3 retail (rb3-Wii oracle Dir.cpp): return AllowsInlineProxy() && bs.Cached();
     // the DC3-era kInlineCached/kInlineAlways split does not exist in retail, where
     // inline-proxy is the single bool mInlineProxy.
     return AllowsInlineProxy() && bs.Cached();
+#endif
 }
 
 void ObjectDir::SetPathName(const char *path) {
@@ -1175,6 +1196,19 @@ void ObjectDir::PreLoad(BinStream &bs) {
 
     if (d.rev > 0xC) {
         if (d.rev > 0x13) {
+#ifdef HX_NATIVE
+            InlineDirType proxyType;
+            if (d.rev > 0x1B) {
+                d >> proxyType;
+            } else {
+                bool b;
+                d >> b;
+                proxyType = (InlineDirType)(b != 0);
+            }
+            if (!gLoadingProxyFromDisk) {
+                mInlineProxyType = proxyType;
+            }
+#else
             // RB3 retail (rb3-Wii oracle Dir.cpp) reads a single bool here:
             //   if (!gLoadingProxyFromDisk) bs >> mInlineProxy; else { bool b; bs >> b; }
             // The 4-byte InlineDirType path (d.rev > 0x1B) is a DC3-era rev that
@@ -1185,6 +1219,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
                 bool b;
                 d >> b;
             }
+#endif
         }
         if (gLoadingProxyFromDisk || mProxyOverride) {
             if (mProxyOverride && AllowsInlineProxy()) {
