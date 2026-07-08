@@ -447,12 +447,6 @@
    "system/char/Char.cpp": "NonMatching",
    "system/gesture/SkeletonViz.cpp": "NonMatching",
    "system/net/WebSvcReq.cpp": "NonMatching",
-   "system/net/WebSvcMgrCurl.cpp": {
-    "status": "NonMatching",
-    "extra_cflags": [
-     "/I src/system/net/curl/include"
-    ]
-   },
    "system/world/World.cpp": "NonMatching",
    "system/rndobj/Spline.cpp": "NonMatching",
    "system/char/Character.cpp": "NonMatching",

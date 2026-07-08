@@ -3868,7 +3868,3 @@ RGState.cpp:
 
 Rnd.cpp:
 	.text       start:0x82508F90 end:0x82508FA0
-
-WebSvcMgrCurl.cpp:
-	.pdata      start:0x821F0F88 end:0x821F0F90
-	.text       start:0x822D58B8 end:0x822D5910
