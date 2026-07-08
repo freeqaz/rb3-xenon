@@ -14,7 +14,7 @@ from typing import Any
 DEFAULT_DB_PATH = "decomp.db"
 
 # Schema version for migrations
-SCHEMA_VERSION = 16
+SCHEMA_VERSION = 17
 
 # Default maximum attempts before deprioritizing a function
 # Functions with >= this many attempts are excluded from normal queries
@@ -509,6 +509,31 @@ def _run_migrations(conn: sqlite3.Connection, from_version: int, to_version: int
             except sqlite3.OperationalError as e:
                 if "duplicate column" not in str(e).lower():
                     raise
+
+    if from_version < 17 <= to_version:
+        # Migration v16 -> v17: Add landing_snapshot table for the RFC-16
+        # per-function match% regression lock. Keyed by the same
+        # (unit, fn_name, occurrence) tuple measure_delta.py::pct_map uses to
+        # disambiguate the ~11 binary-wide duplicate function names. The partial
+        # index ix_snapshot_strict is the hot path for the regression-lock check
+        # (load the strict-100 set of the latest snapshot).
+        print("  Migration v17: Adding landing_snapshot table (RFC-16 regression lock)...")
+        conn.executescript(
+            """
+            CREATE TABLE IF NOT EXISTS landing_snapshot (
+                merge_commit TEXT NOT NULL,      -- main SHA after the ff-merge
+                landed_at    INTEGER NOT NULL,   -- unix ts
+                unit         TEXT NOT NULL,
+                fn_name      TEXT NOT NULL,
+                occurrence   INTEGER NOT NULL,
+                match_pct    REAL NOT NULL,       -- match_percent_normalized at merge time
+                PRIMARY KEY (merge_commit, unit, fn_name, occurrence)
+            );
+            CREATE INDEX IF NOT EXISTS ix_snapshot_strict
+                ON landing_snapshot(unit, fn_name, occurrence)
+                WHERE match_pct >= 99.999;
+            """
+        )
 
     # Update schema version
     conn.execute("UPDATE schema_version SET version = ?", (to_version,))
