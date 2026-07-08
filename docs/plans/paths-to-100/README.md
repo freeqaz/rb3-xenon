@@ -1,5 +1,21 @@
 # Paths to 100% — ranked index
 
+> **EXECUTION UPDATE — 2026-07-08 (round 1).** The top-4 moves were executed as
+> an Opus workflow. **Shipped to main:** RFC-02 `tools/gap_atlas.py` + snapshot
+> (`8f06bc4`, reproduces every bucket), RFC-14 `tools/symbol_sweep_scan.py`
+> (`74270ab`), RFC-16 Phase-A regression lock (`ec46311`, schema v17 +
+> snapshot/check, backfilled 20 commits, 0 historical strict-100 drops), and a
+> durable decomp-synth fix (`d4cfe67`) making the permuter usable in fresh
+> worktrees. **Both match-producing pilots came back NEGATIVE and are now
+> settled:** RFC-11 permuter farm **KILLED** (0 TRUE-100 / 66 attempts,
+> full 139-pattern set exercised — band is codegen-wall-dominated); RFC-14
+> sweep **empty at the measurable band** (all 415 scanned near-misses classified
+> non-signature — the grind win was revealed thunks, not a sweepable population).
+> Net strict-match delta this round: **+0** (as predicted for the tooling; the
+> two lever bets were falsified cheaply, which was their purpose). See the
+> per-RFC PILOT RESULT banners in `11-` and `14-`, and "Round-1 outcomes" below.
+
+
 **Framing.** rb3-xenon is blocked by exactly two walls, and every RFC here is a
 bet against one of them (or a decision to route around it). **Wall 1 —
 identification:** 71.7% of `.text` is anonymous `auto_*` buckets objdiff never
@@ -53,20 +69,46 @@ Rank is my judgment. "±self" flags where I disagree with the RFC's own verdict.
 - **15** I keep at PILOT but rank low: its EV is entirely downstream of Wall 1
   (no ID → no pin → no verify), so it cannot lead — it's a follower of 02/04.
 
-## Recommended next 3 moves
+## Round-1 outcomes (2026-07-08) — what the pilots settled
 
-1. **Build the gap atlas (RFC-02).** ~1 day, +0 fns, but it is the denominator
-   every other RFC's EV depends on. Do this before committing any grind budget so
-   11/13/14/15 estimate against real bucket sizes, not the framing's guesses.
-2. **Run the 5-fn local-static-Symbol / guard-thunk pilot (RFC-14).** Hours of
-   work; validates the guard-thunk pairing multiplier that produced the only
-   verified grind win. If it holds, build the ~1.5d scanner — this is the highest
-   EV-per-effort actionable lever in the set.
-3. **Ship Phase A of the land-lane (RFC-16) + run the 80-fn permuter pilot
-   (RFC-11).** Phase A (per-fn regression lock, ~1d) is insurance that stops the
-   silent wave-loss that has already zeroed deltas; the permuter pilot is the
-   decisive gate (KILL if <3/80 convert) on the single largest unexplored
-   match vein *and* answers RFC-12's pivotal close-rate unknown.
+The original "next 3 moves" (gap atlas / RFC-14 sweep pilot / RFC-16 + RFC-11
+permuter pilot) are **all executed**. Result:
+
+- **RFC-02 gap atlas — DONE, landed** (`8f06bc4`). `tools/gap_atlas.py`
+  reproduces all five buckets. The denominator-of-record now confirms the
+  highest-EV *untapped* pool is **bucket-3 named-but-unpinned: 7,086 fns /
+  2.63 MB, already oracle-identified** (vs the 35,039-fn / 5.31 MB anonymous
+  frontier behind Wall 1).
+- **RFC-11 permuter farm — KILLED** (0/66). The band is codegen-wall-dominated;
+  automated permutation of the *existing* [90,100) band is not the lever.
+- **RFC-14 systematic sweep — scanner landed, vein empty at this band** (0/415).
+  The local-static-Symbol population isn't sitting in the measured near-miss band.
+- **RFC-16 Phase-A regression lock — DONE, landed** (`ec46311`); 0 historical
+  strict-100 drops in the last 20 commits (the manual gate has been clean).
+
+**Consequence:** both body-divergence levers that targeted the *current* band are
+spent. The surviving positive-EV moves are (a) getting *more* functions into the
+grind-closable band, and (b) attacking the pinning/identification frontier the
+atlas just quantified.
+
+## Recommended next 3 moves (post round-1)
+
+1. **RFC-12 autonomous grind fleet — the surviving body-divergence lever.** The
+   +22 proof (`3342b30`) closed functions via LLM best-of-N *drafts reaching 100
+   directly*, NOT via the (now-killed) permuter. So grind drafting is still live,
+   and the decomp-synth worktree fix (`d4cfe67`) de-risks running it in CoW
+   worktrees. Wire the cron/orchestrator drafting loop over the [75,95) band
+   (489 fns), policy-gated landing behind the new RFC-16 regression lock.
+2. **RFC-04 pinning probe on the 7,086 named-but-unpinned fns.** The atlas
+   confirms this is the largest identified-but-uncredited pool (2.63 MB). Run the
+   "how much pins cleanly?" 20-TU shadow probe (RFC-04 Track-3) — if a meaningful
+   fraction ports+pins to real matches, this reorders the whole roadmap and is a
+   far bigger vein than the [90,100) tail the pilots just exhausted.
+3. **One cheap Wall-1 identification probe (RFC-06 BSim seed-prop A/B @ 11,240
+   anchors, or RFC-05 data-xref P1 measurement).** Low probability, high payoff:
+   without a Wall-1 recall breakthrough strict saturates ~17.5–18% (RFC-03). Run
+   exactly one decisive 1-day probe, gated at its stated recall bar; do not build
+   the machinery unless the probe passes.
 
 ## Do-not / deferred (settled — do not re-litigate)
 

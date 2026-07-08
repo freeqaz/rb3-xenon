@@ -2,6 +2,20 @@
 
 Status: DRAFT-RFC | Date: 2026-07-08 | Author: Claude Opus (paths-to-100 wave) | Theme: body-divergence
 
+> **PILOT RESULT — 2026-07-08 — scanner built + landed, vein EMPTY at the
+> measurable band.** `tools/symbol_sweep_scan.py` shipped (commit `74270ab`) and
+> works: it scanned **416** band3/network sub-100% targets in the [90,100) band,
+> got objdiff JSON for 415, and classified **all 415 as non-signature** — i.e.
+> **0** functions whose residual mismatch is *dominated* by the
+> local-static-Symbol / guard-thunk signature. The 5-fn apply pilot was
+> therefore skipped (no candidates). Interpretation: the +22 grind win
+> (`3342b30`) was **revealed** guard/atexit thunks *paired* to 2 draft closes,
+> NOT a broad population of sweepable near-misses sitting in the measured band.
+> The +30–90 EV estimate is **not realized** at the current band. The tool is
+> retained + re-runnable each wave (a fresh cluster could surface candidates as
+> new TUs pin), but this is **not** an actionable lever today — DEFER. See also
+> RFC-11's parallel KILL: the same [90,100) band is codegen-wall-dominated.
+
 ## Summary
 
 Two of the last two grind close-outs were the *same* fix: a function-local

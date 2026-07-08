@@ -2,6 +2,21 @@
 
 Status: DRAFT-RFC | Date: 2026-07-08 | Author: Claude Opus (paths-to-100 wave) | Theme: body-divergence
 
+> **PILOT RESULT — 2026-07-08 — KILL full-band farm.** The mandatory 80-fn
+> stratified pilot ran (4 CoW workers, decomp-synth symbol-resolution bug fixed
+> first — see `../../../` decomp-synth `d4cfe67`; report.json fallback so the
+> permuter no longer silently returns 0 candidates in a fresh worktree).
+> **Result: 0 TRUE-100 wins / 66 real attempts** (0/80 target; ~14 were
+> fn_/scheduling cases with no permutable proposals). The full 139-pattern set
+> was exercised (e.g. `SetupGamma` 48 s) and beam-search was tried (`AddTask`);
+> per-pattern win rate **0/139** across the whole pilot. The [90,100) band is
+> **codegen-wall-dominated**, exactly as the 2026-06-24 pivot warned (permuter
+> 0/all on strcpy/regalloc walls). Kill gate `<3/80 → KILL` is met decisively.
+> **Do NOT build the standing farm.** The one durable win is the decomp-synth
+> worktree fix (below), which also benefits the grind fleet (RFC-12). Redirect
+> body-divergence effort to RFC-13 (idiom library) / RFC-12 (get more fns *into*
+> the band), not automated permutation of the existing band.
+
 ## Summary
 
 The `decomp_synth` permuter already exists, is wired (skill `permute`, 139
