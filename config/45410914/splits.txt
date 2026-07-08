@@ -1441,7 +1441,9 @@ CharSignalApplier.cpp:
 
 Morph.cpp:
 	.pdata      start:0x821FB110 end:0x821FB178
+	.pdata      start:0x822086F8 end:0x82208808
 	.text       start:0x82377FC8 end:0x82378720
+	.text       start:0x824710A8 end:0x82472160
 
 FileMerger.cpp:
 	.pdata      start:0x821FB770 end:0x821FBDE0
@@ -1494,10 +1496,6 @@ HamIKEffector.cpp:
 PracticeSection.cpp:
 	.pdata      start:0x821FE4B8 end:0x821FE4C0
 	.text       start:0x823B5C60 end:0x823B5CA4
-
-TexProc.cpp:
-	.pdata      start:0x821FE508 end:0x821FE518
-	.text       start:0x823B61B0 end:0x823B6314
 
 RhythmBattle.cpp:
 	.pdata      start:0x821EAE60 end:0x821EAE90
@@ -2603,7 +2601,9 @@ DrivenPropertyMathOps.cpp:
 
 CharTransDraw.cpp:
 	.pdata      start:0x821F8D50 end:0x821F8D58
+	.pdata      start:0x821FE508 end:0x821FE518
 	.text       start:0x82353068 end:0x8235314C
+	.text       start:0x823B61B0 end:0x823B6314
 
 HamSkeletonConverter.cpp:
 	.pdata      start:0x82228F48 end:0x82228F50
@@ -2719,10 +2719,6 @@ Ribbon.cpp:
 Set.cpp:
 	.pdata      start:0x822085A0 end:0x822085A8
 	.text       start:0x8246F960 end:0x8246F9F0
-
-FlowNode.cpp:
-	.pdata      start:0x822086F8 end:0x82208808
-	.text       start:0x824710A8 end:0x82472160
 
 FlowQueueable.cpp:
 	.pdata      start:0x82208AB0 end:0x82208AF0
