@@ -54,8 +54,16 @@ public:
     float mTambourinePoints; // 0x64
     int unk68; // 0x68
     std::vector<int> unk6c; // 0x6c
-    bool unk74; // 0x74
-    int unk78; // 0x78
-    int unk7c; // 0x7c
-    std::vector<int> mGemStates; // 0x80
+    // unk74 is a DC3-only mic-mute state bool. Retail rb3-xenon TambourineManager
+    // is 4 bytes smaller (mGemStates at standalone-offset 0x90, proven by
+    // vector begin/end loads lwz 0x90/0x94 in fn_826DC7C0/fn_826DCB88/fn_826DD580;
+    // ours is 0x94) and its ctor stores a full word (stw) at 0x88 — i.e. unk78
+    // sits directly after the unk6c vector, with no bool between. Guarded out of
+    // the retail build so unk78/unk7c pack at 0x88/0x8c and mGemStates lands 0x90.
+#ifdef HX_NATIVE
+    bool unk74; // native-only mic-mute state
+#endif
+    int unk78; // 0x78 (retail 0x88)
+    int unk7c; // 0x7c (retail 0x8c)
+    std::vector<int> mGemStates; // 0x80 (retail 0x90)
 };

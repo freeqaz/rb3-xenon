@@ -288,6 +288,14 @@ public:
     float mSectionStartPhrasePercentageTotal; // 0x414
     int mSectionStartPhrasePercentageCount; // 0x418
     float mSectionStartScore; // 0x41c
-    VocalFrameSpewData *mFrameSpewData; // 0x420
-    TextFileStream *mFrameSpewStream; // 0x424
+    // mFrameSpewData/mFrameSpewStream are DC3-only debug frame-spew members.
+    // Retail rb3-xenon has NO frame-spew feature at all (no "frame_spew" /
+    // "toggle_frame_spew" / OutputHeader strings in default.xex; retail
+    // VocalPlayer ctor fn_826CBB28 inits members only through 0x470, with the
+    // Object vbase at K=0x478 — no trailing pointer slots). Guarded out of the
+    // retail build to reach the true K=0x478 layout.
+#ifdef HX_NATIVE
+    VocalFrameSpewData *mFrameSpewData; // native-only
+    TextFileStream *mFrameSpewStream; // native-only
+#endif
 };

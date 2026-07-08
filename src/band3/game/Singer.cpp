@@ -563,11 +563,13 @@ void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, f
     mLastFrameMicEnergy = micEnergy;
     mCurrentFrameTime = ms;
 
+#ifdef HX_NATIVE
     VocalFrameSpewData *spew = mPlayer->mFrameSpewData;
     if (spew) {
         spew->mSingerData[mSingerIndex].unk0 = mFrameMicPitch;
         spew->mSingerData[mSingerIndex].unk4 = mLastFrameMicEnergy;
     }
+#endif
 }
 
 void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {

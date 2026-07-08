@@ -679,11 +679,13 @@ void VocalPart::Poll(float ms, const SongPos &) {
     if (allUnpitched && beginNote != lastNote) {
         unk98 = 1;
     }
+#ifdef HX_NATIVE
     VocalFrameSpewData *spew = mPlayer->mFrameSpewData;
     if (spew) {
         float pitch = PitchAt__13VocalNoteListCFf(mVocalNoteList, ms);
         spew->mPartData[mPartIndex].unk0 = pitch;
     }
+#endif
 }
 
 void VocalPart::HandlePhraseEnd(
@@ -962,6 +964,7 @@ void VocalPart::CalculateScore(
     if (note.mDurationMs < mShortNoteThresh)
         noteMult *= mShortNoteMult;
     float framePoints = noteMult * (mult * sliceWeight);
+#ifdef HX_NATIVE
     VocalFrameSpewData *spew = mPlayer->mFrameSpewData;
     if (spew) {
         spew->mPartData[mPartIndex].unk4 = framePoints;
@@ -970,6 +973,7 @@ void VocalPart::CalculateScore(
         spew->mPartData[mPartIndex].unk10 = sliceWeight;
         spew->mPartData[mPartIndex].unk14 = noteMult;
     }
+#endif
     cache.unkc = framePoints;
     if (unk38 < mPhraseScore + framePoints)
         framePoints = unk38 - mPhraseScore;

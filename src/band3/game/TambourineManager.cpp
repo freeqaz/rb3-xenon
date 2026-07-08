@@ -29,7 +29,10 @@ TambourineManager::TambourineManager(VocalPlayer &p)
     : mPlayerRef(p), mIsLocal(p.IsLocal()), mTambourineSequence(0),
       mTambourineFader(Hmx::Object::New<Fader>()), mTambourineParser(0),
       mTambourineIdx(0), unk48(1), unk4c(0), mTambourineActive(0), unk60(0), unk68(0),
-      unk74(0), unk78(0), unk7c(0) {
+#ifdef HX_NATIVE
+      unk74(0),
+#endif
+      unk78(0), unk7c(0) {
     DataArray *cfg = SystemConfig("scoring", "vocals");
     int diff = mPlayerRef.GetUser()->GetDifficulty();
     mTambourineWindowTicks = cfg->FindInt("tambourine_window_ticks");
@@ -81,12 +84,15 @@ const std::vector<int> &TambourineManager::TambourineGems() const {
 
 void TambourineManager::Poll(float ms) {
     if (unk60 <= 0 || (unsigned int)mTambourineIdx == TambourineGems().size()) {
+#ifdef HX_NATIVE
         if (unk74) {
             TheProfileMgr.UpdateAllMicLevels();
         }
         unk74 = false;
+#endif
         return;
     }
+#ifdef HX_NATIVE
     if (!unk74) {
         for (int i = 0; i < 3; i++) {
             Mic *mic = TheSynth->GetMic(i);
@@ -97,6 +103,7 @@ void TambourineManager::Poll(float ms) {
         }
         unk74 = true;
     }
+#endif
     int tick = (int)MsToTick(ms);
     int delta = tick - TambourineGems()[mTambourineIdx];
     if (mIsLocal) {

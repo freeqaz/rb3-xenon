@@ -64,7 +64,11 @@ VocalPlayer::VocalPlayer(
       mPhraseActivePartCount(0), mPhrasePercentageTotal(0), mPhrasePercentageCount(0),
       mOverlay(0), mVocalOverlay(0), mScoringEnabled(1), mTambourineManager(*this),
       mSectionStartPhrasePercentageTotal(0), mSectionStartPhrasePercentageCount(0),
-      mSectionStartScore(0), mFrameSpewData(0), mFrameSpewStream(0) {
+      mSectionStartScore(0)
+#ifdef HX_NATIVE
+      , mFrameSpewData(0), mFrameSpewStream(0)
+#endif
+{
     BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
         TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
     );
@@ -178,9 +182,11 @@ void VocalPlayer::PostLoad(bool b1) {
         (*it)->PostLoad();
     }
     BuildPhrases(b1);
+#ifdef HX_NATIVE
     DataNode spew = DataVariable("vocal_frame_spew");
     if (spew.Int())
         ToggleFrameSpew();
+#endif
 }
 
 void VocalPlayer::Start() {
@@ -372,6 +378,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     }
 
     float fCompMS = GetCompensatedTime(ms);
+#ifdef HX_NATIVE
     VocalFrameSpewData *spewData = mFrameSpewData;
 
     // Update frame spew data if active
@@ -393,6 +400,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         mFrameSpewData->mMs = ms;
         mFrameSpewData->mCompMs = fCompMS;
     }
+#endif
 
     // Reset vocal overlay
     if (mVocalOverlay) {
@@ -750,10 +758,12 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             pPart->AddScore(cache);
             pSinger->mFrameBestHitScore = cache.unk0;
 
+#ifdef HX_NATIVE
             if (mFrameSpewData) {
                 mFrameSpewData->mSingerData[pSinger->mSingerIndex].unk8 =
                     (int)pSinger->mFrameAssignedPart;
             }
+#endif
 
             if (0.0f != pSinger->mFrameMicPitch) {
                 iOctaveOffset =
@@ -853,12 +863,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     FOREACH (pIt3, mVocalParts) {
         VocalPart *pPart = *pIt3;
         pPart->AfterPoll(fCompMS);
+#ifdef HX_NATIVE
         VocalFrameSpewData *frameSpewData = mFrameSpewData;
         if (frameSpewData) {
             frameSpewData->mPartData[pPart->mPartIndex].unk18 = (int)pPart->mPhraseScore;
             frameSpewData->mPartData[pPart->mPartIndex].unk1c =
                 (int)pPart->mPhraseScoreMax;
         }
+#endif
     }
 
     bool bNotNet = !IsNet();
@@ -935,11 +947,13 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
     Player::Poll(ms, pos);
 
-    // Frame spew output to stream
+#ifdef HX_NATIVE
+    // Frame spew output to stream (native-only debug feature)
     if (mFrameSpewStream) {
         MILO_ASSERT(mFrameSpewData, 0x5CC);
         mFrameSpewData->OutputFrame(*mFrameSpewStream);
     }
+#endif
 }
 
 bool VocalPlayer::FindBestPart(
@@ -1909,6 +1923,8 @@ bool VocalPlayer::SongSectionOnly(float &f1, float &f2) const {
 }
 
 bool VocalPlayer::ToggleFrameSpew() {
+    // DC3-only debug feature; retail rb3-xenon has no frame-spew members.
+#ifdef HX_NATIVE
     if (mFrameSpewData) {
         MILO_ASSERT(mFrameSpewStream, 0xE28);
         RELEASE(mFrameSpewData);
@@ -1922,6 +1938,9 @@ bool VocalPlayer::ToggleFrameSpew() {
         mFrameSpewData->OutputHeader(*s);
         return true;
     }
+#else
+    return false;
+#endif
 }
 
 void VocalPlayer::EnablePartScoring(int part, bool b2) {
@@ -1971,7 +1990,9 @@ BEGIN_HANDLERS(VocalPlayer)
     HANDLE_EXPR(score, GetScore())
     HANDLE_EXPR(percent_hit, 0)
     HANDLE_ACTION(toggle_overlay, ToggleOverlay())
+#ifdef HX_NATIVE
     HANDLE_EXPR(toggle_frame_spew, ToggleFrameSpew())
+#endif
     HANDLE_EXPR(num_stars, GetNumStars())
     HANDLE_EXPR(star_rating, GetStarRating())
     HANDLE_ACTION(set_spoofed, mSpoofed = _msg->Int(2))
