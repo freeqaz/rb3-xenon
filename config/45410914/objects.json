@@ -283,6 +283,12 @@
      "/DMILO_MESSAGE_TIMERS"
     ]
    },
+   "system/obj/Dir.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DMILO_MESSAGE_TIMERS"
+    ]
+   },
    "system/ui/UIListState.cpp": "NonMatching",
    "system/ui/UIListWidget.cpp": "NonMatching",
    "system/synth_xbox/Synth.cpp": "NonMatching",

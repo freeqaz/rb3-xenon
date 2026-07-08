@@ -1081,7 +1081,7 @@ RenderState.cpp:
 	.pdata      start:0x82231C78 end:0x82231CA8
 	.text       start:0x82712010 end:0x82712410
 
-Dir.cpp:
+system/obj/Dir.cpp:
 	.pdata      start:0x82233010 end:0x82233608
 	.text       start:0x82728D00 end:0x8272FF10
 
