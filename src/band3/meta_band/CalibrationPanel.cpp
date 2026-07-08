@@ -277,9 +277,6 @@ void CalibrationPanel::UpdateStream() {
     if (mStream) {
         if (mStream->IsPlaying() && mTestState == tsIdle) {
             mStream->Stop();
-        } else if (mStream->IsFinished() && mTestState == tsTesting) {
-            mStream->Stop();
-            mTestState = tsPostTest;
         } else if (unk44 && mStream->IsReady()) {
             mStream->Play();
             unk44 = false;

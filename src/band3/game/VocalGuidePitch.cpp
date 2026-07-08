@@ -55,21 +55,21 @@ void VocalGuidePitch::Poll(float ms) {
                 }
             } else {
                 int begin = note->mBeginPitch;
-                if (mGuidePitch != begin) {
+                if (begin != mGuidePitch) {
                     mGuidePitch = begin;
                     mInstrument->PressNote(begin + mPitchModifier, 127, 1, -1);
                     if (note->mBeginPitch != note->mEndPitch) {
                         mGuidePitch = note->mEndPitch;
                         mInstrument->PressNote(
                             mPitchModifier + note->mEndPitch, 127, 1,
-                            RoundPitchBend(60.0f * (note->mDurationMs / 1000.0f))
+                            RoundPitchBend(60.0f * note->mDurationMs * (1.0f / 1000.0f))
                         );
                     }
-                } else if (mGuidePitch != note->mEndPitch) {
+                } else if (note->mEndPitch != mGuidePitch) {
                     mGuidePitch = note->mEndPitch;
                     mInstrument->PressNote(
                         mPitchModifier + note->mEndPitch, 127, 1,
-                        RoundPitchBend(60.0f * (note->mDurationMs / 1000.0f))
+                        RoundPitchBend(60.0f * note->mDurationMs * (1.0f / 1000.0f))
                     );
                 }
             }

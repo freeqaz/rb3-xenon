@@ -176,7 +176,8 @@ int TrackerManager::GetQuestEarnedStars() const {
             return unk0;
         else {
             MILO_ASSERT(mBand, 0x18B);
-            return std::floor(mBand->GetBand()->mStats.unk1c4 * 5.0f);
+            float rounded = std::floor(mBand->GetBand()->mStats.unk1c4 * 5.0f);
+            return rounded;
         }
     } else
         return 0;

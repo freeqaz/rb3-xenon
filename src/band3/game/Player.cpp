@@ -574,7 +574,9 @@ void Player::DisablePhraseBonus() { mPhraseBonus = false; }
 void Player::EnablePhraseBonus() { mPhraseBonus = true; }
 
 void Player::DisableOverdrivePhrases() {
-    mCommonPhraseCapturer->Enabled(this, mTrackNum, MsToTick(PollMs()), false);
+    float ms = PollMs();
+    int tick = MsToTick(ms);
+    mCommonPhraseCapturer->Enabled(this, mTrackNum, tick, false);
     TheSongDB->ClearTrackPhrases(mTrackNum);
 }
 

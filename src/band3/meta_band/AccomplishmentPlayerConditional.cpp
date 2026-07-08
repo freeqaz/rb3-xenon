@@ -231,7 +231,7 @@ bool AccomplishmentPlayerConditional::IsConditionMet(
     int i4 = 0;
     int i8 = 0;
     InqConditionProgress(profile, cond, i4, i8);
-    return i4 >= i8;
+    return static_cast<bool>(i4 >= i8);
 }
 
 void AccomplishmentPlayerConditional::InitializeTrackerDesc(TrackerDesc &desc) const {

@@ -50,8 +50,8 @@ void GameMode::SetMode(Symbol mode) {
         static Message exit_msg("exit");
         HandleType(exit_msg);
         mMode = mode;
-        static Symbol parent_only("parent_only");
         DataArray *cloned = cfg->FindArray(mMode)->Clone(true, false, 0);
+        static Symbol parent_only("parent_only");
         if (cloned->FindArray(parent_only, false)) {
             if (cloned->FindArray(parent_only)->Int(1)) {
                 MILO_FAIL("Trying to set mode %s, which is a parent_only mode!\n", mMode);

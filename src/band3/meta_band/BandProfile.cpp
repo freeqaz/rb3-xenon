@@ -394,17 +394,16 @@ void BandProfile::SaveFixed(FixedSizeSaveableStream &fsss) const {
 int BandProfile::SaveSize(int i) {
     int x = TourProgress::SaveSize(i);
     x += TourChar::SaveSize(i) * 10 + 4;
-    x += PatchDir::SaveSize(i) * 8 + 4;
+    x += PatchDir::SaveSize(i) * 19 + 4;
     if (i >= 150)
         x += 4;
     x += SongStatusMgr::SaveSize(i);
-    x += LocalSavedSetlist::SaveSize(i) * 20 + 0x2030;
+    x += (LocalSavedSetlist::SaveSize(i) + 0x19C) * 20;
     x += AccomplishmentProgress::SaveSize(i);
     if (i < 149) {
         x += PerformanceData::SaveSize(i) * 50 + 4;
     } else {
-        x += PerformanceData::SaveSize(i) * 50;
-        x += 8;
+        x += PerformanceData::SaveSize(i) * 50 + 8;
     }
     x += ProfileAssets::SaveSize(i);
     x += 8;

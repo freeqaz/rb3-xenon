@@ -160,7 +160,7 @@ int TrainerPanel::FixupTick(int tick) const {
 
 void TrainerPanel::ResetChallenge() {
     TrainerChallenge *tc = mSections[mCurrSection].mChallenge;
-    if (tc) {
+    if ((int)tc) {
         tc->Exit();
         mSections[mCurrSection].mChallenge->Enter();
     }

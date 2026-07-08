@@ -16,7 +16,9 @@ void StatCollector::Reset() {
 
 void StatCollector::Poll(float time) {
     if (unk0x8) {
-        CheckRolls(MsToTickInt(time), true);
+        int arg1 = MsToTickInt(time);
+        bool arg2 = true;
+        CheckRolls(arg1, arg2);
     }
 }
 

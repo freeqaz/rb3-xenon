@@ -162,8 +162,9 @@ bool Track::PlayerDisconnected() const {
 
 bool Track::PlayerDisconnectedAtStart() const {
     const BandUser *user = mTrackConfig.GetBandUser();
-    if (user->GetPlayer())
-        return user->GetPlayer()->mDisconnectedAtStart;
+    Player *player = user->GetPlayer();
+    if (player)
+        return player->mDisconnectedAtStart;
     else
         return false;
 }

@@ -188,10 +188,10 @@ DataNode SetlistMergePanel::OnMsg(const ReleasingLockStepMsg &msg) {
 }
 
 void SetlistMergePanel::SendSongsToMetaPerformer(const std::vector<int> &songs) {
-    unsigned short size = songs.size();
+    int size = songs.size();
     SavedSetlist *current = TheMusicLibrary->mCurrentSetlist;
     bool sameSongs = false;
-    if (current && size == current->mSongs.size()) {
+    if (current && current->mSongs.size() == size) {
         sameSongs = true;
         for (int i = 0; i < size; i++) {
             if (songs[i] != current->mSongs[i]) {
@@ -204,12 +204,8 @@ void SetlistMergePanel::SendSongsToMetaPerformer(const std::vector<int> &songs) 
         if (current->IsBattle()) {
             BattleSavedSetlist *bss = dynamic_cast<BattleSavedSetlist *>(current);
             MILO_ASSERT(bss, 0x12F);
-            bool archived = true;
             SavedSetlist::SetlistType type = bss->mSetlistType;
-            if (type != SavedSetlist::kBattleHarmonixArchived
-                && type != SavedSetlist::kBattleFriendArchived) {
-                archived = false;
-            }
+            bool archived = (type == SavedSetlist::kBattleHarmonixArchived || type == SavedSetlist::kBattleFriendArchived);
             if (!archived) {
                 MetaPerformer::Current()->SetBattle(bss);
                 return;

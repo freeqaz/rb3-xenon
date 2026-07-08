@@ -337,8 +337,10 @@ void StreakFocusTracker::TranslateRelativeTargets() {
 bool StreakFocusTracker::PlayerWantsFocus(const TrackerPlayerID &pid, float f) const {
     Player *pPlayer = mSource->GetPlayer(pid);
     MILO_ASSERT(pPlayer, 0x2C6);
-    return TrackerUtils::GetNextNoteMs(pPlayer->GetTrackNum(), pPlayer->GetTrackType(), f)
-        <= unkd4;
+    int trackNum = pPlayer->GetTrackNum();
+    TrackType trackType = pPlayer->GetTrackType();
+    float nextNoteMs = TrackerUtils::GetNextNoteMs(trackNum, trackType, f);
+    return nextNoteMs <= unkd4;
 }
 
 TrackerPlayerID StreakFocusTracker::GetNextFocusPlayer(

@@ -486,7 +486,7 @@ int SongStatusMgr::GetBestStars(int idx, ScoreType ty, Difficulty diff) const {
 bool SongStatusMgr::IsSongPlayed(int idx, ScoreType ty, Difficulty diff) const {
     if (HasSongStatus(idx)) {
         SongStatus *status = GetSongStatus(idx);
-        return status->GetAccuracy(ty, diff);
+        return status->GetAccuracy(ty, diff) > 0;
     } else
         return 0;
 }
