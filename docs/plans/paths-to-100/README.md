@@ -91,6 +91,27 @@ spent. The surviving positive-EV moves are (a) getting *more* functions into the
 grind-closable band, and (b) attacking the pinning/identification frontier the
 atlas just quantified.
 
+## Round-2 outcome (2026-07-08) — RFC-04 pinning probe
+
+Executed move #2 (the pinning probe). **Result: +1 strict, vein exhausted.** The
+atlas's "7,086 named-but-unpinned / 2.63 MB" pool collapses under source-present +
+not-already-pinned to **18 NEW-pinnable TUs / 78 fns** — the rest are scattered in
+already-pinned units (class-B). Of the 18, only 1 converted (`WebSvcMgrCurl`
+`make_pair<String,String>`, +1, landed); the other 13 were span-overlaps with
+existing pins (8), dilutive scatter (3), body-divergence (1), or false ICF
+attribution (1). **RFC-04 Track-1 automation is not worth building.** Two durable
+side-findings: (i) `pin_candidates.py` provisional spans have a false-positive
+rate (min-max hulls overlapping existing pins) worth fixing if reused; (ii) a
+**project-wide baseline correction** — the stale `report.json` everything cited
+read **11,240**, but a forced full rebuild shows the true strict count is
+**11,278 / 17.19%** (WIRED fuzzy 94.67%). Subtract ~37 from every "11,240" claim
+in this doc set.
+
+**Roadmap effect:** with the permuter (round 1) and pinning (round 2) veins both
+confirmed near-dry, the *only* live positive-EV lever left is **RFC-12 grind-fleet
+drafting** (closes fns directly, permuter-independent) — now clearly the #1 next
+move — followed by the low-probability Wall-1 identification probes.
+
 ## Recommended next 3 moves (post round-1)
 
 1. **RFC-12 autonomous grind fleet — the surviving body-divergence lever.** The

@@ -2,6 +2,35 @@
 
 > Status: DRAFT-RFC | Date: 2026-07-08 | Author: Claude Opus (paths-to-100 wave) | Theme: identification
 
+> **PROBE RESULT — 2026-07-08 — vein ~EXHAUSTED, +1 strict.** Drove
+> `pin_candidates.py rank` end-to-end. First finding: the "7,086 named-but-unpinned
+> / 2.63 MB" headline pool collapses under the source-present + not-already-pinned
+> filter to **18 NEW-pinnable TUs / 78 fns** (the other ~7,000 named fns are
+> scattered *inside already-pinned units* = class-B, not a pinning problem).
+> Of the 18, only ~12 are clean high-density spans. 4 Opus agents pinned+built+
+> measured all 14 span candidates. **Result: +1 strict** (`WebSvcMgrCurl.cpp`
+> `make_pair<String,String>`, verified by same-tree A/B: 11277→11278, unique —
+> not ICF-redundant; landed on main). The other 13: **8 SKIP** (provisional span
+> overlaps an already-pinned neighbor — PitchShiftEffect/SampleZone/MeshAnim/
+> rtti/ShaderOptions/SoftParticles — `overlap_check` aborts), **3 DILUTIVE**
+> (density ≤0.04 scatter that would claim ~50–88 neighbor fns), **1 BODY_DIVERGE**
+> (`HttpReqCurl` MakeString compiles+pins clean but 31.7% fuzzy vs the dc3 oracle),
+> **1 DUD** (false oracle attribution — the "own fn" was a folded STL helper).
+> **Conclusion: the residual span-pin vein yields ≈+1 and is exhausted** (class-A
+> exhaustion now triple-confirmed). Track-1 automation is NOT worth building.
+> Also surfaced: several ranker "NEW-pinnable" spans are false positives (provisional
+> min-max cluster hulls overlapping existing pins / ICF misattribution) — a
+> `pin_candidates.py` precision bug worth a fix if this tool is reused.
+>
+> **⚠ BASELINE CORRECTION (project-wide):** the `report.json` this whole RFC set
+> was written against was **stale at 11,240**; a forced full rebuild
+> (`touch config.yml && ninja`) shows the true strict count is **11,277** (now
+> **11,278** with the pin) = **17.19%**, WIRED fuzzy **94.67%**. All RFC/atlas
+> "11,240 / 17.13%" figures undercount by ~37 (accumulated matches an incremental
+> report never re-counted). Lesson (reinforces `verify-ab-reliability`): a warm
+> CoW worktree can serve a **stale report.json** too, not just stale objs — do the
+> A/B in-tree with a forced report regen, which is how this +1 was confirmed.
+
 ## Summary
 
 ~71.7% of RB3's `.text` (7.88 MB / 65,619 fns) sits in anonymous `auto_*_text`
