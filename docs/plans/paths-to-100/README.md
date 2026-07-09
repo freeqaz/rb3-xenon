@@ -55,6 +55,15 @@ Rank is my judgment. "±self" flags where I disagree with the RFC's own verdict.
 | 18 | 06-oracle-refresh-loops | Ghidra re-injection cron + 1 BSim A/B | DEFER (mostly) | ~+0 (kill A/B) | ~0.5-1d | Wall 1 |
 | 19 | 08-ml-embedding-triage | Supervised re-rank of oracle candidates | PILOT, likely DEFER | +0 to +5 | pilot | Wall 1 (structural) |
 | 20 | 07-icf-constraint-solver | Global ICF re-ranker | DO-NOT (yet); 1d P0 probe | most likely +0 | 1d probe | Wall 1 (upstream of ranking) |
+| +  | 21-crack-farm-cpu-training-capture | LLM-free massive-CPU whole-TU crack farm on decomp-synth's B2 fleet + training-data capture | DESIGN done; build = future Opus run | unproven (Wall-2 bet; <5% band conversion = kill) | E1 smoke ~1-2 CPU-hr | supersedes 11+12 (distributed-CPU + corpus flywheel) |
+
+> **Doc 21 (2026-07-09)** is the design/problem-overview for the CPU-crack-farm the
+> owner requested — it operationalizes 11 (permuter-farm) + 12 (grind-fleet) as a
+> distributed, LLM-free, B2-scheduled sweep with per-pass training-data capture.
+> Key finding: **not greenfield** — decomp-synth already has a working B2 CPU farm
+> (`farm_worker.sh`/`runmeta.py`/`b2_sync.sh`); the only real TO-BUILDs are an
+> exhaustive whole-TU search engine + a TU-value scheduler. Identical copy in
+> `decomp-synth/docs/rb3-crackfarm-and-training-capture.md`.
 
 **Disagreements with self-reports:**
 - **12-grind-fleet-v2** self-rates DEFER-to-background; I rank it below 16 rather
