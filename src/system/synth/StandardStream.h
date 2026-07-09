@@ -70,7 +70,7 @@ public:
     virtual int MarkerListSize() const;
     virtual bool MarkerAt(int, Marker &) const;
     virtual void SetJump(float, float, const char *);
-    virtual void SetJump(String &, String &);
+    virtual void SetLoop(String &, String &);
     virtual bool CurrentJumpPoints(Marker &, Marker &);
     virtual void ClearJump();
     virtual void EnableSlipStreaming(int);

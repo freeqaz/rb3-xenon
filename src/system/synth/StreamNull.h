@@ -36,7 +36,7 @@ public:
     virtual void SetSpeed(float);
     virtual float GetSpeed() const { return mTimer.GetSpeed(); }
     virtual void LoadMarkerList(const char *) {}
-    virtual void SetJump(String &, String &) {}
+    virtual void SetLoop(String &, String &) {}
     virtual void SetJump(float, float, const char *) {}
     virtual void ClearJump() {}
     virtual void EnableSlipStreaming(int) {}

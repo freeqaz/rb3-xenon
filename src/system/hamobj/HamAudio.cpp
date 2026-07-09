@@ -321,7 +321,7 @@ void HamAudio::SetLoop(float f1, float f2, Stream *stream) {
         m2.posMS = f2;
         stream->AddMarker(m1);
         stream->AddMarker(m2);
-        stream->SetJump(end, start);
+        stream->SetLoop(end, start);
     }
 }
 

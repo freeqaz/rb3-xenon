@@ -30,7 +30,11 @@ public:
     virtual void DrawShowing();
     virtual void Poll();
     // everything below this is for TrackDir (i.e. not from PanelDir)
-    virtual void SyncFingerFeedback();
+    // NOTE: SyncFingerFeedback is declared LAST (after PostDraw) to match the
+    // retail vtable — retail places it at the tail of TrackDir's virtuals
+    // (GemTrackDir vtable @0x82026d3c slot 35), NOT before SetDisplayRange like
+    // the rb3-Wii dev header. Declaring it here would push SetDisplayRange (and
+    // every TrackDir virtual after it) one slot too high.
     virtual void SetDisplayRange(float) {}
     virtual void SetDisplayOffset(float, bool) {}
     virtual RndDir *SmasherPlate();
@@ -60,6 +64,8 @@ public:
     virtual bool IsActiveInSession() const { return false; }
     virtual void PreDraw() {}
     virtual void PostDraw() {}
+    // Declared LAST to match retail vtable slot order (see note above).
+    virtual void SyncFingerFeedback();
 
     void AddActiveWidget(class TrackWidget *);
     void AddTestWidget(class TrackWidget *, int);

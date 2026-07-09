@@ -158,7 +158,6 @@ public:
     AccomplishmentProgress mAccomplishmentProgress; // 0xf4
     int unk740;
     int mAccomplishmentDataUploadContextID; // 0x744
-    int unk748;
     int unk74c;
     int unk750;
     DataResultList unk754;

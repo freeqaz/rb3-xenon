@@ -825,7 +825,12 @@
    "band3/meta_band/Leaderboard.cpp": "NonMatching",
    "band3/meta_band/PlayerLeaderboards.cpp": "NonMatching",
    "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
-   "band3/meta_band/Campaign.cpp": "NonMatching",
+   "band3/meta_band/Campaign.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_MAP_0x1C"
+    ]
+   },
    "band3/meta_band/GameplayOptions.cpp": "NonMatching",
    "band3/meta_band/SavedSetlist.cpp": "NonMatching",
    "band3/meta_band/CampaignKey.cpp": "NonMatching",

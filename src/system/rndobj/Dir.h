@@ -38,7 +38,12 @@ public:
     virtual void SetSubDir(bool);
     virtual void SyncObjects();
     virtual void ChainSourceSubdir(Hmx::Object *, ObjectDir *);
-    virtual void
+    // NON-virtual in retail RB3 (and rb3-Wii oracle): confirmed absent from all
+    // retail vtables (0 refs to RndDir::CollideListSubParts base impl 0x823f0890
+    // across the whole .rdata). DC3 provenance made it virtual, inserting a bogus
+    // slot into every RndDir-descendant vtable and shifting the class-specific
+    // tail +1 (breaks TrackDir SetDisplayRange/GetChordMesh vcall offsets).
+    void
     CollideListSubParts(const Segment &, std::list<RndDrawable::Collision> &);
     // RndDrawable
     virtual void UpdateSphere();

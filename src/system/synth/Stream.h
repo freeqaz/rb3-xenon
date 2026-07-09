@@ -63,7 +63,12 @@ public:
     virtual void AddMarker(const Marker &) {}
     virtual int MarkerListSize() const { return 0; }
     virtual bool MarkerAt(int, Marker &) const { return 0; }
-    virtual void SetJump(String &, String &) = 0;
+    // rb3-Wii/retail names this SetLoop (NOT a SetJump overload). Keeping the
+    // dc3 name "SetJump" collided with SetJump(float,...) below: MSVC groups
+    // same-name virtuals at the first declaration's slot, collapsing the float
+    // overload from retail's 0xa0 to 0x94 (-3 slots). Renaming to SetLoop breaks
+    // the collision so SetJump(float,...) lands at 0xa0.
+    virtual void SetLoop(String &, String &) = 0;
     virtual bool CurrentJumpPoints(Marker &, Marker &) { return 0; }
     // RB3 retail (matching rb3-Wii) has an extra AbandonLoop slot here that
     // dc3 (newer) dropped; without it Stream's vtable is one slot short and

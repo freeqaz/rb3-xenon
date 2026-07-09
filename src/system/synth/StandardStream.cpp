@@ -298,7 +298,7 @@ void StandardStream::SetJump(float fromMs, float toMs, const char *file) {
         setJumpSamplesFromMs(fromMs, toMs);
 }
 
-void StandardStream::SetJump(String &s1, String &s2) {
+void StandardStream::SetLoop(String &s1, String &s2) {
     for (int i = 0; i < mMarkerList.size(); i++) {
         if (mMarkerList[i].name == s1) {
             mStartMarker = mMarkerList[i];

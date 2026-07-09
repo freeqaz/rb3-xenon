@@ -86,6 +86,11 @@ public:
     virtual void Exit();
     // ObjectDir
     virtual void SyncObjects();
+    // Kept virtual even though RndDir::CollideListSubParts is now non-virtual:
+    // Character reintroduces it as its own virtual at the same inherited-region
+    // slot (11), so the Character vtable stays byte-identical to the pre-change
+    // build (retail Character's true layout has a compensating missing draw
+    // virtual; this preserves the existing coincidental byte-match).
     virtual void
     CollideListSubParts(const Segment &, std::list<RndDrawable::Collision> &);
 
