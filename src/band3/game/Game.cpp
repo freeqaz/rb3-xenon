@@ -574,7 +574,7 @@ void Game::Rollback(float f1, float toMs) {
     }
     unkdc = f1;
     unk11c = 0;
-    mInterpolator.Reset(Vector2(mLastPollMs / 1000.0f, 0.0f), Vector2(toMs / 1000.0f, 60.0f), 3.5f);
+    mInterpolator.Reset(mLastPollMs / 1000.0f, toMs / 1000.0f, 0, 60.0f, 3.5f);
     unkd8 = toMs;
     unk120 = true;
     if (mProperties.mInPracticeMode) {

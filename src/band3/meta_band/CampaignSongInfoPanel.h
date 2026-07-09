@@ -45,5 +45,7 @@ public:
     NEW_OBJ(CampaignSongInfoPanel);
     static void Init() { REGISTER_OBJ_FACTORY(CampaignSongInfoPanel); }
 
-    CampaignSourceProvider *mCampaignSourceProvider; // 0x38
+    int unk3c; // 0x3c - retail RB3-360 has 8 bytes here before mCampaignSourceProvider
+    int unk40; // 0x40
+    CampaignSourceProvider *mCampaignSourceProvider; // 0x44
 };

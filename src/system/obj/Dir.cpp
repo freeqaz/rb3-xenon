@@ -854,7 +854,7 @@ void ObjectDir::RemoveSubDir(const ObjDirPtr<ObjectDir> &dPtr) {
 #ifdef HX_NATIVE
         if ((ObjectDir *)(*it) == (ObjectDir *)dPtr) {
 #else
-        if (*(u32 *)((u8 *)&(*it) + 0xc) == *(u32 *)((u8 *)&dPtr + 0xc)) {
+        if (*(u32 *)((u8 *)&(*it) + 0x4) == *(u32 *)((u8 *)&dPtr + 0x4)) {
 #endif
             RemovingSubDir(*it);
             it = mSubDirs.erase(it);

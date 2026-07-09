@@ -153,7 +153,7 @@ namespace {
                 return atoi(ptr);
             }
         }
-        return -1;
+        return 0;
     }
 };
 

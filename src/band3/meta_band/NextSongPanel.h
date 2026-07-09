@@ -39,6 +39,7 @@ public:
     float mDetailsFooterSize; // 0x58
     float mDetailsScrollStep; // 0x5c
     float mDetailsHeight[4]; // 0x60
+    int unk74_retailpad; // retail RB3-360 has 4 extra bytes here vs Wii layout
     int unk70[4];
     bool unk80[4];
     bool unk84[4];

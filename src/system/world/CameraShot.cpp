@@ -495,13 +495,7 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
                 break;
             }
         }
-        ATanInterpolator aint("", "");
-        auto _tmp0 = Vector2(easeOffset, easeOffset);
-        aint.Reset(
-            _tmp0,
-            Vector2(easeEnd, easeEnd),
-            mBlendEase
-        );
+        ATanInterpolator aint(easeOffset, easeEnd, easeOffset, easeEnd, mBlendEase);
         blendT = aint.Eval(f1);
     }
 

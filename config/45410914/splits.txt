@@ -446,6 +446,10 @@ Key.cpp:
 	.pdata      start:0x8220E078 end:0x8220E090
 	.text       start:0x824E2900 end:0x824E2E0C
 
+Interp.cpp:
+	.pdata      start:0x8220E090 end:0x8220E0E0
+	.text       start:0x824E2E10 end:0x824E3510
+
 Rand2.cpp:
 	.text       start:0x82B5E050 end:0x82B5E0B8
 
@@ -2151,8 +2155,14 @@ Trans.cpp:
 	.text       start:0x82A48308 end:0x82A483BC
 
 MeshDeform.cpp:
-	.pdata      start:0x822025C8 end:0x822029B0
-	.text       start:0x823F8468 end:0x823FBE80
+	.pdata      start:0x822025C8 end:0x822025D0
+	.pdata      start:0x822025D8 end:0x822029B0
+	.text       start:0x823F8468 end:0x823F84B8
+	.text       start:0x823F85D0 end:0x823FBE80
+
+vec.cpp:
+	.pdata      start:0x822025D0 end:0x822025D8
+	.text       start:0x823F84B8 end:0x823F85D0
 
 HamDriver.cpp:
 	.pdata      start:0x822495E0 end:0x822495E8

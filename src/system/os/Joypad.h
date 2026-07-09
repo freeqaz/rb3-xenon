@@ -261,8 +261,6 @@ public:
     int unkc8; // 0xc8
     int unkcc; // 0xcc
     int unkd0; // 0xd0
-    int unkd4; // 0xd4
-    int unkd8; // 0xd8
 
     JoypadData();
     float GetAxis(Symbol) const;

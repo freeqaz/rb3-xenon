@@ -13848,5 +13848,20 @@
  "0x82771b00": "?CheckForPasses@TrackWatcherImpl@@QAAXM@Z",
  "0x822e9450": "?UpdateConfiguration@VocalTrackDir@@QAAXXZ",
  "0x826d7260": "?Poll@GuitarFx@@QAAXH_N0MMM00@Z",
- "0x826d77d8": "?GetFxSend@GuitarFx@@QAAPAVFxSend@@XZ"
+ "0x826d77d8": "?GetFxSend@GuitarFx@@QAAPAVFxSend@@XZ",
+ "0x824E2E10": "?Eval@LinearInterpolator@@UAAMM@Z",
+ "0x824E2E20": "?Reset@LinearInterpolator@@UAAXPBVDataArray@@@Z",
+ "0x824E2F00": "?Eval@ExpInterpolator@@UAAMM@Z",
+ "0x824E2F50": "?Reset@InvExpInterpolator@@UAAXPBVDataArray@@@Z",
+ "0x824E3058": "?Eval@InvExpInterpolator@@UAAMM@Z",
+ "0x824E30C0": "??0ATanInterpolator@@QAA@XZ",
+ "0x824E30E0": "?Reset@ATanInterpolator@@QAAXMMMMM@Z",
+ "0x824E31C0": "?Reset@ATanInterpolator@@UAAXPBVDataArray@@@Z",
+ "0x824E3290": "?Eval@ATanInterpolator@@UAAMM@Z",
+ "0x824E32E0": "??0LinearInterpolator@@QAA@MMMM@Z",
+ "0x824E3338": "??_GExpInterpolator@@UAAPAXI@Z",
+ "0x824E3380": "??0ExpInterpolator@@QAA@MMMMM@Z",
+ "0x824E33E0": "??0InvExpInterpolator@@QAA@MMMMM@Z",
+ "0x824E3440": "??0ATanInterpolator@@QAA@MMMMM@Z",
+ "0x824E34C0": "??_GATanInterpolator@@UAAPAXI@Z"
 }

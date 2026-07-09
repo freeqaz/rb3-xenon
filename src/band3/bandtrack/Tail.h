@@ -50,11 +50,5 @@ public:
     float unk4f0; // 0x4f0
     bool unk4f4; // 0x4f4
     SlideInfo mSlideInfo; // 0x4f8
-    ATanInterpolator mInterpolator; // 0x508
-    // Retail Tail is 0x544; mInterpolator ends at 0x530. The trailing 0x14 bytes
-    // are an uninitialized region (the ctor at fn_82B7E918 writes nothing past
-    // mInterpolator, and no Tail method accesses [0x530,0x544)). Kept as a pad so
-    // sizeof(Tail)==0x544 — matches AddRep@Gem's `li r3, 0x544` allocation — without
-    // shifting any accessed member. Likely an rb3-Wii-removed slide/whammy member.
-    char unk530[0x14]; // 0x530
+    ATanInterpolator mInterpolator; // 0x508, ends at 0x544 (0x3c bytes)
 };

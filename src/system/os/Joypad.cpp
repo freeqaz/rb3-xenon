@@ -39,7 +39,7 @@ JoypadData::JoypadData()
       mIsDrum(false), mType(kJoypadNone), mControllerType(), mDistFromRest(0),
       mHasGreenCymbal(false), mHasYellowCymbal(false), mHasBlueCymbal(false),
       mHasSecondaryPedal(false), mBreedCallback(0), mBreedDataDest(0), mSuppressWriteCallback(0), unka0(0), unka4(0),
-      unka8(0), unkac(0), mEepromWriteDone(0), unkd8(0) {
+      unka8(0), unkac(0), mEepromWriteDone(0) {
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             mSticks[i][j] = 0;

@@ -44,7 +44,7 @@ void Tail::Init(
     if (mSlideInfo.unk0) {
         static float severity = 3.5f;
         mInterpolator.Reset(
-            Vector2(mSlideInfo.unk4, 0), Vector2(mSlideInfo.unk8, mSlideInfo.unkc), severity
+            mSlideInfo.unk4, mSlideInfo.unk8, 0, mSlideInfo.unkc, severity
         );
     }
     ConfigureMeshes(tail);

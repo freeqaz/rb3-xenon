@@ -294,11 +294,13 @@ void ManageBandPanel::SetStandIn(int i) {
     if (mCharProvider->IsIndexNone(i)) {
         standin.SetNone();
     } else if (mCharProvider->IsIndexPrefab(i)) {
-        standin.SetName(mCharProvider->DataSymbol(i));
+        Symbol name = mCharProvider->DataSymbol(i);
+        standin.SetName(name);
     } else if (mCharProvider->IsIndexCustomChar(i)) {
         CharData *pCharacter = mCharProvider->GetCharData(i);
         MILO_ASSERT(pCharacter, 0x1AB);
-        standin.SetGuid(pCharacter->mGuid);
+        const HxGuid &guid = pCharacter->mGuid;
+        standin.SetGuid(guid);
     }
 
     if (mProfile->GetNumStandins() == 4) {
