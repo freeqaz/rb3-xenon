@@ -686,7 +686,8 @@ void BandCamShot::Target::Store(BandCamShot *shot) {
 void BandCamShot::Target::UpdateTarget(Symbol s, BandCamShot *shot) {
     if (mTarget != s) {
         mTarget = s;
-        mAnimGroup = Symbol("");
+        auto _tmp0 = Symbol("");
+        mAnimGroup = _tmp0;
     }
     Store(shot);
 }

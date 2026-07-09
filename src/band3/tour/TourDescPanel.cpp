@@ -461,7 +461,7 @@ void TourDescProvider::Text(
     MILO_ASSERT(pTourDesc, 0x60);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x63);
-    bool bSelected = pProgress->GetTourDesc() == s;
+    bool bSelected = s == pProgress->GetTourDesc();
     bool bAvailable = IsTourDescAvailable(s);
     if (i_pSlot->Matches("name")) {
         if (bAvailable)

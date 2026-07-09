@@ -934,7 +934,8 @@ void Spotlight::UpdateTransforms() {
 }
 
 void Spotlight::UpdateFloorSpotTransform(const Transform &tf) {
-    mFloorSpotXfm.Reset();
+    Transform &floorSpotXfm = mFloorSpotXfm;
+    floorSpotXfm.Reset();
     if (DoFloorSpot()) {
         float f1 = GetFloorSpotTarget()->WorldXfm().v.z;
         Vector3 vac(tf.m.y);
@@ -954,7 +955,7 @@ void Spotlight::UpdateFloorSpotTransform(const Transform &tf) {
             vac = tf.m.y;
             vac *= scalar;
             Add(vac, tf.v, vac);
-            mFloorSpotXfm = Transform(m70, vac);
+            floorSpotXfm = Transform(m70, vac);
         }
         mFloorSpotTargetZ = f1;
     }

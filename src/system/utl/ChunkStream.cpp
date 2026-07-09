@@ -484,9 +484,9 @@ bool ChunkStream::PollDecompressionWorker() {
         DecompressTask task;
         memcpy(&task, &gDecompressionQueue.front(), sizeof(DecompressTask));
         gDecompressionQueue.erase(gDecompressionQueue.begin());
-        tracker.mCritSec = 0;
         gDecompressionCritSec.Exit();
         DecompressChunk(task);
+        tracker.mCritSec = 0;
         return true;
     }
     return false;

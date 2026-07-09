@@ -107,7 +107,7 @@ bool OvershellPartSelectProvider::IsActive(int data) const {
     }
     if (mUser->GetTrackType() != kTrackNone && mUser->GetTrackType() != kTrackPending
         && mUser->GetTrackType() != kTrackPendingVocals
-        && mUser->GetTrackType() != entry.unk4) {
+        && entry.unk4 != mUser->GetTrackType()) {
         return false;
     }
 

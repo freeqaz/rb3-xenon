@@ -867,7 +867,7 @@ void LightPreset::CacheFrames() {
                 }
             }
             for (uint j = 0; j != kf.mSpotlightDrawerEntries.size(); j++) {
-                if (kf.mSpotlightDrawerEntries[j] != prev.mSpotlightDrawerEntries[j]) {
+                if (prev.mSpotlightDrawerEntries[j] != kf.mSpotlightDrawerEntries[j]) {
                     kf.mSpotlightDrawerChanges[j] = true;
                 }
             }
