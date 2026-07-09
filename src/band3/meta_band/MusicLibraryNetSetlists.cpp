@@ -250,7 +250,7 @@ void MusicLibraryNetSetlists::RefreshSetlistArt() {
     unk50 = node->GetToken();
     if (nss->unk44) {
         mSetlistArtLoader =
-            TheNetCacheMgr->AddNetCacheLoader(nss->GetArtUrl(), (NetLoaderPos)0);
+            TheNetCacheMgr->AddNetCacheLoader(nss->GetArtUrl(), (NetLoaderPos)1);
         if (!mSetlistArtLoader) {
             RELEASE(mPendingSetlistArt);
         }

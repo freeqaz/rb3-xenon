@@ -32,9 +32,9 @@ protected:
     SongMetadata();
     SongMetadata(DataArray *main_arr, DataArray *backup_arr, bool onDisc);
 
-    short mVersion; // 0x2c
+    short mVersion; // 0x28
+    Symbol mShortName; // 0x2c
     int mID; // 0x30
-    Symbol mShortName; // 0x34
     bool mIsOnDisc; // 0x38
     Symbol mGameOrigin; // 0x3c
     float mPreviewStartTime; // 0x40

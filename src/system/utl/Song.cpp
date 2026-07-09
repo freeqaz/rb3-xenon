@@ -305,7 +305,7 @@ void Song::Play() {
 
 void Song::Pause() {
     if (mHxMaster) {
-        sCallback->SongPlay(false);
+        sCallback->SongPlay(true);
         if (mHxMaster) {
             mHxMaster->GetHxAudio()->SetPaused(true);
         }

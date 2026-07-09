@@ -42,6 +42,7 @@ public:
     virtual void SetPaused(bool paused) { mPaused = paused; }
     virtual void FocusIn() {}
     virtual void FocusOut() {}
+    virtual void Unload();
     virtual bool IsLoaded() const;
 
     bool Showing() const { return mShowing; }
@@ -63,7 +64,6 @@ public:
     static void SetFinalDrawPass(bool pass) { sIsFinalDrawPass = pass; }
 
 protected:
-    virtual void Unload();
     virtual void PollForLoading();
     virtual void FinishLoad();
 

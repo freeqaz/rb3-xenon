@@ -68,7 +68,7 @@ public:
     const char *MidiFile(Symbol) const;
     const char *SongName(Symbol) const;
     SongUpgradeData *GetUpgradeData(int) const;
-    const char *SongFilePath(Symbol, const char *, bool) const;
+    const char *SongFilePath(Symbol, const char *) const;
     const char *GetAlbumArtPath(Symbol) const;
     const char *SongPath(Symbol) const;
     int NumRankTiers(Symbol) const;

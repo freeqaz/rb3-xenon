@@ -344,7 +344,7 @@ BEGIN_PROPSYNCS(RndParticleSys)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndParticleSys)
-    SAVE_REVS(0x29, 0)
+    SAVE_REVS(0x25, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndPollable)
     SAVE_SUPERCLASS(RndAnimatable)

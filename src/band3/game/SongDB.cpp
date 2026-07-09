@@ -571,7 +571,7 @@ int SongDB::NextPhraseIndexAfter(int i1, int i2) {
     const std::vector<RawPhrase> &rawPhrases =
         mSongData->GetPhraseAnalyzer()->GetRawPhrases();
     for (int i = i2 + 1; i < rawPhrases.size(); i++) {
-        if (i1 == rawPhrases[i].track)
+        if (rawPhrases[i].track == i1)
             return i;
     }
     return -1;

@@ -388,6 +388,8 @@ void GemManager::ProcessRealGuitarRun(std::vector<GameGem> &gems, int &iref) {
 }
 
 void GemManager::SetupRealGuitarImportantStrings() {
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     const BandUser *bandUser = mTrackConfig.GetBandUser();
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
@@ -395,8 +397,8 @@ void GemManager::SetupRealGuitarImportantStrings() {
         for (int i = 1; i < mGems.size(); i++) {
             const GameGem &cur = mGems[i].GetGameGem();
             const GameGem &prev = mGems[i - 1].GetGameGem();
-            unsigned int prevID = prev.GetRGChordID();
-            if ((unsigned int)cur.GetRGChordID() == prevID && !cur.IsMuted() &&
+            unsigned int curID = cur.GetRGChordID();
+            if (curID == (unsigned int)prev.GetRGChordID() && !cur.IsMuted() &&
                 cur.IsRealGuitarChord()) {
                 const_cast<GameGem &>(cur).SetImportantStrings(prev.GetImportantStrings());
             } else if (!prev.IsMuted() && !cur.IsMuted()) {
@@ -407,8 +409,8 @@ void GemManager::SetupRealGuitarImportantStrings() {
                     int matches = 0;
                     unsigned int s;
                     for (s = 0; s < 6; s++) {
-                        int prevFret = prev.GetFret(s);
-                        if (cur.GetFret(s) != prevFret &&
+                        int curFret = cur.GetFret(s);
+                        if (curFret != prev.GetFret(s) &&
                             (cur.mTick - prev.mTick) < 0x780 &&
                             cur.GetFret(s) != -1 &&
                             cur.GetRGNoteType(s) != 1 &&
@@ -418,7 +420,7 @@ void GemManager::SetupRealGuitarImportantStrings() {
                             bits |= (unsigned char)(1 << s);
                         }
                     }
-                    if ((unsigned int)(matches - 1) <= 1U) {
+                    if (matches > 0 && matches <= 2) {
                         const_cast<GameGem &>(cur).SetImportantStrings(bits);
                         if (prev.GetImportantStrings() == 0) {
                             const_cast<GameGem &>(prev).SetImportantStrings(bits);
@@ -1091,7 +1093,7 @@ void GemManager::AdvanceEnd() {
     mEnd++;
     if (mTrackConfig.IsKeyboardTrack()) {
         int tick = lastGem.GetGameGem().GetTick();
-        for (; mEnd < mGems.size() && tick == mGems[mEnd].GetGameGem().GetTick();
+        for (; mEnd < mGems.size() && mGems[mEnd].GetGameGem().GetTick() == tick;
              mEnd++) {
             Symbol curGemType = GetTypeForGem(mEnd);
             Gem &curGem = mGems[mEnd];
@@ -1107,6 +1109,7 @@ void GemManager::AddChordBracket(Symbol gemType, unsigned int slots, float ms) {
     if (!_ref0)
         return;
     if (mTrackConfig.IsKeyboardTrack()) {
+        static Symbol invisible("invisible");
         if (gemType != invisible) {
             if (slots != 0) {
                 if (TheGame->unkdc != -1.0f)

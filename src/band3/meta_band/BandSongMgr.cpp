@@ -311,11 +311,11 @@ const char *BandSongMgr::MidiFile(Symbol s) const {
         return gNullStr;
 }
 
-const char *BandSongMgr::SongFilePath(Symbol s1, const char *cc, bool b3) const {
+const char *BandSongMgr::SongFilePath(Symbol s1, const char *cc) const {
     const char *path = gNullStr;
     BandSongMetadata *data = (BandSongMetadata *)Data(GetSongIDFromShortName(s1, true));
     if (data) {
-        if (b3 && data->IsDownload()) {
+        if (data->IsDownload()) {
             String str =
                 MakeString("%s%s", SongMgr::SongAudioData(s1)->GetBaseFileName(), cc);
             unsigned int idx = str.find("_song");
@@ -347,7 +347,7 @@ DECOMP_FORCEACTIVE(BandSongMgr, "")
 
 const char *BandSongMgr::GetAlbumArtPath(Symbol s) const {
     if (HasSong(s, true)) {
-        const char *path = SongFilePath(s, "_keep.png", true);
+        const char *path = SongFilePath(s, "_keep.png");
 #ifdef HX_NATIVE
         // The extracted native asset set ships the song .mogg/.milo but NOT the
         // per-song "<name>_keep.png" album-art textures, so this path resolves to
@@ -956,7 +956,7 @@ void BandSongMgr::CheatToggleMaxSongCount() {
 BEGIN_HANDLERS(BandSongMgr)
     HANDLE_EXPR(has_song, HasSong(_msg->Sym(2), true))
     HANDLE_EXPR(song_path, SongPath(_msg->Sym(2)))
-    HANDLE_EXPR(song_file_path, SongFilePath(_msg->Sym(2), _msg->Str(3), false))
+    HANDLE_EXPR(song_file_path, SongFilePath(_msg->Sym(2), _msg->Str(3)))
     HANDLE_EXPR(song_name, SongName(_msg->Sym(2)))
     HANDLE_EXPR(
         upgrade_midi_file, UpgradeMidiFile(GetSongIDFromShortName(_msg->Sym(2), true))

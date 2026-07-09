@@ -197,7 +197,9 @@ bool SetlistRecord::IsNetSetlist() const {
 
 bool SetlistRecord::IsProfileOwner(const BandProfile *p) const {
     LocalSavedSetlist *setlist = dynamic_cast<LocalSavedSetlist *>(mSetlist);
-    return !setlist ? false : (setlist->mOwnerProfile && setlist->mOwnerProfile == p);
+    if (!setlist)
+        return false;
+    return setlist->mOwnerProfile && setlist->mOwnerProfile == p;
 }
 
 const char *SetlistRecord::GetOwner() const {
