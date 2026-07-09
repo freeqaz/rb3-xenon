@@ -517,7 +517,7 @@ UIComponent::State TourDescProvider::ComponentStateOverride(
     Symbol s = DataSymbol(iData);
     bool bAvailable = IsTourDescAvailable(s);
     if (!bAvailable)
-        i_eState = UIComponent::kDisabled;
+        return UIComponent::kDisabled;
     return i_eState;
 }
 

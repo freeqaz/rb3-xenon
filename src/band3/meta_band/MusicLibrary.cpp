@@ -1356,10 +1356,9 @@ bool MusicLibrary::IsActive(int idx) const {
 
 UIComponent::State
 MusicLibrary::ComponentStateOverride(int, int idx, UIComponent::State state) const {
-    if (GetCurrentSort()->GetNode(idx)->IsEnabled()) {
-        return state;
-    } else
+    if (!GetCurrentSort()->GetNode(idx)->IsEnabled())
         return UIComponent::kDisabled;
+    return state;
 }
 
 int MusicLibrary::SnappableAtOrBeforeData(int idx) const {

@@ -275,9 +275,7 @@ void GemTrainerPanel::StartSectionImpl() {
     int i34 = -1;
     CopyGems(mPattern, GetCurrSection(), i30, i34);
     TheSongDB->SetTrainerGems(i30, i34);
-    int i3 = sect.GetStartTick();
-    int i4 = sect.GetStartTick();
-    i3 -= TheSongDB->GetBeatsPerMeasure(i4) * 480;
+    int i3 = sect.GetStartTick() - TheSongDB->GetBeatsPerMeasure(sect.GetStartTick()) * 480;
     if (i3 < 0)
         i3 = 0;
     int numPatterns = mPattern.size();

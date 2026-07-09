@@ -15,18 +15,25 @@ AccomplishmentSetlist::~AccomplishmentSetlist() {}
 void AccomplishmentSetlist::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x1f);
 
-    i_pConfig->FindData(setlist, mSetlist, true);
-    int difficultyVal = false;
-    bool parsed = i_pConfig->FindData(difficulty, difficultyVal, false);
+    static Symbol s_setlist("setlist");
+    i_pConfig->FindData(s_setlist, mSetlist, true);
+
+    static Symbol s_difficulty("difficulty");
+    int difficultyVal = 0;
+    bool parsed = i_pConfig->FindData(s_difficulty, difficultyVal, false);
     if (parsed) {
         mDifficulty = (Difficulty)difficultyVal;
     }
-    int instrumentVal = false;
-    parsed = i_pConfig->FindData(instrument, instrumentVal, false);
+
+    static Symbol s_instrument("instrument");
+    int instrumentVal = 0;
+    parsed = i_pConfig->FindData(s_instrument, instrumentVal, false);
     if (parsed) {
         mInstrument = (ScoreType)instrumentVal;
     }
-    i_pConfig->FindData(min_stars, mMinStars, false);
+
+    static Symbol s_min_stars("min_stars");
+    i_pConfig->FindData(s_min_stars, mMinStars, false);
 }
 
 AccomplishmentType AccomplishmentSetlist::GetType() const {

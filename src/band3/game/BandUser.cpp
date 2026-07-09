@@ -94,21 +94,18 @@ TrackType BandUser::GetTrackType() const { return mTrackType; }
 Symbol BandUser::GetTrackSym() const { return TrackTypeToSym(mTrackType); }
 
 const char *BandUser::GetTrackIcon() const {
-    switch (mTrackType) {
-    case kTrackNone:
-    case kTrackPending:
-    case kTrackPendingVocals:
+    int tt = mTrackType;
+    if (tt == kTrackNone || tt == kTrackPending || tt == kTrackPendingVocals) {
         return GetFontCharFromControllerType(
             mControllerType, GetCurrentHardcoreIconLevel()
         );
-    case kTrackVocals:
+    }
+    if (tt == kTrackVocals) {
         if (mPlayer && mPlayer->GetSongNumVocalParts() > 1) {
             return GetFontCharForHarmonyMics(
                 mPlayer->GetSongNumVocalParts(), GetCurrentHardcoreIconLevel()
             );
         }
-    default:
-        break;
     }
 
     if (mTrackType == kTrackDrum && mPreferredScoreType == kScoreRealDrum) {

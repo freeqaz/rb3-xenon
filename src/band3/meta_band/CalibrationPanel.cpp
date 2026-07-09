@@ -133,46 +133,53 @@ void CalibrationPanel::UpdateAnimation() {
 }
 
 float CalibrationPanel::HandlePreAndPostTestAnim(float f) {
-    float ftouse = f;
     if (mTestState == tsPreRoll) {
-        bool b6;
-        if (mRestingFrame == 0) {
-            b6 = unk64 > f;
-        } else {
-            b6 = false;
-            if (f >= mRestingFrame && unk64 <= mRestingFrame)
-                b6 = true;
-        }
-        if (b6) {
-            if (mEnableAudio) {
-                mFader->DoFade(0, mCycleTimeMs / 2.0f);
+        if (mRestingFrame == 0.0f) {
+            if (unk64 > f) {
+                if (mEnableAudio) {
+                    mFader->DoFade(0, mCycleTimeMs / 2.0f);
+                }
+                SetTestState(tsTesting);
+                unk7c = 1;
+                unk7c = GetTestRep();
+                goto finalize;
             }
-            SetTestState(tsTesting);
-            unk7c = 1;
-            unk7c = GetTestRep();
         } else {
-            unk64 = f;
-            return mRestingFrame;
+            if (f >= mRestingFrame && unk64 <= mRestingFrame) {
+                if (mEnableAudio) {
+                    mFader->DoFade(0, mCycleTimeMs / 2.0f);
+                }
+                SetTestState(tsTesting);
+                unk7c = 1;
+                unk7c = GetTestRep();
+                goto finalize;
+            }
         }
+        unk64 = f;
+        return mRestingFrame;
     } else if (mTestState == tsPostTest) {
         for (int i = 0; i < mAnimNumCycles; i++) {
             float testFrame = mAnimCycleFrames * (float)i + mRestingFrame;
-            bool b6;
-            if (testFrame == 0) {
-                b6 = unk64 > f;
+            if (testFrame == 0.0f) {
+                if (unk64 > f) {
+                    f = testFrame;
+                    break;
+                }
             } else {
-                b6 = false;
-                if (f >= testFrame && unk64 <= testFrame)
-                    b6 = true;
+                if (f >= testFrame && unk64 <= testFrame) {
+                    f = testFrame;
+                    break;
+                }
             }
-            if (b6 || (unk64 == testFrame)) {
-                ftouse = testFrame;
+            if (unk64 == testFrame) {
+                f = testFrame;
                 break;
             }
         }
     }
-    unk64 = ftouse;
-    return ftouse;
+finalize:
+    unk64 = f;
+    return f;
 }
 
 void CalibrationPanel::UpdateLabel() {
@@ -687,15 +694,14 @@ int CalibrationPanel::GetTestQuality() const {
 }
 
 float CalibrationPanel::ReshapeTime(float f) {
-    float u = unk8c;
     float cycle = mCycleTimeMs;
-    float f1 = f / cycle;
-    if (!(f1 <= 1.0f))
-        f1 = (f1 - 2.0f) * (f1 - 2.0f) + 2.0f;
-    else
+    float f1 = f * (1.0f / cycle);
+    if (f1 <= 1.0f)
         f1 = f1 * f1;
+    else
+        f1 = (f1 - 2.0f) * (f1 - 2.0f) + 2.0f;
     f1 = f1 * cycle;
-    return Interp(f, f1, u);
+    return Interp(f, f1, unk8c);
 }
 
 void CalibrationPanel::Enter() {
