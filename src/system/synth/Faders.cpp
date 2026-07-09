@@ -210,6 +210,18 @@ DECOMP_FORCEACTIVE(Faders, "ObjPtr_p.h", "c.Owner()", "")
 
 #define kGroupRev 0
 
+void FaderGroup::Save(BinStream &bs) {
+    bs << kGroupRev;
+    ObjPtrList<Fader> pList(mFaders);
+    for (ObjPtrList<Fader>::iterator it = pList.begin(); it != pList.end(); it) {
+        if ((*it)->Dir() && (*it)->LocalName().Null())
+            ++it;
+        else
+            it = pList.erase(it);
+    }
+    bs << pList;
+}
+
 // fn_80670CA8
 void FaderGroup::Load(BinStream &bs) {
     int rev;

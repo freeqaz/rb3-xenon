@@ -3741,15 +3741,48 @@ NoteTube.cpp:
 	.text       start:0x82BF6570 end:0x82BF6938
 
 Faders.cpp:
+	.pdata      start:0x8222FB90 end:0x8222FB98
+	.pdata      start:0x8222FC00 end:0x8222FC08
+	.pdata      start:0x8222FC60 end:0x8222FC68
 	.text       start:0x826EDE48 end:0x826EDE74
+	.text       start:0x826EE670 end:0x826EE6C0
+	.text       start:0x826EE6C0 end:0x826EE6E8
+	.text       start:0x826EEDB8 end:0x826EEE78
+	.text       start:0x826EF300 end:0x826EF388
 
 SongPreview.cpp:
 	.pdata      start:0x82237960 end:0x82237968
 	.text       start:0x82780788 end:0x827808AC
 
 StandardStream.cpp:
+	.pdata      start:0x8222F020 end:0x8222F028
+	.pdata      start:0x8222F028 end:0x8222F030
+	.pdata      start:0x8222F0A8 end:0x8222F0B0
+	.pdata      start:0x8222F140 end:0x8222F148
+	.pdata      start:0x8222F178 end:0x8222F180
+	.pdata      start:0x8222F1A0 end:0x8222F1A8
+	.pdata      start:0x8222F1B8 end:0x8222F1C0
+	.pdata      start:0x8222F250 end:0x8222F258
+	.pdata      start:0x8222F2A0 end:0x8222F2A8
 	.pdata      start:0x8222F348 end:0x8222F350
+	.pdata      start:0x8222F360 end:0x8222F368
+	.text       start:0x826E3B20 end:0x826E3B70
+	.text       start:0x826E3B70 end:0x826E3B9C
+	.text       start:0x826E3BA0 end:0x826E3BB4
+	.text       start:0x826E3BD0 end:0x826E3BE4
+	.text       start:0x826E3BE8 end:0x826E3C58
+	.text       start:0x826E4178 end:0x826E4270
+	.text       start:0x826E4480 end:0x826E4494
+	.text       start:0x826E4498 end:0x826E44AC
+	.text       start:0x826E4B28 end:0x826E4B90
+	.text       start:0x826E4B90 end:0x826E4BBC
+	.text       start:0x826E4EF8 end:0x826E4F74
+	.text       start:0x826E5198 end:0x826E5258
+	.text       start:0x826E5520 end:0x826E5574
+	.text       start:0x826E5D50 end:0x826E5DAC
+	.text       start:0x826E62C8 end:0x826E6320
 	.text       start:0x826E6D08 end:0x826E6FA4
+	.text       start:0x826E7000 end:0x826E70F8
 
 TrackConfig.cpp:
 	.pdata      start:0x82255180 end:0x82255188
