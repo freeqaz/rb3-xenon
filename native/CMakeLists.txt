@@ -59,6 +59,13 @@ list(FILTER ENGINE_SOURCES EXCLUDE REGEX "/(Vec|Mtx)\\.cpp$")
 # Flex-generated DTA lexer (C source).
 set(DTA_LEXER ${REPO_ROOT}/src/system/obj/DataFlex.c)
 
+# rndobj/Anim.cpp: not part of the obj/utl/os/math engine globs, but utl/Song.cpp
+# derives Song from RndAnimatable and emits its vtable, which references the
+# virtual thunks to RndAnimatable::Handle / ::SyncProperty. Those thunks (and the
+# real method bodies) live in Anim.cpp's BEGIN_HANDLERS/BEGIN_PROPSYNCS blocks, so
+# the native link needs this one TU. Compiles clean against the engine subset.
+set(RNDOBJ_SOURCES ${REPO_ROOT}/src/system/rndobj/Anim.cpp)
+
 # --- Native platform shims (from dc3-decomp) ---
 file(GLOB PLATFORM_SHIMS ${CMAKE_SOURCE_DIR}/src/platform/*.cpp)
 set(NATIVE_SHIMS
@@ -72,6 +79,7 @@ set(NATIVE_SHIMS
 add_executable(rb3-dta
     ${CMAKE_SOURCE_DIR}/src/main_dta.cpp
     ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s

@@ -364,6 +364,16 @@ _ZTv0_n96_N13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE:
     xorq %rax, %rax
     ret
 
+// RndGroup::AddObject(Hmx::Object*, Hmx::Object*) — referenced by
+// RndAnimatable::OnAnimate in Anim.cpp (animation runtime, NOT on the DTA-parse
+// path). RndGroup.cpp isn't compiled for native, so a no-op stub satisfies the
+// link.
+.weak _ZN8RndGroup9AddObjectEPN3Hmx6ObjectES2_
+.type _ZN8RndGroup9AddObjectEPN3Hmx6ObjectES2_,@function
+_ZN8RndGroup9AddObjectEPN3Hmx6ObjectES2_:
+    xorq %rax, %rax
+    ret
+
 .bss
 .align 16
 .weak gMemStackLock
@@ -448,5 +458,21 @@ _ZTI8WorldDir:
 .type _ZTT13RndAnimatable,@object
 .size _ZTT13RndAnimatable, 128
 _ZTT13RndAnimatable:
+    .zero 128
+
+// typeinfo for RndGroup / RndAnimFilter — referenced by RndAnimatable::OnAnimate
+// and Hmx::Object::New<RndAnimFilter> in Anim.cpp (animation runtime, NOT on the
+// DTA-parse path). RndGroup.cpp / RndAnimFilter aren't compiled for native, so
+// zeroed RTTI storage satisfies the vtable-emitter reference.
+.weak _ZTI8RndGroup
+.type _ZTI8RndGroup,@object
+.size _ZTI8RndGroup, 128
+_ZTI8RndGroup:
+    .zero 128
+
+.weak _ZTI13RndAnimFilter
+.type _ZTI13RndAnimFilter,@object
+.size _ZTI13RndAnimFilter, 128
+_ZTI13RndAnimFilter:
     .zero 128
 

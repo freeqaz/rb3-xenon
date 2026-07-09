@@ -86,3 +86,17 @@ const char *LocalizeOrdinal(
     }
     return MakeString(buf);
 }
+
+#ifdef HX_NATIVE
+// 4-arg overload: not yet decompiled in the retail xenon TU (its out-of-line
+// body lives outside this object here), but DateTime.cpp references it, so the
+// native rb3-dta build needs a real definition. Delegate to the 6-arg form with
+// an empty lang (which makes it fall back to SystemLanguage — the exact behavior
+// the 4-arg form must have) and TheLocale. Guarded so retail bytes are
+// byte-identical (HX_NATIVE is native-only).
+const char *LocalizeOrdinal(
+    int num, LocaleGender gender, LocaleNumber number, bool superscriptMarkup
+) {
+    return LocalizeOrdinal(num, gender, number, superscriptMarkup, Symbol(), TheLocale);
+}
+#endif

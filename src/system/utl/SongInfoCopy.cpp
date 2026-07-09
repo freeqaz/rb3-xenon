@@ -91,3 +91,29 @@ SongInfoCopy::SongInfoCopy(const SongInfo *info) {
         mExtraMidiFiles.push_back(info->GetExtraMidiFile(i));
     }
 }
+
+#ifdef HX_NATIVE
+// Trivial member accessors. In the retail X360 object these are emitted from a
+// different TU / inlined into the vtable emitter, so their out-of-line bodies
+// are absent from SongInfoCopy.obj — but the native rb3-dta build references
+// them through the vtable and needs real definitions. Bodies are the verbatim
+// rb3-Wii oracle (src/system/utl/SongInfoCopy.cpp), which returns the members.
+// Guarded so retail bytes are byte-identical (HX_NATIVE is native-only).
+int SongInfoCopy::GetNumVocalParts() const { return mNumVocalParts; }
+
+int SongInfoCopy::GetHopoThreshold() const { return mHopoThreshold; }
+
+const std::vector<int> &SongInfoCopy::GetCrowdChannels() const { return mCrowdChannels; }
+
+const std::vector<Symbol> &SongInfoCopy::GetDrumSoloSamples() const {
+    return mDrumSoloSamples;
+}
+
+const std::vector<Symbol> &SongInfoCopy::GetDrumFreestyleSamples() const {
+    return mDrumFreestyleSamples;
+}
+
+float SongInfoCopy::GetMuteVolume() const { return mMuteVolume; }
+
+float SongInfoCopy::GetVocalMuteVolume() const { return mVocalMuteVolume; }
+#endif
