@@ -3901,3 +3901,70 @@ Rnd.cpp:
 WebSvcMgrCurl.cpp:
 	.pdata      start:0x821F0F88 end:0x821F0F90
 	.text       start:0x822D58B8 end:0x822D5910
+
+Decibels.cpp:
+	.pdata      start:0x82253F48 end:0x82253F58
+	.text       start:0x82B5DC80 end:0x82B5DD28
+
+Primes.cpp:
+	.text       start:0x82B5DD28 end:0x82B5DD68
+
+StreamChecksum.cpp:
+	.pdata      start:0x82253F58 end:0x82253F90
+	.text       start:0x82B5DD68 end:0x82B5E050
+
+Cam.cpp:
+	.pdata      start:0x82204A58 end:0x82204BF0
+	.text       start:0x82420C50 end:0x82422B28
+
+CamAnim.cpp:
+	.pdata      start:0x822088F8 end:0x822089F0
+	.text       start:0x82472E60 end:0x82473DF8
+
+Lit_NG.cpp:
+	.pdata      start:0x82253DE8 end:0x82253EE8
+	.text       start:0x82B5B398 end:0x82B5D040
+
+AccomplishmentConditional.cpp:
+	.pdata      start:0x82226530 end:0x82226598
+	.text       start:0x8264DBB8 end:0x8264E128
+
+CymbalSelectionProvider.cpp:
+	.pdata      start:0x822262E0 end:0x822263C0
+	.text       start:0x8264C238 end:0x8264C940
+
+SongSortByArtist.cpp:
+	.pdata      start:0x82225320 end:0x82225440
+	.text       start:0x8263D398 end:0x8263E2B8
+
+SongSortByDiff.cpp:
+	.pdata      start:0x82225738 end:0x822257A0
+	.text       start:0x82640558 end:0x82640B58
+
+SongSortByPlays.cpp:
+	.pdata      start:0x82225640 end:0x82225690
+	.text       start:0x8263F9D8 end:0x8263FE30
+
+SongSortByRank.cpp:
+	.pdata      start:0x822257B0 end:0x82225918
+	.text       start:0x82640CA8 end:0x826421B8
+
+SongSortByRecent.cpp:
+	.pdata      start:0x82225500 end:0x82225640
+	.text       start:0x8263EC10 end:0x8263F9D8
+
+SongSortBySong.cpp:
+	.pdata      start:0x82225290 end:0x82225320
+	.text       start:0x8263CC60 end:0x8263D398
+
+UploadErrorMgr.cpp:
+	.pdata      start:0x82223830 end:0x822238C8
+	.text       start:0x82625724 end:0x82625CA8
+
+HttpGet.cpp:
+	.pdata      start:0x8223AEE0 end:0x8223AF58
+	.text       start:0x827B6BE8 end:0x827B75C0
+
+BandLabel.cpp:
+	.pdata      start:0x821F69A0 end:0x821F6B58
+	.text       start:0x8232DD30 end:0x8232FAB0
