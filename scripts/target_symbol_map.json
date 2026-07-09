@@ -13846,5 +13846,7 @@
  "0x82721500": "?SetFile@TexMovie@@QAAXABVFilePath@@@Z",
  "0x82770f38": "?CheckForPitchBend@TrackWatcherImpl@@QAAXM@Z",
  "0x82771b00": "?CheckForPasses@TrackWatcherImpl@@QAAXM@Z",
- "0x822e9450": "?UpdateConfiguration@VocalTrackDir@@QAAXXZ"
+ "0x822e9450": "?UpdateConfiguration@VocalTrackDir@@QAAXXZ",
+ "0x826d7260": "?Poll@GuitarFx@@QAAXH_N0MMM00@Z",
+ "0x826d77d8": "?GetFxSend@GuitarFx@@QAAPAVFxSend@@XZ"
 }
