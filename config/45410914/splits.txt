@@ -68,13 +68,6 @@ RockCentral.cpp:
 	.pdata      start:0x82219010 end:0x82219018
 	.pdata      start:0x82219D58 end:0x82219D60
 	.pdata      start:0x8221B418 end:0x8221B420
-	.pdata      start:0x8221BAF0 end:0x8221BAF8
-	.pdata      start:0x8221BB70 end:0x8221BB78
-	.pdata      start:0x8221BB80 end:0x8221BB88
-	.pdata      start:0x8221BB90 end:0x8221BB98
-	.pdata      start:0x8221BBA8 end:0x8221BBB8
-	.pdata      start:0x8221BC08 end:0x8221BC10
-	.pdata      start:0x8221BC78 end:0x8221BC98
 	.pdata      start:0x8221BCD0 end:0x8221BCE0
 	.pdata      start:0x8221BFD8 end:0x8221BFE0
 	.pdata      start:0x8221C020 end:0x8221C028
@@ -147,13 +140,6 @@ RockCentral.cpp:
 	.text       start:0x82588AA0 end:0x82588B20
 	.text       start:0x82594328 end:0x82594348
 	.text       start:0x825A9E20 end:0x825A9E6C
-	.text       start:0x825AF958 end:0x825AF978
-	.text       start:0x825B0FB8 end:0x825B0FD8
-	.text       start:0x825B0FF8 end:0x825B1018
-	.text       start:0x825B1038 end:0x825B1058
-	.text       start:0x825B1098 end:0x825B10D8
-	.text       start:0x825B1220 end:0x825B1240
-	.text       start:0x825B13E0 end:0x825B1460
 	.text       start:0x825B18A8 end:0x825B18E8
 	.text       start:0x825B3F14 end:0x825B3F34
 	.text       start:0x825B426C end:0x825B428C
@@ -3112,8 +3098,8 @@ band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.text       start:0x8262F530 end:0x82630988
 
 band3/meta_band/AppLabel.cpp:
-	.pdata      start:0x8221B7D0 end:0x8221BAE8
-	.text       start:0x825ACF88 end:0x825AF938
+	.pdata      start:0x8221B7D0 end:0x8221BCA0
+	.text       start:0x825ACF88 end:0x825B1488
 
 band3/meta_band/UIStats.cpp:
 	.pdata      start:0x82214E58 end:0x82214ED0
@@ -3152,8 +3138,8 @@ band3/meta_band/StoreMainPanel.cpp:
 	.text       start:0x8261E020 end:0x8261FE68
 
 band3/meta_band/StoreMenuPanel.cpp:
-	.pdata      start:0x82223238 end:0x82223408
-	.text       start:0x8261FE68 end:0x826218C0
+	.pdata      start:0x82223238 end:0x82223340
+	.text       start:0x8261FE68 end:0x82620F00
 
 band3/meta_band/SongSort.cpp:
 	.pdata      start:0x8221AFD8 end:0x8221B078
@@ -3877,12 +3863,8 @@ TourPerformer.cpp:
 	.text       start:0x8234ED88 end:0x8234F61C
 
 TrainingPanel.cpp:
-	.pdata      start:0x82223418 end:0x82223420
-	.pdata      start:0x82223420 end:0x82223428
-	.pdata      start:0x82223438 end:0x82223440
-	.text       start:0x82621988 end:0x82621A00
-	.text       start:0x82621A00 end:0x82621A38
-	.text       start:0x82621B08 end:0x82621E78
+	.pdata      start:0x82223340 end:0x82223480
+	.text       start:0x82620F00 end:0x82621F90
 
 WaitingUserGate.cpp:
 	.pdata      start:0x82219E60 end:0x82219E68

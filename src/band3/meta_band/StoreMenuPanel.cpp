@@ -1,3 +1,10 @@
+#include "macros.h"
+// ObjMacros.h must precede StoreMenuPanel.h so the class body expands the
+// ObjMacros OBJ_SET_TYPE (arg-evaluating stripped-warn arm) instead of the
+// Object.h fallback — retail SetType keeps the PathName/ClassName arg
+// evaluation (same fix as TrainingPanel, whose header chain pulls ObjMacros
+// first via LessonProvider.h).
+#include "obj/ObjMacros.h"
 #include "meta_band/StoreMenuPanel.h"
 #include "meta_band/BandSongMetadata.h"
 #include "meta_band/BandStorePanel.h"
@@ -12,21 +19,18 @@
 #include "ui/UIList.h"
 #include "utl/MakeString.h"
 #include "utl/Messages2.h"
+#include "utl/Std.h"
 #include "utl/Symbol.h"
 #include "utl/Symbols.h"
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
 
-StoreMenuPanel *StoreMenuPanel::inst;
-
 StoreMenuPanel::StoreMenuPanel()
-    : mMenuStack(), mCurrentMenuIx(-1), mPendingMenuIx(-1), mList(0),
-      mStartingHighlightIx(0) {
-    inst = this;
-}
+    : mMenuStack(), mCurrentMenuIx(0), mPendingMenuIx(-1), mList(0),
+      mStartingHighlightIx(0) {}
 
-StoreMenuPanel::~StoreMenuPanel() { inst = nullptr; }
+StoreMenuPanel::~StoreMenuPanel() {}
 
 void StoreMenuPanel::SetPendingMenuIx(int ix) {
     mPendingMenuIx = ix;
@@ -46,12 +50,7 @@ void StoreMenuPanel::FinishLoad() {
 
 void StoreMenuPanel::Unload() {
     mCurrentMenuIx = 0;
-    std::vector<StoreMenuProvider *>::iterator it = mMenuStack.begin();
-    std::vector<StoreMenuProvider *>::iterator e = mMenuStack.end();
-    for (; it != e; ++it) {
-        delete *it;
-    }
-    mMenuStack.clear();
+    DeleteAll(mMenuStack);
     mList = nullptr;
     UIPanel::Unload();
 }
@@ -103,45 +102,58 @@ const char *StoreMenuPanel::GetCrumbText() const {
     return result;
 }
 
-void StoreMenuPanel::AddMenu(DataArray *data, const char *path) {
+void StoreMenuPanel::AddMenu(DataArray *data, const char *path, int ix) {
+    if (ix < 0)
+        ix = mCurrentMenuIx + 1;
     StoreMenuProvider *provider;
-    int next = mCurrentMenuIx + 1;
-    if (next == (int)mMenuStack.size()) {
+    if (ix == mMenuStack.size()) {
         provider = new StoreMenuProvider(data, path);
         mMenuStack.push_back(provider);
     } else {
-        provider = mMenuStack[next];
+        provider = mMenuStack[ix];
         provider->SetData(data);
     }
+    int hl = 0;
     int numData = provider->NumData();
-    int ix = 0;
-    if (mMenuStack.size() == 1) {
-        if (mStartingHighlightIx < numData)
-            ix = mStartingHighlightIx;
+    if (mMenuStack.size() == 1 && mStartingHighlightIx < numData) {
+        hl = mStartingHighlightIx;
     }
-    while (!provider->IsActive(ix)) {
-        ix = (ix + 1) % numData;
+    while (!provider->IsActive(hl)) {
+        hl = (hl + 1) % numData;
     }
-    provider->mIxHighlight = ix;
-    SetPendingMenuIx(next);
+    provider->mIxHighlight = hl;
+    SetPendingMenuIx(ix);
 }
 
 DataNode StoreMenuPanel::OnBack(const DataArray *) {
-    if (mCurrentMenuIx > 0) {
-        SetPendingMenuIx(mCurrentMenuIx - 1);
+    int ix = mCurrentMenuIx;
+    if (ix != 0) {
+        if (ix == 1) {
+            mStartingHighlightIx = mMenuStack[0]->mIxHighlight;
+            BandStorePanel *bsp = BandStorePanel::Instance();
+            bsp->Request(String(bsp->GetIndexFile()), true);
+            ix = -1;
+        } else {
+            ix = ix - 1;
+        }
+        SetPendingMenuIx(ix);
         return DataNode(1);
+    } else {
+        mStartingHighlightIx = 0;
+        SetPendingMenuIx(-1);
+        return DataNode(kDataUnhandled, 0);
     }
-    mStartingHighlightIx = 0;
-    SetPendingMenuIx(-1);
-    return DataNode(kDataUnhandled, 0);
 }
 
 DataNode StoreMenuPanel::OnMsg(const MetadataLoadedMsg &msg) {
     BandStorePanel *panel = BandStorePanel::Instance();
     if (msg->Int(3)) {
-        static Symbol submenus("submenus");
-        if (msg->Array(2)->FindArray(submenus, false)) {
-            AddMenu(msg->Array(2), String(msg->Str(4)).c_str());
+        DataArray *arr = msg->Array(2);
+        if (arr->FindArray(Symbol("submenus"), false)) {
+            String str(msg->Str(4));
+            str = str.substr(0, str.find("/") + 1);
+            bool replaceRoot = msg->Int(5);
+            AddMenu(arr, str.c_str(), replaceRoot ? 0 : -1);
         }
     } else {
         panel->ExitError(kStoreErrorCacheRemoved);

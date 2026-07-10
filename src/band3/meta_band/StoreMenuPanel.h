@@ -20,19 +20,17 @@ public:
     virtual void Exit();
     virtual void Poll();
 
-    void AddMenu(DataArray *, const char *);
+    // Retail 360: third arg is the explicit menu index (-1 = push after
+    // current); OnMsg passes 0 to replace the root menu.
+    void AddMenu(DataArray *, const char *, int);
     DataNode OnBack(const DataArray *);
     DataNode OnMsg(const MetadataLoadedMsg &);
     const char *GetCrumbText() const;
     void SetPendingMenuIx(int);
-
-    static StoreMenuPanel *sInstance() { return inst; }
 
     std::vector<StoreMenuProvider *> mMenuStack; // 0x3c
     int mCurrentMenuIx; // 0x48
     int mPendingMenuIx; // 0x4c
     BandList *mList; // 0x50
     int mStartingHighlightIx; // 0x54
-
-    static StoreMenuPanel *inst;
 };

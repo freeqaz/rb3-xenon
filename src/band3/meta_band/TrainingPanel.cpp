@@ -54,6 +54,10 @@ void TrainingPanel::Unload() {
 }
 
 bool TrainingPanel::IsCorrectController(Symbol s, LocalBandUser *u) const {
+    static Symbol trainer_drums("trainer_drums");
+    static Symbol trainer_pro_drums("trainer_pro_drums");
+    static Symbol trainer_real_guitar("trainer_real_guitar");
+    static Symbol trainer_pro_keyboard("trainer_pro_keyboard");
     ControllerType ty = u->GetControllerType();
     if ((s == trainer_drums || s == trainer_pro_drums) && ty == kControllerDrum)
         return true;
@@ -86,6 +90,10 @@ void TrainingPanel::SetTrainingState(TrainingPanel::TrainingState state) {
 }
 
 TrainingPanel::TrainingState TrainingPanel::GetStateFromTrainer(Symbol s) {
+    static Symbol trainer_drums("trainer_drums");
+    static Symbol trainer_pro_drums("trainer_pro_drums");
+    static Symbol trainer_real_guitar("trainer_real_guitar");
+    static Symbol trainer_pro_keyboard("trainer_pro_keyboard");
     if (s == trainer_drums)
         return kTrainingState_DrumLessons;
     else if (s == trainer_pro_drums)
@@ -98,7 +106,10 @@ TrainingPanel::TrainingState TrainingPanel::GetStateFromTrainer(Symbol s) {
         return kTrainingState_Invalid;
 }
 
-void TrainingPanel::RefreshLessonsList() { Handle(refresh_lessons_list_msg, true); }
+void TrainingPanel::RefreshLessonsList() {
+    static Message refresh_lessons_list(Symbol("refresh_lessons_list"));
+    Handle(refresh_lessons_list, true);
+}
 
 DataNode TrainingPanel::OnMsg(const ButtonDownMsg &msg) {
     JoypadAction action = msg.GetAction();

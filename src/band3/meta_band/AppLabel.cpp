@@ -93,13 +93,8 @@ bool UILabel::CanHaveFocus() { return false; }
 
 void AppLabel::SetLeaderboardName(const LeaderboardRow &lb) {
     if (lb.mUnnamedBand) {
-        DataNode word = band_default_name;
-        DataNode count = lb.mName.c_str();
-        DataArray *da = new DataArray(2);
-        da->Node(0) = count;
-        da->Node(1) = word;
-        SetTokenFmt(da);
-        da->Release();
+        static Symbol band_default_name("band_default_name");
+        SetTokenFmt(band_default_name, lb.mName.c_str());
     } else {
         SetDisplayText(lb.mName.c_str(), true);
     }
@@ -110,25 +105,28 @@ void AppLabel::SetLeaderboardRankAndName(const LeaderboardRow &lb) {
         SetDisplayText(
             MakeString(
                 "%s) %s",
-                LocalizeSeparatedInt(lb.mRank, TheLocale),
+                LocalizeSeparatedInt(lb.mRank),
                 MakeString(Localize(band_default_name, nullptr), lb.mName.c_str())
             ),
             true
         );
     } else {
         SetDisplayText(
-            MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank, TheLocale), lb.mName.c_str()),
+            MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank), lb.mName.c_str()),
             true
         );
     }
 }
 
 void AppLabel::SetCreditsText(DataArray *arr, UIListSlot *slot) {
-    Symbol sym = blank;
-    if (arr->Size() != 0) {
-        sym = arr->Sym(0);
-    }
-    if (sym == blank) {
+    static Symbol heading("heading");
+    static Symbol image("image");
+    static Symbol blank("blank");
+    static Symbol heading2("heading2");
+    static Symbol title_name("title_name");
+    static Symbol centered("centered");
+    Symbol sym;
+    if (arr->Size() == 0 || (sym = arr->Sym(0)) == blank) {
         SetTextToken(gNullStr);
     } else if (heading == sym) {
         if (slot->Matches("heading")) {
@@ -187,22 +185,26 @@ void AppLabel::SetFormattedProfileName(Symbol s, BandUser *user) {
 }
 
 void AppLabel::SetSongName(Symbol shortname, bool fail) {
-    if (!shortname.Null()) {
-        SetSongNameWithNumber(TheSongMgr.GetSongIDFromShortName(shortname, fail), 0, 0);
-    }
+    int songID = TheSongMgr.GetSongIDFromShortName(shortname, fail);
+    SetSongNameWithNumber(songID, 0, 0);
 }
 
 void AppLabel::SetSongNameWithNumber(int songID, int i2, const char *cc) {
     BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
+    const char *text;
     if (data) {
-        cc = data->Title();
+        text = data->Title();
+    } else if (cc != 0) {
+        text = cc;
     } else {
-        cc = cc ? cc : Localize(unknown_song, 0);
+        static Symbol unknown_song("unknown_song");
+        text = Localize(unknown_song, 0);
     }
     if (i2 > 0) {
-        SetTokenFmt(setlist_song_fmt, i2, cc);
+        static Symbol setlist_song_fmt("setlist_song_fmt");
+        SetTokenFmt(setlist_song_fmt, i2, text);
     } else
-        SetDisplayText(cc, true);
+        SetDisplayText(text, true);
 }
 
 void AppLabel::SetSongAndArtistNameFromSymbol(Symbol shortname, int i) {
@@ -211,8 +213,10 @@ void AppLabel::SetSongAndArtistNameFromSymbol(Symbol shortname, int i) {
     String titleStr;
     BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
     if (!data) {
+        static Symbol unknown_song("unknown_song");
         titleStr = Localize(unknown_song, 0);
     } else {
+        static Symbol store_famous_by("store_famous_by");
         titleStr = data->Title();
         if (!data->IsMasterRecording()) {
             artistStr = MakeString("%s %s", Localize(store_famous_by, 0), data->Artist());
@@ -221,11 +225,13 @@ void AppLabel::SetSongAndArtistNameFromSymbol(Symbol shortname, int i) {
         }
     }
     if (i <= 0) {
+        static Symbol song_artist_fmt("song_artist_fmt");
         SetDisplayText(
             MakeString(Localize(song_artist_fmt, 0), titleStr.c_str(), artistStr.c_str()),
             true
         );
     } else {
+        static Symbol song_artist_fmt_number("song_artist_fmt_number");
         SetDisplayText(
             MakeString(
                 Localize(song_artist_fmt_number, 0), i, titleStr.c_str(), artistStr.c_str()
@@ -281,10 +287,11 @@ DECOMP_FORCEBLOCK(AppLabel, (), {SetlistRecord* slr; slr->GetSetlist()->SavedSet
 #pragma pop
 
 void AppLabel::SetArtistName(Symbol shortname) {
-    if (!shortname.Null()) {
-        int songID = TheSongMgr.GetSongIDFromShortName(shortname, true);
-        SetArtistName((BandSongMetadata *)TheSongMgr.Data(songID));
-    }
+    SetArtistName(
+        (BandSongMetadata *)TheSongMgr.Data(
+            TheSongMgr.GetSongIDFromShortName(shortname, true)
+        )
+    );
 }
 
 void AppLabel::SetArtistName(const BandSongMetadata *data) {
@@ -295,6 +302,7 @@ void AppLabel::SetArtistName(const char *name, bool cover) {
     if (!cover)
         SetDisplayText(name, true);
     else {
+        static Symbol cover_artist_fmt("cover_artist_fmt");
         DataArrayPtr ptr;
         SetTokenFmt(cover_artist_fmt, ptr, name);
         ptr->Release();
@@ -302,7 +310,8 @@ void AppLabel::SetArtistName(const char *name, bool cover) {
 }
 
 void AppLabel::SetSongAndArtistName(const SongSortNode *ssn) {
-    MILO_ASSERT(ssn, 342);
+    static Symbol song_artist_fmt("song_artist_fmt");
+    static Symbol store_famous_by("store_famous_by");
     String str;
     if (ssn->GetIsCover()) {
         str = MakeString("%s %s", Localize(store_famous_by, nullptr), ssn->GetArtist());
@@ -316,16 +325,13 @@ void AppLabel::SetSongAndArtistName(const SongSortNode *ssn) {
 }
 
 void AppLabel::SetSongCount(int ct) {
+    static Symbol song_select_song("song_select_song");
+    static Symbol song_select_songs("song_select_songs");
     const Symbol *sptr = &song_select_songs;
     if (ct == 1)
         sptr = &song_select_song;
-    DataNode word(*sptr);
-    DataNode count(LocalizeSeparatedInt(ct, TheLocale));
-    DataArray *da = new DataArray(2);
-    da->Node(0) = word;
-    da->Node(1) = count;
-    SetTokenFmt(da);
-    da->Release();
+    Symbol sym = *sptr;
+    SetTokenFmt(sym, LocalizeSeparatedInt(ct));
 }
 
 void AppLabel::SetStarRating(int i) {
@@ -333,14 +339,16 @@ void AppLabel::SetStarRating(int i) {
 }
 
 void AppLabel::SetMotd(MainHubPanel *hub) {
-    DataNode n = hub->Handle(motd_msg, true);
+    static Message motd("motd");
+    DataNode n = hub->Handle(motd, true);
     if (n.NotNull())
         SetDisplayText(n.Str(), true);
     return;
 }
 
 void AppLabel::SetDLCMotd(MainHubPanel *hub) {
-    DataNode n = hub->Handle(dlc_motd_msg, true);
+    static Message dlc_motd("dlc_motd");
+    DataNode n = hub->Handle(dlc_motd, true);
     if (n.NotNull())
         SetDisplayText(n.Str(), true);
     return;
@@ -398,16 +406,14 @@ void AppLabel::SetFromCharacter(const CharData *cd) {
 }
 
 void AppLabel::SetBandName(const LocalBandUser *lbu) {
-    BandProfile *prof = TheProfileMgr.GetProfileForUser(lbu);
-    if (prof)
-        SetBandName(prof);
+    SetBandName(TheProfileMgr.GetProfileForUser(lbu));
 }
 
 void AppLabel::SetBandName(const BandProfile *pProfile) {
-    MILO_ASSERT(pProfile, 463);
     String name = pProfile->GetBandName();
     const char *s = name.c_str();
     if (strcmp(s, "") == 0) {
+        static Symbol band_emptyname("band_emptyname");
         SetTextToken(band_emptyname);
     } else
         SetDisplayText(s, 1);
@@ -415,13 +421,13 @@ void AppLabel::SetBandName(const BandProfile *pProfile) {
 
 void AppLabel::SetPrimaryBandName() {
     BandMachineMgr *pMachineMgr = TheSessionMgr->GetMachineMgr();
-    MILO_ASSERT(pMachineMgr, 481);
     String pbn = pMachineMgr->GetLeaderPrimaryBandName();
     const char *s = pbn.c_str();
     if (pbn.length() != 0) {
         SetDisplayText(s, true);
     } else {
         String ppn = pMachineMgr->GetLeaderPrimaryProfileName();
+        static Symbol band_default_name("band_default_name");
         String defaultname =
             MakeString(Localize(band_default_name, nullptr), ppn.c_str());
         SetDisplayText(defaultname.c_str(), true);
@@ -465,19 +471,24 @@ void AppLabel::SetOfferCost(const StoreOffer *offer) {
     SetDisplayText(offer->CostStr(), true);
 }
 void AppLabel::SetOfferArtist(const StoreOffer *offer) {
-    if (offer->HasArtist()) {
-        bool isCover = offer->IsCover();
-        SetArtistName(offer->Artist(), isCover);
+    static Symbol artist("artist");
+    static Symbol cover("cover");
+    if (offer->HasData(artist)) {
+        bool isCover = false;
+        if (offer->HasData(cover))
+            isCover = offer->GetData(DataArrayPtr(cover), false).Int();
+        SetArtistName(offer->GetData(DataArrayPtr(artist), false).Str(), isCover);
     } else {
         SetDisplayText(gNullStr, true);
     }
 }
 void AppLabel::SetOfferAlbum(const StoreOffer *offer) {
-    bool hasAlbum = offer->OfferType() != pack && offer->AlbumName() != nullptr;
-    if (hasAlbum) {
-        SetDisplayText(offer->AlbumName(), true);
-    } else {
+    static Symbol pack("pack");
+    static Symbol album_name("album_name");
+    if (offer->OfferType() == pack || !offer->HasData(album_name)) {
         SetDisplayText(gNullStr, true);
+    } else {
+        SetDisplayText(offer->GetData(DataArrayPtr(album_name), false).Str(), true);
     }
 }
 void AppLabel::SetOfferDescription(const StoreOffer *offer) {
@@ -485,12 +496,9 @@ void AppLabel::SetOfferDescription(const StoreOffer *offer) {
 }
 
 void AppLabel::SetStoreCrumbText() {
-    StoreMenuPanel *smp = StoreMenuPanel::inst;
-    MILO_ASSERT(smp, 0x32A);
+    StoreMenuPanel *smp = ObjectDir::Main()->Find<StoreMenuPanel>("store_menu_panel", true);
     UIPanel *sbp = ObjectDir::Main()->Find<UIPanel>("store_browser_panel", true);
-    MILO_ASSERT(sbp, 0x32D);
     BandStorePanel *bsp = BandStorePanel::Instance();
-    MILO_ASSERT(bsp, 0x330);
     const char *title;
     if (sbp->GetState() != UIPanel::kUp || strlen(title = bsp->MenuTitle().c_str()) == 0) {
         SetDisplayText(smp->GetCrumbText(), true);
@@ -501,11 +509,29 @@ void AppLabel::SetStoreCrumbText() {
         );
     }
 }
+// Retail 360-only: sets label text from a store submenu entry node.
+// Only caller is StoreMenuProvider::Text.
+void AppLabel::SetStoreMenuText(const DataNode &node) {
+    if (node.Type() == kDataSymbol) {
+        SetTextToken(node.Sym());
+    } else if (node.Type() == kDataArray) {
+        SetDisplayText(
+            MakeString(
+                "%s%s", Localize(node.Array()->Sym(0), nullptr), node.Array()->Str(1)
+            ),
+            true
+        );
+    } else {
+        SetDisplayText(node.Str(), true);
+    }
+}
+
 void AppLabel::SetMusicLibraryStatus() {
     SetDisplayText(TheMusicLibrary->GetStatusText(), true);
 }
 
 void AppLabel::SetRecommendation(const StoreInfoPanel *panel) {
+    static Symbol store_recommended("store_recommended");
     SetDisplayText(panel->CurrentRecommendation()->unk0.c_str(), true);
 }
 
@@ -519,6 +545,17 @@ void AppLabel::SetLinkingCode(const char *cc) {
 }
 
 void AppLabel::SetBattleTimeLeft(int seconds) {
+    static Symbol battle_time_left_none("battle_time_left_none");
+    static Symbol battle_time_left_second("battle_time_left_second");
+    static Symbol battle_time_left_seconds("battle_time_left_seconds");
+    static Symbol battle_time_left_minute("battle_time_left_minute");
+    static Symbol battle_time_left_minutes("battle_time_left_minutes");
+    static Symbol battle_time_left_hour("battle_time_left_hour");
+    static Symbol battle_time_left_hours("battle_time_left_hours");
+    static Symbol battle_time_left_day("battle_time_left_day");
+    static Symbol battle_time_left_days("battle_time_left_days");
+    static Symbol battle_time_left_week("battle_time_left_week");
+    static Symbol battle_time_left_weeks("battle_time_left_weeks");
     int minutes = seconds / 60;
     int hours = minutes / 60;
     int days = hours / 24;
@@ -555,15 +592,12 @@ void AppLabel::SetBattleTimeLeft(int seconds) {
 }
 
 void AppLabel::SetBattleInstrument(ScoreType ty) {
+    static Symbol battle_instrument_fmt("battle_instrument_fmt");
     const char *result = gNullStr;
-    if ((unsigned)ty <= 0xA) {
-        Symbol nameSym(ScoreTypeToSym(ty));
-        Symbol fmtSym(battle_instrument_fmt);
-        const char *name = Localize(nameSym, nullptr);
+    if ((unsigned)ty < 0xB) {
+        const char *name = Localize(ScoreTypeToSym(ty), nullptr);
         const char *fontChar = GetFontCharFromScoreType(ty, 0);
-        result = MakeString(Localize(fmtSym, nullptr), fontChar, name);
-    } else {
-        MILO_FAIL("Bad ScoreType in AppLabel::SetBattleInstrumentString!");
+        result = MakeString(Localize(battle_instrument_fmt, nullptr), fontChar, name);
     }
     SetDisplayText(result, true);
 }
@@ -579,9 +613,9 @@ void AppLabel::SetBattleInstrument(const SetlistRecord *slr) {
 }
 
 void AppLabel::SetRatingIcon(int i) {
-    AUTO(ratingIcons, SystemConfig(song_select, rating_icons, SystemLanguage()));
-    MILO_ASSERT(ratingIcons, 943);
-    SetIcon(ratingIcons->Str(i)[0]);
+    static Symbol song_select("song_select");
+    static Symbol rating_icons("rating_icons");
+    SetIcon(SystemConfig(song_select, rating_icons, SystemLanguage())->Str(i)[0]);
 }
 
 void AppLabel::SetNewReleaseEntryText1(const StoreMainPanel *panel) {
@@ -623,17 +657,12 @@ void AppLabel::SetRawStoreShortcut(int i) {
 }
 
 void AppLabel::SetViewSetting(const ViewSetting *setting) {
-    const char *status = setting->GetCurrentStatus();
-    const char *name = Localize(setting->GetName(), nullptr);
-    DataNode fmt(setting_option_fmt);
-    DataNode nameNode(name);
-    DataNode valueNode(status);
-    DataArray *da = new DataArray(3);
-    da->Node(0) = fmt;
-    da->Node(1) = nameNode;
-    da->Node(2) = valueNode;
-    SetTokenFmt(da);
-    da->Release();
+    static Symbol setting_option_fmt("setting_option_fmt");
+    SetTokenFmt(
+        setting_option_fmt,
+        Localize(setting->GetName(), nullptr),
+        setting->GetCurrentStatus()
+    );
 }
 
 void AppLabel::SetViewSettingStatus(const ViewSetting *setting) {
@@ -680,7 +709,8 @@ void AppLabel::SetPitch(int pitch, int chrom) {
         break;
     }
     char buf[3];
-    *(short *)buf = 0;
+    buf[0] = 0;
+    buf[1] = 0;
     buf[2] = 0;
     switch (pitch) {
     case 0:
@@ -726,7 +756,6 @@ void AppLabel::SetTokenRedemptionString(const TokenRedemptionPanel *panel, int i
 
 void AppLabel::SetFromScoreDisplayData(short mask, int score, int rank, bool amongAll) {
     String icons;
-    Symbol sym;
     for (int i = 0; i < 11; i++) {
         if (mask & (1 << i)) {
             icons += GetFontCharFromScoreType((ScoreType)i, 0);
@@ -734,9 +763,12 @@ void AppLabel::SetFromScoreDisplayData(short mask, int score, int rank, bool amo
     }
     if (rank == 0) {
         SetDisplayText(
-            MakeString("%s%s", icons.c_str(), LocalizeSeparatedInt(score, TheLocale)), true
+            MakeString("%s%s", icons.c_str(), LocalizeSeparatedInt(score)), true
         );
     } else {
+        static Symbol ir_among_all("ir_among_all");
+        static Symbol ir_among_friends("ir_among_friends");
+        Symbol sym;
         if (amongAll) {
             sym = ir_among_all;
         } else {
@@ -746,7 +778,7 @@ void AppLabel::SetFromScoreDisplayData(short mask, int score, int rank, bool amo
             MakeString(
                 "<alt>%s</alt> %s (%s %s)",
                 icons.c_str(),
-                LocalizeSeparatedInt(score, TheLocale),
+                LocalizeSeparatedInt(score),
                 LocalizeOrdinal(rank, LocaleGenderMasculine, LocaleSingular, true),
                 Localize(sym, nullptr)
             ),
