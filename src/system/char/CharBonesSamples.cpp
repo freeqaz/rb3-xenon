@@ -10,6 +10,10 @@
 #include "utl/ChunkStream.h"
 #include "utl/MemMgr.h"
 #line 8 "CharBonesSamples.cpp"
+static int gVer;
+
+void CharBonesSamples::SetVer(int ver) { gVer = ver; }
+
 CharBonesSamples::CharBonesSamples()
     : mNumSamples(0), mPreviewSample(0), mRawData(nullptr) {}
 
@@ -18,68 +22,54 @@ CharBonesSamples::~CharBonesSamples() { MemFree(mRawData); }
 INIT_REVS(0x10, 0)
 
 void CharBonesSamples::Load(BinStream &bs) {
-    LOAD_REVS(bs)
-    if (0x10 < d.rev) {
-        MILO_FAIL(
-            "%s can\'t load new %s version %d > %d", "", "CharBonesSample", d.rev, gRev
-        );
+    bs >> gVer;
+    if (!(gVer > 12 && gVer <= 16)) {
+        TheDebugFailer << MakeString(kAssertStr, __FILE__, 0x2a0, "gVer > 12 && gVer <= VER");
     }
-    if (d.altRev > 0) {
-        MILO_FAIL(
-            "%s can\'t load new %s alt version %d > %d",
-            "",
-            "CharBonesSample",
-            d.altRev,
-            gAltRev
-        );
-    }
-    if (!(d.rev > 12)) {
-        TheDebugFailer << MakeString(kAssertStr, __FILE__, 0x29d, "d.rev > 12");
-    }
-    LoadHeader(d);
-    LoadData(d);
+    LoadHeader(bs);
+    LoadData(bs);
 }
 
-void CharBonesSamples::LoadHeader(BinStreamRev &d) {
+void CharBonesSamples::LoadHeader(BinStream &bs) {
     MemFree(mRawData);
     int numBones;
-    d >> numBones;
+    bs >> numBones;
     mBones.resize(numBones);
-    if (d.rev > 0xA) {
+    if (gVer > 0xA) {
         for (int i = 0; i < numBones; i++) {
-            d >> mBones[i];
+            bs >> mBones[i];
         }
     } else {
         for (int i = 0; i < numBones; i++) {
-            d >> mBones[i].name;
+            bs >> mBones[i].name;
         }
     }
 
-    if (d.rev > 9) {
-        ReadCounts(d.stream, d.rev > 0xF ? 7 : 10);
-        d >> (int &)mCompression;
-        d >> mNumSamples;
+    if (gVer > 9) {
+        ReadCounts(bs, gVer > 0xF ? 7 : 10);
+        bs >> (int &)mCompression;
+        bs >> mNumSamples;
     } else {
         int i;
-        if (d.rev > 5) {
+        if (gVer > 5) {
             int count;
-            if (d.rev > 7) {
+            if (gVer > 7) {
                 count = 9;
-            } else if (d.rev > 6) {
+            } else if (gVer > 6) {
                 count = 6;
             } else {
                 count = 10;
             }
             for (i = 0; i < count; i++) {
                 int tmp;
-                d >> tmp;
+                bs >> tmp;
             }
-            d >> (int &)mCompression;
-            d >> mNumSamples;
+            bs >> (int &)mCompression;
+            bs >> mNumSamples;
         } else {
-            d >> mNumSamples;
-            if (d.rev > 3) {
-                d >> (int &)mCompression;
+            bs >> mNumSamples;
+            if (gVer > 3) {
+                bs >> (int &)mCompression;
             }
         }
         for (i = 0; i < 7; i++) {
@@ -93,8 +83,8 @@ void CharBonesSamples::LoadHeader(BinStreamRev &d) {
         }
     }
 
-    if (d.rev > 0xB) {
-        d >> mFrames;
+    if (gVer > 0xB) {
+        bs >> mFrames;
     } else {
         mFrames.clear();
     }
@@ -104,26 +94,25 @@ void CharBonesSamples::LoadHeader(BinStreamRev &d) {
     );
 }
 
-void CharBonesSamples::LoadData(BinStreamRev &d) {
-    if (d.rev == 0xE) {
+void CharBonesSamples::LoadData(BinStream &bs) {
+    if (gVer == 0xE) {
         bool x;
-        d >> x;
+        bs >> x;
     }
-    bool cached = d.stream.Cached();
+    bool cached = bs.Cached();
     auto& _sub1 = mOffsets[TYPE_QUAT];
     auto& _sub0 = mOffsets[TYPE_END];
-    if (!cached || d.rev <= 0xE) {
+    if (!cached || gVer <= 0xE) {
         for (int i = 0; i < mNumSamples; i++) {
-            auto _tmp0 = Min(i, mNumSamples - 1);
-            mStart = mRawData + mTotalSize * _tmp0;
+            SetSamplePointers(Min(i, mNumSamples - 1));
 
             if (cached) {
-                d.stream.Read(mStart, _sub0 - mOffsets[TYPE_POS]);
+                bs.Read(mStart, _sub0 - mOffsets[TYPE_POS]);
 #ifdef HX_NATIVE
                 // Cached .milo_xbox files store raw big-endian data.
                 // Byte-swap floats (4 bytes) in POS/SCALE sections and
                 // shorts (2 bytes) in QUAT/ROT sections to native LE order.
-                if (!d.stream.LittleEndian()) {
+                if (!bs.LittleEndian()) {
                     // POS + SCALE sections: float data (4 bytes each)
                     for (char *p = mStart; p < mStart + _sub1; p += 4) {
                         unsigned int *u = (unsigned int *)p;
@@ -159,35 +148,35 @@ void CharBonesSamples::LoadData(BinStreamRev &d) {
                 if (mCompression >= kCompressVects) {
                     short *quatOffset = (short *)(mStart + _sub1);
                     for (short *p = (short *)mStart; p < quatOffset; p += 3) {
-                        d >> p[0] >> p[1] >> p[2];
+                        bs >> p[0] >> p[1] >> p[2];
                     }
                 } else {
                     Vector3 *quatOffset = (Vector3 *)(mStart + _sub1);
                     for (Vector3 *p = (Vector3 *)mStart; p < quatOffset; p++) {
-                        d >> *p;
+                        bs >> *p;
                     }
                 }
 
                 if (mCompression >= kCompressQuats) {
                     char *rotXOffset = mStart + mOffsets[TYPE_ROTX];
                     for (char *p = mStart + _sub1; p < rotXOffset; p += 4) {
-                        d.stream.Read(p, 1);
-                        d.stream.Read(p + 1, 1);
-                        d.stream.Read(p + 2, 1);
-                        d.stream.Read(p + 3, 1);
+                        bs.Read(p, 1);
+                        bs.Read(p + 1, 1);
+                        bs.Read(p + 2, 1);
+                        bs.Read(p + 3, 1);
                     }
                 } else if (mCompression != kCompressNone) {
                     short *rotXOffset = (short *)(mStart + mOffsets[TYPE_ROTX]);
                     for (short *p = (short *)(mStart + _sub1); p < rotXOffset;
                          p += 4) {
-                        d >> p[0] >> p[1] >> p[2] >> p[3];
+                        bs >> p[0] >> p[1] >> p[2] >> p[3];
                     }
                 } else {
                     Hmx::Quat *rotXOffset =
                         (Hmx::Quat *)(mStart + mOffsets[TYPE_ROTX]);
                     for (Hmx::Quat *p = (Hmx::Quat *)(mStart + _sub1);
                          p < rotXOffset; p++) {
-                        d >> *p;
+                        bs >> *p;
                     }
                 }
 
@@ -195,22 +184,22 @@ void CharBonesSamples::LoadData(BinStreamRev &d) {
                     short *endOffset = (short *)(mStart + _sub0);
                     for (short *p = (short *)(mStart + mOffsets[TYPE_ROTX]); p < endOffset;
                          p++) {
-                        d >> *p;
+                        bs >> *p;
                     }
                 } else {
                     float *endOffset = (float *)(mStart + _sub0);
                     for (float *p = (float *)(mStart + mOffsets[TYPE_ROTX]); p < endOffset;
                          p++) {
-                        d >> *p;
+                        bs >> *p;
                     }
                 }
             }
 
             if ((i & 0x7F) == 0x7F) {
 #ifdef HX_NATIVE
-                d.stream.WaitUntilReady();
+                bs.WaitUntilReady();
 #else
-                while (d.stream.Eof() == TempEof) {
+                while (bs.Eof() == TempEof) {
                     Timer::Sleep(0);
                 }
 #endif
@@ -218,13 +207,13 @@ void CharBonesSamples::LoadData(BinStreamRev &d) {
         }
     } else {
         mStart = mRawData;
-        ReadChunks(d.stream, mRawData, mNumSamples * mTotalSize, mTotalSize << 7);
+        ReadChunks(bs, mStart, mNumSamples * mTotalSize, mTotalSize << 7);
 #ifdef HX_NATIVE
         // ReadChunks reads raw big-endian data — byte-swap all samples
         // NOTE: this branch is extremely parity-sensitive. Channel finiteness
         // failures in ClipPoseFixture usually indicate an endian/swap issue
         // here (or stale native test binaries).
-        if (!d.stream.LittleEndian()) {
+        if (!bs.LittleEndian()) {
             for (int i = 0; i < mNumSamples; i++) {
                 char *s = mRawData + mTotalSize * i;
                 for (char *p = s; p < s + _sub1; p += 4) {
@@ -321,15 +310,12 @@ void CharBonesSamples::Clone(const CharBonesSamples &samp) {
 }
 
 void CharBonesSamples::Print() {
-    auto size = mTotalSize * mNumSamples;
-    auto address = mRawData;
-    auto compression = mCompression;
-    MILO_LOG(
+    TheDebug << MakeString(
         "samples: %d size: %d address: %x compression %d\n",
         mNumSamples,
-        size,
-        address,
-        compression
+        mTotalSize * mNumSamples,
+        (int)mRawData,
+        (int)mCompression
     );
     if (mNumSamples == 0) {
         TheDebug << "Bones:\n";

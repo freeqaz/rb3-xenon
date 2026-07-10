@@ -145,7 +145,7 @@ DataNode StoreMenuPanel::OnBack(const DataArray *) {
     }
 }
 
-DataNode StoreMenuPanel::OnMsg(const MetadataLoadedMsg &msg) {
+DataNode StoreMenuPanel::OnMsg(const MultipleItemsEnumCompleteMsg &msg) {
     BandStorePanel *panel = BandStorePanel::Instance();
     if (msg->Int(3)) {
         DataArray *arr = msg->Array(2);
@@ -164,10 +164,10 @@ DataNode StoreMenuPanel::OnMsg(const MetadataLoadedMsg &msg) {
 BEGIN_HANDLERS(StoreMenuPanel)
     HANDLE_EXPR(get_menu_provider, mMenuStack[mCurrentMenuIx])
     HANDLE(back, OnBack)
-    HANDLE_ACTION(reset_last_menu, SetPendingMenuIx(mCurrentMenuIx - 1))
+    HANDLE_ACTION(reset_last_menu, SetPendingMenuIx(mMenuStack.size() - 1))
     HANDLE_ACTION(set_menu_waiting, SetPendingMenuIx(-1))
     HANDLE_EXPR(get_menu_waiting, mPendingMenuIx + 1 == 0)
-    HANDLE_MESSAGE(MetadataLoadedMsg)
+    HANDLE_MESSAGE(MultipleItemsEnumCompleteMsg)
     HANDLE_SUPERCLASS(UIPanel)
     HANDLE_CHECK(0x104)
 END_HANDLERS

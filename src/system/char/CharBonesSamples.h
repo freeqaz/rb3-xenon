@@ -24,9 +24,11 @@ public:
     int FracToSample(float *) const;
     void RotateBy(CharBones &, int);
     void RotateTo(CharBones &, float, int, float);
-    void LoadData(BinStreamRev &);
+    void LoadData(BinStream &);
     void Set(const std::vector<CharBones::Bone> &, int, CharBones::CompressionType);
-    void LoadHeader(BinStreamRev &);
+    void LoadHeader(BinStream &);
+
+    static void SetVer(int);
 
 protected:
     void ReadCounts(BinStream &, int);

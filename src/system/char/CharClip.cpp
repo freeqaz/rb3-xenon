@@ -593,14 +593,15 @@ BEGIN_LOADS(CharClip)
         mFull.Load(d.stream);
         mOne.Load(d.stream);
     } else {
-        mFull.LoadHeader(d);
-        mOne.LoadHeader(d);
+        CharBonesSamples::SetVer(d.rev);
+        mFull.LoadHeader(d.stream);
+        mOne.LoadHeader(d.stream);
         if (d.rev > 7) {
             CharBonesSamples samples;
-            samples.LoadHeader(d);
+            samples.LoadHeader(d.stream);
         }
-        mFull.LoadData(d);
-        mOne.LoadData(d);
+        mFull.LoadData(d.stream);
+        mOne.LoadData(d.stream);
     }
     if (d.rev > 0xE) {
         d >> mZeros;
