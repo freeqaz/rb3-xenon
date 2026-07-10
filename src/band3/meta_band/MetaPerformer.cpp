@@ -149,8 +149,15 @@ void MetaPerformer::Init() {
 }
 
 MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
-    : Synchronizable(cc), mWiiPending(0), mCreditsPending(0), mVenue(gNullStr),
-      mLastVenue(), mSetlist(gNullStr), mSetlistIsLocal(0), mSetlistIsHmx(0),
+    : Synchronizable(cc),
+#ifndef RB3_NO_WII_META_MEMBERS
+      mWiiPending(0),
+#endif
+      mCreditsPending(0), mVenue(gNullStr),
+#ifndef RB3_NO_WII_META_MEMBERS
+      mLastVenue(),
+#endif
+      mSetlist(gNullStr), mSetlistIsLocal(0), mSetlistIsHmx(0),
       mSongMgr((BandSongMgr *)&mgr), mHasOnlineScoring(0), mSkippedSong(0), unk2c0(0),
       mFestivalReward(0), mCheatInFinale(0), mCheating(0), unk338(0), unk33c(-1),
       mRecordBattleContextID(-1), mHarmonyOverride(0), mRealDrumsOverride(0), unk360(2),
@@ -201,10 +208,15 @@ Symbol MetaPerformer::GetVenueClass() const {
 }
 
 Symbol MetaPerformer::GetLastVenueClass() const {
-    String venue(mLastVenue.Str());
+#ifdef RB3_NO_WII_META_MEMBERS
+    Symbol lastVenue = mVenue; // retail Xbox has no separate mLastVenue
+#else
+    Symbol lastVenue = mLastVenue;
+#endif
+    String venue(lastVenue.Str());
     unsigned int idx = venue.find_last_of('_');
     if (idx == String::npos)
-        return mLastVenue;
+        return lastVenue;
     else
         return venue.substr(0, idx).c_str();
 }
@@ -1013,10 +1025,15 @@ void MetaPerformer::SetVenue(Symbol s) {
     bool changed = false;
     if (mVenue != s)
         changed = true;
-    mLastVenue = mVenue = s;
+    mVenue = s;
+#ifndef RB3_NO_WII_META_MEMBERS
+    mLastVenue = mVenue;
+#endif
     if (mVenueOverride != no_venue_override) {
         mVenue = mVenueOverride;
+#ifndef RB3_NO_WII_META_MEMBERS
         mLastVenue = mVenueOverride;
+#endif
     }
     if (changed && TheSessionMgr && HasSyncPermission()) {
         SetSyncDirty(-1, false);
@@ -1623,11 +1640,18 @@ void MetaPerformer::ClearCreditsPending() {
 }
 
 bool MetaPerformer::AreCreditsPending() const { return mCreditsPending; }
+#ifdef RB3_NO_WII_META_MEMBERS
+// Wii-only pending flags; retail Xbox carries no mWiiPending member.
+void MetaPerformer::SetWiiPending(WiiPendingFlags) {}
+void MetaPerformer::ClearWiiPending(WiiPendingFlags) {}
+bool MetaPerformer::IsWiiPending(WiiPendingFlags) const { return false; }
+#else
 void MetaPerformer::SetWiiPending(WiiPendingFlags flags) { mWiiPending |= flags; }
 void MetaPerformer::ClearWiiPending(WiiPendingFlags flags) { mWiiPending &= ~flags; }
 bool MetaPerformer::IsWiiPending(WiiPendingFlags flags) const {
     return mWiiPending & flags;
 }
+#endif
 void MetaPerformer::SetCheating(bool b) { mCheating = b; }
 short MetaPerformer::GetRecentInstrumentMask() const { return 0x400; }
 bool MetaPerformer::CheatToggleFinale() { return mCheatInFinale = !mCheatInFinale; }

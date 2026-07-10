@@ -273,6 +273,13 @@ public:
     bool mRealDrumsOverride; // 0x35d
     int unk360; // used in lock/unlock band or solo...some kind of mask?
     Symbol mVenueOverride; // 0x364
+#ifndef RB3_NO_WII_META_MEMBERS
+    // Wii-only members. Retail Xbox drops both: the ctor (fn_8256A970) packs
+    // 0x38..0x384 with non-Wii members and places the MsgSource virtual base at
+    // exactly 0x384 with no room for these. Keeping them here adds
+    // mWiiPending(1)+pad+mLastVenue(4)+8-align = 0xc, pushing MsgSource to 0x390.
+    // Gated OFF for this TU via /DRB3_NO_WII_META_MEMBERS in objects.json.
     unsigned char mWiiPending; // tail (Wii-only)
     Symbol mLastVenue; // tail (Wii-only)
+#endif
 };

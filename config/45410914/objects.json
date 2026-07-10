@@ -1019,7 +1019,9 @@
    "band3/meta_band/MetaPerformer.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_NO_WII_META_MEMBERS",
+     "/vd0"
     ]
    },
    "band3/meta_band/BandSongMetadata.cpp": "NonMatching",
@@ -1094,7 +1096,8 @@
    "band3/tour/Tour.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_MAP_0x1C"
     ]
    },
    "band3/tour/QuestFilterPanel.cpp": {
