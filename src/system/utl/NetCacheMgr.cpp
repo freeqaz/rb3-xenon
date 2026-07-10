@@ -248,7 +248,7 @@ void NetCacheMgr::OnInit(DataArray *pData) {
     MILO_ASSERT(pData, 0x46);
     static Symbol xlsp_service_id("xlsp_service_id");
     static Symbol xlsp_filter("xlsp_filter");
-    mServiceId = pData->FindArray(xlsp_service_id)->Int(1);
+    mServiceId = pData->FindInt(xlsp_service_id);
     mXLSPFilter = pData->FindStr(xlsp_filter);
     static Symbol servers("servers");
     DataArray *serverArr = pData->FindArray(servers);
