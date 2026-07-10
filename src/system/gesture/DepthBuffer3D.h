@@ -16,7 +16,13 @@ struct DepthBuffer3DAttachment {
     int player; // 0x4
     bool unk1c; // 0x8  (retail byte@8)
     int mJoint; // 0xc
-    float mOffset; // 0x10 (retail float@10; DC3-newer widened this to Vector3 and appended an int unk20, growing the struct to 0x24 — retail RB3 is 0x14)
+    float mOffset; // 0x10
+    // Retail RB3 sizeof(DepthBuffer3DAttachment) == 0x28 (verified against the retail XEX:
+    // vector<...>::_M_fill_insert's `divw` divides the byte-span by `li 0x28`). The matched
+    // RB3 paths only read obj/player/mJoint/mOffset, so keep those head offsets and reflect
+    // the true retail size with the trailing bytes (DC3-newer reshaped this region into a
+    // Vector3 mOffset + int unk20; RB3 retail is 0x28, 4 bytes larger than DC3's 0x24).
+    char _pad14[0x14]; // 0x14..0x28
 };
 
 /** "Render the Kinect depth buffer as a 3D mesh" */
