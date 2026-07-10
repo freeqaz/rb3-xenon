@@ -1399,8 +1399,8 @@ Draw.cpp:
 	.text       start:0x823F3B10 end:0x823F4D20
 
 AnimFilter.cpp:
-	.pdata      start:0x821F75C8 end:0x821F75D0
-	.text       start:0x8233CE48 end:0x8233CEBC
+	.pdata      start:0x82209630 end:0x82209728
+	.text       start:0x824837C8 end:0x82484954
 
 CharIKHead.cpp:
 	.pdata      start:0x821FDD28 end:0x821FDEC8
@@ -2260,8 +2260,8 @@ Compress.cpp:
 	.text       start:0x82A39A30 end:0x82A3A918
 
 system/rndobj/CubeTex.cpp:
-	.pdata      start:0x822094E0 end:0x822096A0
-	.text       start:0x824822D8 end:0x824840E8
+	.pdata      start:0x822094E0 end:0x82209630
+	.text       start:0x824822D8 end:0x824837C8
 
 CacheMgr.cpp:
 	.pdata      start:0x8223A300 end:0x8223A328
@@ -2742,10 +2742,6 @@ Set.cpp:
 FlowQueueable.cpp:
 	.pdata      start:0x82208AB0 end:0x82208AF0
 	.text       start:0x82474BA8 end:0x82474E9C
-
-DancerSequence.cpp:
-	.pdata      start:0x822096A0 end:0x82209728
-	.text       start:0x824840E8 end:0x82484954
 
 Shockwave.cpp:
 	.pdata      start:0x8220C6A0 end:0x8220C728

@@ -26,11 +26,18 @@ BEGIN_PROPSYNCS(RndAnimFilter)
     SYNC_PROP_MODIFY(jitter, mJitter, mJitterFrame = 0.0f)
     SYNC_PROP(type, (int &)mType)
     SYNC_SUPERCLASS(RndAnimatable)
+#ifdef HX_NATIVE
+    // RB3-360 retail tail-chains only through RndAnimatable::SyncProperty
+    // (no direct Hmx::Object chain); keep DC3's extra chain native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndAnimFilter)
-    SAVE_REVS(2, 0)
+    // RB3-360 retail: rev written from a constant-initialized static (.data
+    // lwz), not an immediate — `SAVE_REVS(2,0)`'s folded li r11,0x2 mismatches.
+    static int REV = 2;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object);
     SAVE_SUPERCLASS(RndAnimatable);
     bs << mAnim << mScale << mOffset << mStart << mEnd << mType;
@@ -56,30 +63,34 @@ BEGIN_COPYS(RndAnimFilter)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(2, 0)
+// RB3-360 retail uses the old plain-int static gRev idiom (rb3-Wii style, assert
+// stripped): rev is read straight into a TU-static int (ReadEndian into the
+// global at the guard-word base) and compared as a full int — no BinStreamRev,
+// no hi/lo split, no ASSERT_REVS block in the retail body.
+static int gRev;
 
-BEGIN_LOADS(RndAnimFilter)
-    LOAD_REVS(bs);
-    ASSERT_REVS(2, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndAnimatable)
-    d >> mAnim;
-    d >> mScale;
-    d >> mOffset;
-    d >> mStart;
-    d >> mEnd;
-    if (d.rev > 0) {
-        d >> (int &)mType;
-        d >> mPeriod;
+void RndAnimFilter::Load(BinStream &bs) {
+    bs >> gRev;
+    Hmx::Object::Load(bs);
+    RndAnimatable::Load(bs);
+    bs >> mAnim;
+    bs >> mScale;
+    bs >> mOffset;
+    bs >> mStart;
+    bs >> mEnd;
+    if (gRev > 0) {
+        bs >> (int &)mType;
+        bs >> mPeriod;
     } else {
         bool b;
-        d >> b;
+        bs >> b;
         mType = static_cast<RndAnimFilter::Type>(b);
     }
-    if (d.rev > 1) {
-        d >> mSnap >> mJitter;
+    if (gRev > 1) {
+        bs >> mSnap;
+        bs >> mJitter;
     }
-END_LOADS
+}
 
 void RndAnimFilter::SetFrame(float frame, float blend) {
     RndAnimatable::SetFrame(frame, blend);
