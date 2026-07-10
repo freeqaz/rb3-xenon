@@ -191,33 +191,25 @@ useFixed:
     }
 }
 
+inline TourSetlistType QuestFilterProvider::GetSetlistType(int i_iData) const {
+    TourProgress *pProg = TheTour->GetTourProgress();
+    TourDesc *pTourDesc = TheTour->GetTourDesc(pProg->GetTourDesc());
+    Symbol gigtype = pTourDesc->GetSetlistTypeForGigNum(pProg->GetCurrentGigNum(), i_iData);
+#ifdef HX_NATIVE
+    if (gigtype == Symbol("random")) // `random` collides with POSIX random()
+#else
+    if (gigtype == random)
+#endif
+        return kTourSetlist_Random;
+    else if (gigtype == custom)
+        return kTourSetlist_Custom;
+    return kTourSetlist_Fixed;
+}
+
 inline RndMat *QuestFilterProvider::Mat(int, int i_iData, UIListMesh *i_pSlot) const {
     MILO_ASSERT(i_iData < NumData(), 0x95);
     DataSymbol(i_iData);
-    TourSetlistType eType;
-    TourProgress *pProg = TheTour->GetTourProgress();
-    if (pProg) {
-        TourDesc *pTourDesc = TheTour->GetTourDesc(pProg->GetTourDesc());
-        if (pTourDesc) {
-            Symbol gigtype =
-                pTourDesc->GetSetlistTypeForGigNum(pProg->GetCurrentGigNum(), i_iData);
-#ifdef HX_NATIVE
-            if (gigtype == Symbol("random")) // `random` collides with POSIX random()
-#else
-            if (gigtype == random)
-#endif
-                eType = kTourSetlist_Random;
-            else if (gigtype == custom)
-                eType = kTourSetlist_Custom;
-            else
-                goto useFixedMat;
-        } else {
-            goto useFixedMat;
-        }
-    } else {
-useFixedMat:
-        eType = kTourSetlist_Fixed;
-    }
+    TourSetlistType eType = GetSetlistType(i_iData);
     if (i_pSlot->Matches("icon")) {
         String str;
         switch (eType) {

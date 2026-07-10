@@ -181,25 +181,33 @@ void AppMiniLeaderboardDisplay::Update() {
     MILO_ASSERT(t, 0x132);
     ObjectDir *dir = mResource->Dir();
     MILO_ASSERT(dir, 0x135);
-    mLeaderboardList = dir->Find<BandList>(t->FindArray(leaderboard, true)->Str(1), true);
-    mTitleLabel = dynamic_cast<AppLabel *>(
-        dir->FindObject(t->FindArray(title_label, true)->Str(1), false)
-    );
-    mIconsLabel = dynamic_cast<AppLabel *>(
-        dir->FindObject(t->FindArray(icons_label, true)->Str(1), false)
-    );
-    mResetTrigger = dynamic_cast<EventTrigger *>(
-        dir->FindObject(t->FindArray(reset_trigger, true)->Str(1), false)
-    );
-    mFadeInTrigger = dynamic_cast<EventTrigger *>(
-        dir->FindObject(t->FindArray(fade_in_trigger, true)->Str(1), false)
-    );
-    mFadeOutTrigger = dynamic_cast<EventTrigger *>(
-        dir->FindObject(t->FindArray(fade_out_trigger, true)->Str(1), false)
-    );
-    mPendingGroup = dynamic_cast<RndGroup *>(
-        dir->FindObject(t->FindArray(pending_group, true)->Str(1), false)
-    );
+    static Symbol leaderboard("leaderboard");
+    Symbol leaderboardTag = leaderboard;
+    mLeaderboardList = dir->Find<BandList>(t->FindArray(leaderboardTag, true)->Str(1), true);
+    static Symbol title_label("title_label");
+    Symbol titleTag = title_label;
+    const char *titleLabelName = t->FindArray(titleTag, true)->Str(1);
+    mTitleLabel = dir->Find<AppLabel>(titleLabelName, false);
+    static Symbol icons_label("icons_label");
+    Symbol iconsTag = icons_label;
+    const char *iconsLabelName = t->FindArray(iconsTag, true)->Str(1);
+    mIconsLabel = dir->Find<AppLabel>(iconsLabelName, false);
+    static Symbol reset_trigger("reset_trigger");
+    Symbol resetTag = reset_trigger;
+    const char *resetTriggerName = t->FindArray(resetTag, true)->Str(1);
+    mResetTrigger = dir->Find<EventTrigger>(resetTriggerName, false);
+    static Symbol fade_in_trigger("fade_in_trigger");
+    Symbol fadeInTag = fade_in_trigger;
+    const char *fadeInTriggerName = t->FindArray(fadeInTag, true)->Str(1);
+    mFadeInTrigger = dir->Find<EventTrigger>(fadeInTriggerName, false);
+    static Symbol fade_out_trigger("fade_out_trigger");
+    Symbol fadeOutTag = fade_out_trigger;
+    const char *fadeOutTriggerName = t->FindArray(fadeOutTag, true)->Str(1);
+    mFadeOutTrigger = dir->Find<EventTrigger>(fadeOutTriggerName, false);
+    static Symbol pending_group("pending_group");
+    Symbol pendingTag = pending_group;
+    const char *pendingGroupName = t->FindArray(pendingTag, true)->Str(1);
+    mPendingGroup = dir->Find<RndGroup>(pendingGroupName, false);
     if (mResetTrigger) {
         mResetTrigger->Trigger();
     }

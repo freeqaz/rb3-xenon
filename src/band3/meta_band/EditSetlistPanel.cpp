@@ -261,21 +261,30 @@ void EditSetlistPanel::MessageOK() {
     switch (mEditState) {
     case 7:
         switch (unk9c) {
-        case 0:
+        case 0: {
             TheMusicLibrary->RebuildAndSortSetlists();
             TheMusicLibrary->SetSavedSetlistHighlight(mEditingSetlist);
             TheMusicLibrary->SetSort((SongSortType)8);
+            static Symbol leave_setlist("leave_setlist");
+            static Message leave_setlist_msg(leave_setlist);
             HandleType(leave_setlist_msg);
             break;
-        case 1:
+        }
+        case 1: {
             TheMusicLibrary->RebuildAndSortSetlists();
+            static Symbol leave_setlist("leave_setlist");
+            static Message leave_setlist_msg(leave_setlist);
             HandleType(leave_setlist_msg);
             break;
-        case 2:
+        }
+        case 2: {
             TheMusicLibrary->RefreshNetSetlists();
             TheMusicLibrary->SetSort((SongSortType)8);
+            static Symbol leave_setlist("leave_setlist");
+            static Message leave_setlist_msg(leave_setlist);
             HandleType(leave_setlist_msg);
             break;
+        }
         default:
             MILO_FAIL("Bad mode %i!");
             break;
@@ -285,9 +294,12 @@ void EditSetlistPanel::MessageOK() {
         switch (unka4) {
         case 0:
         case 1:
-        case 6:
+        case 6: {
+            static Symbol goto_create_dialog("goto_create_dialog");
+            static Message goto_create_dialog_msg(goto_create_dialog);
             HandleType(goto_create_dialog_msg);
             break;
+        }
         case 2:
         case 3:
         case 4:

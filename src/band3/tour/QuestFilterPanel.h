@@ -21,6 +21,7 @@ public:
 
     void UpdateSongLabel(UILabel *, Symbol, TourSetlistType, int) const;
     String GetFilterName(int) const;
+    TourSetlistType GetSetlistType(int) const;
 
     void Update() {
         m_vQuestFilters.clear();

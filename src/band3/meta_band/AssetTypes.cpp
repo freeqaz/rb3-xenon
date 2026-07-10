@@ -85,6 +85,8 @@ AssetType GetAssetTypeFromSymbol(Symbol symbol) {
 }
 
 AssetGender GetAssetGenderFromSymbol(Symbol symbol) {
+    static Symbol male("male");
+    static Symbol female("female");
     if (symbol == gNullStr) {
         return kAssetGender_None;
     }

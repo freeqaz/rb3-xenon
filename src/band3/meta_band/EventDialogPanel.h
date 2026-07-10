@@ -5,8 +5,7 @@
 #include "obj/Msg.h"
 
 DECLARE_MESSAGE(EventDialogStartMsg, "event_dialog_start");
-EventDialogStartMsg(DataArray *a1, DataArray *a2)
-    : Message(Type(), DataNode(a1, kDataArray), DataNode(a2, kDataArray)) {}
+EventDialogStartMsg(DataArray *a1, DataArray *a2) : Message(Type(), a1, a2) {}
 DataArray *EventType() const { return mData->Array(2); }
 DataArray *Arr3() const { return mData->Array(3); }
 END_MESSAGE

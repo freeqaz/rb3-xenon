@@ -37,8 +37,11 @@ void StoreMenuPanel::SetPendingMenuIx(int ix) {
 void StoreMenuPanel::FinishLoad() {
     UIPanel::FinishLoad();
     const DataArray *t = TypeDef();
-    const char *name = t->FindArray(menu_list, true)->Str(1);
-    mList = mDir->Find<BandList>(name, true);
+    static Symbol menu_list("menu_list");
+    Symbol tag = menu_list;
+    const char *name = t->FindArray(tag, true)->Str(1);
+    ObjectDir *dir = mDir;
+    mList = dir->Find<BandList>(name, true);
 }
 
 void StoreMenuPanel::Unload() {
@@ -87,14 +90,15 @@ void StoreMenuPanel::Poll() {
 }
 
 const char *StoreMenuPanel::GetCrumbText() const {
-    int limit = (mMenuStack.end() - mMenuStack.begin()) - 1;
-    if (mCurrentMenuIx < limit)
-        limit = mCurrentMenuIx;
-    const char *result = "";
+    const char *result = gNullStr;
+    int limit = mCurrentMenuIx;
+    int vecLimit = (mMenuStack.end() - mMenuStack.begin()) - 1;
+    if (mCurrentMenuIx >= vecLimit)
+        limit = vecLimit;
     for (int i = 1; i <= limit; i++) {
-        const char *title = mMenuStack[i]->GetTitle();
-        if (gNullStr != title)
-            result = MakeString("%s%s", result, title);
+        String title = mMenuStack[i]->GetTitle();
+        if (!title.empty())
+            result = MakeString("%s%s", result, title.c_str());
     }
     return result;
 }
