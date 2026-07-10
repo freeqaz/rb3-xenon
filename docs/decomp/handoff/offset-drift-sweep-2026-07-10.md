@@ -1,5 +1,21 @@
 # Offset-drift sweep — systematic layout-drift detection (2026-07-10)
 
+> **STATUS (2026-07-10, executed same day):** recon + both implementation
+> lanes DONE. Landed `39034a69` (lane A: locale statics order, synapse
+> bool+dtor, Line Wii-shape, CharEyes else-arm bugfix, patchmesh literals,
+> MemTemp DataFile+Rnd — **+6 strict**) and `e5d13619` (panels:
+> **Practice::Handle + Overshell::Handle both →100**, Customize banked 99.0 —
+> **+2 strict**, 8.6 KB closed). Composed main after both: **12,963**.
+> All A/Bs run1==run2, 0 regressions, ICF HONEST. Recon REFUTED the raw
+> layout reading in 5 of 7 lanes (panels = trailing Wii members moving the
+> vbase anchor; synapse = anchor-bias artifact; patchmesh = .cpp Wii literals,
+> header already correct; gametail = already landed concurrently; FlowIf =
+> phantom pairing → see flow-phantom-pins-2026-07-10.md). Round verdicts
+> registered in nearmiss_verdicts.json (`a5bc1dd`). Still open: unclaimed
+> candidates below, DrawPreClear body port (81.3), Overshell
+> ResolveSlotStates recon (78.9), Locale::Init pin extension, dc3-decomp
+> export of the synapse fixes, flow/ pin audit.
+
 Generalization of the round-5 header-candidates campaign: instead of waiting
 for handoff docs to name header suspects, mine EVERY fuzzy near-miss for the
 layout-drift fingerprint mechanically, then spend recon effort only on ranked
