@@ -13847,7 +13847,7 @@
  "0x826a3d80": "?FillComplete@GemPlayer@@UAAXHH@Z",
  "0x82b623d8": "?ApplyShiftImmediately@GemTrack@@QAAXABVRangeShift@1@@Z",
  "0x824533e8": "??0QuickplayPerformerImpl@@QAA@XZ",
- "0x823795c8": "?Save@MusicLibraryTaskMsg@@UBAXAAVBinStream@@@Z",
+ "0x823795c8": "?Save@CharLipSyncDriver@@UAAXAAVBinStream@@@Z",
  "0x82592a88": "?Load@SetUserTrackTypeMsg@@UAAXAAVBinStream@@@Z",
  "0x8259a210": "?IsNonVocalistInVocalsSlot@OvershellPanel@@QBA_NXZ",
  "0x825beda0": "?LeaveOptions@OvershellSlot@@QAAXXZ",

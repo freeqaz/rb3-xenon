@@ -2413,7 +2413,9 @@ File_Win.cpp:
 
 CharLipSyncDriver.cpp:
 	.pdata      start:0x821E9D68 end:0x821E9D70
+	.pdata      start:0x821FB248 end:0x821FB250
 	.text       start:0x82263F38 end:0x82263F98
+	.text       start:0x823795C8 end:0x823796D4
 
 DeJitterPanel.cpp:
 	.pdata      start:0x82238818 end:0x82238870
@@ -4034,9 +4036,7 @@ GemTrack.cpp:
 	.text       start:0x8276BF28 end:0x8276BF98
 
 NetGameMsgs.cpp:
-	.pdata      start:0x821FB248 end:0x821FB250
 	.pdata      start:0x82219B88 end:0x82219B90
-	.text       start:0x823795C8 end:0x823796D4
 	.text       start:0x82592A88 end:0x82592AD4
 
 SongDB.cpp:

@@ -40,6 +40,8 @@ public:
     void ClearLipSync();
     void SetClips(ObjectDir *);
     bool SetLipSync(CharLipSync *);
+    // dc3-only blend API kept as compat shims for hamobj (DC3 game layer);
+    // retail RB3 has no override-blend state fields (see layout below).
     void ResetOverrideBlend();
     void BlendInOverrideClip(CharClip *, float, float);
     void BlendInOverrides(float);
@@ -56,52 +58,39 @@ public:
 protected:
     CharLipSyncDriver();
 
-    void ApplyBlinks();
-    void UpdatePlayback(CharLipSync::PlayBack *, float weight, float songTime);
+    // Retail RB3-360 layout (verified against retail CharLipSyncDriver::Save
+    // @0x823795C8: Hmx::Object vbase at +0xac, ObjPtr = 0xc bytes).
+    // Matches rb3-Wii oracle field order (each 360 offset = Wii offset - 4).
 
     /** "The lipsync file to use" */
-    ObjPtr<CharLipSync> mLipSync; // 0x30
+    ObjPtr<CharLipSync> mLipSync; // 0x24
     /** "pointer to the visemes" */
-    ObjPtr<ObjectDir> mClips; // 0x44
-    ObjPtr<CharClip> mBlinkClip; // 0x58
+    ObjPtr<ObjectDir> mClips; // 0x30
+    ObjPtr<CharClip> mBlinkClip; // 0x3c
     /** "Will use this song if set, except for blinks" */
-    ObjPtr<CharLipSyncDriver> mSongOwner; // 0x6c
+    ObjPtr<CharLipSyncDriver> mSongOwner; // 0x48
     /** "offset within song in seconds, resets on song change" */
-    float mSongOffset; // 0x80
+    float mSongOffset; // 0x54
     /** "should we loop this song, resets on song change" */
-    bool mLoop; // 0x84
-    CharLipSync::PlayBack *mMainPlayback; // 0x88
-    bool mIsOverrideActive; // 0x8c
-    float mMainBlendAlpha; // 0x90
-    CharLipSync::PlayBack *mOverridePlayback; // 0x94
+    bool mLoop; // 0x58
+    CharLipSync::PlayBack *mMainPlayback; // 0x5c (Wii: mSongPlayer)
     /** "The CharBones object to add or blend into." */
-    ObjPtr<CharBonesObject> mBones; // 0x98
+    ObjPtr<CharBonesObject> mBones; // 0x60
     /** "Test charclip to apply, does nothing else" */
-    ObjPtr<CharClip> mTestClip; // 0xac
+    ObjPtr<CharClip> mTestClip; // 0x6c
     /** "weight to apply this clip with" */
-    float mTestWeight; // 0xc0
-    float unkc4; // 0xc4
-    bool mBlendingIn; // 0xc8
-    bool mBlendingOut; // 0xc9
-    float mOverrideBlendTarget; // 0xcc
-    bool mIsBlending; // 0xd0
-    float unkd4; // 0xd4
+    float mTestWeight; // 0x78
     /** "default clip to be used as the override - maybe be overriden programatically" */
-    ObjPtr<CharClip> mOverrideClip; // 0xd8
+    ObjPtr<CharClip> mOverrideClip; // 0x7c
     /** "weight to blend override clip. this is mostly here for testing,
         because its likely to be set programatically." */
-    float mOverrideWeight; // 0xec
+    float mOverrideWeight; // 0x88
     /** "an optional clipset that provides list of clips to override face with -
         viseme clipset is used otherwise" */
-    ObjPtr<ObjectDir> mOverrideOptions; // 0xf0
+    ObjPtr<ObjectDir> mOverrideOptions; // 0x8c
     /** "is the override clip applied addtively on top of face mocap?
         If false, it will blend." */
-    bool mApplyOverrideAdditively; // 0x104
-    ObjPtr<CharClip> mOverrideBlendClip; // 0x108
-    float mOverrideBlendWeight; // 0x11c
-    float mOverrideBlendDuration; // 0x120
-    float mOverrideBlendStartTime; // 0x124
-    bool mOverrideBlendActive; // 0x128
+    bool mApplyOverrideAdditively; // 0x98
     /** "This will be used instead of the song, if set" */
-    ObjPtr<CharDriver> mAlternateDriver; // 0x12c
+    ObjPtr<CharDriver> mAlternateDriver; // 0x9c
 };

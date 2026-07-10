@@ -150,6 +150,14 @@ void MusicLibrary::TryToSetHighlight(Symbol token, SongNodeType type, bool passt
 void MusicLibrary::Poll() {
     if (unk12c)
         PushSetlistToScreen();
+    if (unk19c) {
+        unk19c->Poll();
+        if (!unk1a0 && unk19c->mState == 2) {
+            unk1a0 = true;
+            if (unk40)
+                unk19c->Finish();
+        }
+    }
     if (mNetSetlists)
         mNetSetlists->Poll();
     if (unke8 != 9) {

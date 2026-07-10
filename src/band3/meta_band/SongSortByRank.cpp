@@ -202,7 +202,6 @@ DataNode SongSortByRank::OnMsg(RockCentralOpCompleteMsg const &msg) {
     if(msg.Success()) {
         mDataResults.Update(NULL);
         MILO_ASSERT(mRankings.empty(), 0x11F);
-        std::hash_map<int, std::pair<int, bool> > &rankings = mRankings;
         int songId, rank;
         bool isPercentile;
         for(int i = 0; i < mDataResults.NumDataResults(); i++) {
@@ -214,13 +213,7 @@ DataNode SongSortByRank::OnMsg(RockCentralOpCompleteMsg const &msg) {
             rank = node.Int(NULL);
             res->GetDataResultValue("is_percentile", node);
             isPercentile = node.Int(NULL) != 0;
-            std::hash_map<int, std::pair<int, bool> >::iterator it = mRankings.find(songId);
-            bool doInsert = (it == rankings.end());
-            if(doInsert) {
-                it = mRankings.insert(std::make_pair(songId, std::make_pair(0, false))).first;
-            }
-            it->second.first = rank;
-            it->second.second = isPercentile;
+            mRankings[songId] = std::make_pair(rank, isPercentile);
         }
         mDataResults.Clear();
     }

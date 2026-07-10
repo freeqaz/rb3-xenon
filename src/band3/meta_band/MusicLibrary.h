@@ -23,6 +23,22 @@
 #include "ui/UIListProvider.h"
 #include <vector>
 
+/** Retail-only async op polled by MusicLibrary::Poll — absent from the rb3-Wii
+    dev branch. Retail shape (verified from the XEX): size 0x64, vptr @0x0,
+    int state @0x28 (2 = done, 3 = in progress?, 4 = failed -> deleted),
+    vector of overlapped IO @0x54. Impl lives in an unidentified meta_band TU:
+    ctor @0x825A4860, Poll @0x825A50F8, Finish @0x825A3ED0. Only the shape
+    MusicLibrary itself needs is declared here; methods are intentionally
+    left undefined (never linked standalone). */
+class MusicLibraryUnkOp {
+public:
+    virtual ~MusicLibraryUnkOp();
+    void Poll(); // retail 0x825A50F8
+    void Finish(); // retail 0x825A3ED0
+    char unk4[0x24]; // 0x4
+    int mState; // 0x28 (2 = done, 4 = failed)
+};
+
 class MusicLibrary : public UIListProvider,
                      public Hmx::Object,
                      public ContentMgr::Callback,
@@ -252,7 +268,13 @@ public:
     int mHeaderCareerScore; // 0x168
     short mHeaderCareerInstrumentMask; // 0x16c
     int mHeaderCareerStars; // 0x170
-    int mHeaderPossibleStars; // 0x174
+    int mHeaderPossibleStars; // 0x174 (compiled: 0x198)
+    /** Retail-only tail fields (0x19c/0x1a0), absent from the Wii dev branch.
+        NOTE: retail's ctor does NOT initialize these (verified: no other
+        stores to 0x19c/0x1a0 in the unit); they are set by the op-starter
+        (retail fn_825276C0: unk1a0 = false; unk19c = new MusicLibraryUnkOp). */
+    MusicLibraryUnkOp *unk19c; // 0x19c
+    bool unk1a0; // 0x1a0
 };
 
 extern MusicLibrary *TheMusicLibrary;
