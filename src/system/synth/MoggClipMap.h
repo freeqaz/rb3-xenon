@@ -3,7 +3,11 @@
 #include "synth/MoggClip.h"
 #include "utl/BinStream.h"
 
-class MoggClipMap {
+// RB3-360 retail (and rb3-Wii) MoggClipMap derives from Hmx::Object — the leading
+// Object subobject (0x28 bytes on X360, 0x1c on Wii) pushes mMoggClip to 0x28.
+// DC3's newer refactor dropped the base (mMoggClip at 0x4); porting that verbatim
+// caused a uniform -0x24 member-offset drift in myLoad + the ObjVector helpers.
+class MoggClipMap : public Hmx::Object {
     friend bool PropSync(MoggClipMap &, DataNode &, DataArray *, int, PropOp);
 
 public:
@@ -26,15 +30,15 @@ public:
 
 protected:
     /** "Which moggclip to play" */
-    ObjPtr<MoggClip> mMoggClip; // 0x4
+    ObjPtr<MoggClip> mMoggClip; // 0x28 (after Object 0x28)
     /** "Surround pan, between -4 and 4" */
-    float mPan; // 0x18
+    float mPan; // 0x3c
     /** "Surround pan width, between 0 and 4" */
-    float mPanWidth; // 0x1c
+    float mPanWidth; // 0x40
     /** "Volume in dB (0 is full volume, -96 is silence)" */
-    float mVolume; // 0x20
+    float mVolume; // 0x44
     /** "Is the mogg clip stereo?" */
-    bool mIsStereo; // 0x24
+    bool mIsStereo; // 0x48
 };
 
 BinStream &operator<<(BinStream &, const MoggClipMap &);
