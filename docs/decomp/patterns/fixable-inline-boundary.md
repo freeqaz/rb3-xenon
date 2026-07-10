@@ -233,6 +233,24 @@ register swap dissolves.
 | Function | Before | After | Cause |
 |----------|--------|-------|-------|
 | `MainMenuPanel::MotdInitializeTexts` | 92.6% | 100% | Moved `RockCentral::GetMotdFreq` from inline → out-of-line. Resulting ICF merge with `GetGraphNode` made the call site emit `bl`, dissolving 47 r28↔r29 swap mismatches and 7 instruction reorderings |
+| `BandCharacter::UpdateOverlay` | 85.2% | 100% | De-inlined `SafeName` (dc3 header inline → retail's out-of-line `fn_82733060`). 3 inlined `SafeName` bodies collapsed to `bl ?SafeName@@YAPBDPAVObject@Hmx@@@Z`, dissolving the insert + regswap cascade. Required wiring `system/obj/Utl.cpp` NonMatching in objects.json; the retail map entry already existed |
+
+### De-inline-to-match: helper shared across many TUs
+
+The `BandCharacter::UpdateOverlay` row above is a distinct trigger worth
+calling out: retail keeps a small **helper called from many TUs**
+(`SafeName(Hmx::Object*)`) **out-of-line**, and the offset-drift sweep misreads
+the inlined-vs-called divergence as **member drift** at the caller (an inlined
+`obj->mName` load at `+0x18` shows up as a phantom struct offset). Provenance is
+the giveaway: the dc3 header has the helper `inline`; the rb3-Wii oracle has it
+declared in `.h`, defined in `.cpp`. Because RB3 has **no LTCG**, every retail
+cross-TU user *calls* it; our `/Ob2` build inlines it. The fix is the standard
+de-inline (declaration in the header, definition in a `.cpp`, wire the `.cpp`
+`NonMatching`), and it closes the caller once the `bl` reappears. This is one of
+the confirmed fix families in
+[`../playbooks/offset-drift-sweep.md`](../playbooks/offset-drift-sweep.md); the
+false "member drift" reading is catalogued in
+[`false-layout-drift.md`](false-layout-drift.md).
 
 ### Detection
 

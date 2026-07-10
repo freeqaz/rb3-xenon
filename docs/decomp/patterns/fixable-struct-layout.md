@@ -97,6 +97,38 @@ The reference conversion operators (`operator Vector3&`) allow seamless use with
 
 **Fix:** Check parent class size. Virtual inheritance adds vbptr (4 bytes on PPC). Multiple inheritance adds vtable pointers.
 
+### TU static / global .bss emission order
+
+**Symptom:** a function reads several file-scope statics/globals through a
+single materialized base register plus **raw immediate** offsets (not
+per-symbol `@ha`/`@l` relocations), and those immediates are all off by a
+consistent permutation vs retail. objdiff does NOT normalize raw immediates, so
+the *relative* .bss layout of the TU's statics must match retail exactly. The
+offset-drift sweep flags these as `global`-class diffs.
+
+**Root cause (MSVC X360 /O1, verified — Locale.cpp + DataFile.cpp):** the
+compiler emits **all** uninitialized / zero-initialized file-scope objects
+(statics AND externs, scalars AND structs) in **one pool in REVERSE definition
+order**; dynamically-initialized objects follow in **FORWARD definition order**;
+the dyn-init tail typically already matches. Only the uninit head block is a
+permutation to fix.
+
+**Fix:** reorder the static/global *definitions* in the `.cpp` so that, after
+the reverse-emission rule, the resulting .bss layout matches retail. Read the
+retail layout from the sweep's raw immediates (or a COFF dump of the retail
+`.obj`), then arrange the definitions to reproduce it. Example — retail wants
+ascending `gParse@0, gBinStream@8, gOpenArray@0xc, gCachingFile@0x10,
+gReadingFile@0x11, gDataLine@0x14`, so define them in the *reverse* of that
+order at the top of the TU. Keep the dyn-init tail (`gDataReadCrit`, `gFile`,
+…) where it is.
+
+**Gate:** this changes global *proximity*, which in principle feeds MSVC's
+anchor-sharing heuristic in other functions of the TU — always A/B the whole
+unit (require `>=` on every function), not just the target fn.
+
+Real examples: Locale.cpp (`LocalizeFloat`/`LocalizeSeparatedInt`, round 1),
+DataFile.cpp `ParseNode` (round 2).
+
 ## Verification Checklist
 
 After fixing a struct:

@@ -11,6 +11,7 @@ judgment calls a workflow prompt can't.
 | [`bodyport-wave.md`](bodyport-wave.md) | Named fns 40–95%, logic-divergent | Standing campaign; refills the reveal cascade + inline-policy pool |
 | [`hasreal-grind.md`](hasreal-grind.md) | Near-miss [90,100) HAS_REAL (~330 fns): real struct-offset/codegen bugs | After body-port waves; per-fn grind |
 | [`nearmiss-harvest.md`](nearmiss-harvest.md) | Named real-bodied 96–99.99%: evaluation-order sculpting, local-.cpp-only Fable lanes | Recurring wave; regen pool from fresh report.json each round (+28 over rounds 1–4) |
+| [`offset-drift-sweep.md`](offset-drift-sweep.md) | Whole 85–99.99% band with shared-header/TU-static **layout** drift (the header-edit complement of nearmiss-harvest) | Recurring; mechanical sweep + recon-before-edit; one header fix closes many fns (+31 over rounds 1–2) |
 
 Shared invariants (every playbook assumes these):
 - Work in a worktree from `scripts/setup_worktree.sh`; never mutate the main repo's

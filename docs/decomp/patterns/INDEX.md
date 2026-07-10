@@ -142,6 +142,14 @@ These patterns resist simple source-level fixes. Each documents what would be ne
 
 ---
 
+## Diagnostic — before you edit
+
+Patterns that *look* fixable but are traps. Rule these out first.
+
+| Pattern | Effect | File |
+|---------|--------|------|
+| False Layout Drift (anchor-bias, vbase mirage, diagonal pairing, red-zone) | wasted header edit + cascade regression | [false-layout-drift.md](false-layout-drift.md) |
+
 ## Harmful Patterns
 
 These patterns make matches **worse**. Avoid them.
@@ -313,5 +321,7 @@ From 143 successful fine-tuning attempts (90%+ start, 100% end):
 - [TECHNICAL_NOTES.md: MSVC Encoding](../TECHNICAL_NOTES.md#msvc-mangled-number-encoding) — Decode MakeString template sizes
 - [verifiable-icf.md](verifiable-icf.md) — ICF, LTCG, float constant pooling
 - [at-limit-systemic.md](at-limit-systemic.md) — Project-wide AT_LIMIT issues spanning many TUs (ICF, `__FILE__` path remap, MILO_NOTIFY FormatString wrapper, block-sinking, etc.)
+- [false-layout-drift.md](false-layout-drift.md) — Offset diffs that are NOT layout bugs (anchor-bias, vbase mirage, diagonal pairing); rule out before editing a header
 - [harmful-avoid.md](harmful-avoid.md) — Member aliasing, child pointer in loop
+- [../playbooks/offset-drift-sweep.md](../playbooks/offset-drift-sweep.md) — Mechanical sweep that surfaces layout/header-drift candidates across the whole near-miss band
 - [PERMUTER_ROI_ANALYSIS.md](PERMUTER_ROI_ANALYSIS.md) — Pattern automation ROI rankings, permuter coverage gaps
