@@ -38,13 +38,15 @@ bool LicenseMgr::HasLicense(Symbol s) const {
 void LicenseMgr::ContentStarted() { mLicenses.clear(); }
 
 bool LicenseMgr::ContentDiscovered(Symbol s) {
-    if (mCachedLicenses.find(s) != mCachedLicenses.end()) {
+    Symbol key = s;
+    if (mCachedLicenses.find(key) != mCachedLicenses.end()) {
         std::vector<Symbol> licenses;
-        GetLicensesInContent(s, licenses);
+        GetLicensesInContent(key, licenses);
         for (std::vector<Symbol>::iterator it = licenses.begin(); it != licenses.end();
              ++it) {
-            if (mLicenses.find(*it) == mLicenses.end()) {
-                MarkAvailable(*it, s);
+            Symbol lic = *it;
+            if (mLicenses.find(lic) == mLicenses.end()) {
+                MarkAvailable(lic, key);
             }
         }
         return true;
