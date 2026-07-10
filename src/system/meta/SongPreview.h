@@ -34,6 +34,10 @@ public:
     void Init();
     void Terminate();
     void Start(Symbol, TexMovie *);
+    // Retail RB3-360 has a single-arg Start(Symbol) overload (fn_827808B0);
+    // the two-arg TexMovie form is a DC3-newer addition. MusicLibrary's
+    // Clear/CheckSongPreview call the single-arg form. rb3-Wii oracle agrees.
+    void Start(Symbol);
     void PreparePreview();
     void Poll();
     DataNode OnStart(DataArray *);

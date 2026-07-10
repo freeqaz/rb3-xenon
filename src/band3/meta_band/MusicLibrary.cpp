@@ -88,57 +88,29 @@ void MusicLibrary::Init(SongPreview &prev) {
 void MusicLibrary::TryToSetHighlight(Symbol token, SongNodeType type, bool passthrough) {
     static Symbol random_song("random_song");
     static Symbol make_a_setlist("make_a_setlist");
-    SortNode *node;
-    bool matched = false;
-    bool foundNode = false;
+    // Retail uses early-returns with per-block node scope (no foundNode/matched
+    // bool temporaries) — the Wii oracle's flag-tracking form emits ~30 extra
+    // insns and forces a larger frame + wider callee-save band.
     if (token.Str() != gNullStr) {
-        node = GetCurrentSort()->GetNode(token);
-        if (node != nullptr) {
-            foundNode = true;
+        SortNode *node = GetCurrentSort()->GetNode(token);
+        if (node && (type == kNodeNone || node->GetType() == type)) {
+            SetHighlightIx(node->mStartIx, true);
+            return;
         }
     }
-    if (foundNode) {
-        bool typeMatch = false;
-        if (type == kNodeNone || node->GetType() == type) {
-            typeMatch = true;
-        }
-        if (typeMatch) {
-            matched = true;
-        }
-    }
-    if (matched) {
-        SetHighlightIx(node->mStartIx, true);
-        return;
-    }
-    foundNode = false;
-    matched = false;
     if (!SongSortMgr::IsSetlistSort(unkdc)) {
-        node = GetCurrentSort()->GetNode(random_song);
-        if (node != nullptr) {
-            foundNode = true;
+        SortNode *node = GetCurrentSort()->GetNode(random_song);
+        if (node && passthrough) {
+            SetHighlightIx(node->mStartIx, true);
+            return;
         }
     }
-    if (foundNode && passthrough) {
-        matched = true;
-    }
-    if (matched) {
-        SetHighlightIx(node->mStartIx, true);
-        return;
-    }
-    foundNode = false;
-    matched = false;
     if (SongSortMgr::IsSetlistSort(unkdc)) {
-        node = GetCurrentSort()->GetNode(make_a_setlist);
-        if (node != nullptr) {
-            foundNode = true;
+        SortNode *node = GetCurrentSort()->GetNode(make_a_setlist);
+        if (node && passthrough) {
+            SetHighlightIx(node->mStartIx, true);
+            return;
         }
-    }
-    if (foundNode && passthrough) {
-        matched = true;
-    }
-    if (matched) {
-        SetHighlightIx(node->mStartIx, true);
-        return;
     }
     if (passthrough) {
         int ix = 0;
@@ -488,7 +460,10 @@ void MusicLibrary::ReportSortAndFilters() {
 void MusicLibrary::ClearSongPreview() {
     mLastSongPreview = gNullStr;
     mSongPreviewTimer.Reset();
-    mSongPreview.Start(gNullStr, nullptr);
+    // Retail calls the single-arg Start(Symbol) (fn_827808B0), then unconditionally
+    // clears the pending content op's preview (fn_825A3DC8(unk19c)).
+    mSongPreview.Start(gNullStr);
+    unk19c->ClearPreview();
 }
 
 void MusicLibrary::StartSongPreview() {
