@@ -232,21 +232,24 @@ public:
     static MetaPerformer *Current();
     static MetaPerformer *sMetaPerformer;
 
-    unsigned char mWiiPending; // 0x38
-    QuickplayPerformerImpl *mQpPerformer; // 0x3c
-    bool mCreditsPending; // 0x40
-    Symbol mVenue; // 0x44
-    Symbol mLastVenue; // 0x48
-    Symbol mSetlist; // 0x4c
-    String mSetlistTitle; // 0x50
-    bool mSetlistIsLocal; // 0x5c
-    bool mSetlistIsHmx; // 0x5d
-    int mSetlistBattleID; // 0x60
-    bool mIsBattle; // 0x64
-    int mBattleScore; // 0x68
-    ScoreType mBattleScoreType; // 0x6c
-    std::vector<Symbol> mSongs; // 0x70
-    std::vector<int> mStars; // 0x78
+    // Retail 360 layout (verified from ctor fn_8256A970 + SetBattle fn_825691D0):
+    // base (Synchronizable@0 + MsgSource@0x20) ends at 0x38; the first own member
+    // is mQpPerformer@0x38. Retail does NOT carry the Wii-only mWiiPending byte or
+    // the mLastVenue Symbol in this early cluster (both are Wii-isms rb3-Wii kept);
+    // they live at the tail here so the battle cluster lands at 0x58 like retail.
+    QuickplayPerformerImpl *mQpPerformer; // 0x38
+    bool mCreditsPending; // 0x3c
+    Symbol mVenue; // 0x40
+    Symbol mSetlist; // 0x44
+    String mSetlistTitle; // 0x48
+    bool mSetlistIsLocal; // 0x54
+    bool mSetlistIsHmx; // 0x55
+    int mSetlistBattleID; // 0x58
+    bool mIsBattle; // 0x5c
+    int mBattleScore; // 0x60
+    ScoreType mBattleScoreType; // 0x64
+    std::vector<Symbol> mSongs; // 0x68
+    std::vector<int> mStars; // 0x74
     BandSongMgr *mSongMgr; // 0x80
     Instarank mBattleInstarank; // 0x84
     Instarank mBandInstarank; // 0xdc
@@ -270,4 +273,6 @@ public:
     bool mRealDrumsOverride; // 0x35d
     int unk360; // used in lock/unlock band or solo...some kind of mask?
     Symbol mVenueOverride; // 0x364
+    unsigned char mWiiPending; // tail (Wii-only)
+    Symbol mLastVenue; // tail (Wii-only)
 };
