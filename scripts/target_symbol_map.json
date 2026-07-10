@@ -13532,6 +13532,7 @@
  "0x82564468": "?IsRandomSetList@MetaPerformer@@QBA_NXZ",
  "0x82564498": "?HasSyncPermission@MetaPerformer@@UBA_NXZ",
  "0x8256b758": "?Handle@MetaPerformer@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82567c68": "?AdvanceSong@MetaPerformer@@QAAXH@Z",
  "0x82353b40": "?GetVocalPartPercentage@Stats@@QBAMH@Z",
  "0x8267e578": "?GetMultiplier@Performer@@UBAH_NAAH11@Z",
  "0x82b7f4d8": "?VolumeOff@SlipTrack@@QAAXXZ",
