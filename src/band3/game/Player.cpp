@@ -107,7 +107,8 @@ DECOMP_FORCEFUNC(Player, Player, GetUser())
 #pragma pop
 
 void Player::Leave() {
-    mCommonPhraseCapturer->Enabled(this, mTrackNum, MsToTick(PollMs()), false);
+    int tick = MsToTick(PollMs());
+    mCommonPhraseCapturer->Enabled(this, mTrackNum, tick, false);
     BandTrack *track = GetBandTrack();
     if (track)
         track->DropOut();
@@ -745,9 +746,9 @@ void Player::UpdateEnergy(const SongPos &pos) {
                 float delta = curBeat - prevBeat;
                 SubtractEnergy(delta * mParams->mDeployBeats);
             }
-        }
-        if (mBandEnergy == 0.0f) {
-            StopDeployingBandEnergy(false);
+            if (mBandEnergy == 0.0f) {
+                StopDeployingBandEnergy(false);
+            }
         }
     }
 }
@@ -879,7 +880,8 @@ void Player::DelayReturn(bool b) {
     if (b) {
         mEnableMs += mParams->mMsToReturnFromBrink;
     }
-    if (TheGame->unkdc != -1.0f) {
+    bool hasUnkdc = TheGame->unkdc != -1.0f;
+    if (hasUnkdc) {
         float unkdc = TheGame->unkdc;
         mEnableMs = std::max(unkdc, mEnableMs);
         IgnoreUntilRollback(mEnableMs);

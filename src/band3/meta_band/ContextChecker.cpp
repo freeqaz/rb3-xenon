@@ -102,10 +102,8 @@ namespace {
     }
 
     bool CheckContextArtist(const DataArray *a) {
-        Symbol song = GetSong();
-        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-            TheSongMgr.GetSongIDFromShortName(song, true)
-        );
+        int songID = TheSongMgr.GetSongIDFromShortName(GetSong(), true);
+        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
         for (int i = 1; i < a->Size(); i++) {
             if (streq(a->Str(i), data->Artist()))
                 return true;
@@ -245,15 +243,10 @@ void HandleContextUsed(Symbol ctx) { gUsedContexts.insert(ctx); }
 void PotentiallyCreateAndAddEntry(
     Symbol s, const char *c, int i, bool b, std::vector<WeightedEntry> &vec, int &iref
 ) {
-    bool b1 = false;
-    if (b) {
-        if (IsContextUsed(s))
-            b1 = true;
-    }
-    if (!b1) {
-        iref += i;
-        vec.push_back(WeightedEntry(iref, s, c));
-    }
+    if (b && IsContextUsed(s))
+        return;
+    iref += i;
+    vec.push_back(WeightedEntry(iref, s, c));
 }
 
 bool IsSongSpecificEntry(const DataArray *a) {

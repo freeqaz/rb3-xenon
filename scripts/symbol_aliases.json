@@ -51,6 +51,15 @@
         "?MemOrPoolAllocSTL@@YAPAXH@Z"
       ],
       "evidence": "1-arg MemOrPoolAlloc/MemOrPoolAllocSTL (utl/MemMgr.h, debug-stripped) fold onto the 4-arg debug MemOrPoolAlloc; target obj refs only the 4-arg name (244 objs). Paired-bl diff_arg signature confirmed in DataArray (??0DataArray, LoadGlob, _M_create_node — including the cross-variant STL fold)."
+    },
+    {
+      "name": "CheckContextSongLastSong",
+      "address": "0x825555E8",
+      "survivor": "?CheckContextSong@?A0x1e5d0754@@YA_NPBVDataArray@@@Z",
+      "folded": [
+        "?CheckContextLastSong@?A0x1e5d0754@@YA_NPBVDataArray@@@Z"
+      ],
+      "evidence": "band3/meta_band/ContextChecker.cpp: CheckContextSong and CheckContextLastSong have byte-identical bodies (both loop a->Sym(i)==GetSong()); retail ICF-folds them to one address (0x825555E8, 120 bytes), confirmed via Ghidra decompile matching the shared loop pattern. InternalCheckContext's dispatcher calls both case labels via bl to this same folded address; our compiled obj emits both spellings separately (Song chosen as target_symbol_map survivor)."
     }
   ]
 }
