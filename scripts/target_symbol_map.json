@@ -4048,7 +4048,7 @@
  "0x8252975C": "??$__uninitialized_move@PAVSymbol@@PAV1@U__false_type@stlpmtx_std@@@stlpmtx_std@@YAPAVSymbol@@PAV1@00U__false_type@0@ABU20@@Z",
  "0x82529788": "?GetSongFilterAsString@MusicLibraryTask@MusicLibrary@@QAAXAAVString@@@Z",
  "0x8252A080": "?PushFilterToScreen@MusicLibrary@@QAAXXZ",
- "0x8252A2E8": "?PushSetlistToScreen@MusicLibrary@@QAAXXZ",
+ "0x8252A2E8": "?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ",
  "0x8252A408": "?PushSonglistToScreen@MusicLibrary@@QAAXXZ",
  "0x8252A4F0": "?PushSetlistSaveDialog@MusicLibrary@@QAAXXZ",
  "0x8252ACD0": "??$random_shuffle@PAPBUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@YAXPAPBUUnlockable@?A0xf8e4b4b5@@0@Z",
@@ -14954,7 +14954,6 @@
  "0x8252BDF8": "?DeleteHighlightedSetlist@MusicLibrary@@QAAXXZ",
  "0x82527F18": "?Mat@MusicLibrary@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
  "0x8252D780": "??4MusicLibraryTask@MusicLibrary@@QAAAAV01@ABV01@@Z",
- "0x8252A2E8": "?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ",
  "0x825283A0": "?SetlistIsFull@MusicLibrary@@QAA_NXZ",
  "0x82528678": "?CheckSongPreview@MusicLibrary@@QAAXXZ",
  "0x8252DB68": "?SelectNode@MusicLibrary@@QAAXPAVSortNode@@PAVLocalBandUser@@_N@Z",
@@ -15011,5 +15010,6 @@
  "0x8268B138": "?Handle@SyncGameStartPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8268AED8": "?PollIsSynced@SyncGameStartPanel@@QAAXXZ",
  "0x8268AB70": "?ClassName@SyncGameStartPanel@@UBA?AVSymbol@@XZ",
- "0x8268ABA8": "?SetType@SyncGameStartPanel@@UAAXVSymbol@@@Z"
+ "0x8268ABA8": "?SetType@SyncGameStartPanel@@UAAXVSymbol@@@Z",
+ "0x825A3E70": "?FindOfferBySongID@MusicLibraryStore@@QBAPAVStoreOffer@@H@Z"
 }
