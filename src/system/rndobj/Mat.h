@@ -9,46 +9,8 @@
 #include "rndobj/Tex.h"
 #include "utl/BinStream.h"
 
-struct bf {
-    uint val;
-};
-
-struct MatShaderOptions {
-    MatShaderOptions();
-    union {
-        struct {
-            int itop : 24;
-            int mHasAOCalc : 1;
-            int mHasBones : 1;
-            int i5 : 1;
-            int i4 : 1;
-            int i3 : 1;
-            int i2 : 1;
-            int i1 : 1;
-            int i0 : 1;
-        } shader_struct;
-        u32 pack;
-
-        // from bank 5
-        uint value;
-        bf shaderType;
-        bf billboard;
-        bf skinned;
-        bf useAO;
-    }; // 0x0
-    bool mTempMat;
-
-    // TODO: rename this once you have a better idea of what it does
-    // i think this is some sort of enum/opcode
-    void SetLast5(int mask) { pack = (pack & ~0x1f) | (mask & 0x1f); }
-
-    void SetHasBones(bool bones) {
-        shader_struct.mHasBones = 0;
-        shader_struct.mHasBones = bones;
-    }
-
-    void SetHasAOCalc(bool calc) { shader_struct.mHasAOCalc = calc; }
-};
+// MatShaderOptions + bf now defined in rndobj/BaseMaterial.h (mShaderOptions is a
+// BaseMaterial member in retail RB3-360).
 
 class RndMat : public BaseMaterial {
     friend class NgSpotlightDrawer;
@@ -178,14 +140,12 @@ protected:
     static ObjectDir *sMetaMaterials;
     static ObjectDir *LoadMetaMaterials();
 
-    ObjPtr<MetaMaterial> mMetaMaterial; // 0x1f8
-    int mColorModFlags; // 0x20c
-    std::vector<Hmx::Color> mColorMod; // 0x210
-    MatShaderOptions mShaderOptions; // 0x21c
-    bool mToggleDisplayAllProps; // 0x224
-    bool mOwnsMetaMat; // 0x225 - whether this mat retains ownership of its MetaMaterial
-    bool mUpdatingFromMetaMat; // 0x226 - guard against re-entrant UpdatePropertiesFromMetaMat
-    int mDirty; // 0x228
+    // mColorModFlags / mColorMod / mShaderOptions / mDirty are BaseMaterial members
+    // in retail RB3-360 (they fall inside the 0x28..0x18c BaseMaterial range).
+    ObjPtr<MetaMaterial> mMetaMaterial; // 0x18c
+    bool mToggleDisplayAllProps; // 0x198
+    bool mOwnsMetaMat; // 0x199 - whether this mat retains ownership of its MetaMaterial
+    bool mUpdatingFromMetaMat; // 0x19a - guard against re-entrant UpdatePropertiesFromMetaMat
 };
 
 RndMat *LookupOrCreateMat(const char *, ObjectDir *);

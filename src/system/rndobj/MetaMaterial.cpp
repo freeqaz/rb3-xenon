@@ -129,7 +129,9 @@ BEGIN_PROPSYNCS(MetaMaterial)
     SYNC_MAT_PROP(use_environ, mUseEnviron, kMatPropUseEnviron)
     SYNC_MAT_PROP(prelit, mPrelit, kMatPropPrelit)
     SYNC_MAT_PROP(diffuse_tex, mDiffuseTex, kMatPropDiffuseTex)
+#ifdef RB3_DC3_MAT
     SYNC_MAT_PROP(diffuse_tex2, mDiffuseTex2, kMatPropDiffuseTex2)
+#endif
     SYNC_MAT_PROP(intensify, mIntensify, kMatPropIntensify)
     SYNC_MAT_PROP(tex_wrap, (int &)mTexWrap, kMatPropTexWrap)
     SYNC_MAT_PROP(tex_gen, (int &)mTexGen, kMatPropTexGen)
@@ -139,8 +141,10 @@ BEGIN_PROPSYNCS(MetaMaterial)
     SYNC_MAT_PROP(alpha_cut, mAlphaCut, kMatPropAlphaCut)
     SYNC_PROP(alpha_threshold, mAlphaThreshold)
     SYNC_MAT_PROP(alpha_write, mAlphaWrite, kMatPropAlphaWrite)
+#ifdef RB3_DC3_MAT
     SYNC_MAT_PROP_EDIT_ACTION(force_alpha_write_edit_action, kMatPropForceAlphaWrite)
     SYNC_PROP(alpha_write, mForceAlphaWrite) // yes, the same symbol was used twice
+#endif
     SYNC_MAT_PROP(next_pass, mNextPass, kMatPropNextPass)
     SYNC_MAT_PROP(point_lights, mPointLights, kMatPropPointLights)
     SYNC_MAT_PROP(fog, mFog, kMatPropFog)
@@ -193,6 +197,7 @@ BEGIN_PROPSYNCS(MetaMaterial)
     SYNC_MAT_PROP(screen_aligned, mScreenAligned, kMatPropScreenAligned)
     SYNC_MAT_PROP(cull, (int &)mCull, kMatPropCull)
     SYNC_MAT_PROP(stencil_mode, (int &)mStencilMode, kMatPropStencilMode)
+#ifdef RB3_DC3_MAT
     SYNC_MAT_PROP(bloom_multiplier, mBloomMultiplier, kMatPropBloomMultiplier)
     SYNC_MAT_PROP(never_fit_to_spline, mNeverFitToSpline, kMatPropNeverFitToSpline)
     SYNC_MAT_PROP(
@@ -212,6 +217,7 @@ BEGIN_PROPSYNCS(MetaMaterial)
         mWorldProjectionEndBlend,
         kMatPropWorldProjectionEndBlend
     )
+#endif
     SYNC_SUPERCLASS(BaseMaterial)
 END_PROPSYNCS
 

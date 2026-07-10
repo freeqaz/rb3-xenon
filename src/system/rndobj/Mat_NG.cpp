@@ -128,9 +128,11 @@ void NgMat::SetBasicState() {
     if (mDiffuseTex) {
         TheRenderState.SetTextureClamp(0, cur);
     }
+#ifdef RB3_DC3_MAT
     if (mDiffuseTex2) {
         TheRenderState.SetTextureClamp(6, cur);
     }
+#endif
     if (mNormalMap) {
         TheRenderState.SetTextureClamp(1, cur);
     }
@@ -156,7 +158,11 @@ void NgMat::SetRegularShaderConst(bool perPixel) {
         Vector4 texParams(
             mEmissiveMultiplier,
             (float)((int)(unsigned char)mIntensify + 1),
+#ifdef RB3_DC3_MAT
             mBloomMultiplier,
+#else
+            0.0f,
+#endif
             0.0f
         );
         TheShaderMgr.SetPConstant(kPS_Texture, texParams);
@@ -201,9 +207,13 @@ void NgMat::SetRegularShaderConst(bool perPixel) {
 
     // Diffuse textures
     TheShaderMgr.SetPConstant(kPS_Color, (RndTex *)mDiffuseTex);
+#ifdef RB3_DC3_MAT
     TheShaderMgr.SetPConstant((PShaderConstant)6, (RndTex *)mDiffuseTex2);
+#endif
     TheRenderState.SetTextureFilter(0, (RndRenderState::FilterMode)1, mPerfSettings.mPS3ForceTrilinear);
+#ifdef RB3_DC3_MAT
     TheRenderState.SetTextureFilter(6, (RndRenderState::FilterMode)1, mPerfSettings.mPS3ForceTrilinear);
+#endif
 
     // NgMat custom constants
     TheShaderMgr.SetPConstant(kPS_NgMatCustom, *(const Vector4 *)&mTexHalfPixelX);
@@ -303,10 +313,12 @@ void NgMat::SetRegularShaderConst(bool perPixel) {
             Vector4 spec2P(spec2Red, spec2Green, spec2Blue, spec2Pow);
             TheShaderMgr.SetPConstant(kPS_Specular2, spec2P);
         }
+#ifdef RB3_DC3_MAT
         float blendRange = 1.0f / (mWorldProjectionEndBlend - mWorldProjectionStartBlend);
         float blendOffset = -(mWorldProjectionStartBlend * blendRange);
         Vector4 wpParams(mWorldProjectionTiling, blendRange, blendOffset, 0.0f);
         TheShaderMgr.SetPConstant(kPS_WorldProjection, wpParams);
+#endif
     }
 
     // Tex transform matrix

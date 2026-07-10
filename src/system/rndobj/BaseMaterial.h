@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "math/Color.h"
 #include "math/Mtx.h"
 #include "obj/Data.h"
@@ -8,6 +9,45 @@
 #include "rndobj/Fur.h"
 #include "rndobj/Tex.h"
 #include "utl/BinStream.h"
+
+struct bf {
+    uint val;
+};
+
+struct MatShaderOptions {
+    MatShaderOptions();
+    union {
+        struct {
+            int itop : 24;
+            int mHasAOCalc : 1;
+            int mHasBones : 1;
+            int i5 : 1;
+            int i4 : 1;
+            int i3 : 1;
+            int i2 : 1;
+            int i1 : 1;
+            int i0 : 1;
+        } shader_struct;
+        u32 pack;
+
+        // from bank 5
+        uint value;
+        bf shaderType;
+        bf billboard;
+        bf skinned;
+        bf useAO;
+    }; // 0x0
+    bool mTempMat;
+
+    void SetLast5(int mask) { pack = (pack & ~0x1f) | (mask & 0x1f); }
+
+    void SetHasBones(bool bones) {
+        shader_struct.mHasBones = 0;
+        shader_struct.mHasBones = bones;
+    }
+
+    void SetHasAOCalc(bool calc) { shader_struct.mHasAOCalc = calc; }
+};
 
 enum Cull {
     /** "No culling.  User sees both front and back of polygon." */
@@ -169,9 +209,9 @@ public:
     bool FadeOut() const { return mFadeout; }
     bool Prelit() const { return mPrelit; }
     Blend GetBlend() const { return mBlend; }
-    Cull GetCull() const { return mCull; }
+    Cull GetCull() const { return (Cull)mCull; }
 #ifdef HX_NATIVE
-    void SetCull(Cull c) { mCull = c; }
+    void SetCull(Cull c) { mCull = (unsigned char)c; }
 #endif
     StencilMode GetStencil() const { return mStencilMode; }
     bool GetAlphaCut() const { return mAlphaCut; }
@@ -215,163 +255,118 @@ protected:
 
     static void SetDefaultMat(BaseMaterial *);
 
-    int mUnk0x28; // 0x28 — 4-byte gap between Hmx::Object (0x28) and mColor (0x2c)
+    // ==== Retail RB3-360 layout, 0x28..0x18c (BaseMaterial size 0x18c). ====
+    // Derived byte-exact from ctor fn_82425998 + Save@BaseMaterial (0x824233C0).
+    // Declaration order == offset order (MSVC lays members in decl order).
+    /** "How to blend poly into screen" */
+    Blend mBlend; // 0x28
     /** "Base material color" */
     Hmx::Color mColor; // 0x2c
-    /** "Modulate with environment ambient and lights" */
-    bool mUseEnviron; // 0x3c
-    /** "Use vertex color and alpha for base or ambient" */
-    bool mPrelit; // 0x3d
-    /** "Base texture map, modulated with color and alpha" */
-    ObjPtr<RndTex> mDiffuseTex; // 0x40
-    ObjPtr<RndTex> mDiffuseTex2; // 0x54
-    /** "Double the intensity of base map" */
-    bool mIntensify; // 0x68
-    /** "Texture mapping mode" */
-    TexWrap mTexWrap; // 0x6c
-    /** "How to generate texture coordinates" */
-    TexGen mTexGen; // 0x70
-    /** "Transform for coordinate generation" */
-    Transform mTexXfm; // 0x74
-    /** "How to blend poly into screen" */
-    Blend mBlend; // 0xb4
     /** "How to read and write z-buffer" */
-    ZMode mZMode; // 0xb8
-    /** "Cut zero alpha pixels from z-buffer" */
-    bool mAlphaCut; // 0xbc
-    /** "Write pixel alpha to screen" */
-    bool mAlphaWrite; // 0xbd
-    bool mForceAlphaWrite; // 0xbe
-    /** "Alpha level below which gets cut". Ranges from 0 to 255. */
-    int mAlphaThreshold; // 0xc0
-    /** "Next material for object" */
-    ObjPtr<BaseMaterial> mNextPass; // 0xc4
-
-    // Next gen:
-    /** "Next-generation graphics settings
-        Does not apply to particles" */
-
-    // Shader capabilities:
-    /** "Defines the capabilities of the shader generated using this material" */
-
-    /** "Is the Mat lit with point lights?" */
-    bool mPointLights; // 0xd8
-    /** "Is the Mat affected by fog?" */
-    bool mFog; // 0xd9
-    /** "Is the Mat affected its Environment's fade_out?" */
-    bool mFadeout; // 0xda
-    /** "Is the Mat affected its Environment's color adjust?" */
-    bool mColorAdjust; // 0xdb
-
-    // Performance:
-    /** "Performance options for this material" */
-    MatPerfSettings mPerfSettings; // 0xdc
-
-    /** "Use per-pixel lighting" */
-    bool mPerPixelLit; // 0xdf
-
-    // Emissive settings:
-    /** "Settings for manipulating the emissive properties of the material" */
-
-    /** "Multiplier to apply to emission" */
-    float mEmissiveMultiplier; // 0xe0
-    /** "Map for self illumination" */
-    ObjPtr<RndTex> mEmissiveMap; // 0xe4
-
-    // Normal settings:
-    /** "Settings for manipulating the normals of the material.
-        Requires per-pixel lighting." */
-    /** "Texture map to define lighting normals.
-        Requires per-pixel lighting." */
-    ObjPtr<RndTex> mNormalMap; // 0xf8
-    /** "Amount to diminish normal map bumpiness, 0 is neutral, 1 is no bumps, -1
-     * exaggerates". Ranges from -3 to 1. */
-    float mDeNormal; // 0x10c
-    /** "Detail map texture" */
-    ObjPtr<RndTex> mNormDetailMap; // 0x110
-    /** "Texture tiling scale for the detail map" */
-    float mNormDetailTiling; // 0x124
-    /** "Strength of the detail map bumpiness" */
-    float mNormDetailStrength; // 0x128
-
-    // Specular settings:
-    /** "Settings for manipulating the specular properties of the material" */
-    /** "Specular color. If a specular texture is present, this color is multiplied by the
-     * specular texture RGB color." */
-    /** Specular power: "This is the maximum level of 'shininess' of the surface; higher
-     * numbers represent a shinier surface. If a specular texture is present, this value
-     * is multiplied by the specular texture alpha channel." */
-    Hmx::Color mSpecularRGB; // 0x12c
-    /** "Secondary specular color.  Only valid for certain shader variations." */
-    /** "Secondary specular power.  Only valid for certain shader variations." */
-    Hmx::Color mSpecular2RGB; // 0x13c
-    /** "Texture map for specular color (RGB channels) and glossiness (Alpha channel).
-     * Requires per-pixel lighting." */
-    ObjPtr<RndTex> mSpecularMap; // 0x14c
-    /** "Specular power in downward (strand) direction, 0 to disable". Ranges from 0 to
-     * 100. */
-    float mAnisotropy; // 0x160
-
-    // Rim light settings:
-    /** "Settings for manipulating the rim lighting properties of the material" */
-    /** "Rim lighting color. If a rim texture is present, this color is multiplied by the
-     * rim texture RGB color." */
-    /** Rim power: "Rim lighting power. This is the sharpness of the wrap-around effect;
-     * higher numbers result in a sharper rim lighting effect. If a rim texture is
-     * present, this value is multiplied by the rim texture alpha channel."
-     * Ranges from 0 to 64. */
-    Hmx::Color mRimRGB; // 0x164
-    /** "Texture map that defines the rim lighting color (in the RGB channels) and power
-     * (in the Alpha channel)." */
-    ObjPtr<RndTex> mRimMap; // 0x174
-    /** "When enabled, this causes the rim effect to highlight the undersides of meshes"
-     */
-    bool mRimLightUnder; // 0x188
-
-    // Environ map settings:
-    /** "Settings for manipulating the environment map properties of the material" */
-    /** "Cube texture for reflections" */
-    ObjPtr<RndCubeTex> mEnvironMap; // 0x18c
-    /** "Causes the relfection to increase at glancing angles and fade when viewed
-     * directly" */
-    bool mEnvironMapFalloff; // 0x1a0
-    /** "Masks the reflection by the specular map alpha channel" */
-    bool mEnvironMapSpecMask; // 0x1a1
-
-    // Refraction settings:
-    /** "Settings for applying refraction to the material" */
-    /** "When enabled, this material will refract the screen under the material" */
-    bool mRefractEnabled; // 0x1a2
-    /** "The scale of the refraction of the screen under the material." Ranges from 0 to
-     * 100. */
-    float mRefractStrength; // 0x1a4
-    /** "This is a normal map used to distort the screen under the material. If none is
-     * specified, the regular normal map will be used." */
-    ObjPtr<RndTex> mRefractNormalMap; // 0x1a8
-
-    // Custom shader settings:
-    /** "Settings for using a custom shader effect." */
-    /** "Select a variation on the shader to enable a new range of rendering features." */
-    ShaderVariation mShaderVariation; // 0x1bc
-    /** "Use fur shader" */
-    ObjPtr<RndFur> mFur; // 0x1c0
-
-    // Misc settings:
-    /** "Miscellaneous settings." */
-    bool mNeverFitToSpline; // 0x1d4
-    bool mAllowDistortionEffects; // 0x1d5
-    float mShockwaveMult; // 0x1d8
-    float mWorldProjectionTiling; // 0x1dc
-    float mWorldProjectionStartBlend; // 0x1e0
-    float mWorldProjectionEndBlend; // 0x1e4
-    /** "Projected material from camera's POV" */
-    bool mScreenAligned; // 0x1e8
-    /** "Cull backface polygons" */
-    Cull mCull; // 0x1ec
+    ZMode mZMode; // 0x3c
     /** "How to read and write the stencil buffer" */
-    StencilMode mStencilMode; // 0x1f0
-    /** "Multiplier to apply to bloom" */
-    float mBloomMultiplier; // 0x1f4
+    StencilMode mStencilMode; // 0x40
+    /** "How to generate texture coordinates" */
+    TexGen mTexGen; // 0x44
+    /** "Texture mapping mode" */
+    TexWrap mTexWrap; // 0x48
+    /** "Transform for coordinate generation" */
+    Transform mTexXfm; // 0x4c
+    /** "Base texture map, modulated with color and alpha" */
+    ObjPtr<RndTex> mDiffuseTex; // 0x8c
+    /** "Double the intensity of base map" */
+    bool mIntensify; // 0x98
+    /** "Modulate with environment ambient and lights" */
+    bool mUseEnviron; // 0x99
+    /** "Use vertex color and alpha for base or ambient" */
+    bool mPrelit; // 0x9a
+    /** "Cut zero alpha pixels from z-buffer" */
+    bool mAlphaCut; // 0x9b
+    /** "Write pixel alpha to screen" */
+    bool mAlphaWrite; // 0x9c
+    /** "Alpha level below which gets cut". Ranges from 0 to 255. */
+    int mAlphaThreshold; // 0xa0
+    /** "Next material for object" */
+    ObjPtr<BaseMaterial> mNextPass; // 0xa4
+    /** "Multiplier to apply to emission" */
+    float mEmissiveMultiplier; // 0xb0
+    /** "Specular color." */
+    Hmx::Color mSpecularRGB; // 0xb4
+    /** "Secondary specular color.  Only valid for certain shader variations." */
+    Hmx::Color mSpecular2RGB; // 0xc4
+    /** "Texture map to define lighting normals." */
+    ObjPtr<RndTex> mNormalMap; // 0xd4
+    /** "Map for self illumination" */
+    ObjPtr<RndTex> mEmissiveMap; // 0xe0
+    /** "Texture map for specular color (RGB) and glossiness (Alpha)." */
+    ObjPtr<RndTex> mSpecularMap; // 0xec
+    /** "Cube texture for reflections" */
+    ObjPtr<RndCubeTex> mEnvironMap; // 0xf8
+    /** "Use fur shader" */
+    ObjPtr<RndFur> mFur; // 0x104
+    /** "Amount to diminish normal map bumpiness". */
+    float mDeNormal; // 0x110
+    /** "Specular power in downward (strand) direction, 0 to disable". */
+    float mAnisotropy; // 0x114
+    /** "Select a variation on the shader." */
+    ShaderVariation mShaderVariation; // 0x118
+    /** "Cull backface polygons" (stored as 1 byte in retail) */
+    unsigned char mCull; // 0x11c
+    /** "Use per-pixel lighting" */
+    bool mPerPixelLit; // 0x11d
+    /** "Projected material from camera's POV" */
+    bool mScreenAligned; // 0x11e
+    /** "Causes the reflection to increase at glancing angles." */
+    bool mEnvironMapFalloff; // 0x11f
+    /** "Masks the reflection by the specular map alpha channel" */
+    bool mEnvironMapSpecMask; // 0x120
+    /** "When enabled, this material will refract the screen under the material" */
+    bool mRefractEnabled; // 0x121
+    /** "The scale of the refraction of the screen under the material." */
+    float mRefractStrength; // 0x124
+    /** "Normal map used to distort the screen under the material." */
+    ObjPtr<RndTex> mRefractNormalMap; // 0x128
+    /** "Rim effect highlights the undersides of meshes" */
+    bool mRimLightUnder; // 0x134
+    /** "Rim lighting color." */
+    Hmx::Color mRimRGB; // 0x138
+    /** "Texture map that defines the rim lighting color/power." */
+    ObjPtr<RndTex> mRimMap; // 0x148
+    int mColorModFlags; // 0x154
+    std::vector<Hmx::Color> mColorMod; // 0x158
+    /** "Detail map texture" */
+    ObjPtr<RndTex> mNormDetailMap; // 0x164
+    /** "Texture tiling scale for the detail map" */
+    float mNormDetailTiling; // 0x170
+    /** "Strength of the detail map bumpiness" */
+    float mNormDetailStrength; // 0x174
+    /** "Is the Mat lit with point lights?" */
+    bool mPointLights; // 0x178
+    /** "Is the Mat affected by fog?" */
+    bool mFog; // 0x179
+    /** "Is the Mat affected its Environment's fade_out?" */
+    bool mFadeout; // 0x17a
+    /** "Is the Mat affected its Environment's color adjust?" */
+    bool mColorAdjust; // 0x17b
+    /** "Performance options for this material" */
+    MatPerfSettings mPerfSettings; // 0x17c
+    MatShaderOptions mShaderOptions; // 0x180
+    int mDirty; // 0x188
+    // BaseMaterial ends at 0x18c in retail RB3-360.
+
+#ifdef RB3_DC3_MAT
+    // DC3-only members — absent from retail RB3-360 (verified: no ctor init slot,
+    // not in BaseMaterial::Save@0x824233C0). Gated out so size == retail 0x18c.
+    ObjPtr<RndTex> mDiffuseTex2;
+    bool mForceAlphaWrite;
+    float mBloomMultiplier;
+    bool mNeverFitToSpline;
+    bool mAllowDistortionEffects;
+    float mShockwaveMult;
+    float mWorldProjectionTiling;
+    float mWorldProjectionStartBlend;
+    float mWorldProjectionEndBlend;
+#endif
 };
 
 BaseMaterial::Blend CheckBlendMode(BaseMaterial::Blend b, BaseMaterial *);

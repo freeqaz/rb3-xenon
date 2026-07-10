@@ -38,23 +38,29 @@ void MatPerfSettings::Load(BinStream &bs) {
 #pragma region BaseMaterial
 
 BaseMaterial::BaseMaterial()
-    : mColor(1, 1, 1), mUseEnviron(true), mPrelit(false), mDiffuseTex(this),
-      mDiffuseTex2(this), mIntensify(false), mTexWrap(kTexWrapRepeat),
-      mTexGen(kTexGenNone), mBlend(kBlendSrc), mZMode(kZModeNormal), mAlphaCut(false),
-      mAlphaWrite(false), mForceAlphaWrite(false), mAlphaThreshold(0), mNextPass(this),
-      mPointLights(false), mFog(false), mFadeout(false), mColorAdjust(false),
-      mPerPixelLit(false), mEmissiveMultiplier(1), mEmissiveMap(this), mNormalMap(this),
-      mDeNormal(0), mNormDetailMap(this), mNormDetailTiling(1), mNormDetailStrength(0),
-      mSpecularRGB(0, 0, 0, 10), mSpecular2RGB(0, 0, 0, 10), mSpecularMap(this),
-      mAnisotropy(0), mRimRGB(0, 0, 0, 10), mRimMap(this), mRimLightUnder(false),
-      mEnvironMap(this), mEnvironMapFalloff(false), mEnvironMapSpecMask(false),
-      mRefractEnabled(false), mRefractStrength(0), mRefractNormalMap(this),
-      mShaderVariation(kShaderVariationNone), mFur(this), mNeverFitToSpline(false),
-      mAllowDistortionEffects(true), mShockwaveMult(1), mWorldProjectionTiling(0.125),
-      mWorldProjectionStartBlend(0.8), mWorldProjectionEndBlend(0.9),
-      mScreenAligned(false), mCull(kCullRegular), mStencilMode(kStencilIgnore),
-      mBloomMultiplier(1) {
+    : mBlend(kBlendSrc), mColor(1, 1, 1), mZMode(kZModeNormal),
+      mStencilMode(kStencilIgnore), mTexGen(kTexGenNone), mTexWrap(kTexWrapRepeat),
+      mDiffuseTex(this), mIntensify(false), mUseEnviron(true), mPrelit(false),
+      mAlphaCut(false), mAlphaWrite(false), mAlphaThreshold(0), mNextPass(this),
+      mEmissiveMultiplier(1), mSpecularRGB(0, 0, 0, 10), mSpecular2RGB(0, 0, 0, 10),
+      mNormalMap(this), mEmissiveMap(this), mSpecularMap(this), mEnvironMap(this),
+      mFur(this), mDeNormal(0), mAnisotropy(0), mShaderVariation(kShaderVariationNone),
+      mCull(kCullRegular), mPerPixelLit(false), mScreenAligned(false),
+      mEnvironMapFalloff(false), mEnvironMapSpecMask(false), mRefractEnabled(false),
+      mRefractStrength(0), mRefractNormalMap(this), mRimLightUnder(false),
+      mRimRGB(0, 0, 0, 10), mRimMap(this), mColorModFlags(0), mNormDetailMap(this),
+      mNormDetailTiling(1), mNormDetailStrength(0), mPointLights(false), mFog(false),
+      mFadeout(false), mColorAdjust(false), mDirty(3)
+#ifdef RB3_DC3_MAT
+      ,
+      mDiffuseTex2(this), mForceAlphaWrite(false), mBloomMultiplier(1),
+      mNeverFitToSpline(false), mAllowDistortionEffects(true), mShockwaveMult(1),
+      mWorldProjectionTiling(0.125), mWorldProjectionStartBlend(0.8),
+      mWorldProjectionEndBlend(0.9)
+#endif
+{
     mTexXfm.Reset();
+    mColorMod.resize(3);
 }
 
 BEGIN_HANDLERS(BaseMaterial)
@@ -69,7 +75,7 @@ BEGIN_PROPSYNCS(BaseMaterial)
 END_PROPSYNCS
 
 BEGIN_SAVES(BaseMaterial)
-    SAVE_REVS(8, 0)
+    SAVE_REVS(0x44, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mBlend << (const Vector4 &)mColor << mUseEnviron << mPrelit;
     bs << mZMode << mAlphaCut << mAlphaThreshold << mAlphaWrite;
@@ -86,6 +92,7 @@ BEGIN_SAVES(BaseMaterial)
     bs << mScreenAligned << mShaderVariation << (const Vector4 &)mSpecular2RGB;
     mPerfSettings.Save(bs);
     bs << mRefractEnabled << mRefractStrength << mRefractNormalMap;
+#ifdef RB3_DC3_MAT
     bs << mBloomMultiplier << mNeverFitToSpline;
     bs << mAllowDistortionEffects << mShockwaveMult;
     bs << mWorldProjectionTiling;
@@ -93,6 +100,7 @@ BEGIN_SAVES(BaseMaterial)
     bs << mWorldProjectionEndBlend;
     bs << mDiffuseTex2;
     bs << mForceAlphaWrite;
+#endif
 END_SAVES
 
 BEGIN_COPYS(BaseMaterial)
@@ -103,9 +111,11 @@ BEGIN_COPYS(BaseMaterial)
             if (!mDiffuseTex != !c->mDiffuseTex) {
                 COPY_MEMBER(mDiffuseTex)
             }
+#ifdef RB3_DC3_MAT
             if (!mDiffuseTex2 != !c->mDiffuseTex2) {
                 COPY_MEMBER(mDiffuseTex2)
             }
+#endif
         } else {
             COPY_MEMBER(mZMode)
             COPY_MEMBER(mStencilMode)
@@ -116,12 +126,16 @@ BEGIN_COPYS(BaseMaterial)
             COPY_MEMBER(mAlphaCut)
             COPY_MEMBER(mAlphaThreshold)
             COPY_MEMBER(mAlphaWrite)
+#ifdef RB3_DC3_MAT
             COPY_MEMBER(mForceAlphaWrite)
+#endif
             COPY_MEMBER(mTexGen)
             COPY_MEMBER(mTexWrap)
             COPY_MEMBER(mTexXfm)
             COPY_MEMBER(mDiffuseTex)
+#ifdef RB3_DC3_MAT
             COPY_MEMBER(mDiffuseTex2)
+#endif
             COPY_MEMBER(mNextPass)
             COPY_MEMBER(mCull)
             COPY_MEMBER(mEmissiveMultiplier)
@@ -154,6 +168,7 @@ BEGIN_COPYS(BaseMaterial)
             COPY_MEMBER(mRefractEnabled)
             COPY_MEMBER(mRefractStrength)
             COPY_MEMBER(mRefractNormalMap)
+#ifdef RB3_DC3_MAT
             COPY_MEMBER(mBloomMultiplier)
             COPY_MEMBER(mNeverFitToSpline)
             COPY_MEMBER(mAllowDistortionEffects)
@@ -161,15 +176,16 @@ BEGIN_COPYS(BaseMaterial)
             COPY_MEMBER(mWorldProjectionTiling)
             COPY_MEMBER(mWorldProjectionStartBlend)
             COPY_MEMBER(mWorldProjectionEndBlend)
+#endif
         }
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(8, 0)
+INIT_REVS(0x44, 0)
 
 BEGIN_LOADS(BaseMaterial)
     LOAD_REVS(bs)
-    ASSERT_REVS(8, 0)
+    ASSERT_REVS(0x44, 0)
     LOAD_SUPERCLASS(Hmx::Object)
     d >> (int &)mBlend;
     mBlend = CheckBlendMode(mBlend, this);
@@ -201,6 +217,7 @@ BEGIN_LOADS(BaseMaterial)
     d >> mRefractEnabled;
     d >> mRefractStrength;
     d >> mRefractNormalMap;
+#ifdef RB3_DC3_MAT
     if (d.rev > 1) {
         d >> mBloomMultiplier;
     }
@@ -225,6 +242,7 @@ BEGIN_LOADS(BaseMaterial)
     if (d.rev > 7) {
         d >> mForceAlphaWrite;
     }
+#endif
 END_LOADS
 
 void BaseMaterial::SetDefaultMat(BaseMaterial *mat) {

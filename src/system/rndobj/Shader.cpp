@@ -300,8 +300,11 @@ bool RndShaderParticles::CheckError(MatFlagErrorType type) {
 
 void SetColorWriteMask(const ShaderOptions &opts, RndMat *mat) {
     bool writeAlpha = mat->mAlphaWrite;
-    if (!mat->mForceAlphaWrite
-        && ((opts.flags & 0x400000) != 0 || TheNgRnd.Offscreen() || writeAlpha)) {
+    if (
+#ifdef RB3_DC3_MAT
+        !mat->mForceAlphaWrite &&
+#endif
+        ((opts.flags & 0x400000) != 0 || TheNgRnd.Offscreen() || writeAlpha)) {
         writeAlpha = true;
     }
     TheRenderState.SetColorWriteMask((-(unsigned int)writeAlpha & 8) + 7);
@@ -309,7 +312,11 @@ void SetColorWriteMask(const ShaderOptions &opts, RndMat *mat) {
 
 void CheckDistortionOpts(RndMat *mat, ShaderOptions &opts) {
     RndSpline *spline = RndSpline::sGlobalDefaultSpline;
-    if (spline && !mat->mNeverFitToSpline && spline->mCtrlPoints.size() >= 2) {
+    if (spline
+#ifdef RB3_DC3_MAT
+        && !mat->mNeverFitToSpline
+#endif
+        && spline->mCtrlPoints.size() >= 2) {
         opts.flags |= (u64)1 << 55;
         opts.flags = ((u64)(spline->mPulseDrawing & 1) << 56)
             | (opts.flags & ~((u64)1 << 56));
@@ -317,19 +324,23 @@ void CheckDistortionOpts(RndMat *mat, ShaderOptions &opts) {
     RndShockwave *shockwave = RndShockwave::sSelected;
     if (shockwave) {
         bool ampBad = Abs(shockwave->mAmplitude) < 0.0001f;
+#ifdef RB3_DC3_MAT
         if (!ampBad && mat->mAllowDistortionEffects) {
             bool multBad = Abs(mat->mShockwaveMult) < 0.0001f;
             if (!multBad) {
                 opts.flags |= (u64)1 << 60;
             }
         }
+#endif
     }
 }
 
 void CheckDistortion(RndMat *mat) {
     RndSpline *spline = RndSpline::sGlobalDefaultSpline;
     if (spline
+#ifdef RB3_DC3_MAT
         && !mat->mNeverFitToSpline
+#endif
         && !spline->mManual
         && spline->mCtrlPoints.size() >= 2) {
         spline->PrepareShader();
@@ -337,12 +348,14 @@ void CheckDistortion(RndMat *mat) {
     RndShockwave *shock = RndShockwave::sSelected;
     if (shock) {
         bool ampBad = Abs(shock->mAmplitude) < 0.0001f;
+#ifdef RB3_DC3_MAT
         if (!ampBad && mat->mAllowDistortionEffects) {
             bool multBad = Abs(mat->mShockwaveMult) < 0.0001f;
             if (!multBad) {
                 shock->PrepareShader(mat->mShockwaveMult);
             }
         }
+#endif
     }
 }
 

@@ -51,10 +51,8 @@ namespace {
 }
 
 RndMat::RndMat()
-    : mMetaMaterial(this), mColorModFlags(0), mToggleDisplayAllProps(0), mOwnsMetaMat(0), mUpdatingFromMetaMat(0),
-      mDirty(3) {
-    ResetColors(mColorMod, 3);
-}
+    : mMetaMaterial(this), mToggleDisplayAllProps(0), mOwnsMetaMat(0),
+      mUpdatingFromMetaMat(0) {}
 
 RndMat::~RndMat() {
     if (mOwnsMetaMat && mMetaMaterial) {
@@ -131,12 +129,16 @@ BEGIN_PROPSYNCS(RndMat)
     SYNC_MAT_PROP(tex_wrap, (int &)mTexWrap, 2)
     SYNC_MAT_PROP(tex_xfm, mTexXfm, 2)
     SYNC_MAT_PROP(diffuse_tex, mDiffuseTex, 2)
+#ifdef RB3_DC3_MAT
     SYNC_MAT_PROP(diffuse_tex2, mDiffuseTex2, 2)
+#endif
     SYNC_MAT_PROP(prelit, mPrelit, 2)
     SYNC_MAT_PROP(alpha_cut, mAlphaCut, 2)
     SYNC_PROP_MODIFY(alpha_threshold, mAlphaThreshold, mDirty |= 2)
     SYNC_MAT_PROP(alpha_write, mAlphaWrite, 2)
+#ifdef RB3_DC3_MAT
     SYNC_PROP(force_alpha_write, mForceAlphaWrite)
+#endif
     SYNC_MAT_PROP(next_pass, mNextPass, 2)
     SYNC_MAT_PROP(cull, (int &)mCull, 2)
     SYNC_MAT_PROP(per_pixel_lit, mPerPixelLit, 2)
@@ -230,6 +232,7 @@ BEGIN_PROPSYNCS(RndMat)
     SYNC_PERF_PROP(recv_proj_lights, mPerfSettings.mRecvProjLights)
     SYNC_PERF_PROP(recv_point_cube_tex, mPerfSettings.mRecvPointCubeTex)
     SYNC_PERF_PROP(ps3_force_trilinear, mPerfSettings.mPS3ForceTrilinear)
+#ifdef RB3_DC3_MAT
     SYNC_MAT_PROP(bloom_multiplier, mBloomMultiplier, 2)
     SYNC_MAT_PROP(never_fit_to_spline, mNeverFitToSpline, 2)
     SYNC_MAT_PROP(allow_distortion_effects, mAllowDistortionEffects, 2)
@@ -237,6 +240,7 @@ BEGIN_PROPSYNCS(RndMat)
     SYNC_MAT_PROP(world_projection_tiling, mWorldProjectionTiling, 2)
     SYNC_MAT_PROP(world_projection_start_blend, mWorldProjectionStartBlend, 2)
     SYNC_MAT_PROP(world_projection_end_blend, mWorldProjectionEndBlend, 2)
+#endif
     SYNC_SUPERCLASS(BaseMaterial)
 END_PROPSYNCS
 
