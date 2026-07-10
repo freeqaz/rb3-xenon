@@ -1130,7 +1130,7 @@ void GemManager::AddChordBracket(Symbol gemType, unsigned int slots, float ms) {
                 unsigned char isMiss = (unsigned char)(gemType == "miss");
                 if (lowest < highest) {
                     Symbol name;
-                    int leftBlack = _ref0->IsBlackKey(lowest);
+                    bool leftBlack = _ref0->IsBlackKey(lowest);
                     GetWidgetName(
                         name, leftBlack, Symbol(isMiss ? "bracket_left_miss" : "bracket_left")
                     );
@@ -1145,7 +1145,7 @@ void GemManager::AddChordBracket(Symbol gemType, unsigned int slots, float ms) {
                     Symbol spanName = name;
                     TrackWidget *wSpan = GetWidgetByName(spanName);
                     RememberChordWidget(wSpan);
-                    int rightBlack = _ref0->IsBlackKey(highest);
+                    bool rightBlack = _ref0->IsBlackKey(highest);
                     GetWidgetName(
                         name, rightBlack,
                         Symbol(isMiss ? "bracket_right_miss" : "bracket_right")

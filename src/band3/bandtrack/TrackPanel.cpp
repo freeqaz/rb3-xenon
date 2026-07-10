@@ -162,42 +162,39 @@ void TrackPanel::UpdateReservedVocalSlot() {
 #pragma optimization_level reset
 
 void TrackPanel::CreateTracks() {
-    if (!unk5d) {
-        for (int i = 0; i < mTrackSlots.size(); i++) {
-            TrackSlot &curslot = mTrackSlots[i];
-            curslot.mTrack = 0;
-            curslot.mInstrument = kInstNone;
-        }
-        MILO_ASSERT(mTrackSlots.size() == kTrackNumSlots, 299);
+    for (int i = 0; i < mTrackSlots.size(); i++) {
+        TrackSlot &curslot = mTrackSlots[i];
+        curslot.mTrack = 0;
+        curslot.mInstrument = kInstNone;
+    }
+    MILO_ASSERT(mTrackSlots.size() == kTrackNumSlots, 299);
 
-        int maxslot = TheBandUserMgr->MaxSlot();
-        for (int i = 0; i <= maxslot; i++) {
-            BandUser *curuser = TheBandUserMgr->GetUserFromSlot(i);
-            if (curuser && curuser->IsParticipating() && curuser->IsFullyInGame()) {
-                Track *curtrack = NewTrack(curuser);
-                curtrack->SetName(MakeString("track%d", i), ObjectDir::Main());
-                curtrack->mSlotIdx = i;
-                mTracks.push_back(curtrack);
-                curuser->mTrack = curtrack;
-                TrackSlot &curslot = mTrackSlots[i];
-                curslot.mTrack = curtrack;
-                curslot.mInstrument = GetTrackInstrument(curuser->GetTrackSym());
-            }
+    int maxslot = TheBandUserMgr->MaxSlot();
+    for (int i = 0; i <= maxslot; i++) {
+        BandUser *curuser = TheBandUserMgr->GetUserFromSlot(i);
+        if (curuser && curuser->IsParticipating() && curuser->IsFullyInGame()) {
+            Track *curtrack = NewTrack(curuser);
+            curtrack->SetName(MakeString("track%d", i), ObjectDir::Main());
+            curtrack->mSlotIdx = i;
+            mTracks.push_back(curtrack);
+            curuser->mTrack = curtrack;
+            TrackSlot &curslot = mTrackSlots[i];
+            curslot.mTrack = curtrack;
+            curslot.mInstrument = GetTrackInstrument(curuser->GetTrackSym());
         }
-        UpdateReservedVocalSlot();
-        BandUser *nulluser = TheBandUserMgr->GetNullUser();
-        if (nulluser->GetPlayer()) {
-            int idx = mReservedVocalSlot;
-            Track *nulltrack = NewTrack(nulluser);
-            nulltrack->SetName(MakeString("track%d", idx), ObjectDir::Main());
-            nulltrack->mSlotIdx = idx;
-            mTracks.push_back(nulltrack);
-            nulluser->mTrack = nulltrack;
-            TrackSlot &curslot = mTrackSlots[idx];
-            curslot.mTrack = nulltrack;
-            curslot.mInstrument = GetTrackInstrument(nulluser->GetTrackSym());
-        }
-        unk5d = true;
+    }
+    UpdateReservedVocalSlot();
+    BandUser *nulluser = TheBandUserMgr->GetNullUser();
+    if (nulluser->GetPlayer()) {
+        int idx = mReservedVocalSlot;
+        Track *nulltrack = NewTrack(nulluser);
+        nulltrack->SetName(MakeString("track%d", idx), ObjectDir::Main());
+        nulltrack->mSlotIdx = idx;
+        mTracks.push_back(nulltrack);
+        nulluser->mTrack = nulltrack;
+        TrackSlot &curslot = mTrackSlots[idx];
+        curslot.mTrack = nulltrack;
+        curslot.mInstrument = GetTrackInstrument(nulluser->GetTrackSym());
     }
 }
 
