@@ -24,6 +24,12 @@ RecentCmp::RecentCmp(int pos, const char *name, Symbol s, bool b)
 }
 
 RecentCmp::RecentType RecentCmp::OriginToRecentType(Symbol origin) {
+    static Symbol rb3("rb3");
+    static Symbol pearljam("pearljam");
+    static Symbol greenday("greenday");
+    static Symbol lego("lego");
+    static Symbol rb2("rb2");
+    static Symbol rb1("rb1");
     if (origin == rb3)
         return kDisc;
     else if (origin == pearljam)
@@ -41,6 +47,12 @@ RecentCmp::RecentType RecentCmp::OriginToRecentType(Symbol origin) {
 }
 
 Symbol RecentCmp::RecentTypeToOrigin(RecentCmp::RecentType ty) {
+    static Symbol rb3("rb3");
+    static Symbol pearljam("pearljam");
+    static Symbol greenday("greenday");
+    static Symbol lego("lego");
+    static Symbol rb2("rb2");
+    static Symbol rb1("rb1");
     switch (ty) {
     case kDisc:
         return rb3;
@@ -105,28 +117,30 @@ ShortcutNode *SongSortByRecent::NewShortcutNode(SongSortNode *node) const {
     MemDoTempAllocations m;
     RecentCmp *other = (RecentCmp *)node->Cmp();
     RecentCmp::RecentType ty = other->mType;
-    int pos = ((-ty) | ty) >> 31;
+    int pos = ty ? -1 : 0;
     bool tyIs8 = ty == 8;
-    Symbol origin = other->RecentTypeToOrigin(ty);
-    RecentCmp *cmp = new RecentCmp(pos, nullptr, origin, tyIs8);
-
-    Symbol token;
+    Symbol token = other->RecentTypeToOrigin(ty);
+    RecentCmp *cmp = new RecentCmp(pos, nullptr, token, tyIs8);
+    static Symbol recently_acquired("recently_acquired");
+    static Symbol previously_acquired("previously_acquired");
+    static Symbol acquired_from_discs("acquired_from_discs");
+    static Symbol not_yet_acquired("not_yet_acquired");
+    Symbol tok;
     switch (ty) {
     case RecentCmp::kRecent:
-        token = recently_acquired;
+        tok = recently_acquired;
         break;
     case RecentCmp::kPrevious:
-        token = previously_acquired;
+        tok = previously_acquired;
         break;
     case RecentCmp::kNotYet:
-        token = not_yet_acquired;
+        tok = not_yet_acquired;
         break;
     default:
-        MILO_ASSERT(origin != gNullStr, 0xB1);
-        token = origin;
+        tok = token;
         break;
     }
-    ShortcutNode *newNode = new ShortcutNode(cmp, token, true);
+    ShortcutNode *newNode = new ShortcutNode(cmp, tok, true);
     return newNode;
 }
 
@@ -134,27 +148,29 @@ HeaderSortNode *SongSortByRecent::NewHeaderNode(SongSortNode *node) const {
     MemDoTempAllocations m;
     RecentCmp *other = (RecentCmp *)node->Cmp();
     RecentCmp::RecentType ty = other->mType;
-    int pos = ((-ty) | ty) >> 31;
+    int pos = ty ? -1 : 0;
     bool tyIs8 = ty == 8;
-    Symbol origin = other->RecentTypeToOrigin(ty);
-    RecentCmp *cmp = new RecentCmp(pos, nullptr, origin, tyIs8);
-
-    Symbol token;
+    Symbol token = other->RecentTypeToOrigin(ty);
+    RecentCmp *cmp = new RecentCmp(pos, nullptr, token, tyIs8);
+    static Symbol recently_acquired("recently_acquired");
+    static Symbol previously_acquired("previously_acquired");
+    static Symbol acquired_from_discs("acquired_from_discs");
+    static Symbol not_yet_acquired("not_yet_acquired");
+    Symbol tok;
     switch (ty) {
     case RecentCmp::kRecent:
-        token = recently_acquired;
+        tok = recently_acquired;
         break;
     case RecentCmp::kPrevious:
-        token = previously_acquired;
+        tok = previously_acquired;
         break;
     case RecentCmp::kNotYet:
-        token = not_yet_acquired;
+        tok = not_yet_acquired;
         break;
     default:
-        MILO_ASSERT(origin != gNullStr, 0xD6);
-        token = origin;
+        tok = token;
         break;
     }
-    HeaderSortNode *newNode = new HeaderSortNode(cmp, token, true);
+    HeaderSortNode *newNode = new HeaderSortNode(cmp, tok, true);
     return newNode;
 }

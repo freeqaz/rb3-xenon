@@ -21,12 +21,14 @@ int DifficultyCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
             return -1;
         else if (mTier == -1)
             return 1;
+        else if (mTier < cmp->mTier)
+            return -1;
         else
-            return mTier < cmp->mTier ? -1 : 1;
+            return 1;
     case kNodeSong:
     case kNodeStoreSong: {
-        float other = cmp->mRank;
         float mine = mRank;
+        float other = cmp->mRank;
         if (mine == other) {
             return AlphaKeyStrCmp(mName, cmp->mName, true);
         } else if (other == 0)
@@ -75,6 +77,7 @@ ShortcutNode *SongSortByDiff::NewShortcutNode(SongSortNode *node) const {
     DifficultyCmp *other = (DifficultyCmp *)node->Cmp();
     int tier = other->mTier;
     DifficultyCmp *cmp = new DifficultyCmp(tier, 0, "");
+    static Symbol no_part("no_part");
     Symbol sym = tier == -1 ? no_part : TheSongMgr.RankTierToken(tier);
     ShortcutNode *newNode = new ShortcutNode(cmp, sym, true);
     return newNode;
@@ -85,6 +88,7 @@ HeaderSortNode *SongSortByDiff::NewHeaderNode(SongSortNode *node) const {
     DifficultyCmp *other = (DifficultyCmp *)node->Cmp();
     int tier = other->mTier;
     DifficultyCmp *cmp = new DifficultyCmp(tier, 0, "");
+    static Symbol no_part("no_part");
     Symbol sym = tier == -1 ? no_part : TheSongMgr.RankTierToken(tier);
     HeaderSortNode *newNode = new HeaderSortNode(cmp, sym, true);
     return newNode;

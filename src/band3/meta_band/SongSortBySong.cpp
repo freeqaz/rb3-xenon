@@ -28,6 +28,8 @@ int SongCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
 }
 
 void SongSortBySong::Init() {
+    static Symbol song_select("song_select");
+    static Symbol alpha_shortcuts("alpha_shortcuts");
     DataArray *cfg = SystemConfig(song_select);
     DataArray *alphas = cfg->FindArray(alpha_shortcuts);
     for (int i = 1; i < alphas->Size(); i++) {

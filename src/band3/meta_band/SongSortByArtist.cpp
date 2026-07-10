@@ -22,12 +22,8 @@ int ArtistCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
             return ret;
         else if (mCover == cmp->mCover)
             return 0;
-        else {
-            ret = -1;
-            if (mCover)
-                ret = 1;
-            return ret;
-        }
+        else
+            return mCover ? 1 : -1;
     }
     case kNodeSubheader:
         if (!HasSubheader()) {
@@ -61,6 +57,8 @@ int ArtistCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
 bool ArtistCmp::HasSubheader() const { return mTrackNum != -1 || mShortcut.Null(); }
 
 void SongSortByArtist::Init() {
+    static Symbol song_select("song_select");
+    static Symbol alpha_shortcuts("alpha_shortcuts");
     DataArray *cfg = SystemConfig(song_select);
     DataArray *alphas = cfg->FindArray(alpha_shortcuts);
     for (int i = 1; i < alphas->Size(); i++) {

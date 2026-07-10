@@ -4107,6 +4107,14 @@ SongSortBySong.cpp:
 	.pdata      start:0x82225290 end:0x82225320
 	.text       start:0x8263CC60 end:0x8263D398
 
+SongSortByStars.cpp:
+	.pdata      start:0x82225440 end:0x82225500
+	.text       start:0x8263E2B8 end:0x8263EC10
+
+SongSortByReview.cpp:
+	.pdata      start:0x82225690 end:0x82225738
+	.text       start:0x8263FE30 end:0x82640558
+
 UploadErrorMgr.cpp:
 	.pdata      start:0x82223830 end:0x822238C8
 	.text       start:0x82625724 end:0x82625CA8

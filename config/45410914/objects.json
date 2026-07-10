@@ -1149,9 +1149,16 @@
    "band3/meta_band/SongSortByArtist.cpp": "NonMatching",
    "band3/meta_band/SongSortByDiff.cpp": "NonMatching",
    "band3/meta_band/SongSortByPlays.cpp": "NonMatching",
-   "band3/meta_band/SongSortByRank.cpp": "NonMatching",
+   "band3/meta_band/SongSortByRank.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SongSortByRecent.cpp": "NonMatching",
+   "band3/meta_band/SongSortByReview.cpp": "NonMatching",
    "band3/meta_band/SongSortBySong.cpp": "NonMatching",
+   "band3/meta_band/SongSortByStars.cpp": "NonMatching",
    "band3/meta_band/SongSortMgr.cpp": "NonMatching",
    "band3/meta_band/StandIn.cpp": "NonMatching",
    "band3/meta_band/StoreInfoPanel.cpp": {

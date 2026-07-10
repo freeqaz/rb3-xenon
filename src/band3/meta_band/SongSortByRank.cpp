@@ -132,6 +132,10 @@ ShortcutNode *SongSortByRank::NewShortcutNode(SongSortNode *node) const {
     MemDoTempAllocations m;
     RankCmp *other = (RankCmp *)node->Cmp();
     RankCmp::RankType type = other->mType;
+    static Symbol rank_ranked("rank_ranked");
+    static Symbol rank_unranked("rank_unranked");
+    static Symbol rank_nodata("rank_nodata");
+    static Symbol percentile_fmt("percentile_fmt");
     int val;
     const char *label = gNullStr;
     switch(type) {
@@ -165,6 +169,10 @@ HeaderSortNode *SongSortByRank::NewHeaderNode(SongSortNode *node) const {
     MemDoTempAllocations m;
     RankCmp *other = (RankCmp *)node->Cmp();
     RankCmp::RankType type = other->mType;
+    static Symbol rank_ranked("rank_ranked");
+    static Symbol rank_unranked("rank_unranked");
+    static Symbol rank_nodata("rank_nodata");
+    static Symbol percentile_fmt("percentile_fmt");
     int val;
     const char *label = gNullStr;
     switch(type) {

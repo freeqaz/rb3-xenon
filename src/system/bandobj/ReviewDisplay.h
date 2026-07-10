@@ -16,5 +16,6 @@ public:
     virtual ~ReviewDisplay();
 
     void SetToToken(Symbol);
+    static Symbol GetSymbolForReviewScore(int);
     void SetValues(int, bool);
 };
