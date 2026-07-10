@@ -67,7 +67,7 @@ public:
     }
 
     int GetSlot() const {
-        for (unsigned int i = 0; i < 32; i++) {
+        for (int i = 0; i < 32; i++) {
             if (mSlots & 1 << i)
                 return i;
         }

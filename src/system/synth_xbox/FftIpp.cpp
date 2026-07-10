@@ -49,12 +49,11 @@ void FftIpp::SetMode(int mode) {
     mOrder = 1;
     mSize = mode;
     if (mSize > 2) {
-        unsigned char o;
         do {
-            mOrder = mOrder + 1;
-                        o = *(volatile int *)&mOrder;
+            *(volatile int *)&mOrder = *(volatile int *)&mOrder + 1;
             int s = *(volatile int *)&mSize;
-            if (s > (1 << o)) continue;
+            int o = *(volatile int *)&mOrder;
+            if ((1 << o) < s) continue;
             break;
         } while (true);
     }

@@ -700,7 +700,7 @@ void TrackWatcherImpl::OnMiss(
     } else if (noFillLogic && mParent->InFill(tick + 120, true)) {
         FillSwing(tick + 120, slot, -1, false);
     } else if (!IsSwingInRoll(gemID, slots) && !mTrillSucceeding) {
-        if (gem.Unk10B1() && gem.GetPlayed() && slot == gem.GetSlot()) {
+        if (gem.Unk10B1() && gem.GetPlayed() && gem.GetSlot() == slot) {
             gem.SetUnk10B1(false);
         } else {
             SendMiss(ms, slot, gemID, slots, flags);
