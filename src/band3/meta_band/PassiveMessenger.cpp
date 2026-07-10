@@ -116,15 +116,13 @@ void PassiveMessageQueue::HandlePassiveMessage(PassiveMessage *msg) {
 }
 END_UNPOOL_DATA
 
-namespace {
-    bool IsEarnedAccomplishmentMessage(PassiveMessage *msg) {
-        static Symbol passive_message_earned_accomplishment("passive_message_earned_accomplishment");
-        return passive_message_earned_accomplishment == msg->mText->Sym(0);
-    }
-    bool IsEarnedCampaignLevelMessage(PassiveMessage *msg) {
-        static Symbol passive_message_earned_campaign_level("passive_message_earned_campaign_level");
-        return passive_message_earned_campaign_level == msg->mText->Sym(0);
-    }
+bool PassiveMessageQueue::IsEarnedAccomplishmentMessage(PassiveMessage *msg) {
+    static Symbol passive_message_earned_accomplishment("passive_message_earned_accomplishment");
+    return msg->mText->Sym(0) == passive_message_earned_accomplishment;
+}
+bool PassiveMessageQueue::IsEarnedCampaignLevelMessage(PassiveMessage *msg) {
+    static Symbol passive_message_earned_campaign_level("passive_message_earned_campaign_level");
+    return msg->mText->Sym(0) == passive_message_earned_campaign_level;
 }
 
 PassiveMessage *PassiveMessageQueue::GetAndPreProcessFirstMessage() {
@@ -219,9 +217,8 @@ void PassiveMessageQueue::SetMessageDuration(float f1) { mMessageDuration = f1; 
 
 namespace {
     PassiveMessagesPanel *GetPMPanel() {
-        return ObjectDir::Main()->Find<PassiveMessagesPanel>(
-            "passive_messages_panel", false
-        );
+        ObjectDir *dir = ObjectDir::Main();
+        return dir->Find<PassiveMessagesPanel>("passive_messages_panel", false);
     }
 }
 
@@ -274,9 +271,9 @@ void PassiveMessenger::TriggerMessage(
         OvershellSlot *slot = TheBandUI.GetOvershell()->GetSlot(u);
         if (slot) {
             if (!TheGameMode->InMode("trainer")) {
-                int i4 = -1;
-                if (i10 != 0)
-                    i4 = i8 + i10;
+                int i4 = i8 + i10;
+                if (i10 == 0)
+                    i4 = -1;
                 slot->GetMessageQueue()->AddMessage(
                     new PassiveMessage(a, t, s, i6, i8, i9, i4, i7, c1, c2, c3, i14, b4)
                 );
@@ -286,9 +283,9 @@ void PassiveMessenger::TriggerMessage(
     }
     PassiveMessagesPanel *pmPanel = GetPMPanel();
     if (pmPanel) {
-        int i4 = -1;
-        if (i10 != 0)
-            i4 = i8 + i10;
+        int i4 = i8 + i10;
+        if (i10 == 0)
+            i4 = -1;
         pmPanel->GetMessageQueue()->AddMessage(
             new PassiveMessage(a, t, s, i6, i8, i9, i4, i7, c1, c2, c3, i14, b4)
         );
@@ -328,7 +325,8 @@ DataNode PassiveMessenger::OnMsg(const RemoteUserLeftMsg &msg) {
 void PassiveMessenger::TriggerRemoteUserLeftMsg(const char *cc) {
     static Symbol passive_message_remote_user_left("passive_message_remote_user_left");
     DataArrayPtr ptr(passive_message_remote_user_left, cc);
-    if (TheBandUI.GetOvershell()->InSong()) {
+    OvershellPanel *overshell = TheBandUI.GetOvershell();
+    if (overshell->InSong()) {
         TriggerMessage(ptr, (PassiveMessageType)0, nullptr, false, gNullStr);
     } else {
         LocalBandUser *host = TheSessionMgr->GetLocalHost();
@@ -342,6 +340,18 @@ void PassiveMessenger::TriggerRemoteUserLeftMsg(const char *cc) {
             TriggerMessage(ptr, (PassiveMessageType)0, host, false, gNullStr);
         }
     }
+}
+
+void PassiveMessenger::TriggerEarnedGamerpicMsg(LocalBandUser *u) {
+    static Symbol passive_message_earned_gamerpic("passive_message_earned_gamerpic");
+    DataArrayPtr ptr(passive_message_earned_gamerpic, u->UserName());
+    TriggerMessage(ptr, (PassiveMessageType)0, u, false, gNullStr);
+}
+
+void PassiveMessenger::TriggerEarnedAvatarAssetMsg(LocalBandUser *u) {
+    static Symbol passive_message_earned_avatarasset("passive_message_earned_avatarasset");
+    DataArrayPtr ptr(passive_message_earned_avatarasset, u->UserName());
+    TriggerMessage(ptr, (PassiveMessageType)0, u, false, gNullStr);
 }
 
 void PassiveMessenger::TriggerEarnedAccomplishmentMsg(

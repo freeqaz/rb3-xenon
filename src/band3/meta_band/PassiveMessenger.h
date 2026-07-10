@@ -72,6 +72,8 @@ public:
     void HandlePassiveMessage(PassiveMessage *);
     void MakeIntoCoalescedGoalMessage(PassiveMessage *, int);
     bool RemoveLowerPriorityMessage(PassiveMessage *);
+    bool IsEarnedAccomplishmentMessage(PassiveMessage *);
+    bool IsEarnedCampaignLevelMessage(PassiveMessage *);
 
     float mMessageDuration; // 0x4
     std::list<PassiveMessage *> mQueue; // 0x8
@@ -142,6 +144,8 @@ public:
         const char *,
         int
     );
+    void TriggerEarnedGamerpicMsg(LocalBandUser *);
+    void TriggerEarnedAvatarAssetMsg(LocalBandUser *);
     void TriggerEarnedCampaignLevelMsg(LocalBandUser *, Symbol);
     void TriggerCompletedAccomplishmentCategoryMsg(LocalBandUser *, Symbol);
     void TriggerCompletedAccomplishmentGroupMsg(LocalBandUser *, Symbol);

@@ -4116,6 +4116,7 @@ BandLabel.cpp:
 	.text       start:0x8232DD30 end:0x8232FAB0
 
 band3/meta_band/PassiveMessenger.cpp:
+	.pdata      start:0x8221BD40 end:0x8221BD48
 	.pdata      start:0x8221BD50 end:0x8221BD58
 	.pdata      start:0x8221BD78 end:0x8221BD80
 	.pdata      start:0x8221BD88 end:0x8221BD90
@@ -4126,6 +4127,8 @@ band3/meta_band/PassiveMessenger.cpp:
 	.pdata      start:0x8221BE50 end:0x8221BE58
 	.pdata      start:0x8221BE70 end:0x8221BE78
 	.pdata      start:0x8221BE90 end:0x8221BE98
+	.pdata      start:0x8221BEB8 end:0x8221BEC0
+	.pdata      start:0x8221BEE0 end:0x8221BEE8
 	.pdata      start:0x8221BF08 end:0x8221BF10
 	.pdata      start:0x8221BF30 end:0x8221BF38
 	.pdata      start:0x8221BF58 end:0x8221BF60
@@ -4139,6 +4142,7 @@ band3/meta_band/PassiveMessenger.cpp:
 	.pdata      start:0x8221C258 end:0x8221C260
 	.pdata      start:0x8221C260 end:0x8221C268
 	.pdata      start:0x8221C270 end:0x8221C278
+	.text       start:0x825B1DD0 end:0x825B1E28
 	.text       start:0x825B1E50 end:0x825B1EE8
 	.text       start:0x825B2010 end:0x825B2084
 	.text       start:0x825B20B0 end:0x825B2124
@@ -4149,6 +4153,8 @@ band3/meta_band/PassiveMessenger.cpp:
 	.text       start:0x825B2BF0 end:0x825B2CE4
 	.text       start:0x825B2D60 end:0x825B2E40
 	.text       start:0x825B2EB8 end:0x825B30AC
+	.text       start:0x825B3150 end:0x825B3274
+	.text       start:0x825B3318 end:0x825B343C
 	.text       start:0x825B34E0 end:0x825B3608
 	.text       start:0x825B36A8 end:0x825B37BC
 	.text       start:0x825B3860 end:0x825B3974
@@ -4156,6 +4162,7 @@ band3/meta_band/PassiveMessenger.cpp:
 	.text       start:0x825B3BD0 end:0x825B3CAC
 	.text       start:0x825B3D28 end:0x825B3EF4
 	.text       start:0x825B4000 end:0x825B405C
+	.text       start:0x825B4060 end:0x825B4074
 	.text       start:0x825B4080 end:0x825B424C
 	.text       start:0x825B4338 end:0x825B4EC0
 	.text       start:0x825B5780 end:0x825B5D1C
