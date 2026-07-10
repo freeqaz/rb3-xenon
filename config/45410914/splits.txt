@@ -56,7 +56,6 @@ RockCentral.cpp:
 	.pdata      start:0x8220E3D0 end:0x8220E3D8
 	.pdata      start:0x8220E498 end:0x8220E4A0
 	.pdata      start:0x8220E6E8 end:0x8220E978
-	.pdata      start:0x82215228 end:0x82215230
 	.pdata      start:0x82217BB0 end:0x82217BB8
 	.pdata      start:0x82218150 end:0x82218160
 	.pdata      start:0x82218168 end:0x82218170
@@ -136,7 +135,6 @@ RockCentral.cpp:
 	.text       start:0x824E57A0 end:0x824E596C
 	.text       start:0x824E62C8 end:0x824E6318
 	.text       start:0x824E8468 end:0x824EA844
-	.text       start:0x8254FFF8 end:0x82550078
 	.text       start:0x825766E0 end:0x82576700
 	.text       start:0x8257C30C end:0x8257C34C
 	.text       start:0x8257C36C end:0x8257C38C
@@ -3218,12 +3216,36 @@ GameMicManager.cpp:
 	.text       start:0x82663A1C end:0x82664890
 
 band3/meta_band/ClosetMgr.cpp:
+	.pdata      start:0x82215120 end:0x82215128
 	.pdata      start:0x82215140 end:0x82215148
 	.pdata      start:0x82215148 end:0x82215150
+	.pdata      start:0x822151B0 end:0x822151B8
+	.pdata      start:0x82215220 end:0x82215228
+	.pdata      start:0x82215228 end:0x82215230
+	.pdata      start:0x82215238 end:0x82215240
+	.pdata      start:0x82215240 end:0x82215248
+	.pdata      start:0x82215258 end:0x82215260
+	.pdata      start:0x82215298 end:0x822152A0
+	.pdata      start:0x822152E8 end:0x822152F0
+	.pdata      start:0x822152F8 end:0x82215300
+	.pdata      start:0x82215308 end:0x82215310
+	.pdata      start:0x82215328 end:0x82215330
 	.pdata      start:0x82215330 end:0x82215338
+	.text       start:0x8254EF20 end:0x8254EFAC
 	.text       start:0x8254F240 end:0x8254F298
 	.text       start:0x8254F298 end:0x8254F2F8
+	.text       start:0x8254F790 end:0x8254F820
+	.text       start:0x8254FF38 end:0x8254FFF8
+	.text       start:0x8254FFF8 end:0x82550074
+	.text       start:0x825500B8 end:0x82550118
+	.text       start:0x82550118 end:0x8255019C
+	.text       start:0x82550270 end:0x825502E4
+	.text       start:0x82550568 end:0x825507A8
 	.text       start:0x825508C8 end:0x8255090C
+	.text       start:0x82550918 end:0x82550994
+	.text       start:0x825509C0 end:0x82550A3C
+	.text       start:0x82550A68 end:0x82550B18
+	.text       start:0x82550D08 end:0x82550D58
 	.text       start:0x82550D58 end:0x82550D6C
 	.text       start:0x82550D78 end:0x8255187C
 
@@ -3246,14 +3268,24 @@ band3/meta_band/SongRecord.cpp:
 	.pdata      start:0x8221AB00 end:0x8221AB08
 	.pdata      start:0x8221AB08 end:0x8221AB10
 	.pdata      start:0x8221AB30 end:0x8221AB38
+	.pdata      start:0x8221AB38 end:0x8221AB40
 	.pdata      start:0x8221AB40 end:0x8221AB48
+	.pdata      start:0x8221AB48 end:0x8221AB50
+	.pdata      start:0x8221AB58 end:0x8221AB60
+	.pdata      start:0x8221AB60 end:0x8221AB68
+	.pdata      start:0x8221AB68 end:0x8221AB70
 	.pdata      start:0x8221AB78 end:0x8221AB80
 	.pdata      start:0x8221ABD0 end:0x8221ABD8
 	.text       start:0x825A1BA8 end:0x825A1D90
 	.text       start:0x825A1D90 end:0x825A1DFC
 	.text       start:0x825A1E00 end:0x825A1E50
 	.text       start:0x825A2038 end:0x825A2070
+	.text       start:0x825A2070 end:0x825A20DC
 	.text       start:0x825A20E0 end:0x825A2150
+	.text       start:0x825A2158 end:0x825A21CC
+	.text       start:0x825A21F0 end:0x825A223C
+	.text       start:0x825A2240 end:0x825A22A0
+	.text       start:0x825A22A0 end:0x825A231C
 	.text       start:0x825A23A0 end:0x825A2774
 	.text       start:0x825A28D0 end:0x825A2F3C
 

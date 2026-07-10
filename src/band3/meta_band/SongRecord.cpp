@@ -1,7 +1,9 @@
 #include "meta_band/SongRecord.h"
 #include "SavedSetlist.h"
 #include "decomp.h"
+#include "game/BandUser.h"
 #include "game/Defines.h"
+#include "os/PlatformMgr.h"
 #include "meta_band/BandProfile.h"
 #include "meta_band/BandSongMetadata.h"
 #include "meta_band/BandSongMgr.h"
@@ -203,18 +205,34 @@ bool SetlistRecord::IsProfileOwner(const BandProfile *p) const {
 }
 
 const char *SetlistRecord::GetOwner() const {
+    static Symbol harmonix("harmonix");
     const char *owner = mSetlist->GetOwner();
     if (owner)
         return owner;
     else
-        Localize(harmonix, nullptr);
+        return Localize(harmonix, nullptr);
+}
+
+Symbol SetlistRecord::GetSetlistTypeSym() const {
+    return SavedSetlist::SetlistTypeToSym(mSetlist->GetType());
+}
+
+bool SetlistRecord::HasViewableGamercard() const {
+    NetSavedSetlist *setlist = dynamic_cast<NetSavedSetlist *>(mSetlist);
+    return setlist && !setlist->GetOwnerOnlineID()->IsInvalid();
+}
+
+void SetlistRecord::ViewGamercard(LocalBandUser *user) {
+    NetSavedSetlist *setlist = dynamic_cast<NetSavedSetlist *>(mSetlist);
+    const OnlineID *oid = setlist->GetOwnerOnlineID();
+    ThePlatformMgr.ShowGamercard(user, oid);
 }
 
 BEGIN_HANDLERS(SetlistRecord)
     HANDLE_EXPR(id, mID)
     HANDLE_EXPR(get_owner, GetOwner())
     HANDLE_EXPR(get_art_tex, mSetlist->GetArtTex())
-    HANDLE_EXPR(get_setlist_type_sym, SavedSetlist::SetlistTypeToSym(mSetlist->GetType()))
+    HANDLE_EXPR(get_setlist_type_sym, GetSetlistTypeSym())
     HANDLE_EXPR(is_local_setlist, mSetlist->GetType() == SavedSetlist::kSetlistLocal)
     HANDLE_EXPR(is_net_setlist, IsNetSetlist())
     HANDLE_EXPR(is_battle, mSetlist->IsBattle())
@@ -225,6 +243,8 @@ BEGIN_HANDLERS(SetlistRecord)
     HANDLE_EXPR(get_title, mSetlist->GetTitle())
     HANDLE_EXPR(get_description, mSetlist->GetDescription())
     HANDLE_EXPR(get_battle_time_left, mBattleTimeLeft)
+    HANDLE_EXPR(has_viewable_gamercard, HasViewableGamercard())
+    HANDLE_ACTION(view_gamercard, ViewGamercard(_msg->Obj<LocalBandUser>(2)))
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x17E)
 END_HANDLERS

@@ -222,6 +222,7 @@ void ClosetMgr::SetCurrentClosetPanel(ClosetPanel *pClosetPanel) {
 void ClosetMgr::ClearCurrentClosetPanel() { mCurrentClosetPanel = 0; }
 
 void ClosetMgr::ResetCharacterPreview() {
+    static Symbol none("none");
     unk44 = none;
     mCurrentOutfitPiece = 0;
     mCurrentOutfitConfig = 0;
@@ -235,6 +236,7 @@ void ClosetMgr::ResetNewCharacterPreview(Symbol s) {
     MILO_ASSERT(pAssetMgr, 0x154);
     Symbol assetSym = GetSymbolFromAssetType(pAssetMgr->GetTypeFromName(s));
     if (!IsInstrumentAssetType(assetSym) || assetSym != unk44) {
+        static Symbol none("none");
         mBandCharacter->SetInstrumentType(none);
     }
     PreviewCharacter(true, false);
@@ -267,12 +269,7 @@ void ClosetMgr::FinalizeCharCreatorChanges() {
 void ClosetMgr::FinalizeChanges(bool b1, bool b2) {
     mBandCharDesc->CopyCharDesc(unk3c);
     MakeProfileDirty();
-    bool bbb = false;
-    if (b1) {
-        if (!IsInstrumentAssetType(unk44))
-            bbb = true;
-    }
-    if (bbb)
+    if (b1 && !IsInstrumentAssetType(unk44))
         TakePortrait();
     PlayFinalizedSound(b2);
 }
@@ -297,8 +294,9 @@ void ClosetMgr::PlayFinalizedSound(bool b) {
 DECOMP_FORCEACTIVE(ClosetMgr, "pProfile")
 
 void ClosetMgr::MakeProfileDirty() {
-    if (unk28)
-        unk28->MakeDirty();
+    BandProfile *pProfile = unk28;
+    MILO_ASSERT(pProfile, 0x142);
+    pProfile->MakeDirty();
 }
 
 void ClosetMgr::CharacterFinishedLoading() {
@@ -398,15 +396,24 @@ void ClosetMgr::UpdateCurrentOutfitConfig() {
 }
 
 void ClosetMgr::HideClothes() {
+    static Symbol male("male");
     BandCharDesc *desc = unk3c;
     desc->mOutfit.mGlasses.mName = gNullStr;
     desc->mOutfit.mWrist.mName = gNullStr;
     if (mGender == male) {
+        static Symbol male_torso_naked("male_torso_naked");
+        static Symbol male_hands_naked("male_hands_naked");
+        static Symbol undies_dirty("undies_dirty");
+        static Symbol male_feet_naked("male_feet_naked");
         desc->mOutfit.mTorso.mName = male_torso_naked;
         desc->mOutfit.mHands.mName = male_hands_naked;
         desc->mOutfit.mLegs.mName = undies_dirty;
         desc->mOutfit.mFeet.mName = male_feet_naked;
     } else {
+        static Symbol femalebra_cotton("femalebra_cotton");
+        static Symbol female_hands_naked("female_hands_naked");
+        static Symbol femaleundies_cotton("femaleundies_cotton");
+        static Symbol female_feet_naked("female_feet_naked");
         desc->mOutfit.mTorso.mName = femalebra_cotton;
         desc->mOutfit.mHands.mName = female_hands_naked;
         desc->mOutfit.mLegs.mName = femaleundies_cotton;
@@ -462,6 +469,7 @@ void ClosetMgr::SetInstrumentType(Symbol type) {
 }
 
 void ClosetMgr::ClearInstrument() {
+    static Symbol none("none");
     mBandCharacter->SetInstrumentType(none);
     unk44 = none;
     mCurrentOutfitPiece = 0;
@@ -502,6 +510,10 @@ void ClosetMgr::UpdatePreviousCharacter() {
 
 #pragma push
 #pragma dont_inline on
+bool ClosetMgr::HasAssetOffer(Symbol s) { return mAssetStore.HasAssetOffer(s); }
+
+void ClosetMgr::ShowPurchaseUI(Symbol s) { mAssetStore.ShowPurchaseUI(s); }
+
 BEGIN_HANDLERS(ClosetMgr)
     HANDLE_ACTION(set_user, SetUser(_msg->Obj<LocalBandUser>(2)))
     HANDLE_EXPR(get_user, GetUser())
@@ -529,9 +541,10 @@ BEGIN_HANDLERS(ClosetMgr)
     HANDLE_ACTION(clear_instrument, ClearInstrument())
     HANDLE_ACTION(set_return_screen, SetReturnScreen(_msg->Sym(2)))
     HANDLE_EXPR(get_return_screen, GetReturnScreen())
-    HANDLE_ACTION(has_asset_offer, nullptr)
-    HANDLE_ACTION(show_purchase_ui, nullptr)
-    HANDLE_ACTION(is_downloading, nullptr)
+    HANDLE_EXPR(has_asset_offer, HasAssetOffer(_msg->Sym(2)))
+    HANDLE_EXPR(has_any_asset_offers, mAssetStore.HasAnyAssetOffers())
+    HANDLE_ACTION(show_purchase_ui, ShowPurchaseUI(_msg->Sym(2)))
+    HANDLE_EXPR(is_downloading, mAssetStore.IsDownloading())
     HANDLE_MESSAGE(ProfileSwappedMsg)
     HANDLE_SUPERCLASS(MsgSource)
     HANDLE_CHECK(0x3A7)

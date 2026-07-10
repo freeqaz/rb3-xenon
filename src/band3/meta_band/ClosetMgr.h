@@ -12,6 +12,29 @@
 
 class ClosetPanel;
 
+// Xbox-360-only DLC asset-offer store embedded in ClosetMgr (retail RTTI
+// ".?AVAssetStore@@", sizeof 0x4c, ctor @0x825D1A38, methods @0x825D15A8/
+// 0x825D1718/0x825D1748 in an unpinned TU). Declaration-only: absent from the
+// rb3-Wii oracle; only ClosetMgr::Handle's call sites are matched here.
+class AssetStore : public Hmx::Object {
+public:
+    AssetStore();
+    bool HasAssetOffer(Symbol);
+    bool HasAnyAssetOffers() const;
+    void ShowPurchaseUI(Symbol);
+    bool IsDownloading() const { return unk3c != 0; }
+
+    int unk28; // 0x28 - retail ctor inits to 4
+    int unk2c; // 0x2c
+    int unk30; // 0x30
+    void *unk34; // 0x34 - set by ShowPurchaseUI (download object)
+    void *unk38; // 0x38 - current offer
+    void *unk3c; // 0x3c - checked by is_downloading handler
+    int unk40; // 0x40 - offers begin (HasAnyAssetOffers compares 0x40 vs 0x44)
+    int unk44; // 0x44 - offers end
+    int unk48; // 0x48
+};
+
 class ClosetMgr : public MsgSource {
 public:
     ClosetMgr();
@@ -61,6 +84,8 @@ public:
     void SetInstrumentType(Symbol);
     void ClearInstrument();
     void SetReturnScreen(Symbol);
+    bool HasAssetOffer(Symbol);
+    void ShowPurchaseUI(Symbol);
     bool IsCharacterLoading() { return mCharacterLoading; }
     Symbol GetReturnScreen() const { return mReturnScreen; }
     LocalBandUser *GetUser() const { return mUser; }
@@ -91,7 +116,7 @@ public:
     Symbol unk44;
     BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x48
     OutfitConfig *mCurrentOutfitConfig; // 0x4c
-    char mAssetStore[0x4c]; // 0x50 - AssetStore (RTTI ".?AVAssetStore@@"), sizeof==0x4c; retail ctor @0x825D1A38
+    AssetStore mAssetStore; // 0x50 (360: base+0x4c) - sizeof 0x4c
     PatchDescriptor unk50;
     Symbol mReturnScreen; // 0x58
     Symbol mGender; // 0x5c

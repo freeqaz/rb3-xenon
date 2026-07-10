@@ -174,6 +174,7 @@ public:
     bool GetServiceID(const String &, unsigned int &);
     void SignInUsers(int, unsigned long);
     ShowGamercardResult ShowGamercardForPadNum(int, const OnlineID *);
+    ShowGamercardResult ShowGamercard(class LocalUser *, const OnlineID *);
     bool CanSeeUserCreatedContent(const OnlineID *) const;
     // Wii-origin entry points referenced by ported meta_band/OvershellPanel code.
     // Declaration-only; append-only — does not alter existing PlatformMgr layout.

@@ -61,6 +61,9 @@ public:
     bool IsNetSetlist() const;
     bool IsProfileOwner(const BandProfile *) const;
     const char *GetOwner() const;
+    Symbol GetSetlistTypeSym() const;
+    bool HasViewableGamercard() const;
+    void ViewGamercard(class LocalBandUser *);
     Symbol GetToken() const { return mToken; }
     SavedSetlist *GetSetlist() const { return mSetlist; }
 
