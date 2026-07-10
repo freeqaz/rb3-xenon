@@ -1058,6 +1058,10 @@ HeadsetXferEffect.cpp:
 	.pdata      start:0x822527B8 end:0x822527E0
 	.text       start:0x82B3CB80 end:0x82B3CD98
 
+StreamReceiver360.cpp:
+	.pdata      start:0x822527E8 end:0x82252890
+	.text       start:0x82B3CDC0 end:0x82B3DA40
+
 FIFOSampleBuffer.cpp:
 	.pdata      start:0x82252FA0 end:0x82252FD8
 	.text       start:0x82B46670 end:0x82B469E0
