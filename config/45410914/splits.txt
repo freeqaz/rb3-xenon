@@ -3277,6 +3277,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x82227660 end:0x82227668
 	.pdata      start:0x82227668 end:0x82227670
 	.pdata      start:0x82227850 end:0x82227858
+	.pdata      start:0x822278B0 end:0x822278B8
 	.text       start:0x82659E60 end:0x82659EC0
 	.text       start:0x8265A168 end:0x8265A1F8
 	.text       start:0x8265A278 end:0x8265A34C
@@ -3284,6 +3285,7 @@ band3/game/Game.cpp:
 	.text       start:0x8265C250 end:0x8265C3B0
 	.text       start:0x8265C3B0 end:0x8265C518
 	.text       start:0x8265EA78 end:0x8265EBE8
+	.text       start:0x8265F7A8 end:0x82660BE0
 
 GemSmasher.cpp:
 	.pdata      start:0x822555C8 end:0x822555D0
@@ -3343,6 +3345,7 @@ GemPlayer.cpp:
 	.pdata      start:0x8222B668 end:0x8222B670
 	.pdata      start:0x8222B9B8 end:0x8222B9C0
 	.pdata      start:0x8222BA98 end:0x8222BAA0
+	.pdata      start:0x8222BAC8 end:0x8222BAD0
 	.text       start:0x8269D670 end:0x8269D724
 	.text       start:0x8269D780 end:0x8269D858
 	.text       start:0x8269DB38 end:0x8269DB94
@@ -3364,6 +3367,7 @@ GemPlayer.cpp:
 	.text       start:0x826A1988 end:0x826A19EC
 	.text       start:0x826A3D80 end:0x826A3E50
 	.text       start:0x826A51C0 end:0x826A523C
+	.text       start:0x826A59A8 end:0x826A6F94
 
 TrackerManager.cpp:
 	.pdata      start:0x82228F08 end:0x82228F10
@@ -3387,20 +3391,24 @@ MetaPerformer.cpp:
 	.pdata      start:0x82216A58 end:0x82216A60
 	.pdata      start:0x82216C68 end:0x82216C70
 	.pdata      start:0x82216EF0 end:0x82216EF8
+	.pdata      start:0x822170F8 end:0x82217100
 	.text       start:0x824533E8 end:0x82453424
 	.text       start:0x82564468 end:0x82564498
 	.text       start:0x82564498 end:0x825644C8
 	.text       start:0x82566A78 end:0x82566ACC
 	.text       start:0x825691D0 end:0x82569238
+	.text       start:0x8256B758 end:0x8256D4A8
 
 Performer.cpp:
 	.pdata      start:0x822297D8 end:0x822297E0
 	.pdata      start:0x82229810 end:0x82229818
 	.pdata      start:0x82229848 end:0x82229850
+	.pdata      start:0x822298D8 end:0x822298E0
 	.text       start:0x82353B40 end:0x82353B50
 	.text       start:0x8267E578 end:0x8267E5D0
 	.text       start:0x8267E860 end:0x8267E8C0
 	.text       start:0x8267EC30 end:0x8267ECC4
+	.text       start:0x8267F4C0 end:0x8268059C
 
 TrackerUtils.cpp:
 	.pdata      start:0x8222E4D0 end:0x8222E4D8
@@ -3425,9 +3433,11 @@ BandUser.cpp:
 	.pdata      start:0x82228678 end:0x82228680
 	.pdata      start:0x82228698 end:0x822286A0
 	.pdata      start:0x82228800 end:0x82228808
+	.pdata      start:0x82228820 end:0x82228828
 	.text       start:0x8266CF60 end:0x8266D070
 	.text       start:0x8266D1E0 end:0x8266D288
 	.text       start:0x8266ECB0 end:0x8266ECFC
+	.text       start:0x8266EEB0 end:0x8266F990
 
 Leaderboard.cpp:
 	.pdata      start:0x822266A0 end:0x822266A8
@@ -3474,9 +3484,11 @@ CustomizePanel.cpp:
 	.pdata      start:0x82220A00 end:0x82220A08
 	.pdata      start:0x82220B78 end:0x82220B80
 	.pdata      start:0x82220B80 end:0x82220B88
+	.pdata      start:0x82220CC0 end:0x82220CC8
 	.text       start:0x825F9F48 end:0x825F9FB4
 	.text       start:0x825FB3D0 end:0x825FB52C
 	.text       start:0x825FB548 end:0x825FB590
+	.text       start:0x825FC6E0 end:0x825FDA74
 
 TrackWatcherImpl.cpp:
 	.pdata      start:0x82236C58 end:0x82236C60
@@ -3711,8 +3723,10 @@ StatCollector.cpp:
 Tour.cpp:
 	.pdata      start:0x821F81B0 end:0x821F81B8
 	.pdata      start:0x821F8218 end:0x821F8220
+	.pdata      start:0x821F8400 end:0x821F8408
 	.text       start:0x82348D08 end:0x82348DB0
 	.text       start:0x823491D0 end:0x8234922C
+	.text       start:0x8234AF60 end:0x8234BD04
 
 TourBand.cpp:
 	.text       start:0x82B4A6A0 end:0x82B4A6F0
