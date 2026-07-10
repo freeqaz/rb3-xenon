@@ -970,7 +970,9 @@ void GemPlayer::FillReset() {
 void GemPlayer::FillComplete(int i1, int i2) {
     if (mBehavior->GetFillsDeployBandEnergy() && TheGame->mProperties.mEnableOverdrive) {
         FillLogic logic = TheGame->GetFillLogic();
-        if (i1 - 1 >= mNumCrashFillReadyHits || (logic - 1U <= 1)) {
+        if (i1 - 1 >= mNumCrashFillReadyHits
+            || logic == kFillsDeployGemAndDim
+            || logic == kFillsDeployGemAndInvisible) {
             mTrack->GetTrackDir()->CrashFill();
             DeployBandEnergyIfPossible(true);
             mStats.AddFillHit();
