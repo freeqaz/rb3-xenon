@@ -48,8 +48,9 @@ public:
     Vector3 *mFacingPos; // 0x94
     bool mMoveSelf; // 0x98
     bool mDeltaChanged; // 0x99
-    Symbol mClipType; // 0x9c
-    ObjPtr<Waypoint> mRegulate; // 0xa0
+    Character *mMe; // 0x9c
+    Symbol mClipType; // 0xa0
+    ObjPtr<Waypoint> mRegulate; // 0xa4
 
 protected:
     // CharBonesMeshes
