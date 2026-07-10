@@ -991,10 +991,10 @@ void Rnd::CreateDefaults() {
     RELEASE(mOverdrawMat);
     auto _tmp0 = ObjectDir::Main()->New<RndCam>("[world cam copy]");
     mWorldCamCopy = _tmp0;
-    auto _tmp1 = ObjectDir::Main()->New<RndCam>("[default cam]");
-        mDefaultEnv = ObjectDir::Main()->New<RndEnviron>("[default env]");
+    mDefaultCam = ObjectDir::Main()->New<RndCam>("[default cam]");
+    mDefaultEnv = ObjectDir::Main()->New<RndEnviron>("[default env]");
     mDefaultLit = ObjectDir::Main()->New<RndLight>("[default lit]");
-    mDefaultLit->SetTransParent(mDefaultCam = _tmp1, false);
+    mDefaultLit->SetTransParent(mDefaultCam, false);
     mDefaultLit->SetLightType(RndLight::kDirectional);
     mDefaultEnv->AddLight(mDefaultLit);
     mDefaultEnv->SetUseApproxes(true);
@@ -1002,19 +1002,16 @@ void Rnd::CreateDefaults() {
     mDefaultMat = Hmx::Object::New<RndMat>();
     mDefaultMat->SetUseEnv(false);
     mDefaultMat->SetPreLit(true);
-    CreateAndSetMetaMat(mDefaultMat);
     mOverlayMat = Hmx::Object::New<RndMat>();
     mOverlayMat->SetUseEnv(false);
     mOverlayMat->SetPreLit(true);
     mOverlayMat->SetBlend(RndMat::kBlendSrcAlpha);
     mOverlayMat->SetZMode(kZModeForce);
-    CreateAndSetMetaMat(mOverlayMat);
     mOverdrawMat = Hmx::Object::New<RndMat>();
     mOverdrawMat->SetUseEnv(false);
     mOverdrawMat->SetBlend(RndMat::kBlendSrcAlpha);
     mOverdrawMat->SetColor(1, 0, 0);
     mOverdrawMat->SetAlpha(0.2);
-    CreateAndSetMetaMat(mOverdrawMat);
     for (unsigned int i = 0; i < kDefaultTex_Max; i++) {
         RELEASE(mDefaultTex[i]);
         mDefaultTex[i] = CreateDefaultTexture((DefaultTextureType)i);

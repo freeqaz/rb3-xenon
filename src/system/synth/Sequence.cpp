@@ -625,17 +625,16 @@ void GroupSeqInst::SetTranspose(float f) {
 
 RandomGroupSeqInst::RandomGroupSeqInst(RandomGroupSeq *seq)
     : GroupSeqInst(seq, false), mIt(mSeqs.end()) {
+    ObjPtrList<Sequence> &children = seq->Children();
     mNumSeqs = seq->GetNumSimul();
-    int childrenSize = seq->Children().size();
-    if (childrenSize < mNumSeqs)
-        mNumSeqs = childrenSize;
-    if (mNumSeqs == 1) {
+    int childrenSize = children.size();
+    int numSeqs = childrenSize < mNumSeqs ? childrenSize : mNumSeqs;
+    if (numSeqs == 1) {
         int next = seq->NextIndex();
         int target = next % childrenSize;
         seq->PickNextIndex();
         int n = 0;
-        for (ObjPtrList<Sequence>::iterator it = seq->Children().begin();
-             it != seq->Children().end();
+        for (ObjPtrList<Sequence>::iterator it = children.begin(); it != children.end();
              ++it) {
             if (n == target) {
                 SeqInst *si = (*it)->MakeInst();
@@ -649,24 +648,21 @@ RandomGroupSeqInst::RandomGroupSeqInst(RandomGroupSeq *seq)
         }
         mIt = mSeqs.begin();
     } else {
-        int seqsLeft = mNumSeqs;
         int childrenLeft = childrenSize;
-        ObjPtrList<Sequence>::iterator it = seq->Children().begin();
-        while (it != seq->Children().end()) {
-            if (seqsLeft == childrenLeft || RandomFloat() <= (float)seqsLeft / (float)childrenLeft) {
-                SeqInst *si = (*it)->MakeInst();
-                if (si) {
-                    mSeqs.push_back();
-                    mSeqs.back() = si;
+        ObjPtrList<Sequence>::iterator it;
+        do {
+            for (it = children.begin(); it != children.end(); ++it) {
+                if (numSeqs == childrenLeft || RandomFloat() <= (float)numSeqs / (float)childrenLeft) {
+                    SeqInst *si = (*it)->MakeInst();
+                    if (si) {
+                        mSeqs.push_back();
+                        mSeqs.back() = si;
+                    }
+                    numSeqs--;
                 }
-                seqsLeft--;
+                childrenLeft--;
             }
-            ++it;
-            childrenLeft--;
-            if (seqsLeft != 0)
-                continue;
-            break;
-        }
+        } while (numSeqs != 0);
         mIt = mSeqs.begin();
     }
 }

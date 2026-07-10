@@ -403,20 +403,21 @@ void Synth360::SetupHeadsetSubmixes() {
     HRESULT hr = ((HRESULT(*)(
         int *, IXAudio2SourceVoice **, WAVEFORMATEX *, int, float, int, XAUDIO2_VOICE_SENDS *, int
     ))(*(int *)(*(int *)pEngine + 0x20)))(
-        pEngine, &headsetVoice, &format, 0, 2.0f, 0, &voiceSends, 0
+        pEngine, &headsetVoice, &format, 2, 2.0f, 0, &voiceSends, 0
     );
     MILO_ASSERT(SUCCEEDED(hr), 0x30a);
 
     XAUDIO2_BUFFER buffer;
+    buffer.Flags = 0;
     memset(&buffer.AudioBytes, 0, sizeof(buffer) - 4);
+    buffer.LoopBegin = 0;
+    buffer.LoopLength = 0;
     buffer.AudioBytes = 0x100;
     buffer.pAudioData = (const BYTE *)sHeadsetSilence;
+    buffer.LoopCount = 0xff;
     buffer.PlayBegin = 0;
     buffer.PlayLength = 0;
-    buffer.LoopCount = 0xff;
-    buffer.LoopLength = 0;
     buffer.pContext = 0;
-    buffer.Flags = 0;
     int *pSourceVoice = (int *)unkc0;
     hr = ((HRESULT(*)(int *, XAUDIO2_BUFFER *, int))(*(int *)(*(int *)pSourceVoice + 0x54)))(
         pSourceVoice, &buffer, 0

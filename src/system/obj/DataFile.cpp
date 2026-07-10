@@ -26,17 +26,17 @@
 // retail/dc3 emit gArray+gNode through ONE base register with gArray@+0 / gNode@+4.
 // Two separate file-statics let MSVC reorder them in BSS (it puts gNode first);
 // a single struct pins the member order so the compiler shares one base.
+DataType gDataLine;
+static bool gReadingFile;
+static bool gCachingFile;
+static int gOpenArray;
+static BinStream *gBinStream;
 static struct DataParseState {
     DataArray *array;
     int node;
 } gParse;
 #define gArray gParse.array
 #define gNode gParse.node
-static BinStream *gBinStream;
-static int gOpenArray;
-static bool gCachingFile;
-static bool gReadingFile;
-DataType gDataLine;
 CriticalSection gDataReadCrit;
 Symbol gFile;
 std::list<bool> gConditional;
@@ -294,7 +294,8 @@ bool ParseNode() {
 
         if (gCachingFile) {
             PushBack(DataNode(kDataDefine, macro.Str()));
-            PushBack(DataNode(array, kDataArray));
+            DataNode n(array, kDataArray);
+            PushBack(n);
         } else {
             DataSetMacro(macro, array);
         }
@@ -373,7 +374,9 @@ bool ParseNode() {
 
         Symbol sym(text);
         DataArray *macro = DataGetMacro(sym);
-        bool b = macro && !gCachingFile;
+        bool b = false;
+        if (macro && !gCachingFile)
+            b = true;
         if (b) {
             for (int i = 0; i < macro->Size(); i++) {
                 PushBack(macro->Node(i));
@@ -395,9 +398,6 @@ bool ParseNode() {
                     escaped = true;
                 } else if (c[1] == 'q') {
                     *c = '\"';
-                    escaped = true;
-                } else if (c[1] == 't') {
-                    *c = '\t';
                     escaped = true;
                 }
             } else if (*c == '\n') {

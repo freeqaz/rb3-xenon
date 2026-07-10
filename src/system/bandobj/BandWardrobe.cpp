@@ -981,22 +981,18 @@ DataNode BandWardrobe::OnEnableDebugInterests(DataArray *da) {
 DataNode BandWardrobe::OnEnterCloset(DataArray *da) {
     ObjectDir *dir = da->Obj<ObjectDir>(2);
     MILO_ASSERT(dir, 0x795);
-    if (dir) {
-        int i3 = da->Int(3);
-        if (i3 != -1) {
-            mCurNames = &mClosetNames;
-            SetContexts("closet");
-            CharDriver *driver = mTargets[i3]->Driver();
-            if (driver) {
-                driver->SetClips(dir->Find<ObjectDir>("clips", false));
-                for (int i = 0; i < 4; i++) {
-                    mClosetNames.names[i] = i == i3 ? "closet_character" : "";
-                }
-                SetDir(dir);
-                for (int i = 0; i < 4; i++) {
-                    mTargets[i]->SetShowing(i == i3);
-                }
-            }
+    int i3 = da->Int(3);
+    mCurNames = &mClosetNames;
+    SetContexts("closet");
+    CharDriver *driver = mTargets[i3]->Driver();
+    if (driver) {
+        driver->SetClips(dir->Find<ObjectDir>("clips", false));
+        for (int i = 0; i < 4; i++) {
+            mClosetNames.names[i] = i == i3 ? "closet_character" : "";
+        }
+        SetDir(dir);
+        for (int i = 0; i < 4; i++) {
+            mTargets[i]->SetShowing(i == i3);
         }
     }
     return DataNode(0);
