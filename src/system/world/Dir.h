@@ -86,12 +86,18 @@ public:
     CameraManager *GetCameraManager() const {
         return const_cast<CameraManager *>(&mCameraManager);
     }
+#ifdef WORLDDIR_DC3_TAIL
     PhysicsManager *GetPhysicsManager() const { return mPhysicsMgr; }
+#endif
     LightPresetManager &GetLightPresetMgr() { return mLightPresetMgr; }
     RndDir *GetHUD() const { return mHUD; }
     void SetHUD(RndDir *hud) { mHUD = hud; }
+    // Retail Game::EnableWorldPolling pokes this bool (WorldDir+0x381).
+    void SetPollCamera(bool b) { mPollCamera = b; }
 
+#ifdef WORLDDIR_DC3_TAIL
     DataNode OnGetPhysicsManager(const DataArray *);
+#endif
 
 private:
     void SyncHUD();
@@ -103,44 +109,53 @@ private:
     void AccumulateDeltas(float *const);
     void RestoreDeltas(float *const);
 
-    static RndMat *sGlowMat;
-
 protected:
-    ObjList<PresetOverride> mPresetOverrides; // 0x268
-    ObjList<BitmapOverride> mBitmapOverrides; // 0x274
-    ObjList<MatOverride> mMatOverrides; // 0x280
+    // Retail tail layout Ghidra-verified against the retail WorldDir ctor
+    // (0x824BC930; factory 0x824BD600 allocates 0x3d8). Matches the rb3-Wii
+    // member order exactly: NO ThreeDSoundManager / PhysicsManager (DC3-only),
+    // instance mGlowMat (not static), mCrowds directly after the PS3 lists,
+    // mPollCamera after mFirstPoll (retail inits it true; ctor byte +0x381=1),
+    // no mExplicitPostProc (retail vtordisp sits at +0x3a0).
+    ObjList<PresetOverride> mPresetOverrides; // 0x238
+    ObjList<BitmapOverride> mBitmapOverrides; // 0x244
+    ObjList<MatOverride> mMatOverrides; // 0x250
     /** "Subdir objects to hide" */
-    ObjPtrList<RndDrawable> mHideOverrides; // 0x28c
+    ObjPtrList<RndDrawable> mHideOverrides; // 0x25c
     /** "Subdir camshots to inhibit" */
-    ObjPtrList<CamShot> mCamShotOverrides; // 0x2a0
+    ObjPtrList<CamShot> mCamShotOverrides; // 0x270
     /** "Things to show when ps3_per_pixel on CamShot" */
-    ObjPtrList<RndDrawable> mPS3PerPixelShows; // 0x2b4
+    ObjPtrList<RndDrawable> mPS3PerPixelShows; // 0x284
     /** "Things to hide when ps3_per_pixel on CamShot" */
-    ObjPtrList<RndDrawable> mPS3PerPixelHides; // 0x2c8
+    ObjPtrList<RndDrawable> mPS3PerPixelHides; // 0x298
+    ObjPtrList<WorldCrowd> mCrowds; // 0x2ac
+    RndMat *mGlowMat; // 0x2c0 (instance, created in ctor — retail 0x824BC930)
     /** "HUD Preview Dir" */
-    FilePath mHUDFilename; // 0x2dc
-    RndDir *mHUDDir; // 0x2e4
+    FilePath mHUDFilename; // 0x2c4
+    RndDir *mHUDDir; // 0x2d0
     /** "Whether to draw the HUD preview" */
-    bool mShowHUD; // 0x2e8
+    bool mShowHUD; // 0x2d4
     /** "hud to be drawn last" */
-    ObjPtr<RndDir> mHUD; // 0x2ec
-    CameraManager mCameraManager; // by-value (retail): standalone, sizeof 0x34
-    ObjPtrList<WorldCrowd> mCrowds;
-    ThreeDSoundManager m3DSoundMgr; // 0x318
-    LightPresetManager mLightPresetMgr; // 0x38c
-    PhysicsManager *mPhysicsMgr; // 0x3dc
-    bool mNeedPhysicsEnter;
-    bool mEchoMsgs; // 0x3e1
-    float mDeltaSincePoll[4]; // 0x3e4
-    bool mFirstPoll;
+    ObjPtr<RndDir> mHUD; // 0x2d8
+    CameraManager mCameraManager; // 0x2e4 (by value, sizeof 0x34)
+    LightPresetManager mLightPresetMgr; // 0x318 (sizeof 0x54)
+    bool mEchoMsgs; // 0x36c
+    float mDeltaSincePoll[4]; // 0x370
+    bool mFirstPoll; // 0x380
+    bool mPollCamera; // 0x381 (retail Game::EnableWorldPolling writes this)
     /** "The first light preset to start" */
-    ObjPtr<LightPreset> mTestLightPreset1; // 0x3f8
+    ObjPtr<LightPreset> mTestLightPreset1; // 0x384
     /** "The second light preset to start" */
-    ObjPtr<LightPreset> mTestLightPreset2; // 0x40c
+    ObjPtr<LightPreset> mTestLightPreset2; // 0x390
     /** "animation time in beats" */
-    float mTestAnimTime; // 0x420
+    float mTestAnimTime; // 0x39c
+#ifdef WORLDDIR_DC3_TAIL
+    // DC3-only members, NOT present in retail RB3 (kept for reference).
+    ThreeDSoundManager m3DSoundMgr;
+    PhysicsManager *mPhysicsMgr;
+    bool mNeedPhysicsEnter;
     /** "TRUE if we explicitly do the postprocing" */
-    bool mExplicitPostProc; // 0x424
+    bool mExplicitPostProc;
+#endif
 };
 
 void SetTheWorld(WorldDir *);

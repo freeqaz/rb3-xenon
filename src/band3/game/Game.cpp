@@ -632,11 +632,8 @@ void Game::EnableWorldPolling(bool b1) {
     if (panel) {
         WorldDir *worldDir = dynamic_cast<WorldDir *>(panel->LoadedDir());
         if (worldDir) {
-            // Retail pokes a bool at WorldDir+0x381 (the Wii mPollCamera
-            // equivalent; sits inside the span our Dir.h currently annotates
-            // as m3DSoundMgr 0x318..0x38c -- WorldDir layout needs a revisit
-            // before this can become a named member).
-            *(bool *)((char *)worldDir + 0x381) = b1;
+            // Retail pokes WorldDir+0x381 = mPollCamera (layout now retail-exact).
+            worldDir->SetPollCamera(b1);
         }
     }
     MidiParserMgr *midiParserMgr = mMaster->GetMidiParserMgr();

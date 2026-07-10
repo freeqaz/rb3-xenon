@@ -25,8 +25,6 @@
 #include "world/CameraManager.h"
 #include "world/Spotlight.h"
 
-RndMat *WorldDir::sGlowMat = nullptr;
-
 WorldDir *TheWorld = nullptr;
 ObjectDir *gOldTexDir = nullptr;
 std::vector<FilePath> gOldChars;
@@ -40,10 +38,16 @@ void SetTheWorld(WorldDir *w) {
 WorldDir::WorldDir()
     : mPresetOverrides(this), mBitmapOverrides(this), mMatOverrides(this),
       mHideOverrides(this), mCamShotOverrides(this), mPS3PerPixelShows(this),
-      mPS3PerPixelHides(this), mHUDDir(0), mShowHUD(0), mHUD(this), mCameraManager(this),
-      mCrowds(this), m3DSoundMgr(this), mLightPresetMgr(this), mPhysicsMgr(0), mNeedPhysicsEnter(0),
-      mEchoMsgs(0), mFirstPoll(0), mTestLightPreset1(this), mTestLightPreset2(this),
-      mTestAnimTime(10), mExplicitPostProc(1) {
+      mPS3PerPixelHides(this), mCrowds(this), mHUDDir(0), mShowHUD(0), mHUD(this),
+      mCameraManager(this), mLightPresetMgr(this), mEchoMsgs(0), mFirstPoll(0),
+      mPollCamera(1), mTestLightPreset1(this), mTestLightPreset2(this),
+      mTestAnimTime(10) {
+    // Retail ctor 0x824BC930 tail: per-instance glow mat (New<RndMat> +
+    // SetBlend/SetZMode/SetPreLit inlined), then zero deltas.
+    mGlowMat = Hmx::Object::New<RndMat>();
+    mGlowMat->SetBlend(BaseMaterial::kBlendSrcAlpha);
+    mGlowMat->SetZMode(kZModeDisable);
+    mGlowMat->SetPreLit(true);
     ClearDeltas();
 }
 
@@ -53,13 +57,16 @@ WorldDir::~WorldDir() {
     if (TheWorld == this) {
         SetTheWorld(nullptr);
     }
+#ifdef WORLDDIR_DC3_TAIL
     RELEASE(mPhysicsMgr);
+#endif
 }
 
 BEGIN_HANDLERS(WorldDir)
     if (mEchoMsgs && !_warn) {
         MILO_LOG("World msg: %s\n", sym);
     }
+#ifdef WORLDDIR_DC3_TAIL
     HANDLE(get_physics_mgr, OnGetPhysicsManager)
     HANDLE_ACTION(sync_physics, mPhysicsMgr->SyncObjects(_msg->Int(2)))
     HANDLE_ACTION(
@@ -73,6 +80,7 @@ BEGIN_HANDLERS(WorldDir)
         set_anim_driven, GetPhysicsManager()->MakeAnimDriven(_msg->Obj<Hmx::Object>(2))
     )
     HANDLE_ACTION(reset_trans, GetPhysicsManager()->ResetTrans(_msg->Obj<Hmx::Object>(2)))
+#endif
     HANDLE_MEMBER_PTR((&mLightPresetMgr))
     HANDLE_SUPERCLASS(PanelDir)
 END_HANDLERS
@@ -174,6 +182,7 @@ BEGIN_PROPSYNCS(WorldDir)
     SYNC_PROP(test_light_preset_2, mTestLightPreset2)
     SYNC_PROP(test_animation_time, mTestAnimTime)
     SYNC_PROP_MODIFY(hud, mHUD, SyncObjects())
+#ifdef WORLDDIR_DC3_TAIL
     SYNC_PROP_SET(
         doppler_power, m3DSoundMgr.mDopplerPower, m3DSoundMgr.mDopplerPower = _val.Float()
     )
@@ -183,6 +192,7 @@ BEGIN_PROPSYNCS(WorldDir)
         m3DSoundMgr.SetListener(_val.Obj<RndTransformable>())
     )
     SYNC_PROP(explicit_postproc, mExplicitPostProc)
+#endif
     SYNC_SUPERCLASS(PanelDir)
 END_PROPSYNCS
 
@@ -209,10 +219,19 @@ BEGIN_SAVES(WorldDir)
     bs << mCamShotOverrides << mPS3PerPixelHides << mPS3PerPixelShows;
     bs << mTestLightPreset1 << mTestLightPreset2 << mTestAnimTime;
     bs << mHUD;
+#ifdef WORLDDIR_DC3_TAIL
     bs << m3DSoundMgr.mDopplerPower;
     ObjPtr<RndTransformable> listener(this, m3DSoundMgr.mListener);
     bs << listener;
     bs << mExplicitPostProc;
+#else
+    // Keep the rev-0x1C/0x1D/altRev stream slots (DC3-format saves) with
+    // defaults; retail RB3 has none of these members.
+    bs << 1.0f;
+    ObjPtr<RndTransformable> listener(this);
+    bs << listener;
+    bs << true;
+#endif
 END_SAVES
 
 BEGIN_COPYS(WorldDir)
@@ -241,10 +260,14 @@ BEGIN_COPYS(WorldDir)
         COPY_MEMBER(mTestLightPreset2)
         COPY_MEMBER(mTestAnimTime)
         COPY_MEMBER(mHUD)
+#ifdef WORLDDIR_DC3_TAIL
         COPY_MEMBER(m3DSoundMgr.mDopplerPower)
         m3DSoundMgr.SetListener(c->m3DSoundMgr.mListener);
         SyncHUD();
         COPY_MEMBER(mExplicitPostProc)
+#else
+        SyncHUD();
+#endif
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -419,15 +442,24 @@ void WorldDir::PostLoad(BinStream &bs) {
     if (d.rev >= 0x1C) {
         float x;
         d >> x;
+#ifdef WORLDDIR_DC3_TAIL
         m3DSoundMgr.mDopplerPower = x;
+#endif
     }
     if (d.rev >= 0x1D) {
         ObjPtr<RndTransformable> trans(this);
         d >> trans;
+#ifdef WORLDDIR_DC3_TAIL
         m3DSoundMgr.SetListener(trans);
+#endif
     }
     if (d.altRev > 0) {
+#ifdef WORLDDIR_DC3_TAIL
         d >> mExplicitPostProc;
+#else
+        bool b;
+        d >> b;
+#endif
     }
 }
 
@@ -442,8 +474,11 @@ void WorldDir::SyncObjects() {
     for (ObjDirItr<WorldCrowd> it(this, true); it != nullptr; ++it) {
         mCrowds.push_back(it);
     }
+#ifdef WORLDDIR_DC3_TAIL
     m3DSoundMgr.SyncObjects();
+#endif
     mLightPresetMgr.SyncObjects();
+#ifdef WORLDDIR_DC3_TAIL
     if (!mPhysicsMgr) {
         if (CreatePhysicsManager) {
             mPhysicsMgr = CreatePhysicsManager(this);
@@ -453,6 +488,7 @@ void WorldDir::SyncObjects() {
         }
     }
     mPhysicsMgr->SyncObjects(false);
+#endif
     if (mHUD) {
         VectorRemove(mDraws, mHUD);
     }
@@ -513,17 +549,20 @@ void WorldDir::DrawShowing() {
 
             if (shot) {
                 Spotlight *spot = shot->mGlowSpot;
-                if (spot && sGlowMat && spot->Showing() && spot->Intensity() > 0) {
+                if (spot && mGlowMat && spot->Showing() && spot->Intensity() > 0) {
                     Hmx::Rect rect(0, 0, TheRnd.Width(), TheRnd.Height());
                     Hmx::Color color(spot->Color());
                     color.alpha = 0.25f;
-                    TheRnd.DrawRect(rect, color, sGlowMat, nullptr, nullptr);
+                    TheRnd.DrawRect(rect, color, mGlowMat, nullptr, nullptr);
                 }
             }
         }
 
         TheRnd.CopyWorldCam(TheWorld->Cam());
-        if (mExplicitPostProc) {
+#ifdef WORLDDIR_DC3_TAIL
+        if (mExplicitPostProc)
+#endif
+        {
             TheRnd.EndWorld();
         }
 
@@ -569,17 +608,23 @@ void WorldDir::Poll() {
             }
             static Message select_camera("select_camera");
             HandleType(select_camera);
-            mCameraManager.PrePoll();
+            if (mPollCamera)
+                mCameraManager.PrePoll();
+#ifdef WORLDDIR_DC3_TAIL
             m3DSoundMgr.Poll();
+#endif
             mLightPresetMgr.Poll();
             RndDir::Poll();
-            mCameraManager.Poll();
+            if (mPollCamera)
+                mCameraManager.Poll();
+#ifdef WORLDDIR_DC3_TAIL
             {
                 START_AUTO_TIMER("phys_mgr_poll");
                 if (mPhysicsMgr) {
                     mPhysicsMgr->Poll();
                 }
             }
+#endif
             RestoreDeltas(deltas);
         }
         SetTheWorld(nullptr);
@@ -594,11 +639,13 @@ void WorldDir::Enter() {
     }
     mLightPresetMgr.Enter();
     mCameraManager.Enter();
+#ifdef WORLDDIR_DC3_TAIL
     if (mPhysicsMgr) {
         mPhysicsMgr->Enter();
     } else {
         mNeedPhysicsEnter = true;
     }
+#endif
     PanelDir::Enter();
     ClearDeltas();
     mFirstPoll = true;
@@ -633,13 +680,10 @@ void WorldDir::ClearDeltas() {
 }
 
 void WorldDir::Init() {
+    // Retail Init (0x824BDCB0) = register factory + SetTheWorld(0) only;
+    // the glow mat is a per-instance member created in the ctor.
     REGISTER_OBJ_FACTORY(WorldDir)
     SetTheWorld(nullptr);
-    sGlowMat = Hmx::Object::New<RndMat>();
-    sGlowMat->SetBlend(BaseMaterial::kBlendSrcAlpha);
-    sGlowMat->SetZMode(kZModeDisable);
-    sGlowMat->SetPreLit(true);
-    CreateAndSetMetaMat(sGlowMat);
 }
 
 void WorldDir::AccumulateDeltas(float *deltas) {
@@ -679,4 +723,6 @@ void WorldDir::SyncCamShots(bool b) {
     }
 }
 
+#ifdef WORLDDIR_DC3_TAIL
 DataNode WorldDir::OnGetPhysicsManager(const DataArray *) { return mPhysicsMgr; }
+#endif
