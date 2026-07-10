@@ -137,8 +137,13 @@ public:
     void CheckViewOverride(Symbol, bool, Symbol &);
     void UpdateMuteUsersList();
     void UpdateKickUsersList();
+    void UpdateGamercardUsersList(); // retail X360-only
     void UpdateProfilesList();
+    void UpdateFriendsList(); // retail X360-only
     void UpdatePartSelectList();
+    void ViewUserGamercard(int);  // retail X360-only
+    void InviteFriend(int);       // retail X360-only
+    bool CanChangeSynapseOption(); // retail X360-only
     void ShowProfiles();
     void ShowOnlineOptions();
     void AttemptRegisterOnline();

@@ -1757,6 +1757,34 @@ void OvershellSlot::UpdateKickUsersList() {
     mOvershellDir->HandleType(updateKickUsersMsg);
 }
 
+void OvershellSlot::UpdateGamercardUsersList() {
+    BandUser *pUser = GetUser();
+    mGamercardUsersProvider->RefreshUserList(pUser, mBandUserMgr);
+    static Message updateGamercardUsersMsg("update_users_provider", 0);
+    updateGamercardUsersMsg[0] = mGamercardUsersProvider;
+    mOvershellDir->HandleType(updateGamercardUsersMsg);
+}
+
+void OvershellSlot::UpdateFriendsList() {
+    static Message updateFriendsMsg("update_friends_provider", 0);
+    updateFriendsMsg[0] = mFriendsProvider;
+    mOvershellDir->HandleType(updateFriendsMsg);
+}
+
+void OvershellSlot::ViewUserGamercard(int i) {
+    static Message viewUserGamercardMsg("view_user_gamercard", 0);
+    viewUserGamercardMsg[0] = i;
+    mOvershellDir->HandleType(viewUserGamercardMsg);
+}
+
+void OvershellSlot::InviteFriend(int i) {
+    static Message inviteFriendMsg("invite_friend", 0);
+    inviteFriendMsg[0] = i;
+    mOvershellDir->HandleType(inviteFriendMsg);
+}
+
+bool OvershellSlot::CanChangeSynapseOption() { return mSessionMgr != 0; }
+
 void OvershellSlot::UpdateProfilesList() {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0xC97);
@@ -1852,7 +1880,6 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION(leave_options, LeaveOptions())
     HANDLE_ACTION(show_state, ShowState((OvershellSlotStateID)_msg->Int(2)))
     HANDLE_ACTION(show_chars, ShowState(kState_ChooseChar))
-    HANDLE_ACTION(show_profiles, ShowProfiles())
     HANDLE_ACTION(show_options, ShowState(kState_Options))
     HANDLE_ACTION(show_online_options, ShowOnlineOptions())
     HANDLE_ACTION(attempt_register_online, AttemptRegisterOnline())
@@ -1860,7 +1887,6 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION(show_options_av_settings, ShowState(kState_OptionsAVSettings))
     HANDLE_ACTION(show_options_audio, ShowState(kState_OptionsAudio))
     HANDLE_ACTION(show_options_vocal, ShowState(kState_OptionsVocal))
-    HANDLE_ACTION(show_options_wiispeak, ShowState(kState_OptionsWiiSpeak))
     HANDLE_ACTION(show_options_extras, ShowState(kState_OptionsExtras))
     HANDLE_ACTION(show_options_drum, ShowOptionsDrum())
     HANDLE_ACTION(show_saveloadmgr_not_idle, ShowState(kState_SaveloadManagerNotIdle))
@@ -1897,6 +1923,7 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION(refresh_highlighted_char, RefreshHighlightedChar(_msg->Int(2)))
     HANDLE_ACTION(update_character_list, UpdateCharacterList())
     HANDLE_EXPR(get_default_char_index, GetDefaultCharIndex())
+    HANDLE_ACTION(update_friends_list, UpdateFriendsList())
     HANDLE_ACTION(select_char, SelectChar(_msg->Int(2)))
     HANDLE_ACTION(
         begin_override_flow, BeginOverrideFlow((OvershellOverrideFlow)_msg->Int(2), true)
@@ -1906,7 +1933,6 @@ BEGIN_HANDLERS(OvershellSlot)
     )
     HANDLE_ACTION(show_enter_calibration, ShowEnterFlowPrompt(kState_EnterCalibration))
     HANDLE_ACTION(show_enter_credits, ShowEnterFlowPrompt(kState_EnterCredits))
-    HANDLE_ACTION(show_enter_wiispeak_options, ShowEnterWiiSpeakOptions())
     HANDLE_ACTION(attempt_disconnect, AttemptDisconnect())
     HANDLE_ACTION(attempt_remove_user, AttemptRemoveUser())
     HANDLE_ACTION(show_kick_users, ShowState(kState_KickUsers))
@@ -1914,12 +1940,14 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION(show_mute_users, ShowState(kState_MuteUsers))
     HANDLE_ACTION(toggle_mute_user, ToggleMuteUser(_msg->Int(2)))
     HANDLE_ACTION(show_gamercard_users, ShowState(kState_GamercardUsers))
+    HANDLE_ACTION(view_user_gamercard, ViewUserGamercard(_msg->Int(2)))
+    HANDLE_ACTION(show_invite_friends, ShowState(kState_InviteFriends))
+    HANDLE_ACTION(invite_friend, InviteFriend(_msg->Int(2)))
     HANDLE_ACTION(toggle_vocal_style, ToggleVocalStyle())
     HANDLE_ACTION(toggle_lefty_flip, ToggleLeftyFlip())
-    HANDLE_EXPR(get_char_provider, mCharProvider)
-    HANDLE_EXPR(get_profiles_provider, mSwappableProfilesProvider)
+    HANDLE_ACTION(show_choose_profile, ShowState(kState_ChooseProfile))
+    HANDLE_ACTION(attempt_swap_user_profile, AttemptSwapUserProfile(_msg->Int(2)))
     HANDLE_EXPR(confirm_swap_user_profile, ConfirmSwapUserProfile())
-    HANDLE_ACTION(select_guest_profile, SelectGuestProfile())
     HANDLE_ACTION(show_modifiers, ShowState(kState_Modifiers))
     HANDLE_ACTION(show_modifiers_drum_warning, ShowState(kState_ModifiersDrumWarning))
     HANDLE_ACTION(show_modifier_unlock, ShowState(kState_ModifierUnlock))
@@ -1946,6 +1974,9 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_EXPR(is_quit_token, IsQuitToken(_msg->Sym(2)))
     HANDLE_ACTION(update_mute_users_list, UpdateMuteUsersList())
     HANDLE_ACTION(update_kick_users_list, UpdateKickUsersList())
+    HANDLE_ACTION(update_gamercard_users_list, UpdateGamercardUsersList())
+    HANDLE_ACTION(update_profiles_list, UpdateProfilesList())
+    HANDLE_EXPR(can_change_synapse_option, CanChangeSynapseOption())
 #ifdef HX_NATIVE
     // Wii-only Handle arms (wiiprofile/wii_speak/invitation/wii_profile_selector).
     // Retail X360 OvershellSlot::Handle has NONE of these — objdiff proved the whole
