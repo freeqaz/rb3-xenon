@@ -23,7 +23,9 @@ enum UIFlowType {
     kUIFlowType_None,
     kUIFlowType_Main,
     kUIFlowType_MusicLibrary,
-    kUIFlowType_InGame
+    kUIFlowType_InGame,
+    kUIFlowType_QpCoopCampaign = 4,
+    kUIFlowType_Unk6 = 6
 };
 
 class BandUI : public UIManager, public MsgSource {
@@ -115,6 +117,12 @@ public:
     UIPanel *mAbstractWipePanel; // 0x108
     bool unk10c; // 0x10c
     bool unk10d; // 0x10d
+    // In retail RB3-360 this "wipe pending" flag lives in the UIManager base at
+    // 0xb5 (rb3-Wii UI.h). rb3-xenon's DC3-derived UIManager omits it and is
+    // pinned/matched at its own verified offsets, so we keep it BandUI-local to
+    // stay per-TU-scoped; the two functions that touch it (WipeOnNextTransition,
+    // OnMsg(UITransitionCompleteMsg)) diverge only by this store offset.
+    bool unkb5; // local (retail: UIManager+0xb5)
 };
 
 extern BandUI TheBandUI;

@@ -52,6 +52,9 @@ public:
     // Wii-origin net-error dialog; referenced by ported RB3-Wii game code
     // (meta_band/OvershellPanel). Decl-only on X360.
     void ShowNetError();
+    // Wii-origin; referenced by BandUI::UpdateInputPerformanceMode. Decl-only
+    // on X360 (defined in retail UI.cpp). Additive non-virtual — no layout change.
+    void EnableInputPerformanceMode(bool);
     UIScreen *CurrentScreen() { return mCurrentScreen; }
     UIScreen *TransitionScreen() { return mTransitionScreen; }
     bool InTransition() { return mTransitionState != kTransitionNone; }

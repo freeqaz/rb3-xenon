@@ -888,7 +888,9 @@ window.c:
 
 AsyncFile_Win.cpp:
 	.pdata      start:0x82212280 end:0x822122B8
+	.pdata      start:0x822122D0 end:0x822122F0
 	.text       start:0x82521E88 end:0x825221D0
+	.text       start:0x82522298 end:0x82522758
 
 CDReader.cpp:
 	.pdata      start:0x82212180 end:0x822121A0
@@ -2367,8 +2369,12 @@ OggMap.cpp:
 	.text       start:0x82B83858 end:0x82B83990
 
 AsyncFileHolmes.cpp:
-	.pdata      start:0x822122B8 end:0x82212910
-	.text       start:0x825221D0 end:0x82527920
+	.pdata      start:0x822122B8 end:0x822122D0
+	.text       start:0x825221D0 end:0x82522298
+
+BandUI.cpp:
+	.pdata      start:0x822122F0 end:0x82212868
+	.text       start:0x82522758 end:0x82527278
 
 BustAMoveData.cpp:
 	.pdata      start:0x821EEF10 end:0x821EEF28

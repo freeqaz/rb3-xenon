@@ -904,6 +904,12 @@
     ]
    },
    "band3/meta_band/Accomplishment.cpp": "NonMatching",
+   "band3/meta_band/BandUI.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/AppInlineHelp.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

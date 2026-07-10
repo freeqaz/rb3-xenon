@@ -34,6 +34,9 @@ public:
     static void PrintSongInfo(Symbol, float);
     static void Print(HAQType, Hmx::Object *, int);
     static void Print(HAQType);
+    // Referenced only by BandUI::OnMsg(UIComponentScrollMsg); decl-only on X360
+    // (rb3-Wii meta/HAQManager.cpp defines it). Additive — no layout/vtable change.
+    static void HandleComponentScroll(UIComponent *);
     bool Enabled() const { return m_bEnabled; }
 
 private:

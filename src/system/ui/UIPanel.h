@@ -48,6 +48,7 @@ public:
     bool Showing() const { return mShowing; }
     void SetShowing(bool b) { mShowing = b; }
     bool IsReferenced() const { return mLoadRefs != 0; }
+    int LoadRefs() const { return mLoadRefs; } // additive accessor (BandUI overlay)
     bool Paused() { return mPaused; }
     void CheckLoad();
     bool CheckIsLoaded();

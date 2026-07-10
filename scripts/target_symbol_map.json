@@ -4027,11 +4027,6 @@
  "0x82522170": "??0AsyncFileWin@@QAA@PBDH@Z",
  "0x825221D0": "??1AsyncFileHolmes@@UAA@XZ",
  "0x82522248": "??_GAsyncFileHolmes@@UAAPAXI@Z",
- "0x825229E0": "?StaticClassName@RndSoftParticleBuffer@@SA?AVSymbol@@XZ",
- "0x82523CB8": "??_DStartTransitionMsg@@QAAXXZ",
- "0x82524008": "??0CurrentScreenChangedMsg@@QAA@VSymbol@@@Z",
- "0x825245A0": "?OnMsg@MetaPerformer@@IAA?AVDataNode@@ABVRCJobCompleteMsg@@@Z",
- "0x82527428": "?StaticClassName@DOFProc@@SA?AVSymbol@@XZ",
  "0x82527920": "?CanHeadersBeSelected@MusicLibrary@@QAA_NXZ",
  "0x82527968": "?SetSavedSetlistHighlight@MusicLibrary@@QAAXPAVSavedSetlist@@@Z",
  "0x825279B8": "?GetCurrentSortType@MusicLibrary@@QAA?AW4SongSortType@@_N@Z",
@@ -13959,5 +13954,14 @@
  "0x82708E08": "?op57@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82708EE8": "?op60@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82708FC8": "?op62@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x82709038": "?op63@@YA?AVDataNode@@PAVDataArray@@@Z"
+ "0x82709038": "?op63@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x825223E0": "?_WriteAsync@AsyncFileWin@@MAAXPBXH@Z",
+ "0x82523CB8": "??_DStartTransitionMsg@@QAAXXZ",
+ "0x82523D28": "?GetScreen@CurrentScreenChangedMsg@@QBA?AVSymbol@@XZ",
+ "0x825240E0": "?FindPanel@?A0xbc94a999@@YAPAVUIPanel@@PBD@Z",
+ "0x825242B8": "?GetJoinEntryPointForFlowType@BandUI@@QBAPAVUIScreen@@W4UIFlowType@@@Z",
+ "0x82524390": "?TriggerOnFinishedJoin@BandUI@@QAAXW4UIFlowType@@@Z",
+ "0x82524460": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIScreenChangeMsg@@@Z",
+ "0x82525B48": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVJoypadConnectionMsg@@@Z",
+ "0x82525CA0": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVGameMicsChangedMsg@@@Z"
 }
