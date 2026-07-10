@@ -46,16 +46,20 @@ RockCentral.cpp:
 	.pdata      start:0x821F6D78 end:0x821F6D80
 	.pdata      start:0x821F6F18 end:0x821F6F20
 	.pdata      start:0x821F75D8 end:0x821F75E0
-	.pdata      start:0x821FE6D8 end:0x821FE6E0
 	.pdata      start:0x821FFFD8 end:0x821FFFE0
 	.pdata      start:0x82200D30 end:0x82200D38
 	.pdata      start:0x82200EE8 end:0x82200EF0
 	.pdata      start:0x822099F0 end:0x822099F8
-	.pdata      start:0x82209A58 end:0x82209A68
 	.pdata      start:0x8220E390 end:0x8220E398
 	.pdata      start:0x8220E3D0 end:0x8220E3D8
 	.pdata      start:0x8220E498 end:0x8220E4A0
 	.pdata      start:0x8220E6E8 end:0x8220E978
+	.pdata      start:0x8220E9C0 end:0x8220E9C8
+	.pdata      start:0x8220EA80 end:0x8220EA88
+	.pdata      start:0x8220F2A0 end:0x8220F2A8
+	.pdata      start:0x8220F478 end:0x8220F480
+	.pdata      start:0x8220F530 end:0x8220F538
+	.pdata      start:0x8220F560 end:0x8220F568
 	.pdata      start:0x82217BB0 end:0x82217BB8
 	.pdata      start:0x82218150 end:0x82218160
 	.pdata      start:0x82218168 end:0x82218170
@@ -65,7 +69,6 @@ RockCentral.cpp:
 	.pdata      start:0x82218288 end:0x82218290
 	.pdata      start:0x82218318 end:0x82218338
 	.pdata      start:0x82218390 end:0x822183A0
-	.pdata      start:0x82219010 end:0x82219018
 	.pdata      start:0x82219D58 end:0x82219D60
 	.pdata      start:0x8221B418 end:0x8221B420
 	.pdata      start:0x8221BCD0 end:0x8221BCE0
@@ -77,31 +80,12 @@ RockCentral.cpp:
 	.pdata      start:0x8221C1F0 end:0x8221C1F8
 	.pdata      start:0x8221C240 end:0x8221C250
 	.pdata      start:0x8221C280 end:0x8221C290
-	.pdata      start:0x8221CD48 end:0x8221CD50
-	.pdata      start:0x8221D338 end:0x8221D340
 	.pdata      start:0x8221E0D0 end:0x8221E0D8
 	.pdata      start:0x82220130 end:0x82220148
-	.pdata      start:0x82227CE0 end:0x82227CE8
-	.pdata      start:0x82227CF8 end:0x82227D00
 	.pdata      start:0x8222C498 end:0x8222C4A0
-	.pdata      start:0x8222CAB0 end:0x8222CAB8
 	.pdata      start:0x8222CF00 end:0x8222CF08
 	.pdata      start:0x8222D1F8 end:0x8222D200
 	.pdata      start:0x8222E458 end:0x8222E460
-	.pdata      start:0x82242BC8 end:0x82242BD0
-	.pdata      start:0x82242C10 end:0x82242C18
-	.pdata      start:0x82242C38 end:0x82242C40
-	.pdata      start:0x82242C80 end:0x82242C88
-	.pdata      start:0x82243430 end:0x82243438
-	.pdata      start:0x82243958 end:0x82243960
-	.pdata      start:0x82247C60 end:0x82247C68
-	.pdata      start:0x82247C68 end:0x82247C70
-	.pdata      start:0x82247C70 end:0x82247C78
-	.pdata      start:0x82247C78 end:0x82247C80
-	.pdata      start:0x82247EA0 end:0x82247EA8
-	.pdata      start:0x82247EE0 end:0x82247EE8
-	.pdata      start:0x82255C20 end:0x82255C28
-	.pdata      start:0x822566A8 end:0x822566B0
 	.text       start:0x822765C0 end:0x82276614
 	.text       start:0x822766D0 end:0x82276724
 	.text       start:0x822767E0 end:0x82276834
@@ -115,18 +99,21 @@ RockCentral.cpp:
 	.text       start:0x82332640 end:0x82332728
 	.text       start:0x82335668 end:0x82335830
 	.text       start:0x8233CF20 end:0x8233CFDC
-	.text       start:0x823B8200 end:0x823B8270
 	.text       start:0x823D1BB8 end:0x823D1C08
 	.text       start:0x823DE468 end:0x823DE4A8
 	.text       start:0x823DFB50 end:0x823DFC80
 	.text       start:0x824237A0 end:0x824237E0
-	.text       start:0x82449EE0 end:0x82449EF8
 	.text       start:0x82488A50 end:0x82488B38
-	.text       start:0x82488FE8 end:0x824891B8
 	.text       start:0x824E54C0 end:0x824E55E0
 	.text       start:0x824E57A0 end:0x824E596C
 	.text       start:0x824E62C8 end:0x824E6318
 	.text       start:0x824E8468 end:0x824EA844
+	.text       start:0x824EA9A0 end:0x824EB12C
+	.text       start:0x824EB498 end:0x824ED720
+	.text       start:0x824F2320 end:0x824F2814
+	.text       start:0x824F39A0 end:0x824F3ADC
+	.text       start:0x824F41C8 end:0x824F433C
+	.text       start:0x824F43F8 end:0x824F456C
 	.text       start:0x825766E0 end:0x82576700
 	.text       start:0x8257C30C end:0x8257C34C
 	.text       start:0x8257C36C end:0x8257C38C
@@ -136,7 +123,6 @@ RockCentral.cpp:
 	.text       start:0x8257CF20 end:0x8257CF40
 	.text       start:0x8257E0E8 end:0x8257E168
 	.text       start:0x8257E2C8 end:0x8257E308
-	.text       start:0x82588AA0 end:0x82588B20
 	.text       start:0x82594328 end:0x82594348
 	.text       start:0x825A9E20 end:0x825A9E6C
 	.text       start:0x825B18A8 end:0x825B18E8
@@ -148,33 +134,13 @@ RockCentral.cpp:
 	.text       start:0x825B56C0 end:0x825B56E0
 	.text       start:0x825B5D3C end:0x825B5D7C
 	.text       start:0x825B63A8 end:0x825B63E8
-	.text       start:0x825C0C40 end:0x825C0D24
-	.text       start:0x825C6948 end:0x825C69C8
 	.text       start:0x825D1D00 end:0x825D1F70
 	.text       start:0x825F1F6C end:0x825F1FCC
-	.text       start:0x82663808 end:0x826638C8
-	.text       start:0x82663918 end:0x82663A1C
 	.text       start:0x826B1898 end:0x826B19B8
-	.text       start:0x826B5F58 end:0x826B6054
 	.text       start:0x826BA270 end:0x826BA634
 	.text       start:0x826BDAE0 end:0x826BDBF4
 	.text       start:0x826BE160 end:0x826BE168
 	.text       start:0x826D70E0 end:0x826D7258
-	.text       start:0x828890F8 end:0x82889158
-	.text       start:0x828C1218 end:0x828C1918
-	.text       start:0x828C4548 end:0x828C4938
-	.text       start:0x828C7728 end:0x828C7BD8
-	.text       start:0x828CB580 end:0x828CBA40
-	.text       start:0x829000D0 end:0x829006F0
-	.text       start:0x8290FAD0 end:0x8290FAF8
-	.text       start:0x82A3FE80 end:0x82A3FED0
-	.text       start:0x82A3FEE0 end:0x82A3FF30
-	.text       start:0x82A3FF40 end:0x82A3FF90
-	.text       start:0x82A3FFA0 end:0x82A3FFF0
-	.text       start:0x82A42068 end:0x82A420B8
-	.text       start:0x82A42CD0 end:0x82A42D20
-	.text       start:0x82B8E0C0 end:0x82B8E110
-	.text       start:0x82BB2048 end:0x82BB2180
 
 BandScoreboard.cpp:
 	.pdata      start:0x821EF8F8 end:0x821EF988
@@ -333,6 +299,7 @@ OvershellSlot.cpp:
 	.pdata      start:0x8221CCE0 end:0x8221CCE8
 	.pdata      start:0x8221CD90 end:0x8221CE28
 	.pdata      start:0x8221D0C0 end:0x8221D0C8
+	.pdata      start:0x8221D338 end:0x8221D340
 	.pdata      start:0x8221D3A8 end:0x8221D3B0
 	.pdata      start:0x8221D4B0 end:0x8221D4B8
 	.text       start:0x825BED40 end:0x825BEDA0
@@ -343,6 +310,7 @@ OvershellSlot.cpp:
 	.text       start:0x825C04E0 end:0x825C0580
 	.text       start:0x825C10D8 end:0x825C3A44
 	.text       start:0x825C4658 end:0x825C468C
+	.text       start:0x825C6948 end:0x825C69C8
 	.text       start:0x825C7188 end:0x825C76F0
 	.text       start:0x825C8058 end:0x825CA494
 
@@ -2011,6 +1979,7 @@ SongCollision.cpp:
 	.text       start:0x8274B9D0 end:0x8274BA10
 
 TransProxy.cpp:
+	.text       start:0x82449EE0 end:0x82449EF8
 	.text       start:0x8275B7D8 end:0x8275B7E8
 
 HamBattleData.cpp:
@@ -3096,7 +3065,9 @@ band3/meta_band/PatchPanel.cpp:
 
 band3/game/TrackerDisplay.cpp:
 	.pdata      start:0x8222C630 end:0x8222C898
+	.pdata      start:0x8222CAB0 end:0x8222CAB8
 	.text       start:0x826B3268 end:0x826B4B30
+	.text       start:0x826B5F58 end:0x826B6054
 
 band3/meta_band/SongUpgradeMgr.cpp:
 	.pdata      start:0x82224678 end:0x82224818
