@@ -14888,5 +14888,8 @@
  "0x82319610": "?Save@BandWardrobe@@UAAXAAVBinStream@@@Z",
  "0x8231c970": "?SetType@BandWardrobe@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82320df0": "?Handle@BandWardrobe@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82320e00": "?GetPrefabs@BandCharDesc@@SAPAVObjectDir@@XZ"
+ "0x82320e00": "?GetPrefabs@BandCharDesc@@SAPAVObjectDir@@XZ",
+ "0x826C7178": "?ShowPitchCorrectionNotice@VocalPlayer@@QBA_NXZ",
+ "0x826C9228": "?Poll@VocalPlayer@@UAAXMABVSongPos@@@Z",
+ "0x826CACA8": "??_GVocalPlayer@@UAAPAXI@Z"
 }
