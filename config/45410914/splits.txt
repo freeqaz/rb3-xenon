@@ -236,8 +236,8 @@ VocalTrack.cpp:
 	.text       start:0x82B79EB8 end:0x82B7A2A0
 
 MusicLibrary.cpp:
-	.pdata      start:0x82212910 end:0x82212F28
-	.text       start:0x82527920 end:0x8252E608
+	.pdata      start:0x82212868 end:0x82212F28
+	.text       start:0x82527278 end:0x8252E608
 
 Instarank.cpp:
 	.pdata      start:0x82224938 end:0x82224AB8

@@ -686,6 +686,9 @@ void MusicLibrary::SkipToShortcut(int idx) {
 
 void MusicLibrary::ClientSetPartyShuffleMode() {
     if (!IsLeaderLocal()) {
+        // Retail emits a function-local static Symbol here (guard bit +
+        // atexit thunk at 0x825278FC), not the global symbol-table entry.
+        static Symbol qp_party_shuffle("qp_party_shuffle");
         TheGameMode->SetMode(qp_party_shuffle);
     }
 }

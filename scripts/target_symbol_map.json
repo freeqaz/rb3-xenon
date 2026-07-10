@@ -14050,5 +14050,14 @@
  "0x8277c1b8": "??0GuitarTrackWatcherImpl@@QAA@HABVUserGuid@@HPAVSongData@@PAVGameGemList@@PAVTrackWatcherParent@@PAVDataArray@@@Z",
  "0x82779508": "?Play@DrumPlayer@@QAAXHM@Z",
  "0x82779278": "??0DrumPlayer@@QAA@AAVSongInfo@@@Z",
- "0x82779408": "??1DrumPlayer@@QAA@XZ"
+ "0x82779408": "??1DrumPlayer@@QAA@XZ",
+ "0x825273a8": "?Type@RemoteMachineUpdatedMsg@@SA?AVSymbol@@XZ",
+ "0x82527428": "?Type@RemoteMachineLeftMsg@@SA?AVSymbol@@XZ",
+ "0x825274a8": "?Type@AddLocalUserResultMsg@@SA?AVSymbol@@XZ",
+ "0x82527520": "?StaticByteCode@AppendSongToSetlistMsg@@SAEXZ",
+ "0x82527560": "?StaticByteCode@RemoveLastSongFromSetlistMsg@@SAEXZ",
+ "0x82527310": "??_GRemoveLastSongFromSetlistMsg@@UAAPAXI@Z",
+ "0x82527358": "??_GNetMessage@@UAAPAXI@Z",
+ "0x82527880": "?ClientSetPartyShuffleMode@MusicLibrary@@QAAXXZ",
+ "0x825277f8": "?ClearSongPreview@MusicLibrary@@QAAXXZ"
 }
