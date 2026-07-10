@@ -382,8 +382,7 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
         unk2a9 = false;
     }
     SetCrowdMeterActive(!b);
-    float durms = TheSongDB->GetSongDurationMs();
-    float newpct = GetSongMs() / durms;
+    float newpct = GetSongMs() / TheSongDB->GetSongDurationMs();
     if (b) {
         SetNoScorePercent(newpct);
     }
