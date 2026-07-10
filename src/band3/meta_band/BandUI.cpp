@@ -217,13 +217,7 @@ void BandUI::Poll() {
         }
         mAbstractWipePanel->Poll();
 
-        // this part here is inlined, but idk what to name the func
-        bool b1 = false;
-        if ((unk10c && mTransitionState == kTransitionFrom)
-            || (unk10d && mTransitionState == kTransitionTo))
-            b1 = true;
-
-        if (b1) {
+        if (ShouldCheckWipeDone()) {
             static Message msg("check_wipe_done");
             mAbstractWipePanel->HandleType(msg);
         }
@@ -236,7 +230,11 @@ void BandUI::Poll() {
         mWaitingUserGate->Poll();
 #endif
         TheUIEventMgr->Poll();
+#ifdef HX_NATIVE
+        // Retail X360 does not call this from Poll (dev-overlay update, part of
+        // the debug strip — see ui/UI.h). Keep for the native host build.
         UpdateUIOverlay();
+#endif
     }
 }
 
@@ -506,8 +504,17 @@ DataNode BandUI::OnMsg(const NetErrorMsg &msg) {
     return 1;
 }
 
+// Retail X360 emits this out-of-line (target fn_82523A50): at /O1 the 17-instr
+// body is larger than the 2-instr call, and the externally-linked copy must be
+// kept anyway, so the size-optimizer declines to inline. The Wii dev build
+// inlined it into Poll; the name is invented.
+__declspec(noinline) bool BandUI::ShouldCheckWipeDone() const {
+    return (unk10c && mTransitionState == kTransitionFrom)
+        || (unk10d && mTransitionState == kTransitionTo);
+}
+
 bool BandUI::InComponentSelect() {
-    if (TheUIEventMgr->HasActiveDialogEvent() && mEventDialog
+    if (TheUIEventMgr->HasActiveDialogEvent() && (int)mEventDialog
         && mEventDialog->GetState() == UIPanel::kUp) {
         UIComponent *c = mEventDialog->FocusComponent();
         if (c) {

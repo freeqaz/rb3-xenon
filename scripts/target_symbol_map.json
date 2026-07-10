@@ -14252,5 +14252,6 @@
  "0x825A6E30": "?DeleteTree@NodeSort@@UAAXXZ",
  "0x825A6EF8": "?DeleteList@NodeSort@@QAAXXZ",
  "0x825A6FA0": "?NumData@NodeSort@@UBAHXZ",
- "0x825A6698": "??_GFunctionSortNode@@UAAPAXI@Z"
+ "0x825A6698": "??_GFunctionSortNode@@UAAPAXI@Z",
+ "0x82523A50": "?ShouldCheckWipeDone@BandUI@@QBA_NXZ"
 }

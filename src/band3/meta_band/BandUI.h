@@ -68,6 +68,9 @@ public:
     void WipeOutIfNecessary();
     bool WipingIn() const;
     bool WipingOut() const;
+    // Retail X360 keeps this wipe check out-of-line (fn_82523A50, called from
+    // Poll); the Wii dev build inlined it, so the name is invented.
+    __declspec(noinline) bool ShouldCheckWipeDone() const;
     void UpdateUIOverlay();
     UIScreen *GetTargetScreen(UIScreen *);
     void UpdateInputPerformanceMode();
