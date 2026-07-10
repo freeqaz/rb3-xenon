@@ -1385,6 +1385,15 @@ bool MusicLibrary::IsSnappableAtData(int idx) const {
 }
 
 Symbol MusicLibrary::DifficultySortPart() const {
+    static Symbol band("band");
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol vocals("vocals");
+    static Symbol keys("keys");
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
+    static Symbol real_keys("real_keys");
     switch (ActiveScoreType()) {
     case kScoreBand:
         return band;
@@ -1911,8 +1920,8 @@ DataNode MusicLibrary::OnMsg(const UserLoginMsg &) {
 
 void MusicLibrary::RebuildProfileData() {
     std::map<Symbol, SongRecord> &theSongs = TheSongSortMgr->mSongs;
-    bool b2 = false;
     bool b1 = false;
+    bool b2 = false;
     FOREACH (it, theSongs) {
         if (it->second.UpdatePerformanceData())
             b1 = true;
