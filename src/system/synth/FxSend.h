@@ -25,7 +25,7 @@ class FxSend : public Hmx::Object {
 public:
     // Hmx::Object
     virtual ~FxSend() {}
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(FxSend);
     OBJ_SET_TYPE(FxSend);
     virtual DataNode Handle(DataArray *, bool);

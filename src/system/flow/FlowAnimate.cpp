@@ -344,7 +344,7 @@ void FlowAnimate::OnAnimEvent(Symbol sym) {
     }
 }
 
-bool FlowAnimate::Replace(ObjRef *ref, Hmx::Object *obj) {
+void FlowAnimate::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mAnimTask)) {
         if (mAnimTask) {
             AnimTask *task = mAnimTask;
@@ -353,9 +353,9 @@ bool FlowAnimate::Replace(ObjRef *ref, Hmx::Object *obj) {
             }
         }
         mAnimTask = nullptr;
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(ref, obj);
+    Hmx::Object::Replace(ref, obj);
 }
 
 bool FlowAnimate::IsRunning() {

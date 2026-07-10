@@ -9,7 +9,7 @@ RndMeshAnim::RndMeshAnim() : mMesh(this), mKeysOwner(this, this) {}
 // Replace and SetFrame are declared in the header but never decomped.
 // On GCC, Replace is the key function — without it, the vtable ends up in .bss as zeros,
 // which crashes at construction time due to null VTT entries.
-bool RndMeshAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
+void RndMeshAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         RndMeshAnim *ma;
         if (mKeysOwner == this || !(ma = dynamic_cast<RndMeshAnim *>(obj))) {
@@ -17,9 +17,9 @@ bool RndMeshAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
         } else {
             mKeysOwner.SetObjConcrete(ma->mKeysOwner.Ptr());
         }
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(ref, obj);
+    Hmx::Object::Replace(ref, obj);
 }
 
 struct GetVertPoint {

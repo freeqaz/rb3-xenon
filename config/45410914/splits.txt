@@ -188,16 +188,8 @@ TrackPanelDir.cpp:
 VocalTrack.cpp:
 	.pdata      start:0x8223C1A8 end:0x8223C1B0
 	.pdata      start:0x82254B80 end:0x82255180
-	.pdata      start:0x82255188 end:0x82255190
-	.pdata      start:0x82255198 end:0x82255260
-	.pdata      start:0x82255268 end:0x822552D0
-	.pdata      start:0x822552D8 end:0x82255330
 	.text       start:0x827CA508 end:0x827CA564
 	.text       start:0x82B6D688 end:0x82B78200
-	.text       start:0x82B78254 end:0x82B78288
-	.text       start:0x82B782C8 end:0x82B79348
-	.text       start:0x82B793E4 end:0x82B79D18
-	.text       start:0x82B79EB8 end:0x82B7A2A0
 
 MusicLibrary.cpp:
 	.pdata      start:0x82212868 end:0x82212F28
@@ -4813,12 +4805,8 @@ network/ObjDup/DuplicatedObject.cpp:
 	.text       start:0x82A46180 end:0x82A47228
 
 band3/bandtrack/Gem.cpp:
-	.pdata      start:0x82255260 end:0x82255268
-	.pdata      start:0x822552D0 end:0x822552D8
-	.pdata      start:0x82255330 end:0x822553D8
-	.text       start:0x82B79348 end:0x82B793E4
-	.text       start:0x82B79D18 end:0x82B79EB8
-	.text       start:0x82B7A2A0 end:0x82B7B52C
+	.pdata      start:0x822551A0 end:0x822553D8
+	.text       start:0x82B783DC end:0x82B7B52C
 
 band3/bandtrack/TrackPanel.cpp:
 	.pdata      start:0x82253F90 end:0x82254318
@@ -5872,9 +5860,13 @@ StandardStream.cpp:
 
 TrackConfig.cpp:
 	.pdata      start:0x82255180 end:0x82255188
+	.pdata      start:0x82255188 end:0x82255190
 	.pdata      start:0x82255190 end:0x82255198
+	.pdata      start:0x82255198 end:0x822551A0
 	.text       start:0x82B78200 end:0x82B78254
+	.text       start:0x82B78254 end:0x82B78288
 	.text       start:0x82B78288 end:0x82B782C8
+	.text       start:0x82B782C8 end:0x82B783DC
 
 system/synth/Synth.cpp:
 	.pdata      start:0x8222EA98 end:0x8222EAA0

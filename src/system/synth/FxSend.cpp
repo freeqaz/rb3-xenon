@@ -13,13 +13,13 @@ FxSend::FxSend()
       mInputGain(0), mReverbMixDb(kDbSilence), mReverbEnable(0), mEnableUpdates(1),
       mChannels(kSendAll) {}
 
-bool FxSend::Replace(ObjRef *from, Hmx::Object *to) {
+void FxSend::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mNextSend)) {
         mNextSend.SetObj(to);
         RebuildChain();
-        return true;
+        return;
     } else
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(FxSend)

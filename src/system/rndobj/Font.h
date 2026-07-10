@@ -50,7 +50,7 @@ public:
         float mAdvance;
     };
     virtual ~RndFont();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Font);
     OBJ_SET_TYPE(Font);
     virtual DataNode Handle(DataArray *, bool);

@@ -79,7 +79,7 @@ void RndEnviron::OnRemoveAllLights() {
     mLightsOld.clear();
 }
 
-bool RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
+void RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mAmbientFogOwner)) {
         if (mAmbientFogOwner == this) {
             mAmbientFogOwner = this;
@@ -91,9 +91,9 @@ bool RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
                 mAmbientFogOwner = this;
             }
         }
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(from, to);
+    Hmx::Object::Replace(from, to);
 }
 
 INIT_REVS(0x10, 0)

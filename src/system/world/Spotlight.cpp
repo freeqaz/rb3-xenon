@@ -163,14 +163,14 @@ Spotlight::~Spotlight() {
     RELEASE(mFlare);
 }
 
-bool Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
+void Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mColorOwner)) {
         if (!mColorOwner.SetObj(to)) {
             mColorOwner = this;
         }
-        return true;
+        return;
     } else {
-        return RndTransformable::Replace(from, to);
+        RndTransformable::Replace(from, to);
     }
 }
 

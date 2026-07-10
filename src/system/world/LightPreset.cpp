@@ -1393,7 +1393,7 @@ BEGIN_LOADS(LightPreset)
     CacheFrames();
 END_LOADS
 
-bool LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
+void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     Hmx::Object *fromObj = from->GetObj();
     for (uint idx = 0; idx != mSpotlights.size(); idx++) {
         if (mSpotlights[idx] == fromObj) {
@@ -1402,7 +1402,7 @@ bool LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
             else
                 RemoveSpotlight(idx);
             CacheFrames();
-            return true;
+            return;
         }
     }
     for (uint idx = 0; idx != mEnvironments.size(); idx++) {
@@ -1412,7 +1412,7 @@ bool LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
             else
                 RemoveEnvironment(idx);
             CacheFrames();
-            return true;
+            return;
         }
     }
     for (uint idx = 0; idx != mLights.size(); idx++) {
@@ -1422,7 +1422,7 @@ bool LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
             else
                 RemoveLight(idx);
             CacheFrames();
-            return true;
+            return;
         }
     }
     for (uint idx = 0; idx != mSpotlightDrawers.size(); idx++) {
@@ -1432,10 +1432,10 @@ bool LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
             else
                 RemoveSpotlightDrawer(idx);
             CacheFrames();
-            return true;
+            return;
         }
     }
-    return RndAnimatable::Replace(from, to);
+    RndAnimatable::Replace(from, to);
 }
 
 #pragma endregion

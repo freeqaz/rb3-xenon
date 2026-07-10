@@ -137,9 +137,9 @@ void TypeProps::ReplaceObject(DataNode &n, Hmx::Object *from, Hmx::Object *to) {
     }
 }
 
-bool TypeProps::Replace(ObjRef *from, Hmx::Object *to) {
+void TypeProps::Replace(ObjRef *from, Hmx::Object *to) {
     if (!mMap)
-        return false;
+        return;
     Hmx::Object *fromObj = from->GetObj();
     for (int i = mMap->Size() - 1; i > 0; i -= 2) {
         DataNode &node = mMap->Node(i);
@@ -155,7 +155,6 @@ bool TypeProps::Replace(ObjRef *from, Hmx::Object *to) {
             }
         }
     }
-    return true;
 }
 
 void TypeProps::ReleaseObjects() {

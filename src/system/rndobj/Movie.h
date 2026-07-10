@@ -7,7 +7,7 @@
 class RndMovie : public RndAnimatable {
 public:
     // Hmx::Object
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Movie);
     OBJ_SET_TYPE(Movie);
     virtual DataNode Handle(DataArray *, bool);

@@ -161,7 +161,7 @@ public:
 
     // Hmx::Object
     virtual ~LightPreset();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(LightPreset);
     OBJ_SET_TYPE(LightPreset);
     virtual DataNode Handle(DataArray *, bool);

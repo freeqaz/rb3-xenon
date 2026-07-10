@@ -312,7 +312,7 @@ public:
 
     MsgSinks(Hmx::Object *owner);
     ~MsgSinks();
-    bool Replace(ObjRef *from, Hmx::Object *to);
+    void Replace(ObjRef *from, Hmx::Object *to);
     void RemovePropertySink(Hmx::Object *, DataArray *);
     bool HasPropertySink(Hmx::Object *, DataArray *);
     void RemoveSink(Hmx::Object *s, Symbol event);

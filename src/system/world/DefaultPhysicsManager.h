@@ -8,7 +8,7 @@ class DefaultPhysicsManager : public PhysicsManager {
 public:
     DefaultPhysicsManager(RndDir *);
     virtual ~DefaultPhysicsManager() {}
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void Poll();
     virtual RayCastContainer *MakeContainer(const Box &, unsigned int);
     virtual DetectionVolume *MakeDetectionVolume(

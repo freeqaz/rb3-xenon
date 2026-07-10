@@ -76,13 +76,13 @@ EventTrigger::EventTrigger()
     RegisterEvents();
 }
 
-bool EventTrigger::Replace(ObjRef *from, Hmx::Object *to) {
+void EventTrigger::Replace(ObjRef *from, Hmx::Object *to) {
     FOREACH (it, mAnims) {
         if (RefIs(from, it->mAnim)) {
             if (!it->mAnim.SetObj(to)) {
                 mAnims.erase(it);
             }
-            return true;
+            return;
         }
     }
     FOREACH (it, mHideDelays) {
@@ -90,17 +90,17 @@ bool EventTrigger::Replace(ObjRef *from, Hmx::Object *to) {
             if (!it->mHide.SetObj(to)) {
                 mHideDelays.erase(it);
             }
-            return true;
+            return;
         }
     }
     FOREACH (it, mProxyCalls) {
         if ((RefIs(from, it->mEvent) && !it->mEvent.SetObj(to))
             || (RefIs(from, it->mProxy) && !it->mProxy.SetObj(to))) {
             mProxyCalls.erase(it);
-            return true;
+            return;
         }
     }
-    return Hmx::Object::Replace(from, to);
+    Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(EventTrigger)

@@ -98,12 +98,11 @@ public:
     // (rb3-Wii oracle: `RefOwner() { return 0; }`).
     virtual Hmx::Object *RefOwner() const { return nullptr; }
     // Vtable slot +8: Replace(from, to). from==nullptr => unconditional.
-    virtual bool Replace(ObjRef *from, Hmx::Object *o) {
+    virtual void Replace(ObjRef *from, Hmx::Object *o) {
         Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
         if (fromObj == nullptr || (Hmx::Object *)mObject == fromObj) {
             *this = o ? dynamic_cast<C *>(o) : nullptr;
         }
-        return false;
     }
     // Vtable slot +c: IsDirPtr() => true.
     virtual bool IsDirPtr() { return true; }

@@ -316,7 +316,7 @@ AnimTask::AnimTask(
 
 AnimTask::~AnimTask() { TheTaskMgr.QueueTaskDelete(mBlendTask); }
 
-bool AnimTask::Replace(ObjRef *from, Hmx::Object *to) {
+void AnimTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mAnim)) {
         RndAnimatable *myAnim = Anim();
         if (!mAnim.SetObj(to)) {
@@ -326,9 +326,9 @@ bool AnimTask::Replace(ObjRef *from, Hmx::Object *to) {
             Hmx::Object::Replace(from, to);
             TheTaskMgr.QueueTaskDelete(this);
         }
-        return true;
+        return;
     } else
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
 }
 
 float AnimTask::TimeUntilEnd() {

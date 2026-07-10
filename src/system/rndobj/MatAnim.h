@@ -27,7 +27,7 @@ public:
     };
 
     // Hmx::Object
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(MatAnim);
     OBJ_SET_TYPE(MatAnim);
     virtual DataNode Handle(DataArray *, bool);

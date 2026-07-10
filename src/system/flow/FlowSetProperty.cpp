@@ -125,16 +125,16 @@ void PropertyTask::Poll(float ms) {
     }
 }
 
-bool PropertyTask::Replace(ObjRef *from, Hmx::Object *to) {
+void PropertyTask::Replace(ObjRef *from, Hmx::Object *to) {
     auto& target = mTarget;
     if (RefIs(from, target)) {
         target = to;
         if (target == nullptr) {
             delete this;
         }
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(from, to);
+    Hmx::Object::Replace(from, to);
 }
 
 void PropertyTask::SetProperty(DataNode &val) {
@@ -440,13 +440,13 @@ void FlowSetProperty::ChildFinished(FlowNode *child) {
     }
 }
 
-bool FlowSetProperty::Replace(ObjRef *from, Hmx::Object *to) {
+void FlowSetProperty::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, unk_0xCC)) {
         unk_0xCC = nullptr;
         OnAnimEvent("interrupted");
-        return true;
+        return;
     } else {
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
     }
 }
 

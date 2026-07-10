@@ -93,7 +93,7 @@ public:
     PropKeys(Hmx::Object *targetOwner, Hmx::Object *target);
     virtual ~PropKeys();
     virtual Hmx::Object *RefOwner() const { return nullptr; }
-    virtual bool Replace(ObjRef *ref, Hmx::Object *obj) {
+    virtual void Replace(ObjRef *ref, Hmx::Object *obj) {
 #ifdef HX_NATIVE
         // On Xbox, the ObjOwnerPtr's mOwner dispatch (ObjRefOwner* vtable)
         // coincidentally lands on RndPropAnim::Replace which handles this.
@@ -101,10 +101,9 @@ public:
         // directly so the ring advances correctly via SetTarget.
         if (ref == static_cast<ObjRef *>(&mTarget)) {
             SetTarget(obj);
-            return true;
+            return;
         }
 #endif
-        return false;
     }
     /** The first frame of these keys. */
     virtual float StartFrame() { return 0; }

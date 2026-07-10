@@ -65,7 +65,7 @@ public:
     Character();
     // Hmx::Object
     virtual ~Character();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Character);
     OBJ_SET_TYPE(Character);
     virtual DataNode Handle(DataArray *, bool);

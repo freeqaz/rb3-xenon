@@ -199,12 +199,11 @@ Hmx::Object::~Object() {
     }
 }
 
-bool Hmx::Object::Replace(ObjRef *from, Hmx::Object *to) {
+void Hmx::Object::Replace(ObjRef *from, Hmx::Object *to) {
 #ifdef HX_NATIVE
     if (mSinks)
-        return mSinks->Replace(from, to);
+        mSinks->Replace(from, to);
 #endif
-    return false;
 }
 
 BEGIN_HANDLERS(Hmx::Object)

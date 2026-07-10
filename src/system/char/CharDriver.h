@@ -24,7 +24,7 @@ public:
 
     // Hmx::Object
     virtual ~CharDriver();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(CharDriver);
     OBJ_SET_TYPE(CharDriver);
     virtual DataNode Handle(DataArray *, bool);

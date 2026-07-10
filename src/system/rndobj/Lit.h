@@ -25,7 +25,7 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void SetColor(const Hmx::Color &c) { mColorOwner->mColor = c; }
     virtual void SetLightType(Type t) { mType = t; }
     virtual void SetRange(float r) { mRange = r; }

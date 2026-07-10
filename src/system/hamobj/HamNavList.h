@@ -49,7 +49,7 @@ public:
 
     // Hmx::Object
     virtual ~HamNavList();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(HamNavList);
     OBJ_SET_TYPE(HamNavList);
     virtual DataNode Handle(DataArray *, bool);

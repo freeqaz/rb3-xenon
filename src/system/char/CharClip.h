@@ -36,7 +36,7 @@ public:
             : mNodeStart(nullptr), mNodeEnd(nullptr), mOwner(owner) {}
         ~Transitions() { Clear(); }
         Hmx::Object *RefOwner() const { return mOwner; }
-        bool Replace(ObjRef *, Hmx::Object *);
+        void Replace(ObjRef *, Hmx::Object *);
 
         void Clear();
         int Size() const;

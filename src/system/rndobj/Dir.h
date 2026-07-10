@@ -23,7 +23,7 @@ class RndDir : public ObjectDir,
                public MsgSource {
 public:
     // Hmx::Object
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(RndDir);
     OBJ_SET_TYPE(RndDir);
     virtual DataNode Handle(DataArray *, bool);

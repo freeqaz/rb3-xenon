@@ -146,7 +146,7 @@ public:
     };
 
     virtual ~RndMesh();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Mesh);
     OBJ_SET_TYPE(Mesh);
     virtual DataNode Handle(DataArray *, bool);

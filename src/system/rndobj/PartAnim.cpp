@@ -12,7 +12,7 @@ operator>>(BinStream &, std::vector<Key<Hmx::Color> > &);
 
 RndParticleSysAnim::RndParticleSysAnim() : mParticleSys(this), mKeysOwner(this, this) {}
 
-bool RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
+void RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mKeysOwner)) {
         // When our keys owner reference is being replaced:
         if (mKeysOwner == this) {
@@ -28,9 +28,9 @@ bool RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
                 mKeysOwner.SetObjConcrete(this);
             }
         }
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(from, to);
+    Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(RndParticleSysAnim)

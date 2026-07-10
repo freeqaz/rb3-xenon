@@ -12,7 +12,7 @@ class FlowAnimate : public FlowNode, public FlowLabelProvider {
 public:
     // Hmx::Object
     virtual ~FlowAnimate();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(FlowAnimate)
     OBJ_SET_TYPE(FlowAnimate)
     virtual DataNode Handle(DataArray *, bool);

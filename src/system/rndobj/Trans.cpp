@@ -47,12 +47,12 @@ RndTransformable::~RndTransformable() {
     }
 }
 
-bool RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
+void RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mParent)) {
         SetTransParent(dynamic_cast<RndTransformable *>(to), false);
-        return true;
+        return;
     } else
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(RndTransformable)

@@ -6,14 +6,14 @@ void TrueColor::ExposureRecipe::SetGlobalGain(float f) { mField_0x08 = f; }
 
 CharWeightable::CharWeightable() : mWeight(1), mWeightOwner(this, this) {}
 
-bool CharWeightable::Replace(ObjRef *ref, Hmx::Object *obj) {
+void CharWeightable::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mWeightOwner)) {
         if (!mWeightOwner.SetObj(obj)) {
             mWeightOwner = this;
         }
-        return true;
+        return;
     } else {
-        return Hmx::Object::Replace(ref, obj);
+        Hmx::Object::Replace(ref, obj);
     }
 }
 

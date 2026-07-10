@@ -1056,8 +1056,9 @@ void VocalPlayer::RemoteVocalState(int i1, int i2, int i3) {
     UnpackFloats(i3, 0, 1, fvec2);
     FOREACH (it, mSingers) {
         Singer *cur = *it;
-        float detune = fvec1[cur->GetSingerIndex()] * mMaxDetune;
-        cur->SetIsSinging(ivec[cur->GetSingerIndex()]);
+        int idx = cur->GetSingerIndex();
+        float detune = fvec1[idx] * mMaxDetune;
+        cur->SetIsSinging(ivec[idx]);
         cur->Detune(detune);
     }
     FOREACH (it, mVocalParts) {

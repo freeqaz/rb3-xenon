@@ -170,7 +170,7 @@ public:
         bool wait
     );
     virtual ~AnimTask();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(AnimTask);
     virtual void Poll(float);
 

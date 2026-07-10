@@ -46,13 +46,13 @@ const char *CharClip::BeatAlignString(int mask) {
 
 #pragma region Transitions
 
-bool CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
+void CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
     NodeVector *vector = reinterpret_cast<NodeVector *>(from);
     vector->clip = (CharClip *)to;
     if (!vector->clip) {
         RemoveNodes(vector);
     }
-    return true;
+    return;
 }
 
 void CharClip::Transitions::Clear() {

@@ -19,7 +19,7 @@ RndMatAnim::TexPtr::TexPtr(RndTex *tex) : ObjPtr<RndTex>(DeferOwner(), tex) {
 
 RndMatAnim::RndMatAnim() : mMat(this), mKeysOwner(this, this), mTexKeys(this) {}
 
-bool RndMatAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
+void RndMatAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         RndMatAnim *ma;
         if (mKeysOwner == this || !(ma = dynamic_cast<RndMatAnim *>(obj))) {
@@ -27,9 +27,9 @@ bool RndMatAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
         } else {
             mKeysOwner.SetObjConcrete(ma->mKeysOwner.Ptr());
         }
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(ref, obj);
+    Hmx::Object::Replace(ref, obj);
 }
 
 BEGIN_HANDLERS(RndMatAnim)

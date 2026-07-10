@@ -8,7 +8,7 @@
 class RndParticleSysAnim : public RndAnimatable {
 public:
     // Hmx::Object
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(ParticleSysAnim);
     OBJ_SET_TYPE(ParticleSysAnim);
     virtual DataNode Handle(DataArray *, bool);

@@ -65,7 +65,7 @@ BEGIN_COPYS(RndLight)
     }
 END_COPYS
 
-bool RndLight::Replace(ObjRef *ref, Hmx::Object *obj) {
+void RndLight::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mColorOwner)) {
         RndLight *lit = NULL;
         if (mColorOwner != this) {
@@ -76,9 +76,9 @@ bool RndLight::Replace(ObjRef *ref, Hmx::Object *obj) {
         } else {
             mColorOwner = this;
         }
-        return true;
+        return;
     }
-    return RndTransformable::Replace(ref, obj);
+    RndTransformable::Replace(ref, obj);
 }
 
 Transform RndLight::Projection() {

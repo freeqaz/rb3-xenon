@@ -138,10 +138,9 @@ void HamDriver::PollDeps(
     change.push_back(mBones);
 }
 
-bool HamDriver::Replace(ObjRef *ref, Hmx::Object *obj) {
+void HamDriver::Replace(ObjRef *ref, Hmx::Object *obj) {
     mLayers.Replace(ref, obj);
-    bool replaced = CharWeightable::Replace(ref, obj);
-    return replaced;
+    CharWeightable::Replace(ref, obj);
 }
 
 float HamDriver::Display(float normalizedY) {

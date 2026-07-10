@@ -60,7 +60,7 @@ public:
     };
 
     virtual ~RndTransformable();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Trans)
     OBJ_SET_TYPE(Trans)
     virtual DataNode Handle(DataArray *, bool);

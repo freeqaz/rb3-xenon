@@ -69,15 +69,15 @@ Character::~Character() {
     delete mTest;
 }
 
-bool Character::Replace(ObjRef *from, Hmx::Object *to) {
+void Character::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mSphereBase)) {
         Hmx::Object *obj = mSphereBase.SetObj(to);
         if (!obj) {
             mSphereBase = this;
         }
-        return true;
+        return;
     } else {
-        return RndDir::Replace(from, to);
+        RndDir::Replace(from, to);
     }
 }
 

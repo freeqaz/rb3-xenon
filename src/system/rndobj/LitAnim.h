@@ -9,7 +9,7 @@
 class RndLightAnim : public RndAnimatable {
 public:
     // Hmx::Object
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(LightAnim);
     OBJ_SET_TYPE(LightAnim);
     virtual DataNode Handle(DataArray *, bool);

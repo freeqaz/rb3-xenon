@@ -9,7 +9,7 @@
 class RndWind : public RndHighlightable {
 public:
     virtual ~RndWind();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Wind);
     OBJ_SET_TYPE(Wind);
     virtual DataNode Handle(DataArray *, bool);

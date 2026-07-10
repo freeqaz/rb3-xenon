@@ -10,7 +10,7 @@ RndCamAnim::RndCamAnim() : mCam(this, 0), mKeysOwner(this, this) {}
 
 RndCamAnim::~RndCamAnim() {}
 
-bool RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
+void RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mKeysOwner)) {
         if (mKeysOwner == this) {
             RndCamAnim *camTo = dynamic_cast<RndCamAnim *>(to);
@@ -20,9 +20,9 @@ bool RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
         } else {
             mKeysOwner = this;
         }
-        return true;
+        return;
     } else
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(RndCamAnim)

@@ -25,7 +25,7 @@ public:
 protected:
     CharWeightable();
 
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
 
     /** "Weight to blend in by" */
     float mWeight; // 0x8

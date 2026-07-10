@@ -14,7 +14,7 @@ class RndPropAnim : public RndAnimatable {
 public:
     // Hmx::Object
     virtual ~RndPropAnim();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(PropAnim);
     OBJ_SET_TYPE(PropAnim);
     virtual DataNode Handle(DataArray *, bool);

@@ -9,7 +9,7 @@
 class RndMeshAnim : public RndAnimatable {
 public:
     // Hmx::Object
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(MeshAnim);
     OBJ_SET_TYPE(MeshAnim);
     virtual DataNode Handle(DataArray *, bool);

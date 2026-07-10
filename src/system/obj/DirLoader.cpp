@@ -95,14 +95,12 @@ DirLoader::~DirLoader() {
     }
 }
 
-bool DirLoader::Replace(ObjRef *from, Hmx::Object *to) {
+void DirLoader::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mProxyDir)) {
         mProxyDir = nullptr;
         mProxyName = nullptr;
         delete this; // uhhh.
-        return true;
-    } else
-        return false;
+    }
 }
 
 const char *DirLoader::DebugText() { return MakeString("DL: %s", mFile.c_str()); }

@@ -25,7 +25,7 @@ RndGroup::RndGroup()
     : mObjects(this, kObjListOwnerControl), mDrawOnly(this), mEnv(this), mLod(this),
       mLodScreenSize(0), mDrawLod(false), mSortInWorld(false) {}
 
-bool RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
+void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (ref->Parent() == &mObjects) {
         if (!obj) {
             Hmx::Object *theObj = ref->GetObj();
@@ -38,9 +38,9 @@ bool RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
             RemoveObject(ref->GetObj());
             gInReplace = false;
         }
-        return true;
+        return;
     } else {
-        return RndTransformable::Replace(ref, obj);
+        RndTransformable::Replace(ref, obj);
     }
 }
 

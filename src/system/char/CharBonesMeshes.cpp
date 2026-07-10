@@ -14,7 +14,7 @@ CharBonesMeshes::~CharBonesMeshes() {
     delete mDummyMesh;
 }
 
-bool CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
+void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
     Hmx::Object *from = ref->GetObj();
     if (from != mDummyMesh) {
         for (ObjVector<ObjOwnerPtr<RndTransformable> >::iterator it = mMeshes.begin();
@@ -24,11 +24,11 @@ bool CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
                 *it = obj ? dynamic_cast<RndTransformable *>(obj) : 0;
                 if (!*it)
                     *it = mDummyMesh;
-                return true;
+                return;
             }
         }
     }
-    return Hmx::Object::Replace(ref, obj);
+    Hmx::Object::Replace(ref, obj);
 }
 
 void CharBonesMeshes::ReallocateInternal() {

@@ -324,11 +324,11 @@ void MsgSinks::RemovePropertySink(Hmx::Object *o, DataArray *a) {
     MILO_NOTIFY_ONCE("Property Sink not in the list! %s -> %s", PathName(mOwner), PathName(o));
 }
 
-bool MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
+void MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
     for (ObjList<Sink>::iterator it = mSinks.begin(); it != mSinks.end(); ++it) {
         if (RefIs(ref, it->obj)) {
             mSinks.erase(it);
-            return true;
+            return;
         }
     }
     for (ObjList<EventSink>::iterator evIt = mEventSinks.begin();
@@ -337,9 +337,9 @@ bool MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
              sinkIt != evIt->sinks.end(); ++sinkIt) {
             if (RefIs(ref, sinkIt->obj)) {
                 evIt->sinks.erase(sinkIt);
-                return true;
+                return;
             }
         }
     }
-    return false;
+    return;
 }

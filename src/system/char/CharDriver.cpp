@@ -317,15 +317,15 @@ float CharDriver::EvaluateFlags(int flags) {
     return result;
 }
 
-bool CharDriver::Replace(ObjRef *from, Hmx::Object *to) {
+void CharDriver::Replace(ObjRef *from, Hmx::Object *to) {
     bool deleted = false;
     if (mFirst != nullptr) {
         mFirst = mFirst->DeleteRef(from, deleted);
     }
     if (deleted != false) {
-        return true;
+        return;
     }
-    return CharWeightable::Replace(from, to);
+    CharWeightable::Replace(from, to);
 }
 
 BEGIN_SAVES(CharDriver)

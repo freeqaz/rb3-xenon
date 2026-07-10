@@ -153,7 +153,7 @@ public:
     };
     // Hmx::Object
     virtual ~RndParticleSys();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(ParticleSys);
     OBJ_SET_TYPE(ParticleSys);
     virtual DataNode Handle(DataArray *, bool);

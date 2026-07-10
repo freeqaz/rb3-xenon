@@ -734,7 +734,7 @@ Vector3 CharEyes::GenerateDartOffset() {
     return vout;
 }
 
-bool CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
+void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
     EyeDesc *eyeEnd = mEyes.end();
     EyeDesc *eyeBegin = mEyes.begin();
     int eyeCount = (int)((char *)eyeEnd - (char *)eyeBegin) / (int)sizeof(EyeDesc);
@@ -749,7 +749,7 @@ bool CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
                     if (desc != mEyes.end()) {
                         if (!desc->mEye.SetObj(obj))
                             mEyes.erase(mEyes.begin() + eyeIdx);
-                        return true;
+                        return;
                     }
                 }
             }
@@ -769,13 +769,13 @@ bool CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
                     if (state != mInterests.end()) {
                         if (!state->mInterest.SetObj(obj))
                             mInterests.erase(mInterests.begin() + stateIdx);
-                        return true;
+                        return;
                     }
                 }
             }
         }
     }
-    return CharWeightable::Replace(ref, obj);
+    CharWeightable::Replace(ref, obj);
 }
 
 void CharEyes::NextLook() {

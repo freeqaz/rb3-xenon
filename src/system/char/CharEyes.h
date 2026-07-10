@@ -60,7 +60,7 @@ public:
 
     // Hmx::Object
     virtual ~CharEyes();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(CharEyes);
     OBJ_SET_TYPE(CharEyes);
     virtual DataNode Handle(DataArray *, bool);

@@ -52,7 +52,7 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void DrawShowing();
     virtual void ListDrawChildren(std::list<RndDrawable *> &);
     virtual void CollideList(const Segment &, std::list<Collision> &);

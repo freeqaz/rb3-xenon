@@ -9,7 +9,7 @@
 
 RndLightAnim::RndLightAnim() : mLight(this), mKeysOwner(this, this) {}
 
-bool RndLightAnim::Replace(ObjRef *from, Hmx::Object *to) {
+void RndLightAnim::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mLight)) {
         if (!(mKeysOwner != this)) {
             RndLightAnim *litTo = dynamic_cast<RndLightAnim *>(to);
@@ -21,9 +21,9 @@ bool RndLightAnim::Replace(ObjRef *from, Hmx::Object *to) {
             mKeysOwner = this;
         }
     } else {
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
     }
-    return true;
+    return;
 }
 
 BEGIN_HANDLERS(RndLightAnim)

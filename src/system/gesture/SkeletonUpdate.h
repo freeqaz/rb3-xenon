@@ -65,7 +65,7 @@ public:
 private:
     SkeletonUpdate();
 
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
 
     void SetCameraInput(CameraInput *);
     void PostUpdate();

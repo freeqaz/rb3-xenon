@@ -15,7 +15,7 @@ public:
     // Hmx::Object
     virtual ~TexMovie();
     virtual void Copy(Hmx::Object const *, Hmx::Object::CopyType);
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(TexMovie);
     OBJ_SET_TYPE(TexMovie);
     OBJ_MEM_OVERLOAD(0x18);

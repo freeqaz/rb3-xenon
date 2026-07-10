@@ -31,7 +31,7 @@ RndPropAnim::RndPropAnim()
 
 RndPropAnim::~RndPropAnim() { DeleteAll(mPropKeys); }
 
-bool RndPropAnim::Replace(ObjRef *from, Hmx::Object *to) {
+void RndPropAnim::Replace(ObjRef *from, Hmx::Object *to) {
     for (auto it = mPropKeys.begin(); it != mPropKeys.end();) {
         PropKeys *cur = *it;
 #ifdef HX_NATIVE
@@ -45,11 +45,11 @@ bool RndPropAnim::Replace(ObjRef *from, Hmx::Object *to) {
             } else {
                 cur->SetTarget(to);
             }
-            return true;
+            return;
         } else
             ++it;
     }
-    return Hmx::Object::Replace(from, to);
+    Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(RndPropAnim)

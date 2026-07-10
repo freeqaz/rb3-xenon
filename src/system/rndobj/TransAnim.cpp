@@ -11,7 +11,7 @@ RndTransAnim::RndTransAnim()
       mRotSpline(false), mRotKeys(), mTransKeys(), mScaleKeys(), mKeysOwner(this, this),
       mRepeatTrans(false), mFollowPath(false) {}
 
-bool RndTransAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
+void RndTransAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         RndTransAnim *ta;
         if (mKeysOwner == this || !(ta = dynamic_cast<RndTransAnim *>(obj))) {
@@ -19,9 +19,9 @@ bool RndTransAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
         } else {
             mKeysOwner.SetObjConcrete(ta->mKeysOwner.Ptr());
         }
-        return true;
+        return;
     }
-    return Hmx::Object::Replace(ref, obj);
+    Hmx::Object::Replace(ref, obj);
 }
 
 BEGIN_HANDLERS(RndTransAnim)

@@ -23,7 +23,7 @@ public:
     );
     virtual ~PropertyTask();
     OBJ_CLASSNAME(PropertyTask)
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void Poll(float);
 
     POOL_OVERLOAD(PropertyTask, 0x17)
@@ -75,7 +75,7 @@ public:
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
     virtual void MoveIntoDir(ObjectDir *, ObjectDir *);
-    virtual bool Replace(ObjRef *from, Hmx::Object *to);
+    virtual void Replace(ObjRef *from, Hmx::Object *to);
 
     virtual bool IsRunning(void);
     virtual bool Activate();

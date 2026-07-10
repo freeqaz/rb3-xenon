@@ -39,7 +39,7 @@ public:
     ObjRefOwner() {}
     virtual ~ObjRefOwner() {}
     virtual Hmx::Object *RefOwner() const = 0;
-    virtual bool Replace(ObjRef *from, Hmx::Object *to) = 0;
+    virtual void Replace(ObjRef *from, Hmx::Object *to) = 0;
 #ifndef HX_NATIVE
     // Vtable slot +c. Present on every ring-ref so ring-walks (HasDirPtrs) can
     // dispatch uniformly. Only ObjDirPtr overrides to true.
@@ -381,11 +381,10 @@ public:
     // docs/decomp/patterns/fixable-declarations.md).
     // Vtable slot +8: Replace(from, to). Retail fn_824D76B0.
     // from==nullptr is the ReplaceList/MergeDirs "replace unconditionally" path.
-    virtual bool Replace(ObjRef *from, Hmx::Object *to) {
+    virtual void Replace(ObjRef *from, Hmx::Object *to) {
         Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
         if (fromObj == nullptr || (Hmx::Object *)mObject == fromObj)
             SetObj(to);
-        return false;
     }
     Hmx::Object *Owner() const { return mOwner; }
 
@@ -434,7 +433,7 @@ public:
     }
     virtual Hmx::Object *RefOwner() const { return OwnerRef()->RefOwner(); }
     // Vtable slot +8: empty — the ring dispatches Replace on mOwner, not this.
-    virtual bool Replace(ObjRef *, Hmx::Object *) { return false; }
+    virtual void Replace(ObjRef *, Hmx::Object *) {}
     // Ring-ref is mOwner (not this), so manage the ring directly here.
     void SetOwnerObj(T *obj);
     void operator=(T *obj) { SetOwnerObj(obj); }
@@ -518,10 +517,9 @@ private:
         }
 #else
         // X360: vtable slot +8 — dispatch to the owning vec's ReplaceNode.
-        virtual bool Replace(ObjRef *from, Hmx::Object *obj) {
+        virtual void Replace(ObjRef *from, Hmx::Object *obj) {
             ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
             vec->ReplaceNode(this, obj);
-            return true;
         }
 #endif
 
@@ -541,9 +539,8 @@ protected:
         MILO_FAIL("should never be called");
         return nullptr;
     }
-    virtual bool Replace(ObjRef *, Hmx::Object *) {
+    virtual void Replace(ObjRef *, Hmx::Object *) {
         MILO_FAIL("should never be called");
-        return false;
     }
 
     void ReplaceNode(Node *, Hmx::Object *);
@@ -761,7 +758,7 @@ private:
     ObjListMode mListMode; // 0x10
 
     virtual Hmx::Object *RefOwner() const;
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     void ReplaceNode(Node *, Hmx::Object *);
 
 public:
@@ -1393,7 +1390,7 @@ public:
     virtual ~TypeProps() { ClearAll(); }
 #endif
     virtual Hmx::Object *RefOwner() const { return mOwner; }
-    virtual bool Replace(ObjRef *from, Hmx::Object *to);
+    virtual void Replace(ObjRef *from, Hmx::Object *to);
 
     void SetOwner(Hmx::Object *o) { mOwner = o; }
 
@@ -1573,7 +1570,7 @@ namespace Hmx {
         static Object *GetDeleting() { return sDeleting; }
 #endif
         virtual Object *RefOwner() const { return const_cast<Object *>(this); }
-        virtual bool Replace(ObjRef *from, Hmx::Object *to);
+        virtual void Replace(ObjRef *from, Hmx::Object *to);
         /** This Object's class name. */
         OBJ_CLASSNAME(Object);
         /** Set this Object's mTypeDef array based this Object's types entry in

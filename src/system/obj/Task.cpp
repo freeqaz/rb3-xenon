@@ -50,16 +50,16 @@ MessageTask::~MessageTask() {
     }
 }
 
-bool MessageTask::Replace(ObjRef *from, Hmx::Object *to) {
+void MessageTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mObj)) {
         if (!to) {
             delete this;
         } else {
             mObj = to;
         }
-        return true;
+        return;
     } else
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
 }
 
 void MessageTask::Poll(float) {
@@ -107,17 +107,17 @@ ScriptTask::~ScriptTask() {
     mScript->Release();
 }
 
-bool ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
+void ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mThis)) {
         mThis = to;
         if (mThis) {
-            return true;
+            return;
         }
     } else if (to || !ListFind(mObjects, reinterpret_cast<Hmx::Object *>(from))) {
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
     }
     delete this;
-    return true;
+    return;
 }
 
 void ScriptTask::Poll(float f1) {
@@ -192,13 +192,13 @@ ThreadTask::ThreadTask(DataArray *script, DataArray *updateVarsObjs)
     : ScriptTask(script, false, updateVarsObjs), mWait(false), mCurrent(1), mTime(0),
       mExecuting(false), mTimeout(-1) {}
 
-bool ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
+void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (mExecuting) {
         Hmx::Object::Replace(from, to);
         mObjects.remove_if(ObjMatchPr(reinterpret_cast<Hmx::Object *>(from)));
-        return true;
+        return;
     }
-    return ScriptTask::Replace(from, to);
+    ScriptTask::Replace(from, to);
 }
 
 BEGIN_HANDLERS(ThreadTask)

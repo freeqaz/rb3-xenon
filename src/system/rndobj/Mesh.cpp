@@ -917,7 +917,7 @@ void RndMesh::ClearCompressedVerts() {
     mNumCompressedVerts = 0;
 }
 
-bool RndMesh::Replace(ObjRef *ref, Hmx::Object *obj) {
+void RndMesh::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mGeomOwner)) {
         RndMesh *meshObj;
         if (mGeomOwner == this
@@ -926,9 +926,9 @@ bool RndMesh::Replace(ObjRef *ref, Hmx::Object *obj) {
         } else {
             mGeomOwner = meshObj->mGeomOwner;
         }
-        return true;
+        return;
     }
-    return RndTransformable::Replace(ref, obj);
+    RndTransformable::Replace(ref, obj);
 }
 
 void RndMesh::SetMat(RndMat *mat) { mMat = mat; }

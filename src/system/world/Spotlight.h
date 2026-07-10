@@ -81,7 +81,7 @@ public:
     };
     // Hmx::Object
     virtual ~Spotlight();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Spotlight);
     OBJ_SET_TYPE(Spotlight);
     virtual DataNode Handle(DataArray *, bool);

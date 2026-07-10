@@ -76,7 +76,7 @@ public:
         int mRate; // 0x18
     };
 
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(EventTrigger);
     OBJ_SET_TYPE(EventTrigger);
     virtual DataNode Handle(DataArray *, bool);

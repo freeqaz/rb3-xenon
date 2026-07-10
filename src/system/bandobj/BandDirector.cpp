@@ -364,10 +364,10 @@ END_COPYS
 // retail 0x8227C290: two superclass Replace calls, then returns the
 // dynamic_cast<BandDirector*> of the first arg (RTDynamicCast srctype is
 // Hmx::Object in retail).
-bool BandDirector::Replace(ObjRef *from, Hmx::Object *to) {
+void BandDirector::Replace(ObjRef *from, Hmx::Object *to) {
     Hmx::Object::Replace(from, to);
     RndDrawable::Replace(from, to);
-    return dynamic_cast<BandDirector *>((Hmx::Object *)(void *)from);
+    dynamic_cast<BandDirector *>((Hmx::Object *)(void *)from);
 }
 
 WorldDir *BandDirector::GetWorld() {

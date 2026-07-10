@@ -16,7 +16,7 @@ class RndEnviron;
  */
 class RndGroup : public RndAnimatable, public RndDrawable, public RndTransformable {
 public:
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Group)
     OBJ_SET_TYPE(Group)
     virtual DataNode Handle(DataArray *, bool);

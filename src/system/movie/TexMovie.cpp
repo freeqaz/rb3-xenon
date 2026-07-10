@@ -39,16 +39,13 @@ BEGIN_COPYS(TexMovie)
     END_COPYING_MEMBERS
 END_COPYS
 
-bool TexMovie::Replace(ObjRef *a, Hmx::Object *b) {
-    bool check;
+void TexMovie::Replace(ObjRef *a, Hmx::Object *b) {
     if (RefIs(a, mTex)) {
         mMovie.End();
         mTex.SetObj(b);
-        check = true;
     } else {
-        check = Hmx::Object::Replace(a, b);
+        Hmx::Object::Replace(a, b);
     }
-    return check;
 }
 
 BEGIN_PROPSYNCS(TexMovie)

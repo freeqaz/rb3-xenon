@@ -18,7 +18,7 @@ public:
     static void Terminate();
 
 protected:
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void ReallocateInternal();
 
     /** "Transes we will change" */

@@ -31,7 +31,7 @@ public:
     );
     virtual ~DirLoader();
     virtual Hmx::Object *RefOwner() const { return nullptr; }
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual const char *DebugText();
     virtual bool IsLoaded() const;
     virtual const char *StateName() const;

@@ -57,7 +57,7 @@ public:
 
     // Hmx::Object
     virtual ~HamDriver();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(HamDriver);
     OBJ_SET_TYPE(HamDriver);
     virtual DataNode Handle(DataArray *, bool);

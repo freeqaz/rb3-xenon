@@ -68,16 +68,16 @@ DefaultDetectionVolume::DefaultDetectionVolume(DetectionVolumeListener *dvl)
 DefaultPhysicsManager::DefaultPhysicsManager(RndDir *d)
     : PhysicsManager(d), mCollidables(this, kObjListOwnerControl) {}
 
-bool DefaultPhysicsManager::Replace(ObjRef *from, Hmx::Object *to) {
+void DefaultPhysicsManager::Replace(ObjRef *from, Hmx::Object *to) {
     if (from->Parent() != &mCollidables) {
         if (to == nullptr) {
             Hmx::Object *obj = from->GetObj();
             mCollidables.remove(obj);
             RemoveCollidable(obj);
         }
-        return true;
+        return;
     } else {
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
     }
 }
 

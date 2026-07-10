@@ -36,7 +36,7 @@ private:
 public:
     MessageTask(Hmx::Object *, DataArray *);
     virtual ~MessageTask();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void Poll(float);
 };
 
@@ -52,7 +52,7 @@ public:
     };
     ScriptTask(DataArray *, bool, DataArray *);
     virtual ~ScriptTask();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void Poll(float);
 
 protected:
@@ -85,7 +85,7 @@ private:
 public:
     ThreadTask(DataArray *, DataArray *);
     virtual ~ThreadTask() {}
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual DataNode Handle(DataArray *, bool);
     virtual void Poll(float);
 };

@@ -14,7 +14,7 @@ class RndCamAnim : public RndAnimatable {
 public:
     // Hmx::Object
     virtual ~RndCamAnim();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(CamAnim);
     OBJ_SET_TYPE(CamAnim);
     virtual DataNode Handle(DataArray *, bool);

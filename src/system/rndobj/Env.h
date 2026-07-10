@@ -34,7 +34,7 @@ class RndEnviron : public Hmx::Object {
     friend class SpotlightDrawer;
 public:
     virtual ~RndEnviron();
-    virtual bool Replace(ObjRef *, Hmx::Object *);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Environ);
     OBJ_SET_TYPE(Environ);
     virtual DataNode Handle(DataArray *, bool);

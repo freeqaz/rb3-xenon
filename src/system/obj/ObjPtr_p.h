@@ -962,23 +962,37 @@ Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
 }
 
 template <class T1, class T2>
-bool ObjPtrList<T1, T2>::Replace(ObjRef *from, Hmx::Object *obj) {
-    // List-as-ref: the LIST is the polymorphic ring-ref, so ~Object dispatches
-    // this with `from` reinterpreted as the dying Hmx::Object* (same convention
-    // as ObjPtr::Replace; from==nullptr means "replace every entry"). Match the
-    // node(s) whose held mObject == the dying object. Mirrors rb3-Wii
-    // ObjPtrList::Replace, which loops `if (it->obj == from)`.
-    Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
-    for (Node *node = mNodes; node != nullptr;) {
-        // ReplaceNode may erase `node` (NoNull + null obj), freeing it; capture
-        // the successor first so iteration stays valid.
-        Node *next = node->next;
-        if (fromObj == nullptr || (Hmx::Object *)node->mObject == fromObj) {
-            ReplaceNode(node, obj);
+void ObjPtrList<T1, T2>::Replace(ObjRef *from, Hmx::Object *obj) {
+    // Retail shape (fn_82272490 etc., 11 RTTI-verified instantiations in
+    // BandCharacter): mirrors rb3-Wii ObjPtrList::Replace exactly —
+    //  1. kObjListOwnerControl delegates via the owner's VTABLE (slot 8,
+    //     `lwz r11,0xc(this); lwz r11,0(r11); lwz r11,8(r11); bctrl`);
+    //  2. otherwise walk the ring inline (no ReplaceNode call): match the node
+    //     whose held object == `from` (reinterpreted dying Hmx::Object*, same
+    //     convention as ObjPtr::Replace), then either erase (NoNull + null obj)
+    //     or Release/dynamic_cast/AddRef in place.
+    if (mListMode == kObjListOwnerControl) {
+        mOwner->Replace(from, obj);
+    } else {
+        Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
+        for (Node *node = mNodes; node != nullptr;) {
+            if ((Hmx::Object *)node->mObject == fromObj) {
+                if (mListMode == kObjListNoNull && !obj) {
+                    // Erase: unlink and free the node, continue from successor.
+                    Node *next = Unlink(node);
+                    delete node;
+                    node = next;
+                    continue;
+                } else {
+                    fromObj->Release(this);
+                    node->mObject = dynamic_cast<T1 *>(obj);
+                    if (obj)
+                        obj->AddRef(this);
+                }
+            }
+            node = node->next;
         }
-        node = next;
     }
-    return false;
 }
 
 // The thin X360 ObjPtrList::Node is non-polymorphic and declares no RefOwner();
@@ -1097,14 +1111,13 @@ Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
 }
 
 template <class T1, class T2>
-bool ObjPtrList<T1, T2>::Replace(ObjRef *ref, Hmx::Object *obj) {
+void ObjPtrList<T1, T2>::Replace(ObjRef *ref, Hmx::Object *obj) {
     for (iterator it = begin(); it != end(); ++it) {
         if (it.mNode == ref) {
             ReplaceNode(it.mNode, obj);
-            return true;
+            return;
         }
     }
-    return false;
 }
 
 template <class T1, class T2>

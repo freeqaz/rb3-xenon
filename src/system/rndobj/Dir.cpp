@@ -19,8 +19,8 @@
 
 RndDir::RndDir() : mEnv(this) {}
 
-bool RndDir::Replace(ObjRef *ref, Hmx::Object *obj) {
-    return RndTransformable::Replace(ref, obj);
+void RndDir::Replace(ObjRef *ref, Hmx::Object *obj) {
+    RndTransformable::Replace(ref, obj);
 }
 
 BEGIN_HANDLERS(RndDir)

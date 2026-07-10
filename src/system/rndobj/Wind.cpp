@@ -106,7 +106,7 @@ RndWind::RndWind()
 
 RndWind::~RndWind() {}
 
-bool RndWind::Replace(ObjRef *from, Hmx::Object *to) {
+void RndWind::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mWindOwner)) {
         if (mWindOwner != this) {
             RndWind *wind = dynamic_cast<RndWind *>(to);
@@ -116,9 +116,9 @@ bool RndWind::Replace(ObjRef *from, Hmx::Object *to) {
         } else {
             mWindOwner = this;
         }
-        return true;
+        return;
     } else {
-        return Hmx::Object::Replace(from, to);
+        Hmx::Object::Replace(from, to);
     }
 }
 
