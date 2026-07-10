@@ -15,11 +15,17 @@
 #include "macros.h"
 
 Symbol ControllerTypeToTrackWatcherType(Symbol cntType) {
+    // Retail constructs these as function-local statics (guard-bit + inline
+    // Symbol ctor) rather than the centralized Symbols.h globals; "joypad" is
+    // initialized but unused (bit 2 of the guard word).
+    static Symbol guitar_sym("guitar");
+    static Symbol joypad_sym("joypad");
+    static Symbol joypad_guitar_sym("joypad_guitar");
     DataArray *cfg =
         SystemConfig("beatmatcher", "controllers", "beatmatch_controller_mapping");
     Symbol watchType = cfg->FindSym(cntType);
-    if (watchType == joypad_guitar)
-        return guitar;
+    if (watchType == joypad_guitar_sym)
+        return guitar_sym;
     else
         return watchType;
 }
@@ -33,18 +39,23 @@ TrackWatcherImpl *NewTrackWatcherImpl(
     TrackWatcherParent *parent,
     DataArray *cfg
 ) {
+    // Same retail local-static-Symbol pattern as above (guard bits 1,2,4,8).
+    static Symbol guitar_sym("guitar");
+    static Symbol joypad_sym("joypad");
+    static Symbol real_guitar_sym("real_guitar");
+    static Symbol keys_sym("keys");
     Symbol watchType = ControllerTypeToTrackWatcherType(cntType);
     TrackType trackType = data->TrackTypeAt(track);
     GameGemList *gemList = data->GetGemList(track);
-    if (watchType == guitar) {
+    if (watchType == guitar_sym) {
         return new GuitarTrackWatcherImpl(track, u, slot, data, gemList, parent, cfg);
-    } else if (watchType == joypad) {
+    } else if (watchType == joypad_sym) {
         if (data->TrackHasIndependentSlots(track)) {
             return new DrumFillTrackWatcherImpl(
                 track, u, slot, data, gemList, parent, cfg
             );
         } else {
-            if (trackType - 4U <= 1) {
+            if (trackType == kTrackKeys || trackType == kTrackRealKeys) {
                 return new KeyboardTrackWatcherImpl(
                     track, u, slot, data, gemList, parent, cfg
                 );
@@ -54,15 +65,15 @@ TrackWatcherImpl *NewTrackWatcherImpl(
                 );
             }
         }
-    } else if (watchType == real_guitar) {
-        if (trackType - 1U <= 1) {
+    } else if (watchType == real_guitar_sym) {
+        if (trackType == kTrackGuitar || trackType == kTrackBass) {
             return new GuitarTrackWatcherImpl(track, u, slot, data, gemList, parent, cfg);
         } else {
             return new RealGuitarTrackWatcherImpl(
                 track, u, slot, data, gemList, parent, cfg
             );
         }
-    } else if (watchType == keys) {
+    } else if (watchType == keys_sym) {
         return new KeyboardTrackWatcherImpl(track, u, slot, data, gemList, parent, cfg);
     } else {
         MILO_FAIL("Bad TrackWatcher type: %s\n", watchType);
