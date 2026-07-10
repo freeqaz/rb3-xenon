@@ -136,20 +136,16 @@ template <class T1, class T2>
 bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
     char buf[128];
     bs.ReadString(buf, 128);
+#ifdef HX_NATIVE
     Hmx::Object *refOwner = RefOwner();
     if (!dir && refOwner) {
         dir = refOwner->Dir();
     }
-#ifdef HX_NATIVE
     // On native, allow dir-only lookup (no refOwner needed) so ObjPtrs
     // with null owners (e.g. Font3d CharInfo::mMesh) can resolve when
     // the caller passes an explicit dir.
     if (dir) {
-#else
-    if (refOwner && dir) {
-#endif
         SetObj(dir->FindObject(buf, false));
-#ifdef HX_NATIVE
         // Native fallback: walk up the parent dir chain when not found locally.
         // On Xbox, FileMerger flattens all objects into the same scope.
         // On native, the merge pipeline is incomplete so objects may live in
@@ -171,7 +167,6 @@ bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
                 SetObj(ObjectDir::Main()->FindObject(buf, false));
             }
         }
-#endif
         if (!mObject && buf[0] != '\0') {
             if (print) {
                 MILO_NOTIFY(
@@ -181,10 +176,40 @@ bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
             return false;
         }
     } else {
+#else
+    // Retail X360: reads mOwner directly rather than through the virtual
+    // RefOwner() accessor and does not cache it in a local -- Load() is
+    // itself a member of ObjRefConcrete (RefOwner() is just `return
+    // mOwner;`), and the retail codegen re-materializes mOwner@0x4 at each
+    // use point instead of keeping a cached value live across the whole
+    // function (confirmed via objdiff: no vtable call at entry, and three
+    // separate field reads of mOwner rather than one cached register).
+    if (!dir && mOwner) {
+        dir = mOwner->Dir();
+    }
+    if (mOwner && dir) {
+        // Retail X360: SetObj()'s dyncast+SetObjConcrete body is inlined
+        // directly at this call site rather than calling the out-of-line
+        // SetObj() (confirmed via objdiff: raw __RTDynamicCast + a direct
+        // SetObjConcrete call, no call to the SetObj symbol).
+        SetObjConcrete(dynamic_cast<T1 *>(dir->FindObject(buf, false)));
+        if (!mObject && buf[0] != '\0') {
+            if (print) {
+                // Retail X360: PathName(dir) is evaluated before
+                // PathName(mOwner) (confirmed via objdiff instruction
+                // order) -- unspecified argument evaluation order, pin it
+                // explicitly to match.
+                const char *dirPath = PathName(dir);
+                MILO_NOTIFY("%s couldn't find %s in %s", PathName(mOwner), buf, dirPath);
+            }
+            return false;
+        }
+    } else {
+#endif
         if (mObject) {
             mObject->Release(this);
+            mObject = nullptr;
         }
-        mObject = nullptr;
         if (buf[0] != '\0') {
             if (print)
                 MILO_NOTIFY("No dir to find %s", buf);
