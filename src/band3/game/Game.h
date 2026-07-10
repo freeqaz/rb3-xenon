@@ -212,16 +212,23 @@ public:
     SongInfo *mSongInfo; // 0x58
     BeatMaster *mMaster; // 0x5c
     std::vector<Player *> mAllActivePlayers; // 0x60
-    bool mIsPaused; // 0x68
-    bool mGameWantsPause; // 0x69
-    bool mOvershellWantsPause; // 0x6a
-    bool unk6b;
-    bool unk6c; // 0x6c - screen saver?
-    bool mPauseTime; // 0x6d
-    bool mRealtime; // 0x6e
-    bool unk6f;
-    float mTimeOffset; // 0x70
-    Timer mTime; // 0x78
+    // Retail places mRealtime at this+0x78 and unk6f at this+0x79 (proven by
+    // Game::HandleAudioLoad reading lbz 0x78 / stb 0x79). With mAllActivePlayers
+    // ending at 0x74, mRealtime must be the 5th bool of this run (index 4), so
+    // retail has only ONE unknown bool (mPauseTime) between mOvershellWantsPause
+    // and mRealtime — unk6b/unk6c (DC3/Wii-era extras) sit AFTER unk6f, absorbed
+    // by the alignment pad before mTimeOffset@0x7c. Reordering (not deleting)
+    // keeps their ctor init + accessors valid while fixing the +2 bool shift.
+    bool mIsPaused; // 0x74
+    bool mGameWantsPause; // 0x75
+    bool mOvershellWantsPause; // 0x76
+    bool mPauseTime; // 0x77
+    bool mRealtime; // 0x78
+    bool unk6f; // 0x79
+    bool unk6b; // 0x7a (pad region)
+    bool unk6c; // 0x7b (pad region) - screen saver?
+    float mTimeOffset; // 0x7c
+    Timer mTime; // 0x80
     bool mHasIntro; // 0xa8
     float mLastPollMs; // 0xac
     // Retail packs mMuckWithPitch with the mNeverAllowInput/unkb9 bool group

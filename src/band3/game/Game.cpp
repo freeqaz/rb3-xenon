@@ -772,7 +772,8 @@ void Game::SetGameOver(bool over) {
             unk124 = mLastPollMs;
         }
         AutoTimer::SetCollectStats(false, TheRnd.VerboseTimers());
-        TheNetSession->EndGame(GetResult(over), false, unk124);
+        EndGameResult res = GetResult(over);
+        TheNetSession->EndGame(res, false, unk124);
     }
 }
 
