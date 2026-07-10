@@ -13863,5 +13863,20 @@
  "0x824E3380": "??0ExpInterpolator@@QAA@MMMMM@Z",
  "0x824E33E0": "??0InvExpInterpolator@@QAA@MMMMM@Z",
  "0x824E3440": "??0ATanInterpolator@@QAA@MMMMM@Z",
- "0x824E34C0": "??_GATanInterpolator@@UAAPAXI@Z"
+ "0x824E34C0": "??_GATanInterpolator@@UAAPAXI@Z",
+ "0X826359A0": "??_GBandMatchmaker@@UAAPAXI@Z",
+ "0X82636438": "?Init@QuickFinding@@QAAXW4MatchmakerFindType@@@Z",
+ "0X826364A0": "?SetQuickFindingMode@Matchmaker@@QAAXW4MatchmakerFindType@@@Z",
+ "0X82636740": "?Poll@BandMatchmaker@@UAAXXZ",
+ "0X826368A0": "?FindPlayersImpl@BandMatchmaker@@UAAXXZ",
+ "0X82637058": "?GetNextQueryType@QuickFinding@@UAAHXZ",
+ "0X82636E58": "?Handle@Matchmaker@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0X82636E68": "?Handle@BandMatchmaker@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0X82637008": "??_GQuickFinding@@UAAPAXI@Z",
+ "0X826359F0": "?AddCustomSettings@BandMatchmaker@@QAAXPAVMatchmakingSettings@@W4CustomSettingsType@1@@Z",
+ "0X82635D30": "?HasCompatibleInstruments@BandMatchmaker@@QAA_NPAVNetSearchResult@@@Z",
+ "0X82635ED8": "?OnSearchFinished@BandMatchmaker@@QAA?AVDataNode@@XZ",
+ "0X82636188": "?OnMsg@BandMatchmaker@@QAA?AVDataNode@@ABVJoinResultMsg@@@Z",
+ "0X82636518": "?FindPlayers@Matchmaker@@QAAXW4MatchmakerFindType@@@Z",
+ "0X826370C8": "??0Matchmaker@@QAA@XZ"
 }
