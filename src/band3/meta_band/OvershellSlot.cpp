@@ -59,12 +59,12 @@ OvershellSlot::OvershellSlot(
     int i, OvershellPanel *panel, OvershellDir *dir, BandUserMgr *umgr, SessionMgr *smgr
 )
     : mStateMgr(new OvershellSlotStateMgr()), mState(0),
-      mOverrideFlowReturnState(kState_JoinedDefault), unk28(kState_WiiProfileOptions),
+      mOverrideFlowReturnState(kState_JoinedDefault),
       mOvershell(panel), mBandUserMgr(umgr), mSessionMgr(smgr), mSlotNum(i),
       mOvershellDir(dir), mAutohideEnabled(0), mIsLeavingOptions(0),
       mCurrentView(gNullStr), mBlockAllInput(0), mInGame(0), mSongOptionsRequired(0),
       unk80(0), unk81(0), mCharForEdit(0), mCymbalConfiguration(0),
-      mSlotOverrideFlow(kOverrideFlow_None) {
+      mSlotOverrideFlow(kOverrideFlow_None), unk28(kState_WiiProfileOptions) {
     mMessageQueue = new PassiveMessageQueue(this);
     mKickUsersProvider = new SessionUsersProvider(false, true, false);
     mMuteUsersProvider = new SessionUsersProvider(true, true, false);
@@ -93,7 +93,7 @@ OvershellSlot::OvershellSlot(
     setupProviders[4] = mCymbalProvider;
     setupProviders[5] = TheModifierMgr;
     mOvershellDir->HandleType(setupProviders);
-    mUserNameLabel = mOvershellDir->Find<BandLabel>("user_name.lbl", true);
+    BandLabel *mUserNameLabel = mOvershellDir->Find<BandLabel>("user_name.lbl", true);
     MILO_ASSERT(mUserNameLabel, 0xF1);
 #ifndef HX_NATIVE
     // TheServer (network/ online server) is a zeroed DATA stub on native — its

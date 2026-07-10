@@ -186,12 +186,15 @@ public:
     bool AutoHideEnabled() const { return mAutohideEnabled; }
     PassiveMessageQueue *GetMessageQueue() const { return mMessageQueue; }
 
-    OvershellSlotStateMgr *mStateMgr; // 0x1c
-    OvershellSlotState *mState; // 0x20
-    OvershellSlotStateID mOverrideFlowReturnState; // 0x24
-    OvershellSlotStateID unk28; // 0x28
-    BandLabel *mUserNameLabel; // 0x2c
-    OvershellPanel *mOvershell; // 0x30
+    // Retail X360 layout: Hmx::Object base is 0x28. mUserNameLabel is a ctor
+    // local in retail (never read outside the ctor), and unk28 is declared at
+    // the class tail (both confirmed via objdiff member-offset evidence: retail
+    // has mOvershell at 0x34, i.e. exactly ONE enum slot between mState and
+    // mOvershell). The // offsets below are the retail X360 offsets.
+    OvershellSlotStateMgr *mStateMgr; // 0x28
+    OvershellSlotState *mState; // 0x2c
+    OvershellSlotStateID mOverrideFlowReturnState; // 0x30
+    OvershellPanel *mOvershell; // 0x34
     BandUserMgr *mBandUserMgr; // 0x34
     SessionMgr *mSessionMgr; // 0x38
     int mSlotNum; // 0x3c
@@ -218,4 +221,5 @@ public:
     OvershellProfileProvider *mSwappableProfilesProvider; // 0xa0
     OvershellPartSelectProvider *mPartSelectProvider; // 0xa4
     CymbalSelectionProvider *mCymbalProvider; // 0xa8
+    OvershellSlotStateID unk28; // tail (retail declares this after the providers)
 };
