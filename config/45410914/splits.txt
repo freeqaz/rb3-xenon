@@ -193,10 +193,8 @@ BandDirector.cpp:
 	.text       start:0x82285300 end:0x8228AFB8
 
 BandWardrobe.cpp:
-	.pdata      start:0x821F5578 end:0x821F5620
-	.pdata      start:0x821F5988 end:0x821F5F80
-	.text       start:0x823188F8 end:0x8231980C
-	.text       start:0x8231C988 end:0x82322DA0
+	.pdata      start:0x821F5578 end:0x821F5D58
+	.text       start:0x823188F8 end:0x82320E00
 
 TrackPanelDir.cpp:
 	.pdata      start:0x821F2F30 end:0x821F3130
@@ -267,8 +265,8 @@ GameMode.cpp:
 	.text       start:0x82671A60 end:0x826725F0
 
 BandCharDesc.cpp:
-	.pdata      start:0x821F5F80 end:0x821F6050
-	.text       start:0x82322DA0 end:0x82324884
+	.pdata      start:0x821F5D58 end:0x821F6050
+	.text       start:0x82320E00 end:0x82324884
 	.text       start:0x82447130 end:0x8244714C
 
 BandList.cpp:
@@ -872,10 +870,6 @@ StreamNull.cpp:
 	.pdata      start:0x82230850 end:0x822308B0
 	.text       start:0x826FBD28 end:0x826FC140
 
-RhythmBattlePlayer.cpp:
-	.pdata      start:0x821F5620 end:0x821F5638
-	.text       start:0x82319810 end:0x82319A04
-
 CharEyeDartRuleset.cpp:
 	.pdata      start:0x821FDA40 end:0x821FDAD8
 	.pdata      start:0x821FDB50 end:0x821FDC38
@@ -1339,10 +1333,6 @@ FlowTrigger.cpp:
 CharIKHand.cpp:
 	.pdata      start:0x821F5570 end:0x821F5578
 	.text       start:0x823188A8 end:0x823188EC
-
-HollaBackMinigame.cpp:
-	.pdata      start:0x821F5638 end:0x821F5640
-	.text       start:0x82319A08 end:0x82319AAC
 
 PropAnim.cpp:
 	.pdata      start:0x82203E50 end:0x82204170
@@ -2620,10 +2610,6 @@ VirtualKeyboard_Xbox.cpp:
 	.pdata      start:0x82247BA8 end:0x82247BB0
 	.text       start:0x82A3F620 end:0x82A3F6A0
 
-MidiVarLen.cpp:
-	.pdata      start:0x821F5680 end:0x821F5688
-	.text       start:0x82319F60 end:0x82319FF0
-
 FlowWhile.cpp:
 	.pdata      start:0x821F6B70 end:0x821F6B78
 	.text       start:0x8232FC88 end:0x8232FD00
@@ -2665,10 +2651,6 @@ Memcard.cpp:
 EQEffect.cpp:
 	.pdata      start:0x822558A8 end:0x822558C8
 	.text       start:0x82B828E8 end:0x82B833B0
-
-MoveGraph.cpp:
-	.pdata      start:0x821F5840 end:0x821F5848
-	.text       start:0x8231B9A8 end:0x8231BA48
 
 BandIKEffector.cpp:
 	.pdata      start:0x821EEC60 end:0x821EEF10
