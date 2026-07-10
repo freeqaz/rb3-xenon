@@ -332,18 +332,7 @@ DataNode EditSetlistPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
         }
         break;
     case 5: {
-        bool noMatch = true;
-        bool failed = true;
-        if (msg.Success() && msg.Arg1() == 12) {
-            noMatch = false;
-        }
-        if (!noMatch) {
-            DataNode arg2 = msg.Arg2();
-            if (arg2.Int(NULL) > 0) {
-                failed = false;
-            }
-        }
-        if (failed) {
+        if (!msg.Success() || msg.Arg1() != 12 || msg.Arg2().Int(NULL) <= 0) {
             FailWithReason((FailureReason)7);
         } else {
             unk84 = msg.Arg2().Int(NULL);
@@ -568,7 +557,6 @@ BEGIN_HANDLERS(EditSetlistPanel)
     HANDLE_ACTION(set_expiration_val_cheat, unk54 = _msg->Int(2))
     HANDLE_ACTION(set_expiration_units_cheat, unk58 = SymToTimeUnits(_msg->Sym(2)))
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
-    HANDLE_MESSAGE(DWCProfanityResultMsg)
     HANDLE_MESSAGE(UITransitionCompleteMsg)
     HANDLE_SUPERCLASS(UIPanel)
     HANDLE_CHECK(0x37D)
