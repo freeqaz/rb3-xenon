@@ -2209,8 +2209,8 @@ Mic.cpp:
 	.text       start:0x82B2F568 end:0x82B32C20
 
 FxSendWah.cpp:
-	.pdata      start:0x82252380 end:0x82252388
-	.text       start:0x82B35C90 end:0x82B35D84
+	.pdata      start:0x82252380 end:0x822523B0
+	.text       start:0x82B35C90 end:0x82B35F20
 
 Lit.cpp:
 	.pdata      start:0x822524A8 end:0x822524B0
@@ -2459,8 +2459,8 @@ system/synth_xbox/FxSendPitchShift.cpp:
 	.text       start:0x82B3B460 end:0x82B3B4B8
 
 system/synth_xbox/FxSendCompress.cpp:
-	.pdata      start:0x82252160 end:0x82252168
-	.text       start:0x82B34128 end:0x82B341BC
+	.pdata      start:0x82251AA8 end:0x82251B48
+	.text       start:0x82B2D1C8 end:0x82B2DBC0
 
 MultiMeshProxy.cpp:
 	.pdata      start:0x82208488 end:0x822084B8

@@ -4,13 +4,15 @@
 class DistortionEffect {
 public:
     struct Params {
-        u32 unk0;
-        float unk4;
+        Params() : unk0(false) {}
+        bool unk0; // 0x0 (bypass)
+        float unk4; // 0x4 (drive)
     };
 
     DistortionEffect(IXAudioBatchAllocator *);
     void Process(float *, int, int);
     void SetParameters(DistortionEffect::Params const &);
+    void Reset();
 
     float mDrive;
 };

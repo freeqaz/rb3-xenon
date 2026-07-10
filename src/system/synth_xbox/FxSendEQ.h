@@ -10,7 +10,7 @@
 class FxSendEQ360 : public FxSendEQ, public FxSend360 {
 public:
     virtual ~FxSendEQ360();
-    OBJ_CLASSNAME(FxSendEQ360)
+    OBJ_CLASSNAME(FxSendEQ)
     OBJ_SET_TYPE(FxSendEQ360)
     virtual void Recreate(std::vector<FxSend *> &);
     virtual void UpdateMix();

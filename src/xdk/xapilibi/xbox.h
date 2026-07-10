@@ -202,6 +202,10 @@ DWORD XUserSetPropertyEx(
     XOVERLAPPED *pOverlapped
 );
 DWORD XShowGamerCardUI(DWORD dwUserIndex, XUID XuidPlayer);
+DWORD XMicGetStatus(HANDLE hMic);
+DWORD XMicRequestData(HANDLE hMic, DWORD dwNumFrames, PVOID pBuffer, PVOID pFrameSizes, DWORD dwFlags);
+DWORD XMicGetGain(DWORD dwDeviceId, DWORD dwChannel, float *pGain);
+DWORD XMicSetGain(DWORD dwDeviceId, float fGain, DWORD dwFlags);
 
 #ifdef __cplusplus
 }

@@ -87,8 +87,6 @@ void EQEffect::SetParameters(EQEffect::Params const &params) {
     SetParameter(8, params.mBand3Q);
     SetParameter(9, params.mBand4Freq);
     SetParameter(10, params.mBand4Gain);
-    SetParameter(11, params.mBand4Q);
-    SetParameter(12, params.mBand5Freq);
 }
 
 // kSmoothBase = 0x3fd78d4fe0000000 as double

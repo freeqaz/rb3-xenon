@@ -4,16 +4,28 @@
 class WahEffect {
 public:
     struct Params {
-        u32 unk0;
-        float mGain;
-        float mFreqHi;
-        float mFreqLo;
-        float mResonance;
-        float mBandwidth;
-        float mSweepRate;
-        float mSweepRange;
-        bool mEnvAmount;
-        float mStaticSweep;
+        // Default initializers match the DC3 target (bypass/resonance/upperFreq/lowerFreq/
+        // lfoFreq/magic/beatFrac/distAmount/autoWah/frequency). Field names are our
+        // native-facing labels; the per-offset defaults are what SyncEffectParams and
+        // StandardEffect<WahEffect> emit as constant loads.
+        // RB3 target WahEffect::Params is 0x2c (one param MORE than DC3's newer 0x28
+        // layout — verified: StandardEffect<WahEffect>::DoProcess accesses mEffect/mBypass
+        // at offsets pinning 3*sizeof(Params) = 0x84, i.e. sizeof(Params) = 0x2c).
+        Params()
+            : unk0(false), mGain(7), mFreqHi(5000), mFreqLo(1000), mResonance(1.35f),
+              mBandwidth(0.3f), mSweepRate(-1), mSweepRange(0.5f), mEnvAmount(true),
+              mStaticSweep(0.5f), mUnk28(0) {}
+        bool unk0; // 0x0 (bypass)
+        float mGain; // 0x4 (resonance)
+        float mFreqHi; // 0x8 (upperFreq)
+        float mFreqLo; // 0xc (lowerFreq)
+        float mResonance; // 0x10 (lfoFreq)
+        float mBandwidth; // 0x14 (magic)
+        float mSweepRate; // 0x18 (beatFrac)
+        float mSweepRange; // 0x1c (distAmount)
+        bool mEnvAmount; // 0x20 (autoWah)
+        float mStaticSweep; // 0x24 (frequency)
+        float mUnk28; // 0x28 (RB3-only trailing param)
     };
 
     WahEffect(IXAudioBatchAllocator *);

@@ -2,6 +2,8 @@
 #include "xdk/win_types.h"
 #include "xdk/xapilibi/xbase.h"
 
+class MicXbox;
+
 class ExternalMic {
 public:
     ~ExternalMic();
@@ -19,5 +21,17 @@ public:
     unsigned long mDeviceId;
     bool mQuit;
     bool unk9;
-    float unkc;
+    float mLastGain;  // 0xc
+    float mGainLeft;  // 0x10
+    float mGainRight; // 0x14
+};
+
+class ExternalMicClientMgr {
+public:
+    static void Associate(int, MicXbox *);
+    static bool ConnectedForClient(const MicXbox *);
+    static void AddAudio(unsigned long, unsigned char *, unsigned long);
+    static float GetRequiredGain(unsigned long);
+    static void Terminate();
+    static void Init();
 };

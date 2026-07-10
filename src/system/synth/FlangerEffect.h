@@ -4,7 +4,8 @@
 class FlangerEffect {
 public:
     struct Params {
-        u32 unk0;
+        Params() : unk0(false) {}
+        bool unk0; // 0x0 (bypass)
         float mDelayMs;  // delay time in milliseconds
         float mRate;     // LFO rate in Hz
         float mDepth;    // modulation depth (percentage)

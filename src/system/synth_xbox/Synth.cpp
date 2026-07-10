@@ -30,11 +30,6 @@
 #include "xdk/xapilibi/xbox.h"
 #include "xdk/xaudio2/xaudio2.h"
 
-class ExternalMicClientMgr {
-public:
-    static void Associate(int, MicXbox *);
-};
-
 Synth360 *TheXboxSynth;
 
 Synth360::Synth360()
