@@ -128,8 +128,8 @@ inline T PrevItr(T it, int idx) {
 
 // not sure where else to put this
 inline int atoi_s(char *str) {
-    if (str)
-        return atoi(str);
-    else
+    if (!str)
         return 0;
+    else
+        return atoi(str);
 }

@@ -40,9 +40,11 @@ void Instarank::UpdateRankLabel(UILabel *label) {
     MILO_ASSERT(mIsValid, 0x3A);
     MILO_ASSERT(label, 0x3B);
     if (mIsPercentile) {
+        static Symbol instarank_percentile("instarank_percentile");
         label->SetTokenFmt(instarank_percentile, mInstaRank);
     } else {
-        label->SetTokenFmt(instarank_rank, LocalizeSeparatedInt(mInstaRank, TheLocale));
+        static Symbol instarank_rank("instarank_rank");
+        label->SetTokenFmt(instarank_rank, LocalizeSeparatedInt(mInstaRank));
     }
 }
 
@@ -63,38 +65,48 @@ void Instarank::UpdateString1Label(UILabel *label) {
     char tokc = *strtok(buf, "|");
     const char *fontc = GetFontCharFromScoreType(mScoreType, 0);
     switch (tokc) {
-    case 'a':
+    case 'a': {
+        static Symbol instarank_highscore_percentile("instarank_highscore_percentile");
         label->SetTokenFmt(instarank_highscore_percentile, mInstaRank, fontc);
-        break;
-    case 'b':
+    } break;
+    case 'b': {
+        static Symbol instarank_highscore_rank("instarank_highscore_rank");
         label->SetTokenFmt(
-            instarank_highscore_rank, LocalizeSeparatedInt(mInstaRank, TheLocale), fontc
+            instarank_highscore_rank, LocalizeSeparatedInt(mInstaRank), fontc
         );
-        break;
-    case 'c':
+    } break;
+    case 'c': {
+        int ic = atoi_s(strtok(0, "|"));
+        static Symbol instarank_previousbest_rank("instarank_previousbest_rank");
         label->SetTokenFmt(
             instarank_previousbest_rank,
             fontc,
-            LocalizeSeparatedInt(atoi_s(strtok(0, "|")), TheLocale),
-            LocalizeSeparatedInt(1, TheLocale)
+            LocalizeSeparatedInt(ic),
+            LocalizeSeparatedInt(1)
         );
-        break;
-    case 'd':
+    } break;
+    case 'd': {
+        int id1 = atoi_s(strtok(0, "|"));
+        int id2 = atoi_s(strtok(0, "|"));
+        static Symbol instarank_rival_percentile("instarank_rival_percentile");
         label->SetTokenFmt(
             instarank_rival_percentile,
-            LocalizeSeparatedInt(atoi_s(strtok(0, "|")), TheLocale),
-            atoi_s(strtok(0, "|")),
+            LocalizeSeparatedInt(id1),
+            id2,
             fontc
         );
-        break;
-    case 'e':
+    } break;
+    case 'e': {
+        int ie1 = atoi_s(strtok(0, "|"));
+        int ie2 = atoi_s(strtok(0, "|"));
+        static Symbol instarank_rival_rank("instarank_rival_rank");
         label->SetTokenFmt(
             instarank_rival_rank,
-            LocalizeSeparatedInt(atoi_s(strtok(0, "|")), TheLocale),
-            LocalizeSeparatedInt(atoi_s(strtok(0, "|")), TheLocale),
+            LocalizeSeparatedInt(ie1),
+            LocalizeSeparatedInt(ie2),
             fontc
         );
-        break;
+    } break;
     default:
         MILO_ASSERT(false, 0x8C);
         break;
@@ -109,46 +121,57 @@ void Instarank::UpdateString2Label(UILabel *label) {
     char tokc = *strtok(buf, "|");
     const char *fontc = GetFontCharFromScoreType(mScoreType, 0);
     switch (tokc) {
-    case 'f':
+    case 'f': {
+        static Symbol instarank_nofriend_beat("instarank_nofriend_beat");
         label->SetTextToken(instarank_nofriend_beat);
-        break;
+    } break;
     case 'g': {
         const char *tokg = strtok(0, "|");
         int ig = atoi_s(strtok(0, "|"));
+        bool nonzero = (ig != 0);
         String strg;
-        if (ig != 0)
+        if (nonzero) {
+            static Symbol band_default_name("band_default_name");
             strg = MakeString(Localize(band_default_name, 0), tokg);
-        else
+        } else
             strg = tokg;
+        static Symbol instarank_friend_beat("instarank_friend_beat");
         label->SetTokenFmt(instarank_friend_beat, strg.c_str(), fontc);
     } break;
     case 'h': {
         const char *tokh = strtok(0, "|");
         int ih1 = atoi_s(strtok(0, "|"));
         int ih2 = atoi_s(strtok(0, "|"));
+        bool nonzero = (ih2 != 0);
         String strh;
-        if (ih2 != 0)
+        if (nonzero) {
+            static Symbol band_default_name("band_default_name");
             strh = MakeString(Localize(band_default_name, 0), tokh);
-        else
+        } else
             strh = tokh;
+        static Symbol instarank_friend_beat_and_more("instarank_friend_beat_and_more");
         label->SetTokenFmt(instarank_friend_beat_and_more, fontc, strh.c_str(), ih1);
     } break;
     case 'i': {
         int ii1 = atoi_s(strtok(0, "|"));
         const char *toki = strtok(0, "|");
         int ii2 = atoi_s(strtok(0, "|"));
+        bool nonzero = (ii2 != 0);
         String stri;
-        if (ii2 != 0)
+        if (nonzero) {
+            static Symbol band_default_name("band_default_name");
             stri = MakeString(Localize(band_default_name, 0), toki);
-        else
+        } else
             stri = toki;
+        static Symbol instarank_rival_close("instarank_rival_close");
         label->SetTokenFmt(
-            instarank_rival_close, LocalizeSeparatedInt(ii1, TheLocale), stri.c_str(), fontc
+            instarank_rival_close, LocalizeSeparatedInt(ii1), stri.c_str(), fontc
         );
     } break;
-    case 'j':
+    case 'j': {
+        static Symbol instarank_nofriend_beat("instarank_nofriend_beat");
         label->SetTextToken(instarank_nofriend_beat);
-        break;
+    } break;
     default:
         MILO_ASSERT(false, 0xEB);
         break;

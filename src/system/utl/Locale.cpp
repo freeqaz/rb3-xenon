@@ -359,6 +359,56 @@ const char *LocalizeSeparatedInt(int num, Locale &locale) {
     return result;
 }
 
+// RB3 1-argument form — matches rb3-Wii Locale.cpp:320 (real out-of-line
+// function, not a forward to the 2-arg version). The 2-arg version's
+// `locale` parameter is unused in its body, so this is logically identical;
+// kept as a separate definition (mirroring source) so the call site doesn't
+// need to load a Locale& reference.
+const char *LocalizeSeparatedInt(int num) {
+    static Symbol sSep("locale_separator");
+    bool success = false;
+    char digitBuf[2];
+    const char *sep = Localize(sSep, &success);
+    if (!success) {
+        sep = ",";
+    }
+    if (strcmp(sep, gNullStr) == 0) {
+        return (char *)MakeString("%i", num);
+    }
+    int sepLen = strlen(sep);
+    char *buf = gLocalizeSepBuf[gLocalizeSepIdx];
+    buf[0x31] = '\0';
+    int pos = 0x31;
+    int absNum = num;
+    bool negative = num < 0;
+    if (negative) {
+        absNum = abs(num);
+    }
+    int digitCount = 0;
+    while (true) {
+        if (digitCount != 0 && absNum <= 0)
+            break;
+        if (digitCount % 3 == 0 && digitCount > 0) {
+            for (int j = sepLen - 1; j >= 0; j--) {
+                pos--;
+                buf[pos] = sep[j];
+            }
+        }
+        Hx_snprintf(digitBuf, 2, "%d", absNum % 10);
+        pos--;
+        buf[pos] = digitBuf[0];
+        digitCount++;
+        absNum = absNum / 10;
+    }
+    if (negative) {
+        pos--;
+        buf[pos] = '-';
+    }
+    char *result = &buf[pos];
+    gLocalizeSepIdx = (gLocalizeSepIdx + 1) % 4;
+    return result;
+}
+
 void SyncReloadLocale() {
     static Symbol sLocale("locale");
     DataArray *cfg = SystemConfig(sLocale);

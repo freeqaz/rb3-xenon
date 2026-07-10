@@ -82,9 +82,12 @@ const char *Localize(Symbol token, bool *success, Locale &locale);
 // uses TheLocale. Matches rb3-Wii Locale.h: const char *Localize(Symbol, bool *).
 const char *Localize(Symbol token, bool *success);
 const char *LocalizeSeparatedInt(int num, Locale &locale);
-// RB3 1-argument form — real out-of-line function in rb3-Wii; inline wrapper here.
-inline const char *LocalizeSeparatedInt(int num) {
-    return LocalizeSeparatedInt(num, TheLocale);
-}
+// RB3 1-argument form — real out-of-line function (rb3-Wii Locale.h:63); the
+// `locale` parameter of the 2-arg form above is unused in its body (dead
+// param), so retail has a genuine no-locale-arg overload with its own
+// definition, not an inline forward. Call sites that pass only `num` do NOT
+// load &TheLocale into a register in target's disassembly — confirmed by
+// tracing Instarank::UpdateRankLabel / UpdateString2Label / UpdateString1Label.
+const char *LocalizeSeparatedInt(int num);
 const char *LocalizeFloat(const char *fmt, float num);
 void SyncReloadLocale();

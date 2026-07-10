@@ -676,7 +676,8 @@ int SongStatusMgr::CalculateTotalScore(ScoreType ty, Symbol s) const {
         if (mSongMgr->HasSong(songID)) {
             BandSongMetadata *metaData = (BandSongMetadata *)mSongMgr->Data(songID);
             if (s == gNullStr || s == metaData->SourceSym()) {
-                SongStatus *status = mSongStatusCache.find(songID)->second;
+                int id = songID;
+                SongStatus *status = mSongStatusCache.find(id)->second;
                 ret += status->GetHighScore(ty);
                 if (ret > 2000000000)
                     return 2000000000;
@@ -691,20 +692,16 @@ int SongStatusMgr::GetTotalBestStars(ScoreType ty, Difficulty diff, Symbol s) co
     for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
          it != mSongStatusCache.end(); ++it) {
         int songID = it->first;
-        if (songID && mSongMgr->HasSong(songID)) {
-            if (s != gNullStr) {
-                BandSongMetadata *metaData = (BandSongMetadata *)mSongMgr->Data(songID);
-                MILO_ASSERT(metaData, 0x677);
-                if (s != metaData->SourceSym())
-                    continue;
-            }
-            int beststars = GetBestStars(songID, ty, diff);
-            int count = ret + beststars;
+        if (mSongMgr->HasSong(songID)) {
+            mSongMgr->Data(songID);
+            int id = songID;
+            SongStatus *status = mSongStatusCache.find(id)->second;
+            int beststars = status->GetStars(ty, status->GetHighScoreDifficulty(ty));
             if (beststars > 5)
-                count = ret + 5;
-            ret = count;
-            if (count > 5000)
-                return 5000;
+                beststars = 5;
+            ret += beststars;
+            if (ret > 15000)
+                return 15000;
         }
     }
     return ret;
