@@ -31,9 +31,9 @@ public:
     HttpGet(
         unsigned int ip, unsigned short port, const char *, unsigned char, const char *
     );
-    virtual ~HttpGet();
-    virtual void SetContent(const char *content) {}
-    virtual void SetContentLength(unsigned int len) {}
+    ~HttpGet();
+    void SetContent(const char *content) {}
+    void SetContentLength(unsigned int len) {}
 
     bool IsDownloaded();
     bool HasFailed();
@@ -55,9 +55,9 @@ private:
     static const int kRecvBufSize;
 
 protected:
-    virtual bool CanRetry();
-    virtual void StartSending();
-    virtual void Sending() {
+    bool CanRetry();
+    void StartSending();
+    void Sending() {
         MILO_FAIL("HttpGet::Sending() - shouldn't be calling this");
     }
 
@@ -68,37 +68,40 @@ protected:
     bool HasTimedOut();
     void SetState(State);
 
-    NetworkSocket *mSocket; // 0x8
-    String mPath; // 0xc - URL path for GET/POST requests
-    unsigned short mPort; // 0x14
-    int mState; // 0x18
-    bool mFlags;
-    Timer mTimer; // 0x20
-    float mTimeoutMs; // 0x50
-    unsigned int mIP; // 0x54
-    String mHeaders; // 0x58 - additional HTTP headers
-    void *mRecvBuf; // 0x60 - receive buffer (allocated as 0x1000 bytes)
-    int mRecvBufPos; // 0x64
-    u32 mHttpStatus;
-    char *mFileBuf; // 0x6c
-    int mFileBufSize; // 0x70
-    int mFileBufRecvPos; // 0x74
-    int mRetryCount; // 0x78 - compared against kMaxRetries
-    HttpGetFailType mFailType; // 0x7c
-    State mPrevState; // 0x80
+    // Retail layout (reconstructed from disasm): HttpGet is non-polymorphic
+    // (no vfptr at 0x0 — the ctor/dtor store no vtable and mTimer.mStart is at
+    // this+0x0). Members reordered to match the retail offsets exactly.
+    Timer mTimer; // 0x00
+    float mTimeoutMs; // 0x30
+    int mState; // 0x34
+    const char *mPath; // 0x38 - URL path (read-only const char*, not a String)
+    unsigned int mIP; // 0x3c
+    String mHeaders; // 0x40 - additional HTTP headers (dtor destructs this)
+    NetworkSocket *mSocket; // 0x4c
+    void *mRecvBuf; // 0x50 - receive buffer (allocated as 0x1000 bytes)
+    int mRecvBufPos; // 0x54
+    char *mFileBuf; // 0x58
+    int mFileBufSize; // 0x5c
+    int mFileBufRecvPos; // 0x60
+    int mRetryCount; // 0x64 - compared against kMaxRetries
+    u32 mHttpStatus; // 0x68
+    HttpGetFailType mFailType; // 0x6c
+    State mPrevState; // 0x70
+    unsigned short mPort; // 0x74
+    bool mFlags; // 0x76
 };
 
 class HttpPost : public HttpGet {
 public:
     HttpPost(unsigned int, unsigned short, const char *, unsigned char);
-    virtual ~HttpPost();
-    virtual void SetContent(const char *content) { mContent = content; }
-    virtual void SetContentLength(unsigned int);
+    ~HttpPost();
+    void SetContent(const char *content) { mContent = content; }
+    void SetContentLength(unsigned int);
 
 protected:
-    virtual bool CanRetry();
-    virtual void StartSending();
-    virtual void Sending();
+    bool CanRetry();
+    void StartSending();
+    void Sending();
 
     const char *mContent; // 0x88
     unsigned int mContentLength; // 0x8c

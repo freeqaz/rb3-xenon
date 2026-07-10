@@ -511,7 +511,7 @@ HttpPost::HttpPost(unsigned int ip, unsigned short port, const char *cc, unsigne
     String newLine;
     newLine = MakeString("\r\n");
     String post("POST ");
-    post += mPath.c_str();
+    post += mPath;
     post += " ";
     post += "HTTP/1.1";
     post += newLine;
