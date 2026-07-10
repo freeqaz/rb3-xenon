@@ -176,3 +176,32 @@ agent pass.
 - 2026-07-10, phase 3 launched as workflow `spill-harvest-and-family-trial`:
   5 class-A fixers (worktree-isolated) + sentinel-family diagnosis/trial
   (fleet A/B gated) + merger (premise-checked, path-limited landings).
+- 2026-07-10, phase 3a **landed: +5 strict, zero regressions** (15419→15424;
+  commits `0c25ac0b` NetCacheMgr::OnInit, `96ad7a1f`
+  SongUpgradeMgr::AddUpgradeData + bonus funclet, `638fbb49` GemPlayer::Handle,
+  `4c428976` RandomGroupSeqInst ctor — all strict 100). Workflow was
+  quota-paused mid-run; 4/5 fixers had finished, patches landed manually via
+  an Opus merger. **New transferable levers from the fixes** (fold into the
+  mechanism doc / pattern docs):
+  - *Inlinee-`this` homing rule* (GemPlayer): MSVC homes an inlined member
+    fn's `this` into a $T stack temp only when the inline instance is live
+    across a call; a call-free arm phrased as a direct double-deref
+    (`mA->mB = !mA->mB`) can spuriously trigger a dead home — route it
+    through a named local (`T* m = mA; m->mB = !m->mB;`).
+  - *Single-expression getter-before-call rule* (RandomGroupSeqInst): retail
+    `f(x->Call() % container.size())`-style single expressions evaluate the
+    inlined getter BEFORE the call, value-CSE it with later loads, and home
+    the EH-tracked temp; splitting into named statements kills the temp/store.
+    Signature: ours-missing write-only stw before a throwing bl whose slot
+    doubles as a conversion temp.
+  - *Wrapper-helper homing* (NetCacheMgr, SongUpgradeMgr): retail's source
+    calls small same-class/same-TU inline helpers (`FindInt`, `HasUpgrade`);
+    /Ob2 inlines them and homes the param copy into an address-taken slot.
+    Ours-missing address-taken store near a find/lookup ⇒ look for a helper
+    wrapper in the oracle instead of the direct expression.
+  - SongUpgradeMgr also fixed a real behavior bug: only the `delete` of the
+    old entry is guarded by `find != end`; the new/assign/MarkAvailable runs
+    unconditionally.
+- Remaining from phase 3: Geo::Clip fixer + sentinel-family trial were killed
+  by the quota pause mid-run (worktrees preserved); Opus transcript review in
+  flight — results to be appended here.
