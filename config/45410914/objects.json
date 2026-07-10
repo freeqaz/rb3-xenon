@@ -766,7 +766,12 @@
    "band3/meta_band/LessonProvider.cpp": "NonMatching",
    "band3/meta_band/SongSelectPanel.cpp": "NonMatching",
    "band3/meta_band/VoiceoverPanel.cpp": "NonMatching",
-   "band3/meta_band/EditSetlistPanel.cpp": "NonMatching",
+   "band3/meta_band/EditSetlistPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SetlistMergePanel.cpp": "NonMatching",
    "band3/game/TrainerGemTab.cpp": "NonMatching",
    "band3/game/Stats.cpp": "NonMatching",
@@ -838,7 +843,12 @@
     ]
    },
    "band3/meta_band/GameplayOptions.cpp": "NonMatching",
-   "band3/meta_band/SavedSetlist.cpp": "NonMatching",
+   "band3/meta_band/SavedSetlist.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/CampaignKey.cpp": "NonMatching",
    "band3/meta_band/CampaignLevel.cpp": "NonMatching",
    "band3/meta_band/CharacterCreatorPanel.cpp": {
@@ -883,7 +893,12 @@
    "band3/meta_band/PatchPanel.cpp": "NonMatching",
    "band3/meta_band/TrainingPanel.cpp": "NonMatching",
    "band3/meta_band/CampaignSongInfoPanel.cpp": "NonMatching",
-   "band3/meta_band/PatchSelectPanel.cpp": "NonMatching",
+   "band3/meta_band/PatchSelectPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SongRecord.cpp": "NonMatching",
    "band3/meta_band/SongSortByArtist.cpp": "NonMatching",
    "band3/meta_band/SongSortByDiff.cpp": "NonMatching",
@@ -895,7 +910,12 @@
    "band3/meta_band/StandIn.cpp": "NonMatching",
    "band3/meta_band/StoreInfoPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMainPanel.cpp": "NonMatching",
-   "band3/meta_band/StoreMenuPanel.cpp": "NonMatching",
+   "band3/meta_band/StoreMenuPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SongSortNode.cpp": "NonMatching",
    "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
    "band3/meta_band/UIEvent.cpp": "NonMatching",
