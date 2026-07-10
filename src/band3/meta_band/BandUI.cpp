@@ -48,11 +48,13 @@ CurrentScreenChangedMsg::CurrentScreenChangedMsg(Symbol s) : Message(Type(), s) 
 Symbol CurrentScreenChangedMsg::GetScreen() const { return mData->Sym(2); }
 
 BandUI::BandUI()
-    : mShowVignettes(1), mVignetteOverlay(0), mInviteAccepted(0),
-      mDisbandStatus(kDisbandsEnabled), mOvershell(0), mEventDialog(0),
-      mContentLoadingPanel(0), mPassiveMessagesPanel(0), mSaveLoadStatusPanel(0),
-      mWaitingUserGate(0), mInterstitialMgr(0), mInputInterceptor(0),
-      mAbstractWipePanel(0), unk10c(0), unk10d(0) {}
+    // Init-list follows the retail declaration order (MSVC emits member inits in
+    // declaration order regardless of list order).
+    : mShowVignettes(1), mDisbandStatus(kDisbandsEnabled), mOvershell(0),
+      mEventDialog(0), mContentLoadingPanel(0), mPassiveMessagesPanel(0),
+      mSaveLoadStatusPanel(0), mWaitingUserGate(0), mInterstitialMgr(0),
+      mInputInterceptor(0), mAbstractWipePanel(0), unk10c(0), unk10d(0),
+      mVignetteOverlay(0), mInviteAccepted(0) {}
 
 BandUI::~BandUI() {}
 

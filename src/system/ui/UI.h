@@ -16,6 +16,18 @@ class Automator;
 class JoypadClient;
 class UIResource;
 
+// Retail RB3-360 STRIPS the UIManager debug/dev members (load-timer overlay,
+// Automator, dev-menu toggle). Verified against the retail ctor
+// Function_827DF040 (0x827DF040): it initializes only bytes 0x78/0x79/0x7a and
+// ends the UIManager own-object at 0x80 (vtordisp @ 0x80, Hmx::Object vbase @
+// 0x84 = puVar1+0x21); it never touches 0x80+ and never inits 0x7b. Keep the
+// members for the native host build so it is unaffected. NOTE: this repo
+// force-defines MILO_DEBUG tree-wide (src/macros.h), so MILO_DEBUG canNOT be
+// part of the strip condition — the gate is HX_NATIVE only.
+#ifdef HX_NATIVE
+#define RB3_UI_DEBUG_MEMBERS 1
+#endif
+
 // RB3-360 layout (verified in Ghidra @ 0x827DF8B8 Handle / 0x827E0690 Init /
 // 0x827DED28 Terminate / 0x827E0448 InitResources):
 //   own-vftable @ 0x0, vbtbl @ 0x8, Hmx::Object vbase relocated to tail @ 0x84.
@@ -128,10 +140,20 @@ protected:
     bool mCancelTransitionNotify; // 0x79
     bool mDefaultAllowEditText; // 0x7a
     bool mDisableScreenBlacklight; // 0x7b
+#ifdef RB3_UI_DEBUG_MEMBERS
+    // Debug/dev-only members. Retail RB3-360 strips these (see the ctor note
+    // above); present only for the native host build (RB3_UI_DEBUG_MEMBERS).
     Timer mLoadTimer; // 0x80 (region; trails into vbase area in some builds)
     RndOverlay *mOverlay;
     Automator *mAutomator;
     bool mShowDevMenu;
+#else
+    // Retail carries an unnamed int here (rb3-Wii dev oracle: `int unk74`). It
+    // pads the UIManager own-object out to 0x80 so the virtual-base thunk lands
+    // at vtordisp @ 0x80 and the Hmx::Object vbase at 0x84 (without it the bool
+    // at 0x7b would only extend the object to 0x7c, placing the vbase at 0x80).
+    int mUnk7c; // 0x7c
+#endif
 };
 
 extern UIManager *TheUI;

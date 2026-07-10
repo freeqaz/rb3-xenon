@@ -101,22 +101,31 @@ public:
     void SetDisbandStatus(DisbandStatus s) { mDisbandStatus = s; }
     OvershellPanel *GetOvershell() { return mOvershell; }
 
-    bool mShowVignettes; // 0xd4
-    RndOverlay *mVignetteOverlay; // 0xd8
-    RndOverlay *mUIOverlay; // 0xdc
-    bool mInviteAccepted; // 0xe0 - invite accepted
-    DisbandStatus mDisbandStatus; // 0xe4 - disband status
-    OvershellPanel *mOvershell; // 0xe8
-    UIPanel *mEventDialog; // 0xec
-    UIPanel *mContentLoadingPanel; // 0xf0
-    UIPanel *mPassiveMessagesPanel; // 0xf4
-    UIPanel *mSaveLoadStatusPanel; // 0xf8
-    WaitingUserGate *mWaitingUserGate; // 0xfc
-    InterstitialMgr *mInterstitialMgr; // 0x100
-    ShellInputInterceptor *mInputInterceptor; // 0x104
-    UIPanel *mAbstractWipePanel; // 0x108
-    bool unk10c; // 0x10c
-    bool unk10d; // 0x10d
+    // Retail RB3-360 own-block order (asm-proven; own base @ 0x98 once the
+    // UIManager base is stripped to its retail 0x80 size). mShowVignettes(byte)
+    // @own+0 (0x98), mDisbandStatus(int) @own+4 (0x9c), mOvershell @own+8 (0xa0),
+    // then the panel-ptr block mEventDialog @own+0xc (0xa4) .. mAbstractWipePanel
+    // @own+0x28 (0xc0). The wipe flags unk10c/unk10d (0xc4/0xc5, proven by
+    // WipeIn/WipeOutIfNecessary) follow the panel block, then the vignette/UI
+    // overlay ptrs and mInviteAccepted. In the dc3/rb3-Wii dev order these three
+    // ptrs sat BEFORE mDisbandStatus, adding a spurious +0xc to every panel-ptr
+    // access — the InitPanels off:+0x4c divergence.
+    bool mShowVignettes; // own+0x0 (0x98)
+    DisbandStatus mDisbandStatus; // own+0x4 (0x9c) - disband status
+    OvershellPanel *mOvershell; // own+0x8 (0xa0)
+    UIPanel *mEventDialog; // own+0xc (0xa4)
+    UIPanel *mContentLoadingPanel; // own+0x10 (0xa8)
+    UIPanel *mPassiveMessagesPanel; // own+0x14 (0xac)
+    UIPanel *mSaveLoadStatusPanel; // own+0x18 (0xb0)
+    WaitingUserGate *mWaitingUserGate; // own+0x1c (0xb4)
+    InterstitialMgr *mInterstitialMgr; // own+0x20 (0xb8)
+    ShellInputInterceptor *mInputInterceptor; // own+0x24 (0xbc)
+    UIPanel *mAbstractWipePanel; // own+0x28 (0xc0)
+    bool unk10c; // own+0x2c (0xc4) - wipe-in pending (WipeInIfNecessary)
+    bool unk10d; // own+0x2d (0xc5) - wipe-out pending (WipeOutIfNecessary)
+    RndOverlay *mVignetteOverlay; // own+0x30 (0xc8)
+    RndOverlay *mUIOverlay; // own+0x34 (0xcc)
+    bool mInviteAccepted; // own+0x38 (0xd0) - invite accepted
     // In retail RB3-360 this "wipe pending" flag lives in the UIManager base at
     // 0xb5 (rb3-Wii UI.h). rb3-xenon's DC3-derived UIManager omits it and is
     // pinned/matched at its own verified offsets, so we keep it BandUI-local to

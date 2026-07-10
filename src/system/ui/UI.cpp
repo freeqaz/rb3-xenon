@@ -146,10 +146,31 @@ void UITerminateCallback() { TheUI->Terminate(); }
 
 #pragma region UIManager
 
+#ifndef RB3_UI_DEBUG_MEMBERS
+// Retail RB3-360 strips the UIManager load-timer/dev-menu/Automator debug members
+// from the object layout (verified against ctor Function_827DF040 — see UI.h). To
+// keep the matching build's debug code paths byte-structurally identical to before
+// the strip (crucially their EH-cleanup funclets and static-local scope numbering,
+// which are TU-wide and would otherwise renumber and mispair), back the stripped
+// members with same-named file-scope storage. `TheUI` is a singleton so sharing is
+// harmless, and these are write-mostly debug scratch never read on the retail path.
+static RndOverlay *mOverlay;
+static Automator *mAutomator;
+static Timer mLoadTimer;
+static bool mShowDevMenu;
+#endif
+
 UIManager::UIManager()
     : mWentBack(0), mMaxPushDepth(100), mJoyClient(0), mCurrentScreen(0), mSink(0),
-      mOverloadHorizontalNav(0), mCancelTransitionNotify(0), mDefaultAllowEditText(1),
-      mDisableScreenBlacklight(0), mOverlay(0), mAutomator(0), mShowDevMenu(0) {}
+      mOverloadHorizontalNav(0), mCancelTransitionNotify(0), mDefaultAllowEditText(1)
+#ifdef RB3_UI_DEBUG_MEMBERS
+      // Retail Function_827DF040 stops after mDefaultAllowEditText @ 0x7a; it does
+      // NOT init 0x7b (mDisableScreenBlacklight) nor the stripped debug members.
+      ,
+      mDisableScreenBlacklight(0), mOverlay(0), mAutomator(0), mShowDevMenu(0)
+#endif
+{
+}
 
 UIManager::~UIManager() {}
 
@@ -983,6 +1004,13 @@ BEGIN_HANDLERS(UIManager)
     HANDLE(foreach_current_screen, OnForeachCurrentScreen)
     HANDLE_EXPR(went_back, WentBack())
     HANDLE_EXPR(is_game_screen_active, IsGameScreenActive())
+    // NOTE: these 5 dev/debug handlers reference the retail-stripped members
+    // (now file-scope storage, see top of this region). Retail lacks them, so
+    // they leave UIManager::Handle a NonMatching function either way — but they
+    // MUST stay here: gating them out renumbers this TU's EH-funclet scope
+    // counters (Handle precedes Init in .text) and mispairs Init's cleanup
+    // funclets fn_827E0E0C/34/84 (a net strict-100 loss). Keeping them costs
+    // ~2% fuzzy on Handle only; it is not worth 3 strict matches.
     HANDLE_ACTION(toggle_load_times, ToggleLoadTimes())
     HANDLE_EXPR(showing_load_times, mOverlay->Showing())
     HANDLE_ACTION(toggle_dev_menu, mShowDevMenu = !mShowDevMenu)
