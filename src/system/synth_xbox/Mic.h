@@ -25,7 +25,7 @@ class MicXbox : public Mic {
 public:
     virtual ~MicXbox();
     virtual float GetGain() const;
-    virtual void ClearBuffers();
+    void ClearBuffers();
     virtual int GetDroppedSamples();
     virtual bool GetClipping() const;
     virtual void SetGain(float);

@@ -26,7 +26,7 @@ public:
     virtual bool GetCompressor() const { return 0; }
     virtual void SetCompressorParam(float) {}
     virtual float GetCompressorParam() const { return 0; }
-    virtual void ClearBuffers() {}
+    void ClearBuffers() {}
     virtual short *GetRecentBuf(int &);
     virtual short *GetContinuousBuf(int &);
     virtual int GetDroppedSamples() { return 0; }

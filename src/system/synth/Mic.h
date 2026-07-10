@@ -39,7 +39,6 @@ public:
     virtual bool GetCompressor() const = 0;
     virtual void SetCompressorParam(float) = 0;
     virtual float GetCompressorParam() const = 0;
-    virtual void ClearBuffers() = 0;
     virtual short *GetRecentBuf(int &) = 0;
     virtual short *GetContinuousBuf(int &) = 0;
     virtual int GetDroppedSamples() { return 0; }
