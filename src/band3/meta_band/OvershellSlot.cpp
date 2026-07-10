@@ -64,7 +64,7 @@ OvershellSlot::OvershellSlot(
       mOvershell(panel), mBandUserMgr(umgr), mSessionMgr(smgr), mSlotNum(i),
       mOvershellDir(dir), mAutohideEnabled(0), mIsLeavingOptions(0),
       mCurrentView(gNullStr), mBlockAllInput(0), mInGame(0), mSongOptionsRequired(0),
-      unk80(0), unk81(0), mCharForEdit(0), mCymbalConfiguration(0),
+      mCharForEdit(0), mCymbalConfiguration(0),
       mSlotOverrideFlow(kOverrideFlow_None), unk28(kState_WiiProfileOptions) {
     mMessageQueue = new PassiveMessageQueue(this);
     mKickUsersProvider = new SessionUsersProvider(false, true, false);
@@ -1946,6 +1946,12 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_EXPR(is_quit_token, IsQuitToken(_msg->Sym(2)))
     HANDLE_ACTION(update_mute_users_list, UpdateMuteUsersList())
     HANDLE_ACTION(update_kick_users_list, UpdateKickUsersList())
+#ifdef HX_NATIVE
+    // Wii-only Handle arms (wiiprofile/wii_speak/invitation/wii_profile_selector).
+    // Retail X360 OvershellSlot::Handle has NONE of these — objdiff proved the whole
+    // block is pure SRC-only inserts (no retail counterpart). Retail's Xbox profile
+    // arms (gamercard/friends/signin) live in a different token set. Gated to HX_NATIVE
+    // so the native engine keeps the Wii dispatch while the retail-match build drops it.
     HANDLE_ACTION(set_wiiprofile_list_mode, SetWiiProfileListMode(_msg->Int(2), false))
     HANDLE_EXPR(get_wiiprofile_list_mode, GetWiiProfileListMode())
     HANDLE_EXPR(get_wiiprofile_last_index, GetWiiProfileLastIndex())
@@ -1974,6 +1980,7 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION(show_no_invitations, ShowState(kState_NoInvitations))
     HANDLE_ACTION(show_wii_profile_selector, ShowWiiProfileSelector(false))
     HANDLE_ACTION(cancel_wii_profile_selector, CancelWiiProfileSelector())
+#endif
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
     HANDLE_MESSAGE(UIComponentScrollMsg)
     HANDLE_MESSAGE(UIComponentSelectMsg)

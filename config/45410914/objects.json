@@ -1075,7 +1075,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/meta_band/OvershellSlot.cpp": "NonMatching",
+   "band3/meta_band/OvershellSlot.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/PrefabMgr.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
