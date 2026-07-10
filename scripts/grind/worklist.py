@@ -66,8 +66,56 @@ def load_db_index(db_path):
     return idx
 
 
+# --- struct-size-delta sub-classifier -------------------------------------
+# Wave-6 discovery (DepthBuffer3DAttachment, commit 79bb233, +7): a whole band
+# of engine STLport template instantiations (vector/list grow/fill/copy/destroy/
+# create_node) and compiler dtors (`scalar/vector deleting destructor') differ
+# from retail by exactly ONE mismatched immediate (li/mulli/slwi/addi) encoding
+# sizeof(element) or sizeof(node). When retail sizeof > ours AND the class's head
+# member offsets are already retail-correct (its other functions match), padding
+# the struct TAIL to the retail size closes the whole template family at zero
+# regression risk.
+#
+# report.json alone cannot see the immediate, so this is a *candidate* pre-filter
+# on the static signature (engine unit + STL/dtor template demangle + small size
+# band + fuzzy in [99,100)); confirmation of the single diff_arg immediate — and
+# the retail>ours direction with matching heads — is a downstream objdiff step
+# (run_diff_inspect mismatches). Families (>=2 funcs sharing an element type) are
+# real size deltas; lone functions with a huge stride delta are usually ICF folds
+# (retail merged the identical memcpy-body function with a different-size element)
+# and are NOT tail-pad-fixable.
+_STL_MARKERS = (
+    "stlpmtx_std::", "stlp_std::",
+    "`scalar deleting destructor'", "`vector deleting destructor'",
+    "__uninitialized_", "_Destroy_Range", "_List_base", "_List_node",
+    "::vector<", "::list<", "::deque<", "_M_",
+)
+
+
+def is_struct_size_delta_candidate(demangled, category, size, fuzzy, normalized,
+                                   *, size_lo=40, size_hi=200):
+    """True if a function has the static signature of the tail-pad / struct-size-
+    delta band: an *engine* STLport-template or compiler-dtor instantiation, in
+    the small size band, sitting just under 100% fuzzy but not yet normalized-100.
+
+    This is a *candidate* tag only — the single differing immediate (and its
+    retail>ours direction) must be confirmed downstream via objdiff. The default
+    72-140B window matches the observed template-instantiation body sizes; the
+    caller may widen via size_lo/size_hi."""
+    if category != "engine":
+        return False
+    if normalized is not None and normalized >= 100:
+        return False
+    if fuzzy is None or not (99.0 <= fuzzy < 100.0):
+        return False
+    if not (size_lo <= size <= size_hi):
+        return False
+    dn = demangled or ""
+    return any(m in dn for m in _STL_MARKERS)
+
+
 def generate(report_path, db_path, *, min_fuzzy, max_fuzzy, unit_pattern,
-             game_only, min_size):
+             game_only, min_size, struct_size_delta_only=False):
     """Return (functions, stats). ``functions`` is the vetted, filtered list
     sorted by fuzzy descending (near-misses first). ``stats`` counts drops per
     reason for transparency."""
@@ -78,7 +126,7 @@ def generate(report_path, db_path, *, min_fuzzy, max_fuzzy, unit_pattern,
     out = []
     drop = {"normalized_100": 0, "anon_fn": 0, "funclet": 0, "verdict": 0,
             "excluded": 0, "band": 0, "unit": 0, "game": 0, "size": 0,
-            "no_fuzzy": 0}
+            "no_fuzzy": 0, "not_ssd": 0}
     seen = 0
 
     for unit in report.get("units", []):
@@ -141,22 +189,31 @@ def generate(report_path, db_path, *, min_fuzzy, max_fuzzy, unit_pattern,
                 drop["size"] += 1
                 continue
 
+            demangled = (func.get("metadata", {}) or {}).get("demangled_name", "")
+            ssd = is_struct_size_delta_candidate(
+                demangled, category, size, fuzzy, normalized)
+            if struct_size_delta_only and not ssd:
+                drop["not_ssd"] += 1
+                continue
+
             out.append({
                 "symbol": symbol,
-                "demangled": (func.get("metadata", {}) or {}).get("demangled_name", ""),
+                "demangled": demangled,
                 "unit": unit_name,
                 "src_path": src_path,
                 "size": size,
                 "fuzzy_match_percent": fuzzy,
                 "match_percent_normalized": normalized,
                 "category": category,
+                "struct_size_delta": ssd,
             })
 
     out.sort(key=lambda r: (r["fuzzy_match_percent"] is None,
                             -(r["fuzzy_match_percent"] or 0)))
     stats = {"seen": seen, "kept": len(out), "drop": drop,
              "game_kept": sum(1 for r in out if r["category"] == "game"),
-             "engine_kept": sum(1 for r in out if r["category"] == "engine")}
+             "engine_kept": sum(1 for r in out if r["category"] == "engine"),
+             "ssd_kept": sum(1 for r in out if r.get("struct_size_delta"))}
     return out, stats
 
 
@@ -177,6 +234,12 @@ def main(argv=None):
                     help="keep only units whose progress_categories include 'game'")
     ap.add_argument("--min-size", type=int, default=0,
                     help="minimum function size in bytes (default 0)")
+    ap.add_argument("--struct-size-delta", action="store_true",
+                    dest="struct_size_delta_only",
+                    help="keep only tail-pad / struct-size-delta candidates "
+                         "(engine STLport-template or compiler-dtor instantiations "
+                         "in the 40-200B band at fuzzy [99,100); the single "
+                         "immediate diff is confirmed downstream via objdiff)")
     ap.add_argument("--out", default=None, help="write JSON here (default: stdout)")
     ap.add_argument("--quiet", action="store_true",
                     help="suppress the stderr filter summary")
@@ -190,7 +253,8 @@ def main(argv=None):
         args.report, args.db,
         min_fuzzy=args.min_fuzzy, max_fuzzy=args.max_fuzzy,
         unit_pattern=args.unit_pattern, game_only=args.game_only,
-        min_size=args.min_size)
+        min_size=args.min_size,
+        struct_size_delta_only=args.struct_size_delta_only)
 
     doc = {
         "generated_at": _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -199,6 +263,7 @@ def main(argv=None):
             "min_fuzzy": args.min_fuzzy, "max_fuzzy": args.max_fuzzy,
             "unit_pattern": args.unit_pattern, "game_only": args.game_only,
             "min_size": args.min_size,
+            "struct_size_delta_only": args.struct_size_delta_only,
         },
         "count": stats["kept"],
         "functions": funcs,
@@ -213,11 +278,13 @@ def main(argv=None):
     if not args.quiet:
         d = stats["drop"]
         print(f"[worklist] seen={stats['seen']} kept={stats['kept']} "
-              f"(game={stats['game_kept']} engine={stats['engine_kept']}) | "
+              f"(game={stats['game_kept']} engine={stats['engine_kept']} "
+              f"struct_size_delta={stats['ssd_kept']}) | "
               f"dropped: normalized100={d['normalized_100']} anon_fn={d['anon_fn']} "
               f"funclet={d['funclet']} verdict={d['verdict']} excluded={d['excluded']} "
               f"band={d['band']} no_fuzzy={d['no_fuzzy']} size={d['size']} "
-              f"unit={d['unit']} game={d['game']}", file=sys.stderr)
+              f"unit={d['unit']} game={d['game']} not_ssd={d['not_ssd']}",
+              file=sys.stderr)
     return 0
 
 
