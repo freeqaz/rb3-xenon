@@ -71,7 +71,7 @@ OvershellPanel::OvershellPanel(SessionMgr *smgr, BandUserMgr *umgr)
       mActiveStatus(kOvershellInactive), mSongOptionsRequired(0),
       mUseExtendedMicArrows(0), mAllowsButtonPulse(1), mPartRestrictedUser(0),
       mPartRestriction(kTrackNone), mMinimumDifficulty(kDifficultyEasy), mPartResolver(0),
-      mPartResolverSeed(0), mAllowRealGuitarFlow(0), unk4c8(0) {
+      mPartResolverSeed(0), mAllowRealGuitarFlow(0) {
     if (smgr)
         mSessionMgr = smgr;
     else {
@@ -302,9 +302,10 @@ DECOMP_FORCEACTIVE(OvershellPanel, "!playableTracks.empty()", "!resolvingUsers.e
 
 DataNode OvershellPanel::OnMsg(const SessionReadyMsg &msg) {
     if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        if (msg->Int(2)) {
-            unk4c8 = true;
-        } else {
+        // RB3-360: the success branch set `unk4c8 = true` to arm the Wii
+        // friends-console-code gather in Poll — member absent in retail
+        // (Wii-only); retail success path here is UNVERIFIED (unpinned).
+        if (!msg->Int(2)) {
             for (int i = 0; i < mSlots.size(); i++) {
                 if (mSlots[i]->GetUser()) {
                     mSlots[i]->ShowState(kState_SignInFailRetry);
@@ -336,7 +337,11 @@ DataNode OvershellPanel::OnMsg(const MatchmakerChangedMsg &) {
 }
 
 DataNode OvershellPanel::OnMsg(const ServerStatusChangedMsg &msg) {
-    if (unk4cc == 2) {
+    // RB3-360: was `unk4cc == 2` — unk4cc (a per-frame Poll cache of
+    // mPanelOverrideFlow) is absent in retail (Wii-only); direct
+    // mPanelOverrideFlow read is the natural equivalent but the retail
+    // read here is UNVERIFIED (unpinned — decompile 0x8259xxxx when pinned).
+    if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
         if (!msg->Int(2)) {
             TheBandUI.ShowNetError();
             if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
@@ -354,7 +359,9 @@ DataNode OvershellPanel::OnMsg(const ConnectionStatusChangedMsg &) {
 }
 
 DataNode OvershellPanel::OnMsg(const NetStartUtilityFinishedMsg &msg) {
-    if (unk4cc == 2) {
+    // RB3-360: was `unk4cc == 2` — see ServerStatusChangedMsg note above
+    // (retail read UNVERIFIED, unpinned).
+    if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
         if (!msg->Int(2)) {
             TheBandUI.ShowNetError();
             if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
@@ -573,6 +580,9 @@ bool OvershellPanel::IsAnySlotAllowingInputToShell() {
     return false;
 }
 
+// RB3-360: retail has no GetFirstUserAllowingInputToShell function (its only
+// caller was the Wii-dev get_first_user_allowing_input_to_shell Handle arm,
+// which retail lacks). Kept for reference; emitted but unpaired.
 BandUser *OvershellPanel::GetFirstUserAllowingInputToShell() {
     for (int i = 0; i < mSlots.size(); i++) {
         BandUser *user = mSlots[i]->GetUser();
@@ -1197,28 +1207,11 @@ bool OvershellPanel::Exiting() const {
 }
 
 void OvershellPanel::Poll() {
-    unk4cc = mPanelOverrideFlow;
+    // RB3-360: removed `unk4cc = mPanelOverrideFlow;` (per-frame cache) and
+    // the whole `if (unk4c8) { ... TheWiiFriendMgr ... unk4c0.push_back ... }`
+    // friends-console-code gather block — unk4c0/unk4c8/unk4cc are absent in
+    // retail (Wii-only online-registration flow).
     if (TheRnd.ProcCmds() & kProcessPost) {
-        if (unk4c8) {
-            MILO_ASSERT(InOverrideFlow(kOverrideFlow_RegisterOnline), 0x794);
-            if (TheWiiFriendMgr.unk2c) {
-                unk4c8 = false;
-                WiiFriendList friends;
-                TheWiiFriendMgr.GetCachedFriends(&friends);
-                int numFriends = (int)friends.mFriends.size();
-                for (int i = 0; i < numFriends; i++) {
-                    WiiFriend *pFriend = friends.GetFriendByIdx(i);
-                    unsigned int codeLow = (unsigned int)(pFriend->mConsoleCode);
-                    unsigned int codeHigh = (unsigned int)(pFriend->mConsoleCode >> 32);
-                    u64 code = ((u64)codeHigh << 32) | codeLow;
-                    unk4c0.push_back(code);
-                }
-                EndOverrideFlow(kOverrideFlow_RegisterOnline, false);
-            } else if (TheWiiFriendMgr.unk2d) {
-                EndOverrideFlow(kOverrideFlow_RegisterOnline, false);
-                unk4c8 = false;
-            }
-        }
         bool inSession = false;
         if (TheNetSession != nullptr && !TheNetSession->IsLocal()) {
             inSession = true;
@@ -1619,10 +1612,12 @@ BEGIN_HANDLERS(OvershellPanel)
     HANDLE_MESSAGE(ConnectionStatusChangedMsg)
     HANDLE_MESSAGE(NetStartUtilityFinishedMsg)
     HANDLE_MESSAGE(PartyMembersChangedMsg)
-    HANDLE_MESSAGE(InviteReceivedMsg)
-    HANDLE_MESSAGE(InviteExpiredMsg)
-    HANDLE_MESSAGE(UserNameNewlyProfaneMsg)
-    HANDLE_MESSAGE(NetStartUtilityFinishedMsg)
+    // RB3-360: HANDLE_MESSAGE(InviteReceivedMsg), HANDLE_MESSAGE(InviteExpiredMsg)
+    // (Wii invite flow), HANDLE_MESSAGE(UserNameNewlyProfaneMsg) and the
+    // duplicate HANDLE_MESSAGE(NetStartUtilityFinishedMsg) (retail keeps
+    // exactly one, above) are all absent in retail — their stack
+    // message/DataNode temps were the entire 0x1c0-vs-0x1a0 frame
+    // reorganization. (The OnMsg definitions are kept; only the arms go.)
     HANDLE(export_all, OnExportAll)
     HANDLE_ACTION(update_all, UpdateAll())
     HANDLE(update, OnUpdate)
@@ -1642,7 +1637,13 @@ BEGIN_HANDLERS(OvershellPanel)
     HANDLE_EXPR(should_pause, ShouldPause())
     HANDLE_ACTION(attempt_to_add_user, AttemptToAddUser(_msg->Obj<LocalBandUser>(2)))
     HANDLE_EXPR(is_any_slot_allowing_input_to_shell, IsAnySlotAllowingInputToShell())
-    HANDLE_EXPR(get_first_user_allowing_input_to_shell, GetFirstUserAllowingInputToShell())
+    // RB3-360: retail LACKS the get_first_user_allowing_input_to_shell arm
+    // (and the retail binary has no GetFirstUserAllowingInputToShell function
+    // at all — no room between fn_82599FB0 = IsAnySlotAllowingInputToShell
+    // and fn_8259A028 = IsAnyLocalSlotAllowingInputToShell; both identified
+    // by Ghidra decompile). Retail's Handle call sequence here is
+    // FB0 / A028 / A198(IsAnySlotJoinable) / IsNonVocalistInVocalsSlot /
+    // DataNode::Int->stb 0x4CC (set_allow_real_guitar_flow) — one arm fewer.
     HANDLE_EXPR(
         is_any_local_slot_allowing_input_to_shell, IsAnyLocalSlotAllowingInputToShell()
     )

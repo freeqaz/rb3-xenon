@@ -114,7 +114,6 @@ public:
     void SetCurrentCharacterPatch();
     void FinishPatchEdit();
     void SavePrefab();
-    bool CheatToggleAssetTokens();
     void SetupAssetPatchData(Symbol);
     bool IsAssetPatchable();
     CharData *GetCharData() const { return mCharData; }
@@ -155,5 +154,9 @@ public:
     bool mWaitingToLeave; // 0x9b
     BandCharDesc::Patch::Category mPatchCategory; // 0x9c
     String mPatchName; // 0xa0
-    bool mShowAssetTokens; // 0xac
+    // RB3-360: no trailing mShowAssetTokens — retail members end after
+    // mPatchName (RTTI: vtordisp 0xB4, vbase Hmx::Object at 0xB8). The
+    // Wii-dev-only bool pushed the vbase to 0xBC and biased every
+    // r26-relative displacement in Handle. Its only users were the two
+    // RB3_STRIP_CHEAT_HANDLERS-stripped cheat arms + CheatToggleAssetTokens.
 };

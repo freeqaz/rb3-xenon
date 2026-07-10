@@ -35,10 +35,13 @@
 
 PracticePanel *ThePracticePanel;
 
+// RB3-360: retail ctor (Function_82693E60) initializes exactly these members
+// in exactly this order/value sequence (0, -1, 0, 1, 0, 1) — no unk59/unk5c/
+// unk60 (Wii-dev-only).
 PracticePanel::PracticePanel()
     : mInVocalMode(0), mFader(Hmx::Object::New<Fader>()), mPlayAllTracks(0),
-      mGuidePitch(0), unk4c(-1), mScorePart(-1), unk54(0), unk55(0), unk56(1), unk57(0),
-      unk58(1), unk59(0), unk5c(0), unk60(1), mMetronome(0) {
+      mGuidePitch(0), unk4c(-1), unk54(0), mScorePart(-1), unk55(0), unk56(1),
+      unk57(0), unk58(1), mMetronome(0) {
     ThePracticePanel = this;
     mGuidePitch = new VocalGuidePitch();
 }
@@ -52,7 +55,7 @@ PracticePanel::~PracticePanel() {
 void PracticePanel::Enter() {
     mGuidePitch->Init();
     UIPanel::Enter();
-    unk59 = false;
+    // RB3-360: `unk59 = false;` removed — member absent in retail (Wii-only).
     TheGame->AddMusicFader(mFader);
     OnFadeSongIn(0.1f);
     if (IsDrums()) {
@@ -68,9 +71,9 @@ void PracticePanel::Enter() {
     mScorePart = -1;
     unk55 = false;
     unk56 = true;
-    unk5c = 1;
+    // RB3-360: `unk5c = 1;` and `SetRestartAllowed(true);` removed — unk5c and
+    // unk60 (restart-allowed flag) absent in retail (Wii-only).
     unk57 = false;
-    SetRestartAllowed(true);
     MarkGemsAsProcessed();
 }
 
@@ -86,7 +89,7 @@ void PracticePanel::Exit() {
     mGuidePitch->EnableGuideTrack(-1);
     mGuidePitch->Terminate();
     unk4c = -1;
-    SetRestartAllowed(true);
+    // RB3-360: `SetRestartAllowed(true);` removed — unk60 absent in retail.
     unk54 = true;
 }
 
@@ -149,17 +152,15 @@ void PracticePanel::Poll() {
                 if (vp && vp->ScoringEnabled()) {
                     mGuidePitch->Poll(ms);
                 }
+                // RB3-360: unk5c absent in retail (Wii-only) — the Wii build
+                // wrapped this in a two-poll delay state machine
+                // (unk5c==1 -> unk5c=2 -> else { unk5c=0; ... }).
                 if (unk56 && !unk57) {
-                    if (unk5c == 1)
-                        unk5c = 2;
-                    else {
-                        unk5c = 0;
-                        static Message trackInMsg("bring_track_in");
-                        Handle(trackInMsg, true);
-                        unk56 = false;
-                        if (!vp) {
-                            GetTrackPanel()->GetTrack(players[0], true)->UpdateShifts();
-                        }
+                    static Message trackInMsg("bring_track_in");
+                    Handle(trackInMsg, true);
+                    unk56 = false;
+                    if (!vp) {
+                        GetTrackPanel()->GetTrack(players[0], true)->UpdateShifts();
                     }
                 }
                 bool u7 = TheGame->IsPaused() | TheGame->InRollback();
@@ -195,28 +196,28 @@ void PracticePanel::Poll() {
                         }
                     }
                     float ftick = MsToTick(f84);
-                    if (!unk59) {
-                        if (TheTaskMgr.GetSongPos().GetTotalTick() > ftick) {
-                            if (!unk57) {
-                                Handle(end_play_msg, true);
-                                unk57 = true;
-                                SetRestartAllowed(false);
-                            }
-                            if (TheTaskMgr.GetSongPos().GetTotalTick()
-                                > ftick + 1920.0f) {
-                                Handle(loop_msg, true);
-                                unk57 = false;
-                                if (TheGame->GetActivePlayer(0)
-                                    && TheGame->GetActivePlayer(0)->GetBandTrack()) {
-                                    TheGame->GetActivePlayer(0)
-                                        ->GetBandTrack()
-                                        ->ResetStreakMeter();
-                                }
-                                unk59 = true;
+                    // RB3-360: unk59/unk60 absent in retail (Wii-only) — the
+                    // Wii build guarded this block with `if (!unk59)` (with a
+                    // one-poll skip via `else unk59 = false;`, setting
+                    // `unk59 = true` after loop_msg) and called
+                    // SetRestartAllowed(false) after end_play_msg.
+                    if (TheTaskMgr.GetSongPos().GetTotalTick() > ftick) {
+                        if (!unk57) {
+                            Handle(end_play_msg, true);
+                            unk57 = true;
+                        }
+                        if (TheTaskMgr.GetSongPos().GetTotalTick()
+                            > ftick + 1920.0f) {
+                            Handle(loop_msg, true);
+                            unk57 = false;
+                            if (TheGame->GetActivePlayer(0)
+                                && TheGame->GetActivePlayer(0)->GetBandTrack()) {
+                                TheGame->GetActivePlayer(0)
+                                    ->GetBandTrack()
+                                    ->ResetStreakMeter();
                             }
                         }
-                    } else
-                        unk59 = false;
+                    }
                 }
             }
         }
@@ -365,7 +366,7 @@ void PracticePanel::SetGuidePitchPaused(bool b) {
 void PracticePanel::UpdateGuideTrack(const Symbol &s) { mGuidePitch->SetSong(s); }
 
 void PracticePanel::TrackIn() {
-    SetRestartAllowed(true);
+    // RB3-360: `SetRestartAllowed(true);` removed — unk60 absent in retail.
     mGuidePitch->EnableGuideTrack(unk4c);
     unk4c = -1;
     if (unk55 && TheGame->GetActivePlayer(0)) {
@@ -381,7 +382,7 @@ void PracticePanel::TrackOut() {
     unk4c = mGuidePitch->GetGuideTrack();
     mGuidePitch->EnableGuideTrack(-1);
     unk56 = true;
-    unk5c = 1;
+    // RB3-360: `unk5c = 1;` removed — member absent in retail (Wii-only).
 }
 
 int PracticePanel::GetNumVocalParts() const {
@@ -420,14 +421,9 @@ void PracticePanel::MarkGemsAsProcessed() {
     }
 }
 
-void PracticePanel::SetRestartAllowed(bool b1) { unk60 = b1; }
-
-bool PracticePanel::GetRestartAllowed() {
-    if (ThePracticePanel && ThePracticePanel->Showing())
-        return unk60;
-    else
-        return true;
-}
+// RB3-360: SetRestartAllowed/GetRestartAllowed removed — unk60 and the
+// get_restart_allowed Handle arm are absent in retail (Wii-only); the arm's
+// `static Symbol _hs` was what shifted the guard bits (oris 0x200 vs 0x400).
 
 #pragma push
 #pragma dont_inline on
@@ -457,7 +453,6 @@ BEGIN_HANDLERS(PracticePanel)
     HANDLE_ACTION(click_cheat, unk58 = _msg->Int(2))
     HANDLE_EXPR(has_player, HasPlayer())
     HANDLE_ACTION(mark_gems_as_processed, MarkGemsAsProcessed())
-    HANDLE_EXPR(get_restart_allowed, GetRestartAllowed())
 
     {
         const char *symStr = sym.Str();

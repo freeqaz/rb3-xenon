@@ -55,8 +55,7 @@ CustomizePanel::CustomizePanel()
       mMakeupProvider(0), mInstrumentFinishProvider(0),
       mCurrentBoutique(kAssetBoutique_None), unk90(gNullStr), mCurrentMakeupIndex(-1),
       mRefreshingContent(0), mWaitingToLeave(0),
-      mPatchCategory((BandCharDesc::Patch::Category)0), mPatchName(gNullStr),
-      mShowAssetTokens(0) {}
+      mPatchCategory((BandCharDesc::Patch::Category)0), mPatchName(gNullStr) {}
 
 CustomizePanel::~CustomizePanel() { mFocusComponents.clear(); }
 
@@ -219,6 +218,12 @@ void CustomizePanel::UpdateAssetProvider() {
     }
 }
 
+// RB3-360 residual note (CustomizePanel::Handle stalls at 99.0): retail's
+// update_makeup_provider arm calls this outlined (bl fn_825F85A0) where ours
+// inlines it. Forcing __declspec(noinline) here DOES outline it but cascades
+// into a whole-function layout/regalloc reshuffle (99.0 -> 72.0) — reverted.
+// Remaining Handle diffs: this-spill vs remat at the customize-state arm and
+// an inverted has_license/has_patch bool-normalize cross-jump direction.
 void CustomizePanel::UpdateMakeupProvider(Symbol type) {
     MILO_ASSERT(type == eyes || type == lips, 0x1A9);
     mMakeupProvider->Update(type);
@@ -1084,10 +1089,6 @@ void CustomizePanel::SavePrefab() {
     }
 }
 
-bool CustomizePanel::CheatToggleAssetTokens() {
-    return mShowAssetTokens = !mShowAssetTokens;
-}
-
 #pragma push
 #pragma dont_inline on
 BEGIN_HANDLERS(CustomizePanel)
@@ -1145,16 +1146,12 @@ BEGIN_HANDLERS(CustomizePanel)
     HANDLE_EXPR(is_waiting_to_leave, mWaitingToLeave)
     HANDLE_ACTION(take_portrait, mClosetMgr->TakePortrait())
     HANDLE_ACTION(save_prefab, SavePrefab())
-#ifndef RB3_STRIP_CHEAT_HANDLERS
-    // Retail X360 stripped these two asset-token cheat handlers: the retail
-    // Handle body jumps straight from save_prefab to the HANDLE_MESSAGE block
-    // (no local-static Symbol ctor/guard machinery for cheat_toggle_asset_tokens
-    // or show_asset_tokens). Gated per-TU via /DRB3_STRIP_CHEAT_HANDLERS.
-    // Verified: their inline block = the 43-instr target-only gap; removing them
-    // moved CustomizePanel::Handle 95.3 -> 98.9% normalized.
-    HANDLE_EXPR(cheat_toggle_asset_tokens, CheatToggleAssetTokens())
-    HANDLE_EXPR(show_asset_tokens, mShowAssetTokens)
-#endif
+    // RB3-360: the Wii-dev asset-token cheat arms (cheat_toggle_asset_tokens /
+    // show_asset_tokens), their mShowAssetTokens member, and
+    // CheatToggleAssetTokens() do not exist in retail — the retail Handle body
+    // jumps straight from save_prefab to the HANDLE_MESSAGE block, and retail
+    // RTTI places the vbase at 0xB8 (no trailing bool). Deleted outright
+    // (member could not be gated per-TU: other TUs include this header).
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_MESSAGE(UIComponentScrollMsg)

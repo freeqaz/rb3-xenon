@@ -1444,8 +1444,12 @@ void GemManager::Poll(float ms, const PlayerState &state) {
     if (TheGame->IsWaiting() || TheGame->unkdc != -1.0f ||
         (TheRGTrainerPanel && TheRGTrainerPanel->GetLegendMode())) {
         UpdateArpeggios(ms, true);
-    } else if (!TheGame || !TheGame->InPracticeMode() || !ThePracticePanel ||
-               ThePracticePanel->unk5c <= 0) {
+    } else {
+        // RB3-360: `|| ThePracticePanel->unk5c <= 0` removed from this
+        // condition — PracticePanel::unk5c is absent in retail (Wii-only
+        // track-in delay state). GemManager::Poll is unpinned; the retail
+        // form of this practice-mode condition is UNVERIFIED (recon open
+        // question — revisit when GemManager is pinned).
         PollHelper(ms, state);
     }
 }

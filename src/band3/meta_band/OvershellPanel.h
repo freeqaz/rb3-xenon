@@ -168,9 +168,10 @@ public:
     Rand mPartResolver; // 0xa8
     int mPartResolverSeed; // 0x4b8
     bool mAllowRealGuitarFlow; // 0x4bc
-    std::vector<u64> unk4c0;
-    bool unk4c8;
-    int unk4cc;
+    // RB3-360: no unk4c0 (std::vector<u64> friends console codes) / unk4c8 /
+    // unk4cc — Wii-dev-only online-registration state (Poll filled unk4c0 from
+    // TheWiiFriendMgr). Retail members end at mAllowRealGuitarFlow 0x4CD,
+    // vtordisp 0x4D0, vbase Hmx::Object at 0x4D4 (RTTI COL vbase offset 0x4D4).
 };
 
 DECLARE_MESSAGE(NewOvershellLocalUserMsg, "new_overshell_local_user_msg")

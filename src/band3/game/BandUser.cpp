@@ -409,7 +409,12 @@ RemoteBandUser *LocalBandUser::GetRemoteBandUser() const {
 }
 
 const std::vector<u64> &LocalBandUser::GetFriendsConsoleCodes() const {
-    return TheBandUI.mOvershell->unk4c0;
+    // RB3-360: was `return TheBandUI.mOvershell->unk4c0;` — that member
+    // (Wii friends-console-code list filled by OvershellPanel::Poll) is
+    // absent in retail. Stubbed to an empty list; whether retail even keeps
+    // this vtable slot is an open recon question (dump ??_7LocalBandUser).
+    static std::vector<u64> sNoFriendsConsoleCodes;
+    return sNoFriendsConsoleCodes;
 }
 
 void LocalBandUser::Reset() {
