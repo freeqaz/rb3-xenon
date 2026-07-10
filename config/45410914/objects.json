@@ -764,8 +764,18 @@
    "band3/game/Metronome.cpp": "NonMatching",
    "band3/game/DirectInstrument.cpp": "NonMatching",
    "band3/meta_band/LessonProvider.cpp": "NonMatching",
-   "band3/meta_band/SongSelectPanel.cpp": "NonMatching",
-   "band3/meta_band/VoiceoverPanel.cpp": "NonMatching",
+   "band3/meta_band/SongSelectPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/VoiceoverPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/EditSetlistPanel.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
@@ -832,7 +842,12 @@
    "band3/meta_band/AssetTypes.cpp": "NonMatching",
    "band3/meta_band/AppLabel.cpp": "NonMatching",
    "band3/meta_band/UIStats.cpp": "NonMatching",
-   "band3/meta_band/AppMiniLeaderboardDisplay.cpp": "NonMatching",
+   "band3/meta_band/AppMiniLeaderboardDisplay.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/Leaderboard.cpp": "NonMatching",
    "band3/meta_band/PlayerLeaderboards.cpp": "NonMatching",
    "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
@@ -878,7 +893,12 @@
    "band3/meta_band/OvershellPartSelectProvider.cpp": "NonMatching",
    "band3/meta_band/OvershellPanel.cpp": "NonMatching",
    "band3/meta_band/OvershellSlot.cpp": "NonMatching",
-   "band3/meta_band/PrefabMgr.cpp": "NonMatching",
+   "band3/meta_band/PrefabMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SongUpgradeMgr.cpp": "NonMatching",
    "band3/meta_band/BandMachine.cpp": "NonMatching",
    "band3/meta_band/BandMachineMgr.cpp": "NonMatching",
