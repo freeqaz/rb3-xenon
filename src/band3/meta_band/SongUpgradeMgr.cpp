@@ -285,16 +285,16 @@ void SongUpgradeMgr::AddUpgradeData(
         DataArray *curArr = arr->Array(i);
         static Symbol song_id("song_id");
         int songID = curArr->FindInt(song_id);
-        if (mAvailableUpgrades.find(songID) != mAvailableUpgrades.end()) {
+        if (HasUpgrade(songID)) {
             MILO_LOG("The upgrade for %s was found twice.\n", curArr->Sym(0));
         } else {
             if (mUpgradeData.find(songID) != mUpgradeData.end()) {
                 delete mUpgradeData.find(songID)->second;
-
-                SongUpgradeData *udata = new SongUpgradeData(curArr);
-                mUpgradeData[songID] = udata;
-                MarkAvailable(songID, s);
             }
+
+            SongUpgradeData *udata = new SongUpgradeData(curArr);
+            mUpgradeData[songID] = udata;
+            MarkAvailable(songID, s);
         }
     }
     if (!streq(s.Str(), ".")) {
