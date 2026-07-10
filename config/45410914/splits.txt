@@ -802,6 +802,9 @@ Jukebox.cpp:
 	.pdata      start:0x82238668 end:0x82238680
 	.text       start:0x8278C7B8 end:0x8278C964
 
+Sort.cpp:
+	.text       start:0x82B5DC30 end:0x82B5DC80
+
 Sorting.cpp:
 	.pdata      start:0x82238800 end:0x82238810
 	.text       start:0x8278DD80 end:0x8278E008
