@@ -7,6 +7,7 @@
 #include "game/GameMicManager.h"
 #include "game/SongDB.h"
 #include "game/VocalPlayer.h"
+#include "math/Utl.h"
 #include "net/Net.h"
 #include "net/NetSession.h"
 #include "obj/Data.h"
@@ -455,8 +456,7 @@ float Singer::AddToFreestyleDeployment(float val) {
 }
 
 void Singer::ResolveAmbiguity() {
-    for (AmbiguousData *entry = &mAmbiguousData[0];
-         entry != &mAmbiguousData[0] + mAmbiguousData.size(); entry++) {
+    for (AmbiguousData *entry = &mAmbiguousData[0]; entry != mAmbiguousData.end(); entry++) {
         if (!entry->isResolved || entry->winningPart == -1)
             continue;
         int part1 = entry->part1;
@@ -464,8 +464,8 @@ void Singer::ResolveAmbiguity() {
         float points1 = mResultsData[part1].centsDeviation;
         float points2 = mResultsData[part2].centsDeviation;
         float delta = points1 - points2;
-        float maxPoints = (points1 < points2) ? points2 : points1;
-        if (std::fabs(delta) / maxPoints > 0.1f) {
+        float maxPoints = Max(points1, points2);
+        if (fabsf(delta) / maxPoints > 0.1f) {
             int iWinningPart = (delta > 0.0f) ? part1 : part2;
             int iLosingPart = (delta < 0.0f) ? part1 : part2;
             MILO_ASSERT(iWinningPart != iLosingPart, 0x1B4);

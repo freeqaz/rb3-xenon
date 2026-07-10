@@ -326,7 +326,7 @@ const VocalPhrase *VocalPart::GetFirstPhraseMarker() const {
 
 const VocalPhrase *VocalPart::GetNextPhraseMarker(const VocalPhrase *const &p) const {
     const VocalPhrase *curPhrase = p;
-    const VocalPhrase *end = mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size();
+    const VocalPhrase *end = mVocalNoteList->mPhrases.end();
     if (curPhrase == end) return curPhrase;
     return curPhrase + 1;
 }
@@ -697,13 +697,10 @@ void VocalPart::HandlePhraseEnd(
         const VocalPhrase *phrase = nextPhrase;
         float startMs;
         float endMs;
-        if (nextPhrase
-            != mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()) {
+        if (nextPhrase != mVocalNoteList->mPhrases.end()) {
             startMs = nextPhrase->unk0 + nextPhrase->unk4;
             const VocalPhrase *nextNext = GetNextPhraseMarker(phrase);
-            if (nextNext
-                != mVocalNoteList->mPhrases.data()
-                    + mVocalNoteList->mPhrases.size()) {
+            if (nextNext != mVocalNoteList->mPhrases.end()) {
                 endMs = nextNext->unk0 + nextNext->unk4;
             } else {
                 endMs = TheSongDB->GetSongDurationMs();
@@ -715,8 +712,7 @@ void VocalPart::HandlePhraseEnd(
         o_rRating = -1;
         unk20 = 0.0f;
         if (mPlayer->ScoringEnabled()
-            && mThisPhrase
-                != mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()
+            && mThisPhrase != mVocalNoteList->mPhrases.end()
             && mPlayer->GetEnabledState() == kPlayerEnabled
             && mThisPhrase->unk0 >= mFirstPhraseMsToScore) {
             float scoreMax = mPhraseScoreMax;
@@ -748,8 +744,7 @@ void VocalPart::HandlePhraseEnd(
             }
         }
         VocalNoteList *list = mVocalNoteList;
-        if (phrase != list->mPhrases.data() + list->mPhrases.size()
-            && phrase->unk10 != phrase->unk14) {
+        if (phrase != list->mPhrases.end() && phrase->unk10 != phrase->unk14) {
             mSpotlightPhraseID = TheSongDB->GetCommonPhraseID(
                 TheGameConfig->GetTrackNum(mPlayer->GetUserGuid()),
                 list->mNotes[phrase->unk10].mTick
@@ -757,9 +752,7 @@ void VocalPart::HandlePhraseEnd(
         } else {
             mSpotlightPhraseID = -1;
         }
-        if (mThisPhrase
-                != mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()
-            && mThisPhrase->unk1a) {
+        if (mThisPhrase != mVocalNoteList->mPhrases.end() && mThisPhrase->unk1a) {
             UpdateMinMaxPitch(phrase);
         }
         if (mPlayer->ScoringEnabled() && mPhraseScoreMax > 0.0f) {
@@ -773,7 +766,7 @@ void VocalPart::HandlePhraseEnd(
             unk48 = 0.0f;
             unk38 = 0.0f;
         }
-        if (phrase != mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()) {
+        if (phrase != mVocalNoteList->mPhrases.end()) {
             if (phrase->unk10 > 0) {
                 const VocalNote &prev = mVocalNoteList->mNotes[phrase->unk10 - 1];
                 if (prev.mMs + prev.mDurationMs > phrase->unk0) {
@@ -788,22 +781,6 @@ void VocalPart::HandlePhraseEnd(
         o_rStartMs = startMs;
         o_rEndMs = endMs;
         o_rPrevScore = prevScore;
-    }
-    static bool dump;
-    if (dump) {
-        TheDebug << MakeString("=== HandlePhraseEnd singer %d ms %f\n", mPartIndex, ms);
-        if (mThisPhrase
-            != mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()) {
-            MILO_LOG("\tNext Phrase Data:\n");
-            TheDebug << MakeString("\tStart ms: %f\n", mThisPhrase->unk0);
-            TheDebug << MakeString(
-                "\tEnd ms: %f\n", mThisPhrase->unk0 + mThisPhrase->unk4
-            );
-            TheDebug << MakeString("\tBegin Note: %d\n", mThisPhrase->unk10);
-            TheDebug << MakeString("\tEnd Note: %d\n", mThisPhrase->unk14);
-        } else {
-            MILO_LOG("\tEnd Of Song\n");
-        }
     }
 }
 

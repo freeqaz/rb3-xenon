@@ -58,9 +58,6 @@ public:
     class RangeShift {
     public:
         RangeShift() {}
-        RangeShift(const RangeShift &o)
-            : unk0(o.unk0), unk4(o.unk4), unk8(o.unk8), unkc(o.unkc),
-              unk10(o.unk10), unk14(o.unk14) {}
         float unk0;
         float unk4;
         float unk8;

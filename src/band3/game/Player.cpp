@@ -735,20 +735,14 @@ void Player::SubtractEnergy(float f) {
 }
 
 void Player::UpdateEnergy(const SongPos &pos) {
-    if (mPermanentOverdrive && !mDeployingBandEnergy) {
-        float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime);
-        if (secs > 0.0f) {
-            SetEnergy(1.0f);
-            DeployBandEnergyIfPossible(false);
-        }
-    }
-    if (TheGame->unkdc == -1.0f) {
+    bool notPracticing = TheGame->unkdc != -1.0f;
+    if (!notPracticing) {
         if (unk2b0 && mDeployingBandEnergy) {
             TheSongDB->GetData()->GetBeatMap();
             float curBeat = TickToBeat((int)pos.GetTotalTick());
             float prevBeat = TickToBeat((int)mSongPos.GetTotalTick());
-            float delta = curBeat - prevBeat;
             if (ShouldDrainEnergy()) {
+                float delta = curBeat - prevBeat;
                 SubtractEnergy(delta * mParams->mDeployBeats);
             }
         }
