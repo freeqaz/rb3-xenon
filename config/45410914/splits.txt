@@ -3074,8 +3074,16 @@ network/Plugins/Checksum/MD5/MD5.cpp:
 	.text       start:0x82B15190 end:0x82B16D44
 
 band3/meta_band/LessonProvider.cpp:
-	.pdata      start:0x82227018 end:0x82227080
-	.text       start:0x826574C0 end:0x82657A10
+	.pdata      start:0x82227040 end:0x822270B8
+	.text       start:0x82657610 end:0x82657CB4
+
+band3/meta_band/TrainerProvider.cpp:
+	.pdata      start:0x822270B8 end:0x82227108
+	.text       start:0x82657CB4 end:0x82658064
+
+band3/meta_band/StoreSongSortNode.cpp:
+	.pdata      start:0x82227108 end:0x822271D0
+	.text       start:0x82658064 end:0x82658920
 
 band3/game/TrainerGemTab.cpp:
 	.pdata      start:0x8222E0F0 end:0x8222E168
@@ -3354,6 +3362,7 @@ system/bandobj/BandTrack.cpp:
 	.text       start:0x8233CCE0 end:0x8233CD74
 
 band3/game/Game.cpp:
+	.pdata      start:0x822271D0 end:0x82227430
 	.pdata      start:0x82227430 end:0x82227438
 	.pdata      start:0x82227468 end:0x82227470
 	.pdata      start:0x82227478 end:0x82227480
@@ -3361,6 +3370,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x82227668 end:0x82227670
 	.pdata      start:0x82227850 end:0x82227858
 	.pdata      start:0x822278B0 end:0x822278B8
+	.text       start:0x82658920 end:0x82659E60
 	.text       start:0x82659E60 end:0x82659EC0
 	.text       start:0x8265A168 end:0x8265A1F8
 	.text       start:0x8265A278 end:0x8265A34C

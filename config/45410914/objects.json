@@ -1189,7 +1189,13 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
+   "band3/meta_band/StoreSongSortNode.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/TrainerProvider.cpp": "NonMatching",
    "band3/meta_band/UIEvent.cpp": "NonMatching",
    "band3/meta_band/UIEventMgr.cpp": {
     "status": "NonMatching",

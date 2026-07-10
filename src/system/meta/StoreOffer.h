@@ -54,7 +54,9 @@ public:
     int GetSingleSongID() const;
     // RB3-specific methods (missing from DC3 base)
     char const *Artist() const;
-    Symbol ShortName() const;
+    // Inline (retail evidence: ??0StoreSongSortNode inlines this as
+    // mStoreOfferData->Sym(0) — DataNode::Sym called on node[0] directly).
+    Symbol ShortName() const { return mStoreOfferData->Sym(0); }
     bool IsCover() const;
     bool HasArtist() const;
     float PartRank(Symbol) const;

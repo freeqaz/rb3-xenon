@@ -6,60 +6,54 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 
-StoreSongSortNode::StoreSongSortNode(SongSortCmp *cmp, StoreOffer* off) : SongSortNode(cmp) {
-    unk38 = off;
-    unk34 = off->ShortName();
+StoreSongSortNode::StoreSongSortNode(SongSortCmp *cmp, StoreOffer *off)
+    : SongSortNode(cmp) {
+    mOffer = off;
+    mToken = off->ShortName();
 }
 
-StoreSongSortNode::~StoreSongSortNode(){
+StoreSongSortNode::~StoreSongSortNode() {}
 
-}
-
-bool StoreSongSortNode::IsEnabled() const {
-    return IsActive();
-}
+bool StoreSongSortNode::IsEnabled() const { return IsActive(); }
 
 const char *StoreSongSortNode::GetAlbumArtPath() {
     return "ui/image/song_select_random_keep.png";
 }
 
-const char *StoreSongSortNode::GetTitle() const {
-    return unk38->OfferName();
-}
+const char *StoreSongSortNode::GetTitle() const { return mOffer->OfferName(); }
 
 const char *StoreSongSortNode::GetArtist() const {
-    return unk38->Artist();
+    static Symbol artist("artist");
+    return mOffer->GetData(DataArrayPtr(artist), false).Str();
 }
 
 bool StoreSongSortNode::GetIsCover() const {
-    return unk38->IsCover();
+    static Symbol cover("cover");
+    bool ret = mOffer->HasData(cover) && mOffer->GetData(DataArrayPtr(cover), false).Int();
+    return ret;
 }
 
 const char *StoreSongSortNode::GetAlbum() const {
-    return unk38->AlbumName();
+    static Symbol album_name("album_name");
+    return mOffer->GetData(DataArrayPtr(album_name), false).Str();
 }
 
-int StoreSongSortNode::GetTotalMs() const {
-    return 0;
-}
+int StoreSongSortNode::GetTotalMs() const { return 0; }
 
 int StoreSongSortNode::GetTier(Symbol sym) const {
-    float f1 = unk38->PartRank(sym);
+    static Symbol rank("rank");
+    float f1 = mOffer->PartRank(sym);
     return TheSongMgr.RankTier(f1, sym);
 }
 
-SongNodeType StoreSongSortNode::GetType() const {
-    return kNodeStoreSong;
-}
+SongNodeType StoreSongSortNode::GetType() const { return kNodeStoreSong; }
 
-Symbol StoreSongSortNode::GetToken() const {
-    return unk34;
-}
+Symbol StoreSongSortNode::GetToken() const { return mToken; }
 
 BEGIN_HANDLERS(StoreSongSortNode)
-    HANDLE_EXPR(id, (int)unk38->GetSingleSongID())
-    HANDLE_EXPR(get_offer, unk38)
-    HANDLE_MEMBER_PTR(unk38)
+    HANDLE_EXPR(id, (int)mOffer->GetSingleSongID())
+    HANDLE_EXPR(get_offer, mOffer)
+    HANDLE_MEMBER_PTR(mOffer)
     HANDLE_SUPERCLASS(SongSortNode)
     HANDLE_CHECK(76)
 END_HANDLERS

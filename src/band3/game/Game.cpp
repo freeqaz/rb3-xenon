@@ -389,8 +389,13 @@ void Game::Reset() {
 bool Game::HasIntro() { return mHasIntro; }
 
 float Game::GetSongToTaskMgrMs() {
-    float f1 = 1;
+    // Retail constructs (and never reads) two function-local static Symbols
+    // here — guard bits 1/2 of the same $S word (evidence: fn 0x82659CE8
+    // inits 82dd0a58 from "practice", 82dd0a54 from "trainer").
     LagContext ctx = kGame;
+    static Symbol practice("practice");
+    static Symbol trainer("trainer");
+    float f1 = 1;
     if (mProperties.mInPracticeMode || mProperties.mInTrainer)
         f1 = mMusicSpeed;
     if (0.85 < f1 && f1 <= 0.95) {
