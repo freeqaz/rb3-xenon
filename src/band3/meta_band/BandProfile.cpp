@@ -982,7 +982,15 @@ BEGIN_HANDLERS(BandProfile)
     HANDLE_EXPR(has_seen_hint, HasSeenHint(_msg->Sym(2)))
     HANDLE_ACTION(set_has_seen_hint, SetHasSeenHint(_msg->Sym(2)))
     HANDLE_EXPR(access_accomplishment_progress, &AccessAccomplishmentProgress())
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 stripped this cheat handler: the retail Handle body jumps
+    // straight from access_accomplishment_progress to the HANDLE_MESSAGE block
+    // (no local-static Symbol ctor/guard machinery for auto_fake_fill). Gated
+    // per-TU via /DRB3_STRIP_CHEAT_HANDLERS (same convention as
+    // CustomizePanel::Handle's cheat_toggle_asset_tokens/show_asset_tokens).
+    // Verified: removing it moved BandProfile::Handle 96.6 -> 100% normalized.
     HANDLE_ACTION(auto_fake_fill, AutoFakeFill(_msg->Int(2)))
+#endif
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
     HANDLE_MEMBER_PTR((&mGameplayOptions))
     HANDLE_MEMBER_PTR(mScores)
