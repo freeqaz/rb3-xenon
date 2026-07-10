@@ -202,6 +202,28 @@ agent pass.
   - SongUpgradeMgr also fixed a real behavior bug: only the `delete` of the
     old entry is guarded by `find != end`; the new/assign/MarkAvailable runs
     unconditionally.
-- Remaining from phase 3: Geo::Clip fixer + sentinel-family trial were killed
-  by the quota pause mid-run (worktrees preserved); Opus transcript review in
-  flight — results to be appended here.
+- 2026-07-10, killed-agent salvage (Opus transcript review of the two
+  quota-paused runs; full review `~/tmp/spill_incomplete_review.md`):
+  - **Geo::Clip partial LANDED** (`73f2c74`): 95.1→97.6 fuzzy via a
+    Clip-local `SubV2` static helper + commutative dot-term reorder;
+    zero regressions (A/B vs post-landing baseline). Remaining: f12↔f13
+    volatile regswap (permuter-class), Vector2 0x0/0x4 offset swap, and two
+    class-B EH-homed `stfs` (quantized). Reported `stuck@97.6` to decomp.db;
+    minimal-repro harness preserved at `~/tmp/geoclip_probe/`.
+  - **Sentinel-family REDIAGNOSED — scanner's reading was wrong.** The
+    "self-pointing sentinel init" is actually retail **inline-expanding a
+    second `ObjPtr<T>` constructor we don't have**: retail's 360 header had
+    BOTH `ObjPtr(Hmx::Object* owner)` (no AddRef → always /Ob2-inlined:
+    3 field stores + vptr install + EH-home of &member) and
+    `ObjPtr(Hmx::Object*, T*)` (branch+AddRef → never inlined). Proof: the
+    same instantiation is inlined at RndMorph but called out-of-line at
+    SampleZone — impossible under one phrasing; oracle-corroborated
+    (rb3-Wii writes `mSample(obj, 0)` 2-arg vs 1-arg sites). Full mechanism
+    doc: `docs/decomp/research/2026-07-10-objptr-two-ctor-inline.md`.
+    Trial state: header split applied in preserved worktree
+    `~/tmp/wt-sentinel-family` — **inline fires (mechanism confirmed) but
+    expansion is scrambled** (RndMorph 90.5→66.9, wrong regalloc + store
+    order). RESUMABLE, not landable: match RndMorph's store/vtable order
+    first, then the fleet A/B gate. Population if cracked: **~20 fns at
+    43–93%** (876 `??0?$ObjPtr` refs tree-wide). Spin-off TU-local lead:
+    `FileStream::~FileStream` retail inlines trivial `DeleteChecksum()`.
