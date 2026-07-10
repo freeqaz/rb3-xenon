@@ -3376,7 +3376,7 @@ TrackerManager.cpp:
 	.text       start:0x82674F68 end:0x826750D4
 	.text       start:0x826750D8 end:0x82675148
 	.text       start:0x82675220 end:0x8267529C
-	.text       start:0x826752A0 end:0x826752A8
+	.text       start:0x826752A0 end:0x826752D0
 	.text       start:0x82675330 end:0x82675344
 	.text       start:0x826753A8 end:0x826753BC
 	.text       start:0x82675EE8 end:0x82675F58

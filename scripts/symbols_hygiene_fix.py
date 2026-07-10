@@ -272,5 +272,167 @@ def main():
         print(f"APPLIED. wrote {SYMS} ({len(lines)} -> {len(out)} lines)")
 
 
+# Addresses whose synthesis measured a whole-binary regression (see comment at
+# use-site). Kept explicit for auditability under the zero-regression gate.
+SYNTH_REGRESSORS = {
+    0x827C9210,  # MidiReader ?erase@vector<Midi> — abuts matched ?_M_erase@
+}
+
+
+def synth_main():
+    """Round-2 mode: SYNTHESIZE a fn_ anchor where a spurious except_data_/lbl_
+    shadows the TRUE start of a real named (target_symbol_map) function that has
+    NO fn_ entry, so dtk never emits a function COMDAT there and objdiff reads 0%.
+
+    For each such shadowed start X (inside a pinned .text range, X named in
+    target_symbol_map, no fn_ at X, a lbl_/except_data_ sits at X):
+      - synthesize `fn_X = .text:0xX; // type:function size:0x<size>`
+      - delete the shadowing lbl_/except_data_ at X (+ matching except_record_)
+      - delete every INTERIOR spurious except_data_ in (X, end) (+ record)
+    size = (next hard boundary) - X, where a hard boundary is the next fn_ /
+    target_symbol_map addr / real pdata start, capped at the split-range end;
+    if that boundary is a func_type3 pdata start its 8-byte exc-data precedes it,
+    so we stop 8 bytes short.
+
+    Guards (both round-1 guards retained):
+      - target_symbol_map protection: boundary never crosses another named fn.
+      - baseline-matched protection: never touch X if already matched at 100%.
+      - skip DEDICATED tiny (<=0x10) split ranges (need a paired splits.txt edit).
+    """
+    import json as _json
+    funcs, t3 = parse_pdata(BAND)
+    ranges = parse_splits(SPLITS)
+
+    def range_for(addr):
+        for u, s, e in ranges:
+            if s <= addr < e:
+                return (u, s, e)
+        return None
+
+    tmap = _json.load(open(os.path.join(ROOT, "scripts/target_symbol_map.json")))
+    tmap_addr = {int(k, 16): v for k, v in tmap.items()
+                 if re.match(r"0x[0-9A-Fa-f]+$", k)}
+    name2addr = {}
+    for a, v in tmap_addr.items():
+        for nm in (v if isinstance(v, list) else [v]):
+            name2addr[nm] = a
+    matched_addrs = set()
+    base_report = os.path.join(ROOT, "build/45410914/report.json")
+    if os.path.exists(base_report):
+        for u in _json.load(open(base_report)).get("units", []):
+            for f in (u.get("functions") or []):
+                if f.get("match_percent_normalized", 0) == 100 and f["name"] in name2addr:
+                    matched_addrs.add(name2addr[f["name"]])
+
+    only = None
+    if "--only" in sys.argv:
+        only = set(sys.argv[sys.argv.index("--only") + 1].split(","))
+
+    lines = open(SYMS).read().splitlines()
+    fn_at = {}          # addr -> lineidx (fn_ in .text)
+    text_syms = {}      # addr -> list[(name, lineidx)]  (all .text)
+    exc_rec = {}        # suffix(int) -> lineidx (except_record_ anywhere)
+    for idx, line in enumerate(lines):
+        m = re.match(r"^(\S+)\s*=\s*\.(\w+):0x([0-9A-Fa-f]+);(.*)$", line)
+        if not m:
+            continue
+        name, sect, ah, rest = m.groups()
+        addr = int(ah, 16)
+        if sect == "text":
+            text_syms.setdefault(addr, []).append((name, idx))
+            if name.startswith("fn_"):
+                fn_at[addr] = idx
+        m2 = re.match(r"except_record_([0-9A-Fa-f]+)$", name)
+        if m2:
+            exc_rec[int(m2.group(1), 16)] = idx
+
+    hard = set(fn_at) | set(tmap_addr) | set(funcs)
+
+    del_lines = set()
+    add_after = {}   # lineidx-of-shadow -> synthesized fn_ line (insert in place)
+    plan = []
+    for X in sorted(tmap_addr):
+        if X in fn_at:
+            continue
+        r = range_for(X)
+        if r is None:
+            continue
+        u, rs, re_ = r
+        if only and u not in only:
+            continue
+        if (re_ - rs) <= 0x10:
+            continue  # dedicated tiny range — needs splits.txt edit, defer
+        if X in matched_addrs:
+            continue
+        here = text_syms.get(X, [])
+        shadow_here = [(n, i) for (n, i) in here
+                       if n.startswith("lbl_") or n.startswith("except_data_")]
+        if not shadow_here:
+            continue
+        # a legit except_data (its named func X+8 is a real t3 start) is NOT a shadow
+        if any(n.startswith("except_data_") for n, _ in shadow_here) and (X + 8) in t3:
+            continue
+        # next hard boundary after X, capped at split end
+        cands = [a for a in hard if a > X]
+        nb = min(cands) if cands else re_
+        nb = min(nb, re_)
+        nb_eff = nb - 8 if nb in t3 else nb
+        size = nb_eff - X
+        if size <= 0:
+            continue
+        # Proven-regressor exclusion (measured whole-binary A/B, zero-regression
+        # discipline). A tiny (<=0x8) forwarder that abuts a baseline-matched
+        # named sibling of the same STL template family perturbs dtk's re-split
+        # of that sibling (target disassembles as illegal insns) — the synth is
+        # too small to pair yet costs the neighbor -1. Observed on MidiReader
+        # ?erase@vector<Midi> directly in front of matched ?_M_erase@vector<Midi>.
+        if X in SYNTH_REGRESSORS:
+            continue
+        # collect deletions: shadowing symbols at X + interior spurious except_data
+        dels = []
+        for n, i in shadow_here:
+            dels.append(i)
+            m2 = re.match(r"except_data_([0-9A-Fa-f]+)$", n)
+            if m2 and int(m2.group(1), 16) in exc_rec:
+                dels.append(exc_rec[int(m2.group(1), 16)])
+        for a, ents in text_syms.items():
+            if X < a < nb_eff:
+                for n, i in ents:
+                    if n.startswith("except_data_") and (a + 8) not in t3:
+                        dels.append(i)
+                        m2 = re.match(r"except_data_([0-9A-Fa-f]+)$", n)
+                        if m2 and int(m2.group(1), 16) in exc_rec:
+                            dels.append(exc_rec[int(m2.group(1), 16)])
+        # synthesize fn_ at the FIRST shadow line's position (keep ordering)
+        anchor_line = min(i for _, i in shadow_here)
+        add_after[anchor_line] = (
+            f"fn_{X:08X} = .text:0x{X:08X}; // type:function size:0x{size:X}")
+        for i in dels:
+            del_lines.add(i)
+        plan.append((u, X, size, len(dels)))
+
+    from collections import Counter
+    unit_ct = Counter(p[0] for p in plan)
+    print(f"SYNTH: shadowed starts to anchor: {len(plan)}  across {len(unit_ct)} units")
+    print(f"lines deleted: {len(del_lines)}  fn_ synthesized: {len(add_after)}")
+    for u, ct in unit_ct.most_common(40):
+        print(f"   {ct:3d}  {u}")
+
+    if "--apply" in sys.argv:
+        out = []
+        for idx, line in enumerate(lines):
+            if idx in add_after:
+                out.append(add_after[idx])   # replace shadow line with synth fn_
+                continue
+            if idx in del_lines:
+                continue
+            out.append(line)
+        open(SYMS, "w").write("\n".join(out) + "\n")
+        print(f"APPLIED (synth). wrote {SYMS} ({len(lines)} -> {len(out)} lines)")
+
+
 if __name__ == "__main__":
-    main()
+    if "--synth" in sys.argv:
+        synth_main()
+    else:
+        main()
