@@ -21,7 +21,6 @@
  "ReportHash@Digest@CSHA1": {"verdict": "at_limit", "date": "2026-07-07", "why": "2x strcpy extsb. sites; unsigned-buffer theory tested dead"},
  "Synapse::ProcessInPlace": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 96.0->99.8; single commutative add operand order = VN fixed point"},
  "CharIKFingers::CalculateHandDest": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 95.8->99.7; residual 3-cycle FPR result rotation, permuter-class"},
- "UsbMidiGuitar::Poll": {"verdict": "header_need", "date": "2026-07-07", "why": "banked 99.16->99.9; residual needs Joypad.h mType 0x74->0x6c (-8 in 0x5c-0x70 mask block) + ProGuitarData bitfields"},
- "CharBoneDir::GetContextFlags": {"verdict": "header_need", "date": "2026-07-07", "why": "Data.h SortNodes(int)->SortNodes() DC3 drift; rb3-Wii Data.h:477 no-arg; +6 cascade candidate, own gated change"},
- "StandardStream::Init": {"verdict": "header_need", "date": "2026-07-07", "why": "StandardStream.h +8: mAccumulatedLoopbacks@0x164 (Wii oracle) + 4B in 0xf4-0x160 marker region; then add mAccumulatedLoopbacks=0.0f in Init"}
+ "UsbMidiGuitar::Poll": {"verdict": "header_need", "date": "2026-07-10", "why": "Joypad.h repack LANDED b5b28fe (mType now 0x6c); residual 4 mismatches = ProGuitarData pgRaw[0xc]/[0xb] bitfield extract order only"},
+ "CharBoneDir::GetContextFlags": {"verdict": "header_need", "date": "2026-07-07", "why": "Data.h SortNodes(int)->SortNodes() DC3 drift; rb3-Wii Data.h:477 no-arg; +6 cascade candidate, own gated change IN FLIGHT 2026-07-10"}
 }

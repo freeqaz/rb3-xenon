@@ -5,6 +5,16 @@ landed its .cpp wins cleanly; per lane discipline, header-level fixes were
 *reported, not applied*. Each item below is a *single* shared-header change to be
 done as its own whole-binary-A/B-gated task. Listed by expected value.
 
+> **STATUS (2026-07-10):** all four executed after a 5-agent deep-recon pass.
+> #1 Game.h LANDED independently by wave-5 (`3edcc60`) — deeper findings +
+> remaining Game drift in `game-layout-followups-2026-07-10.md`. #3
+> StandardStream and #4 Joypad LANDED together (`b5b28fe`, +7 strict, A/B ×2
+> clean) — NOTE the recon **refuted** #3's "marker region" hypothesis (both
+> missing words sit at 0x160/0x164; the marker region already matched) and
+> **corrected** #4 (our stride was right only via two canceling errors; fix =
+> bool repack **plus** restoring dc3's 2 tail ints to hold sizeof 0xd4). #2
+> Data.h in flight.
+
 ## 1. Game.h — drop the Wii-only `DiscErrorMgrWii::Callback` base (BIG cascade)
 
 **Claim:** retail-360 `Game` has `mProperties` at **0x2c**; ours compiles it at
