@@ -12,7 +12,11 @@ public:
     virtual ~MoggClipMap();
 
     void mySave(BinStream &) const;
-    void myLoad(BinStreamRev &);
+    void myLoad(BinStream &);
+    // RB3-360 retail reads the parent Sfx's rev via a TU-static (rb3-Wii idiom)
+    // rather than threading a BinStreamRev wrapper. Sfx::Load stashes its rev
+    // here right before `bs >> mMoggClipMaps`.
+    static int sRev;
     MoggClipMap &operator=(const MoggClipMap &);
     MoggClip *GetMoggClip() const { return mMoggClip; }
     float Pan() const { return mPan; }
@@ -34,4 +38,4 @@ protected:
 };
 
 BinStream &operator<<(BinStream &, const MoggClipMap &);
-BinStream &operator>>(BinStreamRev &, MoggClipMap &);
+BinStream &operator>>(BinStream &, MoggClipMap &);

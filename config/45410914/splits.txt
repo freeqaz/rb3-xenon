@@ -903,8 +903,10 @@ DistortionEffect.cpp:
 
 SfxMap.cpp:
 	.pdata      start:0x82231838 end:0x82231848
+	.pdata      start:0x82231848 end:0x82231850
 	.pdata      start:0x82231850 end:0x82231858
 	.text       start:0x8270BBC8 end:0x8270BCB0
+	.text       start:0x8270BCB0 end:0x8270BD48
 	.text       start:0x8270BD48 end:0x8270BD80
 
 aes.c:

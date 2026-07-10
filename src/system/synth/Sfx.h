@@ -16,7 +16,11 @@ class SfxMap {
 public:
     SfxMap(Hmx::Object *);
     void Save(BinStream &) const;
-    void Load(BinStreamRev &);
+    void Load(BinStream &);
+    // RB3-360 retail reads the parent Sfx's rev via a TU-static (rb3-Wii idiom,
+    // assert stripped) rather than threading a BinStreamRev wrapper. Sfx::Load
+    // stashes its rev here right before `bs >> mMaps`.
+    static int gRev;
     SynthSample *Sample() const { return mSample; }
     float Volume() const { return mVolume; }
     float Pan() const { return mPan; }
@@ -39,7 +43,7 @@ private:
 };
 
 BinStream &operator<<(BinStream &, const SfxMap &);
-BinStream &operator>>(BinStreamRev &, SfxMap &);
+BinStream &operator>>(BinStream &, SfxMap &);
 
 class SfxInst : public SeqInst {
 public:

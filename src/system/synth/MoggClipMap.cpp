@@ -1,6 +1,8 @@
 #include "synth/MoggClipMap.h"
 #include "utl/BinStream.h"
 
+int MoggClipMap::sRev = 0;
+
 void MoggClipMap::mySave(BinStream &bs) const {
     bs << mMoggClip;
     bs << mVolume;
@@ -32,9 +34,9 @@ BinStream &operator<<(BinStream &bs, const MoggClipMap &mogg) {
     return bs;
 }
 
-void MoggClipMap::myLoad(BinStreamRev &bs) {
+void MoggClipMap::myLoad(BinStream &bs) {
     bs >> mMoggClip;
-    if (bs.rev >= 11) {
+    if (sRev >= 11) {
         bs >> mVolume;
         bs >> mPan;
         bs >> mPanWidth;
@@ -42,7 +44,7 @@ void MoggClipMap::myLoad(BinStreamRev &bs) {
     }
 }
 
-BinStream &operator>>(BinStreamRev &bs, MoggClipMap &mogg) {
+BinStream &operator>>(BinStream &bs, MoggClipMap &mogg) {
     mogg.myLoad(bs);
-    return bs.stream;
+    return bs;
 }

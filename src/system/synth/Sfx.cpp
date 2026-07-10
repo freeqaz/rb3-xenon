@@ -219,32 +219,37 @@ END_COPYS
 INIT_REVS(0xD, 0)
 
 BEGIN_LOADS(Sfx)
-    // rb3-Wii shape: manual rev check with a (retail no-op) MILO_WARN rather than
-    // ASSERT_REVS' MILO_FAIL — RB3-360 compares rev>0xC (12), not ASSERT_REVS' 0xD.
-    LOAD_REVS(bs)
-    if (d.rev > 0xC) {
+    // RB3-360 retail reads the rev as a plain int and compares it directly — no
+    // BinStreamRev hi/lo split, no ASSERT_REVS. The child SfxMap/MoggClipMap
+    // loaders read the parent rev via their own TU-statics (rb3-Wii idiom, assert
+    // stripped). MILO_WARN is a retail no-op, so rev>0xC just skips the body.
+    int rev;
+    bs >> rev;
+    if (rev > 0xC) {
         MILO_WARN("Can't load new Sfx");
     } else {
-        if (d.rev >= 6) {
-            LOAD_SUPERCLASS(Sequence)
-        } else if (d.rev >= 2) {
-            LOAD_SUPERCLASS(Hmx::Object)
+        if (rev >= 6) {
+            Sequence::Load(bs);
+        } else if (rev >= 2) {
+            Hmx::Object::Load(bs);
         }
-        d >> mMaps;
-        if (d.rev >= 10) {
-            d >> mMoggClipMaps;
+        SfxMap::gRev = rev;
+        bs >> mMaps;
+        if (rev >= 10) {
+            MoggClipMap::sRev = rev;
+            bs >> mMoggClipMaps;
         }
-        if (d.rev > 4) {
-            d >> mSend;
-            if (d.rev <= 7) {
+        if (rev > 4) {
+            bs >> mSend;
+            if (rev <= 7) {
                 int x;
-                d >> x;
+                bs >> x;
             }
         }
-        if (d.rev >= 9) {
-            mFaders.Load(d.stream);
+        if (rev >= 9) {
+            mFaders.Load(bs);
         }
-        if (d.rev >= 0xC) {
+        if (rev >= 0xC) {
             bs >> mReverbMixDb >> mReverbEnable;
         }
     }
