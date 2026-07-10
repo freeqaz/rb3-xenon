@@ -23,6 +23,13 @@ const char *PathName(const Hmx::Object *o) {
     return !o ? "NULL Object" : ((Hmx::Object *)o)->FindPathName();
 }
 
+const char *SafeName(Hmx::Object *obj) {
+    if (obj)
+        return obj->Name();
+    else
+        return "NULL";
+}
+
 MergeFilter::SubdirAction
 MergeFilter::DefaultSubdirAction(ObjectDir *dir, Subdirs subdirs) {
     switch (subdirs) {

@@ -82,15 +82,17 @@ protected:
 
     static void ResetRotation();
 
-    std::vector<Symbol> mIconTypes; // 0x44
-    std::vector<ActionElement> mConfig; // 0x50
-    std::vector<UILabel *> mTextLabels; // 0x5c
-    bool mUseConnectedControllers; // 0x68
-    bool mHorizontal; // 0x69
-    float mSpacing; // 0x6c
-    ResourceDirPtr<ObjectDir> mResourceDir; // 0x70
-    UILabel *mTemplateLabel; // 0x88
-    ObjPtr<UIColor> mTextColor; // 0x8c
+    // Offsets relative to this (UIComponent part = 0x140, retail-witnessed):
+    std::vector<Symbol> mIconTypes; // 0x140
+    std::vector<ActionElement> mConfig; // 0x14c
+    std::vector<UILabel *> mTextLabels; // 0x158
+    bool mUseConnectedControllers; // 0x164
+    bool mHorizontal; // 0x165
+    float mSpacing; // 0x168
+    // NOTE: retail RB3-360 has NO per-component ResourceDirPtr here (DC3-newer
+    // addition); the resource dir is the inherited UIComponent::mResourceDir.
+    UILabel *mTemplateLabel; // 0x16c
+    ObjPtr<UIColor> mTextColor; // 0x170 (vbase Hmx::Object at 0x180)
 
     virtual void SyncLabelsToConfig();
     virtual void UpdateIconTypes(bool);

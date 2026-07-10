@@ -111,13 +111,10 @@ inline bool ClampEq(T &value, const T &min, const T &max) {
     return false;
 }
 
-// float specialization for the use of fsel instructions
-template <>
-inline bool ClampEq(float &value, const float &min, const float &max) {
-    float tmp = value;
-    value = Min(Max(min, value), max);
-    return tmp != value;
-}
+// NOTE: retail RB3-360 has NO float specializations of ClampEq/MinEq/MaxEq
+// (DC3-era fsel additions, absent from RB3-era Wii Utl.h; retail witness:
+// branchy generic MinEq in UtilDrawPlane at fn 0x82428440). The branchy
+// generics below are the retail shape for float too.
 
 template <class T>
 inline bool MinEq(T &x, const T &y) {
@@ -128,14 +125,6 @@ inline bool MinEq(T &x, const T &y) {
     return false;
 }
 
-// float specialization for the use of fsel instructions
-template <>
-inline bool MinEq(float &x, const float &y) {
-    float tmp = x;
-    x = Min(x, y);
-    return x != tmp;
-}
-
 template <class T>
 inline bool MaxEq(T &x, const T &y) {
     if (x < y) {
@@ -143,14 +132,6 @@ inline bool MaxEq(T &x, const T &y) {
         return true;
     }
     return false;
-}
-
-// float specialization for the use of fsel instructions
-template <>
-inline bool MaxEq(float &x, const float &y) {
-    float tmp = x;
-    x = Max(x, y);
-    return x != tmp;
 }
 
 inline float Abs(float x) { return fabsf(x); }

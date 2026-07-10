@@ -39,18 +39,17 @@ protected:
     void UpdateDisplay();
 
     /** "label to be shrink wrapped" */
-    ObjPtr<UILabel> mLabel; // 0x44
-    int mDesiredValue; // 0x58
-    float mAnimTime; // 0x5c
-    float mAnimDelay; // 0x60
-    Symbol mWrapperText; // 0x64
-    float mAcceleration; // 0x68 - exponent for acceleration curve: progress^(1 + acceleration)
-    int mAnimStartValue; // 0x6c
-    int mCurrentValue; // 0x70
-    u32 unk74; // 0x74
-    Timer mTimer; // 0x78
-    ObjPtr<EventTrigger> mTickTrigger; // 0xa8
-    int mTickEvery; // 0xbc
+    ObjPtr<UILabel> mLabel; // 0x140
+    int mDesiredValue; // 0x14c
+    float mAnimTime; // 0x150
+    float mAnimDelay; // 0x154
+    Symbol mWrapperText; // 0x158
+    float mAcceleration; // 0x15c - exponent for acceleration curve: progress^(1 + acceleration)
+    int mAnimStartValue; // 0x160
+    int mCurrentValue; // 0x164
+    Timer mTimer; // 0x168 (8-aligned; retail has NO member between mCurrentValue and mTimer)
+    ObjPtr<EventTrigger> mTickTrigger; // 0x198
+    int mTickEvery; // 0x1a4 (vbase Hmx::Object at 0x1a8; sizeof(most-derived) = 0x1e0)
 
 private:
     void SetDesiredValue(int);

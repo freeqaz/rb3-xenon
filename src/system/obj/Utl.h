@@ -13,13 +13,10 @@ void InitObject(Hmx::Object *);
 /** Get this Object's name.
  * @param [in] obj The Object.
  * @returns The Object's name, or "NULL" if the object doesn't exist.
+ * NOTE: out-of-line in obj/Utl.cpp (retail RB3-360 witness fn_82733060 —
+ * every cross-TU user CALLS it; the DC3-style inline form mismatches).
  */
-inline const char *SafeName(Hmx::Object *obj) {
-    if (obj)
-        return obj->Name();
-    else
-        return "NULL";
-}
+const char *SafeName(Hmx::Object *obj);
 
 /** Gets a list of every Object inside ObjectDir dir that is a subclass of class with name
  * parentSym. The list is in DataArray form, with each node containing the qualifying

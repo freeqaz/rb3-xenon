@@ -122,8 +122,8 @@ END_CUSTOM_PROPSYNC
 #pragma region InlineHelp
 
 InlineHelp::InlineHelp()
-    : mUseConnectedControllers(false), mHorizontal(true), mSpacing(0), mResourceDir(this),
-      mTemplateLabel(0), mTextColor(this) {}
+    : mUseConnectedControllers(false), mHorizontal(true), mSpacing(0), mTemplateLabel(0),
+      mTextColor(this) {}
 
 InlineHelp::~InlineHelp() {
     int siz = mTextLabels.size();
@@ -254,7 +254,16 @@ void InlineHelp::Enter() {
 void InlineHelp::OldResourcePreload(BinStream &bs) {
     char buf[0x100];
     bs.ReadString(buf, 0x100);
-    mResourceDir.SetName(buf, true);
+    // mResourceDir is the inherited UIComponent ObjDirPtr (no SetName);
+    // inline equivalent of ResourceDirPtr::SetName(buf, true):
+    FilePath path;
+    if (ResourceDirBase::MakeResourcePath(
+            path, ClassName(), ObjectDir::StaticClassName(), buf
+        )) {
+        mResourceDir.LoadFile(path, true, true, kLoadFront, false);
+    } else {
+        mResourceDir = 0;
+    }
 }
 
 void InlineHelp::UpdateLabelText() {

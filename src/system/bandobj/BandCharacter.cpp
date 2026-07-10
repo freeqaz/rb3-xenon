@@ -641,8 +641,8 @@ void BandCharacter::UpdateOverlay() {
                               << CharClip::BeatAlignString(firstaddplaying->mPlayFlags);
                     *mOverlay << MakeString(
                         " %.2f %.2f",
-                        std::fmod(TheTaskMgr.Beat(), 1.0f),
-                        std::fmod(firstaddplaying->mBeat, 1.0f)
+                        (float)std::fmod(TheTaskMgr.Beat(), 1.0f),
+                        (float)std::fmod(firstaddplaying->mBeat, 1.0f)
                     );
                 } else {
                     *mOverlay << " "
@@ -651,8 +651,8 @@ void BandCharacter::UpdateOverlay() {
                               << CharClip::BeatAlignString(firstplaying->mPlayFlags);
                     *mOverlay << MakeString(
                         " %.2f %.2f",
-                        std::fmod(TheTaskMgr.Beat(), 1.0f),
-                        std::fmod(firstplaying->mBeat, 1.0f)
+                        (float)std::fmod(TheTaskMgr.Beat(), 1.0f),
+                        (float)std::fmod(firstplaying->mBeat, 1.0f)
                     );
                 }
             } else {
@@ -661,8 +661,8 @@ void BandCharacter::UpdateOverlay() {
                 *mOverlay << " " << CharClip::BeatAlignString(firstplaying->mPlayFlags);
                 *mOverlay << MakeString(
                     " %.2f %.2f",
-                    std::fmod(TheTaskMgr.Beat(), 1.0f),
-                    std::fmod(firstplaying->mBeat, 1.0f)
+                    (float)std::fmod(TheTaskMgr.Beat(), 1.0f),
+                    (float)std::fmod(firstplaying->mBeat, 1.0f)
                 );
             }
         }
