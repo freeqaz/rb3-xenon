@@ -116,13 +116,24 @@ void PassiveMessageQueue::HandlePassiveMessage(PassiveMessage *msg) {
 }
 END_UNPOOL_DATA
 
+namespace {
+    bool IsEarnedAccomplishmentMessage(PassiveMessage *msg) {
+        static Symbol passive_message_earned_accomplishment("passive_message_earned_accomplishment");
+        return passive_message_earned_accomplishment == msg->mText->Sym(0);
+    }
+    bool IsEarnedCampaignLevelMessage(PassiveMessage *msg) {
+        static Symbol passive_message_earned_campaign_level("passive_message_earned_campaign_level");
+        return passive_message_earned_campaign_level == msg->mText->Sym(0);
+    }
+}
+
 PassiveMessage *PassiveMessageQueue::GetAndPreProcessFirstMessage() {
     PassiveMessage *firstMessage = mQueue.front();
-    if (firstMessage->mText->Sym(0) == passive_message_earned_accomplishment) {
+    if (IsEarnedAccomplishmentMessage(firstMessage)) {
         int count = 0;
         FOREACH (it, mQueue) {
             PassiveMessage *msg = *it;
-            if (msg->mText->Sym(0) == passive_message_earned_accomplishment) {
+            if (IsEarnedAccomplishmentMessage(msg)) {
                 count++;
             }
         }
@@ -132,7 +143,7 @@ PassiveMessage *PassiveMessageQueue::GetAndPreProcessFirstMessage() {
             for (std::list<PassiveMessage *>::iterator it = mQueue.begin();
                  it != mQueue.end();) {
                 PassiveMessage *msg = *it;
-                if (msg->mText->Sym(0) == passive_message_earned_accomplishment) {
+                if (IsEarnedAccomplishmentMessage(msg)) {
                     firstMessage->AddAnim(msg->mMeterAnimValue - msg->unk14);
                     firstMessage->unk20 += msg->unk20;
                     PassiveMessage *pMessage = *it;
@@ -140,7 +151,7 @@ PassiveMessage *PassiveMessageQueue::GetAndPreProcessFirstMessage() {
                     delete pMessage;
                     it = mQueue.erase(it);
                 } else {
-                    if (msg->mText->Sym(0) == passive_message_earned_campaign_level) {
+                    if (IsEarnedCampaignLevelMessage(msg)) {
                         campaignLevelMsg = msg;
                     }
                     ++it;
@@ -150,7 +161,7 @@ PassiveMessage *PassiveMessageQueue::GetAndPreProcessFirstMessage() {
                 for (std::list<PassiveMessage *>::iterator it = mQueue.begin();
                      it != mQueue.end();) {
                     PassiveMessage *msg = *it;
-                    if (msg->mText->Sym(0) == passive_message_earned_campaign_level) {
+                    if (IsEarnedCampaignLevelMessage(msg)) {
                         if (msg != campaignLevelMsg) {
                             PassiveMessage *pMessage = *it;
                             MILO_ASSERT(pMessage, 0xDD);
@@ -168,6 +179,7 @@ PassiveMessage *PassiveMessageQueue::GetAndPreProcessFirstMessage() {
 }
 
 void PassiveMessageQueue::MakeIntoCoalescedGoalMessage(PassiveMessage *msg, int i2) {
+    static Symbol passive_message_earned_accomplishments("passive_message_earned_accomplishments");
     msg->mText->Node(0) = passive_message_earned_accomplishments;
     msg->mText->Node(1) = i2;
     msg->unk24 = gNullStr;
@@ -285,6 +297,7 @@ void PassiveMessenger::TriggerMessage(
 
 void PassiveMessenger::TriggerSkipSongMsg() {
     if (!mTimer.Running()) {
+        static Symbol passive_message_preload_failed("passive_message_preload_failed");
         TriggerMessage(
             DataArrayPtr(passive_message_preload_failed),
             (PassiveMessageType)0,
@@ -297,6 +310,7 @@ void PassiveMessenger::TriggerSkipSongMsg() {
 }
 
 void PassiveMessenger::TriggerInviteFailedMsg() {
+    static Symbol passive_message_invite_failed("passive_message_invite_failed");
     TriggerMessage(
         DataArrayPtr(passive_message_invite_failed),
         (PassiveMessageType)0,
@@ -312,6 +326,7 @@ DataNode PassiveMessenger::OnMsg(const RemoteUserLeftMsg &msg) {
 }
 
 void PassiveMessenger::TriggerRemoteUserLeftMsg(const char *cc) {
+    static Symbol passive_message_remote_user_left("passive_message_remote_user_left");
     DataArrayPtr ptr(passive_message_remote_user_left, cc);
     if (TheBandUI.GetOvershell()->InSong()) {
         TriggerMessage(ptr, (PassiveMessageType)0, nullptr, false, gNullStr);
@@ -343,6 +358,7 @@ void PassiveMessenger::TriggerEarnedAccomplishmentMsg(
     const char *c3,
     int i12
 ) {
+    static Symbol passive_message_earned_accomplishment("passive_message_earned_accomplishment");
     DataArrayPtr ptr(passive_message_earned_accomplishment, Localize(s1, nullptr));
     TriggerMessage(
         ptr, (PassiveMessageType)3, u, false, s2, i4, i5, i6, i7, i8, c1, c2, c3, i12
@@ -350,6 +366,7 @@ void PassiveMessenger::TriggerEarnedAccomplishmentMsg(
 }
 
 void PassiveMessenger::TriggerEarnedCampaignLevelMsg(LocalBandUser *u, Symbol s) {
+    static Symbol passive_message_earned_campaign_level("passive_message_earned_campaign_level");
     DataArrayPtr ptr(passive_message_earned_campaign_level, Localize(s, nullptr));
     TriggerMessage(ptr, (PassiveMessageType)0, u, true, gNullStr);
 }
@@ -357,6 +374,9 @@ void PassiveMessenger::TriggerEarnedCampaignLevelMsg(LocalBandUser *u, Symbol s)
 void PassiveMessenger::TriggerCompletedAccomplishmentCategoryMsg(
     LocalBandUser *u, Symbol s
 ) {
+    static Symbol passive_message_completed_accomplishment_category(
+        "passive_message_completed_accomplishment_category"
+    );
     DataArrayPtr ptr(
         passive_message_completed_accomplishment_category, Localize(s, nullptr)
     );
@@ -364,16 +384,22 @@ void PassiveMessenger::TriggerCompletedAccomplishmentCategoryMsg(
 }
 
 void PassiveMessenger::TriggerCompletedAccomplishmentGroupMsg(LocalBandUser *u, Symbol s) {
+    static Symbol passive_message_completed_accomplishment_group(
+        "passive_message_completed_accomplishment_group"
+    );
     DataArrayPtr ptr(passive_message_completed_accomplishment_group, Localize(s, nullptr));
     TriggerMessage(ptr, (PassiveMessageType)0, u, false, gNullStr);
 }
 
 void PassiveMessenger::TriggerVoiceChatDisabledMsg() {
+    static Symbol voice_chat_disabled("voice_chat_disabled");
     DataArrayPtr ptr(voice_chat_disabled);
     TriggerMessage(ptr, (PassiveMessageType)0, nullptr, false, gNullStr);
 }
 
 void PassiveMessenger::TriggerSetlistSongsRemovedMsg(int i1) {
+    static Symbol setlist_song_removed("setlist_song_removed");
+    static Symbol setlist_songs_removed("setlist_songs_removed");
     if (i1 == 1) {
         DataArrayPtr ptr(setlist_song_removed);
         TriggerMessage(ptr, (PassiveMessageType)0, nullptr, false, gNullStr);
@@ -397,6 +423,8 @@ DataNode PassiveMessenger::OnMsg(const SessionDisconnectedMsg &) {
 }
 
 DataNode PassiveMessenger::OnMsg(const InviteSentMsg &msg) {
+    static Symbol passive_message_invite_sent_success("passive_message_invite_sent_success");
+    static Symbol passive_message_invite_sent_fail("passive_message_invite_sent_fail");
     if (msg->Int(2)) {
         DataArrayPtr ptr(passive_message_invite_sent_success);
         TriggerMessage(ptr, (PassiveMessageType)0, nullptr, false, gNullStr);

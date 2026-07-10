@@ -4117,9 +4117,49 @@ BandLabel.cpp:
 	.text       start:0x8232DD30 end:0x8232FAB0
 
 band3/meta_band/PassiveMessenger.cpp:
+	.pdata      start:0x8221BD50 end:0x8221BD58
+	.pdata      start:0x8221BD78 end:0x8221BD80
+	.pdata      start:0x8221BD88 end:0x8221BD90
+	.pdata      start:0x8221BD98 end:0x8221BDA0
+	.pdata      start:0x8221BDA8 end:0x8221BDB0
+	.pdata      start:0x8221BE18 end:0x8221BE20
+	.pdata      start:0x8221BE38 end:0x8221BE40
+	.pdata      start:0x8221BE50 end:0x8221BE58
+	.pdata      start:0x8221BE70 end:0x8221BE78
+	.pdata      start:0x8221BE90 end:0x8221BE98
+	.pdata      start:0x8221BF08 end:0x8221BF10
+	.pdata      start:0x8221BF30 end:0x8221BF38
+	.pdata      start:0x8221BF58 end:0x8221BF60
+	.pdata      start:0x8221BF80 end:0x8221BF88
+	.pdata      start:0x8221BFA8 end:0x8221BFB0
+	.pdata      start:0x8221BFC8 end:0x8221BFD0
+	.pdata      start:0x8221C008 end:0x8221C010
+	.pdata      start:0x8221C010 end:0x8221C018
 	.pdata      start:0x8221C048 end:0x8221C050
 	.pdata      start:0x8221C218 end:0x8221C238
 	.pdata      start:0x8221C258 end:0x8221C260
+	.pdata      start:0x8221C260 end:0x8221C268
+	.pdata      start:0x8221C270 end:0x8221C278
+	.text       start:0x825B1E50 end:0x825B1EE8
+	.text       start:0x825B2010 end:0x825B2084
+	.text       start:0x825B20B0 end:0x825B2124
+	.text       start:0x825B2150 end:0x825B223C
+	.text       start:0x825B2268 end:0x825B22B4
+	.text       start:0x825B2878 end:0x825B2948
+	.text       start:0x825B29C0 end:0x825B2B98
+	.text       start:0x825B2BF0 end:0x825B2CE4
+	.text       start:0x825B2D60 end:0x825B2E40
+	.text       start:0x825B2EB8 end:0x825B30AC
+	.text       start:0x825B34E0 end:0x825B3608
+	.text       start:0x825B36A8 end:0x825B37BC
+	.text       start:0x825B3860 end:0x825B3974
+	.text       start:0x825B3A18 end:0x825B3B2C
+	.text       start:0x825B3BD0 end:0x825B3CAC
+	.text       start:0x825B3D28 end:0x825B3EF4
+	.text       start:0x825B4000 end:0x825B405C
+	.text       start:0x825B4080 end:0x825B424C
 	.text       start:0x825B4338 end:0x825B4EC0
 	.text       start:0x825B5780 end:0x825B5D1C
 	.text       start:0x825B5DC0 end:0x825B5E44
+	.text       start:0x825B5E50 end:0x825B5F94
+	.text       start:0x825B5FC8 end:0x825B6388
