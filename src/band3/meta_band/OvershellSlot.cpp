@@ -264,48 +264,11 @@ DataNode OvershellSlot::OnMsg(const LocalUserLeftMsg &msg) {
     return 1;
 }
 
+// Retail X360 has no Wii reconnect-controller path; ShowState reduces to the
+// assert + state-set + UpdateAll tail (real body at 0x825BED40).
 void OvershellSlot::ShowState(OvershellSlotStateID id) {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0x21B);
-    if (id == kState_ReconnectController) {
-        UILabel *lbl = mOvershellDir->Find<UILabel>("reconnect_controller.lbl", false);
-        if (lbl) {
-            static Symbol overshell_reconnect_controller("overshell_reconnect_controller"
-            );
-            static Symbol wii_error_remote_extension_x("wii_error_remote_extension_x");
-            int padnum = pUser->GetLocalBandUser()->GetPadNum();
-            JoypadType j0 = kJoypadNone;
-            JoypadType j1 = kJoypadNone;
-            ControllerType cty = pUser->GetControllerType();
-            Symbol capsmodesym = overshell_reconnect_controller;
-            Symbol defaultcapsmode = capsmodesym;
-            switch (GetWiiJoypadDisconnectType(padnum, &j0, &j1)) {
-            case 1:
-                if (j0 < kJoypadWiiCore || j0 > kJoypadWiiClassic) {
-                    capsmodesym = defaultcapsmode;
-                }
-                break;
-            case 2:
-                if (cty == 2)
-                    capsmodesym = wii_error_remote_extension_x;
-            }
-            if (capsmodesym == overshell_reconnect_controller) {
-                lbl->SetCapsMode(RndText::kForceUpper);
-            } else {
-                lbl->SetCapsMode(RndText::kCapsModeNone);
-            }
-            if (capsmodesym == overshell_reconnect_controller) {
-                lbl->SetTextToken(capsmodesym);
-            } else {
-                Symbol ctysym = ControllerTypeToSym(cty);
-                if (!ctysym.Null()) {
-                    lbl->SetTokenFmt(capsmodesym, ctysym);
-                } else {
-                    lbl->SetTextToken(overshell_reconnect_controller);
-                }
-            }
-        }
-    }
     pUser->SetOvershellSlotState(id);
     mOvershell->UpdateAll();
 }

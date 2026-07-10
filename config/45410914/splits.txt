@@ -79,7 +79,6 @@ RockCentral.cpp:
 	.pdata      start:0x8221C280 end:0x8221C290
 	.pdata      start:0x8221CD48 end:0x8221CD50
 	.pdata      start:0x8221D338 end:0x8221D340
-	.pdata      start:0x8221D3A8 end:0x8221D3B0
 	.pdata      start:0x8221E0D0 end:0x8221E0D8
 	.pdata      start:0x82220130 end:0x82220148
 	.pdata      start:0x82227CE0 end:0x82227CE8
@@ -151,7 +150,6 @@ RockCentral.cpp:
 	.text       start:0x825B63A8 end:0x825B63E8
 	.text       start:0x825C0C40 end:0x825C0D24
 	.text       start:0x825C6948 end:0x825C69C8
-	.text       start:0x825C7188 end:0x825C76F0
 	.text       start:0x825D1D00 end:0x825D1F70
 	.text       start:0x825F1F6C end:0x825F1FCC
 	.text       start:0x82663808 end:0x826638C8
@@ -329,11 +327,14 @@ CharData.cpp:
 	.text       start:0x825BDF28 end:0x825BEBD8
 
 OvershellSlot.cpp:
+	.pdata      start:0x8221CB90 end:0x8221CB98
 	.pdata      start:0x8221CB98 end:0x8221CBA0
 	.pdata      start:0x8221CCC0 end:0x8221CCC8
 	.pdata      start:0x8221CCE0 end:0x8221CCE8
 	.pdata      start:0x8221CD90 end:0x8221CE28
 	.pdata      start:0x8221D0C0 end:0x8221D0C8
+	.pdata      start:0x8221D3A8 end:0x8221D3B0
+	.text       start:0x825BED40 end:0x825BEDA0
 	.text       start:0x825BEDA0 end:0x825BEDD8
 	.text       start:0x825BFB80 end:0x825BFBAC
 	.text       start:0x825C0008 end:0x825C0050
@@ -341,6 +342,7 @@ OvershellSlot.cpp:
 	.text       start:0x825C04E0 end:0x825C0580
 	.text       start:0x825C10D8 end:0x825C3A44
 	.text       start:0x825C4658 end:0x825C468C
+	.text       start:0x825C7188 end:0x825C76F0
 
 OvershellPartSelectProvider.cpp:
 	.pdata      start:0x82226288 end:0x822262E0
@@ -3463,12 +3465,14 @@ MetaPerformer.cpp:
 	.pdata      start:0x82216A50 end:0x82216A58
 	.pdata      start:0x82216A58 end:0x82216A60
 	.pdata      start:0x82216C68 end:0x82216C70
+	.pdata      start:0x82216DA0 end:0x82216DA8
 	.pdata      start:0x82216EF0 end:0x82216EF8
 	.pdata      start:0x822170F8 end:0x82217100
 	.text       start:0x824533E8 end:0x82453424
 	.text       start:0x82564468 end:0x82564498
 	.text       start:0x82564498 end:0x825644C8
 	.text       start:0x82566A78 end:0x82566ACC
+	.text       start:0x82567C68 end:0x82567CCC
 	.text       start:0x825691D0 end:0x82569238
 	.text       start:0x8256B758 end:0x8256D4A8
 
