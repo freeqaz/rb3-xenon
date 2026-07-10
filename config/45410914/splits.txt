@@ -3893,11 +3893,13 @@ NoteTube.cpp:
 Faders.cpp:
 	.pdata      start:0x8222FB90 end:0x8222FB98
 	.pdata      start:0x8222FC00 end:0x8222FC08
+	.pdata      start:0x8222FC40 end:0x8222FC48
 	.pdata      start:0x8222FC60 end:0x8222FC68
 	.text       start:0x826EDE48 end:0x826EDE74
 	.text       start:0x826EE670 end:0x826EE6C0
 	.text       start:0x826EE6C0 end:0x826EE6E8
 	.text       start:0x826EEDB8 end:0x826EEE78
+	.text       start:0x826EF120 end:0x826EF1C0
 	.text       start:0x826EF300 end:0x826EF388
 
 SongPreview.cpp:
