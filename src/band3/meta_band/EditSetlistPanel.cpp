@@ -26,6 +26,9 @@
 #include "utl/UTF8.h"
 
 extern "C" void XMsgCancelIORequest(void *);
+extern "C" unsigned int XStringVerify(
+    unsigned int, const char *, unsigned short, const void *, unsigned int, void *, void *
+);
 
 EditSetlistPanel::EditSetlistPanel()
     : unk50(kScoreBand), unk54(0), unk58(3), unk64(0), unk80(-1), unk84(-1), mProfile(0),
@@ -61,24 +64,31 @@ DataNode EditSetlistPanel::OnMsg(const UITransitionCompleteMsg &msg) {
 
 void EditSetlistPanel::Poll() {
     UIPanel::Poll();
-    if (mEditState == 4 && !unk98 && !ThePlatformMgr.IsCheckingProfanity()) {
-        VerifyStrings(mSetlistName.c_str(), mSetlistDescription.c_str());
+    if (mEditState == kCheckingProfanity) {
+        unsigned int status = XGetOverlappedResult((XOVERLAPPED *)unk98, 0, 0);
+        if (status != 0x3E4) {
+            if (status == 0) {
+                unsigned int *p = *(unsigned int **)((char *)unk94 + 2);
+                bool b1 = p[0] < 1;
+                bool b2 = p[1] < 1;
+                CleanupStringVerify();
+                VerifyStringsComplete(b1, b2);
+            } else {
+                CleanupStringVerify();
+                FailWithReason((FailureReason)7);
+            }
+        }
     }
 }
 
 bool EditSetlistPanel::Exiting() const {
-    bool ret = true;
     if (!UIPanel::Exiting()) {
-        bool allow = true;
-        unsigned int temp = (unsigned int)mEditState - 3;
-        if (temp <= 5U && ((1 << temp) & 0x31)) {
-            allow = false;
-        }
-        if (!allow) {
-            ret = false;
+        int s = mEditState;
+        if (s == 3 || s == 7 || s == 8) {
+            return false;
         }
     }
-    return ret;
+    return true;
 }
 
 void EditSetlistPanel::Unload() {
@@ -431,16 +441,21 @@ DataNode EditSetlistPanel::OnMsg(const DWCProfanityResultMsg &msg) {
 }
 
 void EditSetlistPanel::VerifyStrings(const char *name, const char *desc) {
+    unk90 = (unsigned short **)new char[12];
     unsigned short *us = new unsigned short[strlen(name) + 1];
     UTF8toUTF16(us, name);
+    *(unsigned short **)((char *)unk90 + 2) = us;
+    *(unsigned short *)unk90 = wcslen((const wchar_t *)us) + 1;
     unsigned short *us2 = new unsigned short[strlen(desc) + 1];
     UTF8toUTF16(us2, desc);
-    unk90 = (unsigned short **)new char[12];
-    *(unsigned short **)((char *)unk90 + 2) = us;
     *(unsigned short **)((char *)unk90 + 8) = us2;
-    unk94 = new char[2];
-    unk98 = ThePlatformMgr.StartProfanity((const unsigned short **)unk90, 2, unk94, this);
-    if (!unk98) {
+    *(unsigned short *)((char *)unk90 + 6) = wcslen((const wchar_t *)us2) + 1;
+    unk94 = new char[14];
+    memset(unk94, 0, 14);
+    unk98 = new char[28];
+    memset(unk98, 0, 28);
+    unsigned int r = XStringVerify(0, "en-us", 2, unk90, 14, unk94, unk98);
+    if (r != 0 && r != 0x3E5) {
         CleanupStringVerify();
         FailWithReason((FailureReason)7);
     }
@@ -525,17 +540,24 @@ void EditSetlistPanel::SetEditState(EditState s) {
 void EditSetlistPanel::SetUIState(UIState state) {
     switch (state) {
     case 0: {
+        static Symbol set_edit_state("set_edit_state");
         static Message msg(set_edit_state, 0);
         msg[0] = unk9c == 2;
         HandleType(msg);
         break;
     }
-    case 1:
-        HandleType(set_wait_state_msg);
+    case 1: {
+        static Symbol set_wait_state("set_wait_state");
+        static Message msg(set_wait_state);
+        HandleType(msg);
         break;
-    case 2:
-        HandleType(set_message_state_msg);
+    }
+    case 2: {
+        static Symbol set_message_state("set_message_state");
+        static Message msg(set_message_state);
+        HandleType(msg);
         break;
+    }
     default:
         MILO_FAIL("Bad ui state %i!");
     }
