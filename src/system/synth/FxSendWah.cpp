@@ -71,5 +71,6 @@ BEGIN_PROPSYNCS(FxSendWah)
     SYNC_PROP_MODIFY(dist_amount, mDistAmount, OnParametersChanged())
     SYNC_PROP_MODIFY(auto_wah, mAutoWah, OnParametersChanged())
     SYNC_PROP_MODIFY(frequency, mFrequency, OnParametersChanged())
+    SYNC_PROP_MODIFY(dump, mDump, OnParametersChanged())
     SYNC_SUPERCLASS(FxSend)
 END_PROPSYNCS

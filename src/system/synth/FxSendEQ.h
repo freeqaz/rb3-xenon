@@ -46,8 +46,4 @@ protected:
     float mHighPassCutoff; // 0x84
     /** "High pass filter resonance, in dB". Ranges from -25 to 25. */
     float mHighPassReso; // 0x88
-    /** "Enable or disable Linkwitz-Riley mode" */
-    bool mLRMode; // 0x8c
-    /** "Transition time for gain changes, in ms". Ranges from 25 to 5000. */
-    float mTransitionTime; // 0x90
 };

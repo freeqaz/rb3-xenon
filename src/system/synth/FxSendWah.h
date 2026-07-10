@@ -36,7 +36,9 @@ protected:
     /** "Post wah distortion amount". Ranges from 0 to 1. */
     float mDistAmount; // 0x74
     bool mAutoWah; // 0x78
-    float mFrequency; // 0x7c
+    float mFrequency; // 0x64
+    /** "Dump". */
+    float mDump; // 0x68
     /** "Sync wah to song tempo?" */
     bool mTempoSync; // 0x80
     /** "Note value of delay". Sync type options: (sixteenth eighth dotted_eighth quarter

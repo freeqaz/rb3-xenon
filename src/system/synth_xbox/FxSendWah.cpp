@@ -33,6 +33,7 @@ void FxSendWah360::SyncEffectParams(IXAudio2SubmixVoice *voice) const {
     p.mSweepRange = mDistAmount;      // distAmount @0x1c
     p.unk0 = mBypass;                 // bypass     @0x0
     p.mStaticSweep = mFrequency;      // frequency  @0x24
+    p.mUnk28 = mDump;                 // dump       @0x28
     p.mEnvAmount = mAutoWah != false; // autoWah    @0x20
     voice->SetEffectParameters(0, &p, sizeof(p), 0);
 }

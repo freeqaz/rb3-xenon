@@ -13,6 +13,7 @@ class EQEffect {
 public:
     // size 0x30 (RB3: two band params fewer than DC3's 0x38)
     struct Params {
+        Params() : unk0(false) {}
         bool unk0;
         float mBand1Freq;
         float mBand1Gain;

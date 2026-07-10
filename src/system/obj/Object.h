@@ -919,6 +919,27 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
         } else                                                                            \
             SetTypeDef(nullptr);                                                          \
     }
+// Engine-era variant (synth_xbox FxSend*360 et al.): the static `types` config is
+// initialized BEFORE the null check, the null branch tail-calls SetTypeDef(0), and
+// SetTypeDef(found) runs even when the lookup failed (after the notify).
+#define OBJ_SET_TYPE_ENGINE(classname)                                                    \
+    virtual void SetType(Symbol classname) {                                              \
+        static DataArray *types =                                                         \
+            SystemConfig("objects", StaticClassName(), "types");                          \
+        if (classname.Null()) {                                                           \
+            SetTypeDef(nullptr);                                                          \
+        } else {                                                                          \
+            DataArray *found = types->FindArray(classname, false);                        \
+            if (found) {                                                                  \
+                SetTypeDef(found);                                                        \
+            } else {                                                                      \
+                MILO_NOTIFY(                                                              \
+                    "%s:%s couldn't find type %s", PathName(this), ClassName(), classname \
+                );                                                                        \
+                SetTypeDef(nullptr);                                                      \
+            }                                                                             \
+        }                                                                                 \
+    }
 // END SET TYPE MACRO --------------------------------------------------------------------
 
 // BEGIN HANDLE MACROS -------------------------------------------------------------------

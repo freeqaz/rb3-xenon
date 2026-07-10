@@ -43,3 +43,5 @@ void BitCrushEffect::Process(float *f, int numSamples, int numChans) {
         } while (--ctr);
     }
 }
+
+void BitCrushEffect::Reset() {}

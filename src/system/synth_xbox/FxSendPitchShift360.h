@@ -7,7 +7,7 @@ class FxSendPitchShift360 : public FxSendPitchShift, public FxSend360 {
 public:
     virtual ~FxSendPitchShift360();
     OBJ_CLASSNAME(FxSendPitchShift360)
-    OBJ_SET_TYPE(FxSendPitchShift360)
+    OBJ_SET_TYPE_ENGINE(FxSendPitchShift360)
     virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 
     NEW_OBJ(FxSendPitchShift360)

@@ -52,4 +52,5 @@ public:
     float mFilterState3;
     float mLastInput;
     float mLastOutput;
+    float mUnk4C; // 0x4c (dump state — RB3 extra vs DC3, pairs with Params::mUnk28)
 };

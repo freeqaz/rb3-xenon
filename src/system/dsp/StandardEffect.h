@@ -13,6 +13,7 @@ public:
         SetParameters(&params, sizeof(T::Params));
     }
     virtual ~StandardEffect() { RELEASE(mEffect); }
+    virtual void Reset() { mEffect->Reset(); }
     virtual void OnSetParameters(const typename T::Params &params) {
         mEffect->SetParameters(params);
     }

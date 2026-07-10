@@ -4,7 +4,8 @@
 class DelayEffect {
 public:
     struct Params {
-        u32 unk0;
+        Params() : unk0(false) {}
+        bool unk0; // 0x0 (bypass)
         float mDelaySamples;
         float mDecayDb;
         float mWetPercent;

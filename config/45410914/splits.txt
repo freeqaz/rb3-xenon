@@ -755,16 +755,20 @@ PitchShiftEffect.cpp:
 	.text       start:0x82B3E928 end:0x82B3EE2C
 
 FxSendDistortion.cpp:
-	.pdata      start:0x82251FA0 end:0x82251FC8
-	.text       start:0x82B32C20 end:0x82B32E0C
+	.pdata      start:0x82251F40 end:0x82251FE8
+	.text       start:0x82B32790 end:0x82B32F48
 
 FxSendEQ.cpp:
-	.pdata      start:0x822521F0 end:0x82252218
-	.text       start:0x82B348A0 end:0x82B34A8C
+	.pdata      start:0x82252190 end:0x82252238
+	.text       start:0x82B343B8 end:0x82B34BC8
 
 FxSendChorus.cpp:
-	.pdata      start:0x822520F8 end:0x82252128
-	.text       start:0x82B33CC8 end:0x82B33F3C
+	.pdata      start:0x82252098 end:0x82252138
+	.text       start:0x82B33798 end:0x82B33FB8
+
+system/synth_xbox/FxSendFlanger.cpp:
+	.pdata      start:0x82252238 end:0x82252290
+	.text       start:0x82B34BC8 end:0x82B34FE0
 
 IPP_basicmath_xbox.cpp:
 	.text       start:0x82B46210 end:0x82B462D0
@@ -1980,9 +1984,9 @@ Emitter.cpp:
 	.pdata      start:0x82230E20 end:0x82230E40
 	.text       start:0x82700E18 end:0x82701398
 
-FxSendDelay.cpp:
-	.pdata      start:0x82252010 end:0x822520F8
-	.text       start:0x82B330D8 end:0x82B33CC8
+system/synth_xbox/FxSendDelay.cpp:
+	.pdata      start:0x82251FE8 end:0x82252098
+	.text       start:0x82B32F48 end:0x82B33798
 
 ADSR.cpp:
 	.pdata      start:0x82231858 end:0x82231860
@@ -2213,12 +2217,12 @@ ssluse.c:
 	.text       start:0x82AB42B0 end:0x82AB4388
 
 Mic.cpp:
-	.pdata      start:0x82251C90 end:0x82251FA0
-	.text       start:0x82B2F568 end:0x82B32C20
+	.pdata      start:0x82251C90 end:0x82251F40
+	.text       start:0x82B2F568 end:0x82B32790
 
 FxSendWah.cpp:
-	.pdata      start:0x82252380 end:0x822523B0
-	.text       start:0x82B35C90 end:0x82B35F20
+	.pdata      start:0x82252318 end:0x822523C0
+	.text       start:0x82B35608 end:0x82B35FA0
 
 Lit.cpp:
 	.pdata      start:0x822524A8 end:0x822524B0
@@ -2468,7 +2472,9 @@ system/synth_xbox/FxSendPitchShift.cpp:
 
 system/synth_xbox/FxSendCompress.cpp:
 	.pdata      start:0x82251AA8 end:0x82251B48
+	.pdata      start:0x82252138 end:0x82252190
 	.text       start:0x82B2D1C8 end:0x82B2DBC0
+	.text       start:0x82B33FB8 end:0x82B343B8
 
 MultiMeshProxy.cpp:
 	.pdata      start:0x82208488 end:0x822084B8
@@ -2503,7 +2509,7 @@ PostProcer.cpp:
 	.pdata      start:0x8220DAC0 end:0x8220DAC8
 	.text       start:0x824D6F88 end:0x824D6FF8
 
-FxSendBitCrush.cpp:
+system/synth/FxSendBitCrush.cpp:
 	.pdata      start:0x82231050 end:0x82231058
 	.text       start:0x82703370 end:0x827033E0
 

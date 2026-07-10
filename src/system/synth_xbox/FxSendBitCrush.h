@@ -7,12 +7,17 @@
 class FxSendBitCrush360 : public FxSendBitCrush, public FxSend360 {
 public:
     virtual ~FxSendBitCrush360();
-    OBJ_CLASSNAME(FxSendBitCrush360)
-    OBJ_SET_TYPE(FxSendBitCrush360)
+    OBJ_CLASSNAME(FxSendBitCrush)
+    OBJ_SET_TYPE_ENGINE(FxSendBitCrush360)
+    virtual void Recreate(std::vector<FxSend *> &);
+    virtual void UpdateMix();
+    virtual void OnParametersChanged();
 
     NEW_OBJ(FxSendBitCrush360)
 
     FxSendBitCrush360();
+
+    virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 
 protected:
     virtual IUnknown *CreateFx();

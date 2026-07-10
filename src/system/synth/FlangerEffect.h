@@ -9,8 +9,8 @@ public:
         float mDelayMs;  // delay time in milliseconds
         float mRate;     // LFO rate in Hz
         float mDepth;    // modulation depth (percentage)
-        float mFeedback; // feedback amount (percentage)
-        float mWet;      // wet/dry mix (percentage)
+        int mFeedback; // 0x10 feedback amount (percentage, int)
+        int mWet;      // 0x14 wet/dry mix (percentage, int)
     };
 
     ~FlangerEffect();

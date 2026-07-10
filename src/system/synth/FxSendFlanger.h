@@ -28,12 +28,12 @@ protected:
     /** "Rate at which delay is modulated (Hz)". Ranges from 0 to 10. */
     float mRate; // 0x64
     /** "Percent depth of delay modulation". Ranges from 0 to 100. */
-    float mDepthPct; // 0x68
+    int mDepthPct; // 0x68
     /** "Percent of output that is fed back to input". Ranges from 0 to 100. */
-    float mFeedbackPct; // 0x6c
+    int mFeedbackPct; // 0x6c
     /** "LFO phase offset between channels (for wider stereo effect)". Ranges from 0 to
      * 100. */
-    float mOffsetPct; // 0x70
+    int mOffsetPct; // 0x70
     /** "Sync modulation to song tempo?" */
     bool mTempoSync; // 0x74
     /** "Note value to synchronize modulation to". Sync type options: (sixteenth eighth

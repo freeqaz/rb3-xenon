@@ -10,7 +10,7 @@ class FxSendMeterEffect360 : public FxSendMeterEffect, public FxSend360 {
 public:
     virtual ~FxSendMeterEffect360();
     OBJ_CLASSNAME(FxSendMeterEffect360)
-    OBJ_SET_TYPE(FxSendMeterEffect360)
+    OBJ_SET_TYPE_ENGINE(FxSendMeterEffect360)
     virtual void Recreate(std::vector<FxSend *> &);
     virtual void UpdateMix();
     virtual void OnParametersChanged();

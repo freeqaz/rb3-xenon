@@ -9,8 +9,11 @@
 class FxSend360 {
 public:
     virtual ~FxSend360();
+    virtual void SyncEffectParams(IXAudio2SubmixVoice *) const = 0;
+    virtual bool IsStandard() const { return true; }
     virtual void AddOwnerVoice(Voice *);
     virtual void RemoveOwnerVoice(Voice *);
+    virtual IUnknown *CreateFx() = 0;
 
     FxSend360(FxSend *);
     void SyncEffectParams();
@@ -26,6 +29,9 @@ public:
     FxSend *mThis; // 0x2c
     bool unk30;
     std::vector<Voice *> mOwnerVoices;
+
+protected:
+    virtual void InitParams(IXAudio2SubmixVoice *, int) {}
 
 private:
     struct IXAudio2Voice *OutputVoice();
