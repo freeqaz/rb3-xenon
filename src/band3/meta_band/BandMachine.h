@@ -8,7 +8,7 @@
 class BandMachine : public Hmx::Object {
 public:
     BandMachine();
-    virtual ~BandMachine() {}
+    // virtual ~BandMachine() {}  // retail uses implicit dtor (elides vptr store)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool IsLocal() const = 0;
     virtual String GetPrimaryBandName();
@@ -34,7 +34,7 @@ public:
 class LocalBandMachine : public BandMachine {
 public:
     LocalBandMachine(BandMachineMgr *);
-    virtual ~LocalBandMachine() {}
+    // virtual ~LocalBandMachine() {}  // retail uses implicit dtor
     virtual bool IsLocal() const { return true; }
     virtual String GetPrimaryBandName();
 
@@ -53,7 +53,7 @@ public:
 class RemoteBandMachine : public BandMachine {
 public:
     RemoteBandMachine();
-    virtual ~RemoteBandMachine() {}
+    // virtual ~RemoteBandMachine() {}  // retail uses implicit dtor
     virtual bool IsLocal() const { return false; }
 
     void Activate(unsigned int);

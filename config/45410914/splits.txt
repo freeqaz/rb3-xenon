@@ -3469,11 +3469,39 @@ TrackerUtils.cpp:
 	.text       start:0x826D8478 end:0x826D84EC
 
 BandMachine.cpp:
+	.pdata      start:0x8221B1A0 end:0x8221B1A8
+	.pdata      start:0x8221B1A8 end:0x8221B1B0
+	.pdata      start:0x8221B1B0 end:0x8221B1B8
+	.pdata      start:0x8221B1B8 end:0x8221B1C0
+	.pdata      start:0x8221B1C0 end:0x8221B1C8
+	.pdata      start:0x8221B1D0 end:0x8221B1D8
+	.pdata      start:0x8221B1E0 end:0x8221B1E8
 	.pdata      start:0x8221B1F0 end:0x8221B1F8
+	.pdata      start:0x8221B240 end:0x8221B248
+	.pdata      start:0x8221B248 end:0x8221B250
+	.pdata      start:0x8221B250 end:0x8221B258
+	.pdata      start:0x8221B278 end:0x8221B280
+	.pdata      start:0x8221B280 end:0x8221B288
+	.pdata      start:0x8221B288 end:0x8221B290
 	.pdata      start:0x8221B2B0 end:0x8221B2B8
+	.pdata      start:0x8221B2B8 end:0x8221B2C0
+	.text       start:0x825A8250 end:0x825A8284
+	.text       start:0x825A8288 end:0x825A82BC
+	.text       start:0x825A8300 end:0x825A8348
+	.text       start:0x825A8348 end:0x825A83C0
+	.text       start:0x825A8408 end:0x825A8464
+	.text       start:0x825A8498 end:0x825A84F4
 	.text       start:0x825A8520 end:0x825A8540
+	.text       start:0x825A8540 end:0x825A8588
 	.text       start:0x825A8610 end:0x825A8874
+	.text       start:0x825A89E0 end:0x825A8AD4
+	.text       start:0x825A8AD8 end:0x825A8B1C
+	.text       start:0x825A8B28 end:0x825A8B88
+	.text       start:0x825A8C38 end:0x825A8D28
+	.text       start:0x825A8D28 end:0x825A8D70
+	.text       start:0x825A8D78 end:0x825A8E34
 	.text       start:0x825A8EE0 end:0x825A8F2C
+	.text       start:0x825A8F30 end:0x825A8F7C
 
 BandSongMetadata.cpp:
 	.pdata      start:0x82218E00 end:0x82218E08
