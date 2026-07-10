@@ -812,8 +812,8 @@ Sorting.cpp:
 	.text       start:0x8278DD80 end:0x8278E008
 
 UIGuide.cpp:
-	.pdata      start:0x8223F6D8 end:0x8223FA40
-	.text       start:0x82801070 end:0x82804770
+	.pdata      start:0x8223F6D8 end:0x8223F730
+	.text       start:0x82801070 end:0x82801558
 
 Flare.cpp:
 	.pdata      start:0x82207CB8 end:0x82207CD0
@@ -833,8 +833,8 @@ SoftParticleBuffer.cpp:
 	.text       start:0x82495728 end:0x824961DC
 
 keygen_xbox.cpp:
-	.pdata      start:0x82231380 end:0x822315F8
-	.text       start:0x82706A20 end:0x827090A8
+	.pdata      start:0x82231380 end:0x822313E8
+	.text       start:0x82706A20 end:0x827073D0
 
 NetworkSocket_Win.cpp:
 	.pdata      start:0x82211F08 end:0x82211FA8
@@ -845,12 +845,8 @@ Memory_Xbox.cpp:
 	.text       start:0x82262D70 end:0x82263544
 
 StreamNull.cpp:
-	.pdata      start:0x82230850 end:0x82230980
-	.pdata      start:0x82230990 end:0x82230CE0
-	.pdata      start:0x82230CE8 end:0x82230E20
-	.text       start:0x826FBD28 end:0x826FCBF8
-	.text       start:0x826FCCE0 end:0x826FFB28
-	.text       start:0x826FFC58 end:0x82700E18
+	.pdata      start:0x82230850 end:0x822308B0
+	.text       start:0x826FBD28 end:0x826FC140
 
 RhythmBattlePlayer.cpp:
 	.pdata      start:0x821F5620 end:0x821F5638
@@ -1569,8 +1565,8 @@ ShaderProgram.cpp:
 	.text       start:0x823F2D58 end:0x823F2F98
 
 ByteGrinder.cpp:
-	.pdata      start:0x822315F8 end:0x822317E8
-	.text       start:0x827090A8 end:0x8270B778
+	.pdata      start:0x822313E8 end:0x822317E8
+	.text       start:0x827073D0 end:0x8270B778
 
 UsbMidiKeyboardMsgs.cpp:
 	.pdata      start:0x822029B0 end:0x822029B8
@@ -1644,10 +1640,8 @@ CameraShot.cpp:
 	.text       start:0x824AB028 end:0x824B3818
 
 Sfx.cpp:
-	.pdata      start:0x82230980 end:0x82230990
-	.pdata      start:0x82230CE0 end:0x82230CE8
-	.text       start:0x826FCBF8 end:0x826FCCE0
-	.text       start:0x826FFB28 end:0x826FFC58
+	.pdata      start:0x822308B0 end:0x82230E20
+	.text       start:0x826FC140 end:0x82700E18
 
 PropSync.cpp:
 	.pdata      start:0x8220C018 end:0x8220C020
@@ -1742,12 +1736,12 @@ DirLoader.cpp:
 	.text       start:0x8276A698 end:0x8276A6F4
 
 LabelShrinkWrapper.cpp:
-	.pdata      start:0x822189A0 end:0x822189A8
-	.text       start:0x82582EF8 end:0x82582F50
+	.pdata      start:0x8223F730 end:0x8223F848
+	.text       start:0x82801558 end:0x82802700
 
 LabelNumberTicker.cpp:
-	.pdata      start:0x822189B0 end:0x822189B8
-	.text       start:0x82582F78 end:0x82582FD0
+	.pdata      start:0x8223F848 end:0x8223F9C0
+	.text       start:0x82802700 end:0x82803F00
 
 SongSortMgr.cpp:
 	.pdata      start:0x82218458 end:0x82218460
