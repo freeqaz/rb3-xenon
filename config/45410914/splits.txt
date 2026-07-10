@@ -2865,7 +2865,8 @@ band3/game/Player.cpp:
 	.pdata      start:0x82229DC8 end:0x8222A290
 	.pdata      start:0x8222A298 end:0x8222A2A0
 	.pdata      start:0x8222A2A8 end:0x8222A2F8
-	.pdata      start:0x8222A300 end:0x8222A4A8
+	.pdata      start:0x8222A300 end:0x8222A318
+	.pdata      start:0x8222A3A8 end:0x8222A4A8
 	.text       start:0x82683B98 end:0x82683C20
 	.text       start:0x82683DE0 end:0x82683E00
 	.text       start:0x82683F78 end:0x82683FD8
@@ -2874,7 +2875,12 @@ band3/game/Player.cpp:
 	.text       start:0x826843F0 end:0x8268A058
 	.text       start:0x8268A0A4 end:0x8268A150
 	.text       start:0x8268A190 end:0x8268A818
-	.text       start:0x8268A954 end:0x8268C4A8
+	.text       start:0x8268A954 end:0x8268A9E0
+	.text       start:0x8268B538 end:0x8268C4A8
+
+band3/game/SyncGameStartPanel.cpp:
+	.pdata      start:0x8222A318 end:0x8222A3A8
+	.text       start:0x8268A9E0 end:0x8268B538
 
 band3/game/FadePanel.cpp:
 	.pdata      start:0x8222A290 end:0x8222A298

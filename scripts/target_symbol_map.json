@@ -5184,7 +5184,7 @@
  "0x82686E28": "?RemoteAlreadySaved@Player@@QAAXH@Z",
  "0x826893B0": "?Restart@Player@@UAAX_N@Z",
  "0x82689588": "??_GRndTransAnim@@UAAPAXI@Z",
- "0x8268AE88": "?IsLoaded@GamePanel@@MBA_NXZ",
+ "0x8268AE88": "?IsLoaded@SyncGameStartPanel@@UBA_NXZ",
  "0x8268C4A8": "??$__uninitialized_fill_n@PAUColorSet@@IU1@@stlpmtx_std@@YAPAUColorSet@@PAU1@IABU1@ABU__false_type@0@@Z",
  "0x8268C4F8": "??$__uninitialized_copy@PAVBlacklightPacket@RndText@@PAV12@@stlpmtx_std@@YAPAVBlacklightPacket@RndText@@PAV12@00ABU__false_type@0@@Z",
  "0x8268CB9C": "__unwind$110019",
@@ -15006,5 +15006,10 @@
  "0x82483F70": "?SetType@RndAnimFilter@@UAAXVSymbol@@@Z",
  "0x824840D0": "?SetType@RndAnimFilter@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82484778": "?Copy@RndAnimFilter@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
- "0x82484798": "?Save@RndAnimFilter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+ "0x82484798": "?Save@RndAnimFilter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+ "0x8268A9E0": "??0SyncGameStartPanel@@QAA@XZ",
+ "0x8268B138": "?Handle@SyncGameStartPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8268AED8": "?PollIsSynced@SyncGameStartPanel@@QAAXXZ",
+ "0x8268AB70": "?ClassName@SyncGameStartPanel@@UBA?AVSymbol@@XZ",
+ "0x8268ABA8": "?SetType@SyncGameStartPanel@@UAAXVSymbol@@@Z"
 }

@@ -837,6 +837,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/game/SyncGameStartPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/game/GemPlayer.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
