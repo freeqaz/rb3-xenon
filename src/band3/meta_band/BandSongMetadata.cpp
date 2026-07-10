@@ -37,7 +37,6 @@ void BandSongMetadata::InitBandSongMetadata() {
     mDrumKitBank = 0;
     mHasAlbumArt = 0;
     mIsMasterRecording = 0;
-    mIsTriFrame = 0;
     for (int i = 0; i < 6; i++)
         mRealGuitarTuning[i] = 0;
     for (int i = 0; i < 4; i++)
@@ -152,9 +151,6 @@ BandSongMetadata::BandSongMetadata(
     if (FIND_WITH_BACKUP(master)) {
         mIsMasterRecording = member_arr->Int(1);
     }
-    if (FIND_WITH_BACKUP(tri_frame)) {
-        mIsTriFrame = member_arr->Int(1);
-    }
     if (FIND_WITH_BACKUP(real_guitar_tuning)) {
         for (int i = 0; i < 6; i++) {
             DataArray *arr = member_arr->Array(1);
@@ -206,7 +202,7 @@ Symbol BandSongMetadata::Genre() const { return mGenre; }
 int BandSongMetadata::LengthMs() const { return mLengthMs; }
 bool BandSongMetadata::HasAlternatePath() const { return mHasAlternatePath; }
 bool BandSongMetadata::MuteWinCues() const { return mMuteWinCues; }
-const std::map<Symbol, float> &BandSongMetadata::Ranks() const { return mRanks; }
+const std::hash_map<Symbol, float> &BandSongMetadata::Ranks() const { return mRanks; }
 int BandSongMetadata::Rating() const { return mRating; }
 float BandSongMetadata::GuidePitchVolume() const { return mGuidePitchVolume; }
 int BandSongMetadata::VocalTonicNote() const { return mVocalTonicNote; }
@@ -218,11 +214,11 @@ int BandSongMetadata::SongKey() const {
 int BandSongMetadata::SongTonality() const { return mSongTonality; }
 float BandSongMetadata::ScrollSpeed() const { return mSongScrollSpeed; }
 float BandSongMetadata::TuningOffset() const { return mTuningOffsetCents; }
-Symbol BandSongMetadata::VocalPercussionBank() const { return mVocalPercussionBank; }
-Symbol BandSongMetadata::DrumKitBank() const { return mDrumKitBank; }
+Symbol BandSongMetadata::VocalPercussionBank() const { return mVocalPercussionBank.c_str(); }
+Symbol BandSongMetadata::DrumKitBank() const { return mDrumKitBank.c_str(); }
 bool BandSongMetadata::HasAlbumArt() const { return mHasAlbumArt; }
 bool BandSongMetadata::IsMasterRecording() const { return mIsMasterRecording; }
-Symbol BandSongMetadata::BandFailCue() const { return mBandFailCue; }
+Symbol BandSongMetadata::BandFailCue() const { return mBandFailCue.c_str(); }
 
 int BandSongMetadata::RealGuitarTuning(int i) const {
     SongUpgradeData *data = mSongMgr->GetUpgradeData(ID());
@@ -246,6 +242,20 @@ Symbol BandSongMetadata::Decade() const {
     return sym;
 }
 
+// retail fn_82587490: 1-arg overload, no machine-mgr gate (called from Handle)
+bool BandSongMetadata::HasPart(Symbol s) const {
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
+    if (s == real_guitar || s == real_bass) {
+        SongUpgradeData *upgradeData = mSongMgr->GetUpgradeData(ID());
+        if (upgradeData) {
+            return upgradeData->HasPart(s);
+        }
+    }
+    std::hash_map<Symbol, float>::const_iterator it = mRanks.find(s);
+    return it != mRanks.end() && it->second > 0;
+}
+
 bool BandSongMetadata::HasPart(Symbol s, bool b) const {
     BandMachineMgr *mgr = TheSessionMgr ? TheSessionMgr->mMachineMgr : nullptr;
     if (mgr && !b && !mgr->IsSongAllowedToHavePart(ID(), s)) {
@@ -257,7 +267,7 @@ bool BandSongMetadata::HasPart(Symbol s, bool b) const {
                 return upgradeData->HasPart(s);
             }
         }
-        std::map<Symbol, float>::const_iterator it = mRanks.find(s);
+        std::hash_map<Symbol, float>::const_iterator it = mRanks.find(s);
         if (it != mRanks.end() && it->second > 0) {
             return true;
         } else
@@ -272,7 +282,7 @@ float BandSongMetadata::Rank(Symbol s) const {
             return data->Rank(s);
         }
     }
-    std::map<Symbol, float>::const_iterator it = mRanks.find(s);
+    std::hash_map<Symbol, float>::const_iterator it = mRanks.find(s);
     if (it != mRanks.end()) {
         return it->second;
     }
@@ -369,6 +379,10 @@ Symbol BandSongMetadata::HasSoloSym(Symbol s) const {
 }
 
 bool BandSongMetadata::IsUGC() const {
+    // retail fn_82586C88: function-local lazy statics (this is also what keeps
+    // MSVC from inlining this function into Handle)
+    static Symbol ugc("ugc");
+    static Symbol ugc_plus("ugc_plus");
     return GameOrigin() == ugc || GameOrigin() == ugc_plus;
 }
 
@@ -379,7 +393,37 @@ const char *BandSongMetadata::MidiUpdate() const {
         return 0;
 }
 
-bool BandSongMetadata::IsDownload() const { return GameOrigin() != rb3; }
+bool BandSongMetadata::IsDownload() const {
+    // retail fn_82586DB8: function-local lazy static, non-inlinable
+    static Symbol rb3("rb3");
+    return GameOrigin() != rb3;
+}
+
+// retail mRanks is an STLport hash_map (find helper FUN_82543f88: modulo bucket
+// walk, null-node end();  value pair at node+4). Stream format matches the
+// std::map operators: size, then key/value pairs in iteration order.
+template <class T1, class T2>
+BinStream &operator<<(BinStream &bs, const std::hash_map<T1, T2> &map) {
+    bs << map.size();
+    for (typename std::hash_map<T1, T2>::const_iterator it = map.begin();
+         it != map.end(); ++it) {
+        bs << it->first << it->second;
+    }
+    return bs;
+}
+
+template <class T1, class T2>
+BinStream &operator>>(BinStream &bs, std::hash_map<T1, T2> &map) {
+    unsigned int size;
+    bs >> size;
+    map.clear();
+    while (size-- != 0) {
+        T1 key;
+        bs >> key;
+        bs >> map[key];
+    }
+    return bs;
+}
 
 void BandSongMetadata::Save(BinStream &bs) {
     bs << sBandSaveVer;
@@ -410,7 +454,6 @@ void BandSongMetadata::Save(BinStream &bs) {
     bs << mHasAlbumArt;
     bs << mIsMasterRecording;
     bs << mHasAlternatePath;
-    bs << mIsTriFrame;
     bs << mAnimTempo;
     bs << mVocalGender;
     for (int i = 0; i < 6; i++)
@@ -463,7 +506,7 @@ void BandSongMetadata::Load(BinStream &bs) {
         bs >> mSongKey;
         bs >> mSongTonality;
     }
-    if (rev - 2U <= 11) {
+    if (rev >= 2 && rev < 0xE) {
         std::vector<std::map<Symbol, String> > gross;
         bs >> gross;
     }
@@ -480,7 +523,6 @@ void BandSongMetadata::Load(BinStream &bs) {
             bs >> b;
             bs >> c;
         }
-        bs >> mIsTriFrame;
     }
     if (rev >= 6)
         bs >> mAnimTempo;
@@ -507,9 +549,9 @@ BEGIN_HANDLERS(BandSongMetadata)
     HANDLE_EXPR(year_released, mDateReleased.Year())
     HANDLE_EXPR(year_recorded, mDateRecorded.Year())
     HANDLE_EXPR(length_ms, mLengthMs)
-    HANDLE_EXPR(has_part, HasPart(_msg->Sym(2), false))
-    HANDLE_EXPR(is_ugc, GameOrigin() == ugc || GameOrigin() == ugc_plus)
-    HANDLE_EXPR(is_download, GameOrigin() != rb3)
+    HANDLE_EXPR(has_part, HasPart(_msg->Sym(2)))
+    HANDLE_EXPR(is_ugc, IsUGC())
+    HANDLE_EXPR(is_download, IsDownload())
     HANDLE_EXPR(rating, mRating)
     HANDLE_SUPERCLASS(SongMetadata)
     HANDLE_CHECK(0x379)

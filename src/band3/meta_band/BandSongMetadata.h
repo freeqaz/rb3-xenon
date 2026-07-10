@@ -3,6 +3,7 @@
 #include "meta_band/BandSongMgr.h"
 #include "obj/Data.h"
 #include "os/DateTime.h"
+#include <hash_map>
 
 class BandSongMetadata : public SongMetadata {
 public:
@@ -23,7 +24,7 @@ public:
     int LengthMs() const;
     bool HasAlternatePath() const;
     bool MuteWinCues() const;
-    const std::map<Symbol, float> &Ranks() const;
+    const std::hash_map<Symbol, float> &Ranks() const;
     int Rating() const;
     float GuidePitchVolume() const;
     int VocalTonicNote() const;
@@ -39,6 +40,7 @@ public:
     int RealGuitarTuning(int) const;
     int RealBassTuning(int) const;
     Symbol Decade() const;
+    bool HasPart(Symbol) const;
     bool HasPart(Symbol, bool) const;
     float Rank(Symbol) const;
     bool HasVocalHarmony() const;
@@ -61,41 +63,53 @@ public:
 
     static int sBandSaveVer;
 
-    String mTitle; // 0x40
-    String mArtist; // 0x4c
-    String mAlbum; // 0x58
-    short mAlbumTrackNum; // 0x64
-    short mRating; // 0x66
-    DateTime mDateRecorded; // 0x68
-    DateTime mDateReleased; // 0x6e
-    Symbol mGenre; // 0x74
-    int mAnimTempo; // 0x78
-    Symbol mVocalGender; // 0x7c
-    int mLengthMs; // 0x80
-    int mBasePoints; // 0x84
-    std::map<Symbol, float> mRanks; // 0x88
-    float mGuidePitchVolume; // 0xa0
-    int mVocalTonicNote; // 0xa4
-    int mSongKey; // 0xa8
-    int mSongTonality; // 0xac
-    float mSongScrollSpeed; // 0xb0
-    float mTuningOffsetCents; // 0xb4
-    Symbol mVocalPercussionBank; // 0xb8
-    Symbol mDrumKitBank; // 0xbc
-    Symbol mBandFailCue; // 0xc0
-    int mRealGuitarTuning[6]; // 0xc4
-    int mRealBassTuning[4]; // 0xdc
-    std::vector<Symbol> mSolos; // 0xec
-    bool mHasAlternatePath; // 0xf4
-    bool mIsBonus; // 0xf5
-    bool mIsFake; // 0xf6
-    bool mIsTutorial; // 0xf7
-    bool mMuteWinCues; // 0xf8
-    bool mHasAlbumArt; // 0xf9
-    bool mIsMasterRecording; // 0xfa
-    bool mIsTriFrame; // 0xfb
-    bool mHasDiscUpdate; // 0xfc
-    BandSongMgr *mSongMgr; // 0x100
+    // Retail X360 layout. Ground truth: retail DataArray ctor fn_82584A08
+    // (member init stores), COMDAT dtor fn_8255D5E0 (String dtors @0x4c/0x58/
+    // 0x64/0xd4/0xe0/0xf0, map dtor @0x9c, vector free @0x128), and Handle
+    // fn_82588000 (mTitle.mStr@0x54, dates@0x72/0x78, rating short@0xb8).
+    // Differences vs the rb3-Wii header:
+    //  - mHasAlternatePath + mIsBonus/mIsFake/mIsTutorial/mMuteWinCues moved
+    //    up, between mLengthMs and mRanks (matches dta parse order).
+    //  - mRating sits AFTER mRanks, not paired with mAlbumTrackNum.
+    //  - mVocalPercussionBank/mDrumKitBank/mBandFailCue are String on retail
+    //    X360 (Wii used Symbol).
+    //  - mIsTriFrame does not exist on retail X360 (no ctor parse, no
+    //    Save/Load stream field, no member store) — removed.
+    String mTitle; // 0x4c
+    String mArtist; // 0x58
+    String mAlbum; // 0x64
+    short mAlbumTrackNum; // 0x70
+    DateTime mDateRecorded; // 0x72
+    DateTime mDateReleased; // 0x78
+    Symbol mGenre; // 0x80
+    int mAnimTempo; // 0x84
+    Symbol mVocalGender; // 0x88
+    int mLengthMs; // 0x8c
+    bool mHasAlternatePath; // 0x90
+    int mBasePoints; // 0x94
+    bool mIsBonus; // 0x98
+    bool mIsFake; // 0x99
+    bool mIsTutorial; // 0x9a
+    bool mMuteWinCues; // 0x9b
+    std::hash_map<Symbol, float> mRanks; // 0x9c (STLport hash_map = 0x1c)
+    short mRating; // 0xb8
+    float mGuidePitchVolume; // 0xbc
+    int mVocalTonicNote; // 0xc0
+    int mSongKey; // 0xc4
+    int mSongTonality; // 0xc8
+    float mSongScrollSpeed; // 0xcc
+    float mTuningOffsetCents; // 0xd0
+    String mVocalPercussionBank; // 0xd4
+    String mDrumKitBank; // 0xe0
+    bool mHasAlbumArt; // 0xec
+    bool mIsMasterRecording; // 0xed
+    String mBandFailCue; // 0xf0
+    int mRealGuitarTuning[6]; // 0xfc
+    int mRealBassTuning[4]; // 0x114
+    bool mHasDiscUpdate; // 0x124
+    std::vector<Symbol> mSolos; // 0x128
+    BandSongMgr *mSongMgr; // 0x134
+    // total size: 0x138
 };
 
     DECLARE_MESSAGE(MetadataLoadedMsg, "metadata_loaded")
