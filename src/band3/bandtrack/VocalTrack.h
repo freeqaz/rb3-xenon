@@ -36,6 +36,7 @@ public:
             mUsedGems.pop_front();
         }
     }
+    void FreeOldGems(float oldTime);
     void NewGem(float time, int gemIdx);
     void SetTambourineManager(TambourineManager *mgr) { mTambourineManager = mgr; }
 
