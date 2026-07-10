@@ -669,11 +669,12 @@ void VocalTrack::UpdateVocalStyle() {
         }
         mDir->UpdateConfiguration();
         unk78 = mDir->mTrackRightX - mDir->mTrackLeftX;
-        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-            TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
-        );
+        Symbol song = MetaPerformer::Current()->Song();
+        int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
         // target compiled with ScrollSpeed returning double; cast forces frsp
-        unk74 = (float)(double)data->ScrollSpeed() * (unk78 / 16.8f);
+        float speed = (float)(double)data->ScrollSpeed();
+        unk74 = unk78 * speed / 16.8f;
         mDir->Find<RndAnimatable>("tambourine_preview.anim", true)->SetFrame(0, 1);
         RebuildHUD();
     }
@@ -2235,7 +2236,7 @@ void VocalTrack::BuildStaticDeployZone(
     if (f3 != -1.0f) {
         float max = std::max<float>(mLyricShiftMs + fpair.second, f3);
         shifts.push_back(
-            LyricShift(max, mStaticDeployMarginX + (-fref - mStaticDeployBufferX))
+            LyricShift(max, mStaticDeployMarginX - (fref + mStaticDeployBufferX))
         );
     }
     bool i6 = TheSongDB->IsInCoda(MsToTickInt(fpair.first));
