@@ -1192,6 +1192,10 @@ bool Intersect(const Transform &tf, const Hmx::Polygon &poly, const BSPNode *nod
     return false;
 }
 
+static inline Vector2 SubV2(const Vector2 &a, const Vector2 &b) {
+    return Vector2(a.x - b.x, a.y - b.y);
+}
+
 void Clip(const Hmx::Polygon &poly, const Hmx::Ray &ray, Hmx::Polygon &out) {
     if (poly.points.begin() == poly.points.end()) {
         out.points.clear();
@@ -1212,14 +1216,15 @@ void Clip(const Hmx::Polygon &poly, const Hmx::Ray &ray, Hmx::Polygon &out) {
 
     const Vector2 *lastPoint = &poly.points.back();
     const Vector2 *dirPtr = &ray.dir;
-    float yDiff = lastPoint->y - ray.base.y;
-    float lastDot = dirPtr->x * (lastPoint->x - ray.base.x)
-                  + dirPtr->y * yDiff;
+
+    float yDiff = SubV2(poly.points.back(), ray.base).y;
+    float lastDot = dirPtr->y * yDiff
+                  + (lastPoint->x - ray.base.x) * dirPtr->x;
 
     Vector2 v;
     for (const Vector2 *i = poly.points.begin(); i != poly.points.end(); i++) {
-        float yDelta = i->y - ray.base.y;
-        float dot = dirPtr->x * (i->x - ray.base.x) + yDelta * dirPtr->y;
+        float xDelta = i->x - ray.base.x;
+        float dot = SubV2(*i, ray.base).y * dirPtr->y + dirPtr->x * xDelta;
 
         if (!(dot < 0.0f)) {
             if (dot > 0.0f && lastDot < 0.0f) {
