@@ -33,7 +33,7 @@ namespace {
 
 JoypadData::JoypadData()
     : mButtons(0), mNewPressed(0), mNewReleased(0), mUser(nullptr), mConnected(false),
-      mVibrateEnabled(true), mHasCapFlag1(0), mIsWireless(0), unk4c(0), mNumAnalogSticks(0),
+      mVibrateEnabled(true), mHasCapFlag1(0), mIsWireless(0), unk4c(0), mHasAnalogSticks(false),
       mTranslateSticks(false), mIgnoreButtonMask(0), mGreenCymbalMask(0),
       mYellowCymbalMask(0), mBlueCymbalMask(0), mSecondaryPedalMask(0), mCymbalMask(0),
       mIsDrum(false), mType(kJoypadNone), mControllerType(), mDistFromRest(0),
@@ -410,8 +410,7 @@ bool JoypadIsControllerTypePadNum(int padNum, Symbol controller_type) {
     if (detect_cfg->Size() == 1
         || IsJoypadDetectMatch(detect_cfg->Array(1), gJoypadData[padNum])) {
         data.mControllerType = controller_type;
-        data.mNumAnalogSticks = type_cfg->FindInt("num_analog_sticks");
-        MILO_ASSERT((data.mNumAnalogSticks >= 0) && (data.mNumAnalogSticks <= kNumAnalogSticks), 0x50F);
+        data.mHasAnalogSticks = type_cfg->FindInt("has_analog_sticks");
         data.mTranslateSticks = type_cfg->FindInt("translate_sticks");
         data.mIgnoreButtonMask = 0;
         DataArray *ignore_arr = type_cfg->FindArray("ignore_buttons", false);

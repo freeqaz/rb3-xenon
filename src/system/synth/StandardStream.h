@@ -145,26 +145,28 @@ protected:
     float mJumpToMs; // 0x90
     bool mJumpSamplesInvalid; // 0x94
     String mJumpFile; // 0x98
-    int mCurrentSamp; // 0xa0
-    float mSpeed; // 0xa4
-    Timer mFrameTimer; // 0xa8
-    float mThrottle; // 0xd8
-    Symbol mExt; // 0xdc
-    bool mFloatSamples; // 0xe0
-    int mVirtualChans; // 0xe4
-    int mInfoChannels; // 0xe8
-    float unkec; // 0xec
-    bool mGetInfoOnly; // 0xf0
-    std::vector<void *> mVirtBufs; // 0xf4
-    std::vector<std::pair<int, int> > mChanMaps; // 0x100
-    std::vector<float *> unk10c; // 0x10c
-    std::vector<Marker> mMarkerList; // 0x118
-    std::vector<JumpInstance> mJumpInstances; // 0x124
-    Marker mStartMarker; // 0x130
-    Marker mEndMarker; // 0x140
-    bool mPollingEnabled; // 0x150
-    int unk154; // 0x154
-    bool unk158; // 0x158
+    int mCurrentSamp; // 0xa4
+    float mSpeed; // 0xa8
+    Timer mFrameTimer; // 0xb0
+    float mThrottle; // 0xe0
+    Symbol mExt; // 0xe4
+    bool mFloatSamples; // 0xe8
+    int mVirtualChans; // 0xec
+    int mInfoChannels; // 0xf0
+    float unkec; // 0xf4
+    bool mGetInfoOnly; // 0xf8
+    std::vector<void *> mVirtBufs; // 0xfc
+    std::vector<std::pair<int, int> > mChanMaps; // 0x108
+    std::vector<float *> unk10c; // 0x114
+    std::vector<Marker> mMarkerList; // 0x120
+    std::vector<JumpInstance> mJumpInstances; // 0x12c
+    Marker mStartMarker; // 0x138
+    Marker mEndMarker; // 0x14c
+    int unk160; // 0x160 - cursor into mJumpInstances (see GetJumpBackTotalTime)
+    float mAccumulatedLoopbacks; // 0x164
+    bool mPollingEnabled; // 0x168
+    int unk154; // 0x16c
+    bool unk158; // 0x170
 #ifdef HX_NATIVE
     bool mUseTimerFallback = false; // true when audio output is too slow (headless mode)
     Timer mWallClock; // independent wall-clock timer for detecting audio lag

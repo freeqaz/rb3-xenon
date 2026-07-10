@@ -553,6 +553,7 @@ void StandardStream::UpdateTimeByFiltering() {
 
 void StandardStream::Init(float f1, float f2, Symbol s, bool b4) {
     ClearJumpMarkers();
+    mAccumulatedLoopbacks = 0.0f;
     mBufSecs = f2;
     mGetInfoOnly = false;
     mState = kInit;

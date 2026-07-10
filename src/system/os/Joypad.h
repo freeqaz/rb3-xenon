@@ -211,7 +211,7 @@ struct ProGuitarData {
     unsigned char unkf;
 };
 
-// size 0xDC
+// size 0xD4
 class JoypadData {
 public:
     unsigned int mButtons; // 0x0
@@ -227,40 +227,42 @@ public:
     bool mConnected; // 0x48
     bool mVibrateEnabled; // 0x49
     bool mHasCapFlag1, mIsWireless, unk4c; // 0x4a, 0x4b, 0x4c
-    int mNumAnalogSticks; // 0x50
-    bool mTranslateSticks; // 0x54
-    int mIgnoreButtonMask; // 0x58
-    int mGreenCymbalMask; // 0x5c
-    int mYellowCymbalMask; // 0x60
-    int mBlueCymbalMask; // 0x64
-    int mSecondaryPedalMask; // 0x68
-    int mCymbalMask; // 0x6c
-    bool mIsDrum; // 0x70
-    JoypadType mType; // 0x74
-    Symbol mControllerType; // 0x78
-    float mDistFromRest; // 0x7c
-    bool mHasGreenCymbal; // 0x80
-    bool mHasYellowCymbal; // 0x81
-    bool mHasBlueCymbal; // 0x82
-    bool mHasSecondaryPedal; // 0x83
-    Hmx::Object *mBreedCallback; // 0x84 - callback object for breed data read/write results
-    BreedData mBreedData; // 0x88
-    BreedData *mBreedDataDest; // 0x94
-    int unk98; // 0x98
-    int mSuppressWriteCallback; // 0x9c
-    int unka0; // 0xa0
-    int unka4; // 0xa4
-    int unka8; // 0xa8
-    int unkac; // 0xac
-    int unkb0; // 0xb0
-    int unkb4; // 0xb4
-    int unkb8; // 0xb8
-    int unkbc; // 0xbc
-    bool mEepromWriteDone; // 0xc0
-    int unkc4; // 0xc4
-    int unkc8; // 0xc8
-    int unkcc; // 0xcc
-    int unkd0; // 0xd0
+    bool mHasAnalogSticks; // 0x4d (retail: stb 0x4d in JoypadIsControllerTypePadNum; Wii-era bool, dc3 changed to int mNumAnalogSticks)
+    bool mTranslateSticks; // 0x4e
+    int mIgnoreButtonMask; // 0x50
+    int mGreenCymbalMask; // 0x54
+    int mYellowCymbalMask; // 0x58
+    int mBlueCymbalMask; // 0x5c
+    int mSecondaryPedalMask; // 0x60
+    int mCymbalMask; // 0x64
+    bool mIsDrum; // 0x68
+    JoypadType mType; // 0x6c
+    Symbol mControllerType; // 0x70
+    float mDistFromRest; // 0x74
+    bool mHasGreenCymbal; // 0x78
+    bool mHasYellowCymbal; // 0x79
+    bool mHasBlueCymbal; // 0x7a
+    bool mHasSecondaryPedal; // 0x7b
+    Hmx::Object *mBreedCallback; // 0x7c - callback object for breed data read/write results
+    BreedData mBreedData; // 0x80
+    BreedData *mBreedDataDest; // 0x8c
+    int unk98; // 0x90 (member names in this tail are historical/dc3-inherited; comments are the true offsets)
+    int mSuppressWriteCallback; // 0x94
+    int unka0; // 0x98
+    int unka4; // 0x9c
+    int unka8; // 0xa0
+    int unkac; // 0xa4
+    int unkb0; // 0xa8
+    int unkb4; // 0xac
+    int unkb8; // 0xb0
+    int unkbc; // 0xb4
+    bool mEepromWriteDone; // 0xb8
+    int unkc4; // 0xbc
+    int unkc8; // 0xc0
+    int unkcc; // 0xc4
+    int unkd0; // 0xc8
+    int unkd4; // 0xcc (restored from dc3; keeps sizeof(JoypadData)=0xd4 = retail element stride — REQUIRED)
+    int unkd8; // 0xd0
 
     JoypadData();
     float GetAxis(Symbol) const;
