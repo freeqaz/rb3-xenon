@@ -28,7 +28,7 @@ public:
         FaderGroup mFaders; // 0x30
         ObjPtr<FxSend> mFxSend; // 0x48
     };
-    StandardStream(File *, float, float, Symbol, bool, bool, bool);
+    StandardStream(File *, float, float, Symbol, bool, bool);
     // Stream
     virtual ~StandardStream();
     virtual bool Fail();
@@ -50,6 +50,7 @@ public:
     virtual std::vector<struct JumpInstance> *GetJumpInstances() {
         return &mJumpInstances;
     }
+    virtual void AbandonLoop();
     virtual float GetFilePos() const { return 0; }
     virtual float GetFileLength() const { return 0; }
     virtual void SetVolume(int, float);
@@ -166,7 +167,10 @@ protected:
     float mAccumulatedLoopbacks; // 0x164
     bool mPollingEnabled; // 0x168
     int unk154; // 0x16c
-    bool unk158; // 0x170
+    // Retail sizeof(StandardStream) is 0x170 (NewStream allocates 0x170) and the
+    // retail ctor takes 6 args — no unk158 instance slot. Kept as a class static
+    // so DoJump's use still compiles.
+    static bool unk158;
 #ifdef HX_NATIVE
     bool mUseTimerFallback = false; // true when audio output is too slow (headless mode)
     Timer mWallClock; // independent wall-clock timer for detecting audio lag

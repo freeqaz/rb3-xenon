@@ -248,7 +248,7 @@ bool Voice::HasPendingVoices() {
 }
 
 void Voice::blockingStart(bool b) {
-    if (gShutdownVoiceThread || (unsigned int)TheXboxSynth->unkf0 == 0)
+    if (gShutdownVoiceThread || (unsigned int)TheXboxSynth->unkcc == 0)
         return;
     gLockPendingLists.Enter();
     Init(b);
@@ -386,7 +386,7 @@ bool Voice::IsPlaying() {
 }
 
 void Voice::Init(bool b) {
-    if ((unsigned int)TheXboxSynth->unkf0 == 0)
+    if ((unsigned int)TheXboxSynth->unkcc == 0)
         return;
     if (!b) {
         mState = 1;
@@ -409,7 +409,7 @@ void Voice::Init(bool b) {
     if (mFxSend) {
         outputVoice = (IXAudio2Voice *)(*(int *)((char *)mFxSend + 4));
     } else {
-        outputVoice = (IXAudio2Voice *)TheXboxSynth->unkf0;
+        outputVoice = (IXAudio2Voice *)TheXboxSynth->unkcc;
     }
     sendDesc.pOutputVoice = outputVoice;
 
@@ -421,7 +421,7 @@ void Voice::Init(bool b) {
     // Add reverb send if enabled
     if (mReverbEnabled) {
         sendDesc.Flags = 0;
-        sendDesc.pOutputVoice = (IXAudio2Voice *)TheXboxSynth->unkf8;
+        sendDesc.pOutputVoice = (IXAudio2Voice *)TheXboxSynth->unkd4;
         sends.push_back(sendDesc);
         unk48 = true;
     }
@@ -555,7 +555,7 @@ unsigned long StartVoiceThreadEntry(void *) {
         }
 
         if (gWasCommitSyncVoices && TheXboxSynth) {
-            int *pMasterVoice = (int *)TheXboxSynth->unkec;
+            int *pMasterVoice = (int *)TheXboxSynth->unkc8;
             HRESULT hr =
                 ((HRESULT(*)(int *, int))(*(int *)(*(int *)pMasterVoice + 0x34)))(pMasterVoice, 0);
             MILO_ASSERT(SUCCEEDED(hr), 0x76);
@@ -572,7 +572,7 @@ unsigned long StartVoiceThreadEntry(void *) {
         gVoiceGC.Exit();
 
         if (TheXboxSynth) {
-            CriticalSection *cs = &TheXboxSynth->unkb0;
+            CriticalSection *cs = &TheXboxSynth->unk88;
             cs->Enter();
             for (std::deque<PoolVoice>::iterator it = s_voiceGCInProgress.begin();
                  it != s_voiceGCInProgress.end(); ++it) {

@@ -1143,8 +1143,8 @@ UIListWidget.cpp:
 	.text       start:0x827FBA80 end:0x827FBB08
 
 system/synth_xbox/Synth.cpp:
-	.pdata      start:0x82251C18 end:0x82251C40
-	.text       start:0x82B2E770 end:0x82B2EE00
+	.pdata      start:0x822517D8 end:0x82251C80
+	.text       start:0x82B2B428 end:0x82B2F4F0
 
 CharDriver.cpp:
 	.pdata      start:0x821F9FD8 end:0x821F9FE0
@@ -2211,8 +2211,8 @@ ssluse.c:
 	.text       start:0x82AB42B0 end:0x82AB4388
 
 Mic.cpp:
-	.pdata      start:0x82251C90 end:0x82251F40
-	.text       start:0x82B2F568 end:0x82B32790
+	.pdata      start:0x82251C80 end:0x82251F40
+	.text       start:0x82B2F4F0 end:0x82B32790
 
 FxSendWah.cpp:
 	.pdata      start:0x82252318 end:0x822523C0
@@ -2346,9 +2346,13 @@ system/synth/FxSendCompress.cpp:
 	.pdata      start:0x82231090 end:0x822310B8
 	.text       start:0x82703788 end:0x82703B80
 
-FxSendMeterEffect.cpp:
+system/synth/FxSendMeterEffect.cpp:
 	.pdata      start:0x82231250 end:0x82231380
 	.text       start:0x82705708 end:0x82706A20
+
+system/synth_xbox/FxSendMeterEffect.cpp:
+	.pdata      start:0x82252290 end:0x82252318
+	.text       start:0x82B34FE0 end:0x82B35604
 
 Cache.cpp:
 	.pdata      start:0x8223A368 end:0x8223A378
@@ -2465,9 +2469,7 @@ system/synth_xbox/FxSendPitchShift.cpp:
 	.text       start:0x82B3B460 end:0x82B3B4B8
 
 system/synth_xbox/FxSendCompress.cpp:
-	.pdata      start:0x82251AA8 end:0x82251B48
 	.pdata      start:0x82252138 end:0x82252190
-	.text       start:0x82B2D1C8 end:0x82B2DBC0
 	.text       start:0x82B33FB8 end:0x82B343B8
 
 MultiMeshProxy.cpp:
@@ -2544,10 +2546,6 @@ FlowOnStop.cpp:
 BinkReader.cpp:
 	.pdata      start:0x822559C0 end:0x822559C8
 	.text       start:0x82B87A60 end:0x82B87AAC
-
-MemcardMgr.cpp:
-	.pdata      start:0x822518E0 end:0x822518E8
-	.text       start:0x82B2BCB8 end:0x82B2BD10
 
 CharIKScale.cpp:
 	.pdata      start:0x82205F98 end:0x82205FA0

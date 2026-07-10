@@ -96,9 +96,15 @@ DataNode returnMasterKey(DataArray *a) {
 
 Synth *TheSynth;
 
-Synth::Synth()
-    : mTrackLevels(false), mMuted(false), mMicClientMapper(nullptr), unk98(0),
-      mDebugStream(0), mADSR(nullptr) {
+// Retail RB3-360 Synth has no instance slots for these (sizeof(Synth)=0x88);
+// they live as class statics — see Synth.h.
+std::list<Hmx::Object *> Synth::mPlayHandlers;
+int Synth::unk98;
+Stream *Synth::mDebugStream;
+ADSRImpl *Synth::mADSR;
+String Synth::unka8;
+
+Synth::Synth() : mTrackLevels(false), mMuted(false), mMicClientMapper(nullptr) {
     SetName("synth", ObjectDir::Main());
     DataArray *cfg = SystemConfig("synth");
     cfg->FindData("mics", mNumMics, true);
@@ -240,7 +246,7 @@ Stream *Synth::NewStream(const char *filename, float f1, float f2, bool) {
     File *file;
     Symbol ext;
     NewStreamFile(filename, file, ext);
-    return new StandardStream(file, f1, f2, ext, true, true, false);
+    return new StandardStream(file, f1, f2, ext, true, true);
 #else
     return new StreamNull(f1);
 #endif
@@ -249,7 +255,7 @@ Stream *Synth::NewStream(const char *filename, float f1, float f2, bool) {
 Stream *Synth::NewBufStream(const void *buf, int size, Symbol ext, float f1, bool b1) {
 #ifdef HX_NATIVE
     File *file = new BufFile(buf, size);
-    return new StandardStream(file, 0, f1, ext, b1, true, false);
+    return new StandardStream(file, 0, f1, ext, b1, true);
 #else
     return new StreamNull(f1);
 #endif

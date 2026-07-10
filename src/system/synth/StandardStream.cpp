@@ -35,10 +35,10 @@ StandardStream::ChannelParams::ChannelParams()
     mFaders.AddLocal(_default)->SetVal(0);
 }
 
-StandardStream::StandardStream(
-    File *f, float f1, float f2, Symbol ext, bool b1, bool b2, bool b3
-)
-    : mPollingEnabled(b2), unk158(b3) {
+bool StandardStream::unk158;
+
+StandardStream::StandardStream(File *f, float f1, float f2, Symbol ext, bool b1, bool b2)
+    : mPollingEnabled(b2) {
     MILO_ASSERT(f, 0x4A);
     mExt = ext;
     mFile = f;

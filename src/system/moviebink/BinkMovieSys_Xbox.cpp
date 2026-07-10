@@ -7,7 +7,7 @@ extern "C" void BinkOpenXAudio2();
 
 void BinkMovieSys::PlatformInit() {
     if (TheXboxSynth) {
-        BinkSetSoundSystem(BinkOpenXAudio2, TheXboxSynth->unkec);
+        BinkSetSoundSystem(BinkOpenXAudio2, TheXboxSynth->unkc8);
     }
 }
 

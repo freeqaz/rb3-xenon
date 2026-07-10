@@ -282,6 +282,7 @@
    "system/rndobj/MeshAnim.cpp": "NonMatching",
    "system/rndobj/Part.cpp": "NonMatching",
    "system/rndobj/Rnd.cpp": "NonMatching",
+   "system/synth_xbox/FxSendMeterEffect.cpp": "NonMatching",
    "system/synth_xbox/MeterEffect.cpp": "NonMatching",
    "system/ui/UI.cpp": {
     "status": "NonMatching",

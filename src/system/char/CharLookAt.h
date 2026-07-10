@@ -14,7 +14,7 @@ public:
     // Hmx::Object
     virtual ~CharLookAt();
     OBJ_CLASSNAME(CharLookAt);
-    OBJ_SET_TYPE(CharLookAt);
+    OBJ_SET_TYPE_ENGINE(CharLookAt);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

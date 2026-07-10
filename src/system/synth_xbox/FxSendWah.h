@@ -13,6 +13,7 @@ public:
     virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 
     NEW_OBJ(FxSendWah360)
+    FXSEND360_NEW(FxSendWah)
 
     FxSendWah360();
 

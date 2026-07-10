@@ -14,6 +14,7 @@ public:
     virtual void OnParametersChanged();
 
     NEW_OBJ(FxSendDistortion360)
+    FXSEND360_NEW(FxSendDistortion)
 
     FxSendDistortion360();
 

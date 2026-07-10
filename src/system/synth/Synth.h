@@ -205,14 +205,16 @@ protected:
 #endif
     // mHud is retail-verified at 0x84 (Synth::ToggleHud reads +0x84 for mHud).
     RndOverlay *mHud; // 0x84
-    // DC3-era members retail RB3-360 lacks at these positions; kept for source
-    // compatibility, parked after mHud so they don't shift the retail-verified
-    // 0x74/0x78 slots nor mHud's 0x84 slot.
-    std::list<Hmx::Object *> mPlayHandlers; // 0x88
-    int unk98; // 0x90  TranscodableMixer* mSecureMixer?
-    Stream *mDebugStream; // 0x94
-    ADSRImpl *mADSR; // 0x98
-    String unka8; // 0x9c
+    // DC3-era members retail RB3-360 lacks entirely: retail sizeof(Synth) is
+    // 0x88 (Synth360 ctor inits its CritSec at +0x88, mMics vector at +0xA8).
+    // Kept as CLASS STATICS so synth/Synth.cpp's `this->`-style uses still
+    // compile without inflating the instance and shifting every Synth360
+    // member by +0x20 (which broke Synth360::EnableLevels et al).
+    static std::list<Hmx::Object *> mPlayHandlers;
+    static int unk98; // TranscodableMixer* mSecureMixer?
+    static Stream *mDebugStream;
+    static ADSRImpl *mADSR;
+    static String unka8;
 };
 
 void SynthPreInit();

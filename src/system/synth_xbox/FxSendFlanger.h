@@ -18,6 +18,7 @@ public:
     virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 
     NEW_OBJ(FxSendFlanger360)
+    FXSEND360_NEW(FxSendFlanger)
 
     FxSendFlanger360();
 

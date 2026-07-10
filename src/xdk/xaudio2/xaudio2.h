@@ -142,6 +142,46 @@ struct IXAudio2SubmixVoice : public IXAudio2Voice { /* Size=0x4 */
     IXAudio2SubmixVoice &operator=(const IXAudio2SubmixVoice &);
 };
 
+struct IXAudio2SourceVoice : public IXAudio2Voice { /* Size=0x4 */
+    /* 0x0000: fields for IXAudio2Voice */
+    virtual void GetVoiceDetails(XAUDIO2_VOICE_DETAILS *) = 0;
+    virtual HRESULT SetOutputVoices(const XAUDIO2_VOICE_SENDS *) = 0;
+    virtual HRESULT SetEffectChain(const XAUDIO2_EFFECT_CHAIN *) = 0;
+    virtual HRESULT EnableEffect(UINT32, UINT32) = 0;
+    virtual HRESULT DisableEffect(UINT32, UINT32) = 0;
+    virtual void GetEffectState(UINT32, BOOL *) = 0;
+    virtual HRESULT SetEffectParameters(UINT32, const void *, UINT32, UINT32) = 0;
+    virtual HRESULT GetEffectParameters(UINT32, void *, UINT32) = 0;
+    virtual HRESULT SetFilterParameters(const XAUDIO2_FILTER_PARAMETERS *, UINT32) = 0;
+    virtual void GetFilterParameters(XAUDIO2_FILTER_PARAMETERS *) = 0;
+    virtual HRESULT SetOutputFilterParameters(
+        IXAudio2Voice *, const XAUDIO2_FILTER_PARAMETERS *, UINT32
+    ) = 0;
+    virtual void
+    GetOutputFilterParameters(IXAudio2Voice *, XAUDIO2_FILTER_PARAMETERS *) = 0;
+    virtual HRESULT SetVolume(float, UINT32) = 0;
+    virtual void GetVolume(float *) = 0;
+    virtual HRESULT SetChannelVolumes(UINT32, const float *, UINT32) = 0;
+    virtual void GetChannelVolumes(UINT32, float *) = 0;
+    virtual HRESULT
+    SetOutputMatrix(IXAudio2Voice *, UINT32, UINT32, const float *, UINT32) = 0;
+    virtual void GetOutputMatrix(IXAudio2Voice *, UINT32, UINT32, float *) = 0;
+    virtual void DestroyVoice() = 0;
+    virtual HRESULT Start(UINT32, UINT32);
+    virtual HRESULT Stop(UINT32, UINT32);
+    virtual HRESULT SubmitSourceBuffer(const XAUDIO2_BUFFER *, const void *);
+    virtual HRESULT FlushSourceBuffers();
+    virtual HRESULT Discontinuity();
+    virtual HRESULT ExitLoop(UINT32);
+    virtual void GetState(XAUDIO2_VOICE_STATE *, UINT32);
+    virtual HRESULT SetFrequencyRatio(float, UINT32);
+    virtual void GetFrequencyRatio(float *);
+    virtual HRESULT SetSourceSampleRate(UINT32);
+    IXAudio2SourceVoice(const IXAudio2SourceVoice &);
+    IXAudio2SourceVoice();
+    IXAudio2SourceVoice &operator=(const IXAudio2SourceVoice &);
+};
+
 struct IXAudioRefCount { /* Size=0x4 */
     virtual UINT32 AddRef();
     virtual UINT32 Release();

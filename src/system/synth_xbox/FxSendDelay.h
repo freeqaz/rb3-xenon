@@ -17,6 +17,7 @@ public:
     virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 
     NEW_OBJ(FxSendDelay360)
+    FXSEND360_NEW(FxSendDelay)
 
     FxSendDelay360();
 

@@ -6,6 +6,20 @@
 #include "xdk/xapilibi/xbase.h"
 #include "xdk/xaudio2/xaudio2.h"
 
+// Retail 360 FxSend factory allocation shape (NewObject@FxSendXxx360, Synth.obj
+// @82B2B580..82B2D348): the OBJ_MEM_OVERLOAD operator new inherited from the
+// portable base class is INLINED into NewObject with the base
+// StaticClassName() evaluation kept (Symbol-interning side effect), followed by
+// the 2-arg retail MemAlloc(size, 0). The global OBJ_MEM_OVERLOAD lever is
+// noinline (CacheMgr-verified `bl fn_82709EE0` shape), so the 360 subclasses
+// re-declare operator new locally with the inline form.
+#define FXSEND360_NEW(baseClass)                                                         \
+    static void *operator new(unsigned int s) {                                          \
+        void *mem = (MemAlloc)(s, (baseClass::StaticClassName(), 0));                    \
+        return mem;                                                                      \
+    }                                                                                    \
+    static void *operator new(unsigned int s, void *place) { return place; }
+
 class FxSend360 {
 public:
     virtual ~FxSend360();
