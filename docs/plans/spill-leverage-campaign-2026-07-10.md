@@ -147,3 +147,32 @@ agent pass.
 *(append as phases complete)*
 
 - 2026-07-10: campaign opened; phases 0–2 launched.
+- 2026-07-10, phases 1–2 **complete**. Scanner landed (`6cd19a37` + mid-run
+  fixes `d3b7d3c`: companion-row purity + per-side frame-base validation that
+  killed 15 false hits). Full scan: **pool was 343 fns** (not ~1,700 — the
+  §3 estimate counted raw near-misses before `gen_nearmiss_pool` filters:
+  `fn_`-anonymous, ≤44 B, STL, verdict walls), 50 hits, zero scan failures.
+  Direction calibration: **objdiff insert = ours-extra, delete = ours-missing**
+  (re-verified on FaderGroup after every scanner change). Artifacts:
+  `~/tmp/spill_scan.json`, `~/tmp/spill_scan_triage.md`.
+  - **Class A (GO, small):** 1 sole + 3 dominant + ~20 present-band.
+    Clean strict candidates: `GemPlayer::Handle` (99.86, sole-diff ours-extra
+    4th subi/stw pair into address-taken 0x54) and `NetCacheMgr::OnInit`
+    (98.5, near-clean ours-missing 0x60). Dominant trio
+    (`SongUpgradeMgr::AddUpgradeData`, `RandomGroupSeqInst` ctor, `Hmx::Clip`)
+    carry 12–22 other diffs — store lever alone won't close them.
+  - **Class B header trial: NO-GO.** Thin-node ObjPtrList signature population
+    = **1** (FaderGroup itself) vs the ≥10 gate. Parked stays parked —
+    the sizing question is now answered with data, not judgment.
+  - **Class C:** zero sole/dominant post-fix (the wall class barely exists at
+    high purity); 19 present-band slots noted for T5 verdict walls.
+  - **NEW LEAD (from the scanner's false-positive pile):** an ours-missing
+    **member sentinel-init ctor family** — retail emits a self-pointing
+    intrusive-list head init (`addi r11,r30,0x20; stw r11,0x20(r30)`) that we
+    don't, across ~8 ctors/dtors (RndMorph, RndMultiMeshProxy,
+    NgSpotlightDrawer, SharedGroup, FileStream dtor, CharDriver, CharIKFoot,
+    RndAnimFilter). Smells like ONE shared-header inline-phrasing fix. This —
+    not thin-node — is where the §T3 trial protocol gets used.
+- 2026-07-10, phase 3 launched as workflow `spill-harvest-and-family-trial`:
+  5 class-A fixers (worktree-isolated) + sentinel-family diagnosis/trial
+  (fleet A/B gated) + merger (premise-checked, path-limited landings).
