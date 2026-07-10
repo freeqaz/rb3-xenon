@@ -864,7 +864,7 @@ float VocalPart::GetBestHit(
     noteMatched = -1;
     float bestScore = 0.0f;
     float savedPitch = io_rPitch;
-    int foundTalky = 0;
+    bool foundTalky = false;
     o_rTalkyHit = false;
     for (int i = beginNote; i < endNote; i++) {
         const VocalNote &note = mVocalNoteList->mNotes[i];
@@ -888,7 +888,7 @@ float VocalPart::GetBestHit(
                 if (score >= bestScore) {
                     io_rPitch = savedPitch;
                     bestScore = score;
-                    foundTalky = 1;
+                    foundTalky = true;
                     noteMatched = i;
                     o_rArg8 = -1.0f;
                     o_rOctaves = 0;
@@ -905,7 +905,7 @@ float VocalPart::GetBestHit(
             if (score >= bestScore || (score > 0.0 && foundTalky)) {
                 bestScore = score;
                 io_rPitch = pitch;
-                foundTalky = 0;
+                foundTalky = false;
                 noteMatched = i;
                 o_rArg8 = sloppyPitch;
                 o_rOctaves = octaves;
