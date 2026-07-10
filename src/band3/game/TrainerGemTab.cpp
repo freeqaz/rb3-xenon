@@ -285,12 +285,12 @@ void TrainerGemTab::Draw(int i) {
         DrawStartFinish();
         break;
     case 4: {
-        Transform xfm = mGemTab->WorldXfm();
-        Transform orig = xfm;
+        Transform orig = mGemTab->WorldXfm();
+        Transform xfm = orig;
         unsigned int tickRange = unk54->GetEndTick() - unk54->GetStartTick();
         xfm.v.z -= 60.0f;
         mGemTab->SetWorldXfm(xfm);
-        int half = (int)((tickRange >> 31) + tickRange) >> 1;
+        int half = (int)tickRange / 2;
         Render(unk54->GetStartTick(), unk54->GetStartTick() + half, 0.0f, 10.0f, i);
         mStartLabel->SetShowing(true);
         mStartLabel->Draw();
