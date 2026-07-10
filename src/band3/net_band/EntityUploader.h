@@ -64,9 +64,9 @@ public:
     int mNumUploadOps; // 0x28
     DataArray *mEmptyArray; // 0x2c
     Hmx::Object *mCallbackObj; // 0x30
-    bool unk34; // 0x34
-    DateTime mSubmittedTime; // 0x35
-    int mOpIdGenerator; // 0x3c
+    DateTime mSubmittedTime; // 0x40
+    bool unk34; // 0x46
+    int mOpIdGenerator; // 0x48
 };
 
 extern EntityUploader &TheEntityUploader;
