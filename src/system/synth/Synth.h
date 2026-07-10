@@ -203,13 +203,14 @@ protected:
     MidiInstrumentMgr *mMidiInstrumentMgr; // 0x78 (retail: Disable reads +0x78)
     std::list<SampleInst *> mZombieInsts; // 0x7c
 #endif
+    // mHud is retail-verified at 0x84 (Synth::ToggleHud reads +0x84 for mHud).
+    RndOverlay *mHud; // 0x84
     // DC3-era members retail RB3-360 lacks at these positions; kept for source
-    // compatibility, parked after mMidiInstrumentMgr so they don't shift the
-    // retail-verified 0x74/0x78 slots.
-    std::list<Hmx::Object *> mPlayHandlers; // 0x84
-    int unk98; // 0x8c  TranscodableMixer* mSecureMixer?
-    Stream *mDebugStream; // 0x90
-    RndOverlay *mHud; // 0x94
+    // compatibility, parked after mHud so they don't shift the retail-verified
+    // 0x74/0x78 slots nor mHud's 0x84 slot.
+    std::list<Hmx::Object *> mPlayHandlers; // 0x88
+    int unk98; // 0x90  TranscodableMixer* mSecureMixer?
+    Stream *mDebugStream; // 0x94
     ADSRImpl *mADSR; // 0x98
     String unka8; // 0x9c
 };
