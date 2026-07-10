@@ -455,9 +455,9 @@ void ChunkStream::DecompressChunkAsync() {
             dtask.mChunk = &mCurChunk[bufIdx];
             dtask.mBuffer = mBuffers[idx];
             dtask.mState = &mBuffersState[idx];
-            dtask.mDecompressedSize = mBufSize;
-            dtask.mID = mChunkInfo.mID;
             dtask.mTempBuf = (char *)mFilename.c_str();
+            dtask.mID = mChunkInfo.mID;
+            dtask.mDecompressedSize = mBufSize;
 #ifdef HX_NATIVE
             // Decompress synchronously on native — no background thread needed
             DecompressChunk(dtask);
