@@ -904,6 +904,12 @@
     ]
    },
    "band3/meta_band/Accomplishment.cpp": "NonMatching",
+   "band3/meta_band/AppInlineHelp.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/AccomplishmentCategory.cpp": "NonMatching",
    "band3/meta_band/Award.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentConditional.cpp": "NonMatching",
@@ -917,7 +923,13 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/meta_band/AccomplishmentPanel.cpp": "NonMatching",
+   "band3/meta_band/AccomplishmentPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_STRIP_CHEAT_HANDLERS"
+    ]
+   },
    "band3/meta_band/AccomplishmentOneShot.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentPlayerConditional.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentProgress.cpp": {
@@ -1207,7 +1219,8 @@
    "band3/tour/TourPerformer.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_MAP_0x1C"
     ]
    },
    "band3/game/PracticePanel.cpp": {

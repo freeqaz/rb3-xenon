@@ -2775,9 +2775,9 @@ Pose.cpp:
 	.pdata      start:0x8221C2D8 end:0x8221C2E0
 	.text       start:0x825B67B0 end:0x825B6804
 
-PhysicsVolume.cpp:
-	.pdata      start:0x8221F108 end:0x8221F7A0
-	.text       start:0x825E16D8 end:0x825E80F0
+AppInlineHelp.cpp:
+	.pdata      start:0x8221F6C0 end:0x8221F7A0
+	.text       start:0x825E7110 end:0x825E80F0
 
 ColorPalette.cpp:
 	.pdata      start:0x8222A4A8 end:0x8222A4E0
@@ -3513,7 +3513,9 @@ TourProgress.cpp:
 
 AccomplishmentPanel.cpp:
 	.pdata      start:0x8221EBB0 end:0x8221EBB8
+	.pdata      start:0x8221F108 end:0x8221F6C0
 	.text       start:0x825DBD78 end:0x825DBE68
+	.text       start:0x825E16D8 end:0x825E7110
 
 BandMachineMgr.cpp:
 	.pdata      start:0x8221B570 end:0x8221B578

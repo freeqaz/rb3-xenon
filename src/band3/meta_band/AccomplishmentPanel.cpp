@@ -1316,7 +1316,9 @@ void AccomplishmentPanel::FakeEarnSelectedCategory() {
 }
 
 BEGIN_HANDLERS(AccomplishmentPanel)
+#ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this dev handler
     HANDLE_ACTION(fake_earn_selected, FakeEarnSelected())
+#endif
     HANDLE_EXPR(selected_accomplishment, SelectedAccomplishment())
     HANDLE_ACTION(set_other_user_to_view, mOtherUserToView = _msg->Obj<LocalBandUser>(2))
     HANDLE_EXPR(can_navigate_list, CanNavigateList())
