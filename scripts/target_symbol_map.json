@@ -13890,5 +13890,6 @@
  "0X826377E8": "?KickPlayer@SessionUsersProvider@@QAAXH@Z",
  "0X82637968": "?GetUser@SessionUsersProvider@@QAAPAVBandUser@@H@Z",
  "0X826365D0": "?Handle@Matchmaker@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0X82636970": "?Handle@BandMatchmaker@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+ "0X82636970": "?Handle@BandMatchmaker@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0X82637CD8": "?Handle@SessionUsersProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }

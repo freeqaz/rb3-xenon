@@ -801,7 +801,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/meta_band/SessionUsersProviders.cpp": "NonMatching",
+   "band3/meta_band/SessionUsersProviders.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/bandtrack/GemTrack.cpp": "NonMatching",
    "band3/bandtrack/GemManager.cpp": "NonMatching",
    "band3/bandtrack/Gem.cpp": "NonMatching",
