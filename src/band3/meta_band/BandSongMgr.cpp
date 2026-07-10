@@ -36,7 +36,7 @@
 #endif
 
 BandSongMgr gSongMgr;
-BandSongMgr &TheSongMgr = gSongMgr;
+BandSongMgr *TheSongMgrPtr = &gSongMgr;
 SongMgr *TheBaseSongManger;
 
 bool BandSongMgr::sFakeSongsAllowed;

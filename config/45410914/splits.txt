@@ -3339,19 +3339,16 @@ band3/game/Game.cpp:
 	.pdata      start:0x82227430 end:0x82227438
 	.pdata      start:0x82227468 end:0x82227470
 	.pdata      start:0x82227478 end:0x82227480
-	.pdata      start:0x82227660 end:0x82227668
+	.pdata      start:0x822275F8 end:0x82227668
 	.pdata      start:0x82227668 end:0x82227670
-	.pdata      start:0x82227850 end:0x82227858
-	.pdata      start:0x822278B0 end:0x822278B8
+	.pdata      start:0x82227850 end:0x822278B8
 	.text       start:0x82658920 end:0x82659E60
 	.text       start:0x82659E60 end:0x82659EC0
 	.text       start:0x8265A168 end:0x8265A1F8
 	.text       start:0x8265A278 end:0x8265A34C
-	.text       start:0x8265BAF0 end:0x8265BB48
-	.text       start:0x8265C250 end:0x8265C3B0
+	.text       start:0x8265BAF0 end:0x8265C3B0
 	.text       start:0x8265C3B0 end:0x8265C518
-	.text       start:0x8265EA78 end:0x8265EBE8
-	.text       start:0x8265F7A8 end:0x82660BE0
+	.text       start:0x8265EA78 end:0x82660BE0
 
 GemSmasher.cpp:
 	.pdata      start:0x822555C8 end:0x822555D0

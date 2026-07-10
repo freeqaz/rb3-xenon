@@ -214,8 +214,10 @@ int BandSongMetadata::SongKey() const {
 int BandSongMetadata::SongTonality() const { return mSongTonality; }
 float BandSongMetadata::ScrollSpeed() const { return mSongScrollSpeed; }
 float BandSongMetadata::TuningOffset() const { return mTuningOffsetCents; }
-Symbol BandSongMetadata::VocalPercussionBank() const { return mVocalPercussionBank.c_str(); }
-Symbol BandSongMetadata::DrumKitBank() const { return mDrumKitBank.c_str(); }
+const char *BandSongMetadata::VocalPercussionBank() const {
+    return mVocalPercussionBank.c_str();
+}
+const char *BandSongMetadata::DrumKitBank() const { return mDrumKitBank.c_str(); }
 bool BandSongMetadata::HasAlbumArt() const { return mHasAlbumArt; }
 bool BandSongMetadata::IsMasterRecording() const { return mIsMasterRecording; }
 Symbol BandSongMetadata::BandFailCue() const { return mBandFailCue.c_str(); }

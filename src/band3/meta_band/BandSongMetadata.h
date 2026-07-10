@@ -32,8 +32,8 @@ public:
     int SongTonality() const;
     float ScrollSpeed() const;
     float TuningOffset() const;
-    Symbol VocalPercussionBank() const;
-    Symbol DrumKitBank() const;
+    const char *VocalPercussionBank() const;
+    const char *DrumKitBank() const;
     bool HasAlbumArt() const;
     bool IsMasterRecording() const;
     Symbol BandFailCue() const;

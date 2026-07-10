@@ -104,10 +104,12 @@ public:
     virtual void AddRangeShift(int, float);
     virtual void AddKeyboardRangeShift(int, int, float, int, int);
     virtual SongPos CalcSongPos(float);
-    // Concrete override of the HxSongData pure virtual (dc3 engine header form).
-    // RB3's SongData uses CalcSongPos(float) above; this satisfies the base so
-    // SongData is instantiable. Decl-only — body lives in (uncompiled) SongData.cpp.
+#ifdef HX_NATIVE
+    // Concrete override of the dc3-only HxSongData pure virtual (native keeps
+    // the dc3 base shape). On the 360 track CalcSongPos(float) above IS the
+    // base override and no extra vtable entry exists (retail slot layout).
     virtual SongPos CalcSongPos(class HxMaster *, float);
+#endif
     virtual TempoMap *GetTempoMap() const { return mTempoMap; }
     virtual BeatMap *GetBeatMap() const { return mBeatMap; }
     virtual MeasureMap *GetMeasureMap() const { return mMeasureMap; }

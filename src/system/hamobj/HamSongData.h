@@ -25,6 +25,11 @@ public:
     virtual bool GetGem(int, int &, int &, int &) { return false; }
     // HxSongData
     virtual SongPos CalcSongPos(HxMaster *, float);
+#ifndef HX_NATIVE
+    // 360-track base override (retail HxSongData slot is CalcSongPos(float));
+    // forwards without a master (jump-back compensation is a ham/native path).
+    virtual SongPos CalcSongPos(float f) { return CalcSongPos((HxMaster *)0, f); }
+#endif
     virtual TempoMap *GetTempoMap() const { return mTempoMap; }
     virtual BeatMap *GetBeatMap() const { return mBeatMap; }
     virtual MeasureMap *GetMeasureMap() const { return mMeasureMap; }

@@ -106,8 +106,13 @@ public:
     virtual void Terminate();
     virtual void SetClearColor(const Hmx::Color &c) { mClearColor = c; }
     const Hmx::Color &GetClearColor() const { return mClearColor; }
-    virtual void Clear(unsigned int, const Hmx::Color &) = 0;
+    // RB3-360 vtable order: ForceColorClear precedes Clear (GamePanel::
+    // ClearDrawGlitch target calls ForceColorClear via slot 0x68 while
+    // BeginDrawing/EndDrawing stay at 0x80/0x84 -- ScreenDump anchor at slot 28
+    // holds in both, so the two slots between SetClearColor and ScreenDump are
+    // simply swapped vs the dc3 header shape).
     virtual void ForceColorClear() {}
+    virtual void Clear(unsigned int, const Hmx::Color &) = 0;
     virtual void ScreenDump(const char *);
     RND_DC3_VIRTUAL void ScreenDumpUnique(const char *);
     virtual void DrawRect(

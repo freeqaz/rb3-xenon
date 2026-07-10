@@ -1,6 +1,7 @@
 #include "macros.h"
 #undef MILO_DEBUG
 #include "game/GamePanel.h"
+#include "game/PresenceMgr.h"
 #include "GamePanel.h"
 #include "bandobj/BandDirector.h"
 #include "bandobj/BandWardrobe.h"
@@ -84,7 +85,8 @@ void GamePanel::Reset() {
     mGameState = kGameNeedIntro;
     mExcitement = kNumExcitements;
     mLastExcitement = kNumExcitements;
-    Export(reset_msg, true);
+    static Message msg("reset");
+    Export(msg, true);
     mGame->Restart(true);
     unk151 = false;
 }
@@ -92,19 +94,22 @@ void GamePanel::Reset() {
 void GamePanel::Load() {
     mReplay = false;
     mLoadProf.Start();
-    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-        TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
-    );
+    Symbol song = MetaPerformer::Current()->Song();
+    int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
     mVocalPercussionBank.LoadFile(
-        FilePath(".", data->VocalPercussionBank().Str()), true, true, kLoadBack, false
+        FilePath(".", data->VocalPercussionBank()), true, true, kLoadBack, false
     );
 
-    const char *drumbankStr = data->DrumKitBank().Str();
+    const char *drumbankStr = data->DrumKitBank();
     if (!drumbankStr || *drumbankStr == '\0') {
         drumbankStr = SystemConfig("sound", "banks", "kit")->Str(1);
     }
     mDrumKitBank.LoadFile(FilePath(".", drumbankStr), true, true, kLoadBack, false);
     UIPanel::Load();
+    static Symbol coop_bg("coop_bg");
+    static Symbol coop_bk("coop_bk");
+    static Symbol coop_gk("coop_gk");
     Symbol playModeSym;
     std::vector<BandUser *> users;
     TheBandUserMgr->GetParticipatingBandUsers(users);
@@ -241,6 +246,12 @@ void GamePanel::Enter() {
     mLoadProf.Stop();
     Reset();
     mGame->SetPaused(false, true, true);
+    // Retail-360 addition (absent on Wii): update rich presence with the song
+    // being entered. Nested call shape is load-bearing: the vtable is cached
+    // across the Current()/Song() arg evaluation.
+    ThePresenceMgr.SetSongID(
+        TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
+    );
     ThePlatformMgr.SetNotifyUILocation((NotifyLocation)0);
     if (TheRnd.GetAspect() != Rnd::kWidescreen && !TheGame->mProperties.mLetterbox) {
         TheRnd.SetAspect(Rnd::kRegular);
@@ -268,7 +279,8 @@ void GamePanel::Exit() {
 
 void GamePanel::StartGame() {
     AutoTimer::SetCollectStats(true, TheRnd.VerboseTimers());
-    Export(on_extend_msg, true);
+    static Message msg("on_extend");
+    Export(msg, true);
     if (mGame->HasIntro())
         mGame->Start();
     mGameState = kGamePlaying;
@@ -372,7 +384,8 @@ void GamePanel::SetPlayingTrackIntroUntil(float f1) {
 
 void GamePanel::StartIntro() {
     mGameState = kGameNeedStart;
-    HandleType(pick_intro_msg);
+    static Message msg("pick_intro");
+    HandleType(msg);
     if (mStartPaused) {
         mGame->SetPaused(true, true, true);
     }
@@ -490,9 +503,11 @@ void GamePanel::FinishLoad() {
     mGame->SetDrumKitBank(mDrumKitBank);
     mDirectInstrument->PostLoad();
     PreloadPanel::sCache->Clear();
-    HAQManager::PrintSongInfo(
-        MetaPerformer::Current()->Song(), TheSongDB->GetSongDurationMs()
-    );
+    // Retail strips the HAQManager::PrintSongInfo CALL (debug HAQ tool) but
+    // keeps both argument evaluations (Song() + GetSongDurationMs() are still
+    // called, results discarded) -- MILO_WARN-style arg-evaluating strip.
+    MetaPerformer::Current()->Song();
+    TheSongDB->GetSongDurationMs();
 #ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
     if (unk64)
         unk64 = false;
@@ -510,15 +525,14 @@ void GamePanel::PlayBandDiedCue() {
 }
 
 void GamePanel::ClearDrawGlitch() {
-    TheGameMode->Property(game_screen, true)->Obj<UIScreen>()->SetShowing(false);
+    static Symbol _s("game_screen");
+    TheGameMode->Property(_s, true)->Obj<UIScreen>()->SetShowing(false);
     RndPostProc::Reset();
     TheRnd.ForceColorClear();
-    // X360 retail uses the dx9 renderer's buffered-frame count here; rndwii's
-    // TheWiiRnd.mFramesBuffered does not exist on 360. ClearDrawGlitch() is out
-    // of the pinned matching span, so a plausible double-buffer count compiles.
+    // Retail 360 draws two buffered frames with NO EndWorld between
+    // BeginDrawing and TheUI->Draw (the Wii shape had EndWorld here).
     for (int i = 0; i < 2; i++) {
         TheRnd.BeginDrawing();
-        TheRnd.EndWorld();
         TheUI->Draw();
         TheRnd.EndDrawing();
     }
@@ -589,7 +603,11 @@ END_HANDLERS
 #pragma push
 #pragma pool_data off
 BEGIN_PROPSYNCS(GamePanel)
-    SYNC_PROP(multi_event, mMultiEvent)
+    {
+        static Symbol _s("multi_event");
+        if (sym == _s)
+            return PropSync(mMultiEvent, _val, _prop, _i + 1, _op);
+    }
 
     {
         static Symbol _s("excitement");
@@ -613,6 +631,11 @@ BEGIN_PROPSYNCS(GamePanel)
         return false;
 END_PROPSYNCS
 #pragma pop
+
+#ifdef HX_NATIVE
+// Native stub: retail-only presence hook has no native implementation.
+void PresenceMgr::SetSongID(int) {}
+#endif
 
 float LatencyCallback::UpdateOverlay(RndOverlay *, float f) {
     Hmx::Color color = unk4 ? Hmx::Color(1, 1, 1) : Hmx::Color(0, 0, 0);

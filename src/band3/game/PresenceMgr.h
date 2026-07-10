@@ -10,6 +10,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
 
     void UpdatePresence();
+    void SetSongID(int); // retail-360-only: GamePanel::Enter pushes the current songID into rich presence (target fn at 0x82662E70)
     Symbol GetPresenceMode();
     int GetPresenceContextFromMode(Symbol, bool);
     int GetPlayModeContextFromUser(const LocalBandUser *, bool);

@@ -125,4 +125,12 @@ public:
     int unk140; // 0x164 - num valid songs
 };
 
-extern BandSongMgr &TheSongMgr;
+// Retail 360 exposes the song manager through a MUTABLE POINTER global (the
+// GamePanel::Load target reloads both the object pointer AND its vptr around
+// every intervening call: lwz obj -> lwz vptr -> vcall, twice from the same
+// @ha base). A C++ reference (Wii-dev shape) lets MSVC CSE both loads across
+// calls -- reference-immutability makes the object address (and thus vptr)
+// invariant -- which produces a hoisted preload retail provably lacks. Keep
+// the `TheSongMgr.` spelling for all call sites via the macro.
+extern BandSongMgr *TheSongMgrPtr;
+#define TheSongMgr (*TheSongMgrPtr)

@@ -331,6 +331,20 @@ void Game::Start() {
     Go();
 }
 
+#ifndef HX_NATIVE
+// X360-only synth output-mixer singleton: constructed in the Synth unit
+// (ctor at retail 0x82B2E8E8 stores this -> 0x82DDF9A8; builds the 5.1+drum
+// channel-name table "FL/FR/C/LFE/SL/SR/DML/DMR" and "limiter"/"ratio"
+// strings). Game::Go pokes its +0x110 flag when a song actually starts.
+// Name is provisional -- no Wii/dc3 analog exists to confirm it.
+class XOutputMixer {
+public:
+    unsigned char pad[0x110]; // 0x00..0x110 unexplored
+    bool unk110; // 0x110: set true on Game::Go
+};
+extern XOutputMixer *TheXOutputMixer;
+#endif
+
 void Game::Go() {
     if (!mMaster->GetAudio()->Fail()) {
         if (unk150) {
@@ -345,6 +359,9 @@ void Game::Go() {
         mIsPaused = false;
         unk148 = true;
         SetRealtime(false);
+#ifndef HX_NATIVE
+        TheXOutputMixer->unk110 = true;
+#endif
     }
 }
 
@@ -615,24 +632,27 @@ void Game::EnableWorldPolling(bool b1) {
     if (panel) {
         WorldDir *worldDir = dynamic_cast<WorldDir *>(panel->LoadedDir());
         if (worldDir) {
-            (void)worldDir; // mPollCamera not present in xenon WorldDir
+            // Retail pokes a bool at WorldDir+0x381 (the Wii mPollCamera
+            // equivalent; sits inside the span our Dir.h currently annotates
+            // as m3DSoundMgr 0x318..0x38c -- WorldDir layout needs a revisit
+            // before this can become a named member).
+            *(bool *)((char *)worldDir + 0x381) = b1;
         }
     }
     MidiParserMgr *midiParserMgr = mMaster->GetMidiParserMgr();
     if (midiParserMgr && !mProperties.mInPracticeMode && b1) {
-        // unk59 field differs from xenon layout; no-op in this port
-        (void)midiParserMgr;
+        // Retail: bool at MidiParserMgr+0x69 (Wii unk59 shifted +0x10 by the
+        // MI vptrs); not yet a named member in our MidiParserMgr.h.
+        *(bool *)((char *)midiParserMgr + 0x69) = b1;
     }
 }
 
 void Game::ResetAudio() { mMaster->ResetAudio(); }
 
 void Game::RebuildData() {
-    {
-        Player **it = &mAllActivePlayers[0];
-        for (; it != &mAllActivePlayers[0] + mAllActivePlayers.size(); it++) {
-            (*it)->RebuildPhrases();
-        }
+    std::vector<Player *> &players = GetActivePlayers();
+    FOREACH (it, players) {
+        (*it)->RebuildPhrases();
     }
     mSongDB->RebuildData();
 }
@@ -649,17 +669,16 @@ void Game::Restart(bool doSave) {
                 mMaster->Jump(std::max(0.0f, std::max(0.0f, mResumeTime - 2000.0f) - 2000.0f));
             }
             unk120 = true;
-            if (!mMuckWithPitch) {
-                mMaster->GetAudio()->SetMuckWithPitch(false);
-            }
+            mMaster->GetAudio()->SetMuckWithPitch(true);
             mLastPollMs = mResumeTime;
         }
         EnableWorldPolling(true);
         ReconcilePlayers();
         RebuildData();
         mDrumFillsMod = TheModifierMgr->IsModifierActive("mod_drum_fills");
+        std::vector<Player *> &players = GetActivePlayers();
         for (int i = 0; i < mAllActivePlayers.size(); i++) {
-            Player *p = mAllActivePlayers[i];
+            Player *p = players[i];
             if (p) {
                 p->SetFillLogic(GetFillLogic());
             }
@@ -669,8 +688,7 @@ void Game::Restart(bool doSave) {
             mBand->SetAccumulatedScore(0);
         }
         if (mInvalidScore) {
-            Player **it = &mAllActivePlayers[0];
-            for (; it != &mAllActivePlayers[0] + mAllActivePlayers.size(); it++) {
+            FOREACH (it, players) {
                 (*it)->SetQuarantined(true);
             }
         }
@@ -1142,7 +1160,7 @@ BEGIN_HANDLERS(Game)
     HANDLE_EXPR(main_performer, GetMainPerformer())
     HANDLE_ACTION(set_kick_autoplay, SetKickAutoplay(_msg->Int(2)))
     HANDLE_EXPR(is_waiting, IsWaiting())
-    HANDLE_EXPR(print_base_points, (PrintBasePoints(), MetaPerformer::Current()->Song()))
+    HANDLE_ACTION(print_base_points, (PrintBasePoints(), MetaPerformer::Current()->Song()))
     HANDLE_ACTION(reset_audio, ResetAudio())
     HANDLE(adjust_for_vocal_phrases, OnAdjustForVocalPhrases)
     HANDLE_EXPR(get_fraction_completed, GetFractionCompleted())
@@ -1388,7 +1406,9 @@ bool Game::IsWaiting() {
 }
 
 float Game::GetFractionCompleted() const {
-    if (mResumeTime != 0.0f) {
+    // single-expression bool materialization (retail li/bne/li/clrlwi shape)
+    bool resumed = mResumeTime != 0.0f;
+    if (resumed) {
         return std::max(0.0f, mResumeTime / mSongDB->GetSongDurationMs());
     }
     if (unk124 == 0.0f) {
@@ -1494,25 +1514,14 @@ void Game::ReconcilePlayers() {
 
 void Game::Poll() {
     if (mIsPaused) {
-        if (mRealtime && unk148) {
-            // fall through to body
-        } else {
+        if (!mRealtime)
             return;
-        }
+        if (!unk148)
+            return;
     }
-    if (unk6b && unk148 && !mIsPaused && TheGamePanel->mGameState != kGameOver) {
-        float ms = (unkdc != -1.0f) ? unkdc : mLastPollMs;
-        float rollbackTarget;
-        if (mProperties.mInTrainer && TheTrainerPanel) {
-            rollbackTarget = std::max(0.0f, ms - 1000.0f);
-            mLastPollMs = 1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime);
-        } else {
-            rollbackTarget = std::max(0.0f, ms - 2000.0f);
-        }
-        Rollback(ms, rollbackTarget);
-    }
-    unk6b = false;
-    if (HandleRollbackAnimation() && HandleAudioLoad()) {
+    if (!HandleRollbackAnimation())
+        return;
+    if (HandleAudioLoad()) {
         if (!unk6f && !mIsPaused) {
             unk6f = true;
             if (!mHasIntro) {
@@ -1520,42 +1529,43 @@ void Game::Poll() {
             }
         }
         mTime.Split();
-        bool isGameOver = (TheGamePanel->mGameState == kGameOver);
         float songMs = 0.0f;
         if (TheGamePanel->unk150) {
             float audioMs;
             if (mRealtime) {
-                audioMs = mTimeOffset
-                    + mTime.Ms();
+                audioMs = mTime.Ms() + mTimeOffset;
             } else {
                 audioMs = mMaster->GetAudio()->GetTime();
-                if (mShuttle->mActive) {
-                    audioMs = PollShuttle();
-                }
             }
-            audioMs += GetSongToTaskMgrMs();
             float rawMs;
-            songMs = TheGamePanel->mDeJitter.NewMs(audioMs, rawMs);
-            TheGamePanel->SetDejitteredTime(songMs);
-            TheTaskMgr.SetSeconds(songMs / 1000.0f, false);
+            songMs = TheGamePanel->mDeJitter.NewMs(GetSongToTaskMgrMs() + audioMs, rawMs);
+            TheTaskMgr.SetSeconds(songMs * 0.001f, false);
         }
-        if ((!isGameOver && !mIsPaused && !mRealtime && IsReady()) || mProperties.mInDrumTrainer) {
-            songMs = 1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime);
+        // Retail keeps an UNUSED local static Symbol here (residue of a
+        // stripped debug/mode check); the guard word + ctor are load-bearing.
+        static Symbol drum_trainer("drum_trainer");
+        if ((!mIsPaused && !mRealtime && IsReady()) || mProperties.mInDrumTrainer) {
+            songMs = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f;
             mSongPos = mSongDB->GetData()->CalcSongPos(songMs);
             TheTaskMgr.SetSongPos(mSongPos);
         }
         if (songMs >= 0.0f) {
             mMaster->Poll(songMs);
-            if (!isGameOver) {
-                mBand->Poll(songMs, mSongPos);
-                mTrackerManager->Poll(songMs);
-            }
+            mBand->Poll(songMs, mSongPos);
+            mTrackerManager->Poll(songMs);
         } else {
             mMaster->GetMidiParserMgr()->Poll();
         }
-        if (!isGameOver) {
-            CheckSectionEnd(songMs);
+        // Retail-360 kiosk-demo auto-skip (Wii dev never read the demo fields).
+        if (TheNetSession->IsInGame()) {
+            if (MetaPerformer::Current()->IsPlayingDemo()
+                && TheGamePanel->mGameState != kGameOver
+                && (songMs * 100.0f / mSongDB->GetSongDurationMs() >= mDemoMaxPctComplete
+                    || mMaster->GetAudio()->GetTime() >= mDemoMaxMs)) {
+                TheNetSession->EndGame(kSkip, false, 0.0f);
+            }
         }
+        CheckSectionEnd(songMs);
         CheckRollbackEnd(songMs);
         mLastPollMs = songMs;
         if (mResumeTime == 0 && !mIsPaused) {
