@@ -192,38 +192,29 @@ DataNode CameraManager::OnCycleShot(DataArray *da) {
 }
 
 Symbol CameraManager::MakeCategoryAndFilters(
-    DataArray *da, std::vector<PropertyFilter> &filts, float *f
+    DataArray *da, std::vector<PropertyFilter> &filts
 ) {
     static Symbol flags_exact("flags_exact");
     static Symbol flags_any("flags_any");
     Symbol sym = da->Sym(2);
-    int floatIdx = 3;
     if (da->Size() > 3) {
-        const DataNode &n = da->Evaluate(3);
-        DataArray *nArr = n.Type() == kDataArray ? n.Array() : nullptr;
-        if (nArr) {
-            DataArray *arr = da->Array(3);
-            floatIdx = 4;
-            for (uint i = 0; i != arr->Size(); i++) {
-                DataArray *currArr = arr->Array(i);
-                PropertyFilter filt;
-                filt.prop = currArr->Evaluate(0);
-                if (filt.prop.Type() == kDataSymbol && filt.prop.Sym() == flags_exact) {
-                    filt.mask = currArr->Int(1);
-                    filt.match = currArr->Int(2);
-                } else if (filt.prop.Type() == kDataSymbol
-                           && filt.prop.Sym() == flags_any) {
-                    filt.mask = currArr->Int(1);
-                    filt.match = 1;
-                } else {
-                    filt.match = currArr->Evaluate(1);
-                    filt.mask = -1;
-                }
-                filts.push_back(filt);
+        DataArray *arr = da->Array(3);
+        for (uint i = 0; i != arr->Size(); i++) {
+            DataArray *currArr = arr->Array(i);
+            PropertyFilter filt;
+            filt.prop = currArr->Evaluate(0);
+            if (filt.prop.Type() == kDataSymbol && filt.prop.Sym() == flags_exact) {
+                filt.mask = currArr->Int(1);
+                filt.match = currArr->Int(2);
+            } else if (filt.prop.Type() == kDataSymbol
+                       && filt.prop.Sym() == flags_any) {
+                filt.mask = currArr->Int(1);
+                filt.match = 1;
+            } else {
+                filt.match = currArr->Evaluate(1);
+                filt.mask = -1;
             }
-        }
-        if (f) {
-            *f = da->Float(floatIdx);
+            filts.push_back(filt);
         }
     }
     return sym;
@@ -297,9 +288,7 @@ ObjPtrList<CamShot> &CameraManager::FindOrAddCategory(Symbol cat) {
     return *lowerCat->mShots;
 }
 
-int CameraManager::NumCameraShots(
-    Symbol s, const std::vector<PropertyFilter> &filts, std::list<CamShot *> *shots
-) {
+int CameraManager::NumCameraShots(Symbol s, const std::vector<PropertyFilter> &filts) {
     FirstShotOk(s);
     ObjPtrList<CamShot> &camlist = FindOrAddCategory(s);
     int num = 0;
@@ -307,7 +296,6 @@ int CameraManager::NumCameraShots(
         CamShot *cur = *it;
         if (cur->Disabled() == 0 && ShotMatches(cur, filts)
             && cur->ShotOk(mCurrentShot)) {
-            shots->push_back(cur);
             num++;
         }
     }
@@ -360,22 +348,22 @@ CameraManager::PickCameraShot(Symbol s, const std::vector<PropertyFilter> &filts
 DataNode CameraManager::OnPickCameraShot(DataArray *da) {
     std::vector<PropertyFilter> pvec;
     pvec.reserve(20);
-    Symbol sym = MakeCategoryAndFilters(da, pvec, nullptr);
+    Symbol sym = MakeCategoryAndFilters(da, pvec);
     return PickCameraShot(sym, pvec);
 }
 
 DataNode CameraManager::OnFindCameraShot(DataArray *da) {
     std::vector<PropertyFilter> pvec;
     pvec.reserve(20);
-    Symbol sym = MakeCategoryAndFilters(da, pvec, nullptr);
+    Symbol sym = MakeCategoryAndFilters(da, pvec);
     return FindCameraShot(sym, pvec);
 }
 
 DataNode CameraManager::OnNumCameraShots(DataArray *da) {
     std::vector<PropertyFilter> pvec;
     pvec.reserve(20);
-    Symbol sym = MakeCategoryAndFilters(da, pvec, nullptr);
-    return NumCameraShots(sym, pvec, nullptr);
+    Symbol sym = MakeCategoryAndFilters(da, pvec);
+    return NumCameraShots(sym, pvec);
 }
 
 DataNode CameraManager::OnRandomSeed(DataArray *da) {

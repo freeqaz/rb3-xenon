@@ -52,9 +52,7 @@ public:
     void PrePoll();
     void Randomize();
     void Enter();
-    int NumCameraShots(
-        Symbol s, const std::vector<PropertyFilter> &, std::list<CamShot *> *
-    );
+    int NumCameraShots(Symbol s, const std::vector<PropertyFilter> &);
     void SetNextShot(CamShot *);
     void SyncObjects(WorldDir *);
     CamShot *PickCameraShot(Symbol, const std::vector<PropertyFilter> &);
@@ -74,7 +72,7 @@ private:
     DataNode OnIterateShot(DataArray *);
     DataNode OnNumCameraShots(DataArray *);
     DataNode OnGetShotList(DataArray *);
-    Symbol MakeCategoryAndFilters(DataArray *da, std::vector<PropertyFilter> &, float *);
+    Symbol MakeCategoryAndFilters(DataArray *da, std::vector<PropertyFilter> &);
     ObjPtrList<CamShot> &FindOrAddCategory(Symbol);
 
     /** "Controlling world object" */
