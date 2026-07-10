@@ -204,8 +204,16 @@ MusicLibrary.cpp:
 	.text       start:0x82532010 end:0x82532068
 
 MusicLibraryStore.cpp:
+	.pdata      start:0x8221AD70 end:0x8221AD78
 	.pdata      start:0x8221AD78 end:0x8221AD80
+	.pdata      start:0x8221AE38 end:0x8221AE40
+	.pdata      start:0x8221AE60 end:0x8221AE68
+	.pdata      start:0x8221AEB0 end:0x8221AEB8
+	.text       start:0x825A3DD0 end:0x825A3E70
 	.text       start:0x825A3E70 end:0x825A3EC4
+	.text       start:0x825A4860 end:0x825A4930
+	.text       start:0x825A49E0 end:0x825A4AAC
+	.text       start:0x825A5028 end:0x825A5078
 
 Instarank.cpp:
 	.pdata      start:0x82224938 end:0x82224AB8

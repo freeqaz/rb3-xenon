@@ -1,5 +1,49 @@
 #include "meta_band/MusicLibraryStore.h"
 #include "meta/StoreOffer.h"
+#include "meta/StorePreviewMgr.h"
+#include "obj/Data.h"
+#include "rndobj/Tex.h"
+#include "utl/NetCacheMgr.h"
+#include "utl/NetLoader.h"
+#include "utl/Std.h"
+#include "xdk/xapilibi/xbox.h"
+
+MusicLibraryStore::MusicLibraryStore()
+    : mState(2), mPreviewLoader(NULL), mPreviewData(NULL), mCacheLoader(NULL),
+      mCacheStream(NULL), mPreviewTex(Hmx::Object::New<RndTex>()), mPreviewMgr(NULL),
+      mResults(NULL), mUnk60(0) {
+    mState = 0;
+    TheNetCacheMgr->Load((NetCacheMgr::CacheSize)0);
+    mPreviewMgr = new StorePreviewMgr();
+}
+
+void MusicLibraryStore::ClearPreview() {
+    if (mPreviewLoader) {
+        delete mPreviewLoader;
+    }
+    mPreviewLoader = NULL;
+    if (mPreviewMgr) {
+        delete mPreviewMgr;
+    }
+    mPreviewMgr = NULL;
+    if (mCacheLoader) {
+        TheNetCacheMgr->DeleteNetCacheLoader(mCacheLoader);
+        mCacheLoader = NULL;
+    }
+    TheNetCacheMgr->Unload();
+    mState = 3;
+    XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_AUTO);
+}
+
+MusicLibraryStore::~MusicLibraryStore() {
+    DeleteAll(mOffers);
+    if (mPreviewData) {
+        mPreviewData->Release();
+        mPreviewData = NULL;
+    }
+    mOverlapped.clear();
+    delete mPreviewTex;
+}
 
 StoreOffer *MusicLibraryStore::FindOfferBySongID(int id) const {
     for (std::vector<StoreOffer *>::const_iterator it = mOffers.begin();
