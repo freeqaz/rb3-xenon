@@ -86,6 +86,8 @@ void MusicLibrary::Init(SongPreview &prev) {
 }
 
 void MusicLibrary::TryToSetHighlight(Symbol token, SongNodeType type, bool passthrough) {
+    static Symbol random_song("random_song");
+    static Symbol make_a_setlist("make_a_setlist");
     SortNode *node;
     bool matched = false;
     bool foundNode = false;
@@ -1521,6 +1523,7 @@ void MusicLibrary::SendMessageToSongSelectPanel(Message &msg) {
 
 void MusicLibrary::PushHighlightToScreen(bool b1) {
     if (b1) {
+        static Symbol highlight_node_at_ix("highlight_node_at_ix");
         static Message msg(highlight_node_at_ix, 0);
         msg[0] = mCurrentHighlightIndex;
         SendMessageToSongSelectPanel(msg);
@@ -1530,6 +1533,8 @@ void MusicLibrary::PushHighlightToScreen(bool b1) {
         mSetlistScoresProvider->SetSetlist(sort->GetSetlistRecord()->GetSetlist());
     }
     if (!TheContentMgr.RefreshInProgress()) {
+        static Symbol refresh_selected_song("refresh_selected_song");
+        static Message refresh_selected_song_msg(refresh_selected_song);
         SendMessageToSongSelectPanel(refresh_selected_song_msg);
     }
 }
@@ -1541,6 +1546,8 @@ void MusicLibrary::PushMakingSetlistToScreen() {
 }
 
 void MusicLibrary::PushFilterToScreen() {
+    static Symbol refresh_filter("refresh_filter");
+    static Message refresh_filter_msg(refresh_filter);
     SendMessageToSongSelectPanel(refresh_filter_msg);
 }
 
@@ -1555,17 +1562,23 @@ void MusicLibrary::PushSetlistToScreen() {
     TheSessionMgr->GetMachineMgr()->GetLocalMachine()->SetNetUIStateParam(-mSetlist.size()
     );
     if (!TheContentMgr.RefreshInProgress()) {
+        static Symbol refresh_setlist("refresh_setlist");
+        static Message refresh_setlist_msg(refresh_setlist);
         SendMessageToSongSelectPanel(refresh_setlist_msg);
     }
 }
 
 void MusicLibrary::PushSonglistToScreen() {
     if (!TheContentMgr.RefreshInProgress()) {
+        static Symbol refresh_songlist("refresh_songlist");
+        static Message refresh_songlist_msg(refresh_songlist);
         SendMessageToSongSelectPanel(refresh_songlist_msg);
     }
 }
 
 void MusicLibrary::PushSetlistSaveDialog() {
+    static Symbol show_setlist_save_dialog("show_setlist_save_dialog");
+    static Message show_setlist_save_dialog_msg(show_setlist_save_dialog);
     SendMessageToSongSelectPanel(show_setlist_save_dialog_msg);
 }
 
@@ -1637,6 +1650,7 @@ void MusicLibrary::ShuffleSetlist() {
 }
 
 void MusicLibrary::BuildPartySetlist() {
+    static Symbol party_shuffle("party_shuffle");
     if (TheGameMode->InMode(party_shuffle)) {
         TheSongSortMgr->BuildFilteredSongList(nullptr, "band");
     }
