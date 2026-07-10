@@ -30,7 +30,6 @@ public:
         static Symbol by_rank("by_rank");
         mShortName = by_rank;
     }
-    virtual ~SongSortByRank() {}
     virtual DataNode Handle(DataArray *, bool);
     virtual void Clear();
     virtual bool IsReady() const;

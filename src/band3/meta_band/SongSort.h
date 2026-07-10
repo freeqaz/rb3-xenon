@@ -51,7 +51,6 @@ public:
 class SongSort : public NodeSort {
 public:
     SongSort() {}
-    virtual ~SongSort() {}
     virtual ShortcutNode *NewShortcutNode(LeafSortNode *) const;
     virtual HeaderSortNode *NewHeaderNode(LeafSortNode *) const;
     virtual SubheaderSortNode *NewSubheaderNode(LeafSortNode *) const;

@@ -17,9 +17,9 @@ protected:
 private:
     char *mBuf; // 0x4
     int mBufSize; // 0x8
-    char mFmtBuf[0x1000]; // 0xc
-    char *mFmtEnd; // 0x100c
-    Type mType; // 0x1010
+    char mFmtBuf[0x800]; // 0xc
+    char *mFmtEnd; // 0x80c
+    Type mType; // 0x810
 
     void UpdateType();
 
@@ -51,7 +51,12 @@ void InitMakeString();
 bool MakeStringInitted();
 void TerminateMakeString();
 
-const char *MakeString(const char *c);
+// Retail inlines the single-arg overload (rb3-Wii header agrees); the retail
+// FormatString stack frame (0x870 in NETMSG_NAME bodies) proves mFmtBuf is 0x800.
+inline const char *MakeString(const char *c) {
+    FormatString fs(c);
+    return fs.Str();
+}
 
 template <class T>
 const char *MakeString(const char *c, T t) {

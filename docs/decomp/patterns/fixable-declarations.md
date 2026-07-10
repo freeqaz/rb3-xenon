@@ -40,6 +40,72 @@ GlitchFinder::~GlitchFinder() {
 
 ---
 
+## Implicit Destructor (Vtable-Store Elision)
+
+**Impact:** +16-60% (and unlocks ICF folding of sibling dtors)
+**Success Rate:** 100% (4/4 in the NetSync wave, incl. reversing an at_limit kill)
+**Time:** 1 minute per class
+
+The INVERSE of "Explicit Destructor" above -- for classes whose retail dtor
+*lacks* the leading own-vtable store(s). A user-declared empty dtor
+(`virtual ~X() {}`) makes MSVC emit the class's own vtable store(s) at dtor
+entry (a *pair* of stores for MI / virtual-base classes). A
+**compiler-generated (implicit) dtor elides those stores entirely** -- and,
+because the elided bodies of sibling classes become byte-identical, retail
+ICF folds them into one function (e.g. one shared `??1` for
+ComponentFocus/Select/ScrollNetMsg; one shared `??_G` for
+NetGoto+NetSyncScreenMsg differing only via vbase offset 0x28 vs 0x2c).
+
+### Symptom
+
+objdiff shows 3-6 **base-extra inserts** at dtor entry (or before an inlined
+base-dtor call): `lis/addi/stw` of `??_7Class@@6B...@` -- one store for SI
+classes, a pair for MI/vbase classes. Everything else matches. In target asm
+the dtor jumps straight into member destruction with no vptr stores.
+
+### Why It Works
+
+MSVC treats a user-provided dtor (even `{}`) as having an observable body and
+resets the vptr(s) before it runs. An implicit dtor has no user body, so the
+optimizer skips straight to member/base destruction. This cascades: when an
+implicit dtor is inlined into a derived dtor or `??_D`/`??_G` helper, it
+contributes *no* stores, so retail derived dtors call the grand-base `??1`
+directly (e.g. `~SongSortByRank` calls `??1NodeSort` with no `??_7SongSort`
+stores -- `~SongSort` inlined to nothing).
+
+### Fix
+
+```cpp
+// Remove the empty dtor declaration entirely:
+class ComponentSelectNetMsg : public NetMessage {
+public:
+    ComponentSelectNetMsg() {}
+    // virtual ~ComponentSelectNetMsg() {}   <-- DELETE (retail is implicit)
+};
+```
+
+Only applies to EMPTY dtors. Declared-only dtors with real out-of-line bodies
+(e.g. `~DelayEffect();` at 33%) are a different failure class. Note the
+tension with "Explicit Destructor" above: the atexit-wrapper symptom wants a
+dtor ADDED, this one wants it REMOVED -- the diff shape (atexit wrapper vs
+`??_7` stores) disambiguates.
+
+### Real Examples (NetSync wave, 2026-07-10)
+
+| Function | Before | After | Delta |
+|----------|--------|-------|-------|
+| ??1ComponentSelectNetMsg (ICF x3) | 83.6% | 100% | +16.4% |
+| ??_GLockData | 53.7% | 100% | +46.3% |
+| ??_DNetSyncScreenMsg | 0% | 100% | +100% |
+| ??1SongSortByRank (was at_limit "no source lever") | 39.5% | 100% | +60.5% |
+
+**Counter-example:** `~StartTransitionMsg` retail KEEPS its user dtor (its
+72-byte `??1` at 0x82522AE0 has the store pair) while its four derived
+Net*ScreenMsg classes are implicit. Verify per class from the target diff,
+not per hierarchy.
+
+---
+
 ## Class-Specific Delete Lowering (`POOL_OVERLOAD`)
 
 **Impact:** +12-22% (often fixes multiple call sites)

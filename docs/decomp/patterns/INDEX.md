@@ -4,6 +4,14 @@ Quick reference for all documented decompilation patterns, targeting Xbox 360 / 
 
 > **Data source:** `decomp.db` — 50,981 functions (34,215 non-excluded). 92.8% COMPLETE, 7.2% AT_LIMIT, 0.04% remaining (14 stubs).
 > **Last updated:** 2026-03-03
+>
+> **STATUS (2026-07-06):** the numbers above (and the "Statistics" / "AT_LIMIT Breakdown"
+> sections below) are a **historical DC3-era snapshot** from when this pattern suite was
+> written (`decomp.db` there had 50,981 functions; rb3-xenon's own `decomp.db` currently
+> tracks 66,838 RB3 functions from `build/45410914/report.json` — a different corpus).
+> The *patterns themselves* transfer verbatim (same MSVC X360 toolchain/flags per
+> `CLAUDE.md`), but do not quote these counts as rb3-xenon's current state — see
+> `docs/plans/decomp-state-and-roadmap-*.md` for live rb3-xenon progress numbers instead.
 
 ## Fixable Patterns
 
@@ -13,6 +21,7 @@ These patterns can often be fixed with source changes. Sorted by ROI (impact x s
 |---------|--------|---------|------|
 | Struct Layout (Padded Arrays) | +5-40% | 100% | [fixable-struct-layout.md](fixable-struct-layout.md#padded-vector3-arrays-16-byte-stride) |
 | Explicit Destructor | +37-70% | 100% | [fixable-declarations.md](fixable-declarations.md#explicit-destructor) |
+| Implicit Destructor (Vtable-Store Elision) | +16-60% | 100% | [fixable-declarations.md](fixable-declarations.md#implicit-destructor-vtable-store-elision) |
 | noreturn Attribute | +38% | 100% | [fixable-casting.md](fixable-casting.md#noreturn-attribute) |
 | Float/Double Separation | +80% | 95% | [fixable-casting.md](fixable-casting.md#floatdouble-separation) |
 | fsel Clamp/Min/Max Templates | +5-44% | HIGH | [fixable-fsel-fma.md](fixable-fsel-fma.md#fsel-via-clampminmax-templates) |
@@ -129,6 +138,7 @@ These patterns resist simple source-level fixes. Each documents what would be ne
 | Static Guard Naming (`??_B` vs `$S`) | TUs with few-static funcs | 1-3% | [unfixable-compiler.md](unfixable-compiler.md#static-guard-naming-convention-_b-vs-s) |
 | 16-byte Member Self-Copy Regalloc | Color/Vector4 sites | 0.2-0.5% | [unfixable-compiler.md](unfixable-compiler.md#self-copy-of-16-byte-member-regalloc-coin-flip) |
 | BEGIN_HANDLERS Static-Init Guard Elision | Handle() w/ many `_NEW_STATIC_SYMBOL` | ~0.05-0.1% | [unfixable-compiler.md](unfixable-compiler.md#begin_handlers-static-init-guard-elision) |
+| Systemic / project-wide AT_LIMIT issues (ICF, `__FILE__` paths, MILO_NOTIFY FormatString wrapper, block-sinking, etc.) | project-wide, many TUs | varies | [at-limit-systemic.md](at-limit-systemic.md) |
 
 ---
 
@@ -302,5 +312,6 @@ From 143 successful fine-tuning attempts (90%+ start, 100% end):
 - [TECHNICAL_NOTES.md: Offset Diagnosis](../TECHNICAL_NOTES.md#offset-mismatch-diagnosis-off--n) — How to diagnose `[off:-N]` mismatches (class vs stack)
 - [TECHNICAL_NOTES.md: MSVC Encoding](../TECHNICAL_NOTES.md#msvc-mangled-number-encoding) — Decode MakeString template sizes
 - [verifiable-icf.md](verifiable-icf.md) — ICF, LTCG, float constant pooling
+- [at-limit-systemic.md](at-limit-systemic.md) — Project-wide AT_LIMIT issues spanning many TUs (ICF, `__FILE__` path remap, MILO_NOTIFY FormatString wrapper, block-sinking, etc.)
 - [harmful-avoid.md](harmful-avoid.md) — Member aliasing, child pointer in loop
 - [PERMUTER_ROI_ANALYSIS.md](PERMUTER_ROI_ANALYSIS.md) — Pattern automation ROI rankings, permuter coverage gaps

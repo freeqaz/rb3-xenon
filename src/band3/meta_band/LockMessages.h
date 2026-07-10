@@ -8,7 +8,6 @@
 class LockData : public virtual Hmx::Object {
 public:
     LockData() {}
-    virtual ~LockData() {}
 };
 
 class StartLockMsg : public NetMessage {

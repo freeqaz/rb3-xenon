@@ -33,7 +33,8 @@ NetMessage *ComponentSelectNetMsg::NewNetMessage() { return new ComponentSelectN
 NetMessage *ComponentScrollNetMsg::NewNetMessage() { return new ComponentScrollNetMsg(); }
 NetMessage *NetGotoScreenMsg::NewNetMessage() { return new NetGotoScreenMsg(); }
 NetMessage *NetPushScreenMsg::NewNetMessage() { return new NetPushScreenMsg(); }
-NetMessage *NetPopScreenMsg::NewNetMessage() { return new NetPopScreenMsg(); }
+// retail passes an explicit null screen here (the (UIScreen*) ctor, vbase flag=1)
+NetMessage *NetPopScreenMsg::NewNetMessage() { return new NetPopScreenMsg(nullptr); }
 NetMessage *NetSyncScreenMsg::NewNetMessage() { return new NetSyncScreenMsg(); }
 
 namespace {
@@ -131,6 +132,7 @@ void NetSync::Poll() {
 }
 
 bool NetSync::AttemptTransition(UIScreen *screen, int destination_depth) {
+    static Symbol max_block_mode("max_block_mode"); // retail: guard+ctor at entry, never read (likely from stripped dev code)
     MILO_ASSERT(destination_depth >= 0, 0xAD);
     if (!TheUI->InTransition() && !TheNetSession->IsBusy()
         && !IsBlockingEvent(TheUIEventMgr->CurrentTransitionEvent())) {
@@ -190,18 +192,8 @@ void NetSync::SyncScreen(UIScreen *s, int i2) {
                  s ? s->Name() : "(null)", i2, IsTransitionAllowed(s),
                  TheUI->InTransition(), (void *)mDestinationScreen);
 #endif
-    bool b2;
-    bool b1;
     BandUser *u = TheSessionMgr->GetLeaderUser();
-    b2 = true;
-    if (u) {
-        b1 = false;
-        if (u->IsLocal() && TheNetSession->HasUser(u)) {
-            b1 = true;
-        }
-        if (!b1)
-            b2 = false;
-    }
+    bool b2 = !u || (u->IsLocal() && TheNetSession->HasUser(u));
     if (IsTransitionAllowed(s) && (b2 || unk28) && !mDestinationScreen) {
         Enable();
 #ifdef HX_NATIVE
@@ -315,6 +307,7 @@ DataNode NetSync::OnMsg(const UIComponentScrollMsg &msg) {
     else {
         UIScreen *screen = TheUI->CurrentScreen();
         if (screen) {
+            static Message net_sync_scroll_msg("net_sync_scroll"); // retail: function-local static
             DataNode handled = screen->HandleType(net_sync_scroll_msg);
             if (handled != DataNode(kDataUnhandled, 0) && handled.Int() == 0) {
                 return DataNode(kDataUnhandled, 0);
