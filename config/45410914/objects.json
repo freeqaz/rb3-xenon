@@ -787,14 +787,29 @@
    "band3/game/Stats.cpp": "NonMatching",
    "band3/game/StatCollector.cpp": "NonMatching",
    "band3/game/TambourineManager.cpp": "NonMatching",
-   "band3/game/GamePanel.cpp": "NonMatching",
+   "band3/game/GamePanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/bandtrack/Lyric.cpp": "NonMatching",
    "band3/game/SongDB.cpp": "NonMatching",
-   "band3/game/Player.cpp": "NonMatching",
+   "band3/game/Player.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/game/GemPlayer.cpp": "NonMatching",
    "band3/game/GuitarFx.cpp": "NonMatching",
    "band3/game/Performer.cpp": "NonMatching",
-   "band3/meta_band/NetSync.cpp": "NonMatching",
+   "band3/meta_band/NetSync.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/Matchmaker.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
@@ -807,22 +822,47 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/bandtrack/GemTrack.cpp": "NonMatching",
+   "band3/bandtrack/GemTrack.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/bandtrack/GemManager.cpp": "NonMatching",
    "band3/bandtrack/Gem.cpp": "NonMatching",
    "band3/bandtrack/TrackConfig.cpp": "NonMatching",
-   "band3/bandtrack/TrackPanel.cpp": "NonMatching",
+   "band3/bandtrack/TrackPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/bandtrack/Tail.cpp": "NonMatching",
    "band3/game/BandUser.cpp": "NonMatching",
    "band3/game/Singer.cpp": "NonMatching",
    "band3/game/VocalGuidePitch.cpp": "NonMatching",
-   "band3/game/VocalPlayer.cpp": "NonMatching",
+   "band3/game/VocalPlayer.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/game/VocalPart.cpp": "NonMatching",
    "band3/game/TrainerPanel.cpp": "NonMatching",
    "band3/game/VocalTrainerPanel.cpp": "NonMatching",
    "band3/game/FadePanel.cpp": "NonMatching",
-   "band3/bandtrack/VocalTrack.cpp": "NonMatching",
-   "band3/game/GameMode.cpp": "NonMatching",
+   "band3/bandtrack/VocalTrack.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/game/GameMode.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/Accomplishment.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentCategory.cpp": "NonMatching",
    "band3/meta_band/Award.cpp": "NonMatching",
@@ -831,11 +871,21 @@
    "band3/meta_band/AccomplishmentGroup.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentLessonDiscSongConditional.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentLessonSongListConditional.cpp": "NonMatching",
-   "band3/meta_band/AccomplishmentManager.cpp": "NonMatching",
+   "band3/meta_band/AccomplishmentManager.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/AccomplishmentPanel.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentOneShot.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentPlayerConditional.cpp": "NonMatching",
-   "band3/meta_band/AccomplishmentProgress.cpp": "NonMatching",
+   "band3/meta_band/AccomplishmentProgress.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/AccomplishmentSetlist.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentSongConditional.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentSongFilterConditional.cpp": "NonMatching",
@@ -845,7 +895,12 @@
    "band3/meta_band/AccomplishmentTrainerConditional.cpp": "NonMatching",
    "band3/meta_band/AccomplishmentTrainerListConditional.cpp": "NonMatching",
    "band3/meta_band/AssetTypes.cpp": "NonMatching",
-   "band3/meta_band/AppLabel.cpp": "NonMatching",
+   "band3/meta_band/AppLabel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/UIStats.cpp": "NonMatching",
    "band3/meta_band/AppMiniLeaderboardDisplay.cpp": {
     "status": "NonMatching",
@@ -855,11 +910,17 @@
    },
    "band3/meta_band/Leaderboard.cpp": "NonMatching",
    "band3/meta_band/PlayerLeaderboards.cpp": "NonMatching",
-   "band3/meta_band/CalibrationPanel.cpp": "NonMatching",
+   "band3/meta_band/CalibrationPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/Campaign.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_MAP_0x1C"
+     "/DRB3_MAP_0x1C",
+     "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
    "band3/meta_band/GameplayOptions.cpp": "NonMatching",
@@ -885,7 +946,12 @@
      "/DRB3_MAP_0x1C"
     ]
    },
-   "band3/meta_band/CriticalUserListener.cpp": "NonMatching",
+   "band3/meta_band/CriticalUserListener.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/CymbalSelectionProvider.cpp": "NonMatching",
    "band3/meta_band/Instarank.cpp": "NonMatching",
    "band3/meta_band/LicenseMgr.cpp": "NonMatching",
@@ -893,8 +959,18 @@
    "band3/meta_band/MainHubPanel.cpp": "NonMatching",
    "band3/meta_band/ManageBandPanel.cpp": "NonMatching",
    "band3/meta_band/NextSongPanel.cpp": "NonMatching",
-   "band3/meta_band/MusicLibrary.cpp": "NonMatching",
-   "band3/meta_band/NameGenerator.cpp": "NonMatching",
+   "band3/meta_band/MusicLibrary.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/NameGenerator.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/OvershellPartSelectProvider.cpp": "NonMatching",
    "band3/meta_band/OvershellPanel.cpp": "NonMatching",
    "band3/meta_band/OvershellSlot.cpp": "NonMatching",
@@ -907,15 +983,30 @@
    "band3/meta_band/SongUpgradeMgr.cpp": "NonMatching",
    "band3/meta_band/BandMachine.cpp": "NonMatching",
    "band3/meta_band/BandMachineMgr.cpp": "NonMatching",
-   "band3/meta_band/SongStatusMgr.cpp": "NonMatching",
+   "band3/meta_band/SongStatusMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/PerformanceData.cpp": "NonMatching",
    "band3/meta_band/MusicLibraryNetSetlists.cpp": "NonMatching",
    "band3/meta_band/OvershellSlotState.cpp": "NonMatching",
-   "band3/meta_band/BandSongMgr.cpp": "NonMatching",
+   "band3/meta_band/BandSongMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/MetaPanel.cpp": "NonMatching",
    "band3/meta_band/MetaPerformer.cpp": "NonMatching",
    "band3/meta_band/BandSongMetadata.cpp": "NonMatching",
-   "band3/meta_band/PatchPanel.cpp": "NonMatching",
+   "band3/meta_band/PatchPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/TrainingPanel.cpp": "NonMatching",
    "band3/meta_band/CampaignSongInfoPanel.cpp": "NonMatching",
    "band3/meta_band/PatchSelectPanel.cpp": {
@@ -933,8 +1024,18 @@
    "band3/meta_band/SongSortBySong.cpp": "NonMatching",
    "band3/meta_band/SongSortMgr.cpp": "NonMatching",
    "band3/meta_band/StandIn.cpp": "NonMatching",
-   "band3/meta_band/StoreInfoPanel.cpp": "NonMatching",
-   "band3/meta_band/StoreMainPanel.cpp": "NonMatching",
+   "band3/meta_band/StoreInfoPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/StoreMainPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/StoreMenuPanel.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
@@ -944,17 +1045,37 @@
    "band3/meta_band/SongSortNode.cpp": "NonMatching",
    "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
    "band3/meta_band/UIEvent.cpp": "NonMatching",
-   "band3/meta_band/UIEventMgr.cpp": "NonMatching",
+   "band3/meta_band/UIEventMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/UploadErrorMgr.cpp": "NonMatching",
    "band3/meta_band/Utl.cpp": "NonMatching",
-   "band3/meta_band/ViewSetting.cpp": "NonMatching",
+   "band3/meta_band/ViewSetting.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/ProfileMgr.cpp": "NonMatching",
    "band3/meta_band/WaitingUserGate.cpp": "NonMatching",
    "band3/meta_band/WiiBufStreamMgr.cpp": "NonMatching",
-   "band3/net_band/EntityUploader.cpp": "NonMatching",
+   "band3/net_band/EntityUploader.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/net_band/RockCentral.cpp": "NonMatching",
    "band3/tour/Tour.cpp": "NonMatching",
-   "band3/tour/QuestFilterPanel.cpp": "NonMatching",
+   "band3/tour/QuestFilterPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/tour/QuestJournal.cpp": "NonMatching",
    "band3/tour/QuestManager.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
