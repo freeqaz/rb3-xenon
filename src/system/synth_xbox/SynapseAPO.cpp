@@ -1,6 +1,6 @@
 #include "SynapseAPO.h"
 #include "Synapse_dsp.h"
-#include "oggvorbis/VorbisMem.h"
+#include <string.h>
 
 extern "C" void XMemSet(void* dst, int val, int size);
 
@@ -15,12 +15,8 @@ SynapseAPO::SynapseAPO() : ATG::CSampleXAPOBase<SynapseAPO, SynapseAPOParams>(),
 }
 
 SynapseAPO::~SynapseAPO() {
-    // Retail destroys in place and frees through the ogg allocator
-    // (target: bl ??1Synapse then bl OggFree, no operator delete).
-    Synapse::Synapse* synapse = mSynapse;
-    if (synapse) {
-        synapse->~Synapse();
-        OggFree(synapse);
+    if (mSynapse) {
+        delete mSynapse;
     }
 }
 
@@ -32,7 +28,38 @@ void SynapseAPO::SetSamplingRate(float rate) {
     mSynapse = new Synapse::Synapse(rate);
 }
 
-void SynapseAPO::OnSetParameters(const SynapseAPOParams& params) {}
+void SynapseAPO::OnSetParameters(const SynapseAPOParams& params) {
+    for (unsigned int i = 0; i < 3; i++) {
+        if (mParams.bands[i].enabled != params.bands[i].enabled) {
+            mSynapse->SetVoiceEnabled(i, params.bands[i].enabled);
+        }
+        if (mParams.bands[i].gain != params.bands[i].gain) {
+            mSynapse->SetVoiceGain(i, params.bands[i].gain);
+        }
+        if (mParams.bands[i].freq != params.bands[i].freq) {
+            mSynapse->SetVoiceTargetNote(i, params.bands[i].freq);
+        }
+        if (mParams.bands[i].q != params.bands[i].q) {
+            mSynapse->SetVoiceTransposition(i, params.bands[i].q);
+        }
+        if (mParams.bands[i].coeff0 != params.bands[i].coeff0) {
+            mSynapse->SetVoiceAmount(i, params.bands[i].coeff0);
+        }
+        if (mParams.bands[i].coeff1 != params.bands[i].coeff1) {
+            mSynapse->SetVoiceProximityEffect(i, params.bands[i].coeff1);
+        }
+        if (mParams.bands[i].coeff2 != params.bands[i].coeff2) {
+            mSynapse->SetVoiceProximityFocus(i, params.bands[i].coeff2);
+        }
+    }
+    if (mParams.lowCutoffFreq != params.lowCutoffFreq) {
+        mSynapse->SetAttackSmoothing(params.lowCutoffFreq);
+    }
+    if (mParams.highCutoffFreq != params.highCutoffFreq) {
+        mSynapse->SetReleaseSmoothing(params.highCutoffFreq);
+    }
+    memcpy(&mParams, &params, sizeof(SynapseAPOParams));
+}
 
 void SynapseAPO::DoProcess(const SynapseAPOParams& params, unsigned int* arg1, float& arg2, unsigned int arg3, unsigned int arg4) {}
 

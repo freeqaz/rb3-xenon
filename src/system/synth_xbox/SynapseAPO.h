@@ -59,10 +59,11 @@ public:
     SynapseAPO();
     virtual ~SynapseAPO();
     void SetSamplingRate(float rate);
-    void OnSetParameters(const SynapseAPOParams& params);
     void DoProcess(const SynapseAPOParams& params, unsigned int* arg1, float& arg2, unsigned int arg3, unsigned int arg4);
 
 private:
+    void OnSetParameters(const SynapseAPOParams& params);
+
     Synapse::Synapse* mSynapse;   // at offset 0x168
     SynapseAPOParams mParams;     // at offset 0x16c
 };

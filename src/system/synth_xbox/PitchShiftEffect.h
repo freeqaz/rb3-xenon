@@ -1,27 +1,24 @@
 #pragma once
-
-namespace soundtouch {
-    class SoundTouch;
-}
+#include "synth_xbox/soundtouch/source/SoundTouch/SoundTouch.h"
+#include "xdk/xaudio2/xapobase.h"
 
 struct PitchShiftEffectParams {
+    float unk0;
 };
 
-template<typename T, typename P>
-class CSampleXAPOBase {
-protected:
-    CSampleXAPOBase();
-    virtual ~CSampleXAPOBase();
-};
-
-class PitchShiftEffect : public CSampleXAPOBase<PitchShiftEffect, PitchShiftEffectParams> {
+// size 0x70
+class PitchShiftEffect
+    : public ATG::CSampleXAPOBase<PitchShiftEffect, PitchShiftEffectParams> {
 public:
     PitchShiftEffect();
     virtual ~PitchShiftEffect();
+    virtual void DoProcess(
+        const PitchShiftEffectParams &, float *__restrict, unsigned int, unsigned int
+    );
 
 private:
-    void* mSoundTouch;
-    float mPitch;
-    unsigned char mFlag;
-    unsigned int mChannels;
+    soundtouch::SoundTouch *mSoundTouch; // 0x60
+    bool mPrimed;                        // 0x64
+    float unk68;
+    int unk6c; // 0x6c - num channels
 };
