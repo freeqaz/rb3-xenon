@@ -334,6 +334,7 @@ OvershellSlot.cpp:
 	.pdata      start:0x8221CD90 end:0x8221CE28
 	.pdata      start:0x8221D0C0 end:0x8221D0C8
 	.pdata      start:0x8221D3A8 end:0x8221D3B0
+	.pdata      start:0x8221D4B0 end:0x8221D4B8
 	.text       start:0x825BED40 end:0x825BEDA0
 	.text       start:0x825BEDA0 end:0x825BEDD8
 	.text       start:0x825BFB80 end:0x825BFBAC
@@ -343,6 +344,7 @@ OvershellSlot.cpp:
 	.text       start:0x825C10D8 end:0x825C3A44
 	.text       start:0x825C4658 end:0x825C468C
 	.text       start:0x825C7188 end:0x825C76F0
+	.text       start:0x825C8058 end:0x825CA494
 
 OvershellPartSelectProvider.cpp:
 	.pdata      start:0x82226288 end:0x822262E0
