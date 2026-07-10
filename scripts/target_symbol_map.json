@@ -4822,7 +4822,7 @@
  "0x8262FCA8": "??_DAppMiniLeaderboardDisplay@@QAAXXZ",
  "0x8262FD08": "?DrawShowing@AppMiniLeaderboardDisplay@@UAAXXZ",
  "0x8262FD70": "?UpdateLeaderboardOnline@AppMiniLeaderboardDisplay@@QAAXH@Z",
- "0x8262FEB8": "?UpdateLeaderboard@AppMiniLeaderboardDisplay@@QAAHHW4ScoreType@@@Z",
+ "0x8262FEB8": "?UpdateLeaderboard@AppMiniLeaderboardDisplay@@QAA_NHW4ScoreType@@@Z",
  "0x826300E8": "??_GAppMiniLeaderboardDisplay@@UAAPAXI@Z",
  "0x82630138": "?Poll@AppMiniLeaderboardDisplay@@UAAXXZ",
  "0x826301E0": "?Update@AppMiniLeaderboardDisplay@@UAAXXZ",

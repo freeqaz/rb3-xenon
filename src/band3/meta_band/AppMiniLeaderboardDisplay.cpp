@@ -119,7 +119,7 @@ void AppMiniLeaderboardDisplay::UpdateLeaderboardOnline(int songID) {
     }
 }
 
-int AppMiniLeaderboardDisplay::UpdateLeaderboard(int songID, ScoreType scoreType) {
+bool AppMiniLeaderboardDisplay::UpdateLeaderboard(int songID, ScoreType scoreType) {
     if (songID == mSongID && scoreType == mScoreType)
         return 0;
     mScoreType = scoreType;

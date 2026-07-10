@@ -52,7 +52,7 @@ public:
     void SetLeaderboardStatus(LeaderboardStatus);
     bool IsReady();
     bool HasRows();
-    int UpdateLeaderboard(int songID, ScoreType scoreType);
+    bool UpdateLeaderboard(int songID, ScoreType scoreType);
     void UpdateLeaderboardOnline(int songID);
     void CancelOldServerRequest();
 
