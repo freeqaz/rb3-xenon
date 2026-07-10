@@ -189,5 +189,15 @@
   "verdict": "deferred_nearwin",
   "date": "2026-07-10",
   "why": "r2 recon: retail materializes &TheLocale as explicit arg to LocalizeSeparatedInt \u2014 Locale.h signature/default-arg divergence follow-up, not layout"
+ },
+ "KeyChain::getMasher": {
+  "verdict": "permuter_class",
+  "date": "2026-07-10",
+  "why": "r2 lane-2: /Od regalloc cascade (retail recomputes into r11 per stmt vs our r10->r9->r8 chain); 4 source shapes tried, all <=81.5; recon's 95+ was optimistic"
+ },
+ "inflate": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "r2 lane-2: E1 refuted \u2014 cast drop is byte-neutral (implicit narrowing still emits clrlwi idx 1135); genuine build_env; 99.5 ceiling"
  }
 }

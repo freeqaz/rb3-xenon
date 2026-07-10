@@ -1,5 +1,18 @@
 # Offset-drift sweep ROUND 2 (2026-07-10, baseline 14,450)
 
+> **STATUS (2026-07-10, executed same day): ALL 3 LANES LANDED — +23 strict.**
+> lane-1 `5b399b94` (+4: CharBonesSamples LoadData/SetVer/Print + StoreMenuPanel
+> Handle, all →100; unplanned symbols.txt carve of misbounded fn_823CB928);
+> lane-2 `fa321bb0` (+2 strict: Rnd::CreateDefaults + ParseNode →100; 3 fuzzy
+> banked: RandomGroupSeqInst 98.5, SetupHeadsetSubmixes 91.8, OnEnterCloset
+> 99.5; getMasher + inflate SKIPPED — see verdicts); lane-3 `8e30a244` (+17:
+> ticker +8 incl. Poll →100, InlineHelp +5, SafeName de-inline →100 w/ (float)
+> casts on fmod args, MinEq removal +2 clean across the 40-file surface, +1
+> MemcardMgr::Init inlining-ripple collateral). All gates run1==run2, 0 strict
+> + 0 fuzzy regressions, ICF HONEST. Main after round: **14,601**.
+> New leads recorded below remain open (LabelNumberTicker ctor/factory map
+> entries, InlineHelp recarve, UtilDrawPlane 99.3 permuter, misbounded-fn scan).
+
 Second run of the generalized sweep (`scripts/harvest/offset_drift_sweep.py`,
 method in `offset-drift-sweep-2026-07-10.md`). Pool regenerated post-14,450:
 355 near-misses (85–99.99), 83 flagged, 43 with ≥2 struct/global diffs
