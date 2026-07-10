@@ -9,5 +9,4 @@ public:
     virtual void Reset() = 0;
     virtual class HxAudio *GetHxAudio() = 0;
     virtual float SongDurationMs() = 0;
-    virtual bool IsLoaded() { return false; }
 };
