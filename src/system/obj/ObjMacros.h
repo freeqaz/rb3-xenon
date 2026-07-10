@@ -98,6 +98,73 @@ const char *PathName(const class Hmx::Object *obj);
             return result;                                                               \
     }
 
+// -----------------------------------------------------------------------------------
+// LOCAL-STATIC HANDLE variant (RB3 retail codegen lever).
+//
+// Retail band3 constructs each handler dispatch Symbol as a FUNCTION-LOCAL STATIC
+// (`static Symbol _s("name")`): MSVC emits a guard-bit test + inline Symbol ctor +
+// a ??__F atexit funclet, and packs one guard word / one bit per handler in source
+// order. Our DC3-era headers reference centralized GLOBAL Symbols (Symbols2/3/4.h),
+// so a Handle/OnMsg-heavy method emits a plain global-Symbol compare and structurally
+// diverges (Matchmaker::Handle 83%, BandMatchmaker::Handle 72%: target-only guard
+// lis/lwz/clrlwi. + ??__E/??__F machinery we never emit).
+//
+// The symbol arg is a bare identifier whose spelling == the wire Symbol name (Milo
+// convention `Symbol foo("foo")`), so `#symbol` reproduces the retail string. Enable
+// PER-TU with `-DRB3_HANDLE_LOCAL_STATIC` in the object's extra_cflags (like the
+// proven /DRB3_MAP_0x1C per-TU gate) so no other TU's codegen moves.
+// -----------------------------------------------------------------------------------
+#ifdef RB3_HANDLE_LOCAL_STATIC
+
+#define HANDLE(symbol, func)                                                             \
+    {                                                                                    \
+        static Symbol _hs(#symbol);                                                       \
+        if (sym == _hs)                                                                  \
+            _HANDLE_CHECKED(func(_msg))                                                  \
+    }
+
+#define HANDLE_EXPR(symbol, expr)                                                        \
+    {                                                                                    \
+        static Symbol _hs(#symbol);                                                       \
+        if (sym == _hs)                                                                  \
+            return expr;                                                                 \
+    }
+
+#define HANDLE_ACTION(symbol, action)                                                    \
+    {                                                                                    \
+        static Symbol _hs(#symbol);                                                       \
+        if (sym == _hs) {                                                                \
+            (action);                                                                    \
+            return 0;                                                                    \
+        }                                                                                \
+    }
+
+#define HANDLE_ACTION_IF(symbol, cond, action)                                           \
+    {                                                                                    \
+        static Symbol _hs(#symbol);                                                       \
+        if (sym == _hs) {                                                                \
+            if (cond) {                                                                  \
+                (action);                                                                \
+            }                                                                            \
+            return 0;                                                                    \
+        }                                                                                \
+    }
+
+#define HANDLE_ACTION_IF_ELSE(symbol, cond, action_true, action_false)                   \
+    {                                                                                    \
+        static Symbol _hs(#symbol);                                                       \
+        if (sym == _hs) {                                                                \
+            if (cond) {                                                                  \
+                (action_true);                                                           \
+            } else {                                                                     \
+                (action_false);                                                          \
+            }                                                                            \
+            return 0;                                                                    \
+        }                                                                                \
+    }
+
+#else
+
 #define HANDLE(symbol, func)                                                             \
     if (sym == symbol)                                                                   \
     _HANDLE_CHECKED(func(_msg))
@@ -132,6 +199,8 @@ const char *PathName(const class Hmx::Object *obj);
         }                                                                                \
         return 0;                                                                        \
     }
+
+#endif // RB3_HANDLE_LOCAL_STATIC
 
 #define HANDLE_CONDITION(cond, expr)                                                     \
     if (cond)                                                                            \
