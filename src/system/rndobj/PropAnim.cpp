@@ -21,7 +21,12 @@ static DataNode sKeyReplace;
 #pragma region Hmx::Object
 
 RndPropAnim::RndPropAnim()
-    : mLastFrame(0), mInSetFrame(false), mLoop(false), mFireFlowLabel(""), mIntensity(1) {
+    : mLastFrame(0), mInSetFrame(false), mLoop(false)
+#ifdef HX_NATIVE
+      ,
+      mFireFlowLabel(""), mIntensity(1)
+#endif
+{
 }
 
 RndPropAnim::~RndPropAnim() { DeleteAll(mPropKeys); }
@@ -119,9 +124,11 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(RndPropAnim)
     SYNC_PROP(loop, mLoop)
+#ifdef HX_NATIVE
     SYNC_PROP_MODIFY(fire_flow_label, mFireFlowLabel, FireFlowLabel(mFireFlowLabel))
     SYNC_PROP(flow_labels, mFlowLabels)
     SYNC_PROP(intensity, mIntensity)
+#endif
     SYNC_SUPERCLASS(RndAnimatable)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
@@ -173,8 +180,10 @@ BEGIN_COPYS(RndPropAnim)
             AddKeys(target, cur->Prop(), cur->KeysType())->Copy(*it);
         }
         COPY_MEMBER(mLoop)
+#ifdef HX_NATIVE
         COPY_MEMBER(mFlowLabels)
         COPY_MEMBER(mIntensity)
+#endif
 #ifdef HX_NATIVE
         {
             static int sMergeDebug = -1;
@@ -222,6 +231,7 @@ BEGIN_LOADS(RndPropAnim)
         if (d.rev > 0xB) {
             d >> mLoop;
         }
+#ifdef HX_NATIVE
         // Revision 14+: flow labels
         if (d.rev > 0xD) {
             d >> mFlowLabels;
@@ -230,6 +240,7 @@ BEGIN_LOADS(RndPropAnim)
         if (d.rev > 0xE) {
             d >> mIntensity;
         }
+#endif
     }
 END_LOADS
 
@@ -338,7 +349,11 @@ void RndPropAnim::SetFrame(float frame, float blend) {
                     }
                 }
             }
+#ifdef HX_NATIVE
             (*it)->SetFrame(myframe, blend, mIntensity);
+#else
+            (*it)->SetFrame(myframe, blend, 1.0f);
+#endif
         }
         mLastFrame = myframe;
         mInSetFrame = false;
@@ -719,6 +734,7 @@ DataNode RndPropAnim::ForeachKeyframe(const DataArray *) { return DataNode(0); }
 #pragma region Handlers
 
 DataNode RndPropAnim::OnListFlowLabels(DataArray *arr) {
+#ifdef HX_NATIVE
     if (mFlowLabels.size() != 0) {
         DataArray *flowArr = new DataArray(mFlowLabels.size());
         int i = 0;
@@ -736,6 +752,13 @@ DataNode RndPropAnim::OnListFlowLabels(DataArray *arr) {
         flowArr->Release();
         return ret;
     }
+#else
+    DataArray *flowArr = new DataArray(1);
+    flowArr->Node(0) = Symbol();
+    DataNode ret = flowArr;
+    flowArr->Release();
+    return ret;
+#endif
 }
 
 DataNode RndPropAnim::ForeachFrame(const DataArray *da) {

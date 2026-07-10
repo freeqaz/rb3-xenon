@@ -166,7 +166,7 @@
  "0X8269A240": "?_M_erase@?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUEntry@LocalePanel@@PAU34@0ABU__false_type@2@@Z",
  "0X826B28F8": "?Copy@UIFontImporter@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0X826B7B60": "??_ECharMirror@@UAAPAXI@Z",
- "0X826EB4F0": "??1RandomGroupSeq@@UAA@XZ",
+ "0X826EB4F0": "??1GroupSeq@@UAA@XZ",
  "0X826F19F0": "??1MicClientMapper@@QAA@XZ",
  "0X826F5FB0": "?SynthPoll@MidiInstrument@@UAAXXZ",
  "0X826F6088": "?PropSync@@YA_NAAVSampleZone@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

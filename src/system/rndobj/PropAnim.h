@@ -173,6 +173,14 @@ protected:
     bool mInSetFrame; // 0x1c
     /** "Do I self loop on SetFrame" */
     bool mLoop; // 0x1d
+    // mFireFlowLabel, mIntensity (Milo save rev 15) and mFlowLabels (rev 14)
+    // are DC3-era additions. Retail RB3 RndPropAnim is rev-11-era (see Anim.h)
+    // and, matching the rb3-Wii oracle, its non-virtual part ends right after
+    // mLoop (this+0x1d): RndPropAnim::Save's member/base offsets prove the
+    // Hmx::Object virtual base subobject sits at this+0x24 with no trailing
+    // members, i.e. only a vtordisp/pad before it. So none of these three may
+    // be in the matching build's layout — keep them native-only.
+#ifdef HX_NATIVE
     /** "fire flow labels in sync with the anim" */
     Symbol mFireFlowLabel; // 0x20
     /** "Scales all animation keyframe values by this #" */
@@ -180,4 +188,5 @@ protected:
     /** "the names of possible flow labels you can place on this timeline
         (i.e. 'footstep')" */
     std::list<String> mFlowLabels; // 0x28
+#endif
 };
