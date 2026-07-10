@@ -12,8 +12,10 @@ public:
     DiscErrorMgrWii() {}
     void Init() {}
     void SetDiscError(bool) {}
-    void AddCallback(Callback *) {}
-    void RemoveCallback(Callback *) {}
+    // Retail Xbox's Game does not inherit Callback (see Game.h), so these take
+    // void* to accept a Game* without requiring the Callback base sub-object.
+    void AddCallback(void *) {}
+    void RemoveCallback(void *) {}
 };
 
 extern DiscErrorMgrWii TheDiscErrorMgrWii;

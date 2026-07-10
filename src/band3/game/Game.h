@@ -34,7 +34,13 @@ enum EndGameResult {
     kQuit = 5
 };
 
-class Game : public BeatMasterSink, public Hmx::Object, public DiscErrorMgrWii::Callback {
+// Retail Xbox does NOT inherit the Wii-only DiscErrorMgrWii::Callback base
+// (that third polymorphic base's vptr pushed mProperties to 0x30). Retail
+// keeps only BeatMasterSink + Hmx::Object, placing mProperties at 0x2c —
+// verified against retail disasm (GemPlayer::CanFlail / GemManager::IsSpotlightGem
+// read mProperties bools 4 bytes lower than our old 3-base layout). DiscErrorEnd
+// stays as a plain Game virtual.
+class Game : public BeatMasterSink, public Hmx::Object {
 public:
     enum LoadState {
         kLoadingSong = 0,

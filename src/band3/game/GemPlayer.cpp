@@ -1009,7 +1009,8 @@ void GemPlayer::IgnoreUntilRollback(float f1) {
 
 void GemPlayer::IgnoreGem(int i1) {
     if (!mGemStatus->GetIgnored(i1)) {
-        mStats.m0x0c++;
+        Stats &st = mStats;
+        st.m0x0c++;
         mGemStatus->SetIgnored(i1);
         if (mEnabledState == kPlayerEnabled) {
             HandleCommonPhraseNote(1, i1);

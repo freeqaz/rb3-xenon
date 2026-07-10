@@ -58,7 +58,13 @@ public:
     // ignored: 0x8
 
     bool GetHit(int idx) {
-        int mask;
+        // Retail materializes GetHit's bool result and tests it at the call
+        // site (clrlwi/extract then clrlwi.,24) rather than fusing the bit-test
+        // into the branch. Declaring mask as bool (not int) reproduces that
+        // value-form, closing AllCodaGemsHit + OnGetPercentHitGemsPractice.
+        // (Sibling accessors like GetIgnored keep `int` — their negated call
+        // sites want the fused test-directly form.)
+        bool mask;
         if (idx == -1)
             mask = 0;
         else {
