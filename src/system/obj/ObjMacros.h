@@ -37,9 +37,8 @@ const char *PathName(const class Hmx::Object *obj);
             if (found != 0)                                                               \
                 SetTypeDef(found);                                                        \
             else {                                                                        \
-                MILO_WARN(                                                                \
-                    "%s:%s couldn't find type %s", ClassName(), PathName(this), classname \
-                );                                                                        \
+                /* retail MILO_WARN: output stripped, args still evaluated (R2L) */       \
+                (void)(PathName(this), ClassName(), classname);                           \
                 SetTypeDef(0);                                                            \
             }                                                                             \
         }                                                                                 \

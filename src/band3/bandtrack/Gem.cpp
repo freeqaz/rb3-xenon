@@ -172,7 +172,8 @@ void Gem::AddInstance(Symbol s1, int i2) {
                     i6 = 4 - i6;
                 s1b8 = MakeString("%s%02d.wid", s1b8.Str(), i6);
             }
-            AddWidgetInstanceImpl(mGemManager->GetWidgetByName(s1b8), i2);
+            TrackWidget *w = mGemManager->GetWidgetByName(s1b8);
+            AddWidgetInstanceImpl(w, i2);
         } else
             MILO_WARN(
                 "could not find widget for slot %d %s gem in %s",
@@ -182,8 +183,8 @@ void Gem::AddInstance(Symbol s1, int i2) {
             );
 
         if (mBeard) {
-            Symbol s1c0;
             static Symbol beard("beard");
+            Symbol s1c0;
             if (mGemManager->GetWidgetName(s1c0, i2, beard)) {
                 TrackWidget *w2 = mGemManager->GetWidgetByName(s1c0);
                 Transform tf68;
@@ -193,8 +194,8 @@ void Gem::AddInstance(Symbol s1, int i2) {
         }
 
         if (mArrhythmicDurationSeconds != 0) {
-            Symbol s1c4;
             static Symbol mash("mash");
+            Symbol s1c4;
             if (mGemManager->GetWidgetName(s1c4, i2, mash)) {
                 TrackWidget *w2 = mGemManager->GetWidgetByName(s1c4);
                 Transform tf98;
@@ -204,8 +205,8 @@ void Gem::AddInstance(Symbol s1, int i2) {
         }
 
         if (mKeyFingerNumber != -1) {
-            Symbol s1c8;
             static Symbol fret_num("fret_num");
+            Symbol s1c8;
             if (mGemManager->GetWidgetName(s1c8, i2, fret_num)) {
                 TrackWidget *wcc = mGemManager->GetWidgetByName(s1c8);
                 Transform tfc8;
@@ -224,8 +225,8 @@ void Gem::AddInstance(Symbol s1, int i2) {
         }
 
         if (mGameGem.IsRealGuitar() && mGameGem.GetFret(i2) != -1) {
-            Symbol s1d0;
             static Symbol fret_num("fret_num");
+            Symbol s1d0;
             if (mGemManager->GetWidgetName(s1d0, i2, fret_num)) {
                 TrackWidget *w1d4 = mGemManager->GetWidgetByName(s1d0);
                 Transform tff8;
@@ -484,6 +485,9 @@ void Gem::CreateWidgetInstances(Symbol s) {
             if (unk_0x44 != 0) {
                 AddChordInstance(s);
             } else {
+                if (false) {
+                    static Symbol _stripped("");
+                }
                 MILO_WARN(
                     "RG chord gem at %s has only ghost notes; gem will be invisible",
                     TickFormat(mGameGem.GetTick(), *TheSongDB->GetData()->GetMeasureMap())

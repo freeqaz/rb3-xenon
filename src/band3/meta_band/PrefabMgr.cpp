@@ -71,6 +71,8 @@ void PrefabMgr::Poll() {
 PrefabMgr *PrefabMgr::GetPrefabMgr() { return ThePrefabMgr; }
 
 PrefabMgr::PrefabMgr() : unk60(0) {
+    static Symbol male("male");
+    static Symbol female("female");
     for (ObjDirItr<BandCharDesc> it(BandCharDesc::GetPrefabs(), true); it != 0; ++it) {
         String str(it->Name());
         std::vector<String> substrs;
@@ -336,7 +338,6 @@ PrefabMgr::CharCreatorPrefab::CharCreatorPrefab(BandCharDesc *pBandCharDesc, Sym
 PrefabMgr::CharCreatorPrefab::~CharCreatorPrefab() { RELEASE(unk0); }
 
 BEGIN_HANDLERS(PrefabMgr)
-    HANDLE_ACTION(enable_debug_prefabs, EnableDebugPrefabs())
     HANDLE_ACTION(load_portraits, LoadPortraits(_msg->Obj<OvershellSlot>(2)))
     HANDLE_ACTION(unload_portraits, UnloadPortraits(_msg->Obj<OvershellSlot>(2)))
     HANDLE_SUPERCLASS(Hmx::Object)

@@ -159,7 +159,7 @@ bool SongUpgradeMgr::HasUpgrade(int id) const {
 }
 
 SongUpgradeData *SongUpgradeMgr::UpgradeData(int id) const {
-    if (mAvailableUpgrades.find(id) == mAvailableUpgrades.end())
+    if (!HasUpgrade(id))
         return nullptr;
     else {
         std::hash_map<int, SongUpgradeData *>::const_iterator it = mUpgradeData.find(id);
@@ -178,7 +178,7 @@ void SongUpgradeMgr::ContentStarted() {
 }
 
 bool SongUpgradeMgr::ContentDiscovered(Symbol s) {
-    if (unk34.find(s) != unk34.end()) {
+    if (HasCachedContent(s)) {
         std::vector<int> songs;
         GetUpgradeSongsInContent(s, songs);
         for (std::vector<int>::iterator sit = songs.begin(); sit != songs.end(); ++sit) {
@@ -198,7 +198,7 @@ const char *SongUpgradeMgr::ContentPattern() { return "&upgrades.dta"; }
 const char *SongUpgradeMgr::ContentDir() { return "songs_upgrades"; }
 
 void SongUpgradeMgr::ContentMounted(const char *c1, const char *c2) {
-    if (unk34.find(c1) == unk34.end()) {
+    if (!HasCachedContent(c1)) {
         std::vector<int> vec;
         unk34[c1] = vec;
     }
@@ -281,9 +281,9 @@ void SongUpgradeMgr::AddUpgradeData(
         if (!upgradesongs.empty())
             return;
     }
-    static Symbol song_id("song_id");
     for (int i = 0; i < arr->Size(); i++) {
         DataArray *curArr = arr->Array(i);
+        static Symbol song_id("song_id");
         int songID = curArr->FindInt(song_id);
         if (mAvailableUpgrades.find(songID) != mAvailableUpgrades.end()) {
             MILO_LOG("The upgrade for %s was found twice.\n", curArr->Sym(0));
@@ -301,10 +301,10 @@ void SongUpgradeMgr::AddUpgradeData(
         }
     }
     if (!streq(s.Str(), ".")) {
+        static Symbol song_id("song_id");
         std::vector<int> songs;
         for (int i = 0; i < arr->Size(); i++) {
             int songID = arr->Array(i)->FindInt(song_id);
-            MILO_ASSERT(songID != kSongID_Invalid, 0x212);
             songs.push_back(songID);
         }
         unk34[s] = songs;

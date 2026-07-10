@@ -1112,8 +1112,8 @@ void GemManager::AddChordBracket(Symbol gemType, unsigned int slots, float ms) {
         static Symbol invisible("invisible");
         if (gemType != invisible) {
             if (slots != 0) {
-                if (TheGame->unkdc != -1.0f)
-                    {
+                bool hasTime = TheGame->unkdc != -1.0f;
+                if (hasTime) {
                     if (TheGame->unkdc > ms) return;
                 }
                 int lowest = mTrackConfig.GetMaxSlots();
@@ -1130,30 +1130,27 @@ void GemManager::AddChordBracket(Symbol gemType, unsigned int slots, float ms) {
                 unsigned char isMiss = (unsigned char)(gemType == "miss");
                 if (lowest < highest) {
                     Symbol name;
-                    bool leftBlack = _ref0->IsBlackKey(lowest);
+                    unsigned char leftBlack = _ref0->IsBlackKey(lowest);
                     GetWidgetName(
-                        name, leftBlack, Symbol(isMiss ? "bracket_left_miss" : "bracket_left")
+                        name, leftBlack != 0, Symbol(isMiss ? "bracket_left_miss" : "bracket_left")
                     );
                     if (leftBlack)
                         lowest--;
-                    Symbol leftName = name;
-                    TrackWidget *wLeft = GetWidgetByName(leftName);
+                    TrackWidget *wLeft = GetWidgetByName(name);
                     RememberChordWidget(wLeft);
                     GetWidgetName(
                         name, 0, Symbol(isMiss ? "bracket_span_miss" : "bracket_span")
                     );
-                    Symbol spanName = name;
-                    TrackWidget *wSpan = GetWidgetByName(spanName);
+                    TrackWidget *wSpan = GetWidgetByName(name);
                     RememberChordWidget(wSpan);
-                    bool rightBlack = _ref0->IsBlackKey(highest);
+                    unsigned char rightBlack = _ref0->IsBlackKey(highest);
                     GetWidgetName(
-                        name, rightBlack,
+                        name, rightBlack != 0,
                         Symbol(isMiss ? "bracket_right_miss" : "bracket_right")
                     );
                     if (rightBlack)
                         highest++;
-                    Symbol rightName = name;
-                    TrackWidget *wRight = GetWidgetByName(rightName);
+                    TrackWidget *wRight = GetWidgetByName(name);
                     RememberChordWidget(wRight);
                     AddWidgetInstanceImpl(wLeft, lowest, ms);
                     for (int s = lowest + 1; s < highest; s++) {
@@ -1399,7 +1396,8 @@ void GemManager::UpdateGemStates() {
             for (int i = mBegin; i < mEnd; i++) {
                 if (!gemStatus->GetHit(i) && !gemStatus->Get0x2(i)
                     && !gemStatus->Get0x4(i)) {
-                    mGems[i].SetType(GetTypeForGem(i));
+                    Symbol type = GetTypeForGem(i);
+                    mGems[i].SetType(type);
                 }
             }
         }

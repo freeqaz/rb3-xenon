@@ -67,6 +67,7 @@ public:
     virtual const char *ContentDir();
 
     bool HasUpgrade(int) const;
+    bool HasCachedContent(Symbol s) const { return unk34.find(s) != unk34.end(); }
     const char *ContentName(int) const;
     SongUpgradeData *UpgradeData(int) const;
     bool SongCacheNeedsWrite() const;
