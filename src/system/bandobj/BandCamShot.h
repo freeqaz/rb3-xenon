@@ -65,13 +65,8 @@ public:
     virtual float EndFrame();
     virtual void SetPreFrame(float, float);
     virtual CamShot *CurrentShot() { return mCurShot; }
-    virtual bool CheckShotStarted();
-    virtual bool CheckShotOver(float);
-    virtual void SetFrameEx(float, float);
 
     RndTransformable *FindTarget(Symbol, bool);
-    void CheckNextShots();
-    void ResetNextShot();
     float GetTotalDuration();
     float GetTotalDurationSeconds();
     void Store();
@@ -81,9 +76,7 @@ public:
     void ViewFreeze();
     BandCamShot *InitialShot();
     int GetNumShots();
-    bool IterateNextShot();
     void AnimateShot(float, float);
-    bool ListNextShots(std::list<BandCamShot *> &);
     void TeleportTarget(RndTransformable *, const Transform &, bool);
     std::list<TargetCache>::iterator CreateTargetCache(Symbol);
     std::list<TargetCache>::iterator GetTargetCache(Symbol);
@@ -95,10 +88,27 @@ public:
     DataNode OnTestDelta(DataArray *);
     DataNode AddTarget(DataArray *);
     DataNode OnAllowableNextShots(const DataArray *);
-    DataNode OnListAllNextShots(const DataArray *);
-    DataNode OnListTargets(const DataArray *);
     DataNode OnListAnimGroups(const DataArray *);
 
+private:
+    // NB(rb3-xenon): retail-verified private (target manglings are
+    // `AAA?AVDataNode...`, not `QAA`) — matches DC3 HamCamShot's grouping.
+    DataNode OnListAllNextShots(const DataArray *);
+    DataNode OnListTargets(const DataArray *);
+
+protected:
+    // NB(rb3-xenon): retail-verified protected (target manglings are
+    // `MAA`/`IAA`, not `UAA`/`QAA`) — matches DC3 HamCamShot's grouping.
+    virtual bool CheckShotStarted();
+    virtual bool CheckShotOver(float);
+    virtual void SetFrameEx(float, float);
+
+    void CheckNextShots();
+    void ResetNextShot();
+    bool IterateNextShot();
+    bool ListNextShots(std::list<BandCamShot *> &);
+
+public:
     static unsigned short gRev;
     static unsigned short gAltRev;
     NEW_OVERLOAD;

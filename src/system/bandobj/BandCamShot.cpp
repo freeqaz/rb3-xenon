@@ -781,6 +781,10 @@ BEGIN_HANDLERS(BandCamShot)
 END_HANDLERS
 
 DataNode BandCamShot::OnListTargets(const DataArray *da) {
+    // NB(rb3-xenon): retail-verified local static (not the Messages2.h
+    // extern the rb3-Wii dev branch uses) — Ghidra shows a guarded
+    // function-local static Message ctor here (guard + atexit dtor reg).
+    static Message list_targets_msg("list_targets");
     DataNode handled = HandleType(list_targets_msg);
     if (handled.Type() != kDataUnhandled) {
         return DataNode(handled.Array(), kDataArray);
