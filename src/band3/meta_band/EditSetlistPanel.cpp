@@ -99,6 +99,8 @@ void EditSetlistPanel::CleanupStringVerify() {
 }
 
 bool EditSetlistPanel::CreateSetlist(bool b1) {
+    static Symbol setlist_default_name("setlist_default_name");
+    static Symbol setlist_default_desc("setlist_default_desc");
     MILO_ASSERT(GetState() != kUp, 0xC0);
     BandProfile *profile = TheProfileMgr.GetPrimaryProfile();
     if (profile) {
@@ -131,6 +133,8 @@ bool EditSetlistPanel::EditSetlist(LocalBandUser *user, LocalSavedSetlist *setli
 }
 
 bool EditSetlistPanel::CreateBattle() {
+    static Symbol battle_default_name("battle_default_name");
+    static Symbol battle_default_desc("battle_default_desc");
     MILO_ASSERT(GetState() != kUp, 0xEE);
     BandProfile *profile = TheProfileMgr.GetPrimaryProfile();
     if (profile) {
@@ -151,6 +155,18 @@ bool EditSetlistPanel::CreateBattle() {
 }
 
 Symbol EditSetlistPanel::GetMessageToken() {
+    static Symbol create_setlist_success("create_setlist_success");
+    static Symbol edit_setlist_success("edit_setlist_success");
+    static Symbol create_battle_success("create_battle_success");
+    static Symbol error_battle_limit_reached("error_battle_limit_reached");
+    static Symbol error_setlist_limit_reached("error_setlist_limit_reached");
+    static Symbol error_setlist_title_empty("error_setlist_title_empty");
+    static Symbol error_setlist_description_empty("error_setlist_description_empty");
+    static Symbol error_battle_title_profane("error_battle_title_profane");
+    static Symbol error_setlist_title_profane("error_setlist_title_profane");
+    static Symbol error_battle_description_profane("error_battle_description_profane");
+    static Symbol error_setlist_description_profane("error_setlist_description_profane");
+    static Symbol error_setlist_unknown("error_setlist_unknown");
     switch (mEditState) {
     case 7:
         switch (unk9c) {
@@ -195,9 +211,13 @@ Symbol EditSetlistPanel::GetMessageToken() {
 }
 
 Symbol EditSetlistPanel::GetTitleToken() {
+    static Symbol setlist_save_share("setlist_save_share");
+    static Symbol setlist_save_local("setlist_save_local");
+    static Symbol setlist_save_battle("setlist_save_battle");
+    static Symbol edit_setlist("edit_setlist");
     switch (unk9c) {
     case 0:
-        return unk64 ? setlist_save_share : setlist_save_local;
+        return unk64 ? setlist_save_local : setlist_save_share;
     case 1:
         return edit_setlist;
     case 2:
@@ -519,24 +539,27 @@ void EditSetlistPanel::FailWithReason(FailureReason r) {
 }
 
 int EditSetlistPanel::SymToDayCount(Symbol s) {
+    static Symbol expiration_data("expiration_data");
     DataArray *a = Property(expiration_data, true)->Array();
     return a->FindInt(s);
 }
 
 int EditSetlistPanel::SymToTimeUnits(Symbol s) {
+    static Symbol seconds("seconds");
+    static Symbol minutes("minutes");
+    static Symbol hours("hours");
+    static Symbol weeks("weeks");
     if (s == seconds)
         return 0;
     if (s == minutes)
         return 1;
     if (s == hours)
         return 2;
-    int days = 3;
-    if (s == weeks)
-        days = 4;
-    return days;
+    return 3 + (s == weeks);
 }
 
 Symbol EditSetlistPanel::DayCountToSym(int days) {
+    static Symbol expiration_data("expiration_data");
     DataArray *a = Property(expiration_data, true)->Array();
     for (int i = 0; i < a->Size(); i++) {
         DataArray *a2 = a->Array(i);
