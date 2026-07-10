@@ -40,8 +40,8 @@ void SetTheWorld(WorldDir *w) {
 WorldDir::WorldDir()
     : mPresetOverrides(this), mBitmapOverrides(this), mMatOverrides(this),
       mHideOverrides(this), mCamShotOverrides(this), mPS3PerPixelShows(this),
-      mPS3PerPixelHides(this), mHUDDir(0), mShowHUD(0), mHUD(this), mCameraMgr(this),
-      mOwnsCameraMgr(0), m3DSoundMgr(this), mLightPresetMgr(this), mPhysicsMgr(0), mNeedPhysicsEnter(0),
+      mPS3PerPixelHides(this), mHUDDir(0), mShowHUD(0), mHUD(this), mCameraManager(this),
+      mCrowds(this), m3DSoundMgr(this), mLightPresetMgr(this), mPhysicsMgr(0), mNeedPhysicsEnter(0),
       mEchoMsgs(0), mFirstPoll(0), mTestLightPreset1(this), mTestLightPreset2(this),
       mTestAnimTime(10), mExplicitPostProc(1) {
     ClearDeltas();
@@ -54,9 +54,6 @@ WorldDir::~WorldDir() {
         SetTheWorld(nullptr);
     }
     RELEASE(mPhysicsMgr);
-    if (mOwnsCameraMgr) {
-        RELEASE(mCameraMgr);
-    }
 }
 
 BEGIN_HANDLERS(WorldDir)
@@ -76,7 +73,6 @@ BEGIN_HANDLERS(WorldDir)
         set_anim_driven, GetPhysicsManager()->MakeAnimDriven(_msg->Obj<Hmx::Object>(2))
     )
     HANDLE_ACTION(reset_trans, GetPhysicsManager()->ResetTrans(_msg->Obj<Hmx::Object>(2)))
-    HANDLE_EXPR(get_camera_mgr, DataNode(mCameraMgr.Ptr()))
     HANDLE_MEMBER_PTR((&mLightPresetMgr))
     HANDLE_SUPERCLASS(PanelDir)
 END_HANDLERS
@@ -439,23 +435,12 @@ void WorldDir::PostLoad(BinStream &bs) {
 
 void WorldDir::SyncObjects() {
     PanelDir::SyncObjects();
-    if (!mOwnsCameraMgr) {
-        mCameraMgr = nullptr;
-    }
     if (IsSubDir())
         return;
-    if (!mCameraMgr) {
-        ObjDirItr<CameraManager> it(this, true);
-        if (it) {
-            mCameraMgr = it;
-        }
-    }
-    if (!mCameraMgr) {
-        mOwnsCameraMgr = true;
-        mCameraMgr = new CameraManager(this);
-    }
-    if (mCameraMgr) {
-        mCameraMgr->SyncObjects(this);
+    mCameraManager.SyncObjects(this);
+    mCrowds.clear();
+    for (ObjDirItr<WorldCrowd> it(this, true); it != nullptr; ++it) {
+        mCrowds.push_back(it);
     }
     m3DSoundMgr.SyncObjects();
     mLightPresetMgr.SyncObjects();
@@ -473,6 +458,24 @@ void WorldDir::SyncObjects() {
     }
 }
 
+void WorldDir::SetCrowds(ObjVector<CamShotCrowd> &crowds) {
+    FOREACH (it, mCrowds) {
+        WorldCrowd *curCrowd = *it;
+        CamShotCrowd *cit = crowds.begin();
+        for (; cit != crowds.end(); cit++) {
+            if (curCrowd == cit->mCrowd) {
+                break;
+            }
+        }
+        if (cit != crowds.end()) {
+            curCrowd->SetShowing(true);
+            curCrowd->mCrowdRotate = cit->mCrowdRotate;
+        } else {
+            curCrowd->SetShowing(false);
+        }
+    }
+}
+
 void WorldDir::DrawShowing() {
     START_AUTO_TIMER("world_draw");
     if (TheWorld) {
@@ -483,11 +486,9 @@ void WorldDir::DrawShowing() {
         SetTheWorld(this);
 
         CamShot *shot = nullptr;
-        if (mCameraMgr) {
-            shot = mCameraMgr->MiloCamera();
-            if (!shot)
-                shot = mCameraMgr->CurrentShot();
-        }
+        shot = mCameraManager.MiloCamera();
+        if (!shot)
+            shot = mCameraManager.CurrentShot();
         if (shot)
             shot = shot->CurrentShot();
 
@@ -568,15 +569,11 @@ void WorldDir::Poll() {
             }
             static Message select_camera("select_camera");
             HandleType(select_camera);
-            if (mCameraMgr) {
-                mCameraMgr->PrePoll();
-            }
+            mCameraManager.PrePoll();
             m3DSoundMgr.Poll();
             mLightPresetMgr.Poll();
             RndDir::Poll();
-            if (mCameraMgr) {
-                mCameraMgr->Poll();
-            }
+            mCameraManager.Poll();
             {
                 START_AUTO_TIMER("phys_mgr_poll");
                 if (mPhysicsMgr) {
@@ -596,9 +593,7 @@ void WorldDir::Enter() {
         n = this;
     }
     mLightPresetMgr.Enter();
-    if (mCameraMgr) {
-        mCameraMgr->Enter();
-    }
+    mCameraManager.Enter();
     if (mPhysicsMgr) {
         mPhysicsMgr->Enter();
     } else {

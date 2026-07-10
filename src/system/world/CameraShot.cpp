@@ -1332,9 +1332,7 @@ void CamShot::StartAnim() {
     Export(msg, true);
     WorldDir *crowdDir = GetCrowdDir();
     if (crowdDir) {
-        if (crowdDir->GetCameraManager()) {
-            crowdDir->GetCameraManager()->SetCrowds(mCrowds);
-        }
+        crowdDir->SetCrowds(mCrowds);
         if (TheHamWardrobe) {
             TheHamWardrobe->ForceCrowdAnimationStart(mCrowdStateOverride);
         }

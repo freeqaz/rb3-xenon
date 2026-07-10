@@ -82,7 +82,10 @@ public:
     static void Init();
 
     void ClearDeltas();
-    CameraManager *GetCameraManager() const { return mCameraMgr; }
+    void SetCrowds(ObjVector<CamShotCrowd> &);
+    CameraManager *GetCameraManager() const {
+        return const_cast<CameraManager *>(&mCameraManager);
+    }
     PhysicsManager *GetPhysicsManager() const { return mPhysicsMgr; }
     LightPresetManager &GetLightPresetMgr() { return mLightPresetMgr; }
     RndDir *GetHUD() const { return mHUD; }
@@ -121,8 +124,8 @@ protected:
     bool mShowHUD; // 0x2e8
     /** "hud to be drawn last" */
     ObjPtr<RndDir> mHUD; // 0x2ec
-    ObjPtr<CameraManager> mCameraMgr; // 0x300
-    bool mOwnsCameraMgr; // 0x314
+    CameraManager mCameraManager; // by-value (retail): standalone, sizeof 0x34
+    ObjPtrList<WorldCrowd> mCrowds;
     ThreeDSoundManager m3DSoundMgr; // 0x318
     LightPresetManager mLightPresetMgr; // 0x38c
     PhysicsManager *mPhysicsMgr; // 0x3dc

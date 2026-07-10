@@ -10,8 +10,10 @@
 
 class WorldDir;
 
-/** "Searches for and sequences CamShots" */
-class CameraManager : public Hmx::Object {
+/** "Searches for and sequences CamShots" — retail is a STANDALONE polymorphic
+ * class (vtable@0 = { virtual Handle, virtual dtor }), NOT Hmx::Object. sizeof
+ * 0x34. Layout matches rb3-Wii exactly (retail 0xc ObjPtr). */
+class CameraManager {
 public:
     class Category {
     public:
@@ -28,24 +30,17 @@ public:
     };
 
     CameraManager(WorldDir *);
-    // Hmx::Object
-    virtual ~CameraManager();
-    OBJ_CLASSNAME(CameraManager);
-    OBJ_SET_TYPE(CameraManager);
     virtual DataNode Handle(DataArray *, bool);
-    virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
-    virtual void Save(BinStream &);
-    virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual void Load(BinStream &);
+    virtual ~CameraManager();
 
-    OBJ_MEM_OVERLOAD(0x15)
-    NEW_OBJ(CameraManager)
+    NEW_POOL_OVERLOAD(CameraManager)
+    DELETE_POOL_OVERLOAD(CameraManager)
     static Rand sRand;
     static int sSeed;
 
     CamShot *NextShot() const { return mNextShot; }
     CamShot *CurrentShot() const { return mCurrentShot; }
-    void SetBlendTime(float t) { mBlendTime = t; }
+    void SetBlendTime(float) {}
     bool HasFreeCam() const { return mFreeCam; }
     void ForceCamShot(CamShot *);
     FreeCamera *GetFreeCam(int);
@@ -57,9 +52,9 @@ public:
     void PrePoll();
     void Randomize();
     void Enter();
-    bool SetCrowds(ObjVector<CamShotCrowd> &);
-    int
-    NumCameraShots(Symbol s, const std::vector<PropertyFilter> &, std::list<CamShot *> *);
+    int NumCameraShots(
+        Symbol s, const std::vector<PropertyFilter> &, std::list<CamShot *> *
+    );
     void SetNextShot(CamShot *);
     void SyncObjects(WorldDir *);
     CamShot *PickCameraShot(Symbol, const std::vector<PropertyFilter> &);
@@ -82,20 +77,12 @@ private:
     Symbol MakeCategoryAndFilters(DataArray *da, std::vector<PropertyFilter> &, float *);
     ObjPtrList<CamShot> &FindOrAddCategory(Symbol);
 
-protected:
-    CameraManager();
-
     /** "Controlling world object" */
-    WorldDir *mParent; // 0x2c
-    std::vector<Category> mCameraShotCategories; // 0x30
+    WorldDir *mParent; // 0x4
+    std::vector<Category> mCameraShotCategories; // 0x8
     /** "Which shot to play right now" */
-    ObjPtr<CamShot> mNextShot; // 0x3c
-    /** "Next camera blend time in units of camera, is run-time, not serialized" */
-    float mBlendTime; // 0x50
-    float mBlendRatio; // 0x54
-    bool mShotChanged; // 0x58
-    ObjPtr<CamShot> mCurrentShot; // 0x5c
-    float mCamStartTime; // 0x70
-    FreeCamera *mFreeCam; // 0x74
-    ObjPtrList<WorldCrowd> mCrowds; // 0x78
+    ObjPtr<CamShot> mNextShot; // 0x14
+    ObjPtr<CamShot> mCurrentShot; // 0x20
+    float mCamStartTime; // 0x2c
+    FreeCamera *mFreeCam; // 0x30
 };

@@ -20,7 +20,6 @@
 void WorldInit() {
     WorldDir::Init();
     REGISTER_OBJ_FACTORY(BeatClock)
-    REGISTER_OBJ_FACTORY(CameraManager)
     REGISTER_OBJ_FACTORY(ColorPalette)
     REGISTER_OBJ_FACTORY(WorldCrowd)
     REGISTER_OBJ_FACTORY(WorldCrowd3DCharHandle)
