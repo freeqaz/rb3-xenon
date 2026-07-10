@@ -1,27 +1,158 @@
 {
  "_comment": "Machine-readable at-limit/deferred verdicts for the nearmiss-harvest playbook. gen_nearmiss_pool.py excludes these so lanes never re-attempt proven walls. Key = substring matched against the demangled name. Sources: docs/decomp/plans/post-codegen-kill-streams-2026-06-30.md RESULTS blocks + round handoffs.",
- "RndMesh::SkinVertex": {"verdict": "at_limit", "date": "2026-07-03", "why": "volatile-regalloc cycle, permuter-refuted (97.5 ceiling)"},
- "BinStream::Write": {"verdict": "at_limit", "date": "2026-07-03", "why": "u8-narrowing mask, compiler value-range propagation"},
- "BlockMgr::AddTask": {"verdict": "at_limit", "date": "2026-07-03", "why": "CSE-reload wall (retail reloads what our CSE folds)"},
- "RndFlare::CalcScale": {"verdict": "at_limit", "date": "2026-07-02", "why": "lfd/lfs zero codegen cliff; any FP-compare rewrite reschedules whole DAG"},
- "Waypoint::ShapeDeltaBox": {"verdict": "at_limit", "date": "2026-07-01", "why": "lfd/lfs zero cliff"},
- "Geo::CheckBSPTree": {"verdict": "at_limit", "date": "2026-06-30", "why": "permuter 231 runs never >99.03"},
- "MidiParser::PushIdle": {"verdict": "at_limit", "date": "2026-06-30", "why": "permuter 185 runs 0 wins, 99.74 ceiling"},
- "MidiParser::AddMessage": {"verdict": "deferred_nearwin", "date": "2026-07-03", "why": "body reaches 100 but +8 frame shifts EH funclet DataArray slot 0x50->0x54; needs no-frame-growth shape"},
- "DataArray::Load": {"verdict": "at_limit", "date": "2026-07-10", "why": "banked 0->99.5 (newly paired); residual 2 insns = loop-bottom lhz+extsh vs lha size reload; cast/while/hoist shapes dead; permuter-class"},
- "DataArray::ExecuteScript": {"verdict": "at_limit", "date": "2026-07-10", "why": "banked 0->97.4 (newly paired); residual = callee-saved regalloc cascade r20/21/22+r26/27; permuter-class"},
- "InitMakeString": {"verdict": "at_limit", "date": "2026-07-02", "why": "anchor-selection residual (0x800 partial)"},
- "PanelDir::PanelNav": {"verdict": "at_limit", "date": "2026-07-02", "why": "genuine retail-source body divergence (dc3 same source = Matching; RB3 source differed)"},
- "FftIpp": {"verdict": "deferred_codegen", "date": "2026-07-01", "why": "bodyport recon DEFER_CODEGEN verdict"},
- "VocalTrack::ProcessStaticLyrics": {"verdict": "at_limit", "date": "2026-07-07", "why": "CSE-reload wall: retail reloads f3 post-store, our store-forward is a fixed point; opaque-store lever byte-identical"},
- "BandCharacter::OnChangeFaceGroup": {"verdict": "at_limit", "date": "2026-07-07", "why": "strcpy extsb. wall, 1-insn residual; unsigned-temp ladder exhausted (5 shapes)"},
- "CharUtlFindBoneTrans": {"verdict": "at_limit", "date": "2026-07-07", "why": "strcpy extsb. wall; open-code always leaves a dead mr/mr."},
- "CharUtlFindBone": {"verdict": "at_limit", "date": "2026-07-07", "why": "same strcpy extsb. wall as CharUtlFindBoneTrans, same TU"},
- "FirstSortChar": {"verdict": "at_limit", "date": "2026-07-07", "why": "strcpy extsb. wall"},
- "?Final@CSHA1": {"verdict": "at_limit", "date": "2026-07-07", "why": "2x clrlwi u8-narrowing masks (value-range prop wall)"},
- "ReportHash@Digest@CSHA1": {"verdict": "at_limit", "date": "2026-07-07", "why": "2x strcpy extsb. sites; unsigned-buffer theory tested dead"},
- "Synapse::ProcessInPlace": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 96.0->99.8; single commutative add operand order = VN fixed point"},
- "CharIKFingers::CalculateHandDest": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 95.8->99.7; residual 3-cycle FPR result rotation, permuter-class"},
- "UsbMidiGuitar::Poll": {"verdict": "header_need", "date": "2026-07-10", "why": "Joypad.h repack LANDED b5b28fe (mType now 0x6c); residual 4 mismatches = ProGuitarData pgRaw[0xc]/[0xb] bitfield extract order only"},
- "_resolved_2026-07-10": {"verdict": "note", "date": "2026-07-10", "why": "Data.h SortNodes()/Execute() reverts LANDED 7b6d9ed+78fdc92 (+15 strict: SortNodes/Execute/ExecuteBlock/GetContextFlags/AppChild::Poll/DataNode::Evaluate + 9 funclets); StandardStream.h+Joypad.h LANDED b5b28fe (+7); Game.h base drop landed by wave-5 3edcc60 — see docs/decomp/handoff/round5-header-needs-2026-07-07.md STATUS"}
+ "RndMesh::SkinVertex": {
+  "verdict": "at_limit",
+  "date": "2026-07-03",
+  "why": "volatile-regalloc cycle, permuter-refuted (97.5 ceiling)"
+ },
+ "BinStream::Write": {
+  "verdict": "at_limit",
+  "date": "2026-07-03",
+  "why": "u8-narrowing mask, compiler value-range propagation"
+ },
+ "BlockMgr::AddTask": {
+  "verdict": "at_limit",
+  "date": "2026-07-03",
+  "why": "CSE-reload wall (retail reloads what our CSE folds)"
+ },
+ "RndFlare::CalcScale": {
+  "verdict": "at_limit",
+  "date": "2026-07-02",
+  "why": "lfd/lfs zero codegen cliff; any FP-compare rewrite reschedules whole DAG"
+ },
+ "Waypoint::ShapeDeltaBox": {
+  "verdict": "at_limit",
+  "date": "2026-07-01",
+  "why": "lfd/lfs zero cliff"
+ },
+ "Geo::CheckBSPTree": {
+  "verdict": "at_limit",
+  "date": "2026-06-30",
+  "why": "permuter 231 runs never >99.03"
+ },
+ "MidiParser::PushIdle": {
+  "verdict": "at_limit",
+  "date": "2026-06-30",
+  "why": "permuter 185 runs 0 wins, 99.74 ceiling"
+ },
+ "MidiParser::AddMessage": {
+  "verdict": "deferred_nearwin",
+  "date": "2026-07-03",
+  "why": "body reaches 100 but +8 frame shifts EH funclet DataArray slot 0x50->0x54; needs no-frame-growth shape"
+ },
+ "DataArray::Load": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "banked 0->99.5 (newly paired); residual 2 insns = loop-bottom lhz+extsh vs lha size reload; cast/while/hoist shapes dead; permuter-class"
+ },
+ "DataArray::ExecuteScript": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "banked 0->97.4 (newly paired); residual = callee-saved regalloc cascade r20/21/22+r26/27; permuter-class"
+ },
+ "InitMakeString": {
+  "verdict": "at_limit",
+  "date": "2026-07-02",
+  "why": "anchor-selection residual (0x800 partial)"
+ },
+ "PanelDir::PanelNav": {
+  "verdict": "at_limit",
+  "date": "2026-07-02",
+  "why": "genuine retail-source body divergence (dc3 same source = Matching; RB3 source differed)"
+ },
+ "FftIpp": {
+  "verdict": "deferred_codegen",
+  "date": "2026-07-01",
+  "why": "bodyport recon DEFER_CODEGEN verdict"
+ },
+ "VocalTrack::ProcessStaticLyrics": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "CSE-reload wall: retail reloads f3 post-store, our store-forward is a fixed point; opaque-store lever byte-identical"
+ },
+ "BandCharacter::OnChangeFaceGroup": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "strcpy extsb. wall, 1-insn residual; unsigned-temp ladder exhausted (5 shapes)"
+ },
+ "CharUtlFindBoneTrans": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "strcpy extsb. wall; open-code always leaves a dead mr/mr."
+ },
+ "CharUtlFindBone": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "same strcpy extsb. wall as CharUtlFindBoneTrans, same TU"
+ },
+ "FirstSortChar": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "strcpy extsb. wall"
+ },
+ "?Final@CSHA1": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "2x clrlwi u8-narrowing masks (value-range prop wall)"
+ },
+ "ReportHash@Digest@CSHA1": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "2x strcpy extsb. sites; unsigned-buffer theory tested dead"
+ },
+ "Synapse::ProcessInPlace": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "banked 96.0->99.8; single commutative add operand order = VN fixed point"
+ },
+ "CharIKFingers::CalculateHandDest": {
+  "verdict": "at_limit",
+  "date": "2026-07-07",
+  "why": "banked 95.8->99.7; residual 3-cycle FPR result rotation, permuter-class"
+ },
+ "UsbMidiGuitar::Poll": {
+  "verdict": "header_need",
+  "date": "2026-07-10",
+  "why": "Joypad.h repack LANDED b5b28fe (mType now 0x6c); residual 4 mismatches = ProGuitarData pgRaw[0xc]/[0xb] bitfield extract order only"
+ },
+ "_resolved_2026-07-10": {
+  "verdict": "note",
+  "date": "2026-07-10",
+  "why": "Data.h SortNodes()/Execute() reverts LANDED 7b6d9ed+78fdc92 (+15 strict: SortNodes/Execute/ExecuteBlock/GetContextFlags/AppChild::Poll/DataNode::Evaluate + 9 funclets); StandardStream.h+Joypad.h LANDED b5b28fe (+7); Game.h base drop landed by wave-5 3edcc60 \u2014 see docs/decomp/handoff/round5-header-needs-2026-07-07.md STATUS"
+ },
+ "CharacterCreatorPanel::Handle": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "recon refuted layout claim (vbase matches retail 0xAC); balanced +/-4 + 205 regswaps = store-scheduling/regalloc"
+ },
+ "UsbMidiKeyboard::Poll": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "struct offsets/bits identical; flat-vs-Horner eval shape on highhand + key-scan loop shape + branch polarity; permuter seed in ~/tmp/hdr2_recon_misc.txt item 2"
+ },
+ "FlowIf::~FlowIf": {
+  "verdict": "false_pairing",
+  "date": "2026-07-10",
+  "why": "retail fn 0x823B4C20 is CharUpperTwist::~CharUpperTwist; no Flow classes exist in retail RB3 \u2014 see docs/decomp/handoff/flow-phantom-pins-2026-07-10.md"
+ },
+ "CustomizePanel::Handle": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "banked 98.91->99.0 after vbase fix (e5d13619); residual this-spill-vs-remat + bool-normalize cross-jump; noinline lever cascades 99->72 (refuted); permuter only"
+ },
+ "RndLine::SetNumPoints": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "banked 90.1->97.0 via Wii-shape port (39034a69); residual = MSVC CSEs num*2 into r28 where retail remats slwi; 4 spellings dead \u2014 remat-vs-spill band"
+ },
+ "SynapseAPO::OnSetParameters": {
+  "verdict": "at_limit",
+  "date": "2026-07-10",
+  "why": "banked 93.85->99.9 via bool enabled fix (39034a69); residual 8 diff_args IV-bias constant, 7 formulations dead; permuter-class"
+ },
+ "SongData::UnflipGems": {
+  "verdict": "deferred_nearwin",
+  "date": "2026-07-10",
+  "why": "drift sweep: 3 struct diffs 67% mixed +/-4 \u2014 likely ordering not layout; not yet attempted"
+ }
 }
