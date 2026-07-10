@@ -31,6 +31,9 @@ public:
     NEW_OBJ(RndTexBlender)
     static void Init() { REGISTER_OBJ_FACTORY(RndTexBlender) }
 
+    RndTex *OutputTexture() const { return mOutputTextures; }
+    bool Unkc0() const { return unkc0; }
+
 protected:
     RndTexBlender();
 
