@@ -5,6 +5,7 @@
 #include "os/DateTime.h"
 #include "stl/_vector.h"
 #include "types.h"
+#include "utl/Str.h"
 #include "utl/Symbol.h"
 #include "xdk/win_types.h"
 
@@ -29,6 +30,10 @@ public:
     // Hmx::Object
     virtual ~StoreOffer();
     virtual DataNode Handle(DataArray *, bool);
+    // Retail vtable slot +0x54 (called by the is_completely_unavailable
+    // handler, fn_827827B0) — declared before Cmp. Overridden by
+    // BandStoreOffer.
+    virtual bool IsCompletelyUnavailable() const = 0;
     virtual bool Cmp(StoreOffer const &, Symbol) const = 0;
 
     Symbol OfferType() const {
@@ -37,7 +42,6 @@ public:
         return mStoreOfferData->FindArray(s)->Sym(1);
     }
     bool HasData(Symbol) const;
-    DateTime const &ReleaseDate() const;
     Symbol FirstChar(Symbol, bool) const;
     Symbol PackFirstLetter() const;
     char const *OfferName() const;
@@ -64,8 +68,10 @@ public:
     bool HasSong(StoreOffer const *) const;
     DataNode OnGetData(DataArray *);
     StoreOffer(DataArray *, SongMgr *);
-    // RB3 song-filter accessors (declarations only — layout-neutral; used by
-    // SongSortMgr::DoesOfferMatchFilter). Defined out of this TU.
+    // RB3 song-filter accessors (used by SongSortMgr::DoesOfferMatchFilter).
+    // Defined in StoreOffer.cpp — retail keeps them in this TU (0x82781860,
+    // 0x82781D08, 0x82781D78, 0x827822E0, 0x82782448, 0x827825C0, 0x82782130).
+    int YearReleased() const;
     Symbol Genre() const;
     Symbol Decade() const;
     Symbol LengthSym() const;
@@ -85,9 +91,15 @@ protected:
     StorePurchaseable mAlbum; // 0x40
     StorePurchaseable mPack; // 0x80
     DataArray *mStoreOfferData; // 0xc0
-    DateTime date; // 0xc4
-    SongMgr *mSongMgr; // 0xcc
-    std::vector<int> mSongsInOffer; // 0xd0
+    // Retail evidence: the ctor (fn_82783368) default-constructs a String at
+    // this+0xc4 and assigns it Localize(store_release_date_format) formatted
+    // through DateTime::Format; the release_date_str handler (fn_827827B0)
+    // returns the char* at this+0xcc (= String::mStr, vptr+mCap+mStr layout);
+    // the dtor (fn_827831F8) runs ~String on this+0xc4. The Wii dev branch's
+    // `DateTime date` member is a ctor local in retail.
+    String mReleaseDateStr; // 0xc4
+    SongMgr *mSongMgr; // 0xd0
+    std::vector<int> mSongsInOffer; // 0xd4
 };
 
 class SortCmp {

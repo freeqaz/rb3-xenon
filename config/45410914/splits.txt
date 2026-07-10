@@ -2060,10 +2060,6 @@ CharEyes.cpp:
 	.text       start:0x82370ED8 end:0x82370F28
 	.text       start:0x82370FA0 end:0x82377048
 
-SpeechMgr.cpp:
-	.pdata      start:0x82237A90 end:0x82237A98
-	.text       start:0x82781BB8 end:0x82781C1C
-
 BinkMovieImpl.cpp:
 	.pdata      start:0x82237ED0 end:0x82237ED8
 	.text       start:0x82785668 end:0x827856D4
@@ -2813,8 +2809,8 @@ DirUnloader.cpp:
 	.text       start:0x82717A40 end:0x82717C24
 
 StoreOffer.cpp:
-	.pdata      start:0x822379F8 end:0x82237A90
-	.text       start:0x82781500 end:0x82781BB8
+	.pdata      start:0x822379F8 end:0x82237CF0
+	.text       start:0x82781500 end:0x82783910
 
 MoviePanel.cpp:
 	.pdata      start:0x82238450 end:0x82238668
