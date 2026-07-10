@@ -6,6 +6,7 @@
 #include "SongSetlistProvider.h"
 #include "SongSortMgr.h"
 #include "SongSortNode.h"
+#include "StoreSongSortNode.h"
 #include "ViewSetting.h"
 #include "bandobj/ReviewDisplay.h"
 #include "bandobj/StarDisplay.h"
@@ -497,8 +498,11 @@ void MusicLibrary::CheckSongPreview() {
             if (TheSongMgr.HasSong(token, true)
                 && !TheSongMgr.IsRestricted(TheSongMgr.GetSongIDFromShortName(token, true)
                 )) {
-                mSongPreview.Start(token, nullptr);
+                mSongPreview.Start(token);
             }
+        } else if (node->GetType() == kNodeStoreSong) {
+            StoreSongSortNode *sn = dynamic_cast<StoreSongSortNode *>(node);
+            unk19c->SetStorePreview(sn->mOffer->GetSingleSongID());
         }
     }
 }
@@ -522,17 +526,23 @@ void MusicLibrary::SetHighlightIx(int idx, bool b) {
     mCurrentHighlightIndex = idx;
     SortNode *node = GetCurrentSort()->GetNode(mCurrentHighlightIndex);
     SongNodeType ty = node->GetType();
-    if ((unsigned int)(ty - 3) > 1U) {
-        if (ty == kNodeFunction || ty == kNodeHeader) {
-            ClearSongPreview();
-            TheSessionMgr->GetMachineMgr()->GetLocalMachine()->SetCurrentSongPreview(
-                gNullStr
-            );
-        }
-    } else {
+    switch (ty) {
+    case kNodeHeader:
+    case kNodeFunction: {
+        ClearSongPreview();
+        LocalBandMachine *machine = TheSessionMgr->GetMachineMgr()->GetLocalMachine();
+        machine->SetCurrentSongPreview(gNullStr);
+        break;
+    }
+    case kNodeSubheader:
+    case kNodeSong:
+    case kNodeStoreSong:
         if (TheUI->GetTransitionState() != UIManager::kTransitionTo) {
             StartSongPreview();
         }
+        break;
+    default:
+        break;
     }
     unkd4 = node->GetToken();
     unkd8 = node->GetType();

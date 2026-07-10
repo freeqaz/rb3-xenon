@@ -36,6 +36,7 @@ public:
     void Poll(); // retail 0x825A50F8
     void Finish(); // retail 0x825A3ED0
     void ClearPreview(); // retail 0x825A3DC8 — clears the op's active preview
+    void SetStorePreview(int); // retail 0x825A4288 — sets the store-song preview by song id
     char unk4[0x24]; // 0x4
     int mState; // 0x28 (2 = done, 4 = failed)
 };
