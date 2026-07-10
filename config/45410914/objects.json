@@ -1307,7 +1307,8 @@
     "status": "NonMatching",
     "extra_cflags": [
      "/DRB3_HANDLE_LOCAL_STATIC",
-     "/DRB3_STRIP_CHEAT_HANDLERS"
+     "/DRB3_STRIP_CHEAT_HANDLERS",
+     "/DRB3_ONLINEID_PLAYERNAME"
     ]
    },
    "band3/net_band/ContextWrapper.cpp": "NonMatching",

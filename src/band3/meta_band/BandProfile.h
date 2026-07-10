@@ -150,12 +150,15 @@ public:
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x4c
     std::vector<StandIn> mStandIns; // 0x54
     HxGuid unk5c; // 0x5c
-    Symbol unk6c; // 0x6c
-    std::set<Symbol> mCampaignKeys; // 0x70
-    std::set<Symbol> unk88; // 0x88
-    std::set<Symbol> mUnlockedModifiers; // 0xa0
-    GameplayOptions mGameplayOptions; // 0xb8
-    AccomplishmentProgress mAccomplishmentProgress; // 0xf4
+    std::set<Symbol> mCampaignKeys; // retail 0x7c (shifted -4 vs Wii: unk6c relocated below)
+    std::set<Symbol> unk88; // retail 0x94
+    std::set<Symbol> mUnlockedModifiers; // retail 0xac
+    GameplayOptions mGameplayOptions; // retail 0xb4
+    AccomplishmentProgress mAccomplishmentProgress; // retail 0x10c
+    // Retail X360 relocates the transient (non-serialized) mLastPrefabCharUsed here,
+    // AFTER mAccomplishmentProgress — not at Wii's 0x6c. Keeps sizeof identical while
+    // shifting mCampaignKeys..mAccomplishmentProgress down 4 to match retail offsets.
+    Symbol unk6c; // mLastPrefabCharUsed, retail slot after mAccomplishmentProgress
     int unk740;
     int mAccomplishmentDataUploadContextID; // 0x744
     int unk74c;
