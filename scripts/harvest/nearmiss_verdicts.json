@@ -154,5 +154,40 @@
   "verdict": "deferred_nearwin",
   "date": "2026-07-10",
   "why": "drift sweep: 3 struct diffs 67% mixed +/-4 \u2014 likely ordering not layout; not yet attempted"
+ },
+ "FreeCamera::Poll": {
+  "verdict": "permuter_class",
+  "date": "2026-07-10",
+  "why": "r2 recon: +112 sweep deltas = cross-base-register artifacts; 63 regswaps + body-shape (strafe/slew block reads via held pointer in retail); body-port leads in ~/tmp/r2_recon_rndutl.txt"
+ },
+ "GainEffect::DoProcess": {
+  "verdict": "permuter_class",
+  "date": "2026-07-10",
+  "why": "r2 recon: no struct drift (red-zone stack splat); 6 copy-idioms A/B-exhausted (memcpy/struct-assign/loop/volatile...) none reproduce retail interleave \u2014 crack-farm with exclusion list in ~/tmp/r2_recon_synth.txt"
+ },
+ "RGGemMatcher::FretMatchImpl": {
+  "verdict": "permuter_class",
+  "date": "2026-07-10",
+  "why": "r2 recon: anchor-bias artifact (absolutes identical); residue = r18/r20 callee-saved swap + bool-return clrlwi tail; headers witnessed correct"
+ },
+ "CharBonesSamples::Relativize": {
+  "verdict": "permuter_class",
+  "date": "2026-07-10",
+  "why": "r2 recon: balanced +-4 lha access order; frame delta = temp shape not layout"
+ },
+ "CharBonesSamples::EvaluateChannel": {
+  "verdict": "permuter_class",
+  "date": "2026-07-10",
+  "why": "r2 recon: r30/r31 swap dominance; optional pre-permuter lead = extract file-static quat-align helper mirroring retail 0x823CB938"
+ },
+ "TrainerGemTab::DrawTails": {
+  "verdict": "deferred_nearwin",
+  "date": "2026-07-10",
+  "why": "r2 recon: not layout (frame +16 = extra Transform temp); body-port leads: 2.5f/480.0f constant fold, scalar-arg locals, single Transform copy \u2014 ~/tmp/r2_recon_band3.txt item 4"
+ },
+ "LabelNumberTicker::UpdateDisplay": {
+  "verdict": "deferred_nearwin",
+  "date": "2026-07-10",
+  "why": "r2 recon: retail materializes &TheLocale as explicit arg to LocalizeSeparatedInt \u2014 Locale.h signature/default-arg divergence follow-up, not layout"
  }
 }
