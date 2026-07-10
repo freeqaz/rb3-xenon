@@ -30,7 +30,7 @@ static struct {
 #define gRev gRevs.rev
 
 // Forward decl for stub defined at end-of-file (used by OnLightPresetKeyframeInterp).
-int SymToPstKeyframe(Symbol);
+__declspec(noinline) int SymToPstKeyframe(Symbol);
 
 const char *gVenues[5] = { "arena", "big_club", "festival", "small_club", "video" };
 
@@ -699,20 +699,18 @@ void BandDirector::HarvestDircuts() {
 }
 
 void BandDirector::AddSymbolKey(Symbol s1, Symbol s2, float f) {
-    const ObjPtr<RndPropAnim> &_ref0 = mPropAnim;
-    if (_ref0) {
+    if (mPropAnim) {
         DataArrayPtr ptr(s1);
-        SymbolKeys *keys = dynamic_cast<SymbolKeys *>(_ref0->GetKeys(this, ptr));
+        SymbolKeys *keys = dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, ptr));
         if (keys)
             keys->Add(s2, f * 30.0f, false);
     }
 }
 
 void BandDirector::ClearSymbolKeys(Symbol s) {
-    const ObjPtr<RndPropAnim> &_ref0 = mPropAnim;
-    if (_ref0) {
+    if (mPropAnim) {
         DataArrayPtr ptr(s);
-        SymbolKeys *keys = dynamic_cast<SymbolKeys *>(_ref0->GetKeys(this, ptr));
+        SymbolKeys *keys = dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, ptr));
         if (keys)
             keys->clear();
     }
@@ -767,10 +765,12 @@ BEGIN_HANDLERS(BandDirector)
     HANDLE(get_face_overrides, OnGetFaceOverrideClips)
     HANDLE_EXPR(facing_camera, FacingCamera(_msg->Sym(2)))
     HANDLE_ACTION(load_venue, LoadVenue(_msg->Sym(2), kLoadStayBack))
+// Retail Handle has exactly 34 arms (Ghidra 0x82289600): no
+// set_character_hide_hack_enabled and no debug arms. Keep them native-only.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     HANDLE_ACTION(
         set_character_hide_hack_enabled, SetCharacterHideHackEnabled(_msg->Int(2))
     )
-#ifdef MILO_DEBUG
     HANDLE(debug_char_interests, OnDebugInterestsForNextCharacter)
     HANDLE(toggle_interests_overlay, OnToggleInterestDebugOverlay)
     HANDLE(shot_annotate, OnShotAnnotate)
@@ -923,10 +923,10 @@ DataNode BandDirector::OnForceShot(DataArray *da) {
 }
 
 DataNode BandDirector::OnLoadSong(DataArray *da) {
+    // Retail (Ghidra 0x8227ED38): no gIsLoadingDlc bookkeeping, no dlc log,
+    // and the unknown-genre fallback has no MILO_WARN.
     FilePathTracker tracker(FileRoot());
     const char *songfile = da->Str(2);
-    gIsLoadingDlc = false; (void)songfile; // TODO: FileIsDLC
-    MILO_LOG("BandDirector::OnLoadSong: is dlc? %s\n", gIsLoadingDlc ? "yes" : "no");
     Symbol s3 = da->Sym(3);
     int i4 = da->Int(4);
     Symbol s5 = da->Sym(5);
@@ -937,7 +937,6 @@ DataNode BandDirector::OnLoadSong(DataArray *da) {
         s3 = s3arr->Sym(1);
     else {
         s3 = "rocker";
-        MILO_WARN("song %s has unknown genre %s, forcing to rocker", songfile, s3);
     }
 
     Symbol speed;
@@ -953,13 +952,17 @@ DataNode BandDirector::OnLoadSong(DataArray *da) {
         TheBandWardrobe->SetSongAnimGenre(s3);
     }
 
-    mMerger->Select("song", FilePath(songfile), true);
+    {
+        FilePath fp(songfile);
+        mMerger->Select("song", fp, true);
+    }
     if (i6)
         mMerger->StartLoad(mAsyncLoad);
     return 0;
 }
 
 DataNode BandDirector::OnFileLoaded(DataArray *da) {
+    static Symbol song("song");
     Symbol sym = da->Sym(2);
     ObjectDir *dir = da->Obj<ObjectDir>(3);
     if (sym == song) {
@@ -1042,8 +1045,8 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
         const char *instIntensities[] = { "mic_intensity",  "bass_intensity",
                                           "drum_intensity", "guitar_intensity",
                                           "key_intensity",  0 };
-        for (const char **ptr = instIntensities; *ptr != 0; ptr++) {
-            DataArrayPtr dptr = DataArrayPtr(Symbol(*ptr));
+        for (int i = 0; instIntensities[i] != 0; i++) {
+            DataArrayPtr dptr((Symbol(instIntensities[i])));
             SymbolKeys *skeys =
                 dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, dptr));
             if (skeys)
@@ -1116,13 +1119,8 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
                 }
             } else {
                 FilePathTracker tracker(FileRoot());
-                mChars.LoadFile(
-                    FilePath("world/shared/world_chars.milo"),
-                    false,
-                    true,
-                    kLoadFront,
-                    false
-                );
+                FilePath fp("world/shared/world_chars.milo");
+                mChars.LoadFile(fp, false, true, kLoadFront, false);
             }
         }
     }
@@ -1139,19 +1137,13 @@ void BandDirector::UnloadVenue(bool b) { mVenue.Unload(b); }
 
 DataNode BandDirector::OnSaveSong(DataArray *da) { return 0; }
 
+// Retail (Ghidra 0x82288738) drops the Wii dev build's TheLoadMgr.EditMode()
+// branches (frame-skip fast path and the DeltaSeconds rewind reset).
 DataNode BandDirector::OnSelectCamera(DataArray *a) {
     if (!mDisabled) {
         if (mPropAnim) {
             float f3 = Max(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 30.0f, 0.0f);
-            if (TheLoadMgr.EditMode()) {
-                if (f3 == mPropAnim->GetFrame())
-                    goto ok;
-            }
             mPropAnim->SetFrame(f3, 1);
-        }
-    ok:
-        if (TheLoadMgr.EditMode() && TheTaskMgr.DeltaSeconds() < 0) {
-            unke0 = -kHugeFloat;
         }
         if (!mNextShot && TheTaskMgr.Seconds(TaskMgr::kRealTime) >= unke0
             && !NoWorlds()) {
@@ -1169,7 +1161,9 @@ void ExtractPstCatAdjs(DataArray *arr, Symbol &s1, Symbol &s2) {
     if (eval2.Type() == kDataSymbol) {
         s1 = eval2.Sym(arr);
     } else {
-        MILO_WARN("unhandled light preset category at %f seconds\n", arr->Evaluate(4));
+        // Retail (Ghidra 0x82281B78): the MILO_WARN print is gone but its
+        // argument DataNode temp is still evaluated (copy + conditional Release).
+        DataNode warnArg(arr->Evaluate(4));
     }
     DataNode eval3(arr->Evaluate(3));
     if (eval3.Type() == kDataArray) {
@@ -1178,11 +1172,9 @@ void ExtractPstCatAdjs(DataArray *arr, Symbol &s1, Symbol &s2) {
         if (arrsize > 0) {
             s2 = evalarr->Sym(0);
             if (arrsize > 1) {
-                MILO_WARN(
-                    "unhandled light preset adjective: %s, %f secs\n",
-                    evalarr->Str(1),
-                    arr->Evaluate(4)
-                );
+                // Retail: warn args evaluated right-to-left, print dropped.
+                DataNode warnArg(arr->Evaluate(4));
+                evalarr->Str(1);
             }
         }
     }
@@ -1460,7 +1452,7 @@ DataNode BandDirector::OnLightPresetInterp(DataArray *da) {
     return 0;
 }
 
-float FindFrameWithLeadIn() {
+static inline float FindFrameWithLeadIn() {
     float beat = TheTaskMgr.Beat();
     float bts = BeatToSeconds(beat + 4.0f);
     return bts * 30.0f;
@@ -1510,13 +1502,12 @@ DataNode BandDirector::OnLightPresetKeyframeInterp(DataArray *da) {
             }
             b10 = true;
         }
-        if (b10 || TheLoadMgr.EditMode()) {
+        // Retail (Ghidra 0x82281FF8): no TheLoadMgr.EditMode() alternative and no
+        // StaticResetEvents rescan — plain `if (b10)` gate.
+        if (b10) {
             float f5 = da->Float(5);
             Symbol s60 = da->Sym(3);
-            float f108 = unk108;
             FindNextPstKeyframe(leadin, f5, s60);
-            if (!b10 && f108 != unk108)
-                LightPreset::StaticResetEvents();
         }
         return 0;
     }
@@ -1747,14 +1738,31 @@ void BandDirector::SetCharacterHideHackEnabled(bool b) {
 }
 
 BEGIN_PROPSYNCS(BandDirector)
+    // Retail (Ghidra 0x822829F0) declares these as function-local statics ahead
+    // of the arm chain: guard word 1 bits 1/2/4 = coop_bg/coop_bk/coop_gk,
+    // before shot_5's arm static (bit 8).
+    static Symbol coop_bg("coop_bg");
+    static Symbol coop_bk("coop_bk");
+    static Symbol coop_gk("coop_gk");
     SYNC_PROP_SET(shot_5, mShotCategory, SetShot(_val.Sym(), "shot_5"))
     SYNC_PROP_SET(shot_bg, mShotCategory, SetShot(_val.Sym(), coop_bg))
     SYNC_PROP_SET(shot_bk, mShotCategory, SetShot(_val.Sym(), coop_bk))
     SYNC_PROP_SET(shot_gk, mShotCategory, SetShot(_val.Sym(), coop_gk))
     SYNC_PROP_SET(postproc, NULL_OBJ, )
-    SYNC_PROP_SET(lightpreset, verse, )
-    SYNC_PROP_SET(lightpreset_keyframe, next, )
-    SYNC_PROP_SET(world_event, none, ExportWorldEvent(_val.Sym()))
+    {
+        // Retail: default Symbol is a local static allocated just before the
+        // arm's own static (guard bits 0x100 verse / 0x200 lightpreset, etc.)
+        static Symbol verse("verse");
+        SYNC_PROP_SET(lightpreset, verse, )
+    }
+    {
+        static Symbol next("next");
+        SYNC_PROP_SET(lightpreset_keyframe, next, )
+    }
+    {
+        static Symbol none("none");
+        SYNC_PROP_SET(world_event, none, ExportWorldEvent(_val.Sym()))
+    }
     SYNC_PROP(merger, mMerger)
     SYNC_PROP(disable_picking, mDisablePicking)
     SYNC_PROP(disabled, mDisabled)
@@ -1764,14 +1772,14 @@ BEGIN_PROPSYNCS(BandDirector)
     SYNC_PROP(cam_postproc, mCamPostProc)
     SYNC_PROP_SET(cur_shot, mCurShot.Ptr(), )
     SYNC_PROP_SET(cur_world, mCurWorld.Ptr(), )
-    SYNC_PROP_SET(bass_intensity, Symbol("idle_realtime"), SendMessage(_val.Sym(), "bass"))
-    SYNC_PROP_SET(drum_intensity, Symbol("idle_realtime"), SendMessage(_val.Sym(), "drum"))
+    SYNC_PROP_SET(bass_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "bass"); })
+    SYNC_PROP_SET(drum_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "drum"); })
     SYNC_PROP_SET(
-        guitar_intensity, Symbol("idle_realtime"), SendMessage(_val.Sym(), "guitar")
+        guitar_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "guitar"); }
     )
-    SYNC_PROP_SET(mic_intensity, Symbol("idle_realtime"), SendMessage(_val.Sym(), "mic"))
+    SYNC_PROP_SET(mic_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "mic"); })
     SYNC_PROP_SET(
-        keyboard_intensity, Symbol("idle_realtime"), SendMessage(_val.Sym(), "keyboard")
+        keyboard_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "keyboard"); }
     )
     SYNC_PROP_SET(
         part2_sing,
@@ -1816,11 +1824,28 @@ END_PROPSYNCS
 // dc3-derived 360 tree. Defined here (rather than touching engine .cpps) so
 // BandDirector.cpp can compile; behavior matches "no music-video presets".
 // Port the real implementations as part of the world/LightPreset Wii->360 wave.
-float LightPreset::LegacyFadeIn() const { return 0.0f; }
-void LightPreset::StaticResetEvents() {}
-void LightPresetManager::GetPresets(LightPreset *&a, LightPreset *&b) { a = nullptr; b = nullptr; }
-void LightPresetManager::Interp(Symbol, Symbol, float) {}
-void LightPresetManager::SchedulePstKey(int) {}
-void LightPresetManager::StompPresets(LightPreset *, LightPreset *) {}
-LightPreset *LightPresetManager::PickRandomPreset(Symbol) { return nullptr; }
-int SymToPstKeyframe(Symbol) { return LightPreset::kPresetKeyframeNum; }
+// __declspec(noinline): retail implements these in the LightPreset TU
+// (e.g. SymToPstKeyframe @ 0x82497FD8, SchedulePstKey @ 0x824A5DC8), so every
+// call site in this TU must stay an out-of-line bl. Without the barrier MSVC
+// inlines + constant-folds the stubs (e.g. SymToPstKeyframe()==kPresetKeyframeNum
+// deleted the whole SchedulePstKey block in OnLightPresetKeyframeInterp).
+// The volatile locals make each stub's behavior opaque: MSVC /O1 otherwise
+// constant-folds the return into callers (even across __declspec(noinline))
+// and deletes retail call sites.
+__declspec(noinline) float LightPreset::LegacyFadeIn() const { volatile float f = 0.0f; return f; }
+__declspec(noinline) void LightPreset::StaticResetEvents() { volatile int n = 0; (void)n; }
+__declspec(noinline) void LightPresetManager::GetPresets(LightPreset *&a, LightPreset *&b) {
+    volatile int n = 0; (void)n;
+    a = nullptr; b = nullptr;
+}
+__declspec(noinline) void LightPresetManager::Interp(Symbol, Symbol, float) { volatile int n = 0; (void)n; }
+__declspec(noinline) void LightPresetManager::SchedulePstKey(int) { volatile int n = 0; (void)n; }
+__declspec(noinline) void LightPresetManager::StompPresets(LightPreset *, LightPreset *) { volatile int n = 0; (void)n; }
+__declspec(noinline) LightPreset *LightPresetManager::PickRandomPreset(Symbol) {
+    volatile int n = 0;
+    return (LightPreset *)(n & 0);
+}
+__declspec(noinline) int SymToPstKeyframe(Symbol) {
+    volatile int n = LightPreset::kPresetKeyframeNum;
+    return n;
+}

@@ -47,7 +47,7 @@
    "system/bandobj/BandDirector.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DMILO_MESSAGE_TIMERS"
+     "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
    "system/bandobj/BandIKEffector.cpp": "NonMatching",

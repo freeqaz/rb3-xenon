@@ -14945,5 +14945,7 @@
  "0x8226D610": "?SyncProperty@BandCharDesc@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8226D620": "?Save@BandCharDesc@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x8226D650": "?Handle@BandCharDesc@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x8226D660": "?Load@BandCharDesc@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+ "0x8226D660": "?Load@BandCharDesc@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+ "0x82281b78": "?ExtractPstCatAdjs@@YAXPAVDataArray@@AAVSymbol@@1@Z",
+ "0x8227c470": "?ExtractCatAdj@@YAXVSymbol@@AAV1@1@Z"
 }

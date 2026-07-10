@@ -51,7 +51,14 @@ public:
     void SetOverrideWeight(float weight) { mOverrideWeight = weight; }
     float GetOverrideWeight() const { return mOverrideWeight; }
     CharClip *OverrideClip() const { return mOverrideClip; }
-    ObjectDir *OverrideDir() const { return mOverrideOptions; }
+    // rb3-Wii oracle + retail (BandDirector::OnGetFaceOverrideClips inline,
+    // Ghidra 0x82284F48): falls back to the clip dir when no override is set.
+    ObjectDir *OverrideDir() const {
+        if (mOverrideOptions)
+            return mOverrideOptions;
+        else
+            return mClips;
+    }
     CharLipSync *LipSync() const { return mLipSync; }
     CharLipSync::PlayBack *GetPlayBack() const { return mMainPlayback; }
 
