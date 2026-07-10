@@ -234,9 +234,9 @@ public:
     // Retail packs mMuckWithPitch with the mNeverAllowInput/unkb9 bool group
     // (Wii interleaved it with mMusicSpeed, wasting 4 bytes of alignment pad),
     // so mLoadState lands at 0xcc rather than 0xd0.
-    float mMusicSpeed; // 0xb8
-    bool mMuckWithPitch;
-    bool mNeverAllowInput;
+    float mMusicSpeed; // 0xb4
+    bool mNeverAllowInput; // 0xb8
+    bool mMuckWithPitch; // 0xb9
     bool unkb9;
     int mDemoMaxPctComplete;
     float mDemoMaxMs;

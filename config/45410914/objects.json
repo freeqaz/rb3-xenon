@@ -959,7 +959,8 @@
     "status": "NonMatching",
     "extra_cflags": [
      "/DRB3_MAP_0x1C",
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_STRIP_CHEAT_HANDLERS"
     ]
    },
    "band3/meta_band/CriticalUserListener.cpp": {

@@ -1115,7 +1115,7 @@ BEGIN_HANDLERS(Game)
     HANDLE_EXPR(get_paused, mIsPaused)
     HANDLE_EXPR(can_user_pause, CanUserPause())
     HANDLE_ACTION(set_music_speed, SetMusicSpeed(_msg->Float(2)))
-    HANDLE_ACTION(set_pitch_mucker, SetPitchMucker(_msg->Int(2)))
+    // retail stripped set_pitch_mucker (dev-only) from the dispatch table
     HANDLE_EXPR(music_speed, mMusicSpeed)
     HANDLE_EXPR(get_song_ms, GetSongMs())
     HANDLE_EXPR(get_section_at_ms, GetSectionAtMs(_msg->Float(2)))
@@ -1159,8 +1159,7 @@ BEGIN_HANDLERS(Game)
     HANDLE_MESSAGE(LocalUserLeftMsg)
     HANDLE_MESSAGE(RemoteUserLeftMsg)
     HANDLE_MESSAGE(RemoteLeaderLeftMsg)
-    HANDLE_EXPR(debug_cycle_autoplay, DebugCycleAutoplay())
-    HANDLE_EXPR(debug_cycle_autoplay_accuracy, DebugCycleAutoplayAccuracy())
+    // retail stripped debug_cycle_autoplay[_accuracy] (dev-only) from the dispatch table
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0xA10)
 END_HANDLERS

@@ -197,9 +197,8 @@ bool CustomizePanel::InPreviewState() const {
 }
 
 bool CustomizePanel::InClothingState() const {
-    return mCustomizeState == kCustomizeState_BrowseTorso
-        || mCustomizeState == kCustomizeState_BrowseLegs
-        || mCustomizeState == kCustomizeState_BrowseFeet;
+    return mCustomizeState >= kCustomizeState_BrowseTorso
+        && mCustomizeState <= kCustomizeState_BrowseFeet;
 }
 
 void CustomizePanel::UpdateNewAssetProvider() {
@@ -1146,8 +1145,16 @@ BEGIN_HANDLERS(CustomizePanel)
     HANDLE_EXPR(is_waiting_to_leave, mWaitingToLeave)
     HANDLE_ACTION(take_portrait, mClosetMgr->TakePortrait())
     HANDLE_ACTION(save_prefab, SavePrefab())
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 stripped these two asset-token cheat handlers: the retail
+    // Handle body jumps straight from save_prefab to the HANDLE_MESSAGE block
+    // (no local-static Symbol ctor/guard machinery for cheat_toggle_asset_tokens
+    // or show_asset_tokens). Gated per-TU via /DRB3_STRIP_CHEAT_HANDLERS.
+    // Verified: their inline block = the 43-instr target-only gap; removing them
+    // moved CustomizePanel::Handle 95.3 -> 98.9% normalized.
     HANDLE_EXPR(cheat_toggle_asset_tokens, CheatToggleAssetTokens())
     HANDLE_EXPR(show_asset_tokens, mShowAssetTokens)
+#endif
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_MESSAGE(UIComponentScrollMsg)
