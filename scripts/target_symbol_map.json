@@ -15008,5 +15008,10 @@
  "0x8228CCC0": "?Load@?$ObjRefConcrete@VRndMat@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
  "0x8228CDB8": "?Load@?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
  "0x8228CEA0": "?Load@?$ObjRefConcrete@VColorPalette@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
- "0x8228CF98": "?Load@?$ObjRefConcrete@VRndTexBlender@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z"
+ "0x8228CF98": "?Load@?$ObjRefConcrete@VRndTexBlender@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+ "0x8227C898": "??0DataArrayPtr@@QAA@ABVDataNode@@@Z",
+ "0x822862F8": "?__stl_throw_out_of_range@stlpmtx_std@@YAXPBD@Z",
+ "0x8232EB58": "?AtFrame@?$Keys@VSymbol@@V1@@@QBAHMAAPBV?$Key@VSymbol@@@@0AAM@Z",
+ "0x82725FC0": "?Float@DataNode@@QBAMPBVDataArray@@@Z",
+ "0x82796720": "??$MakeString@PBDPBD@@YAPBDPBD00@Z"
 }

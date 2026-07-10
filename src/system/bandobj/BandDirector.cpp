@@ -1195,7 +1195,7 @@ void ExtractCatAdj(Symbol s, Symbol &s1, Symbol &s2) {
     }
 }
 
-Symbol ConcatCatAdj(Symbol s1, Symbol s2) {
+static __forceinline Symbol ConcatCatAdj(Symbol s1, Symbol s2) {
     Symbol ret;
     if (s2 != gNullStr) {
         ret = MakeString("%s+%s", s1.Str(), s2.Str());
@@ -1264,7 +1264,7 @@ DataNode BandDirector::OnMidiAddPreset(DataArray *da) {
             if (s1 == gNullStr)
                 s1 = s54;
             Symbol s5c = ConcatCatAdj(s1, s2);
-            if (at >= 0 && frame == skeys->at(at).frame) {
+            if (at >= 0 && skeys->at(at).frame == frame) {
                 skeys->at(at).value = s5c;
             } else
                 skeys->Add(s5c, frame, false);
@@ -1554,23 +1554,29 @@ DataNode BandDirector::OnStompPresets(DataArray *da) {
 }
 
 DataNode BandDirector::OnGetCatList(DataArray *da) {
-    Symbol s2 = da->Sym(2);
-    DataArray *arr3 = da->Array(3);
-    DataArray *arr = new DataArray(arr3->Size());
-
-    int i1 = 0;
-    for (int i = 0; i < arr3->Size(); i++) {
-        Symbol cursym = arr3->Sym(i);
-        if (RemapCat(cursym, s2) != cursym) {
-            // ???
-        } else {
-            arr->Node(i1++) = cursym;
+    if (!mPropAnim)
+        return 0;
+    else {
+        Symbol s2 = da->Sym(2);
+        String str30(s2.Str());
+        str30.replace(0, 4, "shot");
+        PropKeys *shotkeys =
+            mPropAnim->GetKeys(this, DataArrayPtr(Symbol(str30.c_str())));
+        PropKeys *shot5keys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot_5")));
+        if (!shotkeys || !shot5keys)
+            return 0;
+        else {
+            Keys<Symbol, Symbol> &sym5keys = *shot5keys->AsSymbolKeys();
+            Keys<Symbol, Symbol> &symkeys = *shotkeys->AsSymbolKeys();
+            symkeys.clear();
+            for (int i = 0; i < sym5keys.size(); i++) {
+                Key<Symbol> curkey(sym5keys[i]);
+                curkey.value = RemapCat(curkey.value, s2);
+                symkeys.push_back(curkey);
+            }
         }
+        return 0;
     }
-    arr->Resize(i1);
-    DataNode ret(arr, kDataArray);
-    arr->Release();
-    return DataNode(arr, kDataArray);
 }
 
 DataNode BandDirector::OnCopyCats(DataArray *da) {
