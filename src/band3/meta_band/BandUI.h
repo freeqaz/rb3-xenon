@@ -57,7 +57,9 @@ public:
     virtual void SendTransitionComplete(UIScreen *, UIScreen *);
 
     void GetCurrentScreenState(std::vector<UIScreen *> &);
+#ifdef HX_NATIVE
     void WriteToVignetteOverlay(const char *);
+#endif
     void InitPanels();
     void TriggerDisbandEvent(DisbandError);
     UIFlowType GetCurrentFlowType() const;
@@ -71,7 +73,9 @@ public:
     // Retail X360 keeps this wipe check out-of-line (fn_82523A50, called from
     // Poll); the Wii dev build inlined it, so the name is invented.
     __declspec(noinline) bool ShouldCheckWipeDone() const;
+#ifdef HX_NATIVE
     void UpdateUIOverlay();
+#endif
     UIScreen *GetTargetScreen(UIScreen *);
     void UpdateInputPerformanceMode();
 
@@ -113,7 +117,11 @@ public:
     // overlay ptrs and mInviteAccepted. In the dc3/rb3-Wii dev order these three
     // ptrs sat BEFORE mDisbandStatus, adding a spurious +0xc to every panel-ptr
     // access — the InitPanels off:+0x4c divergence.
-    bool mShowVignettes; // own+0x0 (0x98)
+    // Retail X360 has NO mShowVignettes (all uses were dev-only: the
+    // GetTargetScreen gate + set/get_vignettes_showing handlers). Its slot is
+    // taken by mInviteAccepted: Handle's set/get_invite_accepted access
+    // (this-0xcc)+... = 0x98 (`stb/lbz r11, -0x34, r28`), i.e. own+0x0.
+    bool mInviteAccepted; // own+0x0 (0x98)
     DisbandStatus mDisbandStatus; // own+0x4 (0x9c) - disband status
     OvershellPanel *mOvershell; // own+0x8 (0xa0)
     UIPanel *mEventDialog; // own+0xc (0xa4)
@@ -126,15 +134,22 @@ public:
     UIPanel *mAbstractWipePanel; // own+0x28 (0xc0)
     bool unk10c; // own+0x2c (0xc4) - wipe-in pending (WipeInIfNecessary)
     bool unk10d; // own+0x2d (0xc5) - wipe-out pending (WipeOutIfNecessary)
-    RndOverlay *mVignetteOverlay; // own+0x30 (0xc8)
-    RndOverlay *mUIOverlay; // own+0x34 (0xcc)
-    bool mInviteAccepted; // own+0x38 (0xd0) - invite accepted
-    // In retail RB3-360 this "wipe pending" flag lives in the UIManager base at
-    // 0xb5 (rb3-Wii UI.h). rb3-xenon's DC3-derived UIManager omits it and is
-    // pinned/matched at its own verified offsets, so we keep it BandUI-local to
-    // stay per-TU-scoped; the two functions that touch it (WipeOnNextTransition,
-    // OnMsg(UITransitionCompleteMsg)) diverge only by this store offset.
-    bool unkb5; // local (retail: UIManager+0xb5)
+    // Retail X360 has NO mVignetteOverlay / mUIOverlay members (the Wii dev
+    // build's debug overlays are stripped: ctor zeroed no 0xc8 word, Init did no
+    // RndOverlay::Find, and Handle lacks all 8 vignette/overlay handlers). It
+    // also has NO unkb5 "wipe pending" mirror byte (GotoScreen /
+    // OnMsg(UITransitionCompleteMsg) store only unk10c/unk10d — asm-proven).
+    // Keep the overlays native-only so the host build's debug overlay works.
+#ifdef HX_NATIVE
+    RndOverlay *mVignetteOverlay;
+    RndOverlay *mUIOverlay;
+#endif
+#ifdef HX_NATIVE
+    bool mShowVignettes; // native-only, see above
+#endif
+    // Layout check (X360 /d1reportSingleClassLayoutBandUI): members end 0xc6,
+    // vtordisp word 0xc8, virtual base Hmx::Object at 0xcc — matches retail's
+    // `addi r3, r3, 0xcc` / `subi r4, r28, 0xcc` exactly.
 };
 
 extern BandUI TheBandUI;

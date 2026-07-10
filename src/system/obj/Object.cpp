@@ -608,9 +608,9 @@ MsgSinks *Hmx::Object::GetOrAddSinks() {
 #endif
 }
 
-void Hmx::Object::AddSink(Hmx::Object *o, Symbol s1, Symbol s2, SinkMode sm, bool b) {
+void Hmx::Object::AddSink(Hmx::Object *o, Symbol s1, Symbol s2, SinkMode sm) {
 #ifdef HX_NATIVE
-    GetOrAddSinks()->AddSink(o, s1, s2, sm, b);
+    GetOrAddSinks()->AddSink(o, s1, s2, sm, true);
 #endif
 }
 
@@ -1023,14 +1023,14 @@ DataNode Hmx::Object::OnAddSink(DataArray *a) {
                         s6 = Symbol();
                         s7 = eval.LiteralSym();
                     }
-                    AddSink(obj, s7, s6, mode, chain);
+                    GetOrAddSinks()->AddSink(obj, s7, s6, mode, chain);
                 }
             }
         }
     } else {
         Symbol s1, s2;
         Hmx::Object *obj = a->GetObj(2);
-        AddSink(obj, s1, s2, kHandle, true);
+        AddSink(obj, s1, s2, kHandle);
     }
     return 0;
 }

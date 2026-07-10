@@ -783,6 +783,7 @@
    "band3/game/OverdriveTracker.cpp": "NonMatching",
    "band3/game/TrackerManager.cpp": "NonMatching",
    "band3/game/NetGameMsgs.cpp": "NonMatching",
+   "band3/game/UITransitionNetMsgs.cpp": "NonMatching",
    "band3/game/GameConfig.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

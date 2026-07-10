@@ -26,4 +26,9 @@ public:
     std::map<Symbol, UIScreen *> mCurrentInterstitials; // 0x50
     int mRandomOverride; // 0x68
     int mRandomSelection; // 0x6c
+    // Retail trailing reserve: `new InterstitialMgr` in BandUI::Init is
+    // `li r3, 0x84` in the target (ours was 0x80) — retail has one more word in
+    // the non-virtual part. Trailing pad = zero ripple on accessed offsets
+    // (vbase-dtor trailing-reserve lever, cf. wave-12 0149637).
+    int unk70;
 };

@@ -50,11 +50,18 @@ Symbol CurrentScreenChangedMsg::GetScreen() const { return mData->Sym(2); }
 BandUI::BandUI()
     // Init-list follows the retail declaration order (MSVC emits member inits in
     // declaration order regardless of list order).
-    : mShowVignettes(1), mDisbandStatus(kDisbandsEnabled), mOvershell(0),
+    // Retail inits mInviteAccepted(0) — the 0x98 store uses the zero reg
+    // (`stb r29, 0x98`), and no constant 1 is hoisted across the base ctor
+    // calls (__savegprlr_29, not _28).
+    : mInviteAccepted(0), mDisbandStatus(kDisbandsEnabled), mOvershell(0),
       mEventDialog(0), mContentLoadingPanel(0), mPassiveMessagesPanel(0),
       mSaveLoadStatusPanel(0), mWaitingUserGate(0), mInterstitialMgr(0),
-      mInputInterceptor(0), mAbstractWipePanel(0), unk10c(0), unk10d(0),
-      mVignetteOverlay(0), mInviteAccepted(0) {}
+      mInputInterceptor(0), mAbstractWipePanel(0), unk10c(0), unk10d(0)
+#ifdef HX_NATIVE
+      , mVignetteOverlay(0), mUIOverlay(0), mShowVignettes(1)
+#endif
+{
+}
 
 BandUI::~BandUI() {}
 
@@ -81,7 +88,9 @@ void BandUI::Init() {
     TheSaveLoadMgr->AddSink(this);
 #endif
     TheRockCentral.AddSink(this);
-    ThePlatformMgr.AddSink(this, NetErrorMsg::Type());
+    // Retail X360 drops the Wii dev build's
+    // `ThePlatformMgr.AddSink(this, NetErrorMsg::Type());` (and BandUI has no
+    // OnMsg(NetErrorMsg) body in the retail binary either).
 
     TheContentMgr.SetReadFailureHandler(this);
     NetSync::Init();
@@ -90,17 +99,12 @@ void BandUI::Init() {
     LockStepMgr::Init();
     mInterstitialMgr = new InterstitialMgr();
     UIManager::Init();
-    for (ObjDirItr<UIScreen> it(ObjectDir::Main(), true); it != nullptr; ++it) {
-        BandScreen *screen = dynamic_cast<BandScreen *>(&*it);
-        if (!screen) {
-            const DataArray *t = it->TypeDef();
-            if (!t || !strstr(t->File(), "system/run")) {
-                MILO_WARN("UIScreen %s is not a BandScreen", it->Name());
-            }
-        }
-    }
-    mVignetteOverlay = RndOverlay::Find(vignette, false);
-    mUIOverlay = RndOverlay::Find(ui, false);
+    // Retail X360 drops the Wii dev build's is-every-UIScreen-a-BandScreen
+    // verification loop (ObjDirItr + dynamic_cast + MILO_WARN) AND the two
+    // debug-overlay lookups (`mVignetteOverlay = RndOverlay::Find(vignette,
+    // false); mUIOverlay = RndOverlay::Find(ui, false);`) — Init goes straight
+    // from UIManager::Init() to WaitingUserGate::Init(). The overlay members
+    // stay null from the ctor.
 #ifndef HX_NATIVE
     // WaitingUserGate.cpp is in _NATIVE_FORK_EXCLUDE (CMakeLists.txt), so its
     // ctor/dtor/Init are weak no-op stubs natively. `new WaitingUserGate()` then
@@ -147,7 +151,8 @@ void BandUI::Terminate() {
         }
         mOvershell->RemoveSink(this);
     }
-    ThePlatformMgr.RemoveSink(this, NetErrorMsg::Type());
+    // Retail X360 drops the NetErrorMsg RemoveSink (symmetric with the dropped
+    // AddSink in Init()).
 }
 
 namespace {
@@ -253,6 +258,8 @@ DataNode BandUI::OnMsg(const ContentReadFailureMsg &msg) {
             static Message init("init", 0, 0);
             init[0] = msg.GetBool();
             init[1] = msg.GetStr();
+            // Retail: function-local static Symbol ($S2 guard bit 2).
+            static Symbol data_error("data_error");
             TheUIEventMgr->TriggerEvent(data_error, init);
         }
     }
@@ -263,8 +270,11 @@ void BandUI::TriggerDisbandEvent(BandUI::DisbandError err) {
     static Message init("init", -1);
     init[0] = err;
     if (mDisbandStatus == kDisbandsEnabled) {
+        // Retail: function-local static Symbols (shared $S guard word bits 1/2).
+        static Symbol disband("disband");
         TheUIEventMgr->TriggerEvent(disband, init);
     } else if (mDisbandStatus == kDisbandsMessageOnly || err == kKicked) {
+        static Symbol disband_error("disband_error");
         TheUIEventMgr->TriggerEvent(disband_error, init);
     }
 }
@@ -279,6 +289,11 @@ void BandUI::GetCurrentScreenState(std::vector<UIScreen *> &screens) {
 }
 
 UIFlowType BandUI::GetCurrentFlowType() const {
+    // Retail X360 case set is SPARSER than the Wii dev build's: no Waiting*
+    // (4-8) cases and no (NetUIState)22 case — those fall to default. That
+    // sparseness is what makes MSVC lower this switch as a binary-search
+    // compare chain (root at 0xb, range-test 0xc..0x10) instead of the dense
+    // jump table the extra cases would produce.
     NetUIState uiState = TheNetSync->GetUIState();
     switch (uiState) {
     case (NetUIState)17:
@@ -286,11 +301,6 @@ UIFlowType BandUI::GetCurrentFlowType() const {
     case (NetUIState)18:
         return (UIFlowType)5;
     case kNetUI_MainMenu:
-    case kNetUI_WaitingChooseSong:
-    case kNetUI_WaitingChooseSetlist:
-    case kNetUI_WaitingQpFindPlayers:
-    case kNetUI_WaitingTour:
-    case kNetUI_WaitingTourFindPlayers:
     case kNetUI_Customize:
     case kNetUI_MusicLibrary:
     case kNetUI_InGame:
@@ -305,8 +315,6 @@ UIFlowType BandUI::GetCurrentFlowType() const {
         if (TheGameMode->InMode("qp_coop"))
             return kUIFlowType_QpCoopCampaign;
         return kUIFlowType_Main;
-    case (NetUIState)22:
-        return kUIFlowType_Unk6;
     default:
         return kUIFlowType_None;
     }
@@ -330,7 +338,6 @@ void BandUI::WipeOnNextTransition(bool b1) {
     unk10c = true;
     if (!b1)
         unk10d = true;
-    unkb5 = true;
 }
 
 void BandUI::WipeInIfNecessary() {
@@ -371,14 +378,19 @@ void BandUI::SendTransitionComplete(UIScreen *s1, UIScreen *s2) {
 }
 
 DataNode BandUI::OnMsg(const UITransitionCompleteMsg &msg) {
-    HAQManager::Print(kHAQType_Screen);
-    HAQManager::Print(kHAQType_Focus);
+    // Retail X360: no HAQManager::Print calls (HAQ debug strip), and the
+    // screen-saver bool is computed branchlessly: `disable` defaults true when
+    // the property is absent (note: OPPOSITE of the Wii dev build's
+    // `!prop || prop->Int() == 0`, which enabled the saver when unset).
     Symbol s38 = gNullStr;
     UIScreen *screen = msg.GetNewScreen();
     if (screen) {
         s38 = screen->Name();
         const DataNode *prop = screen->Property("disable_screen_saver", false);
-        ThePlatformMgr.SetScreenSaver(!prop || prop->Int() == 0);
+        bool disable = !prop || prop->Int() != 0; // 99.1: residual 3-instr bne/beq
+        // polarity select (li-1-first vs mr-0-first) resists all standard
+        // steering forms — permuter-class.
+        ThePlatformMgr.SetScreenSaver(!disable);
     }
     if (TheUIEventMgr->HasActiveTransitionEvent()
         && TheUIEventMgr->IsTransitionEventFinished()) {
@@ -394,7 +406,6 @@ DataNode BandUI::OnMsg(const UITransitionCompleteMsg &msg) {
     unk10d = false;
     static Message blockingMsg("set_blocking", 0);
     mContentLoadingPanel->Handle(blockingMsg, true);
-    unkb5 = false;
     return DataNode(kDataUnhandled, 0);
 }
 
@@ -412,6 +423,9 @@ DataNode BandUI::OnMsg(const ProcessedJoinRequestMsg &msg) {
 }
 
 DataNode BandUI::OnMsg(const ConnectionStatusChangedMsg &msg) {
+    // Retail: guard+ctor at entry, never read (likely from stripped dev code —
+    // same UNUSED function-local static Symbol pattern as NetSync::AttemptTransition).
+    static Symbol sign_out("sign_out");
     if (msg->Int(2) == 0) {
         TheRockCentral.ForceLogout();
         TheSessionMgr->Disconnect();
@@ -420,9 +434,9 @@ DataNode BandUI::OnMsg(const ConnectionStatusChangedMsg &msg) {
 }
 
 DataNode BandUI::OnMsg(const ServerStatusChangedMsg &msg) {
-    if (msg->Int(2) == 0) {
-        TheSessionMgr->Disconnect();
-    }
+    // Retail X360 body is just `return 1;` (20-byte target fn_825245A0) — the
+    // Wii dev build's `if (msg->Int(2) == 0) TheSessionMgr->Disconnect();` was
+    // dropped in retail (server status handled elsewhere on Live).
     return 1;
 }
 
@@ -430,6 +444,8 @@ DataNode BandUI::OnMsg(const DiskErrorMsg &msg) {
     if (TheGameMode->Property("online_play_required", true)->Int()) {
         TheNet.GetNetSession()->Disconnect();
     }
+    // Retail uses a function-local static Symbol here, not the Symbols.h global.
+    static Symbol disc_error("disc_error");
     TheUIEventMgr->TriggerEvent(disc_error, nullptr);
     return 1;
 }
@@ -464,7 +480,9 @@ DataNode BandUI::OnMsg(const UIComponentFocusChangeMsg &msg) {
 
 DataNode BandUI::OnMsg(const UIComponentScrollMsg &msg) {
     DataNode ret = OnOvershellMsgCommon(msg, true);
-    HAQManager::HandleComponentScroll(msg.GetUIComponent());
+    // Retail X360: HAQ strip removes the HandleComponentScroll call but the
+    // GetUIComponent() argument is still evaluated (MILO strip pattern).
+    msg.GetUIComponent();
     return ret;
 }
 
@@ -473,7 +491,9 @@ DataNode BandUI::OnMsg(const GameMicsChangedMsg &msg) {
 }
 
 DataNode BandUI::OnOvershellMsgCommon(const Message &msg, bool b2) {
-    if (TheUIEventMgr->HasActiveDialogEvent() && EventDialog()) {
+    // Retail X360 does NOT null-check EventDialog() here (no cmplwi/beq —
+    // the Wii dev build's `&& EventDialog()` guard is absent).
+    if (TheUIEventMgr->HasActiveDialogEvent()) {
         if (EventDialog()->GetState() == UIPanel::kUp) {
             DataNode handled = EventDialog()->Handle(msg, false);
             if (b2 || handled.Type() != kDataUnhandled) {
@@ -525,16 +545,17 @@ bool BandUI::InComponentSelect() {
 }
 
 UIScreen *BandUI::GetTargetScreen(UIScreen *screen) {
-    if (mShowVignettes) {
-        UIScreen *toScreen = mInterstitialMgr->CurrentInterstitialToScreen(screen);
-        if (toScreen) {
-            mInterstitialMgr->PrintOverlay(mCurrentScreen, screen);
-            toScreen->SetProperty(dest_screen, screen);
-            screen = toScreen;
-            mInterstitialMgr->RefreshRandomSelection();
-        }
+    // Retail X360 drops the Wii dev build's `if (mShowVignettes)` gate and the
+    // dev-only PrintOverlay call, and uses a function-local static Symbol.
+    UIScreen *ret = screen;
+    UIScreen *toScreen = mInterstitialMgr->CurrentInterstitialToScreen(screen);
+    if (toScreen) {
+        static Symbol dest_screen("dest_screen");
+        toScreen->SetProperty(dest_screen, screen);
+        ret = toScreen;
+        mInterstitialMgr->RefreshRandomSelection();
     }
-    return screen;
+    return ret;
 }
 
 void BandUI::GotoScreen(UIScreen *s, bool b2, bool b3) {
@@ -565,6 +586,7 @@ void BandUI::PopScreen(UIScreen *screen) {
     }
 }
 
+#ifdef HX_NATIVE
 void BandUI::WriteToVignetteOverlay(const char *str) {
     if (mVignetteOverlay) {
         mVignetteOverlay->Clear();
@@ -612,6 +634,8 @@ void BandUI::UpdateUIOverlay() {
     }
 }
 
+#endif // HX_NATIVE (WriteToVignetteOverlay / UpdateUIOverlay debug overlays)
+
 DataNode BandUI::OnMsg(const OvershellActiveStatusChangedMsg &) {
     UpdateInputPerformanceMode();
     return 0;
@@ -638,6 +662,9 @@ DataNode BandUI::OnMsg(const LocalUserLeftMsg &) {
 }
 
 void BandUI::UpdateInputPerformanceMode() {
+    // Retail uses a function-local static Symbol (guard+ctor at entry), not the
+    // Symbols.h global.
+    static Symbol allow_input_performance_mode("allow_input_performance_mode");
     bool inSong = mOvershell->InSong();
     bool allowInput = mOvershell->AreAllLocalSlotsAllowingInputToShell();
     bool noEvent = !TheUIEventMgr->HasActiveDialogEvent();
@@ -655,6 +682,13 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_ACTION(trigger_disband_event, TriggerDisbandEvent((DisbandError)_msg->Int(2)))
     HANDLE_ACTION(abstract_wipe, WipeOnNextTransition(false))
     HANDLE_ACTION(abstract_wipe_in, WipeOnNextTransition(true))
+    // Retail X360 drops the 8 vignette/overlay debug handlers the Wii dev
+    // build had here (set/get_vignettes_showing, cycle/get_vignette_override,
+    // write_to_vignette_overlay, toggle_vignette_overlay,
+    // vignette_overlay_showing, toggle_ui_overlay) — .rdata has no such handler
+    // strings and Handle's $S guard-word bit chain skips straight from
+    // abstract_wipe_in's bit to the HANDLE_MESSAGE blocks.
+#ifdef HX_NATIVE
     HANDLE_ACTION(set_vignettes_showing, mShowVignettes = _msg->Int(2))
     HANDLE_EXPR(get_vignettes_showing, mShowVignettes)
     HANDLE_ACTION(cycle_vignette_override, mInterstitialMgr->CycleRandomOverride())
@@ -669,6 +703,7 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_ACTION_IF(
         toggle_ui_overlay, mUIOverlay, mUIOverlay->SetShowing(!mUIOverlay->Showing())
     )
+#endif
     HANDLE_MESSAGE(UITransitionCompleteMsg)
     HANDLE_MESSAGE(UIScreenChangeMsg)
     HANDLE_MESSAGE(ProcessedJoinRequestMsg)
@@ -692,7 +727,8 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_MESSAGE(EventDialogStartMsg)
     HANDLE_MESSAGE(EventDialogDismissMsg)
     HANDLE_MESSAGE(LocalUserLeftMsg)
-    HANDLE_MESSAGE(NetErrorMsg)
+    // Retail X360 has no NetErrorMsg dispatch here (subscription + handler
+    // are Wii-dev-only; see Init()).
     HANDLE_MEMBER_PTR(TheInputMgr)
     HANDLE_SUPERCLASS(UIManager)
     HANDLE_CHECK(0x3F0)

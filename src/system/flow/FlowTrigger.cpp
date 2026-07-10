@@ -222,15 +222,17 @@ void FlowTrigger::RegisterEvents() {
         Hmx::Object *prov = GetEventProvider();
         if (prov) {
             FOREACH (it, mTriggerEvents) {
-                prov->AddSink(this, *it, activate, kHandle, false);
+                // NOTE: DC3 passed chain=false here; RB3-retail AddSink has no chain param
+                // (see Object.h). flow/ is a DC3-only subsystem, not on any RB3 path.
+                prov->AddSink(this, *it, activate, kHandle);
             }
             if (mHardStop) {
                 FOREACH (it, mStopEvents) {
-                    prov->AddSink(this, *it, deactivate, kHandle, false);
+                    prov->AddSink(this, *it, deactivate, kHandle);
                 }
             } else {
                 FOREACH (it, mStopEvents) {
-                    prov->AddSink(this, *it, request_stop, kHandle, false);
+                    prov->AddSink(this, *it, request_stop, kHandle);
                 }
             }
         }

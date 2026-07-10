@@ -8,7 +8,11 @@ class StartTransitionMsg : public StartLockMsg, public LockData {
 public:
     StartTransitionMsg() {}
     StartTransitionMsg(UIScreen *);
-    virtual ~StartTransitionMsg() {}
+    // NO user dtor: retail's ??1 (0x82522AE0, 72B) is the COMPILER-GENERATED
+    // implicit dtor — a real body exists only because mScreenName needs
+    // destruction, and it has NO own-vtable stores (the user-empty-dtor
+    // signature). Declaring `virtual ~StartTransitionMsg() {}` adds the
+    // ??_7StartTransitionMsg vtable-store block and drops the match to 21.6%.
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual LockData *GetLockData();
@@ -62,8 +66,9 @@ public:
     NETMSG_NAME(NetPopScreenMsg);
     NETMSG_NEWNETMSG(NetPopScreenMsg);
 };
-// Retail: StartTransitionMsg keeps a user-declared inline dtor (its ??1 is a real
-// 72-byte body with vtable stores, COMDAT-claimed by BandUI.obj at 0x82522AE0).
-// The derived Net*ScreenMsg classes have NO user dtors: their implicit dtors
-// inline into ??_D/??_G with the initial vtable-store pair ELIDED, which is what
-// lets Goto+Sync share one ICF'd ??_G (0x825841E0, differing only in vbase offset).
+// Dtor note: NO class in this family declares a user dtor. StartTransitionMsg's
+// ??1 survives as a real 72-byte COMDAT (claimed by BandUI.obj at 0x82522AE0)
+// because mScreenName (String) needs destruction — but it is the IMPLICIT dtor
+// (no own-vtable stores; a user-declared empty dtor would emit them). The
+// derived Net*ScreenMsg implicit dtors have nothing to add, which is what lets
+// Goto+Sync share one ICF'd ??_G (0x825841E0, differing only in vbase offset).

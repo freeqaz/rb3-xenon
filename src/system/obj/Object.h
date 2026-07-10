@@ -1722,12 +1722,15 @@ namespace Hmx {
         void SaveRest(BinStream &);
         void ClearAllTypeProps();
         bool HasTypeProps() const;
+        // RB3-retail signature: NO trailing `bool chain` param (DC3 added it
+        // later). Proven by X360 call-site codegen (e.g. BandUI::Init AddSink
+        // calls stop at r7=SinkMode; DC3's `= true` default would materialize
+        // an extra `li r8, 0x1` at every call site). rb3-Wii Msg.h agrees.
         void AddSink(
             Hmx::Object *,
             Symbol = Symbol(),
             Symbol = Symbol(),
-            SinkMode = kHandle,
-            bool = true
+            SinkMode = kHandle
         );
         void AddPropertySink(Hmx::Object *, DataArray *, Symbol);
         void MergeSinks(Hmx::Object *);
