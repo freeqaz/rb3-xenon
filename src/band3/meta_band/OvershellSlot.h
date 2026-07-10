@@ -20,6 +20,7 @@ class CharProvider;
 class SessionUsersProvider;
 class OvershellPartSelectProvider;
 class CymbalSelectionProvider;
+class FriendsProvider;
 
 enum JoinState {
     kMetaJoinNeedsOnline = 0,
@@ -215,11 +216,18 @@ public:
     unsigned int mCymbalConfiguration; // 0x88
     PassiveMessageQueue *mMessageQueue; // 0x8c
     OvershellOverrideFlow mSlotOverrideFlow; // 0x90
-    CharProvider *mCharProvider; // 0x94
-    SessionUsersProvider *mKickUsersProvider; // 0x98
-    SessionUsersProvider *mMuteUsersProvider; // 0x9c
-    OvershellProfileProvider *mSwappableProfilesProvider; // 0xa0
-    OvershellPartSelectProvider *mPartSelectProvider; // 0xa4
-    CymbalSelectionProvider *mCymbalProvider; // 0xa8
-    OvershellSlotStateID unk28; // tail (retail declares this after the providers)
+    // Retail provider block (offsets verified from the retail ctor fn_825C7188
+    // / dtor fn_825C7A90): mCharProvider 0xa0, mKickUsers 0xa4, mMuteUsers 0xa8,
+    // mGamercardUsers 0xac (X360-only), mSwappableProfiles 0xb0, mFriendsProvider
+    // 0xb4 (X360-only), mPartSelect 0xb8, mCymbal 0xbc; sizeof == 0xC0
+    // (operator new(0xC0) in OvershellPanel::CreateSlots).
+    CharProvider *mCharProvider; // 0xa0
+    SessionUsersProvider *mKickUsersProvider; // 0xa4
+    SessionUsersProvider *mMuteUsersProvider; // 0xa8
+    SessionUsersProvider *mGamercardUsersProvider; // 0xac (retail X360-only)
+    OvershellProfileProvider *mSwappableProfilesProvider; // 0xb0
+    FriendsProvider *mFriendsProvider; // 0xb4 (retail X360-only)
+    OvershellPartSelectProvider *mPartSelectProvider; // 0xb8
+    CymbalSelectionProvider *mCymbalProvider; // 0xbc
+    OvershellSlotStateID unk28; // Wii-only leftover (retail sizeof is 0xC0 without it)
 };

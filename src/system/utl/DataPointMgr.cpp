@@ -115,15 +115,15 @@ DataPointRecordFunc *DataPointMgr::SetDataPointRecorder(DataPointRecordFunc *rec
     return old;
 }
 
-void DataPointMgr::RecordDataPoint(DataPoint &point) {
+void DataPointMgr::RecordDataPoint(DataPoint &point, bool b) {
     if (mDataPointRecorder) {
-        mDataPointRecorder(point);
+        mDataPointRecorder(point, b);
     }
 }
 
 void DataPointMgr::RecordDebugDataPoint(DataPoint &point) {
     if (mDebugDataPointRecorder) {
-        mDebugDataPointRecorder(point);
+        mDebugDataPointRecorder(point, true);
     }
 }
 

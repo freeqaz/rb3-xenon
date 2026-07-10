@@ -20,7 +20,11 @@ public:
     std::map<Symbol, DataNode> mNameValPairs; // 0x4
 };
 
-typedef void DataPointRecordFunc(DataPoint &);
+// Retail RB3 X360: the recorder and RecordDataPoint take a trailing bool
+// (verified from retail fn_827A7DE8 = ?RecordDataPoint@DataPointMgr@@ body:
+// tail-calls mDataPointRecorder(dp, r5); UIStats::MaybePublish passes 1).
+// DC3's engine dropped the bool — RB3 needs it.
+typedef void DataPointRecordFunc(DataPoint &, bool);
 
 class DataPointMgr {
 private:
@@ -39,7 +43,7 @@ public:
     ~DataPointMgr();
 
     DataPointRecordFunc *SetDataPointRecorder(DataPointRecordFunc *);
-    void RecordDataPoint(DataPoint &);
+    void RecordDataPoint(DataPoint &, bool = true);
     void RecordDebugDataPoint(DataPoint &);
     void Init();
 };

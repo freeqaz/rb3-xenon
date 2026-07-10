@@ -14,6 +14,7 @@
 #include "meta_band/InputMgr.h"
 #include "meta_band/MetaPerformer.h"
 #include "meta_band/NetSync.h"
+#include "meta_band/FriendsProvider.h"
 #include "meta_band/OvershellPanel.h"
 #include "meta_band/OvershellSlotState.h"
 #include "meta_band/PassiveMessenger.h"
@@ -68,8 +69,10 @@ OvershellSlot::OvershellSlot(
     mMessageQueue = new PassiveMessageQueue(this);
     mKickUsersProvider = new SessionUsersProvider(false, true, false);
     mMuteUsersProvider = new SessionUsersProvider(true, true, false);
+    mGamercardUsersProvider = new SessionUsersProvider(false, false, true);
     mCharProvider = new CharProvider(0, true, false);
     mSwappableProfilesProvider = new OvershellProfileProvider(mBandUserMgr);
+    mFriendsProvider = new FriendsProvider();
     mPartSelectProvider = new OvershellPartSelectProvider(mOvershell);
     mCymbalProvider = new CymbalSelectionProvider(this);
     mSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
@@ -85,9 +88,9 @@ OvershellSlot::OvershellSlot(
     // DataNode::GetObj calls LiteralStr on an int node and MILO_FAILs (clang LP64;
     // MWCC's `0` selected the Hmx::Object* overload). Pass an explicit null object so
     // the slot is kDataObject null and SetProvider(0) yields an empty list.
-    setupProviders[2] = (Hmx::Object *)0;
+    setupProviders[2] = (Hmx::Object *)mFriendsProvider;
 #else
-    setupProviders[2] = 0;
+    setupProviders[2] = mFriendsProvider; // retail X360: the invite_friends.lst provider
 #endif
     setupProviders[3] = mPartSelectProvider;
     setupProviders[4] = mCymbalProvider;
@@ -108,8 +111,10 @@ OvershellSlot::~OvershellSlot() {
 #ifndef HX_NATIVE
     TheServer.RemoveSink(this, UserLoginMsg::Type());
 #endif
+    RELEASE(mFriendsProvider);
     RELEASE(mSwappableProfilesProvider);
     RELEASE(mCharProvider);
+    RELEASE(mGamercardUsersProvider);
     RELEASE(mMuteUsersProvider);
     RELEASE(mKickUsersProvider);
     RELEASE(mMessageQueue);
@@ -1167,6 +1172,7 @@ void OvershellSlot::UpdateState() {
     if (!mState || (curState->GetStateID() != mState->GetStateID())) {
         bool b2 = false;
         if (mState) {
+            static Message exit_msg("exit");
             mState->HandleMsg(exit_msg);
             if (!pUser || pUser->IsLocal()) {
                 if (mState->RetractedPosition() && !curState->RetractedPosition()) {
@@ -1185,16 +1191,15 @@ void OvershellSlot::UpdateState() {
             allowingInputMsg[0] = GetUser();
             mOvershell->Export(allowingInputMsg, true);
         }
+        static Message enter_msg("enter");
         mState->HandleMsg(enter_msg);
     }
 
     if (pUser && pUser->IsLocal()) {
         LocalBandUser *localUser = pUser->GetLocalBandUser();
         if (mState->GetStateID() == kState_LinkingCode) {
-            bool cannotSave = !localUser->CanSaveData();
-            cannotSave |= !TheServer.IsConnected();
-            if (cannotSave) {
-                CancelLinkingCode();
+            // retail X360: no TheServer.IsConnected() check, no CancelLinkingCode()
+            if (!localUser->CanSaveData()) {
                 ShowState(kState_OptionsExtras);
             }
         }
@@ -1214,39 +1219,42 @@ void OvershellSlot::UpdateState() {
             ShowState(kState_SignInSonyPrivilegeDenial);
         }
         if (mState->GetStateID() == kState_EnterCharCreator) {
-            if ((!mSessionMgr->IsLocal()) || (TheUIEventMgr->HasTransitionEvent("go_to_wiiprofilecreator"))) {
+            if (!mSessionMgr->IsLocal()) {
                 ShowState(kState_CharCreatorDenial);
             }
         }
-    
+
         if (mState->GetStateID() == kState_EnterCalibration) {
-            if ((!mSessionMgr->IsLocal()) || (TheUIEventMgr->HasTransitionEvent("go_to_wiiprofilecreator"))) {
+            if (!mSessionMgr->IsLocal()) {
                 ShowState(kState_CalibrationDenial);
             }
         }
-    
+
         if (mState->GetStateID() == kState_EnterCredits) {
-            if ((!mSessionMgr->IsLocal()) || (TheUIEventMgr->HasTransitionEvent("go_to_wiiprofilecreator"))) {
+            if (!mSessionMgr->IsLocal()) {
                 ShowState(kState_CreditsDenial);
             }
         }
-    
-        if (mState->GetStateID() == kState_EnterWiiProfile) {
-            if ((!mSessionMgr->IsLocal()) || (TheUIEventMgr->HasTransitionEvent("go_to_wiiprofilecreator"))) {
-                ShowState(kState_WiiProfileDenial);
-            }
+
+        // retail X360-only: friends-list denial (Wii builds have the
+        // EnterWiiProfile/RegisterWiiProfile blocks here instead)
+        if (mState->GetStateID() == kState_InviteFriends
+            && mFriendsProvider->NumData() == 0) {
+            ShowState(kState_InviteFriendsDenial);
         }
-    
-        if (mState->GetStateID() == kState_RegisterWiiProfile) {
-            if ((!mSessionMgr->IsLocal()) || (TheUIEventMgr->HasTransitionEvent("go_to_wiiprofilecreator"))) {
-                ShowState(kState_RegisterWiiProfileDenial);
-            }
-        }
-    
+
         if (mState->GetStateID() == kState_SignInToRegister
             && localUser->HasOnlinePrivilege()
             && !mBandUserMgr->AllLocalUsersInSessionAreGuests()) {
             ShowState(kState_SignInWait);
+        }
+
+        // retail X360-only: retry the char-creator enter flow once the user
+        // gains online privilege (verified: fn_825C0680 = ShowEnterFlowPrompt)
+        if (mState->GetStateID() == kState_CharCreatorDenialNoProfile
+            && localUser->HasOnlinePrivilege()
+            && !mBandUserMgr->AllLocalUsersInSessionAreGuests()) {
+            ShowEnterFlowPrompt(kState_EnterCharCreator);
         }
 
         if (mState->GetStateID() == kState_ChooseCharDelete
@@ -1263,16 +1271,14 @@ void OvershellSlot::UpdateState() {
                 LeaveOptions();
             }
         }
-        if (mState->GetStateID() == kState_RemoveUserInCampaignConfirm) {
-            if (!TheProfileMgr.IsPrimaryProfileCritical(pUser->GetLocalUser())) {
-                LeaveOptions();
-            }
-        }
+        // retail X360: no RemoveUserInCampaignConfirm block (Wii-only)
         if (mState->GetStateID() == kState_FirstTimeRG && !localUser->CanSaveData()) {
             LeaveOptions();
         }
         if (mState->GetStateID() == kState_ChooseProfileConfirm) {
-            LocalBandUser *swapUser = mState->Property("swap_user")->Obj<LocalBandUser>();
+            // retail shape: out-of-line GetObj(0) + __RTDynamicCast (not Obj<T>)
+            LocalBandUser *swapUser =
+                dynamic_cast<LocalBandUser *>(mState->Property("swap_user")->GetObj(0));
             if (!swapUser->IsSignedIn() || !swapUser->IsJoypadConnected()
                 || swapUser->IsGuest()) {
                 ShowState(kState_ChooseProfile);

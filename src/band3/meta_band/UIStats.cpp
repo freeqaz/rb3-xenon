@@ -58,8 +58,9 @@ void UIStats::MaybePublish(UIScreen *from) {
     mLastPublishTime = SystemMs();
     MILO_ASSERT(from, 0x48);
 
-    Server *server = TheNet.mServer;
     bool &_ref0 = mPublishingPad;
+    static Symbol gather_uistats("gather_uistats"); // retail: function-local (guard bit 1)
+    Server *server = TheNet.mServer;
     const DataArray *gather = from->TypeDef()->FindArray(gather_uistats, false);
     if (!server->IsConnected()
         || (gather && gather->Node(1).Int(gather) == 0)) {
@@ -71,14 +72,13 @@ void UIStats::MaybePublish(UIScreen *from) {
     }
 
     if (!_ref0) {
-        mLastMode = Symbol("");
+        Symbol empty("");
+        mLastMode = empty;
         for (int i = 0; i < 4; i++) {
             mLastWasParticipating[i] = 0;
-            OnlineID id1;
-            mLastPadID[i] = id1;
+            mLastPadID[i] = OnlineID();
             mLastBreedString[i] = "00";
-            OnlineID id2;
-            mLastRemoteID[i] = id2;
+            mLastRemoteID[i] = OnlineID();
             mLastControllerType[i] = kControllerNone;
         }
     }
@@ -96,21 +96,23 @@ void UIStats::MaybePublish(UIScreen *from) {
         mLastMode = curMode;
     }
 
-    if (mPadLogCount != 0) {
+    if ((unsigned int)mPadLogCount != 0) {
         int compressedSize = 0x10100;
         unsigned char stackbuf[0x10100];
         unsigned char *buf = stackbuf + 0x100;
-        unsigned char *base = (unsigned char *)mPadLogBuffer;
         unsigned char *write = (unsigned char *)mPadLogWritePtr;
+        unsigned char *base = (unsigned char *)mPadLogBuffer;
         unsigned int writeOff = (unsigned int)(write - base);
-        int size = 0x10000;
+        int size;
         if (write == base || (unsigned int)mPadLogCount < 0x4000) {
             if ((unsigned int)mPadLogCount < 0x4000) size = writeOff;
+            else size = 0x10000;
             memcpy(buf, base, size);
         } else {
-            int tail = 0x10000 - writeOff;
+            size = 0x10000;
+            int tail = size - writeOff;
             memcpy(buf + tail, base, writeOff);
-            memcpy(buf, mPadLogWritePtr, tail);
+            memcpy(buf, write, tail);
         }
         if ((unsigned int)mPadLogCount >= 0x1A) {
             CompressMem(buf, size, stackbuf, compressedSize, 0);
@@ -122,24 +124,23 @@ void UIStats::MaybePublish(UIScreen *from) {
         String hex(MakeString("%x:", (unsigned int)mPadLogCount));
         int prefixLen = strlen(hex.c_str());
         hex.resize(prefixLen + (compressedSize * 2));
-        unsigned char *src = stackbuf;
         char *dst = (char *)hex.c_str() + prefixLen;
         for (int i = 0; i < compressedSize; i++) {
-            unsigned char b = *src;
+            unsigned char b = stackbuf[i];
             unsigned int hi = (b >> 4) & 0xF;
             if (hi > 9) {
-                dst[0] = (char)(hi + 0x57);
+                *dst = (char)(hi + 0x57);
             } else {
-                dst[0] = (char)(hi + 0x30);
+                *dst = (char)(hi + 0x30);
             }
+            dst++;
             unsigned int lo = b & 0xF;
             if (lo > 9) {
-                dst[1] = (char)(lo + 0x57);
+                *dst = (char)(lo + 0x57);
             } else {
-                dst[1] = (char)(lo + 0x30);
+                *dst = (char)(lo + 0x30);
             }
-            dst += 2;
-            src += 1;
+            dst++;
         }
         *dst = 0;
         screenExit.AddPair("padlog", DataNode(hex));
@@ -150,8 +151,8 @@ void UIStats::MaybePublish(UIScreen *from) {
     std::vector<BandUser *> users = TheBandUserMgr->GetBandUsers();
     int remoteCount = 0;
     for (std::vector<BandUser *>::iterator it = users.begin(); it != users.end(); ++it) {
-        BandUser *user = *it;
-        int participating = user->IsParticipating();
+        const BandUser *user = *it; // retail: const (selects the const GetLocal/RemoteBandUser vtable slots)
+        bool participating = user->IsParticipating();
         if (user->IsLocal()) {
             int padNum = user->GetLocalBandUser()->GetPadNum();
             const char *breed = JoypadGetBreedString(padNum);
@@ -169,17 +170,17 @@ void UIStats::MaybePublish(UIScreen *from) {
             if (participating) {
                 ThePlatformMgr.GetOnlineID(padNum, &id);
             }
-            if ((unsigned int)participating != mLastWasParticipating[padNum]
+            if (participating != mLastWasParticipating[padNum]
                 || !(id == mLastPadID[padNum])) {
                 const char *key = MakeString("local_user_%d", padNum);
                 screenExit.AddPair(key, DataNode(participating ? id.ToString() : "null"));
                 padUser.AddPair(key, DataNode(participating ? id.ToString() : "null"));
-                mLastWasParticipating[padNum] = (unsigned char)participating;
+                mLastWasParticipating[padNum] = participating;
                 mLastPadID[padNum] = id;
             }
         } else {
             MILO_ASSERT(remoteCount < DIM(mLastRemoteID), 0xEC);
-            user->Reset();
+            user->GetRemoteBandUser(); // retail calls this (result unused), not Reset()
             int controllerType = kControllerNone;
             OnlineID id;
             if (participating) {
@@ -189,12 +190,15 @@ void UIStats::MaybePublish(UIScreen *from) {
             if (controllerType != mLastControllerType[remoteCount]
                 || !(id == mLastRemoteID[remoteCount])) {
                 String key(MakeString("remote_user_%d", remoteCount));
-                Symbol ctySym = ControllerTypeToSym((ControllerType)controllerType);
-                String val(MakeString("%s:%s", ctySym, id.ToString()));
+                String val(MakeString(
+                    "%s:%s",
+                    ControllerTypeToSym((ControllerType)controllerType).Str(),
+                    id.ToString()
+                ));
                 screenExit.AddPair(key.c_str(), DataNode(val));
                 padUser.AddPair(key.c_str(), DataNode(val));
                 mLastRemoteID[remoteCount] = id;
-                mLastControllerType[remoteCount] = controllerType;
+                // retail X360: mLastControllerType[remoteCount] is never written back here
             }
             remoteCount++;
         }

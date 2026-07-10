@@ -794,9 +794,30 @@ BEGIN_HANDLERS(Tour)
     HANDLE_EXPR(get_bronze_medal_goal, DataNode(GetBronzeMedalGoalInCurrentTour()))
     HANDLE_EXPR(get_silver_medal_goal, DataNode(GetSilverMedalGoalInCurrentTour()))
     HANDLE_EXPR(get_gold_medal_goal, DataNode(GetGoldMedalGoalInCurrentTour()))
-    HANDLE_EXPR(has_bronze_medal, DataNode(HasBronzeMedalInCurrentTour()))
-    HANDLE_EXPR(has_silver_medal, DataNode(HasSilverMedalInCurrentTour()))
-    HANDLE_EXPR(has_gold_medal, DataNode(HasGoldMedalInCurrentTour()))
+    // retail X360: these three arms call Has*Medal(m_pTourProgress->GetTourDesc())
+    // directly (GetTourDesc sret to a named local read back from its slot), not the
+    // *InCurrentTour wrappers
+    {
+        static Symbol _hs("has_bronze_medal");
+        if (sym == _hs) {
+            Symbol tourSym = m_pTourProgress->GetTourDesc();
+            return DataNode(HasBronzeMedal(tourSym));
+        }
+    }
+    {
+        static Symbol _hs("has_silver_medal");
+        if (sym == _hs) {
+            Symbol tourSym = m_pTourProgress->GetTourDesc();
+            return DataNode(HasSilverMedal(tourSym));
+        }
+    }
+    {
+        static Symbol _hs("has_gold_medal");
+        if (sym == _hs) {
+            Symbol tourSym = m_pTourProgress->GetTourDesc();
+            return DataNode(HasGoldMedal(tourSym));
+        }
+    }
     HANDLE_EXPR(get_current_filter_name, DataNode(GetCurrentFilterName()))
     HANDLE_EXPR(get_bronze_medal_icon, DataNode(GetBronzeGoalIcon()))
     HANDLE_EXPR(get_silver_medal_icon, DataNode(GetSilverGoalIcon()))
@@ -805,7 +826,7 @@ BEGIN_HANDLERS(Tour)
     HANDLE_ACTION(update_next_medal_label, UpdateNextMedalLabel(_msg->Obj<UILabel>(2)))
     HANDLE_ACTION(clear_current_quest, ClearCurrentQuest())
     HANDLE_ACTION(update_progress_with_career_data, UpdateProgressWithCareerData())
-    HANDLE_ACTION(cheat_reload_data, CheatReloadTourData())
+    // retail X360: no cheat_reload_data arm (cheat handler stripped from retail)
     HANDLE_MESSAGE(PrimaryProfileChangedMsg)
     HANDLE_MESSAGE(RemoteLeaderLeftMsg)
     HANDLE_SUPERCLASS(Hmx::Object)
