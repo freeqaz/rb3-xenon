@@ -292,11 +292,8 @@ void SongUpgradeMgr::AddUpgradeData(
                 delete mUpgradeData.find(songID)->second;
 
                 SongUpgradeData *udata = new SongUpgradeData(curArr);
-                if (udata->CorrectMidiFile(loc, s)) {
-                    mUpgradeData[songID] = udata;
-                    MarkAvailable(songID, s);
-                } else
-                    delete udata;
+                mUpgradeData[songID] = udata;
+                MarkAvailable(songID, s);
             }
         }
     }
