@@ -578,9 +578,18 @@ void MusicLibrary::PlaySetlist(bool b1) {
                  TheSessionMgr->GetMachineMgr()->AllMachinesHaveSameNetUIState(),
                  (void *)TheProfileMgr.GetPrimaryProfile());
 #endif
-    if (ContentDir()) {
+    // Retail 360 guards on HasSyncPermission() (Synchronizable slot 3, this+0x30),
+    // NOT ContentDir() as the rb3-Wii dev oracle does — verified from the retail
+    // vtable group: PlaySetlist loads [this+0x30]+0xc (Sync vtable slot 3, bool
+    // return). There is NO base-layout delta here (Callback@0x2c, Sync@0x30 in
+    // both builds); the prior "+4 wall" was ContentDir(Callback) misread as the
+    // guard. See PlaySetlist decomp notes.
+    if (HasSyncPermission()) {
         MakeSureSetlistIsValid();
-        if (!mSetlist.empty()) {
+        if (mSetlist.size() != 0) {
+            // Retail uses a function-local static Symbol here (guard bit + Symbol
+            // ctor emitted inline), not the extern global from Symbols.h.
+            static Symbol setlists_can_be_saved("setlists_can_be_saved");
             SetSyncDirty(-1, true);
             if (b1 && GetMakingSetlist(false) && TheSessionMgr->IsLocal()
                 && TheGameMode->Property(setlists_can_be_saved, true)->Int()
@@ -595,7 +604,8 @@ void MusicLibrary::PlaySetlist(bool b1) {
                     MILO_LOG("GAME_DBG: PlaySetlist -> SendSetlistToMetaPerformer + "
                              "song_select_panel move_on_quickplay\n");
 #endif
-                panel->HandleType(move_on_quickplay_msg);
+                static Message move_on_quickplay("move_on_quickplay");
+                panel->HandleType(move_on_quickplay);
             } else {
 #ifdef HX_NATIVE
                 if (getenv("GAME_DBG"))
