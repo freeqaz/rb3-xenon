@@ -38,8 +38,7 @@ enum EndGameResult {
 // (that third polymorphic base's vptr pushed mProperties to 0x30). Retail
 // keeps only BeatMasterSink + Hmx::Object, placing mProperties at 0x2c —
 // verified against retail disasm (GemPlayer::CanFlail / GemManager::IsSpotlightGem
-// read mProperties bools 4 bytes lower than our old 3-base layout). DiscErrorEnd
-// stays as a plain Game virtual.
+// read mProperties bools 4 bytes lower than our old 3-base layout).
 class Game : public BeatMasterSink, public Hmx::Object {
 public:
     enum LoadState {
@@ -83,7 +82,6 @@ public:
     virtual void UpdateSongPos(const SongPos &) {}
     virtual void HandleSubmix(int, const char *) {}
     virtual DataNode Handle(DataArray *, bool);
-    virtual void DiscErrorEnd();
 
     void SetPaused(bool, bool, bool);
     void SetGameOver(bool);
@@ -226,14 +224,17 @@ public:
     Timer mTime; // 0x78
     bool mHasIntro; // 0xa8
     float mLastPollMs; // 0xac
-    bool mMuckWithPitch; // 0xb0
-    float mMusicSpeed; // 0xb4
-    bool mNeverAllowInput; // 0xb8
+    // Retail packs mMuckWithPitch with the mNeverAllowInput/unkb9 bool group
+    // (Wii interleaved it with mMusicSpeed, wasting 4 bytes of alignment pad),
+    // so mLoadState lands at 0xcc rather than 0xd0.
+    float mMusicSpeed; // 0xb8
+    bool mMuckWithPitch;
+    bool mNeverAllowInput;
     bool unkb9;
-    int mDemoMaxPctComplete; // 0xbc
-    float mDemoMaxMs; // 0xc0
+    int mDemoMaxPctComplete;
+    float mDemoMaxMs;
     bool unkc4;
-    LoadState mLoadState; // 0xc8
+    LoadState mLoadState; // 0xcc
     EndGameResult mResult; // 0xcc
     Band *mBand; // 0xd0
     Shuttle *mShuttle; // 0xd4

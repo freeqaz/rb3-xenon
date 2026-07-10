@@ -201,11 +201,9 @@ Game::Game()
     mDemoMaxPctComplete = _tmp1;
     mDemoMaxMs = SystemConfig(demo)->FindFloat(max_ms);
     LoadSong();
-    TheDiscErrorMgrWii.AddCallback(this);
 }
 
 Game::~Game() {
-    TheDiscErrorMgrWii.RemoveCallback(this);
     MetaPerformer::Current();
     TheGameConfig->ChangeRandomSeed();
     RELEASE(mShuttle);
@@ -443,7 +441,6 @@ bool Game::CanUserPause() const {
         || mLastPollMs < TheSongDB->GetSongDurationMs() - mDisablePauseMs;
 }
 
-void Game::DiscErrorEnd() { unk6b = true; }
 
 void Game::SetMusicSpeed(float speed) {
     gDebugFullQuota = speed != 1;
