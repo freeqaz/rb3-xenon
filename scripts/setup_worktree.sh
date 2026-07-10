@@ -216,6 +216,34 @@ if [ "$WARM_CACHE" -eq 1 ]; then
     # the best-effort pass dropped them.
     [ -d "$WT_BUILD/obj" ] || reflink_dir "$MAIN_REPO/build/$VERSION/obj" "$WT_BUILD/obj"
     [ -f "$WT_BUILD/config.json" ] || cp --reflink=auto "$MAIN_REPO/build/$VERSION/config.json" "$WT_BUILD/config.json" 2>/dev/null || true
+
+    # ---- PCH: drop main's reflinked .pch — it bakes MAIN's absolute header paths.
+    # The reflinked build/$VERSION/pch/system.pch was created in the MAIN tree and
+    # embeds main's absolute include paths as the #pragma-once identity of every
+    # header it precompiled. This is INVISIBLE while every PCH-eligible TU is served
+    # from objcache, but the moment an engine-header edit forces a REAL /Yu recompile
+    # of an eligible TU (dirs: hamobj synth flow gesture meta obj os utl movie),
+    # cl.exe consumes this stale .pch and resolves the SAME logical header at BOTH
+    # main and worktree paths, so `#pragma once` fails to dedupe -> mass
+    # Symbol/Str/File redefinition errors across ~34 TUs, corrupting measurement for
+    # every agent that edits a shared engine header.
+    #
+    # Fix: force ninja to rebuild the PCH IN THIS WORKTREE on first need (baking THIS
+    # tree's paths) by deleting the PCH edge's object output (a missing output makes
+    # the edge dirty regardless of the seeded .ninja_log). This is cheap and does NOT
+    # bust the warm object cache: objcache keys /Yu TUs on a ROOT-INDEPENDENT
+    # pch-source-closure digest (objcache key.rs closure_digest — content + repo-root-
+    # relative path, NOT the .pch bytes), so eligible TUs stay cache HITS after the
+    # rebuild. Cost is a single decomp_pch.cpp compile on the first build that needs
+    # the PCH; the dominant GAME workflow (band3/network are NON-eligible dirs) never
+    # enters the PCH graph and stays a true 0-compile no-op. The empty placeholder
+    # keeps cl.exe OVERWRITING system.pch rather than CREATING it (WIBO_FS_CACHE can't
+    # create a new file under the case-insensitive VERSION dir; overwrite is fine).
+    if [ -d "$WT_BUILD/pch" ]; then
+        rm -f "$WT_BUILD/pch/decomp_pch.obj"
+        : > "$WT_BUILD/pch/system.pch"
+        echo "==> PCH reset (dropped main-path system.pch/decomp_pch.obj; worktree rebuilds on first need)"
+    fi
 else
     echo "==> build/$VERSION/  (cold: copying only obj/ + config.json, no object cache)"
     rm -rf "$WT_BUILD"
