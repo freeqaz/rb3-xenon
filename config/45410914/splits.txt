@@ -4115,3 +4115,11 @@ HttpGet.cpp:
 BandLabel.cpp:
 	.pdata      start:0x821F69A0 end:0x821F6B58
 	.text       start:0x8232DD30 end:0x8232FAB0
+
+band3/meta_band/PassiveMessenger.cpp:
+	.pdata      start:0x8221C048 end:0x8221C050
+	.pdata      start:0x8221C218 end:0x8221C238
+	.pdata      start:0x8221C258 end:0x8221C260
+	.text       start:0x825B4338 end:0x825B4EC0
+	.text       start:0x825B5780 end:0x825B5D1C
+	.text       start:0x825B5DC0 end:0x825B5E44

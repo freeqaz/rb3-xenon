@@ -15013,5 +15013,10 @@
  "0x822862F8": "?__stl_throw_out_of_range@stlpmtx_std@@YAXPBD@Z",
  "0x8232EB58": "?AtFrame@?$Keys@VSymbol@@V1@@@QBAHMAAPBV?$Key@VSymbol@@@@0AAM@Z",
  "0x82725FC0": "?Float@DataNode@@QBAMPBVDataArray@@@Z",
- "0x82796720": "??$MakeString@PBDPBD@@YAPBDPBD00@Z"
+ "0x82796720": "??$MakeString@PBDPBD@@YAPBDPBD00@Z",
+ "0x825B5780": "?GetAndPreProcessFirstMessage@PassiveMessageQueue@@UAAPAVPassiveMessage@@XZ",
+ "0x825B5930": "?RemoveLowerPriorityMessage@PassiveMessageQueue@@QAA_NPAVPassiveMessage@@@Z",
+ "0x825B59D8": "?OnMsg@PassiveMessenger@@QAA?AVDataNode@@ABVRemoteUserLeftMsg@@@Z",
+ "0x825B5DC0": "?AddMessage@PassiveMessageQueue@@UAAXPAVPassiveMessage@@@Z",
+ "0x825B4338": "?HandlePassiveMessage@PassiveMessageQueue@@QAAXPAVPassiveMessage@@@Z"
 }
