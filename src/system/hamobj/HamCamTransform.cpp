@@ -111,7 +111,7 @@ void HamCamTransform::Setup(bool update) {
     if (update && TheLoadMgr.EditMode()) {
         DataNode node(DataReadString("milo cur_anim"), kDataArray);
         node.Array(0)->Release();
-        DataNode result = node.Array(0)->Execute(true);
+        DataNode result = node.Array(0)->Execute();
         if (result.Type() == kDataObject) {
             HamCamShot *anim = result.Obj<HamCamShot>();
             if (anim) {

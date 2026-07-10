@@ -225,7 +225,7 @@ void ThreadTask::Poll(float f1) {
     Hmx::Object *old_this = DataSetThis(mThis);
     for (; mCurrent < mScript->Size();) {
         int old_current = mCurrent;
-        mScript->Command(mCurrent)->Execute(true);
+        mScript->Command(mCurrent)->Execute();
         if (mWait)
             break;
         // Only increment if Execute() didn't modify mCurrent

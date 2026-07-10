@@ -70,7 +70,7 @@ void AppChild::Poll() {
         while (mEnabled && !mSync) {
             DataArrayPtr cmd;
             *mStream >> cmd;
-            cmd->Execute(true);
+            cmd->Execute();
         }
         mSync = false;
     }

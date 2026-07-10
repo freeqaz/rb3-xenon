@@ -207,7 +207,7 @@ DataNode CharacterTest::OnGetFilteredClips(DataArray *arr) {
             }
         }
         ptr->Resize(idx);
-        ptr->SortNodes(0);
+        ptr->SortNodes();
     }
     return ptr;
 }

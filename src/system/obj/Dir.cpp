@@ -945,7 +945,7 @@ void ObjectDir::Iterate(DataArray *arr, bool b) {
         if (bbb && (s2.Null() || it->Type() == s2)) {
             *var = &*it;
             for (int i = 4; i < arr->Size(); i++) {
-                arr->Command(i)->Execute(true);
+                arr->Command(i)->Execute();
             }
         }
     }

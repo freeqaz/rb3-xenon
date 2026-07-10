@@ -60,7 +60,7 @@ DataNode TextFile::OnReflect(DataArray *array) {
     if (mFile) {
         TextStream *idk = TheDebug.SetReflect(this);
         for (int i = 2; i < array->Size(); i++) {
-            array->Command(i)->Execute(true);
+            array->Command(i)->Execute();
         }
         TheDebug.SetReflect(idk);
     }

@@ -139,7 +139,7 @@ void StreamRecorder::StoppedRecordingScript() {
     static Symbol stream_recorder_stopped_recording("stream_recorder_stopped_recording");
     static DataArrayPtr p = new DataArray(1);
     p->Node(0) = stream_recorder_stopped_recording;
-    p->Execute(false);
+    p->Execute();
 }
 
 bool StreamRecorder::SetFrame(int index) {

@@ -558,7 +558,7 @@ DataNode CameraManager::OnGetShotList(DataArray *a) {
             list->Insert(list->Size(), *shotIt);
         }
     }
-    list->SortNodes(0);
+    list->SortNodes();
     list->Insert(0, NULL_OBJ);
     DataNode ret(list);
     list->Release();

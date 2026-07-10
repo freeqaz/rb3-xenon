@@ -618,16 +618,15 @@ public:
 
     void SetFileLine(Symbol, int);
     /** Sort the nodes in this DataArray. */
-    void SortNodes(int);
+    void SortNodes();
 
     /** Execute the value of this DataNode.
      * If the value is a DataFunc, call it directly.
      * Else, if the value is not a number,
      * retrieve the corresponding Object and call its handler.
-     * @param [in] fail If true, fail the program if there is an error in execution.
      * @returns The return value of whatever code was executed.
      */
-    DataNode Execute(bool fail = true);
+    DataNode Execute();
 
     /** Execute each Command in this DataArray, starting at the given index.
      * The final DataNode in the DataArray will be evaluated separately,

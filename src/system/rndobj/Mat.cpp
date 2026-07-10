@@ -440,7 +440,7 @@ DataNode RndMat::OnGetMetaMaterials(const DataArray *a) {
             }
         }
         ptr->Resize(idx);
-        ptr->SortNodes(0);
+        ptr->SortNodes();
     }
     return ptr;
 }

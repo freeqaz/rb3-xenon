@@ -159,7 +159,7 @@ DataNode CharBoneDir::GetClipTypes() {
         DataArray *currArr = sCharClipTypes->Array(i);
         arr->Node(i) = currArr->Sym(0);
     }
-    arr->SortNodes(0);
+    arr->SortNodes();
     DataNode ret(arr);
     arr->Release();
     return ret;
@@ -188,7 +188,7 @@ DataNode CharBoneDir::GetContextFlags() {
             }
         }
         arr->Resize(count);
-        arr->SortNodes(0);
+        arr->SortNodes();
         mContextFlags = arr;
         arr->Release();
     }

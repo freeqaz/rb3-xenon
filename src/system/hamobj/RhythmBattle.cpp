@@ -517,7 +517,7 @@ void RhythmBattle::UpdateMindControl() {
 void RhythmBattle::CheckIsFinale() {
     DataArray *arr = new DataArray(1);
     arr->Node(0) = "is_finale";
-    mFinale = arr->Execute(false).Int() && mFullKTB;
+    mFinale = arr->Execute().Int() && mFullKTB;
     arr->Release();
 }
 

@@ -110,7 +110,7 @@ DEF_DATA_FUNC(DataIfElse) {
 DEF_DATA_FUNC(DataIf) {
     if (array->Node(1).NotNull()) {
         for (int i = 2; i < array->Size(); i++) {
-            array->Command(i)->Execute(true);
+            array->Command(i)->Execute();
         }
         return 0;
     } else
@@ -120,7 +120,7 @@ DEF_DATA_FUNC(DataIf) {
 DEF_DATA_FUNC(DataUnless) {
     if (!array->Node(1)) {
         for (int i = 2; i < array->Size(); i++) {
-            array->Command(i)->Execute(true);
+            array->Command(i)->Execute();
         }
         return 0;
     }
@@ -272,7 +272,7 @@ DEF_DATA_FUNC(DataCountBits) { return CountBits(array->Int(1)); }
 DEF_DATA_FUNC(DataWhile) {
     while (array->Node(1).NotNull()) {
         for (int i = 2; i < array->Size(); i++) {
-            array->Command(i)->Execute(true);
+            array->Command(i)->Execute();
         }
     }
     return 0;
@@ -316,7 +316,7 @@ DEF_DATA_FUNC(DataDo) {
     int numVars = i - 1;
 
     for (; i < size - 1; i++) {
-        array->Command(i)->Execute(true);
+        array->Command(i)->Execute();
     }
     DataNode ret(array->Evaluate(i));
 
@@ -609,7 +609,7 @@ DEF_DATA_FUNC(DataForEach) {
     for (int i = 0; i < arr->Size(); i++) {
         *var = arr->Evaluate(i);
         for (int j = 3; j < array->Size(); j++) {
-            array->Command(j)->Execute(true);
+            array->Command(j)->Execute();
         }
     }
 
@@ -628,7 +628,7 @@ DEF_DATA_FUNC(DataForEachInt) {
     for (int cur = begin; cur != end; cur += inc) {
         *var = cur;
         for (int cnt = 4; cnt < array->Size(); cnt++) {
-            array->Command(cnt)->Execute(true);
+            array->Command(cnt)->Execute();
         }
         cur = var->UncheckedInt();
     }
@@ -722,7 +722,7 @@ DEF_DATA_FUNC(DataTime) {
     Timer time;
     time.Start();
     while (i < array->Size()) {
-        array->Command(i++)->Execute(true);
+        array->Command(i++)->Execute();
     }
     time.Stop();
 
@@ -1303,7 +1303,7 @@ DEF_DATA_FUNC(DataPushBack) {
 }
 
 DEF_DATA_FUNC(DataSort) {
-    array->Array(1)->SortNodes(0);
+    array->Array(1)->SortNodes();
     return 0;
 }
 
@@ -1446,7 +1446,7 @@ DEF_DATA_FUNC(DataDisableNotify) {
     if (array->Size() > 1) {
         TheDebug.SetDisabled(true);
         for (int i = 1; i < array->Size(); i++) {
-            array->Command(i)->Execute(true);
+            array->Command(i)->Execute();
         }
         TheDebug.SetDisabled(false);
     } else {
@@ -1470,7 +1470,7 @@ DEF_DATA_FUNC(DataFilterNotify) {
         TheDebug.SetModalCallback(ScriptDebugModal);
 
         for (int i = 3; i < array->Size(); i++) {
-            array->Command(i)->Execute(true);
+            array->Command(i)->Execute();
         }
 
         if (restore) {

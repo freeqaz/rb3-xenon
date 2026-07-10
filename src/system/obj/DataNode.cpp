@@ -133,7 +133,7 @@ const DataNode &UseQueue(const DataNode &node) {
 
 const DataNode &DataNode::Evaluate() const {
     if (mType == kDataCommand) {
-        return UseQueue(mValue.array->Execute(true));
+        return UseQueue(mValue.array->Execute());
     } else if (mType == kDataVar) {
         return *mValue.var;
     } else if (mType == kDataProperty) {

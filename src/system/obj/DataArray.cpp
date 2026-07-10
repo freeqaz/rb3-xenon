@@ -449,12 +449,10 @@ int NodeCmp(const void *a, const void *b) {
     }
 }
 
-void DataArray::SortNodes(int idx) {
+void DataArray::SortNodes() {
     if (mSize <= 0)
         return;
-    if (idx >= mSize)
-        return;
-    qsort(&mNodes[idx], mSize - idx, 8, NodeCmp);
+    qsort(mNodes, mSize, 8, NodeCmp);
 }
 
 void DataArrayGlitchCB(float f, void *v) {
@@ -869,28 +867,27 @@ void DataArray::RandomSortNodes() {
     }
 }
 
-DataNode DataArray::Execute(bool fail) {
+DataNode DataArray::Execute() {
+    // Retail asm (fn_82728118) has no DataCallStackFrame, no AutoTimer, and no
+    // "not function or object" fail block — all stripped from the matching
+    // build (MILO_DEBUG is force-defined tree-wide by src/macros.h, so the
+    // strip gate here is HX_NATIVE, per this file's existing convention).
+#ifdef HX_NATIVE
     DataCallStackFrame frame(this);
     static Timer *_t = AutoTimer::GetTimer("array_exec");
     AutoTimer _at(_t, 17.0f, DataArrayGlitchCB, this);
+#endif
     DataNode &node = (DataNode &)Evaluate(0);
-    Hmx::Object *deferredObject = 0;
     switch (node.Type()) {
     case kDataFunc:
         return node.UncheckedFunc()(this);
-    case kDataObject: {
-        deferredObject = node.UncheckedObj();
-        break;
-    }
     case kDataSymbol: {
-        const char *rawSymbolText = node.UncheckedStr();
-        Symbol commandSymbol = STR_TO_SYM(rawSymbolText);
-        const char *symbolText = commandSymbol.Str();
-        Hmx::Object *obj = gDataDir->FindObject(symbolText, true);
-        if (obj) {
-            return obj->Handle(this, true);
+        const char *sym = node.UncheckedStr();
+        Hmx::Object *object = gDataDir->FindObject(sym, true);
+        if (object) {
+            return object->Handle(this, true);
         }
-        std::map<Symbol, DataFunc *>::iterator func = gDataFuncs.find(commandSymbol);
+        std::map<Symbol, DataFunc *>::iterator func = gDataFuncs.find(STR_TO_SYM(sym));
         if (func != gDataFuncs.end()) {
             // Cache the function into the array to optimize repeat calls
             node = func->second;
@@ -898,8 +895,11 @@ DataNode DataArray::Execute(bool fail) {
         }
         break;
     }
+    case kDataObject:
+        return node.UncheckedObj()->Handle(this, true);
     case kDataString: {
-        Hmx::Object *object = gDataDir->FindObject(node.UncheckedStr(), true);
+        Hmx::Object *object =
+            gDataDir->FindObject(node.UncheckedVar()->UncheckedStr(), true);
         if (object) {
             return object->Handle(this, true);
         }
@@ -908,51 +908,44 @@ DataNode DataArray::Execute(bool fail) {
     default:
         break;
     }
-    Hmx::Object *handledObject = deferredObject;
-    // (int) cast produces signed cmpwi; direct comparison produces unsigned cmplwi
-#ifdef HX_NATIVE
-    if (handledObject == 0) {
-#else
-    if ((int)handledObject == 0) {
-#endif
-        if (sDefaultHandler) {
-            DataNode n = sDefaultHandler(this);
-            if (n.Type() != kDataUnhandled) {
-                return n;
-            }
+    if (sDefaultHandler) {
+        DataNode n = sDefaultHandler(this);
+        if (n.Type() != kDataUnhandled) {
+            return n;
         }
-        if (fail) {
-            String str;
-            Node(0).Print(str, true);
-            String str2;
-            node.Print(str2, true);
-            const char *msg;
-            bool sameText = (str == str2);
-            if (sameText) {
-                msg = MakeString(
-                    "%s not function or object (file %s, line %d)", str.c_str(), mFile, mLine
-                );
-            } else {
-                const char *evaluatedText = str2.c_str();
-                const char *commandText = str.c_str();
-                msg = MakeString(
-                    "%s = %s not function or object (file %s, line %d)",
-                    evaluatedText,
-                    commandText,
-                    mFile,
-                    mLine
-                );
-            }
-            MILO_FAIL_DTA("%s", msg);
-        }
-        return 0;
     }
-    return handledObject->Handle(this, true);
+#ifdef HX_NATIVE
+    {
+        String str;
+        Node(0).Print(str, true);
+        String str2;
+        node.Print(str2, true);
+        const char *msg;
+        bool sameText = (str == str2);
+        if (sameText) {
+            msg = MakeString(
+                "%s not function or object (file %s, line %d)", str.c_str(), mFile, mLine
+            );
+        } else {
+            const char *evaluatedText = str2.c_str();
+            const char *commandText = str.c_str();
+            msg = MakeString(
+                "%s = %s not function or object (file %s, line %d)",
+                evaluatedText,
+                commandText,
+                mFile,
+                mLine
+            );
+        }
+        MILO_FAIL_DTA("%s", msg);
+    }
+#endif
+    return 0;
 }
 
 DataNode DataArray::ExecuteBlock(int len) {
     for (; len < mSize - 1; len++) {
-        Command(len)->Execute(true);
+        Command(len)->Execute();
     }
     return Evaluate(len);
 }

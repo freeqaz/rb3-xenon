@@ -268,7 +268,7 @@ DataNode OnWithFileRoot(DataArray *da) {
     int thresh = da->Size() - 1;
     int i;
     for (i = 2; i < thresh; i++) {
-        da->Command(i)->Execute(true);
+        da->Command(i)->Execute();
     }
     return da->Evaluate(i);
 }

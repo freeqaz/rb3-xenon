@@ -297,7 +297,7 @@ DataNode ObjectList(ObjectDir *dir, Symbol parentSym, bool b) {
     for (std::list<const char *>::iterator it = sList.begin(); it != sList.end(); ++it) {
         ptr->Node(idx++) = *it;
     }
-    ptr->SortNodes(0);
+    ptr->SortNodes();
     return ptr;
 }
 

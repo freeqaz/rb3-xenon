@@ -224,7 +224,7 @@ DataNode CharDriver::OnGetClipOrGroupList(DataArray *) {
          ++it) {
         ptr->Node(idx++) = *it;
     }
-    ptr->SortNodes(0);
+    ptr->SortNodes();
     return ptr;
 }
 

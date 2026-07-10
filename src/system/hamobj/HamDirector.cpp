@@ -1211,7 +1211,7 @@ DataNode HamDirector::OnListPossibleMoves() {
          ++it) {
         moveArr->Insert(moveArr->Size(), it->first);
     }
-    moveArr->SortNodes(0);
+    moveArr->SortNodes();
     DataNode ret(moveArr);
     moveArr->Release();
     return ret;
@@ -1228,7 +1228,7 @@ DataNode HamDirector::OnListPossibleVariants() {
          ++it) {
         moveArr->Insert(moveArr->Size(), (*it)->Name());
     }
-    moveArr->SortNodes(0);
+    moveArr->SortNodes();
     DataNode ret(moveArr);
     moveArr->Release();
     return ret;
@@ -1373,7 +1373,7 @@ DataNode HamDirector::OnClipList(DataArray *a) {
     } else {
         DataNode list = PracticeList(kDifficultyExpert);
         DataArray *arr = list.Array();
-        arr->SortNodes(0);
+        arr->SortNodes();
         return list;
     }
 }

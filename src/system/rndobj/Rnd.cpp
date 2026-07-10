@@ -799,7 +799,7 @@ DataNode Rnd::OnReflect(const DataArray *da) {
     if (o->Showing()) {
         TextStream *idk = TheDebug.SetReflect(o);
         for (int i = 3; i < da->Size(); i++) {
-            da->Command(i)->Execute(true);
+            da->Command(i)->Execute();
         }
         TheDebug.SetReflect(idk);
     }
