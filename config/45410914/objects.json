@@ -907,7 +907,12 @@
    "band3/tour/QuestJournal.cpp": "NonMatching",
    "band3/tour/QuestManager.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
-   "band3/tour/TourProgress.cpp": "NonMatching",
+   "band3/tour/TourProgress.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_MAP_0x1C"
+    ]
+   },
    "band3/tour/TourBand.cpp": "NonMatching",
    "band3/tour/TourPerformer.cpp": "NonMatching",
    "band3/game/PracticePanel.cpp": "NonMatching",
