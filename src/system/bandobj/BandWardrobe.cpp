@@ -311,8 +311,10 @@ void BandWardrobe::SetPlayMode(Symbol s, BandCamShot *shot) {
 }
 
 void BandWardrobe::SyncPlayMode() {
-    if (mModeSink)
+    if (mModeSink) {
+        static Message sync_play_mode_msg("sync_play_mode");
         mModeSink->Handle(sync_play_mode_msg, true);
+    }
 }
 
 void BandWardrobe::SyncInterestObjects() {
@@ -854,7 +856,16 @@ BandCharDesc *BandWardrobe::GetPrefab(int target, int variation) {
     }
 }
 
-SAVE_OBJ(BandWardrobe, 0x6D3)
+BEGIN_SAVES(BandWardrobe)
+    SAVE_REVS(5, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    bs << mGenre;
+    bs << mTempo;
+    bs << mVocalGender;
+    bs << GetPlayMode();
+    bs << mShotSetPlayMode;
+    bs << mPlayShot5;
+END_SAVES
 
 BEGIN_LOADS(BandWardrobe)
     LOAD_REVS(bs)
