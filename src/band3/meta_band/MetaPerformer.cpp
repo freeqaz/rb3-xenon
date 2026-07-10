@@ -1666,7 +1666,9 @@ BEGIN_HANDLERS(MetaPerformer)
     HANDLE_ACTION(select_random_venue, SelectRandomVenue())
     HANDLE_EXPR(get_venue, GetVenue())
     HANDLE_EXPR(get_venue_class, GetVenueClass())
+#ifdef HX_NATIVE
     HANDLE_EXPR(get_last_venue_class, GetLastVenueClass())
+#endif
     HANDLE_ACTION(clear_venues, ClearVenues())
     HANDLE_EXPR(has_setlist, HasSetlist())
     HANDLE_ACTION(set_song, SetSong(_msg->Sym(2)))
@@ -1688,7 +1690,9 @@ BEGIN_HANDLERS(MetaPerformer)
     HANDLE_EXPR(part_plays_in_song, PartPlaysInSong(_msg->Sym(2)))
     HANDLE_EXPR(is_winning, IsWinning())
     HANDLE_EXPR(has_sync_permission, HasSyncPermission())
+#ifdef HX_NATIVE
     HANDLE_EXPR(cheat_toggle_finale, CheatToggleFinale())
+#endif
     HANDLE_ACTION(trigger_song_completion, TriggerSongCompletion())
     HANDLE_ACTION(advance_song, AdvanceSong(_msg->Int(2)))
     HANDLE_ACTION(skip_song, SkipSong())
@@ -1697,25 +1701,33 @@ BEGIN_HANDLERS(MetaPerformer)
     HANDLE_ACTION(set_band_no_fail, SetBandNoFail(_msg->Int(2)))
     HANDLE_ACTION(set_harmony_override, mHarmonyOverride = _msg->Int(2))
     HANDLE_ACTION(set_realdrums_override, mRealDrumsOverride = _msg->Int(2))
+#ifdef HX_NATIVE
     HANDLE_EXPR(get_venue_override, GetVenueOverride())
     HANDLE_ACTION(set_venue_override, mVenueOverride = _msg->Sym(2))
+#endif
     HANDLE_EXPR(is_now_using_vocal_harmony, IsNowUsingVocalHarmony())
     HANDLE_EXPR(is_playing_demo, IsPlayingDemo())
     HANDLE_EXPR(are_credits_pending, AreCreditsPending())
     HANDLE_ACTION(set_credits_pending, SetCreditsPending())
     HANDLE_ACTION(clear_credits_pending, ClearCreditsPending())
+#ifdef HX_NATIVE
     HANDLE_EXPR(is_wiiprofile_create_pending, IsWiiPending((WiiPendingFlags)1))
     HANDLE_ACTION(set_wiiprofile_create_pending, SetWiiPending((WiiPendingFlags)1))
     HANDLE_ACTION(clear_wiiprofile_create_pending, ClearWiiPending((WiiPendingFlags)1))
+#endif
     HANDLE_EXPR(is_using_persistent_data, GetPersistentGameData() != 0)
     HANDLE_EXPR(total_stars, TotalStars(_msg->Int(2)))
     HANDLE_EXPR(get_total_stars_capped, TotalStars(true))
     HANDLE_EXPR(get_recent_instrument_mask, GetRecentInstrumentMask())
     HANDLE_ACTION(upload_debug_stats, UploadDebugStats())
+#ifdef HX_NATIVE
     HANDLE_EXPR(has_online_scoring, mHasOnlineScoring)
+#endif
     HANDLE_EXPR(has_valid_band_score, HasValidBandScore())
     HANDLE_EXPR(has_valid_user_score, HasValidUserScore(_msg->Obj<BandUser>(2)))
+#ifdef HX_NATIVE
     HANDLE_EXPR(has_online_scoring, mHasOnlineScoring)
+#endif
     HANDLE_EXPR(has_valid_instarank_data, HasValidInstarankData())
     HANDLE_ACTION(
         update_instarank_rank_label, UpdateInstarankRankLabel(_msg->Obj<UILabel>(2))

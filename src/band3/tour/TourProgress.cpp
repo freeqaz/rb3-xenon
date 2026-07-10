@@ -208,7 +208,7 @@ Symbol TourProgress::GetVenueForCurrentGig() const {
 }
 
 bool TourProgress::IsTourComplete() const {
-    return !mOnTour ? false : GetNumTotalGigs() <= mNumCompletedGigs;
+    return mOnTour && AreAllTourGigsComplete();
 }
 
 bool TourProgress::AreAllTourGigsComplete() const {
@@ -496,7 +496,9 @@ BEGIN_HANDLERS(TourProgress)
     HANDLE_EXPR(get_next_city, GetNextCity())
     HANDLE_EXPR(does_tour_have_leaderboard, DoesTourHaveLeaderboard())
     HANDLE_EXPR(get_tour_leaderboard_goal, GetTourLeaderboardGoal())
+#ifdef HX_NATIVE
     HANDLE_ACTION(dump_properties, DumpProperties())
+#endif
     HANDLE_SUPERCLASS(TourSavable)
     HANDLE_CHECK(0x373)
 END_HANDLERS
