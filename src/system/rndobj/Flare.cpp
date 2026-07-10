@@ -297,7 +297,7 @@ void RndFlare::CalcScale() {
 }
 
 void RndFlare::SetSteps(int i1) {
-    if (i1 < 1) {
+    if (i1 <= 1) {
         i1 = 1;
     }
     if (mStep == mSteps) {
