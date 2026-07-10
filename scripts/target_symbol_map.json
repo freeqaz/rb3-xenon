@@ -14638,5 +14638,6 @@
  "0x82621740": "?SetTrainingState@TrainingPanel@@QAAXW4TrainingState@1@@Z",
  "0x826218C0": "?RefreshLessonsList@TrainingPanel@@QAAXXZ",
  "0x82621A38": "?OnMsg@TrainingPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
- "0x82621AB8": "?GotoTrainer@TrainingPanel@@QAAXVSymbol@@@Z"
+ "0x82621AB8": "?GotoTrainer@TrainingPanel@@QAAXVSymbol@@@Z",
+ "0x82659CD8": "?HasIntro@Game@@QAA_NXZ"
 }

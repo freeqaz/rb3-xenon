@@ -11,6 +11,13 @@
 #include "utl/DeJitter.h"
 #include "utl/Profiler.h"
 
+// Dev-only GamePanel debug-HUD members (see the note at the member block below).
+// Defined only for the native host build; the X360 matching build must strip them
+// so sizeof(GamePanel) == 0x188 everywhere (retail layout).
+#ifdef HX_NATIVE
+#define RB3_GAMEPANEL_DEBUG_MEMBERS 1
+#endif
+
 enum LoadingState {
     kLoadingState_NotReady = 0,
     kLoadingState_UILoaded = 1,
@@ -93,8 +100,16 @@ public:
     HitTracker *mHitTracker; // 0x14c (ctor new HitTracker(0x408) -> puVar1[0x53])
     DirectInstrument *mDirectInstrument; // 0x150 (ctor new DirectInstrument(0x18) -> puVar1[0x54])
 
-#ifdef MILO_DEBUG
-    // Debug HUD overlays + dejitter scratch — present only in debug builds.
+#ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
+    // Debug HUD overlays + dejitter scratch — present only in dev builds.
+    // Retail RB3-360 strips these: GamePanel::NewObject (target, in the Game.cpp
+    // TU region) allocates `new(0x188)`, i.e. own-object ends at mDirectInstrument
+    // +4 = 0x154 and the Hmx::Object vbase follows immediately (sizeof 0x188).
+    // With these members kept, every TU including this header sees sizeof 0x1a0.
+    // NOTE: src/macros.h force-defines MILO_DEBUG tree-wide, so MILO_DEBUG canNOT
+    // be the strip gate (GamePanel.cpp locally #undef's it, which is why that TU
+    // already matched at the 0x188 layout while other TUs disagreed). Gate is
+    // HX_NATIVE-only, mirroring RB3_UI_DEBUG_MEMBERS in ui/UI.h (commit 9a198eb).
     RndOverlay *mTime;
     RndOverlay *mLatency;
     RndOverlay *mDeltaTime;

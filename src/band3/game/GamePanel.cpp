@@ -55,7 +55,7 @@ LatencyCallback gGamePanelCallback;
 
 GamePanel::GamePanel()
     : mGame(0),
-#ifdef MILO_DEBUG
+#ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
       mTime(RndOverlay::Find("time", true)),
       mLatency(RndOverlay::Find("latency", true)),
       mDeltaTime(RndOverlay::Find("delta_time", true)), unk64(1), unk68(0), unk6c(0),
@@ -343,7 +343,7 @@ void GamePanel::Poll() {
     if (unk151 && 1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime) > unk154) {
         unk151 = false;
     }
-#ifdef MILO_DEBUG
+#ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
     if (mTime->Showing()) {
         UpdateNowBar();
     }
@@ -380,7 +380,7 @@ void GamePanel::StartIntro() {
     mGame->StartIntro();
 }
 
-#ifdef MILO_DEBUG
+#ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
 void GamePanel::UpdateNowBar() {
     MILO_ASSERT(mGame, 0x212);
     TaskMgr& tm = TheTaskMgr;
@@ -480,7 +480,7 @@ void GamePanel::UpdateDeltaTimeOverlay() {
     float t = unk70;
     *mDeltaTime << MakeString("dt: %5.1f, ddt: %5.1f\n", t, t - unk6c);
 }
-#endif // MILO_DEBUG
+#endif // RB3_GAMEPANEL_DEBUG_MEMBERS
 
 void GamePanel::FinishLoad() {
     UIPanel::FinishLoad();
@@ -493,7 +493,7 @@ void GamePanel::FinishLoad() {
     HAQManager::PrintSongInfo(
         MetaPerformer::Current()->Song(), TheSongDB->GetSongDurationMs()
     );
-#ifdef MILO_DEBUG
+#ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
     if (unk64)
         unk64 = false;
 #endif

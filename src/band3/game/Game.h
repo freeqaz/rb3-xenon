@@ -228,19 +228,24 @@ public:
     bool unk6b; // 0x7a (pad region)
     bool unk6c; // 0x7b (pad region) - screen saver?
     float mTimeOffset; // 0x7c
-    Timer mTime; // 0x80
-    bool mHasIntro; // 0xa8
-    float mLastPollMs; // 0xac
+    // NOTE (360 offsets): Timer is 0x30 on X360 (8-byte-aligned unsigned long
+    // long mCycles) vs 0x28 on Wii, so everything from mHasIntro on sits +0x8
+    // vs the old Wii-era annotations here. Proven by the retail getter
+    // fn_82659CD8 (= Game::HasIntro): `lbz r3, 0xb0(r3)`, called on
+    // GamePanel::mGame in GamePanel::StartGame (target 0x826773F4).
+    Timer mTime; // 0x80 (0x30 bytes on 360)
+    bool mHasIntro; // 0xb0 (Wii: 0xa8)
+    float mLastPollMs; // 0xb4 (Wii: 0xac)
     // Retail packs mMuckWithPitch with the mNeverAllowInput/unkb9 bool group
     // (Wii interleaved it with mMusicSpeed, wasting 4 bytes of alignment pad),
     // so mLoadState lands at 0xcc rather than 0xd0.
-    float mMusicSpeed; // 0xb4
-    bool mNeverAllowInput; // 0xb8
-    bool mMuckWithPitch; // 0xb9
-    bool unkb9;
-    int mDemoMaxPctComplete;
-    float mDemoMaxMs;
-    bool unkc4;
+    float mMusicSpeed; // 0xb8
+    bool mNeverAllowInput; // 0xbc
+    bool mMuckWithPitch; // 0xbd
+    bool unkb9; // 0xbe
+    int mDemoMaxPctComplete; // 0xc0
+    float mDemoMaxMs; // 0xc4
+    bool unkc4; // 0xc8
     LoadState mLoadState; // 0xcc
     EndGameResult mResult; // 0xcc
     Band *mBand; // 0xd0

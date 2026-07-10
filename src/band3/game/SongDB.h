@@ -102,6 +102,13 @@ public:
 
     SongData *GetData() const { return mSongData; }
 
+    // Offsets below are Wii-era annotations (stlport vector = 0x8 there; it is
+    // 0x10 on X360, so the real 360 offsets differ). NOTE: a prior lead claimed
+    // retail SongDB is >= 0xb1 bytes based on the 8-byte getter fn_82659CD8
+    // (`lbz r3, 0xb0(r3)`) supposedly reading SongDB+0xb0 -- that was wrong: the
+    // getter is Game::HasIntro reading Game+0xb0 (called on GamePanel::mGame,
+    // which shares offset 0x54 with Game::mSongDB -- hence the confusion). No
+    // evidence exists that this member list is missing retail members.
     SongData *mSongData; // 0x4
     std::vector<TrackData> mTrackData; // 0x8
     float mSongDurationMs; // 0x10
