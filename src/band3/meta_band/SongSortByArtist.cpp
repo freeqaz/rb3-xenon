@@ -85,12 +85,18 @@ OwnedSongSortNode *SongSortByArtist::NewSongNode(SongRecord *record) const {
 
 StoreSongSortNode *SongSortByArtist::NewSongNode(StoreOffer *offer) const {
     MemDoTempAllocations m;
-    const char *artist = offer->Artist();
-    Symbol firstChar = NodeSort::FirstChar(artist, true);
-    const char *album = offer->AlbumName();
+    // Retail 360: StoreOffer no longer exposes Artist()/AlbumName()/IsCover();
+    // properties are read straight off the offer data via GetData (same lever
+    // as StoreSongSortNode::GetArtist/GetAlbum/GetIsCover, eab797d).
+    static Symbol artist("artist");
+    static Symbol album_name("album_name");
+    static Symbol cover("cover");
+    const char *artistStr = offer->GetData(DataArrayPtr(artist), false).Str();
+    Symbol firstChar = NodeSort::FirstChar(artistStr, true);
+    const char *album = offer->GetData(DataArrayPtr(album_name), false).Str();
     const char *title = offer->OfferName();
-    bool cover = offer->IsCover();
-    ArtistCmp *cmp = new ArtistCmp(firstChar, artist, cover, album, -1, title);
+    bool isCover = offer->GetData(DataArrayPtr(cover), false).Int();
+    ArtistCmp *cmp = new ArtistCmp(firstChar, artistStr, isCover, album, -1, title);
     StoreSongSortNode *node = new StoreSongSortNode(cmp, offer);
     return node;
 }

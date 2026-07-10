@@ -14463,5 +14463,19 @@
  "0x825826f8": "??_GSongSortMgr@@UAAPAXI@Z",
  "0x82582750": "?BuildFilteredSongList@SongSortMgr@@QAAXPAVSongFilter@1@VSymbol@@@Z",
  "0x82582a30": "?BuildSetlistList@SongSortMgr@@QAAXXZ",
- "0x82582e78": "?Init@SongSortMgr@@SAXXZ"
+ "0x82582e78": "?Init@SongSortMgr@@SAXXZ",
+ "0x82656AD8": "?NumData@StoreMenuProvider@@UBAHXZ",
+ "0x82656AE8": "?IsActive@StoreMenuProvider@@UBA_NH@Z",
+ "0x82656B58": "?IsRandomSelect@StoreMenuProvider@@QBA_NPAVDataArray@@@Z",
+ "0x82656C20": "??1StoreMenuProvider@@UAA@XZ",
+ "0x82656D18": "?SetData@StoreMenuProvider@@QAAXPAVDataArray@@@Z",
+ "0x82656DB0": "?Text@StoreMenuProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x82656EB8": "?GetTitle@StoreMenuProvider@@QAAPBDXZ",
+ "0x82656FE8": "?GetFileName@StoreMenuProvider@@QAAPBDH@Z",
+ "0x82657180": "?Handle@StoreMenuProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x826574C0": "??0StoreMenuProvider@@QAA@PAVDataArray@@PBD@Z",
+ "0x826575C0": "??_GStoreMenuProvider@@UAAPAXI@Z",
+ "0x82656D10": "??_EStoreMenuProvider@@W3AAPAXI@Z",
+ "0x82659CC0": "?GameTerminate@@YAXXZ",
+ "0x8265BB38": "?GetActivePlayer@Game@@QBAPAVPlayer@@H@Z"
 }

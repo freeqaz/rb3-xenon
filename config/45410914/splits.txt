@@ -3073,6 +3073,10 @@ network/Plugins/Checksum/MD5/MD5.cpp:
 	.pdata      start:0x82250C70 end:0x82250C98
 	.text       start:0x82B15190 end:0x82B16D44
 
+band3/meta_band/StoreMenuProvider.cpp:
+	.pdata      start:0x82226F70 end:0x82227040
+	.text       start:0x82656AD8 end:0x82657610
+
 band3/meta_band/LessonProvider.cpp:
 	.pdata      start:0x82227040 end:0x822270B8
 	.text       start:0x82657610 end:0x82657CB4
@@ -3374,7 +3378,7 @@ band3/game/Game.cpp:
 	.text       start:0x82659E60 end:0x82659EC0
 	.text       start:0x8265A168 end:0x8265A1F8
 	.text       start:0x8265A278 end:0x8265A34C
-	.text       start:0x8265BAF0 end:0x8265BB10
+	.text       start:0x8265BAF0 end:0x8265BB48
 	.text       start:0x8265C250 end:0x8265C3B0
 	.text       start:0x8265C3B0 end:0x8265C518
 	.text       start:0x8265EA78 end:0x8265EBE8

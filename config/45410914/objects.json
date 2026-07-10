@@ -1186,6 +1186,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/StoreMenuProvider.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SongSortNode.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

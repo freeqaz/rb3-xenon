@@ -78,6 +78,11 @@ public:
     void SetOfferAlbum(const StoreOffer *);
     void SetOfferDescription(const StoreOffer *);
     void SetStoreCrumbText();
+    // Retail 360-only (fn 0x825AE018): sets label text from a store submenu
+    // entry node - Symbol -> SetTextToken; (loc_sym str) array ->
+    // "%s%s" of Localize(arr->Sym(0)) + arr->Str(1); else node.Str().
+    // Only caller is StoreMenuProvider::Text.
+    void SetStoreMenuText(const DataNode &);
     void SetMusicLibraryStatus();
     void SetTokenRedemptionString(const TokenRedemptionPanel *, int);
     void SetBandName(const LocalBandUser *);
