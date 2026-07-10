@@ -1,5 +1,14 @@
 # Game (band3) retail layout — post-base-drop follow-ups (2026-07-10)
 
+> **STATUS (2026-07-10, later same day):** Follow-up 2 (mMuckWithPitch tail)
+> LANDED in `e0633ea` and Follow-up 3 (bool-block reorder) in `325f063` — by a
+> concurrent wave, verified by a fresh recon pass: CanUserPause/HandleAudioLoad/
+> IsLoaded/SetGameOver all at 100%, and the drift sweep shows Game::Handle
+> (99.69) with ZERO remaining offset deltas. Follow-up 1 (DiscErrorEnd phantom
+> vtable slot) and Follow-up 4 (comment refresh; GetScoringTracks 0%/32B
+> pairing artifact) remain open. New non-layout residual noted: Game::Handle
+> is missing one fn_82564F80 call sequence on &mSongInfo (5 instructions).
+
 The `DiscErrorMgrWii::Callback` base drop landed in `3edcc60` (wave-5 g3-gem,
 +8). Independently, a deep recon agent reconstructed the FULL retail `Game`
 layout from first principles (RTTI walk + ctor/dtor decompile + 20+ pinned-asm
