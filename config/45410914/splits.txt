@@ -383,6 +383,34 @@ TrackWatcher.cpp:
 	.pdata      start:0x822372D8 end:0x82237390
 	.text       start:0x82778700 end:0x82779278
 
+DrumPlayer.cpp:
+	.pdata      start:0x82237390 end:0x822373D8
+	.text       start:0x82779278 end:0x82779610
+
+MercurySwitchFilter.cpp:
+	.pdata      start:0x822373D8 end:0x82237428
+	.text       start:0x82779610 end:0x82779C10
+
+RealGuitarTrackWatcherImpl.cpp:
+	.pdata      start:0x82237428 end:0x82237548
+	.text       start:0x82779C10 end:0x8277B6D8
+
+KeyboardTrackWatcherImpl.cpp:
+	.pdata      start:0x82237548 end:0x82237560
+	.text       start:0x8277B6D8 end:0x8277B848
+
+JoypadTrackWatcherImpl.cpp:
+	.pdata      start:0x82237560 end:0x82237588
+	.text       start:0x8277B848 end:0x8277BE60
+
+DrumFillTrackWatcherImpl.cpp:
+	.pdata      start:0x82237588 end:0x822375B8
+	.text       start:0x8277BE60 end:0x8277C1B8
+
+GuitarTrackWatcherImpl.cpp:
+	.pdata      start:0x822375B8 end:0x822375D8
+	.text       start:0x8277C1B8 end:0x8277C6A0
+
 JoypadController.cpp:
 	.pdata      start:0x82237198 end:0x822371A0
 	.pdata      start:0x822371E8 end:0x822371F0
