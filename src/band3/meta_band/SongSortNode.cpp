@@ -257,7 +257,9 @@ SortNode *HeaderSortNode::GetFirstActive() {
 }
 
 bool HeaderSortNode::IsActive() const {
-    return TheMusicLibrary->CanHeadersBeSelected() ? IsEnabled() : false;
+    if (!TheMusicLibrary->CanHeadersBeSelected())
+        return false;
+    return IsEnabled();
 }
 
 bool HeaderSortNode::IsEnabled() const {
@@ -382,7 +384,7 @@ int OwnedSongSortNode::GetTotalScore() { return mSongRecord->GetScore(); }
 
 int OwnedSongSortNode::GetTotalStars(bool b) {
     int stars = mSongRecord->mStars[mSongRecord->mActiveScoreType];
-    int cap = (b != 0) + 5;
+    int cap = ((b == 0) ^ 1) + 5;
     return cap >= stars ? stars : cap;
 }
 
@@ -435,8 +437,9 @@ int SetlistSortNode::GetTotalStars(bool b) {
     for (std::vector<int>::iterator it = songs.begin(); it != songs.end(); ++it) {
         SongRecord *rec = TheSongSortMgr->GetRecord(*it);
         if (rec) {
+            int cap = b ? 6 : 5;
             int stars = rec->mStars[rec->mActiveScoreType];
-            sum += Min<int>(b ? 6 : 5, stars);
+            sum += cap < stars ? cap : stars;
         }
     }
     return sum;

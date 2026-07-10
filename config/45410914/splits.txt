@@ -1254,9 +1254,7 @@ SongLayout.cpp:
 
 Mesh.cpp:
 	.pdata      start:0x822032A0 end:0x82203730
-	.pdata      start:0x82225B50 end:0x82225B58
 	.text       start:0x82404BE8 end:0x8240A428
-	.text       start:0x82643D50 end:0x82643E10
 
 CharMeshHide.cpp:
 	.pdata      start:0x821FB4D8 end:0x821FB4E0
@@ -3147,7 +3145,7 @@ band3/meta_band/StoreMenuPanel.cpp:
 	.pdata      start:0x82223238 end:0x82223408
 	.text       start:0x8261FE68 end:0x826218C0
 
-band3/meta_band/StoreSongSortNode.cpp:
+band3/meta_band/SongSort.cpp:
 	.pdata      start:0x8221AFD8 end:0x8221B078
 	.text       start:0x825A6640 end:0x825A7038
 
@@ -3418,8 +3416,8 @@ UIStats.cpp:
 	.text       start:0x8254BD10 end:0x8254BD64
 
 OvershellSlotState.cpp:
-	.pdata      start:0x82225AE0 end:0x82225AE8
-	.text       start:0x82643628 end:0x82643698
+	.pdata      start:0x82225928 end:0x82225B08
+	.text       start:0x82642270 end:0x82643810
 
 GemPlayer.cpp:
 	.pdata      start:0x8222B448 end:0x8222B450
@@ -3830,10 +3828,8 @@ QuestManager.cpp:
 	.text       start:0x82346E18 end:0x82346F08
 
 SongSortNode.cpp:
-	.pdata      start:0x82225B38 end:0x82225B40
-	.pdata      start:0x82225CE0 end:0x82225D98
-	.text       start:0x82643AE8 end:0x82643BD0
-	.text       start:0x826454E8 end:0x826462F4
+	.pdata      start:0x82225B08 end:0x82225D98
+	.text       start:0x82643810 end:0x826462F4
 
 GuitarFx.cpp:
 	.pdata      start:0x8222E460 end:0x8222E4C0

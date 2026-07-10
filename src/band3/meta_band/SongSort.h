@@ -24,8 +24,8 @@ public:
     virtual bool CustomForNode(ShortcutNode *, UIListCustom *, Hmx::Object *) const {
         return false;
     }
-    virtual const char *TextForNode(ShortcutNode *, UIListLabel *, UILabel *) const {
-        return nullptr;
+    virtual bool TextForNode(ShortcutNode *, UIListLabel *, UILabel *) const {
+        return false;
     }
     virtual bool IsReady() const { return true; }
     virtual void PollReady() {}

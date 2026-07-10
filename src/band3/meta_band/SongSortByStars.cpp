@@ -111,11 +111,11 @@ HeaderSortNode *SongSortByStars::NewHeaderNode(SongSortNode *node) const {
     return newNode;
 }
 
-const char *SongSortByStars::TextForNode(
+bool SongSortByStars::TextForNode(
     ShortcutNode *node, UIListLabel *listLabel, UILabel *label
 ) const {
     label->SetTextToken(gNullStr);
-    return (const char *)1;
+    return true;
 }
 
 bool SongSortByStars::CustomForNode(

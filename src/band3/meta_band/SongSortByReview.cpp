@@ -87,11 +87,11 @@ HeaderSortNode *SongSortByReview::NewHeaderNode(SongSortNode *node) const {
     return newNode;
 }
 
-const char *SongSortByReview::TextForNode(
+bool SongSortByReview::TextForNode(
     ShortcutNode *node, UIListLabel *listLabel, UILabel *label
 ) const {
     label->SetTextToken(gNullStr);
-    return (const char *)1;
+    return true;
 }
 
 bool SongSortByReview::CustomForNode(

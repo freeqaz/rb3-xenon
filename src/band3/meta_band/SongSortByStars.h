@@ -22,7 +22,7 @@ public:
     virtual ~SongSortByStars() {}
     virtual void Init();
     virtual bool CustomForNode(ShortcutNode *, UIListCustom *, Hmx::Object *) const;
-    virtual const char *TextForNode(ShortcutNode *, UIListLabel *, UILabel *) const;
+    virtual bool TextForNode(ShortcutNode *, UIListLabel *, UILabel *) const;
     virtual ShortcutNode *NewShortcutNode(SongSortNode *) const;
     virtual HeaderSortNode *NewHeaderNode(SongSortNode *) const;
     virtual OwnedSongSortNode *NewSongNode(SongRecord *) const;

@@ -1162,6 +1162,7 @@
    "band3/meta_band/SongSortByReview.cpp": "NonMatching",
    "band3/meta_band/SongSortBySong.cpp": "NonMatching",
    "band3/meta_band/SongSortByStars.cpp": "NonMatching",
+   "band3/meta_band/SongSort.cpp": "NonMatching",
    "band3/meta_band/SongSortMgr.cpp": "NonMatching",
    "band3/meta_band/StandIn.cpp": "NonMatching",
    "band3/meta_band/StoreInfoPanel.cpp": {
@@ -1182,7 +1183,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/meta_band/SongSortNode.cpp": "NonMatching",
+   "band3/meta_band/SongSortNode.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/StoreSongSortNode.cpp": "NonMatching",
    "band3/meta_band/UIEvent.cpp": "NonMatching",
    "band3/meta_band/UIEventMgr.cpp": {
