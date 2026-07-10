@@ -946,7 +946,7 @@ WiiProfile *OvershellSlot::GetUserWiiProfile() {
 }
 
 void OvershellSlot::ToggleWiiSpeak() {
-    TheProfileMgr.SetWiiSpeakToggle(!TheProfileMgr.mWiiSpeakToggle);
+    // retail X360 strips ProfileMgr's WiiSpeak state (feature absent) — no-op
 }
 
 void OvershellSlot::AttemptSwapUserProfile(int i) {

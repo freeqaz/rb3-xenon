@@ -538,7 +538,12 @@ void MainHubPanel::SetDLCMotd(const char *motd) {
 const char *MainHubPanel::GetDLCMotd() {
     const char *motd = unk94.c_str();
     if (strlen(motd) == 0) {
+#ifdef RB3_HANDLE_LOCAL_STATIC
+        static Symbol message_latest_dlc("message_latest_dlc");
         return Localize(message_latest_dlc, nullptr);
+#else
+        return Localize(message_latest_dlc, nullptr);
+#endif
     }
     return motd;
 }

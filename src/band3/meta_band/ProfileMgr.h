@@ -59,17 +59,12 @@ public:
     void SetDolby(bool);
     void SetOverscan(bool);
     void SetSynapseEnabled(bool);
-    void SetWiiSpeakToggle(bool);
-    void SetWiiSpeakFriendsVolume(int);
-    void SetWiiSpeakMicrophoneSensitivity(int);
-    void SetWiiSpeakHeadphoneMode(bool);
-    void SetWiiSpeakEchoSuppression(bool);
+    // retail X360 strips the WiiSpeak feature (setters absent)
     bool GetHasSeenFirstTimeCalibration() const;
     void SetHasSeenFirstTimeCalibration(bool);
     bool GetHasConnectedProGuitar() const;
     void SetHasConnectedProGuitar(bool);
-    void SetWiiFriendsPromptShown();
-    bool GetUsingWiiFriends();
+    // retail X360 strips the Wii-friends feature
     bool GetSecondPedalHiHat() const;
     void SetSecondPedalHiHat(bool);
     void SetSyncPresetIx(int);
@@ -133,7 +128,6 @@ public:
     int GetFirstTimeInstrumentFlag(JoypadType) const;
     bool GetHasSeenFirstTimeInstruments(const LocalUser *) const;
     void SetHasSeenFirstTimeInstruments(const LocalUser *, bool);
-    void SetUsingWiiFriends(int);
     void CheckProfileWebSetlistStatus();
     void HandlePendingProfileUploads();
     void SyncProfileSetlists();
@@ -143,9 +137,7 @@ public:
     void UpdateMultiMicDeviceSliders(Mic *, int);
     void ForceMicGain(int, float);
     void ForceMicOutputGain(int, float);
-    int GetCount() const;
-    int GetUnregisteredCount() const;
-    int GetRegisteredCount() const;
+    // retail X360 strips the Wii roster-count accessors (TheWiiProfileMgr)
     bool ChooseNewPrimaryProfile();
     void SetPrimaryProfile(BandProfile *);
     bool CanChangePrimaryProfile() const;
@@ -153,19 +145,12 @@ public:
     void HandleProfileLoadComplete();
     void HandleProfileSaveComplete();
     void FakeProfileFill();
-    void SetUploadFriendsToken(int);
 
     bool GetBassBoost() const { return mBassBoost; }
     bool GetDolby() const { return mDolby; }
     bool GetOverscan() const { return mOverscan; }
-    bool GetWiiSpeakToggle() { return mWiiSpeakToggle; }
-    int GetWiiSpeakFriendsVolume() { return mWiiSpeakFriendsVolume; }
-    int GetWiiSpeakMicrophoneSensitivity() { return mWiiSpeakMicrophoneSensitivity; }
-    bool GetWiiSpeakHeadphoneMode() { return mWiiSpeakHeadphoneMode; }
-    bool GetWiiSpeakEchoSuppression() { return mWiiSpeakEchoSuppression; }
     bool GetSynapseEnabled() const { return mSynapseEnabled; }
     int GetSyncPresetIx() const { return mSyncPresetIx; }
-    bool GetShouldShowWiiFriendsPrompt();
 
     DataNode OnMsg(const SaveLoadMgrStatusUpdateMsg &);
     DataNode OnMsg(const UserLoginMsg &);
@@ -218,15 +203,9 @@ public:
     BandProfile *mPrimaryProfile; // 0xa8
     bool mAllUnlocked; // 0xac
     std::vector<float> mForcedMicGains; // 0xb0
-    bool mWiiSpeakToggle; // 0xbc
-    int mWiiSpeakFriendsVolume; // 0xc0
-    int mWiiSpeakMicrophoneSensitivity; // 0xc4
-    bool mWiiSpeakHeadphoneMode; // 0xc8
-    bool mWiiSpeakEchoSuppression; // 0xc9
-    bool mHasLoaded; // 0xca
-    bool mWiiFriendsPromptShown; // 0xcb
-    bool mUsingWiiFriends; // 0xcc
-    int unk5b8; // 0xd0
+    // Retail X360 drops the WiiSpeak/WiiFriends members entirely (verified:
+    // ProfileMgr::Handle anchors at this+0xc4 = retail sizeof(ProfileMgr)).
+    bool mHasLoaded; // 0xbc
 };
 
 extern ProfileMgr TheProfileMgr;

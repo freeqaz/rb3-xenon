@@ -66,11 +66,8 @@ ProfileMgr::ProfileMgr()
       mVocalCueVolume(11), mVoiceChatVolume(11), mHasSeenFirstTimeCalibration(0),
       mHasConnectedProGuitar(0), mSyncOffset(0), mSongToTaskMgrMs(0), mBassBoost(0),
       mDolby(0), unk582(0), mSyncPresetIx(0), mOverscan(0), mSynapseEnabled(1), unk58a(1),
-      mSecondPedalHiHat(0), mWiiSpeakToggle(1), mWiiSpeakFriendsVolume(6),
-      mWiiSpeakMicrophoneSensitivity(3), mWiiSpeakHeadphoneMode(0),
-      mWiiSpeakEchoSuppression(1), mHasLoaded(0), mWiiFriendsPromptShown(0),
-      mUsingWiiFriends(0), unk5b8(0), mCymbalConfiguration(0), mPrimaryProfile(0),
-      mAllUnlocked(0) {
+      mSecondPedalHiHat(0), mHasLoaded(0), mCymbalConfiguration(0),
+      mPrimaryProfile(0), mAllUnlocked(0) {
     mSyncOffset = -mPlatformVideoLatency;
     mSongToTaskMgrMs = mPlatformVideoLatency - mPlatformAudioLatency;
     for (int i = 0; i < 3; i++) {
@@ -432,11 +429,6 @@ void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
     bs << mSyncPresetIx;
     bs << mOverscan;
     bs << mSynapseEnabled;
-    bs << mWiiSpeakToggle;
-    bs << mWiiSpeakFriendsVolume;
-    bs << mWiiSpeakMicrophoneSensitivity;
-    bs << mWiiSpeakHeadphoneMode;
-    bs << mWiiSpeakEchoSuppression;
     bs << mVoiceChatVolume;
     bs << mHasSeenFirstTimeCalibration;
     bs << mHasConnectedProGuitar;
@@ -447,9 +439,6 @@ void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
     bs << String("");
     bs << false;
     bs << 0ll;
-    bs << mWiiFriendsPromptShown;
-    bs << mUsingWiiFriends;
-    bs << unk5b8;
     mGlobalOptionsDirty = false;
 }
 
@@ -481,11 +470,6 @@ void ProfileMgr::LoadGlobalOptions(FixedSizeSaveableStream &bs) {
             bs >> b;
         }
     }
-    bs >> mWiiSpeakToggle;
-    bs >> mWiiSpeakFriendsVolume;
-    bs >> mWiiSpeakMicrophoneSensitivity;
-    bs >> mWiiSpeakHeadphoneMode;
-    bs >> mWiiSpeakEchoSuppression;
     bs >> mVoiceChatVolume;
     bs >> mHasSeenFirstTimeCalibration;
     bs >> mHasConnectedProGuitar;
@@ -501,12 +485,6 @@ void ProfileMgr::LoadGlobalOptions(FixedSizeSaveableStream &bs) {
     bs >> b46;
     long long lol;
     bs >> lol;
-    if (gAltRev >= 1) {
-        bs >> mWiiFriendsPromptShown;
-        bs >> mUsingWiiFriends;
-    }
-    if (gAltRev >= 2)
-        bs >> unk5b8;
     mHasLoaded = true;
     mGlobalOptionsDirty = false;
     PushAllOptions();
@@ -612,7 +590,6 @@ void ProfileMgr::PushAllOptions() {
     );
     static DataNode &cv = DataVariable("crowd_audio.volume");
     cv = GetCrowdVolumeDb();
-    TheWiiFriendMgr.UseConsoleFriends(mUsingWiiFriends);
 }
 
 void ProfileMgr::SetBackgroundVolume(int vol) {
@@ -690,40 +667,7 @@ void ProfileMgr::SetSynapseEnabled(bool b) {
     PushAllOptions();
 }
 
-void ProfileMgr::SetWiiSpeakToggle(bool b) {
-    mWiiSpeakToggle = b;
-    mGlobalOptionsDirty = true;
-}
-
-void ProfileMgr::SetWiiSpeakFriendsVolume(int vol) {
-    mWiiSpeakFriendsVolume = vol;
-    mGlobalOptionsDirty = true;
-}
-
-void ProfileMgr::SetWiiSpeakMicrophoneSensitivity(int sense) {
-    mWiiSpeakMicrophoneSensitivity = sense;
-    mGlobalOptionsDirty = true;
-}
-
-UNPOOL_DATA
-void ProfileMgr::SetWiiSpeakHeadphoneMode(bool b1) {
-    static Symbol error_message("error_message");
-    static Message msg("init", 0);
-    if (b1) {
-        msg[0] = Symbol("passive_message_use_headphones");
-    } else {
-        msg[0] = Symbol("passive_message_dont_use_headphones");
-    }
-    TheUIEventMgr->TriggerEvent(error_message, msg);
-    mWiiSpeakHeadphoneMode = b1;
-    mGlobalOptionsDirty = true;
-}
-END_UNPOOL_DATA
-
-void ProfileMgr::SetWiiSpeakEchoSuppression(bool b) {
-    mWiiSpeakEchoSuppression = b;
-    mGlobalOptionsDirty = true;
-}
+// retail X360 strips the WiiSpeak setters (feature absent)
 
 bool ProfileMgr::GetHasSeenFirstTimeCalibration() const {
     return mHasSeenFirstTimeCalibration;
@@ -792,32 +736,9 @@ void ProfileMgr::SetHasConnectedProGuitar(bool b) {
     mGlobalOptionsDirty = true;
 }
 
-void ProfileMgr::SetWiiFriendsPromptShown() {
-    mWiiFriendsPromptShown = true;
-    mGlobalOptionsDirty = true;
-}
+// retail X360 strips the Wii-friends methods (feature absent)
 
-bool ProfileMgr::GetShouldShowWiiFriendsPrompt() {
-    return !mWiiFriendsPromptShown && !ThePlatformMgr.IsOnlineRestricted();
-}
-
-void ProfileMgr::SetUsingWiiFriends(int i1) {
-    mUsingWiiFriends = i1 != 0;
-    mGlobalOptionsDirty = true;
-    TheWiiFriendMgr.UseConsoleFriends(mUsingWiiFriends);
-    TheRockCentral.UpdateOnlineStatus();
-    TheSaveLoadMgr->AutoSave();
-}
-
-bool ProfileMgr::GetUsingWiiFriends() { return mUsingWiiFriends; }
-
-void ProfileMgr::SetUploadFriendsToken(int i) {
-    if (i == unk5b8)
-        return;
-    unk5b8 = i;
-    mGlobalOptionsDirty = true;
-    TheSaveLoadMgr->AutoSave();
-}
+// retail X360 strips SetUploadFriendsToken (Wii friends-upload token)
 
 bool ProfileMgr::GetSecondPedalHiHat() const { return mSecondPedalHiHat; }
 
@@ -1337,15 +1258,7 @@ void ProfileMgr::SetCymbalConfiguration(unsigned int ui) {
 
 bool ProfileMgr::HasLoaded() { return mHasLoaded; }
 
-int ProfileMgr::GetCount() const { return TheWiiProfileMgr.Count(0); }
-
-int ProfileMgr::GetUnregisteredCount() const {
-    return TheWiiProfileMgr.Count(0) - GetRegisteredCount();
-}
-
-FORCE_LOCAL_INLINE
-int ProfileMgr::GetRegisteredCount() const { return TheWiiProfileMgr.Count(2); }
-END_FORCE_LOCAL_INLINE
+// retail X360 strips the Wii roster-count accessors (TheWiiProfileMgr)
 
 DataNode ProfileMgr::OnMsg(const SigninChangedMsg &msg) {
     for (unsigned int mask = msg.GetChangedMask(), i = 0; mask != 0; mask >>= 1, i++) {
@@ -1491,11 +1404,7 @@ BEGIN_HANDLERS(ProfileMgr)
     HANDLE_EXPR(get_bass_boost, GetBassBoost())
     HANDLE_EXPR(get_dolby, GetDolby())
     HANDLE_EXPR(get_overscan, GetOverscan())
-    HANDLE_EXPR(get_wiispeak_toggle, GetWiiSpeakToggle())
-    HANDLE_EXPR(get_wiispeak_friends_volume, GetWiiSpeakFriendsVolume())
-    HANDLE_EXPR(get_wiispeak_microphone_sensitivity, GetWiiSpeakMicrophoneSensitivity())
-    HANDLE_EXPR(get_wiispeak_headphone_mode, GetWiiSpeakHeadphoneMode())
-    HANDLE_EXPR(get_wiispeak_echo_suppression, GetWiiSpeakEchoSuppression())
+    // retail X360 strips the WiiSpeak get_* handlers (Wii-only feature)
     HANDLE_EXPR(get_synapse_enabled, GetSynapseEnabled())
     HANDLE_EXPR(get_sync_preset_ix, GetSyncPresetIx())
     HANDLE_EXPR(get_sync_offset_raw, GetSyncOffsetRaw())
@@ -1529,10 +1438,12 @@ BEGIN_HANDLERS(ProfileMgr)
     )
     HANDLE_EXPR(get_mic_vol, GetMicVol(_msg->Int(2)))
     HANDLE_EXPR(get_has_seen_first_time_calibration, GetHasSeenFirstTimeCalibration())
+#ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this handler
     HANDLE_EXPR(
         get_has_seen_first_time_instruments,
         GetHasSeenFirstTimeInstruments(_msg->Obj<LocalBandUser>(2))
     )
+#endif
     HANDLE_EXPR(get_second_pedal_hihat, GetSecondPedalHiHat())
     HANDLE_ACTION(set_background_volume, SetBackgroundVolume(_msg->Int(2)))
     HANDLE_ACTION(set_foreground_volume, SetForegroundVolume(_msg->Int(2)))
@@ -1543,21 +1454,7 @@ BEGIN_HANDLERS(ProfileMgr)
     HANDLE_ACTION(set_bass_boost, SetBassBoost(_msg->Int(2)))
     HANDLE_ACTION(set_dolby, SetDolby(_msg->Int(2)))
     HANDLE_ACTION(set_overscan, SetOverscan(_msg->Int(2)))
-    HANDLE_ACTION(set_wiispeak_toggle, SetWiiSpeakToggle(_msg->Int(2)))
-    HANDLE_ACTION(set_wiispeak_friends_volume, SetWiiSpeakFriendsVolume(_msg->Int(2)))
-    HANDLE_ACTION(
-        set_wiispeak_microphone_sensitivity,
-        SetWiiSpeakMicrophoneSensitivity(_msg->Int(2))
-    )
-    HANDLE_ACTION(set_wiispeak_headphone_mode, SetWiiSpeakHeadphoneMode(_msg->Int(2)))
-    HANDLE_ACTION(set_wiispeak_echo_suppression, SetWiiSpeakEchoSuppression(_msg->Int(2)))
-    HANDLE_ACTION(set_wii_friends_prompt_shown, SetWiiFriendsPromptShown())
-    HANDLE_EXPR(get_should_show_wii_friends_prompt, GetShouldShowWiiFriendsPrompt())
-    HANDLE_ACTION(set_using_wii_friends, SetUsingWiiFriends(_msg->Int(2)))
-    HANDLE_EXPR(get_using_wii_friends, GetUsingWiiFriends())
-    HANDLE_EXPR(get_count, GetCount())
-    HANDLE_EXPR(get_unregistered_count, GetUnregisteredCount())
-    HANDLE_EXPR(get_registered_count, GetRegisteredCount())
+    // retail X360 strips the WiiSpeak set_* / Wii-friends / roster-count handlers
     HANDLE_ACTION(set_synapse_enabled, SetSynapseEnabled(_msg->Int(2)))
     HANDLE_ACTION(set_sync_preset_ix, SetSyncPresetIx(_msg->Int(2)))
     HANDLE_ACTION(set_sync_offset, SetSyncOffsetRaw(_msg->Float(2)))
@@ -1568,16 +1465,20 @@ BEGIN_HANDLERS(ProfileMgr)
     HANDLE_ACTION(
         set_has_seen_first_time_calibration, SetHasSeenFirstTimeCalibration(_msg->Int(2))
     )
+#ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this handler
     HANDLE_ACTION(
         set_has_seen_first_time_instruments,
         SetHasSeenFirstTimeInstruments(_msg->Obj<LocalBandUser>(2), _msg->Int(3))
     )
+#endif
     HANDLE_EXPR(is_autosave_enabled, IsAutosaveEnabled(_msg->Obj<LocalBandUser>(2)))
     HANDLE_ACTION(update_mic_levels, UpdateMicLevels(_msg->Int(2)))
     HANDLE_ACTION(update_all_mic_levels, UpdateAllMicLevels())
     HANDLE_ACTION(force_mic_gain, ForceMicGain(_msg->Int(2), _msg->Float(3)))
     HANDLE_ACTION(force_mic_output_gain, ForceMicOutputGain(_msg->Int(2), _msg->Float(3)))
+#ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this dev handler
     HANDLE_ACTION(fake_profile_fill, FakeProfileFill())
+#endif
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ProfileChangedMsg)
     HANDLE_MESSAGE(ServerStatusChangedMsg)

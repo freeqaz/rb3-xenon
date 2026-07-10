@@ -1726,7 +1726,7 @@ bool MusicLibrary::FilterSetlist(WiiFriendList *friends, NetSavedSetlist *pSetli
             return true;
         }
     }
-    if (!TheProfileMgr.GetUsingWiiFriends()) {
+    if (true) { // retail X360 strips ProfileMgr's Wii-friends state (feature absent)
         return false;
     }
     for (int i = 0; i < numFriends; i++) {
