@@ -13,6 +13,7 @@
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
 #include "os/PlatformMgr.h"
+#include "oggvorbis/VorbisMem.h"
 #include "ui/UIPanel.h"
 #include "ui/UIScreen.h"
 #include "utl/Locale.h"
@@ -23,6 +24,8 @@
 #include "utl/Messages4.h"
 #include "utl/Symbols4.h"
 #include "utl/UTF8.h"
+
+extern "C" void XMsgCancelIORequest(void *);
 
 EditSetlistPanel::EditSetlistPanel()
     : unk50(kScoreBand), unk54(0), unk58(3), unk64(0), unk80(-1), unk84(-1), mProfile(0),
@@ -60,7 +63,6 @@ void EditSetlistPanel::Poll() {
     UIPanel::Poll();
     if (mEditState == 4 && !unk98 && !ThePlatformMgr.IsCheckingProfanity()) {
         VerifyStrings(mSetlistName.c_str(), mSetlistDescription.c_str());
-        unk98 = true;
     }
 }
 
@@ -86,9 +88,14 @@ void EditSetlistPanel::Unload() {
 }
 
 void EditSetlistPanel::CleanupStringVerify() {
+    if (unk98) {
+        XMsgCancelIORequest(unk98);
+        OggFree(unk98);
+        unk98 = 0;
+    }
     if (unk90) {
-        delete[] unk90[0];
-        delete[] unk90[1];
+        delete[] *(unsigned short **)((char *)unk90 + 2);
+        delete[] *(unsigned short **)((char *)unk90 + 8);
         delete[] unk90;
         unk90 = 0;
     }
@@ -408,7 +415,7 @@ DataNode EditSetlistPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
 
 DataNode EditSetlistPanel::OnMsg(const DWCProfanityResultMsg &msg) {
     if (mEditState == kCheckingProfanity && unk98) {
-        unk98 = false;
+        unk98 = 0;
         MILO_ASSERT(unk94, 0x252);
         if (msg.Success()) {
             bool b1 = !unk94[0];
@@ -424,15 +431,16 @@ DataNode EditSetlistPanel::OnMsg(const DWCProfanityResultMsg &msg) {
 }
 
 void EditSetlistPanel::VerifyStrings(const char *name, const char *desc) {
-    unk90 = new unsigned short *[2];
     unsigned short *us = new unsigned short[strlen(name) + 1];
     UTF8toUTF16(us, name);
-    unk90[0] = us;
     unsigned short *us2 = new unsigned short[strlen(desc) + 1];
     UTF8toUTF16(us2, desc);
-    unk90[1] = us2;
+    unk90 = (unsigned short **)new char[12];
+    *(unsigned short **)((char *)unk90 + 2) = us;
+    *(unsigned short **)((char *)unk90 + 8) = us2;
     unk94 = new char[2];
-    if (!ThePlatformMgr.StartProfanity((const unsigned short **)unk90, 2, unk94, this)) {
+    unk98 = ThePlatformMgr.StartProfanity((const unsigned short **)unk90, 2, unk94, this);
+    if (!unk98) {
         CleanupStringVerify();
         FailWithReason((FailureReason)7);
     }

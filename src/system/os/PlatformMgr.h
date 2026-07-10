@@ -159,7 +159,7 @@ public:
     // these references into EditSetlistPanel; the link target lives in the
     // platform layer (not part of this TU's match).
     bool IsCheckingProfanity() const;
-    bool StartProfanity(const unsigned short **, int, char *, Hmx::Object *);
+    void *StartProfanity(const unsigned short **, int, char *, Hmx::Object *);
     bool IsConnected() { return mConnected; }
     bool ScreenSaver() { return mScreenSaver; }
     DiskError GetDiskError() const { return mDiskError; }

@@ -68,7 +68,7 @@ public:
     LocalSavedSetlist *mEditingSetlist; // 0x8c
     unsigned short **unk90;
     char *unk94;
-    int unk98; // word-sized on Xbox 360 retail (ctor stores stw, not stb)
+    void *unk98; // async profanity-check IO handle; word-sized on Xbox 360 retail
     int unk9c; // mode? 0 = create setlist, 1 = edit setlist, 2 = create battle
     EditState mEditState; // 0xa0
     FailureReason unka4; // 0xa4
