@@ -7,7 +7,6 @@
 class FlowManager : public Hmx::Object {
 public:
     FlowManager();
-    virtual ~FlowManager();
 
     void AddPollable(FlowNode *);
     void RemovePollable(FlowNode *);

@@ -4,7 +4,6 @@
 class FlowEventListener : public FlowTrigger {
 public:
     // Hmx::Object
-    virtual ~FlowEventListener();
     OBJ_CLASSNAME(FlowEventListener)
     OBJ_SET_TYPE(FlowEventListener)
     virtual DataNode Handle(DataArray *, bool);

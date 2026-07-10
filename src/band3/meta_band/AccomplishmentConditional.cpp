@@ -6,7 +6,6 @@ AccomplishmentConditional::AccomplishmentConditional(DataArray *i_pConfig, int i
     AccomplishmentConditional::Configure(i_pConfig);
 }
 
-AccomplishmentConditional::~AccomplishmentConditional() {}
 
 void AccomplishmentConditional::UpdateConditionOptionalData(
     AccomplishmentCondition &condition, DataArray *i_pConditionEntryArray

@@ -15,7 +15,6 @@ public:
         float radius; // 0x4
     };
     // Hmx::Object
-    virtual ~CharCuff();
     OBJ_CLASSNAME(CharCuff)
     OBJ_SET_TYPE(CharCuff)
     virtual DataNode Handle(DataArray *, bool);

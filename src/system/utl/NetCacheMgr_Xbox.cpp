@@ -4,7 +4,6 @@
 #include "utl/NetCacheMgr.h"
 
 NetCacheMgrXbox::NetCacheMgrXbox() : mDoneLoading(false) {}
-NetCacheMgrXbox::~NetCacheMgrXbox() {}
 
 DataNode NetCacheMgrXbox::Handle(DataArray *da, bool b) {
     return NetCacheMgr::Handle(da, b);

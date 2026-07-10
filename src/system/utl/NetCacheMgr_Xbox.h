@@ -5,7 +5,6 @@
 class NetCacheMgrXbox : public NetCacheMgr {
 public:
     NetCacheMgrXbox();
-    virtual ~NetCacheMgrXbox();
     virtual DataNode Handle(DataArray *, bool);
     virtual void Poll();
 

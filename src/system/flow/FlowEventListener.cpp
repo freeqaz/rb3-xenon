@@ -15,7 +15,6 @@ FlowEventListener::FlowEventListener()
     mAutoRegister = true;
 }
 
-FlowEventListener::~FlowEventListener() {}
 
 BEGIN_HANDLERS(FlowEventListener)
     HANDLE_SUPERCLASS(FlowTrigger)

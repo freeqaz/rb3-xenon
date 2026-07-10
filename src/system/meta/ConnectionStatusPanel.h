@@ -14,7 +14,6 @@ class ConnectionStatusPanel : public UIPanel {
 public:
     ConnectionStatusPanel();
     // Hmx::Object
-    virtual ~ConnectionStatusPanel();
     OBJ_CLASSNAME(ConnectionStatusPanel)
     OBJ_SET_TYPE(ConnectionStatusPanel)
     virtual DataNode Handle(DataArray *, bool);

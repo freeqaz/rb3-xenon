@@ -226,8 +226,9 @@ ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {
         this->mObject->AddRef(this);
 }
 
-template <class T>
-ObjPtr<T>::~ObjPtr() {}
+// ~ObjPtr: intentionally NOT user-declared on the retail path — retail's dtor
+// is implicit, which elides the ??_7ObjPtr vtable store at inlined dtor entry
+// (implicit-destructor vtable-store elision pattern).
 #endif
 
 template <class T>

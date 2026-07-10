@@ -374,7 +374,11 @@ protected:
 public:
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
     ObjPtr(const ObjPtr &p);
-    ~ObjPtr();
+    // NO user dtor: retail's ~ObjPtr is compiler-generated (implicit). A
+    // user-declared empty dtor makes MSVC store ??_7ObjPtr@@6B@ before the
+    // inlined base ??1ObjRefConcrete call in every containing dtor
+    // (implicit-destructor vtable-store elision,
+    // docs/decomp/patterns/fixable-declarations.md).
     // Vtable slot +8: Replace(from, to). Retail fn_824D76B0.
     // from==nullptr is the ReplaceList/MergeDirs "replace unconditionally" path.
     virtual bool Replace(ObjRef *from, Hmx::Object *to) {

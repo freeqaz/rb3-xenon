@@ -177,7 +177,6 @@ public:
     class classname : public Message {                                                   \
     public:                                                                              \
         classname(DataArray *da) : Message(da) {}                                        \
-        virtual ~classname() {}                                                          \
         static Symbol Type() {                                                           \
             static Symbol t(type);                                                       \
             return t;                                                                    \

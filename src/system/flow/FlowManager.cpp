@@ -32,7 +32,6 @@ FlowManager::FlowManager() : unk2c(0), mExecuting(0), mPollables(this) {
     mFlowEventOverlay = RndOverlay::Find("flow_event", false);
 }
 
-FlowManager::~FlowManager() {}
 
 void FlowManager::AddPollable(FlowNode *n) { mPollables.push_back(n); }
 void FlowManager::RemovePollable(FlowNode *n) { mPollables.remove(n); }

@@ -12,7 +12,6 @@ struct AccomplishmentCondition {
 class AccomplishmentConditional : public Accomplishment {
 public:
     AccomplishmentConditional(DataArray *, int);
-    virtual ~AccomplishmentConditional();
     void UpdateConditionOptionalData(AccomplishmentCondition &, DataArray *);
     void Configure(DataArray *);
     virtual bool CanBeLaunched() const;

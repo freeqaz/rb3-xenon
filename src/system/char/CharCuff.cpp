@@ -15,7 +15,6 @@ CharCuff::CharCuff() : mOpenEnd(0), mIgnore(this), mBone(this), mEccentricity(1)
     mOuterRadius = 3.1;
 }
 
-CharCuff::~CharCuff() {}
 
 BEGIN_HANDLERS(CharCuff)
     HANDLE_SUPERCLASS(RndTransformable)
