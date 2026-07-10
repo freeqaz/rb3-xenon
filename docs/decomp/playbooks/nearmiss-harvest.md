@@ -78,6 +78,13 @@ Other lane rules:
   around an isolated mismatch.
 - ≤5 shape attempts per function, then bank the diagnosis and move on. The
   wall taxonomy (§5) exists so lanes don't burn budget re-proving cliffs.
+- **`MILO_DEBUG` IS defined in the matching build** (`src/macros.h:3`,
+  unconditional). Debug-era code (`DataCallStackFrame`, `AutoTimer`
+  static-init, fail/assert blocks) is NOT stripped by `#ifdef MILO_DEBUG` —
+  the strip convention for retail-absent code is **`#ifdef HX_NATIVE`**
+  (compiled only in the native build). Any doc claiming
+  "START_AUTO_TIMER_CALLBACK is (void)0 in the matching build" is wrong.
+  (Discovered 2026-07-10 during the Data.h Execute body port.)
 - A lane's deliverable is: per-fn verdict (100 / at-limit+why / header-need),
   the exact edit, and the residual diagnosis for non-wins.
 

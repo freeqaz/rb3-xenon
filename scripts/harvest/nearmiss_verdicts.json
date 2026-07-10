@@ -8,7 +8,8 @@
  "Geo::CheckBSPTree": {"verdict": "at_limit", "date": "2026-06-30", "why": "permuter 231 runs never >99.03"},
  "MidiParser::PushIdle": {"verdict": "at_limit", "date": "2026-06-30", "why": "permuter 185 runs 0 wins, 99.74 ceiling"},
  "MidiParser::AddMessage": {"verdict": "deferred_nearwin", "date": "2026-07-03", "why": "body reaches 100 but +8 frame shifts EH funclet DataArray slot 0x50->0x54; needs no-frame-growth shape"},
- "AppChild::Poll": {"verdict": "header_need", "date": "2026-07-03", "why": "Data.h Execute(bool fail=true) -> Wii-era Execute(); shared header, own A/B-gated change"},
+ "DataArray::Load": {"verdict": "at_limit", "date": "2026-07-10", "why": "banked 0->99.5 (newly paired); residual 2 insns = loop-bottom lhz+extsh vs lha size reload; cast/while/hoist shapes dead; permuter-class"},
+ "DataArray::ExecuteScript": {"verdict": "at_limit", "date": "2026-07-10", "why": "banked 0->97.4 (newly paired); residual = callee-saved regalloc cascade r20/21/22+r26/27; permuter-class"},
  "InitMakeString": {"verdict": "at_limit", "date": "2026-07-02", "why": "anchor-selection residual (0x800 partial)"},
  "PanelDir::PanelNav": {"verdict": "at_limit", "date": "2026-07-02", "why": "genuine retail-source body divergence (dc3 same source = Matching; RB3 source differed)"},
  "FftIpp": {"verdict": "deferred_codegen", "date": "2026-07-01", "why": "bodyport recon DEFER_CODEGEN verdict"},
@@ -22,5 +23,5 @@
  "Synapse::ProcessInPlace": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 96.0->99.8; single commutative add operand order = VN fixed point"},
  "CharIKFingers::CalculateHandDest": {"verdict": "at_limit", "date": "2026-07-07", "why": "banked 95.8->99.7; residual 3-cycle FPR result rotation, permuter-class"},
  "UsbMidiGuitar::Poll": {"verdict": "header_need", "date": "2026-07-10", "why": "Joypad.h repack LANDED b5b28fe (mType now 0x6c); residual 4 mismatches = ProGuitarData pgRaw[0xc]/[0xb] bitfield extract order only"},
- "CharBoneDir::GetContextFlags": {"verdict": "header_need", "date": "2026-07-07", "why": "Data.h SortNodes(int)->SortNodes() DC3 drift; rb3-Wii Data.h:477 no-arg; +6 cascade candidate, own gated change IN FLIGHT 2026-07-10"}
+ "_resolved_2026-07-10": {"verdict": "note", "date": "2026-07-10", "why": "Data.h SortNodes()/Execute() reverts LANDED 7b6d9ed+78fdc92 (+15 strict: SortNodes/Execute/ExecuteBlock/GetContextFlags/AppChild::Poll/DataNode::Evaluate + 9 funclets); StandardStream.h+Joypad.h LANDED b5b28fe (+7); Game.h base drop landed by wave-5 3edcc60 — see docs/decomp/handoff/round5-header-needs-2026-07-07.md STATUS"}
 }

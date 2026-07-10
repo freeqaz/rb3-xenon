@@ -13,7 +13,14 @@ done as its own whole-binary-A/B-gated task. Listed by expected value.
 > missing words sit at 0x160/0x164; the marker region already matched) and
 > **corrected** #4 (our stride was right only via two canceling errors; fix =
 > bool repack **plus** restoring dc3's 2 tail ints to hold sizeof 0xd4). #2
-> Data.h in flight.
+> #2 Data.h LANDED (`7b6d9ed` + `78fdc92`, **+15 strict**, A/B ×2 clean, ICF
+> HONEST): SortNodes/Execute/ExecuteBlock closed + GetContextFlags +
+> AppChild::Poll + DataNode::Evaluate + 9 EH funclets; Load banked 99.5,
+> ExecuteScript 97.4 (both newly paired from 0). Key lessons recorded in the
+> nearmiss-harvest playbook §2: `MILO_DEBUG` is force-defined (`src/macros.h:3`)
+> — retail-absent code strips via `#ifdef HX_NATIVE`; and retail temp-alloc is
+> the `MemTemp` RAII guard, not DC3's `MemPushTemp()/MemPopTemp()` (its EH
+> funclets are what made retail Load's funclets pair). All four items done.
 
 ## 1. Game.h — drop the Wii-only `DiscErrorMgrWii::Callback` base (BIG cascade)
 
