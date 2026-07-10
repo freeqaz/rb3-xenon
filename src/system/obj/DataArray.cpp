@@ -472,29 +472,30 @@ void DataArray::Load(BinStream &bs) {
     mFile = gFile;
     short size;
     bs >> size;
-    MemPushTemp();
-    Resize(size);
-    MemPopTemp();
+    {
+        MemTemp tmp;
+        Resize(size);
+    }
     bs >> mLine;
     bs >> mDeprecated;
+    DataArray *array = nullptr;
     for (int i = 0; i < size;) {
         DataNode &node = mNodes[i];
         bs >> node;
-        if (DataArrayDefined() || node.Type() == kDataIfdef || node.Type() == kDataElse
-            || node.Type() == kDataEndif || node.Type() == kDataIfndef) {
+        if (DataArrayDefined() || node.Type() == kDataIfdef || node.Type() == kDataIfndef
+            || node.Type() == kDataElse || node.Type() == kDataEndif) {
             // process
         } else {
             size--;
             continue;
         }
-        DataArray *array = nullptr;
-        const char *nodeSym = node.UncheckedStr();
         if (node.Type() == kDataSymbol
-            && (array = DataGetMacro(STR_TO_SYM(nodeSym))) != 0) {
+            && (array = DataGetMacro(node.UncheckedSym())) != 0) {
             size += array->Size() - 1;
-            MemPushTemp();
-            Resize(size);
-            MemPopTemp();
+            {
+                MemTemp tmp;
+                Resize(size);
+            }
             for (int j = 0; j < array->Size(); j++) {
                 mNodes[i++] = array->Node(j);
             }
@@ -508,20 +509,19 @@ void DataArray::Load(BinStream &bs) {
         } else if (node.Type() == kDataDefine) {
             DataNode macro;
             bs >> macro;
-            auto _tmp0 = STR_TO_SYM(nodeSym);
-            DataSetMacro(_tmp0, macro.Array(this));
+            DataSetMacro(node.UncheckedSym(), macro.Array(this));
             size -= 2;
         } else if (node.Type() == kDataUndef) {
-            DataSetMacro(STR_TO_SYM(nodeSym), nullptr);
+            DataSetMacro(node.UncheckedSym(), nullptr);
             size -= 1;
         } else if (node.Type() == kDataIfdef) {
             gDataArrayConditional.push_back(
-                DataGetMacro(STR_TO_SYM(nodeSym)) != nullptr
+                DataGetMacro(node.UncheckedSym()) != nullptr
             );
             size -= 1;
         } else if (node.Type() == kDataIfndef) {
             gDataArrayConditional.push_back(
-                DataGetMacro(STR_TO_SYM(nodeSym)) == nullptr
+                DataGetMacro(node.UncheckedSym()) == nullptr
             );
             size -= 1;
         } else if (node.Type() == kDataElse) {
@@ -547,7 +547,7 @@ void DataArray::Load(BinStream &bs) {
 #endif
             size -= 1;
         } else if (node.Type() == kDataInclude || node.Type() == kDataMerge) {
-            const char *path = nodeSym;
+            const char *path = node.UncheckedStr();
             bool readFile = false;
             DataArray *macro = DataGetMacro(path);
             if (!macro) {
@@ -565,9 +565,10 @@ void DataArray::Load(BinStream &bs) {
             }
             if (node.Type() == kDataInclude) {
                 size += macro->Size() - 1;
-                MemPushTemp();
-                Resize(size);
-                MemPopTemp();
+                {
+                    MemTemp tmp;
+                    Resize(size);
+                }
                 for (int j = 0; j < macro->Size(); j++) {
                     mNodes[i++] = macro->Node(j);
                 }
@@ -576,15 +577,17 @@ void DataArray::Load(BinStream &bs) {
                     MILO_FAIL("Empty merge file (possibly a re-included file): %s", path);
                 }
                 int remaining = size - i - 1;
-                MemPushTemp();
-                Resize(i);
-                MemPopTemp();
+                {
+                    MemTemp tmp;
+                    Resize(i);
+                }
                 DataMergeTags(this, macro);
                 i = mSize;
                 size = mSize + remaining;
-                MemPushTemp();
-                Resize(size);
-                MemPopTemp();
+                {
+                    MemTemp tmp;
+                    Resize(size);
+                }
             }
             if (readFile) {
                 macro->Release();
@@ -953,7 +956,12 @@ DataNode DataArray::ExecuteBlock(int len) {
 DataNode DataArray::ExecuteScript(
     int index, Hmx::Object *obj, const DataArray *_args, int _argStart
 ) {
+    // Retail asm (fn_82728A60) has no DataCallStackFrame — stripped from the
+    // matching build (same treatment as Execute; MILO_DEBUG is force-defined
+    // tree-wide, so the strip gate is HX_NATIVE).
+#ifdef HX_NATIVE
     DataCallStackFrame frame(this);
+#endif
 
     int numVars = 0;
     int size = mSize;

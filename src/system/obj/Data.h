@@ -181,6 +181,10 @@ public:
     DataArray *UncheckedArray() const { return mValue.array; }
     DataNode *UncheckedVar() const { return mValue.var; }
     DataFunc *UncheckedFunc() const { return mValue.func; }
+    // In-place Symbol view of the stored (already-interned) string. The
+    // STR_TO_SYM macro needs an lvalue and mValue is private; this compiles to
+    // a bare member reload at each use site (the retail codegen shape).
+    Symbol UncheckedSym() const { return STR_TO_SYM(mValue.symbol); }
 
     /** Evalute this DataNode, and return the resulting int.
      * @param [in] source The DataArray this DataNode comes from.
