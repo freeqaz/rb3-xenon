@@ -16,7 +16,10 @@ public:
 
 class SongSortByPlays : public SongSort {
 public:
-    SongSortByPlays() { mShortName = by_plays; }
+    SongSortByPlays() {
+        static Symbol by_plays("by_plays");
+        mShortName = by_plays;
+    }
     virtual ~SongSortByPlays() {}
     virtual ShortcutNode *NewShortcutNode(SongSortNode *) const;
     virtual HeaderSortNode *NewHeaderNode(SongSortNode *) const;

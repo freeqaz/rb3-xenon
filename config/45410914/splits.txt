@@ -1785,14 +1785,8 @@ LabelNumberTicker.cpp:
 	.text       start:0x82802700 end:0x82803F00
 
 SongSortMgr.cpp:
-	.pdata      start:0x82218458 end:0x82218460
-	.pdata      start:0x82218618 end:0x822189A0
-	.pdata      start:0x822189A8 end:0x822189B0
-	.pdata      start:0x822189B8 end:0x82218B30
-	.text       start:0x8257E968 end:0x8257EA08
-	.text       start:0x82580040 end:0x82582EF8
-	.text       start:0x82582F50 end:0x82582F78
-	.text       start:0x82582FD0 end:0x82583DD8
+	.pdata      start:0x82218430 end:0x822189A0
+	.text       start:0x8257E6D0 end:0x82582EF8
 
 Bitmap.cpp:
 	.pdata      start:0x82201890 end:0x822019D8

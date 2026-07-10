@@ -17,7 +17,10 @@ public:
 
 class SongSortByReview : public SongSort {
 public:
-    SongSortByReview() { mShortName = by_review; }
+    SongSortByReview() {
+        static Symbol by_review("by_review");
+        mShortName = by_review;
+    }
     virtual ~SongSortByReview() {}
     virtual bool CustomForNode(ShortcutNode *, UIListCustom *, Hmx::Object *) const;
     virtual bool TextForNode(ShortcutNode *, UIListLabel *, UILabel *) const;

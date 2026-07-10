@@ -32,7 +32,10 @@ public:
 
 class SongSortByRecent : public SongSort {
 public:
-    SongSortByRecent() { mShortName = by_recent; }
+    SongSortByRecent() {
+        static Symbol by_recent("by_recent");
+        mShortName = by_recent;
+    }
     virtual ~SongSortByRecent() {}
     virtual ShortcutNode *NewShortcutNode(SongSortNode *) const;
     virtual HeaderSortNode *NewHeaderNode(SongSortNode *) const;

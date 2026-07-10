@@ -491,12 +491,7 @@ public:
         MILO_ASSERT(mRefs > 0, 0x11C);
     }
     /** Decrement this DataArray's reference count. */
-    void Release() {
-        mRefs--;
-        MILO_ASSERT(mRefs >= 0, 0x122);
-        if (mRefs == 0)
-            delete this;
-    }
+    void Release();
 
     /** Get the DataNode at the given node index.
      * @param [in] i The node index.

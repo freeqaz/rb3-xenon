@@ -4,6 +4,7 @@
 #include "net_band/DataResults.h"
 #include "net_band/RockCentralMsgs.h"
 #include "utl/Symbols.h"
+#include <hash_map>
 
 class RankCmp : public SongSortCmp {
 public:
@@ -25,8 +26,11 @@ public:
 
 class SongSortByRank : public SongSort {
 public:
-    SongSortByRank() { mShortName = by_rank; }
-    virtual ~SongSortByRank();
+    SongSortByRank() {
+        static Symbol by_rank("by_rank");
+        mShortName = by_rank;
+    }
+    virtual ~SongSortByRank() {}
     virtual DataNode Handle(DataArray *, bool);
     virtual void Clear();
     virtual bool IsReady() const;
@@ -41,6 +45,6 @@ public:
     void RequestSongRankingInfo();
     void CancelSongRankingRequest();
 
-    std::map<int, std::pair<int, bool> > mRankings; // 0x3c
+    std::hash_map<int, std::pair<int, bool> > mRankings; // 0x50 (retail: hash_map, 100 buckets)
     DataResultList mDataResults; // 0x54
 };

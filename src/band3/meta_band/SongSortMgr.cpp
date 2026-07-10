@@ -62,8 +62,10 @@ SongSortMgr::~SongSortMgr() {
 
 void SongSortMgr::SongFilter::IntersectFilter(SongSortMgr::SongFilter *filter) {
     MILO_ASSERT(filter, 0x51);
-    FOREACH (it, excludedSongs) {
-        filter->excludedSongs.push_back(*it);
+    std::vector<int> &excl = filter->excludedSongs;
+    FOREACH (it, excl) {
+        int song = *it;
+        excl.push_back(song);
     }
     for (int i = 0; i < kNumFilterTypes; i++) {
         std::set<Symbol> &curSet = filter->filters[i];
@@ -72,7 +74,7 @@ void SongSortMgr::SongFilter::IntersectFilter(SongSortMgr::SongFilter *filter) {
             std::vector<Symbol> v20;
             FOREACH_CONST_POST (it, filters[i]) {
                 Symbol cur = *it;
-                if (!HasFilter((FilterType)i, cur)) {
+                if (!filter->HasFilter((FilterType)i, cur)) {
                     v20.push_back(cur);
                 }
             }
@@ -168,6 +170,9 @@ void SongSortMgr::ClearAllSorts() {
 }
 
 bool SongSortMgr::InqSongsForSetlist(Symbol s, std::vector<Symbol> &songVector) {
+    static Symbol song_select("song_select");
+    static Symbol internal_setlists("internal_setlists");
+    static Symbol songs("songs");
     MILO_ASSERT(songVector.empty(), 0x120);
     DataArray *cfg = SystemConfig(song_select, internal_setlists);
     for (int i = 1; i < cfg->Size(); i++) {
@@ -185,6 +190,12 @@ bool SongSortMgr::InqSongsForSetlist(Symbol s, std::vector<Symbol> &songVector) 
 }
 
 void SongSortMgr::BuildInternalSetlists() {
+    static Symbol song_select("song_select");
+    static Symbol internal_setlists("internal_setlists");
+    static Symbol music_library_visible("music_library_visible");
+    static Symbol desc("desc");
+    static Symbol date("date");
+    static Symbol songs("songs");
     DataArray *cfg = SystemConfig(song_select, internal_setlists);
     for (int i = 1; i < cfg->Size(); i++) {
         DataArray *curArr = cfg->Array(i);
@@ -192,32 +203,18 @@ void SongSortMgr::BuildInternalSetlists() {
         if (visible) {
             Symbol titleSym = curArr->Sym(0);
             Symbol descSym = curArr->FindSym(desc);
-            InternalSavedSetlist *setlist = new InternalSavedSetlist(titleSym, descSym);
+            SavedSetlist *setlist = new InternalSavedSetlist(titleSym, descSym);
             DataArray *dateArr = curArr->FindArray(date);
             setlist->SetDateTime(
                 DateTime(dateArr->Int(1), dateArr->Int(2), dateArr->Int(3), 0, 0, 0)
             );
-            bool b1 = false;
             DataArray *songsArr = curArr->FindArray(songs);
-
-            int songArrIdx = 1;
-            while (songArrIdx < songsArr->Size()) {
-                int songID =
-                    TheSongMgr.GetSongIDFromShortName(songsArr->Sym(songArrIdx), false);
-                if (songID != 0) {
-                    setlist->AddSong(songID);
-                    b1 = true;
-                    songArrIdx++;
-                } else
-                    songsArr->Remove(songArrIdx);
+            for (int j = 1; j < songsArr->Size(); j++) {
+                setlist->AddSong(
+                    TheSongMgr.GetSongIDFromShortName(songsArr->Sym(j), true)
+                );
             }
-            if (b1) {
-                mInternalSetlists.push_back(setlist);
-            } else {
-                delete setlist;
-                cfg->Remove(i);
-                i--;
-            }
+            mInternalSetlists.push_back(setlist);
         }
     }
 }
@@ -271,15 +268,10 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
         != filter->excludedSongs.end()) {
         return false;
     }
-    bool reject = false;
     if (filter->requiredTrackType != kTrackNone) {
-        Symbol trackSym = TrackTypeToSym(filter->requiredTrackType);
-        if (!data->HasPart(trackSym, false)) {
-            reject = true;
-        }
+        if (!data->HasPart(TrackTypeToSym(filter->requiredTrackType)))
+            return false;
     }
-    if (reject)
-        return false;
     bool found = true;
     for (int i = 0; i < kNumFilterTypes; i++) {
         const std::set<Symbol> &curSet = filter->filters[i];
@@ -292,12 +284,12 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
         case 1:
             found = curSet.find(data->Decade()) != curSet.end();
             break;
-        case 2:
+        case 9:
             found = curSet.find(Symbol(data->Artist())) != curSet.end();
             break;
-        case 3: {
+        case 6: {
             MILO_ASSERT(partSym != "", 0x1B5);
-            if (!data->HasPart(partSym, false)) {
+            if (!data->HasPart(partSym)) {
                 found = false;
                 break;
             }
@@ -306,22 +298,22 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
             found = curSet.find(tierTok) != curSet.end();
             break;
         }
+        case 7:
+            found = curSet.find(data->RatingSym()) != curSet.end();
+            break;
+        case 8:
+            found = curSet.find(data->VocalPartsSym()) != curSet.end();
+            break;
+        case 5:
+            found = curSet.find(data->SourceSym()) != curSet.end();
+            break;
         case 4:
             found = curSet.find(data->LengthSym()) != curSet.end();
             break;
-        case 5:
-            found = curSet.find(data->RatingSym()) != curSet.end();
-            break;
-        case 6:
-            found = curSet.find(data->SourceSym()) != curSet.end();
-            break;
-        case 7:
-            found = curSet.find(data->VocalPartsSym()) != curSet.end();
-            break;
-        case 8:
+        case 3:
             found = curSet.find(data->HasProGuitarSym()) != curSet.end();
             break;
-        case 9:
+        case 2:
             found = curSet.find(data->HasKeysSym()) != curSet.end();
             break;
         case 10:
@@ -339,23 +331,23 @@ bool SongSortMgr::DoesOfferMatchFilter(
 ) const {
     if (!filter)
         return true;
-    if (std::find(
-            filter->excludedSongs.begin(),
-            filter->excludedSongs.end(),
-            (int)offer->GetSingleSongID()
-        )
-        != filter->excludedSongs.end()) {
+    int songID = (int)offer->GetSingleSongID();
+    const std::vector<int> &excludedSongs = filter->excludedSongs;
+    if (std::find(excludedSongs.begin(), excludedSongs.end(), songID)
+        != excludedSongs.end()) {
         return false;
     }
-    bool reject = false;
     if (filter->requiredTrackType != kTrackNone) {
-        Symbol trackSym = TrackTypeToSym(filter->requiredTrackType);
-        if (offer->PartRank(trackSym) == 0.0f) {
-            reject = true;
-        }
+        if (offer->PartRank(TrackTypeToSym(filter->requiredTrackType)) == 0.0f)
+            return false;
     }
-    if (reject)
-        return false;
+    static Symbol artist("artist");
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
+    static Symbol real_keys("real_keys");
+    static Symbol keys("keys");
+    static Symbol has_part_no("has_part_no");
+    static Symbol has_part_yes("has_part_yes");
     bool found = true;
     for (int i = 0; i < kNumFilterTypes; i++) {
         const std::set<Symbol> &curSet = filter->filters[i];
@@ -368,10 +360,11 @@ bool SongSortMgr::DoesOfferMatchFilter(
         case 1:
             found = curSet.find(offer->Decade()) != curSet.end();
             break;
-        case 2:
-            found = curSet.find(Symbol(offer->Artist())) != curSet.end();
+        case 9:
+            found = curSet.find(Symbol(offer->GetData(DataArrayPtr(artist), false).Str(0)))
+                != curSet.end();
             break;
-        case 3: {
+        case 6: {
             MILO_ASSERT(partSym != "", 0x219);
             if (offer->PartRank(partSym) == 0.0f) {
                 found = false;
@@ -382,28 +375,31 @@ bool SongSortMgr::DoesOfferMatchFilter(
             found = curSet.find(tierTok) != curSet.end();
             break;
         }
-        case 4:
-            found = curSet.find(offer->LengthSym()) != curSet.end();
-            break;
-        case 5:
+        case 7:
             found = curSet.find(offer->RatingSym()) != curSet.end();
             break;
-        case 6: {
-            Symbol key = offer->IsRbn() ? ugc : dlc;
+        case 8:
+            found = curSet.find(offer->VocalPartsSym()) != curSet.end();
+            break;
+        case 5: {
+            static Symbol author("author");
+            static Symbol ugc("ugc");
+            static Symbol dlc("dlc");
+            Symbol key = offer->HasData(author) ? ugc : dlc;
             found = curSet.find(key) != curSet.end();
             break;
         }
-        case 7:
-            found = curSet.find(offer->VocalPartsSym()) != curSet.end();
+        case 4:
+            found = curSet.find(offer->LengthSym()) != curSet.end();
             break;
-        case 8: {
+        case 3: {
             found = offer->PartRank(real_guitar) == 0.0f
                 && offer->PartRank(real_bass) == 0.0f;
             Symbol key = found ? has_part_no : has_part_yes;
             found = curSet.find(key) != curSet.end();
             break;
         }
-        case 9: {
+        case 2: {
             found = offer->PartRank(real_keys) == 0.0f
                 && offer->PartRank(keys) == 0.0f;
             Symbol key = found ? has_part_no : has_part_yes;
@@ -419,12 +415,9 @@ bool SongSortMgr::DoesOfferMatchFilter(
         if (!found)
             break;
     }
-    int rating = offer->Rating();
-    bool ok = false;
-    if (found && AllowedToAccessContent(rating)) {
-        ok = true;
-    }
-    return ok;
+    static Symbol rating("rating");
+    int ratingVal = offer->GetData(DataArrayPtr(rating), false).Int(0);
+    return found && AllowedToAccessContent(ratingVal);
 }
 
 bool SongSortMgr::GetRandomSongs(
@@ -476,7 +469,7 @@ bool SongSortMgr::GetRandomSongs(
             bool partOk = false;
             FOREACH (pit, *availableParts) {
                 Symbol sym = *pit;
-                if (!rec.GetData()->HasPart(sym, false)) {
+                if (!rec.GetData()->HasPart(sym)) {
                     partOk = true;
                     break;
                 }
@@ -496,8 +489,8 @@ bool SongSortMgr::GetRandomSongs(
         MILO_WARN("Not enough valid random songs!");
         return false;
     }
-    int weights[5];
     DataArray *cfg = SystemConfig(Symbol("song_select"), Symbol("review_weights"));
+    int weights[5] = { 0, 0, 0, 0, 0 };
     for (int i = 1; i < 5; i++) {
         weights[i] = cfg->FindInt(MakeString("review_%i", i + 1));
     }

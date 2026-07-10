@@ -18,7 +18,10 @@ public:
 
 class SongSortByDiff : public SongSort {
 public:
-    SongSortByDiff() { mShortName = by_difficulty; }
+    SongSortByDiff() {
+        static Symbol by_difficulty("by_difficulty");
+        mShortName = by_difficulty;
+    }
     virtual ~SongSortByDiff() {}
     virtual void Init();
     virtual ShortcutNode *NewShortcutNode(SongSortNode *) const;

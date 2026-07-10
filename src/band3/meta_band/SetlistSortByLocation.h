@@ -29,7 +29,10 @@ public:
 
 class SetlistSortByLocation : public SetlistSort {
 public:
-    SetlistSortByLocation() { mShortName = by_location; }
+    SetlistSortByLocation() {
+        static Symbol by_location("by_location");
+        mShortName = by_location;
+    }
     virtual ~SetlistSortByLocation() {}
     virtual ShortcutNode *NewShortcutNode(SetlistSortNode *) const;
     virtual HeaderSortNode *NewHeaderNode(SetlistSortNode *) const;

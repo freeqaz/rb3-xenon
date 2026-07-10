@@ -57,10 +57,6 @@ int RankCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
     }
 }
 
-SongSortByRank::~SongSortByRank() {
-
-}
-
 void SongSortByRank::Clear() {
     mRankings.clear();
     mDataResults.Clear();
@@ -104,7 +100,7 @@ OwnedSongSortNode *SongSortByRank::NewSongNode(SongRecord *record) const {
     MILO_ASSERT(!mRankings.empty(), 0x80);
     const BandSongMetadata *data = record->mData;
     int songId = data->ID();
-    std::map<int, std::pair<int, bool> >::const_iterator it = mRankings.find(songId);
+    std::hash_map<int, std::pair<int, bool> >::const_iterator it = mRankings.find(songId);
     RankCmp *pCmp;
     if(it == mRankings.end()) {
         pCmp = new RankCmp(-1, data->Title(), RankCmp::kNoData);
@@ -206,7 +202,7 @@ DataNode SongSortByRank::OnMsg(RockCentralOpCompleteMsg const &msg) {
     if(msg.Success()) {
         mDataResults.Update(NULL);
         MILO_ASSERT(mRankings.empty(), 0x11F);
-        std::map<int, std::pair<int, bool> > &rankings = mRankings;
+        std::hash_map<int, std::pair<int, bool> > &rankings = mRankings;
         int songId, rank;
         bool isPercentile;
         for(int i = 0; i < mDataResults.NumDataResults(); i++) {
@@ -218,10 +214,10 @@ DataNode SongSortByRank::OnMsg(RockCentralOpCompleteMsg const &msg) {
             rank = node.Int(NULL);
             res->GetDataResultValue("is_percentile", node);
             isPercentile = node.Int(NULL) != 0;
-            std::map<int, std::pair<int, bool> >::iterator it = mRankings.lower_bound(songId);
-            bool doInsert = (it == rankings.end() || songId < it->first);
+            std::hash_map<int, std::pair<int, bool> >::iterator it = mRankings.find(songId);
+            bool doInsert = (it == rankings.end());
             if(doInsert) {
-                it = mRankings.insert(it, std::make_pair(songId, std::make_pair(0, false)));
+                it = mRankings.insert(std::make_pair(songId, std::make_pair(0, false))).first;
             }
             it->second.first = rank;
             it->second.second = isPercentile;

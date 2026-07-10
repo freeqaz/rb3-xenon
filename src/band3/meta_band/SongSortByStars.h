@@ -18,7 +18,10 @@ public:
 
 class SongSortByStars : public SongSort {
 public:
-    SongSortByStars() { mShortName = by_stars; }
+    SongSortByStars() {
+        static Symbol by_stars("by_stars");
+        mShortName = by_stars;
+    }
     virtual ~SongSortByStars() {}
     virtual void Init();
     virtual bool CustomForNode(ShortcutNode *, UIListCustom *, Hmx::Object *) const;

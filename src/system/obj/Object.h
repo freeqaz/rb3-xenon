@@ -1561,6 +1561,7 @@ namespace Hmx {
         };
 
         Object();
+        Object(const Object &);
         virtual ~Object();
 #ifdef HX_NATIVE
         /** True when inside ~Object() -> ReplaceRefs(NULL) chain. */

@@ -20,6 +20,13 @@
 #include <string>
 #include <unordered_set>
 
+void DataArray::Release() {
+    mRefs--;
+    MILO_ASSERT(mRefs >= 0, 0x122);
+    if (mRefs == 0)
+        delete this;
+}
+
 // Intern context path strings for stable pointers and deduplication
 static const char *InternContextPath(const char *path) {
     static std::unordered_set<std::string> sContextPaths;
