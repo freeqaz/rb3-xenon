@@ -203,15 +203,15 @@ public:
     OvershellDir *mOvershellDir; // 0x50
     bool mAutohideEnabled; // 0x54
     bool mIsLeavingOptions; // 0x55
+    bool unk80; // 0x56 (retail packs these two into the 2-byte pad before mCurrentView)
+    bool unk81; // 0x57
     Symbol mCurrentView; // 0x58
     bool mBlockAllInput; // 0x5c
     bool mInGame; // 0x5d
     bool mSongOptionsRequired; // 0x5e
     std::vector<PotentialUserEntry> mPotentialUsers; // 0x60
-    DataResultList mLinkingCodeResultList; // 0x68
-    bool unk80;
-    bool unk81;
-    TourCharLocal *mCharForEdit; // 0x84
+    DataResultList mLinkingCodeResultList; // 0x68 (ends 0x80)
+    TourCharLocal *mCharForEdit; // 0x80
     unsigned int mCymbalConfiguration; // 0x88
     PassiveMessageQueue *mMessageQueue; // 0x8c
     OvershellOverrideFlow mSlotOverrideFlow; // 0x90
