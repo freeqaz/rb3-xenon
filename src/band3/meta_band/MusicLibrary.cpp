@@ -1938,22 +1938,20 @@ void MusicLibrary::RebuildUserConfigData() {
 }
 
 void MusicLibrary::RebuildSharedSongData() {
+    TheSongMgr.SyncSharedSongs();
     SortNode *highlightedNode = GetCurrentSort()->GetNode(mCurrentHighlightIndex);
     OwnedSongSortNode *curNode = dynamic_cast<OwnedSongSortNode *>(highlightedNode);
-    bool wasShared = false;
-    if (curNode && curNode->GetSongRecord()->mIsShared) {
-        wasShared = true;
-    }
+    bool wasShared = curNode && curNode->GetSongRecord()->mIsShared;
     std::map<Symbol, SongRecord> &theSongs = TheSongSortMgr->mSongs;
     bool aSharedSongChanged = false;
     FOREACH (it, theSongs) {
-        if (it->second.UpdateSharedStatus())
+        if (it->second.UpdateSharedStatus()) {
             aSharedSongChanged = true;
+            it->second.UpdateRestricted();
+        }
     }
-    bool mySharedSongChanged = false;
-    if (curNode && wasShared != (bool)curNode->GetSongRecord()->mIsShared) {
-        mySharedSongChanged = true;
-    }
+    bool mySharedSongChanged =
+        curNode && (bool)curNode->GetSongRecord()->mIsShared != wasShared;
     MILO_ASSERT(!mySharedSongChanged || aSharedSongChanged, 0xAFD);
     if (aSharedSongChanged) {
         PushSonglistToScreen();
@@ -1964,25 +1962,17 @@ void MusicLibrary::RebuildSharedSongData() {
 }
 
 void MusicLibrary::RebuildRestrictedData() {
-    TheSongMgr.SyncSharedSongs();
     SortNode *highlightedNode = GetCurrentSort()->GetNode(mCurrentHighlightIndex);
     OwnedSongSortNode *curNode = dynamic_cast<OwnedSongSortNode *>(highlightedNode);
-    bool wasRestricted = false;
-    if (curNode && curNode->GetSongRecord()->mRestricted) {
-        wasRestricted = true;
-    }
+    bool wasRestricted = curNode && curNode->GetSongRecord()->mRestricted;
     std::map<Symbol, SongRecord> &theSongs = TheSongSortMgr->mSongs;
     bool aRestrictedSongChanged = false;
     FOREACH (it, theSongs) {
-        if (it->second.UpdateRestricted()) {
+        if (it->second.UpdateRestricted())
             aRestrictedSongChanged = true;
-            it->second.UpdateSharedStatus();
-        }
     }
-    bool myRestrictedSongChanged = false;
-    if (curNode && wasRestricted != (bool)curNode->GetSongRecord()->mRestricted) {
-        myRestrictedSongChanged = true;
-    }
+    bool myRestrictedSongChanged =
+        curNode && (bool)curNode->GetSongRecord()->mRestricted != wasRestricted;
     MILO_ASSERT(!myRestrictedSongChanged || aRestrictedSongChanged, 0xB27);
     if (aRestrictedSongChanged) {
         PushSonglistToScreen();

@@ -36,9 +36,9 @@ public:
     bool IsDemo() const { return mDemo; }
 
     Symbol mShortName; // 0x1c
-    bool mIsShared; // 0x20
+    bool mRestricted; // 0x20
     bool mDemo; // 0x21
-    bool mRestricted; // 0x22
+    bool mIsShared; // 0x22
     std::map<Symbol, int> mTier; // 0x24
     ScoreType mActiveScoreType; // 0x3c
     int mScores[11]; // 0x40

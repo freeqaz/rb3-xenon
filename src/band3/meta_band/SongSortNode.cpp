@@ -355,11 +355,11 @@ END_HANDLERS
 Symbol OwnedSongSortNode::GetToken() const { return mSongRecord->mShortName; }
 
 bool OwnedSongSortNode::IsEnabled() const {
-    if (!TheSessionMgr->IsLocal() && !mSongRecord->mIsShared)
+    if (!TheSessionMgr->IsLocal() && !mSongRecord->mRestricted)
         return false;
     if (TheMusicLibrary->GetMakingSetlist(false) && mSongRecord->mDemo)
         return false;
-    if (mSongRecord->mRestricted)
+    if (mSongRecord->mIsShared)
         return false;
     if (!TheMusicLibrary->GetDuplicatesAllowed() && TheMusicLibrary->SetlistHasSong(mSongRecord->mData->ID()))
         return false;
