@@ -536,8 +536,8 @@ DelayEffect.cpp:
 	.text       start:0x82B820F8 end:0x82B823F8
 
 FlangerEffect.cpp:
-	.pdata      start:0x82255888 end:0x822558B0
-	.text       start:0x82B823F8 end:0x82B82B58
+	.pdata      start:0x82255888 end:0x822558A8
+	.text       start:0x82B823F8 end:0x82B828E8
 
 FFT.cpp:
 	.pdata      start:0x82253078 end:0x822530D0
@@ -738,9 +738,21 @@ CharFaceServo.cpp:
 	.pdata      start:0x821FC5C0 end:0x821FC720
 	.text       start:0x8238FCE0 end:0x82391298
 
+GainEffect.cpp:
+	.pdata      start:0x822528F0 end:0x82252918
+	.text       start:0x82B3DEA0 end:0x82B3E168
+
+HeadsetPlaybackEffect.cpp:
+	.pdata      start:0x82252918 end:0x82252948
+	.text       start:0x82B3E168 end:0x82B3E3C8
+
+EnvelopeGenerator.cpp:
+	.pdata      start:0x82252948 end:0x82252978
+	.text       start:0x82B3E3C8 end:0x82B3E928
+
 PitchShiftEffect.cpp:
-	.pdata      start:0x822528F8 end:0x822529C8
-	.text       start:0x82B3DFC0 end:0x82B3EE2C
+	.pdata      start:0x82252978 end:0x822529C8
+	.text       start:0x82B3E928 end:0x82B3EE2C
 
 FxSendDistortion.cpp:
 	.pdata      start:0x82251FA0 end:0x82251FC8
@@ -2674,8 +2686,8 @@ Memcard.cpp:
 	.text       start:0x82520110 end:0x82520238
 
 EQEffect.cpp:
-	.pdata      start:0x822558B0 end:0x822558C8
-	.text       start:0x82B82B58 end:0x82B833B0
+	.pdata      start:0x822558A8 end:0x822558C8
+	.text       start:0x82B828E8 end:0x82B833B0
 
 MoveGraph.cpp:
 	.pdata      start:0x821F5840 end:0x821F5848

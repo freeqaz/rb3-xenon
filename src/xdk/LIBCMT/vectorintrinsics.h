@@ -114,6 +114,9 @@ static inline void __stvx(XMVECTOR vSrc, void *base, int offset) {
 // You'll know you got it right if you can call your function
 // and the actual VMX128 PPC instruction shows up.
 
+// Vector128 Multiply Floating Point
+XMVECTOR __vmulfp(XMVECTOR mul1, XMVECTOR mul2);
+
 // Vector128 Multiply Add Floating Point
 XMVECTOR __vmaddfp(XMVECTOR mul1, XMVECTOR mul2, XMVECTOR addend);
 

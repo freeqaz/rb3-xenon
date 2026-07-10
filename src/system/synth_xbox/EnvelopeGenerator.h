@@ -1,37 +1,32 @@
 #pragma once
+#include "utl/PoolAlloc.h"
+#include "xdk/xaudio2/xapobase.h"
 
-namespace ATG {
-
-// Forward declarations
-struct XAPO_REGISTRATION_PROPERTIES;
-
+// size 0x10
 struct EnvelopeGeneratorParams {
-    char data[0x10];
+    float unk0;
+    float unk4;
+    float unk8;
+    float unkc;
+
+    POOL_OVERLOAD(EnvelopeGeneratorParams, 0x1E);
 };
 
-// Base class for XAPO parameters
-class CXAPOParametersBase {
-public:
-    CXAPOParametersBase(const void* pRegistrationProperties, void* pParameterBlocks, unsigned int uParameterBlockByteSize, unsigned char fProducer);
-    virtual ~CXAPOParametersBase() {}
-};
-
-// Template base class for sample XAPOs
-template <typename Derived, typename Params>
-class CSampleXAPOBase : public CXAPOParametersBase {
-protected:
-    CSampleXAPOBase();
-    virtual ~CSampleXAPOBase() {}
-
-    static XAPO_REGISTRATION_PROPERTIES m_regProps;
-
-protected:
-    Params mParams;
-};
-
-class EnvelopeGenerator : public CSampleXAPOBase<EnvelopeGenerator, EnvelopeGeneratorParams> {
+// size 0x94
+class EnvelopeGenerator
+    : public ATG::CSampleXAPOBase<EnvelopeGenerator, EnvelopeGeneratorParams> {
 public:
     EnvelopeGenerator();
-};
+    virtual void OnSetParameters(const EnvelopeGeneratorParams &);
+    virtual void DoProcess(
+        const EnvelopeGeneratorParams &, float *__restrict, unsigned int, unsigned int
+    );
 
-}  // namespace ATG
+    POOL_OVERLOAD(EnvelopeGenerator, 0x2A);
+
+private:
+    int unk84;
+    int unk88;
+    float unk8c;
+    int unk90;
+};
