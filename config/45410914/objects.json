@@ -237,7 +237,12 @@
    "system/utl/BufStream.cpp": "NonMatching",
    "system/utl/Locale.cpp": "NonMatching",
    "system/utl/NetCacheLoader.cpp": "NonMatching",
-   "system/utl/NetLoader_Xbox.cpp": "NonMatching",
+   "system/utl/NetLoader_Xbox.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HTTPGET_VIRTUAL_DTOR"
+    ]
+   },
    "system/utl/Option.cpp": "NonMatching",
    "system/utl/Profiler.cpp": "NonMatching",
    "system/utl/TextFileStream.cpp": "NonMatching",
