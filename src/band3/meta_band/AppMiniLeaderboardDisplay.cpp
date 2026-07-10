@@ -124,6 +124,7 @@ bool AppMiniLeaderboardDisplay::UpdateLeaderboard(int songID, ScoreType scoreTyp
         return 0;
     mScoreType = scoreType;
     mSongID = songID;
+    static Symbol mini_leaderboards_title_friends("mini_leaderboards_title_friends");
     if (mTitleLabel) {
         mTitleLabel->SetTextToken(mini_leaderboards_title_friends);
     }

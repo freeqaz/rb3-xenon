@@ -80,8 +80,8 @@ void StoreMenuPanel::Poll() {
             mList->Reveal();
             mCurrentMenuIx = mPendingMenuIx;
             mPendingMenuIx = -1;
-            static Symbol new_provider("new_provider");
-            TheUI->Handle(Message(new_provider), false);
+            static Message new_provider_msg(Symbol("new_provider"));
+            TheUI->Handle(new_provider_msg, false);
         }
     }
 }
