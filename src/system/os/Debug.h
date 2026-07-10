@@ -135,18 +135,26 @@ extern const char *kAssertStr;
 // Find<> fail-paths; (void)(args) keeps it. HX_NATIVE keeps the real fatal path.)
 #define MILO_FAIL(...) ((void)(__VA_ARGS__))
 #endif
-// Retail RB3-360 compiled the debug-OUTPUT family (WARN/NOTIFY/LOG/PRINT_ONCE/
-// NOTIFY_ONCE/WARN_ONCE) to NO code in release (verified: their format strings
-// are absent from orig band.exe, and gating them raises the match count +23
-// with zero real regressions — engine logging-heavy TUs like MidiParser jump).
-// No-op them for the match build (sizeof keeps args type-checked, zero runtime
-// code). MILO_FAIL / MILO_FAIL_DTA are NOT gated — retail retained the
-// fatal/abort paths (gating them regresses CharBoneDir/CharFaceServo via inlined
-// Find<> fail-paths). HX_NATIVE keeps real output for the native port.
+// Retail RB3-360 stripped the debug-OUTPUT family's EMISSION (WARN/NOTIFY/LOG/
+// PRINT_ONCE/NOTIFY_ONCE/WARN_ONCE): their format strings are absent from orig
+// band.exe and no Warn/Notify/Print calls survive. BUT — like MILO_FAIL above —
+// retail still EVALUATED the argument expressions of the non-ONCE macros
+// (verified via Ghidra callee IDs: TickFormat, PathName/ClassName vcalls,
+// MetaPerformer::Current()->Song() all survive at stripped warn sites). So
+// WARN/NOTIFY/NOTIFY_BETA/LOG use the same ((void)(args)) comma form as
+// MILO_FAIL: each arg evaluated exactly once, in order; format-string literal +
+// MakeString + emission vanish. A/B (2026-07-10, worktree warn-lever): +6 strict
+// (FileMerger FindMerger/FindMergerIndex via NOTIFY PathName; CharClipDriver
+// SetBeatOffset via NOTIFY; band3 CharData fn_825BE52C via WARN; SongUpgradeMgr
+// fn_82631F18/fn_82631FA8 via LOG Sym(0)).
+// The ONCE variants stay sizeof-stripped: eval-ing them gained 0 and lost 3
+// TexBlender funclets (spurious EH/temp scopes where retail has none).
+// MILO_FAIL / MILO_FAIL_DTA are NOT gated — retail retained the fatal/abort
+// paths. HX_NATIVE keeps real output for the native port.
 #ifdef HX_NATIVE
 #define MILO_WARN(...) TheDebugWarner << MakeString(__VA_ARGS__)
 #else
-#define MILO_WARN(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#define MILO_WARN(...) ((void)(__VA_ARGS__))
 #endif
 // DTA runtime errors: FAIL on Xbox (shows dialog + Continue), WARN on native
 #ifdef HX_NATIVE
@@ -158,13 +166,21 @@ extern const char *kAssertStr;
 #define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)
 #define MILO_NOTIFY_BETA(...) DebugBeta() << MakeString(__VA_ARGS__)
 #else
-#define MILO_NOTIFY(...) ((void)sizeof(MakeString(__VA_ARGS__)))
-#define MILO_NOTIFY_BETA(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
+#define MILO_NOTIFY_BETA(...) ((void)(__VA_ARGS__))
 #endif
 #ifdef HX_NATIVE
 #define MILO_LOG(...) do { TheDebug << MakeString(__VA_ARGS__); fprintf(stderr, "%s", MakeString(__VA_ARGS__)); } while(0)
-#else
+#elif defined(RB3_LOG_NO_EVAL)
+// Per-TU opt-out (/DRB3_LOG_NO_EVAL in objects.json extra_cflags; only works
+// for NON-PCH TUs — Debug.h is baked into the PCH, so the #if resolves at
+// PCH-create time for PCH TUs). Needed for band3/game/Game.cpp: retail's
+// Game::Handle cross-jumps the HANDLE_EXPR(print_base_points) Song() eval, and
+// LOG-evaluating PrintBasePoints' inlined `Current()->Song()` arg splits the
+// shared Symbol temp slot (0x58 -> 0x54/0x58), breaking the tail-merge (-1).
 #define MILO_LOG(...) ((void)sizeof(MakeString(__VA_ARGS__)))
+#else
+#define MILO_LOG(...) ((void)(__VA_ARGS__))
 #endif
 
 // Usage:

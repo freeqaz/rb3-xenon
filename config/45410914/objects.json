@@ -1255,7 +1255,8 @@
    "band3/game/Game.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_LOG_NO_EVAL"
     ]
    },
    "band3/game/Band.cpp": {
