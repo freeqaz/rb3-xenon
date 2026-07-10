@@ -33,7 +33,7 @@ TextStream &TextStream::operator<<(int i) {
 
 TextStream &TextStream::operator<<(unsigned char i) {
     char buf[1024];
-    MILO_ASSERT(SNPRINTF(buf, sizeof(buf), "%hhu", i) >= 0, 0x34);
+    MILO_ASSERT(SNPRINTF(buf, sizeof(buf), "%u", i) >= 0, 0x34);
     Print(buf);
     return *this;
 }

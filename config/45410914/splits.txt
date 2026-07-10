@@ -61,6 +61,7 @@ RockCentral.cpp:
 	.pdata      start:0x822099F0 end:0x822099F8
 	.pdata      start:0x8220E0F0 end:0x8220E0F8
 	.pdata      start:0x8220E218 end:0x8220E220
+	.pdata      start:0x8220E2C0 end:0x8220E388
 	.pdata      start:0x8220E388 end:0x8220E390
 	.pdata      start:0x8220E390 end:0x8220E398
 	.pdata      start:0x8220E3D0 end:0x8220E3D8
@@ -118,6 +119,7 @@ RockCentral.cpp:
 	.text       start:0x82488A50 end:0x82488B38
 	.text       start:0x824E3590 end:0x824E35E8
 	.text       start:0x824E4460 end:0x824E449C
+	.text       start:0x824E4AF0 end:0x824E542C
 	.text       start:0x824E5430 end:0x824E54B8
 	.text       start:0x824E54C0 end:0x824E55E0
 	.text       start:0x824E57A0 end:0x824E596C
@@ -942,8 +944,8 @@ Debug.cpp:
 	.text       start:0x824FC360 end:0x824FE310
 
 FileStream.cpp:
-	.pdata      start:0x822397F0 end:0x82239850
-	.text       start:0x8279E3A0 end:0x8279E8D8
+	.pdata      start:0x822397F0 end:0x82239868
+	.text       start:0x8279E3A0 end:0x8279E97C
 
 SoftParticleBuffer.cpp:
 	.pdata      start:0x8220A400 end:0x8220A498
@@ -1111,8 +1113,8 @@ TextFileStream.cpp:
 	.text       start:0x8279ECD8 end:0x8279EDAC
 
 TextStream.cpp:
-	.pdata      start:0x82239890 end:0x822398A8
-	.text       start:0x8279EB70 end:0x8279EC5C
+	.pdata      start:0x82239868 end:0x822398A8
+	.text       start:0x8279E990 end:0x8279EC5C
 
 crc32.c:
 	.pdata      start:0x82251798 end:0x822517A0
@@ -4462,10 +4464,6 @@ FlowQueueable.cpp:
 Shockwave.cpp:
 	.pdata      start:0x8220C6A0 end:0x8220C728
 	.text       start:0x824BD0C8 end:0x824BD6E8
-
-FlowSound.cpp:
-	.pdata      start:0x8220E2C0 end:0x8220E388
-	.text       start:0x824E4AF0 end:0x824E542C
 
 PlatformMgr.cpp:
 	.pdata      start:0x82210248 end:0x82210438
