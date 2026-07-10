@@ -124,20 +124,17 @@ void LocalSavedSetlist::LoadFixed(FixedSizeSaveableStream &fs, int rev) {
 }
 
 void LocalSavedSetlist::ProcessRetCode(int ret) {
+    // Retail (fn_82591860): local static error_message Symbol (guard bit 1,
+    // before msg at bit 2), no b2/mIsShared/mNeedsUpload tail — `this` is
+    // unused in the retail body.
+    static Symbol error_message("error_message");
     static Message msg("init", 0);
-    bool b2 = false;
     if (ret == 15) {
         msg[0] = Symbol("error_setlist_title_profane");
         TheUIEventMgr->TriggerEvent(error_message, msg);
-        b2 = true;
     } else if (ret == 16) {
         msg[0] = Symbol("error_setlist_description_profane");
         TheUIEventMgr->TriggerEvent(error_message, msg);
-        b2 = true;
-    }
-    if (b2) {
-        mIsShared = false;
-        mNeedsUpload = true;
     }
 }
 

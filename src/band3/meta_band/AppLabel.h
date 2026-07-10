@@ -69,6 +69,20 @@ public:
     void SetSongName(const SongSortNode *);
     void SetSetlistName(const SavedSetlist *);
     void SetSetlistDescription(const SavedSetlist *);
+    // Retail 360-only pair (fns 0x825AD298/0x825AD2B0): label setters for a
+    // friend/share list record {String name; bool online; String bandName}.
+    // Sole pinned caller is an unmapped provider at 0x82649280 (vector of
+    // records at this+0x2C, slots "name"/..., status_online/offline.mat) —
+    // the record's real class name is unknown; layout is pinned by the
+    // caller's lbz +0xC (online flag) and these thunks' +0x8/+0x18 c_str
+    // loads. Wii source has no equivalent (LIVE friends UI).
+    struct FriendRecord {
+        String mName; // 0x0
+        bool mOnline; // 0xc
+        String mBandName; // 0x10
+    };
+    void SetFriendName(const FriendRecord *);
+    void SetFriendBandName(const FriendRecord *);
     void SetSetlistOwner(const SetlistRecord *);
     void SetEditSetlistName(const UIPanel *);
     void SetEditSetlistDesc(const UIPanel *);

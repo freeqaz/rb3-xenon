@@ -125,8 +125,11 @@ void AppLabel::SetCreditsText(DataArray *arr, UIListSlot *slot) {
     static Symbol heading2("heading2");
     static Symbol title_name("title_name");
     static Symbol centered("centered");
-    Symbol sym;
-    if (arr->Size() == 0 || (sym = arr->Sym(0)) == blank) {
+    Symbol sym = blank;
+    if (0 != arr->Size()) {
+        sym = arr->Sym(0);
+    }
+    if (sym == blank) {
         SetTextToken(gNullStr);
     } else if (heading == sym) {
         if (slot->Matches("heading")) {
@@ -453,6 +456,15 @@ void AppLabel::SetSetlistDescription(const SavedSetlist *setlist) {
     SetDisplayText(setlist->GetDescription(), true);
 }
 
+// Retail 360-only pair - see AppLabel.h FriendRecord note.
+void AppLabel::SetFriendName(const FriendRecord *record) {
+    SetDisplayText(record->mName.c_str(), true);
+}
+
+void AppLabel::SetFriendBandName(const FriendRecord *record) {
+    SetDisplayText(record->mBandName.c_str(), true);
+}
+
 void AppLabel::SetSetlistOwner(const SetlistRecord *setlist) {
     SetDisplayText(setlist->GetOwner(), true);
 }
@@ -615,7 +627,8 @@ void AppLabel::SetBattleInstrument(const SetlistRecord *slr) {
 void AppLabel::SetRatingIcon(int i) {
     static Symbol song_select("song_select");
     static Symbol rating_icons("rating_icons");
-    SetIcon(SystemConfig(song_select, rating_icons, SystemLanguage())->Str(i)[0]);
+    Symbol locale = SystemLocale();
+    SetIcon(SystemConfig(song_select, rating_icons, locale)->Str(i)[0]);
 }
 
 void AppLabel::SetNewReleaseEntryText1(const StoreMainPanel *panel) {

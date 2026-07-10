@@ -73,11 +73,15 @@ protected:
     bool mLastRequestExtra; // 0xBC
     StoreOfferProvider *mOfferProvider; // 0xC0
     StoreOfferContentsProvider *mOfferContentsProvider; // 0xC4
-    String mPrevChunkPath; // 0xC8 (request_prev_chunk path)
-    String mNextChunkPath; // 0xD4 (request_next_chunk path)
-    Symbol mSort; // 0xE0
-    String mMenuTitle; // 0xE4
+    // Retail order pinned by AppLabel::SetStoreCrumbText: its
+    // MenuTitle().c_str() load reads mMenuTitle+8 with mMenuTitle 0x1C
+    // below our old 0xE4 placement — i.e. retail mMenuTitle precedes both
+    // chunk-path strings.
+    String mMenuTitle; // 0xC8
+    String mPrevChunkPath; // 0xD4 (request_prev_chunk path)
+    String mNextChunkPath; // 0xE0 (request_next_chunk path)
+    Symbol mSort; // 0xEC
     bool mStartBrowserAtBottom; // 0xF0
     bool mUserCanDoInput; // 0xF1
-    BandStoreShortcutProvider *mShortcutProvider; // 0xF4
+    BandStoreShortcutProvider *mShortcutProvider; // 0xF4 (unverified vs retail)
 };
