@@ -187,13 +187,10 @@ BandCamShot.cpp:
 	.text       start:0x8229F0A0 end:0x822A71D8
 
 BandDirector.cpp:
-	.pdata      start:0x821EB640 end:0x821EBF70
-	.pdata      start:0x821EBF70 end:0x821EC610
-	.pdata      start:0x821EC618 end:0x821EC8A8
-	.text       start:0x8227C378 end:0x82285300
-	.text       start:0x82285300 end:0x8228B4F8
-	.text       start:0x8228B5B8 end:0x8228B5E8
-	.text       start:0x8228B600 end:0x8228E468
+	.pdata      start:0x821EB5F0 end:0x821EBF70
+	.pdata      start:0x821EBF70 end:0x821EC588
+	.text       start:0x8227BFC8 end:0x82285300
+	.text       start:0x82285300 end:0x8228AFB8
 
 BandWardrobe.cpp:
 	.pdata      start:0x821F5578 end:0x821F5620
@@ -3973,9 +3970,8 @@ VocalNoteList.cpp:
 	.text       start:0x8275C0E0 end:0x8275C128
 
 OutfitConfig.cpp:
-	.pdata      start:0x821EC610 end:0x821EC618
-	.text       start:0x8228B4F8 end:0x8228B5B8
-	.text       start:0x8228B5E8 end:0x8228B600
+	.pdata      start:0x821EC588 end:0x821EC8A8
+	.text       start:0x8228AFB8 end:0x8228E468
 
 PitchArrow.cpp:
 	.pdata      start:0x821F1B80 end:0x821F1B88

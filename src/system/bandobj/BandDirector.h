@@ -30,7 +30,7 @@ public:
     };
     BandDirector();
     OBJ_CLASSNAME(BandDirector);
-    OBJ_SET_TYPE(BandDirector);
+    OBJ_SET_TYPE_ENGINE(BandDirector); // retail 0x82286000 shape: static types init before null check
     virtual DataNode Handle(DataArray *, bool);
     virtual void Poll();
     virtual void Enter();

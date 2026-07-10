@@ -14,12 +14,20 @@
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
 
-INIT_REVS(6, 0)
-
 DataArray *BandDirector::sPropArr;
 float BandDirector::sMotionBlurBlendAmount;
 BandDirector *TheBandDirector;
 bool gIsLoadingDlc;
+
+// retail 0x8227CF68 stores both revs through ONE computed base pointer
+// (lbl_82C86088: altRev at +0, rev at +4, each align(4)) — a TU-static
+// aggregate, addressed once via lis/addi then plain displacements.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 // Forward decl for stub defined at end-of-file (used by OnLightPresetKeyframeInterp).
 int SymToPstKeyframe(Symbol);
@@ -103,6 +111,14 @@ void AddStageKitKeys(RndPropAnim *anim, BandDirector *dir) {
 }
 
 Symbol HiddenInstrument(Symbol s) {
+    // retail 0x8227C048: interns its own function-local statics (guard bits
+    // 1,2,4,8,16,32 in this declaration order), does NOT use the globals.
+    static Symbol coop_bg("coop_bg");
+    static Symbol coop_bk("coop_bk");
+    static Symbol coop_gk("coop_gk");
+    static Symbol guitar("guitar");
+    static Symbol keyboard("keyboard");
+    static Symbol bass("bass");
     if (s == coop_bg)
         return keyboard;
     else if (s == coop_bk)
@@ -308,26 +324,35 @@ void BandDirector::CollideList(const Segment &seg, std::list<Collision> &colls) 
     RndDrawable::CollideList(seg, colls);
 }
 
-void BandDirector::Save(BinStream &) { MILO_ASSERT(0, 0x1FA); }
+// retail 0x8227CEE0: real Save body (Wii dev build had the SAVE_OBJ assert stub)
+void BandDirector::Save(BinStream &bs) {
+    bs << packRevs(0, 6);
+    Hmx::Object::Save(bs);
+    RndPollable::Save(bs);
+    RndDrawable::Save(bs);
+}
 
-BEGIN_LOADS(BandDirector)
-    LOAD_REVS(bs)
-    ASSERT_REVS(6, 0)
-    MILO_ASSERT(d.rev > 2, 0x204);
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndPollable)
-    LOAD_SUPERCLASS(RndDrawable)
-    if (d.rev < 5)
-        LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev < 6) {
+// retail 0x8227CF68: no ASSERT_REVS/MILO_ASSERT (stripped in retail); revs
+// stored to TU statics gAltRev (hi16) then gRev (lo16), in that order.
+void BandDirector::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndPollable::Load(bs);
+    RndDrawable::Load(bs);
+    if (gRev < 5)
+        Hmx::Object::Load(bs);
+    if (gRev < 6) {
         Symbol s;
         bs >> s;
     }
-    if (d.rev < 4) {
+    if (gRev < 4) {
         char buf[0x100];
         bs.ReadString(buf, 0x100);
     }
-END_LOADS
+}
 
 BEGIN_COPYS(BandDirector)
     COPY_SUPERCLASS(Hmx::Object)
@@ -335,8 +360,13 @@ BEGIN_COPYS(BandDirector)
     CREATE_COPY(BandDirector)
 END_COPYS
 
+// retail 0x8227C290: two superclass Replace calls, then returns the
+// dynamic_cast<BandDirector*> of the first arg (RTDynamicCast srctype is
+// Hmx::Object in retail).
 bool BandDirector::Replace(ObjRef *from, Hmx::Object *to) {
-    return Hmx::Object::Replace(from, to);
+    Hmx::Object::Replace(from, to);
+    RndDrawable::Replace(from, to);
+    return dynamic_cast<BandDirector *>((Hmx::Object *)(void *)from);
 }
 
 WorldDir *BandDirector::GetWorld() {
@@ -773,18 +803,12 @@ BEGIN_HANDLERS(BandDirector)
 END_HANDLERS
 
 void BandDirector::FilterShot(int &flags) {
+    // retail 0x82287xxx shape: no bool temp — straight &&-chain
     if (mCurShot) {
         if (strstr(mCurShot->Category().Str(), "_behind")) {
             flags |= 0x10;
-        } else {
-            bool b1 = false;
-            if (!(flags & 0x20U)) {
-                if (strstr(mCurShot->Category().Str(), "_far")) {
-                    b1 = true;
-                }
-            }
-            if (b1)
-                flags |= 0x100;
+        } else if (!(flags & 0x20U) && strstr(mCurShot->Category().Str(), "_far")) {
+            flags |= 0x100;
         }
     }
 }
