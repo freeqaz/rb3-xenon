@@ -31,4 +31,8 @@ protected:
     Hmx::Rect mRect; // 0x64
     /** "Use current camera screen_rect instead of the full screen" */
     bool mUseCamRect; // 0x74
+    /** Retail RB3's RndScreenMask carries 148 bytes of trailing state DC3 dropped.
+        Size is load-bearing: it places the Hmx::Object virtual-base subobject where
+        retail does (+0x94), fixing the ??_G scalar-deleting-destructor this-adjust. */
+    char mDroppedTrailingState_[0x94];
 };

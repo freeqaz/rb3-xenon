@@ -158,4 +158,8 @@ protected:
         HamCharacter so GetPropShowing/SetPropShowing stay self-consistent
         without inflating sizeof(Character) for every other subclass. */
     DrawPtrVec mShowableProps;
+    /** Retail RB3's HamCharacter carries 96 bytes of trailing state DC3 dropped.
+        Size is load-bearing: it places the Hmx::Object virtual-base subobject where
+        retail does (+0x60), fixing the ??_G scalar-deleting-destructor this-adjust. */
+    char mDroppedTrailingState_[0x60];
 };

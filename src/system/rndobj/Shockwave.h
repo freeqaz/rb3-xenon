@@ -46,6 +46,13 @@ protected:
     /** "Length of the shockwave in the radial dimension (min 0).".
         Ranges from 1.0e-3 to 1000. */
     float mWavelength; // 0xd4
+    /** Retail RB3's RndShockwave holds ~724 bytes of vertex/mesh state here that
+        DC3 (our source) dropped (DC3 rewrote the effect). We don't have named
+        decls for it, but its size is load-bearing: the Hmx::Object virtual-base
+        subobject sits at 0x3a4 in retail vs 0xd0 without it, so ??_G/??_D emit the
+        wrong `subi r31,r3,0xNN` this-adjust. Reserve the exact block to place the
+        vbase where retail does. Matches ??_GRndShockwave + ??_DRndShockwave. */
+    char mDroppedVertexState_[0x2d4];
 
     // selected:
     /** "Whether or not this shockwave object
