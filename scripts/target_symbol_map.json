@@ -14941,5 +14941,9 @@
  "0x82677A48": "?SyncProperty@GamePanel@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82677A60": "?Load@GamePanel@@UAAXXZ",
  "0x82677EE0": "?StartIntro@GamePanel@@QAAXXZ",
- "0x82677FE8": "??0GamePanel@@QAA@XZ"
+ "0x82677FE8": "??0GamePanel@@QAA@XZ",
+ "0x8226D610": "?SyncProperty@BandCharDesc@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8226D620": "?Save@BandCharDesc@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+ "0x8226D650": "?Handle@BandCharDesc@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8226D660": "?Load@BandCharDesc@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
 }
