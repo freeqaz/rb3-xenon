@@ -274,12 +274,16 @@ bool CamShotFrame::SameTargets(const CamShotFrame &other) const {
 void CamShotFrame::GetCurrentTargetPosition(Vector3 &v) const {
     v.Zero();
     int count = 0;
-    FOREACH (it, mTargets) {
-        RndTransformable *cur = *it;
-        if (cur) {
-            count++;
-            Add(v, cur->WorldXfm().v, v);
-        }
+    ObjPtrList<RndTransformable>::iterator it = mTargets.begin();
+    if (it != mTargets.end()) {
+        do {
+            RndTransformable *cur = *it;
+            if (cur) {
+                count++;
+                Add(v, cur->WorldXfm().v, v);
+            }
+            ++it;
+        } while (it != mTargets.end());
     }
     if (count > 0)
         v *= (1.0f / (float)count);
