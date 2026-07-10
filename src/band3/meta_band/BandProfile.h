@@ -141,10 +141,10 @@ public:
 
     static int SaveSize(int);
 
-    bool unk18;
-    std::vector<PatchDir *> mPatches; // 0x1c
+    std::vector<PatchDir *> mPatches; // 0x18
     std::vector<TourCharLocal *> mCharacters; // 0x24
-    TourProgress *mTourProgress; // 0x2c
+    int unk18; // 0x30 (flag; retail slot is here, after mCharacters — see AutoFakeFill/LoadFixed)
+    TourProgress *mTourProgress; // 0x34
     std::map<Symbol, float> mLessonCompletions; // 0x30
     SongStatusMgr *mScores; // 0x48
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x4c
