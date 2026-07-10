@@ -48,7 +48,7 @@ public:
     CamShot *ShotAfter(CamShot *);
     CamShot *FindCameraShot(Symbol, const std::vector<PropertyFilter> &);
     CamShot *MiloCamera();
-    void ForceCameraShot(CamShot *, bool);
+    void ForceCameraShot(CamShot *); // retail 0x824A6DC8: 1-arg (rb3-Wii parity; dc3 added a bool)
     void PrePoll();
     void Randomize();
     void Enter();
@@ -59,6 +59,12 @@ public:
     void Poll();
 
 private:
+    // Retail BandDirector::HarvestDircuts (0x82288308) iterates
+    // mCameraShotCategories directly off WorldDir+0x2ec (member-of-member
+    // access, no accessor call). Friend keeps the codegen-identical direct
+    // access without publicizing the field.
+    friend class BandDirector;
+
     void StartShot_(CamShot *);
     float CalcFrame();
     void FirstShotOk(Symbol);

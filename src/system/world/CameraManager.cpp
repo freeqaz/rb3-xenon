@@ -98,7 +98,7 @@ void CameraManager::DeleteFreeCam() { RELEASE(mFreeCam); }
 
 void CameraManager::SetNextShot(CamShot *shot) { mNextShot = shot; }
 
-void CameraManager::ForceCameraShot(CamShot *shot, bool b) { mNextShot = shot; }
+void CameraManager::ForceCameraShot(CamShot *shot) { mNextShot = shot; }
 
 void CameraManager::FirstShotOk(Symbol s) {
     static Message first_shot_ok("first_shot_ok", "");
@@ -187,7 +187,7 @@ CamShot *CameraManager::ShotAfter(CamShot *cshot) {
 DataNode CameraManager::OnCycleShot(DataArray *da) {
     CamShot *after = ShotAfter(mCurrentShot);
     if (after)
-        ForceCameraShot(after, true);
+        ForceCameraShot(after);
     return 0;
 }
 

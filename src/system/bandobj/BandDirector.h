@@ -28,6 +28,17 @@ public:
         DirLoader *mLoader; // 0x8
         Symbol mName; // 0xc
     };
+
+    /** Retail-only rewrite (no rb3-Wii equivalent): mDircuts entry wrapping a
+     * possibly-null BandCamShot*. Evidence: Keys<DircutEntry,DircutEntry>::Cross
+     * at 0x822847A8 (stride 8, value@+0, frame@+4 => sizeof 4); FindNextDircut
+     * 0x82284C18 returns entry->shot and null-tests it; AddDircut 0x822881B8
+     * stores a nullable shot pointer. */
+    struct DircutEntry {
+        DircutEntry(BandCamShot *s = 0) : shot(s) {}
+        BandCamShot *shot; // 0x0
+    };
+
     BandDirector();
     OBJ_CLASSNAME(BandDirector);
     OBJ_SET_TYPE_ENGINE(BandDirector); // retail 0x82286000 shape: static types init before null check
@@ -93,21 +104,18 @@ public:
     bool BFTB(Symbol s) const;
 
     // TODO: find a better name for this
+    // Retail (0x8227D058): direct short-circuit chain, no bool
+    // materialization; GetWorld() evaluated twice (two dynamic_casts).
     bool NoWorlds() {
-        bool b2;
         bool ret;
-        bool b1;
-
-        ret = true;
-        b2 = true;
-        b1 = false;
-        if (mDisablePicking || !GetWorld())
-            b1 = true;
-        if (!b1 && !GetWorld()->GetCameraManager()->HasFreeCam()) {
-            b2 = false;
-        }
-        if (!b2 && mVenue.Dir())
+        if (!mDisablePicking && GetWorld()
+            && !GetWorld()->GetCameraManager()->HasFreeCam()) {
             ret = false;
+            if (!mVenue.Dir())
+                ret = true;
+        } else {
+            ret = true;
+        }
         return ret;
     }
 
@@ -173,7 +181,7 @@ public:
     float unke0; // 0xe0
     bool mDisablePicking; // 0xe4
     bool unke5; // 0xe5 - enable world polling?
-    Keys<BandCamShot *, BandCamShot *> mDircuts; // 0xe8 - Keys<BandCamShot*>
+    Keys<DircutEntry, DircutEntry> mDircuts; // 0xe8 (retail vector start this+0xec)
     VenueLoader mVenue; // 0xf0
     Keys<Symbol, Symbol> unk100; // 0x100
     float unk108; // 0x108

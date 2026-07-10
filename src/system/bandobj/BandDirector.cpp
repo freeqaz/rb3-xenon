@@ -11,6 +11,7 @@
 #include "synth/BinkClip.h"
 #include "utl/Loader.h"
 #include "world/Dir.h"
+#include "utl/Std.h"
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
 
@@ -396,6 +397,9 @@ bool BandDirector::BehindCamera(Symbol s) const {
 
 void BandDirector::FindNextShot() {
     mNextShot = 0;
+    // Retail (0x82287F58): function-local static (guard DAT_82c8b784 bit 1,
+    // string "flags_any" @0x820162b8) shadowing the Symbols.h global.
+    static Symbol flags_any("flags_any");
     if (!mShotCategory.Null()) {
         WorldDir *dir = mVenue.Dir();
         if (dir) {
@@ -413,7 +417,9 @@ void BandDirector::FindNextShot() {
             mNextShot = dynamic_cast<BandCamShot *>(
                 dir->GetCameraManager()->FindCameraShot(mShotCategory, filts)
             );
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+            // Retail (0x82287F58) drops this whole block — no PathName/GetMBT
+            // argument evaluation survives (unlike the d2 MILO_WARN pattern).
             if (!mNextShot) {
                 const char *pathName = PathName(dir);
                 MILO_LOG(
@@ -446,18 +452,11 @@ void BandDirector::PlayNextShot() {
                 unke0 = TheTaskMgr.Seconds(TaskMgr::kRealTime)
                     + oldnextshot->GetTotalDurationSeconds();
             } else {
-                bool b2 = false;
-                bool b1 = (unke0 == -1000.0f && mCurShot) ? true : false;
-                if (b1) {
-                    b1 = true;
-                    if (!DirectedCut(mCurShot->Category())) {
-                        if (!BFTB(mCurShot->Category()))
-                            b1 = false;
-                    }
-                    if (b1)
-                        b2 = true;
-                }
-                if (b2)
+                // Retail (0x8227FF68): single short-circuit chain, no bool
+                // materialization (same shape as OnFirstShotOK's head).
+                if (unke0 == -1000.0f && mCurShot
+                    && (DirectedCut(mCurShot->Category())
+                        || BFTB(mCurShot->Category())))
                     unke0 = TheTaskMgr.Seconds(TaskMgr::kRealTime) + 1.0f;
                 else
                     unke0 = -kHugeFloat;
@@ -466,9 +465,13 @@ void BandDirector::PlayNextShot() {
         mCurShot = oldnextshot;
         BandCamShot *curshot = mCurShot;
         WorldDir *wdir = GetWorld();
-        wdir->GetCameraManager()->ForceCameraShot(curshot, false);
-        if (mCurWorld)
+        wdir->GetCameraManager()->ForceCameraShot(curshot);
+        if (mCurWorld) {
+            // Retail: function-local static Message ("cam_cut" @0x820144e8,
+            // guard + atexit inside the mCurWorld branch).
+            static Message cam_cut_msg("cam_cut");
             mCurWorld->Handle(cam_cut_msg, false);
+        }
     }
 }
 
@@ -616,17 +619,30 @@ void BandDirector::ForceShot(BandCamShot *shot) {
 
 void BandDirector::PickIntroShot() {
     mNextShot = nullptr;
+    // Retail (0x822803E8): function-local static Message (guard word
+    // DAT_82c8b658 bit 1, string "pick_intro_shot" @0x820145e0, atexit dtor).
+    static Message pick_intro_shot_msg("pick_intro_shot");
     DataNode handled = HandleType(pick_intro_shot_msg);
     mIntroShot = mNextShot;
     mNextShot = nullptr;
 }
 
-Symbol GetShotTrack() {
+// Retail inlines this into HarvestDircuts (0x82288308: 3rd GetPlayMode call +
+// inline Symbol ctor from the stack buffer; no standalone GetShotTrack symbol).
+static Symbol GetShotTrack() {
     if (TheBandWardrobe->PlayShot5()) {
         return "shot_5";
     } else {
         char buf[10];
-        strcpy(buf, TheBandWardrobe->GetPlayMode().Str());
+        // Retail (inlined in 0x82288308): unsigned-char copy loop
+        // (lbzu/cmplwi/stbu), not the strcpy intrinsic (extsb).
+        const unsigned char *s = (const unsigned char *)TheBandWardrobe->GetPlayMode().Str();
+        unsigned char *d = (unsigned char *)buf;
+        unsigned int c;
+        do {
+            c = *s++;
+            *d++ = (unsigned char)c;
+        } while (c != 0);
         memcpy(buf, "shot", 4);
         return buf;
     }
@@ -635,32 +651,39 @@ Symbol GetShotTrack() {
 void BandDirector::AddDircut(Symbol cat, float frame) {
     MILO_ASSERT(DirectedCut(cat), 0x40D);
     std::vector<CameraManager::PropertyFilter> filts;
-    BandCamShot *shot = dynamic_cast<BandCamShot *>(
+    // Retail (0x822881B8): the shot lives in a DircutEntry local (stack slot
+    // kept current at each assignment; &entry passed to Keys::Add).
+    DircutEntry entry(dynamic_cast<BandCamShot *>(
         mVenue.Dir()->GetCameraManager()->FindCameraShot(cat, filts)
-    );
-    if (TheBandWardrobe && !TheBandWardrobe->AddDircut(shot)) {
-        MILO_WARN("Too many non-free Dircuts, not playing %s", PathName(shot));
-        shot = nullptr;
+    ));
+    if (TheBandWardrobe && !TheBandWardrobe->AddDircut(entry.shot)) {
+        MILO_WARN("Too many non-free Dircuts, not playing %s", PathName(entry.shot));
+        entry.shot = nullptr;
     }
-    if (shot) {
-        float f2c = shot->mZeroTime;
-        if (shot->ConvertFrames(f2c)) {
+    if (entry.shot) {
+        float f2c = entry.shot->mZeroTime;
+        if (entry.shot->ConvertFrames(f2c)) {
             frame = frame - f2c;
         } else
             MILO_FAIL("couldn't convert, in beats!");
     }
-    mDircuts.Add(shot, frame, false);
+    mDircuts.Add(entry, frame, false);
 }
 
 void BandDirector::VenueLoaded(WorldDir *) { mDircuts.clear(); }
 
 void BandDirector::HarvestDircuts() {
     if (mPropAnim && mVenue.Dir()) {
-        if (!mDircuts.empty())
-            mDircuts.erase(mDircuts.begin(), mDircuts.end());
+        // Retail (0x82288308) calls the out-of-line clear unconditionally —
+        // no empty() guard, no erase(begin,end).
+        mDircuts.clear();
         TheBandWardrobe->ClearDircuts();
         mIntroShot = nullptr;
         if (!TheBandWardrobe->DemandLoadSym()) {
+            // Retail: two function-local statics (guard word bits 1/2),
+            // strings 0x820105e8/0x82013998.
+            static Symbol coop_bg("coop_bg");
+            static Symbol coop_bk("coop_bk");
             CameraManager::PropertyFilter filt;
             int mask = 0;
             Symbol playmode = TheBandWardrobe->GetPlayMode();
@@ -673,11 +696,15 @@ void BandDirector::HarvestDircuts() {
                     mask = 0x400000;
             }
             WorldDir *wdir = mVenue.Dir();
-            (void)wdir;
-            // TODO(rb3-xenon): iterate wdir's CameraManager shot categories
-            // and disable per genre/mask. CameraManager::mCameraShotCategories
-            // is protected in dc3-derived tree and category->mShots layout
-            // differs from rb3-Wii (was unk4). No-op for now.
+            std::vector<CameraManager::Category> &cats =
+                wdir->GetCameraManager()->mCameraShotCategories;
+            FOREACH (it, cats) {
+                FOREACH_PTR (cit, it->mShots) {
+                    CamShot *shot = *cit;
+                    shot->Disable(!TheBandWardrobe->ValidGenreGender(shot), 2);
+                    shot->Disable((mask & shot->Flags()) == 0, 4);
+                }
+            }
             PickIntroShot();
             DataArrayPtr ptr(GetShotTrack());
             SymbolKeys *skeys = dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, ptr));
@@ -1277,13 +1304,16 @@ DataNode BandDirector::OnMidiAddPreset(DataArray *da) {
     return 0;
 }
 
+// Retail (0x82284C18): Keys<DircutEntry>::Cross(secs, secs - delta) replaces
+// the Wii dev build's GetFirstInRange; Cross is out-of-line at 0x822847A8.
 BandCamShot *BandDirector::FindNextDircut() {
     float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime);
-    float delta = secs - TheTaskMgr.DeltaSeconds();
-    (void)secs; (void)delta;
-    // TODO(rb3-xenon): Keys<>::GetFirstInRange not available in dc3-derived
-    // math/Key.h. Port from rb3-Wii or write equivalent linear scan.
-    return nullptr;
+    const DircutEntry *e = mDircuts.Cross(secs, secs - TheTaskMgr.DeltaSeconds());
+    if (!e)
+        return 0;
+    if (e->shot)
+        unk58 = true;
+    return e->shot;
 }
 
 int curInterestDebugChar = 5;
@@ -1676,6 +1706,15 @@ Symbol BandDirector::GetModeInst(Symbol s) {
 }
 
 DataNode BandDirector::OnFirstShotOK(DataArray *da) {
+    // Retail (0x82282510): seven function-local statics initialized at fn
+    // entry, shared guard word bits 1..0x40 in declaration order.
+    static Symbol coop_bg("coop_bg");
+    static Symbol coop_bk("coop_bk");
+    static Symbol coop_gk("coop_gk");
+    static Symbol shot_5("shot_5");
+    static Symbol shot_bg("shot_bg");
+    static Symbol shot_bk("shot_bk");
+    static Symbol shot_gk("shot_gk");
     Symbol s2 = da->Sym(2);
     if (strncmp(s2.Str(), "coop_", 5) != 0)
         return 0;
@@ -1697,24 +1736,21 @@ DataNode BandDirector::OnFirstShotOK(DataArray *da) {
         Keys<Symbol, Symbol> *keys = &skeys;
         MILO_ASSERT(keys, 0xA42);
 
-        bool b2 = false;
-        bool b1 = false;
-        if (unke0 == -1000.0f && mCurShot)
-            b1 = true;
-        if (b1) {
-            if (DirectedCut(mCurShot->Category()) || BFTB(mCurShot->Category()))
-                b2 = true;
-        }
-        if (b2)
+        // Retail (0x82282510): no bool materialization — one combined
+        // short-circuit chain feeding the f10 += 30 add directly.
+        if (unke0 == -1000.0f && mCurShot
+            && (DirectedCut(mCurShot->Category()) || BFTB(mCurShot->Category())))
             f10 += 30.0f;
 
         int idxafter = skeys.KeyGreaterEq(f10);
         if (idxafter < skeys.size()) {
             f3c = skeys[idxafter].frame;
             if (f3c == f10) {
-                if (idxafter + 1 < skeys.size()) {
-                    float fr = skeys[idxafter + 1].frame;
-                    f3c = fr;
+                // Retail recomputes &skeys[idxafter+1] from the index
+                // (slwi/add), not by offsetting the cached element address.
+                idxafter = idxafter + 1;
+                if (idxafter < skeys.size()) {
+                    f3c = skeys[idxafter].frame;
                 } else
                     f3c = kHugeFloat;
             }
@@ -1722,9 +1758,9 @@ DataNode BandDirector::OnFirstShotOK(DataArray *da) {
         if (f3c == kHugeFloat)
             f3c = mEndOfSongSec * 30.0f;
 
-        int dircutidxafter =
-            mDircuts.KeyGreaterEq(TheTaskMgr.Seconds(TaskMgr::kRealTime));
-        if (dircutidxafter < mDircuts.size() && mDircuts[dircutidxafter].value) {
+        float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime);
+        int dircutidxafter = mDircuts.KeyGreaterEq(secs);
+        if (dircutidxafter < mDircuts.size() && mDircuts[dircutidxafter].value.shot) {
             MinEq(f3c, mDircuts[dircutidxafter].frame * 30.0f);
         }
         return DataNode(f3c - mPropAnim->GetFrame());

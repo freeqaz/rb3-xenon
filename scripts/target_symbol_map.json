@@ -15069,5 +15069,11 @@
  "0x825B20B0": "?IsEarnedAccomplishmentMessage@?A0x130dc2ea@@YA_NPAVPassiveMessage@@@Z",
  "0x825B2010": "?IsEarnedCampaignLevelMessage@?A0x130dc2ea@@YA_NPAVPassiveMessage@@@Z",
  "0x82686fb0": "?Handle@Player@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x826895d8": "?LocalSetEnabledState@Player@@UAAXW4EnabledState@@HPAVBandUser@@_N@Z"
+ "0x826895d8": "?LocalSetEnabledState@Player@@UAAXW4EnabledState@@HPAVBandUser@@_N@Z",
+ "0x82284C18": "?FindNextDircut@BandDirector@@QAAPAVBandCamShot@@XZ",
+ "0x822881B8": "?AddDircut@BandDirector@@QAAXVSymbol@@M@Z",
+ "0x822803E8": "?PickIntroShot@BandDirector@@QAAXXZ",
+ "0x8227D058": "?NoWorlds@BandDirector@@QAA_NXZ",
+ "0x82287F58": "?FindNextShot@BandDirector@@QAAXXZ",
+ "0x8227FF68": "?PlayNextShot@BandDirector@@QAAXXZ"
 }

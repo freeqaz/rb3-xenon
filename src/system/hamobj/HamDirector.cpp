@@ -2611,7 +2611,7 @@ void HamDirector::PlayNextShot() {
             sameCategory ? s.blendFramesSame : s.blendFramesCross);
     }
 #endif
-    world->GetCameraManager()->ForceCameraShot(curShot, false);
+    world->GetCameraManager()->ForceCameraShot(curShot);
 }
 
 DataNode HamDirector::OnSelectCamera(DataArray *a) {
