@@ -114,4 +114,47 @@ works: ~20 family fns at 43–93% (refs list: `~/tmp/sentinel/objptr_ctor_refs.t
 Separate TU-local spin-off (NOT ObjPtr): `FileStream::~FileStream` (90.5%) —
 retail inlines a trivial `DeleteChecksum()` (`OggFree` + zero two fields, no
 null check); our `delete mChecksumValidator` emits the fat nontrivial-dtor
-delete path out-of-line. Fix in FileStream.cpp phrasing.
+delete path out-of-line. Fix in FileStream.cpp phrasing. **Still live** — this
+one is independent of the two-ctor question below and was never attempted.
+
+## RESOLUTION (2026-07-10, Opus resume): CLOSED — at-limit, NOT source-recoverable
+
+The resume agent ran the full fleet A/B and the lead is **dead as a source
+change**. Two independent root causes, either one fatal:
+
+1. **Over-application (the killer).** Retail emits the out-of-line `bl` (2-arg
+   AddRef ctor) at the *majority* of `mX(this)` member-init sites — e.g.
+   `CharBone::CharBone() : … mTarget(this)`, one of 98 functions that were at
+   **100%** via main's single 2-arg-default (bl) ctor — and inline-expands only
+   at a *minority* (the RndMorph family). **Both are written identically as
+   1-arg `mX(this)` in source.** So the inline-vs-`bl` choice is MSVC's
+   per-caller `/Ob2` inlining heuristic, *not* an arg-count fact the source can
+   encode. Adding the 1-arg ctor forces inline at *every* 1-arg site, so the
+   `bl`-majority that was matching regresses. This is inherent to adding the
+   ctor at all — independent of any RndMorph phrasing.
+2. **Schedule mismatch even where retail inlines.** Of 15 predicted family
+   ctors, **0 reach 100%** with the inline. The expansion is the right *kind* of
+   code but never the right *schedule*: our inline materializes the `??_7ObjPtr`
+   vtable ptr and float constants early (holding regs live across the sibling
+   `ObjVector`/scalar inits), homes `&member` early, and orders
+   mOwner/mObject/vtable differently from retail's `mOwner→mObject→vtable-last`,
+   plus a downstream r10↔r11 volatile swap. Whole-tail scheduling divergence,
+   not a local store-order lever. RndMorph: 90.54% → **66.86%**.
+
+**Fleet A/B:** strict 15428 → **15340 (−88; 98 regressed, 10 gained)**; fuzzy
+code% 17.3702 → 17.3144 (−0.056). Net-negative on both. **HARD GATE FAILED.**
+
+**Per-TU `/D` gate (RB3_MAP_0x1C-style) also NO-GO:** scoping the 1-arg ctor to
+just the family TUs fixes the blast radius (root cause 1) but **still produces
+zero strict gains** (root cause 2 — RndMorph 66.86 < its 90.54 bl baseline, a
+net loss *within* the gate). Only 3 fuzzy-only, report-fragile movers. Not worth
+shared-header complexity.
+
+**Disposition:** keep main's single 2-arg-default `ObjPtr` ctor (bl everywhere —
+current state; unchanged). The two-ctor observation is a genuine fact about the
+retail binary but the per-site inline/bl split is a compiler heuristic and the
+inline schedule is permuter/at-limit-class per-ctor. **Do not re-hunt.** The 3
+site protections (CharInterest/SampleZone/StandardStream) are no-ops without the
+split. Patch preserved for the record only at
+`~/tmp/spill_patches/objptr-two-ctor.patch` (do NOT apply); worktree removed.
+RndMorph reported at_limit@90.54 in decomp.db.

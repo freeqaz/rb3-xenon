@@ -227,3 +227,18 @@ agent pass.
     first, then the fleet A/B gate. Population if cracked: **~20 fns at
     43–93%** (876 `??0?$ObjPtr` refs tree-wide). Spin-off TU-local lead:
     `FileStream::~FileStream` retail inlines trivial `DeleteChecksum()`.
+  - **ObjPtr two-ctor lead CLOSED — at-limit, NOT source-recoverable** (Opus
+    resume, full fleet A/B). Two independent fatal causes: (1) *over-application*
+    — retail emits `bl` (out-of-line 2-arg ctor) at the MAJORITY of `mX(this)`
+    sites and inlines only at a minority, but both are written identically as
+    1-arg `mX(this)`; the choice is MSVC's per-caller `/Ob2` heuristic, not
+    encodable in source, so adding the 1-arg ctor forces inline everywhere and
+    regresses **98 previously-100% fns** (e.g. `CharBone` ctor); (2) *schedule
+    mismatch* even where retail inlines — **0/15** family ctors reach 100%,
+    RndMorph 90.54→66.86 (whole-tail reschedule, not a store-order lever).
+    Fleet A/B: strict **15428→15340 (−88)**, fuzzy −0.056 — hard gate failed.
+    Per-TU `/D` gate also NO-GO (no strict gains even scoped). Main's single
+    2-arg-default ctor kept unchanged; full resolution + numbers in the research
+    doc. RndMorph at_limit@90.54 in decomp.db. **Do not re-hunt.** Independent
+    still-live spin-off (unattempted): `FileStream::~FileStream` `DeleteChecksum`
+    inline (TU-local).
