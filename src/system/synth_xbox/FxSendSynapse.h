@@ -3,7 +3,7 @@
 namespace DSP {
 
 struct SynapseBand {
-    char enabled;       // 0x00
+    bool enabled;       // 0x00
     char pad[3];        // 0x01-0x03
     float freq;         // 0x04 - center frequency
     float gain;         // 0x08 - gain in dB

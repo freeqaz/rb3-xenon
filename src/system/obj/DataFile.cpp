@@ -60,17 +60,20 @@ bool Defined() {
 
 void PushBack(const DataNode &n) {
     if (gNode == gArray->Size()) {
+#ifdef HX_NATIVE
+        // Retail has no max-lines check (retail fn_82745CB8 goes straight to
+        // the MemTemp guard + Resize); keep the diagnostic native-only.
         int maxLines = 0x7FFF;
         if (gNode >= 0x7FFF) {
             MILO_FAIL(
                 "%s(%d): array size > max %d lines", gArray->File(), gArray->Line(), maxLines
             );
         }
-        MemPushTemp();
+#endif
+        MemTemp tmp;
         int x = gNode << 1;
         if (x > 0x7FFF) x = 0x7FFF;
         gArray->Resize(x);
-        MemPopTemp();
     }
     gArray->Node(gNode++) = n;
 }

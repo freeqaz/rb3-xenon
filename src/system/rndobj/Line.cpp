@@ -282,16 +282,15 @@ void RndLine::UpdateInternal() {
 void RndLine::SetNumPoints(int num) {
     mPoints.resize(num);
     if ((int)num >= 1) {
-        int i1 = num;
         if (mHasCaps) {
-            i1 = num + 2;
             if (mLinePairs) {
-                i1 = (num & 0x7ffffffeU) * 2;
+                num = (num & 0x7ffffffeU) * 2;
+            } else {
+                num = num + 2;
             }
         }
-        mMesh->Verts().resize(i1 * 2);
-        int numPoints = mPoints.size();
-        for (int i = 0; (unsigned int)i < numPoints; i++) {
+        mMesh->Verts().resize(num * 2);
+        for (int i = 0; i < mPoints.size(); i++) {
             VertsMap vmap;
             MapVerts(i, vmap);
             if (vmap.t == 1) {
@@ -300,9 +299,9 @@ void RndLine::SetNumPoints(int num) {
                 vmap.v->tex.Set(0, 0);
                 vmap.v++->color = mPoints[i].color;
             }
-            vmap.v->tex.Set(1, 1);
+            vmap.v->tex.Set(0.5f, 1.0f);
             vmap.v++->color = mPoints[i].color;
-            vmap.v->tex.Set(0, 1);
+            vmap.v->tex.Set(0.5f, 0.0f);
             vmap.v++->color = mPoints[i].color;
             if (vmap.t == 2) {
                 vmap.v->tex.Set(1, 1);
@@ -314,21 +313,22 @@ void RndLine::SetNumPoints(int num) {
 
         if (mLinePairs) {
             if (mHasCaps)
-                i1 = i1 * 3 >> 1;
+                num = num * 3 >> 1;
         } else
-            i1 = (i1 - 1) * 2;
-        mMesh->Faces().resize(i1);
-        for (int i5 = i1 - 2; i5 >= 0; i5 -= 2) {
-            int i7 = i5;
+            num = (num - 1) * 2;
+        mMesh->Faces().resize(num);
+        num -= 2;
+        while (num >= 0) {
+            int i7 = num;
             if (mLinePairs) {
                 if (mHasCaps) {
-                    i7 = i5 % 6 + (i5 / 6) * 8;
+                    i7 = num % 6 + (num / 6) * 8;
                 } else
-                    i7 = i5 * 2;
+                    i7 = num * 2;
             }
-            mMesh->Faces(i5).Set(i7, i7 + 2, i7 + 1);
-            mMesh->Faces(i1 - 1).Set(i7 + 1, i7 + 2, i7 + 3);
-            i1 = i5;
+            mMesh->Faces(num).Set(i7, i7 + 2, i7 + 1);
+            mMesh->Faces(num + 1).Set(i7 + 1, i7 + 2, i7 + 3);
+            num -= 2;
         }
         mMesh->Sync(0x13F);
     }

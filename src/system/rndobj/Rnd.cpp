@@ -1268,9 +1268,11 @@ void Rnd::DrawPreClear() {
                 if (count > 0) {
                     CompressTexDesc *first = *mCompressTexQueue.begin();
                     gRndTextureEvent = (void *)first->tex;
-                    MemPushTemp();
-                    RndTex *newTex = Hmx::Object::New<RndTex>();
-                    MemPopTemp();
+                    RndTex *newTex;
+                    {
+                        MemTemp tmp;
+                        newTex = Hmx::Object::New<RndTex>();
+                    }
                     ReplaceObject((Hmx::Object *)gRndTextureEvent, newTex, false, false, false);
                     gRndTextureEvent = sTexture->StartCompress(first->alpha);
                     if ((unsigned char)gRndTextureEvent != 0) {

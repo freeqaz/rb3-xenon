@@ -276,13 +276,10 @@ done:
 }
 
 // Static buffers and index
-struct LocaleFloatState {
-    char buffers[4][0x32];
-    int idx;
-};
-static LocaleFloatState gLocalizeFloat = {};
-#define gLocalizeFloatBuf gLocalizeFloat
-#define gLocalizeFloatIdx gLocalizeFloat.idx
+static char gLocalizeSepBuf[4][0x32];
+static char gLocalizeFloatBuf[4][0x32];
+static int gLocalizeSepIdx = 0;
+static int gLocalizeFloatIdx = 0;
 
 const char *LocalizeFloat(const char *fmt, float num) {
     const char *str = MakeString(fmt, num);
@@ -293,7 +290,7 @@ const char *LocalizeFloat(const char *fmt, float num) {
 
     // If the localized decimal separator is not '.', we need to replace it
     if (decimalStr != 0 && *decimalStr != '.') {
-        char *buf = gLocalizeFloatBuf.buffers[gLocalizeFloatIdx];
+        char *buf = gLocalizeFloatBuf[gLocalizeFloatIdx];
         strncpy(buf, str, 0x32);
         buf[0x31] = '\0';
 
@@ -316,9 +313,6 @@ const char *LocalizeFloat(const char *fmt, float num) {
 
     return str;
 }
-
-static char gLocalizeSepBuf[4][0x32];
-static int gLocalizeSepIdx = 0;
 
 const char *LocalizeSeparatedInt(int num, Locale &locale) {
     static Symbol sSep("locale_separator");

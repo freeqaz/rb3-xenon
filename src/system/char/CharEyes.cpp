@@ -1326,8 +1326,6 @@ storeState:
     if (mCurrentInterest) {
         if (!mBlinkEnabled) {
             mTarget = mCurrentInterest->WorldXfm().v;
-        } else {
-            mHeadForward = mCurrentInterest->WorldXfm().v;
         }
         EnforceMinimumTargetDistance(headPos, mTarget, mTarget);
     }

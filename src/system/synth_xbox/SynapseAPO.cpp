@@ -15,8 +15,9 @@ SynapseAPO::SynapseAPO() : ATG::CSampleXAPOBase<SynapseAPO, SynapseAPOParams>(),
 }
 
 SynapseAPO::~SynapseAPO() {
-    if (mSynapse) {
-        delete mSynapse;
+    Synapse::Synapse* prevSynapse = mSynapse;
+    if (prevSynapse) {
+        delete prevSynapse;
     }
 }
 

@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 
+double __frsqrte(double);
+
 // Minimal port of BandPatchMesh.cpp from the rb3-Wii MWCC decomp (matching TU
 // src/system/bandobj/BandPatchMesh.cpp) to MSVC X360. Only the worklist target
 // functions and the helpers required to compile + emit them are ported here:
@@ -14,11 +16,15 @@
 //   * BandPatchMesh::WorkVerts::SetMeshVerts          (0x82337AA0)
 //
 // The MeshVert per-vert arena layout literals (kMVFaceList/kMVTwinFlag/
-// kMVSlotBase) are the Wii/retail-target byte constants — the retail X360 build
-// uses the same MWCC 4-byte-pointer MeshVert layout, so the raw literals match.
-static const size_t kMVFaceList = 0x32;
-static const size_t kMVTwinFlag = 0x27;
-static const size_t kMVSlotBase = 0x38;
+// kMVSlotBase) are the retail X360 byte constants. On X360, Vector3 carries a
+// trailing SIMD pad (sizeof 0x10), so MeshVert is 0x3c: twin flag at 0x2f
+// (= offsetof(MeshVert, unk27)), face-list overallocation base at 0x3a
+// (= sizeof - 2), arena slot base 0x40 (= sizeof + 4). The old 0x32/0x27/0x38
+// values were the Wii/MWCC 12-byte-Vector3 layout — refuted against retail asm
+// (stb 0x2f twin-flag stores, addi +0x1d face-list base, addi +0x1e slot size).
+static const size_t kMVFaceList = 0x3a;
+static const size_t kMVTwinFlag = 0x2f;
+static const size_t kMVSlotBase = 0x40;
 
 int BandPatchMesh::MeshVert::AddUV(
     const BandPatchMesh::MeshVert *mv, const Vector2 &vr, const Vector2 *vp
@@ -30,19 +36,20 @@ int BandPatchMesh::MeshVert::AddUV(
     float lensq = LengthSquared(v48);
     float dot = Dot(mv->mVert->norm, v48);
     ScaleAddEq(v48, mv->mVert->norm, -dot);
-    float v50y = mv->unk1c.y;
     float v50x = mv->unk1c.x;
+    float v50y = mv->unk1c.y;
     float v48x = v48.x;
     float v48y = v48.y;
     float v48z = v48.z;
     float newlensq = v48z * v48z + v48x * v48x + v48y * v48y;
     if (newlensq > 0) {
         float ratio = newlensq / lensq;
-        float r = 1.0f / std::sqrt(ratio);
+        double est = __frsqrte(ratio);
+        float r = (float)est;
         float recipsq = 0.5f * r * (3.0f - ratio * r * r);
-        float dot4 = v48x * mv->unk10.x + v48y * mv->unk10.y + v48z * mv->unk10.z;
-        float vry = vr.y;
         float dot5 = v48x * mv->unk4.x + v48y * mv->unk4.y + v48z * mv->unk4.z;
+        float vry = vr.y;
+        float dot4 = v48x * mv->unk10.x + v48y * mv->unk10.y + v48z * mv->unk10.z;
         v50x += recipsq * vr.x * dot5;
         v50y += recipsq * vry * dot4;
     } else if (lensq > 0)
@@ -124,9 +131,8 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
         RndMesh::Face &curface = mMesh->Faces()[i];
         for (int j = 0; j < 3; j++) {
             MeshVert *mv = (MeshVert *)mMeshVerts[curface[j]];
-            int n = mv->unk30;
-            ((unsigned short *)((char *)mv + kMVFaceList))[n] = i;
-            mv->unk30 = n + 1;
+            ((unsigned short *)((char *)mv + kMVFaceList))[mv->unk30] = i;
+            mv->unk30++;
         }
     }
     RndMesh::Vert *base = &mMesh->Verts()[0];
