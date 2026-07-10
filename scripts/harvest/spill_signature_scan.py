@@ -9,8 +9,23 @@ Per function:
   1. Run objdiff (diff_inspect.run_objdiff_for_symbol), collect instruction rows.
   2. Signature gate: how much of the insert/delete set is STORES to a frame
      slot (stw/stb/sth/stfs/stfd/stmw with mem base r31/r30/r1)?
-     purity: 'sole_diff' (ALL indels are such stores and nothing else really
-     differs), 'dominant' (>=80% of indels), 'present' (any), else no hit.
+     FRAME-BASE VALIDATION (2026-07-10 fix): r30/r31 only count as frame
+     bases when that SIDE's listing actually establishes them from r1
+     (`subi rX, r1, imm` / `addi rX, r1, imm` / `mr rX, r1`). In leaf-ish C
+     code (e.g. lh_table_new) r31 is just a callee-saved pointer to a
+     malloc'd struct (`mr. r31, r3`) and stores through it are member
+     stores, not spills — previously a false positive. r1 always counts.
+     COMPANION rows also count toward purity (2026-07-10 fix): an indel that
+     is (a) `addi rX,<base>,<slot>` or a load from an ALREADY-IMPLICATED
+     slot (address-materialization / reload half of the mechanism), or
+     (b) on the same side, within +/-3 rows of a store indel, and DEFINES
+     the register that store writes to the slot (the value feeder — e.g.
+     GemPlayer::Handle's extra `stw r10,0x54(r31)` travels with its
+     `subi r10,r25,0x43c` two rows earlier). Companions never create a hit
+     by themselves (n_store_indels == 0 -> no hit).
+     purity: 'sole_diff' (ALL indels are signature rows and nothing else
+     really differs), 'dominant' (>=80% of indels), 'present' (any),
+     else no hit.
   3. Direction per implicated slot: ours-extra / ours-missing / moved.
   4. Classify each implicated slot A/B/C from the FULL listing of the side
      that owns the store:
@@ -83,7 +98,7 @@ def parse_int(s):
     return int(s, 16) if s.lower().startswith(("0x", "-0x")) else int(s)
 
 
-def frame_store_slot(side):
+def frame_store_slot(side, bases=FRAME_BASES):
     """If `side` is a store to a frame slot, return (base, off); else None."""
     if not side:
         return None
@@ -98,12 +113,12 @@ def frame_store_slot(side):
     if args[m.end():].strip().startswith(","):
         return None
     base = m.group(2)
-    if base not in FRAME_BASES:
+    if base not in bases:
         return None
     return (base, parse_int(m.group(1)))
 
 
-def frame_load_slot(side):
+def frame_load_slot(side, bases=FRAME_BASES):
     """If `side` is a load from a frame slot, return (base, off); else None."""
     if not side:
         return None
@@ -117,12 +132,12 @@ def frame_load_slot(side):
     if args[m.end():].strip().startswith(","):
         return None
     base = m.group(2)
-    if base not in FRAME_BASES:
+    if base not in bases:
         return None
     return (base, parse_int(m.group(1)))
 
 
-def addi_slot(side):
+def addi_slot(side, bases=FRAME_BASES):
     """If `side` is `addi rX, <frame base>, imm`, return (base, off)."""
     if not side:
         return None
@@ -131,9 +146,36 @@ def addi_slot(side):
     m = ADDI_RE.match(side.get("args", "") or "")
     if not m:
         return None
-    if m.group(2) not in FRAME_BASES:
+    if m.group(2) not in bases:
         return None
     return (m.group(2), parse_int(m.group(3)))
+
+
+def frame_bases_for_side(instrs, side_key):
+    """Registers that act as frame bases on one side of the diff.
+
+    r1 always. r30/r31 only when the side's listing establishes them from r1:
+    `subi rX, r1, imm` / `addi rX, r1, imm` / `mr rX, r1`. Guards against
+    callee-saved r30/r31 holding a heap/struct pointer (e.g. lh_table_new's
+    `mr. r31, r3` after calloc), whose member stores are NOT frame spills.
+    """
+    bases = {"r1"}
+    for ins in instrs:
+        side = ins.get(side_key)
+        if not side:
+            continue
+        op = (side.get("opcode") or "").strip()
+        args = (side.get("args", "") or "").strip()
+        if op in ("subi", "addi"):
+            m = ADDI_RE.match(args)
+            if m and m.group(1) in ("r30", "r31") and m.group(2) == "r1":
+                bases.add(m.group(1))
+        elif op in ("mr", "mr."):
+            parts = [a.strip() for a in args.split(",")]
+            if len(parts) == 2 and parts[0] in ("r30", "r31") \
+                    and parts[1] == "r1":
+                bases.add(parts[0])
+    return bases
 
 
 def diff_arg_is_real(ins):
@@ -211,7 +253,7 @@ def eh_evidence_for(sym):
 
 # ── Per-function scan ───────────────────────────────────────────────────────
 
-def classify_slot(slot, dirs, instrs, sym):
+def classify_slot(slot, dirs, instrs, sym, bases_by_side):
     """Classify one implicated (base, off) slot as A/B/C.
 
     dirs: set of directions that implicated it ('ours-extra'/'ours-missing').
@@ -224,17 +266,18 @@ def classify_slot(slot, dirs, instrs, sym):
         side_key, side_name = "target", "retail"
     else:
         side_key, side_name = "base", "ours"
+    bases = bases_by_side[side_key]
 
     addr_taken = False
     reloaded = False
     store_rows = []
     for ins in instrs:
         side = ins.get(side_key)
-        if addi_slot(side) == slot:
+        if addi_slot(side, bases) == slot:
             addr_taken = True
-        if frame_load_slot(side) == slot:
+        if frame_load_slot(side, bases) == slot:
             reloaded = True
-        if frame_store_slot(side) == slot:
+        if frame_store_slot(side, bases) == slot:
             store_rows.append(ins.get("index", -1))
 
     if addr_taken or reloaded:
@@ -310,6 +353,13 @@ def scan_one(entry, project_dir):
 
     instrs = data.get("instructions", [])
 
+    # Per-side frame bases (see FRAME-BASE VALIDATION in module docstring).
+    bases_by_side = {
+        "base": frame_bases_for_side(instrs, "base"),
+        "target": frame_bases_for_side(instrs, "target"),
+    }
+    rec["frame_bases"] = {k: sorted(v) for k, v in bases_by_side.items()}
+
     # Signature gate over indel rows.
     slot_dirs = {}   # (base, off) -> set of directions
     n_indels = 0
@@ -320,14 +370,14 @@ def scan_one(entry, project_dir):
         if mt == "insert":
             # See DIRECTION CALIBRATION in module docstring: insert = OURS-only.
             n_indels += 1
-            slot = frame_store_slot(ins.get("base"))
+            slot = frame_store_slot(ins.get("base"), bases_by_side["base"])
             if slot:
                 n_store_indels += 1
                 slot_dirs.setdefault(slot, set()).add("ours-extra")
         elif mt == "delete":
             # delete = RETAIL-only (present in retail, missing from ours).
             n_indels += 1
-            slot = frame_store_slot(ins.get("target"))
+            slot = frame_store_slot(ins.get("target"), bases_by_side["target"])
             if slot:
                 n_store_indels += 1
                 slot_dirs.setdefault(slot, set()).add("ours-missing")
@@ -343,9 +393,61 @@ def scan_one(entry, project_dir):
     if n_store_indels == 0:
         return rec  # no hit; purity stays None
 
-    if n_store_indels == n_indels and n_other_real == 0:
+    # Companion pass: indel rows that belong to the same mechanism as a
+    # store indel count as signature rows for purity:
+    #   (a) addi (address materialization) / load (reload) of an
+    #       already-implicated slot;
+    #   (b) same-side definition of a store indel's source register within
+    #       +/-3 rows (the value feeder that travels with the extra store).
+    store_indel_rows = []  # (index, match_type, src_reg)
+    for ins in instrs:
+        mt = ins.get("match_type")
+        if mt == "insert":
+            side, bases = ins.get("base"), bases_by_side["base"]
+        elif mt == "delete":
+            side, bases = ins.get("target"), bases_by_side["target"]
+        else:
+            continue
+        if frame_store_slot(side, bases):
+            args = (side.get("args", "") or "").strip()
+            src_reg = args.split(",")[0].strip() if args else ""
+            store_indel_rows.append((ins.get("index", -1), mt, src_reg))
+
+    n_companion = 0
+    for ins in instrs:
+        mt = ins.get("match_type")
+        if mt == "insert":
+            side, bases = ins.get("base"), bases_by_side["base"]
+        elif mt == "delete":
+            side, bases = ins.get("target"), bases_by_side["target"]
+        else:
+            continue
+        if frame_store_slot(side, bases):
+            continue  # already counted as a store indel
+        slot = addi_slot(side, bases) or frame_load_slot(side, bases)
+        if slot and slot in slot_dirs:
+            n_companion += 1
+            continue
+        # Value feeder: defines (first arg) the register a nearby same-side
+        # store indel writes; exclude stores/branches which don't define rD.
+        op = (side.get("opcode") or "").strip() if side else ""
+        if not op or op in STORE_OPS or op.startswith("b"):
+            continue
+        args = (side.get("args", "") or "").strip()
+        dest = args.split(",")[0].strip() if args else ""
+        if not re.fullmatch(r"r\d+", dest):
+            continue
+        idx = ins.get("index", -1)
+        for sidx, smt, sreg in store_indel_rows:
+            if smt == mt and sreg == dest and abs(sidx - idx) <= 3:
+                n_companion += 1
+                break
+    rec["n_companion_indels"] = n_companion
+    n_sig = n_store_indels + n_companion
+
+    if n_sig == n_indels and n_other_real == 0:
         rec["purity"] = "sole_diff"
-    elif n_store_indels >= 0.8 * n_indels:
+    elif n_sig >= 0.8 * n_indels:
         rec["purity"] = "dominant"
     else:
         rec["purity"] = "present"
@@ -364,7 +466,7 @@ def scan_one(entry, project_dir):
     # Per-slot classification.
     for slot in sorted(slot_dirs):
         dirs = slot_dirs[slot]
-        cls, ev = classify_slot(slot, dirs, instrs, sym)
+        cls, ev = classify_slot(slot, dirs, instrs, sym, bases_by_side)
         rec["slots"].append({
             "off": f"{slot[1]:#x}",
             "base": slot[0],
