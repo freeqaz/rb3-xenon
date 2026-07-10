@@ -2278,7 +2278,10 @@ void GemPlayer::ForceFill(bool force) {
 }
 
 FORCE_LOCAL_INLINE
-bool GemPlayer::ToggleNoFills() { return mMatcher->mNoFills = !mMatcher->mNoFills; }
+bool GemPlayer::ToggleNoFills() {
+    BeatMatcher *m = mMatcher;
+    return m->mNoFills = !m->mNoFills;
+}
 END_FORCE_LOCAL_INLINE
 
 void GemPlayer::HandleSoloGem(int i1, bool b2, float f3, bool b4) {
