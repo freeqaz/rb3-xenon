@@ -58,15 +58,19 @@ struct NetLoaderRef {
 
 class NetCacheMgr : public Hmx::Object {
 public:
-    // size 0x18
+    // Retail RB3-360 ServerData = 20B POD (verified from create_node fn_827A86F8:
+    // alloc 0x1c, raw 5-word copy). DC3-only debug/verifySSL tail bools do NOT
+    // exist in retail (OnInit fn_827A8AC8 reads only local/server/port/root; the
+    // 3 accessors fn_827A8EE8/8F20/8F58 return port@0xc/root@0x10/local@0x4). root
+    // is const char*, not String (String is 0xC bytes w/ vptr — would break the
+    // raw POD node copy).
+    // size 0x14
     struct ServerData {
         Symbol type; // 0x0
         bool local; // 0x4
         const char *server; // 0x8
         unsigned short port; // 0xc
         const char *root; // 0x10
-        bool debug; // 0x14
-        bool verifySSL; // 0x15
     };
 
     enum RefType {

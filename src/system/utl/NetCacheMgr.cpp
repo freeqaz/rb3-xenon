@@ -138,7 +138,8 @@ const NetCacheMgr::ServerData &NetCacheMgr::Server() const {
 unsigned short NetCacheMgr::GetPort() const { return Server().port; }
 const char *NetCacheMgr::GetServerRoot() const { return Server().root; }
 bool NetCacheMgr::IsServerLocal() const { return Server().local; }
-bool NetCacheMgr::IsDebug() const { return Server().debug; }
+// Retail ServerData has no debug field (DC3-only); IsDebug is a constant here.
+bool NetCacheMgr::IsDebug() const { return false; }
 
 Symbol NetCacheMgr::CheatNextServer() {
     auto s = mServers.begin();
@@ -247,7 +248,7 @@ void NetCacheMgr::OnInit(DataArray *pData) {
     MILO_ASSERT(pData, 0x46);
     static Symbol xlsp_service_id("xlsp_service_id");
     static Symbol xlsp_filter("xlsp_filter");
-    mServiceId = 0;
+    mServiceId = pData->FindArray(xlsp_service_id)->Int(1);
     mXLSPFilter = pData->FindStr(xlsp_filter);
     static Symbol servers("servers");
     DataArray *serverArr = pData->FindArray(servers);
@@ -262,14 +263,7 @@ void NetCacheMgr::OnInit(DataArray *pData) {
         serverData.type = curArr->Sym(0);
         serverData.port = 0;
         serverData.server = gNullStr;
-        static Symbol debug("debug");
-        serverData.debug = false;
-        curArr->FindData(debug, serverData.debug, false);
-        static Symbol verify_ssl("verify_ssl");
-        bool vSSL = true;
-        curArr->FindData(verify_ssl, vSSL, false);
         bool isLocal = false;
-        serverData.verifySSL = vSSL;
         curArr->FindData(local, isLocal, false);
         const char *serverStr = nullptr;
         serverData.local = isLocal;
