@@ -29,7 +29,7 @@ public:
     void FailAllContexts();
     ContextWrapper *NewContextWrapper(Hmx::Object *, Updatable *, bool, int);
 
-    ContextWrapper mContextWrappers[500]; // 0x0
-    int unk8ca0; // 0x8ca0
-    int unk8ca4; // 0x8ca4
+    ContextWrapper mContextWrappers[2500]; // 0x0
+    int unk8ca0; // 0x2bf20 (was mislabeled 0x8ca0 when array was [500])
+    int unk8ca4; // 0x2bf24 (was mislabeled 0x8ca4 when array was [500])
 };

@@ -206,23 +206,27 @@ public:
     bool unk58a; // 0x6a
     bool mSecondPedalHiHat; // 0x6b
     DataResultList mDataResults; // 0x6c
-    bool mWiiSpeakToggle; // 0x84
-    int mWiiSpeakFriendsVolume; // 0x88
-    int mWiiSpeakMicrophoneSensitivity; // 0x8c
-    bool mWiiSpeakHeadphoneMode; // 0x90
-    bool mWiiSpeakEchoSuppression; // 0x91
-    bool mHasLoaded; // 0x92
-    bool mWiiFriendsPromptShown; // 0x93
-    bool mUsingWiiFriends; // 0x94
-    int unk5b8; // 0x98
-    std::vector<int> mMicVolumes; // 0x9c
-    DataArray *mSliderConfig; // 0xa8
-    DataArray *mVoiceChatSliderConfig; // 0xac
-    unsigned int mCymbalConfiguration; // 0xb0
-    std::vector<BandProfile *> mProfiles; // 0xb4
-    BandProfile *mPrimaryProfile; // 0xc0
-    bool mAllUnlocked; // 0xc4
-    std::vector<float> mForcedMicGains; // 0xc8
+    // Retail X360 places the mic-volume/profile block immediately after
+    // mDataResults; the WiiSpeak/WiiFriends members (Wii-only feature) live at
+    // the tail of the class. Verified from ProfileMgr::Poll (mProfiles @0x9c)
+    // and UpdateMultiMicDeviceSliders (mMicVolumes @0x84).
+    std::vector<int> mMicVolumes; // 0x84
+    DataArray *mSliderConfig; // 0x90
+    DataArray *mVoiceChatSliderConfig; // 0x94
+    unsigned int mCymbalConfiguration; // 0x98
+    std::vector<BandProfile *> mProfiles; // 0x9c
+    BandProfile *mPrimaryProfile; // 0xa8
+    bool mAllUnlocked; // 0xac
+    std::vector<float> mForcedMicGains; // 0xb0
+    bool mWiiSpeakToggle; // 0xbc
+    int mWiiSpeakFriendsVolume; // 0xc0
+    int mWiiSpeakMicrophoneSensitivity; // 0xc4
+    bool mWiiSpeakHeadphoneMode; // 0xc8
+    bool mWiiSpeakEchoSuppression; // 0xc9
+    bool mHasLoaded; // 0xca
+    bool mWiiFriendsPromptShown; // 0xcb
+    bool mUsingWiiFriends; // 0xcc
+    int unk5b8; // 0xd0
 };
 
 extern ProfileMgr TheProfileMgr;
