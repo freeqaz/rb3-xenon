@@ -249,7 +249,9 @@ BinStream &operator<<(BinStream &bs, const RndBone &bone) {
 }
 
 BEGIN_SAVES(RndMesh)
-    SAVE_REVS(0x26, 0)
+    // RB3-360 retail: rev from a constant-initialized static (.data lwz).
+    static int REV = 0x26;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)

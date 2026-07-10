@@ -45,7 +45,10 @@ BEGIN_PROPSYNCS(RndParticleSysAnim)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndParticleSysAnim)
-    SAVE_REVS(3, 0)
+    // RB3-360 retail: rev written from a constant-initialized static (.data
+    // lwz), not an immediate — SAVE_REVS(3,0)'s folded li mismatches.
+    static int REV = 3;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mParticleSys << mStartColorKeys << mEndColorKeys << mEmitRateKeys;

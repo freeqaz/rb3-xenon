@@ -43,7 +43,10 @@ BEGIN_PROPSYNCS(RndMatAnim)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndMatAnim)
-    SAVE_REVS(7, 0)
+    // RB3-360 retail: rev written from a constant-initialized static (.data
+    // lwz), not an immediate — SAVE_REVS(7,0)'s folded li mismatches.
+    static int REV = 7;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mMat << mKeysOwner << mColorKeys;
