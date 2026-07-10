@@ -13878,5 +13878,15 @@
  "0X82635ED8": "?OnSearchFinished@BandMatchmaker@@QAA?AVDataNode@@XZ",
  "0X82636188": "?OnMsg@BandMatchmaker@@QAA?AVDataNode@@ABVJoinResultMsg@@@Z",
  "0X82636518": "?FindPlayers@Matchmaker@@QAAXW4MatchmakerFindType@@@Z",
- "0X826370C8": "??0Matchmaker@@QAA@XZ"
+ "0X826370C8": "??0Matchmaker@@QAA@XZ",
+ "0X82637E30": "??0SessionUsersProvider@@QAA@_N00@Z",
+ "0X826375B8": "?StaticByteCode@KickPlayerMsg@?A0x5843a934@@SAEXZ",
+ "0X82637758": "?NewNetMessage@KickPlayerMsg@?A0x5843a934@@SAPAVNetMessage@@XZ",
+ "0X82637600": "?Dispatch@KickPlayerMsg@?A0x5843a934@@UAAXXZ",
+ "0X82637888": "?KickPlayer@SessionUsersProvider@@QAAXPAVBandUser@@@Z",
+ "0X82637A38": "?Text@SessionUsersProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0X826379C8": "?InitData@SessionUsersProvider@@UAAXPAVRndDir@@@Z",
+ "0X82637798": "?Register@KickPlayerMsg@?A0x5843a934@@SAXXZ",
+ "0X826377E8": "?KickPlayer@SessionUsersProvider@@QAAXH@Z",
+ "0X82637968": "?GetUser@SessionUsersProvider@@QAAPAVBandUser@@H@Z"
 }

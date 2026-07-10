@@ -104,6 +104,7 @@ public:
     bool UserHasOnlinePrivilege(const LocalUser *) const;
     bool IsUserAGuest(const LocalUser *) const;
     bool IsPadAGuest(int) const;
+    bool IsGuestOnlineID(const OnlineID *) const;
     void ShowUserFriendsUI(const LocalUser *);
     void ShowFriendsUI(int);
     void ShowOfferUI(const LocalUser *);

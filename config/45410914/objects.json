@@ -781,6 +781,7 @@
    "band3/game/Performer.cpp": "NonMatching",
    "band3/meta_band/NetSync.cpp": "NonMatching",
    "band3/meta_band/Matchmaker.cpp": "NonMatching",
+   "band3/meta_band/SessionUsersProviders.cpp": "NonMatching",
    "band3/bandtrack/GemTrack.cpp": "NonMatching",
    "band3/bandtrack/GemManager.cpp": "NonMatching",
    "band3/bandtrack/Gem.cpp": "NonMatching",

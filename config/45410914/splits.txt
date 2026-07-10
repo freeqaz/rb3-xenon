@@ -1861,6 +1861,10 @@ Matchmaker.cpp:
 	.pdata      start:0x82224BF8 end:0x82224DB8
 	.text       start:0x826357C8 end:0x826375B8
 
+SessionUsersProviders.cpp:
+	.pdata      start:0x82224DB8 end:0x82224E68
+	.text       start:0x826375B8 end:0x82637F48
+
 HamSupereasyData.cpp:
 	.pdata      start:0x82226C00 end:0x82226C08
 	.text       start:0x82653960 end:0x826539E4
