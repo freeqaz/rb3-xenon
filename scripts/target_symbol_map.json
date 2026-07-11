@@ -15076,5 +15076,19 @@
  "0x8239D030": "?Replace@?$ObjPtrList@VCharPollable@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82B6EBB0": "?GetHarmonyScore@VocalTrack@@QAAMH@Z",
  "0x82B6FC10": "?UpdatePitchArrow@VocalTrack@@QAAXMH@Z",
- "0x82B779F8": "??0VocalTrack@@QAA@PAVBandUser@@@Z"
+ "0x82B779F8": "??0VocalTrack@@QAA@PAVBandUser@@@Z",
+ "0x826C7EF8": "?SendVocalState@VocalPlayer@@QAAXM@Z",
+ "0x826C6338": "?FindBestPart@VocalPlayer@@QAA_NMMAAV?$vector@PAVVocalPart@@V?$StlNodeAlloc@PAVVocalPart@@@stlpmtx_std@@@stlpmtx_std@@PAVSinger@@AAPAVVocalPart@@AAM3@Z",
+ "0x826C72C8": "?UpdateMicDisplay@VocalPlayer@@QAAXXZ",
+ "0x826CC380": "?Restart@VocalPlayer@@UAAX_N@Z",
+ "0x826C8700": "??1VocalPlayer@@UAA@XZ",
+ "0x826CB8C0": "?BuildPhrases@VocalPlayer@@QAAX_N@Z",
+ "0x826C7818": "?UpdateCrowdMeter@VocalPlayer@@QAAXHH@Z",
+ "0x826C84D0": "?ResetScoring@VocalPlayer@@QAAXXZ",
+ "0x826C8CF8": "?GetPracticeHitPercentage@VocalPlayer@@QAAMHHH@Z",
+ "0x826C79E0": "?LocalEndgameEnergy@VocalPlayer@@QAAXH@Z",
+ "0x826CC1F8": "?PostLoad@VocalPlayer@@UAAX_N@Z",
+ "0x826C7DC8": "?HitCoda@VocalPlayer@@QAAXXZ",
+ "0x826C64F8": "?LocalScorePhrase@VocalPlayer@@QAAXHABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@_N@Z",
+ "0x826C7B20": "?HookupTrack@VocalPlayer@@UAAXXZ"
 }
