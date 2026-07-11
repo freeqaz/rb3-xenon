@@ -15152,5 +15152,17 @@
  "0x825E4E58": "?SelectGroup@AccomplishmentPanel@@QAAXVSymbol@@@Z",
  "0x825E53A8": "?LaunchSelectedEntry@AccomplishmentPanel@@QAAXPAVLocalBandUser@@@Z",
  "0x82688DD0": "?OnGetGemIsSustained@GemPlayer@@QAA_NH@Z",
- "0x82688E40": "??0GemPlayer@@QAA@PAVBandUser@@PAVBeatMaster@@PAVBand@@HPAVBandPerformer@@@Z"
+ "0x82688E40": "??0GemPlayer@@QAA@PAVBandUser@@PAVBeatMaster@@PAVBand@@HPAVBandPerformer@@@Z",
+ "0x8258D148": "?UpdateEndGameInfoForCurrentCampaignGoal@Campaign@@QAAXPAVUILabel@@0PAVUIPicture@@@Z",
+ "0x8258CE98": "?OnMsg@Campaign@@QAA?AVDataNode@@ABVPrimaryProfileChangedMsg@@@Z",
+ "0x825906F0": "?ConfigureCampaignLevelData@Campaign@@QAAXPAVDataArray@@@Z",
+ "0x825909B0": "??0Campaign@@QAA@PAVDataArray@@@Z",
+ "0x825904B8": "??1Campaign@@UAA@XZ",
+ "0x825902D0": "?Cleanup@Campaign@@QAAXXZ",
+ "0x825903D0": "?ConfigureCampaignKeyData@Campaign@@QAAXPAVDataArray@@@Z",
+ "0x825908C0": "??_GCampaign@@UAAPAXI@Z",
+ "0x8258D920": "?GetCampaignLevel@Campaign@@QBAPAVCampaignLevel@@VSymbol@@@Z",
+ "0x8258D8D8": "?HasCampaignKey@Campaign@@QBA_NVSymbol@@@Z",
+ "0x8258C860": "?GetNextHintToShow@Campaign@@QBA?AVSymbol@@XZ",
+ "0x825FF6E8": "?SyncProperty@EditSetlistPanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
 }
