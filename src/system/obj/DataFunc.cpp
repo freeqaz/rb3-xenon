@@ -1507,6 +1507,7 @@ DEF_DATA_FUNC(DataMemoryAllocReport) {
     return 0;
 }
 
+#ifdef HX_NATIVE
 void DataThisPtr::Replace(Hmx::Object *replace) {
     Hmx::Object *old = mObject;
     SetObjConcrete(replace);
@@ -1514,6 +1515,16 @@ void DataThisPtr::Replace(Hmx::Object *replace) {
         DataSetThis(replace);
     }
 }
+#else
+// Retail fn_827385D0: SetObjConcrete(to); if (gDataThis == from) DataSetThis(to);
+// `from` is the dying Hmx::Object* (X360 ring convention — see RefIs in Object.h).
+void DataThisPtr::Replace(ObjRef *from, Hmx::Object *to) {
+    SetObjConcrete(to);
+    if (gDataThis == reinterpret_cast<Hmx::Object *>(from)) {
+        DataSetThis(to);
+    }
+}
+#endif
 
 Symbol DataFuncName(DataFunc *func) {
     for (std::map<Symbol, DataFunc *>::iterator it = gDataFuncs.begin();

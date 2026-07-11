@@ -6,7 +6,7 @@ void Memcard::Init() { SetName("memcard", ObjectDir::Main()); }
 void Memcard::Terminate() {}
 void Memcard::Poll() {}
 
-void Memcard::ShowDeviceSelector(const ContainerId &, Hmx::Object *obj, int, bool) {
+void Memcard::ShowDeviceSelector(const ContainerId &, bool, Hmx::Object *obj, int) {
     if (obj) {
         DeviceChosenMsg msg(-1);
         obj->Handle(msg, false);

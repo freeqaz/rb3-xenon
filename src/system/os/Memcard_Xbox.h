@@ -55,7 +55,7 @@ public:
     virtual void SetContainerDisplayName(const wchar_t *);
     virtual const char *GetContainerName() { return mFileName; }
     virtual const wchar_t *GetDisplayName() { return mDisplayName; }
-    virtual void ShowDeviceSelector(const ContainerId &, Hmx::Object *, int, bool);
+    virtual void ShowDeviceSelector(const ContainerId &, bool, Hmx::Object *, int);
     virtual bool IsDeviceValid(const ContainerId &);
     virtual MCResult DeleteContainer(const ContainerId &);
     virtual MCContainer *CreateContainer(const ContainerId &);

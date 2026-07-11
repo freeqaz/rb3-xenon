@@ -33,7 +33,16 @@ class DataThisPtr : public ObjPtr<Hmx::Object> {
 public:
     DataThisPtr() : ObjPtr(nullptr, nullptr) {}
     virtual ~DataThisPtr() {}
+#ifdef HX_NATIVE
+    // Native ObjPtr keeps dc3's single-arg Replace virtual.
     virtual void Replace(Hmx::Object *);
+#else
+    // Retail X360 (rb3-Wii shape, verified vs fn_827385D0): overrides ObjPtr's
+    // vtable slot +8 Replace(from, to) — the dying object arrives as `from`
+    // and is compared against gDataThis directly. dc3's single-arg drift
+    // captured the OLD mObject instead; retail never loads it.
+    virtual void Replace(ObjRef *from, Hmx::Object *to);
+#endif
 };
 
 #define DEF_DATA_FUNC(name) DataNode name(DataArray *array)

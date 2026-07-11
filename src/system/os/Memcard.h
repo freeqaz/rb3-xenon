@@ -111,7 +111,9 @@ public:
     virtual void SetContainerDisplayName(const wchar_t *) {}
     virtual const char *GetContainerName() { return ""; }
     virtual const wchar_t *GetDisplayName() { return L""; }
-    virtual void ShowDeviceSelector(const ContainerId &, Hmx::Object *, int, bool);
+    // rb3-Wii arg order (retail-verified: fn at 0x825201A8 null-checks r6,
+    // the Hmx::Object* callback — 3rd param). dc3 drifted to (.., obj, int, bool).
+    virtual void ShowDeviceSelector(const ContainerId &, bool, Hmx::Object *, int);
     virtual bool IsDeviceValid(const ContainerId &) { return true; }
     virtual MCResult DeleteContainer(const ContainerId &) = 0;
     virtual MCContainer *CreateContainer(const ContainerId &) = 0;

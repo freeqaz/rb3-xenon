@@ -411,21 +411,22 @@ void MemcardXbox::SetContainerDisplayName(const wchar_t *name) {
 }
 
 void MemcardXbox::ShowDeviceSelector(
-    const ContainerId &c, Hmx::Object *o, int i3, bool b4
+    const ContainerId &c, bool b4, Hmx::Object *o, int i3
 ) {
     memset(&mXOverlapped, 0, sizeof(XOVERLAPPED));
     mSelectorCallback = o;
     mSelectedDevice = 0;
-    int i1 = 0;
-    if (b4) {
-        i1 = 0x200;
-    }
+    // Retail zeroes the two 32-bit halves before the user-index check (forces
+    // the stack spill + 64-bit reload); u.QuadPart = 0 folds to a reg zero.
+    ULARGE_INTEGER u;
+    u.HighPart = 0;
+    u.u.LowPart = 0;
     if (i3 == -1) {
         i3 = c.mUserIndex;
     }
-    ULARGE_INTEGER u;
-    u.QuadPart = 0;
-    if (ThePlatformMgr.ShowDeviceSelectorUI(i3, 1, i1, u, &mSelectedDevice, &mXOverlapped)
+    // Retail (fn_82518458) calls the XShowDeviceSelectorUI import directly
+    // (not the ThePlatformMgr wrapper) with the flag inline and branchless.
+    if (XShowDeviceSelectorUI(i3, 1, b4 ? 0x200 : 0, u, &mSelectedDevice, &mXOverlapped)
         == 0x3E5) {
         mSelectorPending = true;
     } else if (mSelectorCallback) {

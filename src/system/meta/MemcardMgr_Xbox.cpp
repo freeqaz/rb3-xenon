@@ -190,7 +190,7 @@ void MemcardMgr::SelectDevice(
         mPendingDeviceSelectorIndex = i3;
         mSelectDeviceWaiting = true;
     } else {
-        TheMC.ShowDeviceSelector(mContainerIDs[mPadNum], this, i3, waiting);
+        TheMC.ShowDeviceSelector(mContainerIDs[mPadNum], waiting, this, i3);
     }
 }
 
@@ -325,7 +325,7 @@ DataNode MemcardMgr::OnMsg(const UIChangedMsg &msg) {
     if (mSelectDeviceWaiting) {
         if (!msg.Showing()) {
             mSelectDeviceWaiting = false;
-            TheMC.ShowDeviceSelector(mContainerIDs[mPadNum], this, mPendingDeviceSelectorIndex, false);
+            TheMC.ShowDeviceSelector(mContainerIDs[mPadNum], false, this, mPendingDeviceSelectorIndex);
         }
     }
     return 0;
