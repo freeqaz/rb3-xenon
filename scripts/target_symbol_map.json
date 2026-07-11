@@ -15121,5 +15121,7 @@
  "0x82B6F398": "?ClearAllTubePlates@VocalTrack@@QAAXXZ",
  "0x82B73FA0": "??1TambourineGemPool@@QAA@XZ",
  "0x82B71C28": "?GetCurrentPlate@VocalTrack@@QAAPAVTubePlate@@AAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@H@Z",
- "0x82B77848": "??_GVocalTrack@@UAAPAXI@Z"
+ "0x82B77848": "??_GVocalTrack@@UAAPAXI@Z",
+ "0x82B717A0": "?UpdateTubePlates@VocalTrack@@QAAXAAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@MM_N@Z",
+ "0x82B76A30": "?Handle@VocalTrack@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }

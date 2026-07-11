@@ -285,7 +285,9 @@ void VocalTrack::DumpAllPlates() {
 }
 
 TubePlate *VocalTrack::GetCurrentPlate(std::deque<TubePlate *> &plates, int i2) {
-    FOREACH (it, plates) {
+    std::deque<TubePlate *>::iterator it = plates.begin();
+    std::deque<TubePlate *>::iterator itEnd = plates.end();
+    for (; it != itEnd; ++it) {
         if (!(*it)->Baked())
             return *it;
     }
@@ -1927,18 +1929,23 @@ void VocalTrack::Poll(float f1) {
 void VocalTrack::PollKaraoke(float f1) {
     if (mPlayer) {
         int numSingers = mPlayer->NumSingers();
-        if (!unk2e5) {
-            StartUpdateArrows();
-            for (int i = 0; i < numSingers; i++) {
-                UpdatePitchArrow(f1, i);
-            }
-            UpdateUnusedArrows();
+        // retail (this SKU) has no unk2e5 guard here — StartUpdateArrows/
+        // UpdatePitchArrow/UpdateUnusedArrows run unconditionally, unlike
+        // rb3-Wii's `if (!mRemoteBandVocals)` gate. Verified against target
+        // disassembly for fn_82B70860 (PollKaraoke): no this+0x... load or
+        // branch exists between the NumSingers() computation and the
+        // StartUpdateArrows() call.
+        StartUpdateArrows();
+        for (int i = 0; i < numSingers; i++) {
+            UpdatePitchArrow(f1, i);
         }
+        UpdateUnusedArrows();
         float f7 = 0;
         for (int i = 0; i < 3; i++) {
             float clamped = Clamp<float>(0, 1, mPlayer->FramePhraseMeterFrac(i));
             int rating = mPlayer->CalculatePhraseRating(clamped);
-            mDir->mStreakMeter->SetPartPct(i, clamped, rating >= 4);
+            bool isHighRating = rating >= 4;
+            mDir->mStreakMeter->SetPartPct(i, clamped, isHighRating);
             if (clamped > f7)
                 f7 = clamped;
         }
