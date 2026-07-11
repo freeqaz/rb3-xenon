@@ -15097,5 +15097,14 @@
  "0x826CC1F8": "?PostLoad@VocalPlayer@@UAAX_N@Z",
  "0x826C7DC8": "?HitCoda@VocalPlayer@@QAAXXZ",
  "0x826C64F8": "?LocalScorePhrase@VocalPlayer@@QAAXHABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@_N@Z",
- "0x826C7B20": "?HookupTrack@VocalPlayer@@UAAXXZ"
+ "0x826C7B20": "?HookupTrack@VocalPlayer@@UAAXXZ",
+ "0x82275640": "?OnSetFileMerger@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82273910": "?AddObject@BandCharacter@@QAAXPAVObject@Hmx@@@Z",
+ "0x8226FFD8": "?PlayMainClip@BandCharacter@@QAAPAVCharClipDriver@@H_N@Z",
+ "0x822745C0": "?SetContext@BandCharacter@@QAAXVSymbol@@@Z",
+ "0x82274B18": "?GetPatchTex@BandCharacter@@UAAPAVRndTex@@AAVPatch@BandCharDesc@@@Z",
+ "0x82274FC8": "?OnPlayGroup@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82274490": "?PlayGroup@BandCharacter@@QAAXPBD_NHMW4TaskUnits@@VSymbol@@@Z",
+ "0x82271410": "?GameOver@BandCharacter@@QAAXXZ",
+ "0x82271E68": "?OnPreClear@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z"
 }
