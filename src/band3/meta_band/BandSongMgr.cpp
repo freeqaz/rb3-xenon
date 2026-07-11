@@ -39,6 +39,13 @@ BandSongMgr gSongMgr;
 BandSongMgr *TheSongMgrPtr = &gSongMgr;
 SongMgr *TheBaseSongManger;
 
+// Retail-only helper (target fn_82586AB0, called from AddSongData's 360-only
+// tail block). Zero args, single caller, no rb3-Wii/dc3 oracle -- exact
+// source/name unidentified (guarded local-static Symbols "rb1_dlc"/"ugc"/
+// "rb3_dlc"/"ugc_plus" per Ghidra decompile). Extern-declared for call-site
+// codegen only; see docs cited in AddSongData.
+extern bool RB3AddSongDataUpgradeGate();
+
 bool BandSongMgr::sFakeSongsAllowed;
 
 const char *OLD_DLC_DIR = "songs/updates/";
@@ -543,6 +550,13 @@ void BandSongMgr::AddSongData(
     for (int i = arrSize - numSongs; i < arrSize; i++) {
         DataArray *curArray = a->Array(i);
         Symbol curSym = curArray->Sym(0);
+        // Retail constructs this as a function-local static Symbol (guarded
+        // lazy init, per-loop-iteration guard-bit check) rather than
+        // referencing the Symbols4.h global of the same name -- confirmed
+        // from the target asm listing (lis lbl_8209C958 / lbl_82DA0017 guard
+        // pair + ??0Symbol ctor call), same RB3_HANDLE_LOCAL_STATIC lever
+        // this TU is already gated for. The local shadows the extern global.
+        static Symbol missing_song_data("missing_song_data");
         DataArray *cfgArr = SystemConfig(missing_song_data)->FindArray(curSym, false);
         int songID = GetSongID(curArray, cfgArr);
         if (IsInExclusionList(curSym.Str(), songID)) {
@@ -564,6 +578,23 @@ void BandSongMgr::AddSongData(
             }
             mAvailableSongs.insert(songID);
             ivec.push_back(songID);
+            // Retail-360-only tail (TU5-era, no rb3-Wii oracle -- confirmed via
+            // Ghidra decompile of target 0x82561530 + raw asm listing): after
+            // registering a newly-added song, prime its metadata (discarding
+            // the result) and conditionally register it in the recent-songs
+            // list. unk124 (0x144) is the cache-dirty flag SongMgr::
+            // ClearCachedContent()/ReadCachedMetadataFromStream() already
+            // toggle. Data(songID) dispatches through the vtable @+0x40
+            // (confirmed: scripts/target_symbol_map.json maps 0x82783FA8 to
+            // ?Data@SongMgr@@UBAPBVSongMetadata@@H@Z). The gate predicate
+            // (target fn_82586AB0) is a single-caller, zero-arg static helper
+            // with no rb3-Wii/dc3 counterpart -- extern-declared below for
+            // call-site codegen only, exact source identity unresolved.
+            if (!unk124) {
+                Data(songID);
+                if (RB3AddSongDataUpgradeGate())
+                    AddRecentSong(songID);
+            }
         }
     }
 }
@@ -826,7 +857,18 @@ void BandSongMgr::AddSongs(DataArray *a) {
     ContentDone();
 }
 
-void BandSongMgr::AddRecentSong(int) {}
+// Retail 360 keeps a genuine MRU list here (unk114, 0x130), capped at 20
+// entries -- confirmed via Ghidra decompile of target fn_8255F488, the sole
+// caller of which is AddSongData's tail block (see there). Both rb3-Wii's dev
+// decomp and dc3 stub this out; retail's TU5-era body is real. push_back +
+// walk-count (STLport list::size() is O(n)) + pop_front matches the
+// decompiled insert-at-end/erase-at-begin/size-walk shape exactly.
+void BandSongMgr::AddRecentSong(int songID) {
+    unk114.push_back(songID);
+    while (unk114.size() > 20) {
+        unk114.pop_front();
+    }
+}
 
 DECOMP_FORCEACTIVE(BandSongMgr, "mSongNameLookup.find(id) == mSongNameLookup.end()")
 
