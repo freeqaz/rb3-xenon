@@ -15150,5 +15150,7 @@
  "0x825E20D8": "?SelectGoal@AccomplishmentPanel@@QAAXVSymbol@@@Z",
  "0x825E3360": "?SelectCategory@AccomplishmentPanel@@QAAXVSymbol@@@Z",
  "0x825E4E58": "?SelectGroup@AccomplishmentPanel@@QAAXVSymbol@@@Z",
- "0x825E53A8": "?LaunchSelectedEntry@AccomplishmentPanel@@QAAXPAVLocalBandUser@@@Z"
+ "0x825E53A8": "?LaunchSelectedEntry@AccomplishmentPanel@@QAAXPAVLocalBandUser@@@Z",
+ "0x82688DD0": "?OnGetGemIsSustained@GemPlayer@@QAA_NH@Z",
+ "0x82688E40": "??0GemPlayer@@QAA@PAVBandUser@@PAVBeatMaster@@PAVBand@@HPAVBandPerformer@@@Z"
 }
