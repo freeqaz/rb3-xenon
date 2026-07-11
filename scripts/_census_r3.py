@@ -165,7 +165,7 @@ def main():
     print(f"pinned: {n_pinned}, compiled-not-pinned: {len(compiled_not_pinned)}, orphan: {n_orphan}", file=sys.stderr)
 
     compiled_not_pinned.sort(key=lambda x: x["addr"])
-    out = ROOT / "scripts" / "_census_compiled_not_pinned_r2.json"
+    out = ROOT / "scripts" / "_census_compiled_not_pinned_r3.json"
     out.write_text(json.dumps(compiled_not_pinned, indent=1))
     print(f"wrote {out}", file=sys.stderr)
 
