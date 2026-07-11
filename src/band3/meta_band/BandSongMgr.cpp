@@ -600,13 +600,11 @@ void BandSongMgr::AddSongData(
 }
 
 bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
-    ExclusionEntry *entry = exclusionList;
     unsigned int i = 0;
     do {
-        if (songID == entry->songID || strcmp(name, entry->name) == 0)
+        if (songID == exclusionList[i].songID || strcmp(name, exclusionList[i].name) == 0)
             return true;
         i++;
-        entry++;
     } while (i < 4U);
     return false;
 }

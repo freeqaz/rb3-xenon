@@ -156,7 +156,6 @@ RockCentral.cpp:
 	.text       start:0x826B1898 end:0x826B19B8
 	.text       start:0x826BA270 end:0x826BA634
 	.text       start:0x826BDAE0 end:0x826BDBF4
-	.text       start:0x826BE160 end:0x826BE168
 	.text       start:0x826D70E0 end:0x826D7258
 
 BandScoreboard.cpp:
@@ -4956,6 +4955,7 @@ band3/game/GamePanel.cpp:
 band3/game/Stats.cpp:
 	.pdata      start:0x82229360 end:0x82229548
 	.text       start:0x82678FF8 end:0x8267BA08
+	.text       start:0x826BE160 end:0x826BE168
 
 band3/game/UITransitionNetMsgs.cpp:
 	.pdata      start:0x82229548 end:0x822295B8
