@@ -378,14 +378,12 @@ void TrainerGemTab::DrawTails(
     float fStartY = startY;
     if (gem.IgnoreDuration())
         return;
-    float yRange = endY - fStartY;
-    float tickRange = (float)endTick - (float)startTick;
     unsigned int slots = gem.GetSlots();
     for (int slot = 0; slot < mLanes; slot++) {
         if (slots & (1 << slot)) {
             mVerticalTrans->SetFrame(
-                ((float)gem.GetTick() - (float)startTick) / tickRange *
-                        yRange +
+                ((float)gem.GetTick() - (float)startTick) / ((float)endTick - (float)startTick) *
+                        (endY - fStartY) +
                     fStartY,
                 1.0f
             );
