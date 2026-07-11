@@ -52,12 +52,15 @@ public:
     virtual void ContentFailed(const char *);
     virtual const char *ContentDir() { return 0; }
 
-    bool RegisterForContent() const;
-    bool TexturesLoaded() const;
     void FinalizeTexturesChunk();
-    DLCTex *NextDLCTex();
     DynamicTex *AddTex(const char *, const char *, bool, bool);
 
+protected:
+    bool RegisterForContent() const;
+    bool TexturesLoaded() const;
+    DLCTex *NextDLCTex();
+
+public:
     int unk3c; // 0x3c
     std::vector<DynamicTex *> mTexs; // 0x40
     int mCurrentFinalizingTexture; // 0x48

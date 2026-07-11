@@ -6344,3 +6344,7 @@ AccomplishmentDiscSongConditional.cpp:
 	.pdata      start:0x8221D898 end:0x8221D8A0
 	.text       start:0x824E6320 end:0x824E63E8
 	.text       start:0x825CB550 end:0x825CB588
+
+TexLoadPanel.cpp:
+	.pdata      start:0x8221E6D0 end:0x8221E7F8
+	.text       start:0x825D6F70 end:0x825D80D0
