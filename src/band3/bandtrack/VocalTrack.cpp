@@ -1,3 +1,5 @@
+#include "macros.h"
+#undef MILO_DEBUG
 #include "bandtrack/VocalTrack.h"
 #include "GraphicsUtl.h"
 #include "VocalStyle.h"

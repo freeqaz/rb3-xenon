@@ -516,7 +516,6 @@
  "0x82293578": "?_M_erase@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@IAAPAULod@Character@@PAU34@0ABU__false_type@2@@Z",
  "0x822935D8": "?_M_fill_insert@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@@Z",
  "0x82293650": "?_M_fill_insert_aux@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@ABU__false_type@2@@Z",
- "0x82293878": "??0?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
  "0x82293B48": "?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z",
  "0x82293D88": "?_M_insert_overflow_aux@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAULod@Character@@ABU34@ABU__false_type@2@I_N@Z",
  "0x82293FF0": "??$__destroy_range_aux@V?$reverse_iterator@PAVTransformArea@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTransformArea@@@0@0ABU__false_type@0@@Z",
@@ -637,7 +636,6 @@
  "0x822AF248": "?Copy@CrazeHollaback@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x822AF3F0": "?Save@ClipCollide@@UAAXAAVBinStream@@@Z",
  "0x822AFA00": "?Normalize@@YAXABVVector3@@AAV1@@Z",
- "0x822AFA78": "?Interp@@YAXABVVector3@@0MAAV1@@Z",
  "0x822AFA80": "?Interp@@YAXABVVector3@@0MAAV1@@Z",
  "0x822AFB28": "?Multiply@@YAXABVMatrix3@Hmx@@0AAV12@@Z",
  "0x822AFDD0": "?Normalize@@YAXABVMatrix3@Hmx@@AAV12@@Z",
@@ -2371,7 +2369,6 @@
  "0x8243EFD8": "?GetAward@AccomplishmentCategory@@QBA?AVSymbol@@XZ",
  "0x8243F178": "?GetType@AccomplishmentPlayerConditional@@UBA?AW4AccomplishmentType@@XZ",
  "0x8243F198": "?IsRelevantForSong@AccomplishmentPlayerConditional@@UBA_NVSymbol@@@Z",
- "0x8243F220": "?GetType@AccomplishmentSetlist@@UBA?AW4AccomplishmentType@@XZ",
  "0x8243F268": "?CanBeLaunched@AccomplishmentSetlist@@UBA_NXZ",
  "0x8243F288": "?HasSpecificSongsToLaunch@AccomplishmentSetlist@@UBA_NXZ",
  "0x8243F2A8": "?GetRequiredDifficulty@AccomplishmentSetlist@@UBA?AW4Difficulty@@XZ",
@@ -15116,5 +15113,13 @@
  "0x82274FC8": "?OnPlayGroup@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x82274490": "?PlayGroup@BandCharacter@@QAAXPBD_NHMW4TaskUnits@@VSymbol@@@Z",
  "0x82271410": "?GameOver@BandCharacter@@QAAXXZ",
- "0x82271E68": "?OnPreClear@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z"
+ "0x82271E68": "?OnPreClear@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82B70860": "?PollKaraoke@VocalTrack@@QAAXM@Z",
+ "0x82B6E3E8": "?IncrementVolume@VocalTrack@@UAAHH@Z",
+ "0x82B774A8": "?Poll@VocalTrack@@UAAXM@Z",
+ "0x82B77008": "??1VocalTrack@@UAA@XZ",
+ "0x82B6F398": "?ClearAllTubePlates@VocalTrack@@QAAXXZ",
+ "0x82B73FA0": "??1TambourineGemPool@@QAA@XZ",
+ "0x82B71C28": "?GetCurrentPlate@VocalTrack@@QAAPAVTubePlate@@AAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@H@Z",
+ "0x82B77848": "??_GVocalTrack@@UAAPAXI@Z"
 }

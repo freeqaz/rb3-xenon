@@ -204,7 +204,7 @@ void TexLoadPanel::FinalizeTexturesChunk() {
                 if (found)
                     found->SetDiffuseTex(t->mTex);
                 else
-                    MILO_WARN("Could not find %s", t->mMatName);
+                    MILO_WARN("Could not find %s", String(t->mMatName));
             }
         }
         mCurrentFinalizingTexture++;
