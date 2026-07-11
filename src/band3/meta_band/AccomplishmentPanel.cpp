@@ -451,7 +451,7 @@ DataNode AccomplishmentPanel::OnMsg(const ButtonDownMsg &msg) {
 bool AccomplishmentPanel::CanNavigateList() const {
     if (GetState() != kUp)
         return false;
-    if (mCareerState == kCareerStateGroup || mCareerState == kCareerStateCategory)
+    if (mCareerState == kCareerStateCategory || mCareerState == kCareerStateGroup)
         return false;
     Symbol selacc = SelectedAccomplishment();
     Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);

@@ -15136,5 +15136,19 @@
  "0x82B77848": "??_GVocalTrack@@UAAPAXI@Z",
  "0x82B717A0": "?UpdateTubePlates@VocalTrack@@QAAXAAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@MM_N@Z",
  "0x82B76A30": "?Handle@VocalTrack@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82685ed0": "?DisablePlayer@Player@@QAAXH@Z"
+ "0x82685ed0": "?DisablePlayer@Player@@QAAXH@Z",
+ "0x825E38A0": "?LaunchGoal@AccomplishmentPanel@@QAAXPAVLocalBandUser@@@Z",
+ "0x825E25D8": "?Goal_HandleButtonDownMsg@AccomplishmentPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+ "0x825E3610": "?OnMsg@AccomplishmentPanel@@QAA?AVDataNode@@ABVUIComponentScrollMsg@@@Z",
+ "0x825E3318": "?UpdateForCategorySelection@AccomplishmentPanel@@QAAXXZ",
+ "0x825E35C8": "?UpdateForGroupSelection@AccomplishmentPanel@@QAAXXZ",
+ "0x825E1F48": "?UpdateForGoalSelection@AccomplishmentPanel@@QAAXXZ",
+ "0x825E1F98": "?CanNavigateList@AccomplishmentPanel@@QBA_NXZ",
+ "0x825E1A90": "?Text@AccomplishmentProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x825E1C70": "?Custom@AccomplishmentProvider@@UBAXHHPAVUIListCustom@@PAVObject@Hmx@@@Z",
+ "0x825E1858": "?Text@AccomplishmentEntryProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x825E20D8": "?SelectGoal@AccomplishmentPanel@@QAAXVSymbol@@@Z",
+ "0x825E3360": "?SelectCategory@AccomplishmentPanel@@QAAXVSymbol@@@Z",
+ "0x825E4E58": "?SelectGroup@AccomplishmentPanel@@QAAXVSymbol@@@Z",
+ "0x825E53A8": "?LaunchSelectedEntry@AccomplishmentPanel@@QAAXPAVLocalBandUser@@@Z"
 }
