@@ -12016,7 +12016,7 @@
  "0x82B60638": "??$TrimExcess@PAVTrack@@@@YAXAAV?$vector@PAVTrack@@V?$StlNodeAlloc@PAVTrack@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82B60CEC": "__unwind$134648",
  "0x82B60D1C": "__unwind$134649",
- "0x82B60D50": "?AutoVocals@TrackPanel@@UBA_NXZ",
+ "0x82B60D80": "?AutoVocals@TrackPanel@@UBA_NXZ",
  "0x82B611A0": "?Handle@TrackPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82B61A08": "?Enter@TrackPanel@@UAAXXZ",
  "0x82B61AD0": "??0TrackPanel@@QAA@XZ",
