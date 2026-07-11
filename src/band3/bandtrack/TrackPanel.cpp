@@ -52,6 +52,18 @@
 #define MILO_WARN(...) ((void)(__VA_ARGS__))
 #endif
 
+// Retail's compiled TrackPanel::Poll() (fn_82B60080) contains zero references
+// to AutoTimer::GetTimer/??0AutoTimer/the "hud_track_poll" string literal or a
+// static Timer* local -- i.e. START_AUTO_TIMER("hud_track_poll") compiled to a
+// no-op in this TU despite MILO_DEBUG being force-defined project-wide (see
+// docs/decomp/patterns -- MILO_DEBUG unlocks MILO_ASSERT-family checks but this
+// TU's profiling instrumentation was stripped). Per-TU override, matching the
+// MILO_WARN mitigation above.
+#ifndef HX_NATIVE
+#undef START_AUTO_TIMER
+#define START_AUTO_TIMER(name) ((void)0)
+#endif
+
 TrackPanel *TheTrackPanel;
 
 DECOMP_FORCEBLOCK(TrackPanel, (const char *c, DataType d), MakeString(c, d);)
@@ -199,18 +211,25 @@ void TrackPanel::CreateTracks() {
 }
 
 void TrackPanel::Reset() {
-    CleanUpTracks();
-    CreateTracks();
-    AssignAndInitTracks();
-    mLastCrowdRating = -1.0f;
-    if (mScoreboard)
-        mScoreboard->Reset();
+    // Retail fn_82B603B8's disassembly has NO calls to CleanUpTracks/CreateTracks/
+    // AssignAndInitTracks/BandScoreboard::Reset, and never stores -1.0f to
+    // mLastCrowdRating (0x9c) — confirmed via Ghidra decompile of the target
+    // address: the function body starts directly at the TheTaskMgr.Seconds() call
+    // below. This is a genuine retail-vs-rb3-Wii-dev-build behavioral divergence
+    // (the Wii oracle's Reset() does a full track teardown/rebuild; retail's does
+    // not), not a codegen/ordering artifact. Also: retail's on_reset_msg reference
+    // here is a function-LOCAL static (guard-byte + Symbol("on_reset") ctor +
+    // atexit(~Message) all emitted inline at this call site — the classic MSVC
+    // "magic static" pattern), not the shared extern global from Messages3.h.
+    // Declared right at first use (not hoisted to the top) so the guard check
+    // lands at the same point in the retail instruction sequence.
     float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f;
     if (!TheGame->mProperties.mHasSongSections) {
         for (int i = 0; i < mTracks.size(); i++) {
             mTracks[i]->Jump(secs);
         }
     }
+    static Message on_reset_msg("on_reset");
     Hmx::Object::Handle(on_reset_msg, true);
     mTrackPanelDir->ConfigureTracks(false);
     MetaPerformer::Current();
@@ -569,9 +588,8 @@ void TrackPanel::Poll() {
     static int sLastGate = -1;
     int gate = 0;
     if (!TheSongDB || TheSongDB->GetNumTrackData() == 0) gate = 1;
-    else if (!unk5c) gate = 2;
     if (sK8 && (gate != sLastGate || (sEntries++ % 120) == 0)) {
-        MILO_LOG("K8_DBG: TrackPanel::Poll gate=%d (1=noSongDB,2=!unk5c,0=ok) "
+        MILO_LOG("K8_DBG: TrackPanel::Poll gate=%d (1=noSongDB,0=ok) "
                  "mTracks.size=%u mScoreboard=%p\n",
                  gate, (unsigned)mTracks.size(), (void*)mScoreboard.Ptr());
         sLastGate = gate;
@@ -579,13 +597,20 @@ void TrackPanel::Poll() {
 #endif
     if (!TheSongDB || TheSongDB->GetNumTrackData() == 0)
         return;
-    if (!unk5c)
-        return;
-    float ms = 1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime);
-    int tick = MsToTick(ms);
+    // Retail fn_82B60080 has NO unk5c gate here (confirmed via raw target .s +
+    // Ghidra decompile: no 0x3c(this) load anywhere in the function). The
+    // rb3-Wii oracle's `if (!unk5c) return;` does not exist in the 360 retail
+    // binary — dropped to match.
     auto _tmp0 = TheGame->mMaster->GetAudio()->Fail();
     if (_tmp0)
         return;
+    StartPulseAnims();
+    // Retail computes ms/tick AFTER the Fail check + StartPulseAnims call
+    // (confirmed via raw target .s: TheTaskMgr.Seconds()/MsToTick() are
+    // emitted right after the StartPulseAnims bl, not before the Fail
+    // check) -- reordered here to match the retail instruction sequence.
+    float ms = 1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime);
+    int tick = MsToTick(ms);
 #ifdef HX_NATIVE
     if (sK8) {
         static int sBody = 0;
@@ -595,7 +620,6 @@ void TrackPanel::Poll() {
         }
     }
 #endif
-    StartPulseAnims();
     bool wasSoloing = unk62;
     bool soloing = false;
     std::vector<Track *> &_ref0 = mTracks;
@@ -833,12 +857,14 @@ bool TrackPanel::ShouldUpdateScrollSpeed() const { return !TheGame->InDrumTraine
 
 void TrackPanel::PushCrowdReaction(bool react) {
     BeatMaster *master = TheGame->mMaster;
-    if (master) {
-        MasterAudio *audio = master->GetAudio();
-        if (audio && TheGame->mProperties.mCrowdReacts) {
-            audio->SetCrowdFader(react ? 0.0f : -96.0f);
-        }
-    }
+    if (!master)
+        return;
+    MasterAudio *audio = master->GetAudio();
+    if (!audio)
+        return;
+    if (!TheGame->mProperties.mCrowdReacts)
+        return;
+    audio->SetCrowdFader(react ? 0.0f : -96.0f);
 }
 
 BEGIN_HANDLERS(TrackPanel)
