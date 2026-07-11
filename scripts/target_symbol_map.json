@@ -15055,6 +15055,7 @@
  "0x8229F588": "?Replace@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x8231A1E8": "?Replace@?$ObjPtrList@VObjectDir@@V1@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x8231A378": "?Replace@?$ObjPtrList@VCharInterest@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8231A850": "?Replace@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822727B0": "?Replace@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82272CC0": "?Replace@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822E7020": "?Replace@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
