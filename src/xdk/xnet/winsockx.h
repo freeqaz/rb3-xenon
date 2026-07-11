@@ -217,7 +217,7 @@ struct sockaddr_in {
     short sin_family;
     unsigned short sin_port;
     struct in_addr sin_addr;
-    char sin_zero[0];
+    char sin_zero[8];
 };
 
 #define _SS_MAXSIZE 128
@@ -240,7 +240,7 @@ typedef struct hostent {
 } HOSTENT, *PHOSTEND, *LPHOSTENT;
 
 #define WSADESCRIPTION_LEN 256
-#define WSASYS_STATUS_LEN
+#define WSASYS_STATUS_LEN 128
 typedef struct WSADATA {
     WORD wVersion;
     WORD wHighVersion;
