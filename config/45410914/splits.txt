@@ -3166,8 +3166,12 @@ band3/meta_band/VoiceoverPanel.cpp:
 	.text       start:0x826134E8 end:0x82613B70
 
 band3/meta_band/EditSetlistPanel.cpp:
-	.pdata      start:0x82220E78 end:0x822213A0
-	.text       start:0x825FE180 end:0x82603030
+	.pdata      start:0x82220E78 end:0x82221208
+	.text       start:0x825FE180 end:0x826016D8
+
+band3/meta_band/EventDialogPanel.cpp:
+	.pdata      start:0x82221208 end:0x822213A0
+	.text       start:0x826016D8 end:0x82603030
 
 band3/meta_band/ManageBandPanel.cpp:
 	.pdata      start:0x82221910 end:0x82221B90

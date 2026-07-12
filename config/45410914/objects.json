@@ -815,6 +815,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/EventDialogPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/SetlistMergePanel.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
