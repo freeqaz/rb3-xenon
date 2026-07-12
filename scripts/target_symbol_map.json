@@ -15270,5 +15270,7 @@
  "0x825B8048": "?GetCachedTotalStars@SongStatusMgr@@QBAHW4ScoreType@@@Z",
  "0x8258BFE8": "?GetTourValue@AccomplishmentTourConditional@@QBAHXZ",
  "0x82B5E888": "?GetTrackPanelDir@@YAPAVTrackPanelDirBase@@XZ",
- "0x826752B8": "?HandleRemovePlayer@TrackerManager@@QAAXPAVPlayer@@@Z"
+ "0x826752B8": "?HandleRemovePlayer@TrackerManager@@QAAXPAVPlayer@@@Z",
+ "0x823573c8": "?IsNameUnchecked@TourSavable@@QBA_NXZ",
+ "0x82533ef8": "?SetSynapseEnabled@ProfileMgr@@QAAX_N@Z"
 }
