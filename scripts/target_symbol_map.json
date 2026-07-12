@@ -15263,5 +15263,11 @@
  "0x82321D50": "?SetSkinColor@BandCharDesc@@QAAXH@Z",
  "0x82320E28": "?GetInstrumentFromSym@BandCharDesc@@SA?AW4CharInstrumentType@1@VSymbol@@@Z",
  "0x826790C0": "?GetHarmony@Stats@@QBAHXZ",
- "0x826791D8": "?IncrementTrillsHit@Stats@@QAAX_N@Z"
+ "0x826791D8": "?IncrementTrillsHit@Stats@@QAAX_N@Z",
+ "0x825B8028": "?GetCachedTotalDiscScore@SongStatusMgr@@QBAHW4ScoreType@@@Z",
+ "0x825B8038": "?GetCachedTotalScore@SongStatusMgr@@QBAHW4ScoreType@@@Z",
+ "0x825B8048": "?GetCachedTotalStars@SongStatusMgr@@QBAHW4ScoreType@@@Z",
+ "0x8258BFE8": "?GetTourValue@AccomplishmentTourConditional@@QBAHXZ",
+ "0x82B5E888": "?GetTrackPanelDir@@YAPAVTrackPanelDirBase@@XZ",
+ "0x826752B8": "?HandleRemovePlayer@TrackerManager@@QAAXPAVPlayer@@@Z"
 }
