@@ -28,6 +28,9 @@ empirically by Stage B (extend pin, rebuild, captured fns match).
 import argparse, bisect, json, re, sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from funclets import load_funclet_set
+
 ROOT = Path(__file__).resolve().parent.parent.parent
 SYM = ROOT / "config/45410914/symbols.txt"
 SPLITS = ROOT / "config/45410914/splits.txt"
@@ -74,8 +77,6 @@ def main():
     ap.add_argument("--top", type=int, default=40, help="rows to print")
     ap.add_argument("--unit", help="only scan this TU (splits.txt name)")
     ap.add_argument("--json", default=str(Path.home() / "tmp/recarve/scan.json"))
-    ap.add_argument("--verify-funclets", action="store_true",
-                    help="confirm suspected funclets via r12 prologue in unit asm")
     args = ap.parse_args()
 
     funcs = load_functions()
@@ -101,9 +102,13 @@ def main():
         i = bisect.bisect_left(faddr, addr)
         return funcs[i] if i < len(faddr) and funcs[i][0] == addr else None
 
+    funclet_vas = load_funclet_set(ROOT)
+
     def unowned_run(end):
-        """Contiguous unowned function run starting exactly at `end`."""
-        run_fns = run_bytes = real_fns = real_bytes = 0
+        """Contiguous unowned function run starting exactly at `end`.
+        REAL excludes ICF stubs (<=44B), except_data blobs AND EH funclets
+        (r12 prologue, any size — Waypoint E2E lesson 2026-07-12)."""
+        run_fns = run_bytes = real_fns = real_bytes = funclets = 0
         a = end
         while True:
             f = fn_at(a)
@@ -115,34 +120,13 @@ def main():
             if not name.startswith("except_data_"):
                 run_fns += 1
                 run_bytes += sz
-                if sz > STUB:
+                if a in funclet_vas:
+                    funclets += 1
+                elif sz > STUB:
                     real_fns += 1
                     real_bytes += sz
             a += sz
-        return run_fns, run_bytes, real_fns, real_bytes, a
-
-    def funclet_prologue_confirmed(tu, want_sizes):
-        """Return set of fn VAs in the unit asm with an r12-relative prologue
-        (EH funclets compute the parent frame via r12) among `want_sizes`."""
-        asm = ASM / (tu[:-4] + ".s") if tu.endswith(".cpp") else ASM / (tu + ".s")
-        if not asm.exists():
-            return set()
-        confirmed, cur_va, cur_lines = set(), None, []
-        for l in asm.read_text(errors="replace").splitlines():
-            m = re.match(r"\.fn (\S+),", l)
-            if m:
-                cur_va, cur_lines = m.group(1), []
-                continue
-            if l.startswith(".endfn"):
-                cur_va = None
-                continue
-            if cur_va and len(cur_lines) < 4 and "\t" in l:
-                cur_lines.append(l)
-                if re.search(r"\b(subi?c?|subf|addi)\s+r\d+,\s*r12\b", l.split("\t")[-1]):
-                    va = re.search(r"fn_([0-9A-Fa-f]+)", cur_va)
-                    if va:
-                        confirmed.add(int(va.group(1), 16))
-        return confirmed
+        return run_fns, run_bytes, real_fns, real_bytes, funclets, a
 
     # per-TU pinned ranges (a TU may have several)
     tu_ranges = {}
@@ -155,15 +139,17 @@ def main():
             continue
 
         # --- EXTEND signal: check each range end (usually the last matters)
-        ext = {"real_fns": 0, "real_bytes": 0, "run_fns": 0, "at_end": None, "run_end": None}
+        ext = {"real_fns": 0, "real_bytes": 0, "run_fns": 0, "funclets": 0,
+               "at_end": None, "run_end": None}
         for s, e in rs:
             f = fn_at(e)
             if not f:
                 continue
-            run_fns, run_bytes, real_fns, real_bytes, run_end = unowned_run(e)
+            run_fns, run_bytes, real_fns, real_bytes, fclts, run_end = unowned_run(e)
             if real_fns > ext["real_fns"]:
                 ext = {"real_fns": real_fns, "real_bytes": real_bytes,
-                       "run_fns": run_fns, "at_end": e, "run_end": run_end}
+                       "run_fns": run_fns, "funclets": fclts,
+                       "at_end": e, "run_end": run_end}
 
         # --- MAP-GAP signal: retail fns in pinned ranges missing from the map
         retail_fns = unmapped = 0
@@ -196,11 +182,6 @@ def main():
                         hi += 1
                 elif fz <= ZERO_FUZZY:
                     zero += 1
-
-        if args.verify_funclets and suspects:
-            conf = funclet_prologue_confirmed(tu, None)
-            # informational only: report how many suspects are prologue-confirmed
-            ext["funclets_confirmed"] = len(conf)
 
         # --- composite rank (documented in docs/plans/recarve-pipeline.md):
         # EXTEND fns are near-certain yield (x2); zeros only count as recarve

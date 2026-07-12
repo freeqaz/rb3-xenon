@@ -21,6 +21,44 @@ binary path); rebuilt via `touch objdiff-core/build.rs && cargo build
 --release -p objdiff-cli` (the stale-build-script gotcha from
 `project_objdiff_fork.md`).
 
+### Stage B E2E findings (Waypoint.cpp, 2026-07-12)
+
+The first full climb (worktree ~/tmp/recarve-wt-waypoint) proved the
+mechanics — worktree setup, splits edit, re-split, fresh_report, per-fn
+evaluation, measure_delta gate, evidence JSON, zero regressions — and taught
+three lessons now baked into the tools:
+
+1. **The funclet screen must be PROLOGUE-based, not size-based.** Waypoint's
+   "25-real-fn run" was 24 EH unwind funclets (48B each — outside the wave-17
+   40B band) + 1 genuine fn. `scripts/recarve/funclets.py` now detects the
+   r12 parent-frame establisher (`subi/addi rX, r12, imm` as FIRST
+   instruction) across the whole target asm tree: **16,821 funclet VAs
+   (~24% of all functions!)** cached at `~/tmp/recarve/funclet_vas.json`.
+   That population size explains why the "hi-fuzzy quick closes" mirage
+   recurred across so many waves. Both scan.py (EXTEND run walk) and
+   climb.py (walk + eval + trim glue) consume the set.
+2. **Never reconstruct VAs from report.json fn offsets** — dtk compacts
+   excluded symbols so offsets drift (observed -0x30 skew mid-unit). climb's
+   unit_eval now pairs by NAME (mapped VA → mangled name via
+   target_symbol_map, else `fn_<VA>`). This fix *demonstrably killed a false
+   positive*: the offset-based first run reported `??_GWaypoint` at 99.95%
+   "captured outside the pin" — but that fn is actually already pinned at
+   0x822C8CA8 (Waypoint's second range); the offset skew had slid an
+   already-matched fn into the evaluation window. The corrected run
+   evaluates the same extension honestly: 24 funclets + 1 unmapped 0% fn =
+   nothing good.
+3. **Verdicts are graded**: KEEP (strict net > 0, landable), EVIDENCE
+   (good non-funclet fns captured but net <= 0; boundary kept in worktree,
+   yield pends Stage C), DEFER (no good non-funclet fns; extension
+   reverted). Waypoint's final verdict is **DEFER** — both candidate ends
+   processed, both reverted, net +0, zero regressions. The correct next
+   probe for its runs is Stage C identity work (who owns fn_822C8B24 and
+   the 24 funclets' parents), not a boundary move.
+
+Stage C labeled set exported: `~/tmp/recarve/map_verify_labeled.csv`
+(9,516 audited map entries; 8,819 ok, rest = MISPAIR/SUSPECT/… classes) via
+`map_verify.py --all --csv`.
+
 ## Why this exists
 
 The 2026-07-10 mega-session (~11,660 → 15,428 strict matches) showed that the
