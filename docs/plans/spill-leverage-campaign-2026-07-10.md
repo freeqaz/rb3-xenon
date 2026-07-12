@@ -266,3 +266,46 @@ agent pass.
     (`subic/subfe`) permuter-class arm. Lesson: **present**-purity class-A hits
     are noisy (the store may be a shifted temp, not a dead home) — sole/dominant
     purity is where the lever is reliable.
+- 2026-07-12, **frame-size successor lever NO-GO** (sized before building
+  tooling). OvershellSlot's 16-byte frame delta is a *symptom* of body/inline
+  divergence (an extra target arm at idx 625, an inline-policy bool at idx 2085,
+  a `UserLoginMsg` dispatch region at idx 2272), not an independent cause — the
+  rb3-Wii oracle handler-set matches ours exactly, so there's no source
+  correction; at-limit at 98.31%. Prevalence sweep (`~/tmp/framesize_sweep.py`,
+  parses `stwu r1,-N(r1)` both sides): **0/35** near-misses carry any frame-size
+  delta (0/33 general + 0/2 same-class `Handle` mega-dispatchers). Frame deltas,
+  where they occur, are downstream of body-port/inline-policy divergence already
+  owned by those campaigns. **Do not build frame-size tooling.**
+
+## 6. Campaign conclusion (2026-07-12)
+
+**Delivered:** +6 strict (NetCacheMgr::OnInit, SongUpgradeMgr::AddUpgradeData
++funclet, GemPlayer::Handle, RandomGroupSeqInst ctor, FileStream::~FileStream)
++ Geo::Clip 95.1→97.6 fuzzy; the batch signature scanner
+(`scripts/harvest/spill_signature_scan.py`); the mechanism research docs
+(`docs/decomp/research/2026-07-10-spill-store-homing-mechanism.md`,
+`2026-07-10-objptr-two-ctor-inline.md`); and three transferable homing levers
+(inlinee-`this`, single-expression getter-before-call, wrapper-helper — §5).
+
+**Decisive negatives** (each closes a plausible vein so it isn't re-hunted):
+class-B thin-node header trial (population=1), ObjPtr two-ctor inline
+(over-applies + inline-schedule wall, −88 fleet), Handle-family lever transfer,
+frame-size lever (0/35 prevalence).
+
+**Vein state: DRAINED for reliable strict.** Sole/dominant-purity class-A all
+harvested; present-purity class-A is noisy (proven on Handle-family); the two
+adjacent successor probes both returned NO-GO. Value has shifted to the
+**body-port / inline-policy (force-multiplier) domain** — where the residual
+OvershellSlot/TourProgress/present-band diffs actually live — which is a
+separate, concurrently-active campaign. A new push should start there, not by
+grinding more present-band store hits.
+
+**Residual debt (T5, unclaimed):** the `unfixable-compiler.md` "Stack Spill
+Scheduling" three-way-split fold-in is still blocked on another agent's
+uncommitted edits to that file; do it when the file clears, referencing the
+research doc. A `stw-classify` mode for `diff_inspect`/`run_diff_inspect` was
+scoped but deferred — it touches the shared orchestrator MCP server (risky
+mid-session) and the drained vein makes its future-use rate low; revisit only if
+a store-count vein reopens. Class-C verdict walls were skipped deliberately
+(only present-band C hits exist; walling them risks masking functions with other
+fixable diffs).
