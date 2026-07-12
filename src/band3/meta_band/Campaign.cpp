@@ -702,6 +702,7 @@ bool Campaign::CanResumeSongs() {
 }
 
 bool Campaign::CanSaveSetlists() {
+    static Symbol acc_createsetlist("acc_createsetlist");
     return m_symCurrentAccomplishment == acc_createsetlist;
 }
 

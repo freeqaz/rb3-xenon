@@ -4445,6 +4445,7 @@
  "0x8258DA70": "?GetPrimaryCampaignLevel@Campaign@@QBA?AVSymbol@@XZ",
  "0x8258DAC8": "?GetCampaignLevelForUser@Campaign@@QBA?AVSymbol@@PAVLocalBandUser@@@Z",
  "0x8258DB68": "?GetTotalPointsForNextCampaignLevelForUser@Campaign@@QAAHPAVLocalBandUser@@@Z",
+ "0x8258C7D8": "?CanSaveSetlists@Campaign@@QAA_NXZ",
  "0x8258E898": "?Handle@Campaign@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82590910": "?Init@Campaign@@QAAXPAVDataArray@@@Z",
  "0x82590C70": "?SetlistTypeToSym@SavedSetlist@@SA?AVSymbol@@W4SetlistType@1@@Z",
