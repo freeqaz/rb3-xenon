@@ -80,7 +80,13 @@ bool FileStream::ValidateChecksum() {
 }
 
 void FileStream::DeleteChecksum() {
-    delete mChecksumValidator;
+    // Retail frees the validator directly through its class operator delete with no
+    // null guard, keeping this body small enough for /Ob2 to inline at both the dtor
+    // and StartChecksum call sites (matching the retail XEX, which inlines it as an
+    // unconditional free + two field zeroes). StreamChecksumValidator's dtor is
+    // trivial, so this is behavior-identical to `delete mChecksumValidator` (and the
+    // deallocator is null-safe — retail calls it on a null validator in StartChecksum).
+    StreamChecksumValidator::operator delete(mChecksumValidator);
     mChecksumValidator = 0;
     mBytesChecksummed = 0;
 }
