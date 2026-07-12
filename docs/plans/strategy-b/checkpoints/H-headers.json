@@ -1,0 +1,52 @@
+{
+  "lane": "H-headers",
+  "status": "PROVEN",
+  "date": "2026-07-12",
+  "summary": "Reconstructed an XDK-free <xtl.h> header set. All 19 files that #include <xtl.h> (11 .c that include it directly + net_upnp.c transitively = 12 TUs compiled to .obj, plus 8 headers exercised transitively) build clean with cl.exe 16.00.11886.00 under wibo. Every .obj is machine 0x01F2 (PowerPC BE). Only residual diagnostic is warning C4392 from LIBCMT/va_list_def.h (pre-existing, out of lane scope).",
+  "toolchain": {
+    "cl": "/home/free/code/milohax/rb3-xenon/build/compilers/X360/16.00.11886.00/cl.exe",
+    "wibo": "/home/free/code/milohax/wibo/build/release/wibo",
+    "compile_flags": "/c /nologo /X -I<xdk-oss> -I<RB3Enhanced/include> -I<LIBCMT> -D_XBOX -DRB3E_XBOX -DRB3E -DNDEBUG"
+  },
+  "header_tree": {
+    "canonical": "/home/free/code/milohax/RB3Enhanced/include/xdk-oss/",
+    "handoff_copy": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/H-headers/xdk-oss/",
+    "files": ["xtl.h", "xdk_base.h", "stdint.h", "xboxkrnl.h", "xnet.h", "xapi.h", "xam.h", "xinput.h", "xcrypt.h"],
+    "total_lines": 1015
+  },
+  "driver": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/H-headers/compile-tu.sh",
+  "logs": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/H-headers/logs/",
+  "objs": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/H-headers/obj/",
+  "tu_results": [
+    {"tu": "xbox360.c",              "group": "core",    "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_crypto.c",       "group": "crypto",  "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_exceptions.c",   "group": "core",    "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_files.c",        "group": "content", "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_input.c",        "group": "input",   "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox_keyboard.c",        "group": "input",   "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_net.c",          "group": "net",     "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_liveless.c",     "group": "net",     "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "xbox360_content.c",      "group": "content", "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "net_stun.c",             "group": "net",     "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "net_upnp.c",             "group": "net",     "verdict": "COMPILES_CLEAN", "machine": "0x01F2"},
+    {"tu": "net_liveless_online.c",  "group": "net",     "verdict": "COMPILES_CLEAN", "machine": "0x01F2"}
+  ],
+  "headers_exercised_transitively": [
+    {"header": "xbox360.h",               "via": "all xbox TUs"},
+    {"header": "xbox360_upnp.h",          "via": "net_upnp.c"},
+    {"header": "net_liveless_online.h",   "via": "net_liveless_online.c, xbox360_liveless.c"},
+    {"header": "exceptions.h",            "via": "xbox360_exceptions.c"},
+    {"header": "rb3/Joypad.h",            "via": "xbox360_input.c"},
+    {"header": "rb3/XboxCache.h",         "via": "xbox360_content.c"},
+    {"header": "rb3/XboxContent.h",       "via": "xbox360_content.c, xbox360.c"},
+    {"header": "quazal/QuazalSocket.h",   "via": "net_liveless_online.c, xbox360_liveless.c"}
+  ],
+  "clean_count": 12,
+  "gap_count": 0,
+  "residual_warnings": ["C4392 (LIBCMT va_list_def.h __va_start intrinsic arg-count) — pre-existing LIBCMT issue, benign, 1 per TU"],
+  "caveats": [
+    "Lane scope is COMPILE correctness. Import symbols declared here (XNet*, Xam*, XContent*, XInput*, CreateThread, etc.) are resolved at LINK by Lane L's import libs and at LOAD by the console kernel — not defined in these headers.",
+    "Runtime STRUCT-LAYOUT correctness (Risk #3) is only spot-verified for dereferenced structs against public XDK/free60/Xenia layouts (XNADDR, XINPUT_GAMEPAD, XCONTENT_DATA/CROSS_TITLE_DATA, XDEVICE_DATA, XNQOS/XNQOSINFO, sockaddr_in/IN_ADDR, XSESSION_*). The PPC _CONTEXT here uses 64-bit Xenon GPRs with named Gpr0..Gpr31; the exact byte offsets of Iar/Lr/Msr/Gpr1 used by xbox360_exceptions.c's stackwalk should be validated against a stock crash dump before trusting the runtime dump. EXCEPTION_CONTEXT_SIZE is a fixed 560 in RB3E's exceptions.h, independent of sizeof(CONTEXT).",
+    "RB3E's own xbox360.h declares MmIsAddressValid, XexGetModuleHandle/ProcedureAddress, RtlInitAnsiString, ObCreateSymbolicLink, the XeCrypt/XeKeys functions, STRING, and XNetLogonGetExtendedStatus — the xdk-oss headers intentionally do NOT redeclare these to avoid conflicts."
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "lane": "H",
+  "status": "done",
+  "compileOk": "51/51",
+  "verified": true,
+  "date": "2026-07-12",
+  "summary": "Added static __inline XDK wrappers in the xdk-oss header tree so the 51 TUs' bare source-level names (socket/XUser*/XShow*/XNet*/XContent*/XInputGetKeystroke/XLaunchNewImage/XCloseHandle/XHasOverlappedIoCompleted) bind to the real Xam*/NetDll_* xam.xex exports. 51/51 recompile clean; fresh link probe confirms ZERO bare wrapper names remain unresolved (all now resolve to underlying exports). XHasOverlappedIoCompleted is an inline over XOVERLAPPED (not an export).",
+  "files_edited": [
+    "RB3Enhanced/include/xdk-oss/xnet.h",
+    "RB3Enhanced/include/xdk-oss/xam.h",
+    "RB3Enhanced/include/xdk-oss/xinput.h",
+    "RB3Enhanced/include/xdk-oss/xboxkrnl.h",
+    "RB3Enhanced/include/xdk-oss/xapi.h"
+  ],
+  "wrapper_design": {
+    "caller_arg": "WSA_XNCALLER_SYSTEM = 2 (matches Xenia XNCALLER_SYSAPP; XDK winsockx.h convention). Xenia ignores caller; permission-context hint on hardware.",
+    "XUserGetXUID_type_mask": "XamUserGetXUID takes an extra type-mask arg the XUser* form lacks; wrapper passes 7 (all XUID types), which Xenia's assert accepts. Exact XDK constant unconfirmed; only exercised on the online/GoCentral path, never at DllMain/boot.",
+    "XHasOverlappedIoCompleted": "inline: (pOverlapped->InternalLow != STATUS_PENDING(0x103)); no export",
+    "XCloseHandle": "inline alias for CloseHandle (Lane A shim over NtClose@207)"
+  },
+  "underlyingImports": [
+    "NetDll_socket", "NetDll_closesocket", "NetDll_shutdown", "NetDll_bind",
+    "NetDll_connect", "NetDll_listen", "NetDll_accept", "NetDll_send",
+    "NetDll_recv", "NetDll_sendto", "NetDll_recvfrom", "NetDll_setsockopt",
+    "NetDll_ioctlsocket", "NetDll_WSAStartup", "NetDll_WSAGetLastError",
+    "NetDll_XNetStartup", "NetDll_XNetGetTitleXnAddr", "NetDll_XNetXnAddrToInAddr",
+    "NetDll_XNetGetOpt", "NetDll_XNetQosServiceLookup", "NetDll_XNetQosLookup",
+    "XamUserGetXUID", "XamUserGetName", "XamUserGetSigninState", "XamUserGetSigninInfo",
+    "XamShowMessageBoxUI", "XamShowKeyboardUI", "XamShowFriendsUI",
+    "XamLoaderLaunchTitle",
+    "XamContentDelete", "XamContentGetDeviceData", "XamInputGetKeystroke",
+    "CloseHandle"
+  ],
+  "lane_I_gap": {
+    "already_in_xam_def": "All NetDll_* (@1..@27, @51..@78) and XamUserGet*/XamShow*/XamLoaderLaunchTitle are already present in L-importlibs/xam.def; they resolve by construction once K/L consumption is wired.",
+    "must_add_to_xam_def": [
+      "XamContentDelete @601 (0x259)",
+      "XamContentGetDeviceData @605 (0x25D)",
+      "XamInputGetKeystroke @403 (0x193)"
+    ],
+    "ordinal_source": "idaxex namegen.cpp export table for xam.xex v2.0.21256 (the table whose XamUserGetXUID=0x20A=@522 matches stock_imports.txt exactly).",
+    "lane_A_dependency": "CloseHandle (XCloseHandle's target) is the xapilib Win32->NtClose@207 shim owned by Lane A."
+  },
+  "deferred_not_simple_rename": {
+    "symbols": ["XInviteGetAcceptedInfo", "XSessionSearchEx"],
+    "reason": "These are XONLINE library functions (see decomp-clones/ChimpsAtSea_Reach/src/xdk/xonlined/xliveimp.cpp; statically-linked in the stock DLL), NOT single xam.xex exports and NOT in the idaxex ordinal DB. They cannot be simple inline rename wrappers. Left as plain externs in xam.h. Need a Lane A/C decision: a small xonline shim/stub (RB3E hooks XInviteGetAcceptedInfo anyway and only calls the original as a fallback). Also still unresolved: XNetLogonGetExtendedStatus (@315, in xam.def, declared by RB3E's own xbox360.h).",
+    "still_unresolved_after_lane_H": ["XInviteGetAcceptedInfo", "XSessionSearchEx"]
+  },
+  "probe": {
+    "log": "tools/oss-xbox-build/K-link/logs/link_probe_H.log",
+    "note": "Probe linked against L-importlibs/{xam,xboxkrnl}.lib; underlying NetDll_*/Xam* names reappear as unresolved by design (the Lane-H -> Lane-I/L handoff surface). NetDll_UpnpStartup (a DIRECT RB3E ref, unrelated to my wrappers) is unresolved identically, proving the residual is a lib-consumption/join concern (xam.lib DOES contain NetDll_socket + __imp_NetDll_socket), not a decoration bug in the wrappers.",
+    "bare_wrapper_names_unresolved": 0
+  }
+}

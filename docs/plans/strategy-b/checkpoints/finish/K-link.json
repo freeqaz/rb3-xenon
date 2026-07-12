@@ -1,0 +1,71 @@
+{
+  "lane": "K",
+  "task": "link the full from-source RB3Enhanced.dll PE and converge all unresolved externals",
+  "status": "linked",
+  "verified": true,
+  "date": "2026-07-12",
+  "pePath": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/RB3Enhanced.exe",
+  "peMd5": "fa304f5cbba5937b2b6439ecac673db8",
+  "peBytes": 2097152,
+  "machine": "0x01f2",
+  "isDll": true,
+  "imageBase": "0x84000000",
+  "addressOfEntryPoint": "0x0001cf90",
+  "entryVA": "0x8401cf90",
+  "unresolvedExternals": 0,
+  "residualUnresolved": [],
+  "linkRc": 134,
+  "linkRcNote": "rc=134 is the benign wibo 'missing import CheckSumMappedFile from imagehlp.dll' stub, hit by -RELEASE at PE-checksum time AFTER the PE is fully written to disk (Lane C openRisks predicted this). All PE header fields read back correct; xex2pack recomputes the checksum anyway. Not a link/symbol failure. 0 unresolved externals.",
+  "recompiled51": "Yes -- 51/51 TUs recompiled clean against the current Lane H xdk-oss header tree (objs on disk predated H's final wrapper edits); machine 0x01f2. XDK_OSS=/home/free/code/milohax/RB3Enhanced/include/xdk-oss ./build_xbox_ossp.sh compile.",
+  "linkCmd": "cd $K && TMP=$K/tmpdir TEMP=$K/tmpdir LIB=$L wibo link.exe -NOLOGO -INCREMENTAL:NO -MACHINE:PPCBE -STACK:262144,262144 -BASE:0x84000000 -OPT:REF -OPT:ICF -RELEASE -dll -entry:_DllMainCRTStartup -XEX:NO -FIXED:NO -NODEFAULTLIB -OUT:RB3Enhanced.exe -IMPLIB:RB3Enhanced.imp obj/*.obj crt/crt.obj xapi/xapi_oss.obj xonline/xonline_stub.obj xam.lib xboxkrnl.lib",
+  "linkInvariants": {
+    "relativePathsRequired": "wibo parses argv tokens beginning with '/' as options, so absolute obj/lib paths are silently dropped as LNK4044 'unrecognized option; ignored' (first probe linked ZERO objs this way). Fix: cd into $K and pass obj/lib names relative (obj/*.obj crt/crt.obj ...) with LIB=$L in the env.",
+    "baseFlag": "-BASE:0x84000000 added. Default MSVC-X360 link base is 0x88000000; the spec requires the from-source PE at 0x84000000 (matches the intended XEX load base and makes entryVA = 0x84000000 + AOE self-consistent)."
+  },
+  "sections": [
+    ".rdata VA 0x00000400 vsize 0x2ba8",
+    ".pdata VA 0x00003000 vsize 0x530",
+    ".text  VA 0x00010000 vsize 0xf7f0 (entryVA 0x8401cf90 lands here)",
+    ".data  VA 0x00020000 vsize 0x8097cc (includes crt.obj 8MB static malloc arena)",
+    ".idata VA 0x00830000 vsize 0x16a (import descriptors -> xam / xboxkrnl thunks)",
+    ".XBLD  VA 0x00840000 vsize 0x30",
+    ".reloc VA 0x00840200 vsize 0x1790"
+  ],
+  "convergenceFixes": [
+    {
+      "symbol": "MmIsAddressValid",
+      "class": "Lane I (missing import ordinal)",
+      "referencedBy": "xbox360_exceptions.obj (GraphicalExceptionDisplay)",
+      "fix": "Real xboxkrnl.exe export @191 (0xBF, from ORDTBL x360_imports.py). Added 'MmIsAddressValid @191' to L-importlibs/xboxkrnl.def (in ordinal order) and rebuilt xboxkrnl.lib (wibo link.exe /LIB /DEF /MACHINE:PPCBE, rc=0; /DUMP /LINKERMEMBER confirms MmIsAddressValid + __imp_MmIsAddressValid present). Ordinal-map already listed it? No -- newly added; downstream packer must include xboxkrnl @191.",
+      "ordinalMapUpdateNeeded": "Packer/IMPORT_LIBRARIES generator should include xboxkrnl.exe ordinal 191 (MmIsAddressValid). Not in checkpoints/finish/ordinal-map.json; add it there or key off the DLL's actual .idata."
+    },
+    {
+      "symbol": "XSessionSearchEx",
+      "class": "Lane H/A deferred (XONLINE static-lib client fn, NOT a single xam.xex export)",
+      "referencedBy": "xbox360_liveless.obj (XSessionSearchExHook)",
+      "fix": "STUB. New TU xonline/xonline_stub.c -> xonline_stub.obj. Returns ERROR_SUCCESS(0). RB3E's XSessionSearchExHook ignores this return and synthesizes a fake liveless XSESSION, so the stub is behaviorally safe. Never reached at DllMain/boot."
+    },
+    {
+      "symbol": "XInviteGetAcceptedInfo",
+      "class": "Lane H/A deferred (XONLINE static-lib client fn, NOT a single xam.xex export)",
+      "referencedBy": "xbox360_liveless.obj (XInviteGetAcceptedInfoHook)",
+      "fix": "STUB. Same TU. Returns 1 (non-zero => no accepted invite). RB3E's hook only falls through to it when there is NO pending liveless join, so 'nothing to accept' is the correct fallback semantic. Never reached at DllMain/boot."
+    }
+  ],
+  "designDecisionsResolved": {
+    "xonlineStubs": "The two XONLINE client functions Lane H/I explicitly deferred ('need a Lane A/C decision') were resolved here with minimal safe stubs rather than left unresolved, so a complete bootable PE is produced. This is the ONE semantic compromise: the online session-search / invite-accept path is a no-op fallback, not a faithful reimplementation of the XDK xonline client lib. It does NOT affect the first-boot / DllMain bar. FOLLOW-UP for faithful online (GoCentral) play: replace xonline/xonline_stub.c with a real xonline client shim (multi-xam-export sequence) or resolve to the game's own imports at runtime."
+  },
+  "artifactsOwnedByThisLane": [
+    "tools/oss-xbox-build/K-link/RB3Enhanced.exe (output PE)",
+    "tools/oss-xbox-build/K-link/RB3Enhanced.imp (import lib)",
+    "tools/oss-xbox-build/K-link/xonline/xonline_stub.c + .obj (new)",
+    "tools/oss-xbox-build/K-link/obj/*.obj (recompiled 51/51)",
+    "tools/oss-xbox-build/K-link/logs/link_full.log"
+  ],
+  "crossLaneEditsMade": [
+    "L-importlibs/xboxkrnl.def: added 'MmIsAddressValid @191' (+ rebuilt xboxkrnl.lib). Lane I is complete so no race; coordinator should note ordinal-map.json does not yet list this ordinal."
+  ],
+  "nextForPacker": "Pack with xex2pack.py --entry 0x8401cf90 --compress basic, synthesizing the IMPORT_LIBRARIES block from the DLL's .idata (xam.xex + xboxkrnl.exe, incl. new xboxkrnl @191). Verify idaxex enumerates both import modules before boot.",
+  "notes": "0 unresolved externals after 3 convergence fixes. PE verified: MZ/PE, machine 0x01f2 (POWERPCFP), IMAGE_FILE_DLL set (characteristics 0x2102), ImageBase 0x84000000, AddressOfEntryPoint 0x0001cf90 -> entryVA 0x8401cf90 (inside .text). Entry symbol resolved to _DllMainCRTStartup (crt.obj), which forwards to DllMain (xbox360.obj). No non-4044 link warnings.",
+  "timestamp": "2026-07-12"
+}

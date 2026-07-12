@@ -1,0 +1,504 @@
+__declspec(naked) void __savegprlr_14(void) {
+    __emit(0xf9c1ff68);
+    __emit(0xf9e1ff70);
+    __emit(0xfa01ff78);
+    __emit(0xfa21ff80);
+    __emit(0xfa41ff88);
+    __emit(0xfa61ff90);
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_15(void) {
+    __emit(0xf9e1ff70);
+    __emit(0xfa01ff78);
+    __emit(0xfa21ff80);
+    __emit(0xfa41ff88);
+    __emit(0xfa61ff90);
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_16(void) {
+    __emit(0xfa01ff78);
+    __emit(0xfa21ff80);
+    __emit(0xfa41ff88);
+    __emit(0xfa61ff90);
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_17(void) {
+    __emit(0xfa21ff80);
+    __emit(0xfa41ff88);
+    __emit(0xfa61ff90);
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_18(void) {
+    __emit(0xfa41ff88);
+    __emit(0xfa61ff90);
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_19(void) {
+    __emit(0xfa61ff90);
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_20(void) {
+    __emit(0xfa81ff98);
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_21(void) {
+    __emit(0xfaa1ffa0);
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_22(void) {
+    __emit(0xfac1ffa8);
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_23(void) {
+    __emit(0xfae1ffb0);
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_24(void) {
+    __emit(0xfb01ffb8);
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_25(void) {
+    __emit(0xfb21ffc0);
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_26(void) {
+    __emit(0xfb41ffc8);
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_27(void) {
+    __emit(0xfb61ffd0);
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_28(void) {
+    __emit(0xfb81ffd8);
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_29(void) {
+    __emit(0xfba1ffe0);
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_30(void) {
+    __emit(0xfbc1ffe8);
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __savegprlr_31(void) {
+    __emit(0xfbe1fff0);
+    __emit(0x9181fff8);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_14(void) {
+    __emit(0xe9c1ff68);
+    __emit(0xe9e1ff70);
+    __emit(0xea01ff78);
+    __emit(0xea21ff80);
+    __emit(0xea41ff88);
+    __emit(0xea61ff90);
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_15(void) {
+    __emit(0xe9e1ff70);
+    __emit(0xea01ff78);
+    __emit(0xea21ff80);
+    __emit(0xea41ff88);
+    __emit(0xea61ff90);
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_16(void) {
+    __emit(0xea01ff78);
+    __emit(0xea21ff80);
+    __emit(0xea41ff88);
+    __emit(0xea61ff90);
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_17(void) {
+    __emit(0xea21ff80);
+    __emit(0xea41ff88);
+    __emit(0xea61ff90);
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_18(void) {
+    __emit(0xea41ff88);
+    __emit(0xea61ff90);
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_19(void) {
+    __emit(0xea61ff90);
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_20(void) {
+    __emit(0xea81ff98);
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_21(void) {
+    __emit(0xeaa1ffa0);
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_22(void) {
+    __emit(0xeac1ffa8);
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_23(void) {
+    __emit(0xeae1ffb0);
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_24(void) {
+    __emit(0xeb01ffb8);
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_25(void) {
+    __emit(0xeb21ffc0);
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_26(void) {
+    __emit(0xeb41ffc8);
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_27(void) {
+    __emit(0xeb61ffd0);
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_28(void) {
+    __emit(0xeb81ffd8);
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_29(void) {
+    __emit(0xeba1ffe0);
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_30(void) {
+    __emit(0xebc1ffe8);
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}
+__declspec(naked) void __restgprlr_31(void) {
+    __emit(0xebe1fff0);
+    __emit(0x8181fff8);
+    __emit(0x7d8803a6);
+    __emit(0x4e800020);
+}

@@ -1,0 +1,55 @@
+{
+  "lane": "X",
+  "title": "PE->XEX2 packer + identity round-trip",
+  "status": "PROVEN",
+  "date": "2026-07-12",
+  "summary": "xex2pack.py packs a PPC PE basefile into an unsigned/unencrypted/uncompressed XEX2-DLL (base 0x84000000, DLL flag, zeroed sig+hashes). Identity round-trip is byte-exact and the output loads through Xenia's real XEX2 loader (full module load + import resolution for xam.xex + xboxkrnl.exe).",
+  "deliverables": {
+    "packer": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/xex2pack.py",
+    "thunk_restore": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/deidax_thunks.py",
+    "roundtrip_script": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/roundtrip_test.sh",
+    "handoff": "/home/free/code/milohax/rb3-xenon/docs/plans/strategy-b/checkpoints/X-packer-handoff.md",
+    "work_dir": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/X/work"
+  },
+  "tools_used": {
+    "xex1tool": "/home/free/code/milohax/reverse-compiler-refs/idaxex/xex1tool/build/xex1tool (prebuilt, works on Linux)",
+    "xenia_headless": "/home/free/code/milohax/xenia/build/bin/Linux/Checked/xenia-headless (newest build)",
+    "stock_dll": "/home/free/code/milohax/rb3-xenon/_rb3e07/rb3e07/RB3Enhanced.dll"
+  },
+  "proven": [
+    "PHASE-0 identity round-trip: xex2pack(stock_basefile) -> xex1tool -b recovers a BYTE-IDENTICAL PE for BOTH compression=none and compression=basic (md5 62985ed2e5ab6cad55e00b9390914837).",
+    "Container is accepted by Xenia's production XEX2 loader: header/opt-headers/security-info/page-descriptors/uncompressed-basefile all parse; module flags read as DLL (0x9); entry point 0x8401B590 read from opt header; sections mapped; SetupLibraryImports resolves ALL imports for xam.xex + xboxkrnl.exe with zero 'unimplemented import' errors (using a raw-thunk basefile).",
+    "Both compression=none (XexDataFormat::None / raw) and compression=basic (single DataSize/ZeroSize block) load equivalently in Xenia.",
+    "Stock XEX2 header layout fully decoded and cross-checked against XenonRecomp xex.h and idaxex xex_structs.hpp; XenonRecomp Xex2SecurityInfo.'unknown'=0x174 identified as HvImageInfo.InfoSize."
+  ],
+  "stock_dll_facts": {
+    "module_flags": "0x9 (TITLE_MODULE|DLL_MODULE)",
+    "size_of_headers": "0x1000",
+    "security_offset": "0xE0",
+    "opt_header_count": 9,
+    "base_address": "0x84000000",
+    "entry_point": "0x8401B590",
+    "image_size": "0x40000",
+    "page_size": "0x10000 (64 KiB, 4 pages: hdr/code/code/data)",
+    "stock_compression": "NORMAL/LZX window 0x8000 (we emit uncompressed instead)",
+    "stock_encryption": "none",
+    "import_libraries": ["xam.xex (44 imports, id/ver 2.0.21256.0, min 2.0.1861.0)", "xboxkrnl.exe (55 imports)"],
+    "static_libraries": "XAPILIB, XBOXKRNL, XNET, XONLINE, LIBCMT, LINK, C2, C1 (build-time only, NOT XEX import libs)",
+    "note_for_lane_L": "Only TWO real XEX import libraries resolve at load: xam.xex and xboxkrnl.exe. All NetDll_* / Xam* symbols are ordinals in xam.xex; Nt*/Rtl*/Ke*/XeCrypt*/Xex* are ordinals in xboxkrnl.exe. Exact ordinals dumped in handoff."
+  },
+  "artifacts_verified_byte_identical": [
+    "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/X/work/rt_recovered_none.pe",
+    "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/X/work/rt_recovered_basic.pe"
+  ],
+  "key_findings": [
+    "idaxex `xex1tool -b` dumps a POST-import-rewrite basefile: read_imports() overwrites every function thunk in-place with li r3,moduleidx (0x38600000|idx) / li r4,ordinal (0x38800000|ord). A packer fed that image produces a container whose thunks decode as record_type=0x38 -> Xenia SetupLibraryImports assert_always at xex_module.cc:1386. deidax_thunks.py reverses this (word0 -> 0x01000000|ordinal) to yield the RAW basefile the loader expects. A from-source PE (link.exe output) already has raw thunks, so this restore step is only needed for the idaxex round-trip source.",
+    "Xenia halts after full module load at XThread::GetCurrentThread assert (xthread.cc:117, 'kernel stuff from a non-kernel thread'). This is the harness limit of launching a game-injected DLL as a standalone title in headless mode, NOT a packer/container defect.",
+    "Zeroed RSA signature + all HV digests (image/import/header/section) are intentional and benign: idaxex prints 'Invalid ... hash' but still fully parses; RGH/devkit loaders skip HV hash validation. No free tool can mint a retail-signed XEX (accepted, per spec)."
+  ],
+  "remaining": [
+    "Hardware boot on the physical RGH console via RB3ELoader is untested here (no console access in this environment).",
+    "From-scratch import-table SYNTHESIS (build the IMPORT_LIBRARIES opt block from Lane L's ordinal .def rather than copying the stock block) is stubbed via --import-block but not yet generated from ordinals; wire once Lane L lands.",
+    "Packer currently sources entry-point/imports/pe-name from --from-xex for the round-trip; the from-source path (Phase 4) must pass --entry (PE AddressOfEntryPoint+base) and --import-block from the linker output.",
+    "Choose final compression mode for hardware: both none and basic pass Xenia; recommend BASIC (matches what xextool '-e u' emits and is the most widely accepted 'uncompressed' encoding)."
+  ]
+}

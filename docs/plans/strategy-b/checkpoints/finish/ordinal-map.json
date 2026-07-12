@@ -1,0 +1,414 @@
+{
+  "NetDll_WSAStartup": {
+    "module": "xam.xex",
+    "ordinal": 1
+  },
+  "NetDll_socket": {
+    "module": "xam.xex",
+    "ordinal": 3
+  },
+  "NetDll_closesocket": {
+    "module": "xam.xex",
+    "ordinal": 4
+  },
+  "NetDll_shutdown": {
+    "module": "xam.xex",
+    "ordinal": 5
+  },
+  "NetDll_ioctlsocket": {
+    "module": "xam.xex",
+    "ordinal": 6
+  },
+  "NetDll_setsockopt": {
+    "module": "xam.xex",
+    "ordinal": 7
+  },
+  "NetDll_bind": {
+    "module": "xam.xex",
+    "ordinal": 11
+  },
+  "NetDll_connect": {
+    "module": "xam.xex",
+    "ordinal": 12
+  },
+  "NetDll_listen": {
+    "module": "xam.xex",
+    "ordinal": 13
+  },
+  "NetDll_accept": {
+    "module": "xam.xex",
+    "ordinal": 14
+  },
+  "NetDll_recv": {
+    "module": "xam.xex",
+    "ordinal": 18
+  },
+  "NetDll_recvfrom": {
+    "module": "xam.xex",
+    "ordinal": 20
+  },
+  "NetDll_send": {
+    "module": "xam.xex",
+    "ordinal": 22
+  },
+  "NetDll_sendto": {
+    "module": "xam.xex",
+    "ordinal": 24
+  },
+  "NetDll_WSAGetLastError": {
+    "module": "xam.xex",
+    "ordinal": 27
+  },
+  "NetDll_XNetStartup": {
+    "module": "xam.xex",
+    "ordinal": 51
+  },
+  "NetDll_XNetXnAddrToInAddr": {
+    "module": "xam.xex",
+    "ordinal": 57
+  },
+  "NetDll_XNetQosLookup": {
+    "module": "xam.xex",
+    "ordinal": 70
+  },
+  "NetDll_XNetQosServiceLookup": {
+    "module": "xam.xex",
+    "ordinal": 71
+  },
+  "NetDll_XNetGetTitleXnAddr": {
+    "module": "xam.xex",
+    "ordinal": 73
+  },
+  "NetDll_XNetGetOpt": {
+    "module": "xam.xex",
+    "ordinal": 78
+  },
+  "NetDll_UpnpStartup": {
+    "module": "xam.xex",
+    "ordinal": 251
+  },
+  "NetDll_UpnpSearchCreate": {
+    "module": "xam.xex",
+    "ordinal": 253
+  },
+  "NetDll_UpnpSearchGetDevices": {
+    "module": "xam.xex",
+    "ordinal": 254
+  },
+  "NetDll_UpnpDescribeCreate": {
+    "module": "xam.xex",
+    "ordinal": 255
+  },
+  "NetDll_UpnpDescribeGetResults": {
+    "module": "xam.xex",
+    "ordinal": 256
+  },
+  "NetDll_UpnpActionCreate": {
+    "module": "xam.xex",
+    "ordinal": 258
+  },
+  "NetDll_UpnpActionGetResults": {
+    "module": "xam.xex",
+    "ordinal": 259
+  },
+  "NetDll_UpnpDoWork": {
+    "module": "xam.xex",
+    "ordinal": 263
+  },
+  "NetDll_UpnpCloseHandle": {
+    "module": "xam.xex",
+    "ordinal": 264
+  },
+  "XNetLogonGetExtendedStatus": {
+    "module": "xam.xex",
+    "ordinal": 315
+  },
+  "XamInputGetKeystroke": {
+    "module": "xam.xex",
+    "ordinal": 403
+  },
+  "XamLoaderLaunchTitle": {
+    "module": "xam.xex",
+    "ordinal": 420
+  },
+  "XamAlloc": {
+    "module": "xam.xex",
+    "ordinal": 490
+  },
+  "XamFree": {
+    "module": "xam.xex",
+    "ordinal": 492
+  },
+  "XMsgInProcessCall": {
+    "module": "xam.xex",
+    "ordinal": 500
+  },
+  "XMsgStartIORequest": {
+    "module": "xam.xex",
+    "ordinal": 503
+  },
+  "XamUserGetXUID": {
+    "module": "xam.xex",
+    "ordinal": 522
+  },
+  "XamUserGetName": {
+    "module": "xam.xex",
+    "ordinal": 526
+  },
+  "XamUserGetSigninState": {
+    "module": "xam.xex",
+    "ordinal": 528
+  },
+  "XamUserGetSigninInfo": {
+    "module": "xam.xex",
+    "ordinal": 551
+  },
+  "XamContentDelete": {
+    "module": "xam.xex",
+    "ordinal": 603
+  },
+  "XamContentGetDeviceData": {
+    "module": "xam.xex",
+    "ordinal": 606
+  },
+  "XamGetSystemVersion": {
+    "module": "xam.xex",
+    "ordinal": 642
+  },
+  "XamShowFriendsUI": {
+    "module": "xam.xex",
+    "ordinal": 703
+  },
+  "XamShowKeyboardUI": {
+    "module": "xam.xex",
+    "ordinal": 705
+  },
+  "XamShowMessageBoxUI": {
+    "module": "xam.xex",
+    "ordinal": 714
+  },
+  "DbgPrint": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 3
+  },
+  "ExCreateThread": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 13
+  },
+  "ExTerminateThread": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 25
+  },
+  "KeBugCheck": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 82
+  },
+  "KeBugCheckEx": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 83
+  },
+  "KeDebugMonitorData": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 89
+  },
+  "KeDelayExecutionThread": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 90
+  },
+  "KeGetCurrentProcessType": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 102
+  },
+  "KeQuerySystemTime": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 132
+  },
+  "NtAllocateVirtualMemory": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 204
+  },
+  "NtClearEvent": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 206
+  },
+  "NtClose": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 207
+  },
+  "NtCreateFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 210
+  },
+  "NtDuplicateObject": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 218
+  },
+  "NtFlushBuffersFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 219
+  },
+  "NtFreeVirtualMemory": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 220
+  },
+  "NtOpenFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 223
+  },
+  "NtQueryDirectoryFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 228
+  },
+  "NtQueryFullAttributesFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 231
+  },
+  "NtQueryInformationFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 232
+  },
+  "NtQueryVirtualMemory": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 238
+  },
+  "NtQueryVolumeInformationFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 239
+  },
+  "NtReadFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 240
+  },
+  "NtReadFileScatter": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 241
+  },
+  "NtSetInformationFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 247
+  },
+  "NtWaitForSingleObjectEx": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 253
+  },
+  "NtWriteFile": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 255
+  },
+  "ObCreateSymbolicLink": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 259
+  },
+  "RtlCompareMemoryUlong": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 283
+  },
+  "RtlEnterCriticalSection": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 293
+  },
+  "RtlFreeAnsiString": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 295
+  },
+  "RtlImageXexHeaderField": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 299
+  },
+  "RtlInitAnsiString": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 300
+  },
+  "RtlInitUnicodeString": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 301
+  },
+  "RtlInitializeCriticalSection": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 302
+  },
+  "RtlInitializeCriticalSectionAndSpinCount": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 303
+  },
+  "RtlLeaveCriticalSection": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 304
+  },
+  "RtlMultiByteToUnicodeN": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 307
+  },
+  "RtlNtStatusToDosError": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 309
+  },
+  "RtlRaiseException": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 310
+  },
+  "RtlUnicodeStringToAnsiString": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 322
+  },
+  "RtlUnicodeToMultiByteN": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 323
+  },
+  "vswprintf": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 337
+  },
+  "KeTlsAlloc": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 338
+  },
+  "KeTlsFree": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 339
+  },
+  "KeTlsGetValue": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 340
+  },
+  "KeTlsSetValue": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 341
+  },
+  "XboxHardwareInfo": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 342
+  },
+  "XeCryptAesKey": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 345
+  },
+  "XeCryptAesCbc": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 347
+  },
+  "XeCryptHmacSha": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 386
+  },
+  "XexExecutableModuleHandle": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 403
+  },
+  "XexGetModuleHandle": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 405
+  },
+  "XexGetProcedureAddress": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 407
+  },
+  "__C_specific_handler": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 421
+  },
+  "XeKeysConsolePrivateKeySign": {
+    "module": "xboxkrnl.exe",
+    "ordinal": 598
+  }
+}

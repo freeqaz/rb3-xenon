@@ -1,0 +1,58 @@
+{
+  "lane": "K-link",
+  "title": "Full XDK-free compile+link recipe for RB3Enhanced.dll (PPCBE)",
+  "status": "PARTIAL",
+  "date": "2026-07-12",
+  "deliverable_script": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/build_xbox_ossp.sh",
+  "logs_dir": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/logs",
+  "obj_dir": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/obj",
+  "toolchain": {
+    "cc": "/home/free/code/milohax/rb3-xenon/build/compilers/X360/16.00.11886.00/cl.exe",
+    "link": "/home/free/code/milohax/rb3-xenon/build/compilers/X360/16.00.11886.00/link.exe",
+    "wibo": "/home/free/code/milohax/wibo/build/release/wibo"
+  },
+  "compile_result": {
+    "compiled_now": 34,
+    "total": 51,
+    "blocked": 17,
+    "blocked_reason": "fatal error C1083: Cannot open include file: 'xtl.h' (LANE H dependency) - identical for ALL 17; ZERO other errors",
+    "machine_verified": "0x01F2 (POWERPCFP / PPCBE) on all 34 objs",
+    "compiled_list": ["aes","config","crc32","DataDebug","DTAFunctions","FileSD","FileWiiNAND","_functions","GameHooks","GemHooks","GlobalSymbols","gocentral","inih","LocaleHooks","net_events","net_http_server","net_natpmp","OvershellHooks","PassiveMessages","SameInstrumentHooks","SetlistHooks","SongHooks","SongParserHooks","SongSort","SpeedHooks","utilities","wii","wii_cnt_crypt","wii_cnt_hooks","wii_emvolution","wii_exceptions","wii_files","wii_net","wii_usbhid"],
+    "blocked_list_xtl_h": ["MiloSceneHooks","MusicLibrary","net_liveless_online","net_stun","net_upnp","QuazalHooks","rb3enhanced","RndPropAnimHooks","xbox360","xbox360_content","xbox360_crypto","xbox360_exceptions","xbox360_files","xbox360_input","xbox360_liveless","xbox360_net","xbox_keyboard"],
+    "compile_cmd_template": "wibo cl.exe -c -nologo -W3 -WX- -Ox -Os -D _XBOX -D RB3E_XBOX -D RB3E -D NDEBUG -GF -Gm- -MT -GS- -Gy -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- -TC -I <RB3E>/include -I <stdint-shadow> -I <XDK_OSS=srcxdk/LaneH> -I <srcxdk/LIBCMT> -Fo<obj> <src.c>",
+    "cflags_dropped_vs_makefile": ["-FI xbox_intellisense_platform.h (XDK)", "-Zi / -Fd (PDB debug info)"]
+  },
+  "link_recipe": {
+    "cmd_template": "TMP=<tmp> TEMP=<tmp> LIB=<Lane-L-importlibs> wibo link.exe -NOLOGO -INCREMENTAL:NO -MACHINE:PPCBE -STACK:262144,262144 -OPT:REF -OPT:ICF -RELEASE -dll -entry:_DllMainCRTStartup -XEX:NO -FIXED:NO xapilib.lib xboxkrnl.lib xnet.lib xonline.lib -OUT:RB3Enhanced.exe -IMPLIB:RB3Enhanced.imp <objs...>",
+    "lflags_dropped_vs_makefile": ["-DEBUG (PDB)", "-TLBID:1 (typelib)", "-MANIFESTUAC (win-only)", "-ERRORREPORT (harmless)"]
+  },
+  "undefined_ledger": {
+    "artifact": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/logs/undefined_ledger.md",
+    "raw_probe_log": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/logs/probe_link.log",
+    "unique_undefined": 55,
+    "categories": {
+      "A_rb3e_internal_resolved_by_LaneH": {"count": 25, "note": "RB3E_* (23) + MusicLibrarySelectSong + StagekitSetStateHook; defined in the 17 xtl.h-blocked TUs; NOT a real gap"},
+      "B_xboxkrnl_import_LaneL": {"count": 1, "symbols": ["DbgPrint"], "note": "xboxkrnl.exe ord 0x03; PROVEN resolved by Lane-L xboxkrnl.lib (mini link)"},
+      "C_crt_libc_REAL_missing": {"count": 11, "symbols": ["memset","memcpy","strncpy","strchr","strstr","sprintf","sscanf","atof","atoi","isspace","isxdigit","_fltused"], "note": "XDK: libcmt.lib (absent). Need OSS libc impls or a PPC libcmt, or map subset to xboxkrnl Rtl*/XMem*"},
+      "D_mwcc_crt_runtime_REAL_missing": {"count": 17, "symbols": ["__savegprlr_18/20/23/25/26/27/28/29","__restgprlr_18/20/23/25/26/27/28/29","_DllMainCRTStartup"], "note": "PPC codegen save/restore thunks + CRT DLL entry wrapper; trivial known stubs / minimal crt.obj"}
+    }
+  },
+  "proven_facts": [
+    "PROVEN: 34/51 RB3E TUs compile XDK-free RIGHT NOW to machine 0x01F2 with cl.exe under wibo + LIBCMT headers + an 11-line stdint shadow. All 17 failures are the identical xtl.h C1083 (Lane H), zero other errors.",
+    "PROVEN: link.exe under wibo resolves DbgPrint against Lane-L xboxkrnl.lib (mini 1-obj link).",
+    "PROVEN: stock RB3Enhanced.dll imports from xboxkrnl.exe + xam.xex (strings); DbgPrint is xboxkrnl ordinal 0x03 (x360_imports.py).",
+    "PROVEN (blocker): the full -dll-with-exports link crashes wibo with 'missing import GetTempPathW from kernel32' (rc=134) during export/.exp generation. Single-obj / no-export links succeed. wibo needs a GetTempPathW stub before the full 51-TU DLL link can run."
+  ],
+  "dependencies": {
+    "LaneH_headers": "NOT READY (no xtl.h yet). Provides xtl.h umbrella -> unblocks 17 TUs -> category A vanishes. XDK_OSS env var points build script at it.",
+    "LaneL_importlibs": "PARTIAL: /home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/L-importlibs/{xboxkrnl,xam}.lib present; still need xnet, xapilib, xonline .libs.",
+    "crt_provider": "NEW small sub-task: provide categories C+D (crt.obj/libc) - not owned by H or L today.",
+    "wibo_GetTempPathW": "NEW small wibo fix required for the full export link."
+  },
+  "next_actions": [
+    "Once Lane H drops xtl.h: run `XDK_OSS=<LaneH> ./build_xbox_ossp.sh compile` -> expect 51/51.",
+    "Add a crt.obj providing __save/restgprlr_* + _fltused + _DllMainCRTStartup (or -entry:DllMain) + libc (memset/memcpy/strncpy/strchr/strstr/sprintf/sscanf/atof/atoi/isspace/isxdigit).",
+    "Add GetTempPathW to wibo (or a wibo build that has it) for the export link.",
+    "Then `IMPORTLIB=<LaneL> ./build_xbox_ossp.sh link` -> RB3Enhanced.exe (PE, hand to Lane X packer)."
+  ]
+}

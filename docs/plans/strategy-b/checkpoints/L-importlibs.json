@@ -1,0 +1,59 @@
+{
+  "lane": "L-importlibs",
+  "status": "PROVEN",
+  "date": "2026-07-12",
+  "summary": "Reconstructed XDK-free import libraries for RB3Enhanced.dll from the STOCK 0.7 DLL's own XEX import table (ground truth) cross-checked against xorloser x360_imports.py. Only TWO host modules: xam.xex (44 imports) and xboxkrnl.exe (55 imports). Generated .def + .lib for both via the proven wibo link.exe /LIB recipe, and PROVED end-to-end by compiling an XDK-free TU that calls 5 imports and linking it into a valid PPCBE PE whose import table resolves to the exact ground-truth ordinals.",
+  "ground_truth_source": {
+    "method": "b (stock DLL import table) primary, a (x360_imports.py namegen) cross-check",
+    "stock_dll": "/home/free/code/milohax/rb3-xenon/_rb3e07/rb3e07/RB3Enhanced.dll",
+    "stock_dll_format": "XEX2, DLL-module",
+    "tool": "idaxex xex1tool (built standalone with g++)",
+    "kernel_version_min": "2.0.1861.0",
+    "kernel_version_target": "2.0.21256.0",
+    "raw_dump": "tools/oss-xbox-build/L-importlibs/stock_imports.txt"
+  },
+  "key_findings": [
+    "RB3Enhanced.dll imports from exactly TWO modules: xam.xex (44) + xboxkrnl.exe (55) = 99 symbols. No xnet.xex / xapilib.xex / xonline.xex import descriptors exist in the final image.",
+    "The XDK Makefile links xapilib.lib+xboxkrnl.lib+xnet.lib+xonline.lib, but ALL of xapilib/xnet/xonline forward to xam.xex at runtime -- so our two OSS libs (xam.lib->xam.xex, xboxkrnl.lib->xboxkrnl.exe) fully replace all four XDK import libs.",
+    "All Net*/XNet*/Upnp*/Xam* symbols come from xam.xex (NetDll_* are the socket layer at ords 1-27; XNet at 51-78; Upnp at 251-264; Xam at 420-714).",
+    "wibo LACKED GetTempPathW/GetTempFileNameW -- link.exe calls GetTempPathW whenever it builds a real import table (dlltest.dll never triggered it because dlltest.c calls no imports). This was the true blocker for ALL OSS import linking, not just this lane. Fixed by adding both W stubs to wibo (additive)."
+  ],
+  "deliverables": {
+    "defs": [
+      "tools/oss-xbox-build/L-importlibs/xam.def (LIBRARY xam.xex, 44 exports)",
+      "tools/oss-xbox-build/L-importlibs/xboxkrnl.def (LIBRARY xboxkrnl.exe, 55 exports)"
+    ],
+    "libs": [
+      "tools/oss-xbox-build/L-importlibs/xam.lib (sha1 5d5e4555704b7e80e92f65a020125c1e9164a7af)",
+      "tools/oss-xbox-build/L-importlibs/xboxkrnl.lib (sha1 b3026c7eee46f426ac7433068677b8db2b4e4d98)"
+    ],
+    "verification": {
+      "tu": "tools/oss-xbox-build/L-importlibs/verify_imports.c",
+      "dll": "tools/oss-xbox-build/L-importlibs/verify_imports.dll (sha1 a563dd34b6cb1399a26cb216469adc606a2d9091)",
+      "machine": "0x01F2 (IMAGE_FILE_MACHINE_POWERPCBE)",
+      "resolved_imports": {
+        "xam.xex": [51, 642],
+        "xboxkrnl.exe": [3, 300, 407]
+      },
+      "result": "PROVEN -- import descriptors present and ordinals exactly match ground truth"
+    },
+    "xex1tool": "tools/oss-xbox-build/L-importlibs/xex1tool (standalone idaxex build, reusable for import dumps)"
+  },
+  "recipes": {
+    "dump_stock_imports": "xex1tool -i /home/free/code/milohax/rb3-xenon/_rb3e07/rb3e07/RB3Enhanced.dll",
+    "gen_lib": "wibo link.exe /LIB /MACHINE:PPCBE /DEF:<mod>.def /OUT:<mod>.lib",
+    "compile_tu": "wibo cl.exe /c /nologo /X /Fo<obj> <c>",
+    "link_dll": "wibo link.exe -nologo -dll -MACHINE:PPCBE -entry:DllMain -NODEFAULTLIB -XEX:NO -FIXED:NO -OUT:<dll> <obj> xam.lib xboxkrnl.lib"
+  },
+  "wibo_change": {
+    "repo": "/home/free/code/milohax/wibo",
+    "files": ["dll/kernel32/fileapi.cpp", "dll/kernel32/fileapi.h"],
+    "change": "Added GetTempPathW + GetTempFileNameW (thin wrappers over the existing A variants). Additive, uncommitted. Rebuilt build/release/wibo.",
+    "note": "REQUIRED for any OSS import link. If wibo is rebuilt fresh elsewhere without this patch, import linking will abort with 'missing import GetTempPathW'."
+  },
+  "residual_risks": [
+    "verify_imports.dll is a PE, not yet packed to XEX -- boot-level validation belongs to the packer lane, not this one.",
+    "The full RB3E DLL will reference all 99 ordinals; verified 5 representative ones. The .defs contain the complete ground-truth set, so full coverage is by-construction but a full-DLL link is the packer/link lane's job.",
+    "ordinals are version-keyed; these are taken from the stock 0.7 DLL (v2.0.21256.0 target, min 1861) so they are version-correct for the exact artifact we are replacing."
+  ]
+}

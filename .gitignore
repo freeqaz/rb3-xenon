@@ -134,3 +134,22 @@ core.*
 .permuter_work_*
 # dc3<->rb3 fuzzy-pair analysis snapshot (regenerable via the fuzzy-drain tooling)
 /global_fuzzy_pairs.json
+
+# Strategy B OSS Xbox build — generated artifacts (source/.def/.py/.sh are tracked)
+tools/oss-xbox-build/**/*.obj
+tools/oss-xbox-build/**/obj/
+tools/oss-xbox-build/**/logs/
+tools/oss-xbox-build/**/tmpdir/
+tools/oss-xbox-build/**/*.exe
+tools/oss-xbox-build/**/*.imp
+tools/oss-xbox-build/**/*.exp
+tools/xex2pack/work/
+*.xex
+tools/oss-xbox-build/**/*.log
+tools/oss-xbox-build/**/*.bak.laneI
+tools/oss-xbox-build/L-importlibs/verify_imports.dll
+tools/oss-xbox-build/L-importlibs/xex1tool
+tools/oss-xbox-build/H-headers/
+tools/xex2pack/*.log
+tools/oss-xbox-build/**/work/
+tools/oss-xbox-build/**/*.pe

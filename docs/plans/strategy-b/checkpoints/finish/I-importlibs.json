@@ -1,0 +1,47 @@
+{
+  "lane": "I",
+  "task": "extend xam.def/xboxkrnl.def with underlying ordinals for every export Lane A shims + Lane H wrappers call; rebuild xam.lib + xboxkrnl.lib; emit full ordinal-map.json",
+  "status": "done",
+  "verified": true,
+  "date": "2026-07-12",
+  "xamLib": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/L-importlibs/xam.lib",
+  "xboxkrnlLib": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/L-importlibs/xboxkrnl.lib",
+  "ordinalMap": "/home/free/code/milohax/rb3-xenon/docs/plans/strategy-b/checkpoints/finish/ordinal-map.json",
+  "defs": {
+    "xam": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/L-importlibs/xam.def",
+    "xboxkrnl": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/L-importlibs/xboxkrnl.def",
+    "backups": [
+      "L-importlibs/xam.def.bak.laneI",
+      "L-importlibs/xboxkrnl.def.bak.laneI"
+    ]
+  },
+  "exports_after": { "xam": 47, "xboxkrnl": 56, "total_imports_final_dll": 103 },
+  "added_to_xam_def": [
+    { "name": "XamInputGetKeystroke", "ordinal": 403, "hex": "0x193", "source": "Lane H wrapper (XInputGetKeystroke->XamInputGetKeystroke)" },
+    { "name": "XamContentDelete", "ordinal": 603, "hex": "0x25B", "source": "Lane H wrapper (XContentDelete->XamContentDelete)" },
+    { "name": "XamContentGetDeviceData", "ordinal": 606, "hex": "0x25E", "source": "Lane H wrapper (XContentGetDeviceData->XamContentGetDeviceData)" }
+  ],
+  "added_to_xboxkrnl_def": [
+    { "name": "KeQuerySystemTime", "ordinal": 132, "hex": "0x84", "source": "Lane A xapi shim (GetSystemTime->KeQuerySystemTime)" }
+  ],
+  "rebuild_cmd": "cd $L && LIB=$L wibo link.exe /LIB /DEF:<def> /OUT:<lib> /MACHINE:PPCBE  (rc=0 both; xam.lib 10830->11490, xboxkrnl.lib 13506->13718)",
+  "verify": "wibo link.exe /DUMP /LINKERMEMBER confirms XamInputGetKeystroke/XamContentDelete/XamContentGetDeviceData present in xam.lib (both plain + __imp_), KeQuerySystemTime present in xboxkrnl.lib. xam __imp_ symbol count 44->47. No duplicate ordinals in either def.",
+  "IMPORTANT_ordinal_correction": {
+    "issue": "Lane H's H-headers.json lane_I_gap listed XamContentDelete @601 (0x259) and XamContentGetDeviceData @605 (0x25D). Those are WRONG for this title: 0x259=XamContentCreateEx, 0x25D=XamContentCreateDeviceEnumerator.",
+    "resolution": "Used authoritative ordinals from ORDTBL x360_imports.py: XamContentDelete=0x25B=603, XamContentGetDeviceData=0x25E=606. Validated x360_imports.py against this title by cross-checking known stock ordinals (XamUserGetXUID=0x20A=522, XamShowMessageBoxUI=0x2CA=714, XamLoaderLaunchTitle=0x1A4=420, XamUserGetName=0x20E=526, XamShowKeyboardUI=0x2C1=705, XamShowFriendsUI=0x2BF=703) — all match stock_imports.txt exactly, so its 0x2xx XamContent* block is authoritative here.",
+    "action_needed_downstream": "If Lane H's wrapper inline #defines or the packer used @601/@605, they must use @603/@606. The rebuilt xam.lib and ordinal-map.json use the corrected values."
+  },
+  "ordinal_map_scope": {
+    "basis": "Union of stock_imports.txt (44 xam + 55 xboxkrnl = authoritative import list for this title, STOCK RB3Enhanced.dll) with the 4 from-source-build additions. Covers EVERY import the final DLL will have (superset-safe for the packer's IMPORT_LIBRARIES synthesis; extra unused map entries are harmless since the packer keys off the linked DLL's actual import table).",
+    "xam_entries": 47,
+    "xboxkrnl_entries": 56,
+    "names": "real Xam*/NetDll_*/XNet* + Nt*/Ex*/Ke*/Rtl*/Xe* names (NOT wrapper/Win32 names)"
+  },
+  "notes": [
+    "Lane A underlyingImports (16) and Lane H underlyingImports (33) were unioned against the existing defs; all but the 4 above were already present (defs already mirrored stock_imports.txt 44+55).",
+    "CloseHandle (Lane H XCloseHandle target) is intentionally NOT an import: it is the Lane A xapi_oss.obj Win32->NtClose@207 shim, resolved at link from the obj, not from xam/xboxkrnl.",
+    "Win32 names (CreateFileA/ReadFile/etc.) are NOT imports either -- Lane A provides them over Nt* per the ledger's KEY FINDING; do not add Win32 names to the defs.",
+    "Deferred (Lane H): XInviteGetAcceptedInfo, XSessionSearchEx are XONLINE static-lib functions, not single xam.xex exports -- NOT added here; they need a Lane A/C xonline stub, not an import def entry. Not in ordinal-map.json.",
+    "This lane owns ONLY L-importlibs/. Did not touch objs, headers, or the packer. Not committed (coordinator commits)."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "lane": "C",
+  "status": "done",
+  "verified": true,
+  "objPath": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/crt/crt.obj",
+  "objMd5": "234205e908847adf2c0be197326ad390",
+  "objBytes": 18085,
+  "machine": "0x01f2",
+  "source": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/crt/crt.c",
+  "thunkInclude": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/crt/_thunks.inc",
+  "buildCmd": "wibo cl.exe -c -nologo -W3 -WX- -Ox -Os -D _XBOX -D RB3E_XBOX -D RB3E -D NDEBUG -GF -Gm- -MT -GS- -Gy -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- -TC -I <LIBCMT> -Focrt.obj crt.c",
+  "libcmtInclude": "/home/free/code/milohax/rb3-xenon/src/xdk/LIBCMT",
+  "symbolsDefined": [
+    "__savegprlr_14","__savegprlr_15","__savegprlr_16","__savegprlr_17","__savegprlr_18","__savegprlr_19","__savegprlr_20","__savegprlr_21","__savegprlr_22","__savegprlr_23","__savegprlr_24","__savegprlr_25","__savegprlr_26","__savegprlr_27","__savegprlr_28","__savegprlr_29","__savegprlr_30","__savegprlr_31",
+    "__restgprlr_14","__restgprlr_15","__restgprlr_16","__restgprlr_17","__restgprlr_18","__restgprlr_19","__restgprlr_20","__restgprlr_21","__restgprlr_22","__restgprlr_23","__restgprlr_24","__restgprlr_25","__restgprlr_26","__restgprlr_27","__restgprlr_28","__restgprlr_29","__restgprlr_30","__restgprlr_31",
+    "_fltused","_DllMainCRTStartup",
+    "memset","memcpy","strncpy","strchr","strrchr","strstr","sprintf","sscanf","atof","atoi","isspace","isxdigit","tolower","wcscat","wcstombs","malloc",
+    "_blkmov"
+  ],
+  "ledgerRequiredCovered": true,
+  "externalDepsIntroduced": ["DllMain"],
+  "externalDepsNote": "DllMain is defined by RB3E source/xbox360.c (in the 51-obj set). crt.obj introduces ZERO new unresolved externals beyond it: no __u64tod, no libcmt div/mod helpers, no CRT startup deps.",
+  "verification": {
+    "machineCheck": "0x01f2 (POWERPCFP) confirmed via COFF header",
+    "allRequiredDefined": "every ledger Lane-C symbol present as a DEFINED external (COFF symbol-table scan)",
+    "thunkBytesByteExact": "std/ld save-restore words byte-for-byte identical to stock RB3Enhanced.dll thunk chain @0x8401b820 (std rN/ld rN + stw/lwz r12,-8(r1) + mtlr r12 + blr). Standalone full-body copies per entry symbol (rN..r31), semantically identical to the fall-through chain; formula cross-checked against extracted stock bytes.",
+    "linkProbe": "wibo link.exe -MACHINE:PPCBE -dll -entry:_DllMainCRTStartup -NODEFAULTLIB -OPT:NOREF crt.obj probe.obj -> rc=0, no unresolved externals, valid PE (machine 0x01f2, .text=9216B with all libc bodies linked). Entry _DllMainCRTStartup forwards to DllMain and returns TRUE (li r3,1; blr after ICF fold)."
+  },
+  "designNotes": {
+    "thunks": "Emitted via __declspec(naked) + __emit(word) (cl.exe X360 supports both for PPC; naked yields exact bytes with no prolog/epilog). Full 14..31 chain emitted (safe superset of ledger's 16,18,20,22,23,24,25,26,27,28,29).",
+    "vararg": "Uses toolchain <stdarg.h> (va_list_def.h). va_arg lowers to reads from the compiler's own homed GPR save area (lfd for doubles) -- caller-side variadic passing and callee-side va_arg are two halves of the same cl.exe ABI, hence self-consistent incl. FP. C4392 warning on __va_start is benign (intrinsic still lowers correctly).",
+    "malloc": "8 MB static bump arena, 16-byte aligned; no free/realloc reclaim (free is resolved elsewhere -- not in ledger). Arena lives in .bss (no file bloat). Revisit only if a fault traces to exhaustion.",
+    "printf": "Subset covering RB3E's format strings: d i u x X o p c s f %% with flags(-+ space 0 #), width/precision (incl *), length hh/h/l/ll. 64-bit ints supported (%lli/%llx). %f kept 32-bit-integer/fraction (<=9 frac digits) to avoid the __u64tod helper.",
+    "sscanf": "Subset: whitespace, literal match, %d %i %u %x %o %s %c %f with h/l length and * suppression; covers %hu.%hu.%hu.%hu and %i.",
+    "_blkmov": "MSVC-PPC inline-memcpy helper (-Os lowers counted copies to 'bl _blkmov'; dest=r3,src=r4,count=r5 confirmed from call-site). Defined as a forward byte copy; a plain byte loop does not self-lower, so no recursion.",
+    "notDefined": "strlen/strcmp/strcpy/strcat/strncmp/free/memmove intentionally omitted -- already resolved elsewhere in the link (absent from ledger category C); defining them would collide."
+  },
+  "openRisks": [
+    "%f FP correctness relies on cl.exe's self-consistent variadic ABI (caller homes the double where va_arg reads it). Low-priority path (~6 debug uses); integer/string/hex/pointer formats (the hundreds of real uses) are GPR/stack and fully correct.",
+    "The -RELEASE link flag triggers wibo's missing CheckSumMappedFile stub (imagehlp.dll) at PE-checksum time -- NOT a symbol issue and orthogonal to Lane C. The K-link join should drop -RELEASE (or checksum post-hoc; xex2pack recomputes anyway)."
+  ],
+  "timestamp": "2026-07-12"
+}

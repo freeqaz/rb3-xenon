@@ -1,0 +1,52 @@
+{
+  "lane": "P",
+  "task": "teach xex2pack.py to synthesize the IMPORT_LIBRARIES opt block from the from-source PE (validated against ordinal-map), then pack the Lane K PE into an unsigned XEX2-DLL and verify",
+  "status": "packed",
+  "verified": true,
+  "date": "2026-07-12",
+  "xexPath": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/work/boot.xex",
+  "xexMd5": "b1fea870c10bb66037c9efdabc1c96e7",
+  "xexBytes": 8724480,
+  "packerPath": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/xex2pack.py",
+  "packCmd": "python3 xex2pack.py --pe /home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/RB3Enhanced.exe --out work/boot.xex --entry 0x8401cf90 --base 0x84000000 --import-map /home/free/code/milohax/rb3-xenon/docs/plans/strategy-b/checkpoints/finish/ordinal-map.json --pe-name RB3Enhanced.exe --compress basic",
+  "entryVA": "0x8401cf90",
+  "base": "0x84000000",
+  "compression": "basic",
+
+  "generator": {
+    "flag": "--import-map <json>",
+    "keptWorking": ["--from-xex (stock-block copy)", "--import-block (raw bytes)"],
+    "whatItDoes": "Synthesizes a byte-correct XEX2 IMPORT_LIBRARIES opt block (Xex2ImportHeader{sizeOfHeader,sizeOfStringTable,numImports} + NUL-separated 4-aligned name table + one Xex2ImportLibrary per module + per-library import record-address table) directly from the UNMAPPED link.exe PE, using ordinal-map.json only for cross-check/naming.",
+    "sourceOfTruth": "The PE's own .idata (actual imports link.exe recorded) is authoritative for WHICH ordinals to emit -- NOT ordinal-map.json (which is a 103-entry export superset and is also missing xboxkrnl@191). Emitting from the map alone would both add imports the PE lacks and drop MmIsAddressValid @191. The map is used to validate module-grouping and to flag any PE ordinal absent from it.",
+    "newFunctions": ["parse_pe", "_rva2off", "map_pe_to_image", "synthesize_import_block", "STOCK_MODULE_META"],
+    "peToImageMapping": "The link.exe PE is UNMAPPED (raw file offsets != RVAs; SizeOfHeaders 0x400, SizeOfImage 0x847c00, SectionAlignment 0x10000). map_pe_to_image() expands it to a flat load image where offset==RVA (what xex1tool -b recovers): copies SizeOfHeaders bytes at 0, then each section's raw data at its VA (copy len clamped to min(rawsz,vsz) so .rdata's file padding never bleeds into .pdata). Padded up to a 0x10000 page. This mapped image is the XEX basefile.",
+    "importRecordModel": "Discovered the from-source PE already carries genuine XEX-shaped import plumbing: a per-module IAT (PE FirstThunk: xam 42 slots @rva0x400, xboxkrnl 26 slots @rva0x4ac) plus a contiguous table of 68 16-byte .text call thunks (VA 0x8401f3b0..0x8401f7f0), each 'lis r11,0x8400 / lwz r11,iat_off(r11) / mtctr r11 / bctr', one per IAT slot in IAT order. Every by-name import call site bl's its thunk.",
+    "encoding": "Stock-faithful DUAL record per import (verified against RB3E 0.7 stock block + xenia xex_module.cc SetupLibraryImports): a type-0 (variable) record at the 4-byte IAT slot with image value (moduleIndex<<16)|ordinal, immediately followed by a type-1 (function) record at the 16-byte .text thunk with image value 0x01000000|ordinal. Xenia reads the record value BIG-ENDIAN (high byte=type, low16=ordinal, middle hint ignored); for a type-1 kernel function it overwrites the 16-byte thunk with 'sc 2; blr; nop; nop' and wires the kernel shim so bl<thunk> reaches the real export. The type-0 slot is what Xenia's assert pairs the following thunk ordinal against.",
+    "endiannessGotcha": "link.exe writes the PE IAT slots LITTLE-ENDIAN (0x80000000|ord PE-INT form) while .text code is big-endian and the XEX loader reads records big-endian. synthesize_import_block therefore returns rewrites=[(image_offset, be32_value)] that main() applies to the MAPPED image: 136 rewrites (68 IAT slots -> BE (idx<<16)|ord type-0, 68 thunk lead-words -> BE 0x01000000|ord type-1).",
+    "moduleMeta": "library id + Version + VersionMin words copied verbatim from the stock block (xam.xex id=0xFCA15C76, xboxkrnl.exe id=0x45DC17E0, both ver=0x20530800 min=0x20074500 => idaxex decodes v2.0.21256.0 / min v2.0.1861.0). NextImportDigest zeroed (unsigned-boot philosophy; Xenia/RGH do not abort on import-digest mismatch)."
+  },
+
+  "verify": "idaxex -i work/boot.xex enumerates BOTH modules with correct names+counts: xam.xex (42 imports: NetDll_*/XNet*/Xam*/XamContent*/XamShow*, incl XamLoaderLaunchTitle@420, XamShowMessageBoxUI@714) and xboxkrnl.exe (26 imports: Nt*/Ex*/Ke*/Rtl*/Xe*, incl MmIsAddressValid@191). timeout 40 xenia-headless --target=work/boot.xex logs 'Launching module game:\\boot.xex', resolves imports with ZERO unresolved/unimplemented/SetupLibraryImports warnings, spawns GPU/Audio/XMA threads, then halts at XThread::GetCurrentThread assertion (xthread.cc:117) exit 134 -- the DllMain-from-launcher title-exec harness limit, BYTE-FOR-BYTE the same halt site the stock repack (boot_basic.xex) hits (SUCCESS, not failure). roundtrip_test.sh regression = PASS (recovered PE byte-identical none+basic; xenia loads both) FAIL=0.",
+
+  "crossCheckVsStock": {
+    "nameTable": "byte-identical (b'xam.xex\\x00xboxkrnl.exe\\x00\\x00\\x00\\x00')",
+    "moduleId": "byte-identical both modules (0xFCA15C76 / 0x45DC17E0)",
+    "version+versionMin": "byte-identical both modules (0x20530800 / 0x20074500)",
+    "recordValueEncoding": "126 shared (moduleIndex,type,ordinal) record-value encodings compared vs stock raw basefile: 0 mismatches. type byte, hint byte (== moduleIndex for type-0, 0 for type-1) and ordinal all agree.",
+    "recordRVAsDiffer": "EXPECTED and correct: our image layout differs from stock (our thunks @0x8401f3b0 vs stock @0x84029bdc), so record addresses are not comparable -- only the block structure + per-ordinal value ENCODING is the meaningful invariant, and it matches."
+  },
+
+  "blockLayout": {
+    "descriptor": "Size=0x294 NameTableSize=0x18 ModuleCount=2",
+    "xam.xex":      "ModuleIndex 0, 42 imports -> 84 records, TableSize=0x178",
+    "xboxkrnl.exe": "ModuleIndex 1, 26 imports -> 52 records, TableSize=0xF8",
+    "totalRewrites": 136
+  },
+
+  "notes": "This boot.xex is the from-source RB3Enhanced.dll packed as an unsigned XEX2-DLL, ready for RGH deployment via RB3ELoader. The join point (synthesized import block + real link.exe PE) was never exercised before this lane and worked once the PE->image mapping and BE record-slot rewrites were in place. ordinal-map.json is a 103-entry export superset that is MISSING xboxkrnl@191 (MmIsAddressValid, added by Lane K to xboxkrnl.def) -- the generator correctly drives the import SET from the PE .idata (68 imports) and only uses the map for naming/validation, so the missing entry is a non-blocking NOTE, not a defect. If ordinal-map.json should be authoritative going forward, add {\"MmIsAddressValid\": {\"module\": \"xboxkrnl.exe\", \"ordinal\": 191}}. Hardware boot on real RGH is still untested (no console here); Xenia Checked-build load is the strongest available proxy and is behaviorally identical to the proven stock repack.",
+  "artifactsOwnedByThisLane": [
+    "tools/xex2pack/xex2pack.py (added --import-map generator; --from-xex/--import-block preserved)",
+    "tools/xex2pack/work/boot.xex (from-source unsigned XEX2-DLL)"
+  ],
+  "timestamp": "2026-07-12"
+}

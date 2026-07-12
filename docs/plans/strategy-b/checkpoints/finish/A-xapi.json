@@ -1,0 +1,69 @@
+{
+  "lane": "A",
+  "task": "reconstruct XDK xapilib Win32->Nt shim as xapi_oss.obj",
+  "status": "done",
+  "verified": true,
+  "date": "2026-07-12",
+  "artifacts": {
+    "source": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/xapi/xapi_oss.c",
+    "obj": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/xapi/xapi_oss.obj"
+  },
+  "obj_machine": "0x01F2",
+  "obj_size": 11406,
+  "compile_cmd": "wibo cl.exe -c -nologo -W3 -WX- -Ox -Os -D _XBOX -D RB3E_XBOX -D RB3E -D NDEBUG -GF -Gm- -MT -GS- -Gy -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- -TC -I <LIBCMT> -Foxapi_oss.obj xapi_oss.c",
+  "compile_result": "clean (only benign va_list_def.h C4392 intrinsic-arg-count warning from the CRT header; obj emitted, machine 0x01F2)",
+  "self_contained": "includes NONE of include/xdk-oss (race-free vs Lane H); only <stdarg.h> from LIBCMT. All Win32 scalar types, Win32 function signatures (ABI-identical to xapi.h/xboxkrnl.h), and the Nt/Ex/Ke/Rtl prototypes + kernel structs (OBJECT_ATTRIBUTES 3-field ANSI variant, IO_STATUS_BLOCK, ANSI_STRING, FILE_STANDARD/POSITION/NETWORK_OPEN/DIRECTORY_INFORMATION) declared locally. Struct layouts verified against Xenia (xbox.h, kernel/info/file.h, kernel/xfile.h).",
+  "win32_funcs_provided": [
+    "CreateFileA", "ReadFile", "WriteFile", "CloseHandle", "GetFileSize",
+    "SetFilePointer", "GetFileAttributesA", "FindFirstFileA", "FindNextFileA",
+    "FindClose", "CreateThread", "Sleep", "GetSystemTime", "GetLastError",
+    "WideCharToMultiByte", "wsprintfW", "SetLastError"
+  ],
+  "win32_to_nt_mapping": {
+    "CreateFileA": "NtCreateFile (path->\\??\\ objname, Win32 disposition->NT disposition, FILE_SYNCHRONOUS_IO_NONALERT|FILE_NON_DIRECTORY_FILE, +SYNCHRONIZE)",
+    "ReadFile": "NtReadFile (ByteOffset NULL; uses synchronous file position)",
+    "WriteFile": "NtWriteFile",
+    "CloseHandle": "NtClose",
+    "GetFileSize": "NtQueryInformationFile / FileStandardInformation.EndOfFile",
+    "SetFilePointer": "NtSetInformationFile / FilePositionInformation (FILE_BEGIN full; CURRENT/END via query)",
+    "GetFileAttributesA": "NtQueryFullAttributesFile / FILE_NETWORK_OPEN_INFORMATION.FileAttributes",
+    "FindFirstFileA/FindNextFileA/FindClose": "NtOpenFile(dir, FILE_DIRECTORY_FILE) + NtQueryDirectoryFile (Xbox single-entry ANSI variant); 8-slot static find-context pool",
+    "CreateThread": "ExCreateThread (XapiThreadStartup trampoline -> user routine -> ExTerminateThread; CREATE_SUSPENDED->flag 1)",
+    "Sleep": "KeDelayExecutionThread (relative negative 100ns interval, UserMode, non-alertable)",
+    "GetSystemTime": "KeQuerySystemTime + local Gregorian 100ns-since-1601 -> SYSTEMTIME (avoids RtlTimeToTimeFields import)",
+    "GetLastError/SetLastError": "process-global g_oss_last_error; failures set via RtlNtStatusToDosError(status)",
+    "WideCharToMultiByte": "RtlUnicodeToMultiByteN (cch->bytes)",
+    "wsprintfW": "vswprintf (va_list forward)"
+  },
+  "underlyingImports": [
+    "NtCreateFile", "NtOpenFile", "NtReadFile", "NtWriteFile", "NtClose",
+    "NtQueryInformationFile", "NtSetInformationFile", "NtQueryFullAttributesFile",
+    "NtQueryDirectoryFile", "ExCreateThread", "ExTerminateThread",
+    "KeDelayExecutionThread", "KeQuerySystemTime", "RtlNtStatusToDosError",
+    "RtlUnicodeToMultiByteN", "vswprintf"
+  ],
+  "stock_import_check": {
+    "present_in_stock": [
+      "ExCreateThread@13", "ExTerminateThread@25", "KeDelayExecutionThread@90",
+      "NtClose@207", "NtCreateFile@210", "NtOpenFile@223", "NtQueryDirectoryFile@228",
+      "NtQueryFullAttributesFile@231", "NtQueryInformationFile@232", "NtReadFile@240",
+      "NtSetInformationFile@247", "NtWriteFile@255", "RtlNtStatusToDosError@309",
+      "RtlUnicodeToMultiByteN@323", "vswprintf@337"
+    ],
+    "MISSING_FLAG_for_LaneI": [
+      "KeQuerySystemTime (real xboxkrnl export, ordinal 0x84=132 per x360_imports.py; NOT in stock_imports.txt; Lane I must add to xboxkrnl.def)"
+    ]
+  },
+  "crt_dependencies_not_kernel_imports": [
+    "memset", "memcpy", "__savegprlr_27", "__savegprlr_28", "__savegprlr_29",
+    "__restgprlr_27", "__restgprlr_28", "__restgprlr_29"
+  ],
+  "notes": [
+    "va_start lowered inline as an intrinsic (no external __va_start symbol in the obj) -- verified via COFF symbol-table dump.",
+    "COFF undefined-externals dump matches design exactly: 16 xboxkrnl imports + 8 CRT symbols (crt.obj/Lane C), nothing stray.",
+    "GetLastError storage is process-global, not per-thread. Sufficient for the single-threaded first-boot config-load path (RB3E_FileExists is the only consumer and runs at startup before RB3E spawns threads). KeTls-backed per-thread upgrade is a follow-up (would add KeTlsAlloc/Get/Set@338-341, all already in stock).",
+    "Path convention: drive-relative names (GAME:\\.., RB3HDD:\\..) get a \\??\\ prefix to hit the DosDevices symlinks RB3E creates via ObCreateSymbolicLink(\\??\\RB3HDD:); names already starting with \\ pass through. Matches how the real xapilib CreateFileA resolves the RB3E mount points.",
+    "FindFirst/Next best-effort: not on the first-boot/config path (RB3E_ListFiles handles INVALID_HANDLE_VALUE gracefully). File-open/read (config .ini) is the first-boot gate and is fully correct.",
+    "This lane owns ONLY xapi/. Did not touch import defs (Lane I) or headers (Lane H). Not committed (coordinator commits)."
+  ]
+}
