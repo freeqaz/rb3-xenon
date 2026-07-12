@@ -5280,7 +5280,7 @@ band3/meta_band/BandProfile.cpp:
 	.pdata      start:0x82217990 end:0x82217998
 	.pdata      start:0x82217B48 end:0x82217B50
 	.text       start:0x824E4580 end:0x824E45F8
-	.text       start:0x82572980 end:0x82572A94
+	.text       start:0x82572978 end:0x82572A94
 	.text       start:0x82572E08 end:0x82572E74
 	.text       start:0x825739F0 end:0x82573A44
 	.text       start:0x82575AF0 end:0x82576560
@@ -5422,7 +5422,7 @@ GemPlayer.cpp:
 	.text       start:0x8269D670 end:0x8269D724
 	.text       start:0x8269D780 end:0x8269D858
 	.text       start:0x8269DB38 end:0x8269DB94
-	.text       start:0x8269E0A0 end:0x8269E118
+	.text       start:0x8269E0A0 end:0x8269E134
 	.text       start:0x8269E138 end:0x8269E14C
 	.text       start:0x8269E2D0 end:0x8269E320
 	.text       start:0x8269E3D8 end:0x8269E43C
@@ -6365,7 +6365,7 @@ MessageTimer.cpp:
 	.text       start:0x822626F0 end:0x822627E0
 	.text       start:0x82262AF0 end:0x82262B88
 	.text       start:0x82333728 end:0x82333790
-	.text       start:0x82333790 end:0x823339F0
+	.text       start:0x82333790 end:0x82333A08
 	.text       start:0x82334530 end:0x823345F8
 	.text       start:0x82334C98 end:0x82334CE8
 	.text       start:0x82335208 end:0x82335268
@@ -6513,7 +6513,7 @@ PhysicsVolume.cpp:
 
 MoggClip.cpp:
 	.pdata      start:0x82236880 end:0x82236888
-	.text       start:0x8276BD60 end:0x8276BDB0
+	.text       start:0x8276BD60 end:0x8276BDC0
 
 Main.cpp:
 	.pdata      start:0x821E9C78 end:0x821E9C80
