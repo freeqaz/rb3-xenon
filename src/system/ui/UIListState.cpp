@@ -121,7 +121,7 @@ void UIListState::SetScrollPastMinDisplay(bool b) {
     mSelectedDisplay = x;
 }
 
-void UIListState::SetScrollPastMaxDisplay(bool) {}
+void UIListState::SetScrollPastMaxDisplay(bool scroll) { mScrollPastMaxDisplay = scroll; }
 
 int UIListState::Selected() const { return Display2Showing(SelectedDisplay()); }
 

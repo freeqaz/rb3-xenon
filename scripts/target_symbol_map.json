@@ -15259,5 +15259,10 @@
  "0x82577FB0": "?GetBestProKickPercent@AccomplishmentProgress@@QBAHW4Difficulty@@@Z",
  "0x82578000": "?GetBestDrumRollPercent@AccomplishmentProgress@@QBAHW4Difficulty@@@Z",
  "0x82578050": "?GetBestSoloButtonPercent@AccomplishmentProgress@@QBAHW4Difficulty@@@Z",
- "0x82578C78": "?GetToursGotAllStars@AccomplishmentProgress@@QBAHXZ"
+ "0x82578C78": "?GetToursGotAllStars@AccomplishmentProgress@@QBAHXZ",
+ "0x827E8A40": "?SetSpeed@UIListState@@QAAXM@Z",
+ "0x827E8A48": "?SetScrollPastMaxDisplay@UIListState@@QAAX_N@Z",
+ "0x82778FE8": "??1TrackWatcherState@@QAA@XZ",
+ "0x82321D50": "?SetSkinColor@BandCharDesc@@QAAXH@Z",
+ "0x82320E28": "?GetInstrumentFromSym@BandCharDesc@@SA?AW4CharInstrumentType@1@VSymbol@@@Z"
 }
