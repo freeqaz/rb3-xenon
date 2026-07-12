@@ -5126,7 +5126,6 @@
  "0x82679030": "?AddSustain@Stats@@QAAXM@Z",
  "0x82679070": "?AddTambourine@Stats@@QAAXM@Z",
  "0x82679160": "?IncrementHighFretGemsHit@Stats@@QAAX_N@Z",
- "0x82679188": "?IncrementTrillsHit@Stats@@QAAX_N@Z",
  "0x826791B0": "?AddRoll@Stats@@QAAX_N@Z",
  "0x826795A0": "?SetSoloButtonedSoloPercentage@Stats@@QAAXH@Z",
  "0x826798B0": "?GetRankData@SingerStats@@QBAABU?$pair@HM@stlpmtx_std@@H@Z",
@@ -15234,7 +15233,6 @@
  "0x826D8DE8": "?GetAutoplayVariationMagnitude@Singer@@QBAMXZ",
  "0x826D8DF0": "?SetAutoplayOffset@Singer@@QAAXM@Z",
  "0x826D8DF8": "?GetAutoplayOffset@Singer@@QBAMXZ",
- "0x826790B0": "?GetHarmony@Stats@@QBAHXZ",
  "0x82577DC8": "?GetBestStreak@AccomplishmentProgress@@QBAHW4ScoreType@@@Z",
  "0x82577DF0": "?GetTotalOverdriveDeploys@AccomplishmentProgress@@QBAHW4ScoreType@@@Z",
  "0x82577E00": "?GetTotalOverdriveTime@AccomplishmentProgress@@QBAHW4ScoreType@@@Z",
@@ -15263,5 +15261,7 @@
  "0x827E8A48": "?SetScrollPastMaxDisplay@UIListState@@QAAX_N@Z",
  "0x82778FE8": "??1TrackWatcherState@@QAA@XZ",
  "0x82321D50": "?SetSkinColor@BandCharDesc@@QAAXH@Z",
- "0x82320E28": "?GetInstrumentFromSym@BandCharDesc@@SA?AW4CharInstrumentType@1@VSymbol@@@Z"
+ "0x82320E28": "?GetInstrumentFromSym@BandCharDesc@@SA?AW4CharInstrumentType@1@VSymbol@@@Z",
+ "0x826790C0": "?GetHarmony@Stats@@QBAHXZ",
+ "0x826791D8": "?IncrementTrillsHit@Stats@@QAAX_N@Z"
 }
