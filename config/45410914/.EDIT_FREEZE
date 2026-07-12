@@ -1,0 +1,26 @@
+# VA-LAYER EDIT FREEZE — TU5 RE-BASE IN PROGRESS
+
+**Declared:** 2026-07-12 by the TU5 re-base coordinator (approved by project owner).
+**Steering doc:** docs/plans/roadmap-2026-07-12.md  ·  memory: project-tu5-rebase-decision
+
+## FROZEN until the atomic TU5 flip lands (do NOT edit in main):
+- config/45410914/splits.txt
+- config/45410914/symbols.txt
+- config/45410914/config.yml   (touching it re-runs the split/renamer)
+- scripts/target_symbol_map.json
+
+## Why
+The project's build target is being re-based from base/TU0 to TU5 (v0.0.5.1).
+All of the above regenerate together off `base_to_tu5_map.full.json` and land in
+ONE atomic commit. Any in-flight main-tree edit to these files will be clobbered
+by the flip (and vice-versa, your matches would be lost).
+
+## What you CAN still do
+- src/ C++ matching work (name-keyed, survives the flip untouched)
+- work in your own worktree
+- anything not touching the four files above
+
+## Landing / lifting
+P2–P4 run in `.claude/worktrees/tu5-migrate`. Flip gate: matched >= 15,768
+(guaranteed floor; worst-case 15,595 — every drop enumerated in the roadmap).
+This marker is DELETED by the flip commit. If it is still here, the freeze is live.
