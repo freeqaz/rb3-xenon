@@ -15164,5 +15164,18 @@
  "0x8258D920": "?GetCampaignLevel@Campaign@@QBAPAVCampaignLevel@@VSymbol@@@Z",
  "0x8258D8D8": "?HasCampaignKey@Campaign@@QBA_NVSymbol@@@Z",
  "0x8258C860": "?GetNextHintToShow@Campaign@@QBA?AVSymbol@@XZ",
- "0x825FF6E8": "?SyncProperty@EditSetlistPanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+ "0x825FF6E8": "?SyncProperty@EditSetlistPanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x825EE1C8": "?Load@UIPanel@@$4PPPPPPPM@LM@AAXAAVBinStream@@@Z",
+ "0x825FEA90": "??_EEditSetlistPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+ "0x825FFAC0": "?SyncProperty@EditSetlistPanel@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82601600": "?Handle@EditSetlistPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x826019D0": "?Load@UIPanel@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+ "0x82601A00": "?SetTypeDef@UIPanel@@$4PPPPPPPM@A@AAXPAVDataArray@@@Z",
+ "0x8260A2E8": "?Handle@ManageBandPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8262F8C0": "?ClassName@AppMiniLeaderboardDisplay@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+ "0x8262F910": "??_EAppMiniLeaderboardDisplay@@$4PPPPPPPM@BHM@AAPAXI@Z",
+ "0x82630038": "?SetType@AppMiniLeaderboardDisplay@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+ "0x82630870": "?Handle@AppMiniLeaderboardDisplay@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x825E6EB0": "?Handle@AccomplishmentPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8255AB78": "?Handle@AppLabel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z"
 }
