@@ -15210,5 +15210,20 @@
  "0x82B6E520": "?GetNumVocalParts@VocalTrack@@UAAHXZ",
  "0x82B77448": "?GetBandTrack@VocalTrack@@UAAPAVBandTrack@@XZ",
  "0x82B77460": "?RebuildVocalHUD@VocalTrack@@UAAXXZ",
- "0x82B77468": "?SetVocalStyle@VocalTrack@@UAAXW4VocalStyle@@@Z"
+ "0x82B77468": "?SetVocalStyle@VocalTrack@@UAAXW4VocalStyle@@@Z",
+ "0x8261B748": "?ResultFailure@SongSelectPanel@@UAAXXZ",
+ "0x8260D778": "?Load@PatchPanel@@UAAXXZ",
+ "0x8260F708": "?Enter@PatchPanel@@UAAXXZ",
+ "0x8260E838": "?Poll@PatchPanel@@UAAXXZ",
+ "0x82612440": "?Load@PatchSelectPanel@@UAAXXZ",
+ "0x8261DE08": "?Poll@StoreInfoPanel@@UAAXXZ",
+ "0x8261DFB0": "?Load@StoreMainPanel@@UAAXXZ",
+ "0x8261E708": "?Poll@StoreMainPanel@@UAAXXZ",
+ "0x8261F558": "?Unload@StoreMainPanel@@UAAXXZ",
+ "0x8261E478": "?FinishLoad@StoreMainPanel@@UAAXXZ",
+ "0x827ED890": "?Load@StoreArtLoaderPanel@@UAAXXZ",
+ "0x826B3278": "?SendMsg@TrackerBandDisplay@@UBAXABVMessage@@@Z",
+ "0x826B5328": "?Hide@TrackerPlayerDisplay@@UBAXXZ",
+ "0x826B3318": "?SendMsg@TrackerPlayerDisplay@@UBAXABVMessage@@@Z",
+ "0x826B3378": "?SendMsg@TrackerBroadcastDisplay@@UBAXABVMessage@@@Z"
 }
