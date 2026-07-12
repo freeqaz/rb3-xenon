@@ -15272,5 +15272,7 @@
  "0x82B5E888": "?GetTrackPanelDir@@YAPAVTrackPanelDirBase@@XZ",
  "0x826752B8": "?HandleRemovePlayer@TrackerManager@@QAAXPAVPlayer@@@Z",
  "0x823573c8": "?IsNameUnchecked@TourSavable@@QBA_NXZ",
- "0x82533ef8": "?SetSynapseEnabled@ProfileMgr@@QAAX_N@Z"
+ "0x82533ef8": "?SetSynapseEnabled@ProfileMgr@@QAAX_N@Z",
+ "0x82788780": "??1?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x827890f0": "??1ActionRec@@QAA@XZ"
 }
