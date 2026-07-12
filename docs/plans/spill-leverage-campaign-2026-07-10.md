@@ -242,3 +242,27 @@ agent pass.
     doc. RndMorph at_limit@90.54 in decomp.db. **Do not re-hunt.** Independent
     still-live spin-off (unattempted): `FileStream::~FileStream` `DeleteChecksum`
     inline (TU-local).
+- 2026-07-12, phase-3 wave 2 (2 Opus fixers, quota-conscious):
+  - **`FileStream::~FileStream` LANDED 90.5 to 100** (`c27c9635`). The
+    `DeleteChecksum` spin-off from the ObjPtr investigation: `delete
+    mChecksumValidator` expands to a null-checked delete whose branch bloated
+    the body past the `/Ob2` inline threshold, forcing an out-of-line `bl`.
+    `StreamChecksumValidator` has a trivial dtor + null-safe deallocator, so
+    `StreamChecksumValidator::operator delete(...)` is behavior-identical and
+    drops the branch, reproducing retail's inlined unconditional-free + 2
+    field-zeroes. Oracle-confirmed (retail `StartChecksum` frees a null
+    validator). Isolated to FileStream.obj; frozen-worktree A/B verified 6
+    siblings stay 100%. (Whole-binary measure_delta in main was unusable here:
+    the concurrent wave-34 "symbols.txt regen under leaf-synthesizing dtk" was
+    reshaping target objs fleet-wide, so a shared-tree baseline is a moving
+    target; single-`.cpp` confinement + worktree A/B is the sound isolation.)
+  - **Handle-family lever NO-TRANSFER** (OvershellSlot::Handle 98.3,
+    TourProgress::Handle 96.8, both unchanged, no patch shipped). The GemPlayer
+    inlinee-`this` dead-home lever was specific to a genuine member-double-deref
+    arm; neither target has one. The scanner's class-A flags here were
+    mis-attributions: OvershellSlot is a 16-byte stack-frame-size delta (~70
+    temp-slot shifts, a distinct higher-yield lever if pursued), TourProgress is
+    a `BEGIN_HANDLERS` preamble temp-slot/schedule diff plus a branchless-bool
+    (`subic/subfe`) permuter-class arm. Lesson: **present**-purity class-A hits
+    are noisy (the store may be a shifted temp, not a dead home) — sole/dominant
+    purity is where the lever is reliable.
