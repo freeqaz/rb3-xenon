@@ -666,10 +666,13 @@ DataNode Campaign::OnMsg(const PrimaryProfileChangedMsg &msg) {
     if (profile)
         unk84 = profile;
 
+    static Symbol campaign("campaign");
+    static Symbol qp_career_songinfo("qp_career_songinfo");
     if (!TheGameMode->InMode(campaign) && !TheGameMode->InMode(qp_career_songinfo)) {
         return 1;
     } else if (!profile) {
         m_symCurrentAccomplishment = gNullStr;
+        static Symbol sign_out("sign_out");
         static Message init("init", 0);
         init[0] = 3;
         TheUIEventMgr->TriggerEvent(sign_out, init);
@@ -703,6 +706,8 @@ bool Campaign::CanSaveSetlists() {
 }
 
 Symbol Campaign::GetNextHintToShow() const {
+    static Symbol hint_career_halloffame_screen("hint_career_halloffame_screen");
+    static Symbol hint_goalcomplete_screen("hint_goalcomplete_screen");
     BandProfile *profile = TheProfileMgr.GetPrimaryProfile();
     if (profile) {
         if (!profile->HasSeenHint(hint_goalcomplete_screen)) {
