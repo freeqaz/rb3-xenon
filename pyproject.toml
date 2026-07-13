@@ -1,0 +1,29 @@
+[project]
+name = "rb3-xenon-decomp-tooling"
+version = "0.1.0"
+description = "Python tooling for the Rock Band 3 (Xbox 360 / Xenon) decompilation: orchestrator MCP, capstone disassembly, DC3/RB3 content matching."
+requires-python = ">=3.10"
+
+# Direct runtime deps of the rb3-xenon tooling (scripts/, orchestrator). Ghidra
+# work goes through the standalone pyghidra-mcp service, not this env, so pyghidra
+# is intentionally absent. `lldb` (if used) is the system LLVM binding, not pip.
+dependencies = [
+    # shared decomp-workflow core
+    "decomp-synth",        # editable path source below → pulls the tree-sitter trio
+    "mcp",                 # orchestrator MCP server (scripts/orchestrator, 10 files)
+    "pydantic",
+    "python-dotenv",
+    "click",
+    # rb3-xenon-specific
+    "capstone",            # PPC/Xenon disassembly
+    "pytest",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.uv.sources]
+decomp-synth = { path = "../decomp-synth", editable = true }
+
+[tool.uv]
+package = false

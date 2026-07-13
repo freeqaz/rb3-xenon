@@ -155,3 +155,7 @@ tools/oss-xbox-build/**/work/
 tools/oss-xbox-build/**/*.pe
 
 tools/oss-xbox-build/deploy-si*/RB3Enhanced.dll
+
+# uv-managed env (.venv); /venv is a local back-compat symlink -> .venv (already ignored above)
+.venv/
+uv-cache/
