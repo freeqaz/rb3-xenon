@@ -257,3 +257,41 @@ VAs) + hook-install matrix on an RB3DX boot, and characterize the hub-load crash
 frontier, NOT an SI bug; hardware never hits it). Workflow `rb3dx-si-finish` (task
 wjrh3j54a) executes this; checkpoints under `checkpoints/rb3dx-finish/`. Full 2-guitar→
 song-load Xenia proof is gated on the hub-crash fix; hardware gameplay test can proceed now.
+
+---
+
+## Addendum — 2026-07-13 (PM): RB3DX validation workflow results (rb3dx-si-finish)
+
+Workflow `rb3dx-si-finish` (task wjrh3j54a) completed; 5 Opus lanes, results
+independently spot-checked.
+
+- **Audit (P1) — SI is collision-free on RB3DX.** `rb3dx_port_audit.py` proves all 4
+  SI detour VAs + support/data ports are byte-identical clean-TU5-vs-RB3DX (outside
+  every one of the ~20 diff spans). Verdict: **the TU5 SI DLL IS the RB3DX SI DLL for
+  xex c5a17091.** (8 *general* RB3E-vs-Deluxe write-site collisions exist —
+  SetDiskError, FastStart, SongBlacklist, IsDemo, MultiplayerCrash, AppRun, 2 XeKeys
+  stubs — all ruled, NONE touch same-instrument. Regression gate exits nonzero on any
+  unreviewed overlap.) rb3-xenon `47fdd37b`.
+- **Map + deploy (P2).** `-MAP` added to build; from-source DLL rebuilt; VAs recorded
+  (`InitSameInstrument`=0x84019830, config.AllowSameInstrument=0x84829590, 4 hook VAs
+  0x840191A8/0x840191E8/0x84019780/0x84019450). Package
+  `tools/oss-xbox-build/deploy-si-rb3dx/`. rb3-xenon `52ac1226`.
+- **Hub "crash" 0x82BCEFE4 — REFUTED as a defect.** Root-caused = `XMAHALAllocateContexts`
+  `stwbrx` to Xenia's XMA MMIO aperture (0x7FEA0000, reg 0x6A0 Context0Clear): a benign,
+  recoverable-by-design device-register write, misattributed as the crash (it's the last
+  soft-fault PC). All 3 defect hypotheses refuted. Do NOT back/guard it (would break XMA
+  audio). `HUBCRASH-ROOTCAUSE-82BCEFE4.md`. Corroborated independently by the parallel
+  xenia bring-up ([[xenia-seh-fault-wiki]]): the real wall is `main_hub_panel` Loader
+  never completing (mLoader NULL) + XamAlloc 0x10000000 — a different frontier.
+- **Harness (P3) — hooks-install PROVEN; full-boot render BLOCKED by env.** Xenia
+  `--si_load_dll`/`--si_init_va`/`--si_force_allow_va` rewired for the from-source DLL
+  (xenia `53a733143`). Matrix: no-DLL control PASS; DLL loads at 0x84000000 (is_dll)
+  PASS; force-allow poke PASS; 4 detours = `b` into map hook VAs PASS (host-emulated,
+  approach b). Guest-thread `InitSameInstrument` (approach a) FAULTS on ABI (r13/TOC not
+  set headless — a harness limit, not a DLL defect; RB3ELoader sets this up on console).
+  **Full-boot passive verify + DLL-loaded render legs BLOCKED: sandbox has no Vulkan
+  driver** (`--gpu=vulkan` segfaults; host needs a GPU session/reboot). Matrix:
+  `checkpoints/rb3dx-finish/MATRIX-RESULTS.md`. rb3-xenon `a00704d5`.
+- **End-to-end 2-guitar→song-load in Xenia (P5): deferred** — now gated on a
+  GPU-capable host + the `main_hub` load wall, NOT on the (refuted) hub crash. Hardware
+  is the clean gameplay path (no XMA noise, no Vulkan dependency).

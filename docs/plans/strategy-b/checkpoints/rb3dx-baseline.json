@@ -1,0 +1,91 @@
+{
+  "_schema": "rb3dx-finish Phase 0 baseline snapshot",
+  "generated": "2026-07-13",
+  "generated_by": "Opus Phase-0 hygiene lane (RB3DX same-instrument finishing workflow)",
+  "note": "All hashes RE-DERIVED from the actual files on disk, not copied from prose. See _discrepancies for prose values that did NOT verify.",
+  "artifacts": {
+    "rb3dx_xex": {
+      "path": "rock-band-3-deluxe/platform/xbox/default.xex",
+      "abs_path": "/home/free/code/milohax/rock-band-3-deluxe/platform/xbox/default.xex",
+      "size_bytes": 13971456,
+      "sha1": "c5a17091cb44c0119424390a1738d161995e430e",
+      "verified": true,
+      "expected_sha1_prefix": "c5a17091",
+      "status": "MATCH — the one RB3DX xex; read-only (never modify)"
+    },
+    "clean_tu5_pe": {
+      "path": "rb3-xenon/_tu5probe/clean/band_clean_tu5.exe",
+      "abs_path": "/home/free/code/milohax/rb3-xenon/_tu5probe/clean/band_clean_tu5.exe",
+      "size_bytes": 14363648,
+      "sha1": "5f3f667a689e804c1efc736cae4ff2416a278747",
+      "verified": true,
+      "expected_sha1_prefix": "5f3f667a",
+      "status": "MATCH — clean TU5 flat PE; RB3DX == clean TU5 + 170 bytes (divergence doc)"
+    },
+    "boot_xex": {
+      "path": "rb3-xenon/tools/xex2pack/work/boot.xex",
+      "abs_path": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/work/boot.xex",
+      "size_bytes": 8724480,
+      "sha1": "3db731af36c7be645ae7effb08d37d5eab065541",
+      "mtime": "2026-07-12 23:24",
+      "verified": true,
+      "status": "current TU5+RB3DX SI DLL packed artifact (xex2pack); size matches plan (8,724,480 B). Prose gave no boot.xex sha; sha1 recorded here for the first time."
+    },
+    "dupe_allowed_ark": {
+      "gen_dir": "rock-band-3-deluxe/out/xbox/gen/",
+      "abs_gen_dir": "/home/free/code/milohax/rock-band-3-deluxe/out/xbox/gen/",
+      "mtime": "2026-07-09 05:29",
+      "in_git": false,
+      "hdr": {
+        "path": "patch_xbox.hdr",
+        "size_bytes": 427368,
+        "sha1": "886e34c9befea5283e67549cd55e7fc32ba7ed57",
+        "crc32": "9f14c46c",
+        "md5": "d926692212cac6f4d6d59d496186eaf4"
+      },
+      "ark": {
+        "path": "patch_xbox_0.ark",
+        "size_bytes": 714099169,
+        "sha1": "9f5fd2aefeed7609fb99299f71b4f0ac8ff31c31",
+        "crc32": "d8bddb5d",
+        "md5": "efde3bdcd0b939a44af2f7c1b83eb35b"
+      },
+      "verified": true,
+      "status": "dupe_allowed (dx_check_for_dupe -> TRUE) ARK. Current on-disk build, rebuilt 2026-07-09."
+    }
+  },
+  "flat_image_recipe": {
+    "note": "/tmp is volatile — regenerate, do not depend on it.",
+    "out": "/tmp/rb3dx-wf/rb3dx_decomp.bin",
+    "cmd": "xex1tool -b /tmp/rb3dx-wf/rb3dx_decomp.bin /home/free/code/milohax/rock-band-3-deluxe/platform/xbox/default.xex",
+    "base_va": "0x82000000"
+  },
+  "xenia_skip_cal_commit": {
+    "repo": "/home/free/code/milohax/xenia",
+    "commit": "e66f2b57d",
+    "subject": "RB3DX/TU5 first-boot calibration skip (--rb3dx_skip_calibration, default off)",
+    "cvar": "rb3dx_skip_calibration",
+    "default": "false",
+    "title_gate": "0x45410914",
+    "dc3_inert": true,
+    "files_touched": ["src/xenia/emulator.cc"],
+    "insertions": 134,
+    "deletions": 0,
+    "build_verified": {
+      "config": "checked_linux",
+      "xenia-core": "rc=0",
+      "xenia-core-headless": "rc=0",
+      "xenia-headless": "rc=0 (relinked 2026-07-13 00:40:58)"
+    },
+    "isolation": "Only skip-cal hunks committed. --rb3dx_offline_join / --rb3dx_ui_probe / --rb3dx_clamp_alloc / --si_probe / --si_selftest / --si_hook_verify / --si_load_dll remain UNCOMMITTED in the working tree (verified: 26 lever-token matches remain in `git diff`, 0 skip-cal tokens)."
+  },
+  "_discrepancies": [
+    {
+      "field": "dupe_allowed_ark hashes",
+      "prose_claim": "plan §1 + brief say ARK {hdr 6a5b174a, ark aacfbb9d}",
+      "actual": "hdr sha1 886e34c9 / crc32 9f14c46c / md5 d926...; ark sha1 9f5fd2ae / crc32 d8bddb5d / md5 efde...",
+      "resolution": "PROSE IS STALE. 6a5b174a / aacfbb9d match none of sha1/crc32/md5 of the current on-disk gen/ files. The gen/ ARK was rebuilt 2026-07-09 05:29 (after the memory note that pinned 6a5b174a/aacfbb9d). Use the verified hashes above when Phase 2 DEPLOY.md pins the ARK; do NOT propagate the stale prose values.",
+      "severity": "medium — affects deploy-package pinning (Phase 2.3) and any regression gate that hashes the ARK"
+    }
+  ]
+}

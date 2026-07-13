@@ -1,0 +1,20 @@
+{
+  "lane": "hubcrash",
+  "status": "characterized",
+  "date": "2026-07-13",
+  "faultPC": "0x82BCEFE4",
+  "faultEA": "0x7FEA1A80",
+  "faultInsn": "stwbrx r11,0,r10 (7d60552c) + eieio — byte-reverse indexed store, EA=r10=0x7FEA1A80; the canonical PowerPC uncached device-register (MMIO) write",
+  "faultFn": "XMAHALAllocateContexts (RB3DX/TU5 VA 0x82bcef08, base_va 0x82b9bd40, size 272, HIGH confidence, body_identical) — Xbox360 XMA/XAudio2 hardware-abstraction layer allocating audio decoder contexts",
+  "eaExplanation": "0x7FEA1A80 is Xenia's XMA-decoder MMIO register aperture (xma_decoder.cc:113 AddVirtualMappedRange(0x7FEA0000,mask 0xFFFF0000,size 0xFFFF)). Offset 0x1A80 -> register 0x6A0 = Context0Clear (xma_register_table.inc:68), in-bounds of kRegisterCount=0x4000, fully handled (context.Clear() per set bit). The address is a deliberate compile-time constant (addis 0x1ffb/addi -0x7960/slwi 2), NOT a corrupted pointer. Guest stwbrx -> x86 movbe store -> PROT_NONE -> SIGSEGV -> MMIOHandler decodes movbe (mmio_handler.cc:144) -> XmaDecoder::WriteRegister -> RIP advances. This is normal, recoverable-by-design XMA MMIO emulation.",
+  "triage": {
+    "recovered_fault_gone_fatal": "CONFIRMED mechanism, REFUTED as fatal — benign recovered XMA MMIO; skip-cal merely lets audio init run so these normal writes appear. crash_guest field = last soft-fault PC (misattribution).",
+    "sign_extension_negative_offset": "REFUTED — 0x7FEA1A80 is a hardcoded constant matching Xenia's XMA aperture base exactly.",
+    "unmapped_heap_tail": "REFUTED — it is a mapped MMIO device range, not heap; PROT_NONE is intentional (the trap IS the emulation). Backing it would break XMA audio."
+  },
+  "fixRecommendation": "Do NOT patch/back/guard 0x82BCEFE4 — no defect; it is correct XMA MMIO emulation and backing the page would disable XMA register interception. The real item is characterization, not a fix: instrument Xenia (title-gated 0x45410914) to (a) rate-cap the XMA soft-fault log so it stops masking the real event and (b) print the actual terminating thread + host backtrace at teardown (strong prior candidate: pre-existing handles_.empty()/terminate exit-path core-dump, doc-07:187 — main_hub may already survive). Then re-run /tmp/rb3dxboot + --rb3dx_skip_calibration nav ladder and check whether main_hub renders 60s and scripted nav reaches song_select with NO emulator change.",
+  "hubOpen": false,
+  "brief": "/home/free/code/milohax/rb3-xenon/docs/plans/strategy-b/HUBCRASH-ROOTCAUSE-82BCEFE4.md",
+  "flatImage": "/tmp/rb3dx-wf/rb3dx_decomp.bin (regenerate: xex1tool -b ... default.xex; base 0x82000000; /tmp volatile)",
+  "xexSha1": "c5a17091cb44c0119424390a1738d161995e430e"
+}

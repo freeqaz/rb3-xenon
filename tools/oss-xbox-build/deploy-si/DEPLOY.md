@@ -66,10 +66,20 @@ functions at the same VAs** (see `docs/plans/clean-tu5-vs-rb3dx-divergence.md` +
 `rb3dx_port_audit.py`). The earlier "RB3DX is relocated / mismatches" claim was
 relocation vs the *decomp base*, not vs TU5, and is retracted.
 
-Xenia still cannot drive the full 2-guitar→song-load path end to end: RB3 boot in
-Xenia halts at a deterministic **hub-scene-load crash (PC 0x82BCEFE4)** *before*
-song select — a Xenia bring-up frontier, **not** an SI bug (stock RB3DX hits it
-with no DLL). Hardware never sees that crash, so **hardware is the real test for
-the gameplay path**. Xenia CAN validate that the DLL loads and the 4 SI hooks
-install at the correct VAs on an RB3DX boot (see the RB3DX validation work in
-`docs/plans/strategy-b/`).
+Xenia validation status (updated 2026-07-13, workflow `rb3dx-si-finish`):
+- **PROVEN in Xenia**: the from-source DLL loads at 0x84000000 (is_dll=true), the
+  `config.AllowSameInstrument` flag pokes true, and all 4 SI detours resolve to the
+  correct RB3DX hook VAs (`InitSameInstrument`=0x84019830). See
+  `docs/plans/strategy-b/checkpoints/rb3dx-finish/MATRIX-RESULTS.md`.
+- **PC 0x82BCEFE4 was NOT a crash** — root-caused as `XMAHALAllocateContexts` doing
+  a benign, recoverable-by-design XMA MMIO write (byte-reverse store into Xenia's
+  0x7FEA0000 decoder aperture); it was misreported as the "crash" (last soft-fault
+  PC). See `docs/plans/strategy-b/HUBCRASH-ROOTCAUSE-82BCEFE4.md`. Do not patch it.
+- **Remaining Xenia blockers are environmental, not SI**: the full-boot render path
+  needs a working Vulkan host (the sandbox has none → `--gpu=vulkan` segfaults), and
+  a separately-tracked `main_hub` load wall (mLoader NULL) sits before song select
+  ([[xenia-seh-fault-wiki]]). So end-to-end 2-guitar→song-load in Xenia is pending a
+  GPU-capable host, not a DLL fix.
+
+**Hardware remains the clean gameplay test** (no XMA soft-fault noise, no Vulkan
+dependency, real controllers to song select).

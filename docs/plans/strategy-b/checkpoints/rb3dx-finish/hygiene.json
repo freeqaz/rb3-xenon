@@ -1,0 +1,24 @@
+{
+  "stage": "P0-hygiene",
+  "status": "done",
+  "generated": "2026-07-13",
+  "commit": "e66f2b57d",
+  "commit_repo": "/home/free/code/milohax/xenia",
+  "commit_subject": "RB3DX/TU5 first-boot calibration skip (--rb3dx_skip_calibration, default off)",
+  "baselineJson": "/home/free/code/milohax/rb3-xenon/docs/plans/strategy-b/checkpoints/rb3dx-baseline.json",
+  "acceptance": {
+    "skip_cal_committed_isolated": true,
+    "only_emulator_cc_in_commit": true,
+    "default_off_title_gated_0x45410914": true,
+    "other_levers_left_uncommitted": true,
+    "xenia_builds_green_checked_linux": true,
+    "baseline_json_exists": true
+  },
+  "build": {
+    "config": "checked_linux",
+    "xenia-core": "rc=0",
+    "xenia-core-headless": "rc=0",
+    "xenia-headless": "rc=0 (relinked 2026-07-13 00:40:58)"
+  },
+  "notes": "Commit isolated via HEAD+3-block reconstruction (git add -p/-i unavailable in this env): built a skip-cal-only emulator.cc from HEAD + the 3 skip-cal blocks (DEFINE_bool, Rb3dxSkipCalibrationPokeThread, CompleteLaunch spawn site), committed it (134 insertions, 0 deletions, ONLY emulator.cc), built green at that state, then restored the full working tree byte-identical (cmp clean) so all other levers remain uncommitted. No git stash/checkout of live working changes. FINDING: prose ARK hashes {6a5b174a, aacfbb9d} are STALE — actual dupe_allowed gen/ ARK is hdr sha1 886e34c9 / ark sha1 9f5fd2ae (rebuilt 2026-07-09). See rb3dx-baseline.json _discrepancies."
+}
