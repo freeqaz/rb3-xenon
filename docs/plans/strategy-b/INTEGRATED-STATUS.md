@@ -219,3 +219,41 @@ Inline verification before dispatching the finishing workflow:
 
 **Operative spec for the finish = `UNRESOLVED-LEDGER.md`** (lanes C / A / H / I / K / P).
 Everything upstream (packer, round-trip, 51/51 compile, wibo) is green.
+
+---
+
+## Addendum — 2026-07-13: SI built-in, from-source verified, RB3DX == TU5
+
+**From-source XDK-free RB3Enhanced.dll is DONE + independently re-verified + committed.**
+- Link 0 unresolved → `RB3Enhanced.exe` (PE, machine 0x01F2, DLL, base 0x84000000,
+  entry 0x8401CF90) → `tools/xex2pack/work/boot.xex` (8.7M unsigned XEX2-DLL).
+- Re-verified by hand: idaxex enumerates xam.xex(42)+xboxkrnl.exe(26) named; xenia
+  loads the module with ZERO unresolved/unimplemented imports, halts at
+  xthread.cc:117 (same site as the proven stock repack); round-trip regression PASS.
+- Commits: wibo `8fc90d6`, rb3-xenon `43023a91`, RB3Enhanced `be5c74f`
+  (branch feature/same-instrument, include/xdk-oss/). boot.xex not git-committed
+  (8.7M generated; on disk).
+
+**Same-instrument is compiled into this DLL** (not a separate build). `SameInstrumentHooks.c`
+is one of the 51 TUs (full runtime-hook version); `InitSameInstrument` (rb3enhanced.c:473)
+installs all 4 detours when `SameInstReady()` passes — every support pin verified nonzero
+(ProcessConfig@0x8276FA08, RecalcGemList@0x82794740, IsActive@0x826684C0,
+ResolvePartWaitStates@0x825B6488, + support fns/field 0x20). Hooks install
+unconditionally; BODIES gated on `config.AllowSameInstrument` (rb3.ini). Targets TU5.
+TU5 deploy package: `tools/oss-xbox-build/deploy-si/` (DLL + rb3.ini + DEPLOY.md).
+
+**RB3DX needs NO separate DLL — RB3DX ≡ TU5 (byte-proven).** `default.xex` sha1 c5a17091
+== clean TU5 + ~170 bytes (unnamed regions); section tables identical; all 7 SI functions
+byte-identical at the SAME VAs (`docs/plans/clean-tu5-vs-rb3dx-divergence.md`). RB3DX's
+build never compiles the xex (copies a prebuilt binary; only builds ARK/DTA) — so no
+symbol map, and none needed. The earlier "RB3DX relocated" was vs the decomp base, not TU5.
+
+**RB3DX validation plan + Opus workflow (2026-07-13):**
+`docs/plans/strategy-b/RB3DX-RETARGET-PLAN.md` (Fable-authored). Retarget collapsed to:
+audit (prove 197 ports + RB3E write-sites miss the 170-byte delta), `-MAP` build + RB3DX
+deploy package, Xenia harness rewire (`--si_load_dll` was hardcoded to the OLD spliced DLL
+VAs) + hook-install matrix on an RB3DX boot, and characterize the hub-load crash
+**PC 0x82BCEFE4** (the long pole gating full 2-guitar→song-load Xenia validation — a Xenia
+frontier, NOT an SI bug; hardware never hits it). Workflow `rb3dx-si-finish` (task
+wjrh3j54a) executes this; checkpoints under `checkpoints/rb3dx-finish/`. Full 2-guitar→
+song-load Xenia proof is gated on the hub-crash fix; hardware gameplay test can proceed now.

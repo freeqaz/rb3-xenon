@@ -153,3 +153,5 @@ tools/oss-xbox-build/H-headers/
 tools/xex2pack/*.log
 tools/oss-xbox-build/**/work/
 tools/oss-xbox-build/**/*.pe
+
+tools/oss-xbox-build/deploy-si*/RB3Enhanced.dll
