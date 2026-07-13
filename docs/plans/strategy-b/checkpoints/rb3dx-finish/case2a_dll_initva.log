@@ -1,0 +1,2867 @@
+i> 002A6AA9 Xenia Headless Mode - Starting
+i> 002A6AA9 Storage root: /home/free/.local/share/Xenia
+i> 002A6AA9 Loaded config: /home/free/.local/share/Xenia/xenia.config.toml
+i> 002A6AA9 Content root: /home/free/.local/share/Xenia/content
+i> 002A6AA9 Cache root: /home/free/.local/share/Xenia/cache
+i> 002A6AA9 Mapped zero page 0x0-0x10000 as R/W (all zeros); protect_zero=false
+i> 002A6AA9 Mapped null-deref guard page at 0xffff0000 (64KB below virtual_membase 0x100000000)
+i> 002A6AA9 Using posix (frame-pointer) stack walker for guest debugging
+i> 002A6AA9 GPU backend: null
+i> 002A6AA9 Added handle:F8000004 for N2xe6kernel7XObjectE
+i> 002A6AA9 XThreadF8000004 (1) Stack: 70010000-70030000
+i> 002A6AA9 Added handle:F8000008 for N2xe6kernel7XObjectE
+K> F8000004 XThread::Execute thid 1 (handle=F8000004, 'GPU Commands (F8000004)', native=C7FFF6C0, <host>)
+i> 002A6AA9 XThreadF8000008 (2) Stack: 70050000-70070000
+K> F8000008 XThread::Execute thid 2 (handle=F8000008, 'GPU VSync (F8000008)', native=C6FFE6C0, <host>)
+i> 002A6AA9 Added handle:F800000C for N2xe6kernel7XObjectE
+i> 002A6AA9 XThreadF800000C (3) Stack: 70090000-700B0000
+i> 002A6AA9 Added handle:F8000010 for N2xe6kernel7XObjectE
+K> F800000C XThread::Execute thid 3 (handle=F800000C, 'XMA Decoder (F800000C)', native=C5FFD6C0, <host>)
+i> 002A6AA9 XThreadF8000010 (4) Stack: 700D0000-700F0000
+i> 002A6AA9 Added handle:F8000014 for N2xe6kernel7XObjectE
+K> F8000010 XThread::Execute thid 4 (handle=F8000010, 'Audio Worker (F8000010)', native=B3FFF6C0, <host>)
+i> 002A6AA9 Added handle:F8000018 for N2xe6kernel7XObjectE
+i> 002A6AA9 Added handle:F800001C for N2xe6kernel7XObjectE
+i> 002A6AA9 Emulator initialized with headless backends
+i> 002A6AA9   GPU: null
+i> 002A6AA9   APU: nop
+i> 002A6AA9   HID: nop
+i> 002A6AA9 Launching: /tmp/rb3dxboot/default.xex
+i> 002A6AA9 Running with 45000ms timeout...
+i> 002A6AB0 Emulator thread started, launching: /tmp/rb3dxboot/default.xex
+i> 002A6AB0 Launching module game:\default.xex
+i> 002A6AB0 Added handle:F8000020 for N2xe6kernel7XObjectE
+F> 002A6AB0 HostPathDevice::ResolvePath(\default.xex)
+F> 002A6AB0 HostPathDevice::ResolvePath(\default.xexp)
+i> 002A6AB0 Module \Device\Harddisk0\Partition1\default.xex:
+    Module Flags: 00000001
+Security Header:
+     Image Flags: 00000008
+    Load Address: 82000000
+      Image Size: 00EF0000
+    Export Table: 00000000
+Optional Header Count: 18
+  XEX_HEADER_RESOURCE_INFO:
+    45410914 82E60000-82EEF405, 586757b
+  XEX_HEADER_FILE_FORMAT_INFO (TODO):
+  XEX_HEADER_ENTRY_POINT: 8283CD20
+  XEX_HEADER_IMAGE_BASE_ADDRESS: 82000000
+  XEX_HEADER_IMPORT_LIBRARIES:
+    xam.xex - 244 imports
+      Version: 0.0.11164.32
+      Min Version: 0.0.1861.32
+    xboxkrnl.exe - 343 imports
+      Version: 0.0.11164.32
+      Min Version: 0.0.1861.32
+  XEX_HEADER_CHECKSUM_TIMESTAMP (TODO):
+  XEX_HEADER_ORIGINAL_PE_NAME: band.exe
+  XEX_HEADER_STATIC_LIBRARIES:
+    LIBCMT   : 2.0.11164.0
+    XAPILIB  : 2.0.11164.0
+    XBOXKRNL : 2.0.11164.0
+    XNET     : 2.0.11164.0
+    XINP2    : 2.0.11626.0
+    D3D9     : 2.0.11164.0
+    D3DX9    : 2.0.11164.0
+    XGRAPHC  : 2.0.11164.0
+    XONLINE  : 2.0.11164.0
+    XMP      : 2.0.11164.0
+    XPARTY   : 2.0.11164.0
+    XIREMAP  : 2.0.11164.0
+    PRNTCTL  : 2.0.11164.0
+    XAPOBA   : 2.0.11164.3
+    XAUDIO2  : 2.0.11164.3
+    XMCORE   : 2.0.11164.0
+    XAUD     : 2.0.11164.0
+    XHV2     : 2.0.11164.0
+    XMIC     : 2.0.11164.0
+    LINK     : 10.0.10224.0
+    C2       : 16.0.10224.0
+    C1       : 16.0.10224.0
+  XEX_HEADER_TLS_INFO:
+          Slot Count: 64
+    Raw Data Address: 00000000
+           Data Size: 0
+       Raw Data Size: 0
+  XEX_HEADER_DEFAULT_STACK_SIZE: 262144
+  XEX_HEADER_SYSTEM_FLAGS: 40004200
+  Unknown Header 00030100
+  XEX_HEADER_EXECUTION_INFO:
+       Media ID: 4FC9256F
+       Title ID: 45410914
+    Savegame ID: 45410914
+    Disc Number / Total: 0 / 0
+  XEX_HEADER_TITLE_WORKSPACE_SIZE: 2621440
+  XEX_HEADER_GAME_RATINGS (TODO):
+  XEX_HEADER_LAN_KEY: 2D 1F 1F C0 0E 01 21 CE D2 65 00 F3 AA 1C C1 66
+  XEX_HEADER_XBOX360_LOGO (TODO):
+  XEX_HEADER_ALTERNATE_TITLE_IDS (TODO):
+Sections:
+    0 RODATA    1 pages    82000000 - 82010000 (65536 bytes)
+    1 RODATA    1 pages    82010000 - 82020000 (65536 bytes)
+    2 RODATA    1 pages    82020000 - 82030000 (65536 bytes)
+    3 RODATA    1 pages    82030000 - 82040000 (65536 bytes)
+    4 RODATA    1 pages    82040000 - 82050000 (65536 bytes)
+    5 RODATA    1 pages    82050000 - 82060000 (65536 bytes)
+    6 RODATA    1 pages    82060000 - 82070000 (65536 bytes)
+    7 RODATA    1 pages    82070000 - 82080000 (65536 bytes)
+    8 RODATA    1 pages    82080000 - 82090000 (65536 bytes)
+    9 RODATA    1 pages    82090000 - 820A0000 (65536 bytes)
+   10 RODATA    1 pages    820A0000 - 820B0000 (65536 bytes)
+   11 RODATA    1 pages    820B0000 - 820C0000 (65536 bytes)
+   12 RODATA    1 pages    820C0000 - 820D0000 (65536 bytes)
+   13 RODATA    1 pages    820D0000 - 820E0000 (65536 bytes)
+   14 RODATA    1 pages    820E0000 - 820F0000 (65536 bytes)
+   15 RODATA    1 pages    820F0000 - 82100000 (65536 bytes)
+   16 RODATA    1 pages    82100000 - 82110000 (65536 bytes)
+   17 RODATA    1 pages    82110000 - 82120000 (65536 bytes)
+   18 RODATA    1 pages    82120000 - 82130000 (65536 bytes)
+   19 RODATA    1 pages    82130000 - 82140000 (65536 bytes)
+   20 RODATA    1 pages    82140000 - 82150000 (65536 bytes)
+   21 RODATA    1 pages    82150000 - 82160000 (65536 bytes)
+   22 RODATA    1 pages    82160000 - 82170000 (65536 bytes)
+   23 RODATA    1 pages    82170000 - 82180000 (65536 bytes)
+   24 RODATA    1 pages    82180000 - 82190000 (65536 bytes)
+   25 RODATA    1 pages    82190000 - 821A0000 (65536 bytes)
+   26 RODATA    1 pages    821A0000 - 821B0000 (65536 bytes)
+   27 RODATA    1 pages    821B0000 - 821C0000 (65536 bytes)
+   28 RODATA    1 pages    821C0000 - 821D0000 (65536 bytes)
+   29 RODATA    1 pages    821D0000 - 821E0000 (65536 bytes)
+   30 RODATA    1 pages    821E0000 - 821F0000 (65536 bytes)
+   31 RODATA    1 pages    821F0000 - 82200000 (65536 bytes)
+   32 RODATA    1 pages    82200000 - 82210000 (65536 bytes)
+   33 RODATA    1 pages    82210000 - 82220000 (65536 bytes)
+   34 RODATA    1 pages    82220000 - 82230000 (65536 bytes)
+   35 RODATA    1 pages    82230000 - 82240000 (65536 bytes)
+   36 RODATA    1 pages    82240000 - 82250000 (65536 bytes)
+   37 RODATA    1 pages    82250000 - 82260000 (65536 bytes)
+   38 RODATA    1 pages    82260000 - 82270000 (65536 bytes)
+   39 CODE      1 pages    82270000 - 82280000 (65536 bytes)
+   40 CODE      1 pages    82280000 - 82290000 (65536 bytes)
+   41 CODE      1 pages    82290000 - 822A0000 (65536 bytes)
+   42 CODE      1 pages    822A0000 - 822B0000 (65536 bytes)
+   43 CODE      1 pages    822B0000 - 822C0000 (65536 bytes)
+   44 CODE      1 pages    822C0000 - 822D0000 (65536 bytes)
+   45 CODE      1 pages    822D0000 - 822E0000 (65536 bytes)
+   46 CODE      1 pages    822E0000 - 822F0000 (65536 bytes)
+   47 CODE      1 pages    822F0000 - 82300000 (65536 bytes)
+   48 CODE      1 pages    82300000 - 82310000 (65536 bytes)
+   49 CODE      1 pages    82310000 - 82320000 (65536 bytes)
+   50 CODE      1 pages    82320000 - 82330000 (65536 bytes)
+   51 CODE      1 pages    82330000 - 82340000 (65536 bytes)
+   52 CODE      1 pages    82340000 - 82350000 (65536 bytes)
+   53 CODE      1 pages    82350000 - 82360000 (65536 bytes)
+   54 CODE      1 pages    82360000 - 82370000 (65536 bytes)
+   55 CODE      1 pages    82370000 - 82380000 (65536 bytes)
+   56 CODE      1 pages    82380000 - 82390000 (65536 bytes)
+   57 CODE      1 pages    82390000 - 823A0000 (65536 bytes)
+   58 CODE      1 pages    823A0000 - 823B0000 (65536 bytes)
+   59 CODE      1 pages    823B0000 - 823C0000 (65536 bytes)
+   60 CODE      1 pages    823C0000 - 823D0000 (65536 bytes)
+   61 CODE      1 pages    823D0000 - 823E0000 (65536 bytes)
+   62 CODE      1 pages    823E0000 - 823F0000 (65536 bytes)
+   63 CODE      1 pages    823F0000 - 82400000 (65536 bytes)
+   64 CODE      1 pages    82400000 - 82410000 (65536 bytes)
+   65 CODE      1 pages    82410000 - 82420000 (65536 bytes)
+   66 CODE      1 pages    82420000 - 82430000 (65536 bytes)
+   67 CODE      1 pages    82430000 - 82440000 (65536 bytes)
+   68 CODE      1 pages    82440000 - 82450000 (65536 bytes)
+   69 CODE      1 pages    82450000 - 82460000 (65536 bytes)
+   70 CODE      1 pages    82460000 - 82470000 (65536 bytes)
+   71 CODE      1 pages    82470000 - 82480000 (65536 bytes)
+   72 CODE      1 pages    82480000 - 82490000 (65536 bytes)
+   73 CODE      1 pages    82490000 - 824A0000 (65536 bytes)
+   74 CODE      1 pages    824A0000 - 824B0000 (65536 bytes)
+   75 CODE      1 pages    824B0000 - 824C0000 (65536 bytes)
+   76 CODE      1 pages    824C0000 - 824D0000 (65536 bytes)
+   77 CODE      1 pages    824D0000 - 824E0000 (65536 bytes)
+   78 CODE      1 pages    824E0000 - 824F0000 (65536 bytes)
+   79 CODE      1 pages    824F0000 - 82500000 (65536 bytes)
+   80 CODE      1 pages    82500000 - 82510000 (65536 bytes)
+   81 CODE      1 pages    82510000 - 82520000 (65536 bytes)
+   82 CODE      1 pages    82520000 - 82530000 (65536 bytes)
+   83 CODE      1 pages    82530000 - 82540000 (65536 bytes)
+   84 CODE      1 pages    82540000 - 82550000 (65536 bytes)
+   85 CODE      1 pages    82550000 - 82560000 (65536 bytes)
+   86 CODE      1 pages    82560000 - 82570000 (65536 bytes)
+   87 CODE      1 pages    82570000 - 82580000 (65536 bytes)
+   88 CODE      1 pages    82580000 - 82590000 (65536 bytes)
+   89 CODE      1 pages    82590000 - 825A0000 (65536 bytes)
+   90 CODE      1 pages    825A0000 - 825B0000 (65536 bytes)
+   91 CODE      1 pages    825B0000 - 825C0000 (65536 bytes)
+   92 CODE      1 pages    825C0000 - 825D0000 (65536 bytes)
+   93 CODE      1 pages    825D0000 - 825E0000 (65536 bytes)
+   94 CODE      1 pages    825E0000 - 825F0000 (65536 bytes)
+   95 CODE      1 pages    825F0000 - 82600000 (65536 bytes)
+   96 CODE      1 pages    82600000 - 82610000 (65536 bytes)
+   97 CODE      1 pages    82610000 - 82620000 (65536 bytes)
+   98 CODE      1 pages    82620000 - 82630000 (65536 bytes)
+   99 CODE      1 pages    82630000 - 82640000 (65536 bytes)
+  100 CODE      1 pages    82640000 - 82650000 (65536 bytes)
+  101 CODE      1 pages    82650000 - 82660000 (65536 bytes)
+  102 CODE      1 pages    82660000 - 82670000 (65536 bytes)
+  103 CODE      1 pages    82670000 - 82680000 (65536 bytes)
+  104 CODE      1 pages    82680000 - 82690000 (65536 bytes)
+  105 CODE      1 pages    82690000 - 826A0000 (65536 bytes)
+  106 CODE      1 pages    826A0000 - 826B0000 (65536 bytes)
+  107 CODE      1 pages    826B0000 - 826C0000 (65536 bytes)
+  108 CODE      1 pages    826C0000 - 826D0000 (65536 bytes)
+  109 CODE      1 pages    826D0000 - 826E0000 (65536 bytes)
+  110 CODE      1 pages    826E0000 - 826F0000 (65536 bytes)
+  111 CODE      1 pages    826F0000 - 82700000 (65536 bytes)
+  112 CODE      1 pages    82700000 - 82710000 (65536 bytes)
+  113 CODE      1 pages    82710000 - 82720000 (65536 bytes)
+  114 CODE      1 pages    82720000 - 82730000 (65536 bytes)
+  115 CODE      1 pages    82730000 - 82740000 (65536 bytes)
+  116 CODE      1 pages    82740000 - 82750000 (65536 bytes)
+  117 CODE      1 pages    82750000 - 82760000 (65536 bytes)
+  118 CODE      1 pages    82760000 - 82770000 (65536 bytes)
+  119 CODE      1 pages    82770000 - 82780000 (65536 bytes)
+  120 CODE      1 pages    82780000 - 82790000 (65536 bytes)
+  121 CODE      1 pages    82790000 - 827A0000 (65536 bytes)
+  122 CODE      1 pages    827A0000 - 827B0000 (65536 bytes)
+  123 CODE      1 pages    827B0000 - 827C0000 (65536 bytes)
+  124 CODE      1 pages    827C0000 - 827D0000 (65536 bytes)
+  125 CODE      1 pages    827D0000 - 827E0000 (65536 bytes)
+  126 CODE      1 pages    827E0000 - 827F0000 (65536 bytes)
+  127 CODE      1 pages    827F0000 - 82800000 (65536 bytes)
+  128 CODE      1 pages    82800000 - 82810000 (65536 bytes)
+  129 CODE      1 pages    82810000 - 82820000 (65536 bytes)
+  130 CODE      1 pages    82820000 - 82830000 (65536 bytes)
+  131 CODE      1 pages    82830000 - 82840000 (65536 bytes)
+  132 CODE      1 pages    82840000 - 82850000 (65536 bytes)
+  133 CODE      1 pages    82850000 - 82860000 (65536 bytes)
+  134 CODE      1 pages    82860000 - 82870000 (65536 bytes)
+  135 CODE      1 pages    82870000 - 82880000 (65536 bytes)
+  136 CODE      1 pages    82880000 - 82890000 (65536 bytes)
+  137 CODE      1 pages    82890000 - 828A0000 (65536 bytes)
+  138 CODE      1 pages    828A0000 - 828B0000 (65536 bytes)
+  139 CODE      1 pages    828B0000 - 828C0000 (65536 bytes)
+  140 CODE      1 pages    828C0000 - 828D0000 (65536 bytes)
+  141 CODE      1 pages    828D0000 - 828E0000 (65536 bytes)
+  142 CODE      1 pages    828E0000 - 828F0000 (65536 bytes)
+  143 CODE      1 pages    828F0000 - 82900000 (65536 bytes)
+  144 CODE      1 pages    82900000 - 82910000 (65536 bytes)
+  145 CODE      1 pages    82910000 - 82920000 (65536 bytes)
+  146 CODE      1 pages    82920000 - 82930000 (65536 bytes)
+  147 CODE      1 pages    82930000 - 82940000 (65536 bytes)
+  148 CODE      1 pages    82940000 - 82950000 (65536 bytes)
+  149 CODE      1 pages    82950000 - 82960000 (65536 bytes)
+  150 CODE      1 pages    82960000 - 82970000 (65536 bytes)
+  151 CODE      1 pages    82970000 - 82980000 (65536 bytes)
+  152 CODE      1 pages    82980000 - 82990000 (65536 bytes)
+  153 CODE      1 pages    82990000 - 829A0000 (65536 bytes)
+  154 CODE      1 pages    829A0000 - 829B0000 (65536 bytes)
+  155 CODE      1 pages    829B0000 - 829C0000 (65536 bytes)
+  156 CODE      1 pages    829C0000 - 829D0000 (65536 bytes)
+  157 CODE      1 pages    829D0000 - 829E0000 (65536 bytes)
+  158 CODE      1 pages    829E0000 - 829F0000 (65536 bytes)
+  159 CODE      1 pages    829F0000 - 82A00000 (65536 bytes)
+  160 CODE      1 pages    82A00000 - 82A10000 (65536 bytes)
+  161 CODE      1 pages    82A10000 - 82A20000 (65536 bytes)
+  162 CODE      1 pages    82A20000 - 82A30000 (65536 bytes)
+  163 CODE      1 pages    82A30000 - 82A40000 (65536 bytes)
+  164 CODE      1 pages    82A40000 - 82A50000 (65536 bytes)
+  165 CODE      1 pages    82A50000 - 82A60000 (65536 bytes)
+  166 CODE      1 pages    82A60000 - 82A70000 (65536 bytes)
+  167 CODE      1 pages    82A70000 - 82A80000 (65536 bytes)
+  168 CODE      1 pages    82A80000 - 82A90000 (65536 bytes)
+  169 CODE      1 pages    82A90000 - 82AA0000 (65536 bytes)
+  170 CODE      1 pages    82AA0000 - 82AB0000 (65536 bytes)
+  171 CODE      1 pages    82AB0000 - 82AC0000 (65536 bytes)
+  172 CODE      1 pages    82AC0000 - 82AD0000 (65536 bytes)
+  173 CODE      1 pages    82AD0000 - 82AE0000 (65536 bytes)
+  174 CODE      1 pages    82AE0000 - 82AF0000 (65536 bytes)
+  175 CODE      1 pages    82AF0000 - 82B00000 (65536 bytes)
+  176 CODE      1 pages    82B00000 - 82B10000 (65536 bytes)
+  177 CODE      1 pages    82B10000 - 82B20000 (65536 bytes)
+  178 CODE      1 pages    82B20000 - 82B30000 (65536 bytes)
+  179 CODE      1 pages    82B30000 - 82B40000 (65536 bytes)
+  180 CODE      1 pages    82B40000 - 82B50000 (65536 bytes)
+  181 CODE      1 pages    82B50000 - 82B60000 (65536 bytes)
+  182 CODE      1 pages    82B60000 - 82B70000 (65536 bytes)
+  183 CODE      1 pages    82B70000 - 82B80000 (65536 bytes)
+  184 CODE      1 pages    82B80000 - 82B90000 (65536 bytes)
+  185 CODE      1 pages    82B90000 - 82BA0000 (65536 bytes)
+  186 CODE      1 pages    82BA0000 - 82BB0000 (65536 bytes)
+  187 CODE      1 pages    82BB0000 - 82BC0000 (65536 bytes)
+  188 CODE      1 pages    82BC0000 - 82BD0000 (65536 bytes)
+  189 CODE      1 pages    82BD0000 - 82BE0000 (65536 bytes)
+  190 CODE      1 pages    82BE0000 - 82BF0000 (65536 bytes)
+  191 CODE      1 pages    82BF0000 - 82C00000 (65536 bytes)
+  192 CODE      1 pages    82C00000 - 82C10000 (65536 bytes)
+  193 CODE      1 pages    82C10000 - 82C20000 (65536 bytes)
+  194 CODE      1 pages    82C20000 - 82C30000 (65536 bytes)
+  195 CODE      1 pages    82C30000 - 82C40000 (65536 bytes)
+  196 CODE      1 pages    82C40000 - 82C50000 (65536 bytes)
+  197 CODE      1 pages    82C50000 - 82C60000 (65536 bytes)
+  198 RWDATA    1 pages    82C60000 - 82C70000 (65536 bytes)
+  199 RWDATA    1 pages    82C70000 - 82C80000 (65536 bytes)
+  200 RWDATA    1 pages    82C80000 - 82C90000 (65536 bytes)
+  201 RWDATA    1 pages    82C90000 - 82CA0000 (65536 bytes)
+  202 RWDATA    1 pages    82CA0000 - 82CB0000 (65536 bytes)
+  203 RWDATA    1 pages    82CB0000 - 82CC0000 (65536 bytes)
+  204 RWDATA    1 pages    82CC0000 - 82CD0000 (65536 bytes)
+  205 RWDATA    1 pages    82CD0000 - 82CE0000 (65536 bytes)
+  206 RWDATA    1 pages    82CE0000 - 82CF0000 (65536 bytes)
+  207 RWDATA    1 pages    82CF0000 - 82D00000 (65536 bytes)
+  208 RWDATA    1 pages    82D00000 - 82D10000 (65536 bytes)
+  209 RWDATA    1 pages    82D10000 - 82D20000 (65536 bytes)
+  210 RWDATA    1 pages    82D20000 - 82D30000 (65536 bytes)
+  211 RWDATA    1 pages    82D30000 - 82D40000 (65536 bytes)
+  212 RWDATA    1 pages    82D40000 - 82D50000 (65536 bytes)
+  213 RWDATA    1 pages    82D50000 - 82D60000 (65536 bytes)
+  214 RWDATA    1 pages    82D60000 - 82D70000 (65536 bytes)
+  215 RWDATA    1 pages    82D70000 - 82D80000 (65536 bytes)
+  216 RWDATA    1 pages    82D80000 - 82D90000 (65536 bytes)
+  217 RWDATA    1 pages    82D90000 - 82DA0000 (65536 bytes)
+  218 RWDATA    1 pages    82DA0000 - 82DB0000 (65536 bytes)
+  219 RWDATA    1 pages    82DB0000 - 82DC0000 (65536 bytes)
+  220 RWDATA    1 pages    82DC0000 - 82DD0000 (65536 bytes)
+  221 RWDATA    1 pages    82DD0000 - 82DE0000 (65536 bytes)
+  222 RWDATA    1 pages    82DE0000 - 82DF0000 (65536 bytes)
+  223 RWDATA    1 pages    82DF0000 - 82E00000 (65536 bytes)
+  224 RWDATA    1 pages    82E00000 - 82E10000 (65536 bytes)
+  225 RWDATA    1 pages    82E10000 - 82E20000 (65536 bytes)
+  226 RWDATA    1 pages    82E20000 - 82E30000 (65536 bytes)
+  227 RWDATA    1 pages    82E30000 - 82E40000 (65536 bytes)
+  228 RWDATA    1 pages    82E40000 - 82E50000 (65536 bytes)
+  229 RWDATA    1 pages    82E50000 - 82E60000 (65536 bytes)
+  230 RODATA    1 pages    82E60000 - 82E70000 (65536 bytes)
+  231 RODATA    1 pages    82E70000 - 82E80000 (65536 bytes)
+  232 RODATA    1 pages    82E80000 - 82E90000 (65536 bytes)
+  233 RODATA    1 pages    82E90000 - 82EA0000 (65536 bytes)
+  234 RODATA    1 pages    82EA0000 - 82EB0000 (65536 bytes)
+  235 RODATA    1 pages    82EB0000 - 82EC0000 (65536 bytes)
+  236 RODATA    1 pages    82EC0000 - 82ED0000 (65536 bytes)
+  237 RODATA    1 pages    82ED0000 - 82EE0000 (65536 bytes)
+  238 RODATA    1 pages    82EE0000 - 82EF0000 (65536 bytes)
+Imports:
+ xam - 122 imports
+   Version: 0.0.11164.32
+   Min Version: 0.0.1861.32
+
+         Total:  122
+         Known:  100% (122 known, 0 unknown)
+   Implemented:   91% (112 implemented, 10 unimplemented)
+
+   F 82000400 82C4BC4C 3CC ( 972)    XGetGameRegion
+   F 82000404 82C4BC5C 28C ( 652)    XNotifyPositionUI
+   F 82000408 82C4BC6C 28B ( 651)    XNotifyGetNext
+   F 8200040C 82C4BC7C 1B9 ( 441)    XamInputSendStayAliveRequest
+   F 82000410 82C4BC8C 3D1 ( 977)    XGetVideoMode
+   F 82000414 82C4BC9C 2DC ( 732)    XamShowMessageBoxUIEx
+   F 82000418 82C4BCAC 3CD ( 973)    XGetLanguage
+   F 8200041C 82C4BCBC 3CB ( 971)    XGetAVPack
+   F 82000420 82C4BCCC 1A9 ( 425)    XamLoaderTerminateTitle
+   F 82000424 82C4BCDC 1F7 ( 503)    XMsgStartIORequest
+   F 82000428 82C4BCEC 20E ( 526)    XamUserGetName
+   F 8200042C 82C4BCFC 210 ( 528)    XamUserGetSigninState
+   F 82000430 82C4BD0C 213 ( 531)    XamUserAreUsersFriends
+   F 82000434 82C4BD1C 212 ( 530)    XamUserCheckPrivilege
+   F 82000438 82C4BD2C 282 ( 642)    XamGetSystemVersion
+   F 8200043C 82C4BD3C 2F5 ( 757)    XamReadTileToTexture
+   F 82000440 82C4BD4C 2F0 ( 752)    XamWriteGamerTile
+   F 82000444 82C4BD5C 20A ( 522)    XamUserGetXUID
+   F 82000448 82C4BD6C 1F8 ( 504)    XMsgCancelIORequest
+   F 8200044C 82C4BD7C 1A4 ( 420)    XamLoaderLaunchTitle
+   F 82000450 82C4BD8C 2BC ( 700)    XamShowSigninUI
+   F 82000454 82C4BD9C 2BF ( 703)    XamShowFriendsUI
+   F 82000458 82C4BDAC 2C1 ( 705)    XamShowKeyboardUI
+   F 8200045C 82C4BDBC 2D5 ( 725)    XamShowGamerCardUIForXUID
+   F 82000460 82C4BDCC 2C7 ( 711)    XamShowMarketplaceUI
+   F 82000464 82C4BDDC 2CB ( 715)    XamShowDeviceSelectorUI
+   F 82000468 82C4BDEC 2D9 ( 729)    XamShowDirtyDiscErrorUI
+   F 8200046C 82C4BDFC 1A0 ( 416)    XamEnableInactivityProcessing
+   F 82000470 82C4BE0C 1A1 ( 417)    XamResetInactivity
+   F 82000474 82C4BE1C 227 ( 551)    XamUserGetSigninInfo
+   F 82000478 82C4BE2C 28A ( 650)    XamNotifyCreateListener
+   F 8200047C 82C4BE3C 1B3 ( 435)    XamTaskShouldExit
+   F 82000480 82C4BE4C 1B1 ( 433) !! XamTaskCloseHandle
+   F 82000484 82C4BE5C 1AF ( 431)    XamTaskSchedule
+   F 82000488 82C4BE6C 250 ( 592)    XamEnumerate
+   F 8200048C 82C4BE7C 280 ( 640)    XamGetExecutionId
+   F 82000490 82C4BE8C 1EA ( 490)    XamAlloc
+   F 82000494 82C4BE9C 1EC ( 492)    XamFree
+   F 82000498 82C4BEAC 1FB ( 507)    XamGetOverlappedResult
+   F 8200049C 82C4BEBC 1F5 ( 501)    XMsgCompleteIORequest
+   F 820004A0 82C4BECC 1F4 ( 500)    XMsgInProcessCall
+   F 820004A4 82C4BEDC 24F ( 591)    XamGetPrivateEnumStructureFromHandle
+   F 820004A8 82C4BEEC 259 ( 601)    XamContentCreateEx
+   F 820004AC 82C4BEFC 25B ( 603)    XamContentDelete
+   F 820004B0 82C4BF0C 25A ( 602)    XamContentClose
+   F 820004B4 82C4BF1C 267 ( 615)    XamContentFlush
+   F 820004B8 82C4BF2C 262 ( 610)    XamContentGetCreator
+   F 820004BC 82C4BF3C 25C ( 604)    XamContentCreateEnumerator
+   F 820004C0 82C4BF4C 265 ( 613)    XamContentGetDeviceState
+   F 820004C4 82C4BF5C 25E ( 606)    XamContentGetDeviceData
+   F 820004C8 82C4BF6C 190 ( 400)    XamInputGetCapabilities
+   F 820004CC 82C4BF7C 191 ( 401)    XamInputGetState
+   F 820004D0 82C4BF8C 192 ( 402)    XamInputSetState
+   F 820004D4 82C4BF9C 9C4 (2500)    XamBackgroundDownloadSetMode
+   F 820004D8 82C4BFAC 9D1 (2513) !! XamBackgroundDownloadItemGetHistoryStatus
+   F 820004DC 82C4BFBC 9CF (2511) !! XamBackgroundDownloadItemGetStatus
+   F 820004E0 82C4BFCC 2E7 ( 743)    XamShowMarketplaceDownloadItemsUI
+   F 820004E4 82C4CD4C 30E ( 782)    XamVoiceSubmitPacket
+   F 820004E8 82C4CD3C 30F ( 783)    XamVoiceClose
+   F 820004EC 82C4CD2C 30D ( 781)    XamVoiceHeadsetPresent
+   F 820004F0 82C4CD1C 219 ( 537)    XamUserReadProfileSettings
+   F 820004F4 82C4CD0C 208 ( 520)    XamUserGetDeviceContext
+   F 820004F8 82C4CCFC 054 (  84)    NetDll_XNetSetSystemLinkPort
+   F 820004FC 82C4CCEC 053 (  83) !! NetDll_XNetGetSystemLinkPort
+   F 82000500 82C4CA8C 1F1 ( 497) !! XamDeviceRemap
+   F 82000504 82C4CA7C 1FC ( 508)    XMsgStartIORequestEx
+   F 82000508 82C4CA6C 218 ( 536)    XamUserGetOnlineCountryFromXUID
+   F 8200050C 82C4CA5C 217 ( 535)    XamUserGetMembershipTierFromXUID
+   F 82000510 82C4CA4C 24E ( 590)    XamCreateEnumeratorHandle
+   F 82000514 82C4CA3C 136 ( 310)    XNetLogonGetTitleID
+   F 82000518 82C4CA2C 316 ( 790)    XamSessionCreateHandle
+   F 8200051C 82C4CA1C 317 ( 791)    XamSessionRefObjByHandle
+   F 82000520 82C4CA0C 3DE ( 990)    XamInputControl
+   F 82000524 82C4C9FC 195 ( 405)    XamInputRawState
+   F 82000528 82C4C9EC 022 (  34)    NetDll___WSAFDIsSet
+   F 8200052C 82C4C9DC 021 (  33)    NetDll_WSAWaitForMultipleEvents
+   F 82000530 82C4C9CC 020 (  32)    NetDll_WSAResetEvent
+   F 82000534 82C4C9BC 01E (  30)    NetDll_WSACloseEvent
+   F 82000538 82C4C9AC 01D (  29)    NetDll_WSACreateEvent
+   F 8200053C 82C4C99C 01B (  27)    NetDll_WSAGetLastError
+   F 82000540 82C4C98C 01A (  26)    NetDll_inet_addr
+   F 82000544 82C4C97C 019 (  25)    NetDll_WSASendTo
+   F 82000548 82C4C96C 018 (  24)    NetDll_sendto
+   F 8200054C 82C4C95C 016 (  22)    NetDll_send
+   F 82000550 82C4C94C 015 (  21)    NetDll_WSARecvFrom
+   F 82000554 82C4C93C 014 (  20)    NetDll_recvfrom
+   F 82000558 82C4C92C 012 (  18)    NetDll_recv
+   F 8200055C 82C4C91C 010 (  16) !! NetDll_WSAGetOverlappedResult
+   F 82000560 82C4C90C 00F (  15)    NetDll_select
+   F 82000564 82C4C8FC 00E (  14)    NetDll_accept
+   F 82000568 82C4C8EC 00D (  13)    NetDll_listen
+   F 8200056C 82C4C8DC 00C (  12)    NetDll_connect
+   F 82000570 82C4C8CC 00B (  11)    NetDll_bind
+   F 82000574 82C4C8BC 00A (  10)    NetDll_getpeername
+   F 82000578 82C4C8AC 009 (   9)    NetDll_getsockname
+   F 8200057C 82C4C89C 007 (   7)    NetDll_setsockopt
+   F 82000580 82C4C88C 006 (   6)    NetDll_ioctlsocket
+   F 82000584 82C4C87C 005 (   5)    NetDll_shutdown
+   F 82000588 82C4C86C 004 (   4)    NetDll_closesocket
+   F 8200058C 82C4C85C 003 (   3)    NetDll_socket
+   F 82000590 82C4C84C 002 (   2)    NetDll_WSACleanup
+   F 82000594 82C4C83C 001 (   1)    NetDll_WSAStartup
+   F 82000598 82C4C82C 04B (  75)    NetDll_XNetGetEthernetLinkStatus
+   F 8200059C 82C4C81C 049 (  73)    NetDll_XNetGetTitleXnAddr
+   F 820005A0 82C4C80C 048 (  72)    NetDll_XNetQosRelease
+   F 820005A4 82C4C7FC 046 (  70) !! NetDll_XNetQosLookup
+   F 820005A8 82C4C7EC 045 (  69)    NetDll_XNetQosListen
+   F 820005AC 82C4C7DC 044 (  68)    NetDll_XNetDnsRelease
+   F 820005B0 82C4C7CC 043 (  67)    NetDll_XNetDnsLookup
+   F 820005B4 82C4C7BC 042 (  66)    NetDll_XNetGetConnectStatus
+   F 820005B8 82C4C7AC 041 (  65)    NetDll_XNetConnect
+   F 820005BC 82C4C79C 040 (  64)    NetDll_XNetXnAddrToMachineId
+   F 820005C0 82C4C78C 03F (  63)    NetDll_XNetUnregisterInAddr
+   F 820005C4 82C4C77C 03A (  58)    NetDll_XNetServerToInAddr
+   F 820005C8 82C4C76C 039 (  57)    NetDll_XNetXnAddrToInAddr
+   F 820005CC 82C4CD5C 30C ( 780)    XamVoiceCreate
+   F 820005D0 82C4C75C 038 (  56) !! NetDll_XNetUnregisterKey
+   F 820005D4 82C4C74C 037 (  55) !! NetDll_XNetRegisterKey
+   F 820005D8 82C4C73C 036 (  54) !! NetDll_XNetCreateKey
+   F 820005DC 82C4C72C 035 (  53)    NetDll_XNetRandom
+   F 820005E0 82C4C71C 034 (  52)    NetDll_XNetCleanup
+   F 820005E4 82C4C70C 033 (  51)    NetDll_XNetStartup
+
+ xboxkrnl - 178 imports
+   Version: 0.0.11164.32
+   Min Version: 0.0.1861.32
+
+         Total:  178
+         Known:  100% (178 known, 0 unknown)
+   Implemented:   93% (167 implemented, 11 unimplemented)
+
+   F 820005EC 82C4C58C 1A1 ( 417)    XexUnloadImage
+   F 820005F0 82C4C59C 199 ( 409)    XexLoadImage
+   F 820005F4 82C4C5AC 0E4 ( 228)    NtQueryDirectoryFile
+   F 820005F8 82C4C5BC 0F1 ( 241)    NtReadFileScatter
+   F 820005FC 82C4C5CC 0DA ( 218)    NtDuplicateObject
+   F 82000600 82C4C5DC 00D (  13)    ExCreateThread
+   F 82000604 82C4C5EC 05A (  90)    KeDelayExecutionThread
+   F 82000608 82C4C5FC 041 (  65) !! IoInvalidDeviceRequest
+   F 8200060C 82C4C60C 10F ( 271)    ObReferenceObject
+   F 82000610 82C4C61C 037 (  55)    IoCreateDevice
+   F 82000614 82C4C62C 039 (  57) !! IoDeleteDevice
+   F 82000618 82C4C63C 00B (  11)    ExAllocatePoolTypeWithTag
+   F 8200061C 82C4C64C 00F (  15)    ExFreePool
+   F 82000620 82C4C65C 11D ( 285)    RtlCompareStringN
+   F 82000624 82C4C66C 035 (  53) !! IoCompleteRequest
+   F 82000628 82C4C67C 0B4 ( 180)    KfReleaseSpinLock
+   F 8200062C 82C4C68C 0B1 ( 177)    KfAcquireSpinLock
+   F 82000630 82C4C69C 149 ( 329)    RtlUpcaseUnicodeChar
+   F 82000634 82C4C6AC 109 ( 265) !! ObIsTitleObject
+   F 82000638 82C4C6BC 034 (  52) !! IoCheckShareAccess
+   F 8200063C 82C4C6CC 047 (  71) !! IoSetShareAccess
+   F 82000640 82C4C6DC 045 (  69) !! IoRemoveShareAccess
+   F 82000644 82C4C6EC 03C (  60)    IoDismountVolumeByFileHandle
+   F 82000648 82C4C6FC 0D9 ( 217)    NtDeviceIoControlFile
+   V 8200064C          156 ( 342)    XboxHardwareInfo
+   F 82000650 82C4C57C 028 (  40)    HalReturnToFirmware
+   F 82000654 82C4C56C 12D ( 301)    RtlInitUnicodeString
+   F 82000658 82C4C55C 142 ( 322)    RtlUnicodeStringToAnsiString
+   F 8200065C 82C4C54C 127 ( 295)    RtlFreeAnsiString
+   F 82000660 82C4C53C 019 (  25)    ExTerminateThread
+   F 82000664 82C4C51C 053 (  83)    KeBugCheckEx
+   F 82000668 82C4C50C 126 ( 294)    RtlFillMemoryUlong
+   F 8200066C 82C4C4FC 136 ( 310)    RtlRaiseException
+   V 82000670          0AD ( 173)    KeTimeStampBundle
+   F 82000674 82C4C4EC 0D4 ( 212)    NtCreateMutant
+   F 82000678 82C4C4DC 0F2 ( 242)    NtReleaseMutant
+   F 8200067C 82C4C4CC 001 (   1)    DbgBreakPoint
+   F 82000680 82C4C4BC 0E7 ( 231)    NtQueryFullAttributesFile
+   F 82000684 82C4C4AC 133 ( 307)    RtlMultiByteToUnicodeN
+   F 82000688 82C4C49C 14D ( 333)    _vsnprintf
+   F 8200068C 82C4C48C 15B ( 347)    XeCryptAesCbc
+   F 82000690 82C4C47C 159 ( 345)    XeCryptAesKey
+   F 82000694 82C4C46C 0E8 ( 232)    NtQueryInformationFile
+   F 82000698 82C4C45C 143 ( 323)    RtlUnicodeToMultiByteN
+   F 8200069C 82C4C44C 0FD ( 253)    NtWaitForSingleObjectEx
+   V 820006A0          158 ( 344)    XboxKrnlVersion
+   F 820006A4 82C4C43C 0CE ( 206)    NtClearEvent
+   F 820006A8 82C4C42C 0FE ( 254)    NtWaitForMultipleObjectsEx
+   F 820006AC 82C4C41C 0F3 ( 243)    NtReleaseSemaphore
+   F 820006B0 82C4C40C 0D5 ( 213)    NtCreateSemaphore
+   F 820006B4 82C4C3FC 13F ( 319)    RtlTimeFieldsToTime
+   F 820006B8 82C4C3EC 0F7 ( 247)    NtSetInformationFile
+   F 820006BC 82C4C3DC 066 ( 102)    KeGetCurrentProcessType
+   V 820006C0          00E (  14)    ExEventObjectType
+   F 820006C4 82C4C3CC 195 ( 405)    XexGetModuleHandle
+   F 820006C8 82C4C3BC 197 ( 407)    XexGetProcedureAddress
+   F 820006CC 82C4C3AC 015 (  21)    ExRegisterTitleTerminateNotification
+   F 820006D0 82C4C39C 09D ( 157)    KeSetEvent
+   F 820006D4 82C4C38C 0B0 ( 176)    KeWaitForSingleObject
+   F 820006D8 82C4C37C 08F ( 143)    KeResetEvent
+   F 820006DC 82C4C36C 104 ( 260)    ObDeleteSymbolicLink
+   F 820006E0 82C4C35C 103 ( 259)    ObCreateSymbolicLink
+   F 820006E4 82C4C34C 135 ( 309)    RtlNtStatusToDosError
+   F 820006E8 82C4C33C 03B (  59) !! IoDismountVolume
+   F 820006EC 82C4C32C 05F (  95)    KeEnterCriticalRegion
+   F 820006F0 82C4C31C 0DB ( 219)    NtFlushBuffersFile
+   F 820006F4 82C4C30C 07D ( 125)    KeLeaveCriticalRegion
+   F 820006F8 82C4C2FC 13A ( 314)    _snprintf
+   F 820006FC 82C4C2EC 0CC ( 204)    NtAllocateVirtualMemory
+   F 82000700 82C4C2DC 0DC ( 220)    NtFreeVirtualMemory
+   F 82000704 82C4C2CC 0D2 ( 210)    NtCreateFile
+   F 82000708 82C4C2BC 256 ( 598)    XeKeysConsolePrivateKeySign
+   F 8200070C 82C4C2AC 0F0 ( 240)    NtReadFile
+   F 82000710 82C4C29C 0FF ( 255)    NtWriteFile
+   F 82000714 82C4C28C 192 ( 402)    XeCryptSha
+   F 82000718 82C4C27C 257 ( 599) !! XeKeysConsoleSignatureVerification
+   V 8200071C          193 ( 403)    XexExecutableModuleHandle
+   F 82000720 82C4C26C 12B ( 299)    RtlImageXexHeaderField
+   F 82000724 82C4C25C 12C ( 300)    RtlInitAnsiString
+   F 82000728 82C4C24C 0DF ( 223)    NtOpenFile
+   F 8200072C 82C4C23C 0EF ( 239)    NtQueryVolumeInformationFile
+   F 82000730 82C4C22C 259 ( 601) !! StfsCreateDevice
+   F 82000734 82C4C21C 25A ( 602) !! StfsControlDevice
+   V 82000738          1AE ( 430)    ExLoadedCommandLine
+   F 8200073C 82C4C20C 084 ( 132)    KeQuerySystemTime
+   F 82000740 82C4C1FC 140 ( 320)    RtlTimeToTimeFields
+   F 82000744 82C4C1EC 0F5 ( 245)    NtResumeThread
+   F 82000748 82C4C1DC 0F6 ( 246)    NtSetEvent
+   F 8200074C 82C4C1CC 003 (   3)    DbgPrint
+   F 82000750 82C4C1BC 194 ( 404)    XexCheckExecutablePrivilege
+   F 82000754 82C4C1AC 010 (  16)    ExGetXConfigSetting
+   F 82000758 82C4C19C 0D1 ( 209)    NtCreateEvent
+   F 8200075C 82C4C18C 0CF ( 207)    NtClose
+   F 82000760 82C4C17C 0C6 ( 198)    MmQueryStatistics
+   F 82000764 82C4C16C 0EE ( 238)    NtQueryVirtualMemory
+   F 82000768 82C4C15C 0C4 ( 196)    MmQueryAddressProtect
+   F 8200076C 82C4C14C 0BD ( 189)    MmFreePhysicalMemory
+   F 82000770 82C4C13C 0C5 ( 197)    MmQueryAllocationSize
+   F 82000774 82C4C12C 0BA ( 186)    MmAllocatePhysicalMemoryEx
+   V 82000778          059 (  89)    KeDebugMonitorData
+   F 8200077C 82C4C11C 097 ( 151)    KeSetAffinityThread
+   F 82000780 82C4C10C 081 ( 129)    KeQueryBasePriorityThread
+   V 82000784          01B (  27)    ExThreadObjectType
+   F 82000788 82C4C0FC 110 ( 272)    ObReferenceObjectByHandle
+   F 8200078C 82C4C0EC 099 ( 153)    KeSetBasePriorityThread
+   F 82000790 82C4C0DC 10B ( 267)    ObLookupThreadByThreadId
+   F 82000794 82C4C0CC 10E ( 270)    ObOpenObjectByPointer
+   F 82000798 82C4C0BC 105 ( 261)    ObDereferenceObject
+   F 8200079C 82C4C0AC 05D (  93)    KeEnableFpuExceptions
+   F 820007A0 82C4C09C 12F ( 303)    RtlInitializeCriticalSectionAndSpinCount
+   F 820007A4 82C4C08C 119 ( 281)    RtlCaptureContext
+   F 820007A8 82C4C07C 147 ( 327)    RtlUnwind
+   F 820007AC 82C4C06C 152 ( 338)    KeTlsAlloc
+   F 820007B0 82C4CA9C 06D ( 109)    KeInitializeApc
+   F 820007B4 82C4CAAC 00A (  10)    ExAllocatePoolWithTag
+   F 820007B8 82C4CABC 07A ( 122)    KeInsertQueueApc
+   V 820007BC          1BE ( 446)    VdGlobalDevice
+   V 820007C0          1BF ( 447)    VdGlobalXamDevice
+   F 820007C4 82C4CACC 1B4 ( 436)    VdEnableDisableClockGating
+   V 820007C8          266 ( 614)    KeCertMonitorData
+   F 820007CC 82C4CADC 083 ( 131)    KeQueryPerformanceFrequency
+   F 820007D0 82C4CAEC 1C7 ( 455)    VdPersistDisplay
+   F 820007D4 82C4CAFC 25B ( 603)    VdSwap
+   F 820007D8 82C4CB0C 1BD ( 445)    VdGetSystemCommandBuffer
+   F 820007DC 82C4CB1C 089 ( 137)    KeReleaseSpinLockFromRaisedIrql
+   F 820007E0 82C4CB2C 04D (  77)    KeAcquireSpinLockAtRaisedIrql
+   F 820007E4 82C4CB3C 1DF ( 479)    KiApcNormalRoutineNop
+   F 820007E8 82C4CB4C 1B6 ( 438)    VdEnableRingBufferRPtrWriteBack
+   F 820007EC 82C4CB5C 1C3 ( 451)    VdInitializeRingBuffer
+   F 820007F0 82C4CB6C 0BE ( 190)    MmGetPhysicalAddress
+   F 820007F4 82C4CB7C 1D9 ( 473)    VdSetSystemCommandBufferGpuIdentifierAddress
+   F 820007F8 82C4CB8C 13B ( 315)    sprintf
+   F 820007FC 82C4CB9C 1B9 ( 441)    VdGetCurrentDisplayGamma
+   F 82000800 82C4CBAC 06B ( 107)    KeLockL2
+   F 82000804 82C4CBBC 06C ( 108)    KeUnlockL2
+   F 82000808 82C4CBCC 06F ( 111)    KeInitializeDpc
+   F 8200080C 82C4CBDC 1DC ( 476)    VdShutdownEngines
+   F 82000810 82C4CBEC 1CA ( 458)    VdQueryVideoMode
+   F 82000814 82C4CBFC 1BA ( 442)    VdGetCurrentDisplayInformation
+   F 82000818 82C4CC0C 1D3 ( 467)    VdSetDisplayMode
+   F 8200081C 82C4CC1C 1D5 ( 469)    VdSetGraphicsInterruptCallback
+   F 82000820 82C4CC2C 1C2 ( 450)    VdInitializeEngines
+   F 82000824 82C4CC3C 1C6 ( 454)    VdIsHSIOTrainingSucceeded
+   F 82000828 82C4CC4C 1C9 ( 457)    VdQueryVideoFlags
+   F 8200082C 82C4CC5C 1B1 ( 433)    VdCallGraphicsNotificationRoutines
+   V 82000830          1C0 ( 448)    VdGpuClockInMHz
+   F 82000834 82C4CC6C 1C5 ( 453)    VdInitializeScalerCommandBuffer
+   F 82000838 82C4CC7C 269 ( 617)    VdRetrainEDRAM
+   F 8200083C 82C4CC8C 26A ( 618)    VdRetrainEDRAMWorker
+   V 82000840          1C1 ( 449)    VdHSIOCalibrationLock
+   F 82000844 82C4CC9C 276 ( 630)    XAudioOverrideSpeakerConfig
+   F 82000848 82C4CCAC 1FF ( 511)    XAudioGetSpeakerConfig
+   F 8200084C 82C4CCBC 18F ( 399)    XeCryptShaInit
+   F 82000850 82C4CCCC 190 ( 400)    XeCryptShaUpdate
+   F 82000854 82C4CCDC 191 ( 401)    XeCryptShaFinal
+   F 82000858 82C4C05C 153 ( 339)    KeTlsFree
+   F 8200085C 82C4C04C 155 ( 341)    KeTlsSetValue
+   F 82000860 82C4C03C 154 ( 340)    KeTlsGetValue
+   F 82000864 82C4C02C 052 (  82)    KeBugCheck
+   F 82000868 82C4C01C 1A5 ( 421)    __C_specific_handler
+   F 8200086C 82C4C00C 141 ( 321)    RtlTryEnterCriticalSection
+   F 82000870 82C4BFFC 130 ( 304)    RtlLeaveCriticalSection
+   F 82000874 82C4BFEC 125 ( 293)    RtlEnterCriticalSection
+   F 82000878 82C4BFDC 12E ( 302)    RtlInitializeCriticalSection
+   F 8200087C 82C4C52C 11B ( 283)    RtlCompareMemoryUlong
+   F 82000880 82C4CD6C 1F8 ( 504)    XAudioGetVoiceCategoryVolume
+   F 82000884 82C4CD7C 0C2 ( 194)    MmMapIoSpace
+   F 82000888 82C4CD8C 224 ( 548)    XMACreateContext
+   F 8200088C 82C4CD9C 226 ( 550)    XMAReleaseContext
+   F 82000890 82C4CDAC 0AF ( 175)    KeWaitForMultipleObjects
+   F 82000894 82C4CDBC 1F5 ( 501)    XAudioSubmitRenderDriverFrame
+   F 82000898 82C4CDCC 1F4 ( 500)    XAudioUnregisterRenderDriverClient
+   F 8200089C 82C4CDDC 1F3 ( 499)    XAudioRegisterRenderDriverClient
+   F 820008A0 82C4CDEC 2E1 ( 737)    RmcDeviceRequest
+   F 820008A4 82C4CDFC 2B1 ( 689)    MicDeviceRequest
+   F 820008A8 82C4CE0C 0CD ( 205)    NtCancelTimer
+   F 820008AC 82C4CE1C 0FA ( 250)    NtSetTimerEx
+   F 820008B0 82C4CE2C 0D7 ( 215)    NtCreateTimer
+
+i> 002A6AB0 -------------------- ACHIEVEMENTS --------------------
+i> 002A6AB0 1 - Tune Up - Calibrated your audio/video setup for the optimal Rock Band 3 experience. - 4
+i> 002A6AB0 2 - Self-Made Dude or Lady - Created a Character. - 5
+i> 002A6AB0 5 - Best. Name. Ever. - Renamed your band. - 5
+i> 002A6AB0 6 - Well Connected - Connected your Rock Band 3 Band with rockband.com. - 6
+i> 002A6AB0 8 - You Ain't Seen Nothing Yet - Maintained overdrive for 60 seconds. - 20
+i> 002A6AB0 9 - Millionaire Club - Got 1,000,000 on one song. - 25
+i> 002A6AB0 10 - Rock Band Master - 5 Starred on Medium (or 3 Starred on a higher difficulty) 50 Rock Band 3 songs. - 25
+i> 002A6AB0 11 - Rock Band Legend - 5 Star every song in Rock Band 3 on Hard - 30
+i> 002A6AB0 12 - Rock Band Immortal - 5 Starred the Rock Band 3 disc on Expert. - 50
+i> 002A6AB0 13 - Alex's Luggage Combination - Beat a Rock Band 3 score of 12,345,678. - 30
+i> 002A6AB0 14 - Hometown Threwdown - Completed the "Hometown Throwdown" Road Challenge. - 20
+i> 002A6AB0 15 - Real Nor'easter - Completed "The Wicked Awesome Tour". - 20
+i> 002A6AB0 16 - Hell Defrosted - Won all rewards on the "Hell Freezes Over" Road Challenge. - 25
+i> 002A6AB0 17 - Wilderness Survival - Complete the "Through the Wilderness, Eh?" Road Challenge. - 20
+i> 002A6AB0 18 - Major Mileage - Got 90 or more spades on "The Long Drive South" Road Challenge. - 25
+i> 002A6AB0 19 - Party Animal - Completed the "Total Debauchery" Road Challenge. - 20
+i> 002A6AB0 20 - The Connoisseur's Connoisseur - Got 90 or more spades on "The European Connoisseur" Road Challenge. - 25
+i> 002A6AB0 21 - Mile High Club - Completed the "Really Frequent Flyers" Road Challenge. - 25
+i> 002A6AB0 22 - Ultimate Road Warrior - Won all awards on the "Really Frequent Flyers" Road Challenge. - 30
+i> 002A6AB0 23 - HOPO-cidal Maniac - Killed 53,596 Hammer-ons and Pull-offs. - 25
+i> 002A6AB0 24 - Bleeding Fingers - Get 85% on all Guitar Solos in Rock Band 3 on Hard or Expert. - 30
+i> 002A6AB0 25 - Guitar Perfectionist - Got 100% accuracy on Expert Guitar.  - 25
+i> 002A6AB0 26 - Guitar Apprentice - 5 Starred on Easy Guitar (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 27 - Bass Streaker - Get a streak of 500 notes on Bass. - 10
+i> 002A6AB0 28 - Most Authentic Strummer - Hit 100% of the notes, only strumming up, on Hard Bass.  - 10
+i> 002A6AB0 29 - Bass Apprentice - 5 Starred on Easy (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs.
+ - 20
+i> 002A6AB0 30 - Drum Roll, Please! - Nailed a drum roll. - 10
+i> 002A6AB0 31 - Fastest Feet - Hit 90% of the Kick notes in a song on Hard Drums. - 15
+i> 002A6AB0 32 - Drums Apprentice - 5 Starred on Easy Drums (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 33 - Keys Streaker - Got a streak of 350 notes on Keys. - 15
+i> 002A6AB0 34 - Keys Apprentice - 5 Starred on Easy Keys (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 35 - Pro Bass Apprentice - 5 Starred on Easy Pro Bass (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 36 - Drum Trainer Initiate - Completed the introductory Pro Drum Trainer lessons. - 15
+i> 002A6AB0 37 - Drum Trainer Graduate - Completed the final Pro Drum Trainer lessons. - 30
+i> 002A6AB0 38 - Play a Real Guitar Already! - Played "The Hardest Button to Button" on Pro Guitar. - 15
+i> 002A6AB0 39 - Pro Guitar to the Max - Maxed out your Score Multiplier meter on Pro Guitar. - 15
+i> 002A6AB0 40 - Power Chords - Completed the "Power Chords" lessons in the Pro Guitar trainer. - 15
+i> 002A6AB0 41 - Complex Chords - Completed the "More Chord Holding and Arpeggiation" Pro Guitar lessons. - 25
+i> 002A6AB0 42 - Pro Guitar Apprentice - 5 Starred on Easy Pro Guitar (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 43 - Pro Keyboardist - Hit at least 90% of the notes in 3 songs on Expert Pro Keys. - 15
+i> 002A6AB0 44 - Pro Keys Graduate - Completed the final Pro Keys trainers. - 25
+i> 002A6AB0 45 - Pro Keys to the Max - Max out your Score Multiplier meter on Pro Keys.  - 15
+i> 002A6AB0 46 - Pro Keys Apprentice - 5 Starred on Easy Pro Keys (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 47 - Triple Awesome - Got a Triple Awesome while playing with Vocal Harmonies. - 10
+i> 002A6AB0 48 - Is This Just Fantasy? - Nailed all triple awesomes in "Bohemian Rhapsody".  - 25
+i> 002A6AB0 49 - Vocals Showmanship - Deployed overdrive four times in a single song as a vocalist. - 10
+i> 002A6AB0 50 - Tambourine Master - Hit 100% of the notes in a percussion section. - 10
+i> 002A6AB0 51 - Vocal Virtuoso - Earn an Awesome rating on at least 90% of the phrases in 6 songs on Hard Vocals. - 15
+i> 002A6AB0 52 - Vocal Apprentice - 5 Starred on Easy Vocals (or 3 Starred on a higher difficulty) 25 Rock Band 3 songs. - 20
+i> 002A6AB0 53 - The Endless Setlist III - Sucessfully completed "The Endless Setlist III!" - 50
+i> 002A6AB0 54 - Downloader - Played a downloaded song. - 20
+i> 002A6AB0 55 - Mercurial Vocalist - Earned 5 stars on Vocals on a downloaded Queen song. - 30
+i> 002A6AB0 56 - Live Free or Die - Beat all of the free downloadable songs for Rock Band. - 25
+i> 002A6AB0 57 - Fistful of Awesome - Beat 5 downloaded songs. - 15
+i> 002A6AB0 58 - Accountant's Dozen - Beat 12 downloaded songs. - 15
+i> 002A6AB0 59 - Decent Collection - Beat 20 downloaded songs. - 15
+i> 002A6AB0 60 - I Want It All - Play a downloaded Queen song. - 15
+i> 002A6AB0 61 - Shameless Self-Promotion - Downloaded and played three songs from a band that has Harmonix team members in it.  - 15
+i> 002A6AB0 62 - Just Another Band Out of Boston - 5 Star any Boston song. - 15
+i> 002A6AB0 63 - Face Melter - Melted faces by beating three '80s Metal songs. - 25
+i> 002A6AB0 64 - Dave Grohl Band - Beat 5 songs from any band that has had Dave Grohl as a member. - 30
+i> 002A6AB0 65 - The Perfect Drug - Somehow managed a 200 note streak on "The Perfect Drug". - 30
+i> 002A6AB0 ----------------- END OF ACHIEVEMENTS ----------------
+i> 002A6AB0 RB3DX: MemAlloc probe installed via __savegprlr_23 override at 0x82829244 (filter lr=0x827BCD40)
+i> 002A6AB0 RB3DX: SI DLL-hook verify thread started (--si_hook_verify)
+i> 002A6AB1 SI HOOKVERIFY[0]: DLL-base word@0x84000000=0xEEEEEEEE (unmapped -- DLL NOT loaded)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0x7D8802A6 [STOCK mflr r12 -- NOT hooked (DLL not loaded / init skipped)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0x7D8802A6 [STOCK mflr r12 -- NOT hooked (DLL not loaded / init skipped)]
+i> 002A6AB0 RB3DX: first-boot calibration skip thread started (--rb3dx_skip_calibration)
+i> 002A6AB0 Added handle:F8000024 for N2xe6kernel7XObjectE
+F> 002A6AB0 HostPathDevice::ResolvePath(\RB3Enhanced.dll)
+F> 002A6AB0 HostPathDevice::ResolvePath(\RB3Enhanced.dllp)
+BOOT: Title loaded successfully
+BOOT: Title ID: 0x45410914
+BOOT: Title Name: Rock Band 3
+BOOT: Kernel state initialized
+i> 002A6AB0 Module \Device\Harddisk0\Partition1\RB3Enhanced.dll:
+    Module Flags: 00000009
+Security Header:
+     Image Flags: 00000000
+    Load Address: 84000000
+      Image Size: 00850000
+    Export Table: 00000000
+Optional Header Count: 5
+  XEX_HEADER_FILE_FORMAT_INFO (TODO):
+  XEX_HEADER_ENTRY_POINT: 8401CF90
+  XEX_HEADER_IMAGE_BASE_ADDRESS: 84000000
+  XEX_HEADER_IMPORT_LIBRARIES:
+    xam.xex - 84 imports
+      Version: 0.0.21256.32
+      Min Version: 0.0.1861.32
+    xboxkrnl.exe - 52 imports
+      Version: 0.0.21256.32
+      Min Version: 0.0.1861.32
+  XEX_HEADER_ORIGINAL_PE_NAME: RB3Enhanced.exe
+Sections:
+    0 RODATA    1 pages    84000000 - 84010000 (65536 bytes)
+    1 CODE      1 pages    84010000 - 84020000 (65536 bytes)
+    2 RWDATA    1 pages    84020000 - 84030000 (65536 bytes)
+    3 RWDATA    1 pages    84030000 - 84040000 (65536 bytes)
+    4 RWDATA    1 pages    84040000 - 84050000 (65536 bytes)
+    5 RWDATA    1 pages    84050000 - 84060000 (65536 bytes)
+    6 RWDATA    1 pages    84060000 - 84070000 (65536 bytes)
+    7 RWDATA    1 pages    84070000 - 84080000 (65536 bytes)
+    8 RWDATA    1 pages    84080000 - 84090000 (65536 bytes)
+    9 RWDATA    1 pages    84090000 - 840A0000 (65536 bytes)
+   10 RWDATA    1 pages    840A0000 - 840B0000 (65536 bytes)
+   11 RWDATA    1 pages    840B0000 - 840C0000 (65536 bytes)
+   12 RWDATA    1 pages    840C0000 - 840D0000 (65536 bytes)
+   13 RWDATA    1 pages    840D0000 - 840E0000 (65536 bytes)
+   14 RWDATA    1 pages    840E0000 - 840F0000 (65536 bytes)
+   15 RWDATA    1 pages    840F0000 - 84100000 (65536 bytes)
+   16 RWDATA    1 pages    84100000 - 84110000 (65536 bytes)
+   17 RWDATA    1 pages    84110000 - 84120000 (65536 bytes)
+   18 RWDATA    1 pages    84120000 - 84130000 (65536 bytes)
+   19 RWDATA    1 pages    84130000 - 84140000 (65536 bytes)
+   20 RWDATA    1 pages    84140000 - 84150000 (65536 bytes)
+   21 RWDATA    1 pages    84150000 - 84160000 (65536 bytes)
+   22 RWDATA    1 pages    84160000 - 84170000 (65536 bytes)
+   23 RWDATA    1 pages    84170000 - 84180000 (65536 bytes)
+   24 RWDATA    1 pages    84180000 - 84190000 (65536 bytes)
+   25 RWDATA    1 pages    84190000 - 841A0000 (65536 bytes)
+   26 RWDATA    1 pages    841A0000 - 841B0000 (65536 bytes)
+   27 RWDATA    1 pages    841B0000 - 841C0000 (65536 bytes)
+   28 RWDATA    1 pages    841C0000 - 841D0000 (65536 bytes)
+   29 RWDATA    1 pages    841D0000 - 841E0000 (65536 bytes)
+   30 RWDATA    1 pages    841E0000 - 841F0000 (65536 bytes)
+   31 RWDATA    1 pages    841F0000 - 84200000 (65536 bytes)
+   32 RWDATA    1 pages    84200000 - 84210000 (65536 bytes)
+   33 RWDATA    1 pages    84210000 - 84220000 (65536 bytes)
+   34 RWDATA    1 pages    84220000 - 84230000 (65536 bytes)
+   35 RWDATA    1 pages    84230000 - 84240000 (65536 bytes)
+   36 RWDATA    1 pages    84240000 - 84250000 (65536 bytes)
+   37 RWDATA    1 pages    84250000 - 84260000 (65536 bytes)
+   38 RWDATA    1 pages    84260000 - 84270000 (65536 bytes)
+   39 RWDATA    1 pages    84270000 - 84280000 (65536 bytes)
+   40 RWDATA    1 pages    84280000 - 84290000 (65536 bytes)
+   41 RWDATA    1 pages    84290000 - 842A0000 (65536 bytes)
+   42 RWDATA    1 pages    842A0000 - 842B0000 (65536 bytes)
+   43 RWDATA    1 pages    842B0000 - 842C0000 (65536 bytes)
+   44 RWDATA    1 pages    842C0000 - 842D0000 (65536 bytes)
+   45 RWDATA    1 pages    842D0000 - 842E0000 (65536 bytes)
+   46 RWDATA    1 pages    842E0000 - 842F0000 (65536 bytes)
+   47 RWDATA    1 pages    842F0000 - 84300000 (65536 bytes)
+   48 RWDATA    1 pages    84300000 - 84310000 (65536 bytes)
+   49 RWDATA    1 pages    84310000 - 84320000 (65536 bytes)
+   50 RWDATA    1 pages    84320000 - 84330000 (65536 bytes)
+   51 RWDATA    1 pages    84330000 - 84340000 (65536 bytes)
+   52 RWDATA    1 pages    84340000 - 84350000 (65536 bytes)
+   53 RWDATA    1 pages    84350000 - 84360000 (65536 bytes)
+   54 RWDATA    1 pages    84360000 - 84370000 (65536 bytes)
+   55 RWDATA    1 pages    84370000 - 84380000 (65536 bytes)
+   56 RWDATA    1 pages    84380000 - 84390000 (65536 bytes)
+   57 RWDATA    1 pages    84390000 - 843A0000 (65536 bytes)
+   58 RWDATA    1 pages    843A0000 - 843B0000 (65536 bytes)
+   59 RWDATA    1 pages    843B0000 - 843C0000 (65536 bytes)
+   60 RWDATA    1 pages    843C0000 - 843D0000 (65536 bytes)
+   61 RWDATA    1 pages    843D0000 - 843E0000 (65536 bytes)
+   62 RWDATA    1 pages    843E0000 - 843F0000 (65536 bytes)
+   63 RWDATA    1 pages    843F0000 - 84400000 (65536 bytes)
+   64 RWDATA    1 pages    84400000 - 84410000 (65536 bytes)
+   65 RWDATA    1 pages    84410000 - 84420000 (65536 bytes)
+   66 RWDATA    1 pages    84420000 - 84430000 (65536 bytes)
+   67 RWDATA    1 pages    84430000 - 84440000 (65536 bytes)
+   68 RWDATA    1 pages    84440000 - 84450000 (65536 bytes)
+   69 RWDATA    1 pages    84450000 - 84460000 (65536 bytes)
+   70 RWDATA    1 pages    84460000 - 84470000 (65536 bytes)
+   71 RWDATA    1 pages    84470000 - 84480000 (65536 bytes)
+   72 RWDATA    1 pages    84480000 - 84490000 (65536 bytes)
+   73 RWDATA    1 pages    84490000 - 844A0000 (65536 bytes)
+   74 RWDATA    1 pages    844A0000 - 844B0000 (65536 bytes)
+   75 RWDATA    1 pages    844B0000 - 844C0000 (65536 bytes)
+   76 RWDATA    1 pages    844C0000 - 844D0000 (65536 bytes)
+   77 RWDATA    1 pages    844D0000 - 844E0000 (65536 bytes)
+   78 RWDATA    1 pages    844E0000 - 844F0000 (65536 bytes)
+   79 RWDATA    1 pages    844F0000 - 84500000 (65536 bytes)
+   80 RWDATA    1 pages    84500000 - 84510000 (65536 bytes)
+   81 RWDATA    1 pages    84510000 - 84520000 (65536 bytes)
+   82 RWDATA    1 pages    84520000 - 84530000 (65536 bytes)
+   83 RWDATA    1 pages    84530000 - 84540000 (65536 bytes)
+   84 RWDATA    1 pages    84540000 - 84550000 (65536 bytes)
+   85 RWDATA    1 pages    84550000 - 84560000 (65536 bytes)
+   86 RWDATA    1 pages    84560000 - 84570000 (65536 bytes)
+   87 RWDATA    1 pages    84570000 - 84580000 (65536 bytes)
+   88 RWDATA    1 pages    84580000 - 84590000 (65536 bytes)
+   89 RWDATA    1 pages    84590000 - 845A0000 (65536 bytes)
+   90 RWDATA    1 pages    845A0000 - 845B0000 (65536 bytes)
+   91 RWDATA    1 pages    845B0000 - 845C0000 (65536 bytes)
+   92 RWDATA    1 pages    845C0000 - 845D0000 (65536 bytes)
+   93 RWDATA    1 pages    845D0000 - 845E0000 (65536 bytes)
+   94 RWDATA    1 pages    845E0000 - 845F0000 (65536 bytes)
+   95 RWDATA    1 pages    845F0000 - 84600000 (65536 bytes)
+   96 RWDATA    1 pages    84600000 - 84610000 (65536 bytes)
+   97 RWDATA    1 pages    84610000 - 84620000 (65536 bytes)
+   98 RWDATA    1 pages    84620000 - 84630000 (65536 bytes)
+   99 RWDATA    1 pages    84630000 - 84640000 (65536 bytes)
+  100 RWDATA    1 pages    84640000 - 84650000 (65536 bytes)
+  101 RWDATA    1 pages    84650000 - 84660000 (65536 bytes)
+  102 RWDATA    1 pages    84660000 - 84670000 (65536 bytes)
+  103 RWDATA    1 pages    84670000 - 84680000 (65536 bytes)
+  104 RWDATA    1 pages    84680000 - 84690000 (65536 bytes)
+  105 RWDATA    1 pages    84690000 - 846A0000 (65536 bytes)
+  106 RWDATA    1 pages    846A0000 - 846B0000 (65536 bytes)
+  107 RWDATA    1 pages    846B0000 - 846C0000 (65536 bytes)
+  108 RWDATA    1 pages    846C0000 - 846D0000 (65536 bytes)
+  109 RWDATA    1 pages    846D0000 - 846E0000 (65536 bytes)
+  110 RWDATA    1 pages    846E0000 - 846F0000 (65536 bytes)
+  111 RWDATA    1 pages    846F0000 - 84700000 (65536 bytes)
+  112 RWDATA    1 pages    84700000 - 84710000 (65536 bytes)
+  113 RWDATA    1 pages    84710000 - 84720000 (65536 bytes)
+  114 RWDATA    1 pages    84720000 - 84730000 (65536 bytes)
+  115 RWDATA    1 pages    84730000 - 84740000 (65536 bytes)
+  116 RWDATA    1 pages    84740000 - 84750000 (65536 bytes)
+  117 RWDATA    1 pages    84750000 - 84760000 (65536 bytes)
+  118 RWDATA    1 pages    84760000 - 84770000 (65536 bytes)
+  119 RWDATA    1 pages    84770000 - 84780000 (65536 bytes)
+  120 RWDATA    1 pages    84780000 - 84790000 (65536 bytes)
+  121 RWDATA    1 pages    84790000 - 847A0000 (65536 bytes)
+  122 RWDATA    1 pages    847A0000 - 847B0000 (65536 bytes)
+  123 RWDATA    1 pages    847B0000 - 847C0000 (65536 bytes)
+  124 RWDATA    1 pages    847C0000 - 847D0000 (65536 bytes)
+  125 RWDATA    1 pages    847D0000 - 847E0000 (65536 bytes)
+  126 RWDATA    1 pages    847E0000 - 847F0000 (65536 bytes)
+  127 RWDATA    1 pages    847F0000 - 84800000 (65536 bytes)
+  128 RWDATA    1 pages    84800000 - 84810000 (65536 bytes)
+  129 RWDATA    1 pages    84810000 - 84820000 (65536 bytes)
+  130 RWDATA    1 pages    84820000 - 84830000 (65536 bytes)
+  131 RWDATA    1 pages    84830000 - 84840000 (65536 bytes)
+  132 RWDATA    1 pages    84840000 - 84850000 (65536 bytes)
+Imports:
+ xam - 42 imports
+   Version: 0.0.21256.32
+   Min Version: 0.0.1861.32
+
+         Total:   42
+         Known:  100% (42 known, 0 unknown)
+   Implemented:   73% (31 implemented, 11 unimplemented)
+
+   F 84000400 8401F3B0 049 (  73)    NetDll_XNetGetTitleXnAddr
+   F 84000404 8401F3C0 20A ( 522)    XamUserGetXUID
+   F 84000408 8401F3D0 20E ( 526)    XamUserGetName
+   F 8400040C 8401F3E0 2CA ( 714)    XamShowMessageBoxUI
+   F 84000410 8401F3F0 2C1 ( 705)    XamShowKeyboardUI
+   F 84000414 8401F400 001 (   1)    NetDll_WSAStartup
+   F 84000418 8401F410 103 ( 259) !! NetDll_UpnpActionGetResults
+   F 8400041C 8401F420 102 ( 258) !! NetDll_UpnpActionCreate
+   F 84000420 8401F430 100 ( 256) !! NetDll_UpnpDescribeGetResults
+   F 84000424 8401F440 0FF ( 255) !! NetDll_UpnpDescribeCreate
+   F 84000428 8401F450 108 ( 264) !! NetDll_UpnpCloseHandle
+   F 8400042C 8401F460 0FE ( 254) !! NetDll_UpnpSearchGetDevices
+   F 84000430 8401F470 0FD ( 253) !! NetDll_UpnpSearchCreate
+   F 84000434 8401F480 107 ( 263) !! NetDll_UpnpDoWork
+   F 84000438 8401F490 0FB ( 251) !! NetDll_UpnpStartup
+   F 8400043C 8401F4A0 25E ( 606)    XamContentGetDeviceData
+   F 84000440 8401F4B0 25B ( 603)    XamContentDelete
+   F 84000444 8401F4C0 003 (   3)    NetDll_socket
+   F 84000448 8401F4D0 007 (   7)    NetDll_setsockopt
+   F 8400044C 8401F4E0 033 (  51)    NetDll_XNetStartup
+   F 84000450 8401F4F0 039 (  57)    NetDll_XNetXnAddrToInAddr
+   F 84000454 8401F500 047 (  71)    NetDll_XNetQosServiceLookup
+   F 84000458 8401F510 046 (  70) !! NetDll_XNetQosLookup
+   F 8400045C 8401F520 210 ( 528)    XamUserGetSigninState
+   F 84000460 8401F530 227 ( 551)    XamUserGetSigninInfo
+   F 84000464 8401F540 2BF ( 703)    XamShowFriendsUI
+   F 84000468 8401F550 13B ( 315) !! XNetLogonGetExtendedStatus
+   F 8400046C 8401F560 004 (   4)    NetDll_closesocket
+   F 84000470 8401F570 005 (   5)    NetDll_shutdown
+   F 84000474 8401F580 00B (  11)    NetDll_bind
+   F 84000478 8401F590 00C (  12)    NetDll_connect
+   F 8400047C 8401F5A0 00D (  13)    NetDll_listen
+   F 84000480 8401F5B0 00E (  14)    NetDll_accept
+   F 84000484 8401F5C0 016 (  22)    NetDll_send
+   F 84000488 8401F5D0 012 (  18)    NetDll_recv
+   F 8400048C 8401F5E0 018 (  24)    NetDll_sendto
+   F 84000490 8401F5F0 014 (  20)    NetDll_recvfrom
+   F 84000494 8401F600 006 (   6)    NetDll_ioctlsocket
+   F 84000498 8401F610 01B (  27)    NetDll_WSAGetLastError
+   F 8400049C 8401F620 04E (  78)    NetDll_XNetGetOpt
+   F 840004A0 8401F630 1A4 ( 420)    XamLoaderLaunchTitle
+   F 840004A4 8401F640 193 ( 403)    XamInputGetKeystroke
+
+ xboxkrnl - 26 imports
+   Version: 0.0.21256.32
+   Min Version: 0.0.1861.32
+
+         Total:   26
+         Known:  100% (26 known, 0 unknown)
+   Implemented:   96% (25 implemented, 1 unimplemented)
+
+   F 840004AC 8401F650 003 (   3)    DbgPrint
+   F 840004B0 8401F660 256 ( 598)    XeKeysConsolePrivateKeySign
+   F 840004B4 8401F670 182 ( 386)    XeCryptHmacSha
+   F 840004B8 8401F680 159 ( 345)    XeCryptAesKey
+   F 840004BC 8401F690 15B ( 347)    XeCryptAesCbc
+   F 840004C0 8401F6A0 0BF ( 191) !! MmIsAddressValid
+   F 840004C4 8401F6B0 103 ( 259)    ObCreateSymbolicLink
+   F 840004C8 8401F6C0 12C ( 300)    RtlInitAnsiString
+   F 840004CC 8401F6D0 197 ( 407)    XexGetProcedureAddress
+   F 840004D0 8401F6E0 195 ( 405)    XexGetModuleHandle
+   F 840004D4 8401F6F0 135 ( 309)    RtlNtStatusToDosError
+   F 840004D8 8401F700 0D2 ( 210)    NtCreateFile
+   F 840004DC 8401F710 0F0 ( 240)    NtReadFile
+   F 840004E0 8401F720 0FF ( 255)    NtWriteFile
+   F 840004E4 8401F730 0CF ( 207)    NtClose
+   F 840004E8 8401F740 0E8 ( 232)    NtQueryInformationFile
+   F 840004EC 8401F750 0F7 ( 247)    NtSetInformationFile
+   F 840004F0 8401F760 0E7 ( 231)    NtQueryFullAttributesFile
+   F 840004F4 8401F770 0E4 ( 228)    NtQueryDirectoryFile
+   F 840004F8 8401F780 0DF ( 223)    NtOpenFile
+   F 840004FC 8401F790 019 (  25)    ExTerminateThread
+   F 84000500 8401F7A0 00D (  13)    ExCreateThread
+   F 84000504 8401F7B0 05A (  90)    KeDelayExecutionThread
+   F 84000508 8401F7C0 084 ( 132)    KeQuerySystemTime
+   F 8400050C 8401F7D0 143 ( 323)    RtlUnicodeToMultiByteN
+   F 84000510 8401F7E0 151 ( 337)    vswprintf
+
+w> 002A6AB0 SI LOADDLL: RB3Enhanced.dll loaded entry=0x8401CF90 is_dll=true head@0x84000000=0x4D5A9000
+w> 002A6AB0 SI LOADDLL: from-source path (a) armed -- InitSameInstrument @0x84019830 will run mid-boot on the guest thread (--si_init_va).
+w> 002A6AB0 SI LOADDLL: poked config.AllowSameInstrument @0x84829590 0 -> 1 (--si_force_allow_va; hook bodies armed)
+i> 002A6AB0 Added handle:F8000028 for N2xe6kernel7XObjectE
+i> 002A6AB0 XThreadF8000028 (5) Stack: 70110000-70130000
+i> 002A6AB0 KernelState: Launching module...
+i> 002A6AB0 Added handle:F800002C for N2xe6kernel7XObjectE
+i> 002A6AB0 XThreadF800002C (6) Stack: 70150000-70190000
+K> F800002C XThread::Execute thid 6 (handle=F800002C, 'Main XThread (F800002C)', native=B17FC6C0)
+i> 002A6AB0 Title launched, entering main loop...
+K> F8000028 XThread::Execute thid 5 (handle=F8000028, 'Kernel Dispatch (F8000028)', native=B27FD6C0, <host>)
+i> F800002C RB3DX ALLOC PROBE: savegprlr_23 warmup #1 lr=0x8282A318
+i> F800002C RB3DX ALLOC PROBE: savegprlr_23 warmup #2 lr=0x8282A318
+i> F800002C RB3DX ALLOC PROBE: savegprlr_23 warmup #3 lr=0x8282A318
+i> F800002C RB3DX ALLOC PROBE: MemAlloc warmup #1 size=0x00000080 align=0 callerLR(r12)=0x827BB130 sp=0x7018FA50
+i> F800002C RB3DX ALLOC PROBE: MemAlloc warmup #2 size=0x0000001C align=0 callerLR(r12)=0x827BAFA4 sp=0x7018F9C0
+i> F800002C RB3DX ALLOC PROBE: MemAlloc warmup #3 size=0x0000001C align=0 callerLR(r12)=0x827BAFA4 sp=0x7018F9C0
+i> F800002C RB3DX ALLOC PROBE: MemAlloc warmup #4 size=0x0000001C align=0 callerLR(r12)=0x827BAFA4 sp=0x7018F9C0
+i> F800002C RB3DX ALLOC PROBE: MemAlloc warmup #5 size=0x0000001C align=0 callerLR(r12)=0x827BAFA4 sp=0x7018F9C0
+i> F800002C Added handle:F8000030 for N2xe6kernel7XObjectE
+i> F800002C Added handle:F8000034 for N2xe6kernel7XObjectE
+i> F800002C Added handle:F8000038 for N2xe6kernel7XObjectE
+i> F800002C XexLoadImage: 'xam.xex' flags=0x9 min_version=0
+i> F800002C XexLoadImage: 'xam.xex' -> status=0x00000000 hmodule=0x00031000
+F> F800002C HostPathDevice::ResolvePath(\gen\main_xbox.hdr)
+i> F800002C NtCreateFile: d:\gen\patch_xbox.hdr disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800003C for N2xe6kernel7XObjectE
+i> F800002C Removed handle:F800003C for N2xe6kernel5XFileE
+i> F800002C NtCreateFile: d:\gen\patch_xbox.hdr disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800003C for N2xe6kernel7XObjectE
+i> F800002C NtReadFile #1 tid=6 handle=0xF800003C len=131072 offset=0
+i> F800002C NtReadFile #2 tid=6 handle=0xF800003C len=131072 offset=131072
+i> F800002C NtReadFile #3 tid=6 handle=0xF800003C len=131072 offset=262144
+i> F800002C NtReadFile #4 tid=6 handle=0xF800003C len=22528 offset=393216
+w> F800002C NtReadFile RESULT handle=0xF800003C req_len=22528 offset=393216 -> status=0x00000000 bytes_read=22423
+i> F800002C Removed handle:F800003C for N2xe6kernel5XFileE
+i> F800002C NtCreateFile: d:\gen\main_xbox.hdr disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800003C for N2xe6kernel7XObjectE
+i> F800002C NtReadFile #5 tid=6 handle=0xF800003C len=131072 offset=0
+i> F800002C NtReadFile #6 tid=6 handle=0xF800003C len=131072 offset=131072
+i> F800002C NtReadFile #7 tid=6 handle=0xF800003C len=131072 offset=262144
+i> F800002C NtReadFile #8 tid=6 handle=0xF800003C len=118784 offset=393216
+w> F800002C NtReadFile RESULT handle=0xF800003C req_len=118784 offset=393216 -> status=0x00000000 bytes_read=118065
+i> F800002C Removed handle:F800003C for N2xe6kernel5XFileE
+i> F800002C NtCreateFile: d:\gen\main_xbox_0.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800003C for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_0.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000040 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_1.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000044 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_1.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000048 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_2.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800004C for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_2.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000050 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_3.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000054 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_3.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000058 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_4.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800005C for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_4.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000060 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_5.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000064 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_5.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000068 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_6.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800006C for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_6.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000070 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_7.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000074 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_7.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000078 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_8.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800007C for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_8.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000080 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_9.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000084 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\main_xbox_9.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000088 for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\patch_xbox_0.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F800008C for N2xe6kernel7XObjectE
+i> F800002C NtCreateFile: d:\gen\patch_xbox_0.ark disp=1
+F> F800002C HostPathDevice::ResolvePath(\gen)
+i> F800002C Added handle:F8000090 for N2xe6kernel7XObjectE
+i> F800002C NtReadFile #9 tid=6 handle=0xF8000044 len=65536 offset=0
+i> F800002C NtReadFile #10 tid=6 handle=0xF800008C len=65536 offset=95682560
+i> F800002C NtReadFile #11 tid=6 handle=0xF8000044 len=65536 offset=65536
+i> F800002C NtReadFile #12 tid=6 handle=0xF800008C len=65536 offset=95748096
+i> F800002C NtReadFile #13 tid=6 handle=0xF800008C len=65536 offset=589824
+i> F800002C NtReadFile #14 tid=6 handle=0xF800008C len=65536 offset=655360
+i> F800002C NtReadFile #15 tid=6 handle=0xF800008C len=65536 offset=65536
+i> F800002C NtReadFile #16 tid=6 handle=0xF800008C len=65536 offset=12255232
+i> F800002C NtReadFile #17 tid=6 handle=0xF800008C len=65536 offset=99680256
+i> F800002C NtReadFile #18 tid=6 handle=0xF800008C len=65536 offset=0
+i> F800002C NtReadFile #19 tid=6 handle=0xF8000044 len=65536 offset=131072
+i> F800002C NtReadFile #20 tid=6 handle=0xF800008C len=65536 offset=5242880
+i> F800002C NtReadFile #21 tid=6 handle=0xF8000044 len=65536 offset=196608
+i> 002A6AB1 SI HOOKVERIFY[1]: DLL-base word@0x84000000=0x4D5A9000 (mapped)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+i> F800002C NtReadFile #22 tid=6 handle=0xF8000044 len=65536 offset=262144
+i> F800002C NtReadFile #23 tid=6 handle=0xF8000044 len=65536 offset=327680
+i> F800002C NtReadFile #24 tid=6 handle=0xF8000044 len=65536 offset=393216
+i> F800002C NtReadFile #25 tid=6 handle=0xF8000044 len=65536 offset=458752
+i> F800002C NtReadFile #26 tid=6 handle=0xF8000044 len=65536 offset=524288
+i> F800002C NtReadFile #27 tid=6 handle=0xF800008C len=65536 offset=259588096
+i> F800002C NtReadFile #28 tid=6 handle=0xF800008C len=65536 offset=259653632
+i> F800002C NtReadFile #29 tid=6 handle=0xF800008C len=65536 offset=259719168
+i> F800002C NtReadFile #30 tid=6 handle=0xF800008C len=65536 offset=104857600
+i> F800002C NtReadFile #31 tid=6 handle=0xF800008C len=65536 offset=104923136
+i> F800002C NtReadFile #32 tid=6 handle=0xF8000044 len=65536 offset=720896
+i> 002A6AB1 SI HOOKVERIFY[2]: DLL-base word@0x84000000=0x4D5A9000 (mapped)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+i> F800002C NtReadFile #33 tid=6 handle=0xF8000074 len=65536 offset=26411008
+i> F800002C NtReadFile #34 tid=6 handle=0xF8000074 len=65536 offset=26476544
+i> F800002C Added handle:F8000094 for N2xe6kernel7XObjectE
+i> F800002C XThreadF8000094 (7) Stack: 701B0000-701F0000
+i> F800002C ExCreateThread: start=0x8252A3B0 ctx=0x00000000 flags=0x1 stack=262144 -> tid=7
+K> F8000094 XThread::Execute thid 7 (handle=F8000094, 'XThreadA3FFF6C0 (F8000094)', native=A3FFF6C0)
+w> F800002C SI LOADDLL: (a) invoking InitSameInstrument @0x84019830 on guest thread (MemAlloc call #800)
+!> F800002C ==== CRASH DUMP ====
+!> F800002C Thread ID (Host: 0xB17FC6C0 / Guest: 0x00000006)
+!> F800002C Thread Handle: 0xF800002C
+!> F800002C PC: 0x840198B4
+!> F800002C Guest lr: 0xBCBCBCBC
+!> F800002C Guest ctr: 0x00000000  CR=0x22000444  XER[CA/OV/SO]=1/0/0
+!> F800002C Registers:
+!> F800002C  r0   = 0000000000000000
+!> F800002C  r1   = 000000007018F1D0
+!> F800002C  r2   = 0000000000000000
+!> F800002C  r3   = 0000000000000260
+!> F800002C  r4   = 0000000000000000
+!> F800002C  r5   = 000000007018F424
+!> F800002C  r6   = 000000007018F470
+!> F800002C  r7   = 0000000000000000
+!> F800002C  r8   = FFFFFFFFFFFFFFFF
+!> F800002C  r9   = 0000000000000208
+!> F800002C  r10  = 0000000000000008
+!> F800002C  r11  = 000000007018F6E4
+!> F800002C  r12  = 00000000BCBCBCBC
+!> F800002C  r13  = 0000000000044000
+!> F800002C  r14  = 0000000000000000
+!> F800002C  r15  = 0000000000000000
+!> F800002C  r16  = 0000000000000000
+!> F800002C  r17  = 0000000000000000
+!> F800002C  r18  = 0000000000000000
+!> F800002C  r19  = 0000000000000000
+!> F800002C  r20  = 0000000000000000
+!> F800002C  r21  = 000000007018FD40
+!> F800002C  r22  = 0000000000000000
+!> F800002C  r23  = 0000000000000000
+!> F800002C  r24  = 0000000000000000
+!> F800002C  r25  = 0000000000000000
+!> F800002C  r26  = 000000000000001B
+!> F800002C  r27  = FFFFFFFF82CC9C4C
+!> F800002C  r28  = FFFFFFFF820575F0
+!> F800002C  r29  = 00000000000000D8
+!> F800002C  r30  = FFFFFFFF84012DE8
+!> F800002C  r31  = 000000007018F430
+!> F800002C  f0   = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f1   = 3FF0000000000000 = (double)1.0 = (float)0.0
+!> F800002C  f2   = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f3   = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f4   = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f5   = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f6   = 3FE6A09E60000000 = (double)0.7071067690849304 = (float)3.689349e+19
+!> F800002C  f7   = BFE6A09E60000000 = (double)-0.7071067690849304 = (float)3.689349e+19
+!> F800002C  f8   = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f9   = 3FDA20BD60000000 = (double)0.40824827551841736 = (float)3.689349e+19
+!> F800002C  f10  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f11  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f12  = 4031000000000000 = (double)17.0 = (float)0.0
+!> F800002C  f13  = 3F70000000000000 = (double)0.00390625 = (float)0.0
+!> F800002C  f14  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f15  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f16  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f17  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f18  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f19  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f20  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f21  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f22  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f23  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f24  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f25  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f26  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f27  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f28  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f29  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f30  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  f31  = 0000000000000000 = (double)0.0 = (float)0.0
+!> F800002C  v0   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v1   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v2   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v3   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v4   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v5   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v6   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v7   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v8   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v9   = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v10  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v11  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v12  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v13  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v14  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v15  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v16  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v17  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v18  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v19  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v20  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v21  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v22  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v23  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v24  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v25  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v26  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v27  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v28  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v29  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v30  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v31  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v32  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v33  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v34  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v35  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v36  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v37  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v38  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v39  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v40  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v41  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v42  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v43  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v44  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v45  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v46  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v47  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v48  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v49  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v50  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v51  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v52  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v53  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v54  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v55  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v56  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v57  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v58  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v59  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v60  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v61  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v62  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v63  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v64  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v65  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v66  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v67  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v68  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v69  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v70  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v71  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v72  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v73  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v74  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v75  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v76  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v77  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v78  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v79  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v80  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v81  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v82  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v83  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v84  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v85  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v86  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v87  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v88  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v89  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v90  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v91  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v92  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v93  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v94  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v95  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v96  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v97  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v98  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v99  = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v100 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v101 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v102 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v103 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v104 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v105 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v106 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v107 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v108 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v109 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v110 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v111 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v112 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v113 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v114 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v115 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v116 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v117 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v118 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v119 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v120 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v121 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v122 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v123 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v124 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v125 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v126 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C  v127 = [0x00000000, 0x00000000, 0x00000000, 0x00000000]
+!> F800002C Fault address: host=0x0000000184012DE8 guest=0x84012DE8 (WRITE)
+!> F800002C Guest function:  (0x84019830)
+!> F800002C Guest code near PC 0x840198B4:
+!> F800002C   0x84019874: 3CA08401
+!> F800002C   0x84019878: 3C80FE68
+!> F800002C   0x8401987C: 7D294050
+!> F800002C   0x84019880: 3D604800
+!> F800002C   0x84019884: 554A01BE
+!> F800002C   0x84019888: 3C608401
+!> F800002C   0x8401988C: 3FE0FE5B
+!> F800002C   0x84019890: 3BDE2DE8
+!> F800002C   0x84019894: 60C6E168
+!> F800002C   0x84019898: 38E72DF8
+!> F800002C   0x8401989C: 3D008401
+!> F800002C   0x840198A0: 6084BAF0
+!> F800002C   0x840198A4: 38A52E00
+!> F800002C   0x840198A8: 7D4A5A14
+!> F800002C   0x840198AC: 38632E08
+!> F800002C   0x840198B0: 63FF70D0
+!> F800002C   0x840198B4: 915E0000  <-- CRASH PC
+!> F800002C   0x840198B8: 7CE73050
+!> F800002C   0x840198BC: 552901BE
+!> F800002C   0x840198C0: 39082DF0
+!> F800002C   0x840198C4: 7CA52050
+!> F800002C   0x840198C8: 3CC08401
+!> F800002C   0x840198CC: 7C63F850
+!> F800002C   0x840198D0: 3C808401
+!> F800002C   0x840198D4: 7D495A14
+!> F800002C   0x840198D8: 3FE08401
+!> F800002C   0x840198DC: 54E701BE
+!> F800002C   0x840198E0: 91480000
+!> F800002C   0x840198E4: 38C62DF8
+!> F800002C   0x840198E8: 546901BE
+!> F800002C   0x840198EC: 54A501BE
+!> F800002C   0x840198F0: 38842E00
+!> F800002C ==== STACK WALK (SP=0x7018F1D0) ====
+!> F800002C   [0] sp=0x7018F1D0 sz=112 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+!> F800002C   [1] sp=0x7018F240 sz=176 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+!> F800002C   [2] sp=0x7018F2F0 sz=112 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+!> F800002C   [3] sp=0x7018F360 sz=112 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+!> F800002C   [4] sp=0x7018F3D0 sz=1376 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+!> F800002C   [5] sp=0x7018F930 sz=176 lr_sp4=0x00000001 lr_bc8=0x825111F0
+!> F800002C   [6] sp=0x7018F9E0 sz=96 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+!> F800002C   [7] sp=0x7018FA40 sz=96 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+!> F800002C   [8] sp=0x7018FAA0 sz=592 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+!> F800002C   [9] sp=0x7018FCF0 sz=112 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+!> F800002C   [10] sp=0x7018FD60 sz=496 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+!> F800002C   [11] sp=0x7018FF50 sz=1319485294 lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+!> F800002C ==== END STACK WALK (11 frames) ====
+!> F800002C Guest crashed! PC: 0x840198B4
+=== Thread Status Report (3001ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    Stack frame walk:
+      [ 0] sp=0x7018F1D0 -> 0x7018F240  LR=0x7018F358 []
+      [ 1] sp=0x7018F240 -> 0x7018F2F0  LR=0x82511F38 []
+      [ 2] sp=0x7018F2F0 -> 0x7018F360  LR=0x400F0E60 []
+      [ 3] sp=0x7018F360 -> 0x7018F3D0  LR=0x4021D6D0 []
+      [ 4] sp=0x7018F3D0 -> 0x7018F930  LR=0x00000001 []
+      [ 5] sp=0x7018F930 -> 0x7018F9E0  LR=0x00000000 []
+      [ 6] sp=0x7018F9E0 -> 0x7018FA40  LR=0x000000F3 []
+      [ 7] sp=0x7018FA40 -> 0x7018FAA0  LR=0x400007B4 []
+      [ 8] sp=0x7018FAA0 -> 0x7018FCF0  LR=0x7018FD60 []
+      [ 9] sp=0x7018FCF0 -> 0x7018FD60  LR=0xBEBEBEBE []
+      [10] sp=0x7018FD60 -> 0x7018FF50  LR=0xBEBEBEBE []
+      [11] sp=0x7018FF50 -> 0xBEBEBEBE  LR=0x00000000 []
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    D3D::UnlockResource (0x83779C98) PPC code:
+      0x83779C98: 00000000
+      0x83779C9C: 00000000
+      0x83779CA0: 00000000
+      0x83779CA4: 00000000
+      0x83779CA8: 00000000
+      0x83779CAC: 00000000
+      0x83779CB0: 00000000
+      0x83779CB4: 00000000
+      0x83779CB8: 00000000
+      0x83779CBC: 00000000
+      0x83779CC0: 00000000
+      0x83779CC4: 00000000
+      0x83779CC8: 00000000
+      0x83779CCC: 00000000
+      0x83779CD0: 00000000
+      0x83779CD4: 00000000
+      0x83779CD8: 00000000
+      0x83779CDC: 00000000
+      0x83779CE0: 00000000
+      0x83779CE4: 00000000
+      0x83779CE8: 00000000
+      0x83779CEC: 00000000
+      0x83779CF0: 00000000
+      0x83779CF4: 00000000
+      0x83779CF8: 00000000
+      0x83779CFC: 00000000
+      0x83779D00: 00000000
+      0x83779D04: 00000000
+      0x83779D08: 00000000
+      0x83779D0C: 00000000
+      0x83779D10: 00000000
+      0x83779D14: 00000000
+      0x83779D18: 00000000
+      0x83779D1C: 00000000
+      0x83779D20: 00000000
+      0x83779D24: 00000000
+      0x83779D28: 00000000
+      0x83779D2C: 00000000
+      0x83779D30: 00000000
+      0x83779D34: 00000000
+      0x83779D38: 00000000
+      0x83779D3C: 00000000
+      0x83779D40: 00000000
+      0x83779D44: 00000000
+      0x83779D48: 00000000
+      0x83779D4C: 00000000
+      0x83779D50: 00000000
+      0x83779D54: 00000000
+      0x83779D58: 00000000
+      0x83779D5C: 00000000
+      0x83779D60: 00000000
+      0x83779D64: 00000000
+      0x83779D68: 00000000
+      0x83779D6C: 00000000
+      0x83779D70: 00000000
+      0x83779D74: 00000000
+      0x83779D78: 00000000
+      0x83779D7C: 00000000
+      0x83779D80: 00000000
+      0x83779D84: 00000000
+      0x83779D88: 00000000
+      0x83779D8C: 00000000
+      0x83779D90: 00000000
+      0x83779D94: 00000000
+      0x83779D98: 00000000
+      0x83779D9C: 00000000
+      0x83779DA0: 00000000
+      0x83779DA4: 00000000
+      0x83779DA8: 00000000
+      0x83779DAC: 00000000
+      0x83779DB0: 00000000
+      0x83779DB4: 00000000
+      0x83779DB8: 00000000
+      0x83779DBC: 00000000
+      0x83779DC0: 00000000
+      0x83779DC4: 00000000
+      0x83779DC8: 00000000
+      0x83779DCC: 00000000
+      0x83779DD0: 00000000
+      0x83779DD4: 00000000
+      0x83779DD8: 00000000
+      0x83779DDC: 00000000
+      0x83779DE0: 00000000
+      0x83779DE4: 00000000
+      0x83779DE8: 00000000
+      0x83779DEC: 00000000
+    D3DVertexBuffer_Unlock (0x8377A188) PPC code:
+      0x8377A188: 00000000
+      0x8377A18C: 00000000
+      0x8377A190: 00000000
+      0x8377A194: 00000000
+      0x8377A198: 00000000
+      0x8377A19C: 00000000
+      0x8377A1A0: 00000000
+      0x8377A1A4: 00000000
+      0x8377A1A8: 00000000
+      0x8377A1AC: 00000000
+      0x8377A1B0: 00000000
+      0x8377A1B4: 00000000
+      0x8377A1B8: 00000000
+      0x8377A1BC: 00000000
+      0x8377A1C0: 00000000
+      0x8377A1C4: 00000000
+      0x8377A1C8: 00000000
+      0x8377A1CC: 00000000
+      0x8377A1D0: 00000000
+      0x8377A1D4: 00000000
+      0x8377A1D8: 00000000
+      0x8377A1DC: 00000000
+    merged_VBLockDtor (0x834B0184) PPC code:
+      0x834B0184: 00000000
+      0x834B0188: 00000000
+      0x834B018C: 00000000
+      0x834B0190: 00000000
+      0x834B0194: 00000000
+      0x834B0198: 00000000
+    D3D::FlushCachedMemory (0x8379478C) PPC code:
+      0x8379478C: 00000000
+      0x83794790: 00000000
+      0x83794794: 00000000
+      0x83794798: 00000000
+      0x8379479C: 00000000
+      0x837947A0: 00000000
+      0x837947A4: 00000000
+      0x837947A8: 00000000
+      0x837947AC: 00000000
+      0x837947B0: 00000000
+      0x837947B4: 00000000
+      0x837947B8: 00000000
+      0x837947BC: 00000000
+      0x837947C0: 00000000
+      0x837947C4: 00000000
+      0x837947C8: 00000000
+      0x837947CC: 00000000
+      0x837947D0: 00000000
+      0x837947D4: 00000000
+      0x837947D8: 00000000
+      0x837947DC: 00000000
+      0x837947E0: 00000000
+      0x837947E4: 00000000
+      0x837947E8: 00000000
+      0x837947EC: 00000000
+      0x837947F0: 00000000
+      0x837947F4: 00000000
+      0x837947F8: 00000000
+      0x837947FC: 00000000
+      0x83794800: 00000000
+      0x83794804: 00000000
+      0x83794808: 00000000
+      0x8379480C: 00000000
+      0x83794810: 00000000
+      0x83794814: 00000000
+      0x83794818: 00000000
+      0x8379481C: 00000000
+      0x83794820: 00000000
+      0x83794824: 00000000
+      0x83794828: 00000000
+      0x8379482C: 00000000
+      0x83794830: 00000000
+      0x83794834: 00000000
+      0x83794838: 00000000
+      0x8379483C: 00000000
+      0x83794840: 00000000
+      0x83794844: 00000000
+      0x83794848: 00000000
+      0x8379484C: 00000000
+      0x83794850: 00000000
+      0x83794854: 00000000
+      0x83794858: 00000000
+      0x8379485C: 00000000
+    MainThread (0x82F1A070) PPC code:
+      0x82F1A070: 00000000
+      0x82F1A074: 00000000
+      0x82F1A078: 00000000
+      0x82F1A07C: 00000000
+      0x82F1A080: 00000000
+      0x82F1A084: 00000000
+      0x82F1A088: 00000000
+      0x82F1A08C: 00000000
+      0x82F1A090: 00000000
+      0x82F1A094: 00000000
+      0x82F1A098: 00000000
+      0x82F1A09C: 00000000
+      0x82F1A0A0: 00000000
+      0x82F1A0A4: 00000000
+      0x82F1A0A8: 00000000
+      0x82F1A0AC: 00000000
+      0x82F1A0B0: 00000000
+      0x82F1A0B4: 00000000
+      0x82F1A0B8: 00000000
+      0x82F1A0BC: 00000000
+    App::App() call targets (bl instructions):
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (6005ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (9009ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+i> 002A6AB1 SI HOOKVERIFY[20]: DLL-base word@0x84000000=0x4D5A9000 (mapped)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+=== Thread Status Report (12013ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (15016ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (18019ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+i> 002A6AB1 SI HOOKVERIFY[40]: DLL-base word@0x84000000=0x4D5A9000 (mapped)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+=== Thread Status Report (21023ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (24026ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (27030ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (30034ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+i> 002A6AB1 SI HOOKVERIFY[60]: DLL-base word@0x84000000=0x4D5A9000 (mapped)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (33038ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (36041ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+=== Thread Status Report (39045ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+i> 002A6AB1 SI HOOKVERIFY[80]: DLL-base word@0x84000000=0x4D5A9000 (mapped)
+w> 002A6AB1 SI HOOKVERIFY H1 @0x8276FA08: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+w> 002A6AB1 SI HOOKVERIFY H2 @0x82794740: word=0xEEEEEEEE [UNREADABLE (image not loaded here?)]
+=== Thread Status Report (42048ms) === 7 threads, SIGSEGV=1 last_fault=0x184012DE8 last_rip=0xA00CD4C0 crash_guest=0x840198B4 []
+  Thread 1: LR=0x00000000 [?] SP=0x70030000
+  Thread 2: LR=0x00000000 [?] SP=0x70070000
+  Thread 3: LR=0x00000000 [?] SP=0x700B0000
+  Thread 4: LR=0x00000000 [?] SP=0x700F0000
+  Thread 5: LR=0x00000000 [?] SP=0x70130000
+  Thread 6: LR=0xBCBCBCBC [?] SP=0x7018F1D0
+    regs: r3=0x00000260 r4=0x00000000 r5=0x7018F424 r8=0xFFFFFFFF r9=0x00000208 r10=0x00000008
+          r11=0x7018F6E4 r12=0xBCBCBCBC r29=0x000000D8 r30=0x84012DE8 r31=0x7018F430 CTR=0x00000000
+    r30 @0x84012DE8: 38600081 00000000 38600082 00000000 38600083 00000000 38600084 00000000
+    r30[0x84012DE8] = "8`"
+    JIT IP samples (50ms apart):
+      [0] guest 0x00000000 []
+      [1] guest 0x00000000 []
+      [2] guest 0x00000000 []
+    IAT[RtlEnterCS @ 0x823996E8] = 0x4BEE4499
+    Thunk[0x83A00964]: 00000000 00000000 00000000 00000000 (expect: 44000042 4E800020 60000000 60000000)
+    Thunk fn: NOT FOUND by QueryFunction
+    Indirection[0x83A00964] = 0x00000000
+    RtlEnterCS=1754 RtlInitCS=36 RtlLeaveCS=1754
+    Function probes (present pipeline):
+      0x8311AC20 mainCRTStartup         NOT COMPILED
+      0x82463930 main()                 NOT COMPILED
+      0x8300D2EC App::App()             NOT COMPILED
+      0x833A3B94 DxRnd::PreInit(HWND)   NOT COMPILED
+      0x833A40D0 DxRnd::PreInit(virt)   NOT COMPILED
+      0x83184310 Rnd::PreInit           NOT COMPILED
+      0x82A4B350 Movie::Init            NOT COMPILED
+      0x83438C9C BinkMovieSys::Init     NOT COMPILED
+      0x833A404C Rnd::SetClearColor     NOT COMPILED
+      0x834E24DC Splash::Splash(ctor)   NOT COMPILED
+      0x82B20DD0 OptionBool             NOT COMPILED
+      0x83409780 ULSystemLocale         NOT COMPILED
+      0x834E2050 Splash::PrepareNext    NOT COMPILED
+      0x834E2DEC Splash::BeginSplasher  NOT COMPILED
+      0x834E21B8 Splash::PrepareRemaining NOT COMPILED
+      0x832AAAFC LiveCameraInput::PreInit NOT COMPILED
+      0x832AABE4 LiveCameraInput::Init  NOT COMPILED
+      0x832F69BC SynthPreInit           NOT COMPILED
+      0x832F6B34 SynthInit              NOT COMPILED
+      0x835181F0 SystemInit             NOT COMPILED
+      0x82BC2F80 MagnuInit              NOT COMPILED
+      0x82AE9FC0 DataInit               NOT COMPILED
+      0x83154308 ObjectDir::PreInit     NOT COMPILED
+      0x83151AD8 ObjectDir::Init        NOT COMPILED
+      0x83413CDC FileInit               NOT COMPILED
+      0x8343B8AC LoadMgr::Init          NOT COMPILED
+      0x833A3E84 DxRnd::Init(HWND)      NOT COMPILED
+      0x833A40D8 DxRnd::Init(virt)      NOT COMPILED
+      0x8317EEB0 Rnd::Init(virt)        NOT COMPILED
+      0x8356CB88 DingoServer::Init      NOT COMPILED
+      0x82B1DE50 RockCentral::Init      NOT COMPILED
+      0x82A37CE8 HamUserMgrInit         NOT COMPILED
+      0x83085950 FlowInit               NOT COMPILED
+      0x83123E60 CharInit               NOT COMPILED
+      0x834F7864 SaveLoadManager::Init  NOT COMPILED
+      0x82931E38 MidiParser::Init       NOT COMPILED
+      0x8342E428 UIManager::Init        NOT COMPILED
+      0x8342BEA8 UIManager ctor         NOT COMPILED
+      0x83429904 UIManager::GotoFirstScreen NOT COMPILED
+      0x8300DB7C App::Run()             NOT COMPILED
+      0x8300C1A4 RunWithoutDbg          NOT COMPILED
+      0x8300ABE0 App::DrawRegular       NOT COMPILED
+      0x8300B0D8 MainThread             NOT COMPILED
+      0x8339FBD0 DxRnd::Present         NOT COMPILED
+      0x8301BC40 Game::PostUpdate       NOT COMPILED
+      0x837EAABC D3DDevice_Swap         NOT COMPILED
+      0x83941440 PIXAddPixOpWithData    NOT COMPILED
+      0x8256EDC8 NavListSortMgr::ClearHeaders NOT COMPILED
+      0x8256EEE8 NavListSortMgr::GetFirstChild NOT COMPILED
+    Heap[0x82000000]: type=1 alloc_len=0x0
+    Host ptr for 0x82000000: 0x182000000
+    Read 0x82000000: 0x4D5A9000 (MZ)
+    Stub@0x8340E198 CX2SourceVoice::Initialize    : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E578 CX2SourceVoice::Start         : 00000000 00000000 *** NOT STUBBED ***
+    Stub@0x8340E6CC CX2SourceVoice::Stop          : 00000000 00000000 *** NOT STUBBED ***
+    NotifyList[0x83B14C3C] head=0x00000000 (NON-EMPTY)
+    [0] sp=0x7018F1D0 back=0x7018F240 lr_sp4=0x82E05D30 lr_bc8=0xBCBCBCBC
+    [1] sp=0x7018F240 back=0x7018F2F0 lr_sp4=0x7018F358 lr_bc8=0x82511E90
+    [2] sp=0x7018F2F0 back=0x7018F360 lr_sp4=0x82511F38 lr_bc8=0x82511FB8
+    [3] sp=0x7018F360 back=0x7018F3D0 lr_sp4=0x400F0E60 lr_bc8=0x82512160
+    [4] sp=0x7018F3D0 back=0x7018F930 lr_sp4=0x4021D6D0 lr_bc8=0x82511094
+    [5] sp=0x7018F930 back=0x7018F9E0 lr_sp4=0x00000001 lr_bc8=0x825111F0
+    [6] sp=0x7018F9E0 back=0x7018FA40 lr_sp4=0x00000000 lr_bc8=0x8251B3F8
+    [7] sp=0x7018FA40 back=0x7018FAA0 lr_sp4=0x000000F3 lr_bc8=0x82270ECC
+    [8] sp=0x7018FAA0 back=0x7018FCF0 lr_sp4=0x400007B4 lr_bc8=0x82272E8C
+    [9] sp=0x7018FCF0 back=0x7018FD60 lr_sp4=0x7018FD60 lr_bc8=0x8283CEB0
+    [10] sp=0x7018FD60 back=0x7018FF50 lr_sp4=0xBEBEBEBE lr_bc8=0xBCBCBCBC
+    [11] sp=0x7018FF50 back=0xBEBEBEBE lr_sp4=0xBEBEBEBE lr_bc8=0x00000000
+    [11] END: back=0xBEBEBEBE (zero=0 same=0 valid=0)
+  Thread 7: LR=0x00000000 [?] SP=0x701F0000
+TIMEOUT: 45000ms reached

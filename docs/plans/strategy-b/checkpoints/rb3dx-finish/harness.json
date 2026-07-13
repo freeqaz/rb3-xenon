@@ -1,0 +1,51 @@
+{
+  "lane": "HARNESS",
+  "phase": "Phase 3 (RB3DX-RETARGET-PLAN) — Xenia harness rewire + hook-install validation",
+  "status": "partial",
+  "verified": "code+build+Case1 PASS+Case2 install proven; verifier-PASS-x4-over-boot and reaches-ceiling-with-DLL BLOCKED (no Vulkan in sandbox)",
+  "date": "2026-07-13",
+  "xenia": {
+    "repo": "/home/free/code/milohax/xenia",
+    "branch": "main",
+    "commit": "53a733143",
+    "file": "src/xenia/emulator.cc",
+    "binary": "build/bin/Linux/Checked/xenia-headless",
+    "commit_scope": "emulator.cc ONLY (7 hunks = the SI DLL harness: si_probe/si_selftest/si_hook_verify/si_load_dll/si_init_va/si_force_allow_va). offline_join/ui_probe/alloc_probe already committed (a2b655c8d, 0c0f291b4, e66f2b57d) — not in the working diff. Other uncommitted files (command_processor.cc, nop_input_driver.{cc,h}, xam_input.cc, WORKSTREAM doc) are separate work, left unstaged."
+  },
+  "cvars_added": {
+    "si_init_va": {"default": 0, "title_gated": "0x45410914", "desc": "guest VA of from-source InitSameInstrument (approach a: guest-thread install). Set to mapdeploy initVA 0x84019830."},
+    "si_force_allow_va": {"default": 0, "title_gated": "0x45410914", "desc": "guest VA of config.AllowSameInstrument (char); poked 1 after DLL load. mapdeploy allowFlagVA 0x84829590."}
+  },
+  "cvars_changed": {
+    "si_load_dll": "retired hardcoded old-DLL kHooks {0x8402D918,0x8402D958,0x8402DEF0,0x8402DCE8}; now maps DLL + pokes allow-flag at CompleteLaunch, and installs the four detours mid-boot from the __savegprlr_23 override — approach (a) via InitSameInstrument if --si_init_va set, else approach (b) host-emulated from-source detours (map hookVAs).",
+    "si_hook_verify": "DLL image window widened 0x84040000 -> 0x84850000 (from-source layout: hook stubs ~0x84019xxx, config ~0x84829xxx; packed image_size 0x850000)."
+  },
+  "map_inputs_used": {
+    "initVA": "0x84019830",
+    "hookVAs": {"IsActiveHook": "0x840191A8", "ResolveWaitStatesHook": "0x840191E8", "ProcessConfigHook": "0x84019780", "RecalcGemListHook": "0x84019450"},
+    "allowFlagVA": "0x84829590",
+    "si_game_sites": {"IsActive": "0x826684C0", "ResolveWaitStates": "0x825B6488", "H1_ProcessConfig": "0x8276FA08", "H2_RecalcGemList": "0x82794740"}
+  },
+  "matrix": {
+    "case1_no_dll_neg_control": "PASS — H1@0x8276FA08 & H2@0x82794740 read stock 0x7D8802A6; DLL base unmapped; reaches known hub ceiling crash_guest=0x82BCEFE4 last_fault=0x17FEA1A80. log: case1_nodll.log.gz",
+    "case2_dll_load": "PASS — RB3Enhanced.dll mapped at 0x84000000 (head MZ 0x4D5A9000, is_dll=true, entry 0x8401CF90); config.AllowSameInstrument @0x84829590 poked 0->1.",
+    "case2b_from_source_detours": "PASS (install proven) — 4 mid-boot detour words 0x499B0CE8/0x49A62D60/0x498A9D78/0x49884D10 each decode to b into the exact map hookVA (0x840191A8/0x840191E8/0x84019780/0x84019450), all in DLL space + <±32MB = verifier-PASS by construction (static decode cross-checked). Passive --si_hook_verify does not observe them over the GPU=null boot (boot divergence flips the H1/H2 page readable->unreadable); readback at install time confirms live in guest RAM. log: case2b_dll_hostemu.log",
+    "case2a_guest_thread_init": "FAULT (documented, Risk #3) — InitSameInstrument @0x84019830 called via Processor::Execute faults at PC 0x840198B4 (guest lr=0xBCBCBCBC, r13=0x00044000): DLL-ABI/r13-sdata-base not set up for a DLL function on the guest thread. Preserved for GPU-session / r13-aware future call. log: case2a_dll_initva.log",
+    "case3_reaches_ceiling_with_dll": "BLOCKED — needs interactive Vulkan session. Sandbox has no Vulkan driver (vkCreateInstance: no drivers; --gpu=vulkan segfaults at graphics-system construction). GPU=null DLL boot diverges (no 0x82BCEFE4), so 'no new pre-hub regression' cannot be asserted here."
+  },
+  "static_proof": {
+    "detour_decode": "all 4 words PASS: op=18 (b), target == map hookVA, in [0x84000000,0x84850000), rel < 0x2000000",
+    "pe_hook_prologues": "PE RB3Enhanced.exe: InitSameInstrument/IsActiveHook/ResolveWaitStatesHook/ProcessConfigHook/RecalcGemListHook each start with 0x7D8802A6 (mflr r12) — real functions at the map VAs"
+  },
+  "logs_dir": "/home/free/code/milohax/rb3-xenon/docs/plans/strategy-b/checkpoints/rb3dx-finish",
+  "logs": ["case1_nodll.log.gz", "case2b_dll_hostemu.log", "case2a_dll_initva.log", "MATRIX-RESULTS.md"],
+  "remaining_for_gpu_session": [
+    "Run Case 2b + --gpu=vulkan on a host with a Vulkan device: expect --si_hook_verify PASS x4 into DLL space over the full boot, and boot reaches the SAME hub ceiling 0x82BCEFE4 (no new pre-hub regression).",
+    "Optional: fix approach (a) by setting guest r13 (and r2/TOC if needed) to the DLL's sdata base before Processor::Execute(InitSameInstrument), to enable the fully from-source guest-thread install."
+  ],
+  "notes": [
+    "No retarget (Phase 1/2 established RB3DX==TU5). This lane only rewired the Xenia validation harness for the from-source DLL and proved hook-install.",
+    "All new/changed cvars default-off + title-gated 0x45410914 => DC3-inert by construction.",
+    "Repo hygiene: staged src/xenia/emulator.cc only; the 7 uncommitted hunks were entirely the SI harness (offline_join/ui_probe already committed, so no other-lever leakage). No git add -A/stash/checkout used."
+  ]
+}
