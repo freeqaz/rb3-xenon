@@ -1,0 +1,31 @@
+{
+  "stage": "P1-audit",
+  "status": "complete",
+  "date": "2026-07-13",
+  "rb3dx_xex_sha1": "c5a17091cb44c0119424390a1738d161995e430e",
+  "rb3dx_pe_sha1": "2fbdbc6b279e05363517274ab5a09a9ea909ed88",
+  "clean_tu5_pe_sha1": "5f3f667a689e804c1efc736cae4ff2416a278747",
+  "sections_identical": true,
+  "total_diff_bytes": 170,
+  "num_diff_spans": 38,
+  "num_ports": 197,
+  "num_game_write_sites": 115,
+  "same_instrument_clean": true,
+  "overlaps": [
+    {"va": "0x82516320", "port": "PORT_SETDISKERROR", "site": "rb3enhanced.c:213", "verdict": "BENIGN_IDEMPOTENT"},
+    {"va": "0x82270f40", "port": "PORT_FASTSTART_CHECK", "site": "rb3enhanced.c:217", "verdict": "BENIGN_IDEMPOTENT"},
+    {"va": "0x82579098", "port": "PORT_SONGBLACKLIST", "site": "rb3enhanced.c:219", "verdict": "BENIGN_IDEMPOTENT"},
+    {"va": "0x82575f9c", "port": "PORT_SONGMGR_ISDEMO_CHECK", "site": "rb3enhanced.c:241", "verdict": "BENIGN_IDEMPOTENT"},
+    {"va": "0x82ae6880", "port": "PORT_MULTIPLAYER_CRASH", "site": "rb3enhanced.c:253", "verdict": "BENIGN_IDEMPOTENT"},
+    {"va": "0x82272e90", "port": "PORT_APP_RUN", "site": "xbox360.c:150", "verdict": "RB3E_WINS_BY_DESIGN"},
+    {"va": "0x82c4c47c", "port": "PORT_XEKEYSSETKEY_STUB", "site": "xbox360_crypto.c:40", "verdict": "RB3E_WINS_MOOTED"},
+    {"va": "0x82c4c48c", "port": "PORT_XEKEYSAESCBC_STUB", "site": "xbox360_crypto.c:41", "verdict": "RB3E_WINS_MOOTED"}
+  ],
+  "unreviewed_overlaps": [],
+  "verdict": "REVIEWED EXCEPTION LIST -- same-instrument feature surface is COLLISION-FREE (the TU5 SI DLL IS the RB3DX SI DLL for c5a17091). 8 general RB3E<->Deluxe write-site collisions, all ruled: 5 benign-idempotent (RB3E writes bytes RB3DX already holds -> Deluxe bundled those RB3E patches), 3 RB3E-wins-by-design/mooted (App::Run redirect + 2 XeKeys crypto import stubs, none SI-related).",
+  "artifacts": {
+    "script": "rb3-xenon/tools/oss-xbox-build/rb3dx_port_audit.py",
+    "audit_json": "rb3-xenon/tools/oss-xbox-build/rb3dx_port_audit.json",
+    "rulings_doc": "rb3-xenon/docs/plans/strategy-b/rb3dx-port-audit-rulings.md"
+  }
+}

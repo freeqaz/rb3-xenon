@@ -1,0 +1,2290 @@
+{
+  "clean_pe": "/home/free/code/milohax/rb3-xenon/_tu5probe/clean/band_clean_tu5.exe",
+  "rb3dx_source": "/home/free/code/milohax/rock-band-3-deluxe/platform/xbox/default.xex",
+  "sections_identical": true,
+  "total_diff_bytes": 170,
+  "num_diff_spans": 38,
+  "num_ports": 197,
+  "num_game_write_sites": 115,
+  "num_overlap_sites": 8,
+  "overlap_vas": [
+    "0x82270f40",
+    "0x82272e90",
+    "0x82516320",
+    "0x82575f9c",
+    "0x82579098",
+    "0x82ae6880",
+    "0x82c4c47c",
+    "0x82c4c48c"
+  ],
+  "unreviewed_vas": [],
+  "same_instrument_clean": true,
+  "same_instrument_ports": [
+    {
+      "port": "PORT_OVERSHELL_ISACTIVE",
+      "va": 2187756736,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_OVERSHELLPANEL_RESOLVE",
+      "va": 2187027592,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_PTCL_PROCESSCONFIG",
+      "va": 2188835336,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_TWI_RECALCGEMLIST",
+      "va": 2188986176,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_GAMEGEMDB_DUPLICATE",
+      "va": 2188980936,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_GAMEGEMDB_GETDIFFLIST",
+      "va": 2188980680,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_GAMEGEMLIST_COPYFROM",
+      "va": 2188960104,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_BANDUSER_SETOVERSHELLSLOTSTATE",
+      "va": 2187901680,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_OVERSHELLPANEL_UPDATEALL",
+      "va": 2187030736,
+      "covered": null,
+      "first64_differs": false
+    },
+    {
+      "port": "PORT_THEBANDUSERMGR",
+      "va": 2195727288,
+      "covered": null,
+      "first64_differs": null
+    }
+  ],
+  "verdict": "REVIEWED EXCEPTION LIST -- 8 RB3E<->Deluxe general-patch collisions, all with written rulings; same-instrument feature surface is COLLISION-FREE (clean). The TU5 DLL is the RB3DX DLL for the same-instrument feature; general-patch overlaps are benign-idempotent (5) or RB3E-wins-by-design (3).",
+  "diff_spans": [
+    {
+      "va": 2181039758,
+      "va_end": 2181039760,
+      "section": ".rdata",
+      "clean": "024b",
+      "rb3dx": "015b"
+    },
+    {
+      "va": 2181039762,
+      "va_end": 2181039764,
+      "section": ".rdata",
+      "clean": "0242",
+      "rb3dx": "0159"
+    },
+    {
+      "va": 2181600536,
+      "va_end": 2181600540,
+      "section": ".rdata",
+      "clean": "736f6e67",
+      "rb3dx": "72626478"
+    },
+    {
+      "va": 2181602112,
+      "va_end": 2181602119,
+      "section": ".rdata",
+      "clean": "5550444154453a",
+      "rb3dx": "443a0000000000"
+    },
+    {
+      "va": 2183597888,
+      "va_end": 2183597890,
+      "section": ".text",
+      "clean": "4182",
+      "rb3dx": "6000"
+    },
+    {
+      "va": 2183597891,
+      "va_end": 2183597892,
+      "section": ".text",
+      "clean": "10",
+      "rb3dx": "00"
+    },
+    {
+      "va": 2183597956,
+      "va_end": 2183597960,
+      "section": ".text",
+      "clean": "484d0ccd",
+      "rb3dx": "60000000"
+    },
+    {
+      "va": 2183605904,
+      "va_end": 2183605908,
+      "section": ".text",
+      "clean": "4bffd541",
+      "rb3dx": "4280d1f1"
+    },
+    {
+      "va": 2186371872,
+      "va_end": 2186371895,
+      "section": ".text",
+      "clean": "7d8802a648312f393be1ff809421ff80816300347c7d1b",
+      "rb3dx": "4e800020808300042c04000241820008482473c07fc4f3"
+    },
+    {
+      "va": 2186371896,
+      "va_end": 2186371900,
+      "section": ".text",
+      "clean": "2f0b0003",
+      "rb3dx": "482473ac"
+    },
+    {
+      "va": 2186764188,
+      "va_end": 2186764190,
+      "section": ".text",
+      "clean": "4082",
+      "rb3dx": "6000"
+    },
+    {
+      "va": 2186764191,
+      "va_end": 2186764192,
+      "section": ".text",
+      "clean": "0c",
+      "rb3dx": "00"
+    },
+    {
+      "va": 2186776728,
+      "va_end": 2186776732,
+      "section": ".text",
+      "clean": "4bffc521",
+      "rb3dx": "38600000"
+    },
+    {
+      "va": 2188539546,
+      "va_end": 2188539548,
+      "section": ".text",
+      "clean": "ff90",
+      "rb3dx": "fe00"
+    },
+    {
+      "va": 2188539577,
+      "va_end": 2188539578,
+      "section": ".text",
+      "clean": "60",
+      "rb3dx": "61"
+    },
+    {
+      "va": 2188539579,
+      "va_end": 2188539580,
+      "section": ".text",
+      "clean": "00",
+      "rb3dx": "50"
+    },
+    {
+      "va": 2188539605,
+      "va_end": 2188539606,
+      "section": ".text",
+      "clean": "60",
+      "rb3dx": "61"
+    },
+    {
+      "va": 2188539607,
+      "va_end": 2188539608,
+      "section": ".text",
+      "clean": "00",
+      "rb3dx": "50"
+    },
+    {
+      "va": 2188539614,
+      "va_end": 2188539616,
+      "section": ".text",
+      "clean": "0070",
+      "rb3dx": "0200"
+    },
+    {
+      "va": 2188760800,
+      "va_end": 2188760804,
+      "section": ".text",
+      "clean": "7fc4f378",
+      "rb3dx": "4bdb8c44"
+    },
+    {
+      "va": 2189690772,
+      "va_end": 2189690774,
+      "section": ".text",
+      "clean": "2b03",
+      "rb3dx": "6000"
+    },
+    {
+      "va": 2189690775,
+      "va_end": 2189690778,
+      "section": ".text",
+      "clean": "084198",
+      "rb3dx": "004800"
+    },
+    {
+      "va": 2189690824,
+      "va_end": 2189690826,
+      "section": ".text",
+      "clean": "3863",
+      "rb3dx": "6000"
+    },
+    {
+      "va": 2189690827,
+      "va_end": 2189690828,
+      "section": ".text",
+      "clean": "e0",
+      "rb3dx": "00"
+    },
+    {
+      "va": 2189690923,
+      "va_end": 2189690926,
+      "section": ".text",
+      "clean": "a02b03",
+      "rb3dx": "906000"
+    },
+    {
+      "va": 2189690927,
+      "va_end": 2189690930,
+      "section": ".text",
+      "clean": "084198",
+      "rb3dx": "004800"
+    },
+    {
+      "va": 2189690985,
+      "va_end": 2189690986,
+      "section": ".text",
+      "clean": "e0",
+      "rb3dx": "e1"
+    },
+    {
+      "va": 2189690987,
+      "va_end": 2189690990,
+      "section": ".text",
+      "clean": "0038a0",
+      "rb3dx": "50f907"
+    },
+    {
+      "va": 2189690991,
+      "va_end": 2189690994,
+      "section": ".text",
+      "clean": "103863",
+      "rb3dx": "00f907"
+    },
+    {
+      "va": 2189690995,
+      "va_end": 2189690996,
+      "section": ".text",
+      "clean": "e0",
+      "rb3dx": "08"
+    },
+    {
+      "va": 2189691063,
+      "va_end": 2189691064,
+      "section": ".text",
+      "clean": "60",
+      "rb3dx": "70"
+    },
+    {
+      "va": 2192468096,
+      "va_end": 2192468100,
+      "section": ".text",
+      "clean": "480d62d1",
+      "rb3dx": "4bd449b9"
+    },
+    {
+      "va": 2193933438,
+      "va_end": 2193933440,
+      "section": ".text",
+      "clean": "0242",
+      "rb3dx": "0159"
+    },
+    {
+      "va": 2193933442,
+      "va_end": 2193933444,
+      "section": ".text",
+      "clean": "0242",
+      "rb3dx": "0159"
+    },
+    {
+      "va": 2193933454,
+      "va_end": 2193933456,
+      "section": ".text",
+      "clean": "024b",
+      "rb3dx": "015b"
+    },
+    {
+      "va": 2193933458,
+      "va_end": 2193933460,
+      "section": ".text",
+      "clean": "024b",
+      "rb3dx": "015b"
+    },
+    {
+      "va": 2194104920,
+      "va_end": 2194104972,
+      "section": ".data",
+      "clean": "6d85a8998b2d1c76fade68f2af3802edb23e8dac464997de21db31c4331b756abb7c64b64a6e19e9cc30bd5d0b2080b41f552165",
+      "rb3dx": "01220038d201788bddcdd0f0fe3e247f5173ade5b399b861581af9b81ea7bebfc6229430d83c841408737cf223f6eb5a021a83f3"
+    },
+    {
+      "va": 2194104973,
+      "va_end": 2194104984,
+      "section": ".data",
+      "clean": "2fe5af27d2d4f45e93d19d",
+      "rb3dx": "e9d4b80674146b304c0091"
+    }
+  ],
+  "overlaps": [
+    {
+      "va": 2186371872,
+      "macro": "POKE_32",
+      "arg": "PORT_SETDISKERROR",
+      "file": "rb3enhanced.c",
+      "line": 213,
+      "span": {
+        "va": 2186371872,
+        "va_end": 2186371895,
+        "section": ".text",
+        "clean": "7d8802a648312f393be1ff809421ff80816300347c7d1b",
+        "rb3dx": "4e800020808300042c04000241820008482473c07fc4f3"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "BENIGN_IDEMPOTENT",
+        "port": "PORT_SETDISKERROR",
+        "reason": "RB3E POKE_32(BLR)=0x4e800020 == RB3DX entry word. RB3DX statically bundled this same early-return (Deluxe rewrote the prologue further, but the entry blr is identical and returns before RB3DX's trailing bytes; RB3E only writes the entry word). RB3E-wins is a no-op."
+      }
+    },
+    {
+      "va": 2183597888,
+      "macro": "POKE_32",
+      "arg": "PORT_FASTSTART_CHECK",
+      "file": "rb3enhanced.c",
+      "line": 217,
+      "span": {
+        "va": 2183597888,
+        "va_end": 2183597890,
+        "section": ".text",
+        "clean": "4182",
+        "rb3dx": "6000"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "BENIGN_IDEMPOTENT",
+        "port": "PORT_FASTSTART_CHECK",
+        "reason": "RB3E POKE_32(NOP)=0x60000000 == RB3DX bytes. Deluxe already nop'd the fast-start wait. Idempotent."
+      }
+    },
+    {
+      "va": 2186776728,
+      "macro": "POKE_32",
+      "arg": "PORT_SONGBLACKLIST",
+      "file": "rb3enhanced.c",
+      "line": 219,
+      "span": {
+        "va": 2186776728,
+        "va_end": 2186776732,
+        "section": ".text",
+        "clean": "4bffc521",
+        "rb3dx": "38600000"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "BENIGN_IDEMPOTENT",
+        "port": "PORT_SONGBLACKLIST",
+        "reason": "RB3E POKE_32(LI(3,0))=0x38600000 == RB3DX bytes. Deluxe already stubbed the song-blacklist check to li r3,0. Idempotent."
+      }
+    },
+    {
+      "va": 2186764188,
+      "macro": "POKE_32",
+      "arg": "PORT_SONGMGR_ISDEMO_CHECK",
+      "file": "rb3enhanced.c",
+      "line": 241,
+      "span": {
+        "va": 2186764188,
+        "va_end": 2186764190,
+        "section": ".text",
+        "clean": "4082",
+        "rb3dx": "6000"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "BENIGN_IDEMPOTENT",
+        "port": "PORT_SONGMGR_ISDEMO_CHECK",
+        "reason": "RB3E POKE_32(NOP)=0x60000000 == RB3DX bytes; and RB3E only applies it under RB3E_IsEmulator() so on RGH hardware RB3DX's static nop stands untouched. Idempotent either way. (This is the bne->nop site the SI-only divergence study called out at 0x82575f9c.)"
+      }
+    },
+    {
+      "va": 2192468096,
+      "macro": "POKE_BL",
+      "arg": "PORT_MULTIPLAYER_CRASH",
+      "file": "rb3enhanced.c",
+      "line": 253,
+      "span": {
+        "va": 2192468096,
+        "va_end": 2192468100,
+        "section": ".text",
+        "clean": "480d62d1",
+        "rb3dx": "4bd449b9"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "BENIGN_IDEMPOTENT",
+        "port": "PORT_MULTIPLAYER_CRASH",
+        "reason": "RB3E POKE_BL(->PORT_MULTIPLAYER_FIX 0x8282b238)=0x4bd449b9 == RB3DX bytes. Deluxe bundled the identical online-MP crash-fix redirect. Idempotent."
+      }
+    },
+    {
+      "va": 2183605904,
+      "macro": "POKE_BL",
+      "arg": "PORT_APP_RUN",
+      "file": "xbox360.c",
+      "line": 150,
+      "span": {
+        "va": 2183605904,
+        "va_end": 2183605908,
+        "section": ".text",
+        "clean": "4bffd541",
+        "rb3dx": "4280d1f1"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "RB3E_WINS_BY_DESIGN",
+        "port": "PORT_APP_RUN",
+        "reason": "DIVERGENT: RB3E DllMain POKE_BL(App::Run->RunWithoutDebugging)=0x4bffd1f1; RB3DX static=0x4280d1f1 (Deluxe's own redirect at the main() call site). RB3E-wins: DllMain runs at PROCESS_ATTACH, before App::Run executes, so RB3E's RunWithoutDebugging redirect is the final value. RB3DX is designed to run WITH the RB3E DLL loaded, so this supersession is expected, not a regression. Not same-instrument-related. Confirm at Phase-5 boot."
+      }
+    },
+    {
+      "va": 2193933436,
+      "macro": "POKE_B",
+      "arg": "PORT_XEKEYSSETKEY_STUB",
+      "file": "xbox360_crypto.c",
+      "line": 40,
+      "span": {
+        "va": 2193933438,
+        "va_end": 2193933440,
+        "section": ".text",
+        "clean": "0242",
+        "rb3dx": "0159"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "RB3E_WINS_MOOTED",
+        "port": "PORT_XEKEYSSETKEY_STUB",
+        "reason": "DIVERGENT: RB3E POKE_B(->XeKeysSetKeyHook, a DLL fn) writes a full branch over the import thunk; RB3DX edited only the thunk's low-16 (0x0242->0x0159, a different import RVA/ordinal in Deluxe's XEX import table). RB3E fully redirects XeKeysSetKey to its XeCrypt path, so the underlying import target is mooted. Import-stub/crypto only; not gameplay, not same-instrument."
+      }
+    },
+    {
+      "va": 2193933452,
+      "macro": "POKE_B",
+      "arg": "PORT_XEKEYSAESCBC_STUB",
+      "file": "xbox360_crypto.c",
+      "line": 41,
+      "span": {
+        "va": 2193933454,
+        "va_end": 2193933456,
+        "section": ".text",
+        "clean": "024b",
+        "rb3dx": "015b"
+      },
+      "reviewed": true,
+      "ruling": {
+        "verdict": "RB3E_WINS_MOOTED",
+        "port": "PORT_XEKEYSAESCBC_STUB",
+        "reason": "DIVERGENT: same as PORT_XEKEYSSETKEY_STUB -- RB3E POKE_B over the import thunk redirects XeKeysAesCbc to XeCrypt; RB3DX's low-16 thunk edit (0x024b->0x015b) is mooted by the full RB3E redirect. Crypto import stub."
+      }
+    }
+  ],
+  "ports": [
+    {
+      "port": "PORT_APP_RUNNODEBUG",
+      "va": 2183594112,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RUNLOOP_SPARE",
+      "va": 2183594208,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_APP_CT",
+      "va": 2183597672,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_FASTSTART_CHECK",
+      "va": 2183597888,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2183597888
+    },
+    {
+      "port": "PORT_MAINSEH",
+      "va": 2183605856,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2183605904
+    },
+    {
+      "port": "PORT_APP_CALL",
+      "va": 2183605896,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2183605904
+    },
+    {
+      "port": "PORT_APP_RUN",
+      "va": 2183605904,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2183605904
+    },
+    {
+      "port": "PORT_STAGEKIT_EXISTS",
+      "va": 2183712828,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BANDCHARDESC_MAKEOUTFITPATH",
+      "va": 2184401440,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BANDCHARDESC_RELOADPREFABS",
+      "va": 2184417352,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BANDCHARDESC_NEWOBJECT",
+      "va": 2184419776,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BANDLABELSETDISPLAYTEXT",
+      "va": 2184447736,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_HMXFACTORYFUNCAT",
+      "va": 2184552232,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNQOS_PROBE1",
+      "va": 2185160696,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNQOS_PROBE2",
+      "va": 2185160704,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNQOS_PROBE3",
+      "va": 2185160716,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_UNK",
+      "va": 2185191540,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VERTEX_READ_1",
+      "va": 2185332484,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VERTEX_READ_2",
+      "va": 2185332552,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RNDPROPANIMSETFRAME",
+      "va": 2185391568,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RANDOMINT",
+      "va": 2186227600,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RCG_POLL_LOGGEDIN",
+      "va": 2186244472,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_EXECUTEDTA",
+      "va": 2186247760,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ISSUPPORTEDLANGUAGE",
+      "va": 2186347792,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETSYSTEMLANGUAGE",
+      "va": 2186347920,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_OPTIONSTR_DEFINE",
+      "va": 2186349768,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SYSTEMINIT_BLANK",
+      "va": 2186351524,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ARCHIVE_SETLOCATIONHARDDRIVE",
+      "va": 2186357504,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ARCHIVE_DT",
+      "va": 2186361592,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ARCHIVE_MERGE",
+      "va": 2186362600,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ARCHIVE_CT",
+      "va": 2186363912,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_HDD",
+      "va": 2186370516,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETDISKERROR",
+      "va": 2186371872,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2186371872
+    },
+    {
+      "port": "PORT_NEWFILE",
+      "va": 2186376160,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_FILE_EXISTS",
+      "va": 2186376624,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XBOXCONTENT_CONSTRUCTOR",
+      "va": 2186410816,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_JOYPADGETPADDATA",
+      "va": 2186430872,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_STAGEKIT_SET_STATE",
+      "va": 2186431968,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_JOYPADGETCACHEDXINPUTCAPS",
+      "va": 2186485512,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_OBJECTFINDUIPANEL",
+      "va": 2186507312,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MUSICLIBRARYSELECTMAYBE",
+      "va": 2186537728,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_PREFABCHAR_NEWOBJECT",
+      "va": 2186624832,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_NET5",
+      "va": 2186683960,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_INVALID_DATA_CHECK",
+      "va": 2186684924,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_HANDLE_MESSAGES",
+      "va": 2186690268,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_HANDLE_MSG_JUMP",
+      "va": 2186690632,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONGMGR_ISDEMO_CHECK",
+      "va": 2186764188,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2186764188
+    },
+    {
+      "port": "PORT_GETSONGIDFROMSHORTNAME",
+      "va": 2186768704,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONGMGRGETRANKEDSONGS",
+      "va": 2186769216,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONGBLACKLIST",
+      "va": 2186776728,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2186776728
+    },
+    {
+      "port": "PORT_SONGLIMIT",
+      "va": 2186778752,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETSONGSHORTNAME",
+      "va": 2186790040,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETVENUE",
+      "va": 2186793408,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VIDEO_VENUE_CHECK",
+      "va": 2186810932,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MODIFIERMGR_ACTIVE",
+      "va": 2186841472,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MODIFIERMGR_CT",
+      "va": 2186845256,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ISUGCPLUS",
+      "va": 2186930320,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_KEYSONGUITAR",
+      "va": 2187022584,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_OVERSHELLPANEL_RESOLVE",
+      "va": 2187027592,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_OVERSHELLPANEL_UPDATEALL",
+      "va": 2187030736,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETSONGNAMEFROMNODE",
+      "va": 2187089568,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETSONGANDARTISTNAME",
+      "va": 2187093752,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETPREFABPORTRAITPATH",
+      "va": 2187165816,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_FACE_PAINT_CHECK",
+      "va": 2187414112,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_TATTOO_CHECK",
+      "va": 2187414172,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_QUEUEMESSAGE",
+      "va": 2187497040,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SESSION_MASK_CHECK",
+      "va": 2187668172,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_CHARACTER_CLOTHES_CHECK",
+      "va": 2187678024,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_CHARACTER_CLOTHES_CHECK2",
+      "va": 2187678028,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETGAMEORIGINBYSYMBOL",
+      "va": 2187704592,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETSYMBOLBYGAMEORIGIN",
+      "va": 2187705208,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONGSORTBYRECENT",
+      "va": 2187705832,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_OVERSHELL_ISACTIVE",
+      "va": 2187756736,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BUILDINSTRUMENTSELECTION",
+      "va": 2187758704,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETSONGSPEED",
+      "va": 2187824264,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GAMEGETACTIVEPLAYER",
+      "va": 2187824776,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GAME_DT",
+      "va": 2187833840,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GAME_CT",
+      "va": 2187837232,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_UPDATEPRESENCE",
+      "va": 2187854896,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETBANDUSERFROMSLOT",
+      "va": 2187864928,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETBANDUSERS",
+      "va": 2187869048,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BANDUSER_SETOVERSHELLSLOTSTATE",
+      "va": 2187901680,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GOLD_STAR_CHECK3",
+      "va": 2187989388,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GOLD_STAR_CHECK1",
+      "va": 2187990448,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GOLD_STAR_CHECK2",
+      "va": 2187990612,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_METAMUSICISLOADED",
+      "va": 2188442296,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_METAMUSICLOAD",
+      "va": 2188446384,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_METAMUSICPOLL",
+      "va": 2188448824,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_METAMUSICSTART",
+      "va": 2188450304,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DXRND_SUSPEND",
+      "va": 2188616560,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RENDER_RES_Y_PATCH1",
+      "va": 2188623580,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RENDER_RES_X_PATCH1",
+      "va": 2188623648,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_RENDER_RES_X_PATCH2",
+      "va": 2188623652,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATANODEEVALUATE",
+      "va": 2188684952,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATANODEGETOBJ",
+      "va": 2188685448,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATAARRAYFINDARRAY",
+      "va": 2188690848,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATAARRAYFINDDATA",
+      "va": 2188691440,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATAARRAYEXECUTE",
+      "va": 2188693912,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_LOADOBJS_BCTRL",
+      "va": 2188731108,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DIRLOADER_LOADOBJS",
+      "va": 2188737280,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATASET",
+      "va": 2188760688,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATAONELEM",
+      "va": 2188771152,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATASETELEM",
+      "va": 2188774200,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATAINITFUNCS_TAIL",
+      "va": 2188794240,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DATAREADFILE",
+      "va": 2188822272,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_PTCL_PROCESSCONFIG",
+      "va": 2188835336,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONGDATAADDMULTIGEM",
+      "va": 2188843440,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONGPARSERPITCHTOSLOT",
+      "va": 2188917792,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_WILLBENOSTRUM",
+      "va": 2188954544,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GAMEGEMLIST_COPYFROM",
+      "va": 2188960104,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ADDGAMEGEM",
+      "va": 2188961072,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GAMEGEMDB_GETDIFFLIST",
+      "va": 2188980680,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GAMEGEMDB_DUPLICATE",
+      "va": 2188980936,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_TWI_RECALCGEMLIST",
+      "va": 2188986176,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_PREPARESOMEVECTORMAYBE",
+      "va": 2188995984,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETSONGID",
+      "va": 2189068272,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETMETADATA",
+      "va": 2189069872,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_INITSONGMETADATA",
+      "va": 2189075536,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SONG_ID_EVALUATE",
+      "va": 2189076436,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MEMNUMHEAPS",
+      "va": 2189145640,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MEMFREE",
+      "va": 2189149232,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MEMPRINTOVERVIEW",
+      "va": 2189150264,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MEMPRINT",
+      "va": 2189150576,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MEMALLOC",
+      "va": 2189151544,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SYMBOLPREINIT",
+      "va": 2189165816,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SYMBOL_CT",
+      "va": 2189166376,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_FILESTREAM_CT",
+      "va": 2189177664,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BINSTREAMREAD",
+      "va": 2189184680,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BINSTREAMWRITE",
+      "va": 2189184856,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BINSTREAMREADENDIAN",
+      "va": 2189185112,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_BINSTREAMWRITEENDIAN",
+      "va": 2189185176,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_LOCALIZE",
+      "va": 2189203160,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_CHUNKSTREAM_CT",
+      "va": 2189206664,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_CACHEMGRXBOX_MOUNTASYNC",
+      "va": 2189261624,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SETTRACKSPEED",
+      "va": 2189283608,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DYNAMICCAST",
+      "va": 2189598920,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MULTIPLAYER_FIX",
+      "va": 2189603384,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XAMSHOWFRIENDSUI",
+      "va": 2189678352,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_QUAZAL_BREAKPOINT",
+      "va": 2189693120,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETSTARTUP",
+      "va": 2189744104,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETREGISTERKEY",
+      "va": 2189744160,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETUNREGISTERKEY",
+      "va": 2189744176,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETXNADDRTOINADDR",
+      "va": 2189744192,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETUNREGISTERINADDR",
+      "va": 2189744240,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETCONNECT",
+      "va": 2189744272,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETQOSLOOKUP",
+      "va": 2189744376,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XNETGETTITLEXNADDR",
+      "va": 2189744488,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SOCKET_STUB",
+      "va": 2189744712,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_XSESSIONCREATE",
+      "va": 2191957136,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_XSESSIONMODIFY",
+      "va": 2191957568,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_XSESSIONJOINREMOTE",
+      "va": 2191957936,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_XSESSIONSEARCHEX",
+      "va": 2191959184,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_XINVITEGETACCEPTEDINFO",
+      "va": 2191960008,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_BYPASS_SG",
+      "va": 2192081512,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XL_USESECURESOCKETS",
+      "va": 2192108712,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MULTIPLAYER_CRASH",
+      "va": 2192468096,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2192468096
+    },
+    {
+      "port": "PORT_SETADDRESS",
+      "va": 2192488584,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_STEPSEQUENCEJOBSETSTEP",
+      "va": 2192544440,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_QUAZALSOCKET_BIND",
+      "va": 2192681008,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_QUEUINGSOCKET_BIND",
+      "va": 2192807856,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VDP_DISABLE1",
+      "va": 2192808864,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VDP_DISABLE2",
+      "va": 2192809568,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VDP_DISABLE3",
+      "va": 2192811492,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_VDP_DISABLE4",
+      "va": 2192811504,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_SOMEVECTORPUSHBACKMAYBE",
+      "va": 2193009168,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_POSTPROC_DOPOST",
+      "va": 2193136136,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_CRASH",
+      "va": 2193148200,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_REPL",
+      "va": 2193156472,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_NET1",
+      "va": 2193160188,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_NET2",
+      "va": 2193160204,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_NET3",
+      "va": 2193160212,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_AUD_PATCH_NET4",
+      "va": 2193160220,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETWIDGETBYNAME",
+      "va": 2193209472,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GETSLOTCOLOR",
+      "va": 2193269512,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XAMLOADERTERMINATETITLE",
+      "va": 2193931468,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XAMUSERGETSIGNINSTATE",
+      "va": 2193931516,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XAMUSERCHECKPRIVILEGE",
+      "va": 2193931548,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XAMUSERGETSIGNININFO",
+      "va": 2193931804,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": false,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_XEKEYSSETKEY_STUB",
+      "va": 2193933436,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2193933438
+    },
+    {
+      "port": "PORT_XEKEYSAESCBC_STUB",
+      "va": 2193933452,
+      "section": ".text",
+      "filebacked": true,
+      "is_code": true,
+      "first64_differs": true,
+      "covered_by_span": 2193933454
+    },
+    {
+      "port": "PORT_NULLSYMBOL",
+      "va": 2194085944,
+      "section": ".data",
+      "filebacked": true,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GPREFABS",
+      "va": 2194399672,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MESH_GREV",
+      "va": 2194417208,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_ROCKCENTRALGATEWAY",
+      "va": 2194444128,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THEARCHIVE",
+      "va": 2194447456,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THEBANDUI",
+      "va": 2195706544,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THEMUSICLIBRARY",
+      "va": 2195706792,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THESONGMGR",
+      "va": 2195711924,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THEMETAPERFORMER",
+      "va": 2195712340,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_MODIFIERMGR_POINTER",
+      "va": 2195713032,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THESONGSORTMGR",
+      "va": 2195713628,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THEGAME",
+      "va": 2195726632,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THEBANDUSERMGR",
+      "va": 2195727288,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_THESONGDB",
+      "va": 2195727352,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_DXRND",
+      "va": 2195737400,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_OBJECTDIRMAINDIR",
+      "va": 2195739832,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    },
+    {
+      "port": "PORT_GDATAFUNCS",
+      "va": 2195742000,
+      "section": ".data",
+      "filebacked": false,
+      "is_code": false,
+      "first64_differs": null,
+      "covered_by_span": null
+    }
+  ]
+}
