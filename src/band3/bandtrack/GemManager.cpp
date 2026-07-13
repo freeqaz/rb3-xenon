@@ -1558,6 +1558,7 @@ void GemManager::ClearAllGems() {
 }
 
 void GemManager::HideGems() {
+    static Symbol invisible("invisible");
     for (int i = 0; i < mGems.size(); i++) {
         mGems[i].SetType(invisible);
     }

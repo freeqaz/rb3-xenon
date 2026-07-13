@@ -22,6 +22,7 @@ void CymbalSelectionProvider::ReloadData() {
 
 bool CymbalSelectionProvider::IsActive(int data) const {
     MILO_ASSERT_RANGE(data, 0, NumData(), 0x2C);
+    static Symbol overshell_cymbals_continue("overshell_cymbals_continue");
     if (unk20[data] == overshell_cymbals_continue && !mSlot->mCymbalConfiguration)
         return false;
     else

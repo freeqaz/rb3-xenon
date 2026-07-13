@@ -804,6 +804,9 @@ void CalibrationModesProvider::Text(int, int data, UIListLabel *slot, UILabel *l
 }
 
 RndMat *CalibrationModesProvider::Mat(int, int data, UIListMesh *slot) const {
+    static Symbol cal_auto("cal_auto");
+    static Symbol cal_manual("cal_manual");
+    static Symbol cal_numbers("cal_numbers");
     MILO_ASSERT(( 0) <= (data) && (data) < ( mModes.size()), 0x4B1);
     if (slot->Matches("icon")) {
         Symbol mode = mModes[data];

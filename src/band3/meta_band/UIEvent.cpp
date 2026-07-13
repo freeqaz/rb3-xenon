@@ -86,11 +86,11 @@ void DestructiveTransitionEvent::OnActivate() {
 }
 
 void DestructiveTransitionEvent::SetTransitionAndDestination() {
+    static Symbol next_screen("next_screen");
     mTransitionScreen =
         ObjectDir::Main()->Find<UIScreen>(mEventDef->FindStr(next_screen), true);
-    mDestinationScreen = ObjectDir::Main()->Find<UIScreen>(
-        mTransitionScreen->Property(next_screen, true)->Str(), true
-    );
+    const char *dest = mTransitionScreen->Property(next_screen, true)->Str();
+    mDestinationScreen = ObjectDir::Main()->Find<UIScreen>(dest, true);
 }
 
 bool DestructiveTransitionEvent::IsDestination(const std::vector<UIScreen *> &screens

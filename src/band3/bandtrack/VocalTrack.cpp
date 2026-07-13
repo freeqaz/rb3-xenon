@@ -2561,8 +2561,10 @@ void VocalTrack::HitTambourineGem(int id) {
 }
 
 void VocalTrack::MissTambourineGem(int, bool b) {
-    if (b)
+    if (b) {
+        static Symbol miss("miss");
         mDir->Tambourine(miss);
+    }
 }
 
 void VocalTrack::OnPhraseComplete(float f1, float f2, int i3) {

@@ -22,7 +22,9 @@ AccomplishmentOneShot::~AccomplishmentOneShot() {}
 void AccomplishmentOneShot::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x23);
 
+    static Symbol oneshot_song("oneshot_song");
     i_pConfig->FindData(oneshot_song, mOneShotSong, false);
+    static Symbol oneshot_playermin("oneshot_playermin");
     i_pConfig->FindData(oneshot_playermin, mOneShotPlayerMin, false);
 }
 

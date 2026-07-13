@@ -16,7 +16,9 @@ AccomplishmentTrainerCategoryConditional::~AccomplishmentTrainerCategoryConditio
 
 void AccomplishmentTrainerCategoryConditional::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x1E);
+    static Symbol lesson_category("lesson_category");
     i_pConfig->FindData(lesson_category, mCategory, true);
+    static Symbol num_lessons("num_lessons");
     i_pConfig->FindData(num_lessons, mNumLessons, true);
 }
 

@@ -406,7 +406,10 @@ void TrainerSection::SetStartEarly(bool early) { mStartEarly = early; }
 
 bool TrainerSection::SanityCheck() { return mStartTick < mEndTick; }
 
-void TrainerChallenge::Enter() { Handle(enter_msg, true); }
+void TrainerChallenge::Enter() {
+    static Message enter("enter");
+    Handle(enter, true);
+}
 
 void TrainerChallenge::Exit() { Handle(exit_msg, true); }
 

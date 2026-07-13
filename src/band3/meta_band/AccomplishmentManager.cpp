@@ -93,8 +93,10 @@ bool GoalAlpaCmp::operator()(Symbol s1, Symbol s2) const {
 }
 
 SongDifficultyCmp::SongDifficultyCmp(Symbol s) : mInst(s) {
-    if (mInst == gNullStr)
+    if (mInst == gNullStr) {
+        static Symbol band("band");
         mInst = band;
+    }
 }
 
 bool SongDifficultyCmp::operator()(Symbol s1, Symbol s2) const {
@@ -1672,6 +1674,7 @@ void AccomplishmentManager::ClearFirstNewRewardVignette() {
 }
 
 bool AccomplishmentManager::HasNewRewardVignetteFestival() const {
+    static Symbol festival("festival");
     if (MetaPerformer::Current()->GetVenueClass() == festival) {
         BandProfile *p = TheProfileMgr.GetPrimaryProfile();
         if (p && p->HasValidSaveData()) {

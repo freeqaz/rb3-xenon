@@ -156,7 +156,11 @@ void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
 }
 
 void StoreInfoPanel::PushRecommendationFailure() { HandleType(no_recommendations_msg); }
-void StoreInfoPanel::PushRecommendationsReady() { HandleType(recommendations_ready_msg); }
+void StoreInfoPanel::PushRecommendationsReady() {
+    static Symbol recommendations_ready("recommendations_ready");
+    static Message recommendations_ready_msg(recommendations_ready);
+    HandleType(recommendations_ready_msg);
+}
 
 RndTex *StoreInfoPanel::GetRecommendationTex(int idx) {
     int numRecs = mRecommendations.size();

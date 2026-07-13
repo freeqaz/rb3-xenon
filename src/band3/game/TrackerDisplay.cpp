@@ -40,7 +40,11 @@ void TrackerDisplay::Initialize(Symbol s) {
 }
 
 void TrackerDisplay::Show() const { SendMsg(show_msg); }
-void TrackerDisplay::Hide() const { SendMsg(hide_msg); }
+void TrackerDisplay::Hide() const {
+    static Symbol hideSym("hide");
+    static Message hide_msg(hideSym);
+    SendMsg(hide_msg);
+}
 
 void TrackerDisplay::SetChallengeType(TrackerChallengeType ty) const {
     static Message msg(set_challenge_type, 0);

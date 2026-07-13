@@ -324,7 +324,9 @@ void QuestFilterPanel::Refresh() {
 
 Symbol QuestFilterPanel::GetBackScreen() {
     MILO_ASSERT(GetState() == kUp, 0x194);
-    return Handle(get_backscreen_msg, true).Sym();
+    static Message get_backscreen_msg("get_backscreen");
+    DataNode dn(Handle(get_backscreen_msg, true));
+    return dn.Sym();
 }
 
 Symbol QuestFilterPanel::GetSongSelectScreen() {

@@ -745,6 +745,7 @@ void AccomplishmentPanel::Refresh() {
     RefreshGroupList();
     RefreshCategoryList();
     RefreshGoalList();
+    static Message refresh_msg("refresh");
     Handle(refresh_msg, true);
 }
 

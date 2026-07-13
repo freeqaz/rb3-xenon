@@ -201,6 +201,8 @@ PrefabChar *PrefabMgr::GetDefaultPrefab(int slotNum) const {
 
 PrefabMgr::CharCreatorPrefab *
 PrefabMgr::GetCharCreatorPrefab(Symbol genderSym, Symbol outfitSym) const {
+    static Symbol male("male");
+    static Symbol female("female");
     if (genderSym == male) {
         return GetCharCreatorPrefabFromOutfit(mCharCreatorMalePrefabs, outfitSym);
     } else if (genderSym == female) {
@@ -213,6 +215,8 @@ PrefabMgr::GetCharCreatorPrefab(Symbol genderSym, Symbol outfitSym) const {
 
 PrefabMgr::CharCreatorPrefab *PrefabMgr::GetRandomCharCreatorPrefab(Symbol genderSym
 ) const {
+    static Symbol male("male");
+    static Symbol female("female");
     if (genderSym == male) {
         return mCharCreatorMalePrefabs[RandomInt(0, mCharCreatorMalePrefabs.size())];
     } else if (genderSym == female) {

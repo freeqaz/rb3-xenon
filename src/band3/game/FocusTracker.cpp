@@ -162,6 +162,7 @@ void FocusTracker::UpdateGoalValueLabel(UILabel &label) const {
 }
 
 void FocusTracker::UpdateCurrentValueLabel(UILabel &label) const {
+    static Symbol tour_goal_focus_result_format("tour_goal_focus_result_format");
     label.SetTokenFmt(tour_goal_focus_result_format, (int)unk84);
 }
 
@@ -177,6 +178,7 @@ String FocusTracker::GetPlayerContributionString(Symbol s) const {
 }
 
 Symbol FocusTracker::GetContributionToken(int) const {
+    static Symbol tour_goal_focus_player_contribution_format("tour_goal_focus_player_contribution_format");
     return tour_goal_focus_player_contribution_format;
 }
 
@@ -424,6 +426,7 @@ void StreakFocusTracker::HandleFocusSwitch(float f) {
 }
 
 DataArrayPtr StreakFocusTracker::GetBroadcastDescription() const {
+    static Symbol streak_focus_tracker_explanation("streak_focus_tracker_explanation");
     return DataArrayPtr(streak_focus_tracker_explanation);
 }
 
@@ -506,6 +509,7 @@ void AccuracyFocusTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
         mFocusDelayMs = 0;
     }
     mSectionManager.Init();
+    static Symbol required_accuracy("required_accuracy");
     arr->FindData(required_accuracy, mRequiredAccuracy, true);
 }
 

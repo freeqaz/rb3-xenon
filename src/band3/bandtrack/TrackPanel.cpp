@@ -550,6 +550,8 @@ void TrackPanel::SendTrackerBroadcastDisplayMessage(const Message &msg) const {
 }
 
 void TrackPanel::TrackerDisplayReset() const {
+    static Symbol hide("hide");
+    static Message hide_msg(hide);
     SendTrackerDisplayMessage(hide_msg);
     SendTrackerBroadcastDisplayMessage(hide_msg);
 }

@@ -136,7 +136,10 @@ void OvershellSlot::SetTypeDef(DataArray *da) {
     }
 }
 
-void OvershellSlot::Enter() { Hmx::Object::Handle(enter_msg, false); }
+void OvershellSlot::Enter() {
+    static Message enter_msg("enter");
+    Hmx::Object::Handle(enter_msg, false);
+}
 
 void OvershellSlot::Poll() {
     mMessageQueue->Poll();
@@ -1035,7 +1038,10 @@ void OvershellSlot::ToggleLeftyFlip() {
     Update();
 }
 
-void OvershellSlot::ResetSlotCamera() { mOvershellDir->HandleType(reset_cam_msg); }
+void OvershellSlot::ResetSlotCamera() {
+    static Message reset_cam_msg("reset_cam");
+    mOvershellDir->HandleType(reset_cam_msg);
+}
 
 void OvershellSlot::EnableAutohide(bool b) {
     if (mAutohideEnabled != b) {
