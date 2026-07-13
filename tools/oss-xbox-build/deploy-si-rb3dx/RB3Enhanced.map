@@ -1,0 +1,919 @@
+ RB3Enhanced
+
+ Timestamp is 6a543455 (Mon Jul 13 00:41:57 2026)
+
+ Preferred load address is 84000000
+
+ Start         Length     Name                   Class
+ 0001:00000000 00000118H .idata$5                DATA
+ 0001:00000120 00002a20H .rdata                  DATA
+ 0001:00002b40 00000068H .rdata$debug            DATA
+ 0002:00000000 00000530H .pdata                  DATA
+ 0003:00000000 0000f3b0H .text                   CODE
+ 0003:0000f3b0 00000440H .xidata                 CODE
+ 0003:0000f7f0 00000000H .xedata                 CODE
+ 0004:00000000 000003c4H .data                   DATA
+ 0004:000003e0 008093ecH .bss                    DATA
+ 0005:00000000 00000028H .idata$2                DATA
+ 0005:00000028 00000014H .idata$3                DATA
+ 0005:0000003c 00000118H .idata$4                DATA
+ 0005:00000154 00000016H .idata$6                DATA
+ 0006:00000000 00000030H .XBLD$W                 DATA
+
+  Address         Publics by Value              Rva+Base       Lib:Object
+
+ 0000:00000000       ___safe_se_handler_count   00000000     <absolute>
+ 0000:00000000       ___safe_se_handler_table   00000000     <absolute>
+ 0001:00000000       __imp_NetDll_XNetGetTitleXnAddr 84000400     xam:xam.xex
+ 0001:00000004       __imp_XamUserGetXUID       84000404     xam:xam.xex
+ 0001:00000008       __imp_XamUserGetName       84000408     xam:xam.xex
+ 0001:0000000c       __imp_XamShowMessageBoxUI  8400040c     xam:xam.xex
+ 0001:00000010       __imp_XamShowKeyboardUI    84000410     xam:xam.xex
+ 0001:00000014       __imp_NetDll_WSAStartup    84000414     xam:xam.xex
+ 0001:00000018       __imp_NetDll_UpnpActionGetResults 84000418     xam:xam.xex
+ 0001:0000001c       __imp_NetDll_UpnpActionCreate 8400041c     xam:xam.xex
+ 0001:00000020       __imp_NetDll_UpnpDescribeGetResults 84000420     xam:xam.xex
+ 0001:00000024       __imp_NetDll_UpnpDescribeCreate 84000424     xam:xam.xex
+ 0001:00000028       __imp_NetDll_UpnpCloseHandle 84000428     xam:xam.xex
+ 0001:0000002c       __imp_NetDll_UpnpSearchGetDevices 8400042c     xam:xam.xex
+ 0001:00000030       __imp_NetDll_UpnpSearchCreate 84000430     xam:xam.xex
+ 0001:00000034       __imp_NetDll_UpnpDoWork    84000434     xam:xam.xex
+ 0001:00000038       __imp_NetDll_UpnpStartup   84000438     xam:xam.xex
+ 0001:0000003c       __imp_XamContentGetDeviceData 8400043c     xam:xam.xex
+ 0001:00000040       __imp_XamContentDelete     84000440     xam:xam.xex
+ 0001:00000044       __imp_NetDll_socket        84000444     xam:xam.xex
+ 0001:00000048       __imp_NetDll_setsockopt    84000448     xam:xam.xex
+ 0001:0000004c       __imp_NetDll_XNetStartup   8400044c     xam:xam.xex
+ 0001:00000050       __imp_NetDll_XNetXnAddrToInAddr 84000450     xam:xam.xex
+ 0001:00000054       __imp_NetDll_XNetQosServiceLookup 84000454     xam:xam.xex
+ 0001:00000058       __imp_NetDll_XNetQosLookup 84000458     xam:xam.xex
+ 0001:0000005c       __imp_XamUserGetSigninState 8400045c     xam:xam.xex
+ 0001:00000060       __imp_XamUserGetSigninInfo 84000460     xam:xam.xex
+ 0001:00000064       __imp_XamShowFriendsUI     84000464     xam:xam.xex
+ 0001:00000068       __imp_XNetLogonGetExtendedStatus 84000468     xam:xam.xex
+ 0001:0000006c       __imp_NetDll_closesocket   8400046c     xam:xam.xex
+ 0001:00000070       __imp_NetDll_shutdown      84000470     xam:xam.xex
+ 0001:00000074       __imp_NetDll_bind          84000474     xam:xam.xex
+ 0001:00000078       __imp_NetDll_connect       84000478     xam:xam.xex
+ 0001:0000007c       __imp_NetDll_listen        8400047c     xam:xam.xex
+ 0001:00000080       __imp_NetDll_accept        84000480     xam:xam.xex
+ 0001:00000084       __imp_NetDll_send          84000484     xam:xam.xex
+ 0001:00000088       __imp_NetDll_recv          84000488     xam:xam.xex
+ 0001:0000008c       __imp_NetDll_sendto        8400048c     xam:xam.xex
+ 0001:00000090       __imp_NetDll_recvfrom      84000490     xam:xam.xex
+ 0001:00000094       __imp_NetDll_ioctlsocket   84000494     xam:xam.xex
+ 0001:00000098       __imp_NetDll_WSAGetLastError 84000498     xam:xam.xex
+ 0001:0000009c       __imp_NetDll_XNetGetOpt    8400049c     xam:xam.xex
+ 0001:000000a0       __imp_XamLoaderLaunchTitle 840004a0     xam:xam.xex
+ 0001:000000a4       __imp_XamInputGetKeystroke 840004a4     xam:xam.xex
+ 0001:000000a8       \177xam_NULL_THUNK_DATA    840004a8     xam:xam.xex
+ 0001:000000ac       __imp_DbgPrint             840004ac     xboxkrnl:xboxkrnl.exe
+ 0001:000000b0       __imp_XeKeysConsolePrivateKeySign 840004b0     xboxkrnl:xboxkrnl.exe
+ 0001:000000b4       __imp_XeCryptHmacSha       840004b4     xboxkrnl:xboxkrnl.exe
+ 0001:000000b8       __imp_XeCryptAesKey        840004b8     xboxkrnl:xboxkrnl.exe
+ 0001:000000bc       __imp_XeCryptAesCbc        840004bc     xboxkrnl:xboxkrnl.exe
+ 0001:000000c0       __imp_MmIsAddressValid     840004c0     xboxkrnl:xboxkrnl.exe
+ 0001:000000c4       __imp_ObCreateSymbolicLink 840004c4     xboxkrnl:xboxkrnl.exe
+ 0001:000000c8       __imp_RtlInitAnsiString    840004c8     xboxkrnl:xboxkrnl.exe
+ 0001:000000cc       __imp_XexGetProcedureAddress 840004cc     xboxkrnl:xboxkrnl.exe
+ 0001:000000d0       __imp_XexGetModuleHandle   840004d0     xboxkrnl:xboxkrnl.exe
+ 0001:000000d4       __imp_RtlNtStatusToDosError 840004d4     xboxkrnl:xboxkrnl.exe
+ 0001:000000d8       __imp_NtCreateFile         840004d8     xboxkrnl:xboxkrnl.exe
+ 0001:000000dc       __imp_NtReadFile           840004dc     xboxkrnl:xboxkrnl.exe
+ 0001:000000e0       __imp_NtWriteFile          840004e0     xboxkrnl:xboxkrnl.exe
+ 0001:000000e4       __imp_NtClose              840004e4     xboxkrnl:xboxkrnl.exe
+ 0001:000000e8       __imp_NtQueryInformationFile 840004e8     xboxkrnl:xboxkrnl.exe
+ 0001:000000ec       __imp_NtSetInformationFile 840004ec     xboxkrnl:xboxkrnl.exe
+ 0001:000000f0       __imp_NtQueryFullAttributesFile 840004f0     xboxkrnl:xboxkrnl.exe
+ 0001:000000f4       __imp_NtQueryDirectoryFile 840004f4     xboxkrnl:xboxkrnl.exe
+ 0001:000000f8       __imp_NtOpenFile           840004f8     xboxkrnl:xboxkrnl.exe
+ 0001:000000fc       __imp_ExTerminateThread    840004fc     xboxkrnl:xboxkrnl.exe
+ 0001:00000100       __imp_ExCreateThread       84000500     xboxkrnl:xboxkrnl.exe
+ 0001:00000104       __imp_KeDelayExecutionThread 84000504     xboxkrnl:xboxkrnl.exe
+ 0001:00000108       __imp_KeQuerySystemTime    84000508     xboxkrnl:xboxkrnl.exe
+ 0001:0000010c       __imp_RtlUnicodeToMultiByteN 8400050c     xboxkrnl:xboxkrnl.exe
+ 0001:00000110       __imp_vswprintf            84000510     xboxkrnl:xboxkrnl.exe
+ 0001:00000114       \177xboxkrnl_NULL_THUNK_DATA 84000514     xboxkrnl:xboxkrnl.exe
+ 0001:0000013c       __real@3f800000            8400053c     config.obj
+ 0001:00000140       ??_C@_03KALFDCIK@rb3?$AA@  84000540     config.obj
+ 0001:00000144       ??_C@_0BG@GEEIONOD@DisablePostProcessing?$AA@ 84000544     config.obj
+ 0001:0000015c       ??_C@_0L@KPOFHFLD@RenderResY?$AA@ 8400055c     config.obj
+ 0001:00000168       ??_C@_0L@LGPOEEPC@RenderResX?$AA@ 84000568     config.obj
+ 0001:00000174       ??_C@_08MKHMICKL@Graphics?$AA@ 84000574     config.obj
+ 0001:00000180       ??_C@_0P@POHEDGNG@STUNServerPort?$AA@ 84000580     config.obj
+ 0001:00000190       ??_C@_0L@BFFODEHB@STUNServer?$AA@ 84000590     config.obj
+ 0001:0000019c       ??_C@_0L@LKOGFAKB@ExternalIP?$AA@ 8400059c     config.obj
+ 0001:000001a8       ??_C@_0BA@JLBEOFDE@DirectConnectIP?$AA@ 840005a8     config.obj
+ 0001:000001b8       ??_C@_0BA@KDEKCHLJ@LivelessAddress?$AA@ 840005b8     config.obj
+ 0001:000001c8       ??_C@_0P@MOAGIIPK@EnableLiveless?$AA@ 840005c8     config.obj
+ 0001:000001d8       ??_C@_07CNAJHLDG@Xbox360?$AA@ 840005d8     config.obj
+ 0001:000001e0       ??_C@_0L@PCLMLBED@EnableUPnP?$AA@ 840005e0     config.obj
+ 0001:000001ec       ??_C@_0N@ODAJJHIK@EnableNATPMP?$AA@ 840005ec     config.obj
+ 0001:000001fc       ??_C@_07BGDMAJAE@Network?$AA@ 840005fc     config.obj
+ 0001:00000204       ??_C@_0N@NMMCHEEK@AllowScripts?$AA@ 84000604     config.obj
+ 0001:00000214       ??_C@_09BJENKDJN@AllowCORS?$AA@ 84000614     config.obj
+ 0001:00000220       ??_C@_0BB@EGEOFPJD@EnableHTTPServer?$AA@ 84000620     config.obj
+ 0001:00000234       ??_C@_04MEDPFIKH@HTTP?$AA@ 84000634     config.obj
+ 0001:0000023c       ??_C@_0BB@KBGDIMC@GoCentralAddress?$AA@ 8400063c     config.obj
+ 0001:00000250       ??_C@_0BA@GFGPOJAH@EnableGoCentral?$AA@ 84000650     config.obj
+ 0001:00000260       ??_C@_09OCJCKGOH@GoCentral?$AA@ 84000660     config.obj
+ 0001:0000026c       ??_C@_0BA@BEIBEEAH@BroadcastTarget?$AA@ 8400066c     config.obj
+ 0001:0000027c       ??_C@_0N@OBNHEDLP@EnableEvents?$AA@ 8400067c     config.obj
+ 0001:0000028c       ??_C@_06HEBKAGDH@Events?$AA@ 8400068c     config.obj
+ 0001:00000294       ??_C@_0BE@PHGFGKAO@AllowSameInstrument?$AA@ 84000694     config.obj
+ 0001:000002a8       ??_C@_0P@KKKMPKBE@ContentLogging?$AA@ 840006a8     config.obj
+ 0001:000002b8       ??_C@_0O@LGHIIHI@QuazalLogging?$AA@ 840006b8     config.obj
+ 0001:000002c8       ??_C@_0BA@CJBOEFAM@DisableRawfiles?$AA@ 840006c8     config.obj
+ 0001:000002d8       ??_C@_01GBGANLPD@0?$AA@    840006d8     config.obj
+ 0001:000002dc       ??_C@_05MKDOIIA@False?$AA@ 840006dc     config.obj
+ 0001:000002e4       ??_C@_05MAJJAKPI@FALSE?$AA@ 840006e4     config.obj
+ 0001:000002ec       ??_C@_0M@NFFMGPHC@RawfilesDir?$AA@ 840006ec     config.obj
+ 0001:000002f8       ??_C@_0BB@BDCPKIIA@LanguageOverride?$AA@ 840006f8     config.obj
+ 0001:0000030c       ??_C@_0BB@GMMKNBAG@DisableMenuMusic?$AA@ 8400070c     config.obj
+ 0001:00000320       ??_C@_0BL@OIAKMPAH@AllowGoldOnAllDifficulties?$AA@ 84000720     config.obj
+ 0001:0000033c       ??_C@_0P@PGEFIFMI@UnlockClothing?$AA@ 8400073c     config.obj
+ 0001:0000034c       ??_C@_0O@ONMBLPNI@LogFileAccess?$AA@ 8400074c     config.obj
+ 0001:0000035c       ??_C@_0BA@CFECEDCO@GameOriginIcons?$AA@ 8400075c     config.obj
+ 0001:0000036c       ??_C@_05LAPONLG@false?$AA@ 8400076c     config.obj
+ 0001:00000374       ??_C@_0M@PCLEMBCN@ForcedVenue?$AA@ 84000774     config.obj
+ 0001:00000380       ??_C@_0BF@HFHILKAD@TrackSpeedMultiplier?$AA@ 84000780     config.obj
+ 0001:00000398       ??_C@_0BE@BLAAGFMC@SongSpeedMultiplier?$AA@ 84000798     config.obj
+ 0001:000003ac       ??_C@_04LOAJBDKD@true?$AA@ 840007ac     config.obj
+ 0001:000003b4       ??_C@_04HCDDPBNL@TRUE?$AA@ 840007b4     config.obj
+ 0001:000003bc       ??_C@_04HPMIDMKH@True?$AA@ 840007bc     config.obj
+ 0001:000003c4       ??_C@_01HIHLOKLC@1?$AA@    840007c4     config.obj
+ 0001:000003c8       ??_C@_07ECEMPDJM@General?$AA@ 840007c8     config.obj
+ 0001:000003d0       ??_C@_0CI@CBLNILL@?$FLRB3E?3MSG?$FN?5Successfully?5loaded?5c@ 840007d0     config.obj
+ 0001:000003f8       ??_C@_0DN@EJOCBNHF@?$FLRB3E?3MSG?$FN?5Failed?5to?5load?5config@ 840007f8     config.obj
+ 0001:00000438       ??_C@_0CG@KFAONEBH@?$FLRB3E?3MSG?$FN?5Loading?5config?5from?5?$CF@ 84000838     config.obj
+ 0001:00000460       ??_C@_0DI@HPDEMNCN@?$FLRB3E?3MSG?$FN?5No?5config?5file?5found?0@ 84000860     config.obj
+ 0001:00000498       ??_C@_07CEMGIBJM@rb3?4ini?$AA@ 84000898     config.obj
+ 0001:000004a0       ??_C@_0DF@DMJHDFBO@?$FLRB3E?3MSG?$FN?5No?5drives?5mounted?0?5us@ 840008a0     config.obj
+ 0001:000004d8       ??_C@_0CM@JGIDPAPE@?$FLRB3E?3MSG?$FN?5Loading?5config?5from?5l@ 840008d8     config.obj
+ 0001:00000504       ??_C@_0BM@CNBONIDH@?$FLRB3E?3MSG?$FN?5print_debug?3?5?$CFi?6?$AA@ 84000904     DTAFunctions.obj
+ 0001:00000520       ??_C@_0BM@CGECJPAK@?$FLRB3E?3MSG?$FN?5print_debug?3?5?$CFf?6?$AA@ 84000920     DTAFunctions.obj
+ 0001:0000053c       ??_C@_0BM@DMKPPOJB@?$FLRB3E?3MSG?$FN?5print_debug?3?5?$CFs?6?$AA@ 8400093c     DTAFunctions.obj
+ 0001:00000558       ??_C@_0BM@DOOJEAMI@?$FLRB3E?3MSG?$FN?5print_debug?3?5?$CFp?6?$AA@ 84000958     DTAFunctions.obj
+ 0001:00000574       ??_C@_0DI@LLAEHLMP@?$FLRB3E?3MSG?$FN?5Invalid?5type?5?$CFi?5for?5r@ 84000974     DTAFunctions.obj
+ 0001:000005ac       ??_C@_0DI@KGGOHBKJ@?$FLRB3E?3MSG?$FN?5Invalid?5type?5?$CFi?5for?5r@ 840009ac     DTAFunctions.obj
+ 0001:000005e4       ??_C@_0DK@LABDIGMI@?$FLRB3E?3MSG?$FN?5Invalid?5venue?5string?5@ 840009e4     DTAFunctions.obj
+ 0001:00000620       ??_C@_0CP@BJNHNDAD@?$FLRB3E?3MSG?$FN?5Invalid?5type?5?$CFi?5for?5r@ 84000a20     DTAFunctions.obj
+ 0001:00000650       ??_C@_0FA@FCFGGNIE@?$FLRB3E?3MSG?$FN?5Invalid?5types?5for?5arg@ 84000a50     DTAFunctions.obj
+ 0001:000006a0       ??_C@_0EF@LKPAMHBP@?$FLRB3E?3MSG?$FN?5Invalid?5identify?5stri@ 84000aa0     DTAFunctions.obj
+ 0001:000006e8       ??_C@_0EB@EFCLPPNO@?$FLRB3E?3MSG?$FN?5Invalid?5data?5string?5v@ 84000ae8     DTAFunctions.obj
+ 0001:0000072c       ??_C@_0DF@EHBPMOGM@?$FLRB3E?3MSG?$FN?5?$CB?$CB?5FAILED?5TO?5GET?5SONG@ 84000b2c     DTAFunctions.obj
+ 0001:00000768       ??_C@_0EH@PPKFEDOC@?$FLRB3E?3MSG?$FN?5Invalid?5types?5for?5arg@ 84000b68     DTAFunctions.obj
+ 0001:000007b0       ??_C@_0BC@HLPDOFCC@rb3e_no_song_name?$AA@ 84000bb0     DTAFunctions.obj
+ 0001:000007c8       ??_C@_0EE@HCIHPHKK@?$FLRB3E?3MSG?$FN?5Invalid?5types?5for?5arg@ 84000bc8     DTAFunctions.obj
+ 0001:0000080c       ??_C@_0P@PGAAILIA@rb3e_no_artist?$AA@ 84000c0c     DTAFunctions.obj
+ 0001:00000820       ??_C@_0ED@HALDPIEC@?$FLRB3E?3MSG?$FN?5Invalid?5types?5for?5arg@ 84000c20     DTAFunctions.obj
+ 0001:00000864       ??_C@_0O@IFBKCKJL@rb3e_no_album?$AA@ 84000c64     DTAFunctions.obj
+ 0001:00000878       ??_C@_0EC@GIIHPBK@?$FLRB3E?3MSG?$FN?5Invalid?5types?5for?5arg@ 84000c78     DTAFunctions.obj
+ 0001:000008bc       ??_C@_0O@NJBDIIMC@rb3e_no_genre?$AA@ 84000cbc     DTAFunctions.obj
+ 0001:000008d0       ??_C@_0ED@ENJBPJEA@?$FLRB3E?3MSG?$FN?5Invalid?5types?5for?5arg@ 84000cd0     DTAFunctions.obj
+ 0001:00000914       ??_C@_0P@HPAMAIKA@rb3e_no_origin?$AA@ 84000d14     DTAFunctions.obj
+ 0001:00000924       ??_C@_0M@OPOCDNEK@?$CFi?4?$CFi?4?$CFi?4?$CFi?$AA@ 84000d24     DTAFunctions.obj
+ 0001:00000930       ??_C@_0BA@IENGBPNP@?$CInot?5connected?$CJ?$AA@ 84000d30     DTAFunctions.obj
+ 0001:00000940       ??_C@_0CB@NBFOEPNB@?$FLRB3E?3MSG?$FN?5Added?5DTA?5functions?$CB?6@ 84000d40     DTAFunctions.obj
+ 0001:00000964       ??_C@_06HDDOCMMN@orange?$AA@ 84000d64     GemHooks.obj
+ 0001:0000096c       ??_C@_04OBGPFBCN@blue?$AA@ 84000d6c     GemHooks.obj
+ 0001:00000974       ??_C@_06ENJNJKEL@yellow?$AA@ 84000d74     GemHooks.obj
+ 0001:0000097c       ??_C@_03FAAAOPJM@red?$AA@  84000d7c     GemHooks.obj
+ 0001:00000980       ??_C@_05GBEEJKMC@green?$AA@ 84000d80     GemHooks.obj
+ 0001:00000988       ??_C@_0BI@KPOBNCBA@overshell_vocal_harmony?$AA@ 84000d88     GlobalSymbols.obj
+ 0001:000009a0       ??_C@_0BF@LDFCEJIE@overshell_vocal_solo?$AA@ 84000da0     GlobalSymbols.obj
+ 0001:000009b8       ??_C@_0BE@DFHIAMFK@overshell_drums_pro?$AA@ 84000db8     GlobalSymbols.obj
+ 0001:000009cc       ??_C@_0BA@DMJHBBJO@overshell_drums?$AA@ 84000dcc     GlobalSymbols.obj
+ 0001:000009dc       ??_C@_0BE@CAMFCIDC@overshell_real_keys?$AA@ 84000ddc     GlobalSymbols.obj
+ 0001:000009f0       ??_C@_0P@MPDMFBOO@overshell_keys?$AA@ 84000df0     GlobalSymbols.obj
+ 0001:00000a00       ??_C@_0BE@KPCAFIMC@overshell_real_bass?$AA@ 84000e00     GlobalSymbols.obj
+ 0001:00000a14       ??_C@_0P@EANJCBBO@overshell_bass?$AA@ 84000e14     GlobalSymbols.obj
+ 0001:00000a24       ??_C@_0BG@LFJIKBPJ@overshell_real_guitar?$AA@ 84000e24     GlobalSymbols.obj
+ 0001:00000a3c       ??_C@_0BB@LBMMANIL@overshell_guitar?$AA@ 84000e3c     GlobalSymbols.obj
+ 0001:00000a50       ??_C@_0BE@PENBNNH@gem_orange_hopo?4wid?$AA@ 84000e50     GlobalSymbols.obj
+ 0001:00000a64       ??_C@_0BC@OKOLDDEM@gem_blue_hopo?4wid?$AA@ 84000e64     GlobalSymbols.obj
+ 0001:00000a78       ??_C@_0BE@ECKIBEBM@gem_yellow_hopo?4wid?$AA@ 84000e78     GlobalSymbols.obj
+ 0001:00000a8c       ??_C@_0BB@BOKPHMPJ@gem_red_hopo?4wid?$AA@ 84000e8c     GlobalSymbols.obj
+ 0001:00000aa0       ??_C@_0BD@COAGFBOO@gem_green_hopo?4wid?$AA@ 84000ea0     GlobalSymbols.obj
+ 0001:00000ab4       ??_C@_0BF@GINHCCAO@cymbal_gem_green?4wid?$AA@ 84000eb4     GlobalSymbols.obj
+ 0001:00000acc       ??_C@_0BE@EJNGEBFN@cymbal_gem_blue?4wid?$AA@ 84000ecc     GlobalSymbols.obj
+ 0001:00000ae0       ??_C@_0BG@GMLEMAGE@cymbal_gem_yellow?4wid?$AA@ 84000ee0     GlobalSymbols.obj
+ 0001:00000af8       ??_C@_0BD@OOEAMJCG@cymbal_gem_red?4wid?$AA@ 84000ef8     GlobalSymbols.obj
+ 0001:00000b0c       ??_C@_0P@EBJECAEC@drum_green?4wid?$AA@ 84000f0c     GlobalSymbols.obj
+ 0001:00000b1c       ??_C@_0O@NDBNJFCE@drum_blue?4wid?$AA@ 84000f1c     GlobalSymbols.obj
+ 0001:00000b2c       ??_C@_0BA@BDPHIONN@drum_yellow?4wid?$AA@ 84000f2c     GlobalSymbols.obj
+ 0001:00000b3c       ??_C@_0N@JKCHAGKH@drum_red?4wid?$AA@ 84000f3c     GlobalSymbols.obj
+ 0001:00000b4c       ??_C@_0P@JJBCIDAD@gem_orange?4wid?$AA@ 84000f4c     GlobalSymbols.obj
+ 0001:00000b5c       ??_C@_0N@DNJDFCGG@gem_blue?4wid?$AA@ 84000f5c     GlobalSymbols.obj
+ 0001:00000b6c       ??_C@_0P@NELIBKMH@gem_yellow?4wid?$AA@ 84000f6c     GlobalSymbols.obj
+ 0001:00000b7c       ??_C@_0M@BKIBGIKF@gem_red?4wid?$AA@ 84000f7c     GlobalSymbols.obj
+ 0001:00000b88       ??_C@_0O@NJKIIODJ@gem_green?4wid?$AA@ 84000f88     GlobalSymbols.obj
+ 0001:00000b98       ??_C@_0BA@JFCAOJOI@mod_double_bass?$AA@ 84000f98     GlobalSymbols.obj
+ 0001:00000ba8       ??_C@_0BA@OKNICOPB@mod_gem_shuffle?$AA@ 84000fa8     GlobalSymbols.obj
+ 0001:00000bb8       ??_C@_0BA@OFKIAFFB@mod_mirror_mode?$AA@ 84000fb8     GlobalSymbols.obj
+ 0001:00000bc8       ??_C@_0BA@IDJGAADA@mod_force_hopos?$AA@ 84000fc8     GlobalSymbols.obj
+ 0001:00000bd8       ??_C@_0BC@PGIPAHIG@mod_color_shuffle?$AA@ 84000fd8     GlobalSymbols.obj
+ 0001:00000bec       ??_C@_0BF@IBGJCJCC@mod_black_background?$AA@ 84000fec     GlobalSymbols.obj
+ 0001:00000c04       ??_C@_0O@CMDONLEP@rb3e_local_ip?$AA@ 84001004     GlobalSymbols.obj
+ 0001:00000c14       ??_C@_0BG@FCAIPLJF@rb3e_delete_songcache?$AA@ 84001014     GlobalSymbols.obj
+ 0001:00000c2c       ??_C@_0P@CCMNGFP@rb3e_get_genre?$AA@ 8400102c     GlobalSymbols.obj
+ 0001:00000c3c       ??_C@_0BA@PBGJNIAH@rb3e_get_origin?$AA@ 8400103c     GlobalSymbols.obj
+ 0001:00000c4c       ??_C@_0P@FOCFHEAG@rb3e_get_album?$AA@ 8400104c     GlobalSymbols.obj
+ 0001:00000c5c       ??_C@_0BA@HIGFFLCH@rb3e_get_artist?$AA@ 8400105c     GlobalSymbols.obj
+ 0001:00000c6c       ??_C@_0BD@BLCEPOIB@rb3e_get_song_name?$AA@ 8400106c     GlobalSymbols.obj
+ 0001:00000c80       ??_C@_0BH@EHHCEEDK@rb3e_send_event_string?$AA@ 84001080     GlobalSymbols.obj
+ 0001:00000c98       ??_C@_0BE@ELKBBGJE@rb3e_get_song_count?$AA@ 84001098     GlobalSymbols.obj
+ 0001:00000cac       ??_C@_0BD@PDAFDENF@rb3e_relaunch_game?$AA@ 840010ac     GlobalSymbols.obj
+ 0001:00000cc0       ??_C@_0BB@NLPCDAGH@rb3e_is_emulator?$AA@ 840010c0     GlobalSymbols.obj
+ 0001:00000cd4       ??_C@_0P@OBKMDAHG@rb3e_set_venue?$AA@ 840010d4     GlobalSymbols.obj
+ 0001:00000ce4       ??_C@_0BF@FDPAKDFN@rb3e_get_track_speed?$AA@ 840010e4     GlobalSymbols.obj
+ 0001:00000cfc       ??_C@_0BF@IOOKKBEN@rb3e_get_music_speed?$AA@ 840010fc     GlobalSymbols.obj
+ 0001:00000d14       ??_C@_0BI@INJOIDC@rb3e_change_track_speed?$AA@ 84001114     GlobalSymbols.obj
+ 0001:00000d2c       ??_C@_0BI@NFMDOKCC@rb3e_change_music_speed?$AA@ 8400112c     GlobalSymbols.obj
+ 0001:00000d44       ??_C@_0M@LKJCCODA@rb3e_commit?$AA@ 84001144     GlobalSymbols.obj
+ 0001:00000d50       ??_C@_0P@EIAHNOIG@rb3e_build_tag?$AA@ 84001150     GlobalSymbols.obj
+ 0001:00000d60       ??_C@_0BB@LLBJFMAO@rb3e_api_version?$AA@ 84001160     GlobalSymbols.obj
+ 0001:00000d74       ??_C@_0M@GJOEPNMM@print_debug?$AA@ 84001174     GlobalSymbols.obj
+ 0001:00000d80       ??_C@_0CG@BDEFOCFI@feature?1same?9instrument?9397b2a3?9@ 84001180     GlobalSymbols.obj
+ 0001:00000da8       ??_C@_0BG@IHNPNGFI@0?47?950?9g397b2a3?9dirty?$AA@ 840011a8     GlobalSymbols.obj
+ 0001:00000dc0       ??_C@_0BP@PCGGMCG@DummySandboxAddress?4quazal?4com?$AA@ 840011c0     gocentral.obj
+ 0001:00000de0       ??_C@_0BB@KADDIFDA@?4hmxservices?4com?$AA@ 840011e0     gocentral.obj
+ 0001:00000df4       ??_C@_09JFJLNEHN@192?40?42?41?$AA@ 840011f4     gocentral.obj
+ 0001:00000e00       ??_C@_01ICJEACDI@?$DL?$AA@ 84001200     inih.obj
+ 0001:00000e04       ??_C@_02JGCJFLPN@?$DL?$CD?$AA@ 84001204     inih.obj
+ 0001:00000e08       ??_C@_01LBDDMOBJ@?$FN?$AA@ 84001208     inih.obj
+ 0001:00000e0c       ??_C@_02JKEIOFH@?$DN?3?$AA@ 8400120c     inih.obj
+ 0001:00000e10       ??_C@_0BC@IDOMEPHO@Double?5Bass?5Pedal?$AA@ 84001210     LocaleHooks.obj
+ 0001:00000e24       ??_C@_0N@HPIFFGLI@Note?5Shuffle?$AA@ 84001224     LocaleHooks.obj
+ 0001:00000e34       ??_C@_0BC@BPMHKEAF@Gem?5Color?5Shuffle?$AA@ 84001234     LocaleHooks.obj
+ 0001:00000e48       ??_C@_0M@MMHEGIFF@Mirror?5Mode?$AA@ 84001248     LocaleHooks.obj
+ 0001:00000e54       ??_C@_0M@NFMNJOAK@Force?5HOPOs?$AA@ 84001254     LocaleHooks.obj
+ 0001:00000e60       ??_C@_0BB@IPLFMHDE@Black?5Background?$AA@ 84001260     LocaleHooks.obj
+ 0001:00000e74       ??_C@_0M@LJFOCPEC@Play?5Online?$AA@ 84001274     LocaleHooks.obj
+ 0001:00000e80       ??_C@_0BK@CHKGCEIJ@overshell_register_online?$AA@ 84001280     LocaleHooks.obj
+ 0001:00000e9c       ??_C@_0P@FKGMCKAP@Online?5Options?$AA@ 8400129c     LocaleHooks.obj
+ 0001:00000eac       ??_C@_0BJ@HCNNGAEN@overshell_online_options?$AA@ 840012ac     LocaleHooks.obj
+ 0001:00000ec8       ??_C@_0BE@CDNFDCMF@Find?5Online?5Players?$AA@ 840012c8     LocaleHooks.obj
+ 0001:00000edc       ??_C@_0BC@JEIPOCIM@band_chooser_find?$AA@ 840012dc     LocaleHooks.obj
+ 0001:00000ef0       ??_C@_0BK@HAGFKFGM@Finding?5online?5players?4?4?4?$AA@ 840012f0     LocaleHooks.obj
+ 0001:00000f0c       ??_C@_0BC@HMBFGKPD@main_menu_finding?$AA@ 8400130c     LocaleHooks.obj
+ 0001:00000f20       ??_C@_0BO@KFKMGKMH@Waiting?5for?5online?5players?4?4?4?$AA@ 84001320     LocaleHooks.obj
+ 0001:00000f40       ??_C@_0BL@NJHOMMOM@waiting_for_remote_players?$AA@ 84001340     LocaleHooks.obj
+ 0001:00000f60       ??_C@_0EO@CFDMPBJB@RB3Enhanced?50?47?950?9g397b2a3?9dirt@ 84001360     LocaleHooks.obj
+ 0001:00000fb0       ??_C@_0EE@JGOGKFLF@RB3Enhanced?50?47?950?9g397b2a3?9dirt@ 840013b0     LocaleHooks.obj
+ 0001:00000ff4       ??_C@_07BCEHNHED@rb3e_?$CFs?$AA@ 840013f4     LocaleHooks.obj
+ 0001:00000ffc       ??_C@_0BA@ELJOKKGH@Manage?5Liveless?$AA@ 840013fc     LocaleHooks.obj
+ 0001:0000100c       ??_C@_0BB@NHEPOOJC@overshell_invite?$AA@ 8400140c     LocaleHooks.obj
+ 0001:00001020       ??_C@_0BA@PNGBDLPA@rb3e_mod_string?$AA@ 84001420     LocaleHooks.obj
+ 0001:00001030       ??_C@_0O@EALCCKOH@message_motd_?$AA@ 84001430     LocaleHooks.obj
+ 0001:00001040       ??_C@_0P@JNNJPGAD@?$CFs?5?$DMit?$DO?$CFs?$DM?1it?$DO?$AA@ 84001440     LocaleHooks.obj
+ 0001:00001050       ??_C@_0BA@GKBJFCNM@song_artist_fmt?$AA@ 84001450     LocaleHooks.obj
+ 0001:00001060       ??_C@_01KMDKNFGN@?1?$AA@   84001460     MiloSceneHooks.obj
+ 0001:00001064       ??_C@_0CE@PKODOPNE@char?1main?1custom?1characters?1?$CFs?4m@ 84001464     MiloSceneHooks.obj
+ 0001:00001088       ??_C@_07PGNLKCLD@prefab_?$AA@ 84001488     MiloSceneHooks.obj
+ 0001:00001090       ??_C@_08JFFEGIAI@eyebrows?$AA@ 84001490     MiloSceneHooks.obj
+ 0001:0000109c       ??_C@_0CF@GJPLAJGO@char?1main?1head?1male?1head_custom?4@ 8400149c     MiloSceneHooks.obj
+ 0001:000010c4       ??_C@_04ICKCIGNO@male?$AA@ 840014c4     MiloSceneHooks.obj
+ 0001:000010cc       ??_C@_0CH@LGAGEMGI@char?1main?1head?1female?1head_custo@ 840014cc     MiloSceneHooks.obj
+ 0001:000010f4       ??_C@_06GJLDEJIL@female?$AA@ 840014f4     MiloSceneHooks.obj
+ 0001:000010fc       ??_C@_04NEODDMOL@head?$AA@ 840014fc     MiloSceneHooks.obj
+ 0001:00001104       ??_C@_09DDCOPHAJ@milo_xbox?$AA@ 84001504     MiloSceneHooks.obj
+ 0001:00001110       ??_C@_0CA@EFOABLCF@char?2main?2custom?2characters?2gen?$AA@ 84001510     MiloSceneHooks.obj
+ 0001:00001130       ??_C@_08EFGGCJLD@?$CFs?2?$CFs?2?$CFs?$AA@ 84001530     MiloSceneHooks.obj
+ 0001:0000113c       ??_C@_06NCABOOMF@?4milo_?$AA@ 8400153c     MiloSceneHooks.obj
+ 0001:00001144       ??_C@_0DM@FHEAMPJH@?$FLRB3E?3MSG?$FN?5Failed?5to?5create?5new?5@ 84001544     MiloSceneHooks.obj
+ 0001:00001180       ??_C@_0FP@MJGPCEM@?$FLRB3E?3MSG?$FN?5Failed?5to?5load?5origin@ 84001580     MiloSceneHooks.obj
+ 0001:000011e0       ??_C@_0BO@PPDOMGGD@char?1main?1shared?1prefabs?4milo?$AA@ 840015e0     MiloSceneHooks.obj
+ 0001:00001200       ??_C@_08KHMKKLJA@RB3USB2?3?$AA@ 84001600     MiloSceneHooks.obj
+ 0001:0000120c       ??_C@_08KFIMBFMJ@RB3USB1?3?$AA@ 8400160c     MiloSceneHooks.obj
+ 0001:00001218       ??_C@_08KEEOHPPO@RB3USB0?3?$AA@ 84001618     MiloSceneHooks.obj
+ 0001:00001224       ??_C@_07PCGLOCPJ@RB3HDD?3?$AA@ 84001624     MiloSceneHooks.obj
+ 0001:0000122c       ??_C@_05FKMLMCBJ@Game?3?$AA@ 8400162c     MiloSceneHooks.obj
+ 0001:00001234       ??_C@_0CD@IIMCCOAA@char?1main?1custom?1characters?1?$CFs?4b@ 84001634     MiloSceneHooks.obj
+ 0001:00001258       ??_C@_0BC@OHFNGFN@song_select_panel?$AA@ 84001658     MusicLibrary.obj
+ 0001:0000126c       ??_C@_0CB@ECFHAAEI@?$FLRB3E?3MSG?$FN?5HTTP?5server?5running?$CB?6@ 8400166c     net_http_server.obj
+ 0001:00001290       ??_C@_0CB@LPBLIIOM@Content?9Type?3?5application?1json?$AN?6@ 84001690     net_http_server.obj
+ 0001:000012b4       ??_C@_0P@IHEOGNJK@discordrp?4json?$AA@ 840016b4     net_http_server.obj
+ 0001:000012c4       ??_C@_08NMKCJMGG@?1jsonrpc?$AA@ 840016c4     net_http_server.obj
+ 0001:000012d0       ??_C@_01CNACBAHC@?$PP?$AA@ 840016d0     net_http_server.obj
+ 0001:000012d4       ??_C@_0CI@KFLLAAGJ@X?9Clacks?9Overhead?3?5GNU?5maxton?0?5a@ 840016d4     net_http_server.obj
+ 0001:000012fc       ??_C@_0BK@EAMABLGD@Content?9Type?3?5text?1html?$AN?6?$AA@ 840016fc     net_http_server.obj
+ 0001:00001318       ??_C@_0BA@HAPEHEGB@rb3e_index?4html?$AA@ 84001718     net_http_server.obj
+ 0001:00001328       ??_C@_01OHGJGJJP@?$FL?$AA@ 84001728     net_http_server.obj
+ 0001:0000132c       ??_C@_03BFOLIMEF@?$FN?$AN?6?$AA@ 8400172c     net_http_server.obj
+ 0001:00001330       ??_C@_0M@KJLNEHCL@?1list_songs?$AA@ 84001730     net_http_server.obj
+ 0001:0000133c       ??_C@_0BB@MDIJFIPC@?1execute?$DPscript?$DN?$AA@ 8400173c     net_http_server.obj
+ 0001:00001350       ??_C@_0BB@GKBKHEMI@?1jump?$DPshortname?$DN?$AA@ 84001750     net_http_server.obj
+ 0001:00001364       ??_C@_07ICIHLAFB@origin?$DN?$AA@ 84001764     net_http_server.obj
+ 0001:0000136c       ??_C@_06KFJAMMLP@album?$DN?$AA@ 8400176c     net_http_server.obj
+ 0001:00001374       ??_C@_07LJGAJMBK@artist?$DN?$AA@ 84001774     net_http_server.obj
+ 0001:0000137c       ??_C@_06MBJMFOK@title?$DN?$AA@ 8400177c     net_http_server.obj
+ 0001:00001384       ??_C@_0L@DPBEEMLJ@shortname?$DN?$AA@ 84001784     net_http_server.obj
+ 0001:00001390       ??_C@_0BL@EGIFOBCH@Content?9Type?3?5text?1plain?$AN?6?$AA@ 84001790     net_http_server.obj
+ 0001:000013ac       ??_C@_0CB@ODIFPFDI@Access?9Control?9Allow?9Origin?3?5?$CK?$AN?6@ 840017ac     net_http_server.obj
+ 0001:000013d0       ??_C@_0CM@OAIKKAEM@Server?3?5RB3Enhanced?50?47?950?9g397b@ 840017d0     net_http_server.obj
+ 0001:000013fc       ??_C@_0BC@MGDEECBH@HTTP?11?41?5200?5OK?$AN?6?$AA@ 840017fc     net_http_server.obj
+ 0001:00001410       ??_C@_02IKAHHCAI@?$CFi?$AA@ 84001810     net_http_server.obj
+ 0001:00001414       ??_C@_06GGPAOKAJ@?1song_?$AA@ 84001814     net_http_server.obj
+ 0001:0000141c       ??_C@_04IBPFIGHK@GET?5?$AA@ 8400181c     net_http_server.obj
+ 0001:00001424       ??_C@_02PCIJFNDE@?$AN?6?$AA@ 84001824     net_http_server.obj
+ 0001:00001428       ??_C@_0IJ@GFKJIBOL@HTTP?11?41?5404?5Not?5Found?$AN?6Server?3?5@ 84001828     net_http_server.obj
+ 0001:000014b8       ??_C@_0JE@CBNMOLGK@HTTP?11?41?5200?5OK?$AN?6Server?3?5RB3Enha@ 840018b8     net_http_server.obj
+ 0001:0000154c       ??_C@_0CN@NCIPDDPC@?$FLRB3E?3MSG?$FN?5New?5HTTP?5connection?5f@ 8400194c     net_http_server.obj
+ 0001:00001580       ??_C@_1LI@IKODLNFJ@Y?$AAo?$AAu?$AAr?$AA?5?$AAu?$AAs?$AAe?$AAr?$AA?5?$AAc?$AAo?$AAd?$AAe?$AA?5?$AAi?$AAs?$AA?5?$AA?$CF?$AA?4?$AA8?$AAS?$AA?4?$AA?6?$AA?6?$AAA?$AAn?$AAy?$AAo?$AAn?$AAe?$AA?5?$AA@ 84001980     net_liveless_online.obj
+ 0001:00001638       ??_C@_1M@PMEHJLBG@C?$AAl?$AAo?$AAs?$AAe?$AA?$AA?$AA@ 84001a38     net_liveless_online.obj
+ 0001:00001648       ??_C@_1JG@OAFHHEIF@E?$AAn?$AAt?$AAe?$AAr?$AA?5?$AAt?$AAh?$AAe?$AA?5?$AAu?$AAs?$AAe?$AAr?$AA?5?$AAc?$AAo?$AAd?$AAe?$AA?5?$AAo?$AAf?$AA?5?$AAt?$AAh?$AAe?$AA?5?$AAu?$AAs?$AAe?$AAr?$AA?5?$AA@ 84001a48     net_liveless_online.obj
+ 0001:000016e0       ??_C@_1CK@PAFCLPJI@R?$AAB?$AA3?$AAE?$AAn?$AAh?$AAa?$AAn?$AAc?$AAe?$AAd?$AA?5?$AAL?$AAi?$AAv?$AAe?$AAl?$AAe?$AAs?$AAs?$AA?$AA?$AA@ 84001ae0     net_liveless_online.obj
+ 0001:00001710       ??_C@_1BIO@CPNCGJN@C?$AAo?$AAn?$AAn?$AAe?$AAc?$AAt?$AAe?$AAd?$AA?5?$AAt?$AAo?$AA?5?$AAt?$AAh?$AAe?$AA?5?$AAL?$AAi?$AAv?$AAe?$AAl?$AAe?$AAs?$AAs?$AA?5?$AAs?$AAe?$AAr?$AAv?$AAe?$AAr?$AA@ 84001b10     net_liveless_online.obj
+ 0001:000018a0       ??_C@_1CE@FOFNMOND@S?$AAh?$AAo?$AAw?$AA?5?$AAM?$AAy?$AA?5?$AAU?$AAs?$AAe?$AAr?$AA?5?$AAC?$AAo?$AAd?$AAe?$AA?$AA?$AA@ 84001ca0     net_liveless_online.obj
+ 0001:000018c4       ??_C@_1BO@NCLPJLOD@J?$AAo?$AAi?$AAn?$AA?5?$AAU?$AAs?$AAe?$AAr?$AA?5?$AAC?$AAo?$AAd?$AAe?$AA?$AA?$AA@ 84001cc4     net_liveless_online.obj
+ 0001:000018e4       ??_C@_04BKJMECBN@NAT?$CB?$AA@ 84001ce4     net_liveless_online.obj
+ 0001:000018f0       ??_C@_0HK@GMIAEEKA@?$HLdo?5?$HLjoin_invite_panel?5set_joini@ 84001cf0     net_liveless_online.obj
+ 0001:0000196c       ??_C@_0BG@DDPLOILE@Logged?5into?5Liveless?$CB?$AA@ 84001d6c     net_liveless_online.obj
+ 0001:00001984       ??_C@_0CL@EJBLFCNE@?$FLRB3E?3MSG?$FN?5WTF?5liveless?5state?0?5b@ 84001d84     net_liveless_online.obj
+ 0001:000019b0       ??_C@_0CD@OOBNEOG@Waiting?5for?5log?5in?0?5please?5wait?4@ 84001db0     net_liveless_online.obj
+ 0001:000019d4       ??_C@_0BL@JIGPCNJK@Connecting?0?5please?5wait?4?4?4?$AA@ 84001dd4     net_liveless_online.obj
+ 0001:000019f0       ??_C@_1BAC@GFCPNFDH@Y?$AAo?$AAu?$AA?5?$AAa?$AAr?$AAe?$AA?5?$AAn?$AAo?$AAt?$AA?5?$AAc?$AAo?$AAn?$AAn?$AAe?$AAc?$AAt?$AAe?$AAd?$AA?5?$AAt?$AAo?$AA?5?$AAt?$AAh?$AAe?$AA?5?$AAL?$AAi?$AAv?$AA@ 84001df0     net_liveless_online.obj
+ 0001:00001af4       ??_C@_1CE@LJCJBHCM@C?$AAo?$AAn?$AAn?$AAe?$AAc?$AAt?$AA?5?$AAt?$AAo?$AA?5?$AAS?$AAe?$AAr?$AAv?$AAe?$AAr?$AA?$AA?$AA@ 84001ef4     net_liveless_online.obj
+ 0001:00001b18       ??_C@_0M@PCENNPGA@?$CFd?4?$CFd?4?$CFd?4?$CFd?$AA@ 84001f18     net_stun.obj
+ 0001:00001b24       ??_C@_0P@ODMBMNFJ@AddPortMapping?$AA@ 84001f24     net_upnp.obj
+ 0001:00001b38       ??_C@_0BDD@NNGPEPPL@?$DMNewPortMappingDescription?$DO?$CFs?$DM?1N@ 84001f38     net_upnp.obj
+ 0001:00001c6c       ??_C@_0M@DDADHIAD@RB3Enhanced?$AA@ 8400206c     net_upnp.obj
+ 0001:00001c78       ??_C@_0BF@MCNMKOHO@GetExternalIPAddress?$AA@ 84002078     net_upnp.obj
+ 0001:00001c90       ??_C@_0BF@NLKCKCDP@NewExternalIPAddress?$AA@ 84002090     net_upnp.obj
+ 0001:00001ca8       ??_C@_0DA@MPMKMGDG@urn?3schemas?9upnp?9org?3service?3WAN@ 840020a8     net_upnp.obj
+ 0001:00001cd8       ??_C@_0CP@CAFDENLM@urn?3schemas?9upnp?9org?3service?3WAN@ 840020d8     net_upnp.obj
+ 0001:00001d08       ??_C@_04OBDAOEHG@RB3E?$AA@ 84002108     rb3enhanced.obj
+ 0001:00001d10       ??_C@_0BB@KBBBLGJB@RB3E_HAS_VERSION?$AA@ 84002110     rb3enhanced.obj
+ 0001:00001d24       ??_C@_0O@EEBKKACA@RB3E_EMULATOR?$AA@ 84002124     rb3enhanced.obj
+ 0001:00001d34       ??_C@_0BO@FOFCCKIH@?$FLRB3E?3MSG?$FN?5Setting?5venue?3?5?$CFs?6?$AA@ 84002134     rb3enhanced.obj
+ 0001:00001d54       ??_C@_04CGFJFPFD@none?$AA@ 84002154     rb3enhanced.obj
+ 0001:00001d5c       ??_C@_0BK@IOPIICAJ@?$FLRB3E?3MSG?$FN?5File?3?5?$CFs?5?$CI?$CFs?$CJ?6?$AA@ 8400215c     rb3enhanced.obj
+ 0001:00001d78       ??_C@_03IBKGHDKL@ARK?$AA@  84002178     rb3enhanced.obj
+ 0001:00001d7c       ??_C@_03JGNEKJOM@Raw?$AA@  8400217c     rb3enhanced.obj
+ 0001:00001d80       ??_C@_04PHFLDAHK@?4dtb?$AA@ 84002180     rb3enhanced.obj
+ 0001:00001d88       ??_C@_0EF@LDGFDAPC@?$HLdo?$HLpush_back?5?$HLfind?5$syscfg?5modi@ 84002188     rb3enhanced.obj
+ 0001:00001dd0       ??_C@_0EF@JHEPJDNF@?$HLdo?$HLpush_back?5?$HLfind?5$syscfg?5modi@ 840021d0     rb3enhanced.obj
+ 0001:00001e18       ??_C@_0EH@PDDDMBJK@?$HLdo?$HLpush_back?5?$HLfind?5$syscfg?5modi@ 84002218     rb3enhanced.obj
+ 0001:00001e60       ??_C@_0EF@GIECECOP@?$HLdo?$HLpush_back?5?$HLfind?5$syscfg?5modi@ 84002260     rb3enhanced.obj
+ 0001:00001ea8       ??_C@_0EF@JNEBAKHA@?$HLdo?$HLpush_back?5?$HLfind?5$syscfg?5modi@ 840022a8     rb3enhanced.obj
+ 0001:00001ef0       ??_C@_0EK@FPLHLGCM@?$HLdo?$HLpush_back?5?$HLfind?5$syscfg?5modi@ 840022f0     rb3enhanced.obj
+ 0001:00001f3c       ??_C@_0CH@IIFAAJIH@?$FLRB3E?3MSG?$FN?5Adding?5custom?5modifie@ 8400233c     rb3enhanced.obj
+ 0001:00001f64       ??_C@_01EEMJAFIK@?6?$AA@   84002364     rb3enhanced.obj
+ 0001:00001f68       ??_C@_0BN@MHGCNIAL@?$FLRB3E?3MSG?$FN?5Patches?5applied?$CB?6?$AA@ 84002368     rb3enhanced.obj
+ 0001:00001f88       ??_C@_0FE@NENFGJHP@?$FLRB3E?3MSG?$FN?5Render?5resolution?5set@ 84002388     rb3enhanced.obj
+ 0001:00001fdc       ??_C@_0CD@FMEHCCDB@?$FLRB3E?3MSG?$FN?5Functions?5initialized@ 840023dc     rb3enhanced.obj
+ 0001:00002000       ??_C@_0BL@CLGKJGJI@?$FLRB3E?3MSG?$FN?5Hooks?5applied?$CB?6?$AA@ 84002400     rb3enhanced.obj
+ 0001:0000201c       ??_C@_0CE@HIGFMNCB@?$FLRB3E?3MSG?$FN?5Starting?5Rock?5Band?53?4@ 8400241c     rb3enhanced.obj
+ 0001:00002040       ??_C@_0FK@DJMPLOEE@?$FLRB3E?3MSG?$FN?5Loaded?$CB?5Version?50?47?95@ 84002440     rb3enhanced.obj
+ 0001:0000209c       __real@40000000            8400249c     RndPropAnimHooks.obj
+ 0001:000020a0       __real@00000000            840024a0     RndPropAnimHooks.obj
+ 0001:000020a4       ??_C@_0BE@BIAFBCOO@slot_positions?4anim?$AA@ 840024a4     RndPropAnimHooks.obj
+ 0001:000020b8       ??_C@_0ED@GBKPLEHP@?$FLRB3E?3MSG?$FN?5same?9instrument?3?5clon@ 840024b8     SameInstrumentHooks.obj
+ 0001:000020fc       ??_C@_0CN@DKGGLICK@?$FLRB3E?3MSG?$FN?5Same?9instrument?5hooks@ 840024fc     SameInstrumentHooks.obj
+ 0001:0000212c       ??_C@_0O@PILJBOMA@?$DMalt?$DOG?$DM?1alt?$DO?5?$AA@ 8400252c     SetlistHooks.obj
+ 0001:0000213c       ??_C@_07KAEMLFNJ@onyxite?$AA@ 8400253c     SetlistHooks.obj
+ 0001:00002144       ??_C@_0O@ILGEIPBO@?$DMalt?$DOs?$DM?1alt?$DO?5?$AA@ 84002544     SetlistHooks.obj
+ 0001:00002154       ??_C@_03MKOFBAPB@gh3?$AA@  84002554     SetlistHooks.obj
+ 0001:00002158       ??_C@_0O@JJFANLN@?$DMalt?$DOS?$DM?1alt?$DO?5?$AA@ 84002558     SetlistHooks.obj
+ 0001:00002168       ??_C@_03NDPOCBLA@gh2?$AA@  84002568     SetlistHooks.obj
+ 0001:0000216c       ??_C@_0O@BOOOBJPO@?$DMalt?$DOR?$DM?1alt?$DO?5?$AA@ 8400256c     SetlistHooks.obj
+ 0001:0000217c       ??_C@_03PINDHCHD@gh1?$AA@  8400257c     SetlistHooks.obj
+ 0001:00002180       ??_C@_0O@DANPNJCM@?$DMalt?$DOb?$DM?1alt?$DO?5?$AA@ 84002580     SetlistHooks.obj
+ 0001:00002190       ??_C@_07CFJJBFKH@beatles?$AA@ 84002590     SetlistHooks.obj
+ 0001:00002198       ??_C@_0O@GMHLLANM@?$DMalt?$DO0?$DM?1alt?$DO?5?$AA@ 84002598     SetlistHooks.obj
+ 0001:000021a8       ??_C@_08GLJIKGKK@greenday?$AA@ 840025a8     SetlistHooks.obj
+ 0001:000021b4       ??_C@_0O@ILKDGHEK@?$DMalt?$DOA?$DM?1alt?$DO?5?$AA@ 840025b4     SetlistHooks.obj
+ 0001:000021c4       ??_C@_04MGBKDPFC@lego?$AA@ 840025c4     SetlistHooks.obj
+ 0001:000021cc       ??_C@_04JPPIJOP@ugc2?$AA@  840025cc     SetlistHooks.obj
+ 0001:000021d4       ??_C@_04CCNCNKCM@ugc1?$AA@ 840025d4     SetlistHooks.obj
+ 0001:000021dc       ??_C@_08OAGAAAMJ@ugc_plus?$AA@ 840025dc     SetlistHooks.obj
+ 0001:000021e8       ??_C@_0O@BOEKAFIA@?$DMalt?$DOy?$DM?1alt?$DO?5?$AA@ 840025e8     SetlistHooks.obj
+ 0001:000021f8       ??_C@_06DKDEOCMP@ugc_c3?$AA@ 840025f8     SetlistHooks.obj
+ 0001:00002200       ??_C@_0O@HKIPHEDH@?$DMalt?$DOU?$DM?1alt?$DO?5?$AA@ 84002600     SetlistHooks.obj
+ 0001:00002210       ??_C@_03IBBCJFIM@ugc?$AA@  84002610     SetlistHooks.obj
+ 0001:00002214       ??_C@_0O@ILMAJDGA@?$DMalt?$DOX?$DM?1alt?$DO?5?$AA@ 84002614     SetlistHooks.obj
+ 0001:00002224       ??_C@_08FJAIODPO@rb_blitz?$AA@ 84002624     SetlistHooks.obj
+ 0001:00002230       ??_C@_0O@HLAAKEJP@?$DMalt?$DO1?$DM?1alt?$DO?5?$AA@ 84002630     SetlistHooks.obj
+ 0001:00002240       ??_C@_03OPPEKEEN@rb4?$AA@  84002640     SetlistHooks.obj
+ 0001:00002244       ??_C@_0O@LCCOFLIP@?$DMalt?$DOB?$DM?1alt?$DO?5?$AA@ 84002644     SetlistHooks.obj
+ 0001:00002254       ??_C@_0O@ECINJIFK@?$DMalt?$DO2?$DM?1alt?$DO?5?$AA@ 84002654     SetlistHooks.obj
+ 0001:00002264       ??_C@_03LJKOADML@rb2?$AA@  84002664     SetlistHooks.obj
+ 0001:00002268       ??_C@_0O@JMLLIHCD@?$DMalt?$DOY?$DM?1alt?$DO?5?$AA@ 84002668     SetlistHooks.obj
+ 0001:00002278       ??_C@_03JCIDFAAI@rb1?$AA@  84002678     SetlistHooks.obj
+ 0001:0000227c       ??_C@_0DA@MOFOPHCO@One?5?$CIor?5more?$CJ?5of?5your?5songs?5has?5@ 8400267c     SongHooks.obj
+ 0001:000022ac       ??_C@_0CP@ONKLPMMH@?$FLRB3E?3MSG?$FN?5Corrected?5song_id?5?8?$CFs@ 840026ac     SongHooks.obj
+ 0001:000022dc       ??_C@_07JOJAOGG@song_id?$AA@ 840026dc     SongHooks.obj
+ 0001:000022e4       ??_C@_07OLHFKMNK@rb3_dlc?$AA@ 840026e4     SongSort.obj
+ 0001:000022ec       ??_C@_07KGLNANNB@rb1_dlc?$AA@ 840026ec     SongSort.obj
+ 0001:000022f4       ??_C@_08ILGKFEBG@pearljam?$AA@ 840026f4     SongSort.obj
+ 0001:00002304       ??_C@_0DH@GGINDDFF@?$FLRB3E?3MSG?$FN?5Over?5the?5origin?5limit@ 84002704     SongSort.obj
+ 0001:00002340       ??_C@_0EE@EKNIMJKE@?$FLRB3E?3MSG?$FN?5Tried?5to?5delete?5a?5son@ 84002740     xbox360_content.obj
+ 0001:00002384       ??_C@_0CK@DICCNCNK@?$FLRB3E?3MSG?$FN?5Song?5cache?5delete?5fai@ 84002784     xbox360_content.obj
+ 0001:000023b0       ??_C@_0ED@FNBAINDN@?$FLRB3E?3MSG?$FN?5Tried?5to?5delete?5a?5son@ 840027b0     xbox360_content.obj
+ 0001:000023f4       ??_C@_09EKJFCFJN@rbdxcache?$AA@ 840027f4     xbox360_content.obj
+ 0001:00002400       ??_C@_09FEEOFJBL@songcache?$AA@ 84002800     xbox360_content.obj
+ 0001:0000240c       ??_C@_0CP@IAFEJCIK@?$FLRB3E?3MSG?$FN?5Initialised?5XeKeys?9?$DOX@ 8400280c     xbox360_crypto.obj
+ 0001:0000243c       ??_C@_05NGFEDHGN@write?$AA@ 8400283c     xbox360_exceptions.obj
+ 0001:00002444       ??_C@_04POLDLDMI@read?$AA@ 84002844     xbox360_exceptions.obj
+ 0001:0000244c       ??_C@_1CI@NBBDGJHG@R?$AAe?$AAt?$AAu?$AAr?$AAn?$AA?5?$AAt?$AAo?$AA?5?$AAD?$AAa?$AAs?$AAh?$AAb?$AAo?$AAa?$AAr?$AAd?$AA?$AA?$AA@ 8400284c     xbox360_exceptions.obj
+ 0001:00002474       ??_C@_1CM@OALHOPGN@R?$AAB?$AA3?$AAE?$AAn?$AAh?$AAa?$AAn?$AAc?$AAe?$AAd?$AA?5?$AAE?$AAx?$AAc?$AAe?$AAp?$AAt?$AAi?$AAo?$AAn?$AA?$AA?$AA@ 84002874     xbox360_exceptions.obj
+ 0001:000024a0       ??_C@_1DI@FHPIOBH@?6?$AAF?$AAa?$AAi?$AAl?$AAe?$AAd?$AA?5?$AAt?$AAo?$AA?5?$AAs?$AAa?$AAv?$AAe?$AA?5?$AAc?$AAr?$AAa?$AAs?$AAh?$AA?5?$AAd?$AAu?$AAm?$AAp?$AA?4?$AA?$AA?$AA@ 840028a0     xbox360_exceptions.obj
+ 0001:000024d8       ??_C@_1DA@EIMBLEM@?6?$AAC?$AAr?$AAa?$AAs?$AAh?$AA?5?$AAd?$AAu?$AAm?$AAp?$AA?5?$AAs?$AAa?$AAv?$AAe?$AAd?$AA?5?$AAt?$AAo?$AA?6?$AA?$CF?$AAS?$AA?$AA?$AA@ 840028d8     xbox360_exceptions.obj
+ 0001:00002508       ??_C@_13NDCMKFDF@?6?$AA?$AA?$AA@ 84002908     xbox360_exceptions.obj
+ 0001:0000250c       ??_C@_1M@PGHCPDAI@?$CF?$AA0?$AA8?$AAX?$AA?5?$AA?$AA?$AA@ 8400290c     xbox360_exceptions.obj
+ 0001:00002518       ??_C@_1BA@FIDECGLC@S?$AAt?$AAa?$AAc?$AAk?$AA?3?$AA?5?$AA?$AA?$AA@ 84002918     xbox360_exceptions.obj
+ 0001:00002528       ??_C@_1DE@KENGLCLA@P?$AAC?$AA?3?$AA?$CF?$AA0?$AA8?$AAX?$AA?5?$AAL?$AAR?$AA?3?$AA?$CF?$AA0?$AA8?$AAX?$AA?5?$AAM?$AAS?$AAR?$AA?3?$AA?$CF?$AA0?$AA8?$AAX?$AA?6?$AA?$AA?$AA@ 84002928     xbox360_exceptions.obj
+ 0001:0000255c       ??_C@_1DG@DJAANGOB@R?$AA1?$AA?3?$AA?$CF?$AA0?$AA8?$AAX?$AA?5?$AAR?$AA1?$AA2?$AA?3?$AA?$CF?$AA0?$AA8?$AAX?$AA?5?$AAR?$AA1?$AA3?$AA?3?$AA?$CF?$AA0?$AA8?$AAX?$AA?6?$AA?$AA?$AA@ 8400295c     xbox360_exceptions.obj
+ 0001:00002594       ??_C@_1CA@NPCDKNHG@E?$AAr?$AAr?$AAo?$AAr?$AA?5?$AA?$CF?$AAX?$AA?3?$AA?5?$AA?$CF?$AA0?$AA8?$AAX?$AA?6?$AA?$AA?$AA@ 84002994     xbox360_exceptions.obj
+ 0001:000025b4       ??_C@_1DC@GBIECHGM@I?$AAn?$AAs?$AAt?$AAr?$AAu?$AAc?$AAt?$AAi?$AAo?$AAn?$AA?5?$AAE?$AAr?$AAr?$AAo?$AAr?$AA?3?$AA?5?$AA?$CF?$AA0?$AA8?$AAX?$AA?6?$AA?$AA?$AA@ 840029b4     xbox360_exceptions.obj
+ 0001:000025e8       ??_C@_1DE@DNFEHGBM@D?$AAa?$AAt?$AAa?$AA?5?$AAE?$AAr?$AAr?$AAo?$AAr?$AA?3?$AA?5?$AA?$CF?$AA0?$AA8?$AAX?$AA?5?$AA?$CF?$AA0?$AA8?$AAX?$AA?5?$AA?$CF?$AAS?$AA?6?$AA?$AA?$AA@ 840029e8     xbox360_exceptions.obj
+ 0001:0000261c       ??_C@_1CA@PBBKCEOC@R?$AAB?$AA3?$AAE?$AAn?$AAh?$AAa?$AAn?$AAc?$AAe?$AAd?$AA?5?$AA?$CF?$AAS?$AA?6?$AA?$AA?$AA@ 84002a1c     xbox360_exceptions.obj
+ 0001:00002640       ??_C@_1LK@FFAMNGE@R?$AAo?$AAc?$AAk?$AA?5?$AAB?$AAa?$AAn?$AAd?$AA?5?$AA3?$AA?5?$AAh?$AAa?$AAs?$AA?5?$AAc?$AAr?$AAa?$AAs?$AAh?$AAe?$AAd?$AA?4?$AA?5?$AAI?$AAf?$AA?5?$AAt?$AAh?$AAi?$AAs?$AA@ 84002a40     xbox360_exceptions.obj
+ 0001:000026fc       ??_C@_04HDOCAJNK@?$CFs?$CFs?$AA@ 84002afc     xbox360_exceptions.obj
+ 0001:00002704       ??_C@_0L@LHHCHPDH@RB3HDD?3?2?$CFs?$AA@ 84002b04     xbox360_exceptions.obj
+ 0001:00002710       ??_C@_08GMKFHGIJ@GAME?3?2?$CFs?$AA@ 84002b10     xbox360_exceptions.obj
+ 0001:0000271c       ??_C@_0CE@CGHCKCJH@crash_?$CF04d?$CF02d?$CF02d_?$CF02d?$CF02d?$CF02d?4@ 84002b1c     xbox360_exceptions.obj
+ 0001:00002740       ??_C@_0O@BJFDNBJP@?2Device?2Mass2?$AA@ 84002b40     xbox360_files.obj
+ 0001:00002750       ??_C@_0O@DCHOICFM@?2Device?2Mass1?$AA@ 84002b50     xbox360_files.obj
+ 0001:00002760       ??_C@_0O@CLGFLDBN@?2Device?2Mass0?$AA@ 84002b60     xbox360_files.obj
+ 0001:00002770       ??_C@_0BN@HJEIBBJL@?2Device?2Harddisk0?2Partition1?$AA@ 84002b70     xbox360_files.obj
+ 0001:00002790       ??_C@_04FFEPHCCK@?2?$DP?$DP?2?$AA@ 84002b90     xbox360_files.obj
+ 0001:00002798       ??_C@_05BMGBEOOC@?$CFs?2?$CFs?$AA@ 84002b98     xbox360_files.obj
+ 0001:000027a0       ??_C@_0EE@BLALHOJO@?$FLRB3E?3MSG?$FN?5RB3E_ListFiles?3?5Faile@ 84002ba0     xbox360_files.obj
+ 0001:000027e4       ??_C@_07HMIPAPAI@?$CFs?2?$CK?4?$CFs?$AA@ 84002be4     xbox360_files.obj
+ 0001:000027ec       ??_C@_06IDKIAIED@?$CFs?$CK?4?$CFs?$AA@ 84002bec     xbox360_files.obj
+ 0001:000027f4       ??_C@_0BA@ELKGOGDA@?$CFhu?4?$CFhu?4?$CFhu?4?$CFhu?$AA@ 84002bf4     xbox360_liveless.obj
+ 0001:00002804       ??_C@_01FHEEJDEE@A?$AA@    84002c04     xbox360_liveless.obj
+ 0001:00002808       ??_C@_0CH@BHKOMMHC@?$FLRB3E?3MSG?$FN?5Applied?5GoCentral?5pat@ 84002c08     xbox360_liveless.obj
+ 0001:00002830       ??_C@_0CG@GOMIPFIA@?$FLRB3E?3MSG?$FN?5Applied?5liveless?5patc@ 84002c30     xbox360_liveless.obj
+ 0001:00002858       ??_C@_0CE@IGPOHIJ@?$FLRB3E?3MSG?$FN?5Applied?5socket?5patche@ 84002c58     xbox360_liveless.obj
+ 0001:00002880       ??_C@_1BEI@FJNNGHCA@Y?$AAo?$AAu?$AAr?$AA?5?$AAc?$AAo?$AAn?$AAs?$AAo?$AAl?$AAe?$AA?5?$AAi?$AAs?$AA?5?$AAc?$AAu?$AAr?$AAr?$AAe?$AAn?$AAt?$AAl?$AAy?$AA?5?$AAc?$AAo?$AAn?$AAn?$AAe?$AAc?$AA@ 84002c80     xbox360_liveless.obj
+ 0001:000029c8       ??_C@_1CI@EBBFKAOF@R?$AAB?$AA3?$AAE?$AAn?$AAh?$AAa?$AAn?$AAc?$AAe?$AAd?$AA?5?$AAW?$AAa?$AAr?$AAn?$AAi?$AAn?$AAg?$AA?$AA?$AA@ 84002dc8     xbox360_liveless.obj
+ 0001:000029f0       ??_C@_15OIFBPDOF@O?$AAK?$AA?$AA?$AA@ 84002df0     xbox360_liveless.obj
+ 0001:000029f8       ??_C@_0CO@IIJEBBPE@?$FLRB3E?3MSG?$FN?5Getting?5gateway?5IP?5fa@ 84002df8     xbox360_net.obj
+ 0001:00002a28       ??_C@_0N@FGDKACMC@xboxkrnl?4exe?$AA@ 84002e28     xbox360.obj
+ 0001:00002a38       ??_C@_07FEDBCEF@xam?4xex?$AA@ 84002e38     xbox360.obj
+ 0001:00002a40       ??_C@_0M@FIIJKANM@default?4xex?$AA@ 84002e40     xbox360.obj
+ 0001:00002a4c       ??_C@_0DM@OMHNFFJM@?$FLRB3E?3MSG?$FN?5Dashlaunch?5was?5detect@ 84002e4c     xbox360.obj
+ 0001:00002a88       ??_C@_0BP@OIFKGNBE@?$FLRB3E?3MSG?$FN?5Enabled?5sockpatch?$CB?6?$AA@ 84002e88     xbox360.obj
+ 0001:00002aa8       ??_C@_09PJJMKIAB@sockpatch?$AA@ 84002ea8     xbox360.obj
+ 0001:00002ab4       ??_C@_0L@KILPCJNN@launch?4xex?$AA@ 84002eb4     xbox360.obj
+ 0001:00002ac0       ??_C@_03ICHNJLJF@key?$AA@  84002ec0     xbox_keyboard.obj
+ 0001:00002ac4       ??_C@_02OGLLFMLI@ui?$AA@   84002ec4     xbox_keyboard.obj
+ 0001:00002ac8       __real@3fb999999999999a    84002ec8     crt.obj
+ 0001:00002ad0       __real@4024000000000000    84002ed0     crt.obj
+ 0001:00002ad8       __real@3ff0000000000000    84002ed8     crt.obj
+ 0001:00002ae0       __real@0000000000000000    84002ee0     crt.obj
+ 0001:00002ae8       ??_C@_0BB@JCEFLFJE@0123456789abcdef?$AA@ 84002ee8     crt.obj
+ 0001:00002afc       ??_C@_0BB@JGGOGLEG@0123456789ABCDEF?$AA@ 84002efc     crt.obj
+ 0001:00002b0d       ??_C@_00CNPNBAHC@?$AA@     84002f0d     crt.obj
+ 0001:00002b10       ??_C@_06OJHGLDPL@?$CInull?$CJ?$AA@ 84002f10     crt.obj
+ 0001:00002b18       ??_C@_02FGLHBECB@0X?$AA@   84002f18     crt.obj
+ 0001:00002b1c       ??_C@_02MDDDDAID@0x?$AA@   84002f1c     crt.obj
+ 0001:00002b20       __real@3fe0000000000000    84002f20     crt.obj
+ 0003:00000000       InitDefaultConfig          84010000 f   config.obj
+ 0003:00000060       HasLauncherConfig          84010060 f   config.obj
+ 0003:00001ae0       LoadConfig                 84011ae0 f   config.obj
+ 0003:00001c58       crc32                      84011c58 f   crc32.obj
+ 0003:00001cf8       DataSetHook                84011cf8 f   DataDebug.obj
+ 0003:00001d30       DataSetElemHook            84011d30 f   DataDebug.obj
+ 0003:00001dc8       DataOnElemHook             84011dc8 f   DataDebug.obj
+ 0003:00001e60       DataNodeGetObjHook         84011e60 f   DataDebug.obj
+ 0003:00001eb8       DTAGetRB3EBuildTag         84011eb8 f   DTAFunctions.obj
+ 0003:00001ed0       DTAGetRB3ECommit           84011ed0 f   DTAFunctions.obj
+ 0003:00001ef0       DTAGetAPIVersion           84011ef0 f   DTAFunctions.obj
+ 0003:00001f00       DTAPrintToDebugger         84011f00 f   DTAFunctions.obj
+ 0003:00001fb0       DTAGetMusicSpeed           84011fb0 f   DTAFunctions.obj
+ 0003:00001fd0       DTAGetTrackSpeed           84011fd0 f   DTAFunctions.obj
+ 0003:00001fe8       DTAChangeMusicSpeed        84011fe8 f   DTAFunctions.obj
+ 0003:00002090       DTAChangeTrackSpeed        84012090 f   DTAFunctions.obj
+ 0003:00002130       DTASetVenue                84012130 f   DTAFunctions.obj
+ 0003:000021f0       DTAIsEmulator              840121f0 f   DTAFunctions.obj
+ 0003:00002230       DTARelaunchGame            84012230 f   DTAFunctions.obj
+ 0003:00002270       DTAGetSongCount            84012270 f   DTAFunctions.obj
+ 0003:00002288       DTASendModData             84012288 f   DTAFunctions.obj
+ 0003:000023d8       DTAGetSongName             840123d8 f   DTAFunctions.obj
+ 0003:00002498       DTAGetArtist               84012498 f   DTAFunctions.obj
+ 0003:00002558       DTAGetAlbum                84012558 f   DTAFunctions.obj
+ 0003:00002618       DTAGetGenre                84012618 f   DTAFunctions.obj
+ 0003:000026c8       DTAGetOrigin               840126c8 f   DTAFunctions.obj
+ 0003:00002778       DTADeleteSongCache         84012778 f   DTAFunctions.obj
+ 0003:000027b8       DTALocalIP                 840127b8 f   DTAFunctions.obj
+ 0003:00002850       AddDTAFunctions            84012850 f   DTAFunctions.obj
+ 0003:00002b68       RB3EBase                   84012b68 f   _functions.obj
+ 0003:00002b70       AppConstructor             84012b70 f   _functions.obj
+ 0003:00002b78       ExecuteDTA                 84012b78 f   _functions.obj
+ 0003:00002b80       SymbolConstruct            84012b80 f   _functions.obj
+ 0003:00002b88       ModifierActive             84012b88 f   _functions.obj
+ 0003:00002b90       HmxFactoryFuncAt           84012b90 f   _functions.obj
+ 0003:00002b98       BandLabelSetDisplayText    84012b98 f   _functions.obj
+ 0003:00002ba0       RandomInt                  84012ba0 f   _functions.obj
+ 0003:00002ba8       DataNodeEvaluate           84012ba8 f   _functions.obj
+ 0003:00002bb0       DataFindArray              84012bb0 f   _functions.obj
+ 0003:00002bb8       DataFindData               84012bb8 f   _functions.obj
+ 0003:00002bc0       FileExists                 84012bc0 f   _functions.obj
+ 0003:00002bc8       QueueMessage               84012bc8 f   _functions.obj
+ 0003:00002bd0       GetMetadata                84012bd0 f   _functions.obj
+ 0003:00002bd8       GetSongIDFromShortname     84012bd8 f   _functions.obj
+ 0003:00002be0       GetSongShortname           84012be0 f   _functions.obj
+ 0003:00002be8       GetBandUsers               84012be8 f   _functions.obj
+ 0003:00002bf0       GetBandUserFromSlot        84012bf0 f   _functions.obj
+ 0003:00002bf8       ChunkStreamConstructor     84012bf8 f   _functions.obj
+ 0003:00002c00       FileStreamConstructor      84012c00 f   _functions.obj
+ 0003:00002c08       Dynamic_Cast               84012c08 f   _functions.obj
+ 0003:00002c10       GameGetActivePlayer        84012c10 f   _functions.obj
+ 0003:00002c18       PropAnimSetFrame           84012c18 f   _functions.obj
+ 0003:00002c20       ObjectFindUIPanel          84012c20 f   _functions.obj
+ 0003:00002c28       JoypadGetPadData           84012c28 f   _functions.obj
+ 0003:00002c30       SongMgrGetRankedSongs      84012c30 f   _functions.obj
+ 0003:00002c38       InitSongMetadata           84012c38 f   _functions.obj
+ 0003:00002c40       MemPrintOverview           84012c40 f   _functions.obj
+ 0003:00002c48       MemPrint                   84012c48 f   _functions.obj
+ 0003:00002c50       MemNumHeaps                84012c50 f   _functions.obj
+ 0003:00002c58       MemAlloc                   84012c58 f   _functions.obj
+ 0003:00002c60       MemFree                    84012c60 f   _functions.obj
+ 0003:00002c68       DxRndSuspend               84012c68 f   _functions.obj
+ 0003:00002c70       Localize                   84012c70 f   _functions.obj
+ 0003:00002c78       SetVenue                   84012c78 f   _functions.obj
+ 0003:00002c80       ModifierManagerConstructor 84012c80 f   _functions.obj
+ 0003:00002c88       NewFile                    84012c88 f   _functions.obj
+ 0003:00002c90       WillBeNoStrum              84012c90 f   _functions.obj
+ 0003:00002c98       AddGameGem                 84012c98 f   _functions.obj
+ 0003:00002ca0       SetSongAndArtistName       84012ca0 f   _functions.obj
+ 0003:00002ca8       SetMusicSpeed              84012ca8 f   _functions.obj
+ 0003:00002cb0       UpdateTrackSpeed           84012cb0 f   _functions.obj
+ 0003:00002cb8       SetAddress                 84012cb8 f   _functions.obj
+ 0003:00002cc0       GetWidgetByName            84012cc0 f   _functions.obj
+ 0003:00002cc8       GetSlotColor               84012cc8 f   _functions.obj
+ 0003:00002cd0       SetSystemLanguage          84012cd0 f   _functions.obj
+ 0003:00002cd8       DataReadFile               84012cd8 f   _functions.obj
+ 0003:00002ce0       StagekitSetState           84012ce0 f   _functions.obj
+ 0003:00002ce8       GameConstruct              84012ce8 f   _functions.obj
+ 0003:00002cf0       GameDestruct               84012cf0 f   _functions.obj
+ 0003:00002cf8       SetSongNameFromNode        84012cf8 f   _functions.obj
+ 0003:00002d00       PrepareSomeVectorMaybe     84012d00 f   _functions.obj
+ 0003:00002d08       SomeVectorPushBackMaybe    84012d08 f   _functions.obj
+ 0003:00002d10       MusicLibrarySelect         84012d10 f   _functions.obj
+ 0003:00002d18       GetSymbolByGameOrigin      84012d18 f   _functions.obj
+ 0003:00002d20       GetGameOriginBySymbol      84012d20 f   _functions.obj
+ 0003:00002d28       JoypadGetCachedXInputCaps  84012d28 f   _functions.obj
+ 0003:00002d30       SymbolPreInit              84012d30 f   _functions.obj
+ 0003:00002d38       QueuingSocketBind          84012d38 f   _functions.obj
+ 0003:00002d40       UpdatePresence             84012d40 f   _functions.obj
+ 0003:00002d48       BinstreamWrite             84012d48 f   _functions.obj
+ 0003:00002d50       BinstreamRead              84012d50 f   _functions.obj
+ 0003:00002d58       BinstreamReadEndian        84012d58 f   _functions.obj
+ 0003:00002d60       BinstreamWriteEndian       84012d60 f   _functions.obj
+ 0003:00002d68       SongParserPitchToSlot      84012d68 f   _functions.obj
+ 0003:00002d70       DataSet                    84012d70 f   _functions.obj
+ 0003:00002d78       DataSetElem                84012d78 f   _functions.obj
+ 0003:00002d80       DataOnElem                 84012d80 f   _functions.obj
+ 0003:00002d88       DataNodeGetObj             84012d88 f   _functions.obj
+ 0003:00002d90       XboxContentConstruct       84012d90 f   _functions.obj
+ 0003:00002d98       CacheMgrXbox_MountAsync    84012d98 f   _functions.obj
+ 0003:00002da0       DataArrayExecute           84012da0 f   _functions.obj
+ 0003:00002da8       MakeOutfitPath             84012da8 f   _functions.obj
+ 0003:00002db0       BandCharDescNewObject      84012db0 f   _functions.obj
+ 0003:00002db8       DirLoaderLoadObjs          84012db8 f   _functions.obj
+ 0003:00002dc0       GetPrefabPortraitPath      84012dc0 f   _functions.obj
+ 0003:00002dc8       IsActiveOrig               84012dc8 f   _functions.obj
+ 0003:00002dd0       ResolvePartWaitOrig        84012dd0 f   _functions.obj
+ 0003:00002dd8       ProcessConfigOrig          84012dd8 f   _functions.obj
+ 0003:00002de0       RecalcGemListOrig          84012de0 f   _functions.obj
+ 0003:00002de8       GameGemDBDuplicate         84012de8 f   _functions.obj
+ 0003:00002df0       GameGemDBGetDiffList       84012df0 f   _functions.obj
+ 0003:00002df8       GameGemListCopyFrom        84012df8 f   _functions.obj
+ 0003:00002e00       BandUserSetOvershellSlotState 84012e00 f   _functions.obj
+ 0003:00002e08       OvershellPanelUpdateAll    84012e08 f   _functions.obj
+ 0003:00002e10       RB3EStubEnd                84012e10 f   _functions.obj
+ 0003:00002e18       GameConstructHook          84012e18 f   GameHooks.obj
+ 0003:00002f60       GameDestructHook           84012f60 f   GameHooks.obj
+ 0003:00002fc8       WillBeNoStrumHook          84012fc8 f   GemHooks.obj
+ 0003:00003038       GetWidgetByNameHook        84013038 f   GemHooks.obj
+ 0003:000032d0       GetSlotColorHook           840132d0 f   GemHooks.obj
+ 0003:00003488       shuffleColors              84013488 f   GemHooks.obj
+ 0003:00003588       AddGameGemHook             84013588 f   GemHooks.obj
+ 0003:00003670       InitGlobalSymbols          84013670 f   GlobalSymbols.obj
+ 0003:00003aa8       SetAddressHook             84013aa8 f   gocentral.obj
+ 0003:00003c90       ini_parse_stream           84013c90 f   inih.obj
+ 0003:00003fc0       ini_parse_string           84013fc0 f   inih.obj
+ 0003:00004018       SetSystemLanguageHook      84014018 f   LocaleHooks.obj
+ 0003:00004088       LocalizeHook               84014088 f   LocaleHooks.obj
+ 0003:00004378       LoadObj                    84014378 f   MiloSceneHooks.obj
+ 0003:000045e0       VertexReadHook             840145e0 f   MiloSceneHooks.obj
+ 0003:00004660       MakeOutfitPathHook         84014660 f   MiloSceneHooks.obj
+ 0003:00004900       DirLoaderLoadObjsHook      84014900 f   MiloSceneHooks.obj
+ 0003:00004c88       GetPrefabPortraitPathHook  84014c88 f   MiloSceneHooks.obj
+ 0003:00004d20       CheckForPanelAndJump       84014d20 f   MusicLibrary.obj
+ 0003:00004d80       MusicLibrarySelectSong     84014d80 f   MusicLibrary.obj
+ 0003:00004db8       RB3E_InitEvents            84014db8 f   net_events.obj
+ 0003:00004ea0       RB3E_SendEvent             84014ea0 f   net_events.obj
+ 0003:00004f70       HTTP_Server_Init           84014f70 f   net_http_server.obj
+ 0003:00004fe8       urldecode2                 84014fe8 f   net_http_server.obj
+ 0003:000050e0       HTTP_Server_Accept         840150e0 f   net_http_server.obj
+ 0003:00006510       HTTP_Server_RunLoop        84016510 f   net_http_server.obj
+ 0003:000065d8       Liveless_DoClientHello     840165d8 f   net_liveless_online.obj
+ 0003:00006668       Liveless_DoPong            84016668 f   net_liveless_online.obj
+ 0003:000066c0       Liveless_DoJoinUser        840166c0 f   net_liveless_online.obj
+ 0003:00006738       Liveless_DoClientLogin     84016738 f   net_liveless_online.obj
+ 0003:00006888       Liveless_StartConnect      84016888 f   net_liveless_online.obj
+ 0003:00006980       Liveless_DelayedAction     84016980 f   net_liveless_online.obj
+ 0003:00006a68       Liveless_ShowConnectedUI   84016a68 f   net_liveless_online.obj
+ 0003:00006b10       Liveless_Poll              84016b10 f   net_liveless_online.obj
+ 0003:00006e30       Liveless_ShowUI            84016e30 f   net_liveless_online.obj
+ 0003:00006f58       NATPMP_RequestExternalIP   84016f58 f   net_natpmp.obj
+ 0003:00006fb0       NATPMP_RequestOpenPort     84016fb0 f   net_natpmp.obj
+ 0003:00007028       PCP_RequestOpenPort        84017028 f   net_natpmp.obj
+ 0003:000070f0       NATPMP_Init                840170f0 f   net_natpmp.obj
+ 0003:00007170       NATPMP_Poll                84017170 f   net_natpmp.obj
+ 0003:00007410       STUN_GetExternalIP         84017410 f   net_stun.obj
+ 0003:000075d0       UPNP_Poll                  840175d0 f   net_upnp.obj
+ 0003:00007ae0       BuildInstrumentSelectionList 84017ae0 f   OvershellHooks.obj
+ 0003:00007dc0       DisplayMessage             84017dc0 f   PassiveMessages.obj
+ 0003:00007e38       DefinesHook                84017e38 f   rb3enhanced.obj
+ 0003:00007eb0       SetVenueHook               84017eb0 f   rb3enhanced.obj
+ 0003:00007f80       UpdatePresenceHook         84017f80 f   rb3enhanced.obj
+ 0003:00008008       NewFileHook                84018008 f   rb3enhanced.obj
+ 0003:000080d0       DataReadFileHook           840180d0 f   rb3enhanced.obj
+ 0003:00008160       ModifierManagerConstructorHook 84018160 f   rb3enhanced.obj
+ 0003:00008200       DebugTextStreamDestructor  84018200 f   rb3enhanced.obj
+ 0003:00008200       RB3E_FlushCache            84018200 f   xbox360.obj
+ 0003:00008208       DebugTextStreamPrint       84018208 f   rb3enhanced.obj
+ 0003:00008288       RB3E_RunLoop               84018288 f   rb3enhanced.obj
+ 0003:00008308       StagekitSetStateHook       84018308 f   rb3enhanced.obj
+ 0003:00008360       ApplyPatches               84018360 f   rb3enhanced.obj
+ 0003:00008410       ApplyConfigurablePatches   84018410 f   rb3enhanced.obj
+ 0003:00008530       SymbolPreInitHook          84018530 f   rb3enhanced.obj
+ 0003:00008558       InitialiseFunctions        84018558 f   rb3enhanced.obj
+ 0003:00008be0       ApplyHooks                 84018be0 f   rb3enhanced.obj
+ 0003:000090c8       StartupHook                840190c8 f   rb3enhanced.obj
+ 0003:00009148       PropAnimSetFrameHook       84019148 f   RndPropAnimHooks.obj
+ 0003:000091a8       IsActiveHook               840191a8 f   SameInstrumentHooks.obj
+ 0003:000091e8       ResolveWaitStatesHook      840191e8 f   SameInstrumentHooks.obj
+ 0003:00009450       RecalcGemListHook          84019450 f   SameInstrumentHooks.obj
+ 0003:00009690       FreeSameInstrumentClones   84019690 f   SameInstrumentHooks.obj
+ 0003:00009780       ProcessConfigHook          84019780 f   SameInstrumentHooks.obj
+ 0003:00009830       InitSameInstrument         84019830 f   SameInstrumentHooks.obj
+ 0003:000099a8       SetSongAndArtistNameHook   840199a8 f   SetlistHooks.obj
+ 0003:00009b38       SetSongNameFromNodeHook    84019b38 f   SetlistHooks.obj
+ 0003:00009db8       MetadataSongIDHook         84019db8 f   SongHooks.obj
+ 0003:00009e00       GetSongIDHook              84019e00 f   SongHooks.obj
+ 0003:00009eb8       InitSongMetadataHook       84019eb8 f   SongHooks.obj
+ 0003:00009ed0       SongParserPitchToSlotHook  84019ed0 f   SongParserHooks.obj
+ 0003:00009f58       GetSymbolByGameOriginHook  84019f58 f   SongSort.obj
+ 0003:00009f80       GetGameOriginBySymbolHook  84019f80 f   SongSort.obj
+ 0003:0000a0d0       SetMusicSpeedHook          8401a0d0 f   SpeedHooks.obj
+ 0003:0000a0f0       UpdateTrackSpeedHook       8401a0f0 f   SpeedHooks.obj
+ 0003:0000a100       HookFunction               8401a100 f   utilities.obj
+ 0003:0000a130       RB3E_DeleteSongCache       8401a130 f   xbox360_content.obj
+ 0003:0000a1d0       CacheMgrXbox_MountAsync_Hook 8401a1d0 f   xbox360_content.obj
+ 0003:0000a2b8       XboxContentConstructHook   8401a2b8 f   xbox360_content.obj
+ 0003:0000a318       InitContentHooks           8401a318 f   xbox360_content.obj
+ 0003:0000a370       XeKeysSetKeyHook           8401a370 f   xbox360_crypto.obj
+ 0003:0000a3f8       XeKeysAesCbcHook           8401a3f8 f   xbox360_crypto.obj
+ 0003:0000a430       InitCryptoHooks            8401a430 f   xbox360_crypto.obj
+ 0003:0000aba8       RB3E_ExceptionHandler      8401aba8 f   xbox360_exceptions.obj
+ 0003:0000ac70       RB3E_MountXboxDrive        8401ac70 f   xbox360_files.obj
+ 0003:0000ad58       RB3E_MountFileSystems      8401ad58 f   xbox360_files.obj
+ 0003:0000adb8       RB3E_FileExists            8401adb8 f   xbox360_files.obj
+ 0003:0000ae18       RB3E_OpenFile              8401ae18 f   xbox360_files.obj
+ 0003:0000ae80       RB3E_ReadFile              8401ae80 f   xbox360_files.obj
+ 0003:0000aed8       RB3E_WriteFile             8401aed8 f   xbox360_files.obj
+ 0003:0000af30       RB3E_CloseFile             8401af30 f   xbox360_files.obj
+ 0003:0000af38       RB3E_ListFiles             8401af38 f   xbox360_files.obj
+ 0003:0000b148       RB3E_FreeFileList          8401b148 f   xbox360_files.obj
+ 0003:0000b1a0       RB3E_GetRawfilePath        8401b1a0 f   xbox360_files.obj
+ 0003:0000b350       JoypadGetCachedXInputCapsHook 8401b350 f   xbox360_input.obj
+ 0003:0000b418       InitInputHooks             8401b418 f   xbox360_input.obj
+ 0003:0000b438       CanUseGoCentral            8401b438 f   xbox360_liveless.obj
+ 0003:0000b4a8       XSessionSearchEx           8401b4a8 f   xonline_stub.obj
+ 0003:0000b4a8       ReturnsZero                8401b4a8 f   xbox360_liveless.obj
+ 0003:0000b4b0       QueuingSocketBindHook      8401b4b0 f   xbox360_liveless.obj
+ 0003:0000b508       socketHook                 8401b508 f   xbox360_liveless.obj
+ 0003:0000b598       XNetStartupHook            8401b598 f   xbox360_liveless.obj
+ 0003:0000b5b0       XSessionSearchExHook       8401b5b0 f   xbox360_liveless.obj
+ 0003:0000b700       XamUserCheckPrivilegeHook  8401b700 f   xbox360_liveless.obj
+ 0003:0000b710       XamUserGetSigninInfoHook   8401b710 f   xbox360_liveless.obj
+ 0003:0000b750       XamUserGetSigninStateHook  8401b750 f   xbox360_liveless.obj
+ 0003:0000b780       XNetXnAddrToInAddrHook     8401b780 f   xbox360_liveless.obj
+ 0003:0000b820       XNetGetTitleXnAddrHook     8401b820 f   xbox360_liveless.obj
+ 0003:0000b920       XNetQosLookupHook          8401b920 f   xbox360_liveless.obj
+ 0003:0000ba68       XamShowFriendsUIShim       8401ba68 f   xbox360_liveless.obj
+ 0003:0000bac8       XInviteGetAcceptedInfoHook 8401bac8 f   xbox360_liveless.obj
+ 0003:0000bb28       InitLivelessHooks          8401bb28 f   xbox360_liveless.obj
+ 0003:0000bf28       RB3E_CreateSocket          8401bf28 f   xbox360_net.obj
+ 0003:0000bfd8       RB3E_DisposeSocket         8401bfd8 f   xbox360_net.obj
+ 0003:0000c020       RB3E_LastError             8401c020 f   xbox360_net.obj
+ 0003:0000c028       RB3E_GetInternalIP         8401c028 f   xbox360_net.obj
+ 0003:0000c070       RB3E_GetGatewayIP          8401c070 f   xbox360_net.obj
+ 0003:0000c0e0       RB3E_BindPort              8401c0e0 f   xbox360_net.obj
+ 0003:0000c148       RB3E_SetNonBlocking        8401c148 f   xbox360_net.obj
+ 0003:0000c180       RB3E_SetRecvTimeout        8401c180 f   xbox360_net.obj
+ 0003:0000c1c0       RB3E_SetTimeout            8401c1c0 f   xbox360_net.obj
+ 0003:0000c240       RB3E_UDP_SendTo            8401c240 f   xbox360_net.obj
+ 0003:0000c2a8       RB3E_UDP_RecvFrom          8401c2a8 f   xbox360_net.obj
+ 0003:0000c358       RB3E_TCP_Connect           8401c358 f   xbox360_net.obj
+ 0003:0000c3b0       RB3E_TCP_Send              8401c3b0 f   xbox360_net.obj
+ 0003:0000c3c8       RB3E_TCP_Recv              8401c3c8 f   xbox360_net.obj
+ 0003:0000c3e0       RB3E_TCP_Listen            8401c3e0 f   xbox360_net.obj
+ 0003:0000c3f8       RB3E_TCP_Accept            8401c3f8 f   xbox360_net.obj
+ 0003:0000c570       RB3E_IsEmulator            8401c570 f   xbox360.obj
+ 0003:0000c5b8       RB3E_Sleep                 8401c5b8 f   xbox360.obj
+ 0003:0000c5c0       RB3E_CreateThread          8401c5c0 f   xbox360.obj
+ 0003:0000c610       RB3E_RelaunchGame          8401c610 f   xbox360.obj
+ 0003:0000c7a0       DllMain                    8401c7a0 f   xbox360.obj
+ 0003:0000c808       TranslateVK                8401c808 f   xbox_keyboard.obj
+ 0003:0000c978       KeyboardPoll               8401c978 f   xbox_keyboard.obj
+ 0003:0000caf0       __savegprlr_14             8401caf0 f   crt.obj
+ 0003:0000cb40       __savegprlr_16             8401cb40 f   crt.obj
+ 0003:0000cb88       __savegprlr_18             8401cb88 f   crt.obj
+ 0003:0000cbc8       __savegprlr_20             8401cbc8 f   crt.obj
+ 0003:0000cc00       __savegprlr_22             8401cc00 f   crt.obj
+ 0003:0000cc30       __savegprlr_23             8401cc30 f   crt.obj
+ 0003:0000cc60       __savegprlr_24             8401cc60 f   crt.obj
+ 0003:0000cc88       __savegprlr_25             8401cc88 f   crt.obj
+ 0003:0000ccb0       __savegprlr_26             8401ccb0 f   crt.obj
+ 0003:0000ccd0       __savegprlr_27             8401ccd0 f   crt.obj
+ 0003:0000ccf0       __savegprlr_28             8401ccf0 f   crt.obj
+ 0003:0000cd08       __savegprlr_29             8401cd08 f   crt.obj
+ 0003:0000cd20       __restgprlr_14             8401cd20 f   crt.obj
+ 0003:0000cd78       __restgprlr_16             8401cd78 f   crt.obj
+ 0003:0000cdc8       __restgprlr_18             8401cdc8 f   crt.obj
+ 0003:0000ce10       __restgprlr_20             8401ce10 f   crt.obj
+ 0003:0000ce50       __restgprlr_22             8401ce50 f   crt.obj
+ 0003:0000ce88       __restgprlr_23             8401ce88 f   crt.obj
+ 0003:0000ceb8       __restgprlr_24             8401ceb8 f   crt.obj
+ 0003:0000cee8       __restgprlr_25             8401cee8 f   crt.obj
+ 0003:0000cf10       __restgprlr_26             8401cf10 f   crt.obj
+ 0003:0000cf38       __restgprlr_27             8401cf38 f   crt.obj
+ 0003:0000cf58       __restgprlr_28             8401cf58 f   crt.obj
+ 0003:0000cf78       __restgprlr_29             8401cf78 f   crt.obj
+ 0003:0000cf90       _DllMainCRTStartup         8401cf90 f   crt.obj
+ 0003:0000cf98       memset                     8401cf98 f   crt.obj
+ 0003:0000cfc0       _blkmov                    8401cfc0 f   crt.obj
+ 0003:0000cfc0       memcpy                     8401cfc0 f   crt.obj
+ 0003:0000cfe8       strncpy                    8401cfe8 f   crt.obj
+ 0003:0000d040       strchr                     8401d040 f   crt.obj
+ 0003:0000d070       strrchr                    8401d070 f   crt.obj
+ 0003:0000d0a8       strstr                     8401d0a8 f   crt.obj
+ 0003:0000d120       isspace                    8401d120 f   crt.obj
+ 0003:0000d160       isxdigit                   8401d160 f   crt.obj
+ 0003:0000d1a0       tolower                    8401d1a0 f   crt.obj
+ 0003:0000d1b8       atoi                       8401d1b8 f   crt.obj
+ 0003:0000d258       atof                       8401d258 f   crt.obj
+ 0003:0000d410       wcscat                     8401d410 f   crt.obj
+ 0003:0000d458       wcstombs                   8401d458 f   crt.obj
+ 0003:0000d4b8       malloc                     8401d4b8 f   crt.obj
+ 0003:0000e020       sprintf                    8401e020 f   crt.obj
+ 0003:0000e070       sscanf                     8401e070 f   crt.obj
+ 0003:0000ea30       CreateFileA                8401ea30 f   xapi_oss.obj
+ 0003:0000eb18       ReadFile                   8401eb18 f   xapi_oss.obj
+ 0003:0000eba0       WriteFile                  8401eba0 f   xapi_oss.obj
+ 0003:0000ec28       CloseHandle                8401ec28 f   xapi_oss.obj
+ 0003:0000ec70       SetFilePointer             8401ec70 f   xapi_oss.obj
+ 0003:0000ed68       GetFileAttributesA         8401ed68 f   xapi_oss.obj
+ 0003:0000eea0       FindFirstFileA             8401eea0 f   xapi_oss.obj
+ 0003:0000f0e8       FindNextFileA              8401f0e8 f   xapi_oss.obj
+ 0003:0000f110       FindClose                  8401f110 f   xapi_oss.obj
+ 0003:0000f198       CreateThread               8401f198 f   xapi_oss.obj
+ 0003:0000f218       Sleep                      8401f218 f   xapi_oss.obj
+ 0003:0000f250       GetSystemTime              8401f250 f   xapi_oss.obj
+ 0003:0000f290       GetLastError               8401f290 f   xapi_oss.obj
+ 0003:0000f2a0       WideCharToMultiByte        8401f2a0 f   xapi_oss.obj
+ 0003:0000f358       wsprintfW                  8401f358 f   xapi_oss.obj
+ 0003:0000f3a8       XInviteGetAcceptedInfo     8401f3a8 f   xonline_stub.obj
+ 0003:0000f3b0       NetDll_XNetGetTitleXnAddr  8401f3b0 f   xam:xam.xex
+ 0003:0000f3c0       XamUserGetXUID             8401f3c0 f   xam:xam.xex
+ 0003:0000f3d0       XamUserGetName             8401f3d0 f   xam:xam.xex
+ 0003:0000f3e0       XamShowMessageBoxUI        8401f3e0 f   xam:xam.xex
+ 0003:0000f3f0       XamShowKeyboardUI          8401f3f0 f   xam:xam.xex
+ 0003:0000f400       NetDll_WSAStartup          8401f400 f   xam:xam.xex
+ 0003:0000f410       NetDll_UpnpActionGetResults 8401f410 f   xam:xam.xex
+ 0003:0000f420       NetDll_UpnpActionCreate    8401f420 f   xam:xam.xex
+ 0003:0000f430       NetDll_UpnpDescribeGetResults 8401f430 f   xam:xam.xex
+ 0003:0000f440       NetDll_UpnpDescribeCreate  8401f440 f   xam:xam.xex
+ 0003:0000f450       NetDll_UpnpCloseHandle     8401f450 f   xam:xam.xex
+ 0003:0000f460       NetDll_UpnpSearchGetDevices 8401f460 f   xam:xam.xex
+ 0003:0000f470       NetDll_UpnpSearchCreate    8401f470 f   xam:xam.xex
+ 0003:0000f480       NetDll_UpnpDoWork          8401f480 f   xam:xam.xex
+ 0003:0000f490       NetDll_UpnpStartup         8401f490 f   xam:xam.xex
+ 0003:0000f4a0       XamContentGetDeviceData    8401f4a0 f   xam:xam.xex
+ 0003:0000f4b0       XamContentDelete           8401f4b0 f   xam:xam.xex
+ 0003:0000f4c0       NetDll_socket              8401f4c0 f   xam:xam.xex
+ 0003:0000f4d0       NetDll_setsockopt          8401f4d0 f   xam:xam.xex
+ 0003:0000f4e0       NetDll_XNetStartup         8401f4e0 f   xam:xam.xex
+ 0003:0000f4f0       NetDll_XNetXnAddrToInAddr  8401f4f0 f   xam:xam.xex
+ 0003:0000f500       NetDll_XNetQosServiceLookup 8401f500 f   xam:xam.xex
+ 0003:0000f510       NetDll_XNetQosLookup       8401f510 f   xam:xam.xex
+ 0003:0000f520       XamUserGetSigninState      8401f520 f   xam:xam.xex
+ 0003:0000f530       XamUserGetSigninInfo       8401f530 f   xam:xam.xex
+ 0003:0000f540       XamShowFriendsUI           8401f540 f   xam:xam.xex
+ 0003:0000f550       XNetLogonGetExtendedStatus 8401f550 f   xam:xam.xex
+ 0003:0000f560       NetDll_closesocket         8401f560 f   xam:xam.xex
+ 0003:0000f570       NetDll_shutdown            8401f570 f   xam:xam.xex
+ 0003:0000f580       NetDll_bind                8401f580 f   xam:xam.xex
+ 0003:0000f590       NetDll_connect             8401f590 f   xam:xam.xex
+ 0003:0000f5a0       NetDll_listen              8401f5a0 f   xam:xam.xex
+ 0003:0000f5b0       NetDll_accept              8401f5b0 f   xam:xam.xex
+ 0003:0000f5c0       NetDll_send                8401f5c0 f   xam:xam.xex
+ 0003:0000f5d0       NetDll_recv                8401f5d0 f   xam:xam.xex
+ 0003:0000f5e0       NetDll_sendto              8401f5e0 f   xam:xam.xex
+ 0003:0000f5f0       NetDll_recvfrom            8401f5f0 f   xam:xam.xex
+ 0003:0000f600       NetDll_ioctlsocket         8401f600 f   xam:xam.xex
+ 0003:0000f610       NetDll_WSAGetLastError     8401f610 f   xam:xam.xex
+ 0003:0000f620       NetDll_XNetGetOpt          8401f620 f   xam:xam.xex
+ 0003:0000f630       XamLoaderLaunchTitle       8401f630 f   xam:xam.xex
+ 0003:0000f640       XamInputGetKeystroke       8401f640 f   xam:xam.xex
+ 0003:0000f650       DbgPrint                   8401f650 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f660       XeKeysConsolePrivateKeySign 8401f660 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f670       XeCryptHmacSha             8401f670 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f680       XeCryptAesKey              8401f680 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f690       XeCryptAesCbc              8401f690 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f6a0       MmIsAddressValid           8401f6a0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f6b0       ObCreateSymbolicLink       8401f6b0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f6c0       RtlInitAnsiString          8401f6c0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f6d0       XexGetProcedureAddress     8401f6d0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f6e0       XexGetModuleHandle         8401f6e0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f6f0       RtlNtStatusToDosError      8401f6f0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f700       NtCreateFile               8401f700 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f710       NtReadFile                 8401f710 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f720       NtWriteFile                8401f720 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f730       NtClose                    8401f730 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f740       NtQueryInformationFile     8401f740 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f750       NtSetInformationFile       8401f750 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f760       NtQueryFullAttributesFile  8401f760 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f770       NtQueryDirectoryFile       8401f770 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f780       NtOpenFile                 8401f780 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f790       ExTerminateThread          8401f790 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f7a0       ExCreateThread             8401f7a0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f7b0       KeDelayExecutionThread     8401f7b0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f7c0       KeQuerySystemTime          8401f7c0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f7d0       RtlUnicodeToMultiByteN     8401f7d0 f   xboxkrnl:xboxkrnl.exe
+ 0003:0000f7e0       vswprintf                  8401f7e0 f   xboxkrnl:xboxkrnl.exe
+ 0004:00000268       RB3E_EventsSocket          84020268     net_events.obj
+ 0004:00000274       RB3E_HTTPSocket            84020274     net_http_server.obj
+ 0004:00000288       DebugTextStream_vt         84020288     rb3enhanced.obj
+ 0004:00000290       DebugTextStream            84020290     rb3enhanced.obj
+ 0004:00000348       NewKeyset                  84020348     xbox360_crypto.obj
+ 0004:00000398       mountToPoint               84020398     xbox360_files.obj
+ 0004:000003b8       numMountToPoint            840203b8     xbox360_files.obj
+ 0004:000003bc       optEnable                  840203bc     xbox360_liveless.obj
+ 0004:000003c0       opt_true                   840203c0     xbox360_net.obj
+ 0004:00000868       RB3E_ActiveLocale          84020868     LocaleHooks.obj
+ 0004:000030f8       NATPMP_Success             840230f8     net_natpmp.obj
+ 0004:000030fc       NATPMP_ExternalIP          840230fc     net_natpmp.obj
+ 0004:00003100       NATPMP_ExternalPort        84023100     net_natpmp.obj
+ 0004:00003b6c       RB3E_LoadedSongCount       84023b6c     SongHooks.obj
+ 0004:0000437c       hasLastMountedCache        8402437c     xbox360_content.obj
+ 0004:00004380       OurAesState                84024380     xbox360_crypto.obj
+ 0004:000044e0       Feed                       840244e0     xbox360_crypto.obj
+ 0004:000069e8       RB3E_Mounted               840269e8     xbox360_files.obj
+ 0004:00006d5c       ExternalIP                 84026d5c     xbox360_liveless.obj
+ 0004:00006d60       game_socket                84026d60     xbox360_liveless.obj
+ 0004:00006d64       xnqos                      84026d64     xbox360_liveless.obj
+ 0004:00006d8c       dlaunchGetOptValByName     84026d8c     xbox360.obj
+ 0004:00006d90       dlaunchSetOptValByName     84026d90     xbox360.obj
+ 0004:00806de0       _fltused                   84826de0 f   crt.obj
+ 0004:008082b0       ExternalIPShort            848282b0     <common>
+ 0004:008082c0       lastMountedCache           848282c0     <common>
+ 0004:00808404       Liveless_PendingJoin       84828404     <common>
+ 0004:00808405       Liveless_Connected         84828405     <common>
+ 0004:00808408       Liveless_PendingInternalIPv4 84828408     <common>
+ 0004:00808410       Liveless_MyUserCode        84828410     <common>
+ 0004:00808418       Liveless_PendingExternalIPv4 84828418     <common>
+ 0004:0080841c       Liveless_MyExternalIPv4    8482841c     <common>
+ 0004:00808420       globalSymbols              84828420     <common>
+ 0004:00808520       RB3E_Launcher_Config       84828520     <common>
+ 0004:00809520       RB3E_Launcher_HasConfig    84829520     <common>
+ 0004:00809540       config                     84829540     <common>
+ 0005:00000000       __IMPORT_DESCRIPTOR_xam    84830000     xam:xam.xex
+ 0005:00000014       __IMPORT_DESCRIPTOR_xboxkrnl 84830014     xboxkrnl:xboxkrnl.exe
+ 0005:00000028       __NULL_IMPORT_DESCRIPTOR   84830028     xam:xam.xex
+ 0006:00000010       __C2_11886                 84840010     aes.obj
+ 0006:00000020       __C1_11886                 84840020     aes.obj
+
+ entry point at        0003:0000cf90
+
+ Static symbols
+
+ 0003:00000080       INIHandler                 84010080 f   config.obj
+ 0003:00003b88       rstrip                     84013b88 f   inih.obj
+ 0003:00003c08       find_chars_or_comment      84013c08 f   inih.obj
+ 0003:00003f58       ini_reader_string          84013f58 f   inih.obj
+ 0003:00009278       TrackNumOfType             84019278 f   SameInstrumentHooks.obj
+ 0003:00009380       FirstSlotOfExactType       84019380 f   SameInstrumentHooks.obj
+ 0003:00009cc8       CorrectSongID              84019cc8 f   SongHooks.obj
+ 0003:0000a480       GraphicalExceptionDisplay  8401a480 f   xbox360_exceptions.obj
+ 0003:0000a718       WriteMemChunkToFile        8401a718 f   xbox360_exceptions.obj
+ 0003:0000a7e0       WriteStackWalkToFile       8401a7e0 f   xbox360_exceptions.obj
+ 0003:0000a8d8       ExceptionWriteToFile       8401a8d8 f   xbox360_exceptions.obj
+ 0003:0000ab70       ExceptionHandler           8401ab70 f   xbox360_exceptions.obj
+ 0003:0000c480       DetectXenia                8401c480 f   xbox360.obj
+ 0003:0000c640       CTHook                     8401c640 f   xbox360.obj
+ 0003:0000c6a0       EnableSockpatch            8401c6a0 f   xbox360.obj
+ 0003:0000d500       crt_vsprintf               8401d500 f   crt.obj
+ 0003:0000e820       oss_build_objname          8401e820 f   xapi_oss.obj
+ 0003:0000e8a8       oss_filetime_to_systemtime 8401e8a8 f   xapi_oss.obj
+ 0003:0000ede0       oss_find_query             8401ede0 f   xapi_oss.obj
+ 0003:0000f168       oss_thread_startup         8401f168 f   xapi_oss.obj

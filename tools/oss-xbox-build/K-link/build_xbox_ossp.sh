@@ -38,7 +38,9 @@ STUBS=$STAGE/stubs
 # ---- dependency inputs (stub if Lane H / Lane L not ready) -----------------
 LIBCMT=$XENON/src/xdk/LIBCMT               # CRT headers (present today)
 XDK_OSS=${XDK_OSS:-$XENON/src/xdk}         # Lane H: xtl.h + group headers
-IMPORTLIB=${IMPORTLIB:-$STAGE/importlib-stub}   # Lane L: xapilib/xboxkrnl/xnet/xonline .lib
+# Lane L reconstructed import libs. The ONLY two real XEX import modules that
+# resolve at load are xam.xex + xboxkrnl.exe (see finish/K-link.json).
+IMPORTLIB=${IMPORTLIB:-$XENON/tools/oss-xbox-build/L-importlibs}
 
 mkdir -p "$OBJ" "$LOGS"
 
@@ -61,15 +63,26 @@ INCS=(
   -I "$LIBCMT"
 )
 
-# ---- LFLAGS: Makefile LFLAGS_X minus -DEBUG/-TLBID (XDK/PDB), -XEX:NO kept --
-# Makefile also linked the *.exe as -dll -entry:_DllMainCRTStartup -XEX:NO
-LIBS_X=(xapilib.lib xboxkrnl.lib xnet.lib xonline.lib)
+# ---- LFLAGS: proven recipe, see finish/K-link.json (0 unresolved externals) ---
+# Only xam.xex + xboxkrnl.exe resolve at XEX load; XAPILIB/XNET/XONLINE are
+# build-time static libs, not XEX import modules -> the game-fn stubs + xapi/
+# xonline OSS objs cover them. -BASE:0x84000000 (MSVC-X360 default base is
+# 0x88000000; we want the intended XEX load base). -NODEFAULTLIB + explicit
+# crt/xapi/xonline objs. -MAP emits RB3Enhanced.map (hook VAs the SI Xenia
+# harness needs). -RELEASE is intentionally DROPPED: under wibo it invokes the
+# unstubbed imagehlp!CheckSumMappedFile (rc=134) AFTER the PE is written but
+# BEFORE the .map is flushed, yielding an empty map. The PE checksum is
+# irrelevant here -- xex2pack recomputes it -- so dropping -RELEASE gives a
+# clean rc=0 link AND a complete map.
+LIBS_X=(xam.lib xboxkrnl.lib)
 LFLAGS=(
   -NOLOGO -INCREMENTAL:NO -ERRORREPORT:PROMPT
   -MACHINE:PPCBE
   -STACK:262144,262144
-  -OPT:REF -OPT:ICF -RELEASE
-  -dll -entry:_DllMainCRTStartup -XEX:NO -FIXED:NO
+  -BASE:0x84000000
+  -OPT:REF -OPT:ICF
+  -dll -entry:_DllMainCRTStartup -XEX:NO -FIXED:NO -NODEFAULTLIB
+  -MAP:RB3Enhanced.map
 )
 
 cd "$RB3E" || exit 2
@@ -99,18 +112,26 @@ compile_all() {
 }
 
 link_full() {
-  local objs=("$OBJ"/*.obj)
-  echo "linking ${#objs[@]} objs..."
-  # TMP/TEMP required: link.exe's export/.exp generation for a -dll with exports
-  # calls Win32 GetTempPathW. wibo currently lacks that import (crashes rc=134 /
-  # "missing import GetTempPathW from kernel32") -> a wibo GetTempPathW stub is a
-  # prerequisite for the full 51-TU DLL link. Single-obj / no-export links are fine.
+  # wibo parses argv tokens beginning with '/' as options and silently DROPS
+  # absolute obj/lib paths as LNK4044 'unrecognized option; ignored' (a probe
+  # that passed absolute paths linked ZERO objs). Fix: cd into $STAGE and pass
+  # obj/lib names RELATIVE, with LIB=$IMPORTLIB in the env.
+  local nobj; nobj=$(ls "$OBJ"/*.obj 2>/dev/null | wc -l)
+  echo "linking $nobj game objs + crt/xapi/xonline + xam/xboxkrnl import libs..."
   mkdir -p "$STAGE/tmpdir"
-  TMP="$STAGE/tmpdir" TEMP="$STAGE/tmpdir" LIB="$IMPORTLIB" \
-    "$WIBO" "$LINK" "${LFLAGS[@]}" "${LIBS_X[@]}" \
-      -OUT:"$STAGE/RB3Enhanced.exe" -IMPLIB:"$STAGE/RB3Enhanced.imp" \
-      "${objs[@]}" >"$LOGS/link.log" 2>&1
-  echo "link rc=$? -> see $LOGS/link.log"
+  ( cd "$STAGE" \
+    && TMP="$STAGE/tmpdir" TEMP="$STAGE/tmpdir" LIB="$IMPORTLIB" \
+       "$WIBO" "$LINK" "${LFLAGS[@]}" \
+         -OUT:RB3Enhanced.exe -IMPLIB:RB3Enhanced.imp \
+         obj/*.obj crt/crt.obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
+         "${LIBS_X[@]}" >"$LOGS/link_full.log" 2>&1 )
+  local rc=$?
+  echo "link rc=$rc -> $LOGS/link_full.log"
+  if [ -s "$STAGE/RB3Enhanced.exe" ] && [ -s "$STAGE/RB3Enhanced.map" ]; then
+    echo "  PE -> $STAGE/RB3Enhanced.exe ; MAP -> $STAGE/RB3Enhanced.map"
+  else
+    echo "  WARNING: missing RB3Enhanced.exe or RB3Enhanced.map"
+  fi
 }
 
 case "${1:-all}" in

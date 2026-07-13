@@ -1,0 +1,39 @@
+{
+  "lane": "MAPDEPLOY",
+  "phase": "Phase 2 (RB3DX-RETARGET-PLAN)",
+  "status": "done",
+  "verified": true,
+  "date": "2026-07-13",
+  "initVA": "0x84019830",
+  "hookVAs": {
+    "IsActiveHook": "0x840191A8",
+    "ResolveWaitStatesHook": "0x840191E8",
+    "ProcessConfigHook": "0x84019780",
+    "RecalcGemListHook": "0x84019450"
+  },
+  "allowFlagVA": "0x84829590",
+  "configBaseVA": "0x84829540",
+  "allowFieldOffset": "0x50",
+  "deployDir": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/deploy-si-rb3dx",
+  "artifacts": {
+    "map": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/RB3Enhanced.map",
+    "pe": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/RB3Enhanced.exe",
+    "bootXex": "/home/free/code/milohax/rb3-xenon/tools/xex2pack/work/boot.xex",
+    "deployDll": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/deploy-si-rb3dx/RB3Enhanced.dll",
+    "deployDllSha256": "b0d06f869989ef85df1a38ad99b506b91b0589c3afbe5ee3802d999de6730e50",
+    "buildScript": "/home/free/code/milohax/rb3-xenon/tools/oss-xbox-build/K-link/build_xbox_ossp.sh"
+  },
+  "pe": {
+    "imageBase": "0x84000000",
+    "entryVA": "0x8401CF90",
+    "machine": "0x01F2"
+  },
+  "notes": [
+    "No retarget: RB3DX default.xex c5a17091 == clean TU5 (170-byte delta, identical section tables). Comment block added atop RB3Enhanced/include/ports_xbox360.h; no ports_rb3dx.h created.",
+    "build_xbox_ossp.sh 'link' repaired to the proven finish/K-link.json recipe (relative paths, -BASE:0x84000000, -NODEFAULTLIB, crt/xapi/xonline objs, xam.lib+xboxkrnl.lib) and -MAP:RB3Enhanced.map added. -RELEASE dropped: under wibo it calls the unstubbed imagehlp!CheckSumMappedFile (rc=134) after writing the PE but before flushing the .map, yielding an empty map; the PE checksum is irrelevant (xex2pack recomputes). Now rc=0 + full map in one shot.",
+    "AllowSameInstrument field offset 0x50 is compiler-confirmed via offsetof probe (cl.exe 16.00.11886); sizeof(RB3E_Config)=0x28C. allowFlagVA = config(0x84829540) + 0x50 = 0x84829590.",
+    "Repack: xex2pack.py --pe K-link/RB3Enhanced.exe --entry 0x8401cf90 --base 0x84000000 --import-map finish/ordinal-map.json --compress basic -> boot.xex 8724480 B (image_size 0x850000). Copied to deploy-si-rb3dx/RB3Enhanced.dll.",
+    "This on-disk PE (85504 B) is smaller than the earlier K-link.json PE (2097152 B): the 8MB crt malloc arena is now in .bss not .data. Immaterial to the packed image -- xex2pack maps SizeOfImage and zero-fills bss; boot.xex is the same 8724480 B and same VAs.",
+    "deployDir contains RB3Enhanced.dll + rb3.ini(AllowSameInstrument=true) + RB3Enhanced.map + DEPLOY.md (pins RB3DX xex c5a17091, dupe_allowed ARK 6a5b174a/aacfbb9d, rollback set)."
+  ]
+}
