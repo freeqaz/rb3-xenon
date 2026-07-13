@@ -1,8 +1,34 @@
 # Hub "crash" PC 0x82BCEFE4 / EA 0x7FEA1A80 — root-cause brief
 
 **Lane:** RB3DX-RETARGET-PLAN Phase 4.1/4.2 (characterize + bounded-fix decision).
-**Date:** 2026-07-13. **Status:** CHARACTERIZED. **hubOpen:** false (no emulator
-fix warranted at this PC — see verdict).
+**Date:** 2026-07-13. **Status:** CHARACTERIZED + EMPIRICALLY CONFIRMED. **hubOpen:**
+false (no emulator fix warranted at this PC — see verdict).
+
+## 2026-07-13 UPDATE — de-mask instrumentation confirms it LIVE
+
+The characterization re-do the "Fix recommendation" section below asks for is now
+DONE and lands the verdict with runtime evidence. Xenia commit `90eb07f81` adds a
+title-gated (0x45410914), default-off `--rb3dx_hub_teardown_trace` cvar that splits
+the SIGSEGV stream: writes into the XMA aperture [0x7FEA0000,0x7FEB0000) are counted
+as benign, and the last fault whose guest EA is *not* in that aperture is tracked
+separately (`ExceptionHandler::GetLastRealFaultAddress/Rip/GetXmaSoftFaultCount`).
+
+First run (`--gpu=null --rb3dx_skip_calibration --rb3dx_hub_teardown_trace`, 42s boot,
+exit 0). At 33 s the raw report shows the familiar "crash":
+
+    SIGSEGV=2 last_fault=0x17FEA1A80 last_rip=0xA0ACD4EF crash_guest=0x82BCEFE4 []
+    [demask] XMA-benign-faults=2  last_REAL_fault=0x0 last_REAL_rip=0x0
+
+**Both SIGSEGVs are XMA-benign, and `last_REAL_fault` stays `0x0` for the entire
+boot.** There is NO genuine fault anywhere — 0x82BCEFE4 is purely the XMA red herring,
+and the CPU/audio path runs to the timeout and exits cleanly. This is the stronger
+form of the verdict: the boot does not *crash* at all. The real main_hub wall is a
+**stall** (loader never completing / mLoader NULL — see [[xenia-seh-fault-wiki]]),
+which by definition produces no SIGSEGV, exactly matching `last_REAL_fault=0x0`.
+
+Use `--rb3dx_hub_teardown_trace` on every future RB3DX Xenia run: if a genuine
+terminator ever exists (e.g. on the real Vulkan render path), it will surface as a
+non-zero `last_REAL_fault` / `real_guest=[fn]` instead of being buried under XMA noise.
 
 ## TL;DR
 
