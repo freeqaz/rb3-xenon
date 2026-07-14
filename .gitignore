@@ -159,3 +159,17 @@ tools/oss-xbox-build/deploy-si*/RB3Enhanced.dll
 # uv-managed env (.venv); /venv is a local back-compat symlink -> .venv (already ignored above)
 .venv/
 uv-cache/
+
+# --- SI hardware-fix scratch (binaries, probe dirs, stray logs) ---
+NUL.obj
+/err*.log
+/xenia-headless.log
+/_ossprobe/
+/_rb3e07/
+/_tu5probe/
+docs/plans/si-hw-fix/**/*.basefile
+docs/plans/si-hw-fix/**/*.pe
+docs/plans/si-hw-fix/**/*.png
+docs/plans/si-hw-fix/**/*.dll
+docs/plans/si-hw-fix/artifacts/
+tools/xex2pack/work/

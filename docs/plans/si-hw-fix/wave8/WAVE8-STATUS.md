@@ -1,7 +1,50 @@
 # Wave 8 — DLL Load-Compat: root cause is the XEX container, not the code
 
 **Date:** 2026-07-14
-**Status:** ✅ **SOLVED — SI DLL now LOADS on real hardware.** Root cause was our
+**Status:** ⛔ **"SOLVED" RETRACTED — the compression/page-hash thesis below is
+WRONG.** The `xextool -c c` compressed spliced build (968ebd4f) does NOT load; the
+earlier "PASS" was an FTP-race artifact. See **REAL ROOT CAUSE + corrected results
+below**, and the decision doc **PATH-REVIEW.md**. Everything from "THE FIX" down to
+"## Conclusion" is preserved as historical/incorrect analysis.
+
+---
+
+## ✅ REAL ROOT CAUSE (2026-07-14, corrected) — malformed XEX import thunks
+
+**It was never the container.** Decisive control: `stock_repacked` = the known-good
+stock nightly run through `xextool -c c` ONLY (nothing else) → **LOADS on hardware**
+(RB3E ALIVE + HTTP-server events captured). That exonerates compression, signing,
+and page-hashes. The rejection is **image content** — specifically the **XEX import
+thunk encoding**. The RGH `XexLoadImage` binder expects each function-import thunk as
+`word0 = 0x01000000|(module_index<<16)|ordinal`, `word1 = 0x02000000|(module_index<<16)|ordinal`
+then `mtctr r11; bctr`. `tools/xex2pack/deidax_thunks.py` restored only word0 and
+dropped module_index → FIXED (proof: fixed null round-trip basefile is byte-identical
+to `stock_repacked.base`, the proven-loading image). `idaxex -b` mangles thunks on
+extract; **`xextool -b` preserves them** — so build via xextool, not idaxex/xex2pack.
+
+### Corrected hardware load matrix (all sha-verified on-drive)
+
+| DLL | sha256 | Container | Loads? |
+|---|---|---|---|
+| Stock nightly | `58676ce8` | original nightly | **YES** (control) |
+| `stock_repacked` | `9d874dab` | stock → `xextool -c c` | **YES** (container recipe proven) |
+| spliced_compressed | `968ebd4f` | xex2pack + splice, then xextool | **NO** (contaminated import table) |
+| from-source devkit | `25998625` | 8.7MB, xex2pack, `xextool -m d -c c` | **NO** (valid RSA+hashes, still rejected) |
+| from-source modfix | `05794e32` | ^ + xboxkrnl thunk module-byte fixed | **NO** (deeper container defect) |
+
+**Conclusion:** the `xex2pack`-**synthesized** import table/container is not accepted
+by RGH XexLoadImage even devkit-signed with valid hashes AND the module-byte fix —
+too many latent defects. **Chosen path = splice SI onto the proven stock container
+(header-preserving `xextool -b` → in-place patch → `-m d -c c`).** Retire xex2pack
+from the ship path. Full analysis: `PATH-REVIEW.md`. Root-cause memory:
+`project_si_dll_load_rootcause`.
+
+---
+
+## (historical / INCORRECT below — compression thesis, retracted)
+
+**Date:** 2026-07-14
+**Status:** ✅ ~~SOLVED — SI DLL now LOADS on real hardware.~~ Root cause was our
 uncompressed XEX repack (bad compression descriptor + stale page hashes). Fix =
 re-pack through xorloser's **XexTool 6.3** (`wine xextool.exe -c c`), which
 LZX-compresses AND recomputes the page-hash chain. Deployed + confirmed mapped.
