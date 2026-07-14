@@ -1,5 +1,11 @@
 # CharClipGroup ObjVector flip — READY TO APPLY (+2 strict), deferred on box saturation (2026-07-01)
 
+> **STATUS (2026-07-06):** SUPERSEDED — applied & landed, see
+> `docs/decomp/handoff/charclipgroup-flip-RESULT-2026-07-02.md` (FindClip+Save both
+> 100.0% normalized) and commit `011e257`. Verified on disk: `src/system/char/CharClipGroup.h`
+> has no `unk24` field. This doc's own plan (keep unk24) was superseded during application —
+> the RESULT doc explains why (retail vtordisp requires dropping unk24 entirely).
+
 The ObjVector-flip harvest (wf_00550624-264) fully scoped + asm-validated a **+2 STRICT** flip for
 CharClipGroup but could NOT build (32-core box was 3x-oversubscribed, load 91-99, cold build crawled to
 6/729). Flow/FlowNode were honestly REFUTED (their 99.9% near-misses are dtk-reloc name-noise, not

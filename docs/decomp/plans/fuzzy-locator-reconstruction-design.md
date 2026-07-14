@@ -1,5 +1,10 @@
 # Fuzzy locator-first reconstruction — design (2026-06-21)
 
+> **STATUS (2026-07-06):** DESIGN SUPERSEDED by pilot falsification — see the
+> "PILOT RESULT (2026-06-21, wf_bf9851ca)" and "CONSOLIDATED VERDICT" sections inside
+> this doc (rb3-Wii oracle alone is insufficient; BSim is required, not optional), plus
+> `docs/decomp/research/2026-06-21-structural-levers-exhausted-capstone.md`.
+
 **Status: DESIGN / awaiting alignment before build.** Grounded in the hard-frontier-#2
 diagnosis (wf_8dd364e0) + the findings report (docs/decomp/fuzzy-reconstruction-frontier-2026-06-21.md).
 

@@ -2,7 +2,7 @@
 
 These patterns are caused by compiler optimizations or heuristics that resist simple source-level changes. Each section documents what would be needed to fix them.
 
-**Action:** Confirm the pattern actually applies (and that no fixable issues are mixed in). Try the documented fixes before moving on. For patterns requiring c2.dll patching, see [compiler-instrumentation.md](../../plans/compiler-instrumentation.md).
+**Action:** Confirm the pattern actually applies (and that no fixable issues are mixed in). Try the documented fixes before moving on. For patterns requiring c2.dll patching, see the DC3-side writeup at `../dc3-decomp/docs/plans/compiler-instrumentation.md` (the GDB-tracing/register-coloring experiments this suite was ported from — not copied into this repo). rb3-xenon's own `docs/plans/instrumentation-patcher-experiment.md` covers a related but distinct experiment (an obj-patcher for coverage-stub functions; verdict: dead end).
 
 ---
 
@@ -156,7 +156,7 @@ ORDER BY current_percent DESC;
 
 ### Root Cause: c2.dll Register Allocator Mechanism
 
-**Fully characterized via GDB tracing of c2.dll** (Experiments 1-9 in [compiler-instrumentation.md](../../plans/compiler-instrumentation.md)):
+**Fully characterized via GDB tracing of c2.dll** (Experiments 1-9 in `../dc3-decomp/docs/plans/compiler-instrumentation.md` — not present in this repo; same compiler/toolchain, so the mechanism transfers verbatim):
 
 The MSVC Xbox 360 backend (c2.dll) uses graph-coloring register allocation:
 
@@ -229,7 +229,7 @@ float z, y, x;  // Instead of x, y, z
 
 Try [Variable Declaration Order](fixable-declarations.md#variable-declaration-order) with the heuristics above. If 10+ reordering attempts don't help, the register assignment is fixed by interference constraints.
 
-**Future**: Binary patching of c2.dll's coloring loop (RVA `0x026780`) could reverse the BSF scan direction or reorder the color assignment, fixing all register swap functions at once. See [compiler-instrumentation.md](../../plans/compiler-instrumentation.md) for the full mechanism and address map.
+**Future**: Binary patching of c2.dll's coloring loop (RVA `0x026780`) could reverse the BSF scan direction or reorder the color assignment, fixing all register swap functions at once. See `../dc3-decomp/docs/plans/compiler-instrumentation.md` for the full mechanism and address map (not present in this repo).
 
 ### Statistical Analysis (1,288 functions scanned)
 

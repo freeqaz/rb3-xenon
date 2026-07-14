@@ -1,5 +1,12 @@
 # Handoff: port-BeatMatcher (lane w3-beatmatcher)
 
+> **STATUS (2026-07-06):** SUPERSEDED — since verified and pinned. Commits `e6d9835`
+> (RndOverlay::Showing fix) and `18c33de` landed after this handoff: 4 of the 5 worklist
+> fns (InSolo, PostDynamicAdd, Poll, Jump) are 100.0% normalized and pinned in
+> `scripts/target_symbol_map.json` / `config/45410914/splits.txt`; `ResetPitchBend` was
+> honestly REVERTED (88.24%, real body divergence) per `80ac963`. The build-environment
+> blocker described below is resolved; do not re-run the "Next steps" section as written.
+
 Status: **STAGED + COMMITTED, UNVERIFIED (blocked on build environment).**
 
 ## What is done

@@ -59,9 +59,12 @@ candidate. **Defer without forcing** (note it, move on):
 ## 4. Worktree setup (every agent, every time)
 ```bash
 cd /home/free/code/milohax/rb3-xenon
-scripts/setup_worktree.sh /home/free/code/milohax/wt-<key> <branch-key>   # btrfs CoW; warm cache
-cd /home/free/code/milohax/wt-<key>
+scripts/setup_worktree.sh ~/tmp/wt-<key> <branch-key>   # btrfs CoW; warm cache
+cd ~/tmp/wt-<key>
 ```
+- Worktrees go under `~/tmp` (= `/home/free/tmp`), **never** `/tmp` (RAM-backed tmpfs —
+  no btrfs reflink, so the CoW fast-path silently falls back to a full ~660 MB copy
+  there) and never the main repo's own directory.
 - Bare `git worktree add` is UNBUILDABLE (toolchain/build inputs gitignored).
 - If you must re-run `configure.py`, current main resolves the forked tools correctly;
   if it ever grabs dtk 0.3.0, pass explicit `--dtk /home/free/code/milohax/jeff/target/release/dtk
@@ -71,7 +74,7 @@ cd /home/free/code/milohax/wt-<key>
   `objects.json` entry, then regenerate `build.ninja`.
 
 ## 5. The per-function loop
-1. `./tools/ninja-locked 2>&1 | tee /tmp/<key>_build.log` (ALWAYS tee; the
+1. `./tools/ninja-locked 2>&1 | tee ~/tmp/rb3_build_<key>.log` (ALWAYS tee; the
    `0x8229D660` overlap WARN is expected noise).
 2. Diff one fn (`diff_inspect` or `bin/objdiff-cli`), form a SOURCE-LEVEL hypothesis
    (wrong callee → check oracle body; wrong constant → check enums/save-revs; missing

@@ -451,6 +451,6 @@ For a function that won't match:
 
 ---
 
-**Last Updated:** 2026-01-29
+**Last Updated:** 2026-01-29 (ported verbatim from DC3 2026-05-27, no rb3-xenon-specific edits since)
 **XDK Version:** 21256.3 (2013)
-**Project:** DC3 Decompilation
+**Project:** DC3 Decompilation — applies directly to rb3-xenon (same MSVC X360 toolchain/compiler flags per `CLAUDE.md`)

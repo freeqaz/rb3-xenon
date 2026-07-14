@@ -2,7 +2,11 @@
 
 These patterns are caused by linker ICF merging identical function bodies after compilation. We compare at the object file level, so the call target mismatch is inherent to our comparison method.
 
-**Note:** The target binary is a debug build (no LTCG), but ICF is still enabled.
+**Note:** The target binary is a retail, size-optimized **release** build
+(`/O1 /Oi /GR /EHsc`, no `/GL`/`/LTCG` — verified against
+`dc3-decomp/config/373307D9/config.json`; see `CLAUDE.md` and
+`docs/plans/lto-vs-icf-investigation-2026-06-06.md`), **not** a debug build. ICF
+(`/OPT:ICF`) is a linker optimization independent of `/LTCG` and is active here.
 
 **Action:** Use `objdiff-cli diff --analyze --verdict` to confirm LINKER_MERGED is present, then use `merged-symbols` / `lookup_merged_symbol` to verify your call target is in the merged set. If verified, accept at_limit. If not in set, investigate — your code may be calling the wrong function.
 
@@ -137,8 +141,9 @@ See [../../plans/MAKESTRING_ICF_EQUIVALENCE.md](../../plans/MAKESTRING_ICF_EQUIV
 
 ## LTCG/Global Pooling
 
-> **Note:** This pattern likely does NOT apply to DC3. The target binary is a debug build
-> without LTCG. Keeping this section for reference in case it's needed for other projects.
+> **Note:** This pattern likely does NOT apply here. The target binary is a retail
+> release build without `/GL`/`/LTCG` (see the note at the top of this file), not a
+> debug build. Keeping this section for reference in case it's needed for other projects.
 
 **Prevalence:** Varies (retail builds with LTCG)
 **Typical Gap:** 0.5-1%
@@ -173,8 +178,9 @@ Accept the 0.5-1% gap as permanent (if applicable).
 
 ## Float Constant Pooling
 
-> **Note:** This pattern likely does NOT apply to DC3. The target binary is a debug build
-> without LTCG. Keeping this section for reference in case it's needed for other projects.
+> **Note:** This pattern likely does NOT apply here. The target binary is a retail
+> release build without `/GL`/`/LTCG` (see the note at the top of this file), not a
+> debug build. Keeping this section for reference in case it's needed for other projects.
 
 **Prevalence:** Common (retail builds with LTCG)
 **Typical Gap:** 1-2 instructions

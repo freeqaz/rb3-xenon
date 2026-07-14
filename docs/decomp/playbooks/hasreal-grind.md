@@ -75,10 +75,13 @@ print('COUNT', len(rows))"
 
 ```bash
 cd /home/free/code/milohax/rb3-xenon
-scripts/setup_worktree.sh /home/free/code/milohax/rb3-grindN grind-hasreal-N
+scripts/setup_worktree.sh ~/tmp/rb3-grindN grind-hasreal-N
 # work ONLY in the worktree; NEVER mutate git in the main repo
-cd /home/free/code/milohax/rb3-grindN
-./tools/ninja-locked 2>&1 | tee /tmp/rb3_grindN_build.log | tail -25
+# (worktrees + scratch/logs go under ~/tmp = /home/free/tmp, NEVER /tmp — /tmp is a
+# RAM-backed tmpfs with no btrfs reflink, so the CoW fast-path silently falls back
+# to a full ~660 MB copy there)
+cd ~/tmp/rb3-grindN
+./tools/ninja-locked 2>&1 | tee ~/tmp/rb3_grindN_build.log | tail -25
 python3 -c "import json;print(json.load(open('build/45410914/report.json'))['measures']['matched_functions'])"  # BASELINE
 ```
 
@@ -100,7 +103,7 @@ PICK (from §0 worklist)  →  CONFIRM report-norm <100  →  DIFF  →  CLASSIF
 
 ```python
 # 1. authoritative paired diff (this is ground truth, not the raw .s file)
-run_objdiff(symbol="?Foo@Bar@@...", unit="default/Unit", project_dir="/home/.../rb3-grindN",
+run_objdiff(symbol="?Foo@Bar@@...", unit="default/Unit", project_dir="/home/free/tmp/rb3-grindN",
             concise=False, full_listing=True, context=3)
 # 2. just the mismatches, fast:
 run_diff_inspect(symbol="...", mode="mismatches", unit="default/Unit", project_dir="...")
