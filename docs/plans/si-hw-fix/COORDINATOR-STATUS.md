@@ -1,5 +1,17 @@
 # Same-Instrument hardware-failure investigation — coordinator status (INTERIM)
 
+> **SUPERSEDED (current state):** This interim snapshot (2026-07-09) predates the
+> resolution. Since then: the DLL-load blocker was root-caused (malformed import
+> thunks — dropped module index / `lwz` word1) and solved; the native
+> `../xex-patcher` writer + `xexlint` validator were built (Wine off the write path);
+> and the song-start crash was root-caused (a missing per-instrument smasher plate)
+> and **fixed** — the 2-same-instrument song now loads and reaches gameplay on
+> hardware. The "chosen fix path" and "next actions" below are historical. See
+> `CRASH3-TRACE.md` for the hardware-test outcome and the two remaining documented
+> Phase-2 v1 limitations (shared difficulty / shared inputs).
+> _(TODO: `../xex-patcher` is a convenience stub — repoint once the repo moves to its
+> final shareable location.)_
+
 Date: 2026-07-09. Coordinator: Fable. Status: **evidence-gathering in progress** —
 3 Sonnet subagents still running (console byte verify / RB3E DLL poke analysis /
 grey-out call-path trace). This file checkpoints everything established so far so a

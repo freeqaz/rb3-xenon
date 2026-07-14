@@ -70,7 +70,7 @@ The console freezes at the first-chance fault (XBDM stays up; FTP does not).
 ## 4. Capture the crash
 
 ```bash
-source xex-patcher/.venv/bin/activate            # capstone
+source ../xex-patcher/.venv/bin/activate         # capstone  (TODO: repoint to xex-patcher's final path)
 rb3-xenon/tools/xdbg.py crash                     # fault PC, symbolized regs, fault instr, stack
 ```
 

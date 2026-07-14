@@ -515,7 +515,13 @@ choose to revive it.
 
 ---
 
-## 11. Exploration: a Linux-native XEX writer (`xex-patcher`)
+## 11. A Linux-native XEX writer (`xex-patcher`)
+
+> **STATUS (updated):** No longer exploratory — `xex-patcher` is **built**. The offline
+> validator (`xexlint`) and the native writer (integrity block + devkit signature,
+> through native LZX compression) exist and pass their corpus tests, taking Wine off
+> the write path. The rationale below is kept as the original record. The repo lives at
+> **`../xex-patcher`** _(TODO: repoint to its final shareable location once moved)._
 
 The §8 ship path and the §10 validator both still lean on XexTool-under-Wine for the
 final container regeneration. The endgame is to remove that dependency with our own
@@ -551,7 +557,7 @@ real stock module. The `/tmp/xboxdbg` corpus (which builds load, which don't) is
 regression set.
 
 A dedicated analysis pass decomposes each component above into an implementation spec
-under **`/home/free/code/milohax/xex-patcher/analysis/`** (container structure, import
+under **`../xex-patcher/analysis/`** (container structure, import
 table, LZX, integrity/hashes, signing, the loader rule-set, and a gap analysis of our
 current packer), with a synthesized architecture in `00-writer-architecture-synthesis.md`.
 
