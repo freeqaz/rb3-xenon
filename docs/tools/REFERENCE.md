@@ -14,13 +14,32 @@ Scripts, commands, and reference material for the rb3-xenon decompilation projec
 | `configure.py` | Generate build files (ninja) |
 | `scripts/build/rebuild_jeff_link.sh` | Rebuild jeff (dtk), re-split XEX objects, link, show error summary |
 
-## Symbol Lookup (Map File)
+## Symbol Lookup (No Map File for RB3)
 
-The linker map file `orig/45410914/ham_xbox_r.map` contains all symbol names and addresses:
+**RB3 has no leaked linker map.** `orig/45410914/` contains only `default.xex`
+and `band.exe` — no `.map` (verified on disk 2026-07-06). The `ham_xbox_r.map`
+shown below is **DC3's** map, at `../dc3-decomp/orig/373307D9/ham_xbox_r.map`
+(same Milo-engine toolchain, useful as a symbol-name *oracle* for engine code,
+not a direct source of RB3 addresses). For RB3 identification, use:
+
+- **`tools/fingerprint_match.py`** (extract/report/autoid/identify) — indexes
+  all 66,838 RB3 functions by referenced strings/callees/constants and
+  cross-refs against `../rb3/src` (Wii dev decomp, named functions) and
+  `../dc3-decomp/src` (same engine, named functions) to propose source-file
+  mappings. See `project_function_identification.md` in memory.
+- **`decomp.db`** (SQLite, ingested from `build/45410914/report.json`) — the
+  function database queried by the orchestrator MCP (`query_functions`,
+  `get_attempts`, etc.) and directly via `sqlite3` (see below).
+- **Ghidra + BinDiff** (planned/partial) — transfers DC3's named functions onto
+  RB3's anonymous `fn_8XXXXXXX` by structural similarity; see
+  `tools/ghidra/build_symbol_map.py` + `apply_symbols.py` for the
+  objdiff-matched-symbol renaming pipeline that's actually in use today.
+
+DC3 map lookup (for reference — cross-repo, not RB3's own symbols):
 
 ```bash
-# Find function address by name
-grep "FastSin\|Pool::Alloc" orig/45410914/ham_xbox_r.map
+# Find function address by name in DC3's map
+grep "FastSin\|Pool::Alloc" ../dc3-decomp/orig/373307D9/ham_xbox_r.map
 
 # Example output:
 # 0005:002027e8       ?FastSin@@YAMM@Z           825327e8 f   math:Trig.obj

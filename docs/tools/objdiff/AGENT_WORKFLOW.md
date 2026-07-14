@@ -1,5 +1,7 @@
 # Agent Workflow Analysis
 
+> **STATUS (2026-07-06):** HISTORICAL — a DC3-heritage design note exploring what an `objdiff` CLI/wrapper *could* expose to agents. This repo's live agent workflow is the orchestrator MCP tooling (`query_functions`, `run_objdiff`, `run_analyze_function`, `run_diff_inspect`, etc. — see `CLAUDE.md` "Orchestrator MCP, Ghidra MCP, skills"), not a standalone objdiff CLI wrapper as sketched here. Kept for the design rationale behind report-query filters (null vs 0% match, tiering, etc.), most of which did land in some form.
+
 > Part of the [objdiff CLI Design](./OBJDIFF_CLI_DESIGN.md) documentation.
 
 This document analyzes agent workflows and what queries they need, based on review of `docs/sessions/2026-01-worksession-archive.md`, `docs/decomp/SUBAGENT_STRATEGY.md`, and `docs/decomp/LOW_HANGING_FRUIT.md`.

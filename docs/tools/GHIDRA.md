@@ -1,5 +1,7 @@
 # Ghidra Setup for rb3-xenon
 
+> **STATUS (2026-07-06):** PARTIALLY STALE — this doc was ported verbatim from DC3 and several sections (map-file symbol lookup, "Type Seeding Pipeline") assume a leaked `ham_xbox_r.map` that **does not exist for RB3** (verified: `ls orig/45410914/` = `band.exe`, `default.xex` only; DC3's map lives at `../dc3-decomp/orig/373307D9/ham_xbox_r.map`). Those sections are marked DC3-heritage inline below. The actual RB3 flow: `tools/ghidra/import-xex.sh` does a single-pass full analysis with no map import (project `ghidra_projects/RB3Xenon`, MCP on port 8002); function identification uses `tools/fingerprint_match.py` (string/callee cross-referencing) plus `tools/ghidra/build_symbol_map.py` + `apply_symbols.py` (renames Ghidra's anonymous `fn_<addr>` using symbols objdiff has already matched, sourced from `decomp.db`/`report.json` — not a linker map). See `docs/tools/GHIDRA_SETUP.md` for a shorter doc that already carries the correct RB3 disclaimer, and `CLAUDE.md` for the canonical current-state summary.
+
 Ghidra provides binary analysis and decompilation for the original RB3 binary. Integrated via pyghidra-mcp (v0.1.6+) for AI-assisted workflows.
 
 ## Prerequisites
@@ -21,16 +23,21 @@ export PATH="$GHIDRA_INSTALL_DIR/support:$PATH"
 
 Xbox 360 executables require XEXLoaderWV. The extension must be installed in `$GHIDRA_INSTALL_DIR/Extensions/Ghidra/`. See [XEXLOADERWV.md](XEXLOADERWV.md) for build/install instructions and [PYGHIDRA_MCP_XEX_SUPPORT.md](../plans/PYGHIDRA_MCP_XEX_SUPPORT.md) for technical details on XEX handling.
 
-## Symbol Lookup via Map File
+## Symbol Lookup via Map File — DC3-HERITAGE, NOT APPLICABLE TO RB3
+
+> This section describes DC3's workflow (which has a leaked `ham_xbox_r.map` at
+> `../dc3-decomp/orig/373307D9/ham_xbox_r.map`). **RB3 has no equivalent map
+> file** — `orig/45410914/` contains only `default.xex` and `band.exe`. Kept
+> below for reference only; do not follow it for RB3.
 
 **Important:** The binary is stripped - Ghidra won't have function names. Use the linker map file as the primary symbol source:
 
 ```bash
-# Map file location
-orig/45410914/ham_xbox_r.map    # 119K lines of symbols
+# DC3 map file location (NOT present in rb3-xenon's orig/45410914/)
+../dc3-decomp/orig/373307D9/ham_xbox_r.map    # 119K lines of symbols
 
 # Find function address
-grep "GetPresenceMode" orig/45410914/ham_xbox_r.map
+grep "GetPresenceMode" ../dc3-decomp/orig/373307D9/ham_xbox_r.map
 # Output: 0005:00548b58  ?GetPresenceMode@PresenceMgr@@...  82878b58 f  game:PresenceMgr.obj
 #                                                          ^^^^^^^^
 #                                                          Use this address in Ghidra
@@ -39,7 +46,7 @@ grep "GetPresenceMode" orig/45410914/ham_xbox_r.map
 # decompile_function(binary_name, "0x82878b58")
 ```
 
-### Map File Format
+### Map File Format (DC3 reference)
 
 ```
 Section:Offset    MangledName                    Address    Type  Source
@@ -50,9 +57,33 @@ Section:Offset    MangledName                    Address    Type  Source
 - `f` = function, `i` = inlined
 - Address is absolute (base 0x82000000)
 
+### What RB3 actually does instead
+
+No leaked map exists for RB3, so symbol identification goes through:
+
+- **`tools/fingerprint_match.py`** — identifies source files/functions by
+  cross-referencing strings/callees/constants against `../rb3` (Wii dev decomp,
+  named functions) and `../dc3-decomp` (same engine, named functions). Produces
+  `fingerprints.json` + `autoid.json`.
+- **`tools/ghidra/build_symbol_map.py` + `apply_symbols.py`** — once objdiff has
+  *matched* a function (its target address is known from dtk's `.s` disassembly
+  comments), these rename that function's Ghidra `fn_<addr>`/`FUN_<addr>` to its
+  real mangled symbol, sourced from `decomp.db`/`build/45410914/report.json` —
+  no map file involved. Run via `tools/ghidra/run_apply_symbols.sh` (stops the
+  :8002 service, applies via a headless post-script, restarts it). Idempotent
+  and re-runnable after any `tools/ghidra/import-xex.sh` re-import.
+
 ## Headless Analysis
 
-Pre-analyze the RB3 binary (one-time, ~4 minutes):
+Pre-analyze the RB3 binary (one-time, ~4 minutes). The project-local wrapper is
+`tools/ghidra/import-xex.sh` (single-pass full analysis, no map import, project
+`ghidra_projects/RB3Xenon` — matches what `pyghidra-service.sh` expects):
+
+```bash
+./tools/ghidra/import-xex.sh
+```
+
+Equivalent raw invocation (adjust project location/name if not using the wrapper):
 
 ```bash
 /opt/ghidra/support/analyzeHeadless /tmp/pyghidra_mcp_projects/rb3-xenon rb3-xenon \
@@ -114,10 +145,11 @@ Configured in `.mcp.json`. The MCP server runs on **port 8002** (default) using 
 
 ## Workflow: Decompiling Unknown Functions
 
-1. **Find address from map file:**
-   ```bash
-   grep "YourFunction" orig/45410914/ham_xbox_r.map
-   ```
+1. **Find the address (no map file for RB3 — see caveat above).** Use
+   `tools/fingerprint_match.py identify` / `autoid`, `search_symbols_by_name`,
+   `search_code`/`search_strings` via the MCP tools below, or an already-matched
+   function's address from `build/45410914/report.json`. (The
+   `grep ... ham_xbox_r.map` idiom shown elsewhere in this doc is DC3-only.)
 
 2. **Decompile in Ghidra MCP:**
    ```
@@ -174,6 +206,21 @@ export GHIDRA_USER_HOME=/tmp/claude/ghidra_user # User settings/cache (writable!
 
 ## Type Seeding Pipeline
 
+> **DC3-heritage numbers below.** The table and before/after metrics in this
+> section describe DC3's map-based seed (`bulk_create_functions` +
+> `apply_demangled_signatures` sourced from `ham_xbox_r.map`). **RB3 has no map
+> to parse**, so `tools/ghidra/batch_export_types.py` in *this* repo explicitly
+> skips those two steps — its own docstring says: "rb3-xenon has no leaked .map
+> file (unlike DC3). The seed pipeline here skips the map-file-based steps
+> (bulk_create_functions from map, apply_demangled_signatures). Use
+> `tools/fingerprint_match.py` for function identification instead." In
+> practice `--seed` here only runs `create_structures` (struct_db → Ghidra
+> DTM); function-name seeding for RB3 instead comes from
+> `tools/ghidra/build_symbol_map.py` + `apply_symbols.py` (see the Symbol
+> Lookup section above), which renames only functions objdiff has already
+> matched — there is no RB3 equivalent of the ~27K/~53K bulk-create numbers
+> below.
+
 Seeds Ghidra with type information from the linker map file, enabling the decompiler to show field names, calling conventions, and full parameter types instead of raw offsets.
 
 ### Running the Pipeline
@@ -189,7 +236,7 @@ python3 tools/ghidra/batch_export_types.py --seed --legacy
 python3 tools/ghidra/batch_export_types.py --seed --extract
 ```
 
-### What the Pipeline Does
+### What the Pipeline Does (DC3 original design — see caveat above for what RB3's copy actually runs)
 
 | Step | Tool | Effect |
 |------|------|--------|
@@ -198,7 +245,7 @@ python3 tools/ghidra/batch_export_types.py --seed --extract
 | 3. Demangle signatures | `apply_demangled_signatures` | Applies full signatures to ~53K functions (CC, return type, all params) |
 | 4. Supplementary structs | `create_structures` | Creates ~2.1K struct layouts from struct_db |
 
-### Before/After
+### Before/After (DC3 measurements — not reproduced on RB3)
 
 | Metric | Before (legacy) | After (demangled) |
 |--------|-----------------|-------------------|
@@ -265,7 +312,7 @@ The pyghidra-mcp service is managed via `tools/ghidra/pyghidra-service.sh`:
 |-------|-------|-----|
 | "No load spec found" | XEX loader not installed | See [XEXLOADERWV.md](XEXLOADERWV.md) |
 | "Analysis incomplete" | Large binary still analyzing | Wait and retry |
-| "Function not found" | Binary is stripped or no function object | Use address from map file; run `--seed` to bulk-create functions |
+| "Function not found" | Binary is stripped or no function object | Locate via `tools/fingerprint_match.py` / MCP search tools (no map file for RB3); run `--seed` to seed struct_db types |
 | Binary shows as x86/DOS | XEX loader not working | Reinstall extension to `$GHIDRA_INSTALL_DIR/Extensions/` |
 | "Failed to init global cache" | `/var/tmp` not writable | Check permissions |
 | Service won't start on port 8002 | Port already in use | Check `lsof -i :8002`, kill conflicting process, or change port |
