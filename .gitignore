@@ -192,3 +192,6 @@ docs/plans/si-hw-fix/wave6/shim2/
 tools/oss-xbox-build/**/*.dll
 tools/oss-xbox-build/_dbg/
 tools/struct_db.sqlite
+tools/oss-xbox-build/xbdm_cmd.py
+tools/oss-xbox-build/xbdm_notify.py
+tools/oss-xbox-build/rb3e_alive_listen.py
