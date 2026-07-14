@@ -1,5 +1,9 @@
 # `config.json`
 
+> **STATUS (2026-07-06):** HISTORICAL dtk-template doc, generic format explanation
+> still accurate. See "This repo" section below for rb3-xenon's actual values —
+> `config/45410914/config.json`.
+
 This file contains the progress categories and the compiler flags for your project.
 
 ## Format
@@ -49,3 +53,27 @@ This file contains the progress categories and the compiler flags for your proje
         }
     }
 ```
+
+## This repo
+
+rb3-xenon's actual file is `config/45410914/config.json` (not `config.json` —
+paths are keyed by title ID, `45410914`). Verified contents as of 2026-07-06:
+
+```json
+"progress_categories": { "game": "Game Code", "engine": "Milo Engine Code",
+                          "sdk": "XDK Code", "network": "Quazal Network Code" },
+"asflags": [], "ldflags": [],
+"cflags": { "base": { "flags": ["/nologo", "/wd4355", "/wd4164", "/c",
+                                 "/GR", "/O1", "/Oi", "/EHsc"] },
+            "curl": { "base": "base", "flags": ["/TC", "/GS", "/D_XBOX360", "/DCURL_STATICLIB"] } }
+```
+
+Confirmed `"asflags"`/`"ldflags"` really do go unused here as the generic doc
+above says: this project's build (`tools/project.py`) never emits a linker or
+assembler edge for the X360/XEX target (there's no `mwld`-style link step —
+we diff compiled `.obj`s directly against dtk-split target objects), so both
+stay `[]`. The `/O1 /Oi /GR /EHsc` base flags and their rationale (retail
+size-optimized release, no LTCG) are documented in `CLAUDE.md` under
+"Optimization level". See `config/45410914/objects.json` (via `docs/objects.md`)
+for how individual `.cpp` files pick a `cflags` set (mostly `"base"`; a few
+opt into `"curl"` or add `extra_cflags` like `/Od`).

@@ -4,6 +4,11 @@ Decompilation of **Rock Band 3** for **Xbox 360** (PowerPC). Goal: matching
 machine code from C++ source. Target binary: vanilla retail XEX, title ID
 `45410914`, at `orig/45410914/default.xex` (not committed).
 
+**Docs index: `docs/INDEX.md`** — audited master index of every doc under
+`docs/` (2026-07-06): current references vs `[HIST]` frozen records, plus a
+"known traps" box. Check it before trusting any doc's current-state claims;
+stale/boilerplate docs carry a `> **STATUS (2026-07-06):**` banner.
+
 **Optimization level: `/O1 /Oi /GR /EHsc` (retail size-optimized release, no LTCG).**
 Verified for dc3 by reading `dc3-decomp/config/373307D9/config.json` (no `/GL` in
 cflags, no `/LTCG` in ldflags). RB3 is the same Harmonix toolchain era and engine,
