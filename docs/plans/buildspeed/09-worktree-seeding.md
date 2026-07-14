@@ -1,5 +1,10 @@
 # W3-B — Worktree warm-state seeding: .ninja_log/.ninja_deps in setup_worktree.sh, 0-compile verify
 
+> **STATUS (2026-07-06):** EXECUTED/LANDED — verified in `scripts/setup_worktree.sh`
+> (the "seed warm ninja state (.ninja_log/.ninja_deps) from main" block, gated on
+> cold-cache flag / src|config diffs / msvc-rule parity / non-absolute deps /
+> non-empty main state). Behavior is documented as live in CLAUDE.md's worktree section.
+
 Model: **sonnet**. Wave 3. **Start only after W3-A reports success** (the orchestrator should
 sequence this; you ALSO self-gate — see Preconditions). Completes the half-landed "L2
 fully-warm worktrees" work (session tasks #8/#9/#10 lineage).

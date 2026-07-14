@@ -1,5 +1,8 @@
 # Execution Schedule — dependency-aware matching roadmap
 
+> **STATUS (2026-07-06):** HISTORICAL roadmap (394-matched era, 2026-05-28) — superseded
+> by `docs/plans/frontier-workstreams-2026-07-02.md`.
+
 **Date:** 2026-05-28. **Supersedes the *ordering* of:** `docs/plans/path-to-100.md`
 (P1-P7 phases) and `docs/plans/exploratory-techniques.md` (§3 next-steps).
 **Does NOT supersede** their *content* — this doc re-orders and re-scopes those

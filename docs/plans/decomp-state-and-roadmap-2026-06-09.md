@@ -1,5 +1,8 @@
 # rb3-xenon decomp — state, lever landscape & research roadmap (2026-06-09)
 
+> **STATUS (2026-07-06):** HISTORICAL snapshot (6568-matched era, 2026-06-09) — current
+> match count is ~11,100+. Current master plan is `docs/plans/frontier-workstreams-2026-07-02.md`.
+
 **Operating model:** Claude coordinates + manages context; implementation is delegated
 to **workflows** (`.claude/workflows/*.js`, run via the Workflow tool). Tooling is the
 product — every manual/agent pass must report tooling gaps + ideas. This is a research

@@ -1,5 +1,8 @@
 # Path to 100% — multi-phase matching roadmap
 
+> **STATUS (2026-07-06):** HISTORICAL roadmap (394-matched era, 2026-05-28) — superseded
+> by `docs/plans/frontier-workstreams-2026-07-02.md`.
+
 **Date:** 2026-05-28. **Baseline (verified from `build/45410914/report.json`):**
 **394 / 66,134 matched functions (0.60%), 77,024 / 11,774,176 matched code bytes
 (0.65%), fuzzy 1.43% whole-binary.** Engine slice is 380/4360 fns (8.72%,
