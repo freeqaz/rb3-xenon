@@ -34,15 +34,22 @@ cause).
   worklist, **P2_classify.py / P3_remap.py generators**, `tu5_valayer/` outputs
   (incl. `nearmiss_anon_reloc_pairs.json`, `tu5_icf_folds_harvested.map`),
   `valayer_baseline_main/` (frozen ff839c46 inputs + PROVENANCE.txt).
-  Was ALL untracked → being committed onto branch tu5-migrate (preservation
-  agent, in flight; hash recorded in §6 when done).
+  Was ALL untracked → **COMMITTED on branch tu5-migrate = `72254ce0`** (38 files,
+  33 MB; note `*.map` is gitignored — `tu5_icf_folds_harvested.map` needed
+  `git add -f`).
 - **wt-tu5-p4** (`~/tmp/wt-tu5-p4`, branch tu5-p4-gate): the applied P4 gate
-  VA-layer state (4 modified tracked files) + the 14,818 gate report. Was
-  uncommitted → being committed onto branch tu5-p4-gate (same agent).
-- **KNOWN GAP:** gate splits.txt (6,236 lines) ≠ P3_remap output (4,082 lines) —
-  an *apply/merge step* between generator output and gate config exists in no
-  script. Reconstruction in flight → `~/tmp/tu5_landing/apply-step-reconstruction.md`;
-  must be scripted before the flip re-run (§3 step F3).
+  VA-layer state → **COMMITTED on branch tu5-p4-gate = `88794af4`**. Gate report
+  copy: `~/tmp/tu5_landing/report.tu5.p4gate.json` (matched_functions=14818).
+- **Apply step SOLVED (was "known gap"):** there is no missing script. The step
+  is: (1) copy `tu5_valayer/{splits.txt,symbols.txt}` → `config/45410914/` and
+  `target_symbol_map.json` → `scripts/` (byte-identical, sha1 edd88864);
+  (2) flip the single `object:` line in config.yml to `default_tu5.xex`;
+  (3) `touch config.yml && ninja` — the standard dtk split pass, run against the
+  TU5 binary, re-derives all `.pdata` pins and all 129,150 non-.text symbols,
+  augments .text symbols (+1875/−320), drops 10 .text-less TU headers.
+  `.text` split pins carry verbatim (2406 == 2406). P3_remap emits .text-only
+  by design (the map is .text-only; dtk owns the rest). Full accounting:
+  `~/tmp/tu5_landing/apply-step-reconstruction.md`.
 
 ### Load-bearing technical lessons (do not relearn)
 
@@ -73,16 +80,26 @@ cause).
 
 ---
 
-## 2. The gate (recomputed)
+## 2. The gate (RECOMPUTED 2026-07-15 vs 15,852 — `~/tmp/tu5_floor/FLOOR.md`)
 
-Floor accounting is being recomputed against 15,852 (agent in flight →
-`~/tmp/tu5_floor/FLOOR.md`). Prior figures (15,816 baseline): 48 of 81 MISS
-bodies matched → guaranteed floor 15,768, worst 15,595.
+| quantity | value |
+|---|---|
+| baseline | 15,852 |
+| MISS-we-match (guaranteed drops, enumerated) | **48** (same set as the roadmap's — all +36 baseline gains landed outside the changed set) |
+| AMBIG-we-match | 178 |
+| **GUARANTEED FLOOR** | **15,804** |
+| worst case | 15,625 |
+| NO-GO unexplained-loss budget (~1%) | **≈159** |
 
-**Gate to flip:** after the mis-pairing lever, the TU5 report must show
-`matched_functions ≥ floor(15,852)` with every drop inside the enumerated
-changed-set (`expected_drops.json`). **NO-GO:** unexplained loss > ~1%
-(~158 fns) → halt, keep TU0, debug `base_to_tu5_map.full.json` (roadmap §d).
+Enumerated drops: `~/tmp/tu5_floor/expected_drops.json` (48 fns; 17 ≥256 B;
+largest OvershellSlot::UpdateState 2,132 B) — also the P5 seed. The 23
+post-freeze pins (cc31ef0b) all remap cleanly: `~/tmp/tu5_floor/new_pins_tu5.json`
+(append at flip; the valayer map predates them and holds 15,073/15,206 older
+symbols, 133 dropped to re-anchoring ambiguity per its `dropped_pins.json`).
+
+**Gate to flip:** post-lever TU5 report must show `matched_functions ≥ 15,804`
+with every drop inside `expected_drops.json`. **NO-GO:** unexplained loss > ≈159
+→ halt, keep TU0, debug `base_to_tu5_map.full.json` (roadmap §d).
 
 ## 3. Flip sequence (F-steps, ordered, gated)
 
@@ -96,8 +113,9 @@ changed-set (`expected_drops.json`). **NO-GO:** unexplained loss > ~1%
   If a Rule-3-shaped residue dominates → small report-driver relaxation flag in
   the fork (report.rs:525-575 seam only; A/B on the TU0 report to prove zero
   baseline shift). Per-unit pairing code (`diff_objs`) stays untouched.
-- **F2 — Script the apply step** from the reconstruction note; commit the script
-  (branch tu5-p4-gate or tools/) so P2→P3→apply is fully reproducible.
+- **F2 — Apply step: RESOLVED** (no script needed — copy valayer outputs, flip
+  `object:` line, standard dtk split pass; see §1). Reproducibility is proven by
+  the committed gate state (`88794af4`).
 - **F3 — Re-run the full pipeline against CURRENT main:** re-freeze
   `valayer_baseline_main` from main HEAD (now = ff839c46 VA-layer + 23 pins —
   splits/symbols identical, so mostly a provenance refresh), fold in
@@ -157,3 +175,8 @@ Keep a TU0 copy of `orig/45410914/{default.xex,band.exe}` under
 - 2026-07-15: Recon workflow (4 Opus lanes) complete; findings folded into §1.
 - 2026-07-15: Keystone tooling cherry-picked to main = `03557b71` (roadmap #2 ✅).
 - 2026-07-15: F0 agents dispatched: preservation, lever (a1), floor recompute.
+- 2026-07-15: F0(c) floor recomputed vs 15,852: **floor 15,804 / worst 15,625 /
+  budget ≈159**; same 48-drop set as roadmap; 23 pins remapped 0-loss.
+- 2026-07-15: F0(a) preservation done: `72254ce0` (tu5-migrate, 33 MB map data +
+  generators) and `88794af4` (tu5-p4-gate, applied gate VA-layer). Apply step
+  reconstructed = seed-config + object-flip + dtk split pass (no missing script).
