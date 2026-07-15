@@ -220,3 +220,30 @@ Keep a TU0 copy of `orig/45410914/{default.xex,band.exe}` under
   shifts + C≈250 real divergence + A≈100 tooling; churn 95% benign relabel;
   flip legal via enumeration** (`~/tmp/tu5_forensics/F1_DECISION.md`).
   F3 (flip payload regen, wt-tu5-flip) + F3b (P5 manifest) agents dispatched.
+- 2026-07-15: F3 payload staged (tu5-flip: `2dccba57` generators + `b9d1f7a0`
+  flip + `ec19ebe5` canonical path) @ **14,847 matched, 828/828 named losses
+  manifest-explained, 0 unexplained**. P5 manifest landed (`3a470e1b`:
+  A527/B480/C380/UNRESOLVED 20 ≪ 159; arithmetic closes exactly).
+- 2026-07-15: **FLIP LANDED ON MAIN** — merge `d9c44305` (VA layer → TU5,
+  `.EDIT_FREEZE` deleted per contract) + F6 in-place binary swap (TU0 archived
+  at `orig/45410914/tu0-archive/`, default.xex → sha1 c5a17091 TU5) + first
+  post-flip build **verified matched = 14,847**; band.exe self-regenerated to
+  the TU5 PE (2fbdbc6b); dtk convergence commit `fcd7ac08` (symbols.txt ==
+  P4-gate sha 0cf7d49b exactly). F7 decomp.db reseeded from the TU5 report +
+  pruned 53,481 stale TU0 anon rows (72,109 rows; backup
+  `decomp.db.tu0-backup-20260715`).
+
+## 7. Post-flip follow-ups (open)
+
+- **User-owned:** push timing; CI container `/orig` rebuild (owner rjkiv — must
+  carry the TU5 default.xex before first post-flip CI run); other
+  machines/checkouts swap `orig/45410914/default.xex` to TU5 (sha c5a17091) —
+  stale warm worktrees keep building TU0 consistently until re-created.
+- Ghidra TU5 import (`tools/ghidra/import-xex.sh`, port 8002; keep TU0 program
+  for BinDiff transfer). Fingerprints/autoid regen on TU5.
+- `tools/scope_data/{engine,game}.json` are TU0-VA-keyed (cosmetic progress
+  breakdown only — not a match input); regenerate eventually.
+- RB3Enhanced `ports_xbox360.h` base/TU5 VA-mixing hygiene fix.
+- **P5-A** (map anchoring, ~100): census `unmapped_exist.json` FOUND set,
+  uniqueness-gated → new target_symbol_map pins. **P5-B** (struct re-basing,
+  ~480–600): seed = manifest offset-pair table. **P5-C** (~250–380 body work).
