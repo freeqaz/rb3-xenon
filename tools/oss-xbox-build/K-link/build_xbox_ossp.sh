@@ -24,7 +24,11 @@ set -u
 
 # ---- fixed paths -----------------------------------------------------------
 MILO=/home/free/code/milohax
-RB3E=$MILO/RB3Enhanced
+# RB3E source root. Default = the main RB3Enhanced checkout (byte-identical for
+# concurrent agents who set no RB3E_SRC). Override to build from a worktree, e.g.
+#   RB3E_SRC=/home/free/code/milohax/rb3e-civetweb-wt ./K-link/build_xbox_ossp.sh all
+# This changes only the *source* root; objs/PE/map still land under $STAGE.
+RB3E=${RB3E_SRC:-$MILO/RB3Enhanced}
 XENON=$MILO/rb3-xenon
 WIBO=$MILO/wibo/build/release/wibo
 CC=$XENON/build/compilers/X360/16.00.11886.00/cl.exe
@@ -56,6 +60,11 @@ CFLAGS=(
   -D _XBOX -D RB3E_XBOX -D RB3E -D NDEBUG
   -GF -Gm- -MT -GS- -Gy -fp:fast -fp:except-
   -Zc:wchar_t -Zc:forScope -GR- -openmp-
+  # civetweb private config (harmless global — only civetweb sources + civetweb.h
+  # test these macros; none collide with RB3E/CRT/XDK-OSS identifiers). Global is
+  # beneficial so net_http_civet.c sees USE_WEBSOCKET when it includes civetweb.h.
+  -D NO_SSL -D NO_CGI -D NO_FILES -D NO_FILESYSTEMS -D NO_CACHING
+  -D NO_THREAD_NAME -D USE_WEBSOCKET -D USE_STACK_SIZE=65536
   -TC
 )
 # include order: RB3E game headers -> stdint shadow -> Lane H xtl.h -> CRT
@@ -96,13 +105,21 @@ compile_all() {
   # $STAGE/_xdk_stubs.c (XDK entrypoint shims) compiles with the same recipe —
   # it MUST be in this loop: a stale obj/_xdk_stubs.obj once shipped return -1
   # networking stubs long after the source was fixed.
-  for src in source/*.c "$STAGE/_xdk_stubs.c"; do
+  # source/*.c is non-recursive: it auto-globs source/civetweb_x360_shim.c and
+  # source/net_http_civet.c (compiled -TC as C), but MISSES the vendored subdir TU
+  # source/civetweb/civetweb.c — list it explicitly. That one TU compiles -TP (C++;
+  # cl 16.00 -TC=C89 rejects civetweb's C99 mid-block/for-init decls — phase-0 v4).
+  for src in source/*.c source/civetweb/civetweb.c "$STAGE/_xdk_stubs.c"; do
     total=$((total+1))
     local base; base=$(basename "$src" .c)
     local log="$LOGS/${base}.log"
     # wibo treats absolute /paths as cl options — pass sources relative to cwd
     case "$src" in /*) src=$(realpath --relative-to=. "$src") ;; esac
-    "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$OBJ/${base}.obj" "$src" >"$log" 2>&1
+    # vendored civetweb TU: force C++ (-TP wins over the array's trailing -TC,
+    # last-wins in cl) + expose its own dir for the #include "*.inl" siblings.
+    local extra=()
+    case "$src" in source/civetweb/civetweb.c) extra=(-TP -I "$RB3E/source/civetweb") ;; esac
+    "$WIBO" "$CC" "${CFLAGS[@]}" "${extra[@]}" "${INCS[@]}" -Fo"$OBJ/${base}.obj" "$src" >"$log" 2>&1
     local rc=$?
     if [ $rc -eq 0 ] && [ -f "$OBJ/${base}.obj" ]; then
       ok=$((ok+1))
