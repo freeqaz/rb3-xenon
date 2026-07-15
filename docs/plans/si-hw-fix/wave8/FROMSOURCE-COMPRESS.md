@@ -1,5 +1,15 @@
 # WAVE8 — From-Source SI DLL: XexTool compression + hardware test
 
+> **⚠️ HISTORICAL — but this wave was RIGHT (confirmed 2026-07-15).** The
+> `xextool -m d -c c` compression this wave pursued **was the load-critical
+> step**: the raw container is rejected by `XexLoadImage`; the compressed one
+> loads. (An interim "thunks were the real blocker" claim was later overturned —
+> the import table was byte-correct all along.) The recipe is now automated as
+> `tools/oss-xbox-build/pack-si-dll.sh` step [3] / `build-si.sh` — do not run
+> the ad-hoc commands below; see
+> [`docs/tools/LIVE-DEBUG-RUNBOOK.md`](../../../tools/LIVE-DEBUG-RUNBOOK.md).
+> Kept as the investigation record.
+
 **Date:** 2026-07-14
 **Goal:** Apply the proven `xextool -c c` compression fix (which fixed the spliced
 266 KB SI build) to the **canonical 8.7 MB from-source SI build** and hardware-test it.

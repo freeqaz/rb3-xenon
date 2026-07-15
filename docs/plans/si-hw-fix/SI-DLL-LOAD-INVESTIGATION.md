@@ -1,7 +1,22 @@
 # Why our RB3Enhanced.dll won't load on a real Xbox 360 — end-to-end investigation
 
+> **⚠️ ROOT-CAUSE CLAIM OVERTURNED (2026-07-15).** This document concludes the
+> load blocker was malformed type-1 import thunks. A later Opus byte-level lint
+> vs the reversed HV-loader contract proved the from-source import table was
+> **byte-correct vs stock** — the actual blocker was the **raw/uncompressed
+> container**, which `XexLoadImage` rejects at image-map time. The proven ship
+> recipe is the wine-free envelope **plus a final `xextool -m d -c c`**
+> (LZX-compress + devkit re-sign), now automated as `pack-si-dll.sh` step [3].
+> DLL loads on hardware, HTTP up, ALIVE broadcasting. Full corrected record:
+> [`../http-bringup-and-rb3eloader-fix-2026-07-15.md`](../http-bringup-and-rb3eloader-fix-2026-07-15.md);
+> current workflow: [`docs/tools/LIVE-DEBUG-RUNBOOK.md`](../../tools/LIVE-DEBUG-RUNBOOK.md).
+> Read this document as the investigation *trail* (its XEX-anatomy background and
+> tooling sections remain accurate); do not follow its build conclusions.
+
 **Date:** 2026-07-14
-**Status:** Root cause found and proven. Ship path identified (not yet built).
+**Status:** SUPERSEDED 2026-07-15 — thunk root-cause claim overturned (import table
+was byte-correct); real blocker = raw container, fixed by xextool compress step.
+**DLL LOADS ON HARDWARE.**
 **Audience:** developers building tooling that packages and loads extension
 modules for the Xbox 360, a legacy platform we support. Written to be
 self-contained and shareable.

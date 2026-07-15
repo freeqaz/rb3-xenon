@@ -1,5 +1,14 @@
 # Live crash capture — 2-same-instrument song load (2026-07-14)
 
+> **Note (corrected 2026-07-15):** the `wine xextool -m d -c c` step in the
+> `SI-LOADABLE-RECIPE` section below turned out to be **load-critical, not
+> incidental** — the compressed container is what makes the module load
+> (`XexLoadImage` rejects the raw one). It is now automated as
+> `tools/oss-xbox-build/pack-si-dll.sh` step [3]; don't run it by hand — use
+> `build-si.sh`. Current workflow:
+> [`docs/tools/LIVE-DEBUG-RUNBOOK.md`](../../tools/LIVE-DEBUG-RUNBOOK.md).
+> Read this doc for the **crash story**.
+
 Captured from the live dev console (192.168.8.180) via XBDM while the native
 Format=1 RB3Enhanced.dll (stock repack, **no SI feature**) was running. The game
 runs fine until a song with **two of the same instrument** is loaded, then crashes

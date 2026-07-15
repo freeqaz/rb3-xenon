@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# ############################################################################
+# DEPRECATED (2026-07-15): this is the RETIRED relay-era wrapper. The console
+# is now wired DIRECTLY into the LAN at 192.168.8.180 — use
+#   ../../../xex-patcher/tools/xbox.sh          (same subcommands, direct)
+# and see docs/tools/LIVE-DEBUG-RUNBOOK.md. Kept only for the relay recipes.
+# ############################################################################
 # xbox.sh — one-stop wrapper for talking to the RGH 360 through the .54 relay.
 #
 # Topology: this box -> ssh free@192.168.8.54 (relay) -> Xbox 192.168.9.180

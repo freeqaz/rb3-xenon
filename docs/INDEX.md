@@ -121,6 +121,20 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 ## 3. Tooling
 
+### Hardware / live debugging (RB3Enhanced on the console)
+
+- [tools/LIVE-DEBUG-RUNBOOK.md](tools/LIVE-DEBUG-RUNBOOK.md) — **the live-debugging runbook**:
+  console facts + topology (direct `192.168.8.180`; the relay-era
+  `tools/oss-xbox-build/xbox.sh` is deprecated), `build-si.sh` edit→run loop,
+  observability channels (XBDM notify / RB3E UDP / HTTP), `/execute` live DTA
+  introspection (returns evaluation results), `xdbg` crash capture, recovery ladder.
+- [../tools/oss-xbox-build/BUILD-AND-DEPLOY.md](../tools/oss-xbox-build/BUILD-AND-DEPLOY.md) —
+  build/pack/deploy pipeline internals (XDK-free compile, load-critical `xextool -m d -c c`
+  compress step, 8 hard-won gotchas).
+- [plans/si-hw-fix/README.md](plans/si-hw-fix/README.md) — SI hardware campaign entry point:
+  `DEBUG-WORKFLOW.md` (crash→analyze→hook-fix loop + crash ledger), load-blocker
+  root-cause record, worked crash traces.
+
 ### Ghidra / decompiler
 
 - [tools/GHIDRA.md](tools/GHIDRA.md) — primary Ghidra MCP integration doc (banner: DC3-map assumptions relabeled; RB3 uses fingerprint/apply_symbols pipeline).

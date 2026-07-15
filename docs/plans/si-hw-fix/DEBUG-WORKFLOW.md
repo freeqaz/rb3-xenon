@@ -1,15 +1,24 @@
 # SI hardware debug workflow (RB3DX / Xbox 360)
 
+> General live-session operations (observability channels, `/execute` DTA
+> introspection, recovery ladder, verification) live in the canonical runbook:
+> [`docs/tools/LIVE-DEBUG-RUNBOOK.md`](../../tools/LIVE-DEBUG-RUNBOOK.md).
+> This doc is the SI-campaign crash→analyze→hook-fix loop in depth.
+
 The end-to-end loop for fixing a same-instrument (SI) song-load crash: build the
 from-source RB3Enhanced DLL, pack it loadable, deploy, capture the live crash,
 map it against the real console image, find the null/bad object, add a hook, repeat.
 
-Two purpose-built tools remove almost all the manual toil:
+Purpose-built tools remove almost all the manual toil (steps 1–3 below are all
+wrapped by **`tools/oss-xbox-build/build-si.sh [--deploy|--launch]`** — one command
+from edited C source to launched-and-verified on the console):
 - **`tools/oss-xbox-build/pack-si-dll.sh`** — PE → loadable, xexlint-gated DLL (one command).
 - **`tools/xdbg.py`** — live-crash capture + symbolized disasm against the real image.
+- **`../xex-patcher/tools/xbox.sh`** — console driver; `redeploy`/`aurora`/`wait-ftp`/`verify`/`screen`/`alive` one-liners.
 
 Console: **`192.168.8.180`** (FTP `xboxftp:xboxftp`, XBDM :730, RB3E ALIVE UDP :21070).
-FTP is only up while Aurora runs; launching a title unloads it (cold-reboot to restore).
+FTP is only up while Aurora runs; launching a title unloads it — `xbox.sh aurora`
+boots Aurora back to restore FTP (`xbox.sh wait-ftp` blocks until it answers).
 
 ---
 
@@ -29,40 +38,73 @@ match this image; band.exe does not.
 
 ```bash
 cd rb3-xenon/tools/oss-xbox-build/K-link
-XDK_OSS=$(pwd)/../H-headers/xdk-oss ./build_xbox_ossp.sh all     # 51/51 TUs, link rc=0
+./build_xbox_ossp.sh all     # 51/51 TUs, link rc=0
 ```
 
-- **`XDK_OSS` must point at `H-headers/xdk-oss`** (has `xtl.h`); the script's default
-  (`src/xdk`) lacks it and silently drops `rb3enhanced.c` + the networking TUs,
-  linking a stale obj without your hook wiring. Check obj timestamps if unsure.
-- The link needs `obj/_xdk_stubs.obj` (no-op stubs for 34 XDK import symbols the
-  reconstructed import libs export under `NetDll_*` names — networking/content/
-  keyboard/relaunch, none used by the SI fix). Regenerate if missing:
-  `grep -oE 'unresolved external symbol \w+' logs/link_full.log | awk '{print $4}' | sort -u`
-  → one `int NAME(){return 0;}` each (return `1` for `XCloseHandle` /
-  `XHasOverlappedIoCompleted`), compile with the same CFLAGS into `obj/_xdk_stubs.obj`.
+- `XDK_OSS` now **defaults to `H-headers/xdk-oss`** (has `xtl.h`) and the build
+  **hard-fails on any TU compile error** — the old silent stale-obj-link failure
+  mode is closed. If you override `XDK_OSS`, it must still have `xtl.h`.
+- `K-link/_xdk_stubs.c` is compiled in the main loop and now **wraps the real
+  xam `NetDll_*` winsock exports** (HTTP server + UDP events work from-source);
+  only genuinely unused entrypoints remain `return -1` stubs. If a feature
+  misbehaves only on the from-source build, check whether it hits a remaining stub.
 - Verify your hook is in: `grep YourHookName RB3Enhanced.map`.
 
 ## 2. Pack it loadable (one command, xexlint-gated)
 
 ```bash
-rb3-xenon/tools/oss-xbox-build/pack-si-dll.sh            # -> RB3Enhanced.fromsource.compressed.dll
+rb3-xenon/tools/oss-xbox-build/pack-si-dll.sh            # -> RB3Enhanced.fromsource.dll
 rb3-xenon/tools/oss-xbox-build/pack-si-dll.sh --deploy   # + FTP to the console
 ```
 
-Runs: xex2pack (basic compress, correct-VA import block via `--import-map`) →
-`xextool -e d -c b` (flat base) → `fix_thunks` (repair the type-1 import thunks the
-packer emits wrong — the load-blocker) → splice fixed base back → `xextool -m d -c c`
-(recompress + rehash + devkit re-sign) → **`xexlint` must PASS (0 reject)** before
-hardware. Entry point is re-derived from the PE each run (it moves every relink).
+Runs: xex2pack (`--compress none`, correct-VA import block via `--import-map`) →
+`../xex-patcher/tools/pack-loadable.sh`, which reads the raw base at
+`SizeOfHeaders`, runs `fix_thunks` (repair the type-1 import thunks the packer
+emits wrong), then the native `xex-patcher --modified --raw` rebuilds the
+FileDataDescriptor + page-hash chain + **import-digest chain** + HeaderHash +
+devkit RSA signature, gated on **`xexlint` (must PASS, 0 reject)** — and finally
+the **load-critical step [3]: `xextool -m d -c c`** (LZX-compress + devkit
+re-sign, under wine). The raw container is byte-correct but `XexLoadImage`
+**rejects it at image-map time**; only the compressed container loads (proven on
+HW 2026-07-15 — this overturned the earlier "wine recipe retired / thunks were
+the blocker" claim; the import table was byte-correct all along, see
+`../http-bringup-and-rb3eloader-fix-2026-07-15.md`). Entry point is re-derived
+from the PE each run (it moves every relink). Packing internals:
+`../xex-patcher/docs/WINE-FREE-PACK.md`.
 
 ## 3. Deploy + launch
 
+One command does the whole hot-reload cycle — boot Aurora (restores FTP, which a
+title launch kills), wait for FTP, deploy + sha-verify, then magicboot RB3:
+
 ```bash
-cd rb3-xenon/tools/oss-xbox-build
-./xbox.sh deploy RB3Enhanced.fromsource.compressed.dll      # -> GAME:\RB3Enhanced.dll + sha verify
-./xbox.sh launch                                            # magicboot the title
+xex-patcher/tools/xbox.sh redeploy rb3-xenon/tools/oss-xbox-build/RB3Enhanced.fromsource.dll
 ```
+
+(Or run the steps individually: `xbox.sh aurora` → `xbox.sh wait-ftp` →
+`xbox.sh deploy <dll>` → `xbox.sh launch`.)
+
+**Confirm the module actually loaded** in one command with `xbox.sh launch-watch` —
+it launches the title, captures the XBDM DbgPrint stream *across* the magicboot reset
+(`--follow` reconnects after the reset drops XBDM), and waits for the RB3E `ALIVE` UDP
+signal, exiting non-zero if it never arrives:
+
+```bash
+xex-patcher/tools/xbox.sh launch-watch        # magicboot + boot-log + ALIVE, all in one
+```
+
+This replaces the old hand-assembled "background `xbdm_notify.py` + `launch` +
+poll loop". To confirm *which* build is running (not just that one loaded), use
+`xbox.sh verify` (prints the running `RB3Enhanced.dll` module line):
+
+```bash
+xex-patcher/tools/xbox.sh verify
+```
+
+Note: the wine-free packer **zeroes the XEX header timestamp**, so `timestamp=0x00000000`
+is normal and is NOT a build marker. Read "did it land" from **`psize`** (the `.pdata`
+size shifts when code is added — e.g. `0x538` → `0x548`) plus the boot `DbgPrint`
+version string, not the timestamp.
 
 Then two controllers pick the **same instrument** and start a song → the SI crash.
 The console freezes at the first-chance fault (XBDM stays up; FTP does not).
@@ -129,4 +171,4 @@ mistakes before a hardware cycle; hardware cycles are the scarce resource.
 |---|---|---|---|
 | 1 | `0x8279DA90` (stock repack) | `vector[-1]` at TrackNum=-1 | SI `ProcessConfigHook` (H1) |
 | 2 | `0x8274E584` | `ObjectDir::FindObject` on a null dir (this+8 deref) | `ObjectDirFindObjectHook` null-dir guard |
-| 3 | `0x82B998D4` | null-dir propagated: `Find('smasher.trans')`→NULL → `r31->[0x170]` on the not-found path | see `CRASH3-TRACE.md` (in progress) |
+| 3 | `0x82B998D4` | null-dir propagated: `Find('smasher.trans')`→NULL → `r31->[0x170]` on the not-found path | missing per-instrument smasher plate populated; FIXED on HW — see `CRASH3-TRACE.md` |

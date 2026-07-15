@@ -1,5 +1,10 @@
 # RB3Enhanced — build, pack, deploy (Xbox 360)
 
+> Live-session operations (observability, `/execute` DTA introspection, crash
+> capture, recovery) are in
+> [`docs/tools/LIVE-DEBUG-RUNBOOK.md`](../../docs/tools/LIVE-DEBUG-RUNBOOK.md);
+> this doc is the build/pack/deploy pipeline detail.
+
 One command takes edited C source in `/home/free/code/milohax/RB3Enhanced` to a
 loadable, devkit-signed XEX DLL running on the console:
 
