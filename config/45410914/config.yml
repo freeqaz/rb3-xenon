@@ -1,10 +1,13 @@
 # See config.example.yml for documentation.
 #
-# Targeting the vanilla retail XEX. The original config in this template
-# referenced default_plus_TU5.xex, but the existing symbols.txt aligns with
-# vanilla retail (entry point fn_82816080 matches retail's 0x82816080). Our
-# local copy of retail is also pre-decrypted, so applying official xexp TUs
-# would require the still-encrypted base — out of scope for now.
+# Targeting RB3 TU5 (v0.0.5.1, entry 0x8283CD20) — the binary all downstream
+# consumers run (RB3Enhanced, same-instrument patch, players). Flipped from
+# vanilla retail TU0 on 2026-07-15 (docs/plans/tu5-landing-runbook.md).
+# CONVENTION: orig/45410914/default.xex holds the TU5 bytes IN PLACE (sha1
+# c5a17091cb44c0119424390a1738d161995e430e) so tools hardcoding default.xex /
+# band.exe follow automatically; the TU0 originals are archived at
+# orig/45410914/tu0-archive/. band.exe is re-extracted from the xex by the
+# build.
 object: orig/45410914/default.xex
 symbols: config/45410914/symbols.txt
 splits: config/45410914/splits.txt
