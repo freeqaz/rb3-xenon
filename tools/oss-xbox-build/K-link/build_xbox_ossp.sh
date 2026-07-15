@@ -17,7 +17,7 @@
 #   ./build_xbox_ossp.sh link        # attempt full link (needs Lane L libs)
 #   ./build_xbox_ossp.sh all         # compile + link
 # Env overrides:
-#   XDK_OSS   = Lane H reconstructed xtl.h header dir   (default: rb3-xenon/src/xdk)
+#   XDK_OSS   = Lane H reconstructed xtl.h header dir   (default: <staging>/H-headers/xdk-oss)
 #   IMPORTLIB = Lane L reconstructed import-lib dir     (default: <staging>/importlib-stub)
 # =============================================================================
 set -u
@@ -37,7 +37,10 @@ STUBS=$STAGE/stubs
 
 # ---- dependency inputs (stub if Lane H / Lane L not ready) -----------------
 LIBCMT=$XENON/src/xdk/LIBCMT               # CRT headers (present today)
-XDK_OSS=${XDK_OSS:-$XENON/src/xdk}         # Lane H: xtl.h + group headers
+# Lane H: xtl.h + group headers. The reconstructed set that compiles 51/51
+# lives in H-headers/xdk-oss ($XENON/src/xdk has no xtl.h — with it, the 17
+# xtl.h TUs FAIL and the link silently reuses stale objs).
+XDK_OSS=${XDK_OSS:-$XENON/tools/oss-xbox-build/H-headers/xdk-oss}
 # Lane L reconstructed import libs. The ONLY two real XEX import modules that
 # resolve at load are xam.xex + xboxkrnl.exe (see finish/K-link.json).
 IMPORTLIB=${IMPORTLIB:-$XENON/tools/oss-xbox-build/L-importlibs}
@@ -90,10 +93,15 @@ cd "$RB3E" || exit 2
 compile_all() {
   local ok=0 fail=0 total=0
   : > "$LOGS/compile_summary.txt"
-  for src in source/*.c; do
+  # $STAGE/_xdk_stubs.c (XDK entrypoint shims) compiles with the same recipe —
+  # it MUST be in this loop: a stale obj/_xdk_stubs.obj once shipped return -1
+  # networking stubs long after the source was fixed.
+  for src in source/*.c "$STAGE/_xdk_stubs.c"; do
     total=$((total+1))
     local base; base=$(basename "$src" .c)
     local log="$LOGS/${base}.log"
+    # wibo treats absolute /paths as cl options — pass sources relative to cwd
+    case "$src" in /*) src=$(realpath --relative-to=. "$src") ;; esac
     "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$OBJ/${base}.obj" "$src" >"$log" 2>&1
     local rc=$?
     if [ $rc -eq 0 ] && [ -f "$OBJ/${base}.obj" ]; then
@@ -109,6 +117,7 @@ compile_all() {
   done
   echo "----" | tee -a "$LOGS/compile_summary.txt"
   echo "compiled $ok/$total, failed $fail" | tee -a "$LOGS/compile_summary.txt"
+  [ "$fail" -eq 0 ]
 }
 
 link_full() {
@@ -137,6 +146,7 @@ link_full() {
 case "${1:-all}" in
   compile) compile_all ;;
   link)    link_full ;;
-  all)     compile_all; link_full ;;
+  all)     compile_all || { echo "!! compile failures — refusing to link (stale objs would be silently reused). See $LOGS/compile_summary.txt"; exit 1; }
+           link_full ;;
   *) echo "usage: $0 {compile|link|all}"; exit 1 ;;
 esac
