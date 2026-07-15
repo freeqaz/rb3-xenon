@@ -6,6 +6,9 @@ EXPORTS
     NetDll_shutdown @5
     NetDll_ioctlsocket @6
     NetDll_setsockopt @7
+    NetDll_getsockopt @8
+    NetDll_getsockname @9
+    NetDll_select @15
     NetDll_bind @11
     NetDll_connect @12
     NetDll_listen @13
@@ -47,3 +50,4 @@ EXPORTS
     XamShowFriendsUI @703
     XamShowKeyboardUI @705
     XamShowMessageBoxUI @714
+    GetCurrentThreadId @1040

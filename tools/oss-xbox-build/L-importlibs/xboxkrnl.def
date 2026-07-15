@@ -13,6 +13,7 @@ EXPORTS
     NtAllocateVirtualMemory @204
     NtClearEvent @206
     NtClose @207
+    NtCreateEvent @209
     NtCreateFile @210
     NtDuplicateObject @218
     NtFlushBuffersFile @219
@@ -25,6 +26,7 @@ EXPORTS
     NtQueryVolumeInformationFile @239
     NtReadFile @240
     NtReadFileScatter @241
+    NtSetEvent @246
     NtSetInformationFile @247
     NtWaitForSingleObjectEx @253
     NtWriteFile @255
