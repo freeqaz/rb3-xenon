@@ -20,7 +20,21 @@ set -euo pipefail
 
 HERE=$(cd "$(dirname "$0")" && pwd)
 XBOXSH=/home/free/code/milohax/xex-patcher/tools/xbox.sh
-DLL=$HERE/RB3Enhanced.fromsource.dll
+MILO=/home/free/code/milohax
+
+# Per-source-tree isolation, mirroring K-link/build_xbox_ossp.sh: a non-default
+# RB3E_SRC builds into K-link/out-<basename>/, so pack THAT tree's PE and give the
+# DLL a distinct name (RB3Enhanced.fromsource.<basename>.dll) — otherwise a
+# worktree pack would overwrite the default DLL. Default (no RB3E_SRC) keeps the
+# byte-identical path + a no-arg pack-si-dll.sh call.
+RB3E=${RB3E_SRC:-$MILO/RB3Enhanced}
+if [ "$(realpath "$RB3E")" = "$(realpath "$MILO/RB3Enhanced")" ]; then
+  PE=""; DLL=$HERE/RB3Enhanced.fromsource.dll
+else
+  name=$(basename "$RB3E")
+  PE=$HERE/K-link/out-$name/RB3Enhanced.exe
+  DLL=$HERE/RB3Enhanced.fromsource.$name.dll
+fi
 
 DEPLOY=0; LAUNCH=0
 case "${1:-}" in
@@ -34,7 +48,11 @@ echo "== [1/4] compile + link (build_xbox_ossp.sh all) =="
 "$HERE/K-link/build_xbox_ossp.sh" all
 
 echo "== [2/4] pack (pack-si-dll.sh -> $DLL) =="
-"$HERE/pack-si-dll.sh"
+if [ -n "$PE" ]; then
+  "$HERE/pack-si-dll.sh" "$PE" "$DLL"      # non-default tree: explicit PE + suffixed DLL
+else
+  "$HERE/pack-si-dll.sh"                    # default: byte-identical no-arg invocation
+fi
 
 if [ "$DEPLOY" = "1" ]; then
   echo "== [3/4] deploy to console =="

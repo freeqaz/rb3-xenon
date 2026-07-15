@@ -28,6 +28,29 @@ cd /home/free/code/milohax/rb3-xenon/tools/oss-xbox-build
 Console IP comes from `XBOX` (default `192.168.8.180`), e.g.
 `XBOX=192.168.8.190 ./build-si.sh --launch`.
 
+### Building from a worktree / alternate source tree (`RB3E_SRC`)
+
+By default the pipeline builds the main `RB3Enhanced` checkout and every artifact
+lands directly under `K-link/`. To build a different source tree (e.g. a feature
+worktree) set `RB3E_SRC` to its root:
+
+```bash
+RB3E_SRC=/home/free/code/milohax/rb3e-civetweb-wt ./build-si.sh   # build + pack
+RB3E_SRC=/home/free/code/milohax/rb3e-civetweb-wt ./K-link/build_xbox_ossp.sh all
+```
+
+A non-default `RB3E_SRC` gets its own **isolated output subtree**
+`K-link/out-<basename>/` holding that tree's `obj/`, `logs/`, `crt_civetweb.obj`,
+`tmpdir`, and `RB3Enhanced.exe`/`.imp`/`.map` — so its extra TUs can never leak
+into a default-checkout link (which is exactly what bit the SI build on
+2026-07-15: a worktree's `civetweb.obj` shared the flat `obj/` and broke the
+default link). `build-si.sh` then packs that PE into a distinctly-named
+`RB3Enhanced.fromsource.<basename>.dll`. The default tree's paths are unchanged
+and byte-identical to before. A `.rb3e_src` marker pins each `out-<basename>/` to
+one source tree and the build exits loudly if a different tree reuses the same
+basename. (One agent per tree; two concurrent builds of the *same* tree still
+race — see the commented `flock` one-liner in `build_xbox_ossp.sh`.)
+
 ## What each stage does
 
 | Stage | Script | Output |

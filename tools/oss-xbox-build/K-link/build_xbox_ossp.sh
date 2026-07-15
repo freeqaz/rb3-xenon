@@ -27,7 +27,9 @@ MILO=/home/free/code/milohax
 # RB3E source root. Default = the main RB3Enhanced checkout (byte-identical for
 # concurrent agents who set no RB3E_SRC). Override to build from a worktree, e.g.
 #   RB3E_SRC=/home/free/code/milohax/rb3e-civetweb-wt ./K-link/build_xbox_ossp.sh all
-# This changes only the *source* root; objs/PE/map still land under $STAGE.
+# This changes the *source* root; a non-default tree's objs/PE/map/logs land under
+# $STAGE/out-<basename>/ (see OUTDIR derivation below) so its extra TUs can't leak
+# into a default-checkout link. The default tree keeps every path under $STAGE.
 RB3E=${RB3E_SRC:-$MILO/RB3Enhanced}
 XENON=$MILO/rb3-xenon
 WIBO=$MILO/wibo/build/release/wibo
@@ -35,8 +37,20 @@ CC=$XENON/build/compilers/X360/16.00.11886.00/cl.exe
 LINK=$XENON/build/compilers/X360/16.00.11886.00/link.exe
 
 STAGE=$XENON/tools/oss-xbox-build/K-link
-OBJ=$STAGE/obj
-LOGS=$STAGE/logs
+# ---- per-source-tree output isolation --------------------------------------
+# Default tree keeps today's paths verbatim (OUTDIR=$STAGE, OUTREL=""), so every
+# output path AND every linker argv token stays byte-identical. A non-default
+# RB3E_SRC gets its own out-<basename>/ subtree (obj/, logs/, crt_civetweb.obj,
+# tmpdir, PE/imp/map). OUTREL is the RELATIVE prefix used inside link_full's
+# `cd "$STAGE"` block — wibo silently drops absolute /paths as LNK4044, so link
+# outputs MUST be passed relative (see comment in link_full).
+if [ "$(realpath "$RB3E")" = "$(realpath "$MILO/RB3Enhanced")" ]; then
+  OUTDIR=$STAGE; OUTREL=""                         # default: byte-identical paths
+else
+  OUTDIR=$STAGE/out-$(basename "$RB3E"); OUTREL="out-$(basename "$RB3E")/"
+fi
+OBJ=$OUTDIR/obj
+LOGS=$OUTDIR/logs
 STUBS=$STAGE/stubs
 
 # ---- dependency inputs (stub if Lane H / Lane L not ready) -----------------
@@ -50,6 +64,24 @@ XDK_OSS=${XDK_OSS:-$XENON/tools/oss-xbox-build/H-headers/xdk-oss}
 IMPORTLIB=${IMPORTLIB:-$XENON/tools/oss-xbox-build/L-importlibs}
 
 mkdir -p "$OBJ" "$LOGS"
+# Marker guard: out-<basename> can collide when two different source trees share
+# a basename. Pin each OUTDIR to exactly one RB3E source tree (its realpath); if a
+# later run points a differing tree at the same OUTDIR, exit 2 loudly rather than
+# silently share objs. Default tree ($OUTDIR=$STAGE) is pinned to the main checkout.
+marker="$OUTDIR/.rb3e_src"; rb3e_real=$(realpath "$RB3E")
+if [ -f "$marker" ]; then
+  prev=$(cat "$marker")
+  if [ "$prev" != "$rb3e_real" ]; then
+    echo "!! $OUTDIR is bound to a different RB3E source tree:" >&2
+    echo "     marker: $prev" >&2
+    echo "     wanted: $rb3e_real" >&2
+    echo "   Refusing to share one output dir across trees (basename collision)." >&2
+    echo "   Rename the source dir so basename '$(basename "$RB3E")' is unique." >&2
+    exit 2
+  fi
+else
+  echo "$rb3e_real" > "$marker"
+fi
 
 # ---- CFLAGS: Makefile CFLAGS_X minus XDK force-include / PDB ---------------
 # Makefile: -c -Zi -nologo -W3 -WX- -Ox -Os -D _XBOX -D RB3E_XBOX -D RB3E -D NDEBUG
@@ -98,7 +130,7 @@ LFLAGS=(
   -BASE:0x84000000
   -OPT:REF -OPT:ICF
   -dll -entry:_DllMainCRTStartup -XEX:NO -FIXED:NO -NODEFAULTLIB
-  -MAP:RB3Enhanced.map
+  -MAP:${OUTREL}RB3Enhanced.map
 )
 
 cd "$RB3E" || exit 2
@@ -106,11 +138,13 @@ cd "$RB3E" || exit 2
 compile_all() {
   local ok=0 fail=0 total=0
   : > "$LOGS/compile_summary.txt"
-  # Prune objs whose source doesn't exist in THIS $RB3E: obj/ is shared across
-  # RB3E_SRC targets and link_full globs obj/*.obj, so a worktree build's extra
-  # TUs (civetweb.obj, civetweb_x360_shim.obj, net_http_civet.obj, ...) would
-  # otherwise leak into a later default-checkout link (bit the SI build 2026-07-15;
-  # same class as the stale _xdk_stubs.obj incident below).
+  # Prune objs whose source doesn't exist in THIS $RB3E (aeccc7c9). obj/ is now
+  # per-OUTDIR (out-<basename>/obj for non-default trees), so cross-tree leakage
+  # is handled by the isolation scheme above — but this prune is still load-bearing
+  # for SAME-tree staleness: TU renames/deletions leave orphan objs that link_full
+  # would glob (obj/*.obj), and the default dir may still hold pre-change leaked
+  # civetweb objs that a first post-change default build must sweep out
+  # (same class as the stale _xdk_stubs.obj incident below).
   local o base
   for o in "$OBJ"/*.obj; do
     [ -e "$o" ] || break
@@ -164,17 +198,21 @@ compile_all() {
   # existence-gate won't pull duplicate CRT symbols into the default build.
   if [ "$HAVE_CIVET" = 1 ]; then
     total=$((total+1))
+    # Source stays in the shared crt/ dir; the OBJ moves into $OUTDIR so it can't
+    # contaminate a default-checkout link (it was the direct 2026-07-15 vector).
     local cvsrc; cvsrc=$(realpath --relative-to=. "$STAGE/crt/crt_civetweb.c")
-    "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$STAGE/crt/crt_civetweb.obj" "$cvsrc" \
+    "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$OUTDIR/crt_civetweb.obj" "$cvsrc" \
         >"$LOGS/crt_civetweb.log" 2>&1
-    if [ $? -eq 0 ] && [ -f "$STAGE/crt/crt_civetweb.obj" ]; then
+    if [ $? -eq 0 ] && [ -f "$OUTDIR/crt_civetweb.obj" ]; then
       ok=$((ok+1)); echo "OK    crt_civetweb" | tee -a "$LOGS/compile_summary.txt"
     else
       fail=$((fail+1))
       echo "FAIL  crt_civetweb    $(grep -m1 -iE 'error|fatal' "$LOGS/crt_civetweb.log" | head -c 160)" | tee -a "$LOGS/compile_summary.txt"
     fi
   else
-    rm -f "$STAGE/crt/crt_civetweb.obj"
+    # Drop this run's obj; also one-time-clean the OLD shared crt/ location so a
+    # pre-change stray can't slip past link_full's existence gate below.
+    rm -f "$OUTDIR/crt_civetweb.obj" "$STAGE/crt/crt_civetweb.obj"
   fi
   echo "----" | tee -a "$LOGS/compile_summary.txt"
   echo "compiled $ok/$total, failed $fail" | tee -a "$LOGS/compile_summary.txt"
@@ -186,22 +224,26 @@ link_full() {
   # absolute obj/lib paths as LNK4044 'unrecognized option; ignored' (a probe
   # that passed absolute paths linked ZERO objs). Fix: cd into $STAGE and pass
   # obj/lib names RELATIVE, with LIB=$IMPORTLIB in the env.
+  # Same-tree races (two concurrent builds of ONE tree) are out of scope; the
+  # one-agent-per-tree pattern avoids them. To serialize per-tree, uncomment:
+  #   exec 9>"$OUTDIR/.lock"; flock 9
   local nobj; nobj=$(ls "$OBJ"/*.obj 2>/dev/null | wc -l)
-  # civetweb CRT obj only when it was built this run (see compile_all HAVE_CIVET)
+  # civetweb CRT obj only when it was built this run (see compile_all HAVE_CIVET).
+  # Path is RELATIVE to $STAGE ($OUTREL prefix) — wibo drops absolute /paths.
   local civet_obj=""
-  [ -f "$STAGE/crt/crt_civetweb.obj" ] && civet_obj="crt/crt_civetweb.obj"
+  [ -f "$OUTDIR/crt_civetweb.obj" ] && civet_obj="${OUTREL}crt_civetweb.obj"
   echo "linking $nobj game objs + crt${civet_obj:+/civetweb}/xapi/xonline + xam/xboxkrnl import libs..."
-  mkdir -p "$STAGE/tmpdir"
+  mkdir -p "$OUTDIR/tmpdir"
   ( cd "$STAGE" \
-    && TMP="$STAGE/tmpdir" TEMP="$STAGE/tmpdir" LIB="$IMPORTLIB" \
+    && TMP="$OUTDIR/tmpdir" TEMP="$OUTDIR/tmpdir" LIB="$IMPORTLIB" \
        "$WIBO" "$LINK" "${LFLAGS[@]}" \
-         -OUT:RB3Enhanced.exe -IMPLIB:RB3Enhanced.imp \
-         obj/*.obj crt/crt.obj $civet_obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
+         -OUT:${OUTREL}RB3Enhanced.exe -IMPLIB:${OUTREL}RB3Enhanced.imp \
+         ${OUTREL}obj/*.obj crt/crt.obj $civet_obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
          "${LIBS_X[@]}" >"$LOGS/link_full.log" 2>&1 )
   local rc=$?
   echo "link rc=$rc -> $LOGS/link_full.log"
-  if [ -s "$STAGE/RB3Enhanced.exe" ] && [ -s "$STAGE/RB3Enhanced.map" ]; then
-    echo "  PE -> $STAGE/RB3Enhanced.exe ; MAP -> $STAGE/RB3Enhanced.map"
+  if [ -s "$OUTDIR/RB3Enhanced.exe" ] && [ -s "$OUTDIR/RB3Enhanced.map" ]; then
+    echo "  PE -> $OUTDIR/RB3Enhanced.exe ; MAP -> $OUTDIR/RB3Enhanced.map"
   else
     echo "  WARNING: missing RB3Enhanced.exe or RB3Enhanced.map"
   fi
