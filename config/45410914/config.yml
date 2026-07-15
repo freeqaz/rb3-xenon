@@ -5,6 +5,6 @@
 # vanilla retail (entry point fn_82816080 matches retail's 0x82816080). Our
 # local copy of retail is also pre-decrypted, so applying official xexp TUs
 # would require the still-encrypted base — out of scope for now.
-object: orig/45410914/default.xex
+object: orig/45410914/default_tu5.xex
 symbols: config/45410914/symbols.txt
 splits: config/45410914/splits.txt
