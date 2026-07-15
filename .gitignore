@@ -146,6 +146,8 @@ tools/oss-xbox-build/**/tmpdir/
 tools/oss-xbox-build/**/*.exe
 tools/oss-xbox-build/**/*.imp
 tools/oss-xbox-build/**/*.exp
+tools/oss-xbox-build/**/out-*/
+tools/oss-xbox-build/**/.rb3e_src
 tools/xex2pack/work/
 *.xex
 tools/oss-xbox-build/**/*.log
