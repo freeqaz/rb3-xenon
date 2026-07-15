@@ -54,6 +54,33 @@ import urllib.request
 DEF_HOST = "192.168.8.180"
 DEF_PORT = 21070
 DEF_SONG = "blitzkriegbop"
+DEF_CONFIG = "guitar:expert,guitar:easy"
+
+DIFF_NUM = {"easy": "0", "medium": "1", "hard": "2", "expert": "3"}
+
+
+def parse_config(spec):
+    """'drum:expert,drum:easy' -> [('drum','expert'), ('drum','easy')].
+    Pad N is the Nth entry. Vocals are refused (SI safety rule)."""
+    out = []
+    for i, part in enumerate(spec.split(",")):
+        part = part.strip()
+        if not part:
+            continue
+        inst, _, diff = part.partition(":")
+        inst, diff = inst.strip(), diff.strip().lower()
+        if diff not in DIFF_NUM:
+            raise ValueError(f"bad difficulty {diff!r} in {part!r}")
+        if inst in ("vocals", "vocal", "mic"):
+            raise ValueError("vocals are not allowed in SI test configs")
+        out.append((inst, diff))
+    if not (1 <= len(out) <= 4):
+        raise ValueError("config must have 1..4 players")
+    return out
+
+
+def config_dta(players):
+    return "(" + " ".join(f"({inst} {diff} 1)" for inst, diff in players) + ")"
 
 
 class Console:
@@ -127,8 +154,17 @@ def main():
     ap.add_argument("--host", default=DEF_HOST)
     ap.add_argument("--port", type=int, default=DEF_PORT)
     ap.add_argument("--song", default=DEF_SONG)
+    ap.add_argument("--config", default=DEF_CONFIG,
+                    help="per-pad instrument:difficulty list, e.g. "
+                         "'drum:expert,drum:easy' or "
+                         "'guitar:expert,guitar:easy,guitar:medium' (max 4, "
+                         "no vocals)")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+
+    players = parse_config(args.config)
+    npl = len(players)
+    print(f"[config] {npl} player(s): {players} -> {config_dta(players)}")
 
     c = Console(args.host, args.port, dry_run=args.dry_run)
 
@@ -148,8 +184,8 @@ def main():
         if scr == "game_screen":
             playing = c.execute("{game is_playing}") == "1"
             n = c.execute("{beatmatch num_active_players}")
-            if playing and n == "2":
-                print("[ok] already in 2-player gameplay; nothing to do")
+            if playing and n == str(npl):
+                print(f"[ok] already in {npl}-player gameplay; nothing to do")
                 return 0
             print("WARNING: console already mid-game but not in target state; "
                   "relaunch the title first (magicboot) for a clean run.")
@@ -184,16 +220,45 @@ def main():
 
     # 2. game mode + full player/song setup via HMX's debug entry point
     c.execute("{gamemode set_mode qp_coop}")
-    c.execute("{setup_game %s '' ((guitar expert 1) (guitar easy 1))}" % args.song)
+    c.execute("{setup_game %s '' %s}" % (args.song, config_dta(players)))
 
     if not args.dry_run:
-        ok = (c.execute("{{user_mgr get_user_from_pad_num 0} get_difficulty}") == "3"
-              and c.execute("{{user_mgr get_user_from_pad_num 1} get_difficulty}") == "0"
-              and c.execute("{{user_mgr get_user_from_pad_num 0} get_track_sym}") == "guitar"
-              and c.execute("{{user_mgr get_user_from_pad_num 1} get_track_sym}") == "guitar")
+        ok = True
+        for pad, (inst, diff) in enumerate(players):
+            got_d = c.execute(
+                "{{user_mgr get_user_from_pad_num %d} get_difficulty}" % pad)
+            got_t = c.execute(
+                "{{user_mgr get_user_from_pad_num %d} get_track_sym}" % pad)
+            if got_d != DIFF_NUM[diff] or got_t != inst:
+                print(f"MISMATCH pad {pad}: want ({inst},{DIFF_NUM[diff]}) "
+                      f"got ({got_t},{got_d})")
+                ok = False
         if not ok:
             print("FATAL: setup_game readback mismatch")
             return 1
+
+    # 2b. verify the song actually loaded. setup_game INTERMITTENTLY drops its
+    #     song arg right after a fresh boot (song-cache readiness race) and lands
+    #     on a random song; a silently-wrong song poisons every gem-count
+    #     comparison downstream. setup_game's own final step is
+    #     {meta_performer set_song <song>}, so re-issuing it + reading back is the
+    #     fix. Slots in here (after setup_game, before preload); no goto_screen.
+    if not args.dry_run:
+        got = c.execute("{meta_performer song}")
+        tries = 0
+        while got != args.song and tries < 5:
+            tries += 1
+            print(f"WARNING: song readback {got!r} != requested "
+                  f"{args.song!r} (retry {tries}/5); re-issuing set_song")
+            c.execute("{meta_performer set_song %s}" % args.song)
+            time.sleep(2)
+            got = c.execute("{meta_performer song}")
+        if got != args.song:
+            print(f"FATAL: song still {got!r} after {tries} retries; refusing "
+                  f"to continue — gem counts would be compared across the wrong "
+                  f"song. Relaunch the title and re-run.")
+            return 1
+        print(f"[ok] song verified: {got!r}")
 
     # 3. preload the song. ORDER MATTERS (hardware-verified): entering
     #    preloading with the venue ALREADY selected crash-looped the main
@@ -229,7 +294,7 @@ def main():
     # 6. dismiss the "reconnect controller" overshell pause: fake the pads.
     c.execute("{set {var fake_controllers} 1}")
     if not args.dry_run:
-        for pad in (0, 1):
+        for pad in range(npl):
             conn = c.execute("{{user_mgr get_user_from_pad_num %d} "
                              "connected_controller_type}" % pad)
             # match the user's controller_type to whatever the platform
@@ -251,7 +316,7 @@ def main():
                           "get_current_view}" % i)
             return 1
     else:
-        for pad in (0, 1):
+        for pad in range(npl):
             c.execute("{{user_mgr get_user_from_pad_num %d} "
                       "set_controller_type 1}" % pad)
         c.execute("{overshell update_all}")
@@ -266,12 +331,16 @@ def main():
         print("is_playing:    ", c.execute("{game is_playing}"))
         print("paused:        ", c.execute("{game get_paused}"))
         print("players:       ", c.execute("{beatmatch num_active_players}"))
-        print("P1 track/diff: ",
-              c.execute("{{user_mgr get_user_from_pad_num 0} get_track_sym}"),
-              c.execute("{{user_mgr get_user_from_pad_num 0} get_difficulty}"))
-        print("P2 track/diff: ",
-              c.execute("{{user_mgr get_user_from_pad_num 1} get_track_sym}"),
-              c.execute("{{user_mgr get_user_from_pad_num 1} get_difficulty}"))
+        for pad in range(npl):
+            print(f"P{pad + 1} track/diff: ",
+                  c.execute("{{user_mgr get_user_from_pad_num %d} "
+                            "get_track_sym}" % pad),
+                  c.execute("{{user_mgr get_user_from_pad_num %d} "
+                            "get_difficulty}" % pad))
+        for pl in range(npl):
+            print(f"player {pl} gem_count: ",
+                  c.execute("{{beatmatch active_player %d} get_gem_count}"
+                            % pl))
         print("song_ms moved: ", ms1, "->", ms2)
     print("done")
     return 0
