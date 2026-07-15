@@ -106,6 +106,18 @@ cd "$RB3E" || exit 2
 compile_all() {
   local ok=0 fail=0 total=0
   : > "$LOGS/compile_summary.txt"
+  # Prune objs whose source doesn't exist in THIS $RB3E: obj/ is shared across
+  # RB3E_SRC targets and link_full globs obj/*.obj, so a worktree build's extra
+  # TUs (civetweb.obj, civetweb_x360_shim.obj, net_http_civet.obj, ...) would
+  # otherwise leak into a later default-checkout link (bit the SI build 2026-07-15;
+  # same class as the stale _xdk_stubs.obj incident below).
+  local o base
+  for o in "$OBJ"/*.obj; do
+    [ -e "$o" ] || break
+    base=$(basename "$o" .obj)
+    [ -f "source/$base.c" ] || [ -f "source/civetweb/$base.c" ] || [ "$base" = _xdk_stubs ] \
+      || { echo "PRUNE stale $base.obj (no source in $RB3E)"; rm -f "$o"; }
+  done
   # $STAGE/_xdk_stubs.c (XDK entrypoint shims) compiles with the same recipe —
   # it MUST be in this loop: a stale obj/_xdk_stubs.obj once shipped return -1
   # networking stubs long after the source was fixed.
