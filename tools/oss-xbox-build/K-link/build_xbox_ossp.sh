@@ -113,7 +113,12 @@ compile_all() {
   # source/net_http_civet.c (compiled -TC as C), but MISSES the vendored subdir TU
   # source/civetweb/civetweb.c — list it explicitly. That one TU compiles -TP (C++;
   # cl 16.00 -TC=C89 rejects civetweb's C99 mid-block/for-init decls — phase-0 v4).
-  for src in source/*.c source/civetweb/civetweb.c "$STAGE/_xdk_stubs.c"; do
+  # Conditional: only when civetweb is vendored in $RB3E (worktree). The default
+  # RB3E=main checkout has no source/civetweb/, so skip it (and the crt_civetweb
+  # step below + its link obj) to keep the default OSS build working.
+  local HAVE_CIVET=0 civet_srcs=()
+  if [ -f "$RB3E/source/civetweb/civetweb.c" ]; then HAVE_CIVET=1; civet_srcs=(source/civetweb/civetweb.c); fi
+  for src in source/*.c "${civet_srcs[@]}" "$STAGE/_xdk_stubs.c"; do
     total=$((total+1))
     local base; base=$(basename "$src" .c)
     local log="$LOGS/${base}.log"
@@ -143,15 +148,21 @@ compile_all() {
   done
   # civetweb CRT additions -> crt/crt_civetweb.obj (linked next to the prebuilt
   # crt.obj). Kept out of crt.c so the 51 game TUs' shared obj is untouched.
-  total=$((total+1))
-  local cvsrc; cvsrc=$(realpath --relative-to=. "$STAGE/crt/crt_civetweb.c")
-  "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$STAGE/crt/crt_civetweb.obj" "$cvsrc" \
-      >"$LOGS/crt_civetweb.log" 2>&1
-  if [ $? -eq 0 ] && [ -f "$STAGE/crt/crt_civetweb.obj" ]; then
-    ok=$((ok+1)); echo "OK    crt_civetweb" | tee -a "$LOGS/compile_summary.txt"
+  # Only when civetweb is present; otherwise drop any stale obj so link_full's
+  # existence-gate won't pull duplicate CRT symbols into the default build.
+  if [ "$HAVE_CIVET" = 1 ]; then
+    total=$((total+1))
+    local cvsrc; cvsrc=$(realpath --relative-to=. "$STAGE/crt/crt_civetweb.c")
+    "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$STAGE/crt/crt_civetweb.obj" "$cvsrc" \
+        >"$LOGS/crt_civetweb.log" 2>&1
+    if [ $? -eq 0 ] && [ -f "$STAGE/crt/crt_civetweb.obj" ]; then
+      ok=$((ok+1)); echo "OK    crt_civetweb" | tee -a "$LOGS/compile_summary.txt"
+    else
+      fail=$((fail+1))
+      echo "FAIL  crt_civetweb    $(grep -m1 -iE 'error|fatal' "$LOGS/crt_civetweb.log" | head -c 160)" | tee -a "$LOGS/compile_summary.txt"
+    fi
   else
-    fail=$((fail+1))
-    echo "FAIL  crt_civetweb    $(grep -m1 -iE 'error|fatal' "$LOGS/crt_civetweb.log" | head -c 160)" | tee -a "$LOGS/compile_summary.txt"
+    rm -f "$STAGE/crt/crt_civetweb.obj"
   fi
   echo "----" | tee -a "$LOGS/compile_summary.txt"
   echo "compiled $ok/$total, failed $fail" | tee -a "$LOGS/compile_summary.txt"
@@ -164,13 +175,16 @@ link_full() {
   # that passed absolute paths linked ZERO objs). Fix: cd into $STAGE and pass
   # obj/lib names RELATIVE, with LIB=$IMPORTLIB in the env.
   local nobj; nobj=$(ls "$OBJ"/*.obj 2>/dev/null | wc -l)
-  echo "linking $nobj game objs + crt/xapi/xonline + xam/xboxkrnl import libs..."
+  # civetweb CRT obj only when it was built this run (see compile_all HAVE_CIVET)
+  local civet_obj=""
+  [ -f "$STAGE/crt/crt_civetweb.obj" ] && civet_obj="crt/crt_civetweb.obj"
+  echo "linking $nobj game objs + crt${civet_obj:+/civetweb}/xapi/xonline + xam/xboxkrnl import libs..."
   mkdir -p "$STAGE/tmpdir"
   ( cd "$STAGE" \
     && TMP="$STAGE/tmpdir" TEMP="$STAGE/tmpdir" LIB="$IMPORTLIB" \
        "$WIBO" "$LINK" "${LFLAGS[@]}" \
          -OUT:RB3Enhanced.exe -IMPLIB:RB3Enhanced.imp \
-         obj/*.obj crt/crt.obj crt/crt_civetweb.obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
+         obj/*.obj crt/crt.obj $civet_obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
          "${LIBS_X[@]}" >"$LOGS/link_full.log" 2>&1 )
   local rc=$?
   echo "link rc=$rc -> $LOGS/link_full.log"
