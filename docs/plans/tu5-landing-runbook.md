@@ -109,33 +109,48 @@ with every drop inside `expected_drops.json`. **NO-GO:** unexplained loss > ≈1
   promotions + bucket residue (≤44B / non-injective / no-oracle-attribution);
   (c) recompute floor vs 15,852 + remap the 23 cc31ef0b pins to TU5 VAs
   (`~/tmp/tu5_floor/new_pins_tu5.json`). ✅ keystone cherry-picked (03557b71).
-- **F1 — Root-cause the gap (REVISED after lever measured 0):** lever (a1)
-  recovered **0 of 1,034** (`~/tmp/tu5_gbe/RESULTS.md`): the gate's
-  target_symbol_map is already TU5-addressed (13,770/15,136 keys), so
-  name-pairing already works; only 32 byte-twin candidates existed and all were
-  STL-fold false matches (Rule-3 correctly rejects — do NOT relax). The
-  experiment's "97.6% genuine divergence" conclusion is DISPUTED: its byte-twin
-  signature embeds canonicalized reloc-target names (cross-binary noise on
-  identical code), and it conflicts with the verified 07-13 finding (1,120/1,829
-  near-misses normalized-identical to their twins) + the churn shape (8,468
-  named lost vs 7,513 gained = attribution shuffle, net −955). Forensics
-  workflow in flight (3 lanes + synthesis → `~/tmp/tu5_forensics/F1_DECISION.md`):
-  (1) objdiff-free masked byte census TU0-VA vs mapped-TU5-VA over all 15,852
-  matched fns; (2) scoring forensics on paired-but-degraded near-misses (dtk
-  reloc deficit / wrong body / real diff); (3) churn decomposition → honest-loss
-  list. Gate legality note: the NO-GO is about UNEXPLAINED losses — a shortfall
-  below 15,804 is flip-legal iff every residual drop is enumerated with
-  evidence (extends expected_drops + P5).
+- **F1 — ROOT CAUSE RESOLVED (forensics 2026-07-15,
+  `~/tmp/tu5_forensics/F1_DECISION.md`):** the three conflicting measurements
+  were masks over the same bytes differing in D-form-immediate treatment
+  (= struct-offset shifts). Reconciled decomposition of the 1,034 net deficit:
+  - **B ≈ 600 (450–700): genuine-but-small TU5 struct member-offset shifts**
+    (Harmonix moved/inserted class members; e.g. GameMode 0x18→0x1c,
+    User::SyncSave 0x70→0x74, GemPlayer 0x3ac→0x3b0; 92% of the 191 named
+    regressions carry IMM shifts). Fix = source-side struct re-basing per
+    shared header (one header cascades to all readers) — real decomp knowledge,
+    the post-flip headline campaign.
+  - **C ≈ 250 (180–350): real divergence** (rewrites/call-target/overload
+    changes/removals; includes the 48 sanctioned drops, 43 census-confirmed
+    GONE).
+  - **A ≈ 100 (50–250): pure tooling/map-gap** (base→TU5 map covers ~91% of
+    named VAs; 839/1,062 unmapped bodies provably present via name-free masked
+    scan).
+  - The 8,468/7,513 name churn is ~95% benign anon-VA relabeling (8,040 traced
+    1:1) — not loss. dtk reloc-deficit hypothesis DISPROVEN (reloc counts equal
+    ±1). 0/191 wrong-body pairings. The 07-13 "1,120 normalized-identical"
+    population is real but DISJOINT from the deficit (already inside 14,818).
+    objdiff content-pairing recovers 0 (GBE-proven); do NOT relax Rule-3.
+  - **GATE VERDICT: 15,804 pre-flip is unreachable** (it presumes recovering
+    B+C, which is the post-flip campaign). Tooling-only landing ≈14,900–15,050.
+    **The flip is LEGAL**: the NO-GO gate counts UNEXPLAINED losses, and full
+    per-function attribution (P5 manifest, below) drives unexplained ≈ 0 ≪ 159.
 - **F2 — Apply step: RESOLVED** (no script needed — copy valayer outputs, flip
   `object:` line, standard dtk split pass; see §1). Reproducibility is proven by
   the committed gate state (`88794af4`).
-- **F3 — Re-run the full pipeline against CURRENT main:** re-freeze
-  `valayer_baseline_main` from main HEAD (now = ff839c46 VA-layer + 23 pins —
-  splits/symbols identical, so mostly a provenance refresh), fold in
-  `new_pins_tu5.json`, run P2_classify → P3_remap → apply → build → TU5 report
-  **with the lever flags**. Spot-check MasterAudio/Object read 100%.
-- **F4 — GATE:** compare vs `FLOOR.md`. Every drop must be in
-  `expected_drops.json`. Unexplained > ~158 → NO-GO.
+- **F3 — Re-run the full pipeline against CURRENT main (IN FLIGHT, agent):**
+  worktree `~/tmp/wt-tu5-flip` (branch tu5-flip): re-freeze baseline from main
+  HEAD (incl. 23 pins, which P3 remaps automatically), generalize P2/P3
+  hardcoded paths, P2→P3→apply→build→report; stage the flip payload as a
+  commit on tu5-flip. No lever flags (measured 0).
+- **F3b — P5 manifest (IN FLIGHT, agent):** per-function attribution of every
+  loss into RELABEL / A_TOOLING / B_STRUCT_OFFSET / C_DIVERGED / UNRESOLVED
+  with evidence → `~/tmp/tu5_forensics/P5_manifest.json` +
+  `docs/plans/tu5-p5-manifest.md`. All 48 sanctioned drops in C; arithmetic
+  must close to 1,034.
+- **F4 — GATE (REVISED):** matched ≈ 14,84x–15,05x expected; every loss must be
+  attributed in the P5 manifest; **UNRESOLVED (unexplained) < 159** is the
+  binding condition. NEW losses vs the P4 gate (regen noise) also need
+  attribution. Fail → NO-GO, debug map.
 - **F5 — Atomic flip commit on main** (single commit, path-limited):
   regenerated `config/45410914/{splits.txt,symbols.txt}`, `scope_map.json`,
   `scripts/target_symbol_map.json` (TU5-keyed), `config.yml` (KEEP
@@ -156,13 +171,18 @@ with every drop inside `expected_drops.json`. **NO-GO:** unexplained loss > ≈1
   (`tools/ghidra/import-xex.sh`, port 8002, keep TU0 program for BinDiff);
   regenerate fingerprints/autoid; RB3Enhanced `ports_xbox360.h` base/TU5 VA
   hygiene fix.
-- **F8 — Open P5** as the standing worklist: 81 MISS bodies triaged per
-  `tu5-rewritten-functions-analysis.md` §4 (~13 SKIP SDK/middleware, ~18 trivial
-  ripple re-match ≥90% skel, ~25 genuine re-decomp: RockCentral::UpdateChar,
-  GemTrainerPanel::Poll, GameMode::SetMode, Overshell* cluster, MidiParser*).
-  The heavy per-unit losers (VocalPlayer −43, Game −42, BandDirector −32,
-  SongSort* cluster, LightPreset −25, Matchmaker −22) route HERE, not to
-  pairing fixes.
+- **F8 — Open P5** as the standing worklist, now THREE tracks from the manifest:
+  - **P5-A (~100, tooling):** map-anchoring for the 839 provably-present
+    unmapped bodies (census `unmapped_exist.json` FOUND set, uniqueness-gated)
+    + splits tail-truncation fixes. Cheap, data-only, do first.
+  - **P5-B (~600, struct re-basing — the headline):** per-shared-header TU5
+    struct-offset campaign seeded by the manifest's offset-pair table
+    (GameMode, User, GemPlayer, Singer, …). One header fixes all readers.
+    This is genuine TU5 layout knowledge — successor to the wave cadence.
+  - **P5-C (~250, body work):** real divergence incl. the 48 sanctioned drops;
+    triage per `tu5-rewritten-functions-analysis.md` §4 (~13 SKIP SDK, ~18
+    trivial ripple, ~25 genuine re-decomp). Heavy per-unit losers (VocalPlayer,
+    Game, BandDirector, SongSort*, LightPreset, Matchmaker) live here.
 
 ## 4. What breaks at flip (same-window fixes)
 
@@ -196,3 +216,7 @@ Keep a TU0 copy of `orig/45410914/{default.xex,band.exe}` under
 - 2026-07-15: F0(b) lever (a1) measured **0 promotions** (oracle-gated; 30 false
   STL folds with gate bypassed). Diagnosis disputed → forensics workflow
   dispatched (byte census + scoring forensics + churn decomposition).
+- 2026-07-15: F1 DECIDED — forensics reconciled the gap: **B≈600 struct-offset
+  shifts + C≈250 real divergence + A≈100 tooling; churn 95% benign relabel;
+  flip legal via enumeration** (`~/tmp/tu5_forensics/F1_DECISION.md`).
+  F3 (flip payload regen, wt-tu5-flip) + F3b (P5 manifest) agents dispatched.
