@@ -81,6 +81,7 @@ static int cv_digit(int c, int base)
 static unsigned long long cv_strtoull(const char *s, char **end, int base, int *neg)
 {
     unsigned long long acc = 0;
+    const char *nptr = s;   /* original arg: C strtol sets endptr==nptr on no conversion */
     const char *start;
     int d;
     *neg = 0;
@@ -92,7 +93,10 @@ static unsigned long long cv_strtoull(const char *s, char **end, int base, int *
     else if (base == 0) base = 10;
     start = s;
     while ((d = cv_digit((unsigned char)*s, base)) >= 0) { acc = acc * (unsigned)base + (unsigned)d; s++; }
-    if (end) *end = (char *)((s == start) ? s : s);
+    /* No digits consumed => point endptr back at the original nptr (not past the
+     * skipped whitespace/sign), matching C semantics. civetweb's Content-Length
+     * validator relies on endptr==header to reject malformed values (e.g. "+"). */
+    if (end) *end = (char *)((s == start) ? nptr : s);
     return acc;
 }
 long strtol(const char *s, char **end, int base)
