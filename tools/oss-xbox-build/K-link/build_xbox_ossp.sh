@@ -65,6 +65,10 @@ CFLAGS=(
   # beneficial so net_http_civet.c sees USE_WEBSOCKET when it includes civetweb.h.
   -D NO_SSL -D NO_CGI -D NO_FILES -D NO_FILESYSTEMS -D NO_CACHING
   -D NO_THREAD_NAME -D USE_WEBSOCKET -D USE_STACK_SIZE=65536
+  # NO_FILESYSTEMS forces two external hooks (civetweb.c:3537/16669 C1189);
+  # bodies live in source/civetweb/external_*.inl (phase-0 v4 Class F).
+  -D MG_EXTERNAL_FUNCTION_mg_cry_internal_impl
+  -D MG_EXTERNAL_FUNCTION_log_access
   -TC
 )
 # include order: RB3E game headers -> stdint shadow -> Lane H xtl.h -> CRT
@@ -118,7 +122,12 @@ compile_all() {
     # vendored civetweb TU: force C++ (-TP wins over the array's trailing -TC,
     # last-wins in cl) + expose its own dir for the #include "*.inl" siblings.
     local extra=()
-    case "$src" in source/civetweb/civetweb.c) extra=(-TP -I "$RB3E/source/civetweb") ;; esac
+    # -TP (C++, past C99 mid-block decls); vendored dir for the #include "*.inl"
+    # siblings + external_*.inl hooks; civetweb_win32/ scoped redirect headers
+    # (windows/winsock2/ws2tcpip/sal/direct/process + sys/*) that route the
+    # _WIN32 branch to civetweb_x360_shim.h. This -I precedes INCS (hence LIBCMT)
+    # so process.h/sys-stat shadow LIBCMT's win_types-pulling versions (v4 Class B).
+    case "$src" in source/civetweb/civetweb.c) extra=(-TP -I "$RB3E/source/civetweb" -I "$RB3E/include/civetweb_win32") ;; esac
     "$WIBO" "$CC" "${CFLAGS[@]}" "${extra[@]}" "${INCS[@]}" -Fo"$OBJ/${base}.obj" "$src" >"$log" 2>&1
     local rc=$?
     if [ $rc -eq 0 ] && [ -f "$OBJ/${base}.obj" ]; then
@@ -132,6 +141,18 @@ compile_all() {
       echo "FAIL  $base    ${firsterr}" | tee -a "$LOGS/compile_summary.txt"
     fi
   done
+  # civetweb CRT additions -> crt/crt_civetweb.obj (linked next to the prebuilt
+  # crt.obj). Kept out of crt.c so the 51 game TUs' shared obj is untouched.
+  total=$((total+1))
+  local cvsrc; cvsrc=$(realpath --relative-to=. "$STAGE/crt/crt_civetweb.c")
+  "$WIBO" "$CC" "${CFLAGS[@]}" "${INCS[@]}" -Fo"$STAGE/crt/crt_civetweb.obj" "$cvsrc" \
+      >"$LOGS/crt_civetweb.log" 2>&1
+  if [ $? -eq 0 ] && [ -f "$STAGE/crt/crt_civetweb.obj" ]; then
+    ok=$((ok+1)); echo "OK    crt_civetweb" | tee -a "$LOGS/compile_summary.txt"
+  else
+    fail=$((fail+1))
+    echo "FAIL  crt_civetweb    $(grep -m1 -iE 'error|fatal' "$LOGS/crt_civetweb.log" | head -c 160)" | tee -a "$LOGS/compile_summary.txt"
+  fi
   echo "----" | tee -a "$LOGS/compile_summary.txt"
   echo "compiled $ok/$total, failed $fail" | tee -a "$LOGS/compile_summary.txt"
   [ "$fail" -eq 0 ]
@@ -149,7 +170,7 @@ link_full() {
     && TMP="$STAGE/tmpdir" TEMP="$STAGE/tmpdir" LIB="$IMPORTLIB" \
        "$WIBO" "$LINK" "${LFLAGS[@]}" \
          -OUT:RB3Enhanced.exe -IMPLIB:RB3Enhanced.imp \
-         obj/*.obj crt/crt.obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
+         obj/*.obj crt/crt.obj crt/crt_civetweb.obj xapi/xapi_oss.obj xonline/xonline_stub.obj \
          "${LIBS_X[@]}" >"$LOGS/link_full.log" 2>&1 )
   local rc=$?
   echo "link rc=$rc -> $LOGS/link_full.log"

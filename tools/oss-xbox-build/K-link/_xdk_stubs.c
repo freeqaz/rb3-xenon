@@ -28,6 +28,7 @@ int NetDll_shutdown(int caller, int s, int how);
 int NetDll_socket(int caller, int af, int type, int protocol);
 int NetDll_WSAGetLastError(int caller);
 int NetDll_WSAStartup(int caller, int wVersionRequested, void *wsaData);
+int NetDll_WSACleanup(int caller);
 int NetDll_XNetGetOpt(int caller, int optid, void *buf, int *len);
 int NetDll_XNetGetTitleXnAddr(int caller, void *pxna);
 int NetDll_XNetQosLookup(int caller, int cxna, void *apxna, void *apxnkid, void *apxnkey,
@@ -68,6 +69,7 @@ int shutdown(int s, int how) { return NetDll_shutdown(XNCALLER_TITLE, s, how); }
 int socket(int af, int type, int protocol) { return NetDll_socket(XNCALLER_TITLE, af, type, protocol); }
 int WSAGetLastError(void) { return NetDll_WSAGetLastError(XNCALLER_TITLE); }
 int WSAStartup(int wVersionRequested, void *wsaData) { return NetDll_WSAStartup(XNCALLER_TITLE, wVersionRequested, wsaData); }
+int WSACleanup(void) { return NetDll_WSACleanup(XNCALLER_TITLE); }
 int XNetGetOpt(int optid, void *buf, int *len) { return NetDll_XNetGetOpt(XNCALLER_TITLE, optid, buf, len); }
 int XNetGetTitleXnAddr(void *pxna) { return NetDll_XNetGetTitleXnAddr(XNCALLER_TITLE, pxna); }
 int XNetQosLookup(int cxna, void *apxna, void *apxnkid, void *apxnkey,

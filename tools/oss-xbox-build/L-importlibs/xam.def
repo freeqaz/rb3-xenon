@@ -1,6 +1,7 @@
 LIBRARY xam.xex
 EXPORTS
     NetDll_WSAStartup @1
+    NetDll_WSACleanup @2
     NetDll_socket @3
     NetDll_closesocket @4
     NetDll_shutdown @5
