@@ -109,10 +109,23 @@ with every drop inside `expected_drops.json`. **NO-GO:** unexplained loss > ≈1
   promotions + bucket residue (≤44B / non-injective / no-oracle-attribution);
   (c) recompute floor vs 15,852 + remap the 23 cc31ef0b pins to TU5 VAs
   (`~/tmp/tu5_floor/new_pins_tu5.json`). ✅ keystone cherry-picked (03557b71).
-- **F1 — Decide lever depth:** if (a1) recovers the bulk of the ~559 → proceed.
-  If a Rule-3-shaped residue dominates → small report-driver relaxation flag in
-  the fork (report.rs:525-575 seam only; A/B on the TU0 report to prove zero
-  baseline shift). Per-unit pairing code (`diff_objs`) stays untouched.
+- **F1 — Root-cause the gap (REVISED after lever measured 0):** lever (a1)
+  recovered **0 of 1,034** (`~/tmp/tu5_gbe/RESULTS.md`): the gate's
+  target_symbol_map is already TU5-addressed (13,770/15,136 keys), so
+  name-pairing already works; only 32 byte-twin candidates existed and all were
+  STL-fold false matches (Rule-3 correctly rejects — do NOT relax). The
+  experiment's "97.6% genuine divergence" conclusion is DISPUTED: its byte-twin
+  signature embeds canonicalized reloc-target names (cross-binary noise on
+  identical code), and it conflicts with the verified 07-13 finding (1,120/1,829
+  near-misses normalized-identical to their twins) + the churn shape (8,468
+  named lost vs 7,513 gained = attribution shuffle, net −955). Forensics
+  workflow in flight (3 lanes + synthesis → `~/tmp/tu5_forensics/F1_DECISION.md`):
+  (1) objdiff-free masked byte census TU0-VA vs mapped-TU5-VA over all 15,852
+  matched fns; (2) scoring forensics on paired-but-degraded near-misses (dtk
+  reloc deficit / wrong body / real diff); (3) churn decomposition → honest-loss
+  list. Gate legality note: the NO-GO is about UNEXPLAINED losses — a shortfall
+  below 15,804 is flip-legal iff every residual drop is enumerated with
+  evidence (extends expected_drops + P5).
 - **F2 — Apply step: RESOLVED** (no script needed — copy valayer outputs, flip
   `object:` line, standard dtk split pass; see §1). Reproducibility is proven by
   the committed gate state (`88794af4`).
@@ -180,3 +193,6 @@ Keep a TU0 copy of `orig/45410914/{default.xex,band.exe}` under
 - 2026-07-15: F0(a) preservation done: `72254ce0` (tu5-migrate, 33 MB map data +
   generators) and `88794af4` (tu5-p4-gate, applied gate VA-layer). Apply step
   reconstructed = seed-config + object-flip + dtk split pass (no missing script).
+- 2026-07-15: F0(b) lever (a1) measured **0 promotions** (oracle-gated; 30 false
+  STL folds with gate bypassed). Diagnosis disputed → forensics workflow
+  dispatched (byte census + scoring forensics + churn decomposition).
