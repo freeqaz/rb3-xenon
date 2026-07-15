@@ -23,6 +23,8 @@ MILOHAX_DIR="$(cd "$PROJECT_DIR/.." && pwd)"
 PROJECT_LOC="$PROJECT_DIR/ghidra_projects/RB3Xenon/RB3Xenon"
 PROJECT_NAME="RB3Xenon"
 MAP_JSON="$SCRIPT_DIR/rb3_symbol_map.json"
+# Program to name (base TU0); explicit so we never touch a co-resident TU5 program.
+PROGRAM="default.xex-35adb6"
 
 export JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk}"
 export GHIDRA_INSTALL_DIR="${GHIDRA_INSTALL_DIR:-$MILOHAX_DIR/ghidra/build/ghidra}"
@@ -32,17 +34,27 @@ PYGHIDRA_MCP="$MILOHAX_DIR/pyghidra-mcp"
 
 REGEN=1
 MIN_PCT=80
+FULL=0
 PY_ARGS=()
 for arg in "$@"; do
     case "$arg" in
         --no-regen) REGEN=0 ;;
+        --full) FULL=1 ;;
         --min-percent=*) MIN_PCT="${arg#*=}" ;;
         --dry-run) PY_ARGS+=("--dry-run") ;;
         *) echo "Unknown arg: $arg" >&2; exit 2 ;;
     esac
 done
 
-if [[ $REGEN -eq 1 ]]; then
+if [[ $FULL -eq 1 ]]; then
+    # Full-universe naming: every oracle-identified VA (scripts/target_symbol_map.json,
+    # ~15k) enriched by our matched-decomp entries. Makes TU0 a fully-named reference.
+    MAP_JSON="$SCRIPT_DIR/rb3_symbol_map.full.json"
+    if [[ $REGEN -eq 1 ]]; then
+        echo "==> Regenerating FULL symbol map"
+        python3 "$SCRIPT_DIR/build_full_symbol_map.py" --out "$MAP_JSON"
+    fi
+elif [[ $REGEN -eq 1 ]]; then
     echo "==> Regenerating symbol map (min-percent=$MIN_PCT)"
     python3 "$SCRIPT_DIR/build_symbol_map.py" --min-percent "$MIN_PCT" --out "$MAP_JSON"
 fi
@@ -64,6 +76,7 @@ set +e
 uv run --python 3.10 --project "$PYGHIDRA_MCP" python "$SCRIPT_DIR/apply_symbols.py" \
     --project-location "$PROJECT_LOC" \
     --project-name "$PROJECT_NAME" \
+    --program "$PROGRAM" \
     --map "$MAP_JSON" \
     "${PY_ARGS[@]}" \
     2>&1 | tee "$LOG"

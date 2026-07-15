@@ -92,6 +92,9 @@ core.*
 # bindiff_match.json is harvested from Ghidra + BinDiff (~10 min run); regenerable, large (~3.6 MB)
 /tools/bindiff_match.json
 /tools/.cache/
+# Full base-naming map (~15k entries) — derived from target_symbol_map.json + rb3_symbol_map.json;
+# regenerate via tools/ghidra/build_full_symbol_map.py (or run_apply_symbols.sh --full).
+/tools/ghidra/rb3_symbol_map.full.json
 
 # Orchestrator MCP databases (regenerable via scripts/ingest_report.py)
 /decomp.db
