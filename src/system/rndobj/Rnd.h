@@ -112,9 +112,16 @@ public:
     // holds in both, so the two slots between SetClearColor and ScreenDump are
     // simply swapped vs the dc3 header shape).
     virtual void ForceColorClear() {}
-    virtual void Clear(unsigned int, const Hmx::Color &) = 0;
+    // Retail RB3 Rnd base has NO Clear virtual: ground-truthed from the TU5
+    // DxRnd vtable (Ghidra). slot 26=ForceColorClear, 27=ScreenDumpUnique,
+    // 28=ScreenDump -- retail OnScreenDump calls vtable+0x70 (slot 28), so
+    // ScreenDump must stay at slot 28 and ScreenDumpUnique is declared FIRST.
+    // Clear is introduced only in NgRnd (slot 0xf8/62, after SetViewport/
+    // GetViewport) -- see Rnd_NG.h. Keeping ScreenDumpUnique virtual preserves
+    // the 2-slot span (27,28) so DrawRect@slot29 and every later Rnd vcall stay
+    // aligned now that Clear no longer occupies a base slot.
+    virtual void ScreenDumpUnique(const char *);
     virtual void ScreenDump(const char *);
-    RND_DC3_VIRTUAL void ScreenDumpUnique(const char *);
     virtual void DrawRect(
         const Hmx::Rect &,
         const Hmx::Color &,
@@ -242,7 +249,7 @@ protected:
     virtual void DrawPreClear();
     virtual bool CanModal(Debug::ModalType) { return false; }
     virtual void ModalDraw(Debug::ModalType, const char *) {}
-    virtual unsigned int GetDefaultTexBitmapOrder() const { return 0; }
+    RND_DC3_VIRTUAL unsigned int GetDefaultTexBitmapOrder() const { return 0; }
 
     virtual float UpdateOverlay(RndOverlay *, float);
 

@@ -962,23 +962,23 @@ void WorldCrowd::Mats(std::list<RndMat *> &mats, bool additive) {
                  charIt != mCharacters.end(); ++charIt) {
                 if (charIt->mDef.mUseRandomColor) {
                     SetMatColorFlags(charIt->mDef.mMats, (BaseMaterial::ColorModFlags)colorIdx, &colors);
-                }
 
-                for (ObjPtrList<RndMat>::iterator matIt = charIt->mDef.mMats.begin();
-                     matIt != charIt->mDef.mMats.end(); ++matIt) {
-                    std::list<unsigned int> flags;
-                    GetMeshShaderFlags(*matIt, flags);
-                    for (std::list<unsigned int>::iterator flagIt = flags.begin();
-                         flagIt != flags.end(); ++flagIt) {
-                        unsigned int flag = *flagIt;
-                        opts.pack = 0x12;
-                        opts.SetHasBones(flag & 1);
-                        opts.SetHasAOCalc((flag >> 1) & 1);
-                        RndMat *newMat = Hmx::Object::New<RndMat>();
-                        newMat->Copy(*matIt, kCopyDeep);
-                        opts.mTempMat = true;
-                        newMat->SetShaderOpts(opts);
-                        mats.insert(mats.end(), newMat);
+                    for (ObjPtrList<RndMat>::iterator matIt = charIt->mDef.mMats.begin();
+                         matIt != charIt->mDef.mMats.end(); ++matIt) {
+                        std::list<unsigned int> flags;
+                        GetMeshShaderFlags(*matIt, flags);
+                        for (std::list<unsigned int>::iterator flagIt = flags.begin();
+                             flagIt != flags.end(); ++flagIt) {
+                            unsigned int flag = *flagIt;
+                            opts.pack = 0x12;
+                            opts.SetHasBones(flag & 1);
+                            opts.SetHasAOCalc((flag >> 1) & 1);
+                            RndMat *newMat = Hmx::Object::New<RndMat>();
+                            newMat->Copy(*matIt, kCopyDeep);
+                            opts.mTempMat = true;
+                            newMat->SetShaderOpts(opts);
+                            mats.insert(mats.end(), newMat);
+                        }
                     }
                 }
             }

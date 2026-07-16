@@ -43,7 +43,9 @@ public:
     // vbase offset, so this is layout-additive and zero-loss by
     // construction. Do NOT let new members grow the class past 0x25C
     // (non-vbase) without re-deriving this pad.
-    unsigned char mRetailLayoutReserve[0xAC];
+    // 0xAC moved into UILabel (pushes UITransitionHandler base 0x16c->0x218);
+    // total object size unchanged so Hmx::Object/RndHighlightable vbases stay
+    // at 0x25c/0x290. No reserve needed here anymore.
 };
 
 DECLARE_MESSAGE(BandLabelCountDoneMsg, "count_done")

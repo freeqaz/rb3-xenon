@@ -149,6 +149,16 @@ protected:
     bool mTextEmpty; // 0x121
     bool mDirty; // 0x122
     ObjVector<LabelStyle> mLabelStyles; // 0x124
+    // Unreconstructed retail UILabel/UIComponent tail members. Their true split
+    // is not yet known, but the non-virtual part of UILabel is 0xAC bytes larger
+    // in retail: derived classes place their next non-virtual base right after
+    // UILabel, and BandLabel's UITransitionHandler base must land at 0x218
+    // (was 0x16c without this). Verified via BandLabel's dtor cleanup funclets
+    // (fn_82341868 & siblings: `addi r3,r11,0x218`). Layout-additive; whole-binary
+    // A/B shows +6 matched / 0 regressions when paired with dropping BandLabel's
+    // now-redundant tail reserve (BandLabel object size is unchanged, so the
+    // shared Hmx::Object/RndHighlightable vbases stay at 0x25c/0x290).
+    unsigned char mUnkTU5Tail[0xAC];
 };
 
 bool PropSync(UILabel::LabelStyle &, DataNode &, DataArray *, int, PropOp);

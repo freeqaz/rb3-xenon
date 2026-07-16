@@ -69,16 +69,24 @@ protected:
     int mSamplesToSkip; // 0xa8
     OggMap mOggMap; // 0xac
     int mHdrSize; // 0xc0
-    char *mHdrBuf; // 0xc4
-    symmetric_CTR *mCtrState; // 0xc8
-    unsigned char mNonce[16]; // 0xcc
-    unsigned char mKeyMask[16]; // 0xdc
-    bool unkec; // 0xec
-    bool unked; // 0xed
-    bool mEof; // 0xee
-    bool mFail; // 0xef
-    int mVersion; // 0xf0 - mogg version?
-    std::vector<std::vector<short> > mPcmBuffers; // 0xf4 - per-channel PCM sample buffers
-    s64 mLastGranulePos; // 0x100
-    int mPcmReadPos; // 0x108
+    // TU5 grew VorbisReader's tail: everything from here on shifts +44/+45 bytes
+    // vs the TU0-era layout (retail mHdrBuf@0xf0, mCtrState@0xf4, unked@0x11a,
+    // mFail@0x11c, mPcmBuffers@0x120 confirmed from the TU5 binary). mVersion moved
+    // up out of the mFail region; the exact identity of the inserted members is
+    // unknown (none are read by the compiled functions in this TU), so the block is
+    // reproduced as layout-correct placeholders.
+    int mVersion; // 0xc4 - mogg version? (moved earlier in TU5)
+    char mUnkTU5_0xc8[40]; // 0xc8 -> 0xf0 : TU5-inserted members (identity TBD)
+    char *mHdrBuf; // 0xf0
+    symmetric_CTR *mCtrState; // 0xf4
+    unsigned char mNonce[16]; // 0xf8
+    unsigned char mKeyMask[16]; // 0x108
+    bool unkec; // 0x118
+    char mUnkTU5_0x119; // 0x119 : TU5-inserted byte (pushes unked/mEof/mFail +1)
+    bool unked; // 0x11a
+    bool mEof; // 0x11b
+    bool mFail; // 0x11c
+    std::vector<std::vector<short> > mPcmBuffers; // 0x120 - per-channel PCM sample buffers
+    s64 mLastGranulePos; // 0x130
+    int mPcmReadPos; // 0x138
 };

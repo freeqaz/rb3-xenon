@@ -19,7 +19,14 @@ public:
         Vector3 mPos;
         float mLen;
         float mLenRatio;
+#ifdef HX_NATIVE
+        /** DC3-only editor debug-draw cache. Retail RB3 X360's Point is 36
+            bytes (mBone+mPos+mLen+mLenRatio) -- this member does not exist in
+            the shipped layout, so sizeof(Point) must stay 0x24 for the
+            mPoints element stride to match. Kept native-only for the editor
+            bone-chain visualization. */
         Vector3 mWorldPos;
+#endif
     };
     // Hmx::Object
     virtual ~CharIKHead();

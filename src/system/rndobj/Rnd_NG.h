@@ -36,7 +36,6 @@ public:
     virtual void Init();
     virtual void ReInit();
     virtual void Terminate();
-    virtual void Clear(unsigned int, const Hmx::Color &) {}
     virtual void SetShadowMap(RndTex *, RndCam *, const Hmx::Color *);
     virtual void RemovePointTest(RndFlare *);
     virtual RndTex *GetShadowMap() { return mShadowMap; }
@@ -45,6 +44,9 @@ public:
 
     virtual void SetViewport(const Viewport &v) { mViewport = v; }
     virtual const Viewport &GetViewport() const { return mViewport; }
+    // Retail slot 0xf8/62: Clear is a NEW NgRnd virtual (Rnd base has none),
+    // placed right after GetViewport -- ground-truthed from the TU5 DxRnd vtable.
+    virtual void Clear(unsigned int, const Hmx::Color &) {}
     virtual void
     DrawRect(const Hmx::Rect &, RndMat *, ShaderType, const Hmx::Color &, const Hmx::Color *, const Hmx::Color *) {
     }

@@ -245,6 +245,6 @@ public:
     int unk2b8;
     int unk2bc;
     int unk2c0;
+    int mUnkTU5_tail; // TU5-inserted 4-byte member (P5 struct re-base); placed before unk2c4 to re-base tail +4 (unk2c4 0x2f8->0x2fc)
     bool unk2c4;
-    int mUnkTU5_tail; // TODO: TU5-inserted 4-byte member (P5 struct re-base probe)
 };

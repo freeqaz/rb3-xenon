@@ -181,9 +181,14 @@ public:
     WiiFriendList *unk9c; // 0x9c
     std::vector<Friend *> *unka0;
     Hmx::Object *unka4;
-    Timer unka8;
+    // TU5/Xbox layout: the Wii friend/messenger tail is 0x50 bytes smaller than
+    // the Wii-derived header (retail's Hmx::Object virtual base sits at object
+    // offset 0xcc, not 0x11c). unka8 (Wii Timer, 0x30) shrinks to 0x10 and unke0
+    // (Wii Timer, 0x30) is dropped -- both are unreferenced in this TU. This
+    // re-bases the vbtable displacement so ~RockCentral matches retail. See
+    // fixwave-2.
+    int mPadTU5_a8[6]; // was Timer unka8 (0x30); Wii-only, unreferenced
     WiiMessageList *unkd8; // 0xd8
-    Timer unke0;
     bool unk110;
     bool unk111;
     bool unk112;

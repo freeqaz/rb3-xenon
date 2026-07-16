@@ -65,9 +65,13 @@ public:
     POOL_OVERLOAD(SfxInst, 0x4E);
 
 private:
-    Sfx *mSfx; // 0x44
-    std::vector<SampleInst *> mSamples; // 0x48
-    float mStartProgress; // 0x54
+    // TU5 retail layout: mSamples is the first SfxInst-specific member,
+    // landing at 0x40 (right after the SeqInst base). mSfx follows the
+    // 12-byte vector at 0x4c. (The header previously declared mSfx first,
+    // which pushed mSamples to 0x44 and mis-based every mSamples access +4.)
+    std::vector<SampleInst *> mSamples; // 0x40
+    Sfx *mSfx; // 0x4c
+    float mStartProgress; // 0x50
 };
 
 /** "Legacy sound effect object.  Plays several samples with a given volume, pan,

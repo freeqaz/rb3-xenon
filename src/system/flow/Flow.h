@@ -46,6 +46,9 @@ public:
         Symbol mObjectClass; // 0x20
         DataNode mSymbolList; // 0x24
         Symbol mObjectType; // 0x2c
+        /** TU5 inserted ~80 bytes of additional members here (layout-correct
+         *  placeholder; retail sizeof(DynamicPropertyEntry) == 0x88). */
+        char mUnkTU5_0x30[0x50]; // 0x30
     };
     // Hmx::Object
     virtual ~Flow();

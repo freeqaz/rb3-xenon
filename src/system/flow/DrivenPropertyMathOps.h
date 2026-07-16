@@ -36,6 +36,7 @@ class FlowMathOp {
     DataNode mLhs; // 0x8
     DataNode mRhs; // 0x10
     FlowPtr<Hmx::Object> mDrivenObj; // 0x18
+    int mUnkTU5_0x30; // 0x30 -- TU5-era insert; grows sizeof to 0x34
 
 public:
     FlowMathOp(Hmx::Object *);

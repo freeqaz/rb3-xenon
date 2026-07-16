@@ -88,7 +88,7 @@ void SkeletonClip::LoadFrame(BinStream &bs, RecordedFrame &frame, int version) {
 
     bs >> frame.mIsTracked;
     if (frame.mIsTracked || version < 2) {
-        for (int i = 0; i < kNumJoints; i++) {
+        for (int i = 0; i < kNumClipJoints; i++) {
             bs >> frame.mJointPositions[i];
             bs >> frame.mJointTrackingState[i];
         }

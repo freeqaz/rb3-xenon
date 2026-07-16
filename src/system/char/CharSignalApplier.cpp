@@ -10,7 +10,6 @@ CharSignalApplier::BoneOp::BoneOp(Hmx::Object *o) : mBone(o) {
     mOp = 0;
     mApplyPercent = 1.0f;
     mMinAngle = -30.0f;
-    mMaxAngle = 30.0f;
 }
 
 CharSignalApplier::BoneOp &
@@ -19,7 +18,6 @@ CharSignalApplier::BoneOp::operator=(const CharSignalApplier::BoneOp &op) {
     mOp = op.mOp;
     mApplyPercent = op.mApplyPercent;
     mMinAngle = op.mMinAngle;
-    mMaxAngle = op.mMaxAngle;
     return *this;
 }
 
@@ -28,7 +26,6 @@ BinStream &operator<<(BinStream &bs, const CharSignalApplier::BoneOp &op) {
     bs << op.mOp;
     bs << op.mApplyPercent;
     bs << op.mMinAngle;
-    bs << op.mMaxAngle;
     return bs;
 }
 
@@ -37,7 +34,6 @@ BinStreamRev &operator>>(BinStreamRev &d, CharSignalApplier::BoneOp &op) {
     d >> op.mOp;
     d >> op.mApplyPercent;
     d >> op.mMinAngle;
-    d >> op.mMaxAngle;
     return d;
 }
 
@@ -46,7 +42,6 @@ BEGIN_CUSTOM_PROPSYNC(CharSignalApplier::BoneOp)
     SYNC_PROP(op, o.mOp)
     SYNC_PROP(apply_percent, o.mApplyPercent)
     SYNC_PROP(min_angle, o.mMinAngle)
-    SYNC_PROP(max_angle, o.mMaxAngle)
 END_CUSTOM_PROPSYNC
 
 CharSignalApplier::CharSignalApplier()
@@ -142,8 +137,7 @@ void CharSignalApplier::Poll() {
                     t = (mSmoothedSignal * op.mApplyPercent - mSignalMin)
                         / (mSignalMax - mSignalMin);
                 }
-                float angle
-                    = ((op.mMaxAngle - op.mMinAngle) * t + op.mMinAngle) * DEG2RAD;
+                float angle = (op.mMinAngle * t) * DEG2RAD;
                 Hmx::Matrix3 rotMatX, rotMatY, rotMatZ;
                 Hmx::Matrix3 *rotMat = &rotMatZ;
                 switch ((unsigned int)op.mOp) {
@@ -212,17 +206,19 @@ CharSignalApplier::BoneOp* __uninitialized_fill_n<CharSignalApplier::BoneOp*, un
     if (count != 0U) {
         do {
             if (cur != NULL) {
+                // Retail layout: ObjPtr head 0xc, mOp@0xc, mApplyPercent@0x10,
+                // mMinAngle@0x14; sizeof(BoneOp)=0x18.
                 // Set vtable pointer
                 *(void**)cur = (void*)0x10000000;
                 // Set mOp to 0
-                *(int*)((char*)cur + 0x14) = 0;
+                *(int*)((char*)cur + 0xc) = 0;
                 // Copy mApplyPercent
-                *(float*)((char*)cur + 0x18) = *(float*)((char*)&value + 0x18);
+                *(float*)((char*)cur + 0x10) = *(float*)((char*)&value + 0x10);
                 // Initialize remaining members with assignment
                 *cur = value;
             }
             remaining--;
-            cur = (CharSignalApplier::BoneOp*)((char*)cur + 0x24);
+            cur = (CharSignalApplier::BoneOp*)((char*)cur + 0x18);
         } while (remaining != 0U);
     }
     return cur;

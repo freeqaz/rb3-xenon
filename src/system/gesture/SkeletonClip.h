@@ -13,20 +13,30 @@
 #include "utl/FileStream.h"
 #include "utl/MemMgr.h"
 
-// size 0x1c8
+// RB3 retail: size 0x78 (120 bytes). Unlike DC3 (0x1c8, which inlines full
+// 20-joint PaddedJointPos + int arrays), RB3's RecordedFrame is a compact frame
+// with no inline 20-joint arrays -- retail RecordFrame copies a 0x24-byte header
+// block then sets scalars; the joint payload is compact. Field offsets below are
+// retail-confirmed where derivable: 0x00..0x24 header block, mQualityFlags@0x64,
+// float@0x6c, mSongSeconds@0x74. The joint payload count is reduced to land the
+// struct at exactly 0x78 (matching the sizeof baked into vector<RecordedFrame>
+// template code); the exact retail joint packing is unverified.
+enum { kNumClipJoints = 3 };
+// size 0x78
 struct RecordedFrame {
     void MakeSkeletonFrame(SkeletonFrame &, int) const;
 
-    int mFrameNumber;
-    int mElapsedMs;
-    Vector3 mFloorNormal;
-    Hmx::Color mFloorClipPlane;
-    bool mIsTracked;
-    PaddedJointPos mJointPositions[kNumJoints];
-    int mJointTrackingState[kNumJoints];
-    int mQualityFlags;
-    int mTrackingID;
-    float mSongSeconds;
+    int mFrameNumber;                        // 0x00
+    int mElapsedMs;                          // 0x04
+    Vector3 mFloorNormal;                    // 0x08
+    Hmx::Color mFloorClipPlane;              // 0x14
+    bool mIsTracked;                         // 0x24
+    PaddedJointPos mJointPositions[kNumClipJoints]; // 0x28
+    int mJointTrackingState[kNumClipJoints];        // 0x58
+    int mQualityFlags;                       // 0x64
+    int mTrackingID;                         // 0x68
+    float mUnkTU5_0x6c;                      // 0x6c (retail float)
+    float mSongSeconds;                      // 0x70/0x74
 };
 
 class SkeletonClip : public CameraInput,

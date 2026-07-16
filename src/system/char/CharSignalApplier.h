@@ -14,11 +14,13 @@ public:
         BoneOp(Hmx::Object *o);
         BoneOp &operator=(const BoneOp &);
 
-        ObjPtr<RndTransformable> mBone; // 0x00
-        int mOp;                        // 0x14
-        float mApplyPercent;            // 0x18
-        float mMinAngle;                // 0x1c
-        float mMaxAngle;                // 0x20
+        ObjPtr<RndTransformable> mBone; // 0x00 (retail ObjPtr = 0xc)
+        int mOp;                        // 0x0c
+        float mApplyPercent;            // 0x10
+        float mMinAngle;                // 0x14
+        // NOTE: DC3 (newer engine) added a 4th field mMaxAngle here, growing
+        // sizeof(BoneOp) 0x18->0x1c. Retail RB3 TU5 has only 3 post-head fields
+        // (element stride 0x18 in every vector<BoneOp> STL helper). Keep at 24B.
     };
 
     // Hmx::Object

@@ -269,12 +269,7 @@
      "/DMILO_MESSAGE_TIMERS"
     ]
    },
-   "system/char/CharClip.cpp": {
-    "status": "NonMatching",
-    "extra_cflags": [
-     "/DRB3_RBTREE_0x1C"
-    ]
-   },
+   "system/char/CharClip.cpp": "NonMatching",
    "system/char/CharClipSet.cpp": "NonMatching",
    "system/midi/MidiParser.cpp": "NonMatching",
    "system/obj/DataFunc.cpp": "NonMatching",

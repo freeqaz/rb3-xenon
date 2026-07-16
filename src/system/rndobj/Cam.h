@@ -136,6 +136,5 @@ protected:
     Hmx::Rect mScreenRect; // 0x2d8
     ObjPtr<RndTex> mTargetTex; // 0x2e8
     Rnd::Aspect mAspect; // 0x2fc
-    Hmx::Matrix4 mViewProjMatrix; // 0x300
-    Hmx::Matrix4 mInvViewProjMatrix; // 0x340
+    Hmx::Matrix4 mViewProjMatrix; // 0x2f0 (retail TU5: no mInvViewProjMatrix; vbase at 0x330)
 };

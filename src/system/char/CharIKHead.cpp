@@ -61,7 +61,9 @@ void CharIKHead::Poll() {
         for (int i = 0; i < mPoints.size(); i++) {
             Point &pt = mPoints[i];
             ScaleAdd(pt.mBone->WorldXfm().v, spineToTarget, pt.mLenRatio, pt.mPos);
+#ifdef HX_NATIVE
             pt.mWorldPos = pt.mPos;
+#endif
         }
         Vector3 correction(0, 0, 0);
         for (int i = 1; i < mPoints.size(); i++) {
