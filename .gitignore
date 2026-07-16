@@ -204,3 +204,4 @@ tools/oss-xbox-build/rb3e_alive_listen.py
 # ported unicorn behavioral-probe harness — build artifacts (regenerable via Makefile)
 scripts/unicorn_runner/**/__pycache__/
 scripts/unicorn_runner/*.so
+/archive/
