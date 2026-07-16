@@ -311,12 +311,19 @@ void LightPreset::Keyframe::LegacyLoadStageKit(BinStream &bs) {
 
 void LightPreset::Keyframe::LegacyLoadP9(BinStreamRev &d) {
     MILO_ASSERT(d.rev == 14, 0x596);
-    d >> mDescription;
-    d >> mSpotlightEntries;
-    d >> mEnvironmentEntries;
-    d >> mLightEntries;
-    d >> mSpotlightDrawerEntries;
-    LegacyLoadStageKit(d.stream);
+    // TU5 reads the StageKit LED fields straight off the BinStream base of the
+    // rev stream (bypassing the rev-delegating operator>>): ReadEndian is called
+    // with `&d` as the BinStream `this`, in the field order below.
+    BinStream &bs = reinterpret_cast<BinStream &>(d);
+    bs.ReadEndian(&mLedBlue, 4);
+    bs.ReadEndian(&mLedGreen, 4);
+    bs.ReadEndian(&mLedRed, 4);
+    bs.ReadEndian(&mLedYellow, 4);
+    bs.ReadEndian(&mLedBluePattern, 4);
+    bs.ReadEndian(&mLedGreenPattern, 4);
+    bs.ReadEndian(&mLedRedPattern, 4);
+    bs.ReadEndian(&mLedYellowPattern, 4);
+    bs.ReadEndian(&mStrobeSetting, 4);
 }
 
 BinStream &operator<<(BinStream &bs, const LightPreset::Keyframe &k) {

@@ -28,7 +28,14 @@ void FreestyleMotionFilter::Activate() {
     mMovementAmount = 0.0f;
 }
 
-void FreestyleMotionFilter::Deactivate() { mIsActive = false; }
+void FreestyleMotionFilter::Deactivate() {
+    // TU5 divergence (dc3-decomp is newer than RB3): retail's Deactivate writes
+    // true to a bool at this+0x10 — a member in RB3's leaner FreestyleMotionFilter
+    // hierarchy that DC3 later refactored (DC3/our layout derives Hmx::Object with
+    // a 0x28 base, so no real member can land at 0x10). Match retail behaviour
+    // exactly (unicorn object_memory divergence, ground-truthed vs the retail probe).
+    *reinterpret_cast<bool *>(reinterpret_cast<char *>(this) + 0x10) = true;
+}
 
 bool FreestyleMotionFilter::IsActive() const { return mIsActive; }
 
