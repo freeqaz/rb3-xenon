@@ -51,28 +51,53 @@ def main():
 
     with open(args.target) as f:
         target = json.load(f)
+
+    # Honor the map's own _denylist (VAs that must NOT be named — ambiguous /
+    # ICF-folded / known-bad). It is a meta-key, not a VA->symbol row.
+    denylist = {norm_va(v) for v in target.get("_denylist", []) if v}
+
     out = {}
+    dropped_meta = denied = 0
     for va, val in target.items():
+        if not str(va).lower().lstrip().startswith("0x"):
+            dropped_meta += 1  # meta-keys like "_denylist"
+            continue
         # values are mangled strings; tolerate a dict shape defensively
         sym = val.get("symbol") if isinstance(val, dict) else val
-        if not sym:
+        if not sym or not isinstance(sym, str):
             continue
-        out[norm_va(va)] = {"symbol": sym}
+        k = norm_va(va)
+        if k in denylist:
+            denied += 1
+            continue
+        out[k] = {"symbol": sym}
 
-    rich_used = 0
+    rich_used = rich_skipped = 0
     if os.path.exists(args.rich):
         with open(args.rich) as f:
             rich = json.load(f)
         for va, info in rich.items():
             if not isinstance(info, dict) or not info.get("symbol"):
                 continue
-            out[norm_va(va)] = info  # richer entry wins (has demangled/percent/unit)
-            rich_used += 1
+            k = norm_va(va)
+            base = out.get(k)
+            # Only enrich a target VA when the rich entry AGREES on the symbol.
+            # target_symbol_map.json is authoritative; the rich map is a separate
+            # (potentially stale) source. After a target re-base (e.g. TU0->TU5)
+            # the rich map's VAs/symbols no longer line up — this drops those
+            # instead of injecting wrong names. Matching entries just add the
+            # demangled/percent/unit metadata.
+            if base is not None and base.get("symbol") == info.get("symbol"):
+                out[k] = info
+                rich_used += 1
+            else:
+                rich_skipped += 1
 
     with open(args.out, "w") as f:
         json.dump(out, f, indent=0)
-    print("[build_full_symbol_map] target=%d rich_overlay=%d -> %d entries written to %s"
-          % (len(target), rich_used, len(out), args.out))
+    print("[build_full_symbol_map] target=%d (meta_skipped=%d denied=%d) "
+          "rich_enriched=%d rich_skipped=%d -> %d entries written to %s"
+          % (len(target), dropped_meta, denied, rich_used, rich_skipped, len(out), args.out))
 
 
 if __name__ == "__main__":

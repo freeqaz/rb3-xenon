@@ -16,12 +16,15 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 PORT=8002
 HOST=127.0.0.1
 PROJECT_PATH="$PROJECT_DIR/ghidra_projects/RB3Xenon/RB3Xenon"
-XEX_PATH="$PROJECT_DIR/orig/45410914/default.xex"
-# TU5 (v0.0.5.1) retail XEX — the build RB3Enhanced / same-instrument / players
-# actually run. Imported as a SECOND co-resident program (PowerPC:BE:64:Xenon,
-# forced by pyghidra-mcp's XEX2 detection) for TU0<->TU5 cross-port analysis.
-# Only loaded when present (durable copy of the c5a17091 skeleton-map source).
-TU5_XEX_PATH="$PROJECT_DIR/orig/45410914/default_tu5.xex"
+# POST-FLIP (2026-07-15): the decomp target is now TU5 v0.0.5.1, so the live
+# orig/45410914/default.xex holds TU5 bytes and TU0 was archived. The two
+# co-resident Ghidra programs are addressed by the paths that reproduce their
+# existing names (basename + sha1[:6]); NEVER load the live default.xex here —
+# it would import a THIRD, duplicate TU5 program (default.xex-c5a170).
+#   TU5 target program  = default_tu5.xex-c5a170  (the current decomp target)
+#   TU0 reference prog   = default.xex-35adb6      (pre-flip base; kept for xref)
+XEX_PATH="$PROJECT_DIR/orig/45410914/tu0-archive/default.xex"   # -> default.xex-35adb6 (TU0)
+TU5_XEX_PATH="$PROJECT_DIR/orig/45410914/default_tu5.xex"       # -> default_tu5.xex-c5a170 (TU5)
 MILOHAX_DIR="$(cd "$PROJECT_DIR/.." && pwd)"
 PYGHIDRA_MCP="$MILOHAX_DIR/pyghidra-mcp"
 PIDFILE="/tmp/claude/pyghidra-mcp-rb3xenon.pid"
@@ -71,13 +74,13 @@ cmd_start() {
     # Ensure log directory exists
     mkdir -p "$(dirname "$LOGFILE")" 2>/dev/null || true
 
-    # Binaries to serve. default.xex (TU0) always; default_tu5.xex when present.
-    # pyghidra-mcp skips already-imported programs, so restarts are cheap and it
-    # only imports+analyzes a binary the first time it appears.
-    local BIN_PATHS=("$XEX_PATH")
-    if [[ -f "$TU5_XEX_PATH" ]]; then
-        BIN_PATHS+=("$TU5_XEX_PATH")
-    fi
+    # Binaries to serve: TU5 target + TU0 reference, each only when present.
+    # pyghidra-mcp serves ALL programs already in the project and skips
+    # re-importing ones it recognizes (basename + sha1[:6]), so restarts are
+    # cheap and these paths just ensure a fresh project re-imports the same two.
+    local BIN_PATHS=()
+    [[ -f "$TU5_XEX_PATH" ]] && BIN_PATHS+=("$TU5_XEX_PATH")
+    [[ -f "$XEX_PATH" ]] && BIN_PATHS+=("$XEX_PATH")
 
     echo "Starting pyghidra-mcp service..."
     echo "  Project: $PROJECT_PATH"

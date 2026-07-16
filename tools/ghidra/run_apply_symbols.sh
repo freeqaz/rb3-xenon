@@ -23,8 +23,12 @@ MILOHAX_DIR="$(cd "$PROJECT_DIR/.." && pwd)"
 PROJECT_LOC="$PROJECT_DIR/ghidra_projects/RB3Xenon/RB3Xenon"
 PROJECT_NAME="RB3Xenon"
 MAP_JSON="$SCRIPT_DIR/rb3_symbol_map.json"
-# Program to name (base TU0); explicit so we never touch a co-resident TU5 program.
-PROGRAM="default.xex-35adb6"
+# Program to name. POST-FLIP the decomp target is TU5, and target_symbol_map.json
+# is TU5-keyed, so the default is the TU5 program. Override with --program=NAME
+# (e.g. --program=default.xex-35adb6 for the TU0 reference, if you have a
+# TU0-keyed map). Co-resident programs are never cross-contaminated: the map VAs
+# must match the chosen program's VAs.
+PROGRAM="default_tu5.xex-c5a170"
 
 export JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk}"
 export GHIDRA_INSTALL_DIR="${GHIDRA_INSTALL_DIR:-$MILOHAX_DIR/ghidra/build/ghidra}"
@@ -41,6 +45,7 @@ for arg in "$@"; do
         --no-regen) REGEN=0 ;;
         --full) FULL=1 ;;
         --min-percent=*) MIN_PCT="${arg#*=}" ;;
+        --program=*) PROGRAM="${arg#*=}" ;;
         --dry-run) PY_ARGS+=("--dry-run") ;;
         *) echo "Unknown arg: $arg" >&2; exit 2 ;;
     esac

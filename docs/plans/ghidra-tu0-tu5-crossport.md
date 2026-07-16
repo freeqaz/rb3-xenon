@@ -1,27 +1,36 @@
 # Ghidra TU0→TU5 cross-port — leveraging the "banks" model for RB3-Xenon
 
-> **STATUS (2026-07-15): the two-program "bank" is LANDED and live on :8002.**
-> Both programs are co-resident in the `RB3Xenon` project and cross-queryable by
-> `binary_name`:
-> - **TU0** `default.xex-35adb6` — now **fully named** (~15.3k symbols applied from
->   the whole oracle universe, up from ~1,139; `run_apply_symbols.sh --full`).
-> - **TU5** `default_tu5.xex-c5a170` — imported from the durable
->   `orig/45410914/default_tu5.xex` (sha `c5a17091`, the exact skeleton-map source),
->   loaded natively as **`PowerPC:BE:64:Xenon`**, `.text` @ `0x82270000` (VA-aligned
->   with `base_to_tu5_map`), full analysis complete, 57,733 `.pdata` fn seeds.
+> **STATUS (2026-07-16, post-flip): READY FOR AGENTS. Two named programs live on
+> :8002 in the `RB3Xenon` project, selected by `binary_name`.** The TU5 decomp-target
+> FLIP has landed (main targets TU5; `orig/45410914/default.xex` now holds TU5 bytes,
+> TU0 archived to `orig/45410914/tu0-archive/`), so the bank was re-pointed accordingly:
 >
-> **How it was made servable (reproducible):**
-> 1. Built **XEXLoaderWV for Ghidra 12.2** (the fork had none) — source at
->    `../XEXLoaderWV`, patched for 12.2 (Jython `Log`→`Msg` shim; **preferred
->    LoadSpec = `PowerPC:BE:64:Xenon`**). Installed into the fork's `Ghidra/Extensions/`.
-> 2. `tools/ghidra/pyghidra-service.sh` now serves **both** XEX paths; pyghidra-mcp
->    forces Xenon for XEX2 files and imports+analyzes+indexes TU5 on start.
-> 3. `tools/ghidra/run_apply_symbols.sh --full` (+ `build_full_symbol_map.py`) names TU0.
+> | `binary_name` | Build | Role | Named |
+> |---|---|---|---|
+> | **`default_tu5.xex-c5a170`** | **TU5 v0.0.5.1** | **the current decomp TARGET — USE THIS** | **~15.1k** (matches `scripts/target_symbol_map.json`, now TU5-keyed) |
+> | `default.xex-35adb6` | TU0 v0.0.0.1 | historical reference / xref | ~15.3k (TU0-keyed) |
 >
-> Validation: `MasterAudio::IsLoaded` base `0x82756d98` ≡ TU5 `0x8277b6e8` decompile
-> to identical bodies. The name/type **port itself** (skeleton map / VT) is the
-> next-phase work below — TU5 functions are currently `FUN_` (fresh analysis).
-> Original investigation notes (still accurate for the pipeline) follow.
+> Both `PowerPC:BE:64:Xenon`, full analysis + code index complete. TU5 `.text` @
+> `0x82270000`. Because the flip already re-keyed `target_symbol_map.json` to TU5 VAs,
+> naming TU5 is a **direct apply** (no TU0→TU5 Ghidra port needed):
+> `run_apply_symbols.sh --full` (default program is now the TU5 target).
+>
+> **Reproducible / restart-safe:**
+> 1. **XEXLoaderWV built for Ghidra 12.2** (the fork shipped none) — `../XEXLoaderWV`
+>    (`56bf704`): Jython `Log`→`Msg` shim + preferred LoadSpec `PowerPC:BE:64:Xenon`.
+>    Installed into the fork's `Ghidra/Extensions/`.
+> 2. `pyghidra-service.sh` serves `default_tu5.xex` (TU5) + `tu0-archive/default.xex`
+>    (TU0) — **never the live `default.xex`**, which is TU5 bytes and would import a
+>    third, duplicate program. Both paths resolve to the existing programs
+>    (basename + sha1[:6]), so restarts open-existing (verified, no dup).
+> 3. `build_full_symbol_map.py` merges `target_symbol_map.json` (authoritative,
+>    honors its `_denylist`) with the rich matched map, enriching **only** where the
+>    two agree on the symbol — so a stale (post-re-base) rich map can't inject wrong
+>    names. `run_apply_symbols.sh --full [--program=NAME]` applies it.
+>
+> Validation: `MasterAudio::IsLoaded` — TU5 `0x8277b6e8` and TU0 `0x82756d98` both
+> resolve to `?IsLoaded@MasterAudio@@QAA_NXZ`. Original investigation notes (still
+> accurate for the VT/skeleton pipeline, if deeper structural porting is wanted) follow.
 
 **Date:** 2026-07-07 · **Status:** investigation / recommended pipeline (READ-ONLY;
 no programs, decomp.db, or configs were mutated). A concurrent workflow is
