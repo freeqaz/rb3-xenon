@@ -12,10 +12,11 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | struct-rebase waves 1–4 | 15,100 | +253, keystone header re-bases (Player/BandDirector/Game/…) |
 | fixwaves (concurrent) | 15,160 | +60, ≥99% near-miss triage lanes |
 | wave 5 + 5b | 15,205 | +45, online/SongSort/TrackConfig **map re-anchors** + 1 permuter flip |
-| wave 6 | **15,207** | +2 (LightPreset body port + 1 unicorn fix); **3 veins closed** |
+| wave 6 | 15,207 | +2 (LightPreset body port + 1 unicorn fix); **3 veins closed** |
+| BinStreamRev lever | **15,226** | +19 foundational (base-at-0 inheritance; streaming family); LEAD B ~+15-20 pending |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 597, now overwhelmingly **deep work** (below).
+≈ 578, now overwhelmingly **deep work** (below).
 
 ## Vein status (what's drained vs live)
 
@@ -36,10 +37,12 @@ Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
    TrackWidget are blocked on this (named fns already 100%, trailing fragments
    never pair). Design: `docs/plans/jeff-pdata-boundary-round3.md` Class 2.
    Fleet-wide multiplier, source-side-unfixable. **← active tooling session.**
-2. **BinStreamRev base-at-0 inheritance** — TU5 models `BinStreamRev : public
-   BinStream` (base off 0); ours composes `stream@0x8` + delegates → extra `lwz`
-   per `d >> field` across the world/rndobj streaming family. Prototype
-   measuring; verdict `~/tmp/p5w6/binstreamrev-verdict.md`.
+2. **BinStreamRev base-at-0 inheritance** — LEAD A LANDED (`2b7b557a`, +19).
+   LEAD B remaining (~+15-20): per-TU `rev` static halfword (not `d.rev`); flips
+   the fns that read `d.rev` after the base fix. Plan in
+   `~/tmp/p5w6/binstreamrev-landable.md`. Codegen fingerprint (reusable): extra
+   `lwz <off>` where retail does `mr r3,&this` = composition-vs-inheritance
+   mismatch on any Milo wrapper type.
 3. **969 unported-source names** — names reading 0%/0-fuzzy whose symbol is
    absent from our compiled objs (the original pre-flip body-port/TU-wiring
    vein, now enumerated). Body-port waves.
