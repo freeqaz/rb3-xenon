@@ -42,6 +42,16 @@ public:
     virtual const std::vector<Symbol> &GetDrumFreestyleSamples() const = 0;
     virtual float GetMuteVolume() const = 0;
     virtual float GetVocalMuteVolume() const = 0;
+    // TU5/retail-only virtual inserted here (vtable slot 0x4c), pushing
+    // NumExtraMidiFiles 0x4c->0x50 and GetExtraMidiFile 0x50->0x54. Absent from
+    // the rb3-Wii dev oracle AND DC3 (both have NumExtraMidiFiles directly after
+    // GetVocalMuteVolume). Verified from the retail TU5 SongInfoCopy vtable
+    // @0x8211A9EC: slot 19 = fn_827D1190, which returns bool and compares the
+    // song's GetName() against the interned Symbol "ugc_audition_temp_song"
+    // (so semantically ~= "is this the UGC audition temp song"). Exact name/args
+    // unknown — pure here so SongInfoCopy must supply the real slot.
+    // TODO(tu5): recover the true method name/semantics from more call sites.
+    virtual bool UnkTU5Virtual_0x4c() const = 0;
     virtual int NumExtraMidiFiles() const = 0;
     virtual const char *GetExtraMidiFile(int) const = 0;
 };
@@ -72,6 +82,9 @@ public:
     virtual const std::vector<Symbol> &GetDrumFreestyleSamples() const;
     virtual float GetMuteVolume() const;
     virtual float GetVocalMuteVolume() const;
+    // See SongInfo base: TU5-only slot-0x4c virtual (placeholder). SongInfoCopy
+    // supplies the real override (retail fn_827D1190).
+    virtual bool UnkTU5Virtual_0x4c() const;
     virtual int NumExtraMidiFiles() const;
     virtual const char *GetExtraMidiFile(int) const;
 

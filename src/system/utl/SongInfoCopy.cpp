@@ -29,6 +29,13 @@ int SongInfoCopy::NumChannelsOfTrack(SongInfoAudioType ty) const {
         return 0;
 }
 
+// TU5/retail-only virtual (vtable slot 0x4c). Placeholder body — the real
+// retail impl (fn_827D1190) compares GetName() against Symbol
+// "ugc_audition_temp_song". Exact semantics for SongInfoCopy TBD; returning
+// false is behavior-neutral for the non-audition path and is not a tracked rep.
+// TODO(tu5): port the real body once the method's purpose is confirmed.
+bool SongInfoCopy::UnkTU5Virtual_0x4c() const { return false; }
+
 int SongInfoCopy::NumExtraMidiFiles() const { return mExtraMidiFiles.size(); }
 
 bool SongInfoCopy::IsPlayTrackChannel(int chan) const {

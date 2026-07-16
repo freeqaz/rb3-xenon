@@ -192,7 +192,7 @@ BEGIN_PROPSYNCS(Sfx)
 END_PROPSYNCS
 
 BEGIN_SAVES(Sfx)
-    SAVE_REVS(0xD, 0)
+    SAVE_REVS(0xC, 0)
     SAVE_SUPERCLASS(Sequence)
     bs << mMaps;
     bs << mMoggClipMaps;

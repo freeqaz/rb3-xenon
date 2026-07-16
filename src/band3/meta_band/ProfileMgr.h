@@ -190,22 +190,24 @@ public:
     bool mSynapseEnabled; // 0x69
     bool unk58a; // 0x6a
     bool mSecondPedalHiHat; // 0x6b
-    DataResultList mDataResults; // 0x6c
-    // Retail X360 places the mic-volume/profile block immediately after
-    // mDataResults; the WiiSpeak/WiiFriends members (Wii-only feature) live at
-    // the tail of the class. Verified from ProfileMgr::Poll (mProfiles @0x9c)
-    // and UpdateMultiMicDeviceSliders (mMicVolumes @0x84).
-    std::vector<int> mMicVolumes; // 0x84
-    DataArray *mSliderConfig; // 0x90
-    DataArray *mVoiceChatSliderConfig; // 0x94
-    unsigned int mCymbalConfiguration; // 0x98
-    std::vector<BandProfile *> mProfiles; // 0x9c
-    BandProfile *mPrimaryProfile; // 0xa8
-    bool mAllUnlocked; // 0xac
-    std::vector<float> mForcedMicGains; // 0xb0
-    // Retail X360 drops the WiiSpeak/WiiFriends members entirely (verified:
-    // ProfileMgr::Handle anchors at this+0xc4 = retail sizeof(ProfileMgr)).
-    bool mHasLoaded; // 0xbc
+    DataResultList mDataResults; // 0x6c (ends 0x84)
+    // TU5 (2026-07-16 reseed): retail X360 keeps exactly ONE 4-byte member from
+    // the Wii WiiSpeak/WiiFriends block here (rb3-Wii ProfileMgr.h has that block
+    // at 0x5a4-0x5b8, between mDataResults and mMicVolumes). Its identity is
+    // unknown, so a placeholder int occupies the slot. Verified from post-reseed
+    // objdiff ground truth: mMicVolumes @0x88 (UpdateMultiMicDeviceSliders),
+    // mProfiles @0xa0 (Poll), and Handle anchors at this+0xc8 (retail sizeof).
+    int mUnkTU5_0x84; // 0x84 TODO: identify (Wii WiiSpeak/WiiFriends survivor)
+    std::vector<int> mMicVolumes; // 0x88
+    DataArray *mSliderConfig; // 0x94
+    DataArray *mVoiceChatSliderConfig; // 0x98
+    unsigned int mCymbalConfiguration; // 0x9c
+    std::vector<BandProfile *> mProfiles; // 0xa0
+    BandProfile *mPrimaryProfile; // 0xac
+    bool mAllUnlocked; // 0xb0
+    std::vector<float> mForcedMicGains; // 0xb4
+    // Retail sizeof(ProfileMgr) = 0xc8 (verified: Handle anchors at this+0xc8).
+    bool mHasLoaded; // 0xc0
 };
 
 extern ProfileMgr TheProfileMgr;
