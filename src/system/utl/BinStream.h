@@ -203,10 +203,20 @@ inline int packRevs(unsigned short alt, unsigned short rev) {
         return *this;                                                                    \
     }
 
-class BinStreamRev {
+// TU5 models the rev-aware read wrapper with its BinStream base at OFFSET 0, so
+// `d >> field` (d: BinStreamRev&) dispatches ReadEndian on `&d` *directly*
+// (`mr r3,&d`) instead of loading a composed inner-stream member (`lwz r3,0x8`).
+// We reproduce that codegen faithfully — and *safely* — by making BinStreamRev a
+// real BinStream subclass (base@0) that decorates an inner `stream`: the read
+// operators upcast `*this` (a genuine BinStream, so this is a plain static_cast,
+// NOT the runtime-unsafe reinterpret_cast of the measurement prototype) and the
+// pure virtuals forward to the inner stream. The `rev`/`altRev`/`stream` members
+// are preserved for the many callers that read `d.rev`/`d.altRev`/`d.stream`.
+class BinStreamRev : public BinStream {
 public:
     BinStreamRev(BinStream &bs, int revs)
-        : rev(getHmxRev(revs)), altRev(getAltRev(revs)), stream(bs) {}
+        : BinStream(bs.LittleEndian()), rev(getHmxRev(revs)), altRev(getAltRev(revs)),
+          stream(bs) {}
 
     BinStreamRev &operator>>(bool &b) {
         unsigned char uc;
@@ -219,13 +229,32 @@ public:
 
     template <class T>
     BinStreamRev &operator>>(T &t) {
-        stream >> t;
+        // base@0 => `mr r3,&d` (upcast is identity-address, and safe because
+        // *this really is a BinStream). Matches TU5's direct dispatch.
+        static_cast<BinStream &>(*this) >> t;
         return *this;
     }
 
     int rev;
     int altRev;
     BinStream &stream;
+
+    // Decorator forwarders — make BinStreamRev a concrete, runtime-safe
+    // BinStream whose reads/writes/seeks defer to the wrapped `stream`.
+    virtual void Flush() { stream.Flush(); }
+    virtual int Tell() { return stream.Tell(); }
+    virtual EofType Eof() { return stream.Eof(); }
+    virtual bool Fail() { return stream.Fail(); }
+    virtual const char *Name() const { return stream.Name(); }
+
+private:
+    // stream.Read/Write apply the wrapped stream's own encryption; our base
+    // (mCrypto==null) adds none, and our base ReadEndian handles endian once —
+    // so byte data is de/encrypted once and byte-swapped once. No UB, no
+    // double-processing.
+    virtual void ReadImpl(void *data, int bytes) { stream.Read(data, bytes); }
+    virtual void WriteImpl(const void *data, int bytes) { stream.Write(data, bytes); }
+    virtual void SeekImpl(int offset, SeekType type) { stream.Seek(offset, type); }
 };
 
 template <class E> // E is an enum type
