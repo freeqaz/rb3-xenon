@@ -650,9 +650,9 @@ void SpliceKeys(
 void LinearizeKeys(
     RndTransAnim *anim, float f2, float f3, float f4, float firstFrame, float lastFrame
 ) {
-    int firstFrameIdx, lastFrameIdx;
-    if (f2) {
-        if (anim->TransKeys().size() > 2) {
+    int lastFrameIdx;
+    int firstFrameIdx;
+    if (f2 && anim->TransKeys().size() > 2) {
             Keys<Vector3, Vector3> vecKeys;
             anim->TransKeys().FindBounds(
                 firstFrame, lastFrame, firstFrameIdx, lastFrameIdx
@@ -677,7 +677,6 @@ void LinearizeKeys(
                 }
             }
         }
-    }
     if (f3) {
         if (anim->RotKeys().size() > 2) {
             Keys<Hmx::Quat, Hmx::Quat> quatKeys;
