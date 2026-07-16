@@ -54,7 +54,15 @@ public:
         bool mInDrumTrainer; // 0x1
         bool mInPracticeMode; // 0x2
         bool mAllowOverdrivePhrases; // 0x3
-        bool mEndWithSong; // 0x4
+        // TU5: two bools inserted here (Properties 25->29 bytes). Proven by
+        // CanUserPause reading mEndWithSong at Prop+0x6 (0x32) vs base 0x30,
+        // and retail Poll reading a bool at Prop+0x4 (0x30) where our source
+        // still calls MetaPerformer::IsPlayingDemo. Growing Properties by 4
+        // also re-aligns mSongPos 0x48->0x4c, giving every post-Properties
+        // member the observed +4 shift. TODO: identify (mIsPlayingDemo?).
+        bool mUnkTU5_prop4; // 0x4 (new in TU5)
+        bool mUnkTU5_prop5; // 0x5 (new in TU5)
+        bool mEndWithSong; // 0x6 (was 0x4)
         bool mForceUseCymbals; // 0x5
         bool mForceDontUseCymbals; // 0x6
         bool mAllowAutoVocals; // 0x7
@@ -75,6 +83,12 @@ public:
         bool mEnableStreak; // 0x16
         bool mShowStars; // 0x17
         bool mPlayStarSfx; // 0x18
+        // TU5: two more bools bring Properties to 29 bytes total (the +4 that
+        // re-aligns mSongPos 0x48->0x4c). Placed at the tail because no loss
+        // function reads a late Properties bool; only their count matters for
+        // layout. TODO: identify + relocate to the real insertion points.
+        bool mUnkTU5_prop19; // 0x19 (new in TU5)
+        bool mUnkTU5_prop20; // 0x1a (new in TU5)
     };
     Game();
     virtual ~Game();
@@ -228,6 +242,10 @@ public:
     bool unk6b; // 0x7a (pad region)
     bool unk6c; // 0x7b (pad region) - screen saver?
     float mTimeOffset; // 0x7c
+    // TU5: a new 4-byte member sits between mTimeOffset and mTime. Proven by
+    // Game::Poll reading mTimeOffset at 0x80 (+4) but mTime (Timer) at 0x88
+    // (+8) — the extra +4 lands exactly here. TODO: identify this member.
+    int mUnkTU5_0x84; // (new in TU5, base ~0x80)
     // NOTE (360 offsets): Timer is 0x30 on X360 (8-byte-aligned unsigned long
     // long mCycles) vs 0x28 on Wii, so everything from mHasIntro on sits +0x8
     // vs the old Wii-era annotations here. Proven by the retail getter

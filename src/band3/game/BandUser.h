@@ -28,6 +28,7 @@ public:
     virtual int GetCurrentInstrumentCareerScore() const = 0;
     virtual int GetCurrentHardcoreIconLevel() const = 0;
     virtual int GetCymbalConfiguration() const = 0;
+    virtual void UnkTU5Virtual() {} // TODO: TU5-inserted virtual (vtable +0x18; shifts GetLocalBandUser 0x18->0x1c)
     virtual LocalBandUser *GetLocalBandUser() = 0;
     virtual LocalBandUser *GetLocalBandUser() const = 0;
     virtual RemoteBandUser *GetRemoteBandUser() = 0;

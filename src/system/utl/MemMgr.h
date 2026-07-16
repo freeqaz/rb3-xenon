@@ -90,12 +90,20 @@ struct MemTemp {
     int mOld; // 0x0 — saved MemHeap::Strategy
 };
 
-// The game-code spelling `MemDoTempAllocations m(true, false)` (rb3-Wii) folds
-// to the SAME retail no-arg guard — verified: the SongDB/SongSort* call sites
-// emit no argument regs, identical to the engine `MemTemp tmp;` sites. Alias it
-// so both spellings share the one out-of-line ctor/dtor (fn_82797500/827975C8).
-// The (true,false) call sites are rewritten to the no-arg form for the match.
-typedef MemTemp MemDoTempAllocations;
+// The game-wide `MemDoTempAllocations m;` guard is a DISTINCT retail construct
+// from MemTemp. Its ctor/dtor are INLINE one-liners that each call a single
+// out-of-line temp-alloc helper (retail fn_827BC270 / fn_827BC2A0: bump the
+// per-thread temp-alloc refcount at +0x44). Because the class is EMPTY and the
+// trivial ctor/dtor inline away, MSVC fully elides the object — every call site
+// is just a bare `bl <helper>` at scope-entry and scope-exit, with NO
+// `addi r3, <frame>` this-setup and NO reserved stack slot. Modeling it as a
+// typedef of the out-of-line MemTemp (which homes an `int mOld` to the frame)
+// added a spurious `addi r3` + a 4-byte slot that shifted every following local
+// by +4 — the whole SongSort family B_STRUCT_OFFSET loss.
+struct MemDoTempAllocations {
+    MemDoTempAllocations() { MemPushTemp(); }
+    ~MemDoTempAllocations() { MemPopTemp(); }
+};
 #endif
 
 struct MemHeapTracker {

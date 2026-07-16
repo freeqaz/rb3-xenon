@@ -119,8 +119,8 @@ bool CDReadExternal(void *&v, int i, u64 u) {
         return false;
     } else {
         v = gExternalArkFiles[i];
-        LONG l = u;
-        SetFilePointer(v, u, &l, 0);
+        u64 l = u;
+        SetFilePointer(v, u, (PLONG)&l, 0);
         return true;
     }
 }
