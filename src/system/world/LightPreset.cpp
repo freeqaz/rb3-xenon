@@ -727,7 +727,7 @@ void LightPreset::FillSpotPresetData(
     if (mask & 2) {
         entry.mTarget = spot->GetTarget();
         entry.mRotation =
-            entry.mTarget ? Hmx::Quat(0, 0, 0, 0) : Hmx::Quat(spot->mWorldXfm.m);
+            entry.mTarget ? Hmx::Quat(0, 0, 0, 0) : Hmx::Quat(spot->mLocalXfm.m);
     }
     if (mask != 0 && spot->IsFlareEnabled()) {
         entry.mFlags |= SpotlightEntry::kEnabled;

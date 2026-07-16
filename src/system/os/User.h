@@ -27,6 +27,14 @@ public:
     virtual const LocalUser *GetLocalUser() const = 0;
     virtual RemoteUser *GetRemoteUser() = 0;
     virtual const RemoteUser *GetRemoteUser() const = 0;
+    // TU5-added User virtual, sits in the vtable immediately BEFORE UserName(),
+    // shifting UserName's dispatch slot 0x70->0x74 (and only UserName's — IsLocal
+    // @0x5c and GetLocalUser @0x64 are unchanged between TU0 and TU5, verified via
+    // UserMgr::GetLocalUsers). This re-matches User::SyncSave and AppLabel::SetUserName
+    // under TU5. Absent from DC3/rb3-Wii User (a TU0->TU5 patch addition). Declared-only
+    // (defined out-of-line in retail); its body is not needed for the dispatch-offset
+    // match. TODO(TU5): recover the real name/semantics of this virtual.
+    virtual const char *UnkTU5Virtual_beforeUserName() const;
     virtual const char *UserName() const = 0;
 
     // unsigned int GetMachineID() const { return mMachineID; }

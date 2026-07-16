@@ -37,19 +37,21 @@ public:
 protected:
     virtual void PollLoading() = 0;
 
-#ifdef HX_NATIVE
-    // DC3-era fields. Retail RB3 Loader has NO re-entrance counter / debug load
-    // timer (verified: retail Loader::Loader writes only vptr@0, mPos@0x4,
-    // mFile@0x8, mHeap@0x14, ending at 0x18). Kept only for the native build,
-    // which carries the DC3 engine layout.
-    int mLoadCount; // (native-only) snapshot of gLoadCount for re-entrance detection
-#endif
-    LoaderPos mPos; // 0x4
-    FilePath mFile; // 0x8
+    // TU5 re-added the DC3-era re-entrance counter that the earlier retail (TU0)
+    // build had dropped. Verified from the TU5 base Loader ctor
+    // (default_tu5.xex @0x827BF3D0): it writes mLoadCount=0 @0x4, mPos @0x8,
+    // mFile @0xc (FilePath, 0xc bytes), mHeap @0x18. The debug load timer
+    // (mLoadStartMs) is still absent in retail TU5 — the ctor writes no such
+    // field — so it stays native-only. This +4 base insert cascades through
+    // every Loader subclass (FileLoader/DirLoader), moving mFile 0x8->0xc, which
+    // is what DirLoader::Find/FindLast and LoadMgr::GetLoader read.
+    int mLoadCount; // 0x4 - snapshot of gLoadCount for re-entrance detection
+    LoaderPos mPos; // 0x8
+    FilePath mFile; // 0xc
 #ifdef HX_NATIVE
     int mLoadStartMs; // (native-only) debug load timing: SystemMs() when tracking starts, -1 when inactive
 #endif
-    int mHeap; // 0x14
+    int mHeap; // 0x18 (native w/ mLoadStartMs present: 0x1c)
 };
 
 typedef Loader *LoaderFactoryFunc(const FilePath &, LoaderPos);

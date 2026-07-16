@@ -12,7 +12,12 @@ public:
     DataNode OnSetMode(const DataArray *);
     Symbol GetMode() const { return mMode; }
 
-    Symbol mMode; // 0x18
+    // TU5 inserts a 4-byte word here that our TU0 model lacked: retail TU5 reads
+    // mMode at 0x1c (objdiff InMode: lwz r,0x1c vs base 0x18). rb3-Wii/DC3 show no
+    // named GameMode member at this slot, so this is a named placeholder pinning
+    // the +4 shift. TODO(tu5): identify the real field (likely a base/layout word).
+    int mUnkTU5_0x18; // 0x18
+    Symbol mMode; // 0x1c
 };
 
 void GameModeInit();
