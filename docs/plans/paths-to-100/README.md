@@ -1,5 +1,21 @@
 # Paths to 100% — ranked index
 
+> **STATUS UPDATE — 2026-07-16 (post-TU5-flip).** The decomp target is now
+> **TU5** (`orig/45410914/default.xex` = TU5 bytes since merge d9c44305);
+> the "Framing" numbers below are TU0-era and stale. Current:
+> **strict 15,100/71,123 fns, 13.34% of code bytes, fuzzy 18.02%**. The TU5
+> P5 loss manifest (`../tu5-p5-manifest.json`) drove 4 struct-rebase waves
+> (+253, 0 regressions, 2026-07-16); of its 1,407 losses, 192 are recovered,
+> **A_TOOLING (514 left) is DEAD** (ICF-fold mirage — do not re-hunt),
+> B_STRUCT_OFFSET has 324 left (clean keystones drained; remainder is
+> recon-class), C_DIVERGED has 357 genuine body rewrites
+> (`../tu5-rewritten-functions-analysis.md` §4). New selection axis: the
+> unicorn behavioral-probe DB columns are live (~186 actionable sub-99
+> divergents) — RFC-17's precondition now exists. Unmatched pool split:
+> named/pinned TUs 12,908 fns / 2.21 MB (incl. a 1,437-fn ≥99% near-miss
+> band); `auto_*` unpinned scatter 43,196 fns / 6.79 MB (Wall 1 unchanged).
+> Wall-1/Wall-2 framing below still holds; per-RFC verdicts unchanged.
+
 > **EXECUTION UPDATE — 2026-07-08 (round 1).** The top-4 moves were executed as
 > an Opus workflow. **Shipped to main:** RFC-02 `tools/gap_atlas.py` + snapshot
 > (`8f06bc4`, reproduces every bucket), RFC-14 `tools/symbol_sweep_scan.py`
