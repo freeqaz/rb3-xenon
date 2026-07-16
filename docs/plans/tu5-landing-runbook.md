@@ -235,15 +235,19 @@ Keep a TU0 copy of `orig/45410914/{default.xex,band.exe}` under
 
 ## 7. Post-flip follow-ups (open)
 
-- **User-owned:** push timing; CI container `/orig` rebuild (owner rjkiv — must
-  carry the TU5 default.xex before first post-flip CI run); other
-  machines/checkouts swap `orig/45410914/default.xex` to TU5 (sha c5a17091) —
-  stale warm worktrees keep building TU0 consistently until re-created.
-- Ghidra TU5 import (`tools/ghidra/import-xex.sh`, port 8002; keep TU0 program
-  for BinDiff transfer). Fingerprints/autoid regen on TU5.
+- **User-owned:** push timing. **(CI is our own standalone fork under @freeqaz —
+  not a blocker; deprioritized per user 2026-07-16.)** Other machines/checkouts
+  swap `orig/45410914/default.xex` to TU5 (sha c5a17091) — stale warm worktrees
+  keep building TU0 consistently until re-created.
+- Ghidra TU5 import DONE (bank live on :8002, program `default_tu5.xex-c5a170`).
+  Fingerprints/autoid regen on TU5 still open.
 - `tools/scope_data/{engine,game}.json` are TU0-VA-keyed (cosmetic progress
   breakdown only — not a match input); regenerate eventually.
 - RB3Enhanced `ports_xbox360.h` base/TU5 VA-mixing hygiene fix.
-- **P5-A** (map anchoring, ~100): census `unmapped_exist.json` FOUND set,
-  uniqueness-gated → new target_symbol_map pins. **P5-B** (struct re-basing,
-  ~480–600): seed = manifest offset-pair table. **P5-C** (~250–380 body work).
+
+**Post-flip matching progress now tracked in `docs/plans/tu5-p5-progress.md`**
+(scoreboard 14,847 → 15,207; vein status; live-vs-drained). P5-A map-anchoring
+is DRAINED (stale-anchor sweep = 0); P5-B struct-rebasing keystones DONE; the
+live frontier is the jeff leaf-split tooling fix (Class 2 `.pdata` over-splits,
+`jeff-pdata-boundary-round3.md`), BinStreamRev base-layout, the 969
+unported-source body ports, and permuter/unicorn sweeps.
