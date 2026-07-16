@@ -14,10 +14,14 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | wave 5 + 5b | 15,205 | +45, online/SongSort/TrackConfig **map re-anchors** + 1 permuter flip |
 | wave 6 | 15,207 | +2 (LightPreset body port + 1 unicorn fix); **3 veins closed** |
 | BinStreamRev lever | 15,226 | +19 foundational (base-at-0 inheritance; streaming family); LEAD B ~+15-20 pending |
-| wave 7 | **15,227** | +1 (Game::Poll gameplay RE); bodyport premise refuted, re-anchor vein found |
+| wave 7 | 15,227 | +1 (Game::Poll gameplay RE); bodyport premise refuted, re-anchor vein found |
+| re-anchor | **15,236** | +9 (EndingBonus/GemSmasher drifted-map refresh; size-match guardrail) |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 577, now overwhelmingly **deep work** (below).
+≈ 568, now overwhelmingly **deep work** (below). **Cheap veins are now
+essentially drained** — remainder is the jeff leaf-split fix (in progress),
+BinStreamRev LEAD B (~+15-20), permuter-harness tooling, and genuine
+C_DIVERGED body ports (Matchmaker rewrites, etc.).
 
 ## Vein status (what's drained vs live)
 
