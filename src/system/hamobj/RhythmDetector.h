@@ -18,6 +18,7 @@ public:
         float mTime; // 0x0
         std::vector<Vector3> mJointVelocities; // 0x4 - could be vec<vec3> - ghidra
                                                // doesnt make it clear
+        float mUnkTU5_0x10; // 0x10 - TU5 sizeof grew 0x10->0x14; field unidentified
     };
 
     struct RecordData {

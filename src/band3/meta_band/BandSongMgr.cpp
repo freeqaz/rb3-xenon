@@ -605,7 +605,7 @@ bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
         if (songID == exclusionList[i].songID || strcmp(name, exclusionList[i].name) == 0)
             return true;
         i++;
-    } while (i < 4U);
+    } while (i < 2U);
     return false;
 }
 

@@ -14,6 +14,7 @@ struct BeatCollisionData {
     float mMinX; // 0x0
     float mMaxX; // 0x4
     Vector3 mOffset; // 0x8
+    char mPadTU5[0x20]; // 0x18
 };
 
 struct SongCollisionOutput {

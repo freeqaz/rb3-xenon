@@ -5,7 +5,7 @@
 class StreamReceiver;
 typedef StreamReceiver *StreamReceiverFactoryFunc(int, int, bool, int);
 
-#define kStreamRcvrBufSize 0x8000
+#define kStreamRcvrBufSize 0x18000
 
 class StreamReceiver {
     friend class StandardStream;
