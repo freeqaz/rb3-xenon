@@ -1553,9 +1553,12 @@ void Game::Poll() {
         } else {
             mMaster->GetMidiParserMgr()->Poll();
         }
-        // Retail-360 kiosk-demo auto-skip (Wii dev never read the demo fields).
+        // Retail-360 kiosk-demo auto-skip. TU5 caches the demo state in a bool
+        // member (mProperties.mUnkTU5_prop4 @ this+0x30) rather than re-calling
+        // MetaPerformer::Current()->IsPlayingDemo() every Poll (see Game::Poll
+        // TU5 decomp @0x8267c9b8: `lbz r11,0x30(this)`).
         if (TheNetSession->IsInGame()) {
-            if (MetaPerformer::Current()->IsPlayingDemo()
+            if (mProperties.mUnkTU5_prop4
                 && TheGamePanel->mGameState != kGameOver
                 && (songMs * 100.0f / mSongDB->GetSongDurationMs() >= mDemoMaxPctComplete
                     || mMaster->GetAudio()->GetTime() >= mDemoMaxMs)) {
@@ -1564,6 +1567,19 @@ void Game::Poll() {
         }
         CheckSectionEnd(songMs);
         CheckRollbackEnd(songMs);
+        // TU5-added block (Game::Poll @0x8267c9b8, idx225-231): when a bool at
+        // mProperties+0x3 (this+0x2f) is set, drive the MIDI/movie-sync poll
+        // fn_826C91C8 on the object reached via *(this+0x48)->[+0x14], passing
+        // songMs. this+0x48 is a TU5 pointer member not yet modeled in Game's
+        // layout (currently Properties tail padding); read it by raw offset so
+        // the emitted `lwz r11,0x48(this); lwz r3,0x14(r11); bl fn_826C91C8`
+        // matches. fn_826C91C8 (0x826C91C8) computes a movie time-delta and
+        // drives MidiInstrument PressNote (autoplay guide).
+        if (mProperties.mAllowOverdrivePhrases) {
+            extern void fn_826C91C8(void *, float);
+            void *syncObj = *(void **)(*(char **)((char *)this + 0x48) + 0x14);
+            fn_826C91C8(syncObj, songMs);
+        }
         mLastPollMs = songMs;
         if (mResumeTime == 0 && !mIsPaused) {
             unk130 = mLastPollMs / mSongDB->GetSongDurationMs();
