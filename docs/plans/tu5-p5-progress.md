@@ -13,10 +13,11 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | fixwaves (concurrent) | 15,160 | +60, ≥99% near-miss triage lanes |
 | wave 5 + 5b | 15,205 | +45, online/SongSort/TrackConfig **map re-anchors** + 1 permuter flip |
 | wave 6 | 15,207 | +2 (LightPreset body port + 1 unicorn fix); **3 veins closed** |
-| BinStreamRev lever | **15,226** | +19 foundational (base-at-0 inheritance; streaming family); LEAD B ~+15-20 pending |
+| BinStreamRev lever | 15,226 | +19 foundational (base-at-0 inheritance; streaming family); LEAD B ~+15-20 pending |
+| wave 7 | **15,227** | +1 (Game::Poll gameplay RE); bodyport premise refuted, re-anchor vein found |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 578, now overwhelmingly **deep work** (below).
+≈ 577, now overwhelmingly **deep work** (below).
 
 ## Vein status (what's drained vs live)
 
@@ -43,9 +44,14 @@ Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
    `~/tmp/p5w6/binstreamrev-landable.md`. Codegen fingerprint (reusable): extra
    `lwz <off>` where retail does `mr r3,&this` = composition-vs-inheritance
    mismatch on any Milo wrapper type.
-3. **969 unported-source names** — names reading 0%/0-fuzzy whose symbol is
-   absent from our compiled objs (the original pre-flip body-port/TU-wiring
-   vein, now enumerated). Body-port waves.
+3. **Re-anchor drifted whole-unit-0% units** (REPLACES the refuted "969
+   unported" vein — wave 7 proved game .cpp is all wired+ported; the ~6,113
+   absent symbols are 95% out-of-scope XDK/audio). Real vein: fully-ported
+   units reading whole-unit-0% because their target_symbol_map addresses
+   drifted base→TU5 (EndingBonus map@0x822C1xxx vs split@0x822D39xx). The
+   wave-6 sweep gated these out ("unit has ≥1 matched fn"). Being tested; if
+   it lands, relax `scripts/harvest/tu5_stale_anchor_sweep.py`'s gate. Also:
+   Matchmaker/Session misanchors, Ham↔Band DC3-leak naming.
 4. **Real TU5 gameplay RE** — Game::Poll-class (divergence sketches in
    `~/tmp/p5w6/cbodies-notes.md`: cached demo bool@Game+0x30, movie-sync block
    calling fn_826C91C8), Matchmaker genuine rewrites.
