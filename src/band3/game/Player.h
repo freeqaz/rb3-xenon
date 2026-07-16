@@ -143,6 +143,7 @@ public:
     virtual void ClearScoreHistories() {}
     virtual void ChangeDifficulty(Difficulty);
     virtual void HandleNewSection(const PracticeSection &, int, int) = 0;
+    virtual void UnkTU5Virtual() {} // TODO: TU5-inserted virtual (vtable re-base probe)
     virtual void SetEnabledState(EnabledState, BandUser *, bool);
     virtual void LocalSetEnabledState(EnabledState, int, BandUser *, bool);
     virtual void EnableSwings(bool) {}
@@ -245,4 +246,5 @@ public:
     int unk2bc;
     int unk2c0;
     bool unk2c4;
+    int mUnkTU5_tail; // TODO: TU5-inserted 4-byte member (P5 struct re-base probe)
 };

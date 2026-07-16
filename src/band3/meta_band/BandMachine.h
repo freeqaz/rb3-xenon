@@ -25,10 +25,13 @@ public:
     NetUIState mNetUIState; // 0x28
     int mNetUIStateParam; // 0x2c
     std::set<int> mAvailableSongs; // 0x30
-    String mCurrentSongPreview; // 0x48
-    String mPrimaryBandName; // 0x54
-    String mPrimaryProfileName; // 0x60
-    int mPrimaryMetaScore; // 0x6c
+    // TU5-inserted: parallel set to mAvailableSongs, backs
+    // SetProGuitarOrBassSongs()/HasProGuitarOrBass(). std::set<int> == 0x18.
+    std::set<int> mProGuitarOrBassSongs; // 0x48
+    String mCurrentSongPreview; // 0x60
+    String mPrimaryBandName; // 0x6c
+    String mPrimaryProfileName; // 0x78
+    int mPrimaryMetaScore; // 0x84
 };
 
 class LocalBandMachine : public BandMachine {
@@ -47,7 +50,7 @@ public:
     void SetProGuitarOrBassSongs(const std::set<int> &);
     void SetCurrentSongPreview(const char *);
 
-    BandMachineMgr *mMachineMgr; // 0x70
+    BandMachineMgr *mMachineMgr; // 0x88
 };
 
 class RemoteBandMachine : public BandMachine {
@@ -61,8 +64,8 @@ public:
     bool IsActive() const;
     unsigned int GetMachineID() const;
 
-    unsigned int mID; // 0x70
-    bool mActive; // 0x74
+    unsigned int mID; // 0x88
+    bool mActive; // 0x8c
 };
 
 #include "obj/Msg.h"

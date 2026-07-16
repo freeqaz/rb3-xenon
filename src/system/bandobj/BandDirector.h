@@ -188,6 +188,12 @@ public:
     float mEndOfSongSec; // 0x10c
     bool unk110; // 0x110
     BandSongPref *mSongPref; // 0x114
+    // TU5-inserted 16 bytes at the tail of BandDirector's own members. Purpose
+    // unknown (no rb3-Wii/DC3 oracle for this field), but layout-load-bearing:
+    // it pushes the shared Hmx::Object virtual base 0x128->0x138 (+0x10), which
+    // re-matches all 39 vbtable/vtordisp-adjust functions in this TU. Placed at
+    // the tail so no named member (read by other units) changes offset.
+    int mUnkTU5_0x118[4]; // 0x118 - TODO: TU5-inserted member (size 0x10)
 };
 
 extern BandDirector *TheBandDirector;
