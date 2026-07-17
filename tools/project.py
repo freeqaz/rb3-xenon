@@ -1589,7 +1589,15 @@ def generate_build_ninja(
     n.comment("Split XEX into relocatable objects")
     n.rule(
         name="split",
-        command=f"{dtk} xex split $in $out_dir",
+        # JEFF_MERGE_PROTECT: the jeff Class-2 leaf-fragment merge pass
+        # (fall-through PDATA-less fragments) must never ABSORB a
+        # map-identified real function. Relative path resolves from ninja's
+        # cwd (repo/worktree root) in main AND every worktree — each protects
+        # with its own target_symbol_map.json — and keeps the command string
+        # byte-identical everywhere (warm-worktree command-hash parity). The
+        # pass fails safe (empty protect set -> over-fires by the 2 explained
+        # losses) if the file is unreadable, so the path must be correct.
+        command=f"JEFF_MERGE_PROTECT=scripts/target_symbol_map.json {dtk} xex split $in $out_dir",
         description="SPLIT $in",
         depfile="$out_dir/dep",
         # restat: dtk split is deterministic, so re-running it with an
