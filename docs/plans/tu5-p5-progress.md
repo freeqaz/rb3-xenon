@@ -15,13 +15,16 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | wave 6 | 15,207 | +2 (LightPreset body port + 1 unicorn fix); **3 veins closed** |
 | BinStreamRev lever | 15,226 | +19 foundational (base-at-0 inheritance; streaming family); LEAD B ~+15-20 pending |
 | wave 7 | 15,227 | +1 (Game::Poll gameplay RE); bodyport premise refuted, re-anchor vein found |
-| re-anchor | **15,236** | +9 (EndingBonus/GemSmasher drifted-map refresh; size-match guardrail) |
+| re-anchor | 15,236 | +9 (EndingBonus/GemSmasher drifted-map refresh; size-match guardrail) |
+| jeff Class-2 merge | **15,303** | +67 (leaf-fragment merge pass; `eb4863cc`, jeff `7f69b9e`) — fleet tooling lever |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 568, now overwhelmingly **deep work** (below). **Cheap veins are now
-essentially drained** — remainder is the jeff leaf-split fix (in progress),
-BinStreamRev LEAD B (~+15-20), permuter-harness tooling, and genuine
-C_DIVERGED body ports (Matchmaker rewrites, etc.).
+≈ 501, now overwhelmingly **deep work** (below). **Cheap veins + the two
+tooling multipliers (BinStreamRev LEAD A, jeff leaf-split) are landed** —
+remainder is BinStreamRev LEAD B (~+15-20), permuter-harness tooling, jeff
+Class-1/3 (terminatorless fragments, stray except_data), and genuine
+C_DIVERGED body ports (Matchmaker rewrites, SongSort gen_game_target_map
+identification wave).
 
 ## Vein status (what's drained vs live)
 
@@ -36,12 +39,16 @@ C_DIVERGED body ports (Matchmaker rewrites, etc.).
   is tooling/permuter (see live veins).
 
 **LIVE (ranked by leverage):**
-1. **jeff leaf-split fix (Class 2 `.pdata` over-splits)** — dtk emits genuine
-   single bodies as 2+ anon `fn_` fragments at retail `.pdata` boundaries; the
-   SongSortBy{Rank,Song,Artist,Review,Recent} clusters + SongStatusMgr/Track/
-   TrackWidget are blocked on this (named fns already 100%, trailing fragments
-   never pair). Design: `docs/plans/jeff-pdata-boundary-round3.md` Class 2.
-   Fleet-wide multiplier, source-side-unfixable. **← active tooling session.**
+1. **jeff leaf-split (Class 2) — LANDED +67** (`eb4863cc`). NOTE: the census
+   corrected the premise — the defect was jeff's OWN `synthesize_reloc_targeted
+   _leaf_functions` over-carving fall-through fragments, not raw `.pdata`
+   over-splits; the fix is its inverse (`merge_fallthrough_leaf_fragments`).
+   The SongSortBy*/SongStatusMgr/Track residuals that motivated it were NOT
+   Class 2 — they need a `gen_game_target_map` identification wave + EH
+   body-ports (separate workstream, `~/tmp/jeffleaf/songsort-classification.md`).
+   Remaining jeff work: Class 1 (terminatorless fragments) + Class 3 (stray
+   func_type==3 except_data), + the 1,168 unpinned-gap merge candidates improve
+   the fingerprint surface. Handoff: `docs/plans/jeff-leaf-split-fix-status.md`.
 2. **BinStreamRev base-at-0 inheritance** — LEAD A LANDED (`2b7b557a`, +19).
    LEAD B remaining (~+15-20): per-TU `rev` static halfword (not `d.rev`); flips
    the fns that read `d.rev` after the base fix. Plan in
