@@ -17,10 +17,11 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | wave 7 | 15,227 | +1 (Game::Poll gameplay RE); bodyport premise refuted, re-anchor vein found |
 | re-anchor | 15,236 | +9 (EndingBonus/GemSmasher drifted-map refresh; size-match guardrail) |
 | jeff Class-2 merge | 15,303 | +67 (leaf-fragment merge pass; `eb4863cc`, jeff `7f69b9e`) — fleet tooling lever |
-| BinStreamRev LEAD B w1 | **15,319** | +16 (per-TU rev statics, 4-lane wave; `677fc117`) — 9 ICF/sibling bonus flips rode along |
+| BinStreamRev LEAD B w1 | 15,319 | +16 (per-TU rev statics, 4-lane wave; `677fc117`) — 9 ICF/sibling bonus flips rode along |
+| jeff Class-4 over-carve merge | **15,354** | +35 (post-blr/branch over-carve tail merge; `f03b9719`, jeff `b50881e`) — 2nd fleet tooling lever |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 485, now overwhelmingly **deep work** (below). **Cheap veins + both tooling
+≈ 450, now overwhelmingly **deep work** (below). **Cheap veins + both tooling
 multipliers (BinStreamRev LEAD A, jeff leaf-split) are landed, and LEAD B wave 1
 is in.** Remainder is BinStreamRev LEAD B wave 2 (evidence-selected by
 `scripts/harvest/leadb_signature_scan.py` — incl. cross-TU rev owners like
@@ -41,16 +42,21 @@ SampleZone←MidiInstrument::Load), permuter-harness tooling, jeff Class-1/3
   is tooling/permuter (see live veins).
 
 **LIVE (ranked by leverage):**
-1. **jeff leaf-split (Class 2) — LANDED +67** (`eb4863cc`). NOTE: the census
-   corrected the premise — the defect was jeff's OWN `synthesize_reloc_targeted
-   _leaf_functions` over-carving fall-through fragments, not raw `.pdata`
-   over-splits; the fix is its inverse (`merge_fallthrough_leaf_fragments`).
-   The SongSortBy*/SongStatusMgr/Track residuals that motivated it were NOT
-   Class 2 — they need a `gen_game_target_map` identification wave + EH
-   body-ports (separate workstream, `~/tmp/jeffleaf/songsort-classification.md`).
-   Remaining jeff work: Class 1 (terminatorless fragments) + Class 3 (stray
-   func_type==3 except_data), + the 1,168 unpinned-gap merge candidates improve
-   the fingerprint surface. Handoff: `docs/plans/jeff-leaf-split-fix-status.md`.
+1. **jeff leaf-split fragment merges — Class 2 (+67, `eb4863cc`) + Class 4 (+35,
+   `f03b9719`) BOTH LANDED; Class 1 & 3 NO-GO.** Class 2 = fall-through PDATA-less
+   leaf merge (`merge_fallthrough_leaf_fragments`). Class 4 = post-`blr`/branch
+   over-carve tail merge (`merge_branch_reached_overcarve_tails`, jeff `b50881e`),
+   its exact complement — the ~85% root cause of the low-% (0.3-1%) named-fn mass
+   (110 branch-proven groups, 193 tails; branch-target-proof P2′ is load-bearing).
+   Census (`~/tmp/jeffc13/design.md`) settled the rest: **Class 3 NO-GO** (pop 0,
+   already solved by b1bc97c write-gate) and **Class 1 NO-GO** (64% false
+   positives — 522 guard-c noreturn-`bl` would CORRUPT if extended; genuine ~33
+   low-yield, cleanest already swept by Class 4). Convergence note: committed
+   symbols.txt must be the FIXED POINT (Class-4 climbs 15,342→15,354 over re-splits
+   via symbols.txt feedback; byte-stable d12af934). Remaining jeff work: none
+   high-value — the ~15% genuine-divergence remainder (OnSetMode-class) is a
+   body-port lane, NOT jeff. Handoffs: `docs/plans/jeff-leaf-split-fix-status.md`,
+   `~/tmp/jeffc13/design.md`, `~/tmp/lowpct-diag/verdict.md`.
 2. **BinStreamRev base-at-0 inheritance** — LEAD A LANDED (`2b7b557a`, +19),
    LEAD B wave 1 LANDED (`677fc117`, +16). Per-TU `static unsigned short sXxxRev`
    (retail's `lbl_82CC*` halfword) set once at the outer `Load` entry from the
