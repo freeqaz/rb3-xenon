@@ -16,15 +16,17 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | BinStreamRev lever | 15,226 | +19 foundational (base-at-0 inheritance; streaming family); LEAD B ~+15-20 pending |
 | wave 7 | 15,227 | +1 (Game::Poll gameplay RE); bodyport premise refuted, re-anchor vein found |
 | re-anchor | 15,236 | +9 (EndingBonus/GemSmasher drifted-map refresh; size-match guardrail) |
-| jeff Class-2 merge | **15,303** | +67 (leaf-fragment merge pass; `eb4863cc`, jeff `7f69b9e`) — fleet tooling lever |
+| jeff Class-2 merge | 15,303 | +67 (leaf-fragment merge pass; `eb4863cc`, jeff `7f69b9e`) — fleet tooling lever |
+| BinStreamRev LEAD B w1 | **15,319** | +16 (per-TU rev statics, 4-lane wave; `677fc117`) — 9 ICF/sibling bonus flips rode along |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 501, now overwhelmingly **deep work** (below). **Cheap veins + the two
-tooling multipliers (BinStreamRev LEAD A, jeff leaf-split) are landed** —
-remainder is BinStreamRev LEAD B (~+15-20), permuter-harness tooling, jeff
-Class-1/3 (terminatorless fragments, stray except_data), and genuine
-C_DIVERGED body ports (Matchmaker rewrites, SongSort gen_game_target_map
-identification wave).
+≈ 485, now overwhelmingly **deep work** (below). **Cheap veins + both tooling
+multipliers (BinStreamRev LEAD A, jeff leaf-split) are landed, and LEAD B wave 1
+is in.** Remainder is BinStreamRev LEAD B wave 2 (evidence-selected by
+`scripts/harvest/leadb_signature_scan.py` — incl. cross-TU rev owners like
+SampleZone←MidiInstrument::Load), permuter-harness tooling, jeff Class-1/3
+(terminatorless fragments, stray except_data), and genuine C_DIVERGED body ports
+(Matchmaker rewrites, SongSort gen_game_target_map identification wave).
 
 ## Vein status (what's drained vs live)
 
@@ -49,12 +51,19 @@ identification wave).
    Remaining jeff work: Class 1 (terminatorless fragments) + Class 3 (stray
    func_type==3 except_data), + the 1,168 unpinned-gap merge candidates improve
    the fingerprint surface. Handoff: `docs/plans/jeff-leaf-split-fix-status.md`.
-2. **BinStreamRev base-at-0 inheritance** — LEAD A LANDED (`2b7b557a`, +19).
-   LEAD B remaining (~+15-20): per-TU `rev` static halfword (not `d.rev`); flips
-   the fns that read `d.rev` after the base fix. Plan in
-   `~/tmp/p5w6/binstreamrev-landable.md`. Codegen fingerprint (reusable): extra
-   `lwz <off>` where retail does `mr r3,&this` = composition-vs-inheritance
-   mismatch on any Milo wrapper type.
+2. **BinStreamRev base-at-0 inheritance** — LEAD A LANDED (`2b7b557a`, +19),
+   LEAD B wave 1 LANDED (`677fc117`, +16). Per-TU `static unsigned short sXxxRev`
+   (retail's `lbl_82CC*` halfword) set once at the outer `Load` entry from the
+   popped rev, replacing `d.rev`/`d.altRev` reads in inner sub-Loads. **Width is
+   per-TU** — `unsigned short`/`lhz`+`cmpwi` (most) vs signed `int`/`lwz`+`cmpwi`
+   (Morph). Wave 2 selected by `scripts/harvest/leadb_signature_scan.py` (target
+   `lhz lbl_82CC*` vs our `lwz 0xC(rN)` member). NOTE from wave 1: LEAD-A residual
+   backlog was optimistic — several entries walled by non-rev causes (element
+   ctor, Symbol default-construct, struct-size); and some sub-loaders inherit
+   their rev **cross-TU** from a different outer Load (SampleZone←`MidiInstrument
+   ::Load`) — wave 2 must set the static in the owner TU. Codegen fingerprint
+   (reusable): extra `lwz <off>` where retail does `mr r3,&this` =
+   composition-vs-inheritance mismatch on any Milo wrapper type.
 3. **Re-anchor drifted whole-unit-0% units** (REPLACES the refuted "969
    unported" vein — wave 7 proved game .cpp is all wired+ported; the ~6,113
    absent symbols are 95% out-of-scope XDK/audio). Real vein: fully-ported
