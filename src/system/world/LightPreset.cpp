@@ -27,6 +27,7 @@ LightPreset *gEditPreset;
 std::deque<std::pair<LightPreset::KeyframeCmd, float> > LightPreset::sManualEvents;
 
 static bool sLoading;
+static unsigned short sPresetRev;
 class AutoLoading {
 public:
     AutoLoading() { sLoading = true; }
@@ -161,11 +162,11 @@ void LightPreset::SpotlightEntry::Load(BinStreamRev &d) {
     if (!mTarget.Load(d.stream, false, nullptr)) {
         mFlags &= ~2;
     }
-    if (d.rev < 0x13) {
+    if (sPresetRev < 0x13) {
         Symbol s;
         d >> s;
     }
-    if (d.rev > 1) {
+    if (sPresetRev > 1) {
         bool b;
         d >> b;
         if (b) {
@@ -173,7 +174,7 @@ void LightPreset::SpotlightEntry::Load(BinStreamRev &d) {
         } else {
             mFlags &= ~kEnabled;
         }
-        if (d.rev < 9) {
+        if (sPresetRev < 9) {
             int x;
             d >> x;
         }
@@ -215,7 +216,7 @@ void LightPreset::SpotlightDrawerEntry::Load(BinStreamRev &d) {
     d >> mBaseIntensity;
     d >> mSmokeIntensity;
     d >> mTotalIntensity;
-    if (d.rev > 0xF) {
+    if (sPresetRev > 0xF) {
         d >> mLightInfluence;
     } else {
         mLightInfluence = 1;
@@ -1267,6 +1268,7 @@ BEGIN_LOADS(LightPreset)
     Clear();
     LOAD_REVS(bs)
     ASSERT_REVS(0x16, 0)
+    sPresetRev = d.rev;
     LOAD_SUPERCLASS(Hmx::Object)
     if (d.rev != 0xE) {
         LOAD_SUPERCLASS(RndAnimatable)

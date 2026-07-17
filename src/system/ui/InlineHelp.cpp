@@ -23,6 +23,11 @@ bool InlineHelp::sRotated = false;
 const float InlineHelp::sRotateDelay = 5;
 const float InlineHelp::sRotateDuration = 1;
 
+// Per-TU streaming rev static (retail lbl_82CBDC14): the outer Load (PreLoad)
+// populates it from the popped archive rev; the ActionElement sub-loader reads
+// it instead of d.rev, reproducing retail's `lhz lbl_82CBDC14` codegen.
+static unsigned short sInlineHelpRev;
+
 #pragma region InlineHelp::ActionElement
 
 InlineHelp::ActionElement::ActionElement()
@@ -49,11 +54,11 @@ BinStream &operator>>(BinStreamRev &d, InlineHelp::ActionElement &a) {
     Symbol token;
     d >> token;
     a.SetToken(token, false);
-    if (d.rev >= 2) {
+    if (sInlineHelpRev >= 2) {
         d >> token;
         a.SetToken(token, true);
     }
-    return d.stream;
+    return d;
 }
 
 void InlineHelp::ActionElement::SetToken(Symbol token, bool secondary) {
@@ -192,6 +197,7 @@ INIT_REVS(5, 0)
 void InlineHelp::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(5, 0)
+    sInlineHelpRev = d.rev;
     d >> mHorizontal;
     d >> mSpacing;
     d >> mConfig;

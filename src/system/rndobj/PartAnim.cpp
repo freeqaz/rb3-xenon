@@ -10,6 +10,11 @@ operator>>(BinStream &, std::vector<Key<Hmx::Color> > &);
 
 #pragma region Hmx::Object
 
+// RB3-360 retail: the Load reads the archive rev from a file-scope static
+// halfword (lbl_82CCxxxx, `lhz`) populated once at Load entry, not from the
+// BinStreamRev member. Mirror that so the rev comparisons match.
+static unsigned short sPartAnimRev;
+
 RndParticleSysAnim::RndParticleSysAnim() : mParticleSys(this), mKeysOwner(this, this) {}
 
 void RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
@@ -79,16 +84,17 @@ INIT_REVS(3, 0)
 BEGIN_LOADS(RndParticleSysAnim)
     LOAD_REVS(bs)
     ASSERT_REVS(3, 0)
-    if (d.rev > 2) {
+    sPartAnimRev = d.rev;
+    if (sPartAnimRev > 2) {
         LOAD_SUPERCLASS(Hmx::Object)
     }
     LOAD_SUPERCLASS(RndAnimatable)
     d >> mParticleSys >> mStartColorKeys >> mEndColorKeys;
-    if (d.rev < 2) {
+    if (sPartAnimRev < 2) {
         float scale = 1.0f;
         Keys<float, float> floatKeys;
         d >> floatKeys >> mKeysOwner;
-        if (d.rev == 1) {
+        if (sPartAnimRev == 1) {
             d >> scale;
         }
         mEmitRateKeys.clear();
@@ -105,7 +111,7 @@ BEGIN_LOADS(RndParticleSysAnim)
     }
     if (!mKeysOwner)
         mKeysOwner = this;
-    if (d.rev > 1) {
+    if (sPartAnimRev > 1) {
         d >> mSpeedKeys >> mLifeKeys >> mStartSizeKeys;
     }
 END_LOADS

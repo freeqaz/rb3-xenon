@@ -513,8 +513,11 @@ void CharHair::SimulateZeroTime() {
 
 INIT_REVS(11, 0)
 
+static unsigned short sHairRev;
+
 void CharHair::Load(BinStream &bs) {
     LOAD_REVS(bs);
+    sHairRev = d.rev;
     ASSERT_REVS(11, 0);
     LOAD_SUPERCLASS(Hmx::Object)
     bs >> mStiffness >> mTorsion >> mInertia >> mGravity >> mWeight >> mFriction;
@@ -557,44 +560,44 @@ void operator>>(BinStreamRev &d, CharHair::Point &pt) {
     d >> pt.pos;
     d >> pt.bone;
     d >> pt.length;
-    if (d.rev < 3) {
+    if (sHairRev < 3) {
         int i;
         d.stream >> i;
         d.stream.ReadString(buf, 0xFF);
-    } else if (d.rev == 3) {
+    } else if (sHairRev == 3) {
         int i;
         d.stream >> i;
     }
     d >> pt.radius;
-    if (d.rev > 1)
+    if (sHairRev > 1)
         d >> pt.outerRadius;
     else
         pt.outerRadius = 0;
-    if (d.rev < 9 && d.rev > 5) {
+    if (sHairRev < 9 && sHairRev > 5) {
         float f;
         d >> f;
         pt.radius += f;
         pt.outerRadius += f;
     }
-    if (d.rev == 6) {
+    if (sHairRev == 6) {
         d.stream.ReadString(buf2, 0xFF);
     }
-    if (d.rev < 8) {
+    if (sHairRev < 8) {
         pt.sideLength = -1.0f;
-        if (d.rev > 5) {
+        if (sHairRev > 5) {
             int i;
             d.stream >> i >> i;
         }
     } else {
         bool b = false;
-        if (d.rev < 9)
+        if (sHairRev < 9)
             d >> b;
         d >> pt.sideLength;
-        if (d.rev < 9 && !b) {
+        if (sHairRev < 9 && !b) {
             pt.sideLength = -1.0f;
         }
     }
-    if (d.rev > 9) {
+    if (sHairRev > 9) {
         d >> pt.unk5c;
     }
     pt.collides.clear();
@@ -704,7 +707,7 @@ void CharHair::Strand::Load(BinStreamRev &d) {
     d >> mAngle;
     d >> mPoints;
     d >> mBaseMat >> mRootMat;
-    if (d.rev > 2) {
+    if (sHairRev > 2) {
         d >> mHookupFlags;
     } else
         mHookupFlags = 0;

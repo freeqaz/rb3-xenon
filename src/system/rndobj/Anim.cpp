@@ -14,6 +14,11 @@
 #include "rndobj/Env.h"
 #include "utl/BinStream.h"
 
+// RB3-360 retail: RndAnimatable::Load reads the archive rev from a file-scope
+// static halfword (lbl_82CCxxxx, `lhz`) populated once at Load entry, not the
+// BinStreamRev member. Mirror that so the rev comparisons match.
+static unsigned short sAnimRev;
+
 static TaskUnits gRateUnits[6] = { kTaskSeconds, kTaskBeats,           kTaskUISeconds,
                                    kTaskBeats,   kTaskTutorialSeconds, kTaskBeats };
 static float gRateFpu[6] = { 30.0f, 480.0f, 30.0f, 1.0f, 30.0f, 15.0f };
@@ -60,16 +65,17 @@ INIT_REVS(4, 0)
 BEGIN_LOADS(RndAnimatable)
     LOAD_REVS(bs)
     ASSERT_REVS(4, 0)
-    if (d.rev > 1)
+    sAnimRev = d.rev;
+    if (sAnimRev > 1)
         d >> mFrame;
-    if (d.rev > 3) {
+    if (sAnimRev > 3) {
         d >> (int &)mRate;
-    } else if (d.rev > 2) {
+    } else if (sAnimRev > 2) {
         bool rate;
         d >> rate;
         mRate = (Rate)(!rate);
     }
-    if (d.rev < 1) {
+    if (sAnimRev < 1) {
         int count;
         d >> count;
         float theScale = 1.0f;

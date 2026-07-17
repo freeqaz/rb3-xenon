@@ -41,6 +41,11 @@
 Hmx::Object *CamShot::sAnimTarget;
 #endif
 
+// RB3-360 retail: this TU's Load family reads the archive rev from a file-scope
+// static halfword (lbl_82CC7494, `lhz`) that the outer CamShot::Load populates
+// once — not from the BinStreamRev member. Mirror that so inner sub-Loads match.
+static unsigned short sCamShotRev;
+
 inline float ComputeFOVScale(float fov) {
     return 24.0f / (float(std::tan(fov / 2.0f)) * 2.0f);
 }
@@ -132,7 +137,7 @@ void CamShotFrame::Save(BinStream &bs) const {
 }
 
 RndTransformable *LoadSubPart(BinStreamRev &d, CamShot *shot) {
-    if (d.rev < 0x2B) {
+    if (sCamShotRev < 0x2B) {
         int dummy;
         d >> dummy;
     }
@@ -176,7 +181,7 @@ void CamShotFrame::Load(BinStreamRev &d) {
     d >> mDuration;
     d >> mBlend;
     d >> mBlendEase;
-    if (d.rev > 0x2D) {
+    if (sCamShotRev > 0x2D) {
         d >> (int &)mBlendEaseMode;
     }
     d >> mFOV;
@@ -188,31 +193,31 @@ void CamShotFrame::Load(BinStreamRev &d) {
     }
     d >> mScreenOffset;
     d >> mBlurDepth;
-    if (d.rev < 0x17) {
+    if (sCamShotRev < 0x17) {
         mBlurDepth = 1 - mBlurDepth;
         int x;
         d >> x;
     }
-    if (d.rev > 0x17) {
+    if (sCamShotRev > 0x17) {
         d >> mMaxBlur;
     } else {
         mMaxBlur = 1;
     }
-    if (d.rev > 0x1C) {
+    if (sCamShotRev > 0x1C) {
         d >> mMinBlur;
     } else {
         mMinBlur = 0;
     }
-    if (d.rev > 0x14) {
+    if (sCamShotRev > 0x14) {
         d >> mFocusBlurMultiplier;
     } else {
         mFocusBlurMultiplier = 0;
     }
-    if (d.rev < 0x17) {
+    if (sCamShotRev < 0x17) {
         int x;
         d >> x;
     }
-    if (d.rev > 0x2B) {
+    if (sCamShotRev > 0x2B) {
         d >> mTargets;
     } else {
         int count;
@@ -225,28 +230,28 @@ void CamShotFrame::Load(BinStreamRev &d) {
             }
         }
     }
-    if (d.rev > 0x1A) {
-        if (d.rev > 0x2B) {
+    if (sCamShotRev > 0x1A) {
+        if (sCamShotRev > 0x2B) {
             d >> mFocalTarget;
         } else {
             mFocalTarget = LoadSubPart(d, mCamShot);
         }
     }
-    if (d.rev > 0x2B) {
+    if (sCamShotRev > 0x2B) {
         d >> mParent;
     } else {
         mParent = LoadSubPart(d, mCamShot);
     }
     d >> mUseParentRotation;
-    if (d.rev > 0x11) {
+    if (sCamShotRev > 0x11) {
         d >> mShakeNoiseAmp;
         d >> mShakeNoiseFreq;
         d >> mShakeMaxAngle;
     }
-    if (d.rev > 0x15) {
+    if (sCamShotRev > 0x15) {
         d >> mZoomFOV;
     }
-    if (d.rev > 0x28) {
+    if (sCamShotRev > 0x28) {
         d >> mParentFirstFrame;
     }
 }
@@ -1076,12 +1081,13 @@ INIT_REVS(0x34, 0)
 BEGIN_LOADS(CamShot)
     LOAD_REVS(bs)
     ASSERT_REVS(0x34, 0)
+    sCamShotRev = d.rev;
     bool hidden = mHidden;
     if (hidden) {
         UnHide();
     }
     float oldRevFloat = 0;
-    if (d.rev > 0) {
+    if (sCamShotRev > 0) {
         Hmx::Object::Load(bs);
         RndAnimatable::Load(bs);
     }
@@ -1089,15 +1095,15 @@ BEGIN_LOADS(CamShot)
     // serialized RndTransformable block is absent — rev > 0x32 still holds in
     // the file format but loads nothing for it here. (rb3-Wii equivalent in
     // ../rb3/src/system/world/CameraShot.cpp also has no RndTransformable::Load.)
-    if (d.rev > 0xC) {
+    if (sCamShotRev > 0xC) {
         d >> mKeyframes;
         d >> mLooping;
-        if (d.rev > 0x1E) {
+        if (sCamShotRev > 0x1E) {
             d >> mLoopKeyframe;
         } else {
             mLoopKeyframe = false;
         }
-        if (d.rev < 0x28) {
+        if (sCamShotRev < 0x28) {
             d >> oldRevFloat;
         }
         d >> mNearPlane;
@@ -1112,7 +1118,7 @@ BEGIN_LOADS(CamShot)
         float fov1, fov2;
         d >> fov1;
         d >> fov2;
-        if (d.rev < 9) {
+        if (sCamShotRev < 9) {
             fov1 = ConvertFov(fov1, 0.75f);
             fov2 = ConvertFov(fov2, 0.75f);
         }
@@ -1124,7 +1130,7 @@ BEGIN_LOADS(CamShot)
         Vector2 vec2;
         d >> vec1;
         d >> vec2;
-        if (d.rev < 0x28)
+        if (sCamShotRev < 0x28)
             d >> oldRevFloat;
 
         float blendDuration;
@@ -1133,7 +1139,7 @@ BEGIN_LOADS(CamShot)
         d >> mFarPlane;
         d >> mUseDepthOfField;
         float blurDepth = 1.0f;
-        if (d.rev > 9) {
+        if (sCamShotRev > 9) {
             float newBlurDepth;
             float dummyFloat1, dummyFloat2;
             d >> newBlurDepth;
@@ -1141,13 +1147,13 @@ BEGIN_LOADS(CamShot)
             d >> dummyFloat2;
             blurDepth = 1.0f - newBlurDepth;
         }
-        if (d.rev < 4) {
+        if (sCamShotRev < 4) {
             bool ratebool;
             d >> ratebool;
             SetRate((Rate)!ratebool);
         }
         d >> mFilter;
-        if (d.rev < 7)
+        if (sCamShotRev < 7)
             mFilter = 0.9f;
         d >> mClampHeight;
         ObjPtrList<RndTransformable> targetList(this);
@@ -1161,7 +1167,7 @@ BEGIN_LOADS(CamShot)
         }
         parentPtr = LoadSubPart(d, this);
         bool useParentRotation = false;
-        if (d.rev > 10)
+        if (sCamShotRev > 10)
             d >> useParentRotation;
         CamShotFrame frame1(this);
         CamShotFrame frame2(this);
@@ -1196,20 +1202,20 @@ BEGIN_LOADS(CamShot)
     }
 
     d >> mPath;
-    if (d.rev > 1 && d.rev < 0x2D) {
+    if (sCamShotRev > 1 && sCamShotRev < 0x2D) {
         float unusedPathFloat;
         d >> unusedPathFloat;
     }
-    if (d.rev > 2) {
+    if (sCamShotRev > 2) {
         d >> mCategory;
-        if (d.rev < 0x26) {
+        if (sCamShotRev < 0x26) {
             float unusedCategoryFloat;
             d >> unusedCategoryFloat;
         }
     }
-    if (d.rev > 0x22) {
+    if (sCamShotRev > 0x22) {
         d >> (int &)mPlatform;
-    } else if (d.rev > 0x21) {
+    } else if (sCamShotRev > 0x21) {
         int platformState;
         d >> platformState;
         if (platformState == 1) {
@@ -1220,24 +1226,24 @@ BEGIN_LOADS(CamShot)
             mPlatform = kPlatformNone;
         }
     }
-    if (d.rev < 1) {
+    if (sCamShotRev < 1) {
         RndAnimatable::Load(bs);
     }
     CamShotCrowd crowdData(this);
 
-    if (d.rev > 4 && d.rev < 42) {
+    if (sCamShotRev > 4 && sCamShotRev < 42) {
         d >> crowdData.m3DCharIndices;
     }
     int crowdModifyStamp = -1;
-    if (d.rev >= 8 && d.rev < 42)
+    if (sCamShotRev >= 8 && sCamShotRev < 42)
         d >> crowdModifyStamp;
-    if (d.rev > 5) {
+    if (sCamShotRev > 5) {
 #ifdef HX_NATIVE
         mGenHideVector.clear();
 #endif
         mGenHideList.clear();
         mHideList.clear();
-        if (d.rev <= 0x2F || (bs.Cached() && d.rev < 0x32)) {
+        if (sCamShotRev <= 0x2F || (bs.Cached() && sCamShotRev < 0x32)) {
             mHideList.Load(bs, false, nullptr, true);
         } else {
             mHideList.Load(bs, false, nullptr, true);
@@ -1245,12 +1251,12 @@ BEGIN_LOADS(CamShot)
             LoadDrawables(bs, tempDraws, Dir());
         }
     }
-    if (d.rev > 0x1B) {
+    if (sCamShotRev > 0x1B) {
         mShowList.Load(bs, false, nullptr, true);
     }
 
-    if (d.rev > 0xB) {
-        if (d.rev < 0x2A)
+    if (sCamShotRev > 0xB) {
+        if (sCamShotRev < 0x2A)
             d >> crowdData.mCrowd;
     } else {
         const DataNode *prop = Property("hide_crowd", false);
@@ -1261,23 +1267,23 @@ BEGIN_LOADS(CamShot)
             }
         }
     }
-    if (d.rev > 32 && d.rev < 42)
+    if (sCamShotRev > 32 && sCamShotRev < 42)
         d >> (int &)crowdData.mCrowdRotate;
-    if (d.rev >= 8 && d.rev < 42) {
+    if (sCamShotRev >= 8 && sCamShotRev < 42) {
         if (crowdData.mCrowd) {
             if (crowdModifyStamp != crowdData.mCrowd->GetModifyStamp())
                 crowdData.m3DCharIndices.clear();
         } else if (crowdModifyStamp != -1)
             crowdData.m3DCharIndices.clear();
     }
-    if (d.rev == 0xE) {
+    if (sCamShotRev == 0xE) {
         float unused1, unused2, unused3;
         d >> unused1;
         d >> unused2;
         d >> unused3;
     }
 
-    if (d.rev > 15 && d.rev < 18) {
+    if (sCamShotRev > 15 && sCamShotRev < 18) {
         float shakeFreq, shakeAmp;
         bs >> shakeFreq;
         bs >> shakeAmp;
@@ -1286,39 +1292,39 @@ BEGIN_LOADS(CamShot)
             mKeyframes[i].mShakeNoiseFreq = shakeFreq;
         }
     }
-    if (d.rev > 0x10 && d.rev < 0x12) {
+    if (sCamShotRev > 0x10 && sCamShotRev < 0x12) {
         Vector2 shakeAngle;
         bs >> shakeAngle;
         for (int i = 0; i != mKeyframes.size(); i++) {
             mKeyframes[i].mShakeMaxAngle = shakeAngle;
         }
     }
-    if (d.rev > 0x13)
+    if (sCamShotRev > 0x13)
         d >> mGlowSpot;
-    if (d.rev > 0x1D)
+    if (sCamShotRev > 0x1D)
         d >> mDrawOverrides;
-    if (d.rev > 0x1F)
+    if (sCamShotRev > 0x1F)
         d >> mPostProcOverrides;
-    if (d.rev > 0x23 && !(d.rev >= 47 && d.rev <= 48)) {
+    if (sCamShotRev > 0x23 && !(sCamShotRev >= 47 && sCamShotRev <= 48)) {
         d >> mPS3PerPixel;
     }
-    if (d.rev > 0x24)
+    if (sCamShotRev > 0x24)
         d >> mFlags;
     Symbol oldAnimSym;
-    if (d.rev > 39 && d.rev < 43)
+    if (sCamShotRev > 39 && sCamShotRev < 43)
         d >> oldAnimSym;
-    if (d.rev < 0x2A) {
+    if (sCamShotRev < 0x2A) {
         if (crowdData.mCrowd)
             mCrowds.push_back(crowdData);
     } else
         d >> mCrowds;
-    if (d.rev > 0x33) {
+    if (sCamShotRev > 0x33) {
         d >> mCrowdStateOverride;
     } else {
         static Symbol none("none");
         mCrowdStateOverride = none;
     }
-    if (d.rev > 0x2A)
+    if (sCamShotRev > 0x2A)
         d >> mAnims;
 
     if (!oldAnimSym.Null()) {

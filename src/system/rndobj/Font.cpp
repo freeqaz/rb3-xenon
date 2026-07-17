@@ -15,6 +15,8 @@
 #include "utl/UTF8.h"
 #include <cmath>
 
+static unsigned short sFontRev;
+
 KerningTable::KerningTable() : mNumEntries(0), mEntries(0) { memset(mTable, 0, 0x80); }
 KerningTable::~KerningTable() { delete mEntries; }
 
@@ -89,7 +91,7 @@ void KerningTable::GetKerning(std::vector<RndFontBase::KernInfo> &info) const {
 }
 
 void KerningTable::Load(BinStreamRev &d, RndFontBase *f) {
-    if (d.rev < 7) {
+    if (sFontRev < 7) {
         std::vector<RndFontBase::KernInfo> info;
         d >> info;
         SetKerning(info, f);
@@ -107,7 +109,7 @@ void KerningTable::Load(BinStreamRev &d, RndFontBase *f) {
             d >> curEntry.key;
             d >> curEntry.kerning;
             unsigned short us4, us3;
-            if (d.rev < 0x11) {
+            if (sFontRev < 0x11) {
                 us4 = curEntry.key & 0xFF;
                 us3 = curEntry.key >> 8 & 0xFF;
                 curEntry.key = Key(us4, us3);
@@ -261,7 +263,7 @@ __forceinline BinStream &operator>>(BinStream &bs, MatChar &mc) {
 }
 
 __forceinline BinStreamRev &operator>>(BinStreamRev &d, RndFontBase::KernInfo &info) {
-    if (d.rev < 0x11) {
+    if (sFontRev < 0x11) {
         char x;
         d >> x;
         info.mFirstChar = x;
@@ -270,7 +272,7 @@ __forceinline BinStreamRev &operator>>(BinStreamRev &d, RndFontBase::KernInfo &i
     } else {
         d >> info.mFirstChar >> info.mSecondChar;
     }
-    if (d.rev < 6) {
+    if (sFontRev < 6) {
         char x;
         d >> x >> x;
     }
@@ -300,6 +302,7 @@ INIT_REVS(0x11, 2)
 BEGIN_LOADS(RndFont)
     LOAD_REVS(bs)
     ASSERT_REVS(0x11, 2)
+    sFontRev = d.rev;
     if (d.altRev < 2) {
         if (d.rev > 7) {
             Hmx::Object::Load(d.stream);

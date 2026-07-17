@@ -28,6 +28,8 @@ BEGIN_PROPSYNCS(RndMorph)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
+static int sMorphRev;
+
 BinStream &operator<<(BinStream &bs, const RndMorph::Pose &p) {
     bs << p.mesh << p.weights;
     return bs;
@@ -54,7 +56,7 @@ END_COPYS
 
 BinStreamRev &operator>>(BinStreamRev &bs, RndMorph::Pose &pose) {
     bs >> pose.mesh;
-    if (bs.rev < 2) {
+    if (sMorphRev < 2) {
         Keys<Weight, Weight> weightKeys;
         bs >> weightKeys;
         pose.weights.resize(weightKeys.size());
@@ -76,6 +78,7 @@ INIT_REVS(4, 0)
 
 BEGIN_LOADS(RndMorph)
     LOAD_REVS(bs)
+    sMorphRev = d.rev;
     ASSERT_REVS(4, 0)
     if (d.rev > 3) {
         LOAD_SUPERCLASS(Hmx::Object)

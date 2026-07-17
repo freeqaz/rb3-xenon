@@ -20,6 +20,7 @@
 #include "utl/MakeString.h"
 
 static DataArray *gSupportedEvents = nullptr;
+static unsigned short sEventTriggerRev;
 
 #pragma region EventTrigger Structs
 
@@ -261,8 +262,8 @@ BinStream &operator>>(BinStream &bs, EventTrigger::HideDelay &hd) {
 }
 
 BinStreamRev &operator>>(BinStreamRev &d, EventTrigger::Anim &anim) {
-    d.stream >> anim.mAnim >> anim.mBlend >> anim.mWait >> anim.mDelay;
-    if (d.rev > 9) {
+    d >> anim.mAnim >> anim.mBlend >> anim.mWait >> anim.mDelay;
+    if (sEventTriggerRev > 9) {
         d >> anim.mEnable >> (int &)anim.mRate >> anim.mStart;
         d >> anim.mEnd >> anim.mPeriod >> anim.mType >> anim.mScale;
     } else {
@@ -274,7 +275,7 @@ BinStreamRev &operator>>(BinStreamRev &d, EventTrigger::Anim &anim) {
 BinStreamRev &operator>>(BinStreamRev &d, EventTrigger::ProxyCall &pc) {
     d >> pc.mProxy;
     d >> pc.mCall;
-    if (d.rev > 10) {
+    if (sEventTriggerRev > 10) {
         pc.mEvent.Load(d.stream, true, pc.mProxy);
     }
     return d;
@@ -295,6 +296,7 @@ INIT_REVS(0x11, 0)
 BEGIN_LOADS(EventTrigger)
     LOAD_REVS(bs)
     ASSERT_REVS(0x11, 0)
+    sEventTriggerRev = d.rev;
     LOAD_SUPERCLASS(Hmx::Object)
     if (d.rev > 0xF) {
         LOAD_SUPERCLASS(RndAnimatable)
@@ -803,7 +805,7 @@ void EventTrigger::LoadOldEvent(
         SetName(NextName(trigFileName, dir), dir);
     }
     RndAnimatable *anim = dynamic_cast<RndAnimatable *>(obj);
-    if (d.rev < 5) {
+    if (sEventTriggerRev < 5) {
         bool b58;
         d >> b58;
         LoadOldAnim(d.stream, b58 ? anim : nullptr);
@@ -840,7 +842,7 @@ void EventTrigger::LoadOldEvent(
     } else if (whichVec == 4) {
         MILO_NOTIFY("%s: can't disable %s", Name(), obj ? obj->Name() : "''");
     }
-    if (d.rev > 1) {
+    if (sEventTriggerRev > 1) {
         float f50;
         d >> f50;
         if (f50) {
@@ -853,7 +855,7 @@ void EventTrigger::LoadOldEvent(
             }
         }
     }
-    if (d.rev > 3) {
+    if (sEventTriggerRev > 3) {
         String str;
         d >> str;
         if (!str.empty()) {
