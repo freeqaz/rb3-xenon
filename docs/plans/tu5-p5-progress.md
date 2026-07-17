@@ -18,10 +18,16 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | re-anchor | 15,236 | +9 (EndingBonus/GemSmasher drifted-map refresh; size-match guardrail) |
 | jeff Class-2 merge | 15,303 | +67 (leaf-fragment merge pass; `eb4863cc`, jeff `7f69b9e`) — fleet tooling lever |
 | BinStreamRev LEAD B w1 | 15,319 | +16 (per-TU rev statics, 4-lane wave; `677fc117`) — 9 ICF/sibling bonus flips rode along |
-| jeff Class-4 over-carve merge | **15,354** | +35 (post-blr/branch over-carve tail merge; `f03b9719`, jeff `b50881e`) — 2nd fleet tooling lever |
+| jeff Class-4 over-carve merge | 15,354 | +35 (post-blr/branch over-carve tail merge; `f03b9719`, jeff `b50881e`) — 2nd fleet tooling lever |
+| SongSort identification | **15,364** | +10 (verified map entries, SongStatusMgr family; `528c51c7`) — vein drained, rest ICF-walled |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 450, now overwhelmingly **deep work** (below). **Cheap veins + both tooling
+≈ 440, now overwhelmingly **deep work** (below). **All cheap/tooling/identification
+veins are drained.** New reusable instrument: `scripts/harvest/tu5_reloc_masked_
+correlate.py` (byte-identity pairing after masking COFF relocs — bypasses TU5
+address drift; the right tool for whole-unit-0% drifted units). Note:
+`gen_game_target_map.py` is DEAD for TU5 (its `unified_id_rb3wii.json` oracle is
+TU0-addressed → all `out_of_span`) — use the correlator instead. **Cheap veins + both tooling
 multipliers (BinStreamRev LEAD A, jeff leaf-split) are landed, and LEAD B wave 1
 is in.** Remainder is BinStreamRev LEAD B wave 2 (evidence-selected by
 `scripts/harvest/leadb_signature_scan.py` — incl. cross-TU rev owners like
