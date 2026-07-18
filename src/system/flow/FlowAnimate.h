@@ -79,4 +79,8 @@ protected:
     bool mWrap; // 0xd0
     /** "If true, Flow will not track/stop or otherwise affect this animation again." */
     bool mImmediateRelease; // 0xd1
+    // See FlowDistance.h: retail RB3 sizes FlowNode-derived objects 0x10 larger
+    // than dc3's newer layout; trailing pad in the virtual-Hmx::Object region.
+    // NewObject size immediate (0x104) confirms via the sizeof oracle.
+    char _retailTrailingPad[16]; // 0xd4
 };

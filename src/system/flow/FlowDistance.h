@@ -46,4 +46,9 @@ protected:
     /** "Applies current distance to flow intensity, closer being higher intensity" */
     bool mDriveIntensity; // 0xa4
     float mIntensityScale; // 0xa8
+    // Retail RB3 sizes FlowNode-derived objects 0x10 larger than dc3's (newer)
+    // engine layout; the extra 16 bytes sit in the trailing virtual-Hmx::Object
+    // region and are not referenced by any accessor (all field functions match).
+    // NewObject/??_G size immediates (0xdc) confirm this via the sizeof oracle.
+    char _retailTrailingPad[16]; // 0xac
 };
