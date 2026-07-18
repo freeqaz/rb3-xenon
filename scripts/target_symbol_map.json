@@ -1,4 +1,5 @@
 {
+ "0x82801a10": "?StartValueChange@UITransitionHandler@@MAAXXZ",
  "0x822ad3f8": "?Handle@BandSwatch@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822adee0": "?SyncProperty@BandSwatch@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822ae0c0": "?Init@BandSwatch@@SAXXZ",

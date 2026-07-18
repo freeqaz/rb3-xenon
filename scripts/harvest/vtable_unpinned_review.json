@@ -1,0 +1,52 @@
+{
+ "0x8233d338": {
+  "name": "??_EBandList@@WBEE@AAPAXI@Z",
+  "owner": null,
+  "route": "unpinned",
+  "flags": [],
+  "vtable": "??_7BandList@@6BScrollSelect@@@",
+  "slot": 2,
+  "unit": "default/BandList",
+  "anchors": 2
+ },
+ "0x8233d380": {
+  "name": "??_EBandList@@WBFA@AAPAXI@Z",
+  "owner": null,
+  "route": "unpinned",
+  "flags": [],
+  "vtable": "??_7BandList@@6BUIListStateCallback@@@",
+  "slot": 0,
+  "unit": "default/BandList",
+  "anchors": 2
+ },
+ "0x8233d388": {
+  "name": "??_EBandList@@WBFE@AAPAXI@Z",
+  "owner": null,
+  "route": "unpinned",
+  "flags": [],
+  "vtable": "??_7BandList@@6BUITransitionHandler@@@",
+  "slot": 0,
+  "unit": "default/BandList",
+  "anchors": 2
+ },
+ "0x8233ee70": {
+  "name": "?Handle@BandList@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "owner": null,
+  "route": "unpinned",
+  "flags": [],
+  "vtable": "??_7BandList@@6BScrollSelect@@@",
+  "slot": 0,
+  "unit": "default/BandList",
+  "anchors": 2
+ },
+ "0x8233f8f0": {
+  "name": "?SyncProperty@BandList@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "owner": null,
+  "route": "unpinned",
+  "flags": [],
+  "vtable": "??_7BandList@@6BScrollSelect@@@",
+  "slot": 1,
+  "unit": "default/BandList",
+  "anchors": 2
+ }
+}
