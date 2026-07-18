@@ -1,6 +1,6 @@
 # Session summary — 2026-07-18 (near-miss cracks + identification stack)
 
-**Result: main 15,364 → 17,421 strict matched (+2,057 across 24 landed
+**Result: main 15,364 → 17,445 strict matched (+2,081 across 26 landed
 batches; sole "losses" = 16 spurious Flow-credited stubs re-credited honestly
 to the new BandSwatch unit).** Every landing was gated by an isolated verify-worktree
 whole-binary A/B (strict SET delta keyed `(unit, name)` + fuzzy sum; `LOST`
@@ -33,7 +33,9 @@ must be empty). One agent-recommended change was rejected by that gate (see
 | Flow.cpp re-pin → BandSwatch unit wired | `88bd166b` | +3 | 17,412 |
 | lane-C round 3 (calibration ~0.031/name) | `23e6cbb8` | +5 | 17,417 |
 | UIComponent verdict + StarDisplay ctor pin | `a2a96d57` | +1 | 17,418 |
-| crack-fodder body-ports (named-at-0% pool) | `dea64514` | +3 | **17,421** |
+| crack-fodder body-ports (named-at-0% pool) | `dea64514` | +3 | 17,421 |
+| BandSwatch gameport (byte-pairing) | `6c98d9f7` | +22 | 17,443 |
+| RndText::Style re-port 0x44→0x24 (WALL overturned) | `1d7e8356` | +2 | **17,445** |
 
 (Plus docs-only: PlatformMgr dead-lever banner `92dad991`, scoreboard updates.)
 
@@ -154,7 +156,10 @@ path-limited land. Win classes that recurred (transferable taxonomy):
    change → ~100 access sites / 6 files / **272 matched fns** blast radius vs
    2 targets at ~99.9. Only path = dedicated rb3-Wii RndText re-port stream
    (recipe in ~/tmp/lyricstyle_patches/NOTES.md). Do NOT attempt as a bounded
-   layout fix. ~~UIComponent-chain layout~~ **REFUTED (`a2a96d57`)** — ctor
+   layout fix. **UPDATE: LANDED anyway (`1d7e8356`, +2)** — the 272-fn
+   blast radius was theorized without building; a Style-pad probe proved
+   LOST 0, so the re-port was safe. LESSON: prove blast radius empirically.
+   ~~UIComponent-chain layout~~ **REFUTED (`a2a96d57`)** — ctor
    matches 100% so layout is byte-identical; Load residuals = per-class
    vbase-dispatch codegen WALL. Diagnostic rule: ctor-100% ⟹ wall. ALL
    lane-B structural leads now resolved.
