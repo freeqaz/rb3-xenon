@@ -569,3 +569,78 @@ int sscanf(const char *str, const char *fmt, ...)
     va_end(ap);
     return assigned;
 }
+
+/* ---- category C: setjmp / longjmp (raw DEFLATE inflate via source/puff.c) --
+ * The stock xapilib provides these; the reconstructed CRT did not, and puff.c
+ * (vendored verbatim -- see include/puff.h) uses setjmp/longjmp for its
+ * "out of input" error path. MSVC-X360 has no inline assembler, so these are
+ * __declspec(naked) functions built from raw PPC64 instruction words via the
+ * __emit intrinsic. They save/restore LR, CR, r1 (SP), r2 and the nonvolatile
+ * GPRs r14-r31 -- sufficient for puff's scalar (integer-only) call chain.
+ * jmp_buf (K-link/stubs/setjmp.h) is unsigned long[64] = 256 B >= 176 B used.
+ * Layout: [0]=LR [8]=CR [16]=r1 [24]=r2 [32..168]=r14..r31 (8-byte slots). */
+void __emit(unsigned int);
+#pragma warning(disable:4716)   /* naked function "must return a value" */
+
+__declspec(naked) int setjmp(void *env)
+{
+    __emit(0x7C0802A6);
+    __emit(0xF8030000);
+    __emit(0x7C000026);
+    __emit(0xF8030008);
+    __emit(0xF8230010);
+    __emit(0xF8430018);
+    __emit(0xF9C30020);
+    __emit(0xF9E30028);
+    __emit(0xFA030030);
+    __emit(0xFA230038);
+    __emit(0xFA430040);
+    __emit(0xFA630048);
+    __emit(0xFA830050);
+    __emit(0xFAA30058);
+    __emit(0xFAC30060);
+    __emit(0xFAE30068);
+    __emit(0xFB030070);
+    __emit(0xFB230078);
+    __emit(0xFB430080);
+    __emit(0xFB630088);
+    __emit(0xFB830090);
+    __emit(0xFBA30098);
+    __emit(0xFBC300A0);
+    __emit(0xFBE300A8);
+    __emit(0x38600000);
+    __emit(0x4E800020);
+}
+
+__declspec(naked) void longjmp(void *env, int val)
+{
+    __emit(0xE8030000);
+    __emit(0x7C0803A6);
+    __emit(0xE8030008);
+    __emit(0x7C0FF120);
+    __emit(0xE8230010);
+    __emit(0xE8430018);
+    __emit(0xE9C30020);
+    __emit(0xE9E30028);
+    __emit(0xEA030030);
+    __emit(0xEA230038);
+    __emit(0xEA430040);
+    __emit(0xEA630048);
+    __emit(0xEA830050);
+    __emit(0xEAA30058);
+    __emit(0xEAC30060);
+    __emit(0xEAE30068);
+    __emit(0xEB030070);
+    __emit(0xEB230078);
+    __emit(0xEB430080);
+    __emit(0xEB630088);
+    __emit(0xEB830090);
+    __emit(0xEBA30098);
+    __emit(0xEBC300A0);
+    __emit(0xEBE300A8);
+    __emit(0x7C832378);
+    __emit(0x2C040000);
+    __emit(0x40820008);
+    __emit(0x38600001);
+    __emit(0x4E800020);
+}

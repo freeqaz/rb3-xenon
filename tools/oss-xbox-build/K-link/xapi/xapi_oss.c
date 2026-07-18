@@ -368,6 +368,66 @@ HANDLE CreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
     return h;
 }
 
+/* ---- extra file-management shims (SI self-gen writer, spec 8.2) ----
+   The stock xapilib exports CreateDirectoryA / DeleteFileA; our from-source
+   build lacks them (they were declared-but-unused until the SI self-generator).
+   Both are implemented directly on NtCreateFile here, mirroring CreateFileA.
+   MoveFileA is intentionally NOT provided: the Xbox FILE_RENAME_INFORMATION ABI
+   is HW-unverifiable from this offline workstream, so si_milogen.c ships the
+   spec 8.2 rename-less write path instead. */
+#define FILE_SHARE_WRITE_        0x00000002UL
+#define FILE_SHARE_DELETE_       0x00000004UL
+#define DELETE_ACCESS_           0x00010000UL   /* Win32 DELETE */
+#define FILE_DELETE_ON_CLOSE_    0x00001000UL   /* NtCreateFile CreateOption */
+
+BOOL CreateDirectoryA(LPCSTR lpPathName, LPVOID lpSecurityAttributes) {
+    char objbuf[OSS_MAX_PATH + 8];
+    ANSI_STRING as;
+    OBJECT_ATTRIBUTES oa;
+    IO_STATUS_BLOCK iosb;
+    HANDLE h = OSS_NULL;
+    NTSTATUS s;
+    (void)lpSecurityAttributes;
+    oss_build_objname(lpPathName, objbuf, sizeof(objbuf), &as);
+    oa.RootDirectory = OSS_NULL;
+    oa.ObjectName = &as;
+    oa.Attributes = OBJ_CASE_INSENSITIVE;
+    /* FILE_CREATE fails with STATUS_OBJECT_NAME_COLLISION if it already exists;
+       RtlNtStatusToDosError maps that to ERROR_ALREADY_EXISTS (183), which the
+       RB3E_CreateDirectory wrapper treats as success. */
+    s = NtCreateFile(&h, GENERIC_WRITE | SYNCHRONIZE, &oa, &iosb,
+                     OSS_NULL, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ,
+                     FILE_CREATE,
+                     FILE_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT);
+    if (!NT_SUCCESS(s)) { oss_set_last_error_status(s); return FALSE; }
+    NtClose(h);
+    return TRUE;
+}
+
+BOOL DeleteFileA(LPCSTR lpFileName) {
+    char objbuf[OSS_MAX_PATH + 8];
+    ANSI_STRING as;
+    OBJECT_ATTRIBUTES oa;
+    IO_STATUS_BLOCK iosb;
+    HANDLE h = OSS_NULL;
+    NTSTATUS s;
+    oss_build_objname(lpFileName, objbuf, sizeof(objbuf), &as);
+    oa.RootDirectory = OSS_NULL;
+    oa.ObjectName = &as;
+    oa.Attributes = OBJ_CASE_INSENSITIVE;
+    /* Open with DELETE access + FILE_DELETE_ON_CLOSE: the file is removed when
+       the handle closes. Missing file -> !NT_SUCCESS -> FALSE. */
+    s = NtCreateFile(&h, DELETE_ACCESS_ | SYNCHRONIZE, &oa, &iosb,
+                     OSS_NULL, FILE_ATTRIBUTE_NORMAL,
+                     FILE_SHARE_READ | FILE_SHARE_WRITE_ | FILE_SHARE_DELETE_,
+                     FILE_OPEN,
+                     FILE_SYNCHRONOUS_IO_NONALERT | FILE_NON_DIRECTORY_FILE |
+                     FILE_DELETE_ON_CLOSE_);
+    if (!NT_SUCCESS(s)) { oss_set_last_error_status(s); return FALSE; }
+    NtClose(h);
+    return TRUE;
+}
+
 BOOL ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead,
               LPDWORD lpNumberOfBytesRead, LPVOID lpOverlapped) {
     IO_STATUS_BLOCK iosb;
