@@ -156,7 +156,13 @@ void Splash::EndSplasher() {
             MILO_ASSERT(gSplashing, 0xa7);
             MILO_ASSERT(SetImmutableState(kTerminating), 0xa9);
             WaitForState(kTerminated);
-            TheNgRnd.Suspend();
+            // Cross-dispatch is intentional (mirrors Splash::Suspend()'s comment
+            // above): the splash thread owned the device while running, so
+            // ending it means the main renderer RESUMES here. Ground-truthed via
+            // Ghidra: retail dispatches vtable+0x118 = DxRnd::Resume (confirmed
+            // by decompiling the actual function body, which calls the D3D
+            // device resume routine and clears the device-suspended flag).
+            TheNgRnd.Resume();
             gSplashing = false;
         } else {
             // Non-threaded mode: manually process remaining screens
@@ -167,10 +173,10 @@ void Splash::EndSplasher() {
         TheSplasher = NULL;
         SetRndSplasherCallback(0, 0, 0);
 #ifdef HX_NATIVE
-        // Use proper member access instead of hardcoded struct offset (0x1b4 = mReleaseImmediate)
+        // Use proper member access instead of hardcoded struct offset (0x150 = mReleaseImmediate)
         TheRnd.mReleaseImmediate = false;
 #else
-        *(bool *)((char *)&TheRnd + 0x1b4) = false;
+        *(bool *)((char *)&TheRnd + 0x150) = false;
 #endif
 #ifdef HX_NATIVE
         // Clear the Rnd's selected camera before deleting splash dirs.

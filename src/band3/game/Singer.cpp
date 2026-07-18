@@ -440,7 +440,7 @@ int Singer::GetFrameMatchType() {
 }
 
 float Singer::AddToFreestyleDeployment(float val) {
-    if (mFrameMicPitch < mScreamEnergyThreshold) {
+    if (mLastFrameMicEnergy < mScreamEnergyThreshold) {
         mLastTambourineTime = 0;
         mTotalTambourineDeployment = 0;
     } else if (val >= mTambourineActivationTime) {

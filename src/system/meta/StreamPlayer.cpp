@@ -31,7 +31,7 @@ StreamPlayer::~StreamPlayer() { Delete(); }
 
 void StreamPlayer::PlayFile(char const *cc, float f1, float f2, bool b) {
     Delete();
-    mStream = TheSynth->NewStream(cc, 0.0f, 0.0f, false);
+    mStream = TheSynth->NewStream(cc, 0.0f, 0.0f, true);
     MILO_ASSERT(mStream, 0x2c);
     mStarted = false;
     mLoop = b;

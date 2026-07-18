@@ -59,16 +59,22 @@ typedef Loader *LoaderFactoryFunc(const FilePath &, LoaderPos);
 class LoadMgr {
 private:
     std::list<Loader *> mLoaders; // 0x0
-    unsigned int mPlatform; // 0x8
-    bool mEditMode; // 0xC
-    bool mCacheMode; // 0xD
-    std::list<std::pair<class String, LoaderFactoryFunc *> > mFactories; // 0x10
-    float mPeriod; // 0x18
-    float mCurrentPeriod; // 0x1c
-    std::list<Loader *> mLoading; // 0x20
-    Timer mTimer; // 0x28
-    int mAsyncUnload; // 0x58
-    LoaderPos mLoaderPos; // 0x5c
+    // TU5 divergence (verified from AddLoader/Poll/LoadStream offset triangulation,
+    // 2026-07-18): mFactories through mLoaderPos are each 8 bytes earlier than a
+    // naive dc3/rb3-Wii-order layout would predict (mFactories@0x8 not 0x10,
+    // mPeriod@0x10, mCurrentPeriod@0x14, mLoading@0x18, mTimer@0x20). That's
+    // exactly the size of mPlatform+mEditMode+mCacheMode (4+1+1+2 pad = 8), so in
+    // retail TU5 those three fields are declared AFTER mLoaderPos, not here.
+    std::list<std::pair<class String, LoaderFactoryFunc *> > mFactories; // 0x8
+    float mPeriod; // 0x10
+    float mCurrentPeriod; // 0x14
+    std::list<Loader *> mLoading; // 0x18
+    Timer mTimer; // 0x20
+    int mAsyncUnload; // 0x50
+    LoaderPos mLoaderPos; // 0x54
+    unsigned int mPlatform; // 0x58
+    bool mEditMode; // 0x5C
+    bool mCacheMode; // 0x5D
 
     static bool (*sFileOpenCallback)(const char *);
     void PollFrontLoader();

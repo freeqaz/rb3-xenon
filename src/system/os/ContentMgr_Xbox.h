@@ -77,14 +77,19 @@ private:
     DataNode OnMsg(const StorageChangedMsg &);
     DataNode OnMsg(const ContentInstalledMsg &);
 
-    bool unk70; // 0x70
-    bool unk71; // 0x71
-    void *mEnumHandles[kNumberOfBuffers]; // 0x74
-    XCONTENT_CROSS_TITLE_DATA mXDatas[kNumberOfBuffers]; // 0x90
-    XOVERLAPPED *mOverlappeds[kNumberOfBuffers]; // 0x918
-    int unk934; // 0x934
+    // Retail evidence (NotifyFailed body stores to this+0x75, confirmed via
+    // dtk-extracted retail asm for fn_82520830): the two bools below sit at
+    // 0x74/0x75, not 0x70/0x71 as DC3's (newer/pruned) layout has it. This
+    // 4-byte filler restores the RB3-only field DC3 no longer carries here.
+    unsigned int unk70; // 0x70
+    bool unk74; // 0x74
+    bool unk75; // 0x75
+    void *mEnumHandles[kNumberOfBuffers]; // 0x78
+    XCONTENT_CROSS_TITLE_DATA mXDatas[kNumberOfBuffers]; // 0x94
+    XOVERLAPPED *mOverlappeds[kNumberOfBuffers]; // 0x91c
     int unk938; // 0x938
-    bool mEnumerateSaveGameExports; // 0x93c
+    int unk93c; // 0x93c
+    bool mEnumerateSaveGameExports; // 0x940
 };
 
 extern XboxContentMgr gContentMgr;

@@ -175,8 +175,8 @@ BEGIN_HANDLERS(XboxContentMgr)
 END_HANDLERS
 
 void XboxContentMgr::Init() {
-    unk934 = 0;
     unk938 = 0;
+    unk93c = 0;
     for (int i = 0; i < kNumberOfBuffers; i++) {
         mOverlappeds[i] = nullptr;
     }
@@ -193,12 +193,12 @@ void XboxContentMgr::Init() {
 void XboxContentMgr::Terminate() { ThePlatformMgr.RemoveSink(this); }
 
 void XboxContentMgr::StartRefresh() {
-    bool b10 = mDirty || (unk70 && unk71);
+    bool b10 = mDirty || (unk74 && unk75);
 
     if (b10) {
         mDirty = false;
-        unk70 = false;
-        unk71 = false;
+        unk74 = false;
+        unk75 = false;
         if (mState == 2) {
             for (int i = 0; i < kNumberOfBuffers; i++) {
                 if (mOverlappeds[i]) {
@@ -217,7 +217,7 @@ void XboxContentMgr::StartRefresh() {
             }
         }
         DeleteAll(mContents);
-        unk938 = 0;
+        unk93c = 0;
         mRootLoaded = 0;
         DataArray *cfg = SystemConfig("content_mgr", "roots");
         for (int i = 1; i < cfg->Size(); i++) {
@@ -345,7 +345,7 @@ void XboxContentMgr::NotifyFailed(Content *c) {
     XboxContent *xc = dynamic_cast<XboxContent *>(c);
     MILO_ASSERT(xc, 0x2E0);
     if (!RefreshDone()) {
-        unk71 = true;
+        unk75 = true;
     }
     FOREACH (it, mCallbacks) {
         (*it)->ContentFailed(xc->FileName().Str());
@@ -357,7 +357,7 @@ DataNode XboxContentMgr::OnMsg(const SigninChangedMsg &msg) {
         unsigned int changedMask = (unsigned int)msg.GetChangedMask() >> i;
         if (changedMask & 1) {
             if (ThePlatformMgr.IsSignedIn(i)) {
-                unk70 = true;
+                unk74 = true;
             }
         }
     }
@@ -366,7 +366,7 @@ DataNode XboxContentMgr::OnMsg(const SigninChangedMsg &msg) {
 
 DataNode XboxContentMgr::OnMsg(const ConnectionStatusChangedMsg &msg) {
     if (msg.Connected()) {
-        unk70 = true;
+        unk74 = true;
     }
     return 0;
 }
@@ -431,7 +431,7 @@ bool XboxContentMgr::MountContent(Symbol name) {
 void XboxContentMgr::PollRefresh() {
     if (mState == kDiscoveryMounting) {
         mState = kDiscoveryLoading;
-        unk938 = 0;
+        unk93c = 0;
         for (int i = 0; i < kNumberOfBuffers; i++) {
             if (mOverlappeds[i]) {
                 DWORD numItems = 0;
@@ -477,11 +477,11 @@ void XboxContentMgr::PollRefresh() {
                         }
 
                         if (discovered) {
-                            unk938++;
+                            unk93c++;
                         }
 
-                        Content *newContent = new XboxContent(*xdata, unk934, i, discovered);
-                        unk934++;
+                        Content *newContent = new XboxContent(*xdata, unk938, i, discovered);
+                        unk938++;
                         std::list<Content *>::iterator end = mContents.end();
                         mContents.insert(end, newContent);
                     }
@@ -504,7 +504,7 @@ void XboxContentMgr::PollRefresh() {
             }
         }
         FOREACH (it, mCallbacks) {
-            (*it)->ContentMountBegun(unk938);
+            (*it)->ContentMountBegun(unk93c);
         }
     } else if (mState == kDiscoveryLoading) {
         int mountedCount = 0;
