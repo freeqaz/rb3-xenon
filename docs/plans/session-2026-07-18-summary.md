@@ -1,7 +1,7 @@
 # Session summary — 2026-07-18 (near-miss cracks + identification stack)
 
-**Result: main 15,364 → 17,339 strict matched (+1,975, ZERO regressions across
-14 landed batches).** Every landing was gated by an isolated verify-worktree
+**Result: main 15,364 → 17,401 strict matched (+2,037, ZERO regressions across
+17 landed batches).** Every landing was gated by an isolated verify-worktree
 whole-binary A/B (strict SET delta keyed `(unit, name)` + fuzzy sum; `LOST`
 must be empty). One agent-recommended change was rejected by that gate (see
 "Gate saves" below) — the process worked exactly as designed.
@@ -22,7 +22,10 @@ must be empty). One agent-recommended change was rejected by that gate (see
 | nearmiss crack w6 | `ac0b1763` | +7 | 17,300 |
 | nearmiss crack w7 (NewObject family) | `dcb2444c` | +29 | 17,329 |
 | sizeof-oracle scan | `c48f6527` | +3 | 17,332 |
-| nearmiss crack w8 | `e1f0d6cb` | +7 | **17,339** |
+| nearmiss crack w8 | `e1f0d6cb` | +7 | 17,339 |
+| opus wave 9 (99-band top closed) | `07409503` | +1 | 17,340 |
+| lane-C scanner-stack round 2 (fixed point) | `16816838` | +26 | 17,366 |
+| lane-B nomatch near-pair vein (drained) | `29cf4bd5` | +35 | **17,401** |
 
 (Plus docs-only: PlatformMgr dead-lever banner `92dad991`, scoreboard updates.)
 
@@ -124,9 +127,15 @@ path-limited land. Win classes that recurred (transferable taxonomy):
    98.7-98.9; new named wall class: MSVC strcpy-intrinsic terminator test
    `cmplwi` vs `extsb.` — not source-expressible). Permuter BANNED (user
    directive 2026-07-18: low yield + grinds the box).
-5. ~5,300 identification-nomatch = genuine body divergence (Lane B in flight).
-6. Re-run the three identification scanners after big body-port waves (Lane C
-   in flight).
+5. ~~identification-nomatch residue~~ **Lane B DONE (+35, `29cf4bd5`) — vein
+   DRAINED.** Near-pair ranking surfaced the ~60 tractable targets; residue is
+   walls (reloc-count drift, deep divergence, tiny stubs, STL ICF). Do NOT
+   re-run as a crack wave; the surviving value is the structural leads:
+   **Rnd vtable 3 extra slots** (0x130 vs 0x124, scout dispatched),
+   UIComponent-chain layout, Flow ~0xD0 missing members, LyricPlate +0x40.
+6. ~~scanner re-run~~ **Lane C DONE (+26, `16816838`) — round-2 fixed point.**
+   Re-run only after the named set grows ~100+ (marginal yield ~26/109).
+7. FMO re-pin + newobject_sizeof_scan vbase filter: agent in flight.
 
 ## Tooling landed this session
 
