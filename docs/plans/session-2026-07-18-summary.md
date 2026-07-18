@@ -1,7 +1,7 @@
 # Session summary — 2026-07-18 (near-miss cracks + identification stack)
 
-**Result: main 15,364 → 17,401 strict matched (+2,037, ZERO regressions across
-17 landed batches).** Every landing was gated by an isolated verify-worktree
+**Result: main 15,364 → 17,403 strict matched (+2,039, ZERO regressions across
+18 landed batches).** Every landing was gated by an isolated verify-worktree
 whole-binary A/B (strict SET delta keyed `(unit, name)` + fuzzy sum; `LOST`
 must be empty). One agent-recommended change was rejected by that gate (see
 "Gate saves" below) — the process worked exactly as designed.
@@ -25,7 +25,9 @@ must be empty). One agent-recommended change was rejected by that gate (see
 | nearmiss crack w8 | `e1f0d6cb` | +7 | 17,339 |
 | opus wave 9 (99-band top closed) | `07409503` | +1 | 17,340 |
 | lane-C scanner-stack round 2 (fixed point) | `16816838` | +26 | 17,366 |
-| lane-B nomatch near-pair vein (drained) | `29cf4bd5` | +35 | **17,401** |
+| lane-B nomatch near-pair vein (drained) | `29cf4bd5` | +35 | 17,401 |
+| FMO mis-pin fix + scanner vbase filter | `4c11e0a7` | +0 | 17,401 |
+| Rnd vtable residual +0xC (3 DC3 virtuals gated) | `ad9376d5` | +2 | **17,403** |
 
 (Plus docs-only: PlatformMgr dead-lever banner `92dad991`, scoreboard updates.)
 
@@ -131,8 +133,10 @@ path-limited land. Win classes that recurred (transferable taxonomy):
 5. ~~identification-nomatch residue~~ **Lane B DONE (+35, `29cf4bd5`) — vein
    DRAINED.** Near-pair ranking surfaced the ~60 tractable targets; residue is
    walls (reloc-count drift, deep divergence, tiny stubs, STL ICF). Do NOT
-   re-run as a crack wave; the surviving value is the structural leads:
-   **Rnd vtable 3 extra slots** (0x130 vs 0x124, scout dispatched),
+   re-run as a crack wave. ~~Rnd vtable 3 extra slots~~ **DONE +2
+   (`ad9376d5`)** — retail vtable ends at slot 73; DC3-only
+   CreateLargeQuad/DrawLargeQuad/SetVertShaderTex gated RND_DC3_VIRTUAL;
+   DxRnd::UpdateScalerParams now paired = body-port lead. Remaining leads:
    UIComponent-chain layout, Flow ~0xD0 missing members, LyricPlate +0x40.
 6. ~~scanner re-run~~ **Lane C DONE (+26, `16816838`) — round-2 fixed point.**
    Re-run only after the named set grows ~100+ (marginal yield ~26/109).
