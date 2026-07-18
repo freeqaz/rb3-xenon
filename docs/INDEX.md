@@ -210,6 +210,7 @@ cascades, pin audits, and the structural-levers-exhausted capstone. Notable caps
 - [decomp/research/2026-06-23-dc3-drain-and-sonnet-opus-pipeline.md](decomp/research/2026-06-23-dc3-drain-and-sonnet-opus-pipeline.md) — DC3-oracle drain exhausted at +46 strict; Sonnet/Opus pipeline.
 - [decomp/research/2026-06-30-nearmiss-codegen-inventory.md](decomp/research/2026-06-30-nearmiss-codegen-inventory.md) — near-miss codegen inventory (feeds post-codegen kill streams).
 - [decomp/research/2026-06-21-dc3-engine-oracle-feasibility.md](decomp/research/2026-06-21-dc3-engine-oracle-feasibility.md) — DC3 engine body-oracle feasibility GO; game-layer Wii wall.
+- [decomp/research/2026-07-18-anthropic-adaptive-thinking-capture.md](decomp/research/2026-07-18-anthropic-adaptive-thinking-capture.md) — REFERENCE: Sonnet-5/Opus-4.8 thinking capture — legacy `budget_tokens` shape returns EMPTY thinking text (display defaults "omitted"); must use `{"type":"adaptive","display":"summarized"}` + `output_config.effort`.
 
 The remaining `decomp/research/*` files are per-lever / per-TU scout logs — grep the folder by
 TU name (SongMgr, SongStatusMgr, BandSongMgr, UIComponent, Waypoint, Campaign, SavedSetlist,
