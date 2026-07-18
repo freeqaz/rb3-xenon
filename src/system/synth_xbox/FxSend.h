@@ -13,9 +13,23 @@
 // the 2-arg retail MemAlloc(size, 0). The global OBJ_MEM_OVERLOAD lever is
 // noinline (CacheMgr-verified `bl fn_82709EE0` shape), so the 360 subclasses
 // re-declare operator new locally with the inline form.
+//
+// EH-temp homing lever (all 10 members, 2026-07-18): a bare comma-discard
+// `(StaticClassName(), 0)` folds the Symbol temp's raw pointer into the SAME
+// stack slot as the `mem` local (retail keeps them in separate slots --
+// `stw r3, 0x54(r31)` vs our `0x50(r31)`, the lone byte diff at 99.5-99.95%).
+// Calling `.Str()` on the temp (even though the result is discarded) is
+// enough to change how the compiler's EH-liveness tracking homes the two
+// values -- it reproduces retail's separate-slot placement exactly, with
+// zero other instruction changes. Real DC3 OBJ_MEM_OVERLOAD (utl/MemMgr.h)
+// also always calls `.Str()` on the Symbol (feeds it to MemAlloc's name arg);
+// retail strips the debug file/line/name args in release but evidently
+// leaves the `.Str()` call's side effect on temp lifetime intact -- this is
+// the release-build echo of that shape.
 #define FXSEND360_NEW(baseClass)                                                         \
     static void *operator new(unsigned int s) {                                          \
-        void *mem = (MemAlloc)(s, (baseClass::StaticClassName(), 0));                    \
+        (void)baseClass::StaticClassName().Str();                                        \
+        void *mem = (MemAlloc)(s, 0);                                                    \
         return mem;                                                                      \
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }

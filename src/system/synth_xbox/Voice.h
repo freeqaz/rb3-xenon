@@ -67,15 +67,19 @@ public:
     float mReverbMixDb; // 0x44 - reverb mix in dB
     bool unk48; // 0x48
     bool mSynchronized; // 0x49 - requires synchronized voice start
-    int mChannels; // 0x4c
-    int mTagState; // 0x50 - stream tag state
-    bool unk54; // 0x54
-    int mSourceVoice; // 0x58 - IXAudio2SourceVoice* (as int for vtable dispatch)
-    int mEnvelopeEffect; // 0x5c - XAPO envelope generator (PoolVoice.eg)
-    void *mEnvelopeParams; // 0x60 - envelope effect parameters (PoolVoice.egParams)
-    tWAVEFORMATEX mWaveFormat; // 0x64 - cached wave format (0x12 bytes, copied in createOrReuse)
-    short mPadding76; // 0x76 - alignment padding
-    int mDisposeTick; // 0x78 - GetTickCount() timestamp for voice GC
+    short mChannels; // 0x4a - channel count. 2 bytes (not int): keeps mTagState and
+                     // mSourceVoice at retail's true (tighter) offsets. Verified via
+                     // Ghidra decompile of ~Voice (target 0x82b662e8): mSourceVoice
+                     // reads at this+0x50; and StreamReceiver360::Tag()'s objdiff
+                     // shows target/base off:+4 on the mTagState store (real 0x4c).
+                     // No unk54 filler either -- mTagState(int) ends exactly at 0x50.
+    int mTagState; // 0x4c - stream tag state
+    int mSourceVoice; // 0x50 - IXAudio2SourceVoice* (as int for vtable dispatch)
+    int mEnvelopeEffect; // 0x54 - XAPO envelope generator (PoolVoice.eg)
+    void *mEnvelopeParams; // 0x58 - envelope effect parameters (PoolVoice.egParams)
+    tWAVEFORMATEX mWaveFormat; // 0x5c - cached wave format (0x12 bytes, copied in createOrReuse)
+    short mPadding76; // 0x6e - alignment padding
+    int mDisposeTick; // 0x70 - GetTickCount() timestamp for voice GC
 
 private:
     void UpdateMix();

@@ -25,7 +25,8 @@ void RndLight::Save(BinStream &bs) {
     SAVE_SUPERCLASS(RndTransformable)
     bs << mColor << mRange << mType;
     bs << mFalloffStart;
-    bs << mAnimateColorFromPreset << mAnimatePositionFromPreset;
+    bs << mAnimateColorFromPreset;
+    bs << mAnimatePositionFromPreset;
     bs << mTopRadius << mBotRadius;
     bs << mTexture;
     bs << mColorOwner;

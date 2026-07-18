@@ -53,9 +53,16 @@ public:
     void SetInVocalMode();
 
     // RB3-360 layout (retail ctor Function_82693E60 init map; byte offsets):
-    // unk54 sits BETWEEN unk4c and mScorePart, and retail has NO unk59/unk5c/
-    // unk60 (Wii-dev-only) — members end at mMetronome 0x60, vtordisp 0x64,
-    // vbase Hmx::Object at 0x68 (RTTI COL vbase offset 0x68).
+    // unk54 sits BETWEEN unk4c and mScorePart. NewObject()'s `li r3, 0x94`
+    // (sizeof == 148, not 144) proved retail keeps one more byte-sized field
+    // than previously assumed here. rb3-Wii's dev build carries a 3-field
+    // "restart allowed" group (unk59 bool / unk5c int / unk60 bool) between
+    // unk58 and mMetronome, but reinstating all three overshoots (+12, not
+    // +4 -- verified by hand-computing the padded layout). Reinstating just
+    // the first (unk59) accounts for the whole delta: the field itself (1B)
+    // plus the alignment padding it forces before the pointer-aligned
+    // mMetronome (3B) == +4 total. NewObject/Handle/MarkGemsAsProcessed/
+    // SetPitchShiftRatio/ToggleGuidePart all verified 100% with this layout.
     bool mInVocalMode; // 0x3c
     Fader *mFader; // 0x40
     float unk40; // 0x44
@@ -68,7 +75,8 @@ public:
     bool unk56; // 0x5d
     bool unk57; // 0x5e
     bool unk58; // 0x5f
-    Metronome *mMetronome; // 0x60
+    bool unk59; // 0x60 (rb3-Wii "restart allowed" group, first field only)
+    Metronome *mMetronome; // 0x64 (was 0x60; padded up by unk59)
 };
 
 extern PracticePanel *ThePracticePanel;

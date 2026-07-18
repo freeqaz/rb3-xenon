@@ -7,7 +7,7 @@ extern "C" void XMemCpy(void *, const void *, int);
 #endif
 
 StreamReceiver::StreamReceiver(int numBuffers, bool slip)
-    : mSlipEnabled(slip), mNumBuffers(numBuffers), mBuffer(), mRingFreeSpace(0),
+    : mSlipEnabled(slip), mBuffer(), mNumBuffers(numBuffers), mRingFreeSpace(0),
       mState(kInit), mSendTarget(0), mWantToSend(false), mSending(false), mBuffersSent(0),
       mStarving(false), mEndData(false), mDoneBufferCounter(0), mLastPlayCursor(0) {
     MILO_ASSERT(numBuffers > 0, 0x33);

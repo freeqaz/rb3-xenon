@@ -102,18 +102,18 @@ protected:
     int mBottom; // 0x68
     bool mFillWithSafeWhite; // 0x6c
     ObjPtr<RndFont> mFontToImportFrom; // 0x70
-    /** "path to save bitmap to (i.e. ui/image/)" */
-    String mBitmapSavePath; // 0x84
-    /** "name of the bitmap file (i.e. Arial(12).BMP)" */
-    String mBitMapSaveName; // 0x8c
-    ObjPtrList<RndFontBase> mGennedFonts; // 0x94
-    ObjPtr<RndFontBase> mReferenceKerning; // 0xa8
-    ObjPtrList<RndMat> mMatVariations; // 0xbc
-    ObjPtr<RndFontBase> mHandmadeFont; // 0xd0
-    bool mCheckNG; // 0xe4
+    ObjPtrList<RndFontBase> mGennedFonts; // (retail: mBitmapSavePath/mBitMapSaveName
+    ObjPtr<RndFontBase> mReferenceKerning; // moved to tail below -- 24-byte offset
+    ObjPtrList<RndMat> mMatVariations; // drift confirmed via GetMatVariationIdx/
+    ObjPtr<RndFontBase> mHandmadeFont; // GetGennedFont target-vs-base lwz operands)
+    bool mCheckNG;
     /** "You can pull in all the importer settings from another resource file by selecting
      * it above and hitting the sync button below" */
-    String mSyncResource; // 0xe8
+    String mSyncResource;
     /** "was the texture for this font last genned for an NG platform?" */
-    bool mLastGenWasNG; // 0xf0
+    bool mLastGenWasNG;
+    /** "path to save bitmap to (i.e. ui/image/)" */
+    String mBitmapSavePath;
+    /** "name of the bitmap file (i.e. Arial(12).BMP)" */
+    String mBitMapSaveName;
 };

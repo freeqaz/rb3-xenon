@@ -45,7 +45,7 @@ Voice::Voice(bool b1, int i, bool b2)
     : mState(0), mBuffer(0), mAudioBytes(0), mNumSamples(0), mSampleRate(0), mStartSamp(0), mLoopStart(-1),
       mLoopEnd(-1), mVolume(1.0f), mPan(0), mSpeed(1.0f), mAttackRate(0.001f), mReleaseRate(0.001f),
       mXMA(b1), mFxSend(), mReverbEnabled(false), mReverbMixDb(-96.0f), unk48(false), mSynchronized(b2),
-      mChannels(i), mTagState(0), unk54(false) {
+      mChannels(i), mTagState(0) {
     mEnvelopeEffect = 0;
     mEnvelopeParams = 0;
     mSourceVoice = 0;

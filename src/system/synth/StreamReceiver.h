@@ -62,16 +62,16 @@ protected:
 #endif
 
     bool mSlipEnabled; // 0x4
-    int mNumBuffers; // 0x8
-    unsigned char mBuffer[kStreamRcvrBufSize]; // 0xc
-    int mRingFreeSpace; // 0x800c
-    State mState; // 0x8010
-    int mSendTarget; // 0x8014
-    bool mWantToSend; // 0x8018
-    bool mSending; // 0x8019
-    int mBuffersSent; // 0x801c
-    bool mStarving; // 0x8020
-    bool mEndData; // 0x8021
-    int mDoneBufferCounter; // 0x8024
-    int mLastPlayCursor; // 0x8028
+    unsigned char mBuffer[kStreamRcvrBufSize]; // 0x5
+    int mNumBuffers; // 0x18008
+    int mRingFreeSpace; // 0x1800c
+    State mState; // 0x18010
+    int mSendTarget; // 0x18014
+    bool mWantToSend; // 0x18018
+    bool mSending; // 0x18019
+    int mBuffersSent; // 0x1801c
+    bool mStarving; // 0x18020
+    bool mEndData; // 0x18021
+    int mDoneBufferCounter; // 0x18024
+    int mLastPlayCursor; // 0x18028
 };

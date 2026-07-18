@@ -33,9 +33,9 @@ UIFontImporter::UIFontImporter()
       mFontPctSize(ConvertHeightNGToPctHeight(12)), mFontWeight(400), mItalics(false),
       mDropShadow(0), mDropShadowOpacity(128), mFontQuality(0), mPitchAndFamily(34),
       mFontCharset(0), mFontSupersample(0), mLeft(0), mRight(0), mTop(0), mBottom(0),
-      mFillWithSafeWhite(false), mFontToImportFrom(this), mBitmapSavePath("ui/image/"),
-      mBitMapSaveName("temp.bmp"), mGennedFonts(this), mReferenceKerning(this),
-      mMatVariations(this), mHandmadeFont(this), mCheckNG(false), mLastGenWasNG(true) {
+      mFillWithSafeWhite(false), mFontToImportFrom(this), mGennedFonts(this),
+      mReferenceKerning(this), mMatVariations(this), mHandmadeFont(this), mCheckNG(false),
+      mLastGenWasNG(true), mBitmapSavePath("ui/image/"), mBitMapSaveName("temp.bmp") {
     static Symbol objects("objects");
     static Symbol default_bitmap_path("default_bitmap_path");
     DataArray *cfgArr =
