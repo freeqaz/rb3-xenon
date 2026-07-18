@@ -21,6 +21,7 @@ struct ColorSet {
  * "List of primary/secondary colors for OutfitConfig"
  */
 class ColorPalette : public Hmx::Object {
+    friend class BandSwatch;
 public:
     OBJ_CLASSNAME(ColorPalette);
     OBJ_SET_TYPE(ColorPalette);

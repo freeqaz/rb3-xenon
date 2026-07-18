@@ -1660,7 +1660,6 @@ HamNavProvider.cpp:
 
 Flow.cpp:
 	.pdata      start:0x821F4C70 end:0x821F4C78
-	.pdata      start:0x821F53B8 end:0x821F5600
 	.pdata      start:0x821F7FA0 end:0x821F7FA8
 	.pdata      start:0x82204AE8 end:0x82204AF0
 	.pdata      start:0x82204B70 end:0x82204B78
@@ -1670,7 +1669,6 @@ Flow.cpp:
 	.pdata      start:0x82238DB8 end:0x82238DC0
 	.text       start:0x822A6528 end:0x822A6578
 	.text       start:0x822A6F68 end:0x822A6F70
-	.text       start:0x822ACFE8 end:0x822AF178
 	.text       start:0x822D8CC0 end:0x822D8D48
 	.text       start:0x823AAD78 end:0x823AADDC
 	.text       start:0x823AB598 end:0x823AB618
@@ -1678,6 +1676,10 @@ Flow.cpp:
 	.text       start:0x82574D90 end:0x82574DF4
 	.text       start:0x82715C88 end:0x82715CCC
 	.text       start:0x82715E18 end:0x82715E78
+
+BandSwatch.cpp:
+	.pdata      start:0x821F53B8 end:0x821F5600
+	.text       start:0x822ACFE8 end:0x822AF178
 
 CharInterest.cpp:
 	.pdata      start:0x821F5600 end:0x821F5608
