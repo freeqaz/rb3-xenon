@@ -66,8 +66,13 @@ typedef long            NTSTATUS;
 #define TRUE       1
 #define FALSE      0
 
+/* Big-endian (Xenon) member order: the high word is FIRST in memory, so
+ * HighPart must be declared first — as in the real XDK winnt.h __BIG_ENDIAN__
+ * variant. With the little-endian order, GetFileSize returned the HIGH half
+ * of EndOfFile (= 0 for any file < 4 GB) on hardware (found 2026-07-18 via
+ * the SI selfgen "hdr size bad" skip). */
 typedef union _LARGE_INTEGER {
-    struct { DWORD LowPart; LONG HighPart; } u;
+    struct { LONG HighPart; DWORD LowPart; } u;
     LONGLONG QuadPart;
 } LARGE_INTEGER, *PLARGE_INTEGER;
 
@@ -147,10 +152,17 @@ typedef struct _IO_STATUS_BLOCK {
     ULONG Information;
 } IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
 
-/* FileInformationClass values (NT/Xbox shared). */
+/* FileInformationClass values. NOTE: the Xbox 360 kernel's
+ * NtQueryInformationFile accepts only a REDUCED class set (per Xenia's
+ * xboxkrnl_io reimplementation): FileInternalInformation(6),
+ * FilePositionInformation(14), FileNetworkOpenInformation(34) and a couple of
+ * Xbox-specific ones — FileStandardInformation(5) is REJECTED with
+ * STATUS_INVALID_PARAMETER (hit on hardware 2026-07-18: GetFileSize -> err 87).
+ * Query sizes through FileNetworkOpenInformation instead. */
 #define FileStandardInformation     5
 #define FilePositionInformation     14
 #define FileEndOfFileInformation    20
+#define FileNetworkOpenInformation  34
 
 typedef struct _FILE_STANDARD_INFORMATION {
     LARGE_INTEGER AllocationSize;   /* 0x00 */
@@ -461,17 +473,20 @@ BOOL CloseHandle(HANDLE hObject) {
 }
 
 DWORD GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh) {
-    FILE_STANDARD_INFORMATION fsi;
+    /* FileStandardInformation is rejected by the 360 kernel (see class-list
+     * note above); FileNetworkOpenInformation is the class the real xapilib
+     * uses for by-handle metadata and is accepted. */
+    FILE_NETWORK_OPEN_INFORMATION info;
     IO_STATUS_BLOCK iosb;
-    NTSTATUS s = NtQueryInformationFile(hFile, &iosb, &fsi, sizeof(fsi),
-                                        FileStandardInformation);
+    NTSTATUS s = NtQueryInformationFile(hFile, &iosb, &info, sizeof(info),
+                                        FileNetworkOpenInformation);
     if (!NT_SUCCESS(s)) {
         oss_set_last_error_status(s);
         if (lpFileSizeHigh) *lpFileSizeHigh = 0;
         return INVALID_FILE_SIZE;
     }
-    if (lpFileSizeHigh) *lpFileSizeHigh = (DWORD)fsi.EndOfFile.u.HighPart;
-    return (DWORD)fsi.EndOfFile.u.LowPart;
+    if (lpFileSizeHigh) *lpFileSizeHigh = (DWORD)info.EndOfFile.u.HighPart;
+    return (DWORD)info.EndOfFile.u.LowPart;
 }
 
 DWORD SetFilePointer(HANDLE hFile, LONG lDistanceToMove, PLONG lpDistanceToMoveHigh,
@@ -490,11 +505,13 @@ DWORD SetFilePointer(HANDLE hFile, LONG lDistanceToMove, PLONG lpDistanceToMoveH
         if (!NT_SUCCESS(s)) { oss_set_last_error_status(s); return INVALID_SET_FILE_POINTER; }
         base.QuadPart = cur.CurrentByteOffset.QuadPart;
     } else if (dwMoveMethod == FILE_END) {
-        FILE_STANDARD_INFORMATION fsi;
-        s = NtQueryInformationFile(hFile, &iosb, &fsi, sizeof(fsi),
-                                   FileStandardInformation);
+        /* FileStandardInformation is rejected by the 360 kernel; use
+         * FileNetworkOpenInformation (see class-list note above). */
+        FILE_NETWORK_OPEN_INFORMATION info;
+        s = NtQueryInformationFile(hFile, &iosb, &info, sizeof(info),
+                                   FileNetworkOpenInformation);
         if (!NT_SUCCESS(s)) { oss_set_last_error_status(s); return INVALID_SET_FILE_POINTER; }
-        base.QuadPart = fsi.EndOfFile.QuadPart;
+        base.QuadPart = info.EndOfFile.QuadPart;
     } /* else FILE_BEGIN: base = 0 */
 
     if (lpDistanceToMoveHigh) {

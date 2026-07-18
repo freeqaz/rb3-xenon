@@ -85,7 +85,12 @@ int XNetStartup(void *pxnsp) { return NetDll_XNetStartup(XNCALLER_TITLE, pxnsp);
 int XNetXnAddrToInAddr(const void *pxna, const void *pxnkid, void *pina) { return NetDll_XNetXnAddrToInAddr(XNCALLER_TITLE, pxna, pxnkid, pina); }
 
 /* ---- non-network XDK entrypoints: still stubbed (unused by SI feature) ---- */
-int XCloseHandle(){ return 1; }
+/* XCloseHandle IS used — it is RB3E_CloseFile (xbox360_files.c). As a return-1
+ * stub every file handle in the DLL leaked, so the selfgen write-verify reopen
+ * and cleanup delete both hit sharing violations against the still-open write
+ * handle (HW, 2026-07-18). Route to the real kernel close. */
+long NtClose(void *Handle);
+int XCloseHandle(void *hObject){ return NtClose(hObject) >= 0; }
 int XContentDelete(){ return 0; }
 int XContentGetDeviceData(){ return 0; }
 int XHasOverlappedIoCompleted(){ return 1; }
