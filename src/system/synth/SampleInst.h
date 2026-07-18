@@ -24,13 +24,18 @@ public:
     virtual void Stop(bool);
     virtual void Pause(bool) = 0;
     virtual bool DonePlaying();
-    virtual void SetVolume(float);
-    virtual void SetPan(float);
+    // Non-virtual setters: retail RB3-360 calls these directly (bl) from
+    // SfxInst's SampleInst* loops (Sfx.cpp), not through the PlayableSample
+    // vtable. DC3 declared them virtual on the PlayableSample MI base, which
+    // forced vtable dispatch in the callers and left SfxInst::SetSpeed /
+    // SetReverbMixDb / UpdateVolume stuck below 100%.
+    void SetVolume(float);
+    void SetPan(float);
     virtual void SetADSR(const ADSRImpl &) = 0;
-    virtual void SetSpeed(float);
-    virtual void SetReverbMixDb(float);
-    virtual void SetReverbEnable(bool);
-    virtual void SetSend(FxSend *);
+    void SetSpeed(float);
+    void SetReverbMixDb(float);
+    void SetReverbEnable(bool);
+    void SetSend(FxSend *);
     virtual void SetEventReceiver(Hmx::Object *);
     virtual Hmx::Object *GetEventReceiver() { return mEventReceiver; }
     virtual void EndLoop();

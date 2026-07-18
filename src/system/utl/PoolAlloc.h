@@ -6,7 +6,15 @@
 // forward declaration
 class ChunkAllocator;
 
+// Retail RB3 XEX bound: sizeof(ChunkAllocator) == 0x80 (128B) == 32*4, proven by
+// PoolAlloc.cpp's `new ChunkAllocator` emitting `li r3,0x80` (fn_827BB0E8 @ 0x82745BE0),
+// and the pool-index math `(classSize-1)>>4` capping at 32 size-classes (<=512B).
+// DC3's PoolAlloc.h uses 64 (0x100) — a genuine RB3 divergence, not a copy error.
+#ifdef HX_NATIVE
 #define MAX_FIXED_ALLOCS 64
+#else
+#define MAX_FIXED_ALLOCS 32
+#endif
 
 class FixedSizeAlloc {
     friend class ChunkAllocator;

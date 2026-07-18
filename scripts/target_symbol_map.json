@@ -6766,6 +6766,8 @@
  "0x827dbaf0": "?ThreadGetDir@CacheXbox@@IAAHVString@@0@Z",
  "0x827dc010": "?ValidateHeader@?A0xaf4cfd2b@@YA_NPADHPAH1@Z",
  "0x827dc090": "?GetNextLine@?A0xaf4cfd2b@@YAPADPADPAH@Z",
+ "0x827dc128": "?IsDownloaded@HttpGet@@QAA_NXZ",
+ "0x827dc140": "?HasFailed@HttpGet@@QAA_NXZ",
  "0x827dc160": "?DetachBuffer@HttpGet@@QAAPADXZ",
  "0x827dc188": "?StartConnection@HttpGet@@IAAXXZ",
  "0x827dc208": "?StartReceiving@HttpGet@@IAAXXZ",

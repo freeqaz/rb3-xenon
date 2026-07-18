@@ -14,17 +14,26 @@ enum HttpGetFailType {
 
 class HttpGet {
 public:
+    // Retail ordering, reconstructed from disasm ground truth:
+    //   SetState enter-switch (827DC588): -1->SafeShutdown, 0->StartConnection,
+    //   1->StartSending, 2->StartReceiving, 4->return, 5->retry(FailedSend).
+    //   StartConnection li r4,0x4 -> SetState(Failed); DetachBuffer/IsDownloaded
+    //   cmpwi 3 -> Downloaded; HasFailed cmpwi 4 -> Failed; StartSending li r4,0x5
+    //   -> SetState(FailedSend); Poll (827DCAB0) cmpwi 6 -> Pending.
+    // Retail collapsed SendingBody/ReceivingHeaders into the Sending(1) state;
+    // they remain here only for HttpPost/source callers (unmeasured), parked at
+    // 7/8 so they don't collide with the real states above.
     enum State {
         kHttpGet_Nil = -1,
         kHttpGet_Connecting = 0,
         kHttpGet_Sending = 1,
-        kHttpGet_SendingBody = 2,
-        kHttpGet_ReceivingHeaders = 3,
-        kHttpGet_ReceivingBody = 4,
-        kHttpGet_Downloaded = 5,
-        kHttpGet_Failed = 6,
-        kHttpGet_FailedSend = 7,
-        kHttpGet_Pending = 8,
+        kHttpGet_ReceivingBody = 2,
+        kHttpGet_Downloaded = 3,
+        kHttpGet_Failed = 4,
+        kHttpGet_FailedSend = 5,
+        kHttpGet_Pending = 6,
+        kHttpGet_SendingBody = 7,
+        kHttpGet_ReceivingHeaders = 8,
     };
 
     HttpGet(unsigned int ip, unsigned short port, const char *, const char *);
