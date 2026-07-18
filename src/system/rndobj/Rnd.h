@@ -30,6 +30,14 @@ class UIPanel;
 // virtual shifts every later slot up 0x20 and breaks every Rnd vcall (EndWorld,
 // DrawStringScreen, ...). The native engine still wants them virtual, so gate the
 // `virtual` keyword behind HX_NATIVE (same idiom as ClearDepthForOverlay below).
+//
+// Residual +0xC (found 2026-07-18): 3 MORE NG/DX-path virtuals were likewise
+// DC3-only and are now gated via RND_DC3_VIRTUAL in Rnd_NG.h / rnddx9/Rnd.h:
+// CreateLargeQuad, DrawLargeQuad, SetVertShaderTex. In retail these are
+// non-virtual members wedged between ParticleBuffer (slot 71) and ResetStats;
+// keeping them virtual shifted UpdateScalerParams from slot 0x124 to 0x130 and
+// broke DxRnd::SetAspect / SetShrinkToSafeArea vcalls. ParticleBuffer,
+// ResetStats, UpdateScalerParams stay virtual (retail slots 71/72/73).
 #ifdef HX_NATIVE
 #define RND_DC3_VIRTUAL virtual
 #else

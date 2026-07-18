@@ -60,10 +60,10 @@ public:
     virtual void Suspend() {}
     virtual void Resume() {}
     virtual RndSoftParticleBuffer *ParticleBuffer() { return mParticleBuffer; }
-    virtual void CreateLargeQuad(int, int, LargeQuadRenderData &);
-    virtual void
+    RND_DC3_VIRTUAL void CreateLargeQuad(int, int, LargeQuadRenderData &);
+    RND_DC3_VIRTUAL void
     DrawLargeQuad(const LargeQuadRenderData &, const Transform &, RndMat *, ShaderType);
-    virtual void SetVertShaderTex(RndTex *, int);
+    RND_DC3_VIRTUAL void SetVertShaderTex(RndTex *, int);
 
 protected:
     virtual void ResetStats();
