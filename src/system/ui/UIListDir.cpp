@@ -487,9 +487,6 @@ void UIListDir::BuildDrawState(
 #endif
         elem.mActive = true;
         *(Vector3 *)&elem.mPosX = elemPos;
-        elem.mScaleX = 1.0f;
-        elem.mScaleY = 1.0f;
-        elem.mScaleZ = 1.0f;
         elem.mAlpha = alpha;
         elem.mElementState = widgetState;
         elem.mComponentState = state.Provider()->ComponentStateOverride(showing, data, compState);

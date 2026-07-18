@@ -29,9 +29,9 @@ public:
     virtual bool HasNetPlayer() const = 0;
     virtual bool IsLocal() const = 0;
     virtual bool PlayerDisabled() const = 0;
-    virtual const char *GetTrackIcon() const = 0;
-    virtual const char *GetPlayerName() const = 0;
     virtual const char *UserName() const = 0;
+    virtual const char *GetPlayerName() const = 0;
+    virtual const char *GetTrackIcon() const = 0;
 
     virtual const User *GetUser() const = 0;
     virtual Difficulty GetPlayerDifficulty() const = 0;

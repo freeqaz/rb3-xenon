@@ -445,14 +445,6 @@ void HamListRibbon::DrawRibbon(
         UIListElementDrawState *elem = (UIListElementDrawState *)state.mElemDrawState;
 #endif
         if (elem) {
-            // Target uses 4-arg ctor with alpha=0.0f. BSS zero-elision: target
-            // compiler skips storing 0.0f to BSS statics (already zero-initialized),
-            // our compiler doesn't — causes 2 extra stfs instructions (unfixable).
-            // Confirmed: Color 3-arg ctor DOES set alpha=1.0f (verified via RB3 ref,
-            // RndMat ctor, RndLight ctor), so these intentionally use 4-arg with 0.0f.
-            static Hmx::Color sBigColor(1.3f, 1.0f, 1.3f, 0.0f);
-            static Hmx::Color sNormalColor(1.0f, 1.0f, 1.0f, 0.0f);
-
             const Transform &labelXfm = mLabelPlaceholder->WorldXfm();
             Vector3 pos = labelXfm.v;
             pos.z += ribbonXfm.v.z;
@@ -460,12 +452,6 @@ void HamListRibbon::DrawRibbon(
 
             float alpha = GetLabelTotalAlpha();
             memcpy(&elem->mData, &alpha, sizeof(float));
-
-            Hmx::Color *color = &sBigColor;
-            if (state.mBigScale == 0.0f) {
-                color = &sNormalColor;
-            }
-            *(Hmx::Color *)&elem->mScaleX = *color;
         }
     }
 

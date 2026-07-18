@@ -24,15 +24,15 @@ public:
     bool AllowPreviewDownload(String const &);
     void Poll();
 
+    NetCacheLoader *mNetCacheLoader; // 0x28
+    std::list<String> mDownloadQueue; // 0x2c
     float mAttenuation;
     bool mLoopForever;
     String mCurrentPreviewFile;
-    StreamPlayer *mStreamPlayer; // 0x3c
-    NetCacheLoader *mNetCacheLoader;
+    StreamPlayer *mStreamPlayer;
     NetCacheMgrFailType mLastFailType;
     bool mHasFailure;
     TexMovie *mTexMovie;
-    std::list<String> mDownloadQueue;
 
 protected:
     void PlayCurrentPreview();

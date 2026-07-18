@@ -174,11 +174,8 @@ void UIListSlot::Draw(
                 static int sChooseModeSlotDiag = 0;
                 if (DebugChooseModeSlot(prov) && sChooseModeSlotDiag < 80) {
                     const Hmx::Object *providerObj = dynamic_cast<const Hmx::Object *>(prov);
-                    const Hmx::Color &overlay =
-                        *(const Hmx::Color *)&curdrawstate.mScaleX;
-                    float overlayAlpha = *(const float *)&curdrawstate.mData;
                     printf(
-                        "DC3 UIListSlot::Draw provider=%s widget=%s/%s idx=%d showing=%d data=%d alpha=%.3f overlayAlpha=%.3f elemState=%d compState=%d pos=(%.2f,%.2f,%.2f) scale=(%.2f,%.2f,%.2f) overlay=(%.2f,%.2f,%.2f,%.2f) color=%s\n",
+                        "DC3 UIListSlot::Draw provider=%s widget=%s/%s idx=%d showing=%d data=%d alpha=%.3f elemState=%d compState=%d pos=(%.2f,%.2f,%.2f) color=%s\n",
                         providerObj ? PathName(providerObj) : "<null>",
                         ClassName().Str(),
                         Name(),
@@ -186,19 +183,11 @@ void UIListSlot::Draw(
                         curdrawstate.mShowing,
                         curdrawstate.mData,
                         d10,
-                        overlayAlpha,
                         curdrawstate.mElementState,
                         curdrawstate.mComponentState,
                         curdrawstate.mPosX,
                         curdrawstate.mPosY,
                         curdrawstate.mPosZ,
-                        curdrawstate.mScaleX,
-                        curdrawstate.mScaleY,
-                        curdrawstate.mScaleZ,
-                        overlay.red,
-                        overlay.green,
-                        overlay.blue,
-                        overlay.alpha,
                         uicolor ? PathName(uicolor) : "<null>"
                     );
                     sChooseModeSlotDiag++;
@@ -208,9 +197,6 @@ void UIListSlot::Draw(
                 if (ParentList())
                     ParentList()->AdjustTrans(tfa8, curdrawstate);
                 CalcXfm(ctf, *(Vector3 *)&curdrawstate.mPosX, tfa8);
-                tfa8.m.x.x *= curdrawstate.mScaleX;
-                tfa8.m.y.y *= curdrawstate.mScaleY;
-                tfa8.m.z.z *= curdrawstate.mScaleZ;
                 if (cmd != kExcludeFirst || i > 0) {
                     mElements[i]->Draw(tfa8, d10, uicolor, box);
                 }

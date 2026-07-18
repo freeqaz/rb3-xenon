@@ -15,7 +15,7 @@
 #include "utl/Symbol.h"
 
 StorePreviewMgr::StorePreviewMgr()
-    : mAttenuation(0.0f), mLoopForever(1), mStreamPlayer(nullptr), mNetCacheLoader(0), mHasFailure(0) {
+    : mNetCacheLoader(0), mAttenuation(0.0f), mLoopForever(1), mStreamPlayer(nullptr), mHasFailure(0) {
     mStreamPlayer = new StreamPlayer();
     MILO_ASSERT(mStreamPlayer, 0x1d);
     DataArray *d = SystemConfig("song_select", "sound");

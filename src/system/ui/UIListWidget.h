@@ -24,17 +24,13 @@ struct UIListElementDrawState {
     float mPosY; // 0x8
     float mPosZ; // 0xc
     int unk10; // 0x10 - Vector3 word-copy overflow padding
-    float mScaleX; // 0x14 - scale factor for transform X axis (written by HamListRibbon as Color.r)
-    float mScaleY; // 0x18 - scale factor for transform Y axis (written by HamListRibbon as Color.g)
-    float mScaleZ; // 0x1c - scale factor for transform Z axis (written by HamListRibbon as Color.b)
-    int unk20; // 0x20 - Color overlay A
-    float mAlpha; // 0x24
-    UIListWidgetState mElementState; // 0x28
-    UIComponent::State mComponentState; // 0x2c
-    int mDisplay; // 0x30
-    int mShowing; // 0x34
-    int mData; // 0x38
-}; // size: 0x3c
+    float mAlpha; // 0x14
+    UIComponent::State mComponentState; // 0x18
+    UIListWidgetState mElementState; // 0x1c
+    int mDisplay; // 0x20
+    int mShowing; // 0x24
+    int mData; // 0x28
+}; // size: 0x2c
 
 struct UIListWidgetDrawState {
     Vector3 mFirstPos; // 0x0 (padded to 0x10)
