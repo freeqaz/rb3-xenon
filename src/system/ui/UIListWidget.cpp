@@ -170,7 +170,6 @@ UIListWidgetDrawType UIListWidget::WidgetDrawType() const { return mWidgetDrawTy
 
 void UIListWidget::CalcXfm(const Transform &tfin, const Vector3 &vin, Transform &out) {
     out.v.x += vin.x;
-    out.v.y += vin.y;
     out.v.z += vin.z;
     Multiply(out, tfin, out);
 }

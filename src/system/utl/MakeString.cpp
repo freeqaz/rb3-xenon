@@ -58,11 +58,6 @@ bool ValidateThreadId(DWORD id) {
 #endif
 
 char *NextBuf() {
-    if (!gLock) {
-        InitMakeString();
-        MILO_LOG("MakeString before InitMakeString!\n");
-        MILO_FAIL("MakeString before InitMakeString!");
-    }
     CritSecTracker cst(gLock);
     if (gNumThreads == 0) {
         gThreadIds[0] = GetCurrentThreadId();
@@ -100,17 +95,7 @@ char *NextBuf() {
                     } while (threadIdx < gNumThreads);
                 }
                 if (threadIdx == activeThreadCount) {
-                    char msg[256];
-                    if (activeThreadCount >= 6) {
-                        Hx_snprintf(
-                            msg,
-                            256,
-                            "Too many threads using MakeString; maybe increase MAX_BUF_THREADS in %s?",
-                            __FILE__
-                        );
-                        TheDebugFailer << msg;
-                        return nullptr;
-                    }
+                    MILO_ASSERT(activeThreadCount < MAX_BUF_THREADS, 0x63);
                     gThreadIds[threadIdx] = GetCurrentThreadId();
                     gNumThreads++;
                 }

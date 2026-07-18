@@ -30,13 +30,20 @@ PoolAlloc(int classSize, int reqSize, const char *file, int line, const char *na
     // which can't hold 64-bit pointers. Just use malloc instead.
     return malloc(reqSize);
 #else
+    // Retail/match: the 5-arg entry point ignores file/line/name, same as the
+    // 2-arg POOL_OVERLOAD form below (see PoolAlloc.h §7 comment) — the retail
+    // XEX strips MemTrack instrumentation from this call site entirely (no
+    // MemTrackAlloc call, no debug-arg register setup), which is why the 2-arg
+    // overload ICF-folds onto this body.
+    (void)file;
+    (void)line;
+    (void)name;
     CritSecTracker tracker(gMemLock);
     if (!gChunkAlloc) {
         gChunkAlloc = new ChunkAllocator();
     }
     MILO_ASSERT(reqSize == classSize, 0x15F);
     void *alloced = gChunkAlloc->Alloc(classSize);
-    MemTrackAlloc(classSize, classSize, name, alloced, true, 0, file, line);
     return alloced;
 #endif
 }

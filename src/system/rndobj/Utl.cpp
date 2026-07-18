@@ -77,13 +77,16 @@ SplashFunc gSplashResume;
 Vector3 gUtlXfms;
 
 RndGroup *GroupOwner(Hmx::Object *o) {
-    if (o) {
-        FOREACH (it, o->Refs()) {
-            RndGroup *grp = dynamic_cast<RndGroup *>(it->RefOwner());
-            if (grp) {
-                if (grp->HasObject(o)) {
-                    return grp;
-                }
+    FOREACH (it, o->Refs()) {
+#ifdef HX_NATIVE
+        RndGroup *grp = dynamic_cast<RndGroup *>(it->RefOwner());
+#else
+        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        RndGroup *grp = dynamic_cast<RndGroup *>(RefPtrOf(it)->RefOwner());
+#endif
+        if (grp) {
+            if (grp->HasObject(o)) {
+                return grp;
             }
         }
     }

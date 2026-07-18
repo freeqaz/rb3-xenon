@@ -168,7 +168,8 @@ void TrackWidget::DrawShowing() {
 
 void TrackWidget::Poll() {
     if (mTrackDir) {
-        mImp->RemoveUntil(mTrackDir->CutOffY(), mBaseLength);
+        float cutOffY = mTrackDir->CutOffY();
+        mImp->RemoveUntil(cutOffY, mBaseLength);
         mImp->Poll();
     }
 }

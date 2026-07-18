@@ -108,6 +108,13 @@ void PatchPanel::Load() {
     UIPanel::Load();
     mPatch = new PatchDir();
     mPatch->LoadStickerData();
+    // Retail constructs this as a function-local static Symbol (guarded lazy
+    // init, single guard-bit check) rather than referencing the Symbols2.h
+    // global of the same name -- confirmed from the target asm listing
+    // (lis lbl_82E012C4 / lbl_82E012C8 guard pair + ??0Symbol ctor call),
+    // same RB3_HANDLE_LOCAL_STATIC lever this TU is already gated for. The
+    // local shadows the extern global.
+    static Symbol editing_patch("editing_patch");
     CopyFromPatch(Property(editing_patch)->Obj<PatchDir>());
     mPatch->LoadLayerStickers();
 }
