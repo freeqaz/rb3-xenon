@@ -112,10 +112,11 @@ path-limited land. Win classes that recurred (transferable taxonomy):
 
 ## Banked leads (updated after opus wave 9, `07409503`, main 17,340)
 
-1. ~~FileMergerOrganizer +212B~~ **RESOLVED: FALSE POSITIVE.** The pinned
-   NewObject@0x8268f050 is a foreign virtual-base/LocalUser class; real FMO is
-   0x3c (100% dtor proof). Follow-ups: re-pin the true FMO NewObject address;
-   teach `newobject_sizeof_scan.py` to reject vbase-ctor callees.
+1. ~~FileMergerOrganizer +212B~~ **CLOSED (`4c11e0a7`).** 0x8268f050 =
+   `BandUser::NewLocalBandUser` (LocalBandUser, vbase, 0x110) — re-pointed;
+   FMO NewObject does not exist (no NEW_OBJ factory, sizeof 0x3c). Scanner now
+   rejects target-vbase/base-plain shape mismatches; re-run 38 scanned / 0
+   drift / 5 shape-rejected. Match-inert (A/B 0/0).
 2. ~~FlowSound pin~~ **DONE (net-0).** NewObject island carved from
    ContextChecker's span; zero yield because our build never emits
    `?NewObject@FlowSound` — the factory registration is unwired (that wiring is
@@ -135,7 +136,7 @@ path-limited land. Win classes that recurred (transferable taxonomy):
    UIComponent-chain layout, Flow ~0xD0 missing members, LyricPlate +0x40.
 6. ~~scanner re-run~~ **Lane C DONE (+26, `16816838`) — round-2 fixed point.**
    Re-run only after the named set grows ~100+ (marginal yield ~26/109).
-7. FMO re-pin + newobject_sizeof_scan vbase filter: agent in flight.
+7. ~~FMO re-pin + vbase filter~~ DONE (`4c11e0a7`, see lead 1).
 
 ## Tooling landed this session
 
