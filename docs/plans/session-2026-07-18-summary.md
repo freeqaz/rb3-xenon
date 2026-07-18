@@ -136,8 +136,13 @@ path-limited land. Win classes that recurred (transferable taxonomy):
    re-run as a crack wave. ~~Rnd vtable 3 extra slots~~ **DONE +2
    (`ad9376d5`)** — retail vtable ends at slot 73; DC3-only
    CreateLargeQuad/DrawLargeQuad/SetVertShaderTex gated RND_DC3_VIRTUAL;
-   DxRnd::UpdateScalerParams now paired = body-port lead. Remaining leads:
-   UIComponent-chain layout, Flow ~0xD0 missing members, LyricPlate +0x40.
+   DxRnd::UpdateScalerParams now paired = body-port lead. ~~Flow ~0xD0
+   missing members~~ **DEAD — MISPAIR** (0x822ad1b0 = BandSwatch::Load by
+   RTTI; the 0xD0 was vbase-offset delta 0x254−0x184 between unrelated
+   classes; DC3 Flow.h byte-identical to ours). Real finding: Flow.cpp's
+   splits.txt pin [0x822ACFE8,0x822AF178) is the BandSwatch/ColorPalette
+   TU — wrong-TU pin, re-pin dispatched; real Flow cluster ~0x822a6xxx.
+   Remaining leads: UIComponent-chain layout, LyricPlate +0x40 (in flight).
 6. ~~scanner re-run~~ **Lane C DONE (+26, `16816838`) — round-2 fixed point.**
    Re-run only after the named set grows ~100+ (marginal yield ~26/109).
 7. ~~FMO re-pin + vbase filter~~ DONE (`4c11e0a7`, see lead 1).
