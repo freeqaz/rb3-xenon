@@ -1574,8 +1574,10 @@ void Game::Poll() {
         // layout (currently Properties tail padding); read it by raw offset so
         // the emitted `lwz r11,0x48(this); lwz r3,0x14(r11); bl fn_826C91C8`
         // matches. fn_826C91C8 (0x826C91C8) computes a movie time-delta and
-        // drives MidiInstrument PressNote (autoplay guide).
-        if (mProperties.mAllowOverdrivePhrases) {
+        // drives MidiInstrument PressNote (autoplay guide). NOTE: this is
+        // NOT AllowOverdrivePhrases -- that's a separate field at Prop+0x5
+        // (this+0x31), proven by GetCommonPhraseID/IsSpotlightGem objdiff.
+        if (mProperties.mUnkTU5_movieSync) {
             extern void fn_826C91C8(void *, float);
             void *syncObj = *(void **)(*(char **)((char *)this + 0x48) + 0x14);
             fn_826C91C8(syncObj, songMs);

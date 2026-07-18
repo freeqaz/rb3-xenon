@@ -169,6 +169,12 @@ public:
     PerformanceData mPerformanceDataList[50]; // 0x788
     int unk6f70;
     int unk6f74;
+    // Extra filler int (offset-drift fix): mProfileAssets/mProfilePicture/
+    // mTourBand were all 4 bytes short vs retail (verified via
+    // Award::GrantAward `addi r24, 0x7c38` vs our prior 0x7c34, and
+    // BandProfile::GetBandLogoTex `lwz 0x7c80` vs our prior 0x7c7c — both
+    // off by the same +4, i.e. a genuine uniform shift, not a reordering).
+    int unk6f78pad;
     ProfileAssets mProfileAssets; // 0x6f78
     int unk6fb4;
     int unk6fb8;

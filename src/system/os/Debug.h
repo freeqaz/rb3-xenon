@@ -4,11 +4,15 @@
 #include <list>
 #include <string.h>
 
-class DataPoint;
 typedef void ExitCallbackFunc(void);
 typedef void FixedStringFunc(FixedString &);
 
-// size 0x134
+// size 0x100 (retail RB3-360). DC3 added a Crucible telemetry block
+// (mFailAppendCallbacks/mCrucibleCallback + mCrucibleHostname/App/Project,
+// mKernelVersion, unk124, mHostName) that RB3 never had -- confirmed against
+// rb3-Wii's Debug.h, which ends at mNotifyThreadMsg with the same 0x100 total,
+// and against the literal `new Debug()` allocation size embedded in
+// DataFile.cpp's DataWriteFile (retail: 0x100, ours was 0x144 before this).
 class Debug : public TextStream {
 public:
     enum ModalType {
@@ -34,18 +38,10 @@ private:
     ModalCallbackFunc *mModalCallback; // 0x1c
     std::list<ExitCallbackFunc *> mFailCallbacks; // 0x20
     std::list<ExitCallbackFunc *> mExitCallbacks; // 0x28
-    std::list<FixedStringFunc *> mFailAppendCallbacks; // 0x30
-    void (*mCrucibleCallback)(ModalType, DataPoint &); // 0x38
-    // 0x3c is a struct, StackData
-    unsigned int mFailThreadStack[50]; // starts at 0x3c
-    const char *mFailThreadMsg; // 0x104
-    const char *mNotifyThreadMsg; // 0x108
-    const char *mCrucibleHostname; // 0x10c
-    const char *mCrucibleApp; // 0x110
-    String mCrucibleProject; // 0x114
-    String mKernelVersion; // 0x11c
-    String unk124; // 0x124
-    String mHostName; // 0x12c
+    // 0x30 is a struct, StackData
+    unsigned int mFailThreadStack[50]; // starts at 0x30
+    const char *mFailThreadMsg; // 0xf8
+    const char *mNotifyThreadMsg; // 0xfc
 
 public:
     Debug();
@@ -56,9 +52,7 @@ public:
     void SetDisabled(bool);
     void SetTry(bool);
     void AddExitCallback(ExitCallbackFunc *func) { mExitCallbacks.push_front(func); }
-    void AddFailAppendCallback(FixedStringFunc *func) { mFailAppendCallbacks.push_front(func); }
     void RemoveExitCallback(ExitCallbackFunc *);
-    void AddFixedStrCallback(FixedStringFunc *func) { mFailAppendCallbacks.push_front(func); }
     bool CheckModalCallback(ModalCallbackFunc *func) { return mModalCallback == func; }
     ModalCallbackFunc *ModalCallback() const { return mModalCallback; }
     bool NoModal() const { return mNoModal; }
@@ -74,7 +68,6 @@ public:
     void Fail(const char *msg, void *);
     // rb3-Wii uses 1-arg Fail; inline wrapper for portability
     inline void Fail(const char *msg) { Fail(msg, nullptr); }
-    void DoCrucible(ModalType, const char *, void *);
     TextStream *Reflect() const { return mReflect; }
     TextStream *SetReflect(TextStream *ts) {
         TextStream *ret = mReflect;

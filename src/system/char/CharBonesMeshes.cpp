@@ -119,42 +119,39 @@ void CharBonesMeshes::PoseMeshes() {
 #endif
 
     // Set positions
-    auto& start = mStart;
-    Vector3 *pos = (Vector3 *)start;
-    auto& scaleOffset = mOffsets[TYPE_SCALE];
-    Vector3 *scaleOff = (Vector3 *)(start + scaleOffset);
+    Vector3 *scaleOff = (Vector3 *)(mStart + mOffsets[TYPE_SCALE]);
+    Vector3 *pos = (Vector3 *)mStart;
     for (; pos < scaleOff; pos++, ++curMesh) {
         (*curMesh)->SetLocalPos(*pos);
     }
 
     // Handle quaternions and rotations if we have enough meshes
-    auto& quatOffset = mOffsets[TYPE_QUAT];
     if (mCounts[TYPE_QUAT] < mMeshes.size()) {
         curMesh = mMeshes.begin() + mCounts[TYPE_QUAT];
 
         // Apply quaternion rotations
-        Hmx::Quat *quat = (Hmx::Quat *)(start + quatOffset);
-        Hmx::Quat *quatEnd = (Hmx::Quat *)(start + mOffsets[TYPE_ROTX]);
+        Hmx::Quat *quatEnd = (Hmx::Quat *)(mStart + mOffsets[TYPE_ROTX]);
+        Hmx::Quat *quat = (Hmx::Quat *)(mStart + mOffsets[TYPE_QUAT]);
         for (; quat < quatEnd; quat++, ++curMesh) {
             Normalize(*quat, *quat);
             MakeRotMatrix(*quat, (*curMesh)->DirtyLocalXfm().m);
         }
 
         // Apply X rotations
-        float *rotIt = (float *)(start + mOffsets[TYPE_ROTX]);
-        float *rotyOff = (float *)(start + mOffsets[TYPE_ROTY]);
+        float *rotIt = (float *)(mStart + mOffsets[TYPE_ROTX]);
+        float *rotyOff = (float *)(mStart + mOffsets[TYPE_ROTY]);
         for (; rotIt < rotyOff; rotIt++, ++curMesh) {
             MakeRotMatrixX(*rotIt, (*curMesh)->DirtyLocalXfm().m);
         }
 
         // Apply Y rotations
-        float *rotzOff = (float *)(start + mOffsets[TYPE_ROTZ]);
+        float *rotzOff = (float *)(mStart + mOffsets[TYPE_ROTZ]);
         for (; rotIt < rotzOff; rotIt++, ++curMesh) {
             MakeRotMatrixY(*rotIt, (*curMesh)->DirtyLocalXfm().m);
         }
 
         // Apply Z rotations
-        float *endOff = (float *)(start + mOffsets[TYPE_END]);
+        float *endOff = (float *)(mStart + mOffsets[TYPE_END]);
 #ifdef HX_NATIVE
         { static int sRotzLog = 0;
           if (sRotzLog < 3) {
@@ -176,15 +173,18 @@ void CharBonesMeshes::PoseMeshes() {
     // Handle scales if we have enough meshes
     if (mCounts[TYPE_SCALE] < mMeshes.size()) {
         curMesh = mMeshes.begin() + mCounts[TYPE_SCALE];
-        Vector3 *scale = (Vector3 *)(start + scaleOffset);
-        Vector3 *scaleEnd = (Vector3 *)(start + quatOffset);
+        Vector3 *scaleEnd = (Vector3 *)(mStart + mOffsets[TYPE_QUAT]);
+        Vector3 *scale = (Vector3 *)(mStart + mOffsets[TYPE_SCALE]);
         for (; scale < scaleEnd; scale++, ++curMesh) {
             Transform &xfm = (*curMesh)->DirtyLocalXfm();
             Vector3 scaleVec;
             MakeScale(xfm.m, scaleVec);
-            xfm.m.x *= scale->x / scaleVec.x;
-            xfm.m.y *= scale->y / scaleVec.y;
-            xfm.m.z *= scale->z / scaleVec.z;
+            float xRatio = scale->x / scaleVec.x;
+            xfm.m.x *= xRatio;
+            float yRatio = scale->y / scaleVec.y;
+            xfm.m.y *= yRatio;
+            float zRatio = scale->z / scaleVec.z;
+            xfm.m.z *= zRatio;
         }
     }
 }

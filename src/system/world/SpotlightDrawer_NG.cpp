@@ -526,12 +526,12 @@ void NgSpotlightDrawer::BlurRT(float amountX, float amountY) {
     do {
         float fi = (float)(int)i;
         Vector4 offset(fi * invW * amountX, fi * invH * amountY, 1.0f, 1.0f);
-        TheShaderMgr.SetPConstant((PShaderConstant)(0x8c + i), offset);
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x21 + i), offset);
 
         pWeight++;
         float wt = *pWeight;
         Vector4 weight(wt, wt, wt, wt);
-        TheShaderMgr.SetPConstant((PShaderConstant)(0x9c + i), weight);
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x31 + i), weight);
 
         i++;
     } while (i <= 2);
@@ -549,8 +549,8 @@ void NgSpotlightDrawer::BlurRT(float amountX, float amountY) {
     RndTex *srTex = SR().unk8;
     workMat->SetDiffuseTex(srTex);
     workMat->SetZMode(kZModeDisable);
-    workMat->SetTexWrap(kTexWrapClamp);
     workMat->SetBlend(BaseMaterial::kBlendSrc);
+    workMat->SetTexWrap(kTexWrapClamp);
 
     TheNgRnd.DrawRect(rect, workMat, (ShaderType)1, Hmx::Color(), 0, 0);
 

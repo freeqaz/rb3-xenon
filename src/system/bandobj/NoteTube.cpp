@@ -76,12 +76,12 @@ void NoteTube::CreateMeshes() {
             }
         }
         if (mFrontPlate && mFrontMat) {
-            if (mFrontPlate->mNumVerts == 0)
+            if (mFrontPlate->NoVerts())
                 InitializePlate(mFrontPlate, mFrontMat, mFrontParent);
             DrawToPlate(mFrontPlate);
         }
         if (mBackPlate && mBackMat) {
-            if (mBackPlate->mNumVerts == 0)
+            if (mBackPlate->NoVerts())
                 InitializePlate(mBackPlate, mBackMat, mBackParent);
             DrawToPlate(mBackPlate);
         }
@@ -424,7 +424,6 @@ void TubePlate::AllocateVerts(int num, bool warn) {
     RndMesh::VertVector &verts = mMesh->Verts();
     int newsize = num + verts.size();
     verts.resize(newsize);
-    mNumVerts += num;
 }
 
 void TubePlate::AllocateFaces(int num, bool warn) {
@@ -479,7 +478,6 @@ void TubePlate::Reset() {
     mInvalidateMs = FLT_MAX;
     mMatSize = 0;
     mDeploy = false;
-    mNumVerts = 0;
 }
 
 String TubePlate::GetMatName() {

@@ -1405,32 +1405,32 @@ DataNode BandWardrobe::OnSortTargets(DataArray *da) {
 }
 
 BEGIN_PROPSYNCS(BandWardrobe)
-    SYNC_PROP(genre, mGenre)
-    SYNC_PROP(tempo, mTempo)
-    SYNC_PROP(vocal_gender, mVocalGender)
-    SYNC_PROP_SET(play_mode, GetPlayMode(), SetPlayMode(_val.Sym(), 0))
-    SYNC_PROP(shot_set_play_mode, mShotSetPlayMode)
-    SYNC_PROP(play_shot_5, mPlayShot5)
-    SYNC_PROP_MODIFY(
+    SYNC_PROP_STATIC(genre, mGenre)
+    SYNC_PROP_STATIC(tempo, mTempo)
+    SYNC_PROP_STATIC(vocal_gender, mVocalGender)
+    SYNC_PROP_SET_STATIC(play_mode, GetPlayMode(), SetPlayMode(_val.Sym(), 0))
+    SYNC_PROP_STATIC(shot_set_play_mode, mShotSetPlayMode)
+    SYNC_PROP_STATIC(play_shot_5, mPlayShot5)
+    SYNC_PROP_MODIFY_STATIC(
         player0_forced_focus, mPlayerForcedFocuses[0], SyncVignetteInterest(0)
     )
-    SYNC_PROP_MODIFY(
+    SYNC_PROP_MODIFY_STATIC(
         player1_forced_focus, mPlayerForcedFocuses[1], SyncVignetteInterest(1)
     )
-    SYNC_PROP_MODIFY(
+    SYNC_PROP_MODIFY_STATIC(
         player2_forced_focus, mPlayerForcedFocuses[2], SyncVignetteInterest(2)
     )
-    SYNC_PROP_MODIFY(
+    SYNC_PROP_MODIFY_STATIC(
         player3_forced_focus, mPlayerForcedFocuses[3], SyncVignetteInterest(3)
     )
-    SYNC_PROP_MODIFY(player0_enable_blinks, mPlayerEnableBlinks[0], SyncEnableBlinks(0))
-    SYNC_PROP_MODIFY(player1_enable_blinks, mPlayerEnableBlinks[1], SyncEnableBlinks(1))
-    SYNC_PROP_MODIFY(player2_enable_blinks, mPlayerEnableBlinks[2], SyncEnableBlinks(2))
-    SYNC_PROP_MODIFY(player3_enable_blinks, mPlayerEnableBlinks[3], SyncEnableBlinks(3))
-    SYNC_PROP_SET(player0_force_blink, 0, if (_val.Int()) ForceBlink(0))
-    SYNC_PROP_SET(player1_force_blink, 0, if (_val.Int()) ForceBlink(1))
-    SYNC_PROP_SET(player2_force_blink, 0, if (_val.Int()) ForceBlink(2))
-    SYNC_PROP_SET(player3_force_blink, 0, if (_val.Int()) ForceBlink(3))
-    SYNC_PROP(demand_load, mDemandLoad)
-    SYNC_PROP(dir, mVenueDir)
+    SYNC_PROP_MODIFY_STATIC(player0_enable_blinks, mPlayerEnableBlinks[0], SyncEnableBlinks(0))
+    SYNC_PROP_MODIFY_STATIC(player1_enable_blinks, mPlayerEnableBlinks[1], SyncEnableBlinks(1))
+    SYNC_PROP_MODIFY_STATIC(player2_enable_blinks, mPlayerEnableBlinks[2], SyncEnableBlinks(2))
+    SYNC_PROP_MODIFY_STATIC(player3_enable_blinks, mPlayerEnableBlinks[3], SyncEnableBlinks(3))
+    SYNC_PROP_SET_STATIC(player0_force_blink, 0, if (_val.Int()) ForceBlink(0))
+    SYNC_PROP_SET_STATIC(player1_force_blink, 0, if (_val.Int()) ForceBlink(1))
+    SYNC_PROP_SET_STATIC(player2_force_blink, 0, if (_val.Int()) ForceBlink(2))
+    SYNC_PROP_SET_STATIC(player3_force_blink, 0, if (_val.Int()) ForceBlink(3))
+    SYNC_PROP_STATIC(demand_load, mDemandLoad)
+    SYNC_PROP_STATIC(dir, mVenueDir)
 END_PROPSYNCS

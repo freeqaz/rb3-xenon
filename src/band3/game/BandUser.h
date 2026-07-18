@@ -24,11 +24,11 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual ~BandUser();
     virtual bool IsNullUser() const { return false; }
+    virtual void UnkTU5Virtual() {} // TODO: TU5-inserted virtual (confirmed via Ghidra decompile of retail TrackPanel::CreateTracks: IsParticipating() call resolves to vtable+0x8, not +0x4, so this slot precedes IsParticipating, not GetLocalBandUser; still nets the same +4 shift for everything after it, incl. GetLocalBandUser 0x18->0x1c)
     virtual bool IsParticipating() const { return mParticipating; }
     virtual int GetCurrentInstrumentCareerScore() const = 0;
     virtual int GetCurrentHardcoreIconLevel() const = 0;
     virtual int GetCymbalConfiguration() const = 0;
-    virtual void UnkTU5Virtual() {} // TODO: TU5-inserted virtual (vtable +0x18; shifts GetLocalBandUser 0x18->0x1c)
     virtual LocalBandUser *GetLocalBandUser() = 0;
     virtual LocalBandUser *GetLocalBandUser() const = 0;
     virtual RemoteBandUser *GetRemoteBandUser() = 0;

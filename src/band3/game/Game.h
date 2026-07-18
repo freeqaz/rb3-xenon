@@ -53,7 +53,14 @@ public:
         bool mInTrainer; // 0x0
         bool mInDrumTrainer; // 0x1
         bool mInPracticeMode; // 0x2
-        bool mAllowOverdrivePhrases; // 0x3
+        // Prop+0x3 (this+0x2f): NOT AllowOverdrivePhrases (that field is at
+        // Prop+0x5 / this+0x31 -- see GetCommonPhraseID/IsSpotlightGem/etc,
+        // both proven by objdiff diff_arg mismatches: base wanted 0x31, our
+        // header previously gave 0x2f here). This slot is some other
+        // TU5-added bool; Game::Poll's movie-sync block reads exactly this
+        // address for an unidentified condition (kept as a raw placeholder
+        // there -- see mUnkTU5_movieSync usage). TODO: identify real meaning.
+        bool mUnkTU5_movieSync; // 0x3 (was misnamed mAllowOverdrivePhrases)
         // TU5: two bools inserted here (Properties 25->29 bytes). Proven by
         // CanUserPause reading mEndWithSong at Prop+0x6 (0x32) vs base 0x30,
         // and retail Poll reading a bool at Prop+0x4 (0x30) where our source
@@ -61,7 +68,11 @@ public:
         // also re-aligns mSongPos 0x48->0x4c, giving every post-Properties
         // member the observed +4 shift. TODO: identify (mIsPlayingDemo?).
         bool mUnkTU5_prop4; // 0x4 (new in TU5)
-        bool mUnkTU5_prop5; // 0x5 (new in TU5)
+        // This is the REAL AllowOverdrivePhrases (proven by GetCommonPhraseID
+        // and GemManager::IsSpotlightGem objdiff: both want a byte load at
+        // this+0x31 = Prop+0x5, not the old Prop+0x3). Previously named
+        // mUnkTU5_prop5 as an unidentified TU5 tail bool; repurposed here.
+        bool mAllowOverdrivePhrases; // 0x5 (was mUnkTU5_prop5)
         bool mEndWithSong; // 0x6 (was 0x4)
         bool mForceUseCymbals; // 0x5
         bool mForceDontUseCymbals; // 0x6

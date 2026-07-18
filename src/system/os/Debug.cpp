@@ -96,8 +96,8 @@ void DebugModal(Debug::ModalType &ty, FixedString &str, bool b3) {
 
 Debug::Debug()
     : mNoDebug(0), mFailing(0), mExiting(0), mNoTry(0), mNoModal(0), mTry(0), mLog(0),
-      mAlwaysFlush(0), mReflect(0), mModalCallback(DebugModal), mCrucibleCallback(0),
-      mFailThreadMsg(0), mNotifyThreadMsg(0), mCrucibleHostname(0), mCrucibleApp(0) {}
+      mAlwaysFlush(0), mReflect(0), mModalCallback(DebugModal), mFailThreadMsg(0),
+      mNotifyThreadMsg(0) {}
 
 void Debug::RemoveExitCallback(ExitCallbackFunc *func) {
     if (!mExiting) {
@@ -285,14 +285,6 @@ void Debug::Init() {
     SetUnhandledExceptionFilter(&HmxGlobalHandler);
 #endif
     mFailing = false;
-    DM_SYSTEM_INFO sysInfo;
-    unsigned char pad[12];
-    (void)pad;
-    sysInfo.SizeOfStruct = 0x20;
-    if (DmGetSystemInfo(&sysInfo) >= 0) {
-        mKernelVersion = MakeString("%d.%d", sysInfo.KernelVersion.Major, sysInfo.KernelVersion.Minor);
-    }
-    mHostName = NetworkSocket::GetHostName();
 }
 
 const char *GetExpCode(int code) {
@@ -381,7 +373,6 @@ const char *GetExpCode(int code) {
 
 void Debug::Modal(ModalType &type, const char *msg, void *addr) {
     String msgCopy(msg);
-    DoCrucible(type, msgCopy.c_str(), nullptr);
     StackString<4096> modalMsg(msgCopy.c_str());
     StackString<256> shortMsg;
     StackString<512> dataCallstack;
@@ -409,15 +400,16 @@ void Debug::Modal(ModalType &type, const char *msg, void *addr) {
                 PlatformSymbol(TheLoadMgr.GetPlatform())
             );
             modalMsg += MakeString("\nLang: %s   SystemConfig: %s", SystemLanguage(), config);
+            // Retail RB3-360 has no live kernel-version query here (that's a DC3
+            // telemetry addition RB3 never had); rb3-Wii's equivalent Modal() body
+            // just prints a static "n/a" placeholder for SDK.
+            String sdk("n/a");
             modalMsg += MakeString(
                 "\nUptime: %.2f hrs   UsingCD: %s   SDK: %s",
                 SystemMs() * (1.0 / 3600000.0),
                 UsingCD() ? "true" : "false",
-                mKernelVersion
+                sdk
             );
-            FOREACH (it, mFailAppendCallbacks) {
-                (*it)(modalMsg);
-            }
             AppendCheatsLog(shortMsg);
             modalMsg += shortMsg.c_str();
             DataAppendStackTrace(dataCallstack);
@@ -442,100 +434,4 @@ void Debug::Modal(ModalType &type, const char *msg, void *addr) {
         }
         Exit(1, true);
     }
-}
-
-void Debug::DoCrucible(ModalType type, const char *msg, void *addr) {
-    if (!mCrucibleHostname) {
-        if (SystemConfig()) {
-            DataArray *cfg = SystemConfig()->FindArray("crucible", false);
-            if (cfg) {
-                mCrucibleHostname = cfg->FindArray("hostname", true)->Str(1);
-                mCrucibleApp = cfg->FindArray("app", true)->Str(1);
-                mCrucibleProject = cfg->FindArray("project", true)->Str(1);
-            }
-        }
-        if (!mCrucibleHostname) {
-            mCrucibleHostname = DevHostname("crucible");
-        }
-    }
-    DataPoint mainPoint;
-    DataPoint detailPoint;
-    mainPoint.AddPair("msg", DataNode(msg));
-    const char *typeStr;
-    if (type == kModalFail) {
-        typeStr = "crash";
-    } else if (type == kModalNotify) {
-        typeStr = "notify";
-    } else {
-        typeStr = "warn";
-    }
-    mainPoint.AddPair("type", DataNode(typeStr));
-    mainPoint.AddPair("project", DataNode(mCrucibleProject.c_str()));
-    mainPoint.AddPair("platform", DataNode(PlatformSymbol(TheLoadMgr.GetPlatform())));
-    mainPoint.AddPair("source", DataNode(mHostName));
-    {
-        String config;
-        String version;
-        if (SystemConfig()) {
-            config = SystemConfig()->File();
-            SystemConfig()->FindData("version", version, false);
-        } else {
-            config = "<unknown>";
-        }
-        detailPoint.AddPair("config", DataNode(config));
-        mainPoint.AddPair("version", DataNode(version));
-    }
-    detailPoint.AddPair("uptime", DataNode(SystemMs()));
-    const char *exeName = "";
-    if (!TheSystemArgs.empty()) {
-        exeName = TheSystemArgs.front();
-    }
-    StackString<256> exePath(exeName);
-    StackString<256> exeBase(exePath.c_str());
-    StackString<256> baseName(FileGetBase(exeBase.c_str()));
-    exeBase = baseName;
-    if (strlen(exeBase.c_str()) > 3) {
-        if (exeBase[strlen(exeBase.c_str()) - 2] == '_') {
-            exeBase[strlen(exeBase.c_str()) - 2] = '\0';
-        }
-    }
-    exePath.ReplaceAll('\\', '/');
-    detailPoint.AddPair("path", DataNode(exePath.c_str()));
-    const char *appName = mCrucibleApp;
-    if (!mCrucibleApp) {
-        appName = exeBase.c_str();
-    }
-    mainPoint.AddPair("application", DataNode(appName));
-    StackString<256> argsStr;
-    for (unsigned int i = 0; i < TheSystemArgs.size(); i++) {
-        StackString<256> arg(TheSystemArgs[i]);
-        arg.ReplaceAll('\\', '/');
-        argsStr += arg.c_str();
-        argsStr += "\r\n";
-    }
-    detailPoint.AddPair("args", DataNode(argsStr.c_str()));
-    detailPoint.AddPair("opsys", DataNode(mKernelVersion));
-    mainPoint.AddPair("user", DataNode(""));
-    if (type == kModalFail) {
-        StackString<512> dataCallstack;
-        DataAppendStackTrace(dataCallstack);
-        StackString<2048> callstack;
-        AppendStackTrace(callstack, addr);
-        StackString<3096> stackTrace;
-        stackTrace += "\r\n";
-        stackTrace += callstack.c_str();
-        stackTrace += dataCallstack.c_str();
-        detailPoint.AddPair("stacktrace", DataNode(stackTrace.c_str()));
-    }
-    StackString<256> cheatsMsg;
-    AppendCheatsLog(cheatsMsg);
-    if (*cheatsMsg.c_str() != '\0') {
-        detailPoint.AddPair("history", DataNode(cheatsMsg.c_str()));
-    }
-    if (mCrucibleCallback) {
-        mCrucibleCallback(type, detailPoint);
-    }
-    String jsonStr;
-    detailPoint.ToJSON(jsonStr);
-    mainPoint.AddPair("data", DataNode(jsonStr));
 }

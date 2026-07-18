@@ -23,7 +23,7 @@ public:
     void SetParent(RndGroup *grp) { mParent = grp; }
     void SetBeginX(float x) { mBeginX = x; }
     void SetWidthX(float x) { mWidthX = x; }
-    bool NoVerts() const { return mNumVerts == 0; }
+    bool NoVerts() const { return mMesh->Verts().empty(); }
     bool Baked() const { return mBaked; }
     float InvalidateMs() const { return mInvalidateMs; }
     bool Deploy() const { return mDeploy; }
@@ -40,7 +40,6 @@ public:
     float mInvalidateMs; // 0x1c
     float mMatSize; // 0x20
     bool mDeploy; // 0x24
-    int mNumVerts; // 0x28
 };
 
 class NoteTube : public Hmx::Object {
