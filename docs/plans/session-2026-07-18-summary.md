@@ -107,20 +107,26 @@ path-limited land. Win classes that recurred (transferable taxonomy):
 - STL-template near-misses (261 fns: `_M_fill_insert`/`push_back`/`_Rb_tree`/
   `insert_unique`) = ICF pairing artifacts, excluded from all sweeps.
 
-## Banked leads (next session)
+## Banked leads (updated after opus wave 9, `07409503`, main 17,340)
 
-1. FileMergerOrganizer +212B (dc3 dropped ~208 retail bytes — structural RE;
-   unit at 94%).
-2. FlowSound +16 pad: TU compiled + map entry exists but **no splits.txt
-   pin** — pin the unit, then pad.
-3. "Stub (High)" mispinned Flow-family fns (`??_GFlowNode`,
-   FlowTrigger/FlowQueueable StaticClassName, `??1FlowEventListener`,
-   `??_GFlowSetProperty`) — objdiff associates them with unrelated units;
-   splits/attribution bug worth a look.
-4. 90-99 band (242 non-STL named fns / 143KB) — body-port + permuter lane.
-5. ~5,300 identification-nomatch = genuine body divergence.
-6. Re-run the three identification scanners after big body-port waves (each
-   landing strengthens the reloc-name resolver).
+1. ~~FileMergerOrganizer +212B~~ **RESOLVED: FALSE POSITIVE.** The pinned
+   NewObject@0x8268f050 is a foreign virtual-base/LocalUser class; real FMO is
+   0x3c (100% dtor proof). Follow-ups: re-pin the true FMO NewObject address;
+   teach `newobject_sizeof_scan.py` to reject vbase-ctor callees.
+2. ~~FlowSound pin~~ **DONE (net-0).** NewObject island carved from
+   ContextChecker's span; zero yield because our build never emits
+   `?NewObject@FlowSound` — the factory registration is unwired (that wiring is
+   the surviving lead, non-deterministic).
+3. ~~Mispinned Flow-family 5~~ **RESOLVED: COMDAT-placement wall.** VAs and map
+   entries already correct; retail's linker placed the weak thunks in different
+   TUs than our per-TU COMDAT emission. Nothing deterministic to fix.
+4. ~~90-99 band top~~ **CLOSED for crack waves** (9/9 Opus WALL verdicts at
+   98.7-98.9; new named wall class: MSVC strcpy-intrinsic terminator test
+   `cmplwi` vs `extsb.` — not source-expressible). Permuter BANNED (user
+   directive 2026-07-18: low yield + grinds the box).
+5. ~5,300 identification-nomatch = genuine body divergence (Lane B in flight).
+6. Re-run the three identification scanners after big body-port waves (Lane C
+   in flight).
 
 ## Tooling landed this session
 
