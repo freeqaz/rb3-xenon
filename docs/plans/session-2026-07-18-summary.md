@@ -1,7 +1,8 @@
 # Session summary — 2026-07-18 (near-miss cracks + identification stack)
 
-**Result: main 15,364 → 17,403 strict matched (+2,039, ZERO regressions across
-18 landed batches).** Every landing was gated by an isolated verify-worktree
+**Result: main 15,364 → 17,412 strict matched (+2,048 across 21 landed
+batches; sole "losses" = 16 spurious Flow-credited stubs re-credited honestly
+to the new BandSwatch unit).** Every landing was gated by an isolated verify-worktree
 whole-binary A/B (strict SET delta keyed `(unit, name)` + fuzzy sum; `LOST`
 must be empty). One agent-recommended change was rejected by that gate (see
 "Gate saves" below) — the process worked exactly as designed.
@@ -27,7 +28,9 @@ must be empty). One agent-recommended change was rejected by that gate (see
 | lane-C scanner-stack round 2 (fixed point) | `16816838` | +26 | 17,366 |
 | lane-B nomatch near-pair vein (drained) | `29cf4bd5` | +35 | 17,401 |
 | FMO mis-pin fix + scanner vbase filter | `4c11e0a7` | +0 | 17,401 |
-| Rnd vtable residual +0xC (3 DC3 virtuals gated) | `ad9376d5` | +2 | **17,403** |
+| Rnd vtable residual +0xC (3 DC3 virtuals gated) | `ad9376d5` | +2 | 17,403 |
+| naming wave (vtable positional alignment, +110 names) | `034a448a` | +6 | 17,409 |
+| Flow.cpp re-pin → BandSwatch unit wired | `88bd166b` | +3 | **17,412** |
 
 (Plus docs-only: PlatformMgr dead-lever banner `92dad991`, scoreboard updates.)
 
