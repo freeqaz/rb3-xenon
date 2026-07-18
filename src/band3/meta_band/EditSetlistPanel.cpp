@@ -629,10 +629,10 @@ END_HANDLERS
 #pragma pop
 
 BEGIN_PROPSYNCS(EditSetlistPanel)
-    SYNC_PROP_SET(setlist_name, mSetlistName.c_str(), mSetlistName = _val.Str())
-    SYNC_PROP_SET(
+    SYNC_PROP_SET_STATIC(setlist_name, mSetlistName.c_str(), mSetlistName = _val.Str())
+    SYNC_PROP_SET_STATIC(
         setlist_desc, mSetlistDescription.c_str(), mSetlistDescription = _val.Str()
     )
-    SYNC_PROP_SET(setlist_inst, unk50, unk50 = (ScoreType)_val.Int())
-    SYNC_PROP_SET(setlist_seconds, unk54 * 86400, unk54 = _val.Int() / 86400)
+    SYNC_PROP_SET_STATIC(setlist_inst, unk50, unk50 = (ScoreType)_val.Int())
+    SYNC_PROP_SET_STATIC(setlist_seconds, unk54 * 86400, unk54 = _val.Int() / 86400)
 END_PROPSYNCS

@@ -42,7 +42,7 @@ void StoreMainPanel::FinishLoad() {
         RndMat *mat = mDir->Find<RndMat>(MakeString("cover_art_%02i.mat", i + 1), true);
         mCoverArtMats[i] = mat;
         mat->SetDiffuseTex(mNoneTex);
-        mat->SetShaderVariation((ShaderVariation)(mat->GetShaderVariation() | 2));
+        mat->MarkDirty(2);
     }
     mLabel1 = mDir->Find<AppLabel>("text_line_1.lbl", true);
     mLabel2 = mDir->Find<AppLabel>("text_line_2.lbl", true);
@@ -55,6 +55,8 @@ void StoreMainPanel::FinishLoad() {
     mLabel1->SetTextToken(gNullStr);
     mLabel2->SetTextToken(gNullStr);
     MILO_ASSERT(TypeDef(), 0x57);
+    static Symbol display_rate("display_rate");
+    static Symbol crossfade_duration("crossfade_duration");
     mDisplayRate = TypeDef()->FindArray(display_rate, true)->Float(1);
     mCrossfadeDuration = TypeDef()->FindArray(crossfade_duration, true)->Float(1);
     ParseConfigData();
@@ -62,7 +64,7 @@ void StoreMainPanel::FinishLoad() {
 
 void StoreMainPanel::Poll() {
     StoreArtLoaderPanel::Poll();
-    if (mNewReleaseList.size() == 0)
+    if (mNewReleaseList.empty())
         return;
     if (!unk6c) {
         if (IsAllArtLoadedOrFailed()) {
