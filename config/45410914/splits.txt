@@ -323,7 +323,9 @@ PatchDir.cpp:
 	.text       start:0x82277AF0 end:0x82279658
 
 StarDisplay.cpp:
+	.pdata      start:0x821FC4B0 end:0x821FC4B8
 	.pdata      start:0x821FC5A0 end:0x821FC6C8
+	.text       start:0x8231CA50 end:0x8231CBBC
 	.text       start:0x8231D670 end:0x8231E8EC
 
 StreakMeter.cpp:

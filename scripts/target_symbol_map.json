@@ -1,4 +1,8 @@
 {
+ "0x8227cb48": "?Load@BandCharacter@@UAAXAAVBinStream@@@Z",
+ "0x8231ca50": "??0StarDisplay@@QAA@XZ",
+ "0x8231e5e8": "?Load@StarDisplay@@UAAXAAVBinStream@@@Z",
+ "0x8231e660": "?PostLoad@StarDisplay@@UAAXAAVBinStream@@@Z",
  "0x823a2200": "??$?5VHide@CharMeshHide@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VHide@CharMeshHide@@@@@Z",
  "0x823dcde0": "??$?5V?$ObjOwnerPtr@VWaypoint@@@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@@Z",
  "0x824b4790": "??$?5USpotlightEntry@LightPreset@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@USpotlightEntry@LightPreset@@@@@Z",
