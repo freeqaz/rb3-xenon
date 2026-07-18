@@ -285,7 +285,7 @@ bool XboxContentMgr::DeleteContent(Symbol contentName) {
         if (contentName == (*it)->FileName()) {
             notFound = false;
             (*it)->Delete();
-            mState = kContentMgrState7;
+            mState = kContentMgrState6;
             mDirty = true;
             break;
         }

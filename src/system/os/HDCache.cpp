@@ -16,7 +16,7 @@
 HDCache TheHDCache;
 
 HDCache::HDCache()
-    : mBlockState(0), mWriteFileIdx(0), mWriteBlock(-1), mWritingHeader(false),
+    : mBlockState(0), mWriteFileIdx(0), mWriteBlock(-1),
       mReadFileIdx(0), mDirtyCache(0), mLastHdrWriteMs(-1), mLastCacheWriteMs(-1),
       mLockId(-1), mLockCount(0), mCritSec(nullptr), mHdrIdx(0), mHdrBuf(nullptr),
       unk64(false) {}

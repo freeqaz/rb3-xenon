@@ -1878,7 +1878,9 @@ BinStream &operator>>(BinStreamRev &bs, ObjVector<T> &vec) {
     for (ObjVector<T>::iterator it = vec.begin(); it != vec.end(); it++) {
         bs >> *it;
     }
-    return bs.stream;
+    // TU5 returns the rev wrapper itself (BinStreamRev base@0 upcast → `mr r3,&bs`),
+    // not the inner stream member (`lwz r3,0x14`). Faithful + safe (base@0 identity).
+    return bs;
 }
 
 template <class T>
@@ -1940,7 +1942,9 @@ BinStream &operator>>(BinStreamRev &bs, ObjList<T> &oList) {
     for (std::list<T>::iterator it = oList.begin(); it != oList.end(); ++it) {
         bs >> *it;
     }
-    return bs.stream;
+    // TU5 returns the rev wrapper itself (BinStreamRev base@0 upcast → `mr r3,&bs`),
+    // not the inner stream member (`lwz r3,0x14`). Faithful + safe (base@0 identity).
+    return bs;
 }
 
 template <class T>

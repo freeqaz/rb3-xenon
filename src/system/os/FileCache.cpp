@@ -146,7 +146,7 @@ int FileCacheFile::Seek(int offset, int whence) {
     }
     int sz = mParent->Size();
     // Clamp position to [0, size]
-    mPos = (ret > sz) ? sz : ((ret < 0) ? 0 : ret);
+    mPos = (ret < 0) ? 0 : ((ret > sz) ? sz : ret);
     return mPos;
 }
 

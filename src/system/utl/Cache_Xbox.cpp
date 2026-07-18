@@ -226,7 +226,7 @@ bool CacheXbox::GetDirectoryAsync(
         return false;
     } else {
         MILO_ASSERT(mThreadStr.empty(), 0x108);
-        mThreadStr = mCacheID.GetCacheSearchPath(cc);
+        mThreadStr = mCacheID.GetCachePath(cc);
         MILO_ASSERT(mCacheDirList == NULL, 0x10B);
         mCacheDirList = entries;
         mLastResult = kCache_NoError;

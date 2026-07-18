@@ -60,6 +60,7 @@ public:
     void RemoveFader(Fader *);
     const FilePath Path() const { return mMoggFile; }
     StandardStream *GetStream() const { return mStream; }
+    bool HasStream() const { return mStream; }
     int NumChannels() const { return mNumChannels; }
 
     NEW_OVERLOAD;

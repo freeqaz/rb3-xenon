@@ -265,7 +265,8 @@ Symbol Campaign::GetCampaignLevelForUser(LocalBandUser *i_pUser) const {
 
 bool Campaign::IsUserOnLastCampaignLevel(LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0x1CA);
-    return IsLastCampaignLevel(GetCampaignLevelForUser(i_pUser));
+    Symbol level = GetCampaignLevelForUser(i_pUser);
+    return IsLastCampaignLevel(level);
 }
 
 bool Campaign::IsPrimaryUserOnLastCampaignLevel() {

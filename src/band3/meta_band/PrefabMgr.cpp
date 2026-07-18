@@ -181,7 +181,8 @@ PrefabChar *PrefabMgr::GetPrefab(Symbol s) {
     for (int i = 0; i < mPrefabs.size(); i++) {
         PrefabChar *pPrefabChar = mPrefabs[i];
         MILO_ASSERT(pPrefabChar, 0x10C);
-        if (pPrefabChar->GetPrefabName() == s)
+        Symbol name = pPrefabChar->GetPrefabName();
+        if (name == s)
             return pPrefabChar;
     }
     return nullptr;

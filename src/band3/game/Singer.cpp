@@ -423,7 +423,7 @@ void Singer::UpdatePitchDeviation(float pitch) {
     float mean = mPitchDeviationMean;
     float newMean = mean + (pitch - mean) / (float)count;
     mPitchDeviationMean = newMean;
-    mPitchDeviationDev = dev + (std::fabs(pitch - newMean) - dev) / (float)count;
+    mPitchDeviationDev = dev + (fabsf(pitch - newMean) - dev) / (float)count;
 }
 
 float Singer::GetPartPercentage(int part) const {

@@ -12,7 +12,8 @@
 
 #pragma region SfxInst
 
-SfxInst::SfxInst(Sfx *sfx) : SeqInst(sfx), mSfx(sfx), mStartProgress(0) {
+SfxInst::SfxInst(Sfx *sfx)
+    : SeqInst(sfx), mMoggClips(this, kObjListNoNull), mStartProgress(0) {
     FOREACH (it, sfx->SfxMaps()) {
         SampleInst *inst = nullptr;
         if (it->Sample()) {
@@ -30,10 +31,8 @@ SfxInst::SfxInst(Sfx *sfx) : SeqInst(sfx), mSfx(sfx), mStartProgress(0) {
             mSamples.push_back(inst);
         }
     }
-    FOREACH (it, mSfx->MoggClipMaps()) {
-        if (it->GetMoggClip()) {
-            it->GetMoggClip()->SetSend(sfx->GetSend());
-        }
+    FOREACH (it, sfx->MoggClipMaps()) {
+        mMoggClips.push_back(&*it);
     }
 }
 
@@ -43,8 +42,8 @@ void SfxInst::Stop() {
     FOREACH (it, mSamples) {
         (*it)->Stop(false);
     }
-    FOREACH (it, mSfx->MoggClipMaps()) {
-        MoggClip *clip = it->GetMoggClip();
+    FOREACH (it, mMoggClips) {
+        MoggClip *clip = (*it)->GetMoggClip();
         if (clip) {
             clip->Stop(false);
         }
@@ -56,10 +55,12 @@ bool SfxInst::IsRunning() {
         if ((*it)->IsPlaying())
             return true;
     }
-    FOREACH (it, mSfx->MoggClipMaps()) {
-        MoggClip *clip = it->GetMoggClip();
-        if (clip && clip->GetStream()) {
-            return true;
+    FOREACH (it, mMoggClips) {
+        MoggClipMap *moggClipMap = *it;
+        MoggClip *clip = moggClipMap->GetMoggClip();
+        if (clip) {
+            if (clip->HasStream())
+                return true;
         }
     }
     return false;
@@ -69,8 +70,8 @@ void SfxInst::UpdateVolume() {
     FOREACH (it, mSamples) {
         (*it)->SetVolume(mVolume + mOwner->Faders().GetVal());
     }
-    FOREACH (it, mSfx->MoggClipMaps()) {
-        MoggClip *clip = it->GetMoggClip();
+    FOREACH (it, mMoggClips) {
+        MoggClip *clip = (*it)->GetMoggClip();
         if (clip) {
             // rb3-Wii calls MoggClip::SetControllerVolume here; RB3-360's xenon
             // MoggClip lacks it (value-stored MoggClipMap drift) -> SetVolume.
@@ -92,11 +93,14 @@ void SfxInst::StartImpl() {
         (*it)->SetStartProgress(mStartProgress);
         (*it)->Play(0);
     }
-    FOREACH (it, mSfx->MoggClipMaps()) {
-        MoggClip *clip = it->GetMoggClip();
+    FOREACH (it, mMoggClips) {
+        MoggClipMap *moggClipMap = *it;
+        MoggClip *clip = moggClipMap->GetMoggClip();
         if (clip) {
-            clip->SetVolume(it->Volume());
-            clip->SetupPanInfo(it->Pan(), it->PanWidth(), it->Stereo());
+            clip->SetVolume(moggClipMap->Volume());
+            clip->SetupPanInfo(
+                moggClipMap->Pan(), moggClipMap->PanWidth(), moggClipMap->Stereo()
+            );
             clip->Play(0);
         }
     }
@@ -106,8 +110,8 @@ void SfxInst::Pause(bool b1) {
     FOREACH (it, mSamples) {
         (*it)->Pause(b1);
     }
-    FOREACH (it, mSfx->MoggClipMaps()) {
-        MoggClip *clip = it->GetMoggClip();
+    FOREACH (it, mMoggClips) {
+        MoggClip *clip = (*it)->GetMoggClip();
         if (clip) {
             clip->Pause(b1);
         }

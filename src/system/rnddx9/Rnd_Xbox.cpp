@@ -580,7 +580,10 @@ RndTex *DxRnd::GetCurrentFrameTex(bool resolvePreProcess) {
 
 bool DxRnd::CanModal(Debug::ModalType t) {
     if (mTilingActive) {
-        if (t == Debug::kModalFail) {
+        // Retail tests t as a byte (clrlwi. r11,r4,24), allowing EndTiling for any
+        // non-kModalWarn modal (notify/fail), not just kModalFail. The byte cast is
+        // what reproduces the low-8-bit truthiness test.
+        if ((unsigned char)t) {
             EndTiling(FrontBuffer(), 0);
         } else {
             return false;

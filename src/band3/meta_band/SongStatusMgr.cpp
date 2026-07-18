@@ -731,7 +731,7 @@ int SongStatusMgr::CalculateTotalStars(ScoreType ty) const {
 
 int SongStatusMgr::GetPossibleStars(ScoreType ty, Symbol s) const {
     int total = GetTotalSongs(ty, s);
-    return Min(total * 5, 5000);
+    return Min(total * 5, 15000);
 }
 
 int SongStatusMgr::GetTotalSongs(ScoreType ty, Symbol s) const {

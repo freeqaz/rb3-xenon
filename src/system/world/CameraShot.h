@@ -279,12 +279,12 @@ protected:
     /** "List of objects to draw after post-processing" */
     ObjPtrList<RndDrawable> mPostProcOverrides; // 0x190
     ObjPtr<RndDir> mParentDir; // 0x1a4
-    ObjVector<CamShotCrowd> mCrowds; // 0x1b8
     /** "Force the croawd into a particular state".
         Options are: (none bad ok great
             skills_bad skills_ok skills_great
             realtime_idle realtime_bad realtime_ok realtime_great) */
     Symbol mCrowdStateOverride; // 0x1c8
+    ObjVector<CamShotCrowd> mCrowds; // 0x1b8
     /** "global per-pixel setting for PS3" */
     bool mPS3PerPixel; // 0x1cc
     /** "The spotlight to get glow settings from" */

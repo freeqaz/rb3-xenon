@@ -319,12 +319,16 @@ void MusicLibraryTaskMsg::Save(BinStream &bs) const {
     bs << mTask.filter;
     bs << mTask.filterLocked;
     bs << mTask.makingSetlistToken;
-    int maxSetlistSize = mTask.maxSetlistSize;
-    bs.WriteEndian(&maxSetlistSize, 4);
+    {
+        int maxSetlistSize = mTask.maxSetlistSize;
+        bs.WriteEndian(&maxSetlistSize, 4);
+    }
     bs << mTask.nextScreen;
     bs << mTask.partSym;
-    int setlistMode = mTask.setlistMode;
-    bs.WriteEndian(&setlistMode, 4);
+    {
+        int setlistMode = mTask.setlistMode;
+        bs.WriteEndian(&setlistMode, 4);
+    }
     bs << mTask.titleToken;
 }
 

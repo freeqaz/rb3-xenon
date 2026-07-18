@@ -65,13 +65,17 @@ public:
     POOL_OVERLOAD(SfxInst, 0x4E);
 
 private:
-    // TU5 retail layout: mSamples is the first SfxInst-specific member,
-    // landing at 0x40 (right after the SeqInst base). mSfx follows the
-    // 12-byte vector at 0x4c. (The header previously declared mSfx first,
-    // which pushed mSamples to 0x44 and mis-based every mSamples access +4.)
+    // TU5 retail layout (matches rb3-Wii SfxInst): mSamples is the first
+    // SfxInst-specific member at 0x40 (right after the SeqInst base). The retail
+    // binary does NOT keep an mSfx back-pointer; instead SfxInst owns its own
+    // ObjPtrList<MoggClipMap> populated from Sfx::MoggClipMaps() in the ctor, and
+    // every clip loop iterates that list (verified: IsRunning loads the list head
+    // from this+0x54 == ObjPtrList mNodes@+8, a next-pointer traversal, not an
+    // ObjVector array walk via mSfx). ObjPtrList is 0x14 bytes → mStartProgress
+    // lands at 0x60.
     std::vector<SampleInst *> mSamples; // 0x40
-    Sfx *mSfx; // 0x4c
-    float mStartProgress; // 0x50
+    ObjPtrList<MoggClipMap> mMoggClips; // 0x4c (mNodes head @ 0x54)
+    float mStartProgress; // 0x60
 };
 
 /** "Legacy sound effect object.  Plays several samples with a given volume, pan,

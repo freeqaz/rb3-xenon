@@ -157,8 +157,8 @@ void TrackPanel::Exit() {
 #pragma optimization_level 2
 void TrackPanel::UpdateReservedVocalSlot() {
     MILO_ASSERT(mTrackSlots.size() == kTrackNumSlots, 0xF3);
-    int offset = 0;
     int u3 = -1;
+    int offset = 0;
     for (int i = 0; i < mTrackSlots.size(); i++) {
         TrackSlot *slot = (TrackSlot *)((char *)&mTrackSlots[0] + offset);
         if (slot->mInstrument == kInstVocals) {
@@ -750,7 +750,8 @@ bool TrackPanel::InGame() const { return TheGame; }
 
 int TrackPanel::GetTrackSlot(Player *player) {
     for (int i = 0; i < mTrackSlots.size(); i++) {
-        if (mTrackSlots[i].mTrack && mTrackSlots[i].mTrack->GetPlayer() == player)
+        Track *t = mTrackSlots[i].mTrack;
+        if (t && t->GetPlayer() == player)
             return i;
     }
     return -1;

@@ -194,8 +194,7 @@ void Stats::SetFinalized(bool b) {
 }
 
 void Stats::UpdateBestSolo(int i) {
-    int item = i;
-    SaveHighest(mBestSolos, item);
+    SaveHighest(mBestSolos, i);
     mSoloPercentage = std::max(mBestSolos[0], 0);
 }
 
