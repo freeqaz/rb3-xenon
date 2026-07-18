@@ -295,7 +295,7 @@ bool RndShaderMultimesh::CheckError(MatFlagErrorType type) {
 }
 
 bool RndShaderParticles::CheckError(MatFlagErrorType type) {
-        return !(type != (MatFlagErrorType)0 && type != (MatFlagErrorType)2) && TheRnd.GetDrawMode() != 4;
+        return !(type != (MatFlagErrorType)1 && type != (MatFlagErrorType)3) && TheRnd.GetDrawMode() != 3;
 }
 
 void SetColorWriteMask(const ShaderOptions &opts, RndMat *mat) {

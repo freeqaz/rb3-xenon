@@ -35,6 +35,9 @@
 
 SongSortMgr *TheSongSortMgr;
 
+void SavedSetlist::SetTitle(const char *title) { mTitle = title; }
+void SavedSetlist::SetDescription(const char *desc) { mDescription = desc; }
+
 void SongSortMgr::Init() {
     MILO_ASSERT(!TheSongSortMgr, 0x29);
     TheSongSortMgr = new SongSortMgr();
