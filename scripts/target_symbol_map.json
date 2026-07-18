@@ -1,4 +1,9 @@
 {
+ "0x823a2200": "??$?5VHide@CharMeshHide@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VHide@CharMeshHide@@@@@Z",
+ "0x823dcde0": "??$?5V?$ObjOwnerPtr@VWaypoint@@@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@@Z",
+ "0x824b4790": "??$?5USpotlightEntry@LightPreset@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@USpotlightEntry@LightPreset@@@@@Z",
+ "0x8271c0e8": "??1SfxInst@@UAA@XZ",
+ "0x82b91bd0": "?UnisonPlayerSuccess@TrackPanel@@QAAXPAVPlayer@@@Z",
  "0x822e4500": "?RefOwner@?$ObjPtrList@VFader@@VObjectDir@@@@EBAPAVObject@Hmx@@XZ",
  "0x82285868": "?Filter@BandCharacter@@UAA?AW4Action@MergeFilter@@PAVObject@Hmx@@0PAVObjectDir@@@Z",
  "0x82289780": "??_EBandCharacter@@WEJM@AAPAXI@Z",
