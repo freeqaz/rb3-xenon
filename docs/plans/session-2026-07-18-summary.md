@@ -1,6 +1,6 @@
 # Session summary — 2026-07-18 (near-miss cracks + identification stack)
 
-**Result: main 15,364 → 17,417 strict matched (+2,053 across 22 landed
+**Result: main 15,364 → 17,418 strict matched (+2,054 across 23 landed
 batches; sole "losses" = 16 spurious Flow-credited stubs re-credited honestly
 to the new BandSwatch unit).** Every landing was gated by an isolated verify-worktree
 whole-binary A/B (strict SET delta keyed `(unit, name)` + fuzzy sum; `LOST`
@@ -31,7 +31,8 @@ must be empty). One agent-recommended change was rejected by that gate (see
 | Rnd vtable residual +0xC (3 DC3 virtuals gated) | `ad9376d5` | +2 | 17,403 |
 | naming wave (vtable positional alignment, +110 names) | `034a448a` | +6 | 17,409 |
 | Flow.cpp re-pin → BandSwatch unit wired | `88bd166b` | +3 | 17,412 |
-| lane-C round 3 (calibration ~0.031/name) | `23e6cbb8` | +5 | **17,417** |
+| lane-C round 3 (calibration ~0.031/name) | `23e6cbb8` | +5 | 17,417 |
+| UIComponent verdict + StarDisplay ctor pin | `a2a96d57` | +1 | **17,418** |
 
 (Plus docs-only: PlatformMgr dead-lever banner `92dad991`, scoreboard updates.)
 
@@ -152,7 +153,10 @@ path-limited land. Win classes that recurred (transferable taxonomy):
    change → ~100 access sites / 6 files / **272 matched fns** blast radius vs
    2 targets at ~99.9. Only path = dedicated rb3-Wii RndText re-port stream
    (recipe in ~/tmp/lyricstyle_patches/NOTES.md). Do NOT attempt as a bounded
-   layout fix. Remaining lead: UIComponent-chain layout (in flight).
+   layout fix. ~~UIComponent-chain layout~~ **REFUTED (`a2a96d57`)** — ctor
+   matches 100% so layout is byte-identical; Load residuals = per-class
+   vbase-dispatch codegen WALL. Diagnostic rule: ctor-100% ⟹ wall. ALL
+   lane-B structural leads now resolved.
 6. ~~scanner re-run~~ **Lane C DONE (+26, `16816838`) — round-2 fixed point.**
    Re-run only after the named set grows ~100+ (marginal yield ~26/109).
 7. ~~FMO re-pin + vbase filter~~ DONE (`4c11e0a7`, see lead 1).
