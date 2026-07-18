@@ -142,7 +142,13 @@ path-limited land. Win classes that recurred (transferable taxonomy):
    classes; DC3 Flow.h byte-identical to ours). Real finding: Flow.cpp's
    splits.txt pin [0x822ACFE8,0x822AF178) is the BandSwatch/ColorPalette
    TU — wrong-TU pin, re-pin dispatched; real Flow cluster ~0x822a6xxx.
-   Remaining leads: UIComponent-chain layout, LyricPlate +0x40 (in flight).
+   ~~LyricPlate +0x40~~ **DEFER/WALL (confirmed)**: retail RndText::Style =
+   0x24 (Ghidra memcpy-stride proof, ctor 0x82baf278) vs our DC3 0x44 (split
+   colors + ObjPtr font + mKerning + mBlacklight); the fix is a GLOBAL Style
+   change → ~100 access sites / 6 files / **272 matched fns** blast radius vs
+   2 targets at ~99.9. Only path = dedicated rb3-Wii RndText re-port stream
+   (recipe in ~/tmp/lyricstyle_patches/NOTES.md). Do NOT attempt as a bounded
+   layout fix. Remaining lead: UIComponent-chain layout (in flight).
 6. ~~scanner re-run~~ **Lane C DONE (+26, `16816838`) — round-2 fixed point.**
    Re-run only after the named set grows ~100+ (marginal yield ~26/109).
 7. ~~FMO re-pin + vbase filter~~ DONE (`4c11e0a7`, see lead 1).
