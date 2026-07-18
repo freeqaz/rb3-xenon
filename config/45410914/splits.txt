@@ -4848,8 +4848,14 @@ band3/meta_band/AccomplishmentManager.cpp:
 	.text       start:0x82555E68 end:0x8255F53C
 
 band3/meta_band/ContextChecker.cpp:
-	.pdata      start:0x8221DB20 end:0x8221E0F8
-	.text       start:0x8256C7E0 end:0x825703F4
+	.pdata      start:0x8221DB20 end:0x8221DE68
+	.pdata      start:0x8221DE70 end:0x8221E0F8
+	.text       start:0x8256C7E0 end:0x8256ED88
+	.text       start:0x8256EDEC end:0x825703F4
+
+FlowSound.cpp:
+	.pdata      start:0x8221DE68 end:0x8221DE70
+	.text       start:0x8256ED88 end:0x8256EDEC
 
 band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x822200D8 end:0x82220350

@@ -241,8 +241,8 @@ public:
     CharDriver *unk6ec; // 0x6ec
     int unk6f0; // 0x6f0
     char unk6f4[64]; // 0x6f4
-    Waypoint *unk734; // 0x734
-    unsigned int unk738; // 0x738
+    unsigned int unk738; // 0x734 (retail TU5: flags precede the waypoint — OnPreClear stw 0x7c4 proof)
+    Waypoint *unk734; // 0x738
     ObjPtrList<RndMesh> unk73c; // 0x73c
     ObjPtrList<RndMesh> unk74c; // 0x74c
 #ifdef HX_NATIVE
