@@ -17,11 +17,49 @@ Rock Band 3 (Xbox 360) — AI-Assisted Fork
 > in this repo. An existing copy of the game is required to do anything useful
 > with it.
 
-A decompilation of **Rock Band 3** for the **Xbox 360** (PowerPC Xenon),
-targeting the vanilla retail executable (title ID `45410914`). Built with the
-MSVC X360 toolchain (`16.00.11886.00`) at the retail size-optimized release
-flags `/O1 /Oi /GR /EHsc` (no `/GL`, no `/LTCG`). Goal: produce byte-matching
-machine code from C++ source, the same way the GC/Wii decomp projects do.
+What is this?
+-------------
+
+A **matching decompilation** of **Rock Band 3** for the **Xbox 360** (PowerPC
+Xenon). "Matching" means the goal is not just readable pseudo-code: we write
+C++ source that, when compiled with the *original* toolchain (MSVC for Xbox
+360, `16.00.11886.00`) at the *original* retail flags (`/O1 /Oi /GR /EHsc`, no
+LTCG), produces machine code **byte-identical** to the shipped executable. Every
+function is proven correct by comparing compiler output against the retail
+binary — the same standard the GameCube/Wii decomp community uses.
+
+The target is the retail executable **with Title Update 5 applied** (title ID
+`45410914`, v0.0.5.1) — the binary players actually run and the one all
+downstream modding tools target. It lives at `orig/45410914/default.xex` (not
+committed; the vanilla TU0 build is archived under `orig/45410914/tu0-archive/`).
+
+Why do this? A byte-matched source tree is a *provably faithful* reimplementation.
+It enables ports, bug-level-accurate mods, preservation, and — via the native
+build track below — running the Milo engine directly on modern hardware.
+
+Progress
+--------
+
+**"Matched" = the function our compiler emits is byte-identical to the retail
+binary.** The denominator is the *whole binary* — every function in the
+executable, including SDK/CRT/middleware code — so there is no denominator
+gaming. Numbers regenerate on every build (`build/45410914/report.json`; ninja
+prints the headline figure). As of **2026-07-18**:
+
+| Area | Functions matched | Code bytes | Progress |
+|---|---:|---:|:---|
+| **Whole binary** | **17,339 / 69,205 (25.1%)** | **15.7%** | `█████░░░░░░░░░░░░░░░` |
+| Game code (`src/band3/`) | 5,543 / 7,612 (72.8%) | 55.5% | `███████████████░░░░░` |
+| Milo engine (`src/system/`) | 11,776 / 19,564 (60.2%) | 44.0% | `████████████░░░░░░░░` |
+| Quazal network (`src/network/`) | 20 / 65 (30.8%) | 10.4% | `██████░░░░░░░░░░░░░░` |
+| Not yet attributed¹ | 0 / 41,964 | — | `░░░░░░░░░░░░░░░░░░░░` |
+
+¹ Functions not yet mapped to a source translation unit — overwhelmingly XDK,
+CRT, and third-party middleware (audio codecs, networking stacks), plus
+exception-handling funclets. Deliberately lowest priority: the RB3-specific
+value concentrates in the game code, which is where matching effort goes (see
+below). An additional ~20% of the whole binary is *fuzzy*-matched (near-miss
+functions being ground toward 100%).
 
 This is the third project in a series, and it sits at the **intersection** of
 the other two — same *game* as the Wii decomp, same *platform and compiler* as
@@ -59,15 +97,15 @@ Sister projects
 
 > **Why this is hard, precisely.** The asymmetry between us and DC3 is **not**
 > optimization level — both are `/O1`, no whole-program optimization, so TU
-> spatial grouping in `.text` is preserved (MasterAudio's 46 functions pack into
-> 8 KB). `/Ob2` inlines leaf math aggressively (SHA1 K-constants used 20× in
+> spatial grouping in `.text` is preserved (MasterAudio's functions pack into
+> a few KB). `/Ob2` inlines leaf math aggressively (SHA1 K-constants used 20× in
 > source appear 0× in `.text`), but there is no cross-TU reordering or
 > whole-program inlining. The difference is that DC3 had a leaked PDB giving its
 > functions names+addresses, while RB3's are anonymous `fn_8XXXXXXX`. So we use
 > DC3 as a **Rosetta Stone for the engine** and Wii-RB3 as a **Rosetta Stone for
 > the game**, transferring their labels onto our anonymous functions via shared
-> string content (`tools/fingerprint_match.py`) or structural similarity
-> (Ghidra + BinDiff).
+> string content (`tools/fingerprint_match.py`), byte/relocation-masked
+> correlation (`scripts/harvest/`), or structural similarity (Ghidra + BinDiff).
 
 Decomp priority: the GAME, not the engine
 -----------------------------------------
@@ -90,14 +128,14 @@ Status
 
 Two build tracks are alive:
 
-**1. X360 decomp-matching build** (`ninja`). Runs end-to-end: dtk SPLIT → MSVC
-compile → objdiff report → progress. The splits-bootstrap pipeline is proven
-(2026-05-26): pinning `MasterAudio.cpp` in `splits.txt` makes dtk emit a real
-target `.obj` + per-object `.s` and auto-derive the matching `.pdata` range. The
-path from "identification" to "registered match" is open; remaining work is
-per-target porting + obj-patcher wiring. **Match baseline: `0.00%`** — and that
-is the honest whole-binary metric (11.8 MB code / 66,003 functions, none matched
-yet, no denominator gaming), directly comparable to DC3's number.
+**1. X360 decomp-matching build** (`ninja`) — the main event. The full pipeline
+runs end-to-end on every build: dtk splits the retail XEX into per-TU target
+objects → MSVC compiles our source through `wibo` → objdiff compares the two and
+emits `report.json` with the numbers in the table above. 816 translation units
+are pinned to address ranges in `splits.txt` and actively diffed (of ~4,350
+total). The matching campaign is in full swing — the current phase is grinding
+near-miss functions to 100% and identifying/porting the remaining anonymous
+clusters.
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang). A host build of
 the shared Milo engine that actually *runs*. The `rb3-dta` tool boots the bare
@@ -120,7 +158,7 @@ Decomp services
 ---------------
 
 - **Orchestrator MCP** (`scripts/orchestrator/`, server name `decomp`) — the
-  central tool surface, backed by `decomp.db` (SQLite, 66k functions seeded from
+  central tool surface, backed by `decomp.db` (SQLite, 69k functions seeded from
   `report.json`). 11 tools: `report_result`, `query_functions`, `get_attempts`,
   `run_objdiff`, `run_diff_inspect`, `run_analyze_function`,
   `lookup_struct_offset`, `lookup_merged_symbol`, `mark_patch_result`, plus the
@@ -130,17 +168,21 @@ Decomp services
   8000, Wii-RB3 owns 8001) — headless Ghidra serving decompiled C, switch/cast
   analysis, semantic search across the binary's functions, and DTM-vs-header
   struct diffs. Uses a VMX128 SLEIGH fork for correct Xenon vector decode.
-- **`tools/fingerprint_match.py`** — function identification. Indexes every one
-  of the 66,838 RB3 functions by referenced strings/callees/constants, then
-  cross-refs those strings against `../rb3/src` and `../dc3-decomp/src` to
-  propose source-file mappings. This table is what drives `splits.txt` pinning.
+- **`tools/fingerprint_match.py`** — function identification. Indexes every
+  RB3 function by referenced strings/callees/constants, then cross-refs those
+  strings against `../rb3/src` and `../dc3-decomp/src` to propose source-file
+  mappings. This table is what drives `splits.txt` pinning.
 - **Analysis engine** (`scripts/analysis/diff_inspect.py`) — modes for
   `diagnose`, `clusters`, `regswaps`, `offsets`, `stack-layout`, etc., backing
   the `/compare-asm` and `/stack-layout` skills and the MCP `run_diff_inspect`
   tool.
-- **Cross-binary identification** (in progress) — Ghidra + BinDiff to
-  bulk-transfer DC3's named functions onto RB3's anonymous `fn_8XXXXXXX` by
-  structural similarity.
+- **Obj patchers** (`scripts/`, wired into `configure.py`) — COFF symbol-table
+  rewriters that neutralize build-environment-specific naming MSVC bakes into
+  objects (anonymous-namespace hashes, static-init guard names, `??__E`/`??__F`
+  thunks), so objdiff compares real code rather than naming noise.
+- **Cross-binary identification** — reloc-masked byte correlation
+  (`scripts/harvest/`) plus Ghidra + BinDiff to bulk-transfer named functions
+  onto RB3's anonymous `fn_8XXXXXXX` by structural similarity.
 
 Agent harness
 -------------
@@ -195,7 +237,7 @@ The X360 matching build is Linux-first (it drives the Windows `cl.exe` through
 then:
 
 ```sh
-# Place the retail executable at orig/45410914/default.xex (not committed).
+# Place the retail TU5 executable at orig/45410914/default.xex (not committed).
 python3 configure.py            # regenerate build.ninja
 ./tools/ninja-locked            # ALWAYS use this wrapper, never bare `ninja`
 ```
@@ -204,6 +246,10 @@ python3 configure.py            # regenerate build.ninja
 > shared build dir. Always `tee` build output to a log — dtk/MSVC failures are
 > invisible without it. After editing `splits.txt`/`objects.json`, `touch
 > config/45410914/config.yml` to force a re-SPLIT, then re-run configure/ninja.
+
+The build prints the headline progress figure at the end; the full per-unit and
+per-category breakdown lands in `build/45410914/report.json` (the source of the
+table at the top of this README).
 
 Native engine build:
 
@@ -234,7 +280,7 @@ Identification tooling
 into source-file proposals:
 
 ```sh
-python3 tools/fingerprint_match.py extract --out fingerprints.json   # 66,838 fns
+python3 tools/fingerprint_match.py extract --out fingerprints.json   # all fns
 python3 tools/fingerprint_match.py autoid   --out autoid.json        # source proposals
 python3 tools/fingerprint_match.py report                            # human view
 python3 tools/fingerprint_match.py identify <string-or-fn>           # one-off lookup
@@ -249,17 +295,19 @@ Project structure
 - `configure.py` — project configuration and build generator.
 - `config/45410914/` — config for the retail XEX (`config.yml`, `symbols.txt`,
   `splits.txt`, `objects.json`).
-- `orig/45410914/default.xex` — the retail executable (not committed).
+- `orig/45410914/default.xex` — the retail TU5 executable (not committed;
+  vanilla TU0 archived under `orig/45410914/tu0-archive/`).
 - `src/system/` — Milo engine code (sourced from dc3-decomp).
 - `src/band3/`, `src/network/` — RB3 game code (sourced from rb3-Wii).
 - `src/xdk/`, `src/system/stlport/` — Xbox 360 SDK + STLport (from dc3-decomp).
 - `tools/` — build scripts + identification/struct/vtable tooling.
-- `scripts/` — orchestrator MCP, analysis engine, MSVC object patchers (the
-  patchers are staged for the matching phase, dormant).
+- `scripts/` — orchestrator MCP, analysis engine, harvest scanners, and the
+  MSVC object patchers (wired into the build).
 - `native/` — host (x86_64 Linux + clang) engine build.
 - `.claude/skills/` — agent slash-command skills.
 - `docs/` — dependencies, getting-started, splits/symbols/config/objects format
-  docs, MSVC X360 pattern catalog, and plan files.
+  docs, MSVC X360 pattern catalog, and plan files (`docs/INDEX.md` is the
+  audited master index).
 
 References
 ==========
