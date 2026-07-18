@@ -60,23 +60,44 @@ enum ShowGamercardResult {
 
 typedef bool XCallbackFunc(unsigned long &);
 
+// LAYOUT NOTE (2026-07-18, Ghidra-verified vs retail TU5): the member layout
+// below is DC3-lineage and DOES NOT match retail RB3-360. This class is a
+// DC3 port (`: public Hmx::Object`, flat, + the XSocial photo/link/overlapped
+// block that DC3 added in 2012). Retail RB3 (2010) predates XSocial and is
+// MsgSource-lineage (Wii-style, compact). Ground truth from default_tu5.xex:
+//   ThePlatformMgr base @ 0x82cc9d1c
+//   PlatformMgr::SetScreenSaver (0x8251c180) writes  this+0x2c  -> mScreenSaver
+//   PlatformMgr::IsSignedIn     (0x82514988) reads   this+0x1c  -> mSigninMask
+//   ConnectionStatusPanel::CheckForLostConnection reads +0x26   -> mConnected
+// i.e. retail mSigninMask@0x1c, mConnected@0x26, mScreenSaver@0x2c. Our source
+// (Object base 0x28 + XSocial block) compiles these to mSigninMask@0x4c,
+// mConnected@0x56, mScreenSaver@0x57 (comments below say 0x50/0x5a/0x5b, which
+// assumed a 0x2c Object base and are themselves stale).
+//
+// This divergence is NOT worth fixing for matching: every cross-unit access is
+// ThePlatformMgr.<field> (a global reloc), whose offset addend is normalized
+// away by objdiff — CheckForLostConnection already matches 100% with our wrong
+// offset. Reproducing the retail offsets would require re-basing on MsgSource
+// (virtual Hmx::Object at tail), a high-risk change to a PCH-eligible, widely
+// included header with zero offsetting strict gain. Do NOT re-anchor as a
+// struct-layout keystone. See the 2026-07-18 investigation report.
 class PlatformMgr : public Hmx::Object {
 private:
-    bool mHasXSocialPhotoPost; // 0x2c
-    bool mHasXSocialLinkPost; // 0x2d
-    XOVERLAPPED mOverlapped; // 0x30
-    int unk4c; // 0x4c - ptr to something
-    int mSigninMask; // 0x50
-    int mSigninChangeMask; // 0x54
-    bool mGuideShowing; // 0x58
-    bool mConfirmCancelSwapped; // 0x59
-    bool mConnected; // 0x5a
-    bool mScreenSaver; // 0x5b
-    PlatformRegion mRegion; // 0x5c
-    DiskError mDiskError; // 0x60
-    JobMgr *mJobMgr; // 0x64
-    bool unk68; // 0x68
-    bool unk69; // 0x69
+    bool mHasXSocialPhotoPost; // DC3-only (absent in retail RB3); compiled@0x28
+    bool mHasXSocialLinkPost;   // DC3-only; compiled@0x29
+    XOVERLAPPED mOverlapped;    // DC3-only; compiled@0x2c
+    int unk4c;                  // DC3-only mSocialCapabilities; compiled@0x48
+    int mSigninMask;            // retail@0x1c (compiled@0x4c)
+    int mSigninChangeMask;      // retail@0x20 (compiled@0x50)
+    bool mGuideShowing;         // compiled@0x54
+    bool mConfirmCancelSwapped; // compiled@0x55
+    bool mConnected;            // retail@0x26 (compiled@0x56)
+    bool mScreenSaver;          // retail@0x2c (compiled@0x57)
+    PlatformRegion mRegion;     // compiled@0x58
+    DiskError mDiskError;       // compiled@0x5c
+    JobMgr *mJobMgr;            // compiled@0x60
+    bool unk68;                 // compiled@0x64
+    bool unk69;                 // compiled@0x65
     DataNode OnSignInUsers(DataArray *);
 
 public:
