@@ -12,6 +12,32 @@ For every NewObject-shaped symbol we can pair (named in
 scripts/target_symbol_map.json AND whose unit compiles), run objdiff-cli,
 extract the size immediate from each side, and emit a mismatch table.
 
+VIRTUAL-BASE / SHAPE-MISMATCH REJECTION (added 2026-07-18, wave-10):
+  A class with virtual bases compiles its ctor with an extra "most-derived /
+  fully-constructed" int flag, and the factory passes it: the ctor `bl` is
+  preceded by `li r4,<const>` (typ. 0x1), i.e. `mr r3,obj; li r4,1; bl ctor`.
+  Detection uses the ONLY signal visible inside the factory body (this scanner
+  never diffs the ctor body, so the companion signals — ctor stores a vbtable
+  ptr at [this+4] + vtordisp math — are not usable here): a `li r4,<imm>`
+  feeding the first post-allocator ctor `bl`.
+
+  Being vbase-flavored is NOT itself disqualifying — `new objType` allocates
+  sizeof(most-derived) regardless of virtual bases, so a class whose TARGET and
+  our BASE factory are BOTH vbase-shaped (e.g. DxMesh, TrackPanel, GemTrainer*)
+  still yields a valid size oracle and stays in the normal table.
+
+  What IS disqualifying is a SHAPE MISMATCH: the TARGET factory is vbase-shaped
+  but OUR base factory is not (plain `new`, no r4 flag). That means the two
+  paired functions are not the same factory — the map VA is a mis-attributed /
+  foreign pin — so the `li r3,<imm>` size on the target side belongs to some
+  other class and must NOT be read as sizeof(named class).
+  Concrete case that motivated this: map VA 0x8268f050 was labeled
+  ?NewObject@FileMergerOrganizer (our real FMO sizeof 0x3c, plain ctor) but the
+  retail fn there is actually BandUser::NewLocalBandUser (LocalBandUser: virtual
+  BandUser + virtual LocalUser, sizeof 0x110, vbase ctor) — target vbase vs base
+  plain, implying +212B of phantom fields. Rejected candidates are reported
+  separately and excluded from both the confirm and the drift/mismatch tables.
+
 Usage:
   scripts/harvest/newobject_sizeof_scan.py [--project DIR] [--json OUT] [--md OUT]
 """
@@ -80,6 +106,42 @@ def _li_r3(args):
     return None
 
 
+def _alloc_idx(seq):
+    """Index of the allocator `bl` (its result r3 is stw'd or null-checked next)."""
+    for i, (op, args) in enumerate(seq):
+        if op != "bl":
+            continue
+        for op2, a2 in seq[i + 1:i + 3]:
+            a2 = a2.strip()
+            if op2 == "stw" and a2.startswith("r3,"):
+                return i
+            if op2 == "cmplwi" and a2.startswith("r3,"):
+                return i
+    return None
+
+
+def ctor_has_vbase_flag(seq):
+    """True if the ctor `bl` (first bl after the allocator) is fed an extra
+    integer arg via `li r4,<imm>` — the virtual-base most-derived flag. A plain
+    NEW_OBJ factory calls its default ctor with r3 only, so no r4 setup appears.
+    Vbase-ness alone is fine; a target-vs-base MISMATCH of this flag is the
+    mis-attribution signal (see module docstring)."""
+    ai = _alloc_idx(seq)
+    if ai is None:
+        return False
+    for j in range(ai + 1, len(seq)):
+        if seq[j][0] != "bl":
+            continue
+        # seq[j] is the ctor call; look for `li r4,...` in its arg-setup window
+        for k in range(ai + 1, j + 1):
+            if seq[k][0] == "li":
+                parts = [p.strip() for p in seq[k][1].split(",")]
+                if parts and parts[0] == "r4":
+                    return True
+        return False  # first post-alloc bl had no r4 flag -> plain ctor
+    return False
+
+
 def size_before_alloc(seq):
     """Immediate of the `li r3,<imm>` feeding the allocator call.
 
@@ -131,13 +193,23 @@ def scan(project_dir, symbols):
                              delta=None, pct=None, err=err))
             continue
         instrs = d.get("instructions", [])
-        retail = size_before_alloc(side_seq(instrs, "target"))
-        ours = size_before_alloc(side_seq(instrs, "base"))
+        tgt_seq = side_seq(instrs, "target")
+        base_seq = side_seq(instrs, "base")
+        retail = size_before_alloc(tgt_seq)
+        ours = size_before_alloc(base_seq)
         pct = d.get("normalized_match_percent")
+        tgt_vbase = ctor_has_vbase_flag(tgt_seq)
+        base_vbase = ctor_has_vbase_flag(base_seq)
+        # mis-attribution: target factory is vbase-shaped, ours is not (or ours
+        # has no comparable factory) -> paired functions differ -> size is bogus.
+        reject = tgt_vbase and not base_vbase
         delta = (retail - ours) if (retail is not None and ours is not None) else None
         rows.append(dict(cls=cls, sym=sym, retail=retail, ours=ours,
-                         delta=delta, pct=pct, err=None))
-        print(f"  {cls:34s} retail={retail} ours={ours} delta={delta} pct={pct}",
+                         delta=delta, pct=pct, err=None,
+                         tgt_vbase=tgt_vbase, base_vbase=base_vbase, reject=reject))
+        tag = " [SHAPE-MISMATCH-REJECT]" if reject else (
+              " [vbase both sides]" if tgt_vbase else "")
+        print(f"  {cls:34s} retail={retail} ours={ours} delta={delta} pct={pct}{tag}",
               file=sys.stderr)
     return rows
 
@@ -154,21 +226,31 @@ def main():
     print(f"NewObject symbols in map: {len(syms)}", file=sys.stderr)
     rows = scan(args.project, syms)
 
-    mism = [r for r in rows if r["delta"] not in (None, 0)]
+    rejected = [r for r in rows if r.get("reject")]
+    mism = [r for r in rows if r["delta"] not in (None, 0) and not r.get("reject")]
     mism.sort(key=lambda r: abs(r["delta"]))
 
     with open(args.json, "w") as f:
-        json.dump(dict(scanned=len(rows), mismatches=len(mism), rows=rows), f, indent=1)
+        json.dump(dict(scanned=len(rows), mismatches=len(mism),
+                       shape_rejected=len(rejected), rows=rows), f, indent=1)
 
     def fmt(v): return "-" if v is None else (hex(v) if isinstance(v, int) else str(v))
     lines = ["# NewObject-sizeof oracle scan", "",
-             f"scanned={len(rows)}  mismatches={len(mism)}", "",
+             f"scanned={len(rows)}  mismatches={len(mism)}  "
+             f"shape_rejected={len(rejected)}", "",
              "## Mismatches (|delta| ascending)", "",
              "| class | retail | ours | delta | factory_pct |",
              "|---|---|---|---|---|"]
     for r in mism:
         lines.append(f"| {r['cls']} | {fmt(r['retail'])} | {fmt(r['ours'])} | "
                      f"{r['delta']:+d} | {r['pct']} |")
+    lines += ["", "## Shape-mismatch rejected (target vbase, our base plain "
+              "-> mis-attributed pin, size NOT a valid sizeof)", "",
+              "| class | target_li_r3 | our_li_r3 | reason |",
+              "|---|---|---|---|"]
+    for r in sorted(rejected, key=lambda x: x["cls"]):
+        lines.append(f"| {r['cls']} | {fmt(r['retail'])} | {fmt(r['ours'])} | "
+                     f"target vbase ctor, base plain |")
     lines += ["", "## All scanned", "",
               "| class | retail | ours | delta | pct | err |",
               "|---|---|---|---|---|---|"]

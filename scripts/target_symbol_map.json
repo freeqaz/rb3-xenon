@@ -6965,7 +6965,7 @@
  "0x8268c920": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
  "0x8268c998": "?erase_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAIABH@Z",
  "0x8268c9e8": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
- "0x8268f050": "?NewObject@FileMergerOrganizer@@SAPAVObject@Hmx@@XZ",
+ "0x8268f050": "?NewLocalBandUser@BandUser@@SAPAVLocalBandUser@@XZ",
  "0x822d0be8": "?_M_insert_overflow_aux@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVSpotlightEntry@SpotlightDrawer@@ABV34@ABU__false_type@2@I_N@Z",
  "0x8268fc38": "??_DPropertyEventProvider@@QAAXXZ",
  "0x8268fca8": "?InMode@GameMode@@QAA_NVSymbol@@@Z",
