@@ -182,3 +182,13 @@ whole-binary A/B before landing; path-limited commits only; scoreboard in
 `docs/plans/tu5-p5-progress.md` updated per landing; memory updated in
 `project_correlator_global_sweep_2026-07-18.md` +
 `project_nearmiss_crack_campaign_2026-07-18.md`.
+
+## Close-out review (2026-07-18, post-run)
+
+Three empirical Opus scout reviews sized the remaining value pools; synthesis +
+next-focus ranking in **`docs/plans/review-2026-07-18-next-focus.md`**. TL;DR:
+(1) body-port campaign on the mapped-but-0% pool (~250-290 oracle-backed cheap
+ports; first wave DirLoader/Debug/MemHeap/Console/Env_NG/MeshAnim/TDStretch/
+MidiSynth), (2) recarve the 5 warm mid-address auto blobs (Accomplishment
+0x825F71A0 warmest, 32 mapped), (3) ≥99 fixwave round 2 REJECTED (band spent —
+80% funclet mirage, 0/8 diagnose-sample wins).
