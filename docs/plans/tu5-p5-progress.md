@@ -19,10 +19,25 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | jeff Class-2 merge | 15,303 | +67 (leaf-fragment merge pass; `eb4863cc`, jeff `7f69b9e`) — fleet tooling lever |
 | BinStreamRev LEAD B w1 | 15,319 | +16 (per-TU rev statics, 4-lane wave; `677fc117`) — 9 ICF/sibling bonus flips rode along |
 | jeff Class-4 over-carve merge | 15,354 | +35 (post-blr/branch over-carve tail merge; `f03b9719`, jeff `b50881e`) — 2nd fleet tooling lever |
-| SongSort identification | **15,364** | +10 (verified map entries, SongStatusMgr family; `528c51c7`) — vein drained, rest ICF-walled |
+| SongSort identification | 15,364 | +10 (verified map entries, SongStatusMgr family; `528c51c7`) — vein drained, rest ICF-walled |
+| nearmiss crack sweep w1 | **15,370** | +6 (Opus-triaged 40–80% <400B pool → Sonnet crack workflow; `40688918`). Wins = source-genuinely-incomplete: DataArraySongInfo::Save (+7 fields), RockCentral::Verify{Char,Band}Name (DP_KEYS2 twin), TypeProps::operator=+ClearAll (ring-walk ReleaseObjects/AddRefObjects, inlined), RndPostProc::Reset (drop UnSet). 12 co-triaged fns walled = **all source==oracle** (structural/permuter/layout). |
 
 Ceiling reference: 15,804 (recover-all-but-48-sanctioned). Remaining gap
-≈ 440, now overwhelmingly **deep work** (below). **All cheap/tooling/identification
+≈ 434, now overwhelmingly **deep work** (below).
+
+**Near-miss crack method (works; wave 2 in flight):** mine `report.json` for
+40–80% & <400B fns → **Opus** tractability triage (Ghidra TU5 bank + dc3/rb3wii
+oracle, read-only) splitting TRACTABLE vs WALL → **Sonnet** crack workflow, each
+fn in its own `setup_worktree.sh` worktree with a **mandatory source-vs-oracle
+gate** (source==oracle ⇒ structural/permuter wall, abort — do NOT hand-crack) →
+coordinator harvests worktree diffs, one isolated whole-binary A/B (clean-HEAD
+baseline set vs patched set), land +N/−0. Wave-1 signal: **wins come only from
+genuinely-incomplete source** (body-ports, missing macro/guard/fields); every
+`source==oracle` fn at 40–80% is a structural/regalloc/block-sinking wall for
+hand-cracking → route to permuter or leave. Deferred structural lead:
+`SampleInst` carries a DC3-only `PlayableSample` virtual-MI base absent from
+retail (forces `+0x28` this-adjust on `SfxInst::SetSpeed/SetReverbMixDb` — fuzzy
+74.9→95.6 only; real fix = drop the base, cross-cutting header change w/ own A/B). **All cheap/tooling/identification
 veins are drained.** New reusable instrument: `scripts/harvest/tu5_reloc_masked_
 correlate.py` (byte-identity pairing after masking COFF relocs — bypasses TU5
 address drift; the right tool for whole-unit-0% drifted units). Note:
