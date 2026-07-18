@@ -81,64 +81,58 @@ public:
         kFitScrollMarqueeWrapAlways = 7
     };
 
+    // RB3-360 retail layout — sizeof 0x24 (verified vs Ghidra: LyricPlate embeds
+    // two of these + mInvalidateMs@0x108/mBaked@0x10c, and RndText::Style memcpy
+    // is 0x24). This is the era-correct single-color / raw-font-ptr model, BETWEEN
+    // rb3-Wii (0x18, packed Color32) and DC3 (0x44, two Colors + ObjPtr + blacklight).
     class Style {
     public:
-        Style() : mFont(nullptr, nullptr) {}
+        Style()
+            : mFont(nullptr), mSize(0), mItalics(0), mTextColor(1, 1, 1),
+              nobreak(true), pre(false), mZOffset(0) {}
         Style(Hmx::Object *owner);
-        Style(const Style &s);
+        Style(const Style &s) { memcpy(this, &s, 0x24); }
         Style &operator=(const Style &s) {
-            mFont = s.mFont;
-            mBlacklight = s.mBlacklight;
-            memcpy(this, &s, 0x34);
+            memcpy(this, &s, 0x24);
             return *this;
         }
-        float GetAlpha() const { return mFontColor.alpha; }
-        void SetAlpha(float alpha) { mFontColor.alpha = alpha; }
+        float GetAlpha() const { return mTextColor.alpha; }
+        void SetAlpha(float alpha) { mTextColor.alpha = alpha; }
 
-        // perhaps the memory from 0x0 to 0x34 is another struct
+        /** "Font to use for this style" (raw ptr in RB3-360 retail) */
+        RndFontBase *mFont; // 0x00
         /** "Size of the text" */
-        float mSize; // 0x0
-        /** "Color of the text, put into mesh verts.
-            Modifed by <color=r,g,b,a> markup .
-            This will only work if the font mat has [prelit] set true
-            and [use_environment] set false" */
-        Hmx::Color mTextColor; // 0x4
-        /** "If true, and if there's a font,
-            you can change color and alpha during the draw" */
-        bool mFontColorOverride; // 0x14
-        /** "Color of the font during draw, can be changed dynamically" */
-        Hmx::Color mFontColor; // 0x18
-        /** "Defines the slant of the text, changed by <it> tag".
-            Ranges from -5 to 5. */
-        float mItalics; // 0x28
-        /** "Extra kerning for the text" */
-        float mKerning; // 0x2c
+        float mSize; // 0x04
+        /** "Defines the slant of the text, changed by <it> tag" */
+        float mItalics; // 0x08
+        /** "Color of the text, put into mesh verts. Modified by <color=r,g,b,a>." */
+        Hmx::Color mTextColor; // 0x0c
+        /** "Prevent line breaks in a block" */
+        bool nobreak; // 0x1c
+        /** "Super-script / pre" */
+        bool pre; // 0x1d
         /** "vertical offset as fraction of size" */
-        float mZOffset; // 0x30
-        /** "Font to use for this style" */
-        ObjPtr<RndFontBase> mFont; // 0x34
-        /** "draw in blacklight pass?" */
-        bool mBlacklight; // 0x48
-    };
+        float mZOffset; // 0x20
+    }; // sizeof 0x24
 
     class StyleState {
     public:
         StyleState(RndText *text, float size);
 
-        // First 0x34 bytes: copied from Style via memcpy
-        float mSize; // 0x0 - Style::mSize, then scaled by size param
-        Hmx::Color mTextColor; // 0x4
-        bool mFontColorOverride; // 0x14
-        Hmx::Color mFontColor; // 0x18
-        float mItalics; // 0x28
-        float mKerning; // 0x2c
-        float mZOffset; // 0x30
+        // First 0x24 bytes: copied from Style via memcpy
+        RndFontBase *mFont; // 0x00
+        float mSize; // 0x04 - Style::mSize, then scaled by size param
+        float mItalics; // 0x08
+        Hmx::Color mTextColor; // 0x0c
+        bool nobreak; // 0x1c
+        bool pre; // 0x1d
+        float mZOffset; // 0x20
         // End of memcpy'd Style data
-        Style *mStyle; // 0x34
-        int mFontMapIdx; // 0x38
-        float mBaseSize; // 0x3c
-        bool mActive; // 0x40
-        bool brk; // 0x41
+        Style *mStyle; // 0x24
+        int mFontMapIdx; // 0x28
+        float mBaseSize; // 0x2c
+        bool mActive; // 0x30
+        bool brk; // 0x31
     };
 
     class BlacklightPacket {

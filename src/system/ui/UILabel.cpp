@@ -140,17 +140,7 @@ BEGIN_CUSTOM_PROPSYNC(UILabel::LabelStyle)
         }
     )
     SYNC_PROP_MODIFY(
-        kerning, textStyle.mKerning, if (!UILabel::sDeferUpdate) {
-            gMe->LabelUpdate(false);
-        }
-    )
-    SYNC_PROP_MODIFY(
         z_offset, textStyle.mZOffset, if (!UILabel::sDeferUpdate) {
-            gMe->LabelUpdate(false);
-        }
-    )
-    SYNC_PROP_MODIFY(
-        blacklight, textStyle.mBlacklight, if (!UILabel::sDeferUpdate) {
             gMe->LabelUpdate(false);
         }
     )
@@ -246,11 +236,9 @@ BEGIN_SAVES(UILabel)
         bs << curLabelStyle.mColorOverride;
         RndText::Style &curStyle = Style(i);
         bs << curStyle.mSize;
-        bs << curStyle.mKerning;
         bs << curStyle.mZOffset;
         bs << curStyle.mItalics;
         bs << curStyle.GetAlpha();
-        bs << curStyle.mBlacklight;
     }
     bs << mText->mScrollDelay;
     bs << mText->mScrollRate;
@@ -316,13 +304,9 @@ void UILabel::PreLoad(BinStream &bs) {
             d >> curLabelStyle.mColorOverride;
             RndText::Style &curStyle = Style(i);
             d >> curStyle.mSize;
-            d >> curStyle.mKerning;
             d >> curStyle.mZOffset;
             d >> curStyle.mItalics;
-            d >> curStyle.mFontColor.alpha;
-            if (d.rev >= 0x1E) {
-                d >> curStyle.mBlacklight;
-            }
+            d >> curStyle.mTextColor.alpha;
         }
         if (d.rev >= 0x1F) {
             d >> mText->mScrollDelay;
@@ -361,7 +345,8 @@ void UILabel::PreLoad(BinStream &bs) {
                 d >> mText->mMarkup;
             }
             d >> mText->mLeading;
-            d >> Style(0).mKerning;
+            float _legacyKerning;
+            d >> _legacyKerning;
         }
         if (d.rev > 4) {
             d >> Style(0).mItalics;
@@ -403,7 +388,7 @@ void UILabel::PreLoad(BinStream &bs) {
             d >> str;
         }
         if (d.rev > 10) {
-            d >> Style(0).mFontColor.alpha;
+            d >> Style(0).mTextColor.alpha;
         }
         if (d.rev > 0xC) {
             d >> LStyle(0).mColorOverride;
@@ -430,9 +415,8 @@ void UILabel::PreLoad(BinStream &bs) {
             LStyle(1).mColorOverride = color;
         }
         if (d.rev > 0x12) {
-            d >> Style(1).mKerning;
-        } else {
-            Style(1).mKerning = Style(0).mKerning;
+            float _legacyKerning;
+            d >> _legacyKerning;
         }
         if (d.rev > 0x13) {
             d >> Style(1).mZOffset;
@@ -462,7 +446,7 @@ void UILabel::PreLoad(BinStream &bs) {
         }
         if (d.rev > 0x17) {
             d >> Style(1).mItalics;
-            d >> Style(1).mFontColor.alpha;
+            d >> Style(1).mTextColor.alpha;
         }
     }
     d.PushRev(this);
@@ -560,7 +544,7 @@ void UILabel::SetInt(int i, bool b) {
 }
 
 void UILabel::DrawShowing() {
-    if (Style(0).mFontColor.alpha > 0) {
+    if (Style(0).mTextColor.alpha > 0) {
         if (mDirty && !sDeferUpdate) {
             LabelUpdate(false);
         }
@@ -584,7 +568,7 @@ void UILabel::DrawShowing() {
                     (int)mLabelStyles.size(),
                     PathName(rsrc),
                     color ? PathName(color) : "<null>",
-                    Style(0).mFontColor.alpha,
+                    Style(0).mTextColor.alpha,
                     mDirty,
                     mText->mFontMaps.size(),
                     cam ? PathName(cam) : "<null>",
@@ -599,14 +583,13 @@ void UILabel::DrawShowing() {
                 LabelStyle &curLabelStyle = mLabelStyles[i];
                 UIColor *curColor = curLabelStyle.mColorOverride;
                 RndText::Style &curStyle = Style(i);
-                curStyle.mFontColorOverride = true;
                 if (!curColor) {
                     curColor = color;
                 }
                 const Hmx::Color &curColorColor = curColor->GetColor();
-                curStyle.mFontColor.red = curColorColor.red;
-                curStyle.mFontColor.green = curColorColor.green;
-                curStyle.mFontColor.blue = curColorColor.blue;
+                curStyle.mTextColor.red = curColorColor.red;
+                curStyle.mTextColor.green = curColorColor.green;
+                curStyle.mTextColor.blue = curColorColor.blue;
             }
         }
         mText->DrawShowing();

@@ -135,13 +135,8 @@ BEGIN_CUSTOM_PROPSYNC(RndText::Style)
     SYNC_PROP(size, o.mSize)
     SYNC_PROP_SET(text_color, o.mTextColor.Pack(), o.mTextColor.Unpack(_val.Int()))
     SYNC_PROP_SET(text_alpha, o.mTextColor.alpha, o.mTextColor.alpha = _val.Float())
-    SYNC_PROP(font_color_override, o.mFontColorOverride)
-    SYNC_PROP_SET(font_color, o.mFontColor.Pack(), o.mFontColor.Unpack(_val.Int()))
-    SYNC_PROP_SET(font_alpha, o.mFontColor.alpha, o.mFontColor.alpha = _val.Float())
     SYNC_PROP(italics, o.mItalics)
-    SYNC_PROP(kerning, o.mKerning)
     SYNC_PROP(z_offset, o.mZOffset)
-    SYNC_PROP(blacklight, o.mBlacklight)
 END_CUSTOM_PROPSYNC
 
 BEGIN_PROPSYNCS(RndText)
@@ -166,19 +161,18 @@ BEGIN_PROPSYNCS(RndText)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
-RndText::Style::Style(Hmx::Object *owner)
-    : mSize(30), mTextColor(1, 1, 1), mFontColorOverride(false), mFontColor(1, 1, 1),
-      mItalics(0), mKerning(0), mZOffset(0), mFont(owner), mBlacklight(false) {}
+// RB3-360 retail Style is 0x24 (single color, raw font ptr). Locking the size
+// keeps LyricPlate's two embedded styles / mBaked@0x10c aligned to retail.
+typedef char _rndtext_style_size_check[sizeof(RndText::Style) == 0x24 ? 1 : -1];
 
-RndText::Style::Style(const Style &s)
-    : mFont((memcpy(this, &s, 0x34), s.mFont)) {
-    mBlacklight = s.mBlacklight;
-}
+RndText::Style::Style(Hmx::Object *owner)
+    : mFont(nullptr), mSize(30), mItalics(0), mTextColor(1, 1, 1), nobreak(true),
+      pre(false), mZOffset(0) {}
 
 RndText::StyleState::StyleState(RndText *text, float size) {
-    memcpy(this, &text->mStyles[0], 0x34);
+    memcpy(this, &text->mStyles[0], 0x24);
     mStyle = &text->mStyles[0];
-    mFontMapIdx = text->FontMapIndex(mStyle->mFont, mStyle->mBlacklight);
+    mFontMapIdx = text->FontMapIndex(mStyle->mFont, false);
     mBaseSize = size;
     mSize *= size;
     mActive = true;
@@ -188,12 +182,8 @@ BinStream &operator<<(BinStream &bs, const RndText::Style &s) {
     bs << s.mFont;
     bs << s.mSize;
     bs << s.mTextColor;
-    bs << s.mFontColorOverride;
-    bs << s.mFontColor;
     bs << s.mItalics;
-    bs << s.mKerning;
     bs << s.mZOffset;
-    bs << s.mBlacklight;
     return bs;
 }
 
@@ -248,17 +238,13 @@ BEGIN_COPYS(RndText)
 END_COPYS
 
 BinStream &operator>>(BinStream &bs, RndText::Style &s) {
-    bs >> s.mFont;
+    ObjPtr<RndFontBase> _f(nullptr, nullptr);
+    bs >> _f;
+    s.mFont = _f;
     bs >> s.mSize;
     bs >> s.mTextColor;
-    bs >> s.mFontColorOverride;
-    bs >> s.mFontColor;
     bs >> s.mItalics;
-    bs >> s.mKerning;
     bs >> s.mZOffset;
-    if (TEXT_REV >= 25) {
-        bs >> s.mBlacklight;
-    }
     return bs;
 }
 
@@ -283,7 +269,9 @@ BEGIN_LOADS(RndText)
         RndTransformable::Load(bs);
     }
     if (d.rev < 22) {
-        bs >> style.mFont;
+        ObjPtr<RndFontBase> _f(nullptr, nullptr);
+        bs >> _f;
+        style.mFont = _f;
     }
     if (d.rev < 3) {
         int idx;
@@ -327,7 +315,7 @@ BEGIN_LOADS(RndText)
         bool b;
         d >> b;
         if (style.mFont) {
-            RndFont *oldfont2d = dynamic_cast<RndFont *>(style.mFont.Ptr());
+            RndFont *oldfont2d = dynamic_cast<RndFont *>(style.mFont);
             MILO_ASSERT(oldfont2d, 0xBC1);
             if (oldfont2d->NumMats() != 0 && oldfont2d->Mat(0)) {
                 int zMode = b ? 2 : 0;
@@ -358,7 +346,7 @@ BEGIN_LOADS(RndText)
         if (d.rev > 12) {
             bs >> style.mSize;
         } else if (style.mFont) {
-            RndFont *oldfont2d = dynamic_cast<RndFont *>(style.mFont.Ptr());
+            RndFont *oldfont2d = dynamic_cast<RndFont *>(style.mFont);
             MILO_ASSERT(oldfont2d, 0xBE9);
             style.mSize = oldfont2d->DeprecatedSize();
         }
@@ -1053,9 +1041,9 @@ void RndText::BuildFontMaps(bool b1) {
         for (int i = 0; i < mStyles.size(); i++) {
             RndFontBase *font = mStyles[i].mFont;
             if (font) {
-                if (FontMapIndex(font, mStyles[i].mBlacklight) == -1) {
+                if (FontMapIndex(font, false) == -1) {
                     FontMapBase *map = AcquireFontMap(font);
-                    map->mBlacklight = mStyles[i].mBlacklight;
+                    map->mBlacklight = false;
                     mFontMaps.push_back(map);
                 }
             }
@@ -1392,7 +1380,7 @@ process_char:
                                 }
                             }
                         } else {
-                            charWidth = (charWidth + styleState.mKerning) * styleState.mSize;
+                            charWidth = charWidth * styleState.mSize;
                             if ((double)charWidth < 0.0) {
                                 if (ch != '\n') {
                                     if (std::find(negWidthChars.begin(), negWidthChars.end(), ch) == negWidthChars.end()) {
@@ -1850,7 +1838,7 @@ void RndText::FitTextScroll() {
         } else {
             unsigned short charCode = 0;
             DecodeUTF8(charCode, "8");
-            scrollCharWidth = (mStyles[0].mKerning + scrollCharWidth) * mStyles[0].mSize;
+            scrollCharWidth = scrollCharWidth * mStyles[0].mSize;
         }
     }
 
@@ -2198,9 +2186,9 @@ RndText::ParseMarkup(const unsigned short *str, StyleState &state, unsigned shor
             state.mStyle = &_ref0[0];
         }
 
-        memcpy(&state, state.mStyle, 0x34);
+        memcpy(&state, state.mStyle, 0x24);
 
-        bool bFontColorOverride = state.mFontColorOverride || bBlacklight;
+        bool bFontColorOverride = bBlacklight;
         if (!state.mStyle->mFont) {
             state.mStyle = &_ref0[0];
         }
@@ -2309,15 +2297,17 @@ void RndText::DrawShowing() {
     auto stylesEnd = mStyles.end();
     for (auto it = mStyles.begin(); it != stylesEnd; ++it) {
         Style &style = *it;
-        if (style.mFont && style.mFontColorOverride) {
-            int fmIdx = FontMapIndex(style.mFont, style.mBlacklight);
+        // RB3-360 retail Style has a single color and no per-style font-color
+        // override; the DC3 override pass does not exist here.
+        if (style.mFont && false) {
+            int fmIdx = FontMapIndex(style.mFont, false);
             if (fmIdx != -1) {
                 hasOverride = true;
                 FontMapBase *fontMap = mFontMaps[fmIdx];
                 int numMats = fontMap->NumMaterials();
                 for (int i = 0; i < numMats; i++) {
                     RndMat *mat = fontMap->Material(i);
-                    mat->GetColor() = style.mFontColor;
+                    mat->GetColor() = style.mTextColor;
                     mat->MarkDirty(1);
                 }
             }
@@ -2577,7 +2567,7 @@ void RndText::FontMap::SetupCharacter(
         return;
     }
 
-    xPos += (mFont->Kerning(prevChar, charCode) + state.mKerning) * state.mSize;
+    xPos += mFont->Kerning(prevChar, charCode) * state.mSize;
 
     float width = charW;
     if (charW <= 0.0f) {
@@ -2653,7 +2643,7 @@ void RndText::FontMap3d::SetupCharacter(
         return;
 
     // Apply kerning + style kerning
-    xPos += (mFont->Kerning(prevChar, charCode) + state.mKerning) * state.mSize;
+    xPos += mFont->Kerning(prevChar, charCode) * state.mSize;
 
     // Use advance as display width if width <= 0
     if (width <= 0.0f) {
