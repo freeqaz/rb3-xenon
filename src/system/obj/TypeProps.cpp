@@ -161,6 +161,30 @@ void TypeProps::ReleaseObjects() {
 #ifdef HX_NATIVE
     if (mMap)
         mObjects.clear();
+#else
+    // Retail X360: no mObjects side-list; release each embedded object's ref
+    // to this TypeProps (as an ObjRefOwner) directly via the ring.
+    if (mMap) {
+        for (int i = mMap->Size() - 1; i > 0; i -= 2) {
+            DataNode &node = mMap->Node(i);
+            if (node.Type() == kDataObject) {
+                Hmx::Object *obj = node.UncheckedObj();
+                if (obj) {
+                    obj->Release(this);
+                }
+            } else if (node.Type() == kDataArray) {
+                DataArray *inner = node.UncheckedArray();
+                for (int j = inner->Size() - 1; j >= 0; j--) {
+                    DataNode &node2 = inner->Node(j);
+                    if (node2.Type() == kDataObject) {
+                        Hmx::Object *obj = node2.UncheckedObj();
+                        if (obj)
+                            obj->Release(this);
+                    }
+                }
+            }
+        }
+    }
 #endif
 }
 
@@ -182,6 +206,30 @@ void TypeProps::AddRefObjects() {
                         Hmx::Object *obj = node2.UncheckedObj();
                         if (obj)
                             mObjects.push_back(obj);
+                    }
+                }
+            }
+        }
+    }
+#else
+    // Retail X360: no mObjects side-list; add each embedded object's ref
+    // to this TypeProps (as an ObjRefOwner) directly via the ring.
+    if (mMap) {
+        for (int i = mMap->Size() - 1; i > 0; i -= 2) {
+            DataNode &node = mMap->Node(i);
+            if (node.Type() == kDataObject) {
+                Hmx::Object *obj = node.UncheckedObj();
+                if (obj) {
+                    obj->AddRef(this);
+                }
+            } else if (node.Type() == kDataArray) {
+                DataArray *inner = node.UncheckedArray();
+                for (int j = inner->Size() - 1; j >= 0; j--) {
+                    DataNode &node2 = inner->Node(j);
+                    if (node2.Type() == kDataObject) {
+                        Hmx::Object *obj = node2.UncheckedObj();
+                        if (obj)
+                            obj->AddRef(this);
                     }
                 }
             }

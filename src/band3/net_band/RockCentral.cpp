@@ -1532,6 +1532,7 @@ void RockCentral::VerifyCharName(
 ) {
     Server *server = IsConnected(o, i4, false);
     if (server) {
+        DP_KEYS2(name, flags)
         INIT_DATAPOINT("entities/character/name/check");
         ADD_DATA_PAIR(name, cc);
         ADD_DATA_PAIR(flags, i5);
@@ -1544,6 +1545,7 @@ void RockCentral::VerifyBandName(
 ) {
     Server *server = IsConnected(o, i4, false);
     if (server) {
+        DP_KEYS2(name, flags)
         INIT_DATAPOINT("entities/band/name/check");
         ADD_DATA_PAIR(name, cc);
         ADD_DATA_PAIR(flags, i5);

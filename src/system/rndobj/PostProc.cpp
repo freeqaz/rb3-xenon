@@ -605,7 +605,6 @@ void RndPostProc::Reset() {
         sCurrent->OnUnselect();
         sCurrent = nullptr;
     }
-    TheDOFProc->UnSet();
 }
 
 DataNode RndPostProc::OnAllowedNormalMap(const DataArray *) {
