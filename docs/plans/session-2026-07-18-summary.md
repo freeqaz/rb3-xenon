@@ -1,6 +1,6 @@
 # Session summary — 2026-07-18 (near-miss cracks + identification stack)
 
-**Result: main 15,364 → 17,418 strict matched (+2,054 across 23 landed
+**Result: main 15,364 → 17,421 strict matched (+2,057 across 24 landed
 batches; sole "losses" = 16 spurious Flow-credited stubs re-credited honestly
 to the new BandSwatch unit).** Every landing was gated by an isolated verify-worktree
 whole-binary A/B (strict SET delta keyed `(unit, name)` + fuzzy sum; `LOST`
@@ -32,7 +32,8 @@ must be empty). One agent-recommended change was rejected by that gate (see
 | naming wave (vtable positional alignment, +110 names) | `034a448a` | +6 | 17,409 |
 | Flow.cpp re-pin → BandSwatch unit wired | `88bd166b` | +3 | 17,412 |
 | lane-C round 3 (calibration ~0.031/name) | `23e6cbb8` | +5 | 17,417 |
-| UIComponent verdict + StarDisplay ctor pin | `a2a96d57` | +1 | **17,418** |
+| UIComponent verdict + StarDisplay ctor pin | `a2a96d57` | +1 | 17,418 |
+| crack-fodder body-ports (named-at-0% pool) | `dea64514` | +3 | **17,421** |
 
 (Plus docs-only: PlatformMgr dead-lever banner `92dad991`, scoreboard updates.)
 
