@@ -391,15 +391,7 @@ void Gem::AddWidgetInstanceImpl(TrackWidget *w, int i) {
         static DataNode &rg_widget_scale = DataVariable("rg_widget_scale");
         float rgFloat = rg_widget_scale.Float();
         if (rgFloat > 0) {
-            tf38.m.x.x *= rgFloat;
-            tf38.m.x.y *= rgFloat;
-            tf38.m.x.z *= rgFloat;
-            tf38.m.y.x *= rgFloat;
-            tf38.m.y.y *= rgFloat;
-            tf38.m.y.z *= rgFloat;
-            tf38.m.z.x *= rgFloat;
-            tf38.m.z.y *= rgFloat;
-            tf38.m.z.z *= rgFloat;
+            Scale(tf38.m, Vector3(rgFloat, rgFloat, rgFloat), tf38.m);
         }
     }
     w->AddInstance(tf38, 0);

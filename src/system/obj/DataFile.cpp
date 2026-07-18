@@ -560,14 +560,13 @@ DataArray *DataReadFile(const char *file, bool warn) {
 }
 
 DataArray *DataReadStream(BinStream *bs) {
-    gDataReadCrit.Enter(); // TODO: may cause IAT thunk issues at runtime
-    Symbol stream(bs->Name());
+    CritSecTracker cst(&gDataReadCrit); // TODO: may cause IAT thunk issues at runtime
     gBinStream = bs;
-    gNode = 0;
-    gOpenArray = 0;
-    gDataLine = (DataType)1;
-    unsigned int conds1 = 0;
+    Symbol stream(bs->Name());
     gFile = stream;
+    gDataLine = (DataType)1;
+    gOpenArray = 0;
+    unsigned int conds1 = 0;
     FOREACH(it, gConditional) {
         conds1++;
     }
@@ -579,7 +578,6 @@ DataArray *DataReadStream(BinStream *bs) {
     if (conds2 != conds1) {
         MILO_FAIL("DataReadFile: conditional block not closed (file %s)", gFile);
     }
-    gDataReadCrit.Exit(); // TODO: may cause IAT thunk issues at runtime
     return parse;
 }
 
