@@ -1,8 +1,35 @@
 # rb3-xenon decomp — state & live veins (2026-07-19)
 
-**Current: 18,621 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,689 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). HEAD `d0864f7c`.
+(~69k functions). Afternoon session +68 (18,621→18,689): scatter expose-and-fix
++15, unwired-owner scatter-wiring +52, near-miss +1.
+
+## ⛔ PIVOT POINT (2026-07-19 pm) — cheap wire-and-flip / near-miss veins EXHAUSTED
+
+Every coordinator-hand-wave vein was probed to exhaustion this session, each
+gated cheaply with zero regressions:
+- scatter expose-and-fix ≥88 band = **MIRAGE** (mispair / reloc-coloc / struct-artifact)
+- struct-recon = **DEAD** (5/5 leads ICF/foreign-offset)
+- near-misses = **AT_LIMIT** (regalloc / RB3<DC3 vtable)
+- TrackWatcher = **NO-WAVE mirage** (own methods done, span = foreign scatter)
+- grouped-globals = **1 fix** (SystemMs), rest banked
+- unwired scatter-include = **+52, DRAINED** (7 cands, 5 flipped)
+- unwired own-span wire-and-flip = **DRAINED ≈0** (body-port, not wire)
+
+**What remains is DEEP GRIND: body-porting the ~103 unwired engine TUs + the
+~5,300 divergent-body long tail (partial→100 via DC3/rb3-Wii oracle).** Per the
+user mandate ("avoid deep grind unless high cascade") and Fable review #3, this is
+a **work-kind pivot for the USER to decide**, not a unilateral coordinator grind.
+Recommendation to bring the user: route the divergent tail to the AUTOMATED
+machinery (crack-farm / grind-loop / the training-corpus model) — that pool is
+exactly what it's built for — while coordinator attention moves to whichever the
+user ranks of native-port / OSS-build / HW streams. Two explicit asks: (a) re-open
+permuter or keep banned; (b) fund a divergence-triage pipeline as batch infra.
+The id round-5 gate (+~1,000 names) is NOT reachable at the ~+70/session naming
+pace, so the flywheel needs a bigger name-feed (body-port waves) to re-open.
+
+## Recent arc
 
 ## Recent arc
 
@@ -150,6 +177,19 @@ the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
   addressable pool, but each hit is ~free. This SUPERSEDES the old "per-symbol
   owner-driven port" framing below — the bodies already exist; only the wiring
   was missing.
+  **OWN-SPAN WIRE-AND-FLIP = DRAINED (2026-07-19, gated out ≈0).** The captain's
+  "dark own-span pool, engine/lib-heavy, good byte-match prior" thesis was based
+  on DC3's tree, not ours: the big C-lib pools don't exist in `src/` (jpeg=1 file
+  not 73, zlib=1, oggvorbis=1, net=14/3-unwired not 107). Real unwired pool =
+  **~103 engine files**. Best case (26 with pre-carved target objs, 20 compiled)
+  → **5 byte-identity hits, ALL noise** (vtable-adjustor thunks + unwind funclets),
+  0 real flips, no ≥3-hit clusters. Root cause: DC3-lineage bodies DIVERGE from
+  retail RB3, and TU5 map-anchoring already carved every span that byte-matches an
+  anonymous region — so the ~77 files with no target obj are precisely the ones
+  whose bodies don't match. **These are BODY-PORT targets (partial→port to 100%
+  via DC3/rb3-Wii oracle, the `bodyport-batch` skills), NOT wire-and-flip. Do NOT
+  build a whole-binary own-span correlator.** With this, ALL cheap wire-and-flip
+  and near-miss veins are exhausted → pivot territory (see PIVOT below).
 - ~~**Wave 2 (old) — Oracle-backed UNWIRED wiring** (superseded by the above; the
   "port the bodies" premise was wrong — bodies pre-exist, just unwired).~~
   Original target census (for reference): rnddx9 CubeTex 8 Dx* + Rnd_Xbox(3),
