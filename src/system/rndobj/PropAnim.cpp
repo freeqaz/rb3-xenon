@@ -924,6 +924,48 @@ DataNode RndPropAnim::ForAllKeyframes(const DataArray *da) {
 
 #pragma endregion
 
+#ifndef HX_NATIVE
+// COMDAT-scatter dup (default/PropAnim <- rndobj/PropKeys.cpp): retail placed the
+// FloatKeys/ColorKeys/SymbolKeys::SetKey COMDATs in PropAnim's .text span. Their
+// canonical source is PropKeys.cpp; duplicate the retail-arity bodies here so
+// PropAnim.obj emits the matching COMDATs. Native links the canonical defs.
+int FloatKeys::SetKey(float frame) {
+    if (!mProp || !mTarget.Ptr())
+        return -1;
+    else {
+        int retVal = PropKeys::SetKey(frame);
+        if (retVal < 0)
+            retVal = Add(0, frame, false);
+        SetToCurrentVal(retVal);
+        return retVal;
+    }
+}
+
+int ColorKeys::SetKey(float frame) {
+    if (!mProp || !mTarget.Ptr())
+        return -1;
+    else {
+        int retVal = PropKeys::SetKey(frame);
+        if (retVal < 0)
+            retVal = Add(Hmx::Color(0), frame, false);
+        SetToCurrentVal(retVal);
+        return retVal;
+    }
+}
+
+int SymbolKeys::SetKey(float frame) {
+    if (!mProp || !mTarget.Ptr())
+        return -1;
+    else {
+        int retVal = PropKeys::SetKey(frame);
+        if (retVal < 0)
+            retVal = Add(Symbol(), frame, false);
+        SetToCurrentVal(retVal);
+        return retVal;
+    }
+}
+#endif
+
 // sw2 scatter-include (default/PropAnim <- obj/MessageTimer.cpp)
 #define gRev gRev_MessageTimer
 #define gAltRev gAltRev_MessageTimer
