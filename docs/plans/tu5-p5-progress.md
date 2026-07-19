@@ -55,6 +55,7 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | rc3 TrackWatcherImpl gap-fill | 17,651 | +14 (`3a7e3677`) — single-TU gap, 8 byte-identity entries + 6 funclets; 121 flat-0% = beatmatch bodyport vein. rc2/SongSort blob = COMDAT catch-all from UNWIRED classes (kill test: pre-mapped names emitted by no wired obj) — 0, correctly skipped |
 | MemHeap 0x24 | 17,652 | +1 (`7fd6745a`) — gate DC3-era mMinFreeBytes; rest of cluster = grouped-globals codegen wall |
 | bp2r rndobj scatter includes | **17,736** | **+84** (`c25769a8`) — Console←MultiMesh, Env_NG←Rnd_NG, MeshAnim←MultiMesh+ShaderMgr+mtx (gRev macro-rename); 25 named + 59 funclets; overturned bp2 "tooling wall". Fresh near-misses exposed (UpdateOverlay 94.2, UpdateCache 99.8) |
+| scatter-sweep w1 (scanner + 26 units) | **17,910** | **+174** (`9e08aed8`) — NEW INSTRUMENT `scripts/harvest/comdat_scatter_scan.py` (COFF scan: named-0% → SCATTER vs UNWIRED); 26 owner-TU includes, 3 lossy auto-reverted; +82 named +92 funclets. Biggest: PropSync←Dir +26, BandDirector←CharClip +22, FileMerger←CharIKHand +15. Residue: 509 SCATTER (include-safety blockers: PROPSYNC barewords, d.rev, math.h pow) + 327 UNWIRED (gameport pool); wave-2 dispatched |
 
 **Ceiling note (2026-07-18):** the old 15,804 "recover-all-but-48" ceiling measured
 only the TU5-flip recovery scope and is now OBSOLETE — the global correlator sweep
