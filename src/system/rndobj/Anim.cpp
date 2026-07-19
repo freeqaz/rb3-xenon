@@ -135,7 +135,7 @@ END_LOADS
 
 
 TaskUnits RndAnimatable::RateToTaskUnits(Rate myRate) { return gRateUnits[myRate]; }
-TaskUnits RndAnimatable::Units() const { return gRateUnits[mRate]; }
+__declspec(noinline) TaskUnits RndAnimatable::Units() const { return gRateUnits[mRate]; }
 float RndAnimatable::FramesPerUnit() { return gRateFpu[mRate]; }
 
 bool RndAnimatable::ConvertFrames(float &f) {
@@ -179,6 +179,15 @@ void RndAnimatable::FireFlowLabel(Symbol s) {
     Export(msg, true);
 }
 
+Task *RndAnimatable::Animate(float blend, bool wait, float delay) {
+    AnimTask *task = new AnimTask(this, StartFrame(), EndFrame(), FramesPerUnit(), Loop(), blend);
+    if (wait && task->BlendTask()) {
+        delay += task->BlendTask()->TimeUntilEnd();
+    }
+    TheTaskMgr.Start(task, Units(), delay);
+    return task;
+}
+
 Task *RndAnimatable::Animate(
     float blend, bool wait, float delay, Hmx::Object *o, EaseType e, float f4, bool b5
 ) {
@@ -194,6 +203,22 @@ Task *RndAnimatable::Animate(
     }
     TheTaskMgr.Start(taskPtr, Units(), delay);
     return taskPtr;
+}
+
+Task *RndAnimatable::Animate(
+    float start, float end, TaskUnits units, float period, float blend
+) {
+    float fpu;
+    if (period) {
+        fpu = std::fabs(end - start);
+        fpu = fpu / period;
+    } else {
+        const float fpus[3] = { 30.0f, 480.0f, 30.0f };
+        fpu = fpus[units];
+    }
+    AnimTask *task = new AnimTask(this, start, end, fpu, false, blend);
+    TheTaskMgr.Start(task, units, 0.0f);
+    return task;
 }
 
 Task *RndAnimatable::Animate(
@@ -288,6 +313,53 @@ AnimTask::AnimTask(
     mActive = true;
     mEaseFunc = GetEaseFunction(easeType);
     mListener = listener;
+    MILO_ASSERT(anim, 0x213);
+    mMin = Min(start, end);
+    mMax = Max(start, end);
+    if (NearlyZero(fpu)) {
+        fpu = 1;
+    }
+    mFrameSpan = (mMax - mMin) / fpu;
+    if (start < end) {
+        mScale = fpu;
+        mOffset = mMin;
+    } else {
+        mScale = -fpu;
+        mOffset = mMax;
+    }
+    Hmx::Object *target = anim->AnimTarget();
+    if (target) {
+        FOREACH (it, target->Refs()) {
+            Hmx::Object *owner = it->RefOwner();
+            if (owner && owner->ClassName() == StaticClassName()) {
+                mBlendTask = static_cast<AnimTask *>(owner);
+                MILO_ASSERT(mBlendTask != this, 0x231);
+                break;
+            }
+        }
+    }
+    if (mBlendPeriod && mBlendTask) {
+        mBlendTask->mBlending = true;
+    }
+    mAnim = anim;
+    mAnimTarget = anim->AnimTarget();
+}
+
+// Retail's lean-overload path never had a listener/easeType/easePower/wait
+// AnimTask at all (see rb3-Wii's AnimTask ctor, exactly these 6 params). Same
+// body as the 10-arg ctor above, with the extra fields fixed to their
+// no-listener/no-ease defaults rather than accepted as parameters.
+AnimTask::AnimTask(
+    RndAnimatable *anim, float start, float end, float fpu, bool loop, float blend
+)
+    : mAnim(this), mListener(this), mAnimTarget(this), mBlendTask(this),
+      mBlendPeriod(blend), mLoop(loop), mEasePower(0) {
+    mBlending = false;
+    mBlendTime = 0;
+    mWait = false;
+    mActive = true;
+    mEaseFunc = GetEaseFunction(kEaseLinear);
+    mListener = nullptr;
     MILO_ASSERT(anim, 0x213);
     mMin = Min(start, end);
     mMax = Max(start, end);

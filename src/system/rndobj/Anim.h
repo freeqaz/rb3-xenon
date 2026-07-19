@@ -81,11 +81,17 @@ public:
     /** Kill any active tasks associated with this animatable. */
     void StopAnimation();
 
+    // Retail's 3-arg call sites (UITransitionHandler etc.) resolve to a genuinely
+    // distinct, leaner Animate() overload with no listener/easeType/easePower/wrap
+    // params at all (see rb3-Wii Anim.h: no such params exist pre-DC3). Restoring
+    // that lean overload here (rather than relying on this extended one's defaults)
+    // matches retail's call-site codegen exactly (fewer arg-setup instructions).
+    Task *Animate(float blend, bool wait, float delay);
     Task *Animate(
         float blend,
         bool wait,
         float delay,
-        Hmx::Object *listener = nullptr,
+        Hmx::Object *listener,
         EaseType easeType = kEaseLinear,
         float easePower = 0,
         bool wrap = false
@@ -105,13 +111,15 @@ public:
         float easePower = 0,
         bool wrap = false
     );
+    // Same rationale as the 3-arg overload above, for the start/end/units form.
+    Task *Animate(float start, float end, TaskUnits units, float period, float blend);
     Task *Animate(
         float start,
         float end,
         TaskUnits units,
-        float period = 0,
-        float blend = 0,
-        Hmx::Object *listener = nullptr,
+        float period,
+        float blend,
+        Hmx::Object *listener,
         EaseType easeType = kEaseLinear,
         float easePower = 0,
         bool wrap = false
@@ -157,6 +165,22 @@ protected:
 /** A task meant for animating. */
 class AnimTask : public Task {
 public:
+    // Retail's lean Animate() overloads (see RndAnimatable::Animate above) never
+    // built up a listener/easeType/easePower/wait AnimTask at all (rb3-Wii's
+    // AnimTask ctor takes exactly these 6 params, full stop). A forwarding stub
+    // that delegates to the 10-arg ctor with hardcoded defaults gets inlined by
+    // /Ob2 right back into the exact same call as the extended overload -
+    // verified empirically, netting zero codegen change at the caller. This
+    // separate, real 6-arg overload is required so the caller genuinely emits
+    // fewer argument-setup instructions (matching retail).
+    AnimTask(
+        RndAnimatable *anim,
+        float start,
+        float end,
+        float fpu,
+        bool loop,
+        float blend
+    );
     AnimTask(
         RndAnimatable *anim,
         float start,

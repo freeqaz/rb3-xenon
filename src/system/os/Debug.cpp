@@ -274,17 +274,11 @@ void Debug::Init() {
     if (OptionBool("no_modal", false)) {
         SetModalCallback(nullptr);
         mNoModal = true;
-    } else {
-        SetModalCallback(DebugModal);
     }
     log = OptionStr("log", nullptr);
     if (log) {
         StartLog(log, true);
     }
-#ifndef HX_NATIVE
-    SetUnhandledExceptionFilter(&HmxGlobalHandler);
-#endif
-    mFailing = false;
 }
 
 const char *GetExpCode(int code) {

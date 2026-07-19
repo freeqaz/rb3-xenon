@@ -33,7 +33,7 @@ void UITransitionHandler::FinishValueChange() {
     else {
         if (mOutAnim && !TheUI->InTransition()) {
             mOutAnimStarted = true;
-            mOutAnim->Animate(0.0f, false, 0.0f, 0, kEaseLinear, 0, 0);
+            mOutAnim->Animate(0.0f, false, 0.0f);
             mAnimationState = kUITransitionAnimationOutAnimating;
         } else
             mAnimationState = kUITransitionAnimationIdle;
@@ -47,7 +47,7 @@ void UITransitionHandler::StartValueChange() {
         FinishValueChange();
     } else if (mAnimationState == 1) {
         if (mInAnim && !TheUI->InTransition()) {
-            mInAnim->Animate(0.0f, false, 0.0f, 0, kEaseLinear, 0, 0);
+            mInAnim->Animate(0.0f, false, 0.0f);
             mAnimationState = kUITransitionAnimationInAnimating;
         } else {
             FinishValueChange();
@@ -62,11 +62,7 @@ void UITransitionHandler::StartValueChange() {
                 mOutAnim->StartFrame(),
                 mOutAnim->Units(),
                 0.0f,
-                0.0f,
-                0,
-                kEaseLinear,
-                0,
-                0
+                0.0f
             );
             mAnimationState = kUITransitionAnimationReverseOutAnimating;
         }

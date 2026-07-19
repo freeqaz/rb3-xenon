@@ -566,9 +566,27 @@ ObjPtrList<T1, T2>::ObjPtrList(ObjRefOwner *owner, ObjListMode mode)
 template <class T1, class T2>
 ObjPtrList<T1, T2>::ObjPtrList(const ObjPtrList &other)
     : mSize(0), mNodes(nullptr), mOwner(other.mOwner), mListMode(other.mListMode) {
+#ifdef HX_NATIVE
     for (iterator it = other.begin(); it != other.end(); ++it) {
         push_back(*it);
     }
+#else
+    // Retail X360: the copy ctor does NOT delegate through push_back()/
+    // insert() (target asm inlines PoolAlloc + a raw mObject store + a direct
+    // Link(end(), node) call, with none of insert()'s mListMode/assert
+    // machinery surviving) — write the node alloc + link inline to match.
+    for (iterator it = other.begin(); it != other.end(); ++it) {
+        // Evaluate *it before the alloc (matches retail's instruction
+        // schedule: the dereference is loaded before the PoolAlloc call).
+        T1 *obj = *it;
+        // No parens: default-init (Node is POD; value-init via "new Node()"
+        // makes MSVC emit a null-check + zero-store guard that retail's asm
+        // does not have). next/prev are set by Link(); mObject is set below.
+        Node *node = new Node;
+        node->mObject = obj;
+        Link(end(), node);
+    }
+#endif
 }
 
 #ifdef HX_NATIVE
@@ -693,8 +711,28 @@ void ObjPtrList<T1, T2>::pop_front() {
 }
 
 template <class T1, class T2>
-void ObjPtrList<T1, T2>::push_back(T1 *obj) {
-    insert(end(), obj);
+__forceinline void ObjPtrList<T1, T2>::push_back(T1 *obj) {
+    // Deliberately NOT `insert(end(), obj)`: insert() returns `iterator` by
+    // value, and since iterator has user-declared constructors MSVC's X360
+    // ABI passes it via a caller-allocated hidden-return-object temp (visible
+    // as a stack materialization at the call site). Retail's push_back skips
+    // insert()'s no-null validation and calls Link() directly with a
+    // freshly-allocated Node, avoiding that temp entirely.
+    iterator it = end();
+#ifdef HX_NATIVE
+    Node *node = new Node();
+    node->SetObjConcrete(obj);
+#else
+    // Default-init (no parens): Node has no user-declared constructor on the
+    // retail X360 path, so `new Node()` (value-init) would zero-initialize
+    // next/prev before Link() unconditionally overwrites them — dead code the
+    // real compiler doesn't emit since it can't see across Link()'s call
+    // boundary either; matching retail means avoiding the zero-init trigger
+    // entirely by using default-init instead.
+    Node *node = new Node;
+    node->mObject = obj;
+#endif
+    Link(it, node);
 }
 
 template <class T1, class T2>

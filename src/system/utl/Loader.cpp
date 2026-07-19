@@ -285,7 +285,7 @@ Loader *LoadMgr::ForceGetLoader(const FilePath &fp) {
         if (!gotten) {
             gotten = TheLoadMgr.AddLoader(fp, kLoadFront);
             if (!gotten) {
-                MILO_NOTIFY("Don't recognize file %s", fp);
+                MILO_NOTIFY("Don't recognize file %s", FilePath(fp));
             }
         }
         if (gotten) {
