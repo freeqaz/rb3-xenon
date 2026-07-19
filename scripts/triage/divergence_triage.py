@@ -68,6 +68,13 @@ from diff_inspect import (  # noqa: E402
 HOME_TMP = Path(os.path.expanduser("~/tmp"))
 DEFAULT_CACHE = HOME_TMP / "triage_l2_cache"
 
+# Authoritative source roots for the class->owning-file index (a2 resolver).
+# Project src first, then the two oracle trees (dc3 engine twin, rb3-Wii game).
+EXTRA_SRC_ROOTS = [
+    "/home/free/code/milohax/dc3-decomp/src",
+    "/home/free/code/milohax/rb3/src",
+]
+
 # ── taxonomy constants ──────────────────────────────────────────────────────
 B_MISPAIR = "MISPAIR"
 B_RELOC = "RELOC-COLOC"
@@ -85,6 +92,9 @@ B_LEVER_STRING = "LEVER-STRING"
 # BODY-LEVER sub-split buckets (30-fn calibration wave, 2026-07-19)
 B_STL_CONTAM = "STL-CONTAM"
 B_BODY_MISSING = "BODY-MISSING-PORT"
+# COMDAT-scatter owner-include lever (mispair-prefilter fix, 2026-07-19):
+# class is authoritatively owned by a DIFFERENT .cpp than the attributed unit.
+B_SCATTER_OWNER = "SCATTER-OWNER"
 # post-processing staleness bucket (report-vs-live pct divergence)
 B_UNRELIABLE = "UNRELIABLE-EVIDENCE"
 B_Z_UNMAPPED = "ZERO-UNMAPPED"
@@ -97,6 +107,7 @@ B_ZS_OTHER = "ZS-OTHER"
 
 NONZERO_BUCKETS = [
     B_MISPAIR,
+    B_SCATTER_OWNER,
     B_LEVER_SYMBOL, B_LEVER_STRING,
     B_BODY_LEVER, B_BODY,
     B_STL_CONTAM, B_BODY_MISSING,
@@ -115,6 +126,7 @@ FLEET = {
     B_FORM: "crack-farm / pattern families",
     B_BODY: "LLM grind (75-92 band best ROI)",
     B_REVIEW: "manual triage",
+    B_SCATTER_OWNER: "owner-include lever (append #include \"<owner>.cpp\" to wired TU)",
     B_BODY_LEVER: "LLM grind FIRST (shape-screened, per-stratum priced)",
     B_STL_CONTAM: "skip (stlport-version divergence / template-twin mispairs)",
     B_BODY_MISSING: "port missing source first (not a lever grind)",
@@ -138,6 +150,7 @@ FLIP_PRIOR = {
     B_FORM: "~30% — UNMEASURED estimate; calibrate before funding",
     B_BODY: "45% in 78-96 band; <=10% above 97.5 (survivor bias)",
     B_REVIEW: "case-by-case",
+    B_SCATTER_OWNER: "high (owner-include pulls whole COMDAT cluster; see project_unwired_owner_wiring)",
     B_BODY_LEVER: "25% in 70-90 live (MEASURED 2/8); <=5% elsewhere (MEASURED 0/22)",
     B_STL_CONTAM: "~0% (MEASURED 0/6)",
     B_BODY_MISSING: "unmeasured — needs source work",
@@ -162,6 +175,7 @@ FLIP_PRIOR = {
 BASIS = {
     B_BODY_LEVER: "MEASURED",
     B_STL_CONTAM: "MEASURED",
+    B_SCATTER_OWNER: "VALIDATED",
     B_MISPAIR: "VALIDATED",
     B_RELOC: "VALIDATED",
     B_WALL_VTORDISP: "VALIDATED",
@@ -218,6 +232,78 @@ def _stem(unit: str) -> str:
     return os.path.splitext(base)[0]
 
 
+def _rg_files(pattern: str, roots: list[str], globs: list[str]) -> list[str]:
+    """List files matching `pattern` under `roots`, restricted to `globs`.
+    Uses ripgrep (-l).  Returns [] on any error / no match."""
+    cmd = ["rg", "-l", "--no-messages"]
+    for g in globs:
+        cmd += ["-g", g]
+    cmd += ["-e", pattern, "--", *roots]
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    except Exception:
+        return []
+    out = []
+    for ln in proc.stdout.splitlines():
+        ln = ln.strip()
+        if not ln:
+            continue
+        base = os.path.basename(ln)
+        # Skip scratch/hidden artifacts that CoW worktrees inherit (e.g. leaked
+        # `.permuter_work_*.cpp`) -- they pollute the owner index with garbage.
+        if base.startswith(".") or "permuter_work" in ln or "/." in ln:
+            continue
+        out.append(ln)
+    return out
+
+
+def _norm_ident(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def _is_subseq(short: str, long: str) -> bool:
+    """True iff `short` is an ordered subsequence of `long`."""
+    it = iter(long)
+    return all(c in it for c in short)
+
+
+def _resolve_class_owner(ctx, cls: str, stem: str):
+    """Two-stage class-vs-unit resolver (a2 mispair prefilter, 2026-07-19).
+
+    Returns one of:
+      ('match', detail)              -> class belongs to the attributed unit
+                                        (or normalizes to it) -> NOT a mispair.
+      ('scatter', owner_stem, wired) -> class authoritatively owned by a
+                                        DIFFERENT .cpp -> SCATTER-OWNER.
+      ('unresolved', None)           -> no evidence either way -> keep MISPAIR
+                                        (low confidence)."""
+    nc, ns = _norm_ident(cls), _norm_ident(stem)
+    # Stage 1: cheap normalization.
+    if nc and ns and (nc in ns or ns in nc):
+        return ("match", "stage1 substring")
+    short, lng = (nc, ns) if len(nc) <= len(ns) else (ns, nc)
+    if len(short) >= 3 and short[:3] == lng[:3] and _is_subseq(short, lng):
+        return ("match", "stage1 subsequence")
+
+    # Stage 2: authoritative source lookup.
+    owners = ctx.class_owners(cls)
+    impl_stems, def_stems = owners["impl"], owners["def"]
+    # Owned by the attributed unit (out-of-line impl or same-stem decl) -> match.
+    if stem in impl_stems:
+        return ("match", f"implemented in {stem}.cpp")
+    if stem in def_stems:
+        return ("match", f"declared in {stem} header (same stem)")
+    # Owned by a DIFFERENT .cpp -> SCATTER-OWNER. Prefer out-of-line impl files;
+    # fall back to a same-stem .cpp of a declaring header.
+    if impl_stems:
+        ostem = sorted(impl_stems)[0]
+        return ("scatter", ostem, ostem in ctx.wired_stems)
+    for ds in sorted(def_stems):
+        if ds != stem and ds in ctx.src_cpp_by_stem:
+            return ("scatter", ds, ds in ctx.wired_stems)
+    return ("unresolved", None)
+
+
 def _is_auto(unit: str) -> bool:
     if unit.startswith("default/auto_"):
         return True
@@ -266,6 +352,28 @@ class Ctx:
         self.wired_stems = self._load_wired(project)
         self.built_obj_stems = self._load_built(project)
         self.src_cpp_by_stem = self._load_src_cpp(project)
+        # a2 class-owner resolver: authoritative source roots + per-class cache.
+        self.src_roots = [str(project / "src")] + [
+            r for r in EXTRA_SRC_ROOTS if os.path.isdir(r)]
+        self._class_owner_cache = {}
+
+    def class_owners(self, cls: str) -> dict:
+        """Authoritative source lookup for a class name.  Returns
+        {'impl': set(cpp stems with out-of-line `Cls::` impls),
+         'def':  set(file stems declaring `class/struct Cls`)}.
+        Memoized per run.  rg over project src + dc3 + rb3-Wii trees."""
+        if cls in self._class_owner_cache:
+            return self._class_owner_cache[cls]
+        esc = re.escape(cls)
+        impl_files = _rg_files(rf"\b{esc}::", self.src_roots, ["*.cpp"])
+        def_files = _rg_files(rf"\b(class|struct)\s+{esc}\b",
+                              self.src_roots, ["*.cpp", "*.h", "*.hpp"])
+        res = {
+            "impl": {Path(f).stem for f in impl_files},
+            "def": {Path(f).stem for f in def_files},
+        }
+        self._class_owner_cache[cls] = res
+        return res
 
     @staticmethod
     def _load_wired(project: Path) -> set:
@@ -486,7 +594,12 @@ def classify_nonzero(row, rec, ctx, ev):
         lo, hi = min(tsize, bsize), max(tsize, bsize)
         ratio = hi / lo if lo else 999.0
         delta = abs(tsize - bsize)
-        if (ratio > 1.5 or delta > 64) and pct < 90:
+        # FIX (2026-07-19): the bare `delta > 64` fired at ratio ~1.04 on large
+        # fns (e.g. 2684T vs 2572B) -- a body divergence, not a renamer mispair.
+        # Make the absolute-delta arm RELATIVE: an out-of-pair size gap must be
+        # both >64 bytes AND >20% of the smaller side. The ratio>1.5 arm is kept
+        # for genuine gross mismatches (e.g. 792T vs 68B).
+        if (ratio > 1.5 or (delta > 64 and delta > 0.20 * lo)) and pct < 90:
             if lo < 64:
                 return (B_BODY, "low",
                         ev + [f"tiny-fn size divergence {tsize}T vs {bsize}B "
@@ -684,10 +797,21 @@ def _stratum(live) -> str:
     return "90plus"
 
 
+def _looks_icf_or_anon(sym: str) -> bool:
+    """True for ICF-merged / anonymous callees (``fn_8...`` raw labels or any
+    ``merged_`` name).  Class-token comparison on these is pairing noise, not a
+    real cross-class divergence signal."""
+    if not sym:
+        return False
+    return sym.startswith("fn_") or "merged_" in sym
+
+
 def _call_class_divergence(instrs, symbol_diffs) -> int:
     """Count ``bl`` rows whose target callee class token differs from the base
     callee class token (>=2 => the renamer paired two functions that call into
-    different classes = a mispair, not a body lever)."""
+    different classes = a mispair, not a body lever).  Rows where EITHER callee
+    looks ICF/anon (``fn_``/``merged_``) are skipped -- those are pairing noise
+    (FIX 2026-07-19)."""
     op_by_idx = {}
     for it in instrs:
         idx = it.get("index")
@@ -698,6 +822,8 @@ def _call_class_divergence(instrs, symbol_diffs) -> int:
     n = 0
     for idx, tsym, bsym in symbol_diffs:
         if op_by_idx.get(idx) != "bl":
+            continue
+        if _looks_icf_or_anon(tsym) or _looks_icf_or_anon(bsym):
             continue
         tc, bc = _class_token(tsym), _class_token(bsym)
         if tc and bc and tc != bc:
@@ -719,20 +845,43 @@ def _body_lever_subsplit(row, rec, ctx, ev, instrs, noneq, symbol_diffs,
     # a1: stub base (should be impossible in a live BODY-LEVER row, but guard).
     if bsize == 0:
         return B_MISPAIR, "medium", ev + ["body-lever prefilter", "base_size==0 stub"]
-    # a2: class-vs-unit mismatch (plain non-template/non-thunk symbols only).
+    # a2: class-vs-unit resolver (FIX 2026-07-19). The old naive bidirectional
+    # substring falsely flagged CamShot->CameraShot (CamShot IS defined in
+    # CameraShot.cpp). Two-stage: cheap name normalization, then an authoritative
+    # source lookup. Templates (``?$`` in the own scope) are emitted in the using
+    # TU, so they are never class-vs-unit mispairs -- skip them.
     cls = _own_class(name)
-    if cls:
-        cl, st = cls.lower(), stem.lower()
-        if cl and st and cl not in st and st not in cl:
-            return (B_MISPAIR, "medium",
+    own_scope = name.split("@@", 1)[0] if "@@" in name else name
+    if cls and "?$" not in own_scope:
+        res = _resolve_class_owner(ctx, cls, stem)
+        if res[0] == "scatter":
+            _, ostem, wired = res
+            owner_file = ctx.src_cpp_by_stem.get(ostem, f"{ostem}.cpp")
+            tag = "wired" if wired else "unwired"
+            note = (f"class {cls} owner {owner_file}"
+                    if wired else f"owner unwired: {owner_file}")
+            return (B_SCATTER_OWNER, "medium",
+                    ev + ["body-lever prefilter", note,
+                          f"owner_stem={ostem}", f"owner_wired={tag}"])
+        if res[0] == "unresolved":
+            return (B_MISPAIR, "low",
                     ev + ["body-lever prefilter",
-                          f"class {cls} attributed to unit {stem}"])
-    # a3: call-class divergence (>=2 bl rows into different classes).
+                          f"class {cls} vs unit {stem}: owner unresolved"])
+        # ('match', ...) -> fall through to the remaining rules.
+    # a3: call-class divergence (>=2 bl rows into different classes) -- FIX
+    # 2026-07-19: only a mispair signal when the pairing is ALSO weak overall
+    # (live<90) or the sizes disagree (ratio>1.15). At 98.7% fuzzy with matched
+    # sizes it is body noise, not a mispair (e.g. SongSortMgr::GetRandomSongs).
     ccd = _call_class_divergence(instrs, symbol_diffs)
-    if ccd >= 2:
+    tsz = rec.get("target_size") or 0
+    _bsz = rec.get("base_size") or 0
+    sratio = (max(tsz, _bsz) / min(tsz, _bsz)) if (tsz and _bsz) else 999.0
+    lp = live_pct if isinstance(live_pct, (int, float)) else row["pct"]
+    if ccd >= 2 and (lp < 90 or sratio > 1.15):
         return (B_MISPAIR, "medium",
                 ev + ["body-lever prefilter",
-                      f"calls different class's methods ({ccd})"])
+                      f"calls different class's methods ({ccd})",
+                      f"live {lp:.1f} / size ratio {sratio:.2f}"])
 
     # (b) STL-CONTAM: fn itself is a member of an stlport container/algorithm.
     if _scope_has_stl(name):
@@ -1151,7 +1300,7 @@ def print_table(results):
 def main():
     ap = argparse.ArgumentParser(description="Batch divergence-triage classifier")
     ap.add_argument("--pool", default="/home/free/tmp/triage_pool.csv")
-    ap.add_argument("--project", default="/home/free/tmp/wt-triage")
+    ap.add_argument("--project", default=str(Path(__file__).resolve().parents[2]))
     ap.add_argument("--out", default=str(HOME_TMP / "triage_results.json"))
     ap.add_argument("--buckets-md", default=str(HOME_TMP / "triage_buckets.md"))
     ap.add_argument("--sample", type=int, default=0)
