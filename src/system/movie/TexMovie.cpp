@@ -157,8 +157,7 @@ void TexMovie::Poll() {
 void TexMovie::Enter() {
     mEntered = true;
     RndPollable::Enter();
-    bool b = (mTex && mTex->Width() && mTex->Height());
-    if (b) {
+    if (mTex) {
         mTex->MakeDrawTarget();
         Hmx::Rect r(0, 0, 1, 1);
         Hmx::Color c(0, 0, 0, 1);

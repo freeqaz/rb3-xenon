@@ -194,13 +194,9 @@ void FxSend::SetStage(int stage) {
 }
 
 void FxSend::TestWithMic() {
-    if (TheSynth->GetNumMics() == 0) {
-        MILO_NOTIFY("There are no mics to test with.");
-    } else {
-        MILO_ASSERT(TheLoadMgr.EditMode(), 0x10A);
-        Mic *mic = TheSynth->GetMic(0);
-        mic->Start();
-        mic->StartPlayback();
-        mic->SetFxSend(this);
-    }
+    MILO_ASSERT(TheLoadMgr.EditMode(), 0x10A);
+    Mic *mic = TheSynth->GetMic(0);
+    mic->Start();
+    mic->StartPlayback();
+    mic->SetFxSend(this);
 }

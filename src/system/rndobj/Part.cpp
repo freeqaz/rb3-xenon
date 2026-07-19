@@ -874,9 +874,7 @@ void RndParticleSys::SetPool(int max, Type ty) {
             ;
         mType = ty;
         mMaxParticles = max;
-        int limit = SystemConfig()
-            ? SystemConfig("rnd", "particlesys", "local_limit")->Int(1)
-            : mMaxParticles;
+        int limit = SystemConfig("rnd", "particlesys", "local_limit")->Int(1);
         if (mMaxParticles > limit) {
             MILO_NOTIFY(
                 "Max particles for %s is too high (%d > %d). The max number of particles has been reset to %d.\n",

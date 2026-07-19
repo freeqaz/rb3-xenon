@@ -259,6 +259,10 @@ MergeFilter::Action FileMerger::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectD
     return a;
 }
 
+__declspec(noinline) void FileMerger::AddSubdir(ObjectDir *dir) {
+    mFilesPending.front()->mLoadedSubdirs.push_back(dir);
+}
+
 MergeFilter::SubdirAction FileMerger::FilterSubdir(ObjectDir *o1, ObjectDir *o2) {
     SubdirAction a;
     Merger *merger = mFilesPending.front();
@@ -268,7 +272,7 @@ MergeFilter::SubdirAction FileMerger::FilterSubdir(ObjectDir *o1, ObjectDir *o2)
         a = DefaultSubdirAction(o1, merger->mSubdirs);
     }
     if (a == kMergeReplace && !o2->HasSubDir(o1)) {
-        mFilesPending.front()->mLoadedSubdirs.push_back(o1);
+        AddSubdir(o1);
     }
     return a;
 }

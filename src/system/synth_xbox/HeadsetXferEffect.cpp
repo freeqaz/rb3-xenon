@@ -8,7 +8,7 @@ HeadsetXferEffect::HeadsetXferEffect() {
     mState = 0;
     memset(mBuffer, 0, sizeof(mBuffer));
     HeadsetXferEffectParams p;
-    memset(&p, 0, sizeof(HeadsetXferEffectParams));
+    p.unk0 = (int)this;
     SetParameters(&p, sizeof(HeadsetXferEffectParams));
 }
 

@@ -433,7 +433,8 @@ void BeatMatcher::SetPitchBend(int i1, float f2, bool b3) {
 }
 
 void BeatMatcher::ResetPitchBend(int i1) {
-    if (mTrackTypes[i1] != kTrackDrum && i1 == mCurTrack && mAudio) {
+    if (mTrackTypes[i1] != kTrackDrum && mTrackTypes[i1] != kTrackKeys
+        && mTrackTypes[i1] != kTrackRealKeys && i1 == mCurTrack && mAudio) {
         mAudio->ResetSlipTrack(mCurTrack, false);
     }
     unk50[i1] = 0;

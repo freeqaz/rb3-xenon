@@ -62,7 +62,7 @@ void LabelNumberTicker::Init() { REGISTER_OBJ_FACTORY(LabelNumberTicker) }
 void LabelNumberTicker::UpdateDisplay() {
     if (mLabel) {
         if (mWrapperText != gNullStr) {
-            mLabel->SetTokenFmt(mWrapperText, LocalizeSeparatedInt(mCurrentValue, TheLocale));
+            mLabel->SetTokenFmt(mWrapperText, (char *)LocalizeSeparatedInt(mCurrentValue));
         }
     }
 }

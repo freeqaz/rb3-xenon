@@ -145,7 +145,7 @@ bool RndAnimatable::ConvertFrames(float &f) {
 
 bool RndAnimatable::IsAnimating() {
     FOREACH (it, Refs()) {
-        if (dynamic_cast<AnimTask *>(it->RefOwner()))
+        if (dynamic_cast<AnimTask *>(RefPtrOf(it)->RefOwner()))
             return true;
     }
     return false;

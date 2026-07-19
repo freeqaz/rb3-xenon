@@ -1123,9 +1123,14 @@ void BandCharacter::SyncObjects() {
 
 float sDrawOrder = -1.0f;
 
+template <void (CharDriver::*Fn)(Symbol)>
+__declspec(noinline) void _outline_SetClipType(CharDriver *_obj, Symbol s) {
+    (_obj->*Fn)(s);
+}
+
 void BandCharacter::SetClipTypes(Symbol s1, Symbol s2) {
     if (mDriver) {
-        mDriver->SetClipType(s2);
+        _outline_SetClipType<&CharDriver::SetClipType>(mDriver, s2);
         if (BoneServo()) {
             BoneServo()->SetClipType(s1);
         }
@@ -2093,9 +2098,7 @@ DataNode BandCharacter::OnPlayGroup(DataArray *da) {
         i5 = da->Int(6);
         s = da->Sym(7);
     }
-    int i3 = 2;
-    if (b1)
-        i3 = 1;
+    int i3 = b1 ? 1 : 2;
     PlayGroup(da->Str(2), b6, i3, f7, (TaskUnits)i5, s);
     return DataNode(0);
 }

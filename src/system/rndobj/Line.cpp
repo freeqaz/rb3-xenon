@@ -344,17 +344,17 @@ DataNode RndLine::OnSetMat(const DataArray *array) {
 void RndLine::MapVerts(int idx, VertsMap &vmap) {
     if (mHasCaps) {
         if (mLinePairs) {
-            vmap.t = (idx & 1) + 1;
+            vmap.t = (idx & 1) ? 2 : 1;
             vmap.v = &mMesh->Verts()[idx * 4];
         } else {
             if (0 == idx) {
                 vmap.t = 1;
                 vmap.v = &mMesh->Verts()[0];
             } else {
-                int lastIdx = (int)mPoints.size() - 1;
-                if ((unsigned int)idx == lastIdx) {
+                if (idx + 1 == mPoints.size()) {
                     vmap.t = 2;
-                    vmap.v = &mMesh->Verts()[(int)mMesh->Verts().size() - 4];
+                    RndMesh::VertVector &verts = mMesh->Verts();
+                    vmap.v = &verts[(int)verts.size() - 4];
                 } else {
                     vmap.t = 0;
                     vmap.v = &mMesh->Verts()[(idx + 1) * 2];

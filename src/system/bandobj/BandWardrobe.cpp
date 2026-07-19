@@ -90,7 +90,7 @@ Symbol BandWardrobe::GetCoopMode(BandCamShot *shot) {
     const char *modeName;
     int curBit = 0;
     int i;
-    for (i = 2; i >= 0; i--, modePtr--) {
+    for (i = 2; (int)modePtr >= (int)modes; i--, modePtr--) {
         modeName = *modePtr;
         int bit = 0x100000 << i;
         if (curMode == modeName) {
@@ -110,7 +110,7 @@ Symbol BandWardrobe::GetCoopMode(BandCamShot *shot) {
             return Symbol(modes[i]);
         }
     }
-    TheDebug.Notify(MakeString("%s is not valid for any modes", PathName(shot)));
+    PathName(shot);
     for (int i = 0; i < 3; i++) {
         if ((0x100000 << i) & allModes) {
             return Symbol(modes[i]);
@@ -296,10 +296,7 @@ void BandWardrobe::SetSongAnimGenre(Symbol s) { mGenre = s; }
 void BandWardrobe::SetPlayMode(Symbol s, BandCamShot *shot) {
     static DataNode &pm = DataVariable("band.play_mode");
     pm = DataNode(s);
-    bool b1 = false;
-    if (LOADMGR_EDITMODE || !TheBandDirector || !mDemandLoad.Null()) {
-        b1 = true;
-    }
+    bool b1 = !TheBandDirector || !mDemandLoad.Null();
     if (b1 && !unk78.Null()) {
         LoadMainCharacters(shot);
         SetContexts("venue");
