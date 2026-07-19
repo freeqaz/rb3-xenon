@@ -130,3 +130,10 @@ void LightHue::Sync() {
         }
     }
 }
+
+// sw2 scatter-include (default/LightHue <- world/Reflection.cpp)
+#define gRev gRev_Reflection
+#define gAltRev gAltRev_Reflection
+#include "world/Reflection.cpp"
+#undef gRev
+#undef gAltRev

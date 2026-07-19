@@ -45,3 +45,10 @@ BEGIN_PROPSYNCS(FxSendMeterEffect)
 END_PROPSYNCS
 
 FxSendMeterEffect::FxSendMeterEffect() : mResetPeaks(0) {}
+
+// sw2 scatter-include (default/FxSendMeterEffect <- synth/FxSendWah.cpp)
+#define gRev gRev_FxSendWah
+#define gAltRev gAltRev_FxSendWah
+#include "synth/FxSendWah.cpp"
+#undef gRev
+#undef gAltRev

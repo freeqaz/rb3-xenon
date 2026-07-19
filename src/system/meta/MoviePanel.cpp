@@ -352,3 +352,6 @@ void MoviePanel::ShowMenu(bool b) {
 #include "meta/Meta.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/MoviePanel <- meta/MetaMusicManager.cpp)
+#include "meta/MetaMusicManager.cpp"
