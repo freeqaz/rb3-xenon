@@ -12,7 +12,7 @@
 | 2026-07-18 review | 17,445 | — | 3 Opus scouts ranked pools; `docs/plans/review-2026-07-18-next-focus.md` |
 | 2026-07-19 body-port/recarve/scatter | **18,397** | **+952** | the "mapped-but-0%" pool cracked open (see below) |
 
-The +465 came from **one discovery**: the "mapped-but-0%" pool (functions with
+The +952 came from **one discovery**: the "mapped-but-0%" pool (functions with
 real mangled names stuck at 0%) is overwhelmingly **COMDAT-scatter / TU-composition
 drift**, NOT missing source. Retail MSVC/X360 (`/O1`, no LTCG) emits each function
 into its own COMDAT and the linker scatters them across `.text`; dtk carves the
@@ -55,25 +55,19 @@ SongSortMgr redesign that matches DC3, not our older port.)
 After 3 sweep waves (+661) the scanner reports **275 SCATTER candidates /
 218 proposals** still open — now net-0 unpairable owners + genuinely divergent
 bodies; the mechanical scatter vein is **nearly drained**. Cross-dialect walls
-were unlocked by the wave-3 byte-neutral shim `obj/dialect_object_{push,pop}.h`. Wave 2 (in flight) is unblocking the *include-safety* owners
-(PROPSYNC macro barewords, `d.rev` BinStreamRev forms, `<math.h>` pow, Part.h
-order, duplicate bodies) so their whole-file include compiles. Highest-value
-open proposals:
+were unlocked by the wave-3 byte-neutral shim `obj/dialect_object_{push,pop}.h`.
 
-| unit ← owner | fns | bytes |
-|---|---|---|
-| BandCamShot ← HamCamShot | 11 | 1480 |
-| CameraShot ← Flow (⚠ w1 lost −2, needs body-dup not include) | 3 | 816 |
-| File ← Sfx (BufFile dtor) | 1 | 792 |
-| Dir ← Dir (vector/find_if) | 3 | 740 |
-| CharEyes ← HamCamTransform | 4 | 696 |
-| VocalTrack ← UIListDir (LightPreset keyframe) | 3 | 692 |
-| CharLipSync ← SongLayout | 4 | 632 |
-| MemHeap ← MemMgr (MemFree/MemPrint/MemResizeElem) | 3 | 484 (grouped-globals-capped) |
-
-Method is mechanical + gated (per-unit whole-binary A/B, auto-revert on loss).
-**Re-run the scanner between waves** — fixing one owner unblocks chained
-proposals (w1's MidiSynth←PropSync only appeared after PropSync←Dir landed).
+The remaining 218 proposals are dominated by **net-0 unpairable owners** (the
+scattered body diverges from ours, so the include exposes a fuzzy near-miss, not
+a strict flip) and a handful of **body-dup** cases that whole-file include can't
+take (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager — need the
+`#ifndef HX_NATIVE` body-dup lever, not include). The **reverse-dialect vein**
+(Object-dialect consumer ← ObjMacros-dialect owner, 21 candidates) is EMPTY
+(all net-0/BUILDFAIL — do not re-hunt). Method is mechanical + gated (per-unit
+whole-binary A/B, auto-revert on loss); **re-run the scanner between waves** —
+fixing one owner unblocks chained proposals (w1's MidiSynth←PropSync only
+appeared after PropSync←Dir landed). Verdict: **the high-yield mechanical
+scatter vein is essentially worked out; what's left is body-port-grade.**
 
 ### 2. UNWIRED gameport pool — 327 fns / 138 units
 Functions no wired obj emits. Two sub-classes:
