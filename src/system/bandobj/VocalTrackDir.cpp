@@ -445,22 +445,17 @@ void VocalTrackDir::SetConfiguration(Hmx::Object *o, HarmonyShowingState state) 
 }
 
 void VocalTrackDir::UpdateConfiguration() {
-    bool b8 = false;
     bool widescreen = TheRnd.GetAspect() == Rnd::kWidescreen;
-    if (BandTrack::mParent && BandTrack::mParent->HasNetPlayer())
-        b8 = true;
+    bool b8 = BandTrack::mParent && BandTrack::mParent->HasNetPlayer();
     b8 |= mSimulatedNet;
-    Hmx::Object *voxobj = FindObject(
-        MakeString(
-            "%s%s%s",
-            b8 ? "vocals_remote" : "vocals",
-            mIsTop ? "_top" : "_bottom",
-            widescreen ? "_wide" : ""
-        ),
-        false);
-    bool b9 = false;
-    if (mHarmLyrics && BandTrack::mParent && BandTrack::mParent->UseVocalHarmony())
-        b9 = true;
+    const char *name = MakeString(
+        "%s%s%s",
+        b8 ? "vocals_remote" : "vocals",
+        mIsTop ? "_top" : "_bottom",
+        widescreen ? "_wide" : ""
+    );
+    Hmx::Object *voxobj = FindObject(name, false);
+    bool b9 = mHarmLyrics && BandTrack::mParent && BandTrack::mParent->UseVocalHarmony();
     SetConfiguration(voxobj, (HarmonyShowingState)!b9);
 }
 
