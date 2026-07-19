@@ -99,6 +99,18 @@ the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
   band" (join size-deltas against the near-miss pool). The 3 narrow S3 leads
   (RecurseInfo/Constraint/StoreMainPanel) were each derived FROM a near-miss
   (99.9x), so they satisfy the predicate — S3 is the live test of the vein.
+  **S3 RESULT — VEIN DEAD (all 5 struct leads mirages, 2026-07-19).** RecurseInfo
+  0x10 is real but holds two 0xC Strings (=0x18; can't shrink without global
+  String change). Constraint copy-ctor matches 100% at 0x1c (F2's `li 0xc` = a
+  mis-paired ICF body). StoreMainPanel ctor matches 100% (F2's `addi 0x88` = a
+  BandStorePanel singleton's return+0x88, foreign object). **Conclusion: F2's
+  "struct-size" immediates were real numbers but SYSTEMATICALLY ICF-fold or
+  foreign-offset artifacts, not oversized fields — the Movie::IsLoading mispair
+  lesson generalized to the whole exposed sub-100 band. Do NOT fund a struct-size
+  scanner sweep; do NOT re-hunt these. The ≥88 exposed band is a mirage across ALL
+  three sub-taxonomies (mispair / reloc-co-location / struct-artifact).** Net from
+  the entire struct-recon probe lane: 0, but 0 regressions (verify-before-edit
+  gate held on all 5).
   **Mechanism rule (F2, durable):** an owner `.cpp` with its OWN nested
   scatter-includes is UNSAFE via the dialect shim — the push forces Object.h
   dialect and breaks the owner's nested ObjMacros-dialect includes, cascading to
