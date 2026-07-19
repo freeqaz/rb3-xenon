@@ -72,9 +72,26 @@ the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
   `<UNIT>_SW3_PRIMARY_TU` sentinel instead.
 
 - **Wave 1 — Expose-and-fix:** RAN 2026-07-19. Harvest → `~/tmp/expose_harvest.md`
-  (9 freebies / 71 ≥88% / 118 compile-fail). **Actual yield: +10 (F1 freebies
-  only); F2 pending, F3=0, F4=0.** BIG EV MISS vs the +80–150 estimate, and the
-  reason is a hard recalibration (see below).
+  (9 freebies / 71 ≥88% / 118 compile-fail). **Actual yield: +10 total (F1
+  freebies only; F2=0, F3=0, F4=0).** BIG EV MISS vs the +80–150 estimate — the
+  ≥88 band is systematically blocked (recalibration below).
+  **NEW CASCADE-SHAPED VEIN — DC3-oversized struct recon (F2 leads).** F2 proved
+  the clean-building 99.9x targets miss on a single **struct-size immediate**: our
+  DC3-sourced headers declare several structs LARGER than retail. Shrinking each to
+  retail size flips its near-miss AND (cascade) every function that touches that
+  struct — a shared-struct fix is wide-ripple by nature. Exact leads (each needs
+  its own whole-binary A/B; gate DC3-newer fields behind `#ifndef HX_NATIVE`):
+  **SongSection 0x18→0xc, RecurseInfo 0x18→0x10, BandIKEffector::Constraint
+  0x1c→0xc, StoreMainPanel member −0x18, CharPollGroup base subobject −0x28.**
+  This is the "B_STRUCT_OFFSET is the real vein" call (see A_TOOLING ICF memory),
+  now with concrete targets. HIGHER EV than the mispair band.
+  **Mechanism rule (F2, durable):** an owner `.cpp` with its OWN nested
+  scatter-includes is UNSAFE via the dialect shim — the push forces Object.h
+  dialect and breaks the owner's nested ObjMacros-dialect includes, cascading to
+  every TU that includes the consumer. Nested-scatter counts: HamCamTransform=9,
+  BandCamShot=3, ViewSetting=2, HamNavList/Spotlight/HolmesClient=1; SAFE (0):
+  SongLayout, CharEyes, ClipDistMap, CharPollGroup, TransAnim, FlowSetProperty,
+  StoreMainPanel, BandIKEffector.
   **⚠ RECALIBRATION — the ≥88%-but-<100% exposed band is a MISPAIR MIRAGE.** The
   target-symbol renamer labels a physically-adjacent, ICF-shaped-but-semantically-
   DIFFERENT function with the exposed name, so "closing" the near-miss matches our
