@@ -1127,3 +1127,9 @@ END_PROPSYNCS
 
 #undef SW_SCATTER_OWNER_INCLUDE
 #endif // ifndef gRev (OutfitConfig-as-owner inert guard)
+
+// ZS-MISSING-INSTANTIATION: retail out-of-lined this by-value MakeString COMDAT
+// in this TU; force emission (BandWardrobe idiom).
+#include "utl/MakeString.h"
+template const char *
+MakeString<const char *, const char *>(const char *, const char *, const char *);

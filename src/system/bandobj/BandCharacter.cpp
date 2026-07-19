@@ -2718,3 +2718,11 @@ END_PROPSYNCS
 #include "band3/bandtrack/GemTrack.cpp"
 #undef gRev
 #undef gAltRev
+
+// ZS-MISSING-INSTANTIATION: retail out-of-lined these template COMDATs in this
+// TU; our call sites (dynamic_cast / FormatString) never instantiate them.
+// Force emission (BandWardrobe Find<T> idiom).
+#include "rndobj/PostProc.h"
+#include "utl/MakeString.h"
+template RndPostProc *ObjectDir::Find<RndPostProc>(const char *, bool);
+template const char *MakeString<const char *>(const char *, const char *);

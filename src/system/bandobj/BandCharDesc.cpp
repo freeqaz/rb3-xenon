@@ -1138,3 +1138,8 @@ END_PROPSYNCS
 #include "band3/bandtrack/VocalTrack.cpp"
 #undef gRev
 #undef gAltRev
+
+// ZS-MISSING-INSTANTIATION: retail out-of-lined operator>>(BinStream&, Key<float>&)
+// in this TU; force emission (BandWardrobe idiom).
+#include "math/Key.h"
+template BinStream &operator>><float>(BinStream &, Key<float> &);

@@ -141,3 +141,7 @@ END_PROPSYNCS
 #include "hamobj/HamLabel.cpp"
 #undef gRev
 #undef gAltRev
+
+// ZS-MISSING-INSTANTIATION: retail out-of-lined this SetTokenFmt<char*> COMDAT
+// in this TU; force emission (BandWardrobe idiom).
+template void UILabel::SetTokenFmt<char *>(Symbol, char *);

@@ -972,3 +972,8 @@ int SymbolKeys::SetKey(float frame) {
 #include "obj/MessageTimer.cpp"
 #undef gRev
 #undef gAltRev
+
+// ZS-MISSING-INSTANTIATION: retail out-of-lined operator>>(BinStream&, Key<Color>&)
+// in this TU; force emission (BandWardrobe idiom).
+#include "math/Key.h"
+template BinStream &operator>><Hmx::Color>(BinStream &, Key<Hmx::Color> &);
