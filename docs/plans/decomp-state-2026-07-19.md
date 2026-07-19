@@ -29,6 +29,28 @@ permuter or keep banned; (b) fund a divergence-triage pipeline as batch infra.
 The id round-5 gate (+~1,000 names) is NOT reachable at the ~+70/session naming
 pace, so the flywheel needs a bigger name-feed (body-port waves) to re-open.
 
+## ▶ AUTOMATION BUILD-OUT (2026-07-19 pm, user-directed)
+
+User decisions: **permuter stays BANNED**; **build the divergence-triage
+classifier first** (price the automatable yield before funding any fleet), and
+concurrently run Opus-foreman/Sonnet-worker grind waves whose outcomes serve as
+ground truth to refine the classifier.
+
+Fresh pool (report.json regenerated at 18,689 baseline, cache cleared;
+`~/tmp/triage_pool.csv`): 7,723 named divergent fns / 2.97 MB. 6,341 at exactly
+0% (unwired/scatter/unmapped mass); the divergent-body pool = 1,382 fns / 440 KB:
+0–50: 292 · 50–75: 138 · 75–90: 260 · 90–98: 289 · 98–99.8: 145 · 99.8+: 258
+(the 99.8+ band is mostly reloc-coloc residue — skip bucket).
+
+In flight: (a) Fable tooling lead + Opus implementers building
+`scripts/triage/divergence_triage.py` in wt-triage — buckets = mispair /
+reloc-coloc / struct-artifact / form-divergence / body-port / zero-unwired,
+features via batched `objdiff-cli diff -f json` + `scripts/analysis/
+diff_inspect.py` analyzers; output `~/tmp/triage_{results.json,buckets.md}`.
+(b) Opus grind foreman running 2–3 waves × 4–5 Sonnet workers on the 90–99.8
+band (walls excluded via get_attempts), producing verified diffs for
+coordinator landing + ranked tooling-gap feedback.
+
 ## Recent arc
 
 ## Recent arc
