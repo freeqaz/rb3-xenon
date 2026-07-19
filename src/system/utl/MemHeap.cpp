@@ -57,8 +57,12 @@ void MemHeap::FreeBlockStats(int &lFrags, int &rFrags, int &freeBytes, int &i4, 
     i5 = ivar5;
     lFrags = ivar6;
     rFrags = (i - ivar6) - 1;
+#ifdef HX_NATIVE
     mMinFreeBytes = Min<unsigned int>(ivar3, mMinFreeBytes);
     i4 = mMinFreeBytes;
+#else
+    i4 = ivar3;
+#endif
 }
 
 void MemHeap::Print(TextStream &ts, bool verbose) {
@@ -174,7 +178,9 @@ void MemHeap::Init(
     mStrategy = strat;
     _ref0 = i7;
     mAllowTemp = allowTemp;
+#ifdef HX_NATIVE
     mMinFreeBytes = -1;
+#endif
     mDebugLevel = debugLevel;
     gTimeStamp++;
         int time = gTimeStamp;

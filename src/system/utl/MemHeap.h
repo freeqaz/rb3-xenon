@@ -67,7 +67,13 @@ private:
     int mDebugLevel; // 0x18
     Strategy mStrategy; // 0x1c
     bool mAllowTemp; // 0x20
+#ifdef HX_NATIVE
+    // DC3-era addition RB3 retail lacks; its presence widened the heap struct
+    // to 0x28 and mispriced every gHeaps[] array-stride (mulli *,0x28 vs retail
+    // *,0x24). Gated so the matching build sees the retail 0x24 layout while the
+    // native link keeps the bookkeeping field.
     int mMinFreeBytes; // 0x24
+#endif
 };
 
 class MemHeapStack {
