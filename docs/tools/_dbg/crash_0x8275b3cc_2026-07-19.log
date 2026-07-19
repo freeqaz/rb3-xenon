@@ -1,0 +1,11 @@
+# Fresh XBDM notify capture — 2026-07-19, guitar session crash
+# (478,825 identical exception lines collapsed)
+
+[xbdm] 201- connected
+[xbdm] debugger connect override name=relay user=claude -> 200- OK
+[xbdm] notify reconnectport=1731 -> 205- now a notification channel
+[notify] control connection converted to notification channel
+[20:14:18] execution started
+
+=== exception line (repeated 478,825x in 12s) ===
+[20:14:18] exception code=0xc0000005 thread=0xf9000000 address=0x8275b3cc read=0x00000008 first

@@ -18,14 +18,23 @@ Decoded from the report descriptor
 
 | Byte | Contents |
 |---|---|
-| 0 | Axis Z (0–255) |
-| 1 | Axis Rz (0–255) ← **strum** |
-| 2 | Axis X |
-| 3 | Axis Y |
-| 4 | Axis (vendor/undefined) |
-| 5 | low nibble = hat/D-pad (0–7, 8=null); high nibble = Buttons 1–4 |
+| 0 | Axis Z (rest 0x7f) |
+| 1 | Axis Rz (rest 0x7f, pinned — **not** strum) |
+| 2 | Axis X (settles 0x00) |
+| 3 | Axis Y ← **strum** (rest 0x7f, up=0x00, down=0xff) |
+| 4 | Axis (vendor, pinned 0xff) |
+| 5 | low nibble = hat/D-pad (rest 0xf=null); high nibble = Buttons 1–4 |
 | 6 | Buttons 5–12 |
-| 7 | 8 vendor bits |
+| 7 | 8 vendor bits (0x00) |
+
+> **HW-CONFIRMED 2026-07-19 (byte-level, live on console):** strum is the
+> **Y axis = report byte 3**, NOT byte 1 (Rz). Earlier this doc labeled strum
+> "byte 1 / Rz" — that conflated Linux **js-axis-1** with **report-byte-1**.
+> joydev assigns js-axis indices in ascending ABS-code order, so js-axis-1 =
+> ABS_Y = report byte 3. The on-console raw-report dump proved it: with the
+> guitar still every axis is fixed except byte 3, which swings 0x7f→0x00 (strum
+> up) / 0x7f→0xff (strum down). Byte 1 (Rz) stays pinned at 0x7f. The driver
+> (`xbox360_vcontroller.c interruptHandler`) reads `r[3]`.
 
 12 buttons (usages Button 1–12) + hat + 5 analog axes.
 
@@ -58,8 +67,8 @@ Target `XINPUT_GAMEPAD.wButtons` bits the driver should set per HID input:
 | Yellow | Button 1 | Y `0x8000` |
 | Blue | Button 3 | X `0x4000` |
 | Orange | Button 4 | LB `0x0100` |
-| Strum up | Rz < ~0x40 | DPAD_UP `0x0001` |
-| Strum down | Rz > ~0xC0 | DPAD_DOWN `0x0002` |
+| Strum up | byte3 (Y) < ~0x40 | DPAD_UP `0x0001` |
+| Strum down | byte3 (Y) > ~0xC0 | DPAD_DOWN `0x0002` |
 | Start | Button 10 | START `0x0010` |
 | Back | Button 9 | BACK `0x0020` |
 
