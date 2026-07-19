@@ -168,7 +168,8 @@ void VocalPlayer::SetTrack(int trk) {
 }
 
 void VocalPlayer::PostLoad(bool b1) {
-    ObjectDir::Main()->Find<MidiParser>("play_tambourine", true)->AddSink(this);
+    MidiParser *midiParser = ObjectDir::Main()->Find<MidiParser>("play_tambourine", true);
+    midiParser->AddSink(this);
     int num = TheSongDB->GetVocalNoteListCount();
     mStats.SetVocalSingerAndPartCounts(mSingers.size(), num);
     for (int i = 0; i < num; i++) {
@@ -230,7 +231,7 @@ void VocalPlayer::Restart(bool b1) {
         mBeatMaster->GetAudio()->SetVocalFailFader(0);
         mBeatMaster->GetAudio()->SetVocalDuckFader(0);
         if (mTrack) {
-            mCouldChat = !TheNetSession->IsLocal() && PressingToTalk();
+            mCouldChat = PressingToTalk();
             SendCanChat(mCouldChat);
         }
         Player::Restart(b1);
@@ -338,8 +339,7 @@ void VocalPlayer::RemoteUpdateCrowd(float f1) {
 }
 
 void VocalPlayer::UpdateCrowdMeter(int rating, int phraseIdx) {
-    bool notNet = !IsNet();
-    if (notNet) {
+    if (!IsNet()) {
         float multiplier = 1.0f;
         float ratingFraction = (float)rating * 0.25f;
         if (ratingFraction > mCrowd->mRawValue) {
@@ -347,7 +347,8 @@ void VocalPlayer::UpdateCrowdMeter(int rating, int phraseIdx) {
         }
         mCrowd->UpdatePhrase(ratingFraction, multiplier);
         CheckCrowdFailure();
-        HandleType(send_update_crowd_msg);
+        static Message msg(Symbol("send_update_crowd"));
+        HandleType(msg);
     }
     if (rating >= 4) {
         BuildHitStreak(phraseIdx, 0);
@@ -1251,12 +1252,6 @@ void VocalPlayer::LocalScorePhrase(
     int i1, const std::vector<int> &i_rNewPhraseActiveParts, bool b3
 ) {
     if (mTrack) {
-        int iActivePartCount = 0;
-        for (std::vector<int>::const_iterator it = i_rNewPhraseActiveParts.begin();
-             it != i_rNewPhraseActiveParts.end(); ++it) {
-            iActivePartCount += *it;
-        }
-        MILO_ASSERT(( 0) <= ( iActivePartCount) && ( iActivePartCount) <= ( i_rNewPhraseActiveParts.size()), 0x855);
         VocalTrackDir *dir = mTrack->GetVocalTrackDir();
         dir->ShowPhraseFeedback(i1, -1, -1, IsDeployingBandEnergy());
         dir->UpdateVocalMeters(
@@ -1282,7 +1277,7 @@ void VocalPlayer::HookupTrack() {
     MILO_ASSERT(mTrack, 0x88A);
     std::vector<VocalPhrase> &phrases = mVocalParts[0]->mVocalNoteList->mPhrases;
     mTrack->Restart(this, phrases[0].unk0 + phrases[0].unk4, phrases[1].unk0 + phrases[1].unk4);
-    mCouldChat = !TheNetSession->IsLocal() && PressingToTalk();
+    mCouldChat = PressingToTalk();
     SendCanChat(mCouldChat);
     UpdateMicDisplay();
     mTrack->GetVocalTrackDir()->SetMaxMultiplier(mBehavior->GetMaxMultiplier());
@@ -1395,19 +1390,41 @@ void VocalPlayer::UpdateMicDisplay() {
         bool hadMic1 = HadMic(MicClientID(1, -1));
         bool hadMic2 = HadMic(MicClientID(2, -1));
 
-        bool hadAnyMic = hadMic0 || hadMic1 || hadMic2;
-        bool noLongerHasMic0 = noMic0 && hadMic0;
-        bool noLongerHasMic1 = noMic1 && hadMic1;
-        bool noLongerHasMic2 = noMic2 && hadMic2;
-        bool b15 = numMics == 0 || noLongerHasMic0 || noLongerHasMic1 || noLongerHasMic2;
+        bool hadAnyMic;
+        if (hadMic0 || hadMic1 || hadMic2)
+            hadAnyMic = true;
+        else
+            hadAnyMic = false;
+        bool noLongerHasMic0;
+        if (noMic0 && hadMic0)
+            noLongerHasMic0 = true;
+        else
+            noLongerHasMic0 = false;
+        bool noLongerHasMic1;
+        if (noMic1 && hadMic1)
+            noLongerHasMic1 = true;
+        else
+            noLongerHasMic1 = false;
+        bool noLongerHasMic2;
+        if (noMic2 && hadMic2)
+            noLongerHasMic2 = true;
+        else
+            noLongerHasMic2 = false;
+        int b15;
+        if (numMics == 0 || noLongerHasMic0 || noLongerHasMic1 || noLongerHasMic2)
+            b15 = 1;
+        else
+            b15 = 0;
         bool combined = b15 & GetUser()->IsLocal();
         if (!combined) {
             pTrackDir->ShowMicDisplay(false);
         } else {
-            if (mVocalParts.size() == 1) {
-                pTrackDir->SetMicDisplayLabel(vocals_connect_a_mic);
+            if (numMics == 0) {
+                static Symbol sym_connect_a_mic("vocals_connect_a_mic");
+                pTrackDir->SetMicDisplayLabel(sym_connect_a_mic);
             } else {
-                pTrackDir->SetMicDisplayLabel(vocals_mics_disconnected);
+                static Symbol sym_mics_disconnected("vocals_mics_disconnected");
+                pTrackDir->SetMicDisplayLabel(sym_mics_disconnected);
             }
             if (hadAnyMic) {
                 pTrackDir->SetMissingMicsForDisplay(
@@ -1495,7 +1512,7 @@ void VocalPlayer::OnGameOver() {
 #pragma push
 #pragma pool_data off
 void VocalPlayer::ResetScoring() {
-    std::vector<int> phraseActiveParts(3);
+    std::vector<int> phraseActiveParts(3, 0);
     for (int i = 0; i < mVocalParts.size(); i++) {
         VocalPart *cur = mVocalParts[i];
         if (cur->ScoringEnabled()) {
