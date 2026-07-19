@@ -278,3 +278,16 @@ void RndMeshAnim::ShrinkKeys(int num) {
         VertColorsKeys().resize(num);
     }
 }
+
+// RB3 retail linker interleaved MultiMesh.cpp / ShaderMgr.cpp / mtx.cpp COMDATs
+// into this TU's .text span. Compile their bodies here so objdiff pairs them (bp2r).
+// MultiMesh's INIT_REVS collides with MeshAnim's own gRev/gAltRev (both file-scope
+// static const), so rename them for the include; they are compile-time literals
+// referenced only inside MultiMesh's functions, so this is byte-neutral.
+#define gRev gRev_MultiMesh
+#define gAltRev gAltRev_MultiMesh
+#include "rndobj/MultiMesh.cpp"
+#undef gRev
+#undef gAltRev
+#include "rndobj/ShaderMgr.cpp"
+#include "math/mtx.cpp"

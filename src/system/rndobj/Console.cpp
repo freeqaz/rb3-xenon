@@ -550,3 +550,7 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
 }
 
 #pragma endregion
+
+// RB3 retail linker interleaved MultiMesh.cpp's COMDATs into this TU's .text
+// span. Compile its bodies into this obj so objdiff can pair them (bp2r).
+#include "rndobj/MultiMesh.cpp"

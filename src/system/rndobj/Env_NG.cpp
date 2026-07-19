@@ -237,3 +237,7 @@ void NgEnviron::Select(const Vector3 *pos) {
     TheNgStats->mLightsReal += mNumLightsReal;
 #endif
 }
+
+// RB3 retail linker interleaved Rnd_NG.cpp's COMDATs into this TU's .text
+// span. Compile its bodies into this obj so objdiff can pair them (bp2r).
+#include "rndobj/Rnd_NG.cpp"
