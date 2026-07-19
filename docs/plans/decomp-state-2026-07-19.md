@@ -1,6 +1,6 @@
 # rb3-xenon decomp — state & live veins (2026-07-19)
 
-**Current: 18,689 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,761 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions). Afternoon session +68 (18,621→18,689): scatter expose-and-fix
 +15, unwired-owner scatter-wiring +52, near-miss +1.
