@@ -135,15 +135,27 @@ the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
   (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager as `#ifndef
   HX_NATIVE` dup), MidiSynth WorldDir::PropSync trio (splits re-attribution —
   Dir.obj already emits), MemTracker::StopLog (map/splits).
-- **Wave 2 — Oracle-backed UNWIRED wiring**, per-symbol-owner-driven (NOT naive
-  whole-TU carve): resolve each unwired symbol's owner class, port its bodies
-  into the canonical TU (wire into objects.json if absent) — then Wave-1
-  machinery pairs it. Targets: rnddx9 CubeTex 8 Dx* ctors + Rnd_Xbox(3) +
-  rnddx9/Rnd(1), Anim(7), Sequence(8), MemTracker(8), DataPointMgr(5),
-  WaveFile(4), Cam(2); game DataArraySongInfo(11), TrainerPanel(5),
-  VocalTrack(3), VocalPlayer(3). SKIP oracle-poor half (System/LEAPCORE 32,
-  Mic/ExternalMic 25, FFT 10, Compress, GranularSynth/Spectral/PeakDetector,
-  rtti/osfinfo). EV +60–120.
+- **Wave 2 — UNWIRED-OWNER SCATTER-WIRING = THE TOP LIVE VEIN (probe P2 GO,
+  +9 @3917a0e4).** The winning shape: **117 `.cpp` files exist in-tree with full
+  bodies but were never wired** (not in objects.json → no obj emits them; list
+  `~/tmp/unwired_cpp_list.txt`). Retail scattered their COMDATs into an
+  already-wired unit's `.text` span → a near-free `#include "<owner>.cpp"` append
+  to that consumer emits + pairs them. P2: CubeTex.cpp += 4 includes
+  (rnddx9/{MultiMesh,Cam,Lit,Part}.cpp) → +9 in ~5 min, 0 regr. Sweep running
+  (`~/tmp/uwire_worklist.md`). **~60–65% clean flip rate**; FILTER OUT
+  multiple-inheritance dtors (`??1`/`??_D`/`??_G` of 2+-base classes) — they ride
+  a shared-base layout delta, only reach 99.x, route to a separate struct stream.
+  Prioritize engine files (rnddx9/rndobj/synth/movie/os/net/midi) over gesture/*
+  + Dance-Central hamobj/* (mostly Kinect, likely no RB3 target). EV: unknown
+  addressable pool, but each hit is ~free. This SUPERSEDES the old "per-symbol
+  owner-driven port" framing below — the bodies already exist; only the wiring
+  was missing.
+- ~~**Wave 2 (old) — Oracle-backed UNWIRED wiring** (superseded by the above; the
+  "port the bodies" premise was wrong — bodies pre-exist, just unwired).~~
+  Original target census (for reference): rnddx9 CubeTex 8 Dx* + Rnd_Xbox(3),
+  Anim(7), Sequence(8), MemTracker(8), DataPointMgr(5), WaveFile(4), Cam(2); game
+  DataArraySongInfo(11), TrainerPanel(5), VocalTrack(3), VocalPlayer(3). SKIP
+  oracle-poor (System/LEAPCORE, Mic, FFT, Compress, DSP, rtti/osfinfo).
 - **Wave 3 — TrackWatcherImpl beatmatch gameport:** 121 flat-0% NAMED bodies,
   direct oracle `../rb3/src/system/beatmatch/TrackWatcherImpl.cpp`, splits
   already gap-filled (rc3). NOT banned grind — highest-cascade single target
@@ -256,6 +268,16 @@ unwired owner TU first (converges with vein #2).
   hit-rate) before committing 4–6 agents. If hit-rate is low, TrackWatcher is a
   low-ROI grind → pivot to oracle-backed unwired wiring (vein #2) or the
   round-5-prep / user pivot conversation.
+  **PROBE VERDICT (2026-07-19): NO-WAVE — TrackWatcher is a MIRAGE.** The premise
+  is wrong: TrackWatcherImpl has only 23 named methods, **22 already at 100%**
+  (own methods effectively DONE); the "78 anon-0%" are FOREIGN functions
+  scatter-interleaved into its 20KB pinned span (BandCrowdMeter, PartAnim,
+  HamSupereasyData, Object, DataArray, STL templates — our source already
+  `#include`s PartAnim.cpp + BandCrowdMeter.cpp). Correlator confirmed 0 real
+  matches. Only residual = `CheckForAutoplay` 92.9% (permuter-class, deferred).
+  The real (separate) opportunity buried here is BandCrowdMeter/PartAnim as
+  first-class units (~20% near-misses, cross-TU layout problem, NOT clean
+  porting). **Do NOT commit a TrackWatcher body-port wave.**
 - **Grouped-globals wall** — RECON DONE (2026-07-19): verdict **NARROW, no
   mechanism wave**. Of 441 named 80–97 fns, only **17** are genuinely fold-walled
   and just **2 pure-fold** (the known MemFindAddrHeap/SystemMs). MSVC only shares
