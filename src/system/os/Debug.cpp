@@ -445,8 +445,12 @@ void Debug::Modal(ModalType &type, const char *msg, void *addr) {
 // in their DC3-split files for the native (HX_NATIVE) link. No final link in the
 // matching build, so the duplicate symbols never collide.
 extern int gUsingCD;
-extern int gSystemMs;
-extern float gSystemFrac;
+// Static (internal-linkage) + adjacent so MSVC addresses them section-relative and
+// folds gSystemMs (+0) + gSystemFrac (+4) under one shared base, matching retail's
+// SystemMs anchor (lbl_82CC999C). Canonical defs live in System.cpp; matching build
+// has no final link (native excludes this reunification block).
+static float gSystemFrac;
+static int gSystemMs;
 extern Timer gSystemTimer;
 extern DataArray *gSystemConfig;
 extern DataArray *gSystemTitles;
@@ -484,8 +488,9 @@ DataArray *SystemTitles() { return gSystemTitles; }
 int SystemMs() {
     gSystemTimer.Restart();
     float lastMs = gSystemTimer.GetLastMs();
-    int ms = gSystemFrac + lastMs;
-    gSystemFrac = (gSystemFrac + lastMs) - ms;
+    float sum = lastMs + gSystemFrac;
+    int ms = sum;
+    gSystemFrac = sum - ms;
     gSystemMs += ms;
     return gSystemMs;
 }

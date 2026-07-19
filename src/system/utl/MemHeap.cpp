@@ -552,8 +552,13 @@ int MemHeap::Free(int *ptr) {
 // emits+matches those bytes; the canonical definitions stay in their DC3-split
 // files for the native (HX_NATIVE) link. No final link in the matching build, so
 // the duplicate symbols never collide.
-extern MemHeap gHeaps[];
-extern int gNumHeaps;
+// Static (internal-linkage) so MSVC addresses them section-relative and folds
+// gHeaps + gNumHeaps under one shared base, matching retail's MemFindAddrHeap
+// anchor (lbl_82E06BA8: gHeaps at +0x8, gNumHeaps after the array). Reverse-decl
+// layout puts gHeaps at the lower address. Canonical defs live in MemMgr.cpp;
+// matching build has no final link (native excludes this reunification block).
+static int gNumHeaps;
+static MemHeap gHeaps[16];
 
 int MemNumHeaps() { return gNumHeaps; }
 

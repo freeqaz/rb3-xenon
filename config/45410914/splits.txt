@@ -1323,8 +1323,10 @@ Part.cpp:
 	.text       start:0x8244E200 end:0x8244F280
 
 system/rndobj/Rnd.cpp:
-	.pdata      start:0x8220A868 end:0x8220B070
-	.text       start:0x8240EC30 end:0x82416B54
+	.pdata      start:0x8220A868 end:0x8220AB68
+	.pdata      start:0x8220AB70 end:0x8220B070
+	.text       start:0x8240EC30 end:0x824111D0
+	.text       start:0x8241126C end:0x82416B54
 
 MeterEffect.cpp:
 	.pdata      start:0x8225B558 end:0x8225B578
@@ -2784,7 +2786,9 @@ SongMgr.cpp:
 	.text       start:0x827A88E0 end:0x827AA508
 
 File.cpp:
+	.pdata      start:0x8220AB68 end:0x8220AB70
 	.pdata      start:0x82218308 end:0x82218430
+	.text       start:0x824111D0 end:0x8241126C
 	.text       start:0x825164A8 end:0x82517DF8
 	.text       start:0x82518340 end:0x82518354
 

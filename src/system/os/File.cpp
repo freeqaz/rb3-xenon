@@ -301,12 +301,12 @@ bool FileExists(const char *iFilename, int iMode, String *str) {
 }
 
 String UniqueFilename(const char *c1, const char *c2) {
-    String ret;
     int i = 0;
+    String ret;
     File *file = nullptr;
     do {
         i++;
-        ret = MakeString("%s_%06d.%s", c1, i, c2);
+        ret = MakeString("%s_%06d.bmp", c1, i);
         delete file;
         file = NewFile(ret.c_str(), 1);
     } while (file);
