@@ -49,25 +49,63 @@ a gameport target, not an attribution gap. (rc2/SongSort `0x826DD570` was
 correctly skipped this way: SkillsAwardList / CampaignEra* / a NavListSortMgr
 SongSortMgr redesign that matches DC3, not our older port.)
 
+## Captain's plan (2026-07-19, Fable strategic review) — ACTIVE
+
+**Key reframe (overturns the "scatter drained" verdict below):** the ~218
+"net-0" scatter residue is NOT dead — it is a **near-miss discovery engine**.
+Applying an owner-include PAIRS the scattered body in objdiff, turning an opaque
+0% stub into a *diagnosed* fuzzy near-miss with a known owner source file + DC3/
+rb3-Wii oracle. This is exactly how UpdateOverlay / UpdateCache / enableAAFilter
+were found and then fixed to strict. Net-0 ≠ rejected; it means "here's a paired
+body and its diff." **Frame for every wave: judged by strict flips + names fed to
+the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
+
+- **Wave 1 — Expose-and-fix:** batch-apply the residual owner-includes, harvest
+  the exposed fuzzy % per paired fn, rank ≥88%, dispatch fixers. Fold in the 3
+  body-dup cases (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager
+  — as `#ifndef HX_NATIVE` dup, never tried), MidiSynth WorldDir::PropSync trio
+  (splits re-attribution — Dir.obj already emits), MemTracker::StopLog mispair
+  (map/splits). EV +80–150. Harvest tool run → `~/tmp/expose_harvest.md`.
+- **Wave 2 — Oracle-backed UNWIRED wiring**, per-symbol-owner-driven (NOT naive
+  whole-TU carve): resolve each unwired symbol's owner class, port its bodies
+  into the canonical TU (wire into objects.json if absent) — then Wave-1
+  machinery pairs it. Targets: rnddx9 CubeTex 8 Dx* ctors + Rnd_Xbox(3) +
+  rnddx9/Rnd(1), Anim(7), Sequence(8), MemTracker(8), DataPointMgr(5),
+  WaveFile(4), Cam(2); game DataArraySongInfo(11), TrainerPanel(5),
+  VocalTrack(3), VocalPlayer(3). SKIP oracle-poor half (System/LEAPCORE 32,
+  Mic/ExternalMic 25, FFT 10, Compress, GranularSynth/Spectral/PeakDetector,
+  rtti/osfinfo). EV +60–120.
+- **Wave 3 — TrackWatcherImpl beatmatch gameport:** 121 flat-0% NAMED bodies,
+  direct oracle `../rb3/src/system/beatmatch/TrackWatcherImpl.cpp`, splits
+  already gap-filled (rc3). NOT banned grind — highest-cascade single target
+  (biggest name-feed to round-5; RealGuitarTrackWatcherImpl.obj already owns
+  scattered spans → landing beatmatch types unblocks chained proposals). Split
+  4–6 agents by method cluster, 4488B monster last, accept partial. EV +80–140.
+- **Micro-lane (no wave slot):** the 4 named near-miss probes (PreInit,
+  InitParams, FindShader, SetTransform) + DxRnd::UpdateScalerParams / UpdateCache
+  99.8 / enableAAFilter 99.5 / RingBuffer::Write 91.4 singles; grouped-globals
+  **RECON ONLY** (count 80–97 fns citing shared-anchor `lbl_*` base+offset
+  addressing — ≥30 → build a source-level global-aggregation mechanism, <10 →
+  drop). → `~/tmp/grouped_globals_recon.md`.
+- **Between waves:** re-run `comdat_scatter_scan.py` (chained proposals) + id
+  stack stage-1 even below the +1,000 gate (~0.15 flips/name).
+- **Pivot decision deferred ~3 waves:** after, the long tail is the ~5,300
+  nomatch divergent-body pool — choose (a) scale Wave-1 expose-and-fix into a
+  systematic divergence-triage pipeline, (b) grouped-globals mechanism if recon
+  supports, or (c) pivot work-kind (native/tooling).
+
 ## Live veins (ranked by EV)
 
-### 1. COMDAT-scatter sweep — TOP LIVE VEIN
+### 1. COMDAT-scatter sweep — reframed as EXPOSE-AND-FIX (see Captain's plan)
 After 3 sweep waves (+661) the scanner reports **275 SCATTER candidates /
-218 proposals** still open — now net-0 unpairable owners + genuinely divergent
-bodies; the mechanical scatter vein is **nearly drained**. Cross-dialect walls
-were unlocked by the wave-3 byte-neutral shim `obj/dialect_object_{push,pop}.h`.
-
-The remaining 218 proposals are dominated by **net-0 unpairable owners** (the
-scattered body diverges from ours, so the include exposes a fuzzy near-miss, not
-a strict flip) and a handful of **body-dup** cases that whole-file include can't
-take (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager — need the
-`#ifndef HX_NATIVE` body-dup lever, not include). The **reverse-dialect vein**
-(Object-dialect consumer ← ObjMacros-dialect owner, 21 candidates) is EMPTY
-(all net-0/BUILDFAIL — do not re-hunt). Method is mechanical + gated (per-unit
+218 proposals** still open. Previously called "nearly drained / body-port-grade";
+the captain's reframe (above) makes these the **cheapest diagnosed near-miss
+fodder on the board** — apply the include to pair the body, harvest the exposed
+%, fix the ≥88% ones. Cross-dialect walls unlocked by the wave-3 byte-neutral
+shim `obj/dialect_object_{push,pop}.h`. Method is mechanical + gated (per-unit
 whole-binary A/B, auto-revert on loss); **re-run the scanner between waves** —
 fixing one owner unblocks chained proposals (w1's MidiSynth←PropSync only
-appeared after PropSync←Dir landed). Verdict: **the high-yield mechanical
-scatter vein is essentially worked out; what's left is body-port-grade.**
+appeared after PropSync←Dir landed).
 
 ### 2. UNWIRED gameport pool — 327 fns / 138 units
 Functions no wired obj emits. Two sub-classes:
