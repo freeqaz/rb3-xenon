@@ -1,8 +1,8 @@
 # rb3-xenon decomp — state & live veins (2026-07-19)
 
-**Current: 18,397 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,621 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). HEAD `6db605e0`.
+(~69k functions). HEAD `d0864f7c`.
 
 ## Recent arc
 
@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 2026-07-17/18 mega-run | 17,445 | +2,081 | identification stack (+1,871 names), lane-B near-pair, naming wave, BandSwatch, struct leads |
 | 2026-07-18 review | 17,445 | — | 3 Opus scouts ranked pools; `docs/plans/review-2026-07-18-next-focus.md` |
-| 2026-07-19 body-port/recarve/scatter | **18,397** | **+952** | the "mapped-but-0%" pool cracked open (see below) |
+| 2026-07-19 body-port/recarve/scatter/id-flywheel | **18,621** | **+1,176** | the "mapped-but-0%" pool cracked open (see below) |
 
 The +952 came from **one discovery**: the "mapped-but-0%" pool (functions with
 real mangled names stuck at 0%) is overwhelmingly **COMDAT-scatter / TU-composition
@@ -107,12 +107,15 @@ Accomplishment/TrackWatcher blobs are done; SongSort is UNWIRED (vein #2).
 - **BandCharacter −4 container compaction** (cr6), **BandCamShot vbase-MI
   reconstruction** (documented wall, pad-probe-killed the tempting +0x80 tail).
 
-### 6. Identification round-4 may re-open
-Round-3 collapsed at ~0.031 flips/name and was gated on "+200 new names or a new
-pinned cluster." The recarve/scatter waves have been *adding* names (rc1 +58, rc3
-+8 map entries, plus every owner-include exposes sibling symbols). Worth
-re-running `scripts/harvest/TU5_SCANNER_STACK.md` once the scatter sweep settles
-and counting the net new named set.
+### 6. Identification round-4 — DONE +170 (`39038c09`), FLYWHEEL CONFIRMED
+The scatter/recarve campaign's +250 names & 3 new pinned clusters cleared the
+round-3 fixed-point gate. Re-running `scripts/harvest/TU5_SCANNER_STACK.md`
+yielded **+170 strict** at ~0.157 flips/name (5x the collapsed 0.031 rate),
+fixed point in 3 rounds, 6/6 Ghidra spot-checks. **Key insight: the scatter
+vein FEEDS the identifier** — every owner-TU-include body flip creates a fresh
+clean byte-identity pair the scanner then cracks. Round-5 not warranted until
++~1,000 more names. This coupling means future body-port waves should be
+followed by an identification re-run.
 
 ## Dead / banned (do NOT re-hunt)
 Permuter (user directive — low yield, grinds the box); ≥99 fixwave round-2
