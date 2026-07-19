@@ -30,8 +30,8 @@ public:
     };
     struct OrganizedFileMerger {
         OrganizedFileMerger() : merger(nullptr) {}
-        ObjPtr<FileMerger> merger; // 0x0
-        OrganizedState state; // 0x14
+        FileMerger *merger; // 0x0
+        OrganizedState state; // 0x4
     };
 
     // Hmx::Object

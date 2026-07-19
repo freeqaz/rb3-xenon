@@ -834,13 +834,13 @@ void HamNavList::SetHighlight(int i) {
 }
 
 HamListRibbonDrawState::HamListRibbonDrawState()
-    : mSwellSmoother(0.0f, 10.0f, 1.0f), mSelected(false),
+    : mSwellSmoother(0.0f, 10.0f, 1.0f),
 #ifdef HX_NATIVE
       mElemDrawState(nullptr),
 #else
       mElemDrawState(0),
 #endif
-      mHidden(false), mBigScale(0.0f), mActive(false) {}
+      mBigScale(0.0f), mSelected(false), mHidden(false), mActive(false) {}
 
 LeftHandListEngagementMsg::LeftHandListEngagementMsg(bool b) : Message(Type(), b) {}
 

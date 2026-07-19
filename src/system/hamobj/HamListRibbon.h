@@ -16,14 +16,14 @@ struct HamListRibbonDrawState {
     HamListRibbonDrawState();
 
     DoubleExponentialSmoother mSwellSmoother;
-    bool mSelected;
 #ifdef HX_NATIVE
     UIListElementDrawState *mElemDrawState; // LP64: pointer, not int
 #else
     unsigned int mElemDrawState; // ILP32: unsigned int == pointer size
 #endif
-    bool mHidden;
     float mBigScale;
+    bool mSelected;
+    bool mHidden;
     bool mActive;
 };
 

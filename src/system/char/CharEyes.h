@@ -46,6 +46,7 @@ public:
     };
     struct CharInterestState {
         CharInterestState(Hmx::Object *owner) : mInterest(owner), mRefractoryTime(-1) {}
+        CharInterestState(const CharInterestState &s) : mInterest(s.mInterest), mRefractoryTime(-1) {}
         CharInterestState &operator=(const CharInterestState &s) {
             mInterest = s.mInterest.Ptr();
             return *this;
@@ -55,7 +56,7 @@ public:
         float RefractoryTimeRemaining();
 
         ObjOwnerPtr<CharInterest> mInterest; // 0x0
-        float mRefractoryTime; // 0x14
+        float mRefractoryTime; // 0xc
     };
 
     // Hmx::Object
