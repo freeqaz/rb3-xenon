@@ -169,6 +169,7 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 ### LLM grind loop / OSS-model eval / training data (2026-07-07..19)
 
 - [decomp/eval-ledger.md](decomp/eval-ledger.md) — **THE standing scoreboard** for the frozen 50-fn eval bench + SIGNAL/NOISE noise threshold; appended by `scripts/grind/bench.sh`.
+- [plans/grind-r3-trace-review-2026-07-19.md](plans/grind-r3-trace-review-2026-07-19.md) — trace review verdict: harness bugs (stdout-swallow, 8 unspliceable fns) dominate compile-fails; ranked prompt levers + ceiling estimate. Full findings JSON in `decomp/research/`.
 - [plans/grind-data-leverage-execution-2026-07-18.md](plans/grind-data-leverage-execution-2026-07-18.md) — **current state of record**: 7-thread options catalog, dispatch results, verdicts (token fix, gold-clone finding, replay verdict).
 - [plans/grind-oreval-data-leverage-review-2026-07-16.md](plans/grind-oreval-data-leverage-review-2026-07-16.md) — the underlying review: two-piles diagnosis, token-length constraint, ranked opportunities.
 - [decomp/training-corpus-annotations.md](decomp/training-corpus-annotations.md) — per-run corpus verdicts (sft+/partial/hard-neg/junk lanes) + normalizer provenance rules.
