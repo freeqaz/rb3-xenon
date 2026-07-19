@@ -24,7 +24,11 @@ Prereqs:
   * RB3 running with our DLL, and `{rb3e_vc_connect}` already issued (returns 3).
   * JRPC2.xex loaded (see jrpc.py header; `jrpc.py <host> ping` to confirm).
 
-usage: vc_diag.py [HOST]     (default 192.168.8.180)
+usage: vc_diag.py [HOST] [USER]   (defaults: 192.168.8.180, user 3)
+
+Pass the user index that `{rb3e_vc_connect}` returned — xam may assign a
+different slot per boot (seen 3 one boot, 1 the next), so query the slot the
+bind actually landed on.
 """
 import os
 import sys
@@ -34,8 +38,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from jrpc import Jrpc, Xbdm  # noqa: E402
 
 HOST = sys.argv[1] if len(sys.argv) > 1 else "192.168.8.180"
+USER = int(sys.argv[2]) if len(sys.argv) > 2 else 3
 GETSTATE_ORD = 401       # xam.xex: 400 caps, 401 GetState, 402 SetState, 685 capsEx
-USER = 3
 # Scratch VA candidates (writable, unused): DLL BSS tail first, then high scratch.
 SCRATCH_CANDIDATES = [0x84858800, 0x84858000, 0x83000000, 0x40000000]
 
@@ -105,9 +109,9 @@ def main():
 
     print("== verdict ==")
     if rv == 0:
-        print("  ERROR_SUCCESS -> xam SEES user 3 as connected.")
+        print("  ERROR_SUCCESS -> xam SEES user %d as connected." % USER)
         print("  => Our xam/kernel hooks work. Bug is RB3-SIDE (poll loop /")
-        print("     enumeration / notification). Next: make RB3 re-enumerate slot 3,")
+        print("     enumeration / notification). Next: make RB3 re-enumerate slot %d," % USER)
         print("     or check RB3E joypad_is_connected mapping vs xam user index.")
         if state:
             pkt = int.from_bytes(state[0:4], "little")

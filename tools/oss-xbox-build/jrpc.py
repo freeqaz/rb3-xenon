@@ -135,24 +135,62 @@ class Jrpc:
             sb.append("%d\\%d\\" % (INT, a & 0xFFFFFFFF))
         return len(args), "".join(sb)
 
+    # -- consolefeatures completion loop ----------------------------------
+    def _consolefeatures_loop(self, cmd, max_loops=10):
+        """Run a consolefeatures call, following JRPC2's `buf_addr=` completion
+        protocol: when a call's result is still pending, JRPC2 replies with
+        `buf_addr=<hex>`; the client must re-poll `consolefeatures ver=2
+        buf_addr=0x<addr>` until the reply no longer contains that token.
+        Returns (final_message, None) or (None, err_string)."""
+        code, msg, _ = self.x.send(cmd)
+        if code != 200:
+            return None, "ERR(%d): %s" % (code, msg)
+        text = msg
+        for i in range(max_loops + 1):
+            low = text.lower()
+            if "buf_addr=" not in low:
+                return text, None
+            idx = low.index("buf_addr=") + len("buf_addr=")
+            hexpart = ""
+            for ch in text[idx:]:
+                if ch in "0123456789abcdefABCDEF":
+                    hexpart += ch
+                else:
+                    break
+            if not hexpart:
+                return text, None  # malformed; hand back what we got
+            addr = int(hexpart, 16)
+            code, msg, _ = self.x.send("consolefeatures ver=2 buf_addr=0x%X" % addr)
+            if code != 200:
+                return None, "ERR(%d): %s" % (code, msg)
+            text = msg
+        return None, "loop-timeout (>%d polls)" % max_loops
+
+    @staticmethod
+    def _value_after_first_space(text):
+        """JRPC2 returns '<tag> <value>'; the value is after the first space
+        (mirrors XeCLI CallAsync). No space -> whole trimmed string."""
+        text = text.strip()
+        sp = text.find(" ")
+        return text if sp <= 0 else text[sp + 1:].strip()
+
     # -- function call -----------------------------------------------------
     def call_int(self, module, ordinal, args, address=0, system=False):
         """Call a function; return its int return value as a raw hex string.
 
         Provide EITHER (module, ordinal) OR address=<absolute VA> (module=None).
-        `system=True` runs the call in system context. Returns e.g. "0", "48F",
-        or "ERR(<code>): <msg>" on an XBDM-level failure.
+        `system=True` runs the call in system context. Follows the buf_addr
+        completion loop. Returns e.g. "0", "48F", or "ERR(...)"/"loop-timeout".
         """
         argc, ptext = self._encode_int_args(args)
         modpart = ' module="%s" ord=%d' % (module, ordinal) if module else ""
         syspart = " system" if system else ""
         cmd = ('consolefeatures ver=2 type=%d%s%s as=0 params="A\\%X\\A\\%d\\%s"'
                % (INT, syspart, modpart, address, argc, ptext))
-        code, msg, _ = self.x.send(cmd)
-        if code != 200:
-            return "ERR(%d): %s" % (code, msg)
-        parts = msg.split()
-        return parts[-1] if parts else msg
+        text, err = self._consolefeatures_loop(cmd)
+        if err:
+            return err
+        return self._value_after_first_space(text)
 
     # -- liveness ----------------------------------------------------------
     def ping(self):
