@@ -36,7 +36,6 @@ END_HANDLERS
 BEGIN_PROPSYNCS(RndDir)
     SYNC_PROP(environ, mEnv)
     SYNC_PROP(polls, mPolls)
-    SYNC_PROP(enters, mEnters)
     SYNC_PROP(draws, mDraws)
     SYNC_PROP(test_event, mTestEvent)
     SYNC_SUPERCLASS(RndTransformable)
@@ -125,14 +124,12 @@ void RndDir::SetSubDir(bool b1) {
     ObjectDir::SetSubDir(b1);
     mDraws.clear();
     mPolls.clear();
-    mEnters.clear();
     mAnims.clear();
 }
 
 void RndDir::SyncObjects() {
     mAnims.clear();
     mPolls.clear();
-    mEnters.clear();
     for (int i = 0; i < mSubDirs.size(); i++) {
         ObjectDir *curSubDir = mSubDirs[i];
         if (curSubDir
@@ -159,29 +156,7 @@ void RndDir::SyncObjects() {
              ++it) {
             VectorRemove(mAnims, *it);
         }
-        std::vector<RndPollable *> pollchildren;
-        HarvestPollables(pollchildren);
-        int numTotalChildren = pollchildren.size();
-        int numEnabled = 0;
-        for (; (unsigned int)numEnabled < (unsigned int)numTotalChildren
-             && pollchildren[numEnabled]->PollEnabled();
-             numEnabled++)
-            ;
-        int numRemaining = numTotalChildren - numEnabled;
-        mPolls.resize(numEnabled);
-        if (numEnabled != 0) {
-            memcpy(
-                mPolls.begin(), pollchildren.begin(), numEnabled * sizeof(RndPollable *)
-            );
-        }
-        mEnters.resize(numRemaining);
-        if (numRemaining != 0) {
-            memcpy(
-                mEnters.begin(),
-                pollchildren.begin() + numEnabled,
-                numRemaining * sizeof(RndPollable *)
-            );
-        }
+        HarvestPollables(mPolls);
         if (IsProxy() && Dir()) {
             ChainSourceSubdir(Dir(), this);
         }
@@ -193,7 +168,6 @@ void RndDir::RemovingObject(Hmx::Object *obj) {
     ObjectDir::RemovingObject(obj);
     VectorRemove(mDraws, obj);
     VectorRemove(mPolls, obj);
-    VectorRemove(mEnters, obj);
     VectorRemove(mAnims, obj);
 }
 
@@ -409,10 +383,6 @@ void RndDir::Enter() {
             mTestEvent = "";
         }
     }
-    for (std::vector<RndPollable *>::iterator it = mEnters.begin(); it != mEnters.end();
-         ++it) {
-        (*it)->Enter();
-    }
     for (std::vector<RndPollable *>::iterator it = mPolls.begin(); it != mPolls.end();
          ++it) {
         (*it)->Enter();
@@ -424,10 +394,6 @@ void RndDir::Enter() {
 }
 
 void RndDir::Exit() {
-    for (std::vector<RndPollable *>::iterator it = mEnters.begin(); it != mEnters.end();
-         ++it) {
-        (*it)->Exit();
-    }
     for (std::vector<RndPollable *>::iterator it = mPolls.begin(); it != mPolls.end();
          ++it) {
         (*it)->Exit();
@@ -438,7 +404,6 @@ void RndDir::Exit() {
 void RndDir::ListPollChildren(std::list<RndPollable *> &children) const {
     if (!IsProxy()) {
         children.insert(children.end(), mPolls.begin(), mPolls.end());
-        children.insert(children.end(), mEnters.begin(), mEnters.end());
     }
 }
 
