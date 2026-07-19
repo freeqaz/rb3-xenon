@@ -12,6 +12,7 @@ Companion docs (don't duplicate, read when needed):
 | [`tools/oss-xbox-build/BUILD-AND-DEPLOY.md`](../../tools/oss-xbox-build/BUILD-AND-DEPLOY.md) | Build/pack pipeline internals + the 8 build gotchas |
 | [`docs/plans/si-hw-fix/DEBUG-WORKFLOW.md`](../plans/si-hw-fix/DEBUG-WORKFLOW.md) | The crash→analyze→hook-fix loop in depth + SI crash ledger |
 | [`docs/plans/http-bringup-and-rb3eloader-fix-2026-07-15.md`](../plans/http-bringup-and-rb3eloader-fix-2026-07-15.md) | Why the raw container didn't load (root-cause record) |
+| [`JRPC2-CONSOLE-CALLS.md`](JRPC2-CONSOLE-CALLS.md) | Call arbitrary console functions live (JRPC2 over XBDM) — `jrpc.py`/`vc_diag.py` + `launch.ini` plugin wiring |
 | `../xex-patcher/docs/WINE-FREE-PACK.md` | XEX2 packing internals (signing, hash chains, xexlint) |
 
 ---
