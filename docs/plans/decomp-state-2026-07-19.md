@@ -61,17 +61,30 @@ truth (24 assignments: 13 flips/3 improves): **route by diff shape, not %**
 97.5–99.8 = survivor-bias wall band, 78–96 = flip band. Full rules in memory
 `project_grind_foreman_groundtruth_2026-07-19.md`.
 
-**Calibrated bucket table** (post-ground-truth, `~/tmp/triage_buckets.md`):
-LEVER-SYMBOL 9 (~90%) · LEVER-STRING 41 (~85%) · BODY-LEVER 396 (~80%*) ·
-BODY-PORT 167 (45% in 78–96) · STRUCT-ARTIFACT 177 (50–70%) · FORM-DIVERGENCE
-148 (~30%) · ZS-INST 17 (high) · certified-skip: WALL-VTORDISP 74 +
-WALL-DEADARG 35 + RELOC-COLOC 217 + ZS-STL 84 · MISPAIR 152 (map fix first) ·
-NEEDS-REVIEW 246 · ZERO-UNMAPPED 5,766. Fundable-fleet expectation ≈ **530
-strict flips**. (*) BODY-LEVER's 80% is the least-calibrated number — 40% of
-the bucket is STL-template helpers (suspected contamination); a stratified
-30-fn validation wave is measuring the true per-stratum rate now. decomp.db
-drift noted: ~3k strict fns have renamed symbol keys; get_attempts "not found"
-must be treated as unknown, not pass.
+**FINAL bucket table** (4 calibration rounds; snapshot committed at
+`docs/plans/triage-buckets-2026-07-19.md`, regen with
+`python3 scripts/triage/divergence_triage.py --jobs 12`): BODY-LEVER 240
+(MEASURED per-stratum: 70-90 non-STL 25%, else ≤5%) · LEVER-STRING 41 +
+LEVER-SYMBOL 9 (validated off 1 flip each — calibrate in first wave) ·
+ZS-INST 17 (probe 2/2) · BODY-PORT 172 · STRUCT-ARTIFACT 175 + FORM-DIVERGENCE
+146 (**UNMEASURED estimates — calibrate before funding**) · certified-skip 318
+(RELOC-COLOC 160, WALL-VTORDISP 60, WALL-DEADARG 7, ZS-STL 84, STL-CONTAM 7) ·
+MISPAIR 191 (map fix first) · UNRELIABLE-EVIDENCE 226 (stale live-diff, re-verify
+before routing) · NEEDS-REVIEW 221 · ZERO-UNMAPPED 5,766.
+
+**Honest fleet economics: bankable ≈96 expected flips** (BODY-LEVER ~26-35 +
+LEVER-STRING ~36 + ZS-INST ~15 + LEVER-SYMBOL ~8 + BODY-PORT 78-96 ~3);
+**estimate-only upside ≈149** (STRUCT 105, FORM 44) pending 20-30-fn calibration
+waves. The original 530 was ~2.2× overpriced (BODY-LEVER measured 6.7% vs 80%
+priced — calibration wave 30 fns: only 70-90 non-STL flips at 25%, STL 0/6,
+mispairs 9/30). Calibration wave itself landed +7 incl. the **codec.h
+`__forceinline` alloca lever** (6 vorbis fns / 1 line; intrinsic-wrapper class
+swept — UNIQUE instance, closed). decomp.db drift: ~3k strict fns have renamed
+symbol keys; treat get_attempts "not found" as unknown, not pass.
+
+**Session arc (2026-07-19 pm, automation build-out): 18,689 → 18,717 (+28)**
+— ZS-instantiation vein +9, VocalPlayer grind +7, foreman package +5, calibration
+wave +7. Zero named regressions across all landings.
 
 ## Recent arc
 
