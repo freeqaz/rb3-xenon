@@ -71,12 +71,27 @@ the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
   before the tail (UIList's BandDirector block), use a stronger top-of-file
   `<UNIT>_SW3_PRIMARY_TU` sentinel instead.
 
-- **Wave 1 — Expose-and-fix:** batch-apply the residual owner-includes, harvest
-  the exposed fuzzy % per paired fn, rank ≥88%, dispatch fixers. Fold in the 3
-  body-dup cases (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager
-  — as `#ifndef HX_NATIVE` dup, never tried), MidiSynth WorldDir::PropSync trio
-  (splits re-attribution — Dir.obj already emits), MemTracker::StopLog mispair
-  (map/splits). EV +80–150. Harvest tool run → `~/tmp/expose_harvest.md`.
+- **Wave 1 — Expose-and-fix:** RAN 2026-07-19. Harvest → `~/tmp/expose_harvest.md`
+  (9 freebies / 71 ≥88% / 118 compile-fail). **Actual yield: +10 (F1 freebies
+  only); F2 pending, F3=0, F4=0.** BIG EV MISS vs the +80–150 estimate, and the
+  reason is a hard recalibration (see below).
+  **⚠ RECALIBRATION — the ≥88%-but-<100% exposed band is a MISPAIR MIRAGE.** The
+  target-symbol renamer labels a physically-adjacent, ICF-shaped-but-semantically-
+  DIFFERENT function with the exposed name, so "closing" the near-miss matches our
+  code to the WRONG target. F4 proved every tiny "one-liner" was a mispair:
+  Movie::IsLoading ("fixing" Movie 4→8B broke 10 MoviePanel funcs, net −9; our
+  4-byte Movie is CORRECT, DC3's 8-byte doesn't apply to RB3), NetLoader::
+  PostDownload (ours already stores 0x10 correctly), PlatformMgr::QueueEnumJob
+  (target tail-calls a DIFFERENT function), OnSeedRandomContext (already 100 in its
+  home unit). F3 proved the 99.8x `??_G`/STL residue is gapped by a reloc-arg
+  (vtable/callee at a different scattered address) report.json won't forgive. **So
+  only the exact-100.00%-on-include freebies flip; the sub-100 band is
+  mispairs + struct-divergence + pairing artifacts. Do NOT re-hunt it as cheap
+  near-misses.** UniqueFilename is the lone real crack — see vein #3.
+  Still-untried Wave-1 items (separate from the mirage band): 3 body-dup cases
+  (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager as `#ifndef
+  HX_NATIVE` dup), MidiSynth WorldDir::PropSync trio (splits re-attribution —
+  Dir.obj already emits), MemTracker::StopLog (map/splits).
 - **Wave 2 — Oracle-backed UNWIRED wiring**, per-symbol-owner-driven (NOT naive
   whole-TU carve): resolve each unwired symbol's owner class, port its bodies
   into the canonical TU (wire into objects.json if absent) — then Wave-1
@@ -149,6 +164,19 @@ REMAINING leads: UpdateCache 99.8; enableAAFilter 99.5 (RateTransposer +16B
 member — pad-probe); RingBuffer::Write 91.4; DxRnd::UpdateScalerParams 0%.
 MemTracker::StopLog 77 = MISPAIRING (target is a MemFree/dtor, not StopLog —
 map/splits fix, not source).
+**UniqueFilename — CRACKED (F4 2026-07-19), needs an independent splits pin to
+land.** The 2-line fix in `src/system/os/File.cpp` reaches 100.0% normalized
+(Ghidra-verified vs `default_tu5.xex`): (a) declare `int i=0` BEFORE `String ret`;
+(b) format string is hardcoded `"%s_%06d.bmp"` (drops the `c2` param — retail
+ignores it and emits `.bmp` for both callers: Rnd.cpp:499 wants `.bmp`,
+LiveCameraInput.cpp:1185 passes `"data"` but retail still emits `.bmp`). Can't land
+now: UniqueFilename's COMDAT lives in Rnd's `.text` span, so the only measurement
+path (`Rnd ← os/File.cpp` include) reshuffles objdiff pairing and drops
+`GetNormalMapTextures` (rndobj/Utl) 100→94.5% — a pairing artifact, not a real
+regression (`matched_functions` stays put, Utl.obj byte-identical). Give
+UniqueFilename its own `splits.txt` `.text` range (carve out of Rnd's span, like
+rc1/rc4 gap-fills) → then the File.cpp fix is a clean +1. Exact patch in F4's
+report / this session's transcript.
 
 ### 4. Remaining recarve gap-fills
 **0x82560660** UI-message run DONE (rc4 +48, UIStats gap-fill). **0x8234FCEC**
