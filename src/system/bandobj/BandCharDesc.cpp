@@ -1122,11 +1122,15 @@ BEGIN_PROPSYNCS(BandCharDesc)
 END_PROPSYNCS
 
 // sw2 scatter-include (default/BandCharDesc <- bandobj/BandCamShot.cpp)
+// sw3: SW_SCATTER_OWNER_INCLUDE suppresses BandCamShot's own nested HamCamShot
+// scatter-include (its DC3 hamobj headers collide with band3/game here).
+#define SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_BandCamShot
 #define gAltRev gAltRev_BandCamShot
 #include "bandobj/BandCamShot.cpp"
 #undef gRev
 #undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
 
 // sw2 scatter-include (default/BandCharDesc <- band3/bandtrack/VocalTrack.cpp)
 #define gRev gRev_VocalTrack

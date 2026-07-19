@@ -484,3 +484,16 @@ BEGIN_PROPSYNCS(TrackWidget)
     SYNC_SUPERCLASS(RndDrawable)
 END_PROPSYNCS
 #pragma pop
+
+// sw3 cross-dialect scatter-include (default/TrackWidget <- char/ClipCollide.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_ClipCollide
+#define gAltRev gAltRev_ClipCollide
+#include "obj/dialect_object_push.h"
+#include "char/ClipCollide.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif

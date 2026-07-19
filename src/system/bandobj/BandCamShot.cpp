@@ -866,3 +866,44 @@ DataNode BandCamShot::OnListAllNextShots(const DataArray *da) {
     }
     return ptr;
 }
+
+// sw3 cross-dialect scatter-include (BandCamShot <- hamobj/HamCamShot.cpp)
+// HamCamShot is Object.h-dialect; shim re-installs those macros for its body.
+// Guarded so it stays inert when BandCamShot.cpp is itself transitively
+// #include'd as a scatter-owner (HamCamShot's DC3 hamobj headers define
+// Difficulty/PracticeSection which collide with band3/game in such a host TU).
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_HamCamShot
+#define gAltRev gAltRev_HamCamShot
+#include "obj/dialect_object_push.h"
+#include "hamobj/HamCamShot.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#endif
+
+// sw3 cross-dialect scatter-include (default/BandCamShot <- rndobj/EventTrigger.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_EventTrigger
+#define gAltRev gAltRev_EventTrigger
+#include "obj/dialect_object_push.h"
+#include "rndobj/EventTrigger.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif
+
+// sw3 cross-dialect scatter-include (default/BandCamShot <- char/CharIKScale.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_CharIKScale
+#define gAltRev gAltRev_CharIKScale
+#include "obj/dialect_object_push.h"
+#include "char/CharIKScale.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif

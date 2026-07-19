@@ -340,3 +340,16 @@ BEGIN_HANDLERS(MetaMusic)
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x252)
 END_HANDLERS
+
+// sw3 cross-dialect scatter-include (default/MetaMusic <- rndobj/PropAnim.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_PropAnim
+#define gAltRev gAltRev_PropAnim
+#include "obj/dialect_object_push.h"
+#include "rndobj/PropAnim.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif

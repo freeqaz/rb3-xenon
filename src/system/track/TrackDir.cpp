@@ -429,3 +429,16 @@ BEGIN_PROPSYNCS(TrackDir)
     SYNC_PROP(warn_on_resort, mWarnOnResort)
     SYNC_SUPERCLASS(PanelDir)
 END_PROPSYNCS
+
+// sw3 cross-dialect scatter-include (default/TrackDir <- rndobj/Anim.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_Anim
+#define gAltRev gAltRev_Anim
+#include "obj/dialect_object_push.h"
+#include "rndobj/Anim.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif

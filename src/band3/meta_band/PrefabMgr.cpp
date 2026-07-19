@@ -371,3 +371,16 @@ END_HANDLERS
 #include "band3/meta_band/AccomplishmentManager.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw3 cross-dialect scatter-include (default/band3/meta_band/PrefabMgr <- rndobj/Text.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_Text
+#define gAltRev gAltRev_Text
+#include "obj/dialect_object_push.h"
+#include "rndobj/Text.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif

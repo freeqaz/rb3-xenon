@@ -525,3 +525,16 @@ END_HANDLERS
 #include "band3/meta_band/CriticalUserListener.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw3 cross-dialect scatter-include (default/band3/meta_band/ViewSetting <- char/CharIKScale.cpp) [Object owner]
+#ifndef SW_SCATTER_OWNER_INCLUDE
+#define SW_SCATTER_OWNER_INCLUDE
+#define gRev gRev_CharIKScale
+#define gAltRev gAltRev_CharIKScale
+#include "obj/dialect_object_push.h"
+#include "char/CharIKScale.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif
