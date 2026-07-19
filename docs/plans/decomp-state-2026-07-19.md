@@ -12,7 +12,7 @@
 | 2026-07-18 review | 17,445 | — | 3 Opus scouts ranked pools; `docs/plans/review-2026-07-18-next-focus.md` |
 | 2026-07-19 body-port/recarve/scatter/id-flywheel | **18,621** | **+1,176** | the "mapped-but-0%" pool cracked open (see below) |
 
-The +952 came from **one discovery**: the "mapped-but-0%" pool (functions with
+The +1,176 came from **one discovery and its flywheel**: the "mapped-but-0%" pool (functions with
 real mangled names stuck at 0%) is overwhelmingly **COMDAT-scatter / TU-composition
 drift**, NOT missing source. Retail MSVC/X360 (`/O1`, no LTCG) emits each function
 into its own COMDAT and the linker scatters them across `.text`; dtk carves the
@@ -81,19 +81,24 @@ Functions no wired obj emits. Two sub-classes:
 - **Game (band3):** 16 units incl. TrainerPanel (5), DataArraySongInfo (11) —
   rb3-Wii oracle, gameport cost.
 
-### 3. Exposed near-misses (fuzzy → strict fodder)
-Pairing the scattered bodies revealed genuine near-misses previously hidden as
-0% stubs: **NgRnd::UpdateOverlay 94.2** (stripped `spotlights %d` debug print +
-`gNgStats` +4 offset drift — clean `#ifdef` gate candidate), RndShaderMgr::
-UpdateCache 99.8 / Terminate 99.9, MakeWorldSphere 97.2, enableAAFilter 99.5
-(RateTransposer +16B member), RingBuffer::Write 91.4, MemTracker::StopLog 77
-(mLog −8). Small, per-fn, cheap.
+### 3. Exposed near-misses (fuzzy → strict fodder) — partly worked (nm +3, sm +3)
+Pairing the scattered bodies revealed genuine near-misses hidden as 0% stubs.
+DONE: NgRnd::UpdateOverlay/Terminate + MakeWorldSphere (nm, NgStats mSpotlights
+strip + Geo.h fix); RndShaderMgr::Terminate/Invalidate + InitShaderOptions (sm,
+ShaderType enum 38→26). REMAINING leads: RndShaderMgr::FindShader 80.3 (r29↔r30
+callee-saved swap + loop insert), SetTransform 82.5 (SetVConstant4x3,
+enum-unrelated), UpdateCache 99.8; enableAAFilter 99.5 (RateTransposer +16B
+member — pad-probe); RingBuffer::Write 91.4; DxRnd::UpdateScalerParams 0%.
+MemTracker::StopLog 77 = MISPAIRING (target is a MemFree/dtor, not StopLog —
+map/splits fix, not source).
 
 ### 4. Remaining recarve gap-fills
-Mid-address auto blobs from the 2026-07-18 review not yet carved:
-**0x8234FCEC** DataArray/ObjectDir (94 real, cold map — Stage-C identity work),
-**0x82560660** UI-message run (64 real). Apply the kill test first. The
-Accomplishment/TrackWatcher blobs are done; SongSort is UNWIRED (vein #2).
+**0x82560660** UI-message run DONE (rc4 +48, UIStats gap-fill). **0x8234FCEC**
+DataArray/ObjectDir SKIPPED by kill test (unwired gesture catch-all —
+SkeletonFrame from gesture/Skeleton.cpp; recovery = wire that TU first). The
+Accomplishment/TrackWatcher blobs are done; SongSort is UNWIRED (vein #2). The
+easy gap-fill recarve targets are now exhausted; new ones require wiring an
+unwired owner TU first (converges with vein #2).
 
 ### 5. Deep grinds (banked, lower EV)
 - **TrackWatcherImpl 121 flat-0% bodies** — beatmatch gameport (oracle
