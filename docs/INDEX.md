@@ -163,6 +163,19 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - [permuter/evolution/OVERVIEW.md](permuter/evolution/OVERVIEW.md) — permuter architecture upgrade (SourceEditor, ast_queries); phases 1-3.
 - [decomp/patterns/PERMUTER_ROI_ANALYSIS.md](decomp/patterns/PERMUTER_ROI_ANALYSIS.md) — permuter coverage vs documented patterns; ROI rankings.
 
+### LLM grind loop / OSS-model eval / training data (2026-07-07..19)
+
+- [decomp/eval-ledger.md](decomp/eval-ledger.md) — **THE standing scoreboard** for the frozen 50-fn eval bench + SIGNAL/NOISE noise threshold; appended by `scripts/grind/bench.sh`.
+- [plans/grind-data-leverage-execution-2026-07-18.md](plans/grind-data-leverage-execution-2026-07-18.md) — **current state of record**: 7-thread options catalog, dispatch results, verdicts (token fix, gold-clone finding, replay verdict).
+- [plans/grind-oreval-data-leverage-review-2026-07-16.md](plans/grind-oreval-data-leverage-review-2026-07-16.md) — the underlying review: two-piles diagnosis, token-length constraint, ranked opportunities.
+- [decomp/training-corpus-annotations.md](decomp/training-corpus-annotations.md) — per-run corpus verdicts (sft+/partial/hard-neg/junk lanes) + normalizer provenance rules.
+- [plans/grind-loop-calibration-2026-07-07.md](plans/grind-loop-calibration-2026-07-07.md) — the grind loop itself (decomp-synth bootstrap_loop port + live calibration).
+- [plans/grind-agentic-tools.md](plans/grind-agentic-tools.md) — `--agent-tools` mode (model requests read/struct/asm/ghidra mid-attempt); landed 2026-07-10.
+- [plans/grind-training-data-capture.md](plans/grind-training-data-capture.md) — lossless attempt capture (RFC-21 T4) → B2 → corpus.py sync design.
+- [plans/grind-openrouter-tiered-eval.md](plans/grind-openrouter-tiered-eval.md) — OSS-model tiered eval campaign design (metrics defs used by eval_report.py §5).
+- [plans/grind-teacher-critique-rlhf.md](plans/grind-teacher-critique-rlhf.md) — teacher-critique / reasoning-rewrite design (v0 critique-only shipped 0bc326bc).
+- [plans/grind-followups-batch2-2026-07-18.md](plans/grind-followups-batch2-2026-07-18.md) — execution design for replay-refine + roster sweep + standing bench follow-ups.
+
 ### VMX128 (Ghidra SLEIGH support)
 
 - [vmx128/README.md](vmx128/README.md) — VMX128 Ghidra support overview; phases 1-4 (13,836 instructions validated).
