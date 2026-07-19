@@ -435,3 +435,98 @@ void Debug::Modal(ModalType &type, const char *msg, void *addr) {
         Exit(1, true);
     }
 }
+
+#ifndef HX_NATIVE
+// --- retail TU-reunification (matching build only) ---
+// In retail RB3 these System/Timer helpers were compiled into the SAME TU as
+// Debug (proven: their .text interleaves Debug's functions under /O1's
+// no-cross-TU-reorder). DC3 split them into System.cpp / Timer.cpp. Duplicate
+// them here so Debug.obj emits+matches those bytes; canonical definitions stay
+// in their DC3-split files for the native (HX_NATIVE) link. No final link in the
+// matching build, so the duplicate symbols never collide.
+extern int gUsingCD;
+extern int gSystemMs;
+extern float gSystemFrac;
+extern Timer gSystemTimer;
+extern DataArray *gSystemConfig;
+extern DataArray *gSystemTitles;
+extern Symbol gSystemLocale;
+
+void SetUsingCD(bool b) { gUsingCD = b; }
+
+DataArray *SystemConfig(Symbol s) {
+    DataArray *result = gSystemConfig->FindArray(s);
+    result->SetContextPath(s.Str());
+    return result;
+}
+
+DataArray *SystemConfig(Symbol s1, Symbol s2) {
+    DataArray *result = gSystemConfig->FindArray(s1)->FindArray(s2);
+    return result;
+}
+
+DataArray *SystemConfig(Symbol s1, Symbol s2, Symbol s3) {
+    return gSystemConfig->FindArray(s1)->FindArray(s2)->FindArray(s3);
+}
+
+DataArray *SystemConfig(Symbol s1, Symbol s2, Symbol s3, Symbol s4, Symbol s5) {
+    return gSystemConfig->FindArray(s1)
+        ->FindArray(s2)
+        ->FindArray(s3)
+        ->FindArray(s4)
+        ->FindArray(s5);
+}
+
+Symbol SystemLocale() { return gSystemLocale; }
+
+DataArray *SystemTitles() { return gSystemTitles; }
+
+int SystemMs() {
+    gSystemTimer.Restart();
+    float lastMs = gSystemTimer.GetLastMs();
+    int ms = gSystemFrac + lastMs;
+    gSystemFrac = (gSystemFrac + lastMs) - ms;
+    gSystemMs += ms;
+    return gSystemMs;
+}
+
+DataArray *SupportedLanguages(bool cheats) {
+    static Symbol system("system");
+    static Symbol language("language");
+    static Symbol supported("supported");
+    static Symbol cheat_supported("cheat_supported");
+    return SystemConfig(system, language, cheats ? cheat_supported : supported)->Array(1);
+}
+
+DataNode OnSupportedLanguages(DataArray *) { return SupportedLanguages(false); }
+DataNode OnSystemMs(DataArray *) { return SystemMs(); }
+
+void NormalizeSystemArgs() {
+    unsigned int i = 0;
+    if (TheSystemArgs.size() == 0)
+        return;
+
+    do {
+        char *p = TheSystemArgs[i];
+        char c = *p;
+        while (c != '\0') {
+            if (*p == (char)0x96) {
+                *p = '-';
+            }
+            if (*p == (char)0x93 || *p == (char)0x94) {
+                *p = '"';
+            }
+            p++;
+            c = *p;
+        }
+        i++;
+    } while (i < TheSystemArgs.size());
+}
+
+void SystemPreInit(const char *cmdLine, const char *cfg) {
+    SetSystemArgs(cmdLine);
+    SystemPreInit(cfg);
+}
+
+void Timer::Sleep(int ms) { ::Sleep(ms); }
+#endif

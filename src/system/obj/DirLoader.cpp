@@ -1090,3 +1090,230 @@ ObjectDir *DirLoader::LoadObjects(const FilePath &fp, Callback *cb, BinStream *b
     }
     return dirLoader.GetDir();
 }
+
+#ifndef HX_NATIVE
+// --- retail TU-reunification (matching build only) ---
+// In retail RB3 these obj/Utl helpers were compiled into the SAME TU as
+// DirLoader (proven: their .text interleaves DirLoader's functions under /O1's
+// no-cross-TU-reorder). DC3 split them into obj/Utl.cpp. Duplicate them here so
+// DirLoader.obj emits+matches those bytes; canonical definitions stay in Utl.cpp
+// for the native (HX_NATIVE) link. No final link in the matching build, so the
+// duplicate symbols never collide.
+bool RecurseSuperClassesSearch(Symbol classSym, Symbol searchClass);
+
+const char *PathName(const Hmx::Object *o) {
+    return !o ? "NULL Object" : ((Hmx::Object *)o)->FindPathName();
+}
+
+const char *SafeName(Hmx::Object *obj) {
+    if (obj)
+        return obj->Name();
+    else
+        return "NULL";
+}
+
+MergeFilter::SubdirAction
+MergeFilter::DefaultSubdirAction(ObjectDir *dir, Subdirs subdirs) {
+    switch (subdirs) {
+    case kNoSubdirs:
+        return kMergeKeep;
+    case kAllSubdirs:
+        return kMergeMerge;
+    case kMoveAllSubdirs:
+        return kMergeReplace;
+    case kInlineSubdirs:
+        if (dir->InlineSubDirType() == kInlineNever
+            || dir->InlineSubDirType() == kInlineCachedShared)
+            return kMergeKeep;
+    case kMergeInlinedMoveSharedSubdirs:
+        if (dir->InlineSubDirType() == kInlineNever
+            || dir->InlineSubDirType() == kInlineCachedShared)
+            return kMergeReplace;
+    default:
+        break;
+    }
+    return kMergeMerge;
+}
+
+bool IsASubclass(Symbol child, Symbol parent) {
+    if ((parent == "Object") || (child == parent))
+        return true;
+    else
+        return RecurseSuperClassesSearch(child, parent);
+}
+
+int SubDirStringUsed(ObjectDir *dir) {
+    if (!dir)
+        return 0;
+    else {
+        int size = dir->StrTableUsedSize();
+        const std::vector<ObjDirPtr<ObjectDir> > &subdirs = dir->SubDirs();
+        for (std::vector<ObjDirPtr<ObjectDir> >::const_iterator it = subdirs.begin();
+             it != subdirs.end();
+             ++it) {
+            size += SubDirStringUsed(*it);
+        }
+        return size;
+    }
+}
+
+int SubDirHashUsed(ObjectDir *dir) {
+    if (!dir)
+        return 0;
+    else {
+        int size = dir->HashTableUsedSize();
+        const std::vector<ObjDirPtr<ObjectDir> > &subdirs = dir->SubDirs();
+        for (std::vector<ObjDirPtr<ObjectDir> >::const_iterator it = subdirs.begin();
+             it != subdirs.end();
+             ++it) {
+            size += SubDirHashUsed(*it);
+        }
+        return size;
+    }
+}
+
+void ReserveToFit(ObjectDir *src, ObjectDir *dst, int extraObjects) {
+    int stringSize = dst->StrTableUsedSize() + SubDirStringUsed(src) + extraObjects * 10;
+    int hashSize = (dst->HashTableUsedSize() + SubDirHashUsed(src) + extraObjects) * 2;
+    dst->Reserve(hashSize, stringSize);
+}
+
+int GetPropSize(Hmx::Object *o, DataArray *arr, int size) {
+    DataArrayPtr ptr(new DataArray(size));
+    for (int x = 0; x < size; x++) {
+        ptr->Node(x) = arr->Node(x);
+    }
+    int ret = o->PropertySize(ptr);
+    return ret;
+}
+
+bool IsPropPathValid(Hmx::Object *o, DataArray *prop) {
+    for (int i = 0; i < prop->Size(); i++) {
+        if (prop->Type(i) == kDataInt) {
+            if (prop->Int(i) + 1 > GetPropSize(o, prop, i))
+                return false;
+        }
+    }
+    return true;
+}
+
+const DataNode *GetPropertyVal(Hmx::Object *o, DataArray *prop, bool fail) {
+    return !IsPropPathValid(o, prop) ? nullptr : o->Property(prop, fail);
+}
+
+void RecurseSuperClasses(Symbol classSym, std::vector<Symbol> &classes);
+
+void ListSuperClasses(Symbol classSym, std::vector<Symbol> &classes) {
+    RecurseSuperClasses(classSym, classes);
+    classes.push_back("Object");
+}
+
+extern std::list<String> sFilePaths;
+extern std::list<Symbol> sFiles;
+extern FileCallbackFunc *sCBack;
+void FileCallbackFullPath(const char *cc1, const char *cc2);
+void FileCallback(const char *cc1, const char *cc2);
+
+DataNode MakeFileListFullPath(const char *cc) {
+    char buf[256];
+    strcpy(buf, cc);
+    sFilePaths.clear();
+    FileRecursePattern(buf, &FileCallbackFullPath, true);
+    sFilePaths.sort();
+    sFilePaths.unique();
+    DataArrayPtr ptr(new DataArray(sFilePaths.size()));
+    int idx = 0;
+    for (std::list<String>::iterator it = sFilePaths.begin(); it != sFilePaths.end();
+         ++it) {
+        ptr->Node(idx) = *it;
+        idx++;
+    }
+    sFilePaths.clear();
+    return ptr;
+}
+
+struct SymbolSort {
+    bool operator()(Symbol s1, Symbol s2) { return strcmp(s1.Str(), s2.Str()) < 0; }
+};
+
+DataNode MakeFileList(const char *cc, bool b, FileCallbackFunc *callback) {
+    char buf[256];
+    strcpy(buf, cc);
+    sCBack = callback;
+    sFiles.clear();
+    FileRecursePattern(buf, &FileCallback, true);
+    sCBack = nullptr;
+    if (b)
+        sFiles.push_back(Symbol());
+    sFiles.sort(SymbolSort());
+    sFiles.unique();
+    DataArrayPtr ptr(new DataArray(sFiles.size()));
+    int idx = 0;
+    for (std::list<Symbol>::iterator it = sFiles.begin(); it != sFiles.end(); ++it) {
+        ptr->Node(idx) = *it;
+        idx++;
+    }
+    sFiles.clear();
+    return ptr;
+}
+
+// Object.cpp methods that retail compiled into DirLoader's TU (span-tail).
+void Hmx::Object::InitObject() {
+    static DataArray *objects = SystemConfig("objects");
+    static Symbol init = "init";
+    DataArray *def = ObjectDef(gNullStr)->FindArray(init, false);
+    if (def) {
+        def->ExecuteScript(1, this, nullptr, 1);
+    }
+}
+
+void Hmx::Object::Save(BinStream &bs) {
+    SaveType(bs);
+    SaveRest(bs);
+}
+
+void Hmx::Object::SaveType(BinStream &bs) {
+    bs << 2;
+    bs << Type();
+}
+
+ObjectDir *Hmx::Object::DataDir() {
+    return mDir ? mDir : ObjectDir::Main();
+}
+
+DataNode Hmx::Object::HandleProperty(DataArray *prop, DataArray *a2, bool fail) {
+    static DataNode n(a2);
+    if (SyncProperty(n, prop, 0, kPropHandle)) {
+        return n;
+    }
+    if (fail) {
+        MILO_FAIL_DTA(
+            "%s: property %s not found", PathName(this), prop ? prop->Sym(0) : "<none>"
+        );
+    }
+    return 0;
+}
+
+void Hmx::Object::PropertyClear(DataArray *propArr) {
+    int size = PropertySize(propArr);
+    DataArray *cloned = propArr->Clone(true, false, 1);
+    while (size-- != 0) {
+        cloned->Node(cloned->Size() - 1) = size;
+        RemoveProperty(cloned);
+    }
+    cloned->Release();
+}
+
+DataNode Hmx::Object::HandleType(DataArray *msg) {
+    Symbol t = msg->Sym(1);
+    DataArray *handler = nullptr;
+    if (mTypeDef) {
+        handler = mTypeDef->FindArray(t, false);
+    }
+    if (handler) {
+        MessageTimer timer(this, t);
+        return handler->ExecuteScript(1, this, (const DataArray *)msg, 2);
+    }
+    return DATA_UNHANDLED;
+}
+#endif

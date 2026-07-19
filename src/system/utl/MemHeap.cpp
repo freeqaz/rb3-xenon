@@ -537,3 +537,29 @@ int MemHeap::Free(int *ptr) {
     return blockSizeBytes;
 }
 
+#ifndef HX_NATIVE
+// --- retail TU-reunification (matching build only) ---
+// In retail RB3 the free Mem* API and Str/FixedString glue below were compiled
+// into the SAME translation unit as MemHeap (proven: their .text interleaves the
+// MemHeap:: methods under /O1's no-cross-TU-reorder). DC3 later split them into
+// MemMgr.cpp / Str.cpp / FixedString.cpp. We duplicate them here so MemHeap.obj
+// emits+matches those bytes; the canonical definitions stay in their DC3-split
+// files for the native (HX_NATIVE) link. No final link in the matching build, so
+// the duplicate symbols never collide.
+extern MemHeap gHeaps[];
+extern int gNumHeaps;
+
+int MemNumHeaps() { return gNumHeaps; }
+
+int MemHeapSize(int heap) { return gHeaps[heap].SizeWords() * 4; }
+
+int MemFindAddrHeap(void *addr) {
+    for (int i = 0; i < gNumHeaps; i++) {
+        if (addr >= gHeaps[i].Start() && addr < gHeaps[i].End()) {
+            return i;
+        }
+    }
+    return -2;
+}
+#endif
+
