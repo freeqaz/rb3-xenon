@@ -51,6 +51,28 @@ diff_inspect.py` analyzers; output `~/tmp/triage_{results.json,buckets.md}`.
 band (walls excluded via get_attempts), producing verified diffs for
 coordinator landing + ranked tooling-gap feedback.
 
+### Results (same day): classifier LANDED + calibrated, campaign +21, main 18,710
+
+`scripts/triage/divergence_triage.py` on main (full pool 36s warm). Landed
+gains: missing-instantiation vein +9 (`ba690393` + harvest), VocalPlayer grind
++7, foreman package +5 → **18,710**, zero regressions. Grind campaign ground
+truth (24 assignments: 13 flips/3 improves): **route by diff shape, not %**
+(screened 12/15 vs unscreened 1/9); I/D-cluster≥3 ≈ flip; regswap-only = skip;
+97.5–99.8 = survivor-bias wall band, 78–96 = flip band. Full rules in memory
+`project_grind_foreman_groundtruth_2026-07-19.md`.
+
+**Calibrated bucket table** (post-ground-truth, `~/tmp/triage_buckets.md`):
+LEVER-SYMBOL 9 (~90%) · LEVER-STRING 41 (~85%) · BODY-LEVER 396 (~80%*) ·
+BODY-PORT 167 (45% in 78–96) · STRUCT-ARTIFACT 177 (50–70%) · FORM-DIVERGENCE
+148 (~30%) · ZS-INST 17 (high) · certified-skip: WALL-VTORDISP 74 +
+WALL-DEADARG 35 + RELOC-COLOC 217 + ZS-STL 84 · MISPAIR 152 (map fix first) ·
+NEEDS-REVIEW 246 · ZERO-UNMAPPED 5,766. Fundable-fleet expectation ≈ **530
+strict flips**. (*) BODY-LEVER's 80% is the least-calibrated number — 40% of
+the bucket is STL-template helpers (suspected contamination); a stratified
+30-fn validation wave is measuring the true per-stratum rate now. decomp.db
+drift noted: ~3k strict fns have renamed symbol keys; get_attempts "not found"
+must be treated as unknown, not pass.
+
 ## Recent arc
 
 ## Recent arc
