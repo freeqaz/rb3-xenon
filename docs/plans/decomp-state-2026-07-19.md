@@ -123,9 +123,18 @@ Functions no wired obj emits. Two sub-classes:
 Pairing the scattered bodies revealed genuine near-misses hidden as 0% stubs.
 DONE: NgRnd::UpdateOverlay/Terminate + MakeWorldSphere (nm, NgStats mSpotlights
 strip + Geo.h fix); RndShaderMgr::Terminate/Invalidate + InitShaderOptions (sm,
-ShaderType enum 38→26). REMAINING leads: RndShaderMgr::FindShader 80.3 (r29↔r30
-callee-saved swap + loop insert), SetTransform 82.5 (SetVConstant4x3,
-enum-unrelated), UpdateCache 99.8; enableAAFilter 99.5 (RateTransposer +16B
+ShaderType enum 38→26).
+**AT_LIMIT (do NOT re-hunt, 2026-07-19):** RndShaderMgr::FindShader 80.3 and
+SetTransform 81.7 — our source is byte-identical to the DC3 oracle; both are
+pure callee-save-vs-volatile regalloc divergence (permuter-band, banned).
+FindShader additionally has a HARD structural blocker: retail RB3 (2010)'s
+`RndShaderMgr` vtable has **one fewer virtual than DC3 (2012)** — NewShaderProgram
+sits at slot `0x5c` retail vs our `0x60`. DC3 is not an oracle for the vtable
+shape; removing a virtual is a wide-ripple header change (re-lays every
+ShaderMgr-subclass vtable) with no ground truth for *which* virtual RB3 lacks.
+Prerequisite for any revisit: dump a concrete retail ShaderMgr-subclass vtable to
+identify the missing virtual — a standalone structural task, not near-miss polish.
+REMAINING leads: UpdateCache 99.8; enableAAFilter 99.5 (RateTransposer +16B
 member — pad-probe); RingBuffer::Write 91.4; DxRnd::UpdateScalerParams 0%.
 MemTracker::StopLog 77 = MISPAIRING (target is a MemFree/dtor, not StopLog —
 map/splits fix, not source).
