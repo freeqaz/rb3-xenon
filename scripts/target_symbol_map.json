@@ -1,4 +1,6 @@
 {
+ "0x82560668": "?Handle@UIStats@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82561e48": "??_GUIStats@@UAAPAXI@Z",
  "0x82796c48": "?Poll@TrackWatcherImpl@@UAAXM@Z",
  "0x82796d60": "?AddSink@TrackWatcherImpl@@UAAXPAVBeatMatchSink@@@Z",
  "0x82796df0": "??1TrackWatcherImpl@@UAA@XZ",
