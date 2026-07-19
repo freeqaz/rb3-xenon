@@ -74,3 +74,15 @@ void DxCubeTex::Sync() {
 #include "band3/meta_band/AppLabel.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/system/rnddx9/CubeTex <- rnddx9/MultiMesh.cpp)
+#include "rnddx9/MultiMesh.cpp"
+
+// sw2 scatter-include (default/system/rnddx9/CubeTex <- rnddx9/Cam.cpp)
+#include "rnddx9/Cam.cpp"
+
+// sw2 scatter-include (default/system/rnddx9/CubeTex <- rnddx9/Lit.cpp)
+#include "rnddx9/Lit.cpp"
+
+// sw2 scatter-include (default/system/rnddx9/CubeTex <- rnddx9/Part.cpp)
+#include "rnddx9/Part.cpp"
