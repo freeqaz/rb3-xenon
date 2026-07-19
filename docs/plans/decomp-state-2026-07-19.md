@@ -245,6 +245,17 @@ unwired owner TU first (converges with vein #2).
   `../rb3/src/system/beatmatch/TrackWatcherImpl.cpp`, largest 4488B). Do NOT fan
   out a 4–6-agent body-port wave before the correlator run scopes the real
   residual.
+  **CORRELATOR RUN DONE (2026-07-19) — it's a real body-port grind, NOT a cheap
+  id win.** `tu5_reloc_masked_correlate.py TrackWatcherImpl.obj (target) vs our
+  compiled obj` → only **14 UNIQUE byte-matches, ALL boilerplate** (`__unwind$`
+  funclets + `bad_alloc` dtor); **0 real named methods match.** The 78 unmapped
+  bodies are genuinely DIVERGENT (NOMATCH) — our source is a rough Wii port that
+  doesn't byte-match 360 retail. So each flip needs a real body-port THEN
+  correlator-pairing (unnamed target). EV per Fable (+80-140) is optimistic;
+  recommend a SMALL probe (1 agent, ~8 representative bodies, measure port
+  hit-rate) before committing 4–6 agents. If hit-rate is low, TrackWatcher is a
+  low-ROI grind → pivot to oracle-backed unwired wiring (vein #2) or the
+  round-5-prep / user pivot conversation.
 - **Grouped-globals wall** — RECON DONE (2026-07-19): verdict **NARROW, no
   mechanism wave**. Of 441 named 80–97 fns, only **17** are genuinely fold-walled
   and just **2 pure-fold** (the known MemFindAddrHeap/SystemMs). MSVC only shares
