@@ -203,3 +203,10 @@ END_PROPSYNCS
 void CharBonesMeshes::Init() {}
 
 void CharBonesMeshes::Terminate() {}
+
+// sw2 scatter-include (default/CharBonesMeshes <- band3/bandtrack/GemManager.cpp)
+#define gRev gRev_GemManager
+#define gAltRev gAltRev_GemManager
+#include "band3/bandtrack/GemManager.cpp"
+#undef gRev
+#undef gAltRev

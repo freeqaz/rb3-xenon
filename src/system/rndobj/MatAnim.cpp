@@ -289,3 +289,10 @@ void Interp(
 ) {
     tex = texPtr;
 }
+
+// sw2 scatter-include (default/MatAnim <- rndobj/Anim.cpp)
+#define gRev gRev_Anim
+#define gAltRev gAltRev_Anim
+#include "rndobj/Anim.cpp"
+#undef gRev
+#undef gAltRev

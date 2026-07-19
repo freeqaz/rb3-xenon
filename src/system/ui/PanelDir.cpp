@@ -710,3 +710,10 @@ void PanelDir::UpdateFocusComponentState() {
 #include "obj/PropSync.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/PanelDir <- ui/UIListWidget.cpp)
+#define gRev gRev_UIListWidget
+#define gAltRev gAltRev_UIListWidget
+#include "ui/UIListWidget.cpp"
+#undef gRev
+#undef gAltRev

@@ -610,3 +610,10 @@ void Gem::GetChordFretLabelInfo(String &s, int &i) const {
     s = RGFretNumberToString(mFirstFret);
     i = mFirstFretString;
 }
+
+// sw2 scatter-include (default/band3/bandtrack/Gem <- bandobj/OutfitConfig.cpp)
+#define gRev gRev_OutfitConfig
+#define gAltRev gAltRev_OutfitConfig
+#include "bandobj/OutfitConfig.cpp"
+#undef gRev
+#undef gAltRev

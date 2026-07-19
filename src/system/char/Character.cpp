@@ -1103,3 +1103,31 @@ void CharPollableSorter::Sort(std::vector<RndPollable *> &polls) {
     }
 }
 #endif // HX_NATIVE
+
+// sw2 scatter-include (default/Character <- synth/SampleData.cpp)
+#define gRev gRev_SampleData
+#define gAltRev gAltRev_SampleData
+#include "synth/SampleData.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Character <- obj/PropSync.cpp)
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Character <- char/CharWeightable.cpp)
+#define gRev gRev_CharWeightable
+#define gAltRev gAltRev_CharWeightable
+#include "char/CharWeightable.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Character <- char/CharBonesSamples.cpp)
+#define gRev gRev_CharBonesSamples
+#define gAltRev gAltRev_CharBonesSamples
+#include "char/CharBonesSamples.cpp"
+#undef gRev
+#undef gAltRev

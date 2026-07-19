@@ -92,3 +92,10 @@ END_HANDLERS
 void CharMeshHide::Init() { REGISTER_OBJ_FACTORY(CharMeshHide) }
 
 #pragma endregion CharMeshHide
+
+// sw2 scatter-include (default/CharMeshHide <- synth/Sfx.cpp)
+#define gRev gRev_Sfx
+#define gAltRev gAltRev_Sfx
+#include "synth/Sfx.cpp"
+#undef gRev
+#undef gAltRev

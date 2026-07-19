@@ -451,3 +451,10 @@ RndTexRenderer::RndTexRenderer()
     : mDirty(1), mForce(0), mDrawPreClear(1), mDrawWorldOnly(0), mDrawResponsible(1),
       mNoPoll(0), mPrimeDraw(0), mFirstDraw(1), mForceMips(0), mImpostorHeight(0),
       mOutputTexture(this), mDrawable(this), mCamera(this), mMirrorCam(this) {}
+
+// sw2 scatter-include (default/TexRenderer <- math/mtx.cpp)
+#define gRev gRev_mtx
+#define gAltRev gAltRev_mtx
+#include "math/mtx.cpp"
+#undef gRev
+#undef gAltRev

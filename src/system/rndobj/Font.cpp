@@ -796,3 +796,17 @@ bool RndFont::CharWidthAdvanceCoords(
     }
     return false;
 }
+
+// sw2 scatter-include (default/Font <- bandobj/BandDirector.cpp)
+#define gRev gRev_BandDirector
+#define gAltRev gAltRev_BandDirector
+#include "bandobj/BandDirector.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Font <- band3/bandtrack/Tail.cpp)
+#define gRev gRev_Tail
+#define gAltRev gAltRev_Tail
+#include "band3/bandtrack/Tail.cpp"
+#undef gRev
+#undef gAltRev

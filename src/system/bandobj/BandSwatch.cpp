@@ -94,3 +94,9 @@ BEGIN_PROPSYNCS(BandSwatch)
     SYNC_PROP_MODIFY_ALT(color_palette, mColorPalette, UpdateColors())
     SYNC_SUPERCLASS(UIList)
 END_PROPSYNCS
+// sw2 scatter-include (default/BandSwatch <- rnddx9/Rnd_Xbox.cpp)
+#define gRev gRev_Rnd_Xbox
+#define gAltRev gAltRev_Rnd_Xbox
+#include "rnddx9/Rnd_Xbox.cpp"
+#undef gRev
+#undef gAltRev

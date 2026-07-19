@@ -272,3 +272,10 @@ void RndCubeTex::UpdateFace(CubeFace face) {
 }
 
 #pragma endregion
+
+// sw2 scatter-include (default/system/rndobj/CubeTex <- rnddx9/CubeTex.cpp)
+#define gRev gRev_CubeTex
+#define gAltRev gAltRev_CubeTex
+#include "rnddx9/CubeTex.cpp"
+#undef gRev
+#undef gAltRev

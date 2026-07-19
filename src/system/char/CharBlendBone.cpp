@@ -157,3 +157,10 @@ BEGIN_CUSTOM_PROPSYNC(CharBlendBone::ConstraintSystem)
 END_CUSTOM_PROPSYNC
 
 #pragma endregion CharBlendBone::ConstraintSystem
+
+// sw2 scatter-include (default/CharBlendBone <- obj/PropSync.cpp)
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev

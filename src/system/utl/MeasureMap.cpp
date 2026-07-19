@@ -83,3 +83,10 @@ bool MeasureMap::AddTimeSignature(int measure, int num, int denom, bool fail) {
     }
     return true;
 }
+
+// sw2 scatter-include (default/MeasureMap <- world/CameraShot.cpp)
+#define gRev gRev_CameraShot
+#define gAltRev gAltRev_CameraShot
+#include "world/CameraShot.cpp"
+#undef gRev
+#undef gAltRev

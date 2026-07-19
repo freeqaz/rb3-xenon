@@ -211,3 +211,9 @@ BEGIN_HANDLERS(SongSelectPanel)
     HANDLE_SUPERCLASS(HeldButtonPanel)
     HANDLE_CHECK(0xC5)
 END_HANDLERS
+// sw2 scatter-include (default/band3/meta_band/SongSelectPanel <- band3/meta_band/SessionUsersProviders.cpp)
+#define gRev gRev_SessionUsersProviders
+#define gAltRev gAltRev_SessionUsersProviders
+#include "band3/meta_band/SessionUsersProviders.cpp"
+#undef gRev
+#undef gAltRev

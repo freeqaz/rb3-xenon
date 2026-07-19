@@ -1864,3 +1864,9 @@ void RockCentral::SendFailure(Hmx::Object *o, int i2, int i3) {
         o->Handle(msg, true);
     }
 }
+// sw2 scatter-include (default/RockCentral <- meta/StoreOffer.cpp)
+#define gRev gRev_StoreOffer
+#define gAltRev gAltRev_StoreOffer
+#include "meta/StoreOffer.cpp"
+#undef gRev
+#undef gAltRev

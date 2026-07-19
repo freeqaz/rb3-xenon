@@ -407,3 +407,24 @@ void CharLipSync::PlayBack::Reset() {
         weight.mPrevWeight = 0;
     }
 }
+
+// sw2 scatter-include (default/CharLipSync <- rndobj/Part.cpp)
+#define gRev gRev_Part
+#define gAltRev gAltRev_Part
+#include "rndobj/Part.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/CharLipSync <- utl/UTF8.cpp)
+#define gRev gRev_UTF8
+#define gAltRev gAltRev_UTF8
+#include "utl/UTF8.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/CharLipSync <- gesture/SkeletonClip.cpp)
+#define gRev gRev_SkeletonClip
+#define gAltRev gAltRev_SkeletonClip
+#include "gesture/SkeletonClip.cpp"
+#undef gRev
+#undef gAltRev

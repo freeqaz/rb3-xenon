@@ -130,3 +130,10 @@ void CharIKScale::CaptureAfter() {
     if (mDest)
         mScale = mDest->LocalXfm().v.z / mScale;
 }
+
+// sw2 scatter-include (default/CharIKScale <- rndobj/Group.cpp)
+#define gRev gRev_Group
+#define gAltRev gAltRev_Group
+#include "rndobj/Group.cpp"
+#undef gRev
+#undef gAltRev

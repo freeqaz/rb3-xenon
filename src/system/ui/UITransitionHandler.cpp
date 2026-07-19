@@ -118,3 +118,10 @@ void UITransitionHandler::LoadHandlerData(BinStream &bs) { bs >> mInAnim >> mOut
 void UITransitionHandler::ClearAnimationState() {
     mAnimationState = kUITransitionAnimationInvalid;
 }
+
+// sw2 scatter-include (default/UITransitionHandler <- rndobj/MatAnim.cpp)
+#define gRev gRev_MatAnim
+#define gAltRev gAltRev_MatAnim
+#include "rndobj/MatAnim.cpp"
+#undef gRev
+#undef gAltRev

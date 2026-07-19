@@ -108,3 +108,10 @@ bool CharIKRod::ComputeRod(Transform &tf) {
     Cross(tf.m.x, tf.m.y, tf.m.z);
     return true;
 }
+
+// sw2 scatter-include (default/CharIKRod <- obj/PropSync.cpp)
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev

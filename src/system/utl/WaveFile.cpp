@@ -130,3 +130,10 @@ WaveFileData::WaveFileData(WaveFile &wf)
     : IDataChunk(wf.PrepareToProvideData()), mWaveFile(wf) {}
 
 WaveFileData::~WaveFileData() {}
+
+// sw2 scatter-include (default/WaveFile <- rndobj/Group.cpp)
+#define gRev gRev_Group
+#define gAltRev gAltRev_Group
+#include "rndobj/Group.cpp"
+#undef gRev
+#undef gAltRev

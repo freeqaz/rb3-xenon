@@ -424,3 +424,24 @@ DataNode RndGroup::GetGroupChildren() {
     }
     return ptr;
 }
+
+// sw2 scatter-include (default/Group <- math/Geo.cpp)
+#define gRev gRev_Geo
+#define gAltRev gAltRev_Geo
+#include "math/Geo.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Group <- obj/PropSync.cpp)
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Group <- rndobj/Flare.cpp)
+#define gRev gRev_Flare
+#define gAltRev gAltRev_Flare
+#include "rndobj/Flare.cpp"
+#undef gRev
+#undef gAltRev

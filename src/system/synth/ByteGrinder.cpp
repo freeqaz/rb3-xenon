@@ -1126,3 +1126,24 @@ void ByteGrinder::Init() {
         DataRegisterFunc(functionName, funPtrs[i]);
     }
 }
+
+// sw2 scatter-include (default/ByteGrinder <- hamobj/HamBattleData.cpp)
+#define gRev gRev_HamBattleData
+#define gAltRev gAltRev_HamBattleData
+#include "hamobj/HamBattleData.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/ByteGrinder <- synth/MicNull.cpp)
+#define gRev gRev_MicNull
+#define gAltRev gAltRev_MicNull
+#include "synth/MicNull.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/ByteGrinder <- gesture/SkeletonClip.cpp)
+#define gRev gRev_SkeletonClip
+#define gAltRev gAltRev_SkeletonClip
+#include "gesture/SkeletonClip.cpp"
+#undef gRev
+#undef gAltRev

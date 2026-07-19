@@ -223,3 +223,10 @@ void FIFOSampleBuffer::clear() {
     samplesInBuffer = 0;
     bufferPos = 0;
 }
+
+// sw2 scatter-include (default/FIFOSampleBuffer <- utl/CacheMgr.cpp)
+#define gRev gRev_CacheMgr
+#define gAltRev gAltRev_CacheMgr
+#include "utl/CacheMgr.cpp"
+#undef gRev
+#undef gAltRev

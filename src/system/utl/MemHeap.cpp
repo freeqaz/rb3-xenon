@@ -569,3 +569,17 @@ int MemFindAddrHeap(void *addr) {
 }
 #endif
 
+
+// sw2 scatter-include (default/MemHeap <- utl/Str.cpp)
+#define gRev gRev_Str
+#define gAltRev gAltRev_Str
+#include "utl/Str.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/MemHeap <- utl/MakeString.cpp)
+#define gRev gRev_MakeString
+#define gAltRev gAltRev_MakeString
+#include "utl/MakeString.cpp"
+#undef gRev
+#undef gAltRev

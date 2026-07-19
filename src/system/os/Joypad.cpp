@@ -550,3 +550,10 @@ unsigned int JoypadPollForButton(int pad) {
         return pressedMask;
     }
 }
+
+// sw2 scatter-include (default/Joypad <- meta/StreamPlayer.cpp)
+#define gRev gRev_StreamPlayer
+#define gAltRev gAltRev_StreamPlayer
+#include "meta/StreamPlayer.cpp"
+#undef gRev
+#undef gAltRev

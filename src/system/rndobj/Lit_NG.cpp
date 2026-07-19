@@ -342,3 +342,10 @@ void NgLight::Init() {
     REGISTER_OBJ_FACTORY(NgLight);
     PhysMemTypeTracker tracker("D3D(phys):NgLight");
 }
+
+// sw2 scatter-include (default/Lit_NG <- meta/StorePreviewMgr.cpp)
+#define gRev gRev_StorePreviewMgr
+#define gAltRev gAltRev_StorePreviewMgr
+#include "meta/StorePreviewMgr.cpp"
+#undef gRev
+#undef gAltRev

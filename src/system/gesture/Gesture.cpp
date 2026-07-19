@@ -35,3 +35,10 @@ void GestureInit() {
     CameraTilt::Init();
     WaveToTurnOnLight::Init();
 }
+
+// sw2 scatter-include (default/Gesture <- obj/PropSync.cpp)
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev

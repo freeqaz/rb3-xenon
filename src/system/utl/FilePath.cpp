@@ -22,3 +22,10 @@ void FilePath::Set(const char *str1, const char *str2) {
     this->String::operator=(path); // well ok then
     // *this = path;
 }
+
+// sw2 scatter-include (default/FilePath <- char/CharBone.cpp)
+#define gRev gRev_CharBone
+#define gAltRev gAltRev_CharBone
+#include "char/CharBone.cpp"
+#undef gRev
+#undef gAltRev

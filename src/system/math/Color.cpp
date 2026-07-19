@@ -73,3 +73,10 @@ void MakeHSL(const Hmx::Color &color, float &h, float &s, float &l) {
             h += 1.0f;
     }
 }
+
+// sw2 scatter-include (default/Color <- math/Key.cpp)
+#define gRev gRev_Key
+#define gAltRev gAltRev_Key
+#include "math/Key.cpp"
+#undef gRev
+#undef gAltRev

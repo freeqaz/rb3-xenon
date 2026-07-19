@@ -98,3 +98,17 @@ Difficulty AccomplishmentConditional::GetRequiredDifficulty() const {
     }
     return Accomplishment::GetRequiredDifficulty();
 }
+
+// sw2 scatter-include (default/AccomplishmentConditional <- math/Geo.cpp)
+#define gRev gRev_Geo
+#define gAltRev gAltRev_Geo
+#include "math/Geo.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/AccomplishmentConditional <- band3/meta_band/AccomplishmentTrainerConditional.cpp)
+#define gRev gRev_AccomplishmentTrainerConditional
+#define gAltRev gAltRev_AccomplishmentTrainerConditional
+#include "band3/meta_band/AccomplishmentTrainerConditional.cpp"
+#undef gRev
+#undef gAltRev

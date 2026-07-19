@@ -73,3 +73,10 @@ BEGIN_HANDLERS(CriticalUserListener)
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x68)
 END_HANDLERS
+
+// sw2 scatter-include (default/CriticalUserListener <- flow/FlowManager.cpp)
+#define gRev gRev_FlowManager
+#define gAltRev gAltRev_FlowManager
+#include "flow/FlowManager.cpp"
+#undef gRev
+#undef gAltRev

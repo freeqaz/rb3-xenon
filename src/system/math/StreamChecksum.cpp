@@ -85,3 +85,10 @@ bool StreamChecksumValidator::ValidateChecksum(const unsigned char *hash) {
         HandleError(MakeString("Checksum failure for file %s\n", mFile));
     return b2;
 }
+
+// sw2 scatter-include (default/StreamChecksum <- os/Joypad.cpp)
+#define gRev gRev_Joypad
+#define gAltRev gAltRev_Joypad
+#include "os/Joypad.cpp"
+#undef gRev
+#undef gAltRev

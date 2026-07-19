@@ -1522,3 +1522,10 @@ void Spotlight::BuildNGQuad(BeamDef &def, RndTransformable::Constraint constrain
     RndTransformable *parent = this ? static_cast<RndTransformable *>(this) : nullptr;
     def.mBeam->SetTransParent(parent, false);
 }
+
+// sw2 scatter-include (default/Spotlight <- world/ColorPalette.cpp)
+#define gRev gRev_ColorPalette
+#define gAltRev gAltRev_ColorPalette
+#include "world/ColorPalette.cpp"
+#undef gRev
+#undef gAltRev

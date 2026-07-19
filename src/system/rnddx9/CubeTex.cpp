@@ -67,3 +67,10 @@ void DxCubeTex::Sync() {
     }
 
 }
+
+// sw2 scatter-include (default/system/rnddx9/CubeTex <- band3/meta_band/AppLabel.cpp)
+#define gRev gRev_AppLabel
+#define gAltRev gAltRev_AppLabel
+#include "band3/meta_band/AppLabel.cpp"
+#undef gRev
+#undef gAltRev

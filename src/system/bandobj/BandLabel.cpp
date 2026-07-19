@@ -127,3 +127,17 @@ BEGIN_PROPSYNCS(BandLabel)
     SYNC_PROP_SET(out_anim, GetOutAnim(), SetOutAnim(_val.Obj<RndAnimatable>()))
     SYNC_SUPERCLASS(UILabel)
 END_PROPSYNCS
+
+// sw2 scatter-include (default/BandLabel <- bandobj/BandDirector.cpp)
+#define gRev gRev_BandDirector
+#define gAltRev gAltRev_BandDirector
+#include "bandobj/BandDirector.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/BandLabel <- hamobj/HamLabel.cpp)
+#define gRev gRev_HamLabel
+#define gAltRev gAltRev_HamLabel
+#include "hamobj/HamLabel.cpp"
+#undef gRev
+#undef gAltRev

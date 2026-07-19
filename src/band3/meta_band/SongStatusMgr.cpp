@@ -1050,3 +1050,10 @@ BEGIN_HANDLERS(SongStatusMgr)
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
     HANDLE_CHECK(0x8EA)
 END_HANDLERS
+
+// sw2 scatter-include (default/SongStatusMgr <- band3/meta_band/SongUpgradeMgr.cpp)
+#define gRev gRev_SongUpgradeMgr
+#define gAltRev gAltRev_SongUpgradeMgr
+#include "band3/meta_band/SongUpgradeMgr.cpp"
+#undef gRev
+#undef gAltRev

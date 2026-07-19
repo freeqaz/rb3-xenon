@@ -535,3 +535,10 @@ int CacheXbox::ThreadGetDir(String searchPath, String basePath) {
     }
     return -1;
 }
+
+// sw2 scatter-include (default/Cache_Xbox <- obj/Dir.cpp)
+#define gRev gRev_Dir
+#define gAltRev gAltRev_Dir
+#include "obj/Dir.cpp"
+#undef gRev
+#undef gAltRev

@@ -231,3 +231,17 @@ void RndMeshDeform::VertArray::Copy(const RndMeshDeform::VertArray &a) {
     SetSize(a.mSize);
     memcpy(mData, a.mData, mSize);
 }
+
+// sw2 scatter-include (default/MeshDeform <- obj/Dir.cpp)
+#define gRev gRev_Dir
+#define gAltRev gAltRev_Dir
+#include "obj/Dir.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/MeshDeform <- band3/meta_band/BandUI.cpp)
+#define gRev gRev_BandUI
+#define gAltRev gAltRev_BandUI
+#include "band3/meta_band/BandUI.cpp"
+#undef gRev
+#undef gAltRev

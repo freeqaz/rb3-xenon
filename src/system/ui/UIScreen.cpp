@@ -592,3 +592,10 @@ void UIScreen::ReloadStrings() {
 }
 
 // EnterGlitchCB/UnloadGlitchCB defined at top of file
+
+// sw2 scatter-include (default/UIScreen <- char/CharBone.cpp)
+#define gRev gRev_CharBone
+#define gAltRev gAltRev_CharBone
+#include "char/CharBone.cpp"
+#undef gRev
+#undef gAltRev

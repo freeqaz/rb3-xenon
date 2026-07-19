@@ -345,3 +345,10 @@ void MoviePanel::ShowMenu(bool b) {
     if (mShowMenu)
         HideHint();
 }
+
+// sw2 scatter-include (default/MoviePanel <- meta/Meta.cpp)
+#define gRev gRev_Meta
+#define gAltRev gAltRev_Meta
+#include "meta/Meta.cpp"
+#undef gRev
+#undef gAltRev

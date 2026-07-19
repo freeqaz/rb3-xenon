@@ -928,3 +928,10 @@ void RhythmDetector::ProcessFrames() {
         }
     }
 }
+
+// sw2 scatter-include (default/RhythmDetector <- band3/game/DirectInstrument.cpp)
+#define gRev gRev_DirectInstrument
+#define gAltRev gAltRev_DirectInstrument
+#include "band3/game/DirectInstrument.cpp"
+#undef gRev
+#undef gAltRev

@@ -798,3 +798,10 @@ void RndLine::UpdateLine(const Transform &camXfm, float nearPlane) {
 
     mMesh->Sync(0x1F);
 }
+
+// sw2 scatter-include (default/Line <- rndobj/Spline.cpp)
+#define gRev gRev_Spline
+#define gAltRev gAltRev_Spline
+#include "rndobj/Spline.cpp"
+#undef gRev
+#undef gAltRev

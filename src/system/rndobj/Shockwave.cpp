@@ -101,3 +101,10 @@ void RndShockwave::PrepareShader(float amplitude_scale) {
         kVS_ShockwaveParams, Vector4(mRadius, mAmplitude * amplitude_scale, 1.0f / mWavelength, 0.0f)
     );
 }
+
+// sw2 scatter-include (default/Shockwave <- obj/Dir.cpp)
+#define gRev gRev_Dir
+#define gAltRev gAltRev_Dir
+#include "obj/Dir.cpp"
+#undef gRev
+#undef gAltRev

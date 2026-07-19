@@ -235,3 +235,10 @@ void UIListWidget::DrawMesh(
 }
 
 UIList *UIListWidget::ParentList() { return mParentList; }
+
+// sw2 scatter-include (default/UIListWidget <- ui/Utl.cpp)
+#define gRev gRev_Utl
+#define gAltRev gAltRev_Utl
+#include "ui/Utl.cpp"
+#undef gRev
+#undef gAltRev

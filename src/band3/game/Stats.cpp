@@ -633,3 +633,10 @@ BinStream &operator>>(BinStream &bs, Stats::SectionInfo &info) {
 #include "hamobj/RhythmDetector.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/band3/game/Stats <- bandobj/BandDirector.cpp)
+#define gRev gRev_BandDirector
+#define gAltRev gAltRev_BandDirector
+#include "bandobj/BandDirector.cpp"
+#undef gRev
+#undef gAltRev

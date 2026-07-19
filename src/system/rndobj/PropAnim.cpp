@@ -923,3 +923,10 @@ DataNode RndPropAnim::ForAllKeyframes(const DataArray *da) {
 }
 
 #pragma endregion
+
+// sw2 scatter-include (default/PropAnim <- obj/MessageTimer.cpp)
+#define gRev gRev_MessageTimer
+#define gAltRev gAltRev_MessageTimer
+#include "obj/MessageTimer.cpp"
+#undef gRev
+#undef gAltRev

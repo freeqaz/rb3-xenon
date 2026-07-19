@@ -700,3 +700,10 @@ BEGIN_PROPSYNCS(CharBonesSamples)
     gPropBones = this;
     SYNC_PROP(bones, mBones)
 END_PROPSYNCS
+
+// sw2 scatter-include (default/CharBonesSamples <- math/Key.cpp)
+#define gRev gRev_Key
+#define gAltRev gAltRev_Key
+#include "math/Key.cpp"
+#undef gRev
+#undef gAltRev

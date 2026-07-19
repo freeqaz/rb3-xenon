@@ -291,3 +291,17 @@ void RndMeshAnim::ShrinkKeys(int num) {
 #undef gAltRev
 #include "rndobj/ShaderMgr.cpp"
 #include "math/mtx.cpp"
+
+// sw2 scatter-include (default/MeshAnim <- band3/game/NetGameMsgs.cpp)
+#define gRev gRev_NetGameMsgs
+#define gAltRev gAltRev_NetGameMsgs
+#include "band3/game/NetGameMsgs.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/MeshAnim <- synth_xbox/Voice.cpp)
+#define gRev gRev_Voice
+#define gAltRev gAltRev_Voice
+#include "synth_xbox/Voice.cpp"
+#undef gRev
+#undef gAltRev

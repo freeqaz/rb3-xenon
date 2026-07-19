@@ -856,3 +856,17 @@ void TrackWatcherImpl::SendHopo(float ms, int gemID) {
         (*it)->Hopo(mTrack, ms, gemID);
     }
 }
+
+// sw2 scatter-include (default/TrackWatcherImpl <- rndobj/PartAnim.cpp)
+#define gRev gRev_PartAnim
+#define gAltRev gAltRev_PartAnim
+#include "rndobj/PartAnim.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/TrackWatcherImpl <- bandobj/BandCrowdMeter.cpp)
+#define gRev gRev_BandCrowdMeter
+#define gAltRev gAltRev_BandCrowdMeter
+#include "bandobj/BandCrowdMeter.cpp"
+#undef gRev
+#undef gAltRev

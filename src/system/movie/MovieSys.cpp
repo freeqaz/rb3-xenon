@@ -32,3 +32,10 @@ void MovieSys::Terminate() {
 }
 
 MovieImpl *MovieSys::CreateMovieImpl() { return new MovieImpl(); }
+
+// sw2 scatter-include (default/MovieSys <- meta/SongMgr.cpp)
+#define gRev gRev_SongMgr
+#define gAltRev gAltRev_SongMgr
+#include "meta/SongMgr.cpp"
+#undef gRev
+#undef gAltRev

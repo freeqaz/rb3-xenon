@@ -38,3 +38,10 @@ BEGIN_HANDLERS(ConnectionStatusPanel)
     HANDLE_MESSAGE(ConnectionStatusChangedMsg)
     HANDLE_SUPERCLASS(UIPanel)
 END_HANDLERS
+
+// sw2 scatter-include (default/ConnectionStatusPanel <- utl/PoolAlloc.cpp)
+#define gRev gRev_PoolAlloc
+#define gAltRev gAltRev_PoolAlloc
+#include "utl/PoolAlloc.cpp"
+#undef gRev
+#undef gAltRev

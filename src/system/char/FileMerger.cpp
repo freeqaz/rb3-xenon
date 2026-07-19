@@ -614,3 +614,10 @@ DataNode FileMerger::OnStartLoad(const DataArray *a) {
 #include "char/CharIKHand.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/FileMerger <- rndobj/Morph.cpp)
+#define gRev gRev_Morph
+#define gAltRev gAltRev_Morph
+#include "rndobj/Morph.cpp"
+#undef gRev
+#undef gAltRev

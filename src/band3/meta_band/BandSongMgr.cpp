@@ -1042,3 +1042,10 @@ BEGIN_HANDLERS(BandSongMgr)
     HANDLE_CHECK(0x6DF)
 END_HANDLERS
 #pragma pop
+
+// sw2 scatter-include (default/band3/meta_band/BandSongMgr <- math/Geo.cpp)
+#define gRev gRev_Geo
+#define gAltRev gAltRev_Geo
+#include "math/Geo.cpp"
+#undef gRev
+#undef gAltRev

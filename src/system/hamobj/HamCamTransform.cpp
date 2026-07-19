@@ -244,3 +244,24 @@ void TransformArea::Load(BinStreamRev &d) {
 #include "char/ClipDistMap.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/HamCamTransform <- flow/FlowTrigger.cpp)
+#define gRev gRev_FlowTrigger
+#define gAltRev gAltRev_FlowTrigger
+#include "flow/FlowTrigger.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/HamCamTransform <- world/Crowd.cpp)
+#define gRev gRev_Crowd
+#define gAltRev gAltRev_Crowd
+#include "world/Crowd.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/HamCamTransform <- gesture/LiveCameraInput.cpp)
+#define gRev gRev_LiveCameraInput
+#define gAltRev gAltRev_LiveCameraInput
+#include "gesture/LiveCameraInput.cpp"
+#undef gRev
+#undef gAltRev

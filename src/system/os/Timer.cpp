@@ -346,3 +346,10 @@ void AutoTimer::Init() {
         }
     }
 }
+
+// sw2 scatter-include (default/Timer <- band3/meta_band/Campaign.cpp)
+#define gRev gRev_Campaign
+#define gAltRev gAltRev_Campaign
+#include "band3/meta_band/Campaign.cpp"
+#undef gRev
+#undef gAltRev

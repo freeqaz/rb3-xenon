@@ -408,3 +408,10 @@ void Nlerp(const Hmx::Quat &q1, const Hmx::Quat &q2, float f, Hmx::Quat &qout) {
     }
     Normalize(qout, qout);
 }
+
+// sw2 scatter-include (default/Rot <- rndobj/AmbientOcclusion.cpp)
+#define gRev gRev_AmbientOcclusion
+#define gAltRev gAltRev_AmbientOcclusion
+#include "rndobj/AmbientOcclusion.cpp"
+#undef gRev
+#undef gAltRev

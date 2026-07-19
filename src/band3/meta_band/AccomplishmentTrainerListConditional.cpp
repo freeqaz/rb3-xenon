@@ -58,3 +58,10 @@ bool AccomplishmentTrainerListConditional::InqIncrementalSymbols(
 int AccomplishmentTrainerListConditional::GetTotalNumLessons() const {
     return mLessons.size();
 }
+
+// sw2 scatter-include (default/band3/meta_band/AccomplishmentTrainerListConditional <- band3/meta_band/AccomplishmentSongListConditional.cpp)
+#define gRev gRev_AccomplishmentSongListConditional
+#define gAltRev gAltRev_AccomplishmentSongListConditional
+#include "band3/meta_band/AccomplishmentSongListConditional.cpp"
+#undef gRev
+#undef gAltRev

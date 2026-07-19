@@ -515,3 +515,10 @@ END_PROPSYNCS
 #include "ui/InlineHelp.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/CrowdAudio <- hamobj/HamMove.cpp)
+#define gRev gRev_HamMove
+#define gAltRev gAltRev_HamMove
+#include "hamobj/HamMove.cpp"
+#undef gRev
+#undef gAltRev

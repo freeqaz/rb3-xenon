@@ -390,3 +390,10 @@ void PhysicalFreeTracked(void *address, const char *p2, int p3, const char *p4) 
 }
 
 int PhysicalUsage() { return gPhysicalUsage; }
+
+// sw2 scatter-include (default/Memory_Xbox <- bandobj/BandCrowdMeter.cpp)
+#define gRev gRev_BandCrowdMeter
+#define gAltRev gAltRev_BandCrowdMeter
+#include "bandobj/BandCrowdMeter.cpp"
+#undef gRev
+#undef gAltRev

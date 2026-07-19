@@ -2672,3 +2672,24 @@ void BuildSphereStratified(unsigned int numSamples, std::vector<Vector3> &dirs) 
         i--;
     } while (i != 0);
 }
+
+// sw2 scatter-include (default/system/rndobj/Utl <- rndobj/Rnd.cpp)
+#define gRev gRev_Rnd
+#define gAltRev gAltRev_Rnd
+#include "rndobj/Rnd.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/system/rndobj/Utl <- ui/UIListDir.cpp)
+#define gRev gRev_UIListDir
+#define gAltRev gAltRev_UIListDir
+#include "ui/UIListDir.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/system/rndobj/Utl <- meta/ButtonHolder.cpp)
+#define gRev gRev_ButtonHolder
+#define gAltRev gAltRev_ButtonHolder
+#include "meta/ButtonHolder.cpp"
+#undef gRev
+#undef gAltRev

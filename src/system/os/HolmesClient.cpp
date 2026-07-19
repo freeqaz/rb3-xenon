@@ -880,3 +880,10 @@ void HolmesClientPrint(const char *) {
     // Holmes remote debug not available on native
 }
 #endif
+
+// sw2 scatter-include (default/HolmesClient <- utl/PoolAlloc.cpp)
+#define gRev gRev_PoolAlloc
+#define gAltRev gAltRev_PoolAlloc
+#include "utl/PoolAlloc.cpp"
+#undef gRev
+#undef gAltRev

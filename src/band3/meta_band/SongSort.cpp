@@ -319,3 +319,17 @@ SubheaderSortNode *SetlistSort::NewSubheaderNode(LeafSortNode *node) const {
     MILO_ASSERT(setlist, 0x1E7);
     return NewSubheaderNode((SetlistSortNode *)setlist);
 }
+
+// sw2 scatter-include (default/band3/meta_band/SongSort <- band3/bandtrack/TrackPanel.cpp)
+#define gRev gRev_TrackPanel
+#define gAltRev gAltRev_TrackPanel
+#include "band3/bandtrack/TrackPanel.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/band3/meta_band/SongSort <- band3/meta_band/Utl.cpp)
+#define gRev gRev_Utl
+#define gAltRev gAltRev_Utl
+#include "band3/meta_band/Utl.cpp"
+#undef gRev
+#undef gAltRev

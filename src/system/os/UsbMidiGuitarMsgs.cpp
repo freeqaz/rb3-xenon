@@ -27,3 +27,10 @@ RGFretButtonUpMsg::RGFretButtonUpMsg(int i1, int i2, bool i3)
 
 StringStoppedMsg::StringStoppedMsg(int i1, int i2, int i3, int i4)
     : Message(Type(), i1, i2, i3, i4) {}
+
+// sw2 scatter-include (default/UsbMidiGuitarMsgs <- band3/meta_band/CalibrationPanel.cpp)
+#define gRev gRev_CalibrationPanel
+#define gAltRev gAltRev_CalibrationPanel
+#include "band3/meta_band/CalibrationPanel.cpp"
+#undef gRev
+#undef gAltRev

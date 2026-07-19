@@ -55,3 +55,10 @@ StoreOffer *MusicLibraryStore::FindOfferBySongID(int id) const {
     }
     return NULL;
 }
+
+// sw2 scatter-include (default/MusicLibraryStore <- band3/meta_band/Utl.cpp)
+#define gRev gRev_Utl
+#define gAltRev gAltRev_Utl
+#include "band3/meta_band/Utl.cpp"
+#undef gRev
+#undef gAltRev

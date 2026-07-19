@@ -339,3 +339,10 @@ DataNode BaseMaterial::OnAllowedNormalMap(const DataArray *a) {
 }
 
 #pragma endregion
+
+// sw2 scatter-include (default/BaseMaterial <- rndobj/Mat.cpp)
+#define gRev gRev_Mat
+#define gAltRev gAltRev_Mat
+#include "rndobj/Mat.cpp"
+#undef gRev
+#undef gAltRev

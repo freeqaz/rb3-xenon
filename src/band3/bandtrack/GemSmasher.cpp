@@ -227,3 +227,10 @@ void GemSmasher::SetGlowing(bool b) {
 }
 
 bool GemSmasher::Glowing() const { return mGlowing; }
+
+// sw2 scatter-include (default/GemSmasher <- utl/Cache.cpp)
+#define gRev gRev_Cache
+#define gAltRev gAltRev_Cache
+#include "utl/Cache.cpp"
+#undef gRev
+#undef gAltRev

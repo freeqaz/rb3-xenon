@@ -611,3 +611,10 @@ void CharIKFingers::Poll() {
         }
     }
 }
+
+// sw2 scatter-include (default/CharIKFingers <- obj/PropSync.cpp)
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev

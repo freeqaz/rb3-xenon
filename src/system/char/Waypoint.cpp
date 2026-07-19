@@ -228,3 +228,10 @@ void Waypoint::ShapeDeltaBox(const Vector3 &v1, float f1, float f2, Vector3 &res
             res *= 1.0f - (f1 / sqrtf(lensq));
     }
 }
+
+// sw2 scatter-include (default/Waypoint <- synth/Sequence.cpp)
+#define gRev gRev_Sequence
+#define gAltRev gAltRev_Sequence
+#include "synth/Sequence.cpp"
+#undef gRev
+#undef gAltRev

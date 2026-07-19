@@ -989,3 +989,10 @@ void MoveMgr::FillRoutineFromReplacer(int player) {
     }
     FillRoutineFromParents(player);
 }
+
+// sw2 scatter-include (default/MoveMgr <- world/CameraManager.cpp)
+#define gRev gRev_CameraManager
+#define gAltRev gAltRev_CameraManager
+#include "world/CameraManager.cpp"
+#undef gRev
+#undef gAltRev

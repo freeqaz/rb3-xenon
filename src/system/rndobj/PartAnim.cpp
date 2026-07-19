@@ -217,3 +217,10 @@ void RndParticleSysAnim::SetKey(float frame) {
 #pragma region RndParticleSysAnim
 
 void RndParticleSysAnim::SetParticleSys(RndParticleSys *sys) { mParticleSys = sys; }
+
+// sw2 scatter-include (default/PartAnim <- hamobj/HamSupereasyData.cpp)
+#define gRev gRev_HamSupereasyData
+#define gAltRev gAltRev_HamSupereasyData
+#include "hamobj/HamSupereasyData.cpp"
+#undef gRev
+#undef gAltRev

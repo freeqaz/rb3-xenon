@@ -59,3 +59,10 @@ vector<DSP::Synapse::GranularSynth::Granule, StlNodeAlloc<DSP::Synapse::Granular
 
 } // namespace stlpmtx_std
 #endif // HX_NATIVE
+
+// sw2 scatter-include (default/GranularSynth <- os/Archive.cpp)
+#define gRev gRev_Archive
+#define gAltRev gAltRev_Archive
+#include "os/Archive.cpp"
+#undef gRev
+#undef gAltRev

@@ -300,3 +300,10 @@ void Sfx::SetReverbEnable(bool b) {
 #include "synth/Synth.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/Sfx <- world/CameraShot.cpp)
+#define gRev gRev_CameraShot
+#define gAltRev gAltRev_CameraShot
+#include "world/CameraShot.cpp"
+#undef gRev
+#undef gAltRev

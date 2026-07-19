@@ -797,3 +797,9 @@ void StoreEnumJob::OnCompletion(Hmx::Object *) {
         mStorePanel->FinishEnum(contentList, mEnumeration->IsSuccess());
     }
 }
+// sw2 scatter-include (default/StorePanel <- hamobj/DancerSequence.cpp)
+#define gRev gRev_DancerSequence
+#define gAltRev gAltRev_DancerSequence
+#include "hamobj/DancerSequence.cpp"
+#undef gRev
+#undef gAltRev

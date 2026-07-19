@@ -734,3 +734,9 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_CHECK(0x3F0)
 END_HANDLERS
 #pragma pop
+// sw2 scatter-include (default/BandUI <- band3/game/Singer.cpp)
+#define gRev gRev_Singer
+#define gAltRev gAltRev_Singer
+#include "band3/game/Singer.cpp"
+#undef gRev
+#undef gAltRev

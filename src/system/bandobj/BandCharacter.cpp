@@ -2711,3 +2711,10 @@ BEGIN_PROPSYNCS(BandCharacter)
     SYNC_SUPERCLASS(BandCharDesc)
     SYNC_SUPERCLASS(Character)
 END_PROPSYNCS
+
+// sw2 scatter-include (default/BandCharacter <- band3/bandtrack/GemTrack.cpp)
+#define gRev gRev_GemTrack
+#define gAltRev gAltRev_GemTrack
+#include "band3/bandtrack/GemTrack.cpp"
+#undef gRev
+#undef gAltRev

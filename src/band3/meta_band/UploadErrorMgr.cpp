@@ -26,3 +26,10 @@ BEGIN_HANDLERS(UploadErrorMgr)
     HANDLE_MESSAGE(SessionReadyMsg)
     HANDLE_CHECK(0x76)
 END_HANDLERS
+
+// sw2 scatter-include (default/UploadErrorMgr <- band3/meta_band/SongSortMgr.cpp)
+#define gRev gRev_SongSortMgr
+#define gAltRev gAltRev_SongSortMgr
+#include "band3/meta_band/SongSortMgr.cpp"
+#undef gRev
+#undef gAltRev

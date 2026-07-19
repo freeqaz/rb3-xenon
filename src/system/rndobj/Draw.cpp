@@ -257,3 +257,10 @@ DataNode RndDrawable::OnGetDrawChildren(const DataArray *a) {
     }
     return ptr;
 }
+
+// sw2 scatter-include (default/Draw <- utl/ChunkStream.cpp)
+#define gRev gRev_ChunkStream
+#define gAltRev gAltRev_ChunkStream
+#include "utl/ChunkStream.cpp"
+#undef gRev
+#undef gAltRev

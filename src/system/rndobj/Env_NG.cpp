@@ -241,3 +241,10 @@ void NgEnviron::Select(const Vector3 *pos) {
 // RB3 retail linker interleaved Rnd_NG.cpp's COMDATs into this TU's .text
 // span. Compile its bodies into this obj so objdiff can pair them (bp2r).
 #include "rndobj/Rnd_NG.cpp"
+
+// sw2 scatter-include (default/Env_NG <- rndobj/PostProc_NG.cpp)
+#define gRev gRev_PostProc_NG
+#define gAltRev gAltRev_PostProc_NG
+#include "rndobj/PostProc_NG.cpp"
+#undef gRev
+#undef gAltRev

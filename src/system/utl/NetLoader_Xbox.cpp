@@ -37,3 +37,10 @@ bool NetLoaderXbox::HasFailed() {
     MILO_ASSERT(mHttpGet, 0x4C);
     return mHttpGet->HasFailed();
 }
+
+// sw2 scatter-include (default/NetLoader_Xbox <- utl/NetLoader.cpp)
+#define gRev gRev_NetLoader
+#define gAltRev gAltRev_NetLoader
+#include "utl/NetLoader.cpp"
+#undef gRev
+#undef gAltRev

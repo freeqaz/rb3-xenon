@@ -21,3 +21,17 @@ JoypadBreedDataReadMsg::JoypadBreedDataReadMsg(LocalUser *user, JoypadBreedDataS
 
 JoypadBreedDataWriteMsg::JoypadBreedDataWriteMsg(LocalUser *user, JoypadBreedDataStatus s)
     : Message(Type(), user, s) {}
+
+// sw2 scatter-include (default/JoypadMsgs <- os/NetStream.cpp)
+#define gRev gRev_NetStream
+#define gAltRev gAltRev_NetStream
+#include "os/NetStream.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/JoypadMsgs <- synth/Sfx.cpp)
+#define gRev gRev_Sfx
+#define gAltRev gAltRev_Sfx
+#include "synth/Sfx.cpp"
+#undef gRev
+#undef gAltRev

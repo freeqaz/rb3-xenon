@@ -317,3 +317,10 @@ void AsyncFile::Terminate() {
     _Close();
     MemFree(mBuffer);
 }
+
+// sw2 scatter-include (default/AsyncFile <- band3/tour/TourSavable.cpp)
+#define gRev gRev_TourSavable
+#define gAltRev gAltRev_TourSavable
+#include "band3/tour/TourSavable.cpp"
+#undef gRev
+#undef gAltRev

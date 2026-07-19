@@ -2224,3 +2224,9 @@ BEGIN_PROPSYNCS(MusicLibrary)
     SYNC_PROP(setlist_scores_provider, mSetlistScoresProvider)
     SYNC_PROP(view_settings_provider, mViewSettingsProvider)
 END_PROPSYNCS
+// sw2 scatter-include (default/MusicLibrary <- band3/game/Game.cpp)
+#define gRev gRev_Game
+#define gAltRev gAltRev_Game
+#include "band3/game/Game.cpp"
+#undef gRev
+#undef gAltRev

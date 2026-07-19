@@ -261,3 +261,10 @@ void ShaderMakeOptionsString(ShaderType type, const ShaderOptions &opts, String 
         }
     }
 }
+
+// sw2 scatter-include (default/ShaderOptions <- rndobj/Anim.cpp)
+#define gRev gRev_Anim
+#define gAltRev gAltRev_Anim
+#include "rndobj/Anim.cpp"
+#undef gRev
+#undef gAltRev

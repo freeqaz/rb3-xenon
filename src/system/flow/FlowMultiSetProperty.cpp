@@ -67,3 +67,17 @@ bool FlowMultiSetProperty::Activate() {
     }
     return false;
 }
+
+// sw2 scatter-include (default/FlowMultiSetProperty <- band3/game/GemPlayer.cpp)
+#define gRev gRev_GemPlayer
+#define gAltRev gAltRev_GemPlayer
+#include "band3/game/GemPlayer.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/FlowMultiSetProperty <- band3/game/Band.cpp)
+#define gRev gRev_Band
+#define gAltRev gAltRev_Band
+#include "band3/game/Band.cpp"
+#undef gRev
+#undef gAltRev

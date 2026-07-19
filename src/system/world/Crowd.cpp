@@ -1428,3 +1428,10 @@ void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &matList, BaseMaterial::Colo
     }
 }
 
+
+// sw2 scatter-include (default/Crowd <- bandobj/BandWardrobe.cpp)
+#define gRev gRev_BandWardrobe
+#define gAltRev gAltRev_BandWardrobe
+#include "bandobj/BandWardrobe.cpp"
+#undef gRev
+#undef gAltRev

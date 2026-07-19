@@ -403,3 +403,10 @@ void CheatsTerminate() {
         gCheatsManager = 0;
     }
 }
+
+// sw2 scatter-include (default/Cheats <- flow/Flow.cpp)
+#define gRev gRev_Flow
+#define gAltRev gAltRev_Flow
+#include "flow/Flow.cpp"
+#undef gRev
+#undef gAltRev

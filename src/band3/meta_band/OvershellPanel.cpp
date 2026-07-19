@@ -1666,3 +1666,17 @@ BEGIN_HANDLERS(OvershellPanel)
     HANDLE_SUPERCLASS(UIPanel)
     HANDLE_CHECK(0xACC)
 END_HANDLERS
+
+// sw2 scatter-include (default/OvershellPanel <- bandobj/BandWardrobe.cpp)
+#define gRev gRev_BandWardrobe
+#define gAltRev gAltRev_BandWardrobe
+#include "bandobj/BandWardrobe.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/OvershellPanel <- band3/meta_band/MainHubPanel.cpp)
+#define gRev gRev_MainHubPanel
+#define gAltRev gAltRev_MainHubPanel
+#include "band3/meta_band/MainHubPanel.cpp"
+#undef gRev
+#undef gAltRev

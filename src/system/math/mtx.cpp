@@ -269,3 +269,17 @@ void Invert(const Hmx::Matrix4 &m, Hmx::Matrix4 &out) {
 }
 
 // Transpose(Matrix4) moved to Mtx.h as inline
+
+// sw2 scatter-include (default/mtx <- bandobj/BandIKEffector.cpp)
+#define gRev gRev_BandIKEffector
+#define gAltRev gAltRev_BandIKEffector
+#include "bandobj/BandIKEffector.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/mtx <- band3/meta_band/AccomplishmentConditional.cpp)
+#define gRev gRev_AccomplishmentConditional
+#define gAltRev gAltRev_AccomplishmentConditional
+#include "band3/meta_band/AccomplishmentConditional.cpp"
+#undef gRev
+#undef gAltRev

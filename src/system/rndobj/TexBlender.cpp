@@ -372,3 +372,10 @@ void RndTexBlender::DrawBlendList(
 DataNode RndTexBlender::OnGetRenderTextures(DataArray *) {
     return GetRenderTexturesNoZ(Dir());
 }
+
+// sw2 scatter-include (default/TexBlender <- rndobj/AmbientOcclusion.cpp)
+#define gRev gRev_AmbientOcclusion
+#define gAltRev gAltRev_AmbientOcclusion
+#include "rndobj/AmbientOcclusion.cpp"
+#undef gRev
+#undef gAltRev

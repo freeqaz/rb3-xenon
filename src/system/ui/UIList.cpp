@@ -1038,3 +1038,10 @@ int UIList::CollidePlane(const Plane &p) {
     }
     return result;
 }
+
+// sw2 scatter-include (default/UIList <- bandobj/BandDirector.cpp)
+#define gRev gRev_BandDirector
+#define gAltRev gAltRev_BandDirector
+#include "bandobj/BandDirector.cpp"
+#undef gRev
+#undef gAltRev

@@ -417,3 +417,10 @@ Symbol Accomplishment::GetUnitsToken(int useSingular) const {
 Symbol Accomplishment::GetPassiveMsgChannel() const { return mPassiveMsgChannel; }
 
 int Accomplishment::GetPassiveMsgPriority() const { return mPassiveMsgPriority; }
+
+// sw2 scatter-include (default/Accomplishment <- bandobj/BandCrowdMeter.cpp)
+#define gRev gRev_BandCrowdMeter
+#define gAltRev gAltRev_BandCrowdMeter
+#include "bandobj/BandCrowdMeter.cpp"
+#undef gRev
+#undef gAltRev

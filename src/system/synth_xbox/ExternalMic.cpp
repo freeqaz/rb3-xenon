@@ -117,3 +117,10 @@ void ExternalMic::Terminate() {
     gMics.clear();
     ExternalMicClientMgr::Terminate();
 }
+
+// sw2 scatter-include (default/ExternalMic <- bandobj/OutfitConfig.cpp)
+#define gRev gRev_OutfitConfig
+#define gAltRev gAltRev_OutfitConfig
+#include "bandobj/OutfitConfig.cpp"
+#undef gRev
+#undef gAltRev

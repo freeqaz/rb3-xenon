@@ -223,3 +223,10 @@ CSHA1::CSHA1() {
 }
 
 CSHA1::~CSHA1() { Reset(); }
+
+// sw2 scatter-include (default/SHA1 <- math/Trig.cpp)
+#define gRev gRev_Trig
+#define gAltRev gAltRev_Trig
+#include "math/Trig.cpp"
+#undef gRev
+#undef gAltRev

@@ -368,3 +368,9 @@ void ContextCheckerInit() {
     DataRegisterFunc("random_context_count", OnRandomContextCount);
     gContextRand.Seed(RandomInt());
 }
+// sw2 scatter-include (default/band3/meta_band/ContextChecker <- char/Char.cpp)
+#define gRev gRev_Char
+#define gAltRev gAltRev_Char
+#include "char/Char.cpp"
+#undef gRev
+#undef gAltRev

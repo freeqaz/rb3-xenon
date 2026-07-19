@@ -190,3 +190,10 @@ int CharCollide::NumSpheres(Shape s) const {
         return s == kCollideSphere || s == kCollideInsideSphere;
     }
 }
+
+// sw2 scatter-include (default/CharCollide <- midi/MidiParserMgr.cpp)
+#define gRev gRev_MidiParserMgr
+#define gAltRev gAltRev_MidiParserMgr
+#include "midi/MidiParserMgr.cpp"
+#undef gRev
+#undef gAltRev

@@ -1140,3 +1140,9 @@ BEGIN_HANDLERS(AccomplishmentProgress)
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
     HANDLE_CHECK(0x795)
 END_HANDLERS
+// sw2 scatter-include (default/band3/meta_band/AccomplishmentProgress <- net/WebSvcMgr.cpp)
+#define gRev gRev_WebSvcMgr
+#define gAltRev gAltRev_WebSvcMgr
+#include "net/WebSvcMgr.cpp"
+#undef gRev
+#undef gAltRev

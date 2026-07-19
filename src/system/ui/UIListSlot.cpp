@@ -258,3 +258,10 @@ void UIListSlot::ClearElements() {
     DeleteAll(mElements);
     RELEASE(mNextElement);
 }
+
+// sw2 scatter-include (default/UIListSlot <- hamobj/Pose.cpp)
+#define gRev gRev_Pose
+#define gAltRev gAltRev_Pose
+#include "hamobj/Pose.cpp"
+#undef gRev
+#undef gAltRev

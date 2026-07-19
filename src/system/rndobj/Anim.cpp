@@ -565,3 +565,24 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
 
     return DataNode(taskPtr.Ptr());
 }
+
+// sw2 scatter-include (default/Anim <- rndobj/Line.cpp)
+#define gRev gRev_Line
+#define gAltRev gAltRev_Line
+#include "rndobj/Line.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Anim <- rndobj/Group.cpp)
+#define gRev gRev_Group
+#define gAltRev gAltRev_Group
+#include "rndobj/Group.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/Anim <- rndobj/MotionBlur.cpp)
+#define gRev gRev_MotionBlur
+#define gAltRev gAltRev_MotionBlur
+#include "rndobj/MotionBlur.cpp"
+#undef gRev
+#undef gAltRev

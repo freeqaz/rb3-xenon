@@ -357,3 +357,17 @@ END_HANDLERS
 #include "band3/meta_band/BandSongMgr.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/band3/meta_band/PrefabMgr <- obj/MessageTimer.cpp)
+#define gRev gRev_MessageTimer
+#define gAltRev gAltRev_MessageTimer
+#include "obj/MessageTimer.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/band3/meta_band/PrefabMgr <- band3/meta_band/AccomplishmentManager.cpp)
+#define gRev gRev_AccomplishmentManager
+#define gAltRev gAltRev_AccomplishmentManager
+#include "band3/meta_band/AccomplishmentManager.cpp"
+#undef gRev
+#undef gAltRev

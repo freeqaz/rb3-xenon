@@ -843,3 +843,10 @@ void ParallelGroupSeqInst::Poll() {
             return;
     }
 }
+
+// sw2 scatter-include (default/Sequence <- char/Character.cpp)
+#define gRev gRev_Character
+#define gAltRev gAltRev_Character
+#include "char/Character.cpp"
+#undef gRev
+#undef gAltRev

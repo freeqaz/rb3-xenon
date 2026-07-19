@@ -1631,3 +1631,10 @@ RndDir *TrackDir::SmasherPlate() {
 #line 1131 "GemManager.cpp"
 
 bool TrackDir::IsBlackKey(int) const { return false; }
+
+// sw2 scatter-include (default/band3/bandtrack/GemManager <- flow/FlowManager.cpp)
+#define gRev gRev_FlowManager
+#define gAltRev gAltRev_FlowManager
+#include "flow/FlowManager.cpp"
+#undef gRev
+#undef gAltRev

@@ -1457,3 +1457,31 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
 #include "ui/LocalePanel.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/LightPreset <- band3/game/Stats.cpp)
+#define gRev gRev_Stats
+#define gAltRev gAltRev_Stats
+#include "band3/game/Stats.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/LightPreset <- world/CameraShot.cpp)
+#define gRev gRev_CameraShot
+#define gAltRev gAltRev_CameraShot
+#include "world/CameraShot.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/LightPreset <- bandobj/BandPatchMesh.cpp)
+#define gRev gRev_BandPatchMesh
+#define gAltRev gAltRev_BandPatchMesh
+#include "bandobj/BandPatchMesh.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/LightPreset <- char/CharDriver.cpp)
+#define gRev gRev_CharDriver
+#define gAltRev gAltRev_CharDriver
+#include "char/CharDriver.cpp"
+#undef gRev
+#undef gAltRev

@@ -2716,3 +2716,10 @@ VocalTrack::LyricShift::LyricShift(float f1, float f2, bool fast)
         );
     }
 }
+
+// sw2 scatter-include (default/VocalTrack <- bandobj/BandWardrobe.cpp)
+#define gRev gRev_BandWardrobe
+#define gAltRev gAltRev_BandWardrobe
+#include "bandobj/BandWardrobe.cpp"
+#undef gRev
+#undef gAltRev

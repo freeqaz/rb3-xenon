@@ -42,3 +42,10 @@ BinStream &operator<<(BinStream &bs, const OnlineID &ssm) {
     bs << ssm.mXUID;
     return bs;
 }
+
+// sw2 scatter-include (default/OnlineID <- os/Joypad.cpp)
+#define gRev gRev_Joypad
+#define gAltRev gAltRev_Joypad
+#include "os/Joypad.cpp"
+#undef gRev
+#undef gAltRev

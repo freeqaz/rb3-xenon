@@ -533,3 +533,10 @@ void XboxContentMgr::PollRefresh() {
     }
     ContentMgr::PollRefresh();
 }
+
+// sw2 scatter-include (default/ContentMgr_Xbox <- char/CharPollGroup.cpp)
+#define gRev gRev_CharPollGroup
+#define gAltRev gAltRev_CharPollGroup
+#include "char/CharPollGroup.cpp"
+#undef gRev
+#undef gAltRev

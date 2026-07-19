@@ -1871,3 +1871,10 @@ bool CamShot::AddCrowd(CamShotCrowd &crowd) {
     }
     return ret;
 }
+
+// sw2 scatter-include (default/CameraShot <- hamobj/DanceRemixer.cpp)
+#define gRev gRev_DanceRemixer
+#define gAltRev gAltRev_DanceRemixer
+#include "hamobj/DanceRemixer.cpp"
+#undef gRev
+#undef gAltRev

@@ -359,3 +359,10 @@ void MoggClip::SetupPanInfo(float f1, float f2, bool stereo) {
         SetPan(0, f1);
     }
 }
+
+// sw2 scatter-include (default/system/synth/MoggClip <- rndobj/CubeTex.cpp)
+#define gRev gRev_CubeTex
+#define gAltRev gAltRev_CubeTex
+#include "rndobj/CubeTex.cpp"
+#undef gRev
+#undef gAltRev

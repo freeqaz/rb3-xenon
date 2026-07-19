@@ -71,3 +71,10 @@ void MessageTimer::Init() {
     DataRegisterFunc("message_timer_dump", MessageTimerDump);
     DataRegisterFunc("message_timer_on", MessageTimerOn);
 }
+
+// sw2 scatter-include (default/MessageTimer <- band3/game/GemPlayer.cpp)
+#define gRev gRev_GemPlayer
+#define gAltRev gAltRev_GemPlayer
+#include "band3/game/GemPlayer.cpp"
+#undef gRev
+#undef gAltRev

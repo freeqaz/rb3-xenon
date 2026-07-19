@@ -102,3 +102,24 @@ const char *StringTable::Add(const char *str) {
 #include "utl/GlitchFinder.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/StringTable <- utl/Locale.cpp)
+#define gRev gRev_Locale
+#define gAltRev gAltRev_Locale
+#include "utl/Locale.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/StringTable <- movie/Movie.cpp)
+#define gRev gRev_Movie
+#define gAltRev gAltRev_Movie
+#include "movie/Movie.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/StringTable <- utl/TimeConversion.cpp)
+#define gRev gRev_TimeConversion
+#define gAltRev gAltRev_TimeConversion
+#include "utl/TimeConversion.cpp"
+#undef gRev
+#undef gAltRev

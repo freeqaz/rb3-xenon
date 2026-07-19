@@ -1469,3 +1469,10 @@ void Rnd::Modal(Debug::ModalType &type, FixedString &str, bool bb) {
         ShowConsole(oldShowing);
     }
 }
+
+// sw2 scatter-include (default/system/rndobj/Rnd <- rndobj/Lit.cpp)
+#define gRev gRev_Lit
+#define gAltRev gAltRev_Lit
+#include "rndobj/Lit.cpp"
+#undef gRev
+#undef gAltRev

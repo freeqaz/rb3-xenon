@@ -1120,3 +1120,17 @@ BEGIN_PROPSYNCS(BandCharDesc)
     SYNC_PROP(outfit, mOutfit)
     SYNC_PROP(patches, mPatches)
 END_PROPSYNCS
+
+// sw2 scatter-include (default/BandCharDesc <- bandobj/BandCamShot.cpp)
+#define gRev gRev_BandCamShot
+#define gAltRev gAltRev_BandCamShot
+#include "bandobj/BandCamShot.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/BandCharDesc <- band3/bandtrack/VocalTrack.cpp)
+#define gRev gRev_VocalTrack
+#define gAltRev gAltRev_VocalTrack
+#include "band3/bandtrack/VocalTrack.cpp"
+#undef gRev
+#undef gAltRev

@@ -279,3 +279,10 @@ void MidiInstrument::StartSample(
         }
     }
 }
+
+// sw2 scatter-include (default/MidiInstrument <- band3/bandtrack/GemTrack.cpp)
+#define gRev gRev_GemTrack
+#define gAltRev gAltRev_GemTrack
+#include "band3/bandtrack/GemTrack.cpp"
+#undef gRev
+#undef gAltRev

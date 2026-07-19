@@ -298,3 +298,24 @@ BEGIN_COPYS(DepthBuffer3D)
 END_COPYS
 
 #endif
+
+// sw2 scatter-include (default/DepthBuffer3D <- ui/UIList.cpp)
+#define gRev gRev_UIList
+#define gAltRev gAltRev_UIList
+#include "ui/UIList.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/DepthBuffer3D <- rndobj/Rnd.cpp)
+#define gRev gRev_Rnd
+#define gAltRev gAltRev_Rnd
+#include "rndobj/Rnd.cpp"
+#undef gRev
+#undef gAltRev
+
+// sw2 scatter-include (default/DepthBuffer3D <- rndobj/Env_NG.cpp)
+#define gRev gRev_Env_NG
+#define gAltRev gAltRev_Env_NG
+#include "rndobj/Env_NG.cpp"
+#undef gRev
+#undef gAltRev

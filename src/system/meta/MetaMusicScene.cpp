@@ -23,3 +23,10 @@ void MetaMusicScene::Configure(DataArray *i_pConfig) {
 Symbol MetaMusicScene::GetName() const { return m_symName; }
 
 const std::list<Symbol> &MetaMusicScene::GetScreenList() const { return m_lScreens; }
+
+// sw2 scatter-include (default/MetaMusicScene <- meta/ConnectionStatusPanel.cpp)
+#define gRev gRev_ConnectionStatusPanel
+#define gAltRev gAltRev_ConnectionStatusPanel
+#include "meta/ConnectionStatusPanel.cpp"
+#undef gRev
+#undef gAltRev
