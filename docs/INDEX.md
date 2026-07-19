@@ -41,12 +41,15 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
+- [plans/decomp-state-2026-07-19.md](plans/decomp-state-2026-07-19.md) — **live state & veins
+  doc** (strict count, PIVOT POINT: cheap veins exhausted → deep grind), updated as waves land.
 - [plans/paths-to-100/README.md](plans/paths-to-100/README.md) — **paths-to-100 RFC set
   (2026-07-08, 20 RFCs + ranked index)**: every remaining vein sized against the two walls
   (identification recall, body-divergence), verify-before-assert, with PURSUE/PILOT/DO-NOT
   verdicts and a settled do-not-re-litigate list. Read the README ranking first.
 - [plans/frontier-workstreams-2026-07-02.md](plans/frontier-workstreams-2026-07-02.md) —
-  **live master tracking doc** for the 7 frontier streams (ws1-ws7).
+  tracking doc for the 7 frontier streams (ws1-ws7); superseded as "live state" by
+  decomp-state-2026-07-19 above.
 - [decomp/handoff/wave-loop-SOP-2026-06-20.md](decomp/handoff/wave-loop-SOP-2026-06-20.md) —
   wave-loop SOP: discover / execute / audit / reduce + harvest/land protocol.
 - [plans/rb3enhanced-same-instrument-patch.md](plans/rb3enhanced-same-instrument-patch.md) —
