@@ -125,8 +125,33 @@ _M_fill_insert_aux regresses 100→99.87 on a contradictory 56B stride = its own
 mispair) — becomes a clean +2 once the inverse-correlator repairs that sibling
 pairing.
 
+### Inverse correlator LANDED (2026-07-19 late, 18,744) — tool > its +2
+
+`scripts/harvest/invcorr_mispair_repoint.py` (+ additive `relocs_full` in
+`tu5_reloc_masked_correlate.py`) repairs `target_symbol_map.json` for true-mispairs,
+applying ONLY unique-byte-identical repoints (guaranteed strict flip), reloc-verified
+(position-wise (offset,type); PAIR/0x12 excluded; anon `fn_/lbl_/vftable_/…` =
+unconfirmable-not-contradiction; contradicted candidates dropped BEFORE uniqueness
+so they can't launder through the hamming/fuzzy fallback). Apply recipe: `--class
+UNIQUE-IDENTICAL --apply` → `touch config/45410914/config.yml` (renamer never
+un-names) → full rebuild → named-set diff both ways. **Of 122 true-mispairs: only
+2 UNIQUE-IDENTICAL** (`__final_insertion_sort<MemDiffEntry>`,
+`_List_base<OldMMInst>::clear`) → +2 landed, 0 regressions; 6 reloc-contradicted,
+82 nomatch, 18 MULTI. **The vein is thin but the TOOL is the asset** — it's the
+machinery to generalize over ZERO-UNMAPPED 5,766 (captain's primary post-drain lane).
+
+Two follow-ups it surfaced:
+- **SongCollision aux is NOT a map bug** — its true home `fn_825A38E8` exists but
+  is 256B vs our 396B (retail out-of-lines fill/uninit_fill_n our /Ob2 inlines);
+  repointing won't flip without fixing the inlining. **The gated SongCollision +2
+  stays gated** (correction to the earlier "correlator unlocks it" assumption).
+- **GemManager is a rotated-neighborhood mispair cluster** — reloc verification is
+  self-referential there (PollHelper's target reloc resolves to PollHelper itself;
+  the map names it trusts are themselves wrong). Needs a neighborhood re-derivation
+  pass over PollHelper/UpdateArpeggios/MsToTick/Poll@NowBar together, not 1-by-1.
+
 **Held (not landed, follow-ups):**
-- **True-MISPAIR (122):** need an inverse-correlator mode that auto-repoints
+- **True-MISPAIR (120 remaining):** need an inverse-correlator mode that auto-repoints
   target_symbol_map ONLY on a unique byte-identical unmapped `fn_` (guaranteed
   strict flip), Ghidra-confirms low-hamming singles, hard-excludes ??_G/??_E/ICF/
   over-carve. Proven on `GameMode::SetMode` (mapped VA held an unrelated 84B fn;
