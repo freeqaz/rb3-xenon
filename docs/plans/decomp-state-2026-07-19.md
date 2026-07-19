@@ -204,8 +204,21 @@ easy gap-fill recarve targets are now exhausted; new ones require wiring an
 unwired owner TU first (converges with vein #2).
 
 ### 5. Deep grinds (banked, lower EV)
-- **TrackWatcherImpl 121 flat-0% bodies** — beatmatch gameport (oracle
-  `../rb3/src/system/beatmatch/TrackWatcherImpl.cpp`, largest 4488B).
+- **TrackWatcher family — CORRECTED CHARACTERIZATION (2026-07-19).** The "121
+  flat-0% NAMED bodies" framing is WRONG per the live report: `TrackWatcherImpl`
+  is 159 fns / 45 matched / **78 at-0% but ALL anonymous `fn_` (0 named-0)** + 36
+  named partials; `RealGuitarTrackWatcherImpl` 40/16/21-anon; family total ~104
+  unnamed-0% + ~40 partials. Our source (872 lines, ≈ oracle 859) is largely
+  ported. So the 0% pool is an **IDENTIFICATION gap (unmapped targets), not a
+  body-port gap** — Wave-2 approach is **correlator-FIRST**: run
+  `scripts/harvest/tu5_reloc_masked_correlate.py` on the TrackWatcher-family objs
+  to pair our compiled named methods to the target's unnamed `fn_` by
+  reloc-masked byte identity → add map entries → the byte-matching bodies flip
+  (+ feed the id flywheel). ONLY the residual (unnamed, bodies diverge) + the ~40
+  named partials are the actual body-port grind (oracle
+  `../rb3/src/system/beatmatch/TrackWatcherImpl.cpp`, largest 4488B). Do NOT fan
+  out a 4–6-agent body-port wave before the correlator run scopes the real
+  residual.
 - **Grouped-globals wall** — RECON DONE (2026-07-19): verdict **NARROW, no
   mechanism wave**. Of 441 named 80–97 fns, only **17** are genuinely fold-walled
   and just **2 pure-fold** (the known MemFindAddrHeap/SystemMs). MSVC only shares
