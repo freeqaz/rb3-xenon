@@ -206,3 +206,41 @@ void TransformArea::Load(BinStreamRev &d) {
         d >> mFlow;
     }
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_CharEyes
+#define gAltRev gAltRev_CharEyes
+#include "char/CharEyes.cpp"
+#undef gRev
+#undef gAltRev
+#define gRev gRev_HamNavProvider
+#define gAltRev gAltRev_HamNavProvider
+#include "hamobj/HamNavProvider.cpp"
+#undef gRev
+#undef gAltRev
+#define gRev gRev_CharBlendBone
+#define gAltRev gAltRev_CharBlendBone
+#include "char/CharBlendBone.cpp"
+#undef gRev
+#undef gAltRev
+#define gRev gRev_Flow
+#define gAltRev gAltRev_Flow
+#include "flow/Flow.cpp"
+#undef gRev
+#undef gAltRev
+#define gRev gRev_UILabel
+#define gAltRev gAltRev_UILabel
+#include "ui/UILabel.cpp"
+#undef gRev
+#undef gAltRev
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_ClipDistMap
+#define gAltRev gAltRev_ClipDistMap
+#include "char/ClipDistMap.cpp"
+#undef gRev
+#undef gAltRev

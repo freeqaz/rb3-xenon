@@ -93,3 +93,12 @@ const char *StringTable::Add(const char *str) {
     mCurChar += len;
     return str;
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_GlitchFinder
+#define gAltRev gAltRev_GlitchFinder
+#include "utl/GlitchFinder.cpp"
+#undef gRev
+#undef gAltRev

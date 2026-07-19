@@ -348,3 +348,12 @@ BEGIN_HANDLERS(PrefabMgr)
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x241)
 END_HANDLERS
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_BandSongMgr
+#define gAltRev gAltRev_BandSongMgr
+#include "band3/meta_band/BandSongMgr.cpp"
+#undef gRev
+#undef gAltRev

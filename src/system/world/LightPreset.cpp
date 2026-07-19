@@ -1448,3 +1448,12 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
 }
 
 #pragma endregion
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_LocalePanel
+#define gAltRev gAltRev_LocalePanel
+#include "ui/LocalePanel.cpp"
+#undef gRev
+#undef gAltRev

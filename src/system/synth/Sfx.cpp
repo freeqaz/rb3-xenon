@@ -291,3 +291,12 @@ void Sfx::SetReverbEnable(bool b) {
         (*it)->SetReverbEnable(mReverbEnable);
     }
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_Synth
+#define gAltRev gAltRev_Synth
+#include "synth/Synth.cpp"
+#undef gRev
+#undef gAltRev

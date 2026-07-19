@@ -48,3 +48,12 @@ bool CampaignLevel::HasAward() const { return mAward != ""; }
 Symbol CampaignLevel::GetAdvertisement() const { return mAdvertisement; }
 Symbol CampaignLevel::GetRequirementToken() const { return mRequirementToken; }
 bool CampaignLevel::IsMajorLevel() const { return mIsMajorLevel; }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_NetGameMsgs
+#define gAltRev gAltRev_NetGameMsgs
+#include "band3/game/NetGameMsgs.cpp"
+#undef gRev
+#undef gAltRev

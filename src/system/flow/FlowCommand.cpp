@@ -190,3 +190,12 @@ DataNode FlowCommand::GetHandlerDef() {
     }
     return 0;
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_ContentMgr
+#define gAltRev gAltRev_ContentMgr
+#include "os/ContentMgr.cpp"
+#undef gRev
+#undef gAltRev

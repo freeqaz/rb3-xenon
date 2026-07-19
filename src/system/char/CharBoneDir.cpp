@@ -322,3 +322,12 @@ void CharBoneDir::MergeCharacter(const FilePath &fp) {
         delete dir;
     }
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_CharBoneTwist
+#define gAltRev gAltRev_CharBoneTwist
+#include "char/CharBoneTwist.cpp"
+#undef gRev
+#undef gAltRev

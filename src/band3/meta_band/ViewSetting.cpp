@@ -516,3 +516,12 @@ BEGIN_HANDLERS(ViewSettingsProvider)
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x280)
 END_HANDLERS
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_CriticalUserListener
+#define gAltRev gAltRev_CriticalUserListener
+#include "band3/meta_band/CriticalUserListener.cpp"
+#undef gRev
+#undef gAltRev

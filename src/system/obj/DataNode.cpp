@@ -797,3 +797,7 @@ void DataNode::Load(BinStream &d, ObjectDir *dir) {
     Load(d);
     gDataDir = old;
 }
+
+// RB3 retail linker interleaved DataArray.cpp COMDATs into this TU's .text span.
+// Compile its bodies here so objdiff can pair them (sw scatter-scan).
+#include "obj/DataArray.cpp"

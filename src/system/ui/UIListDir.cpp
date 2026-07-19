@@ -562,3 +562,12 @@ BEGIN_HANDLERS(UIListDir)
     HANDLE_ACTION(test_scroll, mTestState.Scroll(_msg->Int(2), false))
     HANDLE_SUPERCLASS(RndDir)
 END_HANDLERS
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_LightPreset
+#define gAltRev gAltRev_LightPreset
+#include "world/LightPreset.cpp"
+#undef gRev
+#undef gAltRev

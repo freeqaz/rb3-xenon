@@ -295,3 +295,12 @@ bool PropSync(Box &box, DataNode &node, DataArray *prop, int i, PropOp op) {
         return false;
     }
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_Dir
+#define gAltRev gAltRev_Dir
+#include "world/Dir.cpp"
+#undef gRev
+#undef gAltRev

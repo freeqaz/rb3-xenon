@@ -1680,3 +1680,17 @@ Triangle* vector<Triangle, StlNodeAlloc<Triangle>>::_M_erase(
 
 }  // namespace stlpmtx_std
 #endif
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_PropKeys
+#define gAltRev gAltRev_PropKeys
+#include "rndobj/PropKeys.cpp"
+#undef gRev
+#undef gAltRev
+#define gRev gRev_CamAnim
+#define gAltRev gAltRev_CamAnim
+#include "rndobj/CamAnim.cpp"
+#undef gRev
+#undef gAltRev

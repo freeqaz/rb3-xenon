@@ -506,3 +506,12 @@ BEGIN_PROPSYNCS(CrowdAudio)
     SYNC_PROP(should_play_venue_intro, mShouldPlayVenueIntro)
     SYNC_PROP(should_play_venue_outro, mShouldPlayVenueOutro)
 END_PROPSYNCS
+
+// RB3 retail linker interleaved InlineHelp.cpp COMDATs into this TU's .text span
+// (InlineHelp::Enter + ActionElement ctors/setters). Compile here so objdiff
+// pairs them (sw scatter-scan). gRev/gAltRev collide with this TU's INIT_REVS.
+#define gRev gRev_InlineHelp
+#define gAltRev gAltRev_InlineHelp
+#include "ui/InlineHelp.cpp"
+#undef gRev
+#undef gAltRev

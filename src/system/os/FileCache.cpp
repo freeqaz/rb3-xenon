@@ -406,3 +406,12 @@ void FileCache::Add(const FilePath &fp, char *c, int iii) {
     MILO_ASSERT(GetFileAll(file.c_str()) == NULL, 0x23D);
     mEntries.push_back(new FileCacheEntry(file, c, iii));
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_MoveAsyncDetector
+#define gAltRev gAltRev_MoveAsyncDetector
+#include "hamobj/MoveAsyncDetector.cpp"
+#undef gRev
+#undef gAltRev

@@ -624,3 +624,12 @@ BinStream &operator>>(BinStream &bs, Stats::SectionInfo &info) {
     bs >> info.unk8;
     return bs;
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_RhythmDetector
+#define gAltRev gAltRev_RhythmDetector
+#include "hamobj/RhythmDetector.cpp"
+#undef gRev
+#undef gAltRev

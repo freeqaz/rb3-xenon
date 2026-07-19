@@ -400,3 +400,12 @@ DataNode CameraManager::OnIterateShot(DataArray *da) {
     *var = d28;
     return 0;
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_SpotlightDrawer
+#define gAltRev gAltRev_SpotlightDrawer
+#include "world/SpotlightDrawer.cpp"
+#undef gRev
+#undef gAltRev

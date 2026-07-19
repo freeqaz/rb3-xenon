@@ -701,3 +701,12 @@ void PanelDir::UpdateFocusComponentState() {
     else
         mFocusComponent->SetState(UIComponent::kNormal);
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_PropSync
+#define gAltRev gAltRev_PropSync
+#include "obj/PropSync.cpp"
+#undef gRev
+#undef gAltRev

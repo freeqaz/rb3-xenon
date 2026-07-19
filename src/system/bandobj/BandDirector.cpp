@@ -1891,3 +1891,12 @@ __declspec(noinline) int SymToPstKeyframe(Symbol) {
     volatile int n = LightPreset::kPresetKeyframeNum;
     return n;
 }
+
+
+// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
+// interleaved these owners' COMDATs into this TU's .text span.
+#define gRev gRev_CharClip
+#define gAltRev gAltRev_CharClip
+#include "char/CharClip.cpp"
+#undef gRev
+#undef gAltRev

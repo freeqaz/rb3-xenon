@@ -603,3 +603,14 @@ DataNode FileMerger::OnStartLoad(const DataArray *a) {
     StartLoadInternal(a->Size() == 3 ? a->Int(2) : true, false);
     return 0;
 }
+
+// RB3 retail linker interleaved CharIKHand.cpp's COMDATs into this TU's .text
+// span (CharIKHand::Poll/PollDeps + a template op). Compile its bodies here so
+// objdiff can pair them (sw scatter-scan). gRev/gAltRev collide with this TU's
+// own INIT_REVS (both file-scope static const), so rename for the include; they
+// are compile-time literals used only inside CharIKHand's functions -> byte-neutral.
+#define gRev gRev_CharIKHand
+#define gAltRev gAltRev_CharIKHand
+#include "char/CharIKHand.cpp"
+#undef gRev
+#undef gAltRev
