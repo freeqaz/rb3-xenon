@@ -60,6 +60,17 @@ were found and then fixed to strict. Net-0 ≠ rejected; it means "here's a pair
 body and its diff." **Frame for every wave: judged by strict flips + names fed to
 the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
 
+  **sw2-parent-leak guard (F1 discovery, load-bearing):** several sw3 consumers
+  are themselves scatter-*owners* included by sw2-era parents (Morph←HamMove,
+  DepthBuffer3D←UIList, Gem←OutfitConfig, …). Those parents bracket the include
+  with `#define gRev gRev_<Child>` but do NOT set `SW_SCATTER_OWNER_INCLUDE`, so a
+  naive owner-append leaks the new body into the parent TU and breaks it. Fix:
+  guard the append to fire only in the consumer's PRIMARY TU. `gRev` is a static
+  member *variable* (never a macro) in a primary compile, so `#ifndef gRev` is a
+  reliable primary-vs-owner discriminator; where an internal block `#undef gRev`s
+  before the tail (UIList's BandDirector block), use a stronger top-of-file
+  `<UNIT>_SW3_PRIMARY_TU` sentinel instead.
+
 - **Wave 1 — Expose-and-fix:** batch-apply the residual owner-includes, harvest
   the exposed fuzzy % per paired fn, rank ≥88%, dispatch fixers. Fold in the 3
   body-dup cases (CameraShot←Flow, PropAnim←PropKeys, CharBonesMeshes←GemManager
