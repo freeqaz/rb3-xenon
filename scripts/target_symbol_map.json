@@ -1,4 +1,12 @@
 {
+ "0x82796c48": "?Poll@TrackWatcherImpl@@UAAXM@Z",
+ "0x82796d60": "?AddSink@TrackWatcherImpl@@UAAXPAVBeatMatchSink@@@Z",
+ "0x82796df0": "??1TrackWatcherImpl@@UAA@XZ",
+ "0x82796f28": "?LoadState@TrackWatcherImpl@@QAAXAAVTrackWatcherState@@@Z",
+ "0x82797008": "?SaveState@TrackWatcherImpl@@QAAXAAVTrackWatcherState@@@Z",
+ "0x827970e8": "?Jump@TrackWatcherImpl@@UAAXM@Z",
+ "0x82797240": "??_GTrackWatcherImpl@@UAAPAXI@Z",
+ "0x82797298": "??0TrackWatcherImpl@@QAA@HABVUserGuid@@HPAVSongData@@PAVGameGemList@@PAVTrackWatcherParent@@PAVDataArray@@H@Z",
  "0x825f71a0": "??$__unguarded_linear_insert@PAVSymbol@@V1@VAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@V1@VAccomplishmentCmp@@@Z",
  "0x825f71f8": "??$__unguarded_linear_insert@PAVSymbol@@V1@VAccomplishmentGroupCmp@@@stlpmtx_std@@YAXPAVSymbol@@V1@VAccomplishmentGroupCmp@@@Z",
  "0x825f7250": "??$__unguarded_linear_insert@PAVSymbol@@V1@VAccomplishmentCategoryCmp@@@stlpmtx_std@@YAXPAVSymbol@@V1@VAccomplishmentCategoryCmp@@@Z",

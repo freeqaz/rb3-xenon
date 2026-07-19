@@ -5423,6 +5423,7 @@ TrackWatcherImpl.cpp:
 	.pdata      start:0x8223F718 end:0x8223F720
 	.pdata      start:0x8223F720 end:0x8223F728
 	.pdata      start:0x8223F738 end:0x8223F740
+	.pdata      start:0x8223F740 end:0x8223FB80
 	.text       start:0x82794740 end:0x8279478C
 	.text       start:0x827948A8 end:0x82794914
 	.text       start:0x82794918 end:0x82794984
@@ -5436,6 +5437,7 @@ TrackWatcherImpl.cpp:
 	.text       start:0x82796638 end:0x827967EC
 	.text       start:0x827967F0 end:0x82796AD8
 	.text       start:0x82796C10 end:0x82796C48
+	.text       start:0x82796C48 end:0x8279B778
 
 SongParser.cpp:
 	.pdata      start:0x8223E790 end:0x8223E798
