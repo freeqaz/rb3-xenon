@@ -44,6 +44,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import subprocess
 import sys
 import time
@@ -74,6 +75,13 @@ B_STRUCT = "STRUCT-ARTIFACT"
 B_FORM = "FORM-DIVERGENCE"
 B_BODY = "BODY-PORT"
 B_REVIEW = "NEEDS-REVIEW"
+# ground-truth-calibrated buckets (24-fn grind campaign, 2026-07-19)
+B_BODY_LEVER = "BODY-LEVER"
+B_FORM_REGSWAP = "FORM-REGSWAP-STUCK"
+B_WALL_VTORDISP = "WALL-VTORDISP"
+B_WALL_DEADARG = "WALL-DEADARG"
+B_LEVER_SYMBOL = "LEVER-SYMBOL"
+B_LEVER_STRING = "LEVER-STRING"
 B_Z_UNMAPPED = "ZERO-UNMAPPED"
 B_Z_COMPILE = "ZERO-COMPILE-FAIL"
 # ZERO-SCATTER sub-split (base obj emits nothing = COMDAT scattered)
@@ -82,7 +90,15 @@ B_ZS_MISSINST = "ZS-MISSING-INSTANTIATION"
 B_ZS_UNWIRED = "ZS-UNWIRED-OWNSPAN"
 B_ZS_OTHER = "ZS-OTHER"
 
-NONZERO_BUCKETS = [B_MISPAIR, B_RELOC, B_STRUCT, B_FORM, B_BODY, B_REVIEW]
+NONZERO_BUCKETS = [
+    B_MISPAIR,
+    B_LEVER_SYMBOL, B_LEVER_STRING,
+    B_BODY_LEVER, B_BODY,
+    B_STRUCT,
+    B_FORM, B_FORM_REGSWAP,
+    B_WALL_VTORDISP, B_WALL_DEADARG,
+    B_RELOC, B_REVIEW,
+]
 ZERO_BUCKETS = [B_Z_UNMAPPED, B_ZS_STL, B_ZS_MISSINST, B_ZS_UNWIRED, B_ZS_OTHER, B_Z_COMPILE]
 ALL_BUCKETS = NONZERO_BUCKETS + ZERO_BUCKETS
 
@@ -93,6 +109,12 @@ FLEET = {
     B_FORM: "crack-farm / pattern families",
     B_BODY: "LLM grind (75-92 band best ROI)",
     B_REVIEW: "manual triage",
+    B_BODY_LEVER: "LLM grind FIRST (shape-screened)",
+    B_FORM_REGSWAP: "skip while permuter banned",
+    B_WALL_VTORDISP: "skip (GameMode vtordisp wall)",
+    B_WALL_DEADARG: "skip (dead-arg scheduling wall)",
+    B_LEVER_SYMBOL: "local-static Symbol lever (mechanical)",
+    B_LEVER_STRING: "dev-vs-retail string divergence lever",
     B_Z_UNMAPPED: "splits/mapping work",
     B_ZS_STL: "skip (ICF-merged STL)",
     B_ZS_MISSINST: "forced-instantiation one-liners (probe-verified 2026-07-19)",
@@ -105,8 +127,14 @@ FLIP_PRIOR = {
     B_RELOC: "~0%",
     B_STRUCT: "50-70% (cascades once fixed)",
     B_FORM: "40-60%",
-    B_BODY: "30-50%",
+    B_BODY: "45% in 78-96 band; <=10% above 97.5 (survivor bias)",
     B_REVIEW: "case-by-case",
+    B_BODY_LEVER: "~80% (validated: every such fn flipped)",
+    B_FORM_REGSWAP: "~0%",
+    B_WALL_VTORDISP: "~0% (4 independent confirms)",
+    B_WALL_DEADARG: "~0% (3 confirms)",
+    B_LEVER_SYMBOL: "~90%",
+    B_LEVER_STRING: "~85%",
     B_Z_UNMAPPED: "case-by-case",
     B_ZS_STL: "~0%",
     B_ZS_MISSINST: "high (probe: 2/2 strict flips, +2 report, no collateral)",
@@ -431,7 +459,11 @@ def classify_nonzero(row, rec, ctx, ev):
     verdict = (rec.get("verdict") or {}).get("classification")
     if ins == 0 and dele == 0 and dop == 0 and M > 0 and merged >= 0.8 * M and pct >= 99.0:
         return B_RELOC, "high", ev + [f"{merged}/{M} merged/reloc mismatches, pct {pct:.2f}"], False, ev
-    if verdict == "AT_LIMIT":
+    # Only take the L1 AT_LIMIT reloc shortcut when pct >= 99; below that, force
+    # L2 so the wall detectors (R5a/R5b) can run on survivor-band fns that the
+    # AT_LIMIT verdict would otherwise freeze as RELOC-COLOC (e.g. ClearDrawGlitch
+    # at 96.5% is a GameMode vtordisp wall, not a reloc at-limit).
+    if verdict == "AT_LIMIT" and pct >= 99.0:
         mcr = _factor(rec, "merged_call_ratio")
         arr = _factor(rec, "address_relocation_ratio")
         best = max([v for v in (mcr, arr) if isinstance(v, (int, float))], default=0.0)
@@ -445,6 +477,122 @@ def classify_nonzero(row, rec, ctx, ev):
 
     # Rule 4: needs layer 2
     return None, None, ev, True, ev
+
+
+# ── ground-truth-calibrated lever/wall detectors (24-fn campaign 2026-07-19) ─
+_RAW_LABEL_RE = re.compile(r"^(?:lbl|fn)_8[0-9A-Fa-f]+")
+
+
+def _row_symbols(side):
+    """Symbol-typed typed_arg values on one instruction side (target/base)."""
+    return [str(ta.get("value"))
+            for ta in (side or {}).get("typed_args", [])
+            if ta.get("type") == "Symbol"]
+
+
+def _side_has_imm(side, opcode, values):
+    """True if side has `opcode` and an immediate typed_arg whose value is in `values`."""
+    s = side or {}
+    if s.get("opcode") != opcode:
+        return False
+    for ta in s.get("typed_args", []):
+        if ta.get("type") in ("Signed", "Unsigned") and ta.get("value") in values:
+            return True
+    return False
+
+
+def _detect_lever_symbol(instrs):
+    """R6a: raw label (lbl_/fn_8...) on one side vs a named GLOBAL Symbol var
+    (``@@3VSymbol@@``) on the other.  Scans ALL non-equal rows' typed_args --
+    including insert/replace rows -- because the global Symbol often surfaces in
+    a replace/insert row that carries no diff_breakdown (parse_breakdowns misses
+    it), e.g. ShowBriefBandMessage idx33.  The ``@@3`` global-storage marker is
+    exactly what separates this lever from local-static Symbols (``@4VSymbol@@``,
+    e.g. ClearDrawGlitch) and local-static Messages (``@4VMessage@@``).
+    Returns (target_side_value, base_side_value) or None."""
+    for it in instrs:
+        if it.get("match_type") == "equal":
+            continue
+        tsyms = _row_symbols(it.get("target"))
+        bsyms = _row_symbols(it.get("base"))
+        t_raw = next((v for v in tsyms if _RAW_LABEL_RE.match(v)), None)
+        b_raw = next((v for v in bsyms if _RAW_LABEL_RE.match(v)), None)
+        t_named = next((v for v in tsyms if "@@3VSymbol@@" in v), None)
+        b_named = next((v for v in bsyms if "@@3VSymbol@@" in v), None)
+        if t_raw and b_named:
+            return (t_raw, b_named)
+        if b_raw and t_named:
+            return (t_named, b_raw)
+    return None
+
+
+def _detect_lever_string(instrs):
+    """R6b: a replace row where one side is ``li #0`` and the other side's
+    typed_args carry a Symbol-type arg (string/label reference), either
+    direction.  Returns the row index or None."""
+    for it in instrs:
+        if it.get("match_type") != "replace":
+            continue
+        t, b = it.get("target"), it.get("base")
+        if _side_has_imm(t, "li", (0,)) and _row_symbols(b):
+            return it.get("index")
+        if _side_has_imm(b, "li", (0,)) and _row_symbols(t):
+            return it.get("index")
+    return None
+
+
+def _detect_vtordisp(noneq):
+    """R5a: TheGameMode->Property vbase adjustor.  Within any sliding window of 6
+    consecutive non-equal rows, on the SAME side, find >=2 of {lwz disp 0x4,
+    second lwz disp 0x4, addi imm 0x4} with at least one lwz-disp-4; an ``add``
+    anywhere in the window strengthens to high confidence.
+    Returns (start_index, has_add) or None."""
+    n = len(noneq)
+    for i in range(n):
+        window = noneq[i:i + 6]
+        if len(window) < 2:
+            break
+        for side_key in ("target", "base"):
+            lwz4 = addi4 = 0
+            has_add = False
+            first_idx = None
+            for it in window:
+                side = it.get(side_key)
+                if _side_has_imm(side, "lwz", (4,)):
+                    lwz4 += 1
+                    if first_idx is None:
+                        first_idx = it.get("index")
+                if _side_has_imm(side, "addi", (4,)):
+                    addi4 += 1
+                    if first_idx is None:
+                        first_idx = it.get("index")
+                if (side or {}).get("opcode") == "add":
+                    has_add = True
+            if lwz4 >= 1 and (lwz4 >= 2 or addi4 >= 1):
+                start = first_idx if first_idx is not None else window[0].get("index")
+                return (start, has_add)
+    return None
+
+
+def _detect_deadarg(instrs, ins, dele):
+    """R5b: total insert+delete <= 4 and an inserted/deleted ``li #0/#1`` row
+    within 2 (by instruction index) of any ``bl`` row.  Returns index or None."""
+    if ins + dele > 4:
+        return None
+    bl_idx = [it.get("index") for it in instrs
+              if (it.get("target") or {}).get("opcode") == "bl"
+              or (it.get("base") or {}).get("opcode") == "bl"]
+    if not bl_idx:
+        return None
+    for it in instrs:
+        if it.get("match_type") not in ("insert", "delete"):
+            continue
+        for sk in ("target", "base"):
+            if _side_has_imm(it.get(sk), "li", (0, 1)):
+                idx = it.get("index")
+                if any(abs(idx - bi) <= 2 for bi in bl_idx):
+                    return idx
+    return None
 
 
 def classify_l2(row, rec, l2, ev):
@@ -467,6 +615,43 @@ def classify_l2(row, rec, l2, ev):
     mt_counts = Counter(it.get("match_type") for it in noneq)
     live_pct = rec.get("fuzzy_match_percent")
     live_pct = live_pct if isinstance(live_pct, (int, float)) else row["pct"]
+
+    # ── ground-truth-calibrated lever/wall detectors (priority order:
+    #    R6a, R6b, R5a, R5b, R3) run BEFORE the existing (a) struct rule ──────
+
+    # R6a LEVER-SYMBOL: raw label vs named global Symbol var (@@3VSymbol@@)
+    ls = _detect_lever_symbol(instrs)
+    if ls is not None:
+        a, b = ls
+        return B_LEVER_SYMBOL, "high", ev + [
+            f"named-Symbol vs raw-label: {a[:50]} vs {b[:50]}"]
+
+    # R6b LEVER-STRING: replace row, li #0 on one side vs symbol ref on other
+    lstr = _detect_lever_string(instrs)
+    if lstr is not None:
+        return B_LEVER_STRING, "medium", ev + [
+            f"string-reloc asymmetry @idx {lstr} (li 0 vs symbol ref)"]
+
+    # R5a WALL-VTORDISP: TheGameMode->Property vbase adjustor (95.9-98.6% band,
+    # 4 independent ground-truth confirms)
+    vt = _detect_vtordisp(noneq)
+    if vt is not None:
+        start, has_add = vt
+        return (B_WALL_VTORDISP, "high" if has_add else "medium",
+                ev + [f"vtordisp signature (lwz 0x4 x2 / addi +4) @idx {start}"])
+
+    # R5b WALL-DEADARG: dead-arg li #0/#1 before a call, tiny indel (3 confirms)
+    da = _detect_deadarg(instrs, ins, dele)
+    if da is not None:
+        return B_WALL_DEADARG, "medium", ev + [f"dead-arg li before call @idx {da}"]
+
+    # R3 FORM-REGSWAP-STUCK: the ONLY residue is register swaps (permuter banned)
+    if (ins == 0 and dele == 0 and mt_counts.get("replace", 0) == 0
+            and mt_counts.get("diff_op", 0) == 0 and len(offset_diffs) == 0
+            and len(symbol_diffs) == 0 and len(reg_swaps) >= 1):
+        return (B_FORM_REGSWAP, "high",
+                ev + [f"regswap-only residual ({len(reg_swaps)} swaps), "
+                      "permuter banned"])
 
     # (a) STRUCT-ARTIFACT: dominant nonzero displacement delta
     struct_dom_failed = True  # immediates failed dominance (or too few to test)
@@ -546,12 +731,28 @@ def classify_l2(row, rec, l2, ev):
                 f"{t}->{b} x{c}" for (t, b), c in pair_counts.most_common(3))
             return B_FORM, "medium", ev + [e]
 
-    # (c) BODY-PORT (layer-2 cluster confirm)
+    # (c) BODY-PORT / BODY-LEVER (layer-2 cluster confirm). R2: if the biggest
+    # indel cluster >= 3 AND the diff_arg residue is fully explained by
+    # reg/offset/symbol/branch relocs (>= 0.7 of diff_arg rows), the body is a
+    # shape-screened lever (LLM grind first) -> BODY-LEVER; else BODY-PORT.
     clusters = find_clusters(instrs, match_types=("insert", "delete"), gap=2)
     if clusters:
         biggest = max(clusters, key=len)
         if len(biggest) >= 3:
             start_idx = biggest[0][1].get("index", biggest[0][0])
+            diff_arg_rows = sum(1 for it in noneq if it.get("match_type") == "diff_arg")
+            # Row-based explanation: a diff_arg ROW counts as explained iff it
+            # carries a parseable diff_breakdown attribution. The earlier
+            # arg-based sum double-counted multi-arg rows (the "35/28" bug)
+            # and over-admitted BODY-LEVER.
+            explained = sum(
+                1 for it in noneq
+                if it.get("match_type") == "diff_arg"
+                and (it.get("diff_breakdown") or {}).get("arguments"))
+            if diff_arg_rows == 0 or explained >= 0.7 * diff_arg_rows:
+                return (B_BODY_LEVER, "high",
+                        ev + [f"indel cluster {len(biggest)} @idx {start_idx}; "
+                              f"explained {explained}/{diff_arg_rows} diff_arg (lever)"])
             return B_BODY, "high", ev + [f"insert/delete cluster {len(biggest)} instrs @idx {start_idx}"]
 
     # (d) RELOC-COLOC (layer-2 confirm)
@@ -576,6 +777,19 @@ def classify_l2(row, rec, l2, ev):
             dom_fail = (dom_count / len(offset_diffs)) < 0.60
         if all_diffarg and reloc_ok and len(reg_swaps) == 0 and dom_fail:
             return B_RELOC, "low", ev + [f"{len(noneq)} diff_arg sym/imm reloc rows"]
+
+    # (e-recovery) AT_LIMIT reloc/merged-dominant last resort: L1 now forces
+    # these to L2 (pct<99) so the wall detectors get first crack; anything the
+    # walls / struct / form / body rules didn't claim returns to RELOC-COLOC
+    # exactly as the L1 AT_LIMIT shortcut would have (baseline parity), instead
+    # of leaking to NEEDS-REVIEW.
+    if (rec.get("verdict") or {}).get("classification") == "AT_LIMIT":
+        mcr = _factor(rec, "merged_call_ratio")
+        arr = _factor(rec, "address_relocation_ratio")
+        best = max([v for v in (mcr, arr) if isinstance(v, (int, float))], default=0.0)
+        if best >= 0.8:
+            src = "merged_call" if (mcr or 0) >= 0.8 else "reloc"
+            return B_RELOC, "high", ev + [f"AT_LIMIT {src}_ratio {best:.2f} (L2 recovery)"]
 
     # (e) fallback
     vc = (rec.get("verdict") or {}).get("classification", "unknown")
@@ -660,6 +874,52 @@ def write_markdown(path, rows, results):
             bcols = "- | - | - | -"
         lines.append(f"| {b} | {n} | {kb:.1f} | {bcols} | {FLEET.get(b,'?')} | {FLIP_PRIOR.get(b,'?')} |")
     lines.append("")
+
+    # ── ground-truth calibration appendix (24-fn grind campaign) ──────────
+    lines += [
+        "## Ground-truth calibration (24-fn grind campaign, 2026-07-19)",
+        "",
+        "| Predicted | FLIP | IMPROVED | AT_LIMIT | STUCK |",
+        "|---|---:|---:|---:|---:|",
+        "| BODY-PORT | 4 | 2 | 2 | 0 |",
+        "| FORM-DIVERGENCE | 1 | 0 | 3 | 0 |",
+        "| NEEDS-REVIEW | 2 | 1 | 8 | 0 |",
+        "| RELOC-COLOC | 0 | 0 | 1 | 0 |",
+        "",
+        "NEEDS-REVIEW at_limit mass sits at 95.9-98.6% live — the survivor band; "
+        "vtordisp/dead-arg detectors (R5a/R5b) now auto-skip most of it. 3 pool "
+        "entries were absent from decomp.db (get_attempts not-found) — coordinator "
+        "to re-ingest.",
+        "",
+    ]
+
+    # ── fundable-fleet expected-flip summary ──────────────────────────────
+    counts = Counter(res["bucket"] for _, res in
+                     [(row, results[(row["unit"], row["name"])]) for row in rows])
+    body_78_96 = sum(
+        1 for row in rows
+        if results[(row["unit"], row["name"])]["bucket"] == B_BODY
+        and isinstance(results[(row["unit"], row["name"])]["live_pct"], (int, float))
+        and 78.0 <= results[(row["unit"], row["name"])]["live_pct"] <= 96.0)
+    terms = [
+        ("BODY-LEVER", counts.get(B_BODY_LEVER, 0), 0.80),
+        ("LEVER-SYMBOL", counts.get(B_LEVER_SYMBOL, 0), 0.90),
+        ("LEVER-STRING", counts.get(B_LEVER_STRING, 0), 0.85),
+        ("BODY-PORT(78-96)", body_78_96, 0.45),
+        ("FORM-DIVERGENCE", counts.get(B_FORM, 0), 0.30),
+        ("STRUCT-ARTIFACT", counts.get(B_STRUCT, 0), 0.60),
+        ("ZS-MISSING-INSTANTIATION", counts.get(B_ZS_MISSINST, 0), 0.90),
+    ]
+    total_exp = sum(n * p for _, n, p in terms)
+    parts = "; ".join(f"{lbl} {n}x{p:.2f}={n*p:.1f}" for lbl, n, p in terms)
+    lines += [
+        "## Fundable-fleet expected strict flips",
+        "",
+        f"Expected strict flips by fundable bucket (count x midpoint prior): "
+        f"{parts}. TOTAL expected strict flips: {total_exp:.1f}.",
+        "",
+    ]
+
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     open(path, "w").write("\n".join(lines))
 
@@ -799,16 +1059,31 @@ def main():
                 entry.update(bucket=B_REVIEW, confidence="low",
                              evidence=base_ev + [f"l2-budget-skipped; verdict {vc}"], layer=1)
         elif entry["bucket"] == B_BODY and key in fetch_set and row["name"] in l2_by_sym:
-            # attach optional cluster evidence to fast-path body-ports
+            # L1 body fast-path: if its optional L2 fetch arrived, re-run the full
+            # L2 chain so the higher-priority lever/wall detectors (R6a/R6b/R5a/
+            # R5b/R3) and the BODY-LEVER split (R2) apply at proper priority. This
+            # is how ShowBriefBandMessage (77% + global-Symbol lever) reaches
+            # LEVER-SYMBOL despite tripping the L1 indel fast path.
             l2 = l2_by_sym[row["name"]]
             if l2:
-                cl = find_clusters(l2.get("instructions") or [], ("insert", "delete"), 2)
-                if cl:
-                    big = max(cl, key=len)
-                    if len(big) >= 3:
-                        idx = big[0][1].get("index", big[0][0])
-                        entry["evidence"] = entry["evidence"] + [f"L2 cluster {len(big)}@idx {idx}"]
-                        entry["layer"] = 2
+                b, c, e = classify_l2(row, rec, l2, base_ev)
+                entry.update(bucket=b, confidence=c, evidence=e, layer=2)
+
+    # ── R4: survivor-band inversion (post-processing) ────────────────────
+    # 97.5-99.8% live is the wall-dominated survivor band; the vtordisp/dead-arg
+    # detectors already skim the walls off, so what's left here is low-yield.
+    # Demote confidence one step (do NOT rebucket) for the still-fundable body/
+    # form/review buckets; leave LEVER-* and ZS-* untouched.
+    _CONF_DEMOTE = {"high": "medium", "medium": "low", "low": "low"}
+    _R4_BUCKETS = {B_BODY, B_BODY_LEVER, B_FORM, B_REVIEW}
+    for entry in results.values():
+        if entry["bucket"] in _R4_BUCKETS:
+            lp = entry.get("live_pct")
+            if isinstance(lp, (int, float)) and 97.5 <= lp < 99.8:
+                entry["confidence"] = _CONF_DEMOTE.get(
+                    entry.get("confidence"), entry.get("confidence"))
+                entry["evidence"] = (entry.get("evidence") or []) + [
+                    "survivor-band 97.5-99.8 (wall-dominated)"]
 
     write_json(args.out, project, args.pool, rows, results)
     write_markdown(args.buckets_md, rows, results)
