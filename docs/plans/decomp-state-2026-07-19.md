@@ -139,7 +139,32 @@ pairing.
   18,689 — flipped fns like VocalPlayer::UpdateMicDisplay were lingering in
   worklists). Regenerate the pool from current report.json before any extraction.
 
-## Recent arc
+## Captain review (2026-07-19, at 18,742) — "Drain and repair, then re-measure"
+
+Verdict: triage-and-calibrate is a FINISHING tool, not a growth engine — it did
+its job (killed 2-12× overpriced priors before fleets burned, 0 regressions) but
+realistic remaining strict from THIS machinery is **~+80-120** (~2 sessions):
+BODY-LEVER untapped 59@59%≈+35, reclaimed 21≈+10-12, LEVER-SYMBOL≈+4, correlator
+gated, STRUCT/FORM residue ~+20-30 deflated. Durable value = the certified-SKIP
+fence (~400 fns) + honest routing. The real MASS is ZERO-UNMAPPED 5,766 + the
+~5,300 divergent tail — post-drain, the cascade-shaped next vein is **generalizing
+the inverse-correlator's reloc-masked byte-identity correlation over ZERO-UNMAPPED
+at fleet scale** (identification, ~0.157 flips/name, feeds the round-5 +1,000-name
+gate) + automation fleets on the divergent tail. Native/OSS/HW is the USER's call,
+present only after the drain.
+
+**Directive (executing):** Wave A = BODY-LEVER drain on untapped 74 (≥50% bar,
+STOP if <40%); Wave B = reclaimed-21 (folded into A) + LEVER-SYMBOL 4 + held
+one-offs; Wave C = land correlator repairs under guaranteed-flip gate, then
+regen pool + re-run comdat_scatter_scan + id-stack stage-1 for the name-flywheel
+dividend. After C, if bankable remainder <+30 → bring user the pivot (scale
+correlator over ZERO-UNMAPPED as primary lane).
+
+**Red flags fixed (now wave-preflight checklist):** (1) re-ingest decomp.db from
+live report before every foreman wave (done at 18,742); (2) regenerate
+triage_pool.csv from live report.json + `rm -f report.cache` before every
+extraction/A-B leg (done); (3) cap first-touch calibration at 10-fn probes,
+escalate to 30 only if the probe clears ~20%.
 
 ## Recent arc
 
