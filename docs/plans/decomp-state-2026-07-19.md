@@ -1,8 +1,8 @@
 # rb3-xenon decomp — state & live veins (2026-07-19)
 
-**Current: 17,910 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,397 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). HEAD `9db51a8b`.
+(~69k functions). HEAD `6db605e0`.
 
 ## Recent arc
 
@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 2026-07-17/18 mega-run | 17,445 | +2,081 | identification stack (+1,871 names), lane-B near-pair, naming wave, BandSwatch, struct leads |
 | 2026-07-18 review | 17,445 | — | 3 Opus scouts ranked pools; `docs/plans/review-2026-07-18-next-focus.md` |
-| 2026-07-19 body-port/recarve/scatter | **17,910** | **+465** | the "mapped-but-0%" pool cracked open (see below) |
+| 2026-07-19 body-port/recarve/scatter | **18,397** | **+952** | the "mapped-but-0%" pool cracked open (see below) |
 
 The +465 came from **one discovery**: the "mapped-but-0%" pool (functions with
 real mangled names stuck at 0%) is overwhelmingly **COMDAT-scatter / TU-composition
@@ -52,8 +52,10 @@ SongSortMgr redesign that matches DC3, not our older port.)
 ## Live veins (ranked by EV)
 
 ### 1. COMDAT-scatter sweep — TOP LIVE VEIN
-Scanner at HEAD reports **509 SCATTER candidates / 385 proposals** still open
-after wave 1. Wave 2 (in flight) is unblocking the *include-safety* owners
+After 3 sweep waves (+661) the scanner reports **275 SCATTER candidates /
+218 proposals** still open — now net-0 unpairable owners + genuinely divergent
+bodies; the mechanical scatter vein is **nearly drained**. Cross-dialect walls
+were unlocked by the wave-3 byte-neutral shim `obj/dialect_object_{push,pop}.h`. Wave 2 (in flight) is unblocking the *include-safety* owners
 (PROPSYNC macro barewords, `d.rev` BinStreamRev forms, `<math.h>` pow, Part.h
 order, duplicate bodies) so their whole-file include compiles. Highest-value
 open proposals:
