@@ -2,8 +2,13 @@
 
 **Current: 18,761 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). Afternoon session +68 (18,621→18,689): scatter expose-and-fix
-+15, unwired-owner scatter-wiring +52, near-miss +1.
+(~69k functions). **Automation build-out session 18,689 → 18,761 (+72):**
+triage classifier built + 4-round calibrated, MISPAIR heuristic fixed, inverse
+correlator built, and grind waves drained the productive buckets (ZS-inst +9,
+VocalPlayer +7, foreman +5, MECH-LEVER +8, STRUCT-cal +4, calibration +7,
+correlator +2, BODY-LEVER drain +17). Zero named regressions across ~16 landings.
+**Machinery now DRAINED — bankable remainder <+30; pivot to ZERO-UNMAPPED
+correlator scaling is the captain's recommended next lane (see Captain review).**
 
 ## ⛔ PIVOT POINT (2026-07-19 pm) — cheap wire-and-flip / near-miss veins EXHAUSTED
 
