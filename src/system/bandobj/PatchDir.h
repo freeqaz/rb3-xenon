@@ -144,8 +144,20 @@ public:
 
     DECLARE_REVS;
     static int GetCurrentRev() { return gRev; }
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // PatchDir has no own operator new/delete in retail -- it inherits
+    // RndDir's OBJ_MEM_OVERLOAD. The shared OBJ_MEM_OVERLOAD lever is
+    // noinline (CacheMgr-verified), so retail's `new PatchDir()` call site
+    // shows RndDir::StaticClassName()'s guarded-Symbol-static evaluation
+    // (discarded) inlined directly ahead of a bare 2-arg MemAlloc(size, 0)
+    // call -- same shape as the FXSEND360_NEW lever (synth_xbox/FxSend.h).
+    // Confirmed via Ghidra: fn_82279660 constructs Symbol("RndDir") (guard
+    // bit + ctor), fn_827BCD38 is the real 2-arg heap allocator.
+    static void *operator new(unsigned int s) {
+        (void)RndDir::StaticClassName().Str();
+        return (MemAlloc)(s, 0);
+    }
+    static void *operator new(unsigned int s, void *place) { return place; }
+    static void operator delete(void *v) { (MemFree)(v); }
 
     std::vector<PatchLayer> mLayers; // 0x194
     std::map<Symbol, std::vector<PatchSticker *> > mStickerMap; // 0x19c

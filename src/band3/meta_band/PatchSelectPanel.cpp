@@ -85,10 +85,10 @@ void PatchSelectPanel::SetupForCharacterPatch() {
 void PatchSelectPanel::SetDescriptor(PatchDescriptor *d) {
     mDescriptor = d;
     mStartWithMenu = false;
-    if (d->patchType == 0) {
+    if (mDescriptor->patchType == 0) {
         mStartingPatchIx = -1;
     } else
-        mStartingPatchIx = d->patchIndex;
+        mStartingPatchIx = mDescriptor->patchIndex;
 }
 
 void PatchSelectPanel::Confirm(int i1) {

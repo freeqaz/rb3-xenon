@@ -1405,10 +1405,11 @@ void TestMaterialTextures(ObjectDir *dir) {
         if (normMap) {
             FilePath fp(normMap->File());
             if (!normMap->IsRenderTarget() && !strstr(fp.c_str(), "_norm")) {
+                const char *itPath = PathName(it);
                 MILO_NOTIFY(
                     "normal map %s used by %s must have _norm in the filename",
                     PathName(normMap),
-                    PathName(it)
+                    itPath
                 );
             }
         }

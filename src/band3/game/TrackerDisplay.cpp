@@ -293,6 +293,7 @@ void TrackerBroadcastDisplay::SetBandMessage(const DataArrayPtr &ptr) const {
 
 void TrackerBroadcastDisplay::ShowBriefBandMessage(const DataArrayPtr &ptr) const {
     SetType((BroadcastDisplayType)1);
+    static Symbol show_brief_band_message("show_brief_band_message");
     static Message msg(show_brief_band_message, 0);
     msg[0] = ptr;
     SendMsg(msg);

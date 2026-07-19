@@ -158,13 +158,11 @@ void TrackPanel::Exit() {
 void TrackPanel::UpdateReservedVocalSlot() {
     MILO_ASSERT(mTrackSlots.size() == kTrackNumSlots, 0xF3);
     int u3 = -1;
-    int offset = 0;
-    for (int i = 0; i < mTrackSlots.size(); i++) {
+    for (int i = 0, offset = 0; i < mTrackSlots.size(); offset += 8, i++) {
         TrackSlot *slot = (TrackSlot *)((char *)&mTrackSlots[0] + offset);
         if (slot->mInstrument == kInstVocals) {
             u3 = i;
         }
-        offset += 8;
     }
     if (u3 != -1)
         mReservedVocalSlot = u3;
@@ -860,14 +858,12 @@ bool TrackPanel::ShouldUpdateScrollSpeed() const { return !TheGame->InDrumTraine
 
 void TrackPanel::PushCrowdReaction(bool react) {
     BeatMaster *master = TheGame->mMaster;
-    if (!master)
-        return;
-    MasterAudio *audio = master->GetAudio();
-    if (!audio)
-        return;
-    if (!TheGame->mProperties.mCrowdReacts)
-        return;
-    audio->SetCrowdFader(react ? 0.0f : -96.0f);
+    if ((int)master) {
+        MasterAudio *audio = master->GetAudio();
+        if ((int)audio && TheGame->mProperties.mCrowdReacts) {
+            audio->SetCrowdFader(react ? 0.0f : -96.0f);
+        }
+    }
 }
 
 BEGIN_HANDLERS(TrackPanel)
