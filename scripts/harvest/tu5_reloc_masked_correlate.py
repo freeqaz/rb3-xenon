@@ -29,7 +29,12 @@ def parse(path):
         nreloc = struct.unpack_from("<H", data, o+32)[0]
         chars = struct.unpack_from("<I", data, o+36)[0]
         relocs = [struct.unpack_from("<I", data, preloc+j*10)[0] for j in range(nreloc)]
-        secs[i+1] = dict(raw_size=raw_size, praw=praw, relocs=relocs, chars=chars, idx=i+1)
+        # parallel full-form relocs (va, symbol_table_index, type); 'relocs'
+        # kept as-is for existing importers. NOTE: type 0x12 (IMAGE_REL_PPC_PAIR)
+        # entries carry a displacement in the symidx field, NOT a symbol index.
+        relocs_full = [struct.unpack_from("<IIH", data, preloc+j*10) for j in range(nreloc)]
+        secs[i+1] = dict(raw_size=raw_size, praw=praw, relocs=relocs,
+                        relocs_full=relocs_full, chars=chars, idx=i+1)
     syms = []
     i = 0
     while i < nsym:
