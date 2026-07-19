@@ -5390,9 +5390,11 @@ TourProgress.cpp:
 AccomplishmentPanel.cpp:
 	.pdata      start:0x82219400 end:0x82219408
 	.pdata      start:0x82227298 end:0x822272A0
+	.pdata      start:0x822272A0 end:0x822277E8
 	.pdata      start:0x822277E8 end:0x82227DA0
 	.text       start:0x82528878 end:0x825288D0
 	.text       start:0x825F70B0 end:0x825F71A0
+	.text       start:0x825F71A0 end:0x825FC9B0
 	.text       start:0x825FC9B0 end:0x82602410
 
 BandMachineMgr.cpp:
