@@ -240,7 +240,11 @@ Keep a TU0 copy of `orig/45410914/{default.xex,band.exe}` under
   swap `orig/45410914/default.xex` to TU5 (sha c5a17091) — stale warm worktrees
   keep building TU0 consistently until re-created.
 - Ghidra TU5 import DONE (bank live on :8002, program `default_tu5.xex-c5a170`).
-  Fingerprints/autoid regen on TU5 still open.
+  Fingerprints/autoid regen on TU5 **DONE (2026-07-19)** — re-`extract` off the
+  post-flip TU5 asm (67,285 fns, 8,496 string-refs) + `autoid`: proposals
+  507 (stale TU0) → **1,619** (1,618 at new TU5 addresses). Both gitignored/regenerable
+  (`tools/fingerprint_match.py extract|autoid`); stale TU0 copies parked at
+  `~/tmp/{fingerprints,autoid}.tu0-stale.json`.
 - `tools/scope_data/{engine,game}.json` are TU0-VA-keyed (cosmetic progress
   breakdown only — not a match input); regenerate eventually.
 - RB3Enhanced `ports_xbox360.h` base/TU5 VA-mixing hygiene fix.
