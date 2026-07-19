@@ -52,6 +52,9 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | rc1 Accomplishment gap-fill | 17,575 | **+130** (`605af89b`) — blob 0x825F71A0 = missing middle of AccomplishmentPanel.cpp; 58 map entries, 0 LOST |
 | bp3 COMDAT-scatter includes | 17,601 | +26 (`177cb4b9`) — owner-TU #include trick (TDStretch/DataPointMgr/MidiSynth) |
 | bp1 retail-TU reunification | 17,637 | +36 net (`ce936710`) — Debug/DirLoader/MemHeap bodies duplicated into span-owner under !HX_NATIVE; 1 funclet-echo slip accepted |
+| rc3 TrackWatcherImpl gap-fill | 17,651 | +14 (`3a7e3677`) — single-TU gap, 8 byte-identity entries + 6 funclets; 121 flat-0% = beatmatch bodyport vein. rc2/SongSort blob = COMDAT catch-all from UNWIRED classes (kill test: pre-mapped names emitted by no wired obj) — 0, correctly skipped |
+| MemHeap 0x24 | 17,652 | +1 (`7fd6745a`) — gate DC3-era mMinFreeBytes; rest of cluster = grouped-globals codegen wall |
+| bp2r rndobj scatter includes | **17,736** | **+84** (`c25769a8`) — Console←MultiMesh, Env_NG←Rnd_NG, MeshAnim←MultiMesh+ShaderMgr+mtx (gRev macro-rename); 25 named + 59 funclets; overturned bp2 "tooling wall". Fresh near-misses exposed (UpdateOverlay 94.2, UpdateCache 99.8) |
 
 **Ceiling note (2026-07-18):** the old 15,804 "recover-all-but-48" ceiling measured
 only the TU5-flip recovery scope and is now OBSOLETE — the global correlator sweep
