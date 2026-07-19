@@ -86,6 +86,35 @@ symbol keys; treat get_attempts "not found" as unknown, not pass.
 — ZS-instantiation vein +9, VocalPlayer grind +7, foreman package +5, calibration
 wave +7. Zero named regressions across all landings.
 
+### MISPAIR bucket fixed (2026-07-19 late) — heuristic bug, 68 reclaimed
+
+The MISPAIR prefilter was OVER-FIRING: it flagged `class-name ≠ attributed-unit-name`
+as a wrong-pairing, but `CamShot`::Shake in `CameraShot.cpp` (and BSPFace/Geo,
+kdTree/AmbientOcclusion, KerningTable/Font) are the SAME thing — the class just
+doesn't string-equal the filename. Fixed (landed): Rule-1 delta made relative
+(ratio>1.5 not bare delta>64), a2 class-vs-unit now uses a normalized subsequence
++ a cached class→defining-file index (resolves CamShot→CameraShot.cpp), a3 gated
+to skip ICF/anon callee noise. **MISPAIR 191→123**; 68 reclassified —
+44→BODY-LEVER, 11→WALL-VTORDISP, 4→LEVER-SYMBOL, 3→SCATTER-OWNER, rest.
+3/3 hand-probed reclaims were REAL near-misses (CamShot::Shake 95.6%,
+BSPFace::Update 94.8%, KerningTable::SetKerning 93.2%). 51 of 66 reclaimed are
+≥70%-live grindable; net-new (not already in a running worklist) = 21 at
+`~/tmp/grind_bodylever_reclaimed.json`.
+
+**Held (not landed, follow-ups):**
+- **True-MISPAIR (122):** need an inverse-correlator mode that auto-repoints
+  target_symbol_map ONLY on a unique byte-identical unmapped `fn_` (guaranteed
+  strict flip), Ghidra-confirms low-hamming singles, hard-excludes ??_G/??_E/ICF/
+  over-carve. Proven on `GameMode::SetMode` (mapped VA held an unrelated 84B fn;
+  repoint to true 0x826901c0 + `touch config.yml` → 0→97% fuzzy, 0 named
+  regressions) — but +0 strict alone and map edits are fleet-wide, so NOT landed;
+  worth it as batch tooling. Map-fix recipe: repoint + `touch config/45410914/
+  config.yml` (renamer never un-names — stale symbol persists without re-SPLIT) +
+  full-rebuild + named-set diff both directions.
+- **triage_pool.csv is now regenerated from the 18,717 report** (was stale at
+  18,689 — flipped fns like VocalPlayer::UpdateMicDisplay were lingering in
+  worklists). Regenerate the pool from current report.json before any extraction.
+
 ## Recent arc
 
 ## Recent arc
