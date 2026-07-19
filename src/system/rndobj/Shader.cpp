@@ -82,17 +82,22 @@ void RndShader::Init() {
     sShaders[kPlayerDepthVisShader] = &gShaderSimple;
     sShaders[kParticlesShader] = &gShaderParticles;
     sShaders[kPlayerDepthShellShader] = &gShaderSimple;
+#ifdef HX_NATIVE
     sShaders[kSyncTrackShader] = &gShaderSyncTrack;
+#endif
     sShaders[kStandardShader] = &gShaderStandard;
     sShaders[kStandardBBShader] = &gShaderStandard;
     sShaders[kPostprocessShader] = &gShaderPostProc;
+#ifdef HX_NATIVE
     sShaders[kPlayerDepthShell2Shader] = &gShaderSimple;
     sShaders[kDepthBuffer3DShader] = &gShaderSimple;
     sShaders[kYUVtoRGBShader] = &gShaderSimple;
     sShaders[kSyncTrackChargeEffectShader] = &gShaderSyncTrack;
+#endif
     sShaders[kVelocityCameraShader] = &gShaderVelocityCamera;
     sShaders[kUnwrapUVShader] = &gShaderUnwrapUV;
     sShaders[kVelocityObjectShader] = &gShaderVelocity;
+#ifdef HX_NATIVE
     sShaders[kYUVtoBlackAndWhiteShader] = &gShaderSimple;
     sShaders[kPlayerGreenScreenShader] = &gShaderSimple;
     sShaders[kPlayerDepthGreenScreenShader] = &gShaderSimple;
@@ -100,6 +105,7 @@ void RndShader::Init() {
     sShaders[kTwirlShader] = &gShaderSimple;
     sShaders[kKillAlphaShader] = &gShaderSimple;
     sShaders[kAllWhiteShader] = &gShaderStandard;
+#endif
 }
 
 void RndShader::CheckForceCull(ShaderType s) {
@@ -123,8 +129,12 @@ bool RndShader::RedundantState(
     if (!b5 && mat && (NgMat *)mat == NgMat::Current() && !mat->Dirty()
         && s == sCurrentShader && skinned == sCurrentSkinned && useAO == sCurrentUseAO) {
         if (s == kStandardShader || s == kStandardBBShader || s == kParticlesShader
-            || s == kMultimeshShader || s == kMultimeshBBShader || s == kSyncTrackShader
-            || s == kSyncTrackChargeEffectShader || s == kAllWhiteShader) {
+            || s == kMultimeshShader || s == kMultimeshBBShader
+#ifdef HX_NATIVE
+            || s == kSyncTrackShader || s == kSyncTrackChargeEffectShader
+            || s == kAllWhiteShader
+#endif
+        ) {
             return true;
         }
     }
@@ -1243,7 +1253,11 @@ u64 RndShaderSyncTrack::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     if (RndSpline::sGlobalDefaultSpline != nullptr) {
         result |= ((u64)(RndSpline::sGlobalDefaultSpline->mPulseDrawing & 1)) << 0x38;
     }
+#ifdef HX_NATIVE
     return (u64)(s == kSyncTrackChargeEffectShader) << 0x3b | result;
+#else
+    return result;
+#endif
 }
 
 void RndShaderParticles::Select(RndMat *mat, ShaderType s, bool b) {
@@ -1289,7 +1303,11 @@ void RndShaderStandard::Select(RndMat *mat, ShaderType shader_type, bool b) {
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         CheckShadow();
         ShaderOptions opts(CalcShaderOpts((NgMat *)mat, shader_type, b));
+#ifdef HX_NATIVE
         MILO_ASSERT((shader_type == kStandardShader || shader_type == kStandardBBShader || shader_type == kAllWhiteShader), 0x4BB);
+#else
+        MILO_ASSERT((shader_type == kStandardShader || shader_type == kStandardBBShader), 0x4BB);
+#endif
         if (shader_type == kStandardBBShader) {
             shader_type = kStandardShader;
         }
@@ -1443,10 +1461,12 @@ void RndShaderSyncTrack::Select(RndMat *mat, ShaderType shader_type, bool b) {
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         CheckShadow();
         u64 optsVal = CalcShaderOpts((NgMat *)mat, shader_type, b);
+#ifdef HX_NATIVE
         MILO_ASSERT((shader_type == kSyncTrackShader || shader_type == kSyncTrackChargeEffectShader), 0x749);
         if (shader_type == kSyncTrackChargeEffectShader) {
             shader_type = kSyncTrackShader;
         }
+#endif
         SetColorWriteMask(ShaderOptions(optsVal), mat);
         CheckExtrude();
         CheckForceCull(shader_type);

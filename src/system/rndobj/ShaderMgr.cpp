@@ -167,9 +167,10 @@ void RndShaderMgr::SetTransform(const Transform &xfm) {
 }
 
 void RndShaderMgr::Invalidate(ShaderType t) {
+    bool all = t == kMaxShaderTypes;
     for (std::list<ShaderTree>::iterator it = mShaderTrees.begin();
          it != mShaderTrees.end();) {
-        if (it == mShaderTrees.begin() && it->shaderType != t) {
+        if (!all && it->shaderType != t) {
             ++it;
         } else {
             delete it->obj;

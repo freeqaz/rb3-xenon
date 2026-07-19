@@ -3,6 +3,12 @@
 #include "utl/Str.h"
 #include <vector>
 
+// Retail RB3 (and rb3-Wii oracle) ShaderType: exactly 26 members (0..25).
+// The trailing DC3-only shaders (sync_track, playerdepth_shell2, yuv_to_*,
+// player_greenscreen, crew_photo, twirl, killalpha, allwhite, ...) are Dance
+// Central-specific and do NOT exist in Rock Band 3 — retail encodes
+// kUnwrapUVShader=0x14, kBloomGlareShader=0x19 and kMaxShaderTypes=0x1a.
+// They are kept behind HX_NATIVE for the native/DC3 engine only.
 enum ShaderType {
     kBloomShader = 0,
     kBlurShader = 1,
@@ -24,25 +30,27 @@ enum ShaderType {
     kShadowmapShader = 17,
     kStandardShader = 18,
     kStandardBBShader = 19,
-    kSyncTrackShader = 20,
-    kSyncTrackChargeEffectShader = 21,
-    kUnwrapUVShader = 22,
-    kVelocityCameraShader = 23,
-    kVelocityObjectShader = 24,
-    kPlayerDepthVisShader = 25,
-    kPlayerDepthShellShader = 26,
-    kBloomGlareShader = 27,
-    kPlayerDepthShell2Shader = 28,
-    kDepthBuffer3DShader = 29,
-    kYUVtoRGBShader = 30,
-    kYUVtoBlackAndWhiteShader = 31,
-    kPlayerGreenScreenShader = 32,
-    kPlayerDepthGreenScreenShader = 33,
-    kCrewPhotoShader = 34,
-    kTwirlShader = 35,
-    kKillAlphaShader = 36,
-    kAllWhiteShader = 37,
-    kMaxShaderTypes = 38
+    kUnwrapUVShader = 20,
+    kVelocityCameraShader = 21,
+    kVelocityObjectShader = 22,
+    kPlayerDepthVisShader = 23,
+    kPlayerDepthShellShader = 24,
+    kBloomGlareShader = 25,
+#ifdef HX_NATIVE
+    kSyncTrackShader,
+    kSyncTrackChargeEffectShader,
+    kPlayerDepthShell2Shader,
+    kDepthBuffer3DShader,
+    kYUVtoRGBShader,
+    kYUVtoBlackAndWhiteShader,
+    kPlayerGreenScreenShader,
+    kPlayerDepthGreenScreenShader,
+    kCrewPhotoShader,
+    kTwirlShader,
+    kKillAlphaShader,
+    kAllWhiteShader,
+#endif
+    kMaxShaderTypes
 };
 
 struct ShaderMacro {

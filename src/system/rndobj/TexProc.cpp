@@ -202,10 +202,13 @@ void TexProc::DrawToTexture() {
 
     RndMat *mat = SetUpWorkingMat();
 
-    ShaderType shaderType = kKillAlphaShader;
+    ShaderType shaderType = kErrorShader;
+#ifdef HX_NATIVE
+    shaderType = kKillAlphaShader;
     if ((unsigned int)mShaderType < 1u || mShaderType != kShaderKillAlpha) {
         shaderType = kTwirlShader;
     }
+#endif
 
     RndCam *prevCam = RndCam::Current();
     RndTex *targetTex = prevCam->TargetTex();

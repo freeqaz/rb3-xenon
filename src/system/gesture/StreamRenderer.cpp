@@ -488,6 +488,7 @@ void StreamRenderer::DrawToTexture() {
         );
         TheShaderMgr.SetPConstant((PShaderConstant)0x45, playerIdx);
 
+#ifdef HX_NATIVE
         if (shaderType == kPlayerDepthShell2Shader) {
             Vector4 p4Color(
                 mPlayer4DepthColor.red, mPlayer4DepthColor.green,
@@ -589,6 +590,7 @@ void StreamRenderer::DrawToTexture() {
             );
             TheShaderMgr.SetPConstant((PShaderConstant)0x52, center5);
         }
+#endif
 
         Hmx::Rect drawRect(0, 0, (float)targetRT->Width(), (float)targetRT->Height());
         TheNgRnd.DrawRect(drawRect, workMat, shaderType, Hmx::Color(), nullptr, nullptr);
@@ -712,10 +714,14 @@ ShaderType StreamRenderer::GetShaderType() const {
     ShaderType t = kDrawRectShader;
     switch (mDisplay) {
     case kStreamColor:
+#ifdef HX_NATIVE
         t = kYUVtoRGBShader;
+#endif
         break;
     case kStreamBlackAndWhite:
+#ifdef HX_NATIVE
         t = kYUVtoBlackAndWhiteShader;
+#endif
         break;
     case kStreamBasicDepth:
         t = kDrawRectShader;
@@ -727,16 +733,24 @@ ShaderType StreamRenderer::GetShaderType() const {
         t = kPlayerDepthShellShader;
         break;
     case kStreamPlayerDepthShell2:
+#ifdef HX_NATIVE
         t = kPlayerDepthShell2Shader;
+#endif
         break;
     case kStreamPlayerGreenscreen:
+#ifdef HX_NATIVE
         t = kPlayerGreenScreenShader;
+#endif
         break;
     case kStreamPlayerDepthGreenscreen:
+#ifdef HX_NATIVE
         t = kPlayerDepthGreenScreenShader;
+#endif
         break;
     case kStreamCrewPhoto:
+#ifdef HX_NATIVE
         t = kCrewPhotoShader;
+#endif
         break;
     default:
         MILO_FAIL("Unknown StreamDisplay in StreamRenderer");

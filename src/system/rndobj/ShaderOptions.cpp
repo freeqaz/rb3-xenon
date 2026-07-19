@@ -31,12 +31,15 @@ void InitShaderOptions() {
     sShaderTypes[kPostprocessShader] = "postprocess";
     sShaderTypes[kShadowmapShader] = "shadowmap";
     sShaderTypes[kStandardShader] = "standard";
+#ifdef HX_NATIVE
     sShaderTypes[kSyncTrackShader] = "sync_track";
+#endif
     sShaderTypes[kUnwrapUVShader] = "unwrapuv";
     sShaderTypes[kVelocityCameraShader] = "velocity_camera";
     sShaderTypes[kVelocityObjectShader] = "velocity_object";
     sShaderTypes[kPlayerDepthVisShader] = "playerdepth_vis";
     sShaderTypes[kPlayerDepthShellShader] = "playerdepth_shell";
+#ifdef HX_NATIVE
     sShaderTypes[kPlayerDepthShell2Shader] = "playerdepth_shell2";
     sShaderTypes[kDepthBuffer3DShader] = "depthbuffer_3d";
     sShaderTypes[kYUVtoRGBShader] = "yuv_to_rgb";
@@ -47,6 +50,7 @@ void InitShaderOptions() {
     sShaderTypes[kTwirlShader] = "twirl";
     sShaderTypes[kKillAlphaShader] = "killalpha";
     sShaderTypes[kAllWhiteShader] = "allwhite";
+#endif
 }
 
 const char *ShaderTypeName(ShaderType shader) {
@@ -116,6 +120,7 @@ bool IsPostProcShaderType(ShaderType s) {
     case kPlayerDepthVisShader:
     case kPlayerDepthShellShader:
     case kBloomGlareShader:
+#ifdef HX_NATIVE
     case kPlayerDepthShell2Shader:
     case kDepthBuffer3DShader:
     case kYUVtoRGBShader:
@@ -125,6 +130,7 @@ bool IsPostProcShaderType(ShaderType s) {
     case kCrewPhotoShader:
     case kTwirlShader:
     case kKillAlphaShader:
+#endif
         return false;
     case kErrorShader:
     case kMultimeshShader:
@@ -132,9 +138,11 @@ bool IsPostProcShaderType(ShaderType s) {
     case kParticlesShader:
     case kStandardShader:
     case kStandardBBShader:
+#ifdef HX_NATIVE
     case kSyncTrackShader:
     case kSyncTrackChargeEffectShader:
     case kAllWhiteShader:
+#endif
         return true;
     default:
         MILO_FAIL("unknown shader type %s", ShaderTypeName(s));
