@@ -28,16 +28,18 @@ void FxSendMeterEffect360::SyncEffectParams(IXAudio2SubmixVoice *voice) const {
 // meter XAPO a pointer to the vector's data block (same trick as the master
 // MeterEffect in Synth360::PreInit).
 void FxSendMeterEffect360::InitParams(IXAudio2SubmixVoice *voice, int chans) {
-    mChannels.erase(mChannels.begin(), mChannels.end());
+    std::vector<LevelData> *channels = &mChannels;
+    channels->erase(channels->begin(), channels->end());
     if (chans != 1) {
         if (chans == 2) {
             LevelData left("left");
             LevelData right("right");
-            mChannels.push_back(left);
-            mChannels.push_back(right);
+            channels->push_back(left);
+            channels->push_back(right);
         }
     } else {
-        mChannels.push_back(LevelData("mono"));
+        LevelData mono("mono");
+        channels->push_back(mono);
     }
     delete unkb0;
     unkb0 = 0;
