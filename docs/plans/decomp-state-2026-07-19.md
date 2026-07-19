@@ -85,6 +85,20 @@ the identification flywheel** (round-5 gate ~+1,000 names; body-ports buy it).
   0x1c→0xc, StoreMainPanel member −0x18, CharPollGroup base subobject −0x28.**
   This is the "B_STRUCT_OFFSET is the real vein" call (see A_TOOLING ICF memory),
   now with concrete targets. HIGHER EV than the mispair band.
+  **PROBE RESULTS (2026-07-19) — REFINED PREDICATE, both wide leads DEAD:**
+  S2 CharPollGroup = **misread** (the −0x28 was a member offset 0x50 vs an
+  ICF-folded `??_G` dtor's full-object adjust 0x78; layout already matches retail;
+  ground-truth against target-asm MEMBER offsets, NOT Ghidra `??_G` adjusts —
+  ICF-contaminated). S1 SongSection = size mismatch is **real** (0x18 vs 0xc, DC3
+  added mPatternRange+mSongPattern) but **cascade REFUTED** — its only
+  `vector<SongSection>` consumers are 2 unimplemented stubs; **zero near-misses
+  index it** → 0 flips. **THE RULE: a struct resize flips a near-miss only when a
+  near-miss (90–99.99%) actually indexes that struct. Size-mismatch is necessary
+  but NOT sufficient.** So the scanner predicate is NOT "struct size ≠ retail" —
+  it's "struct size ≠ retail STL-stride AND indexed by ≥1 fn in the 90–99.99%
+  band" (join size-deltas against the near-miss pool). The 3 narrow S3 leads
+  (RecurseInfo/Constraint/StoreMainPanel) were each derived FROM a near-miss
+  (99.9x), so they satisfy the predicate — S3 is the live test of the vein.
   **Mechanism rule (F2, durable):** an owner `.cpp` with its OWN nested
   scatter-includes is UNSAFE via the dialect shim — the push forces Object.h
   dialect and breaks the owner's nested ObjMacros-dialect includes, cascading to
