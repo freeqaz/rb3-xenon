@@ -128,3 +128,7 @@ void DataPointMgr::RecordDebugDataPoint(DataPoint &point) {
 }
 
 #pragma endregion
+
+// RB3 retail scattered NetCacheMgr.cpp's COMDATs into DataPointMgr.cpp's
+// .text span; compile them here so objdiff can pair them.
+#include "utl/NetCacheMgr.cpp"

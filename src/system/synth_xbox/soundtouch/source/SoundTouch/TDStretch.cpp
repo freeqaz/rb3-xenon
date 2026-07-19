@@ -787,3 +787,7 @@ double TDStretch::calcCrossCorrStereo(const float *mixingPos, const float *compa
 }
 
 #endif // FLOAT_SAMPLES
+
+// RB3 retail linker interleaved RateTransposer.cpp's COMDATs into this
+// TU's .text span. Compile its bodies into this obj so objdiff can pair them.
+#include "RateTransposer.cpp"
