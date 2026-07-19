@@ -65,7 +65,6 @@ void NgRnd::Terminate() {
     NgPostProc::Terminate();
     NgDOFProc::Terminate();
     RndShadowMap::Terminate();
-    OnlyReturns();
     Rnd::Terminate();
 }
 
@@ -184,9 +183,6 @@ float NgRnd::UpdateOverlay(RndOverlay *overlay, float y) {
             *mStatsOverlay << MakeString(
                 "motion blur %d %d\n", gNgStats[0].mMotionBlurs, gNgStats[1].mMotionBlurs
             );
-            *mStatsOverlay << MakeString(
-                "spotlights %d %d\n", gNgStats[0].mSpotlights, gNgStats[1].mSpotlights
-            );
             *mStatsOverlay
                 << MakeString("est draw %.1f %.1f\n", EstimateDraw(0), EstimateDraw(1));
             TheNgStats = &gNgStats[2];
@@ -208,7 +204,6 @@ float NgRnd::UpdateOverlay(RndOverlay *overlay, float y) {
                 << MakeString("multimesh batches %d\n", gNgStats[0].mMultiMeshBatches);
             *mStatsOverlay << MakeString("flares %d\n", gNgStats[0].mFlares);
             *mStatsOverlay << MakeString("motion blur %d\n", gNgStats[0].mMotionBlurs);
-            *mStatsOverlay << MakeString("spotlights %d\n", gNgStats[0].mSpotlights);
             *mStatsOverlay << MakeString("est draw %.1f\n", EstimateDraw(0));
             TheNgStats = &gNgStats[2];
         }

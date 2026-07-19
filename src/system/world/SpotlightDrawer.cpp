@@ -532,11 +532,13 @@ void DrawAccessories<LensExtract>(
 
 void SpotlightDrawer::DrawWorld() {
 #ifdef HX_NATIVE
+    // NgStats has no mSpotlights in RB3 retail (DC3-newer field); track natively.
+    static int sSpotlightStat = 0;
     int numLights = sLights.size();
-    if (numLights < TheNgStats->mSpotlights) {
-        numLights = TheNgStats->mSpotlights;
+    if (numLights < sSpotlightStat) {
+        numLights = sSpotlightStat;
     }
-    TheNgStats->mSpotlights = numLights;
+    sSpotlightStat = numLights;
 #endif
     if ((!sLights.empty() || !sCans.empty()) && Showing()) {
         SortLights();

@@ -16,7 +16,6 @@ public:
     int mMultiMeshBatches; // 0x2c
     int mFlares; // 0x30
     int mMotionBlurs; // 0x34
-    int mSpotlights; // 0x38
 };
 
 extern NgStats *TheNgStats;

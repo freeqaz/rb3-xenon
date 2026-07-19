@@ -143,17 +143,7 @@ void Multiply(const Plane &, const Transform &, Plane &);
 // Transform sphere by finding maximum scale factor along any axis
 inline void Multiply(const Sphere &s, const Transform &t, Sphere &out) {
     Multiply(s.center, t, out.center);
-    // Find maximum squared length of transform basis vectors (max scale factor)
-    float xsq = LengthSquared(t.m.x);
-    float ysq = LengthSquared(t.m.y);
-    float zsq = LengthSquared(t.m.z);
-    float len = (xsq - ysq < 0) ? ysq : xsq;
-    len = (len - zsq < 0) ? zsq : len;
-    len = std::sqrt(len);
-    if (NearlyOne(len)) {
-        len = 1;
-    }
-    out.radius = s.radius * len;
+    out.radius = s.radius;
 }
 
 void Intersect(const Hmx::Ray &, const Hmx::Ray &, Vector2 &);
