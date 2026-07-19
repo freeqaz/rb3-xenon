@@ -874,9 +874,12 @@ BEGIN_HANDLERS(TrackPanel)
     HANDLE_EXPR(get_first_track, GetTrack())
     HANDLE(foreach_track, ForEachTrack)
     HANDLE_EXPR(my_track_panel_dir, mTrackPanelDir)
-    if (sym == get_pause_menu) {
-        _msg->Int(2);
-        return NULL_OBJ;
+    {
+        static Symbol get_pause_menu("get_pause_menu");
+        if (sym == get_pause_menu) {
+            _msg->Int(2);
+            return NULL_OBJ;
+        }
     }
     HANDLE_EXPR(get_user_from_track_num, (BandUser *)GetUserFromTrackNum(_msg->Int(2)))
     HANDLE_ACTION(play_seq, PlaySequence(_msg->Str(2), 0, 0, 0))

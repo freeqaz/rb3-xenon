@@ -68,6 +68,7 @@ void CheckboxDisplay::Update() {
     MILO_ASSERT(pTypeDef, 0x7C);
     RndDir *pDir = mResource->Dir();
     MILO_ASSERT(pDir, 0x7F);
+    static Symbol check_mesh("check_mesh");
     mCheckMesh = pDir->Find<RndMesh>(pTypeDef->FindStr(check_mesh), true);
 }
 

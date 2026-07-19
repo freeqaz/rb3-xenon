@@ -2217,12 +2217,11 @@ DECOMP_FORCEACTIVE(
     "outfits can only have one subdir, which is the resource"
 )
 
-extern Symbol AmbientOcclusion;
-extern Symbol CharWeightSetter;
-
 MergeFilter::Action
 BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
     static Symbol meshName("Mesh");
+    static Symbol AmbientOcclusion("AmbientOcclusion");
+    static Symbol CharWeightSetter("CharWeightSetter");
     if (o2 == mInstDir) {
         Character *character = dynamic_cast<Character *>(o1);
         mInstDir->CopyBoundingSphere(character);

@@ -18,8 +18,7 @@
 DynamicTex::DynamicTex(const char *c1, const char *c2, bool b1, bool b2)
     : mTex(Hmx::Object::New<RndTex>()), mMatName(c2), mMat(0), mLoader(0), unk1c(b2) {
     if (c1 != gNullStr) {
-        mLoader =
-            dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(FilePath(c1), kLoadFront));
+        mLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(c1, kLoadFront));
         MILO_ASSERT(mLoader, 0x1B);
     }
     if (b1) {
@@ -46,8 +45,7 @@ void DLCTex::StartLoading() {
     MILO_ASSERT(mState == kMounting, 0x46);
     const char *path = TheSongMgr.GetAlbumArtPath(unk20);
     MILO_ASSERT(path != gNullStr, 0x48);
-    mLoader =
-        dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(FilePath(path), kLoadFront));
+    mLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(path, kLoadFront));
     MILO_ASSERT(mLoader, 0x4A);
     mState = 2;
 }

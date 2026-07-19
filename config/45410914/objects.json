@@ -38,7 +38,12 @@
    "system/math/Trig.cpp": "NonMatching",
    "system/math/vec.cpp": "NonMatching",
    "system/bandobj/BandCamShot.cpp": "NonMatching",
-   "system/bandobj/BandSwatch.cpp": "NonMatching",
+   "system/bandobj/BandSwatch.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/BandCharacter.cpp": "NonMatching",
    "system/bandobj/BandCharDesc.cpp": "NonMatching",
    "system/bandobj/BandList.cpp": "NonMatching",
@@ -1092,7 +1097,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "band3/meta_band/PassiveMessenger.cpp": "NonMatching",
+   "band3/meta_band/PassiveMessenger.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/PrefabMgr.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

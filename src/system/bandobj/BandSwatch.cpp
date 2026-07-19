@@ -91,6 +91,7 @@ BEGIN_HANDLERS(BandSwatch)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(BandSwatch)
+    static Symbol color_palette("color_palette");
     SYNC_PROP_MODIFY_ALT(color_palette, mColorPalette, UpdateColors())
     SYNC_SUPERCLASS(UIList)
 END_PROPSYNCS
