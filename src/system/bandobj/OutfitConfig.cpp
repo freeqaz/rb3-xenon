@@ -1082,3 +1082,48 @@ BEGIN_PROPSYNCS(OutfitConfig)
     SYNC_PROP(band_logo, mBandLogo)
     SYNC_SUPERCLASS(RndDrawable)
 END_PROPSYNCS
+
+// sw3 COMDAT-scatter owner-TU includes (OutfitConfig owns these foreign spans).
+// Outer `#ifndef gRev` guard: OutfitConfig.cpp is itself scatter-included as an
+// owner by Gem.cpp and ExternalMic.cpp (`#define gRev gRev_OutfitConfig`), so this
+// whole region must stay inert when transitively included (gRev is a static member
+// VARIABLE, never a macro, in OutfitConfig's own primary TU). One shared
+// SW_SCATTER_OWNER_INCLUDE region inside: (a) keeps BandCamShot's own nested
+// scatter-includes inert, (b) prevents the per-shim guard from blocking siblings.
+#ifndef gRev
+#define SW_SCATTER_OWNER_INCLUDE
+
+// plain ObjMacros owner
+#include "bandobj/BandCamShot.cpp"
+
+// CROSS ObjMacros<-Object dialect shims
+#define gRev gRev_FontBase
+#define gAltRev gAltRev_FontBase
+#include "obj/dialect_object_push.h"
+#include "rndobj/FontBase.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+
+// NOTE: band3/game/Stats.cpp owner-include OMITTED — its own unguarded nested
+// scatter-includes (hamobj/RhythmDetector.cpp) drag in hamobj/Difficulty.h, whose
+// enum Difficulty is INCOMPATIBLE with game/Defines.h's (pulled via ContextChecker
+// below) → C2011 redefinition. Matches the harvest's "1 plain + 3 dialect-shim".
+#define gRev gRev_ContextChecker
+#define gAltRev gAltRev_ContextChecker
+#include "obj/dialect_object_push.h"
+#include "band3/meta_band/ContextChecker.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+
+#define gRev gRev_CharSignalApplier
+#define gAltRev gAltRev_CharSignalApplier
+#include "obj/dialect_object_push.h"
+#include "char/CharSignalApplier.cpp"
+#include "obj/dialect_object_pop.h"
+#undef gRev
+#undef gAltRev
+
+#undef SW_SCATTER_OWNER_INCLUDE
+#endif // ifndef gRev (OutfitConfig-as-owner inert guard)

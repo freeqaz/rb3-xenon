@@ -892,3 +892,13 @@ const std::vector<float> *HamMove::RatingOverride() const {
         return nullptr;
     }
 }
+
+// sw3 scatter-include (default/HamMove <- beatmatch/MasterAudio.cpp) [ObjMacros owner]
+// `#ifndef gRev` guard: HamMove.cpp is ITSELF scatter-included as an owner by
+// CrowdAudio.cpp and Morph.cpp, which bracket it with `#define gRev gRev_HamMove`.
+// gRev is a static member VARIABLE (never a preprocessor macro) in HamMove's own
+// primary TU, so this include fires there but stays inert when transitively
+// included (otherwise MasterAudio would leak into those parents and break them).
+#ifndef gRev
+#include "beatmatch/MasterAudio.cpp"
+#endif

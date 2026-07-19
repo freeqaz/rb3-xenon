@@ -1,3 +1,12 @@
+// sw3: capture whether this is UIList's PRIMARY TU before any gRev manipulation.
+// When UIList.cpp is scatter-included as an owner (by DepthBuffer3D.cpp), the parent
+// has already `#define gRev gRev_UIList` here, so the sentinel stays undefined and
+// the GemTrack owner-include at the tail is skipped. gRev is a member VARIABLE, never
+// a macro, in UIList's own compile, so the sentinel is defined there.
+#ifndef gRev
+#define UILIST_SW3_PRIMARY_TU
+#endif
+
 #include "ui/UIList.h"
 #include "ui/Utl.h"
 #include "math/Geo.h"
@@ -1045,3 +1054,16 @@ int UIList::CollidePlane(const Plane &p) {
 #include "bandobj/BandDirector.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw3 scatter-include (default/UIList <- band3/bandtrack/GemTrack.cpp) [ObjMacros owner]
+// Guarded on the UILIST_SW3_PRIMARY_TU sentinel captured at the TOP of this file:
+// UIList.cpp is itself scatter-included as an owner by DepthBuffer3D.cpp, so this
+// must stay inert there (GemTrack drags game/Defines.h's enum Difficulty, which
+// collides with hamobj/Difficulty.h already in DepthBuffer3D's closure). Kept at
+// the tail (after BandDirector) to preserve the working primary-compile ordering;
+// the tail `gRev` marker is unusable here because BandDirector `#undef`s it, hence
+// the top-of-file capture.
+#ifdef UILIST_SW3_PRIMARY_TU
+#include "band3/bandtrack/GemTrack.cpp"
+#undef UILIST_SW3_PRIMARY_TU
+#endif

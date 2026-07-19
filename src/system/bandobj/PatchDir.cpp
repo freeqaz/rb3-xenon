@@ -833,3 +833,9 @@ BEGIN_HANDLERS(PatchDir)
     HANDLE_SUPERCLASS(RndDir)
     HANDLE_CHECK(0x544)
 END_HANDLERS
+
+// sw3 scatter-include (default/PatchDir <- bandobj/BandCamShot.cpp) [ObjMacros owner]
+// SW_SCATTER_OWNER_INCLUDE keeps BandCamShot's own scatter-includes inert here.
+#define SW_SCATTER_OWNER_INCLUDE
+#include "bandobj/BandCamShot.cpp"
+#undef SW_SCATTER_OWNER_INCLUDE
