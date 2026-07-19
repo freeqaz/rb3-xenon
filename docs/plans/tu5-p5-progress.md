@@ -61,6 +61,7 @@ campaign. Companion to `tu5-landing-runbook.md` (the flip itself) and
 | UIStats recarve gap-fill (rc4) | **18,445** | **+48** (`5f13960a`) — blob 0x82560660 single-TU gap under UIStats.cpp; UIStats::Handle anchor + 46 funclets. Blob 0x8234FCEC SKIPPED (kill test: unwired gesture catch-all) |
 | near-miss gates (nm) | **18,448** | **+3** (`1795eef9`) — NgStats mSpotlights strip (UpdateOverlay 94→100 + 15 offset drifts), NgRnd::Terminate, Geo.h Sphere-multiply force-multiplier. Verify NOTE: header patch needed FULL rebuild A/B (report-only warm-seed gave false 585-LOST). Leads: RndShaderMgr ShaderType enum 26 vs 38 |
 | identification round-4 (id4) | **18,618** | **+170** (`39038c09`) — scanner stack RE-OPENED by the scatter campaign's +250 names & 3 new clusters (round-3 fixed-point gate cleared). Stage-1 +121/ICF +16/twin +32, fixed point 3 rounds, ~0.157 flips/name = 5x collapsed rate, 6/6 Ghidra PASS. The scatter vein FEEDS identification — subsystems compound |
+| ShaderType enum 38→26 (sm) | **18,621** | **+3** (`d0864f7c`) — retail-asm-grounded (li r4,0x14 + subi r11,r4,0x1a prove kMaxShaderTypes=26); DC3's 12 Dance-Central shaders HX_NATIVE-guarded. Flips Terminate/Invalidate/InitShaderOptions. Full-rebuild verified. Leads: FindShader 80.3, SetTransform 82.5 |
 
 **Ceiling note (2026-07-18):** the old 15,804 "recover-all-but-48" ceiling measured
 only the TU5-flip recovery scope and is now OBSOLETE — the global correlator sweep
