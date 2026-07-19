@@ -1434,3 +1434,8 @@ BEGIN_PROPSYNCS(BandWardrobe)
     SYNC_PROP_STATIC(demand_load, mDemandLoad)
     SYNC_PROP_STATIC(dir, mVenueDir)
 END_PROPSYNCS
+
+// Retail's TU emitted these Find<T> COMDATs out-of-line; our call sites spell
+// dynamic_cast<T*>(FindObject(...)) so they never instantiate. Force emission.
+template CharWeightSetter *ObjectDir::Find<CharWeightSetter>(const char *, bool);
+template BandRetargetVignette *ObjectDir::Find<BandRetargetVignette>(const char *, bool);

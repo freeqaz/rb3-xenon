@@ -9,8 +9,12 @@ ninja, never touches source/splits/maps).
 TAXONOMY (bucket -> recommended fleet)
 Zero band (pool pct == 0):
   ZERO-UNMAPPED      default/auto_* span, or symbol not in target index -> splits/mapping
-  ZERO-SCATTER       real TU but our base obj emits nothing (COMDAT scattered) -> scatter-include
   ZERO-COMPILE-FAIL  wired TU, base .obj missing, all pool symbols emit nothing -> build fix
+  (real TU but our base obj emits nothing = COMDAT scattered) sub-split into:
+    ZS-STL-HELPER            @stlpmtx_std@ / STL container helper -> ICF-merged, skip
+    ZS-MISSING-INSTANTIATION template inst missing from a wired unit -> probe (forced inst)
+    ZS-UNWIRED-OWNSPAN       non-template, unit not in objects.json (own-span .cpp) -> wire
+    ZS-OTHER                 wired inline-only / everything else -> manual triage
   (Z4)               pool 0 but batch base_size>0: routed through nonzero rules on live fuzzy%.
 Nonzero band (0<pct<100), rules applied in order:
   MISPAIR            size ratio/delta mismatch (renamer paired wrong fn) -> renamer/map fix
@@ -71,11 +75,15 @@ B_FORM = "FORM-DIVERGENCE"
 B_BODY = "BODY-PORT"
 B_REVIEW = "NEEDS-REVIEW"
 B_Z_UNMAPPED = "ZERO-UNMAPPED"
-B_Z_SCATTER = "ZERO-SCATTER"
 B_Z_COMPILE = "ZERO-COMPILE-FAIL"
+# ZERO-SCATTER sub-split (base obj emits nothing = COMDAT scattered)
+B_ZS_STL = "ZS-STL-HELPER"
+B_ZS_MISSINST = "ZS-MISSING-INSTANTIATION"
+B_ZS_UNWIRED = "ZS-UNWIRED-OWNSPAN"
+B_ZS_OTHER = "ZS-OTHER"
 
 NONZERO_BUCKETS = [B_MISPAIR, B_RELOC, B_STRUCT, B_FORM, B_BODY, B_REVIEW]
-ZERO_BUCKETS = [B_Z_UNMAPPED, B_Z_SCATTER, B_Z_COMPILE]
+ZERO_BUCKETS = [B_Z_UNMAPPED, B_ZS_STL, B_ZS_MISSINST, B_ZS_UNWIRED, B_ZS_OTHER, B_Z_COMPILE]
 ALL_BUCKETS = NONZERO_BUCKETS + ZERO_BUCKETS
 
 FLEET = {
@@ -86,7 +94,10 @@ FLEET = {
     B_BODY: "LLM grind (75-92 band best ROI)",
     B_REVIEW: "manual triage",
     B_Z_UNMAPPED: "splits/mapping work",
-    B_Z_SCATTER: "scatter-include wiring",
+    B_ZS_STL: "skip (ICF-merged STL)",
+    B_ZS_MISSINST: "forced-instantiation one-liners (probe-verified 2026-07-19)",
+    B_ZS_UNWIRED: "standard-wire work (oracle-poor, low ROI)",
+    B_ZS_OTHER: "manual triage",
     B_Z_COMPILE: "build fix",
 }
 FLIP_PRIOR = {
@@ -97,9 +108,16 @@ FLIP_PRIOR = {
     B_BODY: "30-50%",
     B_REVIEW: "case-by-case",
     B_Z_UNMAPPED: "case-by-case",
-    B_Z_SCATTER: "60-80% (near-free)",
+    B_ZS_STL: "~0%",
+    B_ZS_MISSINST: "high (probe: 2/2 strict flips, +2 report, no collateral)",
+    B_ZS_UNWIRED: "case-by-case",
+    B_ZS_OTHER: "case-by-case",
     B_Z_COMPILE: "case-by-case",
 }
+
+# STL container-helper reference markers (for the ZS-STL-HELPER rule)
+STL_HELPER_REFS = ("stlpmtx_std", "_Rb_tree", "__uninitialized", "_M_insert",
+                   "vector@", "list@")
 
 # bands for stratified sampling (deterministic)
 BAND_995, BAND_90, BAND_75, BAND_075 = "99.5+", "90-99.5", "75-90", "0-75"
@@ -179,6 +197,7 @@ class Ctx:
         self.objdiff = str(project / "bin" / "objdiff-cli")
         self.wired_stems = self._load_wired(project)
         self.built_obj_stems = self._load_built(project)
+        self.src_cpp_by_stem = self._load_src_cpp(project)
 
     @staticmethod
     def _load_wired(project: Path) -> set:
@@ -205,6 +224,17 @@ class Ctx:
             if "/src/" in str(p):
                 stems.add(p.stem)
         return stems
+
+    @staticmethod
+    def _load_src_cpp(project: Path) -> dict:
+        """Map source-file stem -> repo-relative .cpp path (own-span search)."""
+        idx = {}
+        root = project / "src"
+        if not root.is_dir():
+            return idx
+        for p in root.rglob("*.cpp"):
+            idx.setdefault(p.stem, str(p.relative_to(project)))
+        return idx
 
 
 # ── layer 1: batch ──────────────────────────────────────────────────────────
@@ -304,21 +334,67 @@ def classify_l1(row, rec, ctx, unit_all_zero: dict):
         if bsize and bsize > 0:
             # Z4: route to nonzero rules on live pct
             return classify_nonzero(row, rec, ctx, ev + ["report0-live-diff"])
-        # base emits nothing
+        # base emits nothing (COMDAT scattered)
         stem = _stem(unit)
         wired = stem in ctx.wired_stems
         obj_missing = stem not in ctx.built_obj_stems
-        if wired and obj_missing:
-            if unit_all_zero.get(unit, False):
-                return B_Z_COMPILE, "high", ev + ["base obj missing", "all unit symbols base_size==0"], False, ev
-            return B_Z_SCATTER, "medium", ev + ["base emits nothing", "obj-missing-check-ambiguous"], False, ev
-        conf = "high" if not obj_missing else "medium"
-        return B_Z_SCATTER, conf, ev + ["base emits nothing"], False, ev
+        if wired and obj_missing and unit_all_zero.get(unit, False):
+            return B_Z_COMPILE, "high", ev + ["base obj missing", "all unit symbols base_size==0"], False, ev
+        return classify_zero_scatter(row, rec, ctx, ev, wired, obj_missing)
 
     # ── nonzero band ────────────────────────────────────────────────────────
     if is_not_found(rec):
         return B_Z_UNMAPPED, "medium", ev + ["not in target index (pool nonzero)"], False, ev
     return classify_nonzero(row, rec, ctx, ev)
+
+
+def _is_stl_helper(name: str) -> bool:
+    """ICF-merged STL container helper: never flips via scatter-include."""
+    if "@stlpmtx_std@" in name:
+        return True
+    return name.startswith("??$") and any(r in name for r in STL_HELPER_REFS)
+
+
+def _is_template_sym(name: str) -> bool:
+    """MSVC template symbol: ``??$`` prefix or template-arg mangling ``?$``."""
+    return name.startswith("??$") or "?$" in name
+
+
+def classify_zero_scatter(row, rec, ctx, ev, wired, obj_missing):
+    """Sub-split the base-emits-nothing (COMDAT-scattered) pool.
+
+    Returns a 5-tuple (bucket, conf, evidence, need_l2=False, base_ev) like the
+    other classify_l1 branches.  Buckets: ZS-STL-HELPER / ZS-MISSING-INSTANTIATION
+    / ZS-UNWIRED-OWNSPAN / ZS-OTHER.
+    """
+    name = row["name"]
+    stem = _stem(row["unit"])
+    hint = ["base obj missing"] if obj_missing else []
+
+    # 1. STL container helper -> ICF-merged, never flips via include.
+    if _is_stl_helper(name):
+        return B_ZS_STL, "high", ev + ["stlpmtx_std/STL container helper (ICF-merged)"] + hint, False, ev
+
+    is_tmpl = _is_template_sym(name)
+
+    # 2. Template instantiation missing from a wired unit -> probe candidate.
+    if is_tmpl and wired:
+        return B_ZS_MISSINST, "medium", ev + [f"template inst missing from wired unit {stem}"] + hint, False, ev
+
+    # 3. Non-template symbol in an unwired unit (own-span .cpp exists in tree
+    #    but the TU is absent from objects.json) -> standard-wire work.
+    if not is_tmpl and not wired:
+        own = ctx.src_cpp_by_stem.get(stem)
+        if own:
+            return B_ZS_UNWIRED, "medium", ev + [f"own-span {own} unwired"] + hint, False, ev
+        return B_ZS_UNWIRED, "low", ev + [f"unit stem {stem} not in objects.json (no own-span cpp)"] + hint, False, ev
+
+    # 4. Everything else.
+    if is_tmpl and not wired:
+        return B_ZS_OTHER, "low", ev + [f"template in unwired unit {stem}"] + hint, False, ev
+    # wired + non-template + base emits nothing = defined inline in a header,
+    # always inlined, so base never emits it (e.g. Mic).
+    return B_ZS_OTHER, "medium", ev + ["wired unit, inline-only symbol (never emitted by base)"] + hint, False, ev
 
 
 def classify_nonzero(row, rec, ctx, ev):
