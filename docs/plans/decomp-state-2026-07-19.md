@@ -101,6 +101,30 @@ BSPFace::Update 94.8%, KerningTable::SetKerning 93.2%). 51 of 66 reclaimed are
 ≥70%-live grindable; net-new (not already in a running worklist) = 21 at
 `~/tmp/grind_bodylever_reclaimed.json`.
 
+### Priors re-measured (2026-07-19 late) — the "bankable 96" deflates further
+
+Every bucket grinded this round came in BELOW its estimate — the pattern holds
+(unmeasured priors ≈ multiples over). Landed +12 (MECH +8 → 18,725, STRUCT +4 →
+18,729):
+| bucket | priced | MEASURED | note |
+|---|---|---|---|
+| LEVER-SYMBOL | ~90% | **44%** | only real mech vein; named-Symbol evidence ≠ Symbol is the sole mismatch |
+| LEVER-STRING | ~85% | **~5%** | heuristic near-NOISE — flags ObjPtr-2ctor(at-limit)/regalloc/struct as "string-reloc"; needs real string-lit-vs-`li 0` check |
+| ZS-INST | high | **0% drained** | MakeString.h already all by-value → no const-ref producible; rest = middleware no-source |
+| STRUCT-ARTIFACT | 50-70% | **~12-23%** | 68% mislabeled (mostly STL-template mispairs); bimodal (low-band layout bugs + 99.9% STL-stride; mid-band 0/9); most "deltas" are stack-frame-size not members |
+
+STRUCT-ARTIFACT classifier refinements (recommended, not yet coded): quarantine
+STL-template symbols unless a same-`T` sibling is already 100%; discard deltas
+equal to `target_frame-base_frame`; require `this`-relative displacement; add a
+"genuine-but-blocked" sub-label (foundational-MI-base / ICF-fold / multi-site RB3
+divergence) so real-but-unflippable drift doesn't count as yield. The
+`Hmx::Object+RndOverlay::Callback` MI base is +4 short across ~13 Rnd/Synth
+classes — real foundational drift needing a coordinated cross-class fix.
+**SongCollision +2 is gated out** (resize+_M_fill_insert flip but sibling
+_M_fill_insert_aux regresses 100→99.87 on a contradictory 56B stride = its own
+mispair) — becomes a clean +2 once the inverse-correlator repairs that sibling
+pairing.
+
 **Held (not landed, follow-ups):**
 - **True-MISPAIR (122):** need an inverse-correlator mode that auto-repoints
   target_symbol_map ONLY on a unique byte-identical unmapped `fn_` (guaranteed
