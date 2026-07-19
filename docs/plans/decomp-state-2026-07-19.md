@@ -150,10 +150,18 @@ unwired owner TU first (converges with vein #2).
 ### 5. Deep grinds (banked, lower EV)
 - **TrackWatcherImpl 121 flat-0% bodies** — beatmatch gameport (oracle
   `../rb3/src/system/beatmatch/TrackWatcherImpl.cpp`, largest 4488B).
-- **Grouped-globals wall** — retail addresses `gNumHeaps`/`gHeaps`,
-  `gSystemMs`/`gSystemFrac` via a shared base+offset (`lbl_82E06BA8`/`82CC999C`);
-  ours are independent globals → walls MemFindAddrHeap 85, SystemMs 90. Needs a
-  data-layout mechanism, not source edits.
+- **Grouped-globals wall** — RECON DONE (2026-07-19): verdict **NARROW, no
+  mechanism wave**. Of 441 named 80–97 fns, only **17** are genuinely fold-walled
+  and just **2 pure-fold** (the known MemFindAddrHeap/SystemMs). MSVC only shares
+  a base register when the globals are *defined in the same TU as the accessor* —
+  so cross-TU manager singletons (`TheBandDirector`/`TheLoadMgr`, `TheTaskMgr`/
+  `TheUI`, `TheSessionMgr`/`TheSynth`, `ThePlatformMgr`/`region`) are UNFOLDABLE
+  by any source change. Only **3 intra-TU clusters are source-fixable** (cheap
+  micro-fixes, ~+2–3, fold into scatter campaign not a wave): MemHeap
+  `gHeaps`+`gNumHeaps` (extern in MemHeap.cpp), Debug/System `gSystemMs`+
+  `gSystemFrac` (extern in Debug.cpp, defined System.cpp), Voice
+  `gCommitSyncVoices`+`gCommitTag` (in-TU, declaration-adjacency fix). Detail:
+  `~/tmp/grouped_globals_recon.md`. Not a new mechanism — a facet of TU-drift.
 - **DxRnd::UpdateScalerParams** (0x82739948) — paired at 0% since the vtable fix,
   genuine body-port lead.
 - **BandCharacter −4 container compaction** (cr6), **BandCamShot vbase-MI
