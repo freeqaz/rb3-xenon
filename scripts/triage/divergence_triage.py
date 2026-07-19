@@ -82,6 +82,11 @@ B_WALL_VTORDISP = "WALL-VTORDISP"
 B_WALL_DEADARG = "WALL-DEADARG"
 B_LEVER_SYMBOL = "LEVER-SYMBOL"
 B_LEVER_STRING = "LEVER-STRING"
+# BODY-LEVER sub-split buckets (30-fn calibration wave, 2026-07-19)
+B_STL_CONTAM = "STL-CONTAM"
+B_BODY_MISSING = "BODY-MISSING-PORT"
+# post-processing staleness bucket (report-vs-live pct divergence)
+B_UNRELIABLE = "UNRELIABLE-EVIDENCE"
 B_Z_UNMAPPED = "ZERO-UNMAPPED"
 B_Z_COMPILE = "ZERO-COMPILE-FAIL"
 # ZERO-SCATTER sub-split (base obj emits nothing = COMDAT scattered)
@@ -94,10 +99,11 @@ NONZERO_BUCKETS = [
     B_MISPAIR,
     B_LEVER_SYMBOL, B_LEVER_STRING,
     B_BODY_LEVER, B_BODY,
+    B_STL_CONTAM, B_BODY_MISSING,
     B_STRUCT,
     B_FORM, B_FORM_REGSWAP,
     B_WALL_VTORDISP, B_WALL_DEADARG,
-    B_RELOC, B_REVIEW,
+    B_RELOC, B_UNRELIABLE, B_REVIEW,
 ]
 ZERO_BUCKETS = [B_Z_UNMAPPED, B_ZS_STL, B_ZS_MISSINST, B_ZS_UNWIRED, B_ZS_OTHER, B_Z_COMPILE]
 ALL_BUCKETS = NONZERO_BUCKETS + ZERO_BUCKETS
@@ -109,7 +115,10 @@ FLEET = {
     B_FORM: "crack-farm / pattern families",
     B_BODY: "LLM grind (75-92 band best ROI)",
     B_REVIEW: "manual triage",
-    B_BODY_LEVER: "LLM grind FIRST (shape-screened)",
+    B_BODY_LEVER: "LLM grind FIRST (shape-screened, per-stratum priced)",
+    B_STL_CONTAM: "skip (stlport-version divergence / template-twin mispairs)",
+    B_BODY_MISSING: "port missing source first (not a lever grind)",
+    B_UNRELIABLE: "re-verify with cache-cleared report before any routing",
     B_FORM_REGSWAP: "skip while permuter banned",
     B_WALL_VTORDISP: "skip (GameMode vtordisp wall)",
     B_WALL_DEADARG: "skip (dead-arg scheduling wall)",
@@ -124,23 +133,54 @@ FLEET = {
 }
 FLIP_PRIOR = {
     B_MISPAIR: "n/a (re-pair then reclassify)",
-    B_RELOC: "~0%",
-    B_STRUCT: "50-70% (cascades once fixed)",
-    B_FORM: "40-60%",
+    B_RELOC: "~0% (validated)",
+    B_STRUCT: "50-70% — UNMEASURED estimate; run a 20-30-fn calibration wave before funding",
+    B_FORM: "~30% — UNMEASURED estimate; calibrate before funding",
     B_BODY: "45% in 78-96 band; <=10% above 97.5 (survivor bias)",
     B_REVIEW: "case-by-case",
-    B_BODY_LEVER: "~80% (validated: every such fn flipped)",
+    B_BODY_LEVER: "25% in 70-90 live (MEASURED 2/8); <=5% elsewhere (MEASURED 0/22)",
+    B_STL_CONTAM: "~0% (MEASURED 0/6)",
+    B_BODY_MISSING: "unmeasured — needs source work",
+    B_UNRELIABLE: "n/a",
     B_FORM_REGSWAP: "~0%",
-    B_WALL_VTORDISP: "~0% (4 independent confirms)",
-    B_WALL_DEADARG: "~0% (3 confirms)",
+    B_WALL_VTORDISP: "~0% (4 independent confirms) (validated)",
+    B_WALL_DEADARG: "~0% (3 confirms) (validated)",
     B_LEVER_SYMBOL: "~90%",
     B_LEVER_STRING: "~85%",
     B_Z_UNMAPPED: "case-by-case",
-    B_ZS_STL: "~0%",
+    B_ZS_STL: "~0% (validated)",
     B_ZS_MISSINST: "high (probe: 2/2 strict flips, +2 report, no collateral)",
     B_ZS_UNWIRED: "case-by-case",
     B_ZS_OTHER: "case-by-case",
     B_Z_COMPILE: "case-by-case",
+}
+# Evidence basis per bucket for the priced markdown table.
+#   MEASURED  = calibrated against decomp.db outcomes (30-fn wave / 24-fn campaign)
+#   PROBE     = probe-verified (forced-instantiation dry run)
+#   VALIDATED = repeat independent confirms, not a single controlled wave
+#   ESTIMATE  = unmeasured prior; needs a calibration wave before funding
+BASIS = {
+    B_BODY_LEVER: "MEASURED",
+    B_STL_CONTAM: "MEASURED",
+    B_MISPAIR: "VALIDATED",
+    B_RELOC: "VALIDATED",
+    B_WALL_VTORDISP: "VALIDATED",
+    B_WALL_DEADARG: "VALIDATED",
+    B_FORM_REGSWAP: "VALIDATED",
+    B_LEVER_SYMBOL: "VALIDATED",
+    B_LEVER_STRING: "VALIDATED",
+    B_ZS_STL: "VALIDATED",
+    B_ZS_MISSINST: "PROBE",
+    B_BODY: "ESTIMATE",
+    B_STRUCT: "ESTIMATE",
+    B_FORM: "ESTIMATE",
+    B_BODY_MISSING: "ESTIMATE",
+    B_REVIEW: "n/a",
+    B_UNRELIABLE: "n/a",
+    B_Z_UNMAPPED: "n/a",
+    B_ZS_UNWIRED: "n/a",
+    B_ZS_OTHER: "n/a",
+    B_Z_COMPILE: "n/a",
 }
 
 # STL container-helper reference markers (for the ZS-STL-HELPER rule)
@@ -595,7 +635,128 @@ def _detect_deadarg(instrs, ins, dele):
     return None
 
 
-def classify_l2(row, rec, l2, ev):
+# ── BODY-LEVER sub-split helpers (30-fn calibration wave, 2026-07-19) ────────
+def _own_class(name: str):
+    """Innermost class qualifier of a PLAIN method symbol ``?Method@Class@...``.
+
+    Returns None for ``??`` special forms (templates ``??$``, ctor/dtor/operator
+    thunks) and non-mangled names -- class extraction on those is unreliable, and
+    the calibration exempts them from the class-vs-unit mispair filter."""
+    if not name.startswith("?") or name.startswith("??"):
+        return None
+    head = name.split("@@", 1)[0] if "@@" in name else name
+    toks = head.split("@")            # toks[0]=method, toks[1]=innermost class
+    if len(toks) >= 2 and toks[1] and not toks[1].startswith("?"):
+        return toks[1]
+    return None
+
+
+def _class_token(sym: str):
+    """Innermost class token of an arbitrary (callee) mangled symbol, lowercased.
+    Tolerant: returns None when no class scope can be read."""
+    if not sym or "@@" not in sym:
+        return None
+    toks = sym.split("@@", 1)[0].split("@")
+    if len(toks) >= 2 and toks[1]:
+        return toks[1].lower()
+    return None
+
+
+def _scope_has_stl(name: str) -> bool:
+    """True iff ``stlpmtx_std`` appears in the function's OWN qualified name
+    (the scope chain before the first ``@@``), i.e. the function itself is a
+    member of an stlport container/algorithm.  When the token appears only after
+    the first ``@@`` it is a parameter/return type (e.g. a non-STL outer function
+    taking a ``vector`` argument) and this returns False -- that case is real
+    logic, not stlport-version contamination."""
+    scope = name.split("@@", 1)[0] if "@@" in name else name
+    return "stlpmtx_std" in scope
+
+
+def _stratum(live) -> str:
+    """live-fuzzy stratum tag for BODY-LEVER per-stratum pricing."""
+    if not isinstance(live, (int, float)):
+        return "lt70"
+    if 70.0 <= live < 90.0:
+        return "70-90"
+    if live < 70.0:
+        return "lt70"
+    return "90plus"
+
+
+def _call_class_divergence(instrs, symbol_diffs) -> int:
+    """Count ``bl`` rows whose target callee class token differs from the base
+    callee class token (>=2 => the renamer paired two functions that call into
+    different classes = a mispair, not a body lever)."""
+    op_by_idx = {}
+    for it in instrs:
+        idx = it.get("index")
+        op = ((it.get("target") or {}).get("opcode")
+              or (it.get("base") or {}).get("opcode"))
+        if idx is not None:
+            op_by_idx[idx] = op
+    n = 0
+    for idx, tsym, bsym in symbol_diffs:
+        if op_by_idx.get(idx) != "bl":
+            continue
+        tc, bc = _class_token(tsym), _class_token(bsym)
+        if tc and bc and tc != bc:
+            n += 1
+    return n
+
+
+def _body_lever_subsplit(row, rec, ctx, ev, instrs, noneq, symbol_diffs,
+                         cluster_len, start_idx, diff_arg_rows, explained,
+                         live_pct):
+    """Apply the calibrated pre-filters BEFORE granting BODY-LEVER (order:
+    MISPAIR pre-filters -> STL-CONTAM -> BODY-MISSING-PORT -> BODY-LEVER).
+    Returns (bucket, conf, evidence)."""
+    name = row["name"]
+    stem = _stem(row["unit"])
+    bsize = rec.get("base_size") or 0
+
+    # (a) MISPAIR pre-filters ------------------------------------------------
+    # a1: stub base (should be impossible in a live BODY-LEVER row, but guard).
+    if bsize == 0:
+        return B_MISPAIR, "medium", ev + ["body-lever prefilter", "base_size==0 stub"]
+    # a2: class-vs-unit mismatch (plain non-template/non-thunk symbols only).
+    cls = _own_class(name)
+    if cls:
+        cl, st = cls.lower(), stem.lower()
+        if cl and st and cl not in st and st not in cl:
+            return (B_MISPAIR, "medium",
+                    ev + ["body-lever prefilter",
+                          f"class {cls} attributed to unit {stem}"])
+    # a3: call-class divergence (>=2 bl rows into different classes).
+    ccd = _call_class_divergence(instrs, symbol_diffs)
+    if ccd >= 2:
+        return (B_MISPAIR, "medium",
+                ev + ["body-lever prefilter",
+                      f"calls different class's methods ({ccd})"])
+
+    # (b) STL-CONTAM: fn itself is a member of an stlport container/algorithm.
+    if _scope_has_stl(name):
+        return (B_STL_CONTAM, "medium",
+                ev + ["own scope is stlpmtx_std (stlport-version divergence)"])
+
+    # (c) BODY-MISSING-PORT: dtor thunk or no plausible owner .cpp in-tree.
+    if name.startswith(("??_G", "??_D")):
+        return (B_BODY_MISSING, "medium",
+                ev + [f"deleting-dtor thunk {name[:6]}; port owner source first"])
+    has_owner = stem in ctx.src_cpp_by_stem or stem in ctx.wired_stems
+    if not has_owner:
+        return (B_BODY_MISSING, "medium",
+                ev + [f"no in-tree owner .cpp for unit {stem}; port source first"])
+
+    # (d) surviving -> BODY-LEVER, priced per-stratum.
+    strat = _stratum(live_pct)
+    return (B_BODY_LEVER, "high",
+            ev + [f"indel cluster {cluster_len} @idx {start_idx}; "
+                  f"explained {explained}/{diff_arg_rows} diff_arg (lever); "
+                  f"stratum {strat}"])
+
+
+def classify_l2(row, rec, l2, ev, ctx=None):
     """Layer-2 rules a-e. Returns (bucket, conf, evidence)."""
     S = _summary(rec)
     total = int(S.get("total") or 0)
@@ -750,9 +911,12 @@ def classify_l2(row, rec, l2, ev):
                 if it.get("match_type") == "diff_arg"
                 and (it.get("diff_breakdown") or {}).get("arguments"))
             if diff_arg_rows == 0 or explained >= 0.7 * diff_arg_rows:
-                return (B_BODY_LEVER, "high",
-                        ev + [f"indel cluster {len(biggest)} @idx {start_idx}; "
-                              f"explained {explained}/{diff_arg_rows} diff_arg (lever)"])
+                # BODY-LEVER sub-split (30-fn calibration wave, 2026-07-19):
+                # peel MISPAIR (dominant FP class) / STL-CONTAM / BODY-MISSING-
+                # PORT off BEFORE granting BODY-LEVER, then price per-stratum.
+                return _body_lever_subsplit(
+                    row, rec, ctx, ev, instrs, noneq, symbol_diffs,
+                    len(biggest), start_idx, diff_arg_rows, explained, live_pct)
             return B_BODY, "high", ev + [f"insert/delete cluster {len(biggest)} instrs @idx {start_idx}"]
 
     # (d) RELOC-COLOC (layer-2 confirm)
@@ -844,6 +1008,7 @@ def write_json(path, project, pool_path, rows, results):
             "target_size": res["target_size"], "base_size": res["base_size"],
             "bucket": res["bucket"], "confidence": res["confidence"],
             "evidence": res["evidence"], "layer": res["layer"],
+            "stratum": res.get("stratum"),
         })
     doc = {
         "generated": datetime.now(timezone.utc).isoformat(),
@@ -859,8 +1024,8 @@ def write_markdown(path, rows, results):
     for row in rows:
         by_bucket[results[(row["unit"], row["name"])]["bucket"]].append((row, results[(row["unit"], row["name"])]))
     lines = ["# Divergence triage — priced buckets", ""]
-    lines.append("| Bucket | Fns | Tgt KB | 99.5+ | 90-99.5 | 75-90 | <75 | Fleet | Flip likelihood |")
-    lines.append("|---|---:|---:|---:|---:|---:|---:|---|---|")
+    lines.append("| Bucket | Basis | Fns | Tgt KB | 99.5+ | 90-99.5 | 75-90 | <75 | Fleet | Flip likelihood |")
+    lines.append("|---|---|---:|---:|---:|---:|---:|---:|---|---|")
     order = [b for b in ALL_BUCKETS if b in by_bucket] + [b for b in by_bucket if b not in ALL_BUCKETS]
     for b in order:
         items = by_bucket[b]
@@ -872,8 +1037,22 @@ def write_markdown(path, rows, results):
             bcols = f"{c995} | {c90} | {c75} | {clow}"
         else:
             bcols = "- | - | - | -"
-        lines.append(f"| {b} | {n} | {kb:.1f} | {bcols} | {FLEET.get(b,'?')} | {FLIP_PRIOR.get(b,'?')} |")
+        lines.append(
+            f"| {b} | {BASIS.get(b,'n/a')} | {n} | {kb:.1f} | {bcols} | "
+            f"{FLEET.get(b,'?')} | {FLIP_PRIOR.get(b,'?')} |")
     lines.append("")
+    lines += [
+        "Basis: MEASURED = calibrated vs decomp.db outcomes; PROBE = probe-verified "
+        "dry run; VALIDATED = repeat independent confirms; ESTIMATE = unmeasured "
+        "prior, calibrate before funding.",
+        "",
+        "Note: the \"diff_arg (lever)\" evidence shape is NECESSARY BUT NOT "
+        "SUFFICIENT — it screens shape, not root cause. Regswap-cascade, "
+        "FPR-scheduling, and CSE/FMA walls all hide inside the same "
+        "reloc-explained-indel shape, which is why the measured BODY-LEVER flip "
+        "rate collapsed from the ~80% shape-prior to 25%/≤5% per stratum.",
+        "",
+    ]
 
     # ── ground-truth calibration appendix (24-fn grind campaign) ──────────
     lines += [
@@ -901,22 +1080,54 @@ def write_markdown(path, rows, results):
         if results[(row["unit"], row["name"])]["bucket"] == B_BODY
         and isinstance(results[(row["unit"], row["name"])]["live_pct"], (int, float))
         and 78.0 <= results[(row["unit"], row["name"])]["live_pct"] <= 96.0)
+
+    # BODY-LEVER is now priced PER-STRATUM (30-fn calibration wave):
+    #   0.25 x (70-90 live count) + 0.05 x (rest). All BODY-LEVER rows are
+    #   non-STL by construction (STL-CONTAM is peeled off before the grant).
+    bl_7090 = sum(
+        1 for row in rows
+        if results[(row["unit"], row["name"])]["bucket"] == B_BODY_LEVER
+        and results[(row["unit"], row["name"])].get("stratum") == "70-90")
+    bl_total = counts.get(B_BODY_LEVER, 0)
+    bl_rest = bl_total - bl_7090
+    bl_expected = 0.25 * bl_7090 + 0.05 * bl_rest
+
+    # (label, count, prior, basis) — BODY-LEVER handled explicitly above.
     terms = [
-        ("BODY-LEVER", counts.get(B_BODY_LEVER, 0), 0.80),
-        ("LEVER-SYMBOL", counts.get(B_LEVER_SYMBOL, 0), 0.90),
-        ("LEVER-STRING", counts.get(B_LEVER_STRING, 0), 0.85),
-        ("BODY-PORT(78-96)", body_78_96, 0.45),
-        ("FORM-DIVERGENCE", counts.get(B_FORM, 0), 0.30),
-        ("STRUCT-ARTIFACT", counts.get(B_STRUCT, 0), 0.60),
-        ("ZS-MISSING-INSTANTIATION", counts.get(B_ZS_MISSINST, 0), 0.90),
+        ("LEVER-SYMBOL", counts.get(B_LEVER_SYMBOL, 0), 0.90, "VALIDATED"),
+        ("LEVER-STRING", counts.get(B_LEVER_STRING, 0), 0.85, "VALIDATED"),
+        ("ZS-MISSING-INSTANTIATION", counts.get(B_ZS_MISSINST, 0), 0.90, "PROBE"),
+        ("STL-CONTAM", counts.get(B_STL_CONTAM, 0), 0.00, "MEASURED"),
+        ("BODY-PORT(78-96)", body_78_96, 0.45, "VALIDATED"),
+        ("FORM-DIVERGENCE", counts.get(B_FORM, 0), 0.30, "ESTIMATE"),
+        ("STRUCT-ARTIFACT", counts.get(B_STRUCT, 0), 0.60, "ESTIMATE"),
     ]
-    total_exp = sum(n * p for _, n, p in terms)
-    parts = "; ".join(f"{lbl} {n}x{p:.2f}={n*p:.1f}" for lbl, n, p in terms)
+    # Bankable = evidence-backed (MEASURED/PROBE/VALIDATED); estimates listed apart.
+    bankable_terms = [t for t in terms if t[3] != "ESTIMATE"]
+    estimate_terms = [t for t in terms if t[3] == "ESTIMATE"]
+
+    bl_str = (f"BODY-LEVER {bl_7090}x0.25 (70-90) + {bl_rest}x0.05 (rest) "
+              f"= {bl_expected:.1f}")
+    bankable_parts = "; ".join(
+        f"{lbl} {n}x{p:.2f}={n*p:.1f}" for lbl, n, p, _ in bankable_terms)
+    bankable_total = bl_expected + sum(n * p for _, n, p, _ in bankable_terms)
+    est_parts = "; ".join(
+        f"{lbl} {n}x{p:.2f}={n*p:.1f}" for lbl, n, p, _ in estimate_terms)
+    est_total = sum(n * p for _, n, p, _ in estimate_terms)
+
     lines += [
         "## Fundable-fleet expected strict flips",
         "",
-        f"Expected strict flips by fundable bucket (count x midpoint prior): "
-        f"{parts}. TOTAL expected strict flips: {total_exp:.1f}.",
+        f"**BODY-LEVER (MEASURED, per-stratum):** {bl_str}. "
+        f"(non-STL 70-90 count = {bl_7090}; rest = {bl_rest}; total BODY-LEVER = "
+        f"{bl_total}.)",
+        "",
+        f"**Bankable subtotal (MEASURED / PROBE / VALIDATED evidence only):** "
+        f"{bl_str}; {bankable_parts}. BANKABLE TOTAL expected strict flips: "
+        f"{bankable_total:.1f}.",
+        "",
+        f"**Unpriced upside (ESTIMATE — calibrate before funding):** {est_parts}. "
+        f"Estimate-only expected flips (do NOT bank): {est_total:.1f}.",
         "",
     ]
 
@@ -1002,6 +1213,11 @@ def main():
             "bucket": bucket, "confidence": conf, "evidence": ev,
             "layer": 1, "live_pct": live_pct if isinstance(live_pct, (int, float)) else row["pct"],
             "target_size": tsize, "base_size": bsize, "_rec": rec, "_base_ev": base_ev,
+            # raw live fuzzy% (None if the base emits nothing) + pool/report pct,
+            # kept for the post-processing staleness guard (do NOT coalesce raw
+            # live to pool pct here -- that would mask report0-live-diff rows).
+            "_raw_live": live_pct if isinstance(live_pct, (int, float)) else None,
+            "_pool_pct": row["pct"],
         }
         results[(row["unit"], row["name"])] = entry
         if bucket is None:
@@ -1051,7 +1267,7 @@ def main():
         if entry["bucket"] is None:
             if key in fetch_set and row["name"] in l2_by_sym:
                 l2 = l2_by_sym[row["name"]]
-                b, c, e = classify_l2(row, rec, l2, base_ev)
+                b, c, e = classify_l2(row, rec, l2, base_ev, ctx)
                 entry.update(bucket=b, confidence=c, evidence=e, layer=2)
             else:
                 # exceeded l2 budget -> deferred manual triage
@@ -1066,8 +1282,34 @@ def main():
             # LEVER-SYMBOL despite tripping the L1 indel fast path.
             l2 = l2_by_sym[row["name"]]
             if l2:
-                b, c, e = classify_l2(row, rec, l2, base_ev)
+                b, c, e = classify_l2(row, rec, l2, base_ev, ctx)
                 entry.update(bucket=b, confidence=c, evidence=e, layer=2)
+
+    # ── Staleness guard: report-vs-live pct divergence (calibration 2026-07-19)
+    # Runs before bucket finalization, over ALL nonzero-routed rows. If the raw
+    # live fuzzy% (missing -> 0) diverges from the pool/report pct by >50, the
+    # pairing is stale / unstable -> UNRELIABLE-EVIDENCE, keeping the original
+    # bucket in the evidence. Supersedes fleet routing for the report0-live-diff
+    # (Z4) rows -- intended. Known instance: a GemManager row read live 100.0 but
+    # a cache-cleared report shows a 0-byte stub.
+    for row in rows:
+        entry = results[(row["unit"], row["name"])]
+        b = entry.get("bucket")
+        if b not in NONZERO_BUCKETS or b == B_UNRELIABLE:
+            continue
+        raw_live = entry.get("_raw_live")
+        live = raw_live if isinstance(raw_live, (int, float)) else 0.0
+        pool = entry.get("_pool_pct", row["pct"])
+        if abs(live - pool) > 50:
+            entry["evidence"] = (entry.get("evidence") or []) + [
+                f"was {b}; live {live:.1f} vs pool {pool:.1f} — stale/pairing-unstable"]
+            entry["bucket"] = B_UNRELIABLE
+            entry["confidence"] = "low"
+
+    # ── stratum tag for BODY-LEVER rows (per-stratum pricing) ────────────
+    for entry in results.values():
+        if entry.get("bucket") == B_BODY_LEVER:
+            entry["stratum"] = _stratum(entry.get("live_pct"))
 
     # ── R4: survivor-band inversion (post-processing) ────────────────────
     # 97.5-99.8% live is the wall-dominated survivor band; the vtordisp/dead-arg
