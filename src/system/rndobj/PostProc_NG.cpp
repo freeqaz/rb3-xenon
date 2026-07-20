@@ -381,15 +381,15 @@ void NgPostProc::CheckPosterizeAndKaleidoscope() {
     }
     if (0.0f < mKaleidoscopeComplexity) {
         TheShaderMgr.unk2c = true;
-        kaleidoParams.w = mKaleidoscopeRadius;
-        kaleidoParams.y = mKaleidoscopeSize;
+        posterParams.w = mKaleidoscopeSize;
+        kaleidoParams.y = mKaleidoscopeRadius;
         float angle = mKaleidoscopeAngle * 0.017453292f;
         kaleidoParams.x = 6.2831855f / mKaleidoscopeComplexity;
-        kaleidoParams.z = angle;
+        posterParams.z = angle;
         if (mKaleidoscopeFlipUVs) {
-            posterParams.z = 2.0f;
+            kaleidoParams.z = 2.0f;
         } else {
-            posterParams.z = 1.0f;
+            kaleidoParams.z = 1.0f;
         }
     }
     TheShaderMgr.SetPConstant(kPS_Posterize, posterParams);

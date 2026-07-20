@@ -132,8 +132,10 @@ BEGIN_COPYS(RndTransformable)
     COPY_VIRTUAL_SUPERCLASS(Hmx::Object)
     CREATE_COPY(RndTransformable)
     BEGIN_COPYING_MEMBERS
-        COPY_MEMBER(mWorldXfm)
-        COPY_MEMBER(mLocalXfm)
+        const Transform &srcWorldXfm = c->mWorldXfm;
+        mWorldXfm = srcWorldXfm;
+        const Transform &srcLocalXfm = c->mLocalXfm;
+        mLocalXfm = srcLocalXfm;
         if (ty != kCopyFromMax) {
             COPY_MEMBER(mPreserveScale)
             COPY_MEMBER(mConstraint)
