@@ -1,4 +1,12 @@
 {
+ "0x826cd8e0": "?TotalBasePoints@MultiplayerAnalyzer@@QBAHXZ",
+ "0x826cd948": "?GetCodaExtents@MultiplayerAnalyzer@@QAAXABVUserGuid@@AAH1@Z",
+ "0x826cda68": "?GetMaxPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+ "0x826cdaa0": "?GetMaxStreakPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+ "0x826cdad8": "?GetBonusPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+ "0x826cdcd8": "?AddSolo@MultiplayerAnalyzer@@QAAXABVUserGuid@@H@Z",
+ "0x826cdd78": "?AddSolos@MultiplayerAnalyzer@@QAAXXZ",
+ "0x826cde70": "?AddCodas@MultiplayerAnalyzer@@QAAXXZ",
  "0x826dab98": "??A?$map@W4TrackType@@VPlayerStreakData@PerfectSectionTracker@@U?$less@W4TrackType@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAVPlayerStreakData@PerfectSectionTracker@@ABW4TrackType@@@Z",
  "0x826dac78": "??0PerfectSectionTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
  "0x826daf80": "??1PerfectSectionTracker@@UAA@XZ",

@@ -5686,6 +5686,10 @@ band3/game/PerfectSectionTracker.cpp:
 	.pdata      start:0x82235A38 end:0x82235B78
 	.text       start:0x826DAB90 end:0x826DC4BC
 
+band3/game/MultiplayerAnalyzer.cpp:
+	.pdata      start:0x82234B50 end:0x82234C00
+	.text       start:0x826CD4E0 end:0x826CE25C
+
 GameConfig.cpp:
 	.pdata      start:0x82230D80 end:0x82230D88
 	.pdata      start:0x82230EA8 end:0x82230EB0
