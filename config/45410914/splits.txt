@@ -1622,7 +1622,7 @@ HamMove.cpp:
 	.pdata      start:0x821FA818 end:0x821FA820
 	.pdata      start:0x82210658 end:0x82210660
 	.pdata      start:0x8221E708 end:0x8221E710
-	.pdata      start:0x82238C40 end:0x82238C48
+	.pdata      start:0x82238C30 end:0x82238C38
 	.pdata      start:0x82238C90 end:0x82238C98
 	.text       start:0x822717C0 end:0x82271B5C
 	.text       start:0x82271D48 end:0x82271D9C
@@ -1639,7 +1639,7 @@ HamMove.cpp:
 	.text       start:0x82300030 end:0x823000BC
 	.text       start:0x82484B88 end:0x82484BF8
 	.text       start:0x825748A0 end:0x825748E4
-	.text       start:0x82714948 end:0x827149A8
+	.text       start:0x827148B0 end:0x82714910
 	.text       start:0x82714DC8 end:0x82714F0C
 	.text       start:0x8278B7F0 end:0x8278B838
 	.text       start:0x827B7ED0 end:0x827B7EE0
@@ -4308,10 +4308,12 @@ MidiInstrument.cpp:
 	.pdata      start:0x82207DC0 end:0x82207DC8
 	.pdata      start:0x82207DF0 end:0x82207DF8
 	.pdata      start:0x82238AA8 end:0x82238C28
+	.pdata      start:0x82238C40 end:0x82238C48
 	.text       start:0x822C5758 end:0x822C57B8
 	.text       start:0x823E3E38 end:0x823E3E84
 	.text       start:0x823E3FC8 end:0x823E4014
 	.text       start:0x827130B0 end:0x82714854
+	.text       start:0x82714948 end:0x827149A8
 
 CharCollide.cpp:
 	.pdata      start:0x821F6F70 end:0x821F6FC8
