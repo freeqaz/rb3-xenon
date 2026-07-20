@@ -459,8 +459,10 @@ u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     default:
         break;
     }
-    int drawDiff = TheRnd.GetDrawMode() - Rnd::kDrawOcclusion;
-    return -(u64)(bool)drawDiff & opts;
+    // Retail RB3 X360 gates on raw Rnd::DrawMode value 3 here (dc3's newer enum
+    // shifted kDrawOcclusion to 4); same -1 divergence handled in CheckForceCull.
+    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)3) opts = 0;
+    return opts;
 }
 
 u64 RndShaderDrawRect::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
