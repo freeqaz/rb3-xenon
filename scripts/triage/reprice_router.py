@@ -35,6 +35,22 @@ DEFAULT_OUT_MD = os.path.join(REPO_ROOT, "docs", "plans", "router-measured-prior
 TRUST_THRESHOLD = 8  # n_attempted >= this => trusted measurement
 Z = 1.96  # Wilson score interval (95%)
 
+# Buckets the calibrated triage table marks VALIDATED *and* action=skip
+# (Basis=VALIDATED, Fleet=skip, ~0% flip with independent confirms).
+# Source: docs/plans/triage-buckets-2026-07-19.md (2026-07-19).
+# These have zero grind-DB attempts, so the naive join drops them into the
+# "estimate-only" section — but that label is a join artifact and wrongly
+# implies they *might* be fundable. They are independently confirmed dead.
+# NOTE (deliberately excluded): SCATTER-OWNER (fixable scatter-include vein,
+# not a skip) and ZS-MISSING-INSTANTIATION (PROBE/high-flip, fundable) are also
+# zero-attempt but must stay estimate-only — they are NOT validated-dead.
+VALIDATED_SKIP_BUCKETS = frozenset({
+    "WALL-VTORDISP",
+    "WALL-DEADARG",
+    "RELOC-COLOC",
+    "ZS-STL-HELPER",
+})
+
 
 def wilson_low(k, n, z=Z):
     """Standard Wilson score interval lower bound."""
@@ -171,17 +187,38 @@ def build_md(buckets, overall, all_triage_buckets, join_diag, has_stratum,
         lines.append(fmt_row(name, s))
     lines.append("")
 
-    # zero-attempt buckets (estimate-only)
+    # zero-attempt buckets: split VALIDATED-SKIP (independently confirmed dead)
+    # from genuinely estimate-only (no ground truth yet, possibly fundable).
     measured_names = set(buckets)
     zero = sorted(b for b in all_triage_buckets if b not in measured_names)
+    zero_validated_skip = [b for b in zero if b in VALIDATED_SKIP_BUCKETS]
+    zero_estimate = [b for b in zero if b not in VALIDATED_SKIP_BUCKETS]
+
     lines.append("## Estimate-only buckets (zero grind attempts, no ground truth yet)")
     lines.append("")
-    if zero:
-        for b in zero:
+    if zero_estimate:
+        for b in zero_estimate:
             lines.append(f"- {b} ({all_triage_buckets[b]} labeled functions in pool)")
     else:
-        lines.append("_None — every triage bucket has at least one attempted function._")
+        lines.append("_None — every remaining zero-attempt bucket is VALIDATED-SKIP (below)._")
     lines.append("")
+
+    if zero_validated_skip:
+        lines.append("## VALIDATED-SKIP buckets (independent confirm, not grind-DB)")
+        lines.append("")
+        lines.append(
+            "_Zero grind-DB attempts, but independently confirmed dead (~0% flip) "
+            "in the calibrated triage table — the \"estimate-only\" label is a join "
+            "artifact and does NOT imply fundability. "
+            "See `docs/plans/triage-buckets-2026-07-19.md` (2026-07-19)._"
+        )
+        lines.append("")
+        for b in zero_validated_skip:
+            lines.append(
+                f"- {b} ({all_triage_buckets[b]} labeled functions in pool) — "
+                f"VALIDATED-SKIP (independent confirm, not grind-DB)"
+            )
+        lines.append("")
 
     if has_stratum and strata_table:
         lines.append("## Secondary breakdown: (bucket, stratum)")
@@ -249,11 +286,27 @@ def main(argv=None):
 
     ts = datetime.datetime.now().astimezone().replace(microsecond=0).isoformat()
 
+    # zero-attempt buckets that are independently confirmed dead (join artifact,
+    # NOT fundable) — surfaced so a machine consumer doesn't mistake them for
+    # estimate-only upside. See VALIDATED_SKIP_BUCKETS above.
+    measured_names = set(buckets)
+    validated_skip_zero = sorted(
+        b for b in all_triage_buckets
+        if b not in measured_names and b in VALIDATED_SKIP_BUCKETS
+    )
+
     out = {
         "generated": ts,
         "source_attempts": total_attempts,
         "join_diagnostics": join_diag,
         "buckets": dict(buckets),
+        "validated_skip_zero_attempt_buckets": {
+            b: {
+                "n_labeled": all_triage_buckets[b],
+                "label": "VALIDATED-SKIP (independent confirm, not grind-DB)",
+            }
+            for b in validated_skip_zero
+        },
     }
     out["buckets"]["OVERALL"] = overall
 
