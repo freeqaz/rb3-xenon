@@ -296,6 +296,39 @@ public:
             PadStream(stream, (savesize * (maxsize - lsize)));
     }
 
+    // Int-keyed hash_map of owned pointers whose value type is itself
+    // FixedSizeSaveable (e.g. SongStatusMgr::mSongStatusCache). Retail keeps
+    // this instantiation out-of-line as a shared helper (verified: target
+    // SongStatusMgr::SaveFixed calls a standalone fn_825D16B8(stream, &map,
+    // maxsize, savesize) rather than inlining the loop) — write it the same
+    // way here (call this method) rather than hand-inlining the loop in the
+    // caller, so /Ob2 makes the same out-of-line decision.
+    template <class T>
+    static void SaveStdPtr(
+        FixedSizeSaveableStream &stream,
+        const std::hash_map<int, T *> &map,
+        int maxsize,
+        int savesize
+    ) {
+        int lsize = map.size();
+        if (lsize > maxsize) {
+            MILO_NOTIFY(
+                "The hash_map size is greater than the maximum supplied! size=%i max=%i\n",
+                lsize,
+                maxsize
+            );
+            lsize = maxsize;
+        }
+        stream << lsize;
+        for (std::hash_map<int, T *>::const_iterator it = map.begin(); it != map.end();
+             ++it) {
+            stream << it->first;
+            it->second->SaveFixed(stream);
+        }
+        if (maxsize > lsize)
+            PadStream(stream, (savesize * (maxsize - lsize)));
+    }
+
     template <class T>
     static void LoadStd(
         FixedSizeSaveableStream &stream,

@@ -992,12 +992,7 @@ int SongStatusMgr::SaveSize(int rev) {
 }
 
 void SongStatusMgr::SaveFixed(FixedSizeSaveableStream &stream) const {
-    stream << (int)mSongStatusCache.size();
-    for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
-         it != mSongStatusCache.end(); ++it) {
-        stream << it->first;
-        it->second->SaveFixed(stream);
-    }
+    FixedSizeSaveable::SaveStdPtr(stream, mSongStatusCache, 3000, 0x1da);
     for (ScoreType i = (ScoreType)0; i < 11; i = (ScoreType)(i + 1)) {
         stream << mCachedTotalScores[i];
         stream << mCachedTotalDiscScores[i];
