@@ -1,4 +1,6 @@
 {
+ "0x8256bd50": "?Request@CharCache@@QAAXHABV?$vector@PAVBandCharDesc@@V?$StlNodeAlloc@PAVBandCharDesc@@@stlpmtx_std@@@stlpmtx_std@@_N1@Z",
+ "0x8256bdc8": "?RecomposePatches@CharCache@@QAAXHPAVBandCharDesc@@H@Z",
  "0x826adee8": "?GetLegendMode@RGTrainerPanel@@QBA_NXZ",
  "0x826adef0": "?SetSongSectionComplete@RGTrainerPanel@@UAAXPAVBandProfile@@HW4Difficulty@@H@Z",
  "0x826ae078": "?Looped@RGTrainerPanel@@UAAXXZ",

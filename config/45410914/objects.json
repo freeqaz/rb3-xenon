@@ -1047,6 +1047,7 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/CharCache.cpp": "NonMatching",
    "band3/meta_band/CharData.cpp": "NonMatching",
    "band3/meta_band/ContextChecker.cpp": "NonMatching",
    "band3/meta_band/CustomizePanel.cpp": {
