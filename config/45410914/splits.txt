@@ -4669,6 +4669,14 @@ band3/meta_band/NetSync.cpp:
 	.pdata      start:0x82220CF0 end:0x82221090
 	.text       start:0x8259A648 end:0x8259D9B8
 
+band3/game/Scoring.cpp:
+	.pdata      start:0x82232588 end:0x82232638
+	.pdata      start:0x82232640 end:0x82232658
+	.pdata      start:0x82232660 end:0x822326B0
+	.text       start:0x826A0778 end:0x826A1808
+	.text       start:0x826A1868 end:0x826A1960
+	.text       start:0x826A19C0 end:0x826A2208
+
 band3/game/Band.cpp:
 	.pdata      start:0x82231F28 end:0x82231F30
 	.pdata      start:0x82232018 end:0x82232020

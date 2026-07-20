@@ -784,6 +784,7 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/game/Scoring.cpp": "NonMatching",
    "band3/game/Defines.cpp": "NonMatching",
    "band3/game/TrackerDisplay.cpp": "NonMatching",
    "band3/game/TrackerUtils.cpp": "NonMatching",
