@@ -562,14 +562,36 @@ void AccomplishmentPanel::LaunchGoal(LocalBandUser *user) {
         TheAccomplishmentMgr->GetAccomplishment(selectedacc);
     MILO_ASSERT(pAccomplishment, 0x5CC);
     TheCampaign->SetupLaunchedAccomplishmentInfo(selectedacc);
+
+    // Retail declares the acc_* comparison keys as function-local static Symbols
+    // (bit-packed guard word), constructed up front in this order — not the
+    // global Symbol tokens. Shadow the globals to match retail codegen.
+    static Symbol acc_calibrate("acc_calibrate");
+    static Symbol acc_charactercreate("acc_charactercreate");
+    static Symbol acc_bandcreate("acc_bandcreate");
+    static Symbol acc_bandlogo("acc_bandlogo");
+    static Symbol acc_standins("acc_standins");
+    static Symbol acc_joinalabel("acc_joinalabel");
+    static Symbol acc_startalabel("acc_startalabel");
+    static Symbol acc_multiplayersession("acc_multiplayersession");
+    static Symbol acc_createsetlist("acc_createsetlist");
+    static Symbol acc_HMXrecommends("acc_HMXrecommends");
+    static Symbol acc_guitartutorial01("acc_guitartutorial01");
+    static Symbol acc_guitartutorial02("acc_guitartutorial02");
+    static Symbol acc_guitartutorial03("acc_guitartutorial03");
+
+    // Retail computes the profile after the static-Symbol block, just before the
+    // comparison chain.
     BandProfile *pProfile = TheCampaign->GetProfile();
     MILO_ASSERT(pProfile, 0x5E0);
 
     if (selectedacc == acc_calibrate) {
-        Handle(handle_launch_calibration_msg, true);
+        static Message msg("handle_launch_calibration");
+        Handle(msg, true);
     } else if (selectedacc == acc_charactercreate) {
         if (pProfile->NumChars() >= 10) {
-            Handle(handle_cant_launch_charactercreator_msg, true);
+            static Message msg("handle_cant_launch_charactercreator");
+            Handle(msg, true);
         } else {
             static Message cMsg("handle_launch_charactercreator", 0);
             cMsg[0] = user;
@@ -584,15 +606,20 @@ void AccomplishmentPanel::LaunchGoal(LocalBandUser *user) {
     } else if (selectedacc == acc_multiplayersession) {
         CreateAndSubmitMusicLibraryTask();
         TheCampaign->SetWasLaunchedIntoMusicLibrary(true);
-        Handle(handle_goto_musiclibrary_msg, true);
+        static Message msg("handle_goto_musiclibrary");
+        Handle(msg, true);
     } else if (selectedacc == acc_createsetlist || selectedacc == acc_HMXrecommends) {
-        Handle(handle_launch_oneway_setlistbrowser_msg, true);
+        static Message msg("handle_launch_oneway_setlistbrowser");
+        Handle(msg, true);
     } else if (selectedacc == acc_guitartutorial01) {
-        Handle(handle_acc_guitartutorial01_msg, true);
+        static Message msg("handle_acc_guitartutorial01");
+        Handle(msg, true);
     } else if (selectedacc == acc_guitartutorial02) {
-        Handle(handle_acc_guitartutorial02_msg, true);
+        static Message msg("handle_acc_guitartutorial02");
+        Handle(msg, true);
     } else if (selectedacc == acc_guitartutorial03) {
-        Handle(handle_acc_guitartutorial03_msg, true);
+        static Message msg("handle_acc_guitartutorial03");
+        Handle(msg, true);
     } else if (pAccomplishment->GetType() == kAccomplishmentTypeTourConditional) {
         AccomplishmentTourConditional *pTourAccomplishment =
             dynamic_cast<AccomplishmentTourConditional *>(pAccomplishment);
@@ -624,11 +651,13 @@ void AccomplishmentPanel::LaunchGoal(LocalBandUser *user) {
         Handle(cMsg, true);
     } else if (pAccomplishment->HasSpecificSongsToLaunch()) {
         BuildSetList();
-        Handle(handle_goto_difficultyselect_msg, true);
+        static Message msg("handle_goto_difficultyselect");
+        Handle(msg, true);
     } else {
         CreateAndSubmitMusicLibraryTask();
         TheCampaign->SetWasLaunchedIntoMusicLibrary(true);
-        Handle(handle_goto_musiclibrary_msg, true);
+        static Message msg("handle_goto_musiclibrary");
+        Handle(msg, true);
     }
 }
 

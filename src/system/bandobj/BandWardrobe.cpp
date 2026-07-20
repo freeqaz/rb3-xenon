@@ -1146,7 +1146,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
     mCurNames = &mVignetteNames;
     LoadPrefabPrefs();
     SetContexts(Symbol("vignette"));
-    ObjectDir *charsDir = dynamic_cast<ObjectDir *>(worldDir->FindObject("clips", false));
+    ObjectDir *charsDir = worldDir->Find<ObjectDir>("clips", false);
     if (charsDir) {
         for (ObjDirItr<Character> it(worldDir, true); it; ++it) {
             CharDriver *driver = it->Driver();
@@ -1159,9 +1159,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                 if (strstr(name, "extra")) {
                     driver->SetClipType(vignette);
                     it->BoneServo()->SetClipType(vignette);
-                    ObjectDir *visemes = dynamic_cast<ObjectDir *>(
-                        it->FindObject("vignette_visemes", false)
-                    );
+                    ObjectDir *visemes = it->Find<ObjectDir>("vignette_visemes", false);
                     if (visemes) {
                         CharLipSyncDriver *lsd = dynamic_cast<CharLipSyncDriver *>(
                             it->FindObject("vignette.lipdrv", false)
@@ -1174,9 +1172,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                         if (fs)
                             fs->SetClips(visemes);
                     }
-                    CharWeightSetter *ws = dynamic_cast<CharWeightSetter *>(
-                        it->FindObject("venue.weight", false)
-                    );
+                    CharWeightSetter *ws = it->Find<CharWeightSetter>("venue.weight", false);
                     if (ws)
                         ws->SetWeight(0.0f);
                     CharLipSyncDriver *lsd2 = dynamic_cast<CharLipSyncDriver *>(
@@ -1247,9 +1243,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
         }
     }
     SetDir(worldDir);
-    BandRetargetVignette *brv = dynamic_cast<BandRetargetVignette *>(
-        worldDir->FindObject("BandRetargetVignette.brv", false)
-    );
+    BandRetargetVignette *brv = worldDir->Find<BandRetargetVignette>("BandRetargetVignette.brv", false);
     if (brv)
         brv->EnterDir();
     if (charsDir) {

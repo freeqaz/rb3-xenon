@@ -278,7 +278,10 @@ void BandDirector::Poll() {
             }
         }
         UpdatePostProcOverlay(presets, p1, p2, fref);
-#ifdef MILO_DEBUG
+        // Retail (release) stripped this cheat.emulate_fps debug block from Poll;
+        // our tree force-defines MILO_DEBUG (src/macros.h) for asserts, so gate it
+        // behind an opt-in that is off for retail matching.
+#ifdef RB3_KEEP_POLL_CHEAT
         DataNode &fps_var = DataVariable("cheat.emulate_fps");
         if (fps_var.Int() > 0) {
             int ifps = fps_var.Int();
@@ -291,7 +294,11 @@ void BandDirector::Poll() {
 void BandDirector::UpdatePostProcOverlay(
     const char *cc, const RndPostProc *p1, const RndPostProc *p2, float f
 ) {
-#ifdef MILO_DEBUG
+    // Retail (release) shipped an empty UpdatePostProcOverlay — the overlay body
+    // is debug-only and was stripped. MILO_DEBUG is force-defined tree-wide here
+    // (src/macros.h) for asserts, so gate the body behind an opt-in that is off
+    // for retail matching.
+#ifdef RB3_KEEP_POSTPROC_OVERLAY
     RndOverlay *o = RndOverlay::Find("postproc", true);
     if (o->Showing()) {
         TextStream *ts = TheDebug.Reflect();
