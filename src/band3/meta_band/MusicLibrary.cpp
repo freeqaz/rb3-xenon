@@ -1232,6 +1232,10 @@ RndMat *MusicLibrary::Mat(int, int idx, UIListMesh *slot) const {
     switch (node->GetType()) {
     case kNodeFunction:
         if (slot->Matches("bg")) {
+            static Symbol view_setlists("view_setlists");
+            static Symbol net_setlists_connect("net_setlists_connect");
+            static Symbol net_setlists_error("net_setlists_error");
+            static Symbol net_setlists_getting("net_setlists_getting");
             if (node->GetToken() == view_setlists) {
                 return mFunctionSetlistMat;
             }
@@ -1287,6 +1291,14 @@ RndMat *MusicLibrary::Mat(int, int idx, UIListMesh *slot) const {
                 return mSetlistMatOdd;
             } else
                 return mSetlistMatEven;
+        }
+        break;
+    case kNodeStoreSong:
+        if (slot->Matches("bg")) {
+            if (idx % 2) {
+                return mStoreMatOdd;
+            } else
+                return mStoreMatEven;
         }
         break;
     default:
