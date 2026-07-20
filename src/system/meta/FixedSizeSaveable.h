@@ -1,5 +1,11 @@
 #pragma once
-#include "meta_ham/HamMemcardAction.h"
+// NOTE: was #include "meta_ham/HamMemcardAction.h" (DC3 stub) — that header
+// defines stub Save/LoadMemcardAction bodies that collide with the real ones in
+// band3/meta_band/SaveLoadManager.cpp. The include existed only for the friend
+// decl below, which forward-declares the class itself. Replaced with a plain
+// forward declaration so RB3's real subclasses are the sole definitions.
+class LoadMemcardAction;
+class SaveMemcardAction;
 #include "utl/BinStream.h"
 #include "utl/BufStream.h"
 #include "meta/FixedSizeSaveableStream.h"

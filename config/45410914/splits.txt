@@ -5186,6 +5186,10 @@ band3/meta_band/ProfileMgr.cpp:
 	.text       start:0x82549128 end:0x8254B070
 	.text       start:0x827B7D88 end:0x827B7DBC
 
+band3/meta_band/SaveLoadManager.cpp:
+	.pdata      start:0x8221B520 end:0x8221C150
+	.text       start:0x8254B070 end:0x82553F28
+
 UIStats.cpp:
 	.pdata      start:0x8221CCF8 end:0x8221CD00
 	.text       start:0x8255F5C8 end:0x8255F61C

@@ -51,6 +51,14 @@ public:
     void SetHasSeenFirstTimeInstrumentFlagsForUser(const LocalUser *, int, bool) {}
     // CharacterCreatorPanel uses this on X360 in an unreachable Wii sign-in path
     int GetIndexForUser(const LocalUser *) const { return -1; }
+    // SaveLoadManager (band3/meta_band) references these Wii save-flow APIs on
+    // unreachable Xbox paths. Decl-only; the retail 360 SaveLoadManager does not
+    // route through WiiProfileMgr, so these bodies are never expected to match.
+    bool NeedsLoading() const;
+    void PreLoad();
+    bool NeedsSave() const;
+    void SetLocked(void *, bool);
+    static int SaveSize(int);
 };
 
 extern WiiProfileMgr TheWiiProfileMgr;

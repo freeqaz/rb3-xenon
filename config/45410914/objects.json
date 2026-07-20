@@ -1264,6 +1264,7 @@
      "/DRB3_STRIP_CHEAT_HANDLERS"
     ]
    },
+   "band3/meta_band/SaveLoadManager.cpp": "NonMatching",
    "band3/meta_band/WaitingUserGate.cpp": "NonMatching",
    "band3/meta_band/WiiBufStreamMgr.cpp": "NonMatching",
    "band3/net_band/EntityUploader.cpp": {

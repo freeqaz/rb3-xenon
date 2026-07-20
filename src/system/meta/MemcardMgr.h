@@ -54,6 +54,11 @@ public:
     void SetDevice(unsigned int);
     void SelectDevice(Profile *, Hmx::Object *, int, bool);
     int GetSizeNeeded();
+    // Autosave-disable state. Referenced by band3/meta_band/SaveLoadManager.cpp.
+    // Not present in the initial retail-derived layout notes above; decl-only
+    // pending confirmation of the retail storage location (see LOG.md).
+    bool IsDisableWriting();
+    void DisableWriting(bool);
 
 private:
     MCResult ThreadCall_SearchForDevice();
