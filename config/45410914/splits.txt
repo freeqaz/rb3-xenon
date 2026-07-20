@@ -321,6 +321,10 @@ CrowdAudio.cpp:
 	.pdata      start:0x821FB908 end:0x821FBC18
 	.text       start:0x82311240 end:0x8231433C
 
+CrowdMeterIcon.cpp:
+	.pdata      start:0x821F5FD0 end:0x821F6278
+	.text       start:0x822B9318 end:0x822BB3C8
+
 PatchDir.cpp:
 	.pdata      start:0x821F18F0 end:0x821F18F8
 	.pdata      start:0x821F1CC0 end:0x821F1E60
