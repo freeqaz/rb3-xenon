@@ -1,14 +1,14 @@
 {
-  "generated": "2026-07-20T20:32:39+00:00",
-  "source_attempts": 829,
+  "generated": "2026-07-20T23:23:42+00:00",
+  "source_attempts": 830,
   "join_diagnostics": {
     "triage_functions_total": 7662,
-    "attempted_functions_total": 700,
-    "attempted_functions_with_triage_bucket": 367,
+    "attempted_functions_total": 701,
+    "attempted_functions_with_triage_bucket": 368,
     "attempted_functions_without_bucket": 333,
-    "join_rate_pct": 52.4,
-    "sum_bucket_n_attempted": 367,
-    "total_grind_attempts": 829
+    "join_rate_pct": 52.5,
+    "sum_bucket_n_attempted": 368,
+    "total_grind_attempts": 830
   },
   "buckets": {
     "NEEDS-REVIEW": {
@@ -22,11 +22,11 @@
       "trusted": true
     },
     "FORM-DIVERGENCE": {
-      "rate": 0.2222,
-      "wilson_low": 0.1254,
-      "n_attempted": 45,
-      "n_flipped": 10,
-      "n_attempts_total": 59,
+      "rate": 0.2391,
+      "wilson_low": 0.1391,
+      "n_attempted": 46,
+      "n_flipped": 11,
+      "n_attempts_total": 60,
       "mean_output_tokens_per_flip": null,
       "mean_cost_usd_per_flip": null,
       "trusted": true
@@ -182,11 +182,11 @@
       "trusted": false
     },
     "OVERALL": {
-      "rate": 0.4714,
-      "wilson_low": 0.4347,
-      "n_attempted": 700,
-      "n_flipped": 330,
-      "n_attempts_total": 829,
+      "rate": 0.4722,
+      "wilson_low": 0.4355,
+      "n_attempted": 701,
+      "n_flipped": 331,
+      "n_attempts_total": 830,
       "mean_output_tokens_per_flip": null,
       "mean_cost_usd_per_flip": null,
       "trusted": true
