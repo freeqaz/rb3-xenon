@@ -189,6 +189,7 @@ void FileQualifiedFilename(char *oNewName, int unusedLmao, const char *iOldName)
 
 const char *FileLocalize(const char *iFilename, char *buffer);
 bool FileReadOnly(const char *filepath);
+bool FileExists(const char *iFilename, int iMode);
 bool FileExists(const char *iFilename, int iMode, String *);
 /** Is this file inside the system's drive? */
 bool FileIsLocal(const char *file);

@@ -150,7 +150,7 @@ FileStream *HDCache::OpenHeader() {
         int i;
         for (i = 0; i < 2; i++) {
             str = MakeString(mHdrFmt.c_str(), 0);
-            if (FileExists(str, 0x10000, nullptr))
+            if (FileExists(str, 0x10000))
                 break;
         }
         if (!(i != 2)) {
@@ -222,7 +222,7 @@ void HDCache::OpenFiles(int numCachedArkfiles) {
     std::vector<int> pendingArkfiles;
     for (int i = 0; i < numArkfiles; i++) {
         const char *fileFmt = MakeString(mFileFmt.c_str(), i);
-        bool exists = FileExists(fileFmt, 0x10000, nullptr);
+        bool exists = FileExists(fileFmt, 0x10000);
         int prio = TheArchive->GetArkfileCachePriority(i);
         if (exists && i > numCachedArkfiles) {
             FileDelete(fileFmt);

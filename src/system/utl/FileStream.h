@@ -28,7 +28,17 @@ public:
 
     int Size() { return (mFile) ? mFile->Size() : 0; }
 
-    MEM_OVERLOAD(FileStream, 0x1A);
+    // Retail/match: FileStream's operator new is NOT noinline in the retail
+    // XEX (unlike the general MEM_OVERLOAD policy) — `new FileStream(...)`
+    // call sites show the fully-inlined 2-arg `MemAlloc(size, 0)` shape
+    // (verified on HDCache::OpenHeader: target `li r4,0; li r3,0x28; bl
+    // fn_827BCD38` vs our out-of-line `bl ??2FileStream@@SAPAXI@Z`). Define
+    // the overload locally without __declspec(noinline) so /Ob2 inlines it.
+    static void *operator new(unsigned int s) {
+        return MemAlloc(s, __FILE__, 0x1A, "FileStream", 0);
+    }
+    static void *operator new(unsigned int s, void *place) { return place; }
+    static void operator delete(void *v) { MemFree(v, __FILE__, 0x1A, "FileStream"); }
 
 private:
     void DeleteChecksum();
