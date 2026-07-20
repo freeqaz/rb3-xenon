@@ -52,15 +52,25 @@ private:
 /** "Data associated with a ham Move" */
 class HamMove : public RndPropAnim {
 public:
+    // Retail RB3 (Xbox 360) layout: sizeof == 0x54 (84 bytes), NOT DC3's stripped
+    // 0x10. Recovered from objdiff of the vector<LocalizedName> ops: element
+    // stride is 0x54 (li r30,0x54 / addi ...,0x54) and elements are copied via a
+    // *non-trivial* copy ctor `bl` (not inlined). Retail's element copy ctor
+    // (ICF-folded w/ SampleZone's, fn 0x827139b0) shows the shape: a String
+    // sub-object at offset 0x0 (12B: vptr/mCap/mStr, copied by String's copy ctor
+    // fn 0x826FCE18), then a trivially-copied tail out to 0x54. Semantic fields
+    // beyond mName/mLanguage were not individually identified (the accessors are
+    // inlined/anonymous in retail); the tail is carried as opaque padding so the
+    // size/copy-shape match without inventing member semantics.
     struct LocalizedName {
         bool operator==(const Symbol s) const { return mLanguage == s; }
 
-        /** The localized name's language. (i.e. eng, esp, fre) */
-        Symbol mLanguage; // 0x0
         /** The move's name, in that language. */
-        String mName; // 0x4
-        int mPad0x10; // 0x10 - retail LocalizedName is 0x18 (stride 24); DC3 lost these
-        int mPad0x14; // 0x14
+        String mName; // 0x0 (String, 0xC bytes)
+        /** The localized name's language. (i.e. eng, esp, fre) */
+        Symbol mLanguage; // 0xc
+        /** Retail carries ~0x44 more bytes here (fields not individually RE'd). */
+        char mPad[0x54 - 0x10]; // 0x10 .. 0x54
     };
     enum TexState {
         kTexNone = 0,
