@@ -344,6 +344,10 @@ StarDisplay.cpp:
 	.text       start:0x8231CA50 end:0x8231CBBC
 	.text       start:0x8231D670 end:0x8231E8EC
 
+BandStarDisplay.cpp:
+	.pdata      start:0x821F73F0 end:0x821F74B8
+	.text       start:0x822CCDD0 end:0x822CDC10
+
 StreakMeter.cpp:
 	.pdata      start:0x821F7EA0 end:0x821F7EA8
 	.pdata      start:0x821F7F38 end:0x821F7F40

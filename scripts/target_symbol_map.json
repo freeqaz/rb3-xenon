@@ -1,4 +1,10 @@
 {
+ "0x822ccdd0": "?SetupStars@BandStarDisplay@@QAAXXZ",
+ "0x822cd188": "?SetNumStars@BandStarDisplay@@QAAXM_N@Z",
+ "0x822cd4e8": "?SyncProperty@BandStarDisplay@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x822cd748": "?Handle@BandStarDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x822cd0a8": "?ResetStars@BandStarDisplay@@QAAXXZ",
+ "0x822cd4d8": "?Reset@BandStarDisplay@@QAAXXZ",
  "0x822b9448": "?SyncProperty@CrowdMeterIcon@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822bac50": "?PostSave@ObjectDir@@$4PPPPPPPM@BPM@AAXAAVBinStream@@@Z",
  "0x822bae48": "?SetType@CrowdMeterIcon@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
