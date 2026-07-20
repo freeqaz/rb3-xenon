@@ -1307,8 +1307,12 @@ DataNode Hmx::Object::HandleProperty(DataArray *prop, DataArray *a2, bool fail) 
         return n;
     }
     if (fail) {
-        MILO_FAIL_DTA(
-            "%s: property %s not found", PathName(this), prop ? prop->Sym(0) : "<none>"
+        // Retail stripped this to (void)(args) (MILO_FAIL, not MILO_FAIL_DTA):
+        // no MakeString/Fail, only the side-effecting arg exprs survive. Retail
+        // evaluated them right-to-left (ternary before PathName), so the comma
+        // args are ordered ternary-first to reproduce that byte layout.
+        MILO_FAIL(
+            "%s: property %s not found", prop ? prop->Sym(0) : "<none>", PathName(this)
         );
     }
     return 0;

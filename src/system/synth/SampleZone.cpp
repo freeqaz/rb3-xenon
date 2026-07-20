@@ -3,6 +3,8 @@
 #include "synth/Stream.h"
 #include "utl/BinStream.h"
 
+int SampleZone::gRev = 0;
+
 SampleZone::SampleZone(Hmx::Object *owner)
     : mSample(owner), mVolume(0.0f), mPan(0.0f), mCenterNote(0x24), mMinNote(0),
       mMaxNote(0x7f), mMinVel(0), mMaxVel(0x7f), mFXCore(kFXCoreNone) {}
@@ -31,7 +33,7 @@ void SampleZone::Load(BinStreamRev &d) {
     d >> fx;
     mFXCore = (FXCore)fx;
     d >> mADSR;
-    if (d.rev >= 2) {
+    if (gRev >= 2) {
         d >> mMinVel;
         d >> mMaxVel;
     }

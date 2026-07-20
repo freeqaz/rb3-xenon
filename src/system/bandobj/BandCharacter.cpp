@@ -1201,9 +1201,9 @@ void BandCharacter::CollideList(const Segment &seg, std::list<Collision> &colls)
             RndDrawable::CollideList(seg, colls);
         else {
             if (mOutfitDir)
-                mOutfitDir->CollideListSubParts(seg, colls);
+                mOutfitDir->RndDir::CollideListSubParts(seg, colls);
             if (mInstDir)
-                mInstDir->CollideListSubParts(seg, colls);
+                mInstDir->RndDir::CollideListSubParts(seg, colls);
             RndDir::CollideList(seg, colls);
         }
     }

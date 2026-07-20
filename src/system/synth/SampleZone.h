@@ -14,6 +14,8 @@ public:
     void Load(BinStreamRev &);
     bool Includes(unsigned char, unsigned char);
 
+    static int gRev;
+
     int CenterNote() const { return mCenterNote; }
     float Volume() const { return mVolume; }
     float Pan() const { return mPan; }
