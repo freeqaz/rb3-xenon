@@ -142,6 +142,7 @@ public:
     bool Contains(const char *, String &);
     void RegisterCallback(Callback *callback, bool midRefreshAllowed);
     void UnregisterCallback(Callback *callback, bool midRefreshAllowed);
+    bool ShowCurRefreshProgress();
 
 private:
     DataNode OnAddContent(DataArray *);
