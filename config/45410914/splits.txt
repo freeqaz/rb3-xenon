@@ -4883,6 +4883,14 @@ band3/meta_band/LessonProvider.cpp:
 	.pdata      start:0x8222F8C0 end:0x8222F938
 	.text       start:0x82674658 end:0x82674CFC
 
+band3/meta_band/LessonMgr.cpp:
+	.pdata      start:0x8221D700 end:0x8221D880
+	.text       start:0x82568F24 end:0x8256A298
+
+band3/meta_band/AssetMgr.cpp:
+	.pdata      start:0x8221D880 end:0x8221D9D0
+	.text       start:0x8256A298 end:0x8256B4C0
+
 band3/meta_band/TrainerProvider.cpp:
 	.pdata      start:0x8222F938 end:0x8222F988
 	.text       start:0x82674D08 end:0x82675094
