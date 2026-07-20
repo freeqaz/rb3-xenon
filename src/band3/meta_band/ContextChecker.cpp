@@ -265,6 +265,19 @@ std::vector<const char *> GetSongSpecificEntriesForCategory(Symbol, bool) {
 
 std::vector<const char *> GetSongSpecificEntries(const DataArray *a) {
     for (int i = 1; i < a->Size(); i++) {
+        // retail: 3 function-local static Symbols share one guard word
+        // (not the extern globals from Symbols.h/Symbols3.h) -- confirmed
+        // via Ghidra string reads at 0x8209ae60="song_specific",
+        // 0x8209ae7c="last_song", 0x8209b070="current_song". current_song
+        // is constructed for its Symbol interning side effect but never
+        // read in this function (verified via Ghidra decompile:
+        // DAT_82dfe094 is written, never loaded). The guard-init block is
+        // placed after the loop's entry check, so these locals live at the
+        // top of the loop body, only constructed once (first iteration).
+        static Symbol song_specific("song_specific");
+        static Symbol last_song("last_song");
+        static Symbol current_song("current_song");
+        (void)current_song;
         DataArray *thisEntry = a->Array(i);
         if (thisEntry->Sym(0) == song_specific) {
             MILO_ASSERT(thisEntry->Size() >= 3, 0x164);

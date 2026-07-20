@@ -736,6 +736,19 @@ bool Campaign::DidUserMakeProgressOnGoal(LocalBandUser *i_pUser, Symbol goal) {
 void Campaign::UpdateEndGameInfoForCurrentCampaignGoal(
     UILabel *i_pUserLabel, UILabel *i_pStatusLabel, UIPicture *i_pPicture
 ) {
+    // retail: 9 function-local static Symbols share one guard word (not the
+    // extern globals from Symbols2.h) -- confirmed via Ghidra string reads;
+    // declaration order (== guard-bit test order 0..8) verified byte-for-byte
+    // against the target guard/construction block.
+    static Symbol campaign_endgame_user_progress("campaign_endgame_user_progress");
+    static Symbol campaign_endgame_user_noprogress("campaign_endgame_user_noprogress");
+    static Symbol campaign_endgame_user_congrats("campaign_endgame_user_congrats");
+    static Symbol campaign_endgame_goal_complete("campaign_endgame_goal_complete");
+    static Symbol campaign_endgame_goal_complete_and1more("campaign_endgame_goal_complete_and1more");
+    static Symbol campaign_endgame_goal_complete_andmore("campaign_endgame_goal_complete_andmore");
+    static Symbol campaign_endgame_goal_noprogress("campaign_endgame_goal_noprogress");
+    static Symbol campaign_endgame_goal_progress("campaign_endgame_goal_progress");
+    static Symbol campaign_endgame_goal_progress_reward("campaign_endgame_goal_progress_reward");
     MILO_ASSERT(i_pUserLabel, 0x53E);
     MILO_ASSERT(i_pStatusLabel, 0x53F);
     MILO_ASSERT(i_pPicture, 0x540);
@@ -745,58 +758,55 @@ void Campaign::UpdateEndGameInfoForCurrentCampaignGoal(
     Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(goal);
     MILO_ASSERT(pAccomplishment, 0x552);
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(pUser);
-    if (!pProfile) {
+    // retail: NO `if (!pProfile)` guard at all -- pProfile is used unchecked
+    // below (only inside the progress branch, for InqProgressValues). The
+    // condition tree is also NOT `prog.IsAccomplished(goal)`; retail tests
+    // `TheAccomplishmentMgr->HasAccomplishmentGroup(goal)` directly, and the
+    // "noprogress" tail is shared with what would otherwise be a duplicate
+    // (identical) branch -- confirmed via Ghidra decompile of the retail
+    // target (no pProfile-null branch; HasAccomplishmentGroup call site).
+    unk28 = goal;
+    if (TheAccomplishmentMgr->HasAccomplishmentGroup(goal)) {
+        int othergoals =
+            TheAccomplishmentMgr->GetNumOtherGoalsAcquired(pUser->Name(), goal);
+        i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
+        i_pUserLabel->SetTokenFmt(campaign_endgame_user_congrats, pUser->Name());
+        if (othergoals == 0) {
+            i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_complete, goal);
+        } else if (othergoals == 1) {
+            i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_complete_and1more, goal);
+        } else {
+            i_pStatusLabel->SetTokenFmt(
+                campaign_endgame_goal_complete_andmore, goal, othergoals
+            );
+        }
+    } else if (DidUserMakeProgressOnGoal(pUser, goal)) {
+        i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
+        i_pUserLabel->SetTokenFmt(campaign_endgame_user_progress, pUser->Name());
+        int iCurrent = 0;
+        int iMax = 0;
+        pAccomplishment->InqProgressValues(pProfile, iCurrent, iMax);
+        MILO_ASSERT(iMax > iCurrent, 0x584);
+        int diff = iMax - iCurrent;
+        if (pAccomplishment->HasAward()) {
+            i_pStatusLabel->SetTokenFmt(
+                campaign_endgame_goal_progress_reward,
+                goal,
+                diff,
+                pAccomplishment->GetUnitsToken(diff)
+            );
+        } else {
+            i_pStatusLabel->SetTokenFmt(
+                campaign_endgame_goal_progress,
+                goal,
+                diff,
+                pAccomplishment->GetUnitsToken(diff)
+            );
+        }
+    } else {
         i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
         i_pUserLabel->SetTokenFmt(campaign_endgame_user_noprogress, pUser->Name());
         i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_noprogress, goal);
-    } else {
-        MILO_ASSERT(pProfile, 0x560);
-        const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
-        unk28 = goal;
-        if (prog.IsAccomplished(goal)) {
-            int othergoals =
-                TheAccomplishmentMgr->GetNumOtherGoalsAcquired(pUser->Name(), goal);
-            i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
-            i_pUserLabel->SetTokenFmt(campaign_endgame_user_congrats, pUser->Name());
-            if (othergoals == 0) {
-                i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_complete, goal);
-            } else if (othergoals == 1) {
-                i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_complete_and1more, goal);
-            } else {
-                i_pStatusLabel->SetTokenFmt(
-                    campaign_endgame_goal_complete_andmore, goal, othergoals
-                );
-            }
-        } else {
-            if (DidUserMakeProgressOnGoal(pUser, goal)) {
-                i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
-                i_pUserLabel->SetTokenFmt(campaign_endgame_user_progress, pUser->Name());
-                int iCurrent = 0;
-                int iMax = 0;
-                pAccomplishment->InqProgressValues(pProfile, iCurrent, iMax);
-                MILO_ASSERT(iMax > iCurrent, 0x584);
-                int diff = iMax - iCurrent;
-                if (pAccomplishment->HasAward()) {
-                    i_pStatusLabel->SetTokenFmt(
-                        campaign_endgame_goal_progress_reward,
-                        goal,
-                        diff,
-                        pAccomplishment->GetUnitsToken(diff)
-                    );
-                } else {
-                    i_pStatusLabel->SetTokenFmt(
-                        campaign_endgame_goal_progress,
-                        goal,
-                        diff,
-                        pAccomplishment->GetUnitsToken(diff)
-                    );
-                }
-            } else {
-                i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
-                i_pUserLabel->SetTokenFmt(campaign_endgame_user_noprogress, pUser->Name());
-                i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_noprogress, goal);
-            }
-        }
     }
 }
 
