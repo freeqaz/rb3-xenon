@@ -710,15 +710,7 @@ void BandWardrobe::StartClipLoads(bool b, BandCamShot *shot) {
             mTargets[i]->SetTempoGenreVenue(mTempo, mGenre, unk78.Str());
         else
             mTargets[i]->SetTempoGenreVenue(Symbol(), Symbol(), unk78.Str());
-        DataArray *mac = DataGetMacro("HX_SYSTEST");
-        if (!mac && TheBandDirector->IsMusicVideo()) {
-            BandCharDesc *desc = Hmx::Object::New<BandCharDesc>();
-            desc->mHead.mHide = true;
-            mTargets[i]->CopyCharDesc(desc);
-            delete desc;
-            b = false;
-        } else
-            mTargets[i]->StartLoad(unk7c, mTargets[i]->mInCloset, false);
+        mTargets[i]->StartLoad(unk7c, mTargets[i]->mInCloset, false);
     }
     FileMerger *merger = Dir()->Find<FileMerger>("crowd_clips.fm", false);
     if (merger) {

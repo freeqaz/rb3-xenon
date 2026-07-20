@@ -90,12 +90,21 @@ protected:
     // Retail layout (reconstructed from disasm): HttpGet is non-polymorphic
     // (no vfptr at 0x0 — the ctor/dtor store no vtable and mTimer.mStart is at
     // this+0x0). Members reordered to match the retail offsets exactly.
+    // mIP@0x38 / mPort@0x3c confirmed via StartConnection's
+    // `mSocket->Connect(mIP, mPort)` (target: lwz off 0x38 / lhz off 0x3c,
+    // ground truth at 0x827dc188). mPath@0x40 confirmed via StartSending
+    // (0x827dc6a8): `str += mPath` compiles to a call into the
+    // String::operator+=(const String&) helper on this+0x40 -- mPath is a
+    // String, not a raw const char*. The dtor (0x827dc518) destructs exactly
+    // ONE String member, consistent with mPath being the sole String field;
+    // there is no separate `mHeaders` String member in retail (see
+    // AddRequiredHeaders below, which no longer persists into one).
     Timer mTimer; // 0x00
     float mTimeoutMs; // 0x30
     int mState; // 0x34
-    const char *mPath; // 0x38 - URL path (read-only const char*, not a String)
-    unsigned int mIP; // 0x3c
-    String mHeaders; // 0x40 - additional HTTP headers (dtor destructs this)
+    unsigned int mIP; // 0x38
+    unsigned short mPort; // 0x3c
+    String mPath; // 0x40 - URL path for GET request (String, not const char*)
     NetworkSocket *mSocket; // 0x4c
     void *mRecvBuf; // 0x50 - receive buffer (allocated as 0x1000 bytes)
     int mRecvBufPos; // 0x54
@@ -106,8 +115,7 @@ protected:
     u32 mHttpStatus; // 0x68
     HttpGetFailType mFailType; // 0x6c
     State mPrevState; // 0x70
-    unsigned short mPort; // 0x74
-    bool mFlags; // 0x76
+    bool mFlags; // 0x74
 };
 
 class HttpPost : public HttpGet {

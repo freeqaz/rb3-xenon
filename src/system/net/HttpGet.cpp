@@ -159,9 +159,10 @@ namespace {
 
 HttpGet::HttpGet(unsigned int ip, unsigned short port, const char *c1, const char *c2)
     : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mFlags(false),
-      mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mHeaders(c2), mRecvBuf(nullptr), mRecvBufPos(0),
+      mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
       mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType(),
       mPrevState(kHttpGet_Nil) {
+    (void)c2;
     SetState(kHttpGet_Connecting);
     AddRequiredHeaders();
 }
@@ -170,8 +171,9 @@ HttpGet::HttpGet(
     unsigned int ip, unsigned short port, const char *c1, unsigned char uc, const char *c2
 )
     : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mFlags(uc & 3),
-      mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mHeaders(c2), mRecvBuf(nullptr), mRecvBufPos(0),
+      mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
       mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType() {
+    (void)c2;
     SetState((uc & 4) == 0 ? kHttpGet_Pending : kHttpGet_Connecting);
     AddRequiredHeaders();
 }
@@ -187,19 +189,12 @@ void HttpGet::StartSending() {
     }
     String str = "GET ";
     str += mPath;
-    str += " ";
-    str += "HTTP/1.1";
-    if (!mHeaders.empty()) {
-        str += "\r\n";
-        str += mHeaders;
-    }
+    str += " HTTP/1.0";
     str += "\r\n\r\n";
     int len = (int)str.length();
     if (mSocket->Send(str.c_str(), len) != len) {
         mFailType = kHttpFail_Send;
         SetState(kHttpGet_FailedSend);
-    } else {
-        SetState(kHttpGet_ReceivingHeaders);
     }
 }
 
@@ -288,26 +283,21 @@ void HttpGet::AddRequiredHeaders() {
     headers += newLine;
     headers += "Connection: close";
     headers += newLine;
-    mHeaders += headers.c_str();
+    // NOTE: retail ground truth (StartSending @ 0x827dc6a8) shows no header
+    // string is persisted into a member -- there is no `mHeaders` field in
+    // retail (see HttpGet.h). This build-and-discard shape is kept only so
+    // the ctor call site still compiles; not verified against a target fn.
+    (void)headers;
 }
 
 void HttpGet::SetState(State newState) {
-    if (mState == (int)newState) return;
-
-    do {
+    while (mState != (int)newState) {
         switch (mState) {
         case kHttpGet_Connecting:
             if ((int)newState == kHttpGet_Sending) break;
             SafeShutdown();
             break;
         case kHttpGet_Sending:
-            if ((int)newState == kHttpGet_SendingBody) break;
-            // fall through
-        case kHttpGet_SendingBody:
-            if ((int)newState == kHttpGet_ReceivingHeaders) break;
-            SafeShutdown();
-            break;
-        case kHttpGet_ReceivingHeaders:
             if ((int)newState == kHttpGet_ReceivingBody) break;
             SafeShutdown();
             break;
@@ -318,11 +308,6 @@ void HttpGet::SetState(State newState) {
             }
             SafeShutdown();
             break;
-        }
-
-        if (((int)newState == kHttpGet_Failed || (int)newState == kHttpGet_FailedSend)
-            && mState != kHttpGet_Failed && mState != kHttpGet_FailedSend) {
-            mPrevState = (State)mState;
         }
 
         mState = (int)newState;
@@ -356,7 +341,7 @@ void HttpGet::SetState(State newState) {
             }
             break;
         }
-    } while (mState != (int)newState);
+    }
 }
 
 void HttpGet::Poll() {
