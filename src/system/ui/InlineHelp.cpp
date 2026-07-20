@@ -64,10 +64,10 @@ BinStream &operator>>(BinStreamRev &d, InlineHelp::ActionElement &a) {
 void InlineHelp::ActionElement::SetToken(Symbol token, bool secondary) {
     if (!secondary) {
         mPrimaryToken = token;
-        mPrimaryStr = Localize(token, nullptr, TheLocale);
+        mPrimaryStr = Localize(token, nullptr);
     } else {
         mSecondaryToken = token;
-        mSecondaryStr = Localize(token, nullptr, TheLocale);
+        mSecondaryStr = Localize(token, nullptr);
     }
 }
 

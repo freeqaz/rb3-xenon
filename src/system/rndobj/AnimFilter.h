@@ -16,7 +16,7 @@ public:
         kShuttle = 2,
     };
     OBJ_CLASSNAME(AnimFilter);
-    OBJ_SET_TYPE(AnimFilter);
+    OBJ_SET_TYPE_ENGINE(AnimFilter);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
