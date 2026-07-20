@@ -30,7 +30,11 @@ TextFileStream *DirLoader::sTypeMemDumpFile;
 std::map<String, MemPointDelta> DirLoader::sMemPointMap;
 
 Loader *DirLoader::New(const FilePath &fp, LoaderPos pos) {
+#ifdef HX_NATIVE
     return new DirLoader(fp, pos, nullptr, nullptr, nullptr, false, nullptr);
+#else
+    return new DirLoader(fp, pos, nullptr, nullptr, nullptr, false);
+#endif
 }
 
 DirLoader::DirLoader(
@@ -39,13 +43,21 @@ DirLoader::DirLoader(
     Loader::Callback *cb,
     BinStream *stream,
     ObjectDir *dir,
-    bool bbb,
+    bool bbb
+#ifdef HX_NATIVE
+    ,
     ObjectDir *dir2
+#endif
 )
     : Loader(fp, pos), mOwnStream(false), mStream(stream), mRev(0), mCounter(0),
       mObjects(nullptr, kObjListAllowNull), mCallback(cb), mDir(dir), mPostLoad(false),
       mLoadDir(true), mDeleteSelf(false), mProxyName(nullptr), mAccessed(0), mForceFailCallback(0),
-      mHasEditorDir(0), mSubDir(bbb), mParentDir(dir2), mProxyDir(this) {
+      mHasEditorDir(0), mSubDir(bbb),
+#ifdef HX_NATIVE
+      mParentDir(dir2), mProxyDir(this) {
+#else
+      mProxyDir(nullptr) {
+#endif
     if (dir) {
         mDeleteSelf = true;
         mProxyName = dir->Name();
@@ -1068,7 +1080,11 @@ void DirLoader::OpenFile() {
         if (mStream->Fail()) {
             if (mProxyDir) {
                 Cleanup(
+#ifdef HX_NATIVE
                     MakeString("%s: could not load: %s", PathName(mProxyDir.Ptr()), path)
+#else
+                    MakeString("%s: could not load: %s", PathName(mProxyDir), path)
+#endif
                 );
             } else {
                 Cleanup(MakeString("Could not load: %s", path));
@@ -1083,7 +1099,11 @@ ObjectDir *DirLoader::LoadObjects(const FilePath &fp, Callback *cb, BinStream *b
     if (sTypeMemDumpFile) {
         sMemPointMap.clear();
     }
+#ifdef HX_NATIVE
     DirLoader dirLoader(fp, kLoadFront, cb, bs, nullptr, false, nullptr);
+#else
+    DirLoader dirLoader(fp, kLoadFront, cb, bs, nullptr, false);
+#endif
     TheLoadMgr.PollUntilLoaded(&dirLoader, nullptr);
     if (sTypeMemDumpFile) {
         WriteTypeMemDump(sTypeMemDumpFile);

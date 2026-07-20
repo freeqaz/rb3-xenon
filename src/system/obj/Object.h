@@ -460,6 +460,15 @@ inline bool RefIs(ObjRef *from, const P &member) {
 #endif
 }
 
+// Overload for members that are plain (non-owning) raw pointers rather than
+// ObjPtr/ObjOwnerPtr wrappers (e.g. DirLoader::mProxyDir on X360 retail, which
+// has no owning-ptr wrapper — see DirLoader.h). Preferred over the primary
+// template by overload resolution for pointer-typed members.
+template <class P>
+inline bool RefIs(ObjRef *from, P *const &member) {
+    return reinterpret_cast<void *>(from) == reinterpret_cast<void *>(member);
+}
+
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr);
 

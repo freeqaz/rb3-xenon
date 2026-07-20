@@ -501,9 +501,14 @@ void ObjectDir::SetProxyFile(const FilePath &file, bool override) {
             DeleteObjects();
             DeleteSubDirs();
             if (!mProxyFile.empty()) {
+#ifdef HX_NATIVE
                 DirLoader *dl = new DirLoader(
                     mProxyFile, kLoadFront, nullptr, nullptr, this, false, nullptr
                 );
+#else
+                DirLoader *dl =
+                    new DirLoader(mProxyFile, kLoadFront, nullptr, nullptr, this, false);
+#endif
                 TheLoadMgr.PollUntilLoaded(dl, nullptr);
             }
         }
@@ -1505,6 +1510,7 @@ void ObjectDir::PostLoad(BinStream &bs) {
     } else if (ShouldSaveProxy(bs)) {
         DeleteObjects();
         DeleteSubDirs();
+#ifdef HX_NATIVE
         DirLoader *dl = new DirLoader(
             mProxyFile,
             kLoadFront,
@@ -1514,6 +1520,11 @@ void ObjectDir::PostLoad(BinStream &bs) {
             false,
             nullptr
         );
+#else
+        DirLoader *dl = new DirLoader(
+            mProxyFile, kLoadFront, nullptr, InlineProxy(bs) ? &bs : nullptr, this, false
+        );
+#endif
     }
 }
 

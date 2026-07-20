@@ -26,8 +26,11 @@ public:
         Loader::Callback *,
         BinStream *,
         class ObjectDir *,
-        bool,
+        bool
+#ifdef HX_NATIVE
+        ,
         class ObjectDir *
+#endif
     );
     virtual ~DirLoader();
     virtual Hmx::Object *RefOwner() const { return nullptr; }
@@ -105,8 +108,20 @@ private:
     bool mForceFailCallback;
     bool mHasEditorDir; // 0x9a - gates ReadEditorDirDead in LoadObjs
     bool mSubDir;
+#ifdef HX_NATIVE
+    // mParentDir + the ObjOwnerPtr-owning mProxyDir below are a native-port-only
+    // addition (used by the ObjPtr fallback / FileMerger parent-dir walk under
+    // HX_NATIVE — see Dir.cpp/ObjPtr_p.h ParentDir() call sites, all HX_NATIVE-
+    // gated). RB3 retail X360 has neither: PoolAlloc's compiled size argument for
+    // `new DirLoader(...)` is exactly 0xa8 (168) bytes, which only reconciles once
+    // both mParentDir is dropped and mProxyDir reverts to the rb3-Wii oracle's raw
+    // (non-owning) `ObjectDir *mProxyDir` — see docs/decomp/research (DirLoader
+    // size-probe investigation).
     class ObjectDir *mParentDir; // 0x9c
     ObjOwnerPtr<ObjectDir> mProxyDir; // 0xa0
+#else
+    class ObjectDir *mProxyDir;
+#endif
 
     static bool sCacheMode;
     static PathEvalFunc *sPathEval;

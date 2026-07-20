@@ -59,7 +59,11 @@ void BandDirector::VenueLoader::Load(const FilePath &fp, LoaderPos pos, bool asy
     Unload(async);
     mName = FileGetBase(fp.c_str());
     if (!mName.Null() && mName != "none") {
+#ifdef HX_NATIVE
         mLoader = new DirLoader(fp, pos, this, 0, 0, false, nullptr);
+#else
+        mLoader = new DirLoader(fp, pos, this, 0, 0, false);
+#endif
         if (!async)
             TheLoadMgr.PollUntilLoaded(mLoader, 0);
     }

@@ -231,7 +231,11 @@ public:
                 pos = kLoadFrontStayBack;
             }
             if (!p.empty())
+#ifdef HX_NATIVE
                 d = new DirLoader(p, pos, nullptr, nullptr, nullptr, b3, nullptr);
+#else
+                d = new DirLoader(p, pos, nullptr, nullptr, nullptr, b3);
+#endif
         }
         mLoader = d;
 #ifdef HX_NATIVE
@@ -264,14 +268,16 @@ public:
 
     void LoadInlinedFile(const FilePath &fp, BinStream &bs) {
         *this = nullptr;
-        LoaderPos pos;
+        LoaderPos pos = kLoadFront;
         if (TheLoadMgr.GetLoaderPos() == kLoadStayBack
             || TheLoadMgr.GetLoaderPos() == kLoadFrontStayBack) {
             pos = kLoadFrontStayBack;
-        } else {
-            pos = kLoadFront;
         }
+#ifdef HX_NATIVE
         mLoader = new DirLoader(fp, pos, nullptr, &bs, nullptr, false, nullptr);
+#else
+        mLoader = new DirLoader(fp, pos, nullptr, &bs, nullptr, false);
+#endif
     }
 
 #ifdef HX_NATIVE

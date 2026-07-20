@@ -231,7 +231,11 @@ void UIPanel::Load() {
             }
 #endif
             MemHeapTracker t(heapNum);
+#ifdef HX_NATIVE
             mLoader = new DirLoader(fp, pos, nullptr, nullptr, nullptr, false, nullptr);
+#else
+            mLoader = new DirLoader(fp, pos, nullptr, nullptr, nullptr, false);
+#endif
             MILO_ASSERT(mLoader, 0xA9);
             mLoaded = false;
         }
