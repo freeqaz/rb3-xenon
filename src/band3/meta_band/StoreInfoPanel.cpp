@@ -57,14 +57,13 @@ void StoreInfoPanel::Poll() {
             }
         }
     } else {
-        if (mRecommendations.size() && !unk5c && IsAllArtLoadedOrFailed()) {
+        if (!mRecommendations.empty() && !unk5c && IsAllArtLoadedOrFailed()) {
             MILO_ASSERT(mRecommendations.size() == mCoverArtTexs.size(), 0x67);
             for (int i = 0; i < mRecommendations.size(); i++) {
                 RndBitmap *bmp = GetBmp(mRecommendations[i].unkc);
                 if (bmp) {
                     MILO_ASSERT(!mCoverArtTexs[i], 0x6F);
-                    RndTex *tex = Hmx::Object::New<RndTex>();
-                    mCoverArtTexs[i] = tex;
+                    mCoverArtTexs[i] = Hmx::Object::New<RndTex>();
                     mCoverArtTexs[i]->SetBitmap(*bmp, nullptr, false);
                 }
             }

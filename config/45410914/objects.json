@@ -1007,7 +1007,8 @@
    "band3/meta_band/CalibrationPanel.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_LOG_NO_EVAL"
     ]
    },
    "band3/meta_band/Campaign.cpp": {
