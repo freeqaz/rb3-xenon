@@ -1,0 +1,249 @@
+#include "beatmatch/BeatMaster.h"
+#include "beatmatch/SongData.h"
+#include "beatmatch/Output.h"
+#include "beatmatch/Playback.h"
+#include "beatmatch/MasterAudio.h"
+#include "midi/DataEvent.h"
+#include "midi/MidiParserMgr.h"
+#include "os/System.h"
+#include "utl/BeatMap.h"
+#include "utl/SongInfoCopy.h"
+#include "synth/Synth.h"
+#include "utl/TickedInfo.h"
+#include "utl/Symbols2.h"
+
+const char *BeatMasterLoader::DebugText() {
+    return MakeString("BML: %s", mBeatMaster->mSongData->SongFullPath());
+}
+
+BeatMaster::BeatMaster(SongData *data, int num_players)
+    : mSongData(data), mRecording(0), mAudio(0), mMidiParserMgr(0), mSongInfo(0),
+      mPtCfg(0), mLoader(0), mLoaded(0), unk2d(0), mHandlers(0) {
+    mSongData->AddSink(this);
+    DataArray *cfg = SystemConfig("beatmatcher");
+    cfg->FindData("recording", mRecording, false);
+    mHandlers = cfg->FindArray("callbacks", false);
+    TheBeatMatchOutput.SetActive(mRecording);
+    String str;
+    if (cfg->FindData("playback", str, false)) {
+        TheBeatMatchPlayback.LoadFile(str);
+    }
+    Reset();
+    mAudio = new MasterAudio(cfg->FindArray("audio"), num_players, this, mSongData);
+}
+
+BeatMaster::~BeatMaster() {
+    delete mMidiParserMgr;
+    delete mAudio;
+    delete mLoader;
+}
+
+void BeatMaster::RegisterSink(BeatMasterSink &sink) { mSinks.push_back(&sink); }
+
+// fn_80457BB8
+void BeatMaster::Load(
+    SongInfo *info,
+    int i,
+    PlayerTrackConfigList *plist,
+    bool b,
+    SongDataValidate validate,
+    std::vector<MidiReceiver *> *vec
+) {
+    mSongInfo = info;
+    mPtCfg = plist;
+    mMidiParserMgr = new MidiParserMgr(mSongData, info->GetName());
+    std::vector<MidiReceiver *> midi_receivers;
+    if (vec) {
+        midi_receivers.insert(midi_receivers.begin(), vec->begin(), vec->end());
+    }
+    midi_receivers.push_back(mMidiParserMgr);
+    mSongData->Load(info, i, plist, midi_receivers, b, validate);
+    MILO_ASSERT(!mLoader, 0x82);
+    mLoaded = false;
+    mLoader = new BeatMasterLoader(this);
+    unk2d = false;
+    if (b)
+        TheLoadMgr.PollUntilLoaded(mLoader, 0);
+}
+
+void BeatMaster::LoaderPoll() {
+#ifdef HX_NATIVE
+    static int sLpCount = 0;
+    static int sLastPhase = -1;
+    int phase = 0;
+    if (mLoaded) phase = unk2d ? 3 : 2;
+    if (!mLoaded) phase = 1;
+    sLpCount++;
+    if (phase != sLastPhase) {
+        MILO_LOG("BEATMASTER_DBG: LoaderPoll #%d phase=%d mLoaded=%d unk2d=%d\n",
+                 sLpCount, phase, (int)mLoaded, (int)unk2d);
+        sLastPhase = phase;
+    }
+#endif
+    if (!mLoaded && mSongData->Poll()) {
+#ifdef HX_NATIVE
+        MILO_LOG("BEATMASTER_DBG: MIDI parsed -> mLoaded=true; calling FinishLoad\n");
+#endif
+        mLoaded = true;
+        mMidiParserMgr->FinishLoad();
+    } else if (mLoaded && !unk2d) {
+#ifdef HX_NATIVE
+        MILO_LOG("BEATMASTER_DBG: calling mAudio->Load() -- entering audio bring-up phase\n");
+#endif
+        unk2d = true;
+        mAudio->Load(mSongInfo, mPtCfg);
+        mSongInfo = 0;
+#ifdef HX_NATIVE
+        MILO_LOG("BEATMASTER_DBG: mAudio->Load() returned; mSongStream=%p\n", (void*)mAudio->GetSongStream());
+#endif
+    } else if (unk2d) {
+        TheSynth->Poll();
+        bool b1 = false;
+        if (unk2d && mAudio->IsLoaded())
+            b1 = true;
+        if (b1) {
+#ifdef HX_NATIVE
+            MILO_LOG("BEATMASTER_DBG: mAudio->IsLoaded()=true; RELEASE(mLoader)\n");
+#endif
+            RELEASE(mLoader);
+        }
+    }
+}
+
+bool BeatMaster::IsLoaded() {
+    bool b = false;
+    if (unk2d && mAudio->IsLoaded())
+        b = true;
+    return b;
+}
+
+void BeatMaster::AddTrack(
+    int i, Symbol s, SongInfoAudioType atype, TrackType ttype, bool b
+) {
+    mSubmixIdxs.push_back(0);
+}
+
+void BeatMaster::Poll(float f) {
+    if (TheBeatMatchPlayback.mCommands)
+        TheBeatMatchPlayback.Poll(f);
+    mSongPos = mSongData->CalcSongPos(f);
+    for (int i = 0; i < mSinks.size(); i++) {
+        mSinks[i]->UpdateSongPos(mSongPos);
+    }
+    mMidiParserMgr->Poll();
+    float tick = mSongPos.GetTotalTick();
+    CheckBeat();
+    CheckSubmixes(tick);
+    mAudio->Poll();
+}
+
+float BeatMaster::SongDurationMs() {
+    DataEventList *events = mMidiParserMgr->GetEventsList();
+    for (int i = 0; i < events->Size(); i++) {
+        const DataEvent &curEvent = events->Event(i);
+        Symbol msgSym = curEvent.Msg()->Sym(1);
+        if (msgSym == end) {
+            float ftick = mSongData->GetBeatMap()->BeatToTick(curEvent.start);
+            return mSongData->GetTempoMap()->TickToTime(ftick);
+        }
+    }
+    return 0;
+}
+
+// fn_80458830
+void BeatMaster::Jump(float f) {
+    mSongPos = mSongData->CalcSongPos(f);
+    mLastSongPos = mSongPos;
+    mMidiParserMgr->Reset(mSongPos.GetTotalTick());
+    TheBeatMatchPlayback.Jump(f);
+    float timeinloop = mSongData->GetTempoMap()->GetTimeInLoop(f);
+    mAudio->Jump(timeinloop);
+    mAudio->SetTimeOffset(f - timeinloop);
+}
+
+void BeatMaster::Reset() {
+    mLastSongPos.AccessTotalTick() = 0.0f;
+    mLastSongPos.AccessTotalBeat() = 0.0f;
+    mLastSongPos.AccessMeasure() = 0;
+    mLastSongPos.AccessBeat() = 0;
+    mLastSongPos.AccessTick() = 0;
+    for (int i = 0; i < mSubmixIdxs.size(); i++) {
+        mSubmixIdxs[i] = 0;
+    }
+    ExportInitialSubmixes();
+    if (mMidiParserMgr)
+        mMidiParserMgr->Reset();
+    if (mRecording)
+        TheBeatMatchOutput.Reset();
+    TheBeatMatchPlayback.Jump(0);
+    HandleBeatCallback("reset");
+    ResetAudio();
+}
+
+void BeatMaster::ResetAudio() {
+    if (mAudio) {
+        if (mAudio->GetTime() != 0)
+            mAudio->Jump(0);
+    }
+}
+
+void BeatMaster::CheckBeat() {
+    int curTotalBeat = (int)mSongPos.GetTotalBeat();
+    int lastTotalBeat = (int)mLastSongPos.GetTotalBeat();
+    if (lastTotalBeat != curTotalBeat) {
+        static DataNode &beat = DataVariable("beat");
+        beat = curTotalBeat;
+        HandleBeatCallback("beat");
+        for (int i = 0; i < mSinks.size(); i++) {
+            mSinks[i]->Beat(mSongPos.GetMeasure(), mSongPos.GetBeat());
+        }
+    }
+    if (mLastSongPos.GetMeasure() != mSongPos.GetMeasure()) {
+        static DataNode &measure = DataVariable("measure");
+        measure = mSongPos.GetMeasure();
+        HandleBeatCallback("downbeat");
+    }
+    if ((mLastSongPos.GetTick() / 240) != (mSongPos.GetTick() / 240)) {
+        HandleBeatCallback("eighth_note");
+    }
+    if ((mLastSongPos.GetTick() / 120) != (mSongPos.GetTick() / 120)) {
+        HandleBeatCallback("sixteenth_note");
+    }
+    mLastSongPos = mSongPos;
+}
+
+void BeatMaster::ExportInitialSubmixes() {
+    for (int i = 0; i < mSubmixIdxs.size(); i++) {
+        TickedInfoCollection<String> &submixes = mSongData->GetSubmixes(i);
+        if (submixes.Size() > 0) {
+            const char *str = submixes.mInfos[0].mInfo.c_str();
+            for (int j = 0; j < mSinks.size(); j++) {
+                mSinks[j]->HandleSubmix(i, str);
+            }
+        }
+    }
+}
+
+void BeatMaster::CheckSubmixes(int iii) {
+    for (int i = 0; i < mSubmixIdxs.size(); i++) {
+        TickedInfoCollection<String> &submixes = mSongData->GetSubmixes(i);
+        while (true) {
+            int curIdx = mSubmixIdxs[i];
+            if (curIdx >= submixes.Size() || submixes.mInfos[curIdx].mTick > iii)
+                break;
+            const char *str = submixes.mInfos[curIdx].mInfo.c_str();
+            for (int j = 0; j < mSinks.size(); j++) {
+                mSinks[j]->HandleSubmix(i, str);
+            }
+            mSubmixIdxs[i]++;
+        }
+    }
+}
+
+void BeatMaster::HandleBeatCallback(Symbol s) {
+    if (mHandlers) {
+        DataArray *arr = mHandlers->FindArray(s, false);
+        if (arr)
+            arr->ExecuteScript(1, 0, 0, 1);
+    }
+}
