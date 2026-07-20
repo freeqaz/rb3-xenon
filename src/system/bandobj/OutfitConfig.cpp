@@ -202,7 +202,7 @@ void OutfitConfig::MatSwap::Compose(
 
 bool OutfitConfig::MatSwap::Compress(BandCharDesc *desc) {
     RndMat *mat = mMat;
-    if (!mat)
+    if (!(int)mat)
         return false;
     RndTex *diffTex = mat->GetDiffuseTex();
     if (!diffTex || (diffTex->GetType() & RndTex::kRenderedNoZ) != RndTex::kRenderedNoZ)

@@ -138,7 +138,7 @@ void CharCuff::Highlight() {
                 Vector3 boundaryPt(Sine(angle), Cosine(angle), mShape[shapeIdx].offset);
                 (Vector2 &)boundaryPt *= mOuterRadius;
                 Multiply(boundaryPt, WorldXfm(), worldInner);
-                float nextAngle = (pointIdx + 1) * kTwoPi * kInv32;
+                float nextAngle = (kInv32 * (kTwoPi * (pointIdx + 1)));
                 outerPt.Set(Sine(nextAngle), Cosine(nextAngle), mShape[shapeIdx].offset);
                 (Vector2 &)outerPt *= mOuterRadius;
                 Multiply(outerPt, WorldXfm(), worldOuter);
