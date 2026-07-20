@@ -105,6 +105,52 @@ BinDiff library-mass hints. No overlap corroboration available; the string evide
 on its own (all clusters have ≥3 game-specific asset/config strings cross-verified against
 the rb3-Wii source).
 
+## WAVE OUTCOME (batch-carve foreman, 2026-07-20) — ALL 12 RESOLVED
+
+Landed on main, one candidate per commit, full gate (fresh-baseline full rebuild,
+strict monotonic, named-LOST==0) each:
+
+| # | TU | outcome | Δstrict | commit |
+|---|----|---------|---------|--------|
+| 1 | NewAwardPanel | landed (pre-wave) | +19 | eb32781b |
+| 2 | CampaignGoalsLeaderboardPanel | landed (pre-wave) | +34 | 1030031a |
+| 3 | CharCache | landed | +4 | ec953501 |
+| 4 | StoreOfferProvider | landed, net-0 (InitData 99.9% named; Text() = real API drift, retail purchase-state model diverges) | 0 | 2cabed8b |
+| 5 | RGTrainerPanel | landed | +52 | 9273eabd |
+| 6 | InterstitialMgr | landed, net-0 (2 near-misses named 95.2/83.6; RB3_MAP_0x1C per-TU cflag) | 0 | 19a4d1f4 |
+| 7 | ModifierMgr | landed (dual-range pin) | +3 | a4372947 |
+| 8 | MetaNetMsgs | landed (automap empty; positional credit only) | +4 | 299eed92 |
+| 9 | BandStorePanel | **DEFER** — identity CONFIRMED (`dlc_store` byte-verified in XEX) but retail Xbox commerce path restructured vs Wii Shop oracle (`CommerceMgr_Wii` has no in-tree/Xbox equivalent); check DC3 for an Xbox commerce oracle before revisiting | 0 | — |
+| 10 | Platform | **DEFER** — span holds **59** fns (ranking said 5): /Od out-of-line qMap/qList template machinery absent from the 72-LOC oracle; automap EXACT/STRONG=0. Reconstruction, not a carve | 0 | — |
+| 11 | ConnectionInfoDDL | **DEFER** — span MISIDENTIFIED: generated Quazal DDL registration boilerplate *references* the member-name strings; hand-written oracle methods are elsewhere/inlined | 0 | — |
+| 12 | BandwidthCounter | landed — identity confirmed from asm; **flag discovery: per-TU `/EHs-c-` + `/Ob1`** on top of /Od /Oi- (ctor 66→100) | +1 | d5a7bb86 |
+| — | Scoring (held) | deferred — still straddles HolmesClient.cpp pins, not a quick refine | 0 | — |
+| — | GemRepTemplate (held) | deferred — cluster now overlaps a Lyric.cpp pin; needs Lyric-boundary work, not just VocalTrack repair | 0 | — |
+
+Wave aggregate: **+64 strict** from this wave (plus +53 pre-wave from #1/#2). Main
+19,005 → 19,191 across the wave window (coordinator's correlator-r7 +122 landed
+in-between and is not wave credit).
+
+### Ranking rules learned (feed batch 2)
+- **fn-count sanity check is mandatory**: candidates undercounted up to 12x
+  (Platform 5→59, MetaNetMsgs 2→12). Cheap check: pin, count fns in the emitted
+  `.s`, compare to claimed count BEFORE funding a port.
+- **network/Quazal string hits need a Ghidra structural pass first**: generated
+  DDL/registration boilerplate and /Od template mass carry the member-name strings
+  that fingerprinting keys on (ConnectionInfoDDL, Platform). meta_band panels went
+  8/8 identity-correct; network went 1/3.
+- **Quazal per-TU flags are not uniform**: BandwidthCounter needed
+  `/Od /Oi- /EHs-c- /Ob1`; ConnectionInfoDDL's span measured as plain `/O1`.
+  Probe flags per TU before concluding body divergence.
+- **automap on tiny units (<~6 real fns) is near-useless**: EXACT needs
+  byte-identity anchors and small fns collide by size (one confirmed mispair,
+  caught by a worker's asm check, NOT by the strict-100 post-filter). Manual
+  string/asm ID is cheap at that size; automap shines at ≥10-fn units
+  (RGTrainerPanel: 19 entries, 100% precision).
+- **Positional pairing already credits small carved units** — a map entry on an
+  already-strict-100 anon target BREAKS that credit; post-filter fragments against
+  the pre-map report (`filter_frag_vs_report.py`, also gated in-tool since 2221a185).
+
 ## Recommended next actions
 1. **Build the size/order auto-mapper** (compiled-obj fn sizes ↔ target `.s` fn sizes in
    source order) — removes the dominant per-TU manual-mangle cost; unlocks a real campaign.
