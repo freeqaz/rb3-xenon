@@ -1388,8 +1388,8 @@ inline UIComponent::State AccomplishmentProvider::ComponentStateOverride(
 }
 
 inline Accomplishment *AccomplishmentProvider::GetAccomplishment(int data) const {
-    Accomplishment *pAccomplishment =
-        TheAccomplishmentMgr->GetAccomplishment(DataSymbol(data));
+    Symbol sym = DataSymbol(data);
+    Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(sym);
     MILO_ASSERT(pAccomplishment, 0x34B);
     return pAccomplishment;
 }
@@ -1452,12 +1452,14 @@ AccomplishmentProvider::Text(int, int i_iData, UIListLabel *slot, UILabel *label
     BandProfile *profile = TheCampaign->GetProfile();
     if (slot->Matches("name")) {
         if (IsAccomplishmentSecret(pAccomplishment, profile)) {
+            static Symbol acc_secret("acc_secret");
             label->SetTextToken(acc_secret);
         } else {
             label->SetTextToken(pAccomplishment->GetName());
         }
     } else if (slot->Matches("description")) {
         if (IsAccomplishmentSecret(pAccomplishment, profile)) {
+            static Symbol acc_secret_desc("acc_secret_desc");
             label->SetTextToken(acc_secret_desc);
         } else {
             label->SetTextToken(pAccomplishment->GetDescription());

@@ -500,6 +500,16 @@ void RndCam::GetInfiniteViewProj(Hmx::Matrix4 &m4) const {
 DataNode RndCam::OnGetDefaultNearPlane(DataArray *) { return sDefaultNearPlane; }
 DataNode RndCam::OnGetMaxFarNearPlaneRatio(DataArray *) { return sMaxFarNearPlaneRatio; }
 
+// Retail keeps this call to RndCam::SetFrustum out-of-line (it is compiled as
+// a real function elsewhere in this TU for other callers). Since SetFrustum's
+// definition appears earlier in this file, /Ob2 auto-inlines it here unless we
+// force it back out through a noinline wrapper (same lever as
+// _outline_GetAccomplishmentProgress in AccomplishmentPanel.cpp).
+__declspec(noinline) static void
+_outline_SetFrustum(RndCam *cam, float n, float f, float y, float a) {
+    cam->SetFrustum(n, f, y, a);
+}
+
 DataNode RndCam::OnSetFrustum(const DataArray *da) {
     float nearPlane, farPlane, yFov, temp;
     static Symbol near_plane("near_plane");
@@ -514,7 +524,7 @@ DataNode RndCam::OnSetFrustum(const DataArray *da) {
     else
         temp = mYFov;
     yFov = temp;
-    SetFrustum(nearPlane, farPlane, yFov, 1.0f);
+    _outline_SetFrustum(this, nearPlane, farPlane, yFov, 1.0f);
     return 0;
 }
 
