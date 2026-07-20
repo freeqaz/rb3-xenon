@@ -15,8 +15,10 @@ public:
     int GetPresenceContextFromMode(Symbol, bool);
     int GetPlayModeContextFromUser(const LocalBandUser *, bool);
 
+protected:
     DataNode OnPresenceChange(DataArray *);
 
+public:
     DataArray *unk1c;
     DataArray *unk20;
     DataArray *unk24;

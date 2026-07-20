@@ -1,4 +1,6 @@
 {
+ "0x8267f358": "??_GPresenceMgr@@UAAPAXI@Z",
+ "0x8267fe88": "?GetPresenceContextFromMode@PresenceMgr@@QAAHVSymbol@@_N@Z",
  "0x82bad718": "??$__unguarded_linear_insert@PAVVert@RndMesh@@V12@P6A_NABV12@0@Z@stlpmtx_std@@YAXPAVVert@RndMesh@@V12@P6A_NABV12@2@Z@Z",
  "0x82bad790": "??$__push_heap@PAVVert@RndMesh@@HV12@P6A_NABV12@0@Z@stlpmtx_std@@YAXPAVVert@RndMesh@@HHV12@P6A_NABV12@2@Z@Z",
  "0x82bad830": "??$__unguarded_insertion_sort_aux@PAVVert@RndMesh@@V12@P6A_NABV12@0@Z@stlpmtx_std@@YAXPAVVert@RndMesh@@00P6A_NABV12@1@Z@Z",

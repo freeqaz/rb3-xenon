@@ -800,6 +800,7 @@
    },
    "band3/game/GameMicManager.cpp": "NonMatching",
    "band3/game/Metronome.cpp": "NonMatching",
+   "band3/game/PresenceMgr.cpp": "NonMatching",
    "band3/game/DirectInstrument.cpp": "NonMatching",
    "band3/meta_band/ModifierMgr.cpp": "NonMatching",
    "band3/meta_band/LessonProvider.cpp": "NonMatching",

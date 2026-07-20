@@ -6302,3 +6302,7 @@ AccomplishmentDiscSongConditional.cpp:
 TexLoadPanel.cpp:
 	.pdata      start:0x82226DA8 end:0x82226ED0
 	.text       start:0x825F2210 end:0x825F3378
+
+band3/game/PresenceMgr.cpp:
+	.pdata      start:0x822303C8 end:0x82230560
+	.text       start:0x8267F358 end:0x826810BC
