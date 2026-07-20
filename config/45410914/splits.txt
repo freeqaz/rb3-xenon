@@ -4911,6 +4911,10 @@ band3/meta_band/CharCache.cpp:
 	.pdata      start:0x8221DA78 end:0x8221DAB0
 	.text       start:0x8256BC58 end:0x8256C310
 
+band3/meta_band/StoreOfferProvider.cpp:
+	.pdata      start:0x8222E648 end:0x8222E658
+	.text       start:0x82663968 end:0x826640CC
+
 band3/meta_band/PatchPanel.cpp:
 	.pdata      start:0x8222A700 end:0x8222A9D0
 	.text       start:0x82629878 end:0x8262CA80

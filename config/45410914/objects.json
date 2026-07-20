@@ -806,6 +806,7 @@
    "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp": "NonMatching",
    "band3/meta_band/MetaNetMsgs.cpp": "NonMatching",
    "band3/meta_band/NewAwardPanel.cpp": "NonMatching",
+   "band3/meta_band/StoreOfferProvider.cpp": "NonMatching",
    "band3/meta_band/TexLoadPanel.cpp": "NonMatching",
    "band3/meta_band/SongSelectPanel.cpp": {
     "status": "NonMatching",
