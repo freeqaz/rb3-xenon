@@ -180,7 +180,12 @@
    "system/synth/MicClientMapper.cpp": "NonMatching",
    "system/synth/tomcrypt/ctr.c": "NonMatching",
    "system/char/CharBonesBlender.cpp": "NonMatching",
-   "system/char/CharFaceServo.cpp": "NonMatching",
+   "system/char/CharFaceServo.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_NOTIFY_ONCE_EVAL"
+    ]
+   },
    "system/synth_xbox/PitchShiftEffect.cpp": "NonMatching",
    "system/synth_xbox/GainEffect.cpp": "NonMatching",
    "system/synth_xbox/HeadsetPlaybackEffect.cpp": "NonMatching",

@@ -284,6 +284,24 @@ public:
         static DebugNotifyOncer _dw;                                                     \
         _dw << MakeString(__VA_ARGS__);                                                  \
     }
+#elif defined(RB3_NOTIFY_ONCE_EVAL)
+// Per-TU opt-in (/DRB3_NOTIFY_ONCE_EVAL in objects.json extra_cflags; NON-PCH
+// TUs only). Retail RB3 stripped MILO_NOTIFY_ONCE of its MakeString/notify and
+// once-guard but KEPT the side-effecting argument calls, evaluated right-to-left
+// as function arguments (the unused format-string address is DCE'd). See
+// char/CharFaceServo.cpp::ScaleAdd — retail still emits PathName(clip)/PathName(this).
+namespace {
+    inline void _MiloNotifyOnceEval(const char *) {}
+    template <class A> inline void _MiloNotifyOnceEval(const char *, A) {}
+    template <class A, class B>
+    inline void _MiloNotifyOnceEval(const char *, A, B) {}
+    template <class A, class B, class C>
+    inline void _MiloNotifyOnceEval(const char *, A, B, C) {}
+    template <class A, class B, class C, class D>
+    inline void _MiloNotifyOnceEval(const char *, A, B, C, D) {}
+}
+#define MILO_NOTIFY_ONCE(...)                                                            \
+    { _MiloNotifyOnceEval(__VA_ARGS__); }
 #else
 // Brace-block no-op (some call sites omit the trailing ';').
 #define MILO_NOTIFY_ONCE(...)                                                            \
