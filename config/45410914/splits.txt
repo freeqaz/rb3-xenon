@@ -5682,6 +5682,10 @@ OverdriveTracker.cpp:
 	.text       start:0x8266FF30 end:0x8266FFE8
 	.text       start:0x826DD410 end:0x826DD490
 
+band3/game/PerfectSectionTracker.cpp:
+	.pdata      start:0x82235A38 end:0x82235B78
+	.text       start:0x826DAB90 end:0x826DC4BC
+
 GameConfig.cpp:
 	.pdata      start:0x82230D80 end:0x82230D88
 	.pdata      start:0x82230EA8 end:0x82230EB0

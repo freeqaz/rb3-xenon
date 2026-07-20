@@ -1,4 +1,8 @@
 {
+ "0x826dab98": "??A?$map@W4TrackType@@VPlayerStreakData@PerfectSectionTracker@@U?$less@W4TrackType@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAVPlayerStreakData@PerfectSectionTracker@@ABW4TrackType@@@Z",
+ "0x826dac78": "??0PerfectSectionTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
+ "0x826daf80": "??1PerfectSectionTracker@@UAA@XZ",
+ "0x826db188": "?HandleEnterExtent@PerfectSectionTracker@@QAAXMH_N@Z",
  "0x826a0bf8": "?GetSoloGemReward@Scoring@@QAAMVSymbol@@@Z",
  "0x826a0c70": "?GetSoloGemPenalty@Scoring@@QAAMVSymbol@@@Z",
  "0x826a0778": "?GetSoloBlock@Scoring@@QBAPAVDataArray@@VSymbol@@@Z",
