@@ -272,7 +272,7 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
         return false;
     }
     if (filter->requiredTrackType != kTrackNone) {
-        if (!data->HasPart(TrackTypeToSym(filter->requiredTrackType)))
+        if (!data->HasPart(TrackTypeToSym(filter->requiredTrackType), false))
             return false;
     }
     bool found = true;
@@ -292,7 +292,7 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
             break;
         case 6: {
             MILO_ASSERT(partSym != "", 0x1B5);
-            if (!data->HasPart(partSym)) {
+            if (!data->HasPart(partSym, false)) {
                 found = false;
                 break;
             }
@@ -472,7 +472,7 @@ bool SongSortMgr::GetRandomSongs(
             bool partOk = false;
             FOREACH (pit, *availableParts) {
                 Symbol sym = *pit;
-                if (!rec.GetData()->HasPart(sym)) {
+                if (!rec.GetData()->HasPart(sym, false)) {
                     partOk = true;
                     break;
                 }

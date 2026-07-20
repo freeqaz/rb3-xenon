@@ -41,7 +41,7 @@ public:
     int RealBassTuning(int) const;
     Symbol Decade() const;
     bool HasPart(Symbol) const;
-    bool HasPart(Symbol, bool) const;
+    virtual bool HasPart(Symbol, bool) const;
     float Rank(Symbol) const;
     bool HasVocalHarmony() const;
     bool IsPrivate() const;

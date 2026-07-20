@@ -193,8 +193,7 @@ void StreakMeter::SetPartActive(int i, bool b) {
     }
     if (!b && !(mPartFadeAnims[i]->GetFrame() < 0.1f))
         return;
-    RndPropAnim *anim = mPartFadeAnims[i];
-    anim->SetFrame(b ? 0.0f : 1.0f, 1.0f);
+    mPartFadeAnims[i]->SetFrame(b ? 0.0f : 1.0f, 1.0f);
 }
 
 void StreakMeter::SetIsolatedPart(int i) {

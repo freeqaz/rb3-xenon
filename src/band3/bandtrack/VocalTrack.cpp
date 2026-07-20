@@ -577,11 +577,12 @@ RndMesh *VocalTrack::CreateMarker(Symbol s1, float f2, bool warn) {
     mesh->SetMat(found->Mat());
     mesh->SetShowing(true);
     mesh->SetTransParent(found->TransParent(), false);
-    mesh->SetLocalXfm(found->LocalXfm());
+    const Transform &foundXfm = found->LocalXfm();
+    mesh->SetLocalXfm(foundXfm);
     mesh->SetTransParent(mDir->mScroller, true);
-    mesh->SetLocalPos(Vector3(
-        unk78 * (f2 / unk74), mesh->LocalXfm().v.y, mesh->LocalXfm().v.z
-    ));
+    Vector3 markerPos(mesh->LocalXfm().v);
+    markerPos.x = unk78 * (f2 / unk74);
+    mesh->SetLocalPos(markerPos);
     unk1c8->AddObject(mesh);
     unk1a0.push_back(std::make_pair(mesh, f2));
     return mesh;
