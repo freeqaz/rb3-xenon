@@ -59,6 +59,8 @@ public:
         Symbol mLanguage; // 0x0
         /** The move's name, in that language. */
         String mName; // 0x4
+        int mPad0x10; // 0x10 - retail LocalizedName is 0x18 (stride 24); DC3 lost these
+        int mPad0x14; // 0x14
     };
     enum TexState {
         kTexNone = 0,
