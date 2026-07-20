@@ -4705,6 +4705,10 @@ band3/game/VocalTrainerPanel.cpp:
 	.pdata      start:0x82233AC0 end:0x82233B20
 	.text       start:0x826B8598 end:0x826B8AD0
 
+band3/game/RGTrainerPanel.cpp:
+	.pdata      start:0x822330B0 end:0x82233358
+	.text       start:0x826ADD68 end:0x826B1350
+
 band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822347E0 end:0x822347E8
 	.pdata      start:0x82234830 end:0x822349E0

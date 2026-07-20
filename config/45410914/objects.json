@@ -922,6 +922,7 @@
    },
    "band3/game/VocalPart.cpp": "NonMatching",
    "band3/game/TrainerPanel.cpp": "NonMatching",
+   "band3/game/RGTrainerPanel.cpp": "NonMatching",
    "band3/game/VocalTrainerPanel.cpp": "NonMatching",
    "band3/game/FadePanel.cpp": {
     "status": "NonMatching",
