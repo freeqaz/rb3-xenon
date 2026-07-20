@@ -1183,11 +1183,11 @@ void RndMesh::OnSync(int flags) {
     if (PatchOkay(mVerts.size(), mFaces.size())) {
         mPatches.push_back(mFaces.size());
     } else if (flags & 0x100U) {
-        int u13 = 0xFFFF;
-        int i12 = 0;
+        u16 i12 = 0;
+        u16 u13 = 0xFFFF;
         int i4 = 0;
         FOREACH (it, mFaces) {
-            i12 = Max(it->v3, Max<u16>(i12, it->v1, it->v2));
+            i12 = Max(Max<u16>(i12, it->v1, it->v2), it->v3);
             u13 = Min(Min<u16>(u13, it->v1, it->v2), it->v3);
             if (!PatchOkay((i12 - u13) + 1, i4 + 1)) {
                 mPatches.push_back(i4);
@@ -1203,9 +1203,7 @@ void RndMesh::OnSync(int flags) {
         std::vector<Face> faces;
         Vector3 v40(0, 0, 0);
         int i4 = 0;
-        while (true) {
-            if (mFaces.empty())
-                break;
+        while (!mFaces.empty()) {
             int u5 = 4;
             float f68 = 0;
             std::vector<Face>::iterator faceIt = mFaces.begin();
@@ -1247,11 +1245,9 @@ void RndMesh::OnSync(int flags) {
             faces.push_back(*faceIt);
             mFaces.erase(faceIt);
             i4++;
-            if (mFaces.empty())
-                break;
         }
         mPatches.push_back(i4);
-        mFaces = faces;
+        mFaces.swap(faces);
     }
 }
 #endif
