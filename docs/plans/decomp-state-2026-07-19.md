@@ -1,14 +1,35 @@
-# rb3-xenon decomp — state & live veins (2026-07-19)
+# rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 18,819 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,874 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). **Automation build-out session 18,689 → 18,819 (+130):**
+(~69k functions).
+
+## 2026-07-20 flywheel session — 18,819 → 18,874 (+55 this session; +185 across the arc)
+
+Ran the **body-flip → correlator-harvest → reprice** flywheel to a clean milestone:
+- **Grind wave 1** +11 (LEVER-STRING/SYMBOL + BODY-LEVER 70-90; missing-`virtual`
+  GameMode cascade +9 discovered).
+- **Lane A wave 1** +22, **Lane A wave 2** +14 (retail-absent deletions, HttpGet
+  layout, HasPart virtual, dead-stub body restores). Combined Lane A +36.
+- **Correlator re-scan** +8 (6 byte-identity additions + 2 invcorr repoints,
+  full-rebuild A/B gained 8 / LOST 0, `ce41a0a4`). Near fixed-point.
+- **Tooling landed:** `scripts/triage/reprice_router.py` (`48a8ce51`) — grind-outcome
+  feedback loop, router self-sharpens each wave; `scripts/harvest/missing_virtual_scan.py`
+  (`6726d4ee`) — cascade detector (vein now drained).
+
+**Measured priors (reprice_router, N-gated):** BODY-LEVER yield is 70-90 stratum ONLY
+and **thinning: 24.1% → 20.4%** as the band is skimmed; ≥90 dead (4.8%), <70 dead (0%);
+certify-skip RELOC-COLOC/STRUCT-ARTIFACT/NEEDS-REVIEW confirmed. **Forecast: ~80 flips +
+correlator dividend ≈ ~150 strict remaining in the flywheel → lands near ~19k/69k in
+~4-6 more waves. Next order-of-magnitude requires a PIVOT (native/OSS-build/HW) — the
+USER's call, to be made while the flywheel still produces.**
+
+---
+### [HIST] 2026-07-19 automation build-out — 18,689 → 18,819 (+130)
 triage classifier built + 4-round calibrated, MISPAIR heuristic fixed, inverse
-correlator built, and grind waves drained the productive buckets (ZS-inst +9,
-VocalPlayer +7, foreman +5, MECH-LEVER +8, STRUCT-cal +4, calibration +7,
-correlator +2, BODY-LEVER drain +17). Zero named regressions across ~16 landings.
-**Machinery now DRAINED — bankable remainder <+30; pivot to ZERO-UNMAPPED
-correlator scaling is the captain's recommended next lane (see Captain review).**
+correlator built, grind waves drained productive buckets (ZS-inst +9, VocalPlayer
++7, foreman +5, MECH-LEVER +8, STRUCT-cal +4, calibration +7, correlator +2,
+BODY-LEVER drain +17). Zero named regressions across ~16 landings.
 
 ## ⛔ PIVOT POINT (2026-07-19 pm) — cheap wire-and-flip / near-miss veins EXHAUSTED
 
