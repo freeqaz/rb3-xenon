@@ -1,4 +1,6 @@
 {
+ "0x82af71d8": "??ABandwidthCounterMap@Quazal@@QAAPAVIOBandwidthCounter@01@I@Z",
+ "0x82af7318": "??0IOBandwidthCounter@BandwidthCounterMap@Quazal@@QAA@ABVString@2@@Z",
  "0x82663968": "?InitData@StoreOfferProvider@@UAAXPAVRndDir@@@Z",
  "0x825afe98": "?GetInterstitialsFromScreen@InterstitialMgr@@QAAXPAVUIScreen@@AAV?$vector@PAVUIPanel@@V?$StlNodeAlloc@PAVUIPanel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x825b0030": "?PickInterstitialBetweenScreens@InterstitialMgr@@QAAPAVUIPanel@@PBD0@Z",

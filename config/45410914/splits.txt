@@ -4843,6 +4843,10 @@ network/Plugins/Checksum/MD5/MD5.cpp:
 	.pdata      start:0x82259A18 end:0x82259A40
 	.text       start:0x82B438C8 end:0x82B4547C
 
+network/Platform/BandwidthCounter.cpp:
+	.pdata      start:0x82256138 end:0x82256148
+	.text       start:0x82AF71D8 end:0x82AF7394
+
 band3/meta_band/StoreMenuProvider.cpp:
 	.pdata      start:0x8222F7F0 end:0x8222F8C0
 	.text       start:0x82673B20 end:0x82674654

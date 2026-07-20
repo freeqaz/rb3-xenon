@@ -1398,6 +1398,15 @@
    "network/Core/PeriodicJob.cpp": "NonMatching",
    "network/net/NetworkEmulator.cpp": "NonMatching",
    "network/Platform/StringConversion.cpp": "NonMatching",
+   "network/Platform/BandwidthCounter.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/Od",
+     "/Oi-",
+     "/EHs-c-",
+     "/Ob1"
+    ]
+   },
    "network/Core/Scheduler.cpp": "NonMatching",
    "network/Plugins/ChecksumAlgorithm.cpp": "NonMatching"
   }
