@@ -1,4 +1,6 @@
 {
+ "0x825afe98": "?GetInterstitialsFromScreen@InterstitialMgr@@QAAXPAVUIScreen@@AAV?$vector@PAVUIPanel@@V?$StlNodeAlloc@PAVUIPanel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x825b0030": "?PickInterstitialBetweenScreens@InterstitialMgr@@QAAPAVUIPanel@@PBD0@Z",
  "0x822974c0": "??0out_of_range@stlpmtx_std@@QAA@ABV01@@Z",
  "0x822ad9b8": "?Replace@RndTransformable@@$4PPPPPPPM@BHM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822b7da8": "?resize@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVKeyFrame@EventAnim@@@Z",

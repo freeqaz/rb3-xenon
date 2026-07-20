@@ -2009,6 +2009,10 @@ Text.cpp:
 	.text       start:0x826CEA10 end:0x826CEA64
 	.text       start:0x826CEC98 end:0x826CED00
 
+band3/meta_band/InterstitialMgr.cpp:
+	.pdata      start:0x822225B8 end:0x822225C8
+	.text       start:0x825AFE98 end:0x825B0150
+
 HamScrollSpeedIndicator.cpp:
 	.pdata      start:0x821FC758 end:0x821FC760
 	.pdata      start:0x821FD230 end:0x821FD238
