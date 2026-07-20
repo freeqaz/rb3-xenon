@@ -1,4 +1,6 @@
 {
+ "0x823f5dd8": "?Init@Server@@UAAXXZ",
+ "0x823f5f40": "?Handle@Server@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8230e0f8": "?Enter@SongSectionController@@UAAXXZ",
  "0x8230c478": "?OnWaitForEventReceived@SongSectionController@@QAA?AVDataNode@@PBVDataArray@@@Z",
  "0x8230c520": "?Replace@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",

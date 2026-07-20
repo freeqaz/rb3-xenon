@@ -1415,6 +1415,12 @@
    "network/Core/TimedSignal.cpp": "NonMatching",
    "network/Core/PeriodicJob.cpp": "NonMatching",
    "network/net/NetworkEmulator.cpp": "NonMatching",
+   "network/net/Server.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "network/Platform/StringConversion.cpp": "NonMatching",
    "network/Platform/BandwidthCounter.cpp": {
     "status": "NonMatching",
