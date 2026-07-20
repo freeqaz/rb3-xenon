@@ -7,20 +7,14 @@
 #include "utl/MemMgr.h"
 #include <vector>
 
+// RB3 retail SongPattern is 24 bytes (0x18): { Symbol; Range; vector<Symbol> }.
+// The DC3 (newer, dance-move) engine ADDED mMoveParents/mNumMoves — retail RB3
+// (music game, no dance moves) lacks them. Verified from retail TU5: every
+// vector<SongPattern> STL op uses a 0x18 element stride, not 0x28.
 class SongPattern {
 public:
-    SongPattern() : mNumMoves(0) {
-        mElements.clear();
-        mMoveParents.clear();
-    }
+    SongPattern() { mElements.clear(); }
     ~SongPattern() {}
-
-    void ClearMoves() {
-        mNumMoves = 0;
-        FOREACH (it, mMoveParents) {
-            *it = nullptr;
-        }
-    }
 
     /** "The name of this pattern" */
     Symbol mName; // 0x0
@@ -28,8 +22,6 @@ public:
     Range mInitialMeasureRange; // 0x4
     /** "Pattern elements" */
     std::vector<Symbol> mElements; // 0xc
-    std::vector<const MoveParent *> mMoveParents; // 0x18
-    int mNumMoves; // 0x24
 };
 
 class SongSection {

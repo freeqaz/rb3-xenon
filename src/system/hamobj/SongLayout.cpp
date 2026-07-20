@@ -32,11 +32,7 @@ BEGIN_HANDLERS(SongLayout)
     HANDLE_EXPR(pattern_count, (int)mSongPatterns.size())
     HANDLE_EXPR(pattern_size, (int)mSongPatterns[_msg->Int(2)].mElements.size())
     HANDLE_EXPR(first_measure, mSongPatterns[_msg->Int(2)].mInitialMeasureRange.start)
-    HANDLE_EXPR(move_count, mSongPatterns[_msg->Int(2)].mNumMoves)
-    HANDLE_ACTION(add_move, AddPatternMove(_msg->Int(2), _msg->ForceSym(3)))
     HANDLE_ACTION(replace_move, SetReplacerMove(_msg->Int(2), _msg->ForceSym(3)))
-    HANDLE_ACTION(clear_moves, ClearMoves(_msg->Int(2)))
-    HANDLE_ACTION(clear_all_moves, ClearAllPatternMoves())
     HANDLE_EXPR(measure_in_pattern, MeasureInPattern(_msg->Int(2), _msg->Int(3)))
     HANDLE_EXPR(first_unfilled_pattern, FirstUnfilledPattern())
     HANDLE_EXPR(first_unfilled_replacer, FirstUnfilledReplacer())
@@ -46,12 +42,7 @@ BEGIN_HANDLERS(SongLayout)
 END_HANDLERS
 
 void SongLayout::ClearMoves(int pattern) {
-    mSongPatterns[pattern].mNumMoves = 0;
-    auto itEnd = mSongPatterns[pattern].mMoveParents.end();
-    auto it = mSongPatterns[pattern].mMoveParents.begin();
-    for (; it != itEnd; ++it) {
-        (*it) = nullptr;
-    }
+    // RB3 retail SongPattern has no move tracking (DC3-only feature).
 }
 
 bool SongLayout::MeasureInPattern(int measure, int pattern) const {
@@ -121,7 +112,6 @@ BinStreamRev &operator>>(BinStreamRev &d, SongPattern &s) {
     d >> s.mInitialMeasureRange.start;
     d >> s.mInitialMeasureRange.end;
     d >> s.mElements;
-    s.mMoveParents.resize(s.mElements.size());
     return d;
 }
 
@@ -153,23 +143,11 @@ BEGIN_LOADS(SongLayout)
 END_LOADS
 
 void SongLayout::ClearChosenPatterns() {
-    FOREACH (it, mSongPatterns) {
-        const MoveParent **start = &(*it->mMoveParents.begin());
-        int sz = it->mMoveParents.size() * sizeof(const MoveParent *);
-        memset(start, 0, sz);
-        it->mNumMoves = 0;
-    }
+    // RB3 retail SongPattern has no move tracking (DC3-only feature).
 }
 
 void SongLayout::ClearAllPatternMoves() {
-    FOREACH (it, mSongPatterns) {
-        it->mNumMoves = 0;
-        auto itEnd = it->mMoveParents.end();
-        auto pit = it->mMoveParents.begin();
-        for (; pit != itEnd; ++pit) {
-            (*pit) = nullptr;
-        }
-    }
+    // RB3 retail SongPattern has no move tracking (DC3-only feature).
 }
 
 void SongLayout::DumpPatterns() const {
@@ -183,21 +161,13 @@ void SongLayout::DumpPatterns() const {
             it->mInitialMeasureRange.start,
             it->mInitialMeasureRange.end
         );
-        MILO_LOG(" size=%d moves=%d\n", (int)it->mElements.size(), it->mNumMoves);
+        MILO_LOG(" size=%d\n", (int)it->mElements.size());
         i++;
-        for (int j = 0; j < it->mNumMoves; j++) {
-            MILO_LOG("   %s\n", it->mMoveParents[j]->Name());
-        }
     }
 }
 
 void SongLayout::AddPatternMove(int i1, Symbol s2) {
-    if (mSongPatterns[i1].mNumMoves < mSongPatterns[i1].mElements.size()) {
-        int numMoves = mSongPatterns[i1].mNumMoves;
-        mSongPatterns[i1].mElements[numMoves] = s2;
-        mSongPatterns[i1].mMoveParents[numMoves] = TheMoveMgr->Graph().GetMoveParent(s2);
-        mSongPatterns[i1].mNumMoves++;
-    }
+    // RB3 retail SongPattern has no move tracking (DC3-only feature).
 }
 
 void SongLayout::SetReplacerMove(int i, Symbol s2) {
@@ -223,16 +193,8 @@ int SongLayout::ReplacerFirstMeasure(int i) const {
 }
 
 int SongLayout::FirstUnfilledPattern() const {
-    int count = 0;
-    for (auto it = mSongPatterns.begin();
-         it != mSongPatterns.end() && it->mNumMoves >= it->mElements.size();
-         ++it) {
-        count++;
-    }
-    if (count >= mSongPatterns.size()) {
-        count = -1;
-    }
-    return count;
+    // RB3 retail SongPattern has no move tracking (DC3-only feature).
+    return -1;
 }
 
 int SongLayout::FirstUnfilledReplacer() const {
@@ -250,10 +212,8 @@ DataNode SongLayout::AddPattern(DataArray *a) {
     pattern.mName = arr->Sym(0);
     pattern.mInitialMeasureRange.start = arr->Int(1);
     pattern.mInitialMeasureRange.end = arr->Int(2);
-    pattern.mNumMoves = 0;
     for (int i = 3; i < arr->Size(); i++) {
         pattern.mElements.push_back(arr->Sym(i));
-        pattern.mMoveParents.push_back(nullptr);
     }
     mSongPatterns.push_back(pattern);
     return 0;
@@ -322,7 +282,6 @@ void SongLayout::SetDefaultReplacer() {
 
 void SongLayout::SetDefaultPattern(int totalMeasures) {
     ClearChosenPatterns();
-    const MoveParent *nullParent = nullptr;
     int measureStart = 5;
     // Create 2 verse patterns, each with 4 "Rest.move" elements
     for (int i = 0; i < 2; i++) {
@@ -330,7 +289,6 @@ void SongLayout::SetDefaultPattern(int totalMeasures) {
         pattern.mName = Symbol(MakeString("%s%d", "Verse", i));
         for (int j = 0; j < 4; j++) {
             pattern.mElements.push_back(Symbol("Rest.move"));
-            pattern.mMoveParents.push_back(nullParent);
         }
         pattern.mInitialMeasureRange.start = measureStart;
         pattern.mInitialMeasureRange.end = measureStart + 4;

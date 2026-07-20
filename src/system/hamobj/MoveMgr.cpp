@@ -965,14 +965,7 @@ void MoveMgr::FillRoutineFromVerses(int player) {
         int secLen = (it->mMeasureRange.end - it->mMeasureRange.start) + 1;
         int patLen = (it->mPatternRange.end - it->mPatternRange.start) + 1;
         MILO_ASSERT(patLen == secLen, 0x428);
-        for (int i = 0; i < it->mSongPattern->mNumMoves; i++) {
-            int measure = it->mMeasureRange.start + i;
-            unsigned int patIdx = (it->mPatternRange.start + i) - 1;
-            if (patIdx >= (unsigned int)(it->mSongPattern->mElements.size() - 1)) {
-                patIdx = it->mSongPattern->mElements.size() - 1;
-            }
-            mMoveParents[0][measure] = it->mSongPattern->mMoveParents[patIdx];
-        }
+        // RB3 retail SongPattern has no move tracking (DC3-only feature).
     }
     FillRoutineFromParents(player);
 }
