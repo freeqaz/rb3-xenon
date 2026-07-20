@@ -193,12 +193,10 @@ public:
             return tmp;
         }
 
-#ifdef HX_NATIVE
         iterator operator--() {
             curRef = curRef->prev;
             return *this;
         }
-#endif
 
         bool operator!=(iterator it) { return curRef != it.curRef; }
         bool operator==(iterator it) { return curRef == it.curRef; }

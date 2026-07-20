@@ -138,13 +138,15 @@ public:
     static void Init();
     NEW_OBJ(RndTransformable);
 
-private:
-    static Plane sShadowPlane;
-
+public:
     void SetDirty() {
         if (!mDirty)
             SetDirty_Force();
     }
+
+private:
+    static Plane sShadowPlane;
+
     void SetDirty_Force();
     const Transform &WorldXfm_Force();
     void ApplyDynamicConstraint();

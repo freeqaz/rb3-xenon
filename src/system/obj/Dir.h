@@ -459,6 +459,8 @@ protected:
     static ObjectDir *sMainDir;
 
 public:
+    ObjectDir *SubDir(int i) const { return mSubDirs[i]; }
+
     // Hmx::Object
     virtual ~ObjectDir();
     OBJ_CLASSNAME(ObjectDir);
