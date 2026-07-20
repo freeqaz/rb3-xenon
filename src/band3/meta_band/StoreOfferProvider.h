@@ -70,11 +70,16 @@ public:
     Element *GetElementAtIndex(int) const;
 
 protected:
-    DataArray *mShortcuts; // 0x20
-    std::vector<StoreOffer *> *mOffers; // 0x24
-    std::vector<StoreOffer *> *mPacks; // 0x28
-    std::vector<Element *> mElements; // 0x2c
-    RndMat *mAlbumBgMat; // 0x34
-    RndMat *mGroupBgMat; // 0x38
-    RndMat *mSongBgMat; // 0x3c
+    // Retail X360 layout (from ctor/NumData/InitData asm, rel to UIListProvider
+    // subobject at full 0x28): vtable@0x0, mShortcuts@0x4, mOffers@0x8,
+    // mElements@0xc (12B), mAlbumBgMat@0x18, mGroupBgMat@0x1c, mSongBgMat@0x20,
+    // mPacks@0x24. Note mPacks is LAST, not third — declaring it third (as
+    // rb3-Wii does) shifts mElements+mats +4 and breaks InitData's stores.
+    DataArray *mShortcuts; // 0x2c
+    std::vector<StoreOffer *> *mOffers; // 0x30
+    std::vector<Element *> mElements; // 0x34
+    RndMat *mAlbumBgMat; // 0x40
+    RndMat *mGroupBgMat; // 0x44
+    RndMat *mSongBgMat; // 0x48
+    std::vector<StoreOffer *> *mPacks; // 0x4c
 };
