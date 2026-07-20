@@ -843,15 +843,13 @@ void RndAmbientOcclusion::CalculateAOAtPoint(
 }
 
 void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
-    int numVerts = mesh->Verts().size();
     const Transform &xfm = mesh->WorldXfm();
-    int numFaces = mesh->Faces().size();
 
     // Phase 1: Compute AO at each face center
     Vector4 aoResult;
-    std::vector<Vector4> faceAO(numFaces, aoResult);
+    std::vector<Vector4> faceAO(mesh->Faces().size(), aoResult);
     unsigned int f = 0;
-    if (numFaces != 0) {
+    if (mesh->Faces().size() != 0) {
         float oneThird = 1.0f / 3.0f;
         do {
             RndMesh::Vert *verts = &mesh->Verts(0);
@@ -882,13 +880,13 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
 
             faceAO[f] = aoResult;
             f++;
-        } while (f < (unsigned int)numFaces);
+        } while (f < (unsigned int)mesh->Faces().size());
     }
 
     // Phase 2: Build vertex equivalence map (weld coincident vertices)
-    std::vector<int> vertMap(numVerts);
+    std::vector<int> vertMap(mesh->Verts().size());
     int v = 0;
-    if (0 < numVerts) {
+    if (0 < mesh->Verts().size()) {
         do {
             int equiv = 0;
             if (0 < v) {
@@ -904,17 +902,17 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
             }
             vertMap[v] = equiv;
             v++;
-        } while (v < numVerts);
+        } while (v < mesh->Verts().size());
     }
 
     // Phase 3: Smooth AO by accumulating angle-weighted face AO per vertex
     v = 0;
-    if (0 < numVerts) {
+    if (0 < mesh->Verts().size()) {
         int vertOffset = 0;
         int *mapPtr = &vertMap[0];
         do {
             unsigned int fNum = 0;
-            if (numFaces != 0) {
+            if (mesh->Faces().size() != 0) {
                 int faceOffset = 0;
                 int colorOffset = 0;
                 float accR = 0.0f;
@@ -970,7 +968,7 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
                     fNum++;
                     colorOffset += 0x10;
                     faceOffset += 6;
-                } while (fNum < (unsigned int)numFaces);
+                } while (fNum < (unsigned int)mesh->Faces().size());
 
                 // Blend smoothed AO with existing vertex color
                 if (totalAngle > 0.0f) {
@@ -990,7 +988,7 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
             v++;
             mapPtr++;
             vertOffset += 0x60;
-        } while (v < numVerts);
+        } while (v < mesh->Verts().size());
     }
 }
 

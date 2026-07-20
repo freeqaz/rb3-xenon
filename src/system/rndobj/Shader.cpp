@@ -442,14 +442,8 @@ u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         int boneCount = TheShaderMgr.BoneCount();
         bool displayError = TheShaderMgr.GetShaderErrorDisplay();
         u64 bc = (u64)(bool)boneCount & 1;
-        u64 de = (u64)displayError;
+        u64 de = (u64)displayError & 1;
         opts = (de << 23 | bc) << 12;
-        break;
-    }
-    case kMovieShader: {
-        u64 specBit = (u64)(mat->GetSpecularMap() == nullptr) & 1;
-        u64 normBit = (u64)(bool)mat->NormalMap() & 1;
-        opts = (specBit | normBit << 4) << 1;
         break;
     }
     case kPostprocessErrorShader: {
@@ -465,7 +459,6 @@ u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     default:
         break;
     }
-    opts = (opts & ~((u64)1 << 52)) | ((u64)(TheHiResScreen.IsActive() & 1) << 52);
     int drawDiff = TheRnd.GetDrawMode() - Rnd::kDrawOcclusion;
     return -(u64)(bool)drawDiff & opts;
 }
