@@ -1,0 +1,5632 @@
+[
+ {
+  "rb3_va": "0x82270298",
+  "bare_name": "~ObjRef",
+  "mangled": "??1ObjRef@@UAA@XZ",
+  "dc3_va": "0x823312b0",
+  "dc3_unit": "f i App.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82272e40",
+  "bare_name": "SetFileChecksumData",
+  "mangled": "?SetFileChecksumData@@YAXXZ",
+  "dc3_va": "0x82334250",
+  "dc3_unit": "f   ChecksumData_xbox.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82273350",
+  "bare_name": "~CXLrcTransport",
+  "mangled": "??1CXLrcTransport@@QAA@XZ",
+  "dc3_va": "0x8260d910",
+  "dc3_unit": "xlrctransport.obj",
+  "sim": 0.913,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82273810",
+  "bare_name": "CLexSchemaDecoder",
+  "mangled": "??0CLexSchemaDecoder@NUISPEECH@@QAA@XZ",
+  "dc3_va": "0x82b1ac28",
+  "dc3_unit": "lexschemadecoder.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8228e6f0",
+  "bare_name": "D3DDevice_GetRenderTarget",
+  "mangled": "D3DDevice_GetRenderTarget",
+  "dc3_va": "0x82ba4920",
+  "dc3_unit": "state.obj",
+  "sim": 0.964,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x822ad068",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@BlacklightPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828bf448",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.967,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x822b8900",
+  "bare_name": "CheckNoFlashcardsCondition",
+  "mangled": "?CheckNoFlashcardsCondition@AccomplishmentSongConditional@@IBA_NPAVSongStatusMgr@@VSymbol@@@Z",
+  "dc3_va": "0x8297b780",
+  "dc3_unit": "AccomplishmentSongConditional.obj",
+  "sim": 0.932,
+  "conf": 0.964,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8231bd08",
+  "bare_name": "SetSongCampaign",
+  "mangled": "?SetSongCampaign@HamStarsDisplay@@QAAXH@Z",
+  "dc3_va": "0x82969ed8",
+  "dc3_unit": "HamStarsDisplay.obj",
+  "sim": 0.91,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8231d4e8",
+  "bare_name": "TokenRedeemedMsg",
+  "mangled": "??0TokenRedeemedMsg@@QAA@_NABVString@@ABVSymbol@@@Z",
+  "dc3_va": "0x82946460",
+  "dc3_unit": "OptionsPanel.obj",
+  "sim": 0.965,
+  "conf": 0.98,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823426f8",
+  "bare_name": "~InviteAcceptedMsg",
+  "mangled": "??1InviteAcceptedMsg@@UAA@XZ",
+  "dc3_va": "0x825fda60",
+  "dc3_unit": "PlatformMgr_Xbox.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82351420",
+  "bare_name": "SetGameOver",
+  "mangled": "?SetGameOver@GamePanel@@QAAX_N@Z",
+  "dc3_va": "0x8287d178",
+  "dc3_unit": "GamePanel.obj",
+  "sim": 0.92,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823556e0",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@LetterboxPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828bf330",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.967,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82356050",
+  "bare_name": "NewHamUser",
+  "mangled": "?NewHamUser@HamUser@@SAPAV1@H@Z",
+  "dc3_va": "0x8288f260",
+  "dc3_unit": "HamUser.obj",
+  "sim": 0.955,
+  "conf": 0.978,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82356118",
+  "bare_name": "HamUserMgr",
+  "mangled": "??0HamUserMgr@@QAA@H@Z",
+  "dc3_va": "0x8287aa48",
+  "dc3_unit": "HamUserMgr.obj",
+  "sim": 0.92,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82360fb0",
+  "bare_name": "SetDancer",
+  "mangled": "?SetDancer@AppLabel@@QAAXVSymbol@@@Z",
+  "dc3_va": "0x8296cae8",
+  "dc3_unit": "AppLabel.obj",
+  "sim": 0.925,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82368300",
+  "bare_name": "Cleanup",
+  "mangled": "?Cleanup@CampaignEra@@AAAXXZ",
+  "dc3_va": "0x8291aae0",
+  "dc3_unit": "CampaignEra.obj",
+  "sim": 0.979,
+  "conf": 0.984,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823684e8",
+  "bare_name": "~CampaignEra",
+  "mangled": "??1CampaignEra@@UAA@XZ",
+  "dc3_va": "0x8291ac70",
+  "dc3_unit": "CampaignEra.obj",
+  "sim": 0.942,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82368fc0",
+  "bare_name": "GetFitnessPounds",
+  "mangled": "?GetFitnessPounds@HamProfile@@QAAMXZ",
+  "dc3_va": "0x828dfdb8",
+  "dc3_unit": "HamProfile.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82369da8",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@CampaignMasterQuestSongSelectPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828be888",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82369f28",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@PracticeChoosePanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828bfc70",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.967,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8236aaa8",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@VoiceControlPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828c0248",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.967,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8236d2c8",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@KinectSharePanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828c03e0",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.967,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82371b80",
+  "bare_name": "~PPTREE_BUILDER",
+  "mangled": "??1PPTREE_BUILDER@NUISPEECH@@QAA@XZ",
+  "dc3_va": "0x82b4dbb0",
+  "dc3_unit": "ngtree.obj",
+  "sim": 0.956,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823bef28",
+  "bare_name": "DoFSM",
+  "mangled": "?DoFSM@CharIKFoot@@IAAXPAVCharacter@@AAVTransform@@@Z",
+  "dc3_va": "0x8238a1e8",
+  "dc3_unit": "CharIKFoot.obj",
+  "sim": 0.954,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823c3960",
+  "bare_name": "AddVFetch",
+  "mangled": "?AddVFetch@Microcode@CMicrocodeBuilder@D3D@@QAAKPATGPUVERTEX_FETCH_INSTRUCTION@@H@Z",
+  "dc3_va": "0x82bafee8",
+  "dc3_unit": "shader.obj",
+  "sim": 0.943,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823c9b68",
+  "bare_name": "Save",
+  "mangled": "?Save@CharIKMidi@@UAAXAAVBinStream@@@Z",
+  "dc3_va": "0x823a02f0",
+  "dc3_unit": "CharIKMidi.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823e1020",
+  "bare_name": "Done",
+  "mangled": "?Done@SongSequence@@QBA_NXZ",
+  "dc3_va": "0x8288b9b8",
+  "dc3_unit": "SongSequence.obj",
+  "sim": 0.94,
+  "conf": 0.973,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823e1a18",
+  "bare_name": "EventDialogDismissMsg",
+  "mangled": "??0EventDialogDismissMsg@@QAA@VSymbol@@0@Z",
+  "dc3_va": "0x828edee8",
+  "dc3_unit": "UIEventMgr.obj",
+  "sim": 0.969,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823e9f40",
+  "bare_name": "AddToReadyList",
+  "mangled": "?AddToReadyList@Scheduler@XGRAPHICS@@AAAXPAVSchedNode@2@@Z",
+  "dc3_va": "0x82dbfcf0",
+  "dc3_unit": "sched.obj",
+  "sim": 0.939,
+  "conf": 0.958,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823ea538",
+  "bare_name": "DestroySpeechRetainedAudio",
+  "mangled": "?DestroySpeechRetainedAudio@NUISPEECH@@YAXPAU_NUI_SPEECH_RETAINEDAUDIO@@@Z",
+  "dc3_va": "0x82a20450",
+  "dc3_unit": "xspeechapi.obj",
+  "sim": 0.933,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823ee4c8",
+  "bare_name": "InviteAcceptedMsg",
+  "mangled": "??0InviteAcceptedMsg@@QAA@HI_N@Z",
+  "dc3_va": "0x825d5e68",
+  "dc3_unit": "PlatformMgr_Xbox.obj",
+  "sim": 0.978,
+  "conf": 0.98,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x823fc440",
+  "bare_name": "GetBuffer",
+  "mangled": "?GetBuffer@CXboxRendererConnection@LEAPCORE@@UAAPAEI@Z",
+  "dc3_va": "0x82e9d200",
+  "dc3_unit": "xboxrendererconnection.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82402ef0",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@CampaignDiffProvider@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828be3a8",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.946,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8240e140",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@TitleProvider@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828beab8",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.946,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x824a8918",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@MovieProvider@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828bf9c0",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.946,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x824c6950",
+  "bare_name": "operator>><class_MoggClipMap>",
+  "mangled": "??$?5VMoggClipMap@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VMoggClipMap@@@@@Z",
+  "dc3_va": "0x82756ea8",
+  "dc3_unit": "Sfx.obj",
+  "sim": 0.948,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x824ce058",
+  "bare_name": "Replace",
+  "mangled": "?Replace@?$ObjRefConcrete@VSeqInst@@VObjectDir@@@@UAAXPAVObject@Hmx@@@Z",
+  "dc3_va": "0x82747fb0",
+  "dc3_unit": "Sequence.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x824dffd0",
+  "bare_name": "DataPointJob",
+  "mangled": "??0DataPointJob@?A0x698c11de@@QAA@AAVDataPoint@@AAVString@@@Z",
+  "dc3_va": "0x8298ef50",
+  "dc3_unit": "RockCentral.obj",
+  "sim": 0.917,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x824f9388",
+  "bare_name": "OnStartLoadSong",
+  "mangled": "?OnStartLoadSong@GamePanel@@AAA?AVDataNode@@PAVDataArray@@@Z",
+  "dc3_va": "0x8287c808",
+  "dc3_unit": "GamePanel.obj",
+  "sim": 0.914,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82517208",
+  "bare_name": "AddError",
+  "mangled": "?AddError@CSpBasicErrorLog@NUISPEECH@@UAAJJJPB_W0K@Z",
+  "dc3_va": "0x82b17620",
+  "dc3_unit": "srgrammar.obj",
+  "sim": 0.923,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82521830",
+  "bare_name": "FileDelete",
+  "mangled": "FileDelete",
+  "dc3_va": "0x825ef030",
+  "dc3_unit": "File_Win.obj",
+  "sim": 0.979,
+  "conf": 0.985,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825231d8",
+  "bare_name": "TrieFree",
+  "mangled": "TrieFree",
+  "dc3_va": "0x82b56ef0",
+  "dc3_unit": "trie.obj",
+  "sim": 0.939,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82527aa8",
+  "bare_name": "fExist",
+  "mangled": "?fExist@CatLex@NUISPEECH@@QBAHPB_WIGH@Z",
+  "dc3_va": "0x82ad21c0",
+  "dc3_unit": "catlex.obj",
+  "sim": 0.934,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82545f90",
+  "bare_name": "Lookup",
+  "mangled": "?Lookup@?$CFEDefinitionPtrArray@VCFEMappingDef@NUISPEECH@@V?$CFEPair@PBU_GUID@@PBU1@@2@$1??$IsEqual@V?$CFEPair@PBU_GUID@@PBU1@@NUISPEECH@@@2@YA_NV32@0@Z$00@NUISPEECH@@QBAPAVCFEMappingDef@2@V?$CFEPair@PBU_GUID@@PBU1@@2@@Z",
+  "dc3_va": "0x82af73c0",
+  "dc3_unit": "femanager.obj",
+  "sim": 0.933,
+  "conf": 0.966,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8254c108",
+  "bare_name": "GetDialogOpt1",
+  "mangled": "?GetDialogOpt1@SaveLoadManager@@QAA?AVSymbol@@XZ",
+  "dc3_va": "0x82894d50",
+  "dc3_unit": "SaveLoadManager.obj",
+  "sim": 0.914,
+  "conf": 0.98,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825525d0",
+  "bare_name": "Start",
+  "mangled": "?Start@SaveLoadManager@@IAAXXZ",
+  "dc3_va": "0x8289b6a0",
+  "dc3_unit": "SaveLoadManager.obj",
+  "sim": 0.94,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825667b8",
+  "bare_name": "SetCampaignMindControlCompleted",
+  "mangled": "?SetCampaignMindControlCompleted@CampaignProgress@@QAAX_N@Z",
+  "dc3_va": "0x829707f8",
+  "dc3_unit": "CampaignProgress.obj",
+  "sim": 0.956,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8256aef8",
+  "bare_name": "Replace",
+  "mangled": "?Replace@?$ObjRefConcrete@VCharEyes@@VObjectDir@@@@UAAXPAVObject@Hmx@@@Z",
+  "dc3_va": "0x8248ee60",
+  "dc3_unit": "HamCharacter.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8256af08",
+  "bare_name": "~CSpObjectTokenAttributeParser",
+  "mangled": "??1CSpObjectTokenAttributeParser@NUISPEECH@@QAA@XZ",
+  "dc3_va": "0x82aa2db8",
+  "dc3_unit": "objecttokenattribparser.obj",
+  "sim": 0.918,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8256fb48",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@CampaignSongSelectPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828be658",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.967,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82570428",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@SingleUserCrewSelectPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828c04f8",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82587b80",
+  "bare_name": "QueryInterface",
+  "mangled": "?QueryInterface@?$CComObjectNoLock@V?$CSpComClassFactoryReleasableSingleton@VCSpResourceManager@NUISPEECH@@@@@ATL@NUISPEECH@@UAAJABU_GUID@@PAPAX@Z",
+  "dc3_va": "0x82a30dd0",
+  "dc3_unit": "sapi.obj",
+  "sim": 0.924,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82588d80",
+  "bare_name": "FindOffer",
+  "mangled": "?FindOffer@HamStorePanel@@UBAPAVStoreOffer@@VSymbol@@@Z",
+  "dc3_va": "0x82930fd8",
+  "dc3_unit": "HamStorePanel.obj",
+  "sim": 0.984,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8258a0e8",
+  "bare_name": "NuiSpeechDestroyEvent",
+  "mangled": "NuiSpeechDestroyEvent",
+  "dc3_va": "0x82a22988",
+  "dc3_unit": "xspeechapi.obj",
+  "sim": 0.933,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8258a0f0",
+  "bare_name": "RFRProgress_CanHandleSkeleton",
+  "mangled": "?RFRProgress_CanHandleSkeleton@Gesture@@YAHPAXH@Z",
+  "dc3_va": "0x829f3e98",
+  "dc3_unit": "regprogress.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8258a178",
+  "bare_name": "evSenoneMix",
+  "mangled": "?evSenoneMix@MVWEC@NUISPEECH@@QAAHHIPAH0@Z",
+  "dc3_va": "0x82b11f98",
+  "dc3_unit": "mvwec.obj",
+  "sim": 0.913,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8258a370",
+  "bare_name": "`dynamic_atexit_destructor_for_'g_techManager''",
+  "mangled": "??__Fg_techManager@Gesture@@YAXXZ",
+  "dc3_va": "0x82ee4db8",
+  "dc3_unit": "techmanager.obj",
+  "sim": 0.91,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8258a830",
+  "bare_name": "GetNode",
+  "mangled": "?GetNode@NavListSort@@QBAPAVNavListSortNode@@VSymbol@@@Z",
+  "dc3_va": "0x82976668",
+  "dc3_unit": "NavListSort.obj",
+  "sim": 0.958,
+  "conf": 0.98,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8258c888",
+  "bare_name": "LoadCampaignDanceMoves",
+  "mangled": "?LoadCampaignDanceMoves@Campaign@@QAAXVSymbol@@@Z",
+  "dc3_va": "0x8291e220",
+  "dc3_unit": "Campaign.obj",
+  "sim": 0.943,
+  "conf": 0.977,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82590320",
+  "bare_name": "GiveGamerpic",
+  "mangled": "?GiveGamerpic@AccomplishmentProgress@@AAAXPAVAccomplishment@@@Z",
+  "dc3_va": "0x82914258",
+  "dc3_unit": "AccomplishmentProgress.obj",
+  "sim": 0.971,
+  "conf": 0.976,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82590400",
+  "bare_name": "GiveAvatarAsset",
+  "mangled": "?GiveAvatarAsset@AccomplishmentProgress@@AAAXPAVAccomplishment@@@Z",
+  "dc3_va": "0x82914320",
+  "dc3_unit": "AccomplishmentProgress.obj",
+  "sim": 0.971,
+  "conf": 0.976,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825ab8e0",
+  "bare_name": "IsExportedSongDC2",
+  "mangled": "?IsExportedSongDC2@Challenges@@QAA_NH@Z",
+  "dc3_va": "0x8289f940",
+  "dc3_unit": "Challenges.obj",
+  "sim": 0.953,
+  "conf": 0.964,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825bf2a8",
+  "bare_name": "Replace",
+  "mangled": "?Replace@?$ObjRefConcrete@VCharClip@@VObjectDir@@@@UAAXPAVObject@Hmx@@@Z",
+  "dc3_va": "0x82343250",
+  "dc3_unit": "CharLipSync.obj",
+  "sim": 0.91,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825c20f0",
+  "bare_name": "EndGameMsg",
+  "mangled": "??0EndGameMsg@@QAA@W4EndGameResult@@@Z",
+  "dc3_va": "0x8287c3d0",
+  "dc3_unit": "GamePanel.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825c57c8",
+  "bare_name": "SetFromSongSelectNode",
+  "mangled": "?SetFromSongSelectNode@AppLabel@@QAAXPBVNavListNode@@@Z",
+  "dc3_va": "0x8296a510",
+  "dc3_unit": "AppLabel.obj",
+  "sim": 0.981,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825c5f00",
+  "bare_name": "SetBestBattleScore",
+  "mangled": "?SetBestBattleScore@AppLabel@@QAAXPAVHamProfile@@H@Z",
+  "dc3_va": "0x8296d220",
+  "dc3_unit": "AppLabel.obj",
+  "sim": 0.942,
+  "conf": 0.969,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825d85e8",
+  "bare_name": "IsCFGFromTrustedSource",
+  "mangled": "?IsCFGFromTrustedSource@CEngine@NUISPEECH@@QAA_NXZ",
+  "dc3_va": "0x82b039c8",
+  "dc3_unit": "main.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825eb720",
+  "bare_name": "XUserSetContext",
+  "mangled": "XUserSetContext",
+  "dc3_va": "0x82ddbdc0",
+  "dc3_unit": "xuser.obj",
+  "sim": 0.938,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825f6680",
+  "bare_name": "UpdateSongs",
+  "mangled": "?UpdateSongs@SongSelectPlaylistCustomizePanel@@QAAXXZ",
+  "dc3_va": "0x8294d7d8",
+  "dc3_unit": "SongSelectPlaylistCustomizePanel.obj",
+  "sim": 0.946,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x825f7838",
+  "bare_name": "Function_8257FD90",
+  "mangled": "ftp_endofresp",
+  "dc3_va": "0x8257fd90",
+  "dc3_unit": "ftp.obj",
+  "sim": 0.915,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82606260",
+  "bare_name": "iswalpha",
+  "mangled": "iswalpha",
+  "dc3_va": "0x829be8c8",
+  "dc3_unit": "_wctype.obj",
+  "sim": 0.917,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82613a20",
+  "bare_name": "~ContentLoadingPanel",
+  "mangled": "??1ContentLoadingPanel@@UAA@XZ",
+  "dc3_va": "0x8292e280",
+  "dc3_unit": "ContentLoadingPanel.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82616cc8",
+  "bare_name": "CountIn",
+  "mangled": "?CountIn@BustAMovePanel@@AAAXH@Z",
+  "dc3_va": "0x82881ae8",
+  "dc3_unit": "BustAMovePanel.obj",
+  "sim": 0.94,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82630340",
+  "bare_name": "AddLoopEndInstructionForUnnaturalLoopExit",
+  "mangled": "?AddLoopEndInstructionForUnnaturalLoopExit@Compiler@D3DXShader@@AAAXPAVBlock@2@PAVInstruction@2@PAULoop@2@@Z",
+  "dc3_va": "0x82d2e448",
+  "dc3_unit": "optimize.obj",
+  "sim": 0.913,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82644638",
+  "bare_name": "InvokeConceptEngine",
+  "mangled": "?InvokeConceptEngine@CCFGEngine@NUISPEECH@@UAAJPAUSPRULEHANDLE__@2@PAUISpPhraseBuilder@2@@Z",
+  "dc3_va": "0x82a5e6e0",
+  "dc3_unit": "cfgengine.obj",
+  "sim": 0.9,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82663408",
+  "bare_name": "FindSong",
+  "mangled": "?FindSong@HamStoreProvider@@QBAPBVStoreOffer@@H@Z",
+  "dc3_va": "0x8297dc00",
+  "dc3_unit": "HamStoreProvider.obj",
+  "sim": 0.958,
+  "conf": 0.968,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8266d168",
+  "bare_name": "XNuiCacheSessionStore",
+  "mangled": "XNuiCacheSessionStore",
+  "dc3_va": "0x82de10f0",
+  "dc3_unit": "xnuicache.obj",
+  "sim": 0.935,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82673398",
+  "bare_name": "Init",
+  "mangled": "?Init@AccomplishmentManager@@SAXPAVDataArray@@@Z",
+  "dc3_va": "0x828b27d0",
+  "dc3_unit": "AccomplishmentManager.obj",
+  "sim": 0.94,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82675ad0",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@LockedContentPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828bf678",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.983,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82677490",
+  "bare_name": "TrackSkeleton_CommitProcessingState",
+  "mangled": "?TrackSkeleton_CommitProcessingState@Pipeline@ST@@QAAXPAUSTPipelineProcessingState@@@Z",
+  "dc3_va": "0x82b5e920",
+  "dc3_unit": "pipeline.obj",
+  "sim": 0.945,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82680c98",
+  "bare_name": "SetNotInGame",
+  "mangled": "?SetNotInGame@PresenceMgr@@QAAXXZ",
+  "dc3_va": "0x82879a80",
+  "dc3_unit": "PresenceMgr.obj",
+  "sim": 1.0,
+  "conf": 0.975,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826826a8",
+  "bare_name": "SetSongWithDifficulty",
+  "mangled": "?SetSongWithDifficulty@HamStarsDisplay@@QAAXHW4Difficulty@@_N@Z",
+  "dc3_va": "0x82969ee8",
+  "dc3_unit": "HamStarsDisplay.obj",
+  "sim": 0.92,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82684f70",
+  "bare_name": "RemoveCFGPPT",
+  "mangled": "?RemoveCFGPPT@CEngine@NUISPEECH@@QAAXPAVCPPT@2@G@Z",
+  "dc3_va": "0x82b04258",
+  "dc3_unit": "main.obj",
+  "sim": 0.927,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82685060",
+  "bare_name": "MECLoadCalibration",
+  "mangled": "?MECLoadCalibration@MEC@@YAXPBXI@Z",
+  "dc3_va": "0x82a11448",
+  "dc3_unit": "meclib.obj",
+  "sim": 0.914,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8268b0a8",
+  "bare_name": "IsOkToUpdateProfile",
+  "mangled": "?IsOkToUpdateProfile@HamProfile@@QAA_NXZ",
+  "dc3_va": "0x828df5f0",
+  "dc3_unit": "HamProfile.obj",
+  "sim": 0.912,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8268b4e8",
+  "bare_name": "MetaPerformer",
+  "mangled": "??0MetaPerformer@@QAA@ABVHamSongMgr@@PBD@Z",
+  "dc3_va": "0x828d19c8",
+  "dc3_unit": "MetaPerformer.obj",
+  "sim": 0.919,
+  "conf": 0.964,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826905b8",
+  "bare_name": "Read",
+  "mangled": "?Read@CTriphoneHash@NUISPEECH@@QAAJPB_W@Z",
+  "dc3_va": "0x82b49d10",
+  "dc3_unit": "trihash.obj",
+  "sim": 0.909,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82696a38",
+  "bare_name": "ReadCartData",
+  "mangled": "?ReadCartData@HamStorePanel@@IAAXXZ",
+  "dc3_va": "0x829348f8",
+  "dc3_unit": "HamStorePanel.obj",
+  "sim": 0.908,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8269cd18",
+  "bare_name": "SetCampaignIntroCompleted",
+  "mangled": "?SetCampaignIntroCompleted@CampaignProgress@@QAAX_N@Z",
+  "dc3_va": "0x829707e8",
+  "dc3_unit": "CampaignProgress.obj",
+  "sim": 0.946,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826b7c78",
+  "bare_name": "SetLastNewSong",
+  "mangled": "?SetLastNewSong@HamProfile@@QAAXXZ",
+  "dc3_va": "0x828e0a68",
+  "dc3_unit": "HamProfile.obj",
+  "sim": 0.915,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826bc9a0",
+  "bare_name": "~CNeuralNet",
+  "mangled": "??1CNeuralNet@Identity@@QAA@XZ",
+  "dc3_va": "0x82a0b028",
+  "dc3_unit": "neuralnet.obj",
+  "sim": 0.916,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826bc9d8",
+  "bare_name": "BinkCloseTrack",
+  "mangled": "BinkCloseTrack",
+  "dc3_va": "0x82ee9c38",
+  "dc3_unit": "binkread.obj",
+  "sim": 0.929,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826bce58",
+  "bare_name": "IsEqualFile",
+  "mangled": "?IsEqualFile@CCFGGrammar@NUISPEECH@@QAAHPB_W@Z",
+  "dc3_va": "0x82aac860",
+  "dc3_unit": "cfggrammar.obj",
+  "sim": 0.923,
+  "conf": 0.959,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826c3888",
+  "bare_name": "null_method",
+  "mangled": "llist_dtor",
+  "dc3_va": "0x823e3b70",
+  "dc3_unit": "ClipDistMap.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826cfd88",
+  "bare_name": "SendConnectResponse",
+  "mangled": "?SendConnectResponse@CXLrcTransport@@AAAJPAU_XLRC_CONNECT_REQUEST@@PAU_XLRC_CONNECT_PROTOCOL_RESPONSE@@@Z",
+  "dc3_va": "0x8260d650",
+  "dc3_unit": "xlrctransport.obj",
+  "sim": 0.937,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826e56b0",
+  "bare_name": "IsActive",
+  "mangled": "?IsActive@NavListSort@@UBA_NH@Z",
+  "dc3_va": "0x82976ad8",
+  "dc3_unit": "NavListSort.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826f0f20",
+  "bare_name": "bink_timer",
+  "mangled": "bink_timer",
+  "dc3_va": "0x82ee89f0",
+  "dc3_unit": "binkread.obj",
+  "sim": 0.905,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826f6838",
+  "bare_name": "RegSetValueExW",
+  "mangled": "?RegSetValueExW@NUISPEECH@@YAJPAUHKEY__@@PB_WKKPBEK@Z",
+  "dc3_va": "0x82a25410",
+  "dc3_unit": "speechlib.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x826f8380",
+  "bare_name": "GetCrews",
+  "mangled": "?GetCrews@?A0x861ea732@@YAPAVDataArray@@XZ",
+  "dc3_va": "0x82450180",
+  "dc3_unit": "HamGameData.obj",
+  "sim": 0.917,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82704640",
+  "bare_name": "GetOutputGain",
+  "mangled": "?GetSlipOffset@StreamReceiverFile@@UAAMXZ",
+  "dc3_va": "0x8274f950",
+  "dc3_unit": "StreamReceiverFile.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82713b40",
+  "bare_name": "SynthPoll",
+  "mangled": "?SynthPoll@MidiInstrument@@UAAXXZ",
+  "dc3_va": "0x82759890",
+  "dc3_unit": "MidiInstrument.obj",
+  "sim": 0.988,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827145f0",
+  "bare_name": "Reset",
+  "mangled": "?Reset@ATanInterpolator@@QAAXABVVector2@@0M@Z",
+  "dc3_va": "0x82e07b50",
+  "dc3_unit": "Interp.obj",
+  "sim": 0.91,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82731ad8",
+  "bare_name": "~DATABASE",
+  "mangled": "??1DATABASE@MultiPoseDetector@FaceCore@@QAA@XZ",
+  "dc3_va": "0x829feca8",
+  "dc3_unit": "multiposedatabase.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827347d0",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@VoiceInputPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x828c0610",
+  "dc3_unit": "MetaPanel.obj",
+  "sim": 0.979,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82736130",
+  "bare_name": "GetAdaptOptions",
+  "mangled": "?GetAdaptOptions@CMllr@NUISPEECH@@QAAXPA_N000@Z",
+  "dc3_va": "0x82ad7378",
+  "dc3_unit": "mllr_stub.obj",
+  "sim": 0.924,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82738c78",
+  "bare_name": "SetTransforms",
+  "mangled": "?SetTransforms@DxMesh@@IAAXXZ",
+  "dc3_va": "0x826227d0",
+  "dc3_unit": "Mesh.obj",
+  "sim": 0.987,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82743a18",
+  "bare_name": "EndLoopImpl",
+  "mangled": "?EndLoopImpl@SampleInst360@@MAAXXZ",
+  "dc3_va": "0x82e445d8",
+  "dc3_unit": "SampleInst.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82743a30",
+  "bare_name": "wcstombs_s",
+  "mangled": "wcstombs_s",
+  "dc3_va": "0x829a6218",
+  "dc3_unit": "wcstombs.obj",
+  "sim": 0.934,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82746998",
+  "bare_name": "StreamRestart",
+  "mangled": "?StreamRestart@DxMovie@@AAAXH@Z",
+  "dc3_va": "0x8261f928",
+  "dc3_unit": "Movie.obj",
+  "sim": 0.93,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8274a9d0",
+  "bare_name": "GetMaxStars",
+  "mangled": "?GetMaxStars@CampaignEra@@QBAHXZ",
+  "dc3_va": "0x8291a088",
+  "dc3_unit": "CampaignEra.obj",
+  "sim": 0.903,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8275d998",
+  "bare_name": "RAD_blip_for_host",
+  "mangled": "RAD_blip_for_host",
+  "dc3_va": "0x82eee1a0",
+  "dc3_unit": "binkasyncRR.obj",
+  "sim": 0.915,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8277b888",
+  "bare_name": "HasSkeleton",
+  "mangled": "?HasSkeleton@ShellInput@@QBA_NXZ",
+  "dc3_va": "0x829010a8",
+  "dc3_unit": "ShellInput.obj",
+  "sim": 0.958,
+  "conf": 0.973,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827800b0",
+  "bare_name": "CLatticeDecoder",
+  "mangled": "??0CLatticeDecoder@NUISPEECH@@QAA@PAVCHeap@1@@Z",
+  "dc3_va": "0x82afd230",
+  "dc3_unit": "lattice.obj",
+  "sim": 0.932,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82781ae0",
+  "bare_name": "ClearVTLNAdaptationData",
+  "mangled": "?ClearVTLNAdaptationData@CMllr@NUISPEECH@@QAAX_N@Z",
+  "dc3_va": "0x82af0af0",
+  "dc3_unit": "mllr_align.obj",
+  "sim": 0.922,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82790560",
+  "bare_name": "SetTreatDigitsAsLetters",
+  "mangled": "?SetTreatDigitsAsLetters@CTokenize@D3DXShader@@QAAXH@Z",
+  "dc3_va": "0x82bfe470",
+  "dc3_unit": "ctokenize.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827921d8",
+  "bare_name": "IsHeaderCollapsed",
+  "mangled": "?IsHeaderCollapsed@NavListSortMgr@@QAA_NVSymbol@@@Z",
+  "dc3_va": "0x8290e348",
+  "dc3_unit": "NavListSortMgr.obj",
+  "sim": 0.937,
+  "conf": 0.964,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82794730",
+  "bare_name": "Clear",
+  "mangled": "ReleaseAPOXHV",
+  "dc3_va": "0x82caa230",
+  "dc3_unit": "apoxhv.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82794988",
+  "bare_name": "CDecoder",
+  "mangled": "??0CDecoder@NUISPEECH@@QAA@PAVCHeap@1@PAVCEngine@1@@Z",
+  "dc3_va": "0x82adf418",
+  "dc3_unit": "search.obj",
+  "sim": 0.917,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8279d7d0",
+  "bare_name": "IsMinGain",
+  "mangled": "?IsMinGain@TrueColorAutoExposure@TrueColor@@QAA_NXZ",
+  "dc3_va": "0x829e7be8",
+  "dc3_unit": "truecolor.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8279d7f8",
+  "bare_name": "WorthAdapting",
+  "mangled": "?WorthAdapting@CMllr@NUISPEECH@@QAA_NXZ",
+  "dc3_va": "0x82ad7370",
+  "dc3_unit": "mllr_stub.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827b1238",
+  "bare_name": "AddSink",
+  "mangled": "?AddSink@Object@Hmx@@QAAXPAV12@VSymbol@@1W4SinkMode@12@_N@Z",
+  "dc3_va": "0x825ac458",
+  "dc3_unit": "Object.obj",
+  "sim": 0.918,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827b4c68",
+  "bare_name": "Unloading",
+  "mangled": "?Unloading@MainMenuPanel@@UBA_NXZ",
+  "dc3_va": "0x8293afa0",
+  "dc3_unit": "MainMenuPanel.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827cc0b8",
+  "bare_name": "ctr_decrypt",
+  "mangled": "ctr_decrypt",
+  "dc3_va": "0x82e5a990",
+  "dc3_unit": "ctr.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827d44f8",
+  "bare_name": "~PackFileReader",
+  "mangled": "??1PackFileReader@Gesture@@QAA@XZ",
+  "dc3_va": "0x829fbea8",
+  "dc3_unit": "packfilereader.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827e1320",
+  "bare_name": "KinectShare",
+  "mangled": "??0KinectShare@@QAA@IHPBDHW4EContentType@0@_K222@Z",
+  "dc3_va": "0x8299c800",
+  "dc3_unit": "KinectShare.obj",
+  "sim": 0.928,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827e64b8",
+  "bare_name": "StaticClassName",
+  "mangled": "?StaticClassName@OverlayPanel@@SA?AVSymbol@@XZ",
+  "dc3_va": "0x8295de78",
+  "dc3_unit": "OverlayPanel.obj",
+  "sim": 0.979,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827f2890",
+  "bare_name": "SetInt",
+  "mangled": "?SetInt@UILabel@@UAAXH_N@Z",
+  "dc3_va": "0x82793668",
+  "dc3_unit": "UILabel.obj",
+  "sim": 0.947,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827f2900",
+  "bare_name": "D3D__GetTextureSizes",
+  "mangled": "D3D__GetTextureSizes",
+  "dc3_va": "0x82bdbcd0",
+  "dc3_unit": "capture.obj",
+  "sim": 0.929,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x827f2aa0",
+  "bare_name": "WordIdx2Lwid",
+  "mangled": "?WordIdx2Lwid@CSpCfgInst@NUISPEECH@@MAAIKW4SPMATCHINGMODE@@@Z",
+  "dc3_va": "0x82b31518",
+  "dc3_unit": "cfginst.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8280ff38",
+  "bare_name": "Save",
+  "mangled": "?Save@UILabelDir@@UAAXAAVBinStream@@@Z",
+  "dc3_va": "0x827a0a18",
+  "dc3_unit": "UILabelDir.obj",
+  "sim": 0.97,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82829370",
+  "bare_name": "_SaveUnwindContext",
+  "mangled": "_SaveUnwindContext",
+  "dc3_va": "0x8299e420",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828293a0",
+  "bare_name": "_GetUnwindContext",
+  "mangled": "_GetUnwindContext",
+  "dc3_va": "0x8299e450",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828293c8",
+  "bare_name": "_GetEstablisherFrame",
+  "mangled": "?_GetEstablisherFrame@@YAPAKPAKPBU_s_FuncInfo@@@Z",
+  "dc3_va": "0x8299e478",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828293e8",
+  "bare_name": "_MoveContext",
+  "mangled": "_MoveContext",
+  "dc3_va": "0x8299e498",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828293f0",
+  "bare_name": "_ExecutionInCatch",
+  "mangled": "?_ExecutionInCatch@@YAHPAU_xDISPATCHER_CONTEXT@@PBU_s_FuncInfo@@@Z",
+  "dc3_va": "0x8299e4a0",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828296a8",
+  "bare_name": "_GetRangeOfTrysToCheck",
+  "mangled": "?_GetRangeOfTrysToCheck@@YAPBU_s_TryBlockMapEntry@@PAKPBU_s_FuncInfo@@HPAI2PAU_xDISPATCHER_CONTEXT@@@Z",
+  "dc3_va": "0x8299e758",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82829800",
+  "bare_name": "_CreateFrameInfo",
+  "mangled": "_CreateFrameInfo",
+  "dc3_va": "0x8299e8b0",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828298b8",
+  "bare_name": "_IsExceptionObjectToBeDestroyed",
+  "mangled": "_IsExceptionObjectToBeDestroyed",
+  "dc3_va": "0x8299e968",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82829910",
+  "bare_name": "_FindAndUnlinkFrame",
+  "mangled": "_FindAndUnlinkFrame",
+  "dc3_va": "0x8299e9c0",
+  "dc3_unit": "trnsctrl.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828299b8",
+  "bare_name": "_purecall",
+  "mangled": "_purecall",
+  "dc3_va": "0x8299fad0",
+  "dc3_unit": "purevirt.obj",
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82829a08",
+  "bare_name": "_CxxThrowException",
+  "mangled": "_CxxThrowException",
+  "dc3_va": "0x8299fb20",
+  "dc3_unit": "throw.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282a3f4",
+  "bare_name": "Function_8299EBAC",
+  "mangled": null,
+  "dc3_va": "0x8299ebac",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282a61c",
+  "bare_name": "sub_829A054C",
+  "mangled": null,
+  "dc3_va": "0x829a054c",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282a740",
+  "bare_name": "sub_829A0670",
+  "mangled": null,
+  "dc3_va": "0x829a0670",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282cb9c",
+  "bare_name": "sub_8299EFCC",
+  "mangled": null,
+  "dc3_va": "0x8299efcc",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282cbd8",
+  "bare_name": "_fread_nolock_s",
+  "mangled": "_fread_nolock_s",
+  "dc3_va": "0x829a1ed8",
+  "dc3_unit": "fread.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282ce70",
+  "bare_name": "fread_s",
+  "mangled": "fread_s",
+  "dc3_va": "0x829a2170",
+  "dc3_unit": "fread.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282cf44",
+  "bare_name": "sub_829A2244",
+  "mangled": null,
+  "dc3_va": "0x829a2244",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282cf80",
+  "bare_name": "fread",
+  "mangled": "fread",
+  "dc3_va": "0x829a2280",
+  "dc3_unit": "fread.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282cf98",
+  "bare_name": "_ftell_nolock",
+  "mangled": "_ftell_nolock",
+  "dc3_va": "0x829a2298",
+  "dc3_unit": "ftell.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282d1c0",
+  "bare_name": "ftell",
+  "mangled": "ftell",
+  "dc3_va": "0x829a24c0",
+  "dc3_unit": "ftell.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282d264",
+  "bare_name": "sub_829A2564",
+  "mangled": null,
+  "dc3_va": "0x829a2564",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282d2a0",
+  "bare_name": "_fseek_nolock",
+  "mangled": "_fseek_nolock",
+  "dc3_va": "0x829a25a0",
+  "dc3_unit": "fseek.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282d370",
+  "bare_name": "fseek",
+  "mangled": "fseek",
+  "dc3_va": "0x829a2670",
+  "dc3_unit": "fseek.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8282d424",
+  "bare_name": "sub_829A2724",
+  "mangled": null,
+  "dc3_va": "0x829a2724",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282d830",
+  "bare_name": "Function_829A1CC4",
+  "mangled": null,
+  "dc3_va": "0x829a1cc4",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282da20",
+  "bare_name": "Function_829A50F0",
+  "mangled": null,
+  "dc3_va": "0x829a50f0",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282de6c",
+  "bare_name": "sub_829A64D4",
+  "mangled": null,
+  "dc3_va": "0x829a64d4",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282e0b8",
+  "bare_name": "sub_829A6720",
+  "mangled": null,
+  "dc3_va": "0x829a6720",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282e308",
+  "bare_name": "sub_829A4D48",
+  "mangled": null,
+  "dc3_va": "0x829a4d48",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282e85c",
+  "bare_name": "sub_829A6B24",
+  "mangled": null,
+  "dc3_va": "0x829a6b24",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282f1b4",
+  "bare_name": "sub_8299F42C",
+  "mangled": null,
+  "dc3_va": "0x8299f42c",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282f3f0",
+  "bare_name": "Function_829A5BC8",
+  "mangled": null,
+  "dc3_va": "0x829a5bc8",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8282fa60",
+  "bare_name": "Function_8299F928",
+  "mangled": null,
+  "dc3_va": "0x8299f928",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82830f94",
+  "bare_name": "Function_829A9974",
+  "mangled": null,
+  "dc3_va": "0x829a9974",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82830fd4",
+  "bare_name": "Function_829A99B4",
+  "mangled": null,
+  "dc3_va": "0x829a99b4",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82835084",
+  "bare_name": "Function_829A3884",
+  "mangled": null,
+  "dc3_va": "0x829a3884",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x828350d4",
+  "bare_name": "sub_829A38D4",
+  "mangled": null,
+  "dc3_va": "0x829a38d4",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82835140",
+  "bare_name": "fflush",
+  "mangled": "fflush",
+  "dc3_va": "0x829a3940",
+  "dc3_unit": "fflush.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828351fc",
+  "bare_name": "sub_829A39FC",
+  "mangled": null,
+  "dc3_va": "0x829a39fc",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82835238",
+  "bare_name": "_flushall",
+  "mangled": "_flushall",
+  "dc3_va": "0x829a3a38",
+  "dc3_unit": "fflush.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82835b80",
+  "bare_name": "sub_829A86C0",
+  "mangled": null,
+  "dc3_va": "0x829a86c0",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82835bb8",
+  "bare_name": "memcpy_s",
+  "mangled": "memcpy_s",
+  "dc3_va": "0x829b40e0",
+  "dc3_unit": "memcpy_s.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82836ca8",
+  "bare_name": "_vsnprintf_helper",
+  "mangled": "_vsnprintf_helper",
+  "dc3_va": "0x829a1908",
+  "dc3_unit": "vsnprnc.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82837150",
+  "bare_name": "sub_82E5F7A0",
+  "mangled": null,
+  "dc3_va": "0x82e5f7a0",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82837630",
+  "bare_name": "Function_829B7118",
+  "mangled": null,
+  "dc3_va": "0x829b7118",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x828378b0",
+  "bare_name": "Function_829B7398",
+  "mangled": null,
+  "dc3_va": "0x829b7398",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x828378d4",
+  "bare_name": "Function_829B73BC",
+  "mangled": null,
+  "dc3_va": "0x829b73bc",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82837f3c",
+  "bare_name": "sub_829A7E84",
+  "mangled": null,
+  "dc3_va": "0x829a7e84",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x828383e8",
+  "bare_name": "sub_829AB0A8",
+  "mangled": null,
+  "dc3_va": "0x829ab0a8",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82838540",
+  "bare_name": "Function_829B45E0",
+  "mangled": null,
+  "dc3_va": "0x829b45e0",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82838ea8",
+  "bare_name": "sub_829BE508",
+  "mangled": null,
+  "dc3_va": "0x829be508",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8283a890",
+  "bare_name": "sub_829B6E38",
+  "mangled": null,
+  "dc3_va": "0x829b6e38",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x8283c968",
+  "bare_name": "FinalRelease",
+  "mangled": "?FinalRelease@CSpResourceManager@NUISPEECH@@QAAXXZ",
+  "dc3_va": "0x82a52ff0",
+  "dc3_unit": "spresmgr.obj",
+  "sim": 0.927,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283d158",
+  "bare_name": "XUserAreUsersFriends",
+  "mangled": "XUserAreUsersFriends",
+  "dc3_va": "0x82ddbf48",
+  "dc3_unit": "xuser.obj",
+  "sim": 0.915,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283d3b8",
+  "bare_name": "UpdateRecipeInfo",
+  "mangled": "?UpdateRecipeInfo@TrueColorAutoExposure@TrueColor@@QAAXXZ",
+  "dc3_va": "0x829e7700",
+  "dc3_unit": "truecolor.obj",
+  "sim": 0.922,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283d440",
+  "bare_name": "CreateThread",
+  "mangled": "CreateThread",
+  "dc3_va": "0x82335690",
+  "dc3_unit": "createthread.obj",
+  "sim": 0.915,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283d740",
+  "bare_name": "XShowDirtyDiscErrorUI",
+  "mangled": "XShowDirtyDiscErrorUI",
+  "dc3_va": "0x82ddc900",
+  "dc3_unit": "uiapithunk.obj",
+  "sim": 0.955,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283d818",
+  "bare_name": "GetExecutionId",
+  "mangled": "?GetExecutionId@CDataCollection@NUISPEECH@@CAJPAPAU_XEX_EXECUTION_ID@@@Z",
+  "dc3_va": "0x82a27530",
+  "dc3_unit": "datacollection.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283f520",
+  "bare_name": "RegOpenKeyExW",
+  "mangled": "?RegOpenKeyExW@NUISPEECH@@YAJPAUHKEY__@@PB_WKKPAPAU2@@Z",
+  "dc3_va": "0x82a25418",
+  "dc3_unit": "speechlib.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283fb70",
+  "bare_name": "RegCloseKey",
+  "mangled": "?RegCloseKey@NUISPEECH@@YAJPAUHKEY__@@@Z",
+  "dc3_va": "0x82c33c10",
+  "dc3_unit": "speechlib.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8283fb78",
+  "bare_name": "XInputGetCapabilities",
+  "mangled": "XInputGetCapabilities",
+  "dc3_va": "0x82ddddc0",
+  "dc3_unit": "xinpapi.obj",
+  "sim": 0.917,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828410c0",
+  "bare_name": "XMicrocodeBuilder_SetProgramControl",
+  "mangled": "XMicrocodeBuilder_SetProgramControl",
+  "dc3_va": "0x82ba98d8",
+  "dc3_unit": "shader.obj",
+  "sim": 0.906,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82841108",
+  "bare_name": "CreateMutexA",
+  "mangled": "CreateMutexA",
+  "dc3_va": "0x82de15b8",
+  "dc3_unit": "createmutex.obj",
+  "sim": 0.964,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82843898",
+  "bare_name": "sub_823395B8",
+  "mangled": null,
+  "dc3_va": "0x823395b8",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82843b8c",
+  "bare_name": "sub_823398B8",
+  "mangled": null,
+  "dc3_va": "0x823398b8",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x828444f8",
+  "bare_name": "~FacePipelineDetectParts",
+  "mangled": "??1FacePipelineDetectParts@Identity@@QAA@XZ",
+  "dc3_va": "0x829f4e58",
+  "dc3_unit": "facepipelinedetectparts.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82844500",
+  "bare_name": "XapiFormatObjectAttributes",
+  "mangled": "XapiFormatObjectAttributes",
+  "dc3_va": "0x82de1f38",
+  "dc3_unit": "xapiformatobjectattributes.obj",
+  "sim": 0.905,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82844cc0",
+  "bare_name": "WaitForSingleObjectEx",
+  "mangled": "WaitForSingleObjectEx",
+  "dc3_va": "0x82336298",
+  "dc3_unit": "waitforsingleobjectex.obj",
+  "sim": 0.958,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284d810",
+  "bare_name": "XNetRandom",
+  "mangled": "XNetRandom",
+  "dc3_va": "0x82b8e9d8",
+  "dc3_unit": "xnetapi.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284d8d8",
+  "bare_name": "getsockopt",
+  "mangled": "getsockopt",
+  "dc3_va": "0x82b8ebd0",
+  "dc3_unit": "sockapi.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284da60",
+  "bare_name": "closesocket",
+  "mangled": "closesocket",
+  "dc3_va": "0x82b8eb78",
+  "dc3_unit": "sockapi.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284da80",
+  "bare_name": "ioctlsocket",
+  "mangled": "ioctlsocket",
+  "dc3_va": "0x82b8eb98",
+  "dc3_unit": "sockapi.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284db28",
+  "bare_name": "accept",
+  "mangled": "accept",
+  "dc3_va": "0x82b8ec60",
+  "dc3_unit": "sockapi.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284db40",
+  "bare_name": "select",
+  "mangled": "select",
+  "dc3_va": "0x82b8ec78",
+  "dc3_unit": "sockapi.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284db60",
+  "bare_name": "connect",
+  "mangled": "connect",
+  "dc3_va": "0x82b8ec38",
+  "dc3_unit": "sockapi.obj",
+  "sim": 0.959,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284dca8",
+  "bare_name": "WSAGetLastError",
+  "mangled": "WSAGetLastError",
+  "dc3_va": "0x82b8ed10",
+  "dc3_unit": "sockapi.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8284dcb8",
+  "bare_name": "~ColorDepthAndRegistration",
+  "mangled": "??1ColorDepthAndRegistration@ST@@QAA@XZ",
+  "dc3_va": "0x82b70410",
+  "dc3_unit": "colordepthreg.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82850350",
+  "bare_name": "D3DDevice_SetRenderState_AlphaBlendEnable",
+  "mangled": "D3DDevice_SetRenderState_AlphaBlendEnable",
+  "dc3_va": "0x82b9fc70",
+  "dc3_unit": "state.obj",
+  "sim": 0.969,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82853508",
+  "bare_name": "Poll",
+  "mangled": "?Poll@HamPanel@@UAAXXZ",
+  "dc3_va": "0x828efa28",
+  "dc3_unit": "HamPanel.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82854910",
+  "bare_name": "Lock2DSurface",
+  "mangled": "?Lock2DSurface@D3D@@YAXPAUD3DBaseTexture@@_KIIPAU_D3DLOCKED_RECT@@PBUtagRECT@@K@Z",
+  "dc3_va": "0x82b9b570",
+  "dc3_unit": "texture.obj",
+  "sim": 0.952,
+  "conf": 0.961,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828549a0",
+  "bare_name": "Lock3DSurface",
+  "mangled": "?Lock3DSurface@D3D@@YAXPAUD3DBaseTexture@@IPAU_D3DLOCKED_BOX@@PBU_D3DBOX@@K@Z",
+  "dc3_va": "0x82b9b628",
+  "dc3_unit": "texture.obj",
+  "sim": 0.956,
+  "conf": 0.961,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82854fc8",
+  "bare_name": "D3DLineTexture_GetLevelDesc",
+  "mangled": "D3DArrayTexture_GetLevelDesc",
+  "dc3_va": "0x82b9bc88",
+  "dc3_unit": "texture.obj",
+  "sim": 0.908,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82855160",
+  "bare_name": "D3DCubeTexture_LockRect",
+  "mangled": "D3DArrayTexture_LockRect",
+  "dc3_va": "0x82b9be58",
+  "dc3_unit": "texture.obj",
+  "sim": 0.911,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82855180",
+  "bare_name": "D3DVolumeTexture_GetLevelDesc",
+  "mangled": "D3DVolumeTexture_GetLevelDesc",
+  "dc3_va": "0x82b9bf20",
+  "dc3_unit": "texture.obj",
+  "sim": 0.918,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82855238",
+  "bare_name": "D3DDevice_CreateTexture",
+  "mangled": "D3DDevice_CreateTexture",
+  "dc3_va": "0x82b9c080",
+  "dc3_unit": "texture.obj",
+  "sim": 0.95,
+  "conf": 0.96,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82855528",
+  "bare_name": "D3DSurface_LockRect",
+  "mangled": "D3DSurface_LockRect",
+  "dc3_va": "0x82b9c3d0",
+  "dc3_unit": "texture.obj",
+  "sim": 0.939,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82855598",
+  "bare_name": "D3DVolume_LockBox",
+  "mangled": "D3DVolume_LockBox",
+  "dc3_va": "0x82b9c4f0",
+  "dc3_unit": "texture.obj",
+  "sim": 0.938,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828575f0",
+  "bare_name": "DoBeginExportNanVertex",
+  "mangled": "?DoBeginExportNanVertex@@YAXPAUD3DDevice@@@Z",
+  "dc3_va": "0x82ba7460",
+  "dc3_unit": "resource.obj",
+  "sim": 0.98,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828586a8",
+  "bare_name": "D3DDevice_SetScreenExtentQueryMode",
+  "mangled": "D3DDevice_SetScreenExtentQueryMode",
+  "dc3_va": "0x82b9cc38",
+  "dc3_unit": "query.obj",
+  "sim": 0.944,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82858f50",
+  "bare_name": "D3DQuery_Release",
+  "mangled": "D3DQuery_Release",
+  "dc3_va": "0x82b9d620",
+  "dc3_unit": "query.obj",
+  "sim": 0.906,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285b480",
+  "bare_name": "MemAllocAligned",
+  "mangled": "?MemAllocAligned@D3D@@YAPAXKK@Z",
+  "dc3_va": "0x82ba67f0",
+  "dc3_unit": "device.obj",
+  "sim": 0.955,
+  "conf": 0.963,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285c050",
+  "bare_name": "IsExecPredicateClean",
+  "mangled": "?IsExecPredicateClean@Microcode@CMicrocodeBuilder@D3D@@SA_NPATGPUFLOW_EXEC@@PATGPUSHADER_INSTRUCTION@@@Z",
+  "dc3_va": "0x82ba9288",
+  "dc3_unit": "shader.obj",
+  "sim": 0.905,
+  "conf": 0.97,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285c0f8",
+  "bare_name": "SetPredicateCleanBitsVisitor",
+  "mangled": "?SetPredicateCleanBitsVisitor@Microcode@CMicrocodeBuilder@D3D@@SAX_N00KPATGPUSHADER_INSTRUCTION@@PAX@Z",
+  "dc3_va": "0x82ba9370",
+  "dc3_unit": "shader.obj",
+  "sim": 0.987,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285d088",
+  "bare_name": "LowPriPrbWritePerfCounter",
+  "mangled": "?LowPriPrbWritePerfCounter@D3D@@YAXPAVCDevice@1@PCKK@Z",
+  "dc3_va": "0x82bcfdf8",
+  "dc3_unit": "lowpri.obj",
+  "sim": 0.908,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285da40",
+  "bare_name": "CopyNativeToUCodeShader",
+  "mangled": "CopyNativeToUCodeShader",
+  "dc3_va": "0x82bab408",
+  "dc3_unit": "shader.obj",
+  "sim": 0.918,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285da48",
+  "bare_name": "UCodeToNativeConstantTable",
+  "mangled": "UCodeToNativeConstantTable",
+  "dc3_va": "0x82bab440",
+  "dc3_unit": "shader.obj",
+  "sim": 0.941,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285e7b0",
+  "bare_name": "XMicrocodeBuilder_DefineFloatConstant",
+  "mangled": "XMicrocodeBuilder_DefineFloatConstant",
+  "dc3_va": "0x82bac578",
+  "dc3_unit": "shader.obj",
+  "sim": 0.942,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285e7c8",
+  "bare_name": "XMicrocodeBuilder_SetSerialize",
+  "mangled": "XMicrocodeBuilder_SetSerialize",
+  "dc3_va": "0x82bac5c0",
+  "dc3_unit": "shader.obj",
+  "sim": 0.942,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285e840",
+  "bare_name": "XMicrocodeBuilder_GetALU",
+  "mangled": "XMicrocodeBuilder_GetALU",
+  "dc3_va": "0x82bac6f0",
+  "dc3_unit": "shader.obj",
+  "sim": 0.939,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285eb08",
+  "bare_name": "XGMicrocodeEnumerateLiterals",
+  "mangled": "XGMicrocodeEnumerateLiterals",
+  "dc3_va": "0x82baca40",
+  "dc3_unit": "shader.obj",
+  "sim": 0.924,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8285edf0",
+  "bare_name": "D3DPixelShader_GetFunction",
+  "mangled": "D3DPixelShader_GetFunction",
+  "dc3_va": "0x82bacd80",
+  "dc3_unit": "shader.obj",
+  "sim": 0.942,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82860bc0",
+  "bare_name": "PseudoConstructor",
+  "mangled": "?PseudoConstructor@CMicrocodeBuilder@D3D@@QAAXXZ",
+  "dc3_va": "0x82baebb0",
+  "dc3_unit": "shader.obj",
+  "sim": 0.93,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82860cc8",
+  "bare_name": "GetMicrocode",
+  "mangled": "?GetMicrocode@CMicrocodeBuilder@D3D@@QAAJPAVSink@12@@Z",
+  "dc3_va": "0x82baecc0",
+  "dc3_unit": "shader.obj",
+  "sim": 0.935,
+  "conf": 0.979,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828620f0",
+  "bare_name": "Finish",
+  "mangled": "?Finish@CMicrocodeBuilder@D3D@@QAAXXZ",
+  "dc3_va": "0x82bb0200",
+  "dc3_unit": "shader.obj",
+  "sim": 0.945,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82862150",
+  "bare_name": "Replace",
+  "mangled": "?Replace@?$ObjRefConcrete@VRndMatAnim@@VObjectDir@@@@UAAXPAVObject@Hmx@@@Z",
+  "dc3_va": "0x826ea6c8",
+  "dc3_unit": "MatAnim.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82862158",
+  "bare_name": "XMicrocodeBuilder_SetConstantTable",
+  "mangled": "XMicrocodeBuilder_SetConstantTable",
+  "dc3_va": "0x82bb02f0",
+  "dc3_unit": "shader.obj",
+  "sim": 0.918,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82862178",
+  "bare_name": "XMicrocodeBuilder_AddVFetch",
+  "mangled": "XMicrocodeBuilder_AddVFetch",
+  "dc3_va": "0x82bb0378",
+  "dc3_unit": "shader.obj",
+  "sim": 0.939,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82862190",
+  "bare_name": "XMicrocodeBuilder_AddVFetchWithSemantic",
+  "mangled": "XMicrocodeBuilder_AddVFetchWithSemantic",
+  "dc3_va": "0x82bb03c8",
+  "dc3_unit": "shader.obj",
+  "sim": 0.937,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828621a8",
+  "bare_name": "FatalError",
+  "mangled": "?FatalError@Compiler@D3DXShader@@QAAXW4ErrorCode@2@ZZ",
+  "dc3_va": "0x82cb65c0",
+  "dc3_unit": "main.obj",
+  "sim": 0.905,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828621c0",
+  "bare_name": "XMicrocodeBuilder_AddDebuggerHint",
+  "mangled": "XMicrocodeBuilder_AddDebuggerHint",
+  "dc3_va": "0x82bb0470",
+  "dc3_unit": "shader.obj",
+  "sim": 0.918,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828621c8",
+  "bare_name": "StoreUserProfileSwappedToUser",
+  "mangled": "?StoreUserProfileSwappedToUser@HamStorePanel@@MAAXPAVLocalUser@@@Z",
+  "dc3_va": "0x82931168",
+  "dc3_unit": "HamStorePanel.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828621d0",
+  "bare_name": "XMicrocodeBuilder_GetMicrocode",
+  "mangled": "XMicrocodeBuilder_GetMicrocode",
+  "dc3_va": "0x82bb04e0",
+  "dc3_unit": "shader.obj",
+  "sim": 0.916,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82865438",
+  "bare_name": "VerticalBlankInterrupt",
+  "mangled": "?VerticalBlankInterrupt@D3D@@YAXPAVCDevice@1@@Z",
+  "dc3_va": "0x82bb60e0",
+  "dc3_unit": "swap.obj",
+  "sim": 0.98,
+  "conf": 0.985,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82866658",
+  "bare_name": "InterruptCallback",
+  "mangled": "?InterruptCallback@D3D@@YAXKPAVCDevice@1@@Z",
+  "dc3_va": "0x82bb8008",
+  "dc3_unit": "ring.obj",
+  "sim": 0.984,
+  "conf": 0.987,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828676e0",
+  "bare_name": "Initialize",
+  "mangled": "?Initialize@CRingAllocList@D3D@@QAAXPAVCDevice@2@K@Z",
+  "dc3_va": "0x82bb98b8",
+  "dc3_unit": "ring.obj",
+  "sim": 0.941,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828683a0",
+  "bare_name": "Destroy",
+  "mangled": "?Destroy@CCommandBuffer@D3D@@QAAXXZ",
+  "dc3_va": "0x82bc0458",
+  "dc3_unit": "commands.obj",
+  "sim": 0.968,
+  "conf": 0.975,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82868ae0",
+  "bare_name": "FindFreeChunk",
+  "mangled": "?FindFreeChunk@D3D@@YAKPAUEdram@1@PAK@Z",
+  "dc3_va": "0x82bc75b0",
+  "dc3_unit": "allocate.obj",
+  "sim": 0.918,
+  "conf": 0.961,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8286b2a8",
+  "bare_name": "LockL2",
+  "mangled": "?LockL2@D3D@@YAXPAVCXpsGlobal@1@K@Z",
+  "dc3_va": "0x82bc7c00",
+  "dc3_unit": "xps.obj",
+  "sim": 0.982,
+  "conf": 0.985,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8286b360",
+  "bare_name": "CalculatePredicationSelect",
+  "mangled": "?CalculatePredicationSelect@D3D@@YAKPAVCXpsGlobal@1@@Z",
+  "dc3_va": "0x82bc7d10",
+  "dc3_unit": "xps.obj",
+  "sim": 0.942,
+  "conf": 0.957,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8286b4f0",
+  "bare_name": "AutoPatch",
+  "mangled": "?AutoPatch@D3D@@YAXPAUWorkerState@1@PAVCPatchListChunk@1@H@Z",
+  "dc3_va": "0x82bc7fa8",
+  "dc3_unit": "xps.obj",
+  "sim": 0.986,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8286ba60",
+  "bare_name": "XpsConfigureForWork",
+  "mangled": "?XpsConfigureForWork@D3D@@YAXPAVCDevice@1@PAVCXpsGlobal@1@K@Z",
+  "dc3_va": "0x82bc8630",
+  "dc3_unit": "xps.obj",
+  "sim": 0.991,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8286bc08",
+  "bare_name": "XpsVisibilityPatch",
+  "mangled": "?XpsVisibilityPatch@D3D@@YAXPBVCXpsVisibilityPatchListChunk@1@@Z",
+  "dc3_va": "0x82bc87e0",
+  "dc3_unit": "xps.obj",
+  "sim": 0.981,
+  "conf": 0.988,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8286e540",
+  "bare_name": "PIXCaptureGpuFrame",
+  "mangled": "PIXCaptureGpuFrame",
+  "dc3_va": "0x82bbaea0",
+  "dc3_unit": "pix.obj",
+  "sim": 0.958,
+  "conf": 0.961,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82872378",
+  "bare_name": "sinc",
+  "mangled": "?sinc@D3D@@YAMM@Z",
+  "dc3_va": "0x82bce9b8",
+  "dc3_unit": "scaler.obj",
+  "sim": 0.947,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82872cf8",
+  "bare_name": "InternalScalerSetup",
+  "mangled": "?InternalScalerSetup@D3D@@YAHPAVCDevice@1@KKKKKAAW4_D3DFILTER_TYPE@@PBU_D3DFILTER_PARAMETERS@@12PAU_HARDWARE_SCALER_PARAMETERS@@@Z",
+  "dc3_va": "0x82bcf350",
+  "dc3_unit": "scaler.obj",
+  "sim": 0.937,
+  "conf": 0.988,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82875480",
+  "bare_name": "operator_delete",
+  "mangled": "??3CRegisterEntryNode@D3DXShader@@SAXPAX@Z",
+  "dc3_va": "0x82c01910",
+  "dc3_unit": "cassembler.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828772b8",
+  "bare_name": "D3DXCompileShader_Common2",
+  "mangled": "?D3DXCompileShader_Common2@@YAJPAVPreProcessorInitializer@D3DXShader@@PBDPAPBDKPAPAUID3DXBuffer@@3PAPAUID3DXConstantTable@@PAU_D3DXSHADER_COMPILE_PARAMETERSA@@@Z",
+  "dc3_va": "0x82be7a60",
+  "dc3_unit": "d3dx9shader.obj",
+  "sim": 0.987,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8287a9b0",
+  "bare_name": "BltTriangle2D",
+  "mangled": "?BltTriangle2D@CBlt@D3DXTex@@IAAJXZ",
+  "dc3_va": "0x82beb1d8",
+  "dc3_unit": "cblt.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8287b280",
+  "bare_name": "SetOfClassifiers",
+  "mangled": "??0SetOfClassifiers@NUISPEECH@@QAA@XZ",
+  "dc3_va": "0x82bebaa8",
+  "dc3_unit": "conflib.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828894f8",
+  "bare_name": "Token",
+  "mangled": "?Token@CPreProcessor@D3DXShader@@IAAHPAH@Z",
+  "dc3_va": "0x82bf9a90",
+  "dc3_unit": "cpreprocessor.obj",
+  "sim": 0.963,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8288ab38",
+  "bare_name": "DoPragma",
+  "mangled": "?DoPragma@CPreProcessor@D3DXShader@@IAAJXZ",
+  "dc3_va": "0x82bfba08",
+  "dc3_unit": "cpreprocessor.obj",
+  "sim": 0.906,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8288c5e0",
+  "bare_name": "CallDefine",
+  "mangled": "?CallDefine@CPreProcessor@D3DXShader@@IAA?AW4CallDefineDisposition@12@PAUD3DXTOKEN@2@PAVCNode@2@1@Z",
+  "dc3_va": "0x82bfd6d0",
+  "dc3_unit": "cpreprocessor.obj",
+  "sim": 0.961,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8288e270",
+  "bare_name": "SkipToEOL",
+  "mangled": "?SkipToEOL@CTokenize@D3DXShader@@QAAHH@Z",
+  "dc3_va": "0x82bff8f8",
+  "dc3_unit": "ctokenize.obj",
+  "sim": 0.944,
+  "conf": 0.987,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82890040",
+  "bare_name": "MicrocodeErrorCallback",
+  "mangled": "?MicrocodeErrorCallback@CAssembler@D3DXShader@@QAAXHKPBD@Z",
+  "dc3_va": "0x82c01860",
+  "dc3_unit": "cassembler.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828b1ed8",
+  "bare_name": "CNode",
+  "mangled": "??0CNode@D3DXShader@@QAA@W4_D3DNODE_TYPE@1@@Z",
+  "dc3_va": "0x82c23438",
+  "dc3_unit": "cnode.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828b2250",
+  "bare_name": "CNodeTree",
+  "mangled": "??0CNodeTree@D3DXShader@@QAA@PBDPAVCNode@1@11@Z",
+  "dc3_va": "0x82c237b0",
+  "dc3_unit": "cnode.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828b2478",
+  "bare_name": "CNodeToken",
+  "mangled": "??0CNodeToken@D3DXShader@@QAA@XZ",
+  "dc3_va": "0x82c239d8",
+  "dc3_unit": "cnode.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828b55f8",
+  "bare_name": "CNodeRegister",
+  "mangled": "??0CNodeRegister@D3DXShader@@QAA@XZ",
+  "dc3_va": "0x82c26c18",
+  "dc3_unit": "cnode.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828b60a0",
+  "bare_name": "GetConstantSize",
+  "mangled": "?GetConstantSize@CFragmentConstants@D3DXShader@@QAAJPAUD3DXTOKEN@2@PBDPAI@Z",
+  "dc3_va": "0x82c275c0",
+  "dc3_unit": "d3dx9fragment.obj",
+  "sim": 0.932,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828bd838",
+  "bare_name": "Token",
+  "mangled": "?Token@CUAssembler@D3DXShader@@IAAHXZ",
+  "dc3_va": "0x82c2ec28",
+  "dc3_unit": "cuassembler.obj",
+  "sim": 0.985,
+  "conf": 0.985,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cb920",
+  "bare_name": "EmitPOW",
+  "mangled": "?EmitPOW@C30SWProgramML@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3d508",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cb968",
+  "bare_name": "EmitRSQ",
+  "mangled": "?EmitRSQ@C30SWProgramCI@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3cfb0",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cba48",
+  "bare_name": "EmitLT",
+  "mangled": "?EmitLT@C30SWProgramCI@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3d628",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cbc18",
+  "bare_name": "EmitLIT",
+  "mangled": "?EmitLIT@C30SWProgramCI@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3d7f8",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cbe30",
+  "bare_name": "EmitFRC",
+  "mangled": "?EmitFRC@C30SWProgramML@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3ce88",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cbf10",
+  "bare_name": "EmitPOW",
+  "mangled": "?EmitPOW@C30SWProgramCI@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3cf68",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cc030",
+  "bare_name": "EmitGE",
+  "mangled": "?EmitGE@C30SWProgramCI@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3d090",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828cc2d8",
+  "bare_name": "EmitDST",
+  "mangled": "?EmitDST@C30SWProgramML@D3DXShader@@MAAJXZ",
+  "dc3_va": "0x82c3d348",
+  "dc3_unit": "c30swprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828d66d8",
+  "bare_name": "sub_82C47CD0",
+  "mangled": null,
+  "dc3_va": "0x82c47cd0",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x828dd4d0",
+  "bare_name": "AddExtraSymbolTableEntries",
+  "mangled": "?AddExtraSymbolTableEntries@CShaderProgram@D3DXShader@@MAAJPAVCCommentBlock@2@PAU_D3DXSHADER_CONSTANTINFO@@I@Z",
+  "dc3_va": "0x82c4ead0",
+  "dc3_unit": "cshaderprogram.obj",
+  "sim": 0.99,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x828e5a68",
+  "bare_name": "CBaseProgram",
+  "mangled": "??0CBaseProgram@D3DXShader@@QAA@XZ",
+  "dc3_va": "0x82c56cf0",
+  "dc3_unit": "cbaseprogram.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82905d68",
+  "bare_name": "CombineUsages",
+  "mangled": "?CombineUsages@CParse@D3DXShader@@IAAJPAVCNode@2@0@Z",
+  "dc3_va": "0x82c77080",
+  "dc3_unit": "cparse.obj",
+  "sim": 0.948,
+  "conf": 0.983,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8292fbc0",
+  "bare_name": "send_all_trees",
+  "mangled": "send_all_trees",
+  "dc3_va": "0x828638d0",
+  "dc3_unit": "trees.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82933158",
+  "bare_name": "XGCompressSurface",
+  "mangled": "XGCompressSurface",
+  "dc3_va": "0x82ca4c68",
+  "dc3_unit": "xtc.obj",
+  "sim": 0.971,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82938ad0",
+  "bare_name": "ClampEval",
+  "mangled": "?ClampEval@Interpolator@@UBAMM@Z",
+  "dc3_va": "0x82caa1f0",
+  "dc3_unit": "Interp.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82938ae0",
+  "bare_name": "DrawFixedZ",
+  "mangled": "XShaderPDBBuilder_Release",
+  "dc3_va": "0x82caa200",
+  "dc3_unit": "shaderpdbbuilder.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82938e90",
+  "bare_name": "ensure2",
+  "mangled": "?ensure2@?$FastVector@ULiteralFloat@XGRAPHICS@@@XGRAPHICS@@QAAXKAAJ@Z",
+  "dc3_va": "0x82caa5d0",
+  "dc3_unit": "shaderpdbbuilder.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82938f20",
+  "bare_name": "ensure2",
+  "mangled": "?ensure2@?$FastVector@UFile@XGRAPHICS@@@XGRAPHICS@@QAAXKAAJ@Z",
+  "dc3_va": "0x82caa660",
+  "dc3_unit": "shaderpdbbuilder.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82938fb0",
+  "bare_name": "ensure2",
+  "mangled": "?ensure2@?$FastVector@UPDBShader@XGRAPHICS@@@XGRAPHICS@@QAAXKAAJ@Z",
+  "dc3_va": "0x82caa6f0",
+  "dc3_unit": "shaderpdbbuilder.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8293dfb0",
+  "bare_name": "WritePDB",
+  "mangled": "?WritePDB@ShaderPDBBuilder@XGRAPHICS@@AAAXPAVStream@2@@Z",
+  "dc3_va": "0x82caf708",
+  "dc3_unit": "shaderpdbbuilder.obj",
+  "sim": 0.946,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82945f38",
+  "bare_name": "EncodeBlockDXN",
+  "mangled": "?EncodeBlockDXN@@YAXPAEQAY03MHH@Z",
+  "dc3_va": "0x82cb7698",
+  "dc3_unit": "xenoncompress.obj",
+  "sim": 0.97,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82954360",
+  "bare_name": "INTLIST_GetObjSize",
+  "mangled": "?INTLIST_GetObjSize@XGRAPHICS@@YAIXZ",
+  "dc3_va": "0x82cc59e0",
+  "dc3_unit": "linkedlist.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82955b40",
+  "bare_name": "IA_Create",
+  "mangled": "?IA_Create@XGRAPHICS@@YAPAU_IA_INTERNALCONST_ALLOCATOR@1@PAXP6APAX0I@ZP6A?AW4_E_SSM_RETURNCODE@1@00@ZPAU_SSM_REGISTRY@1@@Z",
+  "dc3_va": "0x82cc71c0",
+  "dc3_unit": "internalconstallocator.obj",
+  "sim": 0.984,
+  "conf": 0.987,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82956038",
+  "bare_name": "GetCollapseIconLabel",
+  "mangled": "?GetCollapseIconLabel@NavListHeaderNode@@UBAPAVUILabel@@XZ",
+  "dc3_va": "0x82b05a38",
+  "dc3_unit": "NavListNode.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x8296cd08",
+  "bare_name": "AllocRegWithLocalInterference",
+  "mangled": "?AllocRegWithLocalInterference@Compiler@D3DXShader@@AAAIPAVGeneralRegisterSet@2@PAVInstruction@2@1PAI@Z",
+  "dc3_va": "0x82cde400",
+  "dc3_unit": "localreg.obj",
+  "sim": 0.945,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x829e5910",
+  "bare_name": "MakeInstr_V_MIN",
+  "mangled": "?MakeInstr_V_MIN@Compiler@D3DXShader@@QAAPAVInstruction@2@PAV32@PAVDependency@2@@Z",
+  "dc3_va": "0x82d572b0",
+  "dc3_unit": "import.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x829e6030",
+  "bare_name": "MakeInstr_V_MUL",
+  "mangled": "?MakeInstr_V_MUL@Compiler@D3DXShader@@QAAPAVInstruction@2@PAVDependency@2@PAV32@@Z",
+  "dc3_va": "0x82d579d0",
+  "dc3_unit": "import.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a00198",
+  "bare_name": "EncodeGamma22",
+  "mangled": "?EncodeGamma22@CCodec@XG_D3DXTex@@IAAPAUD3DXCOLOR@2@PAU32@@Z",
+  "dc3_va": "0x82d71b00",
+  "dc3_unit": "ccodec.obj",
+  "sim": 0.991,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a004d8",
+  "bare_name": "DecodeGamma22",
+  "mangled": "?DecodeGamma22@CCodec@XG_D3DXTex@@IAAXPAUD3DXCOLOR@2@@Z",
+  "dc3_va": "0x82d71e40",
+  "dc3_unit": "ccodec.obj",
+  "sim": 0.99,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a06070",
+  "bare_name": "Encode",
+  "mangled": "?Encode@CCodec_L16@XG_D3DXTex@@UAAXIIPAUD3DXCOLOR@2@@Z",
+  "dc3_va": "0x82d75e48",
+  "dc3_unit": "ccodec.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a30b48",
+  "bare_name": "DecodePremult",
+  "mangled": "?DecodePremult@D3DXTex@@YAJPAUD3DXCOLOR@@@Z",
+  "dc3_va": "0x82da2450",
+  "dc3_unit": "dxtn.obj",
+  "sim": 1.0,
+  "conf": 0.988,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a368d0",
+  "bare_name": "CompileGetYUVConstantsC10",
+  "mangled": "?CompileGetYUVConstantsC10@XGRAPHICS@@YA?AW4_SSM_COMPILEWITH_RESULT@1@PAUCompAState@1@HPAMP6AXPAXPBDZZ2@Z",
+  "dc3_va": "0x82da84b0",
+  "dc3_unit": "compilertossm.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a36948",
+  "bare_name": "CompileGetYUVConstantsC23",
+  "mangled": "?CompileGetYUVConstantsC23@XGRAPHICS@@YA?AW4_SSM_COMPILEWITH_RESULT@1@PAUCompAState@1@HPAMP6AXPAXPBDZZ2@Z",
+  "dc3_va": "0x82da84c8",
+  "dc3_unit": "compilertossm.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a478d0",
+  "bare_name": "SetOwner",
+  "mangled": "?SetOwner@ExposureRecipe@TrueColor@@QAAXW4_NUIP_CAMERA_OWNER@@@Z",
+  "dc3_va": "0x82db9578",
+  "dc3_unit": "exposurerecipe.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a558c8",
+  "bare_name": "r400BitsPerDataChannel",
+  "mangled": "r400BitsPerDataChannel",
+  "dc3_va": "0x82dc74d0",
+  "dc3_unit": "r400_addrenum.obj",
+  "sim": 0.956,
+  "conf": 0.957,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a57730",
+  "bare_name": "CreateReplacingTempIfNecessary",
+  "mangled": "?CreateReplacingTempIfNecessary@Interpolator@XGRAPHICS@@UAAPAVVRegInfo@2@TSwizzleOrMaskInfo@2@PAVCFG@2@PAVCompiler@2@@Z",
+  "dc3_va": "0x82dc9348",
+  "dc3_unit": "vreginfo.obj",
+  "sim": 0.989,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a58530",
+  "bare_name": "BaseAddr",
+  "mangled": "??0BaseAddr@XGRAPHICS@@QAA@HW4RegType@R400Tables@@PAVCompiler@1@@Z",
+  "dc3_va": "0x82dca148",
+  "dc3_unit": "vreginfo.obj",
+  "sim": 1.0,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a5aad8",
+  "bare_name": "NewInst",
+  "mangled": "?NewInst@IRBinary@XGRAPHICS@@SAPAVIRInst@2@W4Op@R400Tables@@PAVCompiler@2@@Z",
+  "dc3_va": "0x82dccc20",
+  "dc3_unit": "irinst.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a5aca8",
+  "bare_name": "NewInst",
+  "mangled": "?NewInst@IRCmp1S@XGRAPHICS@@SAPAVIRInst@2@W4Op@R400Tables@@PAVCompiler@2@@Z",
+  "dc3_va": "0x82dcc7b0",
+  "dc3_unit": "irinst.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a5acf8",
+  "bare_name": "NewInst",
+  "mangled": "?NewInst@IRCmp1D@XGRAPHICS@@SAPAVIRInst@2@W4Op@R400Tables@@PAVCompiler@2@@Z",
+  "dc3_va": "0x82dcc800",
+  "dc3_unit": "irinst.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a5c878",
+  "bare_name": "ExitBlock",
+  "mangled": "??0ExitBlock@XGRAPHICS@@QAA@PAVCompiler@1@@Z",
+  "dc3_va": "0x82dce440",
+  "dc3_unit": "block.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a5f220",
+  "bare_name": "ExpandDCLV",
+  "mangled": "?ExpandDCLV@CFG@XGRAPHICS@@AAAXHPATIL_Dst@2@TSwizzleOrMaskInfo@2@PAVBlock@2@_NPATIL_Src@2@@Z",
+  "dc3_va": "0x82dd0e28",
+  "dc3_unit": "expansion.obj",
+  "sim": 0.976,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a6ac18",
+  "bare_name": "XOnlineStartup",
+  "mangled": "XOnlineStartup",
+  "dc3_va": "0x82de4ce8",
+  "dc3_unit": "xoncore.obj",
+  "sim": 0.957,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82a6de40",
+  "bare_name": "XShowSocialNetworkImagePostUI",
+  "mangled": "XShowSocialNetworkImagePostUI",
+  "dc3_va": "0x825fb6d0",
+  "dc3_unit": "socialpostapi.obj",
+  "sim": 0.912,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82abec20",
+  "bare_name": "Init",
+  "mangled": "?Init@CSREvent@@QAAXPAUSPRESULTHEADER@NUISPEECH@@W4SPEVENTENUM@3@IPAUSPRECOCONTEXTHANDLE__@3@@Z",
+  "dc3_va": "0x82a76b08",
+  "dc3_unit": "srevent.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b54130",
+  "bare_name": "XPartySendGameInvites",
+  "mangled": "XPartySendGameInvites",
+  "dc3_va": "0x82de7358",
+  "dc3_unit": "partylib.obj",
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b54168",
+  "bare_name": "XShowPartyUI",
+  "mangled": "XShowPartyUI",
+  "dc3_va": "0x82de7390",
+  "dc3_unit": "partylib.obj",
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b59748",
+  "bare_name": "_tr_stored_block",
+  "mangled": "_tr_stored_block",
+  "dc3_va": "0x82ca1990",
+  "dc3_unit": "trees.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b5e7d0",
+  "bare_name": "MicrophonesChangedMsg",
+  "mangled": "??0MicrophonesChangedMsg@@QAA@_N@Z",
+  "dc3_va": "0x82e3e680",
+  "dc3_unit": "Mic.obj",
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b7a018",
+  "bare_name": "IsPlaylistPlayable",
+  "mangled": "?IsPlaylistPlayable@MetaPerformer@@QBA_NXZ",
+  "dc3_va": "0x828cd4b8",
+  "dc3_unit": "MetaPerformer.obj",
+  "sim": 0.913,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b7a558",
+  "bare_name": "GetSelectedDiff",
+  "mangled": "?GetSelectedDiff@CampaignDiffSelectPanel@@QAA?AW4Difficulty@@XZ",
+  "dc3_va": "0x82925040",
+  "dc3_unit": "CampaignDiffSelectPanel.obj",
+  "sim": 0.982,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b7c458",
+  "bare_name": "ContentMounted",
+  "mangled": "?ContentMounted@VoiceControlPanel@@UAAXPBD0@Z",
+  "dc3_va": "0x829515f8",
+  "dc3_unit": "VoiceControlPanel.obj",
+  "sim": 0.965,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b82e90",
+  "bare_name": "json_object_new_object",
+  "mangled": "json_object_new_object",
+  "dc3_va": "0x82576f30",
+  "dc3_unit": "json_object.obj",
+  "sim": 0.985,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b848f8",
+  "bare_name": "lh_kchar_table_new",
+  "mangled": "lh_kchar_table_new",
+  "dc3_va": "0x825789c8",
+  "dc3_unit": "linkhash.obj",
+  "sim": 0.953,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b8c928",
+  "bare_name": "EmulatePhrase",
+  "mangled": "?EmulatePhrase@CConfidence@NUISPEECH@@SAXPAVCSRPhrase@2@@Z",
+  "dc3_va": "0x82b3a668",
+  "dc3_unit": "confidence.obj",
+  "sim": 0.946,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b8d810",
+  "bare_name": "~BinkMovieLoader",
+  "mangled": "??1BinkMovieLoader@@UAA@XZ",
+  "dc3_va": "0x82e263a8",
+  "dc3_unit": "BinkMovieImpl.obj",
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b93f40",
+  "bare_name": "AdaptAndUpdate",
+  "mangled": "?AdaptAndUpdate@CMllr@NUISPEECH@@QAAJPAVCMvw@2@@Z",
+  "dc3_va": "0x82ad7398",
+  "dc3_unit": "mllr_stub.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b98b40",
+  "bare_name": "GetParameter",
+  "mangled": "?GetParameter@CFEMappingDef@NUISPEECH@@QBAJPB_WPAPBVCFEParameter@2@@Z",
+  "dc3_va": "0x82b29d38",
+  "dc3_unit": "definition.obj",
+  "sim": 0.916,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b98d70",
+  "bare_name": "ExtractBodyPart",
+  "mangled": "?ExtractBodyPart@Pipeline@ST@@QAAXW4STEXCentroidType@STEXEMPLAR@@PAU_XMFLOAT4@@@Z",
+  "dc3_va": "0x82b5e948",
+  "dc3_unit": "pipeline.obj",
+  "sim": 0.917,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82b98d78",
+  "bare_name": "NuiSpeechUnloadGrammar",
+  "mangled": "NuiSpeechUnloadGrammar",
+  "dc3_va": "0x82a23ba0",
+  "dc3_unit": "xspeechapi.obj",
+  "sim": 0.922,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bbc9a8",
+  "bare_name": "Replace",
+  "mangled": "?Replace@RndDir@@UAA_NPAVObjRef@@PAVObject@Hmx@@@Z",
+  "dc3_va": "0x82654908",
+  "dc3_unit": "Dir.obj",
+  "sim": 0.917,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bbdd34",
+  "bare_name": "Function_82E615DC",
+  "mangled": null,
+  "dc3_va": "0x82e615dc",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82bbdd84",
+  "bare_name": "sub_82E6162C",
+  "mangled": null,
+  "dc3_va": "0x82e6162c",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.991,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82bbf2b0",
+  "bare_name": "CreateAudioSRC",
+  "mangled": "CreateAudioSRC",
+  "dc3_va": "0x82e62068",
+  "dc3_unit": "leapfxlib.obj",
+  "sim": 0.989,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bbf438",
+  "bare_name": "IsValidAdpcmWaveFormat",
+  "mangled": "?IsValidAdpcmWaveFormat@XAudio2WaveHelp@@YAHPBUtWAVEFORMATEX@@@Z",
+  "dc3_va": "0x82e75e28",
+  "dc3_unit": "waveutils.obj",
+  "sim": 0.961,
+  "conf": 0.966,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc0a20",
+  "bare_name": "IsValidWaveFormat",
+  "mangled": "?IsValidWaveFormat@XAudio2WaveHelp@@YAHPBUtWAVEFORMATEX@@@Z",
+  "dc3_va": "0x82e76398",
+  "dc3_unit": "waveutils.obj",
+  "sim": 0.919,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc2b00",
+  "bare_name": "RemoveVoice",
+  "mangled": "?RemoveVoice@CX2Engine@XAUDIO2@@QAAXPAVCX2Voice@2@@Z",
+  "dc3_va": "0x82e65af8",
+  "dc3_unit": "x2engine.obj",
+  "sim": 0.904,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc2f68",
+  "bare_name": "GetSubmixStage",
+  "mangled": "?GetSubmixStage@CX2Engine@XAUDIO2@@AAAJIPAPAUSubmixStage@12@@Z",
+  "dc3_va": "0x82e65f88",
+  "dc3_unit": "x2engine.obj",
+  "sim": 0.907,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc3fd0",
+  "bare_name": "Uninitialize",
+  "mangled": "?Uninitialize@CAudioSRC@LEAPFX@@AAAXXZ",
+  "dc3_va": "0x82e67118",
+  "dc3_unit": "src_fast.obj",
+  "sim": 0.985,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc4af0",
+  "bare_name": "UnlockForProcess",
+  "mangled": "?UnlockForProcess@CAudioFilter@LEAPFX@@UAAXXZ",
+  "dc3_va": "0x82e67c58",
+  "dc3_unit": "filter.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc4b28",
+  "bare_name": "~CAudioFilter",
+  "mangled": "??1CAudioFilter@LEAPFX@@UAA@XZ",
+  "dc3_va": "0x82e67c98",
+  "dc3_unit": "filter.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc6218",
+  "bare_name": "AddRef",
+  "mangled": "?AddRef@CAudioReverb@LEAPFX@@UAAKXZ",
+  "dc3_va": "0x82e2d4f8",
+  "dc3_unit": "reverb.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc63b8",
+  "bare_name": "~CAudioFilterMatrixMix",
+  "mangled": "??1CAudioFilterMatrixMix@LEAPFX@@UAA@XZ",
+  "dc3_va": "0x82e695e0",
+  "dc3_unit": "apofiltermatrixmix.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bc7a68",
+  "bare_name": "~CAudioReverb",
+  "mangled": "??1CAudioReverb@LEAPFX@@UAA@XZ",
+  "dc3_va": "0x82e6ac48",
+  "dc3_unit": "reverb.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bcc188",
+  "bare_name": "ConvertFromInt8",
+  "mangled": "?ConvertFromInt8@OAPIPELINE@@YAMPIBE@Z",
+  "dc3_va": "0x82e6f588",
+  "dc3_unit": "oapmatrixmix.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bcd108",
+  "bare_name": "OnPacketStart",
+  "mangled": "?OnPacketStart@CX2SourceVoice@XAUDIO2@@UAAXPAXI@Z",
+  "dc3_va": "0x82e705f8",
+  "dc3_unit": "x2voicesource.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bcd130",
+  "bare_name": "OnPacketLoopEnd",
+  "mangled": "?OnPacketLoopEnd@CX2SourceVoice@XAUDIO2@@UAAXPAXI@Z",
+  "dc3_va": "0x82e70620",
+  "dc3_unit": "x2voicesource.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bcd4d0",
+  "bare_name": "Discontinuity",
+  "mangled": "?Discontinuity@CX2SourceVoiceXMA@XAUDIO2@@UAAJXZ",
+  "dc3_va": "0x82e73b68",
+  "dc3_unit": "x2voicexma.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd0c88",
+  "bare_name": "GetWMAInputData",
+  "mangled": "?GetWMAInputData@XAUDIO2@@YAHPAXPAU_audecInputBufferInfo@xWMA@@@Z",
+  "dc3_va": "0x82e731f8",
+  "dc3_unit": "x2voicewma.obj",
+  "sim": 0.987,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd0eb8",
+  "bare_name": "~CX2SourceVoiceWMA",
+  "mangled": "??1CX2SourceVoiceWMA@XAUDIO2@@UAA@XZ",
+  "dc3_va": "0x82e73430",
+  "dc3_unit": "x2voicewma.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd1968",
+  "bare_name": "AcquireNode",
+  "mangled": "?AcquireNode@?$CPointerList@X$00$0EA@$0A@@@AAAPAUNode@1@XZ",
+  "dc3_va": "0x82e73ef8",
+  "dc3_unit": "x2voicesource.obj",
+  "sim": 0.939,
+  "conf": 0.979,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd2e78",
+  "bare_name": "~CX2SourceVoiceXMA",
+  "mangled": "??1CX2SourceVoiceXMA@XAUDIO2@@UAA@XZ",
+  "dc3_va": "0x82e752f0",
+  "dc3_unit": "x2voicexma.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd4d30",
+  "bare_name": "Initialize",
+  "mangled": "?Initialize@CX2SubmixVoice@XAUDIO2@@QAAJIPBUXAUDIO2_VOICE_SENDS@@PBUXAUDIO2_EFFECT_CHAIN@@@Z",
+  "dc3_va": "0x82e78220",
+  "dc3_unit": "x2voicesubmix.obj",
+  "sim": 0.936,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd5428",
+  "bare_name": "ResampleLinearFromFl32StereoSafe",
+  "mangled": "?ResampleLinearFromFl32StereoSafe@OAPIPELINE@@YAXPIAUSSRCParameters@1@@Z",
+  "dc3_va": "0x82e78aa0",
+  "dc3_unit": "oapresamplelinear.obj",
+  "sim": 0.956,
+  "conf": 0.972,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bd9890",
+  "bare_name": "PcmFramesFromAdpcmBlockSize",
+  "mangled": "?PcmFramesFromAdpcmBlockSize@@YAGGG@Z",
+  "dc3_va": "0x82e7f420",
+  "dc3_unit": "adpcm_codec.obj",
+  "sim": 0.975,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82be2a00",
+  "bare_name": "CreateLeapBuffer",
+  "mangled": "?CreateLeapBuffer@CLeapSystem@LEAPCORE@@UAAJPBUtWAVEFORMATEX@@HPAH@Z",
+  "dc3_va": "0x82e88088",
+  "dc3_unit": "system.obj",
+  "sim": 0.95,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82be3240",
+  "bare_name": "OnCriticalError",
+  "mangled": "?OnCriticalError@CLeapSystem@LEAPCORE@@UAAXJ@Z",
+  "dc3_va": "0x82e888c8",
+  "dc3_unit": "system.obj",
+  "sim": 0.989,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82be5310",
+  "bare_name": "CreateFilterMixer",
+  "mangled": "?CreateFilterMixer@CX2Voice@XAUDIO2@@IBAJW4EMixOverwriteFlag@12@W4EMixTargetAlignment@12@IPAUILeapFilter@@HHPAPAU5@@Z",
+  "dc3_va": "0x82e8a988",
+  "dc3_unit": "x2voicebase.obj",
+  "sim": 0.958,
+  "conf": 0.963,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82be56d0",
+  "bare_name": "DisableEffect",
+  "mangled": "?DisableEffect@CX2Voice@XAUDIO2@@UAAJII@Z",
+  "dc3_va": "0x82e8ad30",
+  "dc3_unit": "x2voicebase.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82be5798",
+  "bare_name": "GetEffectParameters",
+  "mangled": "?GetEffectParameters@CX2Voice@XAUDIO2@@UAAJIPAXI@Z",
+  "dc3_va": "0x82e8ae78",
+  "dc3_unit": "x2voicebase.obj",
+  "sim": 0.944,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82be5818",
+  "bare_name": "SetEffectParameters",
+  "mangled": "?SetEffectParameters@CX2Voice@XAUDIO2@@UAAJIPBXII@Z",
+  "dc3_va": "0x82e8adf8",
+  "dc3_unit": "x2voicebase.obj",
+  "sim": 0.971,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82befba8",
+  "bare_name": "adpcmEncode_Mono_FullPass<short>",
+  "mangled": "??$adpcmEncode_Mono_FullPass@F@@YAKPAEK0KG@Z",
+  "dc3_va": "0x82e95508",
+  "dc3_unit": "msadpcm.obj",
+  "sim": 0.986,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf25f8",
+  "bare_name": "adpcmEncode_Stereo_OnePass<float>",
+  "mangled": "??$adpcmEncode_Stereo_OnePass@M@@YAKPAEK0KG@Z",
+  "dc3_va": "0x82e981d0",
+  "dc3_unit": "msadpcm.obj",
+  "sim": 0.988,
+  "conf": 0.991,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf41a0",
+  "bare_name": "~CThreadBase",
+  "mangled": "??1CThreadBase@@MAA@XZ",
+  "dc3_va": "0x82e9a530",
+  "dc3_unit": "graphmgr.obj",
+  "sim": 0.983,
+  "conf": 0.986,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf4c50",
+  "bare_name": "Start",
+  "mangled": "?Start@CVoiceSkin@LEAPCORE@@UAAJI@Z",
+  "dc3_va": "0x82e9b098",
+  "dc3_unit": "voiceskin.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf5338",
+  "bare_name": "CanExecuteNow",
+  "mangled": "?CanExecuteNow@CBaseSkin@LEAPCORE@@IBAHI@Z",
+  "dc3_va": "0x82e9b7d0",
+  "dc3_unit": "voiceskin.obj",
+  "sim": 0.964,
+  "conf": 0.977,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf5ec0",
+  "bare_name": "ExecuteCommand",
+  "mangled": "?ExecuteCommand@CBaseSkin@LEAPCORE@@UAAJPAUCommand@2@@Z",
+  "dc3_va": "0x82e9c378",
+  "dc3_unit": "baseskin.obj",
+  "sim": 0.901,
+  "conf": 0.988,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf6b78",
+  "bare_name": "VoiceType",
+  "mangled": "?OperationInputs@IRBinary@XGRAPHICS@@UBA?BHXZ",
+  "dc3_va": "0x825e9c88",
+  "dc3_unit": "irinst.obj",
+  "sim": 1.0,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf6da8",
+  "bare_name": "GetFormat",
+  "mangled": "?GetFormat@CXboxRendererConnection@LEAPCORE@@UAAJPAUtWAVEFORMATEX@@PAI@Z",
+  "dc3_va": "0x82e9d1a0",
+  "dc3_unit": "xboxrendererconnection.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bf9ed8",
+  "bare_name": "prvInitGetSetFn",
+  "mangled": "?prvInitGetSetFn@xWMA@@YAXPAP6AJPBJJJJ@ZPAP6AXJPAJPBUCAudioObject@1@J@ZW4BITDEPTH@1@@Z",
+  "dc3_va": "0x82ea0300",
+  "dc3_unit": "msaudio.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82bff4f8",
+  "bare_name": "prvDecodeFrameHeader",
+  "mangled": "?prvDecodeFrameHeader@xWMA@@YAHPAUCAudioObjectDecoder@1@@Z",
+  "dc3_va": "0x82ea5960",
+  "dc3_unit": "entropydec.obj",
+  "sim": 0.992,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c08150",
+  "bare_name": "SongHeaderNode",
+  "mangled": "??0SongHeaderNode@@QAA@PAVNavListItemSortCmp@@VSymbol@@_N@Z",
+  "dc3_va": "0x82986278",
+  "dc3_unit": "SongSortNode.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c098c0",
+  "bare_name": "XbcDoWork",
+  "mangled": "?XbcDoWork@@YAJXZ",
+  "dc3_va": "0x825fae40",
+  "dc3_unit": "xbcapi.obj",
+  "sim": 0.902,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c12540",
+  "bare_name": "PrintYieldAndPredicateClean",
+  "mangled": "?PrintYieldAndPredicateClean@Disassembler@D3D@@AAAXHH_N@Z",
+  "dc3_va": "0x82eb67f8",
+  "dc3_unit": "disassemble.obj",
+  "sim": 0.978,
+  "conf": 0.988,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c125f0",
+  "bare_name": "PrintRTF",
+  "mangled": "?PrintRTF@Disassembler@D3D@@AAAXPBD@Z",
+  "dc3_va": "0x82eb6918",
+  "dc3_unit": "disassemble.obj",
+  "sim": 0.938,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c127b8",
+  "bare_name": "PrintDestReg",
+  "mangled": "?PrintDestReg@Disassembler@D3D@@AAAXHHHHHH_N@Z",
+  "dc3_va": "0x82eb6c30",
+  "dc3_unit": "disassemble.obj",
+  "sim": 0.961,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c13768",
+  "bare_name": "ForceStartLine",
+  "mangled": "?ForceStartLine@Disassembler@D3D@@AAAXXZ",
+  "dc3_va": "0x82eb7c70",
+  "dc3_unit": "disassemble.obj",
+  "sim": 0.945,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c17198",
+  "bare_name": "Siren7EncoderProcess",
+  "mangled": "Siren7EncoderProcess",
+  "dc3_va": "0x82ebb050",
+  "dc3_unit": "codecsiren7.obj",
+  "sim": 0.955,
+  "conf": 0.99,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c19020",
+  "bare_name": "XHVEngineUnregisterLocalTalker",
+  "mangled": "XHVEngineUnregisterLocalTalker",
+  "dc3_va": "0x82ebcdb8",
+  "dc3_unit": "engine.obj",
+  "sim": 1.0,
+  "conf": 0.989,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c19170",
+  "bare_name": "XHVEnginepInitXAudio2",
+  "mangled": "XHVEnginepInitXAudio2",
+  "dc3_va": "0x82ebcfe8",
+  "dc3_unit": "engine.obj",
+  "sim": 0.9,
+  "conf": 0.98,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c19b08",
+  "bare_name": "XHVEngineDoWork",
+  "mangled": "XHVEngineDoWork",
+  "dc3_va": "0x82ebda18",
+  "dc3_unit": "engine.obj",
+  "sim": 0.957,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c1a220",
+  "bare_name": "XHVEnginepInitVTable",
+  "mangled": "XHVEnginepInitVTable",
+  "dc3_va": "0x82ebe380",
+  "dc3_unit": "engine.obj",
+  "sim": 0.953,
+  "conf": 0.963,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c1bae8",
+  "bare_name": "RTpInitXAudio2",
+  "mangled": "RTpInitXAudio2",
+  "dc3_va": "0x82ebfdb8",
+  "dc3_unit": "remotetalker.obj",
+  "sim": 0.94,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c1f988",
+  "bare_name": "EchoCnclUpdateMicPower",
+  "mangled": "?EchoCnclUpdateMicPower@@YAXPAUAEC_OBJ@@PAUECHOCNCL_Struct@@@Z",
+  "dc3_va": "0x82a13468",
+  "dc3_unit": "echocncl.obj",
+  "sim": 0.909,
+  "conf": 0.953,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c26b28",
+  "bare_name": "XMicUpSample2To3",
+  "mangled": "XMicUpSample2To3",
+  "dc3_va": "0x82ec8ba0",
+  "dc3_unit": "xmicapi.obj",
+  "sim": 0.981,
+  "conf": 0.988,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c27ce0",
+  "bare_name": "sub_82EC9D20",
+  "mangled": null,
+  "dc3_va": "0x82ec9d20",
+  "dc3_unit": null,
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "no_mangled"
+ },
+ {
+  "rb3_va": "0x82c2ffb8",
+  "bare_name": "jpeg_get_large",
+  "mangled": "?jpeg_get_large@@YAPAXPAUjpeg_common_struct@@I@Z",
+  "dc3_va": "0x82b91d40",
+  "dc3_unit": "jmemnobs.obj",
+  "sim": 0.906,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c3e6f8",
+  "bare_name": "CreateWaitableTimerA",
+  "mangled": "CreateWaitableTimerA",
+  "dc3_va": "0x82edaa48",
+  "dc3_unit": "createwaitabletimer.obj",
+  "sim": 0.964,
+  "conf": 0.971,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4b458",
+  "bare_name": "`dynamic_initializer_for_'g_csOverrideRestore''",
+  "mangled": "??__Eg_csOverrideRestore@@YAXXZ",
+  "dc3_va": "0x82edf8a0",
+  "dc3_unit": "xmp.obj",
+  "sim": 1.0,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bc4c",
+  "bare_name": "XGetGameRegion",
+  "mangled": "XGetGameRegion",
+  "dc3_va": "0x82ee5a64",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bc6c",
+  "bare_name": "XNotifyGetNext",
+  "mangled": "XNotifyGetNext",
+  "dc3_va": "0x82ee5544",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bc8c",
+  "bare_name": "XGetVideoMode",
+  "mangled": "XGetVideoMode",
+  "dc3_va": "0x82ee5b04",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bc9c",
+  "bare_name": "XamShowMessageBoxUIEx",
+  "mangled": "XamShowMessageBoxUIEx",
+  "dc3_va": "0x82ee55f4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bcac",
+  "bare_name": "XGetLanguage",
+  "mangled": "XGetLanguage",
+  "dc3_va": "0x82ee5604",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bcbc",
+  "bare_name": "XGetAVPack",
+  "mangled": "XGetAVPack",
+  "dc3_va": "0x82ee5614",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bccc",
+  "bare_name": "XamLoaderTerminateTitle",
+  "mangled": "XamTerminateTitle",
+  "dc3_va": "0x82ee5624",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bcdc",
+  "bare_name": "XMsgStartIORequest",
+  "mangled": "XMsgStartIORequest",
+  "dc3_va": "0x82ee5af4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bcfc",
+  "bare_name": "XamUserGetSigninState",
+  "mangled": "XamUserGetSigninState",
+  "dc3_va": "0x82ee6034",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bd0c",
+  "bare_name": "XamUserAreUsersFriends",
+  "mangled": "XamUserAreUsersFriends",
+  "dc3_va": "0x82ee6044",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bd1c",
+  "bare_name": "XamUserCheckPrivilege",
+  "mangled": "XamUserCheckPrivilege",
+  "dc3_va": "0x82ee6054",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bd2c",
+  "bare_name": "XamGetSystemVersion",
+  "mangled": "XamGetSystemVersion",
+  "dc3_va": "0x82ee5c24",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bd5c",
+  "bare_name": "XamUserGetXUID",
+  "mangled": "XamUserGetXUID",
+  "dc3_va": "0x82ee5cd4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bd6c",
+  "bare_name": "XMsgCancelIORequest",
+  "mangled": "XMsgCancelIORequest",
+  "dc3_va": "0x82ee5aa4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bdec",
+  "bare_name": "XamShowDirtyDiscErrorUI",
+  "mangled": "XamShowDirtyDiscErrorUI",
+  "dc3_va": "0x82ee60e4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bdfc",
+  "bare_name": "XamEnableInactivityProcessing",
+  "mangled": "XamEnableInactivityProcessing",
+  "dc3_va": "0x82ee6104",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be0c",
+  "bare_name": "XamResetInactivity",
+  "mangled": "XamResetInactivity",
+  "dc3_va": "0x82ee6114",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be1c",
+  "bare_name": "XamUserGetSigninInfo",
+  "mangled": "XamUserGetSigninInfo",
+  "dc3_va": "0x82ee6074",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be2c",
+  "bare_name": "XamNotifyCreateListener",
+  "mangled": "XamNotifyCreateListener",
+  "dc3_va": "0x82ee55e4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be5c",
+  "bare_name": "XamTaskSchedule",
+  "mangled": "XamTaskSchedule",
+  "dc3_va": "0x82ee6164",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be7c",
+  "bare_name": "XamGetExecutionId",
+  "mangled": "XamGetExecutionId",
+  "dc3_va": "0x82ee6124",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be8c",
+  "bare_name": "XamAlloc",
+  "mangled": "XamAlloc",
+  "dc3_va": "0x82ee6134",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4be9c",
+  "bare_name": "XamFree",
+  "mangled": "XamFree",
+  "dc3_va": "0x82ee6144",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4beac",
+  "bare_name": "XamGetOverlappedResult",
+  "mangled": "XamGetOverlappedResult",
+  "dc3_va": "0x82ee6154",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bebc",
+  "bare_name": "XMsgCompleteIORequest",
+  "mangled": "XMsgCompleteIORequest",
+  "dc3_va": "0x82ee6174",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4becc",
+  "bare_name": "XMsgInProcessCall",
+  "mangled": "XMsgInProcessCall",
+  "dc3_va": "0x82ee5a94",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bedc",
+  "bare_name": "XamGetPrivateEnumStructureFromHandle",
+  "mangled": "XamGetPrivateEnumStructureFromHandle",
+  "dc3_va": "0x82ee6184",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4beec",
+  "bare_name": "XamContentCreateEx",
+  "mangled": "XamContentCreateEx",
+  "dc3_va": "0x82ee6194",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bf6c",
+  "bare_name": "XamInputGetCapabilities",
+  "mangled": "XamInputGetCapabilities",
+  "dc3_va": "0x82ee6204",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bf7c",
+  "bare_name": "XamInputGetState",
+  "mangled": "XamInputGetState",
+  "dc3_va": "0x82ee6214",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bf8c",
+  "bare_name": "XamInputSetState",
+  "mangled": "XamInputSetState",
+  "dc3_va": "0x82ee6224",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bfdc",
+  "bare_name": "RtlInitializeCriticalSection",
+  "mangled": "RtlInitializeCriticalSection",
+  "dc3_va": "0x82ee5914",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bfec",
+  "bare_name": "RtlEnterCriticalSection",
+  "mangled": "RtlEnterCriticalSection",
+  "dc3_va": "0x82ee5884",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4bffc",
+  "bare_name": "RtlLeaveCriticalSection",
+  "mangled": "RtlLeaveCriticalSection",
+  "dc3_va": "0x82ee5874",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c00c",
+  "bare_name": "RtlTryEnterCriticalSection",
+  "mangled": "RtlTryEnterCriticalSection",
+  "dc3_va": "0x82ee5934",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c02c",
+  "bare_name": "KeBugCheck",
+  "mangled": "KeBugCheck",
+  "dc3_va": "0x82ee5964",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c03c",
+  "bare_name": "KeTlsGetValue",
+  "mangled": "TlsGetValue",
+  "dc3_va": "0x82ee5974",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c04c",
+  "bare_name": "KeTlsSetValue",
+  "mangled": "TlsSetValue",
+  "dc3_va": "0x82ee5984",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c05c",
+  "bare_name": "KeTlsFree",
+  "mangled": "TlsFree",
+  "dc3_va": "0x82ee5994",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c06c",
+  "bare_name": "KeTlsAlloc",
+  "mangled": "TlsAlloc",
+  "dc3_va": "0x82ee59a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c07c",
+  "bare_name": "RtlUnwind",
+  "mangled": "RtlUnwind",
+  "dc3_va": "0x82ee59b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c08c",
+  "bare_name": "RtlCaptureContext",
+  "mangled": "RtlCaptureContext",
+  "dc3_va": "0x82ee59d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c09c",
+  "bare_name": "RtlInitializeCriticalSectionAndSpinCount",
+  "mangled": "RtlInitializeCriticalSectionAndSpinCount",
+  "dc3_va": "0x82ee59c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c0ac",
+  "bare_name": "KeEnableFpuExceptions",
+  "mangled": "KeEnableFpuExceptions",
+  "dc3_va": "0x82ee59e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c0bc",
+  "bare_name": "ObDereferenceObject",
+  "mangled": "ObDereferenceObject",
+  "dc3_va": "0x82ee5654",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c0cc",
+  "bare_name": "ObOpenObjectByPointer",
+  "mangled": "ObOpenObjectByPointer",
+  "dc3_va": "0x82ee5664",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c0dc",
+  "bare_name": "ObLookupThreadByThreadId",
+  "mangled": "ObLookupThreadByThreadId",
+  "dc3_va": "0x82ee5674",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c0ec",
+  "bare_name": "KeSetBasePriorityThread",
+  "mangled": "KeSetBasePriorityThread",
+  "dc3_va": "0x82ee5684",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c0fc",
+  "bare_name": "ObReferenceObjectByHandle",
+  "mangled": "ObReferenceObjectByHandle",
+  "dc3_va": "0x82ee5694",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c10c",
+  "bare_name": "KeQueryBasePriorityThread",
+  "mangled": "KeQueryBasePriorityThread",
+  "dc3_va": "0x82ee56a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c11c",
+  "bare_name": "KeSetAffinityThread",
+  "mangled": "KeSetAffinityThread",
+  "dc3_va": "0x82ee56b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c12c",
+  "bare_name": "MmAllocatePhysicalMemoryEx",
+  "mangled": "MmAllocatePhysicalMemoryEx",
+  "dc3_va": "0x82ee56c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c14c",
+  "bare_name": "MmFreePhysicalMemory",
+  "mangled": "MmFreePhysicalMemory",
+  "dc3_va": "0x82ee56e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c15c",
+  "bare_name": "MmQueryAddressProtect",
+  "mangled": "MmQueryAddressProtect",
+  "dc3_va": "0x82ee56f4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c16c",
+  "bare_name": "NtQueryVirtualMemory",
+  "mangled": "NtQueryVirtualMemory",
+  "dc3_va": "0x82ee5704",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c17c",
+  "bare_name": "MmQueryStatistics",
+  "mangled": "MmQueryStatistics",
+  "dc3_va": "0x82ee5714",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c18c",
+  "bare_name": "NtClose",
+  "mangled": "NtClose",
+  "dc3_va": "0x82ee5724",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c19c",
+  "bare_name": "NtCreateEvent",
+  "mangled": "NtCreateEvent",
+  "dc3_va": "0x82ee5734",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c1ac",
+  "bare_name": "ExGetXConfigSetting",
+  "mangled": "ExGetXConfigSetting",
+  "dc3_va": "0x82ee5744",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c1bc",
+  "bare_name": "XexCheckExecutablePrivilege",
+  "mangled": "XexCheckExecutablePrivilege",
+  "dc3_va": "0x82ee5754",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c1cc",
+  "bare_name": "DbgPrint",
+  "mangled": "DbgPrint",
+  "dc3_va": "0x82ee5764",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c1dc",
+  "bare_name": "NtSetEvent",
+  "mangled": "NtSetEvent",
+  "dc3_va": "0x82ee6304",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c1ec",
+  "bare_name": "NtResumeThread",
+  "mangled": "NtResumeThread",
+  "dc3_va": "0x82ee5644",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c1fc",
+  "bare_name": "RtlTimeToTimeFields",
+  "mangled": "RtlTimeToTimeFields",
+  "dc3_va": "0x82ee6734",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c20c",
+  "bare_name": "KeQuerySystemTime",
+  "mangled": "KeQuerySystemTime",
+  "dc3_va": "0x82ee6744",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c23c",
+  "bare_name": "NtQueryVolumeInformationFile",
+  "mangled": "NtQueryVolumeInformationFile",
+  "dc3_va": "0x82ee57d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c24c",
+  "bare_name": "NtOpenFile",
+  "mangled": "NtOpenFile",
+  "dc3_va": "0x82ee57a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c25c",
+  "bare_name": "RtlInitAnsiString",
+  "mangled": "RtlInitAnsiString",
+  "dc3_va": "0x82ee63a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c26c",
+  "bare_name": "RtlImageXexHeaderField",
+  "mangled": "RtlImageXexHeaderField",
+  "dc3_va": "0x82ee5894",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c29c",
+  "bare_name": "NtWriteFile",
+  "mangled": "NtWriteFile",
+  "dc3_va": "0x82ee67a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c2ac",
+  "bare_name": "NtReadFile",
+  "mangled": "NtReadFile",
+  "dc3_va": "0x82ee5804",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c2cc",
+  "bare_name": "NtCreateFile",
+  "mangled": "NtCreateFile",
+  "dc3_va": "0x82ee5814",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c2dc",
+  "bare_name": "NtFreeVirtualMemory",
+  "mangled": "NtFreeVirtualMemory",
+  "dc3_va": "0x82ee5864",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c2ec",
+  "bare_name": "NtAllocateVirtualMemory",
+  "mangled": "NtAllocateVirtualMemory",
+  "dc3_va": "0x82ee5854",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c30c",
+  "bare_name": "KeLeaveCriticalRegion",
+  "mangled": "KeLeaveCriticalRegion",
+  "dc3_va": "0x82ee6694",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c31c",
+  "bare_name": "NtFlushBuffersFile",
+  "mangled": "NtFlushBuffersFile",
+  "dc3_va": "0x82ee6814",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c32c",
+  "bare_name": "KeEnterCriticalRegion",
+  "mangled": "KeEnterCriticalRegion",
+  "dc3_va": "0x82ee66c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c34c",
+  "bare_name": "RtlNtStatusToDosError",
+  "mangled": "RtlNtStatusToDosError",
+  "dc3_va": "0x82ee5784",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c35c",
+  "bare_name": "ObCreateSymbolicLink",
+  "mangled": "ObCreateSymbolicLink",
+  "dc3_va": "0x82ee66e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c36c",
+  "bare_name": "ObDeleteSymbolicLink",
+  "mangled": "ObDeleteSymbolicLink",
+  "dc3_va": "0x82ee66d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c37c",
+  "bare_name": "KeResetEvent",
+  "mangled": "KeResetEvent",
+  "dc3_va": "0x82ee6254",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c38c",
+  "bare_name": "KeWaitForSingleObject",
+  "mangled": "KeWaitForSingleObject",
+  "dc3_va": "0x82ee6274",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c39c",
+  "bare_name": "KeSetEvent",
+  "mangled": "KeSetEvent",
+  "dc3_va": "0x82ee6244",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c3ac",
+  "bare_name": "ExRegisterTitleTerminateNotification",
+  "mangled": "ExRegisterTitleTerminateNotification",
+  "dc3_va": "0x82ee63c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c3bc",
+  "bare_name": "XexGetProcedureAddress",
+  "mangled": "XexGetProcedureAddress",
+  "dc3_va": "0x82ee5944",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c3cc",
+  "bare_name": "XexGetModuleHandle",
+  "mangled": "XexGetModuleHandle",
+  "dc3_va": "0x82ee5954",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c3dc",
+  "bare_name": "KeGetCurrentProcessType",
+  "mangled": "KeGetCurrentProcessType",
+  "dc3_va": "0x82ee58e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c3ec",
+  "bare_name": "NtSetInformationFile",
+  "mangled": "NtSetInformationFile",
+  "dc3_va": "0x82ee57b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c3fc",
+  "bare_name": "RtlTimeFieldsToTime",
+  "mangled": "RtlTimeFieldsToTime",
+  "dc3_va": "0x82ee6794",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c40c",
+  "bare_name": "NtCreateSemaphore",
+  "mangled": "NtCreateSemaphore",
+  "dc3_va": "0x82ee6754",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c41c",
+  "bare_name": "NtReleaseSemaphore",
+  "mangled": "NtReleaseSemaphore",
+  "dc3_va": "0x82ee6764",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c42c",
+  "bare_name": "NtWaitForMultipleObjectsEx",
+  "mangled": "NtWaitForMultipleObjectsEx",
+  "dc3_va": "0x82ee6774",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c43c",
+  "bare_name": "NtClearEvent",
+  "mangled": "NtClearEvent",
+  "dc3_va": "0x82ee6704",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c44c",
+  "bare_name": "NtWaitForSingleObjectEx",
+  "mangled": "NtWaitForSingleObjectEx",
+  "dc3_va": "0x82ee5834",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c45c",
+  "bare_name": "RtlUnicodeToMultiByteN",
+  "mangled": "RtlUnicodeToMultiByteN",
+  "dc3_va": "0x82ee6714",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c46c",
+  "bare_name": "NtQueryInformationFile",
+  "mangled": "NtQueryInformationFile",
+  "dc3_va": "0x82ee57c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c49c",
+  "bare_name": "_vsnprintf",
+  "mangled": "RtlVsnprintf",
+  "dc3_va": "0x82ee6594",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c4ac",
+  "bare_name": "RtlMultiByteToUnicodeN",
+  "mangled": "RtlMultiByteToUnicodeN",
+  "dc3_va": "0x82ee67d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c4bc",
+  "bare_name": "NtQueryFullAttributesFile",
+  "mangled": "NtQueryFullAttributesFile",
+  "dc3_va": "0x82ee5794",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c4dc",
+  "bare_name": "NtReleaseMutant",
+  "mangled": "NtReleaseMutant",
+  "dc3_va": "0x82ee6854",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c4ec",
+  "bare_name": "NtCreateMutant",
+  "mangled": "NtCreateMutant",
+  "dc3_va": "0x82ee6844",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c4fc",
+  "bare_name": "RtlRaiseException",
+  "mangled": "RtlRaiseException",
+  "dc3_va": "0x82ee5924",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c50c",
+  "bare_name": "RtlFillMemoryUlong",
+  "mangled": "RtlFillMemoryUlong",
+  "dc3_va": "0x82ee58c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c51c",
+  "bare_name": "KeBugCheckEx",
+  "mangled": "KeBugCheckEx",
+  "dc3_va": "0x82ee58d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c52c",
+  "bare_name": "RtlCompareMemoryUlong",
+  "mangled": "RtlCompareMemoryUlong",
+  "dc3_va": "0x82ee58f4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c53c",
+  "bare_name": "ExTerminateThread",
+  "mangled": "ExTerminateThread",
+  "dc3_va": "0x82ee58b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c54c",
+  "bare_name": "RtlFreeAnsiString",
+  "mangled": "RtlFreeAnsiString",
+  "dc3_va": "0x82ee67e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c55c",
+  "bare_name": "RtlUnicodeStringToAnsiString",
+  "mangled": "RtlUnicodeStringToAnsiString",
+  "dc3_va": "0x82ee67f4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c56c",
+  "bare_name": "RtlInitUnicodeString",
+  "mangled": "RtlInitUnicodeString",
+  "dc3_va": "0x82ee6804",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c57c",
+  "bare_name": "HalReturnToFirmware",
+  "mangled": "HalReturnToFirmware",
+  "dc3_va": "0x82ee58a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c58c",
+  "bare_name": "XexUnloadImage",
+  "mangled": "XexUnloadImage",
+  "dc3_va": "0x82ee67b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c59c",
+  "bare_name": "XexLoadImage",
+  "mangled": "XexLoadImage",
+  "dc3_va": "0x82ee67c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c5ac",
+  "bare_name": "NtQueryDirectoryFile",
+  "mangled": "NtQueryDirectoryFile",
+  "dc3_va": "0x82ee57e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c5cc",
+  "bare_name": "NtDuplicateObject",
+  "mangled": "NtDuplicateObject",
+  "dc3_va": "0x82ee5824",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c5dc",
+  "bare_name": "ExCreateThread",
+  "mangled": "ExCreateThread",
+  "dc3_va": "0x82ee5844",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c5ec",
+  "bare_name": "KeDelayExecutionThread",
+  "mangled": "KeDelayExecutionThread",
+  "dc3_va": "0x82ee6724",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c60c",
+  "bare_name": "ObReferenceObject",
+  "mangled": "ObReferenceObject",
+  "dc3_va": "0x82ee6894",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c64c",
+  "bare_name": "ExFreePool",
+  "mangled": "ExFreePool",
+  "dc3_va": "0x82ee6864",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c67c",
+  "bare_name": "KfReleaseSpinLock",
+  "mangled": "KfReleaseSpinLock",
+  "dc3_va": "0x82ee6284",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c68c",
+  "bare_name": "KfAcquireSpinLock",
+  "mangled": "KfAcquireSpinLock",
+  "dc3_va": "0x82ee6294",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c69c",
+  "bare_name": "RtlUpcaseUnicodeChar",
+  "mangled": "RtlUpcaseUnicodeChar",
+  "dc3_va": "0x82ee6824",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c70c",
+  "bare_name": "NetDll_XNetStartup",
+  "mangled": "NetDll_XNetStartup",
+  "dc3_va": "0x82ee5db4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c83c",
+  "bare_name": "NetDll_WSAStartup",
+  "mangled": "NetDll_WSAStartup",
+  "dc3_va": "0x82ee5e84",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4c9fc",
+  "bare_name": "XamInputRawState",
+  "mangled": "XamInputRawState",
+  "dc3_va": "0x82ee6954",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca0c",
+  "bare_name": "XamInputControl",
+  "mangled": "XamInputControl",
+  "dc3_va": "0x82ee6964",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca1c",
+  "bare_name": "XamSessionRefObjByHandle",
+  "mangled": "XamSessionRefObjByHandle",
+  "dc3_va": "0x82ee68d4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca2c",
+  "bare_name": "XamSessionCreateHandle",
+  "mangled": "XamSessionCreateHandle",
+  "dc3_va": "0x82ee68e4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca3c",
+  "bare_name": "XNetLogonGetTitleID",
+  "mangled": "XNetLogonGetTitleID",
+  "dc3_va": "0x82ee6924",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca4c",
+  "bare_name": "XamCreateEnumeratorHandle",
+  "mangled": "XamCreateEnumeratorHandle",
+  "dc3_va": "0x82ee68f4",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca5c",
+  "bare_name": "XamUserGetMembershipTierFromXUID",
+  "mangled": "XamUserGetMembershipTypeFromXUID",
+  "dc3_va": "0x82ee6904",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca6c",
+  "bare_name": "XamUserGetOnlineCountryFromXUID",
+  "mangled": "XamUserGetOnlineCountryFromXUID",
+  "dc3_va": "0x82ee6914",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca7c",
+  "bare_name": "XMsgStartIORequestEx",
+  "mangled": "XMsgStartIORequestEx",
+  "dc3_va": "0x82ee6934",
+  "dc3_unit": "f   xapilibi:xam.xex@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ca9c",
+  "bare_name": "KeInitializeApc",
+  "mangled": "KeInitializeApc",
+  "dc3_va": "0x82ee6884",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4caac",
+  "bare_name": "ExAllocatePoolWithTag",
+  "mangled": "ExAllocatePoolWithTag",
+  "dc3_va": "0x82ee68a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cabc",
+  "bare_name": "KeInsertQueueApc",
+  "mangled": "KeInsertQueueApc",
+  "dc3_va": "0x82ee68b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cacc",
+  "bare_name": "VdEnableDisableClockGating",
+  "mangled": "VdEnableDisableClockGating",
+  "dc3_va": "0x82ee64b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cadc",
+  "bare_name": "KeQueryPerformanceFrequency",
+  "mangled": "KeQueryPerformanceFrequency",
+  "dc3_va": "0x82ee64c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4caec",
+  "bare_name": "VdPersistDisplay",
+  "mangled": "VdPersistDisplay",
+  "dc3_va": "0x82ee64d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cafc",
+  "bare_name": "VdSwap",
+  "mangled": "VdSwap",
+  "dc3_va": "0x82ee64e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb0c",
+  "bare_name": "VdGetSystemCommandBuffer",
+  "mangled": "VdGetSystemCommandBuffer",
+  "dc3_va": "0x82ee64f4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb1c",
+  "bare_name": "KeReleaseSpinLockFromRaisedIrql",
+  "mangled": "KeReleaseSpinLockFromRaisedIrql",
+  "dc3_va": "0x82ee6504",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb2c",
+  "bare_name": "KeAcquireSpinLockAtRaisedIrql",
+  "mangled": "KeAcquireSpinLockAtRaisedIrql",
+  "dc3_va": "0x82ee6514",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb3c",
+  "bare_name": "KiApcNormalRoutineNop",
+  "mangled": "VdVerifyMEInitCommand",
+  "dc3_va": "0x82ee6534",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb4c",
+  "bare_name": "VdEnableRingBufferRPtrWriteBack",
+  "mangled": "VdEnableRingBufferRPtrWriteBack",
+  "dc3_va": "0x82ee6544",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb5c",
+  "bare_name": "VdInitializeRingBuffer",
+  "mangled": "VdInitializeRingBuffer",
+  "dc3_va": "0x82ee6554",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb6c",
+  "bare_name": "MmGetPhysicalAddress",
+  "mangled": "MmGetPhysicalAddress",
+  "dc3_va": "0x82ee6564",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb7c",
+  "bare_name": "VdSetSystemCommandBufferGpuIdentifierAddress",
+  "mangled": "VdSetSystemCommandBufferGpuIdentifierAddress",
+  "dc3_va": "0x82ee6574",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cb9c",
+  "bare_name": "VdGetCurrentDisplayGamma",
+  "mangled": "VdGetCurrentDisplayGamma",
+  "dc3_va": "0x82ee65e4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cbac",
+  "bare_name": "KeLockL2",
+  "mangled": "KeLockL2",
+  "dc3_va": "0x82ee65b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cbbc",
+  "bare_name": "KeUnlockL2",
+  "mangled": "KeUnlockL2",
+  "dc3_va": "0x82ee65c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cbcc",
+  "bare_name": "KeInitializeDpc",
+  "mangled": "KeInitializeDpc",
+  "dc3_va": "0x82ee65d4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cbdc",
+  "bare_name": "VdShutdownEngines",
+  "mangled": "VdShutdownEngines",
+  "dc3_va": "0x82ee6634",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cbec",
+  "bare_name": "VdQueryVideoMode",
+  "mangled": "VdQueryVideoMode",
+  "dc3_va": "0x82ee65a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cbfc",
+  "bare_name": "VdGetCurrentDisplayInformation",
+  "mangled": "VdGetCurrentDisplayInformation",
+  "dc3_va": "0x82ee6604",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc0c",
+  "bare_name": "VdSetDisplayMode",
+  "mangled": "VdSetDisplayMode",
+  "dc3_va": "0x82ee6614",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc1c",
+  "bare_name": "VdSetGraphicsInterruptCallback",
+  "mangled": "VdSetGraphicsInterruptCallback",
+  "dc3_va": "0x82ee6644",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc2c",
+  "bare_name": "VdInitializeEngines",
+  "mangled": "VdInitializeEngines",
+  "dc3_va": "0x82ee6654",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc3c",
+  "bare_name": "VdIsHSIOTrainingSucceeded",
+  "mangled": "VdIsHSIOTrainingSucceeded",
+  "dc3_va": "0x82ee6664",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc4c",
+  "bare_name": "VdQueryVideoFlags",
+  "mangled": "VdQueryVideoFlags",
+  "dc3_va": "0x82ee6674",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc5c",
+  "bare_name": "VdCallGraphicsNotificationRoutines",
+  "mangled": "VdCallGraphicsNotificationRoutines",
+  "dc3_va": "0x82ee65f4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc6c",
+  "bare_name": "VdInitializeScalerCommandBuffer",
+  "mangled": "VdInitializeScalerCommandBuffer",
+  "dc3_va": "0x82ee6684",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc7c",
+  "bare_name": "VdRetrainEDRAM",
+  "mangled": "VdRetrainEDRAM",
+  "dc3_va": "0x82ee66a4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc8c",
+  "bare_name": "VdRetrainEDRAMWorker",
+  "mangled": "VdRetrainEDRAMWorker",
+  "dc3_va": "0x82ee66b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4cc9c",
+  "bare_name": "XAudioOverrideSpeakerConfig",
+  "mangled": "XAudioOverrideSpeakerConfig",
+  "dc3_va": "0x82ee68c4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ccac",
+  "bare_name": "XAudioGetSpeakerConfig",
+  "mangled": "XAudioGetSpeakerConfig",
+  "dc3_va": "0x82ee63b4",
+  "dc3_unit": "f   XBOXKRNL:xboxkrnl.exe@21173.0+1861.0",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4d000",
+  "bare_name": "bpopmalloci",
+  "mangled": "bpopmalloci",
+  "dc3_va": "0x82ee72d0",
+  "dc3_unit": "binkread.obj",
+  "sim": 0.974,
+  "conf": 0.982,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4d140",
+  "bare_name": "dosilence",
+  "mangled": "dosilence",
+  "dc3_va": "0x82ee7780",
+  "dc3_unit": "binkread.obj",
+  "sim": 1.0,
+  "conf": 0.993,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4d638",
+  "bare_name": "BinkSetSoundTrack",
+  "mangled": "BinkSetSoundTrack",
+  "dc3_va": "0x82ee7c48",
+  "dc3_unit": "binkread.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c4ffe8",
+  "bare_name": "BinkDoFrameAsync",
+  "mangled": "BinkDoFrameAsync",
+  "dc3_va": "0x82ee6ea8",
+  "dc3_unit": "binkasyncthread.obj",
+  "sim": 0.982,
+  "conf": 0.987,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c50160",
+  "bare_name": "XASoundPlay",
+  "mangled": "?XASoundPlay@@YAXPAUBINKSND@@HI@Z",
+  "dc3_va": "0x82eed000",
+  "dc3_unit": "binkxa2.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c50488",
+  "bare_name": "Close",
+  "mangled": "?Close@@YAXPAUBINKSND@@@Z",
+  "dc3_va": "0x82eed798",
+  "dc3_unit": "binkxa2.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c507b8",
+  "bare_name": "Pause",
+  "mangled": "?Pause@@YAHPAUBINKSND@@H@Z",
+  "dc3_va": "0x82eed678",
+  "dc3_unit": "binkxa2.obj",
+  "sim": 1.0,
+  "conf": 0.992,
+  "kind": "uncompiled"
+ },
+ {
+  "rb3_va": "0x82c59e68",
+  "bare_name": "cftexp1",
+  "mangled": "cftexp1",
+  "dc3_va": "0x82ef6258",
+  "dc3_unit": "fft.obj",
+  "sim": 0.956,
+  "conf": 0.969,
+  "kind": "uncompiled"
+ }
+]
