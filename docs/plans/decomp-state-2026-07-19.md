@@ -1,10 +1,21 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 18,874 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,924 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
 
 ## 2026-07-20 flywheel session — 18,819 → 18,874 (+55 this session; +185 across the arc)
+
+### Wave close-out addendum (later 2026-07-20): 18,874 → 18,924 (+50)
+Final grind-tail wave +28 (LaunchGoal local-static cascade +19; struct-stride
+SongPattern/LocalizedName; levers: NOTIFY_ONCE_EVAL flag, qualified-base call,
+DrawMode=DC3-minus-1, if-guard vs mask-fold) + correlator r6 +1 + BinDiff r1
++5 (286 map entries, 563 carving hints) + partial-recovery/W-E landings.
+**Measured-fundable near-miss pool EXHAUSTED (92/92 attempted, 9.8% tail
+rate) — Phase-1 grind CLOSED; pivot to identification (Phase 2) is live:**
+see docs/plans/remaining-bytes-decomposition-2026-07-20.md +
+docs/plans/bindiff-transfer-spike-2026-07-20.md. Struct-stride RE campaign
+in flight (ICF-fold-stride trap documented in memory).
 
 Ran the **body-flip → correlator-harvest → reprice** flywheel to a clean milestone:
 - **Grind wave 1** +11 (LEVER-STRING/SYMBOL + BODY-LEVER 70-90; missing-`virtual`
