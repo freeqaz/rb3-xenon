@@ -73,7 +73,8 @@ inline TambourineGemPool::~TambourineGemPool() {
 void VocalTrack::UpdateMarkerVisibility(float f1, float f2) {
     for (int i = 0; i < unk1a0.size(); i++) {
         std::pair<RndMesh *, float> &curMarker = unk1a0[i];
-        curMarker.first->SetShowing(curMarker.second >= f1 && curMarker.second <= f2);
+        bool show = curMarker.second >= f1 && curMarker.second <= f2;
+        curMarker.first->SetShowing(show);
     }
 }
 
