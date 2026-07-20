@@ -1284,15 +1284,37 @@ def write_markdown(path, rows, results):
     open(path, "w").write("\n".join(lines))
 
 
-def print_table(results):
+def _load_measured_priors(path):
+    """Load measured_priors.json (from reprice_router.py). Returns
+    {bucket: {rate, n_attempted, wilson_low}} or None if unavailable."""
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        return data.get("buckets", {})
+    except (OSError, ValueError):
+        return None
+
+
+def _measured_suffix(priors, bucket):
+    """Annotation string for a bucket's summary line, or ''."""
+    if priors is None:
+        return ""
+    m = priors.get(bucket)
+    if not m or m.get("n_attempted", 0) == 0:
+        return "   measured: no data"
+    return (f"   measured: rate={m['rate']*100:.1f}% "
+            f"(n={m['n_attempted']}, wilson_low={m['wilson_low']*100:.1f}%)")
+
+
+def print_table(results, priors=None):
     counts = Counter(r["bucket"] for r in results.values())
     print("\n=== bucket counts ===")
     for b in ALL_BUCKETS:
         if counts.get(b):
-            print(f"  {b:18s} {counts[b]:5d}   {FLEET[b]}")
+            print(f"  {b:18s} {counts[b]:5d}   {FLEET[b]}{_measured_suffix(priors, b)}")
     for b, c in counts.items():
         if b not in ALL_BUCKETS:
-            print(f"  {b:18s} {c:5d}   (unexpected)")
+            print(f"  {b:18s} {c:5d}   (unexpected){_measured_suffix(priors, b)}")
     print(f"  {'TOTAL':18s} {sum(counts.values()):5d}")
 
 
@@ -1311,6 +1333,11 @@ def main():
     ap.add_argument("--no-cache", action="store_true")
     ap.add_argument("--cache-dir", default=str(DEFAULT_CACHE))
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--use-measured-priors", nargs="?", const=str(Path(__file__).resolve().parent / "measured_priors.json"),
+                    default=None,
+                    help="annotate bucket summary lines with measured flip-rates "
+                         "from reprice_router.py (default path: "
+                         "scripts/triage/measured_priors.json)")
     args = ap.parse_args()
 
     t0 = time.time()
@@ -1480,7 +1507,10 @@ def main():
     write_markdown(args.buckets_md, rows, results)
     print(f"[out] {args.out}")
     print(f"[out] {args.buckets_md}")
-    print_table(results)
+    priors = None
+    if args.use_measured_priors and os.path.exists(args.use_measured_priors):
+        priors = _load_measured_priors(args.use_measured_priors)
+    print_table(results, priors)
     print(f"\nelapsed {time.time()-t0:.1f}s")
 
 

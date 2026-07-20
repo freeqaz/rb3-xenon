@@ -1,0 +1,185 @@
+{
+  "generated": "2026-07-20T08:42:27+00:00",
+  "source_attempts": 648,
+  "join_diagnostics": {
+    "triage_functions_total": 7662,
+    "attempted_functions_total": 549,
+    "attempted_functions_with_triage_bucket": 216,
+    "attempted_functions_without_bucket": 333,
+    "join_rate_pct": 39.3,
+    "sum_bucket_n_attempted": 216,
+    "total_grind_attempts": 648
+  },
+  "buckets": {
+    "NEEDS-REVIEW": {
+      "rate": 0.0357,
+      "wilson_low": 0.0063,
+      "n_attempted": 28,
+      "n_flipped": 1,
+      "n_attempts_total": 30,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    },
+    "FORM-DIVERGENCE": {
+      "rate": 0.0357,
+      "wilson_low": 0.0063,
+      "n_attempted": 28,
+      "n_flipped": 1,
+      "n_attempts_total": 35,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    },
+    "BODY-LEVER": {
+      "rate": 0.125,
+      "wilson_low": 0.0619,
+      "n_attempted": 56,
+      "n_flipped": 7,
+      "n_attempts_total": 63,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    },
+    "RELOC-COLOC": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 18,
+      "n_flipped": 0,
+      "n_attempts_total": 21,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    },
+    "STRUCT-ARTIFACT": {
+      "rate": 0.0244,
+      "wilson_low": 0.0043,
+      "n_attempted": 41,
+      "n_flipped": 1,
+      "n_attempts_total": 48,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    },
+    "BODY-PORT": {
+      "rate": 0.3333,
+      "wilson_low": 0.0968,
+      "n_attempted": 6,
+      "n_flipped": 2,
+      "n_attempts_total": 6,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "ZERO-UNMAPPED": {
+      "rate": 0.75,
+      "wilson_low": 0.3006,
+      "n_attempted": 4,
+      "n_flipped": 3,
+      "n_attempts_total": 9,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "MISPAIR": {
+      "rate": 0.25,
+      "wilson_low": 0.0456,
+      "n_attempted": 4,
+      "n_flipped": 1,
+      "n_attempts_total": 4,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "WALL-VTORDISP": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 7,
+      "n_flipped": 0,
+      "n_attempts_total": 8,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "LEVER-STRING": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 2,
+      "n_flipped": 0,
+      "n_attempts_total": 3,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "UNRELIABLE-EVIDENCE": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 9,
+      "n_flipped": 0,
+      "n_attempts_total": 9,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    },
+    "BODY-MISSING-PORT": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 1,
+      "n_flipped": 0,
+      "n_attempts_total": 1,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "ZS-OTHER": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 2,
+      "n_flipped": 0,
+      "n_attempts_total": 2,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "WALL-DEADARG": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 3,
+      "n_flipped": 0,
+      "n_attempts_total": 3,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "STL-CONTAM": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 1,
+      "n_flipped": 0,
+      "n_attempts_total": 1,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "LEVER-SYMBOL": {
+      "rate": 0.0,
+      "wilson_low": 0.0,
+      "n_attempted": 6,
+      "n_flipped": 0,
+      "n_attempts_total": 6,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": false
+    },
+    "OVERALL": {
+      "rate": 0.5446,
+      "wilson_low": 0.5028,
+      "n_attempted": 549,
+      "n_flipped": 299,
+      "n_attempts_total": 648,
+      "mean_output_tokens_per_flip": null,
+      "mean_cost_usd_per_flip": null,
+      "trusted": true
+    }
+  }
+}
