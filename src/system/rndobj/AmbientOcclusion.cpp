@@ -474,7 +474,7 @@ bool RndAmbientOcclusion::IsValid_Mesh(const RndMesh *mesh) const {
     if (nonConstMesh->Verts().size() && nonConstMesh->Faces().size()) {
         static Symbol classNames[] = { "Spotlight", "WorldCrowd" };
         FOREACH (it, mesh->Refs()) {
-            Hmx::Object *owner = it->RefOwner();
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
             if (owner) {
                 for (int i = 0; i < DIM(classNames); i++) {
                     if (owner->ClassName() == classNames[i]) {
