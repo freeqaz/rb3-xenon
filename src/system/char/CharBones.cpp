@@ -116,8 +116,10 @@ void CharBones::RecomputeSizes() {
         int cur_offset = *offset;
         // offset[-7] = mCounts[i], offset[-6] = mCounts[i+1]
         // (mCounts is 7 ints (0x1C bytes) before mOffsets)
-        int count_diff = offset[-6] - offset[-7];
-        *++offset = cur_offset + TypeSize(i) * count_diff;
+        int curCount = offset[-7];
+        int nextCount = offset[-6];
+        int sz = TypeSize(i);
+        *++offset = cur_offset + sz * (nextCount - curCount);
         i++;
     } while (i < NUM_TYPES);
     // Round up to nearest 0x10 for alignment

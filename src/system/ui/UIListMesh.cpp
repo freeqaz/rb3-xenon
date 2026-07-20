@@ -108,7 +108,9 @@ UIListMeshElement::Draw(const Transform &tf, float f, UIColor *col, Box *box) {
     MILO_ASSERT(mesh, 0x1B);
     mesh->SetWorldXfm(tf);
     if (box != nullptr) {
-        Box localbox = *box;
+        Box localbox;
+        localbox.mMin = box->mMin;
+        localbox.mMax = box->mMax;
         CalcBox(mesh, localbox);
         box->GrowToContain(localbox.mMin, false);
         box->GrowToContain(localbox.mMax, false);

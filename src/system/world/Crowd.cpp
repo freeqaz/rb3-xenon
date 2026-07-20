@@ -45,11 +45,9 @@ namespace {
         ObjRef::iterator it = mat->Refs().begin();
         ObjRef::iterator itEnd = mat->Refs().end();
         for (; it != itEnd; ++it) {
-            RndMesh *mesh = dynamic_cast<RndMesh *>(it->RefOwner());
+            RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(it)->RefOwner());
             if (mesh) {
-                unsigned int flag = 0;
-                flag |= mesh->IsSkinned();
-                flag |= -(mesh->HasAOCalc()) & 2;
+                unsigned int flag = mesh->IsSkinned() | (mesh->HasAOCalc() ? 2 : 0);
                 flags.push_back(flag);
             }
         }
