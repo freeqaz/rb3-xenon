@@ -1,8 +1,8 @@
 # rb3-xenon decomp — state & live veins (2026-07-19)
 
-**Current: 18,761 strict-matched functions** (`build/45410914/report.json`,
+**Current: 18,819 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). **Automation build-out session 18,689 → 18,761 (+72):**
+(~69k functions). **Automation build-out session 18,689 → 18,819 (+130):**
 triage classifier built + 4-round calibrated, MISPAIR heuristic fixed, inverse
 correlator built, and grind waves drained the productive buckets (ZS-inst +9,
 VocalPlayer +7, foreman +5, MECH-LEVER +8, STRUCT-cal +4, calibration +7,
