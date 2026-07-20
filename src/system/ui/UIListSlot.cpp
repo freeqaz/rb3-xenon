@@ -139,11 +139,9 @@ void UIListSlot::Draw(
                 uicolor = 0;
                 d10 = 1.0f;
                 if (!box) {
-                    if ((mSlotDrawType == kUIListSlotDrawHighlight
-                            || mSlotDrawType == kUIListSlotDrawHighlightNoAlpha)
+                    if (mSlotDrawType == kUIListSlotDrawHighlight
                             && curdrawstate.mDisplay != drawstate.mHighlightDisplay
-                        || (mSlotDrawType == kUIListSlotDrawNoHighlight
-                            || mSlotDrawType == kUIListSlotDrawNoHighlightNoAlpha)
+                        || mSlotDrawType == kUIListSlotDrawNoHighlight
                             && curdrawstate.mDisplay == drawstate.mHighlightDisplay) {
                         continue;
                     }
@@ -159,13 +157,7 @@ void UIListSlot::Draw(
                     uicolor = prov->SlotColorOverride(
                         curdrawstate.mShowing, curdrawstate.mData, this, uicolor
                     );
-                    if (mSlotDrawType == kUIListSlotDrawAlwaysNoAlpha
-                        || mSlotDrawType == kUIListSlotDrawHighlightNoAlpha
-                        || mSlotDrawType == kUIListSlotDrawNoHighlightNoAlpha) {
-                        d10 = 1.0f;
-                    } else {
-                        d10 = curdrawstate.mAlpha;
-                    }
+                    d10 = curdrawstate.mAlpha;
                     if (curcompstate == UIComponent::kDisabled)
                         d10 *= DisabledAlphaScale();
                     prov->PreDraw(curdrawstate.mShowing, curdrawstate.mData, this);

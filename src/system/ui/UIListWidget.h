@@ -25,8 +25,8 @@ struct UIListElementDrawState {
     float mPosZ; // 0xc
     int unk10; // 0x10 - Vector3 word-copy overflow padding
     float mAlpha; // 0x14
-    UIComponent::State mComponentState; // 0x18
-    UIListWidgetState mElementState; // 0x1c
+    UIListWidgetState mElementState; // 0x18
+    UIComponent::State mComponentState; // 0x1c
     int mDisplay; // 0x20
     int mShowing; // 0x24
     int mData; // 0x28
