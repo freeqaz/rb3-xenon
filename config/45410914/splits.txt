@@ -1455,6 +1455,7 @@ CharDriver.cpp:
 	.pdata      start:0x822020D8 end:0x822020E0
 	.pdata      start:0x822020E8 end:0x822020F0
 	.pdata      start:0x822020F8 end:0x82202100
+	.pdata      start:0x82202100 end:0x82202130
 	.pdata      start:0x82206910 end:0x82206918
 	.pdata      start:0x822072E0 end:0x822072E8
 	.text       start:0x82376D40 end:0x82376D80
@@ -1462,6 +1463,7 @@ CharDriver.cpp:
 	.text       start:0x8237A320 end:0x8237A3B8
 	.text       start:0x8237A400 end:0x8237A434
 	.text       start:0x8237A4A0 end:0x8237A5A4
+	.text       start:0x8237A5A4 end:0x8237AFE8
 	.text       start:0x823CED00 end:0x823CED44
 	.text       start:0x823D9518 end:0x823D9570
 
