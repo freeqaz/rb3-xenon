@@ -175,3 +175,67 @@ Channel: **game** = `band3/`|`network/`; **engine** = `system/`; **game(dc3)** =
 fingerprint is an independent channel from the BinDiff library-mass hints, same as
 round 1). String evidence stands alone; all Grade-A/B spans have ≥3 TU-specific
 strings cross-verified against `../rb3/src` or `../dc3-decomp/src`.
+
+---
+
+## WAVE OUTCOME (batch-2 carve foreman, 2026-07-20) — ALL 22 RESOLVED
+
+Landed on main one candidate per commit, full gate each (worker-diff apply
+excluding symbols.txt, fragment splice, configure+config.yml touch,
+rm report.cache, full ninja-locked, strict-set snapshot diff: monotonic AND
+zero LOST entries — named and anon). Baseline 19,191 → **19,542 (+351)**.
+
+| # | TU | outcome | span landed | Δstrict | commit |
+|---|----|---------|-------------|---------|--------|
+| 1 | GemRepTemplate | landed (dispute RESOLVED: span is a clean Gem→Lyric gap `82BAD714..82BAEBA8`; batch-1's Lyric-overlap claim came from the stale over-carved autoid cluster) | 82BAD718..82BAEBA4 | +26 | 4b8a3e2b |
+| 2 | PresenceMgr | landed, DOUBLE sub-split: tail cut 826810BC (FX neighbor: delay.send/tempo_sync) + start tightened 8267D480→8267F358 (foreign easing/gameplay cluster left unpinned for future carve). Retail = dc3/wii hybrid superset; Init()+Msg registrations = reconstruction vein | 8267F358..826810BC | +10 | 8969faae |
+| 3 | SigninScreen | landed, DOUBLE sub-split: 82635EDC→826361D8 (esrb autosave cluster foreign) + tail cut 82636FB4 (songresults family) | 826361D8..82636FB4 | +10 | 8ebafb15 |
+| 4 | TokenRedemptionPanel | landed, POSITIONAL-ONLY (+27, 0 map entries): confirmed Wii→Xbox commerce drift (StoreEnumeration/StorePurchaser vs WiiEnumeration); bodies 15-20% larger than retail | 8263FDE8..8264160C | +27 | 73c09f0a |
+| 5 | Scoring | landed (dispute RESOLVED: 3-range pin skipping the two HolmesClient ICF islands is correct; Band.cpp starts above at 826A2290). 35/42 at 100%, oracle verbatim | 3 ranges | +35 | 3a13d32e |
+| 6 | CrowdMeterIcon | landed, all real bodies 100% | 822B9318..822BB3C8 | +50 | 6297e20f |
+| 7 | BandHeadShaper | landed; shared-header edits (Trans.h/Dir.h/Object.h) verified LOST=0 through full PCH cascade; new BandFaceDeform.h | 822AF1C8..822B0AB0 | +12 | 904a5423 |
+| 8 | SongSectionController | landed, 2-range discontinuous pin; header ported (none in-tree); EventTrigger.h shared edit gated clean | 8230C260..8230DEA4 + 8230DF5C..8230E5B4 | +40 | eec3c55e |
+| 9 | MultiplayerAnalyzer | landed, 8 hand-verified EXACT anchors | 826CD4E0..826CE25C | +9 | 4302d98d |
+| 10 | PerfectSectionTracker | landed | 826DAB90..826DC4BC | +28 | b3e7fa29 |
+| 11 | TrackPanelDirBase | REATTRIBUTED: span belongs to already-wired CharDriver.cpp (gap-fill pinned 8237A5A4..8237AFE8); real TrackPanelDirBase TU unlocated — batch-3 | gap-fill | +5 | 7f74844b |
+| 12 | TourCondition | landed after 3-way sub-split (GigFilter + unknown BinStream class = batch-3 seeds); /DRB3_HANDLE_LOCAL_STATIC | 82364428..82364AA0 | +9 | 302a750f |
+| 13 | BeatMaster | landed; DebugText reconstructed from retail (pure-virtual drift) | 8276E328..8276F458 | +30 | f815606e |
+| 14 | VoiceControlPanel | MISIDENTIFIED → re-identified as **LessonMgr + AssetMgr** (rb3-Wii meta_band, NOT DC3); landed both; local-static Symbol lever decisive | 82568F24..8256A298 + 8256A298..8256B4C0 | +49 | 27d2ca2f |
+| 15 | SongSequence | MISIDENTIFIED → span = NextSongPanel-cluster interior scatter (rb3-Wii, NOT DC3). DEFER to batch-3 as scatter-fill; sub-family table in worker report | — | 0 | — |
+| 16 | InetAddress | RECON DELIVERED, DEFER: ~10 stacked Quazal Core/Transport TUs, **no rb3-Wii .cpp oracle** (RE-only). Best C-grades: StringConverter(7)/EventHandler(14)/WorkerThreads(16) | — | 0 | — |
+| 17 | MemoryManager | MISIDENTIFIED, DEFER: 91/105 fns are XDK XGRAPHICS ucode compiler + D3D marshaller (Ghidra-named); only 14-fn tail is real Quazal MM (oracle-less) | — | 0 | — |
+| 18 | EnvAnim | routed out of channel-3: head-mixed span, real EnvAnim = rb3-Wii rndobj port job — batch-3 | — | 0 | — |
+| 19 | BandStarDisplay | MISIDENTIFIED: span is SongSectionController's PropSync tail (folded into #8). Real BandStarDisplay (achieve_star.cue strings, oracle exists) unlocated — batch-3 | — | (in #8) | — |
+| 20 | Server | landed; passed all 3 network intake gates; plain /O1 + /DRB3_HANDLE_LOCAL_STATIC | 823F5D3C..823F61F4 | +9 | e7e13738 |
+| 21 | MBT | landed NARROWED: 6/7 fns foreign; TickFormat only | 827D1018..827D1088 | +1 | 37de9d2f |
+| 22 | JointUtl | DRIFT-DEFERRED: best body 52.5%, no clean oracle | — | 0 | — |
+
+Side worklist: StoreOfferProvider::InitData → 100% (+1, mPacks last member,
+56515ccc); InterstitialMgr retail layout landed (both Pick* now honest ~82%);
+RGTrainerPanel map MISPAIR FIXED (InitFretSteps↔SetLegendModeImpl VA swap →
+86.5/91.7 honest near-misses, 8f82b3d0); BandwidthCounter::operator[] deferred
+(stack-slot inversion); GetInterstitialsFromScreen deferred (retail inner
+container = slist not std::map).
+
+**Aggregate: +351 strict (19,191 → 19,542), 13 landed carve commits + 3
+support commits, zero lost entries across all 16 gates.**
+
+### Field notes / new levers (feed batch-3)
+- **Caveat-A pays**: 6 of 22 spans needed sub-split cuts; 4 more were whole-span
+  misidentifications caught by per-fn string walks. The maximal-run enumerator's
+  channel attribution (game-dc3) was wrong on BOTH dc3-channel candidates —
+  cross-check DC3-channel strings against `../rb3/src/band3` before assigning.
+- **Local-static Symbol lever is the #1 body-port lever this wave** (LessonMgr
+  23→100, 47→100; Server Handle 0→100 via /DRB3_HANDLE_LOCAL_STATIC).
+- **Do NOT map __unwind$ funclets explicitly** — objdiff pairs them structurally;
+  explicit entries interfere (Server: +9 dropped to +2).
+- **Map-fragment + renamer ordering**: after tu5_map_apply_fragment.py you must
+  touch config.yml again or the renamer runs against the old map (cost a worker
+  +25 temporarily).
+- **Automap**: reliable ≥10 real bodies (Scoring 25 entries); slips where retail
+  COMDAT order breaks source order (BandHeadShaper — manual size-unique+string
+  IDs recovered it); tiny units need hand-verification (MultiplayerAnalyzer).
+- **Positional credit is real yield on drift-blocked TUs** (TokenRedemption +27
+  with zero map entries) — carve+wire even when bodies diverge.
+- **Network economics**: the binding constraint is missing .cpp oracles (rb3-Wii
+  decompiled RB3 net glue, not the vendored Quazal SDK). Sub-TUs are RE-only.
