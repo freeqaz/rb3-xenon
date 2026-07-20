@@ -20,7 +20,6 @@ END_HANDLERS
 BEGIN_PROPSYNCS(CharBoneOffset)
     SYNC_PROP(dest, mDest)
     SYNC_PROP(offset, mOffset)
-    SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
 BEGIN_SAVES(CharBoneOffset)

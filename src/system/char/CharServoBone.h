@@ -24,6 +24,7 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    virtual void SetName(const char *, class ObjectDir *);
     // RndHighlightable
     virtual void Highlight() {}
     // CharPollable
@@ -56,7 +57,7 @@ protected:
     // CharBonesMeshes
     virtual void ReallocateInternal();
     void RegulateInternal(Character *);
-    void DoRegulate(Character *, Waypoint *, class CharClipDriver *, float, float);
+    void DoRegulate(Waypoint *, class CharClipDriver *, float, float);
 
     CharServoBone();
 };

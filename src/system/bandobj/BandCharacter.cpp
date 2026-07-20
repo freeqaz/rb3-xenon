@@ -936,10 +936,11 @@ void BandCharacter::SyncObjects() {
     // loop reads bones[8] (OOB) as a garbage non-null pointer and crashes in
     // Find(). Bound the walk to the array's 8 known elements (same iteration set).
     for (const char **ptr = bones; ptr != bones + 8; ptr++) {
-#else
-    for (const char **ptr = bones; *ptr != 0; ptr++) {
-#endif
         RndTransformable *t = Find<RndTransformable>(*ptr, false);
+#else
+    for (int i = 0; bones[i] != 0; i++) {
+        RndTransformable *t = Find<RndTransformable>(bones[i], false);
+#endif
         if (t)
             t->SetTransParent(this, false);
     }
@@ -1083,7 +1084,7 @@ void BandCharacter::SyncObjects() {
             (*it)->ClearMesh();
         }
     }
-    CharMeshHide::HideAll(unk5b0, -(mDriver->ClipType() == "vignette") & 0x2000);
+    CharMeshHide::HideAll(unk5b0, mDriver->ClipType() == "vignette" ? 0x2000 : 0);
     if (InVignetteOrCloset()) {
         CharClipDriver *first = mDriver->FirstPlaying();
         if (first && mGroupName[0] != 0) {
@@ -1102,17 +1103,7 @@ void BandCharacter::SyncObjects() {
         mGender == "male" ? "eyesdeform_male.anim" : "eyesdeform_female.anim";
     RndPropAnim *panim = Find<RndPropAnim>(eyedfname, false);
     if (panim) {
-        int numeyeshapes = BandHeadShaper::sEyeNum;
-        if ((int)panim->EndFrame() != numeyeshapes)
-            MILO_NOTIFY_ONCE(
-                "%s must have a frame for each eye shape.  It currently has %d frames, but there are %d eye shapes",
-                eyedfname,
-                (int)panim->EndFrame(),
-                BandHeadShaper::sEyeNum
-            );
-        if (!DataVariable("eyetweaker.loadedsettings").Int()) {
-            panim->SetFrame(mHead.mEye, 1.0f);
-        }
+        panim->SetFrame(mHead.mEye, 1.0f);
     } else
         MILO_NOTIFY_ONCE(
             "Can't find eye settings prop anim %s. This is required to set range of motion and lid tracking for each eye shape.",

@@ -3500,7 +3500,7 @@
  "0x82375538": "?RotateAboutZ@@YAXABVVector3@@MAAV1@@Z",
  "0x823755c8": "?SetName@HamRegulate@@MAAXPBDPAVObjectDir@@@Z",
  "0x823757d0": "?MoveToDeltaFacing@CharServoBone@@QAAXAAVTransform@@@Z",
- "0x823758a8": "?DoRegulate@CharServoBone@@IAAXPAVCharacter@@PAVWaypoint@@PAVCharClipDriver@@MM@Z",
+ "0x823758a8": "?DoRegulate@CharServoBone@@IAAXPAVWaypoint@@PAVCharClipDriver@@MM@Z",
  "0x82376d38": "XShaderPDBBuilder_AddSourceFile",
  "0x82376dc0": "?Last@CharDriver@@QAAPAVCharClipDriver@@XZ",
  "0x82376de8": "?Before@CharDriver@@QAAPAVCharClipDriver@@PAV2@@Z",

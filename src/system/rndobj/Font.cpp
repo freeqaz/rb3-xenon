@@ -41,7 +41,9 @@ float KerningTable::Kerning(unsigned short us1, unsigned short us2) {
 }
 
 bool KerningTable::Valid(const RndFont::KernInfo &info, RndFontBase *font) {
-    return !font || (font->CharDefined(info.mFirstChar) && font->CharDefined(info.mSecondChar));
+    return !font
+        || (((RndFont *)font)->RndFont::CharDefined(info.mFirstChar)
+            && ((RndFont *)font)->RndFont::CharDefined(info.mSecondChar));
 }
 
 void KerningTable::Save(BinStream &bs) {

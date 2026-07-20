@@ -44,11 +44,10 @@ BEGIN_PROPSYNCS(CharLookAt)
     SYNC_PROP(allow_roll, mAllowRoll)
     SYNC_PROP(show_range, mShowRange)
     SYNC_PROP(source_radius, mSourceRadius)
-    SYNC_PROP(enable_jitter, mEnableJitter)
-    SYNC_PROP(yaw_jitter_limit, mYawJitterLimit)
-    SYNC_PROP(pitch_jitter_limit, mPitchJitterLimit)
+    // retail (MILO_DEBUG off) has no property-sync exposure for jitter/test_range
+    // members (rb3-Wii gates these under #ifdef MILO_DEBUG in BEGIN_PROPSYNCS),
+    // and does not double-sync the Hmx::Object superclass.
     SYNC_SUPERCLASS(CharWeightable)
-    SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
 BEGIN_SAVES(CharLookAt)
@@ -239,50 +238,10 @@ void CharLookAt::Poll() {
                     Interp(mPivotLookTarget, lookDir, deltasecs / (deltasecs + mHalfTime), lookDir);
                 }
                 mPivotLookTarget = lookDir;
-                // retail (MILO_DEBUG off) lacks the rb3-Wii debug-only
-                // mTestRange preview branch that preceded this if
-                if (mShowRange) {
-                    charWeight = 1.0f;
-                    switch (((int)TheTaskMgr.Seconds(TaskMgr::kRealTime)) & 7) {
-                    case 0:
-                        lookDir.Set(mLookLimits.mMin.x, mLookLimits.mMin.y, mLookLimits.mMin.z);
-                        break;
-                    case 1:
-                        lookDir.Set(0.0f, mLookLimits.mMin.z, mLookLimits.mMax.x);
-                        break;
-                    case 2:
-                        lookDir.Set(mLookLimits.mMax.x, mLookLimits.mMin.y, mLookLimits.mMin.z);
-                        break;
-                    case 3:
-                        lookDir.Set(mLookLimits.mMax.x, mLookLimits.mMin.y, 0.0f);
-                        break;
-                    case 4:
-                        lookDir.Set(mLookLimits.mMax.x, mLookLimits.mMin.y, mLookLimits.mMax.z);
-                        break;
-                    case 5:
-                        lookDir.Set(0.0f, mLookLimits.mMin.y, mLookLimits.mMax.z);
-                        break;
-                    case 6:
-                        lookDir.Set(mLookLimits.mMin.x, mLookLimits.mMin.y, mLookLimits.mMax.z);
-                        break;
-                    case 7:
-                        lookDir.Set(mLookLimits.mMin.x, mLookLimits.mMin.y, 0.0f);
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                static DataNode &disable = DataVariable("cheat.disable_eye_jitter");
-                if (mEnableJitter && !sDisableJitter && !disable && deltasecs > 0.0f) {
-                    auto _tmp4 = RandomFloat(-mPitchJitterLimit, mPitchJitterLimit);
-                    lookDir.Set(
-                        lookDir[0]
-                            + _tmp4
-                                * DEG2RAD,
-                        lookDir[1],
-                        lookDir[2] + RandomFloat(-mYawJitterLimit, mYawJitterLimit) * DEG2RAD
-                    );
-                }
+                // retail (this build/version, vanilla 45410914) has NEITHER the
+                // rb3-Wii debug-only mTestRange preview branch NOR the mShowRange
+                // preview switch NOR the eye-jitter perturbation block -- all
+                // absent from the compiled retail Poll(). Do not reintroduce.
                 if (mSourceRadius > 0.0f) {
                     Multiply(sourceFilter, mPivot->TransParent()->WorldXfm().m, sourceFilter);
                     lookDir -= sourceFilter;

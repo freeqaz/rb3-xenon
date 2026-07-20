@@ -26,6 +26,11 @@ CharServoBone::CharServoBone()
 
 CharServoBone::~CharServoBone() {}
 
+void CharServoBone::SetName(const char *cc, ObjectDir *dir) {
+    Hmx::Object::SetName(cc, dir);
+    mMe = dynamic_cast<Character *>(Dir());
+}
+
 BEGIN_PROPSYNCS(CharServoBone)
     SYNC_PROP_SET(clip_type, mClipType, SetClipType(_val.Sym()))
     SYNC_PROP_SET(move_self, mMoveSelf, SetMoveSelf(_val.Int()))
@@ -170,19 +175,19 @@ void CharServoBone::SetMoveSelf(bool b) {
 
 void CharServoBone::RegulateInternal(Character *me) {
     if (mRegulate) {
-        CharClipDriver *driver = me->Driver()->Before(me->Driver()->Last());
+        CharClipDriver *driver = mMe->Driver()->Before(mMe->Driver()->Last());
         CharClipDriver *next = driver && driver->mRampIn > 0 ? driver->Next() : nullptr;
         if (next) {
-            DoRegulate(me, mRegulate, next, driver->mRampIn, Max(2.0f, driver->mRampIn / 1.5f));
+            DoRegulate(mRegulate, next, driver->mRampIn, Max(2.0f, driver->mRampIn / 1.5f));
         }
-        mRegulate->Constrain(me->DirtyLocalXfm());
+        mRegulate->Constrain(mMe->DirtyLocalXfm());
     }
 }
 
 void CharServoBone::DoRegulate(
-    Character *me, Waypoint *waypoint, CharClipDriver *driver, float f3, float f4
+    Waypoint *waypoint, CharClipDriver *driver, float f3, float f4
 ) {
-    Transform &myxfm = me->DirtyLocalXfm();
+    Transform &myxfm = mMe->DirtyLocalXfm();
     ClipPredict pred(driver->GetClip(), myxfm.v, GetZAngle(myxfm.m));
     pred.Predict(driver->mBeat, driver->mBeat + f3);
     Vector3 pos(pred.mLastPos);
