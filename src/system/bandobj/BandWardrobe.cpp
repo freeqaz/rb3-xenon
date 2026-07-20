@@ -144,12 +144,11 @@ int BandWardrobe::GetShotFlags(CamShot *shot) {
             if (strstr(cat, "INTRO"))
                 flags |= 0x400;
             else if (strstr(cat, "WIN_FINALE")) {
-                const char *venuestr = unk78.Str();
-                if (strstr(venuestr, "arena"))
+                if (strstr(unk78.Str(), "arena"))
                     flags = 0x800;
-                else if (strstr(venuestr, "big_club"))
+                else if (strstr(unk78.Str(), "big_club"))
                     flags = 0x1000;
-                else if (strstr(venuestr, "festival"))
+                else if (strstr(unk78.Str(), "festival"))
                     flags = 0x2000;
             }
         }

@@ -217,11 +217,11 @@ void UIComponent::ResourceFileUpdated(bool b) {
 }
 
 const char *UIComponent::GetResourcesPath() {
-    static Symbol objects("objects");
-    static Symbol resources_path("resources_path");
     std::vector<Symbol> syms;
     syms.push_back(ClassName());
     ListSuperClasses(ClassName(), syms);
+    static Symbol objects("objects");
+    static Symbol resources_path("resources_path");
     DataArray *arr = 0;
     for (int i = 0; i < syms.size(); i++) {
         arr = SystemConfig(objects, syms[i])->FindArray(resources_path, false);

@@ -494,6 +494,7 @@ BEGIN_HANDLERS(PassiveMessenger)
     HANDLE_MESSAGE(InviteSentMsg)
     HANDLE_MESSAGE(RemoteUserLeftMsg)
     HANDLE_MESSAGE(SessionDisconnectedMsg)
-    HANDLE_MESSAGE(InviteReceivedMsg)
+    // RB3-360: HANDLE_MESSAGE(InviteReceivedMsg) (Wii invite flow) is absent in
+    // retail's dispatch chain. OnMsg(const InviteReceivedMsg&) is kept.
     HANDLE_CHECK(0x2CB)
 END_HANDLERS
