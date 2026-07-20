@@ -185,6 +185,12 @@ TrackPanelDir.cpp:
 	.pdata      start:0x821FAC70 end:0x821FAE68
 	.text       start:0x82304950 end:0x82306DF0
 
+band3/meta_band/ModifierMgr.cpp:
+	.pdata      start:0x821FFB00 end:0x821FFB18
+	.pdata      start:0x8221FAF8 end:0x8221FB78
+	.text       start:0x82357218 end:0x823573AC
+	.text       start:0x825895A0 end:0x82589E24
+
 VocalTrack.cpp:
 	.pdata      start:0x82244B98 end:0x82244BA0
 	.pdata      start:0x8225DC68 end:0x8225E280
