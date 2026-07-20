@@ -802,6 +802,7 @@
    "band3/game/Metronome.cpp": "NonMatching",
    "band3/game/DirectInstrument.cpp": "NonMatching",
    "band3/meta_band/LessonProvider.cpp": "NonMatching",
+   "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp": "NonMatching",
    "band3/meta_band/NewAwardPanel.cpp": "NonMatching",
    "band3/meta_band/TexLoadPanel.cpp": "NonMatching",
    "band3/meta_band/SongSelectPanel.cpp": {
