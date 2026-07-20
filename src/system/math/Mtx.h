@@ -320,7 +320,12 @@ public:
     }
 
     /// Returns the dot product between `vec` and the plane normal.
-    float Dot(const Vector3 &vec) const { return a * vec.x + b * vec.y + c * vec.z + d; }
+    float Dot(const Vector3 &vec) const {
+        float ax = a * vec.x;
+        float cz = c * vec.z;
+        float by = b * vec.y;
+        return ax + by + cz + d;
+    }
 
     /// Returns the point on the plane closest to the origin.
     // (a,b,c) must be normalized.
