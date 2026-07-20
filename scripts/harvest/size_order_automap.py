@@ -241,6 +241,18 @@ def resolve_unit(unit: str) -> Tuple[str, Path, Path, Path]:
     tgt_obj = BUILD / "obj" / (rel + ".obj")
     tgt_asm = BUILD / "asm" / (rel + ".s")
     cmp_obj = BUILD / "src" / (rel + ".obj")
+    # Legacy flat-pinned units: splits.txt uses the flat obj/<basename>.obj
+    # while objects.json compiles to src/<nested>.obj (r8 field note). Fall
+    # back to the flat target when the nested one is absent, and locate the
+    # compiled obj by basename when the aligned path is absent.
+    base = rel.rsplit("/", 1)[-1]
+    if not tgt_obj.exists() and (BUILD / "obj" / (base + ".obj")).exists():
+        tgt_obj = BUILD / "obj" / (base + ".obj")
+        tgt_asm = BUILD / "asm" / (base + ".s")
+    if not cmp_obj.exists():
+        cands = [p for p in (BUILD / "src").rglob(base + ".obj")]
+        if len(cands) == 1:
+            cmp_obj = cands[0]
     return "default/" + rel, tgt_obj, tgt_asm, cmp_obj
 
 
