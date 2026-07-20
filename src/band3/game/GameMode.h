@@ -6,9 +6,9 @@ public:
     GameMode();
     virtual DataNode Handle(DataArray *, bool);
     virtual ~GameMode();
+    virtual bool InMode(Symbol);
+    virtual void SetMode(Symbol);
 
-    void SetMode(Symbol);
-    bool InMode(Symbol);
     DataNode OnSetMode(const DataArray *);
     Symbol GetMode() const { return mMode; }
 
