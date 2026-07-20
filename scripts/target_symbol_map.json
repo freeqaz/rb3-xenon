@@ -1,4 +1,7 @@
 {
+ "0x82364428": "??0TourCondition@@QAA@XZ",
+ "0x82364440": "??1TourCondition@@UAA@XZ",
+ "0x823644b0": "??_GTourCondition@@UAAPAXI@Z",
  "0x82377478": "?SetObj@?$ObjRefConcrete@VCharClip@@VObjectDir@@@@QAAPAVObject@Hmx@@PAV23@@Z",
  "0x8237a9e0": "?SetClipType@CharDriver@@IAAXVSymbol@@@Z",
  "0x822b9378": "?ArrowShow@CrowdMeterIcon@@QAAX_N@Z",

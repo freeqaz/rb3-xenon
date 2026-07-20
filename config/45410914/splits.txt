@@ -5749,6 +5749,10 @@ Tour.cpp:
 TourBand.cpp:
 	.text       start:0x82B79150 end:0x82B791A0
 
+band3/tour/TourCondition.cpp:
+	.pdata      start:0x822009D0 end:0x82200A48
+	.text       start:0x82364428 end:0x82364AA0
+
 TourPerformer.cpp:
 	.pdata      start:0x822005F0 end:0x822005F8
 	.pdata      start:0x822005F8 end:0x82200608

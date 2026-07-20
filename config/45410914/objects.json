@@ -1311,6 +1311,12 @@
    },
    "band3/tour/QuestJournal.cpp": "NonMatching",
    "band3/tour/QuestManager.cpp": "NonMatching",
+   "band3/tour/TourCondition.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/tour/TourDescPanel.cpp": "NonMatching",
    "band3/tour/TourProgress.cpp": {
     "status": "NonMatching",
