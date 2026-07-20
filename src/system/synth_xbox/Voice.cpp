@@ -35,7 +35,6 @@ int gWasCommitTag = 0;
 int rolling = 0;
 void StartSynchronizedVoices();
 
-typedef void (*VoiceCallFunc)(int*, int*);
 typedef void (*PoolVoiceCallFunc)(int*, int, int);
 typedef HRESULT (*EndLoopFunc)(int *, int);
 
@@ -75,22 +74,29 @@ Voice::~Voice() {
     }
 
     if (mFxSend) {
-        int *pVar1 = (int *)mFxSend;
-        int *pVar2 = (int *)(*pVar1);
-        VoiceCallFunc fn = (VoiceCallFunc)(*(int *)(*pVar2 + 0x10));
-        fn(pVar1, (int*)this);
+        mFxSend->RemoveOwnerVoice(this);
     }
 
     if (mSourceVoice) {
         int *pVar1 = (int *)mSourceVoice;
         int *pVar2 = (int *)(*pVar1);
-        PoolVoiceCallFunc fn = (PoolVoiceCallFunc)(*(int *)(*pVar2 + 0x50));
+        PoolVoiceCallFunc fn = (PoolVoiceCallFunc)(*(int *)((int)pVar2 + 0x50));
         fn(pVar1, 0, 0);
-        dispose(pVar1, mState);
+        dispose((int *)&mSourceVoice, unk0);
     }
 }
 
-void Voice::dispose(int *, unsigned int) {}
+void Voice::dispose(int *pv, unsigned int) {
+    PoolVoice *voice = (PoolVoice *)pv;
+    ((IXAudio2SourceVoice *)voice->sourceVoice)->FlushSourceBuffers();
+    voice->disposeTick = GetTickCount() - 500000;
+    gVoiceGC.Enter();
+    s_voiceGC.push_back(*voice);
+    gVoiceGC.Exit();
+    voice->eg = 0;
+    voice->egParams = 0;
+    voice->sourceVoice = 0;
+}
 
 void Voice::SetSampleRate(int i) {
     mSampleRate = i;

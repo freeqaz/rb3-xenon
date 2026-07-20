@@ -213,13 +213,13 @@ void TrackWidget::RemoveAt(float f) { mImp->RemoveAt(NewYOffset(f), mXOffset, -1
 
 void TrackWidget::RemoveAt(float f, int i) {
     float sToY = mTrackDir->SecondsToY(f);
-    float x_added = mXOffset + mTrackDir->SlotAt(i).v.x;
     float y = mYOffset + sToY;
+    float x_added = mXOffset + mTrackDir->SlotAt(i).v.x;
     float f4;
     if (i > 0)
-        f4 = Abs(x_added - mTrackDir->SlotAt(i - 1).v.x) / 2.0f;
+        f4 = Abs<float>(x_added - mTrackDir->SlotAt(i - 1).v.x) / 2.0f;
     else
-        f4 = Abs(mTrackDir->SlotAt(i + 1).v.x - x_added) / 2.0f;
+        f4 = Abs<float>(mTrackDir->SlotAt(i + 1).v.x - x_added) / 2.0f;
     mImp->RemoveAt(y, x_added, f4);
 }
 

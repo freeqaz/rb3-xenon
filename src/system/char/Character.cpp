@@ -169,16 +169,16 @@ BEGIN_COPYS(Character)
     CREATE_COPY(Character)
     BEGIN_COPYING_MEMBERS
         if (ty != kCopyFromMax) {
+            COPY_MEMBER(mLods)
             COPY_MEMBER(mLastLod)
             COPY_MEMBER(mForceLod)
+            COPY_MEMBER(mShadow)
             COPY_MEMBER(mDriver)
             COPY_MEMBER(mSelfShadow)
-            SetSphereBase(c->mSphereBase);
+            COPY_MEMBER(mSphereBase)
             COPY_MEMBER(mFrozen)
             COPY_MEMBER(mForceLod)
-            COPY_MEMBER(mLods)
             COPY_MEMBER(mTransGroup)
-            COPY_MEMBER(mShadow)
         }
     END_COPYING_MEMBERS
 END_COPYS

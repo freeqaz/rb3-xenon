@@ -375,7 +375,13 @@ FileMerger::MergeAction(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
     DirLoader *dl = static_cast<DirLoader *>(mCurLoader);
     ObjectDir *dlDir = dl->GetDir();
     if (o1 == dlDir) {
-        o2->MergeSinks(dlDir);
+        MsgSource *src1 = dynamic_cast<MsgSource *>(o2);
+        if (src1) {
+            MsgSource *src2 = dynamic_cast<MsgSource *>(dlDir);
+            if (src2) {
+                src1->MergeSinks(src2);
+            }
+        }
         return (Action)2;
     } else {
         if (strnicmp("spot_", name, 5) == 0 || strnicmp("bone_", name, 5) == 0
@@ -392,18 +398,17 @@ FileMerger::MergeAction(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
                     PathName(o2),
                     PathName(o1)
                 );
-            } else {
-                if (o2->Dir() != dir) {
-                    MILO_NOTIFY(
-                        "%s trying to replace subdir'd object %s with %s, bad because subdirs are shared",
-                        PathName(this),
-                        PathName(o2),
-                        PathName(o1)
-                    );
-                    return (Action)2;
-                }
-            }
-            return (Action)1;
+                return (Action)1;
+            } else if (o2->Dir() != dir) {
+                MILO_NOTIFY(
+                    "%s trying to replace subdir'd object %s with %s, bad because subdirs are shared",
+                    PathName(this),
+                    PathName(o2),
+                    PathName(o1)
+                );
+                return (Action)2;
+            } else
+                return (Action)1;
         }
     }
     return (Action)2;
