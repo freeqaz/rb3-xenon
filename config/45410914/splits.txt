@@ -4780,6 +4780,10 @@ band3/bandtrack/Gem.cpp:
 	.pdata      start:0x8225E2A0 end:0x8225E4E8
 	.text       start:0x82BAA400 end:0x82BAD714
 
+band3/bandtrack/GemRepTemplate.cpp:
+	.pdata      start:0x8225E4E8 end:0x8225E5F8
+	.text       start:0x82BAD718 end:0x82BAEBA4
+
 band3/bandtrack/TrackPanel.cpp:
 	.pdata      start:0x8225D068 end:0x8225D3F0
 	.text       start:0x82B8FED8 end:0x82B93C74
