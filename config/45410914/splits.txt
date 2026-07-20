@@ -632,6 +632,10 @@ BeatMap.cpp:
 	.pdata      start:0x82243060 end:0x82243078
 	.text       start:0x827D2868 end:0x827D2C60
 
+MBT.cpp:
+	.pdata      start:0x82242EA8 end:0x82242EB0
+	.text       start:0x827D1018 end:0x827D1088
+
 MemHeap.cpp:
 	.pdata      start:0x82241A98 end:0x82241AA0
 	.pdata      start:0x82241AA0 end:0x82241B78
