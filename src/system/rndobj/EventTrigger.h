@@ -13,6 +13,7 @@
  * "Triggers animations, sfx, and responses to game events"
  */
 class EventTrigger : public virtual Hmx::Object, public RndAnimatable {
+    friend class SongSectionController;
 public:
     enum TriggerOrder {
         kTriggerRandom = 0,
@@ -99,6 +100,7 @@ public:
 
     void SetNextLink(EventTrigger *);
     bool HasTriggerEvents() const { return !mTriggerEvents.empty(); }
+    void SetEnabled(bool e) { mEnabled = e; }
 
     static void Init();
 
