@@ -4885,6 +4885,10 @@ band3/meta_band/UIStats.cpp:
 	.text       start:0x825603FC end:0x82560660
 	.text       start:0x82560660 end:0x82566238
 
+band3/meta_band/NewAwardPanel.cpp:
+	.pdata      start:0x8222A440 end:0x8222A700
+	.text       start:0x8262709C end:0x82629878
+
 band3/meta_band/PatchPanel.cpp:
 	.pdata      start:0x8222A700 end:0x8222A9D0
 	.text       start:0x82629878 end:0x8262CA80
