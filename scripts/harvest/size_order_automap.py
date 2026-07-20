@@ -502,17 +502,48 @@ def print_table(unit: str, pairings: List[Pairing], gt: Dict[int, str] = None):
         print(line)
 
 
+def _already_strict_anon_vas() -> set:
+    """VAs of anonymous fn_ targets objdiff already credits at strict-100.
+
+    Renaming such a target to a mangled name our obj emits with different
+    bytes DESTROYS the existing positional credit (measured net -25 on an
+    unfiltered 408-entry fragment, correlator r7 2026-07-20). Emits must be
+    guaranteed-additive: never touch an already-100 target.
+    """
+    report = BUILD / "report.json"
+    vas = set()
+    if not report.exists():
+        return vas
+    try:
+        data = json.loads(report.read_text())
+    except Exception:
+        return vas
+    for u in data.get("units", []):
+        for f in u.get("functions", []):
+            nm = f.get("name", "")
+            if nm.startswith("fn_") and (f.get("match_percent_normalized", 0) or 0) == 100.0:
+                try:
+                    vas.add(int(nm[3:], 16))
+                except ValueError:
+                    pass
+    return vas
+
+
 def emit_fragment(pairings: List[Pairing], path: Path,
                   cur_map: Dict[str, str]) -> Tuple[int, List[str]]:
     """Write apply-ready fragment (EXACT+STRONG, non-internal, non-colliding)."""
     keys = set(k.lower() for k in cur_map if k.startswith("0x"))
     vals = set(v for v in cur_map.values() if isinstance(v, str))
+    strict_anon = _already_strict_anon_vas()
     frag: Dict[str, str] = {}
     skipped: List[str] = []
     for p in pairings:
         if p.tier not in ("EXACT", "STRONG"):
             continue
         if is_internal(p.name):
+            continue
+        if p.va in strict_anon:
+            skipped.append(f"0x{p.va:08x} target already strict-100 (positional credit)")
             continue
         key = f"0x{p.va:08x}"
         if key.lower() in keys:
