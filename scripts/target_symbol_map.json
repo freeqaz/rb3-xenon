@@ -1,4 +1,10 @@
 {
+ "0x826361d8": "?GetUser@SigninScreen@@QAAPAVLocalBandUser@@XZ",
+ "0x826362c8": "?Enter@SigninScreen@@UAAXPAVUIScreen@@@Z",
+ "0x826365a0": "?ReEvaluateState@SigninScreen@@QAAXXZ",
+ "0x826367b0": "?OnMsg@SigninScreen@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
+ "0x82636c28": "?OnMsg@SigninScreen@@QAA?AVDataNode@@ABVUIChangedMsg@@@Z",
+ "0x82636d80": "?Handle@SigninScreen@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x826cd8e0": "?TotalBasePoints@MultiplayerAnalyzer@@QBAHXZ",
  "0x826cd948": "?GetCodaExtents@MultiplayerAnalyzer@@QAAXABVUserGuid@@AAH1@Z",
  "0x826cda68": "?GetMaxPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",

@@ -2,6 +2,7 @@
 #include "game/BandUser.h"
 #include "meta/Profile.h"
 #include "meta_band/BandScreen.h"
+#include "ui/UI.h"
 
 class SigninScreen : public BandScreen {
 public:

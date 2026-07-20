@@ -6326,3 +6326,7 @@ TexLoadPanel.cpp:
 band3/game/PresenceMgr.cpp:
 	.pdata      start:0x822303C8 end:0x82230560
 	.text       start:0x8267F358 end:0x826810BC
+
+band3/meta_band/SigninScreen.cpp:
+	.pdata      start:0x8222B3C8 end:0x8222B478
+	.text       start:0x826361D8 end:0x82636FB4
