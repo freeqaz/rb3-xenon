@@ -4965,6 +4965,10 @@ band3/meta_band/StoreMainPanel.cpp:
 	.pdata      start:0x8222B860 end:0x8222BA68
 	.text       start:0x8263A718 end:0x8263C55C
 
+band3/meta_band/TokenRedemptionPanel.cpp:
+	.pdata      start:0x8222BE20 end:0x8222BFF0
+	.text       start:0x8263FDE8 end:0x8264160C
+
 band3/meta_band/StoreMenuPanel.cpp:
 	.pdata      start:0x8222BA68 end:0x8222BB70
 	.text       start:0x8263C560 end:0x8263D5EC

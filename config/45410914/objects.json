@@ -1226,6 +1226,7 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/TokenRedemptionPanel.cpp": "NonMatching",
    "band3/meta_band/StoreMainPanel.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
