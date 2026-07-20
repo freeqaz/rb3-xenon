@@ -185,6 +185,10 @@ TrackPanelDir.cpp:
 	.pdata      start:0x821FAC70 end:0x821FAE68
 	.text       start:0x82304950 end:0x82306DF0
 
+TrackPanelDirBase.cpp:
+	.pdata      start:0x821FFBB0 end:0x821FFD40
+	.text       start:0x82357DD0 end:0x82359760
+
 band3/meta_band/ModifierMgr.cpp:
 	.pdata      start:0x821FFB00 end:0x821FFB18
 	.pdata      start:0x8221FAF8 end:0x8221FB78

@@ -71,6 +71,7 @@
    "system/bandobj/SongSectionController.cpp": "NonMatching",
    "system/bandobj/StreakMeter.cpp": "NonMatching",
    "system/bandobj/TrackPanelDir.cpp": "NonMatching",
+   "system/bandobj/TrackPanelDirBase.cpp": "NonMatching",
    "system/bandobj/VocalTrackDir.cpp": "NonMatching",
    "system/bandobj/BandPatchMesh.cpp": "NonMatching",
    "system/bandobj/GemTrackDir.cpp": "NonMatching",
