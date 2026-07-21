@@ -6038,6 +6038,10 @@ VocalPart.cpp:
 	.pdata      start:0x82236B50 end:0x82236B58
 	.text       start:0x826F2148 end:0x826F232C
 
+RGUtl.cpp:
+	.pdata      start:0x8223E1D8 end:0x8223E240
+	.text       start:0x82779CC0 end:0x8277B178
+
 RGState.cpp:
 	.pdata      start:0x8223E250 end:0x8223E258
 	.text       start:0x8277B398 end:0x8277B3D0

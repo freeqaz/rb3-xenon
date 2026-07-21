@@ -83,6 +83,7 @@
    "system/track/TrackWidget.cpp": "NonMatching",
    "system/beatmatch/GuitarController.cpp": "NonMatching",
    "system/beatmatch/RGState.cpp": "NonMatching",
+   "system/beatmatch/RGUtl.cpp": "NonMatching",
    "system/beatmatch/PhraseList.cpp": "NonMatching",
    "system/beatmatch/RGGemMatcher.cpp": "NonMatching",
    "system/beatmatch/VocalNoteList.cpp": "NonMatching",
