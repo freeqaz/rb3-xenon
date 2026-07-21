@@ -19142,5 +19142,14 @@
  "0x822fb198": "?Reset@VocalTrackDir@@UAAXXZ",
  "0x822fb348": "?GetLyricAlpha@VocalTrackDir@@QBAMH@Z",
  "0x827e5318": "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
- "0x827e64b8": "?StaticClassName@MidiParser@@SA?AVSymbol@@XZ"
+ "0x827e64b8": "?StaticClassName@MidiParser@@SA?AVSymbol@@XZ",
+ "0x825f63e8": "??0CampaignSourceProvider@@QAA@XZ",
+ "0x825f6498": "?DataSymbol@CampaignSourceProvider@@UBA?AVSymbol@@H@Z",
+ "0x822e3d58": "?SpotlightPhraseSuccess@GemTrackDir@@UAAXXZ",
+ "0x822e3ed0": "?ResetCoda@GemTrackDir@@QAAXXZ",
+ "0x822e3f50": "?KeyMissRight@GemTrackDir@@UAAXXZ",
+ "0x822e3f70": "?KeyMissLeft@GemTrackDir@@UAAXXZ",
+ "0x822e3f90": "?SetUnisonProgress@GemTrackDir@@UAAXM@Z",
+ "0x822e3fa8": "?GetCurrentChordLabelPosOffset@GemTrackDir@@UBAMXZ",
+ "0x822e4460": "?GetRate@RndAnimatable@@QAA?AW4Rate@1@XZ"
 }

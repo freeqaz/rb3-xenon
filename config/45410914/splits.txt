@@ -5719,11 +5719,13 @@ SlipTrack.cpp:
 
 GemTrackDir.cpp:
 	.pdata      start:0x821F89F8 end:0x821F8A00
+	.pdata      start:0x821F8A00 end:0x821F8B00
 	.pdata      start:0x821F8B00 end:0x821F8B08
 	.pdata      start:0x821F8C10 end:0x821F8CC8
 	.text       start:0x822E3468 end:0x822E348C
 	.text       start:0x822E36C8 end:0x822E36DC
 	.text       start:0x822E3C68 end:0x822E3D58
+	.text       start:0x822E3D58 end:0x822E4AD4
 	.text       start:0x822E4AD8 end:0x822E4E80
 	.text       start:0x822E6218 end:0x822E7538
 
@@ -5808,8 +5810,10 @@ BeatMatcher.cpp:
 	.text       start:0x82791B60 end:0x82793908
 
 CampaignSongInfoPanel.cpp:
+	.pdata      start:0x82227120 end:0x82227230
 	.pdata      start:0x82227230 end:0x82227238
 	.pdata      start:0x82229C98 end:0x82229CA0
+	.text       start:0x825F5D08 end:0x825F6AF4
 	.text       start:0x825F6B00 end:0x825F6E04
 	.text       start:0x8261FEB8 end:0x8261FF0C
 
