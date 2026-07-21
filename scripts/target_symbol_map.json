@@ -18717,5 +18717,11 @@
  "0x822e7408": "??1?$ObjPtrList@VTrackWidget@@VObjectDir@@@@UAA@XZ",
  "0x822f0178": "?EaseExpoInOut@@YAMMMM@Z",
  "0x822ee488": "?SetUsed@BandTrack@@UAAX_N@Z",
- "0x822f9168": "?SetType@VocalTrackDir@@UAAXVSymbol@@@Z"
+ "0x822f9168": "?SetType@VocalTrackDir@@UAAXVSymbol@@@Z",
+ "0x826c9a48": "?OnSuccess@TrainerPanel@@QAAXH@Z",
+ "0x826c9ab0": "?GetNumSections@TrainerPanel@@QBAHXZ",
+ "0x826c9ac8": "?GetTick@TrainerPanel@@QBAHXZ",
+ "0x826c9bc8": "?GetSectionTicks@TrainerPanel@@QBAHH@Z",
+ "0x826c9c60": "?GetNameForSection@TrainerPanel@@QBA?AVSymbol@@H@Z",
+ "0x826cc0a0": "?RestartSection@TrainerPanel@@QAAXXZ"
 }
