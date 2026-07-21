@@ -3848,11 +3848,13 @@ Rnd_Xbox.cpp:
 	.pdata      start:0x821FFD40 end:0x821FFD58
 	.pdata      start:0x822123A8 end:0x822123B0
 	.pdata      start:0x822123C8 end:0x822123D0
+	.pdata      start:0x8223A6F8 end:0x8223A870
 	.pdata      start:0x8223A870 end:0x8223AAD8
 	.text       start:0x8231D2B8 end:0x8231D308
 	.text       start:0x82359760 end:0x8235984C
 	.text       start:0x824AA560 end:0x824AA5B8
 	.text       start:0x824AA660 end:0x824AA6B8
+	.text       start:0x827378B8 end:0x82739400
 	.text       start:0x82739400 end:0x8273C9CC
 
 MidiSynth.cpp:

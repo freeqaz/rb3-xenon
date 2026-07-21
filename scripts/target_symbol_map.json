@@ -1,4 +1,11 @@
 {
+ "0x82738370": "??_DRndHighlightable@@QAAXXZ",
+ "0x827383d0": "??3DxMesh@@SAXPAX@Z",
+ "0x82739128": "?NumLights_Real@NgEnviron@@UBAHXZ",
+ "0x82739130": "?NumLights_Point@NgEnviron@@UBAHXZ",
+ "0x82739138": "?NumLights_Proj@NgEnviron@@UBAHXZ",
+ "0x82739140": "?HasPointCubeTex@NgEnviron@@UBA_NXZ",
+ "0x82739148": "?GetProjectedBlend@NgEnviron@@UBA?AW4ProjectedBlend@RndLight@@XZ",
  "0x8253e290": "?_M_fill_insert_aux@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAHIABHABU__false_type@2@@Z",
  "0x82541cf0": "??1MusicLibrary@@UAA@XZ",
  "0x82541fa0": "??_EMusicLibrary@@WDA@AAPAXI@Z",
