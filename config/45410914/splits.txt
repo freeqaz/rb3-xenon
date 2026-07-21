@@ -2020,6 +2020,7 @@ Text.cpp:
 	.pdata      start:0x8220E070 end:0x8220E078
 	.pdata      start:0x8220E080 end:0x8220E088
 	.pdata      start:0x8220E108 end:0x8220E110
+	.pdata      start:0x8220E2F0 end:0x8220E538
 	.pdata      start:0x82213CD0 end:0x82213CD8
 	.pdata      start:0x822224E8 end:0x822224F0
 	.pdata      start:0x82234C70 end:0x82234C78
@@ -2034,6 +2035,7 @@ Text.cpp:
 	.text       start:0x82455E90 end:0x82455EE4
 	.text       start:0x82459820 end:0x8245983C
 	.text       start:0x82459958 end:0x82459998
+	.text       start:0x82459E78 end:0x8245C510
 	.text       start:0x824C7B40 end:0x824C7BBC
 	.text       start:0x825AF290 end:0x825AF2E0
 	.text       start:0x826CEA10 end:0x826CEA64
