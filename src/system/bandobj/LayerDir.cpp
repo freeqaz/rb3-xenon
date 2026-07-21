@@ -64,7 +64,16 @@ BinStream &operator>>(BinStream &bs, LayerDir::Layer &layer) {
     bs >> layer.mAllowAlpha;
     bs >> layer.mAlphaMin;
     bs >> layer.mAlphaMax;
-    bs >> layer.mBitmapList;
+    {
+        unsigned int length;
+        bs >> length;
+        layer.mBitmapList.resize(length);
+        for (std::list<FilePath>::iterator it = layer.mBitmapList.begin();
+             it != layer.mBitmapList.end();
+             it++) {
+            bs >> *it;
+        }
+    }
     if (LayerDir::gRev == 1) {
         bool b;
         bs >> b;
@@ -165,10 +174,12 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
                     if (palette) {
                         DataArray *arr =
                             palette->Property(Symbol("colors"), true)->Array();
-                        if (layer.mColorIdx < arr->Size()) {
-                            const DataArray *arr2 =
-                                palette->Property(Symbol("colors"), true)->Array();
-                            int packed = arr2->Node(layer.mColorIdx).Int(arr2);
+                        int colorIdx = layer.mColorIdx;
+                        if (arr->Size() > colorIdx) {
+                            const DataArray *arr2 = layer.mColorPalette
+                                                        ->Property(Symbol("colors"), true)
+                                                        ->Array();
+                            int packed = arr2->Node(colorIdx).Int(arr2);
                             layer.mColor.Unpack(packed);
                         }
                     }
@@ -192,7 +203,7 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
                 String specPng = layer.mBitmap + "_spec.png";
                 String normBmp = layer.mBitmap + "_norm.bmp";
                 String specBmp = layer.mBitmap + "_spec.bmp";
-                for (std::vector<FilePath>::iterator it = layer.mBitmapList.begin();
+                for (std::list<FilePath>::iterator it = layer.mBitmapList.begin();
                      it != layer.mBitmapList.end();
                      ++it) {
                     const char *name = FileGetName(it->c_str());
@@ -202,14 +213,14 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
                         || strcmp(name, specPng.c_str()) == 0
                         || strcmp(name, normBmp.c_str()) == 0
                         || strcmp(name, specBmp.c_str()) == 0) {
-                        FilePath bitmap(FilePath::Root().c_str(), it->c_str());
+                        FilePath bitmap(it->c_str());
                         layer.mMat->GetDiffuseTex()->SetBitmap(bitmap);
                         break;
                     }
                 }
             } else {
                 {
-                    FilePath fp(FilePath::Root().c_str(), layer.unk40.c_str());
+                    FilePath fp(layer.unk40.c_str());
                     layer.mProxy->SetProxyFile(fp, false);
                 }
                 layer.mProxy->Enter();
@@ -218,10 +229,11 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
         } else {
             layer.mMat->SetProperty(Symbol("alpha"), DataNode(0.0f));
         }
-        const ObjRef &refs = layer.mMat->Refs();
+        const ObjRef &refs = Refs();
         for (ObjRef::iterator it = refs.end(); it != refs.begin();) {
             --it;
-            RndTexRenderer *tr = dynamic_cast<RndTexRenderer *>(it->RefOwner());
+            RndTexRenderer *tr =
+                dynamic_cast<RndTexRenderer *>(RefPtrOf(it)->RefOwner());
             if (tr)
                 tr->SetFrame(tr->GetFrame(), 1.0f);
         }
@@ -239,7 +251,7 @@ DataNode LayerDir::GetBitmapList(DataArray *arr) {
             DataArray *result = new DataArray(it->mBitmapList.size());
             if (!result)
                 result = new DataArray(0);
-            std::vector<FilePath>::iterator fp = it->mBitmapList.begin();
+            std::list<FilePath>::iterator fp = it->mBitmapList.begin();
             int i = 0;
             for (; fp != it->mBitmapList.end(); ++fp, i++) {
                 String fileName(FileGetName(fp->c_str()));

@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 #include "obj/ObjMacros.h"
 #include "rndobj/Dir.h"
 #include "rndobj/Mat.h"
@@ -26,8 +27,8 @@ public:
         bool mAllowAlpha; // 0x5c
         float mAlphaMin; // 0x60
         float mAlphaMax; // 0x64
-        std::vector<FilePath> mBitmapList; // 0x68
-        ObjPtr<RndDir> mProxy; // 0x70
+        std::list<FilePath> mBitmapList; // 0x68
+        ObjPtr<RndDir> mProxy; // 0x70 (obj ptr read at 0x78 in retail)
     };
 
     LayerDir();
