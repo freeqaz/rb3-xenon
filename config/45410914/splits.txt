@@ -5294,11 +5294,8 @@ band3/game/Game.cpp:
 	.text       start:0x8267C738 end:0x8267D478
 
 GemSmasher.cpp:
-	.pdata      start:0x8225E6D8 end:0x8225E6E0
-	.pdata      start:0x8225E6E8 end:0x8225E6F0
-	.text       start:0x82BAF9F0 end:0x82BAFA00
-	.text       start:0x82BAFD90 end:0x82BAFDE8
-	.text       start:0x82BAFF20 end:0x82BAFFC8
+	.pdata      start:0x8225E6B0 end:0x8225E720
+	.text       start:0x82BAF9F0 end:0x82BB05A8
 
 PracticePanel.cpp:
 	.pdata      start:0x82233470 end:0x82233478
