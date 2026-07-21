@@ -19120,5 +19120,11 @@
  "0x826897d8": "?GetAverageDifficulty@GameConfig@@QBA?AW4Difficulty@@XZ",
  "0x826898c0": "?IsInstrumentUsed@GameConfig@@QBA_NVSymbol@@@Z",
  "0x82689cf8": "?ForEach@GameConfig@@QAA?AVDataNode@@PBVDataArray@@_N@Z",
- "0x82689f80": "?WantCoda@GameConfig@@QAA_NXZ"
+ "0x82689f80": "?WantCoda@GameConfig@@QAA_NXZ",
+ "0x826d2b08": "?Initialize@TrackerDisplay@@QAAXVSymbol@@@Z",
+ "0x826d4d88": "?SendPlayerDisplayMsg@TrackerPlayerDisplay@@QBAXW4NetDisplayMsg@1@HH@Z",
+ "0x826d5dc8": "?SetSecondaryStateLevel@TrackerPlayerDisplay@@QBAXH@Z",
+ "0x826d5f78": "?RemotePlayerDisplayMsg@TrackerPlayerDisplay@@QBAXHHH@Z",
+ "0x822fb198": "?Reset@VocalTrackDir@@UAAXXZ",
+ "0x822fb348": "?GetLyricAlpha@VocalTrackDir@@QBAMH@Z"
 }

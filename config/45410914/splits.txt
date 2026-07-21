@@ -198,7 +198,9 @@ TrackPanelDir.cpp:
 	.text       start:0x82304950 end:0x82306DF0
 
 TrackPanelDirBase.cpp:
+	.pdata      start:0x821FFB18 end:0x821FFBB0
 	.pdata      start:0x821FFBB0 end:0x821FFD40
+	.text       start:0x823573AC end:0x82357DC8
 	.text       start:0x82357DD0 end:0x82359760
 
 band3/meta_band/ModifierMgr.cpp:
@@ -327,10 +329,12 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821F91E8 end:0x821F9690
 	.pdata      start:0x821F9BF0 end:0x821F9BF8
 	.pdata      start:0x821F9CC8 end:0x821FA060
+	.pdata      start:0x821FA060 end:0x821FA188
 	.pdata      start:0x82245030 end:0x82245038
 	.text       start:0x822ECC48 end:0x822EFB5C
 	.text       start:0x822F5120 end:0x822F5410
 	.text       start:0x822F5B18 end:0x822FAFEC
+	.text       start:0x822FAFF8 end:0x822FC180
 	.text       start:0x827F4778 end:0x827F4910
 
 BandCrowdMeter.cpp:
@@ -5059,9 +5063,13 @@ band3/meta_band/PatchPanel.cpp:
 
 band3/game/TrackerDisplay.cpp:
 	.pdata      start:0x82235020 end:0x82235288
+	.pdata      start:0x82235288 end:0x822354A0
 	.pdata      start:0x822354A0 end:0x822354A8
+	.pdata      start:0x822354A8 end:0x82235618
 	.text       start:0x826D2810 end:0x826D40C8
+	.text       start:0x826D40C8 end:0x826D54E4
 	.text       start:0x826D54F0 end:0x826D55EC
+	.text       start:0x826D55EC end:0x826D65E8
 
 band3/meta_band/SongUpgradeMgr.cpp:
 	.pdata      start:0x8222CEA8 end:0x8222D050
