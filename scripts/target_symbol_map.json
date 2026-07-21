@@ -6899,13 +6899,7 @@
  "0x824fe35c": "__unwind$110672",
  "0x824fe3a4": "__unwind$110678",
  "0x824fe3cc": "__unwind$110675",
- "0x8250423c": "__unwind$182731",
- "0x825059b4": "__unwind$208834",
- "0x82505a04": "__unwind$208830",
  "0x82506908": "?RedeemToken@RockCentral@@QAAXHVString@@AAVDataResultList@@PAVObject@Hmx@@@Z",
- "0x8250a1e0": "__unwind$214393",
- "0x8250a2f8": "__unwind$214395",
- "0x8250a410": "__unwind$189860",
  "0x8250b138": "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABU01@@Z",
  "0x8250bd90": "__unwind$107860",
  "0x8250be30": "__unwind$107857",
@@ -19102,5 +19096,7 @@
  "0x822a0978": "?ApplyAO@OutfitConfig@@QAAXPAVSyncMeshCB@@@Z",
  "0x827639c0": "?DataRegisterFunc@@YAXVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@Z",
  "0x82742a80": "?PollFunc@@YAXXZ",
- "0x82742a90": "?BeginSplasher@Splash@@QAAXXZ"
+ "0x82742a90": "?BeginSplasher@Splash@@QAAXXZ",
+ "0x825086f8": "?Handle@RockCentral@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8250b050": "??1?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@XZ"
 }

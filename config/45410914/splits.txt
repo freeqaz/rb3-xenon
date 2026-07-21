@@ -73,9 +73,12 @@ RockCentral.cpp:
 	.pdata      start:0x82216570 end:0x82216800
 	.pdata      start:0x82216848 end:0x82216850
 	.pdata      start:0x82216908 end:0x82216910
+	.pdata      start:0x82216910 end:0x82217128
 	.pdata      start:0x82217128 end:0x82217130
+	.pdata      start:0x82217130 end:0x822173D8
 	.pdata      start:0x822173D8 end:0x822173E0
 	.pdata      start:0x82217408 end:0x82217410
+	.pdata      start:0x82217410 end:0x82217830
 	.pdata      start:0x8221FF18 end:0x8221FF20
 	.pdata      start:0x822204B0 end:0x822204C0
 	.pdata      start:0x822204C8 end:0x822204D0
@@ -129,9 +132,12 @@ RockCentral.cpp:
 	.text       start:0x824FB3D0 end:0x824FD7AC
 	.text       start:0x824FD908 end:0x824FE094
 	.text       start:0x824FE400 end:0x82500688
+	.text       start:0x82500688 end:0x8250527C
 	.text       start:0x82505288 end:0x8250577C
+	.text       start:0x8250577C end:0x82507288
 	.text       start:0x82507290 end:0x82507404
 	.text       start:0x825074C0 end:0x82507634
+	.text       start:0x82507634 end:0x8250B12C
 	.text       start:0x8258DFD0 end:0x8258DFF0
 	.text       start:0x82593B2C end:0x82593B6C
 	.text       start:0x82593B8C end:0x82593BAC
