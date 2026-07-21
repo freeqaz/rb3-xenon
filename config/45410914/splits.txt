@@ -4738,11 +4738,8 @@ band3/game/Scoring.cpp:
 	.text       start:0x826A19C0 end:0x826A2208
 
 band3/game/Band.cpp:
-	.pdata      start:0x82231F28 end:0x82231F30
-	.pdata      start:0x82232018 end:0x82232020
-	.text       start:0x8269A660 end:0x8269A6A8
-	.text       start:0x8269AE20 end:0x8269AE34
-	.text       start:0x8269B830 end:0x8269BD4C
+	.pdata      start:0x82231F28 end:0x82232140
+	.text       start:0x8269A660 end:0x8269CBE8
 
 band3/game/Player.cpp:
 	.pdata      start:0x822326C8 end:0x822326D0
