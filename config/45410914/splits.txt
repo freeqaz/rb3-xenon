@@ -234,15 +234,19 @@ BandCharacter.cpp:
 	.pdata      start:0x821F22A8 end:0x821F22E8
 	.pdata      start:0x821F22E8 end:0x821F22F0
 	.pdata      start:0x821F22F0 end:0x821F2A50
+	.pdata      start:0x821F2BB0 end:0x821F2F80
 	.pdata      start:0x821F2F80 end:0x821F2F88
 	.pdata      start:0x821F2F88 end:0x821F2F90
 	.pdata      start:0x821F2FB8 end:0x821F2FC0
+	.pdata      start:0x821F2FC0 end:0x821F3250
 	.text       start:0x8227C6D0 end:0x8227C968
 	.text       start:0x8227C968 end:0x8227C9E8
 	.text       start:0x8227C9F8 end:0x82285D8C
+	.text       start:0x8228732C end:0x8228A23C
 	.text       start:0x8228A240 end:0x8228A2A0
 	.text       start:0x8228A2A0 end:0x8228A648
 	.text       start:0x8228A900 end:0x8228A988
+	.text       start:0x8228A988 end:0x8228CB04
 
 Console.cpp:
 	.pdata      start:0x8220ED60 end:0x8220EFD8
