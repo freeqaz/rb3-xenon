@@ -1,4 +1,12 @@
 {
+ "0x82791c38": "?EnterCoda@BeatMatcher@@QAAXXZ",
+ "0x82791c90": "??0BeatMatcher@@QAA@ABVUserGuid@@HHVSymbol@@PAVSongData@@AAVSongInfo@@PAVDataArray@@PAVBeatMaster@@@Z",
+ "0x82791f50": "?GetNow@BeatMatcher@@UBAMXZ",
+ "0x82791f58": "?GetTick@BeatMatcher@@UBAHXZ",
+ "0x82791f60": "??_EBeatMatcher@@W3AAPAXI@Z",
+ "0x82791f70": "??1BeatMatcher@@UAA@XZ",
+ "0x82792118": "??_GBeatMatcher@@UAAPAXI@Z",
+ "0x82792168": "?AddTrack@BeatMatcher@@QAAXHVSymbol@@W4SongInfoAudioType@@W4TrackType@@_N@Z",
  "0x822dbac0": "?PostSave@ObjectDir@@$4PPPPPPPM@BLA@AAXAAVBinStream@@@Z",
  "0x822dbc68": "?SetType@OverdriveMeter@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x822f48d0": "?PostSave@ObjectDir@@$4PPPPPPPM@CFA@AAXAAVBinStream@@@Z",

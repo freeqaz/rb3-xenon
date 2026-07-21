@@ -5703,6 +5703,7 @@ BeatMatcher.cpp:
 	.pdata      start:0x8223F2F8 end:0x8223F300
 	.pdata      start:0x8223F300 end:0x8223F308
 	.pdata      start:0x8223F310 end:0x8223F318
+	.pdata      start:0x8223F318 end:0x8223F4F8
 	.text       start:0x82790570 end:0x827905B8
 	.text       start:0x82790770 end:0x827907B0
 	.text       start:0x82790D70 end:0x82790DF4
@@ -5710,6 +5711,7 @@ BeatMatcher.cpp:
 	.text       start:0x827918B0 end:0x82791920
 	.text       start:0x82791920 end:0x827919C4
 	.text       start:0x82791AD8 end:0x82791B60
+	.text       start:0x82791B60 end:0x82793908
 
 CampaignSongInfoPanel.cpp:
 	.pdata      start:0x82227230 end:0x82227238
