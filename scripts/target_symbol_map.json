@@ -18510,6 +18510,5 @@
  "0x823e7168": "??0NetSession@@QAA@XZ",
  "0x823e82d8": "?OnMsg@NetSession@@QAA_NABVJoinRequestMsg@@@Z",
  "0x823e79e8": "?Handle@NetSession@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82645320": "?CountOrCreateExpandedDetails@NextSongPanel@@QAAHHAAVDataArrayPtr@@_N@Z",
- "0x823e8cc8": "__unwind$176976"
+ "0x82645320": "?CountOrCreateExpandedDetails@NextSongPanel@@QAAHHAAVDataArrayPtr@@_N@Z"
 }
