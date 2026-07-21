@@ -1257,6 +1257,7 @@ DataFunc.cpp:
 	.pdata      start:0x8223CC20 end:0x8223CC28
 	.pdata      start:0x8223CE40 end:0x8223CE48
 	.pdata      start:0x8223CE58 end:0x8223CE60
+	.pdata      start:0x8223CEC0 end:0x8223CEE8
 	.text       start:0x823666B8 end:0x8236955C
 	.text       start:0x8275D170 end:0x8275D1C4
 	.text       start:0x8275D1D0 end:0x8275D224
@@ -1268,6 +1269,7 @@ DataFunc.cpp:
 	.text       start:0x82763290 end:0x82763324
 	.text       start:0x82763420 end:0x82763484
 	.text       start:0x827639B0 end:0x827639BC
+	.text       start:0x827639C0 end:0x82765B40
 
 Task.cpp:
 	.pdata      start:0x8221F178 end:0x8221F180
