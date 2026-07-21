@@ -37,8 +37,8 @@ public:
     virtual const char *UnkTU5Virtual_beforeUserName() const;
     virtual const char *UserName() const = 0;
 
-    // unsigned int GetMachineID() const { return mMachineID; }
-    // void SetUserGuid(const UserGuid &);
+    unsigned int GetMachineID() const { return mMachineID; }
+    void SetUserGuid(const UserGuid &);
     bool ComesBefore(const User *u) { return (mUserGuid < u->mUserGuid); }
     const UserGuid &GetUserGuid() const { return mUserGuid; }
     OnlineID *GetOnlineID() const { return mOnlineID; }

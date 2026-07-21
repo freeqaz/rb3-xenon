@@ -52,7 +52,13 @@ namespace Quazal {
         }
         virtual void AllocateExtraContexts() {
             if (s_uiNbOfExtraContexts == -1) {
-                mValueInContextList = new T[0xffffffc0];
+                // MWCC tolerated a constant array-new size this large; MSVC X360
+                // statically rejects it (C2148: total array size > 0x7fffffff).
+                // Hoisting the count to a variable defers the size to runtime so
+                // the (never-taken, s_uiNbOfExtraContexts==-1) branch compiles.
+                // This template method is not in any pinned/matched span.
+                unsigned int uiCount = 0xffffffc0;
+                mValueInContextList = new T[uiCount];
             } else {
                 mValueInContextList = (StreamSettings *)QUAZAL_DEFAULT_ALLOC(
                     s_uiNbOfExtraContexts * 0x50, 0x77, _InstType10

@@ -1440,6 +1440,7 @@
    "network/Core/TimedSignal.cpp": "NonMatching",
    "network/Core/PeriodicJob.cpp": "NonMatching",
    "network/net/NetworkEmulator.cpp": "NonMatching",
+   "network/net/NetSession.cpp": "NonMatching",
    "network/net/SessionMessages.cpp": "NonMatching",
    "network/net/SyncStore.cpp": "NonMatching",
    "network/net/Synchronize.cpp": "NonMatching",
