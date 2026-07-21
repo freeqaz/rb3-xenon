@@ -18884,5 +18884,16 @@
  "0x82796b90": "?SustainedGemToKill@TrackWatcherImpl@@UAAHH@Z",
  "0x8279b280": "?resize@?$ObjVector@V?$ObjPtr@VRndGroup@@@@@@QAAXI@Z",
  "0x82342680": "?SyncProperty@FlowWhile@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x827354d8": "?AutoRelease@DxRnd@@QAAXPAUD3DResource@@@Z"
+ "0x827354d8": "?AutoRelease@DxRnd@@QAAXPAUD3DResource@@@Z",
+ "0x825de7e8": "?UpdateCharacterList@OvershellSlot@@QAAXXZ",
+ "0x825de9e8": "?UpdateMuteUsersList@OvershellSlot@@QAAXXZ",
+ "0x825deb88": "?UpdateKickUsersList@OvershellSlot@@QAAXXZ",
+ "0x825ded28": "?UpdateGamercardUsersList@OvershellSlot@@QAAXXZ",
+ "0x825df1d8": "?UpdatePartSelectList@OvershellSlot@@QAAXXZ",
+ "0x825df840": "?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+ "0x825e00f8": "?ToggleVocalStyle@OvershellSlot@@QAAXXZ",
+ "0x825e01b0": "?ToggleLeftyFlip@OvershellSlot@@QAAXXZ",
+ "0x825e0248": "?EnableAutohide@OvershellSlot@@QAAX_N@Z",
+ "0x825e0290": "?SetBlockAllInput@OvershellSlot@@QAAX_N@Z",
+ "0x825e02d8": "?SetInGame@OvershellSlot@@QAAX_N@Z"
 }
