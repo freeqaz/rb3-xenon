@@ -452,8 +452,8 @@ bool OvershellPanel::ShouldPause() const {
         if (!pSlot->GetState()->IsReadyToPlay())
             return true;
     }
-    if (!b1) return !b6;
-    return true;
+    if (b1) return true;
+    return !b6;
 }
 
 void OvershellPanel::SetAutohide(bool b1) {
@@ -846,7 +846,7 @@ void OvershellPanel::ResolveReadyToPlayStates() {
             slots.push_back(mSlots[i]);
         }
     }
-    if (!slots.empty()) {
+    if (slots.size() != 0) {
         bool allReady = true;
         for (int i = 0; i < slots.size(); i++) {
             if (slots[i]->GetState()->GetStateID() != kState_ReadyToPlay
