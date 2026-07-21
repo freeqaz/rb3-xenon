@@ -5537,10 +5537,14 @@ Leaderboard.cpp:
 
 MainHubPanel.cpp:
 	.pdata      start:0x82229CD8 end:0x82229CE0
+	.pdata      start:0x82229CE0 end:0x82229EC8
 	.pdata      start:0x82229EC8 end:0x82229ED0
+	.pdata      start:0x82229ED0 end:0x82229FE8
 	.pdata      start:0x82229FE8 end:0x82229FF0
 	.text       start:0x82620268 end:0x826202C0
+	.text       start:0x826202C8 end:0x82621A14
 	.text       start:0x82621A18 end:0x82621AB4
+	.text       start:0x82621AC0 end:0x82622F18
 	.text       start:0x82622F20 end:0x82623C48
 
 SelectDifficultyPanel.cpp:
@@ -5780,7 +5784,9 @@ GameplayOptions.cpp:
 	.text       start:0x82654CC0 end:0x82654FCC
 
 MainHubMessageProvider.cpp:
+	.pdata      start:0x8222F6A0 end:0x8222F760
 	.text       start:0x82672758 end:0x8267276C
+	.text       start:0x82672770 end:0x82673334
 
 Metronome.cpp:
 	.pdata      start:0x82236AB0 end:0x82236AB8
