@@ -15,17 +15,23 @@
 #include "ui/UI.h"
 #include "ui/UIPanel.h"
 #include "utl/BufStream.h"
-#include "utl/JobMgr.h"
 #include "utl/MakeString.h"
 #include "utl/NetCacheMgr.h"
 #include "utl/Std.h"
 #include "utl/Symbol.h"
 
+// Retail RB3-360 StorePanel — re-ported from the rb3-Wii oracle (member set +
+// inline-mEnum control flow), Xbox platform objects, verified against retail
+// Ghidra (default_tu5.xex). See StorePanel.h for the ctor/Load/Poll/… address
+// anchors. The prior DC3 port used a StoreEnumJob architecture + ~0x18 bytes of
+// DC3-only members that retail does not have.
+
 StorePanel::StorePanel()
-    : mNeedsCacheLoad(false), mLoadOk(false), mShowTestOffers(false), mArtLoader(0),
-      mAlbumTex(Hmx::Object::New<RndTex>()), mPendingArtCallback(0), mEnumJobID(-1),
-      mStorePreviewMgr(0), mNeedsReEnum(false), mPurchaser(0), mCheckoutItem(nullptr), mCheckoutProfile(0),
-      mPurchaseSource(gNullStr), mBackupPurchaseSource(gNullStr), unk94(0), mPostPurchaseJob(0) {}
+    : mLoadOk(false), mShowTestOffers(false), mPendingArtLoader(0),
+      mAlbumTex(Hmx::Object::New<RndTex>()), mPendingArtCallback(0),
+      mStorePreviewMgr(0), mEnum(0), mNeedsReEnum(false), mUnk75(false),
+      mPurchaser(0), mPurchaseSource(gNullStr), mBackupPurchaseSource(gNullStr),
+      mPostPurchaseState(0) {}
 
 StorePanel::~StorePanel() {
     DeleteAll(mOffers);
@@ -48,12 +54,11 @@ END_PROPSYNCS
 void StorePanel::Load() {
     UIPanel::Load();
     mLoadOk = true;
-    mNeedsCacheLoad = true;
     ThePlatformMgr.AddSink(this);
     if (StoreProfile() == 0) {
         ExitError(kStoreErrorLiveServer);
     } else if (ThePlatformMgr.IsSignedIntoLive(0) == 0) {
-        ExitError(kStoreErrorCacheNoSpace);
+        ExitError(kStoreErrorLiveServer);
     }
     TheContentMgr.StartRefresh();
 #ifdef HX_NATIVE
@@ -64,7 +69,7 @@ void StorePanel::Load() {
     mStorePreviewMgr = new StorePreviewMgr();
     mStorePreviewMgr->AddSink(this);
     MILO_ASSERT(!mPurchaser, 0x88);
-    unk94 = 2;
+    mPostPurchaseState = 2;
 }
 
 void StorePanel::Enter() {
@@ -81,10 +86,6 @@ void StorePanel::Enter() {
         mLoadOk = false;
         ExitStore(kStoreErrorCacheNoSpace);
     }
-    if (mNeedsCacheLoad) {
-        TheNetCacheMgr->Load((NetCacheMgr::CacheSize)1);
-        mNeedsCacheLoad = false;
-    }
     mShowing = (bool)mLoadOk;
     XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_ALWAYS_ALLOW);
     mNeedsReEnum = false;
@@ -93,10 +94,6 @@ void StorePanel::Enter() {
 void StorePanel::Exit() {
     XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_AUTO);
     ThePlatformMgr.RemoveSink(this);
-    if (0 <= mEnumJobID) {
-        ThePlatformMgr.CancelEnumJob(mEnumJobID);
-    }
-    mEnumJobID = -1;
     UIPanel::Exit();
 }
 
@@ -104,13 +101,16 @@ bool StorePanel::Exiting() const {
     if (mPurchaser && mPurchaser->IsPurchasing()) {
         return true;
     }
+    if (mEnum && mEnum->IsEnumerating()) {
+        return true;
+    }
     return UIPanel::Exiting();
 }
 
 void StorePanel::Poll() {
-    UIPanel::Poll();
     if (!mLoadOk)
         return;
+    UIPanel::Poll();
     if (TheNetCacheMgr->GetHasFailed()) {
         HandleNetCacheMgrFailure();
         return;
@@ -129,7 +129,7 @@ void StorePanel::Poll() {
     while (cur != mNetCacheLoaders.end()) {
         NetCacheLoader *loader = *cur;
         if (loader->IsLoaded()) {
-            if (loader == (NetCacheLoader *)mArtLoader) {
+            if (loader == mPendingArtLoader) {
                 MILO_ASSERT(mPendingArtCallback, 0x167);
                 int size = loader->GetSize();
                 char *buffer = loader->GetBuffer();
@@ -145,7 +145,7 @@ void StorePanel::Poll() {
                     static Message msg("art_loaded");
                     mPendingArtCallback->HandleType(msg.mData);
                 }
-                mArtLoader = 0;
+                mPendingArtLoader = 0;
                 mPendingArtCallback = 0;
             } else {
                 TheNetCacheMgr->DeleteNetCacheLoader(loader);
@@ -161,73 +161,52 @@ void StorePanel::Poll() {
         }
     }
 
-    if (!mPurchaser && mNeedsReEnum && mEnumJobID == -1) {
-        mNeedsReEnum = false;
-        EnumerateOffers(mPendingOffers.size() != mOffers.size());
+    // Drive the inline enumeration
+    if (mEnum) {
+        mEnum->Poll();
+        if (!mEnum->IsEnumerating()) {
+            if (mEnum->IsSuccess()) {
+                int err = UpdateOffers(mEnum->mContentList, false);
+                if ((err == 0 || err == 1) && !mPendingOffers.empty()) {
+                    err = UpdateOffers(mEnum->mContentList, true);
+                }
+                if (err != 0 && err != 1) {
+                    ExitError((StoreError)err);
+                    return;
+                }
+                static Message msg("enum_finished");
+                HandleType(msg.mData);
+            } else {
+                FormatString fmt("An enumeration failed!");
+                TheDebug.Notify(fmt.Str());
+                static Message msg("enum_finished");
+                HandleType(msg.mData);
+            }
+        }
     }
 
-    if (mPurchaser) {
-        mPurchaser->Initiate();
-        if (!mPurchaser->IsPurchasing()) {
-            bool enumFinished = false;
-            bool purchaseMade = false;
-            if (mPurchaser->PurchaseMade()) {
-                if (!(mCartOffers.empty())) {
-                    // Multiple items checkout
-                    if (mPurchaser->IsSuccess()) {
-                        std::vector<unsigned long long> songIds;
-                        for (size_t i = 0; i < mCartOffers.size(); i++) {
-                            songIds.push_back(mCartOffers[i].first->songID);
-                        }
-                        void *mem = operator new(sizeof(MultipleItemsPostPurchaseEnumJob));
-                        MultipleItemsPostPurchaseEnumJob *job = 0;
-                        job = new (mem) MultipleItemsPostPurchaseEnumJob(
-                                this,
-                                mCheckoutProfile,
-                                songIds,
-                                mPurchaser->mSource,
-                                mPurchaser->mUserIndex
-                            );
-                        mPostPurchaseJob = job;
-                        purchaseMade = true;
-                    }
-                } else {
-                    // Single item checkout
-                    if (mCheckoutItem != 0 && !mCheckoutItem->isPurchased) {
-                        if (mPurchaser->IsSuccess()) {
-                            enumFinished = true;
-                            mCheckoutItem->isPurchased = true;
-                            static Message msg("enum_finished");
-                            HandleType(msg.mData);
-                            TheUI->Handle(msg.mData, false);
-                        } else if (mPurchaser->IsSuccess()) {
-                            // purchased
-                        } else if (mCheckoutProfile != 0) {
-                            void *mem = operator new(sizeof(PostPurchaseEnumJob));
-                            PostPurchaseEnumJob *job = 0;
-                            job = new (mem) PostPurchaseEnumJob(
-                                    this,
-                                    mCheckoutProfile,
-                                    mCheckoutItem->songID,
-                                    mPurchaser->mSource,
-                                    mPurchaser->mUserIndex
-                                );
-                            mPostPurchaseJob = job;
-                            purchaseMade = true;
-                        }
-                    }
-                }
-            }
+    // Re-enumerate if requested and idle
+    if (!mPurchaser && mNeedsReEnum) {
+        bool enumerating = mEnum && mEnum->IsEnumerating();
+        if (!enumerating) {
+            mNeedsReEnum = false;
+            EnumerateOffers(mPendingOffers.size() != mOffers.size());
+        }
+    }
 
-            static Message msg("checkout_finished", DataNode(enumFinished), DataNode(purchaseMade));
+    // Drive the purchaser
+    if (mPurchaser) {
+        mPurchaser->Poll();
+        if (!mPurchaser->IsPurchasing()) {
+            bool purchaseMade = false;
+            if (mPurchaser->PurchaseMade() && mPurchaser->IsSuccess()) {
+                mNeedsReEnum = true;
+                purchaseMade = true;
+            }
+            static Message msg("checkout_finished", DataNode(purchaseMade));
             HandleType(msg.mData);
             TheUI->Handle(msg.mData, false);
-
-            delete mPurchaser;
-            mPurchaser = 0;
-            mCheckoutItem = 0;
-            mCheckoutProfile = 0;
-            mCartOffers.clear();
+            RELEASE(mPurchaser);
         }
     }
 }
@@ -240,15 +219,11 @@ bool StorePanel::IsLoaded() const {
 }
 
 void StorePanel::Unload() {
-    if ((int)mEnumJobID >= 0) {
-        ThePlatformMgr.CancelEnumJob(mEnumJobID);
-    }
-    mEnumJobID = -1;
     RELEASE(mPurchaser);
-    mCheckoutItem = 0;
-    mCheckoutProfile = 0;
-    mCartOffers.clear();
-    RemoveSink(mStorePreviewMgr, gNullStr);
+    RELEASE(mEnum);
+    if (mStorePreviewMgr) {
+        RemoveSink(mStorePreviewMgr, gNullStr);
+    }
     RELEASE(mStorePreviewMgr);
     FOREACH (it, mNetCacheLoaders) {
         TheNetCacheMgr->DeleteNetCacheLoader(*it);
@@ -265,12 +240,12 @@ void StorePanel::LoadArt(const char *cc, UIPanel *panel) {
     std::list<NetCacheLoader *>::iterator it = std::find(mNetCacheLoaders.begin(), mNetCacheLoaders.end(), str);
     if (it == mNetCacheLoaders.end()) {
         NetCacheLoader *loader = TheNetCacheMgr->AddNetCacheLoader(cc, (NetLoaderPos)0);
-        mArtLoader = (int)loader;
+        mPendingArtLoader = loader;
         if (loader) {
-            mNetCacheLoaders.insert(it, (NetCacheLoader *)mArtLoader);
+            mNetCacheLoaders.insert(it, mPendingArtLoader);
         }
     } else {
-        mArtLoader = (int)*it;
+        mPendingArtLoader = *it;
     }
     mPendingArtCallback = panel;
 }
@@ -282,9 +257,6 @@ void StorePanel::CheckOut(StorePurchaseable *p) {
     MILO_ASSERT(!mPurchaser, 0x2c1);
     Profile *profile = StoreProfile();
     MILO_ASSERT(profile, 0x2c4);
-
-    mCheckoutItem = p;
-    mCheckoutProfile = (int)profile;
 
     // Allocate and construct XboxPurchaser
     void *mem = operator new(sizeof(XboxPurchaser));
@@ -301,15 +273,7 @@ void StorePanel::CheckOut(StorePurchaseable *p) {
         purchaser = 0;
     }
     mPurchaser = purchaser;
-
-    // Manual vtable dispatch: Call Initiate() at vtable offset 1
-    // Note: mPurchaser is typed as StorePurchaser*, which lacks Initiate() in its interface.
-    // This raw vtable access is required to match the original binary's codegen.
-    typedef void (*VirtFunc)(void*);
-    void** vptr = (void**)mPurchaser;
-    void** vfunc_addr = (void**)*vptr;
-    VirtFunc vf = (VirtFunc)vfunc_addr[1];
-    vf(mPurchaser);
+    mPurchaser->Initiate();
 }
 
 void StorePanel::ExitError(StoreError e) {
@@ -378,43 +342,6 @@ no_metadata:
     ExitError(err);
 }
 
-void StorePanel::MultipleItemsCheckout(std::list<StoreOffer *> *offers) {
-    MILO_ASSERT(!mPurchaser, 0x2e7);
-
-    Profile *profile = StoreProfile();
-    MILO_ASSERT(profile, 0x2ea);
-
-    std::vector<u64> songIds;
-
-    FOREACH(it, *offers) {
-        MILO_ASSERT((*it)->IsAvailable(), 0x2ef);
-
-        u64 songId = (*it)->songID;
-        songIds.push_back(songId);
-
-        std::pair<StorePurchaseable*, const Profile*> pair;
-        pair.first = *it;
-        pair.second = profile;
-        mCartOffers.push_back(pair);
-    }
-
-    void* mem = operator new(sizeof(XboxMultipleItemsPurchaser));
-    StorePurchaser *purchaser;
-    if (mem) {
-        purchaser = new (mem) XboxMultipleItemsPurchaser(
-            profile->GetPadNum(),
-            songIds,
-            mPurchaseSource,
-            0
-        );
-    } else {
-        purchaser = 0;
-    }
-    mPurchaser = purchaser;
-
-    mPurchaser->Initiate();
-}
-
 void StorePanel::PopulateOffers(DataArray *arr, bool b) {
     if (mLoadOk) {
         DeleteAll(mPendingOffers);
@@ -455,9 +382,9 @@ void StorePanel::PopulateOffers(DataArray *arr, bool b) {
 }
 
 void StorePanel::EnumerateOffers(bool b) {
+    RELEASE(mEnum);
     Profile *profile = StoreProfile();
     MILO_ASSERT(profile, 0x356);
-    Job *job;
     if (EnumerateSubsetOfOfferIDs()) {
         std::vector<UINT64> offerIDs;
         GetOfferIDsToEnumerate(offerIDs, b);
@@ -468,59 +395,14 @@ void StorePanel::EnumerateOffers(bool b) {
             }
             return;
         }
-        job = new StoreEnumJob(this, profile->GetPadNum(), &offerIDs);
+        mEnum = new XboxEnumeration(profile->GetPadNum(), &offerIDs);
     } else {
-        job = new StoreEnumJob(this, profile->GetPadNum(), 0);
+        mEnum = new XboxEnumeration(profile->GetPadNum(), 0);
     }
-    ThePlatformMgr.QueueEnumJob(job);
-    mEnumJobID = job->ID();
+    mEnum->Start();
     static Message msg("enum_start");
     HandleType(msg);
     TheUI->Handle(msg, false);
-}
-
-void StorePanel::FinishEnum(std::list<EnumProduct> const &enumList, bool arg) {
-    mEnumJobID = -1;
-
-    if (arg) {
-        int err = UpdateOffers(enumList, arg);
-
-        if (0 == err || err == 1) {
-            if (!mPendingOffers.empty()) {
-                err = UpdateOffers(enumList, true);
-            }
-        }
-
-        if (err != 0) {
-            if (err == 1) {
-                if (TheNetCacheMgr->IsDebug() == 0) {
-                    FormatString fmt("No offers in this metadata were");
-                    TheDebug.Notify(fmt.Str());
-                }
-            } else {
-                ExitError((StoreError)err);
-                return;
-            }
-            ExitError((StoreError)err);
-            return;
-        }
-
-        static unsigned char msg_created = (unsigned char)(0);
-        if (!msg_created) {
-            static Symbol sym("enum_finished");
-            msg_created = 1;
-            static Message msg(sym);
-        }
-    } else {
-        FormatString fmt("An enumeration failed!");
-        TheDebug.Notify(fmt.Str());
-
-        if (mLoadOk) {
-            mLoadOk = false;
-            void (*func)(void *, int) = (void (*)(void *, int))*(void **)this;
-            func(this, 2);
-        }
-    }
 }
 
 int StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
@@ -596,13 +478,6 @@ void StorePanel::UpdateFromEnumProduct(StorePurchaseable *sp, EnumProduct const 
     sp->isPurchased = (ep->mPurchased != 0);
     sp->cost = ep->mPrice;
     sp->isAvailable = true;
-}
-
-void StorePanel::StartReEnum() {
-    if (mPostPurchaseJob != 0) {
-        ThePlatformMgr.QueueEnumJob(mPostPurchaseJob);
-        mPostPurchaseJob = 0;
-    }
 }
 
 DataNode StorePanel::OnMsg(SigninChangedMsg const &msg) {
@@ -759,44 +634,17 @@ BEGIN_HANDLERS(StorePanel)
     HANDLE_EXPR(test_offers, mShowTestOffers)
     HANDLE_ACTION(load_art, LoadArt(_msg->Str(2), _msg->Obj<UIPanel>(3)))
     HANDLE_EXPR(album_tex, mAlbumTex)
-    HANDLE_ACTION(cancel_art, (mArtLoader = 0, mPendingArtCallback = 0))
+    HANDLE_ACTION(cancel_art, (mPendingArtLoader = 0, mPendingArtCallback = 0))
     HANDLE_ACTION(check_out, CheckOut(_msg->Obj<StorePurchaseable>(2)))
     HANDLE_ACTION(re_download, CheckOut(_msg->Obj<StorePurchaseable>(2)))
     HANDLE_ACTION(set_source, SetSource(_msg->Sym(2), _msg->Int(3)))
     HANDLE_ACTION(set_source_to_backup, mPurchaseSource = mBackupPurchaseSource)
-    HANDLE_ACTION(start_reenum_if_needed, StartReEnum())
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ProfileSwappedMsg)
     HANDLE_MESSAGE(SingleItemEnumCompleteMsg)
     HANDLE_MESSAGE(MultipleItemsEnumCompleteMsg)
     HANDLE_SUPERCLASS(UIPanel)
 END_HANDLERS
-
-StoreEnumJob::StoreEnumJob(StorePanel *panel, int i, std::vector<UINT64> *vec) {
-    mEnumeration = new XboxEnumeration(i, vec);
-    mStorePanel = panel;
-}
-
-StoreEnumJob::~StoreEnumJob() {
-    delete mEnumeration;
-}
-
-void StoreEnumJob::Start() { mEnumeration->Start(); }
-void StoreEnumJob::Cancel(Hmx::Object *) {}
-
-bool StoreEnumJob::IsFinished() {
-    if (mEnumeration->IsEnumerating()) {
-        mEnumeration->Poll();
-    }
-    return mEnumeration->IsEnumerating() == false;
-}
-
-void StoreEnumJob::OnCompletion(Hmx::Object *) {
-    if (mStorePanel && mStorePanel->mEnumJobID == ID()) {
-        std::list<EnumProduct> &contentList = mEnumeration->mContentList;
-        mStorePanel->FinishEnum(contentList, mEnumeration->IsSuccess());
-    }
-}
 // sw2 scatter-include (default/StorePanel <- hamobj/DancerSequence.cpp)
 #define gRev gRev_DancerSequence
 #define gAltRev gAltRev_DancerSequence

@@ -18469,5 +18469,10 @@
  "0x826dce10": "?LocalDeploy@DeployCountTracker@@QAAXABUTrackerPlayerID@@@Z",
  "0x826dcfe8": "?Poll_@DeployCountTracker@@UAAXM@Z",
  "0x826dcc20": "??_GDeployCountTracker@@UAAPAXI@Z",
- "0x826dc8a0": "?insert_unique@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@2@@Z"
+ "0x826dc8a0": "?insert_unique@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@2@@Z",
+ "0x827b4f30": "?Load@StorePanel@@UAAXXZ",
+ "0x827b6020": "?Poll@StorePanel@@UAAXXZ",
+ "0x827b5e18": "?UpdateOffers@StorePanel@@MAAHABV?$list@UEnumProduct@@V?$StlNodeAlloc@UEnumProduct@@@stlpmtx_std@@@stlpmtx_std@@_N@Z",
+ "0x827b66e0": "?EnumerateOffers@StorePanel@@MAAX_N@Z",
+ "0x827b6a58": "??0StorePanel@@QAA@XZ"
 }

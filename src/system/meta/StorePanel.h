@@ -33,8 +33,15 @@ void SetOfferID(int index, const String &s);
 void SetPurchased(int index, bool b);
 END_MESSAGE
 
+// RB3-360 retail StorePanel re-ported from the rb3-Wii oracle (member set +
+// inline-mEnum control flow) with Xbox platform objects, verified against the
+// retail Ghidra project (default_tu5.xex): ctor fn_827B6A58, Load fn_827B4F30,
+// Poll fn_827B6020, EnumerateOffers fn_827B66E0, UpdateOffers fn_827B5E18,
+// SyncProperty fn_827B5B68, LoadArt fn_827B6600. The prior DC3 port carried
+// ~0x18 bytes of DC3-only members (mCartOffers/mCheckoutItem/mCheckoutProfile/
+// mEnumJobID/mPostPurchaseJob/unk94/extra mNeedsCacheLoad) + a StoreEnumJob
+// architecture that retail does not use; those are gone here.
 class StorePanel : public UIPanel {
-    friend class StoreEnumJob;
 public:
     // Hmx::Object
     virtual ~StorePanel();
@@ -67,57 +74,38 @@ public:
     void ExitError(StoreError);
     void HandleNetCacheMgrFailure();
     void HandleNetCacheLoaderFailure(int);
-    void MultipleItemsCheckout(std::list<StoreOffer *> *);
 
-    std::vector<StoreOffer *> mOffers;
-    std::vector<StoreOffer *> mPendingOffers;
-    bool mNeedsCacheLoad;
-    bool mLoadOk; // 0x51
-    bool mShowTestOffers;
-    std::list<NetCacheLoader *> mNetCacheLoaders;
-    int mArtLoader;
-    RndTex *mAlbumTex;
-    UIPanel *mPendingArtCallback; // 0x64
-    int mEnumJobID;
-    StorePreviewMgr *mStorePreviewMgr; // 0x6c
-    bool mNeedsReEnum;
-    StorePurchaser *mPurchaser; // 0x74
-    StorePurchaseable *mCheckoutItem;
-    int mCheckoutProfile;
-    std::vector<std::pair<StorePurchaseable *, const Profile *>> mCartOffers;
-    Symbol mPurchaseSource;
-    Symbol mBackupPurchaseSource;
-    int unk94;
-    Job *mPostPurchaseJob;
+    // Retail layout (offsets are of the complete-object; UIPanel non-virtual
+    // part ends at 0x3c, Hmx::Object is a shared virtual base at the tail):
+    std::vector<StoreOffer *> mOffers;          // 0x3c
+    std::vector<StoreOffer *> mPendingOffers;   // 0x48
+    bool mLoadOk;                                // 0x54
+    bool mShowTestOffers;                        // 0x55
+    std::list<NetCacheLoader *> mNetCacheLoaders; // 0x58
+    NetCacheLoader *mPendingArtLoader;          // 0x60
+    RndTex *mAlbumTex;                           // 0x64
+    UIPanel *mPendingArtCallback;                // 0x68
+    StorePreviewMgr *mStorePreviewMgr;           // 0x6c
+    XboxEnumeration *mEnum;                       // 0x70
+    bool mNeedsReEnum;                            // 0x74
+    bool mUnk75;                                  // 0x75
+    StorePurchaser *mPurchaser;                   // 0x78
+    Symbol mPurchaseSource;                       // 0x7c
+    Symbol mBackupPurchaseSource;                 // 0x80
+    int mPostPurchaseState;                       // 0x84 (Load sets it to 2)
 
 protected:
     // UIPanel
     virtual void PopulateOffers(DataArray *, bool);
     virtual void EnumerateOffers(bool);
-    virtual void FinishEnum(std::list<EnumProduct> const &, bool);
     // RB3 returns int (not StoreError) — matches rb3-Wii's StorePanel.h
     virtual int UpdateOffers(std::list<EnumProduct> const &, bool);
     virtual void UpdateFromEnumProduct(StorePurchaseable *, EnumProduct const *);
     virtual void StoreUserProfileSwappedToUser(LocalUser *);
 
-    void StartReEnum();
     DataNode OnMsg(SigninChangedMsg const &);
     DataNode OnMsg(ProfileSwappedMsg const &);
     DataNode OnMsg(SingleItemEnumCompleteMsg const &);
     DataNode OnMsg(MultipleItemsEnumCompleteMsg const &);
     void ValidateOffers(std::vector<StoreOffer *> &);
-};
-
-class StoreEnumJob : public Job {
-public:
-    StoreEnumJob(StorePanel *, int, std::vector<UINT64> *);
-    virtual ~StoreEnumJob();
-    virtual void Start();
-    virtual void Cancel(Hmx::Object *);
-    virtual bool IsFinished();
-    virtual void OnCompletion(Hmx::Object *);
-
-protected:
-    XboxEnumeration *mEnumeration; // 0x8
-    StorePanel *mStorePanel; // 0xc
 };

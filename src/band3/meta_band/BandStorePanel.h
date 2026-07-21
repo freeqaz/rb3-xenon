@@ -67,21 +67,23 @@ public:
     const String &MenuTitle() const { return mMenuTitle; }
 
 protected:
-    // Layout: starts after StorePanel (0x90) and MsgSource (sub-object 0x90..0xAC)
-    DataNetLoader *mMetadataLoader; // 0xAC
-    String mLastRequest; // 0xB0
-    bool mLastRequestExtra; // 0xBC
-    StoreOfferProvider *mOfferProvider; // 0xC0
-    StoreOfferContentsProvider *mOfferContentsProvider; // 0xC4
-    // Retail order pinned by AppLabel::SetStoreCrumbText: its
-    // MenuTitle().c_str() load reads mMenuTitle+8 with mMenuTitle 0x1C
-    // below our old 0xE4 placement — i.e. retail mMenuTitle precedes both
-    // chunk-path strings.
-    String mMenuTitle; // 0xC8
-    String mPrevChunkPath; // 0xD4 (request_prev_chunk path)
-    String mNextChunkPath; // 0xE0 (request_next_chunk path)
-    Symbol mSort; // 0xEC
-    bool mStartBrowserAtBottom; // 0xF0
-    bool mUserCanDoInput; // 0xF1
-    BandStoreShortcutProvider *mShortcutProvider; // 0xF4 (unverified vs retail)
+    // Layout: starts after StorePanel (non-virtual 0x8c) + MsgSource sub-object,
+    // so BandStorePanel's own members begin at 0xA0 (retail-exact, verified via
+    // offsetof probe after the StorePanel base shrank to retail size).
+    DataNetLoader *mMetadataLoader; // 0xA0
+    String mLastRequest; // 0xA4
+    bool mLastRequestExtra; // 0xB0
+    StoreOfferProvider *mOfferProvider; // 0xB4
+    StoreOfferContentsProvider *mOfferContentsProvider; // 0xB8
+    // Retail order pinned by AppLabel::SetStoreCrumbText: its MenuTitle().c_str()
+    // load reads mMenuTitle+8 at retail offset 0xDC — i.e. retail mMenuTitle
+    // (0xD4) FOLLOWS both chunk-path strings (verified via objdiff: with the
+    // shrunk base, mMenuTitle must sit +0x18 above the two chunk Strings).
+    String mPrevChunkPath; // 0xBC (request_prev_chunk path)
+    String mNextChunkPath; // 0xC8 (request_next_chunk path)
+    String mMenuTitle; // 0xD4
+    Symbol mSort; // 0xE0
+    bool mStartBrowserAtBottom; // 0xE4
+    bool mUserCanDoInput; // 0xE5
+    BandStoreShortcutProvider *mShortcutProvider; // 0xE8 (unverified vs retail)
 };
