@@ -3,6 +3,7 @@
 #include "obj/Data.h"
 #include "obj/Msg.h"
 #include "obj/Object.h"
+#include "os/ContentMgr.h"
 #include "os/OnlineID.h"
 #include "os/Timer.h"
 #include "os/User.h"
@@ -60,44 +61,57 @@ enum ShowGamercardResult {
 
 typedef bool XCallbackFunc(unsigned long &);
 
-// LAYOUT NOTE (2026-07-18, Ghidra-verified vs retail TU5): the member layout
-// below is DC3-lineage and DOES NOT match retail RB3-360. This class is a
-// DC3 port (`: public Hmx::Object`, flat, + the XSocial photo/link/overlapped
-// block that DC3 added in 2012). Retail RB3 (2010) predates XSocial and is
-// MsgSource-lineage (Wii-style, compact). Ground truth from default_tu5.xex:
-//   ThePlatformMgr base @ 0x82cc9d1c
-//   PlatformMgr::SetScreenSaver (0x8251c180) writes  this+0x2c  -> mScreenSaver
-//   PlatformMgr::IsSignedIn     (0x82514988) reads   this+0x1c  -> mSigninMask
-//   ConnectionStatusPanel::CheckForLostConnection reads +0x26   -> mConnected
-// i.e. retail mSigninMask@0x1c, mConnected@0x26, mScreenSaver@0x2c. Our source
-// (Object base 0x28 + XSocial block) compiles these to mSigninMask@0x4c,
-// mConnected@0x56, mScreenSaver@0x57 (comments below say 0x50/0x5a/0x5b, which
-// assumed a 0x2c Object base and are themselves stale).
+// LAYOUT NOTE (2026-07-21, supersedes 2026-07-18 "do NOT re-anchor"): retail
+// RB3-360 PlatformMgr IS MsgSource-lineage and the re-anchor PAYS. The 07-18
+// note was right that ThePlatformMgr.<field> cross-unit accesses are global
+// relocs whose addends objdiff normalizes away — but it missed the receiver
+// this-adjust for base-subobject method calls, which is a REAL instruction:
+// retail passes ThePlatformMgr+4 to MsgSource::AddSink (`addi r3, rX, 0x4`,
+// e.g. StorePanel::Load, fn_82767BA0 = MsgSource::AddSink doing a vbtable
+// walk *(vbptr)+4). Our old flat `: public Hmx::Object` emitted `mr r3, rX`
+// (+0, Hmx::Object::AddSink) — an un-normalized mismatch at EVERY
+// ThePlatformMgr.AddSink/RemoveSink call site in the binary.
 //
-// This divergence is NOT worth fixing for matching: every cross-unit access is
-// ThePlatformMgr.<field> (a global reloc), whose offset addend is normalized
-// away by objdiff — CheckForLostConnection already matches 100% with our wrong
-// offset. Reproducing the retail offsets would require re-basing on MsgSource
-// (virtual Hmx::Object at tail), a high-risk change to a PCH-eligible, widely
-// included header with zero offsetting strict gain. Do NOT re-anchor as a
-// struct-layout keystone. See the 2026-07-18 investigation report.
-class PlatformMgr : public Hmx::Object {
+// Ground truth (Ghidra default_tu5.xex, ThePlatformMgr @ 0x82cc9d1c):
+//   class PlatformMgr : public MsgSource, public ContentMgr::Callback
+//   (rb3-Wii lineage). MSVC hoists Callback (the vftable base) to primary:
+//   Callback vfptr@0x0 | MsgSource@0x4 (vbptr@0x4, mSinks@0x8,
+//   mEventSinks@0x10, mExporting@0x18) | members@0x1c | virtual Hmx::Object
+//   at tail. Hence IsSignedIn (0x82514988) reads this+0x1c (mSigninMask),
+//   CheckForLostConnection reads +0x26 (mConnected), SetScreenSaver
+//   (0x8251c180) writes this+0x2c (mScreenSaver).
+//
+// Whole-binary A/B of this re-base (2026-07-21, twice-reproduced): +4 strict
+// (BandUI::Init, BandUI::Terminate, ~Campaign,
+// ConnectionStatusPanel::CheckForLostConnection), 0 strict regressions; only
+// fuzzy slips are 4 unmapped anonymous fn_ (3 SessionMgr EH funclets + one
+// 12-byte address-of-global accessor) — heuristic-pairing noise, not real
+// losses. The DC3-only XSocial members are parked at the tail of the member
+// block; do not move them back ahead of the retail members.
+class PlatformMgr : public MsgSource, public ContentMgr::Callback {
 private:
-    bool mHasXSocialPhotoPost; // DC3-only (absent in retail RB3); compiled@0x28
-    bool mHasXSocialLinkPost;   // DC3-only; compiled@0x29
-    XOVERLAPPED mOverlapped;    // DC3-only; compiled@0x2c
-    int unk4c;                  // DC3-only mSocialCapabilities; compiled@0x48
-    int mSigninMask;            // retail@0x1c (compiled@0x4c)
-    int mSigninChangeMask;      // retail@0x20 (compiled@0x50)
-    bool mGuideShowing;         // compiled@0x54
-    bool mConfirmCancelSwapped; // compiled@0x55
-    bool mConnected;            // retail@0x26 (compiled@0x56)
-    bool mScreenSaver;          // retail@0x2c (compiled@0x57)
-    PlatformRegion mRegion;     // compiled@0x58
-    DiskError mDiskError;       // compiled@0x5c
-    JobMgr *mJobMgr;            // compiled@0x60
-    bool unk68;                 // compiled@0x64
-    bool unk69;                 // compiled@0x65
+    // Retail RB3-360 layout (Ghidra default_tu5.xex): Callback vfptr@0x0
+    // (MSVC hoists the vftable-carrying base to primary), MsgSource@0x4
+    // (vbptr@0x4, mSinks@0x8, mEventSinks@0x10, mExporting@0x18), then
+    // PlatformMgr members from 0x1c; virtual Hmx::Object base at the tail.
+    int mSigninMask;            // 0x1c (retail IsSignedIn 0x82514988 reads this+0x1c)
+    int mSigninChangeMask;      // 0x20
+    bool mGuideShowing;         // 0x24
+    bool mConfirmCancelSwapped; // 0x25
+    bool mConnected;            // 0x26 (retail CheckForLostConnection reads +0x26)
+    PlatformRegion mRegion;     // 0x28
+    bool mScreenSaver;          // 0x2c (retail SetScreenSaver 0x8251c180 writes this+0x2c)
+    DiskError mDiskError;       // 0x30
+    JobMgr *mJobMgr;            // 0x34
+    bool unk68;                 // 0x38
+    bool unk69;                 // 0x39
+    // DC3-only XSocial block (absent in retail RB3, 2012 addition) — kept for
+    // compile compatibility with DC3-ported PlatformMgr.cpp/PlatformMgr_Xbox.cpp,
+    // moved to the tail so the retail members above keep retail offsets.
+    bool mHasXSocialPhotoPost;
+    bool mHasXSocialLinkPost;
+    XOVERLAPPED mOverlapped;
+    int unk4c; // DC3 mSocialCapabilities
     DataNode OnSignInUsers(DataArray *);
 
 public:
