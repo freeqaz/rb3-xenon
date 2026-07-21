@@ -558,19 +558,21 @@ def main() -> int:
           f"across {len(all_stats)} TUs.")
 
     if args.apply:
-        map_path = Path(args.map)
-        existing: Dict[str, str] = {}
-        if map_path.is_file():
-            existing = json.loads(map_path.read_text())
-        before = len(existing)
-        # Merge: game entries override (they are authoritative for game addrs).
-        overwritten = sum(1 for k in all_entries if k in existing)
-        existing.update(all_entries)
-        map_path.write_text(json.dumps(existing, indent=2, sort_keys=True) + "\n")
-        print(f"\n[APPLIED] {map_path}: {before} -> {len(existing)} entries "
-              f"(+{len(existing) - before} new, {overwritten} overwritten).")
+        # HARD-DISABLED (batch-4, 2026-07-21): this json.dump path re-serializes
+        # and reorders the ENTIRE 18k-entry map, destroying textual diff-ability
+        # and colliding with concurrent landings (two workers hit it). The tool
+        # is also TU0-dead for identification on TU5. Emit a fragment and apply
+        # it textually instead.
+        frag_path = Path(args.map).with_name("gen_game_target_map.fragment.json")
+        frag_path.write_text(json.dumps(all_entries, indent=1, sort_keys=True) + "\n")
+        print(f"\n[REFUSED] --apply is disabled: json.dump re-serializes the whole map "
+              f"(reorders 18k entries; breaks concurrent landings).")
+        print(f"Fragment written to {frag_path} — apply it textually via:\n"
+              f"  venv/bin/python scripts/harvest/tu5_map_apply_fragment.py {frag_path} {args.map}")
+        return 1
     else:
-        print("\n(dry-run) re-run with --apply to merge into the map.")
+        print("\n(dry-run) NOTE: --apply is disabled (whole-map re-serialization); "
+              "it now emits a fragment for tu5_map_apply_fragment.py instead.")
     return 0
 
 
