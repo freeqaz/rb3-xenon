@@ -191,7 +191,7 @@ void TrackWatcherImpl::SetSyncOffset(float f) { mSyncOffset = f; }
 void TrackWatcherImpl::NoteSwing(unsigned int ui, int tick) {
     float f6 = mParent->GetNow();
     unsigned int ui5 = 1;
-    for (int i = 0; ui != 0; ui &= ~ui5, ui5 <<= 1, i++) {
+    for (int i = 0; ui != 0; ui &= ~ui5, i++, ui5 <<= 1) {
         if (ui & ui5) {
             if (AreSlotsInRoll(ui5, tick)) {
                 if (f6 < mRollIntervalMs + mRollSlotsLastSwingMs[i]) {
@@ -426,9 +426,10 @@ void TrackWatcherImpl::CheckForAutoplay(float ms) {
             }
         } else {
             int i5 = mGemList->NumGems();
-            int i4;
-            while (i4 = mNextGemToAutoplay, i4 <= i5 - 1) {
-                if (ms + mSyncOffset + mNextCheatError > mGemList->TimeAt(i4)) {
+            while (mNextGemToAutoplay <= i5 - 1) {
+                int i4 = mNextGemToAutoplay;
+                float gemTime = mGemList->TimeAt(i4);
+                if (ms + mSyncOffset + mNextCheatError > gemTime) {
                     mNextGemToAutoplay++;
                     GameGem &gem = mGemList->GetGem(i4);
                     if (!gem.GetPlayed()) {
@@ -445,11 +446,8 @@ void TrackWatcherImpl::CheckForAutoplay(float ms) {
                                         goto ignore;
                                 }
                                 if (RandomFloat() < mAutoplayAccuracy) {
-                                    bool b1 = false;
-                                    if (gem.GetForceStrum()) {
-                                        if (DataVariable("auto_hopos").Int())
-                                            b1 = true;
-                                    }
+                                    bool b1 = gem.GetForceStrum()
+                                        && DataVariable("auto_hopos").Int();
                                     HitGem(
                                         ms,
                                         i4,
@@ -717,7 +715,8 @@ void TrackWatcherImpl::OnPass(float ms, int gemID) {
             return;
         } else {
             int iref;
-            if (IsFillCompletion(mSongData->GetTempoMap()->TickToTime(tick), tick, iref)) {
+            float fillTime = mSongData->GetTempoMap()->TickToTime(tick);
+            if (IsFillCompletion(fillTime, tick, iref)) {
                 SendImplicit(ms, gemID);
                 return;
             }
