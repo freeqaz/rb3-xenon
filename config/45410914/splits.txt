@@ -3880,8 +3880,8 @@ DataFile.cpp:
 	.text       start:0x8276A758 end:0x8276C6CC
 
 system/rnddx9/ShaderMgr.cpp:
-	.pdata      start:0x8223A598 end:0x8223A698
-	.text       start:0x827357F0 end:0x82736EE8
+	.pdata      start:0x8223A490 end:0x8223A698
+	.text       start:0x82733CB0 end:0x82736EE8
 
 Voice.cpp:
 	.pdata      start:0x8225B188 end:0x8225B270

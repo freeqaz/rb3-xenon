@@ -18866,5 +18866,6 @@
  "0x82796ad8": "?CheckForGemsSeen@TrackWatcherImpl@@QAAXM@Z",
  "0x82796b90": "?SustainedGemToKill@TrackWatcherImpl@@UAAHH@Z",
  "0x8279b280": "?resize@?$ObjVector@V?$ObjPtr@VRndGroup@@@@@@QAAXI@Z",
- "0x82342680": "?SyncProperty@FlowWhile@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+ "0x82342680": "?SyncProperty@FlowWhile@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x827354d8": "?AutoRelease@DxRnd@@QAAXPAUD3DResource@@@Z"
 }
