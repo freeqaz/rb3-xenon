@@ -18690,5 +18690,7 @@
  "0x822e7128": "?AddChordRepImpl@GemTrackDir@@UAAXPAVRndMesh@@PAVTrackWidget@@11MABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@VString@@@Z",
  "0x822e72f8": "?Replace@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822e7408": "??1?$ObjPtrList@VTrackWidget@@VObjectDir@@@@UAA@XZ",
- "0x822f0178": "?EaseExpoInOut@@YAMMMM@Z"
+ "0x822f0178": "?EaseExpoInOut@@YAMMMM@Z",
+ "0x822ee488": "?SetUsed@BandTrack@@UAAX_N@Z",
+ "0x822f9168": "?SetType@VocalTrackDir@@UAAXVSymbol@@@Z"
 }

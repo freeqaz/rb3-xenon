@@ -308,9 +308,11 @@ BandList.cpp:
 	.text       start:0x8268C920 end:0x8268C974
 
 VocalTrackDir.cpp:
+	.pdata      start:0x821F91E8 end:0x821F9690
 	.pdata      start:0x821F9BF0 end:0x821F9BF8
 	.pdata      start:0x821F9CC8 end:0x821FA060
 	.pdata      start:0x82245030 end:0x82245038
+	.text       start:0x822ECC48 end:0x822EFB5C
 	.text       start:0x822F5120 end:0x822F5410
 	.text       start:0x822F5B18 end:0x822FAFEC
 	.text       start:0x827F4778 end:0x827F4910
