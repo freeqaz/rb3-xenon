@@ -3089,6 +3089,10 @@ band3/meta_band/EventDialogPanel.cpp:
 	.pdata      start:0x82229A80 end:0x82229C18
 	.text       start:0x8261DFE0 end:0x8261F938
 
+band3/meta_band/SetlistToStorePanel.cpp:
+	.pdata      start:0x8222C218 end:0x8222C250
+	.text       start:0x82643310 end:0x826436D8
+
 band3/meta_band/ManageBandPanel.cpp:
 	.pdata      start:0x8222A178 end:0x8222A3D8
 	.text       start:0x82624748 end:0x82626A3C

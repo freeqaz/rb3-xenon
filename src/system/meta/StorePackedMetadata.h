@@ -66,6 +66,9 @@ public:
             return table->mNonLocalized.GetString(idx - 1);
     }
 
+    void AddSetlistOffer(int);
+    void ClearSetlistOffers();
+
     unsigned int mFlags;                // 0x1c
     int mLoadingState;                  // 0x20
     int mContentSize;                   // 0x24
