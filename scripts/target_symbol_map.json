@@ -4927,7 +4927,6 @@
  "0x823e5d70": "??1?$vector@VCustomPlaylist@@V?$StlNodeAlloc@VCustomPlaylist@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x823e6b90": "__unwind$224196",
  "0x823e6f10": "??_GStoreOffer@@UAAPAXI@Z",
- "0x823e8cc8": "__unwind$176976",
  "0x823e9d00": "?_M_fill_insert_aux@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@AAAXPADIABDABU__false_type@2@@Z",
  "0x823ea1c8": "?_M_fill_insert@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVColor@Hmx@@IABV34@@Z",
  "0x823ea2a8": "??_GThreeDSound@@UAAPAXI@Z",
