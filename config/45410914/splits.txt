@@ -1254,9 +1254,15 @@ CharClipSet.cpp:
 	.text       start:0x823D0640 end:0x823D3294
 
 MidiParser.cpp:
+	.pdata      start:0x822440B0 end:0x82244118
+	.pdata      start:0x82244118 end:0x82244230
+	.pdata      start:0x82244238 end:0x822442B8
 	.pdata      start:0x822442B8 end:0x822442C0
 	.pdata      start:0x822442D8 end:0x822442E0
 	.pdata      start:0x822442E0 end:0x82244768
+	.text       start:0x827E4098 end:0x827E4858
+	.text       start:0x827E487C end:0x827E5D88
+	.text       start:0x827E5F30 end:0x827E6530
 	.text       start:0x827E6530 end:0x827E658C
 	.text       start:0x827E6590 end:0x827E6598
 	.text       start:0x827E6780 end:0x827E6890
@@ -3928,10 +3934,12 @@ DataFile.cpp:
 	.pdata      start:0x82216310 end:0x82216318
 	.pdata      start:0x82217830 end:0x82217838
 	.pdata      start:0x8223D380 end:0x8223D550
+	.pdata      start:0x8223D550 end:0x8223D698
 	.text       start:0x824F88D8 end:0x824F892C
 	.text       start:0x824F9188 end:0x824F91DC
 	.text       start:0x8250B138 end:0x8250B170
 	.text       start:0x8276A758 end:0x8276C6CC
+	.text       start:0x8276C6CC end:0x8276D858
 
 system/rnddx9/ShaderMgr.cpp:
 	.pdata      start:0x8223A490 end:0x8223A698

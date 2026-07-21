@@ -19140,5 +19140,7 @@
  "0x826d5dc8": "?SetSecondaryStateLevel@TrackerPlayerDisplay@@QBAXH@Z",
  "0x826d5f78": "?RemotePlayerDisplayMsg@TrackerPlayerDisplay@@QBAXHHH@Z",
  "0x822fb198": "?Reset@VocalTrackDir@@UAAXXZ",
- "0x822fb348": "?GetLyricAlpha@VocalTrackDir@@QBAMH@Z"
+ "0x822fb348": "?GetLyricAlpha@VocalTrackDir@@QBAMH@Z",
+ "0x827e5318": "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
+ "0x827e64b8": "?StaticClassName@MidiParser@@SA?AVSymbol@@XZ"
 }
