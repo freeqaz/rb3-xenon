@@ -5374,10 +5374,13 @@ GemPlayer.cpp:
 	.pdata      start:0x82233F78 end:0x82233F80
 	.pdata      start:0x82233FB0 end:0x82233FB8
 	.pdata      start:0x82233FD8 end:0x82233FE0
+	.pdata      start:0x82233FE0 end:0x82234130
 	.pdata      start:0x82234130 end:0x82234288
 	.pdata      start:0x82234320 end:0x82234328
+	.pdata      start:0x82234328 end:0x82234410
 	.pdata      start:0x82234410 end:0x82234418
 	.pdata      start:0x82234440 end:0x82234448
+	.pdata      start:0x82234448 end:0x82234690
 	.text       start:0x826A7558 end:0x826A788C
 	.text       start:0x826BBF48 end:0x826BBFFC
 	.text       start:0x826BC058 end:0x826BC130
@@ -5396,10 +5399,13 @@ GemPlayer.cpp:
 	.text       start:0x826BE1D8 end:0x826BE244
 	.text       start:0x826BE6D8 end:0x826BE840
 	.text       start:0x826BEE10 end:0x826BEEE0
+	.text       start:0x826BEEE0 end:0x826C0234
 	.text       start:0x826C0238 end:0x826C1760
 	.text       start:0x826C26A8 end:0x826C2778
+	.text       start:0x826C2780 end:0x826C3D08
 	.text       start:0x826C3D08 end:0x826C3D84
 	.text       start:0x826C44F8 end:0x826C5AE4
+	.text       start:0x826C5AE4 end:0x826C75DC
 
 TrackerManager.cpp:
 	.pdata      start:0x82231850 end:0x82231858
