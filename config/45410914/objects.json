@@ -1437,6 +1437,15 @@
     ]
    },
    "network/Platform/StringConversion.cpp": "NonMatching",
+   "network/Platform/MemoryManager.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/Od",
+     "/Oi-",
+     "/EHs-c-",
+     "/Ob1"
+    ]
+   },
    "network/Platform/BandwidthCounter.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

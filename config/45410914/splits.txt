@@ -4897,6 +4897,10 @@ network/Plugins/Checksum/MD5/MD5.cpp:
 	.pdata      start:0x82259A18 end:0x82259A40
 	.text       start:0x82B438C8 end:0x82B4547C
 
+network/Platform/MemoryManager.cpp:
+	.pdata      start:0x822508F8 end:0x82250950
+	.text       start:0x82A6D428 end:0x82A6DC40
+
 network/Platform/BandwidthCounter.cpp:
 	.pdata      start:0x82256138 end:0x82256148
 	.text       start:0x82AF71D8 end:0x82AF7394
