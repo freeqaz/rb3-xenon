@@ -99,7 +99,6 @@ RockCentral.cpp:
 	.pdata      start:0x82228980 end:0x82228998
 	.pdata      start:0x82234E88 end:0x82234E90
 	.pdata      start:0x82235900 end:0x82235908
-	.pdata      start:0x82235BE0 end:0x82235BE8
 	.pdata      start:0x82236D30 end:0x82236D38
 	.text       start:0x82286D88 end:0x82286DDC
 	.text       start:0x82286E98 end:0x82286EEC
@@ -156,7 +155,6 @@ RockCentral.cpp:
 	.text       start:0x8260E6AC end:0x8260E70C
 	.text       start:0x826D0E30 end:0x826D0F50
 	.text       start:0x826D9938 end:0x826D9CFC
-	.text       start:0x826DCE10 end:0x826DCF24
 	.text       start:0x826F4EA0 end:0x826F5018
 
 BandScoreboard.cpp:
@@ -5792,9 +5790,17 @@ AccuracyTracker.cpp:
 	.pdata      start:0x82236078 end:0x822360C8
 	.text       start:0x826E2438 end:0x826E29E0
 
+DeployCountTracker.cpp:
+	.pdata      start:0x82235B40 end:0x82235B78
+	.pdata      start:0x82235B80 end:0x82235B88
+	.pdata      start:0x82235B98 end:0x82235C18
+	.text       start:0x826DC128 end:0x826DC4BC
+	.text       start:0x826DC51C end:0x826DC598
+	.text       start:0x826DC6C4 end:0x826DD2F4
+
 band3/game/PerfectSectionTracker.cpp:
-	.pdata      start:0x82235A38 end:0x82235B78
-	.text       start:0x826DAB90 end:0x826DC4BC
+	.pdata      start:0x82235A38 end:0x82235B40
+	.text       start:0x826DAB90 end:0x826DC128
 
 band3/game/MultiplayerAnalyzer.cpp:
 	.pdata      start:0x82234B50 end:0x82234C00

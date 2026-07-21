@@ -18391,5 +18391,19 @@
  "0x826e1174": "__unwind$215144",
  "0x826e11a0": "??_GPerfectOverdriveTracker@@UAAPAXI@Z",
  "0x826e12b0": "?TranslateRelativeTargets@PerfectOverdriveTracker@@UAAXXZ",
- "0x826e18a0": "?Poll_@PerfectOverdriveTracker@@UAAXM@Z"
+ "0x826e18a0": "?Poll_@PerfectOverdriveTracker@@UAAXM@Z",
+ "0x826dc130": "?ConfigureTrackerSpecificData@DeployCountTracker@@UAAXPBVDataArray@@@Z",
+ "0x826dc218": "?GetCurrentValue@DeployCountTracker@@UBAMXZ",
+ "0x826dc238": "?GetPlayerContributionString@DeployCountTracker@@UBA?AVString@@VSymbol@@@Z",
+ "0x826dc390": "?TranslateRelativeTargets@DeployCountTracker@@UAAXXZ",
+ "0x826dc520": "?_M_create_node@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@2@@Z",
+ "0x826dc7a8": "?SavePlayerStats@DeployCountTracker@@UBAXXZ",
+ "0x826dcb00": "??1DeployCountTracker@@UAA@XZ",
+ "0x826dcb80": "??0DeployCountTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
+ "0x826dcc70": "??A?$map@UTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAVPlayerDeployData@DeployCountTracker@@ABUTrackerPlayerID@@@Z",
+ "0x826dcd08": "?FirstFrame_@DeployCountTracker@@UAAXM@Z",
+ "0x826dce10": "?LocalDeploy@DeployCountTracker@@QAAXABUTrackerPlayerID@@@Z",
+ "0x826dcfe8": "?Poll_@DeployCountTracker@@UAAXM@Z",
+ "0x826dcc20": "??_GDeployCountTracker@@UAAPAXI@Z",
+ "0x826dc8a0": "?insert_unique@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBUTrackerPlayerID@@VPlayerDeployData@DeployCountTracker@@@2@@Z"
 }

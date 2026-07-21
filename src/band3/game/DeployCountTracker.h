@@ -33,8 +33,12 @@ public:
     void RemoteDeploy(Player *);
     void LocalDeploy(const TrackerPlayerID &);
 
-    std::map<TrackerPlayerID, PlayerDeployData> mDeployDataMap; // 0x58
-    int mDeployCount; // 0x70
-    bool mRequireFullEnergy; // 0x74
-    bool mRequireMaxMultiplier; // 0x75
+    // TU5/Xbox layout (verified in Ghidra: ctor inits rb_tree at 0x64,
+    // mDeployCount at 0x7c, flags at 0x80/0x81). The in-tree base Tracker
+    // already ends at 0x64, so no padding is needed vs the rb3-Wii oracle's
+    // 0x58 comment.
+    std::map<TrackerPlayerID, PlayerDeployData> mDeployDataMap; // 0x64
+    int mDeployCount; // 0x7c
+    bool mRequireFullEnergy; // 0x80
+    bool mRequireMaxMultiplier; // 0x81
 };
