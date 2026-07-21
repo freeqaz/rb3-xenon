@@ -1323,6 +1323,8 @@
     ]
    },
    "band3/tour/QuestJournal.cpp": "NonMatching",
+   "band3/tour/GigFilter.cpp": "NonMatching",
+   "band3/tour/FixedSetlist.cpp": "NonMatching",
    "band3/tour/QuestManager.cpp": "NonMatching",
    "band3/tour/TourCondition.cpp": {
     "status": "NonMatching",
