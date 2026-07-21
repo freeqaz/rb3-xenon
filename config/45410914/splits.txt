@@ -5555,33 +5555,8 @@ CustomizePanel.cpp:
 	.text       start:0x82617E28 end:0x82617E70
 
 TrackWatcherImpl.cpp:
-	.pdata      start:0x8223F600 end:0x8223F608
-	.pdata      start:0x8223F618 end:0x8223F620
-	.pdata      start:0x8223F620 end:0x8223F628
-	.pdata      start:0x8223F660 end:0x8223F668
-	.pdata      start:0x8223F668 end:0x8223F670
-	.pdata      start:0x8223F698 end:0x8223F6A0
-	.pdata      start:0x8223F6E0 end:0x8223F6E8
-	.pdata      start:0x8223F6F0 end:0x8223F6F8
-	.pdata      start:0x8223F6F8 end:0x8223F700
-	.pdata      start:0x8223F718 end:0x8223F720
-	.pdata      start:0x8223F720 end:0x8223F728
-	.pdata      start:0x8223F738 end:0x8223F740
-	.pdata      start:0x8223F740 end:0x8223FB80
-	.text       start:0x82794740 end:0x8279478C
-	.text       start:0x827948A8 end:0x82794914
-	.text       start:0x82794918 end:0x82794984
-	.text       start:0x82794C30 end:0x82794C5C
-	.text       start:0x82794F60 end:0x8279501C
-	.text       start:0x82795020 end:0x82795184
-	.text       start:0x82795438 end:0x827954B0
-	.text       start:0x82795A70 end:0x82795C30
-	.text       start:0x82795E60 end:0x8279602C
-	.text       start:0x82796030 end:0x827962FC
-	.text       start:0x82796638 end:0x827967EC
-	.text       start:0x827967F0 end:0x82796AD8
-	.text       start:0x82796C10 end:0x82796C48
-	.text       start:0x82796C48 end:0x8279B778
+	.pdata      start:0x8223F600 end:0x8223FB80
+	.text       start:0x82794740 end:0x8279B778
 
 SongParser.cpp:
 	.pdata      start:0x8223E790 end:0x8223E798
