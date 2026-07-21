@@ -86,7 +86,7 @@ BandCharacter::BandCharacter()
       unk650(this, kObjListNoNull), unk660(this, kObjListNoNull),
       unk670(this, kObjListNoNull), unk680(this, 0), unk68c(this, 0), unk698(this, 0),
       unk6a4(this, 0), unk6b0(this, 0), mUseMicStandClips(0), unk6bd(1), unk6c0(this, 0),
-      mInTourEnding(0), unk6d8(0), unk6ec(0), unk738(0), unk73c(this, kObjListNoNull),
+      mInTourEnding(0), unk6ec(0), unk6d8(0), unk738(0), unk73c(this, kObjListNoNull),
       unk74c(this, kObjListNoNull) {
     mGroupName[0] = 0;
     mOverrideGroup[0] = 0;

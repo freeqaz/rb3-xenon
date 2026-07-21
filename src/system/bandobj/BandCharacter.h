@@ -235,13 +235,14 @@ public:
     ObjPtr<BandCharacter> unk6c0; // 0x6c0
     std::list<String> mDircuts; // 0x6cc
     bool mInTourEnding; // 0x6d4
-    float unk6d8; // 0x6d8
-    std::list<int> mCompressedTextureIDs; // 0x6dc
-    std::list<BoneState> unk6e4; // 0x6e4
-    CharDriver *unk6ec; // 0x6ec
-    int unk6f0; // 0x6f0
-    char unk6f4[64]; // 0x6f4
-    unsigned int unk738; // 0x734 (retail TU5: flags precede the waypoint — OnPreClear stw 0x7c4 proof)
+    std::list<int> mCompressedTextureIDs; // 0x768 (retail: precedes unk6d8; see below)
+    std::list<BoneState> unk6e4; // 0x770
+    CharDriver *unk6ec; // 0x778
+    int unk6f0; // 0x77c
+    char unk6f4[64]; // 0x780
+    float unk6d8; // 0x7c0 (retail TU5: unk6d8 sits AFTER unk6f4[64], just before the
+                  // flags — SaveBoneAndChildren/TextureCompressed -4 offset proof)
+    unsigned int unk738; // 0x7c4 (retail TU5: flags precede the waypoint — OnPreClear stw 0x7c4 proof)
     Waypoint *unk734; // 0x738
     ObjPtrList<RndMesh> unk73c; // 0x73c
     ObjPtrList<RndMesh> unk74c; // 0x74c
