@@ -221,7 +221,8 @@ void CharacterCreatorPanel::HandleGenderChanged() {
     mGenderChanged = true;
     mFaceTypeProvider->Update(mGender);
     mEyebrowsProvider->Update(mGender);
-    mFaceOptionsProvider->mGender = mGender;
+    Symbol gender = mGender;
+    mFaceOptionsProvider->mGender = gender;
     PrefabMgr *pPrefabMgr = PrefabMgr::GetPrefabMgr();
     MILO_ASSERT(pPrefabMgr, 0x1A3);
     PrefabMgr::CharCreatorPrefab *pCharCreatorPrefab =
