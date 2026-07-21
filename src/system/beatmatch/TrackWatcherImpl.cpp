@@ -402,7 +402,7 @@ void TrackWatcherImpl::CheckForRolls(float ms, int tick) {
     if (mRollActiveSlots != 0) {
         for (int i = 0; i < mRollSlotsLastSwingMs.size(); i++) {
             int mask = 1 << i;
-            if ((mask & mRollActiveSlots)
+            if ((mRollActiveSlots & (1 << i))
                 && (ms > mRollIntervalMs + mRollSlotsLastSwingMs[i])) {
                 mRollActiveSlots &= ~mask;
             }
