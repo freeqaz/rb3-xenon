@@ -5405,6 +5405,7 @@ MetaPerformer.cpp:
 	.pdata      start:0x8221EFB8 end:0x8221EFC0
 	.pdata      start:0x8221F0F0 end:0x8221F0F8
 	.pdata      start:0x8221F240 end:0x8221F248
+	.pdata      start:0x8221F248 end:0x8221F450
 	.pdata      start:0x8221F450 end:0x8221F458
 	.text       start:0x82466000 end:0x8246603C
 	.text       start:0x8257B980 end:0x8257B9B0
@@ -5412,6 +5413,7 @@ MetaPerformer.cpp:
 	.text       start:0x8257E058 end:0x8257E0AC
 	.text       start:0x8257F248 end:0x8257F2AC
 	.text       start:0x825807B8 end:0x82580820
+	.text       start:0x82580820 end:0x82582DFC
 	.text       start:0x82582E08 end:0x82584B58
 
 Performer.cpp:

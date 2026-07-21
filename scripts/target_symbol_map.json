@@ -7617,8 +7617,6 @@
  "0x8257fd70": "?push_back@?$vector@V?$ObjPtr@VTask@@@@V?$StlNodeAlloc@V?$ObjPtr@VTask@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$ObjPtr@VTask@@@@@Z",
  "0x8257fe60": "??1LayerArray@HamDriver@@UAA@XZ",
  "0x8258049c": "__unwind$142472",
- "0x825822dc": "__unwind$197689",
- "0x82582c3c": "__unwind$113122",
  "0x82588d68": "?NumMeshes@FontMap3d@RndText@@UBAHXZ",
  "0x8258b4c8": "??$for_each@PAPAVNavListSort@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVNavListSort@@0U1@@Z",
  "0x8258b8e0": "??$__uninitialized_copy@PAVArchiveSkeleton@@PAV1@@stlpmtx_std@@YAPAVArchiveSkeleton@@PAV1@00ABU__false_type@0@@Z",
@@ -18970,5 +18968,14 @@
  "0x82616718": "?FinishPatchEdit@CustomizePanel@@QAAXXZ",
  "0x82616768": "?OnMsg@CustomizePanel@@QAA?AVDataNode@@ABVUIComponentScrollMsg@@@Z",
  "0x82616cc8": "?SetCustomizeState@CustomizePanel@@QAAXW4CustomizeState@1@@Z",
- "0x826178c0": "?LeaveState@CustomizePanel@@QAA?AVDataNode@@_N@Z"
+ "0x826178c0": "?LeaveState@CustomizePanel@@QAA?AVDataNode@@_N@Z",
+ "0x82580820": "?SetSongs@MetaPerformer@@QAAXABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x825808b8": "?SetSongs@MetaPerformer@@QAAXABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82580998": "?SetSong@MetaPerformer@@QAAXVSymbol@@@Z",
+ "0x82580a48": "?SetSongs@MetaPerformer@@QAAXPAVDataArray@@@Z",
+ "0x82581cf8": "?PotentiallyUpdateLeaderboards@MetaPerformer@@QAAXAAV?$vector@PAVBandUser@@V?$StlNodeAlloc@PAVBandUser@@@stlpmtx_std@@@stlpmtx_std@@_NVSymbol@@ABVBandStatsInfo@@@Z",
+ "0x82581f50": "??_GBandStatsInfo@@UAAPAXI@Z",
+ "0x82582550": "?SetSetlist@MetaPerformer@@QAAXPBVSavedSetlist@@@Z",
+ "0x825826e8": "?Init@MetaPerformer@@SAXXZ",
+ "0x82582778": "??_GMetaPerformer@@UAAPAXI@Z"
 }
