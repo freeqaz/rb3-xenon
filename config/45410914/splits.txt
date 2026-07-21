@@ -1393,12 +1393,14 @@ UI.cpp:
 	.pdata      start:0x82245DC0 end:0x82245DC8
 	.pdata      start:0x82245E60 end:0x82245E68
 	.pdata      start:0x82245E90 end:0x82245E98
+	.pdata      start:0x82245E98 end:0x82246018
 	.pdata      start:0x82246018 end:0x82246128
 	.text       start:0x826FC4E8 end:0x826FC540
 	.text       start:0x828027C0 end:0x82802838
 	.text       start:0x82802840 end:0x82802900
 	.text       start:0x82802F28 end:0x82803030
 	.text       start:0x828033C8 end:0x82803494
+	.text       start:0x82803494 end:0x82804DF4
 	.text       start:0x82804E00 end:0x82806414
 
 system/rndobj/Utl.cpp:

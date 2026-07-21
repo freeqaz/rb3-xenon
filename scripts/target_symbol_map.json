@@ -19046,5 +19046,12 @@
  "0x826c38d0": "??_EGemPlayer@@WDAA@AAPAXI@Z",
  "0x826c38d8": "??_EGemPlayer@@$4PPPPPPPM@EEA@AAPAXI@Z",
  "0x826c61f0": "?Handle@GemPlayer@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x826c6208": "?Miss@GemPlayer@@UAAXHHMHHW4GemHitFlags@@@Z"
+ "0x826c6208": "?Miss@GemPlayer@@UAAXHHMHHW4GemHitFlags@@@Z",
+ "0x82803890": "?PopScreen@UIManager@@UAAXPAVUIScreen@@@Z",
+ "0x82803bd0": "?OnGotoScreen@UIManager@@AAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82803cb8": "?OnGoBackScreen@UIManager@@AAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82804588": "?SetType@Object@Hmx@@UAAXVSymbol@@@Z",
+ "0x82804720": "??1UIManager@@UAA@XZ",
+ "0x82804850": "?OnForeachCurrentScreen@UIManager@@AAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82804a80": "??$_S_sort@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@UCompare@1@@stlpmtx_std@@YAXAAV?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@0@UCompare@UIResource@@@Z"
 }
