@@ -5017,7 +5017,9 @@ FlowSound.cpp:
 
 band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x822200D8 end:0x82220350
+	.pdata      start:0x82220350 end:0x82220410
 	.text       start:0x8258EF80 end:0x8259217C
+	.text       start:0x82592180 end:0x82592D18
 
 band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.pdata      start:0x8222CD80 end:0x8222CEA8
@@ -5525,6 +5527,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82216308 end:0x82216310
 	.pdata      start:0x822211A0 end:0x822211A8
 	.pdata      start:0x822211C8 end:0x822211D0
+	.pdata      start:0x82221208 end:0x82221348
 	.pdata      start:0x82221348 end:0x822216F8
 	.pdata      start:0x82221798 end:0x822217A0
 	.text       start:0x82307B78 end:0x82307CF0
@@ -5534,6 +5537,7 @@ BandSongMetadata.cpp:
 	.text       start:0x8259E788 end:0x8259E844
 	.text       start:0x8259E928 end:0x8259E994
 	.text       start:0x8259EC40 end:0x8259EC50
+	.text       start:0x8259EC58 end:0x8259FC4C
 	.text       start:0x8259FC50 end:0x825A3648
 	.text       start:0x825A3F58 end:0x825A42BC
 
@@ -6113,7 +6117,9 @@ AccomplishmentSongConditional.cpp:
 
 AppLabel.cpp:
 	.pdata      start:0x82223C00 end:0x82223C08
+	.pdata      start:0x82223C08 end:0x82223CD8
 	.text       start:0x825C54D8 end:0x825C5538
+	.text       start:0x825C5538 end:0x825C5EF8
 
 BandSongMgr.cpp:
 	.pdata      start:0x8223DC40 end:0x8223DC48
