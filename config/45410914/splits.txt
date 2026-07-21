@@ -5897,14 +5897,8 @@ WaitingUserGate.cpp:
 	.text       start:0x825ADA80 end:0x825ADAD8
 
 OvershellPanel.cpp:
-	.pdata      start:0x822228C8 end:0x822228D0
-	.pdata      start:0x82222978 end:0x82222980
-	.pdata      start:0x82222D20 end:0x82222D28
-	.text       start:0x825B2788 end:0x825B2798
-	.text       start:0x825B2D40 end:0x825B2D88
-	.text       start:0x825B3818 end:0x825B38BC
-	.text       start:0x825B4A4C end:0x825B4AA0
-	.text       start:0x825B8428 end:0x825B9AB0
+	.pdata      start:0x82222868 end:0x82222FB8
+	.text       start:0x825B2788 end:0x825BA6C8
 
 MetaPanel.cpp:
 	.pdata      start:0x8221E3E0 end:0x8221E4D0
