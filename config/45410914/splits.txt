@@ -4444,6 +4444,10 @@ CharNeckTwist.cpp:
 	.text       start:0x823C7768 end:0x823C7848
 	.text       start:0x8245FAE8 end:0x8245FE3C
 
+EnvAnim.cpp:
+	.pdata      start:0x82210858 end:0x822108F8
+	.text       start:0x8248696C end:0x8248757C
+
 MatAnim.cpp:
 	.pdata      start:0x821F6F08 end:0x821F6F10
 	.pdata      start:0x8220E6E0 end:0x8220E6E8

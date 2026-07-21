@@ -1,4 +1,7 @@
 {
+ "0x82486b60": "?Print@RndEnvAnim@@UAAXXZ",
+ "0x82486c90": "?Handle@RndEnvAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82487138": "??0RndEnvAnim@@IAA@XZ",
  "0x8277a6d0": "?RGGetChordName@@YAXPADHABVGameGem@@HH_N@Z",
  "0x8277b028": "?RGGetNoteName@@YAPBDEH@Z",
  "0x8277b080": "?RGGetFretLabelInfo@@YAXABVGameGem@@AAH1_N@Z",

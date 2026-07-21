@@ -454,6 +454,7 @@
    },
    "system/char/CharNeckTwist.cpp": "NonMatching",
    "system/rndobj/MatAnim.cpp": "NonMatching",
+   "system/rndobj/EnvAnim.cpp": "NonMatching",
    "system/rndobj/Ribbon.cpp": "NonMatching",
    "system/rndobj/Set.cpp": "NonMatching",
    "system/rndobj/Utl.cpp": "NonMatching",
