@@ -13,6 +13,7 @@
  "0x822f48f8": "?SetType@PitchArrow@@UAAXVSymbol@@@Z",
  "0x822f4a68": "?SetType@PitchArrow@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x822f4a88": "?Copy@PitchArrow@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82326508": "?RefreshLayer@LayerDir@@QAAXAAVLayer@1@_N@Z",
  "0x823286c0": "?resize@?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVLayer@LayerDir@@@Z",
  "0x82328c28": "??$_Copy_Construct@VLayer@LayerDir@@@stlpmtx_std@@YAXPAVLayer@LayerDir@@ABV12@@Z",
  "0x82328d80": "?insert@?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VLayer@LayerDir@@U?$_Nonconst_traits@VLayer@LayerDir@@@stlpmtx_std@@@2@U32@ABVLayer@LayerDir@@@Z",
