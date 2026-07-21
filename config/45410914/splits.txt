@@ -398,6 +398,7 @@ StreakMeter.cpp:
 	.text       start:0x822D8630 end:0x822D8690
 	.text       start:0x822D8690 end:0x822D8704
 	.text       start:0x822DAAF0 end:0x822DB298
+	.text       start:0x822D7298 end:0x822D7C28
 
 CriticalUserListener.cpp:
 	.pdata      start:0x82224F78 end:0x82225020
@@ -822,6 +823,7 @@ UIScreen.cpp:
 	.pdata      start:0x82244BC8 end:0x82244D58
 	.text       start:0x826FC568 end:0x826FC5C0
 	.text       start:0x827EFF08 end:0x827F1AC0
+	.text       start:0x827F1AC0 end:0x827F22A4
 
 UIPanel.cpp:
 	.pdata      start:0x82246C58 end:0x82246E38
@@ -1091,6 +1093,7 @@ ContentMgr_Xbox.cpp:
 	.pdata      start:0x82218C30 end:0x82218E10
 	.text       start:0x824089D0 end:0x82408A28
 	.text       start:0x8251F8A0 end:0x825218A0
+	.text       start:0x82408A28 end:0x824090B0
 
 SynchronizationEvent.cpp:
 	.pdata      start:0x822192D0 end:0x822192D8
@@ -1684,6 +1687,9 @@ Character.cpp:
 	.text       start:0x82374A08 end:0x82374A68
 	.text       start:0x82374C98 end:0x82374D14
 	.text       start:0x82374D20 end:0x82374D70
+	.text       start:0x82371A48 end:0x82371EAC
+	.text       start:0x82371F14 end:0x82372928
+	.text       start:0x82374D70 end:0x823754AC
 
 SampleInst.cpp:
 	.pdata      start:0x821F4848 end:0x821F4850
@@ -2899,6 +2905,7 @@ File.cpp:
 	.text       start:0x824111D0 end:0x8241126C
 	.text       start:0x825164A8 end:0x82517DF8
 	.text       start:0x82518340 end:0x82518354
+	.text       start:0x82517DF8 end:0x8251833C
 
 DanceRemixer.cpp:
 	.pdata      start:0x82218FF0 end:0x82218FF8
@@ -3222,6 +3229,8 @@ TransAnim.cpp:
 	.text       start:0x8245E930 end:0x8245EA0C
 	.text       start:0x82460340 end:0x824603F0
 	.text       start:0x82687D48 end:0x82687DAC
+	.text       start:0x824603F0 end:0x82461398
+	.text       start:0x8245E358 end:0x8245E92C
 
 PropKeys.cpp:
 	.pdata      start:0x821F1868 end:0x821F1870
@@ -5272,6 +5281,7 @@ band3/meta_band/ClosetMgr.cpp:
 band3/game/GemTrainerPanel.cpp:
 	.pdata      start:0x82232F30 end:0x82232F38
 	.text       start:0x826AC318 end:0x826AC678
+	.text       start:0x826AC678 end:0x826ADD60
 
 band3/game/Tracker.cpp:
 	.pdata      start:0x82234E48 end:0x82234E50
@@ -5332,6 +5342,7 @@ TrackDir.cpp:
 	.text       start:0x827DD108 end:0x827DD114
 	.text       start:0x827DD118 end:0x827DDDD4
 	.text       start:0x827DDDD8 end:0x827E06EC
+	.text       start:0x827DCA78 end:0x827DD0F8
 
 TrackWidget.cpp:
 	.pdata      start:0x82243D58 end:0x82243D60
@@ -5406,6 +5417,7 @@ band3/game/Game.cpp:
 	.text       start:0x82678E40 end:0x8267959C
 	.text       start:0x82679700 end:0x82679868
 	.text       start:0x8267C738 end:0x8267D478
+	.text       start:0x826758E8 end:0x82675DDC
 
 GemSmasher.cpp:
 	.pdata      start:0x8225E6B0 end:0x8225E720
@@ -5438,6 +5450,7 @@ band3/meta_band/SaveLoadManager.cpp:
 UIStats.cpp:
 	.pdata      start:0x8221CCF8 end:0x8221CD00
 	.text       start:0x8255F5C8 end:0x8255F61C
+	.text       start:0x8255F620 end:0x825603FC
 
 OvershellSlotState.cpp:
 	.pdata      start:0x8222E168 end:0x8222E348
@@ -5674,6 +5687,7 @@ TourProgress.cpp:
 	.text       start:0x823625E0 end:0x823625F8
 	.text       start:0x823630F8 end:0x82363B1C
 	.text       start:0x823643E8 end:0x82364424
+	.text       start:0x82361C9C end:0x8236238C
 
 AccomplishmentPanel.cpp:
 	.pdata      start:0x82219400 end:0x82219408
@@ -5994,6 +6008,8 @@ Tour.cpp:
 	.text       start:0x8235C020 end:0x8235C07C
 	.text       start:0x8235CB54 end:0x8235D688
 	.text       start:0x8235D688 end:0x8235E42C
+	.text       start:0x8235BBF8 end:0x8235C01C
+	.text       start:0x8235C080 end:0x8235C538
 
 TourBand.cpp:
 	.text       start:0x82B79150 end:0x82B791A0
@@ -6084,6 +6100,7 @@ SongPreview.cpp:
 	.text       start:0x827A53A0 end:0x827A5410
 	.text       start:0x827A5668 end:0x827A578C
 	.text       start:0x827A6128 end:0x827A6200
+	.text       start:0x827A5790 end:0x827A6124
 
 StandardStream.cpp:
 	.pdata      start:0x822378F8 end:0x82237900
@@ -6321,6 +6338,7 @@ SongSortByPlays.cpp:
 SongSortByRank.cpp:
 	.pdata      start:0x8222E060 end:0x8222E158
 	.text       start:0x8265DF88 end:0x8265EEEC
+	.text       start:0x8265D8E8 end:0x8265DF84
 
 SongSortByRecent.cpp:
 	.pdata      start:0x8222DD38 end:0x8222DE78
