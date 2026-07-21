@@ -5808,9 +5808,11 @@ GameConfig.cpp:
 
 NextSongPanel.cpp:
 	.pdata      start:0x8222C3C0 end:0x8222C3C8
+	.pdata      start:0x8222C3C8 end:0x8222CD68
 	.pdata      start:0x8222CD68 end:0x8222CD70
 	.pdata      start:0x8222CD70 end:0x8222CD80
 	.text       start:0x82644E38 end:0x8264519C
+	.text       start:0x8264519C end:0x8264BBE0
 	.text       start:0x8264BBE0 end:0x8264BCDC
 	.text       start:0x8264BCE8 end:0x8264BD60
 

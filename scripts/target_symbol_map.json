@@ -3206,6 +3206,8 @@
  "0x825b8428": "?Handle@OvershellPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82622f20": "?Handle@MainHubPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82644e38": "?Handle@NextSongPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82645288": "??$DeleteAll@V?$vector@PAVUILabel@@V?$StlNodeAlloc@PAVUILabel@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVUILabel@@V?$StlNodeAlloc@PAVUILabel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x826452e0": "?Exit@NextSongPanel@@UAAXXZ",
  "0x825f6b00": "?Handle@CampaignSongInfoPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8268a0f0": "?Handle@GameConfig@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8269b830": "?Handle@Band@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
