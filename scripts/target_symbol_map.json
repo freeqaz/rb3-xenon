@@ -5937,7 +5937,6 @@
  "0x824765c0": "??9Matrix3@Hmx@@QBA_NABV01@@Z",
  "0x82476690": "?Print@RndFlare@@UAAXXZ",
  "0x824767b0": "?CalcScale@RndFlare@@IAAXXZ",
- "0x82476e8c": "__unwind$138949",
  "0x82477f50": "??_GRndFlare@@UAAPAXI@Z",
  "0x824781a0": "?SetTex@RndMovie@@UAAXPAVRndTex@@@Z",
  "0x824782c8": "?Poll@HamScrollSpeedIndicator@@UAAXXZ",
@@ -19151,5 +19150,17 @@
  "0x822e3f70": "?KeyMissLeft@GemTrackDir@@UAAXXZ",
  "0x822e3f90": "?SetUnisonProgress@GemTrackDir@@UAAXM@Z",
  "0x822e3fa8": "?GetCurrentChordLabelPosOffset@GemTrackDir@@UBAMXZ",
- "0x822e4460": "?GetRate@RndAnimatable@@QAA?AW4Rate@1@XZ"
+ "0x822e4460": "?GetRate@RndAnimatable@@QAA?AW4Rate@1@XZ",
+ "0x823c5630": "?Handle@CharIKRod@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x823c5bc0": "??_GCharIKRod@@UAAPAXI@Z",
+ "0x823c5c08": "?PollDeps@CharIKRod@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
+ "0x82476cb8": "??0RndFlare@@IAA@XZ",
+ "0x82476f70": "?Highlight@RndFlare@@UAAXXZ",
+ "0x82477138": "??1RndFlare@@UAA@XZ",
+ "0x824776e0": "?Handle@RndFlare@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82477b10": "??_DRndFlare@@QAAXXZ",
+ "0x823cc720": "?OnMidiParser@CharDriverMidi@@IAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x823cc838": "?OnMidiParserFlags@CharDriverMidi@@IAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x823cc9e8": "?SyncProperty@CharDriverMidi@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x823ccbf8": "?Handle@CharDriverMidi@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }

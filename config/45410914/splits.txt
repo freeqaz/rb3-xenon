@@ -1000,8 +1000,10 @@ UIGuide.cpp:
 
 Flare.cpp:
 	.pdata      start:0x8220FAF8 end:0x8220FB10
+	.pdata      start:0x8220FB18 end:0x8220FBF8
 	.text       start:0x824764D0 end:0x824768E0
 	.text       start:0x82476A98 end:0x82476B04
+	.text       start:0x82476B08 end:0x82477F4C
 
 Debug.cpp:
 	.pdata      start:0x82217CC8 end:0x82217EA8
@@ -1041,8 +1043,10 @@ CharEyeDartRuleset.cpp:
 CharIKRod.cpp:
 	.pdata      start:0x82205F48 end:0x82205F60
 	.pdata      start:0x82205F78 end:0x82206018
+	.pdata      start:0x82206018 end:0x82206128
 	.text       start:0x823C4800 end:0x823C49D4
 	.text       start:0x823C4BC8 end:0x823C5568
+	.text       start:0x823C5568 end:0x823C687C
 
 CharSleeve.cpp:
 	.pdata      start:0x822069A8 end:0x82206A30
@@ -4212,7 +4216,9 @@ system/synth/FxSendBitCrush.cpp:
 
 CharDriverMidi.cpp:
 	.pdata      start:0x82206658 end:0x822066B0
+	.pdata      start:0x822066B0 end:0x82206830
 	.text       start:0x823CBF38 end:0x823CC5FC
+	.text       start:0x823CC608 end:0x823CDCF4
 
 CharIKSliderMidi.cpp:
 	.pdata      start:0x82206580 end:0x82206588
