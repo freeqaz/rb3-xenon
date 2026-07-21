@@ -11,7 +11,7 @@ deterministically.
 | Script | Role |
 |---|---|
 | `land.sh <worktree\|branch>` | Rebase one lane branch onto `main`, auto-resolving union files. Prints `READY:<branch>` (then `git merge --ff-only`) or `DEFER:<branch> <reason>`. |
-| `resolve_json_union.py <wt> <relpath>` | Dict-union of git stage-2+stage-3 for `scripts/target_symbol_map.json` / `config/45410914/objects.json` (ours-first, then new-from-theirs; order preserved). |
+| `resolve_json_union.py <wt> <relpath>` | **3-way** dict merge (stage 1 base / stage 2 ours=main / stage 3 theirs=worker) for `scripts/target_symbol_map.json` / `config/45410914/objects.json`. A side that matches base is unchanged; the diverging side wins — so main-side **deletions/re-points are respected** (a stale key a worker still carries is NOT resurrected). Both-changed-differently → **refuses** (exit 3 → land.sh DEFERs). Order preserved (main-first, then worker-new). Tests: `test_resolve_json_union.py`. |
 | `resolve_splits_union.py <wt>` | Line-union of `config/45410914/splits.txt` (ours + lines theirs added vs base). |
 
 ## Land sequence (per wave — see the full SOP)

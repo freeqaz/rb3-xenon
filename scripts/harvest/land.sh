@@ -50,8 +50,10 @@ while echo "$out" | grep -qi "conflict\|could not apply"; do
   if [ $tries -gt 5 ]; then git -C "$W" rebase --abort 2>/dev/null; echo "DEFER:$b cascade"; exit 2; fi
   for f in scripts/target_symbol_map.json config/45410914/objects.json; do
     git -C "$W" status --short "$f" 2>/dev/null | grep -q "^UU" && {
-      # resolver output (incl. CONFLICT warnings) goes to stderr, not /dev/null —
-      # a swallowed keep-theirs warning is how the 2026-07-01 zeroed wave slipped by
+      # resolver output goes to stderr, not /dev/null. The resolver is 3-way
+      # (respects main-side deletions/re-points vs merge-base — no resurrection)
+      # and exits NONZERO on a real both-changed-differently conflict; that
+      # falls through to DEFER here (manual resolve) instead of silent-picking.
       python3 "$HERE/resolve_json_union.py" "$W" "$f" 1>&2 && git -C "$W" add "$f" \
         || { git -C "$W" rebase --abort; echo "DEFER:$b $f"; exit 2; }; }
   done
