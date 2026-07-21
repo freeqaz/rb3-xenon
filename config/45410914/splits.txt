@@ -6018,9 +6018,8 @@ LayerDir.cpp:
 	.text       start:0x823278F0 end:0x82329B14
 
 PitchArrow.cpp:
-	.pdata      start:0x821F98A0 end:0x821F98A8
-	.text       start:0x822F1FD8 end:0x822F2044
-	.text       start:0x822F2618 end:0x822F2758
+	.pdata      start:0x821F9888 end:0x821F9BF0
+	.text       start:0x822F1FD8 end:0x822F5120
 
 BandHighlight.cpp:
 	.pdata      start:0x821FE960 end:0x821FE968
