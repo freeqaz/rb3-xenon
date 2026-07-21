@@ -5827,8 +5827,8 @@ PerformanceData.cpp:
 	.text       start:0x82657E08 end:0x82657EC8
 
 PlayerLeaderboards.cpp:
-	.pdata      start:0x8222F760 end:0x8222F768
-	.text       start:0x82673338 end:0x82673390
+	.pdata      start:0x8222F760 end:0x8222F7F0
+	.text       start:0x82673338 end:0x82673B1C
 
 QuestManager.cpp:
 	.pdata      start:0x821FFD70 end:0x821FFD78
