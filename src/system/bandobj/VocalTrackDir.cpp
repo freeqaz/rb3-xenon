@@ -1008,8 +1008,7 @@ void VocalTrackDir::SetRange(float min, float max, int tonic, bool b) {
         mRangeOffsetAnim->SetFrame(offset, 1.0f);
         RndMat *mat = mPitchWindowMesh->Mat();
         {
-            Transform &texXfmRef = mat->TexXfm();
-            Transform texXfm = texXfmRef;
+            Transform texXfm = mat->TexXfm();
             texXfm.v.y += texXfm.v.z;
             mat->SetTexXfm(texXfm);
         }
@@ -1018,7 +1017,9 @@ void VocalTrackDir::SetRange(float min, float max, int tonic, bool b) {
         mMiddleCZPos = bottom + (60.0f - min) * pitchRange / (max - min);
         RndGroup *grp = mTubeRangeGrp;
         if (grp) {
-            grp->DirtyLocalXfm().v.z = mMiddleCZPos;
+            Vector3 v = grp->LocalXfm().v;
+            v.z = mMiddleCZPos;
+            grp->SetLocalPos(v);
         }
         mLastMin = min;
         mLastMax = max;
