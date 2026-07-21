@@ -5806,10 +5806,12 @@ GameConfig.cpp:
 	.text       start:0x8268A0F0 end:0x8268A6C0
 
 NextSongPanel.cpp:
+	.pdata      start:0x8222C278 end:0x8222C3C0
 	.pdata      start:0x8222C3C0 end:0x8222C3C8
 	.pdata      start:0x8222C3C8 end:0x8222CD68
 	.pdata      start:0x8222CD68 end:0x8222CD70
 	.pdata      start:0x8222CD70 end:0x8222CD80
+	.text       start:0x82643958 end:0x82644E30
 	.text       start:0x82644E38 end:0x8264519C
 	.text       start:0x8264519C end:0x8264BBE0
 	.text       start:0x8264BBE0 end:0x8264BCDC

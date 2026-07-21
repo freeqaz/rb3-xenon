@@ -18949,5 +18949,11 @@
  "0x826102f8": "??_ECharacterCreatorPanel@@$4PPPPPPPM@KM@AAPAXI@Z",
  "0x82610330": "?SetType@CharacterCreatorPanel@@UAAXVSymbol@@@Z",
  "0x82610748": "?SetFocusComponent@CharacterCreatorPanel@@QAAXW4CharCreatorState@1@VSymbol@@@Z",
- "0x826107a8": "?StoreFocusComponent@CharacterCreatorPanel@@QAAXXZ"
+ "0x826107a8": "?StoreFocusComponent@CharacterCreatorPanel@@QAAXXZ",
+ "0x82643a60": "?EaseElasticOutIn@@YAMMMM@Z",
+ "0x82643bb8": "?DeterminePerformanceAwards@NextSongPanel@@QAAXH@Z",
+ "0x82643c08": "?CanChangeSongReview@NextSongPanel@@QBA_NH@Z",
+ "0x82644290": "?IncrementSongReview@NextSongPanel@@QAAXH@Z",
+ "0x82644540": "?SetReviewDisplayValue@NextSongPanel@@QAAXHH@Z",
+ "0x826445b0": "?GetPerformanceAward@NextSongPanel@@QAA?AVSymbol@@H@Z"
 }
