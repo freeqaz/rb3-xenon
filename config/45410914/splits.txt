@@ -3244,12 +3244,18 @@ UIListDir.cpp:
 UIFontImporter.cpp:
 	.pdata      start:0x82234F90 end:0x82234F98
 	.pdata      start:0x82245DB0 end:0x82245DB8
+	.pdata      start:0x822471F8 end:0x82247308
 	.pdata      start:0x82247308 end:0x82247310
+	.pdata      start:0x82247310 end:0x822474D8
 	.pdata      start:0x822474D8 end:0x822474E0
+	.pdata      start:0x822474E0 end:0x82247728
 	.text       start:0x826D1E90 end:0x826D1F00
 	.text       start:0x82802730 end:0x82802788
+	.text       start:0x82817C20 end:0x82818EB8
 	.text       start:0x82818EB8 end:0x82818F18
+	.text       start:0x82818F18 end:0x8281A838
 	.text       start:0x8281A838 end:0x8281A8CC
+	.text       start:0x8281A8D0 end:0x8281D074
 
 CharMirror.cpp:
 	.pdata      start:0x82206830 end:0x82206838
