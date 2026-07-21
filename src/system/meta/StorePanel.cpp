@@ -55,10 +55,12 @@ void StorePanel::Load() {
     UIPanel::Load();
     mLoadOk = true;
     ThePlatformMgr.AddSink(this);
-    if (StoreProfile() == 0) {
-        ExitError(kStoreErrorLiveServer);
-    } else if (ThePlatformMgr.IsSignedIntoLive(0) == 0) {
-        ExitError(kStoreErrorLiveServer);
+    Profile *profile = StoreProfile();
+    int padNum = profile->GetPadNum();
+    if (padNum == 0 || ThePlatformMgr.IsSignedIntoLive(padNum) == 0) {
+        if (mState == 0)
+            mLoadOk = false;
+        ExitStore(kStoreErrorLiveServer);
     }
     TheContentMgr.StartRefresh();
 #ifdef HX_NATIVE
