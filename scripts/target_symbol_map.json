@@ -19105,5 +19105,20 @@
  "0x825086f8": "?Handle@RockCentral@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8250b050": "??1?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@XZ",
  "0x82498e40": "??_DRndLight@@QAAXXZ",
- "0x8249a0d0": "??_GRndLight@@UAAPAXI@Z"
+ "0x8249a0d0": "??_GRndLight@@UAAPAXI@Z",
+ "0x822d5050": "??1?$vector@VMiniIconData@EndingBonus@@V?$StlNodeAlloc@VMiniIconData@EndingBonus@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x822d5100": "?_M_erase@?$vector@VMiniIconData@EndingBonus@@V?$StlNodeAlloc@VMiniIconData@EndingBonus@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVMiniIconData@EndingBonus@@PAV34@0ABU__false_type@2@@Z",
+ "0x822d5838": "?Print@RndTransformable@@$4PPPPPPPM@OE@AAXXZ",
+ "0x822d58f0": "?SetType@EndingBonus@@UAAXVSymbol@@@Z",
+ "0x82688bd8": "?ChangeRandomSeed@GameConfig@@QAAXXZ",
+ "0x82688be8": "?GetSectionBounds@GameConfig@@QBAXHAAM0@Z",
+ "0x82688c70": "?GetPracticeSections@GameConfig@@QBAXAAH0@Z",
+ "0x82689290": "?OnGetSectionBounds@GameConfig@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x826893b8": "?OnGetSectionBoundsTick@GameConfig@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x826895d0": "?OnGetSection@GameConfig@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82689618": "?OnSetSection@GameConfig@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x826897d8": "?GetAverageDifficulty@GameConfig@@QBA?AW4Difficulty@@XZ",
+ "0x826898c0": "?IsInstrumentUsed@GameConfig@@QBA_NVSymbol@@@Z",
+ "0x82689cf8": "?ForEach@GameConfig@@QAA?AVDataNode@@PBVDataArray@@_N@Z",
+ "0x82689f80": "?WantCoda@GameConfig@@QAA_NXZ"
 }

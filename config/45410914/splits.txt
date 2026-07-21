@@ -5863,8 +5863,10 @@ band3/game/MultiplayerAnalyzer.cpp:
 
 GameConfig.cpp:
 	.pdata      start:0x82230D80 end:0x82230D88
+	.pdata      start:0x82230D88 end:0x82230EA8
 	.pdata      start:0x82230EA8 end:0x82230EB0
 	.text       start:0x82688B88 end:0x82688BD4
+	.text       start:0x82688BD8 end:0x8268A0E4
 	.text       start:0x8268A0F0 end:0x8268A6C0
 
 NextSongPanel.cpp:
@@ -5906,9 +5908,11 @@ StatCollector.cpp:
 Tour.cpp:
 	.pdata      start:0x821FFFD8 end:0x821FFFE0
 	.pdata      start:0x82200040 end:0x82200048
+	.pdata      start:0x822000F8 end:0x822001E8
 	.pdata      start:0x822001E8 end:0x822001F0
 	.text       start:0x8235BB48 end:0x8235BBF0
 	.text       start:0x8235C020 end:0x8235C07C
+	.text       start:0x8235CB54 end:0x8235D688
 	.text       start:0x8235D688 end:0x8235E42C
 
 TourBand.cpp:
@@ -5956,12 +5960,14 @@ EndingBonus.cpp:
 	.pdata      start:0x821F7A88 end:0x821F7A90
 	.pdata      start:0x821F7A90 end:0x821F7A98
 	.pdata      start:0x821F7B38 end:0x821F7B40
+	.pdata      start:0x821F7B40 end:0x821F7CE8
 	.text       start:0x822D3970 end:0x822D39B4
 	.text       start:0x822D39E8 end:0x822D3A44
 	.text       start:0x822D4090 end:0x822D40E0
 	.text       start:0x822D40E0 end:0x822D4160
 	.text       start:0x822D4178 end:0x822D4188
 	.text       start:0x822D4AB8 end:0x822D4B34
+	.text       start:0x822D4B40 end:0x822D5EF0
 
 NoteTube.cpp:
 	.pdata      start:0x82260C60 end:0x82260C80
