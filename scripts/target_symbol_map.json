@@ -18723,5 +18723,10 @@
  "0x826c9ac8": "?GetTick@TrainerPanel@@QBAHXZ",
  "0x826c9bc8": "?GetSectionTicks@TrainerPanel@@QBAHH@Z",
  "0x826c9c60": "?GetNameForSection@TrainerPanel@@QBA?AVSymbol@@H@Z",
- "0x826cc0a0": "?RestartSection@TrainerPanel@@QAAXXZ"
+ "0x826cc0a0": "?RestartSection@TrainerPanel@@QAAXXZ",
+ "0x8260d4d0": "?HandleGenderChanged@CharacterCreatorPanel@@QAAXXZ",
+ "0x8260de38": "??$MakeString@PBDVString@@H@@YAPBDPBD0VString@@H@Z",
+ "0x8260dec8": "??_EFaceOptionsProvider@@W3AAPAXI@Z",
+ "0x8260e330": "??$Find@VUIComponent@@@ObjectDir@@QAAPAVUIComponent@@PBD_N@Z",
+ "0x8260e3e0": "?Mat@FaceOptionsProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z"
 }
