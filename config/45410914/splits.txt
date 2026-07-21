@@ -205,8 +205,10 @@ TrackPanelDirBase.cpp:
 
 band3/meta_band/ModifierMgr.cpp:
 	.pdata      start:0x821FFB00 end:0x821FFB18
+	.pdata      start:0x8221FA30 end:0x8221FAF8
 	.pdata      start:0x8221FAF8 end:0x8221FB78
 	.text       start:0x82357218 end:0x823573AC
+	.text       start:0x82588D00 end:0x82589594
 	.text       start:0x825895A0 end:0x82589E24
 
 VocalTrack.cpp:
@@ -1548,12 +1550,14 @@ PostProc.cpp:
 	.pdata      start:0x8220C648 end:0x8220C650
 	.pdata      start:0x8220C6A0 end:0x8220C6A8
 	.pdata      start:0x8220C6B0 end:0x8220C6B8
+	.pdata      start:0x8220C6B8 end:0x8220C8C0
 	.pdata      start:0x8220CB08 end:0x8220CB10
 	.text       start:0x8242EC18 end:0x8242EC28
 	.text       start:0x8242EC80 end:0x824302B0
 	.text       start:0x824306D0 end:0x82430968
 	.text       start:0x82430E10 end:0x82430EC8
 	.text       start:0x82430EF0 end:0x82430FA8
+	.text       start:0x82430FA8 end:0x82433328
 	.text       start:0x82436278 end:0x824362AC
 
 DataArray.cpp:
@@ -3644,12 +3648,14 @@ FlowSetProperty.cpp:
 
 Loader.cpp:
 	.pdata      start:0x82241D28 end:0x82241D30
+	.pdata      start:0x82241D30 end:0x82241D90
 	.pdata      start:0x82241D90 end:0x82241D98
 	.pdata      start:0x82241DD8 end:0x82241DE0
 	.pdata      start:0x82241E18 end:0x82241E20
 	.pdata      start:0x82241E90 end:0x82241E98
 	.pdata      start:0x822425D0 end:0x822425D8
 	.text       start:0x827BEBF0 end:0x827BED78
+	.text       start:0x827BED78 end:0x827BF2D0
 	.text       start:0x827BF2D0 end:0x827BF340
 	.text       start:0x827BF700 end:0x827BF7C8
 	.text       start:0x827BFA28 end:0x827BFB10
@@ -3729,16 +3735,20 @@ InlineHelp.cpp:
 	.pdata      start:0x821FBDA8 end:0x821FBDB0
 	.pdata      start:0x821FBDB8 end:0x821FBDC0
 	.pdata      start:0x821FBDE8 end:0x821FBDF0
+	.pdata      start:0x821FBDF0 end:0x821FBE80
 	.pdata      start:0x821FBEA0 end:0x821FBEA8
 	.pdata      start:0x821FBEB8 end:0x821FBEC0
+	.pdata      start:0x821FBEC0 end:0x821FBF48
 	.text       start:0x822D8D78 end:0x822D8EC0
 	.text       start:0x823148C0 end:0x82315974
 	.text       start:0x823159E8 end:0x82315A4C
 	.text       start:0x82315A88 end:0x82315C10
 	.text       start:0x82315C38 end:0x82315CB8
 	.text       start:0x82315F80 end:0x823160C4
+	.text       start:0x823160D0 end:0x82316A1C
 	.text       start:0x82316BA0 end:0x82316C14
 	.text       start:0x82316CC8 end:0x82316D7C
+	.text       start:0x82316D7C end:0x82317540
 
 PreloadPanel.cpp:
 	.pdata      start:0x82241268 end:0x82241270
@@ -3785,12 +3795,14 @@ Trans.cpp:
 	.pdata      start:0x82209300 end:0x82209308
 	.pdata      start:0x82209308 end:0x82209310
 	.pdata      start:0x82209318 end:0x82209320
+	.pdata      start:0x82209320 end:0x822093B0
 	.pdata      start:0x822093B0 end:0x822093B8
 	.pdata      start:0x822093C0 end:0x822093C8
 	.pdata      start:0x82209440 end:0x82209448
 	.pdata      start:0x82209448 end:0x82209450
 	.pdata      start:0x82209458 end:0x82209460
 	.pdata      start:0x82209498 end:0x822094A0
+	.pdata      start:0x822094A0 end:0x822095A0
 	.pdata      start:0x822095A0 end:0x822095A8
 	.pdata      start:0x822095A8 end:0x822095B0
 	.pdata      start:0x822095B0 end:0x82209720
@@ -3798,12 +3810,14 @@ Trans.cpp:
 	.text       start:0x823F7968 end:0x823F7A10
 	.text       start:0x823F7A10 end:0x823F7A7C
 	.text       start:0x823F7BC0 end:0x823F7CFC
+	.text       start:0x823F7D08 end:0x823F8484
 	.text       start:0x823F8488 end:0x823F8510
 	.text       start:0x823F8560 end:0x823F85C0
 	.text       start:0x823F8D38 end:0x823F8DC8
 	.text       start:0x823F8DC8 end:0x823F8E5C
 	.text       start:0x823F8FA8 end:0x823F90E0
 	.text       start:0x823F9568 end:0x823F9674
+	.text       start:0x823F9680 end:0x823FA890
 	.text       start:0x823FA890 end:0x823FA914
 	.text       start:0x823FA920 end:0x823FAAA0
 	.text       start:0x823FAAA0 end:0x823FBDE8
@@ -4042,7 +4056,9 @@ UIListSubList.cpp:
 
 system/synth/FxSendReverb.cpp:
 	.pdata      start:0x82239790 end:0x822397C8
+	.pdata      start:0x822397C8 end:0x822398B8
 	.text       start:0x8271F6B8 end:0x8271FAB8
+	.text       start:0x8271FAC0 end:0x82720A50
 
 Achievements.cpp:
 	.pdata      start:0x82240058 end:0x82240088
@@ -4148,7 +4164,9 @@ DeJitterPanel.cpp:
 
 UIListHighlight.cpp:
 	.pdata      start:0x82247960 end:0x82247968
+	.pdata      start:0x82247968 end:0x822479E0
 	.text       start:0x8281EF80 end:0x8281F064
+	.text       start:0x8281F068 end:0x8281F620
 
 BinkMovieSys_Xbox.cpp:
 	.text       start:0x82746128 end:0x82746150
@@ -4226,7 +4244,9 @@ CharDriverMidi.cpp:
 
 CharIKSliderMidi.cpp:
 	.pdata      start:0x82206580 end:0x82206588
+	.pdata      start:0x82206588 end:0x82206658
 	.text       start:0x823CB2A0 end:0x823CB34C
+	.text       start:0x823CB350 end:0x823CBF34
 
 Crowd3DCharHandle.cpp:
 	.pdata      start:0x82252190 end:0x82252198
@@ -4607,10 +4627,12 @@ MoviePanel.cpp:
 	.text       start:0x827AF8B0 end:0x827B1780
 
 StorePanel.cpp:
+	.pdata      start:0x82227FE8 end:0x82228078
 	.pdata      start:0x82228078 end:0x82228080
 	.pdata      start:0x82231BE8 end:0x82231BF0
 	.pdata      start:0x822413F0 end:0x822413F8
 	.pdata      start:0x82241410 end:0x82241670
+	.text       start:0x82604840 end:0x8260509C
 	.text       start:0x826050A8 end:0x82605100
 	.text       start:0x826969E8 end:0x82696A2C
 	.text       start:0x827B4C68 end:0x827B4CC0
@@ -5062,7 +5084,9 @@ band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 	.text       start:0x825EFC78 end:0x825F1E4C
 
 band3/meta_band/CharCache.cpp:
+	.pdata      start:0x8221D9D8 end:0x8221DA78
 	.pdata      start:0x8221DA78 end:0x8221DAB0
+	.text       start:0x8256B544 end:0x8256BC50
 	.text       start:0x8256BC58 end:0x8256C310
 
 band3/meta_band/StoreOfferProvider.cpp:
@@ -5165,7 +5189,9 @@ band3/meta_band/SavedSetlist.cpp:
 
 band3/meta_band/AccomplishmentSongConditional.cpp:
 	.pdata      start:0x8222EC80 end:0x8222EC98
+	.pdata      start:0x8222EC98 end:0x8222ED88
 	.text       start:0x82669DF8 end:0x82669F20
+	.text       start:0x82669F20 end:0x8266AAB8
 
 band3/meta_band/AccomplishmentOneShot.cpp:
 	.pdata      start:0x82225F08 end:0x82225F40
@@ -5201,7 +5227,9 @@ band3/meta_band/ViewSetting.cpp:
 
 band3/meta_band/PatchSelectPanel.cpp:
 	.pdata      start:0x8222AAC0 end:0x8222AB88
+	.pdata      start:0x8222AB88 end:0x8222AD20
 	.text       start:0x8262D908 end:0x8262E5DC
+	.text       start:0x8262E5E8 end:0x8262FB9C
 
 GameMicManager.cpp:
 	.pdata      start:0x82230610 end:0x82230718
@@ -5283,11 +5311,13 @@ band3/meta_band/BandProfile.cpp:
 	.pdata      start:0x822160D0 end:0x822160D8
 	.pdata      start:0x8221FBE0 end:0x8221FBE8
 	.pdata      start:0x8221FC28 end:0x8221FC30
+	.pdata      start:0x8221FC78 end:0x8221FCF8
 	.pdata      start:0x8221FCF8 end:0x8221FD00
 	.pdata      start:0x8221FEB0 end:0x8221FEB8
 	.text       start:0x824F7550 end:0x824F75C8
 	.text       start:0x8258A198 end:0x8258A2B4
 	.text       start:0x8258A5F8 end:0x8258A664
+	.text       start:0x8258AB30 end:0x8258B228
 	.text       start:0x8258B228 end:0x8258B27C
 	.text       start:0x8258D3E0 end:0x8258DE50
 
@@ -5480,18 +5510,26 @@ TrackerManager.cpp:
 
 MetaPerformer.cpp:
 	.pdata      start:0x8220ED18 end:0x8220ED20
+	.pdata      start:0x8221EC78 end:0x8221ED98
 	.pdata      start:0x8221ED98 end:0x8221EDA0
 	.pdata      start:0x8221EDA0 end:0x8221EDA8
+	.pdata      start:0x8221EF00 end:0x8221EFB8
 	.pdata      start:0x8221EFB8 end:0x8221EFC0
+	.pdata      start:0x8221EFC0 end:0x8221F0B8
 	.pdata      start:0x8221F0F0 end:0x8221F0F8
+	.pdata      start:0x8221F190 end:0x8221F240
 	.pdata      start:0x8221F240 end:0x8221F248
 	.pdata      start:0x8221F248 end:0x8221F450
 	.pdata      start:0x8221F450 end:0x8221F458
 	.text       start:0x82466000 end:0x8246603C
+	.text       start:0x8257AA00 end:0x8257B980
 	.text       start:0x8257B980 end:0x8257B9B0
 	.text       start:0x8257B9B0 end:0x8257B9E0
+	.text       start:0x8257D5D0 end:0x8257E058
 	.text       start:0x8257E058 end:0x8257E0AC
+	.text       start:0x8257E0B0 end:0x8257EEA8
 	.text       start:0x8257F248 end:0x8257F2AC
+	.text       start:0x8257FEBC end:0x825807B8
 	.text       start:0x825807B8 end:0x82580820
 	.text       start:0x82580820 end:0x82582DFC
 	.text       start:0x82582E08 end:0x82584B58
@@ -5547,6 +5585,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82216278 end:0x82216280
 	.pdata      start:0x822162F8 end:0x82216300
 	.pdata      start:0x82216308 end:0x82216310
+	.pdata      start:0x82221090 end:0x822211A0
 	.pdata      start:0x822211A0 end:0x822211A8
 	.pdata      start:0x822211C8 end:0x822211D0
 	.pdata      start:0x82221208 end:0x82221348
@@ -5556,6 +5595,7 @@ BandSongMetadata.cpp:
 	.text       start:0x824F8968 end:0x824F89BC
 	.text       start:0x824F8F50 end:0x824F901C
 	.text       start:0x824F90A8 end:0x824F9188
+	.text       start:0x8259D9C0 end:0x8259E77C
 	.text       start:0x8259E788 end:0x8259E844
 	.text       start:0x8259E928 end:0x8259E994
 	.text       start:0x8259EC40 end:0x8259EC50
@@ -5735,12 +5775,14 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F89F8 end:0x821F8A00
 	.pdata      start:0x821F8A00 end:0x821F8B00
 	.pdata      start:0x821F8B00 end:0x821F8B08
+	.pdata      start:0x821F8B38 end:0x821F8C10
 	.pdata      start:0x821F8C10 end:0x821F8CC8
 	.text       start:0x822E3468 end:0x822E348C
 	.text       start:0x822E36C8 end:0x822E36DC
 	.text       start:0x822E3C68 end:0x822E3D58
 	.text       start:0x822E3D58 end:0x822E4AD4
 	.text       start:0x822E4AD8 end:0x822E4E80
+	.text       start:0x822E507C end:0x822E6218
 	.text       start:0x822E6218 end:0x822E7538
 
 DuplicatedObject.cpp:
@@ -6014,7 +6056,9 @@ NoteTube.cpp:
 Faders.cpp:
 	.pdata      start:0x8220E130 end:0x8220E138
 	.pdata      start:0x8220E158 end:0x8220E160
+	.pdata      start:0x822383F0 end:0x82238458
 	.pdata      start:0x82238458 end:0x82238460
+	.pdata      start:0x82238460 end:0x822384C8
 	.pdata      start:0x822384C8 end:0x822384D0
 	.pdata      start:0x82238508 end:0x82238510
 	.pdata      start:0x82238518 end:0x82238520
@@ -6023,8 +6067,10 @@ Faders.cpp:
 	.text       start:0x82456190 end:0x8245625C
 	.text       start:0x824563D8 end:0x824564B8
 	.text       start:0x8270BC10 end:0x8270BC3C
+	.text       start:0x8270BC40 end:0x8270C434
 	.text       start:0x8270C438 end:0x8270C488
 	.text       start:0x8270C488 end:0x8270C4A8
+	.text       start:0x8270C4B0 end:0x8270CB74
 	.text       start:0x8270CB80 end:0x8270CC40
 	.text       start:0x8270CEE8 end:0x8270CF88
 	.text       start:0x8270CFB0 end:0x8270D044
@@ -6289,7 +6335,9 @@ SongSortByStars.cpp:
 	.text       start:0x8265AFE0 end:0x8265B908
 
 SongSortByReview.cpp:
+	.pdata      start:0x8222DE78 end:0x8222DEE8
 	.pdata      start:0x8222DEE8 end:0x8222DF78
+	.text       start:0x8265C730 end:0x8265CC3C
 	.text       start:0x8265CC48 end:0x8265D248
 
 UploadErrorMgr.cpp:
