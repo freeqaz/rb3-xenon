@@ -1139,7 +1139,9 @@ UIListArrow.cpp:
 
 UIPicture.cpp:
 	.pdata      start:0x822470B8 end:0x82247118
+	.pdata      start:0x82247118 end:0x822471E8
 	.text       start:0x82816610 end:0x82816F20
+	.text       start:0x82816F20 end:0x82817A64
 
 BufStream.cpp:
 	.pdata      start:0x822429E8 end:0x82242A10
@@ -3385,8 +3387,10 @@ MoggClipMap.cpp:
 Splash.cpp:
 	.pdata      start:0x8223AE88 end:0x8223AFA0
 	.pdata      start:0x8223AFC0 end:0x8223AFC8
+	.pdata      start:0x8223AFC8 end:0x8223B080
 	.text       start:0x827414E0 end:0x827427E0
 	.text       start:0x827429E0 end:0x82742A80
+	.text       start:0x82742A80 end:0x82743A38
 
 PoolAlloc.cpp:
 	.pdata      start:0x8223B210 end:0x8223B218

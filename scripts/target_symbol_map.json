@@ -19100,5 +19100,7 @@
  "0x822a03f0": "?OverlayFlags@OutfitConfig@@QBAIXZ",
  "0x822a0920": "?Randomize@OutfitConfig@@QAAXXZ",
  "0x822a0978": "?ApplyAO@OutfitConfig@@QAAXPAVSyncMeshCB@@@Z",
- "0x827639c0": "?DataRegisterFunc@@YAXVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@Z"
+ "0x827639c0": "?DataRegisterFunc@@YAXVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@Z",
+ "0x82742a80": "?PollFunc@@YAXXZ",
+ "0x82742a90": "?BeginSplasher@Splash@@QAAXXZ"
 }
