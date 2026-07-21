@@ -6046,8 +6046,10 @@ CampaignLevel.cpp:
 
 CharacterCreatorPanel.cpp:
 	.pdata      start:0x82228810 end:0x82228980
+	.pdata      start:0x82228998 end:0x82228BF0
 	.pdata      start:0x82228BF0 end:0x82228BF8
 	.text       start:0x8260D1B8 end:0x8260E6AC
+	.text       start:0x8260E70C end:0x826107F8
 	.text       start:0x82610800 end:0x82611C2C
 
 GemManager.cpp:

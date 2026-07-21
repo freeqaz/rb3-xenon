@@ -18938,5 +18938,16 @@
  "0x8268c4d0": "?OnSetDifficulty@BandUser@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x8268c5f8": "?OnSetHas22FretGuitar@BandUser@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x8268c660": "?OnSetPreferredScoreType@BandUser@@QAA?AVDataNode@@PAVDataArray@@@Z",
- "0x8268c8d0": "??_GRemoteUser@@UAAPAXI@Z"
+ "0x8268c8d0": "??_GRemoteUser@@UAAPAXI@Z",
+ "0x8260ead8": "?OnMsg@CharacterCreatorPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+ "0x8260f370": "?UpdateNameLabel@CharacterCreatorPanel@@QAAXXZ",
+ "0x8260fb08": "?LeaveState@CharacterCreatorPanel@@QAA?AVDataNode@@XZ",
+ "0x8260fce0": "?Enter@CharacterCreatorPanel@@UAAXXZ",
+ "0x8260fd58": "?Exit@CharacterCreatorPanel@@UAAXXZ",
+ "0x82610040": "?GetRandomEyebrows@CharacterCreatorPanel@@QAA?AVSymbol@@XZ",
+ "0x826101c8": "??1CharacterCreatorPanel@@UAA@XZ",
+ "0x826102f8": "??_ECharacterCreatorPanel@@$4PPPPPPPM@KM@AAPAXI@Z",
+ "0x82610330": "?SetType@CharacterCreatorPanel@@UAAXVSymbol@@@Z",
+ "0x82610748": "?SetFocusComponent@CharacterCreatorPanel@@QAAXW4CharCreatorState@1@VSymbol@@@Z",
+ "0x826107a8": "?StoreFocusComponent@CharacterCreatorPanel@@QAAXXZ"
 }
