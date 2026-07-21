@@ -18675,5 +18675,6 @@
  "0x823435f0": "??_DBandHighlight@@QAAXXZ",
  "0x82343660": "?Update@BandHighlight@@UAAXXZ",
  "0x82343818": "?Init@BandHighlight@@SAXXZ",
- "0x82343870": "??_GBandHighlight@@UAAPAXI@Z"
+ "0x82343870": "??_GBandHighlight@@UAAPAXI@Z",
+ "0x822cc588": "??_DRndAnimatable@@QAAXXZ"
 }

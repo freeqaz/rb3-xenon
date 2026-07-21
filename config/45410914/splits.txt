@@ -359,11 +359,13 @@ BandStarDisplay.cpp:
 	.text       start:0x822CCDD0 end:0x822CDC10
 
 StreakMeter.cpp:
+	.pdata      start:0x821F7100 end:0x821F7320
 	.pdata      start:0x821F7370 end:0x821F73F0
 	.pdata      start:0x821F7EA0 end:0x821F7EA8
 	.pdata      start:0x821F7F38 end:0x821F7F40
 	.pdata      start:0x821F7F40 end:0x821F7F48
 	.pdata      start:0x821F8288 end:0x821F82D8
+	.text       start:0x822CA3E8 end:0x822CC5CC
 	.text       start:0x822CC798 end:0x822CCDD0
 	.text       start:0x822D6350 end:0x822D6364
 	.text       start:0x822D6400 end:0x822D642C
