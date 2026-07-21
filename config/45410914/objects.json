@@ -826,6 +826,7 @@
    "band3/game/PresenceMgr.cpp": "NonMatching",
    "band3/game/DirectInstrument.cpp": "NonMatching",
    "band3/meta_band/ContentLoadingPanel.cpp": "NonMatching",
+   "band3/meta_band/SelectDifficultyPanel.cpp": "NonMatching",
    "band3/meta_band/SigninScreen.cpp": "NonMatching",
    "band3/meta_band/SetlistToStorePanel.cpp": {
     "status": "NonMatching",

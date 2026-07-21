@@ -5514,6 +5514,10 @@ MainHubPanel.cpp:
 	.text       start:0x82621A18 end:0x82621AB4
 	.text       start:0x82622F20 end:0x82623C48
 
+SelectDifficultyPanel.cpp:
+	.pdata      start:0x8222AF18 end:0x8222B140
+	.text       start:0x82631E00 end:0x82633E70
+
 SetlistMergePanel.cpp:
 	.pdata      start:0x8222B140 end:0x8222B148
 	.pdata      start:0x8222B150 end:0x8222B158

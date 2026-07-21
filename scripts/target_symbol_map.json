@@ -18537,5 +18537,12 @@
  "0x826bafd0": "?Enter@FreestylePanel@@UAAXXZ",
  "0x826bb1a0": "?Swing@FreestylePanel@@UAA_NH_N000W4GemHitFlags@@@Z",
  "0x826bb388": "?OnMsg@FreestylePanel@@QAA?AVDataNode@@ABVJoypadConnectionMsg@@@Z",
- "0x826bbc38": "??_GBeatMatchControllerSink@@UAAPAXI@Z"
+ "0x826bbc38": "??_GBeatMatchControllerSink@@UAAPAXI@Z",
+ "0x826323e8": "?IsLoaded@SelectDifficultyPanel@@UBA_NXZ",
+ "0x82632560": "??0SelectDifficultyPanel@@QAA@XZ",
+ "0x826326f8": "??_ESelectDifficultyPanel@@$4PPPPPPPM@IE@AAPAXI@Z",
+ "0x82632718": "??_ESelectDifficultyPanel@@WDM@AAPAXI@Z",
+ "0x82632728": "?SetType@SelectDifficultyPanel@@UAAXVSymbol@@@Z",
+ "0x82632fc8": "?ContentMounted@SelectDifficultyPanel@@UAAXPBD0@Z",
+ "0x82633cf0": "?Poll@SelectDifficultyPanel@@UAAXXZ"
 }
