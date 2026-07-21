@@ -19098,5 +19098,7 @@
  "0x82742a80": "?PollFunc@@YAXXZ",
  "0x82742a90": "?BeginSplasher@Splash@@QAAXXZ",
  "0x825086f8": "?Handle@RockCentral@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x8250b050": "??1?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@XZ"
+ "0x8250b050": "??1?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@XZ",
+ "0x82498e40": "??_DRndLight@@QAAXXZ",
+ "0x8249a0d0": "??_GRndLight@@UAAPAXI@Z"
 }

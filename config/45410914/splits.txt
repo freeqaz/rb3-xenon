@@ -3828,11 +3828,13 @@ Lit.cpp:
 	.pdata      start:0x822115F0 end:0x822115F8
 	.pdata      start:0x822115F8 end:0x82211600
 	.pdata      start:0x82211630 end:0x82211638
+	.pdata      start:0x822116E0 end:0x822117E0
 	.pdata      start:0x8225B270 end:0x8225B278
 	.text       start:0x82497BB0 end:0x82497C5C
 	.text       start:0x82497C60 end:0x82497F5C
 	.text       start:0x824981E0 end:0x82498380
 	.text       start:0x82498D80 end:0x82498D90
+	.text       start:0x82498D90 end:0x8249A120
 	.text       start:0x82B661F0 end:0x82B662C0
 
 sslgen.c:
