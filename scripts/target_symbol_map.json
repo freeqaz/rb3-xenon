@@ -1,4 +1,10 @@
 {
+ "0x826df798": "??1StreakTracker@@UAA@XZ",
+ "0x826df850": "??0StreakTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
+ "0x826df960": "??_GStreakTracker@@UAAPAXI@Z",
+ "0x826df9b0": "??A?$map@UTrackerPlayerID@@VPlayerStreakData@StreakTracker@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VPlayerStreakData@StreakTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAVPlayerStreakData@StreakTracker@@ABUTrackerPlayerID@@@Z",
+ "0x826dfc40": "?HandlePlayerSaved_@StreakTracker@@UAAXABUTrackerPlayerID@@@Z",
+ "0x826dfc98": "?FirstFrame_@StreakTracker@@UAAXM@Z",
  "0x826e29e0": "?HasPlayer@TrackerSource@@QBA_NABUTrackerPlayerID@@@Z",
  "0x826e2aa0": "?GetIDFromTrackType@TrackerSource@@QBA?AUTrackerPlayerID@@W4TrackType@@@Z",
  "0x826e2bb0": "?FindPlayerID@TrackerSource@@QBA?AUTrackerPlayerID@@PBVPlayer@@@Z",

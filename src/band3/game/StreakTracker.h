@@ -40,10 +40,7 @@ public:
 
     void LocalEndStreak(const TrackerPlayerID &, float);
 
-    int unk58; // 0x58 (unknown, set outside carved range)
-    int unk5c; // 0x5c
-    int unk60; // 0x60
-    float unk64; // 0x64 streak total (GetCurrentValue)
+    float unk64; // 0x64 streak total (GetCurrentValue) — base Tracker ends at 0x64
     int unk68; // 0x68 streak count
     float unk6c; // 0x6c streak_length_multiplier
     std::map<TrackerPlayerID, PlayerStreakData> mStreakDataMap; // 0x70

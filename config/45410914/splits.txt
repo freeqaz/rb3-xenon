@@ -5779,12 +5779,12 @@ OverdriveTracker.cpp:
 	.text       start:0x826DD570 end:0x826DEAD0
 
 StreakTracker.cpp:
-	.pdata      start:0x82235D70 end:0x82235E40
-	.text       start:0x826DEAD0 end:0x826DF798
+	.pdata      start:0x82235D70 end:0x82235ED8
+	.text       start:0x826DEAD0 end:0x826E03D8
 
 band3/game/PerfectOverdriveTracker.cpp:
-	.pdata      start:0x82235E40 end:0x82235FF8
-	.text       start:0x826DF798 end:0x826E1D80
+	.pdata      start:0x82235ED8 end:0x82235FF8
+	.text       start:0x826E03D8 end:0x826E1D80
 
 OverdriveTimeTracker.cpp:
 	.pdata      start:0x82236030 end:0x82236078
