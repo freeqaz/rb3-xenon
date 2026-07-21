@@ -707,7 +707,8 @@
    "system/synth/Faders.cpp": "NonMatching",
    "system/synth/StandardStream.cpp": "NonMatching",
    "system/synth/SynthSample.cpp": "NonMatching",
-   "system/meta/SongPreview.cpp": "NonMatching"
+   "system/meta/SongPreview.cpp": "NonMatching",
+   "system/bandobj/OverdriveMeter.cpp": "NonMatching"
   }
  },
  "hamobj": {

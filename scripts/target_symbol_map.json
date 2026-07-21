@@ -18520,5 +18520,10 @@
  "0x823e7168": "??0NetSession@@QAA@XZ",
  "0x823e82d8": "?OnMsg@NetSession@@QAA_NABVJoinRequestMsg@@@Z",
  "0x823e79e8": "?Handle@NetSession@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82645320": "?CountOrCreateExpandedDetails@NextSongPanel@@QAAHHAAVDataArrayPtr@@_N@Z"
+ "0x82645320": "?CountOrCreateExpandedDetails@NextSongPanel@@QAAHHAAVDataArrayPtr@@_N@Z",
+ "0x822dba80": "?Print@RndTransformable@@$4PPPPPPPM@MI@AAXXZ",
+ "0x822dbb08": "?SetType@OverdriveMeter@@UAAXVSymbol@@@Z",
+ "0x822dbd70": "?MiloReset@OverdriveMeter@@QAAXXZ",
+ "0x822dc6e8": "??_DOverdriveMeter@@QAAXXZ",
+ "0x822dc758": "??_GOverdriveMeter@@UAAPAXI@Z"
 }

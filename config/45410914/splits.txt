@@ -6479,3 +6479,7 @@ system/bandobj/BandHeadShaper.cpp:
 band3/meta_band/SessionMgr.cpp:
 	.pdata      start:0x8221F458 end:0x8221FA30
 	.text       start:0x82584B58 end:0x82588D00
+
+OverdriveMeter.cpp:
+	.pdata      start:0x821F82D8 end:0x821F8470
+	.text       start:0x822DB298 end:0x822DC7A8
