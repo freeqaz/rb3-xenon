@@ -18676,5 +18676,18 @@
  "0x82343660": "?Update@BandHighlight@@UAAXXZ",
  "0x82343818": "?Init@BandHighlight@@SAXXZ",
  "0x82343870": "??_GBandHighlight@@UAAPAXI@Z",
- "0x822cc588": "??_DRndAnimatable@@QAAXXZ"
+ "0x822cc588": "??_DRndAnimatable@@QAAXXZ",
+ "0x822e65d8": "?SetupInstrument@GemTrackDir@@UAAXXZ",
+ "0x822e6730": "?GameWon@GemTrackDir@@UAAXXZ",
+ "0x822e6780": "?Extend@GemTrackDir@@UAAX_N@Z",
+ "0x822e6888": "?RefreshStreakMeter@GemTrackDir@@UAAXHHH@Z",
+ "0x822e6a80": "?SuperStreak@GemTrackDir@@UAAX_N0@Z",
+ "0x822e6bd0": "?Mash@GemTrackDir@@QAAXH@Z",
+ "0x822e6ca0": "?FillMash@GemTrackDir@@QAAXH@Z",
+ "0x822e6d28": "?FillHit@GemTrackDir@@QAAXH@Z",
+ "0x822e6e08": "?SetDisplayOffset@GemTrackDir@@UAAXM_N@Z",
+ "0x822e70e8": "?GetFretPosOffset@GemTrackDir@@UBAMH@Z",
+ "0x822e7128": "?AddChordRepImpl@GemTrackDir@@UAAXPAVRndMesh@@PAVTrackWidget@@11MABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@VString@@@Z",
+ "0x822e72f8": "?Replace@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x822e7408": "??1?$ObjPtrList@VTrackWidget@@VObjectDir@@@@UAA@XZ"
 }
