@@ -18748,5 +18748,10 @@
  "0x8269c090": "?AddPlayer@Band@@QAAPAVPlayer@@PAVBeatMaster@@PAVBandUser@@@Z",
  "0x8269c660": "?Poll@Band@@QAAXMAAVSongPos@@@Z",
  "0x8269c800": "??_GCommonPhraseCapturer@@QAAPAXI@Z",
- "0x8269cad0": "??_GBand@@UAAPAXI@Z"
+ "0x8269cad0": "??_GBand@@UAAPAXI@Z",
+ "0x825a02d8": "?resize@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
+ "0x825a0440": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@M@2@ABU32@@Z",
+ "0x825a0760": "??$?5VSymbol@@VString@@@@YAAAVBinStream@@AAV0@AAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@Z",
+ "0x825a07e0": "??0?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@1@@Z",
+ "0x825a08b8": "??0BandSongMetadata@@QAA@PAVBandSongMgr@@@Z"
 }

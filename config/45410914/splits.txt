@@ -5453,7 +5453,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82216308 end:0x82216310
 	.pdata      start:0x822211A0 end:0x822211A8
 	.pdata      start:0x822211C8 end:0x822211D0
-	.pdata      start:0x82221348 end:0x82221350
+	.pdata      start:0x82221348 end:0x822216F8
 	.pdata      start:0x82221798 end:0x822217A0
 	.text       start:0x82307B78 end:0x82307CF0
 	.text       start:0x824F8968 end:0x824F89BC
@@ -5462,7 +5462,7 @@ BandSongMetadata.cpp:
 	.text       start:0x8259E788 end:0x8259E844
 	.text       start:0x8259E928 end:0x8259E994
 	.text       start:0x8259EC40 end:0x8259EC50
-	.text       start:0x8259FC50 end:0x8259FF30
+	.text       start:0x8259FC50 end:0x825A3648
 	.text       start:0x825A3F58 end:0x825A42BC
 
 BandUser.cpp:
