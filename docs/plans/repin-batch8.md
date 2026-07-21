@@ -197,3 +197,37 @@ python3 scripts/harvest/repin_census.py --region 0x82840000,0x82c00000 --floor 0
 
 JSON with all 297 rows (full strings, gaps, dtk counts) at
 `/home/free/tmp/repin_batch8.json`.
+
+## EXECUTION RESULT (batch-8 foreman, 2026-07-21)
+
+**32 repin landings, +1,950 strict from repins (main 21,149 → 23,109 incl +10
+concurrent-lane), 0 unexplained regressions.** Full strict-set gate after every
+landing block; final snapshot in decomp.db @ a08764f1.
+
+Capture-rate calibration: measured **≈0.79 × dtkBIG** on kept spans (2,462
+dtkBIG kept → +1,950), nearly 2× the 0.41 proof-point estimate. Game tier
+over-performs (dormant map entries activate beyond automap pairings:
+MusicLibrary 118/78 = 1.51×, GemPlayer 132/94, RockCentral 202/193); engine
+tier under-performs (Rnd_Xbox 15/66 = 0.23×, DataFunc 3/27).
+
+Reverted/rejected (mirage classes for batch-9 to screen):
+- **StorePanel 82605100**: pin caused fuzzy regressions in its own 0x827B
+  fragment (re-carve un-pairing) — needs simultaneous multi-fragment re-pin.
+- **Movie bare-block**: `obj/Movie.obj` target has EMPTY base_path (base-less
+  stray split, 50 target fns) — route to TU-wiring, not repin.
+- **Mesh INTERNAL 8273cc08..8273ee50**: span is actually DxRnd/DxMovie/
+  DxCubeTex retail code (census prev/next warning was right) — repin candidate
+  for THOSE blocks, not Mesh.
+- SongParser / BeatMatchController: net 0 (already-dormant spans), cleanly
+  excluded by per-TU gating.
+
+Stale `__unwind$` clears: RockCentral 6 (incl the 3 census blockers),
+MetaPerformer 2, Flare 1 (was masking a real global fn at 82476e8c). All
+verified no-loss.
+
+Batch-9 seeds: MasterAudio 8277b828 (44, deferred — untracked WIP source in
+another lane); remaining mid-tier rows (CharIKScale 34, PatchSelectPanel 34,
+SetlistToStorePanel 30, CharDriver 27, StoreOfferProvider 24, MeshAnim 23,
+FxSendReverb 23, + ~100 rows dtkBIG 10-22, est ~0.3-0.5×); StorePanel
+multi-fragment re-pin; Movie base wiring; DxRnd/DxMovie pin from the Mesh
+finding; RockCentral residual fragments (nfr=56).
