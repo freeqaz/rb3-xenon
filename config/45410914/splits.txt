@@ -5491,18 +5491,12 @@ BandUser.cpp:
 Leaderboard.cpp:
 	.pdata      start:0x822003A8 end:0x822003B0
 	.pdata      start:0x82221708 end:0x82221710
-	.pdata      start:0x8222EF08 end:0x8222EF10
-	.pdata      start:0x8222EF50 end:0x8222EF58
-	.pdata      start:0x8222EFB0 end:0x8222EFB8
-	.pdata      start:0x8222EFF0 end:0x8222EFF8
+	.pdata      start:0x8222EF08 end:0x8222F3C0
 	.pdata      start:0x82234C00 end:0x82234C08
 	.pdata      start:0x82234CD0 end:0x82234CD8
 	.text       start:0x8235EF08 end:0x8235EF68
 	.text       start:0x825A36B8 end:0x825A3708
-	.text       start:0x8266BDD0 end:0x8266BE48
-	.text       start:0x8266C140 end:0x8266C1A4
-	.text       start:0x8266C818 end:0x8266CB04
-	.text       start:0x8266CC30 end:0x8266CE38
+	.text       start:0x8266BDD0 end:0x8266FF30
 	.text       start:0x826CE268 end:0x826CE2A4
 	.text       start:0x826CEFE0 end:0x826CF054
 
