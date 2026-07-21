@@ -6022,8 +6022,10 @@ PitchArrow.cpp:
 	.text       start:0x822F1FD8 end:0x822F5120
 
 BandHighlight.cpp:
-	.pdata      start:0x821FE960 end:0x821FE968
-	.text       start:0x823424A8 end:0x82342584
+	.pdata      start:0x821FE960 end:0x821FE978
+	.pdata      start:0x821FE980 end:0x821FEB78
+	.text       start:0x823424A8 end:0x82342680
+	.text       start:0x823426F8 end:0x82345034
 
 StringConversion.cpp:
 	.text       start:0x82AE5FA8 end:0x82AE5FE8
