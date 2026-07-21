@@ -5241,6 +5241,10 @@ SessionMessages.cpp:
 	.pdata      start:0x82208BB8 end:0x82208C10
 	.text       start:0x823F1068 end:0x823F14C0
 
+SyncStore.cpp:
+	.pdata      start:0x822082C0 end:0x822083C0
+	.text       start:0x823E9158 end:0x823E9C70
+
 Server.cpp:
 	.pdata      start:0x82209160 end:0x822091B0
 	.text       start:0x823F5D3C end:0x823F61F4
