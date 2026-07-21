@@ -5248,8 +5248,12 @@ SessionMessages.cpp:
 	.text       start:0x823F1068 end:0x823F14C0
 
 SyncStore.cpp:
-	.pdata      start:0x822082C0 end:0x822083C0
-	.text       start:0x823E9158 end:0x823E9C70
+	.pdata      start:0x82208348 end:0x822083C0
+	.text       start:0x823E9750 end:0x823E9C70
+
+network/net/Synchronize.cpp:
+	.pdata      start:0x822082C0 end:0x82208348
+	.text       start:0x823E9158 end:0x823E9750
 
 Server.cpp:
 	.pdata      start:0x82209160 end:0x822091B0

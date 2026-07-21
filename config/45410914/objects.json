@@ -1436,6 +1436,7 @@
    "network/net/NetworkEmulator.cpp": "NonMatching",
    "network/net/SessionMessages.cpp": "NonMatching",
    "network/net/SyncStore.cpp": "NonMatching",
+   "network/net/Synchronize.cpp": "NonMatching",
    "network/net/Server.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
