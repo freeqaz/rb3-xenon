@@ -165,6 +165,10 @@ FingerShape.cpp:
 	.pdata      start:0x821FF908 end:0x821FF910
 	.text       start:0x82355148 end:0x82355558
 
+GemTrackResourceManager.cpp:
+	.pdata      start:0x821FF910 end:0x821FFB00
+	.text       start:0x82355558 end:0x8235720C
+
 BandCamShot.cpp:
 	.pdata      start:0x821F5718 end:0x821F5F60
 	.pdata      start:0x821F7CE8 end:0x821F7CF0

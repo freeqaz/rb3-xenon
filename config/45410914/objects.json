@@ -40,6 +40,7 @@
    "system/bandobj/BandHeadShaper.cpp": "NonMatching",
    "system/bandobj/BandCamShot.cpp": "NonMatching",
    "system/bandobj/FingerShape.cpp": "NonMatching",
+   "system/bandobj/GemTrackResourceManager.cpp": "NonMatching",
    "system/bandobj/BandSwatch.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
