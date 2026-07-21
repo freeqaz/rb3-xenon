@@ -9,6 +9,7 @@ public:
     virtual ~BandStoreOffer() {}
     virtual DataNode Handle(DataArray *, bool);
     virtual bool IsCompletelyUnavailable() const;
+    virtual bool Cmp(const StoreOffer &, Symbol) const;
 
     bool mUpgradeAvailable; // 0x7c
 };

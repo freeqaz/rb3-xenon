@@ -4997,6 +4997,12 @@ band3/meta_band/StoreOfferProvider.cpp:
 	.text       start:0x82663968 end:0x826640CC
 	.text       start:0x826640CC end:0x82665BAC
 
+band3/meta_band/BandStorePanel.cpp:
+	.pdata      start:0x82223240 end:0x82223338
+	.pdata      start:0x82228220 end:0x82228318
+	.text       start:0x825BCA38 end:0x825BD60C
+	.text       start:0x82606888 end:0x826078A4
+
 band3/meta_band/PatchPanel.cpp:
 	.pdata      start:0x8222A700 end:0x8222A9D0
 	.text       start:0x82629878 end:0x8262CA80

@@ -1,4 +1,6 @@
 {
+ "0x82606a80": "?ExitStore@BandStorePanel@@UBAXW4StoreError@@@Z",
+ "0x826071b8": "?Request@BandStorePanel@@QAAXABVString@@_N@Z",
  "0x82486b60": "?Print@RndEnvAnim@@UAAXXZ",
  "0x82486c90": "?Handle@RndEnvAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82487138": "??0RndEnvAnim@@IAA@XZ",
