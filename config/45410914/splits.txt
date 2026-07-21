@@ -5760,9 +5760,15 @@ Metronome.cpp:
 
 OverdriveTracker.cpp:
 	.pdata      start:0x8222F3C0 end:0x8222F3C8
-	.pdata      start:0x82235C38 end:0x82235C40
+	.pdata      start:0x82235C18 end:0x82235C48
+	.pdata      start:0x82235C48 end:0x82235D70
 	.text       start:0x8266FF30 end:0x8266FFE8
-	.text       start:0x826DD410 end:0x826DD490
+	.text       start:0x826DD2F4 end:0x826DD568
+	.text       start:0x826DD570 end:0x826DEAD0
+
+StreakTracker.cpp:
+	.pdata      start:0x82235D70 end:0x82235E40
+	.text       start:0x826DEAD0 end:0x826DF798
 
 band3/game/PerfectSectionTracker.cpp:
 	.pdata      start:0x82235A38 end:0x82235B78

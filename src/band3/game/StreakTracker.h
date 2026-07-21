@@ -35,14 +35,17 @@ public:
     virtual TrackerChallengeType GetChallengeType() const {
         return (TrackerChallengeType)3;
     }
-    virtual float GetCurrentValue() const { return unk58; }
+    virtual float GetCurrentValue() const { return unk64; }
     virtual void SavePlayerStats() const;
 
     void LocalEndStreak(const TrackerPlayerID &, float);
 
-    float unk58;
-    int unk5c;
-    float unk60;
-    std::map<TrackerPlayerID, PlayerStreakData> mStreakDataMap; // 0x64
-    TrackerMultiplierMap unk7c;
+    int unk58; // 0x58 (unknown, set outside carved range)
+    int unk5c; // 0x5c
+    int unk60; // 0x60
+    float unk64; // 0x64 streak total (GetCurrentValue)
+    int unk68; // 0x68 streak count
+    float unk6c; // 0x6c streak_length_multiplier
+    std::map<TrackerPlayerID, PlayerStreakData> mStreakDataMap; // 0x70
+    TrackerMultiplierMap unk88; // 0x88
 };
