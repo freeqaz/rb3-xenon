@@ -1020,7 +1020,10 @@ bool NetSession::IsBusy() const {
 }
 
 FORCE_LOCAL_INLINE
-bool NetSession::IsJoining() const { return mState - 3 <= 3U; }
+bool NetSession::IsJoining() const {
+    return mState == kCreatingJoinSession || mState == kConnectingToSession ||
+           mState == kRequestingJoin || mState == kRevertingToHost;
+}
 END_FORCE_LOCAL_INLINE
 
 FORCE_LOCAL_INLINE

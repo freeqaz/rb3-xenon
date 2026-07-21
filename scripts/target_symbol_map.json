@@ -18500,5 +18500,9 @@
  "0x823e7750": "?OnRegisterSessionJobComplete@NetSession@@QAAX_N@Z",
  "0x823e7910": "?Clear@NetSession@@QAAXXZ",
  "0x823e82c0": "?Handle@NetSession@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x823e8cf0": "?HandleSessionMsg@NetSession@@QAAXPAVSessionMsg@@@Z"
+ "0x823e8cf0": "?HandleSessionMsg@NetSession@@QAAXPAVSessionMsg@@@Z",
+ "0x823e8940": "?OnMsg@NetSession@@QAA_NABVAddUserRequestMsg@@@Z",
+ "0x823e7168": "??0NetSession@@QAA@XZ",
+ "0x823e82d8": "?OnMsg@NetSession@@QAA_NABVJoinRequestMsg@@@Z",
+ "0x823e79e8": "?Handle@NetSession@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }
