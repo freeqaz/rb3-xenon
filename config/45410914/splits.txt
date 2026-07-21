@@ -5317,13 +5317,17 @@ PracticePanel.cpp:
 
 band3/meta_band/ProfileMgr.cpp:
 	.pdata      start:0x8221B250 end:0x8221B258
+	.pdata      start:0x8221B258 end:0x8221B300
 	.pdata      start:0x8221B300 end:0x8221B308
+	.pdata      start:0x8221B388 end:0x8221B518
 	.pdata      start:0x8221B518 end:0x8221B520
 	.pdata      start:0x822416C8 end:0x822416D0
 	.text       start:0x82545818 end:0x82545834
 	.text       start:0x82545900 end:0x8254591C
 	.text       start:0x82545E40 end:0x82545E90
+	.text       start:0x82545E90 end:0x82546A50
 	.text       start:0x82546A50 end:0x82546B7C
+	.text       start:0x82547668 end:0x8254911C
 	.text       start:0x82549128 end:0x8254B070
 	.text       start:0x827B7D88 end:0x827B7DBC
 
