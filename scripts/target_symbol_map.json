@@ -8465,7 +8465,7 @@
  "0x826e1ed0": "??_GAccomplishmentCountConditional@@UAAPAXI@Z",
  "0x826e2f28": "?GetPlayerCount@PlayerTrackerSource@@UBAHXZ",
  "0x826e30d0": "??_GTrackerSource@@UAAPAXI@Z",
- "0x826e3010": "?DetermineHeaderSymbolForSong@SongSortMgr@@QAA?AVSymbol@@V2@@Z",
+ "0x826e3010": "?GetIDFromInstrument@TrackerSource@@QBA?AUTrackerPlayerID@@VSymbol@@@Z",
  "0x826ccaf0": "?InTransition@UIManager@@QAA_NXZ",
  "0x826ccb00": "??0VRegTable@XGRAPHICS@@QAA@PAVCompiler@1@@Z",
  "0x826e37b8": "??_GNavListNode@@UAAPAXI@Z",
