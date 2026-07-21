@@ -148,3 +148,85 @@ Oracle-backed B-grades within the Quazal stack (deps: `String`,`qChain`,`qMap`,
 - Every source path is absolute-verified; every string quoted was grep-confirmed in
   the cited `.cpp`. All spans confirmed zero-overlap with current `.text` pins.
 - Proof leg reproducible in `wt-fp3` (`git log` → acb2fcf4).
+
+---
+
+# BATCH-3 WAVE OUTCOME (2026-07-21, carve foreman)
+
+**19,574 → 19,786 = +212 strict, ZERO lost entries across 16 landings** (incl.
+the pre-landed #1 pin-ext +6). All landings gated: full rebuild + fresh_report +
+measure_delta (NET>0 or fuzzy-stake, 0 strict/fuzzy regressions).
+
+| # | TU | span landed | NET | commit |
+|---|----|-------------|-----|--------|
+| 1 | StoreOfferProvider pin-ext | 826640CC..82665BAC | +6 | 0c26a335 (pre) |
+| 2 | BandStarDisplay | 822CCDD0..822CDC10 | +11 | dc23d849 |
+| 3 | TrackPanelDirBase | 82357DD0..82359760 | +24 | 98167480 |
+| 5 | StreakMeter pin-ext | 822CC798..822CCDD0 | +4 | 744a4392 |
+| 4 | ContentLoadingPanel | 826140F0..82614690 | +7 | 16f707d3 |
+| 6 | SetlistToStorePanel | **82643310..826436D8** (doc span was Matchmaker/StorePanel — corrected) | +4 | d0eb4df3 |
+| 7 | GigFilter | 82364AA0..82365120 | +8 | 07122a23 |
+| 8 | FixedSetlist | 82365120..82365380 | +3 | c9d56b48 |
+| 10 | RGUtl | 82779CC0..**8277B178** (doc tail = 3 VocalTrackDir fns, cut) | +15 | b763254c |
+| 9 | SessionMessages | 823F1068..823F14C0 | +15 | 2ae14ff6 |
+| QC | Quazal MemoryManager pilot | 82A6D428..82A6DC40 | +2 | 10eed275 |
+| 11 | FingerShape | **82355148..82355558** (doc span TU0-STALE — see below) | +0 (ctor 94.4% fuzzy) | dd156bbb |
+| 19 | EnvAnim | 8248696C..8248757C | +13 | f9b8f568 |
+| 18 | Text.cpp pin-ext | 82459E78..8245C510 | +27 | 63544cbd |
+| 14 | SyncStore (NetSession deferred) | 823E9158..823E9C70 | +17 | 2c4abd35 |
+| 15 | OverdriveTracker+StreakTracker | 826DD2F4..826DF798 (3 ranges) | +42 | 4b8ec0d2 |
+| 16 | BandStorePanel | 82606888..826078A4 + 825BCA38..825BD60C | +20 | 9bc91599 |
+
+## Systematic findings
+1. **TU0-stale span (FingerShape).** fingerprints.json can carry TU0 VAs; the doc
+   span carved BandTrack/BandPatchMesh in TU5. Detection: fp2_span strings don't
+   match the doc claim. Recovery: band.exe `.text` string-ref scan (Ghidra
+   auto-analysis at unanalyzed VAs makes wrong boundaries; base_to_tu5_map.json
+   was mis-anchored +0x12a18 vs true +0xF4B0). **Re-verify batch-4 spans against
+   the TU5 binary, not fingerprints.json alone.**
+2. **Foreman landing traps hit (recorded for the SOP):** (a) diff a worker
+   worktree against its **merge-base**, never live `main` — main advances between
+   waves and a `diff main` silently encodes REMOVALS of newer landings (caught by
+   the gate: -79 with "Missing configuration" tells); (b) `git checkout -- file`
+   restores from the INDEX — after a botched staged apply use
+   `git checkout HEAD -- file`.
+3. **tu5_map_apply_fragment.py in one worker run re-serialized all 18k map
+   entries** (36k-line diff for +2 keys). Foreman re-derived the semantic +2 and
+   spliced textually. Worth a hard guard in the tool.
+4. **Transferable port cracks:** oracle bitmask `(1<<(key-1))&0x295` was a
+   reconstruction — retail emits the literal OR-chain (RGUtl 36→100); retail uses
+   single-precision `ceilf/floorf` (std::ceil adds spurious `frsp`);
+   `MILO_FAIL("%s", String(str))` materializes the by-value String temp; BinStream
+   PushRev/PopRev are methods; ObjPtr is single-template-arg; static-local Symbol
+   declaration ORDER matters.
+
+## Quazal-Core friction census (batch-4)
+- **Deps EXCELLENT**: String/qChain/qMap/CriticalSection/WaterMark/MutexPrimitive
+  headers all in-tree; MemoryManager compiled zero-friction.
+- **Flags CONFIRMED**: `/Od /Oi- /EHs-c- /Ob1` is the Quazal recipe (matches
+  wired BandwidthCounter at 99.9%).
+- **Oracle fidelity PARTIAL**: layouts exact (288B ctor byte-match) but retail
+  adds ~6 watermark-accounting fns absent from the Wii oracle → remainder is
+  Ghidra RE, not port.
+- **Best batch-4 QC pick**: BandwidthCounter PerfCounter cluster ~0x82afff30
+  (pin-ext on already-wired .cpp). WorkerThreads = single 604B fn, all-or-nothing,
+  lower priority.
+
+## Batch-4 seeds
+- **Tracker family drain** (from #15 sub-split census): DeployCountTracker
+  (~826DCFE8), PerfectOverdriveTracker [826DF798,826E1D80), OverdriveTimeTracker
+  [826E1F98,826E2438), AccuracyTracker [826E2438,826E29E0) — all unwired with
+  rb3-Wii oracles; + unidentified tail 826E29E0..826E3804. StreakTracker's big
+  methods (Poll_ 684B, TranslateRelativeTargets 444B) live OUTSIDE the run —
+  locate second cluster.
+- **Synchronize.cpp** (3rd TU discovered in #14's run): fns 823E92A8..823E95C8,
+  oracle exists, currently over-covered by the SyncStore pin — split out.
+- **NetSession**: deferred; port Synchronize.cpp + Quazal session headers first
+  (PseudoSingleton, SessionData, VoiceChatMgr, ObjDup surface).
+- **StorePanel base +0x18 layout shift** (blocks BandStorePanel::Request 88.3%
+  and likely siblings StoreMainPanel/StoreMenuPanel/TokenRedemptionPanel) —
+  needs a dedicated cross-TU A/B wave.
+- Remaining batch-3 B-tail: #12 SessionMgr, #13 NextSongPanel gap-fill,
+  #17 LayerDir (header port), #20 Leaderboards (dc3-only).
+- FingerShape's 6 remaining methods: COMDAT-scattered, no unique strings —
+  needs per-fn structural correlation.
