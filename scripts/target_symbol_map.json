@@ -19024,5 +19024,11 @@
  "0x82818160": "??1?$ObjDirPtr@VUILabelDir@@@@UAA@XZ",
  "0x82818258": "??_G?$ObjDirPtr@VUILabelDir@@@@UAAPAXI@Z",
  "0x82819228": "?_M_erase@?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@IAAPAGPAG0ABU__false_type@2@@Z",
- "0x8281a750": "?OnForgetGened@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z"
+ "0x8281a750": "?OnForgetGened@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82334250": "??0Message@@QAA@VSymbol@@@Z",
+ "0x82336af8": "??$swap@V?$_STLP_alloc_proxy@U_List_node_base@stlpmtx_std@@V?$_List_node@VSymbol@@@2@V?$StlNodeAlloc@V?$_List_node@VSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXAAV?$_STLP_alloc_proxy@U_List_node_base@stlpmtx_std@@V?$_List_node@VSymbol@@@2@V?$StlNodeAlloc@V?$_List_node@VSymbol@@@stlpmtx_std@@@2@@0@0@Z",
+ "0x82336b20": "??$__copy_backward_ptrs@PAVOldTrigger@@PAV1@@stlpmtx_std@@YAPAVOldTrigger@@PAV1@00ABU__false_type@0@@Z",
+ "0x8233a8a8": "??$LoadStdFixed@VPatch@BandCharDesc@@V?$StlNodeAlloc@VPatch@BandCharDesc@@@stlpmtx_std@@@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$vector@VPatch@BandCharDesc@@V?$StlNodeAlloc@VPatch@BandCharDesc@@@stlpmtx_std@@@stlpmtx_std@@HH@Z",
+ "0x8233ab28": "?Load@BandCharDesc@@UAAXAAVBinStream@@@Z",
+ "0x8233b108": "?IsSameCharDesc@BandCharDesc@@QBA_NABV1@@Z"
 }

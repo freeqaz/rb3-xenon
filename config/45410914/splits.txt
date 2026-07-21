@@ -286,18 +286,22 @@ GameMode.cpp:
 
 BandCharDesc.cpp:
 	.pdata      start:0x821FDB48 end:0x821FDE58
+	.pdata      start:0x821FDE58 end:0x821FE068
 	.pdata      start:0x821FE068 end:0x821FE070
 	.pdata      start:0x821FE070 end:0x821FE078
 	.pdata      start:0x821FE0B0 end:0x821FE0B8
 	.pdata      start:0x821FE0B8 end:0x821FE0C0
 	.pdata      start:0x821FE150 end:0x821FE158
+	.pdata      start:0x821FE160 end:0x821FE298
 	.pdata      start:0x821FE298 end:0x821FE2A0
 	.text       start:0x823332E0 end:0x82336E4C
+	.text       start:0x82336E58 end:0x82338D1C
 	.text       start:0x82338D20 end:0x82338D9C
 	.text       start:0x82338DA0 end:0x82338E14
 	.text       start:0x823392B0 end:0x823392F4
 	.text       start:0x823392F8 end:0x82339378
 	.text       start:0x82339A58 end:0x82339A8C
+	.text       start:0x82339B10 end:0x8233B19C
 	.text       start:0x8233B1A0 end:0x8233B24C
 	.text       start:0x82459B80 end:0x82459B9C
 
