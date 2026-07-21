@@ -1164,9 +1164,11 @@ crc32.c:
 
 CharBoneDir.cpp:
 	.pdata      start:0x821F2070 end:0x821F2078
+	.pdata      start:0x821F96B8 end:0x821F9888
 	.pdata      start:0x821FCEE8 end:0x821FCEF0
 	.pdata      start:0x822051C8 end:0x822054E8
 	.text       start:0x8227ACC8 end:0x8227AD20
+	.text       start:0x822EFD98 end:0x822F1FD8
 	.text       start:0x82326D20 end:0x82326D78
 	.text       start:0x823B4B40 end:0x823B85BC
 
