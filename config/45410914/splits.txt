@@ -2096,7 +2096,9 @@ Text.cpp:
 	.text       start:0x826CEC98 end:0x826CED00
 
 band3/meta_band/InterstitialMgr.cpp:
+	.pdata      start:0x822224F0 end:0x822225B8
 	.pdata      start:0x822225B8 end:0x822225C8
+	.text       start:0x825AF2E0 end:0x825AFE98
 	.text       start:0x825AFE98 end:0x825B0150
 
 HamScrollSpeedIndicator.cpp:
@@ -5290,11 +5292,13 @@ band3/meta_band/BandProfile.cpp:
 TrackDir.cpp:
 	.pdata      start:0x8220E230 end:0x8220E238
 	.pdata      start:0x8220E268 end:0x8220E270
+	.pdata      start:0x822439B8 end:0x82243A20
 	.pdata      start:0x82243A20 end:0x82243D30
 	.text       start:0x82457680 end:0x824576F0
 	.text       start:0x82457D18 end:0x82457D98
 	.text       start:0x827DD0F8 end:0x827DD104
 	.text       start:0x827DD108 end:0x827DD114
+	.text       start:0x827DD118 end:0x827DDDD4
 	.text       start:0x827DDDD8 end:0x827E06EC
 
 TrackWidget.cpp:
@@ -5494,11 +5498,13 @@ Performer.cpp:
 	.pdata      start:0x82232140 end:0x82232148
 	.pdata      start:0x82232178 end:0x82232180
 	.pdata      start:0x822321B0 end:0x822321B8
+	.pdata      start:0x822321B8 end:0x82232240
 	.pdata      start:0x82232240 end:0x82232248
 	.text       start:0x82365E58 end:0x82365E68
 	.text       start:0x8269CBE8 end:0x8269CC40
 	.text       start:0x8269CED0 end:0x8269CF30
 	.text       start:0x8269D2A0 end:0x8269D334
+	.text       start:0x8269D338 end:0x8269DB28
 	.text       start:0x8269DB30 end:0x8269EC0C
 
 TrackerUtils.cpp:
