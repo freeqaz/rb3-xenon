@@ -15,15 +15,15 @@ public:
     virtual DataArrayPtr GetTargetDescription(int idx) const {
         return TrackerDisplay::MakeTimeTargetDescription(mTargets[idx]);
     }
-    virtual float GetCurrentValue() const { return unk60; }
+    virtual float GetCurrentValue() const { return mLongestDurationMs; }
     virtual void SavePlayerStats() const;
 
     void UpdateTimeRemainingDisplay();
 
-    float unk58;
-    float unk5c;
-    float unk60;
-    float unk64;
-    int unk68;
-    bool unk6c;
+    float mPastDurationMs; // 0x58
+    float mCurrentDurationMs; // 0x5c
+    float mLongestDurationMs; // 0x60
+    float mDeployStartMs; // 0x64
+    int mLastUpdateSeconds; // 0x68
+    bool mWasDeploying; // 0x6c
 };
