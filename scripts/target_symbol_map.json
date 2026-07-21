@@ -18629,5 +18629,20 @@
  "0x8266dc68": "?StartEnumerate@Leaderboard@@UAAXXZ",
  "0x8266dd18": "?EnumerateHigherRankRange@Leaderboard@@QAA_NXZ",
  "0x8266dde8": "?EnumerateLowerRankRange@Leaderboard@@QAA_NXZ",
- "0x8266e4d8": "?OnEnumComplete@Leaderboard@@UAAXXZ"
+ "0x8266e4d8": "?OnEnumComplete@Leaderboard@@UAAXXZ",
+ "0x826b50e0": "??0ChordbookPanel@@QAA@XZ",
+ "0x826b53d0": "??_EChordbookPanel@@$4PPPPPPPM@HAE@AAPAXI@Z",
+ "0x826b53e0": "??_EChordbookPanel@@WDM@AAPAXI@Z",
+ "0x826b5588": "??1ChordbookPanel@@UAA@XZ",
+ "0x826b56c8": "?get_allocator@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@QBA?AV?$StlNodeAlloc@VGameGem@@@2@XZ",
+ "0x826b56d0": "??0?$_Vector_base@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VGameGem@@@1@@Z",
+ "0x826b5740": "?PushSkipDialog@ChordbookPanel@@QAAXXZ",
+ "0x826b5798": "?ResetSkipDialog@ChordbookPanel@@QAAXXZ",
+ "0x826b57f0": "?OnSkipCancel@ChordbookPanel@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x826b5aa8": "??_GChordbookPanel@@UAAPAXI@Z",
+ "0x826b6628": "?OnSkipConfirm@ChordbookPanel@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x826b6670": "?Swing@ChordbookPanel@@UAA_NH_N000W4GemHitFlags@@@Z",
+ "0x826b66d0": "?FretButtonDown@ChordbookPanel@@UAAXHH@Z",
+ "0x826b6748": "?FretButtonUp@ChordbookPanel@@UAAXH@Z",
+ "0x826b7af8": "??0?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
 }

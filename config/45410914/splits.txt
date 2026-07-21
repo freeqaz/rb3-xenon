@@ -5750,10 +5750,8 @@ CampaignSongInfoPanel.cpp:
 	.text       start:0x8261FEB8 end:0x8261FF0C
 
 ChordbookPanel.cpp:
-	.pdata      start:0x82233760 end:0x82233768
-	.pdata      start:0x82233A30 end:0x82233A38
-	.text       start:0x826B4FF0 end:0x826B50D8
-	.text       start:0x826B7D90 end:0x826B8208
+	.pdata      start:0x82233760 end:0x82233AC0
+	.text       start:0x826B4FF0 end:0x826B8598
 
 FreestylePanel.cpp:
 	.pdata      start:0x82233C08 end:0x82233DB0
