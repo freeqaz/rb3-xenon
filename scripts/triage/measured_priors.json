@@ -1,22 +1,22 @@
 {
-  "generated": "2026-07-21T04:43:10+00:00",
-  "source_attempts": 830,
+  "generated": "2026-07-21T06:24:08+00:00",
+  "source_attempts": 837,
   "join_diagnostics": {
     "triage_functions_total": 7662,
-    "attempted_functions_total": 701,
-    "attempted_functions_with_triage_bucket": 368,
-    "attempted_functions_without_bucket": 333,
+    "attempted_functions_total": 706,
+    "attempted_functions_with_triage_bucket": 371,
+    "attempted_functions_without_bucket": 335,
     "join_rate_pct": 52.5,
-    "sum_bucket_n_attempted": 368,
-    "total_grind_attempts": 830
+    "sum_bucket_n_attempted": 371,
+    "total_grind_attempts": 837
   },
   "buckets": {
     "NEEDS-REVIEW": {
-      "rate": 0.0357,
-      "wilson_low": 0.0063,
-      "n_attempted": 28,
+      "rate": 0.0333,
+      "wilson_low": 0.0059,
+      "n_attempted": 30,
       "n_flipped": 1,
-      "n_attempts_total": 30,
+      "n_attempts_total": 32,
       "mean_output_tokens_per_flip": null,
       "mean_cost_usd_per_flip": null,
       "trusted": true
@@ -36,7 +36,7 @@
       "wilson_low": 0.0732,
       "n_attempted": 137,
       "n_flipped": 16,
-      "n_attempts_total": 160,
+      "n_attempts_total": 162,
       "mean_output_tokens_per_flip": null,
       "mean_cost_usd_per_flip": null,
       "trusted": true
@@ -52,11 +52,11 @@
       "trusted": true
     },
     "STRUCT-ARTIFACT": {
-      "rate": 0.0244,
-      "wilson_low": 0.0043,
-      "n_attempted": 41,
-      "n_flipped": 1,
-      "n_attempts_total": 48,
+      "rate": 0.0476,
+      "wilson_low": 0.0132,
+      "n_attempted": 42,
+      "n_flipped": 2,
+      "n_attempts_total": 49,
       "mean_output_tokens_per_flip": null,
       "mean_cost_usd_per_flip": null,
       "trusted": true
@@ -182,11 +182,11 @@
       "trusted": false
     },
     "OVERALL": {
-      "rate": 0.4722,
-      "wilson_low": 0.4355,
-      "n_attempted": 701,
-      "n_flipped": 331,
-      "n_attempts_total": 830,
+      "rate": 0.4717,
+      "wilson_low": 0.4351,
+      "n_attempted": 706,
+      "n_flipped": 333,
+      "n_attempts_total": 837,
       "mean_output_tokens_per_flip": null,
       "mean_cost_usd_per_flip": null,
       "trusted": true
