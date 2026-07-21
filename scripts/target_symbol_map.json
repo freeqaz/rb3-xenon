@@ -1,4 +1,9 @@
 {
+ "0x8279c4a8": "?Poll@GuitarController@@UAAXXZ",
+ "0x8279c860": "?Disable@GuitarController@@UAAX_N@Z",
+ "0x8279c8f0": "?GetWhammyBar@GuitarController@@UBAMXZ",
+ "0x82450388": "?Copy@RndPartLauncher@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82450450": "?Handle@RndPartLauncher@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8240abf0": "?Handle@RndEnviron@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82738370": "??_DRndHighlightable@@QAAXXZ",
  "0x827383d0": "??3DxMesh@@SAXPAX@Z",

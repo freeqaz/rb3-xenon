@@ -436,13 +436,17 @@ OvershellPartSelectProvider.cpp:
 	.text       start:0x826688A8 end:0x82668C64
 
 GuitarController.cpp:
+	.pdata      start:0x8223FBF0 end:0x8223FC30
 	.pdata      start:0x8223FC30 end:0x8223FC38
 	.pdata      start:0x8223FC38 end:0x8223FC40
+	.pdata      start:0x8223FC40 end:0x8223FC58
 	.pdata      start:0x8223FC58 end:0x8223FCC0
 	.pdata      start:0x82240008 end:0x82240020
 	.pdata      start:0x82240038 end:0x82240058
+	.text       start:0x8279BE58 end:0x8279C630
 	.text       start:0x8279C630 end:0x8279C7C0
 	.text       start:0x8279C7C0 end:0x8279C85C
+	.text       start:0x8279C85C end:0x8279CE28
 	.text       start:0x8279CE28 end:0x8279D6A0
 	.text       start:0x827A1EF0 end:0x827A2098
 	.text       start:0x827A2400 end:0x827A25AC
@@ -2702,9 +2706,11 @@ PartLauncher.cpp:
 	.pdata      start:0x8220DB90 end:0x8220DB98
 	.pdata      start:0x8220DB98 end:0x8220DC28
 	.pdata      start:0x8220DC58 end:0x8220DC60
+	.pdata      start:0x8220DC60 end:0x8220DCB8
 	.text       start:0x8244F280 end:0x8244F514
 	.text       start:0x8244F518 end:0x8244FFA4
 	.text       start:0x82450228 end:0x82450388
+	.text       start:0x82450388 end:0x824519C0
 
 DataNode.cpp:
 	.pdata      start:0x8223B780 end:0x8223B8E0
