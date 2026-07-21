@@ -9,7 +9,7 @@ void SetTheUserMgr(UserMgr *mgr) {
     JoypadReset();
 }
 
-UserMgr::UserMgr() : unk2c(true) { SetName("user_mgr", ObjectDir::Main()); }
+UserMgr::UserMgr() { SetName("user_mgr", ObjectDir::Main()); }
 
 void UserMgr::GetLocalUsers(std::vector<LocalUser *> &users) const {
     std::vector<User *> allUsers;

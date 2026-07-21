@@ -3,9 +3,6 @@
 #include "os/User.h"
 
 class UserMgr : public Hmx::Object {
-protected:
-    bool unk2c;
-
 public:
     UserMgr();
     virtual ~UserMgr() {}
@@ -14,9 +11,6 @@ public:
     virtual User *GetUser(const UserGuid &, bool) const = 0;
     virtual LocalUser *GetLocalUser(const UserGuid &, bool) const { return nullptr; }
     virtual RemoteUser *GetRemoteUser(const UserGuid &, bool) const { return nullptr; }
-
-    bool GetBool() const { return unk2c; } // change later
-    void SetBool(bool b) { unk2c = b; } // change later
 
     void GetLocalUsers(std::vector<LocalUser *> &) const;
     // void GetRemoteUsers(std::vector<RemoteUser *> &) const; // goes unused in DC3
