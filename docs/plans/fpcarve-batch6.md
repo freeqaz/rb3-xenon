@@ -171,3 +171,81 @@ Jul 19; Ghidra :8002 `default_tu5.xex-c5a170` available for per-VA confirmation)
 (truncated pins + engine-dc3 pool) is large and the mechanisms are proven. This is
 carve/wire labor, not identification labor — identification is now essentially
 complete for the workable mass.
+
+---
+
+## 6. BATCH-6 WAVE OUTCOME (2026-07-21) — +640, 13/13 landed, 0 lost
+
+**20,081 → 20,725** (includes +4 from a concurrent PlatformMgr lane; batch net
+= +640). 4 Opus workers, 3 worklists, 13 TUs, 13 landings, **zero regressions
+on every gate**, every worker-claimed NET reproduced exactly at landing.
+Largest wave on record (beats batch-2's +351).
+
+### Per-item results
+
+| worklist | TU | mechanism | net | commit |
+|---|---|---|---:|---|
+| B repin | OvershellPanel | full-span repin + automap (60 EXACT/STRONG) | **+210** | a3fee23a |
+| B repin | Leaderboard | 4-frag merge repin + automap (25) | +93 | 83a41e55 |
+| B repin | ChordbookPanel | 2-frag merge repin + automap (15) | +85 | e510b9c3 |
+| A repin | PitchArrow | full-span repin; deleted 2 stale `__unwind$` map lines | +56 | f8b28ac9 |
+| C wire | SelectDifficultyPanel | fresh-wire (rb3-Wii port, header unmodified) | +42 | 107439d0 |
+| C wire | OverdriveMeter | fresh-wire (oracle compiled clean) | +29 | ad7fede8 |
+| A repin | BandHighlight | repin AROUND FlowWhile interleave (2 ranges) | +25 | 792960e5 |
+| C wire | FreestylePanel | fresh-wire (name-only header renames) | +24 | 3901892c |
+| C wire | GemTrackResourceManager | fresh-wire | +21 | 06d115f6 |
+| A repin | GemTrackDir | frag extend to WebSvcMgrCurl boundary | +19 | 91d0e238 |
+| A repin | CharBoneDir | census span added as 4th fragment | +18 | 8a275129 |
+| A repin | StreakMeter | main-body pin (DrivenPropertyEntry interleave noted) | +14 | 8de5d451 |
+| A repin | VocalTrackDir | tail span added; WEAK-STL-dominated | +4 | 1babb89a |
+
+### Economics (flips per worker-hour proxy — schedules the remaining 768 KB)
+
+All 4 workers ran ~12-13 min wall each (~50 worker-min total):
+
+- **Game repins (B): +388 / ~13 wkr-min ≈ 30 flips/wkr-min.** Best in batch by
+  3x. The pin-extend ALONE converted most of it (+154/+68/+71) via objdiff
+  byte-identity self-pairing — the compiled bodies were already sitting there
+  unpaired. Automap added the remainder (+56/+25/+14).
+- **Fresh-wires (C): +116 / ~13 wkr-min ≈ 9 flips/wkr-min.** All 4 grade-A
+  candidates ported near-zero-change (header already in-tree = the gate).
+- **Engine repins (A): +136 / ~25 wkr-min ≈ 5.5 flips/wkr-min.** Real but
+  thinner: engine spans are WEAK-STL/funclet-dominated (VocalTrackDir +4 worst
+  case) and pre-existing map coverage means less new pairing.
+
+**Scheduling implication:** work the game-repin residue (Tier-1 leftovers)
+FIRST, then the 768 KB engine pool — engine repins still run far above
+body-port rates (~1-2/wkr-min), so both stay ahead of any grind lane.
+
+### Friction census (batch 6)
+
+1. **NONE of the 13 hit a compile/port wall** — first batch ever. The grade-A
+   filter (header in-tree + oracle .cpp present) is a near-perfect port-cost
+   predictor.
+2. 3-way `resolve_json_union` worked as designed under fire: protected
+   PitchArrow's 2 main-side `__unwind$` deletions from resurrection by 5
+   later-landing branches (the exact batch-5 trap, now dead).
+3. A concurrent non-batch lane landed on main mid-wave (+4 PlatformMgr) —
+   rebase-per-landing + gate-vs-live-main absorbed it silently.
+4. Small port frictions (all resolved in-worker): `TheUI.`→`TheUI->`,
+   `TheContentMgr->`→`.` (in-tree ref), Timer `Split(),CyclesToMs()`→`SplitMs()`,
+   offset-preserving header field renames (match-safe).
+5. Worker-reused worktrees hold only their LAST branch checked out — foreman
+   registers a bare `git worktree add` per earlier branch so land.sh's
+   worktree lookup succeeds (cheap, works).
+
+### Batch-7 seeds
+
+1. **Tier-1/2 residue not taken this batch:** PracticePanel (99 fns),
+   TrainerPanel (68), Band.cpp (69), CharacterCreatorPanel (50), GemPlayer (44),
+   TrackWatcherImpl (50 fns/27 KB, funclet-heavy), StoreOffer (TU5-verify first
+   — census flags the 8259ff30 span as likely StoreOfferProvider).
+2. **Interleave-exposed TUs identified this batch:** FlowWhile (inside
+   BandHighlight span), DrivenPropertyEntry (inside StreakMeter span) — tiny
+   TUs, likely cheap wires/pins.
+3. **Post-repin near-miss harvest:** repinned spans now expose newly-paired
+   near-misses (Overshell/Leaderboard WEAK tails) — a bodyport lane can flip
+   them; re-run size_order_automap after any compile improvement (coverage
+   grows automatically as bodies go byte-identical).
+4. Engine-with-dc3 157-run pool: order remaining census runs by automap-EXACT
+   density, not KB.
