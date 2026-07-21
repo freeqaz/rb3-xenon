@@ -6466,3 +6466,7 @@ band3/meta_band/SigninScreen.cpp:
 system/bandobj/BandHeadShaper.cpp:
 	.pdata      start:0x821F5608 end:0x821F5718
 	.text       start:0x822AF1C8 end:0x822B0AB0
+
+band3/meta_band/SessionMgr.cpp:
+	.pdata      start:0x8221F458 end:0x8221FA30
+	.text       start:0x82584B58 end:0x82588D00
