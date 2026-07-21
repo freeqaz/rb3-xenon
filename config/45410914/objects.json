@@ -80,6 +80,7 @@
    "system/bandobj/PitchArrow.cpp": "NonMatching",
    "system/bandobj/BandHighlight.cpp": "NonMatching",
    "system/bandobj/OutfitConfig.cpp": "NonMatching",
+   "system/bandobj/LayerDir.cpp": "NonMatching",
    "system/track/TrackDir.cpp": "NonMatching",
    "system/track/TrackWidget.cpp": "NonMatching",
    "system/beatmatch/GuitarController.cpp": "NonMatching",

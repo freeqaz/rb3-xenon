@@ -6002,6 +6002,12 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F42A8 end:0x821F45D0
 	.text       start:0x8229CA70 end:0x8229FF2C
 
+LayerDir.cpp:
+	.pdata      start:0x821FCE78 end:0x821FCEE8
+	.pdata      start:0x821FCFB0 end:0x821FD230
+	.text       start:0x823264D8 end:0x82326D1C
+	.text       start:0x823278F0 end:0x82329B14
+
 PitchArrow.cpp:
 	.pdata      start:0x821F98A0 end:0x821F98A8
 	.text       start:0x822F1FD8 end:0x822F2044
