@@ -6037,7 +6037,9 @@ VocalNoteList.cpp:
 
 OutfitConfig.cpp:
 	.pdata      start:0x821F42A8 end:0x821F45D0
+	.pdata      start:0x821F45D0 end:0x821F4678
 	.text       start:0x8229CA70 end:0x8229FF2C
+	.text       start:0x8229FF30 end:0x822A0ED4
 
 LayerDir.cpp:
 	.pdata      start:0x821FCE78 end:0x821FCEE8
@@ -6133,7 +6135,9 @@ SongDB.cpp:
 	.text       start:0x82773128 end:0x82773198
 
 VocalPart.cpp:
+	.pdata      start:0x82236AF8 end:0x82236B50
 	.pdata      start:0x82236B50 end:0x82236B58
+	.text       start:0x826F0F20 end:0x826F2144
 	.text       start:0x826F2148 end:0x826F232C
 
 RGUtl.cpp:
