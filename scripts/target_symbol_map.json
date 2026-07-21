@@ -19016,5 +19016,9 @@
  "0x82548ed8": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVSaveLoadMgrStatusUpdateMsg@@@Z",
  "0x82548f28": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVUserLoginMsg@@@Z",
  "0x82548fd0": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
- "0x82549050": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVProfileChangedMsg@@@Z"
+ "0x82549050": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVProfileChangedMsg@@@Z",
+ "0x8239d518": "?Handle@CharCuff@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8239d878": "??$PropSync@VRndMesh@@@@YA_NAAPAVRndMesh@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8239e220": "??_DCharCuff@@QAAXXZ",
+ "0x8239e4f8": "?Copy@CharCuff@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
 }
