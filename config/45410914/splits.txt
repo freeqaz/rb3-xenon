@@ -163,6 +163,10 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F7608 end:0x821F7698
 	.text       start:0x822CEF3C end:0x822CF884
 
+FingerShape.cpp:
+	.pdata      start:0x821FF908 end:0x821FF910
+	.text       start:0x82355148 end:0x82355558
+
 BandCamShot.cpp:
 	.pdata      start:0x821F5718 end:0x821F5F60
 	.pdata      start:0x821F7CE8 end:0x821F7CF0

@@ -18299,5 +18299,6 @@
  "0x8265be90": "?Compare@RecentCmp@@UBAHPBVSongSortCmp@@W4SongNodeType@@@Z",
  "0x82627FB8": "?PopAndShowFirstAward@NewAwardPanel@@QAAXXZ",
  "0x826287F0": "?InitData@AwardAssetProvider@@UAAXPAVRndDir@@@Z",
- "0x826288D8": "?Mat@AwardAssetProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z"
+ "0x826288D8": "?Mat@AwardAssetProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
+ "0x82355148": "??0FingerShape@@QAA@PAVRndDir@@@Z"
 }
