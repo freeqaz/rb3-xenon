@@ -6414,8 +6414,14 @@ MoggClip.cpp:
 	.text       start:0x82790AD0 end:0x82790B30
 
 Game.cpp:
+	.pdata      start:0x8222FD10 end:0x8222FEA0
 	.pdata      start:0x8222FEA0 end:0x8222FEA8
+	.pdata      start:0x8222FF20 end:0x82230140
+	.pdata      start:0x822301A0 end:0x822303C8
+	.text       start:0x82677410 end:0x82678CFC
 	.text       start:0x82678D00 end:0x82678D7C
+	.text       start:0x82679868 end:0x8267C738
+	.text       start:0x8267D480 end:0x8267F354
 
 DancerSequence.cpp:
 	.pdata      start:0x8221F108 end:0x8221F110
