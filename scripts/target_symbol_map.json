@@ -18955,5 +18955,20 @@
  "0x82643c08": "?CanChangeSongReview@NextSongPanel@@QBA_NH@Z",
  "0x82644290": "?IncrementSongReview@NextSongPanel@@QAAXH@Z",
  "0x82644540": "?SetReviewDisplayValue@NextSongPanel@@QAAXHH@Z",
- "0x826445b0": "?GetPerformanceAward@NextSongPanel@@QAA?AVSymbol@@H@Z"
+ "0x826445b0": "?GetPerformanceAward@NextSongPanel@@QAA?AVSymbol@@H@Z",
+ "0x82614cd8": "?Poll@CustomizePanel@@UAAXXZ",
+ "0x82614da8": "?Unloading@CustomizePanel@@UBA_NXZ",
+ "0x82614de0": "?ContentStarted@CustomizePanel@@UAAXXZ",
+ "0x82614f20": "?StripFinish@CustomizePanel@@QAA?AVSymbol@@V2@@Z",
+ "0x82614f70": "?HasNewAssets@CustomizePanel@@QAA_NXZ",
+ "0x82615260": "?ClearAssetPatchData@CustomizePanel@@QAAXXZ",
+ "0x826152a8": "?IsCurrentAssetPatchable@CustomizePanel@@QAA_NXZ",
+ "0x82615300": "?GetWearing@CustomizePanel@@QAA?AVSymbol@@XZ",
+ "0x82616338": "?RotatePatch@CustomizePanel@@QAAXH@Z",
+ "0x826164e0": "?GetAssetShot@CustomizePanel@@QAA?AVSymbol@@V2@@Z",
+ "0x826166b0": "?PrepareAssetPatchEdit@CustomizePanel@@QAAXXZ",
+ "0x82616718": "?FinishPatchEdit@CustomizePanel@@QAAXXZ",
+ "0x82616768": "?OnMsg@CustomizePanel@@QAA?AVDataNode@@ABVUIComponentScrollMsg@@@Z",
+ "0x82616cc8": "?SetCustomizeState@CustomizePanel@@QAAXW4CustomizeState@1@@Z",
+ "0x826178c0": "?LeaveState@CustomizePanel@@QAA?AVDataNode@@_N@Z"
 }

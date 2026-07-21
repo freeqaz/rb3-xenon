@@ -5561,10 +5561,14 @@ BandMachineMgr.cpp:
 	.text       start:0x826F6930 end:0x826F6944
 
 CustomizePanel.cpp:
+	.pdata      start:0x82228FF8 end:0x82229270
 	.pdata      start:0x82229270 end:0x82229278
+	.pdata      start:0x82229278 end:0x822293F0
 	.pdata      start:0x822293F0 end:0x822293F8
 	.pdata      start:0x822293F8 end:0x82229400
+	.text       start:0x82614690 end:0x82616798
 	.text       start:0x82616798 end:0x82616804
+	.text       start:0x82616810 end:0x82617CB0
 	.text       start:0x82617CB0 end:0x82617E0C
 	.text       start:0x82617E28 end:0x82617E70
 
