@@ -5276,6 +5276,7 @@ Server.cpp:
 system/bandobj/BandTrack.cpp:
 	.pdata      start:0x821FF118 end:0x821FF120
 	.pdata      start:0x821FF120 end:0x821FF128
+	.pdata      start:0x821FF128 end:0x821FF3A0
 	.pdata      start:0x821FF3A0 end:0x821FF3A8
 	.pdata      start:0x821FF3A8 end:0x821FF3B0
 	.pdata      start:0x821FF3B8 end:0x821FF3C0
@@ -5285,6 +5286,7 @@ system/bandobj/BandTrack.cpp:
 	.text       start:0x8234D560 end:0x8234D574
 	.text       start:0x8234D6C8 end:0x8234D71C
 	.text       start:0x8234D720 end:0x8234D774
+	.text       start:0x8234D778 end:0x8234F4F8
 	.text       start:0x8234F4F8 end:0x8234F558
 	.text       start:0x8234F558 end:0x8234F5D8
 	.text       start:0x8234F6A0 end:0x8234F734
@@ -5481,6 +5483,7 @@ BandUser.cpp:
 	.pdata      start:0x82218A38 end:0x82218A40
 	.pdata      start:0x82230FA8 end:0x82230FB0
 	.pdata      start:0x82230FC8 end:0x82230FD0
+	.pdata      start:0x82230FD0 end:0x82231100
 	.pdata      start:0x82231128 end:0x82231130
 	.pdata      start:0x82231148 end:0x82231150
 	.text       start:0x824E9ED0 end:0x824E9F20
@@ -5488,6 +5491,7 @@ BandUser.cpp:
 	.text       start:0x8251D9C0 end:0x8251DA30
 	.text       start:0x8268AEC8 end:0x8268AFD8
 	.text       start:0x8268B148 end:0x8268B1F0
+	.text       start:0x8268B1F0 end:0x8268C920
 	.text       start:0x8268CC20 end:0x8268CC6C
 	.text       start:0x8268CE18 end:0x8268D8F8
 
