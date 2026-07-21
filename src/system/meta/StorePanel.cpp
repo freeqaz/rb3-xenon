@@ -406,65 +406,61 @@ void StorePanel::EnumerateOffers(bool b) {
 }
 
 int StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
+    std::vector<StoreOffer *> *offers = arg ? &mPendingOffers : &mOffers;
+
     int result;
-    std::vector<StoreOffer *> *offers;
-
-    if (arg) {
-        offers = &mPendingOffers;
-    } else {
-        offers = &mOffers;
-    }
-
-    if (mShowTestOffers != 0) {
+    if (mShowTestOffers) {
         result = kStoreErrorSuccess;
-    } else if (offers->size() == 0) {
-        // Empty list - format error message
-        FormatString fmt("This metadata contained no offer");
-        TheDebug.Notify(fmt.Str());
-        result = kStoreErrorSignedOut;
     } else {
-        result = kStoreErrorNoContent;
+        result = offers->empty() ? kStoreErrorSignedOut : kStoreErrorNoContent;
     }
 
     std::vector<StoreOffer *>::iterator it;
-    auto offersEnd = offers->end();
-    for (it = offers->begin(); it != offersEnd; ++it) {
+    for (it = offers->begin(); it != offers->end(); ++it) {
         StoreOffer *offer = *it;
-        bool _cond = offer->Exists();
-        if (_cond) {
-            // Check if offer matches enum list
-            std::list<EnumProduct>::const_iterator enumIt;
-            enumIt = enumList.begin();
-            bool match = false;
-            while (enumIt != enumList.end()) {
-                if (offer->songID == enumIt->mOfferID) {
-                    match = true;
-                    break;
-                }
-                ++enumIt;
-            }
 
-            if (match) {
-                result = kStoreErrorSuccess;
-                // Call virtual function at offset 0x70 (ILP32)
-#ifdef HX_NATIVE
-                // On LP64, vtable offsets shift — skip this call, offer handling is stubbed
-#else
-                void (*func)(void *, void *, void *) = (void (*)(void *, void *, void *))*(void **)((u32)this + 0x70);
-                func(this, offer, (void *)((u32)offer + 0x38));
-#endif
-            } else {
-                if (offer->IsTest()) {
-                    offer->isAvailable = false;
-                    offer->isPurchased = false;
-                    offer->cost = 0x270f;
-                }
+        // Primary purchaseable (the offer itself).
+        std::list<EnumProduct>::const_iterator e;
+        if (offer->Exists()) {
+            for (e = enumList.begin(); e != enumList.end(); ++e) {
+                if (e->mOfferID == offer->songID)
+                    break;
             }
         } else {
-            if (offer->IsTest()) {
-                offer->isAvailable = false;
-                offer->isPurchased = false;
-                offer->cost = 0x270f;
+            e = enumList.end();
+        }
+        if (e != enumList.end()) {
+            result = kStoreErrorSuccess;
+            UpdateFromEnumProduct(offer, &*e);
+        } else if (offer->IsTest()) {
+            offer->isAvailable = false;
+            offer->isPurchased = false;
+            offer->cost = 0x270f;
+        }
+
+        // Album purchaseable (offer + 0x40).
+        StorePurchaseable *album = (StorePurchaseable *)((char *)offer + 0x40);
+        if (album->Exists()) {
+            for (e = enumList.begin(); e != enumList.end(); ++e) {
+                if (e->mOfferID == album->songID)
+                    break;
+            }
+            if (e != enumList.end()) {
+                result = kStoreErrorSuccess;
+                UpdateFromEnumProduct(album, &*e);
+            }
+        }
+
+        // Pack purchaseable (offer + 0x80).
+        StorePurchaseable *pack = (StorePurchaseable *)((char *)offer + 0x80);
+        if (pack->Exists()) {
+            for (e = enumList.begin(); e != enumList.end(); ++e) {
+                if (e->mOfferID == pack->songID)
+                    break;
+            }
+            if (e != enumList.end()) {
+                result = kStoreErrorSuccess;
+                UpdateFromEnumProduct(pack, &*e);
             }
         }
     }
