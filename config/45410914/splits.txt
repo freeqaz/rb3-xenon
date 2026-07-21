@@ -2665,6 +2665,7 @@ Env.cpp:
 	.pdata      start:0x8220A260 end:0x8220A268
 	.pdata      start:0x8220A280 end:0x8220A288
 	.pdata      start:0x8220A2B0 end:0x8220A2B8
+	.pdata      start:0x8220A2B8 end:0x8220A450
 	.pdata      start:0x8220C640 end:0x8220C648
 	.pdata      start:0x82212388 end:0x82212390
 	.text       start:0x824079B8 end:0x824079C4
@@ -2675,6 +2676,7 @@ Env.cpp:
 	.text       start:0x824092E0 end:0x82409344
 	.text       start:0x82409610 end:0x82409804
 	.text       start:0x824098E8 end:0x82409AC4
+	.text       start:0x82409AC4 end:0x8240B0A0
 	.text       start:0x824302B0 end:0x824306D0
 	.text       start:0x824AA460 end:0x824AA4B8
 
@@ -3755,6 +3757,7 @@ Trans.cpp:
 	.pdata      start:0x82209498 end:0x822094A0
 	.pdata      start:0x822095A0 end:0x822095A8
 	.pdata      start:0x822095A8 end:0x822095B0
+	.pdata      start:0x822095B0 end:0x82209720
 	.text       start:0x823F76C8 end:0x823F78B0
 	.text       start:0x823F7968 end:0x823F7A10
 	.text       start:0x823F7A10 end:0x823F7A7C
@@ -3767,6 +3770,7 @@ Trans.cpp:
 	.text       start:0x823F9568 end:0x823F9674
 	.text       start:0x823FA890 end:0x823FA914
 	.text       start:0x823FA920 end:0x823FAAA0
+	.text       start:0x823FAAA0 end:0x823FBDE8
 
 MeshDeform.cpp:
 	.pdata      start:0x8220A450 end:0x8220A458
