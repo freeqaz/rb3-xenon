@@ -5374,7 +5374,7 @@ GemPlayer.cpp:
 	.text       start:0x826BE1D8 end:0x826BE244
 	.text       start:0x826BE6D8 end:0x826BE840
 	.text       start:0x826BEE10 end:0x826BEEE0
-	.text       start:0x826C0238 end:0x826C0270
+	.text       start:0x826C0238 end:0x826C1760
 	.text       start:0x826C26A8 end:0x826C2778
 	.text       start:0x826C3D08 end:0x826C3D84
 	.text       start:0x826C44F8 end:0x826C5AE4
