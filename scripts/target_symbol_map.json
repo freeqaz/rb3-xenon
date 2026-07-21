@@ -18351,5 +18351,22 @@
  "0x82627FB8": "?PopAndShowFirstAward@NewAwardPanel@@QAAXXZ",
  "0x826287F0": "?InitData@AwardAssetProvider@@UAAXPAVRndDir@@@Z",
  "0x826288D8": "?Mat@AwardAssetProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
- "0x82355148": "??0FingerShape@@QAA@PAVRndDir@@@Z"
+ "0x82355148": "??0FingerShape@@QAA@PAVRndDir@@@Z",
+ "0x826e03d8": "?HandlePlayerSaved_@PerfectOverdriveTracker@@UAAXABUTrackerPlayerID@@@Z",
+ "0x826e0400": "?GetCurrentValue@PerfectOverdriveTracker@@UBAMXZ",
+ "0x826e0410": "?GetPlayerContributionString@PerfectOverdriveTracker@@UBA?AVString@@VSymbol@@@Z",
+ "0x826e0670": "?LocalEndStreak@PerfectOverdriveTracker@@QAAXABUTrackerPlayerID@@MH@Z",
+ "0x826e08a8": "?GetTargetDescription@PerfectOverdriveTracker@@UBA?AVDataArrayPtr@@H@Z",
+ "0x826e08f0": "?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+ "0x826e0c40": "?SavePlayerStats@PerfectOverdriveTracker@@UBAXXZ",
+ "0x826e0f38": "??1PerfectOverdriveTracker@@UAA@XZ",
+ "0x826e0f9c": "__unwind$214855",
+ "0x826e0fc4": "__unwind$214856",
+ "0x826e1028": "??0PerfectOverdriveTracker@@QAA@PAVTrackerSource@@AAVTrackerBandDisplay@@AAVTrackerBroadcastDisplay@@@Z",
+ "0x826e1120": "__unwind$215142",
+ "0x826e1148": "__unwind$215143",
+ "0x826e1174": "__unwind$215144",
+ "0x826e11a0": "??_GPerfectOverdriveTracker@@UAAPAXI@Z",
+ "0x826e12b0": "?TranslateRelativeTargets@PerfectOverdriveTracker@@UAAXXZ",
+ "0x826e18a0": "?Poll_@PerfectOverdriveTracker@@UAAXM@Z"
 }

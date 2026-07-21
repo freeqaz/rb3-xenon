@@ -801,6 +801,7 @@
    "band3/game/FocusTracker.cpp": "NonMatching",
    "band3/game/OverdriveTracker.cpp": "NonMatching",
    "band3/game/StreakTracker.cpp": "NonMatching",
+   "band3/game/PerfectOverdriveTracker.cpp": "NonMatching",
    "band3/game/PerfectSectionTracker.cpp": "NonMatching",
    "band3/game/MultiplayerAnalyzer.cpp": "NonMatching",
    "band3/game/TrackerManager.cpp": "NonMatching",
