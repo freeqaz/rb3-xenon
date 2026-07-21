@@ -18525,5 +18525,17 @@
  "0x822dbb08": "?SetType@OverdriveMeter@@UAAXVSymbol@@@Z",
  "0x822dbd70": "?MiloReset@OverdriveMeter@@QAAXXZ",
  "0x822dc6e8": "??_DOverdriveMeter@@QAAXXZ",
- "0x822dc758": "??_GOverdriveMeter@@UAAPAXI@Z"
+ "0x822dc758": "??_GOverdriveMeter@@UAAPAXI@Z",
+ "0x826ba880": "??1FreestylePanel@@UAA@XZ",
+ "0x826ba9b8": "?Exit@FreestylePanel@@UAAXXZ",
+ "0x826baa48": "?GetFreestyleUser@FreestylePanel@@QAAPAVBandUser@@XZ",
+ "0x826baa90": "??_EFreestylePanel@@$4PPPPPPPM@GM@AAPAXI@Z",
+ "0x826baab0": "??_EFreestylePanel@@WDM@AAPAXI@Z",
+ "0x826baac0": "?SetType@FreestylePanel@@UAAXVSymbol@@@Z",
+ "0x826bac28": "??0FreestylePanel@@QAA@XZ",
+ "0x826baf78": "??_GFreestylePanel@@UAAPAXI@Z",
+ "0x826bafd0": "?Enter@FreestylePanel@@UAAXXZ",
+ "0x826bb1a0": "?Swing@FreestylePanel@@UAA_NH_N000W4GemHitFlags@@@Z",
+ "0x826bb388": "?OnMsg@FreestylePanel@@QAA?AVDataNode@@ABVJoypadConnectionMsg@@@Z",
+ "0x826bbc38": "??_GBeatMatchControllerSink@@UAAPAXI@Z"
 }

@@ -31,12 +31,12 @@ public:
 
     BeatMatchController *mController; // 0x3c
     BandUser *mUser; // 0x40
-    float unk44; // 0x44 - bpm?
-    float unk48;
-    int unk4c;
+    float mSecsPerBeat; // 0x44
+    float mBeatTimer; // 0x48
+    int mBeatCount; // 0x4c
     Metronome *mMetronome; // 0x50
-    bool unk54;
-    float unk58;
-    float unk5c;
+    bool mSoloEnabled; // 0x54
+    float mSoloStartSecs; // 0x58
+    float mLastSwingSecs; // 0x5c
     bool mFreestylePaused; // 0x60
 };

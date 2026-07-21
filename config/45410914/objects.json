@@ -798,6 +798,7 @@
     ]
    },
    "band3/game/Scoring.cpp": "NonMatching",
+   "band3/game/FreestylePanel.cpp": "NonMatching",
    "band3/game/Defines.cpp": "NonMatching",
    "band3/game/TrackerDisplay.cpp": "NonMatching",
    "band3/game/TrackerUtils.cpp": "NonMatching",
