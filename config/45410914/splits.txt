@@ -5308,14 +5308,8 @@ GemSmasher.cpp:
 	.text       start:0x82BAF9F0 end:0x82BB05A8
 
 PracticePanel.cpp:
-	.pdata      start:0x82233470 end:0x82233478
-	.pdata      start:0x822334F0 end:0x822334F8
-	.pdata      start:0x82233530 end:0x82233538
-	.pdata      start:0x82233590 end:0x82233598
-	.text       start:0x826B2040 end:0x826B20A8
-	.text       start:0x826B2858 end:0x826B28B0
-	.text       start:0x826B2C38 end:0x826B2D8C
-	.text       start:0x826B3758 end:0x826B4258
+	.pdata      start:0x82233470 end:0x82233760
+	.text       start:0x826B2040 end:0x826B4FF0
 
 band3/meta_band/ProfileMgr.cpp:
 	.pdata      start:0x8221B250 end:0x8221B258
@@ -5358,6 +5352,7 @@ GemPlayer.cpp:
 	.pdata      start:0x82233F78 end:0x82233F80
 	.pdata      start:0x82233FB0 end:0x82233FB8
 	.pdata      start:0x82233FD8 end:0x82233FE0
+	.pdata      start:0x82234130 end:0x82234288
 	.pdata      start:0x82234320 end:0x82234328
 	.pdata      start:0x82234410 end:0x82234418
 	.pdata      start:0x82234440 end:0x82234448
