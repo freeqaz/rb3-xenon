@@ -176,10 +176,11 @@ void StreakTracker::SavePlayerStats() const {
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 0x141);
+        Stats &stats = pPlayer->mStats;
         std::map<TrackerPlayerID, PlayerStreakData>::const_iterator cData =
             mStreakDataMap.find(id);
         MILO_ASSERT(cData != mStreakDataMap.end(), 0x146);
-        pPlayer->mStats.unk1c0 = cData->second.unk1c;
+        stats.unk1c0 = cData->second.unk1c;
     }
 }
 
