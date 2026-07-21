@@ -209,8 +209,10 @@ VocalTrack.cpp:
 
 MusicLibrary.cpp:
 	.pdata      start:0x8221A748 end:0x8221AE00
+	.pdata      start:0x8221AE08 end:0x8221B1E0
 	.pdata      start:0x8221B1E0 end:0x8221B1E8
 	.text       start:0x8253A7A8 end:0x82541C10
+	.text       start:0x82541CC0 end:0x82545688
 	.text       start:0x82545690 end:0x825456E8
 
 MusicLibraryStore.cpp:

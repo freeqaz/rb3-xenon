@@ -1,4 +1,12 @@
 {
+ "0x8253e290": "?_M_fill_insert_aux@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAHIABHABU__false_type@2@@Z",
+ "0x82541cf0": "??1MusicLibrary@@UAA@XZ",
+ "0x82541fa0": "??_EMusicLibrary@@WDA@AAPAXI@Z",
+ "0x825421e0": "??_GMusicLibrary@@UAAPAXI@Z",
+ "0x82542d10": "?SetTask@MusicLibrary@@QAAXAAVMusicLibraryTask@1@@Z",
+ "0x82544f68": "??0MusicLibraryTask@MusicLibrary@@QAA@XZ",
+ "0x82545040": "?SetRandomSongs@MusicLibrary@@QAAXHAAVSongFilter@SongSortMgr@@VSymbol@@_N2@Z",
+ "0x82545600": "?Init@MusicLibrary@@SAXAAVSongPreview@@@Z",
  "0x82791c38": "?EnterCoda@BeatMatcher@@QAAXXZ",
  "0x82791c90": "??0BeatMatcher@@QAA@ABVUserGuid@@HHVSymbol@@PAVSongData@@AAVSongInfo@@PAVDataArray@@PAVBeatMaster@@@Z",
  "0x82791f50": "?GetNow@BeatMatcher@@UBAMXZ",
