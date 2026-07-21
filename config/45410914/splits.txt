@@ -1845,6 +1845,7 @@ SongLayout.cpp:
 
 Mesh.cpp:
 	.pdata      start:0x821F86B8 end:0x821F86C0
+	.pdata      start:0x821F86C0 end:0x821F8888
 	.pdata      start:0x821F8888 end:0x821F8890
 	.pdata      start:0x821F8890 end:0x821F8898
 	.pdata      start:0x82203EB8 end:0x82203EC0
@@ -1874,6 +1875,7 @@ Mesh.cpp:
 	.pdata      start:0x8225E9C0 end:0x8225E9C8
 	.pdata      start:0x8225E9C8 end:0x8225E9D0
 	.text       start:0x822DFD88 end:0x822DFF20
+	.text       start:0x822DFF28 end:0x822E1234
 	.text       start:0x822E1238 end:0x822E12B0
 	.text       start:0x822E12B0 end:0x822E1320
 	.text       start:0x8239C320 end:0x8239C370
