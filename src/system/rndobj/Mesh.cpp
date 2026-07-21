@@ -259,6 +259,9 @@ BEGIN_SAVES(RndMesh)
     bs << mGeomOwner << mMutable << mVolume << mBSPTree;
     SaveVertices(bs);
     bs << mFaces << mPatches << mBones;
+    // RB3-360 retail: discarded virtual bs.Cached() call here (target slot 0x18 bctrl,
+    // result unused — likely a stripped debug/size check in retail source).
+    bs.Cached();
     bs << mKeepMeshData;
     bs << mHasAOCalc;
 END_SAVES
