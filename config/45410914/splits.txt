@@ -5790,6 +5790,10 @@ AccuracyTracker.cpp:
 	.pdata      start:0x82236078 end:0x822360C8
 	.text       start:0x826E2438 end:0x826E29E0
 
+TrackerSource.cpp:
+	.pdata      start:0x822360C8 end:0x82236158
+	.text       start:0x826E29E0 end:0x826E34D0
+
 DeployCountTracker.cpp:
 	.pdata      start:0x82235B40 end:0x82235B78
 	.pdata      start:0x82235B80 end:0x82235B88
