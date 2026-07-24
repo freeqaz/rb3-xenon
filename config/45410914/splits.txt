@@ -3448,12 +3448,14 @@ CameraManager.cpp:
 	.pdata      start:0x821FE158 end:0x821FE160
 	.pdata      start:0x82213068 end:0x82213348
 	.pdata      start:0x82222218 end:0x82222220
+	.pdata      start:0x82222220 end:0x82222300
 	.pdata      start:0x822569B0 end:0x822569B8
 	.pdata      start:0x822569D8 end:0x822569E0
 	.pdata      start:0x822569F8 end:0x82256A00
 	.text       start:0x82339A90 end:0x82339B04
 	.text       start:0x824B9F00 end:0x824BD428
 	.text       start:0x825ACD30 end:0x825ACEB4
+	.text       start:0x825ACEC0 end:0x825ADA80
 	.text       start:0x82B02748 end:0x82B027F4
 	.text       start:0x82B02C08 end:0x82B02CE4
 	.text       start:0x82B03000 end:0x82B0306C
@@ -6131,7 +6133,9 @@ QuestManager.cpp:
 
 SongSortNode.cpp:
 	.pdata      start:0x8222E348 end:0x8222E5D8
+	.pdata      start:0x8222E5D8 end:0x8222E648
 	.text       start:0x82660548 end:0x8266304C
+	.text       start:0x82663050 end:0x82663968
 
 GuitarFx.cpp:
 	.pdata      start:0x82236D38 end:0x82236D98
@@ -6518,7 +6522,9 @@ SongSortByReview.cpp:
 
 UploadErrorMgr.cpp:
 	.pdata      start:0x8222C060 end:0x8222C0F8
+	.pdata      start:0x8222C0F8 end:0x8222C218
 	.text       start:0x82641ECC end:0x82642450
+	.text       start:0x82642450 end:0x82643310
 
 HttpGet.cpp:
 	.pdata      start:0x822438C8 end:0x82243940

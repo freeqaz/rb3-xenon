@@ -1,4 +1,7 @@
 {
+ "0x825ad710": "??_Gbad_alloc@std@@UAAPAXI@Z",
+ "0x82663050": "??_GHeaderSortNode@@UAAPAXI@Z",
+ "0x826630a0": "?Insert@HeaderSortNode@@UAAXPAVLeafSortNode@@PAVNodeSort@@_N@Z",
  "0x82288420": "??1?$_List_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x82289798": "?Load@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x82289920": "?PreLoad@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
