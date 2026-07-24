@@ -108,6 +108,15 @@ __copy_ptrs< ::Singer::AmbiguousData*, ::Singer::AmbiguousData*>(
 } // namespace stlpmtx_std
 #endif // !HX_NATIVE
 
+#ifdef HX_NATIVE
+// Hardened libstdc++ asserts on &vec[0] when empty (solo mode -> no ambiguity);
+// .data() is the empty-safe, pointer-identical equivalent. X360 keeps the exact
+// original AMBIG0 expression (STLport tolerates the empty case).
+#define AMBIG0 (mAmbiguousData.data())
+#else
+#define AMBIG0 (&mAmbiguousData[0])
+#endif
+
 MicClientID sNullClientID(-1, -1);
 
 Singer::Singer(VocalPlayer *vp, int n)
@@ -120,7 +129,16 @@ Singer::Singer(VocalPlayer *vp, int n)
       mAutoplayVariationMagnitude(0), mAutoplayOffset(0),
       mTambourineDetector(vp->mTambourineManager, this), mPitchDeviationMean(0), mPitchDeviationDev(0), mPitchDeviationFrameCount(0) {
     CreateMicClientID();
+#ifdef HX_NATIVE
+    // Headless has no BandUser; the driver sets gNativeVocalDifficulty in the native
+    // VocalPlayer ctor. (Retail: mPlayer->GetUser()->GetDifficulty().)
+    extern int gNativeVocalDifficulty;
+    Difficulty diff = mPlayer->GetUser()
+        ? mPlayer->GetUser()->GetDifficulty()
+        : (Difficulty)gNativeVocalDifficulty;
+#else
     Difficulty diff = mPlayer->GetUser()->GetDifficulty();
+#endif
     DataArray *cfg = SystemConfig("scoring", "vocals");
     cfg->FindArray("pitch_margin")->Float(diff + 1); // lol what happened to this
     mMaxDetune = cfg->FindFloat("max_detune");
@@ -166,6 +184,15 @@ void Singer::PostLoad() {
 
 void Singer::CreateMicClientID() {
     BandUser *u = mPlayer->GetUser();
+#ifdef HX_NATIVE
+    // Headless: no BandUser / NetSession user table. The driver's native
+    // GameMicManager keys its synthetic mics by MicClientID(singerIndex, -1), so
+    // assign that directly (the retail local-user branch). X360-inert.
+    if (!u) {
+        mMicClientID = MicClientID(mSingerIndex, -1);
+        return;
+    }
+#endif
     if ((!TheNet.GetNetSession()->HasUser(u) || !u->IsLocal()) && !u->IsNullUser()) {
         mMicClientID = sNullClientID;
     } else {
@@ -312,7 +339,7 @@ void Singer::AllScoresAreIn(const std::vector<int> &assignedParts) {
         mResultsData[i].centsVariance += mScoreCaches[i].unkc;
         mResultsData[i].centsDeviation += mScoreCaches[i].unk0;
     }
-    for (AmbiguousData *entry = &mAmbiguousData[0]; entry != &mAmbiguousData[0] + mAmbiguousData.size(); entry++) {
+    for (AmbiguousData *entry = AMBIG0; entry != AMBIG0 + mAmbiguousData.size(); entry++) {
         if (entry->isResolved)
             continue;
         int part0 = entry->part1;
@@ -456,7 +483,7 @@ float Singer::AddToFreestyleDeployment(float val) {
 }
 
 void Singer::ResolveAmbiguity() {
-    for (AmbiguousData *entry = &mAmbiguousData[0]; entry != mAmbiguousData.end(); entry++) {
+    for (AmbiguousData *entry = AMBIG0; entry != mAmbiguousData.end(); entry++) {
         if (!entry->isResolved || entry->winningPart == -1)
             continue;
         int part1 = entry->part1;
@@ -602,8 +629,8 @@ void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {
 void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     MILO_ASSERT(i_iPart1 < i_iPart2, 0x13E);
     bool bFound = false;
-    for (AmbiguousData *iter = &mAmbiguousData[0];
-         iter != &mAmbiguousData[0] + mAmbiguousData.size(); iter++) {
+    for (AmbiguousData *iter = AMBIG0;
+         iter != AMBIG0 + mAmbiguousData.size(); iter++) {
         if (iter->part1 == i_iPart1 || iter->part1 == i_iPart2) {
             bFound = true;
             break;
@@ -623,8 +650,8 @@ void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
 void Singer::DisableAmbiguousPart(int i_iPart1, int i_iPart2) {
     if (mAmbiguousData.size() != 0) {
         MILO_ASSERT(i_iPart1 < i_iPart2, 0x16C);
-        for (AmbiguousData *iter = &mAmbiguousData[0];
-             iter != &mAmbiguousData[0] + mAmbiguousData.size(); iter++) {
+        for (AmbiguousData *iter = AMBIG0;
+             iter != AMBIG0 + mAmbiguousData.size(); iter++) {
             bool match = false;
             if (iter->part1 == i_iPart1 && iter->part2 == i_iPart2) {
                 match = true;
@@ -658,8 +685,8 @@ void Singer::SetAssignedPart(int part, float f2) {
     mResultsData[part].targetPitchHitScore = std::min(total, cap);
     float vibPts = mScoreCaches[part].unk10;
     mPossibleVibratoPoints.Set(vibPts);
-    for (AmbiguousData *iter = &mAmbiguousData[0];
-         iter != &mAmbiguousData[0] + mAmbiguousData.size(); iter++) {
+    for (AmbiguousData *iter = AMBIG0;
+         iter != AMBIG0 + mAmbiguousData.size(); iter++) {
         if ((iter->part1 != part && iter->part2 != part) || iter->isResolved)
             continue;
         if (iter->winningPart == part) {

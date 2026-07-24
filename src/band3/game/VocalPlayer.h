@@ -106,6 +106,17 @@ public:
 class VocalPlayer : public Player, public RndOverlay::Callback {
 public:
     VocalPlayer(BandUser *, BeatMaster *, Band *, int, Performer *, int);
+#ifdef HX_NATIVE
+    // Native scoring-core ctor (M10): delegates to the native Player scoring-core
+    // ctor and brings up the REAL Singer/VocalPart orchestration WITHOUT the retail
+    // ctor's TheSongMgr / MetaPerformer / TheGameMicManager->AddSink / RndOverlay /
+    // JoypadSubscribe singleton coupling. mUser may be null (the null-mUser Poll
+    // derefs — GetCompensatedTime, PressingToTalk — are HX_NATIVE-gated). The
+    // per-singer scoring difficulty comes from `nativeDiff` (the retail ctor reads
+    // it from mUser->GetDifficulty()). X360 never sees this ctor (gated out).
+    VocalPlayer(BandUser *user, BeatMaster *bmaster, Band *band, int tracknum,
+                Performer *perf, int nsingers, int nativeDiff, bool /*native_tag*/);
+#endif
     virtual DataNode Handle(DataArray *, bool);
     virtual ~VocalPlayer();
     virtual Symbol GetStarRating() const;

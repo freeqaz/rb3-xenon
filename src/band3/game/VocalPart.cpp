@@ -744,6 +744,13 @@ void VocalPart::HandlePhraseEnd(
             }
         }
         VocalNoteList *list = mVocalNoteList;
+#ifdef HX_NATIVE
+        // Headless: no BandUser (GetUserGuid) and no TheGameConfig track table.
+        // The spotlight-phrase id feeds overdrive/unison display only; the phrase
+        // rating/score above is unaffected.
+        (void)list;
+        mSpotlightPhraseID = -1;
+#else
         if (phrase != list->mPhrases.end() && phrase->unk10 != phrase->unk14) {
             mSpotlightPhraseID = TheSongDB->GetCommonPhraseID(
                 TheGameConfig->GetTrackNum(mPlayer->GetUserGuid()),
@@ -752,6 +759,7 @@ void VocalPart::HandlePhraseEnd(
         } else {
             mSpotlightPhraseID = -1;
         }
+#endif
         if (mThisPhrase != mVocalNoteList->mPhrases.end() && mThisPhrase->unk1a) {
             UpdateMinMaxPitch(phrase);
         }

@@ -27,14 +27,29 @@
 
 TambourineManager::TambourineManager(VocalPlayer &p)
     : mPlayerRef(p), mIsLocal(p.IsLocal()), mTambourineSequence(0),
-      mTambourineFader(Hmx::Object::New<Fader>()), mTambourineParser(0),
+#ifdef HX_NATIVE
+      // Headless: no synth Fader audio-duck object (scoring-irrelevant); the
+      // per-frame DoFade calls below are guarded on mTambourineFader.
+      mTambourineFader(0),
+#else
+      mTambourineFader(Hmx::Object::New<Fader>()),
+#endif
+      mTambourineParser(0),
       mTambourineIdx(0), unk48(1), unk4c(0), mTambourineActive(0), unk60(0), unk68(0),
 #ifdef HX_NATIVE
       unk74(0),
 #endif
       unk78(0), unk7c(0) {
     DataArray *cfg = SystemConfig("scoring", "vocals");
+#ifdef HX_NATIVE
+    // Headless has no BandUser; the native VocalPlayer ctor sets gNativeVocalDifficulty.
+    extern int gNativeVocalDifficulty;
+    int diff = mPlayerRef.GetUser()
+        ? mPlayerRef.GetUser()->GetDifficulty()
+        : gNativeVocalDifficulty;
+#else
     int diff = mPlayerRef.GetUser()->GetDifficulty();
+#endif
     mTambourineWindowTicks = cfg->FindInt("tambourine_window_ticks");
     mTambourineCrowdSuccess = cfg->FindArray("tambourine_crowd_success")->Float(diff + 1);
     mTambourineCrowdFailure = cfg->FindArray("tambourine_crowd_failure")->Float(diff + 1);
@@ -48,10 +63,13 @@ TambourineManager::~TambourineManager() {
 }
 
 void TambourineManager::PostLoad() {
+#ifndef HX_NATIVE
+    // Headless: no ObjectDir::Main() "tambourine" MidiParser object.
     mTambourineParser = ObjectDir::Main()->Find<MidiParser>("tambourine", true);
     mTambourineParser->AddSink(this);
+#endif
     ComputeTambourinePoints();
-    mTambourineFader->DoFade(-96.0f, 0);
+    if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0);
 }
 
 void TambourineManager::PostDynamicAdd() { Restart(); }
@@ -85,9 +103,7 @@ const std::vector<int> &TambourineManager::TambourineGems() const {
 void TambourineManager::Poll(float ms) {
     if (unk60 <= 0 || (unsigned int)mTambourineIdx == TambourineGems().size()) {
 #ifdef HX_NATIVE
-        if (unk74) {
-            TheProfileMgr.UpdateAllMicLevels();
-        }
+        // headless: no TheProfileMgr mic-level restore object (audio-only)
         unk74 = false;
 #endif
         return;
@@ -125,12 +141,12 @@ void TambourineManager::Poll(float ms) {
     } else if (delta > 0) {
         VocalTrack *track = mPlayerRef.mTrack;
         if (unk48) {
-            mTambourineFader->DoFade(0.0f, 0.0f);
+            if (mTambourineFader) mTambourineFader->DoFade(0.0f, 0.0f);
             if (track) {
                 track->HitTambourineGem(mTambourineIdx);
             }
         } else {
-            mTambourineFader->DoFade(-96.0f, 0.0f);
+            if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0.0f);
             if (track) {
                 track->MissTambourineGem(mTambourineIdx, false);
             }
@@ -183,10 +199,15 @@ bool TambourineManager::IsTambourineButton(JoypadButton btn) const { return btn 
 void TambourineManager::HandleButtonDown() {
     if (mTambourineActive && mTambourineIdx < TambourineGems().size() && unk60 > 0) {
         int pad = -1;
+#ifndef HX_NATIVE
         if (mIsLocal) {
             pad = mPlayerRef.GetUser()->GetLocalBandUser()->GetPadNum();
         }
         float offset = TheProfileMgr.GetSyncOffset(pad);
+#else
+        // headless: no BandUser pad / TheProfileMgr sync-offset (button-driven path)
+        float offset = 0.0f;
+#endif
         TambourineSwing(MsToTick(1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime) + offset));
     }
 }
@@ -274,7 +295,7 @@ void TambourineManager::TambourineSucceed(int index) {
     if (GemProcessed(index))
         return;
     MILO_ASSERT(mIsLocal, 0x244);
-    mTambourineFader->DoFade(0.0f, 0.0f);
+    if (mTambourineFader) mTambourineFader->DoFade(0.0f, 0.0f);
     if (mPlayerRef.mTrack) {
         mPlayerRef.mTrack->HitTambourineGem(index);
     }
@@ -305,7 +326,7 @@ void TambourineManager::TambourineFail(int index, bool swing) {
     if (GemProcessed(index))
         return;
     MILO_ASSERT(mIsLocal, 0x27b);
-    mTambourineFader->DoFade(-96.0f, 0.0f);
+    if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0.0f);
     if (index != -1) {
         if (mPlayerRef.mTrack) {
             mPlayerRef.mTrack->MissTambourineGem(index, swing);
@@ -334,6 +355,9 @@ DataNode TambourineManager::OnPlayTambourine(DataArray *d) {
         seq_name = Symbol("percussion1.cue");
     }
     MILO_ASSERT(!seq_name.Null(), 0x1ef);
+#ifndef HX_NATIVE
+    // Headless: no synth Sequence playback (percussion cue is audio-only). The
+    // MIDI tambourine sink is not wired in the synthetic-mic run.
     RELEASE(mTambourineSequence);
     Sequence *seq = mBank->Find<Sequence>(seq_name.Str(), true);
     MILO_ASSERT(seq, 0x1f5);
@@ -343,6 +367,7 @@ DataNode TambourineManager::OnPlayTambourine(DataArray *d) {
     mTambourineSequence->Copy(seq, Hmx::Object::kCopyShallow);
     mTambourineSequence->Faders().Add(mTambourineFader);
     mTambourineSequence->Play(0, 0, 0);
+#endif
     return 0;
 }
 
@@ -361,7 +386,7 @@ void TambourineManager::SetPaused(bool paused) { mTambourineActive = !paused; }
 
 void TambourineManager::GameOver() {
     mTambourineActive = false;
-    mTambourineFader->DoFade(-96.0f, 0.0f);
+    if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0.0f);
 }
 
 void TambourineManager::Rollback(float, float toMs) {
@@ -376,7 +401,7 @@ void TambourineManager::Rollback(float, float toMs) {
             mGemStates[i] |= 4;
         }
     }
-    mTambourineFader->DoFade(0.0f, 0.0f);
+    if (mTambourineFader) mTambourineFader->DoFade(0.0f, 0.0f);
     unk48 = true;
 }
 

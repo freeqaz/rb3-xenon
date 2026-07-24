@@ -488,6 +488,60 @@ target_include_directories(rb3-vocal PRIVATE
 )
 target_link_libraries(rb3-vocal PRIVATE Threads::Threads ZLIB::ZLIB)
 
+# --- M10: full vocal-gameplay orchestration ----------------------------------
+# The REAL VocalPlayer::Poll each frame: real Singers, real VocalParts, greedy
+# singer<->part assignment, real ScoreSinger / phrase accumulation / phrase-end
+# rating. Adds the three real vocal game TUs (VocalPlayer/Singer/VocalPart +
+# TambourineManager) on top of the M8 object graph, plus faithful rb3-Wii-oracle
+# ports of the leaf helpers (VibratoDetector, TambourineDetector, VocalScoreHistory,
+# VoiceBeat/TalkyMatcher) and m10_support (synthetic GameMic/GameMicManager +
+# vocal SongDB queries). m10_link_stubs replaces m8_link_stubs (drops the
+# GetVocalNoteListCount->0 stub, adds NetSession::IsLocal). Only the mic is
+# synthetic; all scoring is real. See native/src/main_vocal2.cpp for the census.
+add_executable(rb3-vocal2
+    ${CMAKE_SOURCE_DIR}/src/main_vocal2.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/Singer.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPart.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineManager.cpp
+    ${REPO_ROOT}/src/band3/game/VocalScoreHistory.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineDetector.cpp
+    ${REPO_ROOT}/src/system/dsp/VibratoDetector.cpp
+    ${REPO_ROOT}/src/system/synth/VoiceBeat.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${M6_GAME_SOURCES}
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-vocal2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+target_link_options(rb3-vocal2 PRIVATE -Wl,--gc-sections)
+target_compile_definitions(rb3-vocal2 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-vocal2 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-vocal2 PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+)
+target_link_libraries(rb3-vocal2 PRIVATE Threads::Threads ZLIB::ZLIB)
+
 # --- M4: profile / save serialization round-trip -----------------------------
 # Runs RB3's real FixedSizeSaveable machinery natively (src/system/meta) and
 # round-trips two real FixedSizeSaveable subclasses (GameplayOptions, StandIn)

@@ -94,6 +94,54 @@ VocalPlayer::VocalPlayer(
     mOverlay->SetCallback(this);
 }
 
+#ifdef HX_NATIVE
+// Native-only: the difficulty the native Singer ctor reads when mPlayer->GetUser()
+// is null (headless has no BandUser). Set by the native VocalPlayer ctor below
+// before the Singers are constructed. X360-inert.
+int gNativeVocalDifficulty = 3; // Expert
+
+VocalPlayer::VocalPlayer(
+    BandUser *user, BeatMaster *bmaster, Band *band, int tracknum, Performer *perf,
+    int nsingers, int nativeDiff, bool /*native_tag*/
+)
+    : Player(user, band, tracknum, bmaster, true), mBandPerformer(perf), mSpoofed(0),
+      mTrack(0), mAutoPlay(0), mVocalPartBias(1.25f), unk2e8(0), unk2ec(0),
+      mNextPacketSendTime(0), unk300(0), unk304(0), mTrackWrappingMargin(0),
+      mLastDeploymentSinger(-1), mPhraseValue(0), mPartScoreMultipliers(0),
+      mRatingThresholds(0), mNonpitchStickiness(0.6f), mCouldChat(0), mCodaEndMs(0),
+      unk344(0), mTuningOffset(0), unk34c(-1.0f), mInitialMicCount(0), unk36c(0),
+      unk370(0), mPhraseActivePartCount(0), mPhrasePercentageTotal(0),
+      mPhrasePercentageCount(0), mOverlay(0), mVocalOverlay(0), mScoringEnabled(1),
+      mTambourineManager(*this), mSectionStartPhrasePercentageTotal(0),
+      mSectionStartPhrasePercentageCount(0), mSectionStartScore(0),
+      mFrameSpewData(0), mFrameSpewStream(0) {
+    gNativeVocalDifficulty = nativeDiff;
+    NativeInitParams(); // instantiate PlayerParams from scoring.dta (M7 helper) so
+                        // the real overdrive/energy gates (CanDeployOverdrive etc.)
+                        // have their config; retail builds these in the Player ctor.
+    // mTuningOffset: retail reads BandSongMetadata->TuningOffset(); headless has no
+    // song-metadata DB, so 0 (no detune). The per-frame TheSongDB->GetPitchOffset-
+    // ForTick path in Poll still updates it if the chart carries tuning data.
+    for (int i = 0; i < nsingers; i++) {
+        mSingers.push_back(new Singer(this, i));
+    }
+    SetTypeDef(SystemConfig("player", "handlers"));
+    SetDifficultyVariables(nativeDiff);
+    DataArray *cfg = SystemConfig("scoring", "vocals");
+    mTrackWrappingMargin = cfg->FindFloat("track_wrapping_margin");
+    mFreestyleDeploymentTimes = cfg->FindArray("freestyle_deployment_time")->Array(1);
+    mFreestyleMinDurations = cfg->FindArray("freestyle_min_duration")->Array(1);
+    mMaxDetune = cfg->FindFloat("max_detune");
+    mPacketPeriodMs = cfg->FindFloat("packet_period");
+    mPartScoreMultipliers = cfg->FindArray("part_score_multiplier");
+    mRatingThresholds = cfg->FindArray("rating_thresholds");
+    mNonpitchStickiness = cfg->FindFloat("nonpitch_stickiness");
+    // Skipped vs retail (headless / driver-owned): JoypadSubscribe,
+    // TheGameMicManager->AddSink, RememberCurrentMics (mic sink fan-out), and
+    // RndOverlay::Find("vocalplayer") + SetCallback (no render overlay).
+}
+#endif
+
 VocalPlayer::~VocalPlayer() {
     if (mOverlay)
         mOverlay->SetCallback(nullptr);
@@ -168,8 +216,12 @@ void VocalPlayer::SetTrack(int trk) {
 }
 
 void VocalPlayer::PostLoad(bool b1) {
+#ifndef HX_NATIVE
+    // Headless: no ObjectDir::Main() "play_tambourine" MidiParser object; the
+    // tambourine MIDI sink isn't wired in the synthetic-mic run.
     MidiParser *midiParser = ObjectDir::Main()->Find<MidiParser>("play_tambourine", true);
     midiParser->AddSink(this);
+#endif
     int num = TheSongDB->GetVocalNoteListCount();
     mStats.SetVocalSingerAndPartCounts(mSingers.size(), num);
     for (int i = 0; i < num; i++) {
@@ -810,10 +862,19 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
         if (0.0f != pSinger->mFrameMicPitch) {
             float fAdjusted = (kSemitone * (float)iOctaveOffset) + pSinger->mFrameMicPitch;
+#ifdef HX_NATIVE
+            // Headless: mTrack is a non-null sentinel (no VocalTrackDir render
+            // object). Retail clamps the octave to the on-screen display range;
+            // with no display track fBottom/fTop are 0, so the wrap is inactive
+            // and the REAL SuddenOctaveShift path handles octave folding.
+            float fBottom = 0.0f;
+            float fTop = 0.0f;
+#else
             VocalTrack *pTrack = mTrack;
             MILO_ASSERT(pTrack, 0x501);
             float fBottom = pTrack->GetBottomDisplayPitch() - mTrackWrappingMargin;
             float fTop = mTrackWrappingMargin + pTrack->GetTopDisplayPitch();
+#endif
             if ((fBottom > 0.0f) && (fAdjusted < fBottom)) {
                 iOctaveOffset += (int)((fBottom - fAdjusted) / kSemitone) + 1;
             } else if ((fTop > 0.0f) && (fAdjusted > fTop)) {
@@ -997,6 +1058,12 @@ bool VocalPlayer::FindBestPart(
 }
 
 void VocalPlayer::LocalEndgameEnergy(int x) {
+#ifdef HX_NATIVE
+    // Off-path (endgame world-message fan-out); headless has no TheWorld / world
+    // messages. Never reached by the scoring Poll loop.
+    (void)x;
+    return;
+#else
     if (TheWorld) {
         if (x == 0) {
             TheWorld->Handle(endgame_vocals_none_msg, false);
@@ -1007,12 +1074,19 @@ void VocalPlayer::LocalEndgameEnergy(int x) {
         } else
             TheWorld->Handle(endgame_vocals_high_msg, false);
     }
+#endif
 }
 
 void VocalPlayer::SendCanChat(bool b1) {
+#ifdef HX_NATIVE
+    // Off-path: no VocalTrackDir render object. The Poll chat gate never fires
+    // headless (TheNetSession->IsLocal() is true), so this is never called.
+    (void)b1;
+#else
     if (mTrack) {
         mTrack->GetVocalTrackDir()->CanChat(b1);
     }
+#endif
 }
 
 void VocalPlayer::SendVocalState(float f1) {
@@ -1218,6 +1292,16 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
     bool b14 = i4 != -1 && ic8 >= 4;
+#ifdef HX_NATIVE
+    // Headless: mTrack is a non-null sentinel with no VocalTrackDir render object
+    // and no net session, so the retail render/net phrase-end leaves
+    // (VocalTrack::OnPhraseComplete, LocalScorePhrase -> VocalTrackDir feedback,
+    // the send_score_phrase net message, and the CommonPhraseCapturer overdrive
+    // arbiter which needs mTrack->mTrackConfig) are skipped. The REAL per-part
+    // rating / stats / points accumulation above (cur->HandlePhraseEnd,
+    // CalculatePhraseRating, AddPoints, UpdateCrowdMeter) still runs.
+    (void)b14;
+#else
     if (mTrack) {
         int i16 = 0;
         if (ScoringEnabled()) {
@@ -1244,6 +1328,7 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
             this, mTrack->mTrackConfig.TrackNum(), i4, b14
         );
     }
+#endif
     if (ScoringEnabled())
         UpdateSectionStats();
 }
@@ -1273,6 +1358,11 @@ void VocalPlayer::RemoteScorePhrase(int i1, int i2, bool b3) {
 }
 
 void VocalPlayer::HookupTrack() {
+#ifdef HX_NATIVE
+    // Off-path: the driver installs a sentinel mTrack directly (no BandUser track,
+    // no VocalTrack render object, no dynamic_cast RTTI). Never called headless.
+    return;
+#else
     mTrack = dynamic_cast<VocalTrack *>(GetUser()->GetTrack());
     MILO_ASSERT(mTrack, 0x88A);
     std::vector<VocalPhrase> &phrases = mVocalParts[0]->mVocalNoteList->mPhrases;
@@ -1281,6 +1371,7 @@ void VocalPlayer::HookupTrack() {
     SendCanChat(mCouldChat);
     UpdateMicDisplay();
     mTrack->GetVocalTrackDir()->SetMaxMultiplier(mBehavior->GetMaxMultiplier());
+#endif
 }
 
 DECOMP_FORCEACTIVE(
@@ -1344,11 +1435,18 @@ float VocalPlayer::GetSingerAutoplayVariationMagnitude(int x) {
 }
 
 float VocalPlayer::GetCompensatedTime(float ms) {
+#ifdef HX_NATIVE
+    // Headless: no BandUser and no TheProfileMgr controller-sync-offset table.
+    // Retail adds a per-pad audio/display sync offset; native runs uncompensated.
+    // (Whole branch #else'd so the native link never references TheProfileMgr.)
+    return ms;
+#else
     int padNum = -1;
     if (mUser->IsLocal()) {
         padNum = mUser->GetLocalUser()->GetPadNum();
     }
     return ms + TheProfileMgr.GetSyncOffset(padNum);
+#endif
 }
 
 void VocalPlayer::SetAutoplayOffset(float f1) {
@@ -1378,6 +1476,10 @@ int VocalPlayer::OnMsg(const GameMicsChangedMsg &) {
 }
 
 void VocalPlayer::UpdateMicDisplay() {
+#ifdef HX_NATIVE
+    // Off-path: no VocalTrackDir mic-display render object. Never called headless.
+    return;
+#else
     if (mTrack) {
         VocalTrackDir *pTrackDir = mTrack->GetVocalTrackDir();
         MILO_ASSERT(pTrackDir, 0x977);
@@ -1435,6 +1537,7 @@ void VocalPlayer::UpdateMicDisplay() {
             pTrackDir->ShowMicDisplay(true);
         }
     }
+#endif
 }
 
 void VocalPlayer::RememberCurrentMics() {
@@ -1459,6 +1562,12 @@ bool VocalPlayer::HadMic(const MicClientID &id) const {
 }
 
 int VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
+#ifdef HX_NATIVE
+    // Off-path: the tambourine button-down path pulls TheUI / TheBandUI overshell
+    // + PracticePanel RTTI (no UI headless). Not wired to the synthetic-mic run.
+    (void)msg;
+    return 0;
+#else
     if ((User *)GetUser() != msg.GetUser())
         return 0;
     bool b1 = false;
@@ -1477,6 +1586,7 @@ int VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
         mTambourineManager.HandleButtonDown();
     }
     return 0;
+#endif
 }
 
 DECOMP_FORCEACTIVE(
@@ -1500,9 +1610,11 @@ bool VocalPlayer::AllowWarningState() const {
 }
 
 void VocalPlayer::OnGameOver() {
+#ifndef HX_NATIVE
     if (!MetaPerformer::Current()->SongEndsWithEndgameSequence()) {
         TheGameMicManager->SetPlayback(false);
     }
+#endif
     mTambourineManager.GameOver();
     FOREACH (it, mVocalParts) {
         (*it)->OnGameOver();
@@ -1893,7 +2005,12 @@ bool Singer::HasAssignedPart() const {
 }
 
 bool VocalPlayer::ShowPitchCorrectionNotice() const {
+#ifdef HX_NATIVE
+    // Off-path (UI notice); headless has no TheProfileMgr object.
+    return false;
+#else
     return AllowPitchCorrection() && TheProfileMgr.mSynapseEnabled;
+#endif
 }
 
 const VocalPhrase *VocalPlayer::GetNextPhraseMarker(const VocalPhrase *const &p) const {

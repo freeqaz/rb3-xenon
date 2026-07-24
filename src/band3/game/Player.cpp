@@ -908,11 +908,13 @@ bool Player::DeployBandEnergyIfPossible(bool b) {
 }
 
 void Player::Hit() {
+#ifndef HX_NATIVE
     char slotStr[] = "p0_hit";
     slotStr[1] = (char)(mUser->GetSlot() + 0x30);
     static Message hit("");
     hit.SetType(slotStr);
     TheGamePanel->HandleType(hit.mData);
+#endif
     int mult = GetIndividualMultiplier();
     if (mult > unk274 && unk274 == 1) {
         mStats.BeginStreakMultiplier(GetSongMs(), mult);
