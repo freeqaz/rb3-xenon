@@ -658,3 +658,10 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
 #include "rndobj/MotionBlur.cpp"
 #undef gRev
 #undef gAltRev
+
+// sw2 scatter-include (default/Anim <- rndobj/Dir.cpp = RndDir COMDATs)
+#define gRev gRev_RndDir
+#define gAltRev gAltRev_RndDir
+#include "rndobj/Dir.cpp"
+#undef gRev
+#undef gAltRev
