@@ -5011,17 +5011,27 @@ band3/game/TrainerPanel.cpp:
 	.text       start:0x826C97B0 end:0x826CD438
 
 band3/game/VocalPlayer.cpp:
+	.pdata      start:0x82236190 end:0x822361A0
+	.pdata      start:0x822361A8 end:0x822361D8
 	.pdata      start:0x822361D8 end:0x822361E0
 	.pdata      start:0x822361E8 end:0x822361F0
 	.pdata      start:0x82236200 end:0x82236208
 	.pdata      start:0x82236210 end:0x82236218
+	.pdata      start:0x82236218 end:0x82236238
+	.pdata      start:0x82236240 end:0x82236258
 	.pdata      start:0x82236258 end:0x82236260
+	.pdata      start:0x82236260 end:0x82236288
 	.pdata      start:0x82236288 end:0x82236A58
+	.text       start:0x826E381C end:0x826E3A38
+	.text       start:0x826E3AA4 end:0x826E3DB0
 	.text       start:0x826E3DB0 end:0x826E3E90
 	.text       start:0x826E3EE8 end:0x826E3F2C
 	.text       start:0x826E4018 end:0x826E4094
 	.text       start:0x826E4110 end:0x826E4160
+	.text       start:0x826E4160 end:0x826E4310
+	.text       start:0x826E4448 end:0x826E4798
 	.text       start:0x826E4798 end:0x826E4828
+	.text       start:0x826E4828 end:0x826E4BD0
 	.text       start:0x826E4BD0 end:0x826EEC9C
 
 band3/game/VocalPart.cpp:
