@@ -982,13 +982,7 @@ void DirLoader::CreateObjects() {
 void DirLoader::LoadHeader() {
     EofType t;
     while (t = mStream->Eof(), t != NotEof) {
-        if (t != TempEof) {
-            Cleanup(MakeString(
-                "%s: Unexpected end of file. Proceeding as if file were empty.",
-                (char *)mStream->Name()
-            ));
-            return;
-        }
+        MILO_ASSERT(t == TempEof, 0x3E5);
         if (TheLoadMgr.CheckSplit())
             return;
     }
@@ -1021,10 +1015,6 @@ void DirLoader::LoadHeader() {
             return;
         int size1, size2;
         *mStream >> size1 >> size2;
-        mHasEditorDir = false;
-        if (mRev > 0x1c) {
-            *mStream >> mHasEditorDir;
-        }
         size1 += mDir->HashTableUsedSize() + 0x10;
         size2 += mDir->StrTableUsedSize() + 0x98;
         mDir->Reserve(size1, size2);
