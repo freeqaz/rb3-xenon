@@ -406,6 +406,10 @@ BandStarDisplay.cpp:
 	.pdata      start:0x821F73F0 end:0x821F74B8
 	.text       start:0x822CCDD0 end:0x822CDC10
 
+BandRetargetVignette.cpp:
+	.pdata      start:0x821F6D58 end:0x821F6DA0
+	.text       start:0x822C6A90 end:0x822C7040
+
 StreakMeter.cpp:
 	.pdata      start:0x821F7100 end:0x821F7320
 	.pdata      start:0x821F7370 end:0x821F73F0
@@ -5201,6 +5205,20 @@ band3/meta_band/AssetMgr.cpp:
 	.pdata      start:0x8221D880 end:0x8221D9D0
 	.text       start:0x8256A298 end:0x8256B4C0
 
+band3/meta_band/AssetProvider.cpp:
+	.pdata      start:0x8222F490 end:0x8222F4E8
+	.pdata      start:0x8222F4F0 end:0x8222F598
+	.text       start:0x82670B0C end:0x82670F88
+	.text       start:0x82670FDC end:0x82671AC8
+
+band3/meta_band/MakeupProvider.cpp:
+	.pdata      start:0x8222F598 end:0x8222F620
+	.text       start:0x82671AC8 end:0x826720B8
+
+band3/meta_band/NewAssetProvider.cpp:
+	.pdata      start:0x8222F620 end:0x8222F678
+	.text       start:0x826720B8 end:0x826725F0
+
 band3/meta_band/TrainerProvider.cpp:
 	.pdata      start:0x8222F938 end:0x8222F988
 	.text       start:0x82674D08 end:0x82675094
@@ -5212,6 +5230,10 @@ band3/meta_band/StoreSongSortNode.cpp:
 band3/game/TrainerGemTab.cpp:
 	.pdata      start:0x82236A58 end:0x82236AB0
 	.text       start:0x826EECA0 end:0x826F0708
+
+band3/game/TrainerProgressMeter.cpp:
+	.pdata      start:0x82236AD8 end:0x82236AF0
+	.text       start:0x826F0A20 end:0x826F0E88
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x8221C150 end:0x8221C378

@@ -8,6 +8,8 @@
 class BandIKEffector : public RndHighlightable,
                        public CharWeightable,
                        public CharPollable {
+    friend class BandRetargetVignette;
+
 public:
     class Constraint {
     public:
