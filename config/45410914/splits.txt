@@ -6077,7 +6077,13 @@ BeatMatcher.cpp:
 	.pdata      start:0x8223F2F8 end:0x8223F300
 	.pdata      start:0x8223F300 end:0x8223F308
 	.pdata      start:0x8223F310 end:0x8223F318
-	.pdata      start:0x8223F318 end:0x8223F4F8
+	.pdata      start:0x8223F318 end:0x8223F388
+	.pdata      start:0x8223F3A0 end:0x8223F3A8
+	.pdata      start:0x8223F3B8 end:0x8223F420
+	.pdata      start:0x8223F428 end:0x8223F440
+	.pdata      start:0x8223F458 end:0x8223F4C8
+	.pdata      start:0x8223F4D0 end:0x8223F4E0
+	.pdata      start:0x8223F4E8 end:0x8223F4F8
 	.text       start:0x82790570 end:0x827905B8
 	.text       start:0x82790770 end:0x827907B0
 	.text       start:0x82790D70 end:0x82790DF4
@@ -6085,7 +6091,13 @@ BeatMatcher.cpp:
 	.text       start:0x827918B0 end:0x82791920
 	.text       start:0x82791920 end:0x827919C4
 	.text       start:0x82791AD8 end:0x82791B60
-	.text       start:0x82791B60 end:0x82793908
+	.text       start:0x82791B60 end:0x82792270
+	.text       start:0x8279242C end:0x82792460
+	.text       start:0x8279252C end:0x82792D50
+	.text       start:0x82792DE0 end:0x82792EE0
+	.text       start:0x82793050 end:0x827935E8
+	.text       start:0x8279366C end:0x827936C0
+	.text       start:0x82793768 end:0x82793908
 
 CampaignSongInfoPanel.cpp:
 	.pdata      start:0x82227120 end:0x82227230
@@ -6966,8 +6978,26 @@ system/beatmatch/GameGemList.cpp:
 system/beatmatch/DrumMixDB.cpp:
 	.pdata      start:0x8223DB40 end:0x8223DB48
 	.pdata      start:0x8223DCC8 end:0x8223DCD0
+	.pdata      start:0x8223F420 end:0x8223F428
+	.pdata      start:0x8223F440 end:0x8223F458
 	.text       start:0x82772E00 end:0x82772F68
 	.text       start:0x82774960 end:0x827749F0
+	.text       start:0x82792D50 end:0x82792DE0
+	.text       start:0x82792EE0 end:0x82793050
+
+system/beatmatch/PhraseDB.cpp:
+	.pdata      start:0x8223F4C8 end:0x8223F4D0
+	.text       start:0x827935E8 end:0x8279366C
+
+system/beatmatch/FillInfo.cpp:
+	.pdata      start:0x8223F388 end:0x8223F3A0
+	.pdata      start:0x8223F3A8 end:0x8223F3B8
+	.text       start:0x82792270 end:0x8279242C
+	.text       start:0x82792460 end:0x8279252C
+
+system/beatmatch/TimeSpanVector.cpp:
+	.pdata      start:0x8223F4E0 end:0x8223F4E8
+	.text       start:0x827936C0 end:0x82793768
 
 system/beatmatch/PhraseAnalyzer.cpp:
 	.pdata      start:0x8223EE38 end:0x8223EE40
