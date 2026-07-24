@@ -19616,5 +19616,19 @@
  "0x826c1cc8": "?IgnoreGemsUntil@GemPlayer@@QAAXH@Z",
  "0x826c2070": "?SetFilling@GemPlayer@@QAAX_NH@Z",
  "0x826c2250": "?CheckFretReleases@GemPlayer@@QAAXM@Z",
- "0x826c22e0": "?RemoveFretReleasesInSlot@GemPlayer@@QAAXH@Z"
+ "0x826c22e0": "?RemoveFretReleasesInSlot@GemPlayer@@QAAXH@Z",
+ "0x82782a18": "?AudioTrackUsed@SongParser@@QAA_NW4SongInfoAudioType@@@Z",
+ "0x82782a60": "?SetSectionBounds@SongParser@@QAAXHH@Z",
+ "0x82782ac8": "?HandleRGAreaStrumStart@SongParser@@QAA_NHAAVDifficultyInfo@1@EE@Z",
+ "0x82782b28": "?HandleRGRollStart@SongParser@@QAA_NHEE@Z",
+ "0x82782bd8": "??1MidiTrackLister@@UAA@XZ",
+ "0x82782bf0": "?FillTrackList@MidiTrackLister@@QAAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAVBinStream@@@Z",
+ "0x82782ce8": "?ContainsTrackName@PartInfo@@QBA_NPBD@Z",
+ "0x82784878": "?FillTrackList@@YAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAVBinStream@@@Z",
+ "0x82782d68": "?AddPhrase@SongParser@@QAAXW4BeatmatchPhraseType@@HAAHH@Z",
+ "0x82783908": "?ParseAndStripLyricText@SongParser@@QAA_NPBDAAVVocalNote@@@Z",
+ "0x827836f8": "?EndVocalNote@SongParser@@QAAXH@Z",
+ "0x827840c8": "?ParseText@SongParser@@QAAXHPBD@Z",
+ "0x82783c20": "?PitchToSlot@SongParser@@QBAHHAAHH@Z",
+ "0x82783e90": "?CheckKeyboardRangeMarker@SongParser@@QAA_NHH_N@Z"
 }
