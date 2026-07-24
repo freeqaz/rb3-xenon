@@ -39,7 +39,14 @@ TrackWatcherImpl::TrackWatcherImpl(
       mRollSlotsLastSwingMs(), mRollActiveSlots(0), mRollIntervalMs(0.0f),
       mRollEndTick(0), mTrillIntervalsConfig(0) {
     // code
+#ifdef HX_NATIVE
+    // Native has no UserMgr wired (single local player). The console always has
+    // TheUserMgr; this guard is HX_NATIVE-only and the #else is the exact retail
+    // line, so preprocessed X360 output is unchanged.
+    mIsLocalUser = true;
+#else
     mIsLocalUser = TheUserMgr->GetUser(mUserGuid, true)->IsLocal();
+#endif
     if (cfg) {
         cfg->FindData("cheat_error", mCheatError, false);
         cfg->FindData("slop", mSlop, false);
@@ -856,6 +863,11 @@ void TrackWatcherImpl::SendHopo(float ms, int gemID) {
     }
 }
 
+// sw2 scatter-includes below exist purely to reproduce the retail COMDAT
+// layout (they fold PartAnim / BandCrowdMeter COMDATs into this TU's .text for
+// the X360 match). They pull heavy rndobj/bandobj/game deps, so they are
+// excluded from the native build; X360 preprocessed output is unchanged.
+#ifndef HX_NATIVE
 // sw2 scatter-include (default/TrackWatcherImpl <- rndobj/PartAnim.cpp)
 #define gRev gRev_PartAnim
 #define gAltRev gAltRev_PartAnim
@@ -869,3 +881,4 @@ void TrackWatcherImpl::SendHopo(float ms, int gemID) {
 #include "bandobj/BandCrowdMeter.cpp"
 #undef gRev
 #undef gAltRev
+#endif

@@ -47,6 +47,15 @@ TrackWatcherImpl *NewTrackWatcherImpl(
     Symbol watchType = ControllerTypeToTrackWatcherType(cntType);
     TrackType trackType = data->TrackTypeAt(track);
     GameGemList *gemList = data->GetGemList(track);
+#ifdef HX_NATIVE
+    // Native M3b wires only the guitar/bass 5-fret hit-detection impl. The other
+    // per-instrument impls (joypad/keyboard/drum-fill/real-guitar) are not
+    // compiled natively, so instantiating them here would fail to link. This
+    // guard is HX_NATIVE-only; the #else below is the exact retail dispatch, so
+    // preprocessed X360 output is unchanged.
+    (void)trackType;
+    return new GuitarTrackWatcherImpl(track, u, slot, data, gemList, parent, cfg);
+#else
     if (watchType == guitar_sym) {
         return new GuitarTrackWatcherImpl(track, u, slot, data, gemList, parent, cfg);
     } else if (watchType == joypad_sym) {
@@ -79,6 +88,7 @@ TrackWatcherImpl *NewTrackWatcherImpl(
         MILO_FAIL("Bad TrackWatcher type: %s\n", watchType);
         return NULL;
     }
+#endif
 }
 
 TrackWatcher::TrackWatcher(

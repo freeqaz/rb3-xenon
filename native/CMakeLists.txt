@@ -218,3 +218,43 @@ target_include_directories(rb3-gem PRIVATE
     ${REPO_ROOT}/src/system
 )
 target_link_libraries(rb3-gem PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M3b: beatmatch hit detection --------------------------------------------
+# Extends the M3a gem pipeline with the real scoring engine: TrackWatcher +
+# TrackWatcherImpl + the guitar/bass 5-fret impl (BaseGuitar/Guitar). A minimal
+# SongData stand-in + LogFile shim live in beatmatch_native_support.cpp so the
+# heavy real SongData.cpp (phrases/fills/vocals/drum-mix/player-track-config)
+# stays out of the native link. NewTrackWatcherImpl is HX_NATIVE-guarded to the
+# guitar impl, so no other per-instrument impl is compiled.
+set(M3B_SOURCES
+    ${REPO_ROOT}/src/system/beatmatch/TrackWatcher.cpp
+    ${REPO_ROOT}/src/system/beatmatch/TrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/system/beatmatch/BaseGuitarTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/system/beatmatch/GuitarTrackWatcherImpl.cpp
+    ${CMAKE_SOURCE_DIR}/src/beatmatch_native_support.cpp
+)
+
+add_executable(rb3-hit
+    ${CMAKE_SOURCE_DIR}/src/main_hit.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-hit PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_definitions(rb3-hit PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-hit SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-hit PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+)
+target_link_libraries(rb3-hit PRIVATE Threads::Threads ZLIB::ZLIB)
