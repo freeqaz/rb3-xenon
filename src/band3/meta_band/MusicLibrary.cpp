@@ -656,8 +656,8 @@ void MusicLibrary::SkipToNextShortcut(bool forward) {
             }
         }
     } else {
-        NodeSort *sort2 = TheSongSortMgr->GetSort(unkdc);
         int startIx = node->mStartIx;
+        NodeSort *sort2 = TheSongSortMgr->GetSort(unkdc);
         if (startIx == sort2->FirstActiveIxForShortcut(shortcutIx)) {
             shortcutIx--;
             if (numData == 0) {
@@ -1833,7 +1833,8 @@ void MusicLibrary::DeleteHighlightedSetlist() {
     LocalSavedSetlist *lss =
         dynamic_cast<LocalSavedSetlist *>(setlistNode->GetSetlistRecord()->GetSetlist());
     MILO_ASSERT(lss, 0xA17);
-    lss->mOwnerProfile->DeleteSavedSetlist(lss);
+    BandProfile *owner = lss->mOwnerProfile;
+    owner->DeleteSavedSetlist(lss);
     std::vector<BandProfile *> profiles = TheProfileMgr.GetSignedInProfiles();
     TheRockCentral.SyncSetlists(profiles, mResults, this);
     TheSaveLoadMgr->AutoSave();
