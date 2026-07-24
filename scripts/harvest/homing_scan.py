@@ -6,15 +6,16 @@ For each function in our freshly-compiled objs (>=MINSZ bytes), find every
 on BOTH sides, and compare. UNIQUE (exactly one identical VA, not already
 mapped) => confident retail home.
 """
-import struct, sys, json, bisect
+import os, struct, sys, json, bisect
 from pathlib import Path
 from collections import defaultdict
 
-ROOT = "/home/free/code/milohax/rb3-xenon"
-WT   = "/home/free/tmp/wt-homing"
-BAND = f"{ROOT}/orig/45410914/band.exe"
-TMAP = f"{ROOT}/scripts/target_symbol_map.json"
-MINSZ = 32
+ROOT = os.environ.get("HOMING_ROOT", "/home/free/code/milohax/rb3-xenon")
+WT   = os.environ.get("HOMING_WT", "/home/free/tmp/wt-homing")
+BAND = os.environ.get("HOMING_BAND", f"{ROOT}/orig/45410914/band.exe")
+TMAP = os.environ.get("HOMING_TMAP", f"{ROOT}/scripts/target_symbol_map.json")
+OUT  = os.environ.get("HOMING_OUT", "/home/free/tmp/homing_results.json")
+MINSZ = int(os.environ.get("HOMING_MINSZ", "32"))
 
 # ---------- COFF obj parse (reuse correlator logic, expose reloc offsets) ----------
 def parse_obj(path):
@@ -159,6 +160,8 @@ def main():
         'TrackType':    f"{WT}/build/45410914/src/system/beatmatch/TrackType.obj",
         'Msg':          f"{WT}/build/45410914/src/system/obj/Msg.obj",
     }
+    if os.environ.get("HOMING_NO_DEFAULTS"):
+        objs = {}
     # optional extra objs passed as argv: name=path
     for a in sys.argv[1:]:
         n, p = a.split('=', 1)
@@ -166,6 +169,8 @@ def main():
 
     results = {}
     FUNCLET = ('__unwind', '__ehhandler', '__catch', '__tls', '__GSHandler')
+    if os.environ.get("HOMING_FUNCLETS"):
+        FUNCLET = ()
     for tu, path in objs.items():
         if not Path(path).exists():
             results[tu] = dict(error='no obj')
@@ -196,7 +201,7 @@ def main():
                 rec['cls'] = 'MULTI'
             tu_res.append(rec)
         results[tu] = tu_res
-    json.dump(results, open('/home/free/tmp/homing_results.json', 'w'), indent=1)
+    json.dump(results, open(OUT, 'w'), indent=1)
 
     # summary
     for tu, res in results.items():
