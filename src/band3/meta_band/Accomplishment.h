@@ -86,42 +86,55 @@ public:
     int GetPassiveMsgPriority() const;
     static const char *GetIconPath();
 
+    // ------------------------------------------------------------------
+    // Retail-360 member layout, reverse-engineered from the retail
+    // Accomplishment::Accomplishment(DataArray*, int) at 0x82595D18 (which
+    // initialises every member in declaration order) plus the +8 offset delta
+    // observed on mDynamicPrereqsSongs in ~Accomplishment (0x82594D98).
+    //
+    // Two differences from the rb3-Wii DEV header:
+    //   * retail INTERLEAVES the bools with the ints instead of grouping all
+    //     eight at the tail (the init values still form the same F,F,F,T,T,F,T,F
+    //     sequence in declaration order, which is what pins the assignment);
+    //   * retail has two extra ints at 0x74/0x78 that the DEV header lacks --
+    //     both ctor-initialised to -1 and written by Configure from the
+    //     "gamerpic_reward" / "avatarasset_reward" DataArray keys (string
+    //     constants 0x820A3DF8 / 0x820A3DE4).  These are the members
+    //     AccomplishmentProgress::GiveGamerpic / ::GiveAvatarAsset read.
+    // sizeof(Accomplishment) == 0x90, so AccomplishmentConditional::m_lConditions
+    // still lands at 0x90 (previously faked with an mUnkTail[4] pad).
+    // ------------------------------------------------------------------
     Symbol mName; // 0x04
     std::vector<Symbol> mSecretPrereqs; // 0x08
-    int mAccomplishmentType; // 0x10
-    Symbol mCategory; // 0x14
-    Symbol mAward; // 0x18
-    Symbol mUnitsToken; // 0x1c
-    Symbol mUnitsTokenSingular; // 0x20
-    Symbol mIconOverride; // 0x24
-    Symbol mSecretCampaignLevelPrereq; // 0x28
-    std::vector<ControllerType> mControllerTypes; // 0x2c
-    ScoreType mScoreType; // 0x34
-    Difficulty mLaunchableDifficulty; // 0x38
-    Symbol mPassiveMsgChannel; // 0x3c
-    int mPassiveMsgPriority; // 0x40
-    int mPlayerCountMin; // 0x44
-    int mPlayerCountMax; // 0x48
-    int mDynamicPrereqsNumSongs; // 0x4c
-    std::vector<Symbol> mDynamicPrereqsSongs; // 0x50
-    Symbol mDynamicPrereqsFilter; // 0x58
-    int mProgressStep; // 0x5c
-    int mIndex; // 0x60
-    int mContextId; // 0x64
-    Symbol mMetaScoreValue; // 0x68
-    bool mRequiresUnison; // 0x6c
-    bool mRequiresBre; // 0x6d
-    bool mDynamicAlwaysVisible; // 0x6e
-    bool mShouldShowDenominator; // ox6f
-    bool mShowBestAfterEarn; // 0x70
-    bool mHideProgress; // 0x71
-    bool mCanBeEarnedWithNoFail; // 0x72
-    bool mIsTrackedInLeaderboard; // 0x73
-    // Retail-360 places AccomplishmentConditional::m_lConditions (std::list) at
-    // this+0x90, i.e. 0x10 bytes past where our member sum lands. The rb3-Wii DEV
-    // header dropped these tail members; their exact identity is unknown, but the
-    // size is load-bearing for every Accomplishment subclass's member offsets.
-    // Padded to recover correct derived-class layout (verified: list lands at 0x90,
-    // conditional family member offsets match retail).
-    int mUnkTail[4]; // 0x74..0x84 (size-only; identity TBD)
+    int mAccomplishmentType; // 0x14
+    Symbol mCategory; // 0x18
+    Symbol mAward; // 0x1c
+    Symbol mUnitsToken; // 0x20
+    Symbol mUnitsTokenSingular; // 0x24
+    Symbol mIconOverride; // 0x28
+    Symbol mSecretCampaignLevelPrereq; // 0x2c
+    std::vector<ControllerType> mControllerTypes; // 0x30
+    ScoreType mScoreType; // 0x3c
+    Difficulty mLaunchableDifficulty; // 0x40
+    Symbol mPassiveMsgChannel; // 0x44
+    int mPassiveMsgPriority; // 0x48
+    bool mRequiresUnison; // 0x4c
+    bool mRequiresBre; // 0x4d
+    int mPlayerCountMin; // 0x50
+    int mPlayerCountMax; // 0x54
+    bool mDynamicAlwaysVisible; // 0x58
+    int mDynamicPrereqsNumSongs; // 0x5c
+    std::vector<Symbol> mDynamicPrereqsSongs; // 0x60
+    Symbol mDynamicPrereqsFilter; // 0x6c
+    int mProgressStep; // 0x70
+    int mGamerpicReward; // 0x74
+    int mAvatarAssetReward; // 0x78
+    bool mShouldShowDenominator; // 0x7c
+    bool mShowBestAfterEarn; // 0x7d
+    bool mHideProgress; // 0x7e
+    int mIndex; // 0x80
+    int mContextId; // 0x84
+    Symbol mMetaScoreValue; // 0x88
+    bool mCanBeEarnedWithNoFail; // 0x8c
+    bool mIsTrackedInLeaderboard; // 0x8d
 };

@@ -19,11 +19,12 @@ Accomplishment::Accomplishment(DataArray *i_pConfig, int index)
       mUnitsToken(gNullStr), mUnitsTokenSingular(gNullStr), mIconOverride(gNullStr),
       mSecretCampaignLevelPrereq(gNullStr), mScoreType(kScoreBand),
       mLaunchableDifficulty(kDifficultyEasy), mPassiveMsgChannel(gNullStr),
-      mPassiveMsgPriority(-1), mPlayerCountMin(-1), mPlayerCountMax(-1),
+      mPassiveMsgPriority(-1), mRequiresUnison(false), mRequiresBre(false),
+      mPlayerCountMin(-1), mPlayerCountMax(-1), mDynamicAlwaysVisible(false),
       mDynamicPrereqsNumSongs(-1), mDynamicPrereqsFilter(gNullStr), mProgressStep(0),
-      mIndex(index), mContextId(-1), mMetaScoreValue(gNullStr), mRequiresUnison(false),
-      mRequiresBre(false), mDynamicAlwaysVisible(false), mShouldShowDenominator(true),
-      mShowBestAfterEarn(true), mHideProgress(false), mCanBeEarnedWithNoFail(true),
+      mGamerpicReward(-1), mAvatarAssetReward(-1), mShouldShowDenominator(true),
+      mShowBestAfterEarn(true), mHideProgress(false), mIndex(index), mContextId(-1),
+      mMetaScoreValue(gNullStr), mCanBeEarnedWithNoFail(true),
       mIsTrackedInLeaderboard(false) {
     Configure(i_pConfig);
 }
@@ -120,6 +121,14 @@ void Accomplishment::Configure(DataArray *i_pConfig) {
     i_pConfig->FindData(hide_progress, mHideProgress, false);
     i_pConfig->FindData(can_be_earned_with_no_fail, mCanBeEarnedWithNoFail, false);
     i_pConfig->FindData(leaderboard, mIsTrackedInLeaderboard, false);
+    // Retail-360 only (absent from the rb3-Wii DEV source): the two reward ids
+    // stored at this+0x74 / this+0x78, read back by
+    // AccomplishmentProgress::GiveGamerpic / ::GiveAvatarAsset.  Verified in the
+    // retail Configure at 0x82594EF8 (FindArray("gamerpic_reward", false) ->
+    // node[1].Int() -> stw 0x74, then the same for "avatarasset_reward" -> 0x78,
+    // immediately before the accomplishment_type lookup).
+    i_pConfig->FindData(gamerpic_reward, mGamerpicReward, false);
+    i_pConfig->FindData(avatarasset_reward, mAvatarAssetReward, false);
     int accomplishmentType;
     i_pConfig->FindData(accomplishment_type, accomplishmentType, true);
     mAccomplishmentType = accomplishmentType;
