@@ -106,3 +106,12 @@ bool SongSortByReview::CustomForNode(
     }
     return false;
 }
+
+// sw2 scatter-include (default/SongSortByReview <- meta_band/SongSortByPlays.cpp)
+// RB3 retail scattered SongSortByPlays's NewSongNode/NewShortcutNode/NewHeaderNode
+// COMDATs into SongSortByReview's .text span; compile them here so objdiff pairs them.
+#define gRev gRev_SongSortByPlays
+#define gAltRev gAltRev_SongSortByPlays
+#include "meta_band/SongSortByPlays.cpp"
+#undef gRev
+#undef gAltRev

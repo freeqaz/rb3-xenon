@@ -1367,3 +1367,11 @@ void VocalTrackDir::TutorialReset() {
     meter->Find<RndAnimatable>("star_power.panim", true)->SetFrame(10.0f, 1.0f);
     meter->Find<RndParticleSys>("star_power.part", true)->FreeAllParticles();
 }
+
+// sw2 scatter-include (default/VocalTrackDir <- meta_band/AccomplishmentProgress.cpp)
+// RB3 retail scattered AccomplishmentProgress COMDATs into VocalTrackDir's .text span.
+#define gRev gRev_AccomplishmentProgress
+#define gAltRev gAltRev_AccomplishmentProgress
+#include "meta_band/AccomplishmentProgress.cpp"
+#undef gRev
+#undef gAltRev
