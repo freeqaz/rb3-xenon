@@ -20,7 +20,7 @@ void MemcardXbox::SetContainerDisplayName(const wchar_t *name) {
     mDisplayName[XCONTENT_MAX_DISPLAYNAME_LENGTH - 1] = L'\0';
 }
 
-void MemcardXbox::ShowDeviceSelector(const ContainerId &, Hmx::Object *, int, bool) {}
+void MemcardXbox::ShowDeviceSelector(const ContainerId &, bool, Hmx::Object *, int) {}
 bool MemcardXbox::IsDeviceValid(const ContainerId &) { return false; }
 MCResult MemcardXbox::DeleteContainer(const ContainerId &) { return (MCResult)0; }
 MCContainer *MemcardXbox::CreateContainer(const ContainerId &id) {

@@ -89,6 +89,8 @@ bool StreamChecksumValidator::ValidateChecksum(const unsigned char *hash) {
 // sw2 scatter-include (default/StreamChecksum <- os/Joypad.cpp)
 #define gRev gRev_Joypad
 #define gAltRev gAltRev_Joypad
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "os/Joypad.cpp"
+#endif
 #undef gRev
 #undef gAltRev

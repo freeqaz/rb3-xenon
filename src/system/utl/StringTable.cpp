@@ -99,27 +99,35 @@ const char *StringTable::Add(const char *str) {
 // interleaved these owners' COMDATs into this TU's .text span.
 #define gRev gRev_GlitchFinder
 #define gAltRev gAltRev_GlitchFinder
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/GlitchFinder.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/StringTable <- utl/Locale.cpp)
 #define gRev gRev_Locale
 #define gAltRev gAltRev_Locale
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/Locale.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/StringTable <- movie/Movie.cpp)
 #define gRev gRev_Movie
 #define gAltRev gAltRev_Movie
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "movie/Movie.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/StringTable <- utl/TimeConversion.cpp)
 #define gRev gRev_TimeConversion
 #define gAltRev gAltRev_TimeConversion
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/TimeConversion.cpp"
+#endif
 #undef gRev
 #undef gAltRev

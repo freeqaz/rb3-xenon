@@ -641,27 +641,35 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
 // sw2 scatter-include (default/Anim <- rndobj/Line.cpp)
 #define gRev gRev_Line
 #define gAltRev gAltRev_Line
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/Line.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/Anim <- rndobj/Group.cpp)
 #define gRev gRev_Group
 #define gAltRev gAltRev_Group
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/Group.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/Anim <- rndobj/MotionBlur.cpp)
 #define gRev gRev_MotionBlur
 #define gAltRev gAltRev_MotionBlur
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/MotionBlur.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/Anim <- rndobj/Dir.cpp = RndDir COMDATs)
 #define gRev gRev_RndDir
 #define gAltRev gAltRev_RndDir
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/Dir.cpp"
+#endif
 #undef gRev
 #undef gAltRev

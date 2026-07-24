@@ -26,6 +26,8 @@ void FilePath::Set(const char *str1, const char *str2) {
 // sw2 scatter-include (default/FilePath <- char/CharBone.cpp)
 #define gRev gRev_CharBone
 #define gAltRev gAltRev_CharBone
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "char/CharBone.cpp"
+#endif
 #undef gRev
 #undef gAltRev

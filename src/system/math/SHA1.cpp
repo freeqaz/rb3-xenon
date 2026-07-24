@@ -227,6 +227,8 @@ CSHA1::~CSHA1() { Reset(); }
 // sw2 scatter-include (default/SHA1 <- math/Trig.cpp)
 #define gRev gRev_Trig
 #define gAltRev gAltRev_Trig
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "math/Trig.cpp"
+#endif
 #undef gRev
 #undef gAltRev

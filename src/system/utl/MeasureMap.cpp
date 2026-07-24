@@ -87,6 +87,8 @@ bool MeasureMap::AddTimeSignature(int measure, int num, int denom, bool fail) {
 // sw2 scatter-include (default/MeasureMap <- world/CameraShot.cpp)
 #define gRev gRev_CameraShot
 #define gAltRev gAltRev_CameraShot
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "world/CameraShot.cpp"
+#endif
 #undef gRev
 #undef gAltRev

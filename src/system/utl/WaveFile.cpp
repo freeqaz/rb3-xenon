@@ -134,6 +134,8 @@ WaveFileData::~WaveFileData() {}
 // sw2 scatter-include (default/WaveFile <- rndobj/Group.cpp)
 #define gRev gRev_Group
 #define gAltRev gAltRev_Group
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/Group.cpp"
+#endif
 #undef gRev
 #undef gAltRev

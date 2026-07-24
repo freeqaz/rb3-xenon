@@ -350,6 +350,8 @@ void AutoTimer::Init() {
 // sw2 scatter-include (default/Timer <- band3/meta_band/Campaign.cpp)
 #define gRev gRev_Campaign
 #define gAltRev gAltRev_Campaign
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/meta_band/Campaign.cpp"
+#endif
 #undef gRev
 #undef gAltRev

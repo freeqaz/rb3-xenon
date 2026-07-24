@@ -412,6 +412,8 @@ void Nlerp(const Hmx::Quat &q1, const Hmx::Quat &q2, float f, Hmx::Quat &qout) {
 // sw2 scatter-include (default/Rot <- rndobj/AmbientOcclusion.cpp)
 #define gRev gRev_AmbientOcclusion
 #define gAltRev gAltRev_AmbientOcclusion
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/AmbientOcclusion.cpp"
+#endif
 #undef gRev
 #undef gAltRev

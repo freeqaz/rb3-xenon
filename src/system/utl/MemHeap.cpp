@@ -578,13 +578,17 @@ int MemFindAddrHeap(void *addr) {
 // sw2 scatter-include (default/MemHeap <- utl/Str.cpp)
 #define gRev gRev_Str
 #define gAltRev gAltRev_Str
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/Str.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/MemHeap <- utl/MakeString.cpp)
 #define gRev gRev_MakeString
 #define gAltRev gAltRev_MakeString
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/MakeString.cpp"
+#endif
 #undef gRev
 #undef gAltRev

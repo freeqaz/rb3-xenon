@@ -25,13 +25,17 @@ JoypadBreedDataWriteMsg::JoypadBreedDataWriteMsg(LocalUser *user, JoypadBreedDat
 // sw2 scatter-include (default/JoypadMsgs <- os/NetStream.cpp)
 #define gRev gRev_NetStream
 #define gAltRev gAltRev_NetStream
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "os/NetStream.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/JoypadMsgs <- synth/Sfx.cpp)
 #define gRev gRev_Sfx
 #define gAltRev gAltRev_Sfx
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "synth/Sfx.cpp"
+#endif
 #undef gRev
 #undef gAltRev

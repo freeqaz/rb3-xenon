@@ -321,6 +321,8 @@ void AsyncFile::Terminate() {
 // sw2 scatter-include (default/AsyncFile <- band3/tour/TourSavable.cpp)
 #define gRev gRev_TourSavable
 #define gAltRev gAltRev_TourSavable
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/tour/TourSavable.cpp"
+#endif
 #undef gRev
 #undef gAltRev

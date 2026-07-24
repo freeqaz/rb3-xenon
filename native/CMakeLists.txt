@@ -73,6 +73,7 @@ set(NATIVE_SHIMS
     ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
     ${CMAKE_SOURCE_DIR}/src/thunk_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
     ${PLATFORM_SHIMS}
 )
 

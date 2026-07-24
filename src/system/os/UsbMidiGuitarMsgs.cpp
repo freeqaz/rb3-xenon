@@ -31,6 +31,8 @@ StringStoppedMsg::StringStoppedMsg(int i1, int i2, int i3, int i4)
 // sw2 scatter-include (default/UsbMidiGuitarMsgs <- band3/meta_band/CalibrationPanel.cpp)
 #define gRev gRev_CalibrationPanel
 #define gAltRev gAltRev_CalibrationPanel
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/meta_band/CalibrationPanel.cpp"
+#endif
 #undef gRev
 #undef gAltRev

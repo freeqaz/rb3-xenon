@@ -46,6 +46,8 @@ BinStream &operator<<(BinStream &bs, const OnlineID &ssm) {
 // sw2 scatter-include (default/OnlineID <- os/Joypad.cpp)
 #define gRev gRev_Joypad
 #define gAltRev gAltRev_Joypad
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "os/Joypad.cpp"
+#endif
 #undef gRev
 #undef gAltRev

@@ -131,11 +131,15 @@ void DataPointMgr::RecordDebugDataPoint(DataPoint &point) {
 
 // RB3 retail scattered NetCacheMgr.cpp's COMDATs into DataPointMgr.cpp's
 // .text span; compile them here so objdiff can pair them.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/NetCacheMgr.cpp"
+#endif
 
 // sw2 scatter-include (default/DataPointMgr <- band3/meta_band/MusicLibraryNetSetlists.cpp)
 #define gRev gRev_MusicLibraryNetSetlists
 #define gAltRev gAltRev_MusicLibraryNetSetlists
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/meta_band/MusicLibraryNetSetlists.cpp"
+#endif
 #undef gRev
 #undef gAltRev

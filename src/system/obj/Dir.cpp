@@ -1533,6 +1533,8 @@ void ObjectDir::PostLoad(BinStream &bs) {
 // sw2 scatter-include (default/Dir <- bandobj/BandWardrobe.cpp)
 #define gRev gRev_BandWardrobe
 #define gAltRev gAltRev_BandWardrobe
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/BandWardrobe.cpp"
+#endif
 #undef gRev
 #undef gAltRev

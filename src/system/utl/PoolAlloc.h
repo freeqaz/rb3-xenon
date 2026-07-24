@@ -108,9 +108,15 @@ void PoolFree(int idx, void *mem);
 // rb3-Wii headers (which we port verbatim) use the older NEW_POOL_OVERLOAD/
 // DELETE_POOL_OVERLOAD spelling. Provide both so beatmatch/* headers compile
 // without modification.
+#ifdef HX_NATIVE
+#define NEW_POOL_OVERLOAD(obj)                                                           \
+    static void *operator new(size_t s) { return PoolAlloc(s, s); }                      \
+    static void *operator new(size_t, void *place) { return place; }
+#else
 #define NEW_POOL_OVERLOAD(obj)                                                           \
     static void *operator new(unsigned int s) { return PoolAlloc(s, s); }                \
     static void *operator new(unsigned int, void *place) { return place; }
+#endif
 
 #define DELETE_POOL_OVERLOAD(obj)                                                        \
     static void operator delete(void *v) { PoolFree(sizeof(obj), v); }

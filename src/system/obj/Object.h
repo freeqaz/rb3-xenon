@@ -271,6 +271,10 @@ public:
 inline ObjRefOwner *RefPtrOf(const ObjRef *node) {
     return static_cast<const ObjRefNode *>(node)->refPtr;
 }
+#else
+// Native (DC3 model): ObjRef is itself polymorphic and carries RefOwner(), so
+// the ring entry IS the ref — no ObjRefNode indirection. RefPtrOf is identity.
+inline const ObjRef *RefPtrOf(const ObjRef *node) { return node; }
 #endif
 
 #pragma endregion

@@ -328,11 +328,6 @@ _ZNK11HamGameData6PlayerEi:
     xorq %rax, %rax
     ret
 
-.weak _ZNK12SongInfoCopy9GetTracksEv
-.type _ZNK12SongInfoCopy9GetTracksEv,@function
-_ZNK12SongInfoCopy9GetTracksEv:
-    xorq %rax, %rax
-    ret
 
 .weak _ZTv0_n104_N13RndAnimatable4LoadER9BinStream
 .type _ZTv0_n104_N13RndAnimatable4LoadER9BinStream,@function

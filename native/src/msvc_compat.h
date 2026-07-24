@@ -43,4 +43,20 @@ auto mem_fun(Ret (T::*f)(Arg)) { return std::mem_fn(f); }
 } // namespace std
 #endif
 
+// std::hash_map / std::hash_set are SGI/STLport extensions not present in
+// libc++. The Milo engine (e.g. world/LightPresetManager.h) declares members of
+// this type. Their template parameter order matches the C++11 unordered
+// containers, so alias them. Native only needs these to compile/behave, not to
+// match a specific ABI.
+#include <unordered_map>
+#include <unordered_set>
+namespace std {
+template <class K, class T, class H = std::hash<K>, class E = std::equal_to<K>,
+          class A = std::allocator<std::pair<const K, T> > >
+using hash_map = std::unordered_map<K, T, H, E, A>;
+template <class K, class H = std::hash<K>, class E = std::equal_to<K>,
+          class A = std::allocator<K> >
+using hash_set = std::unordered_set<K, H, E, A>;
+} // namespace std
+
 #endif // HX_NATIVE

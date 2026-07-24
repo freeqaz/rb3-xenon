@@ -34,10 +34,18 @@ public:
     // (verified on HDCache::OpenHeader: target `li r4,0; li r3,0x28; bl
     // fn_827BCD38` vs our out-of-line `bl ??2FileStream@@SAPAXI@Z`). Define
     // the overload locally without __declspec(noinline) so /Ob2 inlines it.
+#ifdef HX_NATIVE
+    static void *operator new(size_t s) {
+#else
     static void *operator new(unsigned int s) {
+#endif
         return MemAlloc(s, __FILE__, 0x1A, "FileStream", 0);
     }
+#ifdef HX_NATIVE
+    static void *operator new(size_t s, void *place) { return place; }
+#else
     static void *operator new(unsigned int s, void *place) { return place; }
+#endif
     static void operator delete(void *v) { MemFree(v, __FILE__, 0x1A, "FileStream"); }
 
 private:

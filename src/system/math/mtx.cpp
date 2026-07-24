@@ -273,13 +273,17 @@ void Invert(const Hmx::Matrix4 &m, Hmx::Matrix4 &out) {
 // sw2 scatter-include (default/mtx <- bandobj/BandIKEffector.cpp)
 #define gRev gRev_BandIKEffector
 #define gAltRev gAltRev_BandIKEffector
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/BandIKEffector.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/mtx <- band3/meta_band/AccomplishmentConditional.cpp)
 #define gRev gRev_AccomplishmentConditional
 #define gAltRev gAltRev_AccomplishmentConditional
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/meta_band/AccomplishmentConditional.cpp"
+#endif
 #undef gRev
 #undef gAltRev

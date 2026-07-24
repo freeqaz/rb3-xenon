@@ -884,6 +884,8 @@ void HolmesClientPrint(const char *) {
 // sw2 scatter-include (default/HolmesClient <- utl/PoolAlloc.cpp)
 #define gRev gRev_PoolAlloc
 #define gAltRev gAltRev_PoolAlloc
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "utl/PoolAlloc.cpp"
+#endif
 #undef gRev
 #undef gAltRev

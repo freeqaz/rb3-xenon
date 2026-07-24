@@ -301,6 +301,8 @@ bool PropSync(Box &box, DataNode &node, DataArray *prop, int i, PropOp op) {
 // interleaved these owners' COMDATs into this TU's .text span.
 #define gRev gRev_Dir
 #define gAltRev gAltRev_Dir
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "world/Dir.cpp"
+#endif
 #undef gRev
 #undef gAltRev

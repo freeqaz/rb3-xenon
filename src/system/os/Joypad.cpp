@@ -554,6 +554,8 @@ unsigned int JoypadPollForButton(int pad) {
 // sw2 scatter-include (default/Joypad <- meta/StreamPlayer.cpp)
 #define gRev gRev_StreamPlayer
 #define gAltRev gAltRev_StreamPlayer
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "meta/StreamPlayer.cpp"
+#endif
 #undef gRev
 #undef gAltRev

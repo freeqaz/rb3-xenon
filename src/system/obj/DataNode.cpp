@@ -800,11 +800,15 @@ void DataNode::Load(BinStream &d, ObjectDir *dir) {
 
 // RB3 retail linker interleaved DataArray.cpp COMDATs into this TU's .text span.
 // Compile its bodies here so objdiff can pair them (sw scatter-scan).
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "obj/DataArray.cpp"
+#endif
 
 // sw2 scatter-include (default/DataNode <- band3/meta_band/BandSongMetadata.cpp)
 #define gRev gRev_BandSongMetadata
 #define gAltRev gAltRev_BandSongMetadata
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/meta_band/BandSongMetadata.cpp"
+#endif
 #undef gRev
 #undef gAltRev

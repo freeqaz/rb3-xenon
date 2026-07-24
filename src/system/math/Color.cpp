@@ -77,6 +77,8 @@ void MakeHSL(const Hmx::Color &color, float &h, float &s, float &l) {
 // sw2 scatter-include (default/Color <- math/Key.cpp)
 #define gRev gRev_Key
 #define gAltRev gAltRev_Key
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "math/Key.cpp"
+#endif
 #undef gRev
 #undef gAltRev
