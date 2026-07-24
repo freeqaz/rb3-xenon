@@ -349,6 +349,18 @@ BinStreamRev &operator>>(BinStreamRev &bs, std::list<T, Allocator> &list) {
     return bs;
 }
 
+template <class T, class Allocator>
+BinStream &operator>>(BinStream &bs, std::list<T, Allocator> &list) {
+    int size;
+    bs >> size;
+    list.resize(size);
+    for (typename std::list<T, Allocator>::iterator it = list.begin(); it != list.end();
+         it++) {
+        bs >> *it;
+    }
+    return bs;
+}
+
 template <class T1, class T2>
 BinStream &operator<<(BinStream &bs, const std::pair<T1, T2> &p) {
     bs << p.first << p.second;

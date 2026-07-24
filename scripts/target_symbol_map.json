@@ -1,5 +1,6 @@
 {
  "0x82552450": "?Init@SaveLoadManager@@SAXXZ",
+ "0x826e0190": "?SavePlayerStats@ScoreTracker@@UBAXXZ",
  "0x826e00a0": "?Poll_@ScoreTracker@@UAAXM@Z",
  "0x826e02e8": "?FirstFrame_@ScoreTracker@@UAAXM@Z",
  "0x8227c658": "?StaticClassName@FlowOutPort@@SA?AVSymbol@@XZ",

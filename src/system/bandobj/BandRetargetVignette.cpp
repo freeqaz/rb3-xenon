@@ -106,8 +106,7 @@ BEGIN_LOADS(BandRetargetVignette)
     LOAD_SUPERCLASS(RndPollable)
     if (gRev != 0 && gRev < 3) {
         std::list<String> strs;
-        BinStreamRev d(bs, 0);
-        d >> strs;
+        bs >> strs;
     }
     if (gRev > 1) {
         bs >> mPlayer;
