@@ -137,6 +137,8 @@
    "system/synth/FlangerEffect.cpp": "NonMatching",
    "system/synth/CompressionEffect.cpp": "NonMatching",
    "system/synth/SampleZone.cpp": "NonMatching",
+   "system/synth/VoiceBeat.cpp": "NonMatching",
+   "system/dsp/VibratoDetector.cpp": "NonMatching",
    "system/synth_xbox/FFT.cpp": "NonMatching",
    "system/synth_xbox/SpectralAnalysis.cpp": "NonMatching",
    "system/synth_xbox/soundtouch/source/SoundTouch/AAFilter.cpp": "NonMatching",
@@ -811,6 +813,9 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/game/CommonPhraseCapturer.cpp": "NonMatching",
+   "band3/game/TambourineDetector.cpp": "NonMatching",
+   "band3/game/VocalScoreHistory.cpp": "NonMatching",
    "band3/game/Scoring.cpp": "NonMatching",
    "band3/game/ScoreTracker.cpp": "NonMatching",
    "band3/game/FreestylePanel.cpp": "NonMatching",

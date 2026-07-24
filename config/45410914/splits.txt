@@ -7074,3 +7074,23 @@ system/beatmatch/PlayerTrackConfigList.cpp:
 	.text       start:0x8276FFC8 end:0x827700A4
 	.text       start:0x827700A8 end:0x827701BC
 	.text       start:0x827701C0 end:0x82770240
+
+system/synth/VoiceBeat.cpp:
+	.pdata      start:0x82238F98 end:0x82238FA0
+	.pdata      start:0x82238FA0 end:0x82238FB0
+	.pdata      start:0x82238FB8 end:0x82238FC0
+	.pdata      start:0x82238FC0 end:0x82238FD0
+	.pdata      start:0x82238FD0 end:0x82238FE0
+	.text       start:0x827182B8 end:0x827183CC
+	.text       start:0x827183D0 end:0x827184A4
+	.text       start:0x82718578 end:0x827185CC
+	.text       start:0x827185D0 end:0x82718764
+	.text       start:0x82718768 end:0x827187EC
+
+system/dsp/VibratoDetector.cpp:
+	.pdata      start:0x8225C6A0 end:0x8225C6A8
+	.text       start:0x82B81400 end:0x82B81534
+
+band3/game/CommonPhraseCapturer.cpp:
+	.pdata      start:0x821F1660 end:0x821F1668
+	.text       start:0x82270580 end:0x8227063C
