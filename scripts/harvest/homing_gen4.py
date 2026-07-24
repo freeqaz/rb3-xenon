@@ -118,6 +118,11 @@ def main():
                     help='comma-separated scan keys to emit (default: all)')
     ap.add_argument('--min-cluster', type=int, default=1,
                     help='drop spatial clusters smaller than this many fns')
+    ap.add_argument('--reveal-frag', default=None,
+                    help='also emit a map-ONLY fragment for VAs that are already '
+                         'inside an existing splits .text range (round 4 did this '
+                         'sub-wave by hand). No pin is needed for these; the name '
+                         'alone flips them.')
     args = ap.parse_args()
 
     wt = args.worktree
@@ -147,6 +152,7 @@ def main():
 
     stats = Counter()
     live = {}
+    reveal = {}
     for va, lst in sorted(cand.items()):
         size = lst[0][2]
         if va in map_vas:
@@ -155,6 +161,11 @@ def main():
         cu = covered(ivs, va, size)
         if cu:
             stats['drop_covered'] += 1
+            names = {n for _, n, _ in lst}
+            if len(names) == 1:
+                n = names.pop()
+                if n not in map_names:
+                    reveal[f'0x{va:08x}'] = n
             continue
         names = {n for _, n, _ in lst}
         if len(names) != 1:
@@ -241,6 +252,11 @@ def main():
         blocks.append(dict(unit=hdr, new=hdr in new_units, body=body,
                            ranges=ranges, nfns=len(fns)))
         summary.append((hdr, len(fns), len(ranges), hdr in new_units))
+
+    if args.reveal_frag:
+        json.dump(reveal, open(args.reveal_frag, 'w'), indent=1)
+        print(f'reveal (map-only, already covered by a splits range): {len(reveal)}'
+              f' -> {args.reveal_frag}')
 
     json.dump(blocks, open(args.out_prefix + '_blocks.json', 'w'), indent=1)
     json.dump(mapfrag, open(args.out_prefix + '_map_fragment.json', 'w'), indent=1)

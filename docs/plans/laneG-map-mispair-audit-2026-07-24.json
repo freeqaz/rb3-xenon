@@ -1,0 +1,477 @@
+{
+ "?StaticClassName@Object@Hmx@@SA?AVSymbol@@XZ": {
+  "cur": "0x8227ae48",
+  "correct": "0x82271a90",
+  "correct_currently": "?StaticClassName@HamMove@@SA?AVSymbol@@XZ"
+ },
+ "?NodeCmp@@YAHPBX0@Z": {
+  "cur": "0x8232b0d8",
+  "correct": "0x8232b0d8",
+  "correct_currently": "?NodeCmp@@YAHPBX0@Z"
+ },
+ "?Type@JoypadConnectionMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x825288f8",
+  "correct": "0x825324a0",
+  "correct_currently": "?StaticClassName@DOFProc@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@Sfx@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc3e8",
+  "correct": "0x826b1c88",
+  "correct_currently": "?StaticClassName@LetterboxPanel@@SA?AVSymbol@@XZ"
+ },
+ "?Type@ButtonUpMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8257b260",
+  "correct": "0x825288f8",
+  "correct_currently": "?Type@JoypadConnectionMsg@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@TexLoadPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x827b15b8",
+  "correct": "0x8256e228",
+  "correct_currently": ""
+ },
+ "?Type@ConnectionStatusChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x823e09a8",
+  "correct": "0x824f6550",
+  "correct_currently": "?Type@PlatformMgrOpCompleteMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@ProfileChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x82545690",
+  "correct": "0x824f6628",
+  "correct_currently": "?StaticClassName@AnimTask@@SA?AVSymbol@@XZ"
+ },
+ "?Type@DiskErrorMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8240e040",
+  "correct": "0x82514858",
+  "correct_currently": ""
+ },
+ "?Type@InviteAcceptedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8240dcb8",
+  "correct": "0x823ead68",
+  "correct_currently": "?StaticClassName@FlowIf@@SA?AVSymbol@@XZ"
+ },
+ "?Type@ServerStatusChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x823e0e28",
+  "correct": "0x823ec318",
+  "correct_currently": ""
+ },
+ "?Type@ProfileSwappedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x82b86e70",
+  "correct": "0x8251b880",
+  "correct_currently": "?StaticClassName@RndFont3d@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@ContentLoadingPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x82571370",
+  "correct": "0x8256f168",
+  "correct_currently": ""
+ },
+ "?StaticClassName@CharBlendBone@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a2a8",
+  "correct": "0x8236a528",
+  "correct_currently": "?StaticClassName@CharIKScale@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharBoneTwist@@SA?AVSymbol@@XZ": {
+  "cur": "0x82317aa0",
+  "correct": "0x82369e28",
+  "correct_currently": "?StaticClassName@CharInterest@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharBonesObject@@SA?AVSymbol@@XZ": {
+  "cur": "0x825718e8",
+  "correct": "0x82369b28",
+  "correct_currently": "?StaticClassName@CharClipGroup@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharClipGroup@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369b28",
+  "correct": "0x8236a228",
+  "correct_currently": ""
+ },
+ "?StaticClassName@CharClipSet@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236ad28",
+  "correct": "0x8236ada8",
+  "correct_currently": "?StaticClassName@ClipCollide@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharCollide@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369fa8",
+  "correct": "0x8236a1a8",
+  "correct_currently": "?StaticClassName@CharIKHead@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharCuff@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a328",
+  "correct": "0x8236a5a8",
+  "correct_currently": "?StaticClassName@CharLipSync@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharDriver@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369da8",
+  "correct": "0x8227c788",
+  "correct_currently": "?StaticClassName@CharWeightSetter@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharDriverMidi@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a928",
+  "correct": "0x8236aaa8",
+  "correct_currently": "?StaticClassName@FileMerger@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharEyeDartRuleset@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369ea8",
+  "correct": "0x8236a028",
+  "correct_currently": "?StaticClassName@CharIKFingers@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharEyes@@SA?AVSymbol@@XZ": {
+  "cur": "0x8229ceb8",
+  "correct": "0x8236a128",
+  "correct_currently": "?StaticClassName@CharIKFoot@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharFaceServo@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369ca8",
+  "correct": "0x82369fa8",
+  "correct_currently": "?StaticClassName@CharCollide@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharForeTwist@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a628",
+  "correct": "0x8236a7a8",
+  "correct_currently": "?StaticClassName@CharIKMidi@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharHair@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a3a8",
+  "correct": "0x8236a628",
+  "correct_currently": "?StaticClassName@CharForeTwist@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKFingers@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a028",
+  "correct": "0x8236a2a8",
+  "correct_currently": "?StaticClassName@CharBlendBone@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKFoot@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a128",
+  "correct": "0x8236a3a8",
+  "correct_currently": "?StaticClassName@CharHair@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKHand@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a0a8",
+  "correct": "0x8236a328",
+  "correct_currently": "?StaticClassName@CharCuff@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKHead@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a1a8",
+  "correct": "0x8236a428",
+  "correct_currently": ""
+ },
+ "?StaticClassName@CharIKMidi@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a7a8",
+  "correct": "0x8236a9a8",
+  "correct_currently": "?StaticClassName@CharMirror@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKRod@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a4a8",
+  "correct": "0x8236a6a8",
+  "correct_currently": "?StaticClassName@FxSendDelay@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKScale@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a528",
+  "correct": "0x8236a728",
+  "correct_currently": "?StaticClassName@CharTransDraw@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharIKSliderMidi@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a828",
+  "correct": "0x8236aa28",
+  "correct_currently": "?StaticClassName@CharNeckTwist@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharInterest@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369e28",
+  "correct": "0x8236a0a8",
+  "correct_currently": "?StaticClassName@CharIKHand@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharLipSync@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a5a8",
+  "correct": "0x8236ae28",
+  "correct_currently": "?StaticClassName@PhotoSpotlightPositioner@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharLipSyncDriver@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a8a8",
+  "correct": "0x8236aea8",
+  "correct_currently": "?StaticClassName@PracticeOptionsProvider@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharLookAt@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369c28",
+  "correct": "0x82369f28",
+  "correct_currently": "?StaticClassName@CharPosConstraint@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharMirror@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a9a8",
+  "correct": "0x8236ab28",
+  "correct_currently": "?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharNeckTwist@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236aa28",
+  "correct": "0x8236aba8",
+  "correct_currently": "?StaticClassName@CharServoBone@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236ab28",
+  "correct": "0x8236ac28",
+  "correct_currently": "?StaticClassName@CharSignalApplier@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharPosConstraint@@SA?AVSymbol@@XZ": {
+  "cur": "0x82369f28",
+  "correct": "0x8236a4a8",
+  "correct_currently": "?StaticClassName@CharIKRod@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharServoBone@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236aba8",
+  "correct": "0x8236aca8",
+  "correct_currently": "?StaticClassName@CharSleeve@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharSleeve@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236aca8",
+  "correct": "0x8236ad28",
+  "correct_currently": "?StaticClassName@CharClipSet@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharTransDraw@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236a728",
+  "correct": "0x8236a928",
+  "correct_currently": "?StaticClassName@CharDriverMidi@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CharWeightSetter@@SA?AVSymbol@@XZ": {
+  "cur": "0x8227c788",
+  "correct": "0x82369ea8",
+  "correct_currently": "?StaticClassName@CharEyeDartRuleset@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@FileMerger@@SA?AVSymbol@@XZ": {
+  "cur": "0x8236aaa8",
+  "correct": "0x8236afa8",
+  "correct_currently": "?StaticClassName@StarsDisplay@@SA?AVSymbol@@XZ"
+ },
+ "?Type@SigninChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x823e0ca8",
+  "correct": "0x823ec538",
+  "correct_currently": "?StaticClassName@UIComponent@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@CreditsPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x825717d0",
+  "correct": "0x82571b18",
+  "correct_currently": "?StaticClassName@CampaignMasterQuestSongSelectPanel@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@HeldButtonPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x8256e7a8",
+  "correct": "0x82571258",
+  "correct_currently": "?StaticClassName@UIListWidget@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@MetaPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x827b14a0",
+  "correct": "0x8256df78",
+  "correct_currently": ""
+ },
+ "?StaticClassName@UIComponent@@SA?AVSymbol@@XZ": {
+  "cur": "0x823ec538",
+  "correct": "0x827fe250",
+  "correct_currently": "?StaticClassName@OptionsPanel@@SA?AVSymbol@@XZ"
+ },
+ "?Type@FriendsListChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8240dd38",
+  "correct": "0x824f64d0",
+  "correct_currently": "?Type@MCResultMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@PartyMembersChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8240dc38",
+  "correct": "0x8251ba80",
+  "correct_currently": "?Type@DingoJobCompleteMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@DeviceChosenMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x825c1e30",
+  "correct": "0x8252a520",
+  "correct_currently": "?Type@ControllerReqOpCompleteMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@UIChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8250c808",
+  "correct": "0x8251bb00",
+  "correct_currently": ""
+ },
+ "?Type@PlatformMgrOpCompleteMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x824f6550",
+  "correct": "0x8250c808",
+  "correct_currently": "?Type@UIChangedMsg@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@ObjectDir@@SA?AVSymbol@@XZ": {
+  "cur": "0x8227acc8",
+  "correct": "0x8227df28",
+  "correct_currently": "?StaticClassName@FlowLabel@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@Character@@SA?AVSymbol@@XZ": {
+  "cur": "0x8227adc8",
+  "correct": "0x8236d348",
+  "correct_currently": ""
+ },
+ "?StaticClassName@CamShot@@SA?AVSymbol@@XZ": {
+  "cur": "0x82742b90",
+  "correct": "0x824bd6c0",
+  "correct_currently": "?StaticClassName@RndMovie@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@MidiInstrument@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc668",
+  "correct": "0x826fc0e8",
+  "correct_currently": "?StaticClassName@DepthBuffer3D@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@MoggClip@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc168",
+  "correct": "0x8262f310",
+  "correct_currently": ""
+ },
+ "?StaticClassName@SynthEmitter@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc6e8",
+  "correct": "0x826fc168",
+  "correct_currently": "?StaticClassName@MoggClip@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@RndMorph@@SA?AVSymbol@@XZ": {
+  "cur": "0x824a8ec8",
+  "correct": "0x8240e540",
+  "correct_currently": "?StaticClassName@FlowNode@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@ParallelGroupSeq@@SA?AVSymbol@@XZ": {
+  "cur": "0x8231c150",
+  "correct": "0x826fc068",
+  "correct_currently": "?StaticClassName@RndEnterable@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@RandomGroupSeq@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc268",
+  "correct": "0x826fbf68",
+  "correct_currently": "?StaticClassName@NgMat@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@RandomIntervalGroupSeq@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc2e8",
+  "correct": "0x82705838",
+  "correct_currently": "?StaticClassName@NgEnviron@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@SerialGroupSeq@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc368",
+  "correct": "0x826fbfe8",
+  "correct_currently": ""
+ },
+ "?StaticClassName@SfxSeq@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc468",
+  "correct": "0x827058b8",
+  "correct_currently": "?StaticClassName@WaitSeq@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@WaitSeq@@SA?AVSymbol@@XZ": {
+  "cur": "0x827058b8",
+  "correct": "0x826fbee8",
+  "correct_currently": "?StaticClassName@DxMat@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@RndLine@@SA?AVSymbol@@XZ": {
+  "cur": "0x8227c8f0",
+  "correct": "0x8240e1c0",
+  "correct_currently": ""
+ },
+ "?StaticClassName@RndMeshAnim@@SA?AVSymbol@@XZ": {
+  "cur": "0x8240e840",
+  "correct": "0x8240dec0",
+  "correct_currently": "?Type@SmartGlassMsg@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@UIListWidget@@SA?AVSymbol@@XZ": {
+  "cur": "0x82571258",
+  "correct": "0x827f7830",
+  "correct_currently": "?StaticClassName@KinectSharePanel@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@ConnectionStatusPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x827347d0",
+  "correct": "0x827b1388",
+  "correct_currently": ""
+ },
+ "?StaticClassName@DeJitterPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x82570ae8",
+  "correct": "0x827b14a0",
+  "correct_currently": "?StaticClassName@MetaPanel@@SA?AVSymbol@@XZ"
+ },
+ "?Type@StorageChangedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x82570428",
+  "correct": "0x8251b900",
+  "correct_currently": ""
+ },
+ "?StaticClassName@PreloadPanel@@SA?AVSymbol@@XZ": {
+  "cur": "0x825716b8",
+  "correct": "0x827b15b8",
+  "correct_currently": "?StaticClassName@TexLoadPanel@@SA?AVSymbol@@XZ"
+ },
+ "?Type@PreviewDownloadCompleteMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x82b89e18",
+  "correct": "0x827b1938",
+  "correct_currently": ""
+ },
+ "?StaticClassName@TexMovie@@SA?AVSymbol@@XZ": {
+  "cur": "0x823ec398",
+  "correct": "0x82742b90",
+  "correct_currently": "?StaticClassName@CamShot@@SA?AVSymbol@@XZ"
+ },
+ "?Type@ContentInstalledMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x824089d0",
+  "correct": "0x8251b980",
+  "correct_currently": ""
+ },
+ "?Type@RGConnectedAccessoriesMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x823e0ea8",
+  "correct": "0x8252e6b0",
+  "correct_currently": "?Type@RGPitchBendMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@RGMutingMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252e730",
+  "correct": "0x8252e7b0",
+  "correct_currently": "?Type@RGProgramChangeMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@RGPitchBendMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252e6b0",
+  "correct": "0x8252e730",
+  "correct_currently": "?Type@RGMutingMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@RGProgramChangeMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252e7b0",
+  "correct": "0x8252e8b0",
+  "correct_currently": "?Type@RGSwingMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@RGSwingMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252e8b0",
+  "correct": "0x8252e930",
+  "correct_currently": ""
+ },
+ "?Type@KeyboardConnectedAccessoriesMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252f970",
+  "correct": "0x8252f9f0",
+  "correct_currently": "?Type@KeyboardLowHandPlacementMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@KeyboardExpressionPedalMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252f8f0",
+  "correct": "0x8252f970",
+  "correct_currently": "?Type@KeyboardConnectedAccessoriesMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@KeyboardHighHandPlacementMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252fbf0",
+  "correct": "0x8252fc70",
+  "correct_currently": "?Type@KeyboardKeyReleasedMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@KeyboardKeyReleasedMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252fc70",
+  "correct": "0x8252f870",
+  "correct_currently": "?Type@KeyboardModMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@KeyboardLowHandPlacementMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252f9f0",
+  "correct": "0x8252fbf0",
+  "correct_currently": "?Type@KeyboardHighHandPlacementMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@KeyboardModMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x8252f870",
+  "correct": "0x8252f8f0",
+  "correct_currently": "?Type@KeyboardExpressionPedalMsg@@SA?AVSymbol@@XZ"
+ },
+ "?Type@KeyboardSustainMsg@@SA?AVSymbol@@XZ": {
+  "cur": "0x823e0da8",
+  "correct": "0x8252fa70",
+  "correct_currently": "?StaticClassName@FontMap3d@RndText@@SA?AVSymbol@@XZ"
+ },
+ "?StaticClassName@AnimTask@@SA?AVSymbol@@XZ": {
+  "cur": "0x824f6628",
+  "correct": "0x82400620",
+  "correct_currently": ""
+ },
+ "?StaticClassName@UIScreen@@SA?AVSymbol@@XZ": {
+  "cur": "0x826fc568",
+  "correct": "0x827f1f20",
+  "correct_currently": ""
+ }
+}
