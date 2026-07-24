@@ -12,6 +12,7 @@
 #include "utl/Symbols4.h"
 
 void BandSongMetadata::InitBandSongMetadata() {
+    static Symbol rock("rock");
     mTitle = 0;
     mArtist = 0;
     mAlbum = 0;
@@ -208,7 +209,9 @@ float BandSongMetadata::GuidePitchVolume() const { return mGuidePitchVolume; }
 int BandSongMetadata::VocalTonicNote() const { return mVocalTonicNote; }
 
 int BandSongMetadata::SongKey() const {
-    return mSongKey >= 0 ? mSongKey : mVocalTonicNote;
+    if (mSongKey >= 0)
+        return mSongKey;
+    return mVocalTonicNote;
 }
 
 int BandSongMetadata::SongTonality() const { return mSongTonality; }
@@ -292,22 +295,18 @@ float BandSongMetadata::Rank(Symbol s) const {
 }
 
 bool BandSongMetadata::HasVocalHarmony() const {
+    static Symbol vocals("vocals");
     return HasPart(vocals, false) && SongMetadata::NumVocalParts() > 1;
 }
 
 bool BandSongMetadata::IsPrivate() const {
-    return mIsTutorial || (mIsFake && !BandSongMgr::GetFakeSongsAllowed());
+    return mIsTutorial || mIsFake;
 }
 
 bool BandSongMetadata::IsRanked() const { return !mRanks.empty(); }
 
 bool BandSongMetadata::IsVersionOK() const {
-    bool ret = false;
-    u32 version = (mVersion & 0xffff);
-    if (version <= 30) {
-        ret = true;
-    }
-    return ret;
+    return mVersion >= 0 && mVersion <= 30;
 }
 
 Symbol BandSongMetadata::LengthSym() const {
@@ -339,8 +338,13 @@ Symbol BandSongMetadata::VocalPartsSym() const {
 }
 
 Symbol BandSongMetadata::HasProGuitarSym() const {
-    bool haspropart = HasPart(real_guitar, false) || HasPart(real_bass, false);
-    return haspropart ? has_part_yes : has_part_no;
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
+    static Symbol has_part_yes("has_part_yes");
+    static Symbol has_part_no("has_part_no");
+    if (HasPart(real_guitar, false) || HasPart(real_bass, false))
+        return has_part_yes;
+    return has_part_no;
 }
 
 DECOMP_FORCEFUNC(BandSongMetadata, BandSongMetadata, HasKeys())
@@ -348,23 +352,39 @@ DECOMP_FORCEFUNC(BandSongMetadata, BandSongMetadata, HasKeys())
 #pragma push
 #pragma force_active on
 inline bool BandSongMetadata::HasKeys() const {
+    static Symbol keys("keys");
+    static Symbol real_keys("real_keys");
     return HasPart(keys, false) || HasPart(real_keys, false);
 }
 #pragma pop
 
 bool BandSongMetadata::HasGuitar() const {
+    static Symbol guitar("guitar");
+    static Symbol real_guitar("real_guitar");
     return HasPart(guitar, false) || HasPart(real_guitar, false);
 }
 
 bool BandSongMetadata::HasBass() const {
+    static Symbol bass("bass");
+    static Symbol real_bass("real_bass");
     return HasPart(bass, false) || HasPart(real_bass, false);
 }
 
 Symbol BandSongMetadata::HasKeysSym() const {
+    static Symbol has_part_yes("has_part_yes");
+    static Symbol has_part_no("has_part_no");
     return HasKeys() ? has_part_yes : has_part_no;
 }
 
 bool BandSongMetadata::HasSolo(Symbol s) const {
+    static Symbol real_guitar("real_guitar");
+    static Symbol guitar("guitar");
+    static Symbol real_bass("real_bass");
+    static Symbol bass("bass");
+    static Symbol real_keys("real_keys");
+    static Symbol keys("keys");
+    static Symbol real_drum("real_drum");
+    static Symbol drum("drum");
     if (s == real_guitar)
         s = guitar;
     else if (s == real_bass)
@@ -377,6 +397,8 @@ bool BandSongMetadata::HasSolo(Symbol s) const {
 }
 
 Symbol BandSongMetadata::HasSoloSym(Symbol s) const {
+    static Symbol has_part_yes("has_part_yes");
+    static Symbol has_part_no("has_part_no");
     return HasSolo(s) ? has_part_yes : has_part_no;
 }
 
