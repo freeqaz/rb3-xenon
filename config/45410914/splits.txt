@@ -1781,6 +1781,7 @@ HamMove.cpp:
 	.pdata      start:0x82210658 end:0x82210660
 	.pdata      start:0x8221E708 end:0x8221E710
 	.pdata      start:0x82238C30 end:0x82238C38
+	.pdata      start:0x82238C58 end:0x82238C90
 	.pdata      start:0x82238C90 end:0x82238C98
 	.text       start:0x822717C0 end:0x82271B5C
 	.text       start:0x82271D48 end:0x82271D9C
@@ -1798,6 +1799,7 @@ HamMove.cpp:
 	.text       start:0x82484B88 end:0x82484BF8
 	.text       start:0x825748A0 end:0x825748E4
 	.text       start:0x827148B0 end:0x82714910
+	.text       start:0x82714A48 end:0x82714DC8
 	.text       start:0x82714DC8 end:0x82714F0C
 	.text       start:0x8278B7F0 end:0x8278B838
 	.text       start:0x827B7ED0 end:0x827B7EE0
@@ -5224,8 +5226,10 @@ band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 band3/meta_band/CharCache.cpp:
 	.pdata      start:0x8221D9D8 end:0x8221DA78
 	.pdata      start:0x8221DA78 end:0x8221DAB0
+	.pdata      start:0x8221DAB0 end:0x8221DB20
 	.text       start:0x8256B544 end:0x8256BC50
 	.text       start:0x8256BC58 end:0x8256C310
+	.text       start:0x8256C310 end:0x8256C7E0
 
 band3/meta_band/StoreOfferProvider.cpp:
 	.pdata      start:0x8222E648 end:0x8222E658
@@ -5309,7 +5313,9 @@ band3/meta_band/CampaignKey.cpp:
 
 band3/meta_band/AccomplishmentTourConditional.cpp:
 	.pdata      start:0x82221800 end:0x82221818
+	.pdata      start:0x82221818 end:0x82221860
 	.text       start:0x825A4778 end:0x825A48D4
+	.text       start:0x825A48D8 end:0x825A4BF0
 
 band3/meta_band/CampaignLevel.cpp:
 	.pdata      start:0x8222D978 end:0x8222D980
@@ -5420,9 +5426,11 @@ band3/game/GemTrainerPanel.cpp:
 band3/game/Tracker.cpp:
 	.pdata      start:0x82234E48 end:0x82234E50
 	.pdata      start:0x82234EF0 end:0x82234EF8
+	.pdata      start:0x82234F50 end:0x82234F78
 	.pdata      start:0x82235018 end:0x82235020
 	.text       start:0x826D0AA8 end:0x826D0B00
 	.text       start:0x826D14E8 end:0x826D1598
+	.text       start:0x826D1A60 end:0x826D1C60
 	.text       start:0x826D2710 end:0x826D27C4
 
 band3/meta_band/SongRecord.cpp:

@@ -1,4 +1,12 @@
 {
+ "0x8256c3c8": "?Init@CharCache@@SAXXZ",
+ "0x825a4a38": "??0AccomplishmentTourConditional@@QAA@PAVDataArray@@H@Z",
+ "0x825a4af8": "??1AccomplishmentTourConditional@@UAA@XZ",
+ "0x825a4b78": "??_GAccomplishmentTourConditional@@UAAPAXI@Z",
+ "0x826d1a60": "?SetPlayerProgress@Tracker@@QAAXABUTrackerPlayerID@@M@Z",
+ "0x826d1bf0": "?_M_erase@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrackerPlayerDisplay@@PAV3@0ABU__false_type@2@@Z",
+ "0x82714a48": "?_M_fill_insert_aux@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULocalizedName@HamMove@@IABU34@ABU__false_type@2@@Z",
+ "0x82714d18": "??1?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x826e3820": "?Leave@VocalPlayer@@UAAXXZ",
  "0x826e3910": "?ConfigureBehavior@VocalPlayer@@UAAXXZ",
  "0x826e3960": "?GetNotesHitFraction@VocalPlayer@@UBAMPA_N@Z",
