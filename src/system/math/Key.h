@@ -70,6 +70,24 @@ BinStreamRev &operator>>(BinStreamRev &bs, Key<T> &key) {
 template <class T1, class T2>
 class Keys : public std::vector<Key<T1> > {
 public:
+#ifdef HX_NATIVE
+    // Portable two-phase name lookup binds the many unqualified std::vector
+    // member calls below (size/empty/insert/front/back/...) to the like-named
+    // `extern Symbol size` / `Symbol empty` / ... in utl/Symbols.h instead of
+    // the container members, yielding "Symbol has no call operator" in game TUs
+    // that include Symbols.h before instantiating Keys<>. Re-expose each base
+    // member so unqualified lookup resolves to the container. X360 (MSVC lax
+    // member lookup) never compiles this branch and is unaffected.
+    typedef std::vector<Key<T1> > _KeysBaseVec;
+    using _KeysBaseVec::size;
+    using _KeysBaseVec::empty;
+    using _KeysBaseVec::insert;
+    using _KeysBaseVec::begin;
+    using _KeysBaseVec::end;
+    using _KeysBaseVec::front;
+    using _KeysBaseVec::back;
+    using _KeysBaseVec::erase;
+#endif
     /** Get the number of keyframes in this collection. */
     int NumKeys() const { return size(); }
 

@@ -12,6 +12,21 @@ class BeatMaster;
 class Band : public Hmx::Object {
 public:
     Band(bool, int, BandUser *, BeatMaster *);
+#ifdef HX_NATIVE
+    // Native scoring ctor (M6): a Band that only carries the EnergyMultiplier
+    // state Player::GetMultiplier reads (mMultiplier / mMultiplierActive /
+    // mBonusLevel). It skips the retail ctor's recursive player creation,
+    // BandPerformer/CommonPhraseCapturer allocation, and scoring/bonuses config
+    // parse — those drag the whole band domain (a shimmed leaf). X360 never
+    // sees this ctor (gated out).
+    Band(bool /*native_score_tag*/, int mult, bool /*disambig*/)
+        : mBandPerformer(0), mAccumulatedScore(0), mTotalStars(0), unk30(0),
+          unk3c(0), unk40(0), unk44(0), mBonusLevel(0), mMultiplier(mult),
+          mMaxMultiplier(mult), mMsWithMultiplier(0), mMsWhenMultiplierStarted(0),
+          mMultiplierActive(1), unk60(0), mMaxBonusLevel(0),
+          mCommonPhraseCapturer(0) {}
+    void NativeSetMultiplier(int m) { mMultiplier = m; }
+#endif
     virtual ~Band();
     virtual DataNode Handle(DataArray *, bool);
 

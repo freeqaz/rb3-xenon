@@ -313,3 +313,52 @@ target_include_directories(rb3-score PRIVATE
     ${REPO_ROOT}/src/band3
 )
 target_link_libraries(rb3-score PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M6: REAL scoring object graph -------------------------------------------
+# Replaces M5's interim score_engine transcription with the genuine band3
+# scoring TUs — Performer / Player / Scoring / Stats / Band — driven through
+# their real methods (see src/main_score2.cpp for the graph census). Those TUs
+# reference a cascade of game/net/UI singletons the scoring path never executes;
+# m6_link_stubs.cpp / .s satisfy them (honest leaf stubs). score_engine.cpp is
+# linked only for the side-by-side cross-check.
+set(M6_GAME_SOURCES
+    ${REPO_ROOT}/src/band3/game/Performer.cpp
+    ${REPO_ROOT}/src/band3/game/Player.cpp
+    ${REPO_ROOT}/src/band3/game/Scoring.cpp
+    ${REPO_ROOT}/src/band3/game/Stats.cpp
+    ${REPO_ROOT}/src/band3/game/Band.cpp
+)
+add_executable(rb3-score2
+    ${CMAKE_SOURCE_DIR}/src/main_score2.cpp
+    ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${M6_GAME_SOURCES}
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/m6_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-score2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+# Drop unreferenced methods of the real scoring TUs (and their off-path link
+# refs) so the stub surface is only what the scoring chain actually reaches.
+target_link_options(rb3-score2 PRIVATE -Wl,--gc-sections)
+target_compile_definitions(rb3-score2 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-score2 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-score2 PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+)
+target_link_libraries(rb3-score2 PRIVATE Threads::Threads ZLIB::ZLIB)

@@ -63,6 +63,29 @@ public:
 class Player : public Performer, public MsgSource {
 public:
     Player(BandUser *, Band *, int, BeatMaster *);
+#ifdef HX_NATIVE
+    // Native scoring-core ctor (M6): delegates to the native Performer ctor and
+    // builds the REAL Player scoring state (mBehavior, mBand, mScore, streak
+    // multiplier config) WITHOUT the retail ctor's TheGame / SystemConfig(
+    // "track_graphics") / BandTrack singleton reads. mUser may be null (the
+    // scoring path — AddPoints/GetMultiplier/GetIndividualMultiplier — never
+    // dereferences it); the multiplier config normally taken from mUser is set
+    // by the caller directly on mBehavior (exactly as GemPlayer::SetupBehavior
+    // does). X360 never sees this ctor (gated out).
+    Player(BandUser *user, Band *band, int tracknum, BeatMaster *bmaster,
+           bool /*native_score_tag*/)
+        : Performer(band, true), mParams(0),
+          mBehavior(new PlayerBehavior()), mUser(user), mCommonPhraseCapturer(0),
+          mRemote(0), mTrackNum(tracknum), mTrackType(kTrackNone),
+          mEnabledState(kPlayerEnabled), mTimesFailed(0), mEnableMs(0),
+          unk25c(0), mIsInCoda(0), mBandEnergy(0), mDeployingBandEnergy(0),
+          unk274(1), unk278(0), mPhraseBonus(1), mBeatMaster(bmaster), unk284(0),
+          unk288(0), unk28c(0), unk290(0), unk294(0), unk298(0), unk29c(0),
+          unk2a0(0), unk2a4(0), mDisconnectedAtStart(0), unk2a9(0), unk2ac(0),
+          unk2b0(0), mPermanentOverdrive(0), mHasFinishedCoda(0),
+          mHasBlownCoda(0), unk2b4(0), unk2b8(0), unk2bc(0), unk2c0(-1),
+          mUnkTU5_tail(0), unk2c4(1) {}
+#endif
     virtual DataNode Handle(DataArray *, bool);
     virtual ~Player();
     virtual int GetAccumulatedScore() const;

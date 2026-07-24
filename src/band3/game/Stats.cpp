@@ -628,6 +628,11 @@ BinStream &operator>>(BinStream &bs, Stats::SectionInfo &info) {
 
 // COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
 // interleaved these owners' COMDATs into this TU's .text span.
+// HX_NATIVE: these unity includes exist only to reproduce the retail X360
+// .text COMDAT layout; the native host scorer does not need (and cannot cheaply
+// link) BandDirector/RhythmDetector, so they are gated out. X360 build is
+// unchanged (the gate is false there).
+#ifndef HX_NATIVE
 #define gRev gRev_RhythmDetector
 #define gAltRev gAltRev_RhythmDetector
 #include "hamobj/RhythmDetector.cpp"
@@ -640,3 +645,4 @@ BinStream &operator>>(BinStream &bs, Stats::SectionInfo &info) {
 #include "bandobj/BandDirector.cpp"
 #undef gRev
 #undef gAltRev
+#endif

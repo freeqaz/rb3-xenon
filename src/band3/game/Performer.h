@@ -10,6 +10,19 @@ class Band;
 class Performer : public virtual Hmx::Object {
 public:
     Performer(BandUser *, Band *);
+#ifdef HX_NATIVE
+    // Native scoring-core ctor (M6): builds the REAL scoring state (mStats,
+    // mBand, mScore) WITHOUT the retail ctor's CrowdRating/Game/track_graphics
+    // singleton drags. mCrowd stays null (crowd meter is a shimmed leaf), and
+    // the net/UI streak+score broadcast flags (unk1fd/unk1fe) start disabled so
+    // the headless scorer never dispatches send_* messages. X360 never sees
+    // this ctor (gated out) — the retail preprocessed output is unchanged.
+    Performer(Band *band, bool /*native_score_tag*/)
+        : mPollMs(0), mCrowd(0), mStats(Stats()), mBand(band), unk1e0(0),
+          unk1e1(0), unk1e2(0), mScore(0), mQuarantined(0), unk1fd(0), unk1fe(0),
+          unk1ff(1), mProgressMs(0), mGameOver(0), mMultiplierActive(1),
+          mNumRestarts(0) {}
+#endif
     virtual DataNode Handle(DataArray *, bool);
     virtual ~Performer();
     virtual int GetScore() const;
