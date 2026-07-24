@@ -1055,7 +1055,9 @@ extern Symbol increment_sequence_arrow_x_shift;
 extern Symbol increment_sequence_arrow_y_shift;
 extern Symbol increment_song_review;
 extern Symbol indent;
+#if !HX_NATIVE
 extern Symbol index;
+#endif // index: POSIX glibc name collision
 extern Symbol index_from_frame;
 extern Symbol indexed_song;
 extern Symbol indexParam;

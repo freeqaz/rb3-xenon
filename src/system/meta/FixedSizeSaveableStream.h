@@ -14,11 +14,21 @@
 // retail exactly.
 #ifndef RB3_HASH_SYMBOL_DEFINED
 #define RB3_HASH_SYMBOL_DEFINED
+#if HX_NATIVE
+// Native: hash_map aliases std::unordered_map, which defaults to std::hash<K>.
+// STLport's stlpmtx_std / _STLP_TEMPLATE_NULL spellings don't exist here.
+namespace std {
+template <> struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#else
 namespace stlpmtx_std {
 _STLP_TEMPLATE_NULL struct hash<Symbol> {
     size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
 };
 }
+#endif
 #endif
 
 class FixedSizeSaveableStream : public BufStream {

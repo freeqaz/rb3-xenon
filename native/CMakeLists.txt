@@ -101,3 +101,45 @@ target_link_libraries(rb3-dta PRIVATE Threads::Threads ZLIB::ZLIB)
 # Rendering/MIDI/synth/Win32 symbols referenced by compiled-but-unused engine
 # vtables are satisfied by weak no-op stubs in src/dta_link_stubs.s (none are
 # on the DTA-parse path).
+
+# --- M1: SongMgr / BandSongMgr cluster ---------------------------------------
+# The engine base (meta/) is NOT in the obj/utl/os/math globs, so list the three
+# TUs the song-manager path needs explicitly. The rest of meta/ is UI/net code
+# that doesn't compile natively and isn't on the load path.
+set(META_SONG_SOURCES
+    ${REPO_ROOT}/src/system/meta/SongMgr.cpp
+    ${REPO_ROOT}/src/system/meta/SongMetadata.cpp
+    ${REPO_ROOT}/src/system/meta/DataArraySongInfo.cpp
+)
+# RB3 game-layer song manager + metadata (src/band3/meta_band). MetaPerformer /
+# MusicLibrary are NOT wired: they aren't on the load path (off-path symbols are
+# link-stubbed in dta_link_stubs.s) and don't yet compile natively (math/Key.h
+# Symbol call-operator + UILabel protected-member issues).
+set(M1_SOURCES
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+)
+
+add_executable(rb3-song
+    ${CMAKE_SOURCE_DIR}/src/main_song.cpp
+    ${CMAKE_SOURCE_DIR}/src/m1_symbols.cpp
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${META_SONG_SOURCES}
+    ${M1_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m1_link_stubs.s
+)
+target_compile_options(rb3-song PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_definitions(rb3-song PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-song SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-song PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3     # M1: game-layer meta_band/ headers
+    ${REPO_ROOT}/src/network   # M1: BandSongMgr pulls network/ headers transitively
+)
+target_link_libraries(rb3-song PRIVATE Threads::Threads ZLIB::ZLIB)

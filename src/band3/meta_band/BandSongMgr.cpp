@@ -1044,8 +1044,12 @@ END_HANDLERS
 #pragma pop
 
 // sw2 scatter-include (default/band3/meta_band/BandSongMgr <- math/Geo.cpp)
+// X360-match only: retail folded Geo's COMDATs into this TU. Native compiles
+// math/Geo.cpp as its own TU, so including it here would double-define.
+#if !HX_NATIVE
 #define gRev gRev_Geo
 #define gAltRev gAltRev_Geo
 #include "math/Geo.cpp"
 #undef gRev
 #undef gAltRev
+#endif
