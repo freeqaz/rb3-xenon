@@ -69,7 +69,7 @@ void BinkMovieSys::Init() {
         BinkMovieSys::PlatformInit();
 
         if (mHasAsyncThread && (BinkStartAsyncThread(mBinkCore0, 0) == 0 || BinkStartAsyncThread(mBinkCore1, 0) == 0)) {
-            TheDebug.Fail(FormatString("Error starting bink async thread").Str(), nullptr);
+            MILO_FAIL("Error starting bink async thread");
         }
 #endif
     }

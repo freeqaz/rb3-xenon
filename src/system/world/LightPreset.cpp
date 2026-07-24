@@ -1326,7 +1326,7 @@ BEGIN_LOADS(LightPreset)
         String str2;
         bs >> str2;
         if (!str2.empty()) {
-            TheDebug.Notify(MakeString("%s: %s", Name(), str2));
+            MILO_NOTIFY("%s: %s", Name(), str2);
         }
     } else if (d.rev < 0x15) {
         ObjPtr<EventTrigger> trigPtr(this, 0);

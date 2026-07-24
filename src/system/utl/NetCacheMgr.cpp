@@ -213,10 +213,7 @@ void NetCacheMgr::SetState(NetCacheMgrState state) {
                 mHasFailed = false;
             }
             if (mState == kNCMS_Nil && state == kNCMS_UnloadWaitForWrite) {
-                TheDebug.Fail(
-                    MakeString("NetCacheMgr attempted to move straight from kNCMS_Nil to kNCMS_Unload!\n"),
-                    0
-                );
+                MILO_FAIL("NetCacheMgr attempted to move straight from kNCMS_Nil to kNCMS_Unload!\n");
             }
             mState = state;
             if (state != kNCMS_Nil)

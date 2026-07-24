@@ -30,7 +30,7 @@ CacheMgrXbox::~CacheMgrXbox() {}
 void CacheMgrXbox::Poll() {
     switch (GetOp()) {
     default:
-        TheDebug.Fail(MakeString("Unknown OpType encountered in CacheMgr::Poll()\n"), nullptr);
+        MILO_FAIL("Unknown OpType encountered in CacheMgr::Poll()\n");
         return;
     case kOpDelete:
         PollDelete();

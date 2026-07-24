@@ -289,7 +289,7 @@ int DanceRemixer::JumpedMeasureStepsBetween(int from, int to, int step) const {
     while (from != to) {
         count += step;
         if (((count ^ ((unsigned int)count >> 31)) - ((unsigned int)count >> 31)) > mTotalMeasures * 2) {
-            TheDebug.Fail(MakeString("JumpedMeasureStepsBetween from %d to %d", from, to), nullptr);
+            MILO_FAIL("JumpedMeasureStepsBetween from %d to %d", from, to);
         }
         from = JumpedMeasureAdd(from, step);
     }

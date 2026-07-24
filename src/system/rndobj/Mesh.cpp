@@ -1751,12 +1751,12 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
             b4 = false;
         }
         if (!b4) {
-            TheDebug.Notify(MakeString(
+            MILO_NOTIFY(
                 "Loaded stale compressed vertex data, resave mesh file \"%s\""
                 "(loaded size = %d, current = %d; loaded ver = %d, current = %d",
                 d.stream.Name(), loadedCompressedSize, compressedSize,
                 loadedVersion, (unsigned int)b4
-            ));
+            );
         }
     }
     if (b58) {
@@ -1826,14 +1826,11 @@ void RndMesh::SaveVertices(BinStream &bs) {
         unsigned int compressedSize = 0;
         bool isXBox;
         if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
-            FormatString str("Unsupported platform for vertex compression");
-            int line;
             isXBox = false;
-            TheDebug.Fail(str.Str(), 0);
-            line = 0x339;
-            TheDebug.Fail(MakeString(kAssertStr, "Mesh.cpp", line, "compressedSize > 0"), 0);
-            line = 0x33A;
-            TheDebug.Fail(MakeString(kAssertStr, "Mesh.cpp", line, "compressedVersion > 0"), 0);
+            MILO_FAIL("Unsupported platform for vertex compression");
+            // retail: MILO_ASSERT(compressedSize > 0, 0x339);
+            //         MILO_ASSERT(compressedVersion > 0, 0x33A);
+            // both compile to ((void)(cond)) and emit no code.
         } else {
             compressedSize = 0x24;
             isXBox = true;
@@ -1856,8 +1853,7 @@ void RndMesh::SaveVertices(BinStream &bs) {
 #endif
             if (cached && compress) {
                 if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
-                    FormatString str("Unsupported platform for vertex compression");
-                    TheDebug.Fail(str.Str(), 0);
+                    MILO_FAIL("Unsupported platform for vertex compression");
                 } else {
                     static CompressedVertex_Xbox compressed;
                     FillCompressedVertex(compressed, *it, true);

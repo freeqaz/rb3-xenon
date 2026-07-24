@@ -210,7 +210,7 @@ void TrainerPanel::InternalInitSections(const DataEventList *events) {
             Symbol name = ((const DataArray *)ev.mMsg)->Node(2).Sym(((const DataArray *)ev.mMsg));
             std::map<Symbol, TrainerSection>::iterator it = sectionMap.find(name);
             if (it != sectionMap.end()) {
-                TheDebug.Notify(MakeString("Duplicate trainer section detected - %s \n", name.Str()));
+                MILO_NOTIFY("Duplicate trainer section detected - %s \n", name.Str());
             } else {
                 TrainerSection sect;
                 sect.SetName(name);
@@ -224,14 +224,14 @@ void TrainerPanel::InternalInitSections(const DataEventList *events) {
             Symbol name = ((const DataArray *)ev.mMsg)->Node(2).Sym(((const DataArray *)ev.mMsg));
             std::map<Symbol, TrainerSection>::iterator it = sectionMap.find(name);
             if (it == sectionMap.end()) {
-                TheDebug.Notify(MakeString("Unknown trainer section end - %s \n", name.Str()));
+                MILO_NOTIFY("Unknown trainer section end - %s \n", name.Str());
             } else {
                 TrainerSection &sect = it->second;
                 sect.SetEndTick(FixupTick(tick));
                 if (sect.SanityCheck()) {
                     AddSection(sect);
                 } else {
-                    TheDebug.Notify(MakeString("Invalid trainer section - %s \n", name.Str()));
+                    MILO_NOTIFY("Invalid trainer section - %s \n", name.Str());
                 }
                 sectionMap.erase(it);
             }
@@ -240,7 +240,7 @@ void TrainerPanel::InternalInitSections(const DataEventList *events) {
             Symbol challenge = ((const DataArray *)ev.mMsg)->Node(3).Sym(((const DataArray *)ev.mMsg));
             std::map<Symbol, TrainerSection>::iterator it = sectionMap.find(name);
             if (it == sectionMap.end()) {
-                TheDebug.Notify(MakeString("Unknown trainer section name for challenge - %s \n", name.Str()));
+                MILO_NOTIFY("Unknown trainer section name for challenge - %s \n", name.Str());
             } else {
                 it->second.SetChallengeName(challenge);
             }
@@ -248,7 +248,7 @@ void TrainerPanel::InternalInitSections(const DataEventList *events) {
             Symbol name = ((const DataArray *)ev.mMsg)->Node(2).Sym(((const DataArray *)ev.mMsg));
             std::map<Symbol, TrainerSection>::iterator it = sectionMap.find(name);
             if (it == sectionMap.end()) {
-                TheDebug.Notify(MakeString("Unknown trainer section name for start early \n"));
+                MILO_NOTIFY("Unknown trainer section name for start early \n");
             } else {
                 it->second.SetStartEarly(true);
             }
@@ -256,7 +256,7 @@ void TrainerPanel::InternalInitSections(const DataEventList *events) {
             Symbol name = ((const DataArray *)ev.mMsg)->Node(2).Sym(((const DataArray *)ev.mMsg));
             std::map<Symbol, TrainerSection>::iterator it = sectionMap.find(name);
             if (it == sectionMap.end()) {
-                TheDebug.Notify(MakeString("Unknown trainer section name for start norm \n"));
+                MILO_NOTIFY("Unknown trainer section name for start norm \n");
             } else {
                 it->second.SetStartEarly(false);
             }

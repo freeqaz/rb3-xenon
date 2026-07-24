@@ -89,14 +89,8 @@ void RndShaderProgram::CopyErrorShader(ShaderType shader, const ShaderOptions &o
         if (!TheShaderMgr.CacheShaders()) {
             const char *msg =
                 "FAILURE: Error shader cannot be cached. Unable to handle missing shaders!\n";
-            {
-                FormatString fs(msg);
-                TheDebug << fs.Str();
-            }
-            {
-                FormatString fs(msg);
-                TheDebug.Fail(fs.Str(), nullptr);
-            }
+            MILO_LOG(msg);
+            MILO_FAIL(msg);
         }
         Cache(errorType, newOpts, nullptr, nullptr);
     }

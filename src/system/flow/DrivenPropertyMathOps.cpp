@@ -39,29 +39,23 @@ void FlowMathOp::Load(BinStream &bs, ObjectDir *dir) {
 
     if (d.rev > gRev) {
         const char *dirPath = dir ? PathName(dir) : "";
-        TheDebug.Fail(
-            MakeString(
+        MILO_FAIL(
                 "%s can't load new %s version %d > %d",
                 dirPath,
                 "FlowMathOp",
                 d.rev,
                 gRev
-            ),
-            nullptr
-        );
+            );
     }
     if (d.altRev > gAltRev) {
         const char *dirPath = dir ? PathName(dir) : "";
-        TheDebug.Fail(
-            MakeString(
+        MILO_FAIL(
                 "%s can't load new %s alt version %d > %d",
                 dirPath,
                 "FlowMathOp",
                 d.altRev,
                 gAltRev
-            ),
-            nullptr
-        );
+            );
     }
 
     bs >> (int &)mOp;

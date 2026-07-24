@@ -77,15 +77,12 @@ BinkMovieImpl::BinkMovieImpl()
         if (mThreadId == (unsigned int)-1 && MainThread()) {
             return;
         }
-        TheDebug.Fail(
-            MakeString(
+        MILO_FAIL(
                 "%s called in the wrong thread (expected %d, cur thread is %d)",
                 "BinkMovieImpl::BinkMovieImpl",
                 mThreadId,
                 GetCurrentThreadId()
-            ),
-            0
-        );
+            );
     }
 }
 
@@ -96,15 +93,12 @@ BinkMovieImpl::~BinkMovieImpl() {
         if (mThreadId == (unsigned int)-1 && MainThread()) {
             goto done;
         }
-        TheDebug.Fail(
-            MakeString(
+        MILO_FAIL(
                 "%s called in the wrong thread (expected %d, cur thread is %d)",
                 "BinkMovieImpl::~BinkMovieImpl",
                 mThreadId,
                 GetCurrentThreadId()
-            ),
-            0
-        );
+            );
     }
 done:
     End();

@@ -25,17 +25,17 @@ void AccomplishmentGroup::Configure(DataArray *i_pConfig) {
     i_pConfig->FindData(preferred_scoretype, scoreType, true);
     mScoreType = (ScoreType)scoreType;
     if (1 < instrumentIcon.length()) {
-        TheDebug.Notify(MakeString(
+        MILO_NOTIFY(
             "Accomplishment Group has an instrument icon that is more than 1 character long! GROUP: %s\n",
             mName.Str()
-        ));
+        );
         instrumentIcon = instrumentIcon.substr(0, 1);
     }
     if (instrumentIcon.length() == 0) {
-        TheDebug.Notify(MakeString(
+        MILO_NOTIFY(
             "Accomplishment Group has an instrument icon that is 0 characters long! GROUP: %s\n",
             mName.Str()
-        ));
+        );
     } else {
         mInstrumentIcon = instrumentIcon[0];
     }

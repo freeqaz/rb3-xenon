@@ -286,8 +286,7 @@ void RndConsole::MoveLevel(int level) {
         mDebugging = gCallStackPtr[mLevel - 2];
         List();
     } else {
-        FormatString fs("Can't move level unless debugging");
-        TheDebugFailer << fs.Str();
+        MILO_FAIL("Can't move level unless debugging");
     }
 }
 

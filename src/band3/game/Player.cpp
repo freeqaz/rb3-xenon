@@ -872,8 +872,7 @@ bool Player::DeployBandEnergyIfPossible(bool b) {
         }
     }
     if (!IsLocal()) {
-        FormatString fmt("Non-local player trying to deploy locally\n");
-        TheDebug.Notify(fmt.Str());
+        MILO_NOTIFY("Non-local player trying to deploy locally\n");
         return false;
     }
     if (!unk2b0)

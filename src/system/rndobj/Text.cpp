@@ -375,10 +375,10 @@ BEGIN_LOADS(RndText)
     if (d.rev >= 22) {
         if (d.rev > 22) {
             if (d.rev == 23) {
-                TheDebug.Notify(MakeString(
+                MILO_NOTIFY(
                     "%s was bad version 23, suggest reverting and resaving, lost [height] and [fit_type]",
                     PathName(this)
-                ));
+                );
             } else {
                 bs >> mHeight;
                 if (d.rev < 24) {
@@ -1831,10 +1831,7 @@ void RndText::FitTextScroll() {
 
         RndFontBase *font = mStyles[0].mFont;
         if (font == nullptr) {
-            TheDebug.Fail(
-                MakeString(kAssertStr, "Text.cpp", 2718, "font"),
-                nullptr
-            );
+            MILO_FAIL(kAssertStr, "Text.cpp", 2718, "font");
         } else {
             unsigned short charCode = 0;
             DecodeUTF8(charCode, "8");
@@ -1909,7 +1906,7 @@ RndText::FontMapBase *RndText::AcquireFontMap(RndFontBase *font) {
     } else if (font->ClassName() == RndFont3d::StaticClassName()) {
         fontMapClassName = FontMap3d::StaticClassName();
     } else {
-        TheDebug.Fail(MakeString("Unknown Font type: %s", font->ClassName()), 0);
+        MILO_FAIL("Unknown Font type: %s", font->ClassName());
         fontMapClassName = FontMap::StaticClassName();
     }
 
@@ -1935,7 +1932,7 @@ RndText::FontMapBase *RndText::AcquireFontMap(RndFontBase *font) {
             new (result) FontMap3d();
         }
     } else {
-        TheDebug.Fail(MakeString("Unknown FontMap type: %s", fontMapClassName), 0);
+        MILO_FAIL("Unknown FontMap type: %s", fontMapClassName);
         result = (FontMapBase *)MemAlloc(sizeof(FontMap), __FILE__, 0xd7, "FontMapBase", 0);
         if (result) {
             new (result) FontMap();

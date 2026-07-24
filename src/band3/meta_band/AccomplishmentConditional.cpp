@@ -17,7 +17,7 @@ void AccomplishmentConditional::UpdateConditionOptionalData(
         MILO_ASSERT(pEntry, 0x29);
         Symbol name = Accomplishment::GetName();
         if (pEntry->Size() != 2) {
-            TheDebug.Fail(MakeString("Invalid condition entry in %s.", name.Str()));
+            MILO_FAIL("Invalid condition entry in %s.", name.Str());
         }
         Symbol s = pEntry->Node(0).Sym();
         if (s == instrument) {

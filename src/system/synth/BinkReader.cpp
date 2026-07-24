@@ -41,7 +41,7 @@ BinkReader::BinkReader(File *file, StandardStream *stream)
         BinkSetVideoOnOff(mBink, 0);
     } else {
         const char *err = BinkGetError();
-        TheDebug.Notify(MakeString("Error opening Bink audio file: %s", err));
+        MILO_NOTIFY("Error opening Bink audio file: %s", err);
         mState = kFail;
     }
 }

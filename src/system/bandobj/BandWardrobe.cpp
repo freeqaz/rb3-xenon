@@ -1152,9 +1152,9 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
             CharDriver *driver = it->Driver();
             const char *name = it->Name();
             if (!driver) {
-                TheDebug.Notify(MakeString(
+                MILO_NOTIFY(
                     "%s has no main.drv, not valid character", PathName(it)
-                ));
+                );
             } else {
                 if (strstr(name, "extra")) {
                     driver->SetClipType(vignette);

@@ -397,7 +397,7 @@ void Singer::ClearPitchHistory() {
 
 void Singer::UpdatePitchHistory(float pitch) {
     if ((unsigned int)mPitchHistoryIndex > 4) {
-        TheDebug.Notify(MakeString("pitch history index out of bounds (%d) singer %d", mPitchHistoryIndex, mSingerIndex));
+        MILO_NOTIFY("pitch history index out of bounds (%d) singer %d", mPitchHistoryIndex, mSingerIndex);
         ClearPitchHistory();
     }
     float prev = mPitchHistory[mPitchHistoryIndex];
@@ -409,7 +409,7 @@ void Singer::UpdatePitchHistory(float pitch) {
             mPitchHistoryValidCount -= 1;
             if (mPitchHistoryValidCount == 0) ClearPitchHistory();
             if ((unsigned int)mPitchHistoryValidCount > 5) {
-                TheDebug.Notify(MakeString("pitch history valid frames out of bounds (%d)", mPitchHistoryValidCount));
+                MILO_NOTIFY("pitch history valid frames out of bounds (%d)", mPitchHistoryValidCount);
                 ClearPitchHistory();
             }
         }

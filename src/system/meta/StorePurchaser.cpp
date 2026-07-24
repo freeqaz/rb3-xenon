@@ -46,7 +46,7 @@ void XboxPurchaser::Initiate() {
     }
 
     if (ret != ERROR_SUCCESS) {
-        TheDebug.Notify(MakeString("Error starting checkout UI: %d", ret));
+        MILO_NOTIFY("Error starting checkout UI: %d", ret);
         mState = purchasestate3;
     }
 
@@ -123,7 +123,7 @@ void XboxMultipleItemsPurchaser::Initiate() {
     );
 
     if (result != 0x3E5) {
-        TheDebug.Notify(MakeString("Error starting checkout UI: %d", result));
+        MILO_NOTIFY("Error starting checkout UI: %d", result);
         mState = purchasestate3; // Error state
     }
 

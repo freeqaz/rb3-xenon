@@ -164,14 +164,14 @@ bool DxShader::Compile(
     if (vRes < 0 || pRes < 0) {
         if (vRes < 0) {
             if (vError == nullptr) {
-                TheDebug.Notify(MakeString("VShader '%s' compile failure: %d", shaderName, vRes));
+                MILO_NOTIFY("VShader '%s' compile failure: %d", shaderName, vRes);
             } else {
                 TheDebug.Notify((char *)vError->GetBufferPointer());
             }
         }
         if (pRes < 0) {
             if (pError == nullptr) {
-                TheDebug.Notify(MakeString("PShader '%s' compile failure: %d", shaderName, pRes));
+                MILO_NOTIFY("PShader '%s' compile failure: %d", shaderName, pRes);
             } else {
                 TheDebug.Notify((char *)pError->GetBufferPointer());
             }

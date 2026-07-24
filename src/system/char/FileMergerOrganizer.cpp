@@ -26,7 +26,7 @@ bool FileMergerSort::operator()(const FileMerger::Merger *m1, const FileMerger::
     }
     if (m1data.priority == 0) {
         if (gOrganizing) {
-            TheDebug.Notify(MakeString("unknown file merger organizer category %s", m1->mName));
+            MILO_NOTIFY("unknown file merger organizer category %s", m1->mName);
         }
         m1data.priority = gNextCatPriority++;
         m1data.mInGenderOrder = false;

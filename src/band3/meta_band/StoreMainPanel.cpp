@@ -210,9 +210,9 @@ void StoreMainPanel::SetType(Symbol type) {
         if (found != 0) {
             SetTypeDef(found);
         } else {
-            TheDebug.Notify(MakeString(
+            MILO_NOTIFY(
                 "%s:%s couldn't find type %s", ClassName(), PathName(this), type
-            ));
+            );
             SetTypeDef(0);
         }
     }

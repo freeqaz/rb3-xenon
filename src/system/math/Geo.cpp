@@ -1039,7 +1039,7 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     }
     int nextDepth = depth + 1;
     if (nextDepth > gBSPMaxDepth) {
-        TheDebug.Notify(MakeString("Bsp too deep"));
+        MILO_NOTIFY("Bsp too deep");
         return false;
     }
     node = new BSPNode();
@@ -1097,7 +1097,7 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     }
 
     if (bestScore < zero) {
-        TheDebug.Notify(MakeString("Couldn't find candidate plane"));
+        MILO_NOTIFY("Couldn't find candidate plane");
         return false;
     }
 

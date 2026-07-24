@@ -313,9 +313,7 @@ void BandStorePanel::Poll() {
             }
         }
         if (mMetadataLoader->HasFailed()) {
-            TheDebug.Notify(
-                MakeString("Request for %s failed.\n", mLastRequest.c_str())
-            );
+            MILO_NOTIFY("Request for %s failed.\n", mLastRequest.c_str());
             DataArray *empty = new DataArray(0);
             {
                 Message msg(

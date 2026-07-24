@@ -1181,11 +1181,11 @@ RndMesh *GemTrackDir::GetChordMesh(unsigned int key, bool which) {
     if (it != chordMap.end()) {
         return it->second.second;
     }
-    TheDebug.Notify(MakeString(
+    MILO_NOTIFY(
         "couldn't find %s gem for chord shape %x",
         which ? "lefty" : "righty",
         key
-    ));
+    );
     return NULL;
 }
 

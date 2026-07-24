@@ -127,7 +127,7 @@ void BandStarDisplay::SetStarType(Symbol s, bool b) {
     else if (s == tour)
         frame = 1;
     if (frame == -1.0f) {
-        TheDebug.Notify(MakeString("Invalid star type %s, defaulting to normal\n", s.Str()));
+        MILO_NOTIFY("Invalid star type %s, defaulting to normal\n", s.Str());
         return;
     }
     mStarType = s;

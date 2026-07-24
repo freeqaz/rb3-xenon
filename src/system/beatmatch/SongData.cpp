@@ -614,8 +614,8 @@ void SongData::ValidateVocalSPPhrases() {
         maxList = std::min<int>(kHarm3VocalNoteList, _ref0.size() - 1);
         voxSym = "HARM1";
     } else {
-        firstList = 0;
         maxList = 0;
+        firstList = 0;
         voxSym = "PART VOCALS";
     }
 
@@ -628,12 +628,11 @@ void SongData::ValidateVocalSPPhrases() {
     if (trackIdx == mTrackInfos.size() || mNumDifficulties <= 0)
         return;
 
+    PhraseDB *db = mPhraseDBs[trackIdx];
     const PhraseList &phrases =
-        mPhraseDBs[trackIdx]->GetPhraseList(mTrackDifficulties[trackIdx], kCommonPhrase);
+        db->GetPhraseList(mTrackDifficulties[trackIdx], kCommonPhrase);
     VocalNoteList *curVoxList = _ref0[firstList];
-    int i = 0;
-    if (phrases.mPhrases.size() == 0) return;
-    for (; i < phrases.mPhrases.size(); i++) {
+    for (int i = 0; i < phrases.mPhrases.size(); i++) {
         float ms = phrases.mPhrases[i].mMs;
         float endMs = ms + phrases.mPhrases[i].GetDurationMs();
         VocalPhrase *phrase = NULL;
@@ -645,30 +644,30 @@ void SongData::ValidateVocalSPPhrases() {
             }
         }
         if (!found1) {
-            TheDebug.Notify(MakeString(
+            MILO_NOTIFY(
                 "NOTIFY %s %s : vocal overdrive phrase at %i ms is after all notes.\n",
                 SongFullPath(),
                 curVoxList->GetTrackName(),
                 (int)ms
-            ));
+            );
         } else {
             VocalNote *next = curVoxList->NextNote(ms);
             if (next && next->GetMs() < ms) {
-                TheDebug.Notify(MakeString(
+                MILO_NOTIFY(
                     "NOTIFY %s %s : vocal overdrive phrase at %i ms begins during a note.\n",
                     SongFullPath(),
                     curVoxList->GetTrackName(),
                     (int)ms
-                ));
+                );
             } else if (next
                        && (phrase = &curVoxList->GetPhrases()[next->mPhrase],
                            &curVoxList->mNotes[phrase->unk10] != next)) {
-                TheDebug.Notify(MakeString(
+                MILO_NOTIFY(
                     "NOTIFY %s %s : vocal overdrive phrase at %i ms starts mid-phrase.\n",
                     SongFullPath(),
                     curVoxList->GetTrackName(),
                     (int)ms
-                ));
+                );
             } else {
                 bool found2 = false;
                 for (int j = firstList; j <= maxList; j++) {
@@ -685,22 +684,22 @@ void SongData::ValidateVocalSPPhrases() {
                     }
                 }
                 if (!found2) {
-                    TheDebug.Notify(MakeString(
+                    MILO_NOTIFY(
                         "NOTIFY %s %s : vocal overdrive phrase at %i ms ends prematurely.\n",
                         SongFullPath(),
                         curVoxList->GetTrackName(),
                         (int)ms
-                    ));
+                    );
                 } else if (phrase) {
                     int idx = phrase->unk14;
                     if (idx < curVoxList->mNotes.size()
                         && curVoxList->mNotes[idx].GetMs() < endMs) {
-                        TheDebug.Notify(MakeString(
+                        MILO_NOTIFY(
                             "NOTIFY %s %s : vocal overdrive phrase at %i ms cuts into next phrase.\n",
                             SongFullPath(),
                             curVoxList->GetTrackName(),
                             (int)ms
-                        ));
+                        );
                     }
                 }
             }

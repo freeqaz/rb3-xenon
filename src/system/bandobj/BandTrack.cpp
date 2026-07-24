@@ -941,7 +941,7 @@ void BandTrack::SetHasTrackerFocus(bool b) {
 }
 
 RndDir *BandTrack::AsRndDir() {
-    TheDebug.Fail(MakeString("BandTrack::AsRndDir() base impl should never be called"));
+    MILO_FAIL("BandTrack::AsRndDir() base impl should never be called");
     return 0;
 }
 

@@ -179,8 +179,7 @@ void StorePanel::Poll() {
                 static Message msg("enum_finished");
                 HandleType(msg.mData);
             } else {
-                FormatString fmt("An enumeration failed!");
-                TheDebug.Notify(fmt.Str());
+                MILO_NOTIFY("An enumeration failed!");
                 static Message msg("enum_finished");
                 HandleType(msg.mData);
             }
@@ -550,7 +549,7 @@ void StorePanel::ValidateOffers(std::vector<StoreOffer *> &offers) {
                 std::find(song_names.begin(), song_names.end(), short_name);
 
             if (sit != song_names.end()) {
-                TheDebug.Notify(MakeString("Duplicate offer short name: %s", short_name));
+                MILO_NOTIFY("Duplicate offer short name: %s", short_name);
             } else {
                 song_names.push_back(short_name);
             }
