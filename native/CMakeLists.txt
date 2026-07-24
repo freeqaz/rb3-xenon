@@ -276,3 +276,40 @@ target_include_directories(rb3-hit PRIVATE
     ${REPO_ROOT}/src/band3   # M4: real SongData->BeatMatcher.h pulls game/Player.h
 )
 target_link_libraries(rb3-hit PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M5: game-layer scorer ---------------------------------------------------
+# Extends the M4 hit pipeline (identical sources) with the RB3 game-layer
+# scorer: real TrackWatcher Hit/Miss/Pass verdicts drive a faithful native
+# ScoreState (src/score_engine.*) implementing the real Performer/Player/Scoring/
+# Stats formulas over the real config/scoring.dta values, producing genuine
+# score / streak multiplier / overdrive meter / solo star rating. The full
+# GemPlayer (Player -> Performer + Band/BandUser/BeatMaster/CrowdMeter/meta_band/
+# net/tour object graph) is NOT constructed here — that is the M6 frontier; both
+# it and the real Scoring/Stats TUs compile natively but drag that cascade at
+# link time. See src/score_engine.h for the per-formula oracle provenance.
+add_executable(rb3-score
+    ${CMAKE_SOURCE_DIR}/src/main_score.cpp
+    ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-score PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_definitions(rb3-score PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-score SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-score PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+)
+target_link_libraries(rb3-score PRIVATE Threads::Threads ZLIB::ZLIB)
