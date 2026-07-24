@@ -5871,6 +5871,9 @@ SongParser.cpp:
 	.pdata      start:0x8223E8C8 end:0x8223E910
 	.pdata      start:0x8223E910 end:0x8223E918
 	.pdata      start:0x8223E958 end:0x8223E960
+	.pdata      start:0x8223E960 end:0x8223EB40
+	.pdata      start:0x8223EB48 end:0x8223EB50
+	.pdata      start:0x8223EB58 end:0x8223EBD0
 	.text       start:0x82782A18 end:0x82782A60
 	.text       start:0x82782A60 end:0x82782A6C
 	.text       start:0x82782A70 end:0x82782AC8
@@ -5880,6 +5883,9 @@ SongParser.cpp:
 	.text       start:0x82783E90 end:0x82784420
 	.text       start:0x82784420 end:0x827844B8
 	.text       start:0x82784878 end:0x827848CC
+	.text       start:0x827848CC end:0x82787670
+	.text       start:0x827876C4 end:0x82787718
+	.text       start:0x82787778 end:0x82788288
 
 BeatMatchController.cpp:
 	.pdata      start:0x8223F198 end:0x8223F1A0
