@@ -19676,5 +19676,10 @@
  "0x827627c0": "?DataSort@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82762450": "?DataStrToUpper@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82762360": "?DataStrToLower@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x82761a50": "?DataFindObj@@YA?AVDataNode@@PAVDataArray@@@Z"
+ "0x82761a50": "?DataFindObj@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82577580": "?ClearCachedContent@BandSongMgr@@UAAXXZ",
+ "0x82577860": "?InqAvailableSongSources@BandSongMgr@@QAA_NAAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@Z",
+ "0x82578ed0": "?Terminate@BandSongMgr@@UAAXXZ",
+ "0x82575668": "?GetUpgradeData@BandSongMgr@@QBAPAVSongUpgradeData@@H@Z",
+ "0x82575670": "?HasLicense@BandSongMgr@@QBA_NVSymbol@@@Z"
 }

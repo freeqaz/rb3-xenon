@@ -117,10 +117,10 @@ public:
     std::list<int> unk114; // 0x130
     std::vector<Symbol> unk11c; // 0x138
     bool unk124; // 0x144
-    SongUpgradeMgr *mUpgradeMgr; // 0x148
-    LicenseMgr *mLicenseMgr; // 0x14c
-    std::vector<String> mContentAltDirs; // 0x150
-    int mMaxSongCount; // 0x15c
+    std::vector<String> mContentAltDirs; // 0x148 (retail: precedes the mgr pointers)
+    int mMaxSongCount; // 0x154
+    SongUpgradeMgr *mUpgradeMgr; // 0x158
+    LicenseMgr *mLicenseMgr; // 0x15c
     bool unk13c; // 0x160
     int unk140; // 0x164 - num valid songs
 };
