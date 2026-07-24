@@ -127,19 +127,27 @@ protected:
     bool IsReasonToAutoload();
     bool IsReasonToUpload();
 
-    bool mActivated; // 0x1c
-    bool mInitialLoadNotDone; // 0x1d
+    // Retail RB3-360 layout reconstructed from ctor fn_825521E0 (Ghidra TU5) +
+    // objdiff full listing (2026-07-24). sizeof = 0xb0; Hmx::Object virtual base
+    // at 0x88. MsgSource non-virtual subobject ends at 0x18 (mExporting@0x14 +
+    // tail pad reused), so mActivated lands at 0x18. Retail has a SINGLE
+    // BandProfile* vector at 0x34 (12-byte classic std::vector) and NO profiling
+    // Timer member (Wii's mUploadProfiles/mSaveProfiles pair + mTimer were merged
+    // / stripped for retail). See docs/plans/saveloadmanager-port-log-2026-07-20.md.
+    bool mActivated; // 0x18
+    bool mInitialLoadNotDone; // 0x19
     int mMode; // 0x20
     State mState; // 0x24
     State mStateAtSelectStart; // 0x28
     LocalBandUser *mUser; // 0x2c
     LocalUser *mLocalUser; // 0x30
-    std::vector<BandProfile *> mUploadProfiles; // 0x34
-    std::vector<BandProfile *> mSaveProfiles; // 0x3c
-    DataArrayPtr unk44; // 0x44
-    int unk48; // 0x48
-    String unk4c; // 0x4c
-    int mSaveSize; // 0x58
+    std::vector<BandProfile *> mUploadProfiles; // 0x34 (8B -> 0x3c)
+    int unk3c; // 0x3c (retail replaced Wii's 2nd BandProfile* vector w/ a 4B member)
+    DataArrayPtr unk44; // 0x40
+    int unk48; // 0x44
+    String unk4c; // 0x48 (12B -> 0x54)
+    int mSaveSize; // 0x54
+    unsigned char unk58; // 0x58
     CacheID *mCacheID; // 0x5c
     Cache *mCache; // 0x60
     void *mData; // 0x64
@@ -147,12 +155,11 @@ protected:
     bool mWaiting; // 0x69
     int unk6c; // 0x6c
     int unk70; // 0x70
-    int mRequestFlags; // 0x74
+    unsigned char mRequestFlags; // 0x74
+    unsigned char unk75; // 0x75
     int unk78; // 0x78
     int unk7c; // 0x7c
     MemcardAction *mAction; // 0x80
-    int unk84; // 0x84
-    Timer mTimer; // 0x88
 };
 
 extern SaveLoadManager *TheSaveLoadMgr;

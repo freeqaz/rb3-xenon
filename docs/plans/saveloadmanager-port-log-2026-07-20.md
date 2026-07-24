@@ -84,3 +84,34 @@ locals/spills = body correctness). Do NOT chase funclets individually.
    (0x19C0) & 0x82553490/0x82552660 giants (GetDialogMsg/Opt1/Poll). Each body match flips
    its funclet cluster.
 3. Re-run reveal_sweep after each body to auto-name new byte-exact fns.
+
+## RESOLVED — layout reconstructed (2026-07-24, bodyport-w2, commit on branch bodyport-w2)
+
+The §1 "class layout" wall is CLOSED. Ground truth = ctor fn_825521E0 (Ghidra
+TU5) + objdiff full listing of `??0SaveLoadManager@@QAA@XZ`. Key corrections to
+the wave-1 hypotheses:
+
+- **mActivated IS at 0x18** (header "// 0x1c" comment was stale) — our MsgSource
+  base already compiles to the right size; NO engine base edit needed. MsgSource
+  non-virtual subobject ends at 0x18 (vbptr@0, mSinks list@0x4, mEventSinks@0xc,
+  mExporting@0x14) with 4B tail pad that the derived class reuses. Retail base
+  ctor is `PropertyEventProvider` (derives from MsgSource, same layout) — objdiff
+  normalizes the `bl` so no source change needed there.
+- **vector<BandProfile*> is 8 bytes** here (pointer-specialized STLport impl:
+  _M_start + _M_finish only). Retail has a SINGLE 8-byte vector@0x34 followed by a
+  4-byte member@0x3c (unk3c) — NOT two vectors and NOT one 12-byte vector. Wii's
+  mUploadProfiles+mSaveProfiles pair collapses to one vector + one 4B slot. This
+  8-byte-vector fact is the root of the uniform -4 shift from 0x3c onward.
+- **No Timer member** — 0x88 is the shared Hmx::Object vbase. Dropped mTimer +
+  Stop/Restart calls.
+- Tail: byte@0x58, int@0x6c/0x70, byte@0x74(mRequestFlags)/0x75, int@0x78/0x7c,
+  mAction@0x80, uninitialized 4B@0x84 (pads vbase to 0x88). sizeof = 0xb0.
+
+**Result:** ctor 75.4% -> 99.99% (1 residual reg-scratch diff at the vector
+reserve address — permuter-class). Whole-binary +5 / 0 lost. The 184 funclets
+stay at 99.9% — each is `subi r31,r12,imm` off by the PARENT frame size, so they
+only flip once the divergent parent bodies (Start/AutoSave/Poll/SetState/
+GetDialogMsg/Opt1/Poll giants) are reconstructed from Ghidra TU5 (NOT verbatim
+Wii — retail rewrote the platform paths). **The layout is now correct, so a
+body-port wave on those parents is unblocked and each parent flip cascades its
+funclet cluster.** That is the recommended wave-3 SLM task.

@@ -70,10 +70,9 @@ SaveLoadManager *TheSaveLoadMgr;
 SaveLoadManager::SaveLoadManager()
     : mActivated(false), mInitialLoadNotDone(true), mState(kS_Idle),
       mStateAtSelectStart(kS_Idle), mUser(NULL), mLocalUser(NULL),
-      unk44(), unk48(0), mSaveSize(0), mCacheID(NULL), mCache(NULL),
+      unk3c(0), unk44(), unk48(0), mSaveSize(0), unk58(0), mCacheID(NULL), mCache(NULL),
       mData(NULL), unk68(false), mWaiting(false), unk6c(0), unk70(0),
-      mRequestFlags(0), unk78(0), unk7c(0), mAction(NULL) {
-    mSaveProfiles.reserve(4);
+      mRequestFlags(0), unk75(0), unk78(0), unk7c(0), mAction(NULL) {
     mUploadProfiles.reserve(4);
     SetName("saveload_mgr", ObjectDir::Main());
     ThePlatformMgr.AddSink(this, SigninChangedMsg::Type());
@@ -601,7 +600,6 @@ void SaveLoadManager::Poll() {
     case (State)0x47:
         if (mWaiting) return;
         UpdateStatus(kSaveLoadMgrStatus_Loading);
-        mTimer.Stop();
         switch (unk6c) {
         case 1:
             SetState((State)0x4c);
@@ -787,7 +785,6 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0xb: // kS_AutoloadStartLoad
     {
-        mTimer.Restart();
         for (BandProfile **pp = mUploadProfiles.begin(); pp != mUploadProfiles.end(); pp++) {
             (*pp)->PreLoad();
         }
@@ -1312,11 +1309,11 @@ void SaveLoadManager::SetState(State newState) {
         break;
     case 0x56:
     {
-        mSaveProfiles.erase(mSaveProfiles.begin(), mSaveProfiles.end());
+        mUploadProfiles.erase(mUploadProfiles.begin(), mUploadProfiles.end());
         if (IsReasonToUpload()) {
-            mSaveProfiles = TheProfileMgr.GetSignedInProfiles();
+            mUploadProfiles = TheProfileMgr.GetSignedInProfiles();
         }
-        if (mSaveProfiles.size() != 0) {
+        if (mUploadProfiles.size() != 0) {
             SetState((State)0x58);
         } else {
             SetState((State)0x59);
@@ -1325,8 +1322,8 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x58:
     {
-        MILO_ASSERT(mSaveProfiles.size() != 0, 0x8f9);
-        BandProfile *pProfile = mSaveProfiles.front();
+        MILO_ASSERT(mUploadProfiles.size() != 0, 0x8f9);
+        BandProfile *pProfile = mUploadProfiles.front();
         mWaiting = true;
         Hmx::Object *localUser = NULL;
         if (mLocalUser != NULL) localUser = mLocalUser;
@@ -1337,8 +1334,8 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x57:
     {
-        mSaveProfiles.erase(mSaveProfiles.begin());
-        if (mSaveProfiles.size() != 0) {
+        mUploadProfiles.erase(mUploadProfiles.begin());
+        if (mUploadProfiles.size() != 0) {
             SetState((State)0x58);
         } else {
             SetState((State)0x59);
@@ -1826,7 +1823,6 @@ bool SaveLoadManager::IsReasonToUpload() {
 
 void SaveLoadManager::StartSaveAction(bool b) {
     UpdateStatus(kSaveLoadMgrStatus_Saving);
-    mTimer.Restart();
     MILO_ASSERT(mState == kS_SaveOverwrite || mState == kS_SaveNoOverwrite, 0x9c9);
     for (BandProfile **p = (BandProfile **)mUploadProfiles.begin(); p != (BandProfile **)mUploadProfiles.end(); p++) {
         TheWiiProfileMgr.SetLocked(*p, true);
@@ -1922,7 +1918,6 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         unk6c = res;
         break;
     case kS_AutoloadStartLoad: {
-        (void)mTimer.Stop();
         switch (res) {
         case kMCNoCard:
             SetState(kS_AutoloadNotOwner);
