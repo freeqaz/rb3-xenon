@@ -52,7 +52,7 @@ public:
     void OnLoadGame(Profile *, MemcardAction *);
     void OnSearchForDevice(Profile *);
     void SetDevice(unsigned int);
-    void SelectDevice(Profile *, Hmx::Object *, int, bool);
+    void SelectDevice(Profile *, bool, Hmx::Object *, int);
     int GetSizeNeeded();
     // Autosave-disable state. Referenced by band3/meta_band/SaveLoadManager.cpp.
     // Not present in the initial retail-derived layout notes above; decl-only

@@ -33,6 +33,10 @@ public:
 
     int GetSliderStepCount() const;
     BandProfile *GetProfileForUser(const LocalUser *);
+    // Retail SaveLoadManager::GetProfile (fn_8254C0B0) resolves the profile by
+    // PAD NUM, not by user pointer: TheProfileMgr.<fn_82545E90>(mUser->GetPadNum()).
+    // Decl-only (the definition lives in an unported TU).
+    BandProfile *GetProfileForPad(int);
     void SetCymbalConfiguration(unsigned int);
     void UpdatePrimaryProfile();
     bool GetAllUnlocked();

@@ -75,9 +75,9 @@ public:
         kS_ManualSaveChooseDevice = 0x61,
         kS_GlobalOptionsMissing_Msg = 0x62,
         kS_ManualLoadChooseDevice = 0x64,
-        kS_Done = 0x6D,
-        kS_LoadComplete = 0x6E,
-        kS_Finish = 0x6F,
+        kS_Done = 0x69,
+        kS_LoadComplete = 0x6A,
+        kS_Finish = 0x6B,
     };
 
     SaveLoadManager();
@@ -141,8 +141,13 @@ protected:
     State mStateAtSelectStart; // 0x28
     LocalBandUser *mUser; // 0x2c
     LocalUser *mLocalUser; // 0x30
+    // Retail keeps a BandProfile* slot BEFORE the vector: cases 3 / 0x54 of SetState
+    // do `stw r3, 0x30(r30)` with the result of GetNewSigninProfile() /
+    // GetAutosavableProfile(), and the vector's _M_start/_M_finish live at 0x34/0x38
+    // (retail asm). Our previous layout put the vector at 0x30/0x34 and this slot
+    // after it, which shifted every vector access by -4.
+    BandProfile *mProfile; // 0x30
     std::vector<BandProfile *> mUploadProfiles; // 0x34 (8B -> 0x3c)
-    int unk3c; // 0x3c (retail replaced Wii's 2nd BandProfile* vector w/ a 4B member)
     DataArrayPtr unk44; // 0x40
     int unk48; // 0x44
     String unk4c; // 0x48 (12B -> 0x54)

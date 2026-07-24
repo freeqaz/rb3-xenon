@@ -178,7 +178,7 @@ void MemcardMgr::OnSearchForDevice(Profile *pProfile) {
 }
 
 void MemcardMgr::SelectDevice(
-    Profile *pProfile, Hmx::Object *callbackObj, int i3, bool waiting
+    Profile *pProfile, bool waiting, Hmx::Object *callbackObj, int i3
 ) {
     MILO_ASSERT(mSelectDeviceWaiting == false, 0x82);
     MILO_ASSERT(mSelectDeviceCallBackObj == NULL, 0x83);
