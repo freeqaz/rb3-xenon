@@ -318,3 +318,12 @@ void SongUpgradeMgr::MarkAvailable(int i, Symbol s) {
         unk4c[i] = s;
     }
 }
+
+// COMDAT scatter body-dup: retail scattered LicenseMgr::HasLicense's COMDAT into
+// SongUpgradeMgr's .text span; emit its bytes here so objdiff pairs the fn.
+#ifndef HX_NATIVE
+#include "meta_band/LicenseMgr.h"
+bool LicenseMgr::HasLicense(Symbol s) const {
+    return mLicenses.find(s) != mLicenses.end();
+}
+#endif

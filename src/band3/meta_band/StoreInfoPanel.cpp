@@ -183,3 +183,14 @@ BEGIN_HANDLERS(StoreInfoPanel)
     HANDLE_SUPERCLASS(StoreArtLoaderPanel)
     HANDLE_CHECK(0x132)
 END_HANDLERS
+
+// COMDAT scatter body-dup: retail scattered StoreMainPanel::Load's COMDAT into
+// StoreInfoPanel's .text span; emit its bytes here so objdiff pairs it.
+#ifndef HX_NATIVE
+#include "meta_band/StoreMainPanel.h"
+#include "meta_band/BandStorePanel.h"
+void StoreMainPanel::Load() {
+    StoreArtLoaderPanel::Load();
+    BandStorePanel::Instance()->AddSink(this);
+}
+#endif

@@ -564,3 +564,20 @@ void SongMgr::OnCacheUnmountResult(int res) {
 }
 
 const std::set<int> &SongMgr::GetAvailableSongSet() const { return mAvailableSongs; }
+
+// COMDAT scatter body-dup: retail scattered SongMetadata::InitSongMetadata's
+// COMDAT into SongMgr's .text span; emit its bytes here so objdiff pairs it.
+#ifndef HX_NATIVE
+void SongMetadata::InitSongMetadata() {
+    static Symbol rb3("rb3");
+    mID = 0;
+    mIsOnDisc = false;
+    mGameOrigin = rb3;
+    mPreviewStartTime = 0.0f;
+    mPreviewEndTime = 0.0f;
+    mVersion = -1;
+    mSongInfo = 0;
+    mShortName = gNullStr;
+    mAge = 0;
+}
+#endif

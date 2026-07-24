@@ -536,3 +536,15 @@ void FlowSetProperty::UpdateIntensity(void) {
     if (mPersistent)
         Activate();
 }
+
+// COMDAT scatter body-dup: retail scattered Song::SetLoopStart's COMDAT into
+// FlowSetProperty's .text span; emit its bytes here so objdiff pairs it.
+#ifndef HX_NATIVE
+#include "utl/Song.h"
+void Song::SetLoopStart(float f) {
+    mLoopPoints.x = f;
+    mLoopStart = GetMBTFromFrame(f, nullptr);
+    if (mLoopPoints.y < f)
+        SetLoopEnd(f);
+}
+#endif
