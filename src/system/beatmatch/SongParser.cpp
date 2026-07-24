@@ -2142,16 +2142,16 @@ bool SongParser::HandleRGGemStop(
             int distSign = distFromChordText >> 31;
             if ((distSign ^ distFromChordText) - distSign < 10) {
 #if defined(HX_NATIVE)
-                // chord_name is char[64] on native (see GemInfo.h note); copy
-                // bounded into the buffer (array decays to char*).
-                strncpy(geminfo.chord_name, info.mRGChordText, sizeof(geminfo.chord_name) - 1);
-                geminfo.chord_name[sizeof(geminfo.chord_name) - 1] = 0;
+                // rb3-xenon GemInfo.h declares chord_name as a single char (the
+                // RG chord-name path is off the standard gem path). Store the
+                // first char to stay in-bounds. X360 (#else) is unchanged.
+                geminfo.chord_name = info.mRGChordText[0];
 #else
                 strcpy(&geminfo.chord_name, info.mRGChordText);
 #endif
             } else {
 #if defined(HX_NATIVE)
-                geminfo.chord_name[0] = 0;
+                geminfo.chord_name = 0;
 #else
                 geminfo.chord_name = 0;
 #endif

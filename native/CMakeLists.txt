@@ -178,3 +178,43 @@ target_include_directories(rb3-midi PRIVATE
     ${REPO_ROOT}/src/system
 )
 target_link_libraries(rb3-midi PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M3a: beatmatch gem pipeline ---------------------------------------------
+# SongParser (the real gem parser, a MidiReceiver) + the concrete gem containers
+# (GameGem / GameGemList / GameGemDB, ported from the rb3-Wii oracle). Reuses the
+# M2 MIDI cluster (MidiReader drives SongParser; MidiParserMgr fires the gem
+# branch). BeatMatchUtl / SongInfoCopy come in via M3_SOURCES; the rest of
+# beatmatch/ (BeatMatcher, TrackWatcher*, controllers) is NOT on the parse path
+# and is satisfied by weak stubs in m3_link_stubs.s.
+set(M3_SOURCES
+    ${REPO_ROOT}/src/system/beatmatch/SongParser.cpp
+    ${REPO_ROOT}/src/system/beatmatch/GameGem.cpp
+    ${REPO_ROOT}/src/system/beatmatch/GameGemList.cpp
+    ${REPO_ROOT}/src/system/beatmatch/GameGemDB.cpp
+    ${REPO_ROOT}/src/system/beatmatch/BeatMatchUtl.cpp
+    ${REPO_ROOT}/src/system/beatmatch/TrackType.cpp
+    ${REPO_ROOT}/src/system/utl/SongInfoCopy.cpp
+)
+
+add_executable(rb3-gem
+    ${CMAKE_SOURCE_DIR}/src/main_gem.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+)
+target_compile_options(rb3-gem PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_definitions(rb3-gem PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-gem SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-gem PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+)
+target_link_libraries(rb3-gem PRIVATE Threads::Threads ZLIB::ZLIB)
