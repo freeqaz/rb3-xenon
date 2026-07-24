@@ -189,10 +189,14 @@ void Player::Poll(float f, const SongPos &pos) {
     if (unk1e2 && mDeployingBandEnergy) {
         StopDeployingBandEnergy(false);
     }
+#ifndef HX_NATIVE
+    // Periodic net energy-broadcast leaf (same handler as SetEnergy's); skipped
+    // headless (no net session / BandUser). X360 keeps the real broadcast.
     if (IsLocal() && f >= unk2a4 + 2000.0f && !unk1e2) {
         Handle(send_update_energy_msg, true);
         unk2a4 = f;
     }
+#endif
     if (unk288 && IsLocal() && f >= unk284) {
         PopupHelp(intro, false);
         unk288 = false;
@@ -282,7 +286,26 @@ void Player::StartIntro() {
     }
 }
 
+#ifdef HX_NATIVE
+// M8: headless-audio clock shim. The retail path is mBeatMaster->mAudio->GetTime(),
+// where MasterAudio::GetTime() returns mSongStream->GetTime()+mTimeOffset, or just
+// mTimeOffset when no stream is loaded. The native run-through has no synth/stream
+// (audio hardware is out of scope), so it drives a global ms clock that stands in
+// for exactly that no-stream case — GetTime()==advancing mTimeOffset, time without
+// sound. A native scoring Player is built with mBeatMaster==null; read the clock.
+// X360 preprocessed output is unchanged (this whole guard is HX_NATIVE-only).
+// Weak default so native targets that compile Player.cpp without the M8
+// driver (rb3-score2 etc.) still link; m8_support.cpp's strong definition
+// overrides it in rb3-score4.
+float gNativeSongMs __attribute__((weak)) = 0.0f;
+float Player::GetSongMs() const {
+    if (!mBeatMaster)
+        return gNativeSongMs;
+    return mBeatMaster->mAudio->GetTime();
+}
+#else
 float Player::GetSongMs() const { return mBeatMaster->mAudio->GetTime(); }
+#endif
 
 void Player::BroadcastScore() {
     if (unk1fd) {
@@ -500,6 +523,13 @@ const UserGuid &Player::GetUserGuid() const {
 }
 
 int Player::GetSlot() const {
+#ifdef HX_NATIVE
+    // Native scoring Player carries no BandUser; the overdrive-phrase capturer
+    // asks for its slot to test gem playability. Slot 0 (all gems playable) is
+    // the single-player headless answer. X360 output unchanged.
+    if (!mUser)
+        return 0;
+#endif
     MILO_ASSERT(GetUser(), 0x336);
     return mUser->GetSlot();
 }
@@ -553,6 +583,11 @@ void Player::StopDeployingBandEnergy(bool b) {
         mBand->UpdateBonusLevel(PollMs());
     }
     if (!b) {
+#ifdef HX_NATIVE
+        // Audio-cue leaf guarded: the real expiry bookkeeping (mStats.Stop-
+        // DeployingOverdrive above) runs without a TrackPanel. X360 unchanged.
+        if (GetTrackPanel())
+#endif
         GetTrackPanel()->PlaySequence(
             MakeString("rp_depleted_%s.cue", TrackTypeToSym(mTrackType).Str()), 0, 0, 0
         );
@@ -700,8 +735,14 @@ void Player::SetEnergy(float f) {
         float poll = PollMs();
         float pollDelta = poll - unk2a4;
         if (energyIncreased || pollDelta >= 100.0f || mBandEnergy == 0) {
+#ifndef HX_NATIVE
+            // Net energy-broadcast leaf: its handler reads the BandUser's track,
+            // which no native headless player has. The real energy bookkeeping
+            // (SetEnergyAutomatically above + unk2a4 below) still runs; only the
+            // net export is skipped. X360 keeps the real broadcast.
             static Message send_update_energy(Symbol("send_update_energy"));
             Handle(send_update_energy, true);
+#endif
             unk2a4 = poll;
         }
     }
@@ -799,6 +840,11 @@ void Player::SetEnergyAutomatically(float f) {
 }
 
 void Player::Deploy() {
+#ifdef HX_NATIVE
+    // Audio-cue leaf guarded: run the real deploy bookkeeping (mStats.Deploy-
+    // Overdrive below) without the TrackPanel render surface. X360 unchanged.
+    if (GetTrackPanel())
+#endif
     GetTrackPanel()->PlaySequence(
         MakeString("rp_deployed_%s.cue", TrackTypeToSym(mTrackType).Str()), 0, 0, 0
     );
@@ -995,6 +1041,11 @@ BandTrack *Player::GetBandTrack() const {
 }
 
 void Player::UnisonMiss(int i) const {
+#ifdef HX_NATIVE
+    // Render leaf: the native scoring player has no BandUser/Track. X360 unchanged.
+    if (!mUser)
+        return;
+#endif
     Track *track = mUser->GetTrack();
     if (track) {
         track->OnMissPhrase(i);
@@ -1006,6 +1057,11 @@ void Player::UnisonHit() {
     if (track) {
         track->SpotlightPhraseSuccess();
     }
+#ifdef HX_NATIVE
+    // Audio-cue leaf: no TrackPanel render surface headless. X360 unchanged.
+    if (!GetTrackPanel())
+        return;
+#endif
     GetTrackPanel()->PlaySequence(
         MakeString("rp_captured_%s.cue", TrackTypeToSym(mTrackType).Str()), 0, 0, 0
     );
