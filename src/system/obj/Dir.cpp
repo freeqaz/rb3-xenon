@@ -484,8 +484,10 @@ END_COPYS
 void ObjectDir::Load(BinStream &bs) {
     PreLoad(bs);
     PostLoad(bs);
-    if (IsProxy() && mLoader && !mLoader->IsLoaded()) {
-        TheLoadMgr.PollUntilLoaded(mLoader, nullptr);
+    if (IsProxy() && !mProxyFile.empty()) {
+        class Loader *ldr = TheLoadMgr.GetLoader(mProxyFile);
+        if (ldr)
+            TheLoadMgr.PollUntilLoaded(ldr, nullptr);
     }
 }
 
