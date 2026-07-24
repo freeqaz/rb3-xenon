@@ -143,3 +143,38 @@ target_include_directories(rb3-song PRIVATE
     ${REPO_ROOT}/src/network   # M1: BandSongMgr pulls network/ headers transitively
 )
 target_link_libraries(rb3-song PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M2: MIDI parser cluster -------------------------------------------------
+# The midi/ TUs are not in the obj/utl/os/math globs; list them explicitly. They
+# compile clean against the engine subset (MidiReader/MidiParser/MidiParserMgr/
+# DataEventList/MidiReceiver/MidiVarLen). TempoMap/MeasureMap/BeatMap/
+# TimeConversion come from the utl glob. gems=null on the load path, so no
+# beatmatch/ TU is needed (GemListInterface is a header-only pure interface).
+set(M2_SOURCES
+    ${REPO_ROOT}/src/system/midi/MidiReader.cpp
+    ${REPO_ROOT}/src/system/midi/MidiReceiver.cpp
+    ${REPO_ROOT}/src/system/midi/MidiParser.cpp
+    ${REPO_ROOT}/src/system/midi/MidiParserMgr.cpp
+    ${REPO_ROOT}/src/system/midi/DataEventList.cpp
+    ${REPO_ROOT}/src/system/midi/MidiVarLen.cpp
+)
+
+add_executable(rb3-midi
+    ${CMAKE_SOURCE_DIR}/src/main_midi.cpp
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+)
+target_compile_options(rb3-midi PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_definitions(rb3-midi PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-midi SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-midi PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+)
+target_link_libraries(rb3-midi PRIVATE Threads::Threads ZLIB::ZLIB)
