@@ -542,6 +542,58 @@ target_include_directories(rb3-vocal2 PRIVATE
 )
 target_link_libraries(rb3-vocal2 PRIVATE Threads::Threads ZLIB::ZLIB)
 
+# --- M11: multi-part HARMONY scoring topology --------------------------------
+# Same real object graph as rb3-vocal2 (M10), but drives the multi-part path:
+# a real RB3 harmony chart (PART VOCALS + HARM1/HARM2/HARM3) parsed with
+# UseVocalHarmony() -> multiple VocalNoteLists -> multiple VocalParts, scored by
+# TWO synthetic Singers through the REAL greedy singer<->part assignment
+# (FindBestPart / AddSingerCandidate) and ambiguity machinery (AddAmbiguousPart /
+# AllScoresAreIn / ResolveAmbiguity). Only main_harmony.cpp differs from vocal2.
+# See native/src/main_harmony.cpp for the census.
+add_executable(rb3-harmony
+    ${CMAKE_SOURCE_DIR}/src/main_harmony.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/Singer.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPart.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineManager.cpp
+    ${REPO_ROOT}/src/band3/game/VocalScoreHistory.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineDetector.cpp
+    ${REPO_ROOT}/src/system/dsp/VibratoDetector.cpp
+    ${REPO_ROOT}/src/system/synth/VoiceBeat.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${M6_GAME_SOURCES}
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-harmony PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+target_link_options(rb3-harmony PRIVATE -Wl,--gc-sections)
+target_compile_definitions(rb3-harmony PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-harmony SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-harmony PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+)
+target_link_libraries(rb3-harmony PRIVATE Threads::Threads ZLIB::ZLIB)
+
 # --- M4: profile / save serialization round-trip -----------------------------
 # Runs RB3's real FixedSizeSaveable machinery natively (src/system/meta) and
 # round-trips two real FixedSizeSaveable subclasses (GameplayOptions, StandIn)

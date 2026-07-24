@@ -109,7 +109,11 @@ void TambourineManager::Poll(float ms) {
         return;
     }
 #ifdef HX_NATIVE
-    if (!unk74) {
+    // headless: the synthetic-mic harness has no TheSynth (Synth/Fonix mic stack).
+    // This block only mutes the physical mics during a tambourine gem window, which
+    // is irrelevant to scoring; guard the null TheSynth so charts that author
+    // tambourine gems (vicarious had none) don't crash here.
+    if (!unk74 && TheSynth) {
         for (int i = 0; i < 3; i++) {
             Mic *mic = TheSynth->GetMic(i);
             if (mic) {

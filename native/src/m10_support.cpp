@@ -150,6 +150,21 @@ void NativeSetMicFrame(int i, float pitch, float energy) {
     }
 }
 
+// M11: per-frame CONTINUOUS-waveform injection for the REAL TalkyMatcher path.
+// Singer::ProcessTalkyData -> GameMic::AccessContinuousSamples -> TalkyMatcher::
+// Analyze -> VoiceBeat DSP reads mSamplesContinuous[0..unk8034). The driver writes
+// a synthetic voiced burst here so the real syllable-onset detector scores the
+// chart's unpitched (talky) notes. count is clamped to the 8192-short buffer.
+void NativeSetMicSamples(int i, const short *buf, int count) {
+    if (i < 0 || (unsigned)i >= gNativeMics.size()) return;
+    GameMic *m = gNativeMics[i];
+    if (count < 0) count = 0;
+    if (count > 8192) count = 8192;
+    if (buf && count > 0)
+        std::memcpy(m->mSamplesContinuous, buf, count * sizeof(short));
+    m->unk8034 = count;
+}
+
 // ============================================= SongDB vocal query overrides ===
 // The vocal Poll path resolves note lists / pitch offsets through TheSongDB. These
 // delegate to the real parsed SongData (the base m8_support.cpp provides the SongDB
