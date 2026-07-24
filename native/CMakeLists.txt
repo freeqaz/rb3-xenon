@@ -445,6 +445,49 @@ target_include_directories(rb3-score4 PRIVATE
 )
 target_link_libraries(rb3-score4 PRIVATE Threads::Threads ZLIB::ZLIB)
 
+# --- M9: vocal pitch-track run-through ----------------------------------------
+# Parses a real chart's PART VOCALS through the REAL SongParser -> SongData ->
+# VocalNoteList path (same Stage-1 as M8), prints the vocal note/phrase/lyric
+# table, then drives a synthetic singer through the REAL VocalPart pitch-matching
+# engine (ScoreNote / GetBestHit / CalcNoteWeights / CalcPhraseScoreMax). The
+# mic input is synthetic; all matching/scoring is real engine code. VocalPart.cpp
+# is added on top of the M8 object graph; unused Poll/Singer/VocalPlayer code is
+# dropped by --gc-sections. See native/src/main_vocal.cpp for the census.
+add_executable(rb3-vocal
+    ${CMAKE_SOURCE_DIR}/src/main_vocal.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPart.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${M6_GAME_SOURCES}
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-vocal PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+target_link_options(rb3-vocal PRIVATE -Wl,--gc-sections)
+target_compile_definitions(rb3-vocal PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-vocal SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-vocal PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+)
+target_link_libraries(rb3-vocal PRIVATE Threads::Threads ZLIB::ZLIB)
+
 # --- M4: profile / save serialization round-trip -----------------------------
 # Runs RB3's real FixedSizeSaveable machinery natively (src/system/meta) and
 # round-trips two real FixedSizeSaveable subclasses (GameplayOptions, StandIn)
