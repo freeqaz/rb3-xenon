@@ -7014,6 +7014,7 @@
  "0x824ef890": "?Extend@Box@@QAAXM@Z",
  "0x824ef8e0": "?Contains@Box@@QBA_NABVVector3@@@Z",
  "0x824ef948": "?NumNodes@@YAXPBVBSPNode@@AAH1@Z",
+ "0x824ef9e8": "?Normalize@@YAXABVPlane@@AAV1@@Z",
  "0x824efa78": "??6@YAAAVBinStream@@AAV0@PBVBSPNode@@@Z",
  "0x824efae8": "??5@YAAAVBinStream@@AAV0@AAPAVBSPNode@@@Z",
  "0x824efcb0": "?Contains@Box@@QBA_NABVTriangle@@@Z",

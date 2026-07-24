@@ -138,12 +138,11 @@ bool Box::Clamp(Vector3 &v) {
 }
 
 void Normalize(const Plane &in, Plane &out) {
-    float mult = 0;
-    float len = std::sqrt(in.a * in.a + in.b * in.b + in.c * in.c);
-    if (len != 0) {
-        mult = 1 / len;
-    }
-    out.Set(in.a * mult, in.b * mult, in.c * mult, in.d * mult);
+    if (in.a == 0.0f && in.b == 0.0f && in.c == 0.0f && in.d == 0.0f)
+        return;
+    float mag = std::sqrt(in.a * in.a + in.b * in.b + in.c * in.c);
+    float inv = 1.0f / mag;
+    out.Set(in.a * inv, in.b * inv, in.c * inv, in.d * inv);
 }
 
 void ClosestPoint(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3, Vector3 *vout) {
