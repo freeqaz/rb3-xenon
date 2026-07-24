@@ -51,29 +51,39 @@ public:
 private:
     const SongMgr &mSongMgr; // 0x30
     Stream *mStream; // 0x34
-    ObjPtr<TexMovie> mTexMovie; // 0x38
-    bool mInitted; // 0x4c
-    Fader *mFader; // 0x50
-    Fader *mMusicFader; // 0x54
-    Fader *mCrowdSingFader; // 0x58
-    int mNumChannels; // 0x5c
-    float mAttenuation; // 0x60
-    float mFadeTime; // 0x64
-    float mPreviewDb; // 0x68
-    bool mRestart; // 0x6c
-    bool mLoopForever; // 0x6d
-    bool unk6e; // 0x6e
-    bool unk6f; // 0x6f
-    State mState; // 0x70
-    Symbol mSong; // 0x74
-    Symbol mSongContent; // 0x78
-    float mStartMs; // 0x7c
-    float mEndMs; // 0x80
-    float mStartPreviewMs; // 0x84
-    float mEndPreviewMs; // 0x88
-    bool mRegisteredWithCM; // 0x8c
-    bool mSameSongRequested; // 0x8d
-    bool mSecurePreview; // 0x8e
+    // NOTE: retail RB3-360 lacks the DC3-added TexMovie preview member here;
+    // its absence shifts every member below by -0x14 (20 bytes). We keep the
+    // member (the .cpp/native build use it) but relocate it to the END of the
+    // class so the front members match retail's compiled offsets. Verified via
+    // objdiff: PreparePreview's 9 this-relative accesses all shift by exactly
+    // +20 above this offset. (RELAYOUT b14, 2026-07)
+    Fader *mFader;
+    Fader *mMusicFader;
+    Fader *mCrowdSingFader;
+    int mNumChannels;
+    float mAttenuation;
+    float mFadeTime;
+    bool mRestart;
+    bool mLoopForever;
+    bool unk6e;
+    bool unk6f;
+    State mState;
+    Symbol mSong;
+    Symbol mSongContent;
+    float mStartMs;
+    float mEndMs;
+    float mStartPreviewMs;
+    float mEndPreviewMs;
+    bool mRegisteredWithCM;
+    bool mSameSongRequested;
+    bool mSecurePreview;
+    // The following three members are DC3-newer additions absent in retail
+    // RB3-360. Relocated to the END of the class so the members above keep
+    // retail's compiled offsets (verified: PreparePreview accesses shift by
+    // exactly the removed size). They remain usable by the .cpp / native.
+    bool mInitted;
+    float mPreviewDb;
+    ObjPtr<TexMovie> mTexMovie;
 
     void DetachFader(Fader *);
     void PrepareFaders(const SongInfo *);
