@@ -226,7 +226,10 @@ void GameGemList::MergeChordGems() {
 }
 
 bool GameGemList::AddGameGem(const GameGem &gem, NoStrumState noStrum) {
-    MemDoTempAllocations tmp(true, false);
+    // Retail folds this game-code guard to the empty no-arg RAII form (see
+    // MemMgr.h). Native's ctor defaults to (true,false), so the no-arg spelling
+    // is identical there — keeps both the X360 match and HX_NATIVE correct.
+    MemDoTempAllocations tmp;
     if (!mGems.empty()) {
         const GameGem &last = mGems.back();
         if (last.mMs > gem.mMs) {
