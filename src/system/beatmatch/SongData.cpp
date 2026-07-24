@@ -1,5 +1,14 @@
 #include "beatmatch/SongData.h"
+#ifdef HX_NATIVE
+// Native rb3-hit never constructs a BeatMatcher (mBeatMatchers stays empty), so
+// SongData's BeatMatcher* loops are dead code that only needs to compile. The
+// real BeatMatcher.h drags in the game/meta_band/tour/net header cascade that is
+// off the native gameplay-core path; a minimal shim avoids it. X360 build is
+// unaffected (still includes the real header below).
+#include "beatmatch/BeatMatcher_native.h"
+#else
 #include "beatmatch/BeatMatcher.h"
+#endif
 #include "beatmatch/GameGem.h"
 #include "beatmatch/GameGemDB.h"
 #include "beatmatch/GameGemList.h"
@@ -1134,6 +1143,14 @@ SongPos SongData::CalcSongPos(float f) {
     float beat = mBeatMap->Beat(itick);
     return SongPos(tick, beat, m, b, t);
 }
+
+#ifdef HX_NATIVE
+// Native-only vtable entry: SongData.h adds a HxSongData::CalcSongPos(HxMaster*,
+// float) pure-virtual under HX_NATIVE (the native base keeps the dc3 shape). On
+// the X360 retail slot layout CalcSongPos(float) above IS the base override and
+// this extra entry does not exist. Delegate to the float overload.
+SongPos SongData::CalcSongPos(class HxMaster *, float f) { return CalcSongPos(f); }
+#endif
 
 Symbol SongData::TrackName(int track) const { return mTrackInfos[track]->mName; }
 

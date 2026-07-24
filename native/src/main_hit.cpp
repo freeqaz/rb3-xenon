@@ -3,9 +3,11 @@
 // Wires the REAL beatmatch scoring engine so synthetic input is judged against
 // a real gem timeline parsed from a .mid. Pipeline:
 //
-//   Stage 1 (M3a): SongParser reads the .mid and streams gems into a minimal
-//                  SongData (native/src/beatmatch_native_support.cpp) that is the
-//                  SongParser sink and owns the per-track GameGemDBs.
+//   Stage 1 (M3a/M4): SongParser reads the .mid and streams gems into the REAL
+//                  src/system/beatmatch/SongData.cpp (M4 replaced the minimal
+//                  stand-in). SongData is the InternalSongParserSink and owns the
+//                  per-track GameGemDBs, plus phrases, drum fills, roll/trill
+//                  lanes, drum-mix, and PlayerTrackConfigList-driven difficulty.
 //
 //   Stage 2 (M3b): a TrackWatcher (-> GuitarTrackWatcherImpl, the guitar/bass
 //                  5-fret hit-detection impl) is constructed against that
@@ -33,6 +35,12 @@
 #include "beatmatch/BeatMatchSink.h"
 #include "beatmatch/HitSink.h"
 #include "beatmatch/BeatMatchControllerSink.h"
+#include "beatmatch/PlayerTrackConfig.h"
+#include "beatmatch/FillInfo.h"
+#include "beatmatch/PhraseAnalyzer.h"
+#include "beatmatch/TuningOffsetList.h"
+#include "utl/RangedDataCollection.h"
+#include "utl/BeatMap.h"
 #include "utl/SongInfoCopy.h"
 #include "utl/SongInfoAudioType.h"
 #include "utl/TempoMap.h"
@@ -260,6 +268,18 @@ int main(int argc, char **argv) {
     SongData songData;
     songData.mNumDifficulties = kNumDifficulties;
     songData.mHopoThreshold = songInfo.GetHopoThreshold();
+    // The driver drives its own SongParser (below) instead of SongData::Load,
+    // so replicate the per-load state Load() would allocate before the real
+    // InternalSongParserSink callbacks fire: the BeatMap (SongData::AddBeat
+    // writes it), the tuning-offset list (AddPitchOffset), the phrase analyzer,
+    // per-difficulty keyboard range sections, and mSongInfo (SongFullPath).
+    songData.mSongInfo = &songInfo;
+    songData.mDetailedGrid = false;
+    songData.mBeatMap = new BeatMap();
+    SetTheBeatMap(songData.mBeatMap);
+    songData.mPhraseAnalyzer = new PhraseAnalyzer(&songData);
+    songData.mTuningOffsetList = new TuningOffsetList();
+    songData.mKeyboardRangeSections.resize(kNumDifficulties);
 
     TempoMap *tempoMap = nullptr;
     MeasureMap *measureMap = nullptr;
@@ -286,6 +306,52 @@ int main(int argc, char **argv) {
     printf("  tempoMap=%p  parsed %d track(s).\n", (void *)tempoMap,
            (int)songData.mTrackInfos.size());
 
+    // --- Stage 1.5: real difficulty selection via PlayerTrackConfigList ------
+    // The REAL SongData (unlike the old stand-in, which hard-pinned Expert in
+    // AddTrack) leaves mTrackDifficulties empty until a PlayerTrackConfigList is
+    // resolved. Difficulty selection is exactly the retail PostLoad path:
+    // FixUpTrackConfig() builds the per-track TrackType list and hands it to
+    // PlayerTrackConfigList::Process(); SetUpTrackDifficulties() then copies the
+    // resolved per-track diffs into SongData. Default every track to Expert.
+    PlayerTrackConfigList expertList(1);
+    expertList.mDefaultDifficulty = kExpert;
+    songData.mPlayerTrackConfigList = &expertList;
+    songData.FixUpTrackConfig(&expertList);
+    songData.SetUpTrackDifficulties(&expertList);
+    printf("  difficulty: PlayerTrackConfigList(default=Expert) -> FixUpTrackConfig "
+           "-> SetUpTrackDifficulties\n");
+
+    // Process a second config at Medium so we can flip difficulty on demand.
+    PlayerTrackConfigList mediumList(1);
+    mediumList.mDefaultDifficulty = 1; // Easy=0 Medium=1 Hard=2 Expert=3
+    songData.FixUpTrackConfig(&mediumList);
+
+    // --- SongData chart surface (real SongData.cpp) -------------------------
+    // Everything below is answered by the real SongData query API populated
+    // during parse: gems per selected difficulty, drum fills (DrumFillInfo),
+    // and roll/trill lanes (RangedDataCollection). The stand-in reported none.
+    printf("\n--- SongData chart surface (real SongData.cpp query API) ---\n");
+    printf("  %-4s %-14s %-5s %-5s %6s %6s %6s %6s\n", "trk", "name", "type",
+           "diff", "gems", "fills", "rolls", "trills");
+    for (int t = 0; t < songData.GetNumTracks(); t++) {
+        int diff = songData.TrackDiffAt(t);
+        int nG = songData.GetGemList(t)->NumGems();
+        FillInfo *fi = songData.GetFillInfo(t);
+        int nFills = fi ? (int)fi->mFills.size() : 0;
+        RangedDataCollection<unsigned int> *ri = songData.GetRollInfo(t);
+        RangedDataCollection<std::pair<int, int> > *ti = songData.GetTrillInfo(t);
+        int nRolls = (diff < (int)ri->mRangeDataArray.size())
+                         ? (int)ri->mRangeDataArray[diff].size()
+                         : 0;
+        int nTrills = (diff < (int)ti->mRangeDataArray.size())
+                          ? (int)ti->mRangeDataArray[diff].size()
+                          : 0;
+        printf("  %-4d %-14s %-5d %-5d %6d %6d %6d %6d\n", t,
+               songData.TrackName(t).Str(), (int)songData.TrackTypeAt(t), diff, nG,
+               nFills, nRolls, nTrills);
+    }
+    printf("\n");
+
     // --- Pick a playable track: prefer PART BASS, else first non-empty ------
     int track = songData.TrackNamed(Symbol("PART BASS"));
     if (track == -1 || songData.GetGemList(track)->NumGems() == 0) {
@@ -301,7 +367,17 @@ int main(int argc, char **argv) {
         printf("  no playable track parsed; aborting.\n");
         return 1;
     }
-    GameGemList *gems = songData.GetGemList(track);
+    // --- difficulty selection is real: flip Expert<->Medium, gem count moves --
+    songData.SetUpTrackDifficulties(&mediumList);
+    int nMedium = songData.GetGemList(track)->NumGems();
+    songData.SetUpTrackDifficulties(&expertList);
+    int nExpert = songData.GetGemList(track)->NumGems();
+    printf("  difficulty flip on track %d '%s': Expert=%d gems  Medium=%d gems  (%s)\n",
+           track, songData.TrackName(track).Str(), nExpert, nMedium,
+           nExpert != nMedium ? "SetUpTrackDifficulties re-selects the chart"
+                              : "same count at both diffs for this track");
+
+    GameGemList *gems = songData.GetGemList(track); // back on Expert
     int nGems = gems->NumGems();
     printf("  track %d '%s' (type %d): %d Expert gem(s)\n\n", track,
            songData.TrackName(track).Str(), (int)songData.TrackTypeAt(track), nGems);

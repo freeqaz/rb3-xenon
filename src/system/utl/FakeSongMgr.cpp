@@ -21,3 +21,13 @@ const char *FakeSongMgr::GetPath(const SongInfo *sinfo, const char *cc) {
 const char *FakeSongMgr::MidiFile(const SongInfo *sinfo) {
     return GetPath(sinfo, ".mid");
 }
+
+#ifdef HX_NATIVE
+// M4: the real SongData::SongFullPath() (native rb3-hit) falls back to
+// MidiFullPath when mSongPath is empty. Our tree's FakeSongMgr is a slimmed
+// native reimplementation that lacked this; add it (adapted to our File.h's
+// 2-arg FileMakePath). Gated so the X360 decomp/match build is unaffected.
+const char *FakeSongMgr::MidiFullPath(const SongInfo *sinfo) {
+    return FileMakePath(FileRoot(), GetPath(sinfo, ".mid"));
+}
+#endif

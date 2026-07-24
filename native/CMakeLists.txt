@@ -221,16 +221,33 @@ target_link_libraries(rb3-gem PRIVATE Threads::Threads ZLIB::ZLIB)
 
 # --- M3b: beatmatch hit detection --------------------------------------------
 # Extends the M3a gem pipeline with the real scoring engine: TrackWatcher +
-# TrackWatcherImpl + the guitar/bass 5-fret impl (BaseGuitar/Guitar). A minimal
-# SongData stand-in + LogFile shim live in beatmatch_native_support.cpp so the
-# heavy real SongData.cpp (phrases/fills/vocals/drum-mix/player-track-config)
-# stays out of the native link. NewTrackWatcherImpl is HX_NATIVE-guarded to the
-# guitar impl, so no other per-instrument impl is compiled.
+# TrackWatcherImpl + the guitar/bass 5-fret impl (BaseGuitar/Guitar).
+# NewTrackWatcherImpl is HX_NATIVE-guarded to the guitar impl, so no other
+# per-instrument impl is compiled.
+#
+# M4: the REAL SongData.cpp is now wired (was a minimal stand-in). It brings the
+# full chart surface — phrases, fills, roll/trill lanes, drum-mix, disco-flip,
+# backup tracks, PlayerTrackConfigList-driven per-player difficulty. The six
+# dependency TUs it needs (DrumMap/DrumMixDB/PhraseDB/PhraseAnalyzer/
+# PlayerTrackConfigList/FillInfo) were ported from the rb3-Wii oracle; PhraseList
+# + VocalNoteList + TimeSpanVector are also pulled in (SongData's ctor news a
+# VocalNoteList; PostLoadVocals + IntersectTimeSpans need the rest).
+# beatmatch_native_support.cpp is now only the LogFile shim + TheBeatMatchOutput.
 set(M3B_SOURCES
     ${REPO_ROOT}/src/system/beatmatch/TrackWatcher.cpp
     ${REPO_ROOT}/src/system/beatmatch/TrackWatcherImpl.cpp
     ${REPO_ROOT}/src/system/beatmatch/BaseGuitarTrackWatcherImpl.cpp
     ${REPO_ROOT}/src/system/beatmatch/GuitarTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/system/beatmatch/SongData.cpp
+    ${REPO_ROOT}/src/system/beatmatch/DrumMap.cpp
+    ${REPO_ROOT}/src/system/beatmatch/DrumMixDB.cpp
+    ${REPO_ROOT}/src/system/beatmatch/PhraseDB.cpp
+    ${REPO_ROOT}/src/system/beatmatch/PhraseList.cpp
+    ${REPO_ROOT}/src/system/beatmatch/PhraseAnalyzer.cpp
+    ${REPO_ROOT}/src/system/beatmatch/PlayerTrackConfigList.cpp
+    ${REPO_ROOT}/src/system/beatmatch/FillInfo.cpp
+    ${REPO_ROOT}/src/system/beatmatch/TimeSpanVector.cpp
+    ${REPO_ROOT}/src/system/beatmatch/VocalNoteList.cpp
     ${CMAKE_SOURCE_DIR}/src/beatmatch_native_support.cpp
 )
 
@@ -256,5 +273,6 @@ target_include_directories(rb3-hit PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${REPO_ROOT}/src
     ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3   # M4: real SongData->BeatMatcher.h pulls game/Player.h
 )
 target_link_libraries(rb3-hit PRIVATE Threads::Threads ZLIB::ZLIB)
