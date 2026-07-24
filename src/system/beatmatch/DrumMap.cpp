@@ -1,6 +1,11 @@
 #include "beatmatch/DrumMap.h"
 
+#ifdef HX_NATIVE
+// X360 keeps the inline empty stub ctor from DrumMap.h (see note there); only
+// native uses this out-of-line form. Retail's real ctor is out-of-line at
+// 0x8278c3a8 but homing it via the header ripples SongDB.h consumers.
 DrumMap::DrumMap() : mCurrentLanes(0) { mLanes.AddInfo(0, 0); }
+#endif
 
 bool DrumMap::LaneOn(int tick, int i2) {
     int mask = 1 << i2;

@@ -12,12 +12,10 @@ void ResetTheBeatMap() { TheBeatMap = &gDefaultBeatMap; }
 
 bool BeatInfoCmp(const BeatInfo &info, int tick) { return info.mTick < tick; }
 
-#ifdef HX_NATIVE
 // M4: real SongData::AddBeat (native rb3-hit) feeds beat events into the
 // BeatMap. Our tree's BeatMap.cpp lacked AddBeat (declared in BeatMap.h);
-// port the oracle body. Gated so the X360 build is unaffected (this is a
-// genuine retail function — the coordinator can ungate it as homing mass
-// after a whole-binary A/B).
+// port the oracle body. Genuine retail function — ungated for the homing scan
+// (X360 A/B verified net-neutral+).
 bool BeatMap::AddBeat(int tick, int level) {
     if (mInfos.empty() || mInfos.back().mTick < tick) {
         mInfos.push_back(BeatInfo(tick, level));
@@ -25,7 +23,6 @@ bool BeatMap::AddBeat(int tick, int level) {
     } else
         return false;
 }
-#endif
 
 float BeatMap::BeatToTick(float f1) const {
     if (mInfos.empty())

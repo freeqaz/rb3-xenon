@@ -722,7 +722,9 @@ floor1.c:
 
 BeatMap.cpp:
 	.pdata      start:0x82243060 end:0x82243078
+	.pdata      start:0x82243078 end:0x82243080
 	.text       start:0x827D2868 end:0x827D2C60
+	.text       start:0x827D2C60 end:0x827D2CB4
 
 MBT.cpp:
 	.pdata      start:0x82242EA8 end:0x82242EB0
@@ -6382,8 +6384,38 @@ RGGemMatcher.cpp:
 	.text       start:0x8278F568 end:0x8278F8FC
 
 VocalNoteList.cpp:
+	.pdata      start:0x822085C0 end:0x822085C8
+	.pdata      start:0x82233B48 end:0x82233B50
+	.pdata      start:0x8223E650 end:0x8223E658
+	.pdata      start:0x8223E658 end:0x8223E660
+	.pdata      start:0x8223E660 end:0x8223E668
+	.pdata      start:0x8223E668 end:0x8223E670
+	.pdata      start:0x8223E678 end:0x8223E680
+	.pdata      start:0x8223E680 end:0x8223E688
+	.pdata      start:0x8223E6A0 end:0x8223E6A8
+	.pdata      start:0x8223E6A8 end:0x8223E6B0
+	.pdata      start:0x8223E6C8 end:0x8223E6D0
+	.pdata      start:0x8223E6D8 end:0x8223E6E0
+	.pdata      start:0x8223E708 end:0x8223E710
+	.pdata      start:0x8223E720 end:0x8223E728
+	.pdata      start:0x8223E768 end:0x8223E770
+	.text       start:0x823EB5D8 end:0x823EB604
+	.text       start:0x826B8CA0 end:0x826B8D14
+	.text       start:0x827808C8 end:0x82780958
+	.text       start:0x827809E0 end:0x82780A2C
+	.text       start:0x82780A50 end:0x82780AC8
 	.text       start:0x82780AC8 end:0x82780B74
 	.text       start:0x82780B78 end:0x82780BC0
+	.text       start:0x82780BC0 end:0x82780CEC
+	.text       start:0x82780E08 end:0x82780E7C
+	.text       start:0x82780E80 end:0x82780EE8
+	.text       start:0x82781078 end:0x827810F4
+	.text       start:0x827810F8 end:0x82781160
+	.text       start:0x827814A8 end:0x82781548
+	.text       start:0x82781660 end:0x827817FC
+	.text       start:0x827818E0 end:0x82781950
+	.text       start:0x82781A78 end:0x82781AE0
+	.text       start:0x82782168 end:0x827821E8
 
 OutfitConfig.cpp:
 	.pdata      start:0x821F42A8 end:0x821F45D0
@@ -6930,3 +6962,57 @@ system/beatmatch/GameGemList.cpp:
 	.text       start:0x8278E168 end:0x8278E1F8
 	.text       start:0x8278E670 end:0x8278E6B8
 	.text       start:0x8278E6E8 end:0x8278E730
+
+system/beatmatch/DrumMixDB.cpp:
+	.pdata      start:0x8223DB40 end:0x8223DB48
+	.pdata      start:0x8223DCC8 end:0x8223DCD0
+	.text       start:0x82772E00 end:0x82772F68
+	.text       start:0x82774960 end:0x827749F0
+
+system/beatmatch/PhraseAnalyzer.cpp:
+	.pdata      start:0x8223EE38 end:0x8223EE40
+	.pdata      start:0x8223EE48 end:0x8223EE50
+	.pdata      start:0x8223EE50 end:0x8223EE58
+	.pdata      start:0x8223EE60 end:0x8223EE68
+	.pdata      start:0x8223EE78 end:0x8223EE88
+	.pdata      start:0x8223EE90 end:0x8223EE98
+	.pdata      start:0x8223EEA8 end:0x8223EEB0
+	.pdata      start:0x8223EEC8 end:0x8223EED0
+	.pdata      start:0x8223EED0 end:0x8223EED8
+	.pdata      start:0x8223EEE0 end:0x8223EEE8
+	.text       start:0x8278B438 end:0x8278B4A0
+	.text       start:0x8278B550 end:0x8278B61C
+	.text       start:0x8278B6D0 end:0x8278B734
+	.text       start:0x8278B838 end:0x8278B8E0
+	.text       start:0x8278B988 end:0x8278BAA0
+	.text       start:0x8278BAF8 end:0x8278BB90
+	.text       start:0x8278BD68 end:0x8278BDE8
+	.text       start:0x8278BFB0 end:0x8278C024
+	.text       start:0x8278C030 end:0x8278C094
+	.text       start:0x8278C0C0 end:0x8278C160
+
+system/beatmatch/PlayerTrackConfigList.cpp:
+	.pdata      start:0x82234D68 end:0x82234D70
+	.pdata      start:0x8223D808 end:0x8223D820
+	.pdata      start:0x8223D820 end:0x8223D828
+	.pdata      start:0x8223D828 end:0x8223D830
+	.pdata      start:0x8223D830 end:0x8223D840
+	.pdata      start:0x8223D850 end:0x8223D858
+	.pdata      start:0x8223D860 end:0x8223D868
+	.pdata      start:0x8223D870 end:0x8223D878
+	.pdata      start:0x8223D878 end:0x8223D880
+	.pdata      start:0x8223D8A8 end:0x8223D8B0
+	.pdata      start:0x8223D8B0 end:0x8223D8B8
+	.pdata      start:0x8223D8B8 end:0x8223D8C0
+	.text       start:0x826CFBD8 end:0x826CFC94
+	.text       start:0x8276F738 end:0x8276F814
+	.text       start:0x8276F828 end:0x8276F8B4
+	.text       start:0x8276F8B8 end:0x8276F95C
+	.text       start:0x8276F9B8 end:0x8276FA80
+	.text       start:0x8276FB40 end:0x8276FB94
+	.text       start:0x8276FBD0 end:0x8276FC50
+	.text       start:0x8276FD10 end:0x8276FDD0
+	.text       start:0x8276FDD8 end:0x8276FEEC
+	.text       start:0x8276FFC8 end:0x827700A4
+	.text       start:0x827700A8 end:0x827701BC
+	.text       start:0x827701C0 end:0x82770240
