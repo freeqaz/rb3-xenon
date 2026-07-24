@@ -115,3 +115,70 @@ GetDialogMsg/Opt1/Poll giants) are reconstructed from Ghidra TU5 (NOT verbatim
 Wii — retail rewrote the platform paths). **The layout is now correct, so a
 body-port wave on those parents is unblocked and each parent flip cascades its
 funclet cluster.** That is the recommended wave-3 SLM task.
+
+## WAVE-3 body-port (2026-07-24, branch slm-wave3) — +2 strict landed
+
+Baseline main b3138182 = 25,121 whole-binary / SLM 35 strict. Wave-3 result:
+**25,123 / SLM 37**, zero lost.
+
+### Landed (each +1, full-build verified, zero lost)
+- **IsReasonToAutoload** 0% -> 100% (commit 48c208bf). Two bugs: (1) our decl was
+  `protected` (mangles IAA) but retail is **public** (QAA) so objdiff never paired
+  it (base size 0); (2) retail dropped the Wii `TheMemcardMgr.IsDisableWriting()`
+  gate. Body = `return GetNewSigninProfile() != NULL || mInitialLoadNotDone;`.
+  Ground truth = Ghidra TU5 0x82550728.
+- **AutoSave** 66% -> 100% (commit 88478f39). Retail = `if (IsReasonToAutosave())
+  mRequestFlags = 1;` (byte store of literal 1, NOT `|= 4`, and NO UpdateStatus).
+  Required making **IsReasonToAutosave no-arg** (retail dropped Wii's
+  `bool fromAutoSaveNow`): reconstructed its chain from Ghidra TU5 0x82550778 =
+  `GetAutosavableProfile() || IsReasonToUpload() || TheProfileMgr.GlobalOptionsNeedsSave()
+  || (TheSongMgr.SongCacheNeedsWrite() && !unk68)`. Helper IDs verified:
+  fn_8254BEF0 = IsReasonToUpload, fn_8254BE88 = the songCache check,
+  fn_82550598 = GetAutosavableProfile. Updated Poll + AutoSaveNow to the no-arg call.
+  (IsReasonToAutosave body itself is a separate anonymous parent — not yet revealed.)
+
+### Layout note (CONFIRMED, header comments are stale)
+Our compiled code already uses the retail offsets: mMode@0x1c (NOT 0x20),
+mState@0x20, mStateAtSelectStart@0x24, mUser@0x28, mLocalUser@0x2c,
+mRequestFlags@0x74. The `// 0x20`.. comments in the header are +4 off from the
+real compiled offsets (mMode starts at 0x1c right after the two bytes at 0x18/0x19).
+Start's objdiff base side already emits stw 0x28 / stw 0x2c / lwz 0x1c matching the
+target — so the 0x18-0x34 layout is correct; the comments just mislead. Do not
+"fix" the layout on the basis of the comments.
+
+### Start — BLOCKED on external-global identification (not landed)
+Retail Start (Ghidra TU5 0x825525d0) is a genuine rewrite that ADDS a call our
+Wii-derived source lacks:
+```
+mUser = NULL; mLocalUser = NULL;                       // 0x28, 0x2c
+<GLOBAL@0x82e066b0>.AddSink(this-as-Hmx::Object, SYM, SYM, 0);  // <-- retail-only
+SetState(kS_Start);
+if (mMode == kMode_AutoLoad) UpdateStatus(kSaveLoadMgrStatus_Start);
+```
+AddSink = MsgSource::AddSink(Object*, Symbol, Symbol, SinkMode). The sink source
+is a global object at **0x82e066ac** (MsgSource subobject @+4 = 0x82e066b0); both
+Symbol args = the value at **0x82c71838**. Neither is cheaply identifiable: Ghidra
+returns 0 data-xrefs for both, and the Symbol string isn't directly readable via
+the mcp tools. Needs BinDiff/RTTI to name the global's class + the message Symbol.
+This is a +1 with no funclet cascade (Start has no DataArrayPtr temp), so it was
+deprioritised behind the analysis of the giants.
+
+### The 184-funclet pool — gated behind the giant DataArrayPtr switches
+184 funclets remain (162 @99.9%, 16 @99.8%, 5 @93.9%), 40 bytes each, spread
+across the WHOLE .text (0x8254b990..0x82553b3c). Each is `subi r31, r12, <parent
+frame>` off by the parent's frame immediate. Their parents are the anonymous
+DataArrayPtr/DataNode giants, all still 0-45% (measured by adding temporary
+target_symbol_map reveal entries, VA->mangled):
+- **SetState** fn_82550880 (0x82550880), 106-case, **45%**, frame Δ **+0x840** (our
+  frame is 2112 bytes too big — likely per-case temps not coalesced).
+- **GetDialogMsg** fn_8254CC98 (0x8254cc98), 97-case DataNode switch, **0%**, frame
+  Δ +0x30, ~2411 instrs (763 ins / 983 del) — deep structural reconstruction.
+- GetDialogOpt1/2/3 + Handle/OnMsg giants: fn_82553490 (106-case), fn_82552660
+  (4-arg), fn_8254c608 (local-static Symbol getter) — not yet measured to 100%.
+These are genuine multi-session reconstructions; **partial % on them does NOT flip
+funclets** (the frame immediate must be EXACT), so there is no cheap partial cascade.
+Reveal recipe for the next session: add `"0xVA":"<our-mangled>"` to
+scripts/target_symbol_map.json (insert TEXTUALLY, never json.dump — it reformats
+the whole 19k-line file), `touch config/45410914/config.yml`, rebuild; the target
+renamer then lets objdiff diff the giant by name. The entries are strict-neutral
+until the body actually matches, so revert them if not landing.

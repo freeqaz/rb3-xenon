@@ -127,9 +127,8 @@ void SaveLoadManager::Finish() {
 }
 
 void SaveLoadManager::AutoSave() {
-    if (IsReasonToAutosave(false)) {
-        mRequestFlags |= 4;
-        UpdateStatus(kSaveLoadMgrStatus_Saving);
+    if (IsReasonToAutosave()) {
+        mRequestFlags = 1;
     }
 }
 
@@ -177,7 +176,7 @@ void SaveLoadManager::Poll() {
             return;
         }
         if (flags & 2) {
-            if (IsReasonToAutosave(true)) {
+            if (IsReasonToAutosave()) {
                 mMode = kMode_AutoSave;
                 Start();
                 return;
@@ -1456,31 +1455,24 @@ void SaveLoadManager::UpdateStatus(SaveLoadMgrStatus status) {
     Export(msg, true);
 }
 
-bool SaveLoadManager::IsReasonToAutosave(bool fromAutoSaveNow) {
-    bool songCache = false;
-    if (TheSongMgr.SongCacheNeedsWrite() && !unk68) {
-        songCache = true;
-    }
-    if (songCache) {
-        return true;
-    }
-    if (TheMemcardMgr.IsDisableWriting()) {
-        return false;
-    }
+bool SaveLoadManager::IsReasonToAutosave() {
     if (GetAutosavableProfile()) {
         return true;
     }
-    if (IsReasonToUpload() && !fromAutoSaveNow) {
+    if (IsReasonToUpload()) {
         return true;
     }
     if (TheProfileMgr.GlobalOptionsNeedsSave()) {
         return true;
     }
-    return TheWiiProfileMgr.NeedsSave();
+    if (TheSongMgr.SongCacheNeedsWrite() && !unk68) {
+        return true;
+    }
+    return false;
 }
 
 void SaveLoadManager::AutoSaveNow() {
-    if (IsReasonToAutosave(true)) {
+    if (IsReasonToAutosave()) {
         int i = 0x20;
         mRequestFlags |= 8;
         TheEntityUploader.Abort();
@@ -1742,14 +1734,7 @@ BandProfile *SaveLoadManager::GetProfile() {
 }
 
 bool SaveLoadManager::IsReasonToAutoload() {
-    if (TheMemcardMgr.IsDisableWriting()) {
-        return false;
-    }
-    bool reason = false;
-    if (GetNewSigninProfile() || mInitialLoadNotDone) {
-        reason = true;
-    }
-    return reason;
+    return GetNewSigninProfile() != NULL || mInitialLoadNotDone;
 }
 
 bool SaveLoadManager::IsAutosaveEnabled(LocalBandUser *user) {

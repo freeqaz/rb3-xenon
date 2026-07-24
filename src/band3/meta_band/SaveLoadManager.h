@@ -89,6 +89,7 @@ public:
     void ManualSave(LocalBandUser *);
     void ManualDelete();
     bool IsAutosaveEnabled(LocalBandUser *);
+    bool IsReasonToAutoload();
     DataNode GetDialogMsg();
     Symbol GetDialogOpt1();
     Symbol GetDialogOpt2();
@@ -123,8 +124,7 @@ protected:
     void Finish();
     void SaveLoadErrorSetState();
     void StartSaveAction(bool);
-    bool IsReasonToAutosave(bool);
-    bool IsReasonToAutoload();
+    bool IsReasonToAutosave();
     bool IsReasonToUpload();
 
     // Retail RB3-360 layout reconstructed from ctor fn_825521E0 (Ghidra TU5) +
