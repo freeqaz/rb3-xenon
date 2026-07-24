@@ -26,6 +26,13 @@ public:
           mMultiplierActive(1), unk60(0), mMaxBonusLevel(0),
           mCommonPhraseCapturer(0) {}
     void NativeSetMultiplier(int m) { mMultiplier = m; }
+    // M7: run the REAL retail bonuses parse (identical to the lines the retail
+    // Band ctor executes) so mMaxBonusLevel / unk68 (multiplier-by-bonus-level)
+    // / unk70 (crowd_boost) come from the genuine SystemConfig("scoring",
+    // "bonuses") data instead of a hand-set table. UpdateBonusLevel then drives
+    // mMultiplier = unk68[bonusLevel] through the real machinery. Declared here,
+    // defined out-of-line in Band.cpp (needs SystemConfig); X360 never sees it.
+    void NativeLoadBonuses();
 #endif
     virtual ~Band();
     virtual DataNode Handle(DataArray *, bool);

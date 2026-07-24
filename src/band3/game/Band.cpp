@@ -31,6 +31,24 @@
 #include "utl/Std.h"
 #include "utl/Symbols.h"
 
+#ifdef HX_NATIVE
+void Band::NativeLoadBonuses() {
+    // Byte-for-byte the bonuses-config parse the retail Band ctor runs.
+    DataArray *cfg = SystemConfig("scoring", "bonuses");
+    mMaxBonusLevel = cfg->FindInt("max_bonus");
+    DataArray *multArr = cfg->FindArray("multiplier")->Array(1);
+    unk68.clear();
+    for (int i = 0; i < multArr->Size(); i++) {
+        unk68.push_back(multArr->Int(i));
+    }
+    DataArray *crowdArr = cfg->FindArray("crowd_boost")->Array(1);
+    unk70.clear();
+    for (int i = 0; i < crowdArr->Size(); i++) {
+        unk70.push_back(crowdArr->Int(i));
+    }
+}
+#endif
+
 Band::Band(bool bbb, int i2, BandUser *user, BeatMaster *bm)
     : mBandPerformer(0), unk30(0), mAccumulatedScore(0), mTotalStars(0), unk3c(0),
       unk40(0), unk44(0), mBonusLevel(0), mMultiplier(1), mMaxMultiplier(1),

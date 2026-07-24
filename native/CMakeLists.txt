@@ -363,6 +363,45 @@ target_include_directories(rb3-score2 PRIVATE
 )
 target_link_libraries(rb3-score2 PRIVATE Threads::Threads ZLIB::ZLIB)
 
+# --- M7: the REAL overdrive / band-energy cycle ------------------------------
+# Same object graph as rb3-score2 (real Player/Band/Scoring/Stats + the M2/M3/M3b
+# beatmatch parse pipeline) but the driver closes the overdrive loop: note-116
+# OD phrases parse into the real SongData/PhraseList, phrase completion credits
+# energy via the real Player::CompleteCommonPhrase/AddEnergy, and deploy runs the
+# real Band::UpdateBonusLevel/EnergyMultiplier multiplier machinery (not the shim).
+add_executable(rb3-score3
+    ${CMAKE_SOURCE_DIR}/src/main_score3.cpp
+    ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${M6_GAME_SOURCES}
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/m6_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-score3 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+target_link_options(rb3-score3 PRIVATE -Wl,--gc-sections)
+target_compile_definitions(rb3-score3 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-score3 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-score3 PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+)
+target_link_libraries(rb3-score3 PRIVATE Threads::Threads ZLIB::ZLIB)
+
 # --- M4: profile / save serialization round-trip -----------------------------
 # Runs RB3's real FixedSizeSaveable machinery natively (src/system/meta) and
 # round-trips two real FixedSizeSaveable subclasses (GameplayOptions, StandIn)

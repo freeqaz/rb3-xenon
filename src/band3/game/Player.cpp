@@ -969,7 +969,24 @@ void Player::UpdateSectionStats(float hitFraction, float percentComplete) {
     }
 }
 
+#ifdef HX_NATIVE
+// M7: build the REAL PlayerParams (its ctor is inline/TU-local to Player.cpp, so
+// it can only be instantiated here) from the parsed scoring.dta band_energy /
+// crowd / unison_phrase config. Supplies mSpotlightPhrase / mDeployThreshold /
+// mDeployBeats to the real energy methods. X360 never sees this.
+void Player::NativeInitParams() { mParams = new PlayerParams(); }
+#endif
+
 BandTrack *Player::GetBandTrack() const {
+#ifdef HX_NATIVE
+    // Native headless scoring graph builds a Player with a null mUser (the
+    // retail BandUser drags the meta_band/tour/net/render domain). SetEnergy-
+    // Automatically reaches here purely to feed the OverdriveMeter display; a
+    // null user means "no BandTrack yet", the method's real early-return branch.
+    // X360 preprocessed output is unchanged (this whole guard is HX_NATIVE-only).
+    if (!mUser)
+        return nullptr;
+#endif
     Track *track = mUser->GetTrack();
     if (track != nullptr) {
         return track->GetBandTrack();
