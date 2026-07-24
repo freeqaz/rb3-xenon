@@ -19,12 +19,11 @@
 // today, but the real body is trivial and self-contained, so prefer it. ----
 const std::vector<TrackChannels> &SongInfoCopy::GetTracks() const { return mTrackChannels; }
 
-// ---- MsgSource (obj/Msg.h) — no MsgSource.cpp exists in-tree yet ----
-MsgSource::MsgSource() {}
-MsgSource::~MsgSource() {}
-DataNode MsgSource::Handle(DataArray *, bool) { return DataNode(kDataUnhandled, 0); }
-bool MsgSource::SyncProperty(DataNode &, DataArray *, int, PropOp) { return false; }
-void MsgSource::Export(DataArray *, bool) {}
+// ---- MsgSource (obj/Msg.h) — real bodies now live in src/system/obj/Msg.cpp
+// (ported from the rb3-Wii oracle, 2026-07-24). obj/*.cpp is globbed into the
+// native build, so Msg.cpp supplies MsgSource's ctor/dtor/Handle/SyncProperty/
+// Export/AddSink/RemoveSink/etc. The former no-op shim here is removed: the
+// broadcast now actually reaches sinks. ----
 
 // ---- User (os/User.cpp compiled, but this TU5-discovered virtual has no body) ----
 const char *User::UnkTU5Virtual_beforeUserName() const { return ""; }

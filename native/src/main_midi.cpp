@@ -29,6 +29,7 @@
 #include "obj/Data.h"
 #include "obj/DataFile.h"
 #include "obj/Dir.h"
+#include "obj/Msg.h" // MsgSource / AddSink (the Poll broadcast target)
 #include "obj/Task.h"
 #include "utl/FileStream.h"
 #include "utl/Symbol.h"
@@ -115,6 +116,24 @@ static MidiParser *MakeParser(const char *name, const char *typeDefDta) {
     td->Release();
     return p;
 }
+
+// ------------------------------------------------------------------ Sink ----
+// A real Hmx::Object that registers as a global sink on the events_parser
+// (a MidiParser IS-A MsgSource). When MidiParser::Poll fires an event it calls
+// MsgSource::Export(msg,false), which broadcasts through mSinks -> Sink::Export
+// -> obj->Handle(msg,false). This probe's Handle is that receiving handler:
+// with the real (no-longer-shimmed) MsgSource bodies the broadcast lands here.
+class EventProbeSink : public Hmx::Object {
+public:
+    int received = 0;
+    DataNode Handle(DataArray *msg, bool /*warn*/) {
+        String s;
+        msg->Print(s, kDataArray, false);
+        printf("    >>> SINK received broadcast: %s\n", s.c_str());
+        received++;
+        return DataNode(kDataUnhandled, 0);
+    }
+};
 
 static void PrintFiredEvents(const char *label, MidiParser *p, float beat, int fromIdx) {
     DataEventList *ev = p->Events();
@@ -232,6 +251,13 @@ int main(int argc, char **argv) {
     eventsParser->Reset(-1.0e30f);
     noteParser->Reset(-1.0e30f);
 
+    // Register a real sink on the events_parser. MidiParser::Poll -> Export ->
+    // MsgSource::Sink::Export -> sink->Handle. Global sink (null event) in
+    // kHandle mode receives every broadcast message.
+    EventProbeSink *probe = new EventProbeSink();
+    eventsParser->AddSink(probe);
+    printf("  Registered EventProbeSink as a global sink on events_parser.\n");
+
     // Find the last event beat so we drive the clock across the whole track.
     float lastBeat = 0.0f;
     for (int i = 0; i < eventsParser->Events()->Size(); i++)
@@ -262,6 +288,15 @@ int main(int argc, char **argv) {
     printf("\n  Poll drove the beat clock 0 -> %.1f (step %.1f).\n", lastBeat + step, step);
     printf("  events_parser fired %d event(s); note_parser fired %d note event(s).\n",
            firedEvents, firedNotes);
+    printf("  EventProbeSink received %d broadcast(s) via MsgSource::Export.\n",
+           probe->received);
+    if (probe->received == firedEvents && firedEvents > 0)
+        printf("  OK: every fired events_parser event reached the sink handler.\n");
+    else if (probe->received > 0)
+        printf("  Sink saw %d of %d events (mode/handler routing).\n", probe->received,
+               firedEvents);
+    else
+        printf("  WARNING: sink received nothing — broadcast did not reach the sink.\n");
     printf("\nDone.\n");
     return 0;
 }

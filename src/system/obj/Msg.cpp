@@ -343,3 +343,281 @@ void MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
     }
     return;
 }
+
+// -----------------------------------------------------------------------------
+// MsgSource — the retail RB3-360 (Wii-lineage) messaging class. Ported from the
+// rb3-Wii dev decomp (../rb3/src/system/obj/Msg.cpp), adapted to our Msg.h
+// declarations (std::list<Sink>/<EventSink>, member SinkMode enum, non-virtual
+// Replace(Hmx::Object*,Hmx::Object*)). Coexists in this TU with MsgSinks (the
+// DC3-flattened form above). MILO_ASSERT file string stays "Msg.cpp".
+// -----------------------------------------------------------------------------
+
+// The Wii-lineage MsgSource tracks its referenced sinks with the retail
+// owner-model ring API — Object::AddRef/Release(ObjRefOwner*) — passing the
+// MsgSource itself as the owner. The HX_NATIVE Object ring is node-model
+// (AddRef/Release take an ObjRef*, not the owner), so those calls don't
+// typecheck natively and the sink auto-null-on-death machinery is deferred for
+// the native host. The broadcast path (Export -> Sink::Export -> Handle) does
+// NOT depend on ring registration, and native drivers keep sinks alive for the
+// source's lifetime. On the X360 match build these macros expand to the exact
+// original call tokens (verified match-neutral: Msg.cpp strict count unchanged).
+#ifdef HX_NATIVE
+#define MSGSRC_ADDREF(obj, owner) ((void)0)
+#define MSGSRC_RELEASE(obj, owner) ((void)0)
+#else
+#define MSGSRC_ADDREF(obj, owner) (obj)->AddRef(owner)
+#define MSGSRC_RELEASE(obj, owner) (obj)->Release(owner)
+#endif
+
+void MsgSource::Sink::Export(DataArray *da) {
+    switch (mode) {
+    case kHandle:
+        obj->Handle(da, false);
+        break;
+    case kExport:
+        obj->Export(da, false);
+        break;
+    case kType:
+        obj->HandleType(da);
+        break;
+    case kExportType:
+        obj->Export(da, true);
+        break;
+    }
+}
+
+MsgSource::MsgSource() : mSinks(), mEventSinks(), mExporting(0) {}
+
+MsgSource::~MsgSource() {
+    FOREACH (it, mSinks) {
+        Hmx::Object *o = it->obj;
+        if (o)
+            MSGSRC_RELEASE(o, this);
+    }
+    FOREACH (evIt, mEventSinks) {
+        FOREACH (sinkIt, evIt->sinks) {
+            Hmx::Object *o = sinkIt->obj;
+            if (o)
+                MSGSRC_RELEASE(o, this);
+        }
+    }
+}
+
+void MsgSource::ChainSource(MsgSource *source, MsgSource *othersource) {
+    MILO_ASSERT(source, 0x3D);
+    if (!othersource)
+        othersource = this;
+    if (!mSinks.empty()) {
+        source->AddSink(this);
+    } else {
+        FOREACH (it, othersource->mEventSinks) {
+            source->AddSink(this, it->ev);
+        }
+    }
+}
+
+void MsgSource::AddSink(
+    Hmx::Object *s, Symbol ev, Symbol handler, MsgSource::SinkMode mode
+) {
+    MILO_ASSERT(s, 0x5D);
+    RemoveSink(s, ev);
+    MSGSRC_ADDREF(s, this);
+    if (ev.Null()) {
+        MILO_ASSERT(s != this, 0x66);
+        Sink theSink(s, mode);
+        if (mExporting != 0) {
+            mSinks.push_front(theSink);
+        } else
+            mSinks.push_back(theSink);
+    } else {
+        if (handler.Null())
+            handler = ev;
+        MILO_ASSERT((s != this) || (handler != ev), 0x75);
+        FOREACH (it, mEventSinks) {
+            if (it->ev == ev) {
+                it->Add(s, mode, handler, mExporting != 0);
+                return;
+            }
+        }
+        mEventSinks.push_back(EventSink(ev));
+        mEventSinks.back().Add(s, mode, handler, mExporting != 0);
+    }
+}
+
+void MsgSource::EventSink::Add(
+    Hmx::Object *o, MsgSource::SinkMode mode, Symbol sym, bool b
+) {
+    EventSinkElem s(o, mode, sym);
+    if (b)
+        sinks.push_front(s);
+    else
+        sinks.push_back(s);
+}
+
+void MsgSource::EventSink::Remove(Hmx::Object *o, MsgSource *src, bool exporting) {
+    FOREACH (it, sinks) {
+        if (it->obj == o) {
+            MSGSRC_RELEASE(it->obj, src);
+            it->obj = nullptr;
+            if (!exporting)
+                sinks.erase(it);
+            return;
+        }
+    }
+}
+
+void MsgSource::Replace(Hmx::Object *o1, Hmx::Object *o2) { RemoveSink(o1, Symbol()); }
+
+void MsgSource::RemoveSink(Hmx::Object *s, Symbol ev) {
+    MILO_ASSERT(s, 0xA9);
+    FOREACH (it, mSinks) {
+        if (it->obj == s) {
+            if (!ev.Null()) {
+                MILO_WARN(
+                    "%s: removing global to %s for event %s, all other events will be wiped out",
+                    PathName(this),
+                    s->Name(),
+                    ev
+                );
+            }
+            MSGSRC_RELEASE(it->obj, this);
+            it->obj = 0;
+            if (!mExporting)
+                mSinks.erase(it);
+            return;
+        }
+    }
+    if (ev.Null()) {
+        FOREACH (it, mEventSinks) {
+            it->Remove(s, this, mExporting != 0);
+        }
+    } else {
+        FOREACH (it, mEventSinks) {
+            if (it->ev == ev) {
+                it->Remove(s, this, mExporting != 0);
+                return;
+            }
+        }
+    }
+}
+
+void MsgSource::MergeSinks(MsgSource *from) {
+    std::list<Sink> &sinks = from->mSinks;
+    FOREACH (it, sinks) {
+        AddSink(it->obj, Symbol(), Symbol(), it->mode);
+    }
+    FOREACH (it, from->mEventSinks) {
+        FOREACH (elemIt, it->sinks) {
+            AddSink(elemIt->obj, it->ev, elemIt->handler, elemIt->mode);
+        }
+    }
+}
+
+void MsgSource::Export(DataArray *da, bool b) {
+    if (b)
+        HandleType(da);
+    mExporting++;
+    for (std::list<Sink>::iterator it = mSinks.begin(); it != mSinks.end();) {
+        if (it->obj) {
+            it->Export(da);
+            it++;
+        } else {
+            if (mExporting == 1) {
+                it = mSinks.erase(it);
+            } else
+                it++;
+        }
+    }
+    FOREACH (it, mEventSinks) {
+        if (it->ev == da->Sym(1)) {
+            DataNode node(da->Node(1));
+            for (std::list<EventSinkElem>::iterator elemIt = it->sinks.begin();
+                 elemIt != it->sinks.end();) {
+                if (elemIt->obj) {
+                    da->Node(1) = DataNode(elemIt->handler);
+                    elemIt->Export(da);
+                    ++elemIt;
+                } else {
+                    if (mExporting == 1) {
+                        elemIt = it->sinks.erase(elemIt);
+                    } else
+                        ++elemIt;
+                }
+            }
+            da->Node(1) = node;
+            if (it->sinks.empty())
+                mEventSinks.erase(it);
+            break;
+        }
+    }
+    mExporting--;
+}
+
+BEGIN_HANDLERS(MsgSource)
+    HANDLE(add_sink, OnAddSink);
+    HANDLE(remove_sink, OnRemoveSink);
+    HANDLE_VIRTUAL_SUPERCLASS(Hmx::Object);
+    Export(_msg, false);
+END_HANDLERS
+
+DataNode MsgSource::OnAddSink(DataArray *da) {
+    if (da->Size() > 3) {
+        SinkMode mode = (da->Size() > 4) ? (SinkMode)(da->Int(4)) : kHandle;
+        DataArray *arr = da->Array(3);
+        Hmx::Object *obj = da->GetObj(2);
+        if (arr->Size() == 0) {
+            AddSink(obj, Symbol(), Symbol(), mode);
+        } else {
+            for (int i = 0; i < arr->Size(); i++) {
+                DataNode node(arr->Evaluate(i));
+                if (node.Type() == kDataArray) {
+                    AddSink(
+                        obj,
+                        node.LiteralArray()->LiteralSym(0),
+                        node.LiteralArray()->LiteralSym(1),
+                        mode
+                    );
+                } else {
+                    AddSink(obj, node.LiteralSym(), Symbol(), mode);
+                }
+            }
+        }
+    } else
+        AddSink(da->GetObj(2), Symbol(), Symbol(), kHandle);
+    return 0;
+}
+
+DataNode MsgSource::OnRemoveSink(DataArray *da) {
+    if (da->Size() > 3) {
+        Hmx::Object *obj = da->GetObj(2);
+        for (int i = 3; i < da->Size(); i++) {
+            RemoveSink(obj, da->Sym(i));
+        }
+    } else
+        RemoveSink(da->GetObj(2), Symbol());
+    return 0;
+}
+
+BEGIN_CUSTOM_PROPSYNC(MsgSource::Sink)
+    SYNC_PROP(obj, (Hmx::Object *&)o.obj)
+    SYNC_PROP(mode, (int &)o.mode)
+END_CUSTOM_PROPSYNC
+
+BEGIN_CUSTOM_PROPSYNC(MsgSource::EventSinkElem)
+    SYNC_PROP(handler, o.handler)
+    SYNC_PROP(obj, (Hmx::Object *&)o.obj)
+    SYNC_PROP(mode, (int &)o.mode)
+END_CUSTOM_PROPSYNC
+
+BEGIN_CUSTOM_PROPSYNC(MsgSource::EventSink)
+    SYNC_PROP(event, o.ev)
+    SYNC_PROP(sinks, o.sinks)
+END_CUSTOM_PROPSYNC
+
+BEGIN_PROPSYNCS(MsgSource)
+    SYNC_PROP(sinks, mSinks)
+    SYNC_PROP(event_sinks, mEventSinks)
+END_PROPSYNCS
+
+#undef MSGSRC_ADDREF
+#undef MSGSRC_RELEASE
