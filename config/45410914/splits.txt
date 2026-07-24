@@ -3643,13 +3643,13 @@ StorePreviewMgr.cpp:
 	.pdata      start:0x82240328 end:0x82240330
 	.pdata      start:0x822410A0 end:0x822410A8
 	.pdata      start:0x822410A8 end:0x822410B0
-	.pdata      start:0x822410C0 end:0x822410C8
+	.pdata      start:0x822410B0 end:0x822410C8
 	.text       start:0x825C21D0 end:0x825C227C
 	.text       start:0x827496E8 end:0x82749738
 	.text       start:0x827A5508 end:0x827A5664
 	.text       start:0x827B1C10 end:0x827B1CA8
 	.text       start:0x827B1CA8 end:0x827B1D58
-	.text       start:0x827B1F00 end:0x827B1FBC
+	.text       start:0x827B1D60 end:0x827B1FBC
 
 CharEyes.cpp:
 	.pdata      start:0x822028F0 end:0x822028F8
