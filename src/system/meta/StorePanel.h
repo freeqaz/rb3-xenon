@@ -74,6 +74,8 @@ public:
     void ExitError(StoreError);
     void HandleNetCacheMgrFailure();
     void HandleNetCacheLoaderFailure(int);
+    bool IsEnumerating() const;
+    bool InCheckout() const;
 
     // Retail layout (offsets are of the complete-object; UIPanel non-virtual
     // part ends at 0x3c, Hmx::Object is a shared virtual base at the tail):

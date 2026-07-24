@@ -6162,8 +6162,14 @@ OverdriveTracker.cpp:
 	.text       start:0x826DD570 end:0x826DEAD0
 
 StreakTracker.cpp:
-	.pdata      start:0x82235D70 end:0x82235ED8
-	.text       start:0x826DEAD0 end:0x826E03D8
+	.pdata      start:0x82235D70 end:0x82235EA0
+	.pdata      start:0x82235ED0 end:0x82235ED8
+	.text       start:0x826DEAD0 end:0x826E0060
+	.text       start:0x826E03B4 end:0x826E03D8
+
+band3/game/ScoreTracker.cpp:
+	.pdata      start:0x82235EA0 end:0x82235ED0
+	.text       start:0x826E0060 end:0x826E03B4
 
 band3/game/PerfectOverdriveTracker.cpp:
 	.pdata      start:0x82235ED8 end:0x82235FF8

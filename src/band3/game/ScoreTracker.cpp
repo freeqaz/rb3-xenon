@@ -31,6 +31,6 @@ void ScoreTracker::SavePlayerStats() const {
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 0x49);
-        pPlayer->mStats.mTrackerContribution = mScoreTotal;
+        pPlayer->mStats.unk1c0 = mScoreTotal;
     }
 }
