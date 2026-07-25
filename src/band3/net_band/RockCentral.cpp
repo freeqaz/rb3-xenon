@@ -431,6 +431,15 @@ void RockCentral::GetMaxRank(
     DataResultList &results,
     Hmx::Object *o
 ) {
+    // LEAD (measured, do not re-derive): retail GetMaxRank == fn_824FB038,
+    // 624 B. Adding `DP_KEYS3(role_id, song_id, lb_type)` here makes our body
+    // reloc-masked byte-identical to 0x824fb038 (homing_scan: plain UNIQUE) and
+    // flips this function -- but the 3 extra function-local statics perturb the
+    // TU's funclet pool and collaterally un-pair 9 already-matching EH funclets
+    // (fn_8250459C/45C4/45EC, fn_8250907C/911C/9144, fn_825093E8/9488/94B0),
+    // for a whole-binary net of -7. Needs the funclet-pairing fix (or a
+    // simultaneous DP_KEYS conversion of the other 21 stragglers) before it can
+    // land. Map entry for 0x824fb038 intentionally NOT added.
     Server *server = IsConnected(o, -1, false);
     if (server) {
         INIT_DATAPOINT("leaderboards/maxrank/get");
@@ -563,25 +572,25 @@ void RockCentral::GetLeaderboardByRankRange(
     DataResultList &results,
     Hmx::Object *o
 ) {
+    // Retail RB3 360 has no empty-vec early-out / RockCentralOpCompleteMsg else
+    // branch here, exactly as in GetLeaderboardByPlayer above: retail's body is
+    // reloc-masked byte-identical to GetLeaderboardByPlayer (824 B, frame 0x160)
+    // -- the same ByPlayer/ByRankRange twinning the Acc (624 B) and Battle
+    // (620 B) pairs already show. rb3-Wii's dev build added that branch.
     Server *server = IsConnected(o, -1, false);
     if (server) {
-        if (vec.empty()) {
-            RockCentralOpCompleteMsg msg(false, 0, 0);
-            o->Handle(msg, true);
-        } else {
-            DP_KEYS5(role_id, song_id, start_rank, end_rank, lb_type)
-            INIT_DATAPOINT("leaderboards/rankrange/get");
-            ADD_DATA_PAIR(role_id, (char)s)
-            ADD_DATA_PAIR(song_id, i2)
-            ADD_DATA_PAIR(start_rank, i4)
-            ADD_DATA_PAIR(end_rank, i5)
-            ADD_DATA_PAIR(lb_type, lt)
-            for (int i = 0; i < vec.size(); i++) {
-                char buf[12];
-                ADD_BUFFER_PAIR(buf, vec[i], "pid%03d", i);
-            }
-            RECORD_DATA_POINT(0, results, o);
+        DP_KEYS5(role_id, song_id, start_rank, end_rank, lb_type)
+        INIT_DATAPOINT("leaderboards/rankrange/get");
+        ADD_DATA_PAIR(role_id, (char)s)
+        ADD_DATA_PAIR(song_id, i2)
+        ADD_DATA_PAIR(start_rank, i4)
+        ADD_DATA_PAIR(end_rank, i5)
+        ADD_DATA_PAIR(lb_type, lt)
+        for (int i = 0; i < vec.size(); i++) {
+            char buf[12];
+            ADD_BUFFER_PAIR(buf, vec[i], "pid%03d", i);
         }
+        RECORD_DATA_POINT(0, results, o);
     }
 }
 
