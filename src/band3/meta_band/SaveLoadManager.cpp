@@ -1400,49 +1400,61 @@ BandProfile *SaveLoadManager::GetAutosavableProfile() {
 }
 
 Symbol SaveLoadManager::GetDialogOpt1() {
+    static Symbol s1("mc_button_create_data");
+    static Symbol s2("mc_button_choose_device");
+    static Symbol s3("mc_button_continue");
+    static Symbol s4("mc_button_overwrite");
+    static Symbol s5("song_info_cache_button_create");
+    static Symbol s6("song_info_cache_button_corrupt_overwrite");
+    static Symbol s7("global_options_button_create");
+    static Symbol s8("global_options_button_corrupt_overwrite");
+    static Symbol s9("mc_button_delete_saves");
+    static Symbol s10("upload_button_view_first");
+    static Symbol s11("upload_button_return");
+    static Symbol s12("upload_button_view_prev");
+    static Symbol s13("mc_button_yes");
     Symbol sym(gNullStr);
     switch (mState) {
-    case (State)0x49:
-    case kS_GlobalCreateCorrupt:        // 0x4E
-        sym = global_options_button_cancel;
+    case (State)0x6:
+        sym = s1;
         break;
-    case kS_AutoloadNoSaveFound_Msg:    // 0x06
-        sym = mc_button_create_data;
-        break;
-    case kS_ManualLoadConfirm_Yes:      // 0x5F
-        sym = mc_button_continue;
-        break;
-    case kS_AutoloadMultipleSavesFound: // 0x07
-    case kS_AutoloadNotOwner:           // 0x0C
-    case kS_GlobalCreateNotFound_Msg:   // 0x4C
-    case kS_ManualLoadNoDevice:         // 0x5C
+    case (State)0x7:
+    case (State)0xC:
+    case (State)0x4C:
+    case (State)0x5C:
     case (State)0x62:
-        sym = mc_button_choose_device;
+        sym = s2;
         break;
-    case kS_AutoloadCorrupt:            // 0x0E
-    case kS_AutoloadObsolete:           // 0x0F
-    case kS_AutoloadFuture:             // 0x10
-    case kS_AutoloadFuture2:            // 0x11
-    case kS_SaveDeviceInvalid:          // 0x48
-        sym = mc_button_overwrite;
+    case (State)0x5F:
+        sym = s3;
+        break;
+    case (State)0xE:
+    case (State)0xF:
+    case (State)0x10:
+    case (State)0x11:
+    case (State)0x48:
+        sym = s4;
         break;
     case (State)0x17:
     case (State)0x18:
-        sym = song_info_cache_button_create;
+        sym = s5;
         break;
     case (State)0x1C:
-        sym = song_info_cache_button_corrupt_overwrite;
+        sym = s6;
         break;
     case (State)0x29:
     case (State)0x2A:
     case (State)0x3A:
-        sym = global_options_button_create;
+        sym = s7;
         break;
     case (State)0x2F:
-        sym = global_options_button_corrupt_overwrite;
+        sym = s8;
         break;
-    case kS_ManualLoadConfirm:          // 0x60
-        sym = mc_button_yes;
+    case (State)0x4A:
+        sym = s9;
+        break;
+    case (State)0x60:
+        sym = s13;
         break;
     default:
         break;
@@ -1451,46 +1463,57 @@ Symbol SaveLoadManager::GetDialogOpt1() {
 }
 
 Symbol SaveLoadManager::GetDialogOpt2() {
+    static Symbol s1("mc_button_cancel");
+    static Symbol s2("mc_button_continue_no_save");
+    static Symbol s3("song_info_cache_button_cancel");
+    static Symbol s4("global_options_button_cancel");
+    static Symbol s5("mc_button_retry");
+    static Symbol s6("mc_button_disable_autosave");
+    static Symbol s7("upload_button_return");
+    static Symbol s8("upload_button_view_next");
+    static Symbol s9("mc_button_no");
     Symbol sym(gNullStr);
     switch (mState) {
-    case kS_AutoloadNoSaveFound_Msg:
-    case kS_AutoloadMultipleSavesFound:
-    case kS_AutoloadDeviceMissing:
-    case kS_SaveOverwrite:
-    case kS_ManualSaveNoDevice:
-    case kS_ManualLoadConfirmUnsaved:
-    case kS_ManualLoadNoDevice:
-        sym = mc_button_cancel;
+    case (State)0x6:
+    case (State)0x7:
+    case (State)0xC:
+    case (State)0x48:
+    case (State)0x5C:
+    case (State)0x5F:
+    case (State)0x62:
+        sym = s1;
         break;
-    case kS_AutoloadNotOwner:
-    case kS_AutoloadCorrupt:
-    case kS_AutoloadObsolete:
-    case kS_AutoloadFuture:
-        sym = mc_button_continue_no_save;
+    case (State)0xE:
+    case (State)0xF:
+    case (State)0x10:
+    case (State)0x11:
+        sym = s2;
         break;
-    case kS_SongCacheCreateNotFound_Msg:
-    case kS_SongCacheCreateMissing_Msg:
-    case kS_SongCacheCreateCorrupt:
-        sym = song_info_cache_button_cancel;
+    case (State)0x17:
+    case (State)0x18:
+    case (State)0x1C:
+        sym = s3;
         break;
-    case kS_GlobalCreateNotFound_Msg:
-    case kS_GlobalCreateMissing_Msg:
-    case kS_GlobalCreateCorrupt:
-    case kS_GlobalOptionsMissing_Msg:
-        sym = global_options_button_cancel;
+    case (State)0x29:
+    case (State)0x2A:
+    case (State)0x2F:
+    case (State)0x3A:
+        sym = s4;
         break;
-    case kS_SaveDeviceInvalid:
-        sym = mc_button_disable_autosave;
+    case (State)0x4A:
+        sym = s5;
         break;
-    case kS_ManualLoadConfirm:
-        sym = mc_button_no;
+    case (State)0x4C:
+        sym = s6;
+        break;
+    case (State)0x60:
+        sym = s9;
         break;
     default:
         break;
     }
     return sym;
 }
-
 DataNode SaveLoadManager::GetDialogMsg() {
     String profileName(gNullStr);
     LocalBandUser * &_ref0 = mUser;
@@ -1501,125 +1524,145 @@ DataNode SaveLoadManager::GetDialogMsg() {
         playerNum = _tmp0 + 1;
     }
     switch (mState) {
-    case (State)0x6:
-        return DataArrayPtr(
-            mc_auto_load_no_save_found_fmt, DataArrayPtr(), profileName, playerNum
-        );
-    case (State)0x7:
-        return DataArrayPtr(
-            mc_auto_load_multiple_saves_found_fmt,
-            DataArrayPtr(),
-            profileName,
-            playerNum
-        );
-    case (State)0xC:
-        return DataArrayPtr(
-            mc_load_device_missing_fmt, DataArrayPtr(), profileName, playerNum
-        );
-    case (State)0xE: {
-        BandProfile *pProfile = GetProfile();
-        if (pProfile == NULL) {
-            return DataArrayPtr(mc_manual_load_corrupt, DataArrayPtr());
-        }
-        MILO_ASSERT(pProfile, 0xD4D);
-        return DataArrayPtr(
-            mc_auto_load_corrupt, DataArrayPtr(), pProfile->GetName()
-        );
+    case (State)0x6: {
+        static Symbol s1("mc_auto_load_no_save_found_fmt");
+        return DataArrayPtr(s1, DataArrayPtr(), profileName, playerNum);
     }
-    case (State)0xF:
-        return DataArrayPtr(mc_auto_load_not_owner, DataArrayPtr());
+    case (State)0x7: {
+        static Symbol s2("mc_auto_load_multiple_saves_found_fmt");
+        return DataArrayPtr(s2, DataArrayPtr(), profileName, playerNum);
+    }
+    case (State)0xC: {
+        static Symbol s3("mc_load_device_missing_fmt");
+        return DataArrayPtr(s3, DataArrayPtr(), profileName, playerNum);
+    }
+    case (State)0xE: {
+        static Symbol s4("mc_auto_load_corrupt");
+        return DataArrayPtr(s4, DataArrayPtr(), GetProfile()->GetName());
+    }
+    case (State)0xF: {
+        static Symbol s5("mc_auto_load_not_owner");
+        return DataArrayPtr(s5, DataArrayPtr());
+    }
     case (State)0x10:
         if (playerNum != -1) {
-            return DataArrayPtr(
-                mc_auto_load_obsolete_version_fmt,
-                DataArrayPtr(),
-                profileName,
-                playerNum
-            );
+            static Symbol s6("mc_auto_load_obsolete_version_fmt");
+            return DataArrayPtr(s6, DataArrayPtr(), profileName, playerNum);
+        } else {
+            static Symbol s7("mc_auto_load_obsolete_version");
+            return DataArrayPtr(s7, DataArrayPtr());
         }
-        return DataArrayPtr(mc_auto_load_obsolete_version, DataArrayPtr());
     case (State)0x11:
         if (playerNum != -1) {
-            return DataArrayPtr(
-                mc_auto_load_newer_version_fmt,
-                DataArrayPtr(),
-                profileName,
-                playerNum
-            );
+            static Symbol s8("mc_auto_load_newer_version_fmt");
+            return DataArrayPtr(s8, DataArrayPtr(), profileName, playerNum);
+        } else {
+            static Symbol s9("mc_auto_load_newer_version");
+            return DataArrayPtr(s9, DataArrayPtr());
         }
-        return DataArrayPtr(mc_auto_load_newer_version, DataArrayPtr());
-    case (State)0x17:
-        return DataArrayPtr(song_info_cache_create, DataArrayPtr());
-    case (State)0x18:
-        return DataArrayPtr(song_info_cache_missing, DataArrayPtr());
-    case (State)0x1C:
-        return DataArrayPtr(song_info_cache_corrupt, DataArrayPtr());
-    case (State)0x29:
-        return DataArrayPtr(global_options_create, DataArrayPtr());
+    case (State)0x17: {
+        static Symbol s10("song_info_cache_create");
+        return DataArrayPtr(s10, DataArrayPtr());
+    }
+    case (State)0x18: {
+        static Symbol s11("song_info_cache_missing");
+        return DataArrayPtr(s11, DataArrayPtr());
+    }
+    case (State)0x1C: {
+        static Symbol s12("song_info_cache_corrupt");
+        return DataArrayPtr(s12, DataArrayPtr());
+    }
+    case (State)0x29: {
+        static Symbol s13("global_options_create");
+        return DataArrayPtr(s13, DataArrayPtr());
+    }
     case (State)0x2A:
-        return DataArrayPtr(global_options_missing, DataArrayPtr());
-    case (State)0x2F:
-        return DataArrayPtr(global_options_corrupt, DataArrayPtr());
-    case (State)0x3A:
-        return DataArrayPtr(global_options_missing, DataArrayPtr());
-    case (State)0x42:
-        return DataArrayPtr(mc_autosave_disabled, DataArrayPtr());
-    case (State)0x48:
-        return DataArrayPtr(mc_save_confirm_overwrite, DataArrayPtr());
-    case (State)0x49:
-        if (TheMemcardMgr.GetSizeNeeded() > 0) {
-            int sz = TheMemcardMgr.GetSizeNeeded();
-            if (!TheCacheMgr || !TheCacheMgr->IsDone() ||
-                TheCacheMgr->GetLastResult() != kCache_NoError) {
-                sz += 0x10;
-            }
-            return DataArrayPtr(mc_save_not_enough_space_fmt, DataArrayPtr(), sz);
-        }
-        return DataArrayPtr(mc_save_not_enough_space, DataArrayPtr());
-    case (State)0x4C:
-        return DataArrayPtr(
-            mc_save_device_missing_fmt, DataArrayPtr(), profileName, playerNum
-        );
-    case (State)0x4E:
-        return DataArrayPtr(mc_save_failed, DataArrayPtr());
-    case (State)0x4F:
-        return DataArrayPtr(mc_save_disabled_by_cheat, DataArrayPtr());
-    case (State)0x50:
-        return DataArrayPtr(mc_load_failed, DataArrayPtr());
-    case (State)0x5C:
-        return DataArrayPtr(mc_manual_save_no_selection, DataArrayPtr());
+    case (State)0x3A: {
+        static Symbol s14("global_options_missing");
+        return DataArrayPtr(s14, DataArrayPtr());
+    }
+    case (State)0x2F: {
+        static Symbol s15("global_options_corrupt");
+        return DataArrayPtr(s15, DataArrayPtr());
+    }
+    case (State)0x42: {
+        static Symbol s16("mc_autosave_disabled");
+        return DataArrayPtr(s16, DataArrayPtr());
+    }
+    case (State)0x48: {
+        static Symbol s17("mc_save_confirm_overwrite");
+        return DataArrayPtr(s17, DataArrayPtr());
+    }
+    case (State)0x49: {
+        static Symbol s18("mc_save_not_enough_space");
+        return DataArrayPtr(s18, DataArrayPtr());
+    }
+    case (State)0x4A: {
+        static Symbol s19("mc_save_not_enough_space");
+        return DataArrayPtr(s19, DataArrayPtr(), -TheMemcardMgr.GetSizeNeeded());
+    }
+    case (State)0x4C: {
+        static Symbol s20("mc_save_device_missing_fmt");
+        return DataArrayPtr(s20, DataArrayPtr(), profileName, playerNum);
+    }
+    case (State)0x4E: {
+        static Symbol s21("mc_save_failed");
+        return DataArrayPtr(s21, DataArrayPtr());
+    }
+    case (State)0x4F: {
+        static Symbol s22("mc_save_disabled_by_cheat");
+        return DataArrayPtr(s22, DataArrayPtr());
+    }
+    case (State)0x50: {
+        static Symbol s23("mc_load_failed");
+        return DataArrayPtr(s23, DataArrayPtr());
+    }
+    case (State)0x5C: {
+        static Symbol s24("mc_manual_save_no_selection");
+        return DataArrayPtr(s24, DataArrayPtr());
+    }
     case (State)0x5F:
         if (playerNum != -1) {
-            return DataArrayPtr(
-                mc_manual_load_confirm_unsaved_fmt,
-                DataArrayPtr(),
-                profileName,
-                playerNum
-            );
+            static Symbol s25("mc_manual_load_confirm_unsaved_fmt");
+            return DataArrayPtr(s25, DataArrayPtr(), profileName, playerNum);
+        } else {
+            static Symbol s26("mc_manual_load_confirm_unsaved");
+            return DataArrayPtr(s26, DataArrayPtr());
         }
-        return DataArrayPtr(mc_manual_load_confirm_unsaved, DataArrayPtr());
-    case (State)0x60:
-        return DataArrayPtr(mc_manual_load_confirm, DataArrayPtr());
-    case (State)0x62:
-        return DataArrayPtr(mc_manual_load_no_selection, DataArrayPtr());
-    case (State)0x63:
-        return DataArrayPtr(mc_manual_load_storage_missing, DataArrayPtr());
-    case (State)0x65:
-        return DataArrayPtr(mc_manual_load_no_file, DataArrayPtr());
-    case (State)0x66:
-        return DataArrayPtr(mc_manual_load_corrupt, DataArrayPtr());
-    case (State)0x67:
-        return DataArrayPtr(mc_manual_load_not_owner, DataArrayPtr());
+    case (State)0x60: {
+        static Symbol s27("mc_manual_load_confirm");
+        return DataArrayPtr(s27, DataArrayPtr());
+    }
+    case (State)0x62: {
+        static Symbol s28("mc_manual_load_no_selection");
+        return DataArrayPtr(s28, DataArrayPtr());
+    }
+    case (State)0x63: {
+        static Symbol s29("mc_manual_load_storage_missing");
+        return DataArrayPtr(s29, DataArrayPtr());
+    }
+    case (State)0x65: {
+        static Symbol s30("mc_manual_load_no_file");
+        return DataArrayPtr(s30, DataArrayPtr());
+    }
+    case (State)0x66: {
+        static Symbol s31("mc_manual_load_corrupt");
+        return DataArrayPtr(s31, DataArrayPtr());
+    }
+    case (State)0x67: {
+        static Symbol s32("mc_manual_load_not_owner");
+        return DataArrayPtr(s32, DataArrayPtr());
+    }
     default:
         MILO_ASSERT(false, 0xE00);
         return DataNode(0);
     }
 }
-
 Symbol SaveLoadManager::GetDialogOpt3() {
+    static Symbol s1("mc_button_continue_no_save");
     Symbol sym(gNullStr);
-    if (mState == kS_SaveNotEnoughSpacePS3) {
-        sym = mc_button_continue_no_save;
+    if (mState == (State)0x4A) {
+        sym = s1;
     }
     return sym;
 }

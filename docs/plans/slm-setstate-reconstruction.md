@@ -190,3 +190,176 @@ sed -n '9828,10964p' $WT/build/45410914/asm/band3/meta_band/SaveLoadManager.s \
 
 Note: `/d1reportSingleClassLayoutSaveLoadManager` produces **no output** with this
 cl.exe (16.00.11886.00) — use the offset histogram above instead.
+
+---
+
+# Session 2 (2026-07-24/25) — the dialog giants + the HANDLE fleet sweep
+
+**Worktree:** `~/tmp/wt-laneF-dialog`, branch `laneF-dialog` (base main `85af0a80`).
+**Baseline: 25,231 strict.  Final: 25,885 (+654, 0 lost).**
+
+## 6. Session ledger — session 2
+
+| commit | change | fn % | frame | whole-binary | lost |
+|---|---|---|---|---|---|
+| `ebf4176f` | GetDialogMsg: drop case-0xE null branch + merge 0x3A into 0x2A | 0 → 0 | **0x4f0 → 0x4c0 (EXACT)** | 25,376 | 0 |
+| `1837a106` | `SaveLoadManager.cpp` `/DRB3_HANDLE_LOCAL_STATIC` | Handle 66.7 → 91.8 | 0x110 → **0x120 (EXACT)** | 25,453 | 0 |
+| `749cf23d` | GetDialogMsg: 32 function-local `static Symbol` + case 0x4A | **100.0** (1648/1648) | exact | 25,496 | 0 |
+| `5212ce13` | GetDialogOpt1/2/3 local statics + retail case sets | **100/100/100** | exact | 25,499 | 0 |
+| `0607b7c3` | HANDLE gate sweep, game round 1 (6 TUs) | — | — | 25,608 | 0 |
+| `2bf1c8d4` | HANDLE gate sweep, game round 2 (6 TUs) | — | — | 25,689 | 0 |
+| `984f49ac` | HANDLE gate sweep, rounds 3–4 (4 TUs) | — | — | 25,736 | 0 |
+| `2288e2f6` | HANDLE gate, `BandCharacter.cpp` | — | — | 25,774 | 0 |
+| `bf7d8639` | HANDLE gate, `VocalTrackDir.cpp` | — | — | 25,793 | 0 |
+| `e2bfd154` | HANDLE gate, bandobj batch 1 (4 TUs) | — | — | 25,850 | 0 |
+| `07cfe6f8` | HANDLE gate, bandobj batch 2 (4 TUs) | — | — | 25,877 | 0 |
+| `dc7abace` | HANDLE gate, bandobj batch 3 (3 TUs) | — | — | 25,885 | 0 |
+
+`SaveLoadManager` unit: 74/405 → **342/405** at strict 100.
+
+## 7. Force-multiplier (2) confirmed and generalised — the funclet trigger
+
+Session 1's corrected model held exactly. GetDialogMsg already had the right
+`__savegprlr_27`; the **only** thing holding its 144 EH funclets at 99.9% was a
++0x30 frame. Fixing the frame alone flipped **145 functions in one build**, with
+the body still at 0%.
+
+**The frame-accounting rule that produced it: MSVC gives every `case` body its
+own stack slots — it does NOT reuse them across arms of a switch.** So the frame
+of a big switch is (roughly) the *sum* of every arm's temporaries, and the frame
+delta is a direct census of extra/missing case bodies. Ours was exactly two
+extra 2-node `DataArrayPtr` temp sets (24 B each):
+
+* **case 0xE** — retail has *no* `if (!pProfile) return DataArrayPtr(mc_manual_load_corrupt, …)`
+  and no `MILO_ASSERT`; it is one expression,
+  `DataArrayPtr(s, DataArrayPtr(), GetProfile()->GetName())` (`fn_8254C0B0` then
+  `fn_827A5018` then `??0DataNode@@QAA@PBD@Z`).
+* **case 0x3A** — retail's jump table points 0x2A **and** 0x3A at the *same*
+  block, so it is `case 0x2A: case 0x3A:`, not two bodies.
+
+> **Reusable:** when a switch-heavy function has an exact `__savegprlr_N` but a
+> frame that is a small multiple of one arm's temp footprint, look for
+> extra/duplicated `case` bodies before touching anything else. It is worth far
+> more than body work — 145 functions for a 6-line diff here.
+
+## 8. Force-multiplier (3) — NEW: the retail dialog/handler `static Symbol` form
+
+Retail does **not** reference the centralized `Symbols2/3/4.h` globals inside
+these methods. It declares **function-local `static Symbol`s built from string
+literals**, all sharing one guard word:
+
+| function | retail addr | guard | storages | count | frame / savegpr |
+|---|---|---|---|---|---|
+| `GetDialogMsg` | `fn_8254CC98` | `0x82DFDA04` | `0x82DFDA00`↓`0x82DFD984` | **32** | 0x4c0 / `_27` |
+| `GetDialogOpt1` | `fn_8254C108` | `0x82DFD950` | `0x82DFD94C`↓`0x82DFD91C` | **13** | 0xd0 / `_18` |
+| `GetDialogOpt2` | `fn_8254C608` | `0x82DFD978` | `0x82DFD974`↓`0x82DFD954` | **9** | 0xb0 / `_21` |
+| `GetDialogOpt3` | `fn_8254C9C8` | `0x82DFD980` | `0x82DFD97C` | **1** | 0x80 / `_28` |
+| `Handle` | `fn_82552660` | `0x82DFDA74` | `0x82DFDA70`↓ | 16 | 0x120 / `_24` |
+
+Two placement rules, both load-bearing:
+
+* **`GetDialogMsg`** declares each static **inside its case arm** — the guarded
+  init sits at the top of that arm's block, in jump-table block order.
+* **`GetDialogOpt1/2/3`** declare **all** statics at the **top of the function**,
+  *before* `Symbol sym(gNullStr)`; every guarded init runs before the switch and
+  the live ones are pinned in callee-saved registers (that is why Opt1 saves
+  from **r18**). Opt1 declares 3 statics the switch never reads
+  (`upload_button_view_first` / `_return` / `_view_prev`) and Opt2 declares 2
+  (`upload_button_return`, `upload_button_view_next`) — the ctor calls are still
+  emitted, so they must be present in source.
+
+For `Handle`/`OnMsg` the same form is already available as
+`/DRB3_HANDLE_LOCAL_STATIC` (`src/system/obj/ObjMacros.h`). Turning it on for
+`SaveLoadManager.cpp` alone was **+77**.
+
+## 9. Retail-vs-Wii divergences confirmed this session
+
+* `GetDialogMsg` state space is **6..0x67** (`subi r11,r11,6 ; cmplwi r11,0x61`,
+  2-byte offset table `jumptable_82093A48` @ `0x82093A48`, base `fn_8254CC98+0xD0`).
+  Decode it with the `band.exe` reader recipe in §11.
+* **Case 0x4A exists** and we were missing it. Retail 0x49 is a bare
+  `DataArrayPtr(s, DataArrayPtr())`; 0x4A is
+  `DataArrayPtr(s, DataArrayPtr(), -TheMemcardMgr.GetSizeNeeded())` (the
+  `neg r11,r3` at `0x8254DBEC`). **Both use the same string
+  `"mc_save_not_enough_space"`** — retail has no `_fmt` variant and no
+  `TheCacheMgr` size fixup. Adding that 30th case label is also what tips MSVC's
+  size-based switch lowering from a binary-search chain to the jump table.
+* `fn_823591E8` (called for 0x4A) is an ICF-folded `li r3,0 ; blr` stub — another
+  instance of the "retail stubbed trivial game accessors" pattern.
+* `Opt1` gains `case 0x4A -> "mc_button_delete_saves"` and **drops** the Wii
+  `0x49/0x4E -> global_options_button_cancel` arm (that symbol belongs to Opt2).
+* `fn_82552660` is the real `SaveLoadManager::Handle` body; `0x8254bbc0` and
+  `0x82553478` are its two 12-byte adjustor thunks (both already 100%).
+
+## 10. The HANDLE-gate sweep — measured, and where it stops
+
+Per-TU protocol: set `/DRB3_HANDLE_LOCAL_STATIC`, full `./tools/ninja-locked`,
+whole-binary A/B, **keep only if delta>0 AND LOST==0**, else revert.
+Harness: `~/tmp/laneF_sweep.py` (rewritable in ~30 lines; see §11).
+
+**33 TUs tried, 22 kept, +381 total.** Notable: SessionMgr +73, BandCharacter +38,
+CampaignGoalsLeaderboardPanel +23, PitchArrow +23, TrackPanelDirBase +22,
+StoreOfferProvider +20, GemTrainerPanel +20, VocalTrackDir +19, BandTrack +17.
+
+**Rejected by the gate (net-positive but with regressions — worth a diagnose):**
+`PresenceMgr.cpp` +19/LOST 1, `TrackPanelDir.cpp` +11/LOST 1,
+`BandHighlight.cpp` +4/LOST 1, `BandWardrobe.cpp` **-10/LOST 11** (retail clearly
+uses the global-Symbol form there).
+
+**Where the vein stops.** The local-static handler form is an **RB3 game-layer**
+property, not a shared-engine one. Zero-delta on every one of:
+`rndobj/{Rnd,Trans,PropAnim,Part,Mesh,MultiMesh}`, `ui/{UI,UIList,UIPanel}`,
+`obj/{Object,Dir,Task}`, `os/{PlatformMgr,ContentMgr,User}`,
+`meta/{SongMgr,StorePanel,StorePreviewMgr,MoviePanel,CreditsPanel,StoreOffer}`,
+`synth/Synth`, `synth_xbox/Synth`, `midi/MidiParser`, `track/TrackDir`,
+`utl/{Song,Cheats}`, plus game TUs `NetworkEmulator`, `TourDescPanel`,
+`TambourineManager`, `TexLoadPanel`, `SelectDifficultyPanel`,
+`ContentLoadingPanel`, `GuitarFx`, `InterstitialMgr`.
+`band3/`, `network/`, and `system/bandobj/` are now **drained**. ~200 ungated
+engine TUs remain but the prior is now measured at ~0 for `system/` outside
+`bandobj` — **do not blanket-sweep them**; `system/hamobj` (34 TUs) is DC3-only
+and should be skipped outright.
+
+## 11. Open questions / next steps (priority order)
+
+1. **`SetState` frame is still +0x10 (0x180 vs 0x170) — blocks 5 EH funclets**
+   (`fn_825518A0/18E8/1970/1998/19C0`, all `subi r31, r12, 0x170`). Apply §7's
+   census rule: retail's slot ladder below `BufStream` is
+   `0x50:8, 0x58:8, 0x60:12, 0x6c:4, 0x70:16`; ours is
+   `0x50:4, 0x54:12, 0x60:16, 0x70:12, 0x7c:4, 0x80:16`. Matching from the top,
+   `{16,4,12}` line up and then retail has **two 8-byte temps** where we have
+   **{16,12,4}** — i.e. one extra object, 16 B. Look at the case-0x38/0x56/0x57
+   `vector<BandProfile*>` / `_M_erase` arms. SetState is 89.37%.
+2. **`Poll` = `fn_82553490`** (2628 B, frame **0x130**, `__savegprlr_29`, 0%,
+   not yet in `target_symbol_map.json`). Owns the last 2 funclets
+   (`fn_82553ED4/EFC`). Reveal it and apply the frame census.
+3. **`Handle` 91.8% → 100.** Remaining diff is one *extra* handler we emit
+   (guard bit 0x4, `"delete_saves"`) and an autoload arm that writes a bitfield
+   at `this-0x14` where retail does `li r11,1 ; stb r11, 0x75(r30)`.
+4. **12 funclets `fn_8254B990..fn_8254BB98` have parent frame 0xf0** — and **no
+   function in the pinned SaveLoadManager span has a 0xf0 frame**. Their parent
+   is outside this unit's split; either a scatter from another TU or an
+   unpinned span. Do not hunt them from inside SaveLoadManager.cpp.
+5. `GetDialogFocusOption` is still unlocated (not among Handle's `bl` targets —
+   likely inlined into Handle).
+6. Diagnose the 4 rejected HANDLE-gate TUs in §10; three are net-positive.
+
+## 12. Reproducible commands (session 2)
+
+```bash
+WT=~/tmp/wt-laneF-dialog
+
+# read retail .rdata strings / jump tables straight out of the extracted PE
+# (orig/45410914/band.exe — no Ghidra needed).  Parse the section table once,
+# then map VA -> file offset.  Used to recover all 55 static-Symbol strings and
+# to decode jumptable_82093A48 (2-byte offsets, base = fn_8254CC98+0xD0).
+
+# annotate a retail function's asm with the strings it references
+python3 ~/tmp/laneF_dump.py fn_8254C108        # see docs; ~15 lines
+
+# per-TU HANDLE-gate A/B sweep (keep iff delta>0 and LOST==0)
+python3 ~/tmp/laneF_sweep.py <cur.pkl> band3/meta_band/Foo.cpp system/bandobj/Bar.cpp
+
+# whole-binary A/B — ALWAYS rm report.cache first
+cd $WT && rm -f build/45410914/report.cache && ./tools/ninja-locked
+```
