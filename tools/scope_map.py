@@ -38,6 +38,21 @@ Classification is layered, highest-confidence first:
 Outputs config/45410914/scope_map.json: {addr_hex: {size, scope, provenance,
 confidence, matched}}.
 
+TERMINOLOGY -- "mapped" means two different things in this repo, do not conflate:
+  * the main build/dtk progress box's "mapped" = PINNED coverage: bytes that live
+    inside a unit with a `splits.txt` .text range (the prerequisite to matching).
+  * this tool's coverage footer = TIER-CLASSIFIED coverage: bytes this map could
+    attribute to a scope tier (game/engine/thirdparty/crt/xdk/vendor) by ANY of
+    the 8 layers above -- pinned or not. It is therefore always >= the pinned
+    number. The dashboard labels it "tier-classified" for exactly this reason.
+
+CACHE HYGIENE -- scope_map.json is gitignored and addr-keyed to ONE target build.
+If it is absent (fresh checkout / worktree) or keyed to a different revision of
+the XEX, `priority` falls back to source-path/name-class only, ~65k anonymous
+fn_8XXXXXXX functions collapse into `unknown`, the per-tier DENOMINATORS shrink,
+and every tier % reads INFLATED. The dashboard now detects this and prints a
+banner; the fix is always `python3 tools/scope_map.py build` (~1 s).
+
 Subcommands: build | report | worklist | classify <addr>
 """
 import argparse
@@ -765,8 +780,8 @@ def _print_report(sm):
            sum(v[3] for v in by.values()), "(cached snapshot; dedup'd)"))
     # The progress block below is AUTHORITATIVE: official measures for the headline
     # + a no-dedup live classification for per-tier (sums to total_code exactly).
-    by_live, measures = _progress_by_live()
-    print_progress(by_live, measures)
+    by_live, measures, cache = _progress_by_live()
+    print_progress(by_live, measures, cache=cache)
 
 
 def cmd_report(args):
@@ -887,13 +902,32 @@ def _bar(p, width=42):
     return s + "░" * (width - used)
 
 
-def print_progress(by, measures, compact=False):
+# Banner copy for each unhealthy cache state: (headline, why-line).
+# All of them mean the same thing operationally -- the map could not classify the
+# anonymous fn_8XXXXXXX bulk, so tier denominators are PINNED-ONLY and inflated.
+_CACHE_BANNER = {
+    "missing": ("SCOPE CACHE MISSING — EVERY % BELOW IS INFLATED",
+                "scope_map.json is absent (fresh checkout / worktree)."),
+    "unreadable": ("SCOPE CACHE UNREADABLE — EVERY % BELOW IS INFLATED",
+                   "scope_map.json is present but corrupt / truncated."),
+    "dead": ("SCOPE CACHE STALE — EVERY % BELOW IS INFLATED",
+             "scope_map.json is addr-keyed to a DIFFERENT target build."),
+}
+
+
+def print_progress(by, measures, cache=None, compact=False):
     """The single at-a-glance decomp dashboard ninja prints after every build.
     Headline reads report.json's official `measures` (== ninja "All"); the per-tier
     `by` uses objdiff's OWN predicates so each axis sums to its official total:
       * matched%  = match_percent_normalized==100 fns / raw fuzzy==100 bytes
       * fuzzy%    = size-weighted fuzzy_match_percent (work-in-progress indicator)
-    Denominator per tier = the TRUE tier size from the map (sums to total_code)."""
+    Denominator per tier = the TRUE tier size from the map (sums to total_code).
+
+    `cache` is the _cache_status() record. When it is not `ok` the tier
+    denominators collapse to pinned-only coverage and every percentage below the
+    headline reads HIGH, so we shout about it instead of silently reporting a
+    number that is not comparable to main's. The binary/headline line is always
+    honest (it comes straight from report.json) and is unaffected."""
     def mb(x):
         return x / 1048576.0
 
@@ -919,13 +953,22 @@ def print_progress(by, measures, compact=False):
     mapped_b = (tot_b - unk_b)
     delta = _today_delta(off_mc, off_tc, off_mf, fuzzy_pct)
 
+    cache = cache or {"state": "ok"}
+    cstate = cache.get("state", "ok")
+    cbad = cstate in _CACHE_BANNER
+    # Stale-but-live cache: boundaries age even though the matched overlay doesn't.
+    age = cache.get("age_days")
+    cstale = (not cbad) and age is not None and age >= CACHE_STALE_DAYS
+
     out = []
     if compact:
         out.append("Decomp %.2f%% matched · %.2f%% fuzzy · %d/%d fns%s"
-                   "  |  north-star oracle %.2f MB @ %.2f%% matched / %.2f%% fuzzy · %.0f%% mapped" %
+                   "  |  north-star oracle %.2f MB @ %.2f%% matched / %.2f%% fuzzy · %.0f%% tier-classified%s" %
                    (pct(off_mc, off_tc), fuzzy_pct, off_mf, off_tf,
                     "  (today " + delta + ")" if delta else "",
-                    mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b), pct(mapped_b, tot_b)))
+                    mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b), pct(mapped_b, tot_b),
+                    ("  [!! scope cache %s — tier %% INFLATED, run: python3 tools/scope_map.py build]"
+                     % cstate) if cbad else ""))
     else:
         # ---- framed dashboard --------------------------------------------------
         IW = 66                                  # inner width between the │ borders
@@ -954,6 +997,24 @@ def print_progress(by, measures, compact=False):
             out.append(line("  today    %s" % delta))
         out.append(line())
 
+        # ---- scope-cache health banner ------------------------------------
+        # Sits ABOVE the tier block it invalidates, so nobody can read an
+        # inflated CORE GOALS number without first reading why it is wrong.
+        if cbad:
+            head, why = _CACHE_BANNER[cstate]
+            out.append(rule("!!  " + head))
+            out.append(line())
+            out.append(line("   %s" % why))
+            out.append(line("   Anonymous fn_8XXXXXXX functions cannot be classified, so"))
+            out.append(line("   tier DENOMINATORS are pinned-only and every % below reads"))
+            out.append(line("   HIGH.  NOT comparable to main / to any other worktree."))
+            out.append(line())
+            out.append(line("   fix:  python3 tools/scope_map.py build      (~1 s)"))
+            if cache.get("coverage") is not None:
+                out.append(line("   (cache dated %s resolves only %.1f%% of report addrs)"
+                                % (cache.get("mtime") or "?", 100.0 * cache["coverage"])))
+            out.append(line())
+
         # Core goals: oracle-backed (the cheap near-term work; crt folds into the
         # MB subtotal rather than spending a row). Bars gauge the run to 100% =
         # "cruising". Tier rows break the cluster down (matched / total each axis).
@@ -976,9 +1037,18 @@ def print_progress(by, measures, compact=False):
             out.append(tier_line(b))
         out.append(line())
 
-        out.append(rule("%.0f%% of binary mapped · %.2f MB unmapped" %
+        # NB: "tier-classified" != the dtk/build box's "mapped". That one counts
+        # bytes PINNED to a splits.txt unit; this counts bytes attributed to a
+        # scope TIER by any of the 8 classification layers, pinned or not.
+        out.append(rule("%.0f%% of binary tier-classified · %.2f MB unclassified" %
                         (pct(mapped_b, tot_b), mb(unk_b))))
-        out.append(edge("╰", "╯"))
+        if cstale:
+            out.append(line("   scope cache %s (%dd old) — tier bounds may drift;"
+                            % (cache.get("mtime") or "?", age)))
+            out.append(line("   refresh: python3 tools/scope_map.py build"))
+            out.append(edge("╰", "╯"))
+        else:
+            out.append(edge("╰", "╯"))
 
     text = "\n".join(out)
     print(text)
@@ -992,21 +1062,64 @@ def print_progress(by, measures, compact=False):
             pass
 
 
+# A cache whose addresses resolve for fewer than this share of report functions
+# is treated as DEAD (keyed to a different target build, e.g. a pre-TU5 map):
+# behaviourally identical to no cache at all, so it gets the same loud banner.
+CACHE_DEAD_COVERAGE = 0.50
+# Age (days) past which the cache gets a one-line staleness footer. The matched
+# overlay is always live (it comes from report.json); what ages is the TIER
+# BOUNDARIES baked into the map.
+CACHE_STALE_DAYS = 14
+
+
+def _cache_status(scope_by_addr, funcs, state):
+    """Describe the health of the cached scope map for the dashboard.
+
+    Returns {state, path, age_days, mtime (ISO date or None), coverage (0..1 or
+    None)}. `state` is one of:
+      ok        -- present, readable, resolves most report addrs
+      missing   -- scope_map.json absent (fresh checkout / un-primed worktree)
+      unreadable-- present but truncated/corrupt JSON
+      dead      -- present but addr-keyed to a DIFFERENT target build
+    Every non-`ok` state means the tier denominators are pinned-only -> INFLATED.
+    Never raises: dashboard output must not be able to break a build."""
+    st = {"state": state, "path": os.path.relpath(SCOPE_MAP, ROOT),
+          "age_days": None, "mtime": None, "coverage": None}
+    try:
+        mt = os.path.getmtime(SCOPE_MAP)
+        d = datetime.date.fromtimestamp(mt)
+        st["mtime"] = d.isoformat()
+        st["age_days"] = (datetime.date.today() - d).days
+    except (OSError, OverflowError, ValueError):
+        pass
+    if state == "ok" and funcs:
+        hit = sum(1 for f in funcs if ("%08X" % f[0]) in scope_by_addr)
+        st["coverage"] = hit / float(len(funcs))
+        if st["coverage"] < CACHE_DEAD_COVERAGE:
+            st["state"] = "dead"
+    return st
+
+
 def _progress_by_live():
     """Fresh per-bucket aggregate (every fn, no dedup) over the cached map, plus
-    report.json's official `measures` for the authoritative headline."""
+    report.json's official `measures` for the authoritative headline, plus a
+    health record for the cache itself (see _cache_status)."""
     funcs, rep = load_functions(REPORT, dedup=False)
+    state = "ok"
     try:
         sm = _load_scope_map()
         scope_by_addr = {a: e["scope"] for a, e in sm.items()}
-    except (FileNotFoundError, json.JSONDecodeError):
-        scope_by_addr = {}      # no cache yet -> everything best-effort/unknown
-    return _by_live(scope_by_addr, funcs), rep.get("measures", {})
+    except FileNotFoundError:
+        scope_by_addr, state = {}, "missing"
+    except (json.JSONDecodeError, OSError, KeyError, TypeError):
+        scope_by_addr, state = {}, "unreadable"
+    cache = _cache_status(scope_by_addr, funcs, state)
+    return _by_live(scope_by_addr, funcs), rep.get("measures", {}), cache
 
 
 def cmd_priority(args):
-    by, measures = _progress_by_live()
-    print_progress(by, measures, compact=args.compact)
+    by, measures, cache = _progress_by_live()
+    print_progress(by, measures, cache=cache, compact=args.compact)
 
 
 # ---------------------------------------------------------------------------

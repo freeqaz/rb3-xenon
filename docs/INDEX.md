@@ -34,6 +34,21 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - **Match-counts age fast.** Any doc dated ≤ 2026-06 carries a matched-function count from its
   era (e.g. 394, 3919, 6568, 9793). Current progress lives in the orchestrator DB
   (`decomp.db`) / `build/45410914/report.json` and MEMORY.md, not in these docs.
+- **Two different "mapped"s — never compare them.** dtk's own progress box says *mapped* for
+  bytes **pinned** to a `splits.txt` unit (the prerequisite to matching). `tools/scope_map.py`'s
+  dashboard footer counts bytes **classified into a scope tier** by any of its 8 layers, pinned
+  or not — always the larger number. The dashboard therefore labels its own axis
+  **"tier-classified"**, not "mapped".
+- **The scope-tier percentages depend on a gitignored cache.**
+  `config/45410914/scope_map.json` is addr-keyed to ONE target build and is not committed. If it
+  is absent (fresh checkout), corrupt, or keyed to an older XEX revision, the ~65k anonymous
+  `fn_8XXXXXXX` functions fall into `unknown`, the per-tier **denominators collapse to
+  pinned-only**, and every tier % in the dashboard reads **INFLATED** and is not comparable to
+  main's. The dashboard now prints a banner in that case; the fix is always
+  `python3 tools/scope_map.py build` (~1 s). `scripts/setup_worktree.sh` reflinks the cache into
+  new worktrees, but a cache produced before a target re-base (e.g. the TU0→TU5 flip) must be
+  rebuilt everywhere, main included. The headline `binary NN% matched` line is read straight
+  from `report.json` and is always honest.
 
 ---
 

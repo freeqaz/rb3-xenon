@@ -354,11 +354,17 @@ if [ -d "$MAIN_REPO/venv" ]; then
 fi
 
 # ---- gitignored analysis inputs : reflink-copy so agents don't have to hand-copy
-# These files live at the repo root and are gitignored (they are large or
-# machine-generated). Three consecutive batch-2 wave agents had to cp them
+# These files are gitignored (they are large or machine-generated) and live at the
+# repo root or under config/.  Three consecutive batch-2 wave agents had to cp them
 # manually; we automate it here.  Each copy is non-fatal: if the source
 # doesn't exist yet the worktree is still usable (agents that don't need the
 # file won't hit the gap).
+#
+# config/45410914/scope_map.json is the load-bearing one: WITHOUT it every build's
+# decomp dashboard (tools/scope_map.py priority) loses the classification for ~65k
+# anonymous fn_8XXXXXXX functions, the per-tier DENOMINATORS collapse to pinned-only
+# coverage, and the worktree silently reports INFLATED tier percentages that are not
+# comparable to main's.  (scope_map.py now also shouts when it is absent.)
 #
 # Source resolution: prefer MAIN_REPO (= the repo containing this script).
 # Fallback: if MAIN_REPO is itself a worktree (e.g. wt-infra), scan
@@ -386,11 +392,14 @@ echo "==> Copying gitignored analysis inputs (non-fatal if absent)"
 for analysis_file in \
         global_fuzzy_pairs.json \
         unified_id_rb3wii.json \
-        struct_db.sqlite; do
+        struct_db.sqlite \
+        config/45410914/scope_map.json; do
     # Try MAIN_REPO first, then PRIMARY_REPO fallback.
     src="$MAIN_REPO/$analysis_file"
     [ -e "$src" ] || src="$PRIMARY_REPO/$analysis_file"
     dst="$WORKTREE_PATH/$analysis_file"
+    # entries may be repo-root-relative PATHS, not just basenames
+    mkdir -p "$(dirname "$dst")" 2>/dev/null || true
     if [ -e "$src" ]; then
         cp --reflink=auto "$src" "$dst" 2>/dev/null \
             && echo "  copied $analysis_file (from $(dirname "$src"))" \
