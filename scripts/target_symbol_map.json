@@ -2069,7 +2069,7 @@
  "0x82790370": "?GetRollIntervalMs@@YAMPBVDataArray@@W4TrackType@@H_N@Z",
  "0x82b99250": "?_M_create_node@?$list@UEventSinkElem@MsgSource@@V?$StlNodeAlloc@UEventSinkElem@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUEventSinkElem@MsgSource@@@Z",
  "0x82378f38": "??0CharDriver@@IAA@XZ",
- "0x82383680": "?EnforceMinimumTargetDistance@CharEyes@@IAAXABVVector3@@0AAVVector3@@@Z",
+ "0x82383680": "?EnforceMinimumTargetDistance@CharEyes@@IAAXABVVector3@@0AAV2@@Z",
  "0x823d0030": "?SyncProperty@CharSleeve@@UAA_NAAVDataNode@@PAVDataArray@@HW4DataNodeType@@@Z",
  "0x823df2d0": "?Print@CharBonesSamples@@UAAXXZ",
  "0x823fe230": "?IsTranslucent@RndBitmap@@QBA_NXZ",

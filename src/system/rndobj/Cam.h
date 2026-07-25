@@ -13,6 +13,11 @@
 
 class RndCam : public RndTransformable {
     friend class NgSpotlightDrawer;
+    // GamePanel::Enter() calls cam->UpdateLocal() directly; friendship keeps
+    // that legal while UpdateLocal stays protected (which is what retail's
+    // `IAA` mangling requires). Friendship is compile-time only — no effect
+    // on mangling, layout or codegen.
+    friend class GamePanel;
 
 public:
     virtual ~RndCam();
@@ -75,12 +80,16 @@ public:
     static float MaxFarNearPlaneRatio() { return sMaxFarNearPlaneRatio; }
     const Hmx::Matrix4 &GetViewProjMatrix() const { return mViewProjMatrix; }
 
-    // RB3 GamePanel::Enter() calls cam->UpdateLocal() directly (retail X360
-    // exposes it publicly); dc3's newer RndCam left it protected.
-    void UpdateLocal();
-
 protected:
     RndCam();
+
+    // Retail mangles this `IAA` (protected), agreeing with dc3's RndCam — the
+    // earlier "retail exposes it publicly" note was wrong (it was inferred
+    // from GamePanel::Enter() calling cam->UpdateLocal(), which retail can do
+    // via friendship). Access is pure name-mangling with no vtable/layout
+    // effect, but objdiff pairs by name, so a public declaration can never
+    // pair with the target symbol.
+    void UpdateLocal();
 
     DataNode OnSetFrustum(const DataArray *);
     DataNode OnSetZRange(const DataArray *);

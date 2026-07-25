@@ -20,8 +20,14 @@ public:
     virtual void Count(int, int, float, Symbol);
     virtual void FinishCount();
     virtual bool IsEmptyValue() const;
+    // Retail mangles this `MAA` (protected virtual) — matching the access of
+    // the UITransitionHandler base declaration. Access is pure name-mangling
+    // (no vtable/layout effect), but objdiff pairs by name, so a public
+    // declaration here can never pair with the target symbol.
+protected:
     virtual void FinishValueChange();
 
+public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
     static void LoadOldBandTextComp(BinStream &);
