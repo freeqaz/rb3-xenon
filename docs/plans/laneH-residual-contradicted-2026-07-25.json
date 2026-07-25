@@ -1,0 +1,3853 @@
+[
+ {
+  "name": "??$?5VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8272b860"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6M@@YAAAVTextStream@@AAV0@ABV?$Key@M@@@Z",
+  "cur": [
+   "0x82461398"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x824693f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x82483148"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x82461730"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8246e2a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8246e1f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8246e148"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x82461680"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x82461c88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8245e2a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
+  "cur": [
+   "0x8246de28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
+  "cur": [
+   "0x8246ddb0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
+  "cur": [
+   "0x8246dd38"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x824797d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6VQuat@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VQuat@Hmx@@@@@Z",
+  "cur": [
+   "0x8245def8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6VTexPtr@RndMatAnim@@@@YAAAVTextStream@@AAV0@ABV?$Key@VTexPtr@RndMatAnim@@@@@Z",
+  "cur": [
+   "0x824618c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6VVector2@@@@YAAAVTextStream@@AAV0@ABV?$Key@VVector2@@@@@Z",
+  "cur": [
+   "0x8247ed00"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??$?6VVector3@@@@YAAAVTextStream@@AAV0@ABV?$Key@VVector3@@@@@Z",
+  "cur": [
+   "0x8245df70"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0AccomplishmentCategory@@QAA@PBVDataArray@@H@Z",
+  "cur": [
+   "0x825ea880"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0AccomplishmentDiscSongConditional@@QAA@PAVDataArray@@H@Z",
+  "cur": [
+   "0x825e55a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0AccomplishmentGroup@@QAA@PAVDataArray@@H@Z",
+  "cur": [
+   "0x825eabc8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0AccomplishmentSetlist@@QAA@PAVDataArray@@H@Z",
+  "cur": [
+   "0x825e5870"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0AccomplishmentSongFilterConditional@@QAA@PAVDataArray@@H@Z",
+  "cur": [
+   "0x825e9448"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "??0AccomplishmentTrainerCategoryConditional@@QAA@PAVDataArray@@H@Z",
+  "cur": [
+   "0x825e82c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0BandLabel@@QAA@XZ",
+  "cur": [
+   "0x82341d50"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0BandWardrobe@@QAA@XZ",
+  "cur": [
+   "0x8232e8e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0CampaignKey@@QAA@PAVDataArray@@@Z",
+  "cur": [
+   "0x8265ef30"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0CampaignLevel@@QAA@PAVDataArray@@H@Z",
+  "cur": [
+   "0x82658ce0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0ChordInfo@ChordbookPanel@@QAA@XZ",
+  "cur": [
+   "0x826b46a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "??0FileMergerOrganizerLoader@@QAA@XZ",
+  "cur": [
+   "0x823d9448"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0FixedSetlist@@QAA@XZ",
+  "cur": [
+   "0x82365290"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0GigFilter@@QAA@XZ",
+  "cur": [
+   "0x82365050"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0MetaMusicScene@@QAA@PAVDataArray@@@Z",
+  "cur": [
+   "0x827b9f18"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0QuestFilterPanel@@QAA@XZ",
+  "cur": [
+   "0x82b7adb0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0Synchronizable@@QAA@PBD@Z",
+  "cur": [
+   "0x823e94c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0TourPerformerImpl@@QAA@AAVBandUserMgr@@@Z",
+  "cur": [
+   "0x82361070"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??0WorldReflection@@IAA@XZ",
+  "cur": [
+   "0x824e8ee0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??6@YAAAVTextStream@@AAV0@ABVColor@Hmx@@@Z",
+  "cur": [
+   "0x824f52b8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??6@YAAAVTextStream@@AAV0@ABVMatrix3@Hmx@@@Z",
+  "cur": [
+   "0x824ee2a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??6@YAAAVTextStream@@AAV0@ABVQuat@Hmx@@@Z",
+  "cur": [
+   "0x824ee0e0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??6@YAAAVTextStream@@AAV0@ABVTransform@@@Z",
+  "cur": [
+   "0x824ee308"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??6@YAAAVTextStream@@AAV0@ABVVector2@@@Z",
+  "cur": [
+   "0x824ee230"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??6@YAAAVTextStream@@AAV0@ABVVector3@@@Z",
+  "cur": [
+   "0x824ee190"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "??__E?sNull@FilePath@@0V1@A@@YAXXZ",
+  "cur": [
+   "0x82c40e38"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?AddUpgradeData@SongUpgradeMgr@@QAAXPAVDataArray@@PAVDataLoader@@W4ContentLocT@@VSymbol@@@Z",
+  "cur": [
+   "0x8264e498"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?AllowOverride@BandCharacter@@QAA_NPBD@Z",
+  "cur": [
+   "0x8227e248"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?AngleVectorSync@@YA_NAAVVector2@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x82449780"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?CacheSongData@SongMgr@@IAAXPAVDataArray@@PAVDataLoader@@W4ContentLocT@@VSymbol@@@Z",
+  "cur": [
+   "0x827a9fc8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Clear@Instarank@@QAAXXZ",
+  "cur": [
+   "0x8264fa88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Clear@PendingDataInfo@MetaPerformer@@QAAXXZ",
+  "cur": [
+   "0x8257fe00"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ClearCurrentGoal@Campaign@@QAAXXZ",
+  "cur": [
+   "0x825a4c58"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ClearGroup@BandCharacter@@QAAXXZ",
+  "cur": [
+   "0x822818b0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ClearSelections@FileMerger@@QAAXXZ",
+  "cur": [
+   "0x82392430"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ClearSlowFrame@Timer@@SAXXZ",
+  "cur": [
+   "0x82c42910"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?ColatedPrint@MemTracker@@AAAXAAVTextStream@@PAVAllocInfo@@PBD@Z",
+  "cur": [
+   "0x827d4550"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ContentLoaded@SongMgr@@UAAXPAVLoader@@W4ContentLocT@@VSymbol@@@Z",
+  "cur": [
+   "0x827aa240"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ContentPath@XboxContentMgr@@UAAPBDH@Z",
+  "cur": [
+   "0x825216a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataACos@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x824f50c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataASin@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x824f5040"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataATan@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x824f5150"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataDirname@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x82761b58"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataFuncName@@YA?AVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@Z",
+  "cur": [
+   "0x82763420"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataHelp@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x824667a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataStrElem@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x827625a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DataWriteFile@@YAXPBDPBVDataArray@@H@Z",
+  "cur": [
+   "0x8276adc8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DeleteParentDirs@CacheXbox@@IAA_NVString@@@Z",
+  "cur": [
+   "0x827dab50"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?DumpObjList@RndAmbientOcclusion@@IBAXPBDABV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8248c970"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?EncodeUTF8@@YAIAAVString@@I@Z",
+  "cur": [
+   "0x827cc778"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Enter@AccomplishmentPanel@@UAAXXZ",
+  "cur": [
+   "0x826021d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Enter@BandCharacter@@UAAXXZ",
+  "cur": [
+   "0x82287b38"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ExtractCatAdj@@YAXVSymbol@@AAV1@1@Z",
+  "cur": [
+   "0x8228cf38"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?FadeOutVoiceover@VoiceoverPanel@@QAAXXZ",
+  "cur": [
+   "0x8262fba0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?FinishLoad@MetaPanel@@UAAXXZ",
+  "cur": [
+   "0x825731b0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?FirstShotOk@CameraManager@@AAAXVSymbol@@@Z",
+  "cur": [
+   "0x824bb2b8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ForceMercurySwitch@BeatMatcher@@UAAX_N@Z",
+  "cur": [
+   "0x82791490"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?FretButtonDown@BeatMatcher@@UAAXHH@Z",
+  "cur": [
+   "0x82790e80"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?FretButtonUp@BeatMatcher@@UAAXH@Z",
+  "cur": [
+   "0x82790fe0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetAverageTestTime@CalibrationPanel@@QAAHXZ",
+  "cur": [
+   "0x8260c260"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetAwardNameDisplay@AccomplishmentManager@@QBA?AVSymbol@@V2@@Z",
+  "cur": [
+   "0x82558dc0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetCampaignLevelForMetaScore@Campaign@@QBA?AVSymbol@@H@Z",
+  "cur": [
+   "0x825a6230"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetCurrentGoalIcon@Campaign@@QBA?AVString@@XZ",
+  "cur": [
+   "0x825a4d18"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetDifficulty@Lesson@@QBA?AW4Difficulty@@XZ",
+  "cur": [
+   "0x82569370"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetDirClass@DirLoader@@SA?AVSymbol@@PBD@Z",
+  "cur": [
+   "0x82754aa8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?GetEmptyStarIcon@StarDisplay@@QBADXZ",
+  "cur": [
+   "0x8231d060"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetFile@FileCache@@IAAPAVFile@@PBD@Z",
+  "cur": [
+   "0x82518c88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetMinimumDifficultyForCurrentAccomplishment@Campaign@@QBA?AW4Difficulty@@XZ",
+  "cur": [
+   "0x825a4db8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetPlayerContributionString@AccuracyTracker@@UBA?AVString@@VSymbol@@@Z",
+  "cur": [
+   "0x826e2498"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetPlayerContributionString@TrackerManager@@QBA?AVString@@VSymbol@@@Z",
+  "cur": [
+   "0x82693428"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetRequiredScoreTypeForCurrentAccomplishment@Campaign@@QBA?AW4ScoreType@@XZ",
+  "cur": [
+   "0x825a4e20"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetRequiredTrackTypeForCurrentAccomplishment@Campaign@@QBA?AW4TrackType@@XZ",
+  "cur": [
+   "0x825a4eb0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetSoloScoreTypeIcon@MetaPerformer@@QAAPBDPAVBandUser@@@Z",
+  "cur": [
+   "0x8257bc88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetSubDirPath@ObjectDir@@QAA?AVFilePath@@ABV2@ABVBinStream@@@Z",
+  "cur": [
+   "0x8274f318"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetSymbol@FixedSizeSaveableStream@@QBA?AVSymbol@@H@Z",
+  "cur": [
+   "0x827ab310"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetTitleToken@EditSetlistPanel@@QAA?AVSymbol@@XZ",
+  "cur": [
+   "0x8261b020"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetTrackIcon@BandTrack@@QBAPBDXZ",
+  "cur": [
+   "0x8234d6c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GetTrackIcon@Track@@UBAPBDXZ",
+  "cur": [
+   "0x82b979f0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?GrindArray@ByteGrinder@@QAAXJJPAEHH@Z",
+  "cur": [
+   "0x82727310"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Handle@BaseMaterial@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": [
+   "0x8276d540"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?Handle@PracticePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": [
+   "0x826b3758"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Handle@Tour@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": [
+   "0x8235d688"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Handle@UIPicture@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": [
+   "0x828167d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Handle@Watcher@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": [
+   "0x822b8f08"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HandleInterval@@YA_NPADHABVGameGem@@HAAH@Z",
+  "cur": [
+   "0x82779de0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HandleNoSeventh@@YAXPADHABVGameGem@@HAAH@Z",
+  "cur": [
+   "0x8277a268"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HandleNoSeventhMinor@@YAXPADHABVGameGem@@HAAH@Z",
+  "cur": [
+   "0x8277a498"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HandleNoThird@@YAXPADHABVGameGem@@HAAH@Z",
+  "cur": [
+   "0x8277a008"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HasAward@Accomplishment@@QBA_NXZ",
+  "cur": [
+   "0x82594548"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HasAward@AccomplishmentCategory@@QBA_NXZ",
+  "cur": [
+   "0x825ea848"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HasAward@AccomplishmentGroup@@QBA_NXZ",
+  "cur": [
+   "0x825eab90"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HasAwardIcon@AccomplishmentManager@@QBA_NVSymbol@@@Z",
+  "cur": [
+   "0x82559108"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HasHighscore@Instarank@@QBA_NXZ",
+  "cur": [
+   "0x8264fbb8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?HasID@FixedSizeSaveableStream@@QBA_NH@Z",
+  "cur": [
+   "0x827ab3a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Height@RndOverlay@@QBAMXZ",
+  "cur": [
+   "0x82416da8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Help@RndConsole@@QAAXVSymbol@@@Z",
+  "cur": [
+   "0x82466338"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Hit@Player@@UAAXXZ",
+  "cur": [
+   "0x826a49a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@AutoTimer@@SAXXZ",
+  "cur": [
+   "0x82511ff8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@CharBoneDir@@SAXXZ",
+  "cur": [
+   "0x823b5998"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@DxLight@@SAXXZ",
+  "cur": [
+   "0x827403d8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@GlitchFinder@@SAXXZ",
+  "cur": [
+   "0x827c93d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@MemcardMgr@@QAAXXZ",
+  "cur": [
+   "0x827abfd0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@NgLight@@SAXXZ",
+  "cur": [
+   "0x82b8b288"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@NgPostProc@@SAXXZ",
+  "cur": [
+   "0x82b89ad0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@SkeletonClip@@SAXXZ",
+  "cur": [
+   "0x824a4738"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Init@StreamPlayer@@AAAXXZ",
+  "cur": [
+   "0x827ba948"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?InitParams@FxSendMeterEffect360@@MAAXPAUIXAudio2SubmixVoice@@H@Z",
+  "cur": [
+   "0x82b64108"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?InqGoalsAcquiredForSong@AccomplishmentManager@@QAA_NPAVBandUser@@VSymbol@@AAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "cur": [
+   "0x8255d380"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?IsComparisonConditionMet@TourCondition@@QBA_NABVTourPropertyCollection@@PBVDataArray@@@Z",
+  "cur": [
+   "0x8235a8a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?IsConditionMet@TourCondition@@QBA_NABVTourProgress@@PBVDataArray@@@Z",
+  "cur": [
+   "0x8235ab70"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Load@GamePanel@@UAAXXZ",
+  "cur": [
+   "0x82695f88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?LoadArt@BandStorePanel@@UAAXPBDPAVUIPanel@@@Z",
+  "cur": [
+   "0x82606720"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?LoadStreamFx@MetaMusic@@QAAXXZ",
+  "cur": [
+   "0x827118f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?LocalFinaleSwing@GemPlayer@@QAAXH@Z",
+  "cur": [
+   "0x826bf420"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?LocalizeSeparatedInt@@YAPBDHAAVLocale@@@Z",
+  "cur": [
+   "0x827c97c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?MakeInstrumentPath@BandCharDesc@@QAAXVSymbol@@0AAVFilePath@@@Z",
+  "cur": [
+   "0x823352d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?MakeOutfitPath@BandCharDesc@@QAAXVSymbol@@AAVFilePath@@@Z",
+  "cur": [
+   "0x82335220"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?MakeWorldSphere@RndParticleSys@@UAA_NAAVSphere@@_N@Z",
+  "cur": [
+   "0x824467e0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?MercurySwitch@BeatMatcher@@UAAXM@Z",
+  "cur": [
+   "0x827913d8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NewHeaderNode@SongSortByArtist@@UBAPAVHeaderSortNode@@PAVSongSortNode@@@Z",
+  "cur": [
+   "0x8265a318"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NewHeaderNode@SongSortByPlays@@UBAPAVHeaderSortNode@@PAVSongSortNode@@@Z",
+  "cur": [
+   "0x8265c938"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NewShortcutNode@SongSortByDiff@@UBAPAVShortcutNode@@PAVSongSortNode@@@Z",
+  "cur": [
+   "0x8265d468"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NewShortcutNode@SongSortByPlays@@UBAPAVShortcutNode@@PAVSongSortNode@@@Z",
+  "cur": [
+   "0x8265c820"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NewShortcutNode@SongSortByReview@@UBAPAVShortcutNode@@PAVSongSortNode@@@Z",
+  "cur": [
+   "0x8265ce88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NewSubheaderNode@SongSortByArtist@@UBAPAVSubheaderSortNode@@PAVSongSortNode@@@Z",
+  "cur": [
+   "0x8265a4b0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NodeCmp@@YAHPBX0@Z",
+  "cur": [
+   "0x8232b0d8",
+   "0x8274cb40"
+  ],
+  "desired": "0x8232b0d8",
+  "holder": "?NodeCmp@@YAHPBX0@Z",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?NonStrumSwing@BeatMatcher@@UAAXH_N0@Z",
+  "cur": [
+   "0x82791310"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ObjectList@@YA?AVDataNode@@PAVObjectDir@@VSymbol@@_N@Z",
+  "cur": [
+   "0x82758eb0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?OnEndOfTrack@MidiParserMgr@@UAAXXZ",
+  "cur": [
+   "0x827ec370"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnGetLocalRotIndex@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+  "cur": [
+   "0x823f8078"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnGetResourcesPath@UIComponent@@QAA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x827fed20"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnGetRot@RndMultiMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "cur": [
+   "0x82468be0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnGetWorldRot@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+  "cur": [
+   "0x823f89f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?OnLoadDircut@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x8228a9a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnMsg@StoreMenuPanel@@QAA?AVDataNode@@ABVMultipleItemsEnumCompleteMsg@@@Z",
+  "cur": [
+   "0x8263cf28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnTestDrawGroups@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x8243faf0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?OnUnloadVenue@BandWardrobe@@QAA?AVDataNode@@PAVDataArray@@@Z",
+  "cur": [
+   "0x8232c3c0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PlatformRegionToSymbol@@YA?AVSymbol@@W4PlatformRegion@@@Z",
+  "cur": [
+   "0x825148d8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?PlayBandDiedCue@GamePanel@@QAAXXZ",
+  "cur": [
+   "0x82694d00"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PlayFaceClip@BandCharacter@@QAAXXZ",
+  "cur": [
+   "0x82280888"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Poll@InlineHelp@@UAAXXZ",
+  "cur": [
+   "0x82315838"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Poll@UIPicture@@UAAXXZ",
+  "cur": [
+   "0x82816a68"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Poll@UIScreen@@UAAXXZ",
+  "cur": [
+   "0x827f1060"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Poll@VocalGuidePitch@@QAAXM@Z",
+  "cur": [
+   "0x826c91c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PreSave@CharClipSet@@UAAXAAVBinStream@@@Z",
+  "cur": [
+   "0x823d0678"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@CharClip@@UAAXXZ",
+  "cur": [
+   "0x8237dac0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@DataArray@@QBAXAAVTextStream@@W4DataType@@_N@Z",
+  "cur": [
+   "0x8274bc78"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@FaderGroup@@QAAXAAVTextStream@@@Z",
+  "cur": [
+   "0x8270bc88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@JoinResponseMsg@@UBAXAAVTextStream@@@Z",
+  "cur": [
+   "0x823f1100"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@PropKeys@@QAAXXZ",
+  "cur": [
+   "0x82421a30"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndEnvAnim@@UAAXXZ",
+  "cur": [
+   "0x82486b60"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndFlare@@UAAXXZ",
+  "cur": [
+   "0x82476690"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndGenerator@@UAAXXZ",
+  "cur": [
+   "0x8247c3f0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndLine@@UAAXXZ",
+  "cur": [
+   "0x8247a560"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndMatAnim@@UAAXXZ",
+  "cur": [
+   "0x82461e48"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndMesh@@UAAXXZ",
+  "cur": [
+   "0x82418860"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndMeshAnim@@UAAXXZ",
+  "cur": [
+   "0x8246e358"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndMorph@@UAAXXZ",
+  "cur": [
+   "0x824832e0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndMultiMesh@@UAAXXZ",
+  "cur": [
+   "0x82469580"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndParticleSysAnim@@UAAXXZ",
+  "cur": [
+   "0x8247f1f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndPropAnim@@UAAXXZ",
+  "cur": [
+   "0x82427368"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndTex@@UAAXXZ",
+  "cur": [
+   "0x823ff0d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndTransAnim@@UAAXXZ",
+  "cur": [
+   "0x8245e4d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@RndTransformable@@UAAXXZ",
+  "cur": [
+   "0x823f76e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@SyncObjMsg@@UBAXAAVTextStream@@@Z",
+  "cur": [
+   "0x823e9b20"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Print@UIScreen@@UAAXAAVTextStream@@@Z",
+  "cur": [
+   "0x827f1848"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ProfileName@BandUser@@QBAPBDXZ",
+  "cur": [
+   "0x8268b148"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAUMBT@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x827c62c0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAUProxyCall@EventTrigger@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x8249efe0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAVCamShotFrame@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x824c2040"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAVRect@Hmx@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x8276a1f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?PropSync@@YA_NAAVSphere@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x82769ab0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAVTransform@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x8276a010"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAVVector2@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x82769cf0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?PropSync@@YA_NAAVVector3@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x82769e48"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?RGGetChordName@@YAXPADHABVGameGem@@HH_N@Z",
+  "cur": [
+   "0x8277a6d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?ReadFileHeader@MidiReader@@AAAXAAVBinStream@@@Z",
+  "cur": [
+   "0x827ef598"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?RefreshPrimaryProfileInfo@BandMachineMgr@@QAAXXZ",
+  "cur": [
+   "0x825c1f68"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Reset@BandMachine@@QAAXXZ",
+  "cur": [
+   "0x825c0f60"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Reset@LyricPlate@@QAAXXZ",
+  "cur": [
+   "0x82baf8c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?RestoreDrums@MasterAudio@@QAAXH@Z",
+  "cur": [
+   "0x8277df08"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Save@DataNode@@QBAXAAVBinStream@@@Z",
+  "cur": [
+   "0x8274b500"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SelectCategory@AccomplishmentPanel@@QAAXVSymbol@@@Z",
+  "cur": [
+   "0x825fe638"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SelectGoal@AccomplishmentPanel@@QAAXVSymbol@@@Z",
+  "cur": [
+   "0x825fd3b0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SelectGroup@AccomplishmentPanel@@QAAXVSymbol@@@Z",
+  "cur": [
+   "0x82600130"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SelectedSource@CampaignSongInfoPanel@@QBA?AVSymbol@@XZ",
+  "cur": [
+   "0x825f5b88"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?SendCurWorldMsg@BandDirector@@QAAXVSymbol@@_N@Z",
+  "cur": [
+   "0x82293450"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SendHit@TrackWatcherImpl@@QAAXMHIW4GemHitFlags@@@Z",
+  "cur": [
+   "0x82794f60"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SendMessage@BandWardrobe@@QAAXVSymbol@@0_N@Z",
+  "cur": [
+   "0x8232cec0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SendMiss@TrackWatcherImpl@@QAAXMHHHW4GemHitFlags@@@Z",
+  "cur": [
+   "0x82795020"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SendPass@TrackWatcherImpl@@QAAXMH@Z",
+  "cur": [
+   "0x827951f0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SendSeen@TrackWatcherImpl@@QAAXMH@Z",
+  "cur": [
+   "0x82796420"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SendTransition@PanelDir@@IAAXABVMessage@@VSymbol@@1@Z",
+  "cur": [
+   "0x828071f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Set@FilePath@@QAAXPBD0@Z",
+  "cur": [
+   "0x827be9a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetBandName@AppLabel@@QAAXPBVBandProfile@@@Z",
+  "cur": [
+   "0x825c68d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetCrowd@BandDirector@@QAAXVSymbol@@@Z",
+  "cur": [
+   "0x822912f0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetFromScoreDisplayData@AppLabel@@QAAXFHH_N@Z",
+  "cur": [
+   "0x825c6ba8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetHasTrackerFocus@BandTrack@@UAAX_N@Z",
+  "cur": [
+   "0x82351bc8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetJumpSamples@StandardStream@@UAAXHHPBD@Z",
+  "cur": [
+   "0x82701b70"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetTrack@BeatMatcher@@UAAXH@Z",
+  "cur": [
+   "0x82791540"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetTypeDef@MidiParser@@UAAXPAVDataArray@@@Z",
+  "cur": [
+   "0x827e6898"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetVoiceoverSymbol@VoiceoverPanel@@QAAXVSymbol@@@Z",
+  "cur": [
+   "0x8262fde8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SetVolume@Metronome@@QAAXHH@Z",
+  "cur": [
+   "0x826f07c0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Start@BeatMatcher@@QAAXXZ",
+  "cur": [
+   "0x82790df8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StartAnim@LightPreset@@UAAXXZ",
+  "cur": [
+   "0x824add50"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@ADSR@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc1e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@AppLabel@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82741040"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@AppMiniLeaderboardDisplay@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824aa5e0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CamShot@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82742b90"
+  ],
+  "desired": "0x824bd6c0",
+  "holder": "?StaticClassName@RndMovie@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharBlendBone@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a2a8"
+  ],
+  "desired": "0x8236a528",
+  "holder": "?StaticClassName@CharIKScale@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharBoneTwist@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82317aa0"
+  ],
+  "desired": "0x82369e28",
+  "holder": "?StaticClassName@CharInterest@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharClipSet@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236ad28"
+  ],
+  "desired": "0x8236ada8",
+  "holder": "?StaticClassName@ClipCollide@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharCuff@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a328"
+  ],
+  "desired": "0x8236a5a8",
+  "holder": "?StaticClassName@CharLipSync@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharDriver@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82369da8"
+  ],
+  "desired": "0x8227c788",
+  "holder": "?StaticClassName@CharWeightSetter@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharDriverMidi@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a928"
+  ],
+  "desired": "0x8236aaa8",
+  "holder": "?StaticClassName@FileMerger@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharEyeDartRuleset@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82369ea8"
+  ],
+  "desired": "0x8236a028",
+  "holder": "?StaticClassName@CharIKFingers@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharEyes@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8229ceb8"
+  ],
+  "desired": "0x8236a128",
+  "holder": "?StaticClassName@CharIKFoot@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@CharFeedback@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82369d28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@CharForeTwist@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a628"
+  ],
+  "desired": "0x8236a7a8",
+  "holder": "?StaticClassName@CharIKMidi@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharHair@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a3a8"
+  ],
+  "desired": "0x8236a628",
+  "holder": "?StaticClassName@CharForeTwist@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKFingers@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a028"
+  ],
+  "desired": "0x8236a2a8",
+  "holder": "?StaticClassName@CharBlendBone@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKFoot@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a128"
+  ],
+  "desired": "0x8236a3a8",
+  "holder": "?StaticClassName@CharHair@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKHand@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a0a8"
+  ],
+  "desired": "0x8236a328",
+  "holder": "?StaticClassName@CharCuff@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKMidi@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a7a8"
+  ],
+  "desired": "0x8236a9a8",
+  "holder": "?StaticClassName@CharMirror@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKRod@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a4a8"
+  ],
+  "desired": "0x8236a6a8",
+  "holder": "?StaticClassName@FxSendDelay@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKScale@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a528"
+  ],
+  "desired": "0x8236a728",
+  "holder": "?StaticClassName@CharTransDraw@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharIKSliderMidi@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a828"
+  ],
+  "desired": "0x8236aa28",
+  "holder": "?StaticClassName@CharNeckTwist@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharInterest@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82369e28"
+  ],
+  "desired": "0x8236a0a8",
+  "holder": "?StaticClassName@CharIKHand@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharLipSync@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a5a8"
+  ],
+  "desired": "0x8236ae28",
+  "holder": "?StaticClassName@PhotoSpotlightPositioner@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharLipSyncDriver@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a8a8"
+  ],
+  "desired": "0x8236aea8",
+  "holder": "?StaticClassName@PracticeOptionsProvider@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharLookAt@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82369c28"
+  ],
+  "desired": "0x82369f28",
+  "holder": "?StaticClassName@CharPosConstraint@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharMirror@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a9a8"
+  ],
+  "desired": "0x8236ab28",
+  "holder": "?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharNeckTwist@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236aa28"
+  ],
+  "desired": "0x8236aba8",
+  "holder": "?StaticClassName@CharServoBone@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236ab28"
+  ],
+  "desired": "0x8236ac28",
+  "holder": "?StaticClassName@CharSignalApplier@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharPosConstraint@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82369f28"
+  ],
+  "desired": "0x8236a4a8",
+  "holder": "?StaticClassName@CharIKRod@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharServoBone@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236aba8"
+  ],
+  "desired": "0x8236aca8",
+  "holder": "?StaticClassName@CharSleeve@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharSignalApplier@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236ac28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharSleeve@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236aca8"
+  ],
+  "desired": "0x8236ad28",
+  "holder": "?StaticClassName@CharClipSet@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharTransDraw@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a728"
+  ],
+  "desired": "0x8236a928",
+  "holder": "?StaticClassName@CharDriverMidi@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CharWeightSetter@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227c788"
+  ],
+  "desired": "0x82369ea8",
+  "holder": "?StaticClassName@CharEyeDartRuleset@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@ClipCollide@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236ada8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@CreditsPanel@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x825717d0"
+  ],
+  "desired": "0x82571b18",
+  "holder": "?StaticClassName@CampaignMasterQuestSongSelectPanel@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@DOFProc@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x825324a0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@DepthBuffer3D@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc0e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@DxCam@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824aa560"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@DxCubeTex@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824aa660"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@DxLight@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8256f5c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@DxMat@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fbee8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@DxMesh@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8240e940"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@DxParticleSys@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826cb0f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@EventTask@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82273728"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FileMerger@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236aaa8"
+  ],
+  "desired": "0x8236afa8",
+  "holder": "?StaticClassName@StarsDisplay@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FitnessFilterObj@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82310e50"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@Flow@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8228ca38"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowCommand@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823e3570"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowDistance@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82321590"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowEventListener@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823e0b28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowIf@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823ead68"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowLabel@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227df28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowMultiSetProperty@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823e0928"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowNode@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8240e540"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowOnStop@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x822dc7b0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FlowOutPort@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227c658"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowQueueable@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8256e688"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowSwitch@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82324ca0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowTrigger@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8256f398"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FlowWhile@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823d93c8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FontMap3d@RndText@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8252fa70"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FxSendCompress@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8269f378"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FxSendDelay360@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b5a158"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FxSendDelay@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236a6a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FxSendMeterEffect360@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b5a680"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FxSendPitchShift360@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b5a788"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FxSendPitchShift@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82738f08"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@FxSendReverb360@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b59fd0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FxSendSynapse360@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b5a808"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@FxSendWah360@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b5a888"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@HamListRibbon@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82326300"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@HamMove@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82271a90"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@HamNavList@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8228c908"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@HamPhotoDisplay@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82310ed0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@HamScrollSpeedIndicator@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82329b20"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@HamWardrobe@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82345040"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@HeldButtonPanel@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8256e7a8"
+  ],
+  "desired": "0x82571258",
+  "holder": "?StaticClassName@UIListWidget@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@LocalePanel@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc4e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@MidiInstrument@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc668"
+  ],
+  "desired": "0x826fc0e8",
+  "holder": "?StaticClassName@DepthBuffer3D@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@NgDOFProc@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227a5a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@NgEnviron@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82705838"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@NgFur@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82319950"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@NgLight@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x825b2528"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@NgMat@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fbf68"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@NgSpotlightDrawer@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824d1848"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@Object@Hmx@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227ae48"
+  ],
+  "desired": "0x82271a90",
+  "holder": "?StaticClassName@HamMove@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@ObjectDir@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227acc8"
+  ],
+  "desired": "0x8227df28",
+  "holder": "?StaticClassName@FlowLabel@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@ParallelGroupSeq@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8231c150"
+  ],
+  "desired": "0x826fc068",
+  "holder": "?StaticClassName@RndEnterable@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@PhotoSpotlightPositioner@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236ae28"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@PhysicsVolume@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8249b188"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@PracticeOptionsProvider@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236aea8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@PropertyEventProvider@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8235b978"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@PropertyTask@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227a628"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@RandomGroupSeq@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc268"
+  ],
+  "desired": "0x826fbf68",
+  "holder": "?StaticClassName@NgMat@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RandomIntervalGroupSeq@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc2e8"
+  ],
+  "desired": "0x82705838",
+  "holder": "?StaticClassName@NgEnviron@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RndCam@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824aa4e0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RndCubeTex@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824aa3e0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@RndEnterable@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc068"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RndEnviron@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824aa460"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RndFont3d@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8251b880"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@RndMat@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227aa48"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RndMesh@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227aac8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@RndMeshAnim@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8240e840"
+  ],
+  "desired": "0x8240dec0",
+  "holder": "?Type@SmartGlassMsg@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@RndMorph@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824a8ec8"
+  ],
+  "desired": "0x8240e540",
+  "holder": "?StaticClassName@FlowNode@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@RndMovie@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824bd6c0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@RndTex@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8231f680"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@Sfx@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc3e8"
+  ],
+  "desired": "0x826b1c88",
+  "holder": "?StaticClassName@LetterboxPanel@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@SfxSeq@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc468"
+  ],
+  "desired": "0x827058b8",
+  "holder": "?StaticClassName@WaitSeq@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@Song@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826fc5e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@StandingStillGestureFilter@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x827b78f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@StarsDisplay@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8236afa8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@StreamRecorder@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82279660"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?StaticClassName@TexMovie@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823ec398"
+  ],
+  "desired": "0x82742b90",
+  "holder": "?StaticClassName@CamShot@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@UIComponent@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823ec538"
+  ],
+  "desired": "0x827fe250",
+  "holder": "?StaticClassName@OptionsPanel@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@UIListWidget@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82571258"
+  ],
+  "desired": "0x827f7830",
+  "holder": "?StaticClassName@KinectSharePanel@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?StaticClassName@WaitSeq@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x827058b8"
+  ],
+  "desired": "0x826fbee8",
+  "holder": "?StaticClassName@DxMat@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?Swing@BeatMatcher@@UAA_NH_N000W4GemHitFlags@@@Z",
+  "cur": [
+   "0x827910b0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Swing@RealGuitarTrackWatcherImpl@@UAA_NH_N0W4GemHitFlags@@@Z",
+  "cur": [
+   "0x8279f548"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?SyncProperty@CharBoneDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": [
+   "0x823b7418"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Text@MakeupProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+  "cur": [
+   "0x8266fa50"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?TrackReset@VocalTrackDir@@UAAXXZ",
+  "cur": [
+   "0x822f7240"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?TryDemangleFunc@@YAXPADPBD@Z",
+  "cur": [
+   "0x82530cb0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?TryDemangleParams@@YAXPADPBD@Z",
+  "cur": [
+   "0x82530ab0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@ButtonUpMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8257b260"
+  ],
+  "desired": "0x825288f8",
+  "holder": "?Type@JoypadConnectionMsg@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@DeviceChosenMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x825c1e30"
+  ],
+  "desired": "0x8252a520",
+  "holder": "?Type@ControllerReqOpCompleteMsg@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@DingoJobCompleteMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8251ba80"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@FriendsListChangedMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8240dd38"
+  ],
+  "desired": "0x824f64d0",
+  "holder": "?Type@MCResultMsg@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@InviteAcceptedMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8240dcb8"
+  ],
+  "desired": "0x823ead68",
+  "holder": "?StaticClassName@FlowIf@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@JoypadConnectionMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x825288f8"
+  ],
+  "desired": "0x825324a0",
+  "holder": "?StaticClassName@DOFProc@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@KeyboardSustainMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823e0da8"
+  ],
+  "desired": "0x8252fa70",
+  "holder": "?StaticClassName@FontMap3d@RndText@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@LeftHandListEngagementMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8229ce38"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@MCResultMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x824f64d0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@MultipleItemsEnumCompleteMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x826050a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@NavHighlightSettledMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8233b258"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@NavSelectMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8228c9b8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@PartyMembersChangedMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8240dc38"
+  ],
+  "desired": "0x8251ba80",
+  "holder": "?Type@DingoJobCompleteMsg@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@ProfileSwappedMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82b86e70"
+  ],
+  "desired": "0x8251b880",
+  "holder": "?StaticClassName@RndFont3d@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": false
+ },
+ {
+  "name": "?Type@SigninChangedMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x823e0ca8"
+  ],
+  "desired": "0x823ec538",
+  "holder": "?StaticClassName@UIComponent@@SA?AVSymbol@@XZ",
+  "klass": "EVICTION-ONLY",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@SkeletonIdentifiedMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x825c1eb0"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@SpeechEnableMsg@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x82323438"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Type@SpeechRecoMessage@@SA?AVSymbol@@XZ",
+  "cur": [
+   "0x8227aec8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": false
+ },
+ {
+  "name": "?Unload@VenueLoader@BandDirector@@QAAX_N@Z",
+  "cur": [
+   "0x82297500"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?Unpublish@Synchronizable@@QAAXXZ",
+  "cur": [
+   "0x823e91a8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateConfiguration@VocalTrackDir@@QAAXXZ",
+  "cur": [
+   "0x822fae40"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateEndGameInfo@Campaign@@QAAXPAVUILabel@@0PAVUIPicture@@@Z",
+  "cur": [
+   "0x825a5f10"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateOverlay@BandCharacter@@QAAXXZ",
+  "cur": [
+   "0x82280928"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateOverlay@CharEyes@@IAAXXZ",
+  "cur": [
+   "0x82385050"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateOverlay@NgRnd@@MAAMPAVRndOverlay@@M@Z",
+  "cur": [
+   "0x82b87598"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdatePitch@PitchMucker@@QAAXPAVStream@@@Z",
+  "cur": [
+   "0x8277b5f8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateProgressInfo@SetlistMergePanel@@QAAXXZ",
+  "cur": [
+   "0x826350e8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateString1Label@Instarank@@QAAXPAVUILabel@@@Z",
+  "cur": [
+   "0x82650258"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateString2Label@Instarank@@QAAXPAVUILabel@@@Z",
+  "cur": [
+   "0x826505d8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateSyllableText@@YAXAAVString@@_NAA_N@Z",
+  "cur": [
+   "0x82b9fc90"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UpdateTarget@Target@BandCamShot@@QAAXVSymbol@@PAV2@@Z",
+  "cur": [
+   "0x822b4228"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?UserName@BandTrack@@QBAPBDXZ",
+  "cur": [
+   "0x8234d720"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?calculateCoeffs@AAFilter@soundtouch@@IAAXXZ",
+  "cur": [
+   "0x82b72a08"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?json_object_array_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+  "cur": [
+   "0x82b82f00"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?json_object_object_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+  "cur": [
+   "0x82b82d68"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ },
+ {
+  "name": "?json_object_string_to_json_string@@YAHPAUjson_object@@PAUprintbuf@@@Z",
+  "cur": [
+   "0x82b82bc8"
+  ],
+  "desired": "",
+  "holder": "",
+  "klass": "NO-DETERMINED-HOME",
+  "currently_matched": true
+ }
+]

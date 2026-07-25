@@ -1659,6 +1659,7 @@ CharClipGroup.cpp:
 	.pdata      start:0x822033C8 end:0x822033D0
 	.pdata      start:0x822033E8 end:0x822033F0
 	.pdata      start:0x82203410 end:0x82203420
+	.pdata      start:0x82203420 end:0x82203428
 	.pdata      start:0x822034D8 end:0x822034E0
 	.text       start:0x8238DB68 end:0x8238DBD8
 	.text       start:0x8238DBD8 end:0x8238DC68
@@ -1671,6 +1672,7 @@ CharClipGroup.cpp:
 	.text       start:0x8238F178 end:0x8238F244
 	.text       start:0x8238F3F0 end:0x8238F464
 	.text       start:0x8238F7D0 end:0x8238F930
+	.text       start:0x8238F930 end:0x8238F960
 	.text       start:0x82390418 end:0x82390548
 
 CharClipSet.cpp:
@@ -2176,11 +2178,15 @@ Char.cpp:
 	.pdata      start:0x821F18D8 end:0x821F18E0
 	.pdata      start:0x821F2020 end:0x821F2028
 	.pdata      start:0x821F2030 end:0x821F2038
+	.pdata      start:0x82200F98 end:0x82200FA0
+	.pdata      start:0x822014C0 end:0x822014C8
 	.pdata      start:0x822014D8 end:0x822014E0
 	.pdata      start:0x822014E8 end:0x822014F0
 	.text       start:0x82273860 end:0x822738B8
 	.text       start:0x8227AA48 end:0x8227AAA0
 	.text       start:0x8227AAC8 end:0x8227AB20
+	.text       start:0x82369CA8 end:0x82369D00
+	.text       start:0x8236CB48 end:0x8236CB78
 	.text       start:0x8236CCF0 end:0x8236CD54
 	.text       start:0x8236CD80 end:0x8236CDDC
 
@@ -2246,6 +2252,7 @@ Character.cpp:
 	.pdata      start:0x82201A28 end:0x82201A30
 	.pdata      start:0x82201A38 end:0x82201A40
 	.pdata      start:0x82201A40 end:0x82201A48
+	.pdata      start:0x82201A50 end:0x82201A58
 	.pdata      start:0x82201A78 end:0x82201A80
 	.pdata      start:0x82201AA8 end:0x82201AB0
 	.pdata      start:0x82201B18 end:0x82201B20
@@ -2285,6 +2292,7 @@ Character.cpp:
 	.text       start:0x82372C38 end:0x82372CA4
 	.text       start:0x82372D18 end:0x82372EF0
 	.text       start:0x82372EF0 end:0x82372F60
+	.text       start:0x82372FC0 end:0x82372FF4
 	.text       start:0x82373208 end:0x82373258
 	.text       start:0x823734A0 end:0x823739EC
 	.text       start:0x82373BB0 end:0x82373C98
@@ -3050,10 +3058,12 @@ CharBones.cpp:
 Draw.cpp:
 	.pdata      start:0x82209F90 end:0x82209F98
 	.pdata      start:0x82209F98 end:0x82209FA0
+	.pdata      start:0x82209FB8 end:0x82209FC0
 	.pdata      start:0x82209FD0 end:0x82209FD8
 	.pdata      start:0x82209FD8 end:0x8220A0F8
 	.text       start:0x82406220 end:0x824062F0
 	.text       start:0x824062F8 end:0x82406418
+	.text       start:0x824064E0 end:0x82406510
 	.text       start:0x824066A8 end:0x82406738
 	.text       start:0x82406738 end:0x82407948
 
@@ -4032,9 +4042,11 @@ band3/meta_band/ManageBandPanel.cpp:
 	.text       start:0x82624748 end:0x82626A3C
 
 band3/meta_band/ContentLoadingPanel.cpp:
+	.pdata      start:0x82228F40 end:0x82228F48
 	.pdata      start:0x82228F48 end:0x82228F50
 	.pdata      start:0x82228F60 end:0x82228F68
 	.pdata      start:0x82228F98 end:0x82228FF8
+	.text       start:0x82613B18 end:0x82613B48
 	.text       start:0x82613B78 end:0x82613BF0
 	.text       start:0x82613DB8 end:0x82613E98
 	.text       start:0x826140F0 end:0x82614690
@@ -4731,11 +4743,13 @@ PreloadPanel.cpp:
 	.pdata      start:0x82241270 end:0x82241278
 	.pdata      start:0x82241280 end:0x82241288
 	.pdata      start:0x82241308 end:0x82241310
+	.pdata      start:0x82241350 end:0x82241358
 	.pdata      start:0x82245DA0 end:0x82245DA8
 	.text       start:0x827B36E8 end:0x827B3730
 	.text       start:0x827B3738 end:0x827B37A8
 	.text       start:0x827B37D0 end:0x827B3864
 	.text       start:0x827B3EC8 end:0x827B3F40
+	.text       start:0x827B4218 end:0x827B4248
 	.text       start:0x828026B0 end:0x82802708
 
 PanelDir.cpp:
@@ -6866,10 +6880,12 @@ network/net/NetSession.cpp:
 	.pdata      start:0x82207A10 end:0x82207A18
 	.pdata      start:0x82207A18 end:0x82207A28
 	.pdata      start:0x82207A28 end:0x82207A30
+	.pdata      start:0x82207A48 end:0x82207A50
 	.pdata      start:0x82207A68 end:0x82207A70
 	.pdata      start:0x82207AA0 end:0x82207AA8
 	.pdata      start:0x82207AB8 end:0x82207AC0
 	.pdata      start:0x82207AE8 end:0x82207AF0
+	.pdata      start:0x82207B18 end:0x82207B20
 	.pdata      start:0x82207B90 end:0x82207B98
 	.pdata      start:0x82207BA8 end:0x82207BB0
 	.pdata      start:0x82207BB0 end:0x82207BB8
@@ -6915,10 +6931,12 @@ network/net/NetSession.cpp:
 	.text       start:0x823E1670 end:0x823E16A4
 	.text       start:0x823E16A8 end:0x823E178C
 	.text       start:0x823E17B0 end:0x823E1800
+	.text       start:0x823E18E0 end:0x823E1930
 	.text       start:0x823E1A18 end:0x823E1ABC
 	.text       start:0x823E1C20 end:0x823E1CC4
 	.text       start:0x823E1D20 end:0x823E1DC4
 	.text       start:0x823E1F20 end:0x823E1FC4
+	.text       start:0x823E2118 end:0x823E2168
 	.text       start:0x823E25B0 end:0x823E2668
 	.text       start:0x823E26B8 end:0x823E2704
 	.text       start:0x823E2710 end:0x823E27DC
@@ -7429,6 +7447,7 @@ MainHubPanel.cpp:
 	.pdata      start:0x82229C68 end:0x82229C70
 	.pdata      start:0x82229C90 end:0x82229C98
 	.pdata      start:0x82229CA8 end:0x82229CB0
+	.pdata      start:0x82229CC8 end:0x82229CD0
 	.pdata      start:0x82229CD8 end:0x82229CE0
 	.pdata      start:0x82229CE0 end:0x82229EC8
 	.pdata      start:0x82229EC8 end:0x82229ED0
@@ -7438,6 +7457,7 @@ MainHubPanel.cpp:
 	.text       start:0x8261FCF8 end:0x8261FDC8
 	.text       start:0x8261FE88 end:0x8261FEB8
 	.text       start:0x82620000 end:0x8262013C
+	.text       start:0x826201D8 end:0x8262020C
 	.text       start:0x82620268 end:0x826202C0
 	.text       start:0x826202C8 end:0x82621A14
 	.text       start:0x82621A18 end:0x82621AB4
@@ -8331,13 +8351,16 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E250 end:0x8221E258
 	.pdata      start:0x8221E260 end:0x8221E268
 	.pdata      start:0x8221E270 end:0x8221E278
+	.pdata      start:0x8221E2B0 end:0x8221E2B8
 	.pdata      start:0x8221E2C0 end:0x8221E2C8
 	.pdata      start:0x8221E2D0 end:0x8221E2D8
 	.pdata      start:0x8221E2F0 end:0x8221E2F8
 	.pdata      start:0x8221E300 end:0x8221E308
+	.pdata      start:0x8221E310 end:0x8221E318
 	.pdata      start:0x8221E358 end:0x8221E3E0
 	.pdata      start:0x8221E3E0 end:0x8221E4D0
 	.pdata      start:0x8221E4D0 end:0x8221E580
+	.pdata      start:0x8221E580 end:0x8221E588
 	.pdata      start:0x8221E598 end:0x8221E5A0
 	.pdata      start:0x8221E5A0 end:0x8221E5A8
 	.pdata      start:0x8221E5A8 end:0x8221E5B0
@@ -8363,13 +8386,16 @@ MetaPanel.cpp:
 	.text       start:0x82571060 end:0x825710B8
 	.text       start:0x825710E0 end:0x82571138
 	.text       start:0x82571160 end:0x825711B8
+	.text       start:0x82571370 end:0x825713C8
 	.text       start:0x825713F0 end:0x82571454
 	.text       start:0x82571488 end:0x825714E0
 	.text       start:0x825715A0 end:0x825715F8
 	.text       start:0x82571620 end:0x82571684
+	.text       start:0x825716B8 end:0x82571710
 	.text       start:0x82571940 end:0x82571DD8
 	.text       start:0x82571DD8 end:0x82572A34
 	.text       start:0x82572A40 end:0x82573450
+	.text       start:0x82573470 end:0x825734A0
 	.text       start:0x82573678 end:0x825736C4
 	.text       start:0x825736C8 end:0x825736F8
 	.text       start:0x82573700 end:0x825737FC
