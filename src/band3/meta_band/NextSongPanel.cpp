@@ -337,6 +337,22 @@ void NextSongPanel::FillExpandedDetails(int slot) {
 #pragma opt_usedef_mem_limit 300
 // retail scratch: https://decomp.me/scratch/xGtc5
 int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, bool b) {
+    // Retail declares these as function-local statics (one shared guard word at
+    // 0x82E0193C, storages 0x82E01938 downward) — see the funclet-cascade
+    // write-up.  Order is retail's ctor order at 0x82645374..0x8264560C.
+    static Symbol label("label");
+    static Symbol solo_rank_label("solo_rank_label");
+    static Symbol solo_instarank_group("solo_instarank_group");
+    static Symbol score("score");
+    static Symbol songresults_nodata("songresults_nodata");
+    static Symbol generic_string("generic_string");
+    static Symbol any("any");
+    static Symbol left_label("left_label");
+    static Symbol right_label("right_label");
+    static Symbol page_break("page_break");
+    static Symbol header("header");
+    static Symbol pad("pad");
+    static Symbol solo_score("solo_score");
     BandUser *user = TheBandUserMgr->GetUserFromSlot(slot); // fn_8010021C
     MILO_ASSERT(TheGame->IsActiveUser(user), 0x203);
     Player *player = user->GetPlayer(); // fn_800D2D8C
@@ -393,6 +409,11 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
         int harm3hit = stats.GetTripleHarmonyHit();
         int harm3count = stats.GetTripleHarmonyPhraseCount();
         if (harm2count != 0 || harm3count != 0) {
+            static Symbol vocals_grid("vocals_grid");
+            static Symbol completed_double_harmonies("completed_double_harmonies");
+            static Symbol completed_triple_harmonies("completed_triple_harmonies");
+            static Symbol perfect_harmony("perfect_harmony");
+            static Symbol instrument_specific("instrument_specific");
             if (b)
                 count++;
             else
@@ -451,6 +472,11 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
         }
     }
 
+    static Symbol performance("performance");
+    static Symbol endgame_phrase_streak("endgame_phrase_streak");
+    static Symbol endgame_note_streak("endgame_note_streak");
+    static Symbol endgame_hit_count("endgame_hit_count");
+    static Symbol endgame_avg_multiplier("endgame_avg_multiplier");
     Symbol streakSym = playerTrackType == 3 ? endgame_phrase_streak : endgame_note_streak;
     if (b)
         count++;
@@ -485,6 +511,7 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     else
         ptr.Node(count++) = DataArrayPtr(page_break);
 
+    static Symbol achievement_progress("achievement_progress");
     Symbol completedSongSym = performer->GetCompletedSong();
     if (b)
         count++;
@@ -518,6 +545,9 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     else
         ptr.Node(count++) = DataArrayPtr(page_break);
 
+    static Symbol section_breakdown("section_breakdown");
+    static Symbol score_detail_section("score_detail_section");
+    static Symbol score_detail_section_no_notes("score_detail_section_no_notes");
     if (b)
         count++;
     else
@@ -574,6 +604,17 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     else
         ptr.Node(count++) = DataArrayPtr(page_break);
 
+    static Symbol score_breakdown("score_breakdown");
+    static Symbol score_detail_accuracy("score_detail_accuracy");
+    static Symbol score_detail_sustains("score_detail_sustains");
+    static Symbol score_detail_streak("score_detail_streak");
+    static Symbol score_detail_overdrive("score_detail_overdrive");
+    static Symbol score_detail_solos("score_detail_solos");
+    static Symbol score_detail_surface("score_detail_surface");
+    static Symbol score_detail_band("score_detail_band");
+    static Symbol score_detail_coda("score_detail_coda");
+    static Symbol score_detail_tambourine("score_detail_tambourine");
+    static Symbol score_detail_harmony("score_detail_harmony");
     if (b)
         count++;
     else

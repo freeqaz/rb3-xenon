@@ -2552,17 +2552,12 @@ DataNode BandCharacter::OnSetFileMerger(DataArray *da) {
         ));
         mFileMerger->Select("tour_ending_clips", fp10c, false);
     } else {
-        if (LOADMGR_EDITMODE && !mTestTourEndingVenue.Null()) {
-            FilePath fp118(MakeString(
-                "char/main/anim/%s/finale/%s/%s/tour_endings.milo",
-                animinst,
-                mGender,
-                mTestTourEndingVenue
-            ));
-            mFileMerger->Select("tour_ending_clips", fp118, false);
-        } else {
-            mFileMerger->Select("tour_ending_clips", FilePath(""), false);
-        }
+        // Retail has no LOADMGR_EDITMODE arm here (edit mode is dev-only and was
+        // stripped): the objdiff shows the whole TheLoadMgr+0x5c test, the second
+        // "finale" MakeString and the extra FilePath temp as pure inserts on our
+        // side, and dropping them takes the frame 0x220 -> 0x210 (= retail),
+        // which is what gates this function's 17 EH funclets.
+        mFileMerger->Select("tour_ending_clips", FilePath(""), false);
     }
     mFileMerger->Select("rigging", fp88, false);
     mFileMerger->Select("body_realtime_clips", fp94, false);
