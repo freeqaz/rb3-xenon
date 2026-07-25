@@ -306,6 +306,10 @@ void AccomplishmentManager::Poll() {
 Accomplishment *
 AccomplishmentManager::FactoryCreateAccomplishment(DataArray *arr, int idx) {
     int acctype;
+    // Retail declares this as a function-local static (storage 0x82E0DABC,
+    // guard 0x82E0DAC0), which pins its address in a callee-saved register
+    // (r28 -> __savegprlr_28) rather than the global-Symbol form's _29.
+    static Symbol accomplishment_type("accomplishment_type");
     arr->FindData(accomplishment_type, acctype, true);
     Accomplishment *ret = 0;
     switch (acctype) {

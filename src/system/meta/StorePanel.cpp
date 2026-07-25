@@ -121,10 +121,9 @@ void StorePanel::Poll() {
         return;
 
     mStorePreviewMgr->Poll();
-    NetCacheMgrFailType failType;
-    if (mStorePreviewMgr->GetLastFailure(failType)) {
-        HandleNetCacheLoaderFailure((int)failType);
-    }
+    // Retail StorePreviewMgr (TU5) has no mHasFailure/mLastFailType members —
+    // its layout is fixed at 0x60 (see StorePreviewMgr.h), so GetLastFailure()
+    // is a DC3-only addition and cannot exist here.
 
     // Iterate NetCacheLoaders
     std::list<NetCacheLoader *>::iterator cur = mNetCacheLoaders.begin();

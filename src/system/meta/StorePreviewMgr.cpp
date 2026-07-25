@@ -14,16 +14,14 @@
 #include "utl/Str.h"
 #include "utl/Symbol.h"
 
-StorePreviewMgr::StorePreviewMgr()
-    : mNetCacheLoader(0), mAttenuation(0.0f), mLoopForever(1), mStreamPlayer(nullptr), mHasFailure(0) {
+// Retail ctor @0x827B1FC8 — virtual-base form; see StorePreviewMgr.h.
+StorePreviewMgr::StorePreviewMgr() : mStreamPlayer(0), mNetCacheLoader(0) {
     mStreamPlayer = new StreamPlayer();
     MILO_ASSERT(mStreamPlayer, 0x1d);
-    DataArray *d = SystemConfig("song_select", "sound");
-    d->FindData("loop_forever", mLoopForever);
-    d->FindData("attenuation", mAttenuation);
     SetName("store_preview_mgr", ObjectDir::Main());
 }
 
+// Retail dtor @0x827B2218.
 StorePreviewMgr::~StorePreviewMgr() {
     RELEASE(mStreamPlayer);
     if (mNetCacheLoader) {
@@ -32,17 +30,9 @@ StorePreviewMgr::~StorePreviewMgr() {
     }
 }
 
-bool StorePreviewMgr::GetLastFailure(NetCacheMgrFailType &t) {
-    if (mHasFailure) {
-        t = mLastFailType;
-        mHasFailure = false;
-        return true;
-    }
-    return false;
-}
-
 bool StorePreviewMgr::IsPlaying() const {
-    return (!mCurrentPreviewFile.empty() && TheNetCacheMgr->IsLocalFile(mCurrentPreviewFile.c_str()));
+    return (!mCurrentPreviewFile.empty()
+            && TheNetCacheMgr->IsLocalFile(mCurrentPreviewFile.c_str()));
 }
 
 void StorePreviewMgr::ClearCurrentPreview() {
@@ -52,10 +42,9 @@ void StorePreviewMgr::ClearCurrentPreview() {
     }
 }
 
-void StorePreviewMgr::SetCurrentPreviewFile(String const &str, TexMovie *tex) {
-    if (mCurrentPreviewFile == str && mTexMovie == tex)
+void StorePreviewMgr::SetCurrentPreviewFile(String const &str) {
+    if (mCurrentPreviewFile == str)
         return;
-    mTexMovie = tex;
     mCurrentPreviewFile = str;
     PlayCurrentPreview();
 }
@@ -66,7 +55,8 @@ bool StorePreviewMgr::IsDownloadingFile(String const &str) {
             return true;
         }
     }
-    return mDownloadQueue.end() != std::find(mDownloadQueue.begin(), mDownloadQueue.end(), str);
+    return mDownloadQueue.end()
+        != std::find(mDownloadQueue.begin(), mDownloadQueue.end(), str);
 }
 
 bool StorePreviewMgr::AllowPreviewDownload(String const &str) {
@@ -77,33 +67,23 @@ bool StorePreviewMgr::AllowPreviewDownload(String const &str) {
     if (TheNetCacheMgr->IsLocalFile(str.c_str()))
         return false;
     else
-        return std::find(mDownloadQueue.begin(), mDownloadQueue.end(), str) == mDownloadQueue.end();
+        return std::find(mDownloadQueue.begin(), mDownloadQueue.end(), str)
+            == mDownloadQueue.end();
 }
 
+// Retail @0x827B19B8 — no TexMovie branch, attenuation is the literal -3.0f.
 void StorePreviewMgr::PlayCurrentPreview() {
     MILO_ASSERT(mStreamPlayer, 0xd8);
-    if (mCurrentPreviewFile.empty() || !TheNetCacheMgr->IsLocalFile(mCurrentPreviewFile.c_str())) {
+    if (mCurrentPreviewFile.empty()
+        || !TheNetCacheMgr->IsLocalFile(mCurrentPreviewFile.c_str())) {
         mStreamPlayer->StopPlaying();
-        if (mTexMovie) {
-            FilePath fp(gNullStr);
-            mTexMovie->SetFile(fp);
-        }
     } else {
         String str(mCurrentPreviewFile.c_str());
-        if (mTexMovie) {
-            mStreamPlayer->StopPlaying();
-            {
-                FilePath fp(mCurrentPreviewFile.c_str());
-                mTexMovie->SetFile(fp);
-            }
-            mTexMovie->SetVolume(-mAttenuation);
-        } else {
-            int len = str.length();
-            if (str.find(".mogg", len - 5) != String::npos) {
-                str.erase(len - 5);
-            }
-            mStreamPlayer->PlayFile(str.c_str(), -mAttenuation, 0.0f, mLoopForever);
+        int len = str.length();
+        if (str.find(".mogg", len - 5) != String::npos) {
+            str.erase(len - 5);
         }
+        mStreamPlayer->PlayFile(str.c_str(), -3.0f, 0.0f, false);
     }
 }
 
@@ -114,54 +94,48 @@ void StorePreviewMgr::AddToDownloadQueue(String const &str) {
         }
     }
     if (!TheNetCacheMgr->IsLocalFile(str.c_str())) {
-        if (std::find(mDownloadQueue.begin(), mDownloadQueue.end(), str) == mDownloadQueue.end())
+        if (std::find(mDownloadQueue.begin(), mDownloadQueue.end(), str)
+            == mDownloadQueue.end())
             mDownloadQueue.push_back(str);
     }
 }
 
 BEGIN_HANDLERS(StorePreviewMgr)
 HANDLE_ACTION(clear_current_preview, ClearCurrentPreview())
-HANDLE_ACTION(set_current_preview_file, SetCurrentPreviewFile(_msg->Str(2), nullptr))
-HANDLE_ACTION(set_current_preview_movie, SetCurrentPreviewFile(_msg->Str(2), _msg->Obj<TexMovie>(3)))
+HANDLE_ACTION(set_current_preview_file, SetCurrentPreviewFile(_msg->Str(2)))
 HANDLE_ACTION(download_preview_file, AddToDownloadQueue(_msg->Str(2)))
 HANDLE_EXPR(is_downloading_file, IsDownloadingFile(_msg->Str(2)))
 HANDLE_EXPR(allow_preview_download, AllowPreviewDownload(_msg->Str(2)))
 HANDLE_EXPR(is_playing, IsPlaying())
-HANDLE_SUPERCLASS(Hmx::Object)
+HANDLE_SUPERCLASS(MsgSource)
 END_HANDLERS
 
+// Retail @0x827B1D60 (pinned, was fn_827B1D60).
 void StorePreviewMgr::Poll() {
     MILO_ASSERT(mStreamPlayer, 0x6f);
     mStreamPlayer->Poll();
     if (mNetCacheLoader) {
-        bool isCurrentFile = mCurrentPreviewFile == mNetCacheLoader->GetRemotePath();
         if (mNetCacheLoader->IsLoaded()) {
-            TheNetCacheMgr->IsLocalFile(mNetCacheLoader->GetRemotePath());
             TheNetCacheMgr->DeleteNetCacheLoader(mNetCacheLoader);
             mNetCacheLoader = 0;
-            if (isCurrentFile) {
-                PlayCurrentPreview();
-            }
-            static PreviewDownloadCompleteMsg msg(true, false);
-            msg[1] = isCurrentFile;
-            Handle(msg, true);
+            PlayCurrentPreview();
+            static PreviewDownloadCompleteMsg msg;
+            MsgSource::Handle(msg, false);
         } else if (mNetCacheLoader->HasFailed()) {
-            mHasFailure = true;
-            mLastFailType = mNetCacheLoader->GetFailType();
             TheNetCacheMgr->DeleteNetCacheLoader(mNetCacheLoader);
             mNetCacheLoader = 0;
-            static PreviewDownloadCompleteMsg msg(false, false);
-            msg[1] = isCurrentFile;
-            Handle(msg, true);
         }
     }
-    std::list<String>::iterator it = mDownloadQueue.begin();
-    while (it != mDownloadQueue.end() && TheNetCacheMgr->IsLocalFile(it->c_str())) {
-        it = mDownloadQueue.erase(it);
+    while (mDownloadQueue.begin() != mDownloadQueue.end()) {
+        if (!TheNetCacheMgr->IsLocalFile(mDownloadQueue.front().c_str()))
+            break;
+        mDownloadQueue.erase(mDownloadQueue.begin());
     }
     if (!mNetCacheLoader && mDownloadQueue.begin() != mDownloadQueue.end()) {
         MILO_ASSERT(!TheNetCacheMgr->IsLocalFile(mDownloadQueue.front().c_str()), 0xa5);
-        mNetCacheLoader = TheNetCacheMgr->AddNetCacheLoader(mDownloadQueue.front().c_str(), (NetLoaderPos)1);
+        mNetCacheLoader = TheNetCacheMgr->AddNetCacheLoader(
+            mDownloadQueue.front().c_str(), (NetLoaderPos)1
+        );
         mDownloadQueue.erase(mDownloadQueue.begin());
     }
 }

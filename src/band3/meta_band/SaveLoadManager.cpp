@@ -739,6 +739,13 @@ void SaveLoadManager::SetState(State newState) {
     // Retail (Ghidra TU5) has 8 = SelectDevice and 9 = SetDevice -- our port had
     // them swapped. Retail also passes SelectDevice's bool SECOND
     // (profile, bool, sink, padNum) and never calls AddSink here.
+    // retail emits case 9's body BEFORE case 8's, so its source declares them
+    // in that order (MSVC lays case bodies out in source order)
+    case 0x9: // kS_AutoloadSetDevice
+        MILO_ASSERT(unk7c == 2, 0x559);
+        TheMemcardMgr.SetDevice(unk78);
+        SetState((State)0xb);
+        break;
     case 0x8: // kS_AutoloadSelectDevice2
     {
         BandProfile *pProfile = GetProfile();
@@ -748,11 +755,6 @@ void SaveLoadManager::SetState(State newState) {
         TheMemcardMgr.SelectDevice(pProfile, false, this, devId);
         break;
     }
-    case 0x9: // kS_AutoloadSetDevice
-        MILO_ASSERT(unk7c == 2, 0x559);
-        TheMemcardMgr.SetDevice(unk78);
-        SetState((State)0xb);
-        break;
     case 0xa: // kS_AutoloadSelectDevice3
     case 0xd:
     case 0x4d:
@@ -809,8 +811,7 @@ void SaveLoadManager::SetState(State newState) {
     case 0x15: // kS_SongCacheCreateNotFound_Msg
     case 0x16:
     {
-        TheCacheMgr->AddCacheID(mCacheID, unk4c.c_str());
-        SetState((State)0x20);
+        SetState((State)0x19);
         break;
     }
     case 0x19:

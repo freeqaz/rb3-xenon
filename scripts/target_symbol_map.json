@@ -1829,6 +1829,7 @@
  "0x82552450": "?Init@SaveLoadManager@@SAXXZ",
  "0x82550880": "?SetState@SaveLoadManager@@IAAXW4State@1@@Z",
  "0x8254cc98": "?GetDialogMsg@SaveLoadManager@@QAA?AVDataNode@@XZ",
+ "0x82556038": "?FactoryCreateAccomplishment@AccomplishmentManager@@QAAPAVAccomplishment@@PAVDataArray@@H@Z",
  "0x82552660": "?Handle@SaveLoadManager@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8254c108": "?GetDialogOpt1@SaveLoadManager@@QAA?AVSymbol@@XZ",
  "0x8254c608": "?GetDialogOpt2@SaveLoadManager@@QAA?AVSymbol@@XZ",
@@ -21624,5 +21625,6 @@
  "0x82670ec0": "?Mat@AssetProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
  "0x82670fe0": "?HasAsset@AssetProvider@@QAA_NVSymbol@@@Z",
  "0x826712c0": "??$__linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@0V1@P6A_N11@Z@Z",
- "0x82671408": "??1AssetProvider@@UAA@XZ"
+ "0x82671408": "??1AssetProvider@@UAA@XZ",
+ "0x827b1d60": "?Poll@StorePreviewMgr@@QAAXXZ"
 }

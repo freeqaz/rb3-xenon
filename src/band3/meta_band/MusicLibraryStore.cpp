@@ -2,6 +2,7 @@
 #include "meta/StoreOffer.h"
 #include "meta/StorePreviewMgr.h"
 #include "obj/Data.h"
+#include "os/ContentMgr.h"
 #include "rndobj/Tex.h"
 #include "utl/NetCacheMgr.h"
 #include "utl/NetLoader.h"
@@ -31,6 +32,9 @@ void MusicLibraryStore::ClearPreview() {
         mCacheLoader = NULL;
     }
     TheNetCacheMgr->Unload();
+    // Retail 0x825BC908 constructs Symbol("content_installed") inline and calls
+    // MsgSource::RemoveSink on the global ContentMgr @0x82CC9D20.
+    TheContentMgr.RemoveSink(this, Symbol("content_installed"));
     mState = 3;
     XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_AUTO);
 }
