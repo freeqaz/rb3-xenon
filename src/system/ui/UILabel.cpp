@@ -523,6 +523,8 @@ void UILabel::Highlight() {
 // already executed — this change only restores the virtual dispatch.
 void UILabel::Draw() { RndDrawable::Draw(); }
 
+Symbol UILabel::TextToken() { return mTextToken; }
+
 void UILabel::SetTextToken(Symbol s) {
     mTextToken = s;
     if (TheLoadMgr.EditMode()) {

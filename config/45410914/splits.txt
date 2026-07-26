@@ -671,6 +671,7 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821FA020 end:0x821FA060
 	.pdata      start:0x821FA060 end:0x821FA188
 	.pdata      start:0x821FA1A8 end:0x821FA1B8
+	.pdata      start:0x821FA1B8 end:0x821FA598
 	.pdata      start:0x821FA598 end:0x821FA5A8
 	.pdata      start:0x821FA5A8 end:0x821FA7F8
 	.pdata      start:0x821FA7F8 end:0x821FA800
@@ -699,6 +700,7 @@ VocalTrackDir.cpp:
 	.text       start:0x822FA7B0 end:0x822FAFEC
 	.text       start:0x822FAFF8 end:0x822FC180
 	.text       start:0x822FD26C end:0x822FD2F4
+	.text       start:0x822FD2F4 end:0x822FE780
 	.text       start:0x822FE780 end:0x822FE798
 	.text       start:0x822FE820 end:0x822FE9C8
 	.text       start:0x822FE9C8 end:0x822FFAA0
@@ -3564,7 +3566,6 @@ system/rndobj/SoftParticles.cpp:
 Waypoint.cpp:
 	.pdata      start:0x821F6280 end:0x821F6288
 	.pdata      start:0x821F7278 end:0x821F7280
-	.pdata      start:0x821FA1B8 end:0x821FA598
 	.pdata      start:0x82205970 end:0x82205978
 	.pdata      start:0x822073E8 end:0x82207630
 	.pdata      start:0x82207638 end:0x82207640
@@ -3572,7 +3573,6 @@ Waypoint.cpp:
 	.pdata      start:0x82237D40 end:0x82237D48
 	.text       start:0x822BB448 end:0x822BB4DC
 	.text       start:0x822CB828 end:0x822CB89C
-	.text       start:0x822FD2F4 end:0x822FE780
 	.text       start:0x823BE360 end:0x823BE46C
 	.text       start:0x823DA758 end:0x823DCFB0
 	.text       start:0x823DD010 end:0x823DD0F0
@@ -3849,11 +3849,11 @@ LiveCameraInput.cpp:
 	.text       start:0x8242C1CC end:0x8242C208
 
 CharacterTest.cpp:
-	.pdata      start:0x821FC890 end:0x821FC8E8
+	.pdata      start:0x821FC8A0 end:0x821FC8E8
 	.pdata      start:0x82207690 end:0x82207720
 	.pdata      start:0x82207720 end:0x82207768
 	.pdata      start:0x82207768 end:0x82207770
-	.text       start:0x8232033C end:0x82320824
+	.text       start:0x823203AC end:0x82320824
 	.text       start:0x823DD550 end:0x823DDDC0
 	.text       start:0x823DDDC0 end:0x823DE208
 	.text       start:0x823DE208 end:0x823DE254
@@ -8587,11 +8587,9 @@ band3/meta_band/AccomplishmentProgress.cpp:
 
 band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC1E8 end:0x821FC1F0
-	.pdata      start:0x821FCBC0 end:0x821FCBD0
 	.pdata      start:0x8222CD80 end:0x8222CE90
 	.pdata      start:0x8222CE98 end:0x8222CEA8
 	.text       start:0x8231A0D8 end:0x8231A138
-	.text       start:0x8232380C end:0x82323894
 	.text       start:0x82323950 end:0x82323960
 	.text       start:0x8264BD68 end:0x8264D058
 	.text       start:0x8264D08C end:0x8264D15C
@@ -10979,7 +10977,7 @@ OvershellPanel.cpp:
 	.text       start:0x825BA6C4 end:0x825BA6C8
 
 MetaPanel.cpp:
-	.pdata      start:0x821FC0C0 end:0x821FC1D0
+	.pdata      start:0x821FC138 end:0x821FC1D0
 	.pdata      start:0x822187C8 end:0x822187D8
 	.pdata      start:0x8221DCC8 end:0x8221DD60
 	.pdata      start:0x8221DD78 end:0x8221DDF0
@@ -11018,7 +11016,7 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E738 end:0x8221E760
 	.pdata      start:0x822281A0 end:0x822281D0
 	.pdata      start:0x82241968 end:0x82241970
-	.text       start:0x82318E34 end:0x82319F74
+	.text       start:0x82319810 end:0x82319F74
 	.text       start:0x8251BA00 end:0x8251BA78
 	.text       start:0x8256DF78 end:0x8256E4B0
 	.text       start:0x8256E570 end:0x8256E998
@@ -12037,12 +12035,10 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82B801A8 end:0x82B801D4
 
 SpeechMgr.cpp:
-	.pdata      start:0x821FCA10 end:0x821FCBA0
 	.pdata      start:0x82207A88 end:0x82207AA0
 	.pdata      start:0x8220E318 end:0x8220E320
 	.pdata      start:0x82214250 end:0x82214260
 	.pdata      start:0x82214260 end:0x82214268
-	.text       start:0x82321A2C end:0x823234B0
 	.text       start:0x823E1B40 end:0x823E1C18
 	.text       start:0x82459FC8 end:0x8245A02C
 	.text       start:0x824CD818 end:0x824CD8B8
@@ -12672,3 +12668,21 @@ OvershellDir.cpp:
 PlayerDiffIcon.cpp:
 	.pdata      start:0x821FCDC8 end:0x821FCE30
 	.text       start:0x823258C8 end:0x82326274
+
+MicInputArrow.cpp:
+	.pdata      start:0x821FC0B8 end:0x821FC138
+	.text       start:0x82318C70 end:0x82319810
+
+ScrollbarDisplay.cpp:
+	.pdata      start:0x821FC9D8 end:0x821FCBA0
+	.text       start:0x82321608 end:0x823234B0
+
+InstrumentDifficultyDisplay.cpp:
+	.pdata      start:0x821FCBB0 end:0x821FCBE8
+	.pdata      start:0x821FCBE8 end:0x821FCCF8
+	.text       start:0x82323570 end:0x82323950
+	.text       start:0x82323960 end:0x82324BF0
+
+ScoreDisplay.cpp:
+	.pdata      start:0x821FC7D8 end:0x821FC8A0
+	.text       start:0x8231F790 end:0x823203AC

@@ -58,7 +58,10 @@ public:
     // TextToken overrides nothing (RndText::TextToken is on the mText *member*,
     // not a base) and is overridden by nothing (AppLabel does not override it),
     // so de-virtualizing is behavior-preserving and retail-faithful.
-    Symbol TextToken() { return mTextToken; }
+    // Retail-360 keeps this OUT-OF-LINE (InstrumentDifficultyDisplay::UpdateDisplay
+    // calls it with an sret buffer: `addi r3,r31,0x50 / lwz r4,mLabel / bl 827F2428`,
+    // rather than inlining the mTextToken load). Definition lives in UILabel.cpp.
+    Symbol TextToken();
     virtual void SetCreditsText(DataArray *, class UIListSlot *) {
         MILO_ASSERT(false, 0x50);
     }
@@ -91,6 +94,10 @@ public:
     // Decl-only, mirrors rb3-Wii UILabel::SetCapsMode(RndText::CapsMode).
     void SetCapsMode(RndText::CapsMode);
     void SetAlignment(RndText::Alignment);
+    // Decl-only, mirrors rb3-Wii UILabel::SetColorOverride(UIColor *).
+    // Referenced by bandobj game code (InstrumentDifficultyDisplay, ScoreDisplay).
+    // Non-virtual, no layout effect.
+    void SetColorOverride(UIColor *);
 
     RndText *TextObj() { return mText; }
     const RndText *TextObj() const { return mText; }

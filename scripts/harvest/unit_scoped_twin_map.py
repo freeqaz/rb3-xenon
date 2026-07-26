@@ -145,9 +145,14 @@ def scan(wt, mode):
             if not names:
                 stats['no_twin'] += len(tl)
                 continue
+            # NOTE: the name filter is UNIT-SCOPED on purpose. The target
+            # symbol renamer runs per-target-obj, so the same mangled name may
+            # legitimately be claimed in two different units; only a duplicate
+            # WITHIN one unit is a guaranteed regression. laneAT-p1 measured
+            # that the older global filter was rejecting real matches.
             seen, free = set(), []
             for n in names:
-                if n in used or n in all_names or n in seen:
+                if n in used or n in seen:
                     continue
                 seen.add(n)
                 free.append(n)
