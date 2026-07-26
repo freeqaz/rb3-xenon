@@ -390,6 +390,15 @@ the edit being audited**; without it the audit is circular. All modes are static
   over-covers" objection: over-cover would place the parent *deep inside* an
   unrelated span, not exactly abutting the claim. A repair wave here is a
   well-defined, single-owner splits edit (boundary nudge), not a search.
+  Ready-made handoff: **`docs/plans/laneAN/boundary-slip-repairs.json`** — 652
+  proposals (474 of them currently at 100%, i.e. byte-true but mis-credited)
+  across 174 distinct donor→recipient unit pairs, each with donor block,
+  recipient block, parent VA and size. **NOT applied by this lane**: moving a
+  fill can drop the match if the recipient's obj lacks that byte shape, so the
+  wave needs its own A/B, and it is an honesty repair rather than a yield play.
+  (The count is 652/474 rather than 451 because this lane's own micro-pins
+  created new blocks that now abut, converting "parent block earlier" cases into
+  diagnosable adjacent ones — the contradiction total is unchanged at 532.)
 * **The obvious extension is drained — do not fund it.** When *both* funclet and
   parent are unpinned (1,210 tree-wide), the parent's own identity could in
   principle supply the unit via `scripts/target_symbol_map.json`. Measured:
