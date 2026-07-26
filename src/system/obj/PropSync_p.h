@@ -103,22 +103,19 @@ bool PropSync(std::vector<T> &vec, DataNode &node, DataArray *prop, int i, PropO
         node = (int)vec.size();
         return true;
     } else {
-        int idx = prop->Int(i++);
-        if (idx >= vec.size() + (op == kPropInsert))
-            return false;
-        else {
-            typename std::vector<T>::iterator it = vec.begin() + idx;
-            if (i < prop->Size() || op & (kPropGet | kPropSet | kPropSize)) {
-                return PropSync(*it, node, prop, i, op);
-            } else if (op == kPropRemove) {
-                vec.erase(it);
+        // NOTE: RB3-360 retail (and the rb3-Wii oracle) have NO bounds check here;
+        // DC3's newer engine added `if (idx >= vec.size() + (op == kPropInsert))`.
+        typename std::vector<T>::iterator it = vec.begin() + prop->Int(i++);
+        if (i < prop->Size() || op & (kPropGet | kPropSet | kPropSize)) {
+            return PropSync(*it, node, prop, i, op);
+        } else if (op == kPropRemove) {
+            vec.erase(it);
+            return true;
+        } else if (op == kPropInsert) {
+            T item;
+            if (PropSync(item, node, prop, i, op)) {
+                vec.insert(it, item);
                 return true;
-            } else if (op == kPropInsert) {
-                T item;
-                if (PropSync(item, node, prop, i, op)) {
-                    vec.insert(it, item);
-                    return true;
-                }
             }
         }
         return false;
@@ -134,24 +131,22 @@ bool PropSync(std::list<T> &pList, DataNode &node, DataArray *prop, int i, PropO
         node = (int)pList.size();
         return true;
     } else {
-        int idx = prop->Int(i++);
-        if (idx >= pList.size() + (op == kPropInsert))
-            return false;
-        else {
-            typename std::list<T>::iterator it = pList.begin();
-            while (idx-- > 0)
-                it++;
-            if (i < prop->Size() || op & (kPropGet | kPropSet | kPropSize)) {
-                return PropSync(*it, node, prop, i, op);
-            } else if (op == kPropRemove) {
-                pList.erase(it);
+        // NOTE: RB3-360 retail (and the rb3-Wii oracle) have NO bounds check here;
+        // DC3's newer engine added `if (idx >= pList.size() + (op == kPropInsert))`.
+        typename std::list<T>::iterator it = pList.begin();
+        for (int count = prop->Int(i++); count > 0; count--) {
+            it++;
+        }
+        if (i < prop->Size() || op & (kPropGet | kPropSet | kPropSize)) {
+            return PropSync(*it, node, prop, i, op);
+        } else if (op == kPropRemove) {
+            pList.erase(it);
+            return true;
+        } else if (op == kPropInsert) {
+            T item;
+            if (PropSync(item, node, prop, i, op)) {
+                pList.insert(it, item);
                 return true;
-            } else if (op == kPropInsert) {
-                T item;
-                if (PropSync(item, node, prop, i, op)) {
-                    pList.insert(it, item);
-                    return true;
-                }
             }
         }
         return false;

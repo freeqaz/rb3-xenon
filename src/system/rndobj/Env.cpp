@@ -207,7 +207,11 @@ BEGIN_PROPSYNCS(RndEnviron)
     SYNC_PROP_MODIFY(out_lo, mColorXfm.mLevelOutLo, mColorXfm.AdjustColorXfm())
     SYNC_PROP_MODIFY(out_hi, mColorXfm.mLevelOutHi, mColorXfm.AdjustColorXfm())
     SYNC_PROP(animate_from_preset, mAnimateFromPreset)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_COPYS(RndEnviron)

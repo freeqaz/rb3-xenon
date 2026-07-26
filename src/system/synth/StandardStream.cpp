@@ -265,7 +265,7 @@ void StandardStream::LoadMarkerList(const char *cc) {
 }
 
 void StandardStream::ClearMarkerList() { mMarkerList.clear(); }
-void StandardStream::AddMarker(const Marker &marker) { mMarkerList.push_back(marker); }
+void StandardStream::AddMarker(Marker marker) { mMarkerList.push_back(marker); }
 int StandardStream::MarkerListSize() const { return mMarkerList.size(); }
 
 bool StandardStream::MarkerAt(int idx, Marker &marker) const {

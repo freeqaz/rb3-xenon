@@ -29,7 +29,11 @@ BEGIN_PROPSYNCS(CharIKMidi)
     SYNC_PROP(anim_blend_weightable, mAnimBlender)
     SYNC_PROP(anim_blend_max, mMaxAnimBlend)
     SYNC_PROP_SET(cur_spot, mCurSpot.Ptr(), NewSpot(_val.Obj<RndTransformable>(), 0))
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharIKMidi)

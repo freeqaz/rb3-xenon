@@ -33,7 +33,11 @@ BEGIN_PROPSYNCS(CharEyeDartRuleset)
     SYNC_PROP(max_secs_between_sequences, mData.mMaxSecsBetweenSequences)
     SYNC_PROP(scale_with_distance, mData.mScaleWithDistance)
     SYNC_PROP(reference_distance, mData.mReferenceDistance)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharEyeDartRuleset)

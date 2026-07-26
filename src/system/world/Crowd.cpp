@@ -202,7 +202,11 @@ BEGIN_PROPSYNCS(WorldCrowd)
     SYNC_PROP(char_force_lod, (int &)mCharForceLod)
 #endif
     SYNC_SUPERCLASS(RndDrawable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 void WorldCrowd::SetLod(int lod) { mLod = Clamp(0, 2, lod); }

@@ -23,7 +23,11 @@ BEGIN_PROPSYNCS(RndTexBlendController)
     SYNC_PROP(min_distance, mMinDistance)
     SYNC_PROP(max_distance, mMaxDistance)
     SYNC_PROP(override_map, mTex)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndTexBlendController)

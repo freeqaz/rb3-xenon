@@ -191,7 +191,11 @@ BEGIN_PROPSYNCS(EventTrigger)
     SYNC_PROP(anim_trigger, (int &)mAnimTrigger)
     SYNC_PROP(anim_frame, mAnimFrame)
     SYNC_SUPERCLASS(RndAnimatable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BinStream &operator<<(BinStream &bs, const EventTrigger::HideDelay &e) {

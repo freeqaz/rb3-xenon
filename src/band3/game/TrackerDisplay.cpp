@@ -61,6 +61,13 @@ void TrackerDisplay::SetIntegerProgress(int i) const {
 #pragma push
 #pragma pool_data off
 void TrackerDisplay::SetPercentageProgress(float f) const {
+    // Retail declares these three as FUNCTION-LOCAL statics at the top of the
+    // function (guard word 0x82E03178, bits 0x1/0x2/0x4, storages 0x82E03174 /
+    // 0x82E03170 / 0x82E0316C; strings read out of the PE .rdata). Declaration
+    // order == ctor address order == guard-bit order.
+    static Symbol set_progress("set_progress");
+    static Symbol tracker_percentage("tracker_percentage");
+    static Symbol tracker_percentage_missing("tracker_percentage_missing");
     if (f < 0) {
         DataArrayPtr ptr(tracker_percentage_missing);
         static Message msg(set_progress, 0);
@@ -76,8 +83,13 @@ void TrackerDisplay::SetPercentageProgress(float f) const {
 #pragma pop
 
 void TrackerDisplay::SetTimeProgress(float ms) const {
-    int totalsecs = ms / 1000.0f;
-    DataArrayPtr ptr(tracker_time_remaining, totalsecs / 60, totalsecs % 60);
+    // Function-local statics, retail guard 0x82E0318C bits 0x1/0x2 (storages
+    // 0x82E03188 / 0x82E03184).
+    static Symbol set_progress("set_progress");
+    static Symbol tracker_time_remaining("tracker_time_remaining");
+    int min, sec;
+    MsToMinutesSeconds(ms, min, sec);
+    DataArrayPtr ptr(tracker_time_remaining, min, sec);
     static Message msg(set_progress, 0);
     msg[0] = ptr;
     SendMsg(msg);

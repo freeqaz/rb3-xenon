@@ -38,7 +38,11 @@ BEGIN_PROPSYNCS(RndScreenMask)
     SYNC_PROP(screen_rect, mRect)
     SYNC_PROP(use_cam_rect, mUseCamRect)
     SYNC_SUPERCLASS(RndDrawable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 RndScreenMask::RndScreenMask()

@@ -213,44 +213,41 @@ void CheatsManager::CallCheatScript(bool b1, DataArray *da, LocalUser *lu, bool 
              ++it) {
             if ((*it)->GetPadNum() == -1)
                 break;
-            JoypadData *padData = JoypadGetPadData((*it)->GetPadNum());
-            if (b1 && b2 && padData->mType - 1U > 2 && padData->mType - 0x13U > 2) {
+            JoypadType padType = JoypadGetPadData((*it)->GetPadNum())->mType;
+            if (!b1 || !b2 || padType == kJoypadDigital || padType == kJoypadAnalog
+                || padType == kJoypadWiiCore || padType == kJoypadWiiFS
+                || padType == kJoypadWiiClassic || padType == kJoypadDualShock) {
                 lu = *it;
                 break;
             }
         }
     }
     if (lu) {
-        switch (JoypadGetPadData(lu->GetPadNum())->mType) {
-        case kJoypadDigital:
-        case kJoypadAnalog:
-        case kJoypadDualShock:
-        case kJoypadWiiCore:
-        case kJoypadWiiFS:
-        case kJoypadWiiClassic:
-            DataVariable("cheat_pad") = lu ? lu->GetPadNum() : 0;
-            LogCheat(lu ? lu->GetPadNum() : -1, b1, da);
-            if (b1) {
-                int i = 2;
-                for (; da->Node(i).Type() != kDataCommand && i < da->Size(); i++)
-                    ;
-                if (i < da->Size()) {
-                    da->ExecuteScript(i, nullptr, nullptr, 1);
-                }
-            } else {
-                da->Execute();
-            }
-            {
-                Hmx::Object *uiObj = ObjectDir::Main()->Find<Hmx::Object>("ui", true);
-                static Message msg("cheat_invoked", 0, 0);
-                msg[0] = b1;
-                msg[1] = DataNode(da, kDataArray);
-                uiObj->Handle(msg, false);
-            }
-            break;
-        default:
-            break;
+        JoypadType padType = JoypadGetPadData(lu->GetPadNum())->mType;
+        if (b1 && b2 && padType != kJoypadDigital && padType != kJoypadAnalog
+            && padType != kJoypadWiiCore && padType != kJoypadWiiFS
+            && padType != kJoypadWiiClassic && padType != kJoypadDualShock) {
+            return;
         }
+    }
+    DataVariable("cheat_pad") = lu ? lu->GetPadNum() : 0;
+    LogCheat(lu ? lu->GetPadNum() : -1, b1, da);
+    if (b1) {
+        int i = 2;
+        for (; da->Node(i).Type() != kDataCommand && i < da->Size(); i++)
+            ;
+        if (i < da->Size()) {
+            da->ExecuteScript(i, nullptr, nullptr, 1);
+        }
+    } else {
+        da->Execute();
+    }
+    {
+        Hmx::Object *uiObj = ObjectDir::Main()->Find<Hmx::Object>("ui", true);
+        static Message msg("cheat_invoked", 0, 0);
+        msg[0] = b1;
+        msg[1] = DataNode(da, kDataArray);
+        uiObj->Handle(msg, false);
     }
 }
 

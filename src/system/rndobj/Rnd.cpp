@@ -1389,7 +1389,9 @@ RndTex *Rnd::CreateDefaultTexture(DefaultTextureType textureType) {
     }
     EndianSwapBitmap(bmap);
     RndTex *tex = Hmx::Object::New<RndTex>();
-    tex->SetBitmap(bmap, nullptr, true, RndTex::kRegular);
+    // Retail calls the 3-arg overload here (only r4/r5/r6 are set up before
+    // the bl); the trailing Type parameter is a later addition.
+    tex->SetBitmap(bmap, nullptr, true);
     return tex;
 }
 

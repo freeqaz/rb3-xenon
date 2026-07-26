@@ -35,7 +35,11 @@ BEGIN_PROPSYNCS(RndCamAnim)
     SYNC_PROP(fov_keys, mFovKeys)
     SYNC_PROP(keys_owner, mKeysOwner)
     SYNC_SUPERCLASS(RndAnimatable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndCamAnim)

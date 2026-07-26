@@ -114,7 +114,11 @@ BEGIN_PROPSYNCS(MidiParser)
     SYNC_PROP(variable_blend_pct, mProcess.variableBlendPct)
     SYNC_PROP_SET(index, GetIndex(), SetIndex(_val.Int()))
     SYNC_PROP_SET(song_name, TheMidiParserMgr->GetSongName(), )
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 void MidiParser::SetTypeDef(DataArray *arr) {

@@ -33,14 +33,21 @@ public:
     void SetupDetailLine(DataArray *, int, const char *, float);
     Symbol GetPerformanceAward(int);
 
-    float mEnterTime; // 0x38
-    std::map<Symbol, int> mDetailCounts; // 0x3c
-    float mDetailsPageSize; // 0x54
-    float mDetailsFooterSize; // 0x58
-    float mDetailsScrollStep; // 0x5c
-    float mDetailsHeight[4]; // 0x60
-    int unk74_retailpad; // retail RB3-360 has 4 extra bytes here vs Wii layout
-    int unk70[4];
+    float mEnterTime; // 0x3c
+    std::map<Symbol, int> mDetailCounts; // 0x40 (0x18)
+    // Retail RB3-360 has 4 extra bytes between mDetailCounts and
+    // mDetailsPageSize (2026-07-26: UpdateScrollArrows' target asm reads
+    // mDetailsPageSize at 0x5c and mDetailsHeight[] at 0x68, while unk70[]
+    // stays at 0x78 — so the +4 lives BEFORE mDetailsPageSize, not after
+    // mDetailsHeight where it was previously parked).  Likely the retail
+    // std::map<Symbol,int> node header being 0x1c; modelled as an explicit
+    // pad so no STL layout is disturbed.
+    int unk58_retailpad; // 0x58
+    float mDetailsPageSize; // 0x5c
+    float mDetailsFooterSize; // 0x60
+    float mDetailsScrollStep; // 0x64
+    float mDetailsHeight[4]; // 0x68
+    int unk70[4]; // 0x78
     bool unk80[4];
     bool unk84[4];
     RndGroup *mScrollGroups[4]; // 0x88

@@ -283,7 +283,7 @@ void ChordbookPanel::StrumString(int string) {
             if (CurrentChord().gemId < mGameGemList->NumGems()) {
                 static Message strum_string("strum_string", 0);
                 static Message strum_used_string("strum_used_string", 0);
-                if (mGameGemList->GetGem(CurrentChord().gemId).GetFret(string) >= 0) {
+                if (mGameGemList->GetGem(mChords[mCurrentChord].gemId).GetFret(string) >= 0) {
                     strum_used_string[0] = string + 1;
                     mChordLegend->HandleType(strum_used_string);
                 } else {

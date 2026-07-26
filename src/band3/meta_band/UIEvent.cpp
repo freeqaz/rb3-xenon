@@ -42,8 +42,15 @@ void UIEvent::Dismiss() {
 DialogEvent::DialogEvent(DataArray *a1, DataArray *a2) : UIEvent(a1, a2) {}
 
 void DialogEvent::OnActivate() {
+    // Retail uses a FUNCTION-LOCAL `static Message init_msg` here, not the
+    // Messages2.h global: guard 0x82E01B7C bit 0x1, storage 0x82E01B74, string
+    // "init" @0x820010E4, constructed + atexit'd ahead of `msg` (bit 0x2).
+    static Message init_msg(Symbol("init"));
     static EventDialogStartMsg msg(mEventDef, init_msg);
-    msg[0] = DataNode(mEventDef, kDataArray);
+    {
+        DataNode n(mEventDef, kDataArray);
+        msg[0] = n;
+    }
     if (mEventInit->Size() == 0) {
         mEventInit = init_msg;
     }

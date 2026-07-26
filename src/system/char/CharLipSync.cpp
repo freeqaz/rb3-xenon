@@ -35,7 +35,11 @@ BEGIN_PROPSYNCS(CharLipSync)
             return PropSync(mVisemes, _val, _prop, _i + 1, _op);
     }
     SYNC_PROP(prop_anim, mPropAnim)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharLipSync)

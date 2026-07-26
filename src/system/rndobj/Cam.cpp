@@ -68,7 +68,11 @@ BEGIN_PROPSYNCS(RndCam)
     )
     SYNC_PROP(z_range, mZRange)
     SYNC_PROP_MODIFY(screen_rect, mScreenRect, UpdateLocal())
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndCam)

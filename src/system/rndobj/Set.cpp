@@ -18,7 +18,11 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(RndSet)
     SYNC_PROP(objects, mObjects)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
     if (_op == kPropSet) {
         for (ObjPtrList<Hmx::Object>::iterator it = mObjects.begin();
              it != mObjects.end();

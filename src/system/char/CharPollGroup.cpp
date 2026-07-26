@@ -18,7 +18,11 @@ BEGIN_PROPSYNCS(CharPollGroup)
     SYNC_PROP(changed_by, mChangedBy)
     SYNC_PROP(changes, mChanges)
     SYNC_SUPERCLASS(CharWeightable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharPollGroup)

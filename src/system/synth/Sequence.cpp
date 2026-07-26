@@ -65,7 +65,11 @@ BEGIN_PROPSYNCS(Sequence)
     SYNC_PROP(pan_spread, mPanSpread)
     SYNC_PROP(can_stop, mCanStop)
     SYNC_PROP_SET(trigger_sound, 0, OnTriggerSound(_val.Int()))
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(Sequence)

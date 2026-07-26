@@ -294,9 +294,9 @@ void TrainerPanel::SetLessonComplete(int idx) {
     float f = 1.0f;
     for (int i = 0; i < (int)mSections.size(); i++) {
         float speed = GetBandProfile()->GetLessonCompleteSpeed(GetNameForSection(i));
-        if (speed < f) {
-            f = speed;
-        }
+        // Retail uses the fsel-emitting Min<float> specialization here
+        // (fsubs f0,f31,f1 / fsel f31,f0,f1,f31), not a branchy compare.
+        f = Min(f, speed);
     }
 
     if (f != 0) {

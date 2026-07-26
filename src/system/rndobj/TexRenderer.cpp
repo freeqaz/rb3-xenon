@@ -137,7 +137,11 @@ BEGIN_PROPSYNCS(RndTexRenderer)
     SYNC_SUPERCLASS(RndAnimatable)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndPollable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 void RndTexRenderer::ListAnimChildren(std::list<RndAnimatable *> &list) const {

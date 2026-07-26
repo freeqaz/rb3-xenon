@@ -52,7 +52,11 @@ BEGIN_PROPSYNCS(CharLipSyncDriver)
     SYNC_PROP(apply_override_additively, mApplyOverrideAdditively)
     SYNC_PROP(alternate_driver, mAlternateDriver)
     SYNC_SUPERCLASS(CharWeightable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain does not include this superclass;
+    // DC3's newer engine added it. Native-only.
     SYNC_SUPERCLASS(CharPollable)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharLipSyncDriver)

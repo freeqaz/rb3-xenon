@@ -670,20 +670,12 @@ void GemPlayer::Pass(int track, float ms, int gem_id, bool cur_track) {
                 BuildMissStreak(gem_id);
                 unk3bc++;
             } else {
-                bool isPhraseStart = true;
-                if (gem_id != 0) {
-                    int prevPhrase = TheSongDB->GetPhraseID(mTrackNum, gem_id - 1);
-                    if (TheSongDB->GetPhraseID(mTrackNum, gem_id) == prevPhrase) {
-                        isPhraseStart = false;
-                    }
-                }
-                bool isPhraseEnd = true;
-                if (gem_id != TheSongDB->GetNumPhraseIDs(mTrackNum) - 1) {
-                    int nextPhrase = TheSongDB->GetPhraseID(mTrackNum, gem_id + 1);
-                    if (TheSongDB->GetPhraseID(mTrackNum, gem_id) == nextPhrase) {
-                        isPhraseEnd = false;
-                    }
-                }
+                bool isPhraseStart = gem_id == 0
+                    || TheSongDB->GetPhraseID(mTrackNum, gem_id)
+                        != TheSongDB->GetPhraseID(mTrackNum, gem_id - 1);
+                bool isPhraseEnd = gem_id == TheSongDB->GetNumPhraseIDs(mTrackNum) - 1
+                    || TheSongDB->GetPhraseID(mTrackNum, gem_id)
+                        != TheSongDB->GetPhraseID(mTrackNum, gem_id + 1);
 
                 if ((mGemStatus->Get0x2(gem_id) && isPhraseStart)
                     || (isPhraseEnd && TheGame->mProperties.mAllowOverdrivePhrases)) {
@@ -2285,7 +2277,8 @@ bool GemPlayer::ToggleNoFills() {
 END_FORCE_LOCAL_INLINE
 
 void GemPlayer::HandleSoloGem(int i1, bool b2, float f3, bool b4) {
-    if (Performer::IsLocal() && TheSongDB->IsInPhrase(kSoloPhrase, mTrackNum, i1)) {
+    if (Performer::IsLocal() && !mQuarantined
+        && TheSongDB->IsInPhrase(kSoloPhrase, mTrackNum, i1)) {
         float f4c = 0;
         float f50 = 0;
         int i54 = 0;
@@ -2298,6 +2291,7 @@ void GemPlayer::HandleSoloGem(int i1, bool b2, float f3, bool b4) {
                     return;
                 unk404 = -1;
                 LocalSoloStart();
+                static Message send_solo_start_msg(Symbol("send_solo_start"));
                 HandleType(send_solo_start_msg);
             }
             if (b2) {
@@ -2314,7 +2308,7 @@ void GemPlayer::HandleSoloGem(int i1, bool b2, float f3, bool b4) {
                     mStats.IncrementHighFretGemsHit(b4);
                 }
             }
-            if (mTrackType - 1U <= 1) {
+            if (mTrackType == 1 || mTrackType == 2) {
                 mStats.SetSoloButtonedSoloPercentage(f50);
             }
         }

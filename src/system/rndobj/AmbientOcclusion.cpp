@@ -179,7 +179,11 @@ BEGIN_PROPSYNCS(RndAmbientOcclusion)
     SYNC_PROP(tessellate_tri_error, mTessellateTriError)
     SYNC_PROP(tessellate_tri_large, mTessellateTriLarge)
     SYNC_PROP(tessellate_tri_small, mTessellateTriSmall)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndAmbientOcclusion)
@@ -275,11 +279,15 @@ void RndAmbientOcclusion::BuildTrees(Quality quality) {
                         Multiply(mesh->Verts()[face.v2].pos, xfm, v1);
                         Multiply(mesh->Verts()[face.v3].pos, xfm, v2);
 
-                        float d01 = Distance(v1, v0);
+                        // Retail evaluates the three edge lengths as
+                        // (v0,v1) (v0,v2) (v1,v2) — objdiff showed our
+                        // (v1,v0)/(v1,v2)/(v0,v2) form loading the same
+                        // stack slots into transposed registers.
+                        float d01 = Distance(v0, v1);
+                        float d02 = Distance(v0, v2);
                         float d12 = Distance(v1, v2);
-                        float d20 = Distance(v0, v2);
 
-                        if ((d01 + d12 + d20) > 9.999999747378752e-05f && (d01 * d12 * d20) > 1.1920928955078125e-07f) {
+                        if ((d01 + d02 + d12) > 9.999999747378752e-05f && (d01 * d02 * d12) > 1.1920928955078125e-07f) {
                             box.GrowToContain(v0, false);
                             box.GrowToContain(v1, false);
                             box.GrowToContain(v2, false);

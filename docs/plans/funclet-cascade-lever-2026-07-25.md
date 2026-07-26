@@ -696,3 +696,647 @@ elsewhere: 661 named non-STL functions sit in the 78–100% band binary-wide.**
 `base_frame`. The funclet actually encodes the **`subi r31, r1, N`** immediate.
 These are normally equal but need not be — trust the `subi`, and cross-check
 against the funclet's own `subi r31, r12, N`.
+
+---
+
+# Session 3 (lane R, 2026-07-26) — the identified-body worklist
+
+Base main `e7662cdb` (28,238). Lane branch `laneR-frames`.
+
+## 21. The `callee_set_join` WORKLIST is a **reveal** lever, and it pays a little
+
+`callee_set_join.py --propose` over a fresh `funclet_cascade_rank --json` emitted
+**75 WORKLIST** targets (identified retail VA, body diverges) and **0 BANKABLE**.
+The tool's own docstring is right that naming a frame-mismatched parent banks
+nothing *causally* — but "BANKABLE" is computed from a conservative
+reloc-masked byte-identity test, and inserting all 75 map entries measured
+**+4 strict, 0 lost** (28,238 → 28,242). So:
+
+> **Insert the WORKLIST entries anyway.** BANKABLE is a lower bound, not the
+> answer. The entries cost one map edit and one build.
+
+The far bigger return is that the reveal **turns 75 unpaired `fn_` targets into
+scored near-misses you can actually diff**. Post-reveal distribution:
+
+| band | count |
+|---|--:|
+| flipped outright (100%) | 4 |
+| 90–100% | 49 |
+| 70–90% | 16 |
+| 40–70% | 6 |
+
+Before the reveal every one of these read as an anonymous `fn_` with no diff at
+all. **This is how the identification tooling still pays after byte-identity
+homing has drained: not as strict delta, but as worklist generation.**
+
+Re-run it as the map grows — 238 of 1,809 funclet parents still have zero mapped
+callees, so the join's candidate pool grows every time a body flips.
+
+### The worklist's shape census (use this to route the next wave)
+
+**18 of 75 (24%) are `SyncProperty` / `PropSync<T>`**, nearly all carrying a
+positive size surplus clustered at **+32/+36/+40/+44/+48/+52** bytes, with **+44
+recurring across five unrelated classes** (`Waypoint`, `CharFaceServo`,
+`WorldCrowd`, `PropSync<ActionElement>`, `PropSync<String>`). A repeated
+constant surplus across unrelated TUs is the signature of a **shared macro or
+template cause**, not 18 independent body divergences — route the whole cluster
+to one worker, not one worker per class.
+
+Next largest shapes: 7 `Handle` methods, 2 `op>>(BinStream&)`.
+
+## 22. ★ The §14 `MILO_WARN` vein is **DRAINED** — do not fund a sweep
+
+§14 called the shape "scannable". It was scanned. **The census is 1.**
+
+Method (reproducible): 437 `MILO_WARN(` call sites tree-wide outside
+`src/xdk/` and `src/system/stlport/` → 94 with a plausibly class-typed argument
+→ after resolving the *declared type* of every bare-identifier argument, exactly
+**one** unfixed site remains (`src/band3/meta_band/AssetMgr.cpp:219`, arg `s38`),
+and its enclosing function `AssetMgr::VerifyAssets` **is not in `report.json` at
+all**, so fixing it banks nothing.
+
+Two corrections that make the difference, both load-bearing:
+
+1. **`String(x)` at a call site is the FIXED form, not the broken one.**
+   Scanning for `MILO_WARN(..., String(...))` finds sites lane N *already
+   repaired* — `PrefabMgr.cpp:85` and `SongParser.cpp:1072` are exactly the two
+   §14 harvest targets, and they show up because of the fix. The **broken**
+   signature is a bare **`String`-typed lvalue** argument, which as a discarded
+   comma operand emits no copy at all.
+2. **`Symbol` arguments do NOT qualify.** `Symbol` is a single `const char*`
+   (`src/system/utl/Symbol.h:11-13`) — 4 bytes, register-passed, no `0x10`
+   stack slot, so it cannot produce the shape. The great majority of the 94
+   plausible sites are `Symbol` or `.Str()` / `PathName()` (`const char*`)
+   arguments and are noise. Filtering by *argument spelling* rather than
+   *declared type* over-counts this vein by roughly 90×.
+
+**Corollary: the fleet-wide `Debug.h` vararg-sink form is not worth its isolated
+whole-binary A/B.** There is nothing left for it to fix. §14 stays valuable as a
+*diagnostic* for an individual negative-delta function; it is not a wave.
+
+## 23. Session 3 harvest — shapes the identified-body worklist produced
+
+**`laneR-frames`: 28,238 → 28,313, net +75, 0 lost (unit-agnostic), 6 subagents.**
+
+| stream | net | headline |
+|---|--:|---|
+| map: `callee_set_join` WORKLIST reveal | +4 | §21 |
+| `SyncProperty` superclass-chain (97 classes) | **+25** | §23.1 — one cause, 100 files |
+| `laneR-fc1` local-static `Symbol` ×2 | +24 | §23.2 |
+| `laneR-fc1` `BandCamShot::StartAnim` | +9 | §23.3, §23.4 |
+| `laneR-fc2` ctor-temp rematerialization | +9 | §23.5 |
+| `laneR-tail` `NextSongPanel` pad placement | +1 | §23.6 |
+
+The merged total (+75) **exceeds the sum of the independently-measured parts
+(+72)**: the streams reinforce rather than interfere, because several share
+parents whose funclets only pair once every arm in the unit is right. Always
+re-measure the merge; do not report the sum.
+
+### 23.1 ★★ `SyncProperty` chains: retail stops at the immediate superclass
+The single biggest win of the session, and a clean instance of the recurring
+**"retail X360 PREDATES the newer oracle"** pattern — this time against **DC3**,
+not rb3-Wii. DC3 (newer engine) added a direct `SYNC_SUPERCLASS(Hmx::Object)`
+tail to its `SyncProperty` chains; RB3-360 retail has none, and neither does the
+rb3-Wii oracle for any of the 97 affected classes. Our `src/system/` tree
+inherited DC3's version.
+
+Cost per affected function: an extra **8–13 instruction virtual-base-adjusted
+call**, *plus* — because that call needs one more callee-saved GPR — **a
+register-allocation cascade through the entire function body**. That is why the
+surplus presented as a *constant* (+32…+52 bytes) across unrelated classes while
+the match percentages varied wildly (69%–99%).
+
+**Diagnostic:** a base-only `bl ?SyncProperty@Object@Hmx@@` in objdiff's Function
+Call Diff plus a **pure-insert tail cluster of exactly the surplus size**.
+Guard removals with `#ifdef HX_NATIVE` to preserve native-port behaviour.
+A second, smaller wave (`Spotlight`/`UIComponent` → trailing `RndPollable`,
+`CharLipSyncDriver` → `CharPollable`, `TexMovie` → mid-chain `Hmx::Object`) was
+strict-neutral but moved `Spotlight::SyncProperty` 98.89 → 99.83 fuzzy.
+
+> **Generalise:** a *constant* size surplus repeated across unrelated classes is
+> a **shared macro/chain** defect, never N independent body divergences. Route
+> the whole cluster to one worker. Audit the remaining `SYNC_SUPERCLASS` and
+> `LOAD_SUPERCLASS` chains against rb3-Wii the same way.
+
+### 23.2 The §16 local-static `Symbol` lever generalises to the game layer
+§16 found it once. It closed **two more** here, both at 88–90% → 100.0 with all
+their funclets (`RGTrainerPanel::UpdateStepText` +11 funclets,
+`PlayerGameplayMsg::Dispatch` +10). Retail declares the symbols as
+**function-local `static Symbol`** rather than using the `Symbols*.h` globals.
+
+Tells, all readable without guessing:
+* an extra `??0Symbol@@QAA@PBD@Z` call per static (3 vs 1);
+* the **guard bit index**: `rlwinm. 0,29,29` (bit 4) vs our `clrlwi. 31` (bit 1)
+  — the bit number tells you how many statics precede it in the function;
+* the token fetched as `lwz r4, 0(rN)` from static storage instead of
+  `lis/lwz ?name@@3VSymbol@@A`;
+* `.rdata` string spacing to recover declaration order (§16).
+
+Each extra pinned storage pointer plus the hoisted guard base costs one
+callee-saved register, so **one edit fixes body, `__savegprlr_N` and frame
+together**. Note this is *safe under scatter-includes*: a local static adds no EH
+state, so shadow copies' funclet counts are unchanged and positional pairing
+holds (`NetGameMsgs.cpp` is scatter-included by `CampaignLevel.cpp` and
+`MeshAnim.cpp`; the fix even collected a funclet in a shadow copy).
+
+### 23.3 ★ Dev-only surplus at WHOLE-BLOCK scale — read the target's epilogue
+`BandCamShot::StartAnim`: retail's body simply **ends** at
+`mCachedTotalDuration = GetTotalDuration()`. The rb3-Wii DEV build additionally
+has a `Character *chars[32]` scratch array, a `numChars`/`MILO_ASSERT`, a
+`DoHide()` call and an `sHideAllCharactersHack` tail — together the entire
++0xA0 frame delta and a 39-instruction pure-insert tail cluster.
+
+The method that found it is the transferable part: **read the target's epilogue
+and ask where retail stops**, rather than trying to align clusters from the top.
+Cluster-shape triage finds *small* stripped arms; whole-block strips are easier
+to see from the end of the function.
+
+### 23.4 Trailing bitfields can be TWO allocation units, not one
+Same target's `Target` struct: `int mForceLod : 3` occupies a word at `0x5c`
+(`srawi r,r,29`), then six `bool : 1` flags share a **1-byte** unit at `0x60`
+(`lbz` + `clrrwi. 7` / `extrwi 1,26` / `extrwi 1,29`, masks 0x80/0x20/0x04).
+We had packed all seven as `int` in one word, which forced bool-normalising
+`subic`/`subfe`/`cntlzw` sequences retail never emits.
+**Tell: `lbz` on a bitfield word ⇒ a separate `bool :1` allocation unit.**
+
+### 23.5 ★ NEW shape — ctor `this`-in-r3 suppresses temp rematerialization
+MSVC reuses a constructor's `this` return value in `r3` as the temporary's
+address. So a **prvalue temporary passed as a reference argument emits NO
+`addi rX, r31, <slot>` rematerialization** — and the compiler is then free to
+hoist the *destination* address computation **above** the ctor call, pinning it
+in an extra callee-saved register (+0x10 frame, `__savegprlr_22` vs `_23`).
+
+Retail instead declares a **named local in a nested block**:
+```cpp
+{ DataNode n(arr2, kDataArray); arr->Node(i5++) = n; }
+```
+which (a) re-materializes the address for each use and (b) restores
+RHS-before-LHS evaluation order. **The nested block is load-bearing** — a plain
+named local moves the dtor past the following statement (measured on
+`BandCharDesc::Init`: a plain local left 2 replaces; the extra scope closed it).
+Worth +1 parent +7 funclets on `EntityUploader::ReturnProfileResults`.
+
+### 23.6 Struct padding: derive the pad's POSITION from target offsets
+`NextSongPanel`'s known +4 pad was in the wrong place. The target reads
+`mDetailsPageSize` at `0x5c` and `mDetailsHeight[]` at `0x68` while `unk70[]`
+stays at `0x78` — so the pad sits **between `mDetailCounts` and
+`mDetailsPageSize`**, not after `mDetailsHeight`. A pad of the right size in the
+wrong slot still reads as body divergence; always solve for position from two
+independent member offsets, not one.
+
+### 23.7 Access-specifier over-restriction forces accessor-shaped codegen (OPEN)
+Unmeasured but concrete. `GemManager::GemManager` (99.7%, 4 mismatched
+instructions) differs only in
+`mTrackDir->Find<RndDir>("chord_shape_outline",true)->LocalXfm().v.y`: retail
+folds the whole chain into one displacement (`mr r11,r3` + `lfs …,0xFC(r11)`),
+while going through the `LocalXfm()` **reference-returning accessor**
+materializes the sub-object address (`addi r11,r3,0xd4` + `lfs …,0x28(r11)`).
+`RndTransformable::mLocalXfm` is **`public` in the rb3-Wii oracle**
+(`Trans.h:187`) but `protected` in ours (`Trans.h:188`), which forces the
+accessor at every external call site.
+
+Splitting the access specifier **in place** (declaration order unchanged, so
+layout is untouched) is the candidate fix. It was not landed here — the full
+`Trans.h` cascade competes with concurrent workers for build capacity and the
+immediate payoff is ~1 function — but the *class* of defect (our headers more
+restrictive than the oracle ⇒ accessor-shaped codegen that cannot match) is
+worth a scan of its own: grep for reference-returning accessors whose member the
+oracle exposes directly.
+
+### 23.8 Final session-3 tally and the number to price the next wave with
+
+**`laneR-frames`: 28,238 → 28,329, net +91, 0 lost (unit-agnostic), 6 subagents.**
+Supersedes the +75 table in §23; a second `laneR-fc2` wave added +16.
+
+**Measured flip rate of the 75-target worklist: 33.3% (25/75).** That is the
+honest price for a `callee_set_join` WORKLIST wave — roughly one flip per three
+targets, on a pool whose identity is already established. Note it was achieved
+with only 4 of 6 planned fix streams completing (the engine stream never got a
+concurrency slot), so 33% is a floor, not a ceiling.
+
+The second `fc2` wave is worth reading as confirmation that **§23.2's
+local-static lever is the densest single shape in this pool** — it closed four
+more parents on its own (`TrackerDisplay::SetPercentageProgress` 68.8 → 100 with
+3 funclets, `SetTimeProgress` 65.7 → 100, `DialogEvent::OnActivate` 75.1 → 100
+with 2 funclets, `MidiParserMgr::OnText` 97.4 → 100), and in every case the
+storages, shared guard word, guard-bit order and `.rdata` strings were recovered
+directly from the PE. Two refinements worth keeping:
+
+* **Declaration order == ctor address order == guard-bit order.** Once you have
+  the guard word you can read the whole static block's source order off the
+  binary without guessing.
+* **A local `static Message`** (`DialogEvent::OnActivate`:
+  `static Message init_msg(Symbol("init"))`) behaves the same way as a local
+  `static Symbol` — retail uses it in preference to the `Messages*.h` global.
+  Extend the §23.2 scan to `Message` as well as `Symbol`.
+* **An existing helper can be the last 4 instructions.** `SetTimeProgress`'s
+  residual was retail calling `MsToMinutesSeconds(ms, min, sec)` where we
+  open-coded `totalsecs / 60, totalsecs % 60` in the argument list. The helper
+  inlines to *identical arithmetic* but a different **store schedule** (both
+  divides issue before either `DataNode` store). When a diff is a handful of
+  reordered stores around arithmetic, look for a helper retail called rather
+  than assuming scheduling noise.
+
+## 24. ★★ Correction to the routing rule: positive delta + whole-function regswap is usually ONE defect
+
+This overturns a triage habit that has been costing the project real matches.
+
+The standing rule — *"regswap-only ⇒ at_limit, stop"* (§ throughout) — is only valid
+once the **size delta is already zero**. On `RndCubeTex::SyncProperty` the extra
+`SYNC_SUPERCLASS(Hmx::Object)` tail call is virtual-base-adjusted and therefore
+needs **one more callee-saved GPR** (`__savegprlr_24` vs retail's `_26`), which
+**renumbers the entire function's allocation** — presenting as a full-function
+`r24↔r26 / r25↔r27 / r26↔r28` swap. The regswap was a *downstream symptom* of the
+surplus, not an independent wall.
+
+> **Rule:** never triage a function as "regswap ⇒ at_limit" while it still has a
+> non-zero size delta. Resolve the surplus first, then re-read the swaps. A
+> whole-function swap accompanying a positive delta is evidence of **one**
+> defect — an extra call that consumed a register — not two.
+
+This also explains why the §23.1 cluster's deltas varied (+32…+52) while all
+sharing one cause: different vbase-adjust costs per class.
+
+## 25. The sibling `*_SUPERCLASS` chains are the same vein, and they are UNTOUCHED
+
+§23.1 swept `SYNC_SUPERCLASS` and banked +29. The identical DC3-accretion
+question applies to every other superclass-chaining macro, none of which has been
+audited against rb3-Wii:
+
+| macro | call sites in `src/system` + `src/band3` | status |
+|---|--:|---|
+| `SYNC_SUPERCLASS` | 431 | swept (§23.1), +29 |
+| `HANDLE_SUPERCLASS` | **611** | **untouched** |
+| `COPY_SUPERCLASS` | **385** | **untouched** |
+| `SAVE_SUPERCLASS` | **353** | **untouched** |
+
+**1,349 unaudited sites against 431 that yielded +29.** Method is mechanical and
+already proven: diff each class's chain list against
+`/home/free/code/milohax/rb3/src`, confirm on the target asm (base-only
+`bl ?<Method>@Object@Hmx@@` plus a pure-insert tail cluster of exactly the
+surplus size), guard removals with `#ifdef HX_NATIVE`. **This is the
+highest-leverage known follow-up in the lane.**
+
+Two cautions carried over from the sweep:
+* **Expect genuine exceptions and verify per class.** `CharBonesObject`
+  demonstrably *does* tail-chain (8 target-only instructions + a bool-normalised
+  return); its chain was restored unguarded. A blanket removal would have been a
+  regression.
+* **`Cam.cpp` and `CameraShot.cpp` see `obj/Object.h`'s older macro set, not
+  `ObjMacros.h`** — `SYNC_PROP_MODIFY_ALT` / `SYNC_PROP_BITFIELD_STATIC` do not
+  compile there.
+
+### 25.1 Second shared cause found alongside it
+DC3 also added an `idx >= vec.size() + (op == kPropInsert)` bounds check to the
+`std::vector<T>` / `std::list<T>` `PropSync` templates — an 11-instruction
+`divw`/`cntlzw`/`cmplw`/`bge` block (**+44**, the recurring constant from §23.1's
+census) emitted in *every* instantiation, absent from both retail and rb3-Wii.
+Template-level accretion multiplies across instantiations; audit the other
+`PropSync`/`PropSyncPtr` templates the same way.
+
+### 25.2 Walls recorded (do not re-grind)
+* `Spotlight::SyncProperty` 99.83 — regswap-only *with the delta already
+  resolved*, i.e. a legitimate at_limit under the §24 rule (arg-save order of
+  `_val` vs `_i`).
+* `PropSync<SpotlightEntry>` 97.72 / `PropSync<CharData>` 98.79 — `i++` in-place
+  vs `i+1` fresh-temp regalloc, **template-level**. The obvious source rewrite
+  *regressed* it (97.72 → 91.8). at_limit for hand editing.
+* `CamShot::SyncProperty` 95.56 — genuine body divergence; our source is DC3's
+  (`mHideList`/`mShowList`/`mCrowdStateOverride`) where rb3-Wii has bool-bitfield
+  temps + `SYNC_PROP_BITFIELD_STATIC`. Needs a real body port, not a chain fix.
+* `RndCam::SyncProperty` 75.11 — **inline-policy divergence**: retail calls
+  `RndCam::SetFrustum` out-of-line (`bl` with 4 float args + `this-0x330`);
+  `/Ob2` inlines it for us (~17 instructions × 3 arms). The TU already has an
+  `_outline_SetFrustum` noinline-wrapper convention to reuse.
+
+### 25.3 Two real source bugs the sweep exposed
+Worth noting because both were *behavioural*, not cosmetic — this kind of sweep
+doubles as a correctness audit:
+1. `RndParticleSys::SetGrowRatio` clamped against `mGrowRatio` instead of
+   `mShrinkRatio` (target: load `this-0x60`, store `this-0x64`; rb3-Wii confirms
+   `f <= mShrinkRatio`).
+2. `CharBonesSamples::SyncProperty` tested `_op == kPropSize` (0x10) where retail
+   tests `0x40`, matching the `SYNC_PROP_SET` macro's own early-out.
+
+## 26. FINAL session-3 tally — supersedes §23 and §23.8
+
+**`laneR-frames`: 28,238 → 28,342. Net +104 (106 gained, 2 lost). 6 subagents.**
+
+The 2 losses are honest and understood: `fn_825BC4CC` / `fn_825BC4F4`, two 40-byte
+anonymous EH funclets in `default/band3/meta_band/MetaNetMsgs`, which went
+100.0 → 99.9 when `BandEventPreviewMsg::Dispatch`'s arm count changed and shifted
+objdiff's **positional** pairing of the unit's anonymous funclets (the §5.1 /
+§12 mechanism). They are not a code regression — both still compile, and the
+parent they hang off flipped 79.6 → 100. Accepted against 106 gained.
+
+**Measured flip rate of the 75-target `callee_set_join` WORKLIST: 48.0%
+(36/75).** That is the number to price the next wave with. It is a *floor*: only
+4 of 6 planned fix streams got concurrency slots (the `system/` engine stream
+never launched), and 46 targets were still open when the lane closed, 12 of them
+above 97%.
+
+### Where the +104 came from
+
+| stream | net | dominant shape |
+|---|--:|---|
+| `SyncProperty` superclass-chain, 97+4 classes | +29 | §23.1 / §25 DC3 chain accretion |
+| `laneR-fc1` (3 parents) | +33 | §23.2 local-static `Symbol`, §23.3 whole-block strip |
+| `laneR-fc2` (6 parents) | +25 | §23.2 local-static, §23.5 ctor-temp |
+| `laneR-tail` (7 near-flips) | +7 | §26.1 below |
+| `laneR-game` (5 parents) | +6 | §23.2 local-static, retail-only ctor tails |
+| map reveal waves | +4 | §21 |
+
+### 26.1 The lane's dominant shape, stated plainly
+
+**The single most productive shape of the session was the function-local
+`static Symbol` / `static Message` (§23.2/§16) — it closed 11 of the 36 flips
+across three independent workers, with a reported 3/3 hit rate on negative-delta
+game targets.** Retail declares the token as a function-local static; our
+rb3-Wii port uses the `Symbols*.h` / `Messages*.h` global.
+
+Consolidated tell-set (all target-derivable, no oracle needed):
+* `??0Symbol@@QAA@PBD@Z` **call count target > base**;
+* an ~11-instruction delete cluster holding an extra **static-guard bit test**,
+  and **all downstream guard `ori` immediates shifted left by one bit**;
+* a **−0x10 frame with 1–2 extra `__savegprlr` registers** (each pinned storage
+  pointer plus the hoisted guard base costs a callee-saved register);
+* **declaration order == ctor address order == guard-bit order**, and storages sit
+  descending from the guard word — so the whole block's source order is readable
+  off the binary;
+* the literal itself is at the `lis`/`addi` pair feeding the `Symbol` ctor.
+
+**Worth a scanner** (§23.2 already asked for one): negative-delta parents where
+the `??0Symbol@@QAA@PBD@Z` count differs. With 46 worklist targets still open and
+611+385+353 unaudited `*_SUPERCLASS` sites (§25), this and the chain sweep are
+the two funded follow-ups.
+
+### 26.2 Further "retail predates the dev tree" confirmations
+The pattern now has ~10 independent confirmations and should be the **first**
+hypothesis for any negative delta in ported game code:
+* `Rnd::CreateDefaultTexture` — retail calls the **3-arg** `RndTex::SetBitmap`
+  overload, not the `Type`-taking one.
+* `MusicLibraryNetSetlists::Poll` — retail has **no `SwapDxtEndianness()`** step
+  between `RndBitmap::Load` and `SetMip`; that is **Wii-only**.
+* `RockCentral::UpdateChar` — retail has **no runtime `if (profile)` guard**,
+  only the stripped `MILO_ASSERT`. The guard also drove a 3-way callee-saved
+  register rotation that cleared with it — another §24 instance.
+* `OvershellSlot` ctor — Wii-dev-only `unk28` init and a trailing
+  `Find<BandLabel>("user_name.lbl")` + `TheServer.AddSink(UserLoginMsg)` block,
+  with **zero target instructions** between the `setupProviders` HandleType and
+  the epilogue.
+* `MusicLibrary` ctor — the inverse: retail **does** zero `unk19c`/`unk1a0`; our
+  header comment claiming otherwise was simply wrong. Verify against the target,
+  not against our own annotations.
+
+## 27. Sharpening §24: the regswap stop-rule needs a second condition
+
+§24 established that a *positive size delta* invalidates a "regswap ⇒ at_limit"
+call. The `laneR-tail` stream then hit the same wrong verdict **twice more, at
+zero size delta**, which forces a stronger statement of the rule.
+
+* `RockCentral::UpdateChar` — `run_diff_inspect` reported a 3-way callee-saved
+  rotation (r21/r23/r24) as `REGISTER_SWAP`. The actual defect was a **spurious
+  runtime `if (profile)` guard** retail does not have (it has only the stripped
+  `MILO_ASSERT`). Deleting the guard dissolved the entire rotation.
+* `PatchLayer::Handle` — likewise: `mStickerCategory = Symbol(0)` →
+  `Symbol s(0); mStickerCategory = s;`. Retail reads the value back from the
+  temp's own stack slot and hoists *that* slot's zero-init rather than the
+  `Sym()` NRVO slot's.
+
+In both cases a **single stray `insert` or `diff_op`** sitting among the swaps
+was the thread to pull.
+
+> **Revised rule.** `regswap-only ⇒ at_limit` requires **both**:
+> (a) the size delta is zero, **and**
+> (b) there is **no `insert`, `delete`, or `diff_op` anywhere in the function**.
+> If either fails, the swaps are a *symptom*. Register allocation is
+> deterministic — it does not drift on its own; something upstream moved it.
+
+Genuine at_limit under the revised rule still exists — e.g. `DisplayEvents`
+(95.72): 55 swap instructions over 11 FPR pairs plus a 0x10 frame delta, where
+retail keeps the `5.0f` constant's *address* in r26 and reloads it 3× while we
+hoist the value into `f29`. That is permuter-class, and the permuter is off.
+
+### 27.1 Structural leads left open, with the missing data point named
+Recorded so the next wave does not re-derive them:
+* **`MetaPanel`** (99.95) — the non-virtual part is **0x10 too big**: vbase at
+  `this+0xdc` retail vs `+0xec` ours. `mMusic@0x60` and the `UIPanel` subobject
+  `@0x40` are already correct, so the excess is inside **`SongPreview`** (ours
+  0x74, retail 0x64). Three DC3-newer members sit at its tail; removing all
+  three gives 0x60, not 0x64 — so **one of them is real** (likely `mPreviewDb`).
+  Cheap and high-value with one more data point.
+* **`PlatformMgr`** (99.95) — `mRegion` must be at **0x30** (ours 0x28), with
+  `mScreenSaver@0x2c` retail-confirmed; needs 8 bytes between `mConnected@0x26`
+  and `mRegion`. Wants a Ghidra pass on `SetDiskError`/`GetRegion`.
+* **`LocalBandUser`** (98.35) — two independent defects: `HANDLE_EXPR(has_as_friend)`
+  is **stubbed to constant 1** (retail calls `BandUser::HasAsFriend(BandUser*)`,
+  undeclared in our tree), and the member block is 4 bytes too big (0x2c vs
+  0x28) — and note `RB3_RBTREE_0x1C` is **not** set for this TU, so the
+  `std::set` is already 0x18 and the extra 4 is elsewhere.
+* **`EndingBonus::Handle`** (98.03) — our inlined `ObjectDir` lookup carries an
+  extra **`TheLoadMgr.EditMode()`** branch (`lbz r11, 0x5c(TheLoadMgr)`) retail
+  lacks. Engine-header-level; **likely a cascade lever far beyond this one
+  function**, but needs its own isolated full-rebuild A/B.
+* **`RndMesh::VertVector`** (via `GemRepTemplate`, 98.63) — its tail is **one
+  32-bit field in retail** (single `stw` at +8), two `unsigned short`s in ours.
+  The fix deletes `unkc`, which has 2 live sites in `Mesh.cpp`. Shared engine
+  struct — dedicated A/B, not a drive-by.
+* **`ViewSettingsProvider::SelectSetting`** should return **`bool`**, not `int`
+  (target masks with `clrlwi r11,r3,24`). That changes its mangled name and
+  needs a `target_symbol_map` repoint — **map owner's call.**
+
+### 27.2 Map issues reported, not applied (single-owner rule)
+* `?UpdateChar@RockCentral@@QAAXPAVTourCharLocal@@AAVDataResultList@@@Z` does not
+  exist in our obj; the real symbol is the 6-arg
+  `…@AAVDataResultList@@PAVObject@Hmx@@HH@Z` in `default/RockCentral`.
+* `RndTex::SetBitmap` renders as the **4-arg** name on the target side in
+  `Rnd.cpp` but the **3-arg** name in `MusicLibraryNetSetlists.cpp` — at least
+  one is wrong. Harmless under normalized diff, but it misleads readers.
+* `RockCentral::UpdateChar`'s target-side `insert_unique` resolves to
+  `pair<Symbol,String>` where ours is `pair<Symbol,DataNode>` — evidence retail's
+  `DataPoint` stores `map<Symbol,String>`.
+* `0x822b6720` is `?resize@?$ObjList@UTarget@HamCamShot@@@@QAAXI@Z` (DC3's
+  `HamCamShot`). **Careful — it currently reads 100.0% in `default/BandCamShot`**,
+  so it is *not* a simple mispair to repoint; our tree emits that exact name.
+  The real question is whether `BandCamShot::mTargets` is `ObjList` (retail
+  iterates an embedded-sentinel list: `addi r18,r26,0x19c` = `end()`,
+  `lwz r29,0x19c(r26)` = `begin()`) rather than our `ObjVector`, and whether the
+  nested type should be renamed. A `laneR-fc1` trial of the `ObjList` swap
+  reached `StartAnim` 99.5% and gained 4 sibling functions but lost 5 anonymous
+  funclets to positional re-pairing (**net −1**), so it was reverted. With the
+  naming settled first it should go clearly net-positive.
+
+---
+
+## 28. CORRECTED FINAL NUMBERS (supersede §26)
+
+§26 was written before the last two `laneR-fc2` / `laneR-tail` merges landed.
+
+**`laneR-frames` @ `f023625a`: 28,238 → 28,351. Net +113 (115 gained, 2 lost).**
+**Worklist flip rate: 53.3% (40/75). 35 targets still open, 12 of them ≥97%.**
+
+The 2 losses are the ones documented in §26 (`fn_825BC4CC` / `fn_825BC4F4`,
+anonymous EH funclets re-paired positionally in `MetaNetMsgs`; their parent
+flipped 79.6 → 100). Unchanged.
+
+**Baseline caveat for whoever lands this:** the lane branched from `e7662cdb`
+(28,238). `main` moved to **28,382** during the session (lane Q, +144). A merge
+and a fresh whole-binary re-measure are required before landing — the +113 is
+measured against the branch point, not against current `main`.
+
+### 28.1 Final per-stream attribution
+
+| stream | net (own baseline) | closed |
+|---|--:|--:|
+| `laneR-fc1` funclet parents | +33 | 2 full + 1 frame-only |
+| `laneR-fc2` mid funclet parents | +33 | 9 |
+| `laneR-sync` SyncProperty cluster | +29 | 14 of 18 |
+| `laneR-tail` 99-band near-flips | +7 | 7 |
+| `laneR-game` game bodies | +6 | 5 |
+| map reveal waves (lead) | +4 | 4 |
+
+Sum of independently-measured parts = +112; **merged whole-binary = +113**.
+The streams reinforce rather than interfere. Re-measure the merge; never sum.
+
+### 28.2 Ranked follow-ups, in priority order
+1. **`HANDLE_`/`COPY_`/`SAVE_SUPERCLASS` chain audit (§25)** — 1,349 unaudited
+   sites, identical mechanical method to the `SYNC_SUPERCLASS` sweep that banked
+   +29. Highest expected value in the lane.
+2. **Local-static `Symbol`/`Message` scanner (§26.1)** — the session's densest
+   shape (11 of 40 flips, three independent workers, reported 3/3 on
+   negative-delta game targets). Scan key: parents where the
+   `??0Symbol@@QAA@PBD@Z` call count differs target-vs-base.
+3. **Re-run `callee_set_join` (§21)** — it grows as the map grows, and 40 fresh
+   names just landed. 238 of 1,809 funclet parents still have zero mapped callees.
+4. **The 35 still-open worklist targets**, 12 of which are ≥97%.
+5. **The six structural leads in §27.1**, each with its missing data point named.
+6. **`EndingBonus`'s `TheLoadMgr.EditMode()` branch (§27.1)** — engine-header
+   level, plausibly a cascade lever well beyond the one function; needs its own
+   isolated full-rebuild A/B.
+
+## 29. ★★ The `bool x = A || B` select — and why every other source form fails
+
+The most broadly reusable shape of the session, because the **branchless-mask
+divergence it fixes is everywhere** in ported game code.
+
+**Symptom.** Retail materialises a bool through a volatile temp and a shared
+`li rN, 1` true-block, with the zero supplied by a *function-wide zero register*
+(`li r25, 0x0`). We instead emit MSVC's branchless idiom:
+```
+subf   r11, rA, rB
+subfic r11, r11, 0x0
+subfe  r11, r11, r11      ; r11 = (a != b) ? -1 : 0
+and    rX, r11, rX
+```
+`subfic 0` followed by `subfe rX,rX,rX` **is** the tell — whenever you see that
+trio, retail almost certainly branched and we did not.
+
+**The only source form that reproduces retail is a single `||` initialiser:**
+```cpp
+bool finished = (mBand && mBand->GetBand() && mBand->MainPerformer()->mGameOver)
+    || unk1e1;
+```
+
+**Measured negative controls — every one of these still fails**, which is why
+this needs writing down rather than re-deriving:
+
+| source form | result |
+|---|---|
+| `x = true; if (cond) x = false;` | branchless mask (the form we had) |
+| `x = false; if (A) x = true; else {…}` | +1 callee-saved reg, frame +0x10 |
+| `bool x; if (A) x = true; else x = (p != q);` | branchless mask |
+| explicit inner `if/else` assigning both arms | branchless mask |
+
+The intuition that "writing it branchy makes it branch" is **wrong** — MSVC `/O1`
+re-collapses all of the branchy spellings. The short-circuit `||` *initialiser*
+is load-bearing: it is what lets the compiler share one true-block and pull the
+false value from the function-wide zero register.
+
+This also settles the open diagnosis on `GemPlayer::Pass` recorded at the start
+of the lane (source already used the branchy `if (…) isPhraseStart = false;` form
+yet still emitted `subf/subfic/subfe/and`) — the branchy form was never going to
+work; the fix is to restructure the two phrase-boundary bools as `||`
+initialisers feeding the compound condition.
+
+**Scannable:** any function whose diff contains `subfic … , 0x0` immediately
+followed by `subfe rX, rX, rX`.
+
+## 30. TRUE FINAL NUMBERS (supersede §26 and §28)
+
+The `laneR-game` stream landed one further commit (§29's `||`-select lever plus
+retail-only guards and a `TaskMgr::Init` body port) after §28 was written.
+
+**`laneR-frames` @ `c6f04a6b`: 28,238 → 28,354. Net +116 (118 gained, 2 lost).**
+**Worklist flip rate: 57.3% (43 of 75).**
+
+Verified twice by independent full-rebuild A/B. The 2 losses are unchanged and
+are the ones documented in §26 (`fn_825BC4CC` / `fn_825BC4F4`, anonymous EH
+funclets positionally re-paired in `MetaNetMsgs`; their parent flipped
+79.6 → 100).
+
+**A 57.3% flip rate on an identity-established worklist is the headline number
+for pricing.** It is still a floor: only 5 of 6 planned fix streams got
+concurrency slots (the `system/` engine stream never launched), and 32 targets
+remained open at close.
+
+**Landing caveat unchanged from §28:** the lane branched from `e7662cdb`
+(28,238); `main` reached **28,382** during the session. Merge and re-measure
+whole-binary before landing — do not carry +116 forward as-is.
+
+### 30.1 What this lane actually demonstrated
+1. **Identification tooling still pays after byte-identity homing drains** — not
+   as strict delta (`BANKABLE` was 0) but as **worklist generation**. The reveal
+   converted 75 unpaired `fn_` addresses into scored near-misses; 43 of them are
+   now matched.
+2. **Constant surpluses repeated across unrelated classes mean one shared cause.**
+   The `SyncProperty` census (§23.1) turned 18 apparently independent near-misses
+   into a single 100-file edit worth +29.
+3. **"retail X360 predates the newer oracle" is now the single most confirmed
+   pattern in the project** (~15 independent instances this session alone),
+   against *both* rb3-Wii DEV **and** DC3. It should be the first hypothesis for
+   any size delta in ported code, in either direction.
+4. **Two triage rules were measurably wrong** and are corrected in §24/§27
+   (regswap stop-rule) and §29 (branchy source does *not* defeat the branchless
+   mask — only a `||` initialiser does).
+
+## 31. Shipped: the in-body local-static `Symbol` scanner (62 candidates, ready to work)
+
+`scripts/harvest/localstatic_symbol_inbody_scan.py` (from `laneR-game`) turns
+§26.1's tell-set into a worklist. It compares the target's
+`??0Symbol@@QAA@PBD@Z` call count against ours per function.
+
+```bash
+python3 scripts/harvest/localstatic_symbol_inbody_scan.py \
+    --min-pct 60 --max-pct 99 --exclude-macro-bodies \
+    --json ~/tmp/localstatic_candidates.json
+# -> 62 candidates
+```
+`--exclude-macro-bodies` is important: without it, `BEGIN_HANDLERS` expansions
+flood the output with false positives. Columns are `pct | unit | symbol |
+missing-Symbol-ctor count | .s file`.
+
+Given this shape closed **11 of 43 flips** this session across three independent
+workers (reported 3/3 on negative-delta game targets), this list is the single
+most concrete piece of next-wave work the lane produced.
+
+### 31.1 ★ A force multiplier hiding inside the scanner output
+**Ten `SetType` overrides sit at *exactly* 62.92%** — `RndTexRenderer`,
+`TexLoadPanel`, `RndLine`, `RndGroup`, `RndFlare`, `EventTrigger`, `CharIKScale`,
+`RndPollable`, `BandCamShot`, `UIComponent` — all in unrelated units, each
+missing exactly 1 `Symbol` ctor.
+
+By §23.1's own lesson (*a constant repeated across unrelated classes is one
+shared cause, never N independent divergences*), this is almost certainly a
+**single defect in the shared `SetType`/`SetTypeDef` path or its macro**, not ten
+jobs. **Diagnose one, fix all ten.** Same reasoning that turned 18 `SyncProperty`
+near-misses into one 100-file edit worth +29.
+
+### 31.2 Trap recorded: the `// 0x…` header annotations can be stale
+`laneR-game` found `Player.h` / `Performer.h` offset comments **stale by ~0x30**,
+and — critically — **`lookup_struct_offset` inherits that error**, because the
+struct DB is built from those annotations. Resolving `Performer`'s real layout
+required anchoring off `mGameOver@0x238` read from a *different* function's asm.
+
+> **Rule:** when a member offset matters, confirm it against target asm from a
+> second, independent function. Do not trust `// 0x…` comments or
+> `lookup_struct_offset` alone — they share a single point of failure.

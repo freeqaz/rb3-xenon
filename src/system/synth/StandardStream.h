@@ -67,7 +67,7 @@ public:
     virtual float GetSpeed() const { return mSpeed; }
     virtual void LoadMarkerList(const char *);
     virtual void ClearMarkerList();
-    virtual void AddMarker(const Marker &);
+    virtual void AddMarker(Marker);
     virtual int MarkerListSize() const;
     virtual bool MarkerAt(int, Marker &) const;
     virtual void SetJump(float, float, const char *);

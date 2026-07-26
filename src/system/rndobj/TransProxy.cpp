@@ -13,7 +13,11 @@ BEGIN_PROPSYNCS(RndTransProxy)
     SYNC_PROP_MODIFY(proxy, mProxy, Sync())
     SYNC_PROP_MODIFY(part, mPart, Sync())
     SYNC_SUPERCLASS(RndTransformable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndTransProxy)

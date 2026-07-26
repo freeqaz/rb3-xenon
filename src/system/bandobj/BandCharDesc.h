@@ -72,7 +72,12 @@ public:
     class OutfitPiece : public FixedSizeSaveable {
     public:
         OutfitPiece();
-        virtual ~OutfitPiece() {}
+        // Retail's dtor is COMPILER-GENERATED: operator>>(BinStream&, Outfit&)
+        // destroys three OutfitPiece temporaries with a bare `bl <~base>` and NO
+        // leading `stw ??_7OutfitPiece` vptr store. A user-declared `~X() {}`
+        // (even empty) forces that store and pins the vtable address in an extra
+        // callee-saved register. See
+        // docs/decomp/patterns/fixable-declarations.md#implicit-destructor-vtable-store-elision
         virtual void SaveFixed(FixedSizeSaveableStream &) const;
         virtual void LoadFixed(FixedSizeSaveableStream &, int);
 

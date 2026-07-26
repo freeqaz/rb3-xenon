@@ -20,7 +20,11 @@ BEGIN_PROPSYNCS(CharBlendBone)
     SYNC_PROP(trans_z, mTransZ)
     SYNC_PROP(rotation, mRotation)
     SYNC_PROP(set_local, mSetLocal)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharBlendBone)

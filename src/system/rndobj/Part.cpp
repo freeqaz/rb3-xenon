@@ -340,7 +340,11 @@ BEGIN_PROPSYNCS(RndParticleSys)
     SYNC_SUPERCLASS(RndAnimatable)
     SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(RndDrawable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndParticleSys)
@@ -944,7 +948,7 @@ void RndParticleSys::SetNumTiles(int num) {
 #endif
 
 void RndParticleSys::SetGrowRatio(float f) {
-    if (f >= 0 && f <= mGrowRatio)
+    if (f >= 0 && f <= mShrinkRatio)
         mGrowRatio = f;
 }
 

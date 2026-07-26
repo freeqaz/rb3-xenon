@@ -687,7 +687,7 @@ BEGIN_PROPSYNCS(CharBonesSamples)
                 }
                 mPreviewSample = clamped;
                 mStart = mRawData + mTotalSize * clamped;
-            } else if (_op == kPropSize) {
+            } else if (_op == kPropUnknown0x40) {
                 return false;
             } else {
                 _val = DataNode(mPreviewSample);

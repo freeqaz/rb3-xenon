@@ -336,8 +336,12 @@ void BandCamShot::StartAnim() {
     }
     ResetNextShot();
     CamShot::StartAnim();
-    int numChars = 0;
-    Character *chars[32];
+    // NB(rb3-xenon): retail's StartAnim (0x822B5798, 948 bytes) ends at the
+    // GetTotalDuration() store -- it has no `Character *chars[32]` scratch
+    // array, no numChars/MILO_ASSERT, no DoHide() call and no
+    // sHideAllCharactersHack tail.  rb3-Wii's DEV build has all of that; the
+    // 360 retail build does not.  (The static itself is still referenced from
+    // BandDirector.cpp, so it stays declared.)
     FOREACH (it, mTargets) {
         if (!it->mTarget.Null()) {
             Target &cur = *it;
@@ -351,8 +355,6 @@ void BandCamShot::StartAnim() {
             }
             Character *charObj = dynamic_cast<Character *>(cache->unk4);
             if (charObj) {
-                MILO_ASSERT(numChars < 32, 0x231);
-                chars[numChars++] = charObj;
                 charObj->SetSelfShadow(cur.mSelfShadow);
                 charObj->SetMinLod(cur.mForceLod);
                 charObj->SetShowing(!cur.mHide);
@@ -371,22 +373,6 @@ void BandCamShot::StartAnim() {
         }
     }
     unk164 = GetTotalDuration();
-    DoHide();
-    if (!sHideAllCharactersHack) {
-        int showing = 0;
-        for (int i = 0; i < numChars; i++) {
-            showing |= chars[i]->Showing();
-        }
-        if (numChars != 0 && showing == 0 && TheRnd.InGame()) {
-            for (int i = 0; i < numChars; i++) {
-                chars[i]->SetShowing(true);
-            }
-        }
-    } else {
-        for (int i = 0; i < numChars; i++) {
-            chars[i]->SetShowing(false);
-        }
-    }
 }
 
 bool BandCamShot::IterateNextShot() {

@@ -27,7 +27,11 @@ BEGIN_PROPSYNCS(RndFur)
     SYNC_PROP(fur_detail, mFurDetail)
     SYNC_PROP(fur_tiling, mFurTiling)
     SYNC_PROP(wind, mWind)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndFur)

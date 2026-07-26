@@ -37,7 +37,11 @@ BEGIN_PROPSYNCS(CharServoBone)
     SYNC_PROP(delta_changed, mDeltaChanged)
     SYNC_PROP(regulate, mRegulate)
     SYNC_SUPERCLASS(CharBonesMeshes)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharServoBone)

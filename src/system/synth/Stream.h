@@ -10,7 +10,13 @@ enum FXCore {
 };
 
 struct Marker {
-    Marker(const String &str = String()) : name(str), position(0), posMS(0) {}
+    // Retail's default ctor only default-constructs `name` -- it does NOT
+    // zero position/posMS and does NOT build+copy a String() default argument.
+    // StandardStream::LoadMarkerList's `Marker marker;` compiles to a single
+    // `bl ??0String@@QAA@XZ` on the marker itself; the `= String()` default-arg
+    // spelling added a temp String, a copy ctor, two zero stores and a dtor.
+    Marker() {}
+    Marker(const String &str) : name(str), position(0), posMS(0) {}
     Marker(const String &name, int position, float posMS)
         : name(name), position(position), posMS(posMS) {}
     String name; // 0x0
@@ -60,7 +66,9 @@ public:
     virtual float GetSpeed() const = 0;
     virtual void LoadMarkerList(const char *) = 0;
     virtual void ClearMarkerList() {}
-    virtual void AddMarker(const Marker &) {}
+    // Retail passes Marker BY VALUE (matches the rb3-Wii oracle): the caller
+    // copy-constructs the Marker into its own frame slot and passes that.
+    virtual void AddMarker(Marker) {}
     virtual int MarkerListSize() const { return 0; }
     virtual bool MarkerAt(int, Marker &) const { return 0; }
     // rb3-Wii/retail names this SetLoop (NOT a SetJump overload). Keeping the

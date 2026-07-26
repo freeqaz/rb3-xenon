@@ -764,6 +764,7 @@ UIComponent *CustomizePanel::GetFocusComponent() {
 DataNode CustomizePanel::OnMsg(const SigninChangedMsg &msg) {
     if (mProfile) {
         if (!mProfile->HasValidSaveData()) {
+            static Symbol sign_out("sign_out");
             static Message init("init", 0);
             init[0] = 4;
             TheUIEventMgr->TriggerEvent(sign_out, init);

@@ -1608,22 +1608,23 @@ void RockCentral::UpdateChar(
 ) {
     Server *server = IsConnected(o, i4, false);
     if (server) {
+        // Retail has no runtime `if (profile)` here — only the (stripped)
+        // MILO_ASSERT; the target asm's `mr r20, r3` sets no CR and there is
+        // no following beq.
         BandProfile *profile = TheProfileMgr.FindCharOwnerFromGuid(tcl->GetGuid());
-        if (profile) {
-            MILO_ASSERT(profile, 0xB35);
-            MemStream ms;
-            tcl->SaveDb(ms);
-            DP_KEYS5(guid, pid, name, flags, char_data)
-            INIT_DATAPOINT("entities/character/update");
-            ADD_DATA_PAIR(guid, tcl->GetGuid().ToString());
-            ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
-            ADD_DATA_PAIR(name, tcl->GetCharacterName());
-            ADD_DATA_PAIR(flags, i5);
-            String str;
-            ConvertToStr(ms, str);
-            ADD_DATA_PAIR(char_data, str);
-            RECORD_DATA_POINT(i4, results, o);
-        }
+        MILO_ASSERT(profile, 0xB35);
+        MemStream ms;
+        tcl->SaveDb(ms);
+        DP_KEYS5(guid, pid, name, flags, char_data)
+        INIT_DATAPOINT("entities/character/update");
+        ADD_DATA_PAIR(guid, tcl->GetGuid().ToString());
+        ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
+        ADD_DATA_PAIR(name, tcl->GetCharacterName());
+        ADD_DATA_PAIR(flags, i5);
+        String str;
+        ConvertToStr(ms, str);
+        ADD_DATA_PAIR(char_data, str);
+        RECORD_DATA_POINT(i4, results, o);
     }
 }
 

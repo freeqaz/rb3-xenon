@@ -65,7 +65,7 @@ OvershellSlot::OvershellSlot(
       mOvershellDir(dir), mAutohideEnabled(0), mIsLeavingOptions(0),
       mCurrentView(gNullStr), mBlockAllInput(0), mInGame(0), mSongOptionsRequired(0),
       mCharForEdit(0), mCymbalConfiguration(0),
-      mSlotOverrideFlow(kOverrideFlow_None), unk28(kState_WiiProfileOptions) {
+      mSlotOverrideFlow(kOverrideFlow_None) {
     mMessageQueue = new PassiveMessageQueue(this);
     mKickUsersProvider = new SessionUsersProvider(false, true, false);
     mMuteUsersProvider = new SessionUsersProvider(true, true, false);
@@ -76,6 +76,7 @@ OvershellSlot::OvershellSlot(
     mPartSelectProvider = new OvershellPartSelectProvider(mOvershell);
     mCymbalProvider = new CymbalSelectionProvider(this);
     mSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
+    static Message init_msg(Symbol("init"));
     mOvershellDir->HandleType(init_msg);
     static Message setupProviders(9);
     setupProviders.SetType("setup_providers");
@@ -96,14 +97,11 @@ OvershellSlot::OvershellSlot(
     setupProviders[4] = mCymbalProvider;
     setupProviders[5] = TheModifierMgr;
     mOvershellDir->HandleType(setupProviders);
-    BandLabel *mUserNameLabel = mOvershellDir->Find<BandLabel>("user_name.lbl", true);
-    MILO_ASSERT(mUserNameLabel, 0xF1);
-#ifndef HX_NATIVE
-    // TheServer (network/ online server) is a zeroed DATA stub on native — its
-    // MsgSource base sink list is garbage, so AddSink/RemoveSink fault. The
-    // user-login event has no offline meaning. Mirrors OvershellPanel ctor gating.
-    TheServer.AddSink(this, UserLoginMsg::Type());
-#endif
+    // Retail X360 ends the ctor here: the rb3-Wii DEV tree's trailing
+    // Find<BandLabel>("user_name.lbl") + TheServer.AddSink(UserLoginMsg::Type())
+    // have NO counterpart in the retail body (16 base-only instructions at the
+    // tail, zero target instructions between the setupProviders HandleType and
+    // the epilogue).
 }
 
 OvershellSlot::~OvershellSlot() {

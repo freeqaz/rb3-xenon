@@ -37,7 +37,11 @@ BEGIN_PROPSYNCS(CharCollide)
     SYNC_PROP_MODIFY(mesh, mMesh, SyncShape())
     SYNC_PROP_MODIFY(mesh_y_bias, mMeshYBias, SyncShape())
     SYNC_SUPERCLASS(RndTransformable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharCollide)

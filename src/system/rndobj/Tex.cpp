@@ -62,7 +62,11 @@ BEGIN_PROPSYNCS(RndTex)
     SYNC_PROP(mip_map_k, mMipMapK)
     SYNC_PROP(optimize_for_ps3, mOptimizeForPS3)
     SYNC_PROP_MODIFY(file_path, mFilepath, SetBitmap(mFilepath))
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 DataNode RndTex::OnSetSize(int, int) { return 0; }

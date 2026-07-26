@@ -31,14 +31,17 @@ public:
         float mFastForward; // 0x1c
         Symbol mForwardEvent; // 0x20
         ObjPtr<RndEnviron> mEnvOverride; // 0x24
-        // 0x30 bitfields
-        int mForceLod : 4;
-        int mTeleport : 2;
-        int mReturn : 2;
-        int mSelfShadow : 2;
-        int unk1 : 2;
-        int unk2 : 2;
-        int mHide : 2;
+        // 0x5c: retail keeps mForceLod in its own `int` allocation unit
+        // (`srawi r,r,29` => 3 bits at 31..29) and puts the six flags in a
+        // separate 1-byte `bool` unit at 0x5c+4 = 0x60 (`lbz` + single-bit
+        // `extrwi`/`clrrwi.` at masks 0x80,0x40,0x20,0x10,0x08,0x04).
+        int mForceLod : 3;
+        bool mTeleport : 1;
+        bool mReturn : 1;
+        bool mSelfShadow : 1;
+        bool unk1 : 1;
+        bool unk2 : 1;
+        bool mHide : 1;
     };
 
     // size 0x20

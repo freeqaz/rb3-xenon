@@ -575,13 +575,12 @@ DataNode OnThreadTask(DataArray *arr) {
 }
 
 void TaskMgr::Init() {
+    SetName("taskmgr", ObjectDir::Main());
     mTime.Restart();
+    mTimelines = new TaskTimeline[4];
     mAutoSecondsBeats = true;
-    if (ObjectDir::Main()) {
-        SetName("taskmgr", ObjectDir::Main());
-        DataRegisterFunc("script_task", OnScriptTask);
-        DataRegisterFunc("thread_task", OnThreadTask);
-    }
+    DataRegisterFunc("script_task", OnScriptTask);
+    DataRegisterFunc("thread_task", OnThreadTask);
 }
 
 void TaskMgr::QueueTaskDelete(Task *task) {

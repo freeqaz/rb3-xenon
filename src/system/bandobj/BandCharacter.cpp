@@ -1177,7 +1177,7 @@ void BandCharacter::PostLoad(BinStream &bs) {
         bs >> mDrumVenue;
     if (gRev != 0)
         mTestPrefab.Load(bs, true, BandCharDesc::GetPrefabs());
-    if (gRev == 2 || gRev == 3 || gRev == 4) {
+    if (gRev > 1 && gRev < 5) {
         bool b;
         bs >> b;
     }

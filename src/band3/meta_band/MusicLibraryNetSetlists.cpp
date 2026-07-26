@@ -32,7 +32,8 @@ void MusicLibraryNetSetlists::Poll() {
                 mSetlistArtLoader->GetBuffer(), mSetlistArtLoader->GetSize(), true
             );
             bmap.Load(bs);
-            SwapDxtEndianness(&bmap);
+            // Retail RB3-360 has no SwapDxtEndianness() here (Wii-only step);
+            // target asm goes straight from RndBitmap::Load to SetMip.
             bmap.SetMip(nullptr);
             mPendingSetlistArt->SetBitmap(bmap, nullptr, false);
             TheNetCacheMgr->DeleteNetCacheLoader(mSetlistArtLoader);

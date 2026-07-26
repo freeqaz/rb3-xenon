@@ -176,7 +176,11 @@ BEGIN_PROPSYNCS(RndLight)
     SYNC_PROP_SET(projected_blend, mProjectedBlend, SetProjectedBlend(_val.Int()))
     SYNC_PROP(shadow_objects, mShadowObjects)
     SYNC_SUPERCLASS(RndTransformable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 INIT_REVS(0x10, 0)

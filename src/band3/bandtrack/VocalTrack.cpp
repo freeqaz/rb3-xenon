@@ -2185,10 +2185,15 @@ Lyric *VocalTrack::CreateLyric(
     UpdateSyllableText(text, !IsScrolling(), wordEnd);
     Lyric *lyric = new Lyric(firstNote, b3, text, wordEnd);
     const VocalNote *cur = note + 1;
-    while (cur != &notes[0] + notes.size()) {
+    // Retail reads the vector's finish pointer directly (`lwz r10, 0x4(notes)`).
+    // Spelling it `&notes[0] + notes.size()` makes MSVC recompute
+    // (finish-start)/0x34*0x34+start -- a subf/divw/mulli/add quartet emitted at
+    // BOTH the loop preheader and the latch (+0x38 of code, +0x10 of frame).
+    while (cur != notes.end()) {
         if (!cur->mBends)
             break;
-        lyric->mVocalNotes.push_back(cur);
+        const VocalNote *pushed = cur;
+        lyric->mVocalNotes.push_back(pushed);
         float endMs = cur->mMs + cur->mDurationMs;
         const float &maxMs = lyric->mEndMs < endMs ? endMs : lyric->mEndMs;
         lyric->mEndMs = maxMs;

@@ -40,7 +40,11 @@ BEGIN_PROPSYNCS(RndFlare)
     SYNC_PROP_MODIFY(point_test, mPointTest, TheRnd.RemovePointTest(this))
     SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(RndDrawable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndFlare)

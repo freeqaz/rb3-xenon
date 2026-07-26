@@ -158,7 +158,11 @@ BEGIN_PROPSYNCS(RndText)
     SYNC_PROP(styles, mStyles)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndTransformable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 // RB3-360 retail Style is 0x24 (single color, raw font ptr). Locking the size

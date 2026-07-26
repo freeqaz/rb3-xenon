@@ -740,7 +740,11 @@ BEGIN_PROPSYNCS(CharDriver)
     SYNC_PROP(play_multiple_clips, mPlayMultipleClips)
     SYNC_PROP(display_zoom, CharClipDisplay::sZoom)
     SYNC_SUPERCLASS(CharWeightable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 #ifdef HX_NATIVE

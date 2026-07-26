@@ -162,7 +162,7 @@ MusicLibrary::MusicLibrary(SongPreview &prev)
       mCurrentSetlist(nullptr), mNetSetlists(new MusicLibraryNetSetlists()), unk15c(0),
       mSetlistScoresProvider(new SetlistScoresProvider()), mHasHeaderData(0),
       mHeaderCareerScore(0), mHeaderCareerInstrumentMask(0), mHeaderCareerStars(0),
-      mHeaderPossibleStars(0) {
+      mHeaderPossibleStars(0), unk19c(0), unk1a0(0) {
     SetName("music_library", ObjectDir::Main());
 }
 

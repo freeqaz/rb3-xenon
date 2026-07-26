@@ -59,6 +59,8 @@ void SelectDifficultyPanel::PollForLoading() {
 // whatever the case may be, using O4 seems to fix weird pooling/the dreaded bss meme
 // either that, or changing the order of flags to go "-inline noauto -O4,p"
 void SelectDifficultyPanel::Enter() {
+    static Symbol marquee_rotation_ms("marquee_rotation_ms");
+    static Symbol set_list_title("set_list_title");
     UIPanel::Enter();
     mCurrentSongIx = 0;
     MetaPerformer *mp = MetaPerformer::Current();
@@ -94,6 +96,7 @@ void SelectDifficultyPanel::Enter() {
     }
 
     if (TheModifierMgr) {
+        static Symbol mod_auto_vocals("mod_auto_vocals");
         static Message updateAutoVocalsLabel("update_auto_vocals_label", 0, 0, 0);
         updateAutoVocalsLabel[0] = TheBandUserMgr->GetNumParticipants();
         updateAutoVocalsLabel[1] = TheModifierMgr->IsModifierActive(mod_auto_vocals);

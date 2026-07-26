@@ -119,7 +119,11 @@ BEGIN_PROPSYNCS(CharIKHead)
     SYNC_PROP(offset, mOffset)
     SYNC_PROP(offset_scale, mOffsetScale)
     SYNC_SUPERCLASS(CharWeightable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 INIT_REVS(3, 0)

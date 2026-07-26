@@ -450,6 +450,12 @@ void RGTrainerPanel::InitFretSteps(const GameGem &gem) {
 void RGTrainerPanel::UpdateStepText(int i, FingerStep &step) {
     const char *labelstr = MakeString("step_%02d_text.lbl", i + 1);
     BandLabel *label = mDir->Find<BandLabel>(labelstr, true);
+    // Retail declares these two tokens as function-local statics (storages
+    // 0x82E02B10 / 0x82E02B0C below the shared guard word 0x82E02B14, guard bits
+    // 1 and 2, with the Message taking bit 4) rather than using the Symbols4.h
+    // globals.  They shadow the globals deliberately.
+    static Symbol rg_chordbook_step_finger("rg_chordbook_step_finger");
+    static Symbol rg_chordbook_step_barre("rg_chordbook_step_barre");
     static Message set_step_text("set_step_text", 0, 0, 0, 0, 0);
     set_step_text[0] = label;
     if (step.mHighString >= 0) {

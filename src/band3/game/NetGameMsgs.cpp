@@ -60,6 +60,10 @@ void PlayerGameplayMsg::Load(BinStream &bs) {
 }
 
 void PlayerGameplayMsg::Dispatch() {
+    // Retail uses a function-local static for the token (storage 0x82E02574,
+    // guard bit 1, below the Message at 0x82E0256C which takes bit 2) rather
+    // than the Symbols.h global.
+    static Symbol incoming_msg("incoming_msg");
     static Message gameplayMsg(incoming_msg, 0, 0, 0, 0, 0);
     gameplayMsg[0] = mOpcode;
     gameplayMsg[1] = TheBandUserMgr->GetUser(mUserGuid, true);

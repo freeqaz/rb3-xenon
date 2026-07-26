@@ -57,7 +57,11 @@ BEGIN_PROPSYNCS(CharHair)
     SYNC_PROP(strands, mStrands)
     SYNC_PROP(simulate, mSimulate)
     SYNC_PROP(wind, mWind)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharHair)

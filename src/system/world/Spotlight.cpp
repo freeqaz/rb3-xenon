@@ -232,7 +232,11 @@ BEGIN_PROPSYNCS(Spotlight)
     SYNC_PROP(animate_color_from_preset, mAnimateColorFromPreset)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndTransformable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain does not include this superclass;
+    // DC3's newer engine added it. Native-only.
     SYNC_SUPERCLASS(RndPollable)
+#endif
 END_PROPSYNCS
 
 void Spotlight::InitObject() {

@@ -144,7 +144,11 @@ BEGIN_PROPSYNCS(MidiInstrument)
     SYNC_PROP_SET(reverb_enable, GetReverbEnable(), SetReverbEnable(_val.Int()))
     SYNC_PROP(faders, mFaders)
     SYNC_PROP(patchnum, mPatchNumber)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(MidiInstrument)

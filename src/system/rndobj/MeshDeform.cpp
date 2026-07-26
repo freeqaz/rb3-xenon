@@ -20,7 +20,11 @@ BEGIN_PROPSYNCS(RndMeshDeform)
     SYNC_PROP(mesh, mMesh)
     SYNC_PROP_SET(num_verts, mVerts.NumVerts(), )
     SYNC_PROP_SET(num_bones, (int)mBones.size(), )
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 void operator<<(BinStream &bs, const RndMeshDeform::BoneDesc &desc) {

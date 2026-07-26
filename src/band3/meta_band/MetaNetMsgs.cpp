@@ -20,6 +20,7 @@ void BandEventPreviewMsg::Load(BinStream &bs) { bs >> unk4; }
 
 void BandEventPreviewMsg::Dispatch() {
     UIPanel *panel = ObjectDir::Main()->Find<UIPanel>("tour_band_event_panel", true);
+    static Symbol play_preview("play_preview");
     static Message playMsg(play_preview, 0);
     playMsg[0] = unk4;
     panel->Handle(playMsg, true);

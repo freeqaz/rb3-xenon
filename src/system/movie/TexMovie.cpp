@@ -82,7 +82,11 @@ BEGIN_PROPSYNCS(TexMovie)
         }
     }
     SYNC_SUPERCLASS(RndDrawable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain does not include this superclass;
+    // DC3's newer engine added it. Native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
     SYNC_SUPERCLASS(RndPollable)
 END_PROPSYNCS
 

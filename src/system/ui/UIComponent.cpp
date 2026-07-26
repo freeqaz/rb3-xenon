@@ -47,7 +47,11 @@ BEGIN_PROPSYNCS(UIComponent)
     SYNC_PROP(nav_down, mNavDown)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndTransformable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain does not include this superclass;
+    // DC3's newer engine added it. Native-only.
     SYNC_SUPERCLASS(RndPollable)
+#endif
 END_PROPSYNCS
 
 BEGIN_COPYS(UIComponent)

@@ -104,7 +104,10 @@ void MidiParserMgr::OnText(int tick, const char *text, unsigned char type) {
     if (type == kTrackname)
         OnTrackName(text);
     else if (type == kLyricEvent || type == kTextEvent) {
-        MemTemp tmp;
+        // Retail calls the EMPTY MemDoTempAllocations guard here (fn_827BC270 /
+        // fn_827BC2A0, bare `bl` with no this-setup), not the out-of-line
+        // MemTemp (which would home an `int mOld` and emit `addi r3, r31, 0x50`).
+        MemDoTempAllocations tmp;
         MidiParser::VocalEvent vocEv;
         vocEv.mTick = tick;
         if (*text == '[') {

@@ -410,7 +410,10 @@ void EntityUploader::ReturnProfileResults(Hmx::Object *o) {
                 DataArray *arr2 = new DataArray(2);
                 arr2->Node(0) = mUploadOps[i]->mRetCode;
                 arr2->Node(1) = mUploadOps[i]->mString;
-                arr->Node(i5++) = DataNode(arr2, kDataArray);
+                {
+                    DataNode n(arr2, kDataArray);
+                    arr->Node(i5++) = n;
+                }
                 arr2->Release();
             }
         }

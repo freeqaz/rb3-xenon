@@ -874,7 +874,8 @@ void Player::Deploy() {
 
 bool Player::DeployBandEnergyIfPossible(bool b) {
     if (!b) {
-        if (TheGame->unkdc != -1.0f) {
+        bool notPaused = TheGame->unkdc != -1.0f;
+        if (notPaused) {
             return false;
         }
     }
@@ -884,18 +885,8 @@ bool Player::DeployBandEnergyIfPossible(bool b) {
     }
     if (!unk2b0)
         return false;
-    int finished = 1;
-    int gameOver = 0;
-    int bandOK = 0;
-    if (mBand && mBand->GetBand()) {
-        bandOK = 1;
-    }
-    if (bandOK && mBand->MainPerformer()->mGameOver) {
-        gameOver = 1;
-    }
-    if (!gameOver && !unk1e1) {
-        finished = 0;
-    }
+    bool finished = (mBand && mBand->GetBand() && mBand->MainPerformer()->mGameOver)
+        || unk1e1;
     if (mEnabledState != kPlayerEnabled || finished) {
         return false;
     }

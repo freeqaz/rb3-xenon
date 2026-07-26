@@ -334,7 +334,11 @@ BEGIN_PROPSYNCS(CharEyes)
     SYNC_PROP(llid_track_down, mLowerLidTrackDown)
     SYNC_PROP(llid_track_rotate, mLowerLidTrackRotate)
     SYNC_SUPERCLASS(CharWeightable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BinStream &operator<<(BinStream &bs, const CharEyes::EyeDesc &desc) {

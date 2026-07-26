@@ -13,7 +13,11 @@ BEGIN_PROPSYNCS(CharPosConstraint)
     SYNC_PROP(source, mSrc)
     SYNC_PROP(targets, mTargets)
     SYNC_PROP(box, mBox)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharPosConstraint)

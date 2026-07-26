@@ -90,7 +90,10 @@ void BandCharDesc::Init() {
         if (dfpath[0] != 0) {
             static int _x = MemFindHeap("char");
             MemPushHeap(_x);
-            gDeforms = DirLoader::LoadObjects(FilePath(dfpath), 0, 0);
+            {
+                FilePath fp(dfpath);
+                gDeforms = DirLoader::LoadObjects(fp, 0, 0);
+            }
             MemPopHeap();
         }
     }

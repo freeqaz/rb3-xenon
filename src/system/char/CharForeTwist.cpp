@@ -21,7 +21,11 @@ BEGIN_PROPSYNCS(CharForeTwist)
     SYNC_PROP(twist2, mTwist2)
     SYNC_PROP(offset, mOffset)
     SYNC_PROP(bias, mBias)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharForeTwist)

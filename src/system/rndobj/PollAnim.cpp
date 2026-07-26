@@ -19,7 +19,11 @@ BEGIN_PROPSYNCS(RndPollAnim)
     SYNC_PROP(anims, mAnims)
     SYNC_SUPERCLASS(RndAnimatable)
     SYNC_SUPERCLASS(RndPollable)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndPollAnim)

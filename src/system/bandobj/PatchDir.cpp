@@ -185,7 +185,8 @@ void PatchLayer::SelectFX() { unk28 = TheTaskMgr.UISeconds() + 0.5f; }
 
 void PatchLayer::ClearSticker() {
     Reset();
-    mStickerCategory = Symbol(0);
+    Symbol s(0);
+    mStickerCategory = s;
 }
 
 void PatchLayer::FlipX() {

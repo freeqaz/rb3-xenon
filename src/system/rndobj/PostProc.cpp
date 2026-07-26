@@ -250,7 +250,11 @@ BEGIN_PROPSYNCS(RndPostProc)
     SYNC_PROP(brightness_power, mBrightnessPower)
 #endif
     SYNC_PROP(force_current_interp, mForceCurrentInterp)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(RndPostProc)

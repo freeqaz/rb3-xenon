@@ -19,7 +19,11 @@ BEGIN_PROPSYNCS(CharGuitarString)
     SYNC_PROP(bridge, mBridge)
     SYNC_PROP(bend, mBend)
     SYNC_PROP(target, mTarget)
+#ifdef HX_NATIVE
+    // RB3-360 retail SyncProperty chain stops at the immediate superclass;
+    // DC3's extra direct Hmx::Object chain is native-only.
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 BEGIN_SAVES(CharGuitarString)
