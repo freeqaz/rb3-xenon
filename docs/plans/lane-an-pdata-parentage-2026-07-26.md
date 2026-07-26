@@ -219,13 +219,61 @@ match percent, and the parent's depth inside its span:
 | PROVEN (597) | 487 | 110 | **0** |
 | CONTRADICTED (88) | 47 | 40 | **1** |
 
-**One refutation in 685** (`0x825C5FB8`, claimed `band3/meta_band/AppLabel.cpp`,
-parent pinned in `OSCMessenger.cpp`). Where the independent channel can decide at
-all, the contradiction verdict is right **47 of 48 times (97.9%)**, and the
-PROVEN verdict is never overturned. Object-level evidence for the parent:
-426 `UNIQUE_PU` (exactly one of our objs defines it), 119 `MULTI_PU`, 140 with no
-obj evidence. Full record:
+**One refutation in 685.** Where the independent channel can decide at all, the
+contradiction verdict is right **47 of 48 times (97.9%)**, and the PROVEN verdict
+is never overturned (a seeded random 30 of the 597: 26 confirmed, 4 undecidable,
+0 refuted). Decisive detail on the over-cover hypothesis: **0 of the 88** have
+the parent's symbol resolving to the *claimed* unit, and **0 of the 685 parents'
+spans contain any named function resolving to a different source obj** — over-cover
+leaves no fingerprint anywhere in this population. The single refutation is
+exactly the predicted failure mode: `OSCMessenger.cpp` carries a one-function
+`.text` micro-pin `[0x825C5F00,0x825C5FB8)` whose sole occupant is
+`AppLabel::SetBestBattleScore`, with AppLabel's own span starting 40 bytes later.
+laneAM was right there; **the pin is wrong**. Tool:
+`scripts/harvest/fill_attribution_verify.py`; record:
 `docs/plans/laneAN/fills-T1-independent-audit.json`.
+
+### ★ The repair is net-negative — annotate, do NOT move
+
+Measured, not argued. Carving all 47 confirmed mis-attributions out of their
+laneAM blocks and re-pinning them under the proven owner, whole-binary A/B, one
+build per leg: **36,069 → 36,035 = −34 strict.** 11 fills keep the match, 36 lose
+it — and a static supply/demand model over `funclet_signature` predicted **47 of
+47 correctly**, so this needs no further builds to re-derive. Geometry is not the
+obstacle (0 overlap conflicts) but the 47 fills live inside only **27** laneAM
+blocks totalling ~48 KB, of which the audited fills are ~2.1 KB; one block is
+23,272 B, so a block-level move would drag ~46 KB of unaudited code with it.
+**Splits were reverted and re-verified back at 36,069.** Cost detail:
+`docs/plans/laneAN/fills-T1-repair-cost.json`.
+
+> This is the honest disposition for the whole contradiction class: the fills are
+> **byte-true but mis-credited**, and correcting the credit *costs matches*. The
+> deliverable is the annotation, not the move.
+
+### ★ A join hazard that inflates this kind of audit — and a re-check
+
+`splits.txt` has **45 of 912 headers sharing a basename**, and **27 header pairs
+pin the SAME compiled source obj** (`SongDB.cpp` + `band3/game/SongDB.cpp` →
+`build/45410914/src/band3/game/SongDB.obj`; also Campaign, CampaignLevel,
+NetGameMsgs, PostProc, ContentMgr, deflate, ctr…). Two headers over one TU look
+like a contradiction but are not. Joining by header basename produced **14
+spurious refutations** in the verification worker's first pass. The exact join is
+`objdiff.json` `target_path == build/45410914/obj/<full header, .cpp→.obj>`
+(912/912, zero ambiguity), then compare at `base_path`.
+
+★Re-checked against that rule: **all 532 tree-wide contradictions resolve to
+genuinely different base objs — 0 spurious.** (A basename join, which is what I
+first reached for, left 230 of them "unresolved" and would have understated the
+set; the hazard is real but does not touch these numbers.)
+
+### Honest scope limit on the retro-classification
+
+Only **685 of laneAM's 1,627 fills (42.1%)** get any parent verdict at all — the
+rest have an unpinned or absent parent. The 12.8% contradiction rate among the
+decided is plausibly a **lower bound** on the true error rate, because requiring
+a *pinned* parent biases toward well-pinned neighbourhoods where laneAM's
+left/right heuristic performs best. Naive extrapolation is ~209 mis-attributed
+fills tree-wide — **INFERRED, not measured; do not act on it.**
 
 The `_splits_fill_unresolved_comment` doctrine in `scripts/target_symbol_map.json`
 — "treat all 1,627 as unit-attribution-unresolved" — can now be replaced by a
@@ -462,9 +510,12 @@ the edit being audited**; without it the audit is circular. All modes are static
   Ready-made handoff: **`docs/plans/laneAN/boundary-slip-repairs.json`** — 652
   proposals (474 of them currently at 100%, i.e. byte-true but mis-credited)
   across 174 distinct donor→recipient unit pairs, each with donor block,
-  recipient block, parent VA and size. **NOT applied by this lane**: moving a
-  fill can drop the match if the recipient's obj lacks that byte shape, so the
-  wave needs its own A/B, and it is an honesty repair rather than a yield play.
+  recipient block, parent VA and size. **NOT applied by this lane, and the
+  measured repair cost says do not apply it**: the 47-fill repair A/B came out
+  at **−34 strict** (11 survive, 36 lose). Treat this file as an annotation
+  source, not a work queue; if anyone does act on it, the static
+  `funclet_signature` supply/demand model predicts survival 47/47 and needs no
+  build.
   (The count is 652/474 rather than 451 because this lane's own micro-pins
   created new blocks that now abut, converting "parent block earlier" cases into
   diagnosable adjacent ones — the contradiction total is unchanged at 532.)
