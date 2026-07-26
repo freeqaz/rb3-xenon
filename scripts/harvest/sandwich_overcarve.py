@@ -100,7 +100,8 @@ def main():
     for p in glob.glob(os.path.join(wt, 'build/45410914/src/**/*.obj'), recursive=True):
         base_by_unit[os.path.relpath(p, os.path.join(wt, 'build/45410914/src'))] = p
 
-    def base_sigs(unit_cpp):
+    # signature -> count, for the destination's compiled obj
+    def base_sig_counts(unit_cpp):
         obj = unit_cpp[:-4] + '.obj'
         p = base_by_unit.get(obj)
         if p is None:
@@ -109,9 +110,36 @@ def main():
             if len(cands) != 1:
                 return None
             p = cands[0]
-        return {sig for sig, nm, sz in canon_sigs(p)}
+        c = collections.Counter()
+        for sig, nm, sz in canon_sigs(p):
+            c[sig] += 1
+        return c
 
-    sig_cache, rows = {}, []
+    # signature -> count of symbols ALREADY pinned to the destination and
+    # already matching at 100% (they are consuming a base symbol today)
+    rep = json.load(open(os.path.join(wt, 'build/45410914/report.json')))
+    pct = {}
+    for un in rep['units']:
+        for f in (un.get('functions') or []):
+            pct[(un['name'].split('/', 1)[-1], f['name'])] = f['match_percent_normalized']
+
+    def claimed_counts(unit_cpp):
+        obj = unit_cpp[:-4] + '.obj'
+        tp = os.path.join(wt, 'build/45410914/obj', obj)
+        if not os.path.exists(tp):
+            cands = glob.glob(os.path.join(wt, 'build/45410914/obj', '**',
+                                           os.path.basename(obj)), recursive=True)
+            if len(cands) != 1:
+                return collections.Counter()
+            tp = cands[0]
+        key = unit_cpp[:-4]
+        c = collections.Counter()
+        for sig, nm, sz in canon_sigs(tp):
+            if pct.get((key, nm)) == 100.0:
+                c[sig] += 1
+        return c
+
+    sig_cache, claim_cache, rows = {}, {}, []
     for s, e, u, owner in sandwiches:
         tobj = os.path.join(wt, 'build/45410914/obj', u[:-4] + '.obj')
         if not os.path.exists(tobj):
@@ -122,11 +150,22 @@ def main():
                 continue
             tobj = cands[0]
         if owner not in sig_cache:
-            sig_cache[owner] = base_sigs(owner)
+            sig_cache[owner] = base_sig_counts(owner)
         osigs = sig_cache[owner]
         if not osigs:
             continue
-        # target symbols of this unit whose VA falls in the block
+        # ★ PREDICATE 3 -- CAPACITY. Supply = base symbols in the destination
+        # carrying a signature. Demand already present = target symbols ALREADY
+        # pinned to the destination that carry it and are already at 100%.
+        # A move is only free when supply - claimed >= incoming, per signature;
+        # otherwise the newcomers displace incumbents under greedy pairing and
+        # the losses land in the RECEIVING unit. Measured: a 19-block batch at
+        # 100% definer corroboration but WITHOUT this check ran -23
+        # (49 gained / 72 lost).
+        if owner not in claim_cache:
+            claim_cache[owner] = claimed_counts(owner)
+        claimed = claim_cache[owner]
+        incoming = collections.Counter()
         tot = hit = 0
         for sig, nm, sz in canon_sigs(tobj):
             m = re.match(r'^fn_([0-9A-Fa-f]{8})$', nm)
@@ -136,18 +175,31 @@ def main():
             tot += 1
             if sig in osigs:
                 hit += 1
+                incoming[sig] += 1
         if not tot:
             continue
         frac = hit / tot
+        squeeze = 0
+        for sig, want in incoming.items():
+            spare = osigs.get(sig, 0) - claimed.get(sig, 0)
+            if want > spare:
+                squeeze += want - spare
         rows.append({'start': hex(s), 'end': hex(e), 'bytes': e - s,
                      'pinned_to': u, 'proposed_owner': owner,
-                     'fns': tot, 'definer_hits': hit, 'frac': round(frac, 3)})
+                     'fns': tot, 'definer_hits': hit, 'frac': round(frac, 3),
+                     'squeeze': squeeze, 'capacity_ok': squeeze == 0})
     rows.sort(key=lambda r: (-r['frac'], -r['fns']))
     strong = [r for r in rows if r['frac'] >= a.min_frac]
+    safe = [r for r in strong if r['capacity_ok']]
     print('scored blocks: %d   definer-corroborated (frac >= %.2f): %d  (%d fns)'
           % (len(rows), a.min_frac, len(strong), sum(r['fns'] for r in strong)))
-    for r in strong[:25]:
-        print('  %5d fns  %5.1f%%  %s -> %s   %s-%s'
+    print('★ ALSO capacity-safe (predicate 3): %d blocks (%d fns);'
+          ' rejected %d blocks (%d fns) for squeeze'
+          % (len(safe), sum(r['fns'] for r in safe),
+             len(strong) - len(safe),
+             sum(r['fns'] for r in strong if not r['capacity_ok'])))
+    for r in safe[:25]:
+        print('  SAFE %5d fns  %5.1f%%  %s -> %s   %s-%s'
               % (r['fns'], 100 * r['frac'], r['pinned_to'], r['proposed_owner'],
                  r['start'], r['end']))
     if a.json:
