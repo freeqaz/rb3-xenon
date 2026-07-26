@@ -376,3 +376,37 @@ baseline pickle, **NEW and LOST reported separately**. LOST was 0 at every step.
 ranges, 0 overlaps). Every wave-A pin span was independently audited against the
 retail `.pdata` table and each covers **exactly one** retail function — no
 over-pinning.
+
+## Operational note — worktree/branch deletion incident #3, and the recovery
+
+Late in this lane **all five `laneO-*` worktrees AND their branches were deleted
+out from under it** by something outside the lane: `git worktree list` no longer
+listed them, `git branch --list 'laneO*'` returned empty, and
+`/home/free/tmp/wt-laneO-homing5` was gone from disk. This is the same hazard
+recorded in memory as incidents #1 and #2.
+
+**Nothing was lost, because commits outlive both the branch and the worktree.**
+A deleted branch only removes the *ref*; the objects survive until gc. Recovery:
+
+```bash
+# 1. the commit SHAs are still in the transcript / in `git worktree list` output
+#    captured earlier -- verify each is still reachable:
+git log --oneline -1 <sha>
+# 2. re-point a branch at it (creating a ref does NOT touch main's working tree
+#    or index, so this is safe in the shared repo):
+git branch -f laneO-homing5 <sha>
+# 3. prune the stale worktree registrations, then rebuild a buildable tree:
+git worktree prune
+scripts/setup_worktree.sh ~/tmp/wt-laneO-homing5 laneO-homing5   # reuses an
+#    EXISTING branch (setup_worktree.sh:171) rather than creating one
+```
+
+Re-verified after recovery: clean rebuild of the recovered branch reproduces
+**27,896** exactly.
+
+**Lessons.** (1) Commit early and often on a lane branch — an uncommitted
+worktree edit would have been unrecoverable, whereas every committed wave here
+survived. (2) Record each sub-lane's tip SHA as it lands, not just its branch
+name; the SHA is what recovers you. (3) Prefer `git branch -f <name> <sha>` over
+trying to resurrect the worktree directory — the directory is disposable, the
+objects are not. (4) Do this *before* any `git gc`.
