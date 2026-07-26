@@ -164,10 +164,14 @@ private:
 protected:
     virtual ~Synth() {}
 
-    std::vector<LevelData> mLevelData; // 0x30
+    std::vector<LevelData> mLevelData; // 0x2c..0x38
+    // Retail declares the grinder BEFORE mTrackLevels: InitSecurity ends with
+    // `addi r3, r29, 0x38; bl ByteGrinder::Init`, i.e. mByteGrinder is at 0x38
+    // and the bool takes the 0x3c allocation unit. Swapping the two keeps every
+    // member from mNumMics (0x40) onward at its current, already-matching offset.
+    ByteGrinder mByteGrinder; // 0x38
     bool mTrackLevels; // 0x3c
-    ByteGrinder mByteGrinder; // 0x40
-    int mNumMics; // 0x44
+    int mNumMics; // 0x40
     MidiSynth *mMidiSynth; // 0x48
     std::vector<Mic *> mMics; // 0x4c
     bool mMuted; // 0x58

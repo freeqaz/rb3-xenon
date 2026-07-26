@@ -77,14 +77,18 @@ public:
         *mEnd++ = info;
     }
 
+    AllocInfo **erase(AllocInfo **first, AllocInfo **last);
+    void clear() { erase(begin(), end()); }
+
     void delete_and_clear() {
-        for (auto it = mStart; it != mEnd; ++it) {
+        AllocInfo **e = mEnd;
+        for (AllocInfo **it = mStart; it != e; ++it) {
             AllocInfo *info = *it;
             if (info) {
                 delete info;
             }
         }
-        mEnd = mStart;
+        clear();
     }
 
 private:

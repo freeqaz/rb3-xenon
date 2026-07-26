@@ -122,20 +122,32 @@ public:
     static void Init() { Register(); }
     static void Register() { REGISTER_OBJ_FACTORY(BandCamShot); }
 
-    ObjVector<Target> mTargets; // 0x124
-    int mMinTime; // 0x130
-    int mMaxTime; // 0x134
-    float mZeroTime; // 0x138
-    ObjPtrList<BandCamShot> mNextShots; // 0x13c
-    ObjPtrList<BandCamShot>::iterator mShotIter; // 0x14c
-    ObjPtr<BandCamShot> mCurShot; // 0x150
-    float unk15c; // 0x15c
-    float unk160; // 0x160
-    float unk164; // 0x164
-    bool unk168; // 0x168
-    bool unk169; // 0x169
-    bool unk16a; // 0x16a
-    bool mAnimsDuringNextShots; // 0x16b
+    // Retail RB3-360 layout, recovered from objdiff and corroborated member for
+    // member by DC3's HamCamShot (the same class one engine revision later).
+    // Two corrections vs. what we had:
+    //   * mTargets is an ObjList (0xc bytes: std::list + owner), not an
+    //     ObjVector (0x10) -- HamCamShot::mTargets is ObjList<Target> too. The
+    //     extra word pushed every member below by +4.
+    //   * unk168 (HamCamShot::mInSetFrame) sits BETWEEN unk160 and unk164
+    //     (HamCamShot::mNextShotOffset / mNextShotDuration / mInSetFrame /
+    //     mTotalDuration), so it gets its own 4-byte allocation unit.
+    // Offsets below are the retail ones, verified against seven distinct
+    // this-relative accesses in AddDircut/PlayNextShot/ResetNextShot/
+    // ListNextShots/SetFrameEx/CheckShotStarted/CheckShotOver.
+    ObjList<Target> mTargets; // 0x19c
+    int mMinTime; // 0x1a8
+    int mMaxTime; // 0x1ac
+    float mZeroTime; // 0x1b0
+    ObjPtrList<BandCamShot> mNextShots; // 0x1b4
+    ObjPtrList<BandCamShot>::iterator mShotIter; // 0x1c8
+    ObjPtr<BandCamShot> mCurShot; // 0x1cc
+    float unk15c; // 0x1d8
+    float unk160; // 0x1dc
+    bool unk168; // 0x1e0  (HamCamShot::mInSetFrame)
+    float unk164; // 0x1e4  (HamCamShot::mTotalDuration)
+    bool unk169; // 0x1e8  (HamCamShot::mListingShots)
+    bool unk16a; // 0x1e9  (HamCamShot::mTargetsFlipped)
+    bool mAnimsDuringNextShots; // 0x1ea
 };
 
 BinStream &operator<<(BinStream &bs, const BandCamShot::Target &t);

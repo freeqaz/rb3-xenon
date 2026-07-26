@@ -158,8 +158,8 @@ void TrackPanel::Exit() {
 void TrackPanel::UpdateReservedVocalSlot() {
     MILO_ASSERT(mTrackSlots.size() == kTrackNumSlots, 0xF3);
     int u3 = -1;
-    for (int i = 0, offset = 0; i < mTrackSlots.size(); offset += 8, i++) {
-        TrackSlot *slot = (TrackSlot *)((char *)&mTrackSlots[0] + offset);
+    for (int i = 0; i < mTrackSlots.size(); i++) {
+        TrackSlot *slot = (TrackSlot *)((char *)&mTrackSlots[0] + i * 8);
         if (slot->mInstrument == kInstVocals) {
             u3 = i;
         }
@@ -229,6 +229,7 @@ void TrackPanel::Reset() {
     }
     static Message on_reset_msg("on_reset");
     Hmx::Object::Handle(on_reset_msg, true);
+    mTrackPanelDir->Unkd8();
     mTrackPanelDir->ConfigureTracks(false);
     MetaPerformer::Current();
     mTrackPanelDir->Reset();

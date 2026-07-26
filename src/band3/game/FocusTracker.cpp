@@ -249,8 +249,10 @@ void FocusTracker::LocalSetFocusPlayer(
     if (!(flags & 1)) {
         ff = mFocusDelayMs;
     }
-    unk84 = f2;
+    // Retail stores the delayed-focus time (0x84) before the pending value
+    // (0x90) -- objdiff had our two stfs emitted in the opposite order.
     unk78 = f1 + ff;
+    unk84 = f2;
     unk88 = i;
     mBandDisplay.HandleIncrement();
     mFocusFlags = flags;

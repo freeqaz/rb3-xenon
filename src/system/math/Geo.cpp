@@ -647,31 +647,13 @@ namespace stlpmtx_std {
 #endif // HX_NATIVE
 
 void Multiply(const Box &box, float f, Box &out) {
-    const Box& _ref0 = box;
     Vector3 center;
-    Interp(_ref0.mMin, _ref0.mMax, 0.5f, center);
-    Vector3 *pMax = &out.mMax;
-    float hsz = _ref0.mMax.z - center.z;
-    float hsy = _ref0.mMax.y - center.y;
-    float hsx = _ref0.mMax.x - center.x;
-    pMax->y = hsy;
-    pMax->z = hsz;
-    pMax->x = hsx;
-    float hsxf = out.mMax.x * f;
-    float hsyf = out.mMax.y * f;
-    pMax->y = hsyf;
-    float hszf = hsz * f;
-    pMax->x = hsxf;
-    pMax->z = hszf;
-    pMax->y = hsyf + center.y;
-    pMax->x = hsxf + center.x;
-    pMax->z = hszf + center.z;
-    float dmx = _ref0.mMin.x - center.x;
-    float dmy = _ref0.mMin.y - center.y;
-    float dmz = _ref0.mMin.z - center.z;
-    out.mMin.z = dmz * f + center.z;
-    out.mMin.x = dmx * f + center.x;
-    out.mMin.y = dmy * f + center.y;
+    Interp(box.mMin, box.mMax, 0.5f, center);
+    Subtract(box.mMax, center, out.mMax);
+    Scale(out.mMax, f, out.mMax);
+    Add(out.mMax, center, out.mMax);
+    Subtract(box.mMin, center, out.mMin);
+    ScaleAdd(center, out.mMin, f, out.mMin);
 }
 
 void Multiply(const Plane &p, const Transform &t, Plane &out) {
@@ -712,12 +694,15 @@ void Sphere::GrowToContain(const Sphere &s) {
             return;
         float invDist = 1.0f / dist;
         Vector3 a, b;
-        a.x = center.x - (radius * (invDist * dx));
-        a.z = center.z - dz * invDist * radius;
-        b.x = s.center.x + s.radius * (dx * invDist);
-        b.y = s.center.y + s.radius * (invDist * dy);
-        a.y = center.y - radius * (invDist * dy);
-        b.z = s.center.z + dz * invDist * s.radius;
+        Vector3 dir;
+        dir.y = invDist * dy;
+        dir.x = dx * invDist;
+        dir.z = dz * invDist;
+        Vector3 offA, offB;
+        Scale(dir, radius, offA);
+        Scale(dir, s.radius, offB);
+        Subtract(center, offA, a);
+        Add(s.center, offB, b);
         Interp(a, b, 0.5f, center);
         radius = (dist + s.radius + radius) * 0.5f;
         return;
@@ -773,20 +758,25 @@ bool operator>(const Sphere &s, const Frustum &f) {
 }
 
 bool Intersect(const Segment &seg, const Sphere &sphere) {
-    float dir_z = seg.end.z - seg.start.z;
-    float dir_x = seg.end.x - seg.start.x;
+    Vector3 closest;
+    closest.z = seg.end.z - seg.start.z;
+    closest.x = seg.end.x - seg.start.x;
+    closest.y = seg.end.y - seg.start.y;
     float center_z = sphere.center.z;
-    float dir_y = seg.end.y - seg.start.y;
     float center_x = sphere.center.x;
     float center_y = sphere.center.y;
-    Vector3 closest;
-    closest.x = dir_x;
-    closest.y = dir_y;
-    closest.z = dir_z;
+    Vector3 toCenter;
+    Subtract(sphere.center, seg.start, toCenter);
+    float pz = toCenter.z;
+    float px = toCenter.x;
+    float py = toCenter.y;
+    float dir_z = closest.z;
+    float dir_x = closest.x;
+    float dir_y = closest.y;
     float a = dir_z * dir_z + dir_x * dir_x + dir_y * dir_y;
     if (a == 0.0f)
         return false;
-    float t = ((center_z - seg.start.z) * dir_z + (center_x - seg.start.x) * dir_x + (center_y - seg.start.y) * dir_y) / a;
+    float t = (pz * dir_z + px * dir_x + py * dir_y) / a;
     float zero = 0.0f;
     float neg_t = -t;
     t = (neg_t >= 0.0f) ? zero : t;

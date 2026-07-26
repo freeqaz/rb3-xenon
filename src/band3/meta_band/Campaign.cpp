@@ -64,7 +64,7 @@ Campaign::~Campaign() {
 }
 
 void Campaign::Cleanup() {
-    for (std::map<Symbol, CampaignLevel *>::iterator it = m_mapCampaignLevels.begin();
+    for (std::hash_map<Symbol, CampaignLevel *>::iterator it = m_mapCampaignLevels.begin();
          it != m_mapCampaignLevels.end();
          ++it) {
         RELEASE(it->second);
@@ -87,7 +87,7 @@ void Campaign::ConfigureCampaignLevelData(DataArray *arr) {
         MILO_ASSERT(pCampaignLevel, 0x70);
 
         Symbol levelname = pCampaignLevel->GetName();
-        bool levelExists = GetCampaignLevel(levelname);
+        bool levelExists = HasCampaignLevel(levelname);
         if (levelExists) {
             MILO_WARN("%s campaign level already exists, skipping", levelname);
             delete pCampaignLevel;
@@ -124,7 +124,7 @@ void Campaign::ConfigureCampaignKeyData(DataArray *arr) {
         CampaignKey *pCampaignKey = new CampaignKey(arr->Array(i));
         MILO_ASSERT(pCampaignKey, 0xA7);
         Symbol name = pCampaignKey->GetName();
-        bool keyExists = GetCampaignKey(name);
+        bool keyExists = HasCampaignKey(name);
         if (keyExists) {
             MILO_WARN("%s campaign key already exists, skipping", name);
         } else {
@@ -143,7 +143,7 @@ void Campaign::ConfigureCampaignKeyData(DataArray *arr) {
 bool Campaign::HasCampaignKey(Symbol s) const { return GetCampaignKey(s); }
 
 CampaignKey *Campaign::GetCampaignKey(Symbol s) const {
-    std::map<Symbol, CampaignKey *>::const_iterator it = m_mapCampaignKeys.find(s);
+    std::hash_map<Symbol, CampaignKey *>::const_iterator it = m_mapCampaignKeys.find(s);
     if (it != m_mapCampaignKeys.end())
         return it->second;
     else
@@ -153,7 +153,7 @@ CampaignKey *Campaign::GetCampaignKey(Symbol s) const {
 bool Campaign::HasCampaignLevel(Symbol s) const { return GetCampaignLevel(s); }
 
 CampaignLevel *Campaign::GetCampaignLevel(Symbol s) const {
-    std::map<Symbol, CampaignLevel *>::const_iterator it = m_mapCampaignLevels.find(s);
+    std::hash_map<Symbol, CampaignLevel *>::const_iterator it = m_mapCampaignLevels.find(s);
     if (it != m_mapCampaignLevels.end())
         return it->second;
     else
@@ -728,7 +728,7 @@ bool Campaign::GetWasLaunchedIntoMusicLibrary() const {
     return m_bWasLaunchedIntoMusicLibrary;
 }
 
-bool Campaign::DidUserMakeProgressOnGoal(LocalBandUser *i_pUser, Symbol goal) {
+bool Campaign::DidUserMakeProgressOnGoal(LocalBandUser *i_pUser, const Symbol &goal) {
     MILO_ASSERT(i_pUser, 0x4F0);
     return TheAccomplishmentMgr->DidUserMakeProgressOnGoal(i_pUser, goal);
 }
@@ -765,11 +765,15 @@ void Campaign::UpdateEndGameInfoForCurrentCampaignGoal(
     // "noprogress" tail is shared with what would otherwise be a duplicate
     // (identical) branch -- confirmed via Ghidra decompile of the retail
     // target (no pProfile-null branch; HasAccomplishmentGroup call site).
+    const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
     unk28 = goal;
-    if (TheAccomplishmentMgr->HasAccomplishmentGroup(goal)) {
+    if (prog.IsAccomplished(goal)) {
         int othergoals =
             TheAccomplishmentMgr->GetNumOtherGoalsAcquired(pUser->Name(), goal);
-        i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
+        {
+            FilePath fp(pAccomplishment->GetIconArt());
+            i_pPicture->SetTex(fp);
+        }
         i_pUserLabel->SetTokenFmt(campaign_endgame_user_congrats, pUser->Name());
         if (othergoals == 0) {
             i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_complete, goal);
@@ -780,8 +784,11 @@ void Campaign::UpdateEndGameInfoForCurrentCampaignGoal(
                 campaign_endgame_goal_complete_andmore, goal, othergoals
             );
         }
-    } else if (DidUserMakeProgressOnGoal(pUser, goal)) {
-        i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
+    } else if (DidUserMakeProgressOnGoal(pUser, Symbol(goal))) {
+        {
+            FilePath fp(pAccomplishment->GetIconArt());
+            i_pPicture->SetTex(fp);
+        }
         i_pUserLabel->SetTokenFmt(campaign_endgame_user_progress, pUser->Name());
         int iCurrent = 0;
         int iMax = 0;
@@ -804,7 +811,10 @@ void Campaign::UpdateEndGameInfoForCurrentCampaignGoal(
             );
         }
     } else {
-        i_pPicture->SetTex(FilePath(pAccomplishment->GetIconArt()));
+        {
+            FilePath fp(pAccomplishment->GetIconArt());
+            i_pPicture->SetTex(fp);
+        }
         i_pUserLabel->SetTokenFmt(campaign_endgame_user_noprogress, pUser->Name());
         i_pStatusLabel->SetTokenFmt(campaign_endgame_goal_noprogress, goal);
     }

@@ -406,7 +406,9 @@ void TrackWatcherImpl::CheckForRolls(float ms, int tick) {
             }
     }
 
-    if (mRollActiveSlots != 0) {
+    // Retail compares the slot bitmask UNSIGNED (cmplwi) -- it is an
+    // unsigned slot mask, not a signed int.
+    if ((unsigned int)mRollActiveSlots != 0) {
         for (int i = 0; i < mRollSlotsLastSwingMs.size(); i++) {
             int mask = 1 << i;
             if ((mRollActiveSlots & (1 << i))

@@ -16,13 +16,13 @@ public:
     };
     struct NavItem {
         NavItem()
-            : mLabel(gNullStr), mCheckboxState(kCheckbox_None), mStarMode(0), mEnabled(1),
+            : mLabel(gNullStr), mStarMode(0), mCheckboxState(kCheckbox_None), mEnabled(1),
               mHidden(0), mFormatArgs(0), mSubListProvider(0) {}
         NavItem(const NavItem &other)
-            : mLabel(other.mLabel), mCheckboxState(other.mCheckboxState),
-              mSongID(other.mSongID), mStarMode(other.mStarMode), mEnabled(other.mEnabled),
-              mHidden(other.mHidden), mFormatArgs(other.mFormatArgs), mLabels(other.mLabels),
-              mSubListProvider(other.mSubListProvider) {
+            : mLabel(other.mLabel), mLabels(other.mLabels), mSongID(other.mSongID),
+              mStarMode(other.mStarMode), mCheckboxState(other.mCheckboxState),
+              mEnabled(other.mEnabled), mHidden(other.mHidden),
+              mFormatArgs(other.mFormatArgs), mSubListProvider(other.mSubListProvider) {
             if (mFormatArgs)
                 mFormatArgs->AddRef();
         }
@@ -33,17 +33,22 @@ public:
             }
         }
 
+        // Retail RB3-360 order: mLabels sits immediately after mLabel (0x4) and
+        // mCheckboxState is at 0x18 -- the exact inverse of the DC3 order we had.
+        // Evidence: operator<<(BinStream&, const NavItem&) emits, in source order,
+        // `lwz r11, 0x18(r31)` (mCheckboxState) then `addi r4, r31, 0x4`
+        // (&mLabels); ours emitted 0x4 then 0x18. sizeof is 0x28 either way.
         /** "used for a list entry with a single label" */
         Symbol mLabel; // 0x0
-        CheckboxMode mCheckboxState; // 0x4
-        int mSongID; // 0x8 - song ID
-        int mStarMode;
-        bool mEnabled;
-        bool mHidden;
-        DataArray *mFormatArgs;
         /** "used for a list entry with a list of labels" */
-        std::vector<Symbol> mLabels; // 0x18
-        DataProvider *mSubListProvider;
+        std::vector<Symbol> mLabels; // 0x4
+        int mSongID; // 0x10 - song ID
+        int mStarMode; // 0x14
+        CheckboxMode mCheckboxState; // 0x18
+        bool mEnabled; // 0x1c
+        bool mHidden; // 0x1d
+        DataArray *mFormatArgs; // 0x20
+        DataProvider *mSubListProvider; // 0x24
     };
     // Hmx::Object
     virtual ~HamNavProvider();

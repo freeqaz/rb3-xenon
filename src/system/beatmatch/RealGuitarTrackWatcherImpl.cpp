@@ -214,9 +214,14 @@ bool RealGuitarTrackWatcherImpl::AreSlotsInRoll(unsigned int i1, int i2) const {
     const RGState *state = mMatcher.GetState();
     unsigned int mask = 1;
     bool ret = false;
-    for (int i = 0; i < 6; i++, mask <<= 1) {
-        if ((i1 & mask) && chord.mString[i] != -1) {
-            if (chord.mString[i] != (int)state->GetFret(i)) {
+    // Retail's loop increments the slot mask BEFORE advancing the chord-string
+    // pointer, and compares GetFret()'s result on the LEFT of the !=.
+    // ...and initialises the loop counter BEFORE the chord-string pointer.
+    int i = 0;
+    const int *pstr = chord.mString;
+    for (; i < 6; i++, mask <<= 1, pstr++) {
+        if ((i1 & mask) && *pstr != -1) {
+            if ((int)state->GetFret(i) != *pstr) {
                 return false;
             }
             ret = true;

@@ -285,7 +285,13 @@ void OnFrameRateRecurseCB(const char *cc1, const char *cc2) {
     gFrameRateArray->Insert(gFrameRateArray->Size(), str);
 }
 
-void DirListCB(const char *, const char *cc2) { gDirList.push_back(String(cc2)); }
+// Retail re-materializes &tmp (`addi r4, r31, 0x50`) for the push_back arg instead
+// of reusing the String ctor's returned `this` in r3 -- i.e. a *named* local, not
+// a temporary bound directly to the call.
+void DirListCB(const char *, const char *cc2) {
+    String tmp(cc2);
+    gDirList.push_back(tmp);
+}
 
 bool FileExists(const char *iFilename, int iMode) {
     MILO_ASSERT((iMode & ~FILE_OPEN_NOARK) == 0, 0x2A8);

@@ -36,6 +36,12 @@
 
 RGTrainerPanel *TheRGTrainerPanel;
 
+// Retail-360's RGTrainerPanel::Exit() clears a 1-BYTE data flag (stb), not the
+// TheRGTrainerPanel pointer (stw) the rb3-Wii dev build assigns: the target's
+// sole store is `stb 0, 0x82E0E30F` and nothing in the whole retail binary ever
+// reads that byte back (no lbz/lwz anywhere), so it is a write-only flag.
+static bool sRGTrainerPanelActive;
+
 void ProTrainerPanel::Enter() {
     GemTrainerPanel::Enter();
     if (mGemPlayer) {
@@ -153,7 +159,7 @@ void RGTrainerPanel::Enter() {
 
 void RGTrainerPanel::Exit() {
     GemTrainerPanel::Exit();
-    TheRGTrainerPanel = 0;
+    sRGTrainerPanelActive = false;
 }
 
 void RGTrainerPanel::Poll() {

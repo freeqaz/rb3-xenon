@@ -396,7 +396,12 @@
    "system/ui/UIListState.cpp": "NonMatching",
    "system/ui/UIListWidget.cpp": "NonMatching",
    "system/synth_xbox/Synth.cpp": "NonMatching",
-   "system/char/CharDriver.cpp": "NonMatching",
+   "system/char/CharDriver.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_NOTIFY_ONCE_EVAL"
+    ]
+   },
    "system/rndobj/PostProc.cpp": "NonMatching",
    "system/obj/DataArray.cpp": "NonMatching",
    "system/utl/JobMgr.cpp": "NonMatching",

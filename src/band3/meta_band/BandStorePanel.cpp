@@ -31,6 +31,13 @@
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
 
+// Retail keeps the store request prefix in a statically-initialized file-scope
+// `const char *` (target .data 0x82C73FD8 -> .rdata "dlc_store"), not as an
+// inline literal: LoadArt/Request/GetRequestPrefix all `lwz` the pointer out of
+// .data rather than `addi`-ing the literal's address. GetRequestPrefix
+// (fn_82605868) is literally `{ lwz r3, sRequestPrefix; blr }`.
+static const char *sRequestPrefix = "dlc_store";
+
 // Retail 360 base (meta/StorePanel.h) has two StoreOffer* vectors
 // (mOffers, mPendingOffers) where the rb3-Wii dev oracle used three
 // (unk38/unk40/unk48). Map the oracle names onto the retail base:
@@ -72,9 +79,7 @@ const char *BandStorePanel::GetIndexFile() const {
     return MakeString("%d", StoreBuildNum());
 }
 
-const char *BandStorePanel::GetRequestPrefix() const {
-    return "dlc_store";
-}
+const char *BandStorePanel::GetRequestPrefix() const { return sRequestPrefix; }
 
 int BandStorePanel::StoreUser() const {
     LocalBandUser *l = TheInputMgr->GetUser()
@@ -198,7 +203,7 @@ void BandStoreShortcutProvider::Text(int i, int j, UIListLabel *listlabel, UILab
 
 void BandStorePanel::LoadArt(const char *path, UIPanel *callback) {
     ObjectDir::Main()->Find<BandStorePanel>("store_panel", true);
-    String full("dlc_store");
+    String full(sRequestPrefix);
     full += path;
     StorePanel::LoadArt(full.c_str(), callback);
 }
@@ -216,7 +221,7 @@ void BandStorePanel::Request(const String &path, bool extra) {
             MILO_ASSERT(!mMetadataLoader, 0x1B6);
             mLastRequest = path;
             mLastRequestExtra = extra;
-            String url("dlc_store");
+            String url(sRequestPrefix);
             Symbol region = PlatformRegionToSymbol(ThePlatformMgr.GetRegion());
             url += MakeString("/%s%s", region, path);
             Server *server = TheNet.GetServer();

@@ -145,9 +145,15 @@ int FileCacheFile::Seek(int offset, int whence) {
         return mPos;
     }
     int sz = mParent->Size();
-    // Clamp position to [0, size]
-    mPos = (ret < 0) ? 0 : ((ret > sz) ? sz : ret);
-    return mPos;
+    // Clamp position to [0, size]. Retail keeps `ret` in r3 for the whole tail
+    // (every switch arm writes r3 and there is no closing `mr r3, r11`), which
+    // needs the clamp written as statements returning `ret`, not `mPos`.
+    if (ret < 0)
+        ret = 0;
+    else if (ret > sz)
+        ret = sz;
+    mPos = ret;
+    return ret;
 }
 
 #pragma endregion

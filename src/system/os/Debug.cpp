@@ -94,9 +94,16 @@ void DebugModal(Debug::ModalType &ty, FixedString &str, bool b3) {
     MILO_LOG("%s\n", str.c_str());
 }
 
+// Retail's ctor init list omits mAlwaysFlush @0x14 -- there is no
+// `stb r11, 0x14(r31)` in the target COMDAT (0x10 and 0x18 are both stored).
+// It is only ever assigned from the debug console, so keep it initialized on
+// native only.
 Debug::Debug()
     : mNoDebug(0), mFailing(0), mExiting(0), mNoTry(0), mNoModal(0), mTry(0), mLog(0),
-      mAlwaysFlush(0), mReflect(0), mModalCallback(DebugModal), mFailThreadMsg(0),
+#ifdef HX_NATIVE
+      mAlwaysFlush(0),
+#endif
+      mReflect(0), mModalCallback(DebugModal), mFailThreadMsg(0),
       mNotifyThreadMsg(0) {}
 
 void Debug::RemoveExitCallback(ExitCallbackFunc *func) {
@@ -501,11 +508,11 @@ DataNode OnSupportedLanguages(DataArray *) { return SupportedLanguages(false); }
 DataNode OnSystemMs(DataArray *) { return SystemMs(); }
 
 void NormalizeSystemArgs() {
-    unsigned int i = 0;
-    if (TheSystemArgs.size() == 0)
-        return;
-
-    do {
+    // Retail's entry guard is `srawi. r9,r9,2 / beqlr` -- the rotated copy of a
+    // real for-loop latch (`i < TheSystemArgs.size()`), which keeps the /4 shift.
+    // A hand-written `if (size() == 0) return;` guard instead gets MSVC's
+    // standalone zero-test peephole and compiles to `clrrwi. r9,r9,2`.
+    for (unsigned int i = 0; i < TheSystemArgs.size(); i++) {
         char *p = TheSystemArgs[i];
         char c = *p;
         while (c != '\0') {
@@ -518,8 +525,7 @@ void NormalizeSystemArgs() {
             p++;
             c = *p;
         }
-        i++;
-    } while (i < TheSystemArgs.size());
+    }
 }
 
 void SystemPreInit(const char *cmdLine, const char *cfg) {

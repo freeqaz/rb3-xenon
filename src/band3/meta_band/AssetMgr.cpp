@@ -70,6 +70,16 @@ Asset *AssetMgr::GetAsset(Symbol name) const {
 }
 
 FORCE_LOCAL_INLINE
+// TU-local const-ref shim: retail's AddAssets materializes a by-value Symbol
+// temp for the duplicate check (target-only `stw r4, 0x58(r31)`). Binding the
+// argument through a reference is what forces that temp into memory while the
+// value still forwards from the register. Kept file-static instead of widening
+// AssetMgr::HasAsset's signature -- doing the latter added the same temp at the
+// cross-TU call sites and cost Award::Configure + AssetProvider::Mat.
+static bool AssetMgrHasAsset(const AssetMgr *mgr, const Symbol &asset) {
+    return mgr->HasAsset(asset);
+}
+
 bool AssetMgr::HasAsset(Symbol asset) const { return GetAsset(asset) != NULL; }
 END_FORCE_LOCAL_INLINE
 
@@ -180,7 +190,7 @@ void AssetMgr::AddAssets() {
         Asset *pAsset = new Asset(pConfig, assetIdx);
         MILO_ASSERT(pAsset, 0x11D);
         Symbol name = pAsset->GetName();
-        if (HasAsset(name)) {
+        if (AssetMgrHasAsset(this, Symbol(name))) {
             MILO_WARN("(%s) has a duplicate entry in ui/customize/assets.dta", name.Str());
             delete pAsset;
         } else {

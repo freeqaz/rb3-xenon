@@ -193,3 +193,11 @@ int AllocInfo::StackCompare(const AllocInfo &other) const {
     }
     return 0;
 }
+AllocInfo **AllocInfoVec::erase(AllocInfo **first, AllocInfo **last) {
+    AllocInfo **i = first;
+    for (AllocInfo **j = last; j != mEnd; ++j) {
+        *i++ = *j;
+    }
+    mEnd = i;
+    return first;
+}

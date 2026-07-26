@@ -1869,7 +1869,7 @@ DataNode MusicLibrary::OnMsg(const ProfileChangedMsg &) {
 }
 
 DataNode MusicLibrary::OnMsg(const SigninChangedMsg &msg) {
-    if (msg.GetChangedMask() && unk15c) {
+    if ((unsigned int)msg.GetChangedMask() && unk15c) {
         RefreshNetSetlists();
     }
     return 1;

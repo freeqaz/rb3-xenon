@@ -1027,7 +1027,14 @@ void OvershellPanel::ResolvePartWaitStates() {
                 BandUser *picked =
                     resolvingUsers[mPartResolver.Int(0, resolvingUsers.size())];
                 if (picked->IsLocal()) {
-                    picked->SetOvershellSlotState(kState_ChoosePartWarn);
+                    // Retail passes kState_ChooseDiff (0xc) here, not
+                    // kState_ChoosePartWarn (0x4e) -- objdiff: the target's
+                    // `li r4, 0xc` was the last remaining difference in this
+                    // function. That also means the ChoosePartWarn confirm loop
+                    // the HX_NATIVE block above works around never existed on
+                    // the disc: the resolver hands the winner straight to the
+                    // difficulty screen.
+                    picked->SetOvershellSlotState(kState_ChooseDiff);
                     UpdateAll();
                 }
                 }

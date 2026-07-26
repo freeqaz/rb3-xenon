@@ -135,17 +135,23 @@ void BaseGuitarTrackWatcherImpl::FretButtonUp(int i) {
 
 void BaseGuitarTrackWatcherImpl::AutoCaptureHook() { ResetGemNotFretted(); }
 
+#pragma warning(push)
+#pragma warning(disable : 4716) // 'must return a value' -- retail falls off the end
 float BaseGuitarTrackWatcherImpl::HitGemHook(float f, int i, GemHitFlags flags) {
     if (flags & kGemHitFlagHopo) {
         SetLastNoStrumGem(f, i);
     }
     mMostRecentHit = f;
     ResetGemNotFretted();
-    // rb3-Wii source falls off the end here (MWCC returns garbage, discarded by
-    // caller). MSVC rejects that (C4716); return the base-class default so the TU
-    // compiles. Not in the carved [0x8277D278,0x8277D790) target range.
+    // Retail falls off the end here exactly like the rb3-Wii oracle -- the
+    // target's last instruction before the epilogue is the ResetGemNotFretted
+    // vcall, with NO `lfs f1, 0.0` materialised. MSVC's C4716 is suppressed so
+    // the undefined return value is reproduced rather than zeroed.
+#ifdef HX_NATIVE
     return 0.0f;
+#endif
 }
+#pragma warning(pop)
 
 bool BaseGuitarTrackWatcherImpl::GemCanBePassed(int i) { return i != mGemNotFretted; }
 

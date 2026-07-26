@@ -864,12 +864,18 @@ void OvershellSlot::ShowWiiProfileList(int i) {
     mOvershell->UpdateAll();
 }
 
+// Was `OvershellSlot::unk28`. Retail X360 has neither the member (sizeof is
+// 0xC0, not 0xC4) nor any of the three Wii-profile-selector methods below, so
+// the saved state ID lives in a file-scope static here instead of growing the
+// class. See the note at the tail of OvershellSlot.h.
+static OvershellSlotStateID sWiiProfileReturnState = kState_JoinedDefault;
+
 void OvershellSlot::ShowWiiProfileOptions() {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0x62A);
     LocalBandUser *pLocalUser = pUser->GetLocalBandUser();
     MILO_ASSERT(pLocalUser, 0x62D);
-    unk28 = kState_WiiProfileOptions;
+    sWiiProfileReturnState = kState_WiiProfileOptions;
     pUser->SetOvershellSlotState(kState_WiiProfileOptions);
     mOvershell->UpdateAll();
 }
@@ -895,7 +901,7 @@ void OvershellSlot::ShowWiiProfileSelector(bool b) {
     MILO_ASSERT(pUser->IsLocal(), 0x64A);
     if (ostate)
         oid = ostate->GetStateID();
-    unk28 = oid;
+    sWiiProfileReturnState = oid;
     SetWiiProfileListMode(1, b);
     if (mSwappableProfilesProvider->GetWiiProfileCount(pUser->GetLocalBandUser()) <= 0) {
         ShowState(kState_WiiProfileListEmpty);
@@ -904,8 +910,8 @@ void OvershellSlot::ShowWiiProfileSelector(bool b) {
 }
 
 void OvershellSlot::CancelWiiProfileSelector() {
-    ShowState(unk28);
-    unk28 = kState_WiiProfileOptions;
+    ShowState(sWiiProfileReturnState);
+    sWiiProfileReturnState = kState_WiiProfileOptions;
 }
 
 WiiProfile *OvershellSlot::GetUserWiiProfile() {

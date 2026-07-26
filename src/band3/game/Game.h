@@ -108,7 +108,9 @@ public:
     virtual void HandleSubmix(int, const char *) {}
     virtual DataNode Handle(DataArray *, bool);
 
-    void SetPaused(bool, bool, bool);
+    // Retail-360 takes FOUR bools: GamePanel::StartIntro's call site loads
+    // r4..r7 all = 1 (the rb3-Wii dev build's 3-arg form only fills r4..r6).
+    void SetPaused(bool, bool, bool, bool = true);
     void SetGameOver(bool);
     bool ResumedNoScore() const;
     bool IsActiveUser(BandUser *) const;

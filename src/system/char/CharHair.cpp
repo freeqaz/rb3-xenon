@@ -478,9 +478,7 @@ float CharHair::GetFPS() {
     if (mUsePostProc && RndPostProc::Current()
         && RndPostProc::Current()->EmulateFPS() > 0) {
         float fps = RndPostProc::Current()->EmulateFPS();
-        if (fps != 60.0f)
-            fps = 60.0f - fps;
-        return fps;
+        return fps != 60.0f ? 60.0f - fps : fps;
     }
     return 60.0f;
 }

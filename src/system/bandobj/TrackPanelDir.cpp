@@ -509,7 +509,9 @@ void TrackPanelDir::ResetAll() {
     mVocalTrack->Retract(true);
     for (int i = 0; i < mGemTracks.size(); i++) {
         GemTrackDir *track = AsGemTrack(mGemTracks[i]);
-        if (track)
+        // Retail null-checks these BandTrack*/GemTrackDir* with a SIGNED cmpwi,
+        // not the pointer-natural cmplwi -- the (int) cast reproduces it.
+        if ((int)track)
             track->Retract(true);
     }
 }
@@ -530,7 +532,7 @@ void TrackPanelDir::PlayIntro() {
     Find<EventTrigger>("intro.trig", true)->Trigger();
     for (int i = 0; i < mTracks.size(); i++) {
         BandTrack *track = mTracks[i];
-        if (track)
+        if ((int)track)
             track->PlayIntro();
     }
     SetShowing(!mPerformanceMode);
@@ -591,7 +593,7 @@ void TrackPanelDir::StartFinale() {
 void TrackPanelDir::GameLost() {
     for (int i = 0; i < mTracks.size(); i++) {
         BandTrack *track = mTracks[i];
-        if (track)
+        if ((int)track)
             track->StopDeploy();
     }
     UnisonEnd();

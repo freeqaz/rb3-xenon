@@ -454,7 +454,7 @@ void Game::RemovePlayer(Player *p) {
     );
 }
 
-void Game::SetPaused(bool b1, bool b2, bool b3) {
+void Game::SetPaused(bool b1, bool b2, bool b3, bool) {
     mGameWantsPause = b1;
     UpdatePausedState(b2, b3);
 }

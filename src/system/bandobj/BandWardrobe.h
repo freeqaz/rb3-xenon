@@ -102,10 +102,6 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandWardrobe); }
     NEW_OBJ(BandWardrobe);
-    // DECLARE_REVS expanded inline to avoid pulling obj/ObjMacros.h into this
-    // shared header (which would flip BandDirector.cpp's INIT_REVS arity).
-    static unsigned short gRev;
-    static unsigned short gAltRev;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

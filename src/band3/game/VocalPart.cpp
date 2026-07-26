@@ -326,9 +326,9 @@ const VocalPhrase *VocalPart::GetFirstPhraseMarker() const {
 
 const VocalPhrase *VocalPart::GetNextPhraseMarker(const VocalPhrase *const &p) const {
     const VocalPhrase *curPhrase = p;
-    const VocalPhrase *end = mVocalNoteList->mPhrases.end();
-    if (curPhrase == end) return curPhrase;
-    return curPhrase + 1;
+    if (curPhrase != mVocalNoteList->mPhrases.end())
+        curPhrase++;
+    return curPhrase;
 }
 
 bool VocalPart::IsPhraseMarkerAtEnd(const VocalPhrase *const &p) const {
@@ -693,12 +693,11 @@ void VocalPart::HandlePhraseEnd(
 ) {
     if (mVocalNoteList) {
         mPlayer->IsNet();
-        const VocalPhrase *nextPhrase = GetNextPhraseMarker(mThisPhrase);
-        const VocalPhrase *phrase = nextPhrase;
+        const VocalPhrase *phrase = GetNextPhraseMarker(mThisPhrase);
         float startMs;
         float endMs;
-        if (nextPhrase != mVocalNoteList->mPhrases.end()) {
-            startMs = nextPhrase->unk0 + nextPhrase->unk4;
+        if (phrase != mVocalNoteList->mPhrases.end()) {
+            startMs = phrase->unk0 + phrase->unk4;
             const VocalPhrase *nextNext = GetNextPhraseMarker(phrase);
             if (nextNext != mVocalNoteList->mPhrases.end()) {
                 endMs = nextNext->unk0 + nextNext->unk4;
@@ -721,16 +720,27 @@ void VocalPart::HandlePhraseEnd(
                 o_rRating = rating;
                 unk18 += rating;
                 float denom = mPhraseScoreMax;
-                float mult = mPhraseScorePartMultiplier * (float)mPhraseValue;
-                int accPts = (int)(0.5 + (double)((mPhraseScore * mult) / denom));
-                int bandPts = (int)(0.5 + (double)((unk44 * mult) / denom));
-                int odPts = (int)(0.5 + (double)((unk48 * mult) / denom));
+                int accPts =
+                    (int)(0.5
+                          + (double)(mPhraseScore * mPhraseScorePartMultiplier
+                                     * (float)mPhraseValue * (1.0f / denom)));
+                int bandPts =
+                    (int)(0.5
+                          + (double)(unk44 * mPhraseScorePartMultiplier
+                                     * (float)mPhraseValue * (1.0f / denom)));
+                int odPts = (int)(0.5
+                                  + (double)(unk48 * mPhraseScorePartMultiplier
+                                             * (float)mPhraseValue * (1.0f / denom)));
                 int total = odPts + (bandPts + accPts);
                 if (total > 0) {
                     int m1, m2, m3;
                     mPlayer->GetMultiplier(true, m1, m2, m3);
                     int indMult = mPlayer->GetIndividualMultiplier();
-                    unk20 = (float)(indMult * total);
+                    // NOTE: retail emits `mullw r10, r29, r3` (total, indMult);
+                    // MSVC canonicalises this call-result multiply to
+                    // `mullw r10, r3, r29` regardless of source operand order
+                    // (both orders + int/float temps tried). Sole residual.
+                    unk20 = total * indMult;
                     if (mPhraseRank == 0) {
                         mPlayer->AddAccuracyStat(accPts);
                     } else {
@@ -764,7 +774,8 @@ void VocalPart::HandlePhraseEnd(
             UpdateMinMaxPitch(phrase);
         }
         if (mPlayer->ScoringEnabled() && mPhraseScoreMax > 0.0f) {
-            unk4c += FramePhraseMeterFrac();
+            float frac = FramePhraseMeterFrac();
+            unk4c += frac;
             unk50 += 1;
         }
         int prevScore = (int)mPhraseScore;

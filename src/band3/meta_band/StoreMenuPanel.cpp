@@ -131,7 +131,10 @@ DataNode StoreMenuPanel::OnBack(const DataArray *) {
         if (ix == 1) {
             mStartingHighlightIx = mMenuStack[0]->mIxHighlight;
             BandStorePanel *bsp = BandStorePanel::Instance();
-            bsp->Request(String(bsp->GetIndexFile()), true);
+            {
+                String indexFile(bsp->GetIndexFile());
+                bsp->Request(indexFile, true);
+            }
             ix = -1;
         } else {
             ix = ix - 1;

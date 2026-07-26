@@ -65,6 +65,13 @@ public:
     virtual void StartPulseAnims(float) {}
     virtual float GetPulseAnimStartDelay(bool) const;
     virtual GemTrackResourceManager *GetGemTrackResourceManager() const { return 0; }
+    // Retail TrackPanelDir vtable (file 0x2d464) has two more slots past
+    // GetGemTrackResourceManager (0xd0) that the rb3-Wii dev oracle lacks:
+    //   0xd4 -> 0x82303bb8  (reads this+0x374, shows 3-4 sub-objects)
+    //   0xd8 -> 0x82309b60  (inline: this->0x378 = false)
+    // TrackPanel::Reset() calls slot 0xd8 right before ConfigureTracks(false).
+    virtual void Unkd4() {}
+    virtual void Unkd8() {}
 
     bool Showing() {
         const char *name = "draw_order.grp";

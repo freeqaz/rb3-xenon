@@ -205,7 +205,7 @@ void StreakMeter::SetIsolatedPart(int i) {
 void StreakMeter::SetPartPct(int i, float f, bool b) {
     if (unk260 && i < mPartWipeAnims.size()) {
         RndPropAnim *anim = mPartWipeAnims[i];
-        if (anim)
+        if ((int)anim)
             anim->SetFrame(f, 1.0f);
     }
     unk2cc[i] = b;

@@ -76,8 +76,11 @@ void OverdriveTracker::Poll_(float ms) {
     if (mSource->IsFinished()) {
         float f98 = unk98;
         if (f98 > 0) {
-            unk98 = 0;
+            // Retail stores the accumulated value BEFORE zeroing the streak
+            // (objdiff: target `stfs 0xac` precedes `stfs 0xa4`). Semantically
+            // identical because f98 is already latched in a local.
             unka0 = f98 * unka4 + unka0;
+            unk98 = 0;
         }
     } else {
         bool b4 = false;

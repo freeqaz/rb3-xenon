@@ -329,7 +329,9 @@ DataNode BandMachineMgr::ForEachMachine(const DataArray *arr) {
     DataNode local(*var);
     std::vector<BandMachine *> machines;
     GetMachines(machines);
-    for (int i = 0; i < (int)machines.size(); i++) {
+    // Unsigned loop bound: retail's entry guard is `beq` (size == 0), not the
+    // `ble` a signed `(int)machines.size()` compare produces.
+    for (unsigned int i = 0; i < machines.size(); i++) {
         *var = machines[i];
         for (int j = 3; j < arr->Size(); j++) {
             arr->Command(j)->Execute();

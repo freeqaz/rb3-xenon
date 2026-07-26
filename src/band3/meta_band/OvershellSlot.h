@@ -234,5 +234,10 @@ public:
     FriendsProvider *mFriendsProvider; // 0xb4 (retail X360-only)
     OvershellPartSelectProvider *mPartSelectProvider; // 0xb8
     CymbalSelectionProvider *mCymbalProvider; // 0xbc
-    OvershellSlotStateID unk28; // Wii-only leftover (retail sizeof is 0xC0 without it)
+    // NOTE: the Wii-only `OvershellSlotStateID unk28` member that used to live
+    // here has been removed — retail X360 sizeof(OvershellSlot) is 0xC0 and the
+    // trailing member made ours 0xC4 (objdiff: OvershellPanel::FinishLoad
+    // emitted `li r3, 0xc4` for the operator new size where retail has 0xc0).
+    // The three Wii-profile-selector methods that referenced it (all absent from
+    // the retail X360 .text) now use a file-scope static in OvershellSlot.cpp.
 };

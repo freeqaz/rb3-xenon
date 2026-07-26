@@ -535,18 +535,12 @@ void MainHubPanel::SetDLCMotd(const char *motd) {
     }
 }
 
-const char *MainHubPanel::GetDLCMotd() {
-    const char *motd = unk94.c_str();
-    if (strlen(motd) == 0) {
-#ifdef RB3_HANDLE_LOCAL_STATIC
-        static Symbol message_latest_dlc("message_latest_dlc");
-        return Localize(message_latest_dlc, nullptr);
-#else
-        return Localize(message_latest_dlc, nullptr);
-#endif
-    }
-    return motd;
-}
+// Retail has NO `message_latest_dlc` string anywhere in .rdata (whereas
+// GetMotd's `message_motd_signin` fallback IS present), and the get_dlcmotd
+// handler inlines to a bare `lwz r4, unk94.mStr` -- so retail's GetDLCMotd is a
+// trivial accessor with no empty-string Localize fallback. (The rb3-Wii DEV
+// build added that fallback.)
+const char *MainHubPanel::GetDLCMotd() { return unk94.c_str(); }
 
 #pragma push
 #pragma dont_inline on

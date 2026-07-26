@@ -66,7 +66,7 @@ void BandCamShot::DeleteTargetCache(std::list<TargetCache>::iterator it) {
 
 BandCamShot::BandCamShot()
     : mTargets(this), mMinTime(0), mMaxTime(0), mZeroTime(0), mNextShots(this),
-      mCurShot(this), unk15c(0), unk160(0), unk164(0), unk168(0), unk169(0), unk16a(0),
+      mCurShot(this), unk15c(0), unk160(0), unk168(0), unk164(0), unk169(0), unk16a(0),
       mAnimsDuringNextShots(0) {
     mShotIter = mNextShots.end();
 }
@@ -344,30 +344,29 @@ void BandCamShot::StartAnim() {
     // BandDirector.cpp, so it stays declared.)
     FOREACH (it, mTargets) {
         if (!it->mTarget.Null()) {
-            Target &cur = *it;
             std::list<BandCamShot::TargetCache>::iterator cache =
-                CreateTargetCache(cur.mTarget);
+                CreateTargetCache(it->mTarget);
             if (cache->unk4) {
                 cache->unkc = cache->unk4->LocalXfm();
-                if (cur.mTeleport != 0) {
-                    TeleportTarget(cache->unk4, cur.mXfm, false);
+                if (it->mTeleport != 0) {
+                    TeleportTarget(cache->unk4, it->mXfm, false);
                 }
             }
             Character *charObj = dynamic_cast<Character *>(cache->unk4);
             if (charObj) {
-                charObj->SetSelfShadow(cur.mSelfShadow);
-                charObj->SetMinLod(cur.mForceLod);
-                charObj->SetShowing(!cur.mHide);
+                charObj->SetSelfShadow(it->mSelfShadow);
+                charObj->SetMinLod(it->mForceLod);
+                charObj->SetShowing(!it->mHide);
                 static Message msg("play_group", 0, 0, 0, 0, 0);
                 msg[0] = charObj;
-                msg[1] = cur.mAnimGroup;
-                msg[2] = cur.mFastForward / FramesPerUnit();
+                msg[1] = it->mAnimGroup;
+                msg[2] = it->mFastForward / FramesPerUnit();
                 msg[3] = Units();
-                msg[4] = cur.mForwardEvent;
+                msg[4] = it->mForwardEvent;
                 HandleType(msg);
-                if (cur.mEnvOverride) {
+                if (it->mEnvOverride) {
                     cache->unk8 = charObj->GetEnv();
-                    charObj->SetEnv(cur.mEnvOverride);
+                    charObj->SetEnv(it->mEnvOverride);
                 }
             }
         }

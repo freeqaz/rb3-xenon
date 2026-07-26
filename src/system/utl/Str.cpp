@@ -23,6 +23,24 @@ char gNullStrBuf = 0;
 // gNullStr ("" in .rdata) backs Symbol/comparison use; distinct from gNullStrBuf.
 extern const char *gNullStr;
 
+// Retail's NUL-terminated copy loop is NOT MSVC's /Oi `strcpy` intrinsic: it keeps
+// the copied character in a 32-bit *unsigned* temp, so the loop test compiles to
+//     lbzu rC,1(rS) / cmplwi rC,0 / stbu rC,1(rD) / bne
+// whereas `strcpy(d, s)` (== `while ((*d++ = *s++) != 0);`, the char-typed form)
+// emits `extsb. rT,rC` in the compare slot instead. Verified by compiling both
+// shapes with the retail cl.exe (X360/16.00.11886.00, /O1 /Oi): only the
+// unsigned-int temp reproduces `cmplwi`. Keep this file-local + static so it
+// inlines away and emits no COMDAT of its own.
+static void CopyStrZ(char *dest, const char *src) {
+    --src;
+    --dest;
+    unsigned int c;
+    do {
+        c = (unsigned char)*++src;
+        *++dest = (char)c;
+    } while (c != 0);
+}
+
 void RemoveSpaces(char *out, int len, const char *in) {
     MILO_ASSERT(out, 0x2C0);
     MILO_ASSERT(in, 0x2C1);
@@ -356,7 +374,7 @@ String &String::operator=(const FixedString &fstr) {
 #else
     const String &str = reinterpret_cast<const String &>(fstr);
     reserve(str.mCap);
-    strcpy(mStr, str.mStr);
+    CopyStrZ(mStr, str.mStr);
 #endif
     return *this;
 }
@@ -507,7 +525,7 @@ String &String::insert(unsigned int pos, unsigned int count, char c) {
     for (unsigned int i = 0; i < count; i++) {
         tmp.mStr[pos + i] = c;
     }
-    strcpy(tmp.mStr + pos + count, mStr + pos);
+    CopyStrZ(tmp.mStr + pos + count, mStr + pos);
     swap(tmp);
     return *this;
 }

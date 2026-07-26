@@ -87,7 +87,8 @@ void BandStarDisplay::SetupStars() {
         mStarSweepAnims.clear();
         mStarFullTriggers.clear();
         for (int i = 0; i < 5; i++) {
-            RndDir *stardir = Find<RndDir>(MakeString("star%d", i), true);
+            const char *starName = MakeString("star%d", i);
+            RndDir *stardir = Find<RndDir>(starName, true);
             mStars.push_back(ObjPtr<RndDir>(this, stardir));
 
             RndAnimatable *anim = stardir->Find<RndAnimatable>("sweep.mnm", true);

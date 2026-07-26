@@ -460,7 +460,10 @@ bool SharedGroup::Collide(const Transform &tf, const Segment &s, float &f, Plane
 
 void SharedGroup::Draw(const Transform &tf) {
     mGroup->SetWorldXfm(tf);
-    mGroup->Draw();
+    // Retail-360: RndGroup has no Draw() of its own (Draw() is non-virtual here,
+    // see rndobj/Draw.h) -- every Draw call site is a direct bl to the single
+    // RndDrawable::Draw cull-wrapper body, reached via the +0x10 subobject.
+    mGroup->RndDrawable::Draw();
 }
 
 #pragma endregion SharedGroup

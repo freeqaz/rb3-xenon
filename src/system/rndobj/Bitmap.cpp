@@ -28,8 +28,7 @@ int RndBitmap::DxtRowBytes() const { return mOrder & 0x38 ? mRowBytes * 4 : mRow
 
 unsigned char RndBitmap::PixelIndex(int i1, int i2) const {
     bool bb;
-    int offset = PixelOffset(i1, i2, bb);
-    u8 *p = mPixels + offset;
+    u8 *p = mPixels + PixelOffset(i1, i2, bb);
     unsigned char ret;
     if (mBpp == 8) {
         return *p;
@@ -285,14 +284,13 @@ void RndBitmap::Create(void *buffer) {
 
 void RndBitmap::SetPixelIndex(int i1, int i2, unsigned char uc) {
     bool bb;
-    int offset = PixelOffset(i1, i2, bb);
-    u8 *pixels = mPixels;
+    u8 *p = mPixels + PixelOffset(i1, i2, bb);
     if (mBpp == 8) {
-        *(pixels + offset) = uc;
+        *p = uc;
     } else if (bb) {
-        *(pixels + offset) = uc << 4 | *(pixels + offset) & 0xF;
+        *p = uc << 4 | *p & 0xF;
     } else {
-        *(pixels + offset) = *(pixels + offset) & 0xF0 | uc;
+        *p = *p & 0xF0 | uc;
     }
 }
 
@@ -581,13 +579,18 @@ unsigned char RndBitmap::ColumnNonTransparent(int x, int y, int z, int *iptr) {
 bool RndBitmap::IsTranslucent() const {
     if (mBpp == 24)
         return false;
-    for (int i = 0; i < mHeight; i++) {
-        for (int j = 0; j < mWidth; j++) {
-            unsigned char r, g, b, a;
-            PixelColor(j, i, r, g, b, a);
-            if (a < 253)
-                return true;
-        }
+    int h = Height();
+    int i = 0;
+    if (h > 0) {
+        int w = Width();
+        do {
+            for (int j = 0; j < w; j++) {
+                unsigned char r, g, b, a;
+                PixelColor(j, i, r, g, b, a);
+                if (a < 253)
+                    return true;
+            }
+        } while (++i < h);
     }
     return false;
 }

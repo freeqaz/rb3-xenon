@@ -559,6 +559,12 @@ void BandSongMgr::AddSongData(
         static Symbol missing_song_data("missing_song_data");
         DataArray *cfgArr = SystemConfig(missing_song_data)->FindArray(curSym, false);
         int songID = GetSongID(curArray, cfgArr);
+        // Retail-360 (TU5) tail guard: song ID 0x05E69EC1 is skipped for the
+        // Data()/AddRecentSong priming below. Recovering this bool is what
+        // makes the whole function's register allocation line up (retail saves
+        // r16..r31, one more callee-save than the rb3-Wii shape) -- without it
+        // every GPR in the loop is off by one.
+        bool isReservedSongID = songID == 0x05E69EC1;
         if (IsInExclusionList(curSym.Str(), songID)) {
             MILO_LOG("Skipping song %s because not licensed for RB3.\n", curSym);
         } else if (songID == 0) {
@@ -590,7 +596,7 @@ void BandSongMgr::AddSongData(
             // (target fn_82586AB0) is a single-caller, zero-arg static helper
             // with no rb3-Wii/dc3 counterpart -- extern-declared below for
             // call-site codegen only, exact source identity unresolved.
-            if (!unk124) {
+            if (!isReservedSongID && !unk124) {
                 Data(songID);
                 if (RB3AddSongDataUpgradeGate())
                     AddRecentSong(songID);

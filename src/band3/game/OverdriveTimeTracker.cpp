@@ -49,9 +49,13 @@ void OverdriveTimeTracker::Poll_(float f) {
                 mDeployStartMs = f;
             } else {
                 mCurrentDurationMs = f - startMs;
-                if (mLongestDurationMs < mCurrentDurationMs) {
-                    mLongestDurationMs = mCurrentDurationMs;
-                }
+                // MaxEq, not a hand-written `if`: the template's `T &x` binding
+                // loads mLongestDurationMs only after the mCurrentDurationMs
+                // store is scheduled, matching the target's
+                // `stfs 0x68` -> `lfs 0x6c` order. A plain `if` lets MSVC hoist
+                // the non-aliasing 0x6c load above the store. Same shape as the
+                // else-arm below, which already matches.
+                MaxEq(mLongestDurationMs, mCurrentDurationMs);
             }
             UpdateTimeRemainingDisplay();
         } else if (mDeployStartMs != -1.0f) {

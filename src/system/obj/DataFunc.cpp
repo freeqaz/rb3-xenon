@@ -1357,7 +1357,13 @@ DataNode Quasiquote(const DataNode &node) {
         DataArray *nodeArr = node.UncheckedArray();
 
         if (nodeType == kDataCommand && nodeArr->Type(0) == kDataSymbol) {
-            const char *str = nodeArr->UncheckedStr(0);
+            // Named sub-object reference: retail spills mNodes to the stack slot
+            // at 0x50 here (later reused by the DataArrayPtr below -- disjoint
+            // scopes share the slot), which only happens with a named reference
+            // local. Without it we lose that store plus a 9-instruction regswap
+            // cascade (98.4 -> 99.9).
+            const DataNode &first = nodeArr->Node(0);
+            const char *str = first.UncheckedStr();
             Symbol sym = STR_TO_SYM(str);
             if (sym == unquote || sym == unquoteAbbrev) {
                 return nodeArr->Evaluate(1);
@@ -1365,6 +1371,11 @@ DataNode Quasiquote(const DataNode &node) {
         }
 
         DataArrayPtr ptr(new DataArray(nodeArr->Size()));
+        // Residual (1 of 106): retail emits `add r3, r11, r30` for the LHS
+        // `mNodes + i` here, we emit `add r3, r30, r11` -- a pure commutative
+        // operand-order swap. `ptr.Node(i)` and a cached `DataArray*` local both
+        // leave it unchanged; the identical expression at the RHS (index 81)
+        // already matches, so it is scheduler canonicalization, not source shape.
         for (int i = 0; i < nodeArr->Size(); i++) {
             ptr->Node(i) = Quasiquote(nodeArr->Node(i));
         }

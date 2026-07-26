@@ -946,7 +946,7 @@ void BandProfile::FakeProfileFill() {
             ivec
         );
     }
-    const std::map<Symbol, CampaignKey *> &keys = TheCampaign->CampaignKeys();
+    const std::hash_map<Symbol, CampaignKey *> &keys = TheCampaign->CampaignKeys();
     FOREACH (it, keys) {
         Symbol key = it->first;
         mCampaignKeys.insert(key);

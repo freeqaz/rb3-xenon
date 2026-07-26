@@ -605,14 +605,11 @@ void Rnd::TestPoint(const Vector3 &pos, RndFlare *flare) {
 }
 
 void Rnd::RemovePointTest(RndFlare *flare) {
-    if (!TheHiResScreen.IsActive()) {
-        for (std::list<PointTest>::iterator it = mPointTests.begin();
-             it != mPointTests.end();) {
-            if (it->mFlare == flare) {
-                it = mPointTests.erase(it);
-            } else
-                ++it;
-        }
+    for (std::list<PointTest>::iterator it = mPointTests.begin(); it != mPointTests.end();) {
+        if (it->mFlare == flare) {
+            it = mPointTests.erase(it);
+        } else
+            ++it;
     }
 }
 

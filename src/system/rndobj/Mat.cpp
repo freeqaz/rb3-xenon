@@ -326,13 +326,9 @@ RndTex *RndMat::GetRefractNormalMap() {
 }
 
 bool RndMat::GetRefractEnabled(bool b) {
-    if (mRefractEnabled == 1 && mRefractStrength > 0.0f) {
-        RndTex *tex = mRefractNormalMap ? mRefractNormalMap : mNormalMap;
-        if (tex && (b || TheRnd.GetCurrentFrameTex(false))) {
-            return true;
-        }
-    }
-    return false;
+    return mRefractEnabled == 1 && mRefractStrength > 0.0f
+        && (mRefractNormalMap ? mRefractNormalMap : mNormalMap)
+        && (b || TheRnd.GetCurrentFrameTex(false));
 }
 
 MatPropEditAction RndMat::GetMetaMatPropAction(Symbol s) {
@@ -371,10 +367,12 @@ RndMat *LookupOrCreateMat(const char *shader, ObjectDir *dir) {
     if (!mat) {
         mat = dir->Find<RndMat>(FileGetBase(shader), false);
         if (!mat) {
-            bool old = TheLoadMgr.EditMode();
+            // Retail-360 does not save/restore the old edit mode here; it
+            // unconditionally clears it (no lbz of TheLoadMgr.mEditMode, and
+            // the restore call passes a literal 0).
             TheLoadMgr.SetEditMode(true);
             mat = dir->New<RndMat>(fileStr);
-            TheLoadMgr.SetEditMode(old);
+            TheLoadMgr.SetEditMode(false);
         }
     }
     return mat;

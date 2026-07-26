@@ -22,7 +22,15 @@
 
 BandWardrobe *TheBandWardrobe;
 
-INIT_REVS(BandWardrobe);
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (gAltRev+0,
+// gRev+4) -- not for the DECLARE_REVS/INIT_REVS class statics.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 const char *FlagString(int flags) {
     const char *flagstrs[] = { "FR",
@@ -237,9 +245,10 @@ void BandWardrobe::SetVenueDir(ObjectDir *dir) {
                 MakeString("crowd_%s%02d", genders[j], i + 1), false
             );
             if (thechar) {
+                CharDriver *driver = thechar->Driver();
                 ObjectDir *gendir =
                     thechar->Find<ObjectDir>(MakeString("%s_base", genders[j]), true);
-                thechar->Driver()->SetClips(gendir);
+                driver->SetClips(gendir);
             }
         }
     }
@@ -351,7 +360,7 @@ bool BandWardrobe::AllCharsLoaded() {
 }
 
 bool BandWardrobe::DircutRecurse(BandCamShot *shot, int i) {
-    for (ObjVector<BandCamShot::Target>::iterator it = shot->mTargets.begin();
+    for (ObjList<BandCamShot::Target>::iterator it = shot->mTargets.begin();
          it != shot->mTargets.end();
          ++it) {
         if (!it->mAnimGroup.Null()) {
@@ -793,7 +802,11 @@ void BandWardrobe::SelectExtra(FileMerger::Merger &merger) {
             if (cur == proparr->Sym(i)) {
                 unk2c.erase(it);
                 unk2c.push_back(cur);
-                merger.SetSelected(FilePath(MakeString("char/extras/%s.milo", cur)), false);
+                // Retail re-materializes the FilePath's address (addi r4, r31,
+                // 0x80) instead of reusing the ctor's r3 return -- i.e. a NAMED
+                // local, not an unnamed temporary argument.
+                FilePath fp(MakeString("char/extras/%s.milo", cur));
+                merger.SetSelected(fp, false);
                 return;
             }
         }
@@ -868,7 +881,7 @@ BEGIN_LOADS(BandWardrobe)
         bs >> s;
         bs >> mShotSetPlayMode;
         bs >> mPlayShot5;
-        if (gRev == 2 || gRev == 3) {
+        if (gRev < 4 && gRev > 1) {
             Symbol s2;
             bs >> s2;
             if (gRev > 2) {

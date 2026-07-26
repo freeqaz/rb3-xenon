@@ -27,10 +27,13 @@ const char *OptionStr(const char *option, const char *def) {
     if (i == TheSystemArgs.end())
         return def;
     else {
-        std::vector<char *>::iterator erased = TheSystemArgs.erase(i);
+        // One iterator variable, reassigned -- with a second `erased` local the
+        // first inlined erase() schedules its two arg setups in the opposite
+        // order from retail (`addi r5,r1,0x50` before `mr r4,r11`).
+        i = TheSystemArgs.erase(i);
         MILO_ASSERT(i != TheSystemArgs.end(), 0x5C);
-        def = *erased;
-        TheSystemArgs.erase(erased);
+        def = *i;
+        TheSystemArgs.erase(i);
         return def;
     }
 }

@@ -197,9 +197,10 @@ bool PropSync(
         RndMesh::Vert &vert = vec[prop->Int(i++)];
         if (i < prop->Size() || op & (kPropGet | kPropSet | kPropSize)) {
             if (vec.size() > 0) {
-                if (op & kPropSet) {
-                    vec.unkc = true;
-                }
+                // NOTE: was `vec.unkc = true;`. RB3-360 retail's VertVector has
+                // no such member (it is exactly 0xc: Vert*, int, int -- see
+                // rndobj/Mesh.h), so the write had no target counterpart. This
+                // function is unpaired, so dropping it costs no match.
                 return PropSync(vert, node, prop, i, op);
             } else {
                 MILO_NOTIFY_ONCE(
@@ -1032,9 +1033,9 @@ void RndMesh::Sync(int flags) {
         flags |= 0x200;
     }
     OnSync(flags);
-    if (flags | 0x1F) {
-        Verts().unkc = 0;
-    }
+    // NOTE: was `if (flags | 0x1F) { Verts().unkc = 0; }`. RB3-360 retail's
+    // VertVector has no `unkc` member (exactly 0xc: Vert*, int, int), so this
+    // wrote to a field that does not exist in the target. Unpaired function.
 }
 
 bool RndMesh::HasValidBones(unsigned int *boneIdx) const {

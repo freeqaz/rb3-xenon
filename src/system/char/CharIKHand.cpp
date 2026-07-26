@@ -67,7 +67,7 @@ BinStream &operator<<(BinStream &bs, const CharBlendBone::ConstraintSystem &cs) 
 }
 
 BEGIN_SAVES(CharIKHand)
-    SAVE_REVS(0xD, 0)
+    SAVE_REVS(0xC, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(CharWeightable)
     bs << mHand;
@@ -83,7 +83,6 @@ BEGIN_SAVES(CharIKHand)
     bs << mWristRadians;
     bs << mElbowCollide;
     bs << mClockwise;
-    bs << mPullShoulder;
 END_SAVES
 
 BEGIN_COPYS(CharIKHand)
@@ -113,7 +112,7 @@ INIT_REVS(0xC, 0)
 
 BEGIN_LOADS(CharIKHand)
     LOAD_REVS(bs)
-    ASSERT_REVS(0xD, 0)
+    ASSERT_REVS(0xC, 0)
     LOAD_SUPERCLASS(Hmx::Object)
     LOAD_SUPERCLASS(CharWeightable)
     bs >> mHand;
@@ -171,8 +170,6 @@ BEGIN_LOADS(CharIKHand)
         d >> mElbowCollide;
         d >> mClockwise;
     }
-    if (d.rev > 0xc)
-        d >> mPullShoulder;
     SetHand(mHand);
 END_LOADS
 
@@ -184,17 +181,15 @@ void CharIKHand::SetHand(RndTransformable *t) {
 void CharIKHand::PullShoulder(
     Vector3 &v, const Transform &tf, const Vector3 &vconst, float fff
 ) {
-    if (mPullShoulder) {
-        Subtract(vconst, tf.v, v);
-        float f2 = fff * 0.95f;
-        float lensq = LengthSquared(v);
-        if (lensq > f2 * f2) {
-            v *= 1.0f - f2 / (float)std::sqrt(lensq);
-            return;
-        }
+    Subtract(vconst, tf.v, v);
+    float f2 = fff * 0.95f;
+    float lensq = LengthSquared(v);
+    if (lensq > f2 * f2) {
+        v *= 1.0f - f2 / (float)std::sqrt(lensq);
+        return;
     }
-    v.x = 0;
     v.y = 0;
+    v.x = 0;
     v.z = 0;
 }
 

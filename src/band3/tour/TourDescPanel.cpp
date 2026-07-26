@@ -210,9 +210,9 @@ void TourDescPanel::LoadIcons() {
         }
     }
     {
-        std::map<Symbol, CampaignLevel *>::const_iterator end =
+        std::hash_map<Symbol, CampaignLevel *>::const_iterator end =
             TheCampaign->m_mapCampaignLevels.end();
-        for (std::map<Symbol, CampaignLevel *>::const_iterator it =
+        for (std::hash_map<Symbol, CampaignLevel *>::const_iterator it =
                  TheCampaign->m_mapCampaignLevels.begin();
              it != end;
              ++it) {

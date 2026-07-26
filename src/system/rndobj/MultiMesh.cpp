@@ -52,7 +52,10 @@ BinStream &operator<<(BinStream &bs, const RndMultiMesh::Instance &inst) {
 }
 
 BEGIN_SAVES(RndMultiMesh)
-    SAVE_REVS(5, 0)
+    // Retail RB3-360 writes packRevs(0, 4) here (objdiff: target `li r11, 0x4`);
+    // DC3 bumped the save rev to 5. gRev/ASSERT_REVS stay at 5 — Load already
+    // matches with 5, so only the emitted save revision was wrong.
+    SAVE_REVS(4, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     bs << mMesh << mInstances;

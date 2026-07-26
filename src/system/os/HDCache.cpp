@@ -61,7 +61,9 @@ int HDCache::HdrSize() {
 
 bool HDCache::ReadFail() {
     File *file = mReadArkFiles[mReadFileIdx];
-    if (file && file->Fail()) {
+    // Retail's null test is a SIGNED compare (`cmpwi cr6, r3, 0`), not the
+    // pointer-typed `cmplwi` -- same shape ReadDone() below already relies on.
+    if ((int)file != 0 && file->Fail()) {
         MILO_LOG("HDCache Read %d failed\n", mReadFileIdx);
         return true;
     } else

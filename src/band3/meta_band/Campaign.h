@@ -8,9 +8,23 @@
 #include "meta_band/CampaignKey.h"
 #include "meta_band/ProfileMessages.h"
 #include "obj/Data.h"
+#include <hash_map>
 #include "os/User.h"
 #include "game/BandUser.h"
 #include "ui/UIPicture.h"
+
+// Retail X360 stores the campaign level/key tables in STLport hash_maps, not
+// std::maps: Campaign::GetCampaignLevel calls
+// hashtable<pair<const Symbol,...>, Symbol, hash<Symbol>, ...>::_M_find with an
+// sret _Slist_iterator and then tests the returned node pointer for NULL.
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
 
 class BandProfile;
 
@@ -88,7 +102,7 @@ public:
     bool HasHintsToShow() const;
     Symbol GetCampaignLevelAdvertisement(Symbol) const;
     bool GetWasLaunchedIntoMusicLibrary() const;
-    bool DidUserMakeProgressOnGoal(LocalBandUser *, Symbol);
+    bool DidUserMakeProgressOnGoal(LocalBandUser *, const Symbol &);
     bool HasDisplayGoal();
     Symbol GetCategoryGroup(Symbol);
     Symbol GetGoalCategory(Symbol);
@@ -104,7 +118,7 @@ public:
 
     DataNode OnMsg(const ProfileSwappedMsg &);
     DataNode OnMsg(const PrimaryProfileChangedMsg &);
-    const std::map<Symbol, CampaignKey *> &CampaignKeys() const {
+    const std::hash_map<Symbol, CampaignKey *> &CampaignKeys() const {
         return m_mapCampaignKeys;
     }
 
@@ -114,10 +128,10 @@ public:
     bool unk25; // 0x25
     Symbol unk28; // 0x28
     std::vector<Symbol> m_vCampaignLevels; // 0x2c
-    std::map<Symbol, CampaignLevel *> m_mapCampaignLevels; // 0x34
+    std::hash_map<Symbol, CampaignLevel *> m_mapCampaignLevels; // 0x34
     std::map<Symbol, Symbol> unk4c; // 0x4c
     std::vector<Symbol> unk64; // 0x64
-    std::map<Symbol, CampaignKey *> m_mapCampaignKeys; // 0x6c
+    std::hash_map<Symbol, CampaignKey *> m_mapCampaignKeys; // 0x6c
     BandProfile *unk84; // 0x84
     int unk88; // 0x88
 };

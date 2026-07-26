@@ -124,7 +124,7 @@ public:
         );
 
     public:
-        VertVector() : mVerts(nullptr), mNumVerts(0), mCapacity(0), unkc(0) {}
+        VertVector() : mVerts(nullptr), mNumVerts(0), mCapacity(0) {}
         ~VertVector() {
             mCapacity = 0;
             clear();
@@ -141,8 +141,17 @@ public:
 
         Vert *mVerts; // 0x0
         int mNumVerts; // 0x4
-        unsigned short mCapacity; // 0x8 (short, not int — retail VertVector is 0xc)
-        unsigned short unkc; // 0xa (packs with mCapacity; was a bool at 0xc, oversizing the struct to 0x10)
+        // Signed `int`, and the LAST member -- retail VertVector is exactly 0xc.
+        // Proven from two independent target sites:
+        //   VertVector::resize   -> `lwz r11, 0x8, r3` + `cmpwi cr6, r11, 0x0`
+        //                           + `ble`  (4-byte SIGNED load, `mCapacity > 0`)
+        //   ~GemRepTemplate      -> `stw r29, 0x60/0x6c, r30` (4-byte zero store
+        //                           at mTailVerts+8 / mCapVerts+8)
+        // DC3 (same engine, same MSVC X360 flags) also has `int mCapacity`; only
+        // rb3-Wii's MWCC build uses `unsigned short`. The former `unkc` at 0xa
+        // cannot exist -- 3 x 4 bytes already fills the 0xc stride (confirmed by
+        // GemRepTemplate's mTailVerts 0x58 / mCapVerts 0x64).
+        int mCapacity; // 0x8
     };
 
     virtual ~RndMesh();

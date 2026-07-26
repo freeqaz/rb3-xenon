@@ -182,14 +182,13 @@ void BinStream::Read(void *data, int bytes) {
 #ifdef HX_NATIVE
         AutoGlitchReport report(50.0f, __FUNCTION__);
 #endif
-        unsigned char *ptr = (unsigned char *)data;
-        unsigned char *end;
         ReadImpl(data, bytes);
         if (mCrypto) {
-            end = ptr + bytes;
-            while (ptr < end) {
-                u8 bastard = mCrypto->Int();
-                *ptr++ ^= bastard;
+            for (unsigned char *ptr = (unsigned char *)data;
+                 ptr < (unsigned char *)data + bytes;
+                 ptr++) {
+                unsigned char cryptoInt = mCrypto->Int();
+                *ptr ^= cryptoInt;
             }
         }
     }

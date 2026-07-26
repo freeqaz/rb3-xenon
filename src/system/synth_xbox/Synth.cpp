@@ -226,7 +226,10 @@ void Synth360::Terminate() {
         for (unsigned int i = 0; i < mHeadsetSubmixes.size(); i++) {
             mHeadsetSubmixes[i]->DestroyVoice();
         }
-        mHeadsetSubmixes.erase(mHeadsetSubmixes.begin(), mHeadsetSubmixes.end());
+        // Retail loads both iterators off a materialised &mHeadsetSubmixes
+        // (`lwz r5, 0x4(r30)`), not off `this` -- i.e. a reference local.
+        std::vector<IXAudio2SubmixVoice *> &subs = mHeadsetSubmixes;
+        subs.erase(subs.begin(), subs.end());
     }
 
     ((IXAudio2Voice *)unkd4)->DestroyVoice();

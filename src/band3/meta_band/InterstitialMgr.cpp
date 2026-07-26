@@ -14,8 +14,12 @@
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
 
+// The vignette cheat override is file scope in retail, not a class member —
+// InterstitialMgr's retail sizeof (0x84) leaves no room for it (see the header).
+static int sRandomOverride = -1;
+
 InterstitialMgr::InterstitialMgr()
-    : Synchronizable("interstitial_mgr"), mRandomOverride(-1), mRandomSelection(0) {
+    : Synchronizable("interstitial_mgr"), mRandomSelection(0) {
     SetFromConfig();
     RefreshRandomSelection();
     SetName("interstitial_mgr", ObjectDir::Main());
@@ -26,7 +30,7 @@ void InterstitialMgr::SetFromConfig() {
     for (int i = 1; i < cfg->Size(); i++) {
         DataArray *arr = cfg->Array(i);
         Symbol key = arr->Sym(0);
-        std::map<Symbol, DataArray *> arrMap;
+        std::hash_map<Symbol, DataArray *> arrMap;
         for (int j = 1; j < arr->Size(); j++) {
             DataArray *jarr = arr->Array(j);
             Symbol jkey = jarr->Sym(0);
@@ -41,8 +45,8 @@ void InterstitialMgr::GetInterstitialsFromScreen(
 ) {
     panels.clear();
     mCurrentInterstitials.clear();
-    std::map<Symbol, DataArray *> &cur = mScreenInterstitialMap[screen->Name()];
-    for (std::map<Symbol, DataArray *>::iterator it = cur.begin(); it != cur.end();
+    std::hash_map<Symbol, DataArray *> &cur = mScreenInterstitialMap[screen->Name()];
+    for (std::hash_map<Symbol, DataArray *>::iterator it = cur.begin(); it != cur.end();
          ++it) {
         DataArray *val = it->second;
         for (int i = 1; i < val->Size(); i++) {
@@ -74,11 +78,8 @@ UIPanel *InterstitialMgr::PickInterstitialBetweenScreens(const char *c1, const c
         DataArray *iarr = arr->Array(i);
         if (iarr->Int(0)) {
             DataArray *a = iarr->Array(1);
-            int asize = a->Size();
-            if (asize != 0) {
-                const char *str = a->Str(mRandomSelection % asize);
-                ret = ObjectDir::Main()->Find<UIPanel>(MakeString("%s_panel", str), true);
-            }
+            const char *str = a->Str(mRandomSelection % a->Size());
+            ret = ObjectDir::Main()->Find<UIPanel>(MakeString("%s_panel", str), true);
             break;
         }
     }
@@ -87,7 +88,7 @@ UIPanel *InterstitialMgr::PickInterstitialBetweenScreens(const char *c1, const c
 
 UIScreen *InterstitialMgr::CurrentInterstitialToScreen(UIScreen *screen) const {
     if (screen) {
-        std::map<Symbol, UIScreen *>::const_iterator it =
+        std::hash_map<Symbol, UIScreen *>::const_iterator it =
             mCurrentInterstitials.find(screen->Name());
         if (it != mCurrentInterstitials.end())
             return it->second;
@@ -97,8 +98,8 @@ UIScreen *InterstitialMgr::CurrentInterstitialToScreen(UIScreen *screen) const {
 
 void InterstitialMgr::RefreshRandomSelection() {
     if (HasSyncPermission()) {
-        if (mRandomOverride >= 0) {
-            mRandomSelection = mRandomOverride;
+        if (sRandomOverride >= 0) {
+            mRandomSelection = sRandomOverride;
         } else
             mRandomSelection = RandomInt();
         SetSyncDirty(-1, false);
@@ -144,11 +145,11 @@ void InterstitialMgr::PrintOverlay(UIScreen *scr1, UIScreen *scr2) {
 void InterstitialMgr::CycleRandomOverride() {
     static Hmx::Object *cd = ObjectDir::Main()->Find<Hmx::Object>("cheat_display", true);
     static Message show("show", 0);
-    mRandomOverride++;
-    if (mRandomOverride > 9)
-        mRandomOverride = -1;
-    if (mRandomOverride >= 0) {
-        show[0] = MakeString("vignette override: %i", mRandomOverride + 1);
+    sRandomOverride++;
+    if (sRandomOverride > 9)
+        sRandomOverride = -1;
+    if (sRandomOverride >= 0) {
+        show[0] = MakeString("vignette override: %i", sRandomOverride + 1);
     } else {
         show[0] = "vignette override off";
     }

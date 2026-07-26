@@ -106,6 +106,10 @@ bool WinSockSocket::Fail() const {
     val.tv_usec = 0;
     set.fd_count = 1;
     set.fd_array[0] = mSocket;
+    // NOTE(laneAG-imm): 99.5% -- the only difference is the polarity of the
+    // `case 1` compare (retail `bne` to the exit, ours `beq` to the store);
+    // block layout is otherwise identical. An if/else-if chain and a
+    // `default: return mFail;` switch were both measured WORSE (76% / 90%).
     switch (select(0, nullptr, nullptr, &set, &val)) {
     case -1:
         MILO_LOG("select returned SOCKET_ERROR %d\n", WSAGetLastError());

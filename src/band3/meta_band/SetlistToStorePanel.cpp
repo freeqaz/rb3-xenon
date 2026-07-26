@@ -29,7 +29,10 @@ void SetlistToStorePanel::GetSongsFromMusicLibrary() {
     NetSavedSetlist *netSetlist = dynamic_cast<NetSavedSetlist *>(setlist);
     const std::vector<int> &songs = setlist->mSongs;
     MILO_ASSERT(!songs.empty(), 0x91);
-    TheStoreMetadata.ClearSetlistOffers();
+    // Retail X360 predates the StoreMetadataManager setlist-offer bookkeeping
+    // the rb3-Wii dev build added here: neither ClearSetlistOffers() nor the
+    // per-song AddSetlistOffer() below exists in the target, and their absence
+    // is what frees the callee-save register the rest of the loop is off by.
     MILO_ASSERT(mSongs.empty(), 0x98);
     MILO_ASSERT(mSongNames.empty(), 0x99);
     for (int i = 0; i < songs.size(); i++) {
@@ -38,7 +41,6 @@ void SetlistToStorePanel::GetSongsFromMusicLibrary() {
             BandSongMetadata *meta = (BandSongMetadata *)TheSongMgr.Data(songID);
             if (!meta || meta->IsDownload()) {
                 mSongs.push_back(songID);
-                TheStoreMetadata.AddSetlistOffer(songID);
                 String title(netSetlist ? netSetlist->GetSongTitle(i) : gNullStr);
                 mSongNames.push_back(title);
             }

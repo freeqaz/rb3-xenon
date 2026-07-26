@@ -13,9 +13,10 @@ int BandHeadShaper::sEyeNum;
 int BandHeadShaper::sMouthNum;
 int BandHeadShaper::sNoseNum;
 int BandHeadShaper::sShapeNum;
-ObjectDir *gHeadMale;
+static ObjectDir *gHeads[2];
+#define gHeadMale gHeads[0]
+#define gHeadFemale gHeads[1]
 std::vector<int> gHeadMaleMapping;
-ObjectDir *gHeadFemale;
 std::vector<int> gHeadFemaleMapping;
 ObjDirPtr<ObjectDir> gVisemes[4] = { ObjDirPtr<ObjectDir>(0),
                                      ObjDirPtr<ObjectDir>(0),
@@ -249,19 +250,15 @@ bool BandHeadShaper::Start(
 }
 
 void BandHeadShaper::AddChildBones(RndTransformable *t) {
-    if (!t)
-        MILO_WARN("Trying to add a NULL child bone.\n");
-    else {
-        std::vector<RndTransformable *>::iterator it =
-            std::find(unk18.begin(), unk18.end(), t);
-        if (it == unk18.end()) {
-            unk18.push_back(t);
-            for (std::list<RndTransformable *>::const_iterator child =
-                     t->TransChildren().begin();
-                 child != t->TransChildren().end();
-                 ++child) {
-                AddChildBones(*child);
-            }
+    std::vector<RndTransformable *>::iterator it =
+        std::find(unk18.begin(), unk18.end(), t);
+    if (it == unk18.end()) {
+        unk18.push_back(t);
+        for (std::list<RndTransformable *>::const_iterator child =
+                 t->TransChildren().begin();
+             child != t->TransChildren().end();
+             ++child) {
+            AddChildBones(*child);
         }
     }
 }
@@ -349,13 +346,10 @@ void BandHeadShaper::AddFrameHelper(
 }
 
 void BandHeadShaper::AddDegrees(const char *cc, int i1, float *degrees, int count) {
-    float *p = degrees;
-    int idx = 1;
-    int i = 0;
     int base = i1 * (count * 2 + 1);
     float remainder = 1.0f;
-    for (; i < count; p++, idx += 2, i++) {
-        AddFrameHelper(cc, base, idx, *p, remainder);
+    for (int i = 0; i < count; i++) {
+        AddFrameHelper(cc, base, i * 2 + 1, degrees[i], remainder);
     }
     AddFrame(cc, base, remainder);
 }

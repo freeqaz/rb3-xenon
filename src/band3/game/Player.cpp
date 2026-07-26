@@ -495,6 +495,17 @@ bool Player::Saveable() const {
 
 void Player::Save(BandUser *user, bool b) { SetEnabledState(kPlayerBeingSaved, user, b); }
 
+// Retail keeps the slot-parity pan OUT OF LINE (fn_826A25B8, inside Player.cpp's
+// .text span): under /O1 (size-optimizing) the inlined form — two lis/lfs float
+// constant loads plus a branch — is larger than the call, so MSVC declines to
+// inline it. The rb3-Wii dev oracle writes it inline inside DisablePlayer.
+__declspec(noinline) static float DiedCuePan(BandUser *user) {
+    if (user->GetSlot() % 2)
+        return 1.0f;
+    else
+        return -1.0f;
+}
+
 #pragma push
 #pragma pool_data off
 void Player::DisablePlayer(int i) {
@@ -502,10 +513,7 @@ void Player::DisablePlayer(int i) {
         const char *cue = MakeString("%s_died.cue", TrackTypeToSym(mTrackType).Str());
         float f = 0;
         if (TheBandUserMgr->IsMultiplayerGame()) {
-            if (mUser->GetSlot() % 2)
-                f = 1.0f;
-            else
-                f = -1.0f;
+            f = DiedCuePan(mUser);
         }
         GetTrackPanel()->PlaySequence(cue, 0.0f, f, 0.0f);
     }

@@ -13,6 +13,8 @@
 #include "utl/Symbols.h"
 #include "utl/Symbols4.h"
 #include "utl/TimeConversion.h"
+#include <algorithm>
+#include <cmath>
 
 PerfectOverdriveTracker::PerfectOverdriveTracker(
     TrackerSource *src, TrackerBandDisplay &banddisp, TrackerBroadcastDisplay &bcdisp
@@ -30,10 +32,9 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
     int numCommonPhrases = TheSongDB->NumCommonPhrases();
     int noteCount;
     DataArray *cfg = SystemConfig("scoring", "band_energy");
-    Symbol deployBeatsSym("deploy_beats");
-    float deployBeats = cfg->FindArray(deployBeatsSym, true)->Float(1);
-    Symbol spotlightPhraseSym("spotlight_phrase");
-    float spotlightPhraseFrac = cfg->FindArray(spotlightPhraseSym, true)->Float(1) * deployBeats;
+    float deployBeats = cfg->FindArray(Symbol("deploy_beats"), true)->Float(1);
+    float spotlightPhraseFrac =
+        cfg->FindArray(Symbol("spotlight_phrase"), true)->Float(1) * deployBeats;
     float songDurationMs = TheSongDB->GetSongDurationMs();
     float songBeats = MsToTick(songDurationMs) / 480.0f;
     float beatsPerMs = songBeats / songDurationMs;
@@ -55,9 +56,7 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
         }
 
         float ratio = spotlightPhraseFrac * (float)phraseCount / beatsPerMs;
-        if (songDurationMs < ratio) {
-            ratio = songDurationMs;
-        }
+        ratio = Min(ratio, songDurationMs);
         ratio /= songDurationMs;
         if (trackType == kTrackVocals) {
             noteCount = (int)TheSongDB->GetVocalNoteList(0)->mPhrases.size();
@@ -68,8 +67,8 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
         int trackerCount = (int)((float)noteCount * ratio);
         MaxEq(maxCount, trackerCount);
 
-        int threshold = (int)(deployBeats * (float)trackerCount / songBeats);
-        MaxEq(threshold, 1);
+        int threshold =
+            std::max(1, (int)(deployBeats * (float)trackerCount / songBeats));
 
         PlayerContribData &entry = unk58[trackType];
         entry.unk0 = -1.0f;
@@ -90,9 +89,7 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
     }
 
     for (unsigned int i = 0; i < mTargets.size(); i++) {
-        float scaled = std::floor((float)totalCount * mTargets[i]);
-        MaxEq(scaled, 1.0f);
-        mTargets[i] = scaled;
+        mTargets[i] = std::max<float>(1.0f, std::floor((float)totalCount * mTargets[i]));
     }
 }
 

@@ -82,13 +82,8 @@ void EditSetlistPanel::Poll() {
 }
 
 bool EditSetlistPanel::Exiting() const {
-    if (!UIPanel::Exiting()) {
-        int s = mEditState;
-        if (s == 3 || s == 7 || s == 8) {
-            return false;
-        }
-    }
-    return true;
+    return UIPanel::Exiting() ||
+        (mEditState != 3 && mEditState != 7 && mEditState != 8);
 }
 
 void EditSetlistPanel::Unload() {
@@ -172,6 +167,7 @@ bool EditSetlistPanel::CreateBattle() {
 }
 
 Symbol EditSetlistPanel::GetMessageToken() {
+    static Symbol create_setlistshared_success("create_setlistshared_success");
     static Symbol create_setlist_success("create_setlist_success");
     static Symbol edit_setlist_success("edit_setlist_success");
     static Symbol create_battle_success("create_battle_success");
@@ -179,15 +175,17 @@ Symbol EditSetlistPanel::GetMessageToken() {
     static Symbol error_setlist_limit_reached("error_setlist_limit_reached");
     static Symbol error_setlist_title_empty("error_setlist_title_empty");
     static Symbol error_setlist_description_empty("error_setlist_description_empty");
-    static Symbol error_battle_title_profane("error_battle_title_profane");
     static Symbol error_setlist_title_profane("error_setlist_title_profane");
-    static Symbol error_battle_description_profane("error_battle_description_profane");
     static Symbol error_setlist_description_profane("error_setlist_description_profane");
+    static Symbol error_battle_title_profane("error_battle_title_profane");
+    static Symbol error_battle_description_profane("error_battle_description_profane");
     static Symbol error_setlist_unknown("error_setlist_unknown");
     switch (mEditState) {
     case 7:
         switch (unk9c) {
         case 0:
+            if (unk64)
+                return create_setlistshared_success;
             return create_setlist_success;
         case 1:
             return edit_setlist_success;
@@ -209,10 +207,13 @@ Symbol EditSetlistPanel::GetMessageToken() {
         case 3:
             return error_setlist_description_empty;
         case 4:
-            return unk9c == 2 ? error_battle_title_profane : error_setlist_title_profane;
+            if (unk9c != 2)
+                return error_setlist_title_profane;
+            return error_battle_title_profane;
         case 5:
-            return unk9c == 2 ? error_battle_description_profane
-                              : error_setlist_description_profane;
+            if (unk9c != 2)
+                return error_setlist_description_profane;
+            return error_battle_description_profane;
         case 6:
         case 7:
             return error_setlist_unknown;
@@ -629,10 +630,40 @@ END_HANDLERS
 #pragma pop
 
 BEGIN_PROPSYNCS(EditSetlistPanel)
-    SYNC_PROP_SET_STATIC(setlist_name, mSetlistName.c_str(), mSetlistName = _val.Str())
-    SYNC_PROP_SET_STATIC(
-        setlist_desc, mSetlistDescription.c_str(), mSetlistDescription = _val.Str()
-    )
+    // The two const char* props are hand-expanded because retail materializes
+    // the DataNode temp as a NAMED local (target `addi r4, r31, 0x68` /
+    // `addi r4, r31, 0x70`) rather than reusing the ctor's returned `this`
+    // (`mr r4, r3`), which is what SYNC_PROP_SET's `_val = DataNode(member)`
+    // unnamed temporary emits. Expanded here instead of changing ObjMacros.h,
+    // whose SYNC_PROP_SET form is already correct for every other unit.
+    {
+        _NEW_STATIC_SYMBOL(setlist_name)
+        if (sym == _s) {
+            if (_op == kPropSet) {
+                mSetlistName = _val.Str();
+            } else {
+                if (_op == (PropOp)0x40)
+                    return false;
+                DataNode _tmp(mSetlistName.c_str());
+                _val = _tmp;
+            }
+            return true;
+        }
+    }
+    {
+        _NEW_STATIC_SYMBOL(setlist_desc)
+        if (sym == _s) {
+            if (_op == kPropSet) {
+                mSetlistDescription = _val.Str();
+            } else {
+                if (_op == (PropOp)0x40)
+                    return false;
+                DataNode _tmp(mSetlistDescription.c_str());
+                _val = _tmp;
+            }
+            return true;
+        }
+    }
     SYNC_PROP_SET_STATIC(setlist_inst, unk50, unk50 = (ScoreType)_val.Int())
     SYNC_PROP_SET_STATIC(setlist_seconds, unk54 * 86400, unk54 = _val.Int() / 86400)
 END_PROPSYNCS

@@ -7,7 +7,16 @@
 #include "utl/Symbols.h"
 
 ColorPalette *BandSwatch::sDummyPalette;
-INIT_REVS(BandSwatch);
+
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (altRev+0,
+// rev+4) -- not for the DECLARE_REVS/INIT_REVS class statics. Same lever as
+// BandWardrobe.cpp / BandDirector.cpp. Cannot use the `#define gRev` spelling
+// here: the Rnd_Xbox.cpp scatter-include below re-#defines those names.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gSwatchRevs;
 
 void BandSwatch::Init() {
     TheUI->InitResources("BandSwatch");
@@ -43,9 +52,12 @@ BEGIN_LOADS(BandSwatch)
 END_LOADS
 
 void BandSwatch::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
+    int rev;
+    bs >> rev;
+    gSwatchRevs.rev = getHmxRev(rev);
+    gSwatchRevs.altRev = getAltRev(rev);
     ASSERT_REVS(1, 0);
-    if (gRev != 0)
+    if (gSwatchRevs.rev != 0)
         bs >> mColorPalette;
     UIList::PreLoad(bs);
 }

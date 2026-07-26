@@ -467,7 +467,7 @@ bool NetSession::OnMsg(const JoinRequestMsg &msg) {
                 msg.GetUserData(i, rms);
                 rms.Seek(0, BinStream::kSeekBegin);
                 remoteUser->SyncLoad(rms, -1);
-                remoteUser->mMachineID = sender;
+                static_cast<User *>(remoteUser)->mMachineID = sender;
                 AddRemoteToSession(remoteUser);
                 joiners.push_back(remoteUser);
                 NewUserMsg userMsg(remoteUser);
@@ -479,7 +479,7 @@ bool NetSession::OnMsg(const JoinRequestMsg &msg) {
             std::vector<User *> usersInList;
             GetUserList(usersInList);
             FOREACH (it, usersInList) {
-                if (sender != (*it)->mMachineID) {
+                if ((*it)->mMachineID != sender) {
                     NewUserMsg userMsg(*it);
                     TheNetMessenger.DeliverMsg(sender, userMsg, kReliable);
                 }
@@ -581,7 +581,7 @@ bool NetSession::OnMsg(const AddUserRequestMsg &msg) {
         msg.GetUserData(ustream);
         ustream.Seek(0, BinStream::kSeekBegin);
         newremote->SyncLoad(ustream, -1);
-        newremote->mMachineID = lastsender;
+        static_cast<User *>(newremote)->mMachineID = lastsender;
         AddRemoteToSession(newremote);
         NewUserMsg umsg(newremote);
         SendToAllClientsExcept(umsg, kReliable, lastsender);
