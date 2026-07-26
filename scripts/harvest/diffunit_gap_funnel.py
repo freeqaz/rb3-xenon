@@ -25,10 +25,42 @@ undercounted the real gap set by 27x (laneAL's first, wrong, 153-function
 ceiling).  So: gaps come from splits.txt intervals; report.json is used ONLY to
 census which functions live inside a gap.
 
-SCOPE
------
-`0x82800000 .. 0x82D00000` is XDK + Quazal, hard-skipped by the project owner
-(58% of the raw pool).  Excluded INSIDE the funnel, never after.
+SCOPE -- source path, NOT an address window  [CORRECTED 2026-07-26, laneGAPFILL]
+-------------------------------------------------------------------------------
+This funnel used to hard-skip the VA window `0x82800000 .. 0x82D00000` as
+"XDK + Quazal".  **That guard was wrong and it was expensive.**  It is a
+proxy: it assumes vendor code occupies a contiguous address range.  It does
+not.  That window also contains a large amount of plainly matchable, already-
+pinned, already-compiled Milo/game code -- measured occupants include `UI`,
+`UIListWidget`, `UIPicture`, `UIListDir`, `UILabel`, `GemTrack`, `Mesh`,
+`CameraManager`, `TourDescPanel`, `Tail`, `VorbisReader`, `Track`, `Lyric`.
+
+Concretely: laneGAPFILL's interior-gap sweep found **77% of all content-bearing
+interior-gap bytes inside this window**, and **150 of its 181 landed matches
+came from inside it**.  laneAL's "interior holes: exhausted" verdict was
+therefore only ever true OUTSIDE the window.
+
+The guard is now the honest test: **a unit is out of scope iff its own
+`source_path` classifies as a no-oracle tier** (`xdk` / `vendor`) per
+`tools/scope_map.bucket_for_source`.  Address is not evidence of provenance.
+Note this correctly keeps `src/network/` (Quazal) IN scope as `game` -- it is
+low *priority* per the owner, but it is not vendor, and conflating the two is
+what produced the window in the first place.
+
+`--legacy-window` restores the old VA guard for A/B comparison only.
+
+★ TRAP -- STALE `auto_03_*_text.s` ASM
+--------------------------------------
+Anything that reads dtk's per-unit asm for *content* evidence (strings, callees)
+must filter those files by **mtime against `build/45410914/config.json`**.  A
+warm worktree carries thousands of stale blocks from earlier split states beside
+the live ones -- measured **4,426 stale vs 2,504 live**, one of them dated 13
+days earlier and spanning 55 KB straight across current pins.  Reading them
+unfiltered produces *false content evidence*: it attributed XDK
+`xgraphics\\ucode\\compiler\\ir\\block.cpp` strings to a `DuplicatedObject` gap
+that the live asm proves is DuplicatedObject's own code (it carries the literal
+`.\\DuplicatedObject.cpp` MILO_FAIL path string).  That nearly caused a correct
+span to be rejected.
 
 OUTPUT
 ------
@@ -176,7 +208,75 @@ def report_fns(report_path, symbols_path=None, map_path=None):
 
 
 def in_vendor(lo, hi):
+    """LEGACY VA-window guard.  Kept only for --legacy-window A/B.  See the
+    SCOPE note in the module docstring: address is not evidence of provenance."""
     return not (hi <= VENDOR_LO or lo >= VENDOR_HI)
+
+
+# --- source-path scope test (replaces the VA window) ----------------------
+NO_ORACLE_BUCKETS = {"xdk", "vendor"}
+
+
+def unit_source_paths(report_path):
+    """-> {objdiff unit name: source_path} from report.json metadata."""
+    out = {}
+    try:
+        rep = json.load(open(report_path))
+    except OSError:
+        return out
+    for u in rep.get("units", []):
+        sp = (u.get("metadata") or {}).get("source_path")
+        if sp:
+            out[u["name"]] = sp
+            out[u["name"].split("/")[-1]] = sp
+    return out
+
+
+def _bucket_for_source():
+    """Import tools/scope_map.bucket_for_source lazily (it is the single
+    source-path classifier the project already trusts)."""
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    root = os.path.dirname(here)
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    try:
+        from tools.scope_map import bucket_for_source
+        return bucket_for_source
+    except Exception:
+        try:
+            sys.path.insert(0, os.path.join(root, "tools"))
+            from scope_map import bucket_for_source
+            return bucket_for_source
+        except Exception:
+            return lambda sp: None
+
+
+def make_scope_test(report_path, legacy=False):
+    """-> fn(gap) -> True if the gap is OUT of scope."""
+    if legacy:
+        return lambda g: in_vendor(g['va_lo'], g['va_hi'])
+    srcs = unit_source_paths(report_path)
+    bucket = _bucket_for_source()
+
+    def _unit_out(unit):
+        # splits keys are like 'UI.cpp' or 'band3/bandtrack/Track.cpp';
+        # objdiff keys are 'default/<stem>'.  Try the splits path first --
+        # it IS a source path once prefixed with src/.
+        for cand in (unit, 'src/' + unit, 'src/system/' + unit):
+            b = bucket(cand)
+            if b:
+                return b in NO_ORACLE_BUCKETS
+        stem = os.path.basename(unit).rsplit('.', 1)[0]
+        sp = srcs.get('default/' + stem) or srcs.get(stem)
+        b = bucket(sp) if sp else None
+        return bool(b) and b in NO_ORACLE_BUCKETS
+
+    def _test(g):
+        # a gap is out of scope only when BOTH fences are no-oracle units:
+        # either fence being real code makes the span attributable.
+        return _unit_out(g['left_unit']) and _unit_out(g['right_unit'])
+
+    return _test
 
 
 def main():
@@ -185,6 +285,8 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--interior-out')
     ap.add_argument('--quiet', action='store_true')
+    ap.add_argument('--legacy-window', action='store_true',
+                    help='use the old 0x82800000-0x82D00000 VA guard (A/B only)')
     a = ap.parse_args()
 
     wt = a.worktree
@@ -198,9 +300,10 @@ def main():
     fva = [x[0] for x in fns]
     import bisect
 
+    out_of_scope = make_scope_test(report, legacy=a.legacy_window)
     interior, diffunit, vendor = [], [], 0
     for g in gaps:
-        if in_vendor(g['va_lo'], g['va_hi']):
+        if out_of_scope(g):
             vendor += 1
             continue
         lo = bisect.bisect_left(fva, g['va_lo'])
@@ -214,7 +317,8 @@ def main():
     if not a.quiet:
         print(f"pinned .text blocks      : {len(blocks)}")
         print(f"raw gaps                 : {len(gaps)}")
-        print(f"  vendor-window excluded : {vendor}")
+        print(f"  out-of-scope excluded  : {vendor}"
+              + ("  [LEGACY VA WINDOW]" if a.legacy_window else "  [source-path test]"))
         print(f"  interior (same unit)   : {len(interior):5d}  "
               f"fns {sum(g['n_fns'] for g in interior)}")
         print(f"  DIFFERENT-UNIT         : {len(diffunit):5d}  "

@@ -18,6 +18,30 @@ rewrite of splits.txt, and then AUDITS the whole file:
     dtk back-fill derived from our own `.text`.
 It refuses to write on any finding.
 
+REFUSAL CRITERION 1 IS SCOPED TO THE SYMBOL, NOT THE GAP  [laneGAPFILL 2026-07-26]
+---------------------------------------------------------------------------------
+Criterion 1 -- "a mapped, name-paired symbol inside the span that the claimant's
+obj does not define" -- was being applied by discarding the WHOLE gap.  That is
+over-broad.  The correct scope is **the refused symbol's own byte interval**:
+
+  absorb = gap  minus  union([va, va+size) for each refused symbol)
+
+then snap each surviving sub-span to whole carved-function boundaries (start on
+a function start, end on a function end) and drop any sub-span left holding no
+complete function.  New `.text` lines are emitted for the survivors.
+
+Measured: 11 sub-spans / 5,076 B recovered this way from 15 criterion-1 gaps,
+**+10 strict with 0 losses**, on top of the 170-span main wave.  The refused
+symbols really are foreign (`CBaseSkin@LEAPCORE`, `CCfgEngineBase@NUISPEECH`,
+`Pipeline@ST`, `??_EStreamRecorder`) -- but the code *around* them in the same
+gap is the claimant's, and three of those gaps carry the claimant's own
+unit-specific Symbol strings to prove it.
+
+Criterion 2 (claimant already owns a byte-identical 100% symbol of the same
+mangled name) fired **0** times across 1,025 gaps.  Criterion 3
+(`n_carved_in_span == 0`) selects the alignment-padding gaps -- 851 of the 1,025,
+~7 KB, holding no code at all and worth exactly 0.
+
 USAGE
   diffunit_gap_apply.py --worktree WT --gaps gaps.json --dir left|right
                         [--select sel.json] [--dry]
