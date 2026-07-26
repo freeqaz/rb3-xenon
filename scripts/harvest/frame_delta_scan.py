@@ -65,7 +65,11 @@ def scan_obj(path):
     if secs is None:
         return None
     infer_sizes(secs, syms)
-    names = [s.name for s in syms]
+    # ★ COFF relocation SymbolTableIndex is the TRUE symbol index, which is
+    # NOT the list position: coffx.read_coff skips aux records (i += 1 + naux).
+    # Indexing a list by it names a random symbol. laneAT-f4 found this after
+    # the bad columns made 110 of 112 rows look non-mechanical.
+    by_idx = {s.index: s for s in syms}
     out = {}
     for s in syms:
         if s.sec <= 0 or s.size == 0 or s.kind == K_SEC or s.cls not in (2, 3):
@@ -75,8 +79,8 @@ def scan_obj(path):
             continue
         calls = collections.Counter()
         for (va, si, typ) in sec.relocs:
-            if s.value <= va < s.value + s.size and si < len(names):
-                calls[names[si]] += 1
+            if s.value <= va < s.value + s.size and si in by_idx:
+                calls[by_idx[si].name] += 1
         out.setdefault(s.name, (frame_size(sec.data, s.value, s.size), calls, s.size))
     return out
 
