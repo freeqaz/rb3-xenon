@@ -275,6 +275,12 @@ the edit being audited**; without it the audit is circular. All modes are static
   `band3/meta_band/SessionMgr.cpp` 36, `TourProgress.cpp` 29.
   (The 74 laneAL / 88 laneAM figures above count *fills*; these count fills that
   are *currently at 100%* under *current* pins — a slightly different set.)
+* **The obvious extension is drained — do not fund it.** When *both* funclet and
+  parent are unpinned (1,210 tree-wide), the parent's own identity could in
+  principle supply the unit via `scripts/target_symbol_map.json`. Measured:
+  **only 30 of the 1,210 have a map-named parent** (22 distinct parents), and
+  they are STL/`StaticClassName` boilerplate. Recorded at
+  `/home/free/tmp/laneAN/named_parent_leads.json`.
 * The parent-unpinned residue (2,625 in the gap pool, 314 tree-wide) becomes
   decidable for free as more parents get pinned — **re-run this after any splits
   wave**; it costs no build.
