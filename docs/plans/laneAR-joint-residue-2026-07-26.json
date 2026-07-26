@@ -1,0 +1,643 @@
+{
+ "wrong_unit": {
+  "CameraShot.cpp": [
+   {
+    "va": "0x822be370",
+    "name": "??1?$vector@VIconData@BandCrowdMeter@@V?$StlNodeAlloc@VIconData@BandCrowdMeter@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "n_definers": 5
+   },
+   {
+    "va": "0x823716a8",
+    "name": "?_M_fill_insert_aux@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@ABU__false_type@2@@Z",
+    "n_definers": 4
+   }
+  ],
+  "HamCamTransform.cpp": [
+   {
+    "va": "0x822a9938",
+    "name": "??$PropSync@VMeshAO@OutfitConfig@@@@YA_NAAV?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822a9648",
+    "name": "??$__destroy_range_aux@V?$reverse_iterator@PAVOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOldColorOption@@@0@0ABU__false_type@0@@Z",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822a7730",
+    "name": "??1?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822abc10",
+    "name": "??_DOutfitConfig@@QAAXXZ",
+    "n_definers": 4
+   }
+  ],
+  "Character.cpp": [
+   {
+    "va": "0x822a2fa8",
+    "name": "??$__destroy_range_aux@V?$reverse_iterator@PAVPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPiece@Piercing@OutfitConfig@@@0@0ABU__false_type@0@@Z",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822a5258",
+    "name": "??0?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822a4f58",
+    "name": "?_M_erase@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPiece@Piercing@OutfitConfig@@PAV345@0ABU__false_type@2@@Z",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822a34a8",
+    "name": "?_M_erase@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPiece@Piercing@OutfitConfig@@PAV345@ABU__false_type@2@@Z",
+    "n_definers": 4
+   },
+   {
+    "va": "0x822a5030",
+    "name": "?_M_fill_insert_aux@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPiece@Piercing@OutfitConfig@@IABV345@ABU__false_type@2@@Z",
+    "n_definers": 4
+   }
+  ],
+  "BandCharDesc.cpp": [
+   {
+    "va": "0x82339948",
+    "name": "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z",
+    "n_definers": 4
+   }
+  ],
+  "CharLipSync.cpp": [
+   {
+    "va": "0x822dea78",
+    "name": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
+    "n_definers": 30
+   }
+  ],
+  "band3/meta_band/AccomplishmentDiscSongConditional.cpp": [
+   {
+    "va": "0x825e9500",
+    "name": "??0AccomplishmentLessonDiscSongConditional@@QAA@PAVDataArray@@H@Z",
+    "n_definers": 2
+   },
+   {
+    "va": "0x825e9540",
+    "name": "??_GAccomplishmentLessonDiscSongConditional@@UAAPAXI@Z",
+    "n_definers": 2
+   },
+   {
+    "va": "0x825e96a8",
+    "name": "??_GAccomplishmentLessonSongListConditional@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "band3/meta_band/AssetMgr.cpp": [
+   {
+    "va": "0x8256ac50",
+    "name": "??1?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "n_definers": 5
+   },
+   {
+    "va": "0x8256aa38",
+    "name": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "n_definers": 5
+   }
+  ],
+  "band3/meta_band/UIStats.cpp": [
+   {
+    "va": "0x82563258",
+    "name": "??$SendDataPoint@PBDH@@YAXPBD0H@Z",
+    "n_definers": 2
+   }
+  ],
+  "CheatProvider.cpp": [
+   {
+    "va": "0x82638cc0",
+    "name": "??0RecommendedEntry@StoreInfoPanel@@QAA@ABV01@@Z",
+    "n_definers": 2
+   },
+   {
+    "va": "0x826ffd58",
+    "name": "?_M_erase@?$vector@VSfxMap@@V?$StlNodeAlloc@VSfxMap@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSfxMap@@PAV3@0ABU__false_type@2@@Z",
+    "n_definers": 4
+   }
+  ],
+  "RockCentral.cpp": [
+   {
+    "va": "0x823f0fc0",
+    "name": "??_GBinStream@@UAAPAXI@Z",
+    "n_definers": 3
+   }
+  ],
+  "Watcher.cpp": [
+   {
+    "va": "0x823f20c0",
+    "name": "?_M_clear_after_move@?$vector@VMemStream@@V?$StlNodeAlloc@VMemStream@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "n_definers": 2
+   }
+  ],
+  "FileCache.cpp": [
+   {
+    "va": "0x823470c8",
+    "name": "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z",
+    "n_definers": 9
+   }
+  ],
+  "OutfitConfig.cpp": [
+   {
+    "va": "0x8229e3c0",
+    "name": "??$?6V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "n_definers": 4
+   }
+  ],
+  "FlowAnimate.cpp": [
+   {
+    "va": "0x82398750",
+    "name": "??_GCharIKHand@@UAAPAXI@Z",
+    "n_definers": 3
+   }
+  ],
+  "CharDriver.cpp": [
+   {
+    "va": "0x823ced00",
+    "name": "??_GCharNeckTwist@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "FlowSwitchCase.cpp": [
+   {
+    "va": "0x823b08d0",
+    "name": "??_GCharPollGroup@@UAAPAXI@Z",
+    "n_definers": 3
+   }
+  ],
+  "Screenshot.cpp": [
+   {
+    "va": "0x823c88a0",
+    "name": "?ClassName@CharTransDraw@@UBA?AVSymbol@@XZ",
+    "n_definers": 2
+   }
+  ],
+  "UIList.cpp": [
+   {
+    "va": "0x82666290",
+    "name": "??$__insertion_sort@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@00P6A_NPAV1@1@Z@Z",
+    "n_definers": 2
+   },
+   {
+    "va": "0x826660f0",
+    "name": "??$__make_heap@PAPAVRndPollable@@P6A_NPBV1@0@ZPAV1@H@stlpmtx_std@@YAXPAPAVRndPollable@@0P6A_NPBV1@1@Z0PAH@Z",
+    "n_definers": 6
+   }
+  ],
+  "SpeechMgr.cpp": [
+   {
+    "va": "0x82321e18",
+    "name": "?ForceEmit_ScrollbarDisplay_StaticClassName@@YA?AVSymbol@@XZ",
+    "n_definers": 2
+   }
+  ],
+  "ClipDistMap.cpp": [
+   {
+    "va": "0x822abce0",
+    "name": "?resize@?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVTransformCrowd@@@Z",
+    "n_definers": 2
+   }
+  ],
+  "BandWardrobe.cpp": [
+   {
+    "va": "0x82332298",
+    "name": "?push_back@?$vector@UMerger@FileMerger@@V?$StlNodeAlloc@UMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUMerger@FileMerger@@@Z",
+    "n_definers": 2
+   }
+  ],
+  "HamMove.cpp": [
+   {
+    "va": "0x825748a0",
+    "name": "??_GHamDriver@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "CharUpperTwist.cpp": [
+   {
+    "va": "0x8232a0f0",
+    "name": "?ClassName@HamScrollSpeedIndicator@@UBA?AVSymbol@@XZ",
+    "n_definers": 2
+   }
+  ],
+  "CharLipSyncDriver.cpp": [
+   {
+    "va": "0x8238c548",
+    "name": "?ClassName@PracticeOptionsProvider@@UBA?AVSymbol@@XZ",
+    "n_definers": 2
+   }
+  ],
+  "FreestylePanel.cpp": [
+   {
+    "va": "0x826ba830",
+    "name": "??_GRhythmBattle@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "band3/meta_band/NewAwardPanel.cpp": [
+   {
+    "va": "0x82628f40",
+    "name": "??_GTransConstraint@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "EventTrigger.cpp": [
+   {
+    "va": "0x82486630",
+    "name": "??_GRndCamAnim@@UAAPAXI@Z",
+    "n_definers": 5
+   }
+  ],
+  "MoveDir.cpp": [
+   {
+    "va": "0x82274048",
+    "name": "??1TypeProps@@UAA@XZ",
+    "n_definers": 2
+   }
+  ],
+  "FlowMultiSetProperty.cpp": [
+   {
+    "va": "0x82272a60",
+    "name": "?_M_fill_insert@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndDrawable@@IABQAV3@@Z",
+    "n_definers": 6
+   }
+  ],
+  "system/rndobj/Movie.cpp": [
+   {
+    "va": "0x82478588",
+    "name": "?ClassName@BaseMaterial@@UBA?AVSymbol@@XZ",
+    "n_definers": 4
+   }
+  ],
+  "ContentMgr_Xbox.cpp": [
+   {
+    "va": "0x82463358",
+    "name": "??_GRndMatAnim@@UAAPAXI@Z",
+    "n_definers": 3
+   }
+  ],
+  "CharIKScale.cpp": [
+   {
+    "va": "0x82451f30",
+    "name": "??_GRndPartLauncher@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "CharIKHand.cpp": [
+   {
+    "va": "0x8232ac50",
+    "name": "??_GRndPostProcMgr@@UAAPAXI@Z",
+    "n_definers": 2
+   }
+  ],
+  "system/synth/SynthSample.cpp": [
+   {
+    "va": "0x82728c48",
+    "name": "?Init@SynthSample360@@SAXXZ",
+    "n_definers": 2
+   }
+  ],
+  "MidiParser.cpp": [
+   {
+    "va": "0x827e4880",
+    "name": "?Sort@?$TrackWidgetImp@VMeshInstance@@@@UAAXXZ",
+    "n_definers": 2
+   }
+  ],
+  "BandLeadMeter.cpp": [
+   {
+    "va": "0x822c9b90",
+    "name": "??$__destroy_range_aux@V?$reverse_iterator@PAUObjVersion@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUObjVersion@@@0@0ABU__false_type@0@@Z",
+    "n_definers": 2
+   }
+  ]
+ },
+ "unpinned": [
+  {
+   "va": "0x822bdfa0",
+   "name": "?_M_clear_after_move@?$vector@VIconData@BandCrowdMeter@@V?$StlNodeAlloc@VIconData@BandCrowdMeter@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 5
+  },
+  {
+   "va": "0x822be420",
+   "name": "?_M_erase@?$vector@VIconData@BandCrowdMeter@@V?$StlNodeAlloc@VIconData@BandCrowdMeter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVIconData@BandCrowdMeter@@PAV34@0ABU__false_type@2@@Z",
+   "n_definers": 5
+  },
+  {
+   "va": "0x822ac0b0",
+   "name": "??$?5VOldColorOption@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VOldColorOption@@@@@Z",
+   "n_definers": 4
+  },
+  {
+   "va": "0x822a3340",
+   "name": "??$PropSync@H@@YA_NAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "n_definers": 4
+  },
+  {
+   "va": "0x822a2438",
+   "name": "?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndDir@@@@IABV3@ABU__false_type@2@@Z",
+   "n_definers": 6
+  },
+  {
+   "va": "0x822a2a20",
+   "name": "?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndTex@@@@IABV3@ABU__false_type@2@@Z",
+   "n_definers": 4
+  },
+  {
+   "va": "0x822ac2d0",
+   "name": "?resize@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVBandPatchMesh@@@Z",
+   "n_definers": 4
+  },
+  {
+   "va": "0x826ce460",
+   "name": "??$__destroy_range@PAVPlayerScoreInfo@@V1@@stlpmtx_std@@YAXPAVPlayerScoreInfo@@00@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x826cea68",
+   "name": "?_M_clear_after_move@?$vector@VData@MultiplayerAnalyzer@@V?$StlNodeAlloc@VData@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x826ce568",
+   "name": "?_M_clear_after_move@?$vector@VPlayerScoreInfo@@V?$StlNodeAlloc@VPlayerScoreInfo@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82669898",
+   "name": "?CheckStarsCondition@AccomplishmentSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x8258c928",
+   "name": "??1?$vector@VStandIn@@V?$StlNodeAlloc@VStandIn@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82c3fcb8",
+   "name": "??__ETheBandUI@@YAXXZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x82c45b48",
+   "name": "??__FTheBandUI@@YAXXZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x826034e8",
+   "name": "?ClassName@AppScoreDisplay@@UBA?AVSymbol@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82574810",
+   "name": "?NewObject@CalibrationWelcomePanel@@SAPAVObject@Hmx@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x825711e0",
+   "name": "?NewObject@SigninScreen@@SAPAVObject@Hmx@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x8257f330",
+   "name": "?_M_clear_after_move@?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x82c3fcf0",
+   "name": "??__ETheProfileMgr@@YAXXZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x824cd9a8",
+   "name": "?clear@?$_List_base@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+   "n_definers": 24
+  },
+  {
+   "va": "0x823e3d00",
+   "name": "?NewNetMessage@AddUserRequestMsg@@SAPAVNetMessage@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x8230b568",
+   "name": "?ForceEmit_OvershellDir_StaticClassName@@YA?AVSymbol@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82347d48",
+   "name": "??$sort_heap@PAPAVVert@RndMesh@@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@@Z",
+   "n_definers": 9
+  },
+  {
+   "va": "0x822d82a8",
+   "name": "?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndAnimatable@@@@IABV3@ABU__false_type@2@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x822eb550",
+   "name": "?_M_clear_after_move@?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x822e8a20",
+   "name": "?erase_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAIABI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x827b7e88",
+   "name": "??_GCharSignalApplier@@UAAPAXI@Z",
+   "n_definers": 3
+  },
+  {
+   "va": "0x8227a018",
+   "name": "??_GPatchDir@@UAAPAXI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x822796d8",
+   "name": "?ClassName@RndDir@@UBA?AVSymbol@@XZ",
+   "n_definers": 7
+  },
+  {
+   "va": "0x82473568",
+   "name": "??4?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82773310",
+   "name": "??1?$vector@V?$TickedInfo@VString@@@@V?$StlNodeAlloc@V?$TickedInfo@VString@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x82772b70",
+   "name": "?_M_clear_after_move@?$vector@V?$TickedInfo@VString@@@@V?$StlNodeAlloc@V?$TickedInfo@VString@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x82773ed8",
+   "name": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82773f40",
+   "name": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82399288",
+   "name": "??$?5UIKTarget@CharIKHand@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UIKTarget@CharIKHand@@@@@Z",
+   "n_definers": 3
+  },
+  {
+   "va": "0x8233bf00",
+   "name": "??$_Param_Construct@UWeight@PlayBack@CharLipSync@@U123@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x8251f060",
+   "name": "?insert@?$list@VDataNode@@V?$StlNodeAlloc@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VDataNode@@U?$_Nonconst_traits@VDataNode@@@stlpmtx_std@@@2@U32@ABVDataNode@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x822737a0",
+   "name": "?ClassName@EventTask@@UBA?AVSymbol@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82775898",
+   "name": "??1?$vector@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x824a8ec8",
+   "name": "?StaticClassName@NgMat@@SA?AVSymbol@@XZ",
+   "n_definers": 5
+  },
+  {
+   "va": "0x82774b40",
+   "name": "?_M_clear_after_move@?$vector@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x82788308",
+   "name": "?push_back@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector3@@@Z",
+   "n_definers": 8
+  },
+  {
+   "va": "0x8235c9a0",
+   "name": "?insert_unique@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@PAVMoveDetector@@U?$_SetTraitsT@PAVMoveDetector@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABQAVMoveDetector@@@Z",
+   "n_definers": 3
+  },
+  {
+   "va": "0x82c3f4b0",
+   "name": "??__E?sManualEvents@LightPreset@@1V?$deque@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@@2@@stlpmtx_std@@A@@YAXXZ",
+   "n_definers": 8
+  },
+  {
+   "va": "0x827733c0",
+   "name": "??4?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82c40db8",
+   "name": "??__ETheMemcardMgr@@YAXXZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x827ed240",
+   "name": "??1?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEvent@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x827605d8",
+   "name": "?DataRandomSeed@@YA?AVDataNode@@PAVDataArray@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82766880",
+   "name": "?insert@?$list@UEventSinkElem@MsgSource@@V?$StlNodeAlloc@UEventSinkElem@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSinkElem@MsgSource@@U?$_Nonconst_traits@UEventSinkElem@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSinkElem@MsgSource@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x8252e4d8",
+   "name": "??_GArkFile@@UAAPAXI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82472188",
+   "name": "??_GRndLightAnim@@UAAPAXI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82c432d0",
+   "name": "??__Es_voiceGC@@YAXXZ",
+   "n_definers": 3
+  },
+  {
+   "va": "0x8231fb08",
+   "name": "?ClassName@RndTex@@UBA?AVSymbol@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x8245cba8",
+   "name": "??_GRndTransProxy@@UAAPAXI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82712c70",
+   "name": "?ClassName@FxSendPitchShift@@UBA?AVSymbol@@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x823e3630",
+   "name": "?SetType@MsgSource@@UAAXVSymbol@@@Z",
+   "n_definers": 31
+  },
+  {
+   "va": "0x8272b2a8",
+   "name": "??5@YAAAVBinStream@@AAV0@AAVMoggClipMap@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x82775950",
+   "name": "??1?$vector@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "n_definers": 2
+  },
+  {
+   "va": "0x827e16a0",
+   "name": "?insert@?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@2@U32@ABVMeshInstance@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x822c0cf8",
+   "name": "??_GUIColor@@UAAPAXI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x824c9950",
+   "name": "??$?5VEventCall@EventAnim@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VEventCall@EventAnim@@@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x824ca458",
+   "name": "??$?5VKeyFrame@EventAnim@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VKeyFrame@EventAnim@@@@@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x824ca290",
+   "name": "??_GEventAnim@@UAAPAXI@Z",
+   "n_definers": 2
+  },
+  {
+   "va": "0x824e9e18",
+   "name": "?SyncProperty@SpotlightEnder@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "n_definers": 2
+  }
+ ]
+}
