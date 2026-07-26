@@ -116,3 +116,12 @@ void RndShockwave::PrepareShader(float amplitude_scale) {
 #include "world/Dir.h"
 template void ObjList<WorldDir::PresetOverride>::resize(unsigned int);
 template void ObjList<WorldDir::BitmapOverride>::resize(unsigned int);
+
+// laneAE: retail parked list<BandCamShot::Target>::_M_splice_insert_dispatch
+// (0x824D0758) in this unit.  Reference it so our obj emits the same COMDAT.
+#include "bandobj/BandCamShot.h"
+void sw_BandCamShotTargetListSplice(
+    ObjList<BandCamShot::Target> &a, const ObjList<BandCamShot::Target> &b
+) {
+    a.insert(a.begin(), b.begin(), b.end());
+}

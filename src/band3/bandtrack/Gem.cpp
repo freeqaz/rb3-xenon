@@ -617,3 +617,27 @@ void Gem::GetChordFretLabelInfo(String &s, int &i) const {
 #include "bandobj/OutfitConfig.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneAE scatter force-emit (default/band3/bandtrack/Gem).
+// Retail's /Gy COMDAT for
+//   ??$__median@PAVAllocInfo@@P6A_NABQAV1@0@Z@stlpmtx_std@@...
+// (std::__median with the MemTracker StackLess comparator) landed inside the
+// .text span pinned to this unit; our build emits it only from
+// system/utl/MemTracker.obj.  objdiff pairs by name within a unit, so the target
+// was structurally unpairable.  __median is `inline`, so only an explicit
+// instantiation forces the out-of-line COMDAT into this obj.
+#ifndef HX_NATIVE
+#include "utl/AllocInfo.h"
+#include <algorithm>
+template AllocInfo *const &stlpmtx_std::__median<
+    AllocInfo *, bool (*)(AllocInfo *const &, AllocInfo *const &)>(
+    AllocInfo *const &,
+    AllocInfo *const &,
+    AllocInfo *const &,
+    bool (*)(AllocInfo *const &, AllocInfo *const &)
+);
+#endif
+// Lane-AE b2 scatter-include: retail placed GemRepTemplate::GetSlotMat's COMDAT
+// (0x40 B -- verified: MILO_ASSERT_RANGE + mSlotMats[+0x38][mat+slot]) inside the
+// .text span pinned to default/band3/bandtrack/Gem.
+#include "band3/bandtrack/GemRepTemplate.cpp"

@@ -4,6 +4,13 @@
 
 #include "decomp.h"
 
+
+// RB3_TRACKCONFIG_SCATTER_MIN: retail scattered only TrackConfig::Type,
+// IsDrumTrack and IsKeyboardTrack into default/VocalTrack's .text span. A TU
+// that scatter-includes this file only to emit those three COMDATs defines this
+// macro so the rest of the file stays out -- pulling the whole file in gives
+// MSVC extra /Ob2 inline candidates and cost the host TU real matches.
+#ifndef RB3_TRACKCONFIG_SCATTER_MIN
 TrackConfig::TrackConfig(BandUser *bu)
     : mUser(bu), kDualPerspective(true), mTrackNum(0), mMaxSlots(0), mNumSlots(0),
       mName(), mLefty(false), mCymbalLanes(0), mDisableHopos(0) {}
@@ -18,18 +25,22 @@ inline int TrackConfig::GetMaxSlots() const { return mMaxSlots; }
 #pragma pop
 
 DECOMP_FORCEFUNC(TrackConfig, TrackConfig, GetMaxSlots())
+#endif
 
 Symbol TrackConfig::Type() const { return mUser->GetTrackSym(); }
+#ifndef RB3_TRACKCONFIG_SCATTER_MIN
 bool TrackConfig::IsLefty() const { return mLefty; }
 uint TrackConfig::GetGameCymbalLanes() const { return mCymbalLanes; }
 bool TrackConfig::GetDisableHopos() const { return mDisableHopos; }
 bool TrackConfig::UseLeftyGems() const { return mLefty; }
+#endif
 
 bool TrackConfig::IsDrumTrack() const { return mUser->GetTrackType() == kTrackDrum; }
 bool TrackConfig::IsKeyboardTrack() const {
     return mUser->GetTrackType() == kTrackRealKeys;
 }
 
+#ifndef RB3_TRACKCONFIG_SCATTER_MIN
 bool TrackConfig::AllowsOverlappingGems() const {
     return mUser->GetTrackType() == kTrackRealKeys || mUser->GetTrackType() == 4;
 }
@@ -71,4 +82,5 @@ DECOMP_FORCEACTIVE(
 )
 #else
 DECOMP_FORCEACTIVE(TrackConfig, "\0R\0L\0left\0right")
+#endif
 #endif

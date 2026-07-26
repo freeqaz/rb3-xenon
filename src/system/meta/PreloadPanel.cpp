@@ -240,3 +240,10 @@ void PreloadPanel::StartCache() {
     }
     sCache->EndSet();
 }
+
+// Lane-AE b2 scatter force-emit: retail placed UIGuide's OBJ_CLASSNAME COMDAT
+// (?StaticClassName@UIGuide@@SA?AVSymbol@@XZ) inside the .text span pinned to
+// default/PreloadPanel. It is defined inline in the class body, so it is only
+// emitted where it is odr-used -- nothing in this TU used it.
+#include "ui/UIGuide.h"
+Symbol ForceEmit_UIGuide_StaticClassName() { return UIGuide::StaticClassName(); }

@@ -238,3 +238,10 @@ END_HANDLERS
 BEGIN_PROPSYNCS(BandHighlight)
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS
+
+// Lane-AE b2 scatter force-emit: retail placed BandButton's OBJ_CLASSNAME COMDAT
+// (?StaticClassName@BandButton@@SA?AVSymbol@@XZ) inside the .text span pinned to
+// default/BandHighlight. BandButton has no .cpp in-tree at all, so this symbol was
+// emitted by no object whatsoever and the target was structurally unpairable.
+#include "bandobj/BandButton.h"
+Symbol ForceEmit_BandButton_StaticClassName() { return BandButton::StaticClassName(); }

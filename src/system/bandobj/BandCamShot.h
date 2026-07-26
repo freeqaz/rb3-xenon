@@ -14,8 +14,8 @@ public:
 
 class BandCamShot : public CamShot {
 public:
-    class Target {
-    public:
+    struct Target {
+        // (retail mangles this `UTarget@BandCamShot@@` => struct, not class)
         Target(Hmx::Object *o)
             : mFastForward(0), mEnvOverride(o), mForceLod(-1), mTeleport(1), mReturn(1),
               mSelfShadow(1), unk1(0), unk2(1), mHide(0) {
@@ -137,3 +137,5 @@ public:
     bool unk16a; // 0x16a
     bool mAnimsDuringNextShots; // 0x16b
 };
+
+BinStream &operator<<(BinStream &bs, const BandCamShot::Target &t);

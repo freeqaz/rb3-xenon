@@ -37,22 +37,34 @@ bool NgFur::Shell(int layerIdx, RndMesh *mesh, RndMat *mat) const {
         gravStretch * fShell,
         gravSlide * curveVal
     );
-    TheShaderMgr.SetPConstant(kPS_FurGeometry, furGeom);
+    // Fur geometry (stretch/slide) drives vertex displacement, so it is a
+    // VERTEX-shader constant: target dispatches vtable+0x24 =
+    // SetVConstant(VShaderConstant, Vector4 const&), not +0x40 =
+    // SetPConstant(PShaderConstant, Vector4 const&). The register index value is
+    // shared between the VS/PS constant enums (0x32).  [DC3 oracle agrees]
+    TheShaderMgr.SetVConstant((VShaderConstant)kPS_FurGeometry, furGeom);
 
     // Constant 0xc: color interpolation between roots and ends tints
-    float diffRed = (mEndsTint.red - mRootsTint.red);
-    float diffGreen = (mEndsTint.green - mRootsTint.green);
-    float diffBlue = (mEndsTint.blue - mRootsTint.blue);
-    float diffAlpha = (mEndsTint.alpha - mRootsTint.alpha);
-    diffRed = diffRed * fShell;
-    diffGreen = diffGreen * fShell;
-    diffBlue = diffBlue * fShell;
-    diffAlpha = diffAlpha * fShell;
+    // ★ FMA-contraction lever: retail computes the four (ends-roots)*fShell
+    // products as separate `fmuls` and only then four `fadds`, whereas MSVC
+    // X360 /O1 contracts plain float locals into four `fmadds`. Routing the
+    // products through the members of a named object breaks the expression
+    // tree so the backend peephole cannot re-fuse them. (#pragma fp_contract
+    // is a no-op at these flags -- measured, it changed nothing.)
+    Hmx::Color diff;
+    diff.red = (mEndsTint.red - mRootsTint.red);
+    diff.green = (mEndsTint.green - mRootsTint.green);
+    diff.blue = (mEndsTint.blue - mRootsTint.blue);
+    diff.alpha = (mEndsTint.alpha - mRootsTint.alpha);
+    diff.red = diff.red * fShell;
+    diff.green = diff.green * fShell;
+    diff.blue = diff.blue * fShell;
+    diff.alpha = diff.alpha * fShell;
     Vector4 furColor(
-        mRootsTint.red + diffRed,
-        mRootsTint.green + diffGreen,
-        mRootsTint.blue + diffBlue,
-        mRootsTint.alpha + diffAlpha
+        mRootsTint.red + diff.red,
+        mRootsTint.green + diff.green,
+        mRootsTint.blue + diff.blue,
+        mRootsTint.alpha + diff.alpha
     );
     TheShaderMgr.SetPConstant(kPS_FurColor, furColor);
 
@@ -75,7 +87,9 @@ bool NgFur::Shell(int layerIdx, RndMesh *mesh, RndMat *mat) const {
     }
 
     Vector4 furShell(shellThickness, vertCount, zeroVal, zeroVal);
-    TheShaderMgr.SetPConstant(kPS_FurShell, furShell);
+    // Shell thickness / vertex count is likewise a VERTEX-shader constant
+    // (target dispatches vtable+0x24, not +0x40).  [DC3 oracle agrees]
+    TheShaderMgr.SetVConstant((VShaderConstant)kPS_FurShell, furShell);
 
     // Constant 0xb: alpha processing params
     float alphaExp = mAlphaFalloff * 2.0f + oneVal;

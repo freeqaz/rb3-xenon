@@ -234,3 +234,10 @@ bool GemSmasher::Glowing() const { return mGlowing; }
 #include "utl/Cache.cpp"
 #undef gRev
 #undef gAltRev
+
+// Lane-AE b2 scatter-include: retail placed Tail::MoveSlot's COMDAT (0x82BB0530,
+// 0x74 B -- verified: the `if (mGroup)` + 0x40-byte Transform copy + y-from-
+// LocalXfm + SetDirty shape of our Tail::MoveSlot) inside the .text span pinned
+// to default/GemSmasher. It is out-of-line, so this unit's obj must compile it
+// for objdiff to pair it.
+#include "band3/bandtrack/Tail.cpp"

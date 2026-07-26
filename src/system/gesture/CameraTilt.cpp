@@ -587,3 +587,21 @@ DataNode CameraTilt::OnMsg(const UIChangedMsg &msg) {
     }
     return 0;
 }
+
+// Lane-AE b2 force-emit: retail placed ScrollbarDisplay's OBJ_CLASSNAME COMDAT
+// (?StaticClassName@ScrollbarDisplay@@SA?AVSymbol@@XZ, 0x58 B -- verified as the
+// standard `static Symbol name("...")` + sret-copy shape) inside the .text span
+// pinned to default/CameraTilt. The class has no real port in-tree yet (only the
+// `static void Init()` placeholder in bandobj/Band.cpp), so the symbol was emitted
+// by no obj at all. StaticClassName's body does not depend on the base class, so
+// a minimal local declaration reproduces it exactly.
+// NOTE: must be at global scope -- an anonymous namespace would mangle the symbol
+// as ?StaticClassName@ScrollbarDisplay@?A0x<hash>@@... and never pair.
+#include "obj/Object.h"
+class ScrollbarDisplay {
+public:
+    OBJ_CLASSNAME(ScrollbarDisplay);
+};
+Symbol ForceEmit_ScrollbarDisplay_StaticClassName() {
+    return ScrollbarDisplay::StaticClassName();
+}

@@ -198,7 +198,7 @@ BinStream &operator>>(BinStream &bs, BandCamShot::Target &tgt) {
     return bs;
 }
 
-SAVE_OBJ(BandCamShot, 0x14A)
+// BandCamShot::Save + operator<<(BinStream&, const Target&) live at end of file.
 
 BinStream &operator>>(BinStream &bs, OldTrigger &o) {
     bs >> o.frame;
@@ -893,3 +893,47 @@ DataNode BandCamShot::OnListAllNextShots(const DataArray *da) {
 #undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE
 #endif
+
+// laneAE: retail emits ??6@YAAAVBinStream@@AAV0@ABUTarget@BandCamShot@@@Z (0x822B1B30)
+// and the std::list<Target> operator<< it drives from a real BandCamShot::Save
+// (0x822B3C98).  Field order/types transcribed from the retail asm.
+BinStream &operator<<(BinStream &bs, const BandCamShot::Target &t) {
+    bs << t.mTarget;
+    unsigned char b = t.mTeleport;
+    bs.Write(&b, 1);
+    bs << t.mXfm;
+    bs << t.mAnimGroup;
+    b = t.mReturn;
+    bs.Write(&b, 1);
+    bs << t.mFastForward;
+    bs << t.mForwardEvent;
+    b = t.mSelfShadow;
+    bs.Write(&b, 1);
+    b = t.unk1;
+    bs.Write(&b, 1);
+    b = t.unk2;
+    bs.Write(&b, 1);
+    b = t.mHide;
+    bs.Write(&b, 1);
+    bs << t.mEnvOverride;
+    b = t.mForceLod;
+    bs.Write(&b, 1);
+    return bs;
+}
+
+BEGIN_SAVES(BandCamShot)
+    SAVE_REVS(0x20, 0)
+    SAVE_SUPERCLASS(CamShot)
+    bs << mTargets;
+    bs << mZeroTime;
+    bs << mMinTime;
+    bs << mMaxTime;
+    bs << mNextShots;
+END_SAVES
+
+// laneAE: retail's BandCamShot TU also carries the std::list<Target> stream
+// operator (0x822B3870) -- retail's mTargets is an ObjList, ours is still an
+// ObjVector, so reference it explicitly to emit the same COMDAT here.
+void sw_BandCamShotTargetListStream(BinStream &bs, const ObjList<BandCamShot::Target> &l) {
+    bs << l;
+}

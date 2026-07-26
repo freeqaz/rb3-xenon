@@ -1639,3 +1639,30 @@ bool TrackDir::IsBlackKey(int) const { return false; }
 #include "flow/FlowManager.cpp"
 #undef gRev
 #undef gAltRev
+
+// ---------------------------------------------------------------------------
+// lane-AE batch-3 (sw3) force-emit: retail scattered these template/implicit
+// COMDATs into the .text span pinned to default/band3/bandtrack/GemManager.
+// They are emitted by other TUs but objdiff pairs target<->base WITHIN a unit,
+// so this TU has to define them too.
+#include "rndobj/Text.h"
+#include "world/Crowd.h"
+#include "ui/LocalePanel.h"
+
+// ?erase@?$vector@VLine@RndText@@V?$StlNodeAlloc@VLine@RndText@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVLine@RndText@@PAV34@0@Z
+template RndText::Line *
+stlpmtx_std::vector<RndText::Line, stlpmtx_std::StlNodeAlloc<RndText::Line> >::
+    erase(RndText::Line *, RndText::Line *);
+
+// ??$_Param_Construct@UChar3D@CharData@WorldCrowd@@U123@@stlpmtx_std@@YAXPAUChar3D@CharData@WorldCrowd@@ABU123@@Z
+template void stlpmtx_std::_Param_Construct<
+    WorldCrowd::CharData::Char3D,
+    WorldCrowd::CharData::Char3D>(
+    WorldCrowd::CharData::Char3D *, const WorldCrowd::CharData::Char3D &);
+
+// ??0Entry@LocalePanel@@QAA@ABU01@@Z -- implicit copy ctor; a by-value pass
+// cannot be elided from an lvalue reference, so this odr-uses it.
+static void sw3_Sink3_LocalePanelEntry(LocalePanel::Entry) {}
+void sw3_ForceEmit3_LocalePanelEntry(const LocalePanel::Entry &e) {
+    sw3_Sink3_LocalePanelEntry(e);
+}

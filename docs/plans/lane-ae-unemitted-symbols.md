@@ -345,12 +345,11 @@ single-owner rule):
   form. const-throughout = net 0 (symmetric swap); both overloads = **−8**
   (extra vtable slot shifts TDStretch/RateTransposer call sites); pure-virtual
   variant does not compile. Unresolved C++-shape puzzle, not a map error.
-- **`BandCamShot::Target` `class`→`struct`: net 0 (+1/−1).** The port of
-  `operator<<(BinStream&, Target const&)` hit **100% first try**, but the map
-  holds **both** class-keys for the same type — `U` for the template
-  instantiations, `V` for `??0Target@BandCamShot@@QAA@ABV01@@Z` (248 B,
-  currently 100%). If the map owner normalises the `V` rows to `U`, this becomes
-  a clean **+2**. Ready-made patch: `/home/free/tmp/laneAE_bandcamshot_struct.patch`.
+- ~~**`BandCamShot::Target` `class`→`struct`: net 0 (+1/−1).**~~ **SUPERSEDED —
+  the *full* change measures +4.** The bare class→struct flip is indeed net 0,
+  but combined with the real `Save` body + the two scatter force-emits it is a
+  measured **+4**. See "★ Measured outcome — `BandCamShot::Target` cluster = +4"
+  below.
 
 ### ★ Two process traps that nearly caused wrong landings
 
@@ -370,3 +369,483 @@ Adding an out-of-line definition perturbs `/O1 /Ob2` inlining fleet-wide; a
 sibling lane measured a whole class of "emit it out-of-line" fixes at **0/26
 flips, worst −4**. Every candidate here was therefore A/B'd whole-binary against
 a per-worker baseline pickle that had to read exactly 30,093 before any edit.
+
+---
+
+# Round 2 (2026-07-26, resumed lane) — the per-unit filter folded into the funnel
+
+The round-1 lane died on repeated API 529s with five fixer worktrees still live.
+Round 2 recovered them first, then built the per-unit pairing filter into a
+proper scanner and re-derived the funnel from a fresh 30,102 baseline.
+
+## Worktree recovery (nothing lost)
+
+| worktree / branch | state found | disposition |
+|---|---|---|
+| `wt-laneAE-bigbody` / `laneAE-bigbody` | committed `99409cb1` (Mic.cpp ChatReceiver) | **already landed on main** — byte-identical, no action |
+| `wt-laneAE-hmxobj` / `laneAE-hmxobj` | committed `fc6dc200` (3 OBJ_CLASSNAME force-emits) | **already landed on main** — byte-identical |
+| `wt-laneAE-misc` / `laneAE-misc` | committed `9210ed23` (synth_xbox emissions) | **already landed on main** — byte-identical |
+| `wt-laneAE-camshot` / `laneAE-camshot` | **UNCOMMITTED** BandCamShot Save + `Target` `operator<<` + 2 scatter force-emits (Shockwave, PanelDir), never measured | committed as `4610b0bc` to preserve it, then A/B'd (below) |
+| `wt-laneAE-vecdtor` / `laneAE-vecdtor` | nothing but `config/45410914/symbols.txt` | nothing to recover (the `??_E` result was a clean negative, already documented) |
+| `wt-laneAE-emit` / `laneAE-emit` | committed, all content landed | merged main back in; the apparent "deletions" in its diff vs main were **other lanes' docs**, not its own work |
+
+## ★ New tool — `scripts/harvest/scatter_pairing_scan.py`
+
+Round 1 established that pairing is per-unit but did not *mechanise* it.
+`unemitted_symbol_scan.py` answers "does **any** obj define this name?".
+The new scanner answers the load-bearing question — "does the obj whose pinned
+span **contains the target** define it?" — and splits the named-0% pool three
+ways. Both scanners share `coff_defined_symbols`.
+
+## ★ The funnel, per-unit filter applied (measured, baseline 30,102)
+
+| stage | count | bytes |
+|---|---|---|
+| target fns in `report.json` | 69,420 | |
+| … at 0% | 36,004 | |
+| … in scope (non `auto_03_`) | 8,538 | |
+| … unmapped `fn_*` (other lane's pool) | 8,139 | |
+| … map/tooling artifacts (`lbl_`/`merged_`/`$`) | 6 | |
+| … **named and 0%** | **393** | |
+| ↳ **NOWHERE** — no obj emits the name → needs **source** | **302** | 57,372 |
+| ↳ **ELSEWHERE** — emitted, but by the wrong obj → **SCATTER-WIRE** | **41** | 5,784 |
+| ↳ SAME-UNIT — pairable already → body divergence, not this lane | 50 | 2,792 |
+
+**ELSEWHERE is the round-2 payload.** It is the pool where the source is already
+correct and the *only* defect is which TU emits the COMDAT — precisely what the
+round-1 `OBJ_CLASSNAME` wins fixed. Existence proof, re-verified: all three
+landed wins are now emitted by **exactly** their landing obj
+(`?StaticClassName@OvershellDir@@…` → `BandCharacter` only, etc.), and all three
+flipped to 100%.
+
+Composition of the 41: ~15 STL/template instantiations, ~14 inline in-class-body
+methods (cheap ODR-use fix), ~12 out-of-line members (need the heavier
+`#include "<owner>.cpp"` scatter-include). The `--classname` mode shows the
+`OBJ_CLASSNAME` sub-vein is now nearly **drained**: 3 ELSEWHERE + 2 NOWHERE left.
+
+### ★ True size of the class
+
+| scope | NOWHERE | ELSEWHERE | unpairable total | units |
+|---|---|---|---|---|
+| fleet-wide (incl. XDK/Quazal) | 5,730 / 2,418,780 B | 48 / 8,240 B | **5,778 fns / 2,427,020 B** | 313 |
+| in scope (excl. `auto_03_`) | 302 / 57,372 B | 41 / 5,784 B | **343 fns / 63,156 B** | 137 |
+
+So the honest headline is **5,778 functions / 2.43 MB can never be claimed by a
+name our build compiles** — but **94% of it is XDK + Quazal vendor code that is
+hard-skipped**, leaving a real in-scope class of **343 functions / 63 KB**.
+The per-unit filter then narrows the *cheap* part of that to **41**.
+
+## ★ New sub-class found — duplicate target names inside one unit (MAP defect)
+
+objdiff pairs by name within a unit, so if the **target** side carries the same
+name twice, at most one can pair and the extras are structurally unclaimable no
+matter what the source does. In scope there are **21 duplicate-name groups
+covering 24 non-100% target functions (~2.3 KB)** — all ICF folds that the map
+named identically at several VAs. Cross-tabbing against the funnel:
+
+- NOWHERE: 0 of 302 affected
+- ELSEWHERE: 0 of 41 affected
+- **SAME-UNIT: 23 of 50 affected**
+
+⇒ the "50 SAME-UNIT body-divergence rows" is really **27 body rows + 23 map
+duplicates**. Worst offenders: `?ConfigPanels@VocalTrackDir@@QAAXXZ` (748 B, ×2),
+`??_G?$ObjPtrList@VHamCamShot@@VObjectDir@@@@UAAPAXI@Z` (×3, `BandCamShot`),
+`?OnFileExecRoot@@YA?AVDataNode@@PAVDataArray@@@Z` (×3, `File`),
+`?StaticClassName@TexMovie@@…` / `?StaticClassName@SfxSeq@@…` (×2).
+**Handoff to the map owner — deduplicate these VAs; not applied here.**
+
+## Seed re-check — `ObjRefConcrete::Replace` is STILL not addressable
+
+Re-verified against the current build: **zero** `ObjRef`-family rows appear
+anywhere in the 302 NOWHERE / 41 ELSEWHERE lists, because those VAs are still
+unmapped `fn_*`. Emitting `Replace` from source would still not pair. The seed
+that opened this channel remains **blocked on a map repoint**, which is a
+different lane's single-owner responsibility. Unchanged from round 1.
+
+## ★★ Process trap — an inherited worktree's first build is NOT a baseline
+
+Round 1's headline was **+9** with an "interaction gain no single worker saw"
+(`?delete_and_clear@AllocInfoVec@@QAAXXZ` in `default/MemTracker`). Main's own
+post-landing measurement said **+8**. Round 2 settled it decisively:
+
+- my resumed `wt-laneAE-emit` baseline read **30,102**, stable across **three**
+  `rm -f report.cache` + full-`ninja` legs — so double-building did *not* expose it
+- the set-diff against main's `report.json` was exactly one entry: that same
+  `('default/MemTracker', '?delete_and_clear@AllocInfoVec@@QAAXXZ')`
+- deleting `build/45410914/src/system/utl/MemTracker.obj` and rebuilding dropped
+  the count to **30,101** and made the worktree **zero-diff against main**
+
+⇒ the orphaned worktree was carrying a **stale `.obj`** that ninja considered
+current, so no amount of rebuilding would refresh it. **The "+9 interaction gain"
+was a stale-obj phantom; the true landed figure is +8 and the true baseline is
+30,101.**
+
+A sibling round-2 worker hit the same thing harder: its first baseline read
+**30,089**, making a naive A/B report **+16** for a change worth **+4** — 12 of
+the "gains" were in units the diff never touched (`Task` ×5, `DataFunc` ×2,
+`DirLoader` ×2, `DataUtl`, `ContentMgr_Xbox`, `HamNavList`).
+
+**Rules this yields** (stronger than round 1's "build twice"):
+1. Building twice is **not sufficient** in an inherited worktree — a stale obj
+   survives it. Set-diff your baseline against a *known-good* tree (main), or
+   delete the suspect objs and rebuild.
+2. **A gain in a unit your diff does not touch is the tell for a stale obj**, not
+   an interaction gain. Round 1 mis-read exactly that signal as a real win.
+3. Require two *identical* baseline reads AND a cross-tree reconciliation before
+   trusting an absolute number. Deltas measured within one worktree stay valid
+   regardless, which is why per-worker deltas were still sound.
+## ★ Measured outcome — `BandCamShot::Target` cluster = **+4 strict** (30,101 → 30,105)
+
+**Branch:** `laneAE-camshot` · commits `4610b0bc` (rescued source) + this doc.
+Measured in `/home/free/tmp/wt-laneAE-camshot` with main merged in, every leg
+built **twice** (`rm -f report.cache` before each), harness kept *inside* the
+worktree (`laneAE_ab.py`).
+
+Baseline read **twice independently: 30,101 / 30,101**. Full change read **three
+times: 30,105 / 30,105 / 30,105**. `config/45410914/symbols.txt` md5 held at
+`4f2060e6…` across all five builds, so no dtk carve drift between legs.
+
+```
+base=30101  full=30105  NET=+4  (GAINED 5 / LOST 1)
+ + default/BandCamShot  ??6@YAAAVBinStream@@AAV0@ABUTarget@BandCamShot@@@Z            (344 B)
+ + default/BandCamShot  ??$?6UTarget@BandCamShot@@…@@YA…ABV?$list@UTarget@…@Z         (108 B)
+ + default/PanelDir     ??4?$list@UTarget@BandCamShot@@…@stlpmtx_std@@QAA…@Z          (176 B)
+ + default/PanelDir     ??4?$ObjList@UTarget@BandCamShot@@@@QAAXABV0@@Z               (108 B)
+ + default/Shockwave    ??$_M_splice_insert_dispatch@U?$_List_iterator@UTarget@…@Z    (156 B)
+ - default/BandCamShot  ??0Target@BandCamShot@@QAA@ABV01@@Z                           (248 B)
+```
+
+### Each of the four files maps 1:1 onto a gain — no dead weight
+
+| file | change | gain it delivers |
+|---|---|---|
+| `bandobj/BandCamShot.h` | `class Target` → `struct Target` | prerequisite for **all** 5 (every gained name carries the `U` struct key) |
+| `bandobj/BandCamShot.cpp` | real `BEGIN_SAVES` body + `operator<<(BinStream&, const Target&)` | `??6@…ABUTarget…` (344 B). **`Save` itself is not in the map** and scores nothing — but streaming `mTargets` is what odr-uses the operator and forces the COMDAT to emit. Load-bearing, not cosmetic |
+| `bandobj/BandCamShot.cpp` | `sw_BandCamShotTargetListStream` | the `list<Target>` stream operator (108 B) |
+| `ui/PanelDir.cpp` | `sw_BandCamShotTargetListAssign` | both PanelDir `operator=` rows (176 + 108 B) |
+| `rndobj/Shockwave.cpp` | `sw_BandCamShotTargetListSplice` | `_M_splice_insert_dispatch` (156 B) |
+
+The class→struct flip is **inseparable** from the 5 gains and from the 1 loss —
+provable from the mangled names alone, without a build: every gained symbol
+contains `UTarget@BandCamShot@@` (struct key) and the lost one contains `ABV01`
+(class key) *on the same type*. There is therefore **no subset that takes the
+gains without the loss**; the +5/−1 is a map-key conflict, not a source tradeoff.
+
+### Fuzzy cost (small, and recoverable by the same map fix)
+
+Whole-binary size-weighted fuzzy: **33.528053% → 33.523878%** (−0.0042 pp,
+≈ −441 weighted bytes). Fully accounted for: lost `248 B × 100%` +
+`1180 B × 92.014%` = 1,333 B against 892 B of gains. The 1180-byte
+`operator>>` was at **92.014%** at baseline and is now **0%** — not a body
+regression, purely unpaired by the key flip.
+
+### ★ Handoff to the map owner — 2 renames, worth +1 strict and the fuzzy back
+
+The map is internally inconsistent for **one type**: 11 of 13
+`Target@BandCamShot` rows use the `U` (struct) key, and exactly **2** use `V`.
+Our build now emits the `U` counterpart of both, **in the same unit**
+(`default/BandCamShot`), verified by dumping the COFF symbol table of
+`build/45410914/src/system/bandobj/BandCamShot.obj`:
+
+| map row (`V`, currently 0%) | what we emit (`U`) | expected |
+|---|---|---|
+| `??0Target@BandCamShot@@QAA@ABV01@@Z` (248 B) | `??0Target@BandCamShot@@QAA@AB**U**01@@Z` | **+1 strict** — it was 100% at baseline and class-vs-struct does not change codegen, so this is a near-guaranteed flip ⇒ total **+5** |
+| `??5@YAAAVBinStream@@AAV**V**Target@BandCamShot@@@Z` (1180 B) | `??5@YAAAVBinStream@@AAV0@AA**U**Target@BandCamShot@@@Z` | restores the **92.014%** pairing; a 1180 B function sitting 8 pts from a flip is then a genuine close-out candidate |
+
+This is the *same* defect shape the lane already documented for `??_E`/`??_G`:
+a map carrying a key the compiler cannot emit. **Not applied here** — map repair
+is a single-owner channel.
+
+### Process note — the stale-obj trap (new, cost one wrong number)
+
+The first baseline read in this worktree was **30,089**, and the naive A/B
+therefore said **+16 (17 gained / 1 lost)**. Twelve of those "gains" were in
+units the change does not touch (`Task` ×5, `DataFunc` ×2, `DirLoader` ×2,
+`DataUtl`, `ContentMgr_Xbox`, `HamNavList`). A **baseline re-measure control**
+reproduced exactly those 12 against the *identical* tree — they were stale objs
+left behind by the predecessor agent that died mid-build in this worktree, not
+effects of the change. ⇒ **When picking up an inherited/orphaned worktree, the
+first build is not a baseline.** Re-measure the baseline a second time and
+require two identical reads before trusting any delta; a gain in a unit your
+diff does not touch is the tell.
+## ★ Round 2 — batch 1: the template / STL-instantiation COMDATs
+
+**Date:** 2026-07-26 · **Branch:** `laneAE-misc` · **Baseline: 30,101 strict**
+(the `30,102` quoted in the round-1 section above was a stale-obj artifact in an
+orphaned worktree — a leftover `build/45410914/src/system/utl/MemTracker.obj`
+manufacturing a phantom `('default/MemTracker','?delete_and_clear@AllocInfoVec@@QAAXXZ')`.
+Main's own `report.json` and `docs/plans/decomp-state-2026-07-19.md` both read
+**30,101**; that is the real landed number and the `+9` above is really `+8`.)
+
+13 candidates, all "the landing unit's obj does not define the target's mangled
+name". Measured whole-binary, unit-agnostic `(unit,name)` set diff, two identical
+`report.json` reads per leg:
+
+**30,101 → 30,107 = +6 strict, 0 losses.**
+
+| landing unit | symbol | outcome |
+|---|---|---|
+| `default/Mic` | `vector<unsigned short>::_M_insert_overflow` | **FLIPPED** |
+| `default/Mic` | `vector<unsigned short>::_M_fill_insert` | **FLIPPED** |
+| `default/Mic` | `vector<int>::_M_insert_overflow` | **FLIPPED** |
+| `default/Mic` | `vector<MoveParent const*>::_M_allocate_and_copy<MoveParent const**>` | **FLIPPED** |
+| `default/VocalTrack` | `_Deque_base<pair<LightPreset::KeyframeCmd,float> >::_M_initialize_map` | **FLIPPED** |
+| `default/band3/bandtrack/Gem` | `__median<AllocInfo*, bool(*)(AllocInfo* const&, AllocInfo* const&)>` | **FLIPPED** |
+| `default/VocalTrack` | `vector<FileMerger::Merger>::push_back` | MAP MISPAIR |
+| `default/VocalTrack` | `deque<PoolVoice>::push_back` | MAP MISPAIR |
+| `default/VocalTrack` | `LightPreset::Keyframe::Save(BinStream&) const` | MAP MISLABEL |
+| `default/Synapse_dsp` | `__destroy_range_aux<reverse_iterator<RhythmDetector::Frame*> >` | MAP MISPAIR |
+| `default/PanelDir` | `~vector<char const*>` | MAP MISLABEL |
+| `default/BandCharDesc` | `__copy_backward_ptrs<SkeletonClip::MoveRating*>` | MAP MISLABEL |
+| `default/Text` | `operator>>(BinStreamRev&, Key<vector<Vector3> >&)` | MAP MISLABEL |
+
+### ★ The reusable mechanism split (price this)
+
+Emitting a scattered COMDAT from the landing TU needs **two different shapes**,
+and picking the wrong one silently emits nothing:
+
+1. **`inline` free-function / member templates** — `__median`,
+   `__copy_backward_ptrs`, `__destroy_range_aux`, `vector<T>::_M_allocate_and_copy`.
+   A call site is **inlined away** and no COMDAT appears. Only an
+   **explicit instantiation** (`template <ret> ns::fn<Args>(params);`) forces the
+   standalone COMDAT. `_M_allocate_and_copy` proved this: an `assign(first,last)`
+   ODR-use compiled fine and emitted *nothing*; the explicit instantiation flipped it.
+2. **out-of-line members of a class template** — `_M_insert_overflow`,
+   `_M_fill_insert`, `_M_initialize_map`, `push_back`. These are declared in the
+   class and defined in the `.c` body file, so a plain ODR-use helper
+   (`ForceEmit_*`) is enough.
+
+**Verification loop that saves whole builds:** build only the landing `.obj`
+(`ninja build/45410914/src/<path>.obj`) and parse its COFF symbol table
+(`coff_defined_symbols` in `scripts/harvest/unemitted_symbol_scan.py`) to confirm
+the *exact* target name is now defined, before spending an A/B. 12 of 13 were
+confirmed emitted this way in a few minutes.
+
+**Trap:** transcribed mangled names are easy to truncate — a hand-typed
+`@stlpmtx_std@@IAA…` (missing one `@stlpmtx_std@@`) made a *successful* emission
+read as NOT-EMITTED. Always take the name from `report.json`, never retype it.
+
+**Include-collision trap:** `gesture/SkeletonClip.h` is unincludable from
+`BandCharDesc.cpp` — it pulls `hamobj/Difficulty.h`, whose `enum Difficulty`
+collides with `band3/game/Defines.h`'s, which the `VocalTrack.cpp`
+scatter-include already needs. Neither order helps. A minimal local declaration
+of just the nested type (the trick already used in `synth_xbox/Synapse_dsp.cpp`)
+is enough for an instantiation.
+
+### ★ The 7 map defects — decoded from retail bytes (handoff, report-only)
+
+Round 1 concluded "the dominant root cause is the map, not the source". Round 2
+reproduces that at **7 of 13**. All were force-emitted, measured, then **reverted**
+(commit `527c896a`) because a force-emit against a mislabeled VA only manufactures
+a misleading partial pairing.
+
+**Two map-rename-only flips — the correct name is ALREADY emitted in the right unit:**
+
+| VA / current map name | what the bytes say | why |
+|---|---|---|
+| `?push_back@?$deque@UPoolVoice@@…` | `?push_back@?$deque@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVRangeShift@VocalTrack@@@Z` | all 3 element-size immediates are `0x18` vs `0x24` for `PoolVoice`; `sizeof(VocalTrack::RangeShift)` = `0x18` (6 floats); target's callee is `?_M_push_back_aux_v@?$deque@VRangeShift@VocalTrack@@…` |
+| `?push_back@?$vector@UMerger@FileMerger@@…` | `?push_back@?$vector@V?$deque@PAVTubePlate@@…` | single `addi` immediate differs by exactly 60 = `sizeof(FileMerger::Merger)` − `sizeof(deque<TubePlate*>)`; target's callee is `?_M_insert_overflow_aux@?$vector@V?$deque@PAVTubePlate@@…` |
+
+`band3/bandtrack/VocalTrack.obj` already defines **both** correct names, so these
+should be clean +2 from a two-line map edit with **no source change at all**.
+
+**One needs map rename AND a source force-emit:**
+
+`??$__destroy_range_aux@V?$reverse_iterator@PAUFrame@RhythmDetector@@@…` in
+`default/Synapse_dsp`: both `subi` immediates are `0xc` in target vs `0x14` for
+`RhythmDetector::Frame`, while *every* callee matches (the `vector<Vector3>`
+destructor path). `sizeof == 0xc` **and** dtor `== ~vector<Vector3>` ⇒ the element
+type is `stlpmtx_std::vector<Vector3>`, **not** `RhythmDetector::Frame`. (Note this
+does *not* impeach the in-tree `Frame` layout comment — `0xc` is too small for any
+`float` + `vector` layout.) We emit
+`__destroy_range_aux<reverse_iterator<vector<Vector3>*> >` only from `ui/UIList.obj`
+and `gesture/DepthBuffer3D.obj`, so after the rename someone must also
+explicit-instantiate it at the tail of `synth_xbox/Synapse_dsp.cpp`.
+
+**Four outright mislabels — the VA is unrelated code:**
+
+| current map name / unit | what is actually at the VA |
+|---|---|
+| `??$?5V?$vector@VVector3@@…(BinStreamRev&, Key<vector<Vector3> >&)` · `default/Text` | a **16-byte adjustor thunk**: `lwz r11,-0x4(r3); subf r3,r11,r3; subi r3,r3,0x10; b ?Print@RndTransformable@@UAAXXZ`. Our `operator>>` is 72 B. ICF-folded vtordisp thunk |
+| `??1?$vector@PBDV?$StlNodeAlloc@PBD@…` (`~vector<char const*>`) · `default/PanelDir` | calls `?FirstFrom@?$KeylessHash@PBDUEntry@ObjectDir@@@@AAAPAUEntry@ObjectDir@@PAU23@@Z` then `fn_82806F08`; 20 of 21 instructions differ. `ObjectDir` hash code, not a vector dtor |
+| `??$__copy_backward_ptrs@PAUMoveRating@SkeletonClip@@…` · `default/BandCharDesc` | opens `subi r31, r12, 0x70` — the MSVC-X360 **EH funclet** prologue (`r12` = parent frame). A funclet, not a copy helper |
+| `?Save@Keyframe@LightPreset@@QBAXAAVBinStream@@@Z` @ `0x82ba10c0` · `default/VocalTrack` | a **`_Deque_base` constructor / `_M_initialize_map`-family** function: `li r26,0xa` then `divwu r11,r4,r26`, buffer size `0x78`, `mulli r11,r10,0xc` ⇒ 10 elements of **12 bytes** per node; writes the full `0x28`-byte deque header (`0x0`–`0x24`) into `r3`. There is no `BinStream` operator`<<` call anywhere in it |
+
+★ **The generalisable tell**, cheap and mechanical: for an STL specialization,
+**every element-size immediate in the body is a fingerprint of `sizeof(T)`**. If
+the immediates disagree with `sizeof` of the mapped `T` by a constant, the map
+has the wrong `T` — and the target's *callee* names (which come from the same
+map) usually name the right one outright. A scanner over
+`diff_arg`-only sub-100 % STL rows that solves for `sizeof(T)` and compares
+against `struct_db` would classify this whole class without a build. This is the
+concrete instance of the `objdiff pct INVERTS` note that "ARG-ONLY clusters are
+MAP MISPAIRS".
+
+## ★★ Round-2 measured outcome — **+43 strict, 1 loss** (30,101 → 30,144)
+
+Verified in `wt-laneAE-emit` after merging all four worker branches, against the
+**corrected** 30,101 baseline pickle. Built three times; reads 2 and 3 identical
+(30,144 / 30,144). **Every one of the 44 gains is in a unit the diff directly
+touches** (the stale-obj tell was explicitly checked and came back 0).
+
+| worker | branch | claimed | shape |
+|---|---|---|---|
+| camshot | `laneAE-camshot` | +4 (5 gained / 1 lost) | struct-key + Save + 2 scatter force-emits |
+| batch 1 | `laneAE-misc` | +6 | template explicit instantiation / ODR-use |
+| batch 2 | `laneAE-hmxobj` | +18 | inline ODR-use + scatter-include |
+| batch 3 | `laneAE-bigbody` | +15 | scatter-include + unwired-owner wiring |
+| **joint** | `laneAE-emit` | **+43 / −1** | **exactly additive — no interaction losses** |
+
+Gains by unit: UISlider 10 · UIListState 7 · Mic 4 · VocalTrack 4 · BandCamShot 2 ·
+GemSmasher 2 · Lit_NG 2 · PanelDir 2 · UI 2 · Gem 2 · GemManager 2 ·
+BandHighlight 1 · CameraTilt 1 · PreloadPanel 1 · Shockwave 1 · UIListHighlight 1.
+Sole loss: `??0Target@BandCamShot@@QAA@ABV01@@Z` — the predicted `V`-vs-`U`
+class-key row (map defect, see the handoff below).
+
+★**Additivity is the headline process result.** Four workers' deltas summed
+4+6+15+18 = 43 and the joint build measured exactly +43. Emission fixes are
+**local to the landing obj** and do not fight each other, unlike layout or
+`virtual` changes. Round-1's fear that "adding a symbol perturbs inlining
+fleet-wide" is real but *bounded*: it shows up as a same-unit partial regression
+the worker can see and fix, not as fleet-wide collateral.
+
+### ★ The premise was half wrong, and that is where the yield was
+
+Round 1 framed this as "inline COMDATs only emitted where ODR-used". **`/O1`
+implies `/Gy`, so EVERY function is a COMDAT and retail's linker scattered
+out-of-line members too.** Roughly half the ELSEWHERE rows are ordinary
+out-of-line members, and the fix for those is `#include "<owner>.cpp"` — which
+delivered ~23 of the 43. Operational facts, measured:
+
+- **A scatter-include does NOT require removing the owner from `objects.json`.**
+  There is no link edge in `build.ninja`, so duplicate definitions across objs are
+  harmless (`UIListWidget.cpp`/`PropSync.cpp` stay wired alongside `PanelDir.cpp`'s
+  include of them).
+- Only real requirement: rename `gRev`/`gAltRev` when both TUs use `SAVE_REVS`.
+- The `PanelDir.cpp` → `UISlider.cpp` include paid **+10**, of which 8 were
+  transitive `fn_*` COMDATs pulled in for free. **A scatter-include's yield is the
+  whole COMDAT cluster, not the one row you targeted.**
+- ★**New lever — when a scatter-include goes net-negative, MINIMISE the included
+  set instead of abandoning it.** A `#ifndef RB3_TRACKCONFIG_SCATTER_MIN` guard
+  exposing only the 3 scattered definitions recovered two `VocalTrack`
+  regressions while keeping all 3 gains, and left `default/TrackConfig` itself
+  byte-unchanged.
+- **Two emission shapes, and picking wrong silently emits nothing:** `inline` free
+  functions / member templates (`__median`, `__destroy_range_aux`,
+  `_M_allocate_and_copy`) need an **explicit instantiation** — a call site gets
+  inlined away and emits nothing; out-of-line members of a class template
+  (`_M_insert_overflow`, `push_back`) are fine with a plain ODR-use helper.
+- **Cheap pre-flight that avoids wasted A/Bs:** build only the landing `.obj` and
+  parse it with `coff_defined_symbols`. 12 of 13 candidates confirmed in minutes.
+  **Never retype a mangled name** — one hand-typed name missing a `@stlpmtx_std@@`
+  made a successful emission read as NOT-EMITTED.
+
+### ★ Second new lever — FMA contraction broken via named-object members
+
+Retail emits 4×`fmuls` then 4×`fadds`; MSVC X360 `/O1` contracts plain float
+locals into `fmadds`. Routing products through the **members of a named object**
+breaks the expression tree so the backend peephole cannot re-fuse:
+```cpp
+Hmx::Color diff;
+diff.red = (mEndsTint.red - mRootsTint.red);
+diff.red = diff.red * fShell;   // separate fmuls, not fused into the later fadds
+```
+This took `NgFur::Shell` (816 B) from 96.85% → **100%** in one edit.
+★**Measured negative: `#pragma fp_contract(off)` is inert at these flags** —
+byte-identical output, no `C4068`. `docs/decomp/XBOX360_FLOATING_POINT_CODEGEN.md`
+"Strategy 1" is wrong for this toolchain; **do not re-fund it**.
+
+### Unwired owners confirmed (the VENDOR-UNWIRED vein is real)
+
+`src/system/rndobj/Fur_NG.cpp` has real `NgFur::Prep`/`Shell` bodies and is
+**absent from `objects.json`**; "emitted by `rtti`" was because
+`src/xdk/LIBCMT/rtti.cpp` already scatter-includes it. Scatter-including it into
+`Lit_NG.cpp` flipped `Prep` and moved `Shell` 0% → 96.85%, then the FMA lever
+closed it. A read-only triage of the 302 NOWHERE rows confirmed **5 unwired-TU
+rows**: `FxSendPitchShift360.cpp`, `FxSendSynapse360.cpp`, `DrawUtl.cpp`,
+`PlatformMgr_Xbox.cpp` (file-level only; its pool row is a map mislabel), and
+`ScrollbarDisplay` (needs a real class port — currently a 1-line fake stub in
+`Band.cpp`). Strongest single remaining source row:
+`FilterCoeffs::Low/HighpassCoefficients` (692 B combined) — our file is a 1-line
+empty stub and dc3's is a same-unit drop-in.
+
+### Honest residual size of the actionable class
+
+Of the 302 NOWHERE rows: VECDTOR 25 (map defect, dead) · MAP-ARTIFACT 21 ·
+STL-INST 96 · VENDOR-UNWIRED 93 (+~6 mis-tagged) → **67 rows / 12,332 B
+remainder**, of which 11 are DEAD by an already-measured trap and ~9 are
+SUSPECT-MISPAIR. **Honest actionable remainder: ~16 high-confidence rows /
+~2,600 B.** Full triage: `docs/plans/lane-ae-nowhere-triage-2026-07-26.md`.
+
+## ★ Map-owner handoffs from round 2 (report only — NOT applied)
+
+1. **Guaranteed free flip.** `0x82813190` in `default/UIPanel` is mapped
+   `?Enter@RndPollable@@UAAXXZ` (160 B) but the body is
+   `static Message msg("finish_load"); HandleType(msg); …; mState = kDown` =
+   **`?FinishLoad@UIPanel@@UAAXXZ`**, which has **no map entry at all**. Source
+   order corroborates (`IsLoaded` 0x82813040 < 0x82813190 < `Enter` 0x82813258,
+   matching `UIPanel.cpp`'s IsLoaded/FinishLoad/Exiting/Enter order). We already
+   compile the body — a one-line repair.
+2. `0X8240EA08` → `?Enter@RndPollable@@…` (40 B) is an **EH funclet**
+   (`subi r31,r12,0x70` before `mflr`).
+3. `0X8240F158` → `?PropExceptionID@PropKeys@@…` (8 B) is an **adjustor thunk**
+   (`addi r3,r3,0x154; b …`).
+4. ★**Cheap lint with a 2-for-2 hit rate:** the map has exactly **11 uppercase
+   `0X`-prefixed keys** out of 21,767, and **both** that landed in this pool are
+   defects (#2, #3). Audit all 11.
+5. **Wrong template argument `T` — a whole new defect family.** Four rows where
+   the map names the wrong element type, provable from `sizeof(T)` immediates:
+   `?push_back@?$deque@UPoolVoice@@…` is really
+   `deque<VocalTrack::RangeShift>` (all 3 element-size immediates `0x18`, not
+   `0x24`; callee is the `RangeShift` `_M_push_back_aux_v`);
+   `?push_back@?$vector@UMerger@FileMerger@@…` is really
+   `vector<deque<TubePlate*> >` (one `addi` off by exactly
+   `sizeof(Merger) − sizeof(deque<TubePlate*>)`);
+   `__destroy_range_aux<reverse_iterator<RhythmDetector::Frame*> >` is really
+   `vector<Vector3>` (`0xc` vs `0x14`). The first two are **rename-only ⇒ +2 with
+   zero source change**. ★**Proposed scanner:** for any sub-100% STL row whose
+   mismatches are `diff_arg`-only, solve the immediates for `sizeof(T)` and
+   compare against the mapped `T` in `struct_db` — a constant disagreement means
+   the map has the wrong `T`, and the target's callee names usually name the right
+   one outright. Classifies the family with no build.
+6. **Outright mislabels** (unrelated code at the VA, verified by decoding):
+   `default/Text` `operator>>(BinStreamRev&, Key<vector<Vector3> >&)` → a 16-byte
+   adjustor thunk tail-calling `?Print@RndTransformable@@UAAXXZ`;
+   `default/PanelDir` `~vector<char const*>` → calls
+   `?FirstFrom@?$KeylessHash@PBDUEntry@ObjectDir@@@@…`;
+   `default/BandCharDesc` `__copy_backward_ptrs<SkeletonClip::MoveRating*>` → an
+   EH funclet prologue; `default/VocalTrack`
+   `?Save@Keyframe@LightPreset@@QBAXAAVBinStream@@@Z` @ `0x82ba10c0` → a
+   `_Deque_base` ctor (10 × 12-byte elements, no `BinStream` call anywhere).
+7. `?GetTrackOrder@TrackPanel@@…` has **no map entry for that exact mangling**;
+   the map holds a `…_N@Z` (extra trailing `bool`) variant at `0x82b93c78`.
+8. **`BandCamShot::Target` class-key inconsistency** — 11 of 13
+   `Target@BandCamShot` rows use the `U` (struct) key, exactly 2 use `V`. We now
+   emit the `U` counterpart of both **in the same unit** (verified by dumping
+   `BandCamShot.obj`'s COFF symbol table). Renaming
+   `??0Target@BandCamShot@@QAA@ABV01@@Z` → `…ABU01@@Z` recovers the lane's only
+   loss (class-vs-struct does not change codegen) ⇒ **+1**, and renaming
+   `??5@YAAAVBinStream@@AAV0@AAVTarget@BandCamShot@@@Z` → `…AAUTarget…` restores a
+   1180 B function to its 92.014% pairing, 8 points from a flip.
+9. **21 duplicate-target-name-in-unit groups** (24 fns) — deduplicate; see the
+   round-2 funnel section.
+
+### Tooling note (jeff / scattered units)
+
+For scattered units, dtk's `fn_<VA>` symbol **names do not correspond to the VA of
+the body they cover** (e.g. `.fn fn_82321590` in `CameraTilt.s` holds the body at
+`0x82280F8C`). Pairing still works because the map and dtk agree on the *name*,
+but the `.s` address column is **not** usable to sanity-check a map VA. Belongs in
+`docs/plans/jeff-scattered-unit-addresses.md`.
+
+### Not re-funded (measured negatives, round 2)
+
+- `default/UILabel` ← `movie/Movie.cpp` scatter-include: `?IsLoading@Movie@@`
+  reached only 99.8% while `fn_827F765C` fell 100 → 92.5. **Net −1, reverted.**
+- `DefaultPhysicsManager` ctor (Gem) paired at only 16.96%, `VocalGuidePitch` ctor
+  (TrackerDisplay) at 2.0% — both **reverted**: a whole-TU include is not worth
+  sub-20% pairing. Their blocker is body divergence, not emission; a body-port
+  lane can re-add the one-line include for free.
+- `?QueueEnumJob@PlatformMgr@@` — target does `lwz r3,0x90(r3)` but
+  `PlatformMgr.h` puts `mJobMgr` at `0x34`; a layout divergence, so emitting it
+  cannot reach 100% as-is.

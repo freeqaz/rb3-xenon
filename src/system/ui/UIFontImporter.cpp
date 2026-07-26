@@ -679,3 +679,14 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
     }
     return 0;
 }
+
+// ---------------------------------------------------------------------------
+// lane-AE batch-3 (sw3) force-emit: retail placed the COMDAT for
+//   ?LoadFile@?$ObjDirPtr@VUIListDir@@@@QAAXABVFilePath@@_N1W4LoaderPos@@1@Z
+// inside the .text span pinned to default/UIFontImporter. ObjDirPtr<C>::LoadFile
+// is defined inline in obj/Dir.h, so it is only emitted in a TU that odr-uses
+// it -- nothing in this TU did, so objdiff had no base symbol to pair with.
+// Explicit instantiation forces the COMDAT without adding a call site.
+#include "ui/UIListDir.h"
+template void
+ObjDirPtr<UIListDir>::LoadFile(const FilePath &, bool, bool, LoaderPos, bool);

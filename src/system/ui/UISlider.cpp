@@ -178,3 +178,17 @@ DataNode UISlider::OnMsg(const ButtonDownMsg &msg) {
     }
     return DATA_UNHANDLED;
 }
+
+// ---------------------------------------------------------------------------
+// lane-AE batch-3 (sw3) scatter-include: retail placed PanelDir's destructor
+// COMDATs inside the .text span pinned to default/UISlider:
+//   ??1PanelDir@@UAA@XZ   (464 B)
+//   ??_DPanelDir@@QAAXXZ  (108 B, vbase destructor)
+// They are out-of-line definitions owned by ui/PanelDir.cpp, so an odr-use
+// cannot force them here -- the whole owner TU has to be pulled in. gRev /
+// gAltRev come from SAVE_REVS and would collide with this TU's own pair.
+#define gRev gRev_PanelDir
+#define gAltRev gAltRev_PanelDir
+#include "ui/PanelDir.cpp"
+#undef gRev
+#undef gAltRev

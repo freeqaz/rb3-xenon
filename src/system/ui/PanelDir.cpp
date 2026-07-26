@@ -717,3 +717,13 @@ void PanelDir::UpdateFocusComponentState() {
 #include "ui/UIListWidget.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneAE: retail parked the ObjList<BandCamShot::Target> assignment COMDATs in
+// this unit (0x824D1070 list::operator=, ObjList::operator=).  Reference them so
+// our obj emits the same COMDATs here.
+#include "bandobj/BandCamShot.h"
+void sw_BandCamShotTargetListAssign(
+    ObjList<BandCamShot::Target> &a, const ObjList<BandCamShot::Target> &b
+) {
+    a = b;
+}

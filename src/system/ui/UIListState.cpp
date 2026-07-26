@@ -590,3 +590,17 @@ int UIListState::ScrollToTarget(int target) const {
 
     return diff;
 }
+
+// Lane-AE b2 scatter force-emit: retail placed UIButton's OBJ_CLASSNAME COMDATs
+// (?StaticClassName@UIButton@@SA?AVSymbol@@XZ, ?ClassName@UIButton@@UBA?AVSymbol@@XZ)
+// inside the .text span pinned to default/UIListState. Both are defined inline in
+// the class body, so they are only emitted where odr-used -- nothing in this TU
+// used them. Forcing NewObject() also instantiates UIButton's vtable, which is
+// what pulls the inline virtual ClassName() out of line.
+#include "ui/UIButton.h"
+Symbol ForceEmit_UIButton_StaticClassName() { return UIButton::StaticClassName(); }
+Hmx::Object *ForceEmit_UIButton_NewObject() { return UIButton::NewObject(); }
+
+// Lane-AE b2 scatter-include: retail also placed UIButton::Copy (out-of-line,
+// BEGIN_COPYS in UIButton.cpp) and ClassName in this unit's .text span.
+#include "ui/UIButton.cpp"

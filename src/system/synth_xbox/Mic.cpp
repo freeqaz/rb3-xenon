@@ -268,3 +268,37 @@ void MicManagerXbox::RequirePushToTalk(bool b, int pad) {
 }
 
 #pragma endregion MicManagerXbox
+
+// laneAE scatter force-emit (default/Mic).
+// Retail was built with function-level COMDATs (/Gy); the linker placed these
+// four STL specializations' COMDATs inside the .text span pinned to default/Mic
+// even though their natural owners are elsewhere (vector<unsigned short> /
+// vector<int> helpers are emitted all over our tree, and
+// vector<const MoveParent*>::_M_allocate_and_copy nowhere at all).  objdiff pairs
+// target<->base by mangled name *within a unit*, so with Mic.obj not defining
+// them the four targets were structurally pinned at 0%.  ODR-use them here so
+// MSVC emits the COMDATs into this obj.
+#ifndef HX_NATIVE
+#include <vector>
+class MoveParent;
+void ForceEmit_LaneAE_Mic(
+    std::vector<unsigned short> &us,
+    std::vector<int> &si,
+    std::vector<const MoveParent *> &dst,
+    std::vector<const MoveParent *> &src
+) {
+    // -> ?_M_insert_overflow@?$vector@G...@ABU__true_type@2@I_N@Z
+    us.push_back(0);
+    // -> ?_M_fill_insert@?$vector@G...@AAAXPAGIABG@Z
+    us.insert(us.begin(), (std::vector<unsigned short>::size_type)2, (unsigned short)0);
+    // -> ?_M_insert_overflow@?$vector@H...@ABU__true_type@2@I_N@Z
+    si.push_back(0);
+    dst.assign(src.begin(), src.end());
+}
+// _M_allocate_and_copy is defined inline in the class body, so the assign() call
+// above inlines it away -- only an explicit instantiation forces the standalone
+// COMDAT that retail's linker parked in this unit's .text span.
+// -> ??$_M_allocate_and_copy@PAPBVMoveParent@@@?$vector@PBVMoveParent@@...
+template const MoveParent **std::vector<const MoveParent *>::_M_allocate_and_copy<
+    const MoveParent **>(unsigned int, const MoveParent **, const MoveParent **);
+#endif

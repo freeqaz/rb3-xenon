@@ -349,3 +349,12 @@ void NgLight::Init() {
 #include "meta/StorePreviewMgr.cpp"
 #undef gRev
 #undef gAltRev
+
+// ---------------------------------------------------------------------------
+// lane-AE batch-3 (sw3) scatter-include of an UNWIRED owner TU: retail placed
+//   ?Shell@NgFur@@UBA_NHPAVRndMesh@@PAVRndMat@@@Z  (816 B)
+//   ?Prep@NgFur@@UBA_NPAVRndMesh@@PAVRndMat@@@Z     (88 B)
+// inside the .text span pinned to default/Lit_NG. rndobj/Fur_NG.cpp has real
+// bodies for both but is not listed in config/45410914/objects.json, so nothing
+// in the build ever compiled them. No SAVE_REVS in either TU.
+#include "rndobj/Fur_NG.cpp"

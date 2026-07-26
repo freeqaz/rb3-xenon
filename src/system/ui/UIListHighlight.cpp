@@ -56,3 +56,15 @@ void UIListHighlight::Draw(
         mMesh->SetWorldXfm(tf70);
     }
 }
+
+// ---------------------------------------------------------------------------
+// lane-AE batch-3 (sw3) scatter-include: retail placed
+//   ??1UIListLabelElement@@UAA@XZ  (128 B)
+// inside the .text span pinned to default/UIListHighlight. The definition is
+// out-of-line in ui/UIListLabel.cpp:108, so only pulling the owner TU in can
+// make our obj define the symbol. gRev/gAltRev come from SAVE_REVS in both TUs.
+#define gRev gRev_UIListLabel
+#define gAltRev gAltRev_UIListLabel
+#include "ui/UIListLabel.cpp"
+#undef gRev
+#undef gAltRev

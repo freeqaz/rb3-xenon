@@ -2706,3 +2706,31 @@ VocalTrack::LyricShift::LyricShift(float f1, float f2, bool fast)
 #include "bandobj/BandWardrobe.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneAE scatter force-emit (default/VocalTrack).
+// Retail was built with function-level COMDATs (/Gy), so the linker parked
+// _Deque_base<pair<LightPreset::KeyframeCmd,float> >::_M_initialize_map inside the
+// .text span pinned to default/VocalTrack even though its owner is
+// world/LightPreset.cpp (LightPreset::sManualEvents).  objdiff pairs
+// target<->base by mangled name *within a unit*, so with VocalTrack.obj not
+// defining it the target was structurally pinned at 0%.  ODR-use it here.
+#ifndef HX_NATIVE
+#include "world/LightPreset.h"
+#include <deque>
+#include <utility>
+void ForceEmit_LaneAE_VocalTrack() {
+    // -> ?_M_initialize_map@?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@...
+    std::deque<std::pair<LightPreset::KeyframeCmd, float> > manualEvents;
+    manualEvents.push_back(std::make_pair(LightPreset::kPresetKeyframeFirst, 0.0f));
+}
+#endif
+// Lane-AE b2 scatter-include: retail placed TrackConfig::Type / IsDrumTrack /
+// IsKeyboardTrack COMDATs inside the .text span pinned to default/VocalTrack.
+// /O1 implies /Gy, so every function is a COMDAT and the linker was free to
+// scatter them; they are out-of-line definitions, so the only way our obj can
+// define them (and objdiff can pair them) is to compile TrackConfig.cpp here.
+// SCATTER_MIN: bring in ONLY those three definitions; pulling the whole file in
+// gave MSVC extra /Ob2 inline candidates and cost VocalTrack::Init 100 -> 87.5.
+#define RB3_TRACKCONFIG_SCATTER_MIN 1
+#include "bandtrack/TrackConfig.cpp"
+#undef RB3_TRACKCONFIG_SCATTER_MIN
