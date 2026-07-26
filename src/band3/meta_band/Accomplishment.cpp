@@ -382,8 +382,9 @@ void Accomplishment::InitializeTrackerDesc(TrackerDesc &trackerDesc) const {
     MILO_ASSERT(TheCampaign, 0x2b8);
 
     trackerDesc.mUser = TheCampaign->GetLaunchUser();
-    trackerDesc.mName = mName;
+    Symbol nm = mName;
     trackerDesc.unkc = TrackPanel::kConfigScoreGoal;
+    trackerDesc.mName = nm;
 }
 
 bool Accomplishment::CanBeEarnedWithNoFail() const { return mCanBeEarnedWithNoFail; }
