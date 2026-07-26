@@ -80,7 +80,16 @@ mechanisms are narrow and gated:
   fallback restricted by `is_funclet_like()` to names matching `fn_<8hex>`,
   `__unwind$NNN`, `__catch$NNN`, `__unwind__merged_<addr>`, `??__E…`, `??__F…`.
   Both sides must be `SectionKind::Code` and the reloc-masked signature must be
-  byte-identical **and unique on both sides**.
+  byte-identical. **[CORRECTED 2026-07-26 by laneAM, re-verified by laneAN —
+  see `docs/plans/lane-an-pdata-parentage-2026-07-26.md`: the original "and
+  unique on both sides" clause is wrong. Uniqueness is required only in
+  objdiff's pass 1 (`mod.rs` ~1471); pass 2 (~1507) pairs ambiguous
+  exact-signature groups greedily, pass 2b (~1553) pairs over-subscribed groups
+  many-to-one onto an already-consumed base funclet, and pass 3 (~1578) does
+  same-size fuzzy pairing at ≥50% masked byte equality — none of those three
+  require uniqueness. All four passes landed in the *same* objdiff commit
+  (`b01e3efa`, 2026-05-27), so this claim was never accurate, not merely
+  stale.]**
 * `reconcile_global_byte_matches` — explicitly **requires a real, non-anonymous
   mangled name** (`is_anonymous_or_funclet` gate, "Rule 3"), size > 44 bytes,
   oracle attribution and signature uniqueness. It never touches anonymous
@@ -91,7 +100,8 @@ mechanisms are narrow and gated:
 > **Correction to `scripts/harvest/splits_move.py`'s docstring.** It states
 > "objdiff pairs anonymous (`fn_8XXXXXXX`) target functions against our compiled
 > COMDATs *positionally*". There is no positional pairing. The real mechanism is
-> the uniqueness-gated funclet **byte-signature** fallback above. The tool's
+> the funclet **byte-signature** fallback above (which is uniqueness-gated only
+> in its first pass — see the correction inline above). The tool's
 > fake-match hazard is therefore real but *confined to funclet-shaped symbols*,
 > not general. Worth fixing in the docstring before someone re-derives a risk
 > model from it.
@@ -356,8 +366,9 @@ held together:
   *justified by a symbol name* is drained, and objdiff genuinely cannot pair an
   anonymous function by position.
 * **By contiguity evidence: ~4,128 (the interior-hole subset), of which 2,212
-  landed.** These score through `pair_funclets_by_bytes` — the uniqueness-gated
-  byte-signature path — which is precisely the mechanism Branch 2 identified. It
+  landed.** These score through `pair_funclets_by_bytes` — the byte-signature
+  path (uniqueness-gated only in its first pass; see the correction earlier in
+  this doc) — which is precisely the mechanism Branch 2 identified. It
   needs no name. The gains are all anonymous `fn_` reveals, 32–76 bytes (median
   40), 87 KB of newly matched code: **the funclet/thunk crumb class collected in
   bulk, exactly as predicted, once the owning TU claims the address.**

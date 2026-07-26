@@ -15,21 +15,43 @@ Two bad things follow:
       therefore manufactures **fake 100% matches**: a target function that is
       not the function we compiled, scoring 100 anyway.
 
-      CORRECTION (laneAL, 2026-07-26): this is NOT positional, as an earlier
+      CORRECTION 1 (laneAL, 2026-07-26): this is NOT positional, as an earlier
       revision of this docstring claimed.  objdiff's `matching_symbols`
       (objdiff-core/src/diff/mod.rs) pairs Code symbols by NAME only -- there
       is no ordinal / section-offset fallback.  The real mechanism is
       `pair_funclets_by_bytes` (mod.rs:1410-1627): a reloc-masked
       byte-signature fallback gated by `is_funclet_like()` to names matching
       `fn_<8hex>` / `__unwind$NNN` / `__catch$NNN` / `__unwind__merged_<addr>`
-      / `??__E...` / `??__F...`, requiring the signature to be byte-identical
-      AND unique on both sides.  (`reconcile_global_byte_matches` is the other
-      byte-based pass, but it explicitly REFUSES anonymous names.)
-      Consequence: the fake-match hazard is real but confined to
-      funclet-shaped symbols -- overwhelmingly <=68-byte MSVC PPC EH cleanup
-      funclets and init/atexit thunks.  Do not derive a general positional
-      risk model from this paragraph.  Evidence:
-      docs/plans/lane-al-autocarve-2026-07-26.md.
+      / `??__E...` / `??__F...`, requiring the signature to be byte-identical.
+      (`reconcile_global_byte_matches` is the other byte-based pass, but it
+      explicitly REFUSES anonymous names.)
+
+      CORRECTION 2 (laneAM + laneAN, 2026-07-26): CORRECTION 1's "AND unique on
+      both sides" clause was ALSO wrong.  Uniqueness is gated ONLY in
+      `pair_funclets_by_bytes`'s pass 1 (mod.rs ~1471).  Pass 2 (~1507) pairs
+      ambiguous exact-signature groups greedily (name-sorted zip); pass 2b
+      (~1553) pairs over-subscribed groups many-to-one onto an already-consumed
+      base funclet ON PURPOSE, without setting `right_used`; pass 3 (~1578)
+      does same-size fuzzy pairing at >=50% masked byte equality.  None of
+      those three require uniqueness: a target funclet scores 100% iff its
+      masked bytes equal AT LEAST ONE funclet-shaped Code symbol in the
+      assigned unit's obj -- multiplicity on either side is irrelevant.
+      All four passes landed in the SAME objdiff commit (b01e3efa,
+      2026-05-27), so the uniqueness claim was never accurate, not stale.
+      Measured counter-example: `default/RockCentral`'s `fn_82286DDC` (40 B)
+      scores 100% (`masked_equal_symbol=true`) on a signature shared by 15
+      target-side and 7 base-side funclets.
+      Consequence: the fake-match hazard is real, confined to funclet-shaped
+      symbols -- overwhelmingly <=84-byte MSVC PPC EH cleanup funclets and
+      init/atexit thunks -- and LARGER than CORRECTION 1 implied, since a wrong
+      owner does not need a unique signature to score.  Do not derive a general
+      positional risk model, nor a uniqueness-gate risk model, from this
+      paragraph.  The one attribution signal here that is NOT a similarity
+      score is `.pdata` parent-funclet association --
+      `scripts/harvest/pdata_parent_owner.py`.  Evidence:
+      docs/plans/lane-al-autocarve-2026-07-26.md,
+      docs/plans/lane-am-diffunit-2026-07-26.md,
+      docs/plans/lane-an-pdata-parentage-2026-07-26.md.
 
 Fixing this is a **MOVE**: shrink donor unit A's range and hand the freed span
 to claimant unit B.  It is only ever correct as **both halves at once** -- half

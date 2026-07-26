@@ -23,8 +23,14 @@ in three separate ways:
       not one `.fn`.
   3.  **Attribution alone cannot score an anonymous function.**  objdiff pairs
       Code symbols by NAME; there is no positional fallback.  The only
-      name-free path is `pair_funclets_by_bytes`, a uniqueness-gated
-      reloc-masked byte signature restricted to funclet-shaped names, and the
+      name-free path is `pair_funclets_by_bytes`, a reloc-masked byte
+      signature restricted to funclet-shaped names -- uniqueness-gated ONLY in
+      its first pass (objdiff-core/src/diff/mod.rs ~1471; passes 2/2b/3 pair
+      ambiguous, over-subscribed and same-size-fuzzy groups with NO uniqueness
+      requirement, and all four passes landed in the same objdiff commit
+      b01e3efa, so "uniqueness-gated" was never accurate -- see
+      docs/plans/lane-am-diffunit-2026-07-26.md and
+      docs/plans/lane-an-pdata-parentage-2026-07-26.md) -- and the
       global reconcile pass explicitly REFUSES anonymous names.  So pinning an
       unowned span makes its real anonymous functions score exactly never; it
       only harvests the boilerplate crumbs, and only once the owning TU is
