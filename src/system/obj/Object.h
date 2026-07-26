@@ -381,12 +381,21 @@ public:
     // inlined base ??1ObjRefConcrete call in every containing dtor
     // (implicit-destructor vtable-store elision,
     // docs/decomp/patterns/fixable-declarations.md).
-    // Vtable slot +8: Replace(from, to). Retail fn_824D76B0.
-    // from==nullptr is the ReplaceList/MergeDirs "replace unconditionally" path.
+    // Vtable slot +8: Replace(from, to). The ring dispatches with the *dying
+    // Hmx::Object* * in `from` (the declared ObjRef* is a modelling artefact of
+    // this tree — rb3-Wii's ObjRef declares `Replace(Hmx::Object*, Hmx::Object*)`,
+    // src/system/obj/Object.h:185 there — so `from` is reinterpreted, not cast).
+    //
+    // Retail body (verified byte-for-byte against 0x82314B70 / 0x823BDAB0, both
+    // 0x60 = 96 B): NO `from == nullptr` short-circuit, and the dynamic_cast +
+    // SetObjConcrete are emitted inline rather than delegating to SetObj:
+    //   lwz r11,8(r31); cmplw r11,r4; bne out
+    //   __RTDynamicCast(to,0,&Object,&T,0); SetObjConcrete(this, result)
+    // The earlier `from==nullptr || ...; SetObj(to)` shape compiled to a 36 B
+    // tail-call (22.7 % vs the retail body) and matched nothing.
     virtual void Replace(ObjRef *from, Hmx::Object *to) {
-        Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
-        if (fromObj == nullptr || (Hmx::Object *)mObject == fromObj)
-            SetObj(to);
+        if (mObject == reinterpret_cast<Hmx::Object *>(from))
+            SetObjConcrete(dynamic_cast<T *>(to));
     }
     Hmx::Object *Owner() const { return mOwner; }
 
