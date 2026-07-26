@@ -110,6 +110,55 @@ unpaired(0%) -> SCORED conversions: 0
 `0x8268e478`, `0x826bc6a8`. They are *not* refuted — they are unlandable until
 someone re-derives their cycle against current main.
 
+### 2.3 ★★ Worker A's measured **+26** does not survive the rebase — it is **0** net-new
+
+Worker A subsequently completed a full A/B at the **old** base and landed
+`30f165b3` / `c95708b2`: **37,619 → 37,645 = +26**, 34 gained / 8 lost, with an
+honest decomposition that confirmed this lane's central prediction —
+
+| channel | applied | strict |
+|---|--:|--:|
+| re-decision of the bijection (repoint) | 40 VAs | **+0** *(strict-neutral, as predicted)* |
+| **class completion** (spare class name → unmapped byte-identical VA, same unit) | 25 VAs | **+25** |
+| a name **freed** by a re-decision finding a home | 1 VA | **+1** |
+
+Precision was calibrated non-circularly (held-out pool of multi-member byte
+classes containing **only non-arbitrary** entries; the alphabetical tie-break
+scores **44.0 %** on that pool, so contamination would have shown as ~100 %):
+all DECISIVE **83.4 %** (n=955), **≥69 B with content evidence 100 %** (n=70,
+the only de-tagging gate), ≤16 B **89.5 %** (n=381). Dispositions: 79 DECIDED,
+11 SINGLETON, **1,141 REFUSED** (483 TIE, 351 class too large to enumerate,
+224 all-candidates-contradicted, 44 elimination-only, 39 not multi-member).
+
+**Re-derived against current main `71acd6e7`, all 66 VA edits collapse:**
+
+| | n |
+|---|--:|
+| adds identical to main already | 7 |
+| adds where main placed a **different** name | 19 |
+| adds genuinely clean | **0** |
+| changes where the target name is already main's, elsewhere | 36 |
+| changes genuinely clean | 4 |
+
+And the closing check: **at all 19 VAs where main placed a different name, main's
+incumbent already reads 100.0 %** — scoring-equivalent, nothing to win. laneAT's
+concurrent +520 consumed the entire vein.
+
+> ★**Worker A's net-new contribution to current main is 0 strict.** The +26 was
+> real at its base and is double-counted now. This is the **third** independent
+> instance in this one lane of *two lanes on one evidence channel must measure
+> the union, never the sum* — and the first where a fully-measured, correctly
+> A/B'd, honestly-decomposed result evaporated purely on timing.
+
+Worker A also refuted two of its own tool assumptions (the free-name test must be
+**per-unit**, since objdiff pairs by name inside one unit — `no_class` 186 → 30;
+and the class-completion pool must exclude names by the **post-repoint** map, as
+a TIE class keeps its incumbents — 16 of 26 entries had reused a still-mapped
+name, caught by the applier's duplicate check rather than by reasoning) and
+**refuted this lead's ≤16 B prior**: what is vacuous at 12 bytes is *byte*
+identity, not *relocation* content — a 12-byte adjustor thunk's branch target
+resolves to a specific function, and that band measured **best** (89.5 %).
+
 ### 2.1 The 24 landed repairs
 
 Most are clean 2-cycles within a byte-identical class, several semantically
@@ -278,6 +327,10 @@ absences.
   definer." **0 of 109** have no definer (§5).
 * ★**laneAS §13.2's "real splits defect"** — a TU0-era stale artifact, 0 defects
   (§4).
+* ★**Ours:** "≤16 B `_bijection_arbitrary` entries should mostly be refused
+  because byte identity is vacuous there." Refuted by worker A — the vacuous
+  thing at 12 bytes is *byte* identity, not *relocation* content, and the ≤16 B
+  band measured **best** (89.5 %) (§2.3).
 * **The assumption that byte-identical-class members are freely interchangeable.**
   They are for scoring, but the *set* is not freely splittable: applying 31 of a
   34-cycle permutation cost −1 (§2). Consistent with the fleet finding that 113
