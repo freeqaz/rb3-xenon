@@ -64,8 +64,19 @@ import xex_string_at as X  # noqa: E402
 WII = "/home/free/code/milohax/rb3/src"
 DC3 = "/home/free/code/milohax/dc3-decomp/src"
 
-SCN_RE = re.compile(r"^\?StaticClassName@([A-Za-z_]\w*)@@SA\?AVSymbol@@XZ$")
-TYP_RE = re.compile(r"^\?Type@([A-Za-z_]\w*)@@SA\?AVSymbol@@XZ$")
+# MSVC mangles a qualified name innermost-first, '@'-separated, terminated by '@@'
+# -- Hmx::Object::StaticClassName is ?StaticClassName@Object@Hmx@@SA?AVSymbol@@XZ.
+# These patterns MUST accept the namespaced form; a class-only pattern mis-verdicts
+# every Hmx::Object entry as FOREIGN and then "repairs" it to a bogus unqualified
+# ?StaticClassName@Object@@... (observed on VA 0x82271a90, which is in fact correct).
+SCN_RE = re.compile(r"^\?StaticClassName@([A-Za-z_]\w*(?:@[A-Za-z_]\w*)*)@@SA\?AVSymbol@@XZ$")
+TYP_RE = re.compile(r"^\?Type@([A-Za-z_]\w*(?:@[A-Za-z_]\w*)*)@@SA\?AVSymbol@@XZ$")
+
+
+def qual_parts(captured):
+    """'Object@Hmx' -> (innermost 'Object', display 'Hmx::Object')."""
+    parts = captured.split("@")
+    return parts[0], "::".join(reversed(parts))
 CLASS_RE = re.compile(r"\b(?:class|struct)\s+([A-Za-z_]\w*)\s*(?::[^;{]*)?\{")
 MSG_RE = re.compile(r'DECLARE_MESSAGE(?:_NOINLINE_DTOR)?\s*\(\s*([A-Za-z_]\w*)\s*,\s*"([^"]+)"')
 
@@ -306,14 +317,24 @@ def main():
                 rec["verdict"] = "FOREIGN"          # not even a classname symbol
             else:
                 kind = "SCN" if SCN_RE.match(sym) else "Type"
-                cls = mm.group(1)
+                cls, disp = qual_parts(mm.group(1))
                 tok, src = declared(cls, kind)
-                rec.update(mapped_class=cls, kind=kind, declared=tok, declared_in=src)
+                rec.update(mapped_class=disp, mapped_inner=cls, kind=kind,
+                           declared=tok, declared_in=src)
                 rec["verdict"] = "OK" if tok == s else ("NO_TOKEN" if tok is None else "MISMATCH")
         if rec["verdict"] in ("MISMATCH", "FOREIGN", "UNMAPPED", "NO_TOKEN") and not rec["ambiguous"]:
             r = resolve(s)
             if r:
                 k, cls = r
+                # The string resolves back to the class the map already names.
+                # The MAP is right and OUR SOURCE declares the wrong token --
+                # a data-constant bug in src/, not something to repair here.
+                # (Also guards the namespaced case: never rewrite Object@Hmx to
+                # a bogus unqualified Object@.)
+                if cls == rec.get("mapped_inner"):
+                    rec["source_token_bug"] = True
+                    rows.append(rec)
+                    continue
                 rec["repair"] = ("?StaticClassName@%s@@SA?AVSymbol@@XZ" % cls if k == "SCN"
                                  else "?Type@%s@@SA?AVSymbol@@XZ" % cls)
                 # a repair is harmful when the owning unit compiles the OLD name
@@ -330,6 +351,12 @@ def main():
     rep = [r for r in rows if r.get("repair")]
     print("repairable: %d  (of which harmful-to-apply: %d)"
           % (len(rep), sum(1 for r in rep if r.get("harmful"))))
+    stb = [r for r in rows if r.get("source_token_bug")]
+    if stb:
+        print("source-token bugs (map is RIGHT, src/ declares the wrong string): %d" % len(stb))
+        for r in stb:
+            print("    %s %-34s src says '%s', retail loads '%s'"
+                  % (r["va"], r.get("mapped_class", "?"), r.get("declared"), r["string"]))
     for r in rows:
         if r["verdict"] == "MISMATCH":
             print("  MISMATCH %s %-34s declares '%s' but loads '%s'%s"
