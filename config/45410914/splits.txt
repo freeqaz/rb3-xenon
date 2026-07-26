@@ -12663,3 +12663,12 @@ system/synth/Utl.cpp:
 system/world/Reflection.cpp:
 	.pdata      start:0x822123A8 end:0x822123B8
 	.text       start:0x824AA560 end:0x824AA5D8
+
+OvershellDir.cpp:
+	.pdata      start:0x821FB300 end:0x821FB378
+	.text       start:0x8230B598 end:0x8230B608
+	.text       start:0x8230B618 end:0x8230BE44
+
+PlayerDiffIcon.cpp:
+	.pdata      start:0x821FCDC8 end:0x821FCE30
+	.text       start:0x823258C8 end:0x82326274
