@@ -26,7 +26,9 @@ TrackPanelDir::TrackPanelDir()
       mCrowdMeter(this, 0), mBandScoreMultiplier(this, 0),
       mBandScoreMultiplierTrig(this, 0), mEndingBonus(this, 0), mScoreboard(this, 0),
       mPulseAnimGrp(this, 0), unk2ac(1), unk2ad(0), mTracksExtended(0),
-      mGemTrackRsrcMgr(this, 0), mVocals(1), mVocalsNet(0) {
+      mGemTrackRsrcMgr(0), mVocals(1), mVocalsNet(0), unk33c(this, 0),
+      unk348(this, 0), unk354(this, 0), unk360(this, 0), unk36c(this, 0),
+      unk378(0) {
     for (int i = 0; i < 4; i++) {
         mGemTracks.push_back(ObjPtr<RndDir>(this, 0));
         mGemNet[i] = 0;

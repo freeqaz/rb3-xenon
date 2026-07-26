@@ -488,22 +488,25 @@ int CacheXbox::ThreadGetDir(String searchPath, String basePath) {
     memset(&findData, 0, sizeof(findData));
     HANDLE hFind = FindFirstFileA(searchPath.c_str(), &findData);
     CacheDirEntry entry;
+    DWORD err;
 
-    if (hFind != INVALID_HANDLE_VALUE) {
+    if (hFind == INVALID_HANDLE_VALUE) {
+        err = GetLastError();
+    } else {
         while (true) {
             if (findData.nFileSizeHigh == 0) {
                 if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                     unsigned int len = searchPath.length();
                     unsigned int lastSlash = searchPath.find_last_of('\\');
-                    String suffix = searchPath.substr(lastSlash, len - lastSlash);
-                    String prefix = searchPath.substr(0, lastSlash + 1);
                     String newSearchPath = MakeString(
-                        "%s%s%s", prefix, findData.cFileName, suffix
+                        "%s%s%s", searchPath.substr(0, lastSlash + 1),
+                        findData.cFileName,
+                        searchPath.substr(lastSlash, len - lastSlash)
                     );
                     String newBasePath = MakeString(
                         "%s%s/", basePath, findData.cFileName
                     );
-                    int ret = ThreadGetDir(String(newBasePath), String(newSearchPath));
+                    int ret = ThreadGetDir(newSearchPath, newBasePath);
                     if (ret != 0) {
                         CloseHandle(hFind);
                         return ret;
@@ -520,17 +523,17 @@ int CacheXbox::ThreadGetDir(String searchPath, String basePath) {
                 break;
             }
         }
-    }
-
-    DWORD err = GetLastError();
-    if (hFind != INVALID_HANDLE_VALUE) {
+        err = GetLastError();
         CloseHandle(hFind);
     }
+
     if (err == 2 || err == 0x12) {
         return 0;
     }
-    if (err == 0x15 || err == 0x456 || err == 0x48f || err == 0x651
-        || !IsDeviceConnected(mCacheID.DeviceID())) {
+    if (err == 0x15 || err == 0x456 || err == 0x48f || err == 0x651) {
+        return 8;
+    }
+    if (!IsDeviceConnected(mCacheID.DeviceID())) {
         return 8;
     }
     return -1;

@@ -64,6 +64,8 @@ private:
     // access, no accessor call). Friend keeps the codegen-identical direct
     // access without publicizing the field.
     friend class BandDirector;
+    // Retail ClosetPanel::GetCurrentShot (0x825ED5F0) reads mCurrentShot directly.
+    friend class ClosetPanel;
 
     void StartShot_(CamShot *);
     float CalcFrame();

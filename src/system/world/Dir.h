@@ -100,6 +100,10 @@ public:
 #endif
 
 private:
+    // Retail ClosetPanel::FinishLoad (0x825ED3F8) takes &mCameraManager directly
+    // off the WorldDir it dynamic_casts to; no accessor call in the target bytes.
+    friend class ClosetPanel;
+
     void SyncHUD();
     void SyncHides(bool);
     void SyncBitmaps(bool);

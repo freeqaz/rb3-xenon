@@ -92,9 +92,24 @@ public:
     bool unk2ac; // 0x2ac
     bool unk2ad; // 0x2ad
     bool mTracksExtended; // 0x2ae
-    ObjPtr<GemTrackResourceManager> mGemTrackRsrcMgr; // 0x2b0
-    bool mVocals; // 0x2bc
-    bool mVocalsNet; // 0x2bd
-    int mGemInst[4]; // 0x2c0
-    bool mGemNet[4]; // 0x2d0
+    // Retail X360 stores this as a RAW owning pointer (4 bytes at this+0x320),
+    // not an ObjPtr: the ctor emits a single `stw r0, 0x320(this)` with no
+    // ObjRef construction, and ~TrackPanelDir plain-deletes it. (rb3-Wii's dev
+    // header declares an ObjPtr here; the retail bytes disagree, bytes win.)
+    GemTrackResourceManager *mGemTrackRsrcMgr; // 0x320
+    bool mVocals; // 0x324
+    bool mVocalsNet; // 0x325
+    int mGemInst[4]; // 0x328
+    bool mGemNet[4]; // 0x338
+    // Five further ObjPtr members retail constructs after mGemNet and destroys
+    // via EH funclets at this+0x33c/0x348/0x354/0x360/0x36c, plus a trailing
+    // bool at 0x378. Reconstructed from the target's cleanup census; absent
+    // from the rb3-Wii dev header. Sizing them exactly re-seats the virtual
+    // bases at 0x380 (Hmx::Object) / 0x3b4 (RndHighlightable), matching retail.
+    ObjPtr<EventTrigger> unk33c; // 0x33c
+    ObjPtr<EventTrigger> unk348; // 0x348
+    ObjPtr<EventTrigger> unk354; // 0x354
+    ObjPtr<EventTrigger> unk360; // 0x360
+    ObjPtr<RndGroup> unk36c; // 0x36c
+    bool unk378; // 0x378
 };

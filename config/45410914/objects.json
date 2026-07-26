@@ -1033,6 +1033,7 @@
    "band3/game/DeployCountTracker.cpp": "NonMatching",
    "band3/game/PerfectSectionTracker.cpp": "NonMatching",
    "band3/game/MultiplayerAnalyzer.cpp": "NonMatching",
+   "band3/game/StatMemberTracker.cpp": "NonMatching",
    "band3/game/TrackerManager.cpp": "NonMatching",
    "band3/game/NetGameMsgs.cpp": "NonMatching",
    "band3/game/UITransitionNetMsgs.cpp": "NonMatching",
@@ -1372,6 +1373,19 @@
     ]
    },
    "band3/meta_band/CharData.cpp": "NonMatching",
+   "band3/meta_band/ChooseColorPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_MAP_0x1C",
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/ContentDeletePanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/ContextChecker.cpp": "NonMatching",
    "band3/meta_band/CustomizePanel.cpp": {
     "status": "NonMatching",
@@ -1693,6 +1707,7 @@
     ]
    },
    "band3/bandtrack/GemSmasher.cpp": "NonMatching",
+   "band3/meta_band/ClosetPanel.cpp": "NonMatching",
    "band3/meta_band/ClosetMgr.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
