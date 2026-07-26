@@ -1,0 +1,533 @@
+{
+ "note": "laneAN 84-byte-cap experiment. legs_headconfig = worktree objs re-split from HEAD; legs_mainobjs = main repo current objs (read-only run). strict = match_percent_normalized==100.",
+ "legs_headconfig": {
+  "baseline": {
+   "matched_functions": 19414,
+   "total_functions": 69410,
+   "matched_code": 746296
+  },
+  "legs": {
+   "lifted_all_passes": {
+    "matched_functions": 37870,
+    "delta": 18456,
+    "lost": 0,
+    "gained": 18456,
+    "gained_gt84": 10706,
+    "gained_le44": 4161,
+    "gained_top10": [
+     [
+      6592,
+      "default/band3/meta_band/SaveLoadManager",
+      "fn_8254CC98"
+     ],
+     [
+      5932,
+      "default/Part",
+      "fn_8244B088"
+     ],
+     [
+      5768,
+      "default/OvershellPanel",
+      "fn_825B8428"
+     ],
+     [
+      5612,
+      "default/GemPlayer",
+      "fn_826C44F8"
+     ],
+     [
+      5228,
+      "default/band3/game/Player",
+      "fn_826A5738"
+     ],
+     [
+      5036,
+      "default/aes",
+      "fn_82BB8648"
+     ],
+     [
+      4948,
+      "default/aes",
+      "fn_82BB72F0"
+     ],
+     [
+      4676,
+      "default/RockCentral",
+      "fn_82501A08"
+     ],
+     [
+      4624,
+      "default/band3/meta_band/AppLabel",
+      "fn_825C8D98"
+     ],
+     [
+      4316,
+      "default/Performer",
+      "fn_8269DB30"
+     ]
+    ]
+   },
+   "lifted_strict_relocdesc": {
+    "matched_functions": 21106,
+    "delta": 1692,
+    "lost": 0,
+    "gained": 1692,
+    "gained_gt84": 448,
+    "gained_le44": 962,
+    "gained_top10": [
+     [
+      444,
+      "default/smallft",
+      "fn_82C34568"
+     ],
+     [
+      436,
+      "default/system/zlib/deflate",
+      "fn_8292CC28"
+     ],
+     [
+      408,
+      "default/CameraManager",
+      "fn_824BA360"
+     ],
+     [
+      404,
+      "default/mdct",
+      "fn_82C35EC8"
+     ],
+     [
+      400,
+      "default/band3/meta_band/AccomplishmentManager",
+      "fn_82557AF8"
+     ],
+     [
+      396,
+      "default/mdct",
+      "fn_82C36060"
+     ],
+     [
+      396,
+      "default/CameraShot",
+      "fn_824BEBD0"
+     ],
+     [
+      356,
+      "default/MemStats",
+      "fn_827D9400"
+     ],
+     [
+      348,
+      "default/Bitmap",
+      "fn_823FC550"
+     ],
+     [
+      340,
+      "default/linkhash",
+      "fn_82B84C40"
+     ]
+    ]
+   },
+   "lifted_pass1_only": {
+    "matched_functions": 32045,
+    "delta": 12631,
+    "lost": 0,
+    "gained": 12631,
+    "gained_gt84": 8733,
+    "gained_le44": 1707,
+    "gained_top10": [
+     [
+      6592,
+      "default/band3/meta_band/SaveLoadManager",
+      "fn_8254CC98"
+     ],
+     [
+      5932,
+      "default/Part",
+      "fn_8244B088"
+     ],
+     [
+      5768,
+      "default/OvershellPanel",
+      "fn_825B8428"
+     ],
+     [
+      5612,
+      "default/GemPlayer",
+      "fn_826C44F8"
+     ],
+     [
+      5228,
+      "default/band3/game/Player",
+      "fn_826A5738"
+     ],
+     [
+      5036,
+      "default/aes",
+      "fn_82BB8648"
+     ],
+     [
+      4948,
+      "default/aes",
+      "fn_82BB72F0"
+     ],
+     [
+      4624,
+      "default/band3/meta_band/AppLabel",
+      "fn_825C8D98"
+     ],
+     [
+      4316,
+      "default/Performer",
+      "fn_8269DB30"
+     ],
+     [
+      3648,
+      "default/PartLauncher",
+      "fn_82450B60"
+     ]
+    ]
+   },
+   "lifted_pass1_min48": {
+    "matched_functions": 30338,
+    "delta": 10924,
+    "lost": 0,
+    "gained": 10924,
+    "gained_gt84": 8733,
+    "gained_le44": 0,
+    "gained_top10": [
+     [
+      6592,
+      "default/band3/meta_band/SaveLoadManager",
+      "fn_8254CC98"
+     ],
+     [
+      5932,
+      "default/Part",
+      "fn_8244B088"
+     ],
+     [
+      5768,
+      "default/OvershellPanel",
+      "fn_825B8428"
+     ],
+     [
+      5612,
+      "default/GemPlayer",
+      "fn_826C44F8"
+     ],
+     [
+      5228,
+      "default/band3/game/Player",
+      "fn_826A5738"
+     ],
+     [
+      5036,
+      "default/aes",
+      "fn_82BB8648"
+     ],
+     [
+      4948,
+      "default/aes",
+      "fn_82BB72F0"
+     ],
+     [
+      4624,
+      "default/band3/meta_band/AppLabel",
+      "fn_825C8D98"
+     ],
+     [
+      4316,
+      "default/Performer",
+      "fn_8269DB30"
+     ],
+     [
+      3648,
+      "default/PartLauncher",
+      "fn_82450B60"
+     ]
+    ]
+   },
+   "lifted_pass1_min88": {
+    "matched_functions": 28147,
+    "delta": 8733,
+    "lost": 0,
+    "gained": 8733,
+    "gained_gt84": 8733,
+    "gained_le44": 0,
+    "gained_top10": [
+     [
+      6592,
+      "default/band3/meta_band/SaveLoadManager",
+      "fn_8254CC98"
+     ],
+     [
+      5932,
+      "default/Part",
+      "fn_8244B088"
+     ],
+     [
+      5768,
+      "default/OvershellPanel",
+      "fn_825B8428"
+     ],
+     [
+      5612,
+      "default/GemPlayer",
+      "fn_826C44F8"
+     ],
+     [
+      5228,
+      "default/band3/game/Player",
+      "fn_826A5738"
+     ],
+     [
+      5036,
+      "default/aes",
+      "fn_82BB8648"
+     ],
+     [
+      4948,
+      "default/aes",
+      "fn_82BB72F0"
+     ],
+     [
+      4624,
+      "default/band3/meta_band/AppLabel",
+      "fn_825C8D98"
+     ],
+     [
+      4316,
+      "default/Performer",
+      "fn_8269DB30"
+     ],
+     [
+      3648,
+      "default/PartLauncher",
+      "fn_82450B60"
+     ]
+    ]
+   }
+  }
+ },
+ "legs_mainobjs": {
+  "baseline": {
+   "matched_functions": 36069,
+   "total_functions": 69405,
+   "matched_code": 3195684
+  },
+  "legs": {
+   "lifted_all_passes": {
+    "matched_functions": 37300,
+    "delta": 1231,
+    "lost": 0,
+    "gained": 1231,
+    "gained_gt84": 318,
+    "gained_le44": 699,
+    "gained_top10": [
+     [
+      1572,
+      "default/MetaMusic",
+      "fn_8270FFD8"
+     ],
+     [
+      1252,
+      "default/TrackDir",
+      "fn_827DD608"
+     ],
+     [
+      1012,
+      "default/CharHair",
+      "fn_823A6B00"
+     ],
+     [
+      688,
+      "default/BandCharacter",
+      "fn_822814A8"
+     ],
+     [
+      512,
+      "default/CharBones",
+      "fn_823ADD08"
+     ],
+     [
+      476,
+      "default/BandMachineMgr",
+      "fn_825C2DD0"
+     ],
+     [
+      472,
+      "default/QuestManager",
+      "fn_823599E8"
+     ],
+     [
+      460,
+      "default/SpotlightDrawer_NG",
+      "fn_824D3F60"
+     ],
+     [
+      444,
+      "default/FileMergerOrganizer",
+      "fn_823DA4E0"
+     ],
+     [
+      440,
+      "default/VocalNoteList",
+      "fn_82781BA0"
+     ]
+    ]
+   },
+   "lifted_pass1_only": {
+    "matched_functions": 36534,
+    "delta": 465,
+    "lost": 0,
+    "gained": 465,
+    "gained_gt84": 131,
+    "gained_le44": 265,
+    "gained_top10": [
+     [
+      408,
+      "default/AccomplishmentPanel",
+      "fn_825F4B10"
+     ],
+     [
+      404,
+      "default/LightPreset",
+      "fn_824B14E8"
+     ],
+     [
+      404,
+      "default/LightPreset",
+      "fn_824B1818"
+     ],
+     [
+      404,
+      "default/SongParser",
+      "fn_82787A30"
+     ],
+     [
+      392,
+      "default/CharClipGroup",
+      "fn_8238EC78"
+     ],
+     [
+      392,
+      "default/CharBonesMeshes",
+      "fn_8237BD10"
+     ],
+     [
+      340,
+      "default/CharClipGroup",
+      "fn_8238F468"
+     ],
+     [
+      336,
+      "default/band3/game/Tracker",
+      "fn_826D1FC0"
+     ],
+     [
+      328,
+      "default/BandList",
+      "fn_8233DE90"
+     ],
+     [
+      328,
+      "default/CharClipGroup",
+      "fn_8238F5C8"
+     ]
+    ]
+   }
+  }
+ },
+ "base_side_funclet_pool": {
+  "objs_wired": 883,
+  "objs_with_code": 878,
+  "objs_on_disk": 1024,
+  "all_code_symbols": 441850,
+  "all_code_gt84": 84890,
+  "all_code_max": 15844,
+  "funclet_like": 73182,
+  "funclet_like_gt84": 65,
+  "funclet_like_max": 484,
+  "funclet_like_max_symbol": "??__EgPropPaths@@YAXXZ (Object.obj)",
+  "by_class": {
+   "__unwind$": {
+    "n": 67703,
+    "max": 68,
+    "gt84": 0
+   },
+   "__catch$": {
+    "n": 3579,
+    "max": 104,
+    "gt84": 25
+   },
+   "??__F": {
+    "n": 1510,
+    "max": 68,
+    "gt84": 0
+   },
+   "??__E": {
+    "n": 390,
+    "max": 484,
+    "gt84": 40
+   }
+  }
+ },
+ "static_estimate": {
+  "target_anon_fn_with_any_base_sig_match": 20397,
+  "already_eligible": 19051,
+  "newly_eligible": 1346,
+  "newly_eligible_gt84": 334,
+  "newly_eligible_max_size": 472,
+  "newly_eligible_reloc_desc_equal": 20
+ },
+ "precision_audit": {
+  "oracle": "scripts/target_symbol_map.json VA->name, excluding 1232 VAs flagged _bijection_arbitrary/_icf_arbitrary",
+  "population": "20277 lifted pairs on HEAD-config objs; 16639 auditable",
+  "by_pass": {
+   "p1_unique": {
+    "pairs": 12634,
+    "audited": 12166,
+    "precision": 0.982
+   },
+   "p2_greedy": {
+    "pairs": 5430,
+    "audited": 3434,
+    "precision": 0.363
+   },
+   "p2b_many_to_one": {
+    "pairs": 203,
+    "audited": 90,
+    "precision": 0.433
+   },
+   "p3_fuzzy": {
+    "pairs": 2010,
+    "audited": 949,
+    "precision": 0.667
+   }
+  },
+  "by_size_all_passes": {
+   "gt44": 0.864,
+   "gt84": 0.891,
+   "gt128": 0.942,
+   "gt256": 0.955,
+   "gt512": 0.995
+  },
+  "by_size_pass1": {
+   "gt44": 0.982,
+   "gt84": 0.983,
+   "gt128": 0.989
+  },
+  "reloc_descriptor_equal": {
+   "pairs": 1896,
+   "audited": 1639,
+   "precision": 0.916
+  }
+ },
+ "pass_split_mainobjs_gains": {
+  "p1": 465,
+  "p2": 699,
+  "p2b": 18,
+  "p3_pairs_formed": 1088,
+  "p3_strict_gains": 0
+ }
+}
