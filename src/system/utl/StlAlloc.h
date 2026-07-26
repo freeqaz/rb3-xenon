@@ -76,7 +76,15 @@ namespace STLPORT {
             // count to the pool dispatcher — no __FILE__/line/name (the
             // gStlAllocNameLookup typeid path is dead, MemTrack is compiled
             // out). See MemMgr.h retail ABI note.
-            return reinterpret_cast<pointer>(MemOrPoolAllocSTL(count * sizeof(T)));
+            //
+            // The byte count MUST stay a named local (mirroring deallocate()
+            // below, and DC3's StlAlloc.h). MSVC /O1 homes it into the caller's
+            // frame when this inlines, emitting one `stw <bytes>, __new_start$`
+            // ahead of the allocator call. Collapsing it to a single expression
+            // drops that store and costs 28 strict matches across the
+            // vector<T>::_M_insert_overflow_aux family. Verified 2026-07-26.
+            int size = count * sizeof(T);
+            return reinterpret_cast<pointer>(MemOrPoolAllocSTL(size));
 #endif
         }
 
