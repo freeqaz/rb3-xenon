@@ -278,3 +278,69 @@ was already a descendant of main's HEAD.)
    spatially, and **375 refused because the holder already reads strict-100**.
    Both correctly refused; the first is the natural population for a genuine
    arbitrary tag once §3's repoint-first order is exhausted.
+
+## 10. laneAO's own 6 splits requests: 4 landed (+4), 2 refuted (`3cdd8929`)
+
+Re-measured against current main, 2 builds per leg, unit-agnostic:
+**37,280 → 37,284 = +4, 0 losses**, replicated on the build-1 leg
+(37,278 → 37,282, identical gain set). None of the 4 VAs or names existed on
+main beforehand — no double-count with the concurrent map lanes.
+
+`?Init@SongPreview@@` (whole-range MOVE, and its `.pdata` record
+`0x82240328-0x82240330` verified against `band.exe`'s RUNTIME_FUNCTION table),
+`?OnPassthrough@Synth@@` (MOVE to `CheatProvider.cpp`), `?Save@FlowWhile@@`
+(CARVE out of `BandLabel.cpp`), `VorbisReader` ctor (pin+map, then source fix).
+
+★**The lever generalised: a pin whose function is unmapped HIDES the source
+defect — pin first, then read the residual offset delta as the struct
+correction.** Pinning the `VorbisReader` ctor alone measured **+0**: the newly
+paired ctor read 99.992 % with exactly one mismatch, `stw r29,0xec(r30)` vs our
+`0xc0`, delta −44 = **−0x2C** — confirming laneAO §7's standing `mHdrSize`
+prediction *to the byte*. Retail emits three consecutive zero stores at
+`0xec`/`0xf0`/`0xf4` = `mHdrSize`/`mHdrBuf`/`mCtrState`, i.e. `mHdrSize`
+immediately precedes `mHdrBuf` as in rb3-Wii's declaration order; it shifted
++0x2C with the TU5 tail and only the placeholder blob sits at `0xc0`. Relocating
+it *inside* the existing placeholder array keeps `sizeof` byte-identical, so the
+blast radius is nil. The pin and the header fix were measured as separate legs
+(+0 then +1): **neither pays without the other.**
+
+★**`?OnPassthrough@Synth@@`'s claimant was 5-wide, and COMDAT ordering is a NULL
+discriminator** — all five objs emit the identical COMDAT sequence, because the
+order is a property of the shared header, not of the obj. What did discriminate
+is spatial: `??$_Param_Construct@UCheat@CheatProvider@@…` at `0x826fe590`, a
+CheatProvider-only symbol, anchors the head of the retail run, and CheatProvider
+already owns the adjacent range on **both** the `.text` and the `.pdata` side.
+
+### Both refusals overturned their premise
+
+**Request 5 (`fn_826C44F8`, "5 un-split accessors") — refuted, and already
+matching.** Our `?Handle@GemPlayer@@` is 5,612 B = **0x15EC exactly**, retail has
+*one* `.pdata` record for the whole span, and it reads **100.000 %**. The 5
+accessors were `/Ob2`-inlined into it and do not exist as symbols in
+`GemPlayer.obj`; the retail instruction before each claimed entry point is
+mid-stream (`lwz r11,0(r11)`, `b -0x7c`, `rlwinm.`), never `blr` or padding.
+*Residue:* the map holds 5 interior-pointing entries — `0x826c48f8`,
+`0x826c4908`, `0x826c4910`, `0x826c4958`, `0x826c4970` — provably inert (no
+symbol to rename) but exactly the kind of wrong identity that manufactures a
+false source lead.
+
+**Request 6 (`CharClip.s`/`HamPlayerData.s` overlap) — refuted; the root cause
+is not a dtk over-carve.** `HamPlayerData` appears **zero** times in
+`splits.txt`, and `build/45410914/asm/HamPlayerData.s` is dated **Jun 11**,
+pre-dating the Jul-15 TU5 flip — it is **TU0-era residue that is no longer
+regenerated**. Proof: the stale `.s` claims `.pdata@0x821FB8D8 → fn_8237FBD8 len
+0x9C`, but the live `.pdata` at that address holds `fn_0x82310f98 len 0x48`, and
+no live `.pdata` record begins at `0x8237FBD8` at all. The live carve is a single
+function `[0x8237FBD4, +0x2C)` owned by `CharClip.cpp`, at 100.000 %. laneAO's
+*conclusion* (do not repoint) was right; its *reason* was half-right — retail is
+`subi r31,r12,0x80` at FBD4 then `mflr r12` at FBD8, so the `mflr` it read as "a
+real prologue at FBD8" is the **second instruction of `fn_8237FBD4`**.
+
+★**New trap for the index: stale `build/*/asm/*.s` files for units no longer in
+`splits.txt` are silently wrong and are never regenerated.** Any lane reading
+carve geometry from a `.s` must check the unit is still pinned and the file
+post-dates the TU5 flip. `0x8237fbd8 ?SetCharacter@HamPlayerData@@` is a
+surviving TU0-era address (inert today); since
+`system/hamobj/HamPlayerData.obj` does define the symbol, its true TU5 VA is
+findable with `homing_reverse.py`. **A sweep for other TU0-era survivors is
+worth a lane.**
