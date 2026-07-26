@@ -294,15 +294,29 @@ PowerPC does not have hardware instructions for converting between `uint64` and 
 
 **Symptom:** Code generates `fmadds` when you expect `fmuls + fadds` (or vice versa)
 
-**Solution:**
+> **⚠ CORRECTED 2026-07-26 — `#pragma fp_contract(off)` IS INERT ON THIS
+> TOOLCHAIN.** The pragma-based solution below was ported from generic MSVC
+> documentation and **does not work** in the rb3-xenon build; it was measured
+> producing no codegen change at all (lane AE2, commit `aba678b3`). Do not
+> spend attempts on it.
+>
+> **What actually works: break the contraction through a named object member.**
+> Give the multiply a named home so the add cannot be folded into it — e.g.
+> assign the product to a member/local that is itself read back, rather than
+> writing `a * b + c` as one expression. This flipped `NgFur::Shell`
+> 96.85% → 100%.
+>
+> The mechanism section above (contraction ON emits `fmadds`, OFF emits
+> `fmuls` + `fadds`) is still correct as a *description of the two shapes* —
+> it is only the pragma as a *lever* that is wrong.
+
+**Solution (DOES NOT WORK — kept only to document the dead end):**
 ```c
-// Force separate multiply and add
+// INERT on this toolchain: measured no effect.
 #pragma fp_contract(off)
 float CalculateValue(float a, float b, float c) {
-    return a * b + c;  // Generates: fmuls, fadds
+    return a * b + c;  // still generates fmadds here
 }
-
-// Re-enable for other code
 #pragma fp_contract(on)
 ```
 
