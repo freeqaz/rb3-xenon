@@ -11341,12 +11341,22 @@ CharacterCreatorPanel.cpp:
 	.pdata      start:0x82228810 end:0x82228980
 	.pdata      start:0x82228998 end:0x82228BF0
 	.pdata      start:0x82228BF0 end:0x82228DA0
-	.pdata      start:0x82228DB8 end:0x82228F28
+	.pdata      start:0x82228DB8 end:0x82228DC8
+	.pdata      start:0x82228F10 end:0x82228F28
 	.text       start:0x8260CFE8 end:0x8260D1B0
 	.text       start:0x8260D1B8 end:0x8260E6AC
 	.text       start:0x8260E70C end:0x826107F8
 	.text       start:0x82610800 end:0x826122E4
-	.text       start:0x82612460 end:0x82613A14
+	.text       start:0x82612460 end:0x826124E8
+	.text       start:0x826139B4 end:0x82613A14
+
+ChooseColorPanel.cpp:
+	.pdata      start:0x82228DC8 end:0x82228E70
+	.text       start:0x826124E8 end:0x82612EC8
+
+ContentDeletePanel.cpp:
+	.pdata      start:0x82228E70 end:0x82228F10
+	.text       start:0x82612EC8 end:0x826139B4
 
 GemManager.cpp:
 	.pdata      start:0x821F1790 end:0x821F17A8

@@ -1373,6 +1373,19 @@
     ]
    },
    "band3/meta_band/CharData.cpp": "NonMatching",
+   "band3/meta_band/ChooseColorPanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_MAP_0x1C",
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/ContentDeletePanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/ContextChecker.cpp": "NonMatching",
    "band3/meta_band/CustomizePanel.cpp": {
     "status": "NonMatching",
