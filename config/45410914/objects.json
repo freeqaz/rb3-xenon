@@ -1033,6 +1033,7 @@
    "band3/game/DeployCountTracker.cpp": "NonMatching",
    "band3/game/PerfectSectionTracker.cpp": "NonMatching",
    "band3/game/MultiplayerAnalyzer.cpp": "NonMatching",
+   "band3/game/StatMemberTracker.cpp": "NonMatching",
    "band3/game/TrackerManager.cpp": "NonMatching",
    "band3/game/NetGameMsgs.cpp": "NonMatching",
    "band3/game/UITransitionNetMsgs.cpp": "NonMatching",
@@ -1693,6 +1694,7 @@
     ]
    },
    "band3/bandtrack/GemSmasher.cpp": "NonMatching",
+   "band3/meta_band/ClosetPanel.cpp": "NonMatching",
    "band3/meta_band/ClosetMgr.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

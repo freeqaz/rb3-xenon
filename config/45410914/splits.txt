@@ -5412,8 +5412,12 @@ FixedSizeSaveable.cpp:
 	.text       start:0x827A3190 end:0x827A3228
 
 FreestyleMoveRecorder.cpp:
-	.pdata      start:0x82226750 end:0x82226858
-	.text       start:0x825ECBAC end:0x825EDAB0
+	.pdata      start:0x82226750 end:0x822267C0
+	.text       start:0x825ECBAC end:0x825ED2A0
+
+band3/meta_band/ClosetPanel.cpp:
+	.pdata      start:0x822267C0 end:0x82226858
+	.text       start:0x825ED2A0 end:0x825EDAB0
 
 AssetTypes.cpp:
 	.pdata      start:0x82226880 end:0x82226A98
@@ -8818,7 +8822,8 @@ band3/game/GemTrainerPanel.cpp:
 	.text       start:0x826AC678 end:0x826ADC68
 
 band3/game/Tracker.cpp:
-	.pdata      start:0x82234DC0 end:0x82234E50
+	.pdata      start:0x82234DC0 end:0x82234DF0
+	.pdata      start:0x82234E48 end:0x82234E50
 	.pdata      start:0x82234E50 end:0x82234E58
 	.pdata      start:0x82234E58 end:0x82234E68
 	.pdata      start:0x82234E68 end:0x82234E78
@@ -8841,7 +8846,8 @@ band3/game/Tracker.cpp:
 	.pdata      start:0x82234FB8 end:0x82234FD0
 	.pdata      start:0x82234FD0 end:0x82235018
 	.pdata      start:0x82235018 end:0x82235020
-	.text       start:0x826D0024 end:0x826D0B00
+	.text       start:0x826D0024 end:0x826D0478
+	.text       start:0x826D0AA8 end:0x826D0B00
 	.text       start:0x826D0B00 end:0x826D0B7C
 	.text       start:0x826D0B80 end:0x826D0C00
 	.text       start:0x826D0C00 end:0x826D0CA0
@@ -8864,6 +8870,10 @@ band3/game/Tracker.cpp:
 	.text       start:0x826D2170 end:0x826D2280
 	.text       start:0x826D2280 end:0x826D2710
 	.text       start:0x826D2710 end:0x826D27C4
+
+band3/game/StatMemberTracker.cpp:
+	.pdata      start:0x82234DF0 end:0x82234E48
+	.text       start:0x826D0478 end:0x826D0AA8
 
 band3/meta_band/SongRecord.cpp:
 	.pdata      start:0x82222FB0 end:0x82222FB8
