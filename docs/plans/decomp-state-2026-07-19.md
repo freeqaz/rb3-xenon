@@ -195,6 +195,28 @@ measured: range count fell **5,172 → 4,694, 478 ranges silently vanished**.
 **Move `.pdata` explicitly.** (Not the cause of the −23 — re-running with `.pdata`
 untouched gave the identical −23/49/72 — but a live foot-gun on its own.)
 
+### ★ Two inference rules for diagnosing a "wrong" unit or a "missing" class
+
+★**Before calling any pin a PHANTOM, `grep '#include "[^"]*\.cpp"'` in the owning
+`.cpp`.** Scatter-wiring is deliberate and widespread — a sweep of 49 suspect
+units found **20 of 49 scatter-wired** (e.g. `HamCamTransform.cpp` carries **nine**
+`#define gRev`-guarded `#include "….cpp"` lines; `Character` 4, `EventTrigger` 5,
+`LightPreset` 5, `MeshAnim` 6). **All 49 resolved to a real source file**, so
+foreign-class symbols in a unit are usually *intended*, not a mis-pin. A lane
+retracted a whole "DC3-only files pinned onto spans that never held them" finding
+to this rule.
+★Corollary on scope: a tool reading the **compiled `.obj`** already sees
+post-include content, so existing scatter wiring does **not** loosen a bucket it
+measured. *Adding* a scatter include is a different and much larger change.
+
+★★**ABSENCE FROM `../rb3` DOES NOT PROVE ABSENCE FROM RB3-360 RETAIL.** `../rb3`
+is the **Wii dev** decomp, and Wii is the **cut-down SKU**. A class missing there
+may still exist in the 360 retail binary. ⇒ Downgrade any "this class does not
+exist in RB3" row from **permanently unfixable** to **"no RB3 oracle evidence —
+unreachable pending a second source."** (Dance-Central-lineage names like
+`HamMove::LocalizedName`, `DancerFrame`, `DetectFrame` remain very unlikely, but
+that is a prior, not proof.)
+
 ### Refusals worth not re-funding
 `_bijection_arbitrary` ceiling **+2** (1,205 of 1,207 already at 100) ·
 `.pdata` parentage decides **2.8%** of the unreachable pool · the 84-byte
