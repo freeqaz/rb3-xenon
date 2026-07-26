@@ -1580,9 +1580,7 @@ DepthBuffer3D.cpp:
 	.pdata      start:0x822371F0 end:0x82237200
 	.pdata      start:0x82237208 end:0x82237210
 	.pdata      start:0x82237218 end:0x82237228
-	.pdata      start:0x82237230 end:0x82237248
-	.pdata      start:0x82237260 end:0x82237268
-	.pdata      start:0x82237270 end:0x82237278
+	.pdata      start:0x82237230 end:0x82237238
 	.pdata      start:0x82237958 end:0x82237968
 	.pdata      start:0x822381B0 end:0x822381B8
 	.pdata      start:0x82238880 end:0x82238888
@@ -1602,11 +1600,7 @@ DepthBuffer3D.cpp:
 	.text       start:0x826FB758 end:0x826FB9D0
 	.text       start:0x826FBA9C end:0x826FBAC8
 	.text       start:0x826FBC00 end:0x826FBD60
-	.text       start:0x826FBDB0 end:0x826FBEE8
-	.text       start:0x826FBF60 end:0x826FBF68
-	.text       start:0x826FBFC0 end:0x826FBFE8
-	.text       start:0x826FC040 end:0x826FC068
-	.text       start:0x826FC0E0 end:0x826FC0E8
+	.text       start:0x826FBDB0 end:0x826FBE68
 	.text       start:0x82701EF8 end:0x82701F80
 	.text       start:0x82709BF8 end:0x82709C20
 	.text       start:0x82710D10 end:0x82710DBC
@@ -2627,7 +2621,6 @@ UI.cpp:
 	.pdata      start:0x82209000 end:0x82209158
 	.pdata      start:0x82218938 end:0x82218958
 	.pdata      start:0x82231030 end:0x82231038
-	.pdata      start:0x82237308 end:0x82237318
 	.pdata      start:0x82245D60 end:0x82245D68
 	.pdata      start:0x82245D80 end:0x82245D88
 	.pdata      start:0x82245D90 end:0x82245D98
@@ -2644,7 +2637,6 @@ UI.cpp:
 	.text       start:0x823F4A30 end:0x823F5C90
 	.text       start:0x8251CD08 end:0x8251CE24
 	.text       start:0x8268B9A0 end:0x8268B9EC
-	.text       start:0x826FC4E8 end:0x826FC560
 	.text       start:0x828024B0 end:0x82802508
 	.text       start:0x828025B0 end:0x82802608
 	.text       start:0x82802630 end:0x82802688
@@ -5040,10 +5032,7 @@ UsbMidiGuitarMsgs.cpp:
 
 Sequence.cpp:
 	.pdata      start:0x822073A8 end:0x822073B0
-	.pdata      start:0x82237258 end:0x82237260
-	.pdata      start:0x82237268 end:0x82237270
-	.pdata      start:0x822372B8 end:0x822372D8
-	.pdata      start:0x822372F8 end:0x82237308
+	.pdata      start:0x82237248 end:0x82237288
 	.pdata      start:0x82237CE0 end:0x82237CF0
 	.pdata      start:0x82237CF0 end:0x82237D00
 	.pdata      start:0x82237D00 end:0x82237D08
@@ -5062,10 +5051,7 @@ Sequence.cpp:
 	.pdata      start:0x8223B090 end:0x8223B0A8
 	.text       start:0x823D3910 end:0x823D3918
 	.text       start:0x823DA0B8 end:0x823DA104
-	.text       start:0x826FBF68 end:0x826FBFC0
-	.text       start:0x826FBFE8 end:0x826FC040
-	.text       start:0x826FC268 end:0x826FC360
-	.text       start:0x826FC468 end:0x826FC4E0
+	.text       start:0x826FBEE8 end:0x826FC0E8
 	.text       start:0x82705838 end:0x827058B8
 	.text       start:0x827058B8 end:0x82705950
 	.text       start:0x82705950 end:0x82705A50
@@ -6978,7 +6964,9 @@ BinkMovieSys_Xbox.cpp:
 	.text       start:0x82746128 end:0x82746150
 
 system/synth_xbox/SynthSample.cpp:
+	.pdata      start:0x8225B660 end:0x8225B668
 	.pdata      start:0x8225B678 end:0x8225B680
+	.text       start:0x82B6C6F8 end:0x82B6C750
 	.text       start:0x82B6C7C0 end:0x82B6C830
 
 CrazeHollaback.cpp:
@@ -11226,9 +11214,7 @@ TrackConfig.cpp:
 system/synth/Synth.cpp:
 	.pdata      start:0x8222AC70 end:0x8222AC78
 	.pdata      start:0x82237228 end:0x82237230
-	.pdata      start:0x82237288 end:0x822372A8
-	.pdata      start:0x822372D8 end:0x822372E8
-	.pdata      start:0x82237318 end:0x82237320
+	.pdata      start:0x82237288 end:0x82237320
 	.pdata      start:0x82237320 end:0x82237378
 	.pdata      start:0x82237378 end:0x82237380
 	.pdata      start:0x82237380 end:0x82237390
@@ -11243,9 +11229,7 @@ system/synth/Synth.cpp:
 	.pdata      start:0x822378F0 end:0x822378F8
 	.text       start:0x8262F310 end:0x8262F368
 	.text       start:0x826FBD60 end:0x826FBDB0
-	.text       start:0x826FC0E8 end:0x826FC1E0
-	.text       start:0x826FC368 end:0x826FC3E0
-	.text       start:0x826FC568 end:0x826FC5C0
+	.text       start:0x826FC0E8 end:0x826FC5C0
 	.text       start:0x826FC5C0 end:0x826FC9A4
 	.text       start:0x826FC9A8 end:0x826FCA08
 	.text       start:0x826FCA10 end:0x826FCA90
@@ -11803,16 +11787,16 @@ Campaign.cpp:
 	.text       start:0x822EA154 end:0x822EA9F0
 
 system/synth/SynthSample.cpp:
+	.pdata      start:0x82237238 end:0x82237248
 	.pdata      start:0x82239F68 end:0x8223A048
 	.pdata      start:0x8223A068 end:0x8223A070
 	.pdata      start:0x8223A080 end:0x8223A088
-	.pdata      start:0x8225B660 end:0x8225B668
 	.pdata      start:0x8225B6B0 end:0x8225B6B8
 	.pdata      start:0x8225C5D8 end:0x8225C5E0
+	.text       start:0x826FBE68 end:0x826FBEE8
 	.text       start:0x82728028 end:0x82728CFC
 	.text       start:0x82728E38 end:0x82728FDC
 	.text       start:0x82729080 end:0x827291F4
-	.text       start:0x82B6C6F8 end:0x82B6C750
 	.text       start:0x82B6CAB0 end:0x82B6CAF8
 	.text       start:0x82B801A8 end:0x82B801D4
 
@@ -12449,9 +12433,3 @@ band3/meta_band/MainHubPanel.cpp:
 band3/meta_band/BandMachineMgr.cpp:
 	.pdata      start:0x822237D0 end:0x822237E0
 	.text       start:0x825C1EB0 end:0x825C1F28
-
-system/synth/Sequence.cpp:
-	.pdata      start:0x82237248 end:0x82237258
-	.pdata      start:0x82237278 end:0x82237288
-	.text       start:0x826FBEE8 end:0x826FBF60
-	.text       start:0x826FC068 end:0x826FC0E0
