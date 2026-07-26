@@ -142,6 +142,11 @@ this lane's or laneAM's fills (vendor window excluded):
 That is **just over half of all 36,069 strict matches**, re-classified by a
 signal that never looks at bytes.
 
+After this lane's micro-pin wave (below) the pool is **19,029 anonymous /
+18,181 PROVEN (95.5%) / 532 CONTRADICTED / 313 undecidable** — every one of the
+591 new matches is PROVEN *by construction*, which makes them the
+highest-evidence-class fills this project has landed.
+
 ### Is it circular? Measured, and mostly no
 
 The concern is real: both sides of the comparison come from `splits.txt` pins, so
