@@ -10751,8 +10751,8 @@
  "0x822a8340": "?resize@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUDistEntry@@@Z",
  "0x822a83c0": "??$_Destroy_Range@PAUNavItem@HamNavProvider@@@stlpmtx_std@@YAXPAUNavItem@HamNavProvider@@0@Z",
  "0x822a8418": "??1?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
- "0x822a8778": "??$__uninitialized_fill_n@PAUEyeDesc@CharEyes@@IU12@@stlpmtx_std@@YAPAUEyeDesc@CharEyes@@PAU12@IABU12@ABU__false_type@0@@Z",
- "0x822a8810": "??$__uninitialized_copy@PBUEyeDesc@CharEyes@@PAU12@@stlpmtx_std@@YAPAUEyeDesc@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z",
+ "0x822a8778": "??$__uninitialized_fill_n@PAUNavItem@HamNavProvider@@IU12@@stlpmtx_std@@YAPAUNavItem@HamNavProvider@@PAU12@IABU12@ABU__false_type@0@@Z",
+ "0x822a8810": "??$__uninitialized_copy@PAUNavItem@HamNavProvider@@PAU12@@stlpmtx_std@@YAPAUNavItem@HamNavProvider@@PAU12@00ABU__false_type@0@@Z",
  "0x822a8a20": "??4?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x822a8e68": "?_M_fill_insert@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongPattern@@IABV3@@Z",
  "0x822a8f78": "??4?$ObjVector@VPiece@Piercing@OutfitConfig@@@@QAAXABV0@@Z",
@@ -10778,7 +10778,6 @@
  "0x822aa970": "??$__uninitialized_copy@PAVTransformArea@@PAV1@@stlpmtx_std@@YAPAVTransformArea@@PAV1@00ABU__false_type@0@@Z",
  "0x822aaa08": "??4?$ObjVector@VMatSwap@OutfitConfig@@@@QAAXABV0@@Z",
  "0x822ab0b0": "?_M_fill_insert@?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVTransformCrowd@@IABV3@@Z",
- "0x822ab128": "?_M_insert_overflow_aux@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTransformArea@@ABV3@ABU__false_type@2@I_N@Z",
  "0x822abd60": "?_M_fill_insert@?$vector@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@IABU34@@Z",
  "0x822ad8b0": "?DataIndex@UIListProvider@@UBAHVSymbol@@@Z",
  "0x822b0ab0": "?SetFrameEx@BandCamShot@@MAAXMM@Z",
@@ -11354,8 +11353,8 @@
  "0x82387458": "?ListPollChildren@CharEyes@@UBAXAAV?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x823876a0": "?_M_erase@?$vector@UEyeDesc@CharEyes@@V?$StlNodeAlloc@UEyeDesc@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUEyeDesc@CharEyes@@PAU34@ABU__false_type@2@@Z",
  "0x82387710": "??$_Destroy_Range@PAUEyeDesc@CharEyes@@@stlpmtx_std@@YAXPAUEyeDesc@CharEyes@@0@Z",
- "0x82387768": "??$__uninitialized_copy@PAUNavItem@HamNavProvider@@PAU12@@stlpmtx_std@@YAPAUNavItem@HamNavProvider@@PAU12@00ABU__false_type@0@@Z",
- "0x82387800": "??$__uninitialized_fill_n@PAUNavItem@HamNavProvider@@IU12@@stlpmtx_std@@YAPAUNavItem@HamNavProvider@@PAU12@IABU12@ABU__false_type@0@@Z",
+ "0x82387768": "??$__uninitialized_copy@PBUEyeDesc@CharEyes@@PAU12@@stlpmtx_std@@YAPAUEyeDesc@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z",
+ "0x82387800": "??$__uninitialized_fill_n@PAUEyeDesc@CharEyes@@IU12@@stlpmtx_std@@YAPAUEyeDesc@CharEyes@@PAU12@IABU12@ABU__false_type@0@@Z",
  "0x82387890": "?_M_erase@?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUCharInterestState@CharEyes@@PAU34@ABU__false_type@2@@Z",
  "0x823878f8": "?_M_erase@?$vector@UEyeDesc@CharEyes@@V?$StlNodeAlloc@UEyeDesc@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUEyeDesc@CharEyes@@PAU34@0ABU__false_type@2@@Z",
  "0x82387960": "??$__destroy_range@PAUCharInterestState@CharEyes@@U12@@stlpmtx_std@@YAXPAUCharInterestState@CharEyes@@00@Z",
@@ -26825,5 +26824,6 @@
  "0x823246d8": "?PreLoad@InstrumentDifficultyDisplay@@UAAXAAVBinStream@@@Z",
  "0x823247f0": "?SyncProperty@InstrumentDifficultyDisplay@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82324bd0": "?PreLoad@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
- "0x82324be0": "?SyncProperty@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+ "0x82324be0": "?SyncProperty@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x822a84d8": "?_M_insert_overflow_aux@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTransformArea@@ABV3@ABU__false_type@2@I_N@Z"
 }
