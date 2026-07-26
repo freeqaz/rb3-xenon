@@ -337,44 +337,74 @@ test. What is true is that **84 B is where the funclet-shaped population runs
 out**, on both sides independently: 26,315 of 26,321 retail EH funclets are
 ≤ 84 B, and 99.91% of our base funclet-like symbols are.
 
-### What lifting it would expose — ★SIMULATED, NOT MEASURED
+### What lifting it would expose — ★MEASURED
 
-A worker built `capscan.rs` (preserved at `docs/plans/laneAN/cap/`) on top of
-**objdiff-core's own COFF reader and a verbatim copy of `funclet_signature`**, so
-symbol sizes and masking are exactly what the diff sees, plus a patch to
-`pair_funclets_by_bytes` (`docs/plans/laneAN/cap/objdiff-cap-lift.patch`). Its
-per-leg counts are in `docs/plans/laneAN/cap/measurements.json`.
+Full write-up: **`docs/plans/laneAN/objdiff-84byte-cap.md`**, with
+`capscan.rs` (an objdiff-cli example calling **objdiff-core's own COFF reader**,
+so sizes are byte-for-byte what the diff sees), `measurements.json`, and an
+**env-gated** patch `objdiff-cap-lift.patch` (`OBJDIFF_FUNCLET_GATE` /
+`_P1ONLY` / `_MIN` / `_NOFUZZY`, defaulting to stock when unset). It was applied
+to a **private copy** at `/home/free/tmp/objdiff-laneAN`; the fleet binary was
+never rebuilt or swapped, and with the gate off the patched binary produces a
+byte-identical `report.json` (md5 equal) — a clean control.
 
-> ★★**Read these as a prediction, not a result.** They come from the static
-> scanner, **not** from a `report.json` A/B: the worktree's `report.json` is the
-> untouched setup-time copy, and the scanner's own baseline (19,414) is its
-> count of currently-pairable symbols, **not** the binary's 36,659 strict.
-> Nothing here has been confirmed by a build, and no number below has been
-> folded into this lane's landed total.
+> ★★**An earlier revision of this section reported these as a simulation and
+> recommended relocation-descriptor equality as the honest gate. Both were
+> wrong and are withdrawn.** The legs below are real `report.json` A/Bs, and
+> reloc-descriptor equality is the *wrong* predicate here — see below.
 
-| simulated leg | Δ pairable | of which > 84 B |
-|---|--:|--:|
-| lift the base gate, all passes (incl. pass-3 ≥50% fuzzy) | +18,456 | 10,706 |
-| lift, pass 1 only (uniqueness on both sides) | +12,631 | 8,733 |
-| lift, pass 1 + min size 88 B | +8,733 | 8,733 |
-| **lift + require relocation-descriptor equality** | **+1,692** | 448 |
+**On main's current objs** (baseline 36,069 / 69,405, read-only run, 0 losses in
+every leg):
 
-The spread is the whole story. The permissive legs are enormous *because
-`function_reloc_diffs: None` makes the comparison blind to every callee* — the
-same defect that makes a 32-byte match nearly worthless, applied to a pool of
-87,761 symbols. The last leg is the only one that closes that hole
-(`named_symbol_signature` already carries the reloc descriptors), and it is **11×
-smaller**. Its top entries (`smallft`, `zlib/deflate`, `mdct`, `CameraManager`)
-are exactly the shape one expects to be genuinely right: large,
-self-contained, already-correct code that is simply unpaired because the target
-symbol is anonymous and the base symbol is mangled.
+| leg | Δ strict | gains > 84 B | gains ≤ 44 B |
+|---|--:|--:|--:|
+| lift the base gate, all passes | **+1,231** | 318 | 699 |
+| lift, **pass 1 only** | **+465** | 131 | 265 |
 
-**Recommendation: do not lift the bare-bytes variant. If anyone opens this door,
-open it only as `lift + reloc-descriptor equality`, and only after a real
-whole-binary `report.json` A/B — which this lane did not run.** Note also that
-the objdiff binary is shared fleet-wide, so any change must be A/B'd against a
-private build (`/home/free/tmp/objdiff-laneAN`), never by swapping
-`../objdiff/target/release/objdiff-cli`.
+Pass split of the 1,231: pass 1 = 465, pass 2 = 699, pass 2b = 18, **pass 3 = 0**
+(1,088 fuzzy pairs formed, none reached 100%).
+
+★**The same lift measures +18,456 on objs re-split from `HEAD`'s config.** That
+15× gap is the honesty fact, not the yield: main's `symbols.txt` +
+`target_symbol_map.json` are *ahead of HEAD*, so main's target objs already carry
+mangled names where HEAD's do not. **The lift is overwhelmingly a duplicate of
+what the name-side waves already harvest — but silently, with no manifest**,
+where `target_symbol_map.json` records `_bijection_arbitrary` / `_icf_arbitrary`.
+Generalisation worth carrying: *any* measurement of the anonymous-`fn_` pool is
+sensitive to how recently the target objs were re-split.
+
+**Per-pass precision** (agreement with the independent name in
+`target_symbol_map.json`, excluding the 1,232 VAs the map itself flags
+arbitrary):
+
+| pass | lifted pairs | audited | precision |
+|---|--:|--:|--:|
+| 1 — exact, unique on both sides | 12,634 | 12,166 | **98.2%** |
+| 2 — exact, ambiguous greedy zip | 5,430 | 3,434 | **36.3%** |
+| 2b — exact, many-to-one overflow | 203 | 90 | 43.3% |
+| 3 — same-size fuzzy ≥50% | 2,010 | 949 | 66.7% |
+
+★**The intuition inverts: size is not the danger, ambiguity is.** Within pass 1
+precision is flat in size (98.2% >44 B, 98.3% >84 B, 98.9% >128 B); the apparent
+size correlation is composition, because small symbols are disproportionately
+pass-2 ambiguous. A 5,036-byte instruction-exact hit
+(`fn_82BB8648` ↔ `rijndael_ecb_decrypt`) is not a coincidence.
+
+★**Reloc-descriptor equality is the WRONG honesty gate here** — this is the
+correction to my earlier recommendation. Only **1,896 of 20,277 lifted pairs
+(9.3%)** have equal reloc descriptors, because the target side's reloc targets
+are dtk's anonymous `fn_<VA>` names and can never equal our mangled base names
+except for externally-fixed symbols (`__savegprlr_*`, `__CxxFrameHandler`). Its
+precision is **91.6%, worse than plain pass-1 uniqueness**. **Uniqueness is the
+right gate.**
+
+**Judgement: do not lift it in the shared objdiff.** The yield today is +1,231
+(+3.4%), 58% of it arrives through passes whose precision is 36–43%, and
+`function_reloc_diffs: None` leaves it unauditable afterwards. If it is ever
+lifted, the configuration the data supports is **base side accepts any Code
+symbol, pass 1 only, minimum size 48 B** — 98.2% precision, 0 losses, +465 today
+— and it must keep `masked_pairing: true` and emit the pair list into a manifest
+the way the name-side waves do.
 
 The gate is therefore **incidental in form and load-bearing in effect**. The
 84 B figure should be quoted as an empirical ceiling of the *name* gate's
