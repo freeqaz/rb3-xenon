@@ -10,10 +10,26 @@ Two bad things follow:
 
   1.  The real owner's unit never gets that code, so its functions can never
       match -- the count is depressed.
-  2.  Worse, objdiff pairs anonymous (`fn_8XXXXXXX`) target functions against
-      our compiled COMDATs *positionally*.  Swallowed foreign code therefore
-      manufactures **fake 100% matches**: a target function that is not the
-      function we compiled, scoring 100 because the two happened to line up.
+  2.  Worse, objdiff can pair anonymous (`fn_8XXXXXXX`) target functions
+      against our compiled COMDATs *without a name*.  Swallowed foreign code
+      therefore manufactures **fake 100% matches**: a target function that is
+      not the function we compiled, scoring 100 anyway.
+
+      CORRECTION (laneAL, 2026-07-26): this is NOT positional, as an earlier
+      revision of this docstring claimed.  objdiff's `matching_symbols`
+      (objdiff-core/src/diff/mod.rs) pairs Code symbols by NAME only -- there
+      is no ordinal / section-offset fallback.  The real mechanism is
+      `pair_funclets_by_bytes` (mod.rs:1410-1627): a reloc-masked
+      byte-signature fallback gated by `is_funclet_like()` to names matching
+      `fn_<8hex>` / `__unwind$NNN` / `__catch$NNN` / `__unwind__merged_<addr>`
+      / `??__E...` / `??__F...`, requiring the signature to be byte-identical
+      AND unique on both sides.  (`reconcile_global_byte_matches` is the other
+      byte-based pass, but it explicitly REFUSES anonymous names.)
+      Consequence: the fake-match hazard is real but confined to
+      funclet-shaped symbols -- overwhelmingly <=68-byte MSVC PPC EH cleanup
+      funclets and init/atexit thunks.  Do not derive a general positional
+      risk model from this paragraph.  Evidence:
+      docs/plans/lane-al-autocarve-2026-07-26.md.
 
 Fixing this is a **MOVE**: shrink donor unit A's range and hand the freed span
 to claimant unit B.  It is only ever correct as **both halves at once** -- half
