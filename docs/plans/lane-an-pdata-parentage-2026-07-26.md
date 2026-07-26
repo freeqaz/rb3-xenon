@@ -203,6 +203,30 @@ functions newly claimed), with the parent's unit taken from **pre-laneAL** pins:
 > **162 fills are contradicted** (88 laneAM + 74 laneAL) and 370 more
 > contradictions predate both lanes (532 tree-wide).
 
+### ★ Adversarial verification of those verdicts
+
+The obvious attack: the parent→unit join goes through `splits.txt`, and **a
+pinned span can over-cover** (retail interleaves TUs), so a `CONTRADICTED`
+verdict might just be a bad pin on the *parent's* side. A separate worker
+adjudicated all 685 decided fills against evidence that does **not** come from
+the pin — the parent's mangled name from `target_symbol_map.json` joined to a
+COFF symbol-table index of which of our objs actually **defines** it
+(`scripts/harvest/obj_symbol_index.py`), the parent's own `report.json` unit and
+match percent, and the parent's depth inside its span:
+
+| pin verdict | independently CONFIRMED | UNDECIDABLE | **REFUTED** |
+|---|--:|--:|--:|
+| PROVEN (597) | 487 | 110 | **0** |
+| CONTRADICTED (88) | 47 | 40 | **1** |
+
+**One refutation in 685** (`0x825C5FB8`, claimed `band3/meta_band/AppLabel.cpp`,
+parent pinned in `OSCMessenger.cpp`). Where the independent channel can decide at
+all, the contradiction verdict is right **47 of 48 times (97.9%)**, and the
+PROVEN verdict is never overturned. Object-level evidence for the parent:
+426 `UNIQUE_PU` (exactly one of our objs defines it), 119 `MULTI_PU`, 140 with no
+obj evidence. Full record:
+`docs/plans/laneAN/fills-T1-independent-audit.json`.
+
 The `_splits_fill_unresolved_comment` doctrine in `scripts/target_symbol_map.json`
 — "treat all 1,627 as unit-attribution-unresolved" — can now be replaced by a
 **per-function verdict**, and should be.
