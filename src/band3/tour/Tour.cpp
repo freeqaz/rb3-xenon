@@ -321,7 +321,8 @@ bool Tour::HasAnnouncement() const { return GetAnnouncement() != ""; }
 
 Symbol Tour::GetGigFlavor() const {
     if (m_pTourProgress) {
-        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
+        Symbol tourSym = m_pTourProgress->GetTourDesc();
+        TourDesc *pTourDesc = GetTourDesc(tourSym);
         MILO_ASSERT(pTourDesc, 0x226);
         return pTourDesc->GetFlavorForGigNum(m_pTourProgress->GetNumCompletedGigs());
     } else
@@ -330,7 +331,8 @@ Symbol Tour::GetGigFlavor() const {
 
 Symbol Tour::GetTourGigGuideMap() const {
     if (m_pTourProgress) {
-        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
+        Symbol tourSym = m_pTourProgress->GetTourDesc();
+        TourDesc *pTourDesc = GetTourDesc(tourSym);
         if (pTourDesc)
             return pTourDesc->GetGigGuideMap();
     }
@@ -339,16 +341,18 @@ Symbol Tour::GetTourGigGuideMap() const {
 
 Symbol Tour::GetConclusionText() const {
     if (m_pTourProgress) {
-        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
-        MILO_ASSERT(pTourDesc, 0x246);
-        return pTourDesc->GetConclusionText();
-    } else
-        return "";
+        Symbol tourSym = m_pTourProgress->GetTourDesc();
+        TourDesc *pTourDesc = GetTourDesc(tourSym);
+        if (pTourDesc)
+            return pTourDesc->GetConclusionText();
+    }
+    return "";
 }
 
 Symbol Tour::GetAnnouncement() const {
     if (m_pTourProgress) {
-        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
+        Symbol tourSym = m_pTourProgress->GetTourDesc();
+        TourDesc *pTourDesc = GetTourDesc(tourSym);
         MILO_ASSERT(pTourDesc, 0x255);
         int gigs = m_pTourProgress->GetNumCompletedGigs();
         if (pTourDesc->HasAnnouncementScreen(gigs)) {
@@ -360,7 +364,8 @@ Symbol Tour::GetAnnouncement() const {
 
 Symbol Tour::GetMapScreen() const {
     if (m_pTourProgress && m_pTourProgress->IsOnTour()) {
-        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
+        Symbol tourSym = m_pTourProgress->GetTourDesc();
+        TourDesc *pTourDesc = GetTourDesc(tourSym);
         MILO_ASSERT(pTourDesc, 0x268);
         return pTourDesc->GetMapScreenForGigNum(m_pTourProgress->GetNumCompletedGigs());
     }
@@ -377,7 +382,8 @@ const char *Tour::GetProgressOwnerName() {
 int Tour::GetBronzeMedalGoalInCurrentTour() const {
     TourProgress *pProgress = m_pTourProgress;
     MILO_ASSERT(pProgress, 0x3A1);
-    TourDesc *pTourDesc = GetTourDesc(pProgress->GetTourDesc());
+    Symbol tourSym = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = GetTourDesc(tourSym);
     MILO_ASSERT(pTourDesc, 0x3A6);
     return pTourDesc->GetTourStarsBronzeGoalValue();
 }
@@ -385,7 +391,8 @@ int Tour::GetBronzeMedalGoalInCurrentTour() const {
 int Tour::GetSilverMedalGoalInCurrentTour() const {
     TourProgress *pProgress = m_pTourProgress;
     MILO_ASSERT(pProgress, 0x3AF);
-    TourDesc *pTourDesc = GetTourDesc(pProgress->GetTourDesc());
+    Symbol tourSym = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = GetTourDesc(tourSym);
     MILO_ASSERT(pTourDesc, 0x3B4);
     return pTourDesc->GetTourStarsSilverGoalValue();
 }
@@ -393,7 +400,8 @@ int Tour::GetSilverMedalGoalInCurrentTour() const {
 int Tour::GetGoldMedalGoalInCurrentTour() const {
     TourProgress *pProgress = m_pTourProgress;
     MILO_ASSERT(pProgress, 0x3BD);
-    TourDesc *pTourDesc = GetTourDesc(pProgress->GetTourDesc());
+    Symbol tourSym = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = GetTourDesc(tourSym);
     MILO_ASSERT(pTourDesc, 0x3C2);
     return pTourDesc->GetTourStarsGoldGoalValue();
 }
