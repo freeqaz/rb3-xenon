@@ -3,7 +3,11 @@
 **Merge-base:** main `71acd6e7` = **38,139** strict (the lane started at `620bfb21`
 = 37,619; main advanced twice mid-lane).
 
-> ## **38,139 → 38,185 = +46 strict, 0 real losses**
+> ## **+46 strict, 0 real losses — reproduced on two different bases**
+> `71acd6e7` 38,139 → **38,185**, and after merging main forward,
+> `ade6b32b` 38,259 → **38,305**. The identical +46 on two bases a full laneAT
+> round apart is the cross-check that the delta is independent and the rebase
+> faithful.
 > unit+name 47 gained / 1 lost · **name-only 46 gained / 0 lost** (the single
 > unit+name loss is `?SaveType@Object@Hmx@@` migrating DirLoader→Object with its
 > span — the pin move working, which is exactly what the unit-agnostic leg
