@@ -118,8 +118,14 @@ void ObjRefConcrete<T1, T2>::CopyRef(const ObjRefConcrete &o) {
 
 template <class T1, class T2>
 Hmx::Object *ObjRefConcrete<T1, T2>::SetObj(Hmx::Object *root_obj) {
-    T1 *obj = root_obj ? dynamic_cast<T1 *>(root_obj) : nullptr;
-    SetObjConcrete(obj);
+    // Retail X360 guards on the identity of the *current* referent rather than
+    // null-checking the incoming pointer: target emits `lwz r11,8(r31)` /
+    // `cmplw r11,r4` / `bne`, then an unconditional __RTDynamicCast. The
+    // apparent SetObjConcrete<T> vs SetObjConcrete<Hmx::Object> call
+    // difference is ICF folding of identical bodies, not a real divergence.
+    if (mObject != root_obj) {
+        SetObjConcrete(dynamic_cast<T1 *>(root_obj));
+    }
     return mObject;
 }
 

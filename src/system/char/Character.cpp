@@ -462,7 +462,6 @@ void Character::AddedObject(Hmx::Object *o) {
             }
         }
     }
-    ObjectDir::AddedObject(o);
 }
 
 void Character::RemovingObject(Hmx::Object *o) {
@@ -553,6 +552,10 @@ void Character::CalcBoundingSphere() {
 }
 
 bool Character::MakeWorldSphere(Sphere &s, bool b) {
+    if (b) {
+        s = mBounding;
+        return true;
+    }
     if (mSphere.GetRadius()) {
         Multiply(mSphere, mSphereBase->WorldXfm(), s);
         return true;
@@ -905,28 +908,22 @@ void Character::SyncShadow() {
 void Character::DrawLod(int lod) {
     int rndDrawMode = TheRnd.GetDrawMode();
     unsigned char opaqueBit = mDrawMode & 1;
-    if (rndDrawMode == 5)
+    if (rndDrawMode == 4)
         return;
-    if (rndDrawMode == 3) {
+    if (rndDrawMode == 2) {
         if (!mSpotCutout)
             return;
         if (!opaqueBit)
             return;
     }
-    if (rndDrawMode == 4) {
+    if (rndDrawMode == 3) {
         if (!mFloorShadow)
             return;
         if (!opaqueBit)
             return;
     }
-    DrawMode charDrawMode;
-    if (rndDrawMode == 3 || rndDrawMode == 4) {
-        charDrawMode = (DrawMode)4;
-    } else {
-        bool isExtrude = (rndDrawMode == 2);
-        charDrawMode = isExtrude ? kCharDrawTranslucent : mDrawMode;
-    }
-    DrawLodOrShadow(lod, charDrawMode);
+    bool useAll = rndDrawMode == 2 || rndDrawMode == 3 || rndDrawMode == 1;
+    DrawLodOrShadow(lod, useAll ? (DrawMode)4 : mDrawMode);
 }
 
 void Character::DrawLodOrShadow(int lod, DrawMode drawMode) {

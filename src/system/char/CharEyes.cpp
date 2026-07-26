@@ -503,11 +503,9 @@ BEGIN_COPYS(CharEyes)
 END_COPYS
 
 void CharEyes::ForceBlink() {
-    if (mHeadIKActive && !mBlinkEnabled) {
-        mBlinkEnabled = true;
-        mBlinkTimer = TheTaskMgr.Seconds(TaskMgr::kRealTime);
-        mBlinkCount++;
-    }
+    mBlinkEnabled = true;
+    mBlinkTimer = TheTaskMgr.Seconds(TaskMgr::kRealTime);
+    mBlinkCount++;
 }
 
 void CharEyes::SetEnableBlinks(bool b1, bool b2) {
@@ -589,8 +587,8 @@ void CharEyes::PollDeps(
     for (ObjVector<CharInterestState>::iterator it = mInterests.begin();
          it != mInterests.end();
          ++it) {
-        auto interestDir = it->mInterest->Dir();
-        if (it->mInterest && Dir() == interestDir) {
+        ObjectDir *dir = it->mInterest->Dir();
+        if (dir == Dir()) {
             changedBy.push_back(it->mInterest);
         }
     }

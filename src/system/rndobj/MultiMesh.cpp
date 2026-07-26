@@ -65,11 +65,18 @@ BEGIN_COPYS(RndMultiMesh)
     UpdateMesh();
 END_COPYS
 
+// Retail keeps the in-flight load revision in a file-scope mutable short (the
+// rb3-Wii oracle spells it `RndMultiMesh::gRev`) and hands the BinStreamRev
+// straight through as its BinStream base (base@0 => identity upcast, no insn).
+// That is why the target reads `lhz r5, <data>` instead of extracting bs.rev.
+unsigned short gInstanceLoadRev;
+
 INIT_REVS(5, 0)
 
 BEGIN_LOADS(RndMultiMesh)
     LOAD_REVS(bs)
     ASSERT_REVS(5, 0)
+    gInstanceLoadRev = d.rev;
     if (d.rev > 0)
         LOAD_SUPERCLASS(Hmx::Object)
     LOAD_SUPERCLASS(RndDrawable)
@@ -186,7 +193,7 @@ void RndMultiMesh::Instance::Save(BinStream &bs) const {
     bs << mXfm;
 }
 
-void RndMultiMesh::Instance::Load(BinStreamRev &bs) { LoadRev(bs.stream, bs.rev); }
+void RndMultiMesh::Instance::Load(BinStreamRev &bs) { LoadRev(bs, gInstanceLoadRev); }
 
 void RndMultiMesh::Instance::LoadRev(BinStream &bs, int rev) {
     bs >> mXfm;

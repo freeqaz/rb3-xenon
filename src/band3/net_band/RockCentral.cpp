@@ -1297,12 +1297,13 @@ void RockCentral::GetAllSonglists(
         }
         MILO_ASSERT(!playerIds.empty(), 0x8D6);
         INIT_DATAPOINT("songlists/get");
-        DP_KEYS2(locale, region)
         for (int i = 0; i < playerIds.size(); i++) {
             char buf[12];
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
+        DP_KEY(locale);
         ADD_DATA_PAIR(locale, SystemLanguage());
+        DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));
@@ -1324,12 +1325,13 @@ void RockCentral::GetClosedBattles(
         }
         MILO_ASSERT(!playerIds.empty(), 0x8FF);
         INIT_DATAPOINT("battles/closed/get");
-        DP_KEYS2(locale, region)
         for (int i = 0; i < playerIds.size(); i++) {
             char buf[12];
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
+        DP_KEY(locale);
         ADD_DATA_PAIR(locale, SystemLanguage());
+        DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));

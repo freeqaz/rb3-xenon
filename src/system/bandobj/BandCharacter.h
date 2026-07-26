@@ -71,24 +71,18 @@ public:
     virtual RndMesh *GetPatchMesh(Patch &);
     virtual RndTex *GetBandLogo();
     virtual void Compress(RndTex *, bool);
-#ifdef HX_NATIVE
-    // The Wii build leaves this empty (4-byte `blr`, matching the target): on
-    // PPC it returns whatever is in r3, which the patch-pre-render path tolerates.
-    // On native a non-void function that falls off the end is UB — the optimizer
-    // emits a trap (x86 `ud2` → SIGILL), which crashes OutfitConfig::DrawPreClear's
-    // BandPatchMesh::PreRender loop the moment a band character with patch meshes
-    // composes its outfit. BandCharacter IS an ObjectDir (via Character→RndDir→
-    // ObjectDir) and is the dir GetPatchMesh()/GetPatchTex() search for patch
-    // meshes/textures, so the character's own dir is the correct patch dir.
+    // Retail X360 body is `subi r3, r3, 0x268; blr` — i.e. it really does return
+    // `this`, adjusted from the BandCharDesc sub-object (at +0x268 in
+    // BandCharacter) back to the ObjectDir base at offset 0. The rb3-Wii oracle's
+    // empty body is a DEV-build artifact, not retail behaviour: BandCharacter IS
+    // an ObjectDir (via Character→RndDir→ObjectDir) and is the dir
+    // GetPatchMesh()/GetPatchTex() search for patch meshes/textures, so the
+    // character's own dir is the correct patch dir. This also fixes native, where
+    // falling off the end of a non-void function traps (x86 `ud2` → SIGILL) in
+    // OutfitConfig::DrawPreClear's BandPatchMesh::PreRender loop.
     virtual ObjectDir *GetPatchDir() {
         return static_cast<ObjectDir *>(static_cast<Character *>(this));
     }
-#else
-    // RB3-Wii leaves this empty (4-byte blr — returns whatever is in r3). MSVC
-    // X360 rejects a non-void function with no return (C4716), so return 0; the
-    // retail /O1 body is effectively empty either way.
-    virtual ObjectDir *GetPatchDir() { return 0; }
-#endif
     virtual void AddOverlays(BandPatchMesh &);
     virtual void MiloReload();
     virtual Action Filter(Hmx::Object *, Hmx::Object *, ObjectDir *);

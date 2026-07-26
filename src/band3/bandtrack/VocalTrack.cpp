@@ -633,10 +633,10 @@ bool VocalTrack::UseVocalHarmony() {
 }
 
 void VocalTrack::SetVocalStyle(VocalStyle style) {
-    if (HasNetPlayer())
-        unk2e5 = true;
-    else
-        unk2e5 = false;
+    // Retail (this SKU) predates the rb3-Wii DEV net-vocals addition: there is no
+    // HasNetPlayer()/unk2e5 (mRemoteBandVocals) block here -- the retail body is
+    // just the style-changed guard. Confirmed from the target asm (no leading
+    // vfptr load + bctrl, no stb to 0x305, and a leaf frame with no GPR saves).
     if (mVocalStyleOverride != style) {
         mVocalStyleOverride = style;
         UpdateVocalStyle();
@@ -1989,16 +1989,9 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
         arrow->SetPitched(!inPhonemePhrase);
         arrow->SetSpotlight(spotlight);
         bool clampPitch = true;
-        if (gDebugSpew) {
-            MILO_LOG("--------\n");
-            TheDebug << "singer->FrameTargetPitch()" << ": "
-                     << singer->mFrameTargetPitch << "\n";
-            TheDebug << "singer->FrameMicPitch()" << ": " << singer->mFrameMicPitch
-                     << "\n";
-            TheDebug << "singer->FrameBestHit()" << ": " << singer->mFrameBestHitScore << "\n";
-            TheDebug << "mPlayer->Freestyling()" << ": " << mPlayer->Freestyling()
-                     << "\n";
-        }
+        // Retail (this SKU) has NO gDebugSpew blocks anywhere in UpdatePitchArrow:
+        // the target function never loads the gDebugSpew global and makes exactly
+        // the 20 calls of the non-debug path (the rb3-Wii DEV decomp keeps them).
         if (enabled && inPhonemePhrase) {
             VocalPart *part = NULL;
             if (singer->mFrameAssignedPart > -1) {
@@ -2009,14 +2002,8 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
                 color = (VocalHUDColor)part->unkc8;
             }
             arrow->SetFrameScore(singer->mLastFrameMicEnergy, color, 0.0f);
-            if (gDebugSpew) {
-                MILO_LOG("phoneme phrase\n");
-            }
         } else if (matchType != 0 || 0.0f == singer->mFrameMicPitch) {
             arrow->SetFrameScore(0.0f, (VocalHUDColor)-1, 0.0f);
-            if (gDebugSpew) {
-                MILO_LOG("non-singing section\n");
-            }
         } else if (enabled && singer->mFrameTargetPitch > 0.0f) {
             VocalPart *part = NULL;
             float frameScore = singer->mFrameBestHitScore;
@@ -2030,37 +2017,25 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
             pitchFrame = singer->mFrameTargetPitch - singer->mFrameMicPitch;
             float harmonyScore = GetHarmonyScore(singerIdx);
             arrow->SetFrameScore(frameScore, color, harmonyScore);
-            if (gDebugSpew) {
-                MILO_LOG("singing\n");
-                TheDebug << "pitchFrame" << ": " << pitchFrame << "\n";
-                TheDebug << "frameScore" << ": " << frameScore << "\n";
-                TheDebug << "harmonyScore" << ": " << harmonyScore << "\n";
-            }
         } else {
             arrow->SetFrameScore(0.0f, (VocalHUDColor)-1, 0.0f);
             clampPitch = false;
         }
         if (singer->mFrameMicPitch > 0.0f) {
-            const Vector3 &v = arrow->LocalXfm().v;
-            float vx = v.x;
-            float vy = v.y;
-            float vz = v.z;
+            // Retail copies the whole translation by value into a stack temp and
+            // then writes v.z in BOTH arms (the target reads v.z back off the
+            // temp at 0x68(r1)); the rb3-Wii DEV form extracts x/y/z into three
+            // scalars and rebuilds a Vector3 temp at the call, which costs an
+            // extra float-store trio.
+            Vector3 v = arrow->LocalXfm().v;
             float pitchZ = mDir->PitchToZ(singer->mFrameMicPitch, clampPitch);
-            if (gDebugSpew) {
-                TheDebug << "pitchZ" << ": " << pitchZ << "\n";
-            }
-            if (std::fabs((pitchZ - vz / mDir->mPitchTopZ) - mDir->mPitchBottomZ) >
+            if (std::fabs((pitchZ - v.z / mDir->mPitchTopZ) - mDir->mPitchBottomZ) >
                 0.9f) {
+                v.z = pitchZ;
             } else {
-                pitchZ += mDir->mArrowSmoothing * (vz - pitchZ);
+                v.z = pitchZ + mDir->mArrowSmoothing * (v.z - pitchZ);
             }
-            if (gDebugSpew) {
-                TheDebug << "v.z" << ": " << pitchZ << "\n";
-            }
-            arrow->SetLocalPos(Vector3(vx, vy, pitchZ));
-        }
-        if (gDebugSpew) {
-            TheDebug << "pitchFrame" << ": " << pitchFrame << "\n";
+            arrow->SetLocalPos(v);
         }
         arrow->SetTiltDegrees(5.0f * pitchFrame);
         float volume = Clamp<float>(0, 1, 4.0f * singer->mLastFrameMicEnergy);
@@ -2606,10 +2581,11 @@ void VocalTrack::PushGameplayOptions(VocalParam p, int id) {
 }
 
 int VocalTrack::IncrementVolume(int val) {
-    switch (mCharOptParam) {
-    case kVocalParamMic1Gain:
-    case kVocalParamMic2Gain:
-    case kVocalParamMic3Gain:
+    // Retail lowers this as an if / else-if chain, NOT a switch: the three mic-gain
+    // params are tested with three separate `cmpwi`+`beq` (2, 3, 4) instead of the
+    // range compare (`cmpwi 4; ble`) that a switch's contiguous case labels produce.
+    if (mCharOptParam == kVocalParamMic1Gain || mCharOptParam == kVocalParamMic2Gain
+        || mCharOptParam == kVocalParamMic3Gain) {
         MILO_ASSERT(mCharOptMicID != -1, 0xE0F);
         if (val != 0) {
             TheProfileMgr.SetMicVol(
@@ -2618,19 +2594,19 @@ int VocalTrack::IncrementVolume(int val) {
             TheProfileMgr.UpdateMicLevels(mCharOptMicID);
         }
         return TheProfileMgr.GetMicVol(mCharOptMicID);
-    case kVocalParamMicVolume:
+    } else if (mCharOptParam == kVocalParamMicVolume) {
         if (val != 0) {
             TheProfileMgr.SetVocalCueVolume(val + TheProfileMgr.GetVocalCueVolume());
         }
         return TheProfileMgr.GetVocalCueVolume();
-    case kVocalParamCueVolume:
+    } else if (mCharOptParam == kVocalParamCueVolume) {
         if (val == 1) {
             TheProfileMgr.SetSynapseEnabled(true);
         } else if (val == -1) {
             TheProfileMgr.SetSynapseEnabled(false);
         }
         return TheProfileMgr.GetSynapseEnabled();
-    default:
+    } else {
         MILO_NOTIFY_ONCE(
             "trying to increment unimplemented vocal param %d", mCharOptParam
         );

@@ -192,7 +192,15 @@ void BandCharacter::Enter() {
 
 void BandCharacter::Exit() { Character::Exit(); }
 
+// Retail uses FUNCTION-LOCAL static Symbols here, not the file-scope ones: the
+// target (fn_8227C9F8) opens with two guard-bit tests (0x1, 0x2) against a
+// single guard word, each calling Symbol::Symbol(const char*) on first use.
+// That makes the function 41 instructions — big enough that /Ob2 declines to
+// inline it, which is why SyncObjects/DrawShowing call it out of line with a
+// `bl` + bool test instead of expanding the compare. Keep the statics.
 bool BandCharacter::InVignetteOrCloset() const {
+    static Symbol shell("shell");
+    static Symbol vignette("vignette");
     Symbol cliptype = mDriver->ClipType();
     bool ret = false;
     if (cliptype == shell || cliptype == vignette)
@@ -1495,9 +1503,6 @@ void BandCharacter::SetDeformation() {
         clip->ScaleDown(meshes, 0);
         clip->ScaleAdd(meshes, 1, 0, 0);
         meshes.PoseMeshes();
-        if (LOADMGR_EDITMODE && BoneServo()) {
-            BoneServo()->AcquirePose();
-        }
         for (ObjPtrList<CharIKScale>::iterator it = unk5c0.begin();
              it != unk5c0.end();
              ++it) {
@@ -1528,7 +1533,9 @@ void BandCharacter::SetDeformation() {
         for (ObjPtrList<RndMeshDeform>::iterator it = unk610.begin();
              it != unk610.end();
              ++it) {
-            (*it)->Reskin(mgr, (unk224 >> 1) & 1);
+            // Retail emits a single `extrwi r5, r11, 1, 30` (logical bit
+            // extract), not `srawi`+`clrlwi` — so the shift is UNSIGNED here.
+            (*it)->Reskin(mgr, ((unsigned int)unk224 >> 1) & 1);
         }
         for (ObjPtrList<CharCollide>::iterator it = unk5e0.begin();
              it != unk5e0.end();
@@ -1829,14 +1836,17 @@ OutfitConfig *BandCharacter::GetOutfitConfig(const char *cc) {
 RndTex *BandCharacter::GetPatchTex(Patch &patch) {
     static Message get_patch_tex("get_patch_tex", DataNode(0), DataNode(0));
     get_patch_tex[0] = DataNode(patch.mTexture);
-    get_patch_tex[1] = DataNode(patch.mMeshName);
+    {
+        DataNode meshNameNode(patch.mMeshName);
+        get_patch_tex[1] = meshNameNode;
+    }
     const DataNode &handled = HandleType(get_patch_tex);
     if (handled.Type() == kDataUnhandled || !handled.Obj<RndTex>()) {
         if (!mPrefab.Null()) {
             return Find<RndTex>(MakeString("prefab_art%02d.tex", patch.mTexture), false);
-        } else if (LOADMGR_EDITMODE)
-            return Find<RndTex>("patchtest.tex", false);
-        else
+        } else
+            // Retail X360 has no LOADMGR_EDITMODE "patchtest.tex" arm (rb3-Wii
+            // DEV-build addition), same as GetBandLogo above.
             return 0;
     }
     return handled.Obj<RndTex>();
@@ -1851,17 +1861,18 @@ RndMesh *BandCharacter::GetPatchMesh(Patch &patch) {
 }
 
 RndTex *BandCharacter::GetBandLogo() {
-    if (LOADMGR_EDITMODE) {
-        return TheRnd.GetNullTexture();
-    } else {
-        RndTex *ret;
-        DataNode handled = HandleType(get_band_logo_msg);
-        if (handled.Type() == kDataObject) {
-            ret = handled.Obj<RndTex>();
-        } else
-            ret = 0;
-        return ret;
-    }
+    // Retail X360 has NO LOADMGR_EDITMODE / GetNullTexture arm here — that is a
+    // rb3-Wii DEV-build addition. Retail also uses a FUNCTION-LOCAL static
+    // Message (guard bit + Symbol temp + atexit in the target) rather than the
+    // file-scope ::get_band_logo_msg from utl/Messages.h.
+    static Message get_band_logo_msg("get_band_logo");
+    RndTex *ret;
+    DataNode handled = HandleType(get_band_logo_msg);
+    if (handled.Type() == kDataObject) {
+        ret = handled.Obj<RndTex>();
+    } else
+        ret = 0;
+    return ret;
 }
 
 void BandCharacter::Compress(RndTex *tex, bool b) {
