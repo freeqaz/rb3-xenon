@@ -165,6 +165,11 @@ public:
     AccomplishmentProgress mAccomplishmentProgress; // retail 0x110
     int unk740;
     int mAccomplishmentDataUploadContextID; // 0x744
+    // Present on Wii (BandProfile.h:161) and in retail: CheckWebLinkStatus reads
+    // unk74c at 0x78c / unk754 at 0x794, i.e. +4 vs a layout without this slot.
+    // Restoring it makes the whole unk74c..mPerformanceDataList block land right
+    // and removes the need for the old `unk6f78pad` tail compensator below.
+    int unk748;
     int unk74c;
     int unk750;
     DataResultList unk754;
@@ -173,12 +178,9 @@ public:
     PerformanceData mPerformanceDataList[50]; // 0x788
     int unk6f70;
     int unk6f74;
-    // Extra filler int (offset-drift fix): mProfileAssets/mProfilePicture/
-    // mTourBand were all 4 bytes short vs retail (verified via
-    // Award::GrantAward `addi r24, 0x7c38` vs our prior 0x7c34, and
-    // BandProfile::GetBandLogoTex `lwz 0x7c80` vs our prior 0x7c7c — both
-    // off by the same +4, i.e. a genuine uniform shift, not a reordering).
-    int unk6f78pad;
+    // (Was `int unk6f78pad;` — a tail compensator for the missing `unk748`
+    // above.  Now that unk748 is restored the tail lands correctly without it,
+    // so the +4 is paid once, in the right place.)
     ProfileAssets mProfileAssets; // 0x6f78
     int unk6fb4;
     int unk6fb8;

@@ -28,7 +28,9 @@ FxSendFlanger::FxSendFlanger()
 }
 
 void FxSendFlanger::Save(BinStream &bs) {
-    bs << 7;
+    // RB3 retail is rev 6; DC3 (newer) bumped this to 7.  Target
+    // fn_82722E08 emits `li r11, 0x6`.
+    bs << 6;
     SAVE_SUPERCLASS(FxSend)
     bs << mDelayMs;
     bs << mRate;
