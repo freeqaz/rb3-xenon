@@ -2,7 +2,7 @@
 name: stack-layout
 description: Diff stack-frame layouts between target and base for a function. Labels base-side slots with source variable names from a MSVC /Z7 CodeView recompile. Identifies SWAPPED pairs (decl-reorder candidates), SHIFTED slots, DIFFER (different variables in same slot), and TGT_ONLY / BASE_ONLY (extra/missing locals). Filters out callee-save slots.
 argument-hint: "<symbol_name> [-u <unit>]"
-allowed-tools: Bash(python3 scripts/analysis/stack_layout.py *), Bash(python3 scripts/analysis/codeview_locals.py *), Bash(python3 scripts/analysis/diff_inspect.py *), Read, Grep, Glob
+allowed-tools: Bash(python3 scripts/analysis/stack_layout.py *), Bash(python3 scripts/analysis/codeview_locals.py *), Bash(python3 scripts/analysis/diff_inspect.py *), Bash(python3 scripts/harvest/class_layout_report.py *), Read, Grep, Glob
 ---
 
 # Stack Layout Diff Skill (MSVC X360)
@@ -59,6 +59,37 @@ with verdicts that point to specific source fixes.
 - Function diff shows many `[off:+N]` annotations
 - Frame sizes don't match between target and our build
 - You suspect a declaration reorder is the fix
+- ★ The whole diff is **one differing immediate** (`S=1`, so the function scores
+  99.9x%) and that immediate is `r1`-relative. That tier is a stack/layout tier
+  wearing an immediate mask — see the sizing rule below.
+
+## ★ First: is it a STACK slot or a CLASS offset?
+
+An `S=1` / single-immediate diff splits cleanly by base register, and the two
+halves have completely different fixes:
+
+| The differing immediate is… | It is a… | Fix with |
+|---|---|---|
+| `r1`- or (frame-aliased) `r31`-relative | **stack slot** | this skill — decl reorder / extra-or-missing local |
+| relative to an object pointer (`r3`, `r30`, …), or a `sizeof` in a `new`/`memset`, or a `subi rX, rY, N` base-sub-object adjust | **class layout** | `/struct-info` + `scripts/harvest/class_layout_report.py` |
+
+For the class-layout half, get ground truth from the compiler — **not** from the
+`// 0xHEX` header comments and not from `lookup_struct_offset`, both of which are
+measurably wrong in several headers:
+
+```bash
+python3 scripts/harvest/class_layout_report.py <Class> --exact --no-vtable --project-dir .
+python3 scripts/harvest/class_layout_report.py <Class> --offset 0x118 --project-dir .
+python3 scripts/harvest/class_layout_report.py <Class> --check-header --project-dir .
+```
+
+That report also prints `this` adjustors, which is what a
+`subi r3, r29, 0x1c` vs `0x64` mismatch is actually measuring — a base
+sub-object sitting at the wrong offset, not a stack slot.
+
+Note also that a *class* size change moves stack slots too: a caller that holds a
+by-value temp of a mis-sized class shows up here as a frame Δ. If frame Δ is a
+multiple of a class's size delta, fix the class first and re-run.
 
 ## Output knobs
 

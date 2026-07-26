@@ -1435,9 +1435,11 @@ AccomplishmentProvider::Custom(int, int data, UIListCustom *slot, Hmx::Object *o
         pMeter->SetShowing(false);
         if (!IsAccomplishmentSecret(pAccomplishment, profile)
             && !pAccomplishment->HideProgress()) {
+            int i1c;
+            int i20;
             if (!IsAccomplished(pAccomplishment->GetName(), profile)) {
-                int i1c = 0;
-                int i20 = 0;
+                i1c = 0;
+                i20 = 0;
                 if (pAccomplishment->InqProgressValues(profile, i1c, i20)) {
                     pMeter->SetValues(i1c, i20);
                     pMeter->SetShowing(true);

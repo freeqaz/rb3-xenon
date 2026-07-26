@@ -234,12 +234,21 @@ public:
     CharDriver *unk6ec; // 0x778
     int unk6f0; // 0x77c
     char unk6f4[64]; // 0x780
-    float unk6d8; // 0x7c0 (retail TU5: unk6d8 sits AFTER unk6f4[64], just before the
-                  // flags — SaveBoneAndChildren/TextureCompressed -4 offset proof)
-    unsigned int unk738; // 0x7c4 (retail TU5: flags precede the waypoint — OnPreClear stw 0x7c4 proof)
-    Waypoint *unk734; // 0x738
-    ObjPtrList<RndMesh> unk73c; // 0x73c
-    ObjPtrList<RndMesh> unk74c; // 0x74c
+    // retail TU5 (proved from the ~BandCharacter member-dtor sequence + the ctor's
+    // init-store sequence): the waypoint PRECEDES the flags, and rb3-Wii's
+    // `float unk6d8` (Wii 0x6d8, an edit-mode starvation timer) does NOT exist in
+    // the retail 360 build at all — the ctor emits exactly two zero-stores in this
+    // region (0x778 = unk6ec, 0x7c4 = unk738) and 0x778+4+4+64 == 0x7c0 exactly,
+    // leaving no slot for it. It is kept below under HX_NATIVE only.
+    Waypoint *unk734; // 0x7c0
+    unsigned int unk738; // 0x7c4
+    ObjPtrList<RndMesh> unk73c; // 0x7c8
+    ObjPtrList<RndMesh> unk74c; // 0x7dc
+#ifdef HX_NATIVE
+    // rb3-Wii-only edit-mode clip-starvation timer (Wii 0x6d8); absent from retail
+    // 360, so it lives after the matched layout.
+    float unk6d8;
+#endif
 #ifdef HX_NATIVE
     // wave-08 native-only: rebind bookkeeping for RebindOutfitBonesToOwnSkeleton
     // (called from Poll). mNativeReboundOnce latches to 1 once the rebind is COMPLETE

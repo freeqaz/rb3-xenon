@@ -581,7 +581,17 @@ class DecompMCPServer:
                 ),
                 Tool(
                     name="lookup_struct_offset",
-                    description="Look up which struct field is at a given offset. Use when objdiff shows offset mismatches like 'stw r10, 0x118(r11)' vs 'stw r10, 0xf4(r11)' to identify which field is being accessed.",
+                    description=(
+                        "Look up which struct field is at a given offset. Use when objdiff shows offset "
+                        "mismatches like 'stw r10, 0x118(r11)' vs 'stw r10, 0xf4(r11)' to identify which "
+                        "field is being accessed.\n\n"
+                        "By default this asks the COMPILER (cl.exe /d1reportSingleClassLayout via "
+                        "scripts/harvest/class_layout_report.py) and reports VERIFIED offsets. If the "
+                        "compiler cannot be consulted it falls back to the hand-written '// 0xHEX' header "
+                        "comments and labels the answer UNVERIFIED — those comments have been measured "
+                        "WRONG in several headers (CharEyes.h: 20 wrong offsets; SaveLoadManager.h: "
+                        "uniformly +4 stale), so never make a layout decision on an UNVERIFIED answer."
+                    ),
                     inputSchema={
                         "type": "object",
                         "properties": {
@@ -592,6 +602,14 @@ class DecompMCPServer:
                             "offset": {
                                 "type": "string",
                                 "description": "Offset to look up (hex with 0x prefix or decimal, e.g., '0x48' or '72')",
+                            },
+                            "verify": {
+                                "type": "boolean",
+                                "description": "Consult the compiler for ground truth (default true). Set false for an instant, UNVERIFIED comment-derived answer.",
+                            },
+                            "project_dir": {
+                                "type": "string",
+                                "description": "Worktree to compile the layout report in. Pass your worktree so the report reflects YOUR header edits.",
                             },
                         },
                         "required": ["class_name", "offset"],
@@ -2613,16 +2631,113 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
 
         return [TextContent(type="text", text=output)]
 
+    # ---- compiler-verified layout (preferred over // 0xHEX header comments) ----
+    #
+    # struct_db.sqlite -- and therefore every answer this tool used to give -- is
+    # parsed from the hand-written `// 0xHEX` comments in our headers.  Those are
+    # measurably wrong in places (CharEyes.h had 20 wrong offsets;
+    # SaveLoadManager.h's are uniformly +4 stale), and a silently-wrong oracle is
+    # worse than a missing one.  `cl.exe /d1reportSingleClassLayout<Class>` works
+    # through the wibo-wrapped X360 compiler and is authoritative, so we ask it
+    # first and only fall back to the comments with a loud UNVERIFIED banner.
+
+    _layout_cache: dict = {}
+
+    def _compiler_layout(self, class_name: str, project_dir: str | None):
+        """Parsed /d1reportSingleClassLayout for `class_name`, or None.
+
+        Cached per (class, project_dir, declaring-header mtime) so repeat queries
+        during one session cost nothing after the first compile.
+        """
+        import json as _json
+        import subprocess as _sp
+
+        root = Path(project_dir) if project_dir else self.project_root
+        script = root / "scripts" / "harvest" / "class_layout_report.py"
+        if not script.exists():
+            script = self.project_root / "scripts" / "harvest" / "class_layout_report.py"
+        if not script.exists():
+            return None
+
+        stamp = 0.0
+        for hdr in root.glob(f"src/**/{class_name}.h"):
+            try:
+                stamp = max(stamp, hdr.stat().st_mtime)
+            except OSError:
+                pass
+        key = (class_name, str(root), stamp)
+        if key in self._layout_cache:
+            return self._layout_cache[key]
+
+        try:
+            p = _sp.run(
+                [sys.executable, str(script), class_name, "--json",
+                 "--project-dir", str(root)],
+                cwd=str(root), capture_output=True, text=True, timeout=300,
+            )
+            parsed = _json.loads(p.stdout) if p.stdout.strip().startswith("{") else None
+        except Exception:
+            parsed = None
+        if parsed is not None and not parsed.get("classes"):
+            parsed = None
+        self._layout_cache[key] = parsed
+        return parsed
+
+    @staticmethod
+    def _layout_answer(parsed: dict, class_name: str, offset: int) -> str | None:
+        """Format the compiler's answer for `offset` in `class_name`."""
+        info = parsed["classes"].get(class_name)
+        if info is None:
+            cands = [k for k in parsed["classes"] if k.split("::")[-1] == class_name]
+            if not cands:
+                return None
+            info = parsed["classes"][cands[0]]
+        best = None
+        for m in info["members"]:
+            if m["offset"] <= offset and (best is None or m["offset"] > best["offset"]):
+                best = m
+        exact = [m for m in info["members"] if m["offset"] == offset]
+        tu = parsed.get("_tu", "?")
+        head = (f"**VERIFIED by the compiler** "
+                f"(`cl.exe /d1reportSingleClassLayout{class_name}` via TU `{tu}`)\n"
+                f"`sizeof({info['name']})` = {info['size']} (0x{info['size']:x})\n")
+        if exact:
+            m = exact[0]
+            scope = f"  (in base {' > '.join(m['in_base'])})" if m["in_base"] else ""
+            return (head + f"\n0x{offset:x} is **{info['name']}::{m['name']}**"
+                    + (f" — type `{m['type']}`" if m["type"] else "") + scope)
+        if best:
+            d = offset - best["offset"]
+            scope = f"  (in base {' > '.join(best['in_base'])})" if best["in_base"] else ""
+            return (head + f"\n0x{offset:x} is inside **{info['name']}::{best['name']}** "
+                    f"at +{d} (member starts at 0x{best['offset']:x})"
+                    + (f", type `{best['type']}`" if best["type"] else "") + scope)
+        return head + f"\nno member at or below 0x{offset:x}"
+
+    _UNVERIFIED_BANNER = (
+        "\n\n⚠ **UNVERIFIED — derived from the `// 0xHEX` comments in our headers, "
+        "not from the compiler.** Those comments are measurably wrong in several "
+        "headers (`CharEyes.h`: 20 wrong offsets; `SaveLoadManager.h`: uniformly "
+        "+4 stale). Get ground truth before acting:\n"
+        "```\npython3 scripts/harvest/class_layout_report.py {cls} --exact --no-vtable "
+        "--offset 0x{off:x} --project-dir <your worktree>\n"
+        "python3 scripts/harvest/class_layout_report.py {cls} --check-header "
+        "--project-dir <your worktree>   # audit the comments\n```"
+    )
+
     async def _lookup_struct_offset(self, args: dict) -> list[TextContent]:
         """Handle lookup_struct_offset tool call.
 
-        Enhanced with:
-        - Range-based lookup: finds member containing the offset (not just exact match)
-        - ObjPtr/ObjOwnerPtr/ObjPtrVec sub-offset reporting
-        - RB2 DWARF fallback when struct_db doesn't have the class
+        Resolution order:
+        1. the COMPILER (`/d1reportSingleClassLayout`) -- authoritative;
+        2. struct_db.sqlite exact match          -- UNVERIFIED (header comments);
+        3. struct_db range lookup                -- UNVERIFIED;
+        4. RB2 DWARF                             -- UNVERIFIED.
         """
         class_name = args.get("class_name", "")
         offset_str = args.get("offset", "")
+        verify = args.get("verify", True)
+        project_dir = args.get("project_dir")
 
         if not class_name or not offset_str:
             return [TextContent(type="text", text="Error: class_name and offset are required.")]
@@ -2635,6 +2750,25 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                 offset = int(offset_str)
         except ValueError:
             return [TextContent(type="text", text=f"Error: Invalid offset format: {offset_str}")]
+
+        unverified = self._UNVERIFIED_BANNER.format(cls=class_name, off=offset)
+
+        # (1) ground truth, straight from the compiler that lays the class out
+        if verify:
+            parsed = self._compiler_layout(class_name, project_dir)
+            if parsed:
+                answer = self._layout_answer(parsed, class_name, offset)
+                if answer:
+                    return [TextContent(type="text", text=answer)]
+            unverified = (
+                "\n\n⚠ **UNVERIFIED** — the compiler layout report was attempted and "
+                f"did not cover `{class_name}` (class incomplete in the resolved TU, "
+                "or no compile edge). The answer below comes from the `// 0xHEX` "
+                "header comments, which are measurably wrong in several headers. "
+                "Re-run with an explicit TU:\n```\npython3 "
+                f"scripts/harvest/class_layout_report.py {class_name} --tu <path.cpp> "
+                f"--offset 0x{offset:x} --project-dir <your worktree>\n```"
+            )
 
         # Use struct database from project root
         struct_db_path = self.project_root / "struct_db.sqlite"
@@ -2685,21 +2819,22 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                             text += (f"\n  - [{c['guard_kind']}] "
                                      f"{c['class_name']}::{c['member_name']} "
                                      f"(`{c['type_str']}`)  «{gate}»{note}")
-                    return [TextContent(type="text", text=text)]
+                    return [TextContent(type="text", text=text + unverified)]
 
                 # Exact match failed — try range-based lookup
                 range_result = self._lookup_offset_in_range(db, class_name, offset)
                 if range_result:
-                    return [TextContent(type="text", text=range_result)]
+                    return [TextContent(type="text", text=range_result + unverified)]
 
             # Fall back to RB2 DWARF data
             rb2_result = self._lookup_rb2_offset(class_name, offset)
             if rb2_result:
-                return [TextContent(type="text", text=rb2_result)]
+                return [TextContent(type="text", text=rb2_result + unverified)]
 
             return [TextContent(
                 type="text",
-                text=f"No field found at offset 0x{offset:x} in {class_name} or its parent classes."
+                text=f"No field found at offset 0x{offset:x} in {class_name} "
+                     f"or its parent classes." + unverified
             )]
         except Exception as e:
             return [TextContent(type="text", text=f"Error looking up offset: {e}")]

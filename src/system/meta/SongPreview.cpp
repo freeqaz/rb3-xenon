@@ -22,10 +22,16 @@ const float SongPreview::kSilenceVal = -48;
 #pragma region Hmx::Object
 
 SongPreview::SongPreview(const SongMgr &mgr)
-    : mSongMgr(mgr), mStream(0), mTexMovie(this), mInitted(0), mFader(0), mMusicFader(0),
-      mCrowdSingFader(0), mNumChannels(0), mAttenuation(0.0f), mPreviewDb(0.0f),
+    : mSongMgr(mgr), mStream(0),
+#ifdef HX_NATIVE
+      mTexMovie(this), mPreviewDb(0.0f), mInitted(0), mSecurePreview(0),
+#endif
+      mFader(0), mMusicFader(0),
+      mCrowdSingFader(0), mNumChannels(0), mAttenuation(0.0f),
       mState(kIdle), mStartMs(0.0f), mEndMs(0.0f), mStartPreviewMs(0.0f),
-      mEndPreviewMs(0.0f), mRegisteredWithCM(0), mSameSongRequested(0), mSecurePreview(0) {}
+      // Retail's ctor stores nothing at 0x6e (mSecurePreview) or 0x6f; every
+      // read of mSecurePreview is preceded by OnStart's `mSecurePreview = false`.
+      mEndPreviewMs(0.0f), mRegisteredWithCM(0), mSameSongRequested(0) {}
 
 SongPreview::~SongPreview() { Terminate(); }
 
@@ -68,9 +74,11 @@ bool SongPreview::IsWaitingToDelete() const { return mState == kDeletingSong; }
 bool SongPreview::IsFadingOut() const { return mState == kFadingOutSong; }
 
 void SongPreview::SetMusicVol(float f) {
+#ifdef HX_NATIVE
     if (mInitted == 0) {
         return;
     }
+#endif
     if (f < mMusicFader->GetTargetDb()) {
         mMusicFader->DoFade(f, 250.0f);
     } else {
@@ -79,24 +87,35 @@ void SongPreview::SetMusicVol(float f) {
 }
 
 void SongPreview::SetCrowdSingVol(float f) {
-    if (mInitted)
-        mCrowdSingFader->DoFade(f, 0.0f);
+#ifdef HX_NATIVE
+    if (!mInitted)
+        return;
+#endif
+    mCrowdSingFader->DoFade(f, 0.0f);
 }
 
 void SongPreview::Init() {
+#ifdef HX_NATIVE
     if (!mInitted) {
         mInitted = true;
+#else
+    {
+#endif
         mSong = 0;
         mSongContent = 0;
         RELEASE(mStream);
+#ifdef HX_NATIVE
         mTexMovie = nullptr;
+#endif
         mState = kIdle;
         mRestart = true;
         DataArray *cfg = SystemConfig("sound", "song_select");
         cfg->FindData("loop_forever", mLoopForever, true);
         cfg->FindData("fade_time", mFadeTime, true);
         cfg->FindData("attenuation", mAttenuation, true);
+#ifdef HX_NATIVE
         cfg->FindData("preview_db", mPreviewDb, true);
+#endif
         mFadeTime *= 1000.0f;
         mFader = Hmx::Object::New<Fader>();
         mMusicFader = Hmx::Object::New<Fader>();
@@ -106,8 +125,14 @@ void SongPreview::Init() {
 }
 
 void SongPreview::Terminate() {
+    // Retail has no mInitted guard here: the target starts straight at
+    // `lwz r4, 0x38(r3); bl DetachFader`.
+#ifdef HX_NATIVE
     if (mInitted) {
         mInitted = 0;
+#else
+    {
+#endif
         DetachFader(mMusicFader);
         DetachFader(mCrowdSingFader);
         mSong = 0;
@@ -116,7 +141,9 @@ void SongPreview::Terminate() {
         RELEASE(mFader);
         RELEASE(mMusicFader);
         RELEASE(mCrowdSingFader);
+#ifdef HX_NATIVE
         mTexMovie = nullptr;
+#endif
         if (mRegisteredWithCM) {
             TheContentMgr.UnregisterCallback(this, true);
             mRegisteredWithCM = 0;
@@ -128,10 +155,15 @@ void SongPreview::Start(Symbol song, TexMovie *texMovie) {
 #ifdef HX_NATIVE
     if (!mInitted)
         return; // Audio/synth not initialized on native
-#endif
     if (mInitted || !song.Null()) {
+#else
+    (void)texMovie;
+    {
+#endif
         MILO_ASSERT(mFader && mMusicFader && mCrowdSingFader,0x6c);
+#ifdef HX_NATIVE
         mTexMovie = texMovie;
+#endif
         if (song == mSong) {
             mSameSongRequested = true;
         } else {
@@ -151,7 +183,13 @@ void SongPreview::Start(Symbol song, TexMovie *texMovie) {
             }
             mSong = song;
             mRestart = true;
+            // Retail RB3-360 has no preview_db member (see SongPreview.h);
+            // the rb3-Wii oracle plays the music fader at 0 dB here.
+#ifdef HX_NATIVE
             mMusicFader->SetVal(mPreviewDb);
+#else
+            mMusicFader->SetVal(0.0f);
+#endif
             mCrowdSingFader->SetVal(kDbSilence);
             switch (mState) {
             case kIdle:
@@ -241,6 +279,7 @@ void SongPreview::PrepareSong(Symbol song) {
     RELEASE(mStream);
     DataArraySongInfo songInfo(mSongMgr.SongAudioData(song));
     const char *filename = songInfo.GetBaseFileName();
+#ifdef HX_NATIVE
     if (mTexMovie) {
         String str(mSongMgr.SongFilePath(song, "_prev.bik", 10));
 #ifdef __EMSCRIPTEN__
@@ -262,6 +301,7 @@ void SongPreview::PrepareSong(Symbol song) {
         mTexMovie->SetFile(gNullStr);
 #endif
     }
+#endif // HX_NATIVE
     mStream = TheSynth->NewStream(filename, mStartMs, 0, mSecurePreview);
     const std::vector<float> &pans = songInfo.GetPans();
     const std::vector<float> &vols = songInfo.GetVols();
@@ -340,9 +380,11 @@ void SongPreview::Poll() {
     case kFadingOutSong: {
         if (!mFader->IsFading()) {
             RELEASE(mStream);
+#ifdef HX_NATIVE
             if (HasMovie()) {
                 mTexMovie->SetFile(gNullStr);
             }
+#endif
             mState = kIdle;
         }
         break;

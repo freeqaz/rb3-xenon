@@ -194,7 +194,7 @@ void CharServoBone::DoRegulate(
     Transform &myxfm = mMe->DirtyLocalXfm();
     ClipPredict pred(driver->GetClip(), myxfm.v, GetZAngle(myxfm.m));
     pred.Predict(driver->mBeat, driver->mBeat + f3);
-    Vector3 pos(pred.mLastPos);
+    Vector3 pos(pred.mPos);
     float ang = pred.mAng;
     float deltaBeat = TheTaskMgr.DeltaBeat() / f4;
     Vector3 shapedDelta;

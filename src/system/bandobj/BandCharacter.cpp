@@ -90,7 +90,7 @@ BandCharacter::BandCharacter()
       unk650(this, kObjListNoNull), unk660(this, kObjListNoNull),
       unk670(this, kObjListNoNull), unk680(this, 0), unk68c(this, 0), unk698(this, 0),
       unk6a4(this, 0), unk6b0(this, 0), mUseMicStandClips(0), unk6bd(1), unk6c0(this, 0),
-      mInTourEnding(0), unk6ec(0), unk6d8(0), unk738(0), unk73c(this, kObjListNoNull),
+      mInTourEnding(0), unk6ec(0), unk738(0), unk73c(this, kObjListNoNull),
       unk74c(this, kObjListNoNull) {
     mGroupName[0] = 0;
     mOverrideGroup[0] = 0;
@@ -102,6 +102,7 @@ BandCharacter::BandCharacter()
     unk734->SetAngRadius(0.17453292f);
     unk734->SetStrictAngDelta(0.2617994f);
 #ifdef HX_NATIVE
+    unk6d8 = 0;
     mNativeReboundOnce = 0;
     mNativeReboundQuiet = 0;
     mNativeReboundBody = 0;
@@ -374,7 +375,9 @@ void BandCharacter::Poll() {
         }
     }
 
-    // Edit mode starvation handling - clear driver if clip near end
+    // Edit mode starvation handling - clear driver if clip near end.
+    // rb3-Wii dev-build only: retail 360 has no unk6d8 member (see BandCharacter.h).
+#ifdef HX_NATIVE
     if (LOADMGR_EDITMODE && unk6d8 < 0.0f && TheTaskMgr.DeltaSeconds() > 0.0f
         && Dir() != this) {
         if (mDriver && mDriver->FirstPlaying()) {
@@ -390,6 +393,7 @@ void BandCharacter::Poll() {
     }
 
     unk6d8 = TheTaskMgr.DeltaSeconds();
+#endif
 
     if (!mFrozen) {
         // Force vertical orientation.

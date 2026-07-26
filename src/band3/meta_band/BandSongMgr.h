@@ -117,12 +117,30 @@ public:
     std::list<int> unk114; // 0x130
     std::vector<Symbol> unk11c; // 0x138
     bool unk124; // 0x144
-    std::vector<String> mContentAltDirs; // 0x148 (retail: precedes the mgr pointers)
-    int mMaxSongCount; // 0x154
+    // Retail-only pair of members that rb3-Wii's dev decomp lacks. Evidence is
+    // the retail destructor (fn_8257A7E0): after tearing down mContentAltDirs at
+    // +0x160 it deallocates a THIRD vector at +0x148, reading _M_start from
+    // +0x148 and _M_end_of_storage from +0x150 and scaling the byte count with
+    // `srawi 3 / slwi 3` -- i.e. a plain 3-pointer STLport vector whose element
+    // type is 8 bytes wide and trivially destructible (no per-element destroy
+    // loop is emitted). Nothing else in the TU touches +0x148..+0x154, so the
+    // element type cannot be pinned any further from this binary; pair<float,
+    // float> is used because SongRanking::mTierRanges already instantiates that
+    // exact specialization, so no extra COMDAT is introduced. The 4 bytes at
+    // +0x154 are likewise never referenced in-TU but must exist: mUpgradeMgr is
+    // provably at +0x158 (ClearCachedContent, a 100% match).
+    std::vector<std::pair<float, float> > unk148; // 0x148
+    int unk154; // 0x154
     SongUpgradeMgr *mUpgradeMgr; // 0x158
     LicenseMgr *mLicenseMgr; // 0x15c
-    bool unk13c; // 0x160
-    int unk140; // 0x164 - num valid songs
+    // mContentAltDirs FOLLOWS the two manager pointers in retail: Terminate,
+    // Init and the destructor all address it as `this + 0x160`. mMaxSongCount
+    // then lands at 0x16c -- retail Init stores cfg->FindInt(max_song_count)
+    // to +0x16c.
+    std::vector<String> mContentAltDirs; // 0x160
+    int mMaxSongCount; // 0x16c
+    bool unk13c; // 0x170
+    int unk140; // 0x174 - num valid songs
 };
 
 // Retail 360 exposes the song manager through a MUTABLE POINTER global (the

@@ -43,14 +43,20 @@ public:
     DataNode OnStart(DataArray *);
     void SetCrowdSingVol(float);
 
+#ifdef HX_NATIVE
     bool HasMovie() const { return mTexMovie && !mTexMovie->IsEmpty(); }
     float PreviewDb() const { return mPreviewDb; }
+#else
+    // Retail RB3-360 has no TexMovie song preview at all (see the member note
+    // below) -- the movie branches fold away entirely.
+    bool HasMovie() const { return false; }
+#endif
 
     static const float kSilenceVal;
 
 private:
-    const SongMgr &mSongMgr; // 0x30
-    Stream *mStream; // 0x34
+    const SongMgr &mSongMgr; // 0x2c
+    Stream *mStream; // 0x30
     // NOTE: retail RB3-360 lacks the DC3-added TexMovie preview member here;
     // its absence shifts every member below by -0x14 (20 bytes). We keep the
     // member (the .cpp/native build use it) but relocate it to the END of the
@@ -77,13 +83,26 @@ private:
     bool mRegisteredWithCM;
     bool mSameSongRequested;
     bool mSecurePreview;
-    // The following three members are DC3-newer additions absent in retail
-    // RB3-360. Relocated to the END of the class so the members above keep
-    // retail's compiled offsets (verified: PreparePreview accesses shift by
-    // exactly the removed size). They remain usable by the .cpp / native.
+    // ^ mSecurePreview is the LAST member in retail RB3-360: sizeof(SongPreview)
+    // is 112 (0x70) there, proved by MetaPanel (mMusic @0x60 matches, and the
+    // bool right after the embedded `SongPreview mSongPreview` @0x64 sits at
+    // 0xD4 in the target vs 0xE4 with the DC3 tail present -- a 16-byte delta).
+    // The retail ctor (??0SongPreview@@QAA@ABVSongMgr@@@Z) corroborates: it
+    // stores exactly 0x2c/0x30/0x34/0x38/0x3c/0x40/0x44/0x50/0x54/0x58/0x5c/
+    // 0x60/0x64/0x68/0x6c/0x6d and nothing at 0x6e..0x74, and it makes no
+    // ObjPtr ctor call. So mPreviewDb (0x70) and ObjPtr<TexMovie> (0x74) cannot
+    // exist -- either one would push sizeof past 0x70. They are DC3-newer
+    // additions; keep them for the native build only.
+    //
+    // mInitted is DC3-only too: retail's ?Terminate@SongPreview@@QAAXXZ has no
+    // `if (mInitted)` guard and no `mInitted = 0` store at all, and the ctor
+    // stores nothing at 0x6e/0x6f. The rb3-Wii oracle agrees (no such member,
+    // no guards in Init/Terminate/SetMusicVol/SetCrowdSingVol/Start).
+#ifdef HX_NATIVE
     bool mInitted;
     float mPreviewDb;
     ObjPtr<TexMovie> mTexMovie;
+#endif
 
     void DetachFader(Fader *);
     void PrepareFaders(const SongInfo *);

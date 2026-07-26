@@ -99,42 +99,42 @@ public:
 
     static void Register() { REGISTER_OBJ_FACTORY(TrackDir); }
 
-    bool mRunning; // 0x1d6
+    bool mRunning; // 0x238
     /** "Should contain everything to draw (except widget resources)" */
-    ObjPtr<RndGroup> mDrawGroup; // 0x1d8
+    ObjPtr<RndGroup> mDrawGroup; // 0x23c
     /** "Animated at rate where frame=y position of now bar" */
-    ObjPtr<RndGroup> mAnimGroup; // 0x1e4
+    ObjPtr<RndGroup> mAnimGroup; // 0x248
     /** "World units widgets move per second". Ranges from 1 to 10000. */
-    float mYPerSecond; // 0x1f0
+    float mYPerSecond; // 0x254
     /** "Distance where widgets are pushed onto track" */
-    float mTopY; // 0x1f4
+    float mTopY; // 0x258
     /** "Distance where widgets are pruned from track" */
-    float mBottomY; // 0x1f8
-    std::vector<Transform> mSlots; // 0x1fc
-    std::vector<Transform> vec2; // 0x204
+    float mBottomY; // 0x25c
+    std::vector<Transform> mSlots; // 0x260
+    std::vector<Transform> vec2; // 0x26c
     /** "WARN if widget instances are added out of order? (can be off for prototyping)" */
-    bool mWarnOnResort; // 0x20c
-    std::vector<TrackWidget *> mActiveWidgets; // 0x210
-    ObjPtr<RndGroup> mShowingWhenEnabled; // 0x218
-    ObjPtr<RndGroup> mStationaryBack; // 0x224
-    ObjPtr<RndGroup> mKeyShiftStationaryBack; // 0x230
-    ObjPtr<RndGroup> mStationaryBackAfterKeyShift; // 0x23c
-    ObjPtr<RndGroup> mMovingBack; // 0x248
-    ObjPtr<RndGroup> mKeyShiftMovingBack; // 0x254
-    ObjPtr<RndGroup> mKeyShiftStationaryMiddle; // 0x260
-    ObjPtr<RndGroup> mStationaryMiddle; // 0x26c
-    ObjPtr<RndGroup> mMovingFront; // 0x278
-    ObjPtr<RndGroup> mKeyShiftMovingFront; // 0x284
-    ObjPtr<RndGroup> mKeyShiftStationaryFront; // 0x290
-    ObjPtr<RndGroup> mStationaryFront; // 0x29c
-    ObjPtr<RndGroup> mAlwaysShowing; // 0x2a8
-    ObjPtr<RndTransformable> mRotatorCam; // 0x2b4
-    ObjPtr<RndEnviron> mTrack; // 0x2c0
-    ObjPtr<RndEnviron> mTrackGems; // 0x2cc
-    Transform unk2d8; // 0x2d8
-    Transform unk308; // 0x308
-    Transform unk338; // 0x338
-    float unk368; // 0x368
+    bool mWarnOnResort; // 0x278
+    std::vector<TrackWidget *> mActiveWidgets; // 0x27c
+    ObjPtr<RndGroup> mShowingWhenEnabled; // 0x288
+    ObjPtr<RndGroup> mStationaryBack; // 0x294
+    ObjPtr<RndGroup> mKeyShiftStationaryBack; // 0x2a0
+    ObjPtr<RndGroup> mStationaryBackAfterKeyShift; // 0x2ac
+    ObjPtr<RndGroup> mMovingBack; // 0x2b8
+    ObjPtr<RndGroup> mKeyShiftMovingBack; // 0x2c4
+    ObjPtr<RndGroup> mKeyShiftStationaryMiddle; // 0x2d0
+    ObjPtr<RndGroup> mStationaryMiddle; // 0x2dc
+    ObjPtr<RndGroup> mMovingFront; // 0x2e8
+    ObjPtr<RndGroup> mKeyShiftMovingFront; // 0x2f4
+    ObjPtr<RndGroup> mKeyShiftStationaryFront; // 0x300
+    ObjPtr<RndGroup> mStationaryFront; // 0x30c
+    ObjPtr<RndGroup> mAlwaysShowing; // 0x318
+    ObjPtr<RndTransformable> mRotatorCam; // 0x324
+    ObjPtr<RndEnviron> mTrack; // 0x330
+    ObjPtr<RndEnviron> mTrackGems; // 0x33c
+    Transform unk2d8; // 0x348
+    Transform unk308; // 0x388
+    Transform unk338; // 0x3c8
+    float unk368; // 0x408
     // NOTE: rb3-Wii (a DEV/MILO_DEBUG build) has `TrackTest *mTest;` here, but
     // RB3 retail (our X360 target) stripped MILO_DEBUG, so this 4-byte member is
     // absent. We force-define MILO_DEBUG in macros.h, which would otherwise

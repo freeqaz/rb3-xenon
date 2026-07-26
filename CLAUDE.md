@@ -381,6 +381,18 @@ substitutions applied.
 `// 0xHEX` annotated headers → `struct_db.sqlite`; COFF `??_7*@@6B` vtables
 decoded with `??_R4` RTTI Complete Object Locator parsing.
 
+★ **Class layout: ask the compiler, not the comments.**
+`scripts/harvest/class_layout_report.py <Class>` wraps
+`cl.exe /d1reportSingleClassLayout<Class>` (an undocumented MSVC flag that works
+through wibo) and prints real offsets, explicit padding rows, vtable slots with
+the supplying class, and `this` adjustors. It is **authoritative**; the `// 0xHEX`
+header comments — and `struct_db.sqlite`/`lookup_struct_offset`, which are
+*derived from those comments* — are measurably wrong in places (`CharEyes.h`: 20
+wrong offsets; `SaveLoadManager.h`: uniformly +4 stale). `lookup_struct_offset`
+now consults the compiler by default (`verify=true`, `project_dir=<worktree>`) and
+labels comment-derived answers **UNVERIFIED**. `--check-header` audits a header's
+comments against the compiler; `--offset 0x118` answers "which member is here".
+
 **MSVC pattern docs** (`docs/decomp/patterns/`, `docs/decomp/MSVC_X360_REGALLOC.md`,
 `docs/decomp/TECHNICAL_NOTES.md`, `docs/decomp/PRAGMA_*.md`,
 `docs/decomp/XBOX360_FLOATING_POINT_CODEGEN.md`): ported verbatim from DC3.

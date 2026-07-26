@@ -166,15 +166,19 @@ protected:
 
     std::vector<LevelData> mLevelData; // 0x2c..0x38
     // Retail declares the grinder BEFORE mTrackLevels: InitSecurity ends with
-    // `addi r3, r29, 0x38; bl ByteGrinder::Init`, i.e. mByteGrinder is at 0x38
-    // and the bool takes the 0x3c allocation unit. Swapping the two keeps every
-    // member from mNumMics (0x40) onward at its current, already-matching offset.
+    // `addi r3, r29, 0x38; bl ByteGrinder::Init`, i.e. mByteGrinder is at 0x38.
     ByteGrinder mByteGrinder; // 0x38
-    bool mTrackLevels; // 0x3c
-    int mNumMics; // 0x40
-    MidiSynth *mMidiSynth; // 0x48
-    std::vector<Mic *> mMics; // 0x4c
-    bool mMuted; // 0x58
+    // Retail RB3-360 has NO mTrackLevels instance slot: Synth::SetMic
+    // (fn_826FC818) reads the mic count at +0x3c and Synth::Terminate RELEASEs
+    // mMidiSynth from +0x40 / DeleteAll(mMics) at +0x44 — i.e. exactly ONE word
+    // between mByteGrinder (0x38) and mMidiSynth (0x40). rb3-Wii's Synth (the
+    // same game version) likewise has no mTrackLevels. Kept as a class static so
+    // the two uses in Synth.cpp still compile.
+    static bool mTrackLevels;
+    int mNumMics; // 0x3c  (retail: Synth::SetMic reads +0x3c)
+    MidiSynth *mMidiSynth; // 0x40 (retail: Synth::Terminate RELEASEs +0x40)
+    std::vector<Mic *> mMics; // 0x44..0x50 (retail: DeleteAll(this+0x44))
+    bool mMuted; // 0x50
 #ifdef RB3_SYNTH_DC3_LISTS
     // DC3-era layout (gate ON). Retail RB3-360 differs: no leading ObjectDir*
     // list (unk5c has ZERO uses in our tree), mZombieInsts placed AFTER the
@@ -198,14 +202,23 @@ protected:
     // AFTER mMidiInstrumentMgr where they don't perturb the retail-critical
     // 0x74/0x78 slots. The +4 pad keeps the faders at retail 0x68/0x6c/0x70
     // (empirically our ObjDirPtr lands mMasterFader at 0x68 with this pad).
-    ObjDirPtr<ObjectDir> mCommonBank; // 0x5c
-    int mCommonBankPad_Dc3Deficit; // +4 to push mMasterFader to retail 0x68
+    // Retail ~Synth destroys, in order, a member at +0x5c (ObjDirPtr) then one
+    // at +0x54 (out-of-line 8-byte dtor = the std::list) — reverse declaration
+    // order, so the list is declared immediately BEFORE mCommonBank and the
+    // ObjDirPtr's 0xc bytes land the faders on retail's 0x68/0x6c/0x70 with no
+    // artificial padding (DC3 has a std::list in exactly this slot too).
+    std::list<SampleInst *> mZombieInsts; // 0x54..0x5c
+    ObjDirPtr<ObjectDir> mCommonBank; // 0x5c..0x68
     Fader *mMasterFader; // 0x68
     Fader *mSfxFader; // 0x6c
     Fader *mMidiInstrumentFader; // 0x70
     MicClientMapper *mMicClientMapper; // 0x74 (retail: fn_82664760 reads +0x74)
-    MidiInstrumentMgr *mMidiInstrumentMgr; // 0x78 (retail: Disable reads +0x78)
-    std::list<SampleInst *> mZombieInsts; // 0x7c
+    MidiInstrumentMgr *mMidiInstrumentMgr; // 0x78 (retail: Terminate reads +0x78)
+    // 8 unidentified, non-destructible bytes: rb3-Wii's Synth has `int unk60;`
+    // (TranscodableMixer*?) and `int unk64;` (Stream* mDebugStream?) in exactly
+    // these two slots, between mMidiInstrumentMgr and mHud.
+    int unk7c; // 0x7c
+    int unk80; // 0x80
 #endif
     // mHud is retail-verified at 0x84 (Synth::ToggleHud reads +0x84 for mHud).
     RndOverlay *mHud; // 0x84

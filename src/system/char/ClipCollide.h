@@ -61,24 +61,24 @@ protected:
     DataNode OnListClips(DataArray *);
     DataNode OnListWaypoints(DataArray *);
 
-    std::vector<Report> mReports; // 0x2c
-    RndGraph *mGraph; // 0x38
+    std::vector<Report> mReports; // 0x28
+    RndGraph *mGraph; // 0x34
     /** "Pointer to the character to move around" */
-    ObjPtr<Character> mChar; // 0x3c
+    ObjPtr<Character> mChar; // 0x38
     /** "Changes the character to one of the listed ones". The list is "", "" (lol) */
-    String mCharPath; // 0x50
+    String mCharPath; // 0x44
     /** "Waypoint to stand at" */
-    ObjPtr<Waypoint> mWaypoint; // 0x58
+    ObjPtr<Waypoint> mWaypoint; // 0x50
     /** "Where in the waypoint to stand". Options are: front, back, left, right */
-    Symbol mPosition; // 0x6c
+    Symbol mPosition; // 0x5c
     /** "Clip to test" */
-    ObjPtr<CharClip> mClip; // 0x70
+    ObjPtr<CharClip> mClip; // 0x60
     /** "Pick a report entry to look at" */
-    String mReportString; // 0x84
+    String mReportString; // 0x6c
     /** "show red world lines" */
-    bool mWorldLines; // 0x8c
+    bool mWorldLines; // 0x78
     /** "move the camera when you pick a report" */
-    bool mMoveCamera; // 0x8d
+    bool mMoveCamera; // 0x79
     /** "mode to run in". List is "" (again, lol) */
-    Symbol mMode; // 0x90
+    Symbol mMode; // 0x7c
 };

@@ -136,11 +136,11 @@ protected:
     // / stripped for retail). See docs/plans/saveloadmanager-port-log-2026-07-20.md.
     bool mActivated; // 0x18
     bool mInitialLoadNotDone; // 0x19
-    int mMode; // 0x20
-    State mState; // 0x24
-    State mStateAtSelectStart; // 0x28
-    LocalBandUser *mUser; // 0x2c
-    LocalUser *mLocalUser; // 0x30
+    int mMode; // 0x1c
+    State mState; // 0x20
+    State mStateAtSelectStart; // 0x24
+    LocalBandUser *mUser; // 0x28
+    LocalUser *mLocalUser; // 0x2c
     // Retail keeps a BandProfile* slot BEFORE the vector: cases 3 / 0x54 of SetState
     // do `stw r3, 0x30(r30)` with the result of GetNewSigninProfile() /
     // GetAutosavableProfile(), and the vector's _M_start/_M_finish live at 0x34/0x38

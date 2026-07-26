@@ -99,12 +99,14 @@ Synth *TheSynth;
 // Retail RB3-360 Synth has no instance slots for these (sizeof(Synth)=0x88);
 // they live as class statics — see Synth.h.
 std::list<Hmx::Object *> Synth::mPlayHandlers;
+bool Synth::mTrackLevels;
 int Synth::unk98;
 Stream *Synth::mDebugStream;
 ADSRImpl *Synth::mADSR;
 String Synth::unka8;
 
-Synth::Synth() : mTrackLevels(false), mMuted(false), mMicClientMapper(nullptr) {
+Synth::Synth() : mMuted(false), mMicClientMapper(nullptr) {
+    mTrackLevels = false;
     SetName("synth", ObjectDir::Main());
     DataArray *cfg = SystemConfig("synth");
     cfg->FindData("mics", mNumMics, true);
@@ -217,7 +219,8 @@ void Synth::Terminate() {
     RELEASE(mSfxFader);
     RELEASE(mMidiInstrumentFader);
     RELEASE(mMicClientMapper);
-    SynthUtlTerm();
+    // Retail ends with RELEASE(mMidiInstrumentMgr) (+0x78), not SynthUtlTerm().
+    RELEASE(mMidiInstrumentMgr);
 }
 
 void Synth::Poll() {
@@ -643,7 +646,8 @@ void SynthInit() {
 }
 
 void SynthTerminate() {
-    TheSynth->StopAllSounds();
+    // Retail has no StopAllSounds() here: the first TheSynth load feeds the
+    // Poll() vcall directly (single `lwz r3, TheSynth` before `lwz r11,0x70`).
     TheSynth->Poll();
     TheDebug.RemoveExitCallback(SynthTerminate);
     TheSynth->Terminate();
