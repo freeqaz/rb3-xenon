@@ -83,10 +83,10 @@ bool RGGemMatcher::FretMatchImpl(
     int numMissed = 0;
 
     for (int i = 0; i < 6; i++) {
-        float swing = mStringSwings[i];
+        const float &swing = mStringSwings[i];
         bool swung = b2 | ((float)fabs((swing + f3) - f2) <= f1);
         if (b1) {
-            float nonStrum = mStringNonStrum[i];
+            const float &nonStrum = mStringNonStrum[i];
             swung = swung | ((float)fabs((nonStrum + f3) - f2) <= f1);
         }
         if ((float)fabs(swing - f4) < 68.0f) {

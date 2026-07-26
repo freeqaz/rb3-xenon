@@ -31,26 +31,28 @@ void SynapseAPO::SetSamplingRate(float rate) {
 
 void SynapseAPO::OnSetParameters(const SynapseAPOParams& params) {
     for (unsigned int i = 0; i < 3; i++) {
-        if (mParams.bands[i].enabled != params.bands[i].enabled) {
-            mSynapse->SetVoiceEnabled(i, params.bands[i].enabled);
+        SynapseBand &m = mParams.bands[i];
+        const SynapseBand &t = params.bands[i];
+        if (m.enabled != t.enabled) {
+            mSynapse->SetVoiceEnabled(i, t.enabled);
         }
-        if (mParams.bands[i].gain != params.bands[i].gain) {
-            mSynapse->SetVoiceGain(i, params.bands[i].gain);
+        if (m.gain != t.gain) {
+            mSynapse->SetVoiceGain(i, t.gain);
         }
-        if (mParams.bands[i].freq != params.bands[i].freq) {
-            mSynapse->SetVoiceTargetNote(i, params.bands[i].freq);
+        if (m.freq != t.freq) {
+            mSynapse->SetVoiceTargetNote(i, t.freq);
         }
-        if (mParams.bands[i].q != params.bands[i].q) {
-            mSynapse->SetVoiceTransposition(i, params.bands[i].q);
+        if (m.q != t.q) {
+            mSynapse->SetVoiceTransposition(i, t.q);
         }
-        if (mParams.bands[i].coeff0 != params.bands[i].coeff0) {
-            mSynapse->SetVoiceAmount(i, params.bands[i].coeff0);
+        if (m.coeff0 != t.coeff0) {
+            mSynapse->SetVoiceAmount(i, t.coeff0);
         }
-        if (mParams.bands[i].coeff1 != params.bands[i].coeff1) {
-            mSynapse->SetVoiceProximityEffect(i, params.bands[i].coeff1);
+        if (m.coeff1 != t.coeff1) {
+            mSynapse->SetVoiceProximityEffect(i, t.coeff1);
         }
-        if (mParams.bands[i].coeff2 != params.bands[i].coeff2) {
-            mSynapse->SetVoiceProximityFocus(i, params.bands[i].coeff2);
+        if (m.coeff2 != t.coeff2) {
+            mSynapse->SetVoiceProximityFocus(i, t.coeff2);
         }
     }
     if (mParams.lowCutoffFreq != params.lowCutoffFreq) {

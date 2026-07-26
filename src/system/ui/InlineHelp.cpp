@@ -85,11 +85,11 @@ void InlineHelp::ActionElement::SetConfig(DataNode &dn, bool secondary) {
     if (dn.Type() == kDataArray) {
         DataArray *da = dn.Array();
         if (da->Size() != 0) {
-            FormatString fs(Localize(da->Sym(0), nullptr, TheLocale));
+            FormatString fs(Localize(da->Sym(0), nullptr));
             for (int i = 1; i < da->Size(); i++) {
                 const DataNode &dn2 = da->Evaluate(i);
                 if (dn2.Type() == kDataSymbol) {
-                    fs << Localize(dn2.Sym(), nullptr, TheLocale);
+                    fs << Localize(dn2.Sym(), nullptr);
                 } else {
                     fs << dn2;
                 }

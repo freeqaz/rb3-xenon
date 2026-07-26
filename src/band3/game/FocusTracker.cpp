@@ -187,9 +187,10 @@ void FocusTracker::SavePlayerStats() const {
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 0x17C);
+        Stats &stats = pPlayer->mStats;
         std::map<TrackerPlayerID, int>::const_iterator cData = mFocusCountMap.find(id);
         MILO_ASSERT(cData != mFocusCountMap.end(), 0x181);
-        pPlayer->mStats.unk1c0 = cData->second;
+        stats.unk1c0 = cData->second;
     }
 }
 

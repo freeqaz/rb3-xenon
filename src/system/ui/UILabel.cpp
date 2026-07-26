@@ -624,7 +624,7 @@ void UILabel::SetFloat(const char *cc, float f) {
 }
 
 void UILabel::SetDateTime(DateTime const &dt, Symbol s) {
-    String str(Localize(s, false, TheLocale));
+    String str(Localize(s, false));
     dt.Format(str);
     SetDisplayText(str.c_str(), true);
 }
@@ -747,7 +747,7 @@ char const *UILabel::GetDefaultText() const {
     if (TheLoadMgr.EditMode() && !mLabelText.empty())
         return mLabelText.c_str();
     else
-        return Localize(mTextToken, nullptr, TheLocale);
+        return Localize(mTextToken, nullptr);
 }
 
 void UILabel::CenterWithLabel(UILabel *label, bool b, float f) {
@@ -782,7 +782,7 @@ void UILabel::SetTokenFmtImp(
         SetDisplayText(gNullStr, true);
     } else {
         bool found;
-        const char *localized = Localize(mTextToken, &found, TheLocale);
+        const char *localized = Localize(mTextToken, &found);
         if (found) {
             SuperFormatString str(localized, da1, b, TheLocale, gNullStr);
             if (da2) {
@@ -791,7 +791,7 @@ void UILabel::SetTokenFmtImp(
                     do {
                         const DataNode &n = da2->Evaluate(i);
                         if (n.Type() == kDataSymbol) {
-                            str << Localize(n.Sym(da2), 0, TheLocale);
+                            str << Localize(n.Sym(da2), 0);
                         } else {
                             str << n;
                         }

@@ -66,10 +66,11 @@ void DeployCountTracker::SavePlayerStats() const {
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 0x77);
+        Stats &stats = pPlayer->mStats;
         std::map<TrackerPlayerID, PlayerDeployData>::const_iterator cData =
             mDeployDataMap.find(id);
         MILO_ASSERT(cData != mDeployDataMap.end(), 0x7C);
-        pPlayer->mStats.unk1c0 = cData->second.unk4;
+        stats.unk1c0 = cData->second.unk4;
     }
 }
 

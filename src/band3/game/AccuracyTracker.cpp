@@ -82,8 +82,9 @@ void AccuracyTracker::SavePlayerStats() const {
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 0x9D);
+        Stats &stats = pPlayer->mStats;
         float first = mTargets.front() * 100.0f;
         float floored = std::floor(pPlayer->GetNotesHitFraction(0) * 100.0f);
-        pPlayer->mStats.unk1c0 = floored - first;
+        stats.unk1c0 = floored - first;
     }
 }

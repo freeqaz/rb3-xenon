@@ -672,7 +672,7 @@ DEF_DATA_FUNC(DataObject) {
 }
 
 DEF_DATA_FUNC(DataLocalize) {
-    const char *localized = Localize(array->ForceSym(1), nullptr, TheLocale);
+    const char *localized = Localize(array->ForceSym(1), nullptr);
     return localized ? localized : gNullStr;
 }
 

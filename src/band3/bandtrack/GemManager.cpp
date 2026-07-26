@@ -72,7 +72,8 @@ GemManager::GemManager(const TrackConfig &cfg, TrackDir *dir)
     SetupGems(0);
     UpdateLeftyFlip(false);
     DataRegisterFunc("set_key_glow", SetKeyGlow);
-    unk12c = mTrackDir->Find<RndDir>("chord_shape_outline", true)->LocalXfm().v.y + 0.01f;
+    RndDir *outline = mTrackDir->Find<RndDir>("chord_shape_outline", true);
+    unk12c = outline->LocalXfm().v.y + 0.01f;
     unkd8.reserve(10);
 }
 

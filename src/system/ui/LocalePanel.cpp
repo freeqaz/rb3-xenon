@@ -41,7 +41,7 @@ Symbol LocalePanel::TokenForLabel(UILabel *label) {
         return "<no token>";
     } else {
         bool b18 = false;
-        Localize(label->TextToken(), &b18, TheLocale);
+        Localize(label->TextToken(), &b18);
         if (b18)
             return label->TextToken();
         else

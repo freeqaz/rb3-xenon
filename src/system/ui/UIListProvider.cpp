@@ -71,7 +71,7 @@ void DataProvider::Text(int i, int j, UIListLabel *listlabel, UILabel *label) co
             Message msg("set_token_fmt", n);
             label->Handle(msg, false);
         } else if (TheLoadMgr.EditMode()) {
-            label->SetEditText(Localize(n.Array()->Sym(0), nullptr, TheLocale));
+            label->SetEditText(Localize(n.Array()->Sym(0), nullptr));
         } else {
             label->SetTextToken(n.Array()->Sym(0));
         }
@@ -79,7 +79,7 @@ void DataProvider::Text(int i, int j, UIListLabel *listlabel, UILabel *label) co
         if (!IsActive(j)) {
             label->SetTextToken(gNullStr);
         } else if (TheLoadMgr.EditMode()) {
-            label->SetEditText(Localize(n.ForceSym(), nullptr, TheLocale));
+            label->SetEditText(Localize(n.ForceSym(), nullptr));
         } else {
             label->SetTextToken(n.ForceSym());
         }
