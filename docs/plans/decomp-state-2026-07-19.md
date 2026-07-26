@@ -4,6 +4,149 @@
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
 
+## ★★ 2026-07-26 LATE ARC — 36,069 → 38,305 (lanes AN…AV), and what it taught
+
+Ten lanes (AN…AV), each an Opus lead fanning out to its own Opus/Sonnet workers
+in isolated worktrees. **+2,236 verified strict, every landing A/B'd
+unit-agnostically against a pickled baseline.** Largest single landing:
+laneAT **+640**.
+
+### The channel that reopened
+★**"Byte identity is drained" was REFUTED — every prior drain was measured
+GLOBALLY.** Per-unit, the ICF-prone shapes that defeat global uniqueness are
+still unique *inside their own unit*. Mechanism: **`is_funclet_like()` gates BOTH
+sides of `pair_funclets_by_bytes`** (objdiff `diff/mod.rs:1423,1438`), so an
+anonymous target can never byte-pair with a mangled base name — objdiff
+structurally cannot reach these; only a map entry can. laneAQ +276, laneAS +321,
+laneAT +520 off this one correction.
+★**The size "window" (17–68 B) is a property of the ANONYMOUS POPULATION, not of
+the functions:** named >84 B functions are **91.9% strict**, anonymous ones 0.2%;
+356 functions at exactly 0.0% → **305 flipped once named**. >84 B is
+**supply-limited, not gate-limited**.
+★**New channel — existing map entries can be PROVABLY WRONG** (laneAT): 155
+named targets below 100% with a free exact in-unit byte twin under a different
+name; repairing 120 = **+99 at 82.5%**. Mutually recursive with the twin scan
+(a repair frees a name the scan then claims) ⇒ **run alternately to fixpoint.**
+
+### Honest error bars discovered this arc — quote these, not intuitions
+- ★**113 target symbols are reloc-masked byte-EQUAL to their mapped base and
+  STILL score <100%.** objdiff's normalized diff is **stricter** than masked byte
+  equality. That is the error bar on every byte-twin claim.
+- ★**Only `match_percent_normalized` sums to `matched_functions`;
+  `fuzzy_match_percent` reads 222 LOW.** A ceiling computed off the fuzzy field
+  had to be retracted.
+- ★**Reloc-masked byte equality is near-vacuous below ~32 B** — the 12-byte
+  adjustor body is shared by **1,673 distinct symbols**.
+- ★**Fuzzy % is NOT identity evidence** — 249 provably-wrong names measured mean
+  **53.7%**, max 89.95%; MSVC PPC prologue boilerplate alone reads ~55%.
+- ★**The 99.8/99.9% band is NOT a near-miss queue** — 1,643 forty-byte funclets
+  there are objdiff pass-3 **fuzzy pairings of unrelated funclets**.
+
+### Pools that shrank when the tool was un-gated (both were "source problems")
+- laneAM's "~4,300 unreachable, we compile no matching body" → its predictor was
+  **funclet-shape-gated on the base side**, so ordinary bodies had an empty
+  candidate set *by construction*. Un-gated: **1,502 of 3,290 have an exact
+  reloc-masked twin we already compile** (not 8). Honest source residue
+  **1,445**.
+- laneAT's member-defect census was **~64% wrong** (`addi r3,r31,off` is the
+  funclet's own FRAME pointer, not a `this` slot). Corrected: 1,732 of 2,659
+  frame-related, **390** true member. Then an over-carve scan ate 306 of those
+  ⇒ **the header-reconciliation channel is 84 functions, not 1,098**, and the
+  splits-attribution channel is correspondingly larger.
+⇒ ★**Before concluding "we lack the source", re-run the measurement with the
+tool's own gates removed.** Twice in one day that was the whole answer.
+
+### Mechanisms (reusable)
+- ★**A funclet flips on the parent's frame SIZE alone — the parent need not
+  match.** Controlled: parent held at 99.4%, all 6 funclets at 100.0%. One parent
+  fix = 4× multiplier. Tool `scripts/harvest/frame_delta_scan.py`.
+  ★**But re-priced by its own worker: realistic yield from the 409-row pool is
+  LOW TENS, not hundreds** — 1 of 14 landed, 1 was an ICF trap that would have
+  LOST matches, 4 unfixable in source, 8 entangled with body/regalloc. **Sort by
+  "frame is the only diff" (≤6 mismatches, all offset-shifts), NOT by pct band;
+  below ~97% the frame delta is a SYMPTOM.**
+- ★**Sibling-scope overlay:** most +0x10 deltas are one local failing to
+  *overlay* onto another's slot. MSVC /O1 stack-colours two disjoint-lifetime
+  objects onto the same offset **only when both are block-scoped in the same
+  parent scope**. Bare `{ }` around the trailing object fixed `ReplaceSubdir`
+  (+4 from 3 lines). **Named objects only** — unnamed temporaries resisted every
+  variant and naming them made one case *worse*.
+- ★**ICF folds masquerade as sizeof defects.** `ObjVector<DynamicPropertyEntry>::
+  resize` looked like a perfect +0x30 sizeof bug; "fixing" it hit 100% but broke
+  3 stride-dependent STL functions in the same unit (+5/−3, reverted; 0x80 was
+  correct). **Tell: objdiff's Function Call Diff shows a target-only callee
+  naming a different class than the base at the same call slot.**
+- ★**A large single-parent funclet cluster is as likely to be a WRONG-UNIT carve
+  as a layout defect** — 20 funclets that looked like a layout bug were
+  `StreakMeter::StreakMeter()` over-carved into Waypoint's span; one splits move
+  fixed all 20. **Check whether the class's other members are already pinned
+  elsewhere before reconciling a header.**
+
+### Measurement contamination — FIVE live sources, control for ALL
+1. ★**`setup_worktree.sh` reflinks main's `.obj` files and main's build dir is
+   DIRTY** ⇒ any obj-derived scan before the worktree's own first full build
+   reads another lane's uncommitted source. Measured **73 pre-build vs 32
+   post-build**; **dirty objs MANUFACTURE evidence**, so it reads as a rich vein.
+   ★Second axis: the **map** drifts faster than `src/` (923/549 lines in one
+   interval) — check **both** diffs against *current* main, not the branch point.
+2. ★**`config/45410914/symbols.txt` is both a dtk INPUT and a regenerated
+   OUTPUT** ⇒ a control leg silently retains its own treatment. `git checkout --`
+   it on **BOTH** legs. Never commit it.
+3. **`dynamic_init` patcher unstable on a first build** ⇒ same number of builds
+   per leg; a ±2 drift is documented.
+4. ★**The map is NOT a ninja input to the renamer** ⇒ map-only edits need
+   `rm -f build/45410914/target_symbol_renames.stamp`, or the edit silently does
+   nothing **and reads as a refutation**.
+5. **Stale `.s`:** `build/*/asm/*.s` for units no longer in `splits.txt` are
+   never regenerated and are silently wrong.
+
+### Tool defects found (fix or route around)
+- ★**`span_predictor.py`: `matches()` hardcodes `tu + '.cpp'` ⇒ EVERY `.c` unit
+  is mis-flagged WRONG-UNIT** (raw 532 vs corrected **290** — 242 false positives
+  in json-c/vorbis/zlib/tomcrypt). It also **self-confirms if used naively** (it
+  unions the record's own `tu` into the candidate set) — **pass a sentinel `tu`**.
+- ★**A WRONG-UNIT pool is usually NOT map work:** **276 of 290 have no definer
+  anywhere**; only 3 unique-definer. **Check `n_definers` first.**
+- **`map_rotation_repair.py apply` corrupted the map** — `startswith('"0x')` also
+  matched bare array elements of `_bijection_arbitrary`, writing a key/value pair
+  *inside* a JSON array; asserts were blind (they filter `isinstance(v,str)`).
+  Fixed.
+- **`land.sh`** reflows all ~25k map lines (breaks the byte-splice invariant) and
+  its **union-merge corrupts splits when two lanes each add `.text` pins**
+  (unioned `.pdata` back-fills → hard split failure). **`READY:` is not a
+  verify** — run `scripts/harvest/overlap_check.py`.
+
+### Fleet rules adopted this arc
+- ★**Never re-serialise `scripts/target_symbol_map.json`** — a `sort_keys`
+  rewrite churns ~25k lines and makes the branch unmergeable against every
+  concurrent map lane. Appends + one line per repair.
+- ★**After composing a splits change, re-run the map tools to fixpoint** — a pin
+  move strands every map entry whose VA crossed a unit boundary.
+- ★**Re-check cross-lane collisions LATE.** Two correctly-measured fragments
+  (+26, +8) rebased to exactly **0** because a concurrent lane had taken every VA.
+- ★**Commit every worker worktree early.** Of six orphaned worktrees, the four
+  that had committed contributed +32; the two that had not contributed **0**, and
+  their buffers did not compile.
+- ★**Check that a confirmation test COULD fail.** An inherited 48-entry set was
+  refuted **48/48** because the prescribed test was a byte-diff on a class
+  *constructed* by byte equality. A leave-one-out that restores the truth to the
+  candidate supply likewise reports 100% **vacuously** (same tier: 95.5% wrong
+  under abstention).
+- ★**Draft findings only AFTER the measurement lands.** Six lanes retracted
+  claims written ahead of a real `report.json` A/B — several of those retractions
+  were the lane's most valuable output.
+
+### Refusals worth not re-funding
+`_bijection_arbitrary` ceiling **+2** (1,205 of 1,207 already at 100) ·
+`.pdata` parentage decides **2.8%** of the unreachable pool · the 84-byte
+pairing cap **do-not-lift** (p2 36.3% / p2b 43.3% precision; the lift mostly
+duplicates the name-side waves silently) · `DECOMP_FORCEBLOCK` is a **silent
+no-op under MSVC** (`src/decomp.h:38` gates on `__MWERKS__`), ceiling ≤5 ·
+"overlapping data carves" = stale TU0 artifact, **0 defects** · 187 dangling map
+entries: dropping 179 measured **net 0** and **destroys identification info**
+(a dangling entry becomes valid the moment its TU is wired) · **retiring
+proven-wrong bindings is CHEAP** (5 evictions = +0 strict, −0.0007pp fuzzy).
+
 ## ★ TRANSFERABLE LEVERS from the 2026-07-25/26 coordinator session (27,223 → 27,816 in-lane)
 
 These are mechanism findings, not one-off fixes. Landed + measured; reusable fleet-wide.
