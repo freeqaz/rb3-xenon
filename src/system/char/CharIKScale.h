@@ -10,7 +10,7 @@ public:
     // Hmx::Object
     virtual ~CharIKScale();
     OBJ_CLASSNAME(CharIKScale);
-    OBJ_SET_TYPE(CharIKScale);
+    OBJ_SET_TYPE_ENGINE(CharIKScale);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

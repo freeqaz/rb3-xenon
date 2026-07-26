@@ -33,7 +33,7 @@ public:
     // Hmx::Object
     virtual ~RndLine() { RELEASE(mMesh); }
     OBJ_CLASSNAME(Line);
-    OBJ_SET_TYPE(Line);
+    OBJ_SET_TYPE_ENGINE(Line);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

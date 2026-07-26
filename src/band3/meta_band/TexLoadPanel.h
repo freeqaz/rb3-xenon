@@ -38,7 +38,7 @@ class TexLoadPanel : public UIPanel, public ContentMgr::Callback {
 public:
     TexLoadPanel();
     OBJ_CLASSNAME(TexLoadPanel);
-    OBJ_SET_TYPE(TexLoadPanel);
+    OBJ_SET_TYPE_ENGINE(TexLoadPanel);
     NEW_OBJ(TexLoadPanel);
     virtual DataNode Handle(DataArray *, bool);
     virtual ~TexLoadPanel() {}

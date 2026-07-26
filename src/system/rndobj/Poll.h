@@ -10,7 +10,7 @@
 class RndPollable : public virtual Hmx::Object {
 public:
     OBJ_CLASSNAME(Poll);
-    OBJ_SET_TYPE(Poll);
+    OBJ_SET_TYPE_ENGINE(Poll);
     virtual DataNode Handle(DataArray *, bool);
     /** Poll this object. */
     virtual void Poll() {}

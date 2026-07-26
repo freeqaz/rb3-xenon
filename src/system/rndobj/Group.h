@@ -18,7 +18,7 @@ class RndGroup : public RndAnimatable, public RndDrawable, public RndTransformab
 public:
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(Group)
-    OBJ_SET_TYPE(Group)
+    OBJ_SET_TYPE_ENGINE(Group)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -12,7 +12,7 @@ public:
     // Hmx::Object
     virtual ~RndFlare();
     OBJ_CLASSNAME(Flare);
-    OBJ_SET_TYPE(Flare);
+    OBJ_SET_TYPE_ENGINE(Flare);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

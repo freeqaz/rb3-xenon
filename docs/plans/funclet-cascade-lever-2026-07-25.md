@@ -1340,3 +1340,140 @@ required anchoring off `mGameOver@0x238` read from a *different* function's asm.
 > **Rule:** when a member offset matters, confirm it against target asm from a
 > second, independent function. Do not trust `// 0x…` comments or
 > `lookup_struct_offset` alone — they share a single point of failure.
+
+## 32. `laneX-superclass`: §25 is a FALSE LEAD (funnel → 0), and the real +13 was elsewhere
+
+**29,302 → 29,315. Net +13 (13 gained, 0 lost). 2 subagents.** Both commits on
+branch `laneX-superclass`.
+
+### 32.1 ★★ The headline: §25's "1,349 unaudited sites" yields ZERO
+
+§25 priced `HANDLE_`/`COPY_`/`SAVE_SUPERCLASS` as "the highest-leverage known
+follow-up in the lane" on the strength of a raw site count. **It is inert.**
+Measured with `scripts/harvest/superclass_chain_audit.py` (shipped by this lane):
+
+| family | raw | paired | paired & sub-100 | **differs from oracle** | oracle-blind |
+|---|--:|--:|--:|--:|--:|
+| HANDLE | 624 | 302 | 24 | **0** | 0 |
+| COPY | 403 | 200 | 14 | **0** | 3 |
+| SAVE | 340 | 154 | 22 | **0** | 22 |
+| LOAD | 264 | 8 | 0 | **0** | 0 |
+| SYNC (control, already swept) | 337 | 67 | 11 | 1 | 2 |
+
+**The funded premise — HANDLE+COPY+SAVE — is 1,367 raw → 656 paired → 60
+sub-100 → 0 defects.** The single `DIFF` in the whole audit is
+`CharBonesObject`, which §25.2 already records as a *deliberate* exception and
+which carries an in-source comment saying so. There was never a second wave here.
+
+**Why the count was misleading.** Fan-out is blast radius, not yield. Only 37%
+of sites are in a class objdiff pairs at all, and ~90% of *those* are already at
+100% — i.e. the chains are overwhelmingly already correct. A raw grep count
+measures how much a change would *touch*, never how much it could *earn*.
+
+### 32.2 ★★ The accretion is SYNC-specific — with positive proof
+
+The trailing-`Hmx::Object` surplus that made the `SYNC_SUPERCLASS` sweep pay is
+**not** a general DC3 habit. Global census against the rb3-Wii oracle:
+
+* `SYNC`: 109 chain diffs, **101 of them the trailing-Object surplus** ← the lever
+* `HANDLE`: 7 diffs, **0** trailing-Object
+* `COPY`: 9 diffs, 2 trailing-Object
+* `LOAD`: 24 diffs, 1 trailing-Object
+
+And the decisive negative control — **three classes whose chain differs from
+rb3-Wii yet match retail at strict 100%**:
+
+| class | family | ours | rb3-Wii |
+|---|---|---|---|
+| `CharBonesBlender` | HANDLE | `CharPollable, CharBonesAlloc` | `CharPollable, Object` |
+| `ColorPalette` | COPY | `Object` | *(none)* |
+| `SpotlightDrawer` | COPY | `Object, RndDrawable` | `RndDrawable` |
+
+`ColorPalette` and `SpotlightDrawer` carry the *exact* "surplus trailing
+`Object`" shape the SYNC sweep removed — and we match retail **because** it is
+there. Mechanically porting the SYNC recipe to COPY would have regressed them.
+**A rb3-Wii chain difference is not evidence of a defect.**
+
+### 32.3 Two audit traps the tool now encodes
+
+1. **Preprocessor blindness.** The SYNC sweep *guarded* its removals with
+   `#ifdef HX_NATIVE` rather than deleting them. A naive grep therefore counts
+   438 SYNC sites where only **337** are live for X360 — re-counting the 101
+   already-swept sites as available work. Any macro-site census run after a
+   guarded sweep must model `HX_NATIVE`.
+2. **★ Oracle-blindness is not agreement.** rb3-Wii has **zero** `BEGIN_SAVES` /
+   `SAVE_SUPERCLASS` sites (DC3 has 381). The SAVE family cannot be adjudicated
+   against the Wii oracle *at all*; scoring it "same" would have been a fiction.
+   It must be settled on target asm — **size parity plus absence of an insert
+   cluster** — which is what a subagent did across 9 candidates: 6 chain-correct,
+   0 general surplus. `BaseMaterial::Save` is the cleanest witness (target 988 B,
+   base 988 B, zero insert/delete). One possible one-off remains open:
+   `RndLine::Save`'s `SAVE_SUPERCLASS(RndTransformable)` appears absent from the
+   target stream (a `replace` against non-call arithmetic), plausibly because
+   `RndDrawable::Save` already chains it. Unverified — worth one experiment, not
+   a sweep.
+
+> Reading `bl`-vs-`bl` as "call present" in normalized mode is **not** enough:
+> the callee name is not verified. Two SAVE candidates looked like missing chain
+> calls until the full listing showed the calls present under anonymous/ICF
+> target names. Always pull the raw listing before claiming a missing call.
+
+### 32.4 ★★ Where the +13 actually came from: ONE defect, 13 sites, 13/13 flips
+
+§31.1 flagged "ten `SetType` overrides at exactly 62.92%" as a suspected single
+shared cause. **Confirmed — and it was 13, not 10** (`RndSpline`, `FlowTrigger`,
+`RndMotionBlur` were missed; `RndMotionBlur` is absent from the scanner's own
+JSON, a second scanner gap). All sat at the identical raw `62.92405`.
+
+**The cause was not a missing local-static `Symbol` at all.** Retail's `SetType`
+initialises the static `types` config **unconditionally, before** the
+`classname.Null()` check. Plain `OBJ_SET_TYPE` (`Object.h:916`) nests that init
+*inside* `if (!classname.Null())`. `OBJ_SET_TYPE_ENGINE` (`Object.h:937`)
+already encoded the retail ordering and was already used by `AnimFilter`,
+`CharLookAt`, `BandDirector`, `BandWardrobe` and the `FxSend*360` family — all
+already at 100%. Someone found this split earlier and propagated it to ~6
+families only. The fix is one word at each of 13 sites.
+
+**Result: +13, 13/13 flipped, 0 regressions.** Flip rate **100%** — the highest
+per-site rate the lane has recorded, because a shared cause with an identical
+percentage signature is a near-certainty, not a hypothesis.
+
+**Do NOT "fix" this in the macro body.** 77 other classes use plain
+`OBJ_SET_TYPE` and are *already at 100%* — the plain ordering is correct for
+them. The defect was macro *selection*, not macro *definition*.
+
+**Vein drained.** Of 401 remaining plain `OBJ_SET_TYPE` users: 323 unpaired, 77
+at 100%, and exactly **one** sub-100 (`SyncGameStartPanel`, 3.54% — far too
+broken to be an ordering issue). Do not re-sweep.
+
+### 32.5 ★ A NEW direction for the pattern catalogue: *inverse* accretion
+
+The lane's dominant rule is "retail PREDATES the rb3-Wii/DC3 DEV additions" —
+the oracle has something retail lacks. The `SetType` win is the **inverse and
+neither side was missing code**: both macro variants already existed in our
+tree, and the bug was invoking the wrong one. Worth carrying explicitly, because
+the reflex ("something in our source is surplus, delete it") would have found
+nothing here.
+
+Corollary on the scanner: `localstatic_symbol_inbody_scan.py`'s `MACRO_BODIES`
+filter tests the literal substring `"?Type@"`, which **never** matches
+`"?SetType@"` (no `@@`/start boundary), so the entire `SetType` family leaked
+through a filter written to exclude it. The reported "missing Symbol ctor" was a
+side effect of branch reordering shifting diff alignment — a real count delta
+pointing at an unrelated cause. **A scanner's headline metric can be arithmetically
+true and diagnostically wrong; confirm the shape on asm before trusting its label.**
+
+### 32.6 Pricing the next wave
+
+* `HANDLE_`/`COPY_`/`SAVE_`/`LOAD_SUPERCLASS` chain audit — **CLOSED, 0/1,367.**
+  Do not re-fund. Re-run `superclass_chain_audit.py` after any oracle refresh
+  rather than re-deriving by grep.
+* The 26 chain-bearing near-misses ≥90% (`BandProfile`, `MetaPanel`,
+  `MainHubPanel`, `Game`, `VocalTrack`, `OvershellSlot`, …) have chains that
+  match the oracle **exactly**; their residuals are body/offset/regalloc work and
+  should be routed by diff shape, not by macro family.
+* Generalise the *signature*, not the family: **an identical raw percentage across
+  unrelated units is the single highest-precision lead shape this lane has
+  found** (13/13 here, 18→1 for SYNC). Worth a standing scan that buckets all
+  sub-100 functions by exact `match_percent_normalized` and flags any value
+  shared by ≥3 unrelated units.

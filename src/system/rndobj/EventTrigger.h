@@ -79,7 +79,7 @@ public:
 
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(EventTrigger);
-    OBJ_SET_TYPE(EventTrigger);
+    OBJ_SET_TYPE_ENGINE(EventTrigger);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -19,7 +19,7 @@ public:
     // Hmx::Object
     virtual ~FlowTrigger();
     OBJ_CLASSNAME(FlowTrigger)
-    OBJ_SET_TYPE(FlowTrigger)
+    OBJ_SET_TYPE_ENGINE(FlowTrigger)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

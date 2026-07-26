@@ -55,7 +55,7 @@ public:
 
     BandCamShot();
     OBJ_CLASSNAME(BandCamShot);
-    OBJ_SET_TYPE(BandCamShot);
+    OBJ_SET_TYPE_ENGINE(BandCamShot);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

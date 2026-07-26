@@ -33,7 +33,7 @@ public:
         }
     }
     OBJ_CLASSNAME(Spline);
-    OBJ_SET_TYPE(Spline);
+    OBJ_SET_TYPE_ENGINE(Spline);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

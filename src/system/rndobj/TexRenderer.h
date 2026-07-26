@@ -16,7 +16,7 @@ public:
     // Hmx::Object
     virtual ~RndTexRenderer() {}
     OBJ_CLASSNAME(TexRenderer);
-    OBJ_SET_TYPE(TexRenderer);
+    OBJ_SET_TYPE_ENGINE(TexRenderer);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

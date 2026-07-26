@@ -4,7 +4,7 @@
 class RndMotionBlur : public RndDrawable {
 public:
     OBJ_CLASSNAME(MotionBlur);
-    OBJ_SET_TYPE(MotionBlur);
+    OBJ_SET_TYPE_ENGINE(MotionBlur);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
