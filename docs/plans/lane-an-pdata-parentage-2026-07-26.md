@@ -232,6 +232,52 @@ one* funclet-shaped Code symbol in the assigned unit's obj — multiplicity on
 either side is irrelevant.** A wrong owner does not need a unique signature to
 score. Corrections landed in commit `7f7c057b`.
 
+## ★ What it lands: the micro-pin wave, +590 at an 89.7% hit rate
+
+Parentage's one *discovery* use is the **actionable** class: a funclet that is
+still unpinned while its parent **is** pinned. There are **659** of them (vendor
+window excluded), all starting exactly on a `symbols.txt` symbol boundary (0
+exceptions), merging into **333 contiguous blocks across 211 units**. 292 of the
+659 abut their parent's pinned block end; the other 367 sit further into the
+funclet pool.
+
+Applied via `scripts/harvest/micropin_apply.py` (audit reused verbatim from
+`diffunit_gap_apply.audit`, plus a refusal if any new interval overlaps a
+*different* unit's `.text`), 24,880 bytes of `.text` added, **0 bytes removed**,
+no unit dropped:
+
+| | |
+|---|--:|
+| symmetric baseline (build ×2) | 36,071 |
+| post (build ×2) | 36,661 |
+| gained / lost | 591 / 1 |
+| **net** | **+590** |
+| targets reaching 100% | **591 of 659 (89.7%)** |
+| gains that are NOT one of the 659 targets | **0** |
+| gains in units the diff does not touch | **0** |
+
+Independently re-measured by the lane lead in its own worktree from its own
+baseline pickle (36,069 → 36,659): gained 591, lost 1, **net +590** — the same
+delta from a different absolute baseline, which is the expected ±2
+`dynamic_init` first-build drift and nothing else. Every one of the 591 gains is
+a target funclet by name; the single loss (`default/system/beatmatch/PhraseList`
+`fn_8278C438`, replaced by `fn_8278C76C` in the same unit) is a local re-anchor
+inside a block the diff extends.
+
+### ★ Why the hit rate is the point
+
+| attribution rule | functions claimed | reached 100% |
+|---|--:|--:|
+| a *certainly wrong* unit (laneAM leg X) | 589 | 36.7% |
+| laneAM whole-gap argmax | 589 | 72.0% |
+| **parentage micro-pins (this lane)** | **659** | **89.7%** |
+
+The 68 misses are pinned but their funclet bytes still differ (RhythmDetector 6,
+VarTimer 6, RockCentral 5, Performer 4) — a body/codegen residue, **not** an
+attribution failure. Under a byte-similarity rule a miss is indistinguishable
+from a wrong owner; under parentage the owner is known and the miss is
+diagnostic.
+
 ## The 84-byte cap
 
 `is_funclet_like` contains no size constant. The cap is **emergent**: the target
