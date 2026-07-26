@@ -7,7 +7,7 @@ class SynthSample360 : public SynthSample {
 public:
     SynthSample360();
     virtual ~SynthSample360() {}
-    OBJ_CLASSNAME(SynthSample360);
+    OBJ_CLASSNAME(SynthSample);
     OBJ_SET_TYPE(SynthSample360);
     virtual SampleInst *NewInst(bool, int, int);
     virtual float LengthMs() const;

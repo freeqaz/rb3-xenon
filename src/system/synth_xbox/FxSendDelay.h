@@ -9,7 +9,7 @@
 class FxSendDelay360 : public FxSendDelay, public FxSend360 {
 public:
     virtual ~FxSendDelay360();
-    OBJ_CLASSNAME(FxSendDelay360)
+    OBJ_CLASSNAME(FxSendDelay)
     OBJ_SET_TYPE_ENGINE(FxSendDelay360)
     virtual void Recreate(std::vector<FxSend *> &);
     virtual void UpdateMix();

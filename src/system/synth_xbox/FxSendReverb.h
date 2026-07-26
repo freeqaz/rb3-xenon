@@ -6,7 +6,7 @@
 class FxSendReverb360 : public FxSendReverb, public FxSend360 {
 public:
     virtual ~FxSendReverb360();
-    OBJ_CLASSNAME(FxSendReverb360)
+    OBJ_CLASSNAME(FxSendReverb)
     OBJ_SET_TYPE_ENGINE(FxSendReverb360)
     virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 

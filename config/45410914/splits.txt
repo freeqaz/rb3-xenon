@@ -5119,12 +5119,10 @@ Sequence.cpp:
 System.cpp:
 	.pdata      start:0x82217DB0 end:0x82217DB8
 	.pdata      start:0x82217DF0 end:0x82217DF8
-	.pdata      start:0x8225F688 end:0x8225F7A8
 	.pdata      start:0x822619D8 end:0x822619E0
 	.text       start:0x825100C8 end:0x825101EC
 	.text       start:0x82510510 end:0x82510588
 	.text       start:0x82569E78 end:0x82569E88
-	.text       start:0x82BE28C8 end:0x82BE4428
 	.text       start:0x82C42910 end:0x82C42958
 
 DataEventList.cpp:
@@ -6692,9 +6690,7 @@ ExternalMic.cpp:
 
 Compress.cpp:
 	.pdata      start:0x82242D48 end:0x82242D58
-	.pdata      start:0x822506A8 end:0x822506F0
 	.text       start:0x827CF920 end:0x827CFA40
-	.text       start:0x82A68050 end:0x82A68F38
 
 system/rndobj/CubeTex.cpp:
 	.pdata      start:0x821F1A50 end:0x821F1A58

@@ -47,12 +47,32 @@ LEAPCORE / XAUDIO2 / NUISPEECH / XGRAPHICS / TrueColor / FaceCore are REAL Xbox3
 middleware statically linked into both games (0x82BE0000–0x82BE6000 is a coherent XAUDIO2/LEAPCORE
 region). Their defect is a **SPLIT PIN inside XDK library territory** — `System.cpp` pinned
 0x82BE28C8–0x82BE4428 (tot=33, comp=1), also `Compress.cpp` 0x82A68050, `GemTrack.cpp` 0x82B93C78.
-⇒ splits lane, NOT map lane. **Still open.**
+⇒ splits lane, NOT map lane. **RESOLVED 2026-07-26 (laneXDKPIN).** Content-verified and re-carved:
+`System.cpp` .text 0x82BE28C8–0x82BE4428 + its .pdata 0x8225F688–0x8225F7A8 **removed** (all 55 fns are
+`CLeapSystem@LEAPCORE`; the span's ctors store 7 vtables and reference the GUID {8bcf1f58-…} @0x821A7D9C,
+L"Xbox 360 audio device" @0x821A7DAC, L"Audio" @0x821A7DD8, "SimpList: non-growable list…" @0x821A68BC —
+and have NO RTTI COL, i.e. built /GR-, unlike Milo). `Compress.cpp` .text 0x82A68050–0x82A68F38 + .pdata
+0x822506A8–0x822506F0 **removed** (XGRAPHICS suffix-tree shader-microcode compressor; loads
+"Compression : creates %d subroutines" @0x8217D21C). Our real spans are unaffected: Compress.cpp keeps
+0x827CF920–0x827CFA40, whose zlib version string "1.2.1" @0x8211A4A0 confirms it. The GemTrack.cpp
+0x82B93C78 item was a FALSE ALARM — 0x82B93xxx is band3/bandtrack territory, no XDK symbol within 0x100000,
+and a later lane already re-carved it (TrackPanel.cpp 0x82B93C78–0x82B93CE4, GemTrack from 0x82B93CE4).
+A tree-wide re-scan (map-named XDK/middleware symbols inside each pinned .text) found NO other straddler:
+next worst is Synth.cpp at 5/96. Measured: +2 matched, 0 lost.
 
 ### 6. Source bug, still open
 Retail's `FxSend*360` classes register under the **base** token (`FxSendReverb`, not `FxSendReverb360`);
 `RndMultiMeshProxy` loads `"RndMultiMeshProxy"` where our `OBJ_CLASSNAME` says `MultiMeshProxy`.
-Fixing both would also disambiguate 32 currently-ambiguous strings.
+**FIXED 2026-07-26 (laneXDKPIN).** Ground truth read out of the retail StaticClassName bodies:
+`FxSendReverb360::StaticClassName` @0x82B59FD0 loads "FxSendReverb" @0x820F4EC0; likewise Wah@0x82B5A888→
+"FxSendWah", MeterEffect@0x82B5A680, Synapse@0x82B5A808, Delay@0x82B5A158, PitchShift@0x82B5A788 —
+all base tokens (EQ/Chorus/Distortion/Compress/Flanger already were). `RndMultiMeshProxy::StaticClassName`
+@0x8240E3C0 loads "RndMultiMeshProxy" @0x8205DD00. No "*360" token exists anywhere in .rdata; the only
+360-suffixed strings are .data RTTI type descriptors (`.?AVFxSendReverb360@@`). SynthSample360 fixed too.
+⚠ The "disambiguates 32" prediction is **REFUTED**: `ambiguous` in localstatic_symbol_audit.py is an
+IMAGE property (≥2 bodies load the same string) and is invariant to our source tokens — 32 distinct
+ambiguous strings before AND after. The real, measured payoff is 69→62 MISMATCH / 358→365 OK (7 map
+entries vindicated). Score impact is nil by construction (normalized diff ignores the reloc).
 
 ### 7. Process hazards that cost real time this session
 - **`git apply` aborts ATOMICALLY while still printing per-file "applied cleanly".** Always verify with

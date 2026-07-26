@@ -5,7 +5,7 @@
 
 class FxSendWah360 : public FxSendWah, public FxSend360 {
 public:
-    OBJ_CLASSNAME(FxSendWah360)
+    OBJ_CLASSNAME(FxSendWah)
     OBJ_SET_TYPE_ENGINE(FxSendWah360)
     virtual void Recreate(std::vector<FxSend *> &);
     virtual void UpdateMix();

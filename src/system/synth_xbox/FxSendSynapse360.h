@@ -5,7 +5,7 @@
 
 class FxSendSynapse360 : public FxSendSynapse, public FxSend360 {
 public:
-    OBJ_CLASSNAME(FxSendSynapse360)
+    OBJ_CLASSNAME(FxSendSynapse)
     OBJ_SET_TYPE_ENGINE(FxSendSynapse360)
     virtual void SyncEffectParams(IXAudio2SubmixVoice *) const;
 
