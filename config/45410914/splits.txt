@@ -10979,7 +10979,7 @@ OvershellPanel.cpp:
 	.text       start:0x825BA6C4 end:0x825BA6C8
 
 MetaPanel.cpp:
-	.pdata      start:0x821FC0C0 end:0x821FC1D0
+	.pdata      start:0x821FC138 end:0x821FC1D0
 	.pdata      start:0x822187C8 end:0x822187D8
 	.pdata      start:0x8221DCC8 end:0x8221DD60
 	.pdata      start:0x8221DD78 end:0x8221DDF0
@@ -11018,7 +11018,7 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E738 end:0x8221E760
 	.pdata      start:0x822281A0 end:0x822281D0
 	.pdata      start:0x82241968 end:0x82241970
-	.text       start:0x82318E34 end:0x82319F74
+	.text       start:0x82319810 end:0x82319F74
 	.text       start:0x8251BA00 end:0x8251BA78
 	.text       start:0x8256DF78 end:0x8256E4B0
 	.text       start:0x8256E570 end:0x8256E998
@@ -12037,12 +12037,10 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82B801A8 end:0x82B801D4
 
 SpeechMgr.cpp:
-	.pdata      start:0x821FCA10 end:0x821FCBA0
 	.pdata      start:0x82207A88 end:0x82207AA0
 	.pdata      start:0x8220E318 end:0x8220E320
 	.pdata      start:0x82214250 end:0x82214260
 	.pdata      start:0x82214260 end:0x82214268
-	.text       start:0x82321A2C end:0x823234B0
 	.text       start:0x823E1B40 end:0x823E1C18
 	.text       start:0x82459FC8 end:0x8245A02C
 	.text       start:0x824CD818 end:0x824CD8B8
@@ -12672,3 +12670,11 @@ OvershellDir.cpp:
 PlayerDiffIcon.cpp:
 	.pdata      start:0x821FCDC8 end:0x821FCE30
 	.text       start:0x823258C8 end:0x82326274
+
+MicInputArrow.cpp:
+	.pdata      start:0x821FC0B8 end:0x821FC138
+	.text       start:0x82318C70 end:0x82319810
+
+ScrollbarDisplay.cpp:
+	.pdata      start:0x821FC9D8 end:0x821FCBA0
+	.text       start:0x82321608 end:0x823234B0
