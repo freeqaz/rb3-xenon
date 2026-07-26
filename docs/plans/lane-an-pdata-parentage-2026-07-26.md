@@ -157,6 +157,12 @@ byte-signature fill era):
 | PROVEN whose pre-fill pin **disagrees** with the claim | **0** |
 | …and, independently: PROVEN whose **parent is `target_symbol_map`-NAMED** | **11,985** |
 
+★The test is also **not vacuous**: if `PROVEN` merely meant "one big span
+happens to cover both", the contradiction rate would be ≈0. It is **2.9%
+(532/18,439)**, and the contradictions concentrate in specific units
+(`SaveLoadManager.cpp` 73, `RockCentral.cpp` 56) rather than spreading uniformly
+— i.e. the signal discriminates, and it localises real pin defects.
+
 So **92.6% of the PROVEN set rests on a pin that predates the fills**, and
 **68% of the parents carry a mangled name** — the strongest identity evidence
 this project has. The mechanism is an *evidence transfer*: a 40-byte stereotyped
