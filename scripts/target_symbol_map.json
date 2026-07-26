@@ -1,4 +1,8 @@
 {
+ "0x823423e0": "?Save@FlowWhile@@UAAXAAVBinStream@@@Z",
+ "0x826fe7f0": "?OnPassthrough@Synth@@AAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x827a5508": "?Init@SongPreview@@QAAXXZ",
+ "0x82bb41a0": "??0VorbisReader@@QAA@PAVFile@@_NPAVStandardStream@@11@Z",
  "0x826864a8": "??1?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x82273f80": "??0FilePath@@QAA@XZ",
  "0x822ae070": "??_GBandSwatch@@UAAPAXI@Z",

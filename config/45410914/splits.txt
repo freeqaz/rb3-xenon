@@ -3250,6 +3250,7 @@ VorbisReader.cpp:
 	.pdata      start:0x8225E888 end:0x8225E890
 	.pdata      start:0x8225E8A0 end:0x8225E8A8
 	.pdata      start:0x8225E8E8 end:0x8225E8F0
+	.pdata      start:0x8225E958 end:0x8225E960
 	.pdata      start:0x8225E988 end:0x8225E990
 	.pdata      start:0x8225E9B8 end:0x8225E9C0
 	.text       start:0x822B8BE8 end:0x822B8C8C
@@ -3261,6 +3262,7 @@ VorbisReader.cpp:
 	.text       start:0x82BB2D48 end:0x82BB2E64
 	.text       start:0x82BB3110 end:0x82BB31EC
 	.text       start:0x82BB36B8 end:0x82BB3750
+	.text       start:0x82BB41A0 end:0x82BB439C
 	.text       start:0x82BB4478 end:0x82BB45B4
 	.text       start:0x82BB4730 end:0x82BB477C
 
@@ -4471,7 +4473,6 @@ PracticeSection.cpp:
 	.pdata      start:0x8221C7F0 end:0x8221C7F8
 	.pdata      start:0x8221C9D0 end:0x8221C9D8
 	.pdata      start:0x82233B30 end:0x82233B40
-	.pdata      start:0x822375A8 end:0x822375B0
 	.pdata      start:0x822375D8 end:0x822375E0
 	.text       start:0x82346DE0 end:0x82346EB8
 	.text       start:0x82389608 end:0x82389674
@@ -4485,7 +4486,6 @@ PracticeSection.cpp:
 	.text       start:0x8255A340 end:0x8255A488
 	.text       start:0x8255C8E8 end:0x8255C95C
 	.text       start:0x826B8BA8 end:0x826B8C38
-	.text       start:0x826FE7F0 end:0x826FE8A8
 	.text       start:0x826FED98 end:0x826FEDF8
 
 RhythmBattle.cpp:
@@ -5725,6 +5725,7 @@ CheatProvider.cpp:
 	.pdata      start:0x8222B690 end:0x8222B698
 	.pdata      start:0x82237580 end:0x82237588
 	.pdata      start:0x82237588 end:0x822375A8
+	.pdata      start:0x822375A8 end:0x822375B0
 	.pdata      start:0x822376E8 end:0x822376F0
 	.pdata      start:0x822376F0 end:0x82237720
 	.pdata      start:0x82237760 end:0x822377A0
@@ -5737,6 +5738,7 @@ CheatProvider.cpp:
 	.text       start:0x82638CC0 end:0x82638D04
 	.text       start:0x826FE590 end:0x826FE5CC
 	.text       start:0x826FE5CC end:0x826FE7F0
+	.text       start:0x826FE7F0 end:0x826FE8A8
 	.text       start:0x826FFC18 end:0x826FFC78
 	.text       start:0x826FFC80 end:0x826FFE30
 	.text       start:0x82700270 end:0x827008DC
@@ -6027,7 +6029,6 @@ DataArraySongInfo.cpp:
 
 StorePreviewMgr.cpp:
 	.pdata      start:0x82223820 end:0x82223828
-	.pdata      start:0x82240328 end:0x82240330
 	.pdata      start:0x82241060 end:0x82241080
 	.pdata      start:0x82241080 end:0x82241088
 	.pdata      start:0x82241088 end:0x82241090
@@ -6037,7 +6038,6 @@ StorePreviewMgr.cpp:
 	.pdata      start:0x822410B0 end:0x822410C8
 	.pdata      start:0x822410C8 end:0x82241168
 	.text       start:0x825C21D0 end:0x825C227C
-	.text       start:0x827A5508 end:0x827A5664
 	.text       start:0x827B1938 end:0x827B1AC0
 	.text       start:0x827B1AC0 end:0x827B1B28
 	.text       start:0x827B1B28 end:0x827B1B78
@@ -7319,9 +7319,11 @@ VirtualKeyboard_Xbox.cpp:
 	.text       start:0x82A6DC40 end:0x82A6DCC0
 
 FlowWhile.cpp:
+	.pdata      start:0x821FE950 end:0x821FE958
 	.pdata      start:0x821FE978 end:0x821FE980
 	.pdata      start:0x82209CA0 end:0x82209CA8
 	.text       start:0x8230B608 end:0x8230B618
+	.text       start:0x823423DC end:0x82342438
 	.text       start:0x82342680 end:0x823426F8
 	.text       start:0x82402F68 end:0x82402FA0
 
@@ -11227,12 +11229,14 @@ SongPreview.cpp:
 	.pdata      start:0x82240308 end:0x82240310
 	.pdata      start:0x82240310 end:0x82240318
 	.pdata      start:0x82240318 end:0x82240328
+	.pdata      start:0x82240328 end:0x82240330
 	.pdata      start:0x82240330 end:0x82240338
 	.pdata      start:0x82240338 end:0x822403B8
 	.pdata      start:0x822403B8 end:0x822403C0
 	.text       start:0x827A5338 end:0x827A539C
 	.text       start:0x827A53A0 end:0x827A5410
 	.text       start:0x827A5418 end:0x827A54FC
+	.text       start:0x827A5508 end:0x827A5664
 	.text       start:0x827A5668 end:0x827A578C
 	.text       start:0x827A5790 end:0x827A6124
 	.text       start:0x827A6128 end:0x827A6200
@@ -11716,13 +11720,13 @@ BandLabel.cpp:
 	.pdata      start:0x821FE7B8 end:0x821FE8F8
 	.pdata      start:0x821FE900 end:0x821FE918
 	.pdata      start:0x821FE920 end:0x821FE928
-	.pdata      start:0x821FE950 end:0x821FE960
+	.pdata      start:0x821FE958 end:0x821FE960
 	.pdata      start:0x8222E918 end:0x8222E920
 	.text       start:0x823406F8 end:0x82340740
 	.text       start:0x82340740 end:0x82341FF8
 	.text       start:0x82342068 end:0x823421A8
 	.text       start:0x82342200 end:0x82342228
-	.text       start:0x823423DC end:0x823424A4
+	.text       start:0x82342438 end:0x823424A4
 	.text       start:0x826663F0 end:0x8266643C
 
 band3/meta_band/PassiveMessenger.cpp:
