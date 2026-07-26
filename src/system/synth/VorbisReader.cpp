@@ -204,10 +204,10 @@ bool VorbisReader::TryReadHeader() {
         } else
             return false;
     }
+    ogg_packet packet;
     if (mHeadersRead == 3)
         return false;
     else {
-        ogg_packet packet;
         if (TryReadPacket(packet)) {
             int vorbisErr =
                 vorbis_synthesis_headerin(mVorbisInfo, mVorbisComment, &packet);

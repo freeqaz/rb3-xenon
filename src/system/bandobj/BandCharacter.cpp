@@ -1799,8 +1799,10 @@ void ReplaceSubdir(ObjectDir *d1, ObjectDir *d2) {
         ObjDirPtr<ObjectDir> dPtr(d1->SubDirs()[i].Ptr());
         d1->RemoveSubDir(dPtr);
     }
-    ObjDirPtr<ObjectDir> dPtr(d2);
-    d1->AppendSubDir(dPtr);
+    {
+        ObjDirPtr<ObjectDir> dPtr(d2);
+        d1->AppendSubDir(dPtr);
+    }
 }
 
 void BandCharacter::SetVisemes() {
