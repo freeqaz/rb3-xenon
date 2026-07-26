@@ -50,7 +50,7 @@ void Tracker::Restart() {
 void Tracker::HandleAddPlayer(Player *iPlayer) {
     MILO_ASSERT(GetPlayerDisplayIndex(iPlayer) == -1, 0x60);
     for (int i = 0; i < mPlayerDisplays.size(); i++) {
-        if (!mPlayerDisplays[i].mPlayer) {
+        if (!(int)mPlayerDisplays[i].mPlayer) {
             mPlayerDisplays[i].mPlayer = iPlayer;
             break;
         }
@@ -205,7 +205,7 @@ bool Tracker::ReachedAnyTarget() const { return GetTargetSuccessLevel() > -1; }
 void Tracker::SetupDisplays() {
     TrackerChallengeType ty = GetChallengeType();
     for (int i = 0; i < mPlayerDisplays.size(); i++) {
-        if (mPlayerDisplays[i].mPlayer) {
+        if ((int)mPlayerDisplays[i].mPlayer) {
             mPlayerDisplays[i].SetChallengeType(ty);
         }
     }

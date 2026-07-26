@@ -440,7 +440,7 @@ static float kFogScale = 256.0f;
 
 void NgSpotlightDrawer::RenderFogProxy() {
     RndDrawable *proxy = mParams.mProxy;
-    if (proxy) {
+    if ((int)proxy) {
         MILO_ASSERT(mFogDensityMap == SR().mDensityMap, 0x400);
         TheShaderMgr.SetPConstant((PShaderConstant)5, (RndTex *)0);
         float nearPlane = mSpotCam->NearPlane();
