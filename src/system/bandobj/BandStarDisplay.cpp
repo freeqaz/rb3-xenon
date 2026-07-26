@@ -173,7 +173,9 @@ void BandStarDisplay::PostLoad(BinStream &bs) {
 }
 
 BEGIN_PROPSYNCS(BandStarDisplay)
+    static Symbol num_stars("num_stars");
     SYNC_PROP_SET(num_stars, mNumStars, SetNumStars(_val.Float(), true))
+    static Symbol star_type("star_type");
     SYNC_PROP_SET(star_type, mStarType, SetStarType(_val.Sym(), false))
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS

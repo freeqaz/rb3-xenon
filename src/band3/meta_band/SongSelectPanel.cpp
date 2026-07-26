@@ -129,7 +129,10 @@ void SongSelectPanel::ResultSuccess(bool b1, bool b2, bool b3) {
     HandleType(success);
 }
 
-void SongSelectPanel::ResultFailure() { HandleType(lb_failure_msg); }
+void SongSelectPanel::ResultFailure() {
+    static Message lb_failure_msg("lb_failure");
+    HandleType(lb_failure_msg);
+}
 
 void SongSelectPanel::Poll() {
     HeldButtonPanel::Poll();

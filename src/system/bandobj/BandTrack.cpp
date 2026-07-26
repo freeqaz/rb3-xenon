@@ -399,6 +399,7 @@ void BandTrack::EnterCoda() {
     EventTrigger *trig = ThisDir()->Find<EventTrigger>("enter_coda.trig", false);
     if (trig)
         trig->Trigger();
+    static Message reset_msg("reset");
     if (mPlayerIntro)
         mPlayerIntro->HandleType(reset_msg);
     if (mFailedFeedback)
@@ -761,21 +762,17 @@ void BandTrack::SoloEnd(int i, Symbol sym) {
 void BandTrack::PlayIntro() {
     if (mParent && mParent->FailedAtStart()) {
         DisablePlayer(0);
-        return;
-    }
-    if (!mPlayerIntro)
-        return;
-    if (!mParent)
-        return;
-    if (mParent->InGameMode("practice"))
-        return;
-    if (mSimulatedNet || (mParent && !mParent->IsLocal())) {
-        mPlayerIntro->Handle(intro_remote_msg, true);
-    } else {
-        mPlayerIntro->Handle(intro_msg, true);
-    }
-    if (mParent && mParent->PlayerDisconnected()) {
-        DisablePlayer(0);
+    } else if (mPlayerIntro && mParent && !mParent->InGameMode("practice")) {
+        if (mSimulatedNet || (mParent && !mParent->IsLocal())) {
+            static Message intro_remote_msg("intro_remote");
+            mPlayerIntro->Handle(intro_remote_msg, true);
+        } else {
+            static Message intro_msg("intro");
+            mPlayerIntro->Handle(intro_msg, true);
+        }
+        if (mParent && mParent->PlayerDisconnected()) {
+            DisablePlayer(0);
+        }
     }
     if (mParent) {
         mParent->RefreshPlayerHUD();
@@ -792,16 +789,16 @@ void BandTrack::SavePlayer() {
         trig->Trigger();
     if (mFailedFeedback) {
         if (mParent && mParent->HasLocalPlayer()) {
+            static Message icon_hide_msg("icon_hide");
             mPlayerIntro->Handle(icon_hide_msg, true);
         }
+        static Message saved_msg("saved");
         mFailedFeedback->Handle(saved_msg, true);
     }
     if (mParent)
         mParent->SetGemsEnabledByPlayer();
-    TrackPanelDirBase *tpd = dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir());
-    if (tpd) {
-        int idx = mTrackIdx;
-        dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->EnablePlayer(idx);
+    if (MyTrackPanelDir()) {
+        MyTrackPanelDir()->EnablePlayer(mTrackIdx);
     }
 }
 

@@ -278,8 +278,11 @@ BEGIN_HANDLERS(PatchLayer)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(PatchLayer)
+    static Symbol sticker_category("sticker_category");
     SYNC_PROP_MODIFY(sticker_category, mStickerCategory, mStickerIdx = 0)
+    static Symbol sticker_idx("sticker_idx");
     SYNC_PROP(sticker_idx, mStickerIdx)
+    static Symbol color_idx("color_idx");
     SYNC_PROP(color_idx, mColorIdx)
 END_PROPSYNCS
 

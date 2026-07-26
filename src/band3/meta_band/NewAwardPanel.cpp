@@ -64,7 +64,7 @@ void NewAwardPanel::FinishLoad() {
 
 void NewAwardPanel::PopAndShowFirstAward() {
     if (!TheAccomplishmentMgr->HasNewAwards()) {
-        static Message handle_continue_msg("handle_continue", 0);
+        static Message handle_continue_msg("handle_continue");
         Handle(handle_continue_msg, true);
     } else {
         mUser = TheAccomplishmentMgr->GetUserForFirstNewAward();
@@ -75,7 +75,7 @@ void NewAwardPanel::PopAndShowFirstAward() {
         static Message cUpdateProviderMsg("update_provider", 0);
         cUpdateProviderMsg[0] = m_pAwardAssetProvider;
         Handle(cUpdateProviderMsg, true);
-        static Message update_all_msg("update_all", 0);
+        static Message update_all_msg("update_all");
         Handle(update_all_msg, true);
         TheAccomplishmentMgr->ClearFirstNewAward(mUser);
     }

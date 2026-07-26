@@ -249,6 +249,7 @@ void ChordbookPanel::SetFret(int string, int fret) {
     bool correct = curFret == fret;
     SetCorrect(string, correct);
     if (Showing() && correct && fret != 0 && changed) {
+        static Message play_correct_fret_msg("play_correct_fret");
         Handle(play_correct_fret_msg, true);
     }
     if (!ChordComplete())

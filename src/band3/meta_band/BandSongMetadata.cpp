@@ -266,6 +266,8 @@ bool BandSongMetadata::HasPart(Symbol s, bool b) const {
     if (mgr && !b && !mgr->IsSongAllowedToHavePart(ID(), s)) {
         return false;
     } else {
+        static Symbol real_guitar("real_guitar");
+        static Symbol real_bass("real_bass");
         if (s == real_guitar || s == real_bass) {
             SongUpgradeData *upgradeData = mSongMgr->GetUpgradeData(ID());
             if (upgradeData) {
