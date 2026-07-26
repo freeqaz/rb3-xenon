@@ -316,8 +316,37 @@ compiled base objs contain no `fn_` names, so base candidates are only
 lane's own funclet census corroborates the number from the other side: of 26,321
 retail EH funclets, **26,315 are ≤ 84 B and only 6 exceed it**.
 
-*(Worker A's measurement of the base-obj size histogram, whether the base-side
-gate is load-bearing, and the measured A/B of lifting it — filled in below.)*
+### ★ Correction: it is a *tendency*, not a cap
+
+Measured directly over all **1,024** compiled objs (COFF symbol tables, `cls`
+2/3 only so MSVC's class-6 `$M<N>` labels *inside* funclets cannot under-size
+anything — the exact trap that once zeroed laneAM's predictor):
+
+| | |
+|---|--:|
+| funclet-like code symbols in our base objs | **75,100** |
+| …larger than 84 B | **66** (0.09%) |
+| largest | **484 B** — `??__EgPropPaths@@YAXXZ` in `Object.obj` |
+| **all** code symbols in our base objs | 455,994 |
+| …larger than 84 B | **87,761** |
+
+So "**no** function larger than 84 B can score at all" is **not literally true** —
+66 base-side candidates exceed it, up to 484 B, all of them `??__E`/`??__F`
+dynamic init/dtor thunks, which `is_funclet_like` admits by name with no size
+test. What is true is that **84 B is where the funclet-shaped population runs
+out**, on both sides independently: 26,315 of 26,321 retail EH funclets are
+≤ 84 B, and 99.91% of our base funclet-like symbols are.
+
+The gate is therefore **incidental in form and load-bearing in effect**. The
+84 B figure should be quoted as an empirical ceiling of the *name* gate's
+population, not as a rule — and the real question for a future lane is not
+"raise 84" but "should the base side admit ordinary mangled methods at all",
+which would expose **87,761** new candidates to a matcher that
+`function_reloc_diffs: None` renders blind to every callee. At 32–44 B a
+certainly-wrong unit already scores 19–57% (laneAM leg X); the honest way to
+open that door is to require **relocation-descriptor equality** — objdiff already
+has the primitive, `named_symbol_signature` (~line 933) — rather than bare
+masked bytes.
 
 ## Reproducing
 
