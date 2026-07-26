@@ -217,6 +217,12 @@ void StorePanel::FinishCheckout() {
     RELEASE(mPurchaser);
 }
 
+bool StorePanel::Unloading() const {
+    if (mState != kUp && !TheNetCacheMgr->IsUnloaded())
+        return true;
+    return UIPanel::Unloading();
+}
+
 void StorePanel::ExitStore(StoreError) const {}
 Profile *StorePanel::StoreProfile() const { return nullptr; }
 

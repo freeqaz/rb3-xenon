@@ -289,6 +289,35 @@ Symbol AccomplishmentProgress::GetFirstNewAwardReason() const {
     return mNewAwards.front().second;
 }
 
+void AccomplishmentProgress::GiveGamerpic(Accomplishment *a) {
+    int reward = a->GetGamerpicReward();
+    GamerAwardStatus *gStatus = new GamerAwardStatus(reward, (GamerAwardType)1);
+    mGamerAwardStatusList.push_back(gStatus);
+    if (XUserAwardGamerPicture(
+            mParentProfile->GetPadNum(), reward, 0, &gStatus->mOverlapped
+        ) == ERROR_IO_PENDING) {
+        gStatus->unk10 = true;
+    }
+    ThePassiveMessenger->TriggerEarnedGamerpicMsg(
+        mParentProfile->GetAssociatedLocalBandUser()
+    );
+}
+
+void AccomplishmentProgress::GiveAvatarAsset(Accomplishment *acc) {
+    int reward = acc->GetAvatarAssetReward();
+    GamerAwardStatus *status = new GamerAwardStatus(reward, (GamerAwardType)2);
+    mGamerAwardStatusList.push_back(status);
+    status->mAsset.dwUserIndex = mParentProfile->GetPadNum();
+    status->mAsset.dwAwardId = reward;
+    if (XUserAwardAvatarAssets(1, &status->mAsset, &status->mOverlapped)
+        == ERROR_IO_PENDING) {
+        status->unk10 = true;
+    }
+    ThePassiveMessenger->TriggerEarnedAvatarAssetMsg(
+        mParentProfile->GetAssociatedLocalBandUser()
+    );
+}
+
 void AccomplishmentProgress::ClearFirstNewAward() {
     MILO_ASSERT(HasNewAwards(), 0x16A);
     mNewAwards.pop_front();

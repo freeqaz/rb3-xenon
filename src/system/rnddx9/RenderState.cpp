@@ -91,6 +91,15 @@ void RndRenderState::SetStencilOp(StencilOp fail, StencilOp zfail, StencilOp pas
     D3DDevice_SetRenderState_StencilPass(TheDxRnd.Device(), (int)pass);
 }
 
+void RndRenderState::SetBorderColor(uint sampler, bool border) {
+    // Inline GPUTEXTURE_FETCH_CONSTANT.BorderColor (dword[5], bits 0-1) write,
+    // same one-Device()-fetch-per-bitfield-group shape as SetTextureFilter.
+    D3DDevice *dev = TheDxRnd.Device();
+    DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[5];
+    *pWord = (*pWord & ~0x00000003) | (border != 0);
+    dev->m_Pending.m_Mask[3] |= 0x8000000000000000ull >> (sampler + 0x20);
+}
+
 void RndRenderState::SetTextureFilter(uint sampler, FilterMode filter, bool) {
     D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), sampler, filter);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), sampler, filter);

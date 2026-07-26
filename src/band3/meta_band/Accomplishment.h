@@ -84,6 +84,8 @@ public:
     Symbol GetUnitsToken(int) const;
     Symbol GetPassiveMsgChannel() const;
     int GetPassiveMsgPriority() const;
+    int GetGamerpicReward() const;
+    int GetAvatarAssetReward() const;
     static const char *GetIconPath();
 
     // ------------------------------------------------------------------

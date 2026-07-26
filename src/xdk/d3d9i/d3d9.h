@@ -792,6 +792,9 @@ void D3DDevice_BlockOnFence(DWORD fence);
 #pragma endregion
 #pragma region Misc
 
+void D3DDevice_SetPixelShaderConstantB(
+    D3DDevice *pDevice, DWORD StartRegister, CONST BOOL *pConstantData, DWORD BoolCount
+);
 void D3DDevice_SetSamplerState_MinFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MagFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 inline void D3DDevice_SetSamplerState_MipFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value, UINT64 PendingMask3) {

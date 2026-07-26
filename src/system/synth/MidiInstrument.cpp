@@ -208,9 +208,10 @@ void MidiInstrument::Poll() {
             }
         }
         if (mFaders.Dirty()) {
+            // Retail RB3 (and the rb3-Wii oracle) update volume only; DC3
+            // (newer) added the UpdatePan() call.
             FOREACH (it, mActiveVoices) {
                 (*it)->UpdateVolume();
-                (*it)->UpdatePan();
             }
         }
     }
