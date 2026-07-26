@@ -1,0 +1,216 @@
+{
+ "baseline": {
+  "matched_code": 3276616,
+  "matched_code_percent": 30.968655,
+  "matched_functions": 37282,
+  "reproducible": true,
+  "runs_matched_functions": [
+   37282,
+   37282
+  ]
+ },
+ "bijection_arbitrary_overlap": {
+  "apply_tool_corruption_fix_verified_present": true,
+  "conclusion": "essentially disjoint -- the two channels do not block each other",
+  "note": "identical at both heads",
+  "remove_vas_tagged_bijection_arbitrary": "6 / 34",
+  "remove_vas_tagged_icf_arbitrary": "0 / 34",
+  "set_vas_tagged_bijection_arbitrary": "0 / 63",
+  "set_vas_tagged_icf_arbitrary": "0 / 63"
+ },
+ "controls": {
+  "additivity_check": "evict_live(-2,-176B) + evict_contradicted(-23,-1976B) == evict_as_written(-25,-2152B) exactly",
+  "all_legs_reproducible": true,
+  "builds_per_leg": 2,
+  "map_invariants": {
+   "_bijection_arbitrary": 1207,
+   "_denylist": 3,
+   "_icf_arbitrary": 25,
+   "duplicate_vas": 0,
+   "held_on_all_legs": true
+  },
+  "phantom_stale_obj_control": "PASS - 0 unexplained losses, 0 named gains, 0 common-key improvements in any leg; every lost symbol maps 1:1 to a removed map line",
+  "renamer_stamp_removed_each_leg": true,
+  "report_cache_removed_each_leg": true,
+  "symbols_txt_checked_out_each_leg": true
+ },
+ "date": "2026-07-26",
+ "headline": {
+  "at_620bfb21": {
+   "live_move_blocked_on_lane_conflict": 1,
+   "plan_less_consumed_than_at_24f508fb": true,
+   "still_live_remainder_is_no_longer_free": "strict name-only -1 (was 0)"
+  },
+  "but": "the -25 is now ENTIRELY collateral damage on other lanes since-landed identities, not the integrity trade the plan described. The plan's intended trade is already made: all 63 moves are in the map and 29 of 34 false holders are already gone.",
+  "decomposition": {
+   "evictions": -25,
+   "moves": 0
+  },
+  "old_number_status": "SUPERSEDED, not confirmed and not simply refuted",
+  "plan_total_if_applied_today": -25,
+  "still_live_remainder_price": {
+   "matched_code": -176,
+   "matched_code_percent": -0.001667,
+   "strict_name_only": 0,
+   "strict_unit_name": -2
+  }
+ },
+ "lane": "AU-3",
+ "legs": {
+  "evict_as_written_27of34": {
+   "matched_code_delta": -2152,
+   "matched_code_percent_delta": -0.02034,
+   "reproducible": true,
+   "runs_matched_functions": [
+    37257,
+    37257
+   ],
+   "strict_name_only": -19,
+   "strict_unit_name": -25
+  },
+  "evict_contradicted_25": {
+   "matched_code_delta": -1976,
+   "matched_code_percent_delta": -0.018677,
+   "reproducible": true,
+   "runs_matched_functions": [
+    37259,
+    37259
+   ],
+   "strict_name_only": -19,
+   "strict_unit_name": -23
+  },
+  "evict_live_2": {
+   "matched_code_delta": -176,
+   "matched_code_percent_delta": -0.001667,
+   "reproducible": true,
+   "runs_matched_functions": [
+    37280,
+    37280
+   ],
+   "strict_name_only": 0,
+   "strict_unit_name": -2
+  },
+  "moves_63_set": {
+   "map_lines_changed": 0,
+   "matched_code_delta": 0,
+   "matched_code_percent_delta": 0.0,
+   "method": "textual apply produced a BYTE-IDENTICAL map file; no build needed",
+   "strict_name_only": 0,
+   "strict_unit_name": 0,
+   "verdict": "provable no-op"
+  }
+ },
+ "merge_base": "24f508fb",
+ "prior_price": {
+  "doc_span_predictor": "GAIN 5 / LOSS 27 = net -22",
+  "headline_held": -24,
+  "source": "docs/plans/laneH-map-rotation-repair-2026-07-25.md section 6"
+ },
+ "reconciliation": {
+  "evicted_holders_34": {
+   "gone_from_map_entirely": 29,
+   "present_but_relocated": 5,
+   "still_on_plan_destination": 0
+  },
+  "live_removal_vas": [
+   "0x8229ceb8",
+   "0x8240dcb8"
+  ],
+  "moves_63": {
+   "consumed": 63,
+   "contradicted": 0,
+   "live": 0,
+   "live_freed": 0,
+   "note": "every destination VA already holds the plan-desired name on 24f508fb"
+  },
+  "removals_34": {
+   "consumed_va_already_absent": 7,
+   "contradicted": 25,
+   "live": 2,
+   "note": "CONTRADICTED = a DIFFERENT, since-landed name now occupies the VA"
+  }
+ },
+ "refutations": {
+  "icf_twin_ordering_shape": {
+   "note": "the 25 contradictions are genuine third-party assignments, not swapped-twin false contradictions",
+   "swap_pairs_found": 0,
+   "verdict": "ABSENT"
+  },
+  "lane_ae_artifact_overlap": {
+   "ham_dc3_lineage": 1,
+   "lbl_merged_foreign_ns": 0,
+   "note": "only ?StaticClassName@HamMove@@, already gone from the map",
+   "verdict": "essentially NONE"
+  },
+  "own_claim_corrected": "the still-live remainder reads -2 on the headline but 0 at name level: both entries are DUPLICATE-NAME double-counts (the same name also scores strict at another VA), so no real identity is lost.",
+  "pair_funclets_by_bytes_recovery": {
+   "code": "objdiff-core/src/diff/mod.rs:1410 pair_funclets_by_bytes(left=target,right=base); both candidate loops gate on is_funclet_like (L1423, L1438). is_funclet_like (L815) accepts __unwind$N / __catch$N / __unwind__merged_* / fn_<8hex> / ??__E* / ??__F*. An evicted target reverts to fn_<8hex> and PASSES on the left, but our compiled base object defines the ordinary mangled name, which FAILS the predicate on the right -- so no right candidate exists and no pairing is possible.",
+   "implication": "Lane AR's \"+0 strict / ~0 fuzzy for 5 retirements\" is NOT recovery. Those 5 entries were already scoring ~nothing. Retiring a NON-scoring wrong binding is free; retiring a SCORING binding costs its whole contribution.",
+   "measurement": "all 27 removals produced a replacement fn_<VA> at exactly 0.000%, never a recovered fuzzy; matched_code fell by the full body size (-2152 B over 27).",
+   "verdict": "REFUTED for ordinary named functions"
+  }
+ },
+ "second_head_620bfb21": {
+  "baseline": {
+   "matched_functions": 37619,
+   "note": "reproduces the published headline exactly, after a full all_source build -> rules out the reflinked-dirty-obj trap",
+   "reproducible": true,
+   "runs": [
+    37619,
+    37619
+   ]
+  },
+  "controls": {
+   "_bijection_arbitrary": 1207,
+   "_denylist": 3,
+   "_icf_arbitrary": 25,
+   "duplicate_vas": 0,
+   "phantom_control": "PASS (0 named gains, 0 common-key improvements)"
+  },
+  "evict_live_2": {
+   "delta_vs_old_head": "name-only cost went 0 -> -1 because laneDUPNAME resolved CharEyes to the SINGLE binding 0x8229ceb8 -- exactly the VA this plan wants removed -- and gave laneH-desired 0x8236a128 to CharSignalApplier. Direct head-to-head lane conflict.",
+   "matched_code_delta": -176,
+   "reproducible": true,
+   "runs_matched_functions": [
+    37617,
+    37617
+   ],
+   "strict_name_only": -1,
+   "strict_unit_name": -2
+  },
+  "live_move_not_applicable": "setting 0x82271a90 trips map_rotation_repair.py duplication assert: ?StaticClassName@Object@Hmx@@ now sits at 0x8240dc38 AND 0x8240ddc0. Needs an owner adjudication between laneH content evidence and laneDUPNAME global re-bijection, not an apply.",
+  "reconciliation": {
+   "evicted_holders_34": {
+    "gone_from_map_entirely": 24,
+    "present_but_relocated": 9,
+    "still_on_plan_destination": 1
+   },
+   "moves_63": {
+    "consumed": 60,
+    "contradicted": 2,
+    "live": 1
+   },
+   "removals_34": {
+    "consumed": 7,
+    "contradicted": 25,
+    "live": 2
+   },
+   "reversed_by_laneDUPNAME": {
+    "0x82271a90": {
+     "at_620": "?StaticClassName@HamMove@@SA?AVSymbol@@XZ",
+     "plan_wants": "?StaticClassName@Object@Hmx@@SA?AVSymbol@@XZ"
+    },
+    "0x8236a128": {
+     "at_620": "?StaticClassName@CharSignalApplier@@SA?AVSymbol@@XZ",
+     "plan_wants": "?StaticClassName@CharEyes@@SA?AVSymbol@@XZ"
+    },
+    "0x8236ac28": {
+     "at_620": "?StaticClassName@RndMesh@@SA?AVSymbol@@XZ",
+     "plan_wants": "?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ"
+    }
+   }
+  },
+  "recovery_refutation_holds": "fn_8229CEB8 and fn_8240DCB8 both return at exactly 0.000%"
+ },
+ "subject": "docs/plans/laneH-eviction-plan-2026-07-25.json"
+}
