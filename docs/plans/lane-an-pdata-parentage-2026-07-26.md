@@ -275,6 +275,17 @@ the edit being audited**; without it the audit is circular. All modes are static
   `band3/meta_band/SessionMgr.cpp` 36, `TourProgress.cpp` 29.
   (The 74 laneAL / 88 laneAM figures above count *fills*; these count fills that
   are *currently at 100%* under *current* pins — a slightly different set.)
+
+  ★**451 of the 532 (84.8%) are one-block BOUNDARY SLIPS**: the parent's pinned
+  `.text` block ends *exactly* where the claiming block begins. Example:
+  `CameraInput.cpp` is pinned `0x82369568–0x82369650`, `TourSavable.cpp` starts
+  at `0x82369650`, and `fn_82369650` is `fn_82369568`'s own funclet — the
+  boundary is drawn one function too early. The remaining 81 have the parent in
+  an earlier, non-abutting block.
+  This is also the cleanest refutation of the "the parent's pin merely
+  over-covers" objection: over-cover would place the parent *deep inside* an
+  unrelated span, not exactly abutting the claim. A repair wave here is a
+  well-defined, single-owner splits edit (boundary nudge), not a search.
 * **The obvious extension is drained — do not fund it.** When *both* funclet and
   parent are unpinned (1,210 tree-wide), the parent's own identity could in
   principle supply the unit via `scripts/target_symbol_map.json`. Measured:
