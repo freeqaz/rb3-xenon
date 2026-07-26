@@ -39,12 +39,34 @@ The only sound discriminator is **membership in the live
 Deleting these is safe: `build/` is gitignored, the files are not ninja inputs,
 and the next split regenerates every live one.
 
+SANITY FLOOR (why `--apply` can refuse)
+---------------------------------------
+The classification is only as good as `config.json`.  This repo has a
+documented failure mode that produces a *partially populated* one:
+`config/45410914/symbols.txt` drift makes the split hard-fail ("ends within
+symbol"), and a truncated `config.json` would make every live `.s` look like an
+orphan.  Deleting them is self-healing (the next good split rewrites them) but
+it is not behaviour to hand to other lanes, so `--apply` refuses when either:
+
+  * **the named-orphan share exceeds 25%** (`--max-named-orphan-pct`).  Named
+    units are the right denominator: the healthy measured state is 90 named
+    orphans against 884 named live units = **9.2%**, while a truncated
+    `config.json` drives it toward 100%.  `auto_*` blobs are deliberately
+    excluded from the ratio -- they legitimately outnumber live ones 8,548 to
+    3,290 because auto-carve names are address-derived and churn every split.
+  * **the live unit count is implausibly low** (< 500, `--min-units`).  A
+    healthy manifest carries ~4,174.
+
+`--force` overrides both (it still prints the reason).  `--check` and the dry
+run never refuse -- they only report -- so the floor cannot hide a real problem.
+
 USAGE
 -----
     scripts/prune_orphan_asm.py                      # dry run (default)
     scripts/prune_orphan_asm.py --apply              # actually delete
     scripts/prune_orphan_asm.py --check              # exit 1 if orphans exist
     scripts/prune_orphan_asm.py --project-dir ~/tmp/wt-foo --apply
+    scripts/prune_orphan_asm.py --apply --force      # bypass the sanity floor
 
 ★ Run `--apply` only in your own worktree, or in main when no lane has a live
   `ninja` in flight (the split rule rewrites this directory).
@@ -99,6 +121,11 @@ def main():
     ap.add_argument("--check", action="store_true",
                     help="exit 1 if any orphan exists; delete nothing")
     ap.add_argument("--list", action="store_true", help="print every orphan path")
+    ap.add_argument("--max-named-orphan-pct", type=float, default=25.0,
+                    help="refuse --apply above this named-orphan share (default 25.0)")
+    ap.add_argument("--min-units", type=int, default=500,
+                    help="refuse --apply below this live unit count (default 500)")
+    ap.add_argument("--force", action="store_true", help="bypass the sanity floor")
     args = ap.parse_args()
 
     root = args.project_dir or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -131,9 +158,36 @@ def main():
     if args.check:
         return 1 if orphans else 0
 
+    # --- sanity floor: refuse to mass-delete on a corrupt/truncated config.json ---
+    named_live = sum(1 for r in roots if not os.path.basename(r).startswith("auto_"))
+    named_total = len(named) + named_live
+    named_pct = (100.0 * len(named) / named_total) if named_total else 0.0
+    print(f"named-orphan share:        {len(named)}/{named_total} = {named_pct:.1f}% "
+          f"(refusal threshold {args.max_named_orphan_pct}%)")
+
+    refusals = []
+    if len(roots) < args.min_units:
+        refusals.append(f"live unit count {len(roots)} < --min-units {args.min_units}")
+    if named_pct > args.max_named_orphan_pct:
+        refusals.append(f"named-orphan share {named_pct:.1f}% > "
+                        f"--max-named-orphan-pct {args.max_named_orphan_pct}")
+
     if not args.apply:
+        if refusals:
+            print("\nSANITY FLOOR would block --apply:")
+            for r in refusals:
+                print("   ", r)
         print("\n(dry run -- pass --apply to delete)")
         return 0
+
+    if refusals:
+        for r in refusals:
+            print(f"  {'warn (forced)' if args.force else 'REFUSING'}: {r}", file=sys.stderr)
+        if not args.force:
+            print("\nconfig.json looks truncated or wrong -- a failed split leaves exactly "
+                  "this signature (see the symbols.txt-drift trap). Re-run the split, or "
+                  "pass --force if you are certain.", file=sys.stderr)
+            return 2
 
     freed = 0
     for p in orphans:
