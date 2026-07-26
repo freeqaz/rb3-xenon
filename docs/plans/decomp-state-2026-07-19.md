@@ -136,6 +136,42 @@ tool's own gates removed.** Twice in one day that was the whole answer.
   claims written ahead of a real `report.json` A/B — several of those retractions
   were the lane's most valuable output.
 
+### ★★ SANDWICH OVER-CARVE: measured NET NEGATIVE — necessary but NOT sufficient
+
+A "sandwiched" `.text` block (both immediate gap-0 neighbours are the same other
+unit) plus **100% definer corroboration** (every anonymous target function in the
+block reloc-masked byte-matches a symbol *defined* in the proposed owner's obj)
+**still loses matches.** Measured on the 19 strongest blocks / 268 functions
+(incl. `SaveLoadManager`→`ProfileMgr` 73 fns, `SessionMgr`→`MetaPerformer` 72):
+**−23 net, 49 gained / 72 lost, 18% conversion.** Run twice, identical. Reverted.
+
+★**Why: the definer test asks whether the destination obj DEFINES a byte-identical
+symbol — not whether that symbol is ALREADY CLAIMED.** Moving code in gives the
+base symbol a second claimant and greedy pairing displaces the incumbent. **The
+losses are named symbols in the RECEIVING units, not the donors**
+(`??_GBaseSkeleton`, `??1ObjVector<TransformCrowd>`, `?NewObject@BackdropPanel`,
+`??0Callback@Loader`). This is **laneAP's leg-B failure returning through a
+different door**: moving code between units on byte evidence is not free even
+when the evidence is strong *and the destination is right*.
+
+★**The two moves that DID pay (StreakMeter +13, Waypoint→VocalTrackDir +67)
+satisfied a third condition incidentally** — both were **pure anonymous funclet
+tails whose parent was already pinned to the destination**, so nothing in the
+destination competed for a pairing.
+
+⇒ **Required predicate before funding: sandwich AND definer-corroborated AND the
+destination's matching symbols are NOT already paired at 100%.** That third filter
+is **not built**. Rows: `/home/free/tmp/laneAT/sandwich_scored.json` (126 blocks /
+716 fns); the batch actually tried: `sandwich_applied.json`. Tool:
+`scripts/harvest/sandwich_overcarve.py`.
+
+★★**AND A `CLAUDE.md` CORRECTION FOUND THE SAME WAY:** the doc says dtk
+"auto-derives and back-fills" the `.pdata` range. **That is true only for a NEWLY
+ADDED `.text` pin. DELETING an existing unit's `.pdata` lines just LOSES them** —
+measured: range count fell **5,172 → 4,694, 478 ranges silently vanished**.
+**Move `.pdata` explicitly.** (Not the cause of the −23 — re-running with `.pdata`
+untouched gave the identical −23/49/72 — but a live foot-gun on its own.)
+
 ### Refusals worth not re-funding
 `_bijection_arbitrary` ceiling **+2** (1,205 of 1,207 already at 100) ·
 `.pdata` parentage decides **2.8%** of the unreachable pool · the 84-byte
