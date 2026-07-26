@@ -5,8 +5,13 @@ consumed. Its 63 moves are a provable no-op today; its 34 removals now cost −2
 strict, and every one of those 25 is collateral damage on *other lanes'*
 since-landed identities, not the integrity trade the plan described.**
 
-Branch `laneAU-3`, merge-base `24f508fb` (37,282 strict). Nothing landed on
+Branch `laneAU-3`. Measured at **two** heads, because main moved mid-lane:
+`24f508fb` (37,282) and then `620bfb21` (37,619, after laneAS +321 and
+laneDUPNAME's globally-injective duplicate-name re-bijection). Nothing landed on
 main — this is a measurement record only. **The apply decision is the user's.**
+
+★ **The second head matters: laneDUPNAME partly RE-OPENED the plan and made its
+remaining half more expensive, not less.** See §6.
 
 Subject: `docs/plans/laneH-eviction-plan-2026-07-25.json`
 (63 moves / 34 removals / 34 evicted holders), priced at plan time by the span
@@ -149,3 +154,77 @@ Corollary for the map channel: an eviction plan has a **shelf life**. Its
 `remove` list is stated as bare VAs, which silently re-targets whatever lands on
 those VAs later. Future plans should record the *expected holder* alongside each
 VA so a stale entry fails loudly instead of deleting a stranger's work.
+
+## 6. ★ Re-measured at `620bfb21` — laneDUPNAME re-opened part of the plan
+
+Main advanced to `620bfb21` (**37,619**, baseline reproduced twice) mid-lane.
+Re-running the reconciliation there changes the answer:
+
+| plan half | @ `24f508fb` | @ `620bfb21` |
+|---|---|---|
+| 63 moves | 63 consumed / 0 live / 0 contradicted | **60 consumed / 1 live / 2 contradicted** |
+| 34 removals | 7 consumed / 2 live / 25 contradicted | 7 / **2** / 25 (unchanged) |
+| 34 evicted holders gone | 29 | 24 (5 came back elsewhere) |
+
+laneDUPNAME's re-bijection **reversed three** previously-consumed moves:
+
+| VA | plan wants | @620 holds |
+|---|---|---|
+| `0x82271a90` | `?StaticClassName@Object@Hmx@@` | `?StaticClassName@HamMove@@` (back to plan-base) |
+| `0x8236a128` | `?StaticClassName@CharEyes@@` | `?StaticClassName@CharSignalApplier@@` |
+| `0x8236ac28` | `?StaticClassName@CharPollGroup@@` | `?StaticClassName@RndMesh@@` |
+
+**The one live move is not applicable in isolation.** `Object::StaticClassName`
+now sits at `0x8240dc38` *and* `0x8240ddc0`, so setting it on `0x82271a90` trips
+`map_rotation_repair.py`'s duplication assert. This is a genuine **live
+adjudication** between laneH's content evidence (the VA references the literal
+`"Object"`, and `HamMove` is a Dance Central class RB3 does not have) and
+laneDUPNAME's global re-bijection — not a free edit. It needs an owner decision,
+not an apply.
+
+**And the still-live removals got more expensive:**
+
+| leg | strict (unit,name) | strict (**name-only**) | `matched_code` |
+|---|---|---|---|
+| evict-live 2 @ `24f508fb` | −2 | **0** | −176 B |
+| evict-live 2 @ `620bfb21` | −2 | **−1** | −176 B |
+
+Because laneDUPNAME resolved `?StaticClassName@CharEyes@@` down to a **single**
+binding — and chose `0x8229ceb8`, *precisely the VA the laneH plan wants to
+remove*, while giving laneH's desired CharEyes home (`0x8236a128`) to
+CharSignalApplier. So what was a free duplicate-count removal at the old head is
+now the deletion of a real identity, against a directly conflicting lane
+decision. `?Type@InviteAcceptedMsg@@` is still double-bound, so it stays free.
+
+**The `pair_funclets_by_bytes` refutation holds at the new head too** —
+`fn_8229CEB8` and `fn_8240DCB8` both come back at exactly **0.000%**.
+
+Controls at `620bfb21`: baseline 37,619 twice; leg 37,617 twice; 0 duplicate
+VAs; `_bijection_arbitrary` 1207 / `_icf_arbitrary` 25 / `_denylist` 3 intact;
+phantom control PASS (0 named gains, 0 common-key improvements). The baseline
+was taken **after a full `all_source` build** in this worktree and reproduces the
+published headline exactly, which rules out the reflinked-dirty-obj trap.
+
+**Revised recommendation.** Everything in §5 stands, with one change: the 2
+still-live removals are **no longer free**. Do not treat them as hygiene. One of
+them is now a head-to-head conflict with laneDUPNAME over `CharEyes`, and the
+right output is an adjudication between two lanes' evidence, not an eviction.
+
+## 7. Handoff sizing — `_bijection_arbitrary` overlap
+
+Requested sizing for the 1,207-entry `_bijection_arbitrary` lever. Overlap with
+this plan is **small and identical at both heads**:
+
+| | tagged `_bijection_arbitrary` | tagged `_icf_arbitrary` |
+|---|---|---|
+| plan's 63 move VAs | **0 / 63** | 0 / 63 |
+| plan's 34 remove VAs | **6 / 34** | 0 / 34 |
+
+So the laneH plan and the `_bijection_arbitrary` channel are essentially
+**disjoint** — re-deciding the arbitrary set will not resolve this plan, and this
+plan does not block that lever. They can proceed independently.
+
+Verified before any edit: `map_rotation_repair.py apply` carries the
+array-corruption fix (the `ENTRY` regex requires a colon, so the set's bare
+`"0xVA",` array elements are never rewritten), and the raw-line count was
+re-checked at exactly **1207** after every leg on both heads.
