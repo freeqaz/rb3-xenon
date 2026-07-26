@@ -4708,10 +4708,12 @@ PartLauncher.cpp:
 	.text       start:0x82451E40 end:0x82451F10
 
 DataNode.cpp:
+	.pdata      start:0x8223B150 end:0x8223B158
 	.pdata      start:0x8223B780 end:0x8223B860
 	.pdata      start:0x8223B868 end:0x8223B8E0
 	.pdata      start:0x82243610 end:0x82243618
 	.pdata      start:0x82261670 end:0x82261678
+	.text       start:0x82744E48 end:0x82744F0C
 	.text       start:0x8274AA08 end:0x8274BB88
 	.text       start:0x8274BBE4 end:0x8274C4E0
 	.text       start:0x827D96D8 end:0x827D9750

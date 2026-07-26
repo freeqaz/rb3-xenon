@@ -39,6 +39,22 @@ DECOMP_FORCEBLOCK(
     phrases.push_back(vp);
 )
 
+#if !defined(NON_MATCHING) && !defined(__MWERKS__)
+// DECOMP_FORCEBLOCK above is a no-op under MSVC (it is gated on __MWERKS__),
+// but retail's SongDB.obj really did emit the out-of-line
+// vector<VocalNote>/<VocalPhrase> destructors as scatter COMDATs -- the
+// vector<VocalNote> one is fn_826864A8, inside SongDB.cpp's own pinned .text
+// range.  Re-state the same forcing block for the 360 toolchain so our obj
+// defines the symbol and objdiff can pair it.
+void FORCEBLOCKSongDBMsvc(const VocalNote &vn, const VocalPhrase &vp);
+void FORCEBLOCKSongDBMsvc(const VocalNote &vn, const VocalPhrase &vp) {
+    std::vector<VocalNote> notes;
+    notes.push_back(vn);
+    std::vector<VocalPhrase> phrases;
+    phrases.push_back(vp);
+}
+#endif
+
 SongDB::SongDB()
     : mSongData(new SongData()), mSongDurationMs(0), mCodaStartTick(-1),
       mMultiplayerAnalyzer(new MultiplayerAnalyzer(mSongData)), unk24(-1), unk28(-1) {
