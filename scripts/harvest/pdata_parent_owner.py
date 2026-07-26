@@ -109,8 +109,8 @@ REPO = Path(__file__).resolve().parents[2]
 VENDOR_LO, VENDOR_HI = 0x82800000, 0x82C00000
 
 
-def _load_fcr(repo: Path):
-    p = repo / "scripts/harvest/funclet_cascade_rank.py"
+def _load_fcr(repo):
+    p = Path(repo) / "scripts/harvest/funclet_cascade_rank.py"
     spec = importlib.util.spec_from_file_location("_fcr", p)
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
@@ -118,14 +118,14 @@ def _load_fcr(repo: Path):
 
 
 # --------------------------------------------------------------- parent map
-def build_parent_map(repo: Path, exe: Path | None = None):
+def build_parent_map(repo, exe=None):
     """funclet VA -> (root parent VA, kind).  Multi-parent funclets are EXCLUDED.
 
     Returns (parent_of, multi, funcs, stats).  ``multi`` is {va: [parents]} for
     the ICF-folded funclets we refuse to attribute.
     """
     fcr = _load_fcr(repo)
-    pe = fcr.PE(exe or (repo / "orig/45410914/band.exe"))
+    pe = fcr.PE(exe or (Path(repo) / "orig/45410914/band.exe"))
     funcs = fcr.parse_pdata(pe)
     stats = Counter()
     raw = defaultdict(list)
@@ -194,7 +194,7 @@ def build_parent_map(repo: Path, exe: Path | None = None):
 
 
 # ------------------------------------------------------------------- splits
-def load_text_spans(splits: Path):
+def load_text_spans(splits):
     """[(start, end, unit_full_path_header)] sorted.  NEVER keyed by basename."""
     units = defaultdict(lambda: defaultdict(list))
     cur = None
