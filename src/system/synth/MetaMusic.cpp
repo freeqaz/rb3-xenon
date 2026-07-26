@@ -353,3 +353,8 @@ END_HANDLERS
 #undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE
 #endif
+
+// Retail's MetaMusic TU emits MakeString<FilePath> at 0x8270fef0 (caller-side
+// inversion, lane laneO-wrongunit).  Ours lost the call site -- almost certainly
+// a stripped MILO_WARN/MILO_LOG -- so the COMDAT was never instantiated here.
+template const char *MakeString<FilePath>(const char *, FilePath);

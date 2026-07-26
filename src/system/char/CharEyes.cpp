@@ -1409,3 +1409,13 @@ DataNode CharEyes::OnAddInterest(DataArray *arr) {
 // skips callee-saved GPR saves (r29-r31) that the target uses. Result:
 // structurally incompatible prologue (91.3% -> 57.8%). AT_LIMIT.
 // Native build: NormalizeScale is provided inline in src/system/math/Vec.h.
+
+// laneO-wrongunit scatter-include (CharEyes <- char/CharClipGroup.cpp): retail
+// emitted ObjVector<ObjOwnerPtr<CharClip>>::resize/push_back at 0x82390110 /
+// 0x82390290, inside CharEyes' .text span (CharClipGroup::Sort is at 0x8238fee8,
+// already inside it too).
+#define gRev gRev_CharClipGroup
+#define gAltRev gAltRev_CharClipGroup
+#include "char/CharClipGroup.cpp"
+#undef gRev
+#undef gAltRev

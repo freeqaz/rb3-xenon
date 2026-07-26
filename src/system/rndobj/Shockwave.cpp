@@ -108,3 +108,11 @@ void RndShockwave::PrepareShader(float amplitude_scale) {
 #include "obj/Dir.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneO-wrongunit: retail's Shockwave TU emits these two WorldDir ObjList
+// instantiations at 0x824d0340 / 0x824d03b8, inside its own .text span.
+// Explicit instantiation rather than a whole-file include of ViewSetting.cpp,
+// which collides on world/Dir.cpp's gRev_Dir with the obj/Dir.cpp include above.
+#include "world/Dir.h"
+template void ObjList<WorldDir::PresetOverride>::resize(unsigned int);
+template void ObjList<WorldDir::BitmapOverride>::resize(unsigned int);

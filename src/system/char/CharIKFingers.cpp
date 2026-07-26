@@ -618,3 +618,12 @@ void CharIKFingers::Poll() {
 #include "obj/PropSync.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneO-wrongunit scatter-include (CharIKFingers <- bandobj/SongSectionController.cpp):
+// retail emitted the ContentPoolMapping list/ObjList operator= at 0x82310768 /
+// 0x82310928, interleaved with CharIKFingers' own code (~CharIKFingers @0x823108e0).
+#define gRev gRev_SongSectionController
+#define gAltRev gAltRev_SongSectionController
+#include "bandobj/SongSectionController.cpp"
+#undef gRev
+#undef gAltRev

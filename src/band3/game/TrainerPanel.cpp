@@ -450,3 +450,13 @@ int GetLoopTick(int tick) {
 #undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE
 #endif
+
+// laneO-wrongunit scatter-include (default/TrainerPanel <- band3/game/DirectInstrument.cpp).
+// Retail put DirectInstrument's COMDATs inside TrainerPanel's .text span
+// (~DirectInstrument @0x826ccdb8, Enable @0x826ccb60); DirectInstrument.cpp has
+// no splits block of its own.
+#define gRev gRev_DirectInstrument
+#define gAltRev gAltRev_DirectInstrument
+#include "band3/game/DirectInstrument.cpp"
+#undef gRev
+#undef gAltRev

@@ -100,3 +100,11 @@ bool AccomplishmentTrainerConditional::IsSymbolEntryFulfilled(
 bool AccomplishmentTrainerConditional::ShowBestAfterEarn() const { return false; }
 
 bool AccomplishmentTrainerConditional::CanBeLaunched() const { return true; }
+// laneO-wrongunit scatter-include (AccomplishmentTrainerConditional <-
+// AccomplishmentPlayerConditional.cpp): retail placed the PlayerConditional
+// ctor at 0x825e80d0, inside this TU's .text span.
+#define gRev gRev_AccomplishmentPlayerConditional
+#define gAltRev gAltRev_AccomplishmentPlayerConditional
+#include "band3/meta_band/AccomplishmentPlayerConditional.cpp"
+#undef gRev
+#undef gAltRev

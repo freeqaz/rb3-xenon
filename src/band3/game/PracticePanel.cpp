@@ -469,3 +469,11 @@ BEGIN_HANDLERS(PracticePanel)
     HANDLE_CHECK(0x323)
 END_HANDLERS
 #pragma pop
+
+// laneO-wrongunit scatter-include (PracticePanel <- band3/game/ChordbookPanel.cpp):
+// retail put ChordInfo's dtor at 0x826b4750, inside PracticePanel's .text span.
+#define gRev gRev_ChordbookPanel
+#define gAltRev gAltRev_ChordbookPanel
+#include "band3/game/ChordbookPanel.cpp"
+#undef gRev
+#undef gAltRev
