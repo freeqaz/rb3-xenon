@@ -272,9 +272,31 @@ void operator delete[](void *mem);
 // (verified on CacheMgr::CreateCacheMgr: target `bl fn_82709EE0` vs our inlined
 // 2-arg MemAlloc). __declspec(noinline) reproduces that: the body still folds to
 // fn_82709EE0, but the call site no longer inlines it. operator delete likewise.
+// OBJ_MEM_OVERLOAD is the EXCEPTION to the out-of-line rule above. Retail's
+// `MemAlloc` strip happened inside an inline *function*, not a macro, so the
+// `StaticClassName()` name argument was still EVALUATED (and its result thrown
+// away) before the 2-arg `MemAlloc(size, 0)` call. That makes the body
+// class-specific -> it does NOT ICF-fold, and MSVC /Ob2 inlines it into the
+// single `new Foo` call site. Measured in the retail XEX at every
+// `Foo::NewObject` of an OBJ_MEM_OVERLOAD class (e.g. RndDir::NewObject
+// fn_8240F380): `addi r3,r31,0x50 ; bl ?StaticClassName@RndDir@@ ;
+// li r4,0 ; li r3,0x214 ; bl <MemAlloc> ; stw r3,0x54(r31)`. The discarded
+// Symbol temp is what pushes the EH-cleanup raw-pointer temp from +0x50 to
+// +0x54 in every such NewObject's unwind funclet.
+// This is the GENERALISATION of `FXSEND360_NEW` (src/system/synth_xbox/FxSend.h,
+// 2026-07-18), which already carries the measured form for the 10 FxSend*360
+// classes: the `.Str()` call is load-bearing -- a bare `StaticClassName();`
+// discard homes the Symbol temp into the SAME slot as `mem`, while calling
+// `.Str()` on it reproduces retail's separate-slot placement. Keep both the
+// `.Str()` and the named `mem` local.
+// MEM_OVERLOAD (string-literal name) keeps `noinline`: its name argument is a
+// literal, the body really does reduce to `MemAlloc(size, 0)`, it ICF-folds,
+// and retail calls it out of line.
 #define OBJ_MEM_OVERLOAD(line_num)                                                       \
-    __declspec(noinline) static void *operator new(unsigned int s) {                     \
-        return MemAlloc(s, __FILE__, line_num, StaticClassName().Str(), 0);              \
+    static void *operator new(unsigned int s) {                                          \
+        (void)StaticClassName().Str();                                                   \
+        void *mem = (MemAlloc)(s, 0);                                                    \
+        return mem;                                                                      \
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }             \
     __declspec(noinline) static void operator delete(void *v) {                          \
