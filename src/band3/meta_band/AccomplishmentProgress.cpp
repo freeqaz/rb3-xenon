@@ -1078,7 +1078,7 @@ void AccomplishmentProgress::SetQuestCompletedCount(TourGameType ty, int count) 
 }
 
 bool AccomplishmentProgress::InqGoalLeaderboardData(
-    std::map<Symbol, int> &o_rLeaderboardGoalToValueMap
+    std::hash_map<Symbol, int> &o_rLeaderboardGoalToValueMap
 ) const {
     MILO_ASSERT(o_rLeaderboardGoalToValueMap.empty(), 0x719);
     int fanvalue = TheAccomplishmentMgr->GetScaledFanValue(

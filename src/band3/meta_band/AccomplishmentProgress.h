@@ -159,7 +159,7 @@ public:
     void SetTourTotalSongsPlayed(int);
     void SetToursPlayed(Symbol, int);
     void SetMostStars(Symbol, int);
-    bool InqGoalLeaderboardData(std::map<Symbol, int> &) const;
+    bool InqGoalLeaderboardData(std::hash_map<Symbol, int> &) const;
     void HandleUploadStarted();
     void HandleSuccessfulUpload();
     void FakeFill();

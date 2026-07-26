@@ -238,6 +238,7 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
             snprintf(g_szMachineIdString, 0x18, "%llu", uid);
         }
 #endif
+        DP_KEYS1(locale)
         INIT_DATAPOINT("config/get");
         ADD_DATA_PAIR(locale, SystemLanguage());
         RecordDataPoint(dataPoint, 0, mConfigResultList, this);
@@ -387,6 +388,7 @@ Server *RockCentral::IsConnected(Hmx::Object *o, int i, bool b) {
 void RockCentral::GetLinkingCode(int i1, DataResultList &results, Hmx::Object *o) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS1(pid)
         INIT_DATAPOINT("entities/linkcode/get");
         ADD_DATA_PAIR(pid, server->GetPlayerID(i1));
         RECORD_DATA_POINT(0, results, o);
@@ -399,6 +401,7 @@ void RockCentral::GetTickerInfo(
     Server *server = IsConnected(o, -1, false);
     if (server) {
         MILO_ASSERT(profile, 0x43C);
+        DP_KEYS3(pid, role_id, locale)
         INIT_DATAPOINT("ticker/info/get");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(role_id, (char)s);
@@ -410,11 +413,12 @@ void RockCentral::GetTickerInfo(
 void RockCentral::GetSongFullOffer(int i1, DataResultList &results, Hmx::Object *o) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS3(song_id, locale, region)
         INIT_DATAPOINT("entities/song_offer/get");
         ADD_DATA_PAIR(song_id, i1);
         ADD_DATA_PAIR(locale, SystemLanguage());
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
-        if (regionEnum - 1 <= 1U) {
+        if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));
         } else {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(kRegionNA));
@@ -442,6 +446,7 @@ void RockCentral::GetMaxRank(
     // land. Map entry for 0x824fb038 intentionally NOT added.
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS3(role_id, song_id, lb_type)
         INIT_DATAPOINT("leaderboards/maxrank/get");
         ADD_DATA_PAIR(role_id, (char)s);
         ADD_DATA_PAIR(song_id, i1);
@@ -741,12 +746,17 @@ void RockCentral::RecordScore(
 ) {
     Server *server = IsConnected(o, i2, false);
     if (server) {
-        if (!scores.empty()) {
+        // Retail declares the 4 keys BEFORE the emptiness test (their guard bits
+        // are checked first), and the test itself is `scores.size() != 0`
+        // (subf/divw by sizeof(PlayerScore)=0x2c), not `!scores.empty()`.
+        static Symbol song_id("song_id"), boi_id("boi_id"), band_mask("band_mask"),
+            provide_insta_rank("provide_insta_rank");
+        if (scores.size() != 0) {
             INIT_DATAPOINT("scores/record");
             ADD_DATA_PAIR(song_id, i1);
             ADD_DATA_PAIR(boi_id, i4);
             ADD_DATA_PAIR(band_mask, i5);
-            ADD_DATA_PAIR(provide_insta_rank, (int)b6);
+            ADD_DATA_PAIR(provide_insta_rank, (int)(b6 != 0));
             for (int i = 0; i < scores.size(); i++) {
                 char buf[0x14];
                 ADD_BUFFER_PAIR(buf, scores[i].mScoreType, "role_id%03d", i);
@@ -762,9 +772,13 @@ void RockCentral::RecordScore(
                 ADD_BUFFER_PAIR(buf, scores[i].mTotalDiscScore, "cc_score%03d", i);
                 ADD_BUFFER_PAIR(buf, scores[i].mAccuracy, "percent%03d", i);
             }
+            // Retail declares locale and region as two SEPARATE later statements,
+            // each right before its own use (guard bits are checked there).
+            static Symbol locale("locale");
             ADD_DATA_PAIR(locale, SystemLanguage());
+            static Symbol region("region");
             PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
-            if (regionEnum - 1 <= 1U) {
+            if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
                 ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));
             } else {
                 ADD_DATA_PAIR(region, PlatformRegionToSymbol(kRegionNA));
@@ -788,6 +802,22 @@ void RockCentral::RecordPerformance(
     if (server) {
         MILO_ASSERT(profile, 0x69B);
         INIT_DATAPOINT("performance/record");
+        static Symbol pid("pid"), mode("mode"), song_id("song_id"),
+            is_playtest("is_playtest"), is_online("is_online"),
+            is_cheating("is_cheating"), score_type("score_type"),
+            difficulty("difficulty"), time_stamp("time_stamp"),
+            end_game_score("end_game_score"), stars("stars"), battle_id("battle_id"),
+            notes_hit_fraction("notes_hit_fraction"), hit_count("hit_count"),
+            miss_count("miss_count"), times_saved("times_saved"),
+            players_saved("players_saved"), hit_streak_start("hit_streak_start"),
+            hit_streak_duration("hit_streak_duration"),
+            end_game_overdrive("end_game_overdrive"),
+            end_game_crowdlevel("end_game_crowdlevel"), coda_points("coda_points"),
+            od_phrases_completed("od_phrases_completed"),
+            od_phrase_count("od_phrase_count"),
+            unison_phrases_completed("unison_phrases_completed"),
+            unison_phrase_count("unison_phrase_count"),
+            average_ms_error("average_ms_error");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(mode, data->GetMode());
         ADD_DATA_PAIR(song_id, data->GetSongID());
@@ -848,6 +878,7 @@ void RockCentral::RecordPerformance(
         for (int i = 0; i < numBestSolos; i++) {
             ADD_BUFFER_PAIR(buf, stats.GetBestSolos()[i], "best_solo%03d", i);
         }
+        static Symbol hit_streak_count("hit_streak_count");
         int numHitStreaks = stats.GetHitStreakCount();
         ADD_DATA_PAIR(hit_streak_count, numHitStreaks);
         for (int i = 0; i < numHitStreaks; i++) {
@@ -855,6 +886,7 @@ void RockCentral::RecordPerformance(
             ADD_BUFFER_PAIR(buf, curStreak.mStart, "hit_streak_start%03d", i);
             ADD_BUFFER_PAIR(buf, curStreak.mDuration, "hit_streak_duration%03d", i);
         }
+        static Symbol miss_streak_count("miss_streak_count");
         int numMissStreaks = stats.GetMissStreakCount();
         ADD_DATA_PAIR(miss_streak_count, numMissStreaks);
         for (int i = 0; i < numMissStreaks; i++) {
@@ -862,6 +894,7 @@ void RockCentral::RecordPerformance(
             ADD_BUFFER_PAIR(buf, curStreak.mStart, "miss_streak_start%03d", i);
             ADD_BUFFER_PAIR(buf, curStreak.mDuration, "miss_streak_duration%03d", i);
         }
+        static Symbol best_od_deployment_count("best_od_deployment_count");
         int numBestODs = stats.GetBestOverdriveDeploymentsCount();
         ADD_DATA_PAIR(best_od_deployment_count, numBestODs);
         for (int i = 0; i < numBestODs; i++) {
@@ -884,6 +917,7 @@ void RockCentral::RecordPerformance(
             );
             ADD_BUFFER_PAIR(buf, curInfo.mPoints, "best_od_deployment_points%03d", i);
         }
+        static Symbol best_streak_multipliers_count("best_streak_multipliers_count");
         int numBestStreakMults = stats.GetBestStreakMultipliersCount();
         ADD_DATA_PAIR(best_streak_multipliers_count, numBestStreakMults);
         for (int i = 0; i < numBestStreakMults; i++) {
@@ -906,13 +940,37 @@ void RockCentral::RecordPerformance(
             );
             ADD_BUFFER_PAIR(buf, curInfo.mPoints, "best_streak_multiplier_points%03d", i);
         }
+        static Symbol total_od_duration("total_od_duration"),
+            total_multiplier_duration("total_multiplier_duration"),
+            rolls_hit_completely("rolls_hit_completely"), roll_count("roll_count"),
+            hopo_gems_hopoed("hopo_gems_hopoed"),
+            hopo_gems_strummed("hopo_gems_strummed"), hopo_gem_count("hopo_gem_count"),
+            high_gems_hit_high("high_gems_hit_high"),
+            high_gems_hit_low("high_gems_hit_low"),
+            high_fret_gem_count("high_fret_gem_count"),
+            sustain_gems_hit_completely("sustain_gems_hit_completely"),
+            sustain_gems_hit_partially("sustain_gems_hit_partially"),
+            sustain_gems_count("sustain_gems_count"),
+            trills_hit_completely("trills_hit_completely"),
+            trills_hit_partially("trills_hit_partially"), trill_count("trill_count"),
+            cymbal_gems_hit_on_cymbals("cymbal_gems_hit_on_cymbals"),
+            cymbal_gems_hit_on_pads("cymbal_gems_hit_on_pads"),
+            cymbal_gem_count("cymbal_gem_count"),
+            double_harmony_hit("double_harmony_hit"),
+            double_harmony_phrase_count("double_harmony_phrase_count"),
+            triple_harmony_hit("triple_harmony_hit"),
+            triple_harmony_phrase_count("triple_harmony_phrase_count");
         ADD_DATA_PAIR(total_od_duration, stats.GetTotalOverdriveDuration());
         ADD_DATA_PAIR(total_multiplier_duration, stats.GetTotalMultiplierDuration());
         ADD_DATA_PAIR(rolls_hit_completely, stats.GetRollsHitCompletely());
         ADD_DATA_PAIR(roll_count, stats.GetRollCount());
         ADD_DATA_PAIR(hopo_gems_hopoed, stats.GetHopoGemsHopoed());
+        ADD_DATA_PAIR(hopo_gems_strummed, stats.GetHopoGemsStrummed());
         ADD_DATA_PAIR(hopo_gem_count, stats.GetHopoGemCount());
-        ADD_DATA_PAIR(high_gems_hit_high, stats.GetHighGemsHitHigh());
+        // Retail declares high_gems_hit_high (lbl_82CC938C) but never inserts it --
+        // the Symbol static exists and is constructed, yet the only references to
+        // it in fn_824FE400 are its own guard-init block. Keep the declaration,
+        // drop the pair.
         ADD_DATA_PAIR(high_gems_hit_low, stats.GetHighGemsHitLow());
         ADD_DATA_PAIR(high_fret_gem_count, stats.GetHighFretGemCount());
         ADD_DATA_PAIR(sustain_gems_hit_completely, stats.GetSustainGemsHitCompletely());
@@ -929,6 +987,7 @@ void RockCentral::RecordPerformance(
         ADD_DATA_PAIR(triple_harmony_hit, stats.GetTripleHarmonyHit());
         ADD_DATA_PAIR(triple_harmony_phrase_count, stats.GetTripleHarmonyPhraseCount());
 
+        static Symbol num_singers("num_singers"), num_vocal_parts("num_vocal_parts");
         int numSingers = stats.GetNumberOfSingers();
         ADD_DATA_PAIR(num_singers, numSingers);
         int numVocalParts = stats.GetNumberOfVocalParts();
@@ -960,6 +1019,17 @@ void RockCentral::RecordAccomplishmentData(
     if (server) {
         MILO_ASSERT(profile, 0x79E);
         INIT_DATAPOINT("accomplishment/record");
+        // Declaration order is retail's static-init (guard-bit) order, read off
+        // fn_82501A08: campaign_level is declared 13th even though it is *used*
+        // 4th, so it must not be moved up to first-use position.
+        static Symbol pid("pid"), num_completed("num_completed"),
+            meta_score("meta_score"), tot_gems_smashed("tot_gems_smashed"),
+            tot_guitar_hopos("tot_guitar_hopos"), tot_bass_hopos("tot_bass_hopos"),
+            tot_upstrums("tot_upstrums"), tot_times_revived("tot_times_revived"),
+            tot_saves("tot_saves"), tot_awesomes("tot_awesomes"),
+            tot_double_awesomes("tot_double_awesomes"),
+            tot_triple_awesomes("tot_triple_awesomes"),
+            campaign_level("campaign_level");
         if (server->GetPlayerID(profile->GetPadNum()) == 0) {
             MILO_WARN("RecordAccomplishmentData() - PID == 0!");
         }
@@ -1080,6 +1150,10 @@ void RockCentral::RecordAccomplishmentData(
             );
         }
 
+        // Retail sinks these two static inits to their use site (guard bits
+        // 0x4000/0x8000 are checked here, not with the block above) -- so they
+        // are a SEPARATE declaration statement in the retail source.
+        DP_KEYS2(tot_songs_played, tour_tot_songs_played)
         ADD_DATA_PAIR(tot_songs_played, prog->GetTotalSongsPlayed());
         ADD_DATA_PAIR(tour_tot_songs_played, prog->GetTourTotalSongsPlayed());
         std::hash_map<Symbol, int>::const_iterator it;
@@ -1105,9 +1179,9 @@ void RockCentral::RecordAccomplishmentData(
             ADD_BUFFER_PAIR(buf, git->second, "gig_%03d_completed", git->first);
         }
 
-        std::map<Symbol, int> goalLBData;
+        std::hash_map<Symbol, int> goalLBData;
         prog->InqGoalLeaderboardData(goalLBData);
-        std::map<Symbol, int>::const_iterator lbit;
+        std::hash_map<Symbol, int>::const_iterator lbit;
         for (lbit = goalLBData.begin(); lbit != goalLBData.end(); lbit++) {
             ADD_BUFFER_PAIR(buf, lbit->second, "lb_goal_value_%s", lbit->first.Str());
         }
@@ -1200,6 +1274,7 @@ void RockCentral::GetMultipleRankingsForPlayer(
     Server *server = IsConnected(o, -1, false);
     if (server) {
         MILO_ASSERT(profile, 0x8B7);
+        DP_KEYS2(pid, role_id)
         INIT_DATAPOINT("leaderboards/playerranks/get");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(role_id, (char)s);
@@ -1222,13 +1297,14 @@ void RockCentral::GetAllSonglists(
         }
         MILO_ASSERT(!playerIds.empty(), 0x8D6);
         INIT_DATAPOINT("songlists/get");
+        DP_KEYS2(locale, region)
         for (int i = 0; i < playerIds.size(); i++) {
             char buf[12];
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
         ADD_DATA_PAIR(locale, SystemLanguage());
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
-        if (regionEnum - 1 <= 1U) {
+        if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));
         } else {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(kRegionNA));
@@ -1248,13 +1324,14 @@ void RockCentral::GetClosedBattles(
         }
         MILO_ASSERT(!playerIds.empty(), 0x8FF);
         INIT_DATAPOINT("battles/closed/get");
+        DP_KEYS2(locale, region)
         for (int i = 0; i < playerIds.size(); i++) {
             char buf[12];
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
         ADD_DATA_PAIR(locale, SystemLanguage());
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
-        if (regionEnum - 1 <= 1U) {
+        if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));
         } else {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(kRegionNA));
@@ -1336,6 +1413,9 @@ void RockCentral::UpdateSetlist(
         if (setlist->mArt.patchType == 1) {
             p6 = profile->mPatches[setlist->mArt.patchIndex];
         }
+        static Symbol pid("pid"), name("name"), description("description"),
+            type("type"), shared("shared"), list_guid("list_guid"), flags("flags"),
+            art("art");
         INIT_DATAPOINT("setlists/update");
         auto _tmp3 = profile->GetPadNum();
         auto _tmp2 = server->GetPlayerID(_tmp3);
@@ -1370,6 +1450,7 @@ void RockCentral::UpdateBand(
         if (band->mBandLogo->patchType == 1) {
             dir = profile->mPatches[band->mBandLogo->patchIndex];
         }
+        DP_KEYS4(pid, name, flags, art)
         INIT_DATAPOINT("entities/band/update");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(name, band->GetName());
@@ -1388,6 +1469,7 @@ void RockCentral::CheckBattleLimits(
 ) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS1(pid)
         INIT_DATAPOINT("battles/limit/check");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         RECORD_DATA_POINT(0, results, o);
@@ -1417,6 +1499,10 @@ void RockCentral::CreateBattle(
         if (desc.patchType == 1) {
             pDir = profile->mPatches[desc.patchIndex];
         }
+        static Symbol pid("pid"), name("name"), description("description"),
+            type("type"), instrument("instrument"), time_end_val("time_end_val"),
+            time_end_units("time_end_units"), flags("flags"), art_id("art_id"),
+            art("art");
         INIT_DATAPOINT("battles/create");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(name, nameStr);
@@ -1491,6 +1577,7 @@ void RockCentral::RedeemToken(
 ) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS2(tr_pid, token)
         INIT_DATAPOINT("trs/redeem_token");
         ADD_DATA_PAIR(tr_pid, i1);
         ADD_DATA_PAIR(token, str);
@@ -1505,6 +1592,7 @@ void RockCentral::GetRedeemedTokensByPlayer(
 ) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS1(tr_pid)
         INIT_DATAPOINT("trs/redeemed_tokens");
         ADD_DATA_PAIR(tr_pid, i1);
         RECORD_DATA_POINT(0, results, o);
@@ -1523,6 +1611,7 @@ void RockCentral::UpdateChar(
             MILO_ASSERT(profile, 0xB35);
             MemStream ms;
             tcl->SaveDb(ms);
+            DP_KEYS5(guid, pid, name, flags, char_data)
             INIT_DATAPOINT("entities/character/update");
             ADD_DATA_PAIR(guid, tcl->GetGuid().ToString());
             ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
@@ -1570,6 +1659,7 @@ void RockCentral::GetWebLinkStatus(
     Server *server = IsConnected(o, i2, false);
     if (server) {
         MILO_ASSERT(profile, 0xB97);
+        DP_KEYS1(pid)
         INIT_DATAPOINT("misc/get_accounts_web_linked_status");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         RECORD_DATA_POINT(i2, results, o);
@@ -1582,6 +1672,7 @@ void RockCentral::GetSetlistCreationStatus(
     Server *server = IsConnected(o, i2, false);
     if (server) {
         MILO_ASSERT(profile, 0xBA9);
+        DP_KEYS1(pid)
         INIT_DATAPOINT("misc/get_accounts_setlist_creation_status");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         RECORD_DATA_POINT(i2, results, o);
@@ -1620,6 +1711,7 @@ void RockCentral::SyncAvailableSongs(
 ) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
+        DP_KEYS2(sids, usids)
         INIT_DATAPOINT("misc/sync_available_songs");
         for (int i = 0; i < profiles.size(); i++) {
             char buf[8];

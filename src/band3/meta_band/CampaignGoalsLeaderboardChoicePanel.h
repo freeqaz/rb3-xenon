@@ -21,10 +21,10 @@ public:
     )
         : mIcons(vec) {
         mEntries.clear();
-        std::map<Symbol, int> lbData;
+        std::hash_map<Symbol, int> lbData;
         const AccomplishmentProgress &prog = profile->GetAccomplishmentProgress();
         prog.InqGoalLeaderboardData(lbData);
-        for (std::map<Symbol, int>::iterator it = lbData.begin(); it != lbData.end();
+        for (std::hash_map<Symbol, int>::iterator it = lbData.begin(); it != lbData.end();
              ++it) {
             Symbol key = it->first;
             mEntries.push_back(key);

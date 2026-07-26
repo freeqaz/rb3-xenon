@@ -196,6 +196,7 @@ public:
     int GetRollsHitCompletely() const { return mRollsHitCompletely; }
     int GetRollCount() const { return mRollCount; }
     int GetHopoGemsHopoed() const { return mHopoGemsHopoed; }
+    int GetHopoGemsStrummed() const { return mHopoGemsStrummed; }
     int GetHopoGemCount() const { return mHopoGemCount; }
     int GetHighGemsHitHigh() const { return mHighGemsHitHigh; }
     int GetHighGemsHitLow() const { return mHighGemsHitLow; }
