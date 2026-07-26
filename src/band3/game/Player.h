@@ -116,6 +116,7 @@ public:
     virtual void Start() = 0;
     virtual void StartIntro();
     virtual float GetSongMs() const;
+    float GetSongPct() const;
     virtual void PollTrack() = 0;
     virtual void PollAudio() = 0;
     virtual void SetPaused(bool) = 0;

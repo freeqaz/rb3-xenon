@@ -78,7 +78,9 @@ BinStream &operator<<(BinStream &bs, const LightPreset::EnvironmentEntry &e) {
 }
 
 BinStreamRev &operator>>(BinStreamRev &d, LightPreset::EnvironmentEntry &e) {
-    e.Load(d.stream);
+    // Retail passes the BinStreamRev itself (BinStream base@0 upcast) rather
+    // than the inner `stream` member.
+    e.Load(d);
     return d;
 }
 
@@ -128,7 +130,7 @@ BinStream &operator<<(BinStream &bs, const LightPreset::EnvLightEntry &e) {
 }
 
 BinStreamRev &operator>>(BinStreamRev &d, LightPreset::EnvLightEntry &e) {
-    e.Load(d.stream);
+    e.Load(d);
     return d;
 }
 

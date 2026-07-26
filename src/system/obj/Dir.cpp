@@ -34,6 +34,11 @@ ObjectDir *ObjectDir::sMainDir;
 ObjectDir *gDir;
 static std::map<std::pair<Symbol, Symbol>, bool> sSuperClassMap;
 
+// Retail keeps the *current* dir revision in a mutable TU-static (16-bit,
+// read with `lhz` + unsigned compare) rather than re-reading `d.rev` off the
+// BinStreamRev — same shape as sEventTriggerRev in rndobj/EventTrigger.cpp.
+static unsigned short sObjectDirRev;
+
 #ifdef HX_NATIVE
 namespace {
     void CollectCascadeDirs(ObjectDir *dir, std::vector<ObjectDir *> &out) {
@@ -592,7 +597,7 @@ void ObjectDir::SetInlineProxyType(InlineDirType t) {
 
 BinStreamRev &operator>>(BinStreamRev &bs, ObjectDir::Viewport &v) {
     bs >> v.mXfm;
-    if (bs.rev < 0x12) {
+    if (sObjectDirRev < 0x12) {
         int x;
         bs >> x;
     }
@@ -1157,6 +1162,7 @@ INIT_REVS(0x1C, 0)
 void ObjectDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(0x1C, 0)
+    sObjectDirRev = d.rev;
 
     if (d.rev > 0x15) {
         LoadType(bs);

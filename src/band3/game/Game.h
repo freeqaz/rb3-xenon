@@ -224,6 +224,8 @@ public:
     DataNode OnMsg(const UIScreenChangeMsg &);
     DataNode OnMsg(const class NewOvershellLocalUserMsg &);
     DataNode OnMsg(const class GameEndedMsg &);
+    DataNode OnMsg(const class ButtonDownMsg &);
+    DataNode OnMsg(const class ButtonUpMsg &);
 
     void SetTimeOffset();
     bool HandleAudioLoad();

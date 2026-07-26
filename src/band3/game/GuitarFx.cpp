@@ -89,24 +89,30 @@ void GuitarFx::Poll(
     if (mFramesWhammyIdle >= 120)
         b54 = false;
     ObjDirItr<FxSend> it(mFxDir, true);
-    float negf6 = -f6;
     for (; it != 0; ++it) {
         it->EnableUpdates(false);
+        // Retail declares these five as function-local statics sharing one guard
+        // word (0x82E0367C, bits 0x1..0x10); declaration order == ctor order.
+        static Symbol tempo_sync("tempo_sync");
+        static Symbol tempo("tempo");
         const DataNode *tempoprop = it->Property(tempo_sync, false);
         if (tempoprop && tempoprop->Int()) {
             it->SetProperty(tempo, f4);
         }
+        static Symbol beat_frac("beat_frac");
         if (it->Property(beat_frac, false)) {
             it->SetProperty(beat_frac, f5);
         }
         if (mLastWhammying != b54) {
+            static Symbol auto_wah("auto_wah");
             if (it->Property(auto_wah, false)) {
                 it->SetProperty(auto_wah, !b54);
             }
         }
         if (mLastWhammyPos != f6) {
+            static Symbol frequency("frequency");
             if (it->Property(frequency, false)) {
-                it->SetProperty(frequency, negf6);
+                it->SetProperty(frequency, -f6);
             }
         }
         if (it->CanPushParameters()) {

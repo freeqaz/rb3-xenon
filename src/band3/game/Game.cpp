@@ -56,6 +56,7 @@
 #include "os/PlatformMgr.h"
 #include "os/System.h"
 #include "os/File.h"
+#include "os/JoypadMsgs.h"
 #include "rndobj/Rnd.h"
 #include "synth/Synth.h"
 #include "ui/UI.h"
@@ -872,6 +873,22 @@ DataNode Game::OnMsg(const UIScreenChangeMsg &) {
     return 1;
 }
 
+// Retail X360 Game::Handle continues past RemoteLeaderLeftMsg with button_down /
+// button_up (fn_8267B808 / fn_82679900). Both fall through to DATA_UNHANDLED so
+// the dispatch chain continues; their presence is what sizes Handle's frame
+// (0x140) and therefore what pairs its 21 EH funclets.
+DataNode Game::OnMsg(const ButtonDownMsg &msg) {
+    if (msg.GetUser()) {
+    }
+    return DATA_UNHANDLED;
+}
+
+DataNode Game::OnMsg(const ButtonUpMsg &msg) {
+    if (msg.GetUser()) {
+    }
+    return DATA_UNHANDLED;
+}
+
 void Game::DropUser(BandUser *user) {
     std::vector<BandUser *>::iterator it;
     bool found = false;
@@ -1179,6 +1196,10 @@ BEGIN_HANDLERS(Game)
     HANDLE_MESSAGE(LocalUserLeftMsg)
     HANDLE_MESSAGE(RemoteUserLeftMsg)
     HANDLE_MESSAGE(RemoteLeaderLeftMsg)
+#ifndef RB3_GAME_SCATTER_COPY
+    HANDLE_MESSAGE(ButtonDownMsg)
+    HANDLE_MESSAGE(ButtonUpMsg)
+#endif
     // retail stripped debug_cycle_autoplay[_accuracy] (dev-only) from the dispatch table
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0xA10)

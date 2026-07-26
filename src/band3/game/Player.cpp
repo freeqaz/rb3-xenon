@@ -307,6 +307,8 @@ float Player::GetSongMs() const {
 float Player::GetSongMs() const { return mBeatMaster->mAudio->GetTime(); }
 #endif
 
+float Player::GetSongPct() const { return GetSongMs() / TheSongDB->GetSongDurationMs(); }
+
 void Player::BroadcastScore() {
     if (unk1fd) {
         float poll = PollMs();
@@ -405,18 +407,23 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
         unk2a9 = false;
     }
     SetCrowdMeterActive(!b);
-    float newpct = GetSongMs() / TheSongDB->GetSongDurationMs();
+    float newpct = GetSongPct();
     if (b) {
         SetNoScorePercent(newpct);
     }
     mEnabledState = estate;
     switch (estate) {
-    case kPlayerEnabled:
+    case kPlayerEnabled: {
+        static Message enable_player_msg("enable_player");
         Export(enable_player_msg, true);
-        if (unk260.size() != 0 && unk260.back().unk4 == -1) {
-            unk260.back().unk4 = i;
+        if (unk260.size() != 0) {
+            Extent &ext = unk260.back();
+            if (ext.unk4 == -1) {
+                ext.unk4 = i;
+            }
         }
         break;
+    }
     case kPlayerDisabled:
     case kPlayerDisconnected:
         SetEnergy(0);
@@ -451,13 +458,13 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
         break;
     case kPlayerBeingSaved: {
         BandTrack *track = GetBandTrack();
-        track->PlayerSaved();
-        float savedurms = TheSongDB->GetSongDurationMs();
-        float savenewpct = GetSongMs() / savedurms;
-        mStats.AddToTimesSaved(mBand->MainPerformer()->Crowd()->GetValue(), savenewpct);
+        if (track)
+            track->PlayerSaved();
+        mStats.AddToTimesSaved(mBand->MainPerformer()->Crowd()->GetValue(), GetSongPct());
         mCrowd->SetDisplayValue(mParams->mCrowdSaveLevel);
         DelayReturn(true);
-        track->SavePlayer();
+        if (track)
+            track->SavePlayer();
         static Message player_saved("player_saved", "", 0);
         player_saved[0] = causer->GetTrackSym();
         player_saved[1] = b;

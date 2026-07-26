@@ -135,11 +135,11 @@ void StreakTracker::RemoteEndStreak_(Player *p, float f, int) {
 }
 
 void StreakTracker::LocalEndStreak(const TrackerPlayerID &pid, float f) {
-    static Symbol streak_tracker_progress_1("streak_tracker_progress_1");
-    static Symbol streak_tracker_progress("streak_tracker_progress");
     unk68++;
     unk64 += f;
     GetPlayerDisplay(pid).Pulse(true);
+    static Symbol streak_tracker_progress("streak_tracker_progress");
+    static Symbol streak_tracker_progress_1("streak_tracker_progress_1");
     Symbol sym = unk68 == 1 ? streak_tracker_progress_1 : streak_tracker_progress;
     mBroadcastDisplay.ShowBriefBandMessage(DataArrayPtr(sym, unk68));
 }

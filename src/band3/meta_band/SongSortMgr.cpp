@@ -243,6 +243,9 @@ void SongSortMgr::BuildFilteredSongList(SongFilter *filter, Symbol partSym) {
             if (!DoesSongMatchFilter(songID, filter, partSym)) {
                 continue;
             }
+            if (!TheProfileMgr.mSecondPedalHiHat && record.GetReview() == 1) {
+                continue;
+            }
             std::pair<Symbol, SongRecord> p(record.mShortName, record);
             mSongs.insert(std::pair<const Symbol, SongRecord>(p));
         }

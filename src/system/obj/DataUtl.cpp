@@ -204,3 +204,27 @@ void DataSetMacro(Symbol key, DataArray *macro) {
     } else
         val = nullptr;
 }
+
+// ---------------------------------------------------------------------------
+// DataNode's copy constructor is hosted here, NOT in DataNode.cpp.
+//
+// DataNode.cpp scatter-includes obj/DataArray.cpp and
+// band3/meta_band/BandSongMetadata.cpp so that objdiff can pair the COMDATs the
+// retail linker interleaved into DataNode.cpp's .text span.  Those files were
+// separate translation units in retail, so their `new (&mNodes[i]) DataNode(x)`
+// loops (a) call this ctor out of line and (b) — because an out-of-TU callee is
+// not provably nothrow — carry the MSVC placement-`operator delete(void*,void*)`
+// EH cleanup funclets, which is what fixes DataArray::Insert / InsertNodes /
+// Resize / Remove at frame 0xA0/0xB0/0xA0/0x90 and flips their 9 funclets.
+//
+// If the body is visible in DataNode.cpp's TU, /Ob2 inlines it into those loops
+// and the nothrow deduction deletes the funclets outright.  This TU is used as
+// the host because it constructs no DataNode copies of its own, so hosting the
+// body here inlines it nowhere.  Do not move it back.
+// ---------------------------------------------------------------------------
+DataNode::DataNode(const DataNode &node) {
+    mValue = node.mValue;
+    mType = node.mType;
+    if (mType & kDataArray)
+        mValue.array->AddRef();
+}

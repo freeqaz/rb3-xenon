@@ -1446,7 +1446,7 @@ CharEyeDartRuleset.cpp:
 	.pdata      start:0x82205828 end:0x822058C0
 	.pdata      start:0x82205938 end:0x82205A20
 	.text       start:0x823BC918 end:0x823BD400
-	.text       start:0x823BDE70 end:0x823BF2A4 rename:.text$yd
+	.text       start:0x823BDE70 end:0x823BF2A4
 
 CharIKRod.cpp:
 	.pdata      start:0x82205F48 end:0x82205F60
@@ -2467,7 +2467,7 @@ CharInterest.cpp:
 	.pdata      start:0x821F5600 end:0x821F5608
 	.pdata      start:0x822058C0 end:0x82205938
 	.text       start:0x822AF178 end:0x822AF1C8
-	.text       start:0x823BD400 end:0x823BDE6C rename:.text$yd
+	.text       start:0x823BD400 end:0x823BDE6C
 
 VorbisReader.cpp:
 	.pdata      start:0x821F5F60 end:0x821F5F68

@@ -90,13 +90,6 @@ DataNode::DataNode(const String &str) {
     mType = kDataString;
 }
 
-DataNode::DataNode(const DataNode &node) {
-    mValue = node.mValue;
-    mType = node.mType;
-    if (mType & kDataArray)
-        mValue.array->AddRef();
-}
-
 DataNode::DataNode(const DataArrayPtr &ptr) {
     mValue.array = ptr;
     ptr->AddRef();

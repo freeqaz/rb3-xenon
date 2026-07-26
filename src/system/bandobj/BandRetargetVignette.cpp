@@ -84,15 +84,14 @@ void BandRetargetVignette::EnterDir() const {
     BandRetargetVignette *ncThis = const_cast<BandRetargetVignette *>(this);
     ncThis->mEffectors.clear();
     for (int i = 0; i < pgroups.size(); i++) {
-        ncThis->mEffectors.push_back(
-            String(pgroups[i]->Dir()->Name())
-        );
+        String s(pgroups[i]->Dir()->Name());
+        ncThis->mEffectors.push_back(s);
     }
 
     for (ObjDirItr<BandIKEffector> it(Dir(), true); it; ++it) {
-        const char *itName = it->Name();
-        if (strncmp("player", itName, 6) != 0) {
-            ncThis->mEffectors.push_back(String(itName));
+        if (strncmp("player", it->Name(), 6) != 0) {
+            String s(it->Name());
+            ncThis->mEffectors.push_back(s);
         }
     }
 }

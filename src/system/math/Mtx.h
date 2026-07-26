@@ -287,7 +287,12 @@ inline BinStream &operator>>(BinStream &bs, Transform &tf) {
     return bs;
 }
 
-inline BinStream &operator>>(BinStreamRev &bs, Transform &tf) { return bs.stream >> tf; }
+// Retail passes the BinStreamRev itself (BinStream base@0 upcast -> `mr r3,&bs`),
+// not the inner `stream` member (`lwz r3,0x14`). Verified on
+// operator>>(BinStreamRev&, ObjectDir::Viewport&).
+inline BinStream &operator>>(BinStreamRev &bs, Transform &tf) {
+    return (BinStream &)bs >> tf;
+}
 
 class QuatXfm {
 public:

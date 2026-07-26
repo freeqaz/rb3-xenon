@@ -276,7 +276,7 @@ BinStreamRev &operator>>(BinStreamRev &d, EventTrigger::ProxyCall &pc) {
     d >> pc.mProxy;
     d >> pc.mCall;
     if (sEventTriggerRev > 10) {
-        pc.mEvent.Load(d.stream, true, pc.mProxy);
+        pc.mEvent.Load(d, true, pc.mProxy);
     }
     return d;
 }

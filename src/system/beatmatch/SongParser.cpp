@@ -1053,7 +1053,10 @@ void SongParser::StartVocalNote(int tick, unsigned char data, const char *lyric)
 void SongParser::EndVocalNote(int tick) {
     float ticktime = GetTempoMap()->TickToTime(tick);
     if (!mLyricPitchSet) {
-        MILO_WARN(
+        // Retail strips only the emission: MakeString's arguments are still
+        // evaluated, so both String varargs are copy-constructed into the frame
+        // (mNextLyric -> 0x60, mFilename -> 0x70) and destroyed.
+        (void)MakeString(
             "%s (%s): Missing vocal note at %s for lyric '%s'",
             mFilename,
             mTrackName,
@@ -1062,9 +1065,11 @@ void SongParser::EndVocalNote(int tick) {
         );
     }
     if (!mLyricTextSet) {
+        // ...but the second warn keeps only the argument evaluation (one String
+        // copy of mFilename); retail has no MakeString call here.
         MILO_WARN(
             "%s (%s): missing lyric at %s",
-            mFilename,
+            String(mFilename),
             mTrackName,
             PrintTick(mCurVocalNote.GetTick())
         );

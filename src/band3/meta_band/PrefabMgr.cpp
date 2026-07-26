@@ -82,14 +82,15 @@ PrefabMgr::PrefabMgr() : unk60(0) {
             substrsBase = &substrs[0];
             substrname = substrsBase->c_str();
         } else {
-            MILO_WARN("Bad prefab name: (%s)\n", str);
+            MILO_WARN("Bad prefab name: (%s)\n", String(str));
             continue;
         }
         if (strcmp(substrname, "prefab") == 0) {
             mPrefabs.push_back(new PrefabChar(it));
         } else if (strcmp(substrname, "charcreator") == 0) {
             if (substrs.size() != 3) {
-                MILO_WARN("Bad charcreator prefab name: (%s)\n", str);
+                String warnCC(str); // retail: MILO_WARN copies the String vararg
+                MILO_WARN("Bad charcreator prefab name: (%s)\n", warnCC);
                 continue;
             }
             Symbol boutiqueSym = MakeString("boutique_%s", substrsBase[2].c_str());
@@ -107,13 +108,15 @@ PrefabMgr::PrefabMgr() : unk60(0) {
                 MILO_FAIL("Incorrect gender symbol %s\n", genderSym);
         } else if (strcmp(substrname, "facetype") == 0) {
             if (substrs.size() != 3) {
-                MILO_WARN("Bad facetype prefab name: (%s)\n", str);
+                String warnFT(str); // retail: MILO_WARN copies the String vararg
+                MILO_WARN("Bad facetype prefab name: (%s)\n", warnFT);
                 continue;
             }
             unk34.push_back(it);
-        } else if (strcmp(substrname, "BBE") == 0) {
-            mPrefabs.push_back(new PrefabChar(it));
         }
+        // Retail X360 has no fourth `strcmp(substrname, "BBE")` arm here: only
+        // three strcmp loops and five hoisted string literals ("_", prefab,
+        // charcreator, facetype, boutique_%s) exist in the ctor.
     }
     AssignPrefabsToSlots();
     SetName("prefab_mgr", ObjectDir::Main());

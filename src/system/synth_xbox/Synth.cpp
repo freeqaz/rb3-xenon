@@ -86,6 +86,7 @@ void Synth360::PreInit() {
 
     {
         XAUDIO2_EFFECT_DESCRIPTOR effectDescs[2];
+        XAUDIO2_EFFECT_CHAIN chain;
         effectDescs[0].pEffect =
             static_cast<CXAPOBase *>(new StandardEffect<CompressionEffect>());
         effectDescs[0].InitialState = 1;
@@ -97,11 +98,9 @@ void Synth360::PreInit() {
         mLevelValues = new int;
         *mLevelValues = *(int *)&mLevelData;
 
-        XAUDIO2_EFFECT_CHAIN chain;
         chain.EffectCount = 2;
         chain.pEffectDescriptors = effectDescs;
         ((IXAudio2Voice *)unkcc)->SetEffectChain(&chain);
-    }
 
     DataArray *limiterCfg = SystemConfig(Symbol("synth"), Symbol("limiter"));
     float threshold = limiterCfg->FindArray(Symbol("threshold"), true)->Float(1);
@@ -121,28 +120,29 @@ void Synth360::PreInit() {
     ((IXAudio2Voice *)unkcc)->SetEffectParameters(0, &params, sizeof(params), 0);
 
     CreateAudioReverb((IUnknown **)&unkd8);
-    XAUDIO2_EFFECT_DESCRIPTOR reverbDesc;
-    reverbDesc.pEffect = (IUnknown *)unkd8;
-    reverbDesc.InitialState = 1;
-    reverbDesc.OutputChannels = 2;
-    XAUDIO2_EFFECT_CHAIN reverbChain;
-    reverbChain.EffectCount = 1;
-    reverbChain.pEffectDescriptors = &reverbDesc;
+    effectDescs[0].pEffect = (IUnknown *)unkd8;
+    effectDescs[0].InitialState = 1;
+    effectDescs[0].OutputChannels = 2;
+    chain.EffectCount = 1;
+    chain.pEffectDescriptors = effectDescs;
     (((HRESULT(*)(int *, int *, int, int, int, int, int, XAUDIO2_EFFECT_CHAIN *)
     )(*(int *)(*(int *)unkc8 + 0x24)))(
-        (int *)unkc8, &unkd0, 2, 48000, 0, 0x8000, 0, &reverbChain
+        (int *)unkc8, &unkd0, 2, 48000, 0, 0x8000, 0, &chain
     ));
+    }
 
-    XAUDIO2_SEND_DESCRIPTOR sendDesc;
-    sendDesc.Flags = 0;
-    sendDesc.pOutputVoice = (IXAudio2Voice *)unkd0;
-    XAUDIO2_VOICE_SENDS sends;
-    sends.SendCount = 1;
-    sends.pSends = &sendDesc;
-    (((HRESULT(*)(int *, int *, int, int, int, int, XAUDIO2_VOICE_SENDS *, int)
-    )(*(int *)(*(int *)unkc8 + 0x24)))(
-        (int *)unkc8, &unkd4, 6, 48000, 0, 0x7fff, &sends, 0
-    ));
+    {
+        XAUDIO2_SEND_DESCRIPTOR sendDesc;
+        sendDesc.Flags = 0;
+        sendDesc.pOutputVoice = (IXAudio2Voice *)unkd0;
+        XAUDIO2_VOICE_SENDS sends;
+        sends.SendCount = 1;
+        sends.pSends = &sendDesc;
+        (((HRESULT(*)(int *, int *, int, int, int, int, XAUDIO2_VOICE_SENDS *, int)
+        )(*(int *)(*(int *)unkc8 + 0x24)))(
+            (int *)unkc8, &unkd4, 6, 48000, 0, 0x7fff, &sends, 0
+        ));
+    }
 
     ((IXAudio2Voice *)unkd0)->SetVolume(4.0f, 0);
 

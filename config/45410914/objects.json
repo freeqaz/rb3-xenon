@@ -936,7 +936,12 @@
     ]
    },
    "band3/meta_band/LessonProvider.cpp": "NonMatching",
-   "band3/meta_band/LessonMgr.cpp": "NonMatching",
+   "band3/meta_band/LessonMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_MAP_0x1C"
+    ]
+   },
    "band3/meta_band/AssetMgr.cpp": "NonMatching",
    "band3/meta_band/AssetProvider.cpp": "NonMatching",
    "band3/meta_band/NewAssetProvider.cpp": "NonMatching",
