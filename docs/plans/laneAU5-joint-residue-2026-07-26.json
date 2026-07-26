@@ -1,0 +1,840 @@
+{
+ "lane": "laneAU-5",
+ "date": "2026-07-26",
+ "merge_base": "690d683a",
+ "supersedes": "laneAU-1 (deferred, splits conflict)",
+ "measured": {
+  "baseline": 38390,
+  "final": 38432,
+  "net": 42,
+  "losses": 0,
+  "note": "re-derived from inputs on 690d683a, NOT replayed from the laneAU-1 plan"
+ },
+ "funnel_690d683a": {
+  "NOMATCH": 21532,
+  "name-already-mapped": 15994,
+  "all-hits-occupied": 2933,
+  "multi-free-hit": 2915,
+  "UNIQUE-ICF": 870,
+  "UNIQUE": 252,
+  "vendor-band": 73,
+  "denylisted": 5,
+  "proposals": 1122,
+  "distinct_VA": 191,
+  "UNCONTESTED": 45
+ },
+ "joint_unblock_uncontested": {
+  "ADD-T_SOLE": 13,
+  "MOVE-T_SPATIAL": 12,
+  "MOVE-T_SOLE": 9,
+  "ADD-T_SPATIAL": 4,
+  "refuse-spatial-far": 4,
+  "refuse-definer-has-no-span": 2,
+  "already-pays": 1
+ },
+ "tier_split_of_38": {
+  "T_SOLE_UNPINNED": 13,
+  "T_SPATIAL_WRONG-UNIT": 12,
+  "T_SOLE_WRONG-UNIT": 9,
+  "T_SPATIAL_UNPINNED": 4
+ },
+ "fate_of_laneAU1_28": {
+  "re-derived-independently": 27,
+  "no-longer-derivable": 1,
+  "consumed-by-main": 0
+ },
+ "argreg_reverified": [
+  {
+   "va": "0x82356f48",
+   "holder_pct": 40.0,
+   "strict100": false,
+   "verdict": "eviction permitted, landed"
+  },
+  {
+   "va": "0x826f9878",
+   "holder_pct": 85.0,
+   "strict100": false,
+   "verdict": "eviction permitted, landed"
+  },
+  {
+   "va": "0x8276c958",
+   "holder_pct": 45.0,
+   "strict100": false,
+   "verdict": "eviction permitted, landed"
+  }
+ ],
+ "asserted_but_unpaid": [
+  {
+   "va": "0x823774d8",
+   "name": "?Replace@?$ObjPtr@VCharBonesObject@@@@UAAXPAVObjRef@@PAVObject@@@Z",
+   "reads": "0.0% in default/CharDriver",
+   "note": "PAIRED, so the identity is right -- pure body divergence. Same ObjPtr::Replace family laneAU-2/3/4 landed +23 on; this instantiation is untouched. SOURCE LEAD for that lane."
+  },
+  {
+   "va": "0x8276d248",
+   "name": "?Unload@HamSong@@EAAXXZ",
+   "reads": "94.28571% in default/system/hamobj/HamSong",
+   "note": "reproduced to the digit from laneAU-1. Real body divergence; the pin converted a map problem into a source lead."
+  }
+ ],
+ "fixpoint_round2": {
+  "measured": "1,081 proposals -> 4 uncontested -> 0 MOVE, 0 ADD, all refuse-spatial-far",
+  "survivors": [
+   {
+    "va": "0x827b7c20",
+    "owner": "ProfileMgr.cpp",
+    "n_definers": 10,
+    "name": "?push_back@?$vector@VSingerStats@@..."
+   },
+   {
+    "va": "0x823d3a68",
+    "owner": "CharLipSync.cpp",
+    "n_definers": 2,
+    "name": "??0HighlightObject@@QAA@ABV0@@Z"
+   },
+   {
+    "va": "0x827b7e88",
+    "owner": null,
+    "n_definers": 2,
+    "name": "??_GCharSignalApplier@@UAAPAXI@Z",
+    "note": "ENTANGLED with the escalated CharEyes/HamMove contest -- refused deliberately, do not adjudicate"
+   },
+   {
+    "va": "0x826077e0",
+    "owner": "band3/meta_band/BandStorePanel.cpp",
+    "n_definers": 2,
+    "name": "??$__final_insertion_sort@PAVCategory@CameraManager@@..."
+   }
+  ]
+ },
+ "residue_contested_le3_claimants": [
+  {
+   "va": "0x826c23a0",
+   "n_claimants": 2,
+   "size": 396,
+   "names": [
+    "?_M_fill_insert_aux@?$vector@VHeldNote@@V?$StlNodeAlloc@VHeldNote@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVHeldNote@@IABV3@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@VStyle@RndText@@V?$StlNodeAlloc@VStyle@RndText@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStyle@RndText@@IABV34@ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x823aae58",
+   "n_claimants": 2,
+   "size": 364,
+   "names": [
+    "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ]
+  },
+  {
+   "va": "0x8234a290",
+   "n_claimants": 2,
+   "size": 364,
+   "names": [
+    "??$PropSync@VHighlightObject@@@@YA_NAAV?$ObjVector@VHighlightObject@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "??$PropSync@UBoneOp@CharSignalApplier@@@@YA_NAAV?$ObjVector@UBoneOp@CharSignalApplier@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ]
+  },
+  {
+   "va": "0x827e4a80",
+   "n_claimants": 2,
+   "size": 356,
+   "names": [
+    "?DoRemoveAt@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@QAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@MMM@Z",
+    "?DoRemoveAt@?$TrackWidgetImp@VMeshInstance@@@@QAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@MMM@Z"
+   ]
+  },
+  {
+   "va": "0x824e9f28",
+   "n_claimants": 2,
+   "size": 268,
+   "names": [
+    "?Handle@PostProcer@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+    "?Handle@SpotlightEnder@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+   ]
+  },
+  {
+   "va": "0x823aee98",
+   "n_claimants": 2,
+   "size": 204,
+   "names": [
+    "?Handle@CharData@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+    "?Handle@HamIKSkeleton@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+   ]
+  },
+  {
+   "va": "0x823c7210",
+   "n_claimants": 2,
+   "size": 204,
+   "names": [
+    "?Handle@CharBoneOffset@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+    "?Handle@CharUpperTwist@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+   ]
+  },
+  {
+   "va": "0x82348a60",
+   "n_claimants": 2,
+   "size": 188,
+   "names": [
+    "?reserve@?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+    "?reserve@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+   ]
+  },
+  {
+   "va": "0x825e9700",
+   "n_claimants": 2,
+   "size": 172,
+   "names": [
+    "?CheckLessonCompleteCondition@AccomplishmentLessonDiscSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z",
+    "?CheckLessonCompleteCondition@AccomplishmentLessonSongListConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z"
+   ]
+  },
+  {
+   "va": "0x8233cb58",
+   "n_claimants": 2,
+   "size": 160,
+   "names": [
+    "??A?$map@W4TrackType@@_NU?$less@W4TrackType@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@@stlpmtx_std@@QAAAA_NABW4TrackType@@@Z",
+    "??A?$map@H_NU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAAAA_NABH@Z"
+   ]
+  },
+  {
+   "va": "0x823dd1d8",
+   "n_claimants": 2,
+   "size": 124,
+   "names": [
+    "?SetObjConcrete@?$ObjRefConcrete@VCharClipGroup@@VObjectDir@@@@QAAXPAVCharClipGroup@@@Z",
+    "?SetObjConcrete@?$ObjRefConcrete@VPropertyEventProvider@@VObjectDir@@@@QAAXPAVPropertyEventProvider@@@Z"
+   ]
+  },
+  {
+   "va": "0x8242c4c0",
+   "n_claimants": 2,
+   "size": 124,
+   "names": [
+    "??$?5V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "??$?5V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ]
+  },
+  {
+   "va": "0x826870d0",
+   "n_claimants": 2,
+   "size": 120,
+   "names": [
+    "??0?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+    "??0?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
+   ]
+  },
+  {
+   "va": "0x8233b2d0",
+   "n_claimants": 2,
+   "size": 120,
+   "names": [
+    "?Load@BandList@@UAAXAAVBinStream@@@Z",
+    "?Load@HamCharacter@@MAAXAAVBinStream@@@Z"
+   ]
+  },
+  {
+   "va": "0x822a86f8",
+   "n_claimants": 2,
+   "size": 116,
+   "names": [
+    "?_M_clear@?$vector@VPiercing@OutfitConfig@@V?$StlNodeAlloc@VPiercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VPiercing@OutfitConfig@@V?$StlNodeAlloc@VPiercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ]
+  },
+  {
+   "va": "0x82332298",
+   "n_claimants": 2,
+   "size": 116,
+   "names": [
+    "?push_back@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTrackData@SongDB@@@Z",
+    "?push_back@?$vector@UMerger@FileMerger@@V?$StlNodeAlloc@UMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUMerger@FileMerger@@@Z"
+   ]
+  },
+  {
+   "va": "0x822bdfa0",
+   "n_claimants": 2,
+   "size": 116,
+   "names": [
+    "?_M_clear_after_move@?$vector@VIconData@BandCrowdMeter@@V?$StlNodeAlloc@VIconData@BandCrowdMeter@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@UActionElement@InlineHelp@@V?$StlNodeAlloc@UActionElement@InlineHelp@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ]
+  },
+  {
+   "va": "0x823dd2f8",
+   "n_claimants": 2,
+   "size": 116,
+   "names": [
+    "?Replace@?$ObjPtr@VCharClipGroup@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+    "?Replace@?$ObjPtr@VPropertyEventProvider@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z"
+   ]
+  },
+  {
+   "va": "0x823aade0",
+   "n_claimants": 2,
+   "size": 112,
+   "names": [
+    "?_M_fill_insert@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUDynamicPropertyEntry@Flow@@IABU34@@Z",
+    "?_M_fill_insert@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStrand@CharHair@@IABV34@@Z"
+   ]
+  },
+  {
+   "va": "0x823dd260",
+   "n_claimants": 2,
+   "size": 112,
+   "names": [
+    "??1?$ObjRefConcrete@VCharClipGroup@@VObjectDir@@@@UAA@XZ",
+    "??1?$ObjRefConcrete@VPropertyEventProvider@@VObjectDir@@@@UAA@XZ"
+   ]
+  },
+  {
+   "va": "0x82442e68",
+   "n_claimants": 2,
+   "size": 112,
+   "names": [
+    "?_M_erase@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x8233c850",
+   "n_claimants": 2,
+   "size": 108,
+   "names": [
+    "?_M_erase@?$vector@VHighlightObject@@V?$StlNodeAlloc@VHighlightObject@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVHighlightObject@@PAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@UBoneOp@CharSignalApplier@@V?$StlNodeAlloc@UBoneOp@CharSignalApplier@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUBoneOp@CharSignalApplier@@PAU34@ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x822c8310",
+   "n_claimants": 2,
+   "size": 108,
+   "names": [
+    "?Copy@HamSupereasyData@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?Copy@HamPartyJumpData@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+   ]
+  },
+  {
+   "va": "0x822a34a8",
+   "n_claimants": 2,
+   "size": 104,
+   "names": [
+    "?_M_erase@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPiece@Piercing@OutfitConfig@@PAV345@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VCamShotCrowd@@V?$StlNodeAlloc@VCamShotCrowd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCamShotCrowd@@PAV3@ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x826ce810",
+   "n_claimants": 2,
+   "size": 100,
+   "names": [
+    "?_M_erase@?$vector@VPlayerScoreInfo@@V?$StlNodeAlloc@VPlayerScoreInfo@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPlayerScoreInfo@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDistEntry@@PAU3@0ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x826b8c38",
+   "n_claimants": 2,
+   "size": 100,
+   "names": [
+    "?_M_erase@?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFlowMathOp@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVocalNote@@PAV3@0ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x825a35e8",
+   "n_claimants": 2,
+   "size": 96,
+   "names": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVMeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVMeshPair@BandPatchMesh@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUCheat@CheatProvider@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCheat@CheatProvider@@@0@0ABU__false_type@0@@Z"
+   ]
+  },
+  {
+   "va": "0x822a2fa8",
+   "n_claimants": 2,
+   "size": 96,
+   "names": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPiece@Piercing@OutfitConfig@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVCamShotCrowd@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVCamShotCrowd@@@0@0ABU__false_type@0@@Z"
+   ]
+  },
+  {
+   "va": "0x826856f0",
+   "n_claimants": 2,
+   "size": 96,
+   "names": [
+    "??0?$_Vector_base@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFlowMathOp@@@1@@Z",
+    "??0?$_Vector_base@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVocalNote@@@1@@Z"
+   ]
+  },
+  {
+   "va": "0x826b8b40",
+   "n_claimants": 2,
+   "size": 96,
+   "names": [
+    "?_M_erase@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVocalPhrase@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUBeatCollisionData@@PAU3@0ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x826da078",
+   "n_claimants": 2,
+   "size": 92,
+   "names": [
+    "?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
+   ]
+  },
+  {
+   "va": "0x827b7380",
+   "n_claimants": 2,
+   "size": 92,
+   "names": [
+    "??$__copy@PAUMoveRating@SkeletonClip@@PAU12@H@stlpmtx_std@@YAPAUMoveRating@SkeletonClip@@PAU12@00ABUrandom_access_iterator_tag@0@PAH@Z",
+    "??$__copy@PBUMoveRating@SkeletonClip@@PAU12@H@stlpmtx_std@@YAPAUMoveRating@SkeletonClip@@PBU12@0PAU12@ABUrandom_access_iterator_tag@0@PAH@Z"
+   ]
+  },
+  {
+   "va": "0x822aca98",
+   "n_claimants": 2,
+   "size": 88,
+   "names": [
+    "??$?5VBandPatchMesh@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VBandPatchMesh@@@@@Z",
+    "??$?5VStyle@RndText@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VStyle@RndText@@@@@Z"
+   ]
+  },
+  {
+   "va": "0x82608d38",
+   "n_claimants": 2,
+   "size": 88,
+   "names": [
+    "?GetControllerType@?A0x67f39245@@YA?AW4ControllerType@@XZ",
+    "?GetControllerType@?A0xf1cc8f72@@YA?AW4ControllerType@@XZ"
+   ]
+  },
+  {
+   "va": "0x82484d60",
+   "n_claimants": 2,
+   "size": 88,
+   "names": [
+    "??$?5UBoneOp@CharSignalApplier@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UBoneOp@CharSignalApplier@@@@@Z",
+    "??$?5UPose@RndMorph@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UPose@RndMorph@@@@@Z"
+   ]
+  },
+  {
+   "va": "0x823af2b8",
+   "n_claimants": 2,
+   "size": 88,
+   "names": [
+    "??_GCharWeightable@@UAAPAXI@Z",
+    "??_GHamIKSkeleton@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x82761d08",
+   "n_claimants": 2,
+   "size": 88,
+   "names": [
+    "?OnIsEasierDifficulty@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?OnIsHarderDifficulty@@YA?AVDataNode@@PAVDataArray@@@Z"
+   ]
+  },
+  {
+   "va": "0x827e1648",
+   "n_claimants": 2,
+   "size": 84,
+   "names": [
+    "?erase@?$list@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VBoneState@BandCharacter@@U?$_Nonconst_traits@VBoneState@BandCharacter@@@stlpmtx_std@@@2@U32@@Z",
+    "?erase@?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@2@U32@@Z"
+   ]
+  },
+  {
+   "va": "0x8266f7a8",
+   "n_claimants": 2,
+   "size": 80,
+   "names": [
+    "?DataSymbol@CymbalSelectionProvider@@UBA?AVSymbol@@H@Z",
+    "?DataSymbol@TrainerProvider@@UBA?AVSymbol@@H@Z"
+   ]
+  },
+  {
+   "va": "0x8267f3b0",
+   "n_claimants": 2,
+   "size": 72,
+   "names": [
+    "?NewNetMessage@MusicLibraryTaskMsg@@SAPAVNetMessage@@XZ",
+    "?NewObject@LightHue@@SAPAVObject@Hmx@@XZ"
+   ]
+  },
+  {
+   "va": "0x8242b688",
+   "n_claimants": 2,
+   "size": 72,
+   "names": [
+    "??$?5VSphere@@@BinStreamRev@@QAAAAV0@AAVSphere@@@Z",
+    "??5@YAAAVBinStream@@AAV0@AAVSphere@@@Z"
+   ]
+  },
+  {
+   "va": "0x823e6ea0",
+   "n_claimants": 2,
+   "size": 72,
+   "names": [
+    "?NewObject@FxSendMeterEffect@@SAPAVObject@Hmx@@XZ",
+    "?NewObject@RndTexBlendController@@SAPAVObject@Hmx@@XZ"
+   ]
+  },
+  {
+   "va": "0x822aca18",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "?resize@?$ObjVector@VBandPatchMesh@@@@QAAXI@Z",
+    "?resize@?$ObjVector@UPoint@CharIKHead@@@@QAAXI@Z"
+   ]
+  },
+  {
+   "va": "0x826ba830",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GVocalTrainerPanel@@UAAPAXI@Z",
+    "??_GRhythmBattle@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x825748a0",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GCalibrationWelcomePanel@@UAAPAXI@Z",
+    "??_GHamDriver@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x824ca290",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GWiiFriendsScreen@@UAAPAXI@Z",
+    "??_GEventAnim@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x8254bbd0",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GProfileMgr@@UAAPAXI@Z",
+    "??_GCharMirror@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x823b08d0",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GSetlistMergePanel@@UAAPAXI@Z",
+    "??_GCharPollGroup@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x822c6a40",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GBandRetargetVignette@@UAAPAXI@Z",
+    "??_GPhotoSpotlightPositioner@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x823793c8",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "??_GCharDriver@@UAAPAXI@Z",
+    "??_GFlowMultiSetProperty@@UAAPAXI@Z"
+   ]
+  },
+  {
+   "va": "0x824e9908",
+   "n_claimants": 2,
+   "size": 68,
+   "names": [
+    "?Copy@PostProcer@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?Copy@SpotlightEnder@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+   ]
+  },
+  {
+   "va": "0x8235cbf8",
+   "n_claimants": 2,
+   "size": 60,
+   "names": [
+    "?HasCachedContent@SongUpgradeMgr@@QBA_NVSymbol@@@Z",
+    "?HasSongStatus@SongStatusMgr@@QBA_NH@Z"
+   ]
+  },
+  {
+   "va": "0x8250b1a0",
+   "n_claimants": 2,
+   "size": 56,
+   "names": [
+    "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z",
+    "??0?$pair@VString@@V1@@stlpmtx_std@@QAA@ABVString@@0@Z"
+   ]
+  },
+  {
+   "va": "0x825a4bc8",
+   "n_claimants": 2,
+   "size": 40,
+   "names": [
+    "?IsUnderway@Tour@@QBA_NPAVBandProfile@@@Z",
+    "?ResetTourData@Tour@@QAAXPAVBandProfile@@@Z"
+   ]
+  },
+  {
+   "va": "0x825a0038",
+   "n_claimants": 3,
+   "size": 528,
+   "names": [
+    "?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+    "?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+    "?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z"
+   ]
+  },
+  {
+   "va": "0x82270690",
+   "n_claimants": 3,
+   "size": 300,
+   "names": [
+    "??4?$ObjDirPtr@VUILabelDir@@@@QAAAAV0@PAVUILabelDir@@@Z",
+    "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
+    "??4?$ObjDirPtr@VHamScrollSpeedIndicator@@@@QAAAAV0@PAVHamScrollSpeedIndicator@@@Z"
+   ]
+  },
+  {
+   "va": "0x82775c98",
+   "n_claimants": 3,
+   "size": 292,
+   "names": [
+    "?_M_erase@?$vector@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@2@PAV32@0ABU__true_type@2@@Z",
+    "?_M_erase@?$vector@V?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@2@PAV32@0ABU__true_type@2@@Z",
+    "?_M_erase@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@PAV32@0ABU__true_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x822a0d88",
+   "n_claimants": 3,
+   "size": 268,
+   "names": [
+    "?PropSync@@YA_NAAVBAMPhrase@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "?PropSync@@YA_NAAU?$pair@HH@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "?PropSync@@YA_NAAURange@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ]
+  },
+  {
+   "va": "0x82703d50",
+   "n_claimants": 3,
+   "size": 136,
+   "names": [
+    "??1?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UMoveRating@SkeletonClip@@V?$StlNodeAlloc@UMoveRating@SkeletonClip@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ]
+  },
+  {
+   "va": "0x823ece50",
+   "n_claimants": 3,
+   "size": 132,
+   "names": [
+    "??0PlatformMgrOpCompleteMsg@@QAA@H@Z",
+    "??0AddUserResultMsg@@QAA@H@Z",
+    "??0SessionReadyMsg@@QAA@H@Z"
+   ]
+  },
+  {
+   "va": "0x822a6d38",
+   "n_claimants": 3,
+   "size": 116,
+   "names": [
+    "?_M_clear@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ]
+  },
+  {
+   "va": "0x822a72b0",
+   "n_claimants": 3,
+   "size": 116,
+   "names": [
+    "?_M_clear@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VPatch@BandCharDesc@@V?$StlNodeAlloc@VPatch@BandCharDesc@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ]
+  },
+  {
+   "va": "0x822771f8",
+   "n_claimants": 3,
+   "size": 116,
+   "names": [
+    "?_M_clear@?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@UChar3D@CharData@WorldCrowd@@V?$StlNodeAlloc@UChar3D@CharData@WorldCrowd@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ]
+  },
+  {
+   "va": "0x8256ac50",
+   "n_claimants": 3,
+   "size": 112,
+   "names": [
+    "??1?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
+   ]
+  },
+  {
+   "va": "0x824417d8",
+   "n_claimants": 3,
+   "size": 112,
+   "names": [
+    "?_M_erase@?$vector@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUConstraintSystem@CharBlendBone@@PAU34@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VConstraint@HamIKEffector@@V?$StlNodeAlloc@VConstraint@HamIKEffector@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVConstraint@HamIKEffector@@PAV34@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV3@0ABU__false_type@2@@Z"
+   ]
+  },
+  {
+   "va": "0x82574810",
+   "n_claimants": 3,
+   "size": 100,
+   "names": [
+    "?NewObject@CalibrationWelcomePanel@@SAPAVObject@Hmx@@XZ",
+    "?NewObject@HamDriver@@SAPAVObject@Hmx@@XZ",
+    "?NewObject@HamSong@@SAPAVObject@Hmx@@XZ"
+   ]
+  },
+  {
+   "va": "0x82571738",
+   "n_claimants": 3,
+   "size": 100,
+   "names": [
+    "?NewObject@DxMovie@@SAPAVObject@Hmx@@XZ",
+    "?NewObject@RndMeshAnim@@SAPAVObject@Hmx@@XZ",
+    "?NewObject@TexMovie@@SAPAVObject@Hmx@@XZ"
+   ]
+  },
+  {
+   "va": "0x822a9648",
+   "n_claimants": 3,
+   "size": 96,
+   "names": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOldColorOption@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOverlay@OutfitConfig@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUAutoPropEntry@PropertyEventListener@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUAutoPropEntry@PropertyEventListener@@@0@0ABU__false_type@0@@Z"
+   ]
+  },
+  {
+   "va": "0x826f7948",
+   "n_claimants": 3,
+   "size": 96,
+   "names": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVVocalScoreHistory@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUEntry@LocalePanel@@@0@0ABU__false_type@0@@Z"
+   ]
+  },
+  {
+   "va": "0x8229e508",
+   "n_claimants": 3,
+   "size": 96,
+   "names": [
+    "??$?6VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "??$?6VBAMPhrase@@V?$StlNodeAlloc@VBAMPhrase@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VBAMPhrase@@V?$StlNodeAlloc@VBAMPhrase@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "??$?6VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ]
+  },
+  {
+   "va": "0x827b74d0",
+   "n_claimants": 3,
+   "size": 96,
+   "names": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUPropertyFilter@CameraManager@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUMoveRating@SkeletonClip@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUMoveRating@SkeletonClip@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUMarker@@@0@0ABU__false_type@0@@Z"
+   ]
+  },
+  {
+   "va": "0x8278f3b8",
+   "n_claimants": 3,
+   "size": 92,
+   "names": [
+    "??$MakeString@VSymbol@@M@@YAPBDPBDVSymbol@@M@Z",
+    "??$MakeString@HM@@YAPBDPBDHM@Z",
+    "??$MakeString@PBDM@@YAPBDPBD0M@Z"
+   ]
+  },
+  {
+   "va": "0x824f6920",
+   "n_claimants": 3,
+   "size": 88,
+   "names": [
+    "??1AccomplishmentEarnedMsg@@UAA@XZ",
+    "??1MainHubAdvanceMsg@?A0x447fe1d1@@UAA@XZ",
+    "??1MainHubAdvanceMsg@?A0xfb94c5e0@@UAA@XZ"
+   ]
+  },
+  {
+   "va": "0x82277438",
+   "n_claimants": 3,
+   "size": 84,
+   "names": [
+    "?_M_erase_after@?$_Slist_base@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@IAAPAU_Slist_node_base@23@PAU423@0@Z",
+    "?_M_erase_after@?$_Slist_base@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@IAAPAU_Slist_node_base@23@PAU423@0@Z",
+    "?_M_erase_after@?$_Slist_base@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@IAAPAU_Slist_node_base@23@PAU423@0@Z"
+   ]
+  },
+  {
+   "va": "0x822c8290",
+   "n_claimants": 3,
+   "size": 84,
+   "names": [
+    "??1CharCache@@UAA@XZ",
+    "??1EventTask@@UAA@XZ",
+    "??1MoggClipMap@@UAA@XZ"
+   ]
+  },
+  {
+   "va": "0x827d9680",
+   "n_claimants": 3,
+   "size": 84,
+   "names": [
+    "?erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@2@@2@@Z",
+    "?erase@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBKH@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@@2@@Z",
+    "?erase@?$_Rb_tree@PAVObject@Hmx@@U?$less@PAVObject@Hmx@@@stlpmtx_std@@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@4@U?$_Select1st@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@priv@2@@2@@Z"
+   ]
+  },
+  {
+   "va": "0x826b8ad0",
+   "n_claimants": 3,
+   "size": 84,
+   "names": [
+    "??$__uninitialized_copy@PAUBeatCollisionData@@PAU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PAU1@00ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PBUBeatCollisionData@@PAU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PBU1@0PAU1@ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PAVPitchCorrectedVoice@Synapse@DSP@@PAV123@@stlpmtx_std@@YAPAVPitchCorrectedVoice@Synapse@DSP@@PAV123@00ABU__false_type@0@@Z"
+   ]
+  },
+  {
+   "va": "0x826aaf28",
+   "n_claimants": 3,
+   "size": 80,
+   "names": [
+    "??$_Destroy_Range@PAVGameGem@@@stlpmtx_std@@YAXPAVGameGem@@0@Z",
+    "??$__destroy_range@PAVGameGem@@V1@@stlpmtx_std@@YAXPAVGameGem@@00@Z",
+    "??$__destroy_range@PAVSfxMap@@V1@@stlpmtx_std@@YAXPAVSfxMap@@00@Z"
+   ]
+  }
+ ],
+ "residue_note": "0 of these names lack a definer anywhere -- this population is generated FROM our objs, so a definer is a precondition of entry. Not the same object as a map-entry-derived WRONG-UNIT residue.",
+ "next_tier": "78 ICF-contested VAs with <=3 claimants need a SPATIAL tie-breaker, not more byte evidence."
+}

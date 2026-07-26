@@ -1,6 +1,6 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 38,643 strict-matched functions** (`build/45410914/report.json`,
+**Current: 38,792 strict-matched functions** (`build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
 
@@ -159,11 +159,34 @@ satisfied a third condition incidentally** — both were **pure anonymous funcle
 tails whose parent was already pinned to the destination**, so nothing in the
 destination competed for a pairing.
 
-⇒ **Required predicate before funding: sandwich AND definer-corroborated AND the
-destination's matching symbols are NOT already paired at 100%.** That third filter
-is **not built**. Rows: `/home/free/tmp/laneAT/sandwich_scored.json` (126 blocks /
-716 fns); the batch actually tried: `sandwich_applied.json`. Tool:
-`scripts/harvest/sandwich_overcarve.py`.
+★★**THE THIRD PREDICATE WAS BUILT AND DOES NOT SAVE IT — CHANNEL CLOSED.**
+Predicate 3 as implemented (supply-vs-demand per reloc-masked signature:
+admissible only when `supply − already_claimed ≥ incoming` for **every** signature
+in the block) gave 600 sandwiched → 182 scorable → 107 definer-corroborated →
+**87 capacity-safe (312 fns)**. Applied all 87: **−10 by (unit,name); by name
++73 / −101 = −28.**
+⇒ **Measured NEGATIVE TWICE on DISJOINT candidate sets under TWO different
+admission rules** (19 blocks/268 fns → −23; 87 blocks/312 fns → −10).
+Per-signature counting is insufficient because destination incumbents are also
+displaced by **transitive re-pairing**. ⛔**DO NOT FUND the 716-function pool.**
+
+★**And the two "wins" were probably not a channel at all.** StreakMeter (+13) and
+Waypoint→VocalTrackDir (+67) were each a **pure anonymous funclet tail whose
+parent is already pinned to the destination, with NO parent function of its own in
+the block** — and both were found by *reading* the block, not by any scanner.
+Narrower than any computable predicate. ⇒ **Record as a hand-verified special
+case, not a queue. Two data points that pay do not make a channel when the
+population they were drawn from measures negative twice.**
+
+Tool: `scripts/harvest/sandwich_overcarve.py`. Rows:
+`/home/free/tmp/laneAT/sandwich_scored.json`, `sandwich_applied.json`.
+
+★★**TWO OPERATIONAL TRAPS FOR ANY BULK SPLITS MOVER:**
+1. **A move that empties a unit's LAST `.text` block HARD-FAILS the build** —
+   `Failed to open <unit>.obj: Invalid COFF/PE section headers`. Guard for it.
+2. **`.text` and `.pdata` must be moved and restored TOGETHER.** Restoring an
+   emptied block by hand re-introduced a `.pdata` overlap, because the donor's
+   `.pdata` had already been re-derived around the removal.
 
 ★★**AND A `CLAUDE.md` CORRECTION FOUND THE SAME WAY:** the doc says dtk
 "auto-derives and back-fills" the `.pdata` range. **That is true only for a NEWLY
