@@ -143,8 +143,14 @@ public:
 
     std::vector<PatchDir *> mPatches; // 0x18
     std::vector<TourCharLocal *> mCharacters; // 0x24
-    int unk18; // 0x30 (flag; retail slot is here, after mCharacters — see AutoFakeFill/LoadFixed)
-    TourProgress *mTourProgress; // 0x34
+    // mTourProgress is at 0x30, NOT 0x34: the retail BandProfile.s reads 0x30
+    // eight times and 0x34 *never*, and all eight are pointer loads (vcall
+    // through 0x0(r3), or `addi r4, r11, 0x14` after a null check) — none is the
+    // int test `if (unk18)` would emit.  The two functions that touch unk18
+    // (LoadFixed / AutoFakeFill) are not paired in the target at all, so the
+    // swap costs nothing and fixes IsUnsaved / SaveLoadComplete.
+    TourProgress *mTourProgress; // 0x30
+    int unk18; // 0x34 (flag, dev-only; retail never reads it)
     std::map<Symbol, float> mLessonCompletions; // 0x30
     SongStatusMgr *mScores; // 0x48
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x4c

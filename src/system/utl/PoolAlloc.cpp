@@ -196,7 +196,9 @@ void ChunkAllocator::Print(TextStream &ts) {
     ts << MakeString("\n*** POOL REPORT (Total Capacity: %d)***\n", gPoolCapacity);
     ts << MakeString("   NodeSize   NumAllocs  MaxAllocs  Capacity  Wasted\n");
     int wasted = 0;
-    for (int i = 0; i < 64; i++) {
+    // Was a hardcoded 64 (the DC3 value) while every other loop in this file
+    // already uses MAX_FIXED_ALLOCS; retail fn_827BAFF8 emits `li r27, 0x20`.
+    for (int i = 0; i < MAX_FIXED_ALLOCS; i++) {
         if (mAllocs[i]) {
             FixedSizeAlloc *cur = mAllocs[i];
             int numAllocs = cur->mNumAllocs;

@@ -169,17 +169,19 @@ public:
     static void operator delete(void *v) { (MemFree)(v); }
 #endif
 
-    std::vector<PatchLayer> mLayers; // 0x194
-    std::map<Symbol, std::vector<PatchSticker *> > mStickerMap; // 0x19c
-    std::vector<PatchSticker *> mStickersLoading; // 0x1b4
-    RndTex *mTex; // 0x1bc
-    mutable bool unk1c0; // 0x1c0
-    // Retail sizeof(PatchDir) == 0x258, ours was 0x254 (ground truth:
-    // PatchPanel::Load's `new PatchDir()` emits `li r3, 0x258` in the target vs
-    // `li r3, 0x254` in our build).  69/99 of PatchDir's own functions already
-    // match with the offsets above, so the missing word is placed at the tail
-    // where it cannot disturb any of them.
-    int unk1c4; // 0x1c4
+    std::vector<PatchLayer> mLayers; // retail 0x1e4
+    std::map<Symbol, std::vector<PatchSticker *> > mStickerMap; // retail 0x1f0
+    // The retail PatchDir ctor (fn_82279BF0) spaces mStickerMap 0x1f0 ->
+    // mStickersLoading 0x20c, i.e. sizeof(std::map) == 0x1c in that TU (the
+    // documented per-TU _Rb_tree +4 ODR split), then mTex 0x218 and unk1c0
+    // 0x21c.  Rather than turn on RB3_MAP_0x1C -- which would also have to be
+    // set in every TU that inlines GetTex(), each with its OWN maps to shift --
+    // the same 4 bytes are spent here as an explicit pad.  This is the word
+    // that used to sit at the tail as `unk1c4`; sizeof is unchanged (0x258).
+    int unk1f0mappad;
+    std::vector<PatchSticker *> mStickersLoading; // retail 0x20c
+    RndTex *mTex; // retail 0x218
+    mutable bool unk1c0; // retail 0x21c
 };
 
 BinStream &operator<<(BinStream &, const PatchDescriptor &);
