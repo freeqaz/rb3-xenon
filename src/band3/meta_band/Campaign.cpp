@@ -349,7 +349,10 @@ void Campaign::UpdatePrimaryCurrentMajorLevelIcon(UIPicture *i_pPicture) {
     if (strcmp(iconstr, "") == 0) {
         i_pPicture->SetShowing(false);
     } else {
-        i_pPicture->SetTex(FilePath(iconstr));
+        {
+            FilePath fp(iconstr);
+            i_pPicture->SetTex(fp);
+        }
         i_pPicture->SetShowing(true);
     }
 }
@@ -361,7 +364,10 @@ void Campaign::UpdatePrimaryNextMajorLevelIcon(UIPicture *i_pPicture) {
     if (strcmp(iconstr, "") == 0) {
         i_pPicture->SetShowing(false);
     } else {
-        i_pPicture->SetTex(FilePath(iconstr));
+        {
+            FilePath fp(iconstr);
+            i_pPicture->SetTex(fp);
+        }
         i_pPicture->SetShowing(true);
     }
 }
@@ -374,7 +380,10 @@ void Campaign::UpdateCurrentMajorLevelIcon(LocalBandUser *i_pUser, UIPicture *i_
     if (strcmp(iconstr, "") == 0) {
         i_pPicture->SetShowing(false);
     } else {
-        i_pPicture->SetTex(FilePath(iconstr));
+        {
+            FilePath fp(iconstr);
+            i_pPicture->SetTex(fp);
+        }
         i_pPicture->SetShowing(true);
     }
 }
@@ -387,7 +396,10 @@ void Campaign::UpdateNextMajorLevelIcon(LocalBandUser *i_pUser, UIPicture *i_pPi
     if (strcmp(iconstr, "") == 0) {
         i_pPicture->SetShowing(false);
     } else {
-        i_pPicture->SetTex(FilePath(iconstr));
+        {
+            FilePath fp(iconstr);
+            i_pPicture->SetTex(fp);
+        }
         i_pPicture->SetShowing(true);
     }
 }
