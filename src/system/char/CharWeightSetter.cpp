@@ -144,12 +144,13 @@ void CharWeightSetter::PollDeps(
     }
     FOREACH (it, Refs()) {
 #ifdef HX_NATIVE
-        Hmx::Object *owner = it->RefOwner();
+        CharWeightable *weightowner =
+            dynamic_cast<CharWeightable *>(it->RefOwner());
 #else
         // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
-        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+        CharWeightable *weightowner =
+            dynamic_cast<CharWeightable *>(RefPtrOf(it)->RefOwner());
 #endif
-        CharWeightable *weightowner = dynamic_cast<CharWeightable *>(owner);
         if (weightowner && weightowner->WeightOwner() == this)
             change.push_back(weightowner);
     }
