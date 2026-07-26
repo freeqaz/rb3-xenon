@@ -1,0 +1,6852 @@
+[
+ {
+  "va": "0x822A40F0",
+  "name": "fn_822A40F0",
+  "size": 40,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x822A4060",
+  "parent_unit": "OutfitConfig.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82319D84",
+  "name": "fn_82319D84",
+  "size": 32,
+  "claimed_by": "MetaPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82319C48",
+  "parent_unit": "MetaPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823207A4",
+  "name": "fn_823207A4",
+  "size": 32,
+  "claimed_by": "CharacterTest.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82320578",
+  "parent_unit": "CharacterTest.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8237C2D4",
+  "name": "fn_8237C2D4",
+  "size": 40,
+  "claimed_by": "CharBonesMeshes.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8237C1C8",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D7F4",
+  "name": "fn_8238D7F4",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D814",
+  "name": "fn_8238D814",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D85C",
+  "name": "fn_8238D85C",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EA048",
+  "name": "fn_823EA048",
+  "size": 40,
+  "claimed_by": "SyncStore.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x823E9FC8",
+  "parent_unit": "SyncStore.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437750",
+  "name": "fn_82437750",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437B78",
+  "name": "fn_82437B78",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8244C7B4",
+  "name": "fn_8244C7B4",
+  "size": 32,
+  "claimed_by": "Part.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8244C7D4",
+  "name": "fn_8244C7D4",
+  "size": 32,
+  "claimed_by": "Part.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478EB8",
+  "name": "fn_82478EB8",
+  "size": 32,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478F28",
+  "name": "fn_82478F28",
+  "size": 32,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478F70",
+  "name": "fn_82478F70",
+  "size": 32,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824936B4",
+  "name": "fn_824936B4",
+  "size": 32,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82493498",
+  "parent_unit": "AmbientOcclusion.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD428",
+  "name": "fn_824BD428",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD448",
+  "name": "fn_824BD448",
+  "size": 40,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD470",
+  "name": "fn_824BD470",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD490",
+  "name": "fn_824BD490",
+  "size": 40,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD4B8",
+  "name": "fn_824BD4B8",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD4D8",
+  "name": "fn_824BD4D8",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD598",
+  "name": "fn_824BD598",
+  "size": 40,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824CEF94",
+  "name": "fn_824CEF94",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ViewSetting.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x824CEE58",
+  "parent_unit": "band3/meta_band/ViewSetting.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8250C860",
+  "name": "fn_8250C860",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8250C808",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82573D04",
+  "name": "fn_82573D04",
+  "size": 32,
+  "claimed_by": "MetaPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82573BC8",
+  "parent_unit": "MetaPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82574C2C",
+  "name": "fn_82574C2C",
+  "size": 32,
+  "claimed_by": "MetaPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82574AF0",
+  "parent_unit": "MetaPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A9490",
+  "name": "fn_825A9490",
+  "size": 40,
+  "claimed_by": "band3/meta_band/Campaign.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825A92D8",
+  "parent_unit": "band3/meta_band/Campaign.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825BC65C",
+  "name": "fn_825BC65C",
+  "size": 32,
+  "claimed_by": "band3/meta_band/MetaNetMsgs.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825BC528",
+  "parent_unit": "band3/meta_band/MetaNetMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C22A4",
+  "name": "fn_825C22A4",
+  "size": 40,
+  "claimed_by": "IdentityInfo.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825C21D0",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x825C45F4",
+  "name": "fn_825C45F4",
+  "size": 32,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C4614",
+  "name": "fn_825C4614",
+  "size": 32,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C4634",
+  "name": "fn_825C4634",
+  "size": 32,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C467C",
+  "name": "fn_825C467C",
+  "size": 32,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1E4C",
+  "name": "fn_825F1E4C",
+  "size": 32,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611C2C",
+  "name": "fn_82611C2C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611C4C",
+  "name": "fn_82611C4C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611C6C",
+  "name": "fn_82611C6C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611C8C",
+  "name": "fn_82611C8C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611CAC",
+  "name": "fn_82611CAC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611CCC",
+  "name": "fn_82611CCC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611CEC",
+  "name": "fn_82611CEC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611D0C",
+  "name": "fn_82611D0C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611D4C",
+  "name": "fn_82611D4C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261202C",
+  "name": "fn_8261202C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261204C",
+  "name": "fn_8261204C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261206C",
+  "name": "fn_8261206C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261208C",
+  "name": "fn_8261208C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826120AC",
+  "name": "fn_826120AC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826120CC",
+  "name": "fn_826120CC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826120EC",
+  "name": "fn_826120EC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261210C",
+  "name": "fn_8261210C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82613E98",
+  "name": "fn_82613E98",
+  "size": 68,
+  "claimed_by": "band3/meta_band/ContentLoadingPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82613DB8",
+  "parent_unit": "band3/meta_band/ContentLoadingPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A37C",
+  "name": "fn_8261A37C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A39C",
+  "name": "fn_8261A39C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A3BC",
+  "name": "fn_8261A3BC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A3DC",
+  "name": "fn_8261A3DC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A3FC",
+  "name": "fn_8261A3FC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A41C",
+  "name": "fn_8261A41C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A43C",
+  "name": "fn_8261A43C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A45C",
+  "name": "fn_8261A45C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A47C",
+  "name": "fn_8261A47C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A49C",
+  "name": "fn_8261A49C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A4BC",
+  "name": "fn_8261A4BC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A4DC",
+  "name": "fn_8261A4DC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A4FC",
+  "name": "fn_8261A4FC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A51C",
+  "name": "fn_8261A51C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A53C",
+  "name": "fn_8261A53C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D510",
+  "name": "fn_8262D510",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D530",
+  "name": "fn_8262D530",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D550",
+  "name": "fn_8262D550",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D570",
+  "name": "fn_8262D570",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D590",
+  "name": "fn_8262D590",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D5B0",
+  "name": "fn_8262D5B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D5D0",
+  "name": "fn_8262D5D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D5F0",
+  "name": "fn_8262D5F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D610",
+  "name": "fn_8262D610",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D630",
+  "name": "fn_8262D630",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635EDC",
+  "name": "fn_82635EDC",
+  "size": 32,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82657EC8",
+  "name": "fn_82657EC8",
+  "size": 40,
+  "claimed_by": "PerformanceData.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82657E08",
+  "parent_unit": "PerformanceData.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266913C",
+  "name": "fn_8266913C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82687EC0",
+  "name": "fn_82687EC0",
+  "size": 40,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82687DE8",
+  "parent_unit": "band3/game/SongDB.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9CFC",
+  "name": "fn_826D9CFC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826E1D80",
+  "name": "fn_826E1D80",
+  "size": 32,
+  "claimed_by": "band3/game/PerfectOverdriveTracker.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x826E18A0",
+  "parent_unit": "band3/game/PerfectOverdriveTracker.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82701414",
+  "name": "fn_82701414",
+  "size": 40,
+  "claimed_by": "system/synth/Synth.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x82701368",
+  "parent_unit": "system/synth/Synth.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82715194",
+  "name": "fn_82715194",
+  "size": 40,
+  "claimed_by": "MidiInstrument.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x827150B8",
+  "parent_unit": "MidiInstrument.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82715214",
+  "name": "fn_82715214",
+  "size": 44,
+  "claimed_by": "MidiInstrument.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x827150B8",
+  "parent_unit": "MidiInstrument.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AE8A8",
+  "name": "fn_827AE8A8",
+  "size": 32,
+  "claimed_by": "HeldButtonPanel.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x827AE720",
+  "parent_unit": "HeldButtonPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8AF0",
+  "name": "fn_827C8AF0",
+  "size": 32,
+  "claimed_by": "Song.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827CECFC",
+  "name": "fn_827CECFC",
+  "size": 40,
+  "claimed_by": "NetCacheMgr.cpp",
+  "evidence": "identity_unresolved",
+  "parent": "0x827CEC98",
+  "parent_unit": "NetCacheMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8227063C",
+  "name": "fn_8227063C",
+  "size": 40,
+  "claimed_by": "band3/game/CommonPhraseCapturer.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82270580",
+  "parent_unit": "band3/game/CommonPhraseCapturer.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82270664",
+  "name": "fn_82270664",
+  "size": 40,
+  "claimed_by": "band3/game/CommonPhraseCapturer.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82270580",
+  "parent_unit": "band3/game/CommonPhraseCapturer.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82270D80",
+  "name": "fn_82270D80",
+  "size": 32,
+  "claimed_by": "RhythmDetector.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82270B90",
+  "parent_unit": "RhythmDetector.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82270DA0",
+  "name": "fn_82270DA0",
+  "size": 32,
+  "claimed_by": "RhythmDetector.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82270B90",
+  "parent_unit": "RhythmDetector.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82270DC0",
+  "name": "fn_82270DC0",
+  "size": 40,
+  "claimed_by": "RhythmDetector.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82270B90",
+  "parent_unit": "RhythmDetector.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82271BF4",
+  "name": "fn_82271BF4",
+  "size": 40,
+  "claimed_by": "PropKeys.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82271B68",
+  "parent_unit": "PropKeys.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82271C1C",
+  "name": "fn_82271C1C",
+  "size": 40,
+  "claimed_by": "PropKeys.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82271B68",
+  "parent_unit": "PropKeys.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82274014",
+  "name": "fn_82274014",
+  "size": 40,
+  "claimed_by": "MoveDir.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82273FC8",
+  "parent_unit": "MoveDir.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822757E0",
+  "name": "fn_822757E0",
+  "size": 40,
+  "claimed_by": "Msg.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82275750",
+  "parent_unit": "Msg.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82279A70",
+  "name": "fn_82279A70",
+  "size": 40,
+  "claimed_by": "PatchDir.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82279A00",
+  "parent_unit": "Archive.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8227A8CC",
+  "name": "fn_8227A8CC",
+  "size": 68,
+  "claimed_by": "Ham.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8227A828",
+  "parent_unit": "Ham.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822A209C",
+  "name": "fn_822A209C",
+  "size": 40,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822A2038",
+  "parent_unit": "OutfitConfig.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822A2C44",
+  "name": "fn_822A2C44",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822A2BD8",
+  "parent_unit": "Text.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x822A385C",
+  "name": "fn_822A385C",
+  "size": 40,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822A36C0",
+  "parent_unit": "OutfitConfig.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822A38FC",
+  "name": "fn_822A38FC",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822A3890",
+  "parent_unit": "SampleInst.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x822A4118",
+  "name": "fn_822A4118",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822A4060",
+  "parent_unit": "OutfitConfig.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822A4144",
+  "name": "fn_822A4144",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822A4060",
+  "parent_unit": "OutfitConfig.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822BCF98",
+  "name": "fn_822BCF98",
+  "size": 56,
+  "claimed_by": "BandCrowdMeter.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822BCF30",
+  "parent_unit": "MeasureMap.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x822CDC54",
+  "name": "fn_822CDC54",
+  "size": 44,
+  "claimed_by": "DrivenPropertyEntry.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822CDC18",
+  "parent_unit": "DrivenPropertyEntry.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822CE3A8",
+  "name": "fn_822CE3A8",
+  "size": 76,
+  "claimed_by": "BandScoreboard.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822CE258",
+  "parent_unit": "DrivenPropertyEntry.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x822D85E8",
+  "name": "fn_822D85E8",
+  "size": 40,
+  "claimed_by": "SongLayout.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822D8460",
+  "parent_unit": "SongLayout.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822D8EC8",
+  "name": "fn_822D8EC8",
+  "size": 76,
+  "claimed_by": "Waypoint.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822D8D78",
+  "parent_unit": "InlineHelp.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x822EB688",
+  "name": "fn_822EB688",
+  "size": 40,
+  "claimed_by": "GemTrackDir.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822EB620",
+  "parent_unit": "SongLayout.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x822EBC40",
+  "name": "fn_822EBC40",
+  "size": 40,
+  "claimed_by": "GemTrackDir.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822EB9B8",
+  "parent_unit": "GemTrackDir.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822EBC68",
+  "name": "fn_822EBC68",
+  "size": 64,
+  "claimed_by": "GemTrackDir.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822EB9B8",
+  "parent_unit": "GemTrackDir.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x822EC990",
+  "name": "fn_822EC990",
+  "size": 40,
+  "claimed_by": "Cache_Xbox.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x822EC928",
+  "parent_unit": "SongLayout.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8230A8CC",
+  "name": "fn_8230A8CC",
+  "size": 40,
+  "claimed_by": "AccomplishmentPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8230A7E0",
+  "parent_unit": "AccomplishmentPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8230A8F4",
+  "name": "fn_8230A8F4",
+  "size": 40,
+  "claimed_by": "AccomplishmentPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8230A7E0",
+  "parent_unit": "AccomplishmentPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82317970",
+  "name": "fn_82317970",
+  "size": 40,
+  "claimed_by": "MoveAsyncDetector.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82317900",
+  "parent_unit": "MoveAsyncDetector.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823207C4",
+  "name": "fn_823207C4",
+  "size": 32,
+  "claimed_by": "CharacterTest.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82320578",
+  "parent_unit": "CharacterTest.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823207E4",
+  "name": "fn_823207E4",
+  "size": 32,
+  "claimed_by": "CharacterTest.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82320578",
+  "parent_unit": "CharacterTest.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82320804",
+  "name": "fn_82320804",
+  "size": 32,
+  "claimed_by": "CharacterTest.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82320578",
+  "parent_unit": "CharacterTest.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8232A348",
+  "name": "fn_8232A348",
+  "size": 48,
+  "claimed_by": "CharUpperTwist.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8232A2C0",
+  "parent_unit": "CharUpperTwist.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8232A378",
+  "name": "fn_8232A378",
+  "size": 48,
+  "claimed_by": "CharUpperTwist.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8232A2C0",
+  "parent_unit": "CharUpperTwist.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82348F9C",
+  "name": "fn_82348F9C",
+  "size": 40,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82348E20",
+  "parent_unit": "CharLipSync.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823490B8",
+  "name": "fn_823490B8",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82348FD0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823490E4",
+  "name": "fn_823490E4",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82348FD0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82349110",
+  "name": "fn_82349110",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82348FD0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8234913C",
+  "name": "fn_8234913C",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82348FD0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82349F8C",
+  "name": "fn_82349F8C",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82349DC0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82349FB8",
+  "name": "fn_82349FB8",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82349DC0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82349FE4",
+  "name": "fn_82349FE4",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82349DC0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8234A010",
+  "name": "fn_8234A010",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82349DC0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8234A03C",
+  "name": "fn_8234A03C",
+  "size": 44,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82349DC0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8234A068",
+  "name": "fn_8234A068",
+  "size": 40,
+  "claimed_by": "BandPatchMesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82349DC0",
+  "parent_unit": "BandPatchMesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8234BAE8",
+  "name": "fn_8234BAE8",
+  "size": 40,
+  "claimed_by": "HamCamTransform.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8234BA70",
+  "parent_unit": "HamCamTransform.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354550",
+  "name": "fn_82354550",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354570",
+  "name": "fn_82354570",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354590",
+  "name": "fn_82354590",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823545B0",
+  "name": "fn_823545B0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823545D0",
+  "name": "fn_823545D0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823545F0",
+  "name": "fn_823545F0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354610",
+  "name": "fn_82354610",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354630",
+  "name": "fn_82354630",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354650",
+  "name": "fn_82354650",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354670",
+  "name": "fn_82354670",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354690",
+  "name": "fn_82354690",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823546B0",
+  "name": "fn_823546B0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823546D0",
+  "name": "fn_823546D0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823546F0",
+  "name": "fn_823546F0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354710",
+  "name": "fn_82354710",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354730",
+  "name": "fn_82354730",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354750",
+  "name": "fn_82354750",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354770",
+  "name": "fn_82354770",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354790",
+  "name": "fn_82354790",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823547B0",
+  "name": "fn_823547B0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823547D0",
+  "name": "fn_823547D0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823547F0",
+  "name": "fn_823547F0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354810",
+  "name": "fn_82354810",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354830",
+  "name": "fn_82354830",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354850",
+  "name": "fn_82354850",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354870",
+  "name": "fn_82354870",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354890",
+  "name": "fn_82354890",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823548B0",
+  "name": "fn_823548B0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823548D0",
+  "name": "fn_823548D0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823548F0",
+  "name": "fn_823548F0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354910",
+  "name": "fn_82354910",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354930",
+  "name": "fn_82354930",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354950",
+  "name": "fn_82354950",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354970",
+  "name": "fn_82354970",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82354990",
+  "name": "fn_82354990",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823549B0",
+  "name": "fn_823549B0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823549D0",
+  "name": "fn_823549D0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823549F0",
+  "name": "fn_823549F0",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandTrack.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823537B8",
+  "parent_unit": "system/bandobj/BandTrack.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82359EA0",
+  "name": "fn_82359EA0",
+  "size": 44,
+  "claimed_by": "QuestManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82359E40",
+  "parent_unit": "QuestManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82359ECC",
+  "name": "fn_82359ECC",
+  "size": 44,
+  "claimed_by": "QuestManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82359E40",
+  "parent_unit": "QuestManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82359EF8",
+  "name": "fn_82359EF8",
+  "size": 44,
+  "claimed_by": "QuestManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82359E40",
+  "parent_unit": "QuestManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362E30",
+  "name": "fn_82362E30",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362E5C",
+  "name": "fn_82362E5C",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362E88",
+  "name": "fn_82362E88",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362EB4",
+  "name": "fn_82362EB4",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362EE0",
+  "name": "fn_82362EE0",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362F0C",
+  "name": "fn_82362F0C",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82362F38",
+  "name": "fn_82362F38",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82362D70",
+  "parent_unit": "TourProgress.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823641EC",
+  "name": "fn_823641EC",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82364218",
+  "name": "fn_82364218",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82364244",
+  "name": "fn_82364244",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82364270",
+  "name": "fn_82364270",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8236429C",
+  "name": "fn_8236429C",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823642C8",
+  "name": "fn_823642C8",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823642F4",
+  "name": "fn_823642F4",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82364320",
+  "name": "fn_82364320",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823654DC",
+  "name": "fn_823654DC",
+  "size": 40,
+  "claimed_by": "band3/tour/FixedSetlist.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82365470",
+  "parent_unit": "band3/tour/FixedSetlist.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82379374",
+  "name": "fn_82379374",
+  "size": 40,
+  "claimed_by": "CharDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82379298",
+  "parent_unit": "CharDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8237939C",
+  "name": "fn_8237939C",
+  "size": 40,
+  "claimed_by": "CharDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82379298",
+  "parent_unit": "CharDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8237C290",
+  "name": "fn_8237C290",
+  "size": 68,
+  "claimed_by": "CharBonesMeshes.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8237C1C8",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8237C2FC",
+  "name": "fn_8237C2FC",
+  "size": 44,
+  "claimed_by": "CharBonesMeshes.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8237C1C8",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D834",
+  "name": "fn_8238D834",
+  "size": 40,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D87C",
+  "name": "fn_8238D87C",
+  "size": 40,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D8A4",
+  "name": "fn_8238D8A4",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D8C4",
+  "name": "fn_8238D8C4",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D8E4",
+  "name": "fn_8238D8E4",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D904",
+  "name": "fn_8238D904",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D924",
+  "name": "fn_8238D924",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D944",
+  "name": "fn_8238D944",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D964",
+  "name": "fn_8238D964",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D984",
+  "name": "fn_8238D984",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D9A4",
+  "name": "fn_8238D9A4",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8238D9C4",
+  "name": "fn_8238D9C4",
+  "size": 32,
+  "claimed_by": "CharLipSyncDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8238D220",
+  "parent_unit": "CharLipSyncDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823903E4",
+  "name": "fn_823903E4",
+  "size": 40,
+  "claimed_by": "CharClipGroup.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82390368",
+  "parent_unit": "HAQManager.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823A0400",
+  "name": "fn_823A0400",
+  "size": 44,
+  "claimed_by": "CharClipDriver.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823A01A0",
+  "parent_unit": "CharClipDriver.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B3F40",
+  "name": "fn_823B3F40",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B3F70",
+  "name": "fn_823B3F70",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B3FA0",
+  "name": "fn_823B3FA0",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B3FD0",
+  "name": "fn_823B3FD0",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4000",
+  "name": "fn_823B4000",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4030",
+  "name": "fn_823B4030",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4060",
+  "name": "fn_823B4060",
+  "size": 48,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B3E68",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B48A8",
+  "name": "fn_823B48A8",
+  "size": 68,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B48EC",
+  "name": "fn_823B48EC",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4918",
+  "name": "fn_823B4918",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B496C",
+  "name": "fn_823B496C",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B49C0",
+  "name": "fn_823B49C0",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4A14",
+  "name": "fn_823B4A14",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4A40",
+  "name": "fn_823B4A40",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4A94",
+  "name": "fn_823B4A94",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4AE8",
+  "name": "fn_823B4AE8",
+  "size": 44,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823B4B14",
+  "name": "fn_823B4B14",
+  "size": 40,
+  "claimed_by": "CharIKFingers.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823B45A0",
+  "parent_unit": "CharIKFingers.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823BFF60",
+  "name": "fn_823BFF60",
+  "size": 40,
+  "claimed_by": "CharIKFoot.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823BFE70",
+  "parent_unit": "CharIKFoot.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823C82A4",
+  "name": "fn_823C82A4",
+  "size": 40,
+  "claimed_by": "Screenshot.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823C8198",
+  "parent_unit": "Screenshot.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823C82CC",
+  "name": "fn_823C82CC",
+  "size": 40,
+  "claimed_by": "Screenshot.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823C8198",
+  "parent_unit": "Screenshot.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823CAFD8",
+  "name": "fn_823CAFD8",
+  "size": 48,
+  "claimed_by": "CharIKSliderMidi.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823CAF10",
+  "parent_unit": "CharIKSliderMidi.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823CB008",
+  "name": "fn_823CB008",
+  "size": 48,
+  "claimed_by": "CharIKSliderMidi.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823CAF10",
+  "parent_unit": "CharIKSliderMidi.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823CB038",
+  "name": "fn_823CB038",
+  "size": 48,
+  "claimed_by": "CharIKSliderMidi.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823CAF10",
+  "parent_unit": "CharIKSliderMidi.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823CB068",
+  "name": "fn_823CB068",
+  "size": 48,
+  "claimed_by": "CharIKSliderMidi.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823CAF10",
+  "parent_unit": "CharIKSliderMidi.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823CB098",
+  "name": "fn_823CB098",
+  "size": 48,
+  "claimed_by": "CharIKSliderMidi.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823CAF10",
+  "parent_unit": "CharIKSliderMidi.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823D92F8",
+  "name": "fn_823D92F8",
+  "size": 68,
+  "claimed_by": "CharBonesBlender.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823D9208",
+  "parent_unit": "CharBonesBlender.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823D933C",
+  "name": "fn_823D933C",
+  "size": 44,
+  "claimed_by": "CharBonesBlender.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823D9208",
+  "parent_unit": "CharBonesBlender.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823D9368",
+  "name": "fn_823D9368",
+  "size": 40,
+  "claimed_by": "CharBonesBlender.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823D9208",
+  "parent_unit": "CharBonesBlender.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823D9390",
+  "name": "fn_823D9390",
+  "size": 44,
+  "claimed_by": "CharBonesBlender.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823D9208",
+  "parent_unit": "CharBonesBlender.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823E1ABC",
+  "name": "fn_823E1ABC",
+  "size": 40,
+  "claimed_by": "network/net/NetSession.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823E1A18",
+  "parent_unit": "network/net/NetSession.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EA070",
+  "name": "fn_823EA070",
+  "size": 44,
+  "claimed_by": "SyncStore.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823E9FC8",
+  "parent_unit": "SyncStore.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EA09C",
+  "name": "fn_823EA09C",
+  "size": 44,
+  "claimed_by": "SyncStore.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823E9FC8",
+  "parent_unit": "SyncStore.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EA3B8",
+  "name": "fn_823EA3B8",
+  "size": 40,
+  "claimed_by": "SyncStore.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EA300",
+  "parent_unit": "SyncStore.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EC270",
+  "name": "fn_823EC270",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823EC290",
+  "name": "fn_823EC290",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823EC2B0",
+  "name": "fn_823EC2B0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823EC2D0",
+  "name": "fn_823EC2D0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823EC2F0",
+  "name": "fn_823EC2F0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823EC4A0",
+  "name": "fn_823EC4A0",
+  "size": 48,
+  "claimed_by": "Server.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EC418",
+  "parent_unit": "Server.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EC4D0",
+  "name": "fn_823EC4D0",
+  "size": 48,
+  "claimed_by": "Server.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EC418",
+  "parent_unit": "Server.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823EF6A8",
+  "name": "fn_823EF6A8",
+  "size": 40,
+  "claimed_by": "CheatProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823EF5F8",
+  "parent_unit": "CheatProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823F2024",
+  "name": "fn_823F2024",
+  "size": 40,
+  "claimed_by": "SessionMessages.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823F1FA0",
+  "parent_unit": "SessionMessages.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823F2248",
+  "name": "fn_823F2248",
+  "size": 56,
+  "claimed_by": "SessionMessages.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823F21E0",
+  "parent_unit": "Watcher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x823F27E0",
+  "name": "fn_823F27E0",
+  "size": 44,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823F2688",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823F3950",
+  "name": "fn_823F3950",
+  "size": 44,
+  "claimed_by": "Matchmaker.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823F38C8",
+  "parent_unit": "Matchmaker.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x823F5C68",
+  "name": "fn_823F5C68",
+  "size": 40,
+  "claimed_by": "UI.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x823F5C20",
+  "parent_unit": "UI.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82405BC0",
+  "name": "fn_82405BC0",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82405BE0",
+  "name": "fn_82405BE0",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82405C00",
+  "name": "fn_82405C00",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82405C20",
+  "name": "fn_82405C20",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82405EBC",
+  "name": "fn_82405EBC",
+  "size": 40,
+  "claimed_by": "Anim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82405D90",
+  "parent_unit": "Anim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242BF24",
+  "name": "fn_8242BF24",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242BF4C",
+  "name": "fn_8242BF4C",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242BF74",
+  "name": "fn_8242BF74",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242BF9C",
+  "name": "fn_8242BF9C",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242BFC4",
+  "name": "fn_8242BFC4",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242BFEC",
+  "name": "fn_8242BFEC",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242C014",
+  "name": "fn_8242C014",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8242C03C",
+  "name": "fn_8242C03C",
+  "size": 40,
+  "claimed_by": "PropAnim.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8242BC18",
+  "parent_unit": "PropAnim.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437770",
+  "name": "fn_82437770",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437790",
+  "name": "fn_82437790",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824377B0",
+  "name": "fn_824377B0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824377D0",
+  "name": "fn_824377D0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824377F0",
+  "name": "fn_824377F0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437810",
+  "name": "fn_82437810",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437830",
+  "name": "fn_82437830",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437850",
+  "name": "fn_82437850",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437870",
+  "name": "fn_82437870",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437890",
+  "name": "fn_82437890",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824378B0",
+  "name": "fn_824378B0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824378D0",
+  "name": "fn_824378D0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824378F0",
+  "name": "fn_824378F0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437910",
+  "name": "fn_82437910",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437930",
+  "name": "fn_82437930",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437950",
+  "name": "fn_82437950",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437970",
+  "name": "fn_82437970",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437990",
+  "name": "fn_82437990",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824379B0",
+  "name": "fn_824379B0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824379D0",
+  "name": "fn_824379D0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824379F0",
+  "name": "fn_824379F0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437A10",
+  "name": "fn_82437A10",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437A30",
+  "name": "fn_82437A30",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437A50",
+  "name": "fn_82437A50",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437A70",
+  "name": "fn_82437A70",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437A90",
+  "name": "fn_82437A90",
+  "size": 40,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437AB8",
+  "name": "fn_82437AB8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437AD8",
+  "name": "fn_82437AD8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437AF8",
+  "name": "fn_82437AF8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437B18",
+  "name": "fn_82437B18",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437B38",
+  "name": "fn_82437B38",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437B58",
+  "name": "fn_82437B58",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437B98",
+  "name": "fn_82437B98",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437BB8",
+  "name": "fn_82437BB8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437BD8",
+  "name": "fn_82437BD8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437BF8",
+  "name": "fn_82437BF8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437C18",
+  "name": "fn_82437C18",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437C38",
+  "name": "fn_82437C38",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437C58",
+  "name": "fn_82437C58",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437C78",
+  "name": "fn_82437C78",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437C98",
+  "name": "fn_82437C98",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437CB8",
+  "name": "fn_82437CB8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437CD8",
+  "name": "fn_82437CD8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437CF8",
+  "name": "fn_82437CF8",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437D18",
+  "name": "fn_82437D18",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437D38",
+  "name": "fn_82437D38",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437D58",
+  "name": "fn_82437D58",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437D78",
+  "name": "fn_82437D78",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437D98",
+  "name": "fn_82437D98",
+  "size": 40,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437DC0",
+  "name": "fn_82437DC0",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437DE0",
+  "name": "fn_82437DE0",
+  "size": 40,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82437E08",
+  "name": "fn_82437E08",
+  "size": 32,
+  "claimed_by": "MetaMaterial.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82436488",
+  "parent_unit": "MetaMaterial.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82438620",
+  "name": "fn_82438620",
+  "size": 40,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82438674",
+  "name": "fn_82438674",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x824386A0",
+  "name": "fn_824386A0",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x824386F8",
+  "name": "fn_824386F8",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82438724",
+  "name": "fn_82438724",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8243877C",
+  "name": "fn_8243877C",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8244C7F4",
+  "name": "fn_8244C7F4",
+  "size": 40,
+  "claimed_by": "Part.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8244C81C",
+  "name": "fn_8244C81C",
+  "size": 32,
+  "claimed_by": "Part.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8244C83C",
+  "name": "fn_8244C83C",
+  "size": 32,
+  "claimed_by": "Part.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8244CA5C",
+  "name": "fn_8244CA5C",
+  "size": 40,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8244CAA4",
+  "name": "fn_8244CAA4",
+  "size": 40,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8244CAEC",
+  "name": "fn_8244CAEC",
+  "size": 40,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8244CB34",
+  "name": "fn_8244CB34",
+  "size": 32,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8244D03C",
+  "name": "fn_8244D03C",
+  "size": 40,
+  "claimed_by": "Part.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82451A20",
+  "name": "fn_82451A20",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82451A68",
+  "name": "fn_82451A68",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82451A88",
+  "name": "fn_82451A88",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82451AD0",
+  "name": "fn_82451AD0",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82451AF0",
+  "name": "fn_82451AF0",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82451B38",
+  "name": "fn_82451B38",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82451B58",
+  "name": "fn_82451B58",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8245556C",
+  "name": "fn_8245556C",
+  "size": 64,
+  "claimed_by": "Text.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82455508",
+  "parent_unit": "Text.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82456BBC",
+  "name": "fn_82456BBC",
+  "size": 44,
+  "claimed_by": "BandCamShot.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82456A20",
+  "parent_unit": "CharUtl.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82464098",
+  "name": "fn_82464098",
+  "size": 40,
+  "claimed_by": "ShadowMap.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82463FC8",
+  "parent_unit": "ShadowMap.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82473290",
+  "name": "fn_82473290",
+  "size": 40,
+  "claimed_by": "HamCharacter.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824731C0",
+  "parent_unit": "HamCharacter.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478ED8",
+  "name": "fn_82478ED8",
+  "size": 40,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478F00",
+  "name": "fn_82478F00",
+  "size": 40,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478F48",
+  "name": "fn_82478F48",
+  "size": 40,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478F90",
+  "name": "fn_82478F90",
+  "size": 32,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82478FB0",
+  "name": "fn_82478FB0",
+  "size": 40,
+  "claimed_by": "system/rndobj/Movie.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82478B90",
+  "parent_unit": "system/rndobj/Movie.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824936D4",
+  "name": "fn_824936D4",
+  "size": 40,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82493498",
+  "parent_unit": "AmbientOcclusion.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824936FC",
+  "name": "fn_824936FC",
+  "size": 32,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82493498",
+  "parent_unit": "AmbientOcclusion.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8249371C",
+  "name": "fn_8249371C",
+  "size": 40,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82493498",
+  "parent_unit": "AmbientOcclusion.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82493744",
+  "name": "fn_82493744",
+  "size": 32,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82493498",
+  "parent_unit": "AmbientOcclusion.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82493764",
+  "name": "fn_82493764",
+  "size": 40,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82493498",
+  "parent_unit": "AmbientOcclusion.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD4F8",
+  "name": "fn_824BD4F8",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD518",
+  "name": "fn_824BD518",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD538",
+  "name": "fn_824BD538",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD558",
+  "name": "fn_824BD558",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD578",
+  "name": "fn_824BD578",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD5C0",
+  "name": "fn_824BD5C0",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD5E0",
+  "name": "fn_824BD5E0",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD600",
+  "name": "fn_824BD600",
+  "size": 40,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD628",
+  "name": "fn_824BD628",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824BD670",
+  "name": "fn_824BD670",
+  "size": 32,
+  "claimed_by": "CameraManager.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824BCDB0",
+  "parent_unit": "CameraManager.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824C7FB4",
+  "name": "fn_824C7FB4",
+  "size": 40,
+  "claimed_by": "CameraShot.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824C7D10",
+  "parent_unit": "CameraShot.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824C7FDC",
+  "name": "fn_824C7FDC",
+  "size": 40,
+  "claimed_by": "CameraShot.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824C7D10",
+  "parent_unit": "CameraShot.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824CDD38",
+  "name": "fn_824CDD38",
+  "size": 40,
+  "claimed_by": "PropSync.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824CDCE8",
+  "parent_unit": "EventTrigger.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x824F74CC",
+  "name": "fn_824F74CC",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F7478",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824F74F4",
+  "name": "fn_824F74F4",
+  "size": 64,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F7478",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824F76C4",
+  "name": "fn_824F76C4",
+  "size": 40,
+  "claimed_by": "ContextWrapper.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F7600",
+  "parent_unit": "ContextWrapper.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824F76EC",
+  "name": "fn_824F76EC",
+  "size": 40,
+  "claimed_by": "ContextWrapper.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F7600",
+  "parent_unit": "ContextWrapper.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824F7714",
+  "name": "fn_824F7714",
+  "size": 40,
+  "claimed_by": "ContextWrapper.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F7600",
+  "parent_unit": "ContextWrapper.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824F88A4",
+  "name": "fn_824F88A4",
+  "size": 40,
+  "claimed_by": "DataFile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F86D8",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x824F8934",
+  "name": "fn_824F8934",
+  "size": 40,
+  "claimed_by": "DataFile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F88D8",
+  "parent_unit": "DataFile.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824F89C4",
+  "name": "fn_824F89C4",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F8968",
+  "parent_unit": "BandSongMetadata.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x824F8F24",
+  "name": "fn_824F8F24",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F8EC0",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x824FA034",
+  "name": "fn_824FA034",
+  "size": 44,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x824F9FE0",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8251AA38",
+  "name": "fn_8251AA38",
+  "size": 40,
+  "claimed_by": "system/os/UsbMidiGuitar.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8251A9B8",
+  "parent_unit": "system/os/UsbMidiGuitar.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8251BB58",
+  "name": "fn_8251BB58",
+  "size": 32,
+  "claimed_by": "MemcardMgr_Xbox.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8251BB00",
+  "parent_unit": "MemcardMgr_Xbox.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8251CDAC",
+  "name": "fn_8251CDAC",
+  "size": 40,
+  "claimed_by": "UI.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8251CD08",
+  "parent_unit": "UI.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82523548",
+  "name": "fn_82523548",
+  "size": 40,
+  "claimed_by": "UserMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82523470",
+  "parent_unit": "UserMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82524330",
+  "name": "fn_82524330",
+  "size": 32,
+  "claimed_by": "User.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825241A8",
+  "parent_unit": "User.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82524350",
+  "name": "fn_82524350",
+  "size": 32,
+  "claimed_by": "User.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825241A8",
+  "parent_unit": "User.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82524370",
+  "name": "fn_82524370",
+  "size": 32,
+  "claimed_by": "User.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825241A8",
+  "parent_unit": "User.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825276C4",
+  "name": "fn_825276C4",
+  "size": 40,
+  "claimed_by": "Joypad.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82527580",
+  "parent_unit": "Joypad.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8252965C",
+  "name": "fn_8252965C",
+  "size": 40,
+  "claimed_by": "JoypadClient.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825295E8",
+  "parent_unit": "JoypadClient.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82529864",
+  "name": "fn_82529864",
+  "size": 40,
+  "claimed_by": "JoypadClient.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825297E0",
+  "parent_unit": "JoypadClient.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8252E2D4",
+  "name": "fn_8252E2D4",
+  "size": 40,
+  "claimed_by": "ArkFile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8252E260",
+  "parent_unit": "ArkFile.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8252E2FC",
+  "name": "fn_8252E2FC",
+  "size": 44,
+  "claimed_by": "ArkFile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8252E260",
+  "parent_unit": "ArkFile.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825308D4",
+  "name": "fn_825308D4",
+  "size": 40,
+  "claimed_by": "UsbMidiKeyboardMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82530830",
+  "parent_unit": "UsbMidiKeyboardMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825308FC",
+  "name": "fn_825308FC",
+  "size": 40,
+  "claimed_by": "UsbMidiKeyboardMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82530830",
+  "parent_unit": "UsbMidiKeyboardMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82530924",
+  "name": "fn_82530924",
+  "size": 40,
+  "claimed_by": "UsbMidiKeyboardMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82530830",
+  "parent_unit": "UsbMidiKeyboardMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82533770",
+  "name": "fn_82533770",
+  "size": 40,
+  "claimed_by": "Memcard.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825336E0",
+  "parent_unit": "Memcard.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825743AC",
+  "name": "fn_825743AC",
+  "size": 40,
+  "claimed_by": "Flow.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82574348",
+  "parent_unit": "Flow.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825744B8",
+  "name": "fn_825744B8",
+  "size": 44,
+  "claimed_by": "MetaPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825743E0",
+  "parent_unit": "CalibrationPanel.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x825749E4",
+  "name": "fn_825749E4",
+  "size": 68,
+  "claimed_by": "FlowDistance.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82574938",
+  "parent_unit": "FlowDistance.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82574A28",
+  "name": "fn_82574A28",
+  "size": 44,
+  "claimed_by": "MetaPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82574938",
+  "parent_unit": "FlowDistance.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82574DF4",
+  "name": "fn_82574DF4",
+  "size": 40,
+  "claimed_by": "Flow.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82574D90",
+  "parent_unit": "Flow.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8257F41C",
+  "name": "fn_8257F41C",
+  "size": 44,
+  "claimed_by": "MetaPerformer.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8257F3B0",
+  "parent_unit": "DancerSequence.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8257F90C",
+  "name": "fn_8257F90C",
+  "size": 84,
+  "claimed_by": "MetaPerformer.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8257F750",
+  "parent_unit": "MoveAsyncDetector.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8258CB2C",
+  "name": "fn_8258CB2C",
+  "size": 76,
+  "claimed_by": "band3/meta_band/BandProfile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8258C9E0",
+  "parent_unit": "RhythmBattle.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595B50",
+  "name": "fn_82595B50",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595B70",
+  "name": "fn_82595B70",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595B90",
+  "name": "fn_82595B90",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595BB0",
+  "name": "fn_82595BB0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595BD0",
+  "name": "fn_82595BD0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595BF0",
+  "name": "fn_82595BF0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595C10",
+  "name": "fn_82595C10",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595C30",
+  "name": "fn_82595C30",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595C50",
+  "name": "fn_82595C50",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595C70",
+  "name": "fn_82595C70",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595C90",
+  "name": "fn_82595C90",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595CB0",
+  "name": "fn_82595CB0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595CD0",
+  "name": "fn_82595CD0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595CF0",
+  "name": "fn_82595CF0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82595E80",
+  "name": "fn_82595E80",
+  "size": 44,
+  "claimed_by": "Accomplishment.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82595D18",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82595EAC",
+  "name": "fn_82595EAC",
+  "size": 44,
+  "claimed_by": "Accomplishment.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82595D18",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82595ED8",
+  "name": "fn_82595ED8",
+  "size": 44,
+  "claimed_by": "Accomplishment.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82595D18",
+  "parent_unit": "Accomplishment.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A42BC",
+  "name": "fn_825A42BC",
+  "size": 40,
+  "claimed_by": "BandSongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A3F58",
+  "parent_unit": "BandSongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A42E4",
+  "name": "fn_825A42E4",
+  "size": 40,
+  "claimed_by": "BandSongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A3F58",
+  "parent_unit": "BandSongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A430C",
+  "name": "fn_825A430C",
+  "size": 40,
+  "claimed_by": "BandSongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A3F58",
+  "parent_unit": "BandSongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A94B8",
+  "name": "fn_825A94B8",
+  "size": 44,
+  "claimed_by": "band3/meta_band/Campaign.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A92D8",
+  "parent_unit": "band3/meta_band/Campaign.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A94E4",
+  "name": "fn_825A94E4",
+  "size": 44,
+  "claimed_by": "band3/meta_band/Campaign.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A92D8",
+  "parent_unit": "band3/meta_band/Campaign.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A9510",
+  "name": "fn_825A9510",
+  "size": 44,
+  "claimed_by": "band3/meta_band/Campaign.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A92D8",
+  "parent_unit": "band3/meta_band/Campaign.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A953C",
+  "name": "fn_825A953C",
+  "size": 44,
+  "claimed_by": "band3/meta_band/Campaign.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A92D8",
+  "parent_unit": "band3/meta_band/Campaign.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825A9568",
+  "name": "fn_825A9568",
+  "size": 44,
+  "claimed_by": "band3/meta_band/Campaign.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825A92D8",
+  "parent_unit": "band3/meta_band/Campaign.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825AED20",
+  "name": "fn_825AED20",
+  "size": 40,
+  "claimed_by": "WaitingUserGate.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825AEC80",
+  "parent_unit": "WaitingUserGate.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825B043C",
+  "name": "fn_825B043C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/InterstitialMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825B03E0",
+  "parent_unit": "band3/meta_band/InterstitialMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825B0464",
+  "name": "fn_825B0464",
+  "size": 44,
+  "claimed_by": "band3/meta_band/InterstitialMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825B03E0",
+  "parent_unit": "band3/meta_band/InterstitialMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825B0490",
+  "name": "fn_825B0490",
+  "size": 44,
+  "claimed_by": "band3/meta_band/InterstitialMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825B03E0",
+  "parent_unit": "band3/meta_band/InterstitialMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825BC67C",
+  "name": "fn_825BC67C",
+  "size": 32,
+  "claimed_by": "band3/meta_band/MetaNetMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825BC528",
+  "parent_unit": "band3/meta_band/MetaNetMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825BC69C",
+  "name": "fn_825BC69C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/MetaNetMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825BC528",
+  "parent_unit": "band3/meta_band/MetaNetMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C227C",
+  "name": "fn_825C227C",
+  "size": 40,
+  "claimed_by": "IdentityInfo.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C21D0",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x825C22CC",
+  "name": "fn_825C22CC",
+  "size": 40,
+  "claimed_by": "IdentityInfo.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C21D0",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x825C4654",
+  "name": "fn_825C4654",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C469C",
+  "name": "fn_825C469C",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C46C4",
+  "name": "fn_825C46C4",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C46EC",
+  "name": "fn_825C46EC",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C4714",
+  "name": "fn_825C4714",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C473C",
+  "name": "fn_825C473C",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C4764",
+  "name": "fn_825C4764",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C478C",
+  "name": "fn_825C478C",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C47B4",
+  "name": "fn_825C47B4",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C47DC",
+  "name": "fn_825C47DC",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C4804",
+  "name": "fn_825C4804",
+  "size": 40,
+  "claimed_by": "BandMachineMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C4180",
+  "parent_unit": "BandMachineMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825C5FB8",
+  "name": "fn_825C5FB8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/AppLabel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825C5F00",
+  "parent_unit": "OSCMessenger.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x825CCF64",
+  "name": "fn_825CCF64",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CCD98",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CCFA4",
+  "name": "fn_825CCFA4",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CCD98",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CCFCC",
+  "name": "fn_825CCFCC",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CCD98",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CCFF4",
+  "name": "fn_825CCFF4",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CCD98",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD01C",
+  "name": "fn_825CD01C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CCD98",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD044",
+  "name": "fn_825CD044",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CCD98",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD2BC",
+  "name": "fn_825CD2BC",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD0F0",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD2FC",
+  "name": "fn_825CD2FC",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD0F0",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD324",
+  "name": "fn_825CD324",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD0F0",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD34C",
+  "name": "fn_825CD34C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD0F0",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CD374",
+  "name": "fn_825CD374",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD0F0",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CDF30",
+  "name": "fn_825CDF30",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CDF50",
+  "name": "fn_825CDF50",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CDF78",
+  "name": "fn_825CDF78",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CDFA0",
+  "name": "fn_825CDFA0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CDFC8",
+  "name": "fn_825CDFC8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CDFF0",
+  "name": "fn_825CDFF0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE018",
+  "name": "fn_825CE018",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE040",
+  "name": "fn_825CE040",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE068",
+  "name": "fn_825CE068",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE090",
+  "name": "fn_825CE090",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE0B8",
+  "name": "fn_825CE0B8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE0E0",
+  "name": "fn_825CE0E0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE108",
+  "name": "fn_825CE108",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE130",
+  "name": "fn_825CE130",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE180",
+  "name": "fn_825CE180",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE1A8",
+  "name": "fn_825CE1A8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE750",
+  "name": "fn_825CE750",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE778",
+  "name": "fn_825CE778",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE7A0",
+  "name": "fn_825CE7A0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CE7C8",
+  "name": "fn_825CE7C8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825CEDEC",
+  "name": "fn_825CEDEC",
+  "size": 64,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CEAE8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x825CF3F8",
+  "name": "fn_825CF3F8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PassiveMessenger.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825CF038",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1E6C",
+  "name": "fn_825F1E6C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1E94",
+  "name": "fn_825F1E94",
+  "size": 40,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1EBC",
+  "name": "fn_825F1EBC",
+  "size": 40,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1EE4",
+  "name": "fn_825F1EE4",
+  "size": 40,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1F0C",
+  "name": "fn_825F1F0C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x825F1F34",
+  "name": "fn_825F1F34",
+  "size": 40,
+  "claimed_by": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x825F1CA8",
+  "parent_unit": "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82606790",
+  "name": "fn_82606790",
+  "size": 40,
+  "claimed_by": "band3/meta_band/BandStorePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82606720",
+  "parent_unit": "band3/meta_band/BandStorePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611D2C",
+  "name": "fn_82611D2C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611D6C",
+  "name": "fn_82611D6C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611D8C",
+  "name": "fn_82611D8C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611DAC",
+  "name": "fn_82611DAC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611DCC",
+  "name": "fn_82611DCC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611DEC",
+  "name": "fn_82611DEC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611E0C",
+  "name": "fn_82611E0C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611E2C",
+  "name": "fn_82611E2C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611E4C",
+  "name": "fn_82611E4C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611E6C",
+  "name": "fn_82611E6C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611E8C",
+  "name": "fn_82611E8C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611EAC",
+  "name": "fn_82611EAC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611ECC",
+  "name": "fn_82611ECC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611EEC",
+  "name": "fn_82611EEC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611F0C",
+  "name": "fn_82611F0C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611F2C",
+  "name": "fn_82611F2C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611F4C",
+  "name": "fn_82611F4C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611F6C",
+  "name": "fn_82611F6C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611F8C",
+  "name": "fn_82611F8C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611FAC",
+  "name": "fn_82611FAC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611FCC",
+  "name": "fn_82611FCC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82611FEC",
+  "name": "fn_82611FEC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261200C",
+  "name": "fn_8261200C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261212C",
+  "name": "fn_8261212C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261214C",
+  "name": "fn_8261214C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261216C",
+  "name": "fn_8261216C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261218C",
+  "name": "fn_8261218C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826121AC",
+  "name": "fn_826121AC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826121CC",
+  "name": "fn_826121CC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826121EC",
+  "name": "fn_826121EC",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261220C",
+  "name": "fn_8261220C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261222C",
+  "name": "fn_8261222C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261224C",
+  "name": "fn_8261224C",
+  "size": 32,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261226C",
+  "name": "fn_8261226C",
+  "size": 40,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82612294",
+  "name": "fn_82612294",
+  "size": 40,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826122BC",
+  "name": "fn_826122BC",
+  "size": 40,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82610800",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82612460",
+  "name": "fn_82612460",
+  "size": 44,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82612300",
+  "parent_unit": "FlowSound.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82613EDC",
+  "name": "fn_82613EDC",
+  "size": 44,
+  "claimed_by": "band3/meta_band/ContentLoadingPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82613DB8",
+  "parent_unit": "band3/meta_band/ContentLoadingPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82613F08",
+  "name": "fn_82613F08",
+  "size": 44,
+  "claimed_by": "band3/meta_band/ContentLoadingPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82613DB8",
+  "parent_unit": "band3/meta_band/ContentLoadingPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A55C",
+  "name": "fn_8261A55C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A57C",
+  "name": "fn_8261A57C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A59C",
+  "name": "fn_8261A59C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A5BC",
+  "name": "fn_8261A5BC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A5DC",
+  "name": "fn_8261A5DC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A5FC",
+  "name": "fn_8261A5FC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A61C",
+  "name": "fn_8261A61C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A63C",
+  "name": "fn_8261A63C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A65C",
+  "name": "fn_8261A65C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A67C",
+  "name": "fn_8261A67C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A69C",
+  "name": "fn_8261A69C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A6BC",
+  "name": "fn_8261A6BC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A6DC",
+  "name": "fn_8261A6DC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A6FC",
+  "name": "fn_8261A6FC",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A71C",
+  "name": "fn_8261A71C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A73C",
+  "name": "fn_8261A73C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8261A75C",
+  "name": "fn_8261A75C",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82618FD0",
+  "parent_unit": "CustomizePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D650",
+  "name": "fn_8262D650",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D670",
+  "name": "fn_8262D670",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D690",
+  "name": "fn_8262D690",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D6B0",
+  "name": "fn_8262D6B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D6D0",
+  "name": "fn_8262D6D0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D6F8",
+  "name": "fn_8262D6F8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D718",
+  "name": "fn_8262D718",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D740",
+  "name": "fn_8262D740",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D760",
+  "name": "fn_8262D760",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D788",
+  "name": "fn_8262D788",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D7A8",
+  "name": "fn_8262D7A8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D7C8",
+  "name": "fn_8262D7C8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D7E8",
+  "name": "fn_8262D7E8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D808",
+  "name": "fn_8262D808",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D828",
+  "name": "fn_8262D828",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D850",
+  "name": "fn_8262D850",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D878",
+  "name": "fn_8262D878",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D8A0",
+  "name": "fn_8262D8A0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8262D8C8",
+  "name": "fn_8262D8C8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/PatchPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8262CA88",
+  "parent_unit": "band3/meta_band/PatchPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826347C8",
+  "name": "fn_826347C8",
+  "size": 44,
+  "claimed_by": "ClipDistMap.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82634760",
+  "parent_unit": "PanelDir.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82634DE8",
+  "name": "fn_82634DE8",
+  "size": 48,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82634D48",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82634E18",
+  "name": "fn_82634E18",
+  "size": 48,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82634D48",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635EFC",
+  "name": "fn_82635EFC",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635F24",
+  "name": "fn_82635F24",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635F4C",
+  "name": "fn_82635F4C",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635F74",
+  "name": "fn_82635F74",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635F9C",
+  "name": "fn_82635F9C",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635FC4",
+  "name": "fn_82635FC4",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82635FEC",
+  "name": "fn_82635FEC",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82636014",
+  "name": "fn_82636014",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8263603C",
+  "name": "fn_8263603C",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82636064",
+  "name": "fn_82636064",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8263608C",
+  "name": "fn_8263608C",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826360B4",
+  "name": "fn_826360B4",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826360DC",
+  "name": "fn_826360DC",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82636104",
+  "name": "fn_82636104",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8263612C",
+  "name": "fn_8263612C",
+  "size": 40,
+  "claimed_by": "SetlistMergePanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82635A80",
+  "parent_unit": "SetlistMergePanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82655654",
+  "name": "fn_82655654",
+  "size": 40,
+  "claimed_by": "band3/meta_band/AssetMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826555D8",
+  "parent_unit": "band3/meta_band/AssetMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82657EF0",
+  "name": "fn_82657EF0",
+  "size": 44,
+  "claimed_by": "PerformanceData.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82657E08",
+  "parent_unit": "PerformanceData.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82657F1C",
+  "name": "fn_82657F1C",
+  "size": 44,
+  "claimed_by": "PerformanceData.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82657E08",
+  "parent_unit": "PerformanceData.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266915C",
+  "name": "fn_8266915C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266917C",
+  "name": "fn_8266917C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266919C",
+  "name": "fn_8266919C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826691BC",
+  "name": "fn_826691BC",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826691DC",
+  "name": "fn_826691DC",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826691FC",
+  "name": "fn_826691FC",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266921C",
+  "name": "fn_8266921C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266923C",
+  "name": "fn_8266923C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8266925C",
+  "name": "fn_8266925C",
+  "size": 32,
+  "claimed_by": "OvershellPartSelectProvider.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82668C70",
+  "parent_unit": "OvershellPartSelectProvider.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82687DB4",
+  "name": "fn_82687DB4",
+  "size": 44,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82687D48",
+  "parent_unit": "TransAnim.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82687EE8",
+  "name": "fn_82687EE8",
+  "size": 40,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82687DE8",
+  "parent_unit": "band3/game/SongDB.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82687F10",
+  "name": "fn_82687F10",
+  "size": 44,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82687DE8",
+  "parent_unit": "band3/game/SongDB.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82687F3C",
+  "name": "fn_82687F3C",
+  "size": 40,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82687DE8",
+  "parent_unit": "band3/game/SongDB.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82687F64",
+  "name": "fn_82687F64",
+  "size": 44,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82687DE8",
+  "parent_unit": "band3/game/SongDB.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826885D4",
+  "name": "fn_826885D4",
+  "size": 40,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82688530",
+  "parent_unit": "band3/game/SongDB.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8268A98C",
+  "name": "fn_8268A98C",
+  "size": 40,
+  "claimed_by": "GameConfig.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8268A910",
+  "parent_unit": "GameConfig.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8268F11C",
+  "name": "fn_8268F11C",
+  "size": 40,
+  "claimed_by": "BandUser.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8268F0D0",
+  "parent_unit": "BandUser.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8268FBEC",
+  "name": "fn_8268FBEC",
+  "size": 40,
+  "claimed_by": "Defines.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8268FB30",
+  "parent_unit": "Defines.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82692784",
+  "name": "fn_82692784",
+  "size": 40,
+  "claimed_by": "band3/game/NetGameMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82692710",
+  "parent_unit": "band3/game/NetGameMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826927AC",
+  "name": "fn_826927AC",
+  "size": 44,
+  "claimed_by": "band3/game/NetGameMsgs.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82692710",
+  "parent_unit": "band3/game/NetGameMsgs.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8269F344",
+  "name": "fn_8269F344",
+  "size": 40,
+  "claimed_by": "Performer.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8269F2C8",
+  "parent_unit": "Performer.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826A2208",
+  "name": "fn_826A2208",
+  "size": 44,
+  "claimed_by": "band3/game/Scoring.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A1E28",
+  "parent_unit": "band3/game/Scoring.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826A2234",
+  "name": "fn_826A2234",
+  "size": 44,
+  "claimed_by": "band3/game/Scoring.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A1E28",
+  "parent_unit": "band3/game/Scoring.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826A2260",
+  "name": "fn_826A2260",
+  "size": 44,
+  "claimed_by": "band3/game/Scoring.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A1E28",
+  "parent_unit": "band3/game/Scoring.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826A788C",
+  "name": "fn_826A788C",
+  "size": 68,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826A78D0",
+  "name": "fn_826A78D0",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826A78FC",
+  "name": "fn_826A78FC",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826A7928",
+  "name": "fn_826A7928",
+  "size": 40,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826A7950",
+  "name": "fn_826A7950",
+  "size": 40,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826A7978",
+  "name": "fn_826A7978",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826A79A4",
+  "name": "fn_826A79A4",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826AB31C",
+  "name": "fn_826AB31C",
+  "size": 60,
+  "claimed_by": "band3/game/GemTrainerPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826AB1C0",
+  "parent_unit": "ColorPalette.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826ABA64",
+  "name": "fn_826ABA64",
+  "size": 48,
+  "claimed_by": "band3/game/GemTrainerPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826AB9A8",
+  "parent_unit": "band3/game/GemTrainerPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826ABA94",
+  "name": "fn_826ABA94",
+  "size": 48,
+  "claimed_by": "band3/game/GemTrainerPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826AB9A8",
+  "parent_unit": "band3/game/GemTrainerPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826ABAC4",
+  "name": "fn_826ABAC4",
+  "size": 64,
+  "claimed_by": "band3/game/GemTrainerPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826AB9A8",
+  "parent_unit": "band3/game/GemTrainerPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826B8C10",
+  "name": "fn_826B8C10",
+  "size": 40,
+  "claimed_by": "PracticeSection.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826B8BA8",
+  "parent_unit": "PracticeSection.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826B8EBC",
+  "name": "fn_826B8EBC",
+  "size": 44,
+  "claimed_by": "band3/game/VocalTrainerPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826B8D20",
+  "parent_unit": "MemTracker.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826CE648",
+  "name": "fn_826CE648",
+  "size": 44,
+  "claimed_by": "Mesh.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826CE5E0",
+  "parent_unit": "Mesh.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D0FC0",
+  "name": "fn_826D0FC0",
+  "size": 40,
+  "claimed_by": "band3/game/Tracker.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D0E30",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x826D9D1C",
+  "name": "fn_826D9D1C",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9D6C",
+  "name": "fn_826D9D6C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9D8C",
+  "name": "fn_826D9D8C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9DAC",
+  "name": "fn_826D9DAC",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9E24",
+  "name": "fn_826D9E24",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9E6C",
+  "name": "fn_826D9E6C",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9E94",
+  "name": "fn_826D9E94",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9EB4",
+  "name": "fn_826D9EB4",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826D9EFC",
+  "name": "fn_826D9EFC",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826D9938",
+  "parent_unit": "RockCentral.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826E1DA0",
+  "name": "fn_826E1DA0",
+  "size": 40,
+  "claimed_by": "band3/game/PerfectOverdriveTracker.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826E18A0",
+  "parent_unit": "band3/game/PerfectOverdriveTracker.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x826E1DC8",
+  "name": "fn_826E1DC8",
+  "size": 40,
+  "claimed_by": "band3/game/PerfectOverdriveTracker.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x826E18A0",
+  "parent_unit": "band3/game/PerfectOverdriveTracker.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82700D6C",
+  "name": "fn_82700D6C",
+  "size": 40,
+  "claimed_by": "Sfx.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82700D28",
+  "parent_unit": "Sfx.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8270143C",
+  "name": "fn_8270143C",
+  "size": 44,
+  "claimed_by": "system/synth/Synth.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82701368",
+  "parent_unit": "system/synth/Synth.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82701468",
+  "name": "fn_82701468",
+  "size": 44,
+  "claimed_by": "system/synth/Synth.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82701368",
+  "parent_unit": "system/synth/Synth.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82701494",
+  "name": "fn_82701494",
+  "size": 44,
+  "claimed_by": "system/synth/Synth.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82701368",
+  "parent_unit": "system/synth/Synth.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827014C0",
+  "name": "fn_827014C0",
+  "size": 44,
+  "claimed_by": "system/synth/Synth.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82701368",
+  "parent_unit": "system/synth/Synth.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827014EC",
+  "name": "fn_827014EC",
+  "size": 44,
+  "claimed_by": "system/synth/Synth.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82701368",
+  "parent_unit": "system/synth/Synth.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827151BC",
+  "name": "fn_827151BC",
+  "size": 44,
+  "claimed_by": "MidiInstrument.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827150B8",
+  "parent_unit": "MidiInstrument.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827151E8",
+  "name": "fn_827151E8",
+  "size": 44,
+  "claimed_by": "MidiInstrument.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827150B8",
+  "parent_unit": "MidiInstrument.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82715240",
+  "name": "fn_82715240",
+  "size": 44,
+  "claimed_by": "MidiInstrument.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827150B8",
+  "parent_unit": "MidiInstrument.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82715CCC",
+  "name": "fn_82715CCC",
+  "size": 40,
+  "claimed_by": "MidiInstrument.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82715C88",
+  "parent_unit": "Flow.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x82768F70",
+  "name": "fn_82768F70",
+  "size": 40,
+  "claimed_by": "DataUtl.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82768EF0",
+  "parent_unit": "DataUtl.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827738EC",
+  "name": "fn_827738EC",
+  "size": 44,
+  "claimed_by": "Group.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x82773738",
+  "parent_unit": "Group.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8277FEAC",
+  "name": "fn_8277FEAC",
+  "size": 40,
+  "claimed_by": "MasterAudio.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8277FC38",
+  "parent_unit": "MasterAudio.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8277FED4",
+  "name": "fn_8277FED4",
+  "size": 40,
+  "claimed_by": "MasterAudio.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8277FC38",
+  "parent_unit": "MasterAudio.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82788AAC",
+  "name": "fn_82788AAC",
+  "size": 40,
+  "claimed_by": "SongParser.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827889B8",
+  "parent_unit": "SongParser.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x82788AD4",
+  "name": "fn_82788AD4",
+  "size": 40,
+  "claimed_by": "SongParser.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827889B8",
+  "parent_unit": "SongParser.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8278DB4C",
+  "name": "fn_8278DB4C",
+  "size": 40,
+  "claimed_by": "system/beatmatch/GameGemList.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8278D9C0",
+  "parent_unit": "system/beatmatch/GameGemList.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x8278DCA8",
+  "name": "fn_8278DCA8",
+  "size": 60,
+  "claimed_by": "system/beatmatch/GameGemList.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8278DB80",
+  "parent_unit": "HamBattleData.cpp",
+  "verdict": "CONTRADICTED"
+ },
+ {
+  "va": "0x8278E730",
+  "name": "fn_8278E730",
+  "size": 40,
+  "claimed_by": "system/beatmatch/GameGemList.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x8278E6E8",
+  "parent_unit": "system/beatmatch/GameGemList.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827A4CD4",
+  "name": "fn_827A4CD4",
+  "size": 40,
+  "claimed_by": "DataArraySongInfo.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827A4C58",
+  "parent_unit": "DataArraySongInfo.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827A54D4",
+  "name": "fn_827A54D4",
+  "size": 40,
+  "claimed_by": "SongPreview.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827A5418",
+  "parent_unit": "SongPreview.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AAFD8",
+  "name": "fn_827AAFD8",
+  "size": 40,
+  "claimed_by": "SongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AAD98",
+  "parent_unit": "SongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AB000",
+  "name": "fn_827AB000",
+  "size": 40,
+  "claimed_by": "SongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AAD98",
+  "parent_unit": "SongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AB028",
+  "name": "fn_827AB028",
+  "size": 40,
+  "claimed_by": "SongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AAD98",
+  "parent_unit": "SongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AB050",
+  "name": "fn_827AB050",
+  "size": 40,
+  "claimed_by": "SongMetadata.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AAD98",
+  "parent_unit": "SongMetadata.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AB6F0",
+  "name": "fn_827AB6F0",
+  "size": 40,
+  "claimed_by": "FixedSizeSaveableStream.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AB688",
+  "parent_unit": "FixedSizeSaveableStream.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AB718",
+  "name": "fn_827AB718",
+  "size": 44,
+  "claimed_by": "FixedSizeSaveableStream.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AB688",
+  "parent_unit": "FixedSizeSaveableStream.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AE880",
+  "name": "fn_827AE880",
+  "size": 40,
+  "claimed_by": "HeldButtonPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AE720",
+  "parent_unit": "HeldButtonPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827AE8C8",
+  "name": "fn_827AE8C8",
+  "size": 40,
+  "claimed_by": "HeldButtonPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827AE720",
+  "parent_unit": "HeldButtonPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827B22C0",
+  "name": "fn_827B22C0",
+  "size": 48,
+  "claimed_by": "StorePreviewMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827B2218",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827B22F0",
+  "name": "fn_827B22F0",
+  "size": 48,
+  "claimed_by": "StorePreviewMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827B2218",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827B2320",
+  "name": "fn_827B2320",
+  "size": 48,
+  "claimed_by": "StorePreviewMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827B2218",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827B3030",
+  "name": "fn_827B3030",
+  "size": 32,
+  "claimed_by": "Sorting.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827B2F60",
+  "parent_unit": "Sorting.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827B3624",
+  "name": "fn_827B3624",
+  "size": 68,
+  "claimed_by": "DeJitterPanel.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827B3580",
+  "parent_unit": "DeJitterPanel.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8B10",
+  "name": "fn_827C8B10",
+  "size": 40,
+  "claimed_by": "Song.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8B38",
+  "name": "fn_827C8B38",
+  "size": 32,
+  "claimed_by": "Song.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8B58",
+  "name": "fn_827C8B58",
+  "size": 32,
+  "claimed_by": "Song.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8B78",
+  "name": "fn_827C8B78",
+  "size": 32,
+  "claimed_by": "Song.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8B98",
+  "name": "fn_827C8B98",
+  "size": 32,
+  "claimed_by": "Song.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C8BB8",
+  "name": "fn_827C8BB8",
+  "size": 32,
+  "claimed_by": "Song.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C87D8",
+  "parent_unit": "Song.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827C9ACC",
+  "name": "fn_827C9ACC",
+  "size": 32,
+  "claimed_by": "Locale.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827C99D0",
+  "parent_unit": "Locale.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827CBEC4",
+  "name": "fn_827CBEC4",
+  "size": 44,
+  "claimed_by": "JobMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827CBE80",
+  "parent_unit": "JobMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827CD0D4",
+  "name": "fn_827CD0D4",
+  "size": 40,
+  "claimed_by": "UTF8.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827CD020",
+  "parent_unit": "UTF8.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827CED24",
+  "name": "fn_827CED24",
+  "size": 44,
+  "claimed_by": "NetCacheMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827CEC98",
+  "parent_unit": "NetCacheMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827CED50",
+  "name": "fn_827CED50",
+  "size": 44,
+  "claimed_by": "NetCacheMgr.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827CEC98",
+  "parent_unit": "NetCacheMgr.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827D3F54",
+  "name": "fn_827D3F54",
+  "size": 44,
+  "claimed_by": "WaveFile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827D3ED8",
+  "parent_unit": "WaveFile.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827D3F80",
+  "name": "fn_827D3F80",
+  "size": 44,
+  "claimed_by": "WaveFile.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827D3ED8",
+  "parent_unit": "WaveFile.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827D9208",
+  "name": "fn_827D9208",
+  "size": 40,
+  "claimed_by": "Chunks.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827D90A8",
+  "parent_unit": "Chunks.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827DBDD8",
+  "name": "fn_827DBDD8",
+  "size": 40,
+  "claimed_by": "Cache_Xbox.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827DBAF0",
+  "parent_unit": "Cache_Xbox.cpp",
+  "verdict": "PROVEN"
+ },
+ {
+  "va": "0x827DBE00",
+  "name": "fn_827DBE00",
+  "size": 40,
+  "claimed_by": "Cache_Xbox.cpp",
+  "evidence": "exclusive_byte_signature",
+  "parent": "0x827DBAF0",
+  "parent_unit": "Cache_Xbox.cpp",
+  "verdict": "PROVEN"
+ }
+]

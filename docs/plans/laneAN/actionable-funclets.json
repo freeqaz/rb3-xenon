@@ -1,0 +1,4615 @@
+[
+ {
+  "va": "0x822715F8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82270E68",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x82271620",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82270E68",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x82271648",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82270E68",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x82271670",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82270E68",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x82271698",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82270E68",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x822716C0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82270E68",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x82271794",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82271748",
+  "owner": "MemTracker.cpp"
+ },
+ {
+  "va": "0x82271CF4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82271C50",
+  "owner": "band3/bandtrack/GemManager.cpp"
+ },
+ {
+  "va": "0x82271D1C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82271C50",
+  "owner": "band3/bandtrack/GemManager.cpp"
+ },
+ {
+  "va": "0x82272EB4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82272E68",
+  "owner": "Main.cpp"
+ },
+ {
+  "va": "0x82273780",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82273728",
+  "owner": "FlowTimer.cpp"
+ },
+ {
+  "va": "0x822738B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82273860",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x822743CC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82274290",
+  "owner": "BandScoreboard.cpp"
+ },
+ {
+  "va": "0x822796B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82279660",
+  "owner": "PatchDir.cpp"
+ },
+ {
+  "va": "0x82279904",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822797C8",
+  "owner": "PatchDir.cpp"
+ },
+ {
+  "va": "0x8227A200",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A1A8",
+  "owner": "BandCamShot.cpp"
+ },
+ {
+  "va": "0x8227A300",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A2A8",
+  "owner": "CrowdMeterIcon.cpp"
+ },
+ {
+  "va": "0x8227A380",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A328",
+  "owner": "BandCrowdMeter.cpp"
+ },
+ {
+  "va": "0x8227A400",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A3A8",
+  "owner": "BandSongPref.cpp"
+ },
+ {
+  "va": "0x8227A480",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A428",
+  "owner": "BandIKEffector.cpp"
+ },
+ {
+  "va": "0x8227A500",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A4A8",
+  "owner": "BandRetargetVignette.cpp"
+ },
+ {
+  "va": "0x8227A580",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A528",
+  "owner": "BandCharacter.cpp"
+ },
+ {
+  "va": "0x8227A600",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A5A8",
+  "owner": "BandLeadMeter.cpp"
+ },
+ {
+  "va": "0x8227A680",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A628",
+  "owner": "BandStarDisplay.cpp"
+ },
+ {
+  "va": "0x8227A700",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A6A8",
+  "owner": "BandScoreboard.cpp"
+ },
+ {
+  "va": "0x8227AA20",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227A9C8",
+  "owner": "BandCharacter.cpp"
+ },
+ {
+  "va": "0x8227AAA0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227AA48",
+  "owner": "Char.cpp"
+ },
+ {
+  "va": "0x8227AB20",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227AAC8",
+  "owner": "BandCharacter.cpp"
+ },
+ {
+  "va": "0x8227ABA0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227AB48",
+  "owner": "OverdriveMeter.cpp"
+ },
+ {
+  "va": "0x8227AC20",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227ABC8",
+  "owner": "BandCharacter.cpp"
+ },
+ {
+  "va": "0x8227ACA0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227AC48",
+  "owner": "GemTrackDir.cpp"
+ },
+ {
+  "va": "0x8227AD20",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227ACC8",
+  "owner": "CharBoneDir.cpp"
+ },
+ {
+  "va": "0x8227ADA0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227AD48",
+  "owner": "PitchArrow.cpp"
+ },
+ {
+  "va": "0x8227AE20",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8227ADC8",
+  "owner": "VocalTrackDir.cpp"
+ },
+ {
+  "va": "0x822A1224",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A1170",
+  "owner": "CharFeedback.cpp"
+ },
+ {
+  "va": "0x822A2D8C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A2D50",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x822A2E78",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x822A2E10",
+  "owner": "SampleInst.cpp"
+ },
+ {
+  "va": "0x822A43A4",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x822A4258",
+  "owner": "SampleData.cpp"
+ },
+ {
+  "va": "0x822A4488",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A44B0",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A44DC",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A4508",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A4534",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A4560",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A458C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A43E8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A4704",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A46C8",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x822A48F8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A48A0",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A4920",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A48A0",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A494C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A48A0",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A49EC",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x822A4980",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x822A4A68",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A4A20",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x822A4E48",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A4DD8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A4E70",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A4DD8",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x822A5710",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A55A0",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x822A5738",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A55A0",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x822A58B4",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x822A5768",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x822A6240",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A6100",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x822A671C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822A66E0",
+  "owner": "HamNavProvider.cpp"
+ },
+ {
+  "va": "0x822A6A48",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822A68E0",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x822A6A68",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822A68E0",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x822A6A88",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822A68E0",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x822A7228",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822A70A0",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x822AC020",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822ABFB8",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x822AC27C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822AC110",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x822AC2A4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822AC110",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x822B90F4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822B8F08",
+  "owner": "Watcher.cpp"
+ },
+ {
+  "va": "0x822B9114",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822B8F08",
+  "owner": "Watcher.cpp"
+ },
+ {
+  "va": "0x822B913C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822B8F08",
+  "owner": "Watcher.cpp"
+ },
+ {
+  "va": "0x822B915C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822B8F08",
+  "owner": "Watcher.cpp"
+ },
+ {
+  "va": "0x822B9184",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822B8F08",
+  "owner": "Watcher.cpp"
+ },
+ {
+  "va": "0x822B91A4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822B8F08",
+  "owner": "Watcher.cpp"
+ },
+ {
+  "va": "0x822BCE90",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822BCE28",
+  "owner": "BandCrowdMeter.cpp"
+ },
+ {
+  "va": "0x822BDF00",
+  "size": 76,
+  "kind": "catch",
+  "parent": "0x822BDDB0",
+  "owner": "HamNavProvider.cpp"
+ },
+ {
+  "va": "0x822BE088",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x822BE020",
+  "owner": "HamDirector.cpp"
+ },
+ {
+  "va": "0x822BE3F8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822BE370",
+  "owner": "CameraShot.cpp"
+ },
+ {
+  "va": "0x822BEA94",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822BE958",
+  "owner": "BandCrowdMeter.cpp"
+ },
+ {
+  "va": "0x822BECD8",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x822BEB88",
+  "owner": "CameraShot.cpp"
+ },
+ {
+  "va": "0x822C102C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822C0E78",
+  "owner": "BandSongPref.cpp"
+ },
+ {
+  "va": "0x822C104C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822C0E78",
+  "owner": "BandSongPref.cpp"
+ },
+ {
+  "va": "0x822C106C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822C0E78",
+  "owner": "BandSongPref.cpp"
+ },
+ {
+  "va": "0x822C108C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822C0E78",
+  "owner": "BandSongPref.cpp"
+ },
+ {
+  "va": "0x822C5D3C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822C5C30",
+  "owner": "BandRetargetVignette.cpp"
+ },
+ {
+  "va": "0x822C5D64",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822C5C30",
+  "owner": "BandRetargetVignette.cpp"
+ },
+ {
+  "va": "0x822C6A14",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822C69A8",
+  "owner": "BandRetargetVignette.cpp"
+ },
+ {
+  "va": "0x822C7D24",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x822C7CB8",
+  "owner": "MeshAnim.cpp"
+ },
+ {
+  "va": "0x822C7DDC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822C7D58",
+  "owner": "PropAnim.cpp"
+ },
+ {
+  "va": "0x822D711C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x822D70E0",
+  "owner": "Cache_Xbox.cpp"
+ },
+ {
+  "va": "0x822D8B8C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8BAC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8BCC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8BEC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8C0C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8C2C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8C4C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8C6C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8C8C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822D8818",
+  "owner": "StreakMeter.cpp"
+ },
+ {
+  "va": "0x822D8D48",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822D8CC0",
+  "owner": "Flow.cpp"
+ },
+ {
+  "va": "0x822DFCAC",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x822DFB18",
+  "owner": "CharLipSync.cpp"
+ },
+ {
+  "va": "0x822E3354",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822E2FC8",
+  "owner": "Mesh.cpp"
+ },
+ {
+  "va": "0x822E337C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822E2FC8",
+  "owner": "Mesh.cpp"
+ },
+ {
+  "va": "0x822E4FA8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822E4F70",
+  "owner": "DataFile.cpp"
+ },
+ {
+  "va": "0x822E7590",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822E7538",
+  "owner": "WebSvcMgrCurl.cpp"
+ },
+ {
+  "va": "0x822E75B8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822E7538",
+  "owner": "WebSvcMgrCurl.cpp"
+ },
+ {
+  "va": "0x822E75E0",
+  "size": 64,
+  "kind": "unwind",
+  "parent": "0x822E7538",
+  "owner": "WebSvcMgrCurl.cpp"
+ },
+ {
+  "va": "0x822E8C1C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x822E8A78",
+  "owner": "band3/meta_band/Campaign.cpp"
+ },
+ {
+  "va": "0x82308420",
+  "size": 76,
+  "kind": "catch",
+  "parent": "0x823082D0",
+  "owner": "FlowNode.cpp"
+ },
+ {
+  "va": "0x8230EC54",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8230EBE0",
+  "owner": "Song.cpp"
+ },
+ {
+  "va": "0x8230ECFC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8230EC88",
+  "owner": "SongSectionController.cpp"
+ },
+ {
+  "va": "0x82310EA8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82310E50",
+  "owner": "Gesture.cpp"
+ },
+ {
+  "va": "0x82315DC0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82315D38",
+  "owner": "CrowdAudio.cpp"
+ },
+ {
+  "va": "0x8231A550",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8231A4F8",
+  "owner": "MeterDisplay.cpp"
+ },
+ {
+  "va": "0x8231A658",
+  "size": 48,
+  "kind": "unwind",
+  "parent": "0x8231A578",
+  "owner": "UI.cpp"
+ },
+ {
+  "va": "0x8231D02C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8231CFC8",
+  "owner": "Text.cpp"
+ },
+ {
+  "va": "0x8231F6D8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8231F680",
+  "owner": "LiveCameraInput.cpp"
+ },
+ {
+  "va": "0x823215E8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82321590",
+  "owner": "CameraTilt.cpp"
+ },
+ {
+  "va": "0x82323490",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82323438",
+  "owner": "SpeechMgr.cpp"
+ },
+ {
+  "va": "0x82326358",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82326300",
+  "owner": "HamListRibbon.cpp"
+ },
+ {
+  "va": "0x823277C0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82327608",
+  "owner": "LayerDir.cpp"
+ },
+ {
+  "va": "0x823277E8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82327608",
+  "owner": "LayerDir.cpp"
+ },
+ {
+  "va": "0x82327808",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82327608",
+  "owner": "LayerDir.cpp"
+ },
+ {
+  "va": "0x82327830",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82327608",
+  "owner": "LayerDir.cpp"
+ },
+ {
+  "va": "0x82327850",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82327608",
+  "owner": "LayerDir.cpp"
+ },
+ {
+  "va": "0x82329B78",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82329B20",
+  "owner": "HamScrollSpeedIndicator.cpp"
+ },
+ {
+  "va": "0x82338FA8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82338E20",
+  "owner": "band3/bandtrack/Gem.cpp"
+ },
+ {
+  "va": "0x8233B2B0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8233B258",
+  "owner": "HamNavList.cpp"
+ },
+ {
+  "va": "0x8233CC88",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8233CC00",
+  "owner": "BandList.cpp"
+ },
+ {
+  "va": "0x8233CEA8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8233CD20",
+  "owner": "OutfitConfig.cpp"
+ },
+ {
+  "va": "0x8233CF44",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x8233CED8",
+  "owner": "CharSignalApplier.cpp"
+ },
+ {
+  "va": "0x82345098",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82345040",
+  "owner": "HamWardrobe.cpp"
+ },
+ {
+  "va": "0x82348DEC",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x82348D80",
+  "owner": "SkeletonClip.cpp"
+ },
+ {
+  "va": "0x82349448",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823493D0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x82349D90",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82349D50",
+  "owner": "CheatProvider.cpp"
+ },
+ {
+  "va": "0x8234B53C",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x8234B4D0",
+  "owner": "UILabel.cpp"
+ },
+ {
+  "va": "0x8234BD0C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8234BCB0",
+  "owner": "BandPatchMesh.cpp"
+ },
+ {
+  "va": "0x8234BD34",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8234BCB0",
+  "owner": "BandPatchMesh.cpp"
+ },
+ {
+  "va": "0x8234C460",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8234C410",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x8234F99C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8234F8E0",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x82351F74",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82351E70",
+  "owner": "HamDirector.cpp"
+ },
+ {
+  "va": "0x82351F94",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82351E70",
+  "owner": "HamDirector.cpp"
+ },
+ {
+  "va": "0x8235B9D0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235B978",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235BA50",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235B9F8",
+  "owner": "band3/game/Game.cpp"
+ },
+ {
+  "va": "0x8235E42C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E44C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E46C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E48C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E4AC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E4CC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E4EC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E50C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E52C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E54C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E56C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E58C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E5AC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E5CC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E5EC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E60C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E62C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E64C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E66C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E68C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E6AC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E6CC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E6EC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E70C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E72C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E74C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E76C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E78C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E7AC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E7D4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E7F4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E81C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E83C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E864",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E884",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E8AC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E8CC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E8EC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E90C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E92C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E954",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E97C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E9A4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235E9CC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235D688",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235EAD8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235EA60",
+  "owner": "Tour.cpp"
+ },
+ {
+  "va": "0x8235EF70",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x8235EF08",
+  "owner": "Leaderboard.cpp"
+ },
+ {
+  "va": "0x8235F73C",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x8235F6D0",
+  "owner": "ButtonHolder.cpp"
+ },
+ {
+  "va": "0x8235F7D4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235F770",
+  "owner": "band3/game/Game.cpp"
+ },
+ {
+  "va": "0x8235FA30",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235F9B8",
+  "owner": "band3/game/NetGameMsgs.cpp"
+ },
+ {
+  "va": "0x8235FC58",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235FBA8",
+  "owner": "BandSongMetadata.cpp"
+ },
+ {
+  "va": "0x8235FFB0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8235FF70",
+  "owner": "band3/game/NetGameMsgs.cpp"
+ },
+ {
+  "va": "0x823641A8",
+  "size": 68,
+  "kind": "unwind",
+  "parent": "0x82364028",
+  "owner": "StubCameraInput.cpp"
+ },
+ {
+  "va": "0x82369994",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82369888",
+  "owner": "TourSavable.cpp"
+ },
+ {
+  "va": "0x82369D00",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82369CA8",
+  "owner": "Char.cpp"
+ },
+ {
+  "va": "0x82369D80",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82369D28",
+  "owner": "Ham.cpp"
+ },
+ {
+  "va": "0x8236A680",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236A628",
+  "owner": "Char.cpp"
+ },
+ {
+  "va": "0x8236A700",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236A6A8",
+  "owner": "PoseFatalities.cpp"
+ },
+ {
+  "va": "0x8236AE00",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236ADA8",
+  "owner": "Char.cpp"
+ },
+ {
+  "va": "0x8236AE80",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236AE28",
+  "owner": "PhotoSpotlightPositioner.cpp"
+ },
+ {
+  "va": "0x8236AF00",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236AEA8",
+  "owner": "PracticeOptionsProvider.cpp"
+ },
+ {
+  "va": "0x8236AF80",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236AF28",
+  "owner": "Char.cpp"
+ },
+ {
+  "va": "0x8236B000",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236AFA8",
+  "owner": "StarsDisplay.cpp"
+ },
+ {
+  "va": "0x8236CB04",
+  "size": 68,
+  "kind": "unwind",
+  "parent": "0x8236CA70",
+  "owner": "CharBonesMeshes.cpp"
+ },
+ {
+  "va": "0x8236D3A0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8236D348",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x82371388",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x82371320",
+  "owner": "CameraShot.cpp"
+ },
+ {
+  "va": "0x82371550",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823714C8",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x82371830",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823716A8",
+  "owner": "CameraShot.cpp"
+ },
+ {
+  "va": "0x82373C98",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82373BB0",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x82373CC0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82373BB0",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x82374BFC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82374A70",
+  "owner": "Character.cpp"
+ },
+ {
+  "va": "0x82375C60",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82375AD0",
+  "owner": "CharServoBone.cpp"
+ },
+ {
+  "va": "0x82375C8C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82375AD0",
+  "owner": "CharServoBone.cpp"
+ },
+ {
+  "va": "0x82375CB8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82375AD0",
+  "owner": "CharServoBone.cpp"
+ },
+ {
+  "va": "0x8237AFE8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B008",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B028",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B050",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B070",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B098",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B0B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B0D8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B100",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B120",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B148",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B168",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B188",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B1A8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B1C8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237B1E8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237AA00",
+  "owner": "CharLipSyncDriver.cpp"
+ },
+ {
+  "va": "0x8237C6D0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8237C5F8",
+  "owner": "CharBonesMeshes.cpp"
+ },
+ {
+  "va": "0x82380878",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x823806D8",
+  "owner": "CharClip.cpp"
+ },
+ {
+  "va": "0x82380A44",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x823808B0",
+  "owner": "LightPreset.cpp"
+ },
+ {
+  "va": "0x8238C888",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8238C800",
+  "owner": "SongLayout.cpp"
+ },
+ {
+  "va": "0x8238DF18",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8238DEB0",
+  "owner": "CharMeshHide.cpp"
+ },
+ {
+  "va": "0x82390548",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82390418",
+  "owner": "CharClipGroup.cpp"
+ },
+ {
+  "va": "0x8239C6AC",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x8239C640",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x8239CC24",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x8239CB38",
+  "owner": "Mesh.cpp"
+ },
+ {
+  "va": "0x823A06D8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823A0680",
+  "owner": "CharMeshHide.cpp"
+ },
+ {
+  "va": "0x823AAD50",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823AABC8",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB438",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB458",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB478",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB498",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB4B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB4D8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB4F8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB518",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB538",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB558",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AB578",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AB020",
+  "owner": "CharHair.cpp"
+ },
+ {
+  "va": "0x823AE864",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823AE7A0",
+  "owner": "CharEyes.cpp"
+ },
+ {
+  "va": "0x823B0C1C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823B0B00",
+  "owner": "CharPollGroup.cpp"
+ },
+ {
+  "va": "0x823B0C3C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823B0B00",
+  "owner": "CharPollGroup.cpp"
+ },
+ {
+  "va": "0x823C6E08",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823C6C18",
+  "owner": "CharUpperTwist.cpp"
+ },
+ {
+  "va": "0x823CE320",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823CE0D8",
+  "owner": "CharMirror.cpp"
+ },
+ {
+  "va": "0x823CE340",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823CE0D8",
+  "owner": "CharMirror.cpp"
+ },
+ {
+  "va": "0x823CE368",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823CE0D8",
+  "owner": "CharMirror.cpp"
+ },
+ {
+  "va": "0x823CE388",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823CE0D8",
+  "owner": "CharMirror.cpp"
+ },
+ {
+  "va": "0x823CEC9C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823CEB90",
+  "owner": "CharNeckTwist.cpp"
+ },
+ {
+  "va": "0x823CECBC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823CEB90",
+  "owner": "CharNeckTwist.cpp"
+ },
+ {
+  "va": "0x823D94B8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823D9448",
+  "owner": "FileMergerOrganizer.cpp"
+ },
+ {
+  "va": "0x823D94E0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823D9448",
+  "owner": "FileMergerOrganizer.cpp"
+ },
+ {
+  "va": "0x823D9FDC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823D9F88",
+  "owner": "FileMergerOrganizer.cpp"
+ },
+ {
+  "va": "0x823DA004",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x823D9F88",
+  "owner": "FileMergerOrganizer.cpp"
+ },
+ {
+  "va": "0x823E0A00",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823E09A8",
+  "owner": "network/net/NetSession.cpp"
+ },
+ {
+  "va": "0x823E0A80",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823E0A28",
+  "owner": "Mesh.cpp"
+ },
+ {
+  "va": "0x823E1AE4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E1A18",
+  "owner": "network/net/NetSession.cpp"
+ },
+ {
+  "va": "0x823E1B0C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E1A18",
+  "owner": "network/net/NetSession.cpp"
+ },
+ {
+  "va": "0x823E1BC8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E1B40",
+  "owner": "SpeechMgr.cpp"
+ },
+ {
+  "va": "0x823E1BF0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E1B40",
+  "owner": "SpeechMgr.cpp"
+ },
+ {
+  "va": "0x823E35C8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823E3570",
+  "owner": "network/net/NetSession.cpp"
+ },
+ {
+  "va": "0x823E3BB4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E3AA8",
+  "owner": "network/net/NetSession.cpp"
+ },
+ {
+  "va": "0x823E3FA0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E3F58",
+  "owner": "network/net/NetSession.cpp"
+ },
+ {
+  "va": "0x823E46A4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823E4630",
+  "owner": "MeshAnim.cpp"
+ },
+ {
+  "va": "0x823EADC0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823EAD68",
+  "owner": "BandUI.cpp"
+ },
+ {
+  "va": "0x823EC250",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823EBF88",
+  "owner": "NetworkEmulator.cpp"
+ },
+ {
+  "va": "0x823EC370",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823EC318",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x823EC3F0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823EC398",
+  "owner": "TexMovie.cpp"
+ },
+ {
+  "va": "0x823EC590",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x823EC538",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x823F0E1C",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x823F0CD0",
+  "owner": "SongLayout.cpp"
+ },
+ {
+  "va": "0x823F280C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x823F2688",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x823F2838",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x823F2688",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x823F2864",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x823F2688",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x8240EB10",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8240EAB8",
+  "owner": "UsbMidiKeyboardMsgs.cpp"
+ },
+ {
+  "va": "0x8242C1CC",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x8242C070",
+  "owner": "LiveCameraInput.cpp"
+ },
+ {
+  "va": "0x8244CB54",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8244B088",
+  "owner": "Part.cpp"
+ },
+ {
+  "va": "0x8244CB74",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8244B088",
+  "owner": "Part.cpp"
+ },
+ {
+  "va": "0x8244CB94",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8244B088",
+  "owner": "Part.cpp"
+ },
+ {
+  "va": "0x82451CF0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451D18",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451D38",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451D58",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451D78",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451E40",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451E68",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451E88",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451EA8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451EC8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451EF0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82450B60",
+  "owner": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x8245CB44",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8245C9F0",
+  "owner": "TransProxy.cpp"
+ },
+ {
+  "va": "0x8245CB64",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8245C9F0",
+  "owner": "TransProxy.cpp"
+ },
+ {
+  "va": "0x8245CC58",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8245CC00",
+  "owner": "Wind.cpp"
+ },
+ {
+  "va": "0x8245D514",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8245D4C0",
+  "owner": "NetCacheMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x824720D0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82471F48",
+  "owner": "LitAnim.cpp"
+ },
+ {
+  "va": "0x824720F0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82471F48",
+  "owner": "LitAnim.cpp"
+ },
+ {
+  "va": "0x82472118",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82471F48",
+  "owner": "LitAnim.cpp"
+ },
+ {
+  "va": "0x82472140",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82471F48",
+  "owner": "LitAnim.cpp"
+ },
+ {
+  "va": "0x82474CF0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824748B0",
+  "owner": "Font.cpp"
+ },
+ {
+  "va": "0x82474D60",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82474D20",
+  "owner": "FilterVersion.cpp"
+ },
+ {
+  "va": "0x82485774",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824854E0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x82485794",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824854E0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x824857B4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824854E0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x824857DC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824854E0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x824857FC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824854E0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x8248581C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824854E0",
+  "owner": "Morph.cpp"
+ },
+ {
+  "va": "0x82494530",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82494458",
+  "owner": "system/rndobj/MotionBlur.cpp"
+ },
+ {
+  "va": "0x8249B1E0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8249B188",
+  "owner": "PhysicsVolume.cpp"
+ },
+ {
+  "va": "0x8249B31C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8249B2C0",
+  "owner": "OvershellSlot.cpp"
+ },
+ {
+  "va": "0x8249B570",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8249B470",
+  "owner": "EventTrigger.cpp"
+ },
+ {
+  "va": "0x8249B590",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8249B470",
+  "owner": "EventTrigger.cpp"
+ },
+ {
+  "va": "0x824AA438",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824AA3E0",
+  "owner": "system/rndobj/CubeTex.cpp"
+ },
+ {
+  "va": "0x824AA4B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824AA460",
+  "owner": "Env.cpp"
+ },
+ {
+  "va": "0x824AA538",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824AA4E0",
+  "owner": "Cam.cpp"
+ },
+ {
+  "va": "0x824AA5B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824AA560",
+  "owner": "Rnd_Xbox.cpp"
+ },
+ {
+  "va": "0x824AA638",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824AA5E0",
+  "owner": "SpotlightEnder.cpp"
+ },
+ {
+  "va": "0x824BD690",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824BCDB0",
+  "owner": "CameraManager.cpp"
+ },
+ {
+  "va": "0x824BD718",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824BD6C0",
+  "owner": "system/rndobj/Movie.cpp"
+ },
+ {
+  "va": "0x824C7C1C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824C7BD8",
+  "owner": "CameraShot.cpp"
+ },
+ {
+  "va": "0x824CA264",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824CA1F0",
+  "owner": "DefaultPhysicsManager.cpp"
+ },
+ {
+  "va": "0x824CA418",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824CA2E0",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x824CA438",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824CA2E0",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x824CA668",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824CA4B8",
+  "owner": "EventAnim.cpp"
+ },
+ {
+  "va": "0x824CA690",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824CA4B8",
+  "owner": "EventAnim.cpp"
+ },
+ {
+  "va": "0x824CD704",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x824CD6C8",
+  "owner": "MidiSynth.cpp"
+ },
+ {
+  "va": "0x824CD774",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x824CD738",
+  "owner": "EventTrigger.cpp"
+ },
+ {
+  "va": "0x824CDF7C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824CDDE8",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x824CE6FC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824CE570",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x824CE724",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824CE570",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x824D1374",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824D12F8",
+  "owner": "PanelDir.cpp"
+ },
+ {
+  "va": "0x824D1820",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824D17C8",
+  "owner": "SpotlightDrawer.cpp"
+ },
+ {
+  "va": "0x824EDEE4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824EDAC0",
+  "owner": "FreeCamera.cpp"
+ },
+ {
+  "va": "0x824F6528",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x824F64D0",
+  "owner": "MemcardMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x824F75C8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824F7550",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x824F773C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824F7600",
+  "owner": "ContextWrapper.cpp"
+ },
+ {
+  "va": "0x824F77C4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x824F7770",
+  "owner": "AccomplishmentProgress.cpp"
+ },
+ {
+  "va": "0x824F9358",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x824F9288",
+  "owner": "AccomplishmentDiscSongConditional.cpp"
+ },
+ {
+  "va": "0x8250C7D4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8250C708",
+  "owner": "ContextWrapper.cpp"
+ },
+ {
+  "va": "0x8250CEB8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8250CCF0",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x8251B8D8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8251B880",
+  "owner": "Timer.cpp"
+ },
+ {
+  "va": "0x8251B9D8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8251B980",
+  "owner": "ContentMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x8251BA58",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8251BA00",
+  "owner": "MetaPanel.cpp"
+ },
+ {
+  "va": "0x8251BAD8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8251BA80",
+  "owner": "OvershellPanel.cpp"
+ },
+ {
+  "va": "0x8251C524",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251C320",
+  "owner": "MoggClipMap.cpp"
+ },
+ {
+  "va": "0x8251CC84",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CBE0",
+  "owner": "UsbMidiGuitarMsgs.cpp"
+ },
+ {
+  "va": "0x8251CCAC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CBE0",
+  "owner": "UsbMidiGuitarMsgs.cpp"
+ },
+ {
+  "va": "0x8251CCD4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CBE0",
+  "owner": "UsbMidiGuitarMsgs.cpp"
+ },
+ {
+  "va": "0x8251CDD4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CD08",
+  "owner": "UI.cpp"
+ },
+ {
+  "va": "0x8251CDFC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CD08",
+  "owner": "UI.cpp"
+ },
+ {
+  "va": "0x8251CF54",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CED0",
+  "owner": "DingoSvr.cpp"
+ },
+ {
+  "va": "0x8251CF7C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251CED0",
+  "owner": "DingoSvr.cpp"
+ },
+ {
+  "va": "0x8251D088",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251D000",
+  "owner": "HamNavList.cpp"
+ },
+ {
+  "va": "0x8251D0B0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251D000",
+  "owner": "HamNavList.cpp"
+ },
+ {
+  "va": "0x8251D164",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251D0E0",
+  "owner": "MemcardMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x8251D18C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251D0E0",
+  "owner": "MemcardMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x8251DA90",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8251DA38",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x8251EC38",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251EBA8",
+  "owner": "FlowCommand.cpp"
+ },
+ {
+  "va": "0x8251F198",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8251F120",
+  "owner": "ContentMgr.cpp"
+ },
+ {
+  "va": "0x82528828",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82528768",
+  "owner": "AppChild.cpp"
+ },
+ {
+  "va": "0x82528848",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82528768",
+  "owner": "AppChild.cpp"
+ },
+ {
+  "va": "0x825288D0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82528878",
+  "owner": "AccomplishmentPanel.cpp"
+ },
+ {
+  "va": "0x8252A578",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8252A520",
+  "owner": "Memcard_Xbox.cpp"
+ },
+ {
+  "va": "0x8252F364",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8252F2C0",
+  "owner": "UsbMidiGuitarMsgs.cpp"
+ },
+ {
+  "va": "0x8252F38C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8252F2C0",
+  "owner": "UsbMidiGuitarMsgs.cpp"
+ },
+ {
+  "va": "0x8252F3B4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8252F2C0",
+  "owner": "UsbMidiGuitarMsgs.cpp"
+ },
+ {
+  "va": "0x8252F48C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8252F3E8",
+  "owner": "PlatformMgr.cpp"
+ },
+ {
+  "va": "0x8252F4B4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8252F3E8",
+  "owner": "PlatformMgr.cpp"
+ },
+ {
+  "va": "0x8252F4DC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8252F3E8",
+  "owner": "PlatformMgr.cpp"
+ },
+ {
+  "va": "0x8253246C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825323C0",
+  "owner": "Joypad_Xinput.cpp"
+ },
+ {
+  "va": "0x82535348",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82534D68",
+  "owner": "HDCache.cpp"
+ },
+ {
+  "va": "0x82535370",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82534D68",
+  "owner": "HDCache.cpp"
+ },
+ {
+  "va": "0x82535398",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82534D68",
+  "owner": "HDCache.cpp"
+ },
+ {
+  "va": "0x825703F4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82570390",
+  "owner": "band3/meta_band/ContextChecker.cpp"
+ },
+ {
+  "va": "0x82570C58",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82570C00",
+  "owner": "MetaPanel.cpp"
+ },
+ {
+  "va": "0x82570CE4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82570C80",
+  "owner": "Ham.cpp"
+ },
+ {
+  "va": "0x825711B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82571160",
+  "owner": "MetaPanel.cpp"
+ },
+ {
+  "va": "0x825712B0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82571258",
+  "owner": "UIListWidget.cpp"
+ },
+ {
+  "va": "0x82574474",
+  "size": 68,
+  "kind": "unwind",
+  "parent": "0x825743E0",
+  "owner": "CalibrationPanel.cpp"
+ },
+ {
+  "va": "0x825747DC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82574778",
+  "owner": "MetaPanel.cpp"
+ },
+ {
+  "va": "0x8257F530",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8257F4A8",
+  "owner": "MetaPerformer.cpp"
+ },
+ {
+  "va": "0x82589E24",
+  "size": 68,
+  "kind": "unwind",
+  "parent": "0x82589C48",
+  "owner": "band3/meta_band/ModifierMgr.cpp"
+ },
+ {
+  "va": "0x82589E68",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82589C48",
+  "owner": "band3/meta_band/ModifierMgr.cpp"
+ },
+ {
+  "va": "0x82589E94",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82589C48",
+  "owner": "band3/meta_band/ModifierMgr.cpp"
+ },
+ {
+  "va": "0x82589EBC",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82589C48",
+  "owner": "band3/meta_band/ModifierMgr.cpp"
+ },
+ {
+  "va": "0x82589EE8",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82589C48",
+  "owner": "band3/meta_band/ModifierMgr.cpp"
+ },
+ {
+  "va": "0x82589F14",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82589C48",
+  "owner": "band3/meta_band/ModifierMgr.cpp"
+ },
+ {
+  "va": "0x8258DE50",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DE70",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DE90",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DEB0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DED0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DEF0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DF10",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DF30",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DF50",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DF70",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DF90",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DFB0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258DFF0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E010",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E030",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E058",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E078",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E098",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E0B8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E0D8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E0F8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E118",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E140",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E168",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E190",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x8258E1B8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8258D3E0",
+  "owner": "band3/meta_band/BandProfile.cpp"
+ },
+ {
+  "va": "0x82593AE4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82593678",
+  "owner": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593B04",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82593678",
+  "owner": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593C2C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82593678",
+  "owner": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593C4C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82593678",
+  "owner": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593F20",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82593E58",
+  "owner": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x825A368C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x825A3650",
+  "owner": "OriginalChoreoRemixer.cpp"
+ },
+ {
+  "va": "0x825A3D98",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825A3CE8",
+  "owner": "OriginalChoreoRemixer.cpp"
+ },
+ {
+  "va": "0x825B0570",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825B0518",
+  "owner": "AppInlineHelp.cpp"
+ },
+ {
+  "va": "0x825BC6C4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825BC528",
+  "owner": "band3/meta_band/MetaNetMsgs.cpp"
+ },
+ {
+  "va": "0x825C1E88",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825C1E30",
+  "owner": "MemcardMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x825C1F08",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825C1EB0",
+  "owner": "IdentityInfo.cpp"
+ },
+ {
+  "va": "0x825C2174",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825C20F0",
+  "owner": "Memcard.cpp"
+ },
+ {
+  "va": "0x825C219C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825C20F0",
+  "owner": "Memcard.cpp"
+ },
+ {
+  "va": "0x825C23AC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825C2300",
+  "owner": "IdentityInfo.cpp"
+ },
+ {
+  "va": "0x825C23D4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825C2300",
+  "owner": "IdentityInfo.cpp"
+ },
+ {
+  "va": "0x825C23FC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825C2300",
+  "owner": "IdentityInfo.cpp"
+ },
+ {
+  "va": "0x825C2CCC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825C2C80",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x825CED8C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825CEAE8",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF458",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF480",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF4A8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF4D0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF4F8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF520",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CF548",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825CF038",
+  "owner": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825EDA88",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825ED9F0",
+  "owner": "FreestyleMoveRecorder.cpp"
+ },
+ {
+  "va": "0x825F6E04",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6E24",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6E44",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6E64",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6E84",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6EA4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6EC4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x825F6EE4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x825F6B00",
+  "owner": "CampaignSongInfoPanel.cpp"
+ },
+ {
+  "va": "0x82605100",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826050A8",
+  "owner": "StorePanel.cpp"
+ },
+ {
+  "va": "0x82605944",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826058E8",
+  "owner": "system/gesture/DrawUtl.cpp"
+ },
+ {
+  "va": "0x82607964",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826078B0",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x8260798C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826078B0",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x826079B8",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826078B0",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x826079E4",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826078B0",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x826088B8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82607ED8",
+  "owner": "band3/meta_band/BandStorePanel.cpp"
+ },
+ {
+  "va": "0x826088E0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82607ED8",
+  "owner": "band3/meta_band/BandStorePanel.cpp"
+ },
+ {
+  "va": "0x82608908",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82607ED8",
+  "owner": "band3/meta_band/BandStorePanel.cpp"
+ },
+ {
+  "va": "0x82608930",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82607ED8",
+  "owner": "band3/meta_band/BandStorePanel.cpp"
+ },
+ {
+  "va": "0x82608958",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82607ED8",
+  "owner": "band3/meta_band/BandStorePanel.cpp"
+ },
+ {
+  "va": "0x826123F4",
+  "size": 68,
+  "kind": "unwind",
+  "parent": "0x82612300",
+  "owner": "FlowSound.cpp"
+ },
+ {
+  "va": "0x82612438",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82612300",
+  "owner": "FlowSound.cpp"
+ },
+ {
+  "va": "0x8261A77C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A79C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A7BC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A7DC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A7FC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A81C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A83C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A85C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A87C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A89C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A8BC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A8DC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A8FC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A91C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A93C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A95C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A97C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A9A4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A9CC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261A9F4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261AA1C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x8261AA44",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82618FD0",
+  "owner": "CustomizePanel.cpp"
+ },
+ {
+  "va": "0x82626F34",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82626E50",
+  "owner": "UIComponent.cpp"
+ },
+ {
+  "va": "0x82626F5C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82626E50",
+  "owner": "UIComponent.cpp"
+ },
+ {
+  "va": "0x82626F84",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82626E50",
+  "owner": "UIComponent.cpp"
+ },
+ {
+  "va": "0x82630750",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82630690",
+  "owner": "FlowValueCase.cpp"
+ },
+ {
+  "va": "0x8263422C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826341F0",
+  "owner": "SetlistMergePanel.cpp"
+ },
+ {
+  "va": "0x82634924",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826348A0",
+  "owner": "ClipDistMap.cpp"
+ },
+ {
+  "va": "0x8265401C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82653D80",
+  "owner": "Matchmaker.cpp"
+ },
+ {
+  "va": "0x8265403C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82653D80",
+  "owner": "Matchmaker.cpp"
+ },
+ {
+  "va": "0x8265405C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82653D80",
+  "owner": "Matchmaker.cpp"
+ },
+ {
+  "va": "0x82654FCC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82654CC0",
+  "owner": "GameplayOptions.cpp"
+ },
+ {
+  "va": "0x82654FEC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82654CC0",
+  "owner": "GameplayOptions.cpp"
+ },
+ {
+  "va": "0x8265500C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82654CC0",
+  "owner": "GameplayOptions.cpp"
+ },
+ {
+  "va": "0x8265502C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82654CC0",
+  "owner": "GameplayOptions.cpp"
+ },
+ {
+  "va": "0x8265504C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82654CC0",
+  "owner": "GameplayOptions.cpp"
+ },
+ {
+  "va": "0x8265506C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82654CC0",
+  "owner": "GameplayOptions.cpp"
+ },
+ {
+  "va": "0x826563C4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82656350",
+  "owner": "band3/game/NetGameMsgs.cpp"
+ },
+ {
+  "va": "0x826567D4",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x82656630",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x826576C8",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x82657660",
+  "owner": "RhythmDetector.cpp"
+ },
+ {
+  "va": "0x82657BEC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82657B98",
+  "owner": "PerformanceData.cpp"
+ },
+ {
+  "va": "0x82657C14",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657B98",
+  "owner": "PerformanceData.cpp"
+ },
+ {
+  "va": "0x82657CC8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82657C50",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x8265832C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x82658358",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x82658384",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826583B0",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826583DC",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x82658408",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x82658434",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x82658460",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x8265848C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826584B8",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826584E4",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x82658510",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82657FA0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x8266B394",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8266B330",
+  "owner": "AccomplishmentConditional.cpp"
+ },
+ {
+  "va": "0x8266B3BC",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x8266B330",
+  "owner": "AccomplishmentConditional.cpp"
+ },
+ {
+  "va": "0x8266FFE8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8266FF30",
+  "owner": "OverdriveTracker.cpp"
+ },
+ {
+  "va": "0x82670010",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8266FF30",
+  "owner": "OverdriveTracker.cpp"
+ },
+ {
+  "va": "0x82670038",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8266FF30",
+  "owner": "OverdriveTracker.cpp"
+ },
+ {
+  "va": "0x82670060",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8266FF30",
+  "owner": "OverdriveTracker.cpp"
+ },
+ {
+  "va": "0x82684C84",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82684A70",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82684CB0",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82684A70",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82684CDC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82684A70",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82684CFC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82684A70",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82688020",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82687F98",
+  "owner": "band3/game/MultiplayerAnalyzer.cpp"
+ },
+ {
+  "va": "0x826882E0",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82688298",
+  "owner": "band3/game/SongDB.cpp"
+ },
+ {
+  "va": "0x8268ABB0",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x8268AA10",
+  "owner": "GameConfig.cpp"
+ },
+ {
+  "va": "0x8268ABDC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8268AA10",
+  "owner": "GameConfig.cpp"
+ },
+ {
+  "va": "0x82693BF4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693C1C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693C44",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693C6C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693C94",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693CBC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693CE4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693D0C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693D34",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693D5C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693D84",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693DAC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693DD4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693DFC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693E24",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693E4C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693E74",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693E9C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693EC4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82693EEC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82693718",
+  "owner": "TrackerManager.cpp"
+ },
+ {
+  "va": "0x82696AD4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82696A38",
+  "owner": "band3/game/GamePanel.cpp"
+ },
+ {
+  "va": "0x82696AFC",
+  "size": 64,
+  "kind": "unwind",
+  "parent": "0x82696A38",
+  "owner": "band3/game/GamePanel.cpp"
+ },
+ {
+  "va": "0x826A0600",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826A00D0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826A0628",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826A00D0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826A0650",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826A00D0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826A0678",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826A00D0",
+  "owner": "Performer.cpp"
+ },
+ {
+  "va": "0x826CE2A4",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826CE268",
+  "owner": "Leaderboard.cpp"
+ },
+ {
+  "va": "0x826CFF8C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826CFEF0",
+  "owner": "system/beatmatch/PlayerTrackConfigList.cpp"
+ },
+ {
+  "va": "0x826D0F50",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826D0E30",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x826D0F70",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826D0E30",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x826D0F98",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826D0E30",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x826D9F24",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x826D9938",
+  "owner": "RockCentral.cpp"
+ },
+ {
+  "va": "0x826FC1C0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826FC168",
+  "owner": "system/synth/Synth.cpp"
+ },
+ {
+  "va": "0x826FC340",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826FC2E8",
+  "owner": "Sequence.cpp"
+ },
+ {
+  "va": "0x826FC3C0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826FC368",
+  "owner": "system/synth/Synth.cpp"
+ },
+ {
+  "va": "0x826FC4C0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826FC468",
+  "owner": "Sequence.cpp"
+ },
+ {
+  "va": "0x826FC540",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x826FC4E8",
+  "owner": "UI.cpp"
+ },
+ {
+  "va": "0x826FFE04",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x826FFDC8",
+  "owner": "CheatProvider.cpp"
+ },
+ {
+  "va": "0x82701910",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82701888",
+  "owner": "MidiSynth.cpp"
+ },
+ {
+  "va": "0x82701F58",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82701EF8",
+  "owner": "DepthBuffer3D.cpp"
+ },
+ {
+  "va": "0x82704010",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x82703EC0",
+  "owner": "StandardStream.cpp"
+ },
+ {
+  "va": "0x827041A8",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x82704058",
+  "owner": "SkeletonClip.cpp"
+ },
+ {
+  "va": "0x82705D94",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82705D18",
+  "owner": "Sequence.cpp"
+ },
+ {
+  "va": "0x8270B8E4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8270B7A0",
+  "owner": "Sequence.cpp"
+ },
+ {
+  "va": "0x8270CD60",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8270CCF0",
+  "owner": "Faders.cpp"
+ },
+ {
+  "va": "0x8270EFBC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8270EEB8",
+  "owner": "system/synth/Utl.cpp"
+ },
+ {
+  "va": "0x82714918",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x827148B0",
+  "owner": "HamMove.cpp"
+ },
+ {
+  "va": "0x827149B0",
+  "size": 40,
+  "kind": "catch",
+  "parent": "0x82714948",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x827154B0",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x827153D0",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715AC4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715AE4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715B04",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715B2C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715B4C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715B74",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715B94",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715BBC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x82715BDC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x82715770",
+  "owner": "MidiInstrument.cpp"
+ },
+ {
+  "va": "0x827163A4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82716358",
+  "owner": "PatchDir.cpp"
+ },
+ {
+  "va": "0x827163CC",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82716358",
+  "owner": "PatchDir.cpp"
+ },
+ {
+  "va": "0x827216F8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827215F0",
+  "owner": "system/synth/FxSendDistortion.cpp"
+ },
+ {
+  "va": "0x8273C9CC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8273C8B0",
+  "owner": "Rnd_Xbox.cpp"
+ },
+ {
+  "va": "0x8273C9F4",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x8273C8B0",
+  "owner": "Rnd_Xbox.cpp"
+ },
+ {
+  "va": "0x82766F6C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82766EF8",
+  "owner": "Mesh.cpp"
+ },
+ {
+  "va": "0x8276728C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82767138",
+  "owner": "Msg.cpp"
+ },
+ {
+  "va": "0x827673D0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827672C0",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x827673F0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827672C0",
+  "owner": "HamCamTransform.cpp"
+ },
+ {
+  "va": "0x82767468",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82767418",
+  "owner": "Mesh.cpp"
+ },
+ {
+  "va": "0x82768AE0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82768A98",
+  "owner": "Gesture.cpp"
+ },
+ {
+  "va": "0x8276A3AC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8276A1F8",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x8276A3CC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8276A1F8",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x8276A3EC",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8276A1F8",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x8276A40C",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x8276A1F8",
+  "owner": "PropSync.cpp"
+ },
+ {
+  "va": "0x82772A64",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827729F0",
+  "owner": "SongData.cpp"
+ },
+ {
+  "va": "0x82773AB8",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x82773920",
+  "owner": "HamListRibbon.cpp"
+ },
+ {
+  "va": "0x827749F0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82774960",
+  "owner": "system/beatmatch/DrumMixDB.cpp"
+ },
+ {
+  "va": "0x82774A18",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82774960",
+  "owner": "system/beatmatch/DrumMixDB.cpp"
+ },
+ {
+  "va": "0x827767F0",
+  "size": 64,
+  "kind": "catch",
+  "parent": "0x82776698",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x82777624",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82777558",
+  "owner": "SongData.cpp"
+ },
+ {
+  "va": "0x82777720",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82777658",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x8278BD3C",
+  "size": 44,
+  "kind": "catch",
+  "parent": "0x8278BB98",
+  "owner": "FileChecksum.cpp"
+ },
+ {
+  "va": "0x8278C76C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x8278C6E8",
+  "owner": "system/beatmatch/PhraseList.cpp"
+ },
+ {
+  "va": "0x82793A64",
+  "size": 60,
+  "kind": "catch",
+  "parent": "0x82793910",
+  "owner": "CharClip.cpp"
+ },
+ {
+  "va": "0x82793B4C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82793AA8",
+  "owner": "system/beatmatch/GameGemDB.cpp"
+ },
+ {
+  "va": "0x82793C30",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82793B80",
+  "owner": "CharClip.cpp"
+ },
+ {
+  "va": "0x827A8888",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827A87F0",
+  "owner": "SongMgr.cpp"
+ },
+ {
+  "va": "0x827AB198",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827AB080",
+  "owner": "SongMetadata.cpp"
+ },
+ {
+  "va": "0x827ACCD0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827ACB80",
+  "owner": "MemcardMgr_Xbox.cpp"
+ },
+ {
+  "va": "0x827AD238",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827AD1E0",
+  "owner": "ButtonHolder.cpp"
+ },
+ {
+  "va": "0x827B2688",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827B2360",
+  "owner": "StorePreviewMgr.cpp"
+ },
+ {
+  "va": "0x827B26A8",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827B2360",
+  "owner": "StorePreviewMgr.cpp"
+ },
+ {
+  "va": "0x827B26D0",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827B2360",
+  "owner": "StorePreviewMgr.cpp"
+ },
+ {
+  "va": "0x827B26F0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827B2360",
+  "owner": "StorePreviewMgr.cpp"
+ },
+ {
+  "va": "0x827B2718",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827B2360",
+  "owner": "StorePreviewMgr.cpp"
+ },
+ {
+  "va": "0x827B2738",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827B2360",
+  "owner": "StorePreviewMgr.cpp"
+ },
+ {
+  "va": "0x827B3668",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x827B3580",
+  "owner": "DeJitterPanel.cpp"
+ },
+ {
+  "va": "0x827BAE34",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827BADB0",
+  "owner": "HolmesClient.cpp"
+ },
+ {
+  "va": "0x827BB184",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827BB0E8",
+  "owner": "PoolAlloc.cpp"
+ },
+ {
+  "va": "0x827BB1AC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827BB0E8",
+  "owner": "PoolAlloc.cpp"
+ },
+ {
+  "va": "0x827C4CE0",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827C4BB8",
+  "owner": "MemTrack.cpp"
+ },
+ {
+  "va": "0x827C5448",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827C53E8",
+  "owner": "BinStream.cpp"
+ },
+ {
+  "va": "0x827D0BF4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827D0B40",
+  "owner": "system/utl/DeJitter.cpp"
+ },
+ {
+  "va": "0x827D4404",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827D4260",
+  "owner": "VarTimer.cpp"
+ },
+ {
+  "va": "0x827D4424",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827D4260",
+  "owner": "VarTimer.cpp"
+ },
+ {
+  "va": "0x827D4444",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827D4260",
+  "owner": "VarTimer.cpp"
+ },
+ {
+  "va": "0x827D4464",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827D4260",
+  "owner": "VarTimer.cpp"
+ },
+ {
+  "va": "0x827D4484",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827D4260",
+  "owner": "VarTimer.cpp"
+ },
+ {
+  "va": "0x827D44A4",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827D4260",
+  "owner": "VarTimer.cpp"
+ },
+ {
+  "va": "0x827ED0E0",
+  "size": 56,
+  "kind": "catch",
+  "parent": "0x827ED078",
+  "owner": "DataEventList.cpp"
+ },
+ {
+  "va": "0x827ED200",
+  "size": 56,
+  "kind": "catch",
+  "parent": "0x827ED198",
+  "owner": "PanelDir.cpp"
+ },
+ {
+  "va": "0x827ED6A0",
+  "size": 76,
+  "kind": "catch",
+  "parent": "0x827ED550",
+  "owner": "PanelDir.cpp"
+ },
+ {
+  "va": "0x827EFE28",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827EFAC8",
+  "owner": "DisplayEvents.cpp"
+ },
+ {
+  "va": "0x827EFE50",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x827EFAC8",
+  "owner": "DisplayEvents.cpp"
+ },
+ {
+  "va": "0x827FE2A8",
+  "size": 32,
+  "kind": "unwind",
+  "parent": "0x827FE250",
+  "owner": "UIList.cpp"
+ },
+ {
+  "va": "0x82C29A64",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82C29998",
+  "owner": "NoteTube.cpp"
+ },
+ {
+  "va": "0x82C29A8C",
+  "size": 44,
+  "kind": "unwind",
+  "parent": "0x82C29998",
+  "owner": "NoteTube.cpp"
+ },
+ {
+  "va": "0x82C3EFB4",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82C3EEB8",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82C3EFDC",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82C3EEB8",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82C3F004",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82C3EEB8",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82C3F02C",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82C3EEB8",
+  "owner": "PropKeys.cpp"
+ },
+ {
+  "va": "0x82C3F054",
+  "size": 40,
+  "kind": "unwind",
+  "parent": "0x82C3EEB8",
+  "owner": "PropKeys.cpp"
+ }
+]

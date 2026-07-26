@@ -1,0 +1,446 @@
+[
+ {
+  "va": "0x82369650",
+  "claimed": "TourSavable.cpp",
+  "parent": "0x82369568",
+  "parent_unit": "CameraInput.cpp"
+ },
+ {
+  "va": "0x8244C9DC",
+  "claimed": "AccomplishmentProgress.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CC14",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CC54",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CC74",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CD14",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CDD4",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CE14",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CE34",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CE7C",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CE9C",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CEFC",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CF24",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CF44",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CF8C",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CFB4",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x8244CFD4",
+  "claimed": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp"
+ },
+ {
+  "va": "0x82451BE0",
+  "claimed": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451C08",
+  "claimed": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451C28",
+  "claimed": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82451DE0",
+  "claimed": "AccomplishmentSongFilterConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp"
+ },
+ {
+  "va": "0x82568DE4",
+  "claimed": "UIEvent.cpp",
+  "parent": "0x82568140",
+  "parent_unit": "band3/meta_band/ClosetMgr.cpp"
+ },
+ {
+  "va": "0x82568E24",
+  "claimed": "UIEvent.cpp",
+  "parent": "0x82568140",
+  "parent_unit": "band3/meta_band/ClosetMgr.cpp"
+ },
+ {
+  "va": "0x82568E64",
+  "claimed": "UIEvent.cpp",
+  "parent": "0x82568140",
+  "parent_unit": "band3/meta_band/ClosetMgr.cpp"
+ },
+ {
+  "va": "0x82568E84",
+  "claimed": "UIEvent.cpp",
+  "parent": "0x82568140",
+  "parent_unit": "band3/meta_band/ClosetMgr.cpp"
+ },
+ {
+  "va": "0x82593B6C",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593BAC",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593BCC",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x82593BEC",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp"
+ },
+ {
+  "va": "0x825959B0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x825959D0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x825959F0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595A10",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595A30",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595A50",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595A70",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595A90",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595AB0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595AD0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x82595AF0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp"
+ },
+ {
+  "va": "0x825CE1F0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE218",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE240",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE268",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE290",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE2B8",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE2E0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE308",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE330",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE358",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE380",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE3A8",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE3D0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE3F8",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE420",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE448",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE470",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE498",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE4E0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE508",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE530",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE558",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE580",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE5A8",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE5D0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE5F8",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE620",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE648",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE690",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE6B8",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE6E0",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x825CE708",
+  "claimed": "RockCentral.cpp",
+  "parent": "0x825CD3A8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp"
+ },
+ {
+  "va": "0x82772274",
+  "claimed": "SongData.cpp",
+  "parent": "0x82772208",
+  "parent_unit": "Achievements.cpp"
+ },
+ {
+  "va": "0x827ED51C",
+  "claimed": "PanelDir.cpp",
+  "parent": "0x827ED4B0",
+  "parent_unit": "Mesh.cpp"
+ }
+]
