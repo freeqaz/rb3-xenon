@@ -261,7 +261,14 @@ the edit being audited**; without it the audit is circular. All modes are static
 * **The 3,311 gap functions with no EH parentage stay unreachable by any
   attribution signal.** They are ordinary non-EH code we simply do not compile.
 * **532 tree-wide contradictions** are a live handoff: byte-true matches credited
-  to a unit that parentage says cannot own them.
+  to a unit that parentage says cannot own them. Listed in
+  `docs/plans/laneAN/contradictions-treewide.json`. By era: **420 predate
+  laneAL** (i.e. they are not today's doing), 22 laneAL, 90 laneAM. 319 of 532
+  are 32 B — the modal static-init-guard shape. Top claiming units:
+  `band3/meta_band/SaveLoadManager.cpp` 73, `RockCentral.cpp` 56,
+  `band3/meta_band/SessionMgr.cpp` 36, `TourProgress.cpp` 29.
+  (The 74 laneAL / 88 laneAM figures above count *fills*; these count fills that
+  are *currently at 100%* under *current* pins — a slightly different set.)
 * The parent-unpinned residue (2,625 in the gap pool, 314 tree-wide) becomes
   decidable for free as more parents get pinned — **re-run this after any splits
   wave**; it costs no build.

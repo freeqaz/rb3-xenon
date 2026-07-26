@@ -1,0 +1,4258 @@
+[
+ {
+  "va": "0x823EC270",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823EC290",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823EC2B0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823EC2D0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823EC2F0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x823EBF88",
+  "parent_unit": "NetworkEmulator.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x824F6CD0",
+  "size": 68,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x824F6C10",
+  "parent_unit": "LitAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824F6D14",
+  "size": 44,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x824F6C10",
+  "parent_unit": "LitAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824F6D40",
+  "size": 44,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x824F6C10",
+  "parent_unit": "LitAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824F6D6C",
+  "size": 44,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x824F6C10",
+  "parent_unit": "LitAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824F89C4",
+  "size": 40,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x824F8968",
+  "parent_unit": "BandSongMetadata.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8258DFD0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x8258D3E0",
+  "parent_unit": "band3/meta_band/BandProfile.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82593B2C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82593B4C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82593B6C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82593B8C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82593BAC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82593BCC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82593BEC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82593C0C",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82593678",
+  "parent_unit": "band3/meta_band/UIEventMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82595930",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82595950",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82595970",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82595990",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825959B0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x825959D0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x825959F0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595A10",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595A30",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595A50",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595A70",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595A90",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595AB0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595AD0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595AF0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82595B10",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82595B30",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82595B50",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595B70",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595B90",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595BB0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595BD0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595BF0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595C10",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595C30",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595C50",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595C70",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595C90",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595CB0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595CD0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82595CF0",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x82594EF8",
+  "parent_unit": "Accomplishment.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x825CEDAC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x825CEAE8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825CEDCC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x825CEAE8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825CEDEC",
+  "size": 64,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x825CEAE8",
+  "parent_unit": "band3/meta_band/PassiveMessenger.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8260E6AC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x8260E4E0",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8260E6CC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x8260E4E0",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8260E6EC",
+  "size": 32,
+  "claimed_by": "RockCentral.cpp",
+  "parent": "0x8260E4E0",
+  "parent_unit": "CharacterCreatorPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822CE3A8",
+  "size": 76,
+  "claimed_by": "BandScoreboard.cpp",
+  "parent": "0x822CE258",
+  "parent_unit": "DrivenPropertyEntry.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x822CEF3C",
+  "size": 40,
+  "claimed_by": "BandScoreboard.cpp",
+  "parent": "0x822CEEE8",
+  "parent_unit": "RockCentral.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822CEF64",
+  "size": 40,
+  "claimed_by": "BandScoreboard.cpp",
+  "parent": "0x822CEEE8",
+  "parent_unit": "RockCentral.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82355738",
+  "size": 32,
+  "claimed_by": "GemTrackResourceManager.cpp",
+  "parent": "0x823556E0",
+  "parent_unit": "Rot.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823557B8",
+  "size": 32,
+  "claimed_by": "GemTrackResourceManager.cpp",
+  "parent": "0x82355760",
+  "parent_unit": "UILabel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82456BBC",
+  "size": 44,
+  "claimed_by": "BandCamShot.cpp",
+  "parent": "0x82456A20",
+  "parent_unit": "CharUtl.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8253B29C",
+  "size": 32,
+  "claimed_by": "MusicLibrary.cpp",
+  "parent": "0x8253B238",
+  "parent_unit": "RockCentral.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8227AFA0",
+  "size": 32,
+  "claimed_by": "BandCharacter.cpp",
+  "parent": "0x8227AF48",
+  "parent_unit": "SongSectionController.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8227DF80",
+  "size": 32,
+  "claimed_by": "BandCharacter.cpp",
+  "parent": "0x8227DF28",
+  "parent_unit": "CharBoneDir.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8228732C",
+  "size": 40,
+  "claimed_by": "BandCharacter.cpp",
+  "parent": "0x822872D8",
+  "parent_unit": "RockCentral.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8228C960",
+  "size": 32,
+  "claimed_by": "BandCharacter.cpp",
+  "parent": "0x8228C908",
+  "parent_unit": "BandDirector.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8228CA90",
+  "size": 32,
+  "claimed_by": "BandCharacter.cpp",
+  "parent": "0x8228CA38",
+  "parent_unit": "BandDirector.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822FA5D0",
+  "size": 40,
+  "claimed_by": "VocalTrackDir.cpp",
+  "parent": "0x822FA500",
+  "parent_unit": "Font.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822FA7B8",
+  "size": 40,
+  "claimed_by": "VocalTrackDir.cpp",
+  "parent": "0x822FA6E8",
+  "parent_unit": "HamMove.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822BCF98",
+  "size": 56,
+  "claimed_by": "BandCrowdMeter.cpp",
+  "parent": "0x822BCF30",
+  "parent_unit": "MeasureMap.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x822C95AC",
+  "size": 40,
+  "claimed_by": "BandLeadMeter.cpp",
+  "parent": "0x822C94E0",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82310F28",
+  "size": 32,
+  "claimed_by": "CrowdAudio.cpp",
+  "parent": "0x82310ED0",
+  "parent_unit": "HamPhotoDisplay.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8231355C",
+  "size": 40,
+  "claimed_by": "CrowdAudio.cpp",
+  "parent": "0x823134F8",
+  "parent_unit": "Gesture.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82313E08",
+  "size": 32,
+  "claimed_by": "CrowdAudio.cpp",
+  "parent": "0x82313DB0",
+  "parent_unit": "StarDisplay.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822784E4",
+  "size": 44,
+  "claimed_by": "PatchDir.cpp",
+  "parent": "0x822784A8",
+  "parent_unit": "InlineHelp.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82278580",
+  "size": 56,
+  "claimed_by": "PatchDir.cpp",
+  "parent": "0x82278518",
+  "parent_unit": "MeshAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82278BC8",
+  "size": 76,
+  "claimed_by": "PatchDir.cpp",
+  "parent": "0x82278A78",
+  "parent_unit": "MeshAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82279A70",
+  "size": 40,
+  "claimed_by": "PatchDir.cpp",
+  "parent": "0x82279A00",
+  "parent_unit": "Archive.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x822CC294",
+  "size": 32,
+  "claimed_by": "StreakMeter.cpp",
+  "parent": "0x822CC158",
+  "parent_unit": "BandStarDisplay.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822D7A50",
+  "size": 40,
+  "claimed_by": "StreakMeter.cpp",
+  "parent": "0x822D79B8",
+  "parent_unit": "band3/game/PerfectSectionTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822D7A78",
+  "size": 40,
+  "claimed_by": "StreakMeter.cpp",
+  "parent": "0x822D79B8",
+  "parent_unit": "band3/game/PerfectSectionTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822D7AA0",
+  "size": 40,
+  "claimed_by": "StreakMeter.cpp",
+  "parent": "0x822D79B8",
+  "parent_unit": "band3/game/PerfectSectionTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82369650",
+  "size": 68,
+  "claimed_by": "TourSavable.cpp",
+  "parent": "0x82369568",
+  "parent_unit": "CameraInput.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x8247E084",
+  "size": 32,
+  "claimed_by": "Gen.cpp",
+  "parent": "0x8247DF48",
+  "parent_unit": "Line.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827F2220",
+  "size": 32,
+  "claimed_by": "UIScreen.cpp",
+  "parent": "0x827F21C8",
+  "parent_unit": "UILabel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAA28",
+  "size": 32,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FA720",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAA48",
+  "size": 40,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FA720",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAA70",
+  "size": 40,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FA720",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAA98",
+  "size": 40,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FA720",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAAC0",
+  "size": 32,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FA720",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAD54",
+  "size": 32,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FAAE8",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAD74",
+  "size": 40,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FAAE8",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FAD9C",
+  "size": 40,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FAAE8",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FADC4",
+  "size": 40,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FAAE8",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FADEC",
+  "size": 32,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FAAE8",
+  "parent_unit": "band3/game/TambourineManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FBFC0",
+  "size": 32,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FBF68",
+  "parent_unit": "Sequence.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826FC040",
+  "size": 32,
+  "claimed_by": "DepthBuffer3D.cpp",
+  "parent": "0x826FBFE8",
+  "parent_unit": "Sequence.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8243833C",
+  "size": 40,
+  "claimed_by": "StringTable.cpp",
+  "parent": "0x82438138",
+  "parent_unit": "MetaMaterial.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82438364",
+  "size": 40,
+  "claimed_by": "StringTable.cpp",
+  "parent": "0x82438138",
+  "parent_unit": "MetaMaterial.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x827D73B4",
+  "size": 40,
+  "claimed_by": "NetCacheMgr_Xbox.cpp",
+  "parent": "0x827D7360",
+  "parent_unit": "MeshAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823BE46C",
+  "size": 40,
+  "claimed_by": "CharEyeDartRuleset.cpp",
+  "parent": "0x823BE360",
+  "parent_unit": "Waypoint.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823BE494",
+  "size": 40,
+  "claimed_by": "CharEyeDartRuleset.cpp",
+  "parent": "0x823BE360",
+  "parent_unit": "Waypoint.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823C67E0",
+  "size": 32,
+  "claimed_by": "CharIKRod.cpp",
+  "parent": "0x823C6628",
+  "parent_unit": "CharForeTwist.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823C6800",
+  "size": 32,
+  "claimed_by": "CharIKRod.cpp",
+  "parent": "0x823C6628",
+  "parent_unit": "CharForeTwist.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823C6820",
+  "size": 32,
+  "claimed_by": "CharIKRod.cpp",
+  "parent": "0x823C6628",
+  "parent_unit": "CharForeTwist.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823C6840",
+  "size": 32,
+  "claimed_by": "CharIKRod.cpp",
+  "parent": "0x823C6628",
+  "parent_unit": "CharForeTwist.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823903E4",
+  "size": 40,
+  "claimed_by": "CharClipGroup.cpp",
+  "parent": "0x82390368",
+  "parent_unit": "HAQManager.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82765B00",
+  "size": 32,
+  "claimed_by": "DataFunc.cpp",
+  "parent": "0x827659E0",
+  "parent_unit": "TypeProps.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82765B20",
+  "size": 32,
+  "claimed_by": "DataFunc.cpp",
+  "parent": "0x827659E0",
+  "parent_unit": "TypeProps.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8246C1F8",
+  "size": 40,
+  "claimed_by": "MeshAnim.cpp",
+  "parent": "0x8246C1A8",
+  "parent_unit": "rtti.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8246C220",
+  "size": 44,
+  "claimed_by": "MeshAnim.cpp",
+  "parent": "0x8246C1A8",
+  "parent_unit": "rtti.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82438620",
+  "size": 40,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82438674",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x824386A0",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x824386F8",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82438724",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8243877C",
+  "size": 44,
+  "claimed_by": "system/rndobj/Utl.cpp",
+  "parent": "0x82438398",
+  "parent_unit": "StringTable.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x825D67A8",
+  "size": 40,
+  "claimed_by": "MemTracker.cpp",
+  "parent": "0x825D6728",
+  "parent_unit": "band3/meta_band/ViewSetting.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824AA6B8",
+  "size": 32,
+  "claimed_by": "LightPreset.cpp",
+  "parent": "0x824AA660",
+  "parent_unit": "Rnd_Xbox.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8274DFA0",
+  "size": 40,
+  "claimed_by": "system/obj/Dir.cpp",
+  "parent": "0x8274DF40",
+  "parent_unit": "EventTrigger.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8274E02C",
+  "size": 40,
+  "claimed_by": "system/obj/Dir.cpp",
+  "parent": "0x8274DFD0",
+  "parent_unit": "DirLoader.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82754C58",
+  "size": 32,
+  "claimed_by": "system/obj/Dir.cpp",
+  "parent": "0x82754B98",
+  "parent_unit": "DirLoader.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822A3B28",
+  "size": 40,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822A3AD8",
+  "parent_unit": "OutfitConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822A3B50",
+  "size": 44,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822A3AD8",
+  "parent_unit": "OutfitConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822A3B7C",
+  "size": 44,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822A3AD8",
+  "parent_unit": "OutfitConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822A9C30",
+  "size": 40,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822A9BC8",
+  "parent_unit": "Morph.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822A9F30",
+  "size": 40,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822A9EC0",
+  "parent_unit": "SongLayout.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822AA158",
+  "size": 40,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822A9FD0",
+  "parent_unit": "band3/bandtrack/Gem.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822AA8A8",
+  "size": 40,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822AA708",
+  "parent_unit": "band3/bandtrack/Gem.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822AB9DC",
+  "size": 32,
+  "claimed_by": "HamCamTransform.cpp",
+  "parent": "0x822AB8A0",
+  "parent_unit": "band3/bandtrack/Gem.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8241BB64",
+  "size": 44,
+  "claimed_by": "Mesh.cpp",
+  "parent": "0x8241BAF8",
+  "parent_unit": "PanelDir.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82421574",
+  "size": 32,
+  "claimed_by": "Mesh.cpp",
+  "parent": "0x82421400",
+  "parent_unit": "Poll.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82421594",
+  "size": 32,
+  "claimed_by": "Mesh.cpp",
+  "parent": "0x82421400",
+  "parent_unit": "Poll.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824215B4",
+  "size": 32,
+  "claimed_by": "Mesh.cpp",
+  "parent": "0x82421400",
+  "parent_unit": "Poll.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8248FEF0",
+  "size": 44,
+  "claimed_by": "AmbientOcclusion.cpp",
+  "parent": "0x8248FD58",
+  "parent_unit": "Ribbon.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822D8EC8",
+  "size": 76,
+  "claimed_by": "Waypoint.cpp",
+  "parent": "0x822D8D78",
+  "parent_unit": "InlineHelp.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826DDB70",
+  "size": 40,
+  "claimed_by": "Font.cpp",
+  "parent": "0x826DDA00",
+  "parent_unit": "OverdriveTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826DDB98",
+  "size": 40,
+  "claimed_by": "Font.cpp",
+  "parent": "0x826DDA00",
+  "parent_unit": "OverdriveTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823D44C0",
+  "size": 40,
+  "claimed_by": "CharLipSync.cpp",
+  "parent": "0x823D4458",
+  "parent_unit": "SongLayout.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827F7AB8",
+  "size": 32,
+  "claimed_by": "UILabel.cpp",
+  "parent": "0x827F7A60",
+  "parent_unit": "UIList.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823C1084",
+  "size": 32,
+  "claimed_by": "CharIKHead.cpp",
+  "parent": "0x823C0F48",
+  "parent_unit": "FlowTrigger.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82405BC0",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82405BE0",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82405C00",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82405C20",
+  "size": 32,
+  "claimed_by": "Anim.cpp",
+  "parent": "0x82405980",
+  "parent_unit": "ShaderProgram.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82397870",
+  "size": 40,
+  "claimed_by": "FileMerger.cpp",
+  "parent": "0x82397808",
+  "parent_unit": "DataEventList.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82397D14",
+  "size": 44,
+  "claimed_by": "FileMerger.cpp",
+  "parent": "0x82397CA8",
+  "parent_unit": "DataEventList.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFCC8",
+  "size": 68,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFD0C",
+  "size": 68,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFD50",
+  "size": 44,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFDA4",
+  "size": 44,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFDF8",
+  "size": 44,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFE24",
+  "size": 44,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFE50",
+  "size": 44,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827FFE7C",
+  "size": 44,
+  "claimed_by": "UIComponent.cpp",
+  "parent": "0x827FFAD8",
+  "parent_unit": "Trans.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823FE9F8",
+  "size": 40,
+  "claimed_by": "Tex.cpp",
+  "parent": "0x823FE968",
+  "parent_unit": "Font.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823FEA20",
+  "size": 44,
+  "claimed_by": "Tex.cpp",
+  "parent": "0x823FE968",
+  "parent_unit": "Font.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82400678",
+  "size": 32,
+  "claimed_by": "Tex.cpp",
+  "parent": "0x82400620",
+  "parent_unit": "Anim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82728FDC",
+  "size": 40,
+  "claimed_by": "ByteGrinder.cpp",
+  "parent": "0x82728E38",
+  "parent_unit": "system/synth/SynthSample.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827291F4",
+  "size": 40,
+  "claimed_by": "ByteGrinder.cpp",
+  "parent": "0x82729080",
+  "parent_unit": "system/synth/SynthSample.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824C3E70",
+  "size": 40,
+  "claimed_by": "CameraShot.cpp",
+  "parent": "0x824C3E08",
+  "parent_unit": "BandCamShot.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824C4678",
+  "size": 60,
+  "claimed_by": "CameraShot.cpp",
+  "parent": "0x824C4528",
+  "parent_unit": "BandCamShot.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824C56D4",
+  "size": 40,
+  "claimed_by": "CameraShot.cpp",
+  "parent": "0x824C5650",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271C254",
+  "size": 40,
+  "claimed_by": "Sfx.cpp",
+  "parent": "0x8271C1F0",
+  "parent_unit": "MoggClipMap.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824CDD38",
+  "size": 40,
+  "claimed_by": "PropSync.cpp",
+  "parent": "0x824CDCE8",
+  "parent_unit": "EventTrigger.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x824E1824",
+  "size": 40,
+  "claimed_by": "Crowd.cpp",
+  "parent": "0x824E17B0",
+  "parent_unit": "Rot.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824E1C5C",
+  "size": 44,
+  "claimed_by": "Crowd.cpp",
+  "parent": "0x824E1AC0",
+  "parent_unit": "SongCollision.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8270AB08",
+  "size": 40,
+  "claimed_by": "Sequence.cpp",
+  "parent": "0x8270AAC0",
+  "parent_unit": "Graph.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665BAC",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665BCC",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665BEC",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665C0C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665C2C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665C4C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665C6C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665C8C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665CAC",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665CCC",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665CEC",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665D0C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665D2C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665D4C",
+  "size": 32,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82665D6C",
+  "size": 40,
+  "claimed_by": "UIList.cpp",
+  "parent": "0x82665598",
+  "parent_unit": "band3/meta_band/StoreOfferProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825C227C",
+  "size": 40,
+  "claimed_by": "IdentityInfo.cpp",
+  "parent": "0x825C21D0",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x825C22A4",
+  "size": 40,
+  "claimed_by": "IdentityInfo.cpp",
+  "parent": "0x825C21D0",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x825C22CC",
+  "size": 40,
+  "claimed_by": "IdentityInfo.cpp",
+  "parent": "0x825C21D0",
+  "parent_unit": "StorePreviewMgr.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x825D0C24",
+  "size": 44,
+  "claimed_by": "SongStatusMgr.cpp",
+  "parent": "0x825D0B28",
+  "parent_unit": "band3/meta_band/MusicLibraryNetSetlists.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825D0ED4",
+  "size": 40,
+  "claimed_by": "SongStatusMgr.cpp",
+  "parent": "0x825D0DA0",
+  "parent_unit": "band3/meta_band/MusicLibraryNetSetlists.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825D0EFC",
+  "size": 40,
+  "claimed_by": "SongStatusMgr.cpp",
+  "parent": "0x825D0DA0",
+  "parent_unit": "band3/meta_band/MusicLibraryNetSetlists.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827AE2F0",
+  "size": 44,
+  "claimed_by": "HeldButtonPanel.cpp",
+  "parent": "0x827AE288",
+  "parent_unit": "ButtonHolder.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82421738",
+  "size": 32,
+  "claimed_by": "PropKeys.cpp",
+  "parent": "0x824216A0",
+  "parent_unit": "Poll.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82424D80",
+  "size": 76,
+  "claimed_by": "PropKeys.cpp",
+  "parent": "0x82424D18",
+  "parent_unit": "PracticeSection.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824BBEA4",
+  "size": 44,
+  "claimed_by": "CameraManager.cpp",
+  "parent": "0x824BBE38",
+  "parent_unit": "Spotlight.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827EEA90",
+  "size": 44,
+  "claimed_by": "MidiReader.cpp",
+  "parent": "0x827EE8F0",
+  "parent_unit": "MultiTempoTempoMap.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82387868",
+  "size": 40,
+  "claimed_by": "CharEyes.cpp",
+  "parent": "0x82387800",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82387C28",
+  "size": 40,
+  "claimed_by": "CharEyes.cpp",
+  "parent": "0x82387AA0",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82387F64",
+  "size": 40,
+  "claimed_by": "CharEyes.cpp",
+  "parent": "0x82387EE0",
+  "parent_unit": "OriginalChoreoRemixer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827B9ED0",
+  "size": 32,
+  "claimed_by": "ButtonHolder.cpp",
+  "parent": "0x827B9DB8",
+  "parent_unit": "MetaMusicScene.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827B9EF0",
+  "size": 32,
+  "claimed_by": "ButtonHolder.cpp",
+  "parent": "0x827B9DB8",
+  "parent_unit": "MetaMusicScene.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C28D4",
+  "size": 40,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C28FC",
+  "size": 44,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C2928",
+  "size": 60,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C2964",
+  "size": 44,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C2990",
+  "size": 60,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C29CC",
+  "size": 44,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827C29F8",
+  "size": 44,
+  "claimed_by": "Cheats.cpp",
+  "parent": "0x827C2780",
+  "parent_unit": "StringTable.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827ED51C",
+  "size": 44,
+  "claimed_by": "PanelDir.cpp",
+  "parent": "0x827ED4B0",
+  "parent_unit": "Mesh.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x8240E618",
+  "size": 32,
+  "claimed_by": "MeshDeform.cpp",
+  "parent": "0x8240E5C0",
+  "parent_unit": "system/rndobj/Rnd.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8240E698",
+  "size": 32,
+  "claimed_by": "MeshDeform.cpp",
+  "parent": "0x8240E640",
+  "parent_unit": "EnvAnim.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8240EA90",
+  "size": 32,
+  "claimed_by": "MeshDeform.cpp",
+  "parent": "0x8240EA38",
+  "parent_unit": "system/rndobj/Rnd.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82497AC8",
+  "size": 32,
+  "claimed_by": "Lit.cpp",
+  "parent": "0x82497940",
+  "parent_unit": "AnimFilter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82497AE8",
+  "size": 40,
+  "claimed_by": "Lit.cpp",
+  "parent": "0x82497940",
+  "parent_unit": "AnimFilter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82497B10",
+  "size": 40,
+  "claimed_by": "Lit.cpp",
+  "parent": "0x82497940",
+  "parent_unit": "AnimFilter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822EC990",
+  "size": 40,
+  "claimed_by": "Cache_Xbox.cpp",
+  "parent": "0x822EC928",
+  "parent_unit": "SongLayout.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x827D9EE8",
+  "size": 40,
+  "claimed_by": "Cache_Xbox.cpp",
+  "parent": "0x827D9E90",
+  "parent_unit": "Memcard_Xbox.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824F88A4",
+  "size": 40,
+  "claimed_by": "DataFile.cpp",
+  "parent": "0x824F86D8",
+  "parent_unit": "RockCentral.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8276AAB4",
+  "size": 40,
+  "claimed_by": "DataFile.cpp",
+  "parent": "0x8276AA00",
+  "parent_unit": "system/os/UsbMidiGuitar.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8276D758",
+  "size": 32,
+  "claimed_by": "DataFile.cpp",
+  "parent": "0x8276D540",
+  "parent_unit": "BaseMaterial.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8276D7A0",
+  "size": 32,
+  "claimed_by": "DataFile.cpp",
+  "parent": "0x8276D540",
+  "parent_unit": "BaseMaterial.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8276D7E8",
+  "size": 32,
+  "claimed_by": "DataFile.cpp",
+  "parent": "0x8276D540",
+  "parent_unit": "BaseMaterial.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8273EB4C",
+  "size": 68,
+  "claimed_by": "system/rnddx9/CubeTex.cpp",
+  "parent": "0x8273EAA8",
+  "parent_unit": "system/rnddx9/Movie.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x8273FD88",
+  "size": 32,
+  "claimed_by": "system/rnddx9/CubeTex.cpp",
+  "parent": "0x8273FD30",
+  "parent_unit": "system/rndobj/Utl.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F470",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F490",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F4B0",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F4D0",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F4F0",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F510",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8271F530",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendReverb.cpp",
+  "parent": "0x8271F138",
+  "parent_unit": "Emitter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82722040",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82722060",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82722080",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827220A0",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827220C0",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827220E0",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82722100",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82722120",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82722140",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendEQ.cpp",
+  "parent": "0x82721C98",
+  "parent_unit": "system/synth/FxSendCompress.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82712F90",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendDistortion.cpp",
+  "parent": "0x82712E88",
+  "parent_unit": "system/synth/FxSendPitchShift.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82721224",
+  "size": 32,
+  "claimed_by": "system/synth/FxSendDistortion.cpp",
+  "parent": "0x82720F70",
+  "parent_unit": "system/synth/FxSendDelay.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823E0E80",
+  "size": 32,
+  "claimed_by": "BandUI.cpp",
+  "parent": "0x823E0E28",
+  "parent_unit": "network/net/NetSession.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823C342C",
+  "size": 40,
+  "claimed_by": "CharPosConstraint.cpp",
+  "parent": "0x823C3360",
+  "parent_unit": "CharForeTwist.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C1FC",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C21C",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C23C",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C25C",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C27C",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C29C",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C2BC",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8239C2DC",
+  "size": 32,
+  "claimed_by": "CharIKScale.cpp",
+  "parent": "0x8239BE70",
+  "parent_unit": "CharCollide.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82715CCC",
+  "size": 40,
+  "claimed_by": "MidiInstrument.cpp",
+  "parent": "0x82715C88",
+  "parent_unit": "Flow.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823BA0C0",
+  "size": 32,
+  "claimed_by": "FlowValueCase.cpp",
+  "parent": "0x823B9D38",
+  "parent_unit": "CharWeightSetter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824627A0",
+  "size": 40,
+  "claimed_by": "MatAnim.cpp",
+  "parent": "0x82462738",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824636E4",
+  "size": 40,
+  "claimed_by": "MatAnim.cpp",
+  "parent": "0x82463680",
+  "parent_unit": "Lit_NG.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82482290",
+  "size": 32,
+  "claimed_by": "Ribbon.cpp",
+  "parent": "0x82482058",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824822B0",
+  "size": 32,
+  "claimed_by": "Ribbon.cpp",
+  "parent": "0x82482058",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824822D0",
+  "size": 32,
+  "claimed_by": "Ribbon.cpp",
+  "parent": "0x82482058",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824822F0",
+  "size": 32,
+  "claimed_by": "Ribbon.cpp",
+  "parent": "0x82482058",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82482310",
+  "size": 32,
+  "claimed_by": "Ribbon.cpp",
+  "parent": "0x82482058",
+  "parent_unit": "HamCamTransform.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824D0474",
+  "size": 40,
+  "claimed_by": "Shockwave.cpp",
+  "parent": "0x824D0430",
+  "parent_unit": "system/world/Dir.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827BAC84",
+  "size": 32,
+  "claimed_by": "ConnectionStatusPanel.cpp",
+  "parent": "0x827BABB0",
+  "parent_unit": "StreamPlayer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8244CC54",
+  "size": 32,
+  "claimed_by": "Accomplishment.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82451A20",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451A68",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451A88",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451AD0",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451AF0",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451B38",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451B58",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82451BA0",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82451C08",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x82451C28",
+  "size": 32,
+  "claimed_by": "AccomplishmentPlayerConditional.cpp",
+  "parent": "0x82450B60",
+  "parent_unit": "PartLauncher.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x826A788C",
+  "size": 68,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A78D0",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A78FC",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A7928",
+  "size": 40,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A7950",
+  "size": 40,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A7978",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A79A4",
+  "size": 44,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A75C8",
+  "parent_unit": "GemPlayer.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826A90F4",
+  "size": 32,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A8FB8",
+  "parent_unit": "band3/game/FadePanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826A9CF0",
+  "size": 32,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A98F0",
+  "parent_unit": "band3/game/SyncGameStartPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826A9D10",
+  "size": 32,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A98F0",
+  "parent_unit": "band3/game/SyncGameStartPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826A9D30",
+  "size": 32,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A98F0",
+  "parent_unit": "band3/game/SyncGameStartPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826A9D50",
+  "size": 32,
+  "claimed_by": "band3/game/Player.cpp",
+  "parent": "0x826A98F0",
+  "parent_unit": "band3/game/SyncGameStartPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826B8EBC",
+  "size": 44,
+  "claimed_by": "band3/game/VocalTrainerPanel.cpp",
+  "parent": "0x826B8D20",
+  "parent_unit": "MemTracker.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826B04B8",
+  "size": 68,
+  "claimed_by": "band3/game/RGTrainerPanel.cpp",
+  "parent": "0x826B03D8",
+  "parent_unit": "TexMovie.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826B04FC",
+  "size": 44,
+  "claimed_by": "band3/game/RGTrainerPanel.cpp",
+  "parent": "0x826B03D8",
+  "parent_unit": "TexMovie.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826B0528",
+  "size": 44,
+  "claimed_by": "band3/game/RGTrainerPanel.cpp",
+  "parent": "0x826B03D8",
+  "parent_unit": "TexMovie.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826B0554",
+  "size": 44,
+  "claimed_by": "band3/game/RGTrainerPanel.cpp",
+  "parent": "0x826B03D8",
+  "parent_unit": "TexMovie.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826CCD58",
+  "size": 44,
+  "claimed_by": "band3/game/TrainerPanel.cpp",
+  "parent": "0x826CCC10",
+  "parent_unit": "Splash.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826CCD84",
+  "size": 40,
+  "claimed_by": "band3/game/TrainerPanel.cpp",
+  "parent": "0x826CCC10",
+  "parent_unit": "Splash.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82687DB4",
+  "size": 44,
+  "claimed_by": "band3/game/SongDB.cpp",
+  "parent": "0x82687D48",
+  "parent_unit": "TransAnim.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82698620",
+  "size": 40,
+  "claimed_by": "band3/game/Stats.cpp",
+  "parent": "0x826985C8",
+  "parent_unit": "Mesh.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8255709C",
+  "size": 44,
+  "claimed_by": "band3/meta_band/AccomplishmentManager.cpp",
+  "parent": "0x82557060",
+  "parent_unit": "PracticeSection.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825584A8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/AccomplishmentManager.cpp",
+  "parent": "0x82558440",
+  "parent_unit": "CameraManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82558540",
+  "size": 40,
+  "claimed_by": "band3/meta_band/AccomplishmentManager.cpp",
+  "parent": "0x825584D8",
+  "parent_unit": "WaveFile.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8255A490",
+  "size": 60,
+  "claimed_by": "band3/meta_band/AccomplishmentManager.cpp",
+  "parent": "0x8255A340",
+  "parent_unit": "PracticeSection.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256E4B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256E458",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256E998",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256E940",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256ED60",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256ED08",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256F0A8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256F050",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256F2D8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256F280",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256F3F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256F398",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8256F508",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x8256F4B0",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82570138",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x825700E0",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82570368",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ContextChecker.cpp",
+  "parent": "0x82570310",
+  "parent_unit": "MetaPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825C5FB8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/AppLabel.cpp",
+  "parent": "0x825C5F00",
+  "parent_unit": "OSCMessenger.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82606888",
+  "size": 32,
+  "claimed_by": "band3/meta_band/BandStorePanel.cpp",
+  "parent": "0x826067C0",
+  "parent_unit": "Mat.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8263B5B8",
+  "size": 60,
+  "claimed_by": "band3/meta_band/StoreMainPanel.cpp",
+  "parent": "0x8263B468",
+  "parent_unit": "CharHair.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82578C24",
+  "size": 44,
+  "claimed_by": "band3/meta_band/BandSongMgr.cpp",
+  "parent": "0x82578A90",
+  "parent_unit": "MetaMaterial.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82638BB0",
+  "size": 40,
+  "claimed_by": "band3/meta_band/SongSelectPanel.cpp",
+  "parent": "0x82638B60",
+  "parent_unit": "band3/meta_band/StoreInfoPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82638C60",
+  "size": 40,
+  "claimed_by": "band3/meta_band/SongSelectPanel.cpp",
+  "parent": "0x82638C10",
+  "parent_unit": "PropKeys.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82638D04",
+  "size": 40,
+  "claimed_by": "band3/meta_band/SongSelectPanel.cpp",
+  "parent": "0x82638CC0",
+  "parent_unit": "CheatProvider.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825E9CB8",
+  "size": 40,
+  "claimed_by": "band3/meta_band/AccomplishmentDiscSongConditional.cpp",
+  "parent": "0x825E9C08",
+  "parent_unit": "band3/meta_band/AccomplishmentSongListConditional.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8262F368",
+  "size": 32,
+  "claimed_by": "band3/meta_band/PatchSelectPanel.cpp",
+  "parent": "0x8262F310",
+  "parent_unit": "system/synth/Synth.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826810BC",
+  "size": 32,
+  "claimed_by": "GameMicManager.cpp",
+  "parent": "0x82680DC8",
+  "parent_unit": "band3/game/PresenceMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826AB31C",
+  "size": 60,
+  "claimed_by": "band3/game/GemTrainerPanel.cpp",
+  "parent": "0x826AB1C0",
+  "parent_unit": "ColorPalette.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826D0FC0",
+  "size": 40,
+  "claimed_by": "band3/game/Tracker.cpp",
+  "parent": "0x826D0E30",
+  "parent_unit": "RockCentral.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8258CB2C",
+  "size": 76,
+  "claimed_by": "band3/meta_band/BandProfile.cpp",
+  "parent": "0x8258C9E0",
+  "parent_unit": "RhythmBattle.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x827DCEB0",
+  "size": 32,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DCE58",
+  "parent_unit": "TrackWidget.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEDC8",
+  "size": 68,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEE0C",
+  "size": 68,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEE50",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEEA4",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEEF8",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEF24",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEF50",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEF7C",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DEFD0",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF024",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF078",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF0CC",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF120",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF174",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF1C8",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF21C",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF270",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF2C4",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF318",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF36C",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF3C0",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF414",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF440",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827DF46C",
+  "size": 44,
+  "claimed_by": "TrackDir.cpp",
+  "parent": "0x827DE868",
+  "parent_unit": "Text.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823F2248",
+  "size": 56,
+  "claimed_by": "SessionMessages.cpp",
+  "parent": "0x823F21E0",
+  "parent_unit": "Watcher.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8254687C",
+  "size": 40,
+  "claimed_by": "band3/meta_band/ProfileMgr.cpp",
+  "parent": "0x825467D8",
+  "parent_unit": "JoypadMsgs.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825468A4",
+  "size": 40,
+  "claimed_by": "band3/meta_band/ProfileMgr.cpp",
+  "parent": "0x825467D8",
+  "parent_unit": "JoypadMsgs.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x827B7950",
+  "size": 32,
+  "claimed_by": "band3/meta_band/ProfileMgr.cpp",
+  "parent": "0x827B78F8",
+  "parent_unit": "StandingStillGestureFilter.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B070",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B090",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B0B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B0D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B0F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B110",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B130",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B150",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B170",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B190",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B1B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B1D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B1F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B210",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B230",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B250",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B270",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B290",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B2B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B2D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B2F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B310",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B330",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B350",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B370",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B390",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B3B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B3D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B3F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B410",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B430",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B450",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B470",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B490",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B4B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B4D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B4F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B510",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B530",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B550",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B570",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B590",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B5B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B5D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B5F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B610",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B630",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B650",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B670",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B690",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B6B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B6D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B6F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B710",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B730",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B750",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B770",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B790",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B7B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B7D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B7F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B810",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B830",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B850",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B870",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B890",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B8B0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B8D0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B8F0",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B910",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B930",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B950",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8254B970",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SaveLoadManager.cpp",
+  "parent": "0x82549128",
+  "parent_unit": "band3/meta_band/ProfileMgr.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8257F41C",
+  "size": 44,
+  "claimed_by": "MetaPerformer.cpp",
+  "parent": "0x8257F3B0",
+  "parent_unit": "DancerSequence.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8257F90C",
+  "size": 84,
+  "claimed_by": "MetaPerformer.cpp",
+  "parent": "0x8257F750",
+  "parent_unit": "MoveAsyncDetector.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8269D59C",
+  "size": 32,
+  "claimed_by": "Performer.cpp",
+  "parent": "0x8269D4B8",
+  "parent_unit": "HamMove.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8268B9EC",
+  "size": 40,
+  "claimed_by": "BandUser.cpp",
+  "parent": "0x8268B9A0",
+  "parent_unit": "UI.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8268F01C",
+  "size": 40,
+  "claimed_by": "BandUser.cpp",
+  "parent": "0x8268EFD0",
+  "parent_unit": "FileMergerOrganizer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361C9C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361CBC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361CDC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361CFC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361D1C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361D3C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361D5C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361D7C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361D9C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361DBC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361DDC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361DFC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361E1C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361E3C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361E5C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361E7C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361E9C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361EBC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361EDC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361EFC",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82361F1C",
+  "size": 32,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82361408",
+  "parent_unit": "TourPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x823641EC",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82364218",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82364244",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82364270",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8236429C",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823642C8",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x823642F4",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82364320",
+  "size": 44,
+  "claimed_by": "TourProgress.cpp",
+  "parent": "0x82364028",
+  "parent_unit": "StubCameraInput.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82614690",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "parent": "0x826145A8",
+  "parent_unit": "band3/meta_band/ContentLoadingPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826146B0",
+  "size": 32,
+  "claimed_by": "CustomizePanel.cpp",
+  "parent": "0x826145A8",
+  "parent_unit": "band3/meta_band/ContentLoadingPanel.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82618D10",
+  "size": 44,
+  "claimed_by": "CustomizePanel.cpp",
+  "parent": "0x82618BA8",
+  "parent_unit": "FlowRun.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82618D3C",
+  "size": 44,
+  "claimed_by": "CustomizePanel.cpp",
+  "parent": "0x82618BA8",
+  "parent_unit": "FlowRun.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82618D68",
+  "size": 44,
+  "claimed_by": "CustomizePanel.cpp",
+  "parent": "0x82618BA8",
+  "parent_unit": "FlowRun.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82787DA4",
+  "size": 44,
+  "claimed_by": "SongParser.cpp",
+  "parent": "0x82787C00",
+  "parent_unit": "ClipDistMap.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82348F9C",
+  "size": 40,
+  "claimed_by": "BandPatchMesh.cpp",
+  "parent": "0x82348E20",
+  "parent_unit": "CharLipSync.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82772274",
+  "size": 44,
+  "claimed_by": "SongData.cpp",
+  "parent": "0x82772208",
+  "parent_unit": "Achievements.cpp",
+  "era": "laneAL"
+ },
+ {
+  "va": "0x822EB688",
+  "size": 40,
+  "claimed_by": "GemTrackDir.cpp",
+  "parent": "0x822EB620",
+  "parent_unit": "SongLayout.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8270EE24",
+  "size": 32,
+  "claimed_by": "system/synth/MoggClip.cpp",
+  "parent": "0x8270EC58",
+  "parent_unit": "BinkClip.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8270EE44",
+  "size": 32,
+  "claimed_by": "system/synth/MoggClip.cpp",
+  "parent": "0x8270EC58",
+  "parent_unit": "BinkClip.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8270EE64",
+  "size": 32,
+  "claimed_by": "system/synth/MoggClip.cpp",
+  "parent": "0x8270EC58",
+  "parent_unit": "BinkClip.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8270EE84",
+  "size": 40,
+  "claimed_by": "system/synth/MoggClip.cpp",
+  "parent": "0x8270EC58",
+  "parent_unit": "BinkClip.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8276E388",
+  "size": 40,
+  "claimed_by": "system/beatmatch/BeatMaster.cpp",
+  "parent": "0x8276E328",
+  "parent_unit": "HamMaster.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8276E3B0",
+  "size": 40,
+  "claimed_by": "system/beatmatch/BeatMaster.cpp",
+  "parent": "0x8276E328",
+  "parent_unit": "HamMaster.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825F5D08",
+  "size": 32,
+  "claimed_by": "CampaignSongInfoPanel.cpp",
+  "parent": "0x825F5C60",
+  "parent_unit": "PhysicsManager.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82673154",
+  "size": 40,
+  "claimed_by": "MainHubMessageProvider.cpp",
+  "parent": "0x826730F0",
+  "parent_unit": "MusicLibrary.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826DD2F4",
+  "size": 32,
+  "claimed_by": "OverdriveTracker.cpp",
+  "parent": "0x826DCFE8",
+  "parent_unit": "DeployCountTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x826E03B4",
+  "size": 32,
+  "claimed_by": "StreakTracker.cpp",
+  "parent": "0x826E0348",
+  "parent_unit": "band3/game/PerfectOverdriveTracker.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825744B8",
+  "size": 44,
+  "claimed_by": "MetaPanel.cpp",
+  "parent": "0x825743E0",
+  "parent_unit": "CalibrationPanel.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82574A28",
+  "size": 44,
+  "claimed_by": "MetaPanel.cpp",
+  "parent": "0x82574938",
+  "parent_unit": "FlowDistance.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8229CB5C",
+  "size": 40,
+  "claimed_by": "OutfitConfig.cpp",
+  "parent": "0x8229CA70",
+  "parent_unit": "GameConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8229CB84",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "parent": "0x8229CA70",
+  "parent_unit": "GameConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8229CBB0",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "parent": "0x8229CA70",
+  "parent_unit": "GameConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8229CBDC",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "parent": "0x8229CA70",
+  "parent_unit": "GameConfig.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x822A2C44",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "parent": "0x822A2BD8",
+  "parent_unit": "Text.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x822A38FC",
+  "size": 44,
+  "claimed_by": "OutfitConfig.cpp",
+  "parent": "0x822A3890",
+  "parent_unit": "SampleInst.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82612460",
+  "size": 44,
+  "claimed_by": "CharacterCreatorPanel.cpp",
+  "parent": "0x82612300",
+  "parent_unit": "FlowSound.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x82434150",
+  "size": 68,
+  "claimed_by": "Cam.cpp",
+  "parent": "0x82433FD0",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82434194",
+  "size": 68,
+  "claimed_by": "Cam.cpp",
+  "parent": "0x82433FD0",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x824341D8",
+  "size": 44,
+  "claimed_by": "Cam.cpp",
+  "parent": "0x82433FD0",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82434204",
+  "size": 44,
+  "claimed_by": "Cam.cpp",
+  "parent": "0x82433FD0",
+  "parent_unit": "CharBonesMeshes.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82342200",
+  "size": 32,
+  "claimed_by": "BandLabel.cpp",
+  "parent": "0x823421A8",
+  "parent_unit": "BandHighlight.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8244CA5C",
+  "size": 40,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8244CAA4",
+  "size": 40,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8244CAEC",
+  "size": 40,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x8244CB34",
+  "size": 32,
+  "claimed_by": "AccomplishmentProgress.cpp",
+  "parent": "0x8244B088",
+  "parent_unit": "Part.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x826347C8",
+  "size": 44,
+  "claimed_by": "ClipDistMap.cpp",
+  "parent": "0x82634760",
+  "parent_unit": "PanelDir.cpp",
+  "era": "laneAM+"
+ },
+ {
+  "va": "0x822B0A90",
+  "size": 32,
+  "claimed_by": "system/bandobj/BandHeadShaper.cpp",
+  "parent": "0x822B0A38",
+  "parent_unit": "BandCamShot.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584B58",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584B78",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584B98",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584BB8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584BD8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584BF8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584C18",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584C38",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584C58",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584C78",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584C98",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584CB8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584CD8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584CF8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584F58",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584F78",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584F98",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584FB8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584FD8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82584FF8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585018",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585038",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585058",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585078",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585098",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825850B8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825850D8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825850F8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585358",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585378",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585398",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825853B8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825853D8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x825853F8",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585418",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x82585438",
+  "size": 32,
+  "claimed_by": "band3/meta_band/SessionMgr.cpp",
+  "parent": "0x82582E08",
+  "parent_unit": "MetaPerformer.cpp",
+  "era": "pre-laneAL"
+ },
+ {
+  "va": "0x8278DCA8",
+  "size": 60,
+  "claimed_by": "system/beatmatch/GameGemList.cpp",
+  "parent": "0x8278DB80",
+  "parent_unit": "HamBattleData.cpp",
+  "era": "laneAM+"
+ }
+]
