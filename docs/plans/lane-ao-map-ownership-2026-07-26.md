@@ -10,6 +10,9 @@ lane's delta is fully independent of the concurrent splits work. Rebased onto
 `9b2d2737`; `git merge-base --is-ancestor main laneAO-maphand` verified, and
 `git diff --stat main..laneAO-maphand` touches only this lane's own files.
 
+**With the displacement lane's two waves integrated (§8): 36,661 → 36,707 =
++46, 0 losses.**
+
 ★The ancestry trap fired here exactly as warned: the first symptom was
 `git diff --stat main..laneAO-maphand` showing my branch *deleting* another
 lane's whole `docs/plans/laneAN/` tree and `splits.txt`. That is not a conflict —
@@ -300,3 +303,44 @@ Provenance markers unchanged and untouched: `_icf_arbitrary` 25,
   vbtable/vtordisp functions.
 * `VorbisReader`'s `mHdrSize` is likely at `0xec`, not `0xc0`; currently
   match-neutral because no pinned function touches either.
+
+## 8. The displacement channel (laneAO-a5) — +33 net-new, and an accounting trap
+
+`map_displace_round.py` was run against a **freshly regenerated whole-tree homing
+scan** (1024 TUs, current obj state) with every measured guard armed:
+`--strict-guard` refused 359 holders already at strict-100, `--pays-only`
+(span_predictor) refused 12 WRONG-UNIT + 1 UNPINNED, contested claims refused
+244, and the ICF-twin-on-non-PAYS shape (measured −23/+0) **never fired**. Two
+filters the tool does not apply were added by hand: the map's own `_denylist`
+(it re-proposed `0x82553fc8 ?Terminate@RndMat@@SAXXZ`, a known argreg-refuted
+FP) and the "never name an already-matched anonymous funclet" −13 rule (all 21
+free VAs were verified to read 0.0% first).
+
+★**Negative control:** an independent from-scratch reloc-masked identity
+recheck accepted 24/24, and **the same checker fed those 24 VAs with the names
+rotated by one accepted 0/24.**
+
+Waves measured +24 and +15 in the lane's own worktree. ★**But +6 of the +24 are
+the same six bindings the handoff lane had already landed** (§2a) — the
+displacement resolver **independently rediscovered all six, character for
+character, from a different starting point.** That is a cross-validation of the
+whole byte-identity channel worth more than the matches themselves, *and* an
+accounting trap: **39 raw − 6 overlap = +33 net-new**, which is exactly what the
+integrated measurement shows (36,674 → 36,707). Two lanes mining the same
+evidence channel will double-count unless the union is measured, not the sum.
+
+★**Merge hazard found while integrating: an evict-then-restore round trip can
+RESURRECT an entry a concurrent wave deliberately displaced.** `0x827c7bb0` was
+displaced `??_GBandSong` → `??_GSong` on byte-identity evidence; this lane's
+restore list (§3b), computed against the *pre-displacement* map, put
+`??_GBandSong` back, producing a duplicate VA. Kept the displacement. When two
+map waves merge: re-derive the restore set against the merged map, and
+re-assert the duplicate-VA invariant **on the raw lines** — `json.load` silently
+keeps the last of a duplicate key and hides the problem entirely.
+
+The lane was cut short by an infrastructure error before reporting a fixpoint,
+so the `--include-free` splits/no-splits split and the 27-entry argreg target
+set (§7) remain open.
+
+Final invariants on the merged map: **24,131 address entries, 0 duplicate VAs,
+0 compiler-ordinal names.**
