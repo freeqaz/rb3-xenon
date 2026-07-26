@@ -671,6 +671,7 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821FA020 end:0x821FA060
 	.pdata      start:0x821FA060 end:0x821FA188
 	.pdata      start:0x821FA1A8 end:0x821FA1B8
+	.pdata      start:0x821FA1B8 end:0x821FA598
 	.pdata      start:0x821FA598 end:0x821FA5A8
 	.pdata      start:0x821FA5A8 end:0x821FA7F8
 	.pdata      start:0x821FA7F8 end:0x821FA800
@@ -699,6 +700,7 @@ VocalTrackDir.cpp:
 	.text       start:0x822FA7B0 end:0x822FAFEC
 	.text       start:0x822FAFF8 end:0x822FC180
 	.text       start:0x822FD26C end:0x822FD2F4
+	.text       start:0x822FD2F4 end:0x822FE780
 	.text       start:0x822FE780 end:0x822FE798
 	.text       start:0x822FE820 end:0x822FE9C8
 	.text       start:0x822FE9C8 end:0x822FFAA0
@@ -3564,7 +3566,6 @@ system/rndobj/SoftParticles.cpp:
 Waypoint.cpp:
 	.pdata      start:0x821F6280 end:0x821F6288
 	.pdata      start:0x821F7278 end:0x821F7280
-	.pdata      start:0x821FA1B8 end:0x821FA598
 	.pdata      start:0x82205970 end:0x82205978
 	.pdata      start:0x822073E8 end:0x82207630
 	.pdata      start:0x82207638 end:0x82207640
@@ -3572,7 +3573,6 @@ Waypoint.cpp:
 	.pdata      start:0x82237D40 end:0x82237D48
 	.text       start:0x822BB448 end:0x822BB4DC
 	.text       start:0x822CB828 end:0x822CB89C
-	.text       start:0x822FD2F4 end:0x822FE780
 	.text       start:0x823BE360 end:0x823BE46C
 	.text       start:0x823DA758 end:0x823DCFB0
 	.text       start:0x823DD010 end:0x823DD0F0
