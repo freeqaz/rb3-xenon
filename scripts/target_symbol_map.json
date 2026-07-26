@@ -3767,7 +3767,7 @@
  "0x8256fbc8": "?NewObject@ManageBandPanel@@SAPAVObject@Hmx@@XZ",
  "0x8256fc58": "?ByteCode@AppendSongToSetlistMsg@@UBAEXZ",
  "0x8256fd98": "?NewObject@MultiSelectListPanel@@SAPAVObject@Hmx@@XZ",
- "0x8256feb0": "?NewObject@ContentDeletePanel@@SAPAVObject@Hmx@@XZ",
+ "0x8256feb0": "?NewObject@RetryAudioPanel@@SAPAVObject@Hmx@@XZ",
  "0x82570048": "?NewObject@JoinInvitePanel@@SAPAVObject@Hmx@@XZ",
  "0x82570278": "?NewObject@PatchSelectPanel@@SAPAVObject@Hmx@@XZ",
  "0x825722c0": "?ClassName@AppScoreDisplay@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",

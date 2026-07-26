@@ -954,6 +954,7 @@ StreakMeter.cpp:
 	.pdata      start:0x821F7F40 end:0x821F7F48
 	.pdata      start:0x821F7F48 end:0x821F7F50
 	.pdata      start:0x821F7F50 end:0x821F7FA0
+	.pdata      start:0x821F7FB8 end:0x821F8150
 	.pdata      start:0x821F8150 end:0x821F8218
 	.pdata      start:0x821F8218 end:0x821F8230
 	.pdata      start:0x821F8230 end:0x821F8288
@@ -979,6 +980,7 @@ StreakMeter.cpp:
 	.text       start:0x822D8690 end:0x822D8704
 	.text       start:0x822D8708 end:0x822D880C
 	.text       start:0x822D8818 end:0x822D8CB4
+	.text       start:0x822D8EC8 end:0x822DA004
 	.text       start:0x822DA010 end:0x822DA628
 	.text       start:0x822DA628 end:0x822DA778
 	.text       start:0x822DA778 end:0x822DAAF0
@@ -3516,7 +3518,6 @@ system/rndobj/SoftParticles.cpp:
 Waypoint.cpp:
 	.pdata      start:0x821F6280 end:0x821F6288
 	.pdata      start:0x821F7278 end:0x821F7280
-	.pdata      start:0x821F7FB8 end:0x821F8150
 	.pdata      start:0x821FA1B8 end:0x821FA598
 	.pdata      start:0x82205970 end:0x82205978
 	.pdata      start:0x822073E8 end:0x82207630
@@ -3525,7 +3526,6 @@ Waypoint.cpp:
 	.pdata      start:0x82237D40 end:0x82237D48
 	.text       start:0x822BB448 end:0x822BB4DC
 	.text       start:0x822CB828 end:0x822CB89C
-	.text       start:0x822D8EC8 end:0x822DA004
 	.text       start:0x822FD2F4 end:0x822FE780
 	.text       start:0x823BE360 end:0x823BE46C
 	.text       start:0x823DA758 end:0x823DCFB0
