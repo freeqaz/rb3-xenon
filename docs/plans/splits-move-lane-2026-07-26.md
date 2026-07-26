@@ -537,3 +537,180 @@ Batches C1 and C2 hit it independently on 17 donors.
 coverage, so the symbol-map channel has no opinion. Route to BinDiff or the
 rb3-Wii oracle. The residual `PARENT_OFFUNIT` rows after F+G are all
 anonymous-parent, where neither side's unit is corroborated by a name.
+
+---
+
+# laneV — the UNPINNED pool (2026-07-26)
+
+Third lane in the splits family. laneQ/laneU drained **WRONG-UNIT** (665 → 7)
+by *moving* mis-pinned spans between units. laneV works the other residual laneU
+named: **UNPINNED — 592 mapped VAs that fall in no pinned `.text` range at all.**
+
+Start: main `2be0f697`, strict **28,915**. Branch `laneV-unpinned`.
+
+## 1. The funnel, measured before any work was funded
+
+A site count is not an opportunity count. The pool was pushed through every
+stage that can zero a candidate *before* a single span was applied:
+
+| stage | n | why it drops |
+|---|--:|---|
+| mapped VAs in `target_symbol_map.json` | 21,648 | ground truth VA → mangled name |
+| − in the hard-skipped 0x828–0x82C window | −7,042 | XDK vendor + Quazal, out of scope |
+| **raw UNPINNED** (VA in no pinned range) | **592** | the pool as laneU handed it over |
+| − name defined by **no** obj we compile | −208 | **cannot ever pair, so cannot ever score** — this is the UNPORTED class wearing a different hat; it needs source, not splits |
+| **PAIRED-capable** | **384** | our obj defines the mangled name, so objdiff can name-pair it |
+| clustered into contiguous same-claimant ADD spans | 303 | one span can carry several evidence symbols |
+| − span expansion overlaps an existing pin | −8 | would need a MOVE, not an ADD |
+| − `n_carved_in_span == 0` | −4 | dtk carved no function there; nothing to score |
+| − claimant has no pin of its own | −3 | needs a fresh block, see §4 |
+| − claimant already owns a 100% same-named COMDAT | −0 | the laneU criterion (b) pre-filter; never fired here |
+| **genuinely workable** | **288 spans / 343 carved fns / 318 evidence syms** | the funded pool |
+
+The funnel does **not** collapse: it converts 592 raw records into 288 workable
+spans with a hard ceiling of ~343 scoreable functions, and the lane realised
+about two thirds of that ceiling.
+
+**Why this pool behaves better than WRONG-UNIT: an ADD has no donor.** Nobody
+currently owns the span, so no unit can lose code and no fake positional match
+has to be repaid. Only three failure modes survive — (a) dtk refusing a span
+that slices a carved symbol's interior, (b) the claimant already owning a
+byte-identical 100% symbol of the same mangled name, (c) a wrong claimant pick
+from COMDAT ubiquity.
+
+## 2. Tiering: adjacency, not evidence count
+
+laneU established that `n_wrong` predicts *payoff*, not *safety*. For an ADD the
+open question is different — **which unit should get the span** — and the
+discriminator there is spatial: retail lays a TU's COMDATs out contiguously, so
+the true claimant's existing pin is normally right next to the span. Definition
+alone is weak (an STL/inline symbol is defined by every obj that instantiates
+it), so the tiers are cut by **distance from the claimant's nearest pin**:
+
+| tier | claimant distance | spans | units |
+|---|---|--:|--:|
+| T1 | ≤ 0x40 (adjacent) | 65 | 56 |
+| T2 | 0x40 – 0x1000 | 95 | 68 |
+| T3 | 0x1000 – 0x10000 | 39 | 33 |
+| T4 | > 0x10000 (up to 9 MB) | 89 | 73 |
+
+## 3. Waves and results
+
+Each tier was applied as one batch (a splits-only rebuild is ~40 s), A/B'd
+**unit-agnostically** (by NAME as well as by (unit, name), since a function
+moving between units mimics a loss), then replayed onto the lane branch to check
+additivity. Two Opus subagents verified T2 and T3+T4 in their own worktrees; the
+lane lead ran T1, the salvage wave and the cascade.
+
+| wave | what | spans | Δ isolated | Δ replayed (cumulative) |
+|---|---|--:|--:|--:|
+| T1 | adjacent claimant (≤0x40) | 65 | +59 | 28,974 |
+| T2 | 0x40–0x1000 | 94/95 | +69 | 29,043 |
+| T3 | 0x1000–0x10000 | 39 | +24 | 29,067 |
+| T4 | >0x10000 | 86/89 | +42 | 29,109 |
+| T6 | salvage: per-function gap spans | 59 | +59 | 29,168 |
+| T7 | end-snapped ex-refusals | 2 | +3 | 29,171 |
+| — | new-block claimants (§4) | 3 | **0** | reverted |
+| **total** | | **345 landed / 5 refused** | | **28,915 → 29,171 = +256** |
+
+Every wave was **perfectly additive** (T1+T2+T3+T4 = 59+69+24+42 = 194, measured
+194 on the branch) and every wave had **0 by-name losses**.
+
+**Composition of the 252 by-name gains: 236 NAMED mangled symbols, 16 anonymous
+≤48 B EH-funclet-class.** Priced honestly, the substantive gain is **236** and
+the funclet-class gain (100% normalized, ~99.5% raw — real under the headline
+metric but low information) is **16**. Zero fake matches had to be removed,
+because an ADD has no donor whose positional pairing could be repaid: this lane's
++256 is entirely new coverage, not an honesty trade. 4 relocations.
+
+## 4. Refusals — and two of the three "refusal classes" are not real
+
+Only **5** spans were refused out of 350 attempted.
+
+* **(a) "dtk refuses: ends within symbol" — NOT A REFUSAL CLASS.** Both
+  occurrences (`TransAnim.cpp` in T2, `StandardStream.cpp` in T4) were spans
+  whose end landed 4 bytes inside the 8-byte `except_data` object trailing the
+  last function. Snapping the end *up* to that object's end made both legal, and
+  wave T7 banked them for +3. Treat (a) as an off-by-one-symbol span end, not a
+  reason to drop.
+* **(b) claimant already owns a byte-identical 100% symbol of the same mangled
+  name — REAL, and the only genuine failure mode observed.** Two occurrences,
+  both in T4: `MultiTempoTempoMap.cpp` (a `vector<TempoInfoPoint>` copy ctor,
+  100% → 28.07% plus a 0% twin) and `Mesh.cpp`
+  (`__destroy_range_aux<reverse_iterator<RndBone*>>`, 100% → 42.46% + 0% twin).
+  Ceding a second same-named COMDAT gives the target obj two functions with one
+  name and objdiff's name pairing splits them.
+* **(c) wrong claimant from COMDAT ubiquity — DID NOT OCCUR.** Not once in 345
+  landed spans, including the 86 spans of T4 whose claimant's nearest pin is up
+  to 9 MB away.
+
+**Tool bug found and fixed while building the salvage wave.** The criterion-(b)
+prefilter compared the splits header (`Mesh.cpp`) against `report.json` unit
+names, which are `default/Mesh` — so it silently never fired, which is exactly
+why T4 paid for two (b) regressions. Keying both sides by
+basename-without-extension makes it fire; retro-checked, it correctly
+pre-refuses the `Mesh.cpp` span. Any future wave must apply this check with the
+basename mapping.
+
+**The measured-zero class: claimants with no pin at all.** Three UNPINNED VAs
+name units that have an obj but no splits block (`main` → Main.cpp,
+`SkeletonDir::TestClip`, `HamSkeletonConverter::CalcQuatBone`). Giving each a
+fresh block produced **exactly 0** — only SkeletonDir even paired (at 99.5%, a
+near-miss, not a match) and the other two carved nothing. Reverted; a fresh
+block is a source/oracle problem, not a splits problem.
+
+## 5. The salvage finding: kill CLUSTERS, keep FUNCTIONS
+
+The single most productive wave after T1/T2 was **T6, built entirely out of
+candidates the funnel had already killed.** The `expanded_span_overlaps_pin`
+kill fires at *cluster* granularity: contiguous same-claimant evidence VAs are
+merged and the merged span is expanded to whole carved-function boundaries, so
+if that expansion crosses into a neighbouring pin the whole cluster dies —
+taking with it every function that sits entirely inside the unpinned gap.
+
+Re-deriving **per carved function** instead (span = the function's own
+`[start, start+size)`, required to fit inside the gap, unclaimed, criterion-(b)
+clean) recovered **59 spans from 8 clusters**, and they landed at a **1.00
+gain-per-span hit rate — the best of the lane — 59/59 NAMED, 0 losses.**
+
+Generalisation: when a span-level filter kills a *cluster*, re-ask the question
+at *function* granularity before writing the candidates off.
+
+## 6. Drain state
+
+Re-scan on the landed state:
+
+| | start | end |
+|---|--:|--:|
+| raw UNPINNED | 592 | **216** |
+| of which no definer (UNPORTED — needs source) | 208 | 208 |
+| **PAIRED-capable (can actually score)** | **384** | **8** |
+
+**The channel is drained.** The 8 residual paired-capable records are exactly
+the classes this lane proved unworkable: 2 correctly-refused criterion-(b) spans
+(`Mesh.cpp`, `MultiTempoTempoMap.cpp`), 3 no-pin claimants (measured at 0), and
+3 VAs dtk carved no function at (`BandPatchMesh`, `UsbMidiGuitar::Poll`,
+`SongData::Poll` and a `__uninitialized_copy` — nothing to score).
+
+The lane converted **376 of 384 paired-capable records (98%)** into pins, for
+**+256 strict**, i.e. ~0.67 gains per paired-capable record and ~75% of the
+343-carved-function ceiling the funnel predicted.
+
+What remains in the raw 592 is the **208 UNPORTED** — VAs whose mangled name no
+obj of ours defines. They are not a splits problem and no splits work can move
+them; they need source (rb3-Wii / DC3 oracle body ports). Route accordingly.
+
+## 7. Findings that revise the priors
+
+1. **Claimant distance is not a risk proxy.** T4 (claimant pin up to 9 MB away,
+   the tier built to expose wrong-claimant picks) out-yielded T3 and produced a
+   **100% NAMED** gain mix. Zero (c) failures in 345 spans. This is the same
+   inversion laneU found for `n_wrong` and laneQ found for span looseness — the
+   third consecutive time a "risk" heuristic in this family measured as, at
+   most, a payoff ordering.
+2. **ADD is structurally safer than MOVE.** No donor means no code can be taken
+   from a unit that was scoring with it, so the only live hazard is duplicate
+   same-named COMDATs on the claimant side. 0 losses across 6 waves.
+3. **A funnel stage that kills whole clusters deserves a per-item retry** (§5).
+4. **`.pdata` remains derived** — confirmed again; every wave's diff shows dtk
+   back-filling `.pdata` from our `.text` pins.
