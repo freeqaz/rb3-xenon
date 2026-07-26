@@ -1,3 +1,36 @@
+> **CORRECTION (lane L, 2026-07-26) — read §4 and §8 with this in mind.**
+> The calibration table in §4 is **correlational, not causal**, and the §8 plan
+> to reach the ~2,300 funclets behind unnamed parents *by naming the parents*
+> does not work. Two whole-binary A/B experiments on the 27,629 baseline:
+>
+> * Removed the `target_symbol_map.json` entries for **116 named parents with a
+>   frame MISMATCH** (473 funclets, 235 unmatched) → 27,629. **GAINED 0, LOST 0.**
+> * Removed the entries for **60 named parents with frame OK + savegprlr OK**,
+>   chosen for having the most currently-*matched* funclets (1,446 between them)
+>   → 27,582. **LOST 47 — and all 47 were the parent symbols themselves. Zero
+>   funclets moved.**
+>
+> A parent's map entry has **no causal effect** on whether its EH funclets match;
+> objdiff pairs funclets independently of it. Parents whose compiled frame is
+> exact are simply parents we ported well, and well-ported functions have
+> well-matching funclets. §5's +264 *was* causal — but it came from fixing the
+> **source** so the compiled frame changed, which is body work, not naming.
+>
+> What naming actually buys: the parent itself flips iff our body is already
+> reloc-masked byte-identical at that VA, plus **observability** — naming makes
+> our frame readable, which turns the unnamed pool into a frame-defect worklist
+> for exactly the §7 recipe. Lane L's confirmation on live data: a wave that
+> named 11 unnamed parents owning 21 funclets gained the 11 parents and **0**
+> funclets.
+>
+> Tooling from lane L: `scripts/harvest/unnamed_parent_verify.py` (unit-scoped
+> byte-identity naming, `--validate` held-out) and
+> `scripts/harvest/eh_signature_match.py`. Also measured and closed there: the
+> RTTI-catch-name content channel that
+> `docs/plans/identification-discriminators-2026-07-25.md` calls "the one
+> unexplored content channel left" is **provably empty** — all 1,074 retail
+> `HandlerType` entries have `pType == NULL` (RB3 uses `catch (...)` throughout).
+
 # The EH-funclet cascade lever — tooling, honest pool size, and first harvest
 
 **Lane I, 2026-07-25.** Worktree `~/tmp/wt-laneI-funclet`, branch `laneI-funclet`,

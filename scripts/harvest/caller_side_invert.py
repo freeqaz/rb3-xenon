@@ -146,8 +146,17 @@ def build_claims(band, idx, anchors):
     return claims, sites
 
 
-def resolve(name, cands, byname, claims, sites, famsize=None, maxfam=0):
-    """-> (verdict, va, evidence)"""
+def resolve(name, cands, byname, claims, sites, famsize=None, maxfam=0,
+            containment=True):
+    """-> (verdict, va, evidence)
+
+    `containment=False` drops guard #4 (the derived VA need not be one of the
+    callee's own reloc-masked byte-identical candidates).  That is what a lane
+    which only needs the *name* -- e.g. EH-funclet parentage cascade -- would
+    want, since such a parent's body does not match retail at all and therefore
+    has no hit set to be contained in.  It is also the guard that makes the
+    derivation safe; see --validate-nocontain for the measured cost.
+    """
     if maxfam and famsize is not None and famsize.get(name, 1) > maxfam:
         return 'BIG-FAMILY', None, []
     vs = byname.get(name)
@@ -159,9 +168,131 @@ def resolve(name, cands, byname, claims, sites, famsize=None, maxfam=0):
     ev = sites[(name, v)]
     if claims[v] != {name}:
         return 'SHARED-VA', v, sorted(claims[v] - {name})[:3]
-    if v not in cands:
+    if containment and v not in cands:
         return 'NOT-IN-HITS', v, ev
     return 'RESOLVED', v, ev
+
+
+def validate_nocontain(a, band, tmap, name2va, idx, hitsets, anchors,
+                       claims, sites, byname, famsize, notbyte):
+    """Held-out precision of the derivation WITHOUT guard #4 (containment).
+
+    Ground truth population: every name that the map homes at exactly one VA
+    *and* whose compiled body is NOT reloc-masked byte-identical there.  That is
+    precisely the population guard #4 can never admit -- and precisely the
+    population a funclet-cascade lane wants to name, since a funclet flips on
+    its parent's frame + savegprlr alone, not on the parent's body.
+
+    No leakage: the map entry for F is never used to derive F's VA (claims[v]
+    is built only from F's *callers*, and F itself is not an anchor because it
+    is not byte-identical).  Guard #5 ("v unclaimed") cannot be applied here --
+    F's true VA is by construction in the map -- so it is emulated: a pick is
+    'production-legal' iff tmap.get(v) is None or == F.
+    """
+    val = defaultdict(int)
+    lines = []
+    for name, (tu, v0) in sorted(notbyte.items()):
+        val['POP'] += 1
+        cands = set()               # guard #4 disabled -> unused
+        verdict, v, ev = resolve(name, cands, byname, claims, sites,
+                                 famsize, a.max_family, containment=False)
+        if verdict == 'RESOLVED' and len({e[0] for e in ev}) < a.min_anchors:
+            verdict = 'FEW-ANCHORS'
+        if verdict != 'RESOLVED':
+            val['refuse/' + verdict] += 1
+            continue
+        ok = (v == v0)
+        tag = 'HIT' if ok else 'MISS'
+        val[tag] += 1
+        # GOLD subpopulation: the incumbent map entry is itself corroborated by
+        # map-free content (a string / float constant F references really is at
+        # v0).  Scoring against a contaminated map is a lower bound; scoring
+        # against the corroborated slice removes that contamination.
+        gold = content_check(band, tmap, name2va, idx, tu, name, v0) == 'AGREE'
+        if gold:
+            val['GOLD/%s' % tag] += 1
+            val['GOLDNH%s/%s' % ('0' if nh == 0 else 'N', tag)] += 1
+            if fs == 1:
+                val['GOLDFAM1/%s' % tag] += 1
+        na = len({e[0] for e in ev})
+        fs = famsize.get(name, 1)
+        fb = ('1' if fs == 1 else '2-4' if fs <= 4 else
+              '5-16' if fs <= 16 else '17+')
+        ab = '1' if na == 1 else '2' if na == 2 else '3+'
+        nh = len(hitsets.get((tu, name), ()))
+        val['FAM%s/%s' % (fb, tag)] += 1
+        val['ANC%s/%s' % (ab, tag)] += 1
+        val['HITS%s/%s' % ('0' if nh == 0 else 'N', tag)] += 1
+        legal = tmap.get(v) in (None, name)
+        val['LEGAL/%s' % tag] += 1 if legal else 0
+        val['ILLEGAL/%s' % tag] += 0 if legal else 1
+        if legal:
+            val['LEGALFAM%s/%s' % (fb, tag)] += 1
+            val['LEGALANC%s/%s' % (ab, tag)] += 1
+            if fs == 1:
+                val['L1ANC%s/%s' % (ab, tag)] += 1
+        if not ok:
+            # is the DERIVATION right and the incumbent map entry wrong?  Our
+            # body is by construction NOT byte-identical at the map's VA; if it
+            # IS byte-identical at the derived VA, the map is the wrong one.
+            f = idx.fn.get((tu, name))
+            bi = bool(f) and masked_eq(f['body'],
+                                       band.text_bytes(v, f['size']), f['offs'])
+            val['MISS-derived-byte-identical' if bi
+                else 'MISS-derived-not-byte-identical'] += 1
+            # independent arbiter: map-free content evidence (strings / float
+            # constants F itself references) at each of the two candidate homes
+            c_t = content_check(band, tmap, name2va, idx, tu, name, v0)
+            c_g = content_check(band, tmap, name2va, idx, tu, name, v)
+            val['ARB-%s' % ('map' if (c_t == 'AGREE' and c_g != 'AGREE')
+                            else 'derivation' if (c_g == 'AGREE' and c_t != 'AGREE')
+                            else 'neither/both')] += 1
+            lines.append('MISS %-58s %-34s truth=0x%08x got=0x%08x '
+                         'fam=%d anc=%d nhits=%d legal=%d bi@got=%d '
+                         'ct=%s cg=%s occupied=%s'
+                         % (name[:58], tu[:34], v0, v, fs, na, nh, legal, bi,
+                            c_t, c_g, tmap.get(v, '-')))
+        else:
+            lines.append('HIT  %-58s 0x%08x fam=%d anc=%d' % (name[:58], v, fs, na))
+    open(a.report, 'w').write('\n'.join(lines) + '\n')
+
+    def pct(h, m, label):
+        if h + m:
+            print('   %-26s %5d/%-5d = %6.2f%%' % (label, h, h + m,
+                                                   100.0 * h / (h + m)))
+    print('NO-CONTAINMENT held-out validation (population = %d singly-mapped '
+          'names whose body is NOT byte-identical at their mapped VA)'
+          % val['POP'])
+    print('  refusals:', {k[7:]: v for k, v in sorted(val.items())
+                          if k.startswith('refuse/')})
+    pct(val['HIT'], val['MISS'], 'OVERALL')
+    for c in ('1', '2-4', '5-16', '17+'):
+        pct(val['FAM%s/HIT' % c], val['FAM%s/MISS' % c], 'sibling-family %s' % c)
+    for c in ('1', '2', '3+'):
+        pct(val['ANC%s/HIT' % c], val['ANC%s/MISS' % c], 'anchors %s' % c)
+    for c in ('0', 'N'):
+        pct(val['HITS%s/HIT' % c], val['HITS%s/MISS' % c],
+            'own hit set %s' % ('empty (NOMATCH)' if c == '0' else 'non-empty'))
+    pct(val['LEGAL/HIT'], val['LEGAL/MISS'], 'guard#5-legal only')
+    for c in ('1', '2-4', '5-16', '17+'):
+        pct(val['LEGALFAM%s/HIT' % c], val['LEGALFAM%s/MISS' % c],
+            'legal & family %s' % c)
+    for c in ('1', '2', '3+'):
+        pct(val['LEGALANC%s/HIT' % c], val['LEGALANC%s/MISS' % c],
+            'legal & anchors %s' % c)
+    for c in ('1', '2', '3+'):
+        pct(val['L1ANC%s/HIT' % c], val['L1ANC%s/MISS' % c],
+            'legal & fam1 & anchors %s' % c)
+    pct(val['GOLD/HIT'], val['GOLD/MISS'], 'content-corroborated map')
+    pct(val['GOLDNH0/HIT'], val['GOLDNH0/MISS'], '  ..& own hit set empty')
+    pct(val['GOLDNHN/HIT'], val['GOLDNHN/MISS'], '  ..& own hit set non-empty')
+    pct(val['GOLDFAM1/HIT'], val['GOLDFAM1/MISS'], '  ..& family 1')
+    print('  of the %d misses, %d are byte-identical at the DERIVED VA '
+          '(i.e. the incumbent map entry is the wrong one), %d are not'
+          % (val['MISS'], val['MISS-derived-byte-identical'],
+             val['MISS-derived-not-byte-identical']))
+    if a.stats_out:
+        json.dump(dict(val), open(a.stats_out, 'w'), indent=1)
 
 
 def content_check(band, tmap, name2va, idx, tu, name, v):
@@ -204,6 +335,16 @@ def main():
                     help='fixed-point rounds: resolutions from round N become '
                          'anchors in round N+1')
     ap.add_argument('--validate', action='store_true')
+    ap.add_argument('--validate-nocontain', action='store_true',
+                    help='held-out precision of the derivation with guard #4 '
+                         '(hit-set containment) DISABLED, measured over the '
+                         'singly-mapped names whose body is NOT byte-identical '
+                         'at their mapped VA -- the population a funclet-'
+                         'cascade lane wants and that guard #4 excludes.')
+    ap.add_argument('--no-containment', action='store_true',
+                    help='production: drop guard #4 and admit hitless '
+                         '(NOMATCH) targets.  Only ever use with a variant '
+                         'whose --validate-nocontain precision you measured.')
     ap.add_argument('--stats-out')
     a = ap.parse_args()
 
@@ -229,10 +370,16 @@ def main():
         if not isinstance(recs, list):
             continue
         for r in recs:
-            if not r.get('hits'):
+            if not r.get('hits') and not a.no_containment:
                 continue
             if a.validate:
-                if len(r['hits']) < 2:
+                if len(r['hits'] or ()) < 2:
+                    continue
+            elif a.no_containment:
+                # guard #4 is off, so a hitless (NOMATCH) record is admissible:
+                # its body simply does not match retail anywhere, which is the
+                # normal state of an unnamed parent.
+                if r.get('cls') not in want_cls | {'NOMATCH'}:
                     continue
             elif r.get('cls') not in want_cls:
                 continue
@@ -245,6 +392,10 @@ def main():
 
     # ---------------------------------------------------------------- anchors
     anchors = {}
+    notbyte = {}        # name -> (tu, mapped_va): singly-mapped but our body is
+                        # NOT byte-identical there.  This is the held-out ground
+                        # truth for --validate-nocontain: it mirrors exactly the
+                        # population a funclet-cascade lane wants to name.
     astat = defaultdict(int)
     for (tu, cname), f in idx.fn.items():
         if cname in anchors:
@@ -264,8 +415,10 @@ def main():
                 continue
         if not masked_eq(f['body'], band.text_bytes(va, f['size']), f['offs']):
             astat['not-byte-identical'] += 1
+            notbyte.setdefault(cname, (tu, va))
             continue
         anchors[cname] = va
+        notbyte.pop(cname, None)     # byte-identical in some other TU's COMDAT
         astat['ANCHOR'] += 1
     print('anchors:', dict(astat), file=sys.stderr)
 
@@ -288,6 +441,11 @@ def main():
     print('claims: %d distinct retail VAs claimed by %d callee names'
           % (len(claims), len(byname)), file=sys.stderr)
 
+    if a.validate_nocontain:
+        validate_nocontain(a, band, tmap, name2va, idx, hitsets, anchors,
+                           claims, sites, byname, famsize, notbyte)
+        return
+
     stats = defaultdict(int)
     lines = []
     out = defaultdict(list)
@@ -307,6 +465,15 @@ def main():
         n0 = len(anchors)
         for v, cl in picked.items():
             for tu_, nm in cl:
+                if a.no_containment:
+                    # with guard #4 off a pick is NOT byte-identical by
+                    # construction, so promoting it to anchor would decode
+                    # retail bytes that are not ours and manufacture bogus
+                    # claims.  Promote only the ones that verify.
+                    f = idx.fn.get((tu_, nm))
+                    if f is None or not masked_eq(
+                            f['body'], band.text_bytes(v, f['size']), f['offs']):
+                        continue
                 anchors.setdefault(nm, v)
         if len(anchors) == n0:
             break
@@ -320,7 +487,7 @@ def main():
       for name, (tu, r) in sorted(targets.items()):
         if name in done_names:
             continue
-        hits = [int(h, 16) for h in r['hits']]
+        hits = [int(h, 16) for h in (r.get('hits') or ())]
         if a.validate:
             truth = [v for v in hits if tmap.get(v) == name]
             if len(truth) != 1:
@@ -341,13 +508,15 @@ def main():
                 valpicks[v].append((name, truth, ev, tu, cc))
             continue
 
-        if any(tmap.get(v) == name for v in hits):
+        if any(tmap.get(v) == name for v in hits) or (
+                a.no_containment and name in name2va):
             stats['ALREADY-HOMED'] += 1
             done_names.add(name)
             continue
         cands = {v for v in hits if v not in taken}
         verdict, v, ev = resolve(name, cands, byname, claims, sites,
-                                     famsize, a.max_family)
+                                     famsize, a.max_family,
+                                     containment=not a.no_containment)
         if verdict == 'RESOLVED':
             if len({e[0] for e in ev}) < a.min_anchors:
                 verdict = 'FEW-ANCHORS'
