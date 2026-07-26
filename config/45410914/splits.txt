@@ -775,6 +775,7 @@ PatchDir.cpp:
 	.pdata      start:0x821F1A78 end:0x821F1A80
 	.pdata      start:0x821F1AD0 end:0x821F1B30
 	.pdata      start:0x821F1B90 end:0x821F1B98
+	.pdata      start:0x821F1BE8 end:0x821F1BF0
 	.pdata      start:0x821F1C70 end:0x821F1CA8
 	.pdata      start:0x821F1CA8 end:0x821F1CB0
 	.pdata      start:0x821F1CB0 end:0x821F1CC0
@@ -805,6 +806,7 @@ PatchDir.cpp:
 	.text       start:0x82275500 end:0x8227555C
 	.text       start:0x822759C8 end:0x82276138
 	.text       start:0x82276888 end:0x822768F8
+	.text       start:0x82276C78 end:0x82276CD0
 	.text       start:0x82277388 end:0x82277628
 	.text       start:0x82277628 end:0x8227768C
 	.text       start:0x82277690 end:0x82277AF0
@@ -3618,14 +3620,16 @@ FilterQueue.cpp:
 
 MoveAsyncDetector.cpp:
 	.pdata      start:0x821FB3F0 end:0x821FB3F8
-	.pdata      start:0x821FBF58 end:0x821FC040
+	.pdata      start:0x821FBF58 end:0x821FBF80
+	.pdata      start:0x821FBF88 end:0x821FC040
 	.pdata      start:0x821FEC68 end:0x821FEC88
 	.pdata      start:0x822000A0 end:0x822000A8
 	.pdata      start:0x8221F0C8 end:0x8221F0D0
 	.pdata      start:0x8221F140 end:0x8221F148
 	.pdata      start:0x82234690 end:0x82234698
 	.text       start:0x8230C708 end:0x8230C7DC
-	.text       start:0x82317858 end:0x82318500
+	.text       start:0x82317858 end:0x82317900
+	.text       start:0x82317970 end:0x82318500
 	.text       start:0x82347214 end:0x82347218
 	.text       start:0x82347284 end:0x82347478
 	.text       start:0x82347720 end:0x82347770
@@ -4458,7 +4462,7 @@ CharBonesMeshes.cpp:
 	.pdata      start:0x821F1AB8 end:0x821F1AD0
 	.pdata      start:0x821F1B30 end:0x821F1B90
 	.pdata      start:0x821F1B98 end:0x821F1BA8
-	.pdata      start:0x821F1BB0 end:0x821F1BF0
+	.pdata      start:0x821F1BB0 end:0x821F1BE8
 	.pdata      start:0x821F1BF8 end:0x821F1C30
 	.pdata      start:0x822014B0 end:0x822014C0
 	.pdata      start:0x822021C8 end:0x822021D0
@@ -4471,7 +4475,7 @@ CharBonesMeshes.cpp:
 	.text       start:0x82275880 end:0x822759C8
 	.text       start:0x82276138 end:0x82276828
 	.text       start:0x822768F8 end:0x82276A28
-	.text       start:0x82276B28 end:0x82276CD0
+	.text       start:0x82276B28 end:0x82276C78
 	.text       start:0x82276D50 end:0x82276F98
 	.text       start:0x8236CA70 end:0x8236CB48
 	.text       start:0x8237B410 end:0x8237B594
@@ -6280,6 +6284,7 @@ InlineHelp.cpp:
 	.pdata      start:0x821FBEB0 end:0x821FBEB8
 	.pdata      start:0x821FBEB8 end:0x821FBEC0
 	.pdata      start:0x821FBEC0 end:0x821FBF48
+	.pdata      start:0x821FBF80 end:0x821FBF88
 	.text       start:0x822784A8 end:0x822784E4
 	.text       start:0x822D8D78 end:0x822D8EC0
 	.text       start:0x823148C0 end:0x82315974
@@ -6294,6 +6299,7 @@ InlineHelp.cpp:
 	.text       start:0x82316C70 end:0x82316CC0
 	.text       start:0x82316CC8 end:0x82316D7C
 	.text       start:0x82316D7C end:0x82317540
+	.text       start:0x82317900 end:0x82317970
 
 PreloadPanel.cpp:
 	.pdata      start:0x822276E8 end:0x822276F0
