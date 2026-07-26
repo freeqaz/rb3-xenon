@@ -70,7 +70,7 @@ void KeyboardTrackWatcherImpl::FretButtonUp(int slot) {
     if (mHeldGem != -1) {
         MILO_ASSERT(mHeldSlots != 0, 0x89);
         if (mHeldSlots & mask) {
-            mHeldSlots ^= mask;
+            mHeldSlots &= ~(1 << slot);
             if (mHeldSlots == 0) {
                 KillSustain(mHeldGem);
                 mHeldGem = -1;
