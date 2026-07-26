@@ -4,6 +4,69 @@
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
 
+## ★ TRANSFERABLE LEVERS from the 2026-07-25/26 coordinator session (27,223 → 27,816 in-lane)
+
+These are mechanism findings, not one-off fixes. Landed + measured; reusable fleet-wide.
+
+### 1. BULK-CONVERSION LAW — convert a TU's local-static form ALL AT ONCE (098f84a8, +177)
+Converting ONE function to retail's `DP_KEYS`/function-local-`static Symbol` form measured **−7**
+(its 3 new statics collaterally un-paired 9 already-matching EH funclets — objdiff funclet
+over-subscription re-pairing). Converting **all 21 stragglers in the TU simultaneously = +48**
+(53 gained / 5 lost). The churn is a transient of a *partially*-converted TU; once every function
+shares the form the pool stabilises.
+**⇒ A one-at-a-time trial that reads net-negative is NOT evidence the lever is dead. Re-test in bulk.**
+Follow with `homing_scan` on the converted obj (bytes changed) — yielded 7 more plain-UNIQUE homes, +7/−0.
+
+### 2. GUARD-BIT TIMELINE = a transcript of the source's static-declaration structure
+Bit ORDER gives declaration order; the GAPS between guard-check runs give grouping and placement.
+On `RecordPerformance` it named the 7 declaration groups (at their USE SITES — 27/1/1/1/1/23/2, NOT a
+switch), the missing key (`hopo_gems_strummed`), and a DEAD key retail declares but never inserts
+(`high_gems_hit_high`). 67 → 99.27, frame 0x780→0x680, flipping ALL 79 dependent funclets.
+Note: big recorders declare **DataPoint FIRST then keys** — the OPPOSITE of the small getters.
+
+### 3. Container identity from CALL SHAPE
+`std::hash_map<Symbol,int>` vs `std::map`: retail called an OUT-OF-LINE ctor/dtor and walked a
+null-terminated chain (node+0 next, +4 key, +8 value); `std::map` INLINES its ctor and iterates via
+`_M_increment` against `end()`. Correcting it closed a 0x4d0→0x4c0 frame gap (+42 with 41 funclets).
+
+### 4. ⚠ IDENTICAL-BODY FAMILY = a systematic FAKE-100% generator (a380ed69)
+Every `Foo::StaticClassName()` (OBJ_CLASSNAME) and `FooMsg::Type()` (DECLARE_MESSAGE) compiles to ONE
+identical 22-instruction body; **453 exist in the TU5 image**, differing only in three RELOCATIONS.
+objdiff normalized mode ignores relocation targets ⇒ **ANY member pairs against ANY other at a fake
+100%**, self-confirming. **The STRING OPERAND is the only sound discriminator.**
+Measured: **153 of 405 mapped entries were WRONG**, incl. a contiguous off-by-one shift across 25
+consecutive `Char*` slots. Repair landed +10; one VA GAINED a match once UNMAPPED ⇒ **unmapped beats
+wrongly-mapped**. Tool: `scripts/harvest/localstatic_symbol_audit.py --json` (re-derives in ~40 s,
+flags each repair's harmfulness).
+**OPEN DEBT: ~51 entries are correct-by-string but currently satisfy a fake 100%** (fingerprint: the VA
+sits in a unit *named after the wrong class* — HamMove.cpp→HamMove, TexMovie.cpp→TexMovie …). Fixing
+them is nominally −51. **Pending an explicit user policy call — do not land unilaterally.**
+
+### 5. NOT all "class absent from src/" map entries are contamination
+LEAPCORE / XAUDIO2 / NUISPEECH / XGRAPHICS / TrueColor / FaceCore are REAL Xbox360-SDK + Kinect
+middleware statically linked into both games (0x82BE0000–0x82BE6000 is a coherent XAUDIO2/LEAPCORE
+region). Their defect is a **SPLIT PIN inside XDK library territory** — `System.cpp` pinned
+0x82BE28C8–0x82BE4428 (tot=33, comp=1), also `Compress.cpp` 0x82A68050, `GemTrack.cpp` 0x82B93C78.
+⇒ splits lane, NOT map lane. **Still open.**
+
+### 6. Source bug, still open
+Retail's `FxSend*360` classes register under the **base** token (`FxSendReverb`, not `FxSendReverb360`);
+`RndMultiMeshProxy` loads `"RndMultiMeshProxy"` where our `OBJ_CLASSNAME` says `MultiMeshProxy`.
+Fixing both would also disambiguate 32 currently-ambiguous strings.
+
+### 7. Process hazards that cost real time this session
+- **`git apply` aborts ATOMICALLY while still printing per-file "applied cleanly".** Always verify with
+  `git status` after any apply that reports an error. Hit twice.
+- **`git add <file>` on shared main also stages OTHER lanes' uncommitted edits to that same file** —
+  swept 122 foreign map entries into one commit. The `does not match index` error from `git apply` is
+  the tell; re-apply with `--exclude=<file>`, hand-add your own lines, and read `git diff --cached`
+  (line count is the giveaway) before committing.
+- **`build/45410914/report.json` on disk can be weeks stale** — another lane rebuilds it. Check mtime or
+  regenerate before quoting ANY number.
+- **TU0 → TU5 flip (2026-07-15) invalidated every pre-flip ADDRESS.** Use Ghidra bank
+  `default_tu5.xex-c5a170`; never the live default.xex. Cross-check any address against the map.
+
+
 ## 2026-07-20 flywheel session — 18,819 → 18,874 (+55 this session; +185 across the arc)
 
 ### Wave close-out addendum (later 2026-07-20): 18,874 → 18,924 (+50)
