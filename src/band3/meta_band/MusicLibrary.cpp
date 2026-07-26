@@ -317,6 +317,10 @@ void MusicLibrary::OnUnload() {
 MusicLibrary::MusicLibraryTask::MusicLibraryTask() { Reset(); }
 
 void MusicLibrary::MusicLibraryTask::Reset() {
+    static Symbol main_hub_screen("main_hub_screen");
+    static Symbol part_difficulty_screen("part_difficulty_screen");
+    static Symbol music_library("music_library");
+    static Symbol making_setlist("making_setlist");
     setlistMode = kSetlistOptional;
     filter.Reset();
     filterLocked = false;
@@ -691,14 +695,22 @@ void MusicLibrary::SkipToShortcut(int idx) {
 
 void MusicLibrary::ClientSetPartyShuffleMode() {
     if (!IsLeaderLocal()) {
-        // Retail emits a function-local static Symbol here (guard bit +
-        // atexit thunk at 0x825278FC), not the global symbol-table entry.
+        // Retail emits a function-local static Symbol here (guard 0x82DFD3C8,
+        // storage 0x82DFD3C4), not the global symbol-table entry.
         static Symbol qp_party_shuffle("qp_party_shuffle");
         TheGameMode->SetMode(qp_party_shuffle);
     }
 }
 
 void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
+    static Symbol make_a_setlist("make_a_setlist");
+    static Symbol view_setlists("view_setlists");
+    static Symbol view_songs("view_songs");
+    static Symbol random_song("random_song");
+    static Symbol shuffle_setlist("shuffle_setlist");
+    static Symbol play_setlist("play_setlist");
+    static Symbol party_setlist("party_setlist");
+    static Symbol qp_party_shuffle("qp_party_shuffle");
     switch (node->GetType()) {
     case kNodeFunction:
         if (node->GetToken() == shuffle_setlist) {
@@ -715,6 +727,7 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
         } else if (node->GetToken() == party_setlist) {
             if (IsLeaderLocal()) {
                 BuildPartySetlist();
+                static Symbol qp_party_shuffle("qp_party_shuffle");
                 if (!mSetlist.empty()) {
                     TheGameMode->SetMode(qp_party_shuffle);
                     if (TheNetSession) {

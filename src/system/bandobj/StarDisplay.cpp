@@ -265,3 +265,35 @@ END_PROPSYNCS
 // never defined the symbol and objdiff could not pair it. Force the use.
 #include "bandobj/ReviewDisplay.h"
 Symbol ForceEmit_ReviewDisplay_StaticClassName() { return ReviewDisplay::StaticClassName(); }
+
+// Retail free function living in this TU's .text span (fn_8231C458).  All seven
+// tokens are function-local statics (guard 0x82CBDDA8, storages 0x82CBDDA4
+// downward, bits 0x1..0x40 in declaration order); the default arm constructs
+// from gNullStr rather than pre-initialising the return value.
+Symbol GetStarsToken(int stars) {
+    static Symbol stars_0("stars_0");
+    static Symbol stars_1("stars_1");
+    static Symbol stars_2("stars_2");
+    static Symbol stars_3("stars_3");
+    static Symbol stars_4("stars_4");
+    static Symbol stars_5("stars_5");
+    static Symbol stars_6("stars_6");
+    switch (stars) {
+    case 0:
+        return stars_0;
+    case 1:
+        return stars_1;
+    case 2:
+        return stars_2;
+    case 3:
+        return stars_3;
+    case 4:
+        return stars_4;
+    case 5:
+        return stars_5;
+    case 6:
+        return stars_6;
+    default:
+        return gNullStr;
+    }
+}

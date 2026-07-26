@@ -340,6 +340,7 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     // Retail declares these as function-local statics (one shared guard word at
     // 0x82E0193C, storages 0x82E01938 downward) — see the funclet-cascade
     // write-up.  Order is retail's ctor order at 0x82645374..0x8264560C.
+    static Symbol vocals_grid("vocals_grid");
     static Symbol label("label");
     static Symbol solo_rank_label("solo_rank_label");
     static Symbol solo_instarank_group("solo_instarank_group");
@@ -352,7 +353,6 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     static Symbol page_break("page_break");
     static Symbol header("header");
     static Symbol pad("pad");
-    static Symbol solo_score("solo_score");
     BandUser *user = TheBandUserMgr->GetUserFromSlot(slot); // fn_8010021C
     MILO_ASSERT(TheGame->IsActiveUser(user), 0x203);
     Player *player = user->GetPlayer(); // fn_800D2D8C
@@ -363,6 +363,7 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     MetaPerformer *performer = MetaPerformer::Current();
     MILO_ASSERT(performer, 0x20A);
     ScoreType ty = performer->GetScoreTypeForUser(user); // fn_8022618C
+    static Symbol solo_score("solo_score");
 
     if (b)
         count++;
@@ -404,15 +405,14 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
         ptr.Node(count++) = DataArrayPtr(page_break);
 
     if (player->GetTrackType() == 3) {
+        static Symbol completed_double_harmonies("completed_double_harmonies");
+        static Symbol completed_triple_harmonies("completed_triple_harmonies");
+        static Symbol perfect_harmony("perfect_harmony");
         int harm2hit = stats.GetDoubleHarmonyHit();
         int harm2count = stats.GetDoubleHarmonyPhraseCount();
         int harm3hit = stats.GetTripleHarmonyHit();
         int harm3count = stats.GetTripleHarmonyPhraseCount();
         if (harm2count != 0 || harm3count != 0) {
-            static Symbol vocals_grid("vocals_grid");
-            static Symbol completed_double_harmonies("completed_double_harmonies");
-            static Symbol completed_triple_harmonies("completed_triple_harmonies");
-            static Symbol perfect_harmony("perfect_harmony");
             static Symbol instrument_specific("instrument_specific");
             if (b)
                 count++;
@@ -511,8 +511,8 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     else
         ptr.Node(count++) = DataArrayPtr(page_break);
 
-    static Symbol achievement_progress("achievement_progress");
     Symbol completedSongSym = performer->GetCompletedSong();
+    static Symbol achievement_progress("achievement_progress");
     if (b)
         count++;
     else

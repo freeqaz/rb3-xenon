@@ -26,6 +26,8 @@ InterstitialMgr::InterstitialMgr()
 }
 
 void InterstitialMgr::SetFromConfig() {
+    static Symbol vignettes("vignettes");
+    static Symbol interstitials("interstitials");
     DataArray *cfg = SystemConfig(vignettes, interstitials);
     for (int i = 1; i < cfg->Size(); i++) {
         DataArray *arr = cfg->Array(i);

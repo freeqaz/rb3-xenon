@@ -373,6 +373,8 @@ void TrackPanelDir::SetupApplauseMeter(
         Find<RndGroup>("applause_meter.grp", true)->SetShowing(true);
     }
     if (mScoreboard) {
+        static Symbol stars("stars");
+        static Symbol streak("streak");
         static Message set_opponent_score("set_opponent_score", 0);
         if (s7 == stars) {
             set_opponent_score[0] = (float)i1 / 100.0f;

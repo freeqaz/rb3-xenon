@@ -387,6 +387,7 @@ DataNode AccomplishmentPanel::Goal_HandleButtonDownMsg(const ButtonDownMsg &msg)
         break;
     case kAction_Option:
         if (HasLeaderboard()) {
+            static Message handle_goto_leaderboard_msg("handle_goto_leaderboard", 0);
             Handle(handle_goto_leaderboard_msg, true);
             HandleSoundSelect(msg.GetUser());
         }

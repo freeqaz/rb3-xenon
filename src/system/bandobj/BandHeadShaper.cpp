@@ -208,6 +208,7 @@ bool BandHeadShaper::Start(
     if (mesh->Verts().size() == 0)
         return false;
     else {
+        static Symbol female("female");
         ObjectDir *visemedir = gVisemes[0 + 2 * (s != female)];
         if (visemedir) {
             CharClip *clip = visemedir->Find<CharClip>("Base", false);

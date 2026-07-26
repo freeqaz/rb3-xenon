@@ -408,6 +408,8 @@ void SessionMgr::ChangeRandomSeed() {
 }
 
 bool SessionMgr::AreInvitesAllowed() const {
+    static Symbol joining_allowed_in_transition("joining_allowed_in_transition");
+    static Symbol joining_allowed("joining_allowed");
     bool blocked = false;
     if (!TheGameMode->Property(joining_allowed_in_transition, true)->Int())
         if (TheUI->InTransition())

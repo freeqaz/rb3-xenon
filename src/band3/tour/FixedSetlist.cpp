@@ -9,6 +9,9 @@ FixedSetlist::FixedSetlist() : mWeight(1), m_pSongEntries(NULL), mName("") {}
 FixedSetlist::~FixedSetlist() {}
 
 void FixedSetlist::Init(const DataArray *i_pConfig) {
+    static Symbol group("group");
+    static Symbol weight("weight");
+    static Symbol songs("songs");
     MILO_ASSERT(i_pConfig, 0x1e);
 
     mName = i_pConfig->Sym(0);

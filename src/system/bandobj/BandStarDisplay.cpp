@@ -21,6 +21,8 @@ BandStarDisplay::BandStarDisplay()
 BandStarDisplay::~BandStarDisplay() {}
 
 void BandStarDisplay::SetNumStars(float f, bool b) {
+    static Symbol tour("tour");
+    static Symbol dest("dest");
     SetupStars();
     if (f < 0.0f)
         return;

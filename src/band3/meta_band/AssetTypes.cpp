@@ -6,6 +6,28 @@
 #include "system/utl/Symbols4.h"
 
 Symbol GetSymbolFromAssetType(AssetType asset_type) {
+    // Retail declares all 19 of these as function-local statics at the TOP of the
+    // body (guard word 0x82E001F0, bits 0x1..0x40000 in this exact order); the
+    // rb3-Wii oracle used file-scope Symbols*.h globals instead.
+    static Symbol bandana("bandana");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol earrings("earrings");
+    static Symbol eyebrows("eyebrows");
+    static Symbol facehair("facehair");
+    static Symbol feet("feet");
+    static Symbol glasses("glasses");
+    static Symbol guitar("guitar");
+    static Symbol hair("hair");
+    static Symbol hands("hands");
+    static Symbol hat("hat");
+    static Symbol keyboard("keyboard");
+    static Symbol legs("legs");
+    static Symbol mic("mic");
+    static Symbol piercings("piercings");
+    static Symbol rings("rings");
+    static Symbol torso("torso");
+    static Symbol wrist("wrist");
     Symbol symbol = gNullStr;
     switch (asset_type) {
     case kAssetType_None:
@@ -102,6 +124,16 @@ AssetGender GetAssetGenderFromSymbol(Symbol symbol) {
 }
 
 Symbol GetSymbolFromAssetBoutique(AssetBoutique boutique) {
+    // guard word 0x82E00214, bits 0x1..0x100 in declaration order
+    static Symbol boutique_boss("boutique_boss");
+    static Symbol boutique_romantic("boutique_romantic");
+    static Symbol boutique_scrapper("boutique_scrapper");
+    static Symbol boutique_sheathed("boutique_sheathed");
+    static Symbol boutique_showman("boutique_showman");
+    static Symbol boutique_thatstore("boutique_thatstore");
+    static Symbol boutique_warrior("boutique_warrior");
+    static Symbol boutique_tshirts("boutique_tshirts");
+    static Symbol boutique_premium("boutique_premium");
     Symbol symbol = gNullStr;
     switch (boutique) {
     case kAssetBoutique_None:
@@ -219,6 +251,24 @@ const char *GetConfigNameFromAssetType(AssetType assetType) {
 }
 
 Symbol GetDefaultAssetFromAssetType(AssetType assetType, AssetGender assetGender) {
+    // guard word 0x82E0025C, bits 0x1..0x8000 in declaration order (note retail
+    // declares the gendered pairs FIRST, then the none_* set)
+    static Symbol male_torso_naked("male_torso_naked");
+    static Symbol femalebra_cotton("femalebra_cotton");
+    static Symbol male_hands_naked("male_hands_naked");
+    static Symbol female_hands_naked("female_hands_naked");
+    static Symbol male_feet_naked("male_feet_naked");
+    static Symbol female_feet_naked("female_feet_naked");
+    static Symbol none_bandana("none_bandana");
+    static Symbol none_earrings("none_earrings");
+    static Symbol none_eyebrows("none_eyebrows");
+    static Symbol none_facehair("none_facehair");
+    static Symbol none_glasses("none_glasses");
+    static Symbol none_hair("none_hair");
+    static Symbol none_hat("none_hat");
+    static Symbol none_piercings("none_piercings");
+    static Symbol none_rings("none_rings");
+    static Symbol none_wrists("none_wrists");
     Symbol asset = gNullStr;
     switch (assetType) {
     case kAssetType_None:

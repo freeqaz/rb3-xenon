@@ -56,6 +56,7 @@ void CrowdAudio::Enter() {
     mWon = false;
     mLoopChangeTime = 1e+30f;
     mLastClapBeat = 0;
+    static Message want_outro_duck_msg("want_outro_duck");
     mWantDuck = HandleType(want_outro_duck_msg).Int();
     SetEnabled(true);
     SetPaused(false);

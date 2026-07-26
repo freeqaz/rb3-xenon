@@ -762,6 +762,8 @@ void VocalTrack::RebuildHUD() {
             mDir->SetTambourine(true);
         }
         unk208 = -1;
+        static Symbol pitch_guides("pitch_guides");
+        static Symbol harmonic("harmonic");
         if (mDir->Property(pitch_guides, true)->Sym() == harmonic) {
             int tonic =
                 ((BandSongMetadata *)TheSongMgr.Data(TheSongMgr.GetSongIDFromShortName(
