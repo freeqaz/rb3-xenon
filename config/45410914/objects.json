@@ -99,6 +99,18 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "system/bandobj/OvershellDir.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "system/bandobj/PlayerDiffIcon.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/BandStarDisplay.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
