@@ -216,7 +216,7 @@ void DxRnd::FinishPostProcess() {
     Hmx::Rect rect(0, 0, (float)mWidth, (float)mHeight);
     RndMat *mat = TheShaderMgr.GetPostProcMat();
     mat->SetBlend((BaseMaterial::Blend)1);
-    mat->SetZMode((BaseMaterial::ZMode)0);
+    mat->SetZMode((ZMode)0);
     TheShaderMgr.unk30 = 0;
     DrawRect(rect, mat, (ShaderType)0x10, Hmx::Color(), nullptr, nullptr);
     SavePostBuffer();
@@ -230,7 +230,7 @@ void DxRnd::CopyPostProcess() {
     Hmx::Rect rect(0, 0, (float)mWidth, (float)mHeight);
     RndMat *mat = TheShaderMgr.GetPostProcMat();
     mat->SetBlend((BaseMaterial::Blend)1);
-    mat->SetZMode((BaseMaterial::ZMode)0);
+    mat->SetZMode((ZMode)0);
     TheShaderMgr.unk30 = 1;
     static bool sCopyPostInited;
     if (sCopyPostInited) {

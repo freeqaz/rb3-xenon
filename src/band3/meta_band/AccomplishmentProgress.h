@@ -23,6 +23,7 @@ _STLP_TEMPLATE_NULL struct hash<Symbol> {
 }
 #endif
 
+class Accomplishment;
 class Band;
 class BandProfile;
 class Performer;
