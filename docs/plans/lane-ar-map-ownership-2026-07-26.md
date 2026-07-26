@@ -183,6 +183,17 @@ The 10 non-overlapping WRONG-UNIT/UNPINNED candidates from §1 all landed,
 exactly, sandwiched by the true claimant's own ranges. **The pin and the map
 entry were mutually reinforcing: each alone reads as evidence for the other.**
 
+> ★**CORRECTION (laneAV, 2026-07-26) — "sandwiched" does NOT license a wholesale
+> range move.** The shape above is a *single-function island* whose extent equals
+> one symbol's `symbols.txt` extent. Read as a general rule it is wrong, and
+> laneAV measured the cost: moving a whole sandwiched island **destroyed a named
+> match and replaced it with a byte-paired anonymous `fn_`** — net zero while
+> looking like progress. ⇒ **A whole-island move can buy a fake match with a real
+> one.** Move a range only when every symbol inside it is accounted for; otherwise
+> move the single function. Safe composition primitive:
+> `scripts/harvest/splits_additive_merge.py` (refuses on any interval overlap —
+> `git apply --3way` cannot do this).
+
 ★**The discriminator is not the symbol's kind.** The pre-issued heuristic
 ("STL/`??_D`/`??_G` thunks ⇒ scatter; member functions ⇒ splits") was **wrong**:
 `??_DDxLight`, `??_GDxLight` and `__destroy_range<Data*>` are all
