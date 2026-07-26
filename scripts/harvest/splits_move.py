@@ -421,6 +421,58 @@ def _position(drange, start, end):
 # --------------------------------------------------------------------------
 # apply
 # --------------------------------------------------------------------------
+def _empty_blocks(path_or_lines):
+    """Unit blocks left with no REAL section range.
+
+    A WHOLE move can consume a donor's only `.text` range.  What survives is a
+    header plus, at most, the `.pdata` sub-ranges dtk back-filled from that now
+    departed `.text` -- and `.pdata` alone is meaningless, being a derived view.
+    dtk emits a sectionless ~86-byte stub obj for such a block and
+    `objdiff-cli report generate` HARD-FAILS on it ("Invalid COFF/PE section
+    headers"), producing no report.json at all.  So `.pdata` does not count as
+    content here; only `.text` / `.rdata` / `.data` / `.bss` do.
+    """
+    if isinstance(path_or_lines, str):
+        lines = open(path_or_lines).read().split('\n')
+    else:
+        lines = path_or_lines
+    out, cur, n = [], None, 0
+    for ln in list(lines) + ['EOF:']:
+        if ln is None:
+            continue
+        if ln.endswith(':') and ln and not ln.startswith((' ', '\t')):
+            if cur is not None and n == 0:
+                out.append(cur)
+            cur = None if ln[:-1] == 'Sections' else ln[:-1]
+            n = 0
+            continue
+        m = RANGE_RE.match(ln) if cur is not None else None
+        if m and m.group(1) != 'pdata':
+            n += 1
+    return out
+
+
+def _drop_empty_blocks(lines):
+    """Delete (in place) each degenerate unit block -- header and its orphaned
+    `.pdata` lines.  Returns the unit names dropped."""
+    empty = set(_empty_blocks(lines))
+    if not empty:
+        return []
+    keep, dropping = [], False
+    for ln in lines:
+        if ln is not None and ln.endswith(':') and ln \
+                and not ln.startswith((' ', '\t')):
+            dropping = ln[:-1] in empty
+            if dropping:
+                continue
+        elif dropping and (ln is None or not ln.strip()
+                           or RANGE_RE.match(ln)):
+            continue          # orphaned .pdata / blank inside a dropped block
+        keep.append(ln)
+    lines[:] = keep
+    return sorted(empty)
+
+
 def apply_moves(worktree, moves, dry=False):
     """Atomically: shrink each donor range, insert the span into the claimant.
 
@@ -504,6 +556,19 @@ def apply_moves(worktree, moves, dry=False):
             lines += ['', f'{claimant}:', newline]
         applied.append(mv)
 
+    # ------------------------------------------------------------------
+    # A WHOLE move can consume a donor's ONLY `.text` range.  The block then
+    # survives as a bare header (plus at most a `.pdata` line dtk drops next
+    # rebuild), dtk emits an ~86-byte stub obj with no sections, and
+    # `objdiff-cli report generate` HARD-FAILS with "Invalid COFF/PE section
+    # headers" -- no report.json at all, so this is a build stop, not noise.
+    # laneU batches C1 and C2 hit it independently on 17 donors.  Drop any unit
+    # block left with zero ranges. (laneU fix, 2026-07-26)
+    emptied = _drop_empty_blocks(lines)
+    if emptied:
+        print('dropped %d emptied donor block(s): %s'
+              % (len(emptied), ', '.join(sorted(emptied))))
+
     text = '\n'.join(lines)
     if not text.endswith('\n'):
         text += '\n'
@@ -511,12 +576,12 @@ def apply_moves(worktree, moves, dry=False):
     open(tmp, 'w').write(text)
     units = parse_splits(tmp)
     findings = audit(units, verbose=False)
-    dups = audit_dup_blocks(tmp)
+    dups = audit_dup_blocks(tmp) + [('EMPTY', u) for u in _empty_blocks(tmp)]
     if findings or dups:
         print('REFUSING TO WRITE -- post-move audit failed:')
         audit(units)
         for d in dups:
-            print('  !! DUPLICATE BLOCK', d)
+            print('  !! BAD BLOCK', d)
         os.unlink(tmp)
         return applied, refused + [(None, 'AUDIT FAILED')], False
     if dry:
@@ -559,10 +624,14 @@ def main():
         units = parse_splits(path)
         f = audit(units)
         dups = audit_dup_blocks(path)
+        empties = _empty_blocks(path)
         for d in dups:
             print('  !! DUPLICATE BLOCK', d)
-        print('audit: %d range finding(s), %d duplicate block(s)'
-              % (len(f), len(dups)))
+        for d in empties:
+            print('  !! EMPTY BLOCK (sectionless stub obj -> objdiff report'
+                  ' hard-fails)', d)
+        print('audit: %d range finding(s), %d duplicate block(s),'
+              ' %d empty block(s)' % (len(f), len(dups), len(empties)))
         return 1 if (f or dups) else 0
 
     if a.cmd == 'scan':

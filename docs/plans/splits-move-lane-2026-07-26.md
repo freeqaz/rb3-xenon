@@ -365,3 +365,175 @@ guaranteed regression and the tell is usually in the symbol's own name.
   a move.
 * Map repair is single-owner and was not touched.
 * `auto_03_*` units and 0x828–0x82C (XDK vendor + Quazal) are out of scope.
+
+---
+
+# laneU — draining the WRONG-UNIT residual (2026-07-26)
+
+Follow-on lane. Start: main `88a92ad5`, strict **28,382**, residual **497
+proposals** (overwhelmingly MIDDLE) left by laneQ. Branch `laneU-moves2`.
+
+Method change vs laneQ: laneQ verified **one move per worktree**. That was the
+right call while the primitive was unproven, but a splits-only change rebuilds
+in **39 s** (dtk re-split + report; our compiled objs are untouched), so laneU
+verified **whole evidence tiers as single batches** with bisect held in reserve.
+It was never needed: every batch was perfectly additive.
+
+## Tiering
+
+The laneQ selection filter (`n_wrong >= 4`, density >= 0.5) matches exactly
+**one** proposal in the residual — laneQ drained it. laneU re-tiered by raw
+evidence count instead:
+
+| tier | filter | n |
+|---|---|--:|
+| A | `n_wrong >= 3` | 31 |
+| B | `n_wrong == 2` | 40 |
+| C | `n_wrong == 1` | 427 |
+
+## Waves
+
+| wave | what | moves | Δ | running |
+|---|---|--:|--:|--:|
+| A | `n_wrong >= 3` | 31 | **+227** | 28,609 |
+| E | rescan-after-A, newly visible | 4 | +4 | 28,613 |
+| F | EH-funclet channel (`PARENT_OFFUNIT`, unmatched > 0) | 9 | +17 | 28,630 |
+| G | EH-funclet honesty repair (already-100% in wrong unit) | 21 | **−8** | 28,622 |
+| B | `n_wrong == 2` | 40 | +92 | 28,714 |
+
+### Wave A — the evidence count is the whole ranking
+
+31/31 applied, 0 refused, **+227**: 142 NAMED by-name gains against 0 NAMED
+losses. The gains are coherent whole-method runs of the claimant class
+(`CommonPhraseCapturer::OneTrackCompletedPhrase/Reset/HasPlayedWholePhrase/…`,
+`TrackerManager` ctor/dtor/`SetTracker`/`ConfigureQuestGoal`,
+`CharGuitarString::Poll/Save/Copy/Handle`, `RndEnviron::AddLight/RemoveLight/
+ReclassifyLights`, `GemTrainerPanel::Draw/ShouldLoop/AddBeatMask/…`). Named
+symbols pair by name, so none of this can be positional artifact.
+
+22 anonymous positional matches were removed in the process — fake 100%s, an
+honesty gain, and already netted out of the +227.
+
+### Waves F and G — the EH channel is independent and cheap
+
+`funclet_cascade_rank.py` flags `PARENT_OFFUNIT` when a parent's `__unwind$`
+funclets are pinned to a different unit than the parent. When the **parent is a
+NAMED mangled symbol**, its unit is ground truth and the funclets must follow.
+laneU mechanised that into moves: take each contiguous funclet run pinned to the
+kid unit, clamp it to the containing donor range, and move it to the parent's
+unit. Every generated span contains **zero mapped symbols**, so the refusal
+criterion (a name-paired symbol the claimant does not define) cannot fire — this
+class is structurally safe.
+
+* **F** (9 runs whose funclets are currently *unmatched*): +17, all 40–88 B EH
+  funclets. Real under the normalized headline metric, ~99.5% raw — priced
+  separately as low-information.
+* **G** (21 runs whose funclets already read **100% in the wrong unit**): 27
+  funclets moved, 19 keep matching honestly in their true owner, **8 do not** —
+  those 8 were fake positional matches. **Cost −8, funded for correctness.**
+
+Residual `PARENT_OFFUNIT` after F+G: only anonymous-parent rows, where neither
+side's unit is corroborated by a name. Not actionable from this channel.
+
+### Wave B — two-evidence tier, real bodies not funclets
+
+40/40 KEEP, no bisect. +92 measured in isolation and **+92 again** when replayed
+on top of A/E/F/G — perfectly additive. 96 by-name gains (60 NAMED), of which
+only **9** are 40-byte EH funclets: this tier is real-body-dominated. 4 more
+anonymous fakes removed.
+
+### Wave C — the single-evidence bulk, and it is the cleanest tier of all
+
+427 proposals with `n_wrong == 1`, split three ways and verified concurrently in
+three isolated worktrees. **420 KEEP / 7 DROP, +201.**
+
+| batch | KEEP | Δ isolated | Δ replayed on top of A/B/E/F/G |
+|---|--:|--:|--:|
+| C1 | 141/143 | +65 | +65 |
+| C2 | 141/143 | +75 | +75 |
+| C3 | 138/141 | +63 | +61 (2 spans already taken by wave E) |
+
+**All 201 gains are NAMED mangled symbols — zero anonymous.** Single-evidence
+was expected to be the weakest tier; it is instead the *purest*. Nothing in it
+is positional, nothing was a fake match being repaid, and it lost nothing.
+
+The intuition that low evidence density means low confidence is wrong for the
+same structural reason looseness was: `n_wrong` counts how many symbols in the
+span our objs happen to *define*, which tracks how ported the claimant's source
+is — not how sure the boundary is.
+
+## laneU results
+
+**28,382 → 28,915 (+533).** 471 moves landed, 7 refused, over 6 waves.
+
+| wave | moves | Δ |
+|---|--:|--:|
+| A — `n_wrong >= 3` | 31 | +227 |
+| B — `n_wrong == 2` | 40 | +92 |
+| C1/C2/C3 — `n_wrong == 1` | 420 | +201 |
+| E — rescan cascade | 4 | +4 |
+| F — EH funclets, unmatched | 9 | +17 |
+| G — EH funclets, honesty repair | 21 | −8 |
+| **total** | **525 attempted / 471 landed** | **+533** |
+
+Composition of the 565 by-name gains:
+
+* **407 NAMED** (378 of them >48 B — real bodies, coherent whole-method runs).
+* **158 anonymous**, of which **148 are <=48 B EH-funclet-class** — real under
+  the normalized headline metric, ~99.5% raw, low information. Price them
+  separately: **the substantive gain is ~417, the funclet-class gain ~148.**
+* **0 NAMED losses** across every wave.
+* **33 anonymous fake positional matches removed** (honesty gain, already netted
+  out of the +533; 8 of them deliberately bought in wave G).
+
+## The vein is drained
+
+Re-scan after the last wave:
+`OK 13,685 · WRONG-UNIT 7 · UNPORTED 322 · UNPINNED 592` → **7 proposals**,
+and those 7 *are* the 7 refusals. The WRONG-UNIT class went **665 -> 7**.
+Anything further must come from a different channel (`UNPINNED 592` is
+`homing_gen4`/`homing_apply4`'s pool; `UNPORTED 322` needs source, not splits).
+
+## Findings that revise the priors
+
+1. **`n_wrong` (evidence count) is a payoff predictor, not a safety predictor.**
+   Δ per move: A 7.3, B 2.3, C 0.48. Refusal rate is flat-to-inverse: A 0/31,
+   B 0/40, C 7/420 (1.7%). Rank by `n_wrong` to bank fastest, but do not treat
+   the low tier as risky — it was the cleanest.
+2. **MIDDLE-is-safest HELD at 20x the N.** laneQ measured it at 6/6. laneU
+   landed ~400 MIDDLE moves; of 7 refusals all 7 are MIDDLE, which is 1.9% of
+   the MIDDLE population — no worse than any other class, and every wave was
+   additive. The finding stands; keep MIDDLE at top priority.
+3. **A NEW refusal class** (found twice, independently, by C1 and C2): *the
+   claimant already owns a byte-identical 100% symbol of the same mangled name*.
+   Ceding a second same-named COMDAT gives the target obj two functions with one
+   name; objdiff's name pairing splits them and the pre-existing 100% dies. This
+   is COMDAT ubiquity (§3) surfacing on the *claimant* side rather than as a
+   wrong claimant pick. Pre-filter: refuse any proposal whose evidence name
+   already reads 100% in the claimant unit.
+4. **`n_carved_in_span == 0` is a reliable pre-screen** for spans that slice the
+   interior of a carved function; dtk refuses them outright ("ends within
+   symbol"). Filter at scan time.
+5. **`.pdata` remains a derived view**, confirmed again: 15 donor blocks were
+   left holding *only* dtk-back-filled `.pdata` after a WHOLE move, and that
+   `.pdata` was meaningless — see the tool fix below.
+
+### Tool fix landed in `splits_move.py`
+
+A WHOLE move can consume a donor's **only** `.text` range. The block survives as
+a bare header plus its back-filled `.pdata`; dtk emits a sectionless ~86-byte
+stub obj and **`objdiff-cli report generate` hard-fails** with `Invalid COFF/PE
+section headers` — no `report.json` at all, so it is a build stop, not noise.
+Batches C1 and C2 hit it independently on 17 donors.
+
+* `apply` now drops any block left with no real section (`.pdata` does not
+  count, being derived). 15 blocks were auto-dropped landing wave C.
+* `audit` reports **empty blocks** as a third finding class beside cross-unit
+  overlaps and duplicate blocks.
+
+### Still out of reach
+
+`IdentityInfo.cpp` and `ColorPalette.cpp` are unchanged from laneQ §5.6 — no map
+coverage, so the symbol-map channel has no opinion. Route to BinDiff or the
+rb3-Wii oracle. The residual `PARENT_OFFUNIT` rows after F+G are all
+anonymous-parent, where neither side's unit is corroborated by a name.
