@@ -553,7 +553,13 @@
    "system/synth/Stream.cpp": "NonMatching",
    "system/obj/DirUnloader.cpp": "NonMatching",
    "system/meta/StoreOffer.cpp": "NonMatching",
-   "system/meta/MoviePanel.cpp": "NonMatching",
+   "system/meta/MoviePanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/Y-",
+     "/DRB3_MAP_0x1C"
+    ]
+   },
    "system/meta/StorePanel.cpp": "NonMatching",
    "system/meta/ConnectionStatusPanel.cpp": "NonMatching",
    "system/utl/FilePath.cpp": "NonMatching",

@@ -174,6 +174,12 @@ public:
     std::vector<PatchSticker *> mStickersLoading; // 0x1b4
     RndTex *mTex; // 0x1bc
     mutable bool unk1c0; // 0x1c0
+    // Retail sizeof(PatchDir) == 0x258, ours was 0x254 (ground truth:
+    // PatchPanel::Load's `new PatchDir()` emits `li r3, 0x258` in the target vs
+    // `li r3, 0x254` in our build).  69/99 of PatchDir's own functions already
+    // match with the offsets above, so the missing word is placed at the tail
+    // where it cannot disturb any of them.
+    int unk1c4; // 0x1c4
 };
 
 BinStream &operator<<(BinStream &, const PatchDescriptor &);

@@ -13,7 +13,7 @@ public:
     void Begin();
     void Update(const unsigned char *, unsigned int);
     void End();
-    void GetHash(unsigned char *);
+    __declspec(noinline) void GetHash(unsigned char *);
 };
 
 class StreamChecksumValidator {

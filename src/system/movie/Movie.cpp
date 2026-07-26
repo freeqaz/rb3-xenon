@@ -78,6 +78,12 @@ bool Movie::BeginFromFile(
     return mImpl->BeginFromFile(c, f, b1, b2, b3, b4, i, stream, lp);
 }
 
+bool Movie::BeginFromFile(
+    char const *c, float f, bool b1, bool b2, bool b3, bool b4, int i, BinStream *stream
+) {
+    return BeginFromFile(c, f, b1, b2, b3, b4, i, stream, kLoadFront);
+}
+
 void Movie::Draw() {
     START_AUTO_TIMER("movie");
     mImpl->Draw();

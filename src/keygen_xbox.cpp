@@ -95,10 +95,14 @@ void KeyChain::getMasher(unsigned char *uc) {
 }
 
 void mash(unsigned char *uc1, unsigned char *uc2) {
-    unsigned int *ui1 = (unsigned int *)uc1;
-    unsigned int *ui2 = (unsigned int *)uc2;
+    // NOTE(laneAJ-c): under /Od MSVC assigns the two locals to fixed frame
+    // slots by NAME (ui1 -> -0x10, ui2 -> -0xc) regardless of declaration
+    // order, so retail's "-0x10 holds uc2" is reproduced by binding the
+    // names the other way round, not by reordering the declarations.
+    unsigned int *ui1 = (unsigned int *)uc2;
+    unsigned int *ui2 = (unsigned int *)uc1;
     for (int i = 0; i < 8; i++) {
-        ui1[i] = ui1[i] ^ ui2[i];
+        ui2[i] = ui2[i] ^ ui1[i];
     }
 }
 

@@ -35,7 +35,9 @@ void PatchSelectPanel::Load() {
         MILO_FAIL("PatchSelectPanel must have a profile to pull from!");
     }
     mPatchProvider = new PatchProvider(mSourceProfile->mPatches);
-    mGridProvider = new UIGridProvider(mPatchProvider, 3);
+    // Retail X360 uses 4 columns here, not the rb3-Wii oracle's 3
+    // (target emits `li r5, 0x4` at this call site).
+    mGridProvider = new UIGridProvider(mPatchProvider, 4);
 }
 
 void PatchSelectPanel::FinishLoad() {

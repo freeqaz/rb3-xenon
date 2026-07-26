@@ -106,10 +106,17 @@ bool WinSockSocket::Fail() const {
     val.tv_usec = 0;
     set.fd_count = 1;
     set.fd_array[0] = mSocket;
-    // NOTE(laneAG-imm): 99.5% -- the only difference is the polarity of the
-    // `case 1` compare (retail `bne` to the exit, ours `beq` to the store);
-    // block layout is otherwise identical. An if/else-if chain and a
-    // `default: return mFail;` switch were both measured WORSE (76% / 90%).
+    // NOTE(laneAJ-c): retail's dispatch is `beq case-1; cmpwi 1; bne exit;
+    // b case1`, i.e. the *inverted* nesting below -- an if/else where the
+    // then-branch early-returns and the else-branch holds the SOCKET_ERROR
+    // log. A switch (any case order) emits `beq case1; b exit` instead.
+    // NOTE(laneAG-imm/laneAJ-c): 99.5% -- the only difference is the polarity
+    // of the `case 1` compare (retail `bne` to the exit + `b` to the store;
+    // ours `beq` to the store + `b` to the exit); block layout is otherwise
+    // identical. Measured WORSE: if/else-if chain (76%), `default: return
+    // mFail;` switch (90%), inverted-nesting if/else (90.5%), explicit gotos
+    // spelling retail's CFG (92.4% -- MSVC hoists the log block up into the
+    // first branch), `default: break;` written first (no change).
     switch (select(0, nullptr, nullptr, &set, &val)) {
     case -1:
         MILO_LOG("select returned SOCKET_ERROR %d\n", WSAGetLastError());

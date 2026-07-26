@@ -4,6 +4,13 @@
 #include "os/Debug.h"
 #include "os/UserMgr.h"
 
+// Retail's release MILO_FAIL/MILO_WARN discarded the format string but still
+// materialized the by-value String argument of the (inlined-away) formatter.
+// A by-value class param of an inlined empty callee is what makes MSVC forward
+// the copy-ctor's returned `this` in r3 straight into the dtor call (no reload
+// of the temp's address) -- exactly what the target does here.
+static inline void MiloDiscardedFmtArg(const char *, String) {}
+
 Synchronizable::Synchronizable(const char *cc) : mDirtyMask(0) {
     if (strcmp(cc, ""))
         Publish(cc);
@@ -40,7 +47,9 @@ void Synchronizable::SetSyncDirty(unsigned int ui, bool b) {
         if (b)
             SynchronizeIfDirty();
     } else
-        MILO_WARN("Obj %s cannot SetSyncDirty without permission!", String(mTag));
+        MiloDiscardedFmtArg(
+            "Obj %s cannot SetSyncDirty without permission!", String(mTag)
+        );
 }
 
 void Synchronizable::SynchronizeIfDirty() {

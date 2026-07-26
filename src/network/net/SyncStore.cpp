@@ -8,6 +8,13 @@
 #include "utl/MakeString.h"
 #include "utl/MemStream.h"
 
+// Retail's release MILO_FAIL/MILO_WARN discarded the format string but still
+// materialized the by-value String argument of the (inlined-away) formatter.
+// A by-value class param of an inlined empty callee is what makes MSVC forward
+// the copy-ctor's returned `this` in r3 straight into the dtor call (no reload
+// of the temp's address) -- exactly what the target does here.
+static inline void MiloDiscardedFmtArg(const char *, String) {}
+
 SyncStore *TheSyncStore;
 
 NetMessage *SyncObjMsg::NewNetMessage() { return new SyncObjMsg(); }
@@ -54,9 +61,7 @@ Synchronizable *SyncStore::GetSyncObj(String &str) {
         if (str == mSyncObjs[i]->GetUniqueTag())
             return mSyncObjs[i];
     }
-    // retail materialized MakeString's by-value String param (copy ctor+dtor)
-    // then stripped the MakeString call; String(str) reproduces that temp.
-    MILO_FAIL("Sync Obj %s is not in our store", String(str));
+    MiloDiscardedFmtArg("Sync Obj %s is not in our store", String(str));
     return nullptr;
 }
 

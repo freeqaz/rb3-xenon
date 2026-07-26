@@ -318,8 +318,7 @@ void MoviePanel::PlayMovie() {
         mPreload,
         mFillWidth,
         mLanguage,
-        0,
-        kLoadFront
+        0
     );
 }
 

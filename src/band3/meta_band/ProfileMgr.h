@@ -194,14 +194,15 @@ public:
     bool mSynapseEnabled; // 0x69
     bool unk58a; // 0x6a
     bool mSecondPedalHiHat; // 0x6b
-    DataResultList mDataResults; // 0x6c (ends 0x84)
     // TU5 (2026-07-16 reseed): retail X360 keeps exactly ONE 4-byte member from
-    // the Wii WiiSpeak/WiiFriends block here (rb3-Wii ProfileMgr.h has that block
-    // at 0x5a4-0x5b8, between mDataResults and mMicVolumes). Its identity is
-    // unknown, so a placeholder int occupies the slot. Verified from post-reseed
-    // objdiff ground truth: mMicVolumes @0x88 (UpdateMultiMicDeviceSliders),
-    // mProfiles @0xa0 (Poll), and Handle anchors at this+0xc8 (retail sizeof).
-    int mUnkTU5_0x84; // 0x84 TODO: identify (Wii WiiSpeak/WiiFriends survivor)
+    // the Wii WiiSpeak/WiiFriends block. Its identity is unknown, so a
+    // placeholder int occupies the slot. It sits BEFORE mDataResults, not after:
+    // ProfileMgr::SyncProfileSetlists passes `addi r5, r29, 0x70` for
+    // mDataResults in the target (we emitted 0x6c). With DataResultList == 0x18
+    // bytes that puts mDataResults at 0x70..0x88, which keeps the already-verified
+    // mMicVolumes @0x88 / mProfiles @0xa0 / sizeof 0xc8 anchors intact.
+    int mUnkTU5_0x6c; // 0x6c TODO: identify (Wii WiiSpeak/WiiFriends survivor)
+    DataResultList mDataResults; // 0x70 (ends 0x88)
     std::vector<int> mMicVolumes; // 0x88
     DataArray *mSliderConfig; // 0x94
     DataArray *mVoiceChatSliderConfig; // 0x98

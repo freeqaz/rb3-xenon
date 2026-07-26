@@ -15,6 +15,13 @@
 #include "utl/Symbol.h"
 #include "utl/Symbols2.h"
 
+// Retail's release MILO_FAIL/MILO_WARN discarded the format string but still
+// materialized the by-value String argument of the (inlined-away) formatter.
+// A by-value class param of an inlined empty callee is what makes MSVC forward
+// the copy-ctor's returned `this` in r3 straight into the dtor call (no reload
+// of the temp's address) -- exactly what the target does here.
+static inline void MiloDiscardedFmtArg(const char *, String) {}
+
 DynamicTex::DynamicTex(const char *c1, const char *c2, bool b1, bool b2)
     : mTex(Hmx::Object::New<RndTex>()), mMatName(c2), mMat(0), mLoader(0), unk1c(b2) {
     if (c1 != gNullStr) {
@@ -202,7 +209,7 @@ void TexLoadPanel::FinalizeTexturesChunk() {
                 if (found)
                     found->SetDiffuseTex(t->mTex);
                 else
-                    MILO_WARN("Could not find %s", String(t->mMatName));
+                    MiloDiscardedFmtArg("Could not find %s", String(t->mMatName));
             }
         }
         mCurrentFinalizingTexture++;

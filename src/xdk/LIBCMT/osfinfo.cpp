@@ -30,7 +30,7 @@ extern "C" long long _free_osfhnd(unsigned int fh) {
         array_idx = (int)fh >> 5;
         pio = &__pioinfo[array_idx][fh & 0x1f];
         if ((pio->osfile & FOPEN) != 0 && pio->osfhnd != -1) {
-            *__doserrno() = -1;
+            pio->osfhnd = -1;
             return 0;
         }
     }

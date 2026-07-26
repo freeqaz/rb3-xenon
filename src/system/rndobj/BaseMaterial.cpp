@@ -80,7 +80,8 @@ BEGIN_SAVES(BaseMaterial)
     bs << mBlend << (const Vector4 &)mColor << mUseEnviron << mPrelit;
     bs << mZMode << mAlphaCut << mAlphaThreshold << mAlphaWrite;
     bs << mTexGen << mTexWrap << mTexXfm << mDiffuseTex << mNextPass;
-    bs << mIntensify << mCull << mEmissiveMultiplier;
+    bs << mIntensify;
+    bs << mCull << mEmissiveMultiplier;
     bs << (const Vector4 &)mSpecularRGB << mNormalMap;
     bs << mEmissiveMap << mSpecularMap;
     bs << mEnvironMap << mEnvironMapFalloff << mEnvironMapSpecMask;

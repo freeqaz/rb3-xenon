@@ -150,15 +150,19 @@ public:
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x4c
     std::vector<StandIn> mStandIns; // 0x54
     HxGuid unk5c; // 0x5c
-    std::set<Symbol> mCampaignKeys; // retail 0x7c (shifted -4 vs Wii: unk6c relocated below)
-    std::set<Symbol> unk88; // retail 0x94
-    std::set<Symbol> mUnlockedModifiers; // retail 0xac
-    GameplayOptions mGameplayOptions; // retail 0xb4
-    AccomplishmentProgress mAccomplishmentProgress; // retail 0x10c
-    // Retail X360 relocates the transient (non-serialized) mLastPrefabCharUsed here,
-    // AFTER mAccomplishmentProgress — not at Wii's 0x6c. Keeps sizeof identical while
-    // shifting mCampaignKeys..mAccomplishmentProgress down 4 to match retail offsets.
-    Symbol unk6c; // mLastPrefabCharUsed, retail slot after mAccomplishmentProgress
+    // unk6c (mLastPrefabCharUsed) sits HERE, exactly as on Wii — an earlier
+    // hypothesis relocated it below mAccomplishmentProgress to shift this whole
+    // block -4.  That was wrong: the retail target reads mCampaignKeys at 0x80,
+    // unk88 at 0x98 and mAccomplishmentProgress at 0x110 (see
+    // build/45410914/asm/band3/meta_band/BandProfile.s), i.e. +4 vs the shifted
+    // layout.  Moving it back is size-neutral, so the tail (unk740 …
+    // mTourBand / 0x7c88) is unchanged.
+    Symbol unk6c; // mLastPrefabCharUsed
+    std::set<Symbol> mCampaignKeys; // retail 0x80
+    std::set<Symbol> unk88; // retail 0x98
+    std::set<Symbol> mUnlockedModifiers; // retail 0xb0
+    GameplayOptions mGameplayOptions; // retail 0xb8
+    AccomplishmentProgress mAccomplishmentProgress; // retail 0x110
     int unk740;
     int mAccomplishmentDataUploadContextID; // 0x744
     int unk74c;

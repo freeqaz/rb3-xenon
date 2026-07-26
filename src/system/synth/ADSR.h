@@ -94,6 +94,7 @@ public:
      * @milofail When trying to load where rev > 1 or altRev > 0
      */
     void Load(BinStream &, ADSR *);
+    __declspec(noinline) void Load(BinStream &);
     /** Lazily bakes the float/mode envelope into the PS2-packed register pair. */
     void SyncPacked();
 

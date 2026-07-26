@@ -29,6 +29,10 @@ public:
     bool BeginFromFile(
         char const *, float, bool, bool, bool, bool, int, BinStream *, LoaderPos
     );
+    // RB3 retail's Movie::BeginFromFile takes no LoaderPos (the LoaderPos
+    // parameter is a newer dc3-engine addition). MoviePanel::PlayMovie calls
+    // this 8-parameter form -- target passes one fewer stack argument.
+    bool BeginFromFile(char const *, float, bool, bool, bool, bool, int, BinStream *);
     void Draw();
     bool Poll();
     void SetWidthHeight(int, int);

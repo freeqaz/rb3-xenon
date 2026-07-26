@@ -39,6 +39,17 @@ void NoteTube::SetGlowLevel(int i) {
     MILO_ASSERT_RANGE(mGlowLevel, 0, NumGlowLevels(), 73);
 }
 
+void TubePlate::Bake() {
+    if (!mBaked) {
+        RndMesh::VertVector &verts = mMesh->Verts();
+        if (mDeploy) {
+            mMatSize = verts[verts.size() - 2].tex.x;
+        }
+        mMesh->SetShowing(true);
+        mBaked = true;
+    }
+}
+
 void NoteTube::BakePlates() {
     if (mBackPlate)
         mBackPlate->Bake();
@@ -442,21 +453,6 @@ void TubePlate::AllocateFaces(int num, bool warn) {
             );
     }
     faces.resize(newsize);
-}
-
-void TubePlate::Bake() {
-    if (!mBaked) {
-        MILO_ASSERT(mMesh, 0x21A);
-        RndMesh::VertVector &verts = mMesh->Verts();
-        if (mDeploy) {
-            mMatSize = verts[verts.size() - 2].tex.x;
-        }
-        if (!mDeploy)
-            mMesh->SetMutable(0);
-        mMesh->Sync(0x2BF);
-        mMesh->SetShowing(true);
-        mBaked = true;
-    }
 }
 
 void TubePlate::SetShowing(bool b) { mMesh->SetShowing(b && mBaked); }

@@ -538,7 +538,7 @@ void UILabel::SetTextToken(Symbol s) {
 
 void UILabel::SetInt(int i, bool b) {
     if (b) {
-        SetDisplayText(LocalizeSeparatedInt(i, TheLocale), true);
+        SetDisplayText(LocalizeSeparatedInt(i), true);
     } else
         SetDisplayText(MakeString("%d", i), true);
 }

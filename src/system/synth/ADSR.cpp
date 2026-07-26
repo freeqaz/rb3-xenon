@@ -296,8 +296,10 @@ BinStream &operator<<(BinStream &bs, const ADSRImpl &adsr) {
     return bs;
 }
 
+void ADSRImpl::Load(BinStream &bs) { Load(bs, nullptr); }
+
 BinStream &operator>>(BinStream &bs, ADSRImpl &adsr) {
-    adsr.Load(bs, nullptr);
+    adsr.Load(bs);
     return bs;
 }
 
