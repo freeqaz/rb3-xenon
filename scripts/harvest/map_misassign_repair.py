@@ -69,6 +69,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('worktree')
     ap.add_argument('--apply', action='store_true')
+    ap.add_argument('--drop-dangling', action='store_true',
+                    help='remove entries naming a symbol their unit does not define')
     a = ap.parse_args()
     wt = a.worktree
     map_path = os.path.join(wt, 'scripts/target_symbol_map.json')
@@ -84,7 +86,7 @@ def main():
     for p in glob.glob(os.path.join(wt, 'build/45410914/src/**/*.obj'), recursive=True):
         base_by_name[os.path.basename(p)].append(p)
 
-    stats, repairs = collections.Counter(), {}
+    stats, repairs, drops = collections.Counter(), {}, set()
     root = os.path.join(wt, 'build/45410914/obj')
     for tp in sorted(glob.glob(os.path.join(root, '**', '*.obj'), recursive=True)):
         rel = os.path.relpath(tp, root)
@@ -111,7 +113,14 @@ def main():
             stats['named_below100'] += 1
             bg = by_name.get(nm)
             if bg is None:
+                # The entry names a symbol this unit does not define, so the
+                # renamed target symbol can never pair. Dead weight, and it
+                # holds the name hostage from a target that could use it.
                 stats['no_such_base_symbol'] += 1
+                vas = name2va.get(nm, [])
+                if a.drop_dangling and len(vas) == 1:
+                    stats['DANGLING_DROPPED'] += 1
+                    drops.add(vas[0])
                 continue
             if bg == g:
                 stats['masked_equal_yet_below100'] += 1
@@ -133,19 +142,36 @@ def main():
         # line-level substitution keeps the diff to one line per repair; a
         # re-serialise churns the whole 25k-line file and blocks concurrent lanes.
         lines = open(map_path).read().split('\n')
-        done = 0
+        done = dropped = 0
+        keep = []
         for i, ln in enumerate(lines):
             mm = re.match(r'^(\s*)("0[xX][0-9a-fA-F]+")\s*:\s*(.*?)(,?)$', ln)
             if not mm:
+                keep.append(ln)
                 continue
             key = json.loads(mm.group(2))
+            if key in drops:
+                dropped += 1
+                continue
             if key in repairs:
-                lines[i] = '%s%s: %s%s' % (mm.group(1), mm.group(2),
-                                           json.dumps(repairs[key]), mm.group(4))
+                ln = '%s%s: %s%s' % (mm.group(1), mm.group(2),
+                                     json.dumps(repairs[key]), mm.group(4))
                 done += 1
-        open(map_path, 'w').write('\n'.join(lines))
+            keep.append(ln)
+        # a dropped line may have carried the trailing comma of the last entry
+        for i in range(len(keep) - 1, -1, -1):
+            t = keep[i].rstrip()
+            if t.endswith(','):
+                keep[i] = keep[i].rstrip()[:-1]
+                break
+            if t.endswith('}') or not t:
+                continue
+            break
+        print('dropped %d dangling entries' % dropped)
+        open(map_path, 'w').write('\n'.join(keep))
         chk = json.load(open(map_path))
         assert all(chk.get(k) == v for k, v in repairs.items())
+        assert not (drops & set(chk))
         print('applied %d repairs -> %s' % (done, map_path))
 
 
