@@ -11,7 +11,6 @@ public:
     OBJ_CLASSNAME(ChooseColorPanel);
     OBJ_SET_TYPE(ChooseColorPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~ChooseColorPanel() {}
     virtual void Draw();
     virtual void Enter();
     virtual void Exit();

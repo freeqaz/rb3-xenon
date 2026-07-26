@@ -54,6 +54,10 @@ public:
     }
 
 protected:
+    // Retail ClosetPanel::Poll/TakePortrait (0x825ED484 / 0x825ED81C) touch
+    // mOutputTexture / mDirty directly; no accessor call in the target bytes.
+    friend class ClosetPanel;
+
     RndTexRenderer();
     void InitTexture();
 
