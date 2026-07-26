@@ -932,3 +932,7 @@ void DxRnd::DoPointTests() {
 #include "band3/meta_band/AccomplishmentManager.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneW homing scan: DxMesh's dtor + scalar-deleting dtor COMDATs were scattered
+// by the retail linker into this TU's pinned .text span (0x827385D0, 0x82738AB8).
+#include "rnddx9/Mesh.cpp"

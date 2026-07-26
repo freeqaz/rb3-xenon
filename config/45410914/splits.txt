@@ -1608,15 +1608,15 @@ PitchShiftEffect.cpp:
 	.pdata      start:0x8225B748 end:0x8225B790
 	.text       start:0x82B6D5C0 end:0x82B6DA3C
 
-FxSendDistortion.cpp:
+system/synth_xbox/FxSendDistortion.cpp:
 	.pdata      start:0x8225AD10 end:0x8225ADB8
 	.text       start:0x82B61488 end:0x82B61C38
 
-FxSendEQ.cpp:
+system/synth_xbox/FxSendEQ.cpp:
 	.pdata      start:0x8225AF68 end:0x8225B010
 	.text       start:0x82B630C0 end:0x82B638C8
 
-FxSendChorus.cpp:
+system/synth_xbox/FxSendChorus.cpp:
 	.pdata      start:0x8225AE60 end:0x8225AF00
 	.text       start:0x82B62450 end:0x82B62C54
 
@@ -1912,7 +1912,9 @@ HeadsetXferEffect.cpp:
 
 StreamReceiver360.cpp:
 	.pdata      start:0x8225B5B8 end:0x8225B660
+	.pdata      start:0x8225E8B8 end:0x8225E8C0
 	.text       start:0x82B6BA78 end:0x82B6C6EC
+	.text       start:0x82BB33D8 end:0x82BB342C
 
 FIFOSampleBuffer.cpp:
 	.pdata      start:0x8225BD68 end:0x8225BDA0
@@ -5737,7 +5739,7 @@ UITrigger.cpp:
 	.text       start:0x82824F78 end:0x82825800
 	.text       start:0x82825808 end:0x82826374
 
-FxSend.cpp:
+system/synth/FxSend.cpp:
 	.pdata      start:0x82238E40 end:0x82238E48
 	.pdata      start:0x82238E70 end:0x82238F10
 	.pdata      start:0x82238F68 end:0x82238F70
@@ -6775,10 +6777,14 @@ UIListSubList.cpp:
 	.text       start:0x82820D50 end:0x82820E28
 
 system/synth/FxSendReverb.cpp:
-	.pdata      start:0x82239790 end:0x822397C8
-	.pdata      start:0x822397C8 end:0x822398B8
-	.text       start:0x8271F6B8 end:0x8271FAB8
-	.text       start:0x8271FAC0 end:0x82720A50
+	.pdata      start:0x82239750 end:0x822397C8
+	.pdata      start:0x822397C8 end:0x82239828
+	.text       start:0x8271F470 end:0x8271FAB8
+	.text       start:0x8271FAC0 end:0x82720098
+
+system/synth/FxSendChorus.cpp:
+	.pdata      start:0x82239828 end:0x822398B8
+	.text       start:0x827200A0 end:0x82720A50
 
 Achievements.cpp:
 	.pdata      start:0x8223DA28 end:0x8223DA30
@@ -6794,9 +6800,27 @@ system/synth/FxSendCompress.cpp:
 	.text       start:0x82721718 end:0x82721B10
 	.text       start:0x82721C98 end:0x82722040
 
+system/synth/FxSendEQ.cpp:
+	.pdata      start:0x822399D0 end:0x82239AB8
+	.text       start:0x82722040 end:0x82722CB8
+
+system/synth/FxSendFlanger.cpp:
+	.pdata      start:0x82239AB8 end:0x82239B48
+	.text       start:0x82722CB8 end:0x82723698
+
+system/synth/FxSendSynapse.cpp:
+	.pdata      start:0x822389C8 end:0x82238A58
+	.text       start:0x82712160 end:0x82712C28
+
 system/synth/FxSendMeterEffect.cpp:
 	.pdata      start:0x82239B48 end:0x82239C88
 	.text       start:0x82723698 end:0x82724A90
+
+system/synth/FxSendDistortion.cpp:
+	.pdata      start:0x82238A90 end:0x82238AA0
+	.pdata      start:0x82239910 end:0x82239950
+	.text       start:0x82712F90 end:0x82713020
+	.text       start:0x82721224 end:0x82721370
 
 system/synth_xbox/FxSendMeterEffect.cpp:
 	.pdata      start:0x8225B058 end:0x8225B0E0
@@ -6833,7 +6857,7 @@ ThreadCall_Win.cpp:
 	.text       start:0x82527998 end:0x825279C0
 	.text       start:0x825279C0 end:0x82527A54
 
-FxSendSynapse.cpp:
+system/synth_xbox/FxSendSynapse.cpp:
 	.pdata      start:0x8225B498 end:0x8225B4B0
 	.text       start:0x82B6A160 end:0x82B6A384
 
@@ -12064,3 +12088,25 @@ OggMap.cpp:
 FlowSlider.cpp:
 	.pdata      start:0x8222E8D8 end:0x8222E8E0
 	.text       start:0x82666160 end:0x826661CC
+
+CharIKMidi.cpp:
+	.pdata      start:0x82206380 end:0x82206388
+	.pdata      start:0x82206408 end:0x82206410
+	.pdata      start:0x82206430 end:0x82206450
+	.pdata      start:0x822064C0 end:0x822064D0
+	.text       start:0x823C9010 end:0x823C90E0
+	.text       start:0x823C9708 end:0x823C97C0
+	.text       start:0x823C9880 end:0x823C9E04
+	.text       start:0x823CA488 end:0x823CA5B0
+
+CharTaskMgr.cpp:
+	.pdata      start:0x82208FE8 end:0x82208FF0
+	.text       start:0x823F4810 end:0x823F484C
+
+system/utl/DeJitter.cpp:
+	.pdata      start:0x82242E60 end:0x82242E68
+	.text       start:0x827D0B40 end:0x827D0BF4
+
+system/synth_xbox/FxSend.cpp:
+	.pdata      start:0x8225B3E0 end:0x8225B3E8
+	.text       start:0x82B69648 end:0x82B69714

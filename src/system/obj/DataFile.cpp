@@ -761,3 +761,7 @@ int DataLoaderThreadObj::ThreadStart() {
 }
 
 void DataLoaderThreadObj::ThreadDone(int) { mLoader->ThreadDone(mResult); }
+
+// Scatter-include: retail placed TextFile.cpp's COMDATs inside DataFile.cpp's
+// .text span (0x8276D244-0x8276D540). Emit them from this TU so objdiff pairs.
+#include "obj/TextFile.cpp"

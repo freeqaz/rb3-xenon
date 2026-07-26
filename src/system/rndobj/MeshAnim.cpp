@@ -293,6 +293,16 @@ void RndMeshAnim::ShrinkKeys(int num) {
 #include "rndobj/MultiMesh.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneW homing scan: RndFur's ctor/Save/Copy COMDATs were scattered by the retail
+// linker into this TU's pinned .text span (0x8246BEF0, 0x8246C250, 0x8246C3B0).
+// Must sit here, BEFORE ShaderMgr/NetGameMsgs/Voice: those pull in obj/ObjMacros.h,
+// which redefines INIT_REVS to the 1-arg dialect and breaks Fur.cpp's INIT_REVS(3, 0).
+#define gRev gRev_Fur
+#define gAltRev gAltRev_Fur
+#include "rndobj/Fur.cpp"
+#undef gRev
+#undef gAltRev
 #include "rndobj/ShaderMgr.cpp"
 #include "math/mtx.cpp"
 
