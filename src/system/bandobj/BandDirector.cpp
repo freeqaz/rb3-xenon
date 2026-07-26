@@ -736,6 +736,15 @@ void BandDirector::HarvestDircuts() {
     }
 }
 
+// Retail 0x8228DD38 (0x244 bytes). Placeholder: the real body re-drives the
+// per-character lip-sync assignment from the four CharLipSync* members retail
+// caches at 0x120-0x12c (see the declaration comment in BandDirector.h). Those
+// members do not exist in our layout yet — the block still lives inlined in
+// OnFileLoaded below, exactly as in the rb3-Wii dev source — so this is a no-op
+// for now, which is behaviour-identical to what the call site in
+// BandWardrobe::SetPlayMode did before the call was restored.
+void BandDirector::SetCharacterLipSyncs() {}
+
 void BandDirector::AddSymbolKey(Symbol s1, Symbol s2, float f) {
     if (mPropAnim) {
         DataArrayPtr ptr(s1);
