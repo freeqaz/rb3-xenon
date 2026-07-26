@@ -1,0 +1,278 @@
+[
+ {
+  "va": "0x822744e0",
+  "name": "??_E__non_rtti_object@std@@UAAPAXI@Z",
+  "cls": "std",
+  "sibling_syms": 40
+ },
+ {
+  "va": "0x822b8900",
+  "name": "?CheckNoFlashcardsCondition@AccomplishmentSongConditional@@IBA_NPAVSongStatusMgr@@VSymbol@@@Z",
+  "cls": "AccomplishmentSongConditional",
+  "sibling_syms": 20
+ },
+ {
+  "va": "0x82351420",
+  "name": "?SetGameOver@GamePanel@@QAAX_N@Z",
+  "cls": "GamePanel",
+  "sibling_syms": 36
+ },
+ {
+  "va": "0x82360fb0",
+  "name": "?SetDancer@AppLabel@@QAAXVSymbol@@@Z",
+  "cls": "AppLabel",
+  "sibling_syms": 74
+ },
+ {
+  "va": "0x823bef28",
+  "name": "?DoFSM@CharIKFoot@@IAAXPAVCharacter@@AAVTransform@@@Z",
+  "cls": "CharIKFoot",
+  "sibling_syms": 25
+ },
+ {
+  "va": "0x82419138",
+  "name": "?FillCompressedVerts@DxMesh@@IAAXXZ",
+  "cls": "DxMesh",
+  "sibling_syms": 13
+ },
+ {
+  "va": "0x82447f00",
+  "name": "?InitParticle@RndParticleSys@@IAAXMPAVRndParticle@@PBVTransform@@@Z",
+  "cls": "RndParticleSys",
+  "sibling_syms": 128
+ },
+ {
+  "va": "0x8251c048",
+  "name": "?IsInParty@PlatformMgr@@QAA_NXZ",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8251c0d0",
+  "name": "?IsInPartyWithOthers@PlatformMgr@@QAA_NXZ",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8251c180",
+  "name": "?SetScreenSaver@PlatformMgr@@QAAX_N@Z",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8253a7a8",
+  "name": "?InviteParty@PlatformMgr@@QAAXH@Z",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x82545e90",
+  "name": "?GetProfileFromPad@ProfileMgr@@QBAPAVHamProfile@@H@Z",
+  "cls": "ProfileMgr",
+  "sibling_syms": 128
+ },
+ {
+  "va": "0x82590320",
+  "name": "?GiveGamerpic@AccomplishmentProgress@@AAAXPAVAccomplishment@@@Z",
+  "cls": "AccomplishmentProgress",
+  "sibling_syms": 109
+ },
+ {
+  "va": "0x82590400",
+  "name": "?GiveAvatarAsset@AccomplishmentProgress@@AAAXPAVAccomplishment@@@Z",
+  "cls": "AccomplishmentProgress",
+  "sibling_syms": 109
+ },
+ {
+  "va": "0x825c5ea0",
+  "name": "?SetChallengerGamertag@AppLabel@@QAAXH@Z",
+  "cls": "AppLabel",
+  "sibling_syms": 74
+ },
+ {
+  "va": "0x825c5f00",
+  "name": "?SetBestBattleScore@AppLabel@@QAAXPAVHamProfile@@H@Z",
+  "cls": "AppLabel",
+  "sibling_syms": 74
+ },
+ {
+  "va": "0x82680c98",
+  "name": "?SetNotInGame@PresenceMgr@@QAAXXZ",
+  "cls": "PresenceMgr",
+  "sibling_syms": 6
+ },
+ {
+  "va": "0x8268b2a8",
+  "name": "?HasAsFriend@BandUser@@QBA_NPAV1@@Z",
+  "cls": "BandUser",
+  "sibling_syms": 61
+ },
+ {
+  "va": "0x826ee4d8",
+  "name": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+  "cls": "PitchCorrectedVoice",
+  "sibling_syms": 6
+ },
+ {
+  "va": "0x826f0f18",
+  "name": "?HasFinishedCampaign@BandProfile@@QBA_NXZ",
+  "cls": "BandProfile",
+  "sibling_syms": 96
+ },
+ {
+  "va": "0x82713b40",
+  "name": "?SynthPoll@MidiInstrument@@UAAXXZ",
+  "cls": "MidiInstrument",
+  "sibling_syms": 20
+ },
+ {
+  "va": "0x827145f0",
+  "name": "?Reset@ATanInterpolator@@QAAXABVVector2@@0M@Z",
+  "cls": "ATanInterpolator",
+  "sibling_syms": 3
+ },
+ {
+  "va": "0x82733538",
+  "name": "?DrawRect@DxRnd@@UAAXABVRect@Hmx@@PAVRndMat@@W4ShaderType@@ABVColor@3@PBV63@4@Z",
+  "cls": "DxRnd",
+  "sibling_syms": 60
+ },
+ {
+  "va": "0x82734148",
+  "name": "?DoCompress@DxTex@@QAAXPAX@Z",
+  "cls": "DxTex",
+  "sibling_syms": 4
+ },
+ {
+  "va": "0x82734360",
+  "name": "?Compress@DxTex@@UAAXW4AlphaCompress@RndTex@@@Z",
+  "cls": "DxTex",
+  "sibling_syms": 4
+ },
+ {
+  "va": "0x827343b0",
+  "name": "?TexelsPitch@DxTex@@UBAIXZ",
+  "cls": "DxTex",
+  "sibling_syms": 4
+ },
+ {
+  "va": "0x827349d8",
+  "name": "?GetRT@DxTex@@QAAPAUD3DSurface@@XZ",
+  "cls": "DxTex",
+  "sibling_syms": 4
+ },
+ {
+  "va": "0x827350e8",
+  "name": "?SetDeviceTex@DxTex@@QAAXPAUD3DTexture@@@Z",
+  "cls": "DxTex",
+  "sibling_syms": 4
+ },
+ {
+  "va": "0x82735bf0",
+  "name": "?SetPConstant@DxShaderMgr@@UAAXW4PShaderConstant@@_N@Z",
+  "cls": "DxShaderMgr",
+  "sibling_syms": 7
+ },
+ {
+  "va": "0x82736ff0",
+  "name": "?SetBorderColor@RndRenderState@@QAAXI_N@Z",
+  "cls": "RndRenderState",
+  "sibling_syms": 18
+ },
+ {
+  "va": "0x82737958",
+  "name": "?Fill@DxMesh@@IAAXPAVVert@RndMesh@@0@Z",
+  "cls": "DxMesh",
+  "sibling_syms": 13
+ },
+ {
+  "va": "0x82738b10",
+  "name": "?CheckFurTransformCache@DxMesh@@IAA_NXZ",
+  "cls": "DxMesh",
+  "sibling_syms": 13
+ },
+ {
+  "va": "0x8273b488",
+  "name": "?FinishPostProcess@DxRnd@@AAAXXZ",
+  "cls": "DxRnd",
+  "sibling_syms": 60
+ },
+ {
+  "va": "0x8273c458",
+  "name": "?CopyPostProcess@DxRnd@@AAAXXZ",
+  "cls": "DxRnd",
+  "sibling_syms": 60
+ },
+ {
+  "va": "0x827b4c68",
+  "name": "?Unloading@StorePanel@@UBA_NXZ",
+  "cls": "StorePanel",
+  "sibling_syms": 34
+ },
+ {
+  "va": "0x823f0ed8",
+  "name": "?SetAllocator@SampleData@@SAXP6APAXHPBDH0H@ZP6AXPAX0H0@Z@Z",
+  "cls": "SampleData",
+  "sibling_syms": 19
+ },
+ {
+  "va": "0x824f9388",
+  "name": "?OnStartLoadSong@GamePanel@@AAA?AVDataNode@@PAVDataArray@@@Z",
+  "cls": "GamePanel",
+  "sibling_syms": 36
+ },
+ {
+  "va": "0x8251be08",
+  "name": "?IsEthernetCableConnected@PlatformMgr@@QAA_NXZ",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8251ca58",
+  "name": "?GetName@PlatformMgr@@QBAPBDH@Z",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8273cc08",
+  "name": "?ReleaseAutoRelease@DxRnd@@QAAXXZ",
+  "cls": "DxRnd",
+  "sibling_syms": 60
+ },
+ {
+  "va": "0x82270510",
+  "name": "?Release@DataArray@@QAAXXZ",
+  "cls": "DataArray",
+  "sibling_syms": 77
+ },
+ {
+  "va": "0x8251bec8",
+  "name": "?SetPadContext@PlatformMgr@@QBAXHHH@Z",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8251bf18",
+  "name": "?SetPadPresence@PlatformMgr@@QBAXHH@Z",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8251c840",
+  "name": "?SetPadProperty@PlatformMgr@@QBAXHHPBG@Z",
+  "cls": "PlatformMgr",
+  "sibling_syms": 26
+ },
+ {
+  "va": "0x8255f9c8",
+  "name": "?OnCancel@SongSortMgr@@UAA?AVDataNode@@XZ",
+  "cls": "SongSortMgr",
+  "sibling_syms": 21
+ },
+ {
+  "va": "0x82737440",
+  "name": "?CanDraw@DxMesh@@IBA_NXZ",
+  "cls": "DxMesh",
+  "sibling_syms": 13
+ }
+]
