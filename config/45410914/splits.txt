@@ -4751,19 +4751,26 @@ Font3d.cpp:
 	.text       start:0x824742E8 end:0x824743B8
 
 system/rndobj/Movie.cpp:
+	.pdata      start:0x82209158 end:0x82209160
+	.pdata      start:0x82209160 end:0x82209178
 	.pdata      start:0x8220FC08 end:0x8220FC10
 	.pdata      start:0x8220FC88 end:0x8220FC90
 	.pdata      start:0x8220FC90 end:0x8220FC98
 	.pdata      start:0x8220FCB0 end:0x8220FCB8
 	.pdata      start:0x8220FCB8 end:0x8220FCC0
 	.pdata      start:0x82210650 end:0x82210658
+	.pdata      start:0x822133E0 end:0x822133E8
 	.pdata      start:0x82213AE8 end:0x82213AF0
+	.text       start:0x823F5C98 end:0x823F5D3C
+	.text       start:0x823F5D3C end:0x823F5DD8
 	.text       start:0x82478038 end:0x824780B0
+	.text       start:0x824781A0 end:0x824781A8
 	.text       start:0x82478750 end:0x82478790
 	.text       start:0x824787C8 end:0x8247884C
 	.text       start:0x82478980 end:0x82478A20
 	.text       start:0x82478A28 end:0x82478B34
 	.text       start:0x82484B40 end:0x82484B84
+	.text       start:0x824BD6C0 end:0x824BD718
 	.text       start:0x824C5E90 end:0x824C5EC0
 
 MultiMesh.cpp:
@@ -6653,9 +6660,11 @@ system/rndobj/CubeTex.cpp:
 	.pdata      start:0x821F1A50 end:0x821F1A58
 	.pdata      start:0x821F75E8 end:0x821F75F0
 	.pdata      start:0x82211350 end:0x822114A0
+	.pdata      start:0x82212378 end:0x82212380
 	.text       start:0x82275210 end:0x8227525C
 	.text       start:0x822CED50 end:0x822CEDA0
 	.text       start:0x82494FD8 end:0x824964EC
+	.text       start:0x824AA3E0 end:0x824AA438
 
 CacheMgr.cpp:
 	.pdata      start:0x82242CD0 end:0x82242CF8
@@ -11074,9 +11083,12 @@ system/synth/Synth.cpp:
 	.pdata      start:0x82237380 end:0x82237390
 	.pdata      start:0x82237390 end:0x82237398
 	.pdata      start:0x82237398 end:0x822373A8
+	.pdata      start:0x822373D8 end:0x822373E0
+	.pdata      start:0x822374F0 end:0x822374F8
 	.pdata      start:0x822374F8 end:0x82237500
 	.pdata      start:0x82237510 end:0x82237518
 	.pdata      start:0x82237518 end:0x82237520
+	.pdata      start:0x82237878 end:0x82237880
 	.pdata      start:0x822378F0 end:0x822378F8
 	.text       start:0x8262F310 end:0x8262F368
 	.text       start:0x826FBD60 end:0x826FBDB0
@@ -11088,9 +11100,12 @@ system/synth/Synth.cpp:
 	.text       start:0x826FCA10 end:0x826FCA90
 	.text       start:0x826FCA90 end:0x826FCB28
 	.text       start:0x826FCB28 end:0x826FCCE0
+	.text       start:0x826FCEB0 end:0x826FCF20
+	.text       start:0x826FD8D8 end:0x826FD968
 	.text       start:0x826FD968 end:0x826FDB98
 	.text       start:0x826FDFB0 end:0x826FE014
 	.text       start:0x826FE018 end:0x826FE07C
+	.text       start:0x82701368 end:0x82701414
 	.text       start:0x82701938 end:0x82701A28
 
 RGGemMatcher.cpp:
@@ -11645,28 +11660,11 @@ SpeechMgr.cpp:
 	.text       start:0x824CD818 end:0x824CD878
 	.text       start:0x824CD8B8 end:0x824CD9A4
 
-Movie.cpp:
-	.pdata      start:0x82209158 end:0x82209160
-	.pdata      start:0x82209160 end:0x82209178
-	.pdata      start:0x822133E0 end:0x822133E8
-	.text       start:0x823F5C98 end:0x823F5D3C
-	.text       start:0x823F5D3C end:0x823F5DD8
-	.text       start:0x824781A0 end:0x824781A8
-	.text       start:0x824BD6C0 end:0x824BD718
-
 UIEventMgr.cpp:
 	.pdata      start:0x8221EDF0 end:0x8221EDF8
 	.pdata      start:0x82242CC8 end:0x82242CD0
 	.text       start:0x8257C368 end:0x8257C3A0
 	.text       start:0x827CEDD0 end:0x827CEE20
-
-Synth.cpp:
-	.pdata      start:0x822373D8 end:0x822373E0
-	.pdata      start:0x822374F0 end:0x822374F8
-	.pdata      start:0x82237878 end:0x82237880
-	.text       start:0x826FCEB0 end:0x826FCF20
-	.text       start:0x826FD8D8 end:0x826FD968
-	.text       start:0x82701368 end:0x82701414
 
 ProfileMgr.cpp:
 	.pdata      start:0x8221B220 end:0x8221B228
@@ -11716,10 +11714,6 @@ system/world/Dir.cpp:
 	.text       start:0x826E4348 end:0x826E4444
 	.text       start:0x827E5D88 end:0x827E5F30
 	.text       start:0x827E5F30 end:0x827E5F58
-
-CubeTex.cpp:
-	.pdata      start:0x82212378 end:0x82212380
-	.text       start:0x824AA3E0 end:0x824AA438
 
 ContextChecker.cpp:
 	.pdata      start:0x8225B520 end:0x8225B528
