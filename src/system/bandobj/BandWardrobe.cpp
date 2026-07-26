@@ -310,8 +310,15 @@ void BandWardrobe::SetPlayMode(Symbol s, BandCamShot *shot) {
         SetContexts("venue");
         SyncTransProxies();
         SyncPlayMode();
-        if (TheBandDirector && !shot)
+        // Retail (0x823308EC-0x823308F4) makes TWO calls on TheBandDirector here:
+        // HarvestDircuts() then the factored-out per-character lip-sync assignment
+        // at 0x8228DD38 (same routine VenueLoaded/OnFileLoaded calls at
+        // 0x82292350). The rb3-Wii dev source has that loop inlined in
+        // VenueLoaded only, so this second call has no Wii equivalent.
+        if (TheBandDirector && !shot) {
             TheBandDirector->HarvestDircuts();
+            TheBandDirector->SetCharacterLipSyncs();
+        }
     }
 }
 

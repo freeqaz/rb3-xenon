@@ -505,13 +505,15 @@ Stream *Synth360::NewBufStream(const void *buf, int size, Symbol ext, float star
 }
 
 // Retail @82B2CC10 (0xFC): hxma -> XMAReader, mogg -> VorbisReader, else 0.
-StreamReader *Synth360::NewStreamDecoder(File *file, StandardStream *stream, Symbol ext) {
+StreamReader *Synth360::NewStreamDecoder(
+    File *file, StandardStream *stream, Symbol ext, bool floatSamples
+) {
     static Symbol hxma("hxma");
     static Symbol mogg("mogg");
     if (ext == hxma) {
         return new XMAReader(file, stream);
     } else if (ext == mogg) {
-        return new VorbisReader(file, true, stream, true);
+        return new VorbisReader(file, true, stream, floatSamples, true);
     } else {
         return nullptr;
     }

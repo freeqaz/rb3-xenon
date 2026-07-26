@@ -287,10 +287,12 @@ void Synth::NewStreamFile(const char *cc, File *&file, Symbol &sym) {
 #endif
 }
 
-StreamReader *Synth::NewStreamDecoder(File *file, StandardStream *stream, Symbol ext) {
+StreamReader *Synth::NewStreamDecoder(
+    File *file, StandardStream *stream, Symbol ext, bool floatSamples
+) {
 #ifdef HX_NATIVE
     if (ext == "mogg" || ext == "main") {
-        return new VorbisReader(file, true, stream, true);
+        return new VorbisReader(file, true, stream, floatSamples, true);
     }
 #endif
     return nullptr;

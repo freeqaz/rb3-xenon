@@ -1,0 +1,840 @@
+{
+ "_comment": "laneAO 2026-07-26. Map entries EVICTED from scripts/target_symbol_map.json because the base .obj of the unit that owns the entry VA (per config/45410914/splits.txt) does not define that COFF symbol, so objdiff can never pair it: the name stamps onto the target symbol, reads 0%, and blocks the anonymous pair_funclets_by_bytes path that would otherwise score it. Restricted to LOW-INFORMATION names (STL/template instantiations, vtable adjustor thunks, and entries whose true definer is a different unit). 197 sibling entries naming REAL member functions were deliberately RESTORED and are still in the map -- those are correct-but-not-yet-compiled identities and are forward-useful. Measured: +2 strict, 0 losses. For a splits lane: entries with class MOVE/MOVE-AMBIG name a symbol our tree DOES define, in the listed definer unit -> the VA is pinned to the wrong unit and wants a splits MOVE, not a map edit.",
+ "entries": {
+  "0x822973b0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAVChallengeRow@@IV1@@stlpmtx_std@@YAPAVChallengeRow@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "pinned_unit": "default/BandDirector"
+  },
+  "0x82298268": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVChallengeRow@@ABV3@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/BandDirector"
+  },
+  "0x8229d1a8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$MakeString@HHH@@YAPBDPBDABH11@Z",
+   "pinned_unit": "default/OutfitConfig"
+  },
+  "0x822aacd8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_erase@?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPronunciationsLoc@@PAU3@0ABU__false_type@2@@Z",
+   "pinned_unit": "default/band3/bandtrack/Gem"
+  },
+  "0x822ae070": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??_E?$ObjPtrVec@VRndMat@@VObjectDir@@@@UAAPAXI@Z",
+   "pinned_unit": "default/BandSwatch"
+  },
+  "0x822bb3c8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__push_heap@PAPAVPlaylist@@HPAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVPlaylist@@HHPAV1@P6A_NPBV1@2@Z@Z",
+   "pinned_unit": "default/Geo"
+  },
+  "0x822c6c30": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?clear@?$_Rb_tree@VString@@U?$less@VString@@@stlpmtx_std@@U?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@3@U?$_Select1st@U?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+   "pinned_unit": "default/BandRetargetVignette"
+  },
+  "0x822d4430": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Copy_Construct@VChallengeRecord@@@stlpmtx_std@@YAXPAVChallengeRecord@@ABV1@@Z",
+   "pinned_unit": "default/EndingBonus"
+  },
+  "0x822d45c0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__destroy_range_aux@V?$reverse_iterator@PAVStepMoves@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVStepMoves@@@0@0ABU__false_type@0@@Z",
+   "pinned_unit": "default/EndingBonus"
+  },
+  "0x822d4860": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Destroy_Range@PAVStepMoves@@@stlpmtx_std@@YAXPAVStepMoves@@0@Z",
+   "pinned_unit": "default/EndingBonus"
+  },
+  "0x822da698": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert@?$vector@UHamSpecialOffer@@V?$StlNodeAlloc@UHamSpecialOffer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamSpecialOffer@@IABU3@@Z",
+   "pinned_unit": "default/StreakMeter"
+  },
+  "0x822fa160": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?6HVSymbol@@@@YAAAVBinStream@@AAV0@ABV?$map@HVSymbol@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/VocalTrackDir"
+  },
+  "0x823199c8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$MakeString@$$BY07$$CBDH$$BY0CD@$$CBD@@YAPBDPBDAAY07$$CBDABHAAY0CD@$$CBD@Z",
+   "pinned_unit": "default/MetaPanel"
+  },
+  "0x82332298": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?push_back@?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPronunciationsLoc@@@Z",
+   "pinned_unit": "default/BandWardrobe"
+  },
+  "0x82338650": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAUPronunciationsLoc@@IU1@@stlpmtx_std@@YAPAUPronunciationsLoc@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x82338730": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Param_Construct@UPronunciationsLoc@@U1@@stlpmtx_std@@YAXPAUPronunciationsLoc@@ABU1@@Z",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x82339380": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??1?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x82339438": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPronunciationsLoc@@ABU3@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x82339948": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert@?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUPronunciationsLoc@@IABU3@@Z",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x8233a820": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?resize@?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUPronunciationsLoc@@@Z",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x8233a9c8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?5UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/BandCharDesc"
+  },
+  "0x8233c260": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?6VAttractor@@V?$StlNodeAlloc@VAttractor@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VAttractor@@V?$StlNodeAlloc@VAttractor@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/CharSignalApplier"
+  },
+  "0x8235c678": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@2@@Z",
+   "pinned_unit": "default/CharClip"
+  },
+  "0x8235cbc4": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Param_Construct@V?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@0@ABV10@@Z",
+   "pinned_unit": "default/Tour"
+  },
+  "0x8235f408": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@V?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@2@ABV32@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/CharClip"
+  },
+  "0x823e5d70": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??1?$vector@VCustomPlaylist@@V?$StlNodeAlloc@VCustomPlaylist@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "pinned_unit": "default/network/net/NetSession"
+  },
+  "0x82404d58": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?0U?$_List_iterator@PAVObjectDir@@U?$_Const_traits@PAVObjectDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVObjectDir@@V?$StlNodeAlloc@PAVObjectDir@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@PAVObjectDir@@U?$_Const_traits@PAVObjectDir@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@PAVObjectDir@@@1@@Z",
+   "pinned_unit": "default/Anim"
+  },
+  "0x824058b8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_splice_insert_dispatch@U?$_List_iterator@PAVObjectDir@@U?$_Const_traits@PAVObjectDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVObjectDir@@V?$StlNodeAlloc@PAVObjectDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@PAVObjectDir@@U?$_Nonconst_traits@PAVObjectDir@@@stlpmtx_std@@@1@U?$_List_iterator@PAVObjectDir@@U?$_Const_traits@PAVObjectDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "pinned_unit": "default/Anim"
+  },
+  "0x82464660": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?clear@?$_List_base@PAVObjectDir@@V?$StlNodeAlloc@PAVObjectDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+   "pinned_unit": "default/Graph"
+  },
+  "0x82472d78": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+   "pinned_unit": "default/Font"
+  },
+  "0x8248afe0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$MakeString@PBDHPBDI@@YAPBDPBDABQBDABH1ABI@Z",
+   "pinned_unit": "default/TexBlender"
+  },
+  "0x8249f558": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?6VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/EventTrigger"
+  },
+  "0x824b49b0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??1?$ObjPtrVec@VSpotlight@@VObjectDir@@@@UAA@XZ",
+   "pinned_unit": "default/LightPreset"
+  },
+  "0x824c6a98": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert@?$vector@VAttractor@@V?$StlNodeAlloc@VAttractor@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVAttractor@@IABV3@@Z",
+   "pinned_unit": "default/CameraShot"
+  },
+  "0x824d0618": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_splice_insert_dispatch@U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UFlauntStatusData@@V?$StlNodeAlloc@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UFlauntStatusData@@U?$_Nonconst_traits@UFlauntStatusData@@@stlpmtx_std@@@1@U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "pinned_unit": "default/Shockwave"
+  },
+  "0x824f69a0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??_E?$ObjPtrList@VUILabel@@VObjectDir@@@@UAAPAXI@Z",
+   "pinned_unit": "default/RockCentral"
+  },
+  "0x824f9230": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+   "pinned_unit": "default/RockCentral"
+  },
+  "0x82512d80": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_copy@PAUHamSpecialOffer@@PAU1@@stlpmtx_std@@YAPAUHamSpecialOffer@@PAU1@00ABU__false_type@0@@Z",
+   "pinned_unit": "default/Archive"
+  },
+  "0x82524660": {
+   "class": "MOVE",
+   "definers": [
+    "system/os/Keyboard"
+   ],
+   "name": "?KeyboardUnsubscribe@@YAXPAVObject@Hmx@@@Z",
+   "pinned_unit": "default/OnlineID"
+  },
+  "0x82548860": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?GetShouldAutosave@ProfileMgr@@QAA?AV?$vector@PAVBandProfile@@V?$StlNodeAlloc@PAVBandProfile@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "pinned_unit": "default/band3/meta_band/ProfileMgr"
+  },
+  "0x8256a038": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__make_heap@PAPAVCharClip@@UAlphabetically@@PAV1@H@stlpmtx_std@@YAXPAPAVCharClip@@0UAlphabetically@@0PAH@Z",
+   "pinned_unit": "default/band3/meta_band/LessonMgr"
+  },
+  "0x8256a1b8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$sort_heap@PAPAVCharClip@@UAlphabetically@@@stlpmtx_std@@YAXPAPAVCharClip@@0UAlphabetically@@@Z",
+   "pinned_unit": "default/band3/meta_band/LessonMgr"
+  },
+  "0x8257fcf8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?push_back@?$vector@VCustomPlaylist@@V?$StlNodeAlloc@VCustomPlaylist@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVCustomPlaylist@@@Z",
+   "pinned_unit": "default/MetaPerformer"
+  },
+  "0x8258c7f0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$DeleteAll@V?$vector@PAVNavListSort@@V?$StlNodeAlloc@PAVNavListSort@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVNavListSort@@V?$StlNodeAlloc@PAVNavListSort@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/band3/meta_band/BandProfile"
+  },
+  "0x825adb28": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?6UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@UPronunciationsLoc@@V?$StlNodeAlloc@UPronunciationsLoc@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/WaitingUserGate"
+  },
+  "0x825aeb10": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??_E?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@UAAPAXI@Z",
+   "pinned_unit": "default/WaitingUserGate"
+  },
+  "0x825bd390": {
+   "class": "MOVE",
+   "definers": [
+    "system/hamobj/HamPartyJumpData"
+   ],
+   "name": "?_M_erase@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU?$pair@HH@2@PAU32@ABU__false_type@2@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82606900": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$unique_copy@PA_KPA_K@stlpmtx_std@@YAPA_KPA_K00@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82606960": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__linear_insert@PA_K_KU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAXPA_K0_KU?$less@_K@0@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82606a08": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__make_heap@PA_KU?$less@_K@stlpmtx_std@@_KH@stlpmtx_std@@YAXPA_K0U?$less@_K@0@0PAH@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82607570": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert_aux@?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@AAAXPA_KIAB_KABU__false_type@2@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x826076b8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__unguarded_partition@PA_K_KU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAPA_KPA_K0_KU?$less@_K@0@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82607720": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__insertion_sort@PA_K_KU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAXPA_K00U?$less@_K@0@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82607770": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert@?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@AAAXPA_KIAB_K@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x826077e0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__final_insertion_sort@PA_KU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAXPA_K0U?$less@_K@0@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x82607840": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$sort_heap@PA_KU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAXPA_K0U?$less@_K@0@@Z",
+   "pinned_unit": "default/band3/meta_band/BandStorePanel"
+  },
+  "0x8260ded0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??_E?$ObjPtrList@VThreeDSound@@VObjectDir@@@@UAAPAXI@Z",
+   "pinned_unit": "default/CharacterCreatorPanel"
+  },
+  "0x82637888": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?SyncProperty@FlowPickOne@@$4PPPPPPPM@A@AA_NAAVDataNode@@GK@Z",
+   "pinned_unit": "default/band3/meta_band/SongSelectPanel"
+  },
+  "0x82639678": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAV?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
+   "pinned_unit": "default/band3/meta_band/StoreInfoPanel"
+  },
+  "0x8263b310": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_allocate_and_copy@PBVLeaderboardRow@@@?$vector@VLeaderboardRow@@V?$StlNodeAlloc@VLeaderboardRow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVLeaderboardRow@@IPBV2@0@Z",
+   "pinned_unit": "default/band3/meta_band/StoreMainPanel"
+  },
+  "0x8264e280": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?5VSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$map@VSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@U?$less@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/band3/meta_band/SongUpgradeMgr"
+  },
+  "0x82656a60": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__destroy_range_aux@V?$reverse_iterator@PAUTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTrackChannels@@@0@0ABU__false_type@0@@Z",
+   "pinned_unit": "default/PerformanceData"
+  },
+  "0x82656b40": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__destroy_range@PAUTrackChannels@@U1@@stlpmtx_std@@YAXPAUTrackChannels@@00@Z",
+   "pinned_unit": "default/PerformanceData"
+  },
+  "0x826676c8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$sort@PAVChallengeRow@@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVChallengeRow@@0P6A_NV1@1@Z@Z",
+   "pinned_unit": "default/PropKeys"
+  },
+  "0x8266d218": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAVChallengeRecord@@IV1@@stlpmtx_std@@YAPAVChallengeRecord@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "pinned_unit": "default/Leaderboard"
+  },
+  "0x8266d3d0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_copy@PAVChallengeRecord@@PAV1@@stlpmtx_std@@YAPAVChallengeRecord@@PAV1@00ABU__false_type@0@@Z",
+   "pinned_unit": "default/Leaderboard"
+  },
+  "0x8266d7a8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@VChallengeRecord@@V?$StlNodeAlloc@VChallengeRecord@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVChallengeRecord@@ABV3@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/Leaderboard"
+  },
+  "0x82683930": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?GetUsers@BandUserMgr@@UBAXAAV?$vector@PAVUser@@V?$StlNodeAlloc@PAVUser@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "pinned_unit": "default/PropKeys"
+  },
+  "0x82687178": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Copy_Construct@VStepMoves@@@stlpmtx_std@@YAXPAVStepMoves@@ABV1@@Z",
+   "pinned_unit": "default/band3/game/SongDB"
+  },
+  "0x82687af8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAVStepMoves@@IV1@@stlpmtx_std@@YAPAVStepMoves@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "pinned_unit": "default/band3/game/SongDB"
+  },
+  "0x82698540": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVColor@Hmx@@ABV?$StlNodeAlloc@VColor@Hmx@@@1@@Z",
+   "pinned_unit": "default/band3/game/Stats"
+  },
+  "0x826ca3d8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@2@00@Z",
+   "pinned_unit": "default/band3/game/TrainerPanel"
+  },
+  "0x826ca4a8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@2@@Z",
+   "pinned_unit": "default/band3/game/TrainerPanel"
+  },
+  "0x826ca8e0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@PAVCampaignEraSongProgress@@@2@@Z",
+   "pinned_unit": "default/band3/game/TrainerPanel"
+  },
+  "0x826e0a88": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSongStatus@@@2@00@Z",
+   "pinned_unit": "default/band3/game/PerfectOverdriveTracker"
+  },
+  "0x826e0b58": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBHVSongStatus@@@2@@Z",
+   "pinned_unit": "default/band3/game/PerfectOverdriveTracker"
+  },
+  "0x826e0d40": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHPAVSongMetadata@@@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBHPAVSongMetadata@@@2@@Z",
+   "pinned_unit": "default/band3/game/PerfectOverdriveTracker"
+  },
+  "0x826e0f28": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBHVSongStatus@@@2@@Z",
+   "pinned_unit": "default/band3/game/PerfectOverdriveTracker"
+  },
+  "0x826f9850": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$MakeString@VSymbol@@PBDPBD@@YAPBDPBDABVSymbol@@ABQBD2@Z",
+   "pinned_unit": "default/DepthBuffer3D"
+  },
+  "0x82706208": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Copy_Construct@VCustomPlaylist@@@stlpmtx_std@@YAXPAVCustomPlaylist@@ABV1@@Z",
+   "pinned_unit": "default/Sequence"
+  },
+  "0x82707048": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_copy@PAVCustomPlaylist@@PAV1@@stlpmtx_std@@YAPAVCustomPlaylist@@PAV1@00ABU__false_type@0@@Z",
+   "pinned_unit": "default/Sequence"
+  },
+  "0x8270a280": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@VCustomPlaylist@@V?$StlNodeAlloc@VCustomPlaylist@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVCustomPlaylist@@ABV3@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/Sequence"
+  },
+  "0x8273fff0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?Highlight@RndTransformable@@$4PPPPPPPM@LM@AAXXZ",
+   "pinned_unit": "default/system/rnddx9/CubeTex"
+  },
+  "0x8274e6d8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$?6VHamScrollSpeedIndicator@@@@YAAAVBinStream@@AAV0@ABV?$ObjDirPtr@VHamScrollSpeedIndicator@@@@@Z",
+   "pinned_unit": "default/system/obj/Dir"
+  },
+  "0x82778d60": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert@?$vector@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@2@IABV32@@Z",
+   "pinned_unit": "default/SongData"
+  },
+  "0x8277c788": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_range_insert_aux@PAH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAH00IABU__false_type@1@@Z",
+   "pinned_unit": "default/MasterAudio"
+  },
+  "0x8277c858": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_range_insert_realloc@PAH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAH00I@Z",
+   "pinned_unit": "default/MasterAudio"
+  },
+  "0x8277cc68": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_range_insert@PAH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAH00ABUforward_iterator_tag@1@@Z",
+   "pinned_unit": "default/MasterAudio"
+  },
+  "0x827a3860": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_copy@PBUTrackChannels@@PAU1@@stlpmtx_std@@YAPAUTrackChannels@@PBU1@0PAU1@ABU__false_type@0@@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827a3948": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAUTrackChannels@@IU1@@stlpmtx_std@@YAPAUTrackChannels@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827a39e8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_M_allocate_and_copy@PBUTrackChannels@@@?$vector@UTrackChannels@@V?$StlNodeAlloc@UTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUTrackChannels@@IPBU2@0@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827a3cf8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@UTrackChannels@@V?$StlNodeAlloc@UTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUTrackChannels@@ABU3@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827a3e88": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?reserve@?$vector@UTrackChannels@@V?$StlNodeAlloc@UTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827a3f30": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert@?$vector@UTrackChannels@@V?$StlNodeAlloc@UTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUTrackChannels@@IABU3@@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827a4bd0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?resize@?$vector@UTrackChannels@@V?$StlNodeAlloc@UTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUTrackChannels@@@Z",
+   "pinned_unit": "default/DataArraySongInfo"
+  },
+  "0x827cd8b8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??0?$pair@$$CBVString@@VChallengeBadgeInfo@@@stlpmtx_std@@QAA@ABVString@@ABVChallengeBadgeInfo@@@Z",
+   "pinned_unit": "default/DataPointMgr"
+  },
+  "0x827cdae8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_create_node@?$list@UMotdData@MainMenuPanel@@V?$StlNodeAlloc@UMotdData@MainMenuPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUMotdData@MainMenuPanel@@@Z",
+   "pinned_unit": "default/DataPointMgr"
+  },
+  "0x827cdd28": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?insert@?$list@UMotdData@MainMenuPanel@@V?$StlNodeAlloc@UMotdData@MainMenuPanel@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UMotdData@MainMenuPanel@@U?$_Nonconst_traits@UMotdData@MainMenuPanel@@@stlpmtx_std@@@2@U32@ABUMotdData@MainMenuPanel@@@Z",
+   "pinned_unit": "default/DataPointMgr"
+  },
+  "0x827d3460": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_copy@PAVCartRow@@PAV1@@stlpmtx_std@@YAPAVCartRow@@PAV1@00ABU__false_type@0@@Z",
+   "pinned_unit": "default/WaveFile"
+  },
+  "0x827d36b8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??1?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "pinned_unit": "default/WaveFile"
+  },
+  "0x827d3770": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVCartRow@@ABV3@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/WaveFile"
+  },
+  "0x827d39f0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?push_back@?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVCartRow@@@Z",
+   "pinned_unit": "default/WaveFile"
+  },
+  "0x827d5608": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__make_heap@PAPAVStoreOffer@@VSortCmp@@PAV1@H@stlpmtx_std@@YAXPAPAVStoreOffer@@0VSortCmp@@0PAH@Z",
+   "pinned_unit": "default/MemTracker"
+  },
+  "0x827d5c00": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__insertion_sort@PAPAVStoreOffer@@PAV1@VSortCmp@@@stlpmtx_std@@YAXPAPAVStoreOffer@@00VSortCmp@@@Z",
+   "pinned_unit": "default/MemTracker"
+  },
+  "0x827d5d70": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$sort_heap@PAPAVStoreOffer@@VSortCmp@@@stlpmtx_std@@YAXPAPAVStoreOffer@@0VSortCmp@@@Z",
+   "pinned_unit": "default/MemTracker"
+  },
+  "0x827d5e30": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__final_insertion_sort@PAPAVStoreOffer@@VSortCmp@@@stlpmtx_std@@YAXPAPAVStoreOffer@@0VSortCmp@@@Z",
+   "pinned_unit": "default/MemTracker"
+  },
+  "0x827d65b8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$sort@PAPAVStoreOffer@@VSortCmp@@@stlpmtx_std@@YAXPAPAVStoreOffer@@0VSortCmp@@@Z",
+   "pinned_unit": "default/MemTracker"
+  },
+  "0x827e49c8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Copy_Construct@U?$pair@$$CBVString@@VChallengeBadgeInfo@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@VChallengeBadgeInfo@@@0@ABU10@@Z",
+   "pinned_unit": "default/MidiParser"
+  },
+  "0x827f3548": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$MakeString@PBD$$BY0BE@$$CBDHG@@YAPBDPBDABQBDAAY0BE@$$CBDABHABG@Z",
+   "pinned_unit": "default/VocalTrackDir"
+  },
+  "0x82b5ac58": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??_E?$CSampleXAPOBase@VCompressionEffect@@UParams@1@@ATG@@MAAPAXI@Z",
+   "pinned_unit": "default/system/synth_xbox/Synth"
+  },
+  "0x82b5f450": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAUChatBuffer@MicManagerXbox@@IU12@@stlpmtx_std@@YAPAUChatBuffer@MicManagerXbox@@PAU12@IABU12@ABU__false_type@0@@Z",
+   "pinned_unit": "default/Mic"
+  },
+  "0x82b5f540": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_fill_insert_aux@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABFABU__false_type@2@@Z",
+   "pinned_unit": "default/Mic"
+  },
+  "0x82b5fbb0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?_M_insert_overflow_aux@?$vector@UChatBuffer@MicManagerXbox@@V?$StlNodeAlloc@UChatBuffer@MicManagerXbox@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUChatBuffer@MicManagerXbox@@ABU34@ABU__false_type@2@I_N@Z",
+   "pinned_unit": "default/Mic"
+  },
+  "0x82b60f10": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?push_back@?$vector@UChatBuffer@MicManagerXbox@@V?$StlNodeAlloc@UChatBuffer@MicManagerXbox@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUChatBuffer@MicManagerXbox@@@Z",
+   "pinned_unit": "default/Mic"
+  },
+  "0x82b64d60": {
+   "class": "MOVE",
+   "definers": [
+    "system/gesture/DrawUtl"
+   ],
+   "name": "?TerminateDrawUtl@@YAXXZ",
+   "pinned_unit": "default/Voice"
+  },
+  "0x82b6dbc0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?LockForProcess@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@UAAJIPBUXAPO_LOCKFORPROCESS_BUFFER_PARAMETERS@@I0@Z",
+   "pinned_unit": "default/SynapseAPO"
+  },
+  "0x82b6dc00": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?Process@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@UAAXIPBUXAPO_PROCESS_BUFFER_PARAMETERS@@IPAU3@H@Z",
+   "pinned_unit": "default/SynapseAPO"
+  },
+  "0x82b6e390": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?Release@?$CComContainedObject@VCTextNormMultiResult@NUISPEECH@@@ATL@NUISPEECH@@UAAKXZ",
+   "pinned_unit": "default/SoundTouch"
+  },
+  "0x82b6f218": {
+   "class": "MOVE-AMBIG",
+   "definers": [
+    "system/bandobj/BandCamShot",
+    "system/rndobj/EventTrigger",
+    "system/rndobj/TexBlender",
+    "system/rndobj/Utl",
+    "system/rndobj/AmbientOcclusion",
+    "system/rndobj/PropKeys",
+    "system/world/LightPreset",
+    "system/math/Rot",
+    "system/ui/UIListDir",
+    "system/hamobj/RhythmDetector",
+    "band3/game/Stats"
+   ],
+   "name": "??$__destroy_range_aux@V?$reverse_iterator@PAUFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUFrame@RhythmDetector@@@0@0ABU__false_type@0@@Z",
+   "pinned_unit": "default/Synapse_dsp"
+  },
+  "0x82b737c0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??0PeakDetector@Synapse@DSP@@QAA@ABV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@II@Z",
+   "pinned_unit": "default/PeakDetector"
+  },
+  "0x82b74578": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??0?$vector@UVoice@GranularSynth@Synapse@DSP@@V?$StlNodeAlloc@UVoice@GranularSynth@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABUVoice@GranularSynth@Synapse@DSP@@ABV?$StlNodeAlloc@UVoice@GranularSynth@Synapse@DSP@@@1@@Z",
+   "pinned_unit": "default/GranularSynth"
+  },
+  "0x82b746e8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??0GranularSynth@Synapse@DSP@@QAA@ABV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@III@Z",
+   "pinned_unit": "default/GranularSynth"
+  },
+  "0x82b8aa50": {
+   "class": "MOVE-AMBIG",
+   "definers": [
+    "system/rndobj/CubeTex",
+    "system/synth/MoggClip",
+    "system/rnddx9/CubeTex"
+   ],
+   "name": "?Highlight@RndTransformable@@$4PPPPPPPM@LI@AAXXZ",
+   "pinned_unit": "default/Lit_NG"
+  },
+  "0x82b8aa60": {
+   "class": "MOVE-AMBIG",
+   "definers": [
+    "system/rndobj/CubeTex",
+    "system/synth/MoggClip",
+    "system/rnddx9/CubeTex"
+   ],
+   "name": "?Print@RndTransformable@@$4PPPPPPPM@LI@AAXXZ",
+   "pinned_unit": "default/Lit_NG"
+  },
+  "0x82b8aa70": {
+   "class": "MOVE-AMBIG",
+   "definers": [
+    "system/rndobj/CubeTex",
+    "system/synth/MoggClip",
+    "system/rnddx9/CubeTex"
+   ],
+   "name": "?Replace@RndLight@@$4PPPPPPPM@BA@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+   "pinned_unit": "default/Lit_NG"
+  },
+  "0x82b8aaa0": {
+   "class": "MOVE-AMBIG",
+   "definers": [
+    "system/rndobj/CubeTex",
+    "system/synth/MoggClip",
+    "system/rnddx9/CubeTex"
+   ],
+   "name": "?Save@RndLight@@$4PPPPPPPM@BA@AAXAAVBinStream@@@Z",
+   "pinned_unit": "default/Lit_NG"
+  },
+  "0x82b9adf8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$_Destroy_Range@PAUPronunciationsLoc@@@stlpmtx_std@@YAXPAUPronunciationsLoc@@0@Z",
+   "pinned_unit": "default/band3/bandtrack/GemManager"
+  },
+  "0x82b9b8f8": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "??$__uninitialized_fill_n@PAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
+   "pinned_unit": "default/band3/bandtrack/GemManager"
+  },
+  "0x82be2bb0": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?MemoryAlloc@?$CNonBlockingQueue@PAUCommand@LEAPCORE@@@@CAPAXPAXK@Z",
+   "pinned_unit": "default/System"
+  },
+  "0x82be2f08": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?RemoveHead@?$CPointerList@VCBlock@CPhysicalMemoryPool@XAUDIO2@@$0BA@$0PPPPPPPP@$0A@@@QAAPAVCBlock@CPhysicalMemoryPool@XAUDIO2@@XZ",
+   "pinned_unit": "default/System"
+  },
+  "0x82be2f68": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?RemoveAt@?$CPointerList@UCommand@LEAPCORE@@$0BA@$0PPPPPPPP@$03@@QAAPAUCommand@LEAPCORE@@PAX@Z",
+   "pinned_unit": "default/System"
+  },
+  "0x82be3120": {
+   "class": "UNPORTED",
+   "definers": [],
+   "name": "?MemoryFree@?$CNonBlockingQueue@PAUXAUDIO2_BUFFER@@@@CAXPAX0@Z",
+   "pinned_unit": "default/System"
+  },
+  "0x82bf5dd0": {
+   "class": "MOVE-AMBIG",
+   "definers": [
+    "system/utl/StringTable",
+    "system/movie/Movie"
+   ],
+   "name": "?IsLoading@Movie@@QBA_NXZ",
+   "pinned_unit": "default/UILabel"
+  }
+ }
+}

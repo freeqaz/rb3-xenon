@@ -68,6 +68,21 @@ public:
     void ClearSymbolKeys(Symbol);
     void ClearSymbolKeysFrameRange(Symbol, float, float);
     void HarvestDircuts();
+    /** Retail-only factoring (0x8228DD38, 0x244 bytes): the per-character
+     * lip-sync assignment loop that the rb3-Wii dev source has inlined inside
+     * VenueLoaded. Retail calls it from two places -- OnFileLoaded/VenueLoaded
+     * (0x82292350) and BandWardrobe::SetPlayMode (0x823308F4) -- with `this` as
+     * the only argument, so it takes no parameters and reads everything it needs
+     * from members:
+     *   0x120 song.lipsync, 0x124 part2.lipsync, 0x128 part3.lipsync,
+     *   0x12c part4.lipsync (all CharLipSync*, cached by OnFileLoaded at
+     *   0x822915E4/5FC/614/62C), and mSongPref at 0x130.
+     * TODO: body cannot be written faithfully until BandDirector's tail layout
+     * is corrected (see mUnkTU5_0x118 below) -- retail has mEndOfSongSec@0x118,
+     * unk110@0x11c, the four CharLipSync* at 0x120-0x12c and mSongPref@0x130.
+     * Also note retail uses Part4Inst() for the drum mode inst where the Wii dev
+     * source erroneously re-uses Part3Inst(). */
+    void SetCharacterLipSyncs();
     void SetSongEnd(float);
     void SetShot(Symbol, Symbol);
     void ExportWorldEvent(Symbol);
