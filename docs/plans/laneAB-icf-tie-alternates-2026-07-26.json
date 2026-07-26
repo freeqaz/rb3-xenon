@@ -1,0 +1,121 @@
+{
+ "0x8227ce58": [
+  "?SetObjConcrete@?$ObjRefConcrete@VBandCharacter@@VObjectDir@@@@QAAXPAVBandCharacter@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharDriver@@VObjectDir@@@@QAAXPAVCharDriver@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharEyes@@VObjectDir@@@@QAAXPAVCharEyes@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharLipSyncDriver@@VObjectDir@@@@QAAXPAVCharLipSyncDriver@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharLookAt@@VObjectDir@@@@QAAXPAVCharLookAt@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharWeightSetter@@VObjectDir@@@@QAAXPAVCharWeightSetter@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharWeightable@@VObjectDir@@@@QAAXPAVCharWeightable@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VCharacter@@VObjectDir@@@@QAAXPAVCharacter@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VGemTrackDir@@VObjectDir@@@@QAAXPAVGemTrackDir@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VRndAnimatable@@VObjectDir@@@@QAAXPAVRndAnimatable@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VRndMesh@@VObjectDir@@@@QAAXPAVRndMesh@@@Z",
+  "?SetObjConcrete@?$ObjRefConcrete@VWaypoint@@VObjectDir@@@@QAAXPAVWaypoint@@@Z"
+ ],
+ "0x82654260": [
+  "?Register@KickPlayerMsg@?A0x9d4e879f@@SAXXZ",
+  "?SessionUsersProvidersInit@@YAXXZ"
+ ],
+ "0x826989e0": [
+  "??$_Copy_Construct@VSingerStats@@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z",
+  "??$_Param_Construct@VSingerStats@@V1@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z"
+ ],
+ "0x8246e040": [
+  "?AtFrame@?$Keys@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@V?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@2@@@QBAHMAAPBV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@0AAM@Z",
+  "?AtFrame@?$Keys@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@V?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@2@@@QBAHMAAPBV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@0AAM@Z",
+  "?AtFrame@?$Keys@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@2@@@QBAHMAAPBV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@0AAM@Z"
+ ],
+ "0x822724e8": [
+  "?clear@?$_List_base@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "?clear@?$_List_base@UShaderTree@RndShaderMgr@@V?$StlNodeAlloc@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "?clear@?$_List_base@UTrainerCondition@@V?$StlNodeAlloc@UTrainerCondition@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
+ ],
+ "0x82576168": [
+  "?_M_create_node@?$slist@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBHPAVSongMetadata@@@2@@Z",
+  "?_M_create_node@?$slist@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBHVSymbol@@@2@@Z",
+  "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@H@2@@Z"
+ ],
+ "0x82602a98": [
+  "?OnMsg@AppInlineHelp@@QAA?AVDataNode@@ABVInputStatusChangedMsg@@@Z",
+  "?OnMsg@AppInlineHelp@@QAA?AVDataNode@@ABVLocalUserLeftMsg@@@Z"
+ ],
+ "0x82570390": [
+  "?NewObject@CharPosConstraint@@SAPAVObject@Hmx@@XZ",
+  "?NewObject@CharSignalApplier@@SAPAVObject@Hmx@@XZ",
+  "?NewObject@CharTransDraw@@SAPAVObject@Hmx@@XZ"
+ ],
+ "0x8256e5f0": [
+  "?NewObject@AccomplishmentPanel@@SAPAVObject@Hmx@@XZ",
+  "?NewObject@GameTimePanel@@SAPAVObject@Hmx@@XZ"
+ ],
+ "0x8256e2a8": [
+  "?NewObject@TexLoadPanel@@SAPAVObject@Hmx@@XZ",
+  "?NewObject@TourDescPanel@@SAPAVObject@Hmx@@XZ"
+ ],
+ "0x825b5620": [
+  "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVUIComponentScrollMsg@@@Z",
+  "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z",
+  "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z"
+ ],
+ "0x825d8d40": [
+  "?DismissCymbalMessage@OvershellSlot@@QAAXXZ",
+  "?LeaveDifficultyConfirmation@OvershellSlot@@QAAXXZ"
+ ],
+ "0x824cb7f0": [
+  "??0BitmapOverride@WorldDir@@QAA@PAVObject@Hmx@@@Z",
+  "??0PresetOverride@WorldDir@@QAA@PAVObject@Hmx@@@Z"
+ ],
+ "0x82714c98": [
+  "?_M_clear@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "?_M_clear_after_move@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+ ],
+ "0x82356360": [
+  "??$_Copy_Construct@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z",
+  "??$_Param_Construct@VSmasherPlateInfo@GemTrackResourceManager@@V12@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z"
+ ],
+ "0x824238f0": [
+  "?AtFrame@?$Keys@VColor@Hmx@@V12@@@QBAHMAAPBV?$Key@VColor@Hmx@@@@0AAM@Z",
+  "?AtFrame@?$Keys@VQuat@Hmx@@V12@@@QBAHMAAPBV?$Key@VQuat@Hmx@@@@0AAM@Z",
+  "?AtFrame@?$Keys@VVector3@@V1@@@QBAHMAAPBV?$Key@VVector3@@@@0AAM@Z"
+ ],
+ "0x824254d8": [
+  "??$__copy_aux@PBV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PBV1@0PAV1@ABU__true_type@0@@Z",
+  "??$__copy_ptrs@PAV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PAV1@00ABU__false_type@0@@Z",
+  "??$__copy_ptrs@PBV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
+  "??$copy@PBV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PBV1@0PAV1@@Z"
+ ],
+ "0x827ccbf8": [
+  "?UTF8toUTF16@@YAXPAGPBD@Z",
+  "?UTF8toWChar_t@@YAXPA_WPBD@Z"
+ ],
+ "0x82483a88": [
+  "??$__copy_ptrs@PAUPose@RndMorph@@PAU12@@stlpmtx_std@@YAPAUPose@RndMorph@@PAU12@00ABU__false_type@0@@Z",
+  "??$__copy_ptrs@PBUPose@RndMorph@@PAU12@@stlpmtx_std@@YAPAUPose@RndMorph@@PBU12@0PAU12@ABU__false_type@0@@Z"
+ ],
+ "0x82709f30": [
+  "??0ParallelGroupSeq@@QAA@XZ",
+  "??0SerialGroupSeq@@QAA@XZ",
+  "??0SfxSeq@@QAA@XZ"
+ ],
+ "0x8270b6a8": [
+  "?Load@ParallelGroupSeq@@UAAXAAVBinStream@@@Z",
+  "?Load@SerialGroupSeq@@UAAXAAVBinStream@@@Z"
+ ],
+ "0x824b0b48": [
+  "?_M_clear@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "?_M_clear_after_move@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+ ],
+ "0x827532d8": [
+  "?PreLoadInlined@ObjectDir@@IAAXABVFilePath@@_NW4InlineDirType@@@Z",
+  "?SaveInlined@ObjectDir@@IAAXABVFilePath@@_NW4InlineDirType@@@Z"
+ ],
+ "0x825227e8": [
+  "?GetDateAndTime@@YAXAAUDateTime@@@Z",
+  "?GetSystemDateAndTime@@YAXAAUDateTime@@@Z"
+ ],
+ "0x827e2638": [
+  "?RemoveUntil@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXMM@Z",
+  "?RemoveUntil@?$TrackWidgetImp@VMeshInstance@@@@UAAXMM@Z"
+ ]
+}

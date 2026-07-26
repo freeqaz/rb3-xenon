@@ -4910,13 +4910,11 @@ SpotlightDrawer.cpp:
 
 Spotlight.cpp:
 	.pdata      start:0x82213248 end:0x82213250
-	.pdata      start:0x82214A98 end:0x82214D78
-	.pdata      start:0x82214D80 end:0x82215080
+	.pdata      start:0x82214A98 end:0x82215080
 	.pdata      start:0x822382B0 end:0x822382B8
 	.pdata      start:0x8223A1F0 end:0x8223A1F8
 	.text       start:0x824BBE38 end:0x824BBE9C
-	.text       start:0x824D7FC8 end:0x824DBEB8
-	.text       start:0x824DBF08 end:0x824E0034
+	.text       start:0x824D7FC8 end:0x824E0034
 	.text       start:0x8270A8D8 end:0x8270A948
 	.text       start:0x8272AA78 end:0x8272AAB8
 
@@ -12069,8 +12067,6 @@ QuestJournal.cpp:
 	.text       start:0x82364B00 end:0x82364C2C
 
 TexProc.cpp:
-	.pdata      start:0x82214D78 end:0x82214D80
-	.text       start:0x824DBEB8 end:0x824DBF08
 	.text       start:0x826DF788 end:0x826DF78C
 
 TambourineDetector.cpp:
