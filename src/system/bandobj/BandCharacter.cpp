@@ -32,6 +32,10 @@
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
 
+// Retail folded this TU's COMDATs into BandCharacter's .text span
+// (BandTerminate lands at 0x8227AFC0, inside 0x8227AFA0-0x8227C6D0).
+#include "bandobj/Band.cpp"
+
 INIT_REVS(BandCharacter)
 
 ObjectDir *sBoneMergeDir;

@@ -11625,7 +11625,7 @@ Campaign.cpp:
 	.text       start:0x822EA818 end:0x822EA9F0
 	.text       start:0x822EB1F8 end:0x822EB29C
 
-SynthSample.cpp:
+system/synth/SynthSample.cpp:
 	.pdata      start:0x82239F68 end:0x8223A048
 	.pdata      start:0x8225B660 end:0x8225B668
 	.pdata      start:0x8225B6B0 end:0x8225B6B8
@@ -11680,7 +11680,7 @@ GamePanel.cpp:
 	.text       start:0x82694858 end:0x82694A40
 	.text       start:0x82694A40 end:0x82694AF8
 
-FxSendDelay.cpp:
+system/synth/FxSendDelay.cpp:
 	.pdata      start:0x82205FD0 end:0x82205FD8
 	.pdata      start:0x822398B8 end:0x822398C0
 	.pdata      start:0x822398D8 end:0x822398E0
@@ -11693,7 +11693,7 @@ FxSendDelay.cpp:
 	.text       start:0x82720D58 end:0x82720DE8
 	.text       start:0x82720F70 end:0x82721224
 
-Dir.cpp:
+system/world/Dir.cpp:
 	.pdata      start:0x822143D8 end:0x822143E0
 	.pdata      start:0x82214578 end:0x82214580
 	.pdata      start:0x822145F0 end:0x822145F8
@@ -12032,7 +12032,7 @@ system/beatmatch/GameGemDB.cpp:
 	.text       start:0x82793078 end:0x82793470
 	.text       start:0x82793AA8 end:0x82793B4C
 
-Utl.cpp:
+system/obj/Utl.cpp:
 	.pdata      start:0x8223C270 end:0x8223C278
 	.pdata      start:0x8223C2A8 end:0x8223C2B0
 	.pdata      start:0x8223C318 end:0x8223C328
