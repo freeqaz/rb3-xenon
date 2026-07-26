@@ -101,6 +101,8 @@
    },
    "system/bandobj/MicInputArrow.cpp": "NonMatching",
    "system/bandobj/ScrollbarDisplay.cpp": "NonMatching",
+   "system/bandobj/InstrumentDifficultyDisplay.cpp": "NonMatching",
+   "system/bandobj/ScoreDisplay.cpp": "NonMatching",
    "system/bandobj/OvershellDir.cpp": {
     "status": "NonMatching",
     "extra_cflags": [

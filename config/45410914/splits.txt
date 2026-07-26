@@ -3849,11 +3849,11 @@ LiveCameraInput.cpp:
 	.text       start:0x8242C1CC end:0x8242C208
 
 CharacterTest.cpp:
-	.pdata      start:0x821FC890 end:0x821FC8E8
+	.pdata      start:0x821FC8A0 end:0x821FC8E8
 	.pdata      start:0x82207690 end:0x82207720
 	.pdata      start:0x82207720 end:0x82207768
 	.pdata      start:0x82207768 end:0x82207770
-	.text       start:0x8232033C end:0x82320824
+	.text       start:0x823203AC end:0x82320824
 	.text       start:0x823DD550 end:0x823DDDC0
 	.text       start:0x823DDDC0 end:0x823DE208
 	.text       start:0x823DE208 end:0x823DE254
@@ -8587,11 +8587,9 @@ band3/meta_band/AccomplishmentProgress.cpp:
 
 band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC1E8 end:0x821FC1F0
-	.pdata      start:0x821FCBC0 end:0x821FCBD0
 	.pdata      start:0x8222CD80 end:0x8222CE90
 	.pdata      start:0x8222CE98 end:0x8222CEA8
 	.text       start:0x8231A0D8 end:0x8231A138
-	.text       start:0x8232380C end:0x82323894
 	.text       start:0x82323950 end:0x82323960
 	.text       start:0x8264BD68 end:0x8264D058
 	.text       start:0x8264D08C end:0x8264D15C
@@ -12678,3 +12676,13 @@ MicInputArrow.cpp:
 ScrollbarDisplay.cpp:
 	.pdata      start:0x821FC9D8 end:0x821FCBA0
 	.text       start:0x82321608 end:0x823234B0
+
+InstrumentDifficultyDisplay.cpp:
+	.pdata      start:0x821FCBB0 end:0x821FCBE8
+	.pdata      start:0x821FCBE8 end:0x821FCCF8
+	.text       start:0x82323570 end:0x82323950
+	.text       start:0x82323960 end:0x82324BF0
+
+ScoreDisplay.cpp:
+	.pdata      start:0x821FC7D8 end:0x821FC8A0
+	.text       start:0x8231F790 end:0x823203AC
