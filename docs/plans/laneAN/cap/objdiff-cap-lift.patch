@@ -1,0 +1,229 @@
+diff --git a/objdiff-core/src/diff/mod.rs b/objdiff-core/src/diff/mod.rs
+index 145f7a1..de5f68c 100644
+--- a/objdiff-core/src/diff/mod.rs
++++ b/objdiff-core/src/diff/mod.rs
+@@ -1407,6 +1407,87 @@ fn recalc_unit_measure_percents(m: &mut crate::bindings::report::Measures) {
+     };
+ }
+ 
++/// laneAN measurement knobs (see `pair_funclets_by_bytes`). Read once per process.
++/// 0 = stock (base side must be funclet-shaped), 1 = lifted, 2 = lifted + reloc-strict.
++#[cfg(feature = "std")]
++fn funclet_gate_mode() -> u8 {
++    static MODE: std::sync::OnceLock<u8> = std::sync::OnceLock::new();
++    *MODE.get_or_init(|| match std::env::var("OBJDIFF_FUNCLET_GATE").as_deref() {
++        Ok("lifted") => 1,
++        Ok("lifted-strict") => 2,
++        _ => 0,
++    })
++}
++#[cfg(not(feature = "std"))]
++fn funclet_gate_mode() -> u8 { 0 }
++
++#[cfg(feature = "std")]
++fn funclet_gate_min() -> u64 {
++    static MIN: std::sync::OnceLock<u64> = std::sync::OnceLock::new();
++    *MIN.get_or_init(|| {
++        std::env::var("OBJDIFF_FUNCLET_GATE_MIN").ok().and_then(|v| v.parse().ok()).unwrap_or(0)
++    })
++}
++#[cfg(not(feature = "std"))]
++fn funclet_gate_min() -> u64 { 0 }
++
++#[cfg(feature = "std")]
++fn funclet_gate_p1only() -> bool {
++    static P1: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    *P1.get_or_init(|| std::env::var("OBJDIFF_FUNCLET_GATE_P1ONLY").is_ok_and(|v| v == "1"))
++}
++#[cfg(not(feature = "std"))]
++fn funclet_gate_p1only() -> bool { false }
++
++#[cfg(feature = "std")]
++fn funclet_gate_nofuzzy() -> bool {
++    static NF: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    *NF.get_or_init(|| std::env::var("OBJDIFF_FUNCLET_GATE_NOFUZZY").is_ok_and(|v| v == "1"))
++}
++#[cfg(not(feature = "std"))]
++fn funclet_gate_nofuzzy() -> bool { false }
++
++#[cfg(feature = "std")]
++fn funclet_gate_debug() -> bool {
++    static DBG: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++    *DBG.get_or_init(|| std::env::var("OBJDIFF_FUNCLET_GATE_DEBUG").is_ok_and(|v| v == "1"))
++}
++#[cfg(not(feature = "std"))]
++fn funclet_gate_debug() -> bool { false }
++
++#[cfg(feature = "std")]
++fn emit_pair_debug(pass: &str, left: &Object, right: &Object, l: usize, r: usize, lifted: bool) {
++    if !funclet_gate_debug() {
++        return;
++    }
++    let ls = &left.symbols[l];
++    let rs = &right.symbols[r];
++    let sim = match (funclet_signature(left, l), funclet_signature(right, r)) {
++        (Some(a), Some(b)) if a.len() == b.len() && !a.is_empty() => {
++            a.iter().zip(b.iter()).filter(|(x, y)| x == y).count() * 100 / a.len()
++        }
++        _ => 0,
++    };
++    let reloc_eq = match (named_symbol_signature(left, l), named_symbol_signature(right, r)) {
++        (Some(a), Some(b)) => (a.relocs == b.relocs) as u8,
++        _ => 2,
++    };
++    println!(
++        "FGPAIR\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
++        pass,
++        left.path.as_ref().map(|p| p.to_string_lossy().to_string()).unwrap_or_default(),
++        ls.name,
++        ls.size,
++        rs.name,
++        rs.size,
++        lifted as u8,
++        sim,
++        reloc_eq
++    );
++}
++#[cfg(not(feature = "std"))]
++fn emit_pair_debug(_: &str, _: &Object, _: &Object, _: usize, _: usize, _: bool) {}
++
+ fn pair_funclets_by_bytes(
+     left: &Object,
+     right: &Object,
+@@ -1430,21 +1511,64 @@ fn pair_funclets_by_bytes(
+             left_candidates.push((idx, sig));
+         }
+     }
++    // laneAN experiment: the base-side (`right`) `is_funclet_like` gate is what makes
++    // the "84-byte cap" emergent — our compiled objs only contain funclet-shaped
++    // symbols up to ~68B (`__unwind$`) / 104B (`__catch$`) / 484B (`??__E`), so no
++    // larger target function can ever find a partner here. `OBJDIFF_FUNCLET_GATE`
++    // lifts it so we can MEASURE the upside:
++    //   unset|off      stock behaviour
++    //   lifted         accept ANY nonzero-size base Code symbol
++    //   lifted-strict  ... but a lifted-in (non-funclet-shaped) base symbol may only
++    //                  pair when its ordered relocation descriptors (offset/flags/
++    //                  target-name/addend) equal the target's — i.e. the honesty
++    //                  predicate `named_symbol_signature` provides, which bare masked
++    //                  bytes throw away.
++    // Extra knobs: OBJDIFF_FUNCLET_GATE_MIN=<bytes> (min size for lifted-in base
++    // candidates), OBJDIFF_FUNCLET_GATE_NOFUZZY=1 (keep lifted-in candidates out of
++    // the >=50% same-size fuzzy pass 3).
++    let gate = funclet_gate_mode();
++    let gate_min = funclet_gate_min();
++    let gate_nofuzzy = funclet_gate_nofuzzy() || funclet_gate_p1only();
++    let gate_p1only = funclet_gate_p1only();
+     let mut right_candidates: Vec<(usize, alloc::vec::Vec<u8>)> = Vec::new();
++    // Right-side indices admitted only because the gate was lifted.
++    let mut right_lifted_in: BTreeSet<usize> = BTreeSet::new();
+     for (idx, sym) in right.symbols.iter().enumerate() {
+         if right_used.contains(&idx) || sym.size == 0 || sym.flags.contains(SymbolFlag::Ignored) {
+             continue;
+         }
+-        if !is_funclet_like(&sym.name) {
+-            continue;
++        let funclet_shaped = is_funclet_like(&sym.name);
++        if !funclet_shaped {
++            if gate == 0 {
++                continue;
++            }
++            if sym.size < gate_min {
++                continue;
++            }
++            if sym.kind == crate::obj::SymbolKind::Section {
++                continue;
++            }
+         }
+         if symbol_section_kind(right, sym) != SectionKind::Code {
+             continue;
+         }
+         if let Some(sig) = funclet_signature(right, idx) {
++            if !funclet_shaped {
++                right_lifted_in.insert(idx);
++            }
+             right_candidates.push((idx, sig));
+         }
+     }
++    // Acceptance predicate for a candidate pair, used by every pass below.
++    let pair_ok = |l_idx: usize, r_idx: usize| -> bool {
++        if gate != 2 || !right_lifted_in.contains(&r_idx) {
++            return true;
++        }
++        match (named_symbol_signature(left, l_idx), named_symbol_signature(right, r_idx)) {
++            (Some(a), Some(b)) => a.relocs == b.relocs,
++            _ => false,
++        }
++    };
+ 
+     // Make the greedy assignment below deterministic w.r.t. symbol-table order.
+     //
+@@ -1489,9 +1613,10 @@ fn pair_funclets_by_bytes(
+         }
+         let l_idx = left_indices[0];
+         let r_idx = right_indices[0];
+-        if left_used.contains(&l_idx) || right_used.contains(&r_idx) {
++        if left_used.contains(&l_idx) || right_used.contains(&r_idx) || !pair_ok(l_idx, r_idx) {
+             continue;
+         }
++        emit_pair_debug("p1", left, right, l_idx, r_idx, right_lifted_in.contains(&r_idx));
+         matches.push(SymbolMatch {
+             left: Some(l_idx),
+             right: Some(r_idx),
+@@ -1515,9 +1640,13 @@ fn pair_funclets_by_bytes(
+         }
+     }
+     for (l_idx, r_idx) in pass2_pairs {
+-        if left_used.contains(&l_idx) || right_used.contains(&r_idx) {
++        if gate_p1only && right_lifted_in.contains(&r_idx) {
++            continue;
++        }
++        if left_used.contains(&l_idx) || right_used.contains(&r_idx) || !pair_ok(l_idx, r_idx) {
+             continue;
+         }
++        emit_pair_debug("p2", left, right, l_idx, r_idx, right_lifted_in.contains(&r_idx));
+         matches.push(SymbolMatch {
+             left: Some(l_idx),
+             right: Some(r_idx),
+@@ -1557,10 +1686,14 @@ fn pair_funclets_by_bytes(
+         // first index (right_candidates were sorted by name, so right_by_sig vectors
+         // preserve that order). Any of them is byte-identical by construction.
+         let Some(&partner) = right_indices.first() else { continue };
++        if gate_p1only && right_lifted_in.contains(&partner) {
++            continue;
++        }
+         for &l_idx in left_indices.iter() {
+-            if left_used.contains(&l_idx) {
++            if left_used.contains(&l_idx) || !pair_ok(l_idx, partner) {
+                 continue;
+             }
++            emit_pair_debug("p2b", left, right, l_idx, partner, right_lifted_in.contains(&partner));
+             matches.push(SymbolMatch {
+                 left: Some(l_idx),
+                 right: Some(partner),
+@@ -1580,8 +1713,12 @@ fn pair_funclets_by_bytes(
+     // unmatched right funclet of the same size by Hamming-equality of bytes.
+     let mut remaining_left: Vec<(usize, &alloc::vec::Vec<u8>)> =
+         left_candidates.iter().filter(|(i, _)| !left_used.contains(i)).map(|(i, s)| (*i, s)).collect();
+-    let mut remaining_right: Vec<(usize, &alloc::vec::Vec<u8>)> =
+-        right_candidates.iter().filter(|(i, _)| !right_used.contains(i)).map(|(i, s)| (*i, s)).collect();
++    let mut remaining_right: Vec<(usize, &alloc::vec::Vec<u8>)> = right_candidates
++        .iter()
++        .filter(|(i, _)| !right_used.contains(i))
++        .filter(|(i, _)| !(gate_nofuzzy && right_lifted_in.contains(i)))
++        .map(|(i, s)| (*i, s))
++        .collect();
+     // Pair greedily: highest similarity first.
+     let mut scored: Vec<(usize, usize, usize)> = Vec::new(); // (matching_bytes, l, r)
+     for (l_idx, l_sig) in &remaining_left {
+@@ -1607,9 +1744,10 @@ fn pair_funclets_by_bytes(
+             .then_with(|| right.symbols[a.2].name.cmp(&right.symbols[b.2].name))
+     });
+     for (_, l_idx, r_idx) in scored {
+-        if left_used.contains(&l_idx) || right_used.contains(&r_idx) {
++        if left_used.contains(&l_idx) || right_used.contains(&r_idx) || !pair_ok(l_idx, r_idx) {
+             continue;
+         }
++        emit_pair_debug("p3", left, right, l_idx, r_idx, right_lifted_in.contains(&r_idx));
+         matches.push(SymbolMatch {
+             left: Some(l_idx),
+             right: Some(r_idx),

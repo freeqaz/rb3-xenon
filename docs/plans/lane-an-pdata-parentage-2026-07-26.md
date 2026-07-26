@@ -337,6 +337,45 @@ test. What is true is that **84 B is where the funclet-shaped population runs
 out**, on both sides independently: 26,315 of 26,321 retail EH funclets are
 ≤ 84 B, and 99.91% of our base funclet-like symbols are.
 
+### What lifting it would expose — ★SIMULATED, NOT MEASURED
+
+A worker built `capscan.rs` (preserved at `docs/plans/laneAN/cap/`) on top of
+**objdiff-core's own COFF reader and a verbatim copy of `funclet_signature`**, so
+symbol sizes and masking are exactly what the diff sees, plus a patch to
+`pair_funclets_by_bytes` (`docs/plans/laneAN/cap/objdiff-cap-lift.patch`). Its
+per-leg counts are in `docs/plans/laneAN/cap/measurements.json`.
+
+> ★★**Read these as a prediction, not a result.** They come from the static
+> scanner, **not** from a `report.json` A/B: the worktree's `report.json` is the
+> untouched setup-time copy, and the scanner's own baseline (19,414) is its
+> count of currently-pairable symbols, **not** the binary's 36,659 strict.
+> Nothing here has been confirmed by a build, and no number below has been
+> folded into this lane's landed total.
+
+| simulated leg | Δ pairable | of which > 84 B |
+|---|--:|--:|
+| lift the base gate, all passes (incl. pass-3 ≥50% fuzzy) | +18,456 | 10,706 |
+| lift, pass 1 only (uniqueness on both sides) | +12,631 | 8,733 |
+| lift, pass 1 + min size 88 B | +8,733 | 8,733 |
+| **lift + require relocation-descriptor equality** | **+1,692** | 448 |
+
+The spread is the whole story. The permissive legs are enormous *because
+`function_reloc_diffs: None` makes the comparison blind to every callee* — the
+same defect that makes a 32-byte match nearly worthless, applied to a pool of
+87,761 symbols. The last leg is the only one that closes that hole
+(`named_symbol_signature` already carries the reloc descriptors), and it is **11×
+smaller**. Its top entries (`smallft`, `zlib/deflate`, `mdct`, `CameraManager`)
+are exactly the shape one expects to be genuinely right: large,
+self-contained, already-correct code that is simply unpaired because the target
+symbol is anonymous and the base symbol is mangled.
+
+**Recommendation: do not lift the bare-bytes variant. If anyone opens this door,
+open it only as `lift + reloc-descriptor equality`, and only after a real
+whole-binary `report.json` A/B — which this lane did not run.** Note also that
+the objdiff binary is shared fleet-wide, so any change must be A/B'd against a
+private build (`/home/free/tmp/objdiff-laneAN`), never by swapping
+`../objdiff/target/release/objdiff-cli`.
+
 The gate is therefore **incidental in form and load-bearing in effect**. The
 84 B figure should be quoted as an empirical ceiling of the *name* gate's
 population, not as a rule — and the real question for a future lane is not

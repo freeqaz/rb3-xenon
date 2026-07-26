@@ -1,0 +1,309 @@
+{
+ "baseline": {
+  "matched_functions": 19414,
+  "matched_code": 746296,
+  "total_functions": 69410
+ },
+ "legs": {
+  "lifted_all_passes": {
+   "matched_functions": 37870,
+   "delta": 18456,
+   "lost": 0,
+   "gained": 18456,
+   "gained_gt84": 10706,
+   "gained_le44": 4161,
+   "gained_sample_top": [
+    [
+     6592,
+     "default/band3/meta_band/SaveLoadManager",
+     "fn_8254CC98"
+    ],
+    [
+     5932,
+     "default/Part",
+     "fn_8244B088"
+    ],
+    [
+     5768,
+     "default/OvershellPanel",
+     "fn_825B8428"
+    ],
+    [
+     5612,
+     "default/GemPlayer",
+     "fn_826C44F8"
+    ],
+    [
+     5228,
+     "default/band3/game/Player",
+     "fn_826A5738"
+    ],
+    [
+     5036,
+     "default/aes",
+     "fn_82BB8648"
+    ],
+    [
+     4948,
+     "default/aes",
+     "fn_82BB72F0"
+    ],
+    [
+     4676,
+     "default/RockCentral",
+     "fn_82501A08"
+    ],
+    [
+     4624,
+     "default/band3/meta_band/AppLabel",
+     "fn_825C8D98"
+    ],
+    [
+     4316,
+     "default/Performer",
+     "fn_8269DB30"
+    ]
+   ]
+  },
+  "lifted_strict_relocdesc": {
+   "matched_functions": 21106,
+   "delta": 1692,
+   "lost": 0,
+   "gained": 1692,
+   "gained_gt84": 448,
+   "gained_le44": 962,
+   "gained_sample_top": [
+    [
+     444,
+     "default/smallft",
+     "fn_82C34568"
+    ],
+    [
+     436,
+     "default/system/zlib/deflate",
+     "fn_8292CC28"
+    ],
+    [
+     408,
+     "default/CameraManager",
+     "fn_824BA360"
+    ],
+    [
+     404,
+     "default/mdct",
+     "fn_82C35EC8"
+    ],
+    [
+     400,
+     "default/band3/meta_band/AccomplishmentManager",
+     "fn_82557AF8"
+    ],
+    [
+     396,
+     "default/mdct",
+     "fn_82C36060"
+    ],
+    [
+     396,
+     "default/CameraShot",
+     "fn_824BEBD0"
+    ],
+    [
+     356,
+     "default/MemStats",
+     "fn_827D9400"
+    ],
+    [
+     348,
+     "default/Bitmap",
+     "fn_823FC550"
+    ],
+    [
+     340,
+     "default/linkhash",
+     "fn_82B84C40"
+    ]
+   ]
+  },
+  "lifted_pass1_only": {
+   "matched_functions": 32045,
+   "delta": 12631,
+   "lost": 0,
+   "gained": 12631,
+   "gained_gt84": 8733,
+   "gained_le44": 1707,
+   "gained_sample_top": [
+    [
+     6592,
+     "default/band3/meta_band/SaveLoadManager",
+     "fn_8254CC98"
+    ],
+    [
+     5932,
+     "default/Part",
+     "fn_8244B088"
+    ],
+    [
+     5768,
+     "default/OvershellPanel",
+     "fn_825B8428"
+    ],
+    [
+     5612,
+     "default/GemPlayer",
+     "fn_826C44F8"
+    ],
+    [
+     5228,
+     "default/band3/game/Player",
+     "fn_826A5738"
+    ],
+    [
+     5036,
+     "default/aes",
+     "fn_82BB8648"
+    ],
+    [
+     4948,
+     "default/aes",
+     "fn_82BB72F0"
+    ],
+    [
+     4624,
+     "default/band3/meta_band/AppLabel",
+     "fn_825C8D98"
+    ],
+    [
+     4316,
+     "default/Performer",
+     "fn_8269DB30"
+    ],
+    [
+     3648,
+     "default/PartLauncher",
+     "fn_82450B60"
+    ]
+   ]
+  },
+  "lifted_pass1_min48": {
+   "matched_functions": 30338,
+   "delta": 10924,
+   "lost": 0,
+   "gained": 10924,
+   "gained_gt84": 8733,
+   "gained_le44": 0,
+   "gained_sample_top": [
+    [
+     6592,
+     "default/band3/meta_band/SaveLoadManager",
+     "fn_8254CC98"
+    ],
+    [
+     5932,
+     "default/Part",
+     "fn_8244B088"
+    ],
+    [
+     5768,
+     "default/OvershellPanel",
+     "fn_825B8428"
+    ],
+    [
+     5612,
+     "default/GemPlayer",
+     "fn_826C44F8"
+    ],
+    [
+     5228,
+     "default/band3/game/Player",
+     "fn_826A5738"
+    ],
+    [
+     5036,
+     "default/aes",
+     "fn_82BB8648"
+    ],
+    [
+     4948,
+     "default/aes",
+     "fn_82BB72F0"
+    ],
+    [
+     4624,
+     "default/band3/meta_band/AppLabel",
+     "fn_825C8D98"
+    ],
+    [
+     4316,
+     "default/Performer",
+     "fn_8269DB30"
+    ],
+    [
+     3648,
+     "default/PartLauncher",
+     "fn_82450B60"
+    ]
+   ]
+  },
+  "lifted_pass1_min88": {
+   "matched_functions": 28147,
+   "delta": 8733,
+   "lost": 0,
+   "gained": 8733,
+   "gained_gt84": 8733,
+   "gained_le44": 0,
+   "gained_sample_top": [
+    [
+     6592,
+     "default/band3/meta_band/SaveLoadManager",
+     "fn_8254CC98"
+    ],
+    [
+     5932,
+     "default/Part",
+     "fn_8244B088"
+    ],
+    [
+     5768,
+     "default/OvershellPanel",
+     "fn_825B8428"
+    ],
+    [
+     5612,
+     "default/GemPlayer",
+     "fn_826C44F8"
+    ],
+    [
+     5228,
+     "default/band3/game/Player",
+     "fn_826A5738"
+    ],
+    [
+     5036,
+     "default/aes",
+     "fn_82BB8648"
+    ],
+    [
+     4948,
+     "default/aes",
+     "fn_82BB72F0"
+    ],
+    [
+     4624,
+     "default/band3/meta_band/AppLabel",
+     "fn_825C8D98"
+    ],
+    [
+     4316,
+     "default/Performer",
+     "fn_8269DB30"
+    ],
+    [
+     3648,
+     "default/PartLauncher",
+     "fn_82450B60"
+    ]
+   ]
+  }
+ }
+}
