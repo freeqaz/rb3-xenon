@@ -242,6 +242,34 @@ class Band:
             return None
         return raw.decode('ascii')
 
+    def cstr_exact(self, va, n=256):
+        """AUDIT reader -- symmetric with sym_content_token()'s ??_C@ decode.
+
+        `cstr()` above is the DISCOVERY reader: it deliberately rejects short,
+        long and non-printable strings so that ranking candidate homes is not
+        polluted by coincidental garbage.  Using it to AUDIT the map is a bug,
+        because our side of the comparison (`sym_content_token`) decodes a
+        `??_C@` COMDAT with no length or charset filter at all.  So a function
+        referencing "\\n", "", " " or a printf format ending in \\n produces a
+        token on our side that the retail side is structurally incapable of
+        producing -> guaranteed false CONFLICT.
+
+        Measured 2026-07-26 (lane laneZ): 217 of the 304 names that
+        --trust-audit called CONTRADICTED are this artifact.  The family is
+        obvious in hindsight -- ?Print@CharClip@@, ?Print@DataArray@@,
+        ?Print@PropKeys@@, ?ColatedPrint@MemTracker@@ ... every debug-printer
+        in the binary.  Do NOT use this reader on the discovery path.
+        """
+        raw = self.read(va, n)
+        if raw is None:
+            return None
+        raw = raw.split(b'\0')[0]
+        if len(raw) > 200:
+            return None
+        if not all(b in (9, 10, 13) or 32 <= b < 127 for b in raw):
+            return None
+        return raw.decode('latin1')
+
     def wstr(self, va, n=256):
         raw = self.read(va, n)
         if raw is None:
@@ -322,8 +350,14 @@ def decode_slots(band, va, size, offs, base_words):
     return out
 
 
-def classify_va(band, va, tmap):
-    """Content tokens a retail address yields."""
+def classify_va(band, va, tmap, exact=False):
+    """Content tokens a retail address yields.
+
+    `exact=True` selects the AUDIT reader (see Band.cstr_exact): symmetric with
+    our own ??_C@ decode, and float tokens are suppressed at unaligned
+    addresses.  Leave it False on the discovery path -- a permissive reader
+    there manufactures ties between candidate homes.
+    """
     toks = set()
     if band.in_text(va):
         n = tmap.get(va)
@@ -331,19 +365,26 @@ def classify_va(band, va, tmap):
             toks.add(('sym', n))
         toks.add(('code', va))
         return toks
-    s = band.cstr(va)
+    rd = band.cstr_exact if exact else band.cstr
+    s = rd(va)
     if s is not None:
         toks.add(('str', s))
     ws = band.wstr(va)
     if ws is not None:
         toks.add(('wstr', ws))
-    v = band.cstr(va + VFTABLE_NAME_DELTA)
+    v = rd(va + VFTABLE_NAME_DELTA)
     if v is not None:
         toks.add(('vfstr', v))
-    for w, k in ((4, 'f32'), (8, 'f64'), (16, 'f128')):
-        raw = band.read(va, w)
-        if raw is not None:
-            toks.add((k, raw.hex()))
+    # A float constant pool entry is always at least 4-byte aligned.  On the
+    # audit path an unaligned VA therefore cannot be the float our relocation
+    # points at, and emitting a token for it only fabricates a CONFLICT --
+    # decode_slots' lis/D-form pairing does mis-resolve some pool addresses
+    # (observed: 0x8202dc17, 0x82000c55, both unaligned).
+    if not (exact and (va & 3)):
+        for w, k in ((4, 'f32'), (8, 'f64'), (16, 'f128')):
+            raw = band.read(va, w)
+            if raw is not None:
+                toks.add((k, raw.hex()))
     n = tmap.get(va)
     if n:
         toks.add(('sym', n))
@@ -426,7 +467,7 @@ def evaluate(band, tmap, name2va, fn, cands, use_sym=True, truth=None, trusted=N
                 else:
                     conflict[c].add(off)
             else:
-                toks = classify_va(band, va, tmap)
+                toks = classify_va(band, va, tmap, exact=truth is not None)
                 if want & toks:
                     agree[c].add(off)
                 else:
