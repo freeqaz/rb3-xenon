@@ -101,3 +101,11 @@ END_PROPSYNCS
 #include "rnddx9/Rnd_Xbox.cpp"
 #undef gRev
 #undef gAltRev
+
+// Lane-AE scatter force-emit: retail placed PatchRenderer's OBJ_CLASSNAME
+// COMDAT (?StaticClassName@PatchRenderer@@SA?AVSymbol@@XZ) inside the .text span
+// pinned to default/BandSwatch. The macro defines it inline, so it is only
+// emitted where it is odr-used -- nothing in this TU used it, so our obj
+// never defined the symbol and objdiff could not pair it. Force the use.
+#include "bandobj/PatchRenderer.h"
+Symbol ForceEmit_PatchRenderer_StaticClassName() { return PatchRenderer::StaticClassName(); }

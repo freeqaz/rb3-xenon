@@ -257,3 +257,11 @@ BEGIN_PROPSYNCS(StarDisplay)
     SYNC_PROP_SET(float_total_stars, (float)mTotalStars, SetValues(mStars, _val.Float()))
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS
+
+// Lane-AE scatter force-emit: retail placed ReviewDisplay's OBJ_CLASSNAME
+// COMDAT (?StaticClassName@ReviewDisplay@@SA?AVSymbol@@XZ) inside the .text span
+// pinned to default/StarDisplay. The macro defines it inline, so it is only
+// emitted where it is odr-used -- nothing in this TU used it, so our obj
+// never defined the symbol and objdiff could not pair it. Force the use.
+#include "bandobj/ReviewDisplay.h"
+Symbol ForceEmit_ReviewDisplay_StaticClassName() { return ReviewDisplay::StaticClassName(); }

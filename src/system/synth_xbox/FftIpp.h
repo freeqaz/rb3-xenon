@@ -51,9 +51,8 @@ public:
 
 class FftIpp {
 public:
-    void FftRealCcs(unsigned int *, volatile float &, unsigned int *, float &);
-    void
-    FftReal(unsigned int *, volatile float &, unsigned int *, float &, volatile float &);
+    void FftRealCcs(const float *__restrict, float *__restrict);
+    void FftReal(const float *__restrict, float *__restrict, float *__restrict);
     ~FftIpp();
     FftIpp();
     void SetMode(int);

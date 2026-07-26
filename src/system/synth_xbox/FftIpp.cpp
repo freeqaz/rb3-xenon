@@ -4,39 +4,57 @@
 #include <stdarg.h>
 
 extern int CalculateSinCosTable(long, float *);
-extern "C" int FFTRealForward(unsigned int *, unsigned int, float *, int, int);
+int FFTRealForward(float *data, unsigned long size, float *context);
 extern "C" int _vsprintf_s_l(void *, char *, unsigned int, const char *, void *, va_list);
 
-void FftIpp::FftRealCcs(
-    unsigned int *param1, volatile float &param2, unsigned int *param3, float &param4
-) {
-    unsigned int *inData = param1;
-    float *outData = (float *)&param2;
-    unsigned int n = *param3;
+void FftIpp::FftRealCcs(const float *__restrict in, float *__restrict out) {
+    if ((unsigned int)mSize != 0) {
+        memcpy(&mBuf3[0], in, mSize * 4);
+    }
 
-    memcpy(&param4, (void *)param1, n * 4);
+    FFTRealForward(&mBuf3[0], (unsigned long)mSize, &mSinCos[0]);
 
-    int result = FFTRealForward(inData, n, outData, 0, 0);
-    (void)result;
+    unsigned int n = (unsigned int)mSize;
+    if (n != 0) {
+        memcpy(out, &mBuf3[0], n * 4);
+    }
+
+    out[n] = out[1];
+    out[n + 1] = 0.0f;
+    out[1] = 0.0f;
 }
 
 void FftIpp::FftReal(
-    unsigned int *param1, volatile float &param2, unsigned int *param3, float &param4,
-    volatile float &param5
+    const float *__restrict in, float *__restrict outRe, float *__restrict outIm
 ) {
-    unsigned int *inData = param1;
-    float *outData = (float *)&param2;
-    unsigned int *tmpBuf = param3;
-    unsigned int n = *param3;
-    float *outCcs = (float *)&param5;
+    if ((unsigned int)mSize != 0) {
+        memcpy(&mBuf3[0], in, mSize * 4);
+    }
 
-    memcpy((void *)inData, (void *)outData, n * 4);
+    FFTRealForward(&mBuf3[0], (unsigned long)mSize, &mSinCos[0]);
 
-    int result = FFTRealForward(inData, n, outData, 0, 0);
-    (void)result;
+    int n = mSize;
+    int i = 1;
+    unsigned int half = (unsigned int)(n >> 1);
+    if (half > 1) {
+        char *packed = (char *)&mBuf3[0];
+        int byteOff = 8;
+        float *im = outIm + 1;
+        long reBias = (char *)outRe - (char *)outIm;
+        do {
+            // Even slot -> real out, odd slot -> imag out.
+            *(float *)((char *)im + reBias) = *(float *)(packed + byteOff);
+            ++i;
+            byteOff += 8;
+            im[0] = *(float *)(packed + byteOff - 4);
+            im += 1;
+        } while ((unsigned int)i < half);
+    }
 
-    result = FFTRealForward(inData, n, outCcs, 1, 0);
-    (void)result;
+    outIm[0] = 0.0f;
+    outRe[0] = mBuf3[0];
+    outRe[n] = mBuf3[1];
+    outIm[n] = 0.0f;
 }
 
 FftIpp::~FftIpp() {

@@ -6,8 +6,14 @@
 #include "os/CritSec.h"
 #include "os/Debug.h"
 #include "os/System.h"
+#include "math/Trig.h"
+#include "math/Utl.h"
+#include "utl/MemStream.h"
 #include "utl/Symbol.h"
+#include <cmath>
 #include <cstring>
+
+extern void *_xhv_voicechat_mode;
 
 MicManagerXbox *sInstance;
 
@@ -24,6 +30,96 @@ static int gNoiseInt = 5;
 static float gLowCut = 800;
 static float gLocalGain = -3;
 static float gRemoteGain = 3;
+
+#pragma region ChatReceiver
+
+ChatReceiver::ChatReceiver(IXHV2Engine *engine, int i2)
+    : mXHV(engine), unk4(i2), unk8(0), unk9(0), unkc(0), unk10(0), unk14(0), unk18(0),
+      unk50(new MemStream(true)) {
+    MILO_ASSERT(mXHV, 0x3F2);
+}
+
+ChatReceiver::~ChatReceiver() {
+    ActivateProcessing(false);
+    RELEASE(unk50);
+}
+
+void ChatReceiver::ActivateProcessing(bool b1) {
+    if (b1 != unk9) {
+        unk9 = b1;
+        void *mode = _xhv_voicechat_mode;
+        if (b1) {
+            mXHV->RegisterLocalTalker(unk4);
+            mXHV->StartLocalProcessingModes(unk4, &mode, 1);
+        } else {
+            mXHV->StopLocalProcessingModes(unk4, &mode, 1);
+            mXHV->UnregisterLocalTalker(unk4);
+        }
+    }
+}
+
+void ChatReceiver::ProcessChatData(void *data, unsigned int size, int *flag) {
+    float w = gLowCut * 0.000392699f;
+    float b1 = Sine(w + 1.5707964f) * -2.0f;
+    float a1 = -b1;
+    float disc = b1 * b1 - (Sine(w + 1.5707964f) * 8.0f - 7.0f) * 4.0f;
+    float coef = (a1 - sqrtf(disc)) * 0.5f;
+    float gain = (coef + 1.0f) * 0.5f;
+
+    float z1 = unkc;
+    float z2 = unk10;
+    unsigned int samps = size >> 1;
+    if (samps != 0) {
+        short *p = (short *)data - 1;
+        for (unsigned int i = 0; i != samps; i++) {
+            float in = (float)p[1];
+            float out = (in - z1) * gain * 2.0f + z2 * coef;
+            z1 = in;
+            out = Clamp(-32767.0f, 32767.0f, out);
+            p++;
+            *p = (short)out;
+            z2 = (float)(short)out;
+        }
+    }
+    unk10 = z2;
+    unkc = z1;
+
+    short maxSamp = 0;
+    short minSamp = 0;
+    *flag = 1;
+    float localRatio = DbToRatio(gLocalGain);
+    if (samps != 0) {
+        short *p = (short *)data - 1;
+        for (unsigned int i = 0; i < samps; i++) {
+            short s = p[1];
+            if (s >= maxSamp) {
+                maxSamp = s;
+            }
+            if (s < minSamp) {
+                minSamp = s;
+            }
+            p++;
+            p[0] = (short)((float)s * localRatio);
+        }
+    }
+
+    int newCount;
+    if ((float)maxSamp * (1.0f / 32767.0f) > DbToRatio(gNoiseThreshold)
+        || (float)minSamp * (1.0f / 32767.0f) < -DbToRatio(gNoiseThreshold)) {
+        newCount = gNoiseInt;
+    } else if (unk14 > 0) {
+        newCount = unk14 - 1;
+    } else {
+        *flag = 0;
+        return;
+    }
+    unk14 = newCount;
+    if (*flag != 0) {
+        unk18 = 5;
+    }
+}
+
+#pragma endregion
 
 #pragma region MicXbox
 

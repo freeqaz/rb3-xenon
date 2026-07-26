@@ -2729,3 +2729,11 @@ END_PROPSYNCS
 #include "utl/MakeString.h"
 template RndPostProc *ObjectDir::Find<RndPostProc>(const char *, bool);
 template const char *MakeString<const char *>(const char *, const char *);
+
+// Lane-AE scatter force-emit: retail placed OvershellDir's OBJ_CLASSNAME
+// COMDAT (?StaticClassName@OvershellDir@@SA?AVSymbol@@XZ) inside the .text span
+// pinned to default/BandCharacter. The macro defines it inline, so it is only
+// emitted where it is odr-used -- nothing in this TU used it, so our obj
+// never defined the symbol and objdiff could not pair it. Force the use.
+#include "bandobj/OvershellDir.h"
+Symbol ForceEmit_OvershellDir_StaticClassName() { return OvershellDir::StaticClassName(); }
