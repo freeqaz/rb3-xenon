@@ -26,6 +26,7 @@ void SigninScreen::Poll() { UIScreen::Poll(); }
 
 LocalBandUser *SigninScreen::GetUser() {
     LocalBandUser *user = nullptr;
+    static Symbol signing_in_user("signing_in_user");
     const DataNode *prop = Property(signing_in_user, false);
     if (prop) {
         user = prop->Obj<LocalBandUser>();
@@ -42,6 +43,7 @@ LocalBandUser *SigninScreen::GetUser() {
 void SigninScreen::Enter(UIScreen *screen) {
     BandScreen::Enter(screen);
     ThePlatformMgr.AddSink(this);
+    static Symbol limit_user_signin("limit_user_signin");
     mLimitUserSignin = Property(limit_user_signin)->Int();
     if (mLimitUserSignin) {
         BandUser *pUser = GetUser();
@@ -50,9 +52,13 @@ void SigninScreen::Enter(UIScreen *screen) {
         } else
             MILO_ASSERT(pUser->IsLocal(), 0x49);
     }
+    static Symbol must_not_be_a_guest("must_not_be_a_guest");
     mMustNotBeAGuest = Property(must_not_be_a_guest)->Int();
+    static Symbol must_be_online("must_be_online");
     mMustBeOnline = Property(must_be_online)->Int();
+    static Symbol must_be_multiplayer_capable("must_be_multiplayer_capable");
     mMustBeMultiplayerCapable = Property(must_be_multiplayer_capable)->Int();
+    static Symbol handle_sign_outs("handle_sign_outs");
     mHandleSignOuts = Property(handle_sign_outs)->Int();
 }
 
@@ -74,11 +80,11 @@ void SigninScreen::ReEvaluateState() {
         ok = true;
     }
     if (ok) {
-        bool b1 = true;
-        if (mMustNotBeAGuest && ThePlatformMgr.IsUserAGuest(user))
-            b1 = false;
-        if (b1)
-            Handle(on_signed_in_msg, true);
+        ok = !(mMustNotBeAGuest && ThePlatformMgr.IsUserAGuest(user));
+    }
+    if (ok) {
+        static Message on_signed_in_msg("on_signed_in");
+        Handle(on_signed_in_msg, true);
     }
 }
 
@@ -108,18 +114,26 @@ DataNode SigninScreen::OnMsg(const SigninChangedMsg &msg) {
         }
     }
     switch (state) {
-    case 1:
+    case 1: {
+        static Message on_signed_into_guest_msg("on_signed_into_guest");
         Handle(on_signed_into_guest_msg, true);
         break;
-    case 2:
+    }
+    case 2: {
+        static Message on_not_online_msg("on_not_online");
         Handle(on_not_online_msg, true);
         break;
-    case 3:
+    }
+    case 3: {
+        static Message on_not_multiplayer_capable_msg("on_not_multiplayer_capable");
         Handle(on_not_multiplayer_capable_msg, true);
         break;
-    case 4:
+    }
+    case 4: {
+        static Message on_signed_in_msg("on_signed_in");
         Handle(on_signed_in_msg, true);
         break;
+    }
     }
     if (ThePlatformMgr.GuideShowing()) {
         unk41 = true;
@@ -131,6 +145,7 @@ DataNode SigninScreen::OnMsg(const UIChangedMsg &msg) {
     if (msg->Int(2) == 0) {
         if (unk41 && mHandleSignOuts
             && !ThePlatformMgr.IsUserSignedIn(GetUser())) {
+            static Message on_signed_out_msg("on_signed_out");
             Handle(on_signed_out_msg, true);
         } else {
             ReEvaluateState();

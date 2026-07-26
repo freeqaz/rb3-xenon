@@ -287,10 +287,15 @@ void TrackPanelDirBase::HideScore() {}
 void TrackPanelDirBase::GameOver() {}
 
 BEGIN_PROPSYNCS(TrackPanelDirBase)
+    static Symbol view_time_easy("view_time_easy");
     SYNC_PROP(view_time_easy, mViewTimeEasy)
+    static Symbol view_time_expert("view_time_expert");
     SYNC_PROP(view_time_expert, mViewTimeExpert)
+    static Symbol net_track_alpha("net_track_alpha");
     SYNC_PROP(net_track_alpha, mNetTrackAlpha)
+    static Symbol configuration("configuration");
     SYNC_PROP(configuration, mConfiguration)
+    static Symbol configurable_objects("configurable_objects");
     SYNC_PROP(configurable_objects, mConfigurableObjects)
     SYNC_SUPERCLASS(PanelDir)
 END_PROPSYNCS

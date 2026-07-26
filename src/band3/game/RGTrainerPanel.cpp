@@ -407,6 +407,9 @@ void RGTrainerPanel::InitFretSteps(const GameGem &gem) {
 
             const char *lblstr = MakeString("step_%02d_text.lbl", 1);
             BandLabel *steptextlbl = mDir->Find<BandLabel>(lblstr, true);
+            static Symbol rg_chordbook_left_hand_doesnt_matter(
+                "rg_chordbook_left_hand_doesnt_matter"
+            );
             steptextlbl->SetTextToken(rg_chordbook_left_hand_doesnt_matter);
 
             const char *animstr = MakeString("step_config_%02d.anim", 1);
@@ -416,6 +419,7 @@ void RGTrainerPanel::InitFretSteps(const GameGem &gem) {
 
             const char *lblstr2 = MakeString("step_%02d_text.lbl", 2);
             BandLabel *steptextlbl2 = mDir->Find<BandLabel>(lblstr2, true);
+            static Symbol rg_chordbook_step_strum("rg_chordbook_step_strum");
             steptextlbl2->SetTextToken(rg_chordbook_step_strum);
 
             const char *animstr2 = MakeString("step_config_%02d.anim", 2);
@@ -433,6 +437,7 @@ void RGTrainerPanel::InitFretSteps(const GameGem &gem) {
             const char *lblstr =
                 MakeString("step_%02d_text.lbl", mFingerSteps.size() + 1);
             BandLabel *steptextlbl = mDir->Find<BandLabel>(lblstr, true);
+            static Symbol rg_chordbook_step_strum("rg_chordbook_step_strum");
             steptextlbl->SetTextToken(rg_chordbook_step_strum);
             const char *animstr =
                 MakeString("step_config_%02d.anim", mFingerSteps.size() + 1);
@@ -629,6 +634,7 @@ void RGTrainerPanel::StartSectionImpl() {
 }
 
 void RGTrainerPanel::NewDifficulty(int i1, int i2) {
+    static Message end_chord_legend_no_rollback_msg("end_chord_legend_no_rollback");
     Handle(end_chord_legend_no_rollback_msg, true);
     ProTrainerPanel::NewDifficulty(i1, i2);
 }

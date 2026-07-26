@@ -632,6 +632,7 @@ void TrackPanel::Poll() {
         }
     }
     if (!wasSoloing && soloing) {
+        static Message hide_msg("hide");
         SendTrackerBroadcastDisplayMessage(hide_msg);
     }
     unk62 = soloing;
