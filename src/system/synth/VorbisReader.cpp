@@ -33,12 +33,15 @@ namespace {
 #define VORBIS_FAIL(name, err)                                                           \
     MILO_NOTIFY("Ogg Vorbis failure: %s, error code %i", name, err);
 
-VorbisReader::VorbisReader(File *file, bool expectMap, StandardStream *stream, bool b2)
+VorbisReader::VorbisReader(
+    File *file, bool expectMap, StandardStream *stream, bool floatSamples, bool b2
+)
     : mNumChannels(-1), mSampleRate(-1), mFile(file), mHeadersRead(0), mReadBuffer(0),
       mEnableReads(true), unk40(0), unk44(0), mDone(0), mStream(stream), mOggSync(0),
       mOggStream(0), mVorbisInfo(0), mVorbisComment(0), mVorbisDsp(0), mVorbisBlock(0),
       mHasPendingPacket(0), mSeekTarget(-1), mSamplesToSkip(0), mHdrSize(0), mHdrBuf(0), mCtrState(0),
-      unkec(b2), unked(0), mEof(0), mFail(0), mLastGranulePos(-1), mPcmReadPos(0) {
+      unkec(b2), mFloatSamples(floatSamples), unked(0), mEof(0), mFail(0),
+      mLastGranulePos(-1), mPcmReadPos(0) {
     MILO_ASSERT(mFile, 0xEC);
     if (expectMap) {
         mHdrBuf = new char[60000];

@@ -28,7 +28,7 @@ public:
     virtual void ResetMicsChanged();
     virtual Stream *NewStream(char const *, float, float, bool);
     virtual Stream *NewBufStream(void const *, int, Symbol, float, bool);
-    virtual StreamReader *NewStreamDecoder(File *, StandardStream *, Symbol);
+    virtual StreamReader *NewStreamDecoder(File *, StandardStream *, Symbol, bool);
     virtual void NewStreamFile(char const *, File *&, Symbol &);
     virtual void CaptureMic(int);
     virtual void ReleaseAllMics();

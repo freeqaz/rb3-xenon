@@ -10,7 +10,7 @@
 
 class VorbisReader : public StreamReader, public CriticalSection {
 public:
-    VorbisReader(File *, bool, StandardStream *, bool);
+    VorbisReader(File *, bool, StandardStream *, bool, bool);
     virtual ~VorbisReader();
     virtual void Poll(float);
     virtual void Seek(int);
@@ -82,7 +82,7 @@ protected:
     unsigned char mNonce[16]; // 0xf8
     unsigned char mKeyMask[16]; // 0x108
     bool unkec; // 0x118
-    char mUnkTU5_0x119; // 0x119 : TU5-inserted byte (pushes unked/mEof/mFail +1)
+    bool mFloatSamples; // 0x119 : ctor param 4 (StandardStream::mFloatSamples)
     bool unked; // 0x11a
     bool mEof; // 0x11b
     bool mFail; // 0x11c

@@ -588,7 +588,7 @@ void StandardStream::Init(float f1, float f2, Symbol s, bool b4) {
     if (mPollingEnabled) {
         StartPolling();
     }
-    mRdr = TheSynth->NewStreamDecoder(mFile, this, s);
+    mRdr = TheSynth->NewStreamDecoder(mFile, this, s, mFloatSamples);
 }
 
 void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4) {
@@ -936,7 +936,7 @@ void StandardStream::DoJump() {
         mFile = NewFile(mJumpFile.c_str(), 2);
         if (!mFile)
             MILO_FAIL("\nCould not open %s", mJumpFile.c_str());
-        mRdr = TheSynth->NewStreamDecoder(mFile, this, mExt);
+        mRdr = TheSynth->NewStreamDecoder(mFile, this, mExt, mFloatSamples);
         mFileStartMs = SampToMs(mJumpToSamples);
         mCurrentSamp = 0;
         ClearJump();
