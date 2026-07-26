@@ -1,8 +1,20 @@
 # laneAO — single-owner round on `scripts/target_symbol_map.json` (2026-07-26)
 
 Baseline at lane start: main `a059e4a8`, **36,069** strict by a single build.
-**Honest baseline 36,071** — see §1. Final **36,084 = +13, 0 losses**, rebased
-onto `e792cc00`, verified `git merge-base --is-ancestor main laneAO-maphand`.
+**Honest baseline 36,071** — see §1. Measured there: **36,084 = +13, 0 losses**.
+
+★**Re-measured after main advanced twice mid-lane** (`e792cc00`, then
+`9b2d2737`, the latter carrying a 1,525-line `splits.txt` change worth ~+590):
+**36,661 → 36,674 = +13, 0 losses, the identical 13-function gain set.** The
+lane's delta is fully independent of the concurrent splits work. Rebased onto
+`9b2d2737`; `git merge-base --is-ancestor main laneAO-maphand` verified, and
+`git diff --stat main..laneAO-maphand` touches only this lane's own files.
+
+★The ancestry trap fired here exactly as warned: the first symptom was
+`git diff --stat main..laneAO-maphand` showing my branch *deleting* another
+lane's whole `docs/plans/laneAN/` tree and `splits.txt`. That is not a conflict —
+it is the signature of a stale branch point. **Re-check ancestry immediately
+before the final measurement, not once at the start.**
 
 Five subagents: one adjudicating the map handoff, one read-only auditing the
 map, two on the source leads, one on the displacement/rotation channels.
