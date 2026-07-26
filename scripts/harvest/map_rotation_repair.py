@@ -49,6 +49,7 @@ Usage
 import argparse
 import json
 import os
+import re
 import sys
 from collections import defaultdict
 
@@ -240,9 +241,22 @@ def apply(a):
     out = [lines[0]]
     done = set()
     nset = nrem = 0
+    # ---- A map ENTRY line is  "0xVA": "name",  -- it has a colon after the
+    # closing quote.  The map ALSO contains provenance ARRAYS (`_denylist`,
+    # `_icf_arbitrary`, `_bijection_arbitrary` = 1,207 entries) whose elements
+    # are bare `    "0xVA",` strings.  A plain startswith('"0x') test matches
+    # those too, and then this writer either silently DELETES an array element
+    # (on `remove`) or rewrites it into a `"key": "value"` pair *inside a JSON
+    # array* (on `set`) -- which is a hard parse error.  Measured here: applying
+    # a 3-entry plan corrupted the map at line 1381 because `0x82754a48` is also
+    # listed in `_bijection_arbitrary`.  The safety asserts above cannot catch
+    # it: they build `cur` from `json.load(...)` filtered by
+    # `isinstance(v, str)`, so the arrays are invisible to the checker and
+    # visible only to this textual writer.  Require the colon.
+    ENTRY = re.compile(r'^"0[xX][0-9a-fA-F]+"\s*:')
     for ln in lines[1:]:
         s = ln.strip()
-        if s.startswith('"0x') or s.startswith('"0X'):
+        if ENTRY.match(s):
             key = s.split('"')[1].lower()
             if key in remove:
                 nrem += 1

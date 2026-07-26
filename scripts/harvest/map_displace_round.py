@@ -109,9 +109,18 @@ def main():
 
     wt = a.worktree
     mp = a.map or os.path.join(wt, 'scripts/target_symbol_map.json')
-    raw = {k.lower(): v for k, v in json.load(open(mp)).items()
+    full = json.load(open(mp))
+    raw = {k.lower(): v for k, v in full.items()
            if k.lower().startswith('0x') and isinstance(v, str)}
     mapped_names = set(raw.values())
+    # ---- guard 0: the map's own `_denylist`.  Byte identity is not the last
+    # word: a denylisted VA is one a human already adjudicated as a bad binding
+    # (argreg-refuted, or a fingerprint collision).  Because the *bytes* still
+    # match, this tool re-proposes it on every run -- `_denylist_comment` names
+    # `0x82553fc8 ?Terminate@RndMat@@SAXXZ` a "permanent oscillator" for exactly
+    # this reason, and two separate lanes (laneAO, laneAR) then had to filter it
+    # out by hand.  Consult the denylist here so the next lane does not.
+    denylist = {str(x).lower() for x in (full.get('_denylist') or [])}
     name2va = defaultdict(set)
     for k, v in raw.items():
         name2va[v].add(k)
@@ -128,11 +137,15 @@ def main():
 
     # claimants: unmapped name whose bytes are unique in the whole binary
     claims = defaultdict(list)
+    stats_denied = []
     for name, hs in hits_of.items():
         if len(hs) != 1 or name in mapped_names:
             continue
         va = next(iter(hs))
         if in_vendor(va):
+            continue
+        if va in denylist:
+            stats_denied.append(va)
             continue
         claims[va].append(name)
 
@@ -162,6 +175,7 @@ def main():
 
     tiers = set(a.tiers.split(','))
     stats = defaultdict(int)
+    stats['refuse-denylisted'] = len(stats_denied)
     cands = []
     # ---- contested claims: several unmapped names are byte-identical at the
     # same VA, i.e. the linker ICF-folded them.  Byte identity cannot rank
