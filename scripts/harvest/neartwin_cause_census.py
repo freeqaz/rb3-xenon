@@ -42,6 +42,13 @@ def load(path):
         if end: out.append((g[:end], sec.data[s.value:s.value+s.size], s.name, s.size))
     return out
 def opk(w): return {14:'addi',32:'lwz',36:'stw',15:'addis'}.get(w>>26,'op%d'%(w>>26))
+def ra(w): return (w>>16)&31
+def framereg(raw):
+    """Funclet prologue is `addi rN, r12, -frame`; rN is the frame pointer."""
+    if len(raw) < 4: return None
+    w=struct.unpack('>I',raw[0:4])[0]
+    if (w>>26)==14 and ra(w)==12: return (w>>21)&31
+    return None
 tmap={k.lower():v for k,v in json.load(open(f'{WT}/scripts/target_symbol_map.json')).items() if isinstance(v,str) and k.startswith('0x')}
 rep=json.load(open(f'{WT}/build/45410914/report.json'))
 pct={f['name']:f['match_percent_normalized'] for u in rep['units'] for f in (u.get('functions') or [])}
@@ -76,8 +83,22 @@ for tp in sorted(glob.glob(f'{root}/**/*.obj',recursive=True)):
         if len(d)==1:
             i=d[0]; tv=struct.unpack('>I',raw[i:i+4])[0]; bv=struct.unpack('>I',braw[i:i+4])[0]
             tk,bk=opk(tv),opk(bv)
-            cause=('FRAME_OFFSET' if i==0 and tk==bk=='addi' else 'MEMBER_OFFSET' if tk==bk=='addi'
-                   else 'MEMBER_PTR_OFFSET' if tk==bk=='lwz' else 'MEMBER_FORM' if {tk,bk}=={'addi','lwz'} else 'OTHER_1WORD')
+            # ★ RA decides member-vs-frame. r31 (the funclet's own frame
+            # pointer, set from r12 in the prologue) means a STACK SLOT of the
+            # parent, i.e. a parent-body divergence. Only a base register that
+            # was itself loaded from a frame slot -- a `this` pointer -- makes
+            # this a class-MEMBER reference. laneAT-f1 measured that conflating
+            # the two mislabels ~4 of every 5 rows.
+            fp = framereg(raw)
+            same_op = tk == bk
+            if i == 0 and same_op and tk == 'addi':
+                cause = 'FRAME_SIZE'
+            elif tk in ('addi','lwz') and bk in ('addi','lwz'):
+                on_fp = (fp is not None and ra(tv) == fp and ra(bv) == fp)
+                kind = 'OFFSET' if same_op else 'FORM'
+                cause = ('FRAMESLOT_' if on_fp else 'MEMBER_') + kind
+            else:
+                cause = 'OTHER_1WORD'
             st['1W_'+cause]+=1
             rows.append(dict(sym=nm,unit=rel,size=sz,pct=p,cause=cause,base=bn,at=i,
                              tgt='0x%08x'%tv,bas='0x%08x'%bv))
