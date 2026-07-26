@@ -2,13 +2,32 @@
 
 **Merge-base:** main `71acd6e7` = **38,139** strict (the lane started at `620bfb21`
 = 37,619; main advanced twice mid-lane).
-**Landed here:** `baedcd09` — **38,139 → 38,139 = +0 strict, 0 gained, 0 lost.**
 
-> **Headline: this lane moved the counter by zero, and that is the correct
-> result.** The channel it was chartered against is strict-neutral *by
-> construction*, which we measured rather than assumed. The lane's product is
-> 24 corrected identities, three refutations (two of them of our own claims),
-> and one wrong scope predicate found and priced.
+> ## **38,139 → 38,185 = +46 strict, 0 real losses**
+> unit+name 47 gained / 1 lost · **name-only 46 gained / 0 lost** (the single
+> unit+name loss is `?SaveType@Object@Hmx@@` migrating DirLoader→Object with its
+> span — the pin move working, which is exactly what the unit-agnostic leg
+> exists to distinguish). `overlap_check` clean (`.text` 5,703 / `.pdata` 5,163,
+> 0 overlaps); map 25,669 entries, **0 duplicate VAs** on the raw-line check;
+> `_bijection_arbitrary` 1207 / `_icf_arbitrary` 25 / `_denylist` 3 intact.
+
+| commit | content | strict |
+|---|---|--:|
+| `baedcd09` | 24 VA-closed identity repairs in byte-identical classes | **+0** |
+| `f2473e8a` | 42 over-covering `.text` pins → 36 move+map (worker B, rebased) | **+17** |
+| `9a1252b6` | 67 unpinned vtable VAs → 51 new pins + 49 map entries + 1 source fix (worker D, rebased) | **+29** |
+
+**The two items the lane was chartered on both closed, but not symmetrically:**
+the `_bijection_arbitrary` re-decision is **strict-neutral by construction and
+we proved it** (ceiling +2, measured +0), while the *splits* items — the 42
+over-covering pins and the 67 unpinned VAs — carried the entire +46. **Two of
+five worker fragments (+26 and +8, both correctly measured) rebased to exactly
+0 net-new** because a concurrent lane had taken every VA in the interval.
+
+Also delivered: **83 VAs converted from 0.00 % structurally-unpairable to paired
+and scored** (19 from the pins, 64 from the unpinned arm) — a ready body-port
+worklist that never shows in the strict count — plus six refutations, four of
+them of our own claims, and one wrong scope predicate found and priced.
 
 ---
 
@@ -293,6 +312,82 @@ Tools: `/home/free/tmp/laneAV/definer_index.py`, cached index
 `/home/free/tmp/laneAV/definers.json`, annotated evidence
 `/home/free/tmp/laneAV/frag109_definers.json`.
 
+## 5.5 The splits arms — where the +46 actually came from
+
+### The 42 over-covering pins (worker B, `ebb363cd` → rebased `f2473e8a`, **+17**)
+36 moved+mapped, 2 already correct, 4 refused. **40 of the 42 VAs were absent
+from the map**, so a splits move alone converts nothing — every landed row is
+move **and** map entry in one leg. `splits.txt` on main was unchanged since the
+old base, so the delta applied verbatim; 35 of 36 map adds rebased clean (one
+dropped: `0x82579f50 ?ContentDone@SongMgr@@`, already held by main at
+`0x827a88c8`). The +17 reproduced *exactly* at the new base — the cross-check
+that the rebase was faithful.
+
+* ★**Spatial distance is not a rejection criterion.** 11 rows were deferred on
+  claim-distance grounds; 5 were tested anyway and **all 5 flipped to 100 %** —
+  at up to 1.9 MB. Adjustor thunks and small accessors are ICF-eligible and land
+  wherever the surviving fold goes. Distance should **rank** multi-definer
+  contests, never **reject** a unique-definer row. **Other lanes' distance-
+  deferred rows are worth re-testing.**
+* ★**A whole-island move can buy a fake match with a real one.** Leg 1 read +12
+  with 2 losses, both named matches at map-known VAs inside wholesale-moved
+  islands. One netted *exactly zero*: it destroyed a named match and created a
+  new 100 % on an anonymous `fn_` that byte-paired in the destination obj — same
+  count, less honest. Narrowing both moves to the single function recovered
+  both. **`lane-ar-map-ownership-2026-07-26.md` §10 currently reads as though
+  "sandwiched by the claimant on both sides" licenses a wholesale range move; it
+  does not** — the sandwich establishes the span's *ownership*, not transfer of
+  the named matches inside it. That wording is worth correcting.
+* ★**4 laneAS rows refuted, all one shape:** the VA is already held at 100 % by a
+  *different* name (`?GetProfile@Tour@@` `0x8235bb28`,
+  `?Ranked@MatchmakingSettings@@` `0x823e2ae8`, plus duplicate-name cases at
+  `0x82317a88`, `0x823af200`). **Byte identity of the incumbent beats vtable
+  anchors**, and anchor count (3-5 here) does not rescue them.
+
+### The 67 unpinned vtable VAs (worker D, `a917302a` → rebased `9a1252b6`, **+29**)
+3 refused as stale (already pinned by a concurrent lane — laneAS's `route`
+snapshot is out of date), **64 pinned** via 51 new `.text` ranges + 49 rebased
+map entries; 44 strict, 20 scored. Plus one carried source fix:
+`Accomplishment::InitializeTrackerDesc` store order (hoist `Symbol nm = mName`
+above the `unkc` store) 99.90 % → **100 %** — laneAO's pin-then-read-the-diff
+lesson reproducing exactly.
+
+* ★★**Reloc-masked byte equality is near-vacuous below ~32 B — and worker D
+  refuted its own tool for it.** It built the byte-equality upgrader, validated
+  it (297/299 known-strict controls), got "40/64 byte-equal", then killed it:
+  indexing every (size, masked-body) pair over all **154,948** compiled `.text`
+  symbols shows the 12-byte MSVC adjustor-thunk body is shared by **1,673
+  distinct symbols**, the `Handle` variant by 590, a 4-byte `blr` body by
+  **2,309**. It confirms *shape*, not identity. **Anyone planning to "upgrade
+  candidates with byte equality" must gate on pattern multiplicity first.**
+* **What discriminated instead, at the same build cost:** decode the retail
+  `b`/`bl` at the VA, resolve it through `target_symbol_map` + `symbols.txt`, and
+  compare against the reloc symbol our obj points at. Measured flips:
+  BR-MATCH ≤68 B **16/18** · leaf/no-branch ≤68 B **4/4** · BR-MISMATCH-but-ICF-
+  explained ≤68 B **3/3** · BR-UNRESOLVED ≤68 B 8/18 · **>68 B any class 1/19**.
+  The 68-byte rule held almost exactly; the one >68 B flip was an
+  extent-vs-body sizing artefact (36 B body inside an 84 B extent).
+* Two BR-MISMATCH rows were **ICF artefacts, not misassignments**
+  (`?Main@ObjectDir@@` / `?Current@MetaPerformer@@` are byte-identical; `??_E`/
+  `??_G` destructors fold likewise). `icf_aliases.map` carries only 7 entries, so
+  branch-target comparison needs its own fold check.
+
+### ★ Composition: the merge that `git apply --3way` could not do
+B's delta *moves* ranges; D's delta only *adds* them (D did this deliberately so
+a concurrent `splits_move.py` could not collide). A plain `git apply --3way` of
+D onto B **conflicted**. `scripts/harvest/splits_additive_merge.py` (new) parses
+both files structurally and copies only the `(unit, section, start, end)` ranges
+the target lacks — never removes, never edits an endpoint, and **refuses on any
+interval overlap**. 72 ranges added, 0 removed, D's 51 new ranges overlapping the
+landing tree in **0** places. This is the safe primitive that `land.sh`'s
+dict-union is not.
+
+★**`.pdata` must be carried with `.text`.** A `.text` move silently orphans the
+donor's `.pdata` for the moved functions — invisible in `matched_functions`, but
+it leaves donors owning unwind records for code they no longer contain. The
+landed delta carries it (60 `.pdata` lines added / 23 removed alongside 82/27 for
+`.text`), and `overlap_check` is clean on **both** sections.
+
 ## 6. Handoff: 46 named methods retail has and our tree never emits
 
 Applying the definer index to the map itself: **5,455 of 25,166 entries name a
@@ -363,11 +458,30 @@ Also open:
    5 VAs with no row). laneDUPNAME's channel; not worked here.
 2. **The 7 orphaned repairs** of §2 — need their cycles re-derived against
    current main.
-3. **The 314 `_bijection_arbitrary` entries at ≥69 B** — the only decidable arm,
+3. ★**The four `Track` accessors at 96.5-97.1 %** — `GetPlayerName`,
+   `PlayerDisconnected`, `HasLocalPlayer`, `PlayerDisabled` all sit behind **one
+   shared mismatch**: retail `cmplwi cr6, r11, 0x0` vs our `cmpwi` on the null
+   test of `user->GetPlayer()`. `!= NULL` and a hoisted `Player *player` local
+   both fail to move it (tried and reverted). **Four strict matches sit behind
+   whichever source form makes MSVC pick the unsigned compare** — worth a
+   `docs/decomp/patterns/` entry if someone cracks it.
+4. **83 VAs converted 0.00 % -> scored**, a ready body-port worklist:
+   `?Poll@CharMirror@@` 98.97 · `HasLocalPlayer@Track` 97.14 ·
+   `PlayerDisconnected@Track` 96.67 · `GetPlayerName@Track` /
+   `PlayerDisabled@Track` 96.47 · `?PollDeps@CharWeightSetter@@` 95.39 ·
+   `Load@JoinRequestMsg` 95.12 · `?Poll@CharSleeve@@` 92.92 ·
+   `?FindPathName@Object@Hmx@@` 90.56 · `SetPitchBend@BeatMatcher` 90.00 ·
+   `setCoefficients@FIRFilter` 87.37 · `?Poll@CharForeTwist@@` 82.14 ·
+   `?Handle@Object@Hmx@@` (2,660 B) 80.24. Tail down to `Save@Fader` 3.57 (our
+   body is a 4-byte stub vs retail's 112 - a pure body-port lead). The three
+   lowest from the pins arm (`?Handle@UIScreen@@` 1.95, `?ContentDone@SongMgr@@`
+   0.98, `?Poll@SetlistToStorePanel@@` 0.33) cost nothing but are **not
+   corroborated by their score** - treat their attribution as unproven.
+5. **The 314 `_bijection_arbitrary` entries at ≥69 B** — the only decidable arm,
    and the reloc-content discriminator (`scripts/harvest/reloc_disc/`, imported
    from `laneAS-B` where it had never landed, now on branch `laneAV-A`) is the
    tool for it. Ceiling remains +2 strict; fund for correctness only.
-4. **12 files hardcoding the vendor VA window**, two of them unbounded and one
+6. **12 files hardcoding the vendor VA window**, two of them unbounded and one
    with a different upper bound (§3).
 
 ## 9. Reproducing
