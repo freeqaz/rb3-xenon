@@ -520,6 +520,7 @@ __declspec(noinline) const char *_outline_Str(Symbol *_obj) {
 
 void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
     MILO_ASSERT(DemandLoad() || !shot, 0x45C);
+    static Message on_loading_characters_msg("on_loading_characters");
     HandleType(on_loading_characters_msg);
     Symbol playmode = GetPlayMode();
     int instOrderEnd = 5;
@@ -925,10 +926,16 @@ BEGIN_HANDLERS(BandWardrobe)
     HANDLE(sort_targets, OnSortTargets)
     HANDLE_EXPR(prefabs_list, ObjectList(BandCharDesc::GetPrefabs(), "BandCharDesc", true))
     HANDLE(get_matching_dude, OnGetMatchingDude)
+#ifdef HX_NATIVE
+    // Retail RB3 stripped these four dev-only handlers: the target Handle
+    // constructs exactly 14 dispatch Symbols, ending at get_matching_dude, and
+    // goes straight to HANDLE_SUPERCLASS. Keeping them cost 99 extra
+    // instructions and a +0x10 frame, which also un-paired 11 EH funclets.
     HANDLE(list_interest_objects, OnGetCurrentInterests)
     HANDLE(enable_debug_interests, OnEnableDebugInterests)
     HANDLE_ACTION(load_prefab_prefs, LoadPrefabPrefs())
     HANDLE_ACTION(sync_interests, SyncInterestObjects())
+#endif
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x73A)
 END_HANDLERS

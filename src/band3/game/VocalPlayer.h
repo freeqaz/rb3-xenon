@@ -221,8 +221,10 @@ public:
     int OnMsg(const GameMicsChangedMsg &);
     void UpdateMicDisplay();
     bool HadMic(const MicClientID &) const;
-    int OnMsg(const ButtonDownMsg &);
-    int OnMsg(const ButtonUpMsg &);
+    // Retail masks both returns at the HANDLE_MESSAGE call site
+    // (`clrlwi r11, r3, 24` before the DataNode store) => bool, not int.
+    bool OnMsg(const ButtonDownMsg &);
+    bool OnMsg(const ButtonUpMsg &);
     bool AllowPitchCorrection() const;
     void OnGameOver();
     void OnDisableController();

@@ -154,6 +154,24 @@ bool AccomplishmentSongConditional::CheckFullComboCondition(
 
 bool AccomplishmentSongConditional::CheckConditionsForSong(SongStatusMgr *mgr, Symbol s)
     const {
+    // Retail declares every condition key as a function-local static Symbol,
+    // all initialised up front (target: 14 Symbol(const char*) ctors + one
+    // guard word before the HasSong call).  Declaration order is read off the
+    // target's ctor sequence and is NOT the if-chain order for the last two.
+    static Symbol stars("stars");
+    static Symbol score("score");
+    static Symbol accuracy("accuracy");
+    static Symbol streak("streak");
+    static Symbol hopos_percent("hopos_percent");
+    static Symbol solo_percent("solo_percent");
+    static Symbol awesomes("awesomes");
+    static Symbol double_awesomes("double_awesomes");
+    static Symbol all_double_awesomes("all_double_awesomes");
+    static Symbol triple_awesomes("triple_awesomes");
+    static Symbol all_triple_awesomes("all_triple_awesomes");
+    static Symbol hit_bre("hit_bre");
+    static Symbol full_combo("full_combo");
+    static Symbol perfect_drum_rolls("perfect_drum_rolls");
     if (!TheSongMgr.HasSong(s, false))
         return false;
     else {
@@ -246,6 +264,23 @@ bool AccomplishmentSongConditional::IsSymbolEntryFulfilled(BandProfile *profile,
 bool AccomplishmentSongConditional::ShowBestAfterEarn() const { return false; }
 
 void AccomplishmentSongConditional::InitializeTrackerDesc(TrackerDesc &desc) const {
+    // 13 function-local statics in the target, of which only the first five
+    // are ever compared; the rest are declared-but-unused and MSVC still
+    // emits their guarded one-time init (target: 13 ctors before the
+    // Accomplishment::InitializeTrackerDesc call).
+    static Symbol accuracy("accuracy");
+    static Symbol hopos_percent("hopos_percent");
+    static Symbol streak("streak");
+    static Symbol unison_phrases("unison_phrases");
+    static Symbol stars("stars");
+    static Symbol score("score");
+    static Symbol bre_score("bre_score");
+    static Symbol solo_percent("solo_percent");
+    static Symbol awesomes("awesomes");
+    static Symbol double_awesomes("double_awesomes");
+    static Symbol triple_awesomes("triple_awesomes");
+    static Symbol hit_bre("hit_bre");
+    static Symbol full_combo("full_combo");
     Accomplishment::InitializeTrackerDesc(desc);
     MILO_ASSERT(!m_lConditions.empty(), 0x18B);
     const AccomplishmentCondition &condition = m_lConditions.front();

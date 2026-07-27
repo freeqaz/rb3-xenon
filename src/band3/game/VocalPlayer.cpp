@@ -1064,15 +1064,27 @@ void VocalPlayer::LocalEndgameEnergy(int x) {
     (void)x;
     return;
 #else
+    // Retail 360 does NOT use the four Messages*.h globals the Wii dev build
+    // does (rb3/src/band3/game/VocalPlayer.cpp).  Target fn_826E6298 holds ONE
+    // function-local `static Message` (slot 0x82E03524, guard 0x82E0352C),
+    // built from Symbol("") -> Message(Symbol) -> atexit, then re-typed per
+    // branch: the four arms tail-merge into a single Symbol(const char*) +
+    // Message::SetType(Symbol) (out-of-line fn_8228F068) + TheWorld->Handle.
+    // Same idiom as BandDirector::SetCrowd.
     if (TheWorld) {
+        static Message msg("");
+        const char *type;
         if (x == 0) {
-            TheWorld->Handle(endgame_vocals_none_msg, false);
+            type = "endgame_vocals_none";
         } else if (x == 1) {
-            TheWorld->Handle(endgame_vocals_low_msg, false);
+            type = "endgame_vocals_low";
         } else if (x == 2) {
-            TheWorld->Handle(endgame_vocals_medium_msg, false);
-        } else
-            TheWorld->Handle(endgame_vocals_high_msg, false);
+            type = "endgame_vocals_medium";
+        } else {
+            type = "endgame_vocals_high";
+        }
+        msg.SetType(type);
+        TheWorld->Handle(msg, false);
     }
 #endif
 }
@@ -1288,7 +1300,9 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     if (ic8 != -1) {
         int idx = mVocalParts.front()->CurrentPhraseIndex();
         int min = std::min(ic8, 4);
-        UpdateCrowdMeter(min, idx);
+        // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call); the
+        // Wii dev build passes idx.
+        UpdateCrowdMeter(min, idx - 1);
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
     bool b14 = i4 != -1 && ic8 >= 4;
@@ -1317,7 +1331,14 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
             HandleType(msg);
         }
     }
+    // Retail holds these two as function-local statics (guard 0x82E03620;
+    // target fn_826E97F8 emits Symbol("send_vocal_phrase_over")/Message/atexit
+    // then Symbol("phrase_end")/Message/atexit), not as Messages*.h globals.
+    // The `phrase_rating` Message below is genuinely NON-static in retail (no
+    // guard, no atexit) -- leave it alone.
+    static Message send_vocal_phrase_over_msg("send_vocal_phrase_over");
     HandleType(send_vocal_phrase_over_msg);
+    static Message phrase_end_msg("phrase_end");
     Handle(phrase_end_msg, false);
     if (ScoringEnabled() && ic8 != -1) {
         Message msg("phrase_rating", ic8);
@@ -1561,7 +1582,7 @@ bool VocalPlayer::HadMic(const MicClientID &id) const {
     return false;
 }
 
-int VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
+bool VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
 #ifdef HX_NATIVE
     // Off-path: the tambourine button-down path pulls TheUI / TheBandUI overshell
     // + PracticePanel RTTI (no UI headless). Not wired to the synthetic-mic run.
@@ -1597,7 +1618,7 @@ DECOMP_FORCEACTIVE(
     "( 0) <= ( o_rMicNumber) && ( o_rMicNumber) < ( 3)"
 )
 
-int VocalPlayer::OnMsg(const ButtonUpMsg &) { return 0; }
+bool VocalPlayer::OnMsg(const ButtonUpMsg &) { return false; }
 
 bool VocalPlayer::AllowPitchCorrection() const {
     MILO_ASSERT(TheGameMicManager, 0xA46);
@@ -2019,7 +2040,11 @@ const VocalPhrase *VocalPlayer::GetNextPhraseMarker(const VocalPhrase *const &p)
 
 bool VocalPlayer::AtFirstPhrase() const {
     VocalPart *vp = mVocalParts.front();
-    return vp->mThisPhrase == vp->mVocalNoteList->mPhrases.data();
+    // Retail reads mPhrases._M_finish (`lwz r10, 0x4, r10`), not _M_start, so
+    // this is end() -- NOT a VocalNoteList layout bug: all 13 mapped
+    // ?...@VocalNoteList@@ methods are at 100% with mPhrases at offset 0.
+    // The Wii dev build uses .data().
+    return vp->mThisPhrase == vp->mVocalNoteList->mPhrases.end();
 }
 
 bool VocalPlayer::AtLastPhrase() const {
@@ -2104,19 +2129,14 @@ void VocalPlayer::AddTambourineSeen() { mStats.AddTambourineSeen(); }
 void VocalPlayer::AddTambourineHit() { mStats.AddTambourineHit(); }
 void VocalPlayer::EndTambourineSection(int i) { mStats.UpdateBestTambourineSection(i); }
 
-// Family-A counterexample: retail VocalPlayer::Handle carries the MessageTimer
-// (proven: the unwind funclet fn_826CDB88 only byte-matches with the timer's
-// frame; dropping the global timer regresses it 100->stub). Restore the timer
-// for this TU only, the inverse of GuitarController.
-#ifndef HX_NATIVE
-#undef BEGIN_HANDLERS
-#define BEGIN_HANDLERS(objType)                                                          \
-    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
-        Symbol sym = _msg->Sym(1);                                                       \
-        MessageTimer timer(                                                              \
-            (MessageTimer::Active()) ? static_cast<Hmx::Object *>(this) : 0, sym         \
-        );
-#endif
+// REFUTED (laneAX-2, 2026-07-27): this TU used to #undef BEGIN_HANDLERS to put a
+// MessageTimer back into VocalPlayer::Handle, on funclet evidence. The premise was
+// built while ?Handle@VocalPlayer@@ was MISPAIRED (the map had 0x826e7ca0 =
+// ?Poll@..., so our Handle was unpaired and never measured). With the map rotation
+// fixed, the real target Handle (fn_826E7CA0) makes NO MessageTimer::Active /
+// Timer::Restart / AddTime call at all, and our timer'd body read frame Δ +0x30
+// with 247 target-missing instructions. Retail RB3 drops the per-handler timer,
+// exactly as Object.h's default (MILO_MESSAGE_TIMERS undefined) already assumes.
 
 #pragma push
 #pragma dont_inline on

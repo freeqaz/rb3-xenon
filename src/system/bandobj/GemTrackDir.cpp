@@ -386,17 +386,14 @@ void GemTrackDir::PlayIntro() {
     if (!BandTrack::mParent
         || (!BandTrack::mParent->PlayerDisconnected()
             && !BandTrack::mParent->FailedAtStart())) {
-        bool b2 = false;
-        if (BandTrack::mParent) {
-            if (!BandTrack::mParent->InGameMode(h2h))
-                b2 = true;
-        }
+        static Symbol h2h("h2h");
         float f1;
-        if (b2)
+        if (BandTrack::mParent && !BandTrack::mParent->InGameMode(h2h))
             f1 = mTrackIdx / 4.0f + 0.05f;
         else
             f1 = 0.55f;
 
+        static Message trigger_msg("trigger");
         unk624 = new MessageTask(mIntroTrig, trigger_msg);
         TheTaskMgr.Start(unk624, kTaskUISeconds, f1);
     }
@@ -509,8 +506,10 @@ void GemTrackDir::ReleaseSmasherPlate() {
 }
 
 void GemTrackDir::ResetSmashers(bool b) {
+    static Message reset_msg("reset");
+    static Message reset_particles_msg("reset_particles");
     if (BandTrack::mParent) {
-        BandTrack::mParent->ResetSmashers(reset_particles_msg);
+        BandTrack::mParent->ResetSmashers(b);
     }
     mKickDrummerTrig->BasicReset();
     mKickDrummerResetTrig->Trigger();
@@ -580,6 +579,7 @@ void GemTrackDir::Retract(bool b) {
     if (unk624)
         delete unk624;
     if (!b) {
+        static Message clear_all_msg("clear_all");
         unk60c = new MessageTask(this, clear_all_msg);
         TheTaskMgr.Start(unk60c, kTaskSeconds, 1.0f);
     } else {
@@ -649,6 +649,7 @@ void GemTrackDir::SuperStreak(bool b1, bool b2) {
 void GemTrackDir::Deploy() {
     BandTrack::Deploy();
     if (mTrackInstrument == kInstDrum && BandTrack::mParent) {
+        static Message update_gems_msg("update_gems");
         unk618 = new MessageTask(BandTrack::mParent, update_gems_msg);
         TheTaskMgr.Start(unk618, kTaskSeconds, 0.0f);
     }
@@ -656,6 +657,7 @@ void GemTrackDir::Deploy() {
 
 void GemTrackDir::EnterCoda() {
     BandTrack::EnterCoda();
+    static Message reset_msg("reset");
     if (mPlayerFeedback) {
         mPlayerFeedback->HandleType(reset_msg);
     }

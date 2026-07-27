@@ -412,6 +412,10 @@ void MusicLibrary::ToggleFilter(FilterType ty, Symbol s) {
 }
 
 const char *MusicLibrary::GetStatusText() {
+    // Retail interns both format tokens as function-local statics (guard word
+    // 0x82DFD4B0, bits 0x1/0x2), initialised up-front before the song counts.
+    static Symbol music_library_filtered_fmt("music_library_filtered_fmt");
+    static Symbol music_library_unfiltered_fmt("music_library_unfiltered_fmt");
     int i4 = TheSongSortMgr->mSongs.size();
     std::vector<int> songs;
     TheSongMgr.GetRankedSongs(songs, true, true);
@@ -2161,6 +2165,29 @@ void MusicLibrary::FakeWinNode(
 
 #pragma push
 #pragma dont_inline on
+// DEFERRED LEAD (laneAX-W5, 2026-07-27) -- Handle is 96.01%; the residue is a
+// handler-list divergence, not the local-static lever (RB3_HANDLE_LOCAL_STATIC
+// is already on for this TU and our 52 statics line up 1:1 with retail's first
+// 52). Retail fn_82542D20 has 54 guarded Symbol ctors: ours minus `fake_win`
+// (retail has NO fake_win handler) plus three store handlers after
+// `reset_filters`, in this exact order:
+//   is_downloading   HANDLE_EXPR, returns
+//       unk19c->IsDownloading(                       // retail 0x825BCBD0
+//           dynamic_cast<StoreSongSortNode *>(_msg->Obj<Hmx::Object>(2))
+//               ->mOffer                             // StoreSongSortNode+0x44
+//               ->GetSingleSongID())                 // 0x827A6D48
+//   load_store_art   HANDLE_ACTION (branches to the "return 0" epilogue);
+//       node 3 is evaluated FIRST (MSVC right-to-left):
+//       unk19c->LoadStoreArt(                        // retail 0x825BCC10
+//           dynamic_cast<StoreOffer *>(_msg->Obj<Hmx::Object>(2))
+//               ->GetSingleSongID(),
+//           _msg->Obj<Hmx::Object>(3))
+//   get_store_art    HANDLE_EXPR, returns a kDataObject built straight from
+//       unk19c + 0x48 (an Hmx::Object* member this stub class lacks).
+// Blocker: MusicLibraryUnkOp is a deliberately-undefined stub (see the comment
+// on its declaration in MusicLibrary.h) with no IsDownloading/LoadStoreArt and
+// no 0x48 member. Adding them is a real body port, so it was NOT bundled into
+// W5's measured local-static leg.
 BEGIN_HANDLERS(MusicLibrary)
     HANDLE_ACTION(on_enter, OnEnter())
 #ifdef HX_NATIVE
@@ -2246,8 +2273,11 @@ END_HANDLERS
 #pragma pop
 
 BEGIN_PROPSYNCS(MusicLibrary)
+    static Symbol setlist_provider("setlist_provider");
     SYNC_PROP(setlist_provider, mSetlistProvider)
+    static Symbol setlist_scores_provider("setlist_scores_provider");
     SYNC_PROP(setlist_scores_provider, mSetlistScoresProvider)
+    static Symbol view_settings_provider("view_settings_provider");
     SYNC_PROP(view_settings_provider, mViewSettingsProvider)
 END_PROPSYNCS
 // sw2 scatter-include (default/MusicLibrary <- band3/game/Game.cpp)

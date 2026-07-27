@@ -642,11 +642,17 @@ void BandList::DrawShowing() {
 }
 
 BEGIN_HANDLERS(BandList)
+    static Symbol reveal("reveal");
     HANDLE_ACTION(reveal, Reveal())
+    static Symbol conceal("conceal");
     HANDLE_ACTION(conceal, Conceal())
+    static Symbol conceal_now("conceal_now");
     HANDLE_ACTION(conceal_now, ConcealNow())
+    static Symbol is_animating("is_animating");
     HANDLE_ACTION(is_animating, IsAnimating())
+    static Symbol is_revealed("is_revealed");
     HANDLE_EXPR(is_revealed, IsRevealed())
+    static Symbol restart_highlight_matanim("restart_highlight_matanim");
     HANDLE_ACTION(restart_highlight_matanim, mListDir->ListEntered())
     HANDLE_SUPERCLASS(UIList)
     HANDLE_CHECK(0x468)
@@ -660,21 +666,37 @@ BEGIN_CUSTOM_PROPSYNC(HighlightObject)
 END_CUSTOM_PROPSYNC
 
 BEGIN_PROPSYNCS(BandList)
+    static Symbol focus_anim("focus_anim");
     SYNC_PROP(focus_anim, mFocusAnim)
+    static Symbol pulse_anim("pulse_anim");
     SYNC_PROP(pulse_anim, mPulseAnim)
+    static Symbol reveal_anim("reveal_anim");
     SYNC_PROP(reveal_anim, mRevealAnim)
+    static Symbol reveal_start_delay("reveal_start_delay");
     SYNC_PROP(reveal_start_delay, mRevealStartDelay)
+    static Symbol reveal_entry_delay("reveal_entry_delay");
     SYNC_PROP(reveal_entry_delay, mRevealEntryDelay)
+    static Symbol reveal_scale("reveal_scale");
     SYNC_PROP(reveal_scale, mRevealScale)
+    static Symbol reveal_sound("reveal_sound");
     SYNC_PROP(reveal_sound, mRevealSound)
+    static Symbol reveal_sound_delay("reveal_sound_delay");
     SYNC_PROP(reveal_sound_delay, mRevealSoundDelay)
+    static Symbol conceal_anim("conceal_anim");
     SYNC_PROP(conceal_anim, mConcealAnim)
+    static Symbol conceal_start_delay("conceal_start_delay");
     SYNC_PROP(conceal_start_delay, mConcealStartDelay)
+    static Symbol conceal_entry_delay("conceal_entry_delay");
     SYNC_PROP(conceal_entry_delay, mConcealEntryDelay)
+    static Symbol conceal_scale("conceal_scale");
     SYNC_PROP(conceal_scale, mConcealScale)
+    static Symbol conceal_sound("conceal_sound");
     SYNC_PROP(conceal_sound, mConcealSound)
+    static Symbol conceal_sound_delay("conceal_sound_delay");
     SYNC_PROP(conceal_sound_delay, mConcealSoundDelay)
+    static Symbol auto_reveal("auto_reveal");
     SYNC_PROP(auto_reveal, mAutoReveal)
+    static Symbol highlight_objects("highlight_objects");
     SYNC_PROP(highlight_objects, mHighlightObjects)
     SYNC_SUPERCLASS(UIList)
 END_PROPSYNCS

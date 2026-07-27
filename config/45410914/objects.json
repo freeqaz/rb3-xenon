@@ -78,7 +78,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "system/bandobj/BandWardrobe.cpp": "NonMatching",
+   "system/bandobj/BandWardrobe.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/CheckboxDisplay.cpp": "NonMatching",
    "system/bandobj/CrowdAudio.cpp": "NonMatching",
    "system/bandobj/CrowdMeterIcon.cpp": {
