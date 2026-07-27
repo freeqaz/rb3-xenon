@@ -5,6 +5,8 @@
 #include "rndobj/Dir.h"
 #include "rndobj/FontBase.h"
 #include "rndobj/Group.h"
+#include "rndobj/Mesh.h"
+#include "rndobj/Text.h"
 #include "ui/UIColor.h"
 #include "ui/UIFontImporter.h"
 #include "utl/MemMgr.h"
@@ -48,10 +50,16 @@ protected:
      * "color when label is selected"
      */
     std::vector<ObjPtr<UIColor> > mColors; // 0x304
-    ObjPtr<RndAnimatable> mFocusAnim; // 0x310
-    ObjPtr<RndAnimatable> mPulseAnim; // 0x324
-    ObjPtr<RndGroup> mFocusedBackgroundGroup; // 0x338
-    ObjPtr<RndGroup> mUnfocusedBackgroundGroup; // 0x34c
+    ObjPtr<RndText> mTextObj;
+    ObjPtr<RndAnimatable> mFocusAnim;
+    ObjPtr<RndAnimatable> mPulseAnim;
+    ObjPtr<RndMesh> mTopLeftHighlightBone;
+    ObjPtr<RndMesh> mTopRightHighlightBone;
+    ObjPtr<RndMesh> mBottomLeftHighlightBone;
+    ObjPtr<RndMesh> mBottomRightHighlightBone;
+    ObjPtr<RndGroup> mHighlightMeshGroup;
+    ObjPtr<RndGroup> mFocusedBackgroundGroup;
+    ObjPtr<RndGroup> mUnfocusedBackgroundGroup;
     /** "allow non-localized text with this resource?" */
     bool mAllowEditText; // 0x360
 };

@@ -16,9 +16,11 @@
 UIColor *gColor = nullptr;
 
 UILabelDir::UILabelDir()
-    : mDefaultColor(this), mFocusAnim(this), mPulseAnim(this),
-      mFocusedBackgroundGroup(this), mUnfocusedBackgroundGroup(this),
-      mAllowEditText(false) {
+    : mDefaultColor(this), mTextObj(this), mFocusAnim(this), mPulseAnim(this),
+      mTopLeftHighlightBone(this), mTopRightHighlightBone(this),
+      mBottomLeftHighlightBone(this), mBottomRightHighlightBone(this),
+      mHighlightMeshGroup(this), mFocusedBackgroundGroup(this),
+      mUnfocusedBackgroundGroup(this), mAllowEditText(false) {
     for (int i = 0; i < UIComponent::kNumStates; i++) {
         mColors.push_back(ObjPtr<UIColor>(this));
     }
@@ -31,9 +33,15 @@ BEGIN_HANDLERS(UILabelDir)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(UILabelDir)
+    SYNC_PROP(text_obj, mTextObj)
     SYNC_PROP(allow_edit_text, mAllowEditText)
     SYNC_PROP(focus_anim, mFocusAnim)
     SYNC_PROP(pulse_anim, mPulseAnim)
+    SYNC_PROP(highlight_mesh_group, mHighlightMeshGroup)
+    SYNC_PROP(top_left_highlight_bone, mTopLeftHighlightBone)
+    SYNC_PROP(top_right_highlight_bone, mTopRightHighlightBone)
+    SYNC_PROP(bottom_left_highlight_bone, mBottomLeftHighlightBone)
+    SYNC_PROP(bottom_right_highlight_bone, mBottomRightHighlightBone)
     SYNC_PROP(focused_background_group, mFocusedBackgroundGroup)
     SYNC_PROP(unfocused_background_group, mUnfocusedBackgroundGroup)
     SYNC_PROP(default_color, mDefaultColor)
@@ -67,10 +75,16 @@ BEGIN_PROPSYNCS(UILabelDir)
 END_PROPSYNCS
 
 BEGIN_SAVES(UILabelDir)
-    SAVE_REVS(11, 0)
+    SAVE_REVS(9, 0)
     SAVE_SUPERCLASS(RndDir)
+    bs << mTextObj;
     bs << mFocusAnim;
     bs << mPulseAnim;
+    bs << mHighlightMeshGroup;
+    bs << mTopLeftHighlightBone;
+    bs << mTopRightHighlightBone;
+    bs << mBottomLeftHighlightBone;
+    bs << mBottomRightHighlightBone;
     bs << mFocusedBackgroundGroup;
     bs << mUnfocusedBackgroundGroup;
     bs << mAllowEditText;
@@ -96,11 +110,11 @@ BEGIN_LOADS(UILabelDir)
     ObjectDir::Load(bs);
 END_LOADS
 
-INIT_REVS(11, 0)
+INIT_REVS(9, 0)
 
 void UILabelDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
-    ASSERT_REVS(11, 0);
+    ASSERT_REVS(9, 0);
     RndDir::PreLoad(d.stream);
     d.PushRev(this);
 }
@@ -108,11 +122,8 @@ void UILabelDir::PreLoad(BinStream &bs) {
 void UILabelDir::PostLoad(BinStream &bs) {
     BinStreamRev d(bs, bs.PopRev(this));
     RndDir::PostLoad(d.stream);
-    if (d.rev < 10) {
-        String s;
-        d >> s;
-    }
-    if (d.rev >= 3 && d.rev < 9) {
+    d >> mTextObj;
+    if (d.rev >= 3 && d.rev <= 8) {
         ObjPtr<RndFont> font(this);
         d >> font;
     }
@@ -122,19 +133,14 @@ void UILabelDir::PostLoad(BinStream &bs) {
     if (d.rev >= 2) {
         d >> mPulseAnim;
     }
-    if (d.rev >= 4 && d.rev < 0xB) {
-        Symbol s1;
-        d >> s1;
-        Symbol s2;
-        d >> s2;
-        Symbol s3;
-        d >> s3;
+    if (d.rev >= 4) {
+        d >> mHighlightMeshGroup;
+        d >> mTopLeftHighlightBone;
+        d >> mTopRightHighlightBone;
     }
-    if (d.rev >= 5 && d.rev < 0xB) {
-        Symbol s1;
-        d >> s1;
-        Symbol s2;
-        d >> s2;
+    if (d.rev >= 5) {
+        d >> mBottomLeftHighlightBone;
+        d >> mBottomRightHighlightBone;
     }
     if (d.rev >= 6) {
         d >> mFocusedBackgroundGroup;
