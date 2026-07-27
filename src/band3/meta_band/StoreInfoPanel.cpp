@@ -21,9 +21,7 @@
 StoreInfoPanel *TheStoreInfoPanel;
 
 StoreInfoPanel::StoreInfoPanel()
-    : mOffer(0), mLoader(0), mCurRecommendationIdx(0), unk5c(0) {
-    TheStoreInfoPanel = this;
-}
+    : mOffer(0), mLoader(0), mCurRecommendationIdx(0), unk5c(0) {}
 
 StoreInfoPanel::~StoreInfoPanel() { ClearData(); }
 

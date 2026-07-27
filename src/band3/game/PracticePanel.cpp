@@ -387,7 +387,8 @@ void PracticePanel::TrackOut() {
 
 int PracticePanel::GetNumVocalParts() const {
     if (MetaPerformer::Current()->IsNowUsingVocalHarmony()) {
-        return TheSongMgr.GetNumVocalParts(MetaPerformer::Current()->Song());
+        Symbol song = MetaPerformer::Current()->Song();
+        return TheSongMgr.GetNumVocalParts(song);
     } else
         return 1;
 }

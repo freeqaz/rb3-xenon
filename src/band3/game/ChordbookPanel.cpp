@@ -501,7 +501,8 @@ DataNode ChordbookPanel::OnGetComplete(const DataArray *a) {
         return 1;
     else {
         GemPlayer *p = GetChordbookPlayer();
-        return ProfileCheckComplete(MetaPerformer::Current()->Song(), p);
+        Symbol song = MetaPerformer::Current()->Song();
+        return ProfileCheckComplete(song, p);
     }
 }
 

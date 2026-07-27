@@ -10,10 +10,6 @@ static std::list<RndGraph *> *sGraphs = nullptr;
 static std::list<FakeGraph> sFakes;
 static ObjPtr<RndCam> sCam(nullptr);
 
-void *Drawable::operator new(size_t s) {
-    return MemAlloc(s, __FILE__, 0xA9, "Drawable");
-}
-void Drawable::operator delete(void *v) { MemFree(v, __FILE__, 0xA9, "Drawable"); }
 void ScreenLine::Draw() { UtilDrawLine(mA, mB, mCol); }
 void ScreenLine::DrawFixedZ(float) { UtilDrawLine(mA, mB, mCol); }
 void RectFilled2D::Draw() {
