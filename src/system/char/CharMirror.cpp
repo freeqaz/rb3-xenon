@@ -53,8 +53,8 @@ END_LOADS
 void CharMirror::Poll() {
     static Symbol x("x");
     static Symbol xy("xy");
-    static Symbol mirror_x("mirror_x");
     static Symbol zw("zw");
+    static Symbol mirror_x("mirror_x");
 
     auto _tmp0 = mBones.TotalSize();
     float w = Weight();
@@ -63,19 +63,16 @@ void CharMirror::Poll() {
 
     mBones.ScaleDown(*mServo, 1.0f - w);
     MirrorOp *curMirrorOp = &mOps[0];
-    char *boneStart = mBones.mStart;
-    for (Vector3 *it = (Vector3 *)(boneStart + mBones.mOffsets[CharBones::TYPE_POS]);
-         it < (Vector3 *)(boneStart + mBones.mOffsets[CharBones::TYPE_SCALE]);
+    for (Vector3 *it = (Vector3 *)mBones.Start();
+         it < (Vector3 *)mBones.ScaleOffset();
          curMirrorOp++, it++) {
         *it = *(Vector3 *)curMirrorOp->ptr;
         if (!curMirrorOp->op.Null() && curMirrorOp->op == x) {
             it->x = -it->x;
         }
-        boneStart = mBones.mStart;
     }
-    for (Hmx::Quat *it =
-             (Hmx::Quat *)(boneStart + mBones.mOffsets[CharBones::TYPE_QUAT]);
-         it < (Hmx::Quat *)(boneStart + mBones.mOffsets[CharBones::TYPE_ROTX]);
+    for (Hmx::Quat *it = (Hmx::Quat *)mBones.QuatOffset();
+         it < (Hmx::Quat *)mBones.RotXOffset();
          curMirrorOp++, it++) {
         *it = *(Hmx::Quat *)curMirrorOp->ptr;
         if (!curMirrorOp->op.Null()) {
@@ -90,11 +87,8 @@ void CharMirror::Poll() {
             } else
                 MILO_NOTIFY("Unknown operation %s", curMirrorOp->op);
         }
-        boneStart = mBones.mStart;
     }
-    int endOffset = mBones.mOffsets[CharBones::TYPE_END];
-    for (float *it = (float *)(boneStart + mBones.mOffsets[CharBones::TYPE_ROTX]);
-         it < (float *)(boneStart + endOffset);
+    for (float *it = (float *)mBones.RotXOffset(); it < (float *)mBones.EndOffset();
          curMirrorOp++, it++) {
         *it = *(float *)curMirrorOp->ptr;
     }

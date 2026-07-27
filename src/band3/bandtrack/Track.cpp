@@ -140,8 +140,9 @@ const char *Track::GetTrackIcon() const {
 
 const char *Track::GetPlayerName() const {
     const BandUser *user = mTrackConfig.GetBandUser();
-    if (user->GetPlayer())
-        return user->GetPlayer()->GetUser()->IntroName();
+    Player *player = user->GetPlayer();
+    if (player)
+        return player->GetUser()->IntroName();
     else
         return "";
 }
@@ -156,8 +157,9 @@ const char *Track::UserName() const {
 
 bool Track::PlayerDisconnected() const {
     const BandUser *user = mTrackConfig.GetBandUser();
-    if (user->GetPlayer())
-        return user->GetPlayer()->mEnabledState == kPlayerDisconnected;
+    Player *player = user->GetPlayer();
+    if (player)
+        return player->mEnabledState == kPlayerDisconnected;
     else
         return false;
 }
@@ -173,16 +175,18 @@ bool Track::PlayerDisconnectedAtStart() const {
 
 bool Track::HasLocalPlayer() const {
     const BandUser *user = mTrackConfig.GetBandUser();
-    if (user->GetPlayer())
-        return user->GetPlayer()->IsLocal();
+    Player *player = user->GetPlayer();
+    if (player)
+        return player->IsLocal();
     else
         return false;
 }
 
 bool Track::PlayerDisabled() const {
     const BandUser *user = mTrackConfig.GetBandUser();
-    if (user->GetPlayer())
-        return user->GetPlayer()->mEnabledState != kPlayerEnabled;
+    Player *player = user->GetPlayer();
+    if (player)
+        return player->mEnabledState != kPlayerEnabled;
     else
         return false;
 }
@@ -266,21 +270,12 @@ int Track::GetNoBackFromBrink() const {
 }
 
 void Track::RefreshPlayerHUD() {
-    static bool sDump;
     BandTrack *track = GetBandTrack();
     Player *player = mTrackConfig.GetBandUser()->GetPlayer();
     if (track && player) {
-        if (sDump) {
-            float od = player->mBandEnergy;
-            MILO_LOG(
-                "Refreshing HUD for player %d: streak %d, mult %d, od %.2f, ready %d\n",
-                player->GetSlot(),
-                player->mStats.GetCurrentStreak(),
-                player->GetIndividualMultiplier(),
-                od,
-                player->CanDeployOverdrive()
-            );
-        }
+        // retail X360 stripped the `static bool sDump` MILO_LOG dump block
+        // (dev-only); its GetSlot/GetCurrentStreak/CanDeployOverdrive calls and
+        // the static itself are absent from the retail body.
         track->RefreshStreakMeter(
             player->mStats.GetCurrentStreak(),
             player->GetIndividualMultiplier(),
