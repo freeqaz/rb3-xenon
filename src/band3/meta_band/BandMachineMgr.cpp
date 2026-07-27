@@ -308,7 +308,7 @@ bool BandMachineMgr::AllMachinesHaveSameNetUIState() const {
     NetUIState target = mLocalMachine->GetNetUIState();
     std::vector<BandMachine *> machines;
     GetMachines(machines);
-    for (int i = 0; i < (int)machines.size(); i++) {
+    for (int i = 0; i < machines.size(); i++) {
         if (machines[i]->GetNetUIState() != target)
             return false;
     }

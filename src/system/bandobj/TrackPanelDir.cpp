@@ -563,7 +563,7 @@ void TrackPanelDir::SetMultiplier(int mult, bool b) {
         }
         for (int i = 0; i < mTracks.size(); i++) {
             BandTrack *track = mTracks[i];
-            if (track)
+            if ((int)track)
                 track->SetBandMultiplier(mult);
         }
     }
@@ -581,7 +581,7 @@ void TrackPanelDir::GameWon() {
     Find<EventTrigger>("game_won.trig", true)->Trigger();
     for (int i = 0; i < mTracks.size(); i++) {
         BandTrack *track = mTracks[i];
-        if (track)
+        if ((int)track)
             track->GameWon();
     }
 }

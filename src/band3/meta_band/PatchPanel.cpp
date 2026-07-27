@@ -640,7 +640,7 @@ inline RndMat *LayerProvider::Mat(int, int idx, UIListMesh *slot) const {
 
 inline void LayerProvider::InitData(RndDir *dir) {
     RndMat *mat = dir->Find<RndMat>("layer.mat", true);
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i != 50; i++) {
         mLayerMats[i]->Copy(mat, kCopyDeep);
     }
 }

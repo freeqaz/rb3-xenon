@@ -820,7 +820,7 @@ void PatchDir::LoadStickerTex(PatchSticker *sticker, bool push) {
 void PatchDir::UnloadStickerTex(PatchSticker *sticker) {
     if (UsesSticker(sticker))
         return;
-    if (sticker->mLoader) {
+    if ((int)sticker->mLoader) {
         std::vector<PatchSticker *>::iterator it =
             std::find(mStickersLoading.begin(), mStickersLoading.end(), sticker);
         MILO_ASSERT(it != mStickersLoading.end(), 0x504);

@@ -168,7 +168,7 @@ void TrainerPanel::ResetChallenge() {
 
 Symbol TrainerPanel::GetChallengeRestriction(int idx) {
     TrainerChallenge *tc = mSections[idx].mChallenge;
-    if (tc)
+    if ((int)tc)
         return tc->GetRestrictionToken();
     else
         return gNullStr;
