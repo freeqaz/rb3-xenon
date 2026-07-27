@@ -26,7 +26,7 @@ public:
     // Hmx::Object
     virtual ~RndAmbientOcclusion();
     OBJ_CLASSNAME(AmbientOcclusion);
-    OBJ_SET_TYPE(AmbientOcclusion);
+    OBJ_SET_TYPE_ENGINE(AmbientOcclusion);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -24,7 +24,7 @@ class ColorPalette : public Hmx::Object {
     friend class BandSwatch;
 public:
     OBJ_CLASSNAME(ColorPalette);
-    OBJ_SET_TYPE(ColorPalette);
+    OBJ_SET_TYPE_ENGINE(ColorPalette);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

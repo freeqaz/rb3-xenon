@@ -8,7 +8,7 @@ class ContentDeletePanel : public UIPanel, public ContentMgr::Callback {
 public:
     ContentDeletePanel();
     OBJ_CLASSNAME(ContentDeletePanel);
-    OBJ_SET_TYPE(ContentDeletePanel);
+    OBJ_SET_TYPE_ENGINE(ContentDeletePanel);
     virtual DataNode Handle(DataArray *, bool);
     virtual void Enter();
     virtual void Exit();

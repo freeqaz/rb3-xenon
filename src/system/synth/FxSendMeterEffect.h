@@ -8,7 +8,7 @@
 class FxSendMeterEffect : public FxSend {
 public:
     OBJ_CLASSNAME(FxSendMeterEffect);
-    OBJ_SET_TYPE(FxSendMeterEffect);
+    OBJ_SET_TYPE_ENGINE(FxSendMeterEffect);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

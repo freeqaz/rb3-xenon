@@ -9,7 +9,7 @@ public:
     // Hmx::Object
     virtual ~LightHue();
     OBJ_CLASSNAME(LightHue)
-    OBJ_SET_TYPE(LightHue)
+    OBJ_SET_TYPE_ENGINE(LightHue)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

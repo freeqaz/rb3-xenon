@@ -11,7 +11,7 @@ public:
     virtual ~RndSoftParticleBuffer();
     // Hmx::Object
     OBJ_CLASSNAME(SoftParticleBuffer);
-    OBJ_SET_TYPE(SoftParticleBuffer);
+    OBJ_SET_TYPE_ENGINE(SoftParticleBuffer);
     // PostProcessor
     virtual void DoPost();
     virtual const char *GetProcType() { return "SoftParticleBuffer"; }

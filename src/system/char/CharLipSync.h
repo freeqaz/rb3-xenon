@@ -62,7 +62,7 @@ public:
     // Hmx::Object
     virtual ~CharLipSync();
     OBJ_CLASSNAME(CharLipSync);
-    OBJ_SET_TYPE(CharLipSync);
+    OBJ_SET_TYPE_ENGINE(CharLipSync);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

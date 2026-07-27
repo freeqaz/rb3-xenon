@@ -7,7 +7,7 @@ class FxSendCompress : public FxSend {
 public:
     virtual ~FxSendCompress();
     OBJ_CLASSNAME(FxSendCompress);
-    OBJ_SET_TYPE(FxSendCompress);
+    OBJ_SET_TYPE_ENGINE(FxSendCompress);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

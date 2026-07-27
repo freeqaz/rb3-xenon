@@ -12,7 +12,7 @@
 class RndSet : public Hmx::Object {
 public:
     OBJ_CLASSNAME(Set);
-    OBJ_SET_TYPE(Set);
+    OBJ_SET_TYPE_ENGINE(Set);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

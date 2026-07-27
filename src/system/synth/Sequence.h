@@ -110,7 +110,7 @@ class RandomGroupSeq : public GroupSeq {
 public:
     RandomGroupSeq();
     OBJ_CLASSNAME(RandomGroupSeq);
-    OBJ_SET_TYPE(RandomGroupSeq);
+    OBJ_SET_TYPE_ENGINE(RandomGroupSeq);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
@@ -154,7 +154,7 @@ class RandomIntervalGroupSeq : public GroupSeq {
 public:
     RandomIntervalGroupSeq();
     OBJ_CLASSNAME(RandomIntervalGroupSeq);
-    OBJ_SET_TYPE(RandomIntervalGroupSeq);
+    OBJ_SET_TYPE_ENGINE(RandomIntervalGroupSeq);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
@@ -184,7 +184,7 @@ class SerialGroupSeq : public GroupSeq {
 public:
     SerialGroupSeq() {}
     OBJ_CLASSNAME(SerialGroupSeq);
-    OBJ_SET_TYPE(SerialGroupSeq);
+    OBJ_SET_TYPE_ENGINE(SerialGroupSeq);
     virtual void Save(BinStream &);
     virtual void Load(BinStream &);
     virtual SeqInst *MakeInstImpl();
@@ -198,7 +198,7 @@ class ParallelGroupSeq : public GroupSeq {
 public:
     ParallelGroupSeq() {}
     OBJ_CLASSNAME(ParallelGroupSeq);
-    OBJ_SET_TYPE(ParallelGroupSeq);
+    OBJ_SET_TYPE_ENGINE(ParallelGroupSeq);
     virtual void Save(BinStream &);
     virtual void Load(BinStream &);
     virtual SeqInst *MakeInstImpl();
@@ -212,7 +212,7 @@ public:
     SfxSeq();
     virtual ~SfxSeq() {}
     OBJ_CLASSNAME(SfxSeq);
-    OBJ_SET_TYPE(SfxSeq);
+    OBJ_SET_TYPE_ENGINE(SfxSeq);
     virtual void Save(BinStream &);
     virtual void Load(BinStream &);
 

@@ -18,7 +18,7 @@ public:
         float mWeight; // 0x4
     };
     OBJ_CLASSNAME(CharBone);
-    OBJ_SET_TYPE(CharBone);
+    OBJ_SET_TYPE_ENGINE(CharBone);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -6,7 +6,7 @@
 class FxSendWah : public FxSend {
 public:
     OBJ_CLASSNAME(FxSendWah);
-    OBJ_SET_TYPE(FxSendWah);
+    OBJ_SET_TYPE_ENGINE(FxSendWah);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

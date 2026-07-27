@@ -84,7 +84,7 @@ class Sfx : public Sequence {
 public:
     // Hmx::Object
     OBJ_CLASSNAME(Sfx);
-    OBJ_SET_TYPE(Sfx);
+    OBJ_SET_TYPE_ENGINE(Sfx);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -79,7 +79,7 @@ public:
     // Hmx::Object
     virtual ~MidiInstrument();
     OBJ_CLASSNAME(MidiInstrument);
-    OBJ_SET_TYPE(MidiInstrument);
+    OBJ_SET_TYPE_ENGINE(MidiInstrument);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

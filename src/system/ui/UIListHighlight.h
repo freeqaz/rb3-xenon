@@ -12,7 +12,7 @@
 class UIListHighlight : public UIListWidget {
 public:
     OBJ_CLASSNAME(UIListHighlight);
-    OBJ_SET_TYPE(UIListHighlight);
+    OBJ_SET_TYPE_ENGINE(UIListHighlight);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

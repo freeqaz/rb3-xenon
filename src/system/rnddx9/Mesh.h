@@ -19,7 +19,7 @@ public:
     // Hmx::Object
     virtual ~DxMesh();
     OBJ_CLASSNAME(Mesh)
-    OBJ_SET_TYPE(Mesh)
+    OBJ_SET_TYPE_ENGINE(Mesh)
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     // RndMesh
     virtual void DrawShowing();

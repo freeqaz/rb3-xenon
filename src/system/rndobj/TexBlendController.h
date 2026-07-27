@@ -17,7 +17,7 @@ public:
     };
     virtual ~RndTexBlendController() {}
     OBJ_CLASSNAME(TexBlendController);
-    OBJ_SET_TYPE(TexBlendController);
+    OBJ_SET_TYPE_ENGINE(TexBlendController);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

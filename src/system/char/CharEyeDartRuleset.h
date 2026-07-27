@@ -47,7 +47,7 @@ public:
     // Hmx::Object
     virtual ~CharEyeDartRuleset() {}
     OBJ_CLASSNAME(CharEyeDartRuleset);
-    OBJ_SET_TYPE(CharEyeDartRuleset);
+    OBJ_SET_TYPE_ENGINE(CharEyeDartRuleset);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

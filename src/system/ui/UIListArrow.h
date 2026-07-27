@@ -18,7 +18,7 @@ enum UIListArrowPosition {
 class UIListArrow : public UIListWidget {
 public:
     OBJ_CLASSNAME(UIListArrow);
-    OBJ_SET_TYPE(UIListArrow);
+    OBJ_SET_TYPE_ENGINE(UIListArrow);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

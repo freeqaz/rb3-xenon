@@ -88,7 +88,7 @@ public:
 
     virtual ~RndMeshDeform();
     OBJ_CLASSNAME(MeshDeform);
-    OBJ_SET_TYPE(MeshDeform);
+    OBJ_SET_TYPE_ENGINE(MeshDeform);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

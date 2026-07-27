@@ -8,7 +8,7 @@
 class UIListSubList : public UIListSlot {
 public:
     OBJ_CLASSNAME(UIListSubList)
-    OBJ_SET_TYPE(UIListSubList)
+    OBJ_SET_TYPE_ENGINE(UIListSubList)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

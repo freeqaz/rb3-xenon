@@ -19,7 +19,7 @@ public:
 
     virtual ~CharMeshHide();
     OBJ_CLASSNAME(CharMeshHide);
-    OBJ_SET_TYPE(CharMeshHide);
+    OBJ_SET_TYPE_ENGINE(CharMeshHide);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
