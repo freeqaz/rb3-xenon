@@ -340,7 +340,10 @@ DataNode AccomplishmentPanel::Group_HandleButtonDownMsg(const ButtonDownMsg &msg
         }
         break;
     case kAction_Option:
-        Handle(handle_goto_leaderboard_hub_msg, true);
+        {
+            static Message handle_goto_leaderboard_hub_msg("handle_goto_leaderboard_hub");
+            Handle(handle_goto_leaderboard_hub_msg, true);
+        }
         HandleSoundSelect(msg.GetUser());
         break;
     default:
@@ -387,7 +390,8 @@ DataNode AccomplishmentPanel::Goal_HandleButtonDownMsg(const ButtonDownMsg &msg)
         break;
     case kAction_Option:
         if (HasLeaderboard()) {
-            static Message handle_goto_leaderboard_msg("handle_goto_leaderboard", 0);
+            // retail: 1-arg Message ctor (no trailing DataNode), not ("...", 0)
+            static Message handle_goto_leaderboard_msg("handle_goto_leaderboard");
             Handle(handle_goto_leaderboard_msg, true);
             HandleSoundSelect(msg.GetUser());
         }
@@ -418,6 +422,7 @@ DataNode AccomplishmentPanel::Details_HandleButtonDownMsg(const ButtonDownMsg &m
         break;
     case kAction_Option:
         if (HasLeaderboard()) {
+            static Message handle_goto_leaderboard_msg("handle_goto_leaderboard");
             Handle(handle_goto_leaderboard_msg, true);
             HandleSoundSelect(msg.GetUser());
         }
@@ -664,11 +669,13 @@ void AccomplishmentPanel::LaunchGoal(LocalBandUser *user) {
 
 Symbol AccomplishmentPanel::GetMusicLibraryBackScreen() {
     MILO_ASSERT(GetState() == kUp, 0x662);
+    static Message get_musiclibrary_backscreen_msg("get_musiclibrary_backscreen");
     return Handle(get_musiclibrary_backscreen_msg, true).Sym();
 }
 
 Symbol AccomplishmentPanel::GetMusicLibraryNextScreen() {
     MILO_ASSERT(GetState() == kUp, 0x66E);
+    static Message get_musiclibrary_nextscreen_msg("get_musiclibrary_nextscreen");
     return Handle(get_musiclibrary_nextscreen_msg, true).Sym();
 }
 
@@ -769,7 +776,10 @@ void AccomplishmentPanel::RefreshGoalList() {
     SelectGoal(mGoal);
 }
 
-void AccomplishmentPanel::RefreshHeader() { Handle(refresh_header_msg, true); }
+void AccomplishmentPanel::RefreshHeader() {
+    static Message refresh_header_msg("refresh_header");
+    Handle(refresh_header_msg, true);
+}
 
 void AccomplishmentPanel::Refresh() {
     RefreshGroupList();
@@ -871,6 +881,9 @@ Symbol AccomplishmentPanel::GetSelectedDetailsEntry() {
     if (GetState() != kUp)
         return "";
     else {
+        static Message get_selected_details_entry_index_msg(
+            "get_selected_details_entry_index"
+        );
         DataNode handled = Handle(get_selected_details_entry_index_msg, true);
         int i = handled.Int();
         if (mAccomplishmentEntryProvider->NumData() > 0) {
@@ -888,6 +901,7 @@ inline Symbol AccomplishmentEntryProvider::DataSymbol(int i_iData) {
 
 Symbol AccomplishmentPanel::GetAccomplishmentName() {
     if (IsSecret()) {
+        static Symbol acc_secret("acc_secret");
         Symbol name = acc_secret;
         return name;
     }
@@ -932,15 +946,19 @@ Symbol AccomplishmentPanel::GetAccomplishmentFlavor() {
 void AccomplishmentPanel::UpdateDetailsListState() {
     Symbol selectedacc = SelectedAccomplishment();
     if (selectedacc == gNullStr || IsSecret()) {
+        static Message hide_list_msg("hide_list");
         Handle(hide_list_msg, true);
     } else {
         Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selectedacc);
         if (acc) {
             mAccomplishmentEntryProvider->Update(acc);
             if (mAccomplishmentEntryProvider->NumData() > 0) {
+                static Message show_list_msg("show_list");
                 Handle(show_list_msg, true);
-            } else
+            } else {
+                static Message hide_list_msg("hide_list");
                 Handle(hide_list_msg, true);
+            }
             UIList *pDetailsList = mDir->Find<UIList>("details.lst", true);
             MILO_ASSERT(pDetailsList, 0x803);
             pDetailsList->SetProvider(mAccomplishmentEntryProvider);
@@ -1102,6 +1120,7 @@ void AccomplishmentPanel::SetRandomUnplayedSong() {
 
 void AccomplishmentPanel::BuildSelectedEntrySetList() {
     Symbol entry = GetSelectedDetailsEntry();
+    static Symbol goal_filtersong_unknown("goal_filtersong_unknown");
     if (entry == goal_filtersong_unknown) {
         SetRandomUnplayedSong();
         return;
@@ -1157,6 +1176,7 @@ void AccomplishmentPanel::LaunchSelectedEntry(LocalBandUser *user) {
         Handle(cMsg, true);
     } else {
         BuildSelectedEntrySetList();
+        static Message handle_goto_difficultyselect_msg("handle_goto_difficultyselect");
         Handle(handle_goto_difficultyselect_msg, true);
     }
 }
@@ -1172,37 +1192,67 @@ void AccomplishmentPanel::SetCareerState(CareerState state, bool b) {
         switch (mCareerState) {
         case kCareerStateGroup:
             if (!b)
-                Handle(handle_snap_state_group_msg, true);
+                {
+                    static Message handle_snap_state_group_msg("handle_snap_state_group");
+                    Handle(handle_snap_state_group_msg, true);
+                }
             else if (oldstate == 2) {
-                Handle(handle_state_category_to_group_msg, true);
+                {
+                    static Message handle_state_category_to_group_msg("handle_state_category_to_group");
+                    Handle(handle_state_category_to_group_msg, true);
+                }
             } else
                 MILO_ASSERT(false, 0x97A);
             break;
         case kCareerStateCategory:
             if (!b)
-                Handle(handle_snap_state_category_msg, true);
+                {
+                    static Message handle_snap_state_category_msg("handle_snap_state_category");
+                    Handle(handle_snap_state_category_msg, true);
+                }
             else if (oldstate == 1) {
-                Handle(handle_state_group_to_category_msg, true);
+                {
+                    static Message handle_state_group_to_category_msg("handle_state_group_to_category");
+                    Handle(handle_state_group_to_category_msg, true);
+                }
             } else if (oldstate == 3) {
-                Handle(handle_state_goal_to_category_msg, true);
+                {
+                    static Message handle_state_goal_to_category_msg("handle_state_goal_to_category");
+                    Handle(handle_state_goal_to_category_msg, true);
+                }
             } else
                 MILO_ASSERT(false, 0x991);
             break;
         case kCareerStateGoal:
             if (!b)
-                Handle(handle_snap_state_goal_msg, true);
+                {
+                    static Message handle_snap_state_goal_msg("handle_snap_state_goal");
+                    Handle(handle_snap_state_goal_msg, true);
+                }
             else if (oldstate == 4) {
-                Handle(handle_state_details_to_goal_msg, true);
+                {
+                    static Message handle_state_details_to_goal_msg("handle_state_details_to_goal");
+                    Handle(handle_state_details_to_goal_msg, true);
+                }
             } else if (oldstate == 2) {
-                Handle(handle_state_category_to_goal_msg, true);
+                {
+                    static Message handle_state_category_to_goal_msg("handle_state_category_to_goal");
+                    Handle(handle_state_category_to_goal_msg, true);
+                }
             } else
                 MILO_ASSERT(false, 0x9A8);
             break;
         case kCareerStateDetails:
             if (!b)
-                Handle(handle_snap_state_details_msg, true);
+                {
+                    static Message handle_snap_state_details_msg("handle_snap_state_details");
+                    Handle(handle_snap_state_details_msg, true);
+                }
             else if (oldstate == 3) {
-                Handle(handle_state_goal_to_details_msg, true);
+                {
+                    static Message handle_state_goal_to_details_msg("handle_state_goal_to_details");
+                    Handle(handle_state_goal_to_details_msg, true);
+                }
             } else
                 MILO_ASSERT(false, 0x9BA);
             break;
@@ -1242,10 +1292,12 @@ void AccomplishmentPanel::UpdateCampaignMeterProgressLabel(UILabel *i_pLabel) {
         int maxval = GetMaxValue();
         String cur(LocalizeSeparatedInt(curval));
         String max(LocalizeSeparatedInt(maxval));
+        static Symbol campaign_meter_progress("campaign_meter_progress");
         i_pLabel->SetTokenFmt(campaign_meter_progress, cur, max, GetCurrentUnits(0));
     } else {
         int curval = GetCurrentValue();
         String cur(LocalizeSeparatedInt(curval));
+        static Symbol campaign_meter_progress_simple("campaign_meter_progress_simple");
         i_pLabel->SetTokenFmt(campaign_meter_progress_simple, cur, GetCurrentUnits(0));
     }
 }
@@ -1253,16 +1305,22 @@ void AccomplishmentPanel::UpdateCampaignMeterProgressLabel(UILabel *i_pLabel) {
 void AccomplishmentPanel::UpdateHeaderLabel(UILabel *i_pLabel) {
     MILO_ASSERT(i_pLabel, 0xA07);
     switch (mCareerState) {
-    case kCareerStateGroup:
+    case kCareerStateGroup: {
+        static Symbol career_header_main("career_header_main");
         i_pLabel->SetTextToken(career_header_main);
         break;
-    case kCareerStateCategory:
+    }
+    case kCareerStateCategory: {
+        static Symbol career_header_group("career_header_group");
         i_pLabel->SetTokenFmt(career_header_group, mGroup);
         break;
+    }
     case kCareerStateGoal:
-    case kCareerStateDetails:
+    case kCareerStateDetails: {
+        static Symbol career_header_category("career_header_category");
         i_pLabel->SetTokenFmt(career_header_category, mGroup, mCategory);
         break;
+    }
     default:
         MILO_ASSERT(false, 0xA20);
         break;
@@ -1598,6 +1656,15 @@ inline AccomplishmentGroup *AccomplishmentGroupProvider::GetAccomplishmentGroup(
 }
 
 inline Symbol AccomplishmentGroupProvider::GetCareerLevel(float f) const {
+    static Symbol career_level1("career_level1");
+    static Symbol career_level2("career_level2");
+    static Symbol career_level3("career_level3");
+    static Symbol career_level4("career_level4");
+    static Symbol career_level5("career_level5");
+    static Symbol career_level6("career_level6");
+    static Symbol career_level7("career_level7");
+    static Symbol career_level8("career_level8");
+
     if (f == 1.0f)
         return career_level8;
     if (f > 0.86f)

@@ -401,6 +401,15 @@ void StorePanel::EnumerateOffers(bool b) {
                 mLoadOk = false;
                 ExitStore(kStoreErrorSignedOut);
             }
+            // NOTE (laneAX-W7, measured): retail's EnumerateOffers does carry a
+            // second `static Message("enum_finished")` + HandleType + TheUI->Handle
+            // pair (target 0x827B66E0, guard at +0xfc, mirrored again at +0x25c),
+            // but its body is otherwise materially different from ours (two
+            // duplicated branches calling fn_827BD2F0/fn_827B84A0/fn_827BCA50).
+            // Adding the static here alone cost 4 strict matches in this unit
+            // (fn_82605040, fn_827B6994, fn_827B69DC, fn_827B6A04 -- EH funclets
+            // un-pairing on the changed frame) for 0 gain, so it is deliberately
+            // NOT applied until the body is ported. Do not re-add in isolation.
             return;
         }
         mEnum = new XboxEnumeration(profile->GetPadNum(), &offerIDs);
