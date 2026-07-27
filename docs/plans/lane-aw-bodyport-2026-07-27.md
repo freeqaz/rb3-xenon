@@ -3,7 +3,11 @@
 **Merge-base for the verify:** main `2551442d` = **39,266** strict, reproduced
 clean in `~/tmp/wt-laneAW-land` before any edit.
 
-> ## **+86 strict, 0 losses — 39,266 → 39,352**
+> ## **+88 strict, 0 losses — 39,266 → 39,355**
+> (+86 from nine branches at `2551442d`, then +2 from the deferred
+> `laneAW-stl` fragment landed separately at `e5a7196c` — see §8.4.)
+>
+> ### The nine-branch leg: **+86 strict, 0 losses — 39,266 → 39,352**
 > `unit+name` **+86 / −0** · **name-only (unit-agnostic) +86 / −0** · map 25,664
 > entries, **0 duplicate VAs** on the raw-line check · `_bijection_arbitrary`
 > 1119 / `_icf_arbitrary` 25 / `_denylist` 3 intact · plus **4 VAs converted
@@ -26,7 +30,7 @@ Landed on main as nine `--no-ff` merges, `01659cfa`..`d6233b5f`.
 | `laneAW-sweep` | `cmpwi`→`cmplwi` signedness cast ×6 | **+9** |
 | `laneAW-char` | CharBones accessors, `RefPtrOf` ring-ref, Track hoisted local | **+8** |
 | `laneAW-hamcam` | STL stride name-pool repoints + one under-covering pin | **+6** |
-| `laneAW-stl` | 4 closed STL transpositions (map-only) | +4 *(not landed — see §8)* |
+| `laneAW-stl` | 4 closed STL transpositions (map-only) | +4 claimed → **+2 net-new** (§8.4) |
 | `laneAW-unitsb` | `Character.h` two compensating vtable errors | **+2** |
 | `laneAW-unitsc` | named-local + early-return, −2 guard-bit collateral | **+2** |
 
@@ -314,7 +318,25 @@ functions in the same TU**. **The fix is to keep the block:**
 `if (!x) return; { …statics… }`. Predicted to turn +4/−2 into +4/−0; mechanism is
 solid, the fix itself is **unverified**. Same mechanism laneGUARDBIT is working.
 
-### 8.3 Tooling cautions earned the hard way
+### 8.3 ★ Two of my own workers double-counted each other — *inside one lane*
+
+`laneAW-stl` measured **+4** from four closed STL transpositions. `laneAW-hamcam`
+measured **+6** including repoints of the *same* `EyeDesc ↔ NavItem` pair, derived
+from completely different evidence (stl: a binary-wide stride solver; hamcam: a
+per-unit opcode-signature grouping). **They agreed character-for-character**,
+which is a genuine cross-validation of both tools — and it also means the two
+numbers cannot be added.
+
+After hamcam landed, stl's net-new content was **2 transpositions, not 4**, and it
+measured **exactly +2 / 0 losses** on its own A/B (39,353 → 39,355, `a102e8b5`).
+
+> The recorded fleet rule *"two lanes on one evidence channel must measure the
+> union, never the sum"* has now fired **inside a single lane, between two workers
+> I dispatched myself**. Sum of the ten workers' own claims is **+90**; the
+> measured union is **+88**. Partition workers by *evidence channel*, not just by
+> unit — I partitioned by unit and the STL family cut across it.
+
+### 8.4 Tooling cautions earned the hard way
 
 * **`llvm-nm --defined-only` silently rejects some of these objs**
   (`ShaderMgr.obj`: "not recognized as a valid object file"), so an nm-based
@@ -411,7 +433,7 @@ per-worktree `ninja -j`.
 * **A jeff carve bug blocks one row for free:** `_Destroy_Range<CharInterestState>`
   has a perfect 0x10-stride twin at `0x82384FD8`, but dtk swallowed it inside
   `.fn fn_82384EE8` (`CharEyes::Enter`), so there is no COMDAT symbol to name.
-* **`laneAW-stl` (+4, map-only, branch `3e533812`) is NOT landed** — its worktree
+* **`laneAW-stl` landed as +2 net-new** (`a102e8b5`) — see §8.3. Its two remaining transpositions (Morph/HamMove `__uninitialized_fill_n`, EventTrigger `_M_create_node`) are in; the other two were already on main via `laneAW-hamcam`. The branch also carries `scripts/harvest/stl_stride_{scan,assign,displace}.py`, still uncommitted to main because its worktree was mid-re-verify at the cut.
   was mid-`OBJCACHE=off` re-verify at the landing cut and `land.sh` correctly
   deferred it as dirty. Four closed STL transpositions; re-run `land.sh
   laneAW-stl` once the worktree is clean.
