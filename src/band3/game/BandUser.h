@@ -38,7 +38,6 @@ public:
     virtual void SyncSave(BinStream &, unsigned int) const;
 
     const char *ProfileName() const;
-    bool HasAsFriend(BandUser *) const;
     bool IsFullyInGame() const;
     ControllerType GetControllerType() const;
     Difficulty GetDifficulty() const;

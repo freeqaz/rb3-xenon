@@ -79,18 +79,6 @@ void BandUser::SetDifficulty(Difficulty d) {
     UpdateData(1);
 }
 
-bool BandUser::HasAsFriend(BandUser *user) const {
-    if (user) {
-        XUID xuid = user->GetOnlineID()->GetXUID();
-        BOOL result;
-        if (XUserAreUsersFriends(GetPadNum(), &xuid, 1, &result, nullptr)
-            == ERROR_SUCCESS) {
-            return result;
-        }
-    }
-    return false;
-}
-
 bool BandUser::IsFullyInGame() const {
     bool ret = false;
     if (unk_0xC && mTrackType != kTrackPending && mTrackType != kTrackPendingVocals) {
