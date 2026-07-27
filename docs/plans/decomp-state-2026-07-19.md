@@ -235,6 +235,20 @@ unreachable pending a second source."** (Dance-Central-lineage names like
 `HamMove::LocalizedName`, `DancerFrame`, `DetectFrame` remain very unlikely, but
 that is a prior, not proof.)
 
+### ★ Two build-monitoring traps (multi-lane box)
+
+★**A bare `pgrep -f "ninja-locked"` COUNTS OTHER LANES' BUILDS.** With 3+ lanes
+building concurrently in separate worktrees, a lane's own "progress" readings were
+partly other lanes' work — it reported edge counts that were not its own. **Match
+processes by `/proc/<pid>/cwd` against your worktree path**, not by a shared tool
+name. (The builds are *not* deadlocked when this happens — each worktree has its
+own build dir; they merely contend for CPU.)
+
+★**Long uncached builds get truncated by harness task reaping** —
+`ninja: build stopped: interrupted by user`, twice on one leg. Detach with
+`setsid nohup … & disown` and monitor `build/45410914/report.json` **mtime** as
+the completion signal, with a ninja-exit fallback.
+
 ### ★ `OBJ_MEM_OVERLOAD` opt-out backlog: measured **ZERO** — a phantom count
 
 The classifier finds **156 OUTLINED-only** classes and only **10** opt-outs were
