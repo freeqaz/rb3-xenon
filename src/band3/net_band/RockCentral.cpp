@@ -680,24 +680,24 @@ void RockCentral::UpdateFriendList(
     Profile *profile, std::vector<Friend *> friends, DataResultList &results, Hmx::Object *o
 ) {
     Server *server = IsConnected(o, -1, false);
-    if (server) {
-        DP_KEYS1(pid)
-        INIT_DATAPOINT("leaderboards/friends/update");
-        ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
-        for (int i = 0; i < friends.size(); i++) {
-            String str;
-            str = friends[i]->mName.c_str();
-            unsigned long long key = friends[i]->mXUID;
-            char buf[8];
-            char buf2[0x18];
-            _snprintf(buf, sizeof(buf), "name%03d", i);
-            dataPoint.mNameValPairs.insert(std::make_pair(buf, str));
-            _snprintf(buf, 8, "guid%03d", i);
-            _snprintf(buf2, 0x18, "%lld", key);
-            dataPoint.mNameValPairs.insert(std::make_pair(buf, buf2));
-        }
-        RECORD_DATA_POINT(0, results, o);
+    if (!server)
+        return;
+    DP_KEYS1(pid)
+    INIT_DATAPOINT("leaderboards/friends/update");
+    ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
+    for (int i = 0; i < friends.size(); i++) {
+        String str;
+        str = friends[i]->mName.c_str();
+        unsigned long long key = friends[i]->mXUID;
+        char buf[8];
+        char buf2[0x18];
+        _snprintf(buf, sizeof(buf), "name%03d", i);
+        dataPoint.mNameValPairs.insert(std::make_pair(buf, str));
+        _snprintf(buf, 8, "guid%03d", i);
+        _snprintf(buf2, 0x18, "%lld", key);
+        dataPoint.mNameValPairs.insert(std::make_pair(buf, buf2));
     }
+    RECORD_DATA_POINT(0, results, o);
 }
 
 void RockCentral::RecordBattleScore(
@@ -1578,13 +1578,13 @@ void RockCentral::RedeemToken(
     int i1, String str, DataResultList &results, Hmx::Object *o
 ) {
     Server *server = IsConnected(o, -1, false);
-    if (server) {
-        DP_KEYS2(tr_pid, token)
-        INIT_DATAPOINT("trs/redeem_token");
-        ADD_DATA_PAIR(tr_pid, i1);
-        ADD_DATA_PAIR(token, str);
-        RECORD_DATA_POINT(0, results, o);
-    }
+    if (!server)
+        return;
+    DP_KEYS2(tr_pid, token)
+    INIT_DATAPOINT("trs/redeem_token");
+    ADD_DATA_PAIR(tr_pid, i1);
+    ADD_DATA_PAIR(token, str);
+    RECORD_DATA_POINT(0, results, o);
 }
 
 DECOMP_FORCEACTIVE(RockCentral, "trs/complete_purchase")
@@ -1926,7 +1926,10 @@ void RockCentral::ExecuteConfig(const char *cc) {
     if (!*cc || unk85)
         return;
     DataNode n18(0);
-    n18 = DataNode(DataReadString(cc), kDataArray);
+    {
+        DataNode parsed(DataReadString(cc), kDataArray);
+        n18 = parsed;
+    }
     n18.Array()->Release();
     if (n18.Array()->Type(0) == kDataCommand && n18.Array()->Size() == 1) {
         n18.Array()->Command(0)->Execute();
