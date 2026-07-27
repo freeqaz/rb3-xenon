@@ -924,6 +924,7 @@ DataNode MetaPerformer::OnMsg(const RockCentralOpCompleteMsg &msg) {
 #pragma pop
 
 DataNode MetaPerformer::OnMsg(const ModeChangedMsg &) {
+    static Symbol local_vocalist_player_count("local_vocalist_player_count");
     int numPlayers = TheGameMode->Property(local_vocalist_player_count, true)->Int();
     MicClientMapper *mapper = TheSynth->GetMicClientMapper();
     if (mapper) {

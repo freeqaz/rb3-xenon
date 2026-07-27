@@ -1005,7 +1005,9 @@ BEGIN_HANDLERS(BandSongMgr)
     HANDLE_EXPR(has_song, HasSong(_msg->Sym(2), true))
     HANDLE_EXPR(song_path, SongPath(_msg->Sym(2)))
     HANDLE_EXPR(song_file_path, SongFilePath(_msg->Sym(2), _msg->Str(3)))
+#ifdef HX_NATIVE // X360-match: retail's dispatch chain has no `song_name` arm
     HANDLE_EXPR(song_name, SongName(_msg->Sym(2)))
+#endif
     HANDLE_EXPR(
         upgrade_midi_file, UpgradeMidiFile(GetSongIDFromShortName(_msg->Sym(2), true))
     )
@@ -1041,11 +1043,15 @@ BEGIN_HANDLERS(BandSongMgr)
         has_upgrade, GetUpgradeData(GetSongIDFromShortName(_msg->Sym(2), true)) != 0
     )
     HANDLE_EXPR(has_license, HasLicense(_msg->Sym(2)))
+#ifdef HX_NATIVE // X360-match: retail stripped these two dev handlers
     HANDLE_EXPR(get_fake_songs_allowed, GetFakeSongsAllowed())
     HANDLE_ACTION(set_fake_songs_allowed, SetFakeSongsAllowed(_msg->Int(2)))
+#endif
     HANDLE_ACTION(sync_shared_songs, SyncSharedSongs())
     HANDLE_EXPR(get_max_song_count, GetMaxSongCount())
+#ifdef HX_NATIVE // X360-match: retail stripped this cheat handler
     HANDLE_ACTION(cheat_toggle_max_song_count, CheatToggleMaxSongCount())
+#endif
     HANDLE_SUPERCLASS(SongMgr)
     HANDLE_CHECK(0x6DF)
 END_HANDLERS
