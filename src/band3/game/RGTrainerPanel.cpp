@@ -375,6 +375,7 @@ void RGTrainerPanel::SetLegendModeImpl(bool mode) {
             mLegendGemID = -1;
         }
     }
+    static Symbol enter_legend("enter_legend");
     SendDataPoint("trainers/chord_legend", enter_legend, mode);
 }
 #pragma pop
