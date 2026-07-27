@@ -175,10 +175,32 @@ public:
     virtual void LoadVertices(BinStreamRev &);
     virtual void SaveVertices(BinStream &);
     virtual void DrawFacesInRange(int, int) {}
+    // Retail X360 RB3 keeps NumFaces()/NumVerts() NON-VIRTUAL; they are DC3-only
+    // vtable slots. Proven by three independent machine-code anchors on RndMesh's
+    // own-vfptr slice (the vptr at this+0, i.e. the RndDrawable primary vtable):
+    //   * SaveVertices is a vcall at slot 0x34 in RndMesh::Save (that function is
+    //     a 100% match, target and base agree on `lwz r11, 0x34(r11)`), so slots
+    //     0x30/0x34 = LoadVertices/SaveVertices and the slice is NOT shorter there.
+    //   * RndTexBlender::DrawShowing vcalls slot 0x38 on `mesh->mGeomOwner`
+    //     (`lwz r3, 0x110(r26)` = ObjOwnerPtr<RndMesh>::mObject at 0x108+8), i.e.
+    //     the DrawFaces slot, so 0x38 is still occupied.
+    //   * OnSync is a vcall at target slot 0x3c vs our 0x44 in seven functions
+    //     (SetNumFaces/SetNumVerts/OnSetFace/OnSetVertXYZ/OnSetVertNorm/
+    //     OnSetVertUV/Copy) -- a uniform -8 = exactly two dropped slots.
+    // 0x30,0x34,0x38 are accounted for and OnSync is 0x3c, so the ONLY two slots
+    // that can be missing are these accessors. Nothing in the tree overrides
+    // them, so dropping `virtual` is behaviour-preserving (they simply inline).
+    // Same idiom as DRAW_DC3_VIRTUAL in rndobj/Draw.h; the native engine keeps
+    // the keyword so host-side subclasses can still specialise them.
+#ifdef HX_NATIVE
+#define MESH_DC3_VIRTUAL virtual
+#else
+#define MESH_DC3_VIRTUAL
+#endif
     /** "Number of faces in the mesh" */
-    virtual int NumFaces() const { return mFaces.size(); }
+    MESH_DC3_VIRTUAL int NumFaces() const { return mFaces.size(); }
     /** "Number of verts in the mesh" */
-    virtual int NumVerts() const { return mVerts.size(); }
+    MESH_DC3_VIRTUAL int NumVerts() const { return mVerts.size(); }
 #ifdef HX_NATIVE
     virtual void DrawShowing();
 #endif
