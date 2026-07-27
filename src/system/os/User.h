@@ -34,7 +34,10 @@ public:
     // under TU5. Absent from DC3/rb3-Wii User (a TU0->TU5 patch addition). Declared-only
     // (defined out-of-line in retail); its body is not needed for the dispatch-offset
     // match. TODO(TU5): recover the real name/semantics of this virtual.
-    virtual const char *UnkTU5Virtual_beforeUserName() const;
+    // Return type is bool, not const char*: retail OvershellSlot::UpdateView calls
+    // it as `if (user->IsLocal() && !user->UnkTU5Virtual_beforeUserName())` and
+    // tests the result with `clrlwi. r11, r3, 24` (byte/bool), not a pointer compare.
+    virtual bool UnkTU5Virtual_beforeUserName() const;
     virtual const char *UserName() const = 0;
 
     unsigned int GetMachineID() const { return mMachineID; }

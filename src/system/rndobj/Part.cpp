@@ -1,3 +1,6 @@
+// Retail inlines the owner-only ObjPtr ctor in this TU (three stores, no
+// AddRef) rather than calling fn_8270B9A8. See obj/Object.h.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/Part.h"
 #include "math/Geo.h"
 #include "math/Rand.h"

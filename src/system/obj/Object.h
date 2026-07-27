@@ -374,7 +374,30 @@ protected:
     struct DeferOwner {};
     ObjPtr(DeferOwner, T *ptr) : ObjRefConcrete<T>(nullptr, ptr) {}
 public:
+    // ---- PER-TU: inline owner-only ctor ------------------------------------
+    // Retail's `mFoo(this)` member-init sites expand two ways depending on the
+    // TU: (a) an out-of-line `bl ??0ObjPtr...` (fn_8270B9A8) -- the default
+    // here -- or (b) INLINE to exactly three stores (mOwner@4, mObject@8 = 0,
+    // vtable@0) with no AddRef. Case (b) is visible in the retail
+    // CharNeckTwist / CharEyes / RndParticleSys constructors.
+    //
+    // Splitting the owner-only case into its own body-in-class ctor is what
+    // lets MSVC /Ob2 inline it: the two-arg ctor's `if (mObject) AddRef(this)`
+    // makes that one too big to inline under /O1.
+    //
+    // Measured whole-binary A/B: applying this GLOBALLY is net -121 (retail
+    // mostly does NOT inline), so it is gated per-TU. Define
+    // RB3_OBJPTR_INLINE_OWNER_CTOR at the top of a .cpp (before any include)
+    // to opt that TU in. NOTE: only valid for TUs outside the PCH-eligible
+    // dirs (char/, rndobj/, world/, ui/ are PCH-excluded), otherwise the
+    // /FI decomp_pch.h include of this header precedes the .cpp's #define.
+    // No layout/ABI change either way -- purely an inline-policy switch.
+#ifdef RB3_OBJPTR_INLINE_OWNER_CTOR
+    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner, nullptr) {}
+    ObjPtr(Hmx::Object *owner, T *ptr);
+#else
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
+#endif
     ObjPtr(const ObjPtr &p);
     // NO user dtor: retail's ~ObjPtr is compiler-generated (implicit). A
     // user-declared empty dtor makes MSVC store ??_7ObjPtr@@6B@ before the

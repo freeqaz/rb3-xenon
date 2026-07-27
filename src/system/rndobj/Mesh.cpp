@@ -1135,7 +1135,11 @@ void RndMesh::SetVolume(RndMesh::Volume vol) {
                     vb0.Zero();
                     vb0[i % 3] = i > 2 ? -1.0f : 1.0f;
                     const Vector3 &point = i > 2 ? box.mMin : box.mMax;
-                    bspIt->plane = Plane(vb0, point);
+                    Plane &pl = bspIt->plane;
+                    pl.a = vb0.x;
+                    pl.b = vb0.y;
+                    pl.c = vb0.z;
+                    pl.d = -(pl.a * point.x + pl.b * point.y + pl.c * point.z);
                     bspIt->left = 0;
                     if (i == 5) {
                         bspIt->right = 0;
@@ -1171,7 +1175,9 @@ void RndMesh::SetVolume(RndMesh::Volume vol) {
                 if (mBSPTree) {
                     int x = 0, y = 0;
                     NumNodes(mBSPTree, x, y);
-                    TheDebug << MakeString(
+                    // Retail compiled this log out (NumNodes survives for its
+                    // side effects, the TheDebug<<MakeString does not).
+                    MILO_LOG(
                         "Made BSP tree for \"%s\" (nodes:%d depth:%d)\n", Name(), x, y
                     );
                 } else {

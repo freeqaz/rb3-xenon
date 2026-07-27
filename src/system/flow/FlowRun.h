@@ -23,7 +23,13 @@ public:
     virtual void RequestStop();
     virtual void RequestStopCancel();
 
-    OBJ_MEM_OVERLOAD(0x17)
+    // laneAT-f4 opt-out: the retail bytes show FlowRun's operator new was kept
+    // OUT OF LINE and ICF-folded (its `new` site is a single
+    // `bl ??2<folded>@@SAPAXI@Z` with NO StaticClassName call), unlike the
+    // OBJ_MEM_OVERLOAD majority which retail inlined. Classified from the
+    // CTOR relocation, not the symbol name -- see
+    // /home/free/tmp/laneAT/f4/newobj_classify.py.
+    MEM_OVERLOAD(FlowRun, 0x17)
     NEW_OBJ(FlowRun)
 
     void ResolveTarget();

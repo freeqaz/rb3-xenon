@@ -19,7 +19,11 @@ public:
     virtual void Poll();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    OBJ_MEM_OVERLOAD(0x19)
+    // laneAT-f4: retail keeps THIS class's operator new out-of-line + ICF-folded
+    // (target CharBoneTwist::NewObject calls the folded `??2CriticalSection@@SAPAXI@Z`
+    // thunk with NO StaticClassName call), unlike the OBJ_MEM_OVERLOAD majority.
+    // MEM_OVERLOAD is the literal-name, noinline, foldable form.
+    MEM_OVERLOAD(CharBoneTwist, 0x19)
     NEW_OBJ(CharBoneTwist)
 
 protected:

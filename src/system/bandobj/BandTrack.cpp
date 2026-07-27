@@ -40,6 +40,7 @@ END_LOADS
 void BandTrack::Save(BinStream &) {}
 
 void BandTrack::StartPulseAnims(float timeTillBeat) {
+    static Symbol loop("loop");
     if (mBeatAnimsGrp) {
         mBeatAnimsGrp->Animate(
             0.0f, false, timeTillBeat, RndAnimatable::k480_fpb, 0.0f, 960.0f, 0.0f, 1.0f,
@@ -504,6 +505,16 @@ void BandTrack::SetupCrowdMeter() {
 
 void BandTrack::SetInstrument(TrackInstrument inst) {
     mTrackInstrument = inst;
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol vocals("vocals");
+    static Symbol keys("keys");
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
+    static Symbol real_keys("real_keys");
+    static Symbol none("none");
+    static Symbol pending("pending");
     switch (inst) {
     case kInstGuitar:
         mInstrument = guitar;
@@ -536,7 +547,11 @@ void BandTrack::SetInstrument(TrackInstrument inst) {
         mInstrument = pending;
         break;
     default:
-        MILO_NOTIFY_ONCE(MakeString("unrecognized instrument type \"%d\"", inst));
+        // Retail keeps the MakeString call here (the notify itself is stripped):
+        // target emits `lis/addi fmt; mr r4, inst; bl MakeString` in the default
+        // arm.  The default MILO_NOTIFY_ONCE no-op (`(void)sizeof(...)`) does not
+        // evaluate it, so the call is written out explicitly.
+        MakeString("unrecognized instrument type \"%d\"", inst);
         break;
     }
 }

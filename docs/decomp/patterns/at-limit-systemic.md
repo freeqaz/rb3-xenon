@@ -54,3 +54,42 @@ These are project-wide issues that cause regressions across many functions. Fixi
   - No BBT section splitting in target binary (single `.text` section)
 - **Possible explanations**: Different c2.dll build variant, linker-level BBT with branch trace data, or unknown compiler mechanism
 - **Status**: UNFIXABLE — cannot reproduce block sinking with our compiler under any conditions
+
+## 8. MSVC temp-slot ASSIGNMENT permutation (AT_LIMIT — measured, 2026-07-26, lane guardbit)
+
+Distinct from block sinking: the frame size, the saved-register range, the
+instruction count **and the set of stack slots actually used** all match retail
+exactly, and the only difference is *which temporary MSVC parks in which slot*.
+No source-level knob reaches it.
+
+- **Fingerprint**: objdiff shows a large `diff_arg` population that is entirely
+  `[off:±N]` on `rXX, N, r31` operands, with **zero** insert/delete, a `frame Δ
+  +0x0` from `run_diff_inspect mode=stack-layout`, and `stack-layout` reporting
+  every user slot as `MATCH`. Collect the operand sets from both columns of
+  `diff_inspect --compare-asm`: if `set(target slots) == set(base slots)` it is
+  this pattern, not a layout defect.
+- **Reference case**: `?HandlePassiveMessage@PassiveMessageQueue@@QAAXPAVPassiveMessage@@@Z`
+  (`default/band3/meta_band/PassiveMessenger`, 99.3%, 33 unmatched EH funclets —
+  the largest named funclet cascade in the TU5 image). Frame 0x280 both, savegpr
+  27 both, 738 instructions both, 100 distinct r31 slots both, identical sets.
+  The 8 `DataNode` ctor-arg temporaries of each `static Message` land in a
+  permuted order (target `0x108,0xe8,0xa0,0x1a0,0xb0,0x130,0xc0,0x170` vs ours
+  `0xd0,0x98,0x168,0xa8,0x190,0xb8,0x150,0xc8`) with no arithmetic relation.
+- **Exhausted**: the function is a 5-arm `switch`, so the natural hypothesis is
+  that the arm order drives the temp-allocation order. **All 120 permutations of
+  the case blocks were compiled and measured**; the current source order is
+  already the maximum (427/738 equal) and every other ordering is worse or equal.
+  Brace-scoping the temps, and naming them, also change nothing.
+- **Status**: AT_LIMIT. The permuter is OFF by standing user directive, so do not
+  route it there either — record it and move on.
+- **Related shape, same verdict**: `?SyncObjects@BandCrowdMeter@@UAAXXZ` (6
+  funclets, frame Δ +0x40). Retail REUSES one slot for five sequential
+  `ObjPtr<EventTrigger>` temporaries in five separate statements; we allocate five
+  distinct 16-byte slots. Explicit block scopes and named locals were both tried
+  and made no difference.
+
+**Why it matters more than the function count suggests**: an EH funclet encodes
+its parent's frame size *and* the slot it cleans up, so a permuted slot map means
+the funclets can never pair even though the parent is at 99%+. This pattern is
+therefore over-represented in "named parent, frame already correct, many
+unmatched funclets" triage buckets. See `docs/decomp/EH_FUNCLET_CASCADE.md`.

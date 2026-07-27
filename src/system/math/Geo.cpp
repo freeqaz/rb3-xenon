@@ -25,9 +25,9 @@ void Triangle::Set(const Vector3 &v0, const Vector3 &v1, const Vector3 &v2) {
 
 float gUnitsPerMeter = 39.370079f;
 float gBSPPosTol = 0.01f;
-float gBSPDirTol = 0.985f;
-int gBSPMaxDepth = 20;
-int gBSPMaxCandidates = 40;
+static float gBSPDirTol = 0.985f;
+static int gBSPMaxDepth = 20;
+static int gBSPMaxCandidates = 40;
 float gBSPCheckScale = 1.1f;
 
 void NumNodes(const BSPNode *node, int &num, int &maxDepth) {
@@ -1033,7 +1033,10 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         return false;
     }
     node = new BSPNode();
-    stlpmtx_std::_S_sort<BSPFace, stlpmtx_std::StlNodeAlloc<BSPFace>, stlpmtx_std::less<BSPFace>>(faces, stlpmtx_std::less<BSPFace>());
+    // NB: default-initialised (not value-initialised) — retail passes the empty
+    // comparator without first storing a zero byte to its stack slot.
+    stlpmtx_std::less<BSPFace> _cmp;
+    stlpmtx_std::_S_sort<BSPFace, stlpmtx_std::StlNodeAlloc<BSPFace>, stlpmtx_std::less<BSPFace>>(faces, _cmp);
 
     int totalFaces = 0;
     for (std::list<BSPFace>::iterator it = faces.begin(); it != faces.end(); ++it)
@@ -1058,7 +1061,8 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
                 bool front, back;
                 jt->OnSide(*planeIt, front, back);
                 if (!front && !back) {
-                    if (fabs(planeIt->a * jt->t.m.z.x + planeIt->b * jt->t.m.z.y + planeIt->c * jt->t.m.z.z) < gBSPDirTol)
+                    const Vector3 &n = jt->t.m.z;
+                    if (fabs(planeIt->a * n.x + planeIt->b * n.y + planeIt->c * n.z) < gBSPDirTol)
                         break;
                 } else {
                     if (back) {
@@ -1094,16 +1098,18 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     std::list<BSPFace> backFaces, frontFaces;
     std::list<BSPFace>::iterator it = faces.begin();
     while (it != faces.end()) {
-        std::list<BSPFace>::iterator cur = it++;
         bool front, back;
-        cur->OnSide(node->plane, front, back);
+        it->OnSide(node->plane, front, back);
         if (!front && !back) {
-            faces.erase(cur);
+            it = faces.erase(it);
         } else if (!back) {
+            std::list<BSPFace>::iterator cur = it++;
             frontFaces.splice(frontFaces.begin(), faces, cur);
         } else if (!front) {
+            std::list<BSPFace>::iterator cur = it++;
             backFaces.splice(backFaces.begin(), faces, cur);
         } else {
+            std::list<BSPFace>::iterator cur = it++;
             Hmx::Ray ray;
             Intersect(cur->t, node->plane, ray);
             BSPFace frontFace;

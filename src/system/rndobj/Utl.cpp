@@ -2282,6 +2282,14 @@ void TessellateMesh(RndMesh *mesh) {
 
     unsigned int nextVert = (unsigned short)geomOwner->Verts().size();
 
+    // Retail declares the three probe edges once, outside the loop: only their
+    // v0/v1 are re-stamped per face, and `midpoint` is seeded to -1 a single
+    // time (it is never read before being overwritten on the insert path).
+    Edge e12, e23, e31;
+    e12.midpoint = -1;
+    e23.midpoint = -1;
+    e31.midpoint = -1;
+
     for (unsigned int i = 0; i < (unsigned int)geomOwner->Faces().size(); i++) {
         auto face = geomOwner->Faces()[i];
         unsigned short v2 = face.v2;
@@ -2302,6 +2310,13 @@ void TessellateMesh(RndMesh *mesh) {
         RndMesh::Vert *pv3 = (RndMesh::Vert *)((unsigned int)v3 * 0x60 + vertsBase);
 #endif
 
+        e12.v0 = v1;
+        e12.v1 = v2;
+        e23.v0 = v2;
+        e23.v1 = v3;
+        e31.v0 = v3;
+        e31.v1 = v1;
+
         RndMesh::Vert blend12, blend23, blend31;
         RndAmbientOcclusion::BlendVert(*pv1, *pv2, blend12);
         RndAmbientOcclusion::BlendVert(*pv2, *pv3, blend23);
@@ -2309,10 +2324,6 @@ void TessellateMesh(RndMesh *mesh) {
 
         unsigned short mid12, mid23, mid31;
 
-        Edge e12;
-        e12.v0 = v1;
-        e12.v1 = v2;
-        e12.midpoint = -1;
         std::set<Edge>::iterator it12 = edges.find(e12);
         if (it12 == edges.end()) {
             mid12 = nextVert++;
@@ -2323,10 +2334,6 @@ void TessellateMesh(RndMesh *mesh) {
             mid12 = it12->midpoint;
         }
 
-        Edge e23;
-        e23.v0 = v2;
-        e23.v1 = v3;
-        e23.midpoint = -1;
         std::set<Edge>::iterator it23 = edges.find(e23);
         if (it23 == edges.end()) {
             mid23 = nextVert++;
@@ -2337,10 +2344,6 @@ void TessellateMesh(RndMesh *mesh) {
             mid23 = it23->midpoint;
         }
 
-        Edge e31;
-        e31.v0 = v3;
-        e31.v1 = v1;
-        e31.midpoint = -1;
         std::set<Edge>::iterator it31 = edges.find(e31);
         if (it31 == edges.end()) {
             mid31 = nextVert++;
@@ -2396,62 +2399,59 @@ void BuildVisit(BSPNode *node) {
         return;
 
     BuildPoly newPoly;
-    newPoly.mPoly.points.clear();
     gParentPolys.push_back(newPoly);
 
     std::list<BuildPoly>::iterator lastIt = gParentPolys.end();
     --lastIt;
-    BuildPoly &poly = *lastIt;
 
     Plane &plane = node->plane;
     float lenSq = plane.a * plane.a + plane.b * plane.b + plane.c * plane.c;
     float invDist = -(plane.d / lenSq);
 
-    poly.mTransform.v.y = plane.b * invDist;
-    poly.mTransform.v.x = plane.a * invDist;
-    poly.mTransform.v.z = plane.c * invDist;
+    Vector3 origin;
+    origin.y = plane.b * invDist;
+    origin.x = plane.a * invDist;
+    origin.z = plane.c * invDist;
+    lastIt->mTransform.v = origin;
 
-    poly.mTransform.m.z.y = plane.b;
-    poly.mTransform.m.z.x = plane.a;
-    poly.mTransform.m.z.z = plane.c;
+    lastIt->mTransform.m.z = *(const Vector3 *)&plane;
 
-    poly.mTransform.m.y.Set(0, 1, 0);
+    lastIt->mTransform.m.y.Set(0, 1, 0);
 
     if (fabsf(
-            poly.mTransform.m.z.x * 0.0f + poly.mTransform.m.z.z * 0.0f
-            + poly.mTransform.m.z.y * 1.0f
+            lastIt->mTransform.m.z.y * lastIt->mTransform.m.y.y
+            + lastIt->mTransform.m.z.z * lastIt->mTransform.m.y.z
+            + lastIt->mTransform.m.z.x * lastIt->mTransform.m.y.x
         )
         > 0.9f) {
-        poly.mTransform.m.y.Set(1, 0, 0);
+        lastIt->mTransform.m.y.Set(1, 0, 0);
     }
 
     // x = y cross z
-    poly.mTransform.m.x.x = poly.mTransform.m.y.y * poly.mTransform.m.z.z
-        - poly.mTransform.m.y.z * poly.mTransform.m.z.y;
-    poly.mTransform.m.x.y = poly.mTransform.m.z.x * poly.mTransform.m.y.z
-        - poly.mTransform.m.z.z * poly.mTransform.m.y.x;
-    poly.mTransform.m.x.z = poly.mTransform.m.y.x * poly.mTransform.m.z.y
-        - poly.mTransform.m.y.y * poly.mTransform.m.z.x;
+    lastIt->mTransform.m.x.x = lastIt->mTransform.m.y.y * lastIt->mTransform.m.z.z
+        - lastIt->mTransform.m.y.z * lastIt->mTransform.m.z.y;
+    lastIt->mTransform.m.x.y = lastIt->mTransform.m.z.x * lastIt->mTransform.m.y.z
+        - lastIt->mTransform.m.z.z * lastIt->mTransform.m.y.x;
+    lastIt->mTransform.m.x.z = lastIt->mTransform.m.y.x * lastIt->mTransform.m.z.y
+        - lastIt->mTransform.m.y.y * lastIt->mTransform.m.z.x;
 
-    Normalize(poly.mTransform.m.x, poly.mTransform.m.x);
+    Normalize(lastIt->mTransform.m.x, lastIt->mTransform.m.x);
 
     // y = z cross x
-    poly.mTransform.m.y.x = poly.mTransform.m.z.y * poly.mTransform.m.x.z
-        - poly.mTransform.m.z.z * poly.mTransform.m.x.y;
-    poly.mTransform.m.y.y = poly.mTransform.m.x.x * poly.mTransform.m.z.z
-        - poly.mTransform.m.x.z * poly.mTransform.m.z.x;
-    poly.mTransform.m.y.z = poly.mTransform.m.z.x * poly.mTransform.m.x.y
-        - poly.mTransform.m.z.y * poly.mTransform.m.x.x;
+    lastIt->mTransform.m.y.x = lastIt->mTransform.m.z.y * lastIt->mTransform.m.x.z
+        - lastIt->mTransform.m.z.z * lastIt->mTransform.m.x.y;
+    lastIt->mTransform.m.y.y = lastIt->mTransform.m.x.x * lastIt->mTransform.m.z.z
+        - lastIt->mTransform.m.x.z * lastIt->mTransform.m.z.x;
+    lastIt->mTransform.m.y.z = lastIt->mTransform.m.z.x * lastIt->mTransform.m.x.y
+        - lastIt->mTransform.m.z.y * lastIt->mTransform.m.x.x;
 
-    // Add large quad
-    Vector2 p0(-10000.0f, 10000.0f);
-    Vector2 p1(-10000.0f, -10000.0f);
-    Vector2 p2(10000.0f, -10000.0f);
-    Vector2 p3(10000.0f, 10000.0f);
-    poly.mPoly.points.push_back(p0);
-    poly.mPoly.points.push_back(p1);
-    poly.mPoly.points.push_back(p2);
-    poly.mPoly.points.push_back(p3);
+    // Add large quad. Retail materialises each corner immediately before its
+    // push_back, so +/-10000.0f stay live in callee-saved f30/f31 across the
+    // four calls instead of being spilled into four separate stack slots.
+    lastIt->mPoly.points.push_back(Vector2(-10000.0f, 10000.0f));
+    lastIt->mPoly.points.push_back(Vector2(-10000.0f, -10000.0f));
+    lastIt->mPoly.points.push_back(Vector2(10000.0f, -10000.0f));
+    lastIt->mPoly.points.push_back(Vector2(10000.0f, 10000.0f));
 
     if (node->left == NULL) {
         // Leaf: clip parents against plane (front), recurse right

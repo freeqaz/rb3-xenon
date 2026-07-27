@@ -19,11 +19,15 @@ class StorePurchaser {
 public:
     virtual ~StorePurchaser() {}
     virtual void Initiate() = 0;
+    // Retail vtable order (from StorePanel::Poll's inlined slot loads):
+    // 0x8 IsPurchasing, 0xc PurchaseMade, 0x10 IsSuccess, 0x14 Poll.
+    // NeedsEnum is a DC3-era addition with no RB3 call sites, so it lands
+    // after Poll where it cannot shift the retail slots.
     virtual bool IsPurchasing() const = 0;
-    virtual bool IsSuccess() const = 0;
     virtual bool PurchaseMade() const = 0;
-    virtual bool NeedsEnum() const { return true; }
+    virtual bool IsSuccess() const = 0;
     virtual void Poll() = 0;
+    virtual bool NeedsEnum() const { return true; }
 
     StorePurchaser(Symbol s, unsigned int i) : mSource(s), mUserIndex(i) {}
 

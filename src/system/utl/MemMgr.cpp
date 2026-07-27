@@ -700,6 +700,16 @@ void MemFreeBlockStats(
     gHeaps[heapNum].FreeBlockStats(i2, i3, numFreeBytes, i5, biggestFreeBlock);
 }
 
+// Retail/match 4-ref overload (rb3-Wii oracle
+// MemFreeBlockStats(int, int&, int&, int&, int&)). DC3 grew a fifth out-param
+// (minFreeBytes); RB3 retail predates it, so call sites that must match retail
+// codegen (e.g. MetaMusic::Poll) use this arity.
+void MemFreeBlockStats(int heapNum, int &a, int &b, int &c, int &d) {
+    CritSecTracker tracker(gMemLock);
+    MILO_ASSERT(heapNum < MAX_HEAPS, 0x154);
+    gHeaps[heapNum].FreeBlockStats(a, b, c, d);
+}
+
 static MemHeapStack gThreadBuf[MAX_BUF_THREADS];
 static int gThreadBufCurrentIndex;
 

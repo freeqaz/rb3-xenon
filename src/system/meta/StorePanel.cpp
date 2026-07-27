@@ -113,13 +113,9 @@ void StorePanel::Poll() {
     if (!mLoadOk)
         return;
     UIPanel::Poll();
-    if (TheNetCacheMgr->GetHasFailed()) {
-        HandleNetCacheMgrFailure();
-        return;
-    }
-    if (!TheNetCacheMgr->IsReady())
-        return;
-
+    // NOTE: retail runs the TheNetCacheMgr->GetHasFailed() check at the END of
+    // Poll (see the tail below) and has no IsReady() gate at all — matching the
+    // rb3-Wii oracle. The leading early-outs are a DC3-era restructuring.
     mStorePreviewMgr->Poll();
     // Retail StorePreviewMgr (TU5) has no mHasFailure/mLastFailType members —
     // its layout is fixed at 0x60 (see StorePreviewMgr.h), so GetLastFailure()
@@ -137,14 +133,13 @@ void StorePanel::Poll() {
                 MILO_ASSERT(buffer, 0x16d);
                 RndBitmap bmap;
                 BufStream stream(buffer, size, true);
-                bmap.Reset();
                 bmap.Load(stream);
                 bmap.SetMip(0);
                 TheNetCacheMgr->DeleteNetCacheLoader(loader);
-                mAlbumTex->SetBitmap(bmap, 0, false, RndTex::kRegular);
+                mAlbumTex->SetBitmap(bmap, 0, false);
                 if (mPendingArtCallback->GetState() == UIPanel::kUp) {
                     static Message msg("art_loaded");
-                    mPendingArtCallback->HandleType(msg.mData);
+                    mPendingArtCallback->Handle(msg.mData, false);
                 }
                 mPendingArtLoader = 0;
                 mPendingArtCallback = 0;
@@ -163,7 +158,7 @@ void StorePanel::Poll() {
     }
 
     // Drive the inline enumeration
-    if (mEnum) {
+    if (mEnum && mEnum->IsEnumerating()) {
         mEnum->Poll();
         if (!mEnum->IsEnumerating()) {
             if (mEnum->IsSuccess()) {
@@ -181,34 +176,45 @@ void StorePanel::Poll() {
                 MILO_NOTIFY("An enumeration failed!");
                 static Message msg("enum_finished");
                 HandleType(msg.mData);
+                return;
             }
         }
     }
 
     // Re-enumerate if requested and idle
-    if (!mPurchaser && mNeedsReEnum) {
-        bool enumerating = mEnum && mEnum->IsEnumerating();
-        if (!enumerating) {
-            mNeedsReEnum = false;
-            EnumerateOffers(mPendingOffers.size() != mOffers.size());
-        }
+    if (!mPurchaser && mNeedsReEnum && !IsEnumerating()) {
+        mNeedsReEnum = false;
+        EnumerateOffers(!mPendingOffers.empty());
     }
 
     // Drive the purchaser
     if (mPurchaser) {
         mPurchaser->Poll();
         if (!mPurchaser->IsPurchasing()) {
-            bool purchaseMade = false;
             if (mPurchaser->PurchaseMade() && mPurchaser->IsSuccess()) {
                 mNeedsReEnum = true;
-                purchaseMade = true;
+                mUnk75 = true;
+            } else {
+                mNeedsReEnum = false;
+                mUnk75 = false;
             }
-            static Message msg("checkout_finished", DataNode(purchaseMade));
-            HandleType(msg.mData);
-            TheUI->Handle(msg.mData, false);
-            RELEASE(mPurchaser);
+            FinishCheckout();
         }
     }
+
+    if (TheNetCacheMgr->GetHasFailed()) {
+        HandleNetCacheMgrFailure();
+    }
+}
+
+// Retail (fn_827B5C78) keeps the checkout-finished broadcast out of line; it is
+// called from Poll() once the purchaser stops purchasing.
+void StorePanel::FinishCheckout() {
+    static Message msg("checkout_finished", DataNode(0));
+    msg[0] = mUnk75;
+    HandleType(msg.mData);
+    TheUI->Handle(msg.mData, false);
+    RELEASE(mPurchaser);
 }
 
 void StorePanel::ExitStore(StoreError) const {}
@@ -278,10 +284,12 @@ void StorePanel::CheckOut(StorePurchaseable *p) {
 
 void StorePanel::ExitError(StoreError e) {
     MILO_ASSERT(e != kStoreErrorSuccess, 0x405);
-    if (mLoadOk) {
+    // Retail (inlined into Poll): the mLoadOk clear is gated on the panel being
+    // unloaded, and ExitStore runs unconditionally.
+    if (GetState() == kUnloaded) {
         mLoadOk = false;
-        ExitStore(e);
     }
+    ExitStore(e);
 }
 
 void StorePanel::HandleNetCacheMgrFailure() {

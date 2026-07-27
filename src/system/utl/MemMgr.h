@@ -45,6 +45,8 @@ void *MemResizeElem(
     const char *name
 );
 void MemFreeBlockStats(int, int &, int &, int &, int &, int &);
+// Retail/match 4-ref overload — see MemMgr.cpp.
+void MemFreeBlockStats(int, int &, int &, int &, int &);
 void MemPrintOverview(int, char *const);
 MemHeapStack &ThreadMemStack(bool);
 

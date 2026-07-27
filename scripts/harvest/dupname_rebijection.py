@@ -295,6 +295,9 @@ def main():
                         txt = new_txt
                         ndrop += 1
                         break
+        # a removal at the tail leaves a dangling comma before the final
+        # brace -- repair it without reformatting the rest of the file
+        txt = re.sub(r",(\s*)\}\s*$", r"\1}", txt)
         MAP_PATH.write_text(txt)
         print(f"applied: {nrep} renames, {ndrop} drops")
 
