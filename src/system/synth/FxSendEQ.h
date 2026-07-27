@@ -7,7 +7,7 @@ class FxSendEQ : public FxSend {
 public:
     virtual ~FxSendEQ();
     OBJ_CLASSNAME(FxSendEQ);
-    OBJ_SET_TYPE(FxSendEQ);
+    OBJ_SET_TYPE_ENGINE(FxSendEQ);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

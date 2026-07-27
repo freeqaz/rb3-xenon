@@ -18,7 +18,7 @@ public:
     Fader();
     virtual ~Fader();
     OBJ_CLASSNAME(SynthFader);
-    OBJ_SET_TYPE(Fader);
+    OBJ_SET_TYPE_ENGINE(Fader);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

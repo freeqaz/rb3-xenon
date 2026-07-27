@@ -8,7 +8,7 @@ class FxSendDelay : public FxSend {
 public:
     virtual ~FxSendDelay();
     OBJ_CLASSNAME(FxSendDelay);
-    OBJ_SET_TYPE(FxSendDelay);
+    OBJ_SET_TYPE_ENGINE(FxSendDelay);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

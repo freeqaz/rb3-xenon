@@ -39,9 +39,18 @@ BEGIN_HANDLERS(MoggClip)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
+// Retail's property list is 5 long, not 2 -- the missing loop / loop_start_sample
+// / loop_end_sample arms are the bulk of the 112 target-only instructions this
+// function used to carry.  Order and member offsets read off the target
+// (fn_8270DFB8): file 0x34, volume 0x40, loop 0x44 (SetLoop(_val.Int() != 0)),
+// loop_start_sample 0x80 and loop_end_sample 0x84 (both stores inlined at the
+// call site).  Matches the rb3-Wii oracle's MoggClip::SyncProperty exactly.
 BEGIN_PROPSYNCS(MoggClip)
     SYNC_PROP_SET(file, mMoggFile, SetFile(_val.Str()))
     SYNC_PROP_SET(volume, mControllerVolume, SetControllerVolume(_val.Float()))
+    SYNC_PROP_SET(loop, mLoop, SetLoop(_val.Int() != 0))
+    SYNC_PROP_SET(loop_start_sample, mLoopStartSample, SetLoopStart(_val.Int()))
+    SYNC_PROP_SET(loop_end_sample, mLoopEndSample, SetLoopEnd(_val.Int()))
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
     // DC3's extra direct Hmx::Object chain is native-only.
@@ -207,6 +216,16 @@ void MoggClip::UnloadData() {
         MemFree(mData);
         mData = nullptr;
         mDataSize = 0;
+    }
+}
+
+void MoggClip::SetLoop(bool b) {
+    mLoop = b;
+    if (mStream) {
+        mStream->ClearJump();
+        if (mLoop) {
+            mStream->SetJumpSamples(mLoopEndSample, mLoopStartSample, 0);
+        }
     }
 }
 

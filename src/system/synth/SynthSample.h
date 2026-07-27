@@ -17,7 +17,7 @@ public:
     // Hmx::Object
     virtual ~SynthSample();
     OBJ_CLASSNAME(SynthSample);
-    OBJ_SET_TYPE(SynthSample);
+    OBJ_SET_TYPE_ENGINE(SynthSample);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

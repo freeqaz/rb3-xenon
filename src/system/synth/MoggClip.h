@@ -20,7 +20,7 @@ public:
 
     virtual ~MoggClip();
     OBJ_CLASSNAME(MoggClip);
-    OBJ_SET_TYPE(MoggClip);
+    OBJ_SET_TYPE_ENGINE(MoggClip);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
@@ -42,6 +42,18 @@ public:
     virtual void SetSend(FxSend *);
 
     void SetLoop(bool, int, int);
+    // Retail RB3 (and the rb3-Wii oracle) carry a 1-arg SetLoop plus trivial
+    // SetLoopStart/SetLoopEnd; SyncProperty's loop / loop_start_sample /
+    // loop_end_sample properties call them.  Target ?SetLoop@..@QAAX_N@Z lives
+    // at 0x8270D770 (mLoop 0x44, mStream 0x4c, start 0x80, end 0x84, vtable
+    // slots 0xa4 ClearJump / 0xd8 SetJumpSamples) -- splits.txt mis-attributes
+    // that address to BinkClip.cpp and target_symbol_map.json labels it
+    // ?SetLoop@BinkClip@@QAAX_N@Z, but the body is unambiguously MoggClip's.
+    // SetLoopStart/SetLoopEnd are inlined at their call sites in the target,
+    // so they stay header-inline here.
+    void SetLoop(bool);
+    void SetLoopStart(int i) { mLoopStartSample = i; }
+    void SetLoopEnd(int i) { mLoopEndSample = i; }
     void EndLoop();
     void SetControllerVolume(float vol) {
         mControllerVolume = vol;

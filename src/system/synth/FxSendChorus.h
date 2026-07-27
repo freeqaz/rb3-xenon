@@ -7,7 +7,7 @@
 class FxSendChorus : public FxSend {
 public:
     OBJ_CLASSNAME(FxSendChorus);
-    OBJ_SET_TYPE(FxSendChorus);
+    OBJ_SET_TYPE_ENGINE(FxSendChorus);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

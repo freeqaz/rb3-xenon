@@ -27,7 +27,7 @@ public:
     virtual ~FxSend() {}
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(FxSend);
-    OBJ_SET_TYPE(FxSend);
+    OBJ_SET_TYPE_ENGINE(FxSend);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

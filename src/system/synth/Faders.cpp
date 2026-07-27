@@ -105,8 +105,17 @@ BEGIN_COPYS(Fader)
     }
 END_COPYS
 
+// Retail declares each property Symbol / Handle() Symbol as a FUNCTION-LOCAL
+// static (guard word + ??0Symbol + atexit), not a reference to the global
+// `extern Symbol` in utl/Symbols*.h.  This TU includes obj/ObjMacros.h, whose
+// HANDLE_*/SYNC_PROP_* copies are the NON-static ones (obj/Object.h's copies
+// are already static), so the tell applies here.  Verified against the target
+// obj by scripts/harvest/localstatic_patch_gen.py: Fader::SyncProperty has one
+// guarded static "level" at +0x7c, Fader::Handle has "set_val" at +0x68 and
+// "fade" at +0xdc.  The Handle side is switched on per-TU by
+// /DRB3_HANDLE_LOCAL_STATIC in config/45410914/objects.json.
 BEGIN_PROPSYNCS(Fader)
-    SYNC_PROP_MODIFY(level, mVal, SetVal(mVal))
+    SYNC_PROP_MODIFY_STATIC(level, mVal, SetVal(mVal))
 END_PROPSYNCS
 
 BEGIN_HANDLERS(Fader)

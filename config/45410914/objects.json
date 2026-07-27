@@ -826,7 +826,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
-   "system/synth/Faders.cpp": "NonMatching",
+   "system/synth/Faders.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/synth/StandardStream.cpp": "NonMatching",
    "system/synth/SynthSample.cpp": "NonMatching",
    "system/meta/SongPreview.cpp": "NonMatching",
