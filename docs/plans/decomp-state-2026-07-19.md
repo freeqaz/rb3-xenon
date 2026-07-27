@@ -235,6 +235,36 @@ unreachable pending a second source."** (Dance-Central-lineage names like
 `HamMove::LocalizedName`, `DancerFrame`, `DetectFrame` remain very unlikely, but
 that is a prior, not proof.)
 
+### ★ `OBJ_MEM_OVERLOAD` opt-out backlog: measured **ZERO** — a phantom count
+
+The classifier finds **156 OUTLINED-only** classes and only **10** opt-outs were
+applied, which reads like ~146 left behind an already-proven +111/+5 lever. **It
+is not there.** Of the 139 non-vendor OUTLINED classes (17 are
+`soundtouch`/`D3DXShader`/`NUISPEECH`, out of scope):
+
+| | n |
+|---|--:|
+| no in-tree header — class lives in an **unwired TU** | 62 |
+| header exists, **no allocation macro** — unaffected by the change | 75 |
+| already declared `MEM_OVERLOAD` — already correct | 2 |
+| **declared `OBJ_MEM_OVERLOAD` — needs an opt-out** | **0** |
+
+★**So `scripts/harvest/newobj_inline_classify.py` is a per-class ORACLE FOR FUTURE
+PORTS, not a work queue** — when a TU gets wired, look its classes up and declare
+each with the macro the bytes say retail used. The **62 with no in-tree header are
+exactly the ones that will need it.** Ranking it as a backlog would have sent a
+lane after 146 phantom candidates — the same failure mode as the sandwich pool:
+**a plausible count that dissolves on contact.**
+
+★**METHOD NOTE (two confidently-wrong answers before the right one):** matching
+`OBJ_MEM_OVERLOAD\s*\(\s*(\w+)` returns **nothing** — the macro takes a **line
+number**, not a class name; and parsing class bodies mislabels **138 of 139**
+(these headers don't survive a naive brace scanner). **File-level presence keyed
+on header basename** is what answers it. Both wrong answers were plausible (0
+actionable / 138 "no declaration") — the lane only caught them by spot-checking a
+header it had written itself. ⇒ **Spot-check any census against a case you know
+by hand before believing it.**
+
 ### Refusals worth not re-funding
 `_bijection_arbitrary` ceiling **+2** (1,205 of 1,207 already at 100) ·
 `.pdata` parentage decides **2.8%** of the unreachable pool · the 84-byte
