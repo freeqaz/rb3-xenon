@@ -124,13 +124,17 @@ OvershellSlot::~OvershellSlot() {
 ObjectDir *OvershellSlot::DataDir() { return mOvershellDir; }
 
 void OvershellSlot::SetTypeDef(DataArray *da) {
-    if (TypeDef() != da) {
-        Hmx::Object::SetTypeDef(da);
-        mStateMgr->Init(da->FindArray(state_handlers), this);
-        float dur = 0;
-        if (da->FindData(msg_duration, dur, false)) {
-            mMessageQueue->SetMessageDuration(dur);
-        }
+    // Retail (0x825D8498) has NO `if (TypeDef() != da)` guard -- it calls
+    // Hmx::Object::SetTypeDef unconditionally at +0x1c with no preceding
+    // compare -- and declares both property Symbols as function-local statics
+    // (guard 0x82DFFB5C, bits 0x1/0x2, storages 0x82DFFB58 / 0x82DFFB54).
+    Hmx::Object::SetTypeDef(da);
+    static Symbol state_handlers("state_handlers");
+    mStateMgr->Init(da->FindArray(state_handlers), this);
+    static Symbol msg_duration("msg_duration");
+    float dur = 0;
+    if (da->FindData(msg_duration, dur, false)) {
+        mMessageQueue->SetMessageDuration(dur);
     }
 }
 

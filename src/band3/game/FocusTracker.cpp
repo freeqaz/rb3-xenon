@@ -158,6 +158,10 @@ DataArrayPtr FocusTracker::GetTargetDescription(int i) const {
 }
 
 void FocusTracker::UpdateGoalValueLabel(UILabel &label) const {
+    // Retail function-local static (guard 0x82E03358 bit 0x1, storage
+    // 0x82E03354); the storage address is materialised into r30 and passed
+    // straight to SetTokenFmt.
+    static Symbol tour_goal_focus_goal_format("tour_goal_focus_goal_format");
     label.SetTokenFmt(tour_goal_focus_goal_format, (int)mTargets.front());
 }
 
@@ -167,6 +171,15 @@ void FocusTracker::UpdateCurrentValueLabel(UILabel &label) const {
 }
 
 String FocusTracker::GetPlayerContributionString(Symbol s) const {
+    // Retail (0x826D6C90) initialises this function-local static at the top
+    // (guard 0x82E03318 bit 0x1, storage 0x82E03314) and then NEVER READS the
+    // storage again -- the only two references to 0x82E03314 in the whole
+    // function are the ctor's own lis/addi. The consumer was a MILO_* that
+    // retail no-op'd; the Symbol ctor call survives because it has side
+    // effects. So the static is declared and deliberately unused.
+    static Symbol tour_goal_focus_player_contribution_format(
+        "tour_goal_focus_player_contribution_format"
+    );
     TrackerPlayerID pid = mSource->GetIDFromInstrument(s);
     int i3 = 0;
     if (pid.NotNull()) {

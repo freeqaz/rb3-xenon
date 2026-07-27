@@ -133,7 +133,7 @@
  "0x825e6260": "?InitializeTrackerDesc@AccomplishmentOneShot@@UBAXAAVTrackerDesc@@@Z",
  "0x825e8ae8": "?UpdateIncrementalEntryName@AccomplishmentSongFilterConditional@@UAAXPAVUILabel@@VSymbol@@@Z",
  "0x825e8b90": "?IsSymbolEntryFulfilled@AccomplishmentSongFilterConditional@@UBA_NPAVBandProfile@@VSymbol@@@Z",
- "0x826426c0": "?Handle@UIScreen@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x827f08e8": "?Handle@UIScreen@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82642d48": "?Poll@SetlistToStorePanel@@UAAXXZ",
  "0x82654ab8": "?GetType@AccomplishmentOneShot@@UBA?AW4AccomplishmentType@@XZ",
  "0x8275a898": "?Copy@Object@Hmx@@UAAXPBV12@W4CopyType@12@@Z",

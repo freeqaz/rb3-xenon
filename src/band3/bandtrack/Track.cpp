@@ -189,27 +189,31 @@ bool Track::PlayerDisabled() const {
 
 void Track::DTSPopup(bool show) const {
     if (TheGame) {
+        // Retail function-local statics (guard 0x82E4BC3C, bits 0x1/0x2,
+        // storages 0x82E4BC38 / 0x82E4BC34) -- emitted INSIDE the TheGame
+        // test, ahead of the player loop.
+        static Symbol deploy_to_save("deploy_to_save");
+        static Symbol deploy_to_save_lefty("deploy_to_save_lefty");
         std::vector<Player *> &players = TheGame->GetActivePlayers();
+        // Retail caches end() (lwz r27, 0x4(r3)) instead of begin()+size(), and
+        // collapses the whole eligibility test into ONE bool: a single
+        // short-circuit chain feeding `b = true` / `else b = false` (see
+        // 0x82B98444..0x82B9849C -- one live register r29, no canDeploy /
+        // noGameOver temporaries). The three separate bools cost two extra
+        // callee-saves and shifted our whole register file by 2.
         Player **it = players.begin();
-        Player **end = it + players.size();
+        Player **end = players.end();
         for (; it != end; ++it) {
             Player *player = *it;
-            bool canDeploy = false;
-            bool noGameOver = false;
-            bool showPopup = false;
-            if (show && player->mEnabledState == kPlayerEnabled && player->CanDeployOverdrive()) {
-                canDeploy = true;
-            }
-            if (canDeploy) {
-                Performer *mainPerf = player->mBand->MainPerformer();
-                if (!mainPerf->mGameOver) {
-                    noGameOver = true;
-                }
-            }
-            if (noGameOver) {
-                MetaPerformer::Current();
-                showPopup = true;
-            }
+            // Retail joins the two arms in a scratch register and only THEN
+            // narrows to the bool (`li r11,1 / b / li r11,0 / clrlwi r29,r11,24`)
+            // -- i.e. the arms are int-typed and converted, not bool literals
+            // assigned straight into the live register.
+            bool showPopup = (show && player->mEnabledState == kPlayerEnabled
+                              && player->CanDeployOverdrive()
+                              && !player->mBand->MainPerformer()->mGameOver)
+                ? (MetaPerformer::Current(), 1)
+                : 0;
             if (player->mTrackType == kTrackDrum) {
                 showPopup = showPopup & player->InFill();
             }

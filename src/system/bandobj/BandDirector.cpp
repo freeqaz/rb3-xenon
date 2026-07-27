@@ -192,6 +192,12 @@ void BandDirector::Enter() {
                 skeys = dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, ptr));
             }
             if (skeys && skeys->empty()) {
+                // Retail: bits 0x4/0x8 of the same guard word 0x82CBCB84 that
+                // already carries the two static Messages above -- so these
+                // two Symbols are function-local statics of Enter() too, in
+                // declaration order allow_intro_shot, set_intro_shot, on, off.
+                static Symbol on("on");
+                static Symbol off("off");
                 float cap = Min(mEndOfSongSec, 241.0f);
                 for (float f = 0.0f; f + 60.0f < cap; f += 60.0f) {
                     skeys->Add(on, (f + 15.0f) * 30.0f, false);

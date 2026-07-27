@@ -64,7 +64,13 @@ BEGIN_HANDLERS(UIScreen)
     HANDLE_EXPR(has_panel, HasPanel(_msg->Obj<class UIPanel>(2)))
     HANDLE_ACTION(foreach_panel, ForeachPanel(_msg))
     HANDLE_EXPR(exiting, Exiting())
+    // Retail RB3's UIScreen::Handle has NO `reload_strings` handler: the target
+    // body (fn_827F08E8) carries exactly nine guard-wrapped dispatch Symbols,
+    // ending at `exiting`, and the 17-instruction cluster this macro emits is a
+    // pure insert against it. DC3 added it later. Keep it for the native port.
+#ifdef HX_NATIVE
     HANDLE_ACTION(reload_strings, ReloadStrings())
+#endif
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_MEMBER_PTR(FocusPanel())
     HANDLE_MESSAGE(ButtonDownMsg)

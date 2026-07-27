@@ -326,6 +326,10 @@ void GemPlayer::Swing(int i1, int i2, float f3, bool b4, bool b5) {
     if (unk1e1) {
         FinaleSwing(GetTrackSlot(i2));
     } else {
+        // Retail function-local static Message (guard 0x82E02E8C bit 0x1,
+        // storage 0x82E02E84), emitted inside the else branch immediately
+        // before the Export call. 1-arg ctor.
+        static Message swing_msg("swing");
         Export(swing_msg, true);
         if (mTrack && GetUser()->GetTrackType() == 0 && i2 == 0) {
             mTrack->GetTrackDir()->KickSwing();
@@ -1908,6 +1912,10 @@ void GemPlayer::SetReverb(bool b1) {
 }
 
 void GemPlayer::ResetController(bool b1) {
+    // Retail (0x826BCF78) opens with a function-local static Symbol keys
+    // (guard 0x82E02DB8 bit 0x1, storage 0x82E02DB4) whose storage is never
+    // read again -- initialised only, consumer no-op'd in retail.
+    static Symbol keys("keys");
     Symbol controller = TheGameConfig->GetController(GetUser());
     GameplayOptions *options = mUser->GetGameplayOptions();
     MILO_ASSERT(options, 0xBCF);

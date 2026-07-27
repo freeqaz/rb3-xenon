@@ -72,6 +72,11 @@ public:
     void SetSecondaryStateLevel(int) const;
     void RemotePlayerDisplayMsg(int, int, int) const;
     void SendPlayerDisplayMsg(NetDisplayMsg, int, int) const;
+    // Retail keeps `mPlayer && mPlayer->IsLocal()` OUT OF LINE as fn_826D2870
+    // (own frame, `lwz r3, 0x4(r3)`, virtual IsLocal at vtable+0x1c, bool
+    // return) and calls it from all six senders. Inlining it costs each caller
+    // 10 instructions plus an 8-byte stack slot.
+    bool HasLocalPlayer() const;
 
     Player *mPlayer; // 0x4
 };

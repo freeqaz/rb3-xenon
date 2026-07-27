@@ -485,6 +485,12 @@ void VocalTrackDir::TrackReset() {
 }
 
 void VocalTrackDir::ResetSmashers(bool b) {
+    // Retail declares both Messages as function-local statics (guard 0x82CBD780,
+    // bits 0x1/0x2, storages 0x82CBD778 / 0x82CBD770), BOTH ahead of the `b`
+    // test at 0x822F90D8 -- so they sit at the top of the function, not inside
+    // the `if`.
+    static Message reset_msg("reset");
+    static Message reset_particles_msg("reset_particles");
     mTambourineSmasher->HandleType(reset_msg);
     if (b)
         mTambourineSmasher->HandleType(reset_particles_msg);
@@ -515,6 +521,12 @@ void VocalTrackDir::SetTambourine(bool b) {
         mTambourineNowShowTrig->Trigger();
     else
         mTambourineNowHideTrig->Trigger();
+    // Retail: own pair of function-local statics (guard 0x82CBD794, bits
+    // 0x1/0x2, storages 0x82CBD78C / 0x82CBD784), emitted AFTER the Trigger
+    // call -- distinct storages from ResetSmashers', so these are separate
+    // statics, not shared globals.
+    static Message reset_msg("reset");
+    static Message reset_particles_msg("reset_particles");
     mTambourineSmasher->HandleType(reset_msg);
     mTambourineSmasher->HandleType(reset_particles_msg);
 }
@@ -654,6 +666,9 @@ void VocalTrackDir::SetupNetVocals() {
 }
 
 void VocalTrackDir::SetPlayerLocal(float f) {
+    // Retail function-local static (guard 0x82CBD7C4 bit 0x1), initialised at
+    // +0x40 i.e. ahead of the net-player test.
+    static Symbol fade_max("fade_max");
     if (BandTrack::mParent && BandTrack::mParent->HasNetPlayer() || mSimulatedNet)
         SetupNetVocals();
     else {

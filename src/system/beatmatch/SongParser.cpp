@@ -1497,6 +1497,11 @@ void SongParser::SetMidiReader(MidiReader *reader) {
 }
 
 int SongParser::PitchToSlot(int pitch, int &diff, int tick) const {
+    // Retail (0x82783C20) opens with a function-local static Symbol keys
+    // (guard 0x82E06408 bit 0x1, storage 0x82E06404) that the body never
+    // reads again -- its consumer was a MILO_* retail no-op'd. Declared and
+    // deliberately unused; the Symbol ctor call cannot be elided.
+    static Symbol keys("keys");
     int i3;
     if (mTrackType == kTrackRealKeys) {
         i3 = pitch - 0x30;
@@ -1637,6 +1642,10 @@ bool SongParser::CheckDrumMapMarker(int i, int j, bool b) {
 }
 
 bool SongParser::CheckKeyboardRangeMarker(int tick, int pitch, bool b) {
+    // Same shape as PitchToSlot: retail (0x82783E90) has a function-local
+    // static Symbol keys (guard 0x82E06410 bit 0x1, storage 0x82E0640C) that
+    // is initialised and never read.
+    static Symbol keys("keys");
     if (mTrackType != kTrackRealKeys)
         return false;
     if (pitch > 24U)
