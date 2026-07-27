@@ -84,6 +84,28 @@ void NextSongPanel::FinishLoad() {
     UIPanel::FinishLoad();
     const DataArray *t = TypeDef();
     MILO_ASSERT(t, 0x5A);
+    // laneAX-W7: the four function-local `static Symbol`s retail declares here
+    // are REAL, not a false positive -- guard word 0x82E01854 (bits 0x1/0x2/0x4),
+    // static objects at 0x82E01850/4C/48, strings "details_page_size",
+    // "details_footer_size", "details_scroll_step", "details_scroll_group".
+    // They are deliberately NOT applied yet: adding them alone measures
+    // 52.11% -> 40.6% because the BODY also diverges, and a partial conversion
+    // whose frame is still wrong un-pairs this unit's EH funclets.
+    //
+    // The divergence is now fully localised. Retail's FinishLoad does, between
+    // `UIPanel::FinishLoad()` and the first guard block (target 0x82643FF8):
+    //     lwz  r3, 0x8(r30)          ; this->mDir
+    //     li   r5, 0x1               ; fail_if_missing = true
+    //     addi r4, lbl_820CF42C      ; "highscore_1.lbl"
+    //     bl   ObjectDir::Find<...>  ; symbol reads as Find<RndAnimatable>
+    //     stfs f0, 0x1bc(r3)         ; f0 = 1.0f (const at 0x820009FC)
+    // i.e. one statement we lack entirely: find "highscore_1.lbl" and store
+    // 1.0f at +0x1bc of the result. Remaining blocker is the identity of that
+    // +0x1bc field -- neither UILabel nor RndAnimatable has a member there, and
+    // the `Find<RndAnimatable>` symbol is very likely an ICF alias for a
+    // different Find<T> instantiation (RB3 has no linker map, so merged-symbol
+    // resolution is unavailable). Port that statement FIRST, then add the
+    // statics; do not add the statics on their own.
     mDetailsPageSize = t->FindFloat(details_page_size);
     mDetailsFooterSize = t->FindFloat(details_footer_size);
     mDetailsScrollStep = t->FindFloat(details_scroll_step);
