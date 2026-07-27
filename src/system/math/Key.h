@@ -12,7 +12,10 @@ struct Weight {
     float derivOut;
 };
 
-inline BinStream &operator>>(BinStream &bs, Weight &w) { return bs >> (Vector3 &)w; }
+inline BinStream &operator>>(BinStream &bs, Weight &w) {
+    bs >> (Vector3 &)w;
+    return bs;
+}
 
 /**
  * @brief A keyframe.
