@@ -3007,6 +3007,8 @@ HamCamTransform.cpp:
 	.pdata      start:0x821F4A98 end:0x821F4AA8
 	.pdata      start:0x821F4CD0 end:0x821F4CF0
 	.pdata      start:0x821F4D20 end:0x821F4D28
+	.pdata      start:0x821F4D60 end:0x821F4D68
+	.pdata      start:0x821F4D70 end:0x821F4D78
 	.pdata      start:0x821F4D80 end:0x821F4D90
 	.pdata      start:0x821F4D98 end:0x821F4DB0
 	.pdata      start:0x821F4DB8 end:0x821F4DC0
@@ -3055,6 +3057,8 @@ HamCamTransform.cpp:
 	.text       start:0x822A4A20 end:0x822A4A90
 	.text       start:0x822A68E0 end:0x822A6AA8
 	.text       start:0x822A6CE8 end:0x822A6D38
+	.text       start:0x822A6F70 end:0x822A6FD0
+	.text       start:0x822A7008 end:0x822A7068
 	.text       start:0x822A70A0 end:0x822A7250
 	.text       start:0x822A72B0 end:0x822A73D0
 	.text       start:0x822A7504 end:0x822A7580
