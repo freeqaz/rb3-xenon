@@ -401,6 +401,9 @@ void StorePanel::EnumerateOffers(bool b) {
                 mLoadOk = false;
                 ExitStore(kStoreErrorSignedOut);
             }
+            static Message enum_finished_msg("enum_finished");
+            HandleType(enum_finished_msg);
+            TheUI->Handle(enum_finished_msg, false);
             return;
         }
         mEnum = new XboxEnumeration(profile->GetPadNum(), &offerIDs);

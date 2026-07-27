@@ -155,6 +155,7 @@ const char *FilterViewSetting::GetCurrentStatus() const {
         result += Localize(*it, nullptr);
     }
     if (!result.c_str()[0]) {
+        static Symbol filter_none("filter_none");
         return Localize(filter_none, nullptr);
     }
     return MakeString(result.c_str());
@@ -187,6 +188,8 @@ void FilterViewSetting::Text(int, int idx, UIListLabel *slot, UILabel *label)
         label->SetTextToken(mFilters[idx].mSym);
     } else {
         int count = mFilters[idx].mCount;
+        static Symbol song_select_song("song_select_song");
+        static Symbol song_select_songs("song_select_songs");
         Symbol fmt = (count == 1) ? song_select_song : song_select_songs;
         DataNode word(fmt);
         DataNode num(LocalizeSeparatedInt(count, TheLocale));
@@ -214,6 +217,15 @@ bool FilterViewSetting::CompareFilters(const Filter &a, const Filter &b) {
 }
 
 Symbol FilterViewSetting::FilterTypeToSym(FilterType ft) {
+    static Symbol filter_setting_genres("filter_setting_genres");
+    static Symbol filter_setting_decades("filter_setting_decades");
+    static Symbol filter_setting_difficulties("filter_setting_difficulties");
+    static Symbol filter_setting_lengths("filter_setting_lengths");
+    static Symbol filter_setting_ratings("filter_setting_ratings");
+    static Symbol filter_setting_sources("filter_setting_sources");
+    static Symbol filter_setting_vocal_parts("filter_setting_vocal_parts");
+    static Symbol filter_setting_pro_guitar("filter_setting_pro_guitar");
+    static Symbol filter_setting_keys("filter_setting_keys");
     switch (ft) {
     case kFilterGenre: return filter_setting_genres;
     case kFilterDecade: return filter_setting_decades;

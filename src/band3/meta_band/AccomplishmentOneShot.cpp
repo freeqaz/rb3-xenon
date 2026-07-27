@@ -102,6 +102,20 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
 }
 
 void AccomplishmentOneShot::InitializeTrackerDesc(TrackerDesc &desc) const {
+    // Retail declares the whole condition-name set as function-local statics at
+    // the top of this function (9 guard bits in one word at 0x82DFFFAC), even
+    // though only the first three are read below: `Symbol(const char*)` interns
+    // into the global symbol table, so the ctor has side effects and MSVC cannot
+    // elide the guarded init of an otherwise-unread static.
+    static Symbol stars("stars");
+    static Symbol unison_phrases("unison_phrases");
+    static Symbol upstrum_percent("upstrum_percent");
+    static Symbol times_revived("times_revived");
+    static Symbol saves("saves");
+    static Symbol awesomes("awesomes");
+    static Symbol double_awesomes("double_awesomes");
+    static Symbol triple_awesomes("triple_awesomes");
+    static Symbol full_combo("full_combo");
     Accomplishment::InitializeTrackerDesc(desc);
     MILO_ASSERT(!m_lConditions.empty(), 0xe6);
     const AccomplishmentCondition &condition = m_lConditions.front();

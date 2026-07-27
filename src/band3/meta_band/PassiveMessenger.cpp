@@ -31,10 +31,12 @@ void PassiveMessageQueue::Poll() {
         mTimer.Split();
         if (mTimer.Ms() >= mMessageDuration) {
             mTimer.Stop();
+            static Message hide_message_msg("hide_message");
             mCallback->Handle(hide_message_msg, true);
         }
     }
     bool running = mTimer.Running();
+    static Message is_message_hiding_msg("is_message_hiding");
     if (!running && mCallback->Handle(is_message_hiding_msg, true).Int() == 0) {
         if (!mQueue.empty()) {
             PassiveMessage *message = GetAndPreProcessFirstMessage();
@@ -43,6 +45,7 @@ void PassiveMessageQueue::Poll() {
             mQueue.pop_front();
             delete message;
             mTimer.Restart();
+            static Message show_message_msg("show_message");
             mCallback->Handle(show_message_msg, true);
         } else {
             mCallback->Handle(clear_pics_msg, true);

@@ -627,6 +627,8 @@ bool BandSongMgr::AllowContentToBeAdded(DataArray *a, ContentLocT lt) {
     int full = (count + GetCurSongCount() >= maxCount);
     if (full) {
         if (!unk13c) {
+            static Symbol song_mgr_full("song_mgr_full");
+            static Message init_msg("init");
             TheUIEventMgr->TriggerEvent(song_mgr_full, init_msg.mData);
             unk13c = true;
         }
