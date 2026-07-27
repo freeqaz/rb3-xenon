@@ -218,7 +218,39 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 //               bandobj. DO NOT apply to NOTIFY / NOTIFY_BETA.
 //     LOG    -> MiloStripEval : -5 on top of WARN (SongData x5, Console,
 //               FileMerger::MergeAction). DO NOT apply to LOG.
-// So: WARN copies, NOTIFY/LOG only evaluate.  Measured, not assumed.
+//
+// CORRECTED 2026-07-27 (lane guardbit-fix) -- WHY the NOTIFY leg lost 20.
+// The first reading of that -20 was "NOTIFY only evaluates, it does not copy".
+// That is NOT the operative cause.  The real cause is ARGUMENT EVALUATION ORDER:
+//
+//     MSVC evaluates FUNCTION ARGUMENTS RIGHT-TO-LEFT.
+//     A comma expression evaluates LEFT-TO-RIGHT.
+//
+// MiloStripEval is a function call, so switching a site to it silently REVERSES
+// the order in which its argument expressions run.  Where those expressions have
+// side effects that the target emits in source order, the body stops matching.
+//
+// The whole -20 was one family -- `?SetType@*@@UAAXVSymbol@@@Z` -- whose stripped
+// residue retail emits LEFT-TO-RIGHT: `PathName(this)` is called BEFORE the
+// `ClassName()` vcall.  Control case, decisive: OBJ_SET_TYPE_ENGINE (Object.h)
+// spells that residue with MILO_NOTIFY (comma form) and RndGroup::SetType stayed
+// at 100.0% through every leg; OBJ_SET_TYPE (ObjMacros.h) spelled the SAME
+// residue with MILO_WARN, and GamePanel::SetType fell 100% -> 96.2% the moment
+// MILO_WARN became MiloStripEval.  Same code, two macros, one broke.
+//
+// So the operative rule is two-part, and they are INDEPENDENT:
+//   * COPYING   -- retail's stripped WARN residue copy-constructs class-typed
+//                  args.  Only MiloStripEval reproduces that.  This is what the
+//                  +33 buys (destructible String temps -> EH states -> funclets).
+//   * ORDERING  -- retail's residue runs left-to-right.  Only the comma form
+//                  reproduces that.  MiloStripEval inverts it.
+// A site needs whichever half its arguments actually depend on.  Sites with
+// destructible class args need COPYING; sites whose args have ordered side
+// effects need ORDERING; a site needing both is not expressible in either form
+// and would need the temps hoisted into explicit locals in source order.
+// NOTIFY and LOG were measured negative because their populations are dominated
+// by ordering-sensitive sites, NOT because retail's NOTIFY residue "does not
+// copy" -- we have no evidence either way on that, and should not imply we do.
 //
 // ==> THE ASYMMETRY IS BY DESIGN, NOT AN OVERSIGHT.  MILO_WARN uses
 //     MiloStripEval; MILO_NOTIFY / MILO_NOTIFY_BETA / MILO_LOG deliberately
@@ -240,11 +272,13 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 #define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)
 #define MILO_NOTIFY_BETA(...) DebugBeta() << MakeString(__VA_ARGS__)
 #else
-// DELIBERATE: comma form, NOT MiloStripEval.  Retail's stripped NOTIFY sites
-// evaluate their args but do NOT copy-construct class-typed ones.  Switching
-// these to MiloStripEval measured -20 strict whole-binary (it kills ~20
-// ?SetType@*@@UAAXVSymbol@@@Z bodies across rndobj/synth/bandobj).  See the
-// measured A/B table above MILO_WARN.
+// DELIBERATE: comma form, NOT MiloStripEval.  The comma operator evaluates
+// LEFT-TO-RIGHT; MiloStripEval is a function call and MSVC evaluates function
+// arguments RIGHT-TO-LEFT.  This population is dominated by ordering-sensitive
+// sites -- ~20 ?SetType@*@@UAAXVSymbol@@@Z bodies whose residue calls
+// PathName(this) BEFORE the ClassName() vcall -- so switching these to
+// MiloStripEval inverts the order and measured -20 strict whole-binary.
+// See the corrected analysis above MILO_WARN.
 #define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
 #define MILO_NOTIFY_BETA(...) ((void)(__VA_ARGS__))
 #endif
@@ -259,8 +293,9 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 // shared Symbol temp slot (0x58 -> 0x54/0x58), breaking the tail-merge (-1).
 #define MILO_LOG(...) ((void)sizeof(MakeString(__VA_ARGS__)))
 #else
-// DELIBERATE: comma form, NOT MiloStripEval -- measured -5 strict (SongData
-// x5, Console, FileMerger::MergeAction).  See the table above MILO_WARN.
+// DELIBERATE: comma form (LEFT-TO-RIGHT), NOT MiloStripEval -- measured -5
+// strict (SongData x5, Console, FileMerger::MergeAction).  Same argument-
+// ordering cause as NOTIFY; see the corrected analysis above MILO_WARN.
 #define MILO_LOG(...) ((void)(__VA_ARGS__))
 #endif
 

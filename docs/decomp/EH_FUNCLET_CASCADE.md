@@ -133,3 +133,66 @@ Ranked by measured hit rate across seven lanes:
   writes two vfptrs through a virtual-base table at `this-0x48` then calls
   `UIPanel::~UIPanel`. `ProfileMgr` is not `UIPanel`-derived and the VA sits in
   StorePanel territory (`0x827b6020`).
+
+## Two hazards found while diagnosing this campaign's own regressions
+
+Both surfaced as EH-funclet churn (40-byte funclets dropping 100 → 99.9), and
+both are general — neither is specific to `MILO_WARN`.
+
+### 1. When a macro takes over a behaviour, every prior hand-rolled emulation of
+### that behaviour silently becomes a defect
+
+`PrefabMgr.cpp` carried
+
+```cpp
+String warnCC(str); // retail: MILO_WARN copies the String vararg
+MILO_WARN("Bad charcreator prefab name: (%s)\n", warnCC);
+```
+
+An earlier lane had correctly observed that retail's stripped WARN residue copies
+its `String` argument, and hand-emulated that copy with an explicit local. That
+was right at the time. Once `MILO_WARN` itself began copying (via `MiloStripEval`)
+the site became a **double** copy — explicit temp *plus* by-value parameter — which
+inflated the parent's frame and un-paired its five funclets.
+
+**When you move a behaviour into a macro, grep for prior emulations of it.** Here
+the tell was a comment naming the very behaviour the macro now provides. PrefabMgr
+was the only such site; removing the three wrappers took the unit 58 → 63.
+
+### 2. Comma form vs function call is an ARGUMENT-ORDER decision, not only a
+### copying decision
+
+```
+MSVC evaluates FUNCTION ARGUMENTS  RIGHT-TO-LEFT.
+A comma expression evaluates       LEFT-TO-RIGHT.
+```
+
+So any "stripped debug output" form that is a *function call* (e.g.
+`MiloStripEval(...)`) silently reverses the order in which its argument
+expressions run, relative to the comma form `((void)(a, b, c))`. Where those
+expressions have side effects the target emits in source order, the body stops
+matching — with no diff in the arguments themselves, only in call sequencing.
+
+Control case, decisive: the `?SetType@*@@UAAXVSymbol@@@Z` family's stripped
+residue calls `PathName(this)` **before** the `ClassName()` vcall, i.e.
+left-to-right. `OBJ_SET_TYPE_ENGINE` (`Object.h`) spells it with `MILO_NOTIFY`
+(comma form) and `RndGroup::SetType` held at 100% throughout; `OBJ_SET_TYPE`
+(`ObjMacros.h`) spelled the same residue with `MILO_WARN`, and
+`GamePanel::SetType` fell 100% → 96.2% the moment `MILO_WARN` became a call.
+Same code, two macros, one broke.
+
+**The two properties are independent, and a site needs whichever its arguments
+actually depend on:**
+
+| property | reproduced by | needed when |
+|---|---|---|
+| **copying** of class-typed args | `MiloStripEval` only | args are destructible class types (String temps → EH states → funclets) |
+| **left-to-right ordering** | comma form only | args have side effects the target emits in source order |
+
+A site needing *both* is expressible in neither form and would have to hoist its
+temporaries into explicit locals in source order.
+
+This also corrects the original reading of the `MILO_NOTIFY → MiloStripEval` A/B
+(−20): that population is dominated by ordering-sensitive sites, **not** by sites
+that "do not copy". We have no evidence either way on whether retail's NOTIFY
+residue copies, and should not imply we do.

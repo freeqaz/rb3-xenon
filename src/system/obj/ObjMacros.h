@@ -54,7 +54,16 @@ const char *PathName(const class Hmx::Object *obj);
             if (found != 0)                                                               \
                 SetTypeDef(found);                                                        \
             else {                                                                        \
-                MILO_WARN(                                                                \
+                /* Retail's stripped SetType residue evaluates LEFT-TO-RIGHT             \
+                 * (PathName before the ClassName vcall), i.e. the comma form.           \
+                 * MILO_WARN is MiloStripEval, whose ARGUMENTS evaluate right-to-left    \
+                 * on MSVC -- that inverts the order and breaks this family.  Use        \
+                 * MILO_NOTIFY (the comma form), matching OBJ_SET_TYPE_ENGINE in         \
+                 * Object.h, which stayed at 100% throughout.  No arg here is a          \
+                 * destructible class type, so the copying half of MiloStripEval buys    \
+                 * nothing.  See docs/decomp/EH_FUNCLET_CASCADE.md.                      \
+                 */                                                                      \
+                MILO_NOTIFY(                                                              \
                     "%s:%s couldn't find type %s", PathName(this), ClassName(), classname \
                 );                                                                        \
                 SetTypeDef(0);                                                            \
