@@ -33,7 +33,11 @@ public:
     virtual void Enter();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    OBJ_MEM_OVERLOAD(0x17)
+    // laneAT-f4: retail keeps THIS class's operator new out-of-line + ICF-folded
+    // (target CharLipSyncDriver::NewObject calls the folded `??2CriticalSection@@SAPAXI@Z`
+    // thunk with NO StaticClassName call), unlike the OBJ_MEM_OVERLOAD majority.
+    // MEM_OVERLOAD is the literal-name, noinline, foldable form.
+    MEM_OVERLOAD(CharLipSyncDriver, 0x17)
     NEW_OBJ(CharLipSyncDriver)
 
     void Sync();
