@@ -885,7 +885,8 @@ bool BandSongMgr::InqAvailableSongSources(std::set<Symbol> &sourceSet) {
     FOREACH (it, songs) {
         BandSongMetadata *songData = (BandSongMetadata *)Data(*it);
         MILO_ASSERT(songData, 0x5C4);
-        sourceSet.insert(songData->SourceSym());
+        Symbol source = songData->SourceSym();
+        sourceSet.insert(source);
     }
     return sourceSet.size();
 }
