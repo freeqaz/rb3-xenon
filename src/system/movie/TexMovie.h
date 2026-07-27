@@ -18,7 +18,13 @@ public:
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(TexMovie);
     OBJ_SET_TYPE(TexMovie);
-    OBJ_MEM_OVERLOAD(0x18);
+    // laneAT-f4 opt-out: the retail bytes show TexMovie's operator new was kept
+    // OUT OF LINE and ICF-folded (its `new` site is a single
+    // `bl ??2<folded>@@SAPAXI@Z` with NO StaticClassName call), unlike the
+    // OBJ_MEM_OVERLOAD majority which retail inlined. Classified from the
+    // CTOR relocation, not the symbol name -- see
+    // /home/free/tmp/laneAT/f4/newobj_classify.py.
+    MEM_OVERLOAD(TexMovie, 0x18);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
