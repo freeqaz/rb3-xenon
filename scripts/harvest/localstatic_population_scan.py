@@ -35,7 +35,7 @@ Requires a FULL build in the worktree first.
 
 Usage: python3 scripts/harvest/localstatic_population_scan.py <worktree> [--json out]
 """
-import argparse, collections, glob, json, os, sys
+import argparse, collections, glob, json, os, struct, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'analysis'))
 from coffx import read_coff, infer_sizes, K_SEC
 
@@ -45,6 +45,42 @@ TELLS = {
     '??0Message@@QAA@VSymbol@@@Z': 'Message(Symbol)',
     'atexit': 'atexit',
 }
+
+
+def has_guard_block(code, off, size):
+    """★ The function-local-static GUARD-WORD test block, in the TARGET code:
+        lwz  rX, guard ; rlwinm./andi. ; ori ; stw rX, guard
+    MSVC emits exactly this once per function-local static (one bit of a shared
+    guard word per static). Its PRESENCE is what separates a real local-static
+    site from a call-count coincidence.
+
+    laneAT-f3 measured the false positive this exists to kill:
+    NextSongPanel::FinishLoad showed +4 Symbol ctor calls but adding the
+    statics REGRESSED it 52.1 -> 40.6, because the extra calls came from a
+    genuinely different body (Find<RndAnimatable> calls we lack), not from
+    local statics. The call-count tell alone is NOT sufficient evidence.
+    """
+    n = size // 4
+    if n < 4:
+        return False
+    w = [struct.unpack_from('>I', code, off + 4 * i)[0] for i in range(n)]
+    def op(x):
+        return x >> 26
+    for i in range(n - 3):
+        if op(w[i]) != 32:                       # lwz
+            continue
+        j = i + 1
+        # rlwinm. (op21, Rc=1) or andi. (op28) within a few instructions
+        while j < min(i + 5, n):
+            if (op(w[j]) == 21 and (w[j] & 1)) or op(w[j]) == 28:
+                break
+            j += 1
+        else:
+            continue
+        rest = w[j:min(j + 10, n)]
+        if any(op(x) == 24 for x in rest) and any(op(x) == 36 for x in rest):
+            return True
+    return False
 
 
 def counts_by_func(path, want_names, name_of):
@@ -75,7 +111,7 @@ def counts_by_func(path, want_names, name_of):
             tell = name_of(t.name)
             if tell in want_names:
                 c[tell] += 1
-        out.setdefault(s.name, c)
+        out.setdefault(s.name, (c, has_guard_block(sec.data, s.value, s.size)))
     return out
 
 
@@ -114,6 +150,7 @@ def main():
 
     want = set(TELLS.values())
     per_tu, rows = collections.Counter(), []
+    unconfirmed = collections.Counter()
     tu_fns = collections.Counter()
     root = os.path.join(wt, 'build/45410914/obj')
     for tp in sorted(glob.glob(os.path.join(root, '**', '*.obj'), recursive=True)):
@@ -129,26 +166,34 @@ def main():
         if not tc or not bc:
             continue
         key = rel[:-4]
-        for nm, ct in tc.items():
+        for nm, (ct, guard) in tc.items():
             if nm.startswith('fn_') or nm.startswith('__') or '$' in nm[:2]:
                 continue
             p = pct.get((key, nm))
             if p is None or p >= 100.0:
                 continue
-            cb = bc.get(nm)
-            if cb is None:
+            b = bc.get(nm)
+            if b is None:
                 continue
+            cb = b[0]
             excess = {k: ct[k] - cb.get(k, 0) for k in want if ct[k] - cb.get(k, 0) > 0}
             if not excess:
                 continue
             n = sum(excess.values())
-            per_tu[rel] += n
-            tu_fns[rel] += 1
-            rows.append({'unit': rel, 'sym': nm, 'pct': p,
-                         'excess': excess, 'n': n})
-    print('functions with a target-only local-static signature: %d across %d TUs'
-          % (len(rows), len(per_tu)))
-    print('total excess initialisation calls: %d' % sum(per_tu.values()))
+            if guard:
+                per_tu[rel] += n
+                tu_fns[rel] += 1
+            else:
+                unconfirmed[rel] += n
+            rows.append({'unit': rel, 'sym': nm, 'pct': p, 'excess': excess,
+                         'n': n, 'guard_block': guard})
+    conf = [r for r in rows if r['guard_block']]
+    unc = [r for r in rows if not r['guard_block']]
+    print('functions with a target-only local-static call signature: %d' % len(rows))
+    print('  ★ GUARD-BLOCK CONFIRMED (actionable): %d across %d TUs, %d excess calls'
+          % (len(conf), len(per_tu), sum(per_tu.values())))
+    print('  unconfirmed -- call-count only, DO NOT EDIT on this alone: %d (%d calls)'
+          % (len(unc), sum(unconfirmed.values())))
     print('\nranked TUs (convert each ALL AT ONCE -- see the law above):')
     for u, n in per_tu.most_common(30):
         print('  %4d excess calls  %3d fns  %s' % (n, tu_fns[u], u))
