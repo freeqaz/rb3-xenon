@@ -184,16 +184,34 @@ Tool: `scripts/harvest/sandwich_overcarve.py`. Rows:
 ★★**TWO OPERATIONAL TRAPS FOR ANY BULK SPLITS MOVER:**
 1. **A move that empties a unit's LAST `.text` block HARD-FAILS the build** —
    `Failed to open <unit>.obj: Invalid COFF/PE section headers`. Guard for it.
-2. **`.text` and `.pdata` must be moved and restored TOGETHER.** Restoring an
-   emptied block by hand re-introduced a `.pdata` overlap, because the donor's
-   `.pdata` had already been re-derived around the removal.
+2. ⛔~~**`.text` and `.pdata` must be moved and restored TOGETHER.**~~
+   **FALSIFIED 2026-07-27 — see below. Move only `.text`; `.pdata` follows.**
 
-★★**AND A `CLAUDE.md` CORRECTION FOUND THE SAME WAY:** the doc says dtk
-"auto-derives and back-fills" the `.pdata` range. **That is true only for a NEWLY
-ADDED `.text` pin. DELETING an existing unit's `.pdata` lines just LOSES them** —
-measured: range count fell **5,172 → 4,694, 478 ranges silently vanished**.
-**Move `.pdata` explicitly.** (Not the cause of the −23 — re-running with `.pdata`
-untouched gave the identical −23/49/72 — but a live foot-gun on its own.)
+★★**⛔RETRACTED 2026-07-27 — THE `.pdata` "DELETION LOSES RANGES" CLAIM DID NOT
+REPRODUCE.** It was recorded here as fact and propagated; it is **false**.
+**Verified rule (jeff `src/util/split.rs:1035-1095`, `update_splits` at
+`split.rs:1146`, xex path `src/cmd/xex.rs:2476-2483`):** `split_pdata()`
+**clears the ENTIRE `.pdata` split set and re-derives one range per `.text` code
+split on EVERY run.** ⇒ **`.pdata` lines in `splits.txt` are DERIVED OUTPUT, not
+input. Derivation is never gated on absence.** Confirmed on the deployed fleet
+binary (`dtk 1.9.2`, sha `57b52d64`; the `laneAF-va-fragments` diff touches only
+`va_fragments`, pdata logic identical).
+Empirical: deleting **54** `.pdata` lines (MasterAudio 30 + BandCharacter 24) and
+re-splitting **regenerated all 54**, sorted diff empty, 5,254 ranges stable; a
+hand-introduced overlapping `.pdata` line was **silently healed** back to
+baseline.
+⇒ **The observed 5,172 → 4,694 can only have come from the lane's accompanying
+`.text` edits (derived count is a function of `.text` splits) or from a split run
+that FAILED and left the hand-edited file in place** — e.g. symbols.txt drift.
+★**If `.pdata` lines don't regenerate, the SPLIT RUN failed — that is the bug to
+chase, not the `.pdata`.** Never hand-edit or hand-carry `.pdata`.
+
+★**The empty-unit trap IS real, but fires at a different stage than reported:**
+draining a unit's last `.text` block, the **split SUCCEEDS** and emits a 42-byte
+`obj/<unit>.obj`; the build then hard-fails at the **report.json** step with
+`Failed to open ./build/45410914/obj/<unit>.obj: Invalid COFF/PE section headers`.
+**Remediation (verified): delete the unit's whole `splits.txt` entry.**
+`CLAUDE.md` amended accordingly at `6ab38692`.
 
 ### ★ Two inference rules for diagnosing a "wrong" unit or a "missing" class
 
