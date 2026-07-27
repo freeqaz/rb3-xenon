@@ -141,6 +141,23 @@ def main():
                 labels.append('MISPAIR_SIZE')
             if any(s['string'] is None for s in ls):
                 labels.append('NO_STRING')
+            # ★ laneAY-B, measured: patch_gen sets form=LOCAL_STATIC on
+            # `guard_va is not None` ALONE, and its target-side guard test is
+            # "some .data VA that is both loaded and stored in the window" --
+            # which any ordinary FILE-SCOPE static satisfies (`sResources`,
+            # `sCharClipTypes`, ...). The base-side scanner uses the exact
+            # symbol-name test (`??_B`/`$S`/`?$S`), so the two disagree on
+            # byte-identical code and the row reads as pure excess.
+            # A REAL function-local static always resolves BOTH a guard BIT
+            # (sequential across the group) and a static_va (marching down by
+            # 4). Requiring both cleanly separated all 9 rows in a hand audit:
+            # CharBoneDir::Init(5), UIEventMgr::Init(2), Part
+            # InitParticleSystem(1), GemManager ctor(3) and BeatMaster
+            # ::CheckBeat(1) all print bit=None static=None and are FALSE
+            # POSITIVES -- which is exactly why they sat at 100%/99.99%.
+            if any(s['guard_bit'] is None or s['static_va'] is None
+                   for s in ls):
+                labels.append('WEAK_GUARD')
             fn_rows.append({
                 'unit': name, 'sym': sym, 'pct': p, 'tgt': len(ls),
                 'base': len(bl), 'excess': excess, 'size': size,
@@ -148,7 +165,8 @@ def main():
                 'statics': [{'kind': s['kind'], 'arity': s.get('arity'),
                              'string': s['string'], 'off': s['off'],
                              'guard_va': s['guard_va'],
-                             'guard_bit': s['guard_bit']} for s in ls],
+                             'guard_bit': s['guard_bit'],
+                             'static_va': s['static_va']} for s in ls],
             })
         if tn:
             tu_rows.append({'unit': name, 'tgt': tn, 'base': tb,
@@ -206,11 +224,12 @@ def main():
                                     for l in r['labels']).most_common():
         print('     %-20s %d' % (k, v))
 
-    bad = {'MISPAIR_STL', 'MISPAIR_XOBJ', 'MISPAIR_SIZE', 'NO_STRING'}
+    bad = {'MISPAIR_STL', 'MISPAIR_XOBJ', 'MISPAIR_SIZE', 'NO_STRING',
+           'WEAK_GUARD'}
     clean = [r for r in rf if not (bad & set(r['labels']))]
     killed = [r for r in rf if (bad & set(r['labels']))]
     named = [r for r in clean if not r['anon']]
-    print('\n== C) PRECISION FILTER (drop MISPAIR_STL/XOBJ/SIZE + NO_STRING) ==')
+    print('\n== C) PRECISION FILTER (drop MISPAIR_*, NO_STRING, WEAK_GUARD) ==')
     print('   killed %d rows (%d excess statics)'
           % (len(killed), sum(r['excess'] for r in killed)))
     print('   surviving : %d functions / %d units / %d excess statics'

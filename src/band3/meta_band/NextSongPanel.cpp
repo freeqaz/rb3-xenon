@@ -82,33 +82,33 @@ done:
 
 void NextSongPanel::FinishLoad() {
     UIPanel::FinishLoad();
+    // laneAY-B: retail's missing statement (target 0x82643FF8+0x18):
+    //     mDir->Find<...>("highscore_1.lbl", true) -> +0x1bc = 1.0f
+    // The +0x1bc field falls inside UILabel's still-unreconstructed retail tail
+    // (UILabel.h `mUnkTU5Tail`), so it is written through a byte offset rather
+    // than a named member. The Find<T> instantiation is ICF-folded in retail
+    // (its symbol reads as Find<RndAnimatable>); any T emits identical code.
+    *(float *)((char *)mDir->Find<UILabel>("highscore_1.lbl", true) + 0x1BC) = 1.0f;
+    static Symbol details_page_size("details_page_size");
+    static Symbol details_footer_size("details_footer_size");
+    static Symbol details_scroll_step("details_scroll_step");
     const DataArray *t = TypeDef();
     MILO_ASSERT(t, 0x5A);
-    // laneAX-W7: the four function-local `static Symbol`s retail declares here
-    // are REAL, not a false positive -- guard word 0x82E01854 (bits 0x1/0x2/0x4),
-    // static objects at 0x82E01850/4C/48, strings "details_page_size",
-    // "details_footer_size", "details_scroll_step", "details_scroll_group".
-    // They are deliberately NOT applied yet: adding them alone measures
-    // 52.11% -> 40.6% because the BODY also diverges, and a partial conversion
-    // whose frame is still wrong un-pairs this unit's EH funclets.
-    //
-    // The divergence is now fully localised. Retail's FinishLoad does, between
-    // `UIPanel::FinishLoad()` and the first guard block (target 0x82643FF8):
-    //     lwz  r3, 0x8(r30)          ; this->mDir
-    //     li   r5, 0x1               ; fail_if_missing = true
-    //     addi r4, lbl_820CF42C      ; "highscore_1.lbl"
-    //     bl   ObjectDir::Find<...>  ; symbol reads as Find<RndAnimatable>
-    //     stfs f0, 0x1bc(r3)         ; f0 = 1.0f (const at 0x820009FC)
-    // i.e. one statement we lack entirely: find "highscore_1.lbl" and store
-    // 1.0f at +0x1bc of the result. Remaining blocker is the identity of that
-    // +0x1bc field -- neither UILabel nor RndAnimatable has a member there, and
-    // the `Find<RndAnimatable>` symbol is very likely an ICF alias for a
-    // different Find<T> instantiation (RB3 has no linker map, so merged-symbol
-    // resolution is unavailable). Port that statement FIRST, then add the
-    // statics; do not add the statics on their own.
+    // laneAX-W7 diagnosis (now RESOLVED by laneAY-B): the four function-local
+    // `static Symbol`s are REAL -- guard word 0x82E01854, bits 0x1/0x2/0x4/0x8,
+    // static objects at 0x82E01850/4C/48/44. Adding them ALONE measured
+    // 52.11% -> 40.6%; the missing piece was the "highscore_1.lbl" statement
+    // above. With both applied this function is 99.5% (residue = a pure
+    // callee-saved regswap in the loop: target i=r29/rdir=r28/scrollgrpstr=r26,
+    // ours i=r28/rdir=r29/scrollgrpstr=r25 -- permuter-class, and hoisting
+    // `rdir` out of the loop or fusing the Reserve() args does not move it).
+    // NOTE the declaration SHAPE matters: retail declares page/footer/step
+    // together BEFORE TypeDef(), and scroll_group separately after the three
+    // FindFloat calls; that is what reproduces the guard-block placement.
     mDetailsPageSize = t->FindFloat(details_page_size);
     mDetailsFooterSize = t->FindFloat(details_footer_size);
     mDetailsScrollStep = t->FindFloat(details_scroll_step);
+    static Symbol details_scroll_group("details_scroll_group");
     const char *scrollgrpstr = t->FindStr(details_scroll_group);
     for (int i = 0; i < 4; i++) {
         RndDir *rdir = mDir->Find<RndDir>(MakeString("slot%i", i), true);

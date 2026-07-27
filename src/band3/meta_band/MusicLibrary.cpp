@@ -2254,7 +2254,22 @@ BEGIN_HANDLERS(MusicLibrary)
     HANDLE_EXPR(header_career_stars, HeaderCareerStars())
     HANDLE_EXPR(header_possible_stars, HeaderPossibleStars())
     HANDLE_ACTION(reset_filters, ResetFilters())
-    HANDLE_ACTION(fake_win, FakeWin(_msg->Int(2)))
+    // laneAY-B: retail has NO `fake_win` handler; in its place three store
+    // handlers (target 0x82542D20 +0x11a8/+0x1228/+0x12bc). See the block
+    // comment above for the retail asm this reproduces.
+    HANDLE_EXPR(
+        is_downloading,
+        unk19c->IsDownloading(dynamic_cast<StoreSongSortNode *>(_msg->Obj<Hmx::Object>(2))
+                                  ->mOffer->GetSingleSongID())
+    )
+    HANDLE_ACTION(
+        load_store_art,
+        unk19c->LoadStoreArt(
+            dynamic_cast<StoreOffer *>(_msg->Obj<Hmx::Object>(2))->GetSingleSongID(),
+            _msg->Obj<Hmx::Object>(3)
+        )
+    )
+    HANDLE_EXPR(get_store_art, unk19c->mStoreArt)
     HANDLE_MESSAGE(PrimaryProfileChangedMsg)
     HANDLE_MESSAGE(ProfileChangedMsg)
     HANDLE_MESSAGE(SigninChangedMsg)
@@ -2265,8 +2280,10 @@ BEGIN_HANDLERS(MusicLibrary)
     HANDLE_MESSAGE(RemoteMachineUpdatedMsg)
     HANDLE_MESSAGE(RemoteMachineLeftMsg)
     HANDLE_MESSAGE(ServerStatusChangedMsg)
-    HANDLE_MESSAGE(FriendsListChangedMsg)
-    HANDLE_MESSAGE(UserLoginMsg)
+    // laneAY-B: retail's list ends here -- it has NO FriendsListChangedMsg and
+    // NO UserLoginMsg handler (target 0x82542D20 goes straight from
+    // ServerStatusChangedMsg/RemoteMachineLeftMsg to Hmx::Object::Handle; the
+    // two rb3-Wii handlers were a clean 60-instruction base-only insert).
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0xC7B)
 END_HANDLERS

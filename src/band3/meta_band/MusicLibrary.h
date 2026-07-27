@@ -37,8 +37,14 @@ public:
     void Finish(); // retail 0x825A3ED0
     void ClearPreview(); // retail 0x825A3DC8 — clears the op's active preview
     void SetStorePreview(int); // retail 0x825A4288 — sets the store-song preview by song id
+    bool IsDownloading(int); // retail 0x825BCBD0
+    void LoadStoreArt(int, class Hmx::Object *); // retail 0x825BCC10
     char unk4[0x24]; // 0x4
     int mState; // 0x28 (2 = done, 4 = failed)
+    char unk2c[0x1c]; // 0x2c
+    /** Retail MusicLibrary::Handle's `get_store_art` returns this slot straight
+        as a kDataObject (target: `lwz r11, 0x48(unk19c)` + `li r10, 4`). */
+    Hmx::Object *mStoreArt; // 0x48
 };
 
 class MusicLibrary : public UIListProvider,

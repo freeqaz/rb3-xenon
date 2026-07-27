@@ -253,13 +253,13 @@ int MetaPerformer::SongsID() const {
 bool MetaPerformer::HasSong() const { return Song() != gNullStr; }
 
 bool MetaPerformer::IsWinning() const {
-    if (InFinale())
-        return true;
-    else {
-        MetaPerformerImpl *pImpl = CurrentImpl();
-        MILO_ASSERT(pImpl, 0x1AA);
-        return pImpl->IsWinning();
-    }
+    // laneAY-B: retail's `is_winning` handler inlines to
+    // `bl CurrentImpl(); lwz vtbl; lwz +0x5c; bctrl` with NO InFinale() branch
+    // (target MetaPerformer::Handle +0x9cc) -- the cheat-finale short-circuit is
+    // rb3-Wii DEV only, and it is what kept this body out of /Ob2's inline budget.
+    MetaPerformerImpl *pImpl = CurrentImpl();
+    MILO_ASSERT(pImpl, 0x1AA);
+    return pImpl->IsWinning();
 }
 
 const char *MetaPerformer::GetSetlistName() const { return mSetlistTitle.c_str(); }
@@ -319,7 +319,15 @@ int MetaPerformer::GetBattleID() const {
 }
 
 bool MetaPerformer::HasValidBattleInstarank() const {
-    return !HasBattle() ? false : mBattleInstarank.IsValid();
+    // laneAY-B: this if/return shape measures best (Handle 99.8%); retail's
+    // residue here is a `subic/subfe` !=0 normalization on mBattleInstarank's
+    // valid flag that our `bool` member does not reproduce. Making
+    // Instarank::mIsValid a `char` DOES emit it, but then regresses the
+    // has_valid_instarank_data site (which retail does NOT normalize) -- so the
+    // two sites read a different type in retail. Left as-is.
+    if (HasBattle())
+        return mBattleInstarank.IsValid();
+    return false;
 }
 
 FORCE_LOCAL_INLINE
@@ -581,12 +589,18 @@ bool MetaPerformer::IsNoFailActive() const {
     return ret;
 }
 
+// laneAY-B: retail's `is_band_no_fail_set` handler is a bare
+// `subi r3, this; bl <IsBandNoFailSet>` -- retail did NOT inline this body into
+// MetaPerformer::Handle, while /Ob2 does for us. auto_inline(off) restores the
+// retail call shape (6 base-only instructions in Handle).
+#pragma auto_inline(off)
 bool MetaPerformer::IsBandNoFailSet() const {
     if (TheModifierMgr)
         return TheModifierMgr->IsModifierActive(mod_no_fail_band);
     else
         return false;
 }
+#pragma auto_inline(on)
 
 void MetaPerformer::LockBandOrSolo() {
     unk360 = TheBandUserMgr->GetNumParticipants() > 1;
@@ -1449,62 +1463,42 @@ bool MetaPerformer::HasValidInstarankData() const { return mBandInstarank.IsVali
 
 void MetaPerformer::UpdateInstarankRankLabel(UILabel *label) {
     MILO_ASSERT(label, 0x8D0);
-    if (mBandInstarank.IsValid()) {
-        mBandInstarank.UpdateRankLabel(label);
-    } else {
-        MILO_WARN(
-            "can't update instarank label %s - mBandInstarank is uninitialized!\n",
-            label->Name()
-        );
-    }
+    // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
+    // inlines a bare `mBandInstarank.UpdateRankLabel(label)`); the guard + MILO_WARN are
+    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    mBandInstarank.UpdateRankLabel(label);
 }
 
 void MetaPerformer::UpdateInstarankHighscore1Label(UILabel *label) {
     MILO_ASSERT(label, 0x8DE);
-    if (mBandInstarank.IsValid()) {
-        mBandInstarank.UpdateString1Label(label);
-    } else {
-        MILO_WARN(
-            "can't update string1 label %s - mBandInstarank is uninitialized!\n",
-            label->Name()
-        );
-    }
+    // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
+    // inlines a bare `mBandInstarank.UpdateString1Label(label)`); the guard + MILO_WARN are
+    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    mBandInstarank.UpdateString1Label(label);
 }
 
 void MetaPerformer::UpdateInstarankHighscore2Label(UILabel *label) {
     MILO_ASSERT(label, 0x8EC);
-    if (mBandInstarank.IsValid()) {
-        mBandInstarank.UpdateString2Label(label);
-    } else {
-        MILO_WARN(
-            "can't update string2 label %s - mBandInstarank is uninitialized!\n",
-            label->Name()
-        );
-    }
+    // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
+    // inlines a bare `mBandInstarank.UpdateString2Label(label)`); the guard + MILO_WARN are
+    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    mBandInstarank.UpdateString2Label(label);
 }
 
 void MetaPerformer::UpdateBattleInstarankHighscore1Label(UILabel *label) {
     MILO_ASSERT(label, 0x8FA);
-    if (mBattleInstarank.IsValid()) {
-        mBattleInstarank.UpdateString1Label(label);
-    } else {
-        MILO_WARN(
-            "can't update HighScore1 label %s - mBattleInstarank is uninitialized!\n",
-            label->Name()
-        );
-    }
+    // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
+    // inlines a bare `mBattleInstarank.UpdateString1Label(label)`); the guard + MILO_WARN are
+    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    mBattleInstarank.UpdateString1Label(label);
 }
 
 void MetaPerformer::UpdateBattleInstarankHighscore2Label(UILabel *label) {
     MILO_ASSERT(label, 0x908);
-    if (mBattleInstarank.IsValid()) {
-        mBattleInstarank.UpdateString2Label(label);
-    } else {
-        MILO_WARN(
-            "can't update HighScore2 label %s - mBattleInstarank is uninitialized!\n",
-            label->Name()
-        );
-    }
+    // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
+    // inlines a bare `mBattleInstarank.UpdateString2Label(label)`); the guard + MILO_WARN are
+    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    mBattleInstarank.UpdateString2Label(label);
 }
 
 const char *MetaPerformer::GetSoloScoreTypeIcon(BandUser *user) {
@@ -1620,25 +1614,17 @@ void MetaPerformer::UpdateSoloInstarankHighscore2Label(BandUser *user, UILabel *
     }
 }
 
-void MetaPerformer::UploadDebugStats() {
-    TheRnd.UploadDebugStats();
-    Symbol::UploadDebugStats();
-    ChunkAllocator::UploadDebugStats();
-}
+// laneAY-B: retail's `upload_debug_stats` handler emits NO calls at all
+// (target MetaPerformer::Handle +0xffc is a bare DataNode(0) tail) -- the
+// TheRnd/Symbol/ChunkAllocator debug uploads are rb3-Wii DEV-build only.
+void MetaPerformer::UploadDebugStats() {}
 
-void MetaPerformer::SetCreditsPending() {
-    static OvershellPanel *pOvershellPanel =
-        ObjectDir::Main()->Find<OvershellPanel>("overshell", true);
-    pOvershellPanel->UpdateAll();
-    mCreditsPending = true;
-}
+// laneAY-B: retail's set/clear_credits_pending handlers inline to a single
+// `stb` on mCreditsPending (target +0xe00 / +0xe54); there is no overshell
+// lookup and no function-local `static OvershellPanel *`.
+void MetaPerformer::SetCreditsPending() { mCreditsPending = true; }
 
-void MetaPerformer::ClearCreditsPending() {
-    static OvershellPanel *pOvershellPanel =
-        ObjectDir::Main()->Find<OvershellPanel>("overshell", true);
-    pOvershellPanel->UpdateAll();
-    mCreditsPending = false;
-}
+void MetaPerformer::ClearCreditsPending() { mCreditsPending = false; }
 
 bool MetaPerformer::AreCreditsPending() const { return mCreditsPending; }
 #ifdef RB3_NO_WII_META_MEMBERS
@@ -1721,14 +1707,14 @@ BEGIN_HANDLERS(MetaPerformer)
     HANDLE_EXPR(get_total_stars_capped, TotalStars(true))
     HANDLE_EXPR(get_recent_instrument_mask, GetRecentInstrumentMask())
     HANDLE_ACTION(upload_debug_stats, UploadDebugStats())
-#ifdef HX_NATIVE
+    // laneAY-B: retail's handler list carries `has_online_scoring` TWICE
+    // (guard 0x82dfeb00 bits 14 and 17, target +0x104c and +0x1184) -- these
+    // were previously gated behind HX_NATIVE, which dropped both from the X360
+    // build and left our static count at 70 vs retail's 72.
     HANDLE_EXPR(has_online_scoring, mHasOnlineScoring)
-#endif
     HANDLE_EXPR(has_valid_band_score, HasValidBandScore())
     HANDLE_EXPR(has_valid_user_score, HasValidUserScore(_msg->Obj<BandUser>(2)))
-#ifdef HX_NATIVE
     HANDLE_EXPR(has_online_scoring, mHasOnlineScoring)
-#endif
     HANDLE_EXPR(has_valid_instarank_data, HasValidInstarankData())
     HANDLE_ACTION(
         update_instarank_rank_label, UpdateInstarankRankLabel(_msg->Obj<UILabel>(2))
