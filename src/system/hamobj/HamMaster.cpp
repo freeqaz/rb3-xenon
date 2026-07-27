@@ -352,6 +352,7 @@ void HamMaster::CheckLevels() {
 }
 
 HamMasterLoader::HamMasterLoader(HamMaster *master)
-    : Loader("", kLoadBack), mMaster(master) {}
+    // Retail fn_8276E328 passes `li r5, 0x2` = kLoadFrontStayBack, not kLoadBack.
+    : Loader("", kLoadFrontStayBack), mMaster(master) {}
 
 void HamMasterLoader::PollLoading() { mMaster->LoaderPoll(); }

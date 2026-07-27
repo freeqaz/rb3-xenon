@@ -28,7 +28,9 @@ FxSendChorus::FxSendChorus()
 }
 
 void FxSendChorus::Save(BinStream &bs) {
-    bs << 4;
+    // RB3 retail is rev 3; DC3 (newer) bumped this to 4.  Target
+    // fn_827201F0 emits `li r11, 0x3`.
+    bs << 3;
     SAVE_SUPERCLASS(FxSend)
     bs << mDelayMs;
     bs << mRate;

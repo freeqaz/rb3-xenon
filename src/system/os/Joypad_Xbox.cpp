@@ -302,7 +302,9 @@ void XinputJoypadThreadStart() {
     tThread = CreateThread(nullptr, 0, XinputJoypadThreadEntry, nullptr, 4, nullptr);
     MILO_ASSERT(tThread, 0x266);
     SetThreadPriority(tThread, 2);
-    XSetThreadProcessor(tThread, 1);
+    // Retail pins the XInput poll thread to hardware thread 4 (fn_8252A3D8
+    // emits `li r4, 0x4` here), not 1.
+    XSetThreadProcessor(tThread, 4);
     ResumeThread(tThread);
 }
 

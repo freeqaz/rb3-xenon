@@ -124,7 +124,6 @@ public:
     virtual const char *ContentPath(int) { return 0; }
     virtual bool MountContent(Symbol) { return true; }
     virtual bool IsMounted(Symbol) { return true; }
-    virtual bool IsCorrupt(Symbol, const char *&) { return false; }
     virtual bool DeleteContent(Symbol) { return true; }
     virtual bool IsDeleteDone(Symbol) { return true; }
     virtual bool GetLicenseBits(Symbol, unsigned long &ul) {
@@ -132,6 +131,15 @@ public:
         return true;
     }
     virtual unsigned int GetCreationDate(Symbol) { return 0; }
+    // IsCorrupt is NOT between IsMounted and DeleteContent in RB3: retail
+    // ContentDeletePanel::OnMsg calls DeleteContent through slot 0x78 and
+    // ::Poll calls IsDeleteDone through 0x7c, exactly 6 and 7 slots after
+    // StartRefresh (0x60, which both sides already agree on) -- i.e. one fewer
+    // slot than the DC3 ordering.  rb3-Wii's ContentMgr.h has no IsCorrupt at
+    // all.  It is a real Xbox entry point (XboxContentMgr overrides it,
+    // PreloadPanel::ContentFailed calls it), so keep it virtual but move it
+    // past the slots whose retail positions we can prove.
+    virtual bool IsCorrupt(Symbol, const char *&) { return false; }
 
     bool NeverRefreshed() const { return mState == kDone; }
     bool RefreshDone() const;
