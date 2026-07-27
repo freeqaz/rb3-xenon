@@ -264,8 +264,14 @@ void BandTrack::ResetPlayerFeedback() {
 }
 
 void BandTrack::SetNetTalking(bool talking) {
-    if (mPlayerIntro)
+    // Retail 0x82351E70: both keys are FUNCTION-LOCAL statics sharing guard word
+    // 0x82CBE5F4 (talk = bit 0, talk_stop = bit 1), with their own ??__F atexit
+    // thunks at 0x82351F74 / 0x82351F94 -- not the file-scope Messages4 globals.
+    if (mPlayerIntro) {
+        static Message talk_msg("talk");
+        static Message talk_stop_msg("talk_stop");
         mPlayerIntro->HandleType(talking ? talk_msg : talk_stop_msg);
+    }
 }
 
 void BandTrack::SetPlayerFeedbackShowing(bool showing) const {

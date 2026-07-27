@@ -55,6 +55,9 @@ public:
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
     virtual void CollideList(const Segment &, std::list<Collision> &);
     virtual void Poll();
+    /** Retail-only out-of-line helper (0x8227CDA8): fallback state-group name
+     * used by Poll() when mOverrideGroup is empty. */
+    const char *DefaultStateGroup();
     virtual void Enter();
     virtual void Exit();
     virtual void Teleport(Waypoint *);

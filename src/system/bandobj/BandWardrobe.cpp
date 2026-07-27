@@ -524,7 +524,7 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
     HandleType(on_loading_characters_msg);
     Symbol playmode = GetPlayMode();
     int instOrderEnd = 5;
-    Symbol gender = female;
+    Symbol gender("female");
     if (shot) {
         int shotflags = GetShotFlags(shot);
         if ((shotflags & 0xFF) != 0xFF) {
@@ -540,9 +540,9 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
                     break;
                 }
             }
-            int gflags = shotflags >> 4;
-            if (shotflags & 0xF)
-                gflags = shotflags;
+            int gflags = shotflags;
+            if (!(shotflags & 0xF))
+                gflags = shotflags >> 4;
             for (int i = 0; i < 4; i++) {
                 if (gflags & 1 << i) {
                     mGenre = gGenres[i];
@@ -551,126 +551,66 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
             }
         }
     }
-    bool usePrefabs = LOADMGR_EDITMODE;
-    if (!usePrefabs) {
+    // Retail's `mic` is a FUNCTION-LOCAL static constructed right here, at the
+    // merge point after the `if (shot)` block (guard word 0x82CBE108 bit 1),
+    // even though it is not used until the vocals loop far below.
+    static Symbol mic("mic");
+    // Retail 360 (0x82330040) has NO prefab path here: after the `if (shot)`
+    // block it falls straight into the vector<Symbol> instrument-assignment
+    // logic below. The LOADMGR_EDITMODE / GetPrefab / "%s_budget_%s" fallback
+    // branch is rb3-Wii DEV-build only -- it is what pushed our frame to 0x260
+    // against retail's 0x140 (the `char buf[256]` alone is 0x100).
+    // `syms` lives in its own scope: retail frees the vector (MemOrPoolFreeSTL)
+    // right after the last "none" fixup loop, before the OutfitPiece sweep.
+    {
+    std::vector<Symbol> syms(4);
+    for (int i = 0; i < 4; i++) {
+        syms[i] = BandCharDesc::GetInstrumentSym(GetInstrumentForTarget(playmode, i));
+    }
+    int forcedTargets[4];
+    int forcedCount = 0;
+    for (int i = 0; i < 4; i++) {
+        DataNode tracknode = GetUserTrack(i);
+        Symbol inst = "none";
+        if (tracknode.Type() != kDataUnhandled) {
+            if (InstrumentIndex(syms, tracknode.Sym()) == syms.size()) {
+                forcedTargets[forcedCount++] = i;
+                continue;
+            }
+            inst = GrabInstrument(syms, tracknode.Sym());
+        }
+        mTargets[i]->SetInstrumentType(inst);
+    }
+    for (int i = 0; i < forcedCount; i++) {
+        int target = forcedTargets[i];
+        Symbol instOrder[5] = { "guitar", "bass", "mic", "drum", "keyboard" };
+        unsigned int j;
+        for (j = 0; j < 5; j++) {
+            if (InstrumentIndex(syms, instOrder[j]) != syms.size())
+                break;
+        }
+        MILO_ASSERT(j != DIM(instOrder), 0x512);
+        mTargets[target]->SetInstrumentType(GrabInstrument(syms, instOrder[j]));
+    }
+    if (InstrumentIndex(syms, mic) != syms.size()) {
         for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 2; j++) {
-                if (GetPrefab(i, j)) usePrefabs = true;
+            BandCharacter *bchar = mTargets[(i + 2) % 4];
+            Symbol inst = bchar->mInstrumentType;
+            if (inst == "none"
+                && (bchar->mGender == mVocalGender || mVocalGender.Null())) {
+                GrabInstrument(syms, mic);
+                bchar->SetInstrumentType(mic);
+                break;
             }
         }
     }
-    if (usePrefabs) {
-        for (int i = 0; i < 4; i++) {
-            BandCharDesc *prefab = 0;
-            for (int j = 0; j < 2 && !prefab; j++) {
-                prefab = GetPrefab(i, j);
-            }
-            int forceInst = GetInstrumentForTarget(playmode, i);
-            bool needOverride = false;
-            bool genderMismatch = false;
-            if (forceInst == instOrderEnd && prefab) needOverride = true;
-            if (needOverride && prefab->mGender != gender) genderMismatch = true;
-            if (genderMismatch) {
-                char buf[256];
-                strcpy(buf, prefab->Name());
-                prefab = 0;
-                for (int j = 0; j < 2; j++) {
-                    BandCharDesc *p = GetPrefab(i, j);
-                    if (p && p->mGender == gender) {
-                        prefab = p;
-                        break;
-                    }
-                }
-                if (!prefab) {
-                    char *suffix = (char *)PrefabSuffix(buf);
-                    if (suffix) {
-                        strcpy(suffix + 1, _outline_Str(&gender));
-                        prefab = BandCharDesc::FindPrefab(buf, false);
-                    }
-                }
-            }
-            if (!prefab) {
-                Symbol plat = PlatformSymbol(TheLoadMgr.GetPlatform());
-                if (plat == "pc") plat = "xbox";
-                Symbol gen2;
-                if (forceInst == instOrderEnd) {
-                    gen2 = gender;
-                } else {
-                    char *gs;
-                    if ((i & 1)) {
-                        gs = "male";
-                    } else {
-                        gs = "female";
-                    }
-                    gen2 = Symbol(gs);
-                }
-                prefab = BandCharDesc::FindPrefab(
-                    MakeString("%s_budget_%s", gen2, plat), true
-                );
-                if (!prefab) {
-                    MILO_WARN("could not find fallback prefab");
-                }
-            }
-            BandCharacter *bchar = mTargets[i];
-            bchar->SetPrefab(prefab);
-            Symbol instSym = BandCharDesc::GetInstrumentSym(forceInst);
-            bchar->SetInstrumentType(instSym);
-            bchar->Enter();
+    for (int i = 0; i < 4; i++) {
+        BandCharacter *bchar = mTargets[i];
+        Symbol inst = bchar->mInstrumentType;
+        if (inst == "none") {
+            bchar->SetInstrumentType(GrabInstrument(syms, Symbol("none")));
         }
-    } else {
-        std::vector<Symbol> syms(4);
-        for (int i = 0; i < 4; i++) {
-            syms[i] = BandCharDesc::GetInstrumentSym(GetInstrumentForTarget(playmode, i));
-        }
-        int forcedTargets[4];
-        int forcedCount = 0;
-        for (int i = 0; i < 4; i++) {
-            DataNode tracknode = GetUserTrack(i);
-            Symbol inst = "none";
-            if (tracknode.Type() != kDataUnhandled) {
-                if (InstrumentIndex(syms, tracknode.Sym()) == syms.size()) {
-                    forcedTargets[forcedCount++] = i;
-                    continue;
-                }
-                inst = GrabInstrument(syms, tracknode.Sym());
-            }
-            mTargets[i]->SetInstrumentType(inst);
-        }
-        for (int i = 0; i < forcedCount; i++) {
-            int target = forcedTargets[i];
-            Symbol instOrder[5] = { "guitar", "bass", "mic", "drum", "keyboard" };
-            unsigned int j;
-            for (j = 0; j < 5; j++) {
-                if (InstrumentIndex(syms, instOrder[j]) != syms.size())
-                    break;
-            }
-            MILO_ASSERT(j != DIM(instOrder), 0x512);
-            mTargets[target]->SetInstrumentType(GrabInstrument(syms, instOrder[j]));
-        }
-        if (InstrumentIndex(syms, mic) != syms.size()) {
-            for (int i = 0; i < 4; i++) {
-                BandCharacter *bchar = mTargets[(i + 2) % 4];
-                bool ok = false;
-                if (bchar->mInstrumentType == "none") {
-                    bool genderOk = true;
-                    if (bchar->mGender != mVocalGender && mVocalGender != gNullStr) {
-                        genderOk = false;
-                    }
-                    if (genderOk) ok = true;
-                }
-                if (ok) {
-                    GrabInstrument(syms, mic);
-                    bchar->SetInstrumentType(mic);
-                    break;
-                }
-            }
-        }
-        for (int i = 0; i < 4; i++) {
-            BandCharacter *bchar = mTargets[i];
-            if (bchar->mInstrumentType == "none") {
-                bchar->SetInstrumentType(GrabInstrument(syms, Symbol("none")));
-            }
-        }
+    }
     }
     for (int i = 0; i < 4; i++) {
         BandCharacter *bchar = mTargets[i];
@@ -686,16 +626,16 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
             BandCharDesc::CharInstrumentType type = BandCharDesc::GetInstrumentFromSym(inst);
             switch (type) {
                 case BandCharDesc::kGuitar:
-                    piece->mName = "kelly02_triburst";
+                    piece->mName = "stratocaster04_paint";
                     break;
                 case BandCharDesc::kBass:
-                    piece->mName = "mb4_triburst";
+                    piece->mName = "telebass_sparkle";
                     break;
                 case BandCharDesc::kDrum:
-                    piece->mName = "generic_zebra";
+                    piece->mName = "dw_marine";
                     break;
                 case BandCharDesc::kMic:
-                    piece->mName = "e935_resource";
+                    piece->mName = "md431ii_resource";
                     break;
                 case BandCharDesc::kKeyboard:
                     piece->mName = "m50_resource";

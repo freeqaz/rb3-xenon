@@ -59,11 +59,23 @@ public:
 
     void VenueLoaded(WorldDir *);
     void OnMidiAddPostProc(Symbol, float, float);
+    /** Retail-only (0x8229A2E0): the RBN2 flavour of `midi_add_postproc`, which
+     * takes only (Symbol, seconds) -- no fade-length. Not present in the rb3-Wii
+     * dev source; its `rbn2_add_postproc` handler string lives at .rdata
+     * 0x820170F8. */
+    void OnRbn2AddPostProc(Symbol, float);
+    /** Retail-only (0x82298E60): the `midi_shot5_cleanup` handler body, which
+     * folds the `shot_5` prop-anim key track into the per-playmode `shot` track.
+     * Handler string at .rdata 0x82016FD0. */
+    void OnMidiShot5Cleanup();
     bool FacingCamera(Symbol) const;
     bool BehindCamera(Symbol) const;
     void LoadVenue(Symbol, LoaderPos);
     void SetCharacterHideHackEnabled(bool);
-    void OnMidiPresetCleanup();
+    /** Retail (0x82298B40) takes a bool the rb3-Wii dev source lacks; it gates
+     * the back-inserted legacy fade-in key (`if (lpreset && b && i > 0)`), and
+     * the `midi_cleanup_presets` handler feeds it `_msg->Int(2)`. */
+    void OnMidiPresetCleanup(bool);
     void AddSymbolKey(Symbol, Symbol, float);
     void ClearSymbolKeys(Symbol);
     void ClearSymbolKeysFrameRange(Symbol, float, float);

@@ -7857,7 +7857,7 @@
  "0x8231c150": "?StaticClassName@StarDisplay@@SA?AVSymbol@@XZ",
  "0x8231d930": "?SetTrackedSkeletons@GestureMgr@@QAAXHH@Z",
  "0x82342090": "?Count@HamLabel@@UAAXHHMVSymbol@@@Z",
- "0x82351e70": "?PickIntroShot@HamDirector@@IAAXXZ",
+ "0x82351e70": "?SetNetTalking@BandTrack@@QAAX_N@Z",
  "0x82356d40": "??0GemTrackResourceManager@@QAA@PAVObjectDir@@@Z",
  "0x823587b0": "??E?$ObjDirItr@VCharBone@@@@QAAAAV0@XZ",
  "0x8235b978": "?Type@PrimaryProfileChangedMsg@@SA?AVSymbol@@XZ",

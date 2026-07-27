@@ -345,18 +345,34 @@ bool BandCharacter::AllowOverride(const char *cc) {
     return true;
 }
 
+// Retail-only out-of-line helper (0x8227CDA8): the default state-group name
+// when mOverrideGroup is empty. Poll() calls it with a `bl`, so it must not be
+// inlined back into Poll.
+#pragma auto_inline(off)
+const char *BandCharacter::DefaultStateGroup() {
+    return mInstrumentType == drum ? "sit" : "stand";
+}
+#pragma auto_inline(on)
+
 void BandCharacter::Poll() {
+    // Retail 360 (0x8227E9B0) has NO auto-timer here: the target's first post-
+    // prologue instruction is `lbz r11, 0x476(r3)` (the unk5a2 test), with no
+    // `static Timer *_t` guard word and no AutoTimer destructor/EH funclet.
+    // Measured: leaving the macro in cost 54 inserted instructions.
+#ifdef HX_NATIVE
     START_AUTO_TIMER("cc_poll");
+#endif
     if (unk5a2) {
         Teleport(unk594);
         unk5a2 = false;
     }
     if (unk5a3) {
-        const char *name;
-        if (mOverrideGroup[0] != 0)
-            name = mOverrideGroup;
-        else
-            name = mInstrumentType == drum ? "sit" : "stand";
+        // Retail (0x82283C84) loads &mOverrideGroup unconditionally and calls an
+        // out-of-line helper (0x8227CDA8, `this - 0x188`) for the fallback name,
+        // rather than inlining the mInstrumentType==drum test here.
+        const char *name = mOverrideGroup;
+        if (mOverrideGroup[0] == 0)
+            name = DefaultStateGroup();
         SetState(name, mPlayFlags, 2, false, true);
         unk5a3 = false;
     }
@@ -534,9 +550,11 @@ void BandCharacter::Poll() {
     if (mDriver) {
         CharClip *clip = mDriver->FirstPlayingClip();
         if (clip) {
+            static Symbol vignette("vignette");
             if (clip->Type() == vignette) {
                 unk574 = true;
             }
+            static Symbol mic_body("mic_body");
             if (clip->Type() == mic_body) {
                 if (unk680) {
                     unk680->SetShowing(clip->Flags() & 0x8000000);
@@ -1787,6 +1805,7 @@ void BandCharacter::SetContext(Symbol s) {
         default:
             break;
         }
+        static Message on_set_instrument_clip_types_msg("on_set_instrument_clip_types");
         HandleType(on_set_instrument_clip_types_msg);
     } else {
         MILO_WARN("%s illegal context %s", PathName(this), s);

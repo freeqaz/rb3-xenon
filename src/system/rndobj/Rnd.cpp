@@ -1079,16 +1079,16 @@ __declspec(noinline) auto _outline_Int(_T* _obj) -> decltype(_obj->Int()) {
 }
 
 float Rnd::DrawTimers(float f) {
-    if (0 == (lbl_830A4104 & 1)) {
-        lbl_830A4104 = lbl_830A4104 | 1;
-        Symbol timerSym("timer_script");
-        Symbol rndSym("rnd");
-        DataArray *rndCfg = SystemConfig(rndSym);
-        lbl_830A4100 = rndCfg->FindArray(timerSym, false);
-    }
+    // Retail (0x82412058) is a plain function-local static of POINTER type: ONE
+    // guard bit (0x82CC2538 bit 0) protecting the store to 0x82CC2534. The two
+    // Symbols are ordinary stack temps inside the initializer -- they get no
+    // guard bits of their own, so the hand-rolled lbl_830A4104 emulation is
+    // wrong on both the guard shape and the reload after the guard.
+    static DataArray *timerCfg =
+        SystemConfig(Symbol("rnd"))->FindArray(Symbol("timer_script"), false);
 
-    if (lbl_830A4100) {
-        lbl_830A4100->ExecuteScript(1, nullptr, nullptr, 1);
+    if (timerCfg) {
+        timerCfg->ExecuteScript(1, nullptr, nullptr, 1);
     }
 
     if (mVerboseTimers) {

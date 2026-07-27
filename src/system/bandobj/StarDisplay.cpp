@@ -228,12 +228,14 @@ void StarDisplay::Update() {
     MILO_ASSERT(typeDef, 369);
     RndDir *dir = mResource->Dir();
     MILO_ASSERT(dir, 372);
+    static Symbol resource_stars_label("resource_stars_label");
     mRsrcStarsLabel->ResourceCopy(
         dir->Find<BandLabel>(typeDef->FindStr(resource_stars_label), true)
     );
-    BandLabel *bl2 =
-        dir->Find<BandLabel>(typeDef->FindStr(resource_stars_mixed_label), true);
-    mRsrcStarsMixedLabel->ResourceCopy(bl2);
+    static Symbol resource_stars_mixed_label("resource_stars_mixed_label");
+    mRsrcStarsMixedLabel->ResourceCopy(
+        dir->Find<BandLabel>(typeDef->FindStr(resource_stars_mixed_label), true)
+    );
     UpdateDisplay();
 }
 

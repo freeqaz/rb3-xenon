@@ -805,6 +805,7 @@ BEGIN_HANDLERS(BandDirector)
     HANDLE_ACTION(
         midi_add_postproc, OnMidiAddPostProc(_msg->Sym(2), _msg->Float(3), _msg->Float(4))
     )
+    HANDLE_ACTION(rbn2_add_postproc, OnRbn2AddPostProc(_msg->Sym(2), _msg->Float(3)))
     HANDLE(postproc_interp, OnPostProcInterp)
     HANDLE(save_song, OnSaveSong)
     HANDLE(on_file_loaded, OnFileLoaded)
@@ -818,8 +819,13 @@ BEGIN_HANDLERS(BandDirector)
     HANDLE(get_face_overrides, OnGetFaceOverrideClips)
     HANDLE_EXPR(facing_camera, FacingCamera(_msg->Sym(2)))
     HANDLE_ACTION(load_venue, LoadVenue(_msg->Sym(2), kLoadStayBack))
-// Retail Handle has exactly 34 arms (Ghidra 0x82289600): no
-// set_character_hide_hack_enabled and no debug arms. Keep them native-only.
+// Retail Handle (0x8229AF98) has exactly 36 arms: the 34 below plus the two
+// retail-only additions `rbn2_add_postproc` (guard bit 3) and
+// `midi_shot5_cleanup` (guard bit 25), both already spliced in above. It still
+// has no set_character_hide_hack_enabled and no debug arms -- keep those
+// native-only. (The former "exactly 34 arms / Ghidra 0x82289600" note here was
+// wrong on both the count and the address; the two extra handler strings are in
+// band.exe .rdata at 0x820170F8 and 0x82016FD0.)
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
     HANDLE_ACTION(
         set_character_hide_hack_enabled, SetCharacterHideHackEnabled(_msg->Int(2))
@@ -835,7 +841,8 @@ BEGIN_HANDLERS(BandDirector)
     HANDLE(force_preset, OnForcePreset)
     HANDLE(stomp_presets, OnStompPresets)
     HANDLE(midi_add_preset, OnMidiAddPreset)
-    HANDLE_ACTION(midi_cleanup_presets, OnMidiPresetCleanup())
+    HANDLE_ACTION(midi_cleanup_presets, OnMidiPresetCleanup(_msg->Int(2)))
+    HANDLE_ACTION(midi_shot5_cleanup, OnMidiShot5Cleanup())
     HANDLE(get_cat_list, OnGetCatList)
     HANDLE(copy_cats, OnCopyCats)
     HANDLE(load_song, OnLoadSong)
@@ -1257,7 +1264,7 @@ static __forceinline Symbol ConcatCatAdj(Symbol s1, Symbol s2) {
     return ret;
 }
 
-void BandDirector::OnMidiPresetCleanup() {
+void BandDirector::OnMidiPresetCleanup(bool fadeIn) {
     if (!mPropAnim || !mVenue.Dir())
         return;
     DataArrayPtr dptr(Symbol("lightpreset"));
@@ -1274,7 +1281,7 @@ void BandDirector::OnMidiPresetCleanup() {
             s1 = s2;
         skeys[i].value = s1;
         LightPreset *lpreset = pm->PickRandomPreset(skeys[i].value);
-        if (lpreset && i > 0) {
+        if (lpreset && fadeIn && i > 0) {
             float fadein = lpreset->LegacyFadeIn() / 480.0f;
             ClampEq(fadein, 0.0f, 4.0f);
             float stb = SecondsToBeat(skeys[i].frame / 30.0f);
@@ -1689,6 +1696,38 @@ void BandDirector::OnMidiAddPostProc(Symbol s, float f1, float f2) {
             MILO_WARN("PostProc %s not found.  Cannot add to song.anim!\n", s.Str());
     }
 }
+
+// Retail-only pair (0x8229A2E0 / 0x82298E60). Neither exists in the rb3-Wii dev
+// source; both are reached only through the two retail-only Handle() arms above,
+// so what matters for Handle()'s codegen is that they stay out-of-line calls.
+#pragma auto_inline(off)
+void BandDirector::OnRbn2AddPostProc(Symbol s, float f) {
+    DataArrayPtr dptr(Symbol("postproc"));
+    ObjectKeys *okeys = dynamic_cast<ObjectKeys *>(mPropAnim->GetKeys(this, dptr));
+    if (okeys && mVenue.Dir()) {
+        RndPostProc *proc = mVenue.Dir()->Find<RndPostProc>(s.Str(), false);
+        if (proc) {
+            okeys->Add(proc, f * 30.0f, false);
+        } else
+            MILO_WARN("PostProc %s not found.  Cannot add to song.anim!\n", s.Str());
+    }
+}
+
+void BandDirector::OnMidiShot5Cleanup() {
+    if (!mPropAnim)
+        return;
+    PropKeys *shot5keys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot_5")));
+    PropKeys *shotkeys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot")));
+    if (!shotkeys || !shot5keys)
+        return;
+    Keys<Symbol, Symbol> &sym5keys = *shot5keys->AsSymbolKeys();
+    Keys<Symbol, Symbol> &symkeys = *shotkeys->AsSymbolKeys();
+    symkeys.clear();
+    for (int i = 0; i < sym5keys.size(); i++) {
+        symkeys.push_back(sym5keys[i]);
+    }
+}
+#pragma auto_inline(on)
 
 void BandDirector::ExportWorldEvent(Symbol s) {
     if (s != none) {

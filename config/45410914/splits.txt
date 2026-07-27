@@ -3400,11 +3400,9 @@ HamDirector.cpp:
 	.pdata      start:0x821F32E0 end:0x821F32E8
 	.pdata      start:0x821F6568 end:0x821F6570
 	.pdata      start:0x821F6570 end:0x821F6578
-	.pdata      start:0x821FF5F8 end:0x821FF610
 	.text       start:0x8228D310 end:0x8228D354
 	.text       start:0x822BE020 end:0x822BE080
 	.text       start:0x822BE088 end:0x822BE0B0
-	.text       start:0x82351E70 end:0x82351FB4
 
 CharCuff.cpp:
 	.pdata      start:0x82203B50 end:0x82203B58
@@ -9462,6 +9460,7 @@ system/bandobj/BandTrack.cpp:
 	.pdata      start:0x821FF3D0 end:0x821FF3D8
 	.pdata      start:0x821FF410 end:0x821FF5C8
 	.pdata      start:0x821FF5C8 end:0x821FF5D0
+	.pdata      start:0x821FF5F8 end:0x821FF610
 	.pdata      start:0x821FF6A0 end:0x821FF6E8
 	.pdata      start:0x821FF6E8 end:0x821FF740
 	.pdata      start:0x821FF740 end:0x821FF778
@@ -9483,6 +9482,7 @@ system/bandobj/BandTrack.cpp:
 	.text       start:0x8234F880 end:0x8234F8D8
 	.text       start:0x8234FCA8 end:0x82351BC8
 	.text       start:0x82351BC8 end:0x82351C7C
+	.text       start:0x82351E70 end:0x82351FB4
 	.text       start:0x82352810 end:0x82352EB0
 	.text       start:0x82352EB0 end:0x823534F0
 	.text       start:0x823534F0 end:0x823537B8
