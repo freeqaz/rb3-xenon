@@ -36,11 +36,18 @@ public:
     bool IsDemo() const { return mDemo; }
 
     Symbol mShortName; // real 0x28
-    // Order verified by MusicLibrary::Rebuild{Restricted,Shared}SongData, which
-    // read both members and already match.  The apparent "swap" in
-    // SongRecord::Update{SharedStatus,Restricted} was a MAP MISPAIR of those two
-    // functions with each other, fixed in scripts/target_symbol_map.json
-    // (fn_825BA970 touches 0x2c = mRestricted, fn_825BA9E0 touches 0x2e).
+    // DO NOT swap mRestricted/mIsShared here -- measured, twice.
+    // Update{SharedStatus,Restricted} look mirrored against the target
+    // (UpdateSharedStatus reads 0x2c, UpdateRestricted 0x2e, the reverse of this
+    // order), but swapping them flips those two to 100% and simultaneously
+    // BREAKS MusicLibrary::Rebuild{Shared,Restricted}SongData, which read the
+    // same members and already match at 100% -- net 0.  Swapping the two map
+    // entries instead is also wrong: fn_825BA970 then scores 63% against
+    // UpdateRestricted (its target body calls SongMetadata::ID(), which
+    // UpdateRestricted does not).  Both pairings are therefore correct and the
+    // layout is correct, so retail most likely has a FOURTH bool here that this
+    // model collapses into one of these two.  Unresolved; needs the real
+    // SongRecord ctor/LoadFixed evidence, not another swap.
     bool mRestricted; // real 0x2c
     bool mDemo; // real 0x2d
     bool mIsShared; // real 0x2e
