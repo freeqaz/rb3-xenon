@@ -24961,7 +24961,7 @@
  "0x82803890": "?PopScreen@UIManager@@UAAXPAVUIScreen@@@Z",
  "0x82803bd0": "?OnGotoScreen@UIManager@@AAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82803cb8": "?OnGoBackScreen@UIManager@@AAA?AVDataNode@@PBVDataArray@@@Z",
- "0x82804588": "?SetType@Object@Hmx@@UAAXVSymbol@@@Z",
+ "0x82804588": "??0UIManager@@QAA@XZ",
  "0x82804720": "??1UIManager@@UAA@XZ",
  "0x82804850": "?OnForeachCurrentScreen@UIManager@@AAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82804a80": "??$_S_sort@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@UCompare@1@@stlpmtx_std@@YAXAAV?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@0@UCompare@UIResource@@@Z",

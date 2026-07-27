@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 """WIDENED local-static census (laneAX-W1, 2026-07-27).
 
+> **SUPERSEDED 2026-07-27 (laneAY) -- USE `localstatic_census_v2.py`.**
+> This tool enumerates its universe by globbing `build/45410914/obj/**/*.obj`,
+> a directory that is NEVER CLEANED. Measured at 39,266: 9,911 of its 13,932
+> reported excess statics (71%) came from objs no live unit owns -- 8,891
+> `auto_*` dtk carves plus **112 STALE objs orphaned by earlier splits.txt
+> generations**. Worse, its `max(variants)` ranking actively PREFERRED the
+> stale obj: its #1 "actionable" row was `band3/game/VocalPlayer` (46 statics)
+> -- a dead carve, mis-attributed to `Poll`, whose live counterpart
+> `default/VocalPlayer ?Handle@...` is 46/46 = ZERO excess. Its `pct` join
+> (`u['name'].split('/', 1)[-1]`) also guesses at a nesting the two trees do
+> not share. `localstatic_census_v2.py` keeps this resolver verbatim and
+> enumerates from `objdiff.json` instead (name / target_path / base_path).
+
 scripts/harvest/localstatic_population_scan.py reports 102 functions / 58 TUs /
 403 excess init calls. That is a FLOOR, not the population: reading its code, it
 discards rows on four separate grounds --

@@ -161,7 +161,9 @@ static bool mShowDevMenu;
 #endif
 
 UIManager::UIManager()
-    : mWentBack(0), mMaxPushDepth(100), mJoyClient(0), mCurrentScreen(0), mSink(0),
+    // ★ retail does NOT initialise mCurrentScreen here: its ctor is 228 bytes to
+    // our 232, the single extra instruction being `stw r29, 0x2c(r30)`.
+    : mWentBack(0), mMaxPushDepth(100), mJoyClient(0), mSink(0),
       mOverloadHorizontalNav(0), mCancelTransitionNotify(0), mDefaultAllowEditText(1)
 #ifdef RB3_UI_DEBUG_MEMBERS
       // Retail Function_827DF040 stops after mDefaultAllowEditText @ 0x7a; it does
