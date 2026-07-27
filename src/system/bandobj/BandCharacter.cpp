@@ -2116,6 +2116,13 @@ DataNode BandCharacter::OnPlayGroup(DataArray *da) {
 }
 
 DataNode BandCharacter::OnGroupOverride(DataArray *da) {
+    // NOTE (laneAW-unitsb): the lone residual mismatch here, and in
+    // OnPortraitEnd, is the inline-strcpy zero test — target `cmplwi r10,0` vs
+    // our `extsb. r9,r10`. REFUTED: hand-writing the loop over `unsigned char*`
+    // (the documented fixable-comparison fix) does NOT reproduce it — it adds a
+    // local, grows the frame 0x10 and drops 97.5% -> 77.4%. The strength-reduced
+    // 2-pointer form only comes out of the /Oi strcpy intrinsic, whose byte
+    // compare we cannot steer from source. Confirmed wall.
     strcpy(mOverrideGroup, da->Str(2));
     mForceNextGroup = true;
     return DataNode(0);

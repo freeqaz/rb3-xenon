@@ -91,7 +91,15 @@ void RndShaderMgr::UpdateCache(const Transform &xfm, int idx) {
     // Cache pointer - accessing mConstantCache[idx * 12]
     float *p = &mConstantCache[idx * 12];
 
-    // Load transform components - declaration order affects register allocation
+    // Load transform components - declaration order affects register allocation.
+    // MEASURED (laneAW-unitsb): MSVC hoists all 12 loads in DECLARATION order,
+    // then SINKS exactly the one load feeding the FIRST store (the only legal
+    // sink) to sit immediately before it. Retail performs NO such sink: its load
+    // order is exactly the store order 0x00,0x10,0x20,0x30,0x04,... and its
+    // last-loaded f3 (0x38) is stored LAST. So no permutation of this
+    // decl/store shape can reach it -- the residue is the sink itself.
+    // Tried: decl==store order -> 97.4%; no temporaries (direct p[i]=xfm...)
+    // -> 67.9% (interleaves load/store pairs). This order is the best at 98.7%.
     float xz = xfm.m.x.z;
     float yx = xfm.m.y.x;
     float zx = xfm.m.z.x;
