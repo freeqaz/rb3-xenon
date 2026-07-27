@@ -23,6 +23,7 @@ _STLP_TEMPLATE_NULL struct hash<Symbol> {
 }
 #endif
 
+class Accomplishment;
 class Band;
 class BandProfile;
 class Performer;
@@ -48,8 +49,9 @@ public:
     int unk8; // 0x8
     int unkc; // 0xc
     bool unk10; // 0x10
-    int unk14; // 0x14 - never ctor-initialized (set by 360 async write path)
-    int unk18; // 0x18 - never ctor-initialized
+    // 0x14/0x18: XUSER_AVATARASSET {dwUserIndex,dwAwardId} - never
+    // ctor-initialized; filled by GiveAvatarAsset before XUserAwardAvatarAssets.
+    XUSER_AVATARASSET mAsset; // 0x14
     XOVERLAPPED mOverlapped; // 0x1c - 360 async award write; memset-zeroed in ctors
 };
 
@@ -163,6 +165,12 @@ public:
     void HandleUploadStarted();
     void HandleSuccessfulUpload();
     void FakeFill();
+
+private:
+    void GiveGamerpic(Accomplishment *);
+    void GiveAvatarAsset(Accomplishment *);
+
+public:
     const std::hash_map<Symbol, int> &GetToursMostStarsMap() const {
         return mTourMostStarsMap;
     }

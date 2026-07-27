@@ -269,6 +269,11 @@ void DxShaderMgr::SetVConstant(VShaderConstant vsc, RndTex *tex) {
     }
 }
 
+void DxShaderMgr::SetPConstant(PShaderConstant psc, bool b) {
+    BOOL val = b;
+    D3DDevice_SetPixelShaderConstantB(TheDxRnd.Device(), psc, &val, 1);
+}
+
 void DxShaderMgr::SetPConstant(PShaderConstant psc, RndTex *tex) {
     if (!tex) {
         tex = TheRnd.GetNullTexture();

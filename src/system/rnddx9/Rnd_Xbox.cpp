@@ -198,6 +198,53 @@ void DxRnd::DoWorldEnd() {
     }
 }
 
+void DxRnd::FinishPostProcess() {
+    SetFrameBuffersAsSource();
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 3, 1);
+    D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 3, 1);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xA, 1);
+    D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xA, 1);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xF, 1);
+    D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xF, 1);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xD, 1);
+    D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xD, 1);
+    D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
+    D3DDevice_SetDepthStencilSurface(mD3DDevice, mWorldDepth);
+    D3DDevice_Clear(
+        mD3DDevice, 0, nullptr, 0x31, MakeColor(Hmx::Color(0, 0, 0.3f)), 0, 0, 0
+    );
+    Hmx::Rect rect(0, 0, (float)mWidth, (float)mHeight);
+    RndMat *mat = TheShaderMgr.GetPostProcMat();
+    mat->SetBlend((BaseMaterial::Blend)1);
+    mat->SetZMode((ZMode)0);
+    TheShaderMgr.unk30 = 0;
+    DrawRect(rect, mat, (ShaderType)0x10, Hmx::Color(), nullptr, nullptr);
+    SavePostBuffer();
+}
+
+void DxRnd::CopyPostProcess() {
+    if (mRegAlloc != 2) {
+        mRegAlloc = (RegisterAlloc)2;
+        D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x10, 0x70);
+    }
+    Hmx::Rect rect(0, 0, (float)mWidth, (float)mHeight);
+    RndMat *mat = TheShaderMgr.GetPostProcMat();
+    mat->SetBlend((BaseMaterial::Blend)1);
+    mat->SetZMode((ZMode)0);
+    TheShaderMgr.unk30 = 1;
+    static bool sCopyPostInited;
+    if (sCopyPostInited) {
+        sCopyPostInited = true;
+        D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xE, 1);
+        D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xE, 1);
+    }
+    DrawRect(rect, mat, (ShaderType)0x10, Hmx::Color(), nullptr, nullptr);
+    if (mRegAlloc != 1) {
+        mRegAlloc = (RegisterAlloc)1;
+        D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x20, 0x60);
+    }
+}
+
 void DxRnd::DoPostProcess() {
     SetFrameBuffersAsSource();
     if (mProcCmds & kProcessPost) {

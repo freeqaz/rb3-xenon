@@ -91,6 +91,19 @@ void RndRenderState::SetStencilOp(StencilOp fail, StencilOp zfail, StencilOp pas
     D3DDevice_SetRenderState_StencilPass(TheDxRnd.Device(), (int)pass);
 }
 
+void RndRenderState::SetBorderColor(uint sampler, bool border) {
+    // Inline GPUTEXTURE_FETCH_CONSTANT.BorderColor (dword[5], bits 0-1) write,
+    // same one-Device()-fetch-per-bitfield-group shape as SetTextureFilter.
+    D3DDevice *dev = TheDxRnd.Device();
+    // 77.0%: retail merges with a single `rlwimi r9,r8,0,0,29` (bool register is
+    // the rlwimi destination); we emit `clrrwi`+`or`.  The plain bitfield store
+    // (`.BorderColor = border`) is worse (44.8%) - it inserts the bool INTO the
+    // word instead.  Residual is that one instruction plus an r6/r7 cascade.
+    DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[5];
+    *pWord = (*pWord & ~0x00000003u) | (border != 0);
+    dev->m_Pending.m_Mask[3] |= 0x8000000000000000ull >> (sampler + 0x20);
+}
+
 void RndRenderState::SetTextureFilter(uint sampler, FilterMode filter, bool) {
     D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), sampler, filter);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), sampler, filter);

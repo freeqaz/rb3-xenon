@@ -78,6 +78,7 @@ enum PShaderConstant {
 
 class RndShaderMgr {
     friend class NgSpotlightDrawer;
+    friend class DxRnd;
 
 public:
     struct ShaderTree {
