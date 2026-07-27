@@ -36,13 +36,14 @@ public:
     bool IsDemo() const { return mDemo; }
 
     Symbol mShortName; // real 0x28
-    // Retail order is mIsShared, mDemo, mRestricted: UpdateSharedStatus reads
-    // 0x2c and UpdateRestricted reads 0x2e, the exact mirror of what this
-    // declaration order produces.  (The old // 0x20/0x21/0x22 comments were
-    // stale by 0xc; the real slots are 0x2c/0x2d/0x2e.)
-    bool mIsShared; // real 0x2c
+    // Order verified by MusicLibrary::Rebuild{Restricted,Shared}SongData, which
+    // read both members and already match.  The apparent "swap" in
+    // SongRecord::Update{SharedStatus,Restricted} was a MAP MISPAIR of those two
+    // functions with each other, fixed in scripts/target_symbol_map.json
+    // (fn_825BA970 touches 0x2c = mRestricted, fn_825BA9E0 touches 0x2e).
+    bool mRestricted; // real 0x2c
     bool mDemo; // real 0x2d
-    bool mRestricted; // real 0x2e
+    bool mIsShared; // real 0x2e
     std::map<Symbol, int> mTier; // 0x24
     ScoreType mActiveScoreType; // 0x3c
     int mScores[11]; // 0x40
