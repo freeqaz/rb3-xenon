@@ -454,11 +454,10 @@ void Rnd::Init() {
         }
     }
     RndUtlInit();
-    RndPostProc::Init();
 #ifndef HX_NATIVE
     gRndTextureEvent = CreateEventA(nullptr, false, false, "texture_event");
     gRndThread = CreateThread(nullptr, 0, CompressThread, nullptr, 4, nullptr);
-    XSetThreadProcessor(gRndThread, 1);
+    XSetThreadProcessor(gRndThread, 2);
     ResumeThread(gRndThread);
 #endif
 }

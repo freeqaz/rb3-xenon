@@ -13,9 +13,6 @@ public:
     virtual ~Drawable() {}
     virtual void Draw() = 0;
     virtual void DrawFixedZ(float) = 0;
-
-    static void *operator new(size_t);
-    static void operator delete(void *);
 };
 
 class Line : public Drawable {
