@@ -86,6 +86,64 @@ typedef void ModalCallbackFunc(Debug::ModalType &, FixedString &, bool);
 extern Debug TheDebug;
 extern const char *kAssertStr;
 
+#ifndef HX_NATIVE
+// ---------------------------------------------------------------------------
+// Stripped debug-output argument sink (retail RB3-360).
+//
+// Retail's stripped MILO_WARN/NOTIFY/LOG sites do NOT just evaluate their args
+// as a comma expression -- they COPY-CONSTRUCT the class-typed ones. Evidence:
+// SongParser::ParseText (0x827840C8) has four copies of
+//     addi r3,r31,0x60 / addi r4,r30,0x28 / stw r3,0x54(r31)
+//     bl ??0String@@QAA@ABV0@@Z ... bl TickFormat ... bl ??1String@@UAA@XZ
+// plus four EH funclets destroying those temps -- i.e. `mFilename` (a String
+// member) is copied into a temporary that is destroyed at end-of-full-expression.
+// That is exactly what MakeString's BY-VALUE template parameters (T1 t1, ...)
+// do. The format-string literal is NOT materialised at those sites, so the
+// callee body must be gone.
+//
+// MiloStripEval reproduces both halves: by-value params force the copy ctor +
+// destructible temp (and hence the EH state/funclet), while the empty inline
+// body lets /Ob2 delete the call and DCE the unused format literal.
+inline void MiloStripEval(const char *) {}
+template <class T1> inline void MiloStripEval(const char *, T1) {}
+template <class T1, class T2> inline void MiloStripEval(const char *, T1, T2) {}
+template <class T1, class T2, class T3>
+inline void MiloStripEval(const char *, T1, T2, T3) {}
+template <class T1, class T2, class T3, class T4>
+inline void MiloStripEval(const char *, T1, T2, T3, T4) {}
+template <class T1, class T2, class T3, class T4, class T5>
+inline void MiloStripEval(const char *, T1, T2, T3, T4, T5) {}
+template <class T1, class T2, class T3, class T4, class T5, class T6>
+inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6) {}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7) {}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8) {}
+template <
+    class T1,
+    class T2,
+    class T3,
+    class T4,
+    class T5,
+    class T6,
+    class T7,
+    class T8,
+    class T9>
+inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9) {}
+template <
+    class T1,
+    class T2,
+    class T3,
+    class T4,
+    class T5,
+    class T6,
+    class T7,
+    class T8,
+    class T9,
+    class T10>
+inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) {}
+#endif
+
 #ifdef HX_NATIVE
 #define MILO_ASSERT(cond, line)                                                          \
     do {                                                                                 \
@@ -145,10 +203,32 @@ extern const char *kAssertStr;
 // TexBlender funclets (spurious EH/temp scopes where retail has none).
 // MILO_FAIL / MILO_FAIL_DTA are NOT gated — retail retained the fatal/abort
 // paths. HX_NATIVE keeps real output for the native port.
+//
+// UPDATE 2026-07-26 (worktree gbE): the comma form was INCOMPLETE for WARN.
+// Retail's stripped WARN sites also COPY-CONSTRUCT class-typed args (see the
+// MiloStripEval block above), which the comma form never does. Switching only
+// MILO_WARN to MiloStripEval measured whole-binary:
+//     WARN   -> MiloStripEval : 36705 -> 36738 strict (+33; 41 gained / 8 lost),
+//               fuzzy 36.93869 -> 36.955505. SongParser +34 (ParseText's four
+//               EH funclets 0x82784380/3A8/3D0/3F8 all flip to 100%).
+//               Losses are funclet-pairing shifts: PrefabMgr x5,
+//               GamePanel::SetType, Group/MidiSynth anon funclets.
+//     NOTIFY -> MiloStripEval : -20 on top of that (36739 -> 36719). It kills
+//               ~20 `?SetType@*@@UAAXVSymbol@@@Z` bodies across rndobj/synth/
+//               bandobj. DO NOT apply to NOTIFY / NOTIFY_BETA.
+//     LOG    -> MiloStripEval : -5 on top of WARN (SongData x5, Console,
+//               FileMerger::MergeAction). DO NOT apply to LOG.
+// So: WARN copies, NOTIFY/LOG only evaluate.  Measured, not assumed.
+//
+// ==> THE ASYMMETRY IS BY DESIGN, NOT AN OVERSIGHT.  MILO_WARN uses
+//     MiloStripEval; MILO_NOTIFY / MILO_NOTIFY_BETA / MILO_LOG deliberately
+//     keep ((void)(args)).  Making them uniform is the obvious-looking next
+//     step and it is MEASURED NEGATIVE: +33 / -20 / -5 respectively.
+//     Do not "finish the job" -- the job is finished.
 #ifdef HX_NATIVE
 #define MILO_WARN(...) TheDebugWarner << MakeString(__VA_ARGS__)
 #else
-#define MILO_WARN(...) ((void)(__VA_ARGS__))
+#define MILO_WARN(...) MiloStripEval(__VA_ARGS__)
 #endif
 // DTA runtime errors: FAIL on Xbox (shows dialog + Continue), WARN on native
 #ifdef HX_NATIVE
@@ -160,6 +240,11 @@ extern const char *kAssertStr;
 #define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)
 #define MILO_NOTIFY_BETA(...) DebugBeta() << MakeString(__VA_ARGS__)
 #else
+// DELIBERATE: comma form, NOT MiloStripEval.  Retail's stripped NOTIFY sites
+// evaluate their args but do NOT copy-construct class-typed ones.  Switching
+// these to MiloStripEval measured -20 strict whole-binary (it kills ~20
+// ?SetType@*@@UAAXVSymbol@@@Z bodies across rndobj/synth/bandobj).  See the
+// measured A/B table above MILO_WARN.
 #define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
 #define MILO_NOTIFY_BETA(...) ((void)(__VA_ARGS__))
 #endif
@@ -174,6 +259,8 @@ extern const char *kAssertStr;
 // shared Symbol temp slot (0x58 -> 0x54/0x58), breaking the tail-merge (-1).
 #define MILO_LOG(...) ((void)sizeof(MakeString(__VA_ARGS__)))
 #else
+// DELIBERATE: comma form, NOT MiloStripEval -- measured -5 strict (SongData
+// x5, Console, FileMerger::MergeAction).  See the table above MILO_WARN.
 #define MILO_LOG(...) ((void)(__VA_ARGS__))
 #endif
 

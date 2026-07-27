@@ -101,8 +101,8 @@ inline bool MetaMusic::Loaded() {
 
 void MetaMusic::Poll() {
     if (mRndHeap && !mBuf) {
-        int i18, i1c, i20, i24, i28;
-        MemFreeBlockStats(MemFindHeap("rnd"), i18, i1c, i20, i24, i28);
+        int i18, i1c, i20, i24;
+        MemFreeBlockStats(MemFindHeap("rnd"), i18, i1c, i20, i24);
         if (i24 > mBufSize + 0x20) {
             static int _x = MemFindHeap("rnd");
             MemTempHeap tmp(_x);
@@ -118,8 +118,9 @@ void MetaMusic::Poll() {
         RELEASE(mLoader);
         RELEASE(mFile);
     }
-    if (mStream && !mStream->IsPlaying() && mStream->IsReady()
-        && !ThePlatformMgr.GuideShowing()) {
+    // NOTE: retail RB3 predates the `&& !ThePlatformMgr.GuideShowing()` gate
+    // that the rb3-Wii dev build / DC3 carry here.
+    if (mStream && !mStream->IsPlaying() && mStream->IsReady()) {
         mFader->SetVal(-96.0f);
         mFader->DoFade(mVolume, mFadeTime * 1000.0f);
         mStream->Play();

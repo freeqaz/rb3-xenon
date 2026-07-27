@@ -994,8 +994,14 @@ void OvershellSlot::FetchLinkingCode() {
 
 void OvershellSlot::CancelLinkingCode() {
     MILO_ASSERT(mState->GetStateID() == kState_LinkingCode, 0x769);
+#ifdef HX_NATIVE
+    // rb3-Wii DEV clears these two flags here; retail X360 does not — the
+    // cancel_linking_code arm inlines to exactly
+    //   lwz r3,0x2c(this); bl GetStateID; TheRockCentral.CancelOutstandingCalls(this)
+    // with no flag stores at all.
     unk80 = false;
     unk81 = false;
+#endif
     TheRockCentral.CancelOutstandingCalls(this);
 }
 
@@ -1263,11 +1269,18 @@ void OvershellSlot::UpdateState() {
 // retail scratch: https://decomp.me/scratch/AdUgA
 UNPOOL_DATA
 void OvershellSlot::UpdateView() {
+#ifdef HX_NATIVE
     bool b1 = false;
+#endif
     Symbol s2ac = mState ? mState->GetView() : gNullStr;
     Symbol s2b0 = s2ac;
+    // retail declares these as function-local statics (guard bits 0/1/2 of the
+    // per-function static-init guard word at 0x82DFFC9C), not as Symbols*.h globals
+    static Symbol hidden("hidden");
+    static Symbol block_all_input("block_all_input");
     CheckViewOverride(block_all_input, BlockAllInput(), s2ac);
     CheckViewOverride(hidden, IsHidden(), s2ac);
+    static Symbol remote_status("remote_status");
     BandUser *user = GetUser();
     if (user && !user->IsLocal()) {
         if (AutoHideEnabled())
@@ -1289,30 +1302,26 @@ void OvershellSlot::UpdateView() {
         } else if (!mPotentialUsers.empty()) {
             c14 = mPotentialUsers[0].mUser->ConnectedControllerType();
         }
-        if (c14 != kControllerNone) {
-            MetaPerformer *mp = MetaPerformer::Current();
-            bool b17 = true;
-            if (!InOverrideFlow(kOverrideFlow_SongSettings)
-                && !mOvershell->SongOptionsRequired())
-                b17 = false;
-            const char *cc2;
-            if (user && user->GetTrackType() != 10 && user->GetTrackType() != 11 && b17
-                && TheContentMgr.RefreshDone()) {
-                cc2 = GetUserFontChar(user, mp, 0);
-            } else {
-                cc2 = GetFontCharFromControllerType(c14, 0);
-            }
-            static Message msgUpdateControllerType("update_controller_type", c14, cc2);
-            msgUpdateControllerType[0] = c14;
-            msgUpdateControllerType[1] = cc2;
-            mOvershellDir->HandleType(msgUpdateControllerType);
+        // retail has no second `c14 != kControllerNone` test here
+        MetaPerformer *mp = MetaPerformer::Current();
+        bool b17 = InOverrideFlow(kOverrideFlow_SongSettings)
+            || mOvershell->SongOptionsRequired();
+        const char *cc2;
+        if (user && user->GetTrackType() != 10 && user->GetTrackType() != 11 && b17
+            && TheContentMgr.RefreshDone()) {
+            cc2 = GetUserFontChar(user, mp, 0);
+        } else {
+            cc2 = GetFontCharFromControllerType(c14, 0);
         }
+        static Message msgUpdateControllerType("update_controller_type", c14, cc2);
+        msgUpdateControllerType[0] = c14;
+        msgUpdateControllerType[1] = cc2;
+        mOvershellDir->HandleType(msgUpdateControllerType);
     }
+    bool i18 = false;
     bool b17 = false;
-    int i18 = 0;
-    bool b4e = true;
-    if (!mState->ShowsExtendedMicArrows() && !mOvershell->GetUseExtendedMicArrows())
-        b4e = false;
+    bool b4e =
+        mState->ShowsExtendedMicArrows() || mOvershell->GetUseExtendedMicArrows();
     GameMicManager *i4 = 0;
     bool b4f = c14 == 2;
     bool i2 = 0;
@@ -1326,33 +1335,43 @@ void OvershellSlot::UpdateView() {
         updateLocalStatusMsg[0] = user->IsLocal();
         mOvershellDir->HandleType(updateLocalStatusMsg);
         mSessionMgr->IsLocal();
+#ifdef HX_NATIVE
+        // rb3-Wii DEV-build only: retail X360 has no "update_restart_allowed"
+        // message here (no such string, and no guard bit, in fn_825DB930)
         static Message updateRestartAllowedMsg("update_restart_allowed", 0);
         updateRestartAllowedMsg[0] = mSessionMgr->IsLocalToLeader(user);
         mOvershellDir->HandleType(updateRestartAllowedMsg);
-        if (user->IsLocal()) {
+#endif
+        // retail X360 gates the local branch on the TU5-added User virtual too
+        if (user->IsLocal() && !user->UnkTU5Virtual_beforeUserName()) {
             b17 = c14 == 2;
             LocalBandUser *l14 = user->GetLocalBandUser();
-            int i7 = 0;
-            if (l14->HasOnlinePrivilege()
-                && !mBandUserMgr->AllLocalUsersInSessionAreGuests()) {
-                i7 = 1;
-            }
+            // retail reuses the HasOnlinePrivilege() result as the
+            // update_online_enabled argument (one shared byte slot)
+            i18 = l14->HasOnlinePrivilege();
+            bool i7 = i18 && !mBandUserMgr->AllLocalUsersInSessionAreGuests();
             static Message msgUpdateContinue("update_sign_in_continue", 0);
             msgUpdateContinue[0] = i7;
             mOvershellDir->HandleType(msgUpdateContinue);
             static Message updatePadNumMsg("update_pad_num", 0);
             updatePadNumMsg[0] = l14->GetPadNum() + 1;
             mOvershellDir->HandleType(updatePadNumMsg);
+#ifdef HX_NATIVE
+            // rb3-Wii DEV-build only: retail X360 has neither the
+            // UpdateProfilesList() call nor the RockCentral invitation flag here
             UpdateProfilesList();
+#endif
             i4 = TheGameMicManager;
-            if (TheGameMicManager) {
+            if (i4) {
                 i2 = i4->HasMic(MicClientID(0, -1));
                 i6 = i4->HasMic(MicClientID(1, -1));
                 i16 = i4->HasMic(MicClientID(2, -1));
             }
+#ifdef HX_NATIVE
             if (!l14->IsGuest() && l14->IsSignedIn() && TheRockCentral.unk111) {
                 b1 = true;
             }
+#endif
         } else {
             if (user->IsParticipating()) {
                 i18 = 1;
@@ -1361,6 +1380,7 @@ void OvershellSlot::UpdateView() {
                 );
                 updateRemoteFocus[0] = Symbol(user->GetOvershellFocus());
                 mState->HandleMsg(updateRemoteFocus);
+                static Message get_remote_status_msg("get_remote_status");
                 DataNode handled = Handle(get_remote_status_msg, false);
                 DataArrayPtr ptr;
                 if (handled.Type() != kDataUnhandled) {
@@ -1368,8 +1388,14 @@ void OvershellSlot::UpdateView() {
                 } else {
                     if (TheSessionMgr && TheNetSync->IsEnabled()) {
                         if (mSessionMgr->GetLeaderUser() == user) {
+                            static Symbol remote_status_leader_controlling(
+                                "remote_status_leader_controlling"
+                            );
                             ptr->Insert(0, remote_status_leader_controlling);
                         } else {
+                            static Symbol remote_status_waiting_on_leader(
+                                "remote_status_waiting_on_leader"
+                            );
                             ptr->Insert(0, remote_status_waiting_on_leader);
                         }
                     } else {
@@ -1390,9 +1416,17 @@ void OvershellSlot::UpdateView() {
             mOvershellDir->HandleType(updateShowVocalBg);
         }
         if (GetState()->InSongSettingsFlow() && MetaPerformer::Current()) {
+            // guard bits 14-18: a contiguous 5-symbol declaration group.
+            // keys/guitar are declared but never referenced in retail (their
+            // guard-init blocks are the only users of their storage).
+            static Symbol vocals("vocals");
+            static Symbol drum("drum");
+            static Symbol real_drum("real_drum");
+            static Symbol keys("keys");
+            static Symbol guitar("guitar");
             static Message updateSongDifficultyRanking(6);
             updateSongDifficultyRanking.SetType("update_song_difficulty_ranking");
-            int i9 = 0;
+            bool i9 = false;
             bool b19 = false;
             int i15 = 0;
             int i8 = 0;
@@ -1403,7 +1437,8 @@ void OvershellSlot::UpdateView() {
             Symbol s2bc = user->GetControllerSym();
             bool b50 = mp->IsRandomSetList();
             TrackType tt = user->GetTrackType();
-            if (tt - 10U <= 2) {
+            if (tt == 10 || tt == 11 || tt == 12) {
+                static Message get_focus_track_type_msg("get_focus_track_type");
                 DataNode handled = mState->HandleMsg(get_focus_track_type_msg);
                 if (handled.Type() != kDataUnhandled) {
                     tt = (TrackType)handled.Int();
@@ -1416,12 +1451,13 @@ void OvershellSlot::UpdateView() {
                     b21 = true;
             }
             Symbol s2c0 = TrackTypeToSym(tt);
-            if (tt - 10U > 2) {
+            if (tt != 10 && tt != 11 && tt != 12) {
                 i9 = mp->PartPlaysInSet(s2c0);
                 i15 = mp->GetHighestDifficultyForPart(s2c0);
                 b19 = mp->GetSongs().size() > 1;
                 if (s2bc == vocals) {
                     if (!b20) {
+                        static Message get_focus_is_harmony_msg("get_focus_is_harmony");
                         DataNode harmHandled =
                             mState->HandleMsg(get_focus_is_harmony_msg);
                         if (harmHandled.Type() != kDataUnhandled) {
@@ -1429,13 +1465,16 @@ void OvershellSlot::UpdateView() {
                         }
                     }
                     if (b20) {
-                        if (mp->GetSetlistMaxVocalParts() == 1) {
-                            i9 = 0;
+                        static Symbol harmony("harmony");
+                        i8 = mp->GetSetlistMaxVocalParts();
+                        if (i8 == 1) {
+                            i9 = false;
                         }
                         s2c0 = harmony;
                     } else
                         i8 = 1;
                 } else if (s2bc == drum) {
+                    static Message get_focus_is_prodrums_msg("get_focus_is_prodrums");
                     DataNode drumsHandled = mState->HandleMsg(get_focus_is_prodrums_msg);
                     if (drumsHandled.Type() != kDataUnhandled) {
                         b21 = drumsHandled.Int();
@@ -1465,15 +1504,22 @@ void OvershellSlot::UpdateView() {
                 setDifficultyRestriction[0] = mOvershell->GetMinimumDifficulty();
                 mOvershellDir->HandleType(setDifficultyRestriction);
             } else {
+                static Message clear_difficulty_restriction_msg(
+                    "clear_difficulty_restriction"
+                );
                 mOvershellDir->HandleType(clear_difficulty_restriction_msg);
             }
         }
     }
+#ifdef HX_NATIVE
+    // rb3-Wii DEV-build only: retail X360 emits nothing between the
+    // difficulty-restriction handling and the update_mics message
     if (b1) {
         HandleType(show_invitation_notification_msg);
     } else {
         HandleType(hide_invitation_notification_msg);
     }
+#endif
     static Message msgUpdateMics("update_mics", i4, 0, 0, 0, 0, 0, 0);
     msgUpdateMics[0] = i4;
     msgUpdateMics[1] = b17;
@@ -1793,7 +1839,17 @@ void OvershellSlot::InviteFriend(int i) {
     mOvershellDir->HandleType(inviteFriendMsg);
 }
 
-bool OvershellSlot::CanChangeSynapseOption() { return mSessionMgr != 0; }
+
+// Retail's body is a real 35-instruction out-of-line function (fn_825D97E8, 140
+// bytes): it fetches an object off `this`, early-outs true when null, rejects when
+// a global manager's count is >= 2, then compares a Symbol against a global and
+// consults one more bool predicate.  The callees are ICF-masked so the exact source
+// is not yet recoverable; what IS certain from OvershellSlot::Handle's
+// can_change_synapse_option arm is that retail CALLS it rather than inlining it.
+// Keep it out of line so the call shape at the use site stays correct.
+__declspec(noinline) bool OvershellSlot::CanChangeSynapseOption() {
+    return mSessionMgr != 0;
+}
 
 void OvershellSlot::UpdateProfilesList() {
     BandUser *pUser = GetUser();
@@ -1957,7 +2013,7 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION(toggle_lefty_flip, ToggleLeftyFlip())
     HANDLE_ACTION(show_choose_profile, ShowState(kState_ChooseProfile))
     HANDLE_ACTION(attempt_swap_user_profile, AttemptSwapUserProfile(_msg->Int(2)))
-    HANDLE_EXPR(confirm_swap_user_profile, ConfirmSwapUserProfile())
+    HANDLE_ACTION(confirm_swap_user_profile, ConfirmSwapUserProfile())
     HANDLE_ACTION(show_modifiers, ShowState(kState_Modifiers))
     HANDLE_ACTION(show_modifiers_drum_warning, ShowState(kState_ModifiersDrumWarning))
     HANDLE_ACTION(show_modifier_unlock, ShowState(kState_ModifierUnlock))
@@ -2028,7 +2084,13 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_MESSAGE(VirtualKeyboardResultMsg)
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_MESSAGE(ButtonUpMsg)
+#ifdef HX_NATIVE
+    // Retail X360 OvershellSlot::Handle has NO UserLoginMsg arm — objdiff shows the
+    // whole 30-instruction block as a base-only insert, and its two stack temps are
+    // exactly the +0x10 frame surplus (0x170 vs retail 0x160).  Kept for the native
+    // engine, dropped from the retail-match build.
     HANDLE_MESSAGE(UserLoginMsg)
+#endif
     HANDLE_MEMBER_PTR(mOvershellDir)
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0xE4D)

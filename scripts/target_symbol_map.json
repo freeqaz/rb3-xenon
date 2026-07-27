@@ -14481,6 +14481,7 @@
  "0x825da808": "?OnMsg@OvershellSlot@@QAA?AVDataNode@@ABVVirtualKeyboardResultMsg@@@Z",
  "0x825d8600": "?ShowState@OvershellSlot@@QAAXW4OvershellSlotStateID@@@Z",
  "0x825e1a58": "?Handle@OvershellSlot@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x825db930": "?UpdateView@OvershellSlot@@QAAXXZ",
  "0x825e0328": "??0PassiveMessageQueue@@QAA@PAVObject@Hmx@@@Z",
  "0x825e4f50": "?CanBeLaunched@AccomplishmentDiscSongConditional@@UBA_NXZ",
  "0x825e5658": "?Configure@AccomplishmentSetlist@@QAAXPAVDataArray@@@Z",

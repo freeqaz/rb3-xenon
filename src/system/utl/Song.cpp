@@ -491,10 +491,13 @@ void Song::SyncState() {
     auto _tmp4 = parserList.end();
     for (std::list<MidiParser *>::iterator it = parserList.begin(); it != _tmp4;
          ++it) {
-        if ((*it)->Sinks()) {
-            auto _tmp0 = (*it)->Sinks()->HasSink(MainDir());
-            if (_tmp0) {
-                parsers.push_back(*it);
+        MidiParser *parser = *it;
+        std::list<MsgSource::Sink>::iterator sinksEnd = parser->mSinks.end();
+        for (std::list<MsgSource::Sink>::iterator sit = parser->mSinks.begin();
+             sit != sinksEnd;
+             ++sit) {
+            if (sit->obj == MainDir()) {
+                parsers.push_back(parser);
             }
         }
     }

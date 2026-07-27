@@ -28,14 +28,14 @@ int ConvertPctHeightToHeightOG(float f) { return -Round(f * HEIGHT_SD); }
 
 UIFontImporter::UIFontImporter()
     : mUpperCaseAthroughZ(1), mLowerCaseAthroughZ(1), mNumbers0through9(1),
-      mPunctuation(1), mUpperEuro(1), mLowerEuro(1), mRussian(0), mPolish(0),
-      mIncludeLocale(0), mIncludeFile(""), mFontName("Arial"),
-      mFontPctSize(ConvertHeightNGToPctHeight(12)), mFontWeight(400), mItalics(false),
-      mDropShadow(0), mDropShadowOpacity(128), mFontQuality(0), mPitchAndFamily(34),
-      mFontCharset(0), mFontSupersample(0), mLeft(0), mRight(0), mTop(0), mBottom(0),
-      mFillWithSafeWhite(false), mFontToImportFrom(this), mGennedFonts(this),
-      mReferenceKerning(this), mMatVariations(this), mHandmadeFont(this), mCheckNG(false),
-      mLastGenWasNG(true), mBitmapSavePath("ui/image/"), mBitMapSaveName("temp.bmp") {
+      mPunctuation(1), mUpperEuro(1), mLowerEuro(1), mPlus(""), mMinus(""),
+      mFontName("Arial"), mFontPctSize(ConvertHeightNGToPctHeight(12)), mItalics(false),
+      mFontQuality(0), mFontWeight(400), mPitchAndFamily(34), mFontCharset(0),
+      mFontSupersample(0), mLeft(0), mRight(0), mTop(0), mBottom(0),
+      mFillWithSafeWhite(false), mFontToImportFrom(this), mBitmapSavePath("ui/image/"),
+      mBitMapSaveName("temp.bmp"), mGennedFonts(this), mReferenceKerning(this),
+      mMatVariations(this), mDefaultMat(this), mHandmadeFont(this), mCheckNG(false),
+      mSyncResource(), mLastGenWasNG(true) {
     static Symbol objects("objects");
     static Symbol default_bitmap_path("default_bitmap_path");
     DataArray *cfgArr =
@@ -71,12 +71,8 @@ BEGIN_PROPSYNCS(UIFontImporter)
     SYNC_PROP(punctuation, mPunctuation)
     SYNC_PROP(UPPER_EURO, mUpperEuro)
     SYNC_PROP(lower_euro, mLowerEuro)
-    SYNC_PROP(russian, mRussian)
-    SYNC_PROP(polish, mPolish)
-    SYNC_PROP(include_locale, mIncludeLocale)
-    SYNC_PROP(include_file, mIncludeFile)
-    SYNC_PROP_SET(plus, GetASCIIPlusChars(), ASCIItoWideVector(mPlus, _val.Str()))
-    SYNC_PROP_SET(minus, GetASCIIMinusChars(), ASCIItoWideVector(mMinus, _val.Str()))
+    SYNC_PROP(plus, mPlus)
+    SYNC_PROP(minus, mMinus)
     SYNC_PROP(font_name, mFontName)
     SYNC_PROP_MODIFY(font_pct_size, mFontPctSize, GenerateBitmapFilename())
     SYNC_PROP_SET(
@@ -101,8 +97,6 @@ BEGIN_PROPSYNCS(UIFontImporter)
         GenerateBitmapFilename()
     )
     SYNC_PROP_MODIFY(italics, mItalics, GenerateBitmapFilename())
-    SYNC_PROP_MODIFY(drop_shadow, mDropShadow, GenerateBitmapFilename())
-    SYNC_PROP(drop_shadow_opacity, mDropShadowOpacity)
     SYNC_PROP(font_quality, (int &)mFontQuality)
     SYNC_PROP(pitch_and_family, mPitchAndFamily)
     SYNC_PROP(font_charset, mFontCharset)
@@ -136,21 +130,12 @@ BEGIN_SAVES(UIFontImporter)
     bs << mPunctuation;
     bs << mUpperEuro;
     bs << mLowerEuro;
-    bs << mRussian;
-    bs << mPolish;
-    bs << mIncludeLocale;
-    bs << mIncludeFile;
-    String utf8;
-    WideVectorToUTF8(mPlus, utf8);
-    bs << utf8;
-    WideVectorToUTF8(mMinus, utf8);
-    bs << utf8;
+    bs << mPlus;
+    bs << mMinus;
     bs << mFontName;
     bs << mFontPctSize;
     bs << mFontWeight;
     bs << mItalics;
-    bs << mDropShadow;
-    bs << mDropShadowOpacity;
     bs << mPitchAndFamily;
     bs << mFontQuality;
     bs << mFontCharset;
@@ -179,18 +164,12 @@ BEGIN_COPYS(UIFontImporter)
         COPY_MEMBER(mPunctuation)
         COPY_MEMBER(mUpperEuro)
         COPY_MEMBER(mLowerEuro)
-        COPY_MEMBER(mRussian)
-        COPY_MEMBER(mPolish)
-        COPY_MEMBER(mIncludeLocale)
-        COPY_MEMBER(mIncludeFile)
         COPY_MEMBER(mPlus)
         COPY_MEMBER(mMinus)
         COPY_MEMBER(mFontName)
         COPY_MEMBER(mFontPctSize)
         COPY_MEMBER(mFontWeight)
         COPY_MEMBER(mItalics)
-        COPY_MEMBER(mDropShadow)
-        COPY_MEMBER(mDropShadowOpacity)
         COPY_MEMBER(mFontQuality)
         COPY_MEMBER(mPitchAndFamily)
         COPY_MEMBER(mFontQuality)
@@ -206,6 +185,7 @@ BEGIN_COPYS(UIFontImporter)
         COPY_MEMBER(mGennedFonts)
         COPY_MEMBER(mReferenceKerning)
         COPY_MEMBER(mMatVariations)
+        COPY_MEMBER(mDefaultMat)
         COPY_MEMBER(mHandmadeFont)
         COPY_MEMBER(mSyncResource)
         COPY_MEMBER(mLastGenWasNG)
@@ -223,23 +203,8 @@ BEGIN_LOADS(UIFontImporter)
     d >> mPunctuation;
     d >> mUpperEuro;
     d >> mLowerEuro;
-    if (d.rev > 0) {
-        d >> mRussian;
-        d >> mPolish;
-        d >> mIncludeLocale;
-        d >> mIncludeFile;
-    }
-    String plus;
-    String minus;
-    d >> plus;
-    d >> minus;
-    if (d.rev < 4) {
-        ASCIItoWideVector(mPlus, plus.c_str());
-        ASCIItoWideVector(mMinus, minus.c_str());
-    } else {
-        UTF8toWideVector(mPlus, plus.c_str());
-        UTF8toWideVector(mMinus, minus.c_str());
-    }
+    d >> mPlus;
+    d >> mMinus;
     d >> mFontName;
     if (d.rev <= 4) {
         int height;
@@ -250,12 +215,6 @@ BEGIN_LOADS(UIFontImporter)
     }
     d >> mFontWeight;
     d >> mItalics;
-    if (d.rev > 1) {
-        d >> mDropShadow;
-    }
-    if (d.rev > 2) {
-        d >> mDropShadowOpacity;
-    }
     d >> mPitchAndFamily;
     d >> mFontQuality;
     d >> mFontCharset;
@@ -359,11 +318,10 @@ void UIFontImporter::GenerateBitmapFilename() {
 
     class String s28(MakeString("%.2f", mFontPctSize * 100.0f));
     s28.ReplaceAll('.', '_');
-    const char *s = mDropShadow ? "S" : "";
     const char *b = (mFontWeight > 500) ? "B" : "";
     const char *i = mItalics ? "I" : "";
     mBitMapSaveName =
-        MakeString("%s(%s)%s%s%s%s.bmp", mFontName.c_str(), s28.c_str(), i, b, s, mult);
+        MakeString("%s(%s)%s%s%s.bmp", mFontName.c_str(), s28.c_str(), i, b, mult);
     mBitMapSaveName.ReplaceAll(' ', '_');
 }
 
@@ -411,13 +369,8 @@ void UIFontImporter::OnSetCharsetUTF8(String const &s) {
     mNumbers0through9 = false;
     mLowerCaseAthroughZ = false;
     mUpperCaseAthroughZ = false;
-    mIncludeLocale = false;
-    mPolish = false;
-    mRussian = false;
-    mIncludeFile = "";
-    mMinus.clear();
-    mPlus.clear();
-    UTF8toWideVector(mPlus, s.c_str());
+    mMinus = "";
+    mPlus = s;
 }
 
 RndText *UIFontImporter::FindTextForFont(RndFontBase *font) const {
@@ -438,13 +391,13 @@ RndText *UIFontImporter::FindTextForFont(RndFontBase *font) const {
 
 String UIFontImporter::GetASCIIPlusChars() {
     static String plusChars;
-    plusChars = WideVectorToASCII(mPlus);
+    plusChars = mPlus;
     return plusChars;
 }
 
 String UIFontImporter::GetASCIIMinusChars() {
     static String minusChars;
-    minusChars = WideVectorToASCII(mMinus);
+    minusChars = mMinus;
     return minusChars;
 }
 
@@ -563,12 +516,9 @@ void UIFontImporter::HandmadeFontChanged() {
         mNumbers0through9 = false;
         mLowerCaseAthroughZ = false;
         mUpperCaseAthroughZ = false;
-        mIncludeLocale = false;
-        mPolish = false;
-        mRussian = false;
-        mIncludeFile = "";
-        mMinus.clear();
-        mPlus = mHandmadeFont->Chars();
+        mMinus = "";
+        std::vector<unsigned short> thechars(mHandmadeFont->Chars());
+        mPlus = WideVectorToASCII(thechars);
     }
     if (mHandmadeFont) {
         RndFont3d::StaticClassName();
@@ -642,18 +592,12 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
                 mPunctuation = labelDir->mPunctuation;
                 mUpperEuro = labelDir->mUpperEuro;
                 mLowerEuro = labelDir->mLowerEuro;
-                mRussian = labelDir->mRussian;
-                mPolish = labelDir->mPolish;
-                mIncludeLocale = labelDir->mIncludeLocale;
-                mIncludeFile = labelDir->mIncludeFile;
                 mPlus = labelDir->mPlus;
                 mMinus = labelDir->mMinus;
                 mFontName = labelDir->mFontName;
                 mFontPctSize = labelDir->mFontPctSize;
                 mFontWeight = labelDir->mFontWeight;
                 mItalics = labelDir->mItalics;
-                mDropShadow = labelDir->mDropShadow;
-                mDropShadowOpacity = labelDir->mDropShadowOpacity;
                 mFontQuality = labelDir->mFontQuality;
                 mPitchAndFamily = labelDir->mPitchAndFamily;
                 mFontQuality = labelDir->mFontQuality;

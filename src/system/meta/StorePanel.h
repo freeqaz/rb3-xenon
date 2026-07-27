@@ -73,6 +73,7 @@ public:
     void SetSource(Symbol src, bool backup);
     void ExitError(StoreError);
     void HandleNetCacheMgrFailure();
+    void FinishCheckout();
     void HandleNetCacheLoaderFailure(int);
     bool IsEnumerating() const;
     bool InCheckout() const;

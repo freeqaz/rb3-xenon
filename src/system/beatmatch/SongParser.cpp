@@ -1690,7 +1690,10 @@ bool SongParser::CheckKeyboardRangeMarker(int tick, int pitch, bool b) {
 void SongParser::ParseText(int tick, const char *text) {
     if (strneq(text, "mix", 3)) {
         const char *t4 = text + 4;
-        if ((unsigned char)(text[4] - 0x30) > 9) {
+        // Retail compares the digit range EXPLICITLY through t4
+        // (lbz/extsb/cmpwi 0x30/blt + cmpwi 0x39/bgt), not with the
+        // (unsigned)(c-'0') > 9 range trick.
+        if (*t4 < '0' || *t4 > '9') {
             MILO_WARN(
                 "%s (%s): improperly formatted mix event '[%s' at %s",
                 mFilename,
@@ -1716,7 +1719,9 @@ void SongParser::ParseText(int tick, const char *text) {
                     mDrumSubmixDifficultyMask |= (1 << consumed);
                     int lookup[] = {2, 4, 5, 6, 3};
                     int idx = (signed char)buf[5] - 0x30;
-                    if ((unsigned)idx > 4) {
+                    // Retail splits the bounds test explicitly (subic./blt +
+                    // cmpwi 0x5/bge), not the (unsigned)idx > 4 range trick.
+                    if (idx < 0 || idx >= 5) {
                         MILO_WARN(
                             "%s (%s): bad mix '%s' at %s",
                             mFilename,
