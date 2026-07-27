@@ -86,12 +86,14 @@ public:
     virtual void Exit();
     // ObjectDir
     virtual void SyncObjects();
-    // Kept virtual even though RndDir::CollideListSubParts is now non-virtual:
-    // Character reintroduces it as its own virtual at the same inherited-region
-    // slot (11), so the Character vtable stays byte-identical to the pre-change
-    // build (retail Character's true layout has a compensating missing draw
-    // virtual; this preserves the existing coincidental byte-match).
-    virtual void
+    // NON-virtual, same as RndDir::CollideListSubParts (see rndobj/Dir.h): the
+    // rb3-Wii oracle's Character declares no CollideListSubParts at all, and
+    // retail's BandCharacter vtable puts Teleport at inherited-region slot 11
+    // (measured: OnCamTeleport/OnClosetTeleport vcall `lwz r11,0x2c(r11)` vs our
+    // 0x30). Keeping it virtual here reinserted the bogus DC3 slot that Dir.h
+    // had already removed, shifting Teleport and every Character virtual after
+    // it by +1 in every Character-descendant vtable.
+    void
     CollideListSubParts(const Segment &, std::list<RndDrawable::Collision> &);
 
     virtual void Teleport(Waypoint *);
@@ -99,6 +101,11 @@ public:
     virtual void CalcBoundingSphere();
     virtual bool MakeWorldSphere(Sphere &, bool);
     virtual float ComputeScreenSize(RndCam *);
+    // Virtual, and declared HERE (right after ComputeScreenSize, before GetEyes)
+    // to match retail's inherited-region slot order — same position the rb3-Wii
+    // oracle's Character gives it. This slot is what the old bogus virtual
+    // CollideListSubParts was accidentally compensating for.
+    virtual void DrawLodOrShadow(int, DrawMode);
     DRAW_DC3_VIRTUAL void DrawOpaque();
     DRAW_DC3_VIRTUAL void DrawTranslucent();
     virtual CharEyes *GetEyes();
@@ -124,7 +131,6 @@ public:
     void CopyBoundingSphere(Character *);
     CharServoBone *BoneServo();
     void DrawLod(int);
-    void DrawLodOrShadow(int, DrawMode);
     void SetTeleport(bool t) { mTeleported = t; }
     void SetTeleported(bool t) { mTeleported = t; }
     void SetFrozen(bool b) { mFrozen = b; }
