@@ -243,6 +243,37 @@ reached through a relocation, and scoring runs with `functionRelocDiffs=none`, s
 by construction the count cannot move. A fix that clears divergence and holds the
 count is the win condition for this lane.
 
+## 5.1 Verification (b): the census re-run
+
+`scripts/harvest/reloc_correspondence.py --census` re-run in the worktree after
+the final build (39,736 functions, 848 live units) and joined back onto the
+109-entry worklist:
+
+| post-fix verdict of the 109 | n |
+|---|--:|
+| **CORRESPONDING** (was DIVERGENT) | **18** |
+| **UNRESOLVABLE, divergent slot gone** (`n_diverge` = 0) | **25** |
+| still DIVERGENT | 66 |
+
+**43 of 109 cleared, every one of them with `n_diverge` = 0** — the mission's
+acceptance criterion ("clears to CORRESPONDING, or at worst UNDECIDABLE with the
+divergent slot gone"). Several fixes cleared more than one entry: the single
+`RAD2DEG` literal cleared `Trans`×2, `Trig`×3, `Console`, `Part::AngleVectorSync`,
+`CameraShot` and `Waypoint`.
+
+The 66 that remain decompose exactly as §3 predicted: **24 template twins, 15
+anonymous-`fn_` targets, 27 other** (the refuted attribution errors plus the
+deferred deep cases of §4). Nothing in the residue is an unfixed operand defect
+that this lane identified and skipped.
+
+`BandCharacter::PlayFaceClip` is worth noting: it now reads CORRESPONDING with
+zero divergent slots **without having been edited**, which independently supports
+the decision (§3.4) not to "fix" it against two agreeing oracles.
+
+Tree-wide DIVERGENT moved 2,036 → 1,982; the two censuses have different
+baselines (39,520 vs 39,736 functions after main advanced), so treat that as
+directional only.
+
 ## 6. Is a standing scanner worth it?
 
 **Yes, and the unexamined remainder is large.** From laneBH's own census
