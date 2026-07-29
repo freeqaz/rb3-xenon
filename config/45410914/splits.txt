@@ -12974,3 +12974,37 @@ band3/meta_band/LockStepMgr.cpp:
 	.pdata      start:0x82222038 end:0x822221F0
 	.text       start:0x825AB138 end:0x825AB3B8
 	.text       start:0x825AB408 end:0x825ACA70
+
+
+system/utl/LogFile.cpp:
+	.pdata      start:0x822429B8 end:0x822429E8
+	.text       start:0x827CBEF8 end:0x827CC150
+
+
+band3/game/HitTracker.cpp:
+	.pdata      start:0x82236158 end:0x82236190
+	.text       start:0x826E34E0 end:0x826E3808
+
+
+system/beatmatch/SlotChannelMapping.cpp:
+	.pdata      start:0x8223F558 end:0x8223F600
+	.text       start:0x82793F8C end:0x82794730
+
+
+band3/meta_band/Asset.cpp:
+	.pdata      start:0x82226A98 end:0x82226AD8
+	.text       start:0x825EF708 end:0x825EFB34
+
+
+band3/meta_band/LockStepMgr.cpp:
+	.pdata      start:0x82221FF0 end:0x82222030
+	.pdata      start:0x82222038 end:0x822221F0
+	.text       start:0x825AB138 end:0x825AB3B8
+	.text       start:0x825AB408 end:0x825ACA70
+
+
+band3/meta_band/UGCPurchasePanel.cpp:
+	.pdata      start:0x8222BCB0 end:0x8222BD60
+	.pdata      start:0x8222BD68 end:0x8222BDD8
+	.text       start:0x8263E6A0 end:0x8263F2F0
+	.text       start:0x8263F318 end:0x8263F910

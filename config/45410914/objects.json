@@ -246,6 +246,23 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "system/utl/LogFile.cpp": "NonMatching",
+   "band3/game/HitTracker.cpp": "NonMatching",
+   "system/beatmatch/SlotChannelMapping.cpp": "NonMatching",
+   "band3/meta_band/Asset.cpp": "NonMatching",
+   "band3/meta_band/LockStepMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/UGCPurchasePanel.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_SYNCPROP_LOCAL_STATIC"
+    ]
+   },
    "system/synth_xbox/FxSend.cpp": "NonMatching",
    "system/utl/Pool.cpp": "NonMatching",
    "system/utl/VarTimer.cpp": "NonMatching",

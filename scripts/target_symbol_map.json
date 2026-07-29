@@ -27196,5 +27196,17 @@
  "0x825ab4b8": "??0LockStepCompleteMsg@@QAA@_N@Z",
  "0x825ab598": "??0ReleasingLockStepMsg@@QAA@_N@Z",
  "0x825ab930": "?GetWaitingMachine@WaitList@LockStepMgr@@QBAPBVWaitingMachine@12@PAVBandMachine@@@Z",
- "0x825ac758": "?StartLock@LockStepMgr@@QAAXXZ"
+ "0x825ac758": "?StartLock@LockStepMgr@@QAAXXZ",
+ "0x8263e6a0": "??0UGCPurchasePanel@@QAA@XZ",
+ "0x8263e8c0": "?Unload@UGCPurchasePanel@@UAAXXZ",
+ "0x8263e9f8": "?SetType@UGCPurchasePanel@@UAAXVSymbol@@@Z",
+ "0x8263eb68": "??_GUGCPurchasePanel@@UAAPAXI@Z",
+ "0x8263ebb8": "?OnMsg@UGCPurchasePanel@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
+ "0x8263ecf8": "??$PropSync@VLocalBandUser@@@@YA_NAAPAVLocalBandUser@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8263f530": "?Handle@UGCPurchasePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8263e800": "?Enter@UGCPurchasePanel@@UAAXXZ",
+ "0x8263e888": "?Exit@UGCPurchasePanel@@UAAXXZ",
+ "0x8263edf0": "?Poll@UGCPurchasePanel@@UAAXXZ",
+ "0x8263f320": "?OnMsg@UGCPurchasePanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
+ "0x8263f7a0": "?SyncProperty@UGCPurchasePanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
 }

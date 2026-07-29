@@ -1,6 +1,7 @@
 #pragma once
 #include "game/BandUser.h"
 #include "meta/StoreEnumeration.h"
+#include "meta/StorePurchaser.h"
 #include "net_band/DataResults.h"
 #include "net_band/RockCentralMsgs.h"
 #include "ui/UIPanel.h"
