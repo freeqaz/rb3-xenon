@@ -119,16 +119,22 @@ def find_overlaps(splits_path, section="text"):
     rs = [r for r in parse_ranges(splits_path)
           if r.section == section and r.hi > r.lo]
     rs.sort(key=lambda r: (r.lo, r.hi))
+    # prefix_max_hi[j] = max(hi) over rs[0..j].  The back-scan below must stop
+    # only when NO earlier range can reach cur.lo -- stopping at the first
+    # non-reaching NEIGHBOR (the pre-2026-07-29 behavior, `rs[j].hi > cur.lo`
+    # as the loop condition) silently missed a WIDE early range swallowing a
+    # later small one whenever a short non-overlapping range sat between them
+    # (found by splits_move.py's synthetic wide-swallow audit test).
+    prefix_max_hi = []
+    m = 0
+    for r in rs:
+        m = max(m, r.hi)
+        prefix_max_hi.append(m)
     overlaps = []
     for i in range(1, len(rs)):
-        prev = rs[i - 1]
         cur = rs[i]
-        # Because rs is sorted by lo, the only candidate for `cur` to overlap is
-        # `prev` (and any earlier range whose hi reaches past cur.lo). Scan back
-        # over every preceding range that could still reach cur.lo so we don't
-        # miss a wide range that swallows several small ones.
         j = i - 1
-        while j >= 0 and rs[j].hi > cur.lo:
+        while j >= 0 and prefix_max_hi[j] > cur.lo:
             other = rs[j]
             if other.lo < cur.hi and cur.lo < other.hi:
                 overlaps.append(OverlapPair(other, cur))

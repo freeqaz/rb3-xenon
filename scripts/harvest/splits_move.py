@@ -91,6 +91,33 @@ SUBCOMMANDS
   audit  --worktree WT            (cross-unit overlap / inversion / dup-block)
 
 `apply` re-runs `audit` on the result and refuses to write on any finding.
+
+SYMBOL-BOUNDARY GATE (laneAY defect, fixed 2026-07-29)
+------------------------------------------------------
+dtk's `validate_splits` hard-fails any split range whose boundary falls
+STRICTLY INSIDE a carved function:
+
+  Failed: Split <unit> .text (0xAAAA..0xBBBB) ends within symbol 'fn_X' (0xC..0xD)
+
+`scan` used to emit exactly such proposals -- a `target_symbol_map.json` VA
+with no matching carve in `symbols.txt` (ICF fold / mis-carve: the named VA
+sits INSIDE a larger carved fn) got `size 0 -> span va..va+4`, mid-symbol --
+and `apply --dry` printed "audit clean" for them because the audit never
+consulted `symbols.txt`.  8 such proposals were live on 2026-07-29; every one
+would have hard-stopped the build at SPLIT.  Both `scan` and `apply` now
+refuse any span whose start or end lies strictly inside a carved symbol
+(boundaries at a symbol start, at a symbol end, or in an inter-function
+alignment gap are fine -- that is precisely dtk's acceptance set), and each
+prints a REFUSAL COUNTER so the discard is visible, never silent.
+
+CAVEAT: `config/45410914/symbols.txt` is BOTH a dtk input and a regenerated
+output.  If it has drifted from git (a prior build regenerated it), boundary
+verdicts are computed against the drifted geometry; `apply` prints a WARN when
+the file is git-dirty.  `git checkout -- config/45410914/symbols.txt` first.
+
+`.pdata` is DERIVED OUTPUT (jeff/src/util/split.rs `split_pdata`, cleared and
+re-derived from `.text` on every run) -- this tool never writes or carries
+`.pdata` lines; it only deletes them together with an emptied donor block.
 """
 import argparse
 import bisect
@@ -99,8 +126,12 @@ import json
 import os
 import re
 import struct
+import subprocess
 import sys
 from collections import Counter, defaultdict
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from overlap_check import find_overlaps  # noqa: E402  (shared .text overlap gate)
 
 IMAGE_SYM_CLASS_EXTERNAL = 2
 IMAGE_SYM_CLASS_STATIC = 3
@@ -150,13 +181,39 @@ def text_ranges(units):
 
 
 def parse_symbols(path):
-    """[(va, size)] sorted -- every function dtk carved."""
+    """[(va, size, name)] sorted -- every function dtk carved."""
     out = []
     for line in open(path):
         m = SYM_RE.match(line)
         if m:
-            out.append((int(m.group(2), 16), int(m.group(3), 16)))
+            out.append((int(m.group(2), 16), int(m.group(3), 16), m.group(1)))
     out.sort()
+    return out
+
+
+def sym_boundary_violation(va, syms, starts):
+    """The carved symbol whose INTERIOR contains `va`, as (name, s, e); else None.
+
+    dtk's `validate_splits` rejects any split range boundary strictly inside a
+    carved function ("ends within symbol").  Accepted: `va` exactly at a symbol
+    start, exactly at a symbol end, or in an inter-function alignment gap --
+    mirroring dtk's own acceptance set, no wider and no narrower."""
+    i = bisect.bisect_right(starts, va) - 1
+    if i < 0:
+        return None
+    s, sz, name = syms[i]
+    if s < va < s + sz:
+        return (name, s, s + sz)
+    return None
+
+
+def span_boundary_violations(start, end, syms, starts):
+    """[(which, va, (name, s, e)), ...] for each misaligned edge of [start, end)."""
+    out = []
+    for which, va in (('start', start), ('end', end)):
+        v = sym_boundary_violation(va, syms, starts)
+        if v:
+            out.append((which, va, v))
     return out
 
 
@@ -298,8 +355,8 @@ def scan(worktree, offunit_path=None, min_size=0):
     tr = text_ranges(units)
     cov = Coverage(tr)
     syms = parse_symbols(os.path.join(cfg, 'symbols.txt'))
-    sym_starts = [v for v, _ in syms]
-    sizes = dict(syms)
+    sym_starts = [v for v, _, _ in syms]
+    sizes = {v: sz for v, sz, _ in syms}
     raw = json.load(open(os.path.join(worktree,
                                       'scripts/target_symbol_map.json')))
     vamap = {}
@@ -349,6 +406,7 @@ def scan(worktree, offunit_path=None, min_size=0):
     by_va = {r['va']: r for r in recs}
     ordered = sorted(by_va)
     proposals = []
+    refused = []          # mid-symbol spans dtk would reject -- never emitted
     i = 0
     while i < len(ordered):
         r = by_va[ordered[i]]
@@ -407,6 +465,23 @@ def scan(worktree, offunit_path=None, min_size=0):
         if end <= start:
             i = j + 1
             continue
+        # SYMBOL-BOUNDARY GATE: a span edge strictly inside a carved function
+        # would make dtk hard-fail ("ends within symbol").  Typical cause: the
+        # map names a VA that symbols.txt carved INSIDE a larger fn (ICF fold /
+        # mis-carve), so size lookup fails and the span degenerates to va..va+4
+        # mid-symbol.  Refuse -- visibly -- instead of emitting.
+        viols = span_boundary_violations(start, end, syms, sym_starts)
+        if viols:
+            refused.append(dict(
+                donor=donor, claimant=claimant,
+                start=hex(start), end=hex(end),
+                names=[by_va[v]['name'] for v in ordered[i:j + 1]
+                       if by_va[v]['cls'] == 'WRONG-UNIT'][:4],
+                violations=[
+                    '%s 0x%X inside %s (0x%X..0x%X)' % (w, va, n, s, e)
+                    for w, va, (n, s, e) in viols]))
+            i = j + 1
+            continue
         n_wrong = sum(1 for v in ordered[i:j + 1]
                       if by_va[v]['cls'] == 'WRONG-UNIT')
         # positional-pairing exposure: every carved function in the span is a
@@ -424,7 +499,7 @@ def scan(worktree, offunit_path=None, min_size=0):
                 names=[by_va[v]['name'] for v in ordered[i:j + 1]
                        if by_va[v]['cls'] == 'WRONG-UNIT'][:8]))
         i = j + 1
-    return stats, proposals, recs
+    return stats, proposals, recs, refused
 
 
 def _claim_distance(unit_key, tranges, va):
@@ -521,6 +596,23 @@ def apply_moves(worktree, moves, dry=False):
     path = os.path.join(worktree, 'config/45410914/splits.txt')
     lines = open(path).read().split('\n')
 
+    # symbols.txt gives the carved-function geometry the boundary gate needs.
+    # It is BOTH a dtk input and a regenerated output -- if it has drifted from
+    # git, verdicts are computed against drifted geometry: warn.
+    sym_rel = 'config/45410914/symbols.txt'
+    syms = parse_symbols(os.path.join(worktree, sym_rel))
+    sym_starts = [v for v, _, _ in syms]
+    try:
+        r = subprocess.run(['git', '-C', worktree, 'diff', '--quiet',
+                            '--', sym_rel], stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL)
+        if r.returncode:
+            print('WARN: %s is git-dirty (build-regenerated drift?) -- '
+                  'boundary verdicts use the drifted geometry; consider '
+                  '`git checkout -- %s` first' % (sym_rel, sym_rel))
+    except OSError:
+        pass
+
     def blocks():
         """{unit: (hdr_idx, [line indices of its .text lines])}"""
         out, cur = {}, None
@@ -538,9 +630,20 @@ def apply_moves(worktree, moves, dry=False):
         return out
 
     applied, refused = [], []
+    n_boundary_refused = 0
     for mv in moves:
         donor, claimant = mv['donor'], mv['claimant']
         s, e = int(str(mv['start']), 16), int(str(mv['end']), 16)
+        # SYMBOL-BOUNDARY GATE: refuse exactly what dtk's validate_splits
+        # rejects -- a boundary strictly inside a carved function.
+        viols = span_boundary_violations(s, e, syms, sym_starts)
+        if viols:
+            n_boundary_refused += 1
+            refused.append((mv, '; '.join(
+                "%s 0x%X inside symbol '%s' (0x%X..0x%X) -- dtk would fail "
+                "\"ends within symbol\"" % (w, va, n, ss, se)
+                for w, va, (n, ss, se) in viols)))
+            continue
         b = blocks()
         if donor not in b:
             refused.append((mv, 'donor block not found'))
@@ -614,10 +717,21 @@ def apply_moves(worktree, moves, dry=False):
     open(tmp, 'w').write(text)
     units = parse_splits(tmp)
     findings = audit(units, verbose=False)
+    # shared .text overlap gate (scan-back catches wide-swallows-several-small
+    # cases the adjacent-pair audit above can miss).  .pdata is NOT gated here:
+    # it is derived output, cleared + re-derived by dtk's split_pdata each run.
+    ovl = find_overlaps(tmp, section='text')
     dups = audit_dup_blocks(tmp) + [('EMPTY', u) for u in _empty_blocks(tmp)]
-    if findings or dups:
+    if n_boundary_refused:
+        print('refused %d move(s) on the symbol-boundary gate '
+              '(dtk "ends within symbol")' % n_boundary_refused)
+    for mv, why in refused:
+        print('  refused:', mv, '--', why)
+    if findings or dups or ovl:
         print('REFUSING TO WRITE -- post-move audit failed:')
         audit(units)
+        for op in ovl:
+            print('  !!', op.describe())
         for d in dups:
             print('  !! BAD BLOCK', d)
         os.unlink(tmp)
@@ -630,8 +744,6 @@ def apply_moves(worktree, moves, dry=False):
     os.replace(tmp, path)
     print('applied %d move(s), refused %d; audit clean'
           % (len(applied), len(refused)))
-    for mv, why in refused:
-        print('  refused:', mv, '--', why)
     return applied, refused, True
 
 
@@ -661,6 +773,9 @@ def main():
         path = os.path.join(a.worktree, 'config/45410914/splits.txt')
         units = parse_splits(path)
         f = audit(units)
+        ovl = find_overlaps(path, section='text')
+        for op in ovl:
+            print('  !!', op.describe())
         dups = audit_dup_blocks(path)
         empties = _empty_blocks(path)
         for d in dups:
@@ -668,13 +783,25 @@ def main():
         for d in empties:
             print('  !! EMPTY BLOCK (sectionless stub obj -> objdiff report'
                   ' hard-fails)', d)
-        print('audit: %d range finding(s), %d duplicate block(s),'
-              ' %d empty block(s)' % (len(f), len(dups), len(empties)))
-        return 1 if (f or dups) else 0
+        print('audit: %d range finding(s), %d overlap(s), %d duplicate'
+              ' block(s), %d empty block(s)'
+              % (len(f), len(ovl), len(dups), len(empties)))
+        # NB: empties USED to be printed but not gated -- a silent pass on a
+        # guaranteed report-generation hard-fail.  Gate on everything.
+        return 1 if (f or ovl or dups or empties) else 0
 
     if a.cmd == 'scan':
-        stats, props, recs = scan(a.worktree, a.offunit, a.min_size)
+        stats, props, recs, brefused = scan(a.worktree, a.offunit, a.min_size)
         print('classification:', dict(stats))
+        if brefused:
+            print('\nREFUSED %d proposal(s) on the symbol-boundary gate -- a'
+                  ' span edge lies strictly inside a carved function, dtk'
+                  ' would hard-fail "ends within symbol":' % len(brefused))
+            for r in brefused:
+                print('  %-30s -> %-30s %s..%s  [%s]  names=%s'
+                      % (r['donor'][:30], r['claimant'][:30], r['start'],
+                         r['end'], '; '.join(r['violations']),
+                         ','.join(r['names'])))
         props.sort(key=lambda p: -p['size'])
         print('\n%d move proposal(s); top %d by size:' % (len(props), a.top))
         print('%-34s %-34s %-11s %-11s %6s %5s %5s %s'
@@ -690,6 +817,10 @@ def main():
             json.dump([r for r in recs if r['cls'] == 'WRONG-UNIT'],
                       open(a.out.replace('.json', '_records.json'), 'w'),
                       indent=1)
+            if brefused:
+                json.dump(brefused,
+                          open(a.out.replace('.json', '_refused.json'), 'w'),
+                          indent=1)
             print('->', a.out)
         return 0
 
