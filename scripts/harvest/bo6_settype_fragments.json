@@ -1,0 +1,1315 @@
+[
+ {
+  "va": "0x8227dfa8",
+  "old": "?SyncProperty@BandCharacter@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "new": "?SetType@BandCharDesc@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "BandCharacter",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@BandCharDesc@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/BandCharacter",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x822897b8",
+  "old": null,
+  "new": "?SetType@BandCharacter@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_8228732C_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@BandCharacter@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/BandCharacter",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x822ae7b8",
+  "old": "?SetType@DxTexRenderer@@UAAXVSymbol@@@Z",
+  "new": "?SetType@PatchRenderer@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "BandSwatch",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@PatchRenderer@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/BandSwatch",
+   0.0
+  ]
+ },
+ {
+  "va": "0x822d9e38",
+  "old": "?Copy@CharWeightable@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": "Waypoint",
+  "tgt_size": 316,
+  "evidence": "name provably wrong at this VA (retail body is OBJ_SET_TYPE for StreakMeter) but the true name is unavailable in this unit -> unmapped beats wrongly-mapped",
+  "now_pct": null
+ },
+ {
+  "va": "0x822f0480",
+  "old": "?SetType@CharBoneDir@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x822f0f20",
+  "old": "?Load@CharBoneTwist@@UAAXAAVBinStream@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": "CharBoneDir",
+  "tgt_size": 316,
+  "evidence": "name provably wrong at this VA (retail body is OBJ_SET_TYPE for CharBone) but the true name is unavailable in this unit -> unmapped beats wrongly-mapped",
+  "now_pct": null
+ },
+ {
+  "va": "0x822f12d8",
+  "old": "?SetType@CharBoneTwist@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x82311ed8",
+  "old": null,
+  "new": "?SetType@CrowdAudio@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "CrowdAudio",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CrowdAudio@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CrowdAudio",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82316470",
+  "old": "?PostLoad@InlineHelp@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@InlineHelp@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "InlineHelp",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@InlineHelp@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/InlineHelp",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82319c48",
+  "old": null,
+  "new": "?SetType@BandStoreUIPanel@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "MetaPanel",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@BandStoreUIPanel@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/MetaPanel",
+   99.8481
+  ]
+ },
+ {
+  "va": "0x8231a9a8",
+  "old": null,
+  "new": "?SetType@MeterDisplay@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_8231A8D0_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@MeterDisplay@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/MeterDisplay",
+   62.848103
+  ]
+ },
+ {
+  "va": "0x823419a8",
+  "old": "?Copy@HamLabel@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@BandLabel@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "BandLabel",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@BandLabel@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/BandLabel",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8236cb88",
+  "old": null,
+  "new": "?SetType@CharBonesObject@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_8236CB78_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharBonesObject@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Char",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8236e600",
+  "old": null,
+  "new": "?SetType@RndTransformable@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "Character",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndTransformable@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Character",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823724c8",
+  "old": "?Replace@CharWeightable@@MAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "new": "?SetType@Character@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "Character",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@Character@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Character",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82375d60",
+  "old": null,
+  "new": "?SetType@CharServoBone@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82375D58_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharServoBone@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharServoBone",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82377b98",
+  "old": "?Replace@CharDriver@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "new": "?SetType@CharDriver@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharDriver",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharDriver@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharDriver",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8237a600",
+  "old": "?SetType@CharDriver@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x82380cf0",
+  "old": null,
+  "new": "?SetType@CharClip@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82380CE8_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharClip@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharClip",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82388838",
+  "old": "?Replace@CharEyes@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "new": "?SetType@CharEyes@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharEyes",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharEyes@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharEyes",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82394770",
+  "old": null,
+  "new": "?SetType@FileMerger@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "FileMerger",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@FileMerger@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/FileMerger",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82397f70",
+  "old": null,
+  "new": "?SetType@CharIKHand@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "FileMerger",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharIKHand@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/FileMerger",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8239b4e8",
+  "old": "?Highlight@CharCollide@@UAAXXZ",
+  "new": "?SetType@CharCollide@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharCollide",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharCollide@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharCollide",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8239dcb8",
+  "old": "?Load@CharCuff@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharCuff@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharCuff",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharCuff@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharCuff",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823a2a00",
+  "old": "?Load@CharFaceServo@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharFaceServo@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharFaceServo",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharFaceServo@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharFaceServo",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823a4880",
+  "old": "?Load@CharBoneOffset@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharBoneOffset@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharBoneOffset",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharBoneOffset@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharBoneOffset",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823a4bc0",
+  "old": "?SetType@CharBoneOffset@@UAAXVSymbol@@@Z",
+  "new": "?Load@CharBoneOffset@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/CharBoneOffset",
+   2.5
+  ]
+ },
+ {
+  "va": "0x823a9da0",
+  "old": null,
+  "new": "?SetType@CharHair@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "CharHair",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharHair@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharHair",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823aec90",
+  "old": "?Load@CharWeightable@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharWeightable@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharWeightable",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharWeightable@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharWeightable",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823b6580",
+  "old": null,
+  "new": "?SetType@CharBoneDir@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "CharBoneDir",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharBoneDir@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharBoneDir",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823b7fe8",
+  "old": null,
+  "new": "?SetType@CharBoneTwist@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "CharBoneDir",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharBoneTwist@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharBoneDir",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823bf650",
+  "old": "?Load@CharIKFoot@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharIKFoot@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharIKFoot",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharIKFoot@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharIKFoot",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823bfb88",
+  "old": "?SetType@CharIKFoot@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x823c2ba0",
+  "old": "?Load@CharPosConstraint@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharPosConstraint@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharPosConstraint",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharPosConstraint@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharPosConstraint",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823c2ee8",
+  "old": "?SetType@CharPosConstraint@@UAAXVSymbol@@@Z",
+  "new": "?Load@CharPosConstraint@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/CharPosConstraint",
+   18.584415
+  ]
+ },
+ {
+  "va": "0x823c5198",
+  "old": null,
+  "new": "?SetType@CharIKRod@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "CharIKRod",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharIKRod@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharIKRod",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823c8908",
+  "old": "?Save@Screenshot@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharTransDraw@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_823C82A4_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharTransDraw@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Screenshot",
+   0.0
+  ]
+ },
+ {
+  "va": "0x823cc160",
+  "old": "?Load@CharDriverMidi@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharDriverMidi@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharDriverMidi",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharDriverMidi@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharDriverMidi",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823d5ce8",
+  "old": "?Load@CharGuitarString@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharGuitarString@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharGuitarString",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharGuitarString@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharGuitarString",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823d6270",
+  "old": "?SetType@CharGuitarString@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x823d89c8",
+  "old": "?Load@CharBonesBlender@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CharBonesBlender@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CharBonesBlender",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharBonesBlender@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CharBonesBlender",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x823d8ff8",
+  "old": "?SetType@CharBonesBlender@@UAAXVSymbol@@@Z",
+  "new": "?Load@CharBonesBlender@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/CharBonesBlender",
+   1.8548387
+  ]
+ },
+ {
+  "va": "0x823dbee0",
+  "old": null,
+  "new": "?SetType@Waypoint@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "Waypoint",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@Waypoint@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Waypoint",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82406548",
+  "old": null,
+  "new": "?SetType@RndDrawable@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82406510_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndDrawable@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Draw",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82408a80",
+  "old": null,
+  "new": "?SetType@CharPollGroup@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82408A28_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/ContentMgr_Xbox",
+   62.38095
+  ]
+ },
+ {
+  "va": "0x8242ffb0",
+  "old": null,
+  "new": "?SetType@RndPostProc@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "PostProc",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndPostProc@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/PostProc",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82433e30",
+  "old": "?SetType@RndCam@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x824342b8",
+  "old": "?Load@RndCam@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@RndCam@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "Cam",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndCam@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Cam",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8244dfc8",
+  "old": "?Replace@RndParticleSys@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "new": "?SetType@RndParticleSys@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_8244DF78_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE; StaticClassName callee unnamed, resolved via its string literal \"ParticleSys\" in band.exe (Milo type name -> C++ class)",
+  "now_pct": [
+   "default/Part",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8245c320",
+  "old": "?SyncProperty@RndText@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "new": "?SetType@RndTransProxy@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "Text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndTransProxy@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Text",
+   0.0
+  ]
+ },
+ {
+  "va": "0x8245f930",
+  "old": "?Replace@RndTransAnim@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "new": "?SetType@RndTransAnim@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_8245F908_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndTransAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/TransAnim",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8245fe40",
+  "old": "?SetType@RndTransAnim@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x82462ee0",
+  "old": "?Export@RndDir@@UAAXPAVDataArray@@_N@Z",
+  "new": "?SetType@RndMatAnim@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "MatAnim",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndMatAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/MatAnim",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82470188",
+  "old": null,
+  "new": "?SetType@RndMeshAnim@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "MeshAnim",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndMeshAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/MeshAnim",
+   62.93671
+  ]
+ },
+ {
+  "va": "0x82473ce8",
+  "old": null,
+  "new": "?SetType@RndFont@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82473CE0_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndFont@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Font",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x824813b8",
+  "old": "?Save@RndMultiMeshProxy@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@RndMultiMeshProxy@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_82481324_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndMultiMeshProxy@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/MultiMeshProxy",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82481ad8",
+  "old": null,
+  "new": "?SetType@RndScreenMask@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82481AA0_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndScreenMask@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/ScreenMask",
+   62.848103
+  ]
+ },
+ {
+  "va": "0x824848c0",
+  "old": null,
+  "new": "?SetType@RndMorph@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "Morph",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndMorph@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Morph",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82486278",
+  "old": "?Load@RndCamAnim@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@RndCamAnim@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CamAnim",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndCamAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CamAnim",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824866c0",
+  "old": "?SetType@RndCamAnim@@UAAXVSymbol@@@Z",
+  "new": "?Load@RndCamAnim@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/CamAnim",
+   10.061539
+  ]
+ },
+ {
+  "va": "0x824873c0",
+  "old": "?Replace@RndEnvAnim@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "new": "?SetType@RndEnvAnim@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "EnvAnim",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndEnvAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/EnvAnim",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824881c8",
+  "old": "?Load@RndPollAnim@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@RndPollAnim@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "PollAnim",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndPollAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/PollAnim",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8248abf8",
+  "old": "?Copy@BandDirector@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@RndTexBlender@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "TexBlender",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@RndTexBlender@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/TexBlender",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82498ab8",
+  "old": "?Copy@RndLight@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@RndLight@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_82498380_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE; StaticClassName callee unnamed, resolved via its string literal \"Light\" in band.exe (Milo type name -> C++ class)",
+  "now_pct": [
+   "default/Lit",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824b55d0",
+  "old": "?FindPathName@FlowNode@@UAAPBDXZ",
+  "new": "?SetType@LightPreset@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "LightPreset",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@LightPreset@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/LightPreset",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824c3258",
+  "old": "?SetType@CamShot@@UAAXVSymbol@@@Z",
+  "new": "?Save@CamShot@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/CameraShot",
+   97.74468
+  ]
+ },
+ {
+  "va": "0x824c5ef0",
+  "old": "?Save@CamShot@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@CamShot@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "CameraShot",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@CamShot@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/CameraShot",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824c9f30",
+  "old": null,
+  "new": "?SetType@EventAnim@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_824C9F08_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@EventAnim@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/EventAnim",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824d6178",
+  "old": "?Load@SpotlightDrawer@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@SpotlightDrawer@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "SpotlightDrawer",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@SpotlightDrawer@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/SpotlightDrawer",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824daad0",
+  "old": "?Load@Spotlight@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@Spotlight@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "Spotlight",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@Spotlight@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Spotlight",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824df318",
+  "old": "?SetType@Spotlight@@UAAXVSymbol@@@Z",
+  "new": "?Load@Spotlight@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/Spotlight",
+   63.79679
+  ]
+ },
+ {
+  "va": "0x824e8a40",
+  "old": "?SetType@WorldReflection@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x824e93a8",
+  "old": null,
+  "new": "?SetType@WorldReflection@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "LightHue",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@WorldReflection@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/LightHue",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824eb2d8",
+  "old": "?PreLoad@WorldInstance@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@WorldInstance@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "Instance",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@WorldInstance@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Instance",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x824ed2d0",
+  "old": "?SetType@WorldInstance@@UAAXVSymbol@@@Z",
+  "new": "?PreLoad@WorldInstance@@UAAXAAVBinStream@@@Z",
+  "op": "rename",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "b-side re-identification by callee-signature best-match within the unit",
+  "now_pct": [
+   "default/Instance",
+   8.968254
+  ]
+ },
+ {
+  "va": "0x826b2550",
+  "old": null,
+  "new": "?SetType@PracticePanel@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_826B20A8_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@PracticePanel@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/PracticePanel",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82708b10",
+  "old": null,
+  "new": "?SetType@WaitSeq@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "Sequence",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@WaitSeq@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Sequence",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x8271e5d8",
+  "old": null,
+  "new": "?SetType@SynthEmitter@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "Emitter",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@SynthEmitter@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Emitter",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8273abd8",
+  "old": "?ConfigurePrecachedFilterData@AccomplishmentManager@@QAAXPAVDataArray@@@Z",
+  "new": "?SetType@DxTexRenderer@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "Rnd_Xbox",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@DxTexRenderer@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Rnd_Xbox",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82768840",
+  "old": null,
+  "new": "?SetType@TextFile@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_827687D8_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@TextFile@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/DataUtl",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x827b0778",
+  "old": null,
+  "new": "?SetType@MoviePanel@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "MoviePanel",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@MoviePanel@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/MoviePanel",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x827b42a8",
+  "old": "?SetTypeDef@PreloadPanel@@UAAXPAVDataArray@@@Z",
+  "new": "?SetType@PreloadPanel@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_827B4248_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@PreloadPanel@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/PreloadPanel",
+   62.848103
+  ]
+ },
+ {
+  "va": "0x827c6f78",
+  "old": "?Copy@Song@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@Song@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_827C6D9C_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE; StaticClassName callee unnamed, resolved via its string literal \"Song\" in band.exe (Milo type name -> C++ class)",
+  "now_pct": [
+   "default/Song",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x827f1fd0",
+  "old": null,
+  "new": "?SetType@UIScreen@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_827F1AC0_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIScreen@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIScreen",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x827fbcd8",
+  "old": "?Load@FlowNode@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@UIList@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "UIList",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIList@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIList",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x828020b8",
+  "old": null,
+  "new": "?SetType@UIColor@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_828020B0_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIColor@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIColor",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82809520",
+  "old": "?SetType@UISlider@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x82809c58",
+  "old": "?Copy@PanelDir@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@UISlider@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "UISlider",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UISlider@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UISlider",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8280cba8",
+  "old": "?Copy@LightPreset@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@UIListDir@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "UIListDir",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIListDir@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIListDir",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8280f6d0",
+  "old": null,
+  "new": "?SetType@UIButton@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_8280F694_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIButton@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIButton",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82814888",
+  "old": null,
+  "new": "?SetType@UIListMesh@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82814880_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIListMesh@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIListMesh",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82815a58",
+  "old": null,
+  "new": "?SetType@UIListSlot@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "UIListSlot",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIListSlot@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIListSlot",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82816208",
+  "old": null,
+  "new": "?SetType@UIPicture@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_828161B8_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIPicture@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIPicture",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x828170a8",
+  "old": "?SetType@UIPicture@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x82819c10",
+  "old": "?Copy@UIFontImporter@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@UIFontImporter@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "auto_03_82818F18_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIFontImporter@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIFontImporter",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x8281b2a0",
+  "old": "?SetType@UIFontImporter@@UAAXVSymbol@@@Z",
+  "new": null,
+  "op": "delete",
+  "unit": null,
+  "tgt_size": null,
+  "evidence": "held a ?SetType@X@@ name but body is NOT the OBJ_SET_TYPE macro (no 3-arg SystemConfig+FindArray) -> name freed for its real body",
+  "now_pct": null
+ },
+ {
+  "va": "0x8281e940",
+  "old": null,
+  "new": "?SetType@UIListCustom@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "UIListCustom",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIListCustom@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIListCustom",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x8281f8c0",
+  "old": null,
+  "new": "?SetType@UIListLabel@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "UIListLabel",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIListLabel@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIListLabel",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82822e78",
+  "old": null,
+  "new": "?SetType@UIListWidget@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_82822C84_text",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIListWidget@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIListWidget",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x828248f8",
+  "old": null,
+  "new": "?SetType@Screenshot@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "auto_03_828248D0_text",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@Screenshot@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Screenshot",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82826470",
+  "old": null,
+  "new": "?SetType@UIGuide@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "UIGuide",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@UIGuide@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/UIGuide",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82827f00",
+  "old": "?PreLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
+  "new": "?SetType@LabelNumberTicker@@UAAXVSymbol@@@Z",
+  "op": "rename",
+  "unit": "LabelNumberTicker",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@LabelNumberTicker@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/LabelNumberTicker",
+   62.92405
+  ]
+ },
+ {
+  "va": "0x82b895a8",
+  "old": null,
+  "new": "?SetType@NgPostProc@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "PostProc_NG",
+  "tgt_size": 252,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@NgPostProc@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/PostProc_NG",
+   64.95238
+  ]
+ },
+ {
+  "va": "0x82b8aab8",
+  "old": null,
+  "new": "?SetType@NgLight@@UAAXVSymbol@@@Z",
+  "op": "add",
+  "unit": "Lit_NG",
+  "tgt_size": 316,
+  "evidence": "retail body = OBJ_SET_TYPE (guard -> Symbol(\"types\")+?StaticClassName@NgLight@@SA?AVSymbol@@XZ+Symbol(\"objects\") -> 3-arg SystemConfig -> FindArray -> SetTypeDef vslot 0x3c); owner from the NAMED StaticClassName callee",
+  "now_pct": [
+   "default/Lit_NG",
+   62.92405
+  ]
+ }
+]
