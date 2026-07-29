@@ -310,6 +310,50 @@ def _gate_wibo_wrapper(wrapper_path: Path) -> None:
             "cd ../wibo && cmake --preset release && cmake --build --preset release"
         )
 
+def _gate_objdiff_missing() -> None:
+    """Hard-fail when the local objdiff fork cannot be resolved.
+
+    Rationale (2026-07-29): objdiff's funclet pairing pass credits a target
+    funclet at 100% even when every byte-identical base partner is already
+    consumed, so `matched_functions` over-counts by ~4% (measured: 39,743
+    reported vs 38,210 honest, all of it anonymous `fn_` symbols). Our fork
+    (branch `oversub-disclosure`) populates `Measures.masked_equal_functions`
+    so EVERY report states its own honest floor
+    (`matched_functions - masked_equal_functions`).
+
+    The old behaviour here was a WARN plus a silent fallback to the DOWNLOADED
+    objdiff release, which does not populate that field. A report generated
+    that way looks completely normal and simply omits the disclosure -- i.e. it
+    silently restores the inflated headline with nothing flagging it. That is
+    the same insidious-failure shape as a stock wibo corrupting deps=msvc
+    tracking, and it gets the same treatment: a loud configure failure is the
+    only acceptable fallback. See `_gate_wibo_wrapper` above.
+
+    Escape hatch for a genuinely fork-less environment (mirrors
+    RB3_OBJCACHE_OPTIONAL): RB3_OBJDIFF_OPTIONAL=1 -> warn and fall back, and
+    OWN the fact that your reports will over-count."""
+    if os.environ.get("RB3_OBJDIFF_OPTIONAL") == "1":
+        print(
+            "WARN: RB3_OBJDIFF_OPTIONAL=1 -- falling back to the downloaded "
+            "objdiff-cli release. Reports will NOT carry "
+            "masked_equal_functions, so matched_functions will over-count by "
+            "~4% with nothing flagging it. Do not quote those numbers.",
+            file=sys.stderr,
+        )
+        return
+    sys.exit(
+        "FATAL: local objdiff fork (../objdiff) not found.\n"
+        "  The downloaded objdiff-cli release does NOT populate\n"
+        "  Measures.masked_equal_functions, so its reports silently over-count\n"
+        "  matched_functions by ~4% (funclet over-subscription) with nothing\n"
+        "  flagging it -- a silently-wrong number is worse than no number.\n"
+        "  Fix: clone/build the fork (cd ../objdiff && cargo build --release,\n"
+        "  with the oversub-disclosure branch checked out), or pass --objdiff\n"
+        "  explicitly. Genuinely fork-less environment: RB3_OBJDIFF_OPTIONAL=1\n"
+        "  (accepts inflated reports)."
+    )
+
+
 # Apply arguments
 config.build_dir = args.build_dir
 config.dtk_path = args.dtk if args.dtk is not None else _default_dtk_path()
@@ -351,12 +395,7 @@ if args.dtk is None and config.dtk_path is None:
         file=sys.stderr,
     )
 if args.objdiff is None and config.objdiff_path is None:
-    print(
-        "WARN: local objdiff fork (../objdiff) not found; falling back to a "
-        "downloaded objdiff-cli release from freeqaz/objdiff. Clone the fork or "
-        "pass --objdiff.",
-        file=sys.stderr,
-    )
+    _gate_objdiff_missing()
 config.binutils_path = args.binutils
 config.compilers_path = args.compilers
 config.generate_map = args.map
