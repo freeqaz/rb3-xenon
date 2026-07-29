@@ -307,6 +307,7 @@
    "system/synth/CompressionEffect.cpp": "NonMatching",
    "system/synth/SampleZone.cpp": "NonMatching",
    "system/synth/VoiceBeat.cpp": "NonMatching",
+   "system/dsp/SndAnalysis.cpp": "NonMatching",
    "system/dsp/VibratoDetector.cpp": "NonMatching",
    "system/synth_xbox/FFT.cpp": "NonMatching",
    "system/synth_xbox/SpectralAnalysis.cpp": "NonMatching",
@@ -1219,6 +1220,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/InputMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/MetaNetMsgs.cpp": "NonMatching",
    "band3/meta_band/NewAwardPanel.cpp": {
     "status": "NonMatching",
@@ -1717,6 +1724,7 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/SongSetlistProvider.cpp": "NonMatching",
    "band3/meta_band/SongSortByArtist.cpp": "NonMatching",
    "band3/meta_band/SongSortByDiff.cpp": "NonMatching",
    "band3/meta_band/SongSortByPlays.cpp": "NonMatching",
