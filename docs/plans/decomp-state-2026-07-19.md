@@ -67,6 +67,48 @@
 > (39,160), consistent with the error bar recorded further down this doc. Only
 > `match_percent_normalized` sums to `matched_functions`.
 
+## ★★★ QUOTE THE HONEST FLOOR, NOT `matched_functions` (2026-07-29)
+
+**`matched_functions` over-counts by ~4%.** The cause is objdiff's own funclet
+pass (`pair_funclets_by_bytes`): it pairs each leftover funclet-like target onto
+a base partner **without marking that partner used**, so **N targets can all
+score 100% against 1 base function**. It is a property of the heuristic, not of
+any lane — an independent replay attributed the inflation across **137 distinct
+commits** spanning the project's whole history, ~70% of it predating the recent
+sweeps.
+
+**Every report now discloses this itself.** Our objdiff fork (branch
+`oversub-disclosure`, installed 2026-07-29) populates
+`measures.masked_equal_functions`:
+
+```
+HONEST FLOOR = matched_functions − masked_equal_functions
+```
+
+At install: 39,743 − 1,582 = **38,161 floor**; true honest **38,210** (the floor
+sits 0.13% low because 49 of the flagged symbols re-pair onto a genuinely unused
+partner when the pass is removed — they were *mis-attributed* credit, not
+*unsupported* credit). `configure.py` now **hard-fails** if the fork cannot be
+resolved, because the downloaded release omits the field and would silently
+restore the inflated headline.
+
+Three things that are settled and should not be re-litigated:
+- **All fake credit is on anonymous `fn_` symbols.** Named-function matches are
+  structurally unreachable by this pass. **No real decompilation is affected.**
+- **Do NOT revert any landing over this.** The blocks that are entirely
+  over-subscribed also hold genuine named matches; deleting them measures
+  **raw −228 / honest −46**, i.e. the honest metric goes *down*. The fix is
+  pricing, not deletion.
+- **The naive screen does not work.** "unit `matched_functions` > its base obj's
+  function-symbol count" trips **0 of 3,881** units (base objs carry thousands of
+  inline/template COMDATs). The correct rule is per-signature:
+  `excess = Σ_S max(0, demand_target(S) − supply_base(S))` —
+  `scripts/harvest/oversub_guard.py`, wired as a gate into
+  `diffunit_gap_apply.py`.
+
+⚠ **The inflation grows with new landings** — re-run the census or read the field;
+never quote a past figure.
+
 ## ⚠ Corrections to landed commit messages (2026-07-29, lane docfix)
 
 Commits are immutable; these are the corrections. Each was re-derived from the
