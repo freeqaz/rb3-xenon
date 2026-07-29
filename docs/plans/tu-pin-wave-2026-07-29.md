@@ -18,15 +18,15 @@ Baseline for every measurement below, taken in a fully-built worktree at main
 
 ## 0. TL;DR
 
-* **28 TUs/carves pinned, wired, ported and measured: +579 gains / −38 losses**
+* **31 TUs/carves pinned, wired, ported and measured: +595 gains / −38 losses (net +557)**
   (lanes were still in flight at time of writing; the ledger is a floor, not a
   final). **All but one of the losses is the retirement of a *false* 100 %** — a
   `target_symbol_map.json` entry bound to a target VA that is not that function,
   scoring only as a shape (§4). The single genuine cost found so far is
   `?MaxPhraseScore@VocalPart@@QBAMXZ`, an 8-byte ICF fold at `0x826EE518` that
-  travelled with `BandPerformer`'s span and does not re-pair. Nine of the TUs are
+  travelled with `BandPerformer`'s span and does not re-pair. Twelve of them are
   pure ADDs into unclaimed space and are structurally incapable of a loss; those
-  alone are **+159**.
+  alone are **+174**.
 
   For scale: laneBD's proof-of-concept was +71 from 3 TUs, and it priced the
   whole 42-span worklist's headroom at 504 currently-unscoreable functions. This
@@ -38,7 +38,7 @@ Baseline for every measurement below, taken in a fully-built worktree at main
   refine the span → carve or add in `splits.txt` → wire in `objects.json` → port
   the rb3-Wii/DC3 source → recover `fn_<VA>` ↔ mangled pairings with
   `size_order_automap.py` → double full build → unit-agnostic A/B.
-* **Three donors were proved to be PHANTOMS** — classes that do not exist in RB3
+* **Four names were proved to be PHANTOMS** (three donors + `MoveGraph`) — classes that do not exist in RB3
   retail at all, whose entire pin was foreign code. laneBD found the first
   (`SongDifficultyDisplay`); this wave found two more (`FlowEventListener`,
   `MoveMgr`) and, crucially, **the predictor that finds them is already in
@@ -93,28 +93,36 @@ baseline above. Losses are itemised in §4.
 | C | `band3/bandtrack/DrumTrackWatcherImpl` (bonus) | `0x827800B0..0x827808C0` (**ADD**) | — | **+5** | 0 |
 | A | `band3/tour/TourPerformerLocal` + `TourPerformerRemote` | (2 carves) | `system/obj/DataFunc.cpp` | **+23** | −2 |
 | B | `band3/game/BandUserMgr` | `0x826826A8..0x82684E40` (+ unclaimed head/tail) | `system/rndobj/PropKeys.cpp` | **+38** | 0 |
-| | **28 TUs / carves** | | | **+579** | **−38** |
+| A | `band3/tour/TourGameRules` + `TourGameModifier` | `0x82365E68..0x823660F8`, `0x823699B4..0x82369B28` (**ADD**) | — | **+10** | 0 |
+| E | `system/bandobj/DialogDisplay` | `0x82329B20..0x82329FD8` (mostly unclaimed) | `CharUpperTwist.cpp` | **+5** | 0 |
+| | **31 TUs / carves** | | | **+595** | **−38** |
 
-Per lane: A **+95/−5**, B **+79/−12**, C **+144/−0**, D **+90/−8**, E **+74/−10**,
-F **+60/−3**, G **+37/−0**. Lanes B, C, D and F are complete; A, E and G were
-still extending. Composition re-verified: **28 new units, zero cross-branch
+Per lane: A **+105/−5**, B **+79/−12**, C **+144/−0**, D **+90/−8**, E **+80/−10**,
+F **+60/−3**, G **+37/−0** — **net +557**. Six lanes complete; only G was still
+extending `InputMgr` (52/61). Composition re-verified: **28 new units, zero cross-branch
 `.text` overlaps**, and every branch passes `overlap_check.py` individually.
+
+★★ **The entire `DataFunc.cpp` block `0x82366274..0x8236955C` (0x32E8) is now
+drained — it was 100 % foreign, five `band3/tour` TUs' worth.** `DataFunc.cpp`
+retains 92 other `.text` blocks, so no empty-unit trap. This is the single
+strongest confirmation of laneBD's seam thesis in the wave: an over-broad pin did
+not merely *contain* a foreign TU, it contained nothing else at all.
 
 `BandUserMgr` is worth singling out: it is the row where 36 functions were already
 matched *inside* the span under the donor, so it was the wave's hardest test of
 the by-name gate — and it came in at **+38 with zero losses**, i.e. every one of
 those 36 legitimately migrated unit and kept scoring.
 
-Three of the 28 (`SongSetlistProvider`, `SndAnalysis`, `InputMgr`) are TUs
+Three of the 31 (`SongSetlistProvider`, `SndAnalysis`, `InputMgr`) are TUs
 **laneBD never located** — they came out of the re-reduction in §5.
 `DrumTrackWatcherImpl` was a LOW row promoted by the same reduction.
 
-★★ **Ten of the 28 are pure ADDs into unclaimed space** — no donor shrinks, no
+★★ **Twelve of the 31 are pure ADDs into unclaimed space** — no donor shrinks, no
 empty-unit risk, and structurally **zero possibility of a loss**. They account for
-**+164 of the +579** and carry **0 of the 38 losses**: `LockStepMgr` +65,
+**+174 of the +595** and carry **0 of the 38 losses**: `LockStepMgr` +65,
 `UGCPurchasePanel` +25, `SlotChannelMapping` +23, `ChordShapeGenerator` (first
 carve) +13, `HitTracker` +12, `LogFile` +7, `Asset` +7, `DrumTrackWatcherImpl` +5,
-`SndAnalysis` +4, `SongSetlistProvider` +3.
+`SndAnalysis` +4, `SongSetlistProvider` +3, and `TourGameRules`+`TourGameModifier` +10.
 
 **laneBD's §4b list of "genuinely unclaimed, pin-ready" rows was by a wide margin
 the best yield-per-unit-of-risk in the whole worklist, and it should be drained
@@ -202,6 +210,14 @@ So a vtable slot lands inside the span **only if the function is not folded**.
 Check fold status before letting a slot set an endpoint.
 
 ### 3.1 The head extends by leaf helpers and the `OBJ_CLASSNAME` accessor
+
+★ **The head marker is consistent enough to search for directly**: the
+`OBJ_CLASSNAME` local-static `Symbol` accessor — a guard-bit test, a
+`static Symbol("<Class>")`, the class-name literal — immediately followed by its
+own `??__F` guard-clear. Lane E hit it as the true head on `BandButton` (+40 %
+span growth) and used it to place `DialogDisplay`'s head 0x78 *below* the located
+lo. Search for the class-name literal's referencing function and walk back one
+`??__F`.
 
 Neither instrument sees a free function with no vtable slot and no distinctive
 string. `TourDesc`'s span needed **+0x788 at the head**
@@ -332,17 +348,55 @@ Three mechanisms produce them:
    carried `BandHighlight`/`UIComponent` `$4` thunk names. This is the largest
    single loss cluster (8 of the 24).
 
-### ★ 4.1 A reusable recipe for adjustor-thunk ground truth
+### ★★ 4.1 Reusable recipe: vtable-slot alignment for adjustor-thunk ground truth
 
-Because automap provably cannot resolve mask-identical thunks, lane E derived
-them **from the compiler instead of from similarity**: dump our own compiled
-`??_7BandButton@@6BObject@Hmx@@@` / `…6BRndDrawable@@@` COMDATs and align
-slot-for-slot against the retail vtables, anchored by three externally-fixed
-points (slots 16/17/20 = `SetName` / `DataDir` / `FindPathName`, which resolve
-identically on both sides). That yields ground truth for 11 thunks + 3 large
-virtuals. **This is the most transferable technique the wave produced** and it
-should be promoted into the standard map-recovery step alongside
-`size_order_automap.py`.
+`size_order_automap` **provably cannot** resolve `$4PPPPPPPM@…` adjustor thunks —
+they are all `subi r3,r3,N; b X`, mask-identical, so every proposal is a coin
+flip. Derive them from the **compiler** instead of from similarity:
+
+1. `TU_LOCATE_SCRATCH=… venv/bin/python scripts/harvest/tu_locate/vt_rtti_scan.py`
+   → `vtables.json`: every `.?AV<Class>@@` → COL → vtable → slot list, read from
+   `orig/45410914/band.exe`.
+2. Dump **our own compiled** `??_7<Class>@@6B<Base>@@@` COMDATs from
+   `build/45410914/src/<unit>.obj`. For the section the `??_7…` symbol defines,
+   walk its relocation table — **10-byte records** (VA `u32`, symIdx `u32`, type
+   `u16`) — and note **slot index = `reloc_va/4 − 1`**, because the section begins
+   with the `??_R4` COL pointer. (`scripts/dump_vtable.py` prints only the first
+   vtable, so this needs a full dump.)
+3. **Pair vtables by slot count, not by offset** — our class sizes differ from
+   retail's (`BandButton`'s 21-slot base sits at +552 in retail and elsewhere in
+   our layout).
+4. ★ **Establish fixed points before trusting anything.** Slots holding
+   *externally-defined* functions must resolve to the same VA on both sides.
+   `BandButton` / `UnisonIcon` / `DialogDisplay` each gave three —
+   `[15] Object::SetTypeDef` `0x8275AB18`, `[16] SetName` `0x8275A5C0`,
+   `[20] FindPathName` `0x8275A9D0` — plus the ICF empty-stub `0x826C3888` at
+   `[11]/[12]/[14]` and `0x823591E8` at `[3]`. **If the anchors do not line up,
+   the alignment is wrong — stop.**
+5. Only then read off slot *i*: our symbol name ↔ retail slot VA. It is ground
+   truth iff the VA is inside your span and the anchors held.
+6. Cross-check against automap; **where they disagree, the vtable wins.** It
+   caught automap assigning `0x82344ED8` to `PostLoad$4` when it is `Handle$4`,
+   and mis-ordering 6 of `UnisonIcon`'s 15.
+
+Yield: 11 (`BandButton`) + 15 (`UnisonIcon`) + 1 (`DialogDisplay`) thunk names,
+**8 of them repointing WRONG-UNIT map entries**. This is the most transferable
+technique the wave produced and belongs in the standard map-recovery step
+alongside `size_order_automap.py`.
+
+★ Note the contrast in judgement: lane C **declined** +5 from five byte-identical
+`$4PPPPPPPM@A@` thunks because it could not separate them; lane E **claimed**
+seven of the same shape because it had named them from the vtable rather than
+guessed. Both were right. The rule is *name it or decline it — never guess it.*
+
+### 4.1-bis Isolating a loss from a repoint
+
+Asked whether `UIGridProvider`'s single loss came from the carve or from the
+`0x82817860` map repoint, lane E ran the full recipe **both ways**: repointed →
+39,541 (19 gains / 1 loss); reverted → 39,540 (18 gains / **the same 1 loss**).
+So the loss is caused by the carve and the repoint is worth **+1 free**. This is
+the pattern to use whenever a commit bundles a carve with map edits — the two are
+separable and should be measured separately.
 
 ### 4.2 The `CharProvider` 11 — adjudicated, and a correction worth keeping
 
@@ -384,6 +438,26 @@ with identical masked bodies. `pair_funclets_by_bytes` will pair either against
 either. This is a third, distinct fake-match mechanism alongside phantom names
 and ICF folds, and it is the one most likely to recur: **any two container
 templates over same-sized elements are candidates.**
+
+### 4.2-bis The `??_G` ICF-fold class — the commonest loss shape in the wave
+
+Four of lane A's five losses are one mechanism: **a template `??_G` (scalar
+deleting destructor) name that retail's linker folded onto the game class's own
+`??_G`**. In each case the VA provably belongs to the new owner, and a VA can
+carry only one name, so it is a **−1/+1 rename, not lost program**:
+
+| VA | old name | proof of true owner |
+|---|---|---|
+| `0x82368580` | `??_G?$ObjRefConcrete@…` (76 B) | calls `fn_823684E8` = `~TourDesc` |
+| `0x82368FC8` | `??_G?$StackString@$0IAA@@` (68 B) | materialises vtable `0x82040334` = `TourProperty`'s |
+| `0x82369510` | `??_G?$ObjPtr@VObject@Hmx@@` (76 B) | calls `~TourWeightManager` |
+| `0x823667C8` | `??_GDataThisPtr` (88 B) | vtable `0x8203F9F4` + `TourPerformerImpl::~` |
+
+Lane E's `UIGridProvider` loss (`??_G?$ObjPtr@VRndMesh@@@@`) and lane F's
+`0x822E11E8` (`??_G?$ObjOwnerPtr@VRndMesh@@`) are the same shape. **`??_G` names
+in `target_symbol_map.json` should be treated as low-confidence by default** —
+they are short, near-identical across every `ObjPtr`/`ObjRef`/`StackString`
+instantiation, and therefore the most fold-prone symbols in the binary.
 
 ### 4.3 Honest caveat
 
@@ -576,6 +650,25 @@ laneBD established that `../rb3` is a **dev** build and every divergence costs a
 whole function. This wave found these; each was worth at least one function and
 several were worth 0 → 100.
 
+**★★ `std::map` where retail uses Harmonix's `hash_map`**
+
+The rb3-Wii dev tree approximates Harmonix's `hash_map` as `std::map`. Retail does
+not: the proof is that retail calls the container **default ctor out of line**
+(`fn_8255D480` = `??0?$hash_map@VSymbol@@H…`), which `std::map` would not produce.
+Worth `ChooseQuestFilters` 50.7 % → 100 % and `InqSongsInFilterData` 83 % → 97 %.
+Any `std::map<Symbol, T>` inherited from the Wii oracle is a candidate.
+
+**★★ TRAP: a block-scoped `static Symbol` can silently bind a global of the same
+name**
+
+`random`, `custom`, `filter_any`, `filter_dynamic_artist` … exist *both* as the
+function-local statics retail emits *and* as globals. Writing
+`static Symbol random("random")` inside a block therefore compiles cleanly while a
+sibling scope binds the **global** instead — wrong codegen, no diagnostic. Noted
+in-source in `src/band3/tour/TourPerformerLocal.cpp`. This is the sharpest edge in
+the local-static lever below; expect it wherever a property name is also a
+`Symbols*.h` global.
+
 **★★ Redundant derived destructor declarations — a tree-wide scannable lever**
 
 *The rb3-Wii dev headers declare a redundant derived `virtual ~Derived() {}`;
@@ -694,6 +787,13 @@ insist on it.
 Both came out of lane B and are recorded here because they are levers, not
 laneBL work:
 
+* ★ **`DataArrayPtr`'s ctor is out-of-line in retail, inline in our tree.** Retail
+  calls `??0DataArrayPtr@@QAA@ABVDataNode@@@Z` at `0x8228D370`, but
+  `src/system/obj/Data.h` defines every `DataArrayPtr` ctor inline, so `/Ob2`
+  inlines them everywhere. This blocks `TourPerformerRemote::OnSynchronized` at
+  67.7 % and **has the same shape in every TU that builds a `DataArrayPtr` from
+  `DataNode`s** — a tree-wide inline-policy lever, exactly the class the
+  force-multiplier finder was built for. Needs its own A/B.
 * ★ **`BandUser::IsNullUser()` goes through a VIRTUAL BASE.** All five
   `BandPerformer` residuals (89.5–94.7 %) differ by the *same* four target-only
   instructions: retail reaches `IsNullUser()` via `add` / `addi r3,r11,4` / vtable
@@ -793,6 +893,50 @@ rather than guessing, and did not fabricate the unidentified XEX-import callee i
 Two independent lanes measured `reloc_correspondence.py` hanging (>8 min and
 >10 min on `--unit`), corroborating the coordinator's finding and the decision to
 drop it.
+
+## 8quater. ★ The highest-value follow-up: reconstruct `UILabel`'s tail
+
+`BandButton`'s three residuals (`PreLoad` 1,140 B, `DrawShowing` 76.1 %, `Update`
+0.7 %) were **reduced rather than ported**, because their Wii bodies touch
+`UILabel` members that are still buried inside `UILabel::mUnkTU5Tail[0xAC]` —
+`mFitType`, `mWidth`, `mHeight`, `mLeading`, `mAlignment`, `mKerning`,
+`mTextSize`, `mCapsMode`, `mLabelDir`, `mFontMatVariation` — plus
+`RndText::GetFont` and `UIComponent::UpdateAndDrawHighlightMesh`, which do not
+exist in the tree yet.
+
+**Reconstructing `UILabel`'s tail gates ~5 functions in `BandButton` alone and
+presumably many more across the whole `UILabel` family.** It is the single
+highest-value follow-up the wave identified, and it is a layout job rather than a
+port, so it wants its own owner.
+
+Two more blockers of the same character, recorded so nobody re-discovers them:
+* **`CharKeyHandMidi` is refuted as tractable for a lane** (not as a location —
+  its span is now known: `0x822D07F0..0x822D16F8` + `0x822D1768..0x822D2908`, 13
+  owned vtable slots, and with `UnisonIcon` carved it is the only remaining
+  claimant of the donor block). The port is blocked on **`CharIKFingers`**: this
+  tree's version is DC3-derived with a different API (`kNumFingers` not
+  `kFingerNone`, no `SetFinger`/`ReleaseFinger`, a different `FingerDesc`).
+  Reconciling it touches an already-matching engine unit. Carve reverted cleanly.
+* **`DialogDisplay` continues into `CharUpperTwist.cpp`'s pin**
+  (`0x82329FD8..0x8232A60C`): three more owned slots and a second vtable
+  materialisation at `0x8232A2D8`. `CharUpperTwist` is a *real* retail class, so
+  that block is genuinely shared and needs a finer seam than a whole-block carve.
+
+Two further dtk over-carves were confirmed (jeff-level ceilings, certify
+`at_limit`, do not grind): 11 of `CharProvider`'s 19 residuals are one source
+function split at an early `blr`; and `fn_828175C0`
+(`UIGridSubProvider::UpdateExtendedText`, really 0x2C) is split into a 0x20
+function + a spurious `except_data_827F21C8` + a 4-byte `bctr`, while all five of
+its siblings match.
+
+★ **An honest negative:** the redundant-derived-destructor lever (§7) **does not**
+apply to lane E's TUs — `??1UIGridProvider` (104 B), `??1BandButton` (296 B) and
+`??1UnisonIcon` already matched byte-identically. It is a real lever with a real
++5, not a universal one.
+
+Build-order gotcha worth carrying: **`obj/ObjMacros.h` must be included before the
+class header** in every ported TU, or `obj/Object.h`'s conflicting two-argument
+`INIT_REVS(rev, alt)` wins and breaks `INIT_REVS`/`DECLARE_REVS`.
 
 ## 9. What remains
 
