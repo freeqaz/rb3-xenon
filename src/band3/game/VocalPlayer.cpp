@@ -1039,9 +1039,10 @@ bool VocalPlayer::FindBestPart(
                 * (float
                 )i_pSinger->AccessScoreHistory(pPart->PartIndex()).GetOctaveOffset()
             + i_fPitch;
+        TalkyMatcher *pMatcher = i_pSinger->mTalkyMatcher;
         if (pPart->CouldScoreAgainstPart(
                 i_fTime,
-                i_pSinger->mTalkyMatcher,
+                pMatcher,
                 fShiftedPitch,
                 mPitchMaximumDistance,
                 fTargetPitch
@@ -1734,7 +1735,10 @@ void VocalPlayer::ChangeDifficulty(Difficulty diff) {
 void VocalPlayer::BuildPhrases(bool b1) {
     std::vector<std::pair<const VocalPhrase *, VocalPart *> > vec;
     FOREACH (it, mVocalParts) {
-        vec.push_back(std::make_pair((*it)->GetFirstPhraseMarker(), *it));
+        VocalPart *part = *it;
+        vec.push_back(
+            std::pair<const VocalPhrase *, VocalPart *>(part->GetFirstPhraseMarker(), part)
+        );
     }
     unk36c = 0;
     unk370 = 0;
@@ -1873,7 +1877,8 @@ void VocalPlayer::LocalBlowCoda() { mBand->LocalBlowCoda(this); }
 
 float VocalPlayer::GetHitPercentage(int p) {
     MILO_ASSERT(p < NumVocalParts(), 0xD18);
-    return mVocalParts[p]->GetOverallPartHitPercentage();
+    VocalPart *part = mVocalParts[p];
+    return part->GetOverallPartHitPercentage();
 }
 
 float VocalPlayer::GetPracticeHitPercentage(int p, int i2, int i3) {

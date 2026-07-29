@@ -285,7 +285,7 @@ void GemPlayer::SeeGem(int i1, float f2, int i3) {
         InputReceived();
         mFirstGemMs = f2;
     }
-    if (mEnabledState == 0 && i1 == GetTrackNum() && mTrack) {
+    if (mEnabledState == 0 && GetTrackNum() == i1 && mTrack) {
         mTrack->See(f2, i3);
     }
     if (mAnnoyingMode && mEnabledState == 0) {
@@ -589,7 +589,8 @@ bool GemPlayer::HandleSpecialMissScenarios(int i1, float f2) {
         if (mUser->GetTrackType() == 0) {
             int slot = mController->GetVirtualSlot(i1);
             int bucket = mController->GetVelocityBucket(i1);
-            PlayDrum(slot, i1, VelocityBucketToDb(bucket), bucket);
+            float db = VelocityBucketToDb(bucket);
+            PlayDrum(slot, i1, db, bucket);
         } else {
             static Message miss_msg("miss", 0, 0, 0);
             miss_msg[0] = GetUser();
@@ -2124,7 +2125,7 @@ void GemPlayer::CheckHeldNotes(float f1) {
             }
             if (it->IsDone()) {
                 if (IsAutoplay()) {
-                    unsigned int slots = it->GetGemSlots();
+                    int slots = it->GetGemSlots();
                     int i = 0;
                     while (slots != 0) {
                         int mask = 1 << i;
@@ -2187,7 +2188,7 @@ HeldNote *GemPlayer::FindHeldNoteFromSlot(int slot) {
 
 HeldNote *GemPlayer::FindHeldNoteFromGemID(int gemID) {
     FOREACH (it, mHeldNotes) {
-        if (gemID == it->unk_0x4)
+        if (it->unk_0x4 == gemID)
             return it;
     }
     return nullptr;
