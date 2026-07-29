@@ -296,6 +296,15 @@ cannot be separated by these instruments).
 | MED | 12 | 165 |
 | LOW (do not act without a third channel) | 22 | 532 |
 
+**All 42 HIGH spans have a ready rb3-Wii `.cpp` in `../rb3/src`, and they are
+small: 46–548 lines, median ≈ 130.** Top of the queue by unmatched functions
+(fns / Wii .cpp lines): `UIProxy` 36/189, `RealGuitarGemPlayer` 29/145,
+`TourPerformerLocal` 27/542, `LockStepMgr` 25/267, `BandUserMgr` 24/548,
+`UIGridProvider` 24/87, `BandPerformer` 23/223, `BandButton` 23/270,
+`TourDesc` 22/248, `SlotChannelMapping` 18/117, `UGCPurchasePanel` 17/131,
+`PracticeSectionProvider` 17/132, `CharProvider` 16/243, `CharSync` 16/248,
+`TourChar` 15/88, `Quest` 15/99.
+
 Biggest single blocks of unmatched code: `ChordShapeGenerator` 77,
 `UIProxy` 36, `CharKeyHandMidi` 32, `RealGuitarGemPlayer` 29,
 `TourPerformerLocal` 27, `UIGridProvider` 24, `BandButton` 23, `BandPerformer` 23,
