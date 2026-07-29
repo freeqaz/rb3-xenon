@@ -402,12 +402,7 @@
     ]
    },
    "system/char/CharClip.cpp": "NonMatching",
-   "system/char/CharClipSet.cpp": {
-    "status": "NonMatching",
-    "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
-    ]
-   },
+   "system/char/CharClipSet.cpp": "NonMatching",
    "system/midi/MidiParser.cpp": "NonMatching",
    "system/obj/DataFunc.cpp": "NonMatching",
    "system/obj/Task.cpp": "NonMatching",
@@ -426,12 +421,7 @@
    },
    "system/ui/Utl.cpp": "NonMatching",
    "system/utl/MemTracker.cpp": "NonMatching",
-   "system/world/LightPreset.cpp": {
-    "status": "NonMatching",
-    "extra_cflags": [
-     "/DRB3_SYNCPROP_LOCAL_STATIC"
-    ]
-   },
+   "system/world/LightPreset.cpp": "NonMatching",
    "system/os/Timer.cpp": "NonMatching",
    "system/utl/Str.cpp": "NonMatching",
    "system/rnddx9/RenderState.cpp": "NonMatching",
@@ -778,12 +768,7 @@
    "system/gesture/SkeletonHistory.cpp": "NonMatching",
    "system/net/HttpGet.cpp": "NonMatching",
    "system/ui/UIListDir.cpp": "NonMatching",
-   "system/ui/UIFontImporter.cpp": {
-    "status": "NonMatching",
-    "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
-    ]
-   },
+   "system/ui/UIFontImporter.cpp": "NonMatching",
    "system/char/CharMirror.cpp": "NonMatching",
    "system/char/FileMergerOrganizer.cpp": "NonMatching",
    "system/ui/CheatProvider.cpp": "NonMatching",
