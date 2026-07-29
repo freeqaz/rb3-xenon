@@ -402,7 +402,12 @@
     ]
    },
    "system/char/CharClip.cpp": "NonMatching",
-   "system/char/CharClipSet.cpp": "NonMatching",
+   "system/char/CharClipSet.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/midi/MidiParser.cpp": "NonMatching",
    "system/obj/DataFunc.cpp": "NonMatching",
    "system/obj/Task.cpp": "NonMatching",

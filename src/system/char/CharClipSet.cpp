@@ -28,6 +28,7 @@ CharClipSet::CharClipSet()
 CharClipSet::~CharClipSet() {}
 
 BEGIN_HANDLERS(CharClipSet)
+    HANDLE_ACTION(randomize_groups, RandomizeGroups())
     HANDLE_ACTION(sort_groups, SortGroups())
     HANDLE_ACTION(recenter_all, RecenterAll())
     HANDLE_ACTION(load_character, LoadCharacter())
@@ -332,6 +333,12 @@ void CharClipSet::ResetPreviewState() {
     mFilterFlags = 0;
     mBpm = 90;
     mPreviewWalk = false;
+}
+
+void CharClipSet::RandomizeGroups() {
+    for (ObjDirItr<CharClipGroup> it(this, false); it != nullptr; ++it) {
+        it->Randomize();
+    }
 }
 
 void CharClipSet::SortGroups() {
