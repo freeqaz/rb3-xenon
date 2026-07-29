@@ -54,6 +54,12 @@
     ]
    },
    "system/bandobj/BandCharDesc.cpp": "NonMatching",
+   "system/bandobj/BandButton.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/BandList.cpp": "NonMatching",
    "system/bandobj/BandScoreboard.cpp": "NonMatching",
    "system/bandobj/BandCrowdMeter.cpp": {

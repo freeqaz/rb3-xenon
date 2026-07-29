@@ -11577,11 +11577,11 @@ BandHighlight.cpp:
 	.pdata      start:0x821FE918 end:0x821FE920
 	.pdata      start:0x821FE928 end:0x821FE950
 	.pdata      start:0x821FE960 end:0x821FE978
-	.pdata      start:0x821FE980 end:0x821FEB78
+	.pdata      start:0x821FE980 end:0x821FEA70
 	.text       start:0x823421A8 end:0x82342200
 	.text       start:0x82342228 end:0x823423DC
 	.text       start:0x823424A8 end:0x82342680
-	.text       start:0x823426F8 end:0x82345034
+	.text       start:0x823426F8 end:0x823438C8
 
 StringConversion.cpp:
 	.text       start:0x82AE5FA8 end:0x82AE5FE8
@@ -12902,3 +12902,7 @@ band3/meta_band/CharSync.cpp:
 system/ui/UIGridProvider.cpp:
 	.pdata      start:0x82247178 end:0x822471E8
 	.text       start:0x82817260 end:0x82817A64
+
+system/bandobj/BandButton.cpp:
+	.pdata      start:0x821FEA70 end:0x821FEB78
+	.text       start:0x823438C8 end:0x82345034
