@@ -3916,6 +3916,16 @@ CharacterTest.cpp:
 	.text       start:0x823DDDC0 end:0x823DE208
 	.text       start:0x823DE208 end:0x823DE254
 
+ChordShapeGenerator.cpp:
+	.pdata      start:0x821F84C8 end:0x821F84F8
+	.pdata      start:0x821F8500 end:0x821F8508
+	.pdata      start:0x821F8520 end:0x821F8538
+	.pdata      start:0x821F8678 end:0x821F8690
+	.text       start:0x822DD290 end:0x822DD7AC
+	.text       start:0x822DD808 end:0x822DD9A0
+	.text       start:0x822DDB48 end:0x822DE6AC
+	.text       start:0x822DF708 end:0x822DF8B0
+
 CheckboxDisplay.cpp:
 	.pdata      start:0x821FC8F8 end:0x821FC9C8
 	.text       start:0x822F0F08 end:0x822F0F18
@@ -12890,6 +12900,7 @@ system/rndobj/PostProcMgr.cpp:
 system/ui/UIProxy.cpp:
 	.pdata      start:0x82247DD8 end:0x82247F10
 	.text       start:0x828233A0 end:0x828248A0
+
 band3/meta_band/TrainingMgr.cpp:
 	.pdata      start:0x8221D2D0 end:0x8221D3E8
 	.text       start:0x82565088 end:0x82566000

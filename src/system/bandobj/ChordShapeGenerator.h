@@ -1,4 +1,5 @@
 #pragma once
+#include "obj/ObjMacros.h"
 #include "obj/Object.h"
 #include "rndobj/Mesh.h"
 #include "rndobj/Trans.h"
@@ -130,9 +131,9 @@ public:
     std::vector<float> mFretHeights; // 0xb4
     std::vector<float> mGradeDistances; // 0xbc
     RndMesh *mSource; // 0xc4
-    float unkc8; // 0xc8
-    float unkcc; // 0xcc
-    float unkd0; // 0xd0
+    float mBaseXVal; // 0xc8
+    float mContourXVal; // 0xcc
+    float mBaseHeightVal; // 0xd0
     CrossSec sec1; // 0xd4
     CrossSec sec2; // 0xf8
 };
