@@ -362,6 +362,71 @@ def load_splits_text_bases(splits_path):
 
 
 # ---------------------------------------------------------------------------
+# NAMED catch-all fn -> true VA lookups (fixes the dropped/mis-addressed defect:
+# every auto-carve function that obj_target_symbol_renamer renamed from
+# fn_<addr> to a real MSVC mangled name used to get a SYNTHETIC address instead
+# of its true VA -- see load_functions() catch-all branch below).
+# ---------------------------------------------------------------------------
+TARGET_SYMBOL_MAP = os.path.join(ROOT, "scripts", "target_symbol_map.json")
+SYMBOLS_TXT = os.path.join(ROOT, "config", "45410914", "symbols.txt")
+
+_TARGET_SYMBOL_NAME2ADDR = None
+
+
+def load_target_symbol_name2addr():
+    """scripts/target_symbol_map.json is addr(0x-hex str) -> mangled name, plus
+    a handful of leading-'_' metadata keys (comments, denylists, ICF/bijection-
+    arbitrary lists) that are NOT addr entries. Invert to name -> addr so a
+    catch-all named function (renamed fn_<addr> -> mangled name by
+    obj_target_symbol_renamer) can recover its true VA. A tiny number of names
+    map to >1 addr (genuine ICF-folded duplicates); we cannot pick a VA for
+    those without more evidence, so they are dropped here and fall through to
+    the next lookup (load_symbols_txt_name2addr) or the synthetic fallback."""
+    global _TARGET_SYMBOL_NAME2ADDR
+    if _TARGET_SYMBOL_NAME2ADDR is not None:
+        return _TARGET_SYMBOL_NAME2ADDR
+    name2addr = {}
+    if os.path.exists(TARGET_SYMBOL_MAP):
+        d = json.load(open(TARGET_SYMBOL_MAP))
+        dup = set()
+        for k, v in d.items():
+            if not (k.startswith("0x") and isinstance(v, str)):
+                continue      # skip metadata keys + ICF-arbitrary addr LISTS
+            if v in name2addr:
+                dup.add(v)
+                continue
+            name2addr[v] = int(k, 16)
+        for v in dup:
+            name2addr.pop(v, None)
+    _TARGET_SYMBOL_NAME2ADDR = name2addr
+    return name2addr
+
+
+_SYMBOLS_TXT_NAME2ADDR = None
+_SYMBOLS_TXT_LINE_RE = re.compile(r"^(\S+) = \S+:0x([0-9A-Fa-f]+);")
+
+
+def load_symbols_txt_name2addr():
+    """config/45410914/symbols.txt: 'NAME = section:0xADDR; ...', one line per
+    real VA. Covers names target_symbol_map.json doesn't carry -- e.g. compiler
+    runtime-helper stubs (__savegprlr_N / __restgprlr_N / __save-/restfprlr_N)
+    and dtk-assigned lbl_<addr> labels whose embedded hex is stale (post-ICF/
+    relocation) so it must NOT be parsed as an address -- the line's actual
+    0xADDR is authoritative. Second fallback after target_symbol_map.json."""
+    global _SYMBOLS_TXT_NAME2ADDR
+    if _SYMBOLS_TXT_NAME2ADDR is not None:
+        return _SYMBOLS_TXT_NAME2ADDR
+    out = {}
+    if os.path.exists(SYMBOLS_TXT):
+        for line in open(SYMBOLS_TXT):
+            m = _SYMBOLS_TXT_LINE_RE.match(line)
+            if m:
+                out[m.group(1)] = int(m.group(2), 16)
+    _SYMBOLS_TXT_NAME2ADDR = out
+    return out
+
+
+# ---------------------------------------------------------------------------
 # load report.json -> list of (addr, size, matched, source_path, unit)
 # ---------------------------------------------------------------------------
 def load_functions(report_path, dedup=True):
@@ -415,15 +480,31 @@ def load_functions(report_path, dedup=True):
         # The report's per-fn `address` here is an internal monotonic index, NOT
         # a recoverable VA (catch-all units interleave many non-contiguous
         # regions and the offset drifts vs the true layout). So fn_ functions
-        # are placed by their absolute name; NAMED functions (template insts /
-        # thunks, all unmatched) are anchored to the nearest *preceding* fn_
-        # anchor in listing order -- good enough to inherit that neighbor's
-        # bucket via spatial locality -- with a tiny distinct delta to avoid
-        # collisions. Functions are listed in `address`-monotonic order.
+        # are placed by their absolute name.
+        #
+        # NAMED functions (every one obj_target_symbol_renamer renamed from
+        # fn_<addr> to its real MSVC mangled name -- template insts, thunks,
+        # ordinary named methods, all still unmatched here) DO have a real VA:
+        # look it up, in order, via
+        #   (1) scripts/target_symbol_map.json (name -> VA, ground truth --
+        #       this is exactly the map the renamer used, inverted), else
+        #   (2) config/45410914/symbols.txt (exact name -> VA -- covers a
+        #       residual class target_symbol_map.json doesn't carry: compiler
+        #       runtime-helper stubs like __savegprlr_N/__restgprlr_N and
+        #       dtk lbl_<addr> labels).
+        # Only when BOTH miss (measured: 1 of 5,377 catch-all named fns, an
+        # ICF-merged __MERGED_fn_ symbol with no map entry) do we fall back to
+        # the old synthetic placement: anchor to the nearest *preceding* fn_ in
+        # listing order (good enough to inherit that neighbor's bucket via
+        # spatial locality) with a tiny distinct delta to avoid collisions.
+        # Functions are listed in `address`-monotonic order.
+        tsm_name2addr = load_target_symbol_name2addr()
+        symtxt_name2addr = load_symbols_txt_name2addr()
         last_anchor = None
         named_off = 0
         for fn in fns:
-            m = FN_ADDR_RE.match(fn["name"])
+            name = fn["name"]
+            m = FN_ADDR_RE.match(name)
             size = int(fn.get("size", "0"))
             matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
             fz = float(fn.get("fuzzy_match_percent", 0.0))
@@ -432,15 +513,24 @@ def load_functions(report_path, dedup=True):
                 last_anchor = addr
                 named_off = 0
             else:
-                if last_anchor is None:
-                    # named fns before the first anchor: use unit-name base.
-                    am = AUTO_ADDR_RE.search(unit)
-                    last_anchor = int(am.group(1), 16) if am else SYNTH_BASE
-                named_off += 1
-                # small odd delta keeps these distinct from the anchor + each
-                # other without crossing into the next real fn (sizes are >=8).
-                addr = last_anchor + named_off  # 1..N within the anchor's slot
-            funcs.append((addr, size, matched, sp, unit, fn["name"], fz))
+                real_addr = tsm_name2addr.get(name)
+                if real_addr is None:
+                    real_addr = symtxt_name2addr.get(name)
+                if real_addr is not None:
+                    # Real VA recovered -- do NOT touch last_anchor/named_off,
+                    # those only govern the synthetic-placement fallback for
+                    # fns that still need it.
+                    addr = real_addr
+                else:
+                    if last_anchor is None:
+                        # named fns before the first anchor: use unit-name base.
+                        am = AUTO_ADDR_RE.search(unit)
+                        last_anchor = int(am.group(1), 16) if am else SYNTH_BASE
+                    named_off += 1
+                    # small odd delta keeps these distinct from the anchor +
+                    # each other without crossing the next real fn (sizes >=8).
+                    addr = last_anchor + named_off  # 1..N within the anchor's slot
+            funcs.append((addr, size, matched, sp, unit, name, fz))
     if not dedup:
         return funcs, rep
     # de-dup on addr (ICF folds / catch-all named-fn anchoring can land two
