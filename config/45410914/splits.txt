@@ -5778,8 +5778,7 @@ PropKeys.cpp:
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
 	.pdata      start:0x8222D7C8 end:0x8222D7D0
 	.pdata      start:0x8222D7D0 end:0x8222D7D8
-	.pdata      start:0x8222E968 end:0x8222EAE0
-	.pdata      start:0x822307B0 end:0x82230950
+	.pdata      start:0x8222EA78 end:0x8222EAE0
 	.pdata      start:0x82231100 end:0x82231108
 	.pdata      start:0x82231108 end:0x82231110
 	.pdata      start:0x82231D80 end:0x82231D88
@@ -5800,8 +5799,7 @@ PropKeys.cpp:
 	.text       start:0x82656180 end:0x82656348
 	.text       start:0x82656630 end:0x826567CC
 	.text       start:0x826567D4 end:0x82656800
-	.text       start:0x82666AC0 end:0x8266849C
-	.text       start:0x82683388 end:0x82684D1C
+	.text       start:0x82667FE0 end:0x8266849C
 	.text       start:0x8268C920 end:0x8268C998
 	.text       start:0x8268C998 end:0x8268C9E8
 	.text       start:0x82698B20 end:0x82698B98
@@ -9978,7 +9976,8 @@ Leaderboard.cpp:
 	.pdata      start:0x8222EF08 end:0x8222EF60
 	.pdata      start:0x8222EF60 end:0x8222EF68
 	.pdata      start:0x8222EF68 end:0x8222EF78
-	.pdata      start:0x8222EF78 end:0x8222F308
+	.pdata      start:0x8222EF78 end:0x8222F160
+	.pdata      start:0x8222F200 end:0x8222F2B0
 	.pdata      start:0x8222F360 end:0x8222F3C0
 	.pdata      start:0x82234C00 end:0x82234C10
 	.text       start:0x8235EF08 end:0x8235EF68
@@ -9987,7 +9986,8 @@ Leaderboard.cpp:
 	.text       start:0x8266BDD0 end:0x8266C270
 	.text       start:0x8266C270 end:0x8266C30C
 	.text       start:0x8266C30C end:0x8266C440
-	.text       start:0x8266C464 end:0x8266F730
+	.text       start:0x8266C464 end:0x8266E4E8
+	.text       start:0x8266EC88 end:0x8266F380
 	.text       start:0x8266FAC4 end:0x8266FF30
 	.text       start:0x826CE268 end:0x826CE2D0
 
@@ -12924,3 +12924,18 @@ band3/tour/TourPerformerRemote.cpp:
 band3/tour/TourPerformerLocal.cpp:
 	.pdata      start:0x82200C10 end:0x82200D68
 	.text       start:0x823663B8 end:0x82367D60
+band3/meta_band/FaceHairProvider.cpp:
+	.pdata      start:0x8222F2B0 end:0x8222F308
+	.text       start:0x8266F380 end:0x8266F730
+
+band3/meta_band/CharProvider.cpp:
+	.pdata      start:0x8222E948 end:0x8222EA78
+	.text       start:0x82666648 end:0x82667FE0
+
+band3/meta_band/BandStoreOffer.cpp:
+	.pdata      start:0x8222F160 end:0x8222F200
+	.text       start:0x8266E4E8 end:0x8266EC88
+
+band3/game/BandUserMgr.cpp:
+	.pdata      start:0x82230718 end:0x82230968
+	.text       start:0x826826A8 end:0x82684E40

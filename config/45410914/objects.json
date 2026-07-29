@@ -1130,6 +1130,25 @@
    "band3/meta_band/AssetProvider.cpp": "NonMatching",
    "band3/meta_band/NewAssetProvider.cpp": "NonMatching",
    "band3/meta_band/MakeupProvider.cpp": "NonMatching",
+   "band3/meta_band/FaceHairProvider.cpp": "NonMatching",
+   "band3/game/BandUserMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/BandStoreOffer.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/CharProvider.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/CampaignGoalsLeaderboardPanel.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
