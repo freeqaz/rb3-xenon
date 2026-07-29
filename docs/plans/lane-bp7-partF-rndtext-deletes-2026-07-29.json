@@ -1,0 +1,20 @@
+[
+ {
+  "va": "0x827de868",
+  "old": "??0RndText@@IAA@XZ",
+  "op": "delete",
+  "why": "PART F (lane BP-2b fragment, proven_mispairs row 1, confidence high). Retail body at this VA initialises members out to 0x408, contains three 0x40-strided Transform blocks (0x348/0x388/0x3c8) and ~14 identical 0xc-sized ObjPtr sub-objects (0x23c..0x324), but retail RndText's sizeof is 0x1c8 -- the object being constructed is far too large to be an RndText. It is also spatially isolated from the RndText cluster, and /O1 without LTCG preserves TU grouping, so spatial isolation is real evidence. BP-2b locates the true RndText ctor at fn_82456CB0. DELETED rather than repointed: the correct owner of THIS VA is unknown, and the true ctor's span 0x82456CA4-0x82457060 is UNCLAIMED in splits.txt so ??0RndText@@IAA@XZ could not pair there anyway -- filed as held-pending-pin. Currently 33.92%%, so this costs 0 matched."
+ },
+ {
+  "va": "0x8245ade8",
+  "old": "?Load@RndText@@UAAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART F (BP-2b proven_mispairs row 3, confidence medium-high) AND a prerequisite for freeing the ?Load@RndText@@ name for 0x8245AE98. Retail size here is 0xA4 while our Load COMDAT is 0x848 and the body BP-2b proves to be Load (0x8245AE98) is 0x578 -- a 0xA4 body cannot be this Load. BP-2b reads it as the 2-arg vftable slot-2 Replace. NOT repointed to Replace: Text.obj contains NO ?Replace@RndText@@ COMDAT at all, so the gate fails and a repoint would read 0%%. Currently 4.39%%, so this costs 0 matched."
+ },
+ {
+  "va": "0x82455928",
+  "old": "?Save@UIFontImporter@@UAAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART F cross-lane resolution. BP-2b proves this VA is RndText::Save (vftable slot 8 via thunk fn_82457260) MIS-PINNED into UIFontImporter.cpp's span. Independently, this lane's part-B stream-direction scan had to HOLD 0x828182A8 (mapped ?Load@UIFontImporter@@ but observing WRITE x26) precisely because ?Save@UIFontImporter@@ was already occupied HERE -- two apparent Saves and no way to choose. Neither lane could resolve it alone; together they determine both VAs. Deleting frees the name for its real owner 0x828182A8 (next row). NOT repointed to ?Save@RndText@@ (which is unmapped and has a real 0x1E8 COMDAT): this VA is owned by UIFontImporter.cpp's span, so the Text.obj COMDAT is in the wrong obj and would read 0%% -- held pending the re-pin BP-2b requests. Currently 1.159%%, so this costs 0 matched."
+ }
+]

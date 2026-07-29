@@ -3760,6 +3760,7 @@ CharIKFingers.cpp:
 	.pdata      start:0x822050B0 end:0x822050B8
 	.pdata      start:0x822050B8 end:0x822050C8
 	.pdata      start:0x822050C8 end:0x82205108
+	.pdata      start:0x82205110 end:0x82205118
 	.pdata      start:0x82205128 end:0x82205138
 	.pdata      start:0x82205138 end:0x82205140
 	.pdata      start:0x82205140 end:0x82205148
@@ -3774,6 +3775,7 @@ CharIKFingers.cpp:
 	.text       start:0x823B3C40 end:0x823B3CA4
 	.text       start:0x823B3CB0 end:0x823B3E68
 	.text       start:0x823B3E68 end:0x823B4090
+	.text       start:0x823B40F8 end:0x823B4234
 	.text       start:0x823B4420 end:0x823B44A4
 	.text       start:0x823B44A8 end:0x823B4518
 	.text       start:0x823B4518 end:0x823B4598
@@ -12925,20 +12927,24 @@ InstrumentDifficultyDisplay.cpp:
 	.pdata      start:0x821FCBA0 end:0x821FCBB0
 	.pdata      start:0x821FCBB0 end:0x821FCBE8
 	.pdata      start:0x821FCBE8 end:0x821FCCF8
+	.pdata      start:0x821FCCF8 end:0x821FCD00
 	.pdata      start:0x821FCD00 end:0x821FCD08
 	.text       start:0x82323438 end:0x82323490
 	.text       start:0x823234B0 end:0x8232356C
 	.text       start:0x82323570 end:0x82323950
 	.text       start:0x82323960 end:0x82324BF0
+	.text       start:0x82324BF0 end:0x82324C48
 	.text       start:0x82324C48 end:0x82324C98
 
 ScoreDisplay.cpp:
 	.pdata      start:0x821FC7C8 end:0x821FC7D8
 	.pdata      start:0x821FC7D8 end:0x821FC8A0
+	.pdata      start:0x821FC8E8 end:0x821FC8F0
 	.pdata      start:0x8221DDB8 end:0x8221DDC0
 	.text       start:0x82319C30 end:0x82319C40
 	.text       start:0x8231F6F8 end:0x8231F78C
 	.text       start:0x8231F790 end:0x823203AC
+	.text       start:0x82320848 end:0x823208A0
 	.text       start:0x8256E7A8 end:0x8256E800
 
 system/hamobj/HamSong.cpp:
@@ -13029,8 +13035,10 @@ band3/meta_band/Asset.cpp:
 	.text       start:0x825EF708 end:0x825EFB34
 
 band3/meta_band/LockStepMgr.cpp:
+	.pdata      start:0x82221FD8 end:0x82221FE0
 	.pdata      start:0x82221FF0 end:0x82222030
 	.pdata      start:0x82222038 end:0x822221F0
+	.text       start:0x825AB060 end:0x825AB094
 	.text       start:0x825AB138 end:0x825AB3B8
 	.text       start:0x825AB408 end:0x825ACA70
 
@@ -13087,8 +13095,10 @@ system/bandobj/UnisonIcon.cpp:
 system/bandobj/DialogDisplay.cpp:
 	.pdata      start:0x821FD230 end:0x821FD240
 	.pdata      start:0x821FD240 end:0x821FD278
+	.pdata      start:0x821FD350 end:0x821FD358
 	.text       start:0x82329B20 end:0x82329B98
 	.text       start:0x82329B98 end:0x82329FD8
+	.text       start:0x8232ABF8 end:0x8232AC50
 
 band3/meta_band/InstrumentFinishProvider.cpp:
 	.pdata      start:0x8222F360 end:0x8222F3A0

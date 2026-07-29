@@ -1,0 +1,37 @@
+[
+ {
+  "va": "0x82739158",
+  "old": "?StaticClassName@DxMesh@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@DxEnviron@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "PART E (new StaticClassName-literal channel). OBJ_CLASSNAME(literal) bodies are IDENTICAL machine code across all classes except the single relocation that supplies the class-name string, and objdiff runs functionRelocDiffs=None -- so every one of them matches every other at 100.0% and the family is free to be scrambled while reading clean. Disassembled the retail body at this VA and recovered the .rdata string it actually builds: 'Environ'. The incumbent name's class declares OBJ_CLASSNAME(DxMesh), which contradicts it; the proposed name's class declares OBJ_CLASSNAME('Environ'). Applied only because this VA belongs to a CLOSED permutation cycle whose every member is itself a proven CONTRADICT and has the proposed name as a real COMDAT in the obj of the unit owning the VA (Rnd_Xbox.cpp) -- closure matters because the Rnd/Dx/Ng renderer-layer split makes literal->class one-to-many, and only the cycle constraint forces a unique assignment. Metric-neutral by construction: the VA keeps its 100%, under the right name."
+ },
+ {
+  "va": "0x82738f08",
+  "old": "?StaticClassName@DxEnviron@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@DxCam@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "PART E (new StaticClassName-literal channel). OBJ_CLASSNAME(literal) bodies are IDENTICAL machine code across all classes except the single relocation that supplies the class-name string, and objdiff runs functionRelocDiffs=None -- so every one of them matches every other at 100.0% and the family is free to be scrambled while reading clean. Disassembled the retail body at this VA and recovered the .rdata string it actually builds: 'Cam'. The incumbent name's class declares OBJ_CLASSNAME(DxEnviron), which contradicts it; the proposed name's class declares OBJ_CLASSNAME('Cam'). Applied only because this VA belongs to a CLOSED permutation cycle whose every member is itself a proven CONTRADICT and has the proposed name as a real COMDAT in the obj of the unit owning the VA (Rnd_Xbox.cpp) -- closure matters because the Rnd/Dx/Ng renderer-layer split makes literal->class one-to-many, and only the cycle constraint forces a unique assignment. Metric-neutral by construction: the VA keeps its 100%, under the right name."
+ },
+ {
+  "va": "0x827382f8",
+  "old": "?StaticClassName@DxCam@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@DxMesh@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "PART E (new StaticClassName-literal channel). OBJ_CLASSNAME(literal) bodies are IDENTICAL machine code across all classes except the single relocation that supplies the class-name string, and objdiff runs functionRelocDiffs=None -- so every one of them matches every other at 100.0% and the family is free to be scrambled while reading clean. Disassembled the retail body at this VA and recovered the .rdata string it actually builds: 'Mesh'. The incumbent name's class declares OBJ_CLASSNAME(DxCam), which contradicts it; the proposed name's class declares OBJ_CLASSNAME('Mesh'). Applied only because this VA belongs to a CLOSED permutation cycle whose every member is itself a proven CONTRADICT and has the proposed name as a real COMDAT in the obj of the unit owning the VA (Rnd_Xbox.cpp) -- closure matters because the Rnd/Dx/Ng renderer-layer split makes literal->class one-to-many, and only the cycle constraint forces a unique assignment. Metric-neutral by construction: the VA keeps its 100%, under the right name."
+ },
+ {
+  "va": "0x82739208",
+  "old": "?StaticClassName@DxMovie@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@DxCubeTex@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "PART E (new StaticClassName-literal channel). OBJ_CLASSNAME(literal) bodies are IDENTICAL machine code across all classes except the single relocation that supplies the class-name string, and objdiff runs functionRelocDiffs=None -- so every one of them matches every other at 100.0% and the family is free to be scrambled while reading clean. Disassembled the retail body at this VA and recovered the .rdata string it actually builds: 'CubeTex'. The incumbent name's class declares OBJ_CLASSNAME(DxMovie), which contradicts it; the proposed name's class declares OBJ_CLASSNAME('CubeTex'). Applied only because this VA belongs to a CLOSED permutation cycle whose every member is itself a proven CONTRADICT and has the proposed name as a real COMDAT in the obj of the unit owning the VA (Rnd_Xbox.cpp) -- closure matters because the Rnd/Dx/Ng renderer-layer split makes literal->class one-to-many, and only the cycle constraint forces a unique assignment. Metric-neutral by construction: the VA keeps its 100%, under the right name."
+ },
+ {
+  "va": "0x82739288",
+  "old": "?StaticClassName@DxCubeTex@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@DxMovie@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "PART E (new StaticClassName-literal channel). OBJ_CLASSNAME(literal) bodies are IDENTICAL machine code across all classes except the single relocation that supplies the class-name string, and objdiff runs functionRelocDiffs=None -- so every one of them matches every other at 100.0% and the family is free to be scrambled while reading clean. Disassembled the retail body at this VA and recovered the .rdata string it actually builds: 'Movie'. The incumbent name's class declares OBJ_CLASSNAME(DxCubeTex), which contradicts it; the proposed name's class declares OBJ_CLASSNAME('Movie'). Applied only because this VA belongs to a CLOSED permutation cycle whose every member is itself a proven CONTRADICT and has the proposed name as a real COMDAT in the obj of the unit owning the VA (Rnd_Xbox.cpp) -- closure matters because the Rnd/Dx/Ng renderer-layer split makes literal->class one-to-many, and only the cycle constraint forces a unique assignment. Metric-neutral by construction: the VA keeps its 100%, under the right name."
+ }
+]

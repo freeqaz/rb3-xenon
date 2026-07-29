@@ -1,0 +1,14 @@
+[
+ {
+  "va": "0x8240dc38",
+  "old": "?StaticClassName@Object@Hmx@@SA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART D duplicate-name resolution 1 of 3. ?StaticClassName@Object@Hmx@@ was mapped at TWO addresses. Decided by the class-name string each retail body builds: 0x82271A90 builds \"Object\", which is exactly what src/system/obj/Object.h:1614 declares via OBJ_CLASSNAME(Object) -- that VA is the genuine one and is KEPT. This VA builds \"CubeTex\", so it is some *CubeTex class's StaticClassName, not Hmx::Object's. It reads 100%% only because these bodies are class-agnostic apart from the string relocation, which functionRelocDiffs=None hides. No repoint: the VA is owned by MeshDeform.cpp's span and no *CubeTex StaticClassName COMDAT exists in MeshDeform.obj, so a repoint would read 0%%."
+ },
+ {
+  "va": "0x8240e940",
+  "old": "?StaticClassName@RndCam@@SA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART D duplicate-name resolution 2 of 3. ?StaticClassName@RndCam@@ was mapped at TWO addresses. src/system/rndobj/Cam.h:24 declares OBJ_CLASSNAME(Cam), and 0x8229CEB8's retail body builds \"Cam\" -- that VA is genuine and is KEPT. This VA builds \"DOFProc\", so it belongs to a DOFProc-registering class. No repoint: owned by system/rndobj/Rnd.cpp's span and no DOFProc StaticClassName COMDAT exists in Rnd.obj."
+ }
+]
