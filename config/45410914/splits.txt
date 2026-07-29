@@ -11750,6 +11750,10 @@ band3/meta_band/MetaNetMsgs.cpp:
 	.text       start:0x825BC1C0 end:0x825BC1D8
 	.text       start:0x825BC1D8 end:0x825BC6EC
 
+band3/meta_band/SongSetlistProvider.cpp:
+	.pdata      start:0x82223218 end:0x82223230
+	.text       start:0x825BC6F8 end:0x825BC8FC
+
 SongDB.cpp:
 	.pdata      start:0x821F1C50 end:0x821F1C58
 	.pdata      start:0x82208C10 end:0x82208C18
@@ -12890,6 +12894,7 @@ system/rndobj/PostProcMgr.cpp:
 system/ui/UIProxy.cpp:
 	.pdata      start:0x82247DD8 end:0x82247F10
 	.text       start:0x828233A0 end:0x828248A0
+
 band3/meta_band/TrainingMgr.cpp:
 	.pdata      start:0x8221D2D0 end:0x8221D3E8
 	.text       start:0x82565088 end:0x82566000

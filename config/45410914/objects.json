@@ -1613,6 +1613,7 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/SongSetlistProvider.cpp": "NonMatching",
    "band3/meta_band/SongSortByArtist.cpp": "NonMatching",
    "band3/meta_band/SongSortByDiff.cpp": "NonMatching",
    "band3/meta_band/SongSortByPlays.cpp": "NonMatching",

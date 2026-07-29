@@ -1,4 +1,6 @@
 {
+ "0x825bc6f8": "?Text@SetlistProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x825bc828": "?NumData@SetlistProvider@@UBAHXZ",
  "0x82823bd0": "?SetTypeDef@UIProxy@@UAAXPAVDataArray@@@Z",
  "0x82823db8": "?SyncDir@UIProxy@@QAAXXZ",
  "0x828233a0": "?DrawShowing@UIProxy@@UAAXXZ",
