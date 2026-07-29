@@ -18,11 +18,18 @@ Baseline for every measurement below, taken in a fully-built worktree at main
 
 ## 0. TL;DR
 
-* **21 TUs pinned, wired, ported and measured: +423 gains / −25 losses.** Every
-  one of the 25 losses is the retirement of a *false* 100 % — a
+* **24 TUs/carves pinned, wired, ported and measured: +500 gains / −25 losses**
+  (lanes were still in flight at time of writing; the ledger is a floor, not a
+  final). Every one of the 25 losses is the retirement of a *false* 100 % — a
   `target_symbol_map.json` entry bound to a target VA that is not that function,
-  scoring only as a shape (§4). Nine of the 21 are pure ADDs into unclaimed space
-  and are structurally incapable of a loss; they alone are **+159**.
+  scoring only as a shape (§4). Nine of them are pure ADDs into unclaimed space
+  and are structurally incapable of a loss; those alone are **+159**.
+
+  For scale: laneBD's proof-of-concept was +71 from 3 TUs, and it priced the
+  whole 42-span worklist's headroom at 504 currently-unscoreable functions. This
+  wave has realised most of that headroom and then exceeded it, because the spans
+  under-covered (§3) — `ChordShapeGenerator` alone came to **+55** across two
+  carves, against a worklist estimate of 77 for a row laneBD had demoted to LOW.
 * **Seven sub-lanes**, one buildable worktree each (`scripts/setup_worktree.sh`),
   each running the full recipe per TU: confirm identity from the retail PE →
   refine the span → carve or add in `splits.txt` → wire in `objects.json` → port
@@ -77,7 +84,10 @@ baseline above. Losses are itemised in §4.
 | F | `system/bandobj/ChordShapeGenerator` | 4 unclaimed runs (**ADD**) | — | **+13** | 0 |
 | G | `band3/meta_band/SongSetlistProvider` | `0x825BC6F8..0x825BC8FC` (**ADD**) | — | **+3** | 0 |
 | G | `system/dsp/SndAnalysis` | `0x82B816F0..0x82B81DD8` (**ADD**) | — | **+4** | 0 |
-| | **21 TUs** | | | **+423** | **−25** |
+| D | `band3/game/KeysFx` | `0x826F3EA8..0x826F4100` | `GuitarFx.cpp` | **+5** | 0 |
+| F | `ChordShapeGenerator` (2nd carve) | out of the foreign `Mesh.cpp` pin | `Mesh.cpp` | **+42** | 0 |
+| G | `band3/meta_band/InputMgr` | `0x825B0518..0x825B22A8` (4 donors) | `AppInlineHelp`/`CalibrationPanel`/… | **+30** | 0 |
+| | **24 TUs / carves** | | | **+500** | **−25** |
 
 Two of the 21 (`SongSetlistProvider`, `SndAnalysis`) are TUs **laneBD never
 located** — they came out of the re-reduction in §5.
