@@ -1,5 +1,17 @@
 # rb3-xenon — Claude Context
 
+## ★ Document your work as you go (applies to every agent)
+
+Keep a clear, readable record in visible output: what you are about to do,
+what you expect to see, and what you actually measured. State predictions
+before results — a failed prediction is the most useful line in a record.
+Say what you deliberately did not do, and quote numbers with how they were
+measured (which leg, which build). A subagent's final report is the only thing
+the coordinator sees, so include the evidence behind each conclusion. Keep it
+proportional: a sentence or two per step.
+
+---
+
 Decompilation of **Rock Band 3** for **Xbox 360** (PowerPC). Goal: matching
 machine code from C++ source. Target binary: vanilla retail XEX, title ID
 `45410914`, at `orig/45410914/default.xex` (not committed).
