@@ -124,6 +124,7 @@ SYM_LINE = re.compile(r"^(\S+) = \.(\w+):0x([0-9A-Fa-f]+)")
 # second half of a REFHI/REFLO pair and always names @comp.id -- pure noise.
 PAIR_TYPE = 0x12
 ABSOLUTE_TYPE = 0x0
+REL14_TYPE = 0x7   # conditional-branch displacement
 
 
 class RetailImage:
@@ -280,6 +281,13 @@ def obj_relocs_for_symbol(parser, sym_name, size_hint=None):
     for r in parser.get_section_relocations(sec_i):
         if r["type"] in (PAIR_TYPE, ABSOLUTE_TYPE):
             continue
+        if r["type"] == REL14_TYPE and r["symbol_name"] == sym_name:
+            # dtk emits a REL14 relocation for an INTRA-function conditional
+            # branch that MSVC resolves internally with no relocation at all.
+            # Verified on ?ListAnimChildren@RndAnimFilter@@ and
+            # ??4?$ObjList@UTarget@HamCamShot@@@@: pure emission artifact, and
+            # the dominant cause of the SHAPE_MISMATCH bucket.
+            continue
         if lo <= r["offset"] < hi:
             out.append((r["offset"] - lo, r["type"], r["symbol_name"]))
     out.sort()
@@ -389,7 +397,8 @@ class UnitPair:
 
 def classify_function(up, fname, fsize, oracles, consistency=None,
                       merged_tolerant=True, icf=None, image=None,
-                      base_index=None, matched_names=None):
+                      base_index=None, matched_names=None,
+                      strict_consistency=False):
     """Return a dict verdict for one 100%-matched target function."""
     t_rel = obj_relocs_for_symbol(up.target, fname, fsize)
     if t_rel is None:
@@ -420,7 +429,7 @@ def classify_function(up, fname, fsize, oracles, consistency=None,
         if b_rel is None:
             continue
         res = _compare(t_rel, b_rel, oracles, consistency, merged_tolerant,
-                       icf, image, base_index, matched_names)
+                       icf, image, base_index, matched_names, strict_consistency)
         res["base_symbol"] = cand
         rank = {"CORRESPONDING": 0, "UNRESOLVABLE": 1, "DIVERGENT": 2,
                 "SHAPE_MISMATCH": 3}[res["verdict"]]
@@ -439,7 +448,8 @@ def classify_function(up, fname, fsize, oracles, consistency=None,
 
 
 def _compare(t_rel, b_rel, oracles, consistency, merged_tolerant, icf=None,
-             image=None, base_index=None, matched_names=None):
+             image=None, base_index=None, matched_names=None,
+             strict_consistency=False):
     if len(t_rel) != len(b_rel) or [(o, t) for o, t, _ in t_rel] != [(o, t) for o, t, _ in b_rel]:
         return {"verdict": "SHAPE_MISMATCH",
                 "detail": f"{len(t_rel)} target relocs vs {len(b_rel)} base relocs"}
@@ -448,7 +458,7 @@ def _compare(t_rel, b_rel, oracles, consistency, merged_tolerant, icf=None,
     for (off, ty, tname), (_, _, bname) in zip(t_rel, b_rel):
         tva = oracles.va_of_label(tname)
         st = _slot(tva, tname, bname, oracles, consistency, merged_tolerant,
-                   icf, image, base_index, matched_names)
+                   icf, image, base_index, matched_names, strict_consistency)
         slots.append({"offset": off, "type": ty, "target": tname,
                       "base": bname, "target_va": tva, "state": st[0],
                       "why": st[1], "oracle": st[2]})
@@ -550,7 +560,8 @@ def _content_check(bname, tva, image, base_index, matched_names=None):
 
 
 def _slot(tva, tname, bname, oracles, consistency, merged_tolerant, icf=None,
-          image=None, base_index=None, matched_names=None):
+          image=None, base_index=None, matched_names=None,
+          strict_consistency=False):
     """Decide one relocation slot.  Oracles in order of strength."""
     if tva is None:
         return ("UNDECIDED", "target reloc symbol has no resolvable VA", "-")
@@ -572,10 +583,16 @@ def _slot(tva, tname, bname, oracles, consistency, merged_tolerant, icf=None,
     if consistency is not None:
         bound = consistency.get(bname)
         if bound is not None:
-            va, n_obs, n_distinct = bound
+            va, n_obs, n_distinct = bound[0], bound[1], bound[2]
+            n_named = bound[3] if len(bound) > 3 else n_obs
+            if strict_consistency:
+                n_obs = n_named
             if va == tva and n_obs >= 2:
                 return ("CORRESPOND", f"{n_obs} distinct functions bind "
                         f"{bname} to this VA", "consistency")
+            if strict_consistency and n_named < 2:
+                return ("UNDECIDED", "consistency support is entirely "
+                        "over-subscribed funclets", "consistency")
             if n_distinct > 1 and va != tva:
                 return ("DIVERGE", f"base {bname} is bound to 0x{va:08X} "
                         f"({n_obs} obs) but this slot points 0x{tva:08X}",
@@ -679,6 +696,17 @@ def build_base_index(units, verbose=False):
     return cap, defs
 
 
+def _is_named_observer(name):
+    """A relocation observation is INDEPENDENT evidence only if the observing
+    function is itself a named body. An EH funclet / `fn_<VA>` crumb reaches
+    100% through objdiff's many-to-one masked pairing, so a crowd of them all
+    pointing at one base symbol is ONE over-subscribed pairing wearing many
+    hats, not N independent corroborations. Measured on `DirLoader`: 33
+    `fn_<VA>` funclets "supported" one local guard binding."""
+    return not (FN_RE.match(name) or name.startswith(
+        ("__unwind$", "__catch$", "??__E", "??__F")))
+
+
 def build_consistency(root, units, fn_index, oracles, verbose=False):
     """Observe every (base symbol name -> target VA) pairing across the census
     and return name -> (modal VA, n_distinct_FUNCTIONS supporting it,
@@ -722,7 +750,8 @@ def build_consistency(root, units, fn_index, oracles, verbose=False):
     out = {}
     for bname, c in obs.items():
         va, fns = max(c.items(), key=lambda kv: (len(kv[1]), -kv[0]))
-        out[bname] = (va, len(fns), len(c))
+        n_named = sum(1 for _, fn in fns if _is_named_observer(fn))
+        out[bname] = (va, len(fns), len(c), n_named)
     if verbose:
         multi = sum(1 for v in out.values() if v[2] > 1)
         print(f"[consistency] {len(out)} base symbols observed, {multi} bound to "
@@ -792,6 +821,9 @@ def main():
     ap.add_argument("--no-consistency", action="store_true",
                     help="disable the data-symbol injectivity oracle")
     ap.add_argument("--no-merged-tolerant", action="store_true")
+    ap.add_argument("--strict-consistency", action="store_true",
+                    help="require >=2 NAMED (non-funclet) supporting functions "
+                         "for a consistency binding -- the conservative bound")
     ap.add_argument("--no-content", action="store_true",
                     help="disable the retail-image byte oracle")
     ap.add_argument("--no-icf", action="store_true",
@@ -859,7 +891,8 @@ def main():
         for fname, fsize in fns:
             r = classify_function(up, fname, fsize, oracles, consistency,
                                   not args.no_merged_tolerant, icf, image,
-                                  base_index, matched_names)
+                                  base_index, matched_names,
+                                  args.strict_consistency)
             m = meta.get((uname, fname), {})
             r.update({"unit": uname, "name": fname, "size": fsize,
                       "va": m.get("va"), "categories": m.get("categories", [])})

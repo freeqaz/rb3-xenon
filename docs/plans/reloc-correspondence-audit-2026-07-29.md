@@ -12,10 +12,18 @@ Tool: `scripts/harvest/reloc_correspondence.py`. Scratch: `/home/free/tmp/laneBH
 ## 0. TL;DR
 
 1. **The count is substantially sound.** Of 39,520 functions at 100.0
-   `match_percent_normalized`: **65.5% are positively evidenced**
-   (61.3% every relocation verified corresponding + 4.2% no relocations to get
-   wrong), **5.2% are demonstrably DIVERGENT** (≥1 relocation proven to point at
-   a different object), **27.7% are UNDECIDABLE**, 1.6% could not be paired.
+   `match_percent_normalized`, reported as a **band** between the permissive and
+   the conservative reading of the weakest oracle (§3.5):
+
+   | | permissive | **conservative** |
+   |---|--:|--:|
+   | **positively evidenced** (corresponding + no-relocs) | **65.5%** | **43.6%** |
+   | **DIVERGENT** (≥1 reloc proven to point elsewhere) | **5.2%** | **2.9%** |
+   | UNDECIDABLE | 27.7% | 51.8% |
+   | unpaired | 1.6% | 1.6% |
+
+   Both ends say the same thing: **divergence is a few percent, not a
+   substantial fraction**, and the residue is *unobservable*, not suspect.
 2. ★ **Raw-diff was the wrong instrument and laneBE's "0 of 528 raw-safe" figure
    should not be read as "0 of 528 real".** Rebuilt on symbolic correspondence,
    the same population splits three ways, and the *tree-wide* divergence rate is
@@ -26,9 +34,11 @@ Tool: `scripts/harvest/reloc_correspondence.py`. Scratch: `/home/free/tmp/laneBH
    `target_symbol_map.json` into a byte comparison. It is what makes this audit
    possible and it should be wired into other tools.
 4. **laneTIGHTGAP's landed +109: 29.0% corresponding / 29.9% divergent / 39.3%
-   undecidable — a 5.7× worse divergence rate than the tree.**
-   Recommendation: **STAND (do not revert), reclassify in the ledger, and gate
-   the channel going forward.** Reasoning in §4.
+   undecidable — a 5.7× worse divergence rate than the tree** (conservative
+   reading: 15.9 / 19.6 / 62.6, **6.8×** — the verdict is invariant to oracle
+   strictness). Its 105 pairable credits rest on only **64 distinct base
+   symbols**. Recommendation: **STAND (do not revert), reclassify in the ledger,
+   and gate the channel going forward.** Reasoning in §4.
 5. **By-product worth more than the audit: 109 named bodies ≥128 B carry
    content-proven wrong constants/strings** — real behavioural bugs that
    normalized diff structurally cannot see. Examples: `RndDrawable::Save` writes
@@ -77,6 +87,7 @@ re-implementation will hit them.
 | **ICF over-rejection** | `target_symbol_map.json` keeps ONE name per folded VA; every `lwz r3,N(r3); blr` accessor and same-shape template read DIVERGENT | content oracle (folded bytes ARE our bytes ⇒ CORRESPOND), plus ICF-capability suppression on the map path | 4,778 → 1,361 raw divergence claims |
 | **content test on unmatched callees** | a byte difference at the callee's address means "we have not ported the callee", not "the pointer is wrong" | apply the code-content test only when the callee is itself a 100% match | false 20.4% → 5.5% |
 | ★ **self-corroborating consistency** | a guard word referenced 3× inside ONE 88 B accessor counted as 3 independent observations — a tautology | count support over **distinct functions**, ≥2 required | CORRESPONDING 73.1% → **61.3%** |
+| ★ **over-subscribed consistency support** | the "distinct functions" backing a binding can themselves all be `fn_<VA>` funclets that reached 100% by the same many-to-one masked pairing — 33 of them "supported" one `DirLoader` local guard | `--strict-consistency`: require ≥2 **named, non-funclet** supporters | CORRESPONDING 61.3% → **39.4%** (reported as a band, §3.5) |
 | **vacuous zero comparison** | an all-zero data object matches the image at almost any address | refuse the content oracle when our bytes are all zero | 1,977 slots un-certified |
 
 ## 2. Controls — and what would have falsified the classifier
@@ -163,6 +174,17 @@ counted.
 | SHAPE_MISMATCH (reloc shapes differ) | 226 | 0.6% |
 | NO_TARGET_SYM | 1 | 0.0% |
 
+`SHAPE_MISMATCH` was hand-diagnosed after the census and is **not** evidence of
+divergence: dtk emits a `REL14` relocation for an *intra-function conditional
+branch* that MSVC resolves internally with no relocation at all (verified on
+`RndAnimFilter::ListAnimChildren` and `ObjList<HamCamShot::Target>::operator=`).
+The tool now filters self-targeted `REL14`, so a re-run redistributes most of
+this bucket into the adjudicated verdicts; the numbers below are the pre-filter
+run and therefore *understate* both CORRESPONDING and DIVERGENT by ≤0.6%.
+`NO_BASE_PAIR` (412) is where our obj simply has no admissible partner for the
+target symbol — objdiff reached 100% through a pass this tool does not
+reimplement (mostly the cross-unit global reconcile pass).
+
 **★ Headline decomposition: A = 25,880 corresponding (65.5%) /
 B = 2,036 divergent (5.2%) / C = 10,965 undecidable (27.7%) /
 638 unpaired (1.6%).**
@@ -219,6 +241,30 @@ Unit hotspots: `RockCentral` 56, `BandCharDesc` 52, `BandCharacter` 40,
 `SessionMgr` 38, `Campaign` 33, `VocalTrackDir` 33, `StreakMeter` 32,
 `TrackPanelDir` 32, `SaveLoadManager` 31, `AccomplishmentPanel` 27.
 
+### 3.5 Sensitivity — the conservative bound
+
+The consistency oracle's support count is the weakest link: a binding "supported
+by N distinct functions" is only N independent observations if those functions
+are themselves independent. They frequently are not — in `DirLoader`, 33
+`fn_<VA>` EH funclets all pair against one local guard through exactly the
+many-to-one masked pairing this audit is investigating. `--strict-consistency`
+demands ≥2 **named, non-funclet** supporters instead, and demotes everything else
+to UNDECIDED (in both directions — it also withdraws consistency-based DIVERGENT
+verdicts).
+
+| verdict | permissive | conservative | delta |
+|---|--:|--:|--:|
+| CORRESPONDING | 24,212 (61.3%) | 15,583 (39.4%) | −8,629 |
+| UNRESOLVABLE | 10,965 (27.7%) | 20,490 (51.8%) | +9,525 |
+| **DIVERGENT** | **2,036 (5.2%)** | **1,140 (2.9%)** | −896 |
+| NO_RELOCS | 1,668 (4.2%) | 1,668 (4.2%) | 0 |
+| unpaired | 639 (1.6%) | 639 (1.6%) | 0 |
+
+★ The conservative reading is the one to quote if a single number is needed:
+**43.6% proven reproduction, 2.9% proven shape, 51.8% unobservable.** The
+permissive reading is the one to quote for "how much *could* be wrong":
+**at most 5.2%.**
+
 ## 4. ★ The adjudication: laneTIGHTGAP's landed +109 (`2e59f8b1`)
 
 Derived without an A/B: the commit's splits.txt diff yields **45 newly-claimed
@@ -227,12 +273,15 @@ currently-100% functions whose retail VA falls inside them number **107** —
 which reproduces laneBE's independently-derived "107 of the +109 are in the
 in-window tight-gap set" exactly.
 
-| | tightgap-107 | tree baseline | ratio |
-|---|--:|--:|--:|
-| CORRESPONDING | 31 (29.0%) | 61.3% | 0.47× |
-| **DIVERGENT** | **32 (29.9%)** | **5.2%** | **5.7×** |
-| UNRESOLVABLE | 42 (39.3%) | 27.7% | 1.4× |
-| NO_BASE_PAIR | 2 (1.9%) | 1.0% | — |
+| | tightgap-107 | tree baseline | ratio | strict: tightgap | strict: tree | ratio |
+|---|--:|--:|--:|--:|--:|--:|
+| CORRESPONDING | 31 (29.0%) | 61.3% | 0.47× | 17 (15.9%) | 39.4% | 0.40× |
+| **DIVERGENT** | **32 (29.9%)** | **5.2%** | **5.7×** | **21 (19.6%)** | **2.9%** | **6.8×** |
+| UNRESOLVABLE | 42 (39.3%) | 27.7% | 1.4× | 67 (62.6%) | 51.8% | 1.2× |
+| NO_BASE_PAIR | 2 (1.9%) | 1.0% | — | 2 (1.9%) | 1.0% | — |
+
+The verdict is **invariant to the oracle strictness**: on either reading the
+tightgap set is ~6× the tree divergence rate and ~0.4× its correspondence rate.
 
 Divergence evidence: 15 by the content oracle, 16 by consistency, 1 by map.
 Divergent units: `DataNode` 12, `Voice` 4, `UsbMidiGuitar` 4, `BlockMgr` 2,
@@ -322,22 +371,24 @@ per unit and also corroborates laneBODYPORT's lever #3.
 
 **Plainly: not much, and not in the direction the brief feared.**
 
-* **65.5% of the count is positively evidenced** relocation-by-relocation
-  against the retail image. That is a floor, not a ceiling — the 27.7%
-  undecidable is dominated by `.bss` statics and externs that *have no bytes in
-  either binary*, so no instrument can decide them; they are not suspect, they
-  are unobservable.
-* **5.2% divergent** is the honest upper bound on "shape, not reproduction",
-  and half of it is real source bugs in genuinely-reproduced code rather than
-  fake credit.
+* **43.6–65.5% of the count is positively evidenced** relocation-by-relocation
+  against the retail image, depending on how much weight the consistency oracle
+  is allowed. That is a floor, not a ceiling — the undecidable residue is
+  dominated by `.bss` statics and externs that *have no bytes in either binary*,
+  so no instrument can decide them; they are not suspect, they are
+  unobservable.
+* **2.9–5.2% divergent** is the honest upper bound on "shape, not
+  reproduction", and a large part of it is **real source bugs in genuinely
+  reproduced code** rather than fake credit (§5).
 * Divergence **concentrates in one identifiable stratum**: ≤16 B adjustor/
   forwarder thunks (10.2%) and the `??__E`/`??__F` static-lifecycle thunk
   family. Both are known, both are already the subject of the gap-absorption
   debate, and together they are a small, nameable slice.
 * The priority (game) tier is **cleaner** than the engine tier.
 
-So: *"39,522" means roughly "≥25,880 functions we can prove we reproduced,
-≤2,036 we can prove we did not, and ~11,000 the binaries cannot adjudicate."*
+So: *"39,522" means roughly "17,000–26,000 functions we can prove we reproduced,
+1,100–2,000 we can prove we did not, and 11,000–20,000 the binaries cannot
+adjudicate."*
 That is a materially sound number. **It does not need to be restated or
 discounted.** What it does need is the §4 gate, so that future channels cannot
 grow the 5.2% quietly.
@@ -365,5 +416,6 @@ python3 scripts/harvest/reloc_correspondence_selftest.py --worktree $PWD \
         --census ~/tmp/laneBH_census_full.json --delta 0x40 -n 400
 ```
 
-Ablation switches for auditing the tool itself: `--no-content` (drop the
+Bounds and ablation switches for auditing the tool itself:
+`--strict-consistency` (the conservative bound of §3.5), `--no-content` (drop the
 `band.exe` oracle), `--no-consistency`, `--no-icf`, `--no-merged-tolerant`.
