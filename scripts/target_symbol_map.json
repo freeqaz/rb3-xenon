@@ -1,4 +1,10 @@
 {
+ "0x827800b0": "??0DrumTrackWatcherImpl@@QAA@HABVUserGuid@@HPAVSongData@@PAVGameGemList@@PAVTrackWatcherParent@@PAVDataArray@@@Z",
+ "0x82780150": "?Restart@DrumTrackWatcherImpl@@UAAXXZ",
+ "0x82780188": "??_GDrumTrackWatcherImpl@@UAAPAXI@Z",
+ "0x827801e0": "?JumpHook@DrumTrackWatcherImpl@@UAAXM@Z",
+ "0x827803c8": "?Swing@DrumTrackWatcherImpl@@UAA_NH_N0W4GemHitFlags@@@Z",
+ "0x82780790": "?NextGemAfter@DrumTrackWatcherImpl@@UAAHH_N@Z",
  "0x82823bd0": "?SetTypeDef@UIProxy@@UAAXPAVDataArray@@@Z",
  "0x82823db8": "?SyncDir@UIProxy@@QAAXXZ",
  "0x828233a0": "?DrawShowing@UIProxy@@UAAXXZ",
@@ -27208,5 +27214,8 @@
  "0x8263e888": "?Exit@UGCPurchasePanel@@UAAXXZ",
  "0x8263edf0": "?Poll@UGCPurchasePanel@@UAAXXZ",
  "0x8263f320": "?OnMsg@UGCPurchasePanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
- "0x8263f7a0": "?SyncProperty@UGCPurchasePanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+ "0x8263f7a0": "?SyncProperty@UGCPurchasePanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82780298": "?RelevantGem@DrumTrackWatcherImpl@@QAAHHHH@Z",
+ "0x82780610": "?CheckForKickAutoplay@DrumTrackWatcherImpl@@QAAXM@Z",
+ "0x82780240": "?CheckCymbal@DrumTrackWatcherImpl@@QBA_NABVGameGem@@W4GemHitFlags@@@Z"
 }

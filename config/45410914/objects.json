@@ -232,6 +232,7 @@
    "system/utl/LogFile.cpp": "NonMatching",
    "band3/game/HitTracker.cpp": "NonMatching",
    "system/beatmatch/SlotChannelMapping.cpp": "NonMatching",
+   "system/beatmatch/DrumTrackWatcherImpl.cpp": "NonMatching",
    "system/utl/LogFile.cpp": "NonMatching",
    "band3/game/HitTracker.cpp": "NonMatching",
    "system/beatmatch/SlotChannelMapping.cpp": "NonMatching",
