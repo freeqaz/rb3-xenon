@@ -104,6 +104,10 @@ public:
 
     Symbol GetTextToken() const { return mTextToken; }
     char const *GetDefaultText() const;
+    // Declared (not defined) in this tree: retail UILabel has it and
+    // DialogDisplay::GetLabelHeight calls it. The decomp build compiles to
+    // .obj only -- objdiff never links -- so an undefined member is inert.
+    float GetDrawHeight();
     void CenterWithLabel(UILabel *, bool, float);
     LabelStyle &LStyle(int);
     const LabelStyle &LStyle(int) const;

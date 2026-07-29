@@ -55,7 +55,25 @@
     ]
    },
    "system/bandobj/BandCharDesc.cpp": "NonMatching",
+   "system/bandobj/BandButton.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/BandList.cpp": "NonMatching",
+   "system/bandobj/DialogDisplay.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "system/bandobj/UnisonIcon.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/BandScoreboard.cpp": "NonMatching",
    "system/bandobj/BandCrowdMeter.cpp": {
     "status": "NonMatching",
@@ -418,6 +436,7 @@
    "system/ui/UIColor.cpp": "NonMatching",
    "system/ui/UIListProvider.cpp": "NonMatching",
    "system/ui/UIListArrow.cpp": "NonMatching",
+   "system/ui/UIGridProvider.cpp": "NonMatching",
    "system/ui/UIPicture.cpp": "NonMatching",
    "system/ui/UIProxy.cpp": "NonMatching",
    "system/utl/BufStream.cpp": "NonMatching",

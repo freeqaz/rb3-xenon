@@ -2116,7 +2116,7 @@ UIPicture.cpp:
 	.pdata      start:0x82247078 end:0x822470B0
 	.pdata      start:0x822470B0 end:0x822470B8
 	.pdata      start:0x822470B8 end:0x82247118
-	.pdata      start:0x82247118 end:0x822471E8
+	.pdata      start:0x82247118 end:0x82247178
 	.pdata      start:0x82247DC8 end:0x82247DD0
 	.text       start:0x82815D50 end:0x82815E38
 	.text       start:0x82815E38 end:0x82816188
@@ -2124,7 +2124,7 @@ UIPicture.cpp:
 	.text       start:0x82816390 end:0x82816590
 	.text       start:0x82816590 end:0x82816610
 	.text       start:0x82816610 end:0x82816F20
-	.text       start:0x82816F20 end:0x82817A64
+	.text       start:0x82816F20 end:0x82817260
 	.text       start:0x828232C8 end:0x82823340
 
 BufStream.cpp:
@@ -3889,10 +3889,8 @@ band3/meta_band/InterstitialMgr.cpp:
 
 HamScrollSpeedIndicator.cpp:
 	.pdata      start:0x821FC720 end:0x821FC760
-	.pdata      start:0x821FD230 end:0x821FD240
 	.text       start:0x822E36B8 end:0x822E36C8
 	.text       start:0x8231EF28 end:0x8231F130
-	.text       start:0x82329B20 end:0x82329B98
 
 LiveCameraInput.cpp:
 	.pdata      start:0x821FC7B8 end:0x821FC7C8
@@ -4158,7 +4156,7 @@ CharLipSync.cpp:
 
 MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
-	.pdata      start:0x821F7840 end:0x821F79E0
+	.pdata      start:0x821F7840 end:0x821F7948
 	.pdata      start:0x821F9FF8 end:0x821FA000
 	.pdata      start:0x821FA010 end:0x821FA018
 	.pdata      start:0x821FA190 end:0x821FA198
@@ -4170,7 +4168,7 @@ MoveMgr.cpp:
 	.pdata      start:0x821FEE70 end:0x821FEE78
 	.text       start:0x822CFD10 end:0x822CFD60
 	.text       start:0x822CFD60 end:0x822D16F8
-	.text       start:0x822D1768 end:0x822D38B0
+	.text       start:0x822D1768 end:0x822D2D58
 	.text       start:0x822D3910 end:0x822D3928
 	.text       start:0x822FA428 end:0x822FA4F4
 	.text       start:0x822FA5F8 end:0x822FA6E0
@@ -11571,11 +11569,11 @@ BandHighlight.cpp:
 	.pdata      start:0x821FE918 end:0x821FE920
 	.pdata      start:0x821FE928 end:0x821FE950
 	.pdata      start:0x821FE960 end:0x821FE978
-	.pdata      start:0x821FE980 end:0x821FEB78
+	.pdata      start:0x821FE980 end:0x821FEA70
 	.text       start:0x823421A8 end:0x82342200
 	.text       start:0x82342228 end:0x823423DC
 	.text       start:0x823424A8 end:0x82342680
-	.text       start:0x823426F8 end:0x82345034
+	.text       start:0x823426F8 end:0x823438C8
 
 StringConversion.cpp:
 	.text       start:0x82AE5FA8 end:0x82AE5FE8
@@ -12983,3 +12981,20 @@ band3/game/CrowdRating.cpp:
 band3/game/KeysFx.cpp:
 	.pdata      start:0x82236C08 end:0x82236C58
 	.text       start:0x826F3E98 end:0x826F47B0
+system/ui/UIGridProvider.cpp:
+	.pdata      start:0x82247178 end:0x822471E8
+	.text       start:0x82817260 end:0x82817A64
+
+system/bandobj/BandButton.cpp:
+	.pdata      start:0x821FEA70 end:0x821FEB78
+	.text       start:0x823438C8 end:0x82345034
+
+system/bandobj/UnisonIcon.cpp:
+	.pdata      start:0x821F7948 end:0x821F79E0
+	.text       start:0x822D2D58 end:0x822D38B0
+
+system/bandobj/DialogDisplay.cpp:
+	.pdata      start:0x821FD230 end:0x821FD240
+	.pdata      start:0x821FD240 end:0x821FD278
+	.text       start:0x82329B20 end:0x82329B98
+	.text       start:0x82329B98 end:0x82329FD8
