@@ -4160,7 +4160,7 @@ CharLipSync.cpp:
 
 MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
-	.pdata      start:0x821F7840 end:0x821F79E0
+	.pdata      start:0x821F7840 end:0x821F7948
 	.pdata      start:0x821F9FF8 end:0x821FA000
 	.pdata      start:0x821FA010 end:0x821FA018
 	.pdata      start:0x821FA190 end:0x821FA198
@@ -4172,7 +4172,7 @@ MoveMgr.cpp:
 	.pdata      start:0x821FEE70 end:0x821FEE78
 	.text       start:0x822CFD10 end:0x822CFD60
 	.text       start:0x822CFD60 end:0x822D16F8
-	.text       start:0x822D1768 end:0x822D38B0
+	.text       start:0x822D1768 end:0x822D2D58
 	.text       start:0x822D3910 end:0x822D3928
 	.text       start:0x822FA428 end:0x822FA4F4
 	.text       start:0x822FA5F8 end:0x822FA6E0
@@ -12906,3 +12906,7 @@ system/ui/UIGridProvider.cpp:
 system/bandobj/BandButton.cpp:
 	.pdata      start:0x821FEA70 end:0x821FEB78
 	.text       start:0x823438C8 end:0x82345034
+
+system/bandobj/UnisonIcon.cpp:
+	.pdata      start:0x821F7948 end:0x821F79E0
+	.text       start:0x822D2D58 end:0x822D38B0

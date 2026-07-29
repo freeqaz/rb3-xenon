@@ -61,6 +61,12 @@
     ]
    },
    "system/bandobj/BandList.cpp": "NonMatching",
+   "system/bandobj/UnisonIcon.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/bandobj/BandScoreboard.cpp": "NonMatching",
    "system/bandobj/BandCrowdMeter.cpp": {
     "status": "NonMatching",
