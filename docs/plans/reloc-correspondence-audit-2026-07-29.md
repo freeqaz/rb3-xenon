@@ -17,8 +17,8 @@ Tool: `scripts/harvest/reloc_correspondence.py`. Scratch: `/home/free/tmp/laneBH
 
    | | permissive | **conservative** |
    |---|--:|--:|
-   | **positively evidenced** (corresponding + no-relocs) | **65.5%** | **43.6%** |
-   | **DIVERGENT** (≥1 reloc proven to point elsewhere) | **5.2%** | **2.9%** |
+   | **positively evidenced** (corresponding + no-relocs) | **65.5%** | **43.8%** |
+   | **DIVERGENT** (≥1 reloc proven to point elsewhere) | **5.2%** | **2.7%** |
    | UNDECIDABLE | 27.7% | 51.8% |
    | unpaired | 1.6% | 1.6% |
 
@@ -87,7 +87,7 @@ re-implementation will hit them.
 | **ICF over-rejection** | `target_symbol_map.json` keeps ONE name per folded VA; every `lwz r3,N(r3); blr` accessor and same-shape template read DIVERGENT | content oracle (folded bytes ARE our bytes ⇒ CORRESPOND), plus ICF-capability suppression on the map path | 4,778 → 1,361 raw divergence claims |
 | **content test on unmatched callees** | a byte difference at the callee's address means "we have not ported the callee", not "the pointer is wrong" | apply the code-content test only when the callee is itself a 100% match | false 20.4% → 5.5% |
 | ★ **self-corroborating consistency** | a guard word referenced 3× inside ONE 88 B accessor counted as 3 independent observations — a tautology | count support over **distinct functions**, ≥2 required | CORRESPONDING 73.1% → **61.3%** |
-| ★ **over-subscribed consistency support** | the "distinct functions" backing a binding can themselves all be `fn_<VA>` funclets that reached 100% by the same many-to-one masked pairing — 33 of them "supported" one `DirLoader` local guard | `--strict-consistency`: require ≥2 **named, non-funclet** supporters | CORRESPONDING 61.3% → **39.4%** (reported as a band, §3.5) |
+| ★ **over-subscribed consistency support** | the "distinct functions" backing a binding can themselves all be `fn_<VA>` funclets that reached 100% by the same many-to-one masked pairing — 33 of them "supported" one `DirLoader` local guard | `--strict-consistency`: require ≥2 **named, non-funclet** supporters | CORRESPONDING 61.3% → **39.6%** (reported as a band, §3.5) |
 | **vacuous zero comparison** | an all-zero data object matches the image at almost any address | refuse the content oracle when our bytes are all zero | 1,977 slots un-certified |
 
 ## 2. Controls — and what would have falsified the classifier
@@ -254,14 +254,14 @@ verdicts).
 
 | verdict | permissive | conservative | delta |
 |---|--:|--:|--:|
-| CORRESPONDING | 24,212 (61.3%) | 15,583 (39.4%) | −8,629 |
-| UNRESOLVABLE | 10,965 (27.7%) | 20,490 (51.8%) | +9,525 |
-| **DIVERGENT** | **2,036 (5.2%)** | **1,140 (2.9%)** | −896 |
+| CORRESPONDING | 24,212 (61.3%) | 15,665 (39.6%) | −8,547 |
+| UNRESOLVABLE | 10,965 (27.7%) | 20,484 (51.8%) | +9,519 |
+| **DIVERGENT** | **2,036 (5.2%)** | **1,064 (2.7%)** | −972 |
 | NO_RELOCS | 1,668 (4.2%) | 1,668 (4.2%) | 0 |
 | unpaired | 639 (1.6%) | 639 (1.6%) | 0 |
 
 ★ The conservative reading is the one to quote if a single number is needed:
-**43.6% proven reproduction, 2.9% proven shape, 51.8% unobservable.** The
+**43.8% proven reproduction, 2.7% proven shape, 51.8% unobservable.** The
 permissive reading is the one to quote for "how much *could* be wrong":
 **at most 5.2%.**
 
@@ -275,8 +275,8 @@ in-window tight-gap set" exactly.
 
 | | tightgap-107 | tree baseline | ratio | strict: tightgap | strict: tree | ratio |
 |---|--:|--:|--:|--:|--:|--:|
-| CORRESPONDING | 31 (29.0%) | 61.3% | 0.47× | 17 (15.9%) | 39.4% | 0.40× |
-| **DIVERGENT** | **32 (29.9%)** | **5.2%** | **5.7×** | **21 (19.6%)** | **2.9%** | **6.8×** |
+| CORRESPONDING | 31 (29.0%) | 61.3% | 0.47× | 17 (15.9%) | 39.6% | 0.40× |
+| **DIVERGENT** | **32 (29.9%)** | **5.2%** | **5.7×** | **21 (19.6%)** | **2.7%** | **7.3×** |
 | UNRESOLVABLE | 42 (39.3%) | 27.7% | 1.4× | 67 (62.6%) | 51.8% | 1.2× |
 | NO_BASE_PAIR | 2 (1.9%) | 1.0% | — | 2 (1.9%) | 1.0% | — |
 
@@ -371,13 +371,13 @@ per unit and also corroborates laneBODYPORT's lever #3.
 
 **Plainly: not much, and not in the direction the brief feared.**
 
-* **43.6–65.5% of the count is positively evidenced** relocation-by-relocation
+* **43.8–65.5% of the count is positively evidenced** relocation-by-relocation
   against the retail image, depending on how much weight the consistency oracle
   is allowed. That is a floor, not a ceiling — the undecidable residue is
   dominated by `.bss` statics and externs that *have no bytes in either binary*,
   so no instrument can decide them; they are not suspect, they are
   unobservable.
-* **2.9–5.2% divergent** is the honest upper bound on "shape, not
+* **2.7–5.2% divergent** is the honest upper bound on "shape, not
   reproduction", and a large part of it is **real source bugs in genuinely
   reproduced code** rather than fake credit (§5).
 * Divergence **concentrates in one identifiable stratum**: ≤16 B adjustor/
@@ -387,7 +387,7 @@ per unit and also corroborates laneBODYPORT's lever #3.
 * The priority (game) tier is **cleaner** than the engine tier.
 
 So: *"39,522" means roughly "17,000–26,000 functions we can prove we reproduced,
-1,100–2,000 we can prove we did not, and 11,000–20,000 the binaries cannot
+1,060–2,040 we can prove we did not, and 11,000–20,000 the binaries cannot
 adjudicate."*
 That is a materially sound number. **It does not need to be restated or
 discounted.** What it does need is the §4 gate, so that future channels cannot
