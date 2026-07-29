@@ -4,6 +4,25 @@
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
 
+> ⚠ **OPEN INTEGRITY QUESTION (2026-07-29) — read before quoting this number.**
+> laneBE closed a +560 different-unit gap-absorption channel after finding the
+> flips were 32-byte static-init **guard-clear cleanups**: our symbol clears
+> `RndAnimatable`'s guard, the retail function clears an **unrelated** one. Same
+> instruction shape, different object — and `functionRelocDiffs=none` **masks the
+> differing relocation**, so it scores 100.0%. Same class as the known
+> `StaticClassName`/`Type()` family (453 members, one 22-instruction body,
+> distinguishable only by the string operand).
+> ⇒ Some share of the count is **shape reproduction, not program reproduction**.
+> **laneBH is auditing this whole-binary** via *symbolic relocation
+> correspondence* (NOT raw diff — raw diff over-rejects, since relocation
+> addresses legitimately differ in a partial decomp). Verdict pending; the
+> **+109 from laneTIGHTGAP (`2e59f8b1`) is explicitly in scope for that audit**
+> and may be reverted. Do not build new gap-absorption channels until it lands:
+> EH funclets are 24.5% of the binary, so this shape is **farmable** without
+> decompiling anything.
+> Principled line proposed by laneBE and provisionally adopted: keep **interior**
+> (same-unit-both-sides) sweeps; close **different-unit absorption**.
+
 > **VERIFIED 2026-07-29 at main `5e9996fc` (lane docfix).** Independently
 > reproduced, not copied from a lane report: fresh `scripts/setup_worktree.sh`
 > worktree at that commit, `rm -f build/45410914/report.cache`, full
