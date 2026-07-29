@@ -14,6 +14,18 @@
 #include "rndobj/Utl.h"
 #include <string.h>
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Flare;
+#define gAltRev gRevs_Flare.altRev
+#define gRev gRevs_Flare.rev
+
 RndFlare::RndFlare()
     : mPointTest(true), mAreaTest(true), mVisible(false), mSizes(0.1, 0.1), mMat(this),
       mRange(0, 0), mOffset(0), mSteps(1), mStep(0), mOcclusionResult(0), mOcclusionReady(false),
@@ -75,32 +87,32 @@ BEGIN_COPYS(RndFlare)
     mOcclusionReady = false;
 END_COPYS
 
-INIT_REVS(7, 0)
-
 BEGIN_LOADS(RndFlare)
-    LOAD_REVS(bs)
-    ASSERT_REVS(7, 0)
-    if (d.rev > 3) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    if (gRev > 3) {
         Hmx::Object::Load(bs);
     }
     RndTransformable::Load(bs);
     RndDrawable::Load(bs);
-    if (d.rev > 0) {
+    if (gRev > 0) {
         bs >> mMat;
     }
-    if (d.rev > 2) {
+    if (gRev > 2) {
         bs >> mSizes;
     } else {
         bs >> mSizes.x;
         mSizes.y = mSizes.x;
     }
-    if (d.rev > 1) {
+    if (gRev > 1) {
         bs >> mRange >> mOffset;
     }
-    if (d.rev > 4) {
-        d >> mPointTest;
+    if (gRev > 4) {
+        bs >> mPointTest;
     }
-    if (d.rev > 6) {
+    if (gRev > 6) {
         bs >> mOffset;
     }
     mOcclusionPending = false;

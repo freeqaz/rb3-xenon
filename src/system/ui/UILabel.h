@@ -2,7 +2,9 @@
 #include "obj/Data.h"
 #include "obj/Object.h"
 #include "os/DateTime.h"
+#include "obj/Dir.h"
 #include "os/Debug.h"
+#include "rndobj/Font.h"
 #include "rndobj/Text.h"
 #include "ui/ResourceDirPtr.h"
 #include "ui/UIColor.h"
@@ -14,6 +16,23 @@
 
 class UILabel : public UIComponent {
 public:
+    /** "How to fit text in the width/height specified" — retail stores this as a
+     *  4-byte enum at 0x19c (UILabel::PreLoad reads 4 bytes into it). */
+    enum FitType {
+        kFitWrap = 0,
+        kFitStretch = 1,
+        kFitJust = 2,
+        kFitEllipsis = 3,
+    };
+
+    /** Retail RB3 has NO `ObjVector<LabelStyle>` member (the ctor's aggregate
+     *  enumeration at 0x827F3D50 is exhaustive, and there is no `mulli ...,0x1c`
+     *  anywhere in the UILabel.cpp span) -- LabelStyle is a DC3-only concept.
+     *  The struct and the two free PropSync overloads in UILabel.cpp are kept on
+     *  purpose: they are what instantiate the `ObjVector<UILabel::LabelStyle>`
+     *  template bodies that the retail UILabel unit pins (ICF-merged generic STL
+     *  code at 0x822A6878 / 0x8234B270 / 0x8234B4D0 / 0x8234D080). Deleting them
+     *  would unpair four already-matching functions for no gain. */
     struct LabelStyle {
         LabelStyle(Hmx::Object *owner) : mColorOverride(owner), mFontResource(owner) {}
         __forceinline LabelStyle &operator=(const LabelStyle &style) {
@@ -102,6 +121,37 @@ public:
     RndText *TextObj() { return mText; }
     const RndText *TextObj() const { return mText; }
 
+    // ------------------------------------------------------------------
+    // RB3 retail API restored from the rb3-Wii oracle
+    // (../rb3/src/system/ui/UILabel.h) + retail asm. All NON-VIRTUAL except
+    // Update()/CopyMembers(), which are OVERRIDES of existing UIComponent
+    // virtual slots 0x4c/0x48 -- they add no vtable slot and do not move the
+    // verified UILabel own-virtual block (Draw/SetCreditsText/SetDisplayText
+    // @0x50/0x54/0x58). Layout-neutral.
+    // ------------------------------------------------------------------
+    void Update();
+    void CopyMembers(const UIComponent *, Hmx::Object::CopyType);
+    RndText::Alignment Alignment() const { return mAlignment; }
+    float Alpha() const { return mAlpha; }
+    float AltAlpha() const { return mAltAlpha; }
+    void SetAlpha(float f) { mAlpha = f; }
+    void SetAltAlpha(float f) { mAltAlpha = f; }
+    void SetFitType(FitType);
+    void SetUseHighlightMesh(bool);
+    bool HasHighlightMesh() const;
+    void UpdateAndDrawHighlightMesh();
+    int
+    InqMinMaxFromWidthAndHeight(float, float, RndText::Alignment, Vector3 &, Vector3 &);
+    void AdjustHeight(bool);
+    void AltFontResourceFileUpdated(bool);
+    void FitText();
+    RndFont *Font();
+    RndFont *AltFont();
+    void OnSetIcon(const char *);
+    DataNode OnGetMaterialVariations(const DataArray *);
+    DataNode OnGetAltMaterialVariations(const DataArray *);
+    float GetDrawWidth();
+
     Symbol GetTextToken() const { return mTextToken; }
     char const *GetDefaultText() const;
     // Declared (not defined) in this tree: retail UILabel has it and
@@ -143,7 +193,9 @@ protected:
     DataNode OnSetInt(DataArray const *);
     DataNode OnSetTimeHMS(DataArray const *);
     bool AllowEditText() const;
-    void LabelUpdate(bool);
+    // retail 0x827F6258 takes TWO bools (matches the rb3-Wii signature); the
+    // one-arg form was the DC3 shape.
+    void LabelUpdate(bool, bool);
     DataNode OnSetHeightFromText(DataArray *);
     void SetFontMat(char const *, int);
     char const *GetFontMat(int);
@@ -153,23 +205,75 @@ protected:
     static bool sDebugHighlight;
     static bool sInDebugHighlight;
 
-    RndText *mText; // 0xd0 - underlying text object (formerly a base of UILabel)
-    Symbol mTextToken; // 0x114
-    String mLabelText; // 0x118
-    char mIconChar; // 0x120
-    bool mTextEmpty; // 0x121
-    bool mDirty; // 0x122
-    ObjVector<LabelStyle> mLabelStyles; // 0x124
-    // Unreconstructed retail UILabel/UIComponent tail members. Their true split
-    // is not yet known, but the non-virtual part of UILabel is 0xAC bytes larger
-    // in retail: derived classes place their next non-virtual base right after
-    // UILabel, and BandLabel's UITransitionHandler base must land at 0x218
-    // (was 0x16c without this). Verified via BandLabel's dtor cleanup funclets
-    // (fn_82341868 & siblings: `addi r3,r11,0x218`). Layout-additive; whole-binary
-    // A/B shows +6 matched / 0 regressions when paired with dropping BandLabel's
-    // now-redundant tail reserve (BandLabel object size is unchanged, so the
-    // shared Hmx::Object/RndHighlightable vbases stay at 0x25c/0x290).
-    unsigned char mUnkTU5Tail[0xAC];
+    // ---------------------------------------------------------------------
+    // RETAIL-360 RB3 MEMBER LAYOUT — reconstructed 2026-07-29 (lane BO-3).
+    // Replaces the old opaque `unsigned char mUnkTU5Tail[0xAC]`.
+    //
+    // Anchors (all from retail asm in build/45410914/asm/UILabel.s):
+    //   * UIComponent nvsize = 0x140, so UILabel's own members start at 0x140.
+    //   * UILabel::PreLoad (retail 0x827F4EC8) is a vbase-introduced virtual, so
+    //     inside it `this` (r31) points at UILabel's Hmx::Object vbase. Its call
+    //     `subi r3, r31, 0x218; bl <AltFontResourceFileUpdated>` PROVES
+    //     r31 == UILabel* + 0x218 ⇒ UILabel nvsize 0x218, vtordisp at 0x214,
+    //     own members occupy exactly [0x140, 0x214) = 0xD4 bytes.
+    //     (0x218 also agrees with BandLabel's UITransitionHandler base offset.)
+    //   * The UILabel ctor (retail 0x827F3E6C) constructs every aggregate member
+    //     in declaration order: addi r30,{0x148,0x154,0x160,0x168,0x174,0x1b0,
+    //     0x1c0,0x1e0,0x1fc,0x208}. That enumeration is exhaustive — there is
+    //     NO ObjVector<LabelStyle> in retail RB3 (that member is DC3-only).
+    //   * PreLoad's rev-gated reads give every scalar offset; FitText
+    //     (retail 0x827F5550) independently confirms mText/mTextSize/mWidth;
+    //     PreLoad's gRev<4 alignment fixup confirms mAlignment/mWidth/mHeight;
+    //     UILabel::Font()'s mat-variation cache (retail 0x827F2CE8) confirms
+    //     mLabelDir/mFont/mCurFontMatVariation/mFontMatVariation.
+    //
+    // Member NAMES and ORDER follow the rb3-Wii oracle
+    // (../rb3/src/system/ui/UILabel.h) — same game, so the source order is the
+    // same; only the offsets differ (Wii own-members start at 0x10c).
+    // Retail-vs-Wii-dev divergences found and encoded here:
+    //   - mAlignment / mCapsMode / mFitType are 4-byte enums in retail, not the
+    //     packed uchars the Wii header shows (PreLoad reads 4 bytes into each).
+    //   - mMarkup / mUseHighlightMesh / mAltStyleEnabled are separate bools at
+    //     0x18c / 0x1cc / 0x1f8, not a packed bitfield.
+    //   - mFixedLength / mReservedLine are 4-byte ints, not shorts.
+    //   - retail has an extra String at 0x168 that the Wii decomp models as a
+    //     discarded local in PreLoad (`if (gRev > 0xD) { String s; bs >> s; }`).
+    // ---------------------------------------------------------------------
+    UILabelDir *mLabelDir; // 0x140 (ctor stw 0x140; Font() passes it to UILabelDir)
+    RndText *mText; // 0x144 (FitText: lwz r3,0x144(r30) -> RndText methods)
+    String mLabelText; // 0x148 (Wii `unk114`, the live display text)
+    ObjPtr<RndFont> mFont; // 0x154 (Font(): lwz 0x15c = ObjPtr payload)
+    Symbol mCurFontMatVariation; // 0x160 (Wii `unk12c`; Font() caches variation)
+    Symbol mTextToken; // 0x164 (PreLoad: bs >> mTextToken)
+    String mEditText; // 0x168 (PreLoad gRev>0xD; Milo-only preview text)
+    String mIcon; // 0x174 (PreLoad gRev>0xE)
+    float mTextSize; // 0x180
+    RndText::Alignment mAlignment; // 0x184 (lwz, tested &1/&4/&0x10/&0x40)
+    RndText::CapsMode mCapsMode; // 0x188
+    bool mMarkup; // 0x18c (+3 pad)
+    float mLeading; // 0x190
+    float mKerning; // 0x194
+    float mItalics; // 0x198
+    FitType mFitType; // 0x19c
+    float mWidth; // 0x1a0
+    float mHeight; // 0x1a4
+    int mFixedLength; // 0x1a8 (read as 4 bytes, not the Wii short)
+    int mReservedLine; // 0x1ac (ditto)
+    String mPreserveTruncText; // 0x1b0
+    float mAlpha; // 0x1bc
+    ObjPtr<UIColor> mColorOverride; // 0x1c0
+    bool mUseHighlightMesh; // 0x1cc (+3 pad)
+    Symbol mFontMatVariation; // 0x1d0
+    Symbol mAltMatVariation; // 0x1d4
+    float mAltTextSize; // 0x1d8
+    float mAltKerning; // 0x1dc (PreLoad else-arm copies mKerning@0x194 here)
+    ObjPtr<UIColor> mAltTextColor; // 0x1e0
+    float mAltZOffset; // 0x1ec
+    float mAltItalics; // 0x1f0
+    float mAltAlpha; // 0x1f4
+    bool mAltStyleEnabled; // 0x1f8 (+3 pad)
+    String mAltFontResourceName; // 0x1fc
+    ObjDirPtr<ObjectDir> mObjDirPtr; // 0x208 -> ends 0x214 (vtordisp), vbase 0x218
 };
 
 bool PropSync(UILabel::LabelStyle &, DataNode &, DataArray *, int, PropOp);

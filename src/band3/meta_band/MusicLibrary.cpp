@@ -810,7 +810,7 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
         } else {
             if (songNode->GetSongRecord()->GetRestricted() && !b3) {
                 ParentalControlPanel *panel = ObjectDir::Main()->Find<ParentalControlPanel>("parental_control_panel", true);
-                panel->unk38 = (int)user;
+                panel->mUser = user;
                 TheUI->PushScreen(
                     ObjectDir::Main()->Find<UIScreen>("parental_control_screen", true)
                 );

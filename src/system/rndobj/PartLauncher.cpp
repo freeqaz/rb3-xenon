@@ -4,6 +4,18 @@
 #include "rndobj/MultiMesh.h"
 #include "rndobj/Poll.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_PartLauncher;
+#define gAltRev gRevs_PartLauncher.altRev
+#define gRev gRevs_PartLauncher.rev
+
 RndPartLauncher::RndPartLauncher()
     : mPart(this, 0), mTrans(this, 0), mMeshEmitter(this, 0), mNumParts(0),
       mEmitRate(0.0f, 0.0f), mEmitCount(0.0f)
@@ -104,58 +116,58 @@ BEGIN_COPYS(RndPartLauncher)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(4, 0)
-
 BEGIN_LOADS(RndPartLauncher)
-    LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev < 2) {
-        LOAD_SUPERCLASS(RndPollable)
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    if (gRev < 2) {
+        RndPollable::Load(bs);
         ObjPtr<RndMultiMesh> multiMesh(this);
         bs >> multiMesh;
-        if (d.rev > 0) {
+        if (gRev > 0) {
             bs >> mPart;
             bs >> mTrans;
             bs >> mNumParts;
 
             bool bit1;
-            d >> bit1;
+            bs >> bit1;
             SetBit(1, bit1);
             bs >> mPartOverride.life;
 
             bool bit2;
-            d >> bit2;
+            bs >> bit2;
             SetBit(2, bit2);
             bs >> mPartOverride.speed;
 
             bool bit4;
-            d >> bit4;
+            bs >> bit4;
             SetBit(4, bit4);
             bs >> mPartOverride.size;
 
             bool bit8;
-            d >> bit8;
+            bs >> bit8;
             SetBit(8, bit8);
             bs >> mPartOverride.deltaSize;
 
             bool bit10;
-            d >> bit10;
+            bs >> bit10;
             SetBit(0x10, bit10);
             bs >> mPartOverride.startColor;
 
             bool bit20;
-            d >> bit20;
+            bs >> bit20;
             SetBit(0x20, bit20);
             bs >> mPartOverride.midColor;
 
             bool bit40;
-            d >> bit40;
+            bs >> bit40;
             SetBit(0x40, bit40);
             bs >> mPartOverride.endColor;
 
             bool bit80;
-            d >> bit80;
+            bs >> bit80;
             SetBit(0x80, bit80);
             bs >> mPartOverride.pitch;
             bs >> mPartOverride.yaw;
@@ -174,11 +186,11 @@ BEGIN_LOADS(RndPartLauncher)
         bs >> mPartOverride.endColor;
         bs >> mPartOverride.pitch;
         bs >> mPartOverride.yaw;
-        if (d.rev > 2) {
+        if (gRev > 2) {
             bs >> mPartOverride.box;
             bs >> mMeshEmitter;
         }
-        if (d.rev > 3) {
+        if (gRev > 3) {
             bs >> mEmitRate;
         }
     }

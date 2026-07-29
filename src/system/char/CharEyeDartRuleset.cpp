@@ -1,6 +1,18 @@
 #include "char/CharEyeDartRuleset.h"
 #include "obj/Object.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharEyeDartRuleset;
+#define gAltRev gRevs_CharEyeDartRuleset.altRev
+#define gRev gRevs_CharEyeDartRuleset.rev
+
 CharEyeDartRuleset::CharEyeDartRuleset() {}
 
 void CharEyeDartRuleset::EyeDartRulesetData::ClearToDefaults() {
@@ -74,16 +86,16 @@ BEGIN_COPYS(CharEyeDartRuleset)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(1, 0)
-
 BEGIN_LOADS(CharEyeDartRuleset)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mData.mMinRadius >> mData.mMaxRadius >> mData.mOnTargetAngleThresh
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mData.mMinRadius >> mData.mMaxRadius >> mData.mOnTargetAngleThresh
         >> mData.mMinDartsPerSequence >> mData.mMaxDartsPerSequence
         >> mData.mMinSecsBetweenDarts >> mData.mMaxSecsBetweenDarts
         >> mData.mMinSecsBetweenSequences >> mData.mMaxSecsBetweenSequences;
-    d >> mData.mScaleWithDistance;
-    d >> mData.mReferenceDistance;
+    bs >> mData.mScaleWithDistance;
+    bs >> mData.mReferenceDistance;
 END_LOADS

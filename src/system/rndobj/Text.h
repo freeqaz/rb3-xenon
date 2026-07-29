@@ -372,6 +372,42 @@ public:
         float mYPos; // 0x10 - y position
     };
 
+    // ------------------------------------------------------------------
+    // RB3-360 retail RndText API used by ui/UILabel.cpp. DECLARATION-ONLY,
+    // non-virtual -> layout- and vtable-neutral. Retail's RndText is the
+    // rb3-Wii-shaped one (ObjOwnerPtr<RndFont> mFont, object at 0xe4 / payload
+    // at 0xec); our member block here is still DC3-shaped, so anything that
+    // INLINES an RndText member access is capped until RndText's layout is
+    // reconstructed. Bodies land with that job.
+    // ------------------------------------------------------------------
+    RndFont *GetFont() const;
+    void SetFont(RndFont *);
+    float MaxLineWidth();
+    void GetVerticalBounds(float &, float &);
+    void GetStringDimensions(float &, float &, HX_VECTOR(Line) &, const char *, float);
+    void GetCurrentStringDimensions(float &, float &);
+    float Size() const;
+    void SetSize(float);
+    void SetAltSizeAndZOffset(float, float);
+    void DeferUpdateText();
+    void ResolveUpdateText();
+    void UpdateText(bool);
+    const Hmx::Color &StyleColor() const;
+    void SetData(
+        Alignment,
+        const char *,
+        RndFont *,
+        float,
+        float,
+        float,
+        float,
+        const Hmx::Color &,
+        bool,
+        CapsMode,
+        int
+    );
+    void SetAltStyle(RndFont *, float, Hmx::Color *, float, float, bool);
+
     void WrapText(const unsigned short *, int, float *, HX_VECTOR(Line) &, Hmx::Rect &, float);
     void ConstructMeshes(const HX_VECTOR(Line) &, const Hmx::Rect &, float);
 

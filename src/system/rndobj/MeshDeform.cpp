@@ -5,6 +5,18 @@
 #include "utl/MemMgr.h"
 #include "math/Rot.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_MeshDeform;
+#define gAltRev gRevs_MeshDeform.altRev
+#define gRev gRevs_MeshDeform.rev
+
 #pragma region Hmx::Object
 
 RndMeshDeform::RndMeshDeform()
@@ -63,20 +75,20 @@ void operator>>(BinStream &bs, RndMeshDeform::BoneDesc &desc) {
     bs >> desc.unk14 >> desc.unk54;
 }
 
-INIT_REVS(1, 0)
-
 BEGIN_LOADS(RndMeshDeform)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
     Hmx::Object::Load(bs);
     bs >> mMesh;
     int num = 0;
-    if (d.rev < 1) {
+    if (gRev < 1) {
         bs >> num;
     }
     int bones;
     bs >> bones;
-    if (d.rev < 1) {
+    if (gRev < 1) {
         mVerts.Clear();
         int i150[64];
         float f250[64];
@@ -98,7 +110,7 @@ BEGIN_LOADS(RndMeshDeform)
     for (int i = 0; i < bones; i++) {
         bs >> mBones[i];
     }
-    if (d.rev > 0) {
+    if (gRev > 0) {
         mVerts.Load(bs);
     }
     bs >> mMeshInverse;
@@ -110,6 +122,8 @@ BEGIN_LOADS(RndMeshDeform)
          & 0 == mMeshInverse.m.z.x && 0 == mMeshInverse.m.z.y
          & 1 == mMeshInverse.m.z.z);
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 void RndMeshDeform::PreSave(BinStream &bs) {
     if (mMesh) {

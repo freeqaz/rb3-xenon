@@ -5,6 +5,18 @@
 #include "obj/Object.h"
 #include "rndobj/Trans.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharIKScale;
+#define gAltRev gRevs_CharIKScale.altRev
+#define gRev gRevs_CharIKScale.rev
+
 CharIKScale::CharIKScale()
     : mDest(this), mScale(1.0f), mSecondaryTargets(this), mBottomHeight(0.0f), mTopHeight(0.0f),
       mAutoWeight(false) {}
@@ -59,22 +71,24 @@ BEGIN_COPYS(CharIKScale)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(3, 0)
-
 BEGIN_LOADS(CharIKScale)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
-    d >> mDest;
-    d >> mScale;
-    if (d.rev > 1)
-        d >> mSecondaryTargets;
-    if (d.rev > 2) {
-        d >> mAutoWeight;
-        d >> mBottomHeight >> mTopHeight;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
+    bs >> mDest;
+    bs >> mScale;
+    if (gRev > 1)
+        bs >> mSecondaryTargets;
+    if (gRev > 2) {
+        bs >> mAutoWeight;
+        bs >> mBottomHeight >> mTopHeight;
     }
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 void CharIKScale::Poll() {
     float weight = Weight();

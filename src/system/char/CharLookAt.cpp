@@ -10,6 +10,18 @@
 #include "rndobj/Graph.h"
 #include "rndobj/Poll.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharLookAt;
+#define gAltRev gRevs_CharLookAt.altRev
+#define gRev gRevs_CharLookAt.rev
+
 const float sMaxThreshold = 80;
 bool CharLookAt::sDisableJitter = false;
 
@@ -97,41 +109,41 @@ BEGIN_COPYS(CharLookAt)
     SyncLimits();
 END_COPYS
 
-INIT_REVS(5, 0)
-
 BEGIN_LOADS(CharLookAt)
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
-    d >> mSource;
-    d >> mPivot;
-    d >> mTarget;
-    d >> mHalfTime;
-    d >> mMinYaw;
-    d >> mMaxYaw;
-    d >> mMinPitch;
-    d >> mMaxPitch;
-    if (d.rev > 1) {
-        d >> mMinWeightYaw;
-        d >> mMaxWeightYaw;
-        d >> mWeightYawSpeed;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
+    bs >> mSource;
+    bs >> mPivot;
+    bs >> mTarget;
+    bs >> mHalfTime;
+    bs >> mMinYaw;
+    bs >> mMaxYaw;
+    bs >> mMinPitch;
+    bs >> mMaxPitch;
+    if (gRev > 1) {
+        bs >> mMinWeightYaw;
+        bs >> mMaxWeightYaw;
+        bs >> mWeightYawSpeed;
     }
-    if (d.rev < 3)
+    if (gRev < 3)
         mAllowRoll = true;
     else
-        d >> mAllowRoll;
-    if (d.rev < 4) {
+        bs >> mAllowRoll;
+    if (gRev < 4) {
         mEnableJitter = false;
         mPitchJitterLimit = 0;
         mYawJitterLimit = 0;
     } else {
-        d >> mEnableJitter;
-        d >> mPitchJitterLimit;
-        d >> mYawJitterLimit;
+        bs >> mEnableJitter;
+        bs >> mPitchJitterLimit;
+        bs >> mYawJitterLimit;
     }
-    if (d.rev > 4)
-        d >> mSourceRadius;
+    if (gRev > 4)
+        bs >> mSourceRadius;
     SyncLimits();
 END_LOADS
 

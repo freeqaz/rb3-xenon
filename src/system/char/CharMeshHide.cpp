@@ -1,5 +1,14 @@
 #include "char/CharMeshHide.h"
 #include "obj/Object.h"
+// Retail folds both rev words onto ONE base register at +0/+4, which only
+// happens for internal-linkage align(4) file-scope storage laid out as a single
+// aggregate (altRev at +0, rev at +4). Two separate statics do NOT fold.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 #pragma region CharMeshHide::Hide
 
@@ -80,14 +89,20 @@ BEGIN_COPYS(CharMeshHide)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(2, 0)
-
 BEGIN_LOADS(CharMeshHide)
-    LOAD_REVS(bs);
-    ASSERT_REVS(2, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mFlags >> mHides;
+    // RB3-360 retail uses the rb3-Wii rev dialect: the packed rev int is split
+    // into two mutable file-scope shorts and read back directly; no BinStreamRev
+    // shim and no ASSERT_REVS block. Written longhand so the DC3 macros stay
+    // intact for the scatter-included TUs further down this file.
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mFlags >> mHides;
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 BEGIN_HANDLERS(CharMeshHide)
     HANDLE_SUPERCLASS(Hmx::Object)

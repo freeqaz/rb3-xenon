@@ -7,7 +7,16 @@
 #include "utl/Messages.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(5, 0)
+// RB3-360 retail rev storage. Retail folds both rev words onto ONE base register
+// at +0/+4, which only happens for internal-linkage align(4) file-scope storage
+// laid out as a single aggregate (altRev at +0, rev at +4). Two separate statics
+// do NOT fold: MSVC interleaves the TU's other .bss objects between them.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 CrowdAudio *TheCrowdAudio;
 
@@ -389,30 +398,30 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
 void CrowdAudio::Save(BinStream &) { MILO_ASSERT(0, 0x33F); }
 
 BEGIN_LOADS(CrowdAudio)
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndPollable)
-    switch ((unsigned int)d.rev) {
-    case 4: {
-        int i;
-        d.stream >> i >> i >> i;
-        break;
-    }
-    case 3: {
-        int j;
-        d.stream >> j;
-        break;
-    }
-    case 2: {
-        String str;
-        d.stream >> str;
-        break;
-    }
-    default:
-        break;
+    // RB3-360 retail uses the rb3-Wii rev dialect: the packed rev int is split
+    // into two MUTABLE file-scope aligned(4) shorts (gRev/gAltRev) and the body
+    // reads `bs` directly. No BinStreamRev shim, no ASSERT_REVS block.
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndPollable::Load(bs);
+    if (gRev != 5) {
+        if (gRev == 4) {
+            int i;
+            bs >> i >> i >> i;
+        } else if (gRev == 3) {
+            int j;
+            bs >> j;
+        } else if (gRev == 2) {
+            String str;
+            bs >> str;
+        }
     }
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 BEGIN_COPYS(CrowdAudio)
     COPY_SUPERCLASS(Hmx::Object)

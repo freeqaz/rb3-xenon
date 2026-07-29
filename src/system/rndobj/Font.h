@@ -86,6 +86,10 @@ public:
     CharWidthAdvanceCoords(unsigned short, float &, float &, Vector2 &, Vector2 &) const;
     int NumMats() const { return mMats.size(); }
     float DeprecatedSize() const { return mDeprecatedSize; }
+    // RB3 retail API used by ui/UILabel.cpp (rb3-Wii oracle rndobj/Font.h).
+    // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
+    RndFont *TextureOwner() const;
+    float CellDiff() const;
 
 protected:
     RndFont();

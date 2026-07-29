@@ -9,6 +9,18 @@
 #include "rndobj/PropAnim.h"
 #include "utl/TextStream.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharLipSync;
+#define gAltRev gRevs_CharLipSync.altRev
+#define gRev gRevs_CharLipSync.rev
+
 
 std::map<Symbol, CharLipSync *> *CharLipSync::sLipSyncMap;
 
@@ -50,20 +62,22 @@ BEGIN_SAVES(CharLipSync)
     bs << mData;
 END_SAVES
 
-INIT_REVS(2, 0)
-
 BEGIN_LOADS(CharLipSync)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mVisemes;
-    d >> mFrames;
-    d >> mData;
-    if (d.rev == 1) {
-        d >> mPropAnim;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mVisemes;
+    bs >> mFrames;
+    bs >> mData;
+    // RB3-360 retail: `gRev != 0` (not `== 1`), and NO RegisterLipSync(this) tail.
+    if (gRev != 0) {
+        bs >> mPropAnim;
     }
-    RegisterLipSync(this);
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 BEGIN_COPYS(CharLipSync)
     COPY_SUPERCLASS(Hmx::Object)

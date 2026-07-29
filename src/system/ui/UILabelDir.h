@@ -32,6 +32,18 @@ public:
     bool AllowEditText() const;
     RndFontBase *FontObj(Symbol) const;
     UIColor *GetStateColor(UIComponent::State) const;
+    // ------------------------------------------------------------------
+    // RB3 retail UILabelDir API (rb3-Wii oracle). DECLARATION-ONLY, non-virtual:
+    // layout- and vtable-neutral; they let ui/UILabel.cpp compile in the RB3
+    // shape. Bodies land when UILabelDir itself is ported.
+    // ------------------------------------------------------------------
+    RndText *TextObj(Symbol) const;
+    void GetStateColor(UIComponent::State, Hmx::Color &) const;
+    RndGroup *HighlighMeshGroup() const;
+    RndMesh *TopLeftHighlightBone() const;
+    RndMesh *TopRightHighlightBone() const;
+    RndMesh *BottomLeftHighlightBone() const;
+    RndMesh *BottomRightHighlightBone() const;
     static DataNode GetMatVariations(UILabelDir *);
     static void Init();
 

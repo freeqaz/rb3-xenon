@@ -7,6 +7,18 @@
 #include "ui/UIComponent.h"
 #include "utl/Loader.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UITrigger;
+#define gAltRev gRevs_UITrigger.altRev
+#define gRev gRevs_UITrigger.rev
+
 UITrigger::UITrigger()
     : mBlockTransition(0), mCallbackObject(this), mEndTime(0), mDone(1) {}
 
@@ -30,12 +42,12 @@ BEGIN_COPYS(UITrigger)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(1, 0)
-
 BEGIN_LOADS(UITrigger)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    if (d.rev < 1) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    if (gRev < 1) {
         UIComponent *uiCom = Hmx::Object::New<UIComponent>();
         uiCom->Load(bs);
         delete uiCom;
@@ -52,8 +64,8 @@ BEGIN_LOADS(UITrigger)
         EventTrigger::Anim &anim = mAnims.back();
         anim.mAnim = animPtr;
     } else
-        LOAD_SUPERCLASS(EventTrigger);
-    d >> mBlockTransition;
+        EventTrigger::Load(bs);
+    bs >> mBlockTransition;
 END_LOADS
 
 void UITrigger::Trigger() {
