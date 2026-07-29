@@ -18,9 +18,8 @@ Baseline for every measurement below, taken in a fully-built worktree at main
 
 ## 0. TL;DR
 
-* **31 TUs/carves pinned, wired, ported and measured: +595 gains / −38 losses (net +557)**
-  (lanes were still in flight at time of writing; the ledger is a floor, not a
-  final). **All but one of the losses is the retirement of a *false* 100 %** — a
+* **31 TUs/carves pinned, wired, ported and measured: +599 gains / −38 losses
+  (net +561)**, all seven lanes complete. **All but one of the losses is the retirement of a *false* 100 %** — a
   `target_symbol_map.json` entry bound to a target VA that is not that function,
   scoring only as a shape (§4). The single genuine cost found so far is
   `?MaxPhraseScore@VocalPart@@QBAMXZ`, an 8-byte ICF fold at `0x826EE518` that
@@ -89,17 +88,16 @@ baseline above. Losses are itemised in §4.
 | G | `system/dsp/SndAnalysis` | `0x82B816F0..0x82B81DD8` (**ADD**) | — | **+4** | 0 |
 | D | `band3/game/KeysFx` | `0x826F3E98..0x826F47B0` (located 708 B → true **2,328 B**) | `GuitarFx.cpp` | **+5** | 0 |
 | F | `ChordShapeGenerator` (2nd carve) | out of the foreign `Mesh.cpp` pin | `Mesh.cpp` | **+42** | 0 |
-| G | `band3/meta_band/InputMgr` | `0x825B0518..0x825B22A8` (4 donors) | `AppInlineHelp`/`CalibrationPanel`/… | **+30** | 0 |
+| G | `band3/meta_band/InputMgr` | `0x825B0518..0x825B22A8` (**4 donors**) | `AppInlineHelp`/`CalibrationPanel`/`StreamRenderer`/`OvershellPanel` | **+34** | 0 |
 | C | `band3/bandtrack/DrumTrackWatcherImpl` (bonus) | `0x827800B0..0x827808C0` (**ADD**) | — | **+5** | 0 |
 | A | `band3/tour/TourPerformerLocal` + `TourPerformerRemote` | (2 carves) | `system/obj/DataFunc.cpp` | **+23** | −2 |
 | B | `band3/game/BandUserMgr` | `0x826826A8..0x82684E40` (+ unclaimed head/tail) | `system/rndobj/PropKeys.cpp` | **+38** | 0 |
 | A | `band3/tour/TourGameRules` + `TourGameModifier` | `0x82365E68..0x823660F8`, `0x823699B4..0x82369B28` (**ADD**) | — | **+10** | 0 |
 | E | `system/bandobj/DialogDisplay` | `0x82329B20..0x82329FD8` (mostly unclaimed) | `CharUpperTwist.cpp` | **+5** | 0 |
-| | **31 TUs / carves** | | | **+595** | **−38** |
+| | **31 TUs / carves** | | | **+599** | **−38** |
 
 Per lane: A **+105/−5**, B **+79/−12**, C **+144/−0**, D **+90/−8**, E **+80/−10**,
-F **+60/−3**, G **+37/−0** — **net +557**. Six lanes complete; only G was still
-extending `InputMgr` (52/61). Composition re-verified: **28 new units, zero cross-branch
+F **+60/−3**, G **+41/−0** — **net +561**. **All seven lanes complete.** Composition re-verified: **28 new units, zero cross-branch
 `.text` overlaps**, and every branch passes `overlap_check.py` individually.
 
 ★★ **The entire `DataFunc.cpp` block `0x82366274..0x8236955C` (0x32E8) is now
@@ -119,7 +117,7 @@ Three of the 31 (`SongSetlistProvider`, `SndAnalysis`, `InputMgr`) are TUs
 
 ★★ **Twelve of the 31 are pure ADDs into unclaimed space** — no donor shrinks, no
 empty-unit risk, and structurally **zero possibility of a loss**. They account for
-**+174 of the +595** and carry **0 of the 38 losses**: `LockStepMgr` +65,
+**+174 of the +599** and carry **0 of the 38 losses**: `LockStepMgr` +65,
 `UGCPurchasePanel` +25, `SlotChannelMapping` +23, `ChordShapeGenerator` (first
 carve) +13, `HitTracker` +12, `LogFile` +7, `Asset` +7, `DrumTrackWatcherImpl` +5,
 `SndAnalysis` +4, `SongSetlistProvider` +3, and `TourGameRules`+`TourGameModifier` +10.
@@ -685,6 +683,31 @@ signature is mechanical (a dtor whose target lacks the own-vptr store while our
 header redeclares the destructor), it applies to every polymorphic Milo class
 ported from a Wii header, and it is **cheap to scan tree-wide**.
 
+**★ Control-flow shapes (lane G measured the rivals, so these are specific)**
+* **Shared-false tail on a switch.** Retail routes `default:` *and* a failing
+  in-case guard to **one** `return false` placed *after* the switch. Writing
+  `default: return false;` inside costs ~11 % — `IsValidButtonForShell`
+  89.1 → **100**. Two rival formulations measured *worse* (85.5 %, 76.6 %), so the
+  shape is exact, not a preference.
+* **Direct bool expression, not accumulate-into-a-flag.** `bool x = A && B;`
+  produces retail's `li 1` / conditional `li 0` / `clrlwi` in a volatile register;
+  the oracle's flag form inverts the test and hoists into a callee-saved register.
+  `AllowRemoteExit` 94.3 → **100**, `HasValidController` 79.3 → **100**.
+* **Unsigned-range tricks are dev-only.** `ty - 3U <= 1 || ty == 1` in the oracle
+  is `ty == 1 || (ty > 2 && ty <= 4)` in retail. `CheckTriggerAutoVocalsConfirm`
+  97.7 → **100**.
+* Micro-lever worth trying on any loop with a repeated divided bound: hoisting
+  `int half = vlen / 2;` instead of leaving `vlen / 2` inline let MSVC
+  strength-reduce an induction pointer as retail does (`FindCCPeak`
+  93.3 → 95.7 %).
+
+**★ A new wall class: hand-written VMX128**
+`ShiftedDotProduct`'s fast path is **hand-vectorised VMX128 selected by its
+fourth parameter** — which the Wii oracle marks `/*unused*/`, using a Gekko
+paired-single `asm{}` block instead. It is not reconstructible from this oracle
+and was left at 25 % deliberately. **Expect this in `system/dsp` and
+`system/synth`**; it is a legitimate reason to stop, distinct from regalloc.
+
 **Guards and arms retail drops**
 * `UIGridProvider::SetListToData` — retail has **no** `if (child)` guard; the
   `SetSelectedSimulateScroll(idx % mWidth)` call is unconditional.
@@ -787,6 +810,18 @@ insist on it.
 Both came out of lane B and are recorded here because they are levers, not
 laneBL work:
 
+* ★★ **`User`/`BandUser` has a virtual the dev tree lacks — found twice,
+  independently.** Lane D: `BandUser::IsNullUser()` is reached through a **virtual
+  base** (`add` / `addi r3,r11,4` / vtable slot `0x70`), and the *same four*
+  target-only instructions explain all five `BandPerformer` residuals. Lane G:
+  where the Wii line is `mSessionMgr->HasUser(user)`, retail calls a virtual **on
+  the user, passing the SessionMgr** (`lwz r11,0(r30); mr r3,r30; lwz r4,0x24(r29);
+  lwz r11,0(r11); bctrl`), reaching it via `vbtbl[8]+4` when the pointer is a
+  `LocalBandUser*` — i.e. RB3-360's `User`/`BandUser` has a
+  `bool <slot0>(SessionMgr*)` virtual the dev tree does not model. Worth ≥ 8
+  functions across two lanes, binary-wide blast radius, **needs a layout owner.**
+  Two lanes converging on the same class from different symptoms is the strongest
+  signal in the wave for what to fund next.
 * ★ **`DataArrayPtr`'s ctor is out-of-line in retail, inline in our tree.** Retail
   calls `??0DataArrayPtr@@QAA@ABVDataNode@@@Z` at `0x8228D370`, but
   `src/system/obj/Data.h` defines every `DataArrayPtr` ctor inline, so `/Ob2`
@@ -813,6 +848,24 @@ laneBL work:
   the same phenomenon, not a regression of it.)
 
 ---
+
+## 7ter. ★ The empty-unit trap fired for real
+
+Documented in CLAUDE.md but never observed until now. `InputMgr`'s carve took
+`StreamRenderer.cpp`'s block — **its only `.text` range** — and `report.json`
+hard-failed with `Failed to open obj/StreamRenderer.obj` exactly as predicted,
+until the unit's whole `splits.txt` entry was deleted in the same edit. Four
+donors were involved in that one carve (`AppInlineHelp`, `CalibrationPanel`,
+`StreamRenderer`, `OvershellPanel`) and **all four micro-pins were
+mis-attributions**: `InputStatusChangedMsg::Type()`+`??__F`,
+`InputStatusChangedMsg`'s ctor, `InputMgr::OnMsg(LocalUserLeftMsg)`, and
+`OvershellPanel` swallowing `Handle`'s 11 EH funclets *and* its 9 `??__F`
+guard-clears.
+
+Ownership was proved by the §3.4 guard-word rule: `Handle`'s 9 local statics set
+bits 0–8 of `0x82DFF420` and the nine 32-byte funclets clear exactly those bits,
+while the 11 EH funclets carry `addi r31,r12,-0xf0` = `Handle`'s frame size. Both
+cheap tells (§3.4, §3.6) doing the whole job on one carve.
 
 ## 7bis. ★★ A silent `splits.txt` corruption class: dtk tolerates duplicate ranges
 
@@ -883,6 +936,14 @@ than as 144 bodies:
 `Asset` (1 body + 6 funclets) is the weakest row in the wave and is labelled as
 such; `UGCPurchasePanel` carries 17 funclets but also the wave's largest median
 body (234 B). Lane B's four TUs: n=79, median 84 B, mean 116 B, **15 % funclet**.
+
+★ Lane G's `SndAnalysis` is the wave's one honestly-bad row and is labelled as
+such: its +4 is **4 x 32 B `??__F` funclets and zero real bodies** (both real
+bodies missed strict — `FindCCPeak` 95.66 %, `RefinePeriod2` 99.977 %). Lane G
+total: n=41, median 64, mean 102.7, 43.9 % funclet, 23 named bodies. Lane E:
+n=80, median 44, mean 132.7, **15 % funclet, 68 of 80 named**. Lane A: n=105,
+median 40, mean 87.9, 35.2 % funclet — framed as "105 = 68 named bodies + 37
+anonymous funclets", named bodies alone median 76 B / mean 116.7 B / max 1,608 B.
 
 ★ Lane C also **declined +5 of pure metric**: five twelve-byte
 `$4PPPPPPPM@A@` adjustor thunks that are byte-identical to each other and
