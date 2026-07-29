@@ -456,9 +456,9 @@ the header. Real signal, zero headroom. (It does confirm the mechanism: retail
 
 ## 7. Pin + wire attempts — the pipeline works, end to end
 
-Two TUs were taken all the way through (locate → carve → port → name-pair →
+Three TUs were taken all the way through (locate → carve → port → name-pair →
 double-build A/B) in isolated worktrees, as an existence proof that the seam in
-§4 converts. **Both landed net-positive with ZERO losses. Combined +50.**
+§4 converts. **All three landed net-positive with ZERO losses. Combined +69.**
 
 ### 7.1 `UIProxy` — branch `laneBD-P1`, commit `a8e8860c` — **+21 / −0**
 
@@ -491,15 +491,33 @@ Two retail-vs-Wii-dev divergences were found and confirmed against the target
 asm: `Save` is a real `SAVE_REVS(3,0)` body (not `SAVE_OBJ`), and `SyncDir` has
 no `LOADMGR_EDITMODE` guard and uses a function-local `static Message`.
 
-### 7.2 `TrainingMgr` — branch `laneBD-P2`, commit `c3af9ef7` — **+29 / −0**
+### 7.2 `TrainingMgr` + `CharSync` — branch `laneBD-P2` — **+48 / −0**
 
-Carved out of `band3/meta_band/UIStats.cpp`'s `0x825632BC..0x82566000` pin into a
-newly wired `src/band3/meta_band/TrainingMgr.cpp`.
+Both carved out of the *same* over-broad `band3/meta_band/UIStats.cpp` pin
+(`0x825632BC..0x82566000`), into two newly wired TUs. The two carves are
+contiguous and abut exactly:
 
-A/B, same protocol: **39,520 → 39,549 (+29 gains, −0 losses)**. The unit ends at
-**34/36 functions, 99.79 % fuzzy**; the residual two
-(`Unparticipate`/`ParticipateUsers`, 96.2 %/97.6 %) are a pure `r9`↔`r10` regswap
-plus one dead `addi` — permuter class, and the permuter is off-limits.
+| TU | commit | span | delta |
+|---|---|---|--:|
+| `TrainingMgr.cpp` | `c3af9ef7` | `0x82565088..0x82566000` | **+29 / −0** |
+| `CharSync.cpp` | `7be91272` | `0x82564410..0x82565088` | **+19 / −0** |
+
+A/B, same protocol: **39,520 → 39,569 (+48 gains, −0 losses)**. `TrainingMgr`
+ends at **34/36 functions, 99.79 % fuzzy**; `CharSync` at **21/22 strict,
+100.00 % fuzzy**. `UIStats` shed 22 target functions and its own rate rose
+15.01 % → 17.81 %. The three residuals are all regalloc-class with the permuter
+banned (`TrainingMgr::{Un,}ParticipateUsers` 96.2 %/97.6 % — pure `r9`↔`r10` swap
+plus one target-only dead `addi`; `CharSync::UpdateCharCache` 99.911 % — three
+instructions, `r27`↔`r30` base/index role swap in `lwzx`/`add`).
+
+★ **Three retail-vs-Wii-dev body divergences were found by diffing, each worth a
+whole function:** `CharSync::Init` keeps explicit if/else arms rather than the
+ternary's copy-then-overwrite; `OnMsg(ProfileChangedMsg)` calls `GetProfile()`
+once, uses `GetAssociatedLocalBandUser()`, and carries a `TheSessionMgr->HasUser(u)`
+guard the Wii dev source lacks; and `UpdateCharCache` has **no**
+`part_difficulty_screen`/`block_char_cache` early-out and no music-video/WiiTex arm
+(dropping them: 97.5 % → 99.9 %). Expect this class of divergence on every port
+from this worklist — the Wii tree is a *dev* build.
 
 ★ **The span needed refining, and that generalises.** The instrument reported
 `0x82565140..0x82565D74`; the true TU span is **`0x82565088..0x82566000`**. The
@@ -516,19 +534,32 @@ entries, string-pooled in exact reverse source order.
 
 ### 7.3 What this calibrates
 
-Two spans, two ports, **+50 measured with 0 losses**, against a §4c headroom of
-528. Conversion on these two was 21/36 and 29/~13-plus-extension of the
-in-span unmatched functions — i.e. **a well-evidenced span converts at roughly
-60–100 % once the source is ported**, which is far better than a generic
-MWCC→MSVC body port because the retail code for these TUs turns out to be close
-to the Wii source. Both are small TUs (189 and 156 lines) and each took one
-agent-session.
+Three spans, three ports, **+69 measured with 0 losses**, against the §4c headroom
+of 528. Every one of the three ends at ≥ 99.79 % fuzzy with only regalloc-class
+residuals, so **a well-evidenced span converts at close to 100 % once the source
+is ported** — far better than a generic MWCC→MSVC body port, because the retail
+code for these TUs is close to the Wii source. All three are small TUs
+(189 / 156 / 190 lines) and each took roughly one agent-session.
+
+Extrapolating the observed conversion over the 504 unscoreable functions in the
+42 HIGH spans is the honest way to price the rest of this worklist — but note
+that these three were chosen as the *best*-evidenced, and every port must still
+absorb dev-vs-retail body divergence (§7.2) and span under-coverage (§7.2 ★).
 
 Neither branch is landed; both are path-limited commits on their own branches for
-the coordinator (`config/45410914/{objects.json,splits.txt}`,
-`scripts/target_symbol_map.json` are all union-mergeable via
-`scripts/harvest/land.sh`, and the two `.text` carves are 8 MB apart so they do
-not collide).
+the coordinator. `config/45410914/{objects.json,splits.txt}` and
+`scripts/target_symbol_map.json` are union-mergeable via
+`scripts/harvest/land.sh`; P1's carve (`0x8282…`) and P2's two (`0x8256…`) are
+8 MB apart and P2's two abut exactly, so nothing collides.
+
+### 7.4 Lead left on the table
+
+`UIStats.cpp`'s pin still holds **at least one more foreign TU**: `fn_82566228`
+has its own static at `0x82DFDE90` and is called twice from
+`CharSync::UpdateCharCache` (i.e. a `GetXxxMgr()` accessor), and there is a
+uniform 0x20-stride run at `0x825640B0..0x825643E0`. One over-broad pin has now
+yielded three separate TUs, which is itself the strongest single argument for
+funding this channel.
 
 ---
 
