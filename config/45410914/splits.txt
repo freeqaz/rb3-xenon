@@ -9856,7 +9856,7 @@ Performer.cpp:
 	.pdata      start:0x822321D8 end:0x82232240
 	.pdata      start:0x82232240 end:0x822323C8
 	.pdata      start:0x822323C8 end:0x822323D8
-	.pdata      start:0x822323D8 end:0x82232580
+	.pdata      start:0x822323D8 end:0x822323E8
 	.text       start:0x82365E58 end:0x82365E68
 	.text       start:0x82657C50 end:0x82657CF0
 	.text       start:0x82657FA0 end:0x8265853C
@@ -9874,7 +9874,7 @@ Performer.cpp:
 	.text       start:0x8269D59C end:0x8269DB28
 	.text       start:0x8269DB30 end:0x8269F228
 	.text       start:0x8269F228 end:0x8269F2BC
-	.text       start:0x8269F2C8 end:0x826A06A0
+	.text       start:0x8269F2C8 end:0x8269F378
 
 TrackerUtils.cpp:
 	.pdata      start:0x82236DA8 end:0x82236DB0
@@ -13055,6 +13055,10 @@ band3/game/RealGuitarGemPlayer.cpp:
 band3/game/BandPerformer.cpp:
 	.pdata      start:0x82236938 end:0x82236A20
 	.text       start:0x826ED658 end:0x826EE598
+
+band3/game/UISyncNetMsgs.cpp:
+	.pdata      start:0x822323E8 end:0x82232580
+	.text       start:0x8269F378 end:0x826A06A0
 
 band3/game/PracticeSectionProvider.cpp:
 	.pdata      start:0x82234CF0 end:0x82234DF0
