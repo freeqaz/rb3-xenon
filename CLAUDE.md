@@ -1,5 +1,44 @@
 # rb3-xenon — Claude Context
 
+## ★ Think out loud (applies to every turn, every agent)
+
+**Narrate your work in visible output as you go.** Say what you are about to do,
+why you chose it over the alternative, what you expect to see, and then what you
+actually saw — *before* moving on. Do not batch a silent run of ten tool calls
+and emit only a conclusion.
+
+**Why: the log is the deliverable.** This work is reviewed after the fact —
+weeks later, by someone (or some agent) who was not there and cannot re-run the
+session. The transcript is the only record of *why* a lever was chosen, what was
+measured, and what was ruled out. Hidden reasoning is not recoverable; only the
+visible trajectory and narration survive. So write for that reader: a correct
+patch with no narration teaches nothing and cannot be audited, while a narrated
+dead end stays useful forever — it stops the next lane from re-hunting a drained
+vein.
+
+What "out loud" means concretely:
+
+- **Before a tool call / batch:** one line on intent — *"reading `splits.txt` to
+  confirm the `.text` span before pinning"*, not silence.
+- **Before a decision:** name the alternatives you rejected and the reason.
+  *"Doing this in a worktree rather than main because the header change cascades
+  to ~281 TUs."*
+- **State your expectation first, then the result.** A prediction that fails is
+  the most informative line in a transcript — call it out explicitly (*"expected
+  +12, got 0 — so the cause is shared, not per-unit"*).
+- **Surface surprises immediately**, especially ones that contradict a memory,
+  a doc, or an earlier claim of yours. Say what changed your mind.
+- **Say what you did NOT do** and why — deferred walls, skipped units, unverified
+  assumptions. Silence reads as coverage.
+- **Numbers with provenance:** quote the measured value and how it was measured
+  (which leg, which build, cache cold/warm). "Improved" without a number is noise.
+
+This applies to subagents too — a subagent's final report is the only thing that
+survives it, so it must carry the reasoning, not just the verdict. Keep it prose
+and proportional: a sentence or two per step, not an essay per tool call.
+
+---
+
 Decompilation of **Rock Band 3** for **Xbox 360** (PowerPC). Goal: matching
 machine code from C++ source. Target binary: vanilla retail XEX, title ID
 `45410914`, at `orig/45410914/default.xex` (not committed).
