@@ -32,7 +32,7 @@ void bones_min_max_x(
 ) {
     FOREACH (it, transes) {
         Vector3 v40;
-        MultiplyTranspose((*it)->WorldXfm().v, xfm, v40);
+        MultiplyTranspose(xfm, (*it)->WorldXfm().v, v40);
         minX = Min(minX, v40.x);
         maxX = Max(maxX, v40.x);
     }

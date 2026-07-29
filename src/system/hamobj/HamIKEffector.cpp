@@ -564,7 +564,7 @@ void HamIKEffector::ComputeHandPullAndQuat(
     Vector3 localDir;
     Multiply(effLocalV, xfmOut, localDir);
     Vector3 localTarget;
-    MultiplyTranspose(targetPos, parentXfm, localTarget);
+    MultiplyTranspose(parentXfm, targetPos, localTarget);
     MakeRotQuat(localDir, localTarget, quatOut.q);
 }
 
@@ -706,7 +706,7 @@ void HamIKEffector::ComputeElbowPullAndQuat(
     QuatXfm &q, const Transform &xfm, const Vector3 &v
 ) {
     Vector3 v40;
-    MultiplyTranspose(v, xfm, v40);
+    MultiplyTranspose(xfm, v, v40);
     const Vector3 &effectorV = mEffector->TransParent()->LocalXfm().v;
     MakeRotQuat(effectorV, v40, q.q);
     float dy = v.y - xfm.v.y;

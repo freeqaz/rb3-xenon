@@ -151,11 +151,6 @@ BEGIN_HANDLERS(RndMesh)
     HANDLE(build_from_bsp, OnBuildFromBSP)
     HANDLE(point_collide, OnPointCollide)
     HANDLE(configure_mesh, OnConfigureMesh)
-    HANDLE_EXPR(estimated_size_kb, EstimatedSizeKb())
-    HANDLE_ACTION(instance_bones, InstanceGeomOwnerBones())
-    HANDLE_EXPR(has_instanced_bones, HasInstancedBones())
-    HANDLE_EXPR(has_bones, !mBones.empty())
-    HANDLE_ACTION(delete_bones, DeleteBones(_msg->Int(2)))
     HANDLE_ACTION(burn_xfm, BurnXfm())
     HANDLE_ACTION(reset_normals, ResetNormals())
     HANDLE_ACTION(tessellate, Tessellate())
@@ -713,24 +708,24 @@ float RndMesh::GetDistanceToPlane(const Plane &p, Vector3 &v) {
 }
 
 bool RndMesh::MakeWorldSphere(Sphere &s, bool b) {
+    // RB3 retail has NO mShowing gate here (DC3 added it later): the retail body
+    // at this site branches straight from `if (b)` into CalcBox.
     if (b) {
-        if (mShowing) {
-            Box box;
-            CalcBox(this, box);
-            Vector3 v68;
-            CalcBoxCenter(v68, box);
-            s.Set(v68, 0);
-            const Transform &worldXfm = WorldXfm();
-            for (auto it = Verts().begin(); it != Verts().end(); ++it) {
-                Vector3 v50;
-                Multiply(it->pos, worldXfm, v50);
-                Vector3 v5c;
-                Subtract(v50, s.center, v5c);
-                s.radius = Max(s.GetRadius(), Dot(v5c, v5c));
-            }
-            s.radius = sqrtf(s.GetRadius());
-            return true;
+        Box box;
+        CalcBox(this, box);
+        Vector3 v68;
+        CalcBoxCenter(v68, box);
+        s.Set(v68, 0);
+        const Transform &worldXfm = WorldXfm();
+        for (auto it = Verts().begin(); it != Verts().end(); ++it) {
+            Vector3 v50;
+            Multiply(it->pos, worldXfm, v50);
+            Vector3 v5c;
+            Subtract(v50, s.center, v5c);
+            s.radius = Max(s.GetRadius(), Dot(v5c, v5c));
         }
+        s.radius = sqrtf(s.GetRadius());
+        return true;
     } else if (mSphere.GetRadius()) {
         Multiply(mSphere, WorldXfm(), s);
         return true;
@@ -1434,7 +1429,7 @@ DataNode RndMesh::OnCompareEdgeVerts(const DataArray *da) {
 DataNode RndMesh::OnPointCollide(const DataArray *da) {
     BSPNode *tree = GetBSPTree();
     Vector3 v(da->Float(2), da->Float(3), da->Float(4));
-    MultiplyTranspose(v, WorldXfm(), v);
+    MultiplyTranspose(WorldXfm(), v, v);
     return tree && Intersect(v, tree);
 }
 

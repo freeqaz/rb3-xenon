@@ -50,17 +50,11 @@ BEGIN_HANDLERS(UIFontImporter)
     HANDLE(show_font_picker, OnShowFontPicker)
     HANDLE(generate, OnGenerate)
     HANDLE(generate_og, OnGenerateOG)
-    HANDLE(generate_og, OnGenerateOG)
-    HANDLE(generate_3d, OnGenerate3d)
     HANDLE(forget_gened_fonts, OnForgetGened)
     HANDLE(attach_to_importfont, OnAttachToImportFont)
     HANDLE(import_from_importfont, OnImportSettings)
     HANDLE(sync_with_resource, OnSyncWithResourceFile)
-    HANDLE_EXPR(
-        get_resources_file_list, ResourceDirBase::GetFileList("UILabel", "UILabelDir")
-    )
     HANDLE(get_bitmap_path, OnGetGennedBitmapPath)
-    HANDLE_ACTION(set_charset_utf8, OnSetCharsetUTF8(_msg->Str(2)))
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

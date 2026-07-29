@@ -90,7 +90,7 @@ void DancerSkeleton::JointPos(SkeletonCoordSys cs, SkeletonJoint joint, Vector3 
     } else {
         Transform xfm;
         CameraToPlayerXfm(cs, xfm);
-        MultiplyTranspose(mCamJointPositions[joint], xfm, pos);
+        MultiplyTranspose(xfm, mCamJointPositions[joint], pos);
     }
 }
 

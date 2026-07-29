@@ -120,7 +120,6 @@ MidiInstrument::~MidiInstrument() {
 
 BEGIN_HANDLERS(MidiInstrument)
     HANDLE_ACTION(add_map, mMultiSampleMap.push_back())
-    HANDLE_ACTION(play_note, StartSample(_msg->Int(2), _msg->Int(3), _msg->Int(4), -1))
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

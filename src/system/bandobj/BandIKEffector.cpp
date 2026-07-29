@@ -400,7 +400,7 @@ void BandIKEffector::ComputeHandPullAndQuat(
     outElbowXfm.m.z.z = 1.0f;
 
     Vector3 localTarget;
-    MultiplyTranspose(handTarget, shoulderXfm, localTarget);
+    MultiplyTranspose(shoulderXfm, handTarget, localTarget);
     Vector3 localDir;
     Multiply(_ref0->mLocalXfm.v, outElbowXfm, localDir);
     MakeRotQuat(localDir, localTarget, outQuat.q);

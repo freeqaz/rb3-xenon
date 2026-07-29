@@ -391,15 +391,12 @@ void VocalTrack::Init() {
     GameplayOptions *options = user->GetGameplayOptions();
     if (options) {
         DataArray *staticArr = SystemConfig()->FindArray("force_static_vocals", false);
-        if (staticArr) {
-            if (SystemConfig()->FindInt("force_static_vocals")) {
-                SetVocalStyle((VocalStyle)0);
-            }
-            goto next;
+        if (staticArr && SystemConfig()->FindInt("force_static_vocals")) {
+            SetVocalStyle((VocalStyle)0);
+        } else {
+            SetVocalStyle(options->GetVocalStyle());
         }
-        SetVocalStyle(options->GetVocalStyle());
     }
-next:
     ReadTimingData(SystemConfig()->FindArray("track_graphics"));
     unk1c8 = mDir->Find<RndGroup>("markers.grp", true);
     unk19c = 0;
@@ -2064,6 +2061,10 @@ float VocalTrack::GetHarmonyScore(int singerIdx) {
         return harmonyScore;
     for (int part = 0; part < numParts; part++) {
         if (part != singer->mFrameAssignedPart) {
+            // NOTE (laneBF-3): residual single mismatch is `lwzx r3,r11,r30` vs
+            // our `lwzx r3,r30,r11` — the rA/rB operands of the indexed load are
+            // swapped (semantically identical `add`). `*(begin()+part)` spelling
+            // tested, no change. Regalloc-class, permuter banned.
             Singer *candidate = mPlayer->mVocalParts[part]->GetBestSingerCandidate();
             if (candidate) {
                 float tmp = frameScore * candidate->mFrameBestHitScore;
@@ -2232,7 +2233,12 @@ void VocalTrack::BuildStaticDeployZone(
             LyricShift(max, mStaticDeployMarginX - (fref + mStaticDeployBufferX))
         );
     }
-    bool i6 = TheSongDB->IsInCoda(MsToTickInt(fpair.first));
+    // The `!!` forces MSVC's int->bool normalize (`subic`/`subfe`) that retail
+    // emits here; without it we return the raw byte. Residue: retail applies the
+    // idiom to the raw r3 with no leading `clrlwi r11,r3,24`, i.e. its IsInCoda
+    // result is int-typed at this point. A `(int)` cast folds straight back to
+    // the un-normalized form (96.3%), so `!!` is the best source-side form.
+    bool i6 = !!TheSongDB->IsInCoda(MsToTickInt(fpair.first));
     float f1;
     RndGroup *u4;
     float f2;
@@ -2612,7 +2618,7 @@ int VocalTrack::IncrementVolume(int val) {
         } else if (val == -1) {
             TheProfileMgr.SetSynapseEnabled(false);
         }
-        return TheProfileMgr.GetSynapseEnabled();
+        return !!TheProfileMgr.GetSynapseEnabled();
     } else {
         MILO_NOTIFY_ONCE(
             "trying to increment unimplemented vocal param %d", mCharOptParam

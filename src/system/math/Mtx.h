@@ -399,7 +399,11 @@ inline void Normalize(const Hmx::Matrix3 &in, Hmx::Matrix3 &out) {
 void Multiply(const Hmx::Matrix3 &, const Hmx::Matrix3 &, Hmx::Matrix3 &);
 void Multiply(const Vector3 &, const Transform &, Vector3 &);
 
-inline void MultiplyTranspose(const Vector3 &v, const Transform &t, Vector3 &out) {
+// RB3 retail takes the Transform FIRST -- verified against the retail body at
+// 0x822C17D0, which loads the matrix/translation from r3 (0x0..0x38) and the
+// point from r4 (0x0..0x8). DC3 and rb3-Wii both declare (Vector3, Transform);
+// that is a later-engine change. Do not "restore" the DC3 order.
+inline void MultiplyTranspose(const Transform &t, const Vector3 &v, Vector3 &out) {
     Subtract(v, t.v, out);
     out.Set(Dot(out, t.m.x), Dot(out, t.m.y), Dot(out, t.m.z));
 }

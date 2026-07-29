@@ -74,15 +74,6 @@ BEGIN_HANDLERS(RndPropAnim)
             _msg->Size() > 6 ? _msg->Int(6) : true
         )
     )
-    HANDLE_ACTION(
-        remove_index, RemoveKey(_msg->Obj<Hmx::Object>(2), _msg->Array(3), _msg->Int(4))
-    )
-    HANDLE_ACTION(
-        remove_range,
-        RemoveRange(
-            _msg->Obj<Hmx::Object>(2), _msg->Array(3), _msg->Float(4), _msg->Float(5)
-        )
-    )
     HANDLE_EXPR(keys_type, AnimKeysType(_msg->Obj<Hmx::Object>(2), _msg->Array(3)))
     HANDLE_EXPR(interp_type, InterpType(_msg->Obj<Hmx::Object>(2), _msg->Array(3)))
     HANDLE_ACTION(
@@ -110,14 +101,12 @@ BEGIN_HANDLERS(RndPropAnim)
         change_prop_path,
         ChangePropPath(_msg->Obj<Hmx::Object>(2), _msg->Array(3), _msg->Array(4))
     )
-    HANDLE(remove_keyframe, OnRemoveKeyframe)
     HANDLE(replace_keyframe, OnReplaceKeyframe)
     HANDLE(replace_frame, OnReplaceFrame)
     HANDLE(index_from_frame, OnGetIndexFromFrame)
     HANDLE(frame_from_index, OnGetFrameFromIndex)
     HANDLE(value_from_index, OnGetValueFromIndex)
     HANDLE(value_from_frame, OnGetValueFromFrame)
-    HANDLE(num_keys, OnGetNumKeys)
     HANDLE_SUPERCLASS(RndAnimatable)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS

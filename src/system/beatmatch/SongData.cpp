@@ -1013,7 +1013,8 @@ unsigned int SongData::GetRollingSlotsAtTick(int i1, int tick) const {
 bool SongData::RollStartsAt(int idx, int startTick, int &endTick) const {
     RangedDataCollection<unsigned int> *pRollInfo = mRollInfos[idx];
     MILO_ASSERT(pRollInfo, 0x5C2);
-    return pRollInfo->DataStartsAt(mTrackDifficulties[idx], startTick, endTick);
+    int diff = mTrackDifficulties[idx];
+    return pRollInfo->DataStartsAt(diff, startTick, endTick);
 }
 
 bool SongData::GetNextRoll(int idx, int tick, unsigned int &roll, int &endTick) const {
@@ -1028,7 +1029,8 @@ bool SongData::GetNextRoll(int idx, int tick, unsigned int &roll, int &endTick) 
 bool SongData::TrillStartsAt(int idx, int startTick, int &endTick) {
     RangedDataCollection<std::pair<int, int> > *pTrillInfo = mTrillInfos[idx];
     MILO_ASSERT(pTrillInfo, 0x5F7);
-    return pTrillInfo->DataStartsAt(mTrackDifficulties[idx], startTick, endTick);
+    int diff = mTrackDifficulties[idx];
+    return pTrillInfo->DataStartsAt(diff, startTick, endTick);
 }
 
 RangedDataCollection<unsigned int> *SongData::GetRollInfo(int idx) const {
@@ -1052,7 +1054,8 @@ RangedDataCollection<std::pair<int, int> > *SongData::GetTrillInfo(int idx) cons
 bool SongData::RGRollStartsAt(int idx, int startTick, int &endTick) const {
     RangedDataCollection<RGRollChord> *pRollInfo = mRGRollInfos[idx];
     MILO_ASSERT(pRollInfo, 0x60F);
-    return pRollInfo->DataStartsAt(mTrackDifficulties[idx], startTick, endTick);
+    int diff = mTrackDifficulties[idx];
+    return pRollInfo->DataStartsAt(diff, startTick, endTick);
 }
 
 bool SongData::GetNextRGRoll(int idx, int tick, RGRollChord &chord, int &endTick) const {
@@ -1128,7 +1131,8 @@ GameGemList *SongData::GetGemList(int track) {
 }
 
 TickedInfoCollection<String> &SongData::GetSubmixes(int track) const {
-    return mDrumMixDBs[track]->GetMixList(mTrackDifficulties[track]);
+    int diff = mTrackDifficulties[track];
+    return mDrumMixDBs[track]->GetMixList(diff);
 }
 
 SongPos SongData::CalcSongPos(float f) {
@@ -1275,7 +1279,7 @@ void SongData::MakeBackupTracks() {
 
 bool SongData::HasBackupTrack(int track) const {
     for (int i = 0; i < mBackupTracks.size(); i++) {
-        if (track == mBackupTracks[i]->mOriginalTrack)
+        if (mBackupTracks[i]->mOriginalTrack == track)
             return true;
     }
     return false;

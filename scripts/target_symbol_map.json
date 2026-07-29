@@ -10860,7 +10860,7 @@
  "0x822c13a8": "?Multiply@@YAXABVMatrix3@Hmx@@0AAV12@@Z",
  "0x822c1650": "?Normalize@@YAXABVMatrix3@Hmx@@AAV12@@Z",
  "0x822c1718": "?Transpose@@YAXABVTransform@@AAV1@@Z",
- "0x822c17d0": "?MultiplyTranspose@@YAXABVVector3@@ABVTransform@@AAV1@@Z",
+ "0x822c17d0": "?MultiplyTranspose@@YAXABVTransform@@ABVVector3@@AAV2@@Z",
  "0x822c1860": "?ScaleAddEq@@YAXAAVQuat@Hmx@@ABV12@M@Z",
  "0x822c18f8": "??0QuatXfm@@QAA@ABVTransform@@@Z",
  "0x822c19c8": "?GetGroundHeight@BandIKEffector@@IAAMPAVRndTransformable@@@Z",

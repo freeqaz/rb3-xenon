@@ -95,7 +95,7 @@ void ThreeDSoundManager::Poll() {
 
 float ThreeDSoundManager::CalculateAngle(ThreeDSound *sound, const Transform &xfm) {
     Vector3 vout;
-    MultiplyTranspose(sound->WorldXfm().v, xfm, vout);
+    MultiplyTranspose(xfm, sound->WorldXfm().v, vout);
     return atan2(vout.x, vout.y);
 }
 
