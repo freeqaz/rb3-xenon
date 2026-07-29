@@ -713,24 +713,24 @@ float RndMesh::GetDistanceToPlane(const Plane &p, Vector3 &v) {
 }
 
 bool RndMesh::MakeWorldSphere(Sphere &s, bool b) {
+    // RB3 retail has NO mShowing gate here (DC3 added it later): the retail body
+    // at this site branches straight from `if (b)` into CalcBox.
     if (b) {
-        if (mShowing) {
-            Box box;
-            CalcBox(this, box);
-            Vector3 v68;
-            CalcBoxCenter(v68, box);
-            s.Set(v68, 0);
-            const Transform &worldXfm = WorldXfm();
-            for (auto it = Verts().begin(); it != Verts().end(); ++it) {
-                Vector3 v50;
-                Multiply(it->pos, worldXfm, v50);
-                Vector3 v5c;
-                Subtract(v50, s.center, v5c);
-                s.radius = Max(s.GetRadius(), Dot(v5c, v5c));
-            }
-            s.radius = sqrtf(s.GetRadius());
-            return true;
+        Box box;
+        CalcBox(this, box);
+        Vector3 v68;
+        CalcBoxCenter(v68, box);
+        s.Set(v68, 0);
+        const Transform &worldXfm = WorldXfm();
+        for (auto it = Verts().begin(); it != Verts().end(); ++it) {
+            Vector3 v50;
+            Multiply(it->pos, worldXfm, v50);
+            Vector3 v5c;
+            Subtract(v50, s.center, v5c);
+            s.radius = Max(s.GetRadius(), Dot(v5c, v5c));
         }
+        s.radius = sqrtf(s.GetRadius());
+        return true;
     } else if (mSphere.GetRadius()) {
         Multiply(mSphere, WorldXfm(), s);
         return true;
