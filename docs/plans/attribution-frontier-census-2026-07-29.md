@@ -24,8 +24,14 @@ that. Only claiming the VA in `splits.txt` can. And **98.3% of the in-scope
 > 68 B functions have no reloc-masked byte twin anywhere in our 1,034 compiled
 objs** — this is a body-divergence backlog wearing an attribution costume.
 
-Three claims are corrected by measurement here — one of mine, one of the
-project's, and one from the immediately-preceding lane:
+Sizing the *decomp work* rather than the *attribution yield*: an independent
+disassembly census of all 18,742 from `band.exe` puts **4,754 plausibly-real
+functions / 996 KB in the GAME/ENGINE zone** (§6). That is a **body-port backlog
+that is strictly harder than the source-attributed queue** — those functions need
+identity *and* pin *and* source, where the 11,113 need source only.
+
+Five claims are corrected by measurement here — one of mine, two of the
+project's, and two from preceding lanes:
 
 * **Mine (retracted):** "4,461 already-identified mangled-named functions sit
   unpinned in the pool" — true as a raw count, but only **167** are in scope, and
@@ -37,9 +43,18 @@ project's, and one from the immediately-preceding lane:
   fake attributions**.
 * **The project's (corroborated, not discovered):** the `0x82800000–0x82D00000`
   blanket hard-skip window contains **3,702 conf-1.0 pinned functions across 167
-  source files, 2,711 already MATCHED** — it is genuinely over-broad. **But
-  laneGAPFILL already killed that guard on 2026-07-26** (`dead67a0`). My
-  measurement corroborates; it is not new. See §2b.
+  source files, 2,711 already MATCHED** — it is genuinely over-broad (~5,578
+  functions misclassified). **But laneGAPFILL already killed that guard on
+  2026-07-26** (`dead67a0`). Corroboration, not discovery. See §2b.
+* **"17,771 coverage-breadcrumb stubs" (retracted → 9,308).** The *ratio* holds
+  (13.42% vs 13.7%) but the absolute count was inflated **1.91×** by globbing
+  `build/45410914/asm/`, which holds 4,618 orphan `auto_03_*.s` files — 2,439 of
+  them **pre-TU5-flip, containing TU0-era bytes that occur nowhere in `band.exe`**.
+  Only **389** breadcrumb stubs are in-scope here.
+* **★★ A 100% double-count hazard:** laneAL's "static-init guard clear (2,287)"
+  and the coverage-breadcrumb stub are **the same class**, byte-identical. The
+  "guard" label is wrong. Count once — subtracting both would erase ~2,300
+  functions twice.
 
 ## 1. The pool, exactly
 
@@ -386,20 +401,101 @@ achievable one — the crumbs must be pinned into the specific unit whose obj
 carries the shape, and the gap inventory that could claim them is 96 evidenced +
 548 ambiguous, not 2,021.
 
-### On the two claims in the brief
+### Independent disassembly census (from `band.exe`, not from shapes in a doc)
 
-* **"17,771 retail coverage-breadcrumb stubs, 13.7% of carved `.fn` symbols,
-  unfixable in source."** Not independently re-derived by this lane (that
-  sub-analysis did not return in time). It does **not** change the ceiling above,
-  because the ceiling is already set by the byte-twin measurement, which is
-  agnostic to *why* a body diverges: a breadcrumb stub is simply one more
-  > 68 B function with no twin, already inside the 98.3%. Treat the breadcrumb
-  count as **unverified by this lane** and do not add it as a separate subtraction
-  — that would double-count.
-* **"16,821 EH funclets ≈ 24% of all fns."** Consistent with what was measured
-  here: the pool's modal sizes are 40 B (×1,870) and 28 B (×828), 42.2% of the
-  pool is ≤ 68 B, and laneAL's `classify_funclets.py` agreement was 4,197/4,197.
-  Directionally confirmed; exact fleet count not re-derived.
+A separate sub-analysis classified all 18,742 by disassembling the retail binary
+and cross-referencing the `.pdata` table. Classes are **disjoint by a single
+decision cascade** — nothing below may be double-subtracted:
+
+| class | fns | % | MB |
+|---|--:|--:|--:|
+| **U** — coverage-breadcrumb stub (unfixable in source) | 389 | 2.08% | 0.012 |
+| **B** — compiler boilerplate (EH funclet, adjustor/vcall thunk, `??_G`/`??_E`, `??__E`/`??__F`) | 2,560 | 13.66% | 0.097 |
+| **T** — trivial-real 1-liners (accessor / tail forwarder / ≤5 insn) | 2,561 | 13.66% | 0.040 |
+| **R** — plausibly real decompilable code | 13,232 | 70.60% | 4.200 |
+| **U+B — no source value** | **2,949** | **15.73%** | **0.109** |
+| **T+R — real source needed** | **15,793** | **84.27%** | **4.240** |
+
+By zone (nearest-map-name attribution, 18 neighbours, ≥70% vote, ≥3 names within
+32 KB):
+
+| zone | fns | MB | U | B | T | **R** |
+|---|--:|--:|--:|--:|--:|--:|
+| GAME/ENGINE | 8,530 | 1.067 | 389 | 1,398 | 1,989 | **4,754** |
+| VENDOR (XDK/Quazal/NUISPEECH/curl) | 5,833 | 2.578 | 0 | 282 | 346 | 5,205 |
+| UNKNOWN (map-name desert) | 4,379 | 0.704 | 0 | 880 | 226 | 3,273 |
+
+The GAME/ENGINE zone total (8,530 / 1.067 MB) sits between this lane's 8 KB
+(5,561 / 0.67 MB) and 64 KB (9,645 / 1.43 MB) nearest-pin bounds — **three
+independent scope methods converge**.
+
+**★ Crucially, `R` is decomp work available, NOT attribution yield.** The 4,754
+in-scope real functions still need identity *and* source: 98.3% of the in-scope
+> 68 B population has no byte twin in our tree (§5), and their units have no
+`base_path`. So they are a **body-port backlog that is strictly harder than the
+source-attributed queue** (which needs source only). This does not move the
+attribution ceiling of +25…+85.
+
+Note this pool is **no longer the crumb-pile laneAL described** — laneAL's own
++2,271 interior-hole sweep consumed the crumbs, so the residue is now
+byte-dominated by large real functions (mean 243 B, only 42.2% ≤ 68 B).
+
+### On the brief's three claims
+
+* **★ "17,771 coverage-breadcrumb stubs" — RETRACTED. The true count is 9,308.**
+  The *ratio* reproduces (9,308 / 69,378 = **13.42%** vs the claimed 13.7%); the
+  *absolute* number was inflated by a uniform **1.91×**, confirmed three ways
+  (17,771/9,308 = 1.9092; claimed 5,520 distinct bitmap words / measured 2,892 =
+  1.9087; claimed denominator 130,033 / 69,378 = 1.874). Cause: counting `.fn`
+  *block occurrences* across `build/45410914/asm/`, which holds **7,013
+  `auto_03_*_text.s` files for 2,395 live units — 4,618 orphans, 2,439 of them
+  pre-dating the Jul-15 TU5 flip and containing TU0-era bytes.** Verified:
+  `auto_03_8227A000_text.s` (Jul 13) claims a stub whose 16 bytes occur nowhere in
+  `band.exe`, while the Jul-27 file matches byte-for-byte. **Only 389 breadcrumb
+  stubs land in the in-scope pool.** Also: `/home/free/tmp/coverage_stub_syms.json`
+  is stale (VA span starts below `.text`); only 9,201 of its 17,771 entries resolve.
+* **★★ DOUBLE-COUNT HAZARD, and it is total (100%, not partial):** laneAL's
+  "static-init guard clear (2,287)" and the coverage-breadcrumb stub are **the same
+  class** — byte-identical shapes. The "static-init guard" label is wrong (a real
+  MSVC guard is an inlined set-and-test, not a standalone leaf that clears a bit
+  and never touches r3; 42/42 of these provably replaced value-returning
+  accessors). **Count once.**
+* **"16,821 EH funclets ≈ 24%" — REPRODUCES.** Measured **17,002** binary-wide
+  (16,992 under `classify_funclets.py`'s 0x50 cap), **100% `subi r31,r12`**, modal
+  40 B ×11,724 / 44 B ×3,405 = 24.5% of 69,378.
+* **laneAL's 83.6% `.pdata` backing — reproduces.** On the analogous subset
+  (anonymous `fn_` in laneAL's flat window, n=3,068): **78.7% carry their own
+  RUNTIME_FUNCTION and FuncLen matches report.json size in 100.00% of those.**
+  Whole pool 72.4% backed / 99.96% exact. `.pdata` geometry verified, not assumed:
+  PE data-directory entry 3 at `0x1F1600`, 461,864 B = **57,733 × 8-byte
+  RUNTIME_FUNCTION**, `function_length = ((data >> 8) & 0x3FFFFF) * 4`.
+
+### ★ Detector falsifiability (the warned-about tautology fired, and was caught)
+
+Control: **18,553 known-real functions** (named, 100% matched, non-auto unit,
+unique map VA — provably real because our source already reproduces them).
+
+| detector | FP on control | reverse control |
+|---|--:|---|
+| `bitmap_stub` | **0 / 18,553** | 45/9,308 hits carry a map name — all documented true positives (`Accomplishment::GetType`, …) |
+| `eh_funclet` | **0 / 18,553** | 26/17,002 named, 22 of them `__unwind$NNNNN`; residual FP ≈ **0.02%** |
+| both over all 57,733 `.pdata` starts | — | **54.1% REJECTED** — not vacuously true |
+
+Two detectors had to be fixed *because the control caught them lying*: the `mflr`
+predicate used the wrong split-encoded PPC SPR field (`0x008` vs `0x100`), making
+`eh_funclet` **vacuously false** — it initially reported 0 funclets binary-wide,
+and only the reverse control over all `.pdata` starts exposed it. **This is
+precisely the tautological-confirmation failure the brief warned about, and it
+fired.** Loose `adjustor_thunk`/`deleting_dtor` also claimed 1,928 / 1,813 *known-real*
+control functions and were tightened; their rejects became the honest `T` class.
+
+Confidence: `bitmap_stub` **high**, `eh_funclet` **high**, thunk classes
+**medium-high**, `R` **low-medium** (it is a residual and inherits every
+detector's misses — samples were not disassembled the way laneAL did for its
+2,890). Zone attribution **medium**; 4,379 functions (23%) sit in a map-name
+desert. Unverified: whether the 5,205 "real" VENDOR-zone functions are truly all
+XDK, and whether the 2,439 stale orphan `.s` files have corrupted any other
+published number.
 
 ## 7. Ranked targets
 
@@ -527,9 +623,16 @@ codegen work, with no identity or attribution risk and no fake-match honesty cos
   (address regex is `fn_([0-9A-Fa-f]{8})` only) — 5,326 fns / 2.34 MB invisible.
 * **`unified_id*.json` / `ghidriff_identities.json` are TU0-keyed and VA-dead.**
   Delete, re-key, or banner them; today any VA read from them is a coincidence.
-* **`build/45410914/obj/` holds 4,618 stale `auto_03_*` objs** (7,013 files vs
-  2,395 live units). Any obj-derived scan must intersect with `objdiff.json`'s
-  `target_path` set — globbing inflated a measurement by 36% this lane.
+* **★★ `build/45410914/{obj,asm}/` hold 4,618 stale `auto_03_*` artifacts each**
+  (7,013 files vs 2,395 live units), and **2,439 pre-date the 2026-07-15 TU5 flip
+  and contain TU0-era bytes that occur nowhere in the current `band.exe`**. This
+  bit two independent sub-analyses this lane: a 36% inflation on an obj scan and
+  the **1.91× breadcrumb over-count** that produced the published 17,771.
+  `scripts/grind/classify_funclets.py` globs this directory and is affected. **Any
+  obj/asm-derived scan must intersect with `objdiff.json`'s `target_path` set**, and
+  the stale artifacts should simply be deleted. Also retire
+  `/home/free/tmp/coverage_stub_syms.json` — its VA span starts below `.text` and
+  only 9,201 of its 17,771 entries still resolve.
 * **Never add a `target_symbol_map.json` entry to an unpinned auto-carve VA** — it
   renames the symbol away from `fn_<hex>`, which removes it from
   `reconcile_global_byte_matches`'s case-B retail index (`mod.rs:1193`). Net-negative.
