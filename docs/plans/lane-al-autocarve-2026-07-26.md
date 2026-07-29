@@ -1,5 +1,18 @@
 # laneAL — the `auto_03_*` unowned-address pool: funnel and verdict (2026-07-26)
 
+> **STATUS (2026-07-29):** superseded as the current pricing of this pool by
+> [attribution-frontier-census-2026-07-29.md](attribution-frontier-census-2026-07-29.md)
+> (laneBA), which re-measured the ceiling at **+25..+85, not thousands**, corrected the
+> breadcrumb count **17,771 → 9,308**, and identified the mechanism: `auto_03_*` units
+> carry a `target_path` but **no `base_path`**, so objdiff never *attempts* pairing —
+> only a `splits.txt` claim changes that; 98.3% have no byte-twin.
+> ⚠ Tooling note: `scripts/harvest/autocarve_funnel.py` derives its geometry from
+> `report.json`'s coalesced unit boundaries rather than from `splits.txt` pins. Use
+> **`scripts/harvest/diffunit_gap_funnel.py`** instead — its docstring states the rule
+> ("DERIVE FROM splits.txt, NEVER FROM report.json") and documents a **27× undercount**
+> of the real gap set from the report.json route. See
+> [`../decomp/TOOLING.md`](../decomp/TOOLING.md) §4.
+
 Baseline at lane start: **32,182** strict (`match_percent_normalized == 100.0`),
 main HEAD `4aa944e9`.
 

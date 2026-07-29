@@ -61,6 +61,25 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   config/45410914/config.json`), or better, **enumerate from `objdiff.json`**, which
   `configure.py` regenerates from the live `objects.json` + `splits.txt`. Same class of
   bug as the census-universe defect in `plans/decomp-state-2026-07-19.md` (laneAY).
+  > **CORRECTED 2026-07-29 (lane BM):** two parts of the advice above are now
+  > superseded. (1) **mtime is NOT a usable freshness proxy** — 72 of 90 named
+  > orphans carried the *same day's* date, because `splits.txt` gets rewritten
+  > between two split runs minutes apart, and `asm/Faders.s` (live) and
+  > `asm/system/synth/Faders.s` (orphan) coexist ten minutes apart. Use
+  > **`objdiff.json` membership** only, via `scripts/harvest/live_units.py`;
+  > the remedy tool is **`scripts/prune_orphan_asm.py`**, which deletes the
+  > orphans by `config.json` membership and thereby fixes every downstream
+  > reader at once. (2) Re-measured on main 2026-07-29: **12,994 `.s` / 3,932
+  > live / 9,062 stale = 69.7% stale** (and 13,016 `.obj`, same 9,062 stale);
+  > `objdiff.json` lists 3,862 live units.
+  > ★ **And `live_units.py` itself has a residual defect:** `filter_live()`
+  > joins on **basename**, so the 34 unit basenames that exist both flat and
+  > nested (`MusicLibrary`, `CrowdAudio`, `LightHue`, `EventTrigger`, `deflate`,
+  > `ctr`, `CharIKRod`, `Instance`, …) keep **68 stale files** through the
+  > filter. The survivors are the tiny 2 KB nested orphans — exactly the shape
+  > that reads as "a unit with almost no content". Full offender list and the
+  > correct join (`live_target_paths()` with `obj/→asm/`, `.obj→.s`) in
+  > **[decomp/TOOLING.md](decomp/TOOLING.md) §3**.
 - **`scripts/harvest/resolve_splits_union.py` is a line-UNION and CANNOT propagate
   deletions — a deletion-valued patch silently no-ops.** `land.sh` calls it to resolve
   a conflicted `config/45410914/splits.txt` during `git rebase main`; under rebase,
@@ -86,6 +105,46 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   This produced a 41-class "missing virtual override" worklist that cost a lane a full
   investigation before `26284d0d` refuted it (NO `virtual` was missing anywhere). The
   vetted primitives now live in one place — `scripts/harvest/thunk_shape.py`.
+- ★ **`orig/45410914/band.exe` is the DECOMPRESSED RETAIL PE** (imagebase
+  `0x82000000`, extracted from `default.xex`). You can read retail's **real
+  bytes** — literal pool, `.pdata`, instruction stream — at any VA instead of
+  inferring from the symbol map, and it **dissolves the ICF confounder** (one
+  physical body, not N symbol aliases). 40 tools already consume it
+  (`funclet_cascade_rank.py`, `switch_frame_census.py`, `map_verify.py`,
+  `localstatic_symbol_audit.py`, `symbols_hygiene.py`, `tools/va_disasm.py`,
+  `tools/xex_string_at.py`, …). **Prefer it over any derived artifact.**
+  ★ To recover a dispatch-arm list *in retail's exact order*, don't run `strings`
+  on it — pull the target fn out of `build/45410914/asm/<Unit>.s`, grep its
+  `addi r4, r11, lbl_…` sequence, and resolve each label in
+  `auto_00_82000400_rdata.s`. Cheaper, ordered, and it tells you *where to
+  insert* (laneBK, `94244fbd` — the commit message was gutted by shell
+  backticks; the doc is authoritative).
+- ★ **A function can score 100% and still be WRONG.** Relocation-masked
+  operands (string/constant addresses) are invisible to the normalized diff, so
+  a wrong constant or wrong literal is undetectable by any scanner that looks
+  *below* 100%. 40 such correctness fixes landed 2026-07-29 at **exactly 0
+  metric movement** (`plans/realbug-fixes-2026-07-29.md`).
+  ★★ **But 43% of that worklist were MAP MISPAIRS, not source bugs.** Rule:
+  *if retail's diverging operands coherently describe a **different** function —
+  a sibling, a template twin, another class — the defect is in
+  `scripts/target_symbol_map.json`, not in the source.* Fix the map; do not
+  "fix" the source to match a function you were never paired against.
+- **Element-stride arithmetic refutes a map binding only when the sizes actually
+  disagree.** `Key<T> = {T value; float frame}`, so `Key<Quat>` and `Key<Color>`
+  are **each exactly 0x14** (Quat and Color are both 4 floats) — a 0x14 STL
+  element stride is *consistent* with them and proves nothing. Only
+  `Key<Vector3>` (12+4 → **16**) is refuted arithmetically. Check the arithmetic
+  per type; prefer call-graph closure or automap-EXACT byte identity as the
+  discriminator. (Correct table already in `plans/tu-pin-wave-2026-07-29.md` §4.2.)
+- **`scripts/harvest/handler_list_diff.py` is BROKEN — it emits FALSE SURPLUS.**
+  When retail string extraction returns nothing it returns `[]`, not `None`, so
+  the caller's `is None` guard passes and *every* handler we have is reported as
+  surplus. It claimed 9 surplus handlers for `StorePanel` that rb3-Wii confirms
+  retail HAS. Do not act on its output. See `decomp/TOOLING.md` §4.
+- **`scripts/harvest/reloc_correspondence.py` is a whole-binary batch job, not a
+  per-lane gate.** A single `--symbol` invocation timed out at **10 minutes** —
+  it runs three whole-binary oracle passes before the filter applies. Use
+  `--census`. See `decomp/TOOLING.md` §4.
 
 ---
 
@@ -93,6 +152,11 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
+- [decomp/TOOLING.md](decomp/TOOLING.md) — ★ **the audited tooling inventory (2026-07-29)**:
+  every tool in `tools/`, `scripts/`, `scripts/harvest/` run and status-graded
+  (WORKING/BROKEN/SUPERSEDED/ONE-SHOT), a "start here for task X" routing table, the
+  ground-truth artifact table (incl. `band.exe`), the stale-build-dir offender list, and
+  the known-defective set. **Read this before running any scanner.**
 - [plans/decomp-state-2026-07-19.md](plans/decomp-state-2026-07-19.md) — **live state & veins
   doc** (strict count, PIVOT POINT: cheap veins exhausted → deep grind), updated as waves land.
 - [plans/paths-to-100/README.md](plans/paths-to-100/README.md) — **paths-to-100 RFC set
@@ -111,6 +175,54 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   watcher ctor); build/boot pipeline (Xenia `.patch.toml` mechanism resolved), Phase-0
   spikes, fingerprint-based address cookbook. Derived + prologue-verified:
   `IsActive 0x8264B5F8`, `ResolvePartWaitStates 0x8259D948`.
+
+### 2026-07-29 results (main 39,382 → 39,743, coordinator-verified)
+
+Each of these is a **pricing or refutation** — read the verdict before re-opening the vein.
+
+- [plans/attribution-frontier-census-2026-07-29.md](plans/attribution-frontier-census-2026-07-29.md) —
+  the dtk auto-carve pool's ceiling is **+25..+85, not thousands**. Root cause: `auto_03_*`
+  units have a `target_path` but **no `base_path`**, so objdiff never *attempts* pairing —
+  only a `splits.txt` claim changes that. 98.3% have no byte-twin. Breadcrumb count
+  corrected **17,771 → 9,308**.
+- [plans/rb3-360-vs-wii-coverage-2026-07-29.md](plans/rb3-360-vs-wii-coverage-2026-07-29.md) —
+  **there is no large 360-exclusive frontier.** The SKUs differ by a swapped platform layer
+  plus ~18 RBN-authoring classes; **Quazal is on BOTH SKUs** (97/103 TUs present in the Wii
+  binary). The real gap is **141 Wii-oracle TUs / 2,505 fns whose 360 location was never
+  found** → [plans/wii-oracle-tu-location-2026-07-29.md](plans/wii-oracle-tu-location-2026-07-29.md).
+  Tool: `scripts/harvest/oracle_coverage_matrix.py`.
+- [plans/reloc-correspondence-audit-2026-07-29.md](plans/reloc-correspondence-audit-2026-07-29.md) —
+  the strict count is **substantially sound**: 65.5% / 43.8% evidenced, **5.2% / 2.7%
+  DIVERGENT**, the rest undecidable (`.bss` + externs are *unobservable*, **not** suspect).
+  ⚠ carries a `CORRECTED 2026-07-29` banner — two of its named defects were re-adjudicated.
+- [plans/realbug-fixes-2026-07-29.md](plans/realbug-fixes-2026-07-29.md) + `plans/laneBH_realbugs.json` —
+  the **reloc-masked defect class**: functions scoring **100% with wrong constants/strings**,
+  invisible because every scanner looks *below* 100%. 40 correctness fixes at exactly 0 metric
+  movement. ★ **43% of the worklist turned out to be MAP MISPAIRS, not source bugs** (see the
+  rule in Known traps).
+- **The local-static frame cascade** — ⚠ *doc pending*: as of this audit neither
+  `plans/nearmiss-drive-to-zero-2026-07-29.md` nor `plans/localstatic-cascade-drain-2026-07-29.md`
+  exists on disk (lane BK owns the latter and is still writing). Recording the verdict here so
+  it is not lost:: retail builds each dispatch `Symbol` as a
+  *function-local* static; ours used globals ⇒ 2 extra callee-saves ⇒ the parent frame shifts
+  ⇒ and since **every EH funclet encodes the parent frame in its first instruction**, one
+  per-TU macro gate flips a whole cascade. **76% of the 96–100% band is funclets, not
+  near-miss functions.** ★ **Early-return restructuring measured NEGATIVE (98.3 → 34.1) —
+  do not use it.**
+- [plans/branch-audit-2026-07-29.md](plans/branch-audit-2026-07-29.md) — **UNMERGED ≠
+  UNLANDED**: lanes land by patch, so a stale branch can be net-HARMFUL to land.
+- [plans/nothrow-scatter-pricing-2026-07-29.md](plans/nothrow-scatter-pricing-2026-07-29.md) —
+  channel **CLOSED by a control group**: scatter units' EH-deletion rate (2.66%) is *below*
+  plain units' (3.55%).
+- [plans/gapfill-pricing-and-nearmiss-open-2026-07-29.md](plans/gapfill-pricing-and-nearmiss-open-2026-07-29.md) —
+  gap-channel pricing + the `tools/scope_map.py` dropped-function fix (laneBE).
+- [plans/lane-bf-stl-instantiation-mispair-verdict.md](plans/lane-bf-stl-instantiation-mispair-verdict.md) —
+  CLASS VERDICT: the STL-instantiation near-miss band is **MAP MISPAIR**, not source drift.
+- ★ **laneBK's dispatch-arm method** (landed `94244fbd`; the commit message was gutted by
+  shell backticks, so the doc + the Known-traps entry above are the authoritative record):
+  to recover retail's exact dispatch-arm list *in order*, pull the target fn from
+  `build/45410914/asm/<Unit>.s`, grep its `addi r4, r11, lbl_…` sequence, and resolve each
+  label in `auto_00_82000400_rdata.s`.
 
 ### Active worklists (open work to pull from)
 
@@ -215,6 +327,17 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 ### objdiff / analysis / orchestrator
 
+- [decomp/TOOLING.md](decomp/TOOLING.md) — ★ **the audited tooling inventory (2026-07-29)**:
+  ~350 tools across `tools/`, `scripts/`, `scripts/harvest/`, each actually invoked and
+  status-graded; routing table; ground-truth artifacts (incl. `band.exe`); the
+  stale-build-dir offender list; the known-defective set; verified `configure.py` patcher
+  wiring and MCP tool list.
+- [plans/claude-md-proposed-2026-07-29.md](plans/claude-md-proposed-2026-07-29.md) —
+  **PROPOSAL, NOT APPLIED**: 7 ready-to-apply CLAUDE.md amendments from the 2026-07-29
+  audit (band.exe oracle, stale-artifact hazard, the "100% ≠ correct" defect class,
+  TOOLING.md pointer, skills enumeration, local-static lever + early-return anti-lever,
+  `land.sh` deletion hole), each with evidence. Also lists what was re-verified as
+  already correct.
 - [tools/INDEX.md](tools/INDEX.md) — **tool-selection index** (MCP orchestrator tools, Ghidra CLI, analysis utilities).
 - [tools/REFERENCE.md](tools/REFERENCE.md) — command reference for symbol lookup (banner: no RB3 map; corrected pointers).
 - [tools/WORKFLOW.md](tools/WORKFLOW.md) — decomp tool workflow narratives (new fns, near-matches, pattern analysis).
@@ -228,7 +351,12 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 ### Harvest / identification scanners (`scripts/harvest/`, read-only unless noted)
 
-No standalone doc — each tool's module docstring is its reference, and they are
+> **STATUS (2026-07-29):** there IS now a standalone doc —
+> **[decomp/TOOLING.md](decomp/TOOLING.md)**, an audited inventory of all ~350
+> tools (each one actually invoked, not just read). The notes below stay as the
+> curated highlights; TOOLING.md is the complete table plus the defect list.
+
+Each tool's module docstring is its detailed reference, and they are
 long and evidence-carrying. Read the docstring before running one; several encode
 a refutation you would otherwise re-derive. Newest first.
 
@@ -426,6 +554,360 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 `decomp/research/2026-06-11-pin-audit-worklist.json`,
 `decomp/research/2026-06-21-{bsim-seedprop-densification,songsortnode-va-confirmation}.json`,
 `plans/fingerprint-transfer-backlog-2026-06-06.json`, `images/*.png` (dtk-template screenshots).
+
+---
+
+## 5. Lane + campaign records, 2026-07-07 → 2026-07-29 (all [HIST] unless noted)
+
+> Added by the **2026-07-29 tooling/docs audit (lane BM)**. The 2026-07-06 audit
+> predates ~3 weeks of daily lane records, and some older docs were never linked:
+> **307 `.md` files under `docs/` were unindexed and therefore invisible to the
+> next agent — 193 of them dated after that audit.** They are indexed here by
+> their own H1 title (not re-summarised — no claim below has been re-verified).
+> Treat every match-count and "current state" claim in them as **frozen at the
+> file date**. Per-lane `.json` worklists (72 files) and `.log`/`.obj`/`.png`
+> artifacts are deliberately not listed individually — grep `docs/plans/*.json`
+> by lane letter or symbol name.
+
+### 2026-07-29 — today's landed records
+
+- [plans/reloc-correspondence-audit-2026-07-29.md](plans/reloc-correspondence-audit-2026-07-29.md) — laneBH — reloc-correspondence audit: how much of the strict count is REPRODUCTION vs SHAPE (2026-07-29) — `2026-07-29`
+- [plans/wii-oracle-tu-location-2026-07-29.md](plans/wii-oracle-tu-location-2026-07-29.md) — laneBD — locating the 141 Wii-oracle TUs with no 360 position (2026-07-29) — `2026-07-29`
+- [plans/gapfill-pricing-and-nearmiss-open-2026-07-29.md](plans/gapfill-pricing-and-nearmiss-open-2026-07-29.md) — laneBE — pricing the gap channel + the scope_map dropped-function fix (2026-07-29) — `2026-07-29`
+- [plans/nothrow-scatter-pricing-2026-07-29.md](plans/nothrow-scatter-pricing-2026-07-29.md) — Pricing the scatter-include nothrow mechanism (laneBG, 2026-07-29) — `2026-07-29`
+- [plans/branch-audit-2026-07-29.md](plans/branch-audit-2026-07-29.md) — Branch / worktree audit — 2026-07-29 (laneBC) — `2026-07-29`
+- [plans/attribution-frontier-census-2026-07-29.md](plans/attribution-frontier-census-2026-07-29.md) — laneBA — the attribution frontier: census of the dtk auto-carve pool (2026-07-29) — `2026-07-29`
+- [plans/rb3-360-vs-wii-coverage-2026-07-29.md](plans/rb3-360-vs-wii-coverage-2026-07-29.md) — RB3-360 vs rb3-Wii vs DC3 — oracle coverage map (Lane BB, 2026-07-29) — `2026-07-29`
+
+### Lane-campaign records, 2026-07-24..27 (map / splits / identity seam)
+
+- [plans/lane-bf-stl-instantiation-mispair-verdict.md](plans/lane-bf-stl-instantiation-mispair-verdict.md) — laneBF W6 — CLASS VERDICT: the STL-instantiation near-miss band is MAP MISPAIR — `2026-07-29`
+- [plans/lane-aw-bodyport-2026-07-27.md](plans/lane-aw-bodyport-2026-07-27.md) — laneAW — body-port / source-divergence wave (2026-07-27) — `2026-07-27`
+- [plans/three-address-adjudication-2026-07-27.md](plans/three-address-adjudication-2026-07-27.md) — Three-address adjudication — CharEyes / CharSignalApplier / HamMove contest (2026-07-27) — `2026-07-27`
+- [plans/lane-au2-objptr-replace-2026-07-26.md](plans/lane-au2-objptr-replace-2026-07-26.md) — laneAU-2 — the `ObjPtr<T>::Replace` family (2026-07-26) — `2026-07-26`
+- [plans/lane-au-4-forceblock-and-stale-asm-2026-07-26.md](plans/lane-au-4-forceblock-and-stale-asm-2026-07-26.md) — laneAU-4 — sizing two inherited veins: the `DECOMP_FORCE*` sweep and the stale-`.s` trap — `2026-07-26`
+- [plans/laneAU3-eviction-plan-reprice-2026-07-26.md](plans/laneAU3-eviction-plan-reprice-2026-07-26.md) — Lane AU-3 — honest re-price of the laneH eviction plan (2026-07-26) — `2026-07-26`
+- [plans/lane-ar-map-ownership-2026-07-26.md](plans/lane-ar-map-ownership-2026-07-26.md) — laneAR — map ownership round 2 (2026-07-26) — `2026-07-26`
+- [plans/lane-av-arbitrary-and-scope-2026-07-26.md](plans/lane-av-arbitrary-and-scope-2026-07-26.md) — laneAV — the `_bijection_arbitrary` re-decision, and a scope predicate that was wrong — `2026-07-26`
+- [plans/lane-as-perunit-identity-allbands-2026-07-26.md](plans/lane-as-perunit-identity-allbands-2026-07-26.md) — laneAS — the per-unit identity channel across ALL size bands (2026-07-26) — `2026-07-26`
+- [plans/lane-ap-residue-funnel-2026-07-26.md](plans/lane-ap-residue-funnel-2026-07-26.md) — laneAP — the "unreachable ~4,400" funnel: 40% of it was never a source problem (2026-07-26) — `2026-07-26`
+- [plans/lane-aq-identity-funnel-2026-07-26.md](plans/lane-aq-identity-funnel-2026-07-26.md) — Lane AQ — the >68 B anonymous pool: identity funnel (2026-07-26) — `2026-07-26`
+- [plans/lane-ao-map-ownership-2026-07-26.md](plans/lane-ao-map-ownership-2026-07-26.md) — laneAO — single-owner round on `scripts/target_symbol_map.json` (2026-07-26) — `2026-07-26`
+- [plans/laneAN/objdiff-84byte-cap.md](plans/laneAN/objdiff-84byte-cap.md) — laneAN — the "84-byte cap" in objdiff funclet byte-signature pairing — `2026-07-26`
+- [plans/lane-al-autocarve-2026-07-26.md](plans/lane-al-autocarve-2026-07-26.md) — laneAL — the `auto_03_*` unowned-address pool: funnel and verdict (2026-07-26) — `2026-07-26`
+- [plans/lane-an-pdata-parentage-2026-07-26.md](plans/lane-an-pdata-parentage-2026-07-26.md) — laneAN — `.pdata` parent-funclet association: a HARD attribution signal (2026-07-26) — `2026-07-26`
+- [plans/lane-am-diffunit-2026-07-26.md](plans/lane-am-diffunit-2026-07-26.md) — laneAM — the DIFFERENT-UNIT gap pool: a margin rule and its precision/yield curve (2026-07-26) — `2026-07-26`
+- [plans/lane-ak-icf-bijection-2026-07-26.md](plans/lane-ak-icf-bijection-2026-07-26.md) — Lane AK — the oracle lane, and the seam it actually found — `2026-07-26`
+- [plans/lane-ah-layout-oracle-2026-07-26.md](plans/lane-ah-layout-oracle-2026-07-26.md) — Lane AH — the layout oracle, and the `S=1` tier it unlocks (2026-07-26) — `2026-07-26`
+- [plans/lane-ai-joint-map-splits-2026-07-26.md](plans/lane-ai-joint-map-splits-2026-07-26.md) — Lane AI — joint owner of `target_symbol_map.json` + `splits.txt`, round 2 — `2026-07-26`
+- [plans/lane-ag-deep-body-ports-2026-07-26.md](plans/lane-ag-deep-body-ports-2026-07-26.md) — Lane AG — the deep-body-port residue (the ~45% every tooling lane declined) — `2026-07-26`
+- [plans/lane-ae-unemitted-symbols.md](plans/lane-ae-unemitted-symbols.md) — Lane AE — the unemitted-symbol class — `2026-07-26`
+- [plans/lane-ae-nowhere-triage-2026-07-26.md](plans/lane-ae-nowhere-triage-2026-07-26.md) — Lane AE round 2 — NOWHERE-pool triage — `2026-07-26`
+- [plans/laneAD-joint-2026-07-26.md](plans/laneAD-joint-2026-07-26.md) — laneAD — the symbol map and splits.txt run to a JOINT fixpoint (2026-07-26) — `2026-07-26`
+- [plans/laneAC-holes-2026-07-26.md](plans/laneAC-holes-2026-07-26.md) — laneAC — splits "holes" and the refilled WRONG-UNIT pool (2026-07-26) — `2026-07-26`
+- [plans/laneAB-map-repair-2026-07-26.md](plans/laneAB-map-repair-2026-07-26.md) — Lane AB — symbol-map repair round 2 — `2026-07-26`
+- [plans/laneAA-structural-clusters-2026-07-26.md](plans/laneAA-structural-clusters-2026-07-26.md) — Lane AA — working the STRUCTURAL identical-percentage clusters — `2026-07-26`
+- [plans/identical-pct-cluster-scan-2026-07-26.md](plans/identical-pct-cluster-scan-2026-07-26.md) — The identical-percentage cluster scan — how much of the sub-100 pool is shared-cause? — `2026-07-26`
+- [plans/splits-move-lane-2026-07-26.md](plans/splits-move-lane-2026-07-26.md) — Splits MOVE lane (laneQ) — wrong-unit `.text` spans, 2026-07-26 — `2026-07-26`
+- [plans/inline-policy-header-bucket-2026-07-26.md](plans/inline-policy-header-bucket-2026-07-26.md) — Inlined-by-us / out-of-line-in-retail — sizing the header-inline bucket — `2026-07-26`
+- [plans/scatter-include-inlining-collapse-2026-07-26.md](plans/scatter-include-inlining-collapse-2026-07-26.md) — Scatter-include inlining collapse — scanner, measured pool size, and a control group — `2026-07-26`
+- [plans/identification-rtti-and-bigfamily-2026-07-26.md](plans/identification-rtti-and-bigfamily-2026-07-26.md) — RTTI-via-EH, and why BIG-FAMILY should stay unfunded (lane M, 2026-07-26) — `2026-07-26`
+- [plans/homing-scan-round5-2026-07-26.md](plans/homing-scan-round5-2026-07-26.md) — Identification flywheel — round 5, driven to a fixed point (2026-07-26) — `2026-07-26`
+- [plans/identification-discriminators-2026-07-25.md](plans/identification-discriminators-2026-07-25.md) — Identification discriminators beyond callee-side content (lane K, 2026-07-25) — `2026-07-25`
+- [plans/laneH-map-rotation-repair-2026-07-25.md](plans/laneH-map-rotation-repair-2026-07-25.md) — Lane H — cycle-aware repair of the mispaired `target_symbol_map` entries (2026-07-25) — `2026-07-25`
+- [plans/laneG-multi-content-join-2026-07-24.md](plans/laneG-multi-content-join-2026-07-24.md) — Lane G — content join over the homing scan's MULTI residue (2026-07-24) — `2026-07-24`
+- [plans/homing-scan-round4-2026-07-24.md](plans/homing-scan-round4-2026-07-24.md) — Homing scan round 4 — full-tree sweep (2026-07-24) — `2026-07-24`
+- [plans/batch5-ranked-2026-07-24.md](plans/batch5-ranked-2026-07-24.md) — fpcarve BATCH-5 — honest ranked target list & channel refresh — `2026-07-24`
+- [plans/map-audit-2026-07-24.md](plans/map-audit-2026-07-24.md) — target_symbol_map.json — whole-map mispair audit (2026-07-24) — `2026-07-24`
+- [plans/bindiff-r2-mispair-verdicts-2026-07-24.md](plans/bindiff-r2-mispair-verdicts-2026-07-24.md) — BinDiff round-2 mispair adjudication — 36 conflicts — `2026-07-24`
+- [plans/bindiff-r2-anchored-2026-07-24.md](plans/bindiff-r2-anchored-2026-07-24.md) — BinDiff DC3→RB3 identification — ROUND 2 (anchored second pass), 2026-07-24 — `2026-07-24`
+- [plans/native-scope-map-2026-07-24.md](plans/native-scope-map-2026-07-24.md) — RB3-Xenon — NATIVE-SCOPE decomp map — `2026-07-24`
+- [plans/paths-to-100/17-unicorn-equivalence-lane.md](plans/paths-to-100/17-unicorn-equivalence-lane.md) — Unicorn behavioral equivalence — triage lane and secondary credit metric — `2026-07-08`
+
+### Wave records: homing / fpcarve / repin / carve-pilot
+
+- [plans/repin-batch11-stub-census.md](plans/repin-batch11-stub-census.md) — Batch-11 — Stub / full-file-port TU census — `2026-07-24`
+- [plans/repin-batch10.md](plans/repin-batch10.md) — Fingerprint carve — BATCH 10 (batch-9 seed execution) — `2026-07-24`
+- [plans/repin-batch9.md](plans/repin-batch9.md) — Fingerprint carve — BATCH 9 (repin tail + named near-miss harvest) — `2026-07-24`
+- [plans/repin-batch8.md](plans/repin-batch8.md) — Fingerprint carve — BATCH 8 (fresh lower-threshold repin census) — `2026-07-21`
+- [plans/fpcarve-batch7.md](plans/fpcarve-batch7.md) — Fingerprint carve — BATCH 7 (game-repin residue drain) — `2026-07-21`
+- [plans/fpcarve-batch6.md](plans/fpcarve-batch6.md) — Fingerprint carve — BATCH 6 (round-4 FIRST-PRINCIPLES census) — `2026-07-21`
+- [plans/fpcarve-batch5.md](plans/fpcarve-batch5.md) — Fingerprint carve — BATCH 5 outcome (2026-07-21) — `2026-07-21`
+- [plans/fpcarve-batch4.md](plans/fpcarve-batch4.md) — Fingerprint carve — BATCH 4 outcome (2026-07-21) — `2026-07-21`
+- [plans/fpcarve-batch3.md](plans/fpcarve-batch3.md) — Fingerprint carve — BATCH 3 (2026-07-20) — `2026-07-21`
+- [plans/fpcarve-batch2.md](plans/fpcarve-batch2.md) — Fingerprint carve — BATCH 2 (2026-07-20) — `2026-07-20`
+- [plans/fpcarve-batch1.md](plans/fpcarve-batch1.md) — Ranked carvable GAME TUs — string-fingerprint channel (batch 1, 2026-07-20) — `2026-07-20`
+- [plans/carve-pilot-2026-07-20.md](plans/carve-pilot-2026-07-20.md) — Carve-pilot: BinDiff-hint → wired TU loop, measured (2026-07-20) — `2026-07-20`
+- [decomp/research/2026-07-10-spill-store-homing-mechanism.md](decomp/research/2026-07-10-spill-store-homing-mechanism.md) — Spill-store count mechanism: address-taken writes vs EH temp homing (2026-07-10) — `2026-07-10`
+
+### TU5 migration + address adjudication
+
+- [plans/tu5-p5-progress.md](plans/tu5-p5-progress.md) — TU5 P5 — post-flip matching progress — `2026-07-20`
+- [plans/tu5-landing-runbook.md](plans/tu5-landing-runbook.md) — TU5 Re-base Landing Runbook — `2026-07-19`
+- [plans/ghidra-tu0-tu5-crossport.md](plans/ghidra-tu0-tu5-crossport.md) — Ghidra TU0→TU5 cross-port — leveraging the "banks" model for RB3-Xenon — `2026-07-16`
+- [plans/tu5-p5-manifest.md](plans/tu5-p5-manifest.md) — TU5 re-base — P5 enumerated-drop manifest — `2026-07-15`
+- [plans/si-hw-fix/TU5-RECALCGEMLIST-ANALYSIS.md](plans/si-hw-fix/TU5-RECALCGEMLIST-ANALYSIS.md) — TU5 RecalcGemList Non-Execution Analysis + Real Song-Load mGemList Path — `2026-07-15`
+- [plans/clean-tu5-vs-rb3dx-divergence.md](plans/clean-tu5-vs-rb3dx-divergence.md) — Clean retail TU5 vs RB3 Deluxe (RB3DX) — production + divergence — `2026-07-07`
+- [plans/tu5-rewritten-functions-analysis.md](plans/tu5-rewritten-functions-analysis.md) — TU0→TU5 rewritten-function analysis (the 81 genuine MISS) — `2026-07-07`
+- [plans/tu5-execution-status.md](plans/tu5-execution-status.md) — RB3 Xenon → TU5 Migration — Execution Status — `2026-07-07`
+- [plans/same-instrument-tu5-retarget.md](plans/same-instrument-tu5-retarget.md) — Same-Instrument patch — TU5 (retail v0.0.5.1) retarget — `2026-07-07`
+- [plans/base-to-tu5-map.md](plans/base-to-tu5-map.md) — base(TU0) → TU5 function map — migration keystone (P1) — `2026-07-07`
+- [plans/rb3xenon-tu5-migration-plan.md](plans/rb3xenon-tu5-migration-plan.md) — rb3-xenon: base(TU0) → TU5 Migration Plan — `2026-07-07`
+- [plans/base-to-tu5-map-spike.md](plans/base-to-tu5-map-spike.md) — base(TU0) → TU5 function-remap SPIKE — proof on a real sample (2026-07-07) — `2026-07-07`
+- [plans/tu5-acquisition.md](plans/tu5-acquisition.md) — TU5 acquisition + validation (Lane A) — 2026-07-07 — `2026-07-07`
+- [plans/tu5-anchoring-impact.md](plans/tu5-anchoring-impact.md) — rb3-xenon base(TU0) → TU5 — ANCHORING IMPACT (Lane B, 2026-07-07) — `2026-07-07`
+- [plans/tu5-migration-scope.md](plans/tu5-migration-scope.md) — rb3-xenon base(TU0)→TU5 migration — PLANNER scope (2026-07-07) — `2026-07-07`
+
+### paths-to-100 RFC set (2026-07-08)
+
+- [plans/paths-to-100/21-crack-farm-cpu-training-capture.md](plans/paths-to-100/21-crack-farm-cpu-training-capture.md) — Paths to 100: an LLM-free massive-CPU crack-farm for byte-exact decomp matching — `2026-07-10`
+- [plans/paths-to-100/04-pinning-at-scale.md](plans/paths-to-100/04-pinning-at-scale.md) — Pinning at scale — automating splits.txt backfill for the unpinned majority — `2026-07-08`
+- [plans/paths-to-100/14-systematic-symbol-sweeps.md](plans/paths-to-100/14-systematic-symbol-sweeps.md) — Systematic sweeps — local-static-Symbol, guard thunks, and other one-pattern-many-functions fixes — `2026-07-08`
+- [plans/paths-to-100/11-permuter-farm.md](plans/paths-to-100/11-permuter-farm.md) — MSVC permuter farm — automated source-permutation search at scale — `2026-07-08`
+- [plans/paths-to-100/atlas-snapshot-2026-07-08.md](plans/paths-to-100/atlas-snapshot-2026-07-08.md) — Gap composition atlas — frozen snapshot 2026-07-08 — `2026-07-08`
+- [plans/paths-to-100/19-shiftable-relink-milestone.md](plans/paths-to-100/19-shiftable-relink-milestone.md) — Shiftable relink milestone — full splits, reloc-normalized equivalence, bootable XEX — `2026-07-08`
+- [plans/paths-to-100/20-native-port-and-engine-reuse.md](plans/paths-to-100/20-native-port-and-engine-reuse.md) — Native port + DC3 engine reuse — the playable-RB3 track and milo-native-engine extraction — `2026-07-08`
+- [plans/paths-to-100/18-metrics-and-dashboard.md](plans/paths-to-100/18-metrics-and-dashboard.md) — Metrics of record and progress dashboard — vein ROI accounting — `2026-07-08`
+- [plans/paths-to-100/10-middleware-and-denominator.md](plans/paths-to-100/10-middleware-and-denominator.md) — Middleware strategy — Bink, Quazal, XDK/CRT and the honest denominator — `2026-07-08`
+- [plans/paths-to-100/09-sibling-title-oracles.md](plans/paths-to-100/09-sibling-title-oracles.md) — Sibling-title oracles — RB1/RB2/TBRB/GDRB/LRB/devkit/TU builds as identification sources — `2026-07-08`
+- [plans/paths-to-100/06-oracle-refresh-loops.md](plans/paths-to-100/06-oracle-refresh-loops.md) — Oracle refresh loops — iterative re-diffing as matches accumulate — `2026-07-08`
+- [plans/paths-to-100/13-codegen-idiom-library.md](plans/paths-to-100/13-codegen-idiom-library.md) — MWCC-to-MSVC codegen idiom library — systematic source-idiom translation — `2026-07-08`
+- [plans/paths-to-100/02-gap-composition-atlas.md](plans/paths-to-100/02-gap-composition-atlas.md) — Gap composition atlas — what exactly is the unmatched 91% — `2026-07-08`
+- [plans/paths-to-100/12-grind-fleet-v2.md](plans/paths-to-100/12-grind-fleet-v2.md) — Autonomous grind fleet v2 — cron-driven LLM drafting on the near-miss band — `2026-07-08`
+- [plans/paths-to-100/03-master-sequencing-roadmap.md](plans/paths-to-100/03-master-sequencing-roadmap.md) — Master sequencing — dependency-ordered roadmap to maximum match — `2026-07-08`
+- [plans/paths-to-100/01-endgame-definitions.md](plans/paths-to-100/01-endgame-definitions.md) — What does 100% mean — endgame taxonomy and recommended target — `2026-07-08`
+- [plans/paths-to-100/05-data-xref-anchoring.md](plans/paths-to-100/05-data-xref-anchoring.md) — Data-xref anchoring — vtables, RTTI, and .rdata/.data pins as an identification signal — `2026-07-08`
+- [plans/paths-to-100/07-icf-constraint-solver.md](plans/paths-to-100/07-icf-constraint-solver.md) — ICF-aware global assignment — constraint-solving identification — `2026-07-08`
+- [plans/paths-to-100/16-auto-landing-pipeline.md](plans/paths-to-100/16-auto-landing-pipeline.md) — Auto-landing pipeline — verification lanes, regression locks, and policy-gated merges — `2026-07-08`
+- [plans/paths-to-100/15-ghidra-guided-synthesis.md](plans/paths-to-100/15-ghidra-guided-synthesis.md) — Ghidra-decompile-guided source synthesis for oracle-poor functions — `2026-07-08`
+- [plans/paths-to-100/08-ml-embedding-triage.md](plans/paths-to-100/08-ml-embedding-triage.md) — Learned function similarity — ML embeddings as a triage amplifier — `2026-07-08`
+
+### SI hardware campaign / strategy-b OSS build / RB3Enhanced
+
+- [plans/si-hw-fix/wave8/FROMSOURCE-COMPRESS.md](plans/si-hw-fix/wave8/FROMSOURCE-COMPRESS.md) — WAVE8 — From-Source SI DLL: XexTool compression + hardware test — `2026-07-15`
+- [plans/si-hw-fix/CRASH-2same-instrument-2026-07-14.md](plans/si-hw-fix/CRASH-2same-instrument-2026-07-14.md) — Live crash capture — 2-same-instrument song load (2026-07-14) — `2026-07-15`
+- [plans/si-hw-fix/SI-DLL-LOAD-INVESTIGATION.md](plans/si-hw-fix/SI-DLL-LOAD-INVESTIGATION.md) — Why our RB3Enhanced.dll won't load on a real Xbox 360 — end-to-end investigation — `2026-07-15`
+- [plans/http-bringup-and-rb3eloader-fix-2026-07-15.md](plans/http-bringup-and-rb3eloader-fix-2026-07-15.md) — RB3E HTTP bring-up + RB3ELoader crash fix — session log 2026-07-15 — `2026-07-15`
+- [plans/si-hw-fix/COORDINATOR-STATUS.md](plans/si-hw-fix/COORDINATOR-STATUS.md) — Same-Instrument hardware-failure investigation — coordinator status (INTERIM) — `2026-07-14`
+- [plans/si-hw-fix/CRASH3-TRACE.md](plans/si-hw-fix/CRASH3-TRACE.md) — CRASH #3 root-cause trace — null smasher-plate dir on 2-same-instrument load (2026-07-14) — `2026-07-14`
+- [plans/si-hw-fix/wave8/WAVE8-STATUS.md](plans/si-hw-fix/wave8/WAVE8-STATUS.md) — Wave 8 — DLL Load-Compat: root cause is the XEX container, not the code — `2026-07-14`
+- [plans/si-hw-fix/wave8/PATH-REVIEW.md](plans/si-hw-fix/wave8/PATH-REVIEW.md) — WAVE8 — Path Review: cleanest route to a loadable SI RB3Enhanced.dll — `2026-07-14`
+- [plans/si-hw-fix/wave8/DEBUG-TOOLING.md](plans/si-hw-fix/wave8/DEBUG-TOOLING.md) — Xbox 360 RGH Debug Tooling — Source Acquisition & Linux Buildability — `2026-07-14`
+- [plans/si-hw-fix/wave8/REMOTE-DEBUG-CAPABILITIES.md](plans/si-hw-fix/wave8/REMOTE-DEBUG-CAPABILITIES.md) — RB3Enhanced remote-debug capabilities — what we have, what a patch adds — `2026-07-14`
+- [plans/si-hw-fix/wave8/HEADER-DIFF.md](plans/si-hw-fix/wave8/HEADER-DIFF.md) — WAVE8 — XEX2 Header Diff: why the spliced DLL is rejected by XexLoadImage — `2026-07-14`
+- [plans/si-hw-fix/wave8/COMPRESSION-LEADS.md](plans/si-hw-fix/wave8/COMPRESSION-LEADS.md) — XEX2 LZX Compression — Tooling Recon (2026-07-14) — `2026-07-14`
+- [plans/strategy-b/checkpoints/rb3dx-finish/DLL-HW-LOAD-COMPAT.md](plans/strategy-b/checkpoints/rb3dx-finish/DLL-HW-LOAD-COMPAT.md) — DLL hardware-load compatibility triage — from-source RB3Enhanced.dll vs known-good nightly — `2026-07-14`
+- [plans/strategy-b/checkpoints/rb3dx-finish/HUB-STALL-GPUNULL-CHARACTERIZATION.md](plans/strategy-b/checkpoints/rb3dx-finish/HUB-STALL-GPUNULL-CHARACTERIZATION.md) — main_hub stall — gpu=null characterization (de-mask + ui_probe) — `2026-07-13`
+- [plans/strategy-b/HUBCRASH-ROOTCAUSE-82BCEFE4.md](plans/strategy-b/HUBCRASH-ROOTCAUSE-82BCEFE4.md) — Hub "crash" PC 0x82BCEFE4 / EA 0x7FEA1A80 — root-cause brief — `2026-07-13`
+- [plans/strategy-b/INTEGRATED-STATUS.md](plans/strategy-b/INTEGRATED-STATUS.md) — Strategy B — Integrated Status (all lanes consolidated) — `2026-07-13`
+- [plans/strategy-b/checkpoints/rb3dx-finish/MATRIX-RESULTS.md](plans/strategy-b/checkpoints/rb3dx-finish/MATRIX-RESULTS.md) — Phase 3 — Xenia harness rewire + hook-install validation (matrix results) — `2026-07-13`
+- [plans/strategy-b/rb3dx-port-audit-rulings.md](plans/strategy-b/rb3dx-port-audit-rulings.md) — RB3DX port-audit rulings (plan Phase 1, P1.2) — `2026-07-13`
+- [plans/strategy-b/RB3DX-RETARGET-PLAN.md](plans/strategy-b/RB3DX-RETARGET-PLAN.md) — RB3DX Retarget Plan — from-source RB3E DLL on RB3DX + Xenia same-instrument validation — `2026-07-13`
+- [plans/strategy-b/UNRESOLVED-LEDGER.md](plans/strategy-b/UNRESOLVED-LEDGER.md) — Strategy B — link unresolved-symbol ledger (from-source RB3Enhanced.dll) — `2026-07-12`
+- [plans/strategy-b/checkpoints/verify/X-packer-verify-handoff.md](plans/strategy-b/checkpoints/verify/X-packer-verify-handoff.md) — Adversarial verify of Lane X (PE→XEX2 packer) — VERDICT: CONFIRMED — `2026-07-12`
+- [plans/strategy-b/checkpoints/H-headers-handoff.md](plans/strategy-b/checkpoints/H-headers-handoff.md) — Lane H — XDK-free `<xtl.h>` header reconstruction — HANDOFF — `2026-07-12`
+- [plans/strategy-b/checkpoints/X-packer-handoff.md](plans/strategy-b/checkpoints/X-packer-handoff.md) — Lane X — PE→XEX2 packer + identity round-trip (HANDOFF) — `2026-07-12`
+- [plans/strategy-b/checkpoints/L-importlibs-handoff.md](plans/strategy-b/checkpoints/L-importlibs-handoff.md) — Lane L — Import Libraries (XDK-free) — HANDOFF — `2026-07-12`
+- [plans/strategy-b/checkpoints/K-link-handoff.md](plans/strategy-b/checkpoints/K-link-handoff.md) — Lane K — Full XDK-free compile+link recipe (handoff) — `2026-07-12`
+- [plans/strategy-b-full-oss-rb3e-build.md](plans/strategy-b-full-oss-rb3e-build.md) — Strategy B — Full XDK-free rebuild of RB3Enhanced.dll from source — `2026-07-12`
+- [plans/si-hw-fix/WAVE6-DLL-BUILD-PLAN.md](plans/si-hw-fix/WAVE6-DLL-BUILD-PLAN.md) — WAVE 6 — RB3Enhanced.dll (same-instrument H1+H2) BUILD + DEBUG PLAN — `2026-07-09`
+- [plans/si-hw-fix/wave6/VALIDATION-LADDER.md](plans/si-hw-fix/wave6/VALIDATION-LADDER.md) — Wave 6 — SI-fix DLL Validation & Debug Ladder (no XDK, no remote debugger) — `2026-07-09`
+- [plans/si-hw-fix/WAVE5-SONGSTART-RISK.md](plans/si-hw-fix/WAVE5-SONGSTART-RISK.md) — WAVE 5 — Song-start risk verdict: why RB3DX blocks same-part, and what our DTA-only fix ships — `2026-07-09`
+- [plans/si-hw-fix/WAVE4-REAL-GATE-AND-FIX.md](plans/si-hw-fix/WAVE4-REAL-GATE-AND-FIX.md) — Wave 4 — Same-Instrument (SI): the REAL gate, and the fix — `2026-07-09`
+- [plans/si-hw-fix/WAVE2-ROOTCAUSE-AND-FIX.md](plans/si-hw-fix/WAVE2-ROOTCAUSE-AND-FIX.md) — Same-Instrument hardware failure — Wave-2 root cause + fix decision — `2026-07-09`
+- [plans/si-hw-fix/TEST-LADDER.md](plans/si-hw-fix/TEST-LADDER.md) — Same-Instrument Hardware Test Ladder (wave 2 output — HELD pending Xenia validation) — `2026-07-09`
+- [plans/si-hw-fix/rb3e-dll-analysis.md](plans/si-hw-fix/rb3e-dll-analysis.md) — RB3Enhanced.dll analysis — PARTIAL / checkpoint (bailed early, console offline) — `2026-07-09`
+- [plans/si-hw-fix/greyout-path.md](plans/si-hw-fix/greyout-path.md) — Overshell instrument-select grey-out — ground truth (Layer A / IsActive) — `2026-07-09`
+- [plans/si-hw-fix/console-bytes.md](plans/si-hw-fix/console-bytes.md) — Console default.xex byte verification — Same-Instrument TU5 patch — `2026-07-09`
+- [plans/same-instrument-packer-status.md](plans/same-instrument-packer-status.md) — Same-Instrument packer — status (Stage 4/5 PACK+VERIFY) — `2026-07-07`
+- [plans/same-instrument-compile-recipe.md](plans/same-instrument-compile-recipe.md) — Same-Instrument TU — XDK-free cl.exe compile recipe — `2026-07-07`
+- [plans/rb3e-07-dll-layout.md](plans/rb3e-07-dll-layout.md) — RB3Enhanced 0.7 (Xbox 360) — release fetch + DLL layout + code-cave decision — `2026-07-07`
+- [plans/same-instrument-derived-addresses.md](plans/same-instrument-derived-addresses.md) — Same-Instrument Patch — Derived Retail Addresses (Xbox 360, TU5, XEX base 0x82000000) — `2026-07-07`
+- [plans/oss-build-path.md](plans/oss-build-path.md) — Lane B — Open-Source Build Path for an Xbox 360 XEX-DLL (no XDK) — `2026-07-07`
+- [plans/binary-patch-path.md](plans/binary-patch-path.md) — Binary-Patch / No-Full-Build Path — same-instrument on retail RB3 (Xbox 360 TU5) — `2026-07-07`
+- [plans/xdk-dependency-audit.md](plans/xdk-dependency-audit.md) — XDK Dependency Audit — LANE A — `2026-07-07`
+
+### Native port cycles
+
+- [plans/native-cycle14.md](plans/native-cycle14.md) — Batch-14 map-recovery foreman — results (2026-07-24) — `2026-07-24`
+- [plans/native-cycle13.md](plans/native-cycle13.md) — Cycle-13 map-recovery foreman — results (2026-07-24) — `2026-07-24`
+- [plans/native-cycle12.md](plans/native-cycle12.md) — Native critical-path cycle 12 — results (2026-07-24) — `2026-07-24`
+
+### Grind / eval / training-corpus (2026-07-16..20)
+
+- [plans/router-measured-priors.md](plans/router-measured-priors.md) — Router measured priors — `2026-07-24`
+- [decomp/research/2026-07-20-prompt-v4-implementation.md](decomp/research/2026-07-20-prompt-v4-implementation.md) — --prompt-v4 implementation note (2026-07-20) — `2026-07-20`
+- [decomp/research/2026-07-20-frontier-selection-hy3val.md](decomp/research/2026-07-20-frontier-selection-hy3val.md) — Frontier target selection — `tencent/hy3` $2 validation run (2026-07-20) — `2026-07-20`
+- [decomp/research/2026-07-20-hy3-log-analysis.md](decomp/research/2026-07-20-hy3-log-analysis.md) — hy3 champion-run log analysis (2026-07-20) — `2026-07-20`
+- [plans/terse-cot-distillation-kickoff-2026-07-20.md](plans/terse-cot-distillation-kickoff-2026-07-20.md) — Terse-CoT distillation — phase-1 kickoff (2026-07-20) — `2026-07-20`
+- [plans/runaway-model-fix-2026-07-20.md](plans/runaway-model-fix-2026-07-20.md) — Runaway-model harness fix (2026-07-20) — `2026-07-20`
+- [plans/eval-harness-speed-2026-07-20.md](plans/eval-harness-speed-2026-07-20.md) — Eval-harness speed profile + speedup path (2026-07-20) — `2026-07-20`
+- [plans/c2rs-eval-speedup-assessment-2026-07-20.md](plans/c2rs-eval-speedup-assessment-2026-07-20.md) — c2-rs as an eval-bench compile accelerator — assessment (2026-07-20) — `2026-07-20`
+- [plans/reasoning-compaction-review-2026-07-20.md](plans/reasoning-compaction-review-2026-07-20.md) — Reasoning-compaction review for the rb3-xenon eval bench (2026-07-20) — `2026-07-20`
+- [plans/triage-buckets-2026-07-19.md](plans/triage-buckets-2026-07-19.md) — Divergence triage — priced buckets — `2026-07-19`
+
+### decomp/patterns + decomp/research + decomp/handoff additions
+
+- [decomp/handoff/countorcreate-expandeddetails-bodyport-DEFER.md](decomp/handoff/countorcreate-expandeddetails-bodyport-DEFER.md) — DEFER handoff — NextSongPanel::CountOrCreateExpandedDetails (fn_82645320) body-port — `2026-07-21`
+- [decomp/handoff/platformmgr-msgsource-rebase-LANDABLE.md](decomp/handoff/platformmgr-msgsource-rebase-LANDABLE.md) — LANDABLE — PlatformMgr MsgSource re-base (+4 strict, 0 lost) — batch-6 lever #2 — `2026-07-21`
+- [decomp/handoff/profile-getpadnum-virtual-DEFER.md](decomp/handoff/profile-getpadnum-virtual-DEFER.md) — DEFER handoff — Profile::GetPadNum "missing-virtual" (batch-6 lever #1) — `2026-07-21`
+- [decomp/handoff/storepreviewmgr-0x60-DEFER.md](decomp/handoff/storepreviewmgr-0x60-DEFER.md) — DEFER handoff — StorePreviewMgr 0x58→0x60 layout (batch-6 lever #3) — `2026-07-21`
+- [decomp/research/2026-07-20-stl-element-stride-ground-truth.md](decomp/research/2026-07-20-stl-element-stride-ground-truth.md) — STL element-stride ground-truth (fill_insert / fill_n / resize / erase near-miss family) — `2026-07-20`
+- [decomp/research/vsig-flags-2026-07-11.md](decomp/research/vsig-flags-2026-07-11.md) — dc3-drift virtual-signature flags — audited list (round 2, 2026-07-11) — `2026-07-11`
+- [decomp/research/2026-07-10-objptr-two-ctor-inline.md](decomp/research/2026-07-10-objptr-two-ctor-inline.md) — "Sentinel-init ctor family" diagnosis — 2026-07-10 — `2026-07-10`
+- [decomp/patterns/fixable-inline-boundary.md](decomp/patterns/fixable-inline-boundary.md) — Fixable Patterns: Inline Boundary — `2026-07-10`
+- [decomp/patterns/fixable-struct-layout.md](decomp/patterns/fixable-struct-layout.md) — Struct Layout Mismatches — `2026-07-10`
+- [decomp/handoff/offset-drift-sweep-r2-2026-07-10.md](decomp/handoff/offset-drift-sweep-r2-2026-07-10.md) — Offset-drift sweep ROUND 2 (2026-07-10, baseline 14,450) — `2026-07-10`
+- [decomp/patterns/fixable-declarations.md](decomp/patterns/fixable-declarations.md) — Fixable Patterns: Declarations — `2026-07-10`
+- [decomp/handoff/offset-drift-sweep-2026-07-10.md](decomp/handoff/offset-drift-sweep-2026-07-10.md) — Offset-drift sweep — systematic layout-drift detection (2026-07-10) — `2026-07-10`
+- [decomp/handoff/game-layout-followups-2026-07-10.md](decomp/handoff/game-layout-followups-2026-07-10.md) — Game (band3) retail layout — post-base-drop follow-ups (2026-07-10) — `2026-07-10`
+- [decomp/handoff/flow-phantom-pins-2026-07-10.md](decomp/handoff/flow-phantom-pins-2026-07-10.md) — flow/ TU pins are phantom — retail RB3 has no Flow system (2026-07-10) — `2026-07-10`
+- [decomp/handoff/round5-header-needs-2026-07-07.md](decomp/handoff/round5-header-needs-2026-07-07.md) — Round-5 harvest — header-need follow-ups (2026-07-07) — `2026-07-10`
+- [decomp/patterns/unfixable-compiler.md](decomp/patterns/unfixable-compiler.md) — Hard Patterns: Compiler — `2026-07-06`
+- [decomp/patterns/verifiable-icf.md](decomp/patterns/verifiable-icf.md) — Verifiable Patterns: ICF (Identical COMDAT Folding) — `2026-07-06`
+- [decomp/research/2026-07-02-ws2-loose-band-judging.md](decomp/research/2026-07-02-ws2-loose-band-judging.md) — WS2 — Loose-band (BSim simconf 10–15) worklist regen + honesty gate — `2026-07-02`
+- [decomp/research/2026-07-02-span-confirm-triage.md](decomp/research/2026-07-02-span-confirm-triage.md) — ws7-R3 span-confirm triage — unpinned candidate identity check (2026-07-02) — `2026-07-02`
+- [decomp/patterns/fixable-bool-mask.md](decomp/patterns/fixable-bool-mask.md) — Fixable Patterns: Bool Mask — `2020-01-01`
+- [decomp/patterns/fixable-casting.md](decomp/patterns/fixable-casting.md) — Fixable Patterns: Casting — `2020-01-01`
+- [decomp/patterns/fixable-comparison.md](decomp/patterns/fixable-comparison.md) — Fixable Patterns: Comparison — `2020-01-01`
+- [decomp/patterns/fixable-control-flow.md](decomp/patterns/fixable-control-flow.md) — Fixable Patterns: Control Flow — `2020-01-01`
+- [decomp/patterns/fixable-copy-ctor.md](decomp/patterns/fixable-copy-ctor.md) — Fixable: Bodyless Copy Constructor Declarations — `2020-01-01`
+- [decomp/patterns/fixable-fsel-fma.md](decomp/patterns/fixable-fsel-fma.md) — Fixable Patterns: fsel Intrinsic and FMA Pragma — `2020-01-01`
+- [decomp/patterns/fixable-loop-condition.md](decomp/patterns/fixable-loop-condition.md) — Fixable Patterns: Loop Condition Subtraction — `2020-01-01`
+- [decomp/patterns/fixable-macros.md](decomp/patterns/fixable-macros.md) — Fixable Patterns: Handler Macros — `2020-01-01`
+- [decomp/patterns/fixable-operators.md](decomp/patterns/fixable-operators.md) — Fixable Patterns: Operators — `2020-01-01`
+- [decomp/patterns/harmful-avoid.md](decomp/patterns/harmful-avoid.md) — Harmful Patterns: Avoid These — `2020-01-01`
+- [decomp/research/2026-06-10-bodyport-pool.md](decomp/research/2026-06-10-bodyport-pool.md) — Body-port pool re-rank — 2026-06-10 (post-refill, 6851 baseline) — `2020-01-01`
+- [decomp/research/2026-06-10-force-multipliers.md](decomp/research/2026-06-10-force-multipliers.md) — Force-multiplier lever hunt — 2026-06-10 (read-only research handoff) — `2020-01-01`
+- [decomp/research/2026-06-10-routed-residue.md](decomp/research/2026-06-10-routed-residue.md) — Routed near-miss residue triage — MEMBER_DELTA + UNKNOWN buckets (2026-06-10) — `2020-01-01`
+- [decomp/research/2026-06-10-static-symbol-worklist.md](decomp/research/2026-06-10-static-symbol-worklist.md) — Static-Symbol-guard + MessageTimer worklist — `2020-01-01`
+- [decomp/research/2026-06-11-accomplishmentprogress-compound.md](decomp/research/2026-06-11-accomplishmentprogress-compound.md) — AccomplishmentProgress compound fix — research dossier (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-bandgame-head4.md](decomp/research/2026-06-11-bandgame-head4.md) — Band head +4 / Game head +4 — RESEARCH-COMPLETE: REFUTED (zero measurable value; per-TU divergence, not a header fix) — `2020-01-01`
+- [decomp/research/2026-06-11-bp4-accprog.md](decomp/research/2026-06-11-bp4-accprog.md) — BP4 lane: AccomplishmentProgress residuals — recon dossier (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-bp4-object.md](decomp/research/2026-06-11-bp4-object.md) — BP4 lane `object` — Hmx::Object root-class bodies (recon dossier, 2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-bp4-songmgr.md](decomp/research/2026-06-11-bp4-songmgr.md) — BP4 lane dossier — songmgr (2026-06-11, read-only recon @ main 78a6ee6, baseline 7785) — `2020-01-01`
+- [decomp/research/2026-06-11-bp4-uicomp.md](decomp/research/2026-06-11-bp4-uicomp.md) — BP4 lane `uicomp` — UIComponent finishers (recon dossier, 2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-bp4-vbase-deep.md](decomp/research/2026-06-11-bp4-vbase-deep.md) — bp4 deep-dive: WHY the banked ObjectDir-vbase patch is net-0 (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-bp4-vocaltrack.md](decomp/research/2026-06-11-bp4-vocaltrack.md) — BP4 recon — lane `vocaltrack` (PORT-THEN-EXTEND) — 2026-06-11 — `2020-01-01`
+- [decomp/research/2026-06-11-map0x1c-sweep.md](decomp/research/2026-06-11-map0x1c-sweep.md) — RB3_MAP_0x1C follow-up sweep — results (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-obj-orphan-worklist.md](decomp/research/2026-06-11-obj-orphan-worklist.md) — obj_orphan Cleanup Worklist — 2026-06-11 — `2020-01-01`
+- [decomp/research/2026-06-11-object-dirloader-boundary-refutation.md](decomp/research/2026-06-11-object-dirloader-boundary-refutation.md) — Object / DirLoader / Dir Triple Boundary — REFUTED (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-player-plus4-layout.md](decomp/research/2026-06-11-player-plus4-layout.md) — Player +4 layout — RESOLVED: it's `utl/SongPos.h` (DC3 `mPhrase`), not Player.h — `2020-01-01`
+- [decomp/research/2026-06-11-sliver-pin-hunt.md](decomp/research/2026-06-11-sliver-pin-hunt.md) — Sliver/Over/Displaced Pin Hunt — Binary-Wide Worklist (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-uicomponent-virtuals.md](decomp/research/2026-06-11-uicomponent-virtuals.md) — UIComponent missing-virtuals reconstruction — research dossier (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-vtable-walls.md](decomp/research/2026-06-11-vtable-walls.md) — Vtable-order walls — rdata-obj slot recovery (2026-06-11) — `2020-01-01`
+- [decomp/research/2026-06-11-w5-finishers.md](decomp/research/2026-06-11-w5-finishers.md) — Wave-5 finishers dossier (2026-06-16, read-only scout @ main, baseline 8038) — `2020-01-01`
+- [decomp/research/2026-06-16-w5-hashmap.md](decomp/research/2026-06-16-w5-hashmap.md) — Wave-5 hashmap lane — AccomplishmentManager + SongMgr hash_map vein (2026-06-16) — `2020-01-01`
+- [decomp/research/2026-06-16-w5-pinaudit.md](decomp/research/2026-06-16-w5-pinaudit.md) — W5 Pin-Audit Triage — 2026-06-16 — `2020-01-01`
+- [decomp/research/2026-06-16-w6-hashmap2.md](decomp/research/2026-06-16-w6-hashmap2.md) — Wave-6 hashmap2 lane — SongMgr surgical conversion + candidate elimination (2026-06-16) — `2020-01-01`
+- [decomp/research/2026-06-16-w6-pinaudit2.md](decomp/research/2026-06-16-w6-pinaudit2.md) — Wave-6 Pin-Audit Re-Triage — 2026-06-16 — `2020-01-01`
+- [decomp/research/2026-06-16-w6-waypoint-audit.md](decomp/research/2026-06-16-w6-waypoint-audit.md) — Wave-6 Waypoint.cpp pin-relocation audit (adversarial honesty gate) — `2020-01-01`
+- [decomp/research/2026-06-19-w7-hashmap-blobs.md](decomp/research/2026-06-19-w7-hashmap-blobs.md) — W7 Hash-map Blob Scout — 2026-06-19 — `2020-01-01`
+- [decomp/research/2026-06-19-w7-hashmap-thin.md](decomp/research/2026-06-19-w7-hashmap-thin.md) — W7 Hashmap-Thin: MoviePanel + FixedSizeSaveableStream Scan — `2020-01-01`
+- [decomp/research/2026-06-19-w7-pinaudit3.md](decomp/research/2026-06-19-w7-pinaudit3.md) — Wave-7 Pin-Audit Round 3 — 2026-06-19 — `2020-01-01`
+- [decomp/research/2026-06-19-w8-character-relocate-pin-audit.md](decomp/research/2026-06-19-w8-character-relocate-pin-audit.md) — Wave-8 Character.cpp pin-relocation audit (adversarial honesty gate) — `2020-01-01`
+- [decomp/research/2026-06-19-w8-fsss-residual-and-getid-pinext-audit.md](decomp/research/2026-06-19-w8-fsss-residual-and-getid-pinext-audit.md) — W8 adversarial honesty audit — `fsss-residual-and-getid-pinext` — `2020-01-01`
+- [decomp/research/2026-06-19-w8-hashmap-exhaustion.md](decomp/research/2026-06-19-w8-hashmap-exhaustion.md) — W8 — hash_map vein EXHAUSTION claim: ADVERSARIAL FALSIFICATION — `2020-01-01`
+- [decomp/research/2026-06-19-w8-nearmiss-bport.md](decomp/research/2026-06-19-w8-nearmiss-bport.md) — Wave-8 B-tier near-miss body-port assessment (adversarial planner) — `2020-01-01`
+- [decomp/research/2026-06-19-w8-pinaudit-recheck.md](decomp/research/2026-06-19-w8-pinaudit-recheck.md) — Wave-8 Pin-Audit Re-check — Adversarial Refutation Audit (2026-06-19) — `2020-01-01`
+- [decomp/research/2026-06-19-w8-uicomp-reconstruction.md](decomp/research/2026-06-19-w8-uicomp-reconstruction.md) — W8 — UIComponent reconstruction (C1/C2/C3): adversarial audit — `2020-01-01`
+- [decomp/research/2026-06-19-w8-wall-ledger-audit.md](decomp/research/2026-06-19-w8-wall-ledger-audit.md) — WALL ledger adversarial audit (C5–C9) — 2026-06-19 (wave-8) — `2020-01-01`
+- [decomp/research/2026-06-20-w10-deferred-ports.md](decomp/research/2026-06-20-w10-deferred-ports.md) — W10 — deferred-ports: re-derive 4 wave-9 game-port TUs onto main@9037 — `2020-01-01`
+- [decomp/research/2026-06-20-w10-gameport-leads.md](decomp/research/2026-06-20-w10-gameport-leads.md) — W10 — gameport-leads (DISCOVER/PLANNER, READ-ONLY in main) — `2020-01-01`
+- [decomp/research/2026-06-20-w10-hashmap-clusteralpha.md](decomp/research/2026-06-20-w10-hashmap-clusteralpha.md) — W10 — hashmap-clusteralpha: SongStatusMgr (cluster-α) — ALREADY-BUILT branch + pin-extension — `2020-01-01`
+- [decomp/research/2026-06-20-w10-pinaudit-r4.md](decomp/research/2026-06-20-w10-pinaudit-r4.md) — W10 — pin_audit r4 (post-wave-9 neighbours) — `2020-01-01`
+- [decomp/research/2026-06-20-w11-AppLabel.md](decomp/research/2026-06-20-w11-AppLabel.md) — W11 DISCOVER dossier — "AppLabel" @ [0x825BB090, 0x825BB5B8) — `2020-01-01`
+- [decomp/research/2026-06-20-w11-Campaign.md](decomp/research/2026-06-20-w11-Campaign.md) — WAVE-11 DISCOVER — Campaign.cpp (~0x82590910 anchor) — `2020-01-01`
+- [decomp/research/2026-06-20-w11-MiniLeaderboardDisplay.md](decomp/research/2026-06-20-w11-MiniLeaderboardDisplay.md) — W11 Discovery — MiniLeaderboardDisplay (ENGINE/bandobj) — `2020-01-01`
+- [decomp/research/2026-06-20-w11-MusicLibraryNetSetlists.md](decomp/research/2026-06-20-w11-MusicLibraryNetSetlists.md) — W11 — MusicLibraryNetSetlists: identify + port + wire + pin the head gap below SongStatusMgr — `2020-01-01`
+- [decomp/research/2026-06-20-w11-PrefabMgr.md](decomp/research/2026-06-20-w11-PrefabMgr.md) — W11 PrefabMgr — port-then-pin dossier (2026-06-20) — `2020-01-01`
+- [decomp/research/2026-06-20-w11-VoiceoverPanel-megacluster.md](decomp/research/2026-06-20-w11-VoiceoverPanel-megacluster.md) — W11 — VoiceoverPanel megacluster scout (meta_band panel belt) — `2020-01-01`
+- [decomp/research/2026-06-20-w12-MainHubPanel.md](decomp/research/2026-06-20-w12-MainHubPanel.md) — Wave-12 MainHubPanel.cpp — port-then-pin DISCOVER (DEFER, no contiguous TU) — `2020-01-01`
+- [decomp/research/2026-06-20-w12-ManageBandPanel.md](decomp/research/2026-06-20-w12-ManageBandPanel.md) — W12 dossier — ManageBandPanel (band3/meta_band) — `2020-01-01`
+- [decomp/research/2026-06-20-w12-PatchSelectPanel.md](decomp/research/2026-06-20-w12-PatchSelectPanel.md) — W12 dossier — PatchSelectPanel (band3/meta_band) — `2020-01-01`
+- [decomp/research/2026-06-20-w12-SaveLoadManager.md](decomp/research/2026-06-20-w12-SaveLoadManager.md) — W12 — SaveLoadManager (band3/meta_band) — DISCOVER dossier — `2020-01-01`
+- [decomp/research/2026-06-20-w12-SavedSetlist.md](decomp/research/2026-06-20-w12-SavedSetlist.md) — W12 — SavedSetlist: locate + port + wire + pin the Campaign↔LockStepMgr gap — `2020-01-01`
+- [decomp/research/2026-06-20-w12-SongSort-family.md](decomp/research/2026-06-20-w12-SongSort-family.md) — W12 — SongSortNode / SongSort family (band3/meta_band) — DEFER (COMDAT-scatter, no pinnable span) — `2020-01-01`
+- [decomp/research/2026-06-20-w12-belt-gap-bisect.md](decomp/research/2026-06-20-w12-belt-gap-bisect.md) — W12 — meta_band belt-gap bisection (the two BIG un-bisected gaps) — `2020-01-01`
+- [decomp/research/2026-06-20-w13-AccomplishmentConditional-evict.md](decomp/research/2026-06-20-w13-AccomplishmentConditional-evict.md) — Wave-13 AccomplishmentConditional sliver-evict audit (DISCOVER, read-only main) — `2020-01-01`
+- [decomp/research/2026-06-20-w13-SaveLoadManager.md](decomp/research/2026-06-20-w13-SaveLoadManager.md) — W13 DISCOVER — SaveLoadManager (band3/meta_band) — `2020-01-01`
+- [decomp/research/2026-06-20-w13-SavedSetlist-retry.md](decomp/research/2026-06-20-w13-SavedSetlist-retry.md) — W13 — SavedSetlist RETRY: header overload already landed → clean self-contained port — `2020-01-01`
+- [decomp/research/2026-06-20-w13-gapA-bisect-port.md](decomp/research/2026-06-20-w13-gapA-bisect-port.md) — W13 — GAP A bisection + first-TU port (CriticalUserListener ↔ OvershellSlot) — `2020-01-01`
+- [decomp/research/2026-06-20-w13-gapB-bisect-port.md](decomp/research/2026-06-20-w13-gapB-bisect-port.md) — W13 — GAP B bisect-port (the REST of Gap B above/around Award) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L1-bandsongmgr-port.md](decomp/research/2026-06-20-w9-L1-bandsongmgr-port.md) — W9 L1 — BandSongMgr port-then-pin (frontier "bandsongmgr-port") — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L1-hashmap-cluster-alpha.md](decomp/research/2026-06-20-w9-L1-hashmap-cluster-alpha.md) — W9 L1 — hashmap-cluster-alpha: ADVERSARIAL DRILL → owner IDENTIFIED — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L1-hashmap-unconverted-census.md](decomp/research/2026-06-20-w9-L1-hashmap-unconverted-census.md) — W9-L1 — hash_map UNCONVERTED-caller census (ground-truth COFF) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L1-uicomp-handle-port.md](decomp/research/2026-06-20-w9-L1-uicomp-handle-port.md) — W9 L1 — UIComponent::Handle port (frontier "uicomp-handle-port"): adversarial drill — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L10-handle-pairing-wave-85-rebased-on-landed-prereq.md](decomp/research/2026-06-20-w9-L10-handle-pairing-wave-85-rebased-on-landed-prereq.md) — W9 L10 — Handle-pairing wave "85" (rebased on landed prereq a7175af) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L10-land-handle-prereq-a7175af-then-family-a-b3b419e.md](decomp/research/2026-06-20-w9-L10-land-handle-prereq-a7175af-then-family-a-b3b419e.md) — W9 L10 — Land Handle prereq: a7175af then Family-A b3b419e — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L10-reveal-sweep-generic-50-on-landed-prereq.md](decomp/research/2026-06-20-w9-L10-reveal-sweep-generic-50-on-landed-prereq.md) — W9-L10 dossier — "reveal-sweep-generic-50-on-landed-prereq" — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L10-reveal-sweep-handlers-mode-tooling.md](decomp/research/2026-06-20-w9-L10-reveal-sweep-handlers-mode-tooling.md) — W9 L10 — reveal_sweep `--handlers` mode (val!=0 macro-body reveal tooling) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L2-flowmanager-cuepoint-panel-tu-825BC.md](decomp/research/2026-06-20-w9-L2-flowmanager-cuepoint-panel-tu-825BC.md) — W9 L2 dossier — "flowmanager-cuepoint-panel-tu-825BC" frontier (REFUTED-as-stated, REAL-as-cluster) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L2-handle-check-pathname-systemic.md](decomp/research/2026-06-20-w9-L2-handle-check-pathname-systemic.md) — W9 L2 — handle-check-pathname-systemic (DISCOVER/adversarial) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L2-songupgrademgr-neighbour-tu-id.md](decomp/research/2026-06-20-w9-L2-songupgrademgr-neighbour-tu-id.md) — W9 L2 — SongUpgradeMgr neighbour-TU identification (0x82632C98+) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L2-w9-cluster-alpha-825b8-owner-id.md](decomp/research/2026-06-20-w9-L2-w9-cluster-alpha-825b8-owner-id.md) — W9 L2 — cluster-alpha @0x825B8738 OWNER ID: **SongStatusMgr** (CONFIRMED) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L3-end-handlers-pathname-tail-forcemult.md](decomp/research/2026-06-20-w9-L3-end-handlers-pathname-tail-forcemult.md) — W9 L3 — end-handlers-pathname-tail-forcemult (ADVERSARIAL DISCOVER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L3-handle-blob-pin-owner-id.md](decomp/research/2026-06-20-w9-L3-handle-blob-pin-owner-id.md) — W9 L3 — handle-blob-pin-owner-id (ADVERSARIAL DISCOVER/PLANNER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L3-metaband-manager-neighbour-pin-chain.md](decomp/research/2026-06-20-w9-L3-metaband-manager-neighbour-pin-chain.md) — W9 L3 dossier — metaband-manager-neighbour-pin-chain (ADVERSARIAL) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L3-metaham-dc3-rosetta-batch-id.md](decomp/research/2026-06-20-w9-L3-metaham-dc3-rosetta-batch-id.md) — W9 L3 — DC3 meta_ham Rosetta batch-ID of RB3 manager owners — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L4-rockcentral-leaderboard-panel-tu.md](decomp/research/2026-06-20-w9-L4-rockcentral-leaderboard-panel-tu.md) — W9 L4 — "rockcentral-leaderboard-panel-tu" frontier drill (2026-06-20) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L4-songmgr-family-hashmap-cluster-8255f.md](decomp/research/2026-06-20-w9-L4-songmgr-family-hashmap-cluster-8255f.md) — W9 L4 — songmgr-family-hashmap-cluster-8255f (BandSongMgr) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L4-voiceoverpanel-storemainpanel-megacluster-825fc.md](decomp/research/2026-06-20-w9-L4-voiceoverpanel-storemainpanel-megacluster-825fc.md) — W9-L4 dossier — "voiceoverpanel-storemainpanel-megacluster-825fc" — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L4-wired-handle-pairing-wave-85.md](decomp/research/2026-06-20-w9-L4-wired-handle-pairing-wave-85.md) — W9 L4 — wired-handle-pairing-wave-85 (ADVERSARIAL DISCOVER/PLANNER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L5-handle-bodyport-large-tier-post-prereq.md](decomp/research/2026-06-20-w9-L5-handle-bodyport-large-tier-post-prereq.md) — W9 L5 — handle-bodyport-large-tier-post-prereq (ADVERSARIAL DISCOVER/PLANNER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L5-reconcile-handle-prereq-FINAL.md](decomp/research/2026-06-20-w9-L5-reconcile-handle-prereq-FINAL.md) — W9 L5 — reconcile-handle-prereq-FINAL (ADVERSARIAL DISCOVER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L5-songsortmgr-family-cluster-pin.md](decomp/research/2026-06-20-w9-L5-songsortmgr-family-cluster-pin.md) — W9 L5 adversarial scout — "songsortmgr-family-cluster-pin" — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L5-songstatusmgr-hashmap-pin-evict.md](decomp/research/2026-06-20-w9-L5-songstatusmgr-hashmap-pin-evict.md) — W9 L5 — songstatusmgr-hashmap-pin-evict: VERIFIED REAL, worktree LAND-READY — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L6-family-a-handle-check-comma-form.md](decomp/research/2026-06-20-w9-L6-family-a-handle-check-comma-form.md) — W9 L6 — family-a-handle-check-comma-form (ADVERSARIAL DISCOVER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L6-songselect-panel-family-port-scout.md](decomp/research/2026-06-20-w9-L6-songselect-panel-family-port-scout.md) — W9 L6 scout — songselect-panel-family-port-scout — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L6-songstatusmgr-residual-bodyports.md](decomp/research/2026-06-20-w9-L6-songstatusmgr-residual-bodyports.md) — W9 L6 — SongStatusMgr residual: REVEAL-dominated, not bodyport — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L6-wired-handle-pairing-wave-85.md](decomp/research/2026-06-20-w9-L6-wired-handle-pairing-wave-85.md) — W9 L6 — wired-handle-pairing-wave-85 (ADVERSARIAL DISCOVER/PLANNER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L7-family-a-handle-check-comma-form.md](decomp/research/2026-06-20-w9-L7-family-a-handle-check-comma-form.md) — W9-L7: "Family A HANDLE_CHECK comma-form" — REFUTED — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L7-handle-reveal-cascade-round2-binary-wide.md](decomp/research/2026-06-20-w9-L7-handle-reveal-cascade-round2-binary-wide.md) — W9 L7 — handle-reveal-cascade-round2-binary-wide (ADVERSARIAL DISCOVER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L7-meta-music-flow-blob-id.md](decomp/research/2026-06-20-w9-L7-meta-music-flow-blob-id.md) — W9 L7 — meta-music-flow-blob-id (owner-TU identification) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L7-reveal-audit-tool-port-then-pin-branches.md](decomp/research/2026-06-20-w9-L7-reveal-audit-tool-port-then-pin-branches.md) — W9 L7 — reveal-audit-tool + port-then-pin reveal residue — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L8-land-familyb-reconcile-handle-prereq.md](decomp/research/2026-06-20-w9-L8-land-familyb-reconcile-handle-prereq.md) — W9 L8 — land-familyb-reconcile-handle-prereq (ADVERSARIAL DISCOVER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L8-map-coverage-reveal-audit-tool.md](decomp/research/2026-06-20-w9-L8-map-coverage-reveal-audit-tool.md) — W9 L8 — map-coverage reveal-audit-tool: TOOL EXISTS, lever = run the existing pipeline — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L8-songstatusmgr-residual-deepen.md](decomp/research/2026-06-20-w9-L8-songstatusmgr-residual-deepen.md) — W9 L8 — songstatusmgr-residual-deepen: REAL but base STILL NOT ON MAIN — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L8-wired-handle-pairing-wave-post-familyb.md](decomp/research/2026-06-20-w9-L8-wired-handle-pairing-wave-post-familyb.md) — W9 L8 — wired-handle-pairing-wave-post-familyb (ADVERSARIAL DISCOVER/PLANNER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L9-family-a-handle-check-comma-form.md](decomp/research/2026-06-20-w9-L9-family-a-handle-check-comma-form.md) — W9-L9: Family-A HANDLE_CHECK comma-form reconcile — REAL_ACTIONABLE (+21, MEASURED) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L9-handle-attribution-realclass-id-sweep.md](decomp/research/2026-06-20-w9-L9-handle-attribution-realclass-id-sweep.md) — W9 L9 — handle-attribution-realclass-id-sweep (ADVERSARIAL DISCOVER/PLANNER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L9-handle-prereq-LAND-and-rebase-base.md](decomp/research/2026-06-20-w9-L9-handle-prereq-LAND-and-rebase-base.md) — W9 L9 — handle-prereq LAND-and-rebase-base (ADVERSARIAL DISCOVER) — `2020-01-01`
+- [decomp/research/2026-06-20-w9-L9-wired-handle-pairing-wave-post-prereq.md](decomp/research/2026-06-20-w9-L9-wired-handle-pairing-wave-post-prereq.md) — W9 L9 — wired-handle-pairing-wave-post-prereq (DISCOVER dossier) — `2020-01-01`
+- [decomp/research/2026-06-21-bsim-seedprop-densification.md](decomp/research/2026-06-21-bsim-seedprop-densification.md) — VT-BSim Seed-Propagation Densification — Experiment Verdict (2026-06-21) — `2020-01-01`
+- [decomp/research/2026-06-21-dc3-engine-vein-yield-pilot.md](decomp/research/2026-06-21-dc3-engine-vein-yield-pilot.md) — DC3 engine-vein yield pilot (LightPreset) — NEGATIVE on cheap matching; the real lever is foundational struct-reconstruction — `2020-01-01`
+- [decomp/research/2026-06-21-songsortnode-va-confirmation.md](decomp/research/2026-06-21-songsortnode-va-confirmation.md) — SongSortNode STEP-1 VA-confirmation sweep (HARD-FRONTIER #2, work item 1) — `2020-01-01`
+- [decomp/research/2026-06-21-string-anchor-recall-probe.md](decomp/research/2026-06-21-string-anchor-recall-probe.md) — String/symbol-literal anchoring as an orthogonal recall lever (2026-06-21 probe) — `2020-01-01`
+- [decomp/research/2026-06-24-pivot-bodyport-classb-results.md](decomp/research/2026-06-24-pivot-bodyport-classb-results.md) — Post-class-A pivot results — body-port tails + class-B identity-transfer (2026-06-24) — `2020-01-01`
+- [decomp/research/2026-06-30-option-C-scan-directions.md](decomp/research/2026-06-30-option-C-scan-directions.md) — Option-C "different scan" investigation — 4 Opus probes + synthesis (2026-06-30) — `2020-01-01`
+- [decomp/research/2026-06-30-topo-locator-design.md](decomp/research/2026-06-30-topo-locator-design.md) — Topological Locator — design + verdict (2026-06-30) — `2020-01-01`
+
+### tools/ hardware + console references
+
+- [tools/PS2-GUITAR-ADAPTER-MAP.md](tools/PS2-GUITAR-ADAPTER-MAP.md) — PS2→USB guitar adapter — device identity + control map — `2026-07-19`
+- [tools/GUITAR-CRASH-STATE-2026-07-19.md](tools/GUITAR-CRASH-STATE-2026-07-19.md) — Guitar session — crash state dump (2026-07-19) — `2026-07-19`
+- [tools/JRPC2-CONSOLE-CALLS.md](tools/JRPC2-CONSOLE-CALLS.md) — Calling console functions live — JRPC2 over XBDM — `2026-07-19`
+- [tools/DTA-NAVIGATION-NOTES.md](tools/DTA-NAVIGATION-NOTES.md) — DTA navigation notes — driving RB3 headlessly via RB3E `/execute` — `2026-07-15`
+
+### Other
+
+- [plans/jeff-scattered-unit-addresses.md](plans/jeff-scattered-unit-addresses.md) — dtk asm listings printed synthetic addresses for scattered units — `2026-07-26`
+- [plans/switch-frame-census-lever.md](plans/switch-frame-census-lever.md) — The switch-frame lever, automated — `scripts/harvest/switch_frame_census.py` — `2026-07-25`
+- [plans/slm-setstate-reconstruction.md](plans/slm-setstate-reconstruction.md) — SaveLoadManager::SetState — dedicated reconstruction project — `2026-07-25`
+- [plans/saveloadmanager-port-log-2026-07-20.md](plans/saveloadmanager-port-log-2026-07-20.md) — SaveLoadManager port — LOG / handoff — `2026-07-24`
+- [plans/bindiff-transfer-spike-2026-07-20.md](plans/bindiff-transfer-spike-2026-07-20.md) — BinDiff DC3→RB3 identification spike — GO (2026-07-20) — `2026-07-20`
+- [plans/remaining-bytes-decomposition-2026-07-20.md](plans/remaining-bytes-decomposition-2026-07-20.md) — Remaining-bytes decomposition + path-to-100 review (2026-07-20) — `2026-07-20`
+- [plans/session-2026-07-18-summary.md](plans/session-2026-07-18-summary.md) — Session summary — 2026-07-18 (near-miss cracks + identification stack) — `2026-07-18`
+- [plans/review-2026-07-18-next-focus.md](plans/review-2026-07-18-next-focus.md) — Review 2026-07-18 — next best areas of focus — `2026-07-18`
+- [plans/jeff-leaf-split-fix-status.md](plans/jeff-leaf-split-fix-status.md) — jeff leaf-split (Class-2 pdata over-split) fix — status — `2026-07-17`
+- [plans/triage-nearmiss-100-2026-07-16.md](plans/triage-nearmiss-100-2026-07-16.md) — ≥99% near-miss triage — 100-fn sample (2026-07-16) — `2026-07-16`
+- [plans/recarve-pipeline.md](plans/recarve-pipeline.md) — Recarve pipeline — programmatic TU-attribution repair — `2026-07-12`
+- [plans/hard-targets-triage-2026-07-12.md](plans/hard-targets-triage-2026-07-12.md) — Remaining hard-targets triage — 2026-07-12 — `2026-07-12`
+- [plans/roadmap-2026-07-12.md](plans/roadmap-2026-07-12.md) — rb3-xenon Roadmap — 2026-07-12 (decision doc) — `2026-07-12`
+- [plans/jeff-pdata-boundary-round3.md](plans/jeff-pdata-boundary-round3.md) — jeff pdata/boundary defects — round 3 design — `2026-07-12`
+- [plans/spill-leverage-campaign-2026-07-10.md](plans/spill-leverage-campaign-2026-07-10.md) — Spill-store leverage campaign (2026-07-10) — `2026-07-12`
+- [plans/tu-wiring-census-2026-07-10.md](plans/tu-wiring-census-2026-07-10.md) — TU-Wiring Census — orphan map-entry analysis (2026-07-10) — `2026-07-10`
+- [plans/build-without-xdk-recommendation.md](plans/build-without-xdk-recommendation.md) — Building the RB3Enhanced Same-Instrument Patch Without the Xbox 360 XDK — `2026-07-07`
 
 ---
 

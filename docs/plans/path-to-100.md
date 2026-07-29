@@ -2,6 +2,11 @@
 
 > **STATUS (2026-07-06):** HISTORICAL roadmap (394-matched era, 2026-05-28) — superseded
 > by `docs/plans/frontier-workstreams-2026-07-02.md`.
+>
+> **CORRECTED 2026-07-29:** the **+50-200** attributed to the jeff asm mis-nest fix
+> (P1, P2, and the lever table) is **refuted** — `plans/jeff-scattered-unit-addresses.md`
+> measured the mis-nests to be ~entirely inside anonymous `auto_03_*` buckets and
+> **zero in named units**; the fix is worth **~0**.
 
 **Date:** 2026-05-28. **Baseline (verified from `build/45410914/report.json`):**
 **394 / 66,134 matched functions (0.60%), 77,024 / 11,774,176 matched code bytes

@@ -1,5 +1,13 @@
 # Remaining-bytes decomposition + path-to-100 review (2026-07-20)
 
+> **CORRECTED 2026-07-29 (lane BM).** This doc lists the **jeff asm mis-nest fix**
+> at "+50-200 direct strict, diagnosed, unfixed" (§ ranked table row 5 and the
+> narrative above it). That estimate is **refuted**: `plans/jeff-scattered-unit-addresses.md`
+> § measured 11,690 of the mis-nested `.fn`/`.endfn` pairs to be in anonymous
+> `auto_03_*_text.s` buckets and **zero in named units** — the fix is real but worth
+> **~0**, not +50–200. Do not schedule it as a lever. (Same correction applies to
+> `path-to-100.md` P1/P2 and `execution-schedule.md` item [A].)
+
 **Snapshot:** live `build/45410914/report.json` @ 18,882 strict (mid-wave).
 Measured by this session's analysis (fields: `match_percent_normalized==100.0`
 strict, `fuzzy_match_percent` fuzzy — `match_percent` does NOT exist).

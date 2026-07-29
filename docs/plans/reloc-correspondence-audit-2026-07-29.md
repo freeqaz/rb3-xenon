@@ -1,5 +1,39 @@
 # laneBH — reloc-correspondence audit: how much of the strict count is REPRODUCTION vs SHAPE (2026-07-29)
 
+> **CORRECTED 2026-07-29 (lane BM, from `plans/realbug-fixes-2026-07-29.md`).**
+> The headline audit result stands — 65.5% / 43.8% evidenced, 5.2% / 2.7%
+> DIVERGENT, remainder undecidable (`.bss` + externs are **unobservable, not
+> suspect**). Three things below were later re-adjudicated and are **wrong as
+> written**:
+>
+> 1. **`soundtouch::AAFilter::calculateCoeffs` is NOT "π where retail has 2π"**
+>    (§0.5, §7 row 472). *Both* sides use π *and* 2π; retail's constants are
+>    **float-rounded** — ours `0x400921FB5480EE4F`, retail `0x400921FB60000000`
+>    (= float-precision π widened), and `TWOPI` follows to `0x401921FB60000000`.
+>    Behavioural, but a rounding difference, not a wrong constant.
+> 2. **`DirLoader::FixClassName` is NOT "a permuted remap table"** (§0.5, §7 row
+>    2260). The divergence is **static-`Symbol` declaration order** only; the
+>    literals merely feed `static Symbol` declarations, and every mapping
+>    *direction* (`RenderedTex→TexRenderer`, `CompositeTexture→LayerDir`,
+>    `BandFx→WorldFx`, `View→Group`) is **verified correct against rb3-Wii**.
+>    ORDERING-ONLY — no behaviour changes.
+> 3. **★ 43% of the 109-item "real bug" queue were MAP MISPAIRS, not source
+>    bugs.** General rule now in `../INDEX.md` Known traps: *if retail's
+>    diverging operands coherently describe a **different** function — a sibling,
+>    a template twin, another class — the defect is in
+>    `scripts/target_symbol_map.json`, not in the source.*
+>
+> **Performance envelope of the instrument (measured, lane BM):**
+> `reloc_correspondence.py --census` is sound and is the supported mode
+> (~6 min tree-wide). A single **`--symbol` invocation timed out at 10 minutes**
+> and is **not usable as a per-lane gate** — `main()` runs three whole-binary
+> oracle passes (`load_matched()` over the whole repo, `build_base_index()` over
+> every live unit, `build_consistency()` over the whole census) *before* the
+> `--symbol` filter applies, which only trims the final emission loop.
+> `--no-icf --no-consistency` bypasses the cost but weakens the verdict. The
+> `--symbol` recipe in §9 below therefore needs a long budget.
+> Full instrument notes: [`../decomp/TOOLING.md`](../decomp/TOOLING.md) §4.
+
 Inputs: `docs/plans/gapfill-pricing-and-nearmiss-open-2026-07-29.md` (laneBE),
 commit `2e59f8b1` (laneTIGHTGAP, landed +109), `scripts/harvest/live_units.py`,
 `scripts/harvest/eh_ground_truth.py`.

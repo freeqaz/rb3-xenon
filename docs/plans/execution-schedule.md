@@ -2,6 +2,11 @@
 
 > **STATUS (2026-07-06):** HISTORICAL roadmap (394-matched era, 2026-05-28) — superseded
 > by `docs/plans/frontier-workstreams-2026-07-02.md`.
+>
+> **CORRECTED 2026-07-29:** item **[A] jeff mis-nest fix** is priced at "+50-200 on
+> already-pinned units". That is **refuted** — see `plans/jeff-scattered-unit-addresses.md`:
+> the mis-nests are ~entirely in anonymous `auto_03_*` buckets, zero in named units,
+> so the fix is worth **~0**.
 
 **Date:** 2026-05-28. **Supersedes the *ordering* of:** `docs/plans/path-to-100.md`
 (P1-P7 phases) and `docs/plans/exploratory-techniques.md` (§3 next-steps).
