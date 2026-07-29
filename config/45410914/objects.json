@@ -1136,6 +1136,12 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/meta_band/InputMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/MetaNetMsgs.cpp": "NonMatching",
    "band3/meta_band/NewAwardPanel.cpp": {
     "status": "NonMatching",

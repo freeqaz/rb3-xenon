@@ -1185,7 +1185,6 @@ JoypadController.cpp:
 CalibrationPanel.cpp:
 	.pdata      start:0x821F1840 end:0x821F1848
 	.pdata      start:0x8221E6A8 end:0x8221E6B8
-	.pdata      start:0x822226A8 end:0x822226B0
 	.pdata      start:0x82228490 end:0x82228498
 	.pdata      start:0x82228498 end:0x822286D8
 	.pdata      start:0x822286D8 end:0x822286F0
@@ -1195,7 +1194,6 @@ CalibrationPanel.cpp:
 	.pdata      start:0x82228758 end:0x822287D8
 	.text       start:0x82272B20 end:0x82272B84
 	.text       start:0x825743E0 end:0x825744B8
-	.text       start:0x825B0D00 end:0x825B0D50
 	.text       start:0x82608D90 end:0x82608E44
 	.text       start:0x82608E48 end:0x8260BD18
 	.text       start:0x8260BD18 end:0x8260BD6C
@@ -7514,10 +7512,6 @@ HAQManager.cpp:
 	.text       start:0x82390368 end:0x823903E4
 	.text       start:0x82BB1260 end:0x82BB1954
 
-StreamRenderer.cpp:
-	.pdata      start:0x82222738 end:0x82222740
-	.text       start:0x825B1738 end:0x825B1804
-
 TransConstraint.cpp:
 	.pdata      start:0x821F52C8 end:0x821F52D0
 	.pdata      start:0x8222A658 end:0x8222A660
@@ -7885,9 +7879,7 @@ JoypadMsgs.cpp:
 	.text       start:0x825BD1F8 end:0x825BD254
 
 AppInlineHelp.cpp:
-	.pdata      start:0x82222628 end:0x82222638
 	.pdata      start:0x82227DA0 end:0x82227E80
-	.text       start:0x825B0518 end:0x825B0590
 	.text       start:0x82602418 end:0x826033F0
 
 ColorPalette.cpp:
@@ -11089,7 +11081,7 @@ WaitingUserGate.cpp:
 OvershellPanel.cpp:
 	.pdata      start:0x822187D8 end:0x822187E8
 	.pdata      start:0x82221FE8 end:0x82221FF0
-	.pdata      start:0x82222758 end:0x82222808
+	.pdata      start:0x822227F8 end:0x82222808
 	.pdata      start:0x82222808 end:0x82222818
 	.pdata      start:0x82222818 end:0x82222828
 	.pdata      start:0x82222828 end:0x82222838
@@ -11100,7 +11092,7 @@ OvershellPanel.cpp:
 	.pdata      start:0x82222868 end:0x82222FB0
 	.text       start:0x8251BA80 end:0x8251BAF8
 	.text       start:0x825AB0F0 end:0x825AB138
-	.text       start:0x825B1FB4 end:0x825B2328
+	.text       start:0x825B22A8 end:0x825B2328
 	.text       start:0x825B2328 end:0x825B23A8
 	.text       start:0x825B23A8 end:0x825B2428
 	.text       start:0x825B2428 end:0x825B24A8
@@ -11742,6 +11734,10 @@ NetGameMsgs.cpp:
 	.text       start:0x82692C10 end:0x82692CE8
 	.text       start:0x82692D00 end:0x82692FE0
 	.text       start:0x82692FF8 end:0x82693078
+
+band3/meta_band/InputMgr.cpp:
+	.pdata      start:0x82222628 end:0x822227F8
+	.text       start:0x825B0518 end:0x825B22A8
 
 band3/meta_band/MetaNetMsgs.cpp:
 	.pdata      start:0x82223168 end:0x82223170
