@@ -489,7 +489,7 @@ across 9 subagents in 9 isolated worktrees.**
 |---|--:|---|
 | map: purge stale `__unwind$N` entries | **+124** | §13 |
 | COMDAT-scatter splits (11 moves) | +35 | §9 |
-| negative-delta batch (6 targets) | +33 | §14 — `MILO_WARN` copies its args |
+| negative-delta batch (6 targets) | +33 | §14 — retail's stripped WARN residue copies class-typed args (⚠ §14 banner: the per-site fix it prescribes was superseded by the macro-level `MiloStripEval` change in `a2e737ab`) |
 | `Game::Handle` | +21 | §12 — stub-shrunk frame |
 | `DataArray` mutators | +12 | §15 — scatter-include inlining collapse |
 | positive-delta batch 2 | +11 | §16 |
@@ -520,7 +520,55 @@ ordinal.** Audit the map for other ordinal-shaped names before the next wave.
 
 ## 14. ★ `MILO_WARN` still EVALUATES its arguments in retail (negative-delta mirror)
 
-Our `#define MILO_WARN(...) ((void)(__VA_ARGS__))` evaluates *nothing* — a class
+> ⚠ **STALE PREMISE (corrected 2026-07-29, lane docfix).** This section, and §22
+> below, were written when `MILO_WARN` was `((void)(__VA_ARGS__))`. **It is not any
+> more.** `a2e737ab` (2026-07-27) changed it to `MiloStripEval(...)` — an empty
+> inline overload set with **by-value** params, so the copy happens *in the macro*
+> — measured **+34 whole-binary**. `src/system/os/Debug.h` is the authority; read it
+> before using anything below.
+>
+> Two consequences that invert this section's advice:
+> 1. **The per-call-site fix this section recommends is now a DEFECT.** `eab1c3f6`
+>    diagnosed 5 of `a2e737ab`'s regressions to exactly the hand-rolled `String
+>    warnCC(str);` wrappers §22 calls "the FIXED form": once the macro copies, those
+>    are **double** copies, which inflate the parent frame and un-pair its funclets.
+>    Removing the three PrefabMgr wrappers took that unit 58 → 63.
+>    ⇒ ★**When a behaviour moves into a macro, every prior hand-rolled emulation of
+>    it silently becomes a defect. The tell is a comment naming the very behaviour
+>    the macro now provides.** Sweep after any macro-semantics change.
+> 2. **The fleet-wide `Debug.h` form §22 declares "not worth its A/B" was worth
+>    +34.** §22's census was of *call sites still needing a hand fix*, which is a
+>    different question from *is the macro-level form worth landing*.
+>
+> ★★**AND THE MECHANISM IS NOT "WARN COPIES, NOTIFY/LOG ONLY EVALUATE."** `a2e737ab`
+> recorded that framing with measurements +34 / −20 / −5; **the numbers stand, the
+> explanation of the −20 was WRONG** and was corrected in `eab1c3f6`. The real cause
+> is **argument evaluation ORDER**: MSVC evaluates *function arguments* right-to-left,
+> a *comma expression* left-to-right. `MiloStripEval` is a function call, so it
+> silently reverses argument order. The whole −20 was one family
+> (`?SetType@*@@UAAXVSymbol@@@Z`) whose stripped residue retail emits **left-to-right**
+> (`PathName(this)` before the `ClassName()` vcall). Decisive control: `OBJ_SET_TYPE_ENGINE`
+> (`Object.h`) spells that residue with the comma form and `RndGroup::SetType` held at
+> 100% throughout, while `OBJ_SET_TYPE` (`ObjMacros.h`) spelled it with `MILO_WARN` and
+> `GamePanel::SetType` fell 100% → 96.2%. **Same code, two macros, one broke.**
+>
+> So there are **two independent properties**, and a site needs whichever its
+> arguments actually depend on:
+>
+> | property | reproduced by | needed when |
+> |---|---|---|
+> | **copying** of class-typed args | `MiloStripEval` only | args are destructible class types (String temps → EH states → funclets) — this is the +34 |
+> | **left-to-right ordering** | comma form only | args have side effects the target emits in source order |
+>
+> A site needing **both** is expressible in neither form and would have to hoist its
+> temporaries into named locals in source order. Honest negative: **we have no
+> evidence whether retail's NOTIFY residue copies** — do not choose a form by the
+> arguments' TYPES; choose it by whether they have ORDERED SIDE EFFECTS.
+> Full write-up: `docs/decomp/EH_FUNCLET_CASCADE.md` §"Two hazards", and the
+> corrected comment block in `src/system/os/Debug.h`.
+
+Our `#define MILO_WARN(...) ((void)(__VA_ARGS__))` **[as of 2026-07-25 only — it is
+`MiloStripEval(...)` since `a2e737ab`; see banner]** evaluates *nothing* — a class
 lvalue as a discarded comma operand emits no code. **Retail strips only the
 emission.** Every by-value class vararg (a `String`) is still copy-constructed
 into its **own 0x10 frame slot** and destroyed, and sometimes the `MakeString`
@@ -745,6 +793,18 @@ to one worker, not one worker per class.
 Next largest shapes: 7 `Handle` methods, 2 `op>>(BinStream&)`.
 
 ## 22. ★ The §14 `MILO_WARN` vein is **DRAINED** — do not fund a sweep
+
+> ⚠ **PARTIALLY SUPERSEDED 2026-07-29 (lane docfix) — see the banner on §14.**
+> The census below is still correct *as a census of call sites needing a hand fix*
+> (it is 1). Two of its conclusions are not:
+> - "**`String(x)` at a call site is the FIXED form**" — true when `MILO_WARN` was
+>   the comma form; **false since `a2e737ab`**. The macro now copies by itself, so a
+>   hand-rolled `String` wrapper is a **double** copy and a real defect (`eab1c3f6`,
+>   PrefabMgr ×5). PrefabMgr was swept and was the only such site; **re-sweep if the
+>   macro semantics change again.**
+> - "**the fleet-wide `Debug.h` vararg-sink form is not worth its isolated
+>   whole-binary A/B**" — it was run and measured **+34**. It landed.
+> The `Symbol`-is-4-bytes point (2) below is unaffected and still load-bearing.
 
 §14 called the shape "scannable". It was scanned. **The census is 1.**
 

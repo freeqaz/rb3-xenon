@@ -49,53 +49,10 @@ for i in range(nsec):
 def word(va):
     for sva,vs,ro in secs:
         if sva<=va<sva+vs: return struct.unpack_from(">I",d,ro+(va-sva))[0]
-def shape(va,sz):
-    if not sz or sz>0x20: return None
-    ws=[word(va+4*i) for i in range(sz//4)]
-    if any(w is None for w in ws): return None
-    while ws and ws[-1]==0: ws.pop()
-    if not ws: return None
-    idx=0; vt=None; adj=0; reg=None
-    if len(ws)>=3 and (ws[0]>>26)==32 and ((ws[0]>>21)&31)==11:
-        rA=(ws[0]>>16)&31; imm=ws[0]&0xFFFF
-        if imm>=0x8000: imm-=0x10000
-        if (ws[1]>>26)==31 and ((ws[1]>>1)&0x3FF)==40 and ((ws[1]>>21)&31)==rA and ((ws[1]>>16)&31)==11 and ((ws[1]>>11)&31)==rA:
-            vt=imm; reg=rA; idx=2
-        else: return None
-    if idx<len(ws) and (ws[idx]>>26)==14:
-        rD=(ws[idx]>>21)&31; rA=(ws[idx]>>16)&31; imm=ws[idx]&0xFFFF
-        if imm>=0x8000: imm-=0x10000
-        if rD==rA and imm<0 and (reg is None or rD==reg): adj=imm; reg=rD; idx+=1
-        elif vt is None: return None
-    if idx!=len(ws)-1: return None
-    b=ws[idx]
-    if b>>26!=18 or (b&1) or ((b>>1)&1): return None
-    li=b&0x03FFFFFC
-    if li&0x02000000: li-=0x04000000
-    if vt is None and adj==0: return None
-    if reg not in (3,4): return None
-    return (vt,-adj,va+4*idx+li)
-def mnum(s,i):
-    if i>=len(s): return None,i
-    if s[i]=='?':
-        v,j=mnum(s,i+1); return (None if v is None else -v),j
-    if s[i].isdigit(): return int(s[i])+1,i+1
-    j=i;v=0
-    while j<len(s) and 'A'<=s[j]<='P': v=v*16+(ord(s[j])-65); j+=1
-    if j==i: return None,i
-    if j<len(s) and s[j]=='@': j+=1
-    if v>=0x80000000: v-=0x100000000
-    return v,j
-def td(n):
-    mm=re.search(r"@@W",n)
-    if mm:
-        v,_=mnum(n,mm.end())
-        return (None,v) if v is not None else None
-    mm=re.search(r"@@\$4",n)
-    if mm:
-        vt,j=mnum(n,mm.end()); ad,_=mnum(n,j)
-        return (vt,ad) if vt is not None and ad is not None else None
-    return None
+# The thunk-shape / name-encoding primitives now live in thunk_shape.py so that
+# dupname_identity_resolver.py uses the SAME vetted logic (see 26284d0d).
+from thunk_shape import mnum, td, prefix, norm, shape as _shape  # noqa: F401,E402
+def shape(va,sz): return _shape(word,va,sz)
 def load_units():
     u=collections.defaultdict(list); cur=None
     for line in open(SPLITS):
@@ -111,16 +68,6 @@ def paths(u):
     if not b.exists():
         c=list((BUILD/"src").rglob(Path(rel).name+".obj")); b=c[0] if len(c)==1 else b
     return a,b
-def prefix(n):
-    """qualified-name prefix shared by a virtual and its thunks, template-safe."""
-    mm=re.search(r"@@(W[0-9A-P?]|\$4)",n)
-    if mm: return n[:mm.start()+2]
-    mm=re.search(r"@@[QAEIMUBV][A-Z]",n)
-    if mm: return n[:mm.start()+2]
-    return None
-def norm(p):
-    """??_G / ??_E equivalence for deleting dtors"""
-    return "??_D*"+p[4:] if p.startswith(("??_G","??_E")) else p
 
 props=[]; st=collections.Counter()
 for u in sorted(load_units()):

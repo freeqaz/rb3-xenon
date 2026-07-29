@@ -1,15 +1,28 @@
 #!/usr/bin/env python3
-"""localstatic_tu_census.py -- TU-LEVEL census for the BULK-CONVERSION LAW.
+"""localstatic_tu_census.py -- TU-LEVEL census for the local-static conversion lever.
 
 Background (docs/plans/decomp-state-2026-07-19.md, TRANSFERABLE LEVERS #1):
 retail declares Symbols/Messages as *function-local statics*; the rb3-Wii oracle
-often uses file-scope `Symbols*.h` globals.  Converting ONE function in a TU
-reads NET-NEGATIVE (its new statics collaterally re-pair EH funclets); converting
-EVERY straggler in the TU at once reads strongly positive.
+often uses file-scope `Symbols*.h` globals.  Converting a function to the retail
+form re-pairs its EH funclets, so a conversion in flight reads NET-NEGATIVE.
 
-So the unit of work is the TU, and the thing worth finding is a TU that is
-*partially* converted: some of its functions already carry the local-static form
-(and score 100) while others still reference the globals (and score < 100).
+★ CORRECTED 2026-07-29 (was "the BULK-CONVERSION LAW"): the predicate that clears
+that churn is **THE PARENT FUNCTION REACHING 100%**, not "the TU is fully
+converted".  Measured in `be2b574c`: moving a SINGLE static in NextSongPanel read
+**-230** mid-flight and **+1 / 0 losses** once the parent was driven to 100; and
+`AccomplishmentPanel::LaunchSelectedEntry` improved 95.6 -> 97.5 and STILL measured
+**-16** (16 funclets 100 -> 99.9), so partial credit does not cancel the churn.
+A whole-TU sweep that leaves parents at 97% is a net-negative operation.
+Also load-bearing, and NOT visible in this census: the DECLARATION POSITION.
+Retail declares at the USE SITE -- `PanelDir::PanelNav` went 96.9 -> 16.4 when its
+statics were hoisted to the function top, and `TrackPanelDir` needed them inside
+`if (mScoreboard)` (90.6 at top -> 100 in the branch).  Use
+`ls_guard_timeline.py` to read the declaration points out of the target body.
+
+So the thing worth finding is a TU that is *partially* converted: some of its
+functions already carry the local-static form (and score 100) while others still
+reference the globals (and score < 100) -- but the unit of *work* is a function
+taken all the way to 100, not the TU.
 
 This script produces that census.  Read-only.
 

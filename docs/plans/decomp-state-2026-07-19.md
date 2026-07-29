@@ -4,6 +4,52 @@
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
 
+> **VERIFIED 2026-07-29 at main `5e9996fc` (lane docfix).** Independently
+> reproduced, not copied from a lane report: fresh `scripts/setup_worktree.sh`
+> worktree at that commit, `rm -f build/45410914/report.cache`, full
+> `./tools/ninja-locked` (1,045 edges, exit 0), then read
+> `build/45410914/report.json`. **`measures.matched_functions = 39382`**, and an
+> independent recount of `match_percent_normalized == 100.0` over every function
+> in every unit gives **39,382** as well. Other measures at that build:
+> `total_functions 69378 · total_units 3967 · matched_code 3431832 ·
+> total_code 10579936 · matched_functions_percent 56.764393 ·
+> fuzzy_match_percent 39.03488 · complete_units 1`.
+> ⚠ **Do not recount with `fuzzy_match_percent`** — it reads **222 LOW** here
+> (39,160), consistent with the error bar recorded further down this doc. Only
+> `match_percent_normalized` sums to `matched_functions`.
+
+## ⚠ Corrections to landed commit messages (2026-07-29, lane docfix)
+
+Commits are immutable; these are the corrections. Each was re-derived from the
+repository, not from another lane's write-up.
+
+- **`01a0e9fa`'s "24 TUs get their FIRST pinned range ever" is WRONG for 23 of the
+  24.** The commit added 24 *path-qualified* unit headers to `splits.txt`
+  (`system/world/Crowd.cpp:`, …), but 23 of those basenames **already had pins under
+  a bare-basename spelling**. Measured by counting `.text start:` lines per bare
+  basename in `git show 01a0e9fa^:config/45410914/splits.txt`: Crowd 14, LightPreset
+  17, LightHue 2, Instance 6, CameraShot 59, CharBoneOffset 8, CharIKRod 12,
+  CharLipSync 40, CharLipSyncDriver 22, FileMerger 16, Anim 22, AmbientOcclusion 16,
+  EventTrigger 46, MeshDeform 16, CrowdAudio 14, EndingBonus 25, LayerDir 10,
+  Faders 37, Sequence 44, HeldButtonPanel 6, BandMachineMgr 45, MainHubPanel 24,
+  MusicLibrary 12 — **only `system/world/Reflection.cpp` was genuinely new (0)**, and
+  it is the only one of the 24 whose qualified spelling still exists on main today
+  (the rest were later consolidated back onto the bare spelling). The commit's
+  *score* claim (−2) and its map/split mechanism finding are unaffected. **No doc
+  repeated this claim** — a tree-wide grep found the phrase only in the commit
+  message — so nothing else needed editing; it is recorded here because a lane
+  reading `git log` would otherwise inherit it.
+  ⇒ ★**A new `splits.txt` unit HEADER is not a newly-pinned TU.** `splits.txt` keys
+  on the spelling, not the source file, so the same `.cpp` can hold pins under two
+  keys. Diff by **basename**, not by header line, before claiming first-ever coverage.
+- **Several recent commit messages quote strict counts that do not reproduce on
+  main** (one claimed 37,599 where a clean full rebuild at that commit measured
+  37,282). The pattern is lanes quoting a **worktree** measurement as if it were
+  main's. The headline above is the one number in this doc that has been rebuilt
+  and re-read at HEAD; every other count in this file is dated and belongs to its
+  own section. ⇒ **Quote a count only with the commit it was measured at and how
+  (`report.cache` cleared? full rebuild? which tree?).**
+
 ## ★★ laneAY 2026-07-27 — the census-honesty lane (+28), and the FOURTH census bug
 
 **Landed +28** across four measured legs (all with the full re-split recipe and
@@ -438,14 +484,56 @@ proven-wrong bindings is CHEAP** (5 evictions = +0 strict, −0.0007pp fuzzy).
 
 These are mechanism findings, not one-off fixes. Landed + measured; reusable fleet-wide.
 
-### 1. BULK-CONVERSION LAW — convert a TU's local-static form ALL AT ONCE (098f84a8, +177)
-Converting ONE function to retail's `DP_KEYS`/function-local-`static Symbol` form measured **−7**
-(its 3 new statics collaterally un-paired 9 already-matching EH funclets — objdiff funclet
-over-subscription re-pairing). Converting **all 21 stragglers in the TU simultaneously = +48**
-(53 gained / 5 lost). The churn is a transient of a *partially*-converted TU; once every function
-shares the form the pool stabilises.
-**⇒ A one-at-a-time trial that reads net-negative is NOT evidence the lever is dead. Re-test in bulk.**
-Follow with `homing_scan` on the converted obj (bytes changed) — yielded 7 more plain-UNIQUE homes, +7/−0.
+### 1. ⚠ SUPERSEDED — "BULK-CONVERSION LAW" (098f84a8, +177) → the predicate is THE PARENT AT 100
+> **CORRECTED 2026-07-29 (lane docfix) by `be2b574c`.** The measurements below are
+> reproduced verbatim and still stand. The *rule inferred from them* was wrong, and
+> acting on the wrong rule is expensive: it tells a lane to keep converting a whole
+> TU while the score falls, when what actually clears the churn is driving **one
+> parent function to 100%**.
+
+Original measurement (unchanged): converting ONE function to retail's
+`DP_KEYS`/function-local-`static Symbol` form measured **−7** (its 3 new statics
+collaterally un-paired 9 already-matching EH funclets — objdiff funclet
+over-subscription re-pairing). Converting **all 21 stragglers in the TU
+simultaneously = +48** (53 gained / 5 lost).
+
+★★**The operative predicate is THE PARENT FUNCTION REACHING 100%, not "the TU is
+fully converted."** Measured in `be2b574c`:
+- `NextSongPanel`: moving a **single** static read **−230** mid-flight (230 funclets
+  100 → 99.9). The same edit read **+1 / 0 losses** once the parent was driven to 100.
+  Whole-TU conversion was never what changed; the parent hitting 100 was.
+- `AccomplishmentPanel::LaunchSelectedEntry`: improved **95.6 → 97.5** and still
+  measured **−16** (16 EH funclets 100 → 99.9). **Reverted.** Partial credit does NOT
+  cancel the funclet re-pairing churn — so "keep going, it'll stabilise" is false for
+  any function that stops short of 100.
+- ⇒ In `098f84a8` the whole-TU sweep paid because it happened to take its parents
+  *to 100*, not because it was whole-TU. A bulk conversion that leaves parents at 97%
+  is a **net-negative** operation.
+
+★★**DECLARATION POSITION IS LOAD-BEARING, AND IT IS USUALLY NOT THE FUNCTION TOP.**
+The guard-check position in the target body names the declaration point; retail
+declares these at the USE SITE.
+- `PanelDir::PanelNav` **96.9 → 16.4** when its 3 statics were hoisted to the top. Reverted.
+- `TrackPanelDir` **90.6 → 79.6** at the top, **→ 100** with the same statics moved
+  inside `if (mScoreboard)`.
+- 3 of 4 `NextSongPanel` fixes were **pure placement moves** (no new statics):
+  80.7 → 100 on their own.
+
+★**FAKE-100s exist in this vein.** `MusicLibrary::ClientSetPartyShuffleMode` read 100
+while its target body held a local static ours lacked (only 12/34 instructions actually
+equal). Converting a sibling exposed it at 52.9; adding the static made it a REAL 100.
+
+**⇒ A one-at-a-time trial that reads net-negative is still NOT evidence the lever is dead
+— but the retest is "drive THIS parent to 100", not "convert the rest of the TU".**
+Tools: `scripts/harvest/ls_guard_timeline.py` (guard-bit order = declaration order, plus
+the string literal and storage address — makes each conversion a transcription) and
+`scripts/harvest/localstatic_tu_census.py` (per-unit done-vs-straggler; ⚠ counting only
+`static Symbol` massively over-reports — most apparent gaps are `static Message` /
+`static DataArrayPtr` already present).
+Follow with `homing_scan` on the converted obj (bytes changed) — yielded 7 more
+plain-UNIQUE homes, +7/−0. ⚠ **`be2b574c`'s full-tree homing sweep (1024 TUs) after the
+conversions found 0 new homes** — that follow-up is swept out tree-wide; do not re-run
+it per-TU.
 
 ### 2. GUARD-BIT TIMELINE = a transcript of the source's static-declaration structure
 Bit ORDER gives declaration order; the GAPS between guard-check runs give grouping and placement.
@@ -468,9 +556,35 @@ Measured: **153 of 405 mapped entries were WRONG**, incl. a contiguous off-by-on
 consecutive `Char*` slots. Repair landed +10; one VA GAINED a match once UNMAPPED ⇒ **unmapped beats
 wrongly-mapped**. Tool: `scripts/harvest/localstatic_symbol_audit.py --json` (re-derives in ~40 s,
 flags each repair's harmfulness).
-**OPEN DEBT: ~51 entries are correct-by-string but currently satisfy a fake 100%** (fingerprint: the VA
-sits in a unit *named after the wrong class* — HamMove.cpp→HamMove, TexMovie.cpp→TexMovie …). Fixing
-them is nominally −51. **Pending an explicit user policy call — do not land unilaterally.**
+~~**OPEN DEBT: ~51 entries are correct-by-string but currently satisfy a fake 100%**~~
+> ✅ **PAID 2026-07-26/27 — this debt is CLOSED.** Do not re-open it as a backlog item.
+> - `01a0e9fa` (lanePHANTOM) retired **31 string-proven-wrong** map entries. Cost was
+>   **−2, not −31**: repairing the map ALONE costs full price (−30), but repairing
+>   **map + SPLIT together** is nearly free — 28 of the 31 were isolated 0x58-byte
+>   scatter ranges that existed ONLY because of the wrong map entry, so re-pinning
+>   `.text`+`.pdata` to the string-proven owner recovers them 1:1. ★**The blast radius
+>   was 2 functions per phantom, not 1** — 26 of the ranges had been grown 0x58 → 0x78
+>   by `.pdata`-parentage pins, and that extra 0x20 is the phantom's own `??__F` atexit
+>   dtor (26/26 verified by decoding the guard word out of both bodies).
+> - `560dffb3` then dropped **528 non-injective duplicate names** (user-approved),
+>   measured **−105**. ★**The naive count overstates that debt by ~3x**: 322 of the 528
+>   were scoring 100%, but a VA that loses its name reverts to anonymous `fn_<VA>` and a
+>   large share **re-pair positionally** as unnamed funclets. Duplicate credit 158 → 1
+>   (the legitimate `?NodeCmp@@YAHPBX0@Z`, a file-static qsort comparator with genuinely
+>   different bodies in `DataArray.cpp` and `BandWardrobe.cpp` — statics are not COMDATs,
+>   so the linker does not dedup them).
+>
+> **LIVE RESIDUE, re-measured 2026-07-29 on main `5e9996fc`** (`venv/bin/python
+> scripts/harvest/localstatic_symbol_audit.py --json`, run in a clean worktree after a
+> full `./tools/ninja-locked`): `family members in .text 453 · distinct strings 418 ·
+> ambiguous strings 32` → **OK=405 MISMATCH=25 UNMAPPED=20 FOREIGN=2 NO_TOKEN=1**,
+> **repairable=3** (of which harmful-to-apply: 0). The three uniquely repairable are
+> `0x8227a1a8` Flow→`BandCamShot`, `0x82369ba8` ClipCollide→`CharBone`, `0x8236ac28`
+> RndMesh→`CharPollGroup`; the other **22 are the AMBIGUOUS-string** rows
+> (`Rnd*`/`Dx*`/`Ng*` triplets, `FxSend*` pairs) — still string-proven wrong, still
+> fake-100, but **not uniquely repairable without a second oracle**.
+> ⚠ At `01a0e9fa` this residue read **33 MISMATCH / repairable=0**; intervening map lanes
+> moved it. The number drifts — **re-run the audit, never quote it from a doc.**
 
 ### 5. NOT all "class absent from src/" map entries are contamination
 LEAPCORE / XAUDIO2 / NUISPEECH / XGRAPHICS / TrueColor / FaceCore are REAL Xbox360-SDK + Kinect

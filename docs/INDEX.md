@@ -49,6 +49,43 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   new worktrees, but a cache produced before a target re-base (e.g. the TU0→TU5 flip) must be
   rebuilt everywhere, main included. The headline `binary NN% matched` line is read straight
   from `report.json` and is always honest.
+- **A warm worktree carries THOUSANDS of stale `auto_*_text.s` files beside the live
+  ones — reading them yields FALSE content evidence.** `build/45410914/asm/` is never
+  cleaned, so carves from dead `splits.txt` generations accumulate. Measured 2026-07-29
+  in a fresh worktree immediately after a clean full `./tools/ninja-locked`:
+  **12,950 `.s` files total, of which only 3,967 are live** (= `report.json`'s
+  `total_units`, exactly) and **8,983 are stale — 4,618 of them `auto_03_*_text.s`**,
+  dated as far back as 2026-06-02. Any scan that globs `asm/**/*.s` (or, equivalently,
+  `obj/**/*.obj`) reads another era's carve as if it were current. **Filter by mtime
+  against `config/45410914/config.json`** (`find build/45410914/asm -name '*.s' -newer
+  config/45410914/config.json`), or better, **enumerate from `objdiff.json`**, which
+  `configure.py` regenerates from the live `objects.json` + `splits.txt`. Same class of
+  bug as the census-universe defect in `plans/decomp-state-2026-07-19.md` (laneAY).
+- **`scripts/harvest/resolve_splits_union.py` is a line-UNION and CANNOT propagate
+  deletions — a deletion-valued patch silently no-ops.** `land.sh` calls it to resolve
+  a conflicted `config/45410914/splits.txt` during `git rebase main`; under rebase,
+  *ours* is main and *theirs* is the lane's branch. The tool seeds its output from
+  **ours** and grafts only the lines **theirs added vs the merge base** (its own
+  docstring, line 17: "No removals are propagated"). So every pin the lane **removed**
+  is still present in main's copy and survives — the removal is silently discarded and
+  `land.sh` still reports `READY:`. This matters because unpinning is a real, landed
+  fix shape (phantom-shell TUs in `01a0e9fa`, XDK-territory spans in laneXDKPIN).
+  ⇒ **If your patch's value is a deletion in `splits.txt`, do not land it through
+  `land.sh` on a conflict — resolve by hand and re-verify with
+  `scripts/harvest/overlap_check.py`.** (Contrast `resolve_json_union.py`, which *is*
+  3-way and does respect deletions.)
+- **A new `splits.txt` unit HEADER is not a newly-pinned TU.** `splits.txt` keys on the
+  header spelling, not on the source file, so `Crowd.cpp:` and `system/world/Crowd.cpp:`
+  are two keys for one `.cpp`. Diff by **basename** before claiming first-ever coverage
+  — `01a0e9fa`'s "24 TUs get their FIRST pinned range ever" is wrong for 23 of the 24
+  for exactly this reason (worked example in `plans/decomp-state-2026-07-19.md`).
+- **A thunk-identity tool that does not fold `??_G`/`??_E` manufactures phantom
+  defects.** MSVC names a deleting-destructor *body* `??_G<C>` but every adjustor thunk
+  of it `??_E<C>`, and it spells simple adjustors `W<n>`, not `$4`. A check that looks
+  for a `$`-name scoped `??_G<C>@@` asks for a symbol that cannot exist for any class.
+  This produced a 41-class "missing virtual override" worklist that cost a lane a full
+  investigation before `26284d0d` refuted it (NO `virtual` was missing anywhere). The
+  vetted primitives now live in one place — `scripts/harvest/thunk_shape.py`.
 
 ---
 
@@ -125,6 +162,22 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - [decomp/playbooks/nearmiss-harvest.md](decomp/playbooks/nearmiss-harvest.md) — evaluation-order-sculpting harvest waves (96–99.99% named fns; local-.cpp-only lanes; technique catalog + wall taxonomy).
 - [decomp/playbooks/offset-drift-sweep.md](decomp/playbooks/offset-drift-sweep.md) — mechanical layout/header-drift sweep (85–99.99%; the header-edit complement of nearmiss-harvest; one fix closes many fns; recon-before-edit discipline).
 - [decomp/patterns/false-layout-drift.md](decomp/patterns/false-layout-drift.md) — offset diffs that are NOT layout bugs (anchor-bias, vbase mirage, diagonal pairing); rule out before editing a header.
+- [decomp/EH_FUNCLET_CASCADE.md](decomp/EH_FUNCLET_CASCADE.md) — **the EH-funclet cascade rule** and
+  how to read a guard-bit timeline: a funclet flips on its parent's frame SIZE alone, the census
+  (2,720 funclets / 1,004 parents, only ~13% source-blocked), the three failure shapes, the five
+  root-cause families, and the two hazards found while diagnosing this campaign's own regressions —
+  (1) when a macro takes over a behaviour, every prior hand-rolled emulation of it becomes a defect;
+  (2) **comma form vs function call is an ARGUMENT-ORDER decision, not only a copying decision**
+  (MSVC evaluates function args right-to-left, the comma operator left-to-right). Read alongside the
+  corrected comment block in `src/system/os/Debug.h`.
+- [plans/funclet-cascade-lever-2026-07-25.md](plans/funclet-cascade-lever-2026-07-25.md) — [HIST]
+  the 9-worktree funclet-lever campaign (map `__unwind$N` purge +124, COMDAT-scatter splits,
+  scatter-include inlining collapse). ⚠ **§14 and §22 carry correction banners**: they predate
+  `a2e737ab`, which moved the `MILO_WARN` copy into the macro (`MiloStripEval`, +34), so the
+  per-call-site `String(x)` fix they prescribe is now itself a defect (`eab1c3f6`).
+- [decomp/patterns/at-limit-systemic.md](decomp/patterns/at-limit-systemic.md) — systemic at-limit
+  classes, incl. §8 the **MSVC temp-slot ASSIGNMENT permutation** wall with a cheap prefilter
+  (`set(target slots) == set(base slots)`) so you can classify BEFORE investing.
 - [decomp/UPSTREAM_PORT_WORKFLOW.md](decomp/UPSTREAM_PORT_WORKFLOW.md) — porting matching impls from DC3 / rb3-Wii when theirs is closer.
 - [decomp/identity-transfer.md](decomp/identity-transfer.md) — per-function identity transfer for ICF-scattered TUs (case-A vs case-B).
 - [decomp/pin-candidates.md](decomp/pin-candidates.md) — unified oracle→pin ranker: 5 oracle sources → consensus tiers + ranked splits wave.
@@ -172,6 +225,53 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - [tools/objdiff/LEARNINGS.md](tools/objdiff/LEARNINGS.md) — patterns, diagnostics, fixability decision trees from objdiff work.
 - [tools/objdiff/AGENT_WORKFLOW.md](tools/objdiff/AGENT_WORKFLOW.md) — [HIST] DC3-heritage design note (live workflow is the orchestrator MCP tools).
 - [tools/orchestrator/INCREMENTAL_BUILDS.md](tools/orchestrator/INCREMENTAL_BUILDS.md) — incremental vs full build strategy + metrics.
+
+### Harvest / identification scanners (`scripts/harvest/`, read-only unless noted)
+
+No standalone doc — each tool's module docstring is its reference, and they are
+long and evidence-carrying. Read the docstring before running one; several encode
+a refutation you would otherwise re-derive. Newest first.
+
+- `thunk_shape.py` — **the single definition** of the MSVC-X360 adjustor-thunk
+  primitives: `shape()` (decode the instruction sequence — a tail call is not a
+  thunk), `td()`/`prefix()` (name encoding, W-form **and** `$4`-form), `norm()`
+  (`??_G`/`??_E` fold). Imported by `thunk_identity_namer.py` and
+  `dupname_identity_resolver.py` so they cannot drift apart again.
+- `thunk_identity_namer.py` — names retail adjustor thunks **by construction**: the
+  mangled name is a total function of (callee prefix, vtordisp, this-adjust), then
+  confirmed against the unique symbol in the owning obj with that exact encoding.
+  Emits proposals; applies nothing. Landed `26284d0d` (+18).
+- `thunk_edge_audit.py` — thunk **scope must equal callee scope**, a self-consistency
+  oracle over the existing map (the axiom is verified on our own objs: 7522/7522 for
+  genuine adjustor mangling). Surfaces hard contradictions, not heuristics.
+- `dupname_identity_resolver.py` — what is ACTUALLY at a duplicate-name VA, resolved
+  from **trust-gated** callees to a fixpoint. ⚠ Its residue path once invented a
+  41-class phantom "missing virtual" worklist; rewritten 2026-07-29 on
+  `thunk_shape.py`, with ungated verdicts now prefixed `UNGATED_` and a loud banner.
+  Read the "WHY THE RESIDUE PATH WAS REWRITTEN" block in its docstring.
+- `dupname_rebijection.py` — makes the map injective on NAME (a linked image resolves
+  each COMDAT/extern name to exactly one VA). Applied in `560dffb3` (−105, user-approved).
+- `run_interleave_scan.py` — finds **uniform-stride runs** in retail `.text` (one TU's
+  same-shaped COMDAT family, e.g. the `StaticClassName` block) whose `splits.txt`
+  attribution is not constant across the run ⇒ a foreign pin reached into the middle
+  of another unit's COMDAT block. A mis-carve detector that % cannot see.
+- `gap_content_evidence.py` — proves gap ownership by **content** rather than
+  adjacency: decodes every `lbl_<VA>` data reference in dtk's auto-carve asm as a C
+  string and classifies SELF (a source path naming the claimant unit — the hardest
+  ownership evidence available, and address-independent) / SRC / STR.
+- `localstatic_tu_census.py` — per-unit done-vs-straggler census for the local-static
+  conversion lever. ⚠ Counting only `static Symbol` massively over-reports; and see
+  the corrected predicate in its docstring (parent-at-100, not whole-TU).
+- `ls_guard_timeline.py` — reads a target VA's function-local-static timeline in
+  guard-BIT order (= source declaration order) with each static's data address and
+  string literal, which turns a conversion into a mechanical transcription.
+- `localstatic_symbol_audit.py` — the identical-body (`StaticClassName` / `Type()`)
+  family audit: the **string operand is the only sound discriminator**, because all
+  453 bodies are identical modulo relocations and objdiff's normalized diff ignores
+  those. Re-derives in ~40 s; re-run it rather than quoting its counts from a doc.
+- `resolve_splits_union.py` / `resolve_json_union.py` / `land.sh` — the landing path.
+  ⚠ The splits resolver is a line-union that **cannot propagate deletions**; see the
+  known-traps list above.
 
 ### Permuter
 
