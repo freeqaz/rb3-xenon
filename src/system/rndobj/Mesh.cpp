@@ -1434,7 +1434,7 @@ DataNode RndMesh::OnCompareEdgeVerts(const DataArray *da) {
 DataNode RndMesh::OnPointCollide(const DataArray *da) {
     BSPNode *tree = GetBSPTree();
     Vector3 v(da->Float(2), da->Float(3), da->Float(4));
-    MultiplyTranspose(v, WorldXfm(), v);
+    MultiplyTranspose(WorldXfm(), v, v);
     return tree && Intersect(v, tree);
 }
 

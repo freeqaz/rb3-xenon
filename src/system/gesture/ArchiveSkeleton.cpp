@@ -32,7 +32,7 @@ void ArchiveSkeleton::JointPos(SkeletonCoordSys cs, SkeletonJoint joint, Vector3
     } else {
         Transform xfm;
         CameraToPlayerXfm(cs, xfm);
-        MultiplyTranspose(mJointPoses[joint], xfm, pos);
+        MultiplyTranspose(xfm, mJointPoses[joint], pos);
     }
 }
 

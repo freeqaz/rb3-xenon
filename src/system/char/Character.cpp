@@ -736,7 +736,7 @@ void Character::SetSphereBase(RndTransformable *trans) {
         trans = this;
     Sphere s18;
     MakeWorldSphere(s18, false);
-    MultiplyTranspose(s18.center, trans->WorldXfm(), s18.center);
+    MultiplyTranspose(trans->WorldXfm(), s18.center, s18.center);
     SetSphere(s18);
     mSphereBase = trans;
 }

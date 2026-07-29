@@ -312,7 +312,7 @@ void Intersect(const Hmx::Ray &ray1, const Hmx::Ray &ray2, Vector2 &vec) {
 void Intersect(const Transform &trans, const Plane &plane, Hmx::Ray &ray) {
     Vector3 on = plane.On();
     Vector3 point;
-    MultiplyTranspose(on, trans, point);
+    MultiplyTranspose(trans, on, point);
     const Vector3 &normal = (const Vector3 &)plane.a;
     float dotX = Dot(trans.m.x, normal);
     float dotY = Dot(trans.m.y, normal);
@@ -659,9 +659,13 @@ void Multiply(const Box &box, float f, Box &out) {
 void Multiply(const Plane &p, const Transform &t, Plane &out) {
     Hmx::Matrix3 invM;
     FastInvert(t.m, invM);
+    // Retail's commutative-chain association follows LOCAL DECLARATION order
+    // (value-number order), not written expression order: decl (b,c,a) yields
+    // the emitted chain mul(c-term), madd(a-term), madd(b-term). Do not
+    // "tidy" this back to (b,a,c) -- it costs ~0.4%.
     float b = p.b;
-    float a = p.a;
     float c = p.c;
+    float a = p.a;
     float nx = invM.x.y * b + invM.x.x * a + invM.x.z * c;
     float ny = invM.y.y * b + invM.y.x * a + invM.y.z * c;
     float nz = invM.z.y * b + invM.z.x * a + invM.z.z * c;
@@ -951,15 +955,15 @@ void BSPFace::Set(const Vector3 &p1, const Vector3 &p2, const Vector3 &p3) {
     Vector3 v;
     Vector2 pt;
 
-    MultiplyTranspose(p1, t, v);
+    MultiplyTranspose(t, p1, v);
     pt.Set(v.x, v.y);
     p.points.push_back(pt);
 
-    MultiplyTranspose(p2, t, v);
+    MultiplyTranspose(t, p2, v);
     pt.Set(v.x, v.y);
     p.points.push_back(pt);
 
-    MultiplyTranspose(p3, t, v);
+    MultiplyTranspose(t, p3, v);
     pt.Set(v.x, v.y);
     p.points.push_back(pt);
 

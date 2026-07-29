@@ -376,8 +376,8 @@ void Skeleton::Poll(int skel_idx, const SkeletonFrame &frame) {
                     _sub0.mJointPos[0] = data.mJointPositions[i];
                 } else {
                     MultiplyTranspose(
-                        data.mJointPositions[i],
                         mPlayerXfms[j - 1],
+                        data.mJointPositions[i],
                         _sub0.mJointPos[j]
                     );
                 }
