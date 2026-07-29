@@ -18,7 +18,7 @@ Baseline for every measurement below, taken in a fully-built worktree at main
 
 ## 0. TL;DR
 
-* **24 TUs/carves pinned, wired, ported and measured: +500 gains / −25 losses**
+* **27 TUs/carves pinned, wired, ported and measured: +574 gains / −38 losses**
   (lanes were still in flight at time of writing; the ledger is a floor, not a
   final). **All but one of the losses is the retirement of a *false* 100 %** — a
   `target_symbol_map.json` entry bound to a target VA that is not that function,
@@ -90,7 +90,18 @@ baseline above. Losses are itemised in §4.
 | D | `band3/game/KeysFx` | `0x826F3E98..0x826F47B0` (located 708 B → true **2,328 B**) | `GuitarFx.cpp` | **+5** | 0 |
 | F | `ChordShapeGenerator` (2nd carve) | out of the foreign `Mesh.cpp` pin | `Mesh.cpp` | **+42** | 0 |
 | G | `band3/meta_band/InputMgr` | `0x825B0518..0x825B22A8` (4 donors) | `AppInlineHelp`/`CalibrationPanel`/… | **+30** | 0 |
-| | **24 TUs / carves** | | | **+500** | **−25** |
+| A | `band3/tour/TourPerformerLocal` + `TourPerformerRemote` | (2 carves) | `system/obj/DataFunc.cpp` | **+23** | −2 |
+| B | `band3/game/BandUserMgr` | — | `system/rndobj/PropKeys.cpp` | **+38** | 0 |
+| | **27 TUs / carves** | | | **+574** | **−38** |
+
+Per lane: A **+95/−5**, B **+79/−12**, C **+139/−0**, D **+90/−8**, E **+74/−10**,
+F **+60/−3**, G **+37/−0**. Composition re-verified at this point: **27 new units,
+zero cross-branch `.text` overlaps.**
+
+`BandUserMgr` is worth singling out: it is the row where 36 functions were already
+matched *inside* the span under the donor, so it was the wave's hardest test of
+the by-name gate — and it came in at **+38 with zero losses**, i.e. every one of
+those 36 legitimately migrated unit and kept scoring.
 
 Two of the 21 (`SongSetlistProvider`, `SndAnalysis`) are TUs **laneBD never
 located** — they came out of the re-reduction in §5.
