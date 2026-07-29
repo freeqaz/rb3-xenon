@@ -57,8 +57,6 @@ void RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
 
 BEGIN_HANDLERS(RndTransformable)
     HANDLE(copy_local_to, OnCopyLocalTo)
-    HANDLE(copy_world_trans_from, OnCopyWorldTransFrom)
-    HANDLE(copy_world_pos_from, OnCopyWorldPosFrom)
     HANDLE(set_constraint, OnSetTransConstraint)
     HANDLE(set_local_rot, OnSetLocalRot)
     HANDLE(set_local_rot_index, OnSetLocalRotIndex)
@@ -75,8 +73,6 @@ BEGIN_HANDLERS(RndTransformable)
     HANDLE(get_local_scale_index, OnGetLocalScaleIndex)
     HANDLE_ACTION(normalize_local, Normalize(mLocalXfm.m, mLocalXfm.m))
     HANDLE(get_world_forward, OnGetWorldForward)
-    HANDLE(get_world_right, OnGetWorldRight)
-    HANDLE(get_world_up, OnGetWorldUp)
     HANDLE(get_world_pos, OnGetWorldPos)
     HANDLE(get_world_rot, OnGetWorldRot)
     HANDLE_ACTION(
