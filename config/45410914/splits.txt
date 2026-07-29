@@ -12126,8 +12126,7 @@ VocalPlayer.cpp:
 	.pdata      start:0x82236288 end:0x82236328
 	.pdata      start:0x82236330 end:0x82236378
 	.pdata      start:0x82236380 end:0x82236478
-	.pdata      start:0x82236478 end:0x822367E0
-	.pdata      start:0x822367E0 end:0x82236870
+	.pdata      start:0x82236478 end:0x822367C8
 	.pdata      start:0x822369D0 end:0x82236A58
 	.text       start:0x8269CCA8 end:0x8269CCFC
 	.text       start:0x826E3808 end:0x826E381C
@@ -12150,8 +12149,7 @@ VocalPlayer.cpp:
 	.text       start:0x826E4BD0 end:0x826E58D0
 	.text       start:0x826E5928 end:0x826E6070
 	.text       start:0x826E60C8 end:0x826E7498
-	.text       start:0x826E74B4 end:0x826EBF20
-	.text       start:0x826EBF28 end:0x826EC860
+	.text       start:0x826E74B4 end:0x826EBE10
 	.text       start:0x826EDF6C end:0x826EEC9C
 
 FlowNode.cpp:
@@ -12890,6 +12888,7 @@ system/rndobj/PostProcMgr.cpp:
 system/ui/UIProxy.cpp:
 	.pdata      start:0x82247DD8 end:0x82247F10
 	.text       start:0x828233A0 end:0x828248A0
+
 band3/meta_band/TrainingMgr.cpp:
 	.pdata      start:0x8221D2D0 end:0x8221D3E8
 	.text       start:0x82565088 end:0x82566000
@@ -12897,3 +12896,9 @@ band3/meta_band/TrainingMgr.cpp:
 band3/meta_band/CharSync.cpp:
 	.pdata      start:0x8221D220 end:0x8221D2D0
 	.text       start:0x82564410 end:0x82565088
+
+band3/game/RealGuitarGemPlayer.cpp:
+	.pdata      start:0x822367C8 end:0x822367E0
+	.pdata      start:0x822367E0 end:0x82236870
+	.text       start:0x826EBE10 end:0x826EBF20
+	.text       start:0x826EBF28 end:0x826EC860

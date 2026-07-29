@@ -1229,6 +1229,12 @@
     ]
    },
    "band3/game/GuitarFx.cpp": "NonMatching",
+   "band3/game/RealGuitarGemPlayer.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/game/Performer.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
