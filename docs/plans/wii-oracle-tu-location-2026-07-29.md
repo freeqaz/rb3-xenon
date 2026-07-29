@@ -454,9 +454,81 @@ the header. Real signal, zero headroom. (It does confirm the mechanism: retail
 
 ---
 
-## 7. Pin + wire attempts
+## 7. Pin + wire attempts — the pipeline works, end to end
 
-*(filled in below)*
+Two TUs were taken all the way through (locate → carve → port → name-pair →
+double-build A/B) in isolated worktrees, as an existence proof that the seam in
+§4 converts. **Both landed net-positive with ZERO losses. Combined +50.**
+
+### 7.1 `UIProxy` — branch `laneBD-P1`, commit `a8e8860c` — **+21 / −0**
+
+Reclaimed the whole `0x828233A0..0x828248A0` range from
+`system/hamobj/SongDifficultyDisplay.cpp` into a newly wired
+`src/system/ui/UIProxy.{h,cpp}` (ported from the rb3-Wii oracle).
+
+A/B, unit-agnostic strict-100 set, double full build with `report.cache` cleared
+each leg: **39,295 → 39,316 strict (+21 gains, −0 losses)**;
+`matched_functions` 39,520 → 39,542; the unit itself went **7/50 → 28/50**.
+
+★ **Bonus finding — the donor pin was a phantom.** `SongDifficultyDisplay` does
+not exist in RB3 retail at all: no RTTI descriptor and no name string anywhere in
+the 66 k-function binary. RB3's equivalent class is `InstrumentDifficultyDisplay`.
+That is why the RTTI instrument *declined* to place the claimer (§4b-bis) — it was
+right to. The pin was 100 % foreign code, so the carve drained the donor's only
+`.text` block and its `splits.txt` entry was deleted in the same edit (the
+empty-unit trap, avoided).
+
+Independent corroboration collected before the move, beyond this lane's two
+instruments: `fn_828233A0` disassembles as `UIProxy::DrawShowing`
+(`mDir@0x144`/`mPolled@0x19d`, `GetEnv`/`SetEnv` save-restore around
+`dir->DrawShowing`); the 7 UIProxy-distinctive literals (`main_trans`, `file`,
+`share`, `sync_on_move`, `sync_dir`, `proxy_dir`, `environ`) are referenced
+**only** from inside this range in the whole binary; the TU's dynamic initializer
+`fn_82823740` calls `0x82802530` = `?StaticClassName@UIProxy@@`; and **13 ported
+functions came out reloc-masked byte-identical on the first compile**.
+
+Two retail-vs-Wii-dev divergences were found and confirmed against the target
+asm: `Save` is a real `SAVE_REVS(3,0)` body (not `SAVE_OBJ`), and `SyncDir` has
+no `LOADMGR_EDITMODE` guard and uses a function-local `static Message`.
+
+### 7.2 `TrainingMgr` — branch `laneBD-P2`, commit `c3af9ef7` — **+29 / −0**
+
+Carved out of `band3/meta_band/UIStats.cpp`'s `0x825632BC..0x82566000` pin into a
+newly wired `src/band3/meta_band/TrainingMgr.cpp`.
+
+A/B, same protocol: **39,520 → 39,549 (+29 gains, −0 losses)**. The unit ends at
+**34/36 functions, 99.79 % fuzzy**; the residual two
+(`Unparticipate`/`ParticipateUsers`, 96.2 %/97.6 %) are a pure `r9`↔`r10` regswap
+plus one dead `addi` — permuter class, and the permuter is off-limits.
+
+★ **The span needed refining, and that generalises.** The instrument reported
+`0x82565140..0x82565D74`; the true TU span is **`0x82565088..0x82566000`**. The
+head extension is `GetTrainingMgr` + `GetModeFromLessonName` +
+`GetSongFromLessonName` (free functions with no vtable slot and no distinctive
+string — invisible to both instruments); the tail extension is `Handle`'s own
+`??__F` funclets and `except_data`. **Expect the located spans in
+`located_spans.json` to under-cover at both ends by exactly this much** — the
+instruments see virtuals, ctors and string users, not leaf helpers or funclets.
+Verification that the extension was right: the guard word `0x82DFDE8C` is cleared
+bit-by-bit by the 20 `??__F` funclets at `0x82565D74..0x82565FF4`, and Handle's 20
+local-static message names are precisely the 20 rb3-Wii `BEGIN_HANDLERS(TrainingMgr)`
+entries, string-pooled in exact reverse source order.
+
+### 7.3 What this calibrates
+
+Two spans, two ports, **+50 measured with 0 losses**, against a §4c headroom of
+528. Conversion on these two was 21/36 and 29/~13-plus-extension of the
+in-span unmatched functions — i.e. **a well-evidenced span converts at roughly
+60–100 % once the source is ported**, which is far better than a generic
+MWCC→MSVC body port because the retail code for these TUs turns out to be close
+to the Wii source. Both are small TUs (189 and 156 lines) and each took one
+agent-session.
+
+Neither branch is landed; both are path-limited commits on their own branches for
+the coordinator (`config/45410914/{objects.json,splits.txt}`,
+`scripts/target_symbol_map.json` are all union-mergeable via
+`scripts/harvest/land.sh`, and the two `.text` carves are 8 MB apart so they do
+not collide).
 
 ---
 
