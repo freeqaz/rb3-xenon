@@ -20,10 +20,13 @@ Baseline for every measurement below, taken in a fully-built worktree at main
 
 * **24 TUs/carves pinned, wired, ported and measured: +500 gains / −25 losses**
   (lanes were still in flight at time of writing; the ledger is a floor, not a
-  final). Every one of the 25 losses is the retirement of a *false* 100 % — a
+  final). **All but one of the losses is the retirement of a *false* 100 %** — a
   `target_symbol_map.json` entry bound to a target VA that is not that function,
-  scoring only as a shape (§4). Nine of them are pure ADDs into unclaimed space
-  and are structurally incapable of a loss; those alone are **+159**.
+  scoring only as a shape (§4). The single genuine cost found so far is
+  `?MaxPhraseScore@VocalPart@@QBAMXZ`, an 8-byte ICF fold at `0x826EE518` that
+  travelled with `BandPerformer`'s span and does not re-pair. Nine of the TUs are
+  pure ADDs into unclaimed space and are structurally incapable of a loss; those
+  alone are **+159**.
 
   For scale: laneBD's proof-of-concept was +71 from 3 TUs, and it priced the
   whole 42-span worklist's headroom at 504 currently-unscoreable functions. This
@@ -84,7 +87,7 @@ baseline above. Losses are itemised in §4.
 | F | `system/bandobj/ChordShapeGenerator` | 4 unclaimed runs (**ADD**) | — | **+13** | 0 |
 | G | `band3/meta_band/SongSetlistProvider` | `0x825BC6F8..0x825BC8FC` (**ADD**) | — | **+3** | 0 |
 | G | `system/dsp/SndAnalysis` | `0x82B816F0..0x82B81DD8` (**ADD**) | — | **+4** | 0 |
-| D | `band3/game/KeysFx` | `0x826F3EA8..0x826F4100` | `GuitarFx.cpp` | **+5** | 0 |
+| D | `band3/game/KeysFx` | `0x826F3E98..0x826F47B0` (located 708 B → true **2,328 B**) | `GuitarFx.cpp` | **+5** | 0 |
 | F | `ChordShapeGenerator` (2nd carve) | out of the foreign `Mesh.cpp` pin | `Mesh.cpp` | **+42** | 0 |
 | G | `band3/meta_band/InputMgr` | `0x825B0518..0x825B22A8` (4 donors) | `AppInlineHelp`/`CalibrationPanel`/… | **+30** | 0 |
 | | **24 TUs / carves** | | | **+500** | **−25** |
@@ -128,6 +131,16 @@ the binary.** laneBD listed exactly three such donors (§4b-bis:
 `SongDifficultyDisplay`, `MoveMgr`, `FlowEventListener`). All three are now
 confirmed phantoms. The instrument was not failing; it was reporting absence, and
 its *refusals* are as informative as its placements.
+
+★ **Caveat — it is the TWO-channel test that is decisive, not RTTI alone.** A
+class that is never instantiated, or that is non-polymorphic, has no COL either;
+absent RTTI on its own does not prove absence. The confirming channel is the raw
+**byte-string** search (the class name as a literal), and it is the cheaper of the
+two — run it first. For `FlowEventListener` the RTTI sweep found zero `.?AV` and
+zero `.?AU` descriptors, *and* the complete set of typedescs matching `Flow` is a
+single entry (`.?AVEnterFlowMsg@?A0x5b3730ba@@`), which rules out the
+anonymous-namespace form by construction; the string `FlowEventListener` occurs
+nowhere at all. Both channels, then the verdict.
 
 Both `MoveMgr` and `MoveGraph` are Dance-Central vocabulary — consistent with the
 standing note that RB3 retail has no Flow system either. A `MoveGraph` map entry
@@ -191,16 +204,60 @@ unwinds.
 matching `Configure`'s 19 function-local statics exactly. This is a *proof* of
 ownership, not a similarity score, and it is the cheapest way to settle a tail.
 
-### 3.5 Interleaved ICF folds must be excluded, not absorbed
+### 3.4-bis ★★ Do NOT reclaim a funclet run without checking `report.json` first
+
+`ChordShapeGenerator`'s 29 property `Symbol`s share one guard word `0x82CBD38C`,
+cleared bit-by-bit by exactly **29 32-byte `??__F` funclets** at
+`0x822DE6AC..0x822DEA4C`. By the §3.4 rule those funclets are provably CSG's. They
+are pinned to `CharLipSync.cpp` — **and they already score 100 % there**, via
+anonymous byte pairing. Lane F deliberately did **not** carve them: the trade is
+**±0 at best and 29 at risk**.
+
+**Rule: ownership evidence tells you a funclet run is yours; `report.json` tells
+you whether moving it is worth anything.** Check the second before acting on the
+first. This is the one case in the wave where the correct action was to leave
+provably-misattributed code where it sits.
+
+### 3.5 ★ ICF mis-attribution: the tell is ISLAND DISTANCE, not byte count
 
 `RealGuitarGemPlayer` is pinned as **two** `.text` blocks so `DepthBuffer3D.cpp`'s
-interleaved 8-byte block at `0x826EBF20` stays with its owner. The tell was in
-the row all along: its `claimers` field read
-`['VocalPlayer.cpp:0x9d8', 'DepthBuffer3D.cpp:0x8']` — a second claimer with a
-tiny byte count means an interleaved fold, not a second donor.
+interleaved 8-byte block at `0x826EBF20` stays with its owner. The first tell was
+in the row: `claimers` read `['VocalPlayer.cpp:0x9d8', 'DepthBuffer3D.cpp:0x8']`
+— a second claimer with a tiny byte count.
 
-`PracticeSectionProvider` is the extreme case: reassembled from **3 pins + 3
-gaps**.
+**But the general form is stronger and should go into the carve pre-flight: any
+claimer pin that is an ISLAND — far from that unit's own other blocks — is an ICF
+mis-attribution, regardless of size.** Under `/O1` with no LTCG, TU spatial
+grouping is preserved, so a unit does not scatter a lone block megabytes from its
+neighbours. `PracticeSectionProvider` proved it twice: `GemTrack` claimed
+`0x826CF908..0x826CFB38` while its next block is at `0x82B93CE4`, and
+`PlayerTrackConfigList` claimed `0x826CFBAC..0x826CFFB8` while its next is at
+`0x8276F708`. Both sat mid-body of the real TU. `PracticeSectionProvider` was
+therefore reassembled from **3 pins + 3 unpinned gaps**.
+
+**Pre-flight addition: for each claimer, print the distance from the claimed
+block to that unit's nearest other block.** A megabyte-scale distance is a
+mis-attribution, not a donor.
+
+### 3.6 Two cheap tells worth having in hand
+
+* **Funclet identification without Ghidra.** A 32–48-byte function starting
+  `subi r31, r12, <N>` *is* an EH funclet, and `<N>` identifies its parent via
+  that parent's `addi r1, r31, <N>` epilogue. This one tell killed
+  `RealGuitarGemPlayer`'s snapped lo, proved its tail extension, and settled
+  `0x826CFEF0 = ~PracticeSectionProvider`.
+* **Invert the string channel to find a tail.** Building the `lis`/`addi`
+  constant-edge set over `.text` and inverting it (code VA → constants referenced)
+  located `BandPerformer::Handle` at `0x826EDFF0`, `InitData` at `0x826D00C0`,
+  `OnText` at `0x826D02C8` and `KeysFx::Poll` at `0x826F4250` in seconds each.
+
+### 3.7 A TU can be far bigger than its `.cpp` — header-only classes
+
+`PracticeSectionProvider.cpp` is 131 lines but the TU is the sole emitter of
+`system/midi/MidiSectionLister.h`, which was **missing from our tree entirely**
+and had to be ported before the TU would close. Do not size-check a span against
+the oracle `.cpp`'s line count. The same effect made `KeysFx`'s true span
+**2,328 B against a located 708 B** (`Poll` alone is 1,376 B).
 
 ---
 
@@ -299,6 +356,20 @@ the row is demoted to LOW. **The signal was never weak — the reduction threw t
 resolution away.** Attributing each edge to its individual `.pdata` function and
 ranking *functions* by how many selective literals they carry recovers it.
 
+### 5.0 ★★ `Mesh.cpp`'s pin `0x822DF9A0..0x822E33A4` is FOREIGN
+
+Found while extending `ChordShapeGenerator`, and it is the largest mis-attributed
+pin the wave uncovered. `RndMesh`'s own RTTI (typedesc `0x82C6B88C`, 4 COLs)
+resolves to vtables at `0x820608F4/EC/94/8C`, and **every one of their own-class
+slots is at `0x82417DA8..0x8242xxxx` — 1.3 MB away** from the pin. Three blocks
+(`0x822DFD88..0x822DFF20`, `0x822DFF28..0x822E1234`, `0x822E12B0..0x822E33A4`)
+were carved out to `ChordShapeGenerator` for **+42**, and `Mesh.cpp` keeps all its
+real blocks, so no empty-unit risk.
+
+This is the §2 phantom test's weaker sibling and it should be run just as
+routinely: **a donor whose own RTTI slots are nowhere near its pin does not own
+that pin**, even when the class itself certainly exists.
+
 ### 5.1 `ChordShapeGenerator`: LOW → landed
 
 Its LOW "span" `0x822DD290..0x822E325C` (24.5 KB) straddles **eight** pinned
@@ -332,7 +403,24 @@ From laneBD's still-unlocated 65, by the same reduction:
 | `band3/meta_band/SongSetlistProvider` | `0x825BC828..0x825BC8FC` (212 B) | **2/2** `part_difficulty_screen` + `song_select_screen` — the only function in the binary carrying both | UNCLAIMED | 4 / 908 | **landed +3** |
 | `system/dsp/SndAnalysis` | `0x82B81860..0x82B81BF8` (920 B) | **4/4** `boost`, `maxperiod`, `minperiod`, `numpeaksmin` | UNCLAIMED | 5 / 2,584 | **landed +4** |
 | `band3/meta_band/InputMgr` | `0x825B0598` (88 B, `input_user_left`) + `0x825B0C38` (160 B, `input_mgr`) | 2 anchors | UNCLAIMED (≈1.9 KB / 14 fns) | 32 / 10,332 | located, assigned |
-| `system/bandobj/ArpeggioShape` | `0x82356118..0x82356208` (240 B) | **5/5** `chord_label.txt`, `chord_shape.mat`, `chord_shape.mesh`, `fade.mnm`, `fret_numbers_chord.txt` | **`Rot.cpp`** — a stray 240-B micro-pin; `Rot.cpp` is `system/math` and cannot own a function full of asset names | 24 / 6,052 | located, assigned |
+| `system/bandobj/ArpeggioShape` | `0x82356118..0x82356208` (240 B) | **5/5** `chord_label.txt`, `chord_shape.mat`, `chord_shape.mesh`, `fade.mnm`, `fret_numbers_chord.txt` | **`Rot.cpp`** micro-pin, currently mapped to `?OnOverlayPrint@Rnd@@…` at **11.7 %** — a mispair, so moving it costs nothing | 24 / 6,052 | located, refined, not ported |
+
+★ `ArpeggioShape` was refined further: `0x82356118` is
+`ArpeggioShapePool::ArpeggioShapePool(ObjectDir*, RndGroup*, int)` — it calls
+`ObjectDir::FindObject` (`0x8227D5E8`) five times with exactly the five init-list
+literals, then loops calling `CreateArpeggioShape`. The rest of the TU is
+scattered across `FingerShape.cpp` (`0x82355098`), `GemTrackResourceManager.cpp`
+(`0x82356050`) and an unclaimed run `0x82354CAC..0x82355044` — a multi-donor
+untangle needing its own session.
+
+★★ **CORRECTION to a hypothesis this lane issued.** I flagged a *second* `Rot.cpp`
+micro-pin at `0x823556E0..0x82355738` (88 B) in the same block as also suspicious.
+It is **not** stray: it is `?StaticClassName@RndMatAnim@@SA?AVSymbol@@XZ`, it
+scores **100 %**, and its `'MatAnim'` string reference confirms it. **Do not move
+it.** A scattered micro-pin in a foreign-looking neighbourhood is not evidence of
+mis-attribution by itself — `Rot.cpp` legitimately owns ~30 scattered COMDATs.
+The 88-byte class-name shape (§5.3) was the tell, and I should have applied my own
+rule before proposing the move.
 
 ### 5.3 Twelve further single-literal anchors (leads, not locations)
 
@@ -518,6 +606,12 @@ insist on it.
 Both came out of lane B and are recorded here because they are levers, not
 laneBL work:
 
+* ★ **`BandUser::IsNullUser()` goes through a VIRTUAL BASE.** All five
+  `BandPerformer` residuals (89.5–94.7 %) differ by the *same* four target-only
+  instructions: retail reaches `IsNullUser()` via `add` / `addi r3,r11,4` / vtable
+  slot `0x70`, where our `BandUser.h` models a plain call. Binary-wide blast
+  radius, so lane D left it alone — it needs a layout owner, and it is the
+  highest-leverage single item the wave surfaced.
 * ★ **`AssetMgr` uses a linked chain, not `std::map`.** Retail walks a
   null-terminated singly-linked chain — head at `*(mgr+0x2c)`, next pointer at
   `*(node+0)`, `Asset*` at `*(node+8)` — while our source emits an `_Rb_tree`.
@@ -531,6 +625,37 @@ laneBL work:
   the same phenomenon, not a regression of it.)
 
 ---
+
+## 8ter. Measured size distributions (the gate in practice)
+
+Lane D, all five TUs, all 90 gains landing in its own units (no donor re-pairings):
+
+| TU | n | min | median | mean | max | % funclet |
+|---|--:|--:|--:|--:|--:|--:|
+| `RealGuitarGemPlayer` | 31 | 4 | 68 | 80.8 | 304 | 16.1 % |
+| `BandPerformer` | 26 | 12 | 66 | 93.7 | 396 | 15.4 % |
+| `PracticeSectionProvider` | 22 | 8 | 64 | 124.0 | 912 | 31.8 % |
+| `CrowdRating` | 5 | 32 | 76 | 191.2 | 668 | 0.0 % |
+| `KeysFx` | 6 | 12 | 80 | 92.0 | 212 | 16.7 % |
+| **lane D total** | **90** | 4 | **68** | **102.0** | 912 | **18.9 %** |
+| `CharProvider` (lane B) | 26 | — | **136** | 140.8 | — | **0 %** |
+| *tree baseline* | 39,521 | 4 | *40* | *88* | 6,900 | *53.4 %* |
+
+Body-weighted on every axis: median 1.7× the tree's, funclet share about a third
+of it.
+
+★ **One honest qualification, from lane F.** Its 60 gains show median 44 B /
+mean 195 B / **0 % funclet-shaped by name** — but **41 of the 60 carry anonymous
+`fn_<8hex>` names**, small template and thunk COMDATs that came with the pin. The
+substance is the named tail (`SyncProperty` 2,644 B, `Handle` 660, `NameMesh` 484,
+`_Rb_tree::swap` 408, `Save` 268, `Copy` 252, `MakeInvertedMesh` 212, plus
+`ClassName`/`SetType`/the four `On*` handlers). **"0 % funclet-shaped" is not the
+same as "0 % boilerplate" when the names are anonymous** — report the named/
+anonymous split alongside the funclet share.
+
+Two independent lanes measured `reloc_correspondence.py` hanging (>8 min and
+>10 min on `--unit`, twice), corroborating the coordinator's finding and the
+decision to drop it.
 
 ## 9. What remains
 
