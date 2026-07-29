@@ -10941,12 +10941,12 @@ SongSortNode.cpp:
 	.text       start:0x82663830 end:0x82663968
 
 GuitarFx.cpp:
-	.pdata      start:0x82236C30 end:0x82236D00
+	.pdata      start:0x82236C58 end:0x82236D00
 	.pdata      start:0x82236D00 end:0x82236D08
 	.pdata      start:0x82236D08 end:0x82236D30
 	.pdata      start:0x82236D30 end:0x82236D38
 	.pdata      start:0x82236D38 end:0x82236D90
-	.text       start:0x826F4100 end:0x826F4C40
+	.text       start:0x826F47B0 end:0x826F4C40
 	.text       start:0x826F4C40 end:0x826F4CF8
 	.text       start:0x826F4D00 end:0x826F4EA0
 	.text       start:0x826F4EA0 end:0x826F5018
@@ -12906,3 +12906,7 @@ band3/game/PracticeSectionProvider.cpp:
 band3/game/CrowdRating.cpp:
 	.pdata      start:0x82236A20 end:0x82236A40
 	.text       start:0x826EE598 end:0x826EEB08
+
+band3/game/KeysFx.cpp:
+	.pdata      start:0x82236C08 end:0x82236C58
+	.text       start:0x826F3E98 end:0x826F47B0

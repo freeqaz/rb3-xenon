@@ -1229,6 +1229,7 @@
     ]
    },
    "band3/game/GuitarFx.cpp": "NonMatching",
+   "band3/game/KeysFx.cpp": "NonMatching",
    "band3/game/CrowdRating.cpp": "NonMatching",
    "band3/game/PracticeSectionProvider.cpp": {
     "status": "NonMatching",
