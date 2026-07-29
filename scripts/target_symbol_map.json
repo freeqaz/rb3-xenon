@@ -27161,5 +27161,7 @@
  "0x82794380": "??_GMassChannelMapping@@UAAPAXI@Z",
  "0x82794668": "??1MultiChannelMapping@@UAA@XZ",
  "0x827946e0": "??_GMultiChannelMapping@@UAAPAXI@Z",
- "0x827944c0": "??0MultiChannelMapping@@QAA@PAVSubmix@@PBDAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z"
+ "0x827944c0": "??0MultiChannelMapping@@QAA@PAVSubmix@@PBDAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x825ef708": "??_GAsset@@UAAPAXI@Z",
+ "0x825ef788": "??0Asset@@QAA@PAVDataArray@@H@Z"
 }

@@ -12927,3 +12927,23 @@ band3/game/HitTracker.cpp:
 system/beatmatch/SlotChannelMapping.cpp:
 	.pdata      start:0x8223F558 end:0x8223F600
 	.text       start:0x82793F8C end:0x82794730
+
+
+system/utl/LogFile.cpp:
+	.pdata      start:0x822429B8 end:0x822429E8
+	.text       start:0x827CBEF8 end:0x827CC150
+
+
+band3/game/HitTracker.cpp:
+	.pdata      start:0x82236158 end:0x82236190
+	.text       start:0x826E34E0 end:0x826E3808
+
+
+system/beatmatch/SlotChannelMapping.cpp:
+	.pdata      start:0x8223F558 end:0x8223F600
+	.text       start:0x82793F8C end:0x82794730
+
+
+band3/meta_band/Asset.cpp:
+	.pdata      start:0x82226A98 end:0x82226AD8
+	.text       start:0x825EF708 end:0x825EFB34
