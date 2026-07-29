@@ -12909,6 +12909,14 @@ band3/tour/TourWeightManager.cpp:
 	.pdata      start:0x82200EF8 end:0x82200F28
 	.text       start:0x82369348 end:0x8236955C
 
+band3/tour/TourGameRules.cpp:
+	.pdata      start:0x82200BB0 end:0x82200BD8
+	.text       start:0x82365E68 end:0x823660F8
+
+band3/tour/TourGameModifier.cpp:
+	.pdata      start:0x82200F58 end:0x82200F68
+	.text       start:0x823699B4 end:0x82369B28
+
 band3/tour/TourPerformerRemote.cpp:
 	.pdata      start:0x82200BD8 end:0x82200C10
 	.text       start:0x823660F8 end:0x823663B8
