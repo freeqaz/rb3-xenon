@@ -20,7 +20,13 @@
   "unmatched": 36,
   "pdata_fns": 34,
   "str_ratio": 0.727,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x828233A0",
+   "0x82824580"
+  ]
  },
  {
   "stem": "RealGuitarGemPlayer",
@@ -44,7 +50,13 @@
   "unmatched": 29,
   "pdata_fns": 19,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826EBDE4",
+   "0x826EC7F0"
+  ]
  },
  {
   "stem": "TourPerformerLocal",
@@ -67,7 +79,13 @@
   "unmatched": 27,
   "pdata_fns": 40,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x823663B8",
+   "0x82367CF4"
+  ]
  },
  {
   "stem": "LockStepMgr",
@@ -88,7 +106,13 @@
   "unmatched": 0,
   "pdata_fns": 25,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825ABDF8",
+   "0x825AC9AC"
+  ]
  },
  {
   "stem": "BandUserMgr",
@@ -111,7 +135,13 @@
   "unmatched": 24,
   "pdata_fns": 67,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82682A48",
+   "0x82684E40"
+  ]
  },
  {
   "stem": "UIGridProvider",
@@ -134,7 +164,13 @@
   "unmatched": 24,
   "pdata_fns": 14,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82817260",
+   "0x82817A68"
+  ]
  },
  {
   "stem": "BandPerformer",
@@ -158,7 +194,13 @@
   "unmatched": 23,
   "pdata_fns": 21,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826ED5D0",
+   "0x826EDFF0"
+  ]
  },
  {
   "stem": "BandButton",
@@ -181,7 +223,13 @@
   "unmatched": 23,
   "pdata_fns": 19,
   "str_ratio": 0.25,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82343950",
+   "0x82344B68"
+  ]
  },
  {
   "stem": "TourDesc",
@@ -204,7 +252,13 @@
   "unmatched": 22,
   "pdata_fns": 25,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x823684E8",
+   "0x82368F88"
+  ]
  },
  {
   "stem": "SlotChannelMapping",
@@ -225,7 +279,13 @@
   "unmatched": 0,
   "pdata_fns": 18,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82793F8C",
+   "0x827946B4"
+  ]
  },
  {
   "stem": "UGCPurchasePanel",
@@ -246,7 +306,13 @@
   "unmatched": 0,
   "pdata_fns": 17,
   "str_ratio": 0.429,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8263E6A0",
+   "0x8263F240"
+  ]
  },
  {
   "stem": "PracticeSectionProvider",
@@ -271,7 +337,13 @@
   "unmatched": 17,
   "pdata_fns": 28,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826CF380",
+   "0x826D0278"
+  ]
  },
  {
   "stem": "CharProvider",
@@ -294,7 +366,13 @@
   "unmatched": 16,
   "pdata_fns": 28,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82666830",
+   "0x82667B48"
+  ]
  },
  {
   "stem": "CharSync",
@@ -317,7 +395,13 @@
   "unmatched": 16,
   "pdata_fns": 17,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82564410",
+   "0x82564FC4"
+  ]
  },
  {
   "stem": "TourChar",
@@ -338,7 +422,13 @@
   "unmatched": 0,
   "pdata_fns": 15,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82B7FAB0",
+   "0x82B800E0"
+  ]
  },
  {
   "stem": "Quest",
@@ -362,7 +452,13 @@
   "unmatched": 15,
   "pdata_fns": 27,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8235AE68",
+   "0x8235B8BC"
+  ]
  },
  {
   "stem": "FaceHairProvider",
@@ -386,7 +482,13 @@
   "unmatched": 14,
   "pdata_fns": 22,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266F330",
+   "0x8266FAF0"
+  ]
  },
  {
   "stem": "CampaignCareerLeaderboardPanel",
@@ -409,7 +511,13 @@
   "unmatched": 12,
   "pdata_fns": 30,
   "str_ratio": 0.812,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825F11F8",
+   "0x825F2000"
+  ]
  },
  {
   "stem": "GameTimePanel",
@@ -432,7 +540,13 @@
   "unmatched": 12,
   "pdata_fns": 10,
   "str_ratio": 0.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8261EA48",
+   "0x8261EF60"
+  ]
  },
  {
   "stem": "TourCharLocal",
@@ -453,7 +567,13 @@
   "unmatched": 0,
   "pdata_fns": 10,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82B79A40",
+   "0x82B79FAC"
+  ]
  },
  {
   "stem": "TrainingMgr",
@@ -476,7 +596,13 @@
   "unmatched": 10,
   "pdata_fns": 13,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82565140",
+   "0x82565D74"
+  ]
  },
  {
   "stem": "ParentalControlPanel",
@@ -499,7 +625,13 @@
   "unmatched": 10,
   "pdata_fns": 8,
   "str_ratio": 0.25,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8262EE18",
+   "0x8262F2E4"
+  ]
  },
  {
   "stem": "KeysFx",
@@ -522,7 +654,13 @@
   "unmatched": 0,
   "pdata_fns": 8,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826F3F80",
+   "0x826F4250"
+  ]
  },
  {
   "stem": "BandStoreOffer",
@@ -545,7 +683,13 @@
   "unmatched": 7,
   "pdata_fns": 12,
   "str_ratio": 0.444,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266E4E8",
+   "0x8266EB80"
+  ]
  },
  {
   "stem": "TourCharRemote",
@@ -566,7 +710,13 @@
   "unmatched": 0,
   "pdata_fns": 6,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82B803A8",
+   "0x82B80740"
+  ]
  },
  {
   "stem": "HitTracker",
@@ -587,7 +737,13 @@
   "unmatched": 0,
   "pdata_fns": 6,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826E34E0",
+   "0x826E3820"
+  ]
  },
  {
   "stem": "LogFile",
@@ -608,7 +764,13 @@
   "unmatched": 0,
   "pdata_fns": 6,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x827CBEF8",
+   "0x827CC150"
+  ]
  },
  {
   "stem": "TourProperty",
@@ -631,7 +793,13 @@
   "unmatched": 6,
   "pdata_fns": 9,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82368FC8",
+   "0x82369348"
+  ]
  },
  {
   "stem": "InterstitialPanel",
@@ -654,7 +822,13 @@
   "unmatched": 6,
   "pdata_fns": 6,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8261EFC0",
+   "0x8261F240"
+  ]
  },
  {
   "stem": "CrowdRating",
@@ -677,7 +851,13 @@
   "unmatched": 6,
   "pdata_fns": 2,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826EE8B8",
+   "0x826EEB08"
+  ]
  },
  {
   "stem": "ProfileAssets",
@@ -700,7 +880,13 @@
   "unmatched": 6,
   "pdata_fns": 14,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82655098",
+   "0x82655558"
+  ]
  },
  {
   "stem": "AssetStore",
@@ -723,7 +909,13 @@
   "unmatched": 6,
   "pdata_fns": 7,
   "str_ratio": 0.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825ECD58",
+   "0x825ED020"
+  ]
  },
  {
   "stem": "UnisonIcon",
@@ -746,7 +938,13 @@
   "unmatched": 5,
   "pdata_fns": 13,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x822D2D58",
+   "0x822D3530"
+  ]
  },
  {
   "stem": "PatchRenderer",
@@ -769,7 +967,13 @@
   "unmatched": 4,
   "pdata_fns": 4,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x822AE298",
+   "0x822AE63C"
+  ]
  },
  {
   "stem": "TourWeightManager",
@@ -792,7 +996,13 @@
   "unmatched": 4,
   "pdata_fns": 5,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x823693E8",
+   "0x82369568"
+  ]
  },
  {
   "stem": "DialogDisplay",
@@ -815,7 +1025,13 @@
   "unmatched": 3,
   "pdata_fns": 17,
   "str_ratio": 0.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82329B98",
+   "0x8232A348"
+  ]
  },
  {
   "stem": "Asset",
@@ -836,7 +1052,13 @@
   "unmatched": 0,
   "pdata_fns": 2,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825EF708",
+   "0x825EFA68"
+  ]
  },
  {
   "stem": "TourGameRules",
@@ -857,7 +1079,13 @@
   "unmatched": 0,
   "pdata_fns": 2,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82365DF0",
+   "0x82366098"
+  ]
  },
  {
   "stem": "TourGameModifier",
@@ -878,7 +1106,13 @@
   "unmatched": 0,
   "pdata_fns": 2,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82369994",
+   "0x82369B28"
+  ]
  },
  {
   "stem": "TourQuestGameRules",
@@ -901,7 +1135,13 @@
   "unmatched": 2,
   "pdata_fns": 7,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82365C50",
+   "0x82365EC0"
+  ]
  },
  {
   "stem": "TourPerformerRemote",
@@ -924,7 +1164,13 @@
   "unmatched": 1,
   "pdata_fns": 7,
   "str_ratio": 1.0,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x823660F8",
+   "0x823663B8"
+  ]
  },
  {
   "stem": "TourReward",
@@ -947,7 +1193,13 @@
   "unmatched": 1,
   "pdata_fns": 2,
   "str_ratio": null,
-  "confidence": "HIGH"
+  "confidence": "HIGH",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x823643E8",
+   "0x823644F8"
+  ]
  },
  {
   "stem": "CharKeyHandMidi",
@@ -971,7 +1223,13 @@
   "unmatched": 32,
   "pdata_fns": 33,
   "str_ratio": 0.667,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x822D0EF8",
+   "0x822D2908"
+  ]
  },
  {
   "stem": "EyebrowsProvider",
@@ -995,7 +1253,13 @@
   "unmatched": 20,
   "pdata_fns": 35,
   "str_ratio": 0.667,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266EC90",
+   "0x8266F800"
+  ]
  },
  {
   "stem": "BandFaceDeform",
@@ -1020,7 +1284,13 @@
   "unmatched": 20,
   "pdata_fns": 42,
   "str_ratio": 0.6,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x822C7768",
+   "0x822C8BA8"
+  ]
  },
  {
   "stem": "FaceTypeProvider",
@@ -1044,7 +1314,13 @@
   "unmatched": 19,
   "pdata_fns": 31,
   "str_ratio": 0.75,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266F110",
+   "0x8266FAF0"
+  ]
  },
  {
   "stem": "ReviewDisplay",
@@ -1069,7 +1345,13 @@
   "unmatched": 17,
   "pdata_fns": 28,
   "str_ratio": 0.727,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8231E4A8",
+   "0x8231F28C"
+  ]
  },
  {
   "stem": "CampaignGoalsLeaderboardChoicePanel",
@@ -1093,7 +1375,13 @@
   "unmatched": 14,
   "pdata_fns": 63,
   "str_ratio": 0.625,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825F3378",
+   "0x825F5790"
+  ]
  },
  {
   "stem": "ShellInputInterceptor",
@@ -1116,7 +1404,13 @@
   "unmatched": 12,
   "pdata_fns": 16,
   "str_ratio": null,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825ACC80",
+   "0x825AD65C"
+  ]
  },
  {
   "stem": "BandConfiguration",
@@ -1141,7 +1435,13 @@
   "unmatched": 10,
   "pdata_fns": 18,
   "str_ratio": 0.667,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x822B8620",
+   "0x822B90F4"
+  ]
  },
  {
   "stem": "AssetOffer",
@@ -1162,7 +1462,13 @@
   "unmatched": 0,
   "pdata_fns": 8,
   "str_ratio": 0.0,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266B520",
+   "0x8266B7D0"
+  ]
  },
  {
   "stem": "InstrumentFinishProvider",
@@ -1186,7 +1492,13 @@
   "unmatched": 7,
   "pdata_fns": 9,
   "str_ratio": 1.0,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266FA50",
+   "0x8266FDC8"
+  ]
  },
  {
   "stem": "StandInProvider",
@@ -1210,7 +1522,13 @@
   "unmatched": 3,
   "pdata_fns": 7,
   "str_ratio": 1.0,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82672F28",
+   "0x826731E0"
+  ]
  },
  {
   "stem": "Playback",
@@ -1233,7 +1551,13 @@
   "unmatched": 3,
   "pdata_fns": 4,
   "str_ratio": null,
-  "confidence": "MED"
+  "confidence": "MED",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82792B38",
+   "0x82792D50"
+  ]
  },
  {
   "stem": "KeyboardController",
@@ -1258,7 +1582,13 @@
   "unmatched": 96,
   "pdata_fns": 130,
   "str_ratio": 0.0,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": false,
+  "snapped": [
+   "0x82798410",
+   "0x8279D318"
+  ]
  },
  {
   "stem": "ChordShapeGenerator",
@@ -1283,7 +1613,13 @@
   "unmatched": 77,
   "pdata_fns": 144,
   "str_ratio": 0.977,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x822DD290",
+   "0x822E325C"
+  ]
  },
  {
   "stem": "ButtonGuitarController",
@@ -1308,7 +1644,13 @@
   "unmatched": 76,
   "pdata_fns": 105,
   "str_ratio": 0.0,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": false,
+  "snapped": [
+   "0x82798F90",
+   "0x8279D318"
+  ]
  },
  {
   "stem": "RealGuitarController",
@@ -1333,7 +1675,13 @@
   "unmatched": 52,
   "pdata_fns": 80,
   "str_ratio": 0.0,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": false,
+  "snapped": [
+   "0x82799D68",
+   "0x8279D318"
+  ]
  },
  {
   "stem": "CurrentOutfitProvider",
@@ -1358,7 +1706,13 @@
   "unmatched": 41,
   "pdata_fns": 91,
   "str_ratio": 0.214,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8266F7A8",
+   "0x82671EEC"
+  ]
  },
  {
   "stem": "SetlistSortByLocation",
@@ -1383,7 +1737,13 @@
   "unmatched": 33,
   "pdata_fns": 227,
   "str_ratio": 0.07,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825BF428",
+   "0x825C5488"
+  ]
  },
  {
   "stem": "JoypadGuitarController",
@@ -1408,7 +1768,13 @@
   "unmatched": 29,
   "pdata_fns": 55,
   "str_ratio": 0.077,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": false,
+  "snapped": [
+   "0x8279AA60",
+   "0x8279D318"
+  ]
  },
  {
   "stem": "StoreArtLoaderPanel",
@@ -1433,7 +1799,13 @@
   "unmatched": 26,
   "pdata_fns": 28,
   "str_ratio": 0.25,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x827B7170",
+   "0x827B7DC8"
+  ]
  },
  {
   "stem": "CharTransCopy",
@@ -1457,7 +1829,13 @@
   "unmatched": 12,
   "pdata_fns": 22,
   "str_ratio": 0.4,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x823C7700",
+   "0x823C8128"
+  ]
  },
  {
   "stem": "JoypadMidiController",
@@ -1481,7 +1859,13 @@
   "unmatched": 12,
   "pdata_fns": 16,
   "str_ratio": 1.0,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82797760",
+   "0x82798224"
+  ]
  },
  {
   "stem": "RetryAudioPanel",
@@ -1505,7 +1889,13 @@
   "unmatched": 0,
   "pdata_fns": 12,
   "str_ratio": 0.4,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82630228",
+   "0x82630894"
+  ]
  },
  {
   "stem": "TourPropertyCollection",
@@ -1529,7 +1919,13 @@
   "unmatched": 0,
   "pdata_fns": 12,
   "str_ratio": null,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82365560",
+   "0x82365C20"
+  ]
  },
  {
   "stem": "BandPreloadPanel",
@@ -1553,7 +1949,13 @@
   "unmatched": 11,
   "pdata_fns": 9,
   "str_ratio": 0.25,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826047A0",
+   "0x82604CD8"
+  ]
  },
  {
   "stem": "BandScreen",
@@ -1577,7 +1979,13 @@
   "unmatched": 11,
   "pdata_fns": 13,
   "str_ratio": 1.0,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826424B0",
+   "0x826428E0"
+  ]
  },
  {
   "stem": "RKTrainerPanel",
@@ -1601,7 +2009,13 @@
   "unmatched": 10,
   "pdata_fns": 9,
   "str_ratio": 0.0,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x826B1760",
+   "0x826B1C30"
+  ]
  },
  {
   "stem": "SaveLoadStatusPanel",
@@ -1625,7 +2039,13 @@
   "unmatched": 9,
   "pdata_fns": 18,
   "str_ratio": 0.333,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82631A20",
+   "0x826323C8"
+  ]
  },
  {
   "stem": "CharMeshCacheMgr",
@@ -1650,7 +2070,13 @@
   "unmatched": 8,
   "pdata_fns": 20,
   "str_ratio": null,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8239C380",
+   "0x8239D048"
+  ]
  },
  {
   "stem": "MultiSelectListPanel",
@@ -1675,7 +2101,13 @@
   "unmatched": 2,
   "pdata_fns": 18,
   "str_ratio": 0.4,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x82626A40",
+   "0x82627238"
+  ]
  },
  {
   "stem": "DrumTrackWatcherImpl",
@@ -1699,7 +2131,13 @@
   "unmatched": 1,
   "pdata_fns": 9,
   "str_ratio": null,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x827800B0",
+   "0x827808C8"
+  ]
  },
  {
   "stem": "AppScoreDisplay",
@@ -1722,7 +2160,13 @@
   "unmatched": 1,
   "pdata_fns": 1,
   "str_ratio": null,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x825720E8",
+   "0x82572208"
+  ]
  },
  {
   "stem": "BandSong",
@@ -1745,7 +2189,13 @@
   "unmatched": 0,
   "pdata_fns": 1,
   "str_ratio": null,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": true,
+  "hi_on_fn_boundary": true,
+  "snapped": [
+   "0x8227A828",
+   "0x8227A8CC"
+  ]
  },
  {
   "stem": "TourChallengeResultsPanel",
@@ -1768,6 +2218,12 @@
   "unmatched": 0,
   "pdata_fns": 0,
   "str_ratio": null,
-  "confidence": "LOW"
+  "confidence": "LOW",
+  "lo_on_fn_boundary": false,
+  "hi_on_fn_boundary": false,
+  "snapped": [
+   "0x82638B24",
+   "0x82638B60"
+  ]
  }
 ]
