@@ -567,10 +567,10 @@ DataNode op48(DataArray *msg) {
 
 DataNode op49(DataArray *msg) {
     u32 operand = msg->Int(1);
-    u8 w = msg->Int(2);
+    u32 w = (u8)msg->Int(2);
 
-    u32 working3 = (w << 8) ^ 0x5Cu;
-    u32 working2 = (w ^ 0x63u);
+    u32 working2 = (w ^ 0x63);
+    u32 working3 = (w << 8) ^ 0x5C;
     u32 tmp = ((working2 | working3) >> 3);
     return u8(tmp ^ operand);
 }
