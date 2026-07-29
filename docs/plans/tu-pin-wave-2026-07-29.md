@@ -69,14 +69,14 @@ baseline above. Losses are itemised in §4.
 | A | `band3/tour/TourDesc` | `0x82367D60..0x82368FB8` | `system/obj/DataFunc.cpp` | **+58** | −1 |
 | A | `band3/tour/TourProperty` + `TourWeightManager` | (2 carves) | `system/obj/DataFunc.cpp` | **+14** | −2 |
 | B | `band3/meta_band/FaceHairProvider` | `0x8266F380..0x8266F730` | `Leaderboard.cpp` | **+6** | 0 |
-| B | `band3/meta_band/CharProvider` | (half the located span — see §4.2) | `system/rndobj/PropKeys.cpp` | **+26** | −11 |
-| B | `band3/meta_band/BandStoreOffer` | `0x8266E4E8..0x8266EB80` | `Leaderboard.cpp` | **+9** | −1 |
-| **C** | `band3/meta_band/LockStepMgr` | `0x825ABDF8..0x825AC9AC` (**ADD**) | — | **+65** | 0 |
-| C | `band3/meta_band/UGCPurchasePanel` | `0x8263E6A0..0x8263F240` (**ADD**) | — | **+25** | 0 |
-| C | `system/beatmatch/SlotChannelMapping` | `0x82793F8C..0x827946B4` (**ADD**) | — | **+23** | 0 |
-| C | `band3/game/HitTracker` | `0x826E34E0..0x826E3820` (**ADD**) | — | **+12** | 0 |
+| B | `band3/meta_band/CharProvider` | `0x82666648..0x82667FE0` (see §3.0/§4.2) | `system/rndobj/PropKeys.cpp` | **+26** | −11 |
+| B | `band3/meta_band/BandStoreOffer` | `0x8266E4E8..0x8266EC88` | `Leaderboard.cpp` | **+9** | −1 |
+| **C** | `band3/meta_band/LockStepMgr` | `0x825AB138..0x825AB3B8` + `0x825AB408..0x825ACA70` (**ADD**) | — | **+65** | 0 |
+| C | `band3/meta_band/UGCPurchasePanel` | `0x8263E6A0..0x8263F2F0` + `0x8263F318..0x8263F910` (**ADD**) | — | **+25** | 0 |
+| C | `system/beatmatch/SlotChannelMapping` | `0x82793F8C..0x82794730` (**ADD**) | — | **+23** | 0 |
+| C | `band3/game/HitTracker` | `0x826E34E0..0x826E3808` (**ADD**) | — | **+12** | 0 |
 | C | `system/utl/LogFile` | `0x827CBEF8..0x827CC150` (**ADD**) | — | **+7** | 0 |
-| C | `band3/meta_band/Asset` | `0x825EF708..0x825EFA68` (**ADD**) | — | **+7** | 0 |
+| C | `band3/meta_band/Asset` | `0x825EF708..0x825EFB34` (**ADD**) | — | **+7** | 0 |
 | D | `band3/game/RealGuitarGemPlayer` | `0x826EBE10..0x826EC860` (2 blocks) | `VocalPlayer.cpp` | **+30** | 0 |
 | D | `band3/game/BandPerformer` | `0x826ED658..0x826EDFE4`+ | **PHANTOM** `system/flow/FlowEventListener.cpp` | **+24** | 0 |
 | D | `band3/game/PracticeSectionProvider` | reassembled from 3 pins + 3 gaps | `PlayerTrackConfigList`/`Tracker`/`GemTrack` | **+19** | 0 |
@@ -97,22 +97,29 @@ baseline above. Losses are itemised in §4.
 
 Per lane: A **+95/−5**, B **+79/−12**, C **+144/−0**, D **+90/−8**, E **+74/−10**,
 F **+60/−3**, G **+37/−0**. Lanes B, C, D and F are complete; A, E and G were
-still extending. Composition re-verified at this point: **27 new units,
-zero cross-branch `.text` overlaps.**
+still extending. Composition re-verified: **28 new units, zero cross-branch
+`.text` overlaps**, and every branch passes `overlap_check.py` individually.
 
 `BandUserMgr` is worth singling out: it is the row where 36 functions were already
 matched *inside* the span under the donor, so it was the wave's hardest test of
 the by-name gate — and it came in at **+38 with zero losses**, i.e. every one of
 those 36 legitimately migrated unit and kept scoring.
 
-Two of the 21 (`SongSetlistProvider`, `SndAnalysis`) are TUs **laneBD never
-located** — they came out of the re-reduction in §5.
+Three of the 28 (`SongSetlistProvider`, `SndAnalysis`, `InputMgr`) are TUs
+**laneBD never located** — they came out of the re-reduction in §5.
+`DrumTrackWatcherImpl` was a LOW row promoted by the same reduction.
 
-★ **Nine of the 21 are pure ADDs into unclaimed space** — no donor shrinks, no
+★★ **Ten of the 28 are pure ADDs into unclaimed space** — no donor shrinks, no
 empty-unit risk, and structurally **zero possibility of a loss**. They account for
-**+159 of the +423** and carry 0 of the 25 losses. laneBD's §4b list of
-"genuinely unclaimed, pin-ready" rows was the single most productive part of its
-worklist per unit of risk, and the next lane should drain that category first.
+**+164 of the +579** and carry **0 of the 38 losses**: `LockStepMgr` +65,
+`UGCPurchasePanel` +25, `SlotChannelMapping` +23, `ChordShapeGenerator` (first
+carve) +13, `HitTracker` +12, `LogFile` +7, `Asset` +7, `DrumTrackWatcherImpl` +5,
+`SndAnalysis` +4, `SongSetlistProvider` +3.
+
+**laneBD's §4b list of "genuinely unclaimed, pin-ready" rows was by a wide margin
+the best yield-per-unit-of-risk in the whole worklist, and it should be drained
+first in any future wave.** It also finishes fastest: lane C converted seven of
+them in one session while the carve lanes were still on their second TU.
 
 ### Composition
 
