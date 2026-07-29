@@ -63,8 +63,8 @@ void NgRnd::Terminate() {
     RELEASE(mParticleBuffer);
     TheShaderMgr.Terminate();
     NgPostProc::Terminate();
-    NgDOFProc::Terminate();
     RndShadowMap::Terminate();
+    NgDOFProc::Terminate();
     Rnd::Terminate();
 }
 

@@ -235,9 +235,9 @@ Symbol DirLoader::FixClassName(Symbol orig) {
 
     if (mRev >= 0x19)
         goto ret;
-    static Symbol TexRenderer("TexRenderer");
-    static Symbol RenderedTex("RenderedTex");
     static Symbol CompositeTexture("CompositeTexture");
+    static Symbol RenderedTex("RenderedTex");
+    static Symbol TexRenderer("TexRenderer");
     static Symbol LayerDir("LayerDir");
     if (orig == RenderedTex)
         orig = TexRenderer;
@@ -246,8 +246,8 @@ Symbol DirLoader::FixClassName(Symbol orig) {
 
     if (mRev >= 0x18)
         goto ret;
-    static Symbol BandFx("BandFx");
     static Symbol WorldFx("WorldFx");
+    static Symbol BandFx("BandFx");
     if (orig == BandFx)
         return WorldFx;
 
@@ -305,8 +305,8 @@ Symbol DirLoader::FixClassName(Symbol orig) {
 
     if (mRev >= 0xF)
         goto ret;
-    static Symbol View("View");
     static Symbol Group("Group");
+    static Symbol View("View");
     if (orig == View)
         return Group;
 

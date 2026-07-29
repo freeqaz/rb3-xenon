@@ -119,7 +119,7 @@ RndMat *DataProvider::Mat(int i, int j, UIListMesh *mesh) const {
     if (handled.Type() == kDataUnhandled) {
         return mesh->DefaultMat();
     } else {
-        ObjectDir *pDir = mList->GetUIListDir();
+        ObjectDir *pDir = mList->ResourceDir();
         MILO_ASSERT(pDir, 0xae);
         RndMat *ret = pDir->Find<RndMat>(handled.Str(), false);
         if (!ret)

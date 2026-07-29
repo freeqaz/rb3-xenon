@@ -50,8 +50,8 @@
 
 using namespace soundtouch;
 
-#define PI 3.141592655357989
-#define TWOPI (2 * PI)
+#define PI 3.1415927410125732 // retail bit pattern 0x400921FB60000000 (float-precision pi widened to double)
+#define TWOPI (2 * PI) // retail bit pattern 0x401921FB60000000 (exact double of PI)
 
 /*****************************************************************************
  *

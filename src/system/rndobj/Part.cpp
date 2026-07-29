@@ -323,7 +323,7 @@ BEGIN_PROPSYNCS(RndParticleSys)
         }
     }
     SYNC_PROP_SET(
-        motion_parent,
+        relative_parent,
         mMotionParent.Ptr(),
         SetRelativeMotion(mRelativeMotion, _val.Obj<RndTransformable>())
     )

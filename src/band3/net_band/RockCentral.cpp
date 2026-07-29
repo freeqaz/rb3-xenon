@@ -1503,8 +1503,8 @@ void RockCentral::CreateBattle(
         }
         static Symbol pid("pid"), name("name"), description("description"),
             type("type"), instrument("instrument"), time_end_val("time_end_val"),
-            time_end_units("time_end_units"), flags("flags"), art_id("art_id"),
-            art("art");
+            time_end_units("time_end_units"), flags("flags"), art("art"),
+            art_id("art_id");
         INIT_DATAPOINT("battles/create");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(name, nameStr);

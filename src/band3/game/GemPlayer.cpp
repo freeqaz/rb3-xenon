@@ -2265,7 +2265,7 @@ void GemPlayer::SetFilling(bool b1, int i2) {
             unk2f4 = i2;
             if (mUseFills) {
                 if (Performer::IsLocal() && TheGame->DrumFillsMod()) {
-                    mBeatMaster->GetAudio()->FadeOutDrums(mTrackNum);
+                    mBeatMaster->GetAudio()->RestoreDrums(mTrackNum);
                 }
                 IgnoreGemsUntil(i2 + 0x1E);
             }

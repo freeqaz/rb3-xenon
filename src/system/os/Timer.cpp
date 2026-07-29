@@ -330,7 +330,7 @@ void AutoTimer::SetCollectStats(bool collect, bool dump) {
 }
 
 void AutoTimer::Init() {
-    DataRegisterFunc("show_timer", ShowTimer);
+    DataRegisterFunc("show_tier", ShowTimer);
     DataRegisterFunc("set_timer_ms", SetTimerMs);
     DataRegisterFunc("timer_ms", TimerMs);
     DataRegisterFunc("print_timers", OnPrintTimers);

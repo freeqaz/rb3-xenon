@@ -34,7 +34,7 @@ END_HANDLERS
 
 void MemcardMgr::Init() {
     SetName("memcardmgr", ObjectDir::Main());
-    TheMC.SetContainerName("savegame");
+    TheMC.SetContainerName("band3");
     static Symbol title_name("title_name");
     for (int i = 0; i < 4; i++) {
         mValidDevices[i] = false;

@@ -33,7 +33,7 @@ UIFontImporter::UIFontImporter()
       mFontQuality(0), mFontWeight(400), mPitchAndFamily(34), mFontCharset(0),
       mFontSupersample(0), mLeft(0), mRight(0), mTop(0), mBottom(0),
       mFillWithSafeWhite(false), mFontToImportFrom(this), mBitmapSavePath("ui/image/"),
-      mBitMapSaveName("temp.bmp"), mGennedFonts(this), mReferenceKerning(this),
+      mBitMapSaveName("temp.BMP"), mGennedFonts(this), mReferenceKerning(this),
       mMatVariations(this), mDefaultMat(this), mHandmadeFont(this), mCheckNG(false),
       mSyncResource(), mLastGenWasNG(true) {
     static Symbol objects("objects");

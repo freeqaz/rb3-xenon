@@ -214,7 +214,7 @@ bool UIScreen::IsLoaded() const {
 }
 
 void UIScreen::Poll() {
-    static Message msg("poll_msg");
+    static Message msg("poll");
     HandleType(msg);
 
     FOREACH (it, mPanelList) {

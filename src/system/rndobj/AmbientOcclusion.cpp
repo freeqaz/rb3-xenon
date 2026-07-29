@@ -22,7 +22,7 @@ void BuildSphereStratified(unsigned int, std::vector<Vector3> &);
 
 // Quality parameters: [samples_q0, samples_q1, splitPlane_q0, splitPlane_q1]
 // Values are guesses; exact values in .rdata at 0x820A658C (16 bytes)
-static const int kQualityLUT[] = { 256, 1024, 0, 2 };
+static const int kQualityLUT[] = { 300, 150, 2, 0 };
 
 // PPC: Edge::operator< lives in Utl.cpp (matching original link unit).
 // Native: define it here since AmbientOcclusion.cpp is the natural home.
@@ -263,7 +263,7 @@ void RndAmbientOcclusion::BuildTrees(Quality quality) {
         int packDepth = kQualityLUT[quality + 2];
         BuildSphereStratified(kQualityLUT[quality], mSampleDirs);
 
-        Box box(Vector3(-FLT_MAX, -FLT_MAX, -FLT_MAX), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
+        Box box(Vector3(FLT_MAX, FLT_MAX, FLT_MAX), Vector3(-FLT_MAX, -FLT_MAX, -FLT_MAX));
 
         {
             auto it = mObjectsCast.begin();

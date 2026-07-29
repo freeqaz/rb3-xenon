@@ -62,14 +62,21 @@ void VocalGuidePitch::Poll(float ms) {
                         mGuidePitch = note->mEndPitch;
                         mInstrument->PressNote(
                             mPitchModifier + note->mEndPitch, 127, 1,
-                            RoundPitchBend(60.0f * note->mDurationMs * (1.0f / 1000.0f))
+                            // retail folds the constant as a direct 60.0f/1000.0f
+                            // division (0x3D75C28F); our previous form (60.0f *
+                            // note->mDurationMs * (1.0f/1000.0f)) folds the
+                            // reciprocal-multiply instead, landing 1 ULP high
+                            // (0x3D75C290). Use the literal directly.
+                            RoundPitchBend(note->mDurationMs * 0.06f)
                         );
                     }
                 } else if (note->mEndPitch != mGuidePitch) {
                     mGuidePitch = note->mEndPitch;
                     mInstrument->PressNote(
                         mPitchModifier + note->mEndPitch, 127, 1,
-                        RoundPitchBend(60.0f * note->mDurationMs * (1.0f / 1000.0f))
+                        // see comment above: literal 0.06f matches retail's
+                        // direct-division fold (0x3D75C28F)
+                        RoundPitchBend(note->mDurationMs * 0.06f)
                     );
                 }
             }
