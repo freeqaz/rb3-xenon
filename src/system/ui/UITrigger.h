@@ -9,7 +9,7 @@ class UITrigger : public EventTrigger, public RndPollable {
 public:
     // Hmx::Object
     OBJ_CLASSNAME(UITrigger);
-    OBJ_SET_TYPE(UITrigger);
+    OBJ_SET_TYPE_ENGINE(UITrigger);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -9,7 +9,7 @@ public:
     // Hmx::Object
     virtual ~HeldButtonPanel();
     OBJ_CLASSNAME(HeldButtonPanel);
-    OBJ_SET_TYPE(HeldButtonPanel);
+    OBJ_SET_TYPE_ENGINE(HeldButtonPanel);
     virtual DataNode Handle(DataArray *, bool);
     // UIPanel
     virtual void Enter();

@@ -113,7 +113,7 @@ public:
     // Hmx::Object
     virtual ~RndMultiMesh() { InvalidateProxies(); }
     OBJ_CLASSNAME(MultiMesh);
-    OBJ_SET_TYPE(MultiMesh);
+    OBJ_SET_TYPE_ENGINE(MultiMesh);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

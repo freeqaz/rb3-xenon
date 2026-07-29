@@ -8,7 +8,7 @@ class VoiceoverPanel : public UIPanel, public ContentMgr::Callback {
 public:
     VoiceoverPanel();
     OBJ_CLASSNAME(VoiceoverPanel);
-    OBJ_SET_TYPE(VoiceoverPanel);
+    OBJ_SET_TYPE_ENGINE(VoiceoverPanel);
     NEW_OBJ(VoiceoverPanel);
     virtual DataNode Handle(DataArray *, bool);
     virtual ~VoiceoverPanel();

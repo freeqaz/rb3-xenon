@@ -47,8 +47,9 @@ BEGIN_PROPSYNCS(RndFlare)
 #endif
 END_PROPSYNCS
 
+static int gSaveRev_RndFlare = 7;
 BEGIN_SAVES(RndFlare)
-    SAVE_REVS(7, 0)
+    bs << gSaveRev_RndFlare;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)

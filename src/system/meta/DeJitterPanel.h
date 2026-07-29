@@ -11,7 +11,7 @@ public:
     // Hmx::Object
     virtual ~DeJitterPanel();
     OBJ_CLASSNAME(DeJitterPanel)
-    OBJ_SET_TYPE(DeJitterPanel);
+    OBJ_SET_TYPE_ENGINE(DeJitterPanel);
 
     // UIPanel
     virtual void Enter();

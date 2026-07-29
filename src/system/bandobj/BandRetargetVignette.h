@@ -6,7 +6,7 @@ class BandRetargetVignette : public RndPollable {
 public:
     BandRetargetVignette();
     OBJ_CLASSNAME(BandRetargetVignette);
-    OBJ_SET_TYPE(BandRetargetVignette);
+    OBJ_SET_TYPE_ENGINE(BandRetargetVignette);
     virtual DataNode Handle(DataArray *, bool);
     virtual void Poll();
     virtual void Enter();

@@ -34,7 +34,8 @@ BEGIN_HANDLERS(UISlider)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(UISlider)
-    SYNC_PROP(vertical, mVertical)
+    // Retail has NO own-property arm here: the target body goes straight from
+    // the `Symbol sym = _prop->Sym(_i)` preamble to SyncProperty(ScrollSelect).
     SYNC_SUPERCLASS(ScrollSelect)
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS

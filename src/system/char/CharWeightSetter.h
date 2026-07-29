@@ -11,7 +11,7 @@ class CharWeightSetter : public CharWeightable, public CharPollable {
 public:
     // Hmx::Object
     OBJ_CLASSNAME(CharWeightSetter);
-    OBJ_SET_TYPE(CharWeightSetter);
+    OBJ_SET_TYPE_ENGINE(CharWeightSetter);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

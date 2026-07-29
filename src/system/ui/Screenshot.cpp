@@ -22,8 +22,9 @@ BEGIN_PROPSYNCS(Screenshot)
 #endif
 END_PROPSYNCS
 
+static int gSaveRev_Screenshot = 1;
 BEGIN_SAVES(Screenshot)
-    SAVE_REVS(1, 0)
+    bs << gSaveRev_Screenshot;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     bs << mTexPath;

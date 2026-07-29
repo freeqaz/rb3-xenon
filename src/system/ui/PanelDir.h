@@ -20,7 +20,7 @@ public:
     // Hmx::Object
     virtual ~PanelDir();
     OBJ_CLASSNAME(PanelDir)
-    OBJ_SET_TYPE(PanelDir)
+    OBJ_SET_TYPE_ENGINE(PanelDir)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

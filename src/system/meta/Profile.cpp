@@ -33,7 +33,12 @@ bool Profile::HasValidSaveData() const {
 
 ProfileSaveState Profile::GetSaveState() const { return mState; }
 
+// Retail keeps this out of line: Profile::Handle's `get_name` arm is a real
+// `bl Profile::GetName` on the adjusted `this`, not an inlined
+// ThePlatformMgr.GetName(mPadNum).  /Ob2 inlines it for us, so pin it.
+#pragma auto_inline(off)
 const char *Profile::GetName() const { return ThePlatformMgr.GetName(mPadNum); }
+#pragma auto_inline(on)
 
 void Profile::SetSaveState(ProfileSaveState state) {
     MILO_ASSERT(mState != kMetaProfileUnchanged, 0x78);

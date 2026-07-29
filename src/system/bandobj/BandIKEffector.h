@@ -28,7 +28,7 @@ public:
     virtual void Poll();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
     OBJ_CLASSNAME(BandIKEffector);
-    OBJ_SET_TYPE(BandIKEffector);
+    OBJ_SET_TYPE_ENGINE(BandIKEffector);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

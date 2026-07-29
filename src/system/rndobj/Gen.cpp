@@ -43,8 +43,9 @@ BEGIN_PROPSYNCS(RndGenerator)
 #endif
 END_PROPSYNCS
 
+static int gSaveRev_RndGenerator = 0xB;
 BEGIN_SAVES(RndGenerator)
-    SAVE_REVS(0xB, 0)
+    bs << gSaveRev_RndGenerator;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)

@@ -15,7 +15,7 @@ public:
     ConnectionStatusPanel();
     // Hmx::Object
     OBJ_CLASSNAME(ConnectionStatusPanel)
-    OBJ_SET_TYPE(ConnectionStatusPanel)
+    OBJ_SET_TYPE_ENGINE(ConnectionStatusPanel)
     virtual DataNode Handle(DataArray *, bool);
 
     // UIPanel

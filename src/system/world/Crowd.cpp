@@ -172,7 +172,7 @@ DataNode WorldCrowd::OnRebuild(DataArray *) { return 0; }
 
 BEGIN_HANDLERS(WorldCrowd)
     HANDLE(rebuild, OnRebuild)
-    HANDLE_ACTION(assign_random_colors, AssignRandomColors(true))
+    HANDLE_ACTION(assign_random_colors, AssignRandomColors())
     HANDLE(iterate_frac, OnIterateFrac)
     HANDLE_ACTION(set_fullness, SetFullness(_msg->Float(2), _msg->Float(3)))
     HANDLE_SUPERCLASS(RndDrawable)
@@ -367,7 +367,7 @@ BEGIN_LOADS(WorldCrowd)
                     }
                 }
             }
-            AssignRandomColors(false);
+            AssignRandomColors();
         }
     } else {
         OnRebuild(nullptr);
@@ -610,7 +610,7 @@ void WorldCrowd::Set3DCharAll() {
     }
     Sort3DCharList();
     SetFullness(fvar1, mCharFullness);
-    AssignRandomColors(false);
+    AssignRandomColors();
 }
 
 void WorldCrowd::Force3DCrowd(bool force) {
@@ -717,10 +717,7 @@ void WorldCrowd::Draw3DChars() {
     }
 }
 
-void WorldCrowd::AssignRandomColors(bool incrementStamp) {
-    if (incrementStamp) {
-        mModifyStamp++;
-    }
+void WorldCrowd::AssignRandomColors() {
     FOREACH (it, mCharacters) {
         if (it->mDef.mChar && it->mMMesh && it->m3DChars.size() > 0) {
             it->mDef.mUseRandomColor = false;
@@ -819,7 +816,7 @@ void WorldCrowd::SetFullness(float flatFullness, float charFullness) {
             }
         }
     }
-    AssignRandomColors(false);
+    AssignRandomColors();
 }
 
 void WorldCrowd::Set3DCharXfm(
@@ -874,7 +871,7 @@ void WorldCrowd::Set3DCharList(
 ) {
     START_AUTO_TIMER("crowd_set3d");
     if (mForce3DCrowd) {
-        AssignRandomColors(false);
+        AssignRandomColors();
     } else {
         float oldFullness = mFlatFullness;
         Reset3DCrowd();
@@ -919,7 +916,7 @@ void WorldCrowd::Set3DCharList(
         }
         Sort3DCharList();
         SetFullness(oldFullness, mCharFullness);
-        AssignRandomColors(false);
+        AssignRandomColors();
     }
 }
 

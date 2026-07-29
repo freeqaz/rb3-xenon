@@ -73,7 +73,7 @@ public:
     // Hmx::Object
     virtual ~WorldCrowd();
     OBJ_CLASSNAME(WorldCrowd);
-    OBJ_SET_TYPE(WorldCrowd);
+    OBJ_SET_TYPE_ENGINE(WorldCrowd);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
@@ -111,7 +111,7 @@ protected:
 
     void Force3DCrowd(bool force);
     void SetMatAndCameraLod();
-    void AssignRandomColors(bool);
+    void AssignRandomColors();
     void Delete3DCrowdHandles();
     void CreateMeshes();
     void Reset3DCrowd();

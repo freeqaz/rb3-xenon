@@ -9,7 +9,7 @@ class RndPartLauncher : public RndPollable {
 public:
     // Hmx::Object
     OBJ_CLASSNAME(PartLauncher);
-    OBJ_SET_TYPE(PartLauncher);
+    OBJ_SET_TYPE_ENGINE(PartLauncher);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

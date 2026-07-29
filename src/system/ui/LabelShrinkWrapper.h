@@ -12,7 +12,7 @@ public:
     // Hmx::Object
     virtual ~LabelShrinkWrapper();
     OBJ_CLASSNAME(LabelShrinkWrapper)
-    OBJ_SET_TYPE(LabelShrinkWrapper)
+    OBJ_SET_TYPE_ENGINE(LabelShrinkWrapper)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

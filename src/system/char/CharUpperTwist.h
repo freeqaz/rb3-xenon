@@ -12,7 +12,7 @@ class CharUpperTwist : public CharPollable {
 public:
     // Hmx::Object
     OBJ_CLASSNAME(CharUpperTwist);
-    OBJ_SET_TYPE(CharUpperTwist);
+    OBJ_SET_TYPE_ENGINE(CharUpperTwist);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

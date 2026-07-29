@@ -91,8 +91,9 @@ BinStream &operator<<(BinStream &bs, const RndLine::Point &pt) {
     return bs;
 }
 
+static int gSaveRev_RndLine = 4;
 BEGIN_SAVES(RndLine)
-    SAVE_REVS(4, 0)
+    bs << gSaveRev_RndLine;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     SAVE_SUPERCLASS(RndTransformable)

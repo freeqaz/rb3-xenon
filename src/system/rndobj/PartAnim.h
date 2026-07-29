@@ -10,7 +10,7 @@ public:
     // Hmx::Object
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(ParticleSysAnim);
-    OBJ_SET_TYPE(ParticleSysAnim);
+    OBJ_SET_TYPE_ENGINE(ParticleSysAnim);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

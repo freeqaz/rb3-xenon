@@ -148,7 +148,7 @@ public:
     MidiParser();
     virtual ~MidiParser();
     OBJ_CLASSNAME(MidiParser);
-    OBJ_SET_TYPE(MidiParser);
+    OBJ_SET_TYPE_ENGINE(MidiParser);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void SetTypeDef(DataArray *);

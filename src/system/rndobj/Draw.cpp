@@ -39,8 +39,9 @@ BEGIN_PROPSYNCS(RndDrawable)
     SYNC_PROP(sphere, mSphere)
 END_PROPSYNCS
 
+static int gSaveRev_RndDrawable = 4;
 BEGIN_SAVES(RndDrawable)
-    SAVE_REVS(4, 0)
+    bs << gSaveRev_RndDrawable;
     bs << (unsigned char)mShowing << mSphere << mOrder;
 END_SAVES
 

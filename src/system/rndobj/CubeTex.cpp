@@ -83,8 +83,9 @@ BEGIN_PROPSYNCS(RndCubeTex)
 #endif
 END_PROPSYNCS
 
+static int gSaveRev_RndCubeTex = 2;
 BEGIN_SAVES(RndCubeTex)
-    SAVE_REVS(2, 0)
+    bs << gSaveRev_RndCubeTex;
     SAVE_SUPERCLASS(Hmx::Object)
     props.Save(bs);
     for (int i = 0; i < kNumCubeFaces; i++) {

@@ -13,7 +13,7 @@ public:
     };
     StoreInfoPanel();
     OBJ_CLASSNAME(StoreInfoPanel);
-    OBJ_SET_TYPE(StoreInfoPanel);
+    OBJ_SET_TYPE_ENGINE(StoreInfoPanel);
     NEW_OBJ(StoreInfoPanel);
     virtual DataNode Handle(DataArray *, bool);
     virtual ~StoreInfoPanel();

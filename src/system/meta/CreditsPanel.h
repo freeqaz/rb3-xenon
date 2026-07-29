@@ -19,7 +19,7 @@ private:
 
 public:
     OBJ_CLASSNAME(CreditsPanel)
-    OBJ_SET_TYPE(CreditsPanel)
+    OBJ_SET_TYPE_ENGINE(CreditsPanel)
     virtual DataNode Handle(DataArray *, bool);
 
     // UIListProvider

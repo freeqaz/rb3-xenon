@@ -22,7 +22,7 @@ public:
     virtual ~CharLipSyncDriver();
     virtual void Highlight();
     OBJ_CLASSNAME(CharLipSyncDriver);
-    OBJ_SET_TYPE(CharLipSyncDriver);
+    OBJ_SET_TYPE_ENGINE(CharLipSyncDriver);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

@@ -54,8 +54,9 @@ BEGIN_PROPSYNCS(RndTransAnim)
 #endif
 END_PROPSYNCS
 
+static int gSaveRev_RndTransAnim = 7;
 BEGIN_SAVES(RndTransAnim)
-    SAVE_REVS(7, 0)
+    bs << gSaveRev_RndTransAnim;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mTrans << mRotKeys << mTransKeys << mKeysOwner;

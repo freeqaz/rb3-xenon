@@ -17,7 +17,7 @@ public:
     virtual void Copy(Hmx::Object const *, Hmx::Object::CopyType);
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(TexMovie);
-    OBJ_SET_TYPE(TexMovie);
+    OBJ_SET_TYPE_ENGINE(TexMovie);
     // laneAT-f4 opt-out: the retail bytes show TexMovie's operator new was kept
     // OUT OF LINE and ICF-folded (its `new` site is a single
     // `bl ??2<folded>@@SAPAXI@Z` with NO StaticClassName call), unlike the

@@ -32,7 +32,7 @@ public:
     // Hmx::Object
     virtual ~NgSpotlightDrawer();
     OBJ_CLASSNAME(NgSpotlightDrawer)
-    OBJ_SET_TYPE(NgSpotlightDrawer)
+    OBJ_SET_TYPE_ENGINE(NgSpotlightDrawer)
 
     // PostProcessor
     virtual void EndWorld();
