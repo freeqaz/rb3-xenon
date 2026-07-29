@@ -253,7 +253,60 @@ from that span, it is the one genuinely-missing TU laneBA also flagged
 (`autoid` proposal `0x822DD480`, score 6/6), and its span is heavily interleaved
 with `Mesh.cpp` / `CharLipSync.cpp` / `Font.cpp` pins.
 
-### 4c. Why this is not free money
+### 4b-bis. Self-consistency check on the claimers
+
+If the instrument were simply drifting toward big pins, the *claiming* units'
+own classes would land in the wrong place too. They do not. Running the same
+class-owned-slot + ctor-site procedure on the claimers puts each one's evidence
+overwhelmingly inside its **own** pin: `VocalPlayer` 39/44, `StorePanel` 16/18,
+`Leaderboard` 12/16, `PropKeys` 7/11, `BandHighlight` 6/6, `UIStats` 2/3,
+`EventDialogPanel` 3/3, `UIPicture` 2/2, `BandSwatch` 2/2. So the foreign spans
+in §4a are *additional* code inside those ranges, not a relocation of the owner.
+Three claimers (`SongDifficultyDisplay`, `MoveMgr`, `FlowEventListener`) produce
+**no evidence at all** — 0 class-owned slots and 0 ctor sites — so for those the
+instrument declines to place the owner rather than guessing.
+
+### 4c. ★ Headroom of the whole seam: 528 functions
+
+Measured, not estimated — every located span intersected with the current
+per-function match state (VAs resolved from `fn_<VA>` names + the reverse of
+`scripts/target_symbol_map.json`, never from `report.json`'s `address` field,
+which is a within-unit offset, not an address):
+
+| | fns |
+|---|--:|
+| currently **unmatched** inside the 35 in-pin located spans | **402** |
+| already matched inside those spans (at risk during a move; most should re-pair) | 171 |
+| functions in the 13 fully-unclaimed located spans (counted from `.pdata`) | **126** |
+| **total currently-unscoreable, now with a name and a span** | **528** |
+
+The full machine-readable worklist — 76 rows, every located span with its
+evidence, claimers, size, current match state and a confidence label — is
+committed at **`scripts/harvest/tu_locate/located_spans.json`**. Confidence is
+`HIGH` when the Wii-literal hit ratio ≥ 0.8 with ≥3 hits, or when a single
+claimer is corroborated by ≥3 evidence functions in a ≤8 KB span; `LOW` when the
+span exceeds 8 KB with ≥3 claimers (the controller family — `KeyboardController`,
+`ButtonGuitarController`, `RealGuitarController`, `JoypadGuitarController` — all
+land on the same overlapping `TrackWatcherImpl`/`GuitarController` block and
+cannot be separated by these instruments).
+
+| confidence | spans | currently-unscoreable fns |
+|---|--:|--:|
+| **HIGH** | **42** | **504** |
+| MED | 12 | 165 |
+| LOW (do not act without a third channel) | 22 | 532 |
+
+Biggest single blocks of unmatched code: `ChordShapeGenerator` 77,
+`UIProxy` 36, `CharKeyHandMidi` 32, `RealGuitarGemPlayer` 29,
+`TourPerformerLocal` 27, `UIGridProvider` 24, `BandButton` 23, `BandPerformer` 23,
+`TourDesc` 22, `CharProvider` 16, `CharSync` 16.
+
+For contrast, laneBA priced the *attribution* channel on the auto-carve pool at
+**+25 to +85**. This is a different and larger channel because it is a **decomp**
+channel: the functions have an oracle and a location, and what they need is a body
+port. It is correspondingly more expensive per function.
+
+### 4d. Why this is not free money
 
 Pinning alone scores **0**. objdiff pairs Code symbols by **name**; a freshly
 carved target obj holds anonymous `fn_<VA>` symbols while our compiled obj holds
