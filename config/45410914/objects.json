@@ -773,7 +773,12 @@
    "system/gesture/SkeletonHistory.cpp": "NonMatching",
    "system/net/HttpGet.cpp": "NonMatching",
    "system/ui/UIListDir.cpp": "NonMatching",
-   "system/ui/UIFontImporter.cpp": "NonMatching",
+   "system/ui/UIFontImporter.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "system/char/CharMirror.cpp": "NonMatching",
    "system/char/FileMergerOrganizer.cpp": "NonMatching",
    "system/ui/CheatProvider.cpp": "NonMatching",
