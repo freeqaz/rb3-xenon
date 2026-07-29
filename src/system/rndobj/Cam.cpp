@@ -51,8 +51,6 @@ BEGIN_HANDLERS(RndCam)
     HANDLE(set_z_range, OnSetZRange)
     HANDLE(far_plane, OnFarPlane)
     HANDLE(set_screen_rect, OnSetScreenRect)
-    HANDLE(world_to_screen, OnWorldToScreen)
-    HANDLE(screen_to_world, OnScreenToWorld)
     HANDLE_SUPERCLASS(RndTransformable)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
