@@ -2116,7 +2116,7 @@ UIPicture.cpp:
 	.pdata      start:0x82247078 end:0x822470B0
 	.pdata      start:0x822470B0 end:0x822470B8
 	.pdata      start:0x822470B8 end:0x82247118
-	.pdata      start:0x82247118 end:0x822471E8
+	.pdata      start:0x82247118 end:0x82247178
 	.pdata      start:0x82247DC8 end:0x82247DD0
 	.text       start:0x82815D50 end:0x82815E38
 	.text       start:0x82815E38 end:0x82816188
@@ -2124,7 +2124,7 @@ UIPicture.cpp:
 	.text       start:0x82816390 end:0x82816590
 	.text       start:0x82816590 end:0x82816610
 	.text       start:0x82816610 end:0x82816F20
-	.text       start:0x82816F20 end:0x82817A64
+	.text       start:0x82816F20 end:0x82817260
 	.text       start:0x828232C8 end:0x82823340
 
 BufStream.cpp:
@@ -12890,6 +12890,7 @@ system/rndobj/PostProcMgr.cpp:
 system/ui/UIProxy.cpp:
 	.pdata      start:0x82247DD8 end:0x82247F10
 	.text       start:0x828233A0 end:0x828248A0
+
 band3/meta_band/TrainingMgr.cpp:
 	.pdata      start:0x8221D2D0 end:0x8221D3E8
 	.text       start:0x82565088 end:0x82566000
@@ -12897,3 +12898,7 @@ band3/meta_band/TrainingMgr.cpp:
 band3/meta_band/CharSync.cpp:
 	.pdata      start:0x8221D220 end:0x8221D2D0
 	.text       start:0x82564410 end:0x82565088
+
+system/ui/UIGridProvider.cpp:
+	.pdata      start:0x82247178 end:0x822471E8
+	.text       start:0x82817260 end:0x82817A64

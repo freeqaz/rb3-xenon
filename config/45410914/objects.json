@@ -379,6 +379,7 @@
    "system/ui/UIColor.cpp": "NonMatching",
    "system/ui/UIListProvider.cpp": "NonMatching",
    "system/ui/UIListArrow.cpp": "NonMatching",
+   "system/ui/UIGridProvider.cpp": "NonMatching",
    "system/ui/UIPicture.cpp": "NonMatching",
    "system/ui/UIProxy.cpp": "NonMatching",
    "system/utl/BufStream.cpp": "NonMatching",
