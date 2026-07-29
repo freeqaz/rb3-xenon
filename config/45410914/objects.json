@@ -1339,6 +1339,18 @@
     ]
    },
    "band3/meta_band/UIStats.cpp": "NonMatching",
+   "band3/meta_band/CharSync.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/meta_band/TrainingMgr.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
    "band3/meta_band/AppMiniLeaderboardDisplay.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
