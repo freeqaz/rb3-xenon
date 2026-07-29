@@ -5646,8 +5646,16 @@ band3/meta_band/EditSetlistPanel.cpp:
 	.text       start:0x8261AA88 end:0x8261DFD8
 
 band3/meta_band/EventDialogPanel.cpp:
-	.pdata      start:0x82229A80 end:0x82229C18
-	.text       start:0x8261DFE0 end:0x8261F938
+	.pdata      start:0x82229A80 end:0x82229B20
+	.text       start:0x8261DFE0 end:0x8261EA40
+
+band3/meta_band/GameTimePanel.cpp:
+	.pdata      start:0x82229B20 end:0x82229B78
+	.text       start:0x8261EA40 end:0x8261EFB8
+
+band3/meta_band/InterstitialPanel.cpp:
+	.pdata      start:0x82229B78 end:0x82229C18
+	.text       start:0x8261EFB8 end:0x8261F938
 
 band3/meta_band/SetlistToStorePanel.cpp:
 	.pdata      start:0x8222C168 end:0x8222C170
@@ -5909,16 +5917,12 @@ CharMirror.cpp:
 	.text       start:0x823CE0D8 end:0x823CE3B0
 
 FileMergerOrganizer.cpp:
-	.pdata      start:0x82200B88 end:0x82200BA8
-	.pdata      start:0x82200BA8 end:0x82200BB0
 	.pdata      start:0x822072B8 end:0x822072E0
 	.pdata      start:0x82207308 end:0x82207398
 	.pdata      start:0x822073B0 end:0x822073C0
 	.pdata      start:0x822073C0 end:0x822073E0
 	.pdata      start:0x822073E0 end:0x822073E8
 	.pdata      start:0x82231338 end:0x82231340
-	.text       start:0x82365CD8 end:0x82365DF0
-	.text       start:0x82365DF0 end:0x82365E3C
 	.text       start:0x823D93C8 end:0x823D9508
 	.text       start:0x823D9738 end:0x823DA030
 	.text       start:0x823DA108 end:0x823DA360
@@ -8613,9 +8617,11 @@ band3/meta_band/LessonMgr.cpp:
 
 band3/meta_band/AssetMgr.cpp:
 	.pdata      start:0x8221D880 end:0x8221D9D0
-	.pdata      start:0x8222D738 end:0x8222D790
 	.text       start:0x8256A298 end:0x8256B4C0
-	.text       start:0x826552CC end:0x8265567C
+
+band3/meta_band/ProfileAssets.cpp:
+	.pdata      start:0x8222D708 end:0x8222D790
+	.text       start:0x82655090 end:0x8265567C
 
 band3/meta_band/AssetProvider.cpp:
 	.pdata      start:0x8222F468 end:0x8222F488
@@ -8954,11 +8960,16 @@ band3/meta_band/ViewSetting.cpp:
 
 band3/meta_band/PatchSelectPanel.cpp:
 	.pdata      start:0x8222AAC0 end:0x8222AB88
-	.pdata      start:0x8222AB88 end:0x8222AC70
+	.pdata      start:0x8222AB88 end:0x8222AC28
 	.pdata      start:0x8222AC78 end:0x8222AC80
 	.text       start:0x8262D908 end:0x8262E5DC
-	.text       start:0x8262E5E8 end:0x8262F310
+	.text       start:0x8262E5E8 end:0x8262EE18
+	.text       start:0x8262F304 end:0x8262F310
 	.text       start:0x8262F368 end:0x8262F390
+
+band3/meta_band/ParentalControlPanel.cpp:
+	.pdata      start:0x8222AC28 end:0x8222AC70
+	.text       start:0x8262EE18 end:0x8262F304
 
 GameMicManager.cpp:
 	.pdata      start:0x822189F8 end:0x82218A00
@@ -12789,8 +12800,10 @@ system/net/HttpReq.cpp:
 system/ui/UILabelDir.cpp:
 	.pdata      start:0x82246948 end:0x82246998
 	.pdata      start:0x822469B0 end:0x822469B8
+	.pdata      start:0x82246BD0 end:0x82246BD8
 	.text       start:0x8280FC74 end:0x82810040
 	.text       start:0x828101A0 end:0x828109EC
+	.text       start:0x82812080 end:0x82812128
 
 system/gesture/DrawUtl.cpp:
 	.pdata      start:0x82228148 end:0x82228158
@@ -12920,7 +12933,12 @@ band3/tour/TourWeightManager.cpp:
 
 band3/tour/TourGameRules.cpp:
 	.pdata      start:0x82200BB0 end:0x82200BD8
+	.text       start:0x82365E40 end:0x82365E58
 	.text       start:0x82365E68 end:0x823660F8
+
+band3/tour/TourQuestGameRules.cpp:
+	.pdata      start:0x82200B78 end:0x82200BB0
+	.text       start:0x82365C48 end:0x82365E3C
 
 band3/tour/TourGameModifier.cpp:
 	.pdata      start:0x82200F58 end:0x82200F68

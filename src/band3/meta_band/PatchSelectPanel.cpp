@@ -184,8 +184,10 @@ inline void PatchProvider::InitData(RndDir *dir) {
         RndMat *newMat = Hmx::Object::New<RndMat>();
         newMat->Copy(mEmptyMat, kCopyShallow);
         newMat->SetDiffuseTex(mPatches[i]->GetTex());
+        // Retail sets ONLY the alpha-cut bit here (`lwz 0x188 / ori 2 / stw`);
+        // it has no SetAlphaThreshold(false) arm -- the Wii dev source's extra
+        // call emits a `stb r11, 0x9b(r31)` that retail does not have.
         newMat->SetAlphaCut(true);
-        newMat->SetAlphaThreshold(false);
         unk24.push_back(newMat);
     }
 }

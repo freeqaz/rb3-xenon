@@ -945,24 +945,20 @@ const char *PathName(const class Hmx::Object *obj);
 
 // BEGIN SET TYPE MACRO ------------------------------------------------------------------
 extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
-#define OBJ_SET_TYPE(classname)                                                           \
-    virtual void SetType(Symbol classname) {                                              \
-        DataArray *def;                                                                   \
-        if (!classname.Null()) {                                                          \
-            static DataArray *types =                                                     \
-                SystemConfig("objects", StaticClassName(), "types");                      \
-            DataArray *found = types->FindArray(classname, false);                        \
-            if (found) {                                                                  \
-                SetTypeDef(found);                                                        \
-            } else {                                                                      \
-                MILO_NOTIFY(                                                              \
-                    "%s:%s couldn't find type %s", ClassName(), PathName(this), classname \
-                );                                                                        \
-                SetTypeDef(nullptr);                                                      \
-            }                                                                             \
-        } else                                                                            \
-            SetTypeDef(nullptr);                                                          \
-    }
+// Retail shape (measured 2026-07-29, lane BO6): the guarded static `types`
+// initialization runs FIRST, BEFORE the `classname.Null()` test, and the stripped
+// MILO_NOTIFY residue evaluates `PathName(this)` BEFORE the `ClassName()` vcall.
+// This header previously carried a second, DIFFERENT spelling that sank the static
+// init into the non-null branch and inverted the notify args; it produced a body
+// retail never emits and was worth a uniform 62.92% (316 B, vbase-adjusted `this`)
+// / 64.95% (252 B, direct `this`) on every class that saw it.  Decisive census over
+// all 448 paired `?SetType@*@@UAAXVSymbol@@@Z` bodies: ZERO classes reached 100%
+// through that spelling, while every class that reached OBJ_SET_TYPE_ENGINE (or
+// obj/ObjMacros.h's equivalently-shaped OBJ_SET_TYPE) did.  The two spellings are
+// therefore collapsed: OBJ_SET_TYPE is now OBJ_SET_TYPE_ENGINE.
+// (obj/ObjMacros.h keeps its own same-shaped redefinition; TUs that include it were
+// already matching and are unaffected.)
+#define OBJ_SET_TYPE(classname) OBJ_SET_TYPE_ENGINE(classname)
 // Engine-era variant (synth_xbox FxSend*360 et al.): the static `types` config is
 // initialized BEFORE the null check, the null branch tail-calls SetTypeDef(0), and
 // SetTypeDef(found) runs even when the lookup failed (after the notify).

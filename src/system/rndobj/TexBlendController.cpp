@@ -3,6 +3,18 @@
 #include "math/Utl.h"
 #include "obj/Object.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_TexBlendController;
+#define gAltRev gRevs_TexBlendController.altRev
+#define gRev gRevs_TexBlendController.rev
+
 RndTexBlendController::RndTexBlendController()
     : mMesh(this), mObject1(this), mObject2(this), mReferenceDistance(0), mMinDistance(0),
       mMaxDistance(0), mTex(this) {}
@@ -56,20 +68,20 @@ BEGIN_COPYS(RndTexBlendController)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(2, 0)
-
 BEGIN_LOADS(RndTexBlendController)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mMesh;
-    d >> mObject1;
-    d >> mObject2;
-    d >> mReferenceDistance;
-    d >> mMinDistance;
-    d >> mMaxDistance;
-    if (d.rev > 1) {
-        d >> mTex;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mMesh;
+    bs >> mObject1;
+    bs >> mObject2;
+    bs >> mReferenceDistance;
+    bs >> mMinDistance;
+    bs >> mMaxDistance;
+    if (gRev > 1) {
+        bs >> mTex;
     }
 END_LOADS
 

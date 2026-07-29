@@ -71,6 +71,9 @@ public:
      * Example usage: {$this get_draws}
      */
     DataNode OnGetDraws(DataArray *);
+    /** RB3 retail accessor used by ui/UILabel.cpp. Non-virtual ->
+     *  layout- and vtable-neutral. */
+    RndEnviron *GetEnv() const;
 
 protected:
     RndGroup();

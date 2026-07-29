@@ -112,7 +112,9 @@ public:
     bool operator==(Symbol) const;
 
     void resize(unsigned int);
-    // unsigned int rfind(const char *) const;
+    // Declaration-only (no body in this tree yet) -- ui/UILabel.cpp's retail
+    // kFitEllipsis arm needs it. Member-function decl => layout-neutral.
+    unsigned int rfind(const char *) const;
 
     unsigned int find(const char *) const;
     unsigned int find(char, unsigned int) const;

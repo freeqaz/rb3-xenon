@@ -6,6 +6,18 @@
 #include "rndobj/Trans.h"
 #include "utl/BinStream.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharBone;
+#define gAltRev gRevs_CharBone.altRev
+#define gRev gRevs_CharBone.rev
+
 CharBone::CharBone()
     : mPositionContext(0), mScaleContext(0), mRotation(CharBones::TYPE_END),
       mRotationContext(0), mTarget(this), mWeights(), mTrans(this),
@@ -103,8 +115,6 @@ BinStream &operator>>(BinStream &d, CharBone::WeightContext &w) {
     return d;
 }
 
-INIT_REVS(10, 0)
-
 BEGIN_SAVES(CharBone)
     SAVE_REVS(10, 0)
     SAVE_SUPERCLASS(Hmx::Object)
@@ -119,54 +129,56 @@ BEGIN_SAVES(CharBone)
 END_SAVES
 
 BEGIN_LOADS(CharBone)
-    LOAD_REVS(bs)
-    ASSERT_REVS(10, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev < 9) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    if (gRev < 9) {
         RndTransformableRemover t;
-        t.Load(d.stream);
+        t.Load(bs);
     }
-    if (d.rev > 6) {
-        d >> mPositionContext;
+    if (gRev > 6) {
+        bs >> mPositionContext;
     } else {
         bool b;
-        d >> b;
+        bs >> b;
         mPositionContext = b;
     }
-    if (d.rev > 6) {
-        d >> mScaleContext;
-    } else if (d.rev > 1) {
+    if (gRev > 6) {
+        bs >> mScaleContext;
+    } else if (gRev > 1) {
         bool b;
-        d >> b;
+        bs >> b;
         mScaleContext = b;
     }
-    d >> (int &)mRotation;
-    if (d.rev < 5) {
+    bs >> (int &)mRotation;
+    if (gRev < 5) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (d.rev < 2) {
+    if (gRev < 2) {
         mScaleContext = 0;
         mRotation = (CharBones::Type)(mRotation + 1);
     }
-    if (d.rev < 5 && mRotation > CharBones::TYPE_END) {
+    if (gRev < 5 && mRotation > CharBones::TYPE_END) {
         mRotation = CharBones::TYPE_END;
     }
-    if (d.rev > 6) {
-        d >> mRotationContext;
+    if (gRev > 6) {
+        bs >> mRotationContext;
     } else {
         mRotationContext = mRotation != CharBones::TYPE_END;
     }
-    if (d.rev > 2 && d.rev < 8) {
+    if (gRev > 2 && gRev < 8) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (d.rev > 3) {
-        d >> mTarget;
+    if (gRev > 3) {
+        bs >> mTarget;
     }
-    if (d.rev == 6) {
+    if (gRev == 6) {
         int ctx;
-        d >> ctx;
+        bs >> ctx;
         if (mPositionContext != 0) {
             mPositionContext = ctx;
         }
@@ -177,14 +189,14 @@ BEGIN_LOADS(CharBone)
             mRotationContext = ctx;
         }
     }
-    if (d.rev > 7) {
-        d >> mWeights;
+    if (gRev > 7) {
+        bs >> mWeights;
     }
-    if (d.rev > 8) {
-        d >> mTrans;
+    if (gRev > 8) {
+        bs >> mTrans;
     }
-    if (d.rev > 9) {
-        d >> mBakeOutAsTopLevel;
+    if (gRev > 9) {
+        bs >> mBakeOutAsTopLevel;
     }
 END_LOADS
 

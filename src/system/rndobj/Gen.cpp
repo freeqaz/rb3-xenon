@@ -12,6 +12,18 @@
 #include "rndobj/Trans.h"
 #include "rndobj/Utl.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Gen;
+#define gAltRev gRevs_Gen.altRev
+#define gRev gRevs_Gen.rev
+
 RndGenerator::RndGenerator()
     : mPath(this), mPathStartFrame(0), mPathEndFrame(0), mMesh(this), mMultiMesh(this),
       mParticleSys(this), mNextFrameGen(-9999999), mRateGenLow(100), mRateGenHigh(100),
@@ -82,48 +94,48 @@ BEGIN_COPYS(RndGenerator)
     COPY_MEMBER_FROM(d, mParticleSys)
 END_COPYS
 
-INIT_REVS(11, 0)
-
 BEGIN_LOADS(RndGenerator)
-    LOAD_REVS(bs)
-    ASSERT_REVS(11, 0)
-    if (d.rev > 9) {
-        LOAD_SUPERCLASS(Hmx::Object)
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    if (gRev > 9) {
+        Hmx::Object::Load(bs);
     }
-    if (d.rev > 1) {
-        LOAD_SUPERCLASS(RndTransformable)
-        LOAD_SUPERCLASS(RndDrawable)
-        LOAD_SUPERCLASS(RndAnimatable)
+    if (gRev > 1) {
+        RndTransformable::Load(bs);
+        RndDrawable::Load(bs);
+        RndAnimatable::Load(bs);
     }
     ResetInstances();
-    d.stream >> mMesh >> mPath;
-    if (d.rev < 7) {
+    bs >> mMesh >> mPath;
+    if (gRev < 7) {
         bool bd0;
-        d >> bd0;
+        bs >> bd0;
         if (!bd0) {
             MILO_NOTIFY("%s no longer supports childOfGen", Name());
         }
     }
-    if (d.rev < 1) {
-        d.stream >> mRateGenHigh;
-        d.stream >> mScaleGenHigh;
+    if (gRev < 1) {
+        bs >> mRateGenHigh;
+        bs >> mScaleGenHigh;
     }
-    if (d.rev < 8) {
+    if (gRev < 8) {
         ObjPtr<RndCam> cam(this);
         bool bd0;
         int ic0;
-        d >> bd0 >> ic0 >> cam;
+        bs >> bd0 >> ic0 >> cam;
     }
 
-    if (d.rev > 0) {
-        d.stream >> mRateGenLow;
-        d.stream >> mRateGenHigh;
-        d.stream >> mScaleGenLow;
-        d.stream >> mScaleGenHigh;
-        d.stream >> mPathVarMaxX;
-        d.stream >> mPathVarMaxY;
-        d.stream >> mPathVarMaxZ;
-        if (d.rev < 9) {
+    if (gRev > 0) {
+        bs >> mRateGenLow;
+        bs >> mRateGenHigh;
+        bs >> mScaleGenLow;
+        bs >> mScaleGenHigh;
+        bs >> mPathVarMaxX;
+        bs >> mPathVarMaxY;
+        bs >> mPathVarMaxZ;
+        if (gRev < 9) {
             mPathVarMaxX *= DEG2RAD;
             mPathVarMaxY *= DEG2RAD;
             mPathVarMaxZ *= DEG2RAD;
@@ -133,29 +145,29 @@ BEGIN_LOADS(RndGenerator)
         mScaleGenLow = mScaleGenHigh;
         mPathVarMaxX = mPathVarMaxY = mPathVarMaxZ = 0;
     }
-    if (d.rev == 3) {
+    if (gRev == 3) {
         int x;
         ObjPtr<Hmx::Object> obj(this);
-        d.stream >> obj >> x;
+        bs >> obj >> x;
     }
-    if (d.rev > 3 && d.rev < 0xB) {
+    if (gRev > 3 && gRev < 0xB) {
         ObjPtr<Hmx::Object> obj(this);
-        d.stream >> obj;
+        bs >> obj;
     }
-    if (d.rev > 4 && d.rev < 0xB) {
+    if (gRev > 4 && gRev < 0xB) {
         bool bd0;
-        d >> bd0;
+        bs >> bd0;
     }
-    if (d.rev > 5) {
-        d.stream >> mPathEndFrame;
-        d.stream >> mPathStartFrame;
+    if (gRev > 5) {
+        bs >> mPathEndFrame;
+        bs >> mPathStartFrame;
     } else {
         if (mPath)
             mPathEndFrame = mPath->EndFrame();
         mPathStartFrame = 0;
     }
-    if (d.rev > 6) {
-        d.stream >> mMultiMesh >> mParticleSys;
+    if (gRev > 6) {
+        bs >> mMultiMesh >> mParticleSys;
     }
 END_LOADS
 

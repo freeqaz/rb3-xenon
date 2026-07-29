@@ -1932,7 +1932,17 @@
             "band3/meta_band/RetryAudioPanel.cpp": "NonMatching",
             "band3/meta_band/SaveLoadStatusPanel.cpp": "NonMatching",
             "band3/meta_band/SetlistSortByLocation.cpp": "NonMatching",
-            "band3/tour/TourPropertyCollection.cpp": "NonMatching"
+            "band3/tour/TourPropertyCollection.cpp": "NonMatching",
+            "band3/meta_band/ProfileAssets.cpp": "NonMatching",
+            "band3/meta_band/GameTimePanel.cpp": "NonMatching",
+            "band3/meta_band/InterstitialPanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
+            "band3/meta_band/ParentalControlPanel.cpp": "NonMatching",
+            "band3/tour/TourQuestGameRules.cpp": "NonMatching"
         }
     },
     "network": {

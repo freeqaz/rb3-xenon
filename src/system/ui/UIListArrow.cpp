@@ -5,6 +5,18 @@
 #include "ui/UIListWidget.h"
 #include "ui/UIList.h"
 
+// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
+// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
+// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
+// does not lay .bss out in declaration order, so two separate statics get other
+// globals interleaved between them and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UIListArrow;
+#define gAltRev gRevs_UIListArrow.altRev
+#define gRev gRevs_UIListArrow.rev
+
 UIListArrow::UIListArrow()
     : mMesh(this), mScrollAnim(this), mPosition(kUIListArrowBack), mShowOnlyScroll(0),
       mOnHighlight(0) {}
@@ -39,18 +51,18 @@ BEGIN_COPYS(UIListArrow)
     COPY_MEMBER_FROM(a, mScrollAnim)
 END_COPYS
 
-INIT_REVS(1, 0)
-
 BEGIN_LOADS(UIListArrow)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(UIListWidget)
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    UIListWidget::Load(bs);
     int pos;
     bs >> mMesh;
     bs >> pos;
     bs >> mShowOnlyScroll >> mOnHighlight;
     mPosition = (UIListArrowPosition)pos;
-    if (d.rev > 0) {
+    if (gRev > 0) {
         bs >> mScrollAnim;
     }
 END_LOADS
