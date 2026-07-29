@@ -2328,7 +2328,8 @@ MidiParser.cpp:
 	.text       start:0x827EA210 end:0x827EB4A0
 
 DataFunc.cpp:
-	.pdata      start:0x82200BF8 end:0x82200F28
+	.pdata      start:0x82200BF8 end:0x82200D68
+	.pdata      start:0x82200EB0 end:0x82200F28
 	.pdata      start:0x8223C768 end:0x8223C780
 	.pdata      start:0x8223C780 end:0x8223C788
 	.pdata      start:0x8223C788 end:0x8223C798
@@ -2419,7 +2420,8 @@ DataFunc.cpp:
 	.pdata      start:0x82241D60 end:0x82241D68
 	.pdata      start:0x82242358 end:0x82242360
 	.pdata      start:0x8225CED8 end:0x8225CEE0
-	.text       start:0x82366274 end:0x8236955C
+	.text       start:0x82366274 end:0x82367D60
+	.text       start:0x82368FB8 end:0x8236955C
 	.text       start:0x8275D040 end:0x8275D04C
 	.text       start:0x8275D058 end:0x8275D170
 	.text       start:0x8275D170 end:0x8275D1C4
@@ -12890,6 +12892,7 @@ system/rndobj/PostProcMgr.cpp:
 system/ui/UIProxy.cpp:
 	.pdata      start:0x82247DD8 end:0x82247F10
 	.text       start:0x828233A0 end:0x828248A0
+
 band3/meta_band/TrainingMgr.cpp:
 	.pdata      start:0x8221D2D0 end:0x8221D3E8
 	.text       start:0x82565088 end:0x82566000
@@ -12897,3 +12900,7 @@ band3/meta_band/TrainingMgr.cpp:
 band3/meta_band/CharSync.cpp:
 	.pdata      start:0x8221D220 end:0x8221D2D0
 	.text       start:0x82564410 end:0x82565088
+
+band3/tour/TourDesc.cpp:
+	.pdata      start:0x82200D68 end:0x82200EB0
+	.text       start:0x82367D60 end:0x82368FB8

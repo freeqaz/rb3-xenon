@@ -1738,6 +1738,7 @@
      "/DRB3_HANDLE_LOCAL_STATIC"
     ]
    },
+   "band3/tour/TourDesc.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
    "band3/tour/TourProgress.cpp": {
     "status": "NonMatching",
