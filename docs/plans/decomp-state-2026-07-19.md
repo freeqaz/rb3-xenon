@@ -12,16 +12,46 @@
 > differing relocation**, so it scores 100.0%. Same class as the known
 > `StaticClassName`/`Type()` family (453 members, one 22-instruction body,
 > distinguishable only by the string operand).
-> ⇒ Some share of the count is **shape reproduction, not program reproduction**.
-> **laneBH is auditing this whole-binary** via *symbolic relocation
-> correspondence* (NOT raw diff — raw diff over-rejects, since relocation
-> addresses legitimately differ in a partial decomp). Verdict pending; the
-> **+109 from laneTIGHTGAP (`2e59f8b1`) is explicitly in scope for that audit**
-> and may be reverted. Do not build new gap-absorption channels until it lands:
-> EH funclets are 24.5% of the binary, so this shape is **farmable** without
-> decompiling anything.
-> Principled line proposed by laneBE and provisionally adopted: keep **interior**
-> (same-unit-both-sides) sweeps; close **different-unit absorption**.
+> **RESOLVED 2026-07-29 by laneBH** (`docs/plans/reloc-correspondence-audit-2026-07-29.md`,
+> tool `scripts/harvest/reloc_correspondence.py`). Whole-binary census of all
+> functions at 100.0, reported as a band between the permissive and conservative
+> reading of the weakest oracle:
+>
+> | | permissive | conservative |
+> |---|--:|--:|
+> | evidenced (corresponding + no-relocs) | **65.5%** | **43.8%** |
+> | **DIVERGENT** | **5.2%** | **2.7%** |
+> | UNDECIDABLE | 27.7% | 51.8% |
+> | unpaired / shape | 1.6% | 1.6% |
+>
+> ⇒ **The count is substantially sound.** The headline means: ~17,000–26,000
+> functions we can *prove* we reproduced, ~1,060–2,040 we can prove we did not,
+> and the rest the binaries **cannot adjudicate** — that residue is `.bss`
+> statics and externs with no bytes in either image, i.e. **unobservable, not
+> suspect**. Divergence is NOT concentrated in funclets (4.6% vs 5.8% for named
+> bodies); it concentrates in **≤16 B adjustor/forwarder thunks (10.2%, 2.2×
+> tree)** and the `??__E`/`??__F` static-lifecycle family. Game tier (4.6%) is
+> cleaner than engine (5.5%).
+>
+> **laneTIGHTGAP's +109: STANDS, not reverted.** It measures 5.7×–7.3× the tree
+> divergence rate (verdict invariant to strictness) and its 105 pairable credits
+> rest on only 64 distinct base symbols — laneBE's guard-clear mechanism
+> reproduced symbolically. But reverting would delete 31 evidenced + 42
+> undecidable to remove 32 unevidenced (0.08% of the count), and **the defect is
+> in the scoring rule (many-to-one masked pairing), not the splits geometry** —
+> reverting removes credit without correcting anything. Reclassified in the
+> ledger as ≈31 evidenced / ≈42 undecidable / ≈32 unevidenced.
+>
+> ★**STANDING GATE: price every future gap-absorption channel with
+> `reloc_correspondence.py` before landing.** A channel materially above the
+> tree's 5.2% divergence rate is buying metric, not program. laneBE's unlanded
+> +560 is 100% this class and prices worse; its CLOSE recommendation stands.
+> Keep **interior** (same-unit-both-sides) sweeps; close **different-unit
+> absorption**.
+>
+> ★**By-product worth more than the audit: `docs/plans/laneBH_realbugs.json`** —
+> **109 named bodies ≥128 B at 100% carry content-proven WRONG constants/strings**,
+> invisible to every near-miss scanner because scanners only look *below* 100%.
 
 > **VERIFIED 2026-07-29 at main `5e9996fc` (lane docfix).** Independently
 > reproduced, not copied from a lane report: fresh `scripts/setup_worktree.sh`
