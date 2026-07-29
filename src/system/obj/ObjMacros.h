@@ -319,80 +319,6 @@ const char *PathName(const class Hmx::Object *obj);
         else {                                                                           \
             Symbol sym = _prop->Sym(_i);
 
-// -----------------------------------------------------------------------------------
-// LOCAL-STATIC SYNC_PROP variant (RB3 retail codegen lever) -- exact analogue of
-// RB3_HANDLE_LOCAL_STATIC above, for BEGIN_PROPSYNCS bodies.
-//
-// Retail band3 constructs each property-dispatch Symbol as a FUNCTION-LOCAL STATIC
-// (`static Symbol _ps("name")`): MSVC emits a guard-bit test + inline Symbol ctor,
-// packing one guard word / one bit per property in source order.  Our DC3-era
-// sources reference centralized GLOBAL Symbols (Symbols2/3/4.h), so a SyncProperty
-// with N props emits N plain global compares and structurally diverges (target-only
-// lis/lwz/clrlwi. guard machinery + ??0Symbol@@QAA@PBD@Z calls we never emit).
-//
-// Measured signature: target obj has K relocations to ??0Symbol@@QAA@PBD@Z inside
-// the SyncProperty COMDAT, ours has 0 (scanner: see laneBF localstatic scan).
-//
-// Enable PER-TU with `/DRB3_SYNCPROP_LOCAL_STATIC` in the object's extra_cflags so
-// no other TU's codegen moves.
-// -----------------------------------------------------------------------------------
-#ifdef RB3_SYNCPROP_LOCAL_STATIC
-
-#define SYNC_PROP(symbol, member)                                                        \
-    {                                                                                    \
-        static Symbol _ps(#symbol);                                                      \
-        if (sym == _ps)                                                                  \
-            return PropSync(member, _val, _prop, _i + 1, _op);                           \
-    }
-
-#define SYNC_PROP_SET(symbol, member, func)                                              \
-    {                                                                                    \
-        static Symbol _ps(#symbol);                                                      \
-        if (sym == _ps) {                                                                \
-            if (_op == kPropSet) {                                                       \
-                func;                                                                    \
-            } else {                                                                     \
-                if (_op == (PropOp)0x40)                                                 \
-                    return false;                                                        \
-                _val = DataNode(member);                                                 \
-            }                                                                            \
-            return true;                                                                 \
-        }                                                                                \
-    }
-
-#define SYNC_PROP_MODIFY(symbol, member, func)                                           \
-    {                                                                                    \
-        static Symbol _ps(#symbol);                                                      \
-        if (sym == _ps) {                                                                \
-            bool synced = PropSync(member, _val, _prop, _i + 1, _op);                    \
-            if (!synced)                                                                 \
-                return false;                                                            \
-            else {                                                                       \
-                if (!(_op & (kPropSize | kPropGet))) {                                   \
-                    func;                                                                \
-                }                                                                        \
-                return true;                                                             \
-            }                                                                            \
-        }                                                                                \
-    }
-
-#define SYNC_PROP_MODIFY_ALT(symbol, member, func)                                       \
-    {                                                                                    \
-        static Symbol _ps(#symbol);                                                      \
-        if (sym == _ps) {                                                                \
-            bool synced = PropSync(member, _val, _prop, _i + 1, _op);                    \
-            if (synced) {                                                                \
-                if (!(_op & (kPropSize | kPropGet))) {                                   \
-                    func;                                                                \
-                }                                                                        \
-                return true;                                                             \
-            } else                                                                       \
-                return false;                                                            \
-        }                                                                                \
-    }
-
-#else
-
 #define SYNC_PROP(symbol, member)                                                        \
     if (sym == symbol)                                                                   \
         return PropSync(member, _val, _prop, _i + 1, _op);
@@ -442,8 +368,6 @@ const char *PathName(const class Hmx::Object *obj);
         } else                                                                           \
             return false;                                                                \
     }
-
-#endif // RB3_SYNCPROP_LOCAL_STATIC
 
 #define SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                                \
     if (sym == symbol) {                                                                 \
