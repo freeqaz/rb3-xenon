@@ -28,7 +28,6 @@ public:
 class BasicStartLockMsg : public StartLockMsg {
 public:
     BasicStartLockMsg() {}
-    virtual ~BasicStartLockMsg() {}
     NETMSG_BYTECODE(BasicStartLockMsg);
     NETMSG_NAME(BasicStartLockMsg);
     virtual LockData *GetLockData() { return nullptr; }
