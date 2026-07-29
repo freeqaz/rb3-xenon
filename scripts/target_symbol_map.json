@@ -6945,7 +6945,7 @@
  "0x827c4380": "??$MakeString@PAHHH@@YAPBDPBDABQAHABH2@Z",
  "0x827c4940": "?MemTrackHeapDump@@YAX_N@Z",
  "0x827c4aa0": "?DataSyncReloadLocale@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x827cc0b8": "?OnAccept@CXLrcListener@@QAAJXZ",
+ "0x827cc0b8": "?Reset@LogFile@@QAAXXZ",
  "0x827d02a0": "?Create@NetLoader@@SAPAV1@ABVString@@@Z",
  "0x827d7290": "??6@YAAAVTextStream@@AAV0@ABVAllocInfo@@@Z",
  "0x827ed930": "??1DataEventList@@QAA@XZ",
@@ -27132,5 +27132,9 @@
  "0x82827f00": "?PreLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
  "0x82828458": "?PostLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
  "0x82828820": "?Handle@LabelNumberTicker@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82b7aae8": "?Handle@QuestFilterPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+ "0x82b7aae8": "?Handle@QuestFilterPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x827cbef8": "??0LogFile@@QAA@PBD@Z",
+ "0x827cbf80": "?AdvanceFile@LogFile@@QAAXXZ",
+ "0x827cc068": "??_GLogFile@@UAAPAXI@Z",
+ "0x827cc0c0": "?Print@LogFile@@UAAXPBD@Z"
 }

@@ -12897,3 +12897,8 @@ band3/meta_band/TrainingMgr.cpp:
 band3/meta_band/CharSync.cpp:
 	.pdata      start:0x8221D220 end:0x8221D2D0
 	.text       start:0x82564410 end:0x82565088
+
+
+system/utl/LogFile.cpp:
+	.pdata      start:0x822429B8 end:0x822429E8
+	.text       start:0x827CBEF8 end:0x827CC150
