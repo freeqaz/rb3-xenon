@@ -1,0 +1,79 @@
+[
+ {
+  "va": "0x82630340",
+  "old": "??1NewAwardPanel@@UAA@XZ",
+  "new": "??1RetryAudioPanel@@UAA@XZ",
+  "op": "repoint",
+  "why": "Held repoint from lane BO-4 (docs/plans/lane-bo4-byte-search-locator-2026-07-29.md S9.3), unblocked by RetryAudioPanel.cpp landing in 4b424140. Four independent channels agree: (1) RTTI -- all three vtables the retail body installs (0x820CA194/0x820CA154/0x820CA0FC) have Complete Object Locators whose type descriptor reads .?AVRetryAudioPanel@@, and the COL offsets 0x0/0x3c match the body's literal stw r11,0(r3)/stw r9,0x3c(r3); (2) hierarchy -- RetryAudioPanel:VoiceoverPanel and the retail body tail-branches b 0x8262f390 = ??1VoiceoverPanel@@UAA@XZ, while NewAwardPanel:TexLoadPanel and OUR ??1NewAwardPanel correctly tail-calls ??1TexLoadPanel, so neither side's CODE is wrong -- only the map's name->address binding; (3) spatial -- 0x82630340 lies in RetryAudioPanel.cpp's span 0x82630228..0x82630690 where every other named symbol is RetryAudioPanel, and our COMDAT is sel=1 (NO_DUPLICATES) so its retail copy must lie in its own TU's span (NewAwardPanel.cpp's span is ~36KB away); (4) uniqueness -- a masked-byte search over all of retail .text returns exactly one hit for this body shape. COMDAT gate PASSES: ??1RetryAudioPanel@@UAA@XZ is a real 0x44 COMDAT in build/45410914/src/band3/meta_band/RetryAudioPanel.obj, matching symbols.txt size:0x44. Currently the target-side name is UNPAIRED (fuzzy None), not a false 100, so this should be +1 matched_functions."
+ },
+ {
+  "va": "0x82323990",
+  "old": "?Handle@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "new": "?ClassName@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x82323990 branches to 0x823238f0 = ?ClassName@InstrumentDifficultyDisplay@@UBA?AVSymbol@@XZ (retail size 48 == our COMDAT 48, so the BODY name is corroborated); thunk 0x823245a8 branches to 0x823243d0 = ?Handle@InstrumentDifficultyDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x823245a8",
+  "old": "?ClassName@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "new": "?Handle@InstrumentDifficultyDisplay@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x823245a8 branches to 0x823243d0 = ?Handle@InstrumentDifficultyDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z (retail size 380 == our COMDAT 380, so the BODY name is corroborated); thunk 0x82323990 branches to 0x823238f0 = ?ClassName@InstrumentDifficultyDisplay@@UBA?AVSymbol@@XZ. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x82406510",
+  "old": "?SetType@RndDrawable@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "new": "?Copy@RndDrawable@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x82406510 branches to 0x82406220 = ?Copy@RndDrawable@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z (retail size 208 == our COMDAT 208, so the BODY name is corroborated); thunk 0x82406ae0 branches to 0x82406548 = ?SetType@RndDrawable@@UAAXVSymbol@@@Z. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x82406ae0",
+  "old": "?Copy@RndDrawable@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "new": "?SetType@RndDrawable@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x82406ae0 branches to 0x82406548 = ?SetType@RndDrawable@@UAAXVSymbol@@@Z (retail size 316 == our COMDAT 316, so the BODY name is corroborated); thunk 0x82406510 branches to 0x82406220 = ?Copy@RndDrawable@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x8245f908",
+  "old": "?Handle@RndTransAnim@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "new": "?ClassName@RndTransAnim@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x8245f908 branches to 0x8245f8d8 = ?ClassName@RndTransAnim@@UBA?AVSymbol@@XZ (retail size 48 == our COMDAT 48, so the BODY name is corroborated); thunk 0x82461310 branches to 0x82460648 = ?Handle@RndTransAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x82461310",
+  "old": "?ClassName@RndTransAnim@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "new": "?Handle@RndTransAnim@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x82461310 branches to 0x82460648 = ?Handle@RndTransAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z (retail size 2112 == our COMDAT 2112, so the BODY name is corroborated); thunk 0x8245f908 branches to 0x8245f8d8 = ?ClassName@RndTransAnim@@UBA?AVSymbol@@XZ. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x826baaa0",
+  "old": "?Handle@FreestylePanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "new": "?ClassName@FreestylePanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x826baaa0 branches to 0x826ba988 = ?ClassName@FreestylePanel@@UBA?AVSymbol@@XZ (retail size 48 == our COMDAT 48, so the BODY name is corroborated); thunk 0x826bba80 branches to 0x826bb460 = ?Handle@FreestylePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x826bba80",
+  "old": "?ClassName@FreestylePanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "new": "?Handle@FreestylePanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x826bba80 branches to 0x826bb460 = ?Handle@FreestylePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z (retail size 1180 == our COMDAT 1180, so the BODY name is corroborated); thunk 0x826baaa0 branches to 0x826ba988 = ?ClassName@FreestylePanel@@UBA?AVSymbol@@XZ. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x827467f8",
+  "old": "?Handle@TexMovie@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "new": "?ClassName@TexMovie@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x827467f8 branches to 0x827467a8 = ?ClassName@TexMovie@@UBA?AVSymbol@@XZ (retail size 48 == our COMDAT 48, so the BODY name is corroborated); thunk 0x82747120 branches to 0x82746cd8 = ?Handle@TexMovie@@UAA?AVDataNode@@PAVDataArray@@_N@Z. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ },
+ {
+  "va": "0x82747120",
+  "old": "?ClassName@TexMovie@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "new": "?Handle@TexMovie@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "swap",
+  "why": "reciprocal adjustor-thunk name swap. Thunk 0x82747120 branches to 0x82746cd8 = ?Handle@TexMovie@@UAA?AVDataNode@@PAVDataArray@@_N@Z (retail size 580 == our COMDAT 580, so the BODY name is corroborated); thunk 0x827467f8 branches to 0x827467a8 = ?ClassName@TexMovie@@UBA?AVSymbol@@XZ. An adjustor thunk (3 insns: load vbase disp, adjust this, tail-branch) is by construction named for the body it jumps to, so these two thunk names are exchanged. Same displacement tag, so the swap stays within one sub-object. Metric-neutral (both thunk bodies are byte-identical under objdiff normalization); value is ATTRIBUTION."
+ }
+]
