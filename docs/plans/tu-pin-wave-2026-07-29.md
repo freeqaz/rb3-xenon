@@ -18,7 +18,7 @@ Baseline for every measurement below, taken in a fully-built worktree at main
 
 ## 0. TL;DR
 
-* **27 TUs/carves pinned, wired, ported and measured: +574 gains / −38 losses**
+* **28 TUs/carves pinned, wired, ported and measured: +579 gains / −38 losses**
   (lanes were still in flight at time of writing; the ledger is a floor, not a
   final). **All but one of the losses is the retirement of a *false* 100 %** — a
   `target_symbol_map.json` entry bound to a target VA that is not that function,
@@ -90,12 +90,14 @@ baseline above. Losses are itemised in §4.
 | D | `band3/game/KeysFx` | `0x826F3E98..0x826F47B0` (located 708 B → true **2,328 B**) | `GuitarFx.cpp` | **+5** | 0 |
 | F | `ChordShapeGenerator` (2nd carve) | out of the foreign `Mesh.cpp` pin | `Mesh.cpp` | **+42** | 0 |
 | G | `band3/meta_band/InputMgr` | `0x825B0518..0x825B22A8` (4 donors) | `AppInlineHelp`/`CalibrationPanel`/… | **+30** | 0 |
+| C | `band3/bandtrack/DrumTrackWatcherImpl` (bonus) | `0x827800B0..0x827808C0` (**ADD**) | — | **+5** | 0 |
 | A | `band3/tour/TourPerformerLocal` + `TourPerformerRemote` | (2 carves) | `system/obj/DataFunc.cpp` | **+23** | −2 |
-| B | `band3/game/BandUserMgr` | — | `system/rndobj/PropKeys.cpp` | **+38** | 0 |
-| | **27 TUs / carves** | | | **+574** | **−38** |
+| B | `band3/game/BandUserMgr` | `0x826826A8..0x82684E40` (+ unclaimed head/tail) | `system/rndobj/PropKeys.cpp` | **+38** | 0 |
+| | **28 TUs / carves** | | | **+579** | **−38** |
 
-Per lane: A **+95/−5**, B **+79/−12**, C **+139/−0**, D **+90/−8**, E **+74/−10**,
-F **+60/−3**, G **+37/−0**. Composition re-verified at this point: **27 new units,
+Per lane: A **+95/−5**, B **+79/−12**, C **+144/−0**, D **+90/−8**, E **+74/−10**,
+F **+60/−3**, G **+37/−0**. Lanes B, C, D and F are complete; A, E and G were
+still extending. Composition re-verified at this point: **27 new units,
 zero cross-branch `.text` overlaps.**
 
 `BandUserMgr` is worth singling out: it is the row where 36 functions were already
@@ -171,6 +173,26 @@ construction and must be removed or repointed — see §4.
 
 laneBD's §7.2 warned that located spans under-cover at both ends. That is
 confirmed — and this wave adds the mechanism and two corrections.
+
+### 3.0 ★★ But they can also OVER-cover — ICF folds inflate the located hi
+
+**Do not treat "the span under-covers" as a rule to apply blindly.**
+`FaceHairProvider`'s located hi was inflated by roughly **2×**: its vtable slots 1
+and 8 (`Text` / `DataSymbol`, 116 B each) are **ICF-folded across the whole
+`*Provider` family** and physically live inside `MakeupProvider.cpp`'s pin. The
+RTTI instrument dutifully reported them as class-owned slots, so the span
+stretched to reach them. Carving to the located hi would have **stolen ~900 B**
+from a unit that legitimately owns it.
+
+The asymmetry is systematic and worth internalising:
+* **Under-covering** comes from what the instruments *cannot see* — free
+  functions, STL template instantiations, `??__F` runs, `except_data`.
+  `CharProvider` and `BandUserMgr` each under-covered by **29 %**.
+* **Over-covering** comes from what the instruments see *too well* — an
+  ICF-folded slot is a real class-owned slot that is not in the TU.
+
+So a vtable slot lands inside the span **only if the function is not folded**.
+Check fold status before letting a slot set an endpoint.
 
 ### 3.1 The head extends by leaf helpers and the `OBJ_CLASSNAME` accessor
 
@@ -347,6 +369,15 @@ fail on `Key<Quat>`/`Key<Color>` and may wrongly reinstate those four bindings.
 sizes actually disagree. Check the arithmetic per type before leaning on it;
 prefer call-graph closure or automap-EXACT byte identity as the discriminator.**
 
+★ The corrected reading also identifies the *mechanism* for nine of the twelve
+lane-B losses, and it is not ICF. `PropKeys`' `Key<Quat>` / `Key<Color>` sort
+templates and `CharProvider`'s `CharacterEntry` templates share the **same 0x14
+element stride**, so MSVC emits **reloc-masked byte twins** — distinct functions
+with identical masked bodies. `pair_funclets_by_bytes` will pair either against
+either. This is a third, distinct fake-match mechanism alongside phantom names
+and ICF folds, and it is the one most likely to recur: **any two container
+templates over same-sized elements are candidates.**
+
 ### 4.3 Honest caveat
 
 **Any loss that turns out to be a real body (≥ 100 B, not funclet-shaped) is a
@@ -484,6 +515,29 @@ this wave saw **17 of 26** for `UIGridProvider`. Nobody has yet turned it into a
 locator. It inverts the pipeline (port → compile → locate → pin) which is the
 right order when there is no positional signal at all.
 
+### 6.0 ★ `MakeupProvider.cpp` is itself mis-pinned — its pin holds `OutfitProvider`
+
+Found by lane B while separating the `Leaderboard.cpp` provider cluster. This is
+the same class of defect as the phantom donors (§2) and the foreign `Mesh.cpp`
+pin (§5.0), but with a *live* class: `MakeupProvider` exists, its pin simply
+contains a different provider's code. It matters because `MakeupProvider.cpp`
+appears as a second claimer on four separate rows of `located_spans.json`, so
+anyone reasoning from those rows is reasoning from a bad label.
+
+Lane B also returned refined spans for three sibling providers it did not have
+budget to wire — these are pin-ready and should be taken next:
+
+| TU | span |
+|---|---|
+| `EyebrowsProvider` | `0x8266EC88..0x8266F088` |
+| `FaceTypeProvider` | `0x8266F088..0x8266F380` |
+| `InstrumentFinishProvider` | ≈ `0x8266FAF0..0x8266FDC8` |
+
+Note these supersede the `located_spans.json` rows, which for `FaceTypeProvider`
+and `InstrumentFinishProvider` both anchored on the *same* 116-byte function
+carrying only the generic literal `option` — the string channel cannot separate
+those two, and the ICF-fold analysis above is why.
+
 ### 6.1 Rows that DO collapse — the next wave's worklist
 
 | TU | was | anchor / unclaimed run | headroom |
@@ -514,6 +568,22 @@ before pinning either.
 laneBD established that `../rb3` is a **dev** build and every divergence costs a
 whole function. This wave found these; each was worth at least one function and
 several were worth 0 → 100.
+
+**★★ Redundant derived destructor declarations — a tree-wide scannable lever**
+
+*The rb3-Wii dev headers declare a redundant derived `virtual ~Derived() {}`;
+retail's headers do not.* With the redeclaration MSVC emits the **own-vptr store
+at dtor entry** (`lis`/`addi ??_7Derived` + `stw r11,0(r3)`); retail's dtors go
+straight to member teardown and only restore the **base** vptr. Confirmed
+independently in three TUs; deleting five redeclarations was worth **+5**
+(`~HitTracker` 88 → 100, `~MassChannelMapping` and `~MultiChannelMapping`
+83.6 → 100, and `LockStepMgr::StartLock` 63.8 → 100 via the inlined
+`BasicStartLockMsg` temporary).
+
+This is the best force-multiplier the wave produced that nobody has swept: the
+signature is mechanical (a dtor whose target lacks the own-vptr store while our
+header redeclares the destructor), it applies to every polymorphic Milo class
+ported from a Wii header, and it is **cheap to scan tree-wide**.
 
 **Guards and arms retail drops**
 * `UIGridProvider::SetListToData` — retail has **no** `if (child)` guard; the
@@ -637,6 +707,30 @@ laneBL work:
 
 ---
 
+## 7bis. ★★ A silent `splits.txt` corruption class: dtk tolerates duplicate ranges
+
+Lane C shipped **six commits containing 36 self-overlapping duplicate `.text`
+ranges** without noticing. Its per-TU staging helper rebuilt `splits.txt` from
+`git show HEAD:config/45410914/splits.txt` at each step — HEAD advances, so every
+step re-appended the earlier units' blocks.
+
+★ **The reason it went unnoticed is the finding: dtk silently tolerates
+exact-duplicate ranges.** The build succeeds, the split succeeds, and the
+measurement is unaffected (re-verified byte-identical after dedupe). There is
+**no symptom at all** until `overlap_check.py` aborts, or until a *different*
+lane adds a pin that collides with the duplicate — at which point the failure
+surfaces in someone else's work.
+
+Two rules follow:
+1. **Never rebuild `splits.txt` from a moving `HEAD`** inside a per-TU loop.
+2. **Run `overlap_check.py` before every commit, not just before every build.**
+   The existing SOP places it before builds, which is exactly where it cannot
+   catch this.
+
+All seven branches were audited after the fix: `laneBL-A` 5,819 `.text` ranges /
+0 overlaps, B 5,819/0, C 5,825/0, D 5,816/0, E 5,818/0, F 5,819/0, G 5,815/0 —
+plus zero cross-branch overlaps.
+
 ## 8ter. Measured size distributions (the gate in practice)
 
 Lane D, all five TUs, all 90 gains landing in its own units (no donor re-pairings):
@@ -664,9 +758,34 @@ substance is the named tail (`SyncProperty` 2,644 B, `Handle` 660, `NameMesh` 48
 same as "0 % boilerplate" when the names are anonymous** — report the named/
 anonymous split alongside the funclet share.
 
+★★ **Lane C's framing is the one to adopt, and it should be mandatory.** It
+reported its +144 as **"76 ported bodies + 68 byte-paired EH funclets"** rather
+than as 144 bodies:
+
+| TU | n | median | mean | % funclet | named bodies | anon `fn_` funclets |
+|---|--:|--:|--:|--:|---|---|
+| `LockStepMgr` | 65 | 68 | 94 | 47.7 % | n=34, med 112, mean 144 | n=31, med 40 |
+| `UGCPurchasePanel` | 25 | 40 | 101 | 68.0 % | n=8, med 234 | n=17, med 40 |
+| `SlotChannelMapping` | 23 | 48 | 61 | 34.8 % | n=15, med 72 | n=8, med 40 |
+| `HitTracker` | 12 | 42 | 65 | 25.0 % | n=9, med 68 | n=3, med 40 |
+| `LogFile` | 7 | 76 | 81 | 28.6 % | n=5, med 88 | n=2, med 40 |
+| `Asset` | 7 | 32 | 46 | 85.7 % | n=1 (116 B) | n=6, med 32 |
+| `DrumTrackWatcherImpl` | 5 | 88 | 72 | 20.0 % | n=4, med 88 | n=1 |
+| **total** | **144** | **44** | **84** | **47.2 %** | **n=76, med 92, mean 124** | **n=68, med 40** |
+
+`Asset` (1 body + 6 funclets) is the weakest row in the wave and is labelled as
+such; `UGCPurchasePanel` carries 17 funclets but also the wave's largest median
+body (234 B). Lane B's four TUs: n=79, median 84 B, mean 116 B, **15 % funclet**.
+
+★ Lane C also **declined +5 of pure metric**: five twelve-byte
+`$4PPPPPPPM@A@` adjustor thunks that are byte-identical to each other and
+separable only by a relocation the normalized diff masks. It left them unmapped
+rather than guessing, and did not fabricate the unidentified XEX-import callee in
+`UGCPurchasePanel::Enter`/`Exit`. That is the behaviour the gate is for.
+
 Two independent lanes measured `reloc_correspondence.py` hanging (>8 min and
->10 min on `--unit`, twice), corroborating the coordinator's finding and the
-decision to drop it.
+>10 min on `--unit`), corroborating the coordinator's finding and the decision to
+drop it.
 
 ## 9. What remains
 
