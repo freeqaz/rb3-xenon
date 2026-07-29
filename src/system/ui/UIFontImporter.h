@@ -52,6 +52,8 @@ protected:
     void SyncWithGennedFonts();
     void HandmadeFontChanged();
     RndFontBase *FindFontForMat(RndMat *) const;
+    const char *GetResourcesPath();
+    DataNode OnGetResourcesPath(DataArray *);
     DataNode OnShowFontPicker(DataArray *);
     DataNode OnGenerate(DataArray *);
     DataNode OnGenerateOG(DataArray *);

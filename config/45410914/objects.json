@@ -50,7 +50,8 @@
    "system/bandobj/BandCharacter.cpp": {
     "status": "NonMatching",
     "extra_cflags": [
-     "/DRB3_HANDLE_LOCAL_STATIC"
+     "/DRB3_HANDLE_LOCAL_STATIC",
+     "/DRB3_SYNCPROP_LOCAL_STATIC"
     ]
    },
    "system/bandobj/BandCharDesc.cpp": "NonMatching",

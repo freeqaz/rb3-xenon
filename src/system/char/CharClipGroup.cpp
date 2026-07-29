@@ -152,6 +152,12 @@ struct Alphabetically {
     }
 };
 
+void CharClipGroup::Randomize() {
+    for (int i = 0; i < mClips.size(); i++) {
+        std::swap(mClips[i], mClips[RandomInt(i, mClips.size())]);
+    }
+}
+
 void CharClipGroup::Sort() { std::sort(mClips.begin(), mClips.end(), Alphabetically()); }
 
 void CharClipGroup::DeleteRemaining(int i1) {

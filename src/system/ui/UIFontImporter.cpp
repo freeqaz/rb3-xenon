@@ -1,5 +1,6 @@
 #include "ui/UIFontImporter.h"
 #include "ui/UILabelDir.h"
+#include "ui/UILabel.h"
 #include "obj/Data.h"
 #include "obj/Object.h"
 #include "os/File.h"
@@ -54,6 +55,7 @@ BEGIN_HANDLERS(UIFontImporter)
     HANDLE(attach_to_importfont, OnAttachToImportFont)
     HANDLE(import_from_importfont, OnImportSettings)
     HANDLE(sync_with_resource, OnSyncWithResourceFile)
+    HANDLE(get_resources_path, OnGetResourcesPath)
     HANDLE(get_bitmap_path, OnGetGennedBitmapPath)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
@@ -518,6 +520,31 @@ void UIFontImporter::HandmadeFontChanged() {
         RndFont3d::StaticClassName();
         mHandmadeFont->ClassName();
     }
+}
+
+const char *UIFontImporter::GetResourcesPath() {
+    static Symbol objects("objects");
+    static Symbol resources_path("resources_path");
+    DataArray *arr =
+        SystemConfig(objects, UILabel::StaticClassName())->FindArray(resources_path, false);
+    if (!arr)
+        return 0;
+    else {
+        const char *str = arr->Str(1);
+        if (*str == '\0')
+            return 0;
+        else {
+            return FileMakePath(MakeString("%s/%s", FileRoot(), "ui/"), str);
+        }
+    }
+}
+
+DataNode UIFontImporter::OnGetResourcesPath(DataArray *da) {
+    const char *path = GetResourcesPath();
+    if (path)
+        return DataNode(FileRelativePath(FileRoot(), path));
+    else
+        return DataNode("");
 }
 
 DataNode UIFontImporter::OnGetGennedBitmapPath(DataArray *da) {

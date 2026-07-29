@@ -45,6 +45,7 @@ public:
     NEW_OBJ(CharClipSet)
 
     void ResetPreviewState();
+    void RandomizeGroups();
     void SortGroups();
     void LoadCharacter();
 
