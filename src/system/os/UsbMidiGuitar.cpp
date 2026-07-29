@@ -250,6 +250,4 @@ void Queue::Initialize(int i) {
     mQueueEnd = mArrayStart;
 }
 
-KeyboardModMsg::~KeyboardModMsg() {}
-
 DECOMP_FORCEACTIVE(UsbMidiGuitar, "queue full\n", "queue empty\n")

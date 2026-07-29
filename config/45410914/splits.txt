@@ -1182,6 +1182,26 @@ JoypadController.cpp:
 	.text       start:0x8279BD28 end:0x8279BDC8
 	.text       start:0x8279BDC8 end:0x8279BE54
 
+system/beatmatch/JoypadMidiController.cpp:
+	.pdata      start:0x8223F7B0 end:0x8223F890
+	.text       start:0x82797760 end:0x82798410
+
+system/beatmatch/KeyboardController.cpp:
+	.pdata      start:0x8223F890 end:0x8223F958
+	.text       start:0x82798410 end:0x82798F90
+
+system/beatmatch/ButtonGuitarController.cpp:
+	.pdata      start:0x8223F958 end:0x8223FA20
+	.text       start:0x82798F90 end:0x82799D68
+
+system/beatmatch/RealGuitarController.cpp:
+	.pdata      start:0x8223FA20 end:0x8223FAE8
+	.text       start:0x82799D68 end:0x8279AA60
+
+system/beatmatch/JoypadGuitarController.cpp:
+	.pdata      start:0x8223FAE8 end:0x8223FB58
+	.text       start:0x8279AA60 end:0x8279B280
+
 CalibrationPanel.cpp:
 	.pdata      start:0x821F1840 end:0x821F1848
 	.pdata      start:0x8221E6A8 end:0x8221E6B8
@@ -1998,10 +2018,8 @@ window.c:
 AsyncFile_Win.cpp:
 	.pdata      start:0x8221A160 end:0x8221A198
 	.pdata      start:0x8221A1B0 end:0x8221A1D0
-	.pdata      start:0x8223F7C0 end:0x8223F7C8
 	.text       start:0x825353C0 end:0x825356FC
 	.text       start:0x825357D0 end:0x82535C84
-	.text       start:0x82797808 end:0x82797858
 
 CDReader.cpp:
 	.pdata      start:0x8221A060 end:0x8221A080
@@ -10215,16 +10233,14 @@ TrackWatcherImpl.cpp:
 	.pdata      start:0x822102A8 end:0x822102B0
 	.pdata      start:0x822102B0 end:0x822102C8
 	.pdata      start:0x82228180 end:0x82228188
-	.pdata      start:0x8223F600 end:0x8223F7C0
-	.pdata      start:0x8223F7C8 end:0x8223FB58
+	.pdata      start:0x8223F600 end:0x8223F7B0
 	.pdata      start:0x8223FB60 end:0x8223FB78
 	.text       start:0x823ABD20 end:0x823ABD90
 	.text       start:0x82480BF8 end:0x82480CA0
 	.text       start:0x82480CA0 end:0x82480FAC
 	.text       start:0x82480FB0 end:0x82480FBC
 	.text       start:0x82605CA8 end:0x82605D20
-	.text       start:0x82794730 end:0x82797808
-	.text       start:0x82797858 end:0x8279B280
+	.text       start:0x82794730 end:0x82797760
 	.text       start:0x8279B2C8 end:0x8279B688
 	.text       start:0x8279B774 end:0x8279B778
 

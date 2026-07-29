@@ -39,6 +39,7 @@ END_MESSAGE
 
 DECLARE_MESSAGE(RGStompBoxMsg, "rg_stomp_box")
 RGStompBoxMsg(bool, int);
+int GetPadNum() const { return mData->Int(3); }
 END_MESSAGE
 
 DECLARE_MESSAGE(RGProgramChangeMsg, "rg_program_change")

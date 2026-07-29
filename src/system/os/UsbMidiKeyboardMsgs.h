@@ -16,7 +16,7 @@ int GetMidiNote() const { return mData->Int(2); }
 int GetPadNum() const { return mData->Int(3); }
 END_MESSAGE
 
-DECLARE_MESSAGE_NOINLINE_DTOR(KeyboardModMsg, "keyboard_mod")
+DECLARE_MESSAGE(KeyboardModMsg, "keyboard_mod")
 KeyboardModMsg(int, int);
 int GetNode2() const { return mData->Int(2); }
 int GetPadNum() const { return mData->Int(3); }
@@ -38,6 +38,7 @@ END_MESSAGE
 
 DECLARE_MESSAGE(KeyboardStompBoxMsg, "keyboard_stomp_box")
 KeyboardStompBoxMsg(bool, int);
+int GetPadNum() const { return mData->Int(3); }
 END_MESSAGE
 
 DECLARE_MESSAGE(KeysAccelerometerMsg, "keys_accelerometer")

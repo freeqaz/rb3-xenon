@@ -1019,7 +1019,13 @@
             "system/synth/Utl.cpp": "NonMatching",
             "system/bandobj/BandFaceDeform.cpp": "NonMatching",
             "system/bandobj/ReviewDisplay.cpp": "NonMatching",
-            "system/char/CharMeshCacheMgr.cpp": "NonMatching"
+            "system/char/CharMeshCacheMgr.cpp": "NonMatching",
+            "system/meta/StoreArtLoaderPanel.cpp": "NonMatching",
+            "system/beatmatch/KeyboardController.cpp": "NonMatching",
+            "system/beatmatch/ButtonGuitarController.cpp": "NonMatching",
+            "system/beatmatch/RealGuitarController.cpp": "NonMatching",
+            "system/beatmatch/JoypadGuitarController.cpp": "NonMatching",
+            "system/beatmatch/JoypadMidiController.cpp": "NonMatching"
         }
     },
     "hamobj": {
