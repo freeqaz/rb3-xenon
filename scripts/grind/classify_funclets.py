@@ -61,6 +61,9 @@ from collections import Counter
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(os.path.dirname(_HERE))
 
+sys.path.insert(0, os.path.join(_REPO, "scripts", "harvest"))
+from live_units import filter_live, repo_root_from_build_subdir  # noqa: E402
+
 # `.fn fn_82758A50, global`  /  `.endfn fn_82758A50`
 _FN_RE = re.compile(r"^\.fn\s+(\S+?)\s*,")
 _ENDFN_RE = re.compile(r"^\.endfn\b")
@@ -124,6 +127,21 @@ def scan_asm(asm_dir, max_size_bytes):
     funclets = {}          # name -> addr0 (unique symbols)
     sizes = {}             # name -> byte size (same block => same size)
     files = sorted(glob.glob(os.path.join(asm_dir, "**", "*.s"), recursive=True))
+    n_globbed = len(files)
+    repo_root = repo_root_from_build_subdir(asm_dir)
+    try:
+        files = sorted(filter_live(files, repo_root))
+    except (OSError, ValueError) as e:
+        print(f"[scan] WARNING: live-unit filter unavailable ({e}); "
+              f"scanning ALL {n_globbed} globbed .s files, including any stale "
+              f"orphans not in objdiff.json", file=sys.stderr)
+    else:
+        n_dropped = n_globbed - len(files)
+        if n_dropped:
+            print(f"[scan] WARNING: dropped {n_dropped} STALE .s files not in "
+                  f"objdiff.json's live units (globbed {n_globbed}, kept "
+                  f"{len(files)}) -- see scripts/harvest/live_units.py",
+                  file=sys.stderr)
     n_blocks = 0
     for path in files:
         for name, addr0, insns in iter_fn_blocks(path):

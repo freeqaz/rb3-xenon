@@ -48,6 +48,9 @@ from collections import defaultdict
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "harvest"))
+from live_units import filter_live  # noqa: E402
 ALIASES = PROJECT_ROOT / "scripts" / "symbol_aliases.json"
 TARGET_MAP = PROJECT_ROOT / "scripts" / "target_symbol_map.json"
 OBJDIFF_JSON = PROJECT_ROOT / "objdiff.json"
@@ -109,9 +112,17 @@ def compiled_obj_symbol_index() -> dict:
 
 
 def target_obj_symbol_index() -> dict:
-    """name -> count of dtk-split target objs referencing it (post-renamer)."""
+    """name -> count of dtk-split target objs referencing it (post-renamer).
+    The flat obj/ dir accumulates stale orphans from earlier split layouts
+    (ninja never deletes them); filter to objdiff.json's LIVE units so counts
+    aren't corrupted by dead .obj files (see scripts/harvest/live_units.py)."""
     idx = defaultdict(int)
-    for p in glob.glob(str(PROJECT_ROOT / "build/45410914/obj/*.obj")):
+    globbed = glob.glob(str(PROJECT_ROOT / "build/45410914/obj/*.obj"))
+    try:
+        live = filter_live(globbed, str(PROJECT_ROOT))
+    except (OSError, ValueError):
+        live = globbed
+    for p in live:
         for s in coff_referenced_symbols(Path(p).read_bytes()):
             idx[s] += 1
     return idx
