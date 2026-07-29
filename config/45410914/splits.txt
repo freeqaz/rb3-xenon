@@ -5780,7 +5780,7 @@ PropKeys.cpp:
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
 	.pdata      start:0x8222D7C8 end:0x8222D7D0
 	.pdata      start:0x8222D7D0 end:0x8222D7D8
-	.pdata      start:0x8222E968 end:0x8222EAE0
+	.pdata      start:0x8222EA78 end:0x8222EAE0
 	.pdata      start:0x822307B0 end:0x82230950
 	.pdata      start:0x82231100 end:0x82231108
 	.pdata      start:0x82231108 end:0x82231110
@@ -5802,7 +5802,7 @@ PropKeys.cpp:
 	.text       start:0x82656180 end:0x82656348
 	.text       start:0x82656630 end:0x826567CC
 	.text       start:0x826567D4 end:0x82656800
-	.text       start:0x82666AC0 end:0x8266849C
+	.text       start:0x82667FE0 end:0x8266849C
 	.text       start:0x82683388 end:0x82684D1C
 	.text       start:0x8268C920 end:0x8268C998
 	.text       start:0x8268C998 end:0x8268C9E8
@@ -12902,3 +12902,7 @@ band3/meta_band/CharSync.cpp:
 band3/meta_band/FaceHairProvider.cpp:
 	.pdata      start:0x8222F2B0 end:0x8222F308
 	.text       start:0x8266F380 end:0x8266F730
+
+band3/meta_band/CharProvider.cpp:
+	.pdata      start:0x8222E948 end:0x8222EA78
+	.text       start:0x82666648 end:0x82667FE0
