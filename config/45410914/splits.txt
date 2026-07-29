@@ -3461,9 +3461,6 @@ SongLayout.cpp:
 	.text       start:0x826CB590 end:0x826CB610
 
 Mesh.cpp:
-	.pdata      start:0x821F86B8 end:0x821F86C0
-	.pdata      start:0x821F86C0 end:0x821F8888
-	.pdata      start:0x821F8890 end:0x821F8990
 	.pdata      start:0x821FC6D0 end:0x821FC6E0
 	.pdata      start:0x82203EF8 end:0x82203F40
 	.pdata      start:0x8220B128 end:0x8220B140
@@ -3506,9 +3503,6 @@ Mesh.cpp:
 	.pdata      start:0x8225E9C0 end:0x8225E9C8
 	.pdata      start:0x8225E9C8 end:0x8225E9D0
 	.text       start:0x822DF9A0 end:0x822DF9D8
-	.text       start:0x822DFD88 end:0x822DFF20
-	.text       start:0x822DFF28 end:0x822E1234
-	.text       start:0x822E12B0 end:0x822E33A4
 	.text       start:0x8231EA20 end:0x8231EAA8
 	.text       start:0x82362688 end:0x82362698
 	.text       start:0x8239C6D8 end:0x8239CC50
@@ -3921,10 +3915,16 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F8500 end:0x821F8508
 	.pdata      start:0x821F8520 end:0x821F8538
 	.pdata      start:0x821F8678 end:0x821F8690
+	.pdata      start:0x821F86B8 end:0x821F86C0
+	.pdata      start:0x821F86C0 end:0x821F8888
+	.pdata      start:0x821F8890 end:0x821F8990
 	.text       start:0x822DD290 end:0x822DD7AC
 	.text       start:0x822DD808 end:0x822DD9A0
 	.text       start:0x822DDB48 end:0x822DE6AC
 	.text       start:0x822DF708 end:0x822DF8B0
+	.text       start:0x822DFD88 end:0x822DFF20
+	.text       start:0x822DFF28 end:0x822E1234
+	.text       start:0x822E12B0 end:0x822E33A4
 
 CheckboxDisplay.cpp:
 	.pdata      start:0x821FC8F8 end:0x821FC9C8

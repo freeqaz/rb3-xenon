@@ -1,4 +1,9 @@
 {
+ "0x822dff60": "??1CrossSec@ChordShapeGenerator@@QAA@XZ",
+ "0x822dffe8": "?Load@ChordShapeGenerator@@UAAXAAVBinStream@@@Z",
+ "0x822e0ca0": "?SetType@ChordShapeGenerator@@UAAXVSymbol@@@Z",
+ "0x822e2f50": "?OnGenerate@ChordShapeGenerator@@QAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x822e2fc8": "?Handle@ChordShapeGenerator@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822dd290": "?Save@ChordShapeGenerator@@UAAXAAVBinStream@@@Z",
  "0x822dd3a0": "?MakeInvertedMesh@ChordShapeGenerator@@QAAPAVRndMesh@@PBV2@@Z",
  "0x822dd480": "?NameMesh@ChordShapeGenerator@@QAAXPAVRndMesh@@_N@Z",
@@ -2903,8 +2908,8 @@
  "0x822dbc88": "?PostLoad@OverdriveMeter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822dbc98": "?DataDir@ObjectDir@@$4PPPPPPPM@BLA@AAPAV1@XZ",
  "0x822dc098": "?Handle@OverdriveMeter@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x822e0c68": "??$?5VRndBone@@@BinStreamRev@@QAAAAV0@AAVRndBone@@@Z",
- "0x822e11e8": "??_G?$ObjOwnerPtr@VRndMesh@@@@UAAPAXI@Z",
+ "0x822e0c68": "?ClassName@ChordShapeGenerator@@UBA?AVSymbol@@XZ",
+ "0x822e11e8": "??_GChordShapeGenerator@@UAAPAXI@Z",
  "0x822e4010": "??1?$ObjRefConcrete@VStreakMeter@@VObjectDir@@@@UAA@XZ",
  "0x822e4130": "??1?$ObjRefConcrete@VOverdriveMeter@@VObjectDir@@@@UAA@XZ",
  "0x822e4250": "??1?$ObjRefConcrete@VChordShapeGenerator@@VObjectDir@@@@UAA@XZ",
@@ -27142,5 +27147,6 @@
  "0x82827f00": "?PreLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
  "0x82828458": "?PostLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z",
  "0x82828820": "?Handle@LabelNumberTicker@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82b7aae8": "?Handle@QuestFilterPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+ "0x82b7aae8": "?Handle@QuestFilterPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x822e0340": "??0ChordShapeGenerator@@QAA@XZ"
 }
