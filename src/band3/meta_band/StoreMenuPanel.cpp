@@ -97,7 +97,7 @@ const char *StoreMenuPanel::GetCrumbText() const {
     for (int i = 1; i <= limit; i++) {
         String title = mMenuStack[i]->GetTitle();
         if (!title.empty())
-            result = MakeString("%s%s", result, title.c_str());
+            result = MakeString("%s::%s", result, title.c_str());
     }
     return result;
 }

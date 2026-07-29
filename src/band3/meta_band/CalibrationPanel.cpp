@@ -662,7 +662,7 @@ int CalibrationPanel::GetAverageTestTime() {
     MILO_LOG("Sample Spread: %f ms\n", GetSampleSpread());
     float f2 = 0;
     if (mHardwareMode)
-        f2 = 14.0f;
+        f2 = 8.0f; // Xbox 360 retail constant (0x41000000); rb3-Wii dev decomp has 14.0f (0x41600000) - platform-specific HW latency offset
     return std::floor((testresult + 0.5) - f2);
 }
 

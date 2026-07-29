@@ -531,7 +531,7 @@ void LightPreset::StartAnim() {
     mStartBeat = TheTaskMgr.Beat();
     mLastKeyframe = 0;
     mLastBlend = -1.0f;
-    static Message start("start_anim_msg");
+    static Message start("start_anim");
     Handle(start, false);
     FOREACH (it, mSelectTriggers) {
         (*it)->Trigger();

@@ -279,7 +279,8 @@ void EQEffect::SetParameter(int param, float value) {
         float one = 1.0f;
         float half = 0.5f;
         mBand1A1 = (gainF - one) * half;
-        float negCos = -(float)cos((double)(mBand1Q * 1.3089969e-04f));
+        // retail constant encodes to 0x3909421F (1.3089969e-04f is 1 ULP low, 0x3909421E)
+        float negCos = -(float)cos((double)(mBand1Q * 0.00013089970161672682f));
         mBand1A2 = negCos;
         if (mBand2Gain > zero) {
             mBand1B0 = (mBand1B1 - one) / (mBand1B1 + one);

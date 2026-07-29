@@ -70,7 +70,10 @@ void StreamPlayer::Init() {
     mStream->SetPan(0, -1.0f);
     mStream->SetPan(1, 1.0f);
     if (mLoop) {
-        mStream->SetJump(-0.25, 0, 0);
+        // retail constant is 0xB4000000 = -1.1920928955078125e-07f (-2^-23,
+        // i.e. -FLT_EPSILON) here, not -0.25f (0xBE800000, matches dc3/rb3-Wii);
+        // jump-start offset for the loop point.
+        mStream->SetJump(-1.1920929e-07f, 0, 0);
     }
 }
 

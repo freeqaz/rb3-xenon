@@ -579,9 +579,9 @@ void AccomplishmentPanel::LaunchGoal(LocalBandUser *user) {
     static Symbol acc_standins("acc_standins");
     static Symbol acc_joinalabel("acc_joinalabel");
     static Symbol acc_startalabel("acc_startalabel");
-    static Symbol acc_multiplayersession("acc_multiplayersession");
     static Symbol acc_createsetlist("acc_createsetlist");
     static Symbol acc_HMXrecommends("acc_HMXrecommends");
+    static Symbol acc_multiplayersession("acc_multiplayersession");
     static Symbol acc_guitartutorial01("acc_guitartutorial01");
     static Symbol acc_guitartutorial02("acc_guitartutorial02");
     static Symbol acc_guitartutorial03("acc_guitartutorial03");
@@ -722,7 +722,7 @@ void AccomplishmentPanel::SelectGroup(Symbol s) {
     UIList *pGroupList = mDir->Find<UIList>("groups.lst", true);
     MILO_ASSERT(pGroupList, 0x6A7);
     pGroupList->SetSelected(idx, -1);
-    UpdateForGoalSelection();
+    UpdateForGroupSelection();
 }
 
 inline Symbol AccomplishmentGroupProvider::DataSymbol(int i_iData) const {

@@ -110,7 +110,7 @@ void NgSpotlightDrawer::SpotlightResources::Clear() {
 
 static float sBeamBrighten = 2.0f;
 static float sSphereScale = 0.5f;
-static float sSheetIntensity = 3.0f;
+static float sSheetIntensity = 8.0f;
 static float sSheetW = 0.0f;
 
 #ifdef HX_NATIVE
@@ -436,7 +436,7 @@ void NgSpotlightDrawer::SetupForPostProcess() {
     sActiveFrame = true;
 }
 
-static float kFogScale = 256.0f;
+static float kFogScale = 10.0f;
 
 void NgSpotlightDrawer::RenderFogProxy() {
     RndDrawable *proxy = mParams.mProxy;

@@ -27,7 +27,11 @@ void VocalPart::SetDifficultyVariables(int diff) {
     DataArray *voxCfg = SystemConfig("scoring", "vocals");
     mSlop = voxCfg->FindArray("slop")->Float(diff + 1);
     mPitchMaximumDistance = voxCfg->FindArray("pitch_margin")->Float(diff + 1);
-    float log = std::log(0.1);
+    // retail's embedded double constant is 0x3FB99999A0000000 = (double)0.1f
+    // (0.10000000149011612), not the double literal 0.1 (0x3FB999999999999A).
+    // Using 0.1f directly would select std::log's float overload (different
+    // codegen/call target), so use the exact double value instead.
+    float log = std::log(0.10000000149011612);
     mPitchSigma = -(mPitchMaximumDistance * mPitchMaximumDistance) / log;
     mPhraseValue = voxCfg->FindArray("phrase_value")->Int(diff + 1);
     mNoteLengthFactor = voxCfg->FindArray("note_length_factor")->Float(diff + 1);

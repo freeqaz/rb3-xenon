@@ -776,7 +776,7 @@ void AppLabel::SetFromScoreDisplayData(short mask, int score, int rank, bool amo
     }
     if (rank == 0) {
         SetDisplayText(
-            MakeString("%s%s", icons.c_str(), LocalizeSeparatedInt(score)), true
+            MakeString("<alt>%s</alt> %s", icons.c_str(), LocalizeSeparatedInt(score)), true
         );
     } else {
         static Symbol ir_among_all("ir_among_all");

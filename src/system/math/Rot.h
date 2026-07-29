@@ -3,7 +3,7 @@
 #include "math/Vec.h"
 
 #define PI 3.1415927f
-#define RAD2DEG 57.29578f
+#define RAD2DEG 57.295776f // retail bit pattern 0x42652EE0 (57.29578f encodes to 0x42652EE1, 1 ULP high)
 #define DEG2RAD 0.01745329238474369049f
 
 TextStream &operator<<(TextStream &ts, const Hmx::Quat &v);

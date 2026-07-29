@@ -229,13 +229,13 @@ Symbol EditSetlistPanel::GetMessageToken() {
 }
 
 Symbol EditSetlistPanel::GetTitleToken() {
-    static Symbol setlist_save_share("setlist_save_share");
     static Symbol setlist_save_local("setlist_save_local");
+    static Symbol setlist_save_share("setlist_save_share");
     static Symbol setlist_save_battle("setlist_save_battle");
     static Symbol edit_setlist("edit_setlist");
     switch (unk9c) {
     case 0:
-        return unk64 ? setlist_save_local : setlist_save_share;
+        return unk64 ? setlist_save_share : setlist_save_local;
     case 1:
         return edit_setlist;
     case 2:

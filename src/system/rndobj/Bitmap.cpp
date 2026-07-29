@@ -13,7 +13,7 @@
 #undef MILO_NOTIFY
 #define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
 
-unsigned char BITMAP_REV = 2;
+unsigned char BITMAP_REV = 1;
 
 int RndBitmap::NumMips() const {
     const RndBitmap *x = this;

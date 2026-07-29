@@ -90,7 +90,7 @@ DataNode hashTo6Bits(DataArray *da) {
 }
 
 DataNode getRandomSequence32A(DataArray *da) {
-    static u32 s_seed = 0x521;
+    static u32 s_seed = 0x303F;
     static bool usedUp[0x20];
 
     bool hasArgs = da->Size() > 1;
@@ -117,7 +117,7 @@ DataNode getRandomSequence32A(DataArray *da) {
 }
 
 DataNode getRandomSequence32B(DataArray *da) {
-    static u32 s_seed = 0x303F;
+    static u32 s_seed = 0x521;
     static bool usedUp[0x20];
 
     bool hasArgs = da->Size() > 1;

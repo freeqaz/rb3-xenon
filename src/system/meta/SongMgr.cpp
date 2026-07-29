@@ -49,7 +49,7 @@ BinStream &operator>>(BinStream &bs, std::hash_map<T1, T2> &map) {
 }
 
 const char *SONG_CACHE_CONTAINER_NAME = "songcache";
-int gSongCacheSaveVer = 12;
+int gSongCacheSaveVer = 13;
 
 namespace {
     const char *gStrSongMgrState[] = { "kSongMgr_SaveMount",

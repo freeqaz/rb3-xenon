@@ -1307,17 +1307,24 @@ RndTex *Rnd::CreateDefaultTexture(DefaultTextureType textureType) {
     MILO_ASSERT(textureType < kDefaultTex_Max, 0x5E4);
     static const int sDefSize[kDefaultTex_Max][2] = {
         { 8, 8 }, { 8, 8 }, { 8, 8 }, { 8, 8 },
-        { 8, 8 }, { 8, 8 }, { 8, 8 }, { 8, 8 }
+        { 8, 8 }, { 64, 64 }, { 256, 8 }, { 128, 128 }
     };
+    // NOTE: retail's row order does not line up 1:1 with the kDefaultTex_*
+    // enum comments below past index 0 (our previous table had dropped
+    // retail's row 1 {0,0,0,0}, shifting everything up by one and inventing
+    // a wrong final row). Values below are retail-exact; comments marked
+    // "mismatch" are the pre-existing (now known-stale) enum label, kept
+    // verbatim rather than guessed at, since we can't yet confirm the true
+    // enum<->slot association.
     static const unsigned char sDefColor[kDefaultTex_Max][4] = {
         { 0,    0,    0,    0xFF },  // kDefaultTex_Black
-        { 0xFF, 0xFF, 0xFF, 0xFF },  // kDefaultTex_White
-        { 0xFF, 0xFF, 0xFF, 0 },     // kDefaultTex_WhiteTransparent
-        { 0x7f, 0x7f, 0xFF, 0xFF },  // kDefaultTex_FlatNormal
-        { 0,    0,    0,    0xFF },  // kDefaultTex_Unk4 (black)
+        { 0,    0,    0,    0 },     // retail row1 (mismatch vs kDefaultTex_White label)
+        { 0xFF, 0xFF, 0xFF, 0xFF },  // (mismatch vs kDefaultTex_WhiteTransparent label)
+        { 0xFF, 0xFF, 0xFF, 0 },     // (mismatch vs kDefaultTex_FlatNormal label)
+        { 0x7f, 0x7f, 0xFF, 0xFF },  // (mismatch vs kDefaultTex_Unk4 label)
         { 0xFF, 0xFF, 0xFF, 0xFF },  // kDefaultTex_Gradient
         { 0xFF, 0xFF, 0xFF, 0xFF },  // kDefaultTex_Hue
-        { 0xFF, 0xFF, 0xFF, 0xFF },  // kDefaultTex_Error (checkerboard)
+        { 0,    0,    0,    0xFF },  // (mismatch vs kDefaultTex_Error/checkerboard label)
     };
     int width = sDefSize[textureType][0];
     int height = sDefSize[textureType][1];

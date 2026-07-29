@@ -38,7 +38,7 @@ void FxSendMeterEffect360::InitParams(IXAudio2SubmixVoice *voice, int chans) {
             channels->push_back(right);
         }
     } else {
-        LevelData mono("mono");
+        LevelData mono("center");
         channels->push_back(mono);
     }
     delete unkb0;

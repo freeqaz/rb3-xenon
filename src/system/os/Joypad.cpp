@@ -26,7 +26,7 @@ namespace {
     KeyboardJoypadExporter *gKeyboardExporter; // 0x24
     JoypadData gJoypadData[kNumJoypads]; // 0x28
 
-    int gKeepaliveThresholdMs = -1;
+    int gKeepaliveThresholdMs = 0x7FFFFFFF;
     bool gExportMsgs = true;
     unsigned int gNotifyMask = 0x8F0;
 }
