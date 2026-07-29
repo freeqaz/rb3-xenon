@@ -3,7 +3,7 @@
 Dumps every resolved vtable's slots to vtables.json.
 """
 import struct, re, json, sys, collections
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_pe import data, secs, SEC, BASE, u32, read, is_text, sec_of, TEXT_LO, TEXT_HI
 
 # ---- 1. type descriptor names ----

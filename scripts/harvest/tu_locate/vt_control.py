@@ -1,7 +1,7 @@
 """Positive control: for classes whose own TU <Class>.cpp is pinned in
 splits.txt, measure precision of ALL vtable slots vs CLASS-OWNED slots only."""
 import json, sys, statistics, os
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_hier import VT, primary, owned_slots, bases
 import vt_splits as SP
 from vt_pe import func_of

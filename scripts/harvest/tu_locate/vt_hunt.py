@@ -1,5 +1,5 @@
 import json, sys, collections, statistics, random
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_hier import VT, owned_slots
 import vt_splits as SP
 from vt_analyze import evidence, cluster, report, fstart

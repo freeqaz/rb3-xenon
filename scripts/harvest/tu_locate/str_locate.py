@@ -1,10 +1,10 @@
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 """String-xref TU locator: cluster selective-literal code refs, attribute via .pdata."""
 import json, os, re, sys, bisect
 from collections import defaultdict, Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-WII = os.path.join(os.path.dirname(REPO), 'rb3', 'src')
+WII = WII_SRC
 
 import str_xref as xref
 

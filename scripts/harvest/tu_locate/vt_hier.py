@@ -4,7 +4,7 @@ CLASS-OWNED vtable slots = slots that differ from the primary base's vtable
 (or extend past its end).
 """
 import json, sys, struct
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_pe import u32, sec_of, is_text
 
 VT = json.load(open(SCRATCH+'/vtables.json'))

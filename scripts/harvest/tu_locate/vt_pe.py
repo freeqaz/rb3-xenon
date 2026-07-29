@@ -1,4 +1,4 @@
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 import struct, re, os, json
 
 BAND = BANDEXE

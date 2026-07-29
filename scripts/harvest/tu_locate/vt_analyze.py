@@ -2,7 +2,7 @@
 (ctors/dtors) -> pdata function boundaries -> cluster -> candidate .text span,
 with splits.txt pin attribution."""
 import json, sys, statistics, collections
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_hier import VT, primary, owned_slots, bases
 import vt_splits as SP
 from vt_pe import func_of

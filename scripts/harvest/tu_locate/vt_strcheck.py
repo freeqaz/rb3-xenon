@@ -1,7 +1,7 @@
 """Independent corroboration: pull C string literals referenced from a .text
 span and test them against the rb3-Wii oracle .cpp/.h for that class."""
 import sys, os, json, re, collections
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 import vt_constidx as constidx
 from vt_pe import data, secs, sec_of, off_of, SEC
 
@@ -40,7 +40,7 @@ def strings_in(lo, hi):
     return out
 
 
-WIIROOT = os.path.join(os.path.dirname(REPO), 'rb3', 'src')
+WIIROOT = WII_SRC
 
 
 def wii_text(canon):

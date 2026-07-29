@@ -1,6 +1,6 @@
 """Positive + negative control for the owned-slot / ctor-site instrument."""
 import json, sys, statistics, collections
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_hier import VT, primary, owned_slots
 import vt_splits as SP
 from vt_analyze import evidence, cluster, fstart, report

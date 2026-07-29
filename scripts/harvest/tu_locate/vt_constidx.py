@@ -2,7 +2,7 @@
 Used to find the code sites that store a vtable pointer (ctors/dtors).
 Pure-python (no numpy in this env)."""
 import array, sys, os, pickle
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 from vt_pe import data, SEC, TEXT_LO
 
 CACHE = SCRATCH+'/constidx2.pkl'

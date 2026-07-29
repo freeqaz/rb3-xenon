@@ -1,4 +1,4 @@
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 """Global string-xref index over band.exe .text.
 
 Emits edges (code_va, string_va) via lis/addi|ori|lwz high/low pair reconstruction.

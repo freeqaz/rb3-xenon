@@ -1,4 +1,4 @@
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 """Positive + negative control for the string-xref locator."""
 import os, sys, json, re, bisect
 from collections import defaultdict

@@ -1,5 +1,5 @@
 import json, sys, bisect, collections
-from _paths import SCRATCH, REPO, BANDEXE  # noqa: E402
+from _paths import SCRATCH, REPO, BANDEXE, WII_SRC  # noqa: E402
 import vt_splits as SP
 from vt_pe import FUNCS, FSTARTS, TEXT_LO, TEXT_HI
 from vt_analyze import report
