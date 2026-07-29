@@ -3891,10 +3891,8 @@ band3/meta_band/InterstitialMgr.cpp:
 
 HamScrollSpeedIndicator.cpp:
 	.pdata      start:0x821FC720 end:0x821FC760
-	.pdata      start:0x821FD230 end:0x821FD240
 	.text       start:0x822E36B8 end:0x822E36C8
 	.text       start:0x8231EF28 end:0x8231F130
-	.text       start:0x82329B20 end:0x82329B98
 
 LiveCameraInput.cpp:
 	.pdata      start:0x821FC7B8 end:0x821FC7C8
@@ -12910,3 +12908,9 @@ system/bandobj/BandButton.cpp:
 system/bandobj/UnisonIcon.cpp:
 	.pdata      start:0x821F7948 end:0x821F79E0
 	.text       start:0x822D2D58 end:0x822D38B0
+
+system/bandobj/DialogDisplay.cpp:
+	.pdata      start:0x821FD230 end:0x821FD240
+	.pdata      start:0x821FD240 end:0x821FD278
+	.text       start:0x82329B20 end:0x82329B98
+	.text       start:0x82329B98 end:0x82329FD8
