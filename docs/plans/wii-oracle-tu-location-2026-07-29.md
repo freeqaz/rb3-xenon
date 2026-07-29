@@ -371,6 +371,19 @@ bites: `BandUserMgr` (53 fns), `TrackWidgetImp` (49), `CharKeyHandMidi` (82),
 *(`TrackWidgetImp` is in fact present — as `.?AV?$TrackWidgetImp@…` template
 instantiations plus `TrackWidgetImpBase`. A stem-exact RTTI test misses templates.)*
 
+### 5.2 ★ A control that passed while the instrument was dead
+
+Worth recording because it is precisely the failure mode laneBA warned about, and
+it fired here too. When `make_audit.py` was first run from a *worktree*,
+`dirname(REPO)` resolved to the worktree's parent, so `../rb3/src` did not exist;
+every TU then fell back to its **lowercase** Wii path component as the class name,
+which matches no RTTI descriptor. The audit came out completely empty (0 RTTI
+hits, 0 literal hits across all 141) — **and both controls still passed**, because
+they were written with hardcoded correctly-cased class names and therefore never
+exercised the broken code path. Fixed in `812bdfea` (`_paths.py` derives
+`MAIN_REPO` from `git worktree list`). Lesson: a control must travel the *same*
+code path as the data, not merely the same function.
+
 ---
 
 ## 6. Instruments REFUTED — do not re-fund
