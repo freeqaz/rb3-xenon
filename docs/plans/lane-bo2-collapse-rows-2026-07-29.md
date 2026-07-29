@@ -40,6 +40,89 @@ strict-100 by `(unit, name)` **40,087**, `fuzzy_match_percent` 40.420128.
 
 ---
 
+## 0bis. ★★ CORRECTIONS — two of this lane's own claims, refuted after landing
+
+Both were established by the coordinator and re-verified here against
+`orig/45410914/band.exe`. They are recorded at the top because each invalidates a
+*method*, not just a number, and the methods are still in circulation.
+
+### 0bis.1 The absolute match count is WORKTREE-DEPENDENT — a delta is only valid within one worktree
+
+Beyond the ~2-function **split-churn floor** (a second split of identical source
+does not measure the same as the first; a control at `9df262c9` measures 40,304
+where a virgin tree measures 40,302), there is a second, larger effect:
+
+| | baseline | after | delta |
+|---|--:|--:|--:|
+| coordinator's worktree | 40,304 | **40,439** | **+135** |
+| this lane's worktree | 40,304 | **40,441** | **+136** |
+
+Byte-identical content — the coordinator verified `git diff` between the landed
+tree and `laneBO2-final` is **empty**. A repeat full build inside one worktree
+reproduces its own figure exactly, so this is **not run-to-run noise: it is stable
+within a worktree, different between worktrees, and a full `ninja` does not
+converge them.** Candidate mechanism, flagged but not diagnosed: objcache's
+cross-root `/Fo` path string, long assumed match-irrelevant.
+
+> ★★ **OPERATING RULE: a delta is valid only within a single worktree, with both
+> legs in the same split state. NEVER compare absolute counts across worktrees,
+> and never quote an absolute as portable.** The landed headline is published as
+> a **band, 40,439–40,441**.
+
+This supersedes every absolute in §2 and §2bis below; those figures are correct
+*within this lane's worktree* and are left as measured rather than silently
+edited. **The delta (+136 here / +135 there) is the transferable quantity.**
+
+### 0bis.2 `.pdata`-absence does NOT prove something is not a function
+
+This lane twice asserted that `0x82630340` "is not a `.pdata` function entry at
+all", inferring from the `.pdata` table that no name should be bound there. **The
+bracketing observation was right; the inference was wrong.** *Frameless leaf
+functions are systematically absent from the X360 `.pdata` table*, so
+`.pdata`-absence is not evidence of non-functionhood.
+
+Disassembly settles it (re-verified here):
+* `0x8263064C = 0x4BFFFCF5` → **`bl 0x82630340`** — a direct call to the address.
+* `0x8263033C = 0x4E800020` (`blr`) — the previous function ends there.
+* `0x82630340 = 0x3D60820D` (`lis r11, 0x820D`) — materialising a vtable address,
+  the classic destructor opening; `0x82630344 = 0x81430004` (`lwz r10, 4(r3)`).
+* `0x82630380 = 0x4BFFF010` → `b 0x8262F390`.
+
+So `0x82630340` **is** a function, and sub-lane B's original identification was
+right. Independent corroboration: our `??1NewAwardPanel@@` tail-calls
+`??1TexLoadPanel@@` where retail's tail-calls `??1VoiceoverPanel@@` — a different
+base class, so the existing pairing is definitively wrong. It reads a full
+**100.0 %** only because `functionRelocDiffs=none` masks the differing tail-call
+target: **the first full-100.0 instance of the at-100 % defect class in this
+project.**
+
+★★ **The root cause of the original refutation is the trap to internalise.** It
+computed the `band.exe` file offset as `va − 0x82000000`. That is valid **only for
+`.rdata`**; `.text` is RVA `0x00270000` / raw `0x00264E00`, a **`0xB200` delta**.
+So string and typedesc reads — which land in `.rdata` — *accidentally work*, while
+every `.text` read silently returns unrelated bytes. **An evidence set can be
+half-correct and feel completely reliable.**
+
+> ★ **Sanity anchor for any future `band.exe` read:
+> `off(0x824DAAD0)` must equal `0x004CF8D0`** (the value in `Spotlight.s`).
+> The naive mapping yields `0x004DAAD0` — off by exactly `0xB200`.
+
+**Audit performed in response, so the blast radius is known rather than assumed:**
+* `scripts/harvest/tu_locate/str_xref.py` — the shared tool generating the
+  20,141 code→string edges that laneBD, laneBL and this wave all reason from —
+  resolves addresses through the **section table** (`read()` computes
+  `pr + (va − sva)` per section). **Not affected.**
+* `td_order.py` and `str_scatter.py` (this wave) both parse the section table;
+  verified through their real code path: `off(0x824DAAD0) = 0x004CF8D0` **PASS**,
+  and the `f2v` round-trip returns `0x824DAAD0` **PASS**.
+
+⇒ The string channel's accumulated evidence stands. The bug was confined to one
+ad-hoc read, not to the shared instruments — but it produced a confident,
+fully-argued, wrong refutation, which is why the anchor above is worth running
+before trusting any new `.text` byte evidence.
+
+---
+
 ## 1. ★★ The lead's contribution: a THIRD TU-location channel
 
 laneBD built two instruments (RTTI class-owned-vtable-slot spans; string-literal
