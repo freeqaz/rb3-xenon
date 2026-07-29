@@ -2328,7 +2328,6 @@ MidiParser.cpp:
 	.text       start:0x827EA210 end:0x827EB4A0
 
 DataFunc.cpp:
-	.pdata      start:0x82200BF8 end:0x82200D68
 	.pdata      start:0x8223C768 end:0x8223C780
 	.pdata      start:0x8223C780 end:0x8223C788
 	.pdata      start:0x8223C788 end:0x8223C798
@@ -2419,7 +2418,6 @@ DataFunc.cpp:
 	.pdata      start:0x82241D60 end:0x82241D68
 	.pdata      start:0x82242358 end:0x82242360
 	.pdata      start:0x8225CED8 end:0x8225CEE0
-	.text       start:0x82366274 end:0x82367D60
 	.text       start:0x8275D040 end:0x8275D04C
 	.text       start:0x8275D058 end:0x8275D170
 	.text       start:0x8275D170 end:0x8275D1C4
@@ -12910,3 +12908,11 @@ band3/tour/TourProperty.cpp:
 band3/tour/TourWeightManager.cpp:
 	.pdata      start:0x82200EF8 end:0x82200F28
 	.text       start:0x82369348 end:0x8236955C
+
+band3/tour/TourPerformerRemote.cpp:
+	.pdata      start:0x82200BD8 end:0x82200C10
+	.text       start:0x823660F8 end:0x823663B8
+
+band3/tour/TourPerformerLocal.cpp:
+	.pdata      start:0x82200C10 end:0x82200D68
+	.text       start:0x823663B8 end:0x82367D60

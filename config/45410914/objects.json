@@ -1740,6 +1740,13 @@
    },
    "band3/tour/TourDesc.cpp": "NonMatching",
    "band3/tour/TourProperty.cpp": "NonMatching",
+   "band3/tour/TourPerformerLocal.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_HANDLE_LOCAL_STATIC"
+    ]
+   },
+   "band3/tour/TourPerformerRemote.cpp": "NonMatching",
    "band3/tour/TourWeightManager.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
    "band3/tour/TourProgress.cpp": {
