@@ -42,10 +42,40 @@ mangled name) fired **0** times across 1,025 gaps.  Criterion 3
 (`n_carved_in_span == 0`) selects the alignment-padding gaps -- 851 of the 1,025,
 ~7 KB, holding no code at all and worth exactly 0.
 
+★★ MANDATORY: THE OVER-SUBSCRIPTION GATE  [laneOVERSUB 2026-07-29]
+------------------------------------------------------------------
+Absorbing a span is the classic way to manufacture FAKE matches.  objdiff's
+funclet pass 2b (`pair_funclets_by_bytes`, objdiff commit 48a5255) credits an
+anonymous target funclet 100% by re-using an **already-consumed** byte-identical
+base funclet.  So a span that swallows N byte-identical `__unwind$` / `??__F`
+thunks while the claimant's own obj emits only M < N of them scores N -- N-M of
+which are machine code we never generated.
+
+Tree-wide audit on `559645e9`: **1,565 of 39,520 matched functions (3.96%) are
+pass-2b surplus**, over 196 units and 138 splits commits.  See
+`scripts/harvest/oversub_guard.py` for the mechanism, the supply rule, and the
+instrumented-objdiff validation.
+
+This tool now REFUSES TO WRITE if it cannot see the guard, and on every write it
+snapshots the pre-landing census and prints the verify command.  The gate is:
+
+    # (this tool does this for you on --gaps/--subranges writes)
+    scripts/harvest/oversub_guard.py --worktree WT \
+        --baseline build/45410914/oversub_baseline.json
+    ... edit splits.txt, touch config.yml, rm target_symbol_renames.stamp, ninja ...
+    scripts/harvest/oversub_guard.py --worktree WT \
+        --verify build/45410914/oversub_baseline.json     # exit 3 = fake matches
+
+A landing that fails the gate must drop the offending spans, or be re-priced by
+its honest delta (raw credited MINUS the over-subscription growth) before it is
+reported.  `--no-oversub-gate` skips the snapshot and prints a loud warning; use
+it only when you are deliberately measuring the inflation.
+
 USAGE
   diffunit_gap_apply.py --worktree WT --gaps gaps.json --dir left|right
                         [--select sel.json] [--dry]
   diffunit_gap_apply.py --worktree WT --audit
+  diffunit_gap_apply.py --worktree WT --oversub-verify [--allow N]
 """
 import argparse
 import collections
@@ -53,6 +83,51 @@ import json
 import os
 import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import oversub_guard
+except ImportError:                                     # pragma: no cover
+    oversub_guard = None
+
+OVERSUB_BASELINE = 'build/45410914/oversub_baseline.json'
+
+
+def snapshot_oversub(worktree, enabled):
+    """Snapshot the PRE-landing over-subscription census and print the gate.
+
+    Returns False if the guard is unavailable and the caller must refuse to write.
+    """
+    if not enabled:
+        print('\n!! OVER-SUBSCRIPTION GATE DISABLED (--no-oversub-gate).'
+              '  This landing may manufacture fake matches; you MUST report its'
+              ' honest delta separately.\n')
+        return True
+    if oversub_guard is None:
+        print('\nREFUSING TO WRITE: scripts/harvest/oversub_guard.py not importable.'
+              '\nSpan absorption without the over-subscription gate manufactures'
+              ' fake matches (measured 1,565 tree-wide on 559645e9).'
+              '\nRe-run with --no-oversub-gate only if you know what you are doing.\n')
+        return False
+    out = os.path.join(worktree, OVERSUB_BASELINE)
+    try:
+        c = oversub_guard.census(worktree, False)
+    except Exception as e:                              # pragma: no cover
+        print('\nREFUSING TO WRITE: over-subscription census failed (%s).'
+              '  Build the objs first (./tools/ninja-locked).\n' % e)
+        return False
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    json.dump(c, open(out, 'w'), indent=0, sort_keys=True)
+    tot = sum(v['excess'] for v in c.values())
+    print(oversub_guard.BANNER)
+    print('pre-landing baseline: %d units / %d fake matches -> %s' % (len(c), tot, out))
+    print('AFTER you rebuild (touch config/45410914/config.yml; '
+          'rm -f build/45410914/target_symbol_renames.stamp; ./tools/ninja-locked) run:')
+    print('    scripts/harvest/oversub_guard.py --worktree %s --verify %s'
+          % (worktree, OVERSUB_BASELINE))
+    print('exit 3 means the landing bought fake matches -- drop those spans or '
+          're-price the landing.\n')
+    return True
 
 
 def read_splits(path):
@@ -112,7 +187,7 @@ def audit(lines):
     return findings
 
 
-def apply_subranges(path, lines, sel, dry):
+def apply_subranges(path, lines, sel, dry, worktree='.', gate=True):
     """Apply per-gap PREFIX/SUFFIX claims from diffunit_subrange.py.
 
     Each record may carry `p` (left claims [va_lo, p)) and/or `q` (right claims
@@ -170,6 +245,8 @@ def apply_subranges(path, lines, sel, dry):
         return 2
     print('AUDIT CLEAN')
     if not dry:
+        if not snapshot_oversub(worktree, gate):
+            return 3
         open(path, 'w').write('\n'.join(lines))
         print('wrote', path)
     return 0
@@ -184,9 +261,37 @@ def main():
     ap.add_argument('--select', help='JSON list of gap indices, or of {va_lo,dir}')
     ap.add_argument('--dry', action='store_true')
     ap.add_argument('--audit', action='store_true')
+    ap.add_argument('--oversub-verify', action='store_true',
+                    help='run the over-subscription gate against %s' % OVERSUB_BASELINE)
+    ap.add_argument('--allow', type=int, default=0,
+                    help='tolerated growth in fake matches for --oversub-verify')
+    ap.add_argument('--no-oversub-gate', action='store_true',
+                    help='skip the over-subscription snapshot (LOUD warning)')
     a = ap.parse_args()
 
     path = os.path.join(a.worktree, 'config/45410914/splits.txt')
+
+    if a.oversub_verify:
+        if oversub_guard is None:
+            print('oversub_guard.py not importable')
+            return 2
+        base = json.load(open(os.path.join(a.worktree, OVERSUB_BASELINE)))
+        cur = oversub_guard.census(a.worktree, False)
+        b_tot = sum(v['excess'] for v in base.values())
+        c_tot = sum(v['excess'] for v in cur.values())
+        print(oversub_guard.BANNER)
+        print('baseline %d fake -> current %d fake (delta %+d, allow %d)'
+              % (b_tot, c_tot, c_tot - b_tot, a.allow))
+        for name, v in sorted(cur.items(), key=lambda kv: -kv[1]['excess']):
+            d = v['excess'] - base.get(name, {}).get('excess', 0)
+            if d > 0:
+                print('  GREW %-50s +%d fake' % (name, d))
+        if c_tot - b_tot > a.allow:
+            print('\nREFUSED: landing manufactures %d fake matches.' % (c_tot - b_tot))
+            return 3
+        print('\nOK: no over-subscription growth.')
+        return 0
+
     lines = read_splits(path)
 
     if a.audit:
@@ -196,7 +301,8 @@ def main():
         return 1 if f else 0
 
     if a.subranges:
-        return apply_subranges(path, lines, json.load(open(a.subranges)), a.dry)
+        return apply_subranges(path, lines, json.load(open(a.subranges)), a.dry,
+                               a.worktree, not a.no_oversub_gate)
 
     gaps = json.load(open(a.gaps))
     if a.select:
@@ -254,6 +360,8 @@ def main():
         return 2
     print('AUDIT CLEAN')
     if not a.dry:
+        if not snapshot_oversub(a.worktree, not a.no_oversub_gate):
+            return 3
         open(path, 'w').write('\n'.join(lines))
         print('wrote', path)
     return 0
