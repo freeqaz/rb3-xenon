@@ -3796,7 +3796,7 @@
  "0x82665d98": "??_G?$ObjPtr@VRndPropAnim@@@@UAAPAXI@Z",
  "0x82667af0": "??_GCharProvider@@UAAPAXI@Z",
  "0x8266d460": "??_GLeaderboard@@UAAPAXI@Z",
- "0x8266e848": "??_GLeaderboardRow@@QAAPAXI@Z",
+ "0x8266e848": "??_GBandStoreOffer@@UAAPAXI@Z",
  "0x8266ee88": "??_ELeaderboard@@W3AAPAXI@Z",
  "0x8266ef60": "??_GLeaderboardShortcutProvider@@UAAPAXI@Z",
  "0x8266fa00": "??_GMakeupProvider@@UAAPAXI@Z",
@@ -27155,5 +27155,9 @@
  "0x82666648": "??RCompareCharacters@CharProvider@@QBA_NABVCharacterEntry@1@0@Z",
  "0x82667838": "?AddCharactersFromProfile@CharProvider@@QAAXPAVBandProfile@@@Z",
  "0x82666900": "?GetCharData@CharProvider@@QAAPAVCharData@@H@Z",
- "0x82667b48": "?Reload@CharProvider@@QAAXPAVLocalBandUser@@@Z"
+ "0x82667b48": "?Reload@CharProvider@@QAAXPAVLocalBandUser@@@Z",
+ "0x8266e4e8": "?IsCompletelyUnavailable@BandStoreOffer@@UBA_NXZ",
+ "0x8266e8a0": "?Handle@BandStoreOffer@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8266e548": "??0BandStoreOffer@@QAA@PAVDataArray@@PAVSongMgr@@@Z",
+ "0x8266e7a0": "??1BandStoreOffer@@UAA@XZ"
 }

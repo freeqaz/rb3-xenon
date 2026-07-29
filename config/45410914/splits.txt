@@ -9980,7 +9980,8 @@ Leaderboard.cpp:
 	.pdata      start:0x8222EF08 end:0x8222EF60
 	.pdata      start:0x8222EF60 end:0x8222EF68
 	.pdata      start:0x8222EF68 end:0x8222EF78
-	.pdata      start:0x8222EF78 end:0x8222F2B0
+	.pdata      start:0x8222EF78 end:0x8222F160
+	.pdata      start:0x8222F200 end:0x8222F2B0
 	.pdata      start:0x8222F360 end:0x8222F3C0
 	.pdata      start:0x82234C00 end:0x82234C10
 	.text       start:0x8235EF08 end:0x8235EF68
@@ -9989,7 +9990,8 @@ Leaderboard.cpp:
 	.text       start:0x8266BDD0 end:0x8266C270
 	.text       start:0x8266C270 end:0x8266C30C
 	.text       start:0x8266C30C end:0x8266C440
-	.text       start:0x8266C464 end:0x8266F380
+	.text       start:0x8266C464 end:0x8266E4E8
+	.text       start:0x8266EC88 end:0x8266F380
 	.text       start:0x8266FAC4 end:0x8266FF30
 	.text       start:0x826CE268 end:0x826CE2D0
 
@@ -12906,3 +12908,7 @@ band3/meta_band/FaceHairProvider.cpp:
 band3/meta_band/CharProvider.cpp:
 	.pdata      start:0x8222E948 end:0x8222EA78
 	.text       start:0x82666648 end:0x82667FE0
+
+band3/meta_band/BandStoreOffer.cpp:
+	.pdata      start:0x8222F160 end:0x8222F200
+	.text       start:0x8266E4E8 end:0x8266EC88
