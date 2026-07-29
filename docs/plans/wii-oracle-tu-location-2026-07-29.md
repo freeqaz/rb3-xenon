@@ -315,6 +315,23 @@ For contrast, laneBA priced the *attribution* channel on the auto-carve pool at
 channel: the functions have an oracle and a location, and what they need is a body
 port. It is correspondingly more expensive per function.
 
+### 4c-bis. Carve-safety pre-flight (for whoever executes this)
+
+Computed against the current `splits.txt` so the next lane does not rediscover it:
+
+* **The 42 HIGH spans do not overlap each other at all** — they can be carved
+  independently, in any order.
+* **32 of 42 already start and end exactly on a `.pdata` function boundary**;
+  the other 10 carry a `snapped` `[lo,hi)` in `located_spans.json` so
+  `splits_move.py`'s mid-symbol refusal can be avoided before the first build.
+* **No claiming unit is fully drained** by carving out all 42 — so the
+  empty-unit trap (last `.text` block removed → 42-byte obj → `report.json`
+  hard-fail) is not triggered. Two come close and must be watched:
+  `FlowEventListener.cpp` would lose 2,324 of 2,452 B (94.8 %) and
+  `system/hamobj/SongDifficultyDisplay.cpp` 4,572 of 5,376 B (85.0 %).
+  Next largest donors: `DataFunc.cpp` 22.3 %, `PropKeys.cpp` 31.3 %,
+  `band3/meta_band/UIStats.cpp` 26.6 %, `BandHighlight.cpp` 40.1 %.
+
 ### 4d. Why this is not free money
 
 Pinning alone scores **0**. objdiff pairs Code symbols by **name**; a freshly
