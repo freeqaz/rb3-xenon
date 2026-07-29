@@ -566,16 +566,20 @@ bool MidiParser::AddMessage(float start, float end, DataArray *msg, int firstArg
         return false;
     if (!mCompressed) {
         int arr_size;
+        DataArray *arr;
+        int first;
         if (node.Type() == kDataArray) {
-            msg = node.Array();
-            firstArg = 0;
-            arr_size = msg->Size() + 1;
+            arr = node.Array();
+            first = 0;
+            arr_size = arr->Size() + 1;
             if (arr_size == 1)
                 return false;
-            node = msg->Evaluate(0);
+            node = arr->Evaluate(0);
             if (node.Type() == kDataUnhandled)
                 return false;
         } else {
+            arr = msg;
+            first = firstArg;
             arr_size = (msg->Size() - firstArg) + 1;
         }
         int i4 = 1;
@@ -591,7 +595,7 @@ bool MidiParser::AddMessage(float start, float end, DataArray *msg, int firstArg
         new_arr->Node(i4) = node;
         int i3;
         for (i3 = 1; i3 < arr_size - i4; i3++) {
-            new_arr->Node(i3 + i4) = msg->Evaluate(i3 + firstArg);
+            new_arr->Node(i3 + i4) = arr->Evaluate(i3 + first);
         }
         if (mAppendLength) {
             new_arr->Node(i3 + i4) = 0.0f;
