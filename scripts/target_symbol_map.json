@@ -1,4 +1,12 @@
 {
+ "0x82564410": "??0CharSync@@QAA@PAVBandUserMgr@@@Z",
+ "0x825644d8": "??1CharSync@@UAA@XZ",
+ "0x82564580": "?Init@CharSync@@SAXPAVBandUserMgr@@@Z",
+ "0x82564640": "??_GCharSync@@UAAPAXI@Z",
+ "0x82564698": "?UpdateCharCache@CharSync@@QAAXXZ",
+ "0x82564cd0": "?OnMsg@CharSync@@QAA?AVDataNode@@ABVPrimaryProfileChangedMsg@@@Z",
+ "0x82564d20": "?OnMsg@CharSync@@QAA?AVDataNode@@ABVProfileChangedMsg@@@Z",
+ "0x82564e20": "?Handle@CharSync@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82565088": "?GetTrainingMgr@TrainingMgr@@SAPAV1@XZ",
  "0x82565098": "?GetModeFromLessonName@TrainingMgr@@QAA?AVSymbol@@V2@@Z",
  "0x825650e8": "?GetSongFromLessonName@TrainingMgr@@QAA?AVSymbol@@V2@@Z",

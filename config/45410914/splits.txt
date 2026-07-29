@@ -8700,10 +8700,10 @@ band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 band3/meta_band/UIStats.cpp:
 	.pdata      start:0x8221CDB8 end:0x8221CDC0
 	.pdata      start:0x8221CDC0 end:0x8221D100
-	.pdata      start:0x8221D108 end:0x8221D2D0
+	.pdata      start:0x8221D108 end:0x8221D220
 	.text       start:0x825605F4 end:0x82560660
 	.text       start:0x82560660 end:0x82563258
-	.text       start:0x825632BC end:0x82565088
+	.text       start:0x825632BC end:0x82564410
 	.text       start:0x82566228 end:0x82566238
 
 band3/meta_band/NewAwardPanel.cpp:
@@ -12894,3 +12894,7 @@ system/rndobj/PostProcMgr.cpp:
 band3/meta_band/TrainingMgr.cpp:
 	.pdata      start:0x8221D2D0 end:0x8221D3E8
 	.text       start:0x82565088 end:0x82566000
+
+band3/meta_band/CharSync.cpp:
+	.pdata      start:0x8221D220 end:0x8221D2D0
+	.text       start:0x82564410 end:0x82565088
