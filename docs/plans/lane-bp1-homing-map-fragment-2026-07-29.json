@@ -1,0 +1,767 @@
+{
+  "0x82278fa0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Copy@PatchDir@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z (184B, 11 relocs) in unit system/bandobj/PatchDir; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Copy@PatchDir@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+  },
+  "0x8227b408": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@PhotoSpotlightPositioner@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/hamobj/PhotoSpotlightPositioner; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@PhotoSpotlightPositioner@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8227b9b8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@HamPhotoDisplay@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/hamobj/HamPhotoDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@HamPhotoDisplay@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8227bb98": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@NavigationSkeletonDir@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/gesture/Gesture; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@NavigationSkeletonDir@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8227e880": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?DrawLodOrShadowMode@BandCharacter@@QAAXHW4DrawMode@Character@@@Z (164B, 3 relocs) in unit system/bandobj/BandCharacter; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?DrawLodOrShadowMode@BandCharacter@@QAAXHW4DrawMode@Character@@@Z"
+  },
+  "0x822c38e8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?PropSync@@YA_NAAVConstraint@BandIKEffector@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z (356B, 27 relocs) in unit system/bandobj/BandIKEffector; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?PropSync@@YA_NAAVConstraint@BandIKEffector@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+  },
+  "0x822c70d8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??4DeltaArray@BandFaceDeform@@QAAAAV01@ABV01@@Z (80B, 2 relocs) in unit system/bandobj/BandFaceDeform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??4DeltaArray@BandFaceDeform@@QAAAAV01@ABV01@@Z"
+  },
+  "0x822c7840": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??$__destroy_range_aux@V?$reverse_iterator@PAVDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDeltaArray@BandFaceDeform@@@0@0ABU__false_type@0@@Z (96B, 1 relocs) in unit system/bandobj/BandFaceDeform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??$__destroy_range_aux@V?$reverse_iterator@PAVDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDeltaArray@BandFaceDeform@@@0@0ABU__false_type@0@@Z"
+  },
+  "0x822c7a20": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?_M_erase@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVDeltaArray@BandFaceDeform@@PAV34@0ABU__false_type@2@@Z (96B, 4 relocs) in unit system/bandobj/BandFaceDeform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?_M_erase@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVDeltaArray@BandFaceDeform@@PAV34@0ABU__false_type@2@@Z"
+  },
+  "0x822c7af8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?_M_fill_insert_aux@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVDeltaArray@BandFaceDeform@@IABV34@ABU__false_type@2@@Z (396B, 11 relocs) in unit system/bandobj/BandFaceDeform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?_M_fill_insert_aux@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVDeltaArray@BandFaceDeform@@IABV34@ABU__false_type@2@@Z"
+  },
+  "0x822c8838": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??$?5VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@@Z (120B, 6 relocs) in unit system/bandobj/BandFaceDeform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??$?5VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+  },
+  "0x822c88e0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetFromMeshAnim@BandFaceDeform@@QAAXPAVRndMeshAnim@@0HH@Z (192B, 6 relocs) in unit system/bandobj/BandFaceDeform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetFromMeshAnim@BandFaceDeform@@QAAXPAVRndMeshAnim@@0HH@Z"
+  },
+  "0x822df1f8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??$insert_unique@U?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@stlpmtx_std@@@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@1@0@Z (84B, 4 relocs) in unit system/bandobj/ChordShapeGenerator; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "??$insert_unique@U?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@stlpmtx_std@@@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@1@0@Z"
+  },
+  "0x822dfa20": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??A?$map@GGU?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAGABG@Z (160B, 1 relocs) in unit system/bandobj/ChordShapeGenerator; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??A?$map@GGU?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAGABG@Z"
+  },
+  "0x82316a98": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@InlineHelp@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/ui/InlineHelp; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@InlineHelp@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82317b18": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Copy@MicInputArrow@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z (124B, 6 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Copy@MicInputArrow@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+  },
+  "0x82317b98": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Load@MicInputArrow@@UAAXAAVBinStream@@@Z (120B, 0 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Load@MicInputArrow@@UAAXAAVBinStream@@@Z"
+  },
+  "0x82317c10": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?PostLoad@MicInputArrow@@UAAXAAVBinStream@@@Z (68B, 1 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?PostLoad@MicInputArrow@@UAAXAAVBinStream@@@Z"
+  },
+  "0x82317e48": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?DrawShowing@MicInputArrow@@UAAXXZ (308B, 10 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?DrawShowing@MicInputArrow@@UAAXXZ"
+  },
+  "0x82318000": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetMicHidden@MicInputArrow@@QAAXH@Z (116B, 1 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetMicHidden@MicInputArrow@@QAAXH@Z"
+  },
+  "0x82318078": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetMicPreview@MicInputArrow@@QAAXH@Z (116B, 1 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetMicPreview@MicInputArrow@@QAAXH@Z"
+  },
+  "0x823180f0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetMicExtended@MicInputArrow@@QAAXH@Z (116B, 1 relocs) in unit system/bandobj/MicInputArrow; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetMicExtended@MicInputArrow@@QAAXH@Z"
+  },
+  "0x8231e588": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?CopyMembers@ReviewDisplay@@UAAXPBVUIComponent@@W4CopyType@Object@Hmx@@@Z (96B, 6 relocs) in unit system/bandobj/ReviewDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?CopyMembers@ReviewDisplay@@UAAXPBVUIComponent@@W4CopyType@Object@Hmx@@@Z"
+  },
+  "0x8231e5e8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Load@ReviewDisplay@@UAAXAAVBinStream@@@Z (120B, 0 relocs) in unit system/bandobj/ReviewDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Load@ReviewDisplay@@UAAXAAVBinStream@@@Z"
+  },
+  "0x8231e6a8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Enter@ReviewDisplay@@UAAXXZ (68B, 1 relocs) in unit system/bandobj/ReviewDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Enter@ReviewDisplay@@UAAXXZ"
+  },
+  "0x8231efa8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetReviewScoreForSymbol@ReviewDisplay@@SAHVSymbol@@@Z (100B, 1 relocs) in unit system/bandobj/ReviewDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetReviewScoreForSymbol@ReviewDisplay@@SAHVSymbol@@@Z"
+  },
+  "0x8231f6f8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Copy@ScoreDisplay@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z (80B, 6 relocs) in unit system/bandobj/ScoreDisplay; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?Copy@ScoreDisplay@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+  },
+  "0x8231f748": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?PostLoad@ScoreDisplay@@UAAXAAVBinStream@@@Z (68B, 1 relocs) in unit system/bandobj/ScoreDisplay; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?PostLoad@ScoreDisplay@@UAAXAAVBinStream@@@Z"
+  },
+  "0x823234b0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Load@InstrumentDifficultyDisplay@@UAAXAAVBinStream@@@Z (120B, 0 relocs) in unit system/bandobj/InstrumentDifficultyDisplay; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?Load@InstrumentDifficultyDisplay@@UAAXAAVBinStream@@@Z"
+  },
+  "0x82323528": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?PostLoad@InstrumentDifficultyDisplay@@UAAXAAVBinStream@@@Z (68B, 1 relocs) in unit system/bandobj/InstrumentDifficultyDisplay; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?PostLoad@InstrumentDifficultyDisplay@@UAAXAAVBinStream@@@Z"
+  },
+  "0x82324c48": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??_GInstrumentDifficultyDisplay@@UAAPAXI@Z (80B, 2 relocs) in unit system/bandobj/InstrumentDifficultyDisplay; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "??_GInstrumentDifficultyDisplay@@UAAPAXI@Z"
+  },
+  "0x82327f20": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?PropSync@@YA_NAAVLayer@LayerDir@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z (1468B, 124 relocs) in unit system/bandobj/LayerDir; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?PropSync@@YA_NAAVLayer@LayerDir@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+  },
+  "0x82329778": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@SkeletonViz@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/gesture/Gesture; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@SkeletonViz@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8232a3a8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Copy@DialogDisplay@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z (144B, 9 relocs) in unit system/bandobj/DialogDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Copy@DialogDisplay@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
+  },
+  "0x8232a4b0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Handle@DialogDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z (268B, 9 relocs) in unit system/bandobj/DialogDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Handle@DialogDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+  },
+  "0x8235ccc8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetGigFlavor@Tour@@QBA?AVSymbol@@XZ (112B, 9 relocs) in unit band3/tour/Tour; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetGigFlavor@Tour@@QBA?AVSymbol@@XZ"
+  },
+  "0x8235ce30": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetAnnouncement@Tour@@QBA?AVSymbol@@XZ (136B, 10 relocs) in unit band3/tour/Tour; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetAnnouncement@Tour@@QBA?AVSymbol@@XZ"
+  },
+  "0x8236b4c0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharFaceServo@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharFaceServo@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236b560": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharEyeDartRuleset@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharEyeDartRuleset@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236b728": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharCollide@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharCollide@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236b868": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharIKFingers@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharIKFingers@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236ba48": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharIKHead@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharIKHead@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236bc28": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharCuff@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharCuff@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236c308": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharMirror@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharMirror@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236c628": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@CharClipSet@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@CharClipSet@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236c890": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@FileMerger@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/char/Char; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?NewObject@FileMerger@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8236d950": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetSphereBase@Character@@QAAXPAVRndTransformable@@@Z (196B, 5 relocs) in unit system/synth/Sequence; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetSphereBase@Character@@QAAXPAVRndTransformable@@@Z"
+  },
+  "0x82372ba0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@Character@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/synth/Sequence; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@Character@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8238ea60": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Randomize@CharClipGroup@@QAAXXZ (116B, 4 relocs) in unit system/hamobj/HamCamTransform; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Randomize@CharClipGroup@@QAAXXZ"
+  },
+  "0x8239c830": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?PopulateMesh@MeshCacher@@QAAXXZ (392B, 1 relocs) in unit system/char/CharMeshCacheMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?PopulateMesh@MeshCacher@@QAAXXZ"
+  },
+  "0x8239c9c0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??1MeshCacher@@QAA@XZ (232B, 6 relocs) in unit system/char/CharMeshCacheMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??1MeshCacher@@QAA@XZ"
+  },
+  "0x8239cb38": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??1CharMeshCacheMgr@@UAA@XZ (196B, 9 relocs) in unit system/char/CharMeshCacheMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??1CharMeshCacheMgr@@UAA@XZ"
+  },
+  "0x823dc3e0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@Waypoint@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/char/Waypoint; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@Waypoint@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x823ea0d0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Dispatch@SyncObjMsg@@UAAXXZ (208B, 11 relocs) in unit network/net/SyncStore; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?Dispatch@SyncObjMsg@@UAAXXZ"
+  },
+  "0x823faad0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Handle@RndTransformable@@UAA?AVDataNode@@PAVDataArray@@_N@Z (3320B, 250 relocs) in unit system/rndobj/Trans; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Handle@RndTransformable@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+  },
+  "0x8240f380": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndDir@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndDir@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8240f420": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndPostProc@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndPostProc@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8240f5d0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@BaseMaterial@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@BaseMaterial@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8240f6f8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndParticleSys@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndParticleSys@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8240f798": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndPartLauncher@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndPartLauncher@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8240fa00": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndFlare@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndFlare@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8240fbe0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndTransAnim@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndTransAnim@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82410040": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndSet@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndSet@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x824103d0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndPollAnim@@SAPAVObject@Hmx@@XZ (108B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndPollAnim@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82411728": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndCubeTex@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndCubeTex@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82411850": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@RndEnviron@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/rndobj/Utl; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@RndEnviron@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82419a00": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnPointCollide@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z (216B, 8 relocs) in unit system/rndobj/Mesh; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnPointCollide@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z"
+  },
+  "0x824a30d0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@EventTrigger@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rndobj/EventTrigger; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@EventTrigger@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x824aa8a8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@LightHue@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/world/World; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@LightHue@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x824aaa70": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@WorldInstance@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/world/World; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@WorldInstance@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x824dbd50": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@Spotlight@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/world/Spotlight; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@Spotlight@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82582c68": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SyncLoad@MetaPerformer@@UAAXAAVBinStream@@I@Z (404B, 29 relocs) in unit band3/meta_band/MetaPerformer; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SyncLoad@MetaPerformer@@UAAXAAVBinStream@@I@Z"
+  },
+  "0x825aac28": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??0LockResponseMsg@@QAA@XZ (80B, 3 relocs) in unit band3/meta_band/LockStepMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??0LockResponseMsg@@QAA@XZ"
+  },
+  "0x825aaeb8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??0EndLockMsg@@QAA@PBD_N@Z (64B, 5 relocs) in unit band3/meta_band/LockStepMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??0EndLockMsg@@QAA@PBD_N@Z"
+  },
+  "0x825ab3b8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Load@EndLockMsg@@UAAXAAVBinStream@@@Z (76B, 2 relocs) in unit band3/meta_band/LockStepMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Load@EndLockMsg@@UAAXAAVBinStream@@@Z"
+  },
+  "0x825bc0e0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??$MiloStripEval@VString@@V1@@@YAXPBDVString@@1@Z (72B, 2 relocs) in unit band3/meta_band/MetaNetMsgs; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "??$MiloStripEval@VString@@V1@@@YAXPBDVString@@1@Z"
+  },
+  "0x825efb58": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetFinishes@Asset@@QBAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z (112B, 3 relocs) in unit band3/meta_band/Asset; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetFinishes@Asset@@QBAXAAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+  },
+  "0x825f3958": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Enter@CampaignGoalsLeaderboardChoicePanel@@UAAXXZ (280B, 19 relocs) in unit band3/meta_band/CampaignGoalsLeaderboardChoicePanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Enter@CampaignGoalsLeaderboardChoicePanel@@UAAXXZ"
+  },
+  "0x825f50a0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??0CampaignGoalsLeaderboardChoiceProvider@@QAA@PAVBandProfile@@ABV?$vector@PAVDynamicTex@@V?$StlNodeAlloc@PAVDynamicTex@@@stlpmtx_std@@@stlpmtx_std@@@Z (292B, 17 relocs) in unit band3/meta_band/CampaignGoalsLeaderboardChoicePanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??0CampaignGoalsLeaderboardChoiceProvider@@QAA@PAVBandProfile@@ABV?$vector@PAVDynamicTex@@V?$StlNodeAlloc@PAVDynamicTex@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+  },
+  "0x825f5270": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Text@CampaignGoalsLeaderboardChoiceProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z (144B, 9 relocs) in unit band3/meta_band/CampaignGoalsLeaderboardChoicePanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Text@CampaignGoalsLeaderboardChoiceProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z"
+  },
+  "0x825f5400": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetIconMat@CampaignGoalsLeaderboardChoiceProvider@@QBAPAVRndMat@@ABVString@@@Z (96B, 1 relocs) in unit band3/meta_band/CampaignGoalsLeaderboardChoicePanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetIconMat@CampaignGoalsLeaderboardChoiceProvider@@QBAPAVRndMat@@ABVString@@@Z"
+  },
+  "0x825f5468": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Mat@CampaignGoalsLeaderboardChoiceProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z (176B, 10 relocs) in unit band3/meta_band/CampaignGoalsLeaderboardChoicePanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Mat@CampaignGoalsLeaderboardChoiceProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z"
+  },
+  "0x825f5700": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Load@CampaignGoalsLeaderboardChoicePanel@@UAAXXZ (144B, 12 relocs) in unit band3/meta_band/CampaignGoalsLeaderboardChoicePanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Load@CampaignGoalsLeaderboardChoicePanel@@UAAXXZ"
+  },
+  "0x825f8b78": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetSelectedDetailsEntry@AccomplishmentPanel@@QAA?AVSymbol@@XZ (320B, 22 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetSelectedDetailsEntry@AccomplishmentPanel@@QAA?AVSymbol@@XZ"
+  },
+  "0x825f91c0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetCareerState@AccomplishmentPanel@@QAAXW4CareerState@@_N@Z (1576B, 124 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetCareerState@AccomplishmentPanel@@QAAXW4CareerState@@_N@Z"
+  },
+  "0x825f9930": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?UpdateCampaignMeterProgressLabel@AccomplishmentPanel@@QAAXPAVUILabel@@@Z (404B, 37 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?UpdateCampaignMeterProgressLabel@AccomplishmentPanel@@QAAXPAVUILabel@@@Z"
+  },
+  "0x825f9c00": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?UpdateHeaderLabel@AccomplishmentPanel@@QAAXPAVUILabel@@@Z (264B, 29 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?UpdateHeaderLabel@AccomplishmentPanel@@QAAXPAVUILabel@@@Z"
+  },
+  "0x825f9f80": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Group_HandleButtonDownMsg@AccomplishmentPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z (468B, 36 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Group_HandleButtonDownMsg@AccomplishmentPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z"
+  },
+  "0x825fb3e8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?UpdateDetailsListState@AccomplishmentPanel@@QAAXXZ (636B, 53 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?UpdateDetailsListState@AccomplishmentPanel@@QAAXXZ"
+  },
+  "0x82600570": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?BuildSelectedEntrySetList@AccomplishmentPanel@@QAAXXZ (188B, 16 relocs) in unit band3/meta_band/AccomplishmentPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?BuildSelectedEntrySetList@AccomplishmentPanel@@QAAXXZ"
+  },
+  "0x8261f940": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Handle@BackdropPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z (280B, 15 relocs) in unit band3/meta_band/InterstitialPanel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?Handle@BackdropPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+  },
+  "0x82627170": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?FinishLoad@MultiSelectListPanel@@UAAXXZ (200B, 12 relocs) in unit band3/meta_band/MultiSelectListPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?FinishLoad@MultiSelectListPanel@@UAAXXZ"
+  },
+  "0x826320f8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Handle@SaveLoadStatusPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z (312B, 13 relocs) in unit band3/meta_band/SaveLoadStatusPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Handle@SaveLoadStatusPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+  },
+  "0x82635030": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?StartSetlistMerge@SetlistMergePanel@@QAAXXZ (136B, 7 relocs) in unit band3/meta_band/SetlistMergePanel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?StartSetlistMerge@SetlistMergePanel@@QAAXXZ"
+  },
+  "0x8266ed80": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??0EyebrowsProvider@@QAA@ABV?$vector@PAVDynamicTex@@V?$StlNodeAlloc@PAVDynamicTex@@@stlpmtx_std@@@stlpmtx_std@@@Z (132B, 12 relocs) in unit band3/meta_band/EyebrowsProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??0EyebrowsProvider@@QAA@ABV?$vector@PAVDynamicTex@@V?$StlNodeAlloc@PAVDynamicTex@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+  },
+  "0x8266f088": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Update@FaceTypeProvider@@QAAXVSymbol@@@Z (124B, 2 relocs) in unit band3/meta_band/FaceTypeProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Update@FaceTypeProvider@@QAAXVSymbol@@@Z"
+  },
+  "0x8266f800": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??0OutfitProvider@@QAA@XZ (168B, 12 relocs) in unit band3/meta_band/OutfitProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??0OutfitProvider@@QAA@XZ"
+  },
+  "0x8266faf0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Update@InstrumentFinishProvider@@QAAXVSymbol@@@Z (128B, 3 relocs) in unit band3/meta_band/InstrumentFinishProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Update@InstrumentFinishProvider@@QAAXVSymbol@@@Z"
+  },
+  "0x8267f3b0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewNetMessage@MusicLibraryTaskMsg@@SAPAVNetMessage@@XZ (72B, 2 relocs) in unit band3/meta_band/MusicLibrary; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewNetMessage@MusicLibraryTaskMsg@@SAPAVNetMessage@@XZ"
+  },
+  "0x826d2870": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?HasLocalPlayer@TrackerPlayerDisplay@@QBA_NXZ (76B, 0 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?HasLocalPlayer@TrackerPlayerDisplay@@QBA_NXZ"
+  },
+  "0x826d2998": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?MakeIntegerTargetDescription@TrackerDisplay@@SA?AVDataArrayPtr@@H@Z (184B, 13 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?MakeIntegerTargetDescription@TrackerDisplay@@SA?AVDataArrayPtr@@H@Z"
+  },
+  "0x826d2c90": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?MakeTimeTargetDescription@TrackerDisplay@@SA?AVDataArrayPtr@@M@Z (268B, 16 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?MakeTimeTargetDescription@TrackerDisplay@@SA?AVDataArrayPtr@@M@Z"
+  },
+  "0x826d3df0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?ShowTarget@TrackerDisplay@@QBAXAAVDataArrayPtr@@@Z (244B, 22 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?ShowTarget@TrackerDisplay@@QBAXAAVDataArrayPtr@@@Z"
+  },
+  "0x826d3f80": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?HandleTargetPass@TrackerDisplay@@QBAXHAAVDataArrayPtr@@@Z (328B, 25 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?HandleTargetPass@TrackerDisplay@@QBAXHAAVDataArrayPtr@@@Z"
+  },
+  "0x826d4730": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetProgressPercentage@TrackerBandDisplay@@QBAXM@Z (256B, 23 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetProgressPercentage@TrackerBandDisplay@@QBAXM@Z"
+  },
+  "0x826d4b40": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetProgressPercentage@TrackerPlayerDisplay@@QBAXM_N@Z (348B, 26 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?SetProgressPercentage@TrackerPlayerDisplay@@QBAXM_N@Z"
+  },
+  "0x826d5790": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GainFocus@TrackerPlayerDisplay@@QBAX_N@Z (280B, 23 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GainFocus@TrackerPlayerDisplay@@QBAX_N@Z"
+  },
+  "0x826d5940": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?LoseFocus@TrackerPlayerDisplay@@QBAX_N@Z (280B, 23 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?LoseFocus@TrackerPlayerDisplay@@QBAX_N@Z"
+  },
+  "0x826d5af0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Pulse@TrackerPlayerDisplay@@QBAX_N@Z (280B, 23 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Pulse@TrackerPlayerDisplay@@QBAX_N@Z"
+  },
+  "0x826d5fe8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Broadcast@TrackerBroadcastDisplay@@QAAXABVDataArrayPtr@@VSymbol@@@Z (340B, 26 relocs) in unit band3/game/TrackerDisplay; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Broadcast@TrackerBroadcastDisplay@@QAAXABVDataArrayPtr@@VSymbol@@@Z"
+  },
+  "0x826eeb08": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Update@CrowdRating@@QAAXMM@Z (148B, 6 relocs) in unit band3/game/CrowdRating; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Update@CrowdRating@@QAAXMM@Z"
+  },
+  "0x826eeba0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?UpdatePhrase@CrowdRating@@QAAXMM@Z (148B, 6 relocs) in unit band3/game/CrowdRating; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?UpdatePhrase@CrowdRating@@QAAXMM@Z"
+  },
+  "0x826f49c0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetFxSend@KeysFx@@QAAPAVFxSend@@XZ (80B, 2 relocs) in unit band3/game/KeysFx; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetFxSend@KeysFx@@QAAPAVFxSend@@XZ"
+  },
+  "0x826fd080": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@Sfx@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/ui/CheatProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@Sfx@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x826fd190": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@SynthEmitter@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/ui/CheatProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@SynthEmitter@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x826fd340": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@FxSendDelay@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/ui/CheatProvider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@FxSendDelay@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82738f88": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@DxCam@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/rnddx9/Rnd_Xbox; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@DxCam@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8273a5f0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@DxEnviron@@SAPAVObject@Hmx@@XZ (112B, 5 relocs) in unit system/rnddx9/Rnd_Xbox; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@DxEnviron@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8273a8d8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@DxCubeTex@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/rnddx9/Rnd_Xbox; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@DxCubeTex@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x827402f0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@DxLight@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/synth/MoggClip; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@DxLight@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82782c78": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??$MiloStripEval@VString@@VSymbol@@PBDV1@@@YAXPBDVString@@VSymbol@@01@Z (72B, 2 relocs) in unit system/beatmatch/SongParser; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??$MiloStripEval@VString@@VSymbol@@PBDV1@@@YAXPBDVString@@VSymbol@@01@Z"
+  },
+  "0x82783688": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?CheckDrumSubmixes@SongParser@@QAAXXZ (104B, 2 relocs) in unit system/beatmatch/SongParser; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?CheckDrumSubmixes@SongParser@@QAAXXZ"
+  },
+  "0x82784b18": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnMidiMessageCommonOn@SongParser@@QAA_NHE@Z (152B, 4 relocs) in unit system/beatmatch/SongParser; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnMidiMessageCommonOn@SongParser@@QAA_NHE@Z"
+  },
+  "0x82784bb8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnSoloPhraseEnd@SongParser@@QAAXH@Z (272B, 12 relocs) in unit system/beatmatch/SongParser; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnSoloPhraseEnd@SongParser@@QAAXH@Z"
+  },
+  "0x82786b58": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?HandlePhraseEnd@SongParser@@QAA_NHE@Z (252B, 9 relocs) in unit system/beatmatch/SongParser; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?HandlePhraseEnd@SongParser@@QAA_NHE@Z"
+  },
+  "0x82793c58": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?push_back@?$vector@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@2@@Z (116B, 2 relocs) in unit system/beatmatch/SlotChannelMapping; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?push_back@?$vector@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@2@@Z"
+  },
+  "0x827b73e8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Handle@StoreArtLoaderPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z (192B, 7 relocs) in unit system/meta/StoreArtLoaderPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Handle@StoreArtLoaderPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+  },
+  "0x827b7ba8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?ClearArt@StoreArtLoaderPanel@@QAAXXZ (120B, 8 relocs) in unit system/meta/StoreArtLoaderPanel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?ClearArt@StoreArtLoaderPanel@@QAAXXZ"
+  },
+  "0x827b7dc8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?EnsureArtLoader@StoreArtLoaderPanel@@QAAXABVString@@@Z (152B, 10 relocs) in unit system/meta/StoreArtLoaderPanel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?EnsureArtLoader@StoreArtLoaderPanel@@QAAXABVString@@@Z"
+  },
+  "0x827bbad0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?MemFreeBlockStats@@YAXHAAH000@Z (116B, 9 relocs) in unit system/utl/MemMgr; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?MemFreeBlockStats@@YAXHAAH000@Z"
+  },
+  "0x827f2338": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetDrawWidth@UILabel@@QAAMXZ (64B, 3 relocs) in unit system/ui/UILabel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?GetDrawWidth@UILabel@@QAAMXZ"
+  },
+  "0x827f2378": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetDrawHeight@UILabel@@QAAMXZ (64B, 3 relocs) in unit system/ui/UILabel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?GetDrawHeight@UILabel@@QAAMXZ"
+  },
+  "0x827f2498": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?SetDisplayText@UILabel@@MAAXPBD_N@Z (116B, 4 relocs) in unit system/ui/UILabel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "?SetDisplayText@UILabel@@MAAXPBD_N@Z"
+  },
+  "0x827f2680": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??$MakeString@VString@@D@@YAPBDPBDVString@@D@Z (92B, 7 relocs) in unit system/ui/UILabel; splits.txt .text range newly pinned this wave (laneBP1)",
+    "kind": "new-pin",
+    "retail_symbol": "??$MakeString@VString@@D@@YAPBDPBDVString@@D@Z"
+  },
+  "0x827f2900": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?AppendIcon@UILabel@@QAAXD@Z (88B, 6 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?AppendIcon@UILabel@@QAAXD@Z"
+  },
+  "0x827f2a40": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?AllowEditText@UILabel@@IBA_NXZ (92B, 4 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?AllowEditText@UILabel@@IBA_NXZ"
+  },
+  "0x827f2c58": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?AltFont@UILabel@@QAAPAVRndFont@@XZ (144B, 10 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?AltFont@UILabel@@QAAPAVRndFont@@XZ"
+  },
+  "0x827f33d8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Highlight@UILabel@@UAAXXZ (364B, 18 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Highlight@UILabel@@UAAXXZ"
+  },
+  "0x827f3790": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnSetInt@UILabel@@IAA?AVDataNode@@PBVDataArray@@@Z (124B, 5 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnSetInt@UILabel@@IAA?AVDataNode@@PBVDataArray@@@Z"
+  },
+  "0x827f3818": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnGetMaterialVariations@UILabel@@QAA?AVDataNode@@PBVDataArray@@@Z (276B, 13 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnGetMaterialVariations@UILabel@@QAA?AVDataNode@@PBVDataArray@@@Z"
+  },
+  "0x827f39f0": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnGetAltMaterialVariations@UILabel@@QAA?AVDataNode@@PBVDataArray@@@Z (512B, 29 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnGetAltMaterialVariations@UILabel@@QAA?AVDataNode@@PBVDataArray@@@Z"
+  },
+  "0x827f3d50": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??0UILabel@@IAA@XZ (692B, 51 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??0UILabel@@IAA@XZ"
+  },
+  "0x827f4478": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ??1UILabel@@UAA@XZ (288B, 22 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "??1UILabel@@UAA@XZ"
+  },
+  "0x827f4c80": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?AltFontResourceFileUpdated@UILabel@@QAAX_N@Z (228B, 13 relocs) in unit system/ui/UILabel; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?AltFontResourceFileUpdated@UILabel@@QAAX_N@Z"
+  },
+  "0x827f8478": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@UIListDir@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/ui/UIList; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@UIListDir@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82802ae8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@PanelDir@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/ui/UI; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@PanelDir@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82802e08": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@UIGuide@@SAPAVObject@Hmx@@XZ (84B, 3 relocs) in unit system/ui/UI; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@UIGuide@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82802e90": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@UIFontImporter@@SAPAVObject@Hmx@@XZ (108B, 3 relocs) in unit system/ui/UI; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@UIFontImporter@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x8280a178": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@UISlider@@SAPAVObject@Hmx@@XZ (112B, 3 relocs) in unit system/ui/UISlider; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@UISlider@@SAPAVObject@Hmx@@XZ"
+  },
+  "0x82817c20": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?GetResourcesPath@UIFontImporter@@IAAPBDXZ (244B, 28 relocs) in unit system/ui/UIFontImporter; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?GetResourcesPath@UIFontImporter@@IAAPBDXZ"
+  },
+  "0x82818758": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?OnGetResourcesPath@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z (104B, 6 relocs) in unit system/ui/UIFontImporter; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?OnGetResourcesPath@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z"
+  },
+  "0x828246e8": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?Save@Screenshot@@UAAXAAVBinStream@@@Z (148B, 9 relocs) in unit system/ui/Screenshot; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?Save@Screenshot@@UAAXAAVBinStream@@@Z"
+  },
+  "0x82b6c850": {
+    "justification": "reloc-masked byte-identical UNIQUE homing hit; our compiled symbol ?NewObject@SynthSample360@@SAPAVObject@Hmx@@XZ (112B, 5 relocs) in unit system/synth_xbox/SynthSample; VA already inside an existing pinned splits.txt range -- name-only, no pin needed",
+    "kind": "reveal-only",
+    "retail_symbol": "?NewObject@SynthSample360@@SAPAVObject@Hmx@@XZ"
+  }
+}
