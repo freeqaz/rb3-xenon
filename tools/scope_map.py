@@ -845,38 +845,111 @@ def _by_live(scope_by_addr, funcs):
     return by
 
 
-def _today_delta(off_mc, off_tc, off_mf, fuzzy_pct):
-    """Persist a per-calendar-day baseline and return a compact 'progress today'
-    string = delta vs the first build of today. The baseline lives in the (private,
-    per-worktree) build dir, so it never collides across worktrees or gets committed.
-    Robust by design: any error -> '' (this must never break a build)."""
-    path = os.path.join(ROOT, "build", "45410914", "progress_today.json")
-    cur = {"mc": off_mc, "tc": off_tc, "mf": off_mf, "fz": fuzzy_pct}
+_HISTORY_CAP = 4000            # entries kept; ~1 per landing, so years of headroom
+_WINDOW_DAYS = 7               # trailing window for the second delta line
+
+
+def _fmt_ago(seconds):
+    """Compact human age: 45s / 12m / 3h / 5d."""
+    s = int(max(0, seconds))
+    if s < 90:
+        return "%ds" % s
+    if s < 5400:
+        return "%dm" % (s // 60)
+    if s < 172800:
+        return "%dh" % (s // 3600)
+    return "%dd" % (s // 86400)
+
+
+def _delta_str(cur, base):
+    d_fns = cur["mf"] - base.get("mf", cur["mf"])
+    cur_mp = 100.0 * cur["mc"] / cur["tc"] if cur["tc"] else 0.0
+    base_mp = 100.0 * base.get("mc", 0) / base["tc"] if base.get("tc") else 0.0
+    d_fz = cur["fz"] - base.get("fz", cur["fz"])
+    return "%+d fns · %+.2f%% matched · %+.2f%% fuzzy" % (d_fns, cur_mp - base_mp, d_fz)
+
+
+def _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct):
+    """Append-only rolling progress history; return (moved_line, window_line).
+
+    Replaces the old per-calendar-day baseline, which reset at midnight and so
+    read '+0' for every build of a session that began the previous day — the
+    common case here, since landings routinely straddle midnight.
+
+    A record is appended ONLY when the totals actually change, so 'moved' is the
+    delta of the last real movement (with its age), not the delta since some
+    arbitrary clock boundary. The second line is the trailing-window total.
+
+    History lives in the private, per-worktree build dir, so it never collides
+    across worktrees and is never committed.
+    Robust by design: any error -> ('', '') (this must never break a build)."""
+    path = os.path.join(ROOT, "build", "45410914", "progress_history.jsonl")
     try:
-        today = datetime.date.today().isoformat()
+        now = datetime.datetime.now()
+        cur = {"t": now.isoformat(timespec="seconds"), "mc": off_mc, "tc": off_tc,
+               "mf": off_mf, "fz": fuzzy_pct}
     except Exception:
-        return ""
-    base = None
+        return "", ""
+
+    hist = []
     try:
         with open(path) as f:
-            st = json.load(f)
-        if st.get("day") == today:
-            base = st.get("baseline")
-    except (FileNotFoundError, json.JSONDecodeError, OSError, ValueError):
+            for ln in f:
+                ln = ln.strip()
+                if not ln:
+                    continue
+                try:
+                    hist.append(json.loads(ln))
+                except json.JSONDecodeError:
+                    continue          # tolerate a torn line from a killed build
+    except (FileNotFoundError, OSError):
         pass
-    if base is None:                       # first build of the day -> set baseline
+
+    def totals(r):
+        return (r.get("mc"), r.get("tc"), r.get("mf"))
+
+    changed = (not hist) or totals(hist[-1]) != totals(cur)
+    if changed:
         try:
-            with open(path, "w") as f:
-                json.dump({"day": today, "baseline": cur}, f)
+            with open(path, "a") as f:
+                f.write(json.dumps(cur) + "\n")
         except OSError:
             pass
-        base = cur                         # delta reads zero this run
-    d_fns = off_mf - base.get("mf", off_mf)
-    cur_mp = 100.0 * off_mc / off_tc if off_tc else 0.0
-    base_mp = 100.0 * base.get("mc", 0) / base["tc"] if base.get("tc") else 0.0
-    d_mp = cur_mp - base_mp
-    d_fz = fuzzy_pct - base.get("fz", fuzzy_pct)
-    return "%+d fns · %+.2f%% matched · %+.2f%% fuzzy" % (d_fns, d_mp, d_fz)
+        if len(hist) + 1 > _HISTORY_CAP:                 # trim oldest, keep it bounded
+            try:
+                keep = (hist + [cur])[-_HISTORY_CAP:]
+                with open(path, "w") as f:
+                    for r in keep:
+                        f.write(json.dumps(r) + "\n")
+            except OSError:
+                pass
+        hist = hist + [cur]
+
+    # 'moved' = the two most recent DISTINCT states. When this build changed
+    # nothing, that is still the last real landing rather than a zero.
+    moved = ""
+    if len(hist) >= 2:
+        prev, last = hist[-2], hist[-1]
+        try:
+            age = (now - datetime.datetime.fromisoformat(last["t"])).total_seconds()
+            ago = " (%s ago)" % _fmt_ago(age)
+        except Exception:
+            ago = ""
+        moved = _delta_str(last, prev) + ago
+
+    # trailing window vs the oldest record still inside it
+    window = ""
+    try:
+        cutoff = now - datetime.timedelta(days=_WINDOW_DAYS)
+        older = [r for r in hist
+                 if datetime.datetime.fromisoformat(r["t"]) <= cutoff]
+        base = older[-1] if older else (hist[0] if hist else None)
+        if base is not None and totals(base) != totals(cur):
+            window = _delta_str(cur, base) + "  · %dd" % _WINDOW_DAYS
+    except Exception:
+        window = ""
+
+    return moved, window
 
 
 # Tiers shown as their own row -- the oracle-backed movers. crt (oracle, ~0.01 MB)
@@ -951,7 +1024,7 @@ def print_progress(by, measures, cache=None, compact=False):
     noora_fzb = sum(by[b][4] for b in NO_ORACLE)
     unk_b = by["unknown"][1]
     mapped_b = (tot_b - unk_b)
-    delta = _today_delta(off_mc, off_tc, off_mf, fuzzy_pct)
+    delta, window = _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct)
 
     cache = cache or {"state": "ok"}
     cstate = cache.get("state", "ok")
@@ -965,7 +1038,7 @@ def print_progress(by, measures, cache=None, compact=False):
         out.append("Decomp %.2f%% matched · %.2f%% fuzzy · %d/%d fns%s"
                    "  |  north-star oracle %.2f MB @ %.2f%% matched / %.2f%% fuzzy · %.0f%% tier-classified%s" %
                    (pct(off_mc, off_tc), fuzzy_pct, off_mf, off_tf,
-                    "  (today " + delta + ")" if delta else "",
+                    "  (moved " + delta + ")" if delta else "",
                     mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b), pct(mapped_b, tot_b),
                     ("  [!! scope cache %s — tier %% INFLATED, run: python3 tools/scope_map.py build]"
                      % cstate) if cbad else ""))
@@ -994,7 +1067,9 @@ def print_progress(by, measures, cache=None, compact=False):
         out.append(line("           %.2f / %.2f MB · %d / %d fns" %
                         (mb(off_mc), mb(off_tc), off_mf, off_tf)))
         if delta:
-            out.append(line("  today    %s" % delta))
+            out.append(line("  moved    %s" % delta))
+        if window:
+            out.append(line("  trend    %s" % window))
         out.append(line())
 
         # ---- scope-cache health banner ------------------------------------
