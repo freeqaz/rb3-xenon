@@ -4584,9 +4584,7 @@ CharUtl.cpp:
 
 FlowRun.cpp:
 	.pdata      start:0x822294E8 end:0x822294F0
-	.pdata      start:0x8222AF10 end:0x8222AF18
 	.text       start:0x82618BA8 end:0x82618CCC
-	.text       start:0x82631DB8 end:0x82631DFC
 
 FlowTimer.cpp:
 	.pdata      start:0x822054E8 end:0x822054F0
@@ -8602,22 +8600,20 @@ band3/meta_band/AssetMgr.cpp:
 	.text       start:0x826552CC end:0x8265567C
 
 band3/meta_band/AssetProvider.cpp:
+	.pdata      start:0x8222F468 end:0x8222F488
 	.pdata      start:0x8222F4A8 end:0x8222F4E8
 	.pdata      start:0x8222F4F0 end:0x8222F540
 	.pdata      start:0x8222F548 end:0x8222F598
+	.text       start:0x82670700 end:0x82670A88
 	.text       start:0x82670B8C end:0x82670F88
 	.text       start:0x82670FDC end:0x826714D8
 	.text       start:0x82671594 end:0x82671AC8
 
 band3/meta_band/MakeupProvider.cpp:
-	.pdata      start:0x8222F308 end:0x8222F360
-	.pdata      start:0x8222F400 end:0x8222F460
-	.pdata      start:0x8222F460 end:0x8222F468
-	.pdata      start:0x8222F598 end:0x8222F620
-	.text       start:0x8266F730 end:0x8266FAC4
-	.text       start:0x82670414 end:0x82670698
-	.text       start:0x82670698 end:0x826706F8
-	.text       start:0x82671AC8 end:0x826720B8
+	.pdata      start:0x8222F3A0 end:0x8222F3C0
+	.pdata      start:0x8222F3E8 end:0x8222F468
+	.text       start:0x8266FDC8 end:0x8266FF30
+	.text       start:0x82670090 end:0x826706F8
 
 band3/meta_band/NewAssetProvider.cpp:
 	.pdata      start:0x8222F620 end:0x8222F678
@@ -8705,7 +8701,6 @@ band3/meta_band/NewAwardPanel.cpp:
 	.pdata      start:0x8222A660 end:0x8222A700
 	.text       start:0x82627118 end:0x82628F40
 	.text       start:0x82628F84 end:0x82629878
-	.text       start:0x82630340 end:0x82630384
 
 band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 	.pdata      start:0x82226AD8 end:0x82226AF8
@@ -9973,8 +9968,6 @@ Leaderboard.cpp:
 	.pdata      start:0x8222EF60 end:0x8222EF68
 	.pdata      start:0x8222EF68 end:0x8222EF78
 	.pdata      start:0x8222EF78 end:0x8222F160
-	.pdata      start:0x8222F200 end:0x8222F2B0
-	.pdata      start:0x8222F360 end:0x8222F3C0
 	.pdata      start:0x82234C00 end:0x82234C10
 	.text       start:0x8235EF08 end:0x8235EF68
 	.text       start:0x8235EF70 end:0x8235EF98
@@ -9983,8 +9976,6 @@ Leaderboard.cpp:
 	.text       start:0x8266C270 end:0x8266C30C
 	.text       start:0x8266C30C end:0x8266C440
 	.text       start:0x8266C464 end:0x8266E4E8
-	.text       start:0x8266EC88 end:0x8266F380
-	.text       start:0x8266FAC4 end:0x8266FF30
 	.text       start:0x826CE268 end:0x826CE2D0
 
 MainHubPanel.cpp:
@@ -12926,9 +12917,10 @@ band3/tour/TourPerformerRemote.cpp:
 band3/tour/TourPerformerLocal.cpp:
 	.pdata      start:0x82200C10 end:0x82200D68
 	.text       start:0x823663B8 end:0x82367D60
+
 band3/meta_band/FaceHairProvider.cpp:
-	.pdata      start:0x8222F2B0 end:0x8222F308
-	.text       start:0x8266F380 end:0x8266F730
+	.pdata      start:0x8222F2B0 end:0x8222F310
+	.text       start:0x8266F380 end:0x8266F7A8
 
 band3/meta_band/CharProvider.cpp:
 	.pdata      start:0x8222E948 end:0x8222EA78
@@ -12941,6 +12933,7 @@ band3/meta_band/BandStoreOffer.cpp:
 band3/game/BandUserMgr.cpp:
 	.pdata      start:0x82230718 end:0x82230968
 	.text       start:0x826826A8 end:0x82684E40
+
 system/utl/LogFile.cpp:
 	.pdata      start:0x822429B8 end:0x822429E8
 	.text       start:0x827CBEF8 end:0x827CC150
@@ -12974,6 +12967,7 @@ system/beatmatch/DrumTrackWatcherImpl.cpp:
 	.pdata      start:0x8223E618 end:0x8223E650
 	.text       start:0x827800B0 end:0x82780130
 	.text       start:0x82780150 end:0x827808C0
+
 band3/game/RealGuitarGemPlayer.cpp:
 	.pdata      start:0x822367C8 end:0x822367E0
 	.pdata      start:0x822367E0 end:0x82236870
@@ -12995,6 +12989,7 @@ band3/game/CrowdRating.cpp:
 band3/game/KeysFx.cpp:
 	.pdata      start:0x82236C08 end:0x82236C58
 	.text       start:0x826F3E98 end:0x826F47B0
+
 system/ui/UIGridProvider.cpp:
 	.pdata      start:0x82247178 end:0x822471E8
 	.text       start:0x82817260 end:0x82817A64
@@ -13012,3 +13007,81 @@ system/bandobj/DialogDisplay.cpp:
 	.pdata      start:0x821FD240 end:0x821FD278
 	.text       start:0x82329B20 end:0x82329B98
 	.text       start:0x82329B98 end:0x82329FD8
+
+band3/meta_band/InstrumentFinishProvider.cpp:
+	.pdata      start:0x8222F360 end:0x8222F3A0
+	.text       start:0x8266FAC4 end:0x8266FDC8
+
+band3/meta_band/EyebrowsProvider.cpp:
+	.pdata      start:0x8222F200 end:0x8222F260
+	.text       start:0x8266EC88 end:0x8266F088
+
+band3/meta_band/CurrentOutfitProvider.cpp:
+	.pdata      start:0x8222F598 end:0x8222F620
+	.text       start:0x82671AC8 end:0x826720B8
+
+band3/meta_band/FaceTypeProvider.cpp:
+	.pdata      start:0x8222F260 end:0x8222F2B0
+	.text       start:0x8266F088 end:0x8266F380
+
+band3/meta_band/OutfitProvider.cpp:
+	.pdata      start:0x8222F310 end:0x8222F360
+	.text       start:0x8266F7A8 end:0x8266FAC4
+
+band3/meta_band/MultiSelectListPanel.cpp:
+	.pdata      start:0x8222A3D8 end:0x8222A418
+	.text       start:0x82626A40 end:0x82626E50
+
+band3/meta_band/SetlistSortByLocation.cpp:
+	.pdata      start:0x82223B40 end:0x82223C00
+	.text       start:0x825C4B10 end:0x825C54D8
+
+band3/meta_band/SaveLoadStatusPanel.cpp:
+	.pdata      start:0x8222AED8 end:0x8222AF18
+	.text       start:0x82631A20 end:0x82631DFC
+
+band3/meta_band/RetryAudioPanel.cpp:
+	.pdata      start:0x8222AD88 end:0x8222ADD0
+	.pdata      start:0x8222ADE0 end:0x8222ADF0
+	.text       start:0x82630228 end:0x82630690
+	.text       start:0x82630778 end:0x826308B4
+
+band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
+	.pdata      start:0x82226F98 end:0x82226FE0
+	.pdata      start:0x82226FE8 end:0x82227000
+	.text       start:0x825F4130 end:0x825F4598
+	.text       start:0x825F45F0 end:0x825F4948
+
+system/bandobj/ReviewDisplay.cpp:
+	.pdata      start:0x821FC6C8 end:0x821FC6D0
+	.pdata      start:0x821FC6E0 end:0x821FC720
+	.pdata      start:0x821FC760 end:0x821FC7B8
+	.text       start:0x8231E8F8 end:0x8231EA20
+	.text       start:0x8231EAA8 end:0x8231EF28
+	.text       start:0x8231F130 end:0x8231F674
+
+system/char/CharMeshCacheMgr.cpp:
+	.pdata      start:0x82203EC0 end:0x82203EC8
+	.pdata      start:0x82203EC8 end:0x82203ED0
+	.pdata      start:0x82203F48 end:0x82203F68
+	.text       start:0x8239C380 end:0x8239C3C8
+	.text       start:0x8239C3D0 end:0x8239C504
+	.text       start:0x8239CCA8 end:0x8239D048
+
+band3/tour/TourPropertyCollection.cpp:
+	.pdata      start:0x82200B08 end:0x82200B18
+	.pdata      start:0x82200B20 end:0x82200B38
+	.pdata      start:0x82200B40 end:0x82200B70
+	.text       start:0x82365560 end:0x82365668
+	.text       start:0x82365710 end:0x823658F8
+	.text       start:0x82365978 end:0x82365C20
+
+system/bandobj/BandFaceDeform.cpp:
+	.pdata      start:0x821F6DA8 end:0x821F6DD8
+	.pdata      start:0x821F6DE0 end:0x821F6E00
+	.pdata      start:0x821F6EA8 end:0x821F6EC8
+	.pdata      start:0x821F6ED0 end:0x821F6ED8
+	.text       start:0x822C7128 end:0x822C7680
+	.text       start:0x822C76F0 end:0x822C783C
+	.text       start:0x822C8290 end:0x822C83CC
+	.text       start:0x822C8448 end:0x822C85A8

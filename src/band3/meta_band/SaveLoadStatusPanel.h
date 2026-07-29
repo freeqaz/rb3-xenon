@@ -20,8 +20,7 @@ public:
 
     DataNode OnMsg(const SaveLoadMgrStatusUpdateMsg &);
 
-    bool unk38;
-    int unk3c;
+    bool unk38; // 0x3c -- retail has NO int between this and unk40
     Timer unk40;
     bool unk70;
     bool unk71;

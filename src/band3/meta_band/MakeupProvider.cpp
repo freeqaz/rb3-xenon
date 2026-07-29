@@ -44,7 +44,10 @@ void MakeupProvider::Text(int, int data, UIListLabel *slot, UILabel *label) cons
     MILO_ASSERT(slot, 0x47);
     MILO_ASSERT(label, 0x48);
     if (slot->Matches("name")) {
-        label->SetTextToken(DataSymbol(data));
+        // Retail reloads the Symbol from its own stack slot (lwz r4, 0x50(r1))
+        // instead of re-deriving it from the sret pointer -- i.e. a named local.
+        Symbol sym = DataSymbol(data);
+        label->SetTextToken(sym);
     } else {
         label->SetTextToken(gNullStr);
     }
@@ -65,6 +68,9 @@ void MakeupProvider::UpdateExtendedText(int, int i_iData, UILabel *label) const 
         Symbol descSym(MakeString("%s_desc", data.Str()));
         label->SetTextToken(descSym);
     } else if (strcmp(label->Name(), "asset_progress_makeup.lbl") == 0) {
+        // Retail: function-local static Symbol (guard-bit test + inline
+        // ??0Symbol ctor), not the Symbols*.h global the Wii dev tree uses.
+        static Symbol customize_asset_progress("customize_asset_progress");
         label->SetTokenFmt(customize_asset_progress, i_iData + 1, NumData());
     } else
         label->SetTextToken(gNullStr);

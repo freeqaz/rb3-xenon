@@ -1,11 +1,10 @@
 #pragma once
 #include "obj/Data.h"
 #include "obj/ObjMacros.h"
+#include "rndobj/Anim.h"
 #include "ui/UIComponent.h"
 #include "utl/Symbol.h"
 
-// Minimal declaration for rb3-xenon (see StarDisplay.h note). MusicLibrary
-// only uses SetToToken + base SetShowing on a dynamic_cast<ReviewDisplay*>.
 class ReviewDisplay : public UIComponent {
 public:
     ReviewDisplay();
@@ -13,9 +12,32 @@ public:
     OBJ_SET_TYPE(ReviewDisplay)
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
+    virtual void Save(BinStream &);
+    virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
+    virtual void Load(BinStream &);
+    virtual void DrawShowing();
     virtual ~ReviewDisplay();
+    virtual void PreLoad(BinStream &);
+    virtual void PostLoad(BinStream &);
+    virtual void Enter();
+    virtual void Poll();
+    virtual void CopyMembers(const UIComponent *, Hmx::Object::CopyType);
+    virtual void Update();
+    virtual void UpdateDisplay(bool);
 
     void SetToToken(Symbol);
-    static Symbol GetSymbolForReviewScore(int);
     void SetValues(int, bool);
+
+    static Symbol GetSymbolForReviewScore(int);
+    static int GetReviewScoreForSymbol(Symbol);
+
+    static void Init();
+    static void Register() { REGISTER_OBJ_FACTORY(ReviewDisplay); }
+
+    DECLARE_REVS
+    NEW_OBJ(ReviewDisplay)
+
+    RndAnimatable *mReviewAnim; // 0x10c
+    RndAnimatable *mFocusAnim; // 0x110
+    int mScore; // 0x114
 };
