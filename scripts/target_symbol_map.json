@@ -1,4 +1,7 @@
 {
+ "0x8266f380": "?NumData@FaceHairProvider@@UBAHXZ",
+ "0x8266f5b8": "??_EFaceHairProvider@@W3AAPAXI@Z",
+ "0x8266f5c8": "??1FaceHairProvider@@UAA@XZ",
  "0x82823bd0": "?SetTypeDef@UIProxy@@UAAXPAVDataArray@@@Z",
  "0x82823db8": "?SyncDir@UIProxy@@QAAXXZ",
  "0x828233a0": "?DrawShowing@UIProxy@@UAAXXZ",
@@ -724,7 +727,7 @@
  "0x82642540": "?IsWinning@QuickplayPerformer@@UBA_NXZ",
  "0x826589e0": "??_ERndOcclusionQueryMgr@@UAAPAXI@Z",
  "0x8266f330": "??_EProfileMgr@@UAAPAXI@Z",
- "0x8266f6e0": "??_GMetagameStats@@UAAPAXI@Z",
+ "0x8266f6e0": "??_GFaceHairProvider@@UAAPAXI@Z",
  "0x82670c68": "??_EShellInput@@UAAPAXI@Z",
  "0x82671de8": "??_ESongStatusMgr@@UAAPAXI@Z",
  "0x82677490": "?TrackSkeleton_CommitProcessingState@Pipeline@ST@@QAAXPAUSTPipelineProcessingState@@@Z",
