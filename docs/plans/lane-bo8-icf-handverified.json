@@ -1,0 +1,31 @@
+{
+ "_comment": [
+  "HAND-VERIFIED ICF alias groups: retail VA -> every mangled name that legitimately",
+  "folds there. Consumed by scripts/harvest/icf_alias_map_build.py --sources ...,hand.",
+  "Only add an entry with a stated proof; this file outranks every derived source.",
+  "",
+  "0x82690A10 / 0x82690B28: proved by lane BO-1 via vtable slot. NetGameMsgs' Save and",
+  "Load bodies are identical across ComponentFocusNetMsg, SetUserTrackTypeMsg and",
+  "SetUserDifficultyMsg, so retail ICF-folded each method into ONE body serving all",
+  "three classes. Corroborated independently here: our own compiled objs make",
+  "?Save@SetUserTrackTypeMsg / ?Save@SetUserDifficultyMsg byte+reloc identical (76 B,",
+  "2 relocs), and likewise the two Loads (scripts/harvest/icf_alias_map_build.py",
+  "--sources derived puts them in one class).",
+  "",
+  "★ MAP DEFECT, for the target_symbol_map.json owner: 0x82690B28 is currently named",
+  "?Save@SetUserDifficultyMsg@@UBAXAAVBinStream@@@Z. BO-1's vtable-slot proof says that",
+  "body is LOAD, not Save -- so the pin is wrong about the METHOD as well as arbitrary",
+  "about the CLASS. This lane does not edit that file (single-owner); handing over the",
+  "VA plus the evidence."
+ ],
+ "0x82690A10": [
+  "?Save@ComponentFocusNetMsg@@UBAXAAVBinStream@@@Z",
+  "?Save@SetUserTrackTypeMsg@@UBAXAAVBinStream@@@Z",
+  "?Save@SetUserDifficultyMsg@@UBAXAAVBinStream@@@Z"
+ ],
+ "0x82690B28": [
+  "?Load@ComponentFocusNetMsg@@UAAXAAVBinStream@@@Z",
+  "?Load@SetUserTrackTypeMsg@@UAAXAAVBinStream@@@Z",
+  "?Load@SetUserDifficultyMsg@@UAAXAAVBinStream@@@Z"
+ ]
+}
