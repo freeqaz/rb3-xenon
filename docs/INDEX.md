@@ -409,7 +409,17 @@ work (see §1); the rest are [HIST] executed.
 - [plans/workstreams-2026-07-02/ws4-round3-banked-repair.md](plans/workstreams-2026-07-02/ws4-round3-banked-repair.md) — [HIST] banked repairs (+25).
 - [plans/workstreams-2026-07-02/ws6-reconstruction-prep.md](plans/workstreams-2026-07-02/ws6-reconstruction-prep.md) — [HIST] reconstruction prep, awaiting downstream.
 
-### 4f. Non-md data artifacts
+### 4f. Claude-memory archive exports (2026-07-29)
+
+Verbatim exports of retired Claude persistent-memory topic files (frontmatter included),
+made during the 2026-07-29 memory restructure. TU0-era: **every raw address in these is
+invalid** (target flipped to TU5 on 2026-07-15); the durable levers/verdicts were distilled
+into the surviving memory graph. Primary searchable record — do not edit.
+
+- [decomp/history/memory-archive-wave-campaign-2026-07.md](decomp/history/memory-archive-wave-campaign-2026-07.md) — [HIST] waves 2-40 session records (2026-07-09..12, main 11,583→15,822), crack-farm deploy/saturation (⚠ B2 key echoed — rotate before reuse), superseded renamer diagnosis. 43 memory files.
+- [decomp/history/memory-archive-early-campaign-2026-06.md](decomp/history/memory-archive-early-campaign-2026-06.md) — [HIST] June-2026 mega-sessions + 2026-07-02 frontier rounds (main 6,932→~11,120). 8 memory files.
+
+### 4g. Non-md data artifacts
 
 Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 `decomp/gameid/{crossval_agree,VERDICT}.json`, `decomp/matng-abandoned.jsonl`,
