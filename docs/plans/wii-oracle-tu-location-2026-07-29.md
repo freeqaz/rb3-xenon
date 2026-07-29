@@ -18,6 +18,16 @@ pre-TU5); never use `unified_id*.json` / `ghidriff_identities.json` (TU0-keyed, 
 already inside `splits.txt` pins that belong to *neighbouring* TUs, and it is a
 principal cause of the sub-25 % match rate on several large units.
 
+**Bottom line on the mission's own metric:**
+
+| | TUs | Wii fns |
+|---|--:|--:|
+| laneBB's census | 141 | 2,505 |
+| **located this lane (any confidence)** | **76** | **1,699 (67.8 %)** |
+| ↳ of which HIGH confidence, pin-ready | **42** | **1,004** |
+| still unlocated | 65 | 806 |
+| ↳ of those, ≥ 12 TUs / 109 fns are census **false positives** | | |
+
 Three things were established:
 
 1. **The premise "we have not located them" is now false for 58 of them.** Two
