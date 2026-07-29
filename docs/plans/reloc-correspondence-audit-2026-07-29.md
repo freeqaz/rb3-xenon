@@ -35,7 +35,7 @@ Tool: `scripts/harvest/reloc_correspondence.py`. Scratch: `/home/free/tmp/laneBH
    possible and it should be wired into other tools.
 4. **laneTIGHTGAP's landed +109: 29.0% corresponding / 29.9% divergent / 39.3%
    undecidable — a 5.7× worse divergence rate than the tree** (conservative
-   reading: 15.9 / 19.6 / 62.6, **6.8×** — the verdict is invariant to oracle
+   reading: 15.9 / 19.6 / 62.6, **7.3×** — the verdict is invariant to oracle
    strictness). Its 105 pairable credits rest on only **64 distinct base
    symbols**. Recommendation: **STAND (do not revert), reclassify in the ledger,
    and gate the channel going forward.** Reasoning in §4.
