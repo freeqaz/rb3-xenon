@@ -6127,9 +6127,7 @@ Msg.cpp:
 	.text       start:0x82B99250 end:0x82B992A0
 
 FlowEventListener.cpp:
-	.pdata      start:0x82236938 end:0x822369D0
 	.pdata      start:0x8223CF68 end:0x8223CF70
-	.text       start:0x826ED658 end:0x826EDF6C
 	.text       start:0x827665D0 end:0x82766650
 
 MetaMusic.cpp:
@@ -12127,7 +12125,7 @@ VocalPlayer.cpp:
 	.pdata      start:0x82236330 end:0x82236378
 	.pdata      start:0x82236380 end:0x82236478
 	.pdata      start:0x82236478 end:0x822367C8
-	.pdata      start:0x822369D0 end:0x82236A58
+	.pdata      start:0x82236A20 end:0x82236A58
 	.text       start:0x8269CCA8 end:0x8269CCFC
 	.text       start:0x826E3808 end:0x826E381C
 	.text       start:0x826E381C end:0x826E3A38
@@ -12150,7 +12148,7 @@ VocalPlayer.cpp:
 	.text       start:0x826E5928 end:0x826E6070
 	.text       start:0x826E60C8 end:0x826E7498
 	.text       start:0x826E74B4 end:0x826EBE10
-	.text       start:0x826EDF6C end:0x826EEC9C
+	.text       start:0x826EE598 end:0x826EEC9C
 
 FlowNode.cpp:
 	.pdata      start:0x821FAF18 end:0x821FAF20
@@ -12902,3 +12900,7 @@ band3/game/RealGuitarGemPlayer.cpp:
 	.pdata      start:0x822367E0 end:0x82236870
 	.text       start:0x826EBE10 end:0x826EBF20
 	.text       start:0x826EBF28 end:0x826EC860
+
+band3/game/BandPerformer.cpp:
+	.pdata      start:0x82236938 end:0x82236A20
+	.text       start:0x826ED658 end:0x826EE598
