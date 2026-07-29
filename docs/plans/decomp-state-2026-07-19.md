@@ -69,6 +69,23 @@
 
 ## ★★★ QUOTE THE HONEST FLOOR, NOT `matched_functions` (2026-07-29)
 
+> **SUPERSEDED IN SCOPE 2026-07-29 by lane BO-8**
+> (`lane-bo8-icf-funclet-audit-2026-07-29.md`). Everything below is correct **for
+> the supply axis alone** and still measures 3.7% (re-verified by a fresh pass-2b
+> compile-out A/B at 40,540: reported 1,517, real 1,466). Two amendments:
+> 1. **There is a second, disjoint over-count axis** — relocation-target divergence,
+>    measured against the retail bytes. **Full honest band: 37,490 – 38,098, i.e.
+>    the headline over-states by 6.0% – 7.5%**, not ~4%.
+> 2. **"No real decompilation is affected" is false as a general claim.** It is true
+>    of pass-2b surplus (which never touches named symbols). But identity divergence
+>    is *worse* among named bodies (5.5% / 4.3%) than among supply-backed funclets
+>    (2.4% / 0.56%). The clean statement is: *pass-2b surplus never touches named
+>    functions.*
+>
+> Also settled there: **populating the ICF alias map cannot change any measure** —
+> `report generate` hardcodes `functionRelocDiffs=None`, under which `reloc_eq`
+> never consults `symbol_equivalences`. Measured: 3 groups → 1,408 groups, Δ = 0.
+
 **`matched_functions` over-counts by ~4%.** The cause is objdiff's own funclet
 pass (`pair_funclets_by_bytes`): it pairs each leftover funclet-like target onto
 a base partner **without marking that partner used**, so **N targets can all
