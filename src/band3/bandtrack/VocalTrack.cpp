@@ -2233,7 +2233,12 @@ void VocalTrack::BuildStaticDeployZone(
             LyricShift(max, mStaticDeployMarginX - (fref + mStaticDeployBufferX))
         );
     }
-    bool i6 = TheSongDB->IsInCoda(MsToTickInt(fpair.first));
+    // The `!!` forces MSVC's int->bool normalize (`subic`/`subfe`) that retail
+    // emits here; without it we return the raw byte. Residue: retail applies the
+    // idiom to the raw r3 with no leading `clrlwi r11,r3,24`, i.e. its IsInCoda
+    // result is int-typed at this point. A `(int)` cast folds straight back to
+    // the un-normalized form (96.3%), so `!!` is the best source-side form.
+    bool i6 = !!TheSongDB->IsInCoda(MsToTickInt(fpair.first));
     float f1;
     RndGroup *u4;
     float f2;
