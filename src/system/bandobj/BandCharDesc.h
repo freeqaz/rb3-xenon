@@ -247,6 +247,5 @@ public:
 class BandCharDescTest : public BandCharDesc {
 public:
     BandCharDescTest() {}
-    virtual ~BandCharDescTest() {}
     virtual Symbol ClassName() const { return ""; }
 };

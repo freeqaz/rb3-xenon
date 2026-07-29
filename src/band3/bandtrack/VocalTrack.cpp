@@ -391,15 +391,12 @@ void VocalTrack::Init() {
     GameplayOptions *options = user->GetGameplayOptions();
     if (options) {
         DataArray *staticArr = SystemConfig()->FindArray("force_static_vocals", false);
-        if (staticArr) {
-            if (SystemConfig()->FindInt("force_static_vocals")) {
-                SetVocalStyle((VocalStyle)0);
-            }
-            goto next;
+        if (staticArr && SystemConfig()->FindInt("force_static_vocals")) {
+            SetVocalStyle((VocalStyle)0);
+        } else {
+            SetVocalStyle(options->GetVocalStyle());
         }
-        SetVocalStyle(options->GetVocalStyle());
     }
-next:
     ReadTimingData(SystemConfig()->FindArray("track_graphics"));
     unk1c8 = mDir->Find<RndGroup>("markers.grp", true);
     unk19c = 0;
@@ -2064,6 +2061,10 @@ float VocalTrack::GetHarmonyScore(int singerIdx) {
         return harmonyScore;
     for (int part = 0; part < numParts; part++) {
         if (part != singer->mFrameAssignedPart) {
+            // NOTE (laneBF-3): residual single mismatch is `lwzx r3,r11,r30` vs
+            // our `lwzx r3,r30,r11` — the rA/rB operands of the indexed load are
+            // swapped (semantically identical `add`). `*(begin()+part)` spelling
+            // tested, no change. Regalloc-class, permuter banned.
             Singer *candidate = mPlayer->mVocalParts[part]->GetBestSingerCandidate();
             if (candidate) {
                 float tmp = frameScore * candidate->mFrameBestHitScore;
@@ -2612,7 +2613,7 @@ int VocalTrack::IncrementVolume(int val) {
         } else if (val == -1) {
             TheProfileMgr.SetSynapseEnabled(false);
         }
-        return TheProfileMgr.GetSynapseEnabled();
+        return !!TheProfileMgr.GetSynapseEnabled();
     } else {
         MILO_NOTIFY_ONCE(
             "trying to increment unimplemented vocal param %d", mCharOptParam

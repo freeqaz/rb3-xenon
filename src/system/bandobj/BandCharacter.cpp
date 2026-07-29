@@ -330,8 +330,10 @@ void BandCharacter::PlayFaceClip() {
                 mFaceGroupName,
                 PathName(mDriver->ClipDir())
             );
-        } else
-            mFaceDriver->Play(grp->GetClip(), 4, -1.0f, 1e+30f, 0.0f);
+        } else {
+            CharClip *fc = grp->GetClip();
+            mFaceDriver->Play(fc, 4, -1.0f, 1e+30f, 0.0f);
+        }
     }
 }
 
@@ -1567,8 +1569,7 @@ void BandCharacter::SetDeformation() {
              it != unk5e0.end();
              ++it) {
             CharCollide *col = *it;
-            RndMesh *colmesh = col->mMesh;
-            if (colmesh && mgr->HasMesh(colmesh)) {
+            if (col->mMesh && mgr->HasMesh(col->mMesh)) {
                 col->Deform();
             }
         }
@@ -2153,6 +2154,12 @@ DataNode BandCharacter::OnSetPlay(DataArray *da) {
 }
 
 DataNode BandCharacter::OnClosetTeleport(DataArray *da) {
+    // NOTE (laneBF-3): residual 2-instruction schedule swap — target emits
+    // `addi r4,this,0xf0` (src) before `addi r3,unk734,0x1c` (dst) for the
+    // inlined Transform memcpy; we emit dst-then-src. REFUTED: binding the RHS
+    // to a `const Transform&` local (91.8%, adds a callee-save + extra addi) and
+    // spelling the RHS as the raw `mLocalXfm` member (99.2%, byte-identical to
+    // the accessor) both fail. Pure MSVC operand-scheduling; permuter is banned.
     unk734->DirtyLocalXfm() = LocalXfm();
     Teleport(unk734);
     unk5a2 = false;
@@ -2505,7 +2512,8 @@ DataNode BandCharacter::OnSetFileMerger(DataArray *da) {
         mFileMerger->Select(bodyparts[i], fp7c, unk5a1);
     }
     for (int i = 0; i < 5; i++) {
-        mFileMerger->Select(BandCharDesc::GetInstrumentSym(i), FilePath(0), false);
+        FilePath fpInst(0);
+        mFileMerger->Select(BandCharDesc::GetInstrumentSym(i), fpInst, false);
     }
     FilePath fp88("");
     FilePath fp94("");
@@ -2525,9 +2533,19 @@ DataNode BandCharacter::OnSetFileMerger(DataArray *da) {
         mPlayFlags |= 0x100000;
     else if (ty == BandCharDesc::kBass)
         mPlayFlags |= 0x200000;
+    mUseMicStandClips = false;
     if (ty != BandCharDesc::kNumInstruments) {
         if (!mGenre.Null() && !mTempo.Null()) {
             if (ty == BandCharacter::kMic) {
+                // NOTE (laneBF-3): residual 4-instruction wall — retail
+                // materializes this bool with a branch (`clrlwi.`/`li 1`/`beq`/
+                // `mr r11,r23`) reusing the zero reg from the
+                // `mUseMicStandClips = false` above; MSVC gives us the
+                // branchless `cntlzw`/`extrwi` form for every spelling tried
+                // (`!=`, `!(==)`, `?:`, if/else). The conditional-store form
+                // `if (mGenre != "banger") mUseMicStandClips = true;` DOES
+                // reproduce the branch but cascades a whole-function r22/r23
+                // regalloc shift (99.2% -> 97.8%), so it is a net loss.
                 mUseMicStandClips = mGenre != "banger";
             }
             fp94.SetRoot(MakeString(
@@ -2604,7 +2622,8 @@ DataNode BandCharacter::OnSetFileMerger(DataArray *da) {
         // "finale" MakeString and the extra FilePath temp as pure inserts on our
         // side, and dropping them takes the frame 0x220 -> 0x210 (= retail),
         // which is what gates this function's 17 EH funclets.
-        mFileMerger->Select("tour_ending_clips", FilePath(""), false);
+        FilePath fpNoTour("");
+        mFileMerger->Select("tour_ending_clips", fpNoTour, false);
     }
     mFileMerger->Select("rigging", fp88, false);
     mFileMerger->Select("body_realtime_clips", fp94, false);
