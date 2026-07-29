@@ -12902,3 +12902,13 @@ band3/meta_band/CharSync.cpp:
 system/utl/LogFile.cpp:
 	.pdata      start:0x822429B8 end:0x822429E8
 	.text       start:0x827CBEF8 end:0x827CC150
+
+
+system/utl/LogFile.cpp:
+	.pdata      start:0x822429B8 end:0x822429E8
+	.text       start:0x827CBEF8 end:0x827CC150
+
+
+band3/game/HitTracker.cpp:
+	.pdata      start:0x82236158 end:0x82236190
+	.text       start:0x826E34E0 end:0x826E3808

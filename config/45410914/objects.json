@@ -227,6 +227,8 @@
    "system/oggvorbis/res0.c": "NonMatching",
    "system/utl/DeJitter.cpp": "NonMatching",
    "system/utl/LogFile.cpp": "NonMatching",
+   "system/utl/LogFile.cpp": "NonMatching",
+   "band3/game/HitTracker.cpp": "NonMatching",
    "system/synth_xbox/FxSend.cpp": "NonMatching",
    "system/utl/Pool.cpp": "NonMatching",
    "system/utl/VarTimer.cpp": "NonMatching",

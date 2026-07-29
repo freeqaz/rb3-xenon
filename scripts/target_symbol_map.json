@@ -15046,7 +15046,7 @@
  "0x826e30d0": "??_GTrackerSource@@UAAPAXI@Z",
  "0x826e3010": "?GetIDFromInstrument@TrackerSource@@QBA?AUTrackerPlayerID@@VSymbol@@@Z",
  "0x826ccaf0": "?InTransition@UIManager@@QAA_NXZ",
- "0x826e37b8": "??_GNavListNode@@UAAPAXI@Z",
+ "0x826e37b8": "??_GHitTracker@@UAAPAXI@Z",
  "0x826e3808": "?HasAssignedPart@Singer@@QBA_NXZ",
  "0x826e3a38": "?RemoteVocalVolume@VocalPlayer@@QBAMXZ",
  "0x826e3ee8": "?LocalHitCoda@VocalPlayer@@QAAXXZ",
@@ -27136,5 +27136,13 @@
  "0x827cbef8": "??0LogFile@@QAA@PBD@Z",
  "0x827cbf80": "?AdvanceFile@LogFile@@QAAXXZ",
  "0x827cc068": "??_GLogFile@@UAAPAXI@Z",
- "0x827cc0c0": "?Print@LogFile@@UAAXPBD@Z"
+ "0x827cc0c0": "?Print@LogFile@@UAAXPBD@Z",
+ "0x826e34e0": "??_GHitSink@@UAAPAXI@Z",
+ "0x826e3528": "?Key@HitTracker@@UAAXH@Z",
+ "0x826e3540": "?RGFret@HitTracker@@UAAXHH@Z",
+ "0x826e3560": "?RGStrum@HitTracker@@UAAXH@Z",
+ "0x826e3578": "?Reset@HitTracker@@QAAXXZ",
+ "0x826e35f8": "?Hit@HitTracker@@UAAXW4HitType@@@Z",
+ "0x826e3618": "??0HitTracker@@QAA@XZ",
+ "0x826e3728": "??1HitTracker@@UAA@XZ"
 }
