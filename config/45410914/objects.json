@@ -421,7 +421,12 @@
    },
    "system/ui/Utl.cpp": "NonMatching",
    "system/utl/MemTracker.cpp": "NonMatching",
-   "system/world/LightPreset.cpp": "NonMatching",
+   "system/world/LightPreset.cpp": {
+    "status": "NonMatching",
+    "extra_cflags": [
+     "/DRB3_SYNCPROP_LOCAL_STATIC"
+    ]
+   },
    "system/os/Timer.cpp": "NonMatching",
    "system/utl/Str.cpp": "NonMatching",
    "system/rnddx9/RenderState.cpp": "NonMatching",
