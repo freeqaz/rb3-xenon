@@ -6123,9 +6123,7 @@ Msg.cpp:
 	.text       start:0x82B99250 end:0x82B992A0
 
 FlowEventListener.cpp:
-	.pdata      start:0x82236938 end:0x822369D0
 	.pdata      start:0x8223CF68 end:0x8223CF70
-	.text       start:0x826ED658 end:0x826EDF6C
 	.text       start:0x827665D0 end:0x82766650
 
 MetaMusic.cpp:
@@ -9044,7 +9042,6 @@ band3/game/GemTrainerPanel.cpp:
 
 band3/game/Tracker.cpp:
 	.pdata      start:0x821F6F08 end:0x821F6F10
-	.pdata      start:0x82234DC0 end:0x82234DF0
 	.pdata      start:0x82234E48 end:0x82234E50
 	.pdata      start:0x82234E50 end:0x82234E58
 	.pdata      start:0x82234E58 end:0x82234E68
@@ -9069,7 +9066,6 @@ band3/game/Tracker.cpp:
 	.pdata      start:0x82234FD0 end:0x82235018
 	.pdata      start:0x82235018 end:0x82235020
 	.text       start:0x822C87B0 end:0x822C882C
-	.text       start:0x826D0024 end:0x826D0478
 	.text       start:0x826D0AA8 end:0x826D0B00
 	.text       start:0x826D0B00 end:0x826D0B7C
 	.text       start:0x826D0B80 end:0x826D0C00
@@ -10943,12 +10939,12 @@ SongSortNode.cpp:
 	.text       start:0x82663830 end:0x82663968
 
 GuitarFx.cpp:
-	.pdata      start:0x82236C30 end:0x82236D00
+	.pdata      start:0x82236C58 end:0x82236D00
 	.pdata      start:0x82236D00 end:0x82236D08
 	.pdata      start:0x82236D08 end:0x82236D30
 	.pdata      start:0x82236D30 end:0x82236D38
 	.pdata      start:0x82236D38 end:0x82236D90
-	.text       start:0x826F4100 end:0x826F4C40
+	.text       start:0x826F47B0 end:0x826F4C40
 	.text       start:0x826F4C40 end:0x826F4CF8
 	.text       start:0x826F4D00 end:0x826F4EA0
 	.text       start:0x826F4EA0 end:0x826F5018
@@ -11702,11 +11698,9 @@ GemManager.cpp:
 	.text       start:0x82B99358 end:0x82B9F510
 
 GemTrack.cpp:
-	.pdata      start:0x82234D10 end:0x82234D58
 	.pdata      start:0x8225D3F8 end:0x8225D420
 	.pdata      start:0x8225D420 end:0x8225D648
 	.pdata      start:0x8225D648 end:0x8225D688
-	.text       start:0x826CF908 end:0x826CFB38
 	.text       start:0x82B93CE4 end:0x82B93F48
 	.text       start:0x82B93F50 end:0x82B97200
 	.text       start:0x82B97200 end:0x82B97758
@@ -12124,9 +12118,8 @@ VocalPlayer.cpp:
 	.pdata      start:0x82236288 end:0x82236328
 	.pdata      start:0x82236330 end:0x82236378
 	.pdata      start:0x82236380 end:0x82236478
-	.pdata      start:0x82236478 end:0x822367E0
-	.pdata      start:0x822367E0 end:0x82236870
-	.pdata      start:0x822369D0 end:0x82236A58
+	.pdata      start:0x82236478 end:0x822367C8
+	.pdata      start:0x82236A40 end:0x82236A58
 	.text       start:0x8269CCA8 end:0x8269CCFC
 	.text       start:0x826E3808 end:0x826E381C
 	.text       start:0x826E381C end:0x826E3A38
@@ -12148,9 +12141,8 @@ VocalPlayer.cpp:
 	.text       start:0x826E4BD0 end:0x826E58D0
 	.text       start:0x826E5928 end:0x826E6070
 	.text       start:0x826E60C8 end:0x826E7498
-	.text       start:0x826E74B4 end:0x826EBF20
-	.text       start:0x826EBF28 end:0x826EC860
-	.text       start:0x826EDF6C end:0x826EEC9C
+	.text       start:0x826E74B4 end:0x826EBE10
+	.text       start:0x826EEB08 end:0x826EEC9C
 
 FlowNode.cpp:
 	.pdata      start:0x821FAF18 end:0x821FAF20
@@ -12578,7 +12570,6 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.text       start:0x8278C0C0 end:0x8278C160
 
 system/beatmatch/PlayerTrackConfigList.cpp:
-	.pdata      start:0x82234D60 end:0x82234DB8
 	.pdata      start:0x8223D808 end:0x8223D820
 	.pdata      start:0x8223D820 end:0x8223D828
 	.pdata      start:0x8223D828 end:0x8223D830
@@ -12591,7 +12582,6 @@ system/beatmatch/PlayerTrackConfigList.cpp:
 	.pdata      start:0x8223D8A8 end:0x8223D8B0
 	.pdata      start:0x8223D8B0 end:0x8223D8B8
 	.pdata      start:0x8223D8B8 end:0x8223D8C8
-	.text       start:0x826CFBAC end:0x826CFFB8
 	.text       start:0x8276F708 end:0x8276F720
 	.text       start:0x8276F720 end:0x8276F738
 	.text       start:0x8276F738 end:0x8276F828
@@ -12972,3 +12962,24 @@ system/beatmatch/DrumTrackWatcherImpl.cpp:
 	.pdata      start:0x8223E618 end:0x8223E650
 	.text       start:0x827800B0 end:0x82780130
 	.text       start:0x82780150 end:0x827808C0
+band3/game/RealGuitarGemPlayer.cpp:
+	.pdata      start:0x822367C8 end:0x822367E0
+	.pdata      start:0x822367E0 end:0x82236870
+	.text       start:0x826EBE10 end:0x826EBF20
+	.text       start:0x826EBF28 end:0x826EC860
+
+band3/game/BandPerformer.cpp:
+	.pdata      start:0x82236938 end:0x82236A20
+	.text       start:0x826ED658 end:0x826EE598
+
+band3/game/PracticeSectionProvider.cpp:
+	.pdata      start:0x82234CF0 end:0x82234DF0
+	.text       start:0x826CF240 end:0x826D0478
+
+band3/game/CrowdRating.cpp:
+	.pdata      start:0x82236A20 end:0x82236A40
+	.text       start:0x826EE598 end:0x826EEB08
+
+band3/game/KeysFx.cpp:
+	.pdata      start:0x82236C08 end:0x82236C58
+	.text       start:0x826F3E98 end:0x826F47B0
