@@ -1,0 +1,37 @@
+[
+  {
+    "va": "0x82690b28",
+    "old": "?Save@SetUserDifficultyMsg@@UBAXAAVBinStream@@@Z",
+    "new": "?Load@SetUserDifficultyMsg@@UAAXAAVBinStream@@@Z",
+    "op": "repoint",
+    "why": "PART A. Method half PROVEN wrong: the retail body's two bl targets are ??5@YAAAVBinStream@@AAV0@AAVHxGuid@@@Z and ??5BinStream@@QAAAAV0@AAVString@@@Z -- both ??5 == operator>> == READ, so the body is a Load, not a Save (BP-4 doc s2). Class half DELIBERATELY PRESERVED: all three of SetUserTrackTypeMsg / SetUserDifficultyMsg / ComponentFocusNetMsg have vtables (RTTI-confirmed via ??_R4 type descriptors .?AVSetUserTrackTypeMsg@@ / .?AVSetUserDifficultyMsg@@ / .?AVComponentFocusNetMsg@@) whose slot[1]=0x82690a10 and slot[2]=0x82690b28, so this VA is a 6-way ICF hub and the class half is UNDECIDABLE -- BP-4 explicitly scoped a CONTRADICT to the method half only. Spatial corroboration for keeping SetUserDifficultyMsg: the VA sits inside that class's own COMDAT group (ctor 0x82690a68 + 0xC0, the exact same stride as SetUserTrackTypeMsg's ctor 0x82690950 + 0xC0 -> 0x82690a10). COMDAT gate PASSES and matters: 0x82690b28 is owned by NetGameMsgs.cpp's span [0x82690868,0x82692818) and NetGameMsgs.obj defines ?Load@SetUserDifficultyMsg@@ at 0x4c == retail size 0x4c. Trades a reloc-masked FALSE 100% (our Save body, calling ??6, scored 100 against a retail Load because objdiff runs functionRelocDiffs=None) for a TRUE 100%."
+  },
+  {
+    "va": "0x82721370",
+    "old": "?Save@FxSendBitCrush@@UAAXAAVBinStream@@@Z",
+    "new": "?Load@FxSendBitCrush@@UAAXAAVBinStream@@@Z",
+    "op": "repoint",
+    "why": "PART B (saveload CONTRADICT, pct 52.22). Retail body at this VA calls ?ReadEndian@BinStream@@, then ?Load@FxSend@@UAAXAAVBinStream@@@Z, then ?ReadEndian@BinStream@@ again. The base-class chain to ?Load@FxSend@@ is decisive on BOTH halves: FxSendBitCrush derives from FxSend, and a Save would chain to ?Save@FxSend@@. Direction READ x3, declared WRITE. ?Load@FxSendBitCrush@@ is UNMAPPED (no collision) and has a real COMDAT in FxSendBitCrush.obj, the obj of the unit owning this VA. Size gate does NOT corroborate (our Load 0xec vs retail 0x90) -- recorded honestly as a source divergence; the repoint is justified on direction+base-chain, not on size, and the resulting pct will be an honest partial rather than a mis-addressed one."
+  },
+  {
+    "va": "0x8233b3e0",
+    "old": "?Save@BandList@@UAAXAAVBinStream@@@Z",
+    "new": "?Load@BandList@@UAAXAAVBinStream@@@Z",
+    "op": "repoint",
+    "why": "PART B (saveload CONTRADICT, pct 2.94). Retail body calls ?ReadEndian@BinStream@@ -- direction READ, declared WRITE. The incumbent pairing is meaningless anyway: our ?Save@BandList@@ COMDAT is a FOUR-BYTE stub (a bare blr), so the 2.94% is comparing retail's 0x88 body against `blr`. ?Load@BandList@@ is UNMAPPED (no collision) and has a real 0x78 COMDAT in BandList.obj. Size gate not satisfied (0x78 vs 0x88) but far closer than the stub; justified on direction."
+  },
+  {
+    "va": "0x823c7e28",
+    "old": "?Save@PracticeSection@@UAAXAAVBinStream@@@Z",
+    "new": "?Load@PracticeSection@@UAAXAAVBinStream@@@Z",
+    "op": "swap-half-1",
+    "why": "PART B (saveload CONTRADICT, pct 2.375). Retail body calls ?ReadEndian@BinStream@@, ?Load@Object@Hmx@@UAAXAAVBinStream@@@Z (base-class Load chain) and ?Load@?$ObjRefConcrete@VColorPalette@@VObjectDir@@@@ twice. Three independent read-side callees plus a base-class Load chain: this is unambiguously a Load. Reciprocal half of a swap with 0x823c7ed0 (which currently holds ?Load@PracticeSection@@ and shows NO read-side evidence at all). The swap makes the PROVEN row correct; the partner stays unproven either way, so proven-correctness strictly increases. Both bodies have COMDATs in PracticeSection.obj. Note the size gate is exactly neutral to this swap (total |retail-ours| distance is 0x180 before and after), so it neither supports nor opposes -- direction is the whole case."
+  },
+  {
+    "va": "0x823c7ed0",
+    "old": "?Load@PracticeSection@@UAAXAAVBinStream@@@Z",
+    "new": "?Save@PracticeSection@@UAAXAAVBinStream@@@Z",
+    "op": "swap-half-2",
+    "why": "PART B. Reciprocal half of the 0x823c7e28 swap. This VA's retail callees (fn_82829248, fn_823c7fd4 x2, fn_8274af68, ??0Symbol@@QAA@PBD@Z, fn_822a1070) carry NO read-side operator and NO ReadEndian, so the incumbent ?Load@ label has zero supporting evidence, while the VA it would displace has three read-side callees. Assigned ?Save@PracticeSection@@ by elimination within the class, not by positive proof -- flagged as such so a later lane with a class oracle can revisit."
+  }
+]

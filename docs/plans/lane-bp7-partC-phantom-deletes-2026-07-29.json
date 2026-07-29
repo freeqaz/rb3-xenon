@@ -1,0 +1,206 @@
+[
+ {
+  "va": "0x82319a50",
+  "old": "?ClassName@BandStoreUIPanel@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BandStoreUIPanel emits OBJ_CLASSNAME(BandStoreUIPanel), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: rb3-Wii DEV oracle (src/band3/meta_band/BandStoreUIPanel.h). An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82319c48",
+  "old": "?SetType@BandStoreUIPanel@@UAAXVSymbol@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BandStoreUIPanel emits OBJ_CLASSNAME(BandStoreUIPanel), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: rb3-Wii DEV oracle (src/band3/meta_band/BandStoreUIPanel.h). An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 99.85% because SetType bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82570b68",
+  "old": "?NewObject@BandStoreUIPanel@@SAPAVObject@Hmx@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BandStoreUIPanel emits OBJ_CLASSNAME(BandStoreUIPanel), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: rb3-Wii DEV oracle (src/band3/meta_band/BandStoreUIPanel.h). An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because NewObject bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82574518",
+  "old": "?SetType@BandStoreUIPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BandStoreUIPanel emits OBJ_CLASSNAME(BandStoreUIPanel), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: rb3-Wii DEV oracle (src/band3/meta_band/BandStoreUIPanel.h). An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because SetType bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x8240f5d0",
+  "old": "?NewObject@BaseMaterial@@SAPAVObject@Hmx@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BaseMaterial emits OBJ_CLASSNAME(BaseMaterial), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp engine (src/system/rndobj/BaseMaterial.h) -- DC3-NEWER, post-dates RB3. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because NewObject bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82435dc0",
+  "old": "?Save@BaseMaterial@@UAAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BaseMaterial emits OBJ_CLASSNAME(BaseMaterial), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp engine (src/system/rndobj/BaseMaterial.h) -- DC3-NEWER, post-dates RB3. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Save bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x8276d540",
+  "old": "?Handle@BaseMaterial@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class BaseMaterial emits OBJ_CLASSNAME(BaseMaterial), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp engine (src/system/rndobj/BaseMaterial.h) -- DC3-NEWER, post-dates RB3. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Handle bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823d0ba8",
+  "old": "?ClassName@ClipCollide@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class ClipCollide emits OBJ_CLASSNAME(ClipCollide), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp engine (src/system/char/ClipCollide.h) -- DC3-NEWER. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82570c80",
+  "old": "?NewObject@DancerSequence@@SAPAVObject@Hmx@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class DancerSequence emits OBJ_CLASSNAME(DancerSequence), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp DANCE CENTRAL game object (src/system/hamobj/DancerSequence.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 85.56% because NewObject bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82604868",
+  "old": "?ClassName@DancerSequence@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class DancerSequence emits OBJ_CLASSNAME(DancerSequence), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp DANCE CENTRAL game object (src/system/hamobj/DancerSequence.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82604a18",
+  "old": "?ClassName@DancerSequence@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class DancerSequence emits OBJ_CLASSNAME(DancerSequence), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp DANCE CENTRAL game object (src/system/hamobj/DancerSequence.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (DancerSequence)"
+ },
+ {
+  "va": "0x827b5510",
+  "old": "?Handle@DancerSequence@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class DancerSequence emits OBJ_CLASSNAME(DancerSequence), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp DANCE CENTRAL game object (src/system/hamobj/DancerSequence.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 20.8% because Handle bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x827b6ca8",
+  "old": "?Handle@DancerSequence@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class DancerSequence emits OBJ_CLASSNAME(DancerSequence), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp DANCE CENTRAL game object (src/system/hamobj/DancerSequence.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Handle bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (DancerSequence)"
+ },
+ {
+  "va": "0x8270cd88",
+  "old": "?ClassName@FitnessFilterObj@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FitnessFilterObj emits OBJ_CLASSNAME(FitnessFilterObj), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp KINECT gesture class (src/system/gesture/FitnessFilter.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823e35e8",
+  "old": "?ClassName@FlowCommand@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowCommand emits OBJ_CLASSNAME(FlowCommand), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowCommand.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823c6fe8",
+  "old": "?SetType@FlowIf@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because SetType bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823c7210",
+  "old": "?ClassName@FlowIf@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 17.59% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823c7328",
+  "old": "?ClassName@FlowIf@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (FlowIf)"
+ },
+ {
+  "va": "0x823c7338",
+  "old": "?Load@FlowIf@@UAAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 2.889% because Load bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823c73f8",
+  "old": "?Save@FlowIf@@UAAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 3.92% because Save bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x823c75b8",
+  "old": "?Load@FlowIf@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Load bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (FlowIf)"
+ },
+ {
+  "va": "0x823c75c8",
+  "old": "?Save@FlowIf@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowIf emits OBJ_CLASSNAME(FlowIf), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowIf.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Save bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (FlowIf)"
+ },
+ {
+  "va": "0x822970e8",
+  "old": "?Handle@FlowNode@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Handle bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target method differs (ClassName vs Handle) -> target name unreliable"
+ },
+ {
+  "va": "0x823399c0",
+  "old": "?NewObject@FlowNode@@SAPAVObject@Hmx@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 99.89% because NewObject bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82484868",
+  "old": "?ClassName@FlowNode@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x82484898",
+  "old": "?ClassName@FlowNode@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (FlowNode)"
+ },
+ {
+  "va": "0x824b5730",
+  "old": "?FindPathName@FlowNode@@$4PPPPPPPM@A@AAPBDXZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because FindPathName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target method differs (SetType vs FindPathName) -> target name unreliable"
+ },
+ {
+  "va": "0x827fbe38",
+  "old": "?Load@FlowNode@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Load bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target method differs (SetType vs Load) -> target name unreliable"
+ },
+ {
+  "va": "0x827fbe88",
+  "old": "?Copy@FlowNode@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 23.56% because Copy bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x827fc350",
+  "old": "?Copy@FlowNode@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class FlowNode emits OBJ_CLASSNAME(FlowNode), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp flow graph (src/system/flow/FlowNode.h) -- DC3-NEWER subsystem. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because Copy bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (FlowNode)"
+ },
+ {
+  "va": "0x824a2a08",
+  "old": "?ClassName@SkeletonClip@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class SkeletonClip emits OBJ_CLASSNAME(SkeletonClip), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp KINECT gesture class (src/system/gesture/SkeletonClip.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ },
+ {
+  "va": "0x824a2a38",
+  "old": "?ClassName@SkeletonClip@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class SkeletonClip emits OBJ_CLASSNAME(SkeletonClip), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: dc3-decomp KINECT gesture class (src/system/gesture/SkeletonClip.h) -- never in Rock Band. An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (SkeletonClip)"
+ },
+ {
+  "va": "0x82319c00",
+  "old": "?ClassName@WiiFriendsScreen@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class WiiFriendsScreen emits OBJ_CLASSNAME(WiiFriendsScreen), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: rb3-Wii DEV oracle, Wii-only screen (declared in src/band3/meta_band/MetaPanel.cpp). An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: thunk target is ALSO phantom (BandStoreUIPanel)"
+ },
+ {
+  "va": "0x82570650",
+  "old": "?ClassName@WiiFriendsScreen@@UBA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "PART C phantom-class drain. Class WiiFriendsScreen emits OBJ_CLASSNAME(WiiFriendsScreen), so if it existed in retail its name string would be in band.exe; the literal has ZERO byte occurrences (independently re-verified this lane against a control group scoring 1-253 hits). Provenance: rb3-Wii DEV oracle, Wii-only screen (declared in src/band3/meta_band/MetaPanel.cpp). An entry naming a class the retail binary does not contain is a certain mispair. It is not merely useless: this row reads 100% because ClassName bodies are class-agnostic apart from a string relocation, and objdiff runs functionRelocDiffs=None so that relocation is invisible to the score -- false credit. Deleting also UNBLOCKS the VA so the real owning class can be paired later. No repoint applied: no decisive oracle for the real owner (no StaticClassName literal, and no thunk jump-target whose method half agrees)"
+ }
+]

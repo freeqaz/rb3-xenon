@@ -1,0 +1,16 @@
+[
+ {
+  "va": "0x8245ae98",
+  "old": "?Highlight@RndText@@UAAXXZ",
+  "new": "?Load@RndText@@UAAXAAVBinStream@@@Z",
+  "op": "repoint",
+  "why": "PART F (BP-2b proven_mispairs row 2, confidence high -- the strongest row in the fragment). The retail body at this VA is RndText::Load: it is reached through Hmx::Object vftable slot 10 via thunk fn_8245BD18; it reads LOAD_REVS (gRev low half / gAltRev high half stored as shorts into ONE aggregate at lbl_82CC2F7C+4/+0 -- consistent with the known 'gRev/gAltRev must be one aggregate' MSVC .bss finding); it has 22 revision gates and 20 member loads in an order identical to rb3-Wii's Load item for item; and it ends with memcpy(this+0x138, this+0x110, 0x24), which is exactly Wii's `mAltStyle = mStyle`, then UpdateText(true). The incumbent name is impossible on size alone: our ?Highlight@RndText@@UAAXXZ COMDAT is 8 BYTES (a stub) against a 0x578 retail body. Gate PASSES: 0x8245AE98 is owned by Text.cpp's span and Text.obj defines ?Load@RndText@@UAAXAAVBinStream@@@Z. The name is freed by deleting 0x8245ADE8 in the companion fragment, which must be applied FIRST. Currently 0.4%%; expected to stay a low honest partial because our Text.cpp is the DC3 generation while retail RndText is rb3-Wii lineage -- the value is attribution, not match%%."
+ },
+ {
+  "va": "0x828182a8",
+  "old": "?Load@UIFontImporter@@UAAXAAVBinStream@@@Z",
+  "new": "?Save@UIFontImporter@@UAAXAAVBinStream@@@Z",
+  "op": "repoint",
+  "why": "PART F cross-lane resolution, second half. This lane's part-B scan found this VA declared READ but observing WRITE x26 -- a proven CONTRADICT on the method half, held only because ?Save@UIFontImporter@@ was occupied by 0x82455928. BP-2b independently proves 0x82455928 is RndText::Save, not UIFontImporter's, so the occupancy was itself the defect. With that row deleted the assignment is forced: 26 write-side callees make this a Save, and the class half is untouched. Gate PASSES: owned by UIFontImporter.cpp's span and UIFontImporter.obj defines ?Save@UIFontImporter@@UAAXAAVBinStream@@@Z (0x290). Currently 1.826%%, so 0 matched either way."
+ }
+]
