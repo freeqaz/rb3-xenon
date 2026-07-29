@@ -12632,6 +12632,10 @@ system/dsp/VibratoDetector.cpp:
 	.pdata      start:0x8225C6A0 end:0x8225C6A8
 	.text       start:0x82B81400 end:0x82B81534
 
+system/dsp/SndAnalysis.cpp:
+	.pdata      start:0x8225C6B0 end:0x8225C6E8
+	.text       start:0x82B816F0 end:0x82B81DD8
+
 band3/game/CommonPhraseCapturer.cpp:
 	.pdata      start:0x821F1660 end:0x821F1678
 	.pdata      start:0x82236870 end:0x82236938
