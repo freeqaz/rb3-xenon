@@ -27144,5 +27144,22 @@
  "0x826e3578": "?Reset@HitTracker@@QAAXXZ",
  "0x826e35f8": "?Hit@HitTracker@@UAAXW4HitType@@@Z",
  "0x826e3618": "??0HitTracker@@QAA@XZ",
- "0x826e3728": "??1HitTracker@@UAA@XZ"
+ "0x826e3728": "??1HitTracker@@UAA@XZ",
+ "0x82793fc8": "??0SingleSlotChannelMapping@@QAA@H@Z",
+ "0x82793fe0": "?ChannelBitfield@SingleSlotChannelMapping@@UBAHH@Z",
+ "0x82793ff0": "??_GSingleSlotChannelMapping@@UAAPAXI@Z",
+ "0x82794038": "?ChannelBitfield@MassChannelMapping@@UBAHH@Z",
+ "0x82794068": "?ChannelBitfield@MultiChannelMapping@@UBAHH@Z",
+ "0x82794118": "?FillChannelList@MultiChannelMapping@@UBAXAAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x827941a0": "?FillChannelList@MultiChannelMapping@@UBAXAAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@Z",
+ "0x82794218": "??0MassChannelMapping@@QAA@ABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x827943d8": "?NewSlotChannelMapping@@YAPAVSlotChannelMapping@@PAVSubmixCollection@@ABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@_N@Z",
+ "0x82793fb8": "??0SlotChannelMapping@@QAA@XZ",
+ "0x827940a0": "?FillChannelList@SingleSlotChannelMapping@@UBAXAAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x827940d0": "?FillChannelList@MassChannelMapping@@UBAXAAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82794308": "??1MassChannelMapping@@UAA@XZ",
+ "0x82794380": "??_GMassChannelMapping@@UAAPAXI@Z",
+ "0x82794668": "??1MultiChannelMapping@@UAA@XZ",
+ "0x827946e0": "??_GMultiChannelMapping@@UAAPAXI@Z",
+ "0x827944c0": "??0MultiChannelMapping@@QAA@PAVSubmix@@PBDAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z"
 }
