@@ -1739,6 +1739,8 @@
     ]
    },
    "band3/tour/TourDesc.cpp": "NonMatching",
+   "band3/tour/TourProperty.cpp": "NonMatching",
+   "band3/tour/TourWeightManager.cpp": "NonMatching",
    "band3/tour/TourDescPanel.cpp": "NonMatching",
    "band3/tour/TourProgress.cpp": {
     "status": "NonMatching",
