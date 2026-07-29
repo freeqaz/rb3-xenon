@@ -43,18 +43,43 @@ def live_target_paths(repo_root):
 
 def live_unit_names(repo_root):
     """Basenames (no extension) of every LIVE unit, e.g. 'auto_03_82270000_text'.
-    Both the .obj (in objdiff.json) and its sibling .s (in build/45410914/asm/,
-    not itself listed in objdiff.json) share this stem, so basename is the
-    right join key for filtering either directory's glob."""
+
+    ★DO NOT USE THIS AS A FILTER JOIN KEY -- kept only for callers that want a
+    display/name set. Basename is NOT injective over units: measured on
+    2026-07-29, 21 live-unit basenames COLLIDE (Rnd, Utl, Dir, Synth, the
+    FxSend* family), and the tree carries BOTH flat and nested files for the
+    same stem (asm/Rnd.s, asm/system/rnddx9/Rnd.s, asm/system/rndobj/Rnd.s).
+    A basename join therefore admits stale orphans that share a live stem --
+    exactly the small nested files most likely to read as a real finding.
+    Use live_rel_keys()/filter_live() instead."""
     return {os.path.splitext(os.path.basename(p))[0] for p in live_target_paths(repo_root)}
 
 
+def _rel_key(path):
+    """Key a build artifact by its path RELATIVE to its obj/ or asm/ root, minus
+    extension: 'system/rndobj/Rnd', 'MasterAudio'. This is injective where the
+    basename is not."""
+    p = os.path.normpath(os.path.abspath(path)).replace(os.sep, "/")
+    for marker in ("/build/45410914/obj/", "/build/45410914/asm/"):
+        i = p.find(marker)
+        if i != -1:
+            return os.path.splitext(p[i + len(marker):])[0]
+    return os.path.splitext(os.path.basename(p))[0]
+
+
+def live_rel_keys(repo_root):
+    """Relative-path keys (no extension) of every LIVE unit. The .obj listed in
+    objdiff.json and its sibling .s under build/45410914/asm/ share this key."""
+    return {_rel_key(p) for p in live_target_paths(repo_root)}
+
+
 def filter_live(paths, repo_root):
-    """Given obj/asm file paths, return only the ones whose basename (no
-    extension) is a currently-LIVE unit. Callers wanting a stale count can
-    diff len(paths) - len(result)."""
-    live = live_unit_names(repo_root)
-    return [p for p in paths if os.path.splitext(os.path.basename(p))[0] in live]
+    """Given obj/asm file paths, return only the ones that are a currently-LIVE
+    unit, joined on the RELATIVE PATH under obj//asm/ (not the basename -- see
+    live_unit_names). Callers wanting a stale count can diff
+    len(paths) - len(result)."""
+    live = live_rel_keys(repo_root)
+    return [p for p in paths if _rel_key(p) in live]
 
 
 def repo_root_from_build_subdir(build_subdir):

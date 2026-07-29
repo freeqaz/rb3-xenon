@@ -334,7 +334,7 @@ def census(proj, scatter_split=False):
         print("STALE GUARD: %d of %d .s files under build/45410914/asm/ are ORPHANS"
               % (len(orphans), len(orphans) + sum(1 for _ in glob.iglob(
                   os.path.join(proj.asm_dir, "**", "*.s"), recursive=True)) - len(orphans)))
-        print("             (basename not in objdiff.json's live set -- their split moved,")
+        print("             (rel-path not in objdiff.json's live set -- their split moved,")
         print("             was renamed, or predates the TU5 flip).  NOT READ.")
         print("=" * 72)
 
