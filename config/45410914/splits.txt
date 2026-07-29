@@ -12792,10 +12792,6 @@ system/gesture/DrawUtl.cpp:
 system/meta/MemcardAction.cpp:
 	.text       start:0x827B3050 end:0x827B307C
 
-system/hamobj/SongDifficultyDisplay.cpp:
-	.pdata      start:0x82247DD8 end:0x82247F10
-	.text       start:0x828233A0 end:0x828248A0
-
 system/midi/MidiReceiver.cpp:
 	.text       start:0x827EF9F8 end:0x827EFA10
 
@@ -12890,3 +12886,7 @@ system/hamobj/HamSong.cpp:
 system/rndobj/PostProcMgr.cpp:
 	.pdata      start:0x821FD358 end:0x821FD360
 	.text       start:0x8232AC50 end:0x8232AC94
+
+system/ui/UIProxy.cpp:
+	.pdata      start:0x82247DD8 end:0x82247F10
+	.text       start:0x828233A0 end:0x828248A0
