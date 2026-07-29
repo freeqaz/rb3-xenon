@@ -104,7 +104,7 @@ void InputMgr::CheckTriggerAutoVocalsConfirm() {
     mBandUserMgr->GetLocalUsersWithAnyController(users);
     for (int i = 0; i < users.size(); i++) {
         ControllerType ty = users[i]->ConnectedControllerType();
-        if (ty - 3U <= 1 || ty == 1)
+        if (ty == 1 || (ty > 2 && ty <= 4))
             i1++;
     }
     if (i1 >= 3) {
@@ -124,10 +124,7 @@ void InputMgr::SetUser(BandUser *user) {
 LocalBandUser *InputMgr::GetUserWithInvalidController() const {
     if (!mUser)
         return nullptr;
-    bool b1 = false;
-    if (mUser && mUser->IsLocal())
-        b1 = true;
-    BandUser *user = b1 ? mUser : 0;
+    BandUser *user = mUser->IsLocal() ? mUser : 0;
     std::vector<LocalBandUser *> users;
     if (mBandUserMgr)
         mBandUserMgr->GetLocalBandUsers(&users, 0);
@@ -135,7 +132,6 @@ LocalBandUser *InputMgr::GetUserWithInvalidController() const {
          ++it) {
         LocalBandUser *cur = *it;
         if (mSessionMgr->HasUser(cur) || (user == cur)) {
-            cur->GetControllerType();
             if (!HasValidController(cur, cur->GetControllerType()))
                 return cur;
         }
@@ -147,10 +143,7 @@ void InputMgr::SetInvalidMessageSink(Hmx::Object *) {}
 void InputMgr::ClearInvalidMessageSink() {}
 
 bool InputMgr::AllowRemoteExit() const {
-    bool hasRemoteUsers = false;
-    if (mNetSync && mNetSync->GetUIState() == (NetUIState)20) {
-        hasRemoteUsers = true;
-    }
+    bool hasRemoteUsers = mNetSync && mNetSync->GetUIState() == (NetUIState)20;
     bool notLocal = !TheNetSession->IsLocal();
     if (mEventMgr && !mEventMgr->HasActiveEvent()
         && ((mNetSync && mNetSync->IsEnabled()) || hasRemoteUsers)) {
@@ -236,16 +229,11 @@ bool InputMgr::HasValidController(LocalBandUser *user, ControllerType ty) const 
     if (!user->IsJoypadConnected())
         return false;
     else if (!mUser || (mEventMgr && mEventMgr->HasActiveEvent())) {
-        bool ret = false;
-        if (ty == 5 || ty == user->ConnectedControllerType())
-            ret = true;
-        return ret;
+        return ty == 5 || user->ConnectedControllerType() == ty;
     } else {
         ControllerType uTy = user->GetControllerType();
-        bool ret = false;
-        if ((uTy == 5 || uTy == ty) && (ty == 5 || ty == user->ConnectedControllerType()))
-            ret = true;
-        return ret;
+        return (uTy == 5 || uTy == ty)
+            && (ty == 5 || user->ConnectedControllerType() == ty);
     }
 }
 
@@ -288,10 +276,13 @@ bool InputMgr::IsValidButtonForShell(JoypadButton btn, LocalBandUser *user) {
     case kPad_RStickRight:
     case kPad_RStickDown:
     case kPad_RStickLeft:
-        return (unsigned int)userType > 1;
+        if (userType != 0 && userType != 1)
+            return true;
+        break;
     default:
-        return false;
+        break;
     }
+    return false;
 }
 
 BEGIN_HANDLERS(InputMgr)
