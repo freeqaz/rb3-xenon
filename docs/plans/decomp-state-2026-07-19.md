@@ -144,6 +144,45 @@ worktree with both legs same-split, not summed from lane deltas.
 > measured combined figure is 34.747932 — a 3e-6 rounding artifact of the 6-dp
 > inputs, so the lanes are **cleanly additive with no interaction**.)
 >
+> ★★★ **BW-1 reopens the anon-naming gate that BV-4 could not adjudicate:
+> `scripts/harvest/anon_reloc_cmp.py` resolves relocations instead of masking
+> them.** BV-4's selector masks every relocated word on *both* sides, so two
+> bodies differing only in which vtable they store, which string they load or
+> which function they call compare **equal** — which is why 25 of its 177
+> proposals were dropped at landing. The new comparator reads the decompressed
+> retail image `orig/45410914/band.exe` **directly rather than going through the
+> `lbl_` index**, so any VA can be dereferenced, not merely the ones dtk happened
+> to emit a label for; on top of the existing map/name/string/`??_R0`/fp channels
+> it adds **vtable identity via the MSVC COL chain** (vtable−4 → COL → +12
+> typedesc → +8 `".?AVClass@@"`), generic initialised-data content, and
+> **target-vs-target** comparison of two retail bodies with every operand
+> resolved to an absolute.
+> ★★★ **The ship gate `agree>=4` was chosen on a truth-ablation control, not on
+> the metric** — POS 100.00% over 3,688 picks, harmful-among-accepted 2.41%.
+> This is the discipline the at-100%-defect class demands: a gate tuned by
+> "which threshold maximises matched_functions" is metric-fitted by construction
+> (cf. the W9 `MILO_MESSAGE_TIMERS` defect). **All 42 shipped rows had ≥2
+> candidate names**, so a unique-name selector could not structurally have taken
+> any of them — this is net-new supply, not a cheaper re-pick.
+> ★★ **Three comparator defects were found and fixed while building it, each of
+> which had been emitting wrong verdicts.** (1) A raw `map` CONTRA implicates
+> *either* the row under test *or* the callee's map row — on the 152 landed rows
+> the callee was usually at fault; replacing it with an implied-binding oracle
+> observed over 19,000 established pairings dropped landed-152 rejects 12 → 3.
+> (2) `reloclib` treats every `lbl_`/`jmp_` token as a relocation, but dtk also
+> names **intra-function branch targets** that way and mislabels them (live asm
+> prints `beq cr6, lbl_8246EED0` for bytes `41 9A 00 54`, a +0x54 branch to
+> `0x82481910` inside the same function) — branch targets are now decoded from
+> the **encoding** and internal ones demoted, which both removes a bogus
+> one-sided "shape" contradiction and returns real control-flow words to the byte
+> comparison. (3) `LK` discriminates: a `bl` into one's own COMDAT is direct
+> recursion and carries a base-side relocation, so only non-linking branches
+> count as internal. ⚠ `reloc_disc`'s copy is **deliberately left untouched** —
+> its 99.41% gate is calibrated against the old behaviour.
+> ★ Attribution was 1:1 on both axes: +42 matched for 42 rows, and the
+> +0.054745pp back-computes to 5,791.7 B against 5,792 B shipped, with all 42
+> reading `fuzzy==100` individually.
+>
 > ★★★ **BW-3 is the canonical "Δhonest 0 is not a failure" case.** Its functions
 > were *already* counted as matched, so no function-count axis could move by
 > construction and only `code%` could respond. Under the amended BO-8 pricing
@@ -200,6 +239,32 @@ worktree with both legs same-split, not summed from lane deltas.
 > already correct — do not "fix" the source.** BW-3 deliberately stayed off
 > `scripts/target_symbol_map.json` because BW-1 and BW-2 were contending for it.
 > ⚠ A map edit is a silent no-op without a re-split.
+>
+> ➡ **Carried forward, unowned: BW-1 turned its new instrument on the 152 rows
+> BV-4 had ALREADY LANDED, and the audit is the more valuable half of the lane.**
+> Tally over the 152 (`~/tmp/laneBW1_v152f.json`): **130 ACCEPT / 20 UNDECIDED /
+> 1 NO_UNIT / 1 REJECT**. None of this was corrected — each needs its own lane,
+> because a map DELETE or repoint is a **silent no-op without a re-split**.
+> - **1 positively-rejected landed row — a candidate false-credit already on
+>   main:** `?GetMaxSlots@GemManager@@QBAHXZ` at `0x82b99058` (agree 0, contra 1,
+>   nrel 1) — its one resolvable relocation binds to
+>   `?GetMaxSlots@TrackConfig@@QBAHXZ`. Thin but *positive* evidence: a
+>   contradiction, not an absence.
+> - **20 UNDECIDED are withheld, NOT condemned.** All 20 have `nrel==0` — no
+>   resolvable relocation at all, so they are **unverifiable by this instrument
+>   rather than disproven**. Do not price them as defects.
+> - **`??1ObjRefOwner@@UAA@XZ`: NEITHER claimant is right.** The proposed VA
+>   `0x8231f620` was rejected (contra 2 on the bind channel, `contested`, never
+>   shipped, and absent from main); main's incumbent is `0x8279e578`, and
+>   target-vs-target scores the two bodies **DIFF at 2 words** — so they cannot
+>   both be this destructor. Per BW-1's COL resolution the proposed VA stores
+>   *UIListCustomTemplate*'s vtable and the incumbent stores
+>   *MercurySwitchFilter*'s.
+> - ⚠ **A 22nd row was never evaluated at all:**
+>   `?NewObject@ObjectDir@@SAPAVObject@Hmx@@XZ` at `0x82752f90` came back
+>   `NO_UNIT` (the audit could not locate its unit), so it is neither confirmed
+>   nor rejected — an audit that reports 130/152 ACCEPT is silently 130/151 on
+>   coverage.
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
