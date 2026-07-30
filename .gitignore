@@ -44,6 +44,15 @@ compile_commands.json
 !.claude/skills/
 !.claude/settings.json
 .claude/settings.local.json
+# Workflow prompts are TRACKED as of 2026-07-30. They are agent-facing instructions,
+# so a stale one silently steers every future lane: 20 of them had hardcoded a
+# BASELINE of 4,661-6,568 while the tree was at 41,170, turning `net_delta =
+# after - baseline` into a +34k fabricated-win generator, and gameport1/2.js baked
+# 16 dead TU0-era .text spans in as literal data at conf 0.99 (0 of 16 were real
+# function boundaries). Untracked, those fixes could not be carried by a lane
+# branch and nothing prevented them regressing. Keep them in review.
+!.claude/workflows/
+!.claude/wave2_finalize.js
 
 # Native port build output
 native/build/
