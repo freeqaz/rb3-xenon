@@ -164,6 +164,13 @@ Rnd::Rnd()
         mDefaultTex[i] = nullptr;
 }
 
+// ★ Must be defined BEFORE the handler block: retail inlines this at the
+// set_postproc_override call site in Rnd::Handle (MSVC /Ob2 only inlines a
+// definition it has already seen). rb3-Wii Rnd.cpp:572 is the same one-liner;
+// the MILO_LOG + "postproc" RndOverlay reflect block that used to live here is
+// a DC3-era addition and is absent from retail RB3.
+void Rnd::SetPostProcOverride(RndPostProc *pp) { mPostProcOverride = pp; }
+
 BEGIN_HANDLERS(Rnd)
     HANDLE_ACTION(reset_postproc, RndPostProc::Reset())
     HANDLE_ACTION(set_postproc_override, SetPostProcOverride(_msg->Obj<RndPostProc>(2)))
@@ -516,7 +523,7 @@ void Rnd::BeginDrawing() {
     } else
 #endif
         if (mPostProcOverride) {
-        mPostProcOverride->SetBloomColor();
+        static_cast<RndPostProc *>(mPostProcOverride)->SetBloomColor();
     } else if (RndPostProc::Current()) {
         RndPostProc::Current()->SetBloomColor();
     }
@@ -664,7 +671,7 @@ Rnd::DrawStringScreen(const char *c, const Vector2 &v, const Hmx::Color &color, 
     return vres;
 }
 
-RndPostProc *Rnd::GetPostProcOverride() { return mPostProcOverride; }
+PostProcessor *Rnd::GetPostProcOverride() { return mPostProcOverride; }
 
 RndPostProc *Rnd::GetSelectedPostProc() {
     RndPostProc *selected = nullptr;
@@ -932,22 +939,6 @@ DataNode Rnd::OnToggleShowMetaMatErrors(const DataArray *) {
 DataNode Rnd::OnToggleShowShaderErrors(const DataArray *) {
     TheShaderMgr.ToggleShowShaderErrors();
     return 0;
-}
-
-void Rnd::SetPostProcOverride(RndPostProc *pp) {
-    MILO_LOG(
-        "Rnd::SetPostProcOverride: %s -> %s\n",
-        mPostProcOverride == 0 ? "NULL" : PathName(mPostProcOverride),
-        pp == 0 ? "NULL" : PathName(pp)
-    );
-    mPostProcOverride = pp;
-    RndOverlay *ppOverlay = RndOverlay::Find("postproc", true);
-    if (ppOverlay->Showing()) {
-        TextStream *old = TheDebug.Reflect();
-        TheDebug.SetReflect(ppOverlay);
-        MILO_LOG("SETPROSTPROCOVERRIDE: %s\n", pp == 0 ? "NULL" : PathName(pp));
-        TheDebug.SetReflect(old);
-    }
 }
 
 void Rnd::SetPostProcBlacklightOverride(RndPostProc *pp) {
