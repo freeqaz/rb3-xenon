@@ -1,3 +1,16 @@
+// Retail INLINES the owner-only ObjPtr ctor in this TU. Binary evidence, read
+// off the retail instruction stream at RndPartLauncher::Load's
+// `ObjPtr<RndMultiMesh> multiMesh(this)` site (PartLauncher.cpp:127): retail
+// emits three plain stores into the local (vtable@0x58, mOwner@0x5c,
+// mObject@0x60) and NO call, where we emitted
+// `bl ??0?$ObjPtr@VRndMultiMesh@@@@QAA@PAVObject@Hmx@@PAVRndMultiMesh@@@Z`.
+// The surrounding r10/r11->r3/r4/r5 register mismatches were that call's
+// argument setup. See the RB3_OBJPTR_INLINE_OWNER_CTOR block in obj/Object.h:
+// applying this globally is net -121 (retail mostly does NOT inline), so it is
+// opt-in per TU -- and per the metric-fitted-build-config rule, opted in only
+// on direct binary evidence, never on match improvement alone.
+// rndobj/ is PCH-excluded, so this #define precedes the Object.h include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/PartLauncher.h"
 #include "math/Rand.h"
 #include "obj/Object.h"
