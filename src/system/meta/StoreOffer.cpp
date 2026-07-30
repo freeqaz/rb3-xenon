@@ -40,6 +40,29 @@ unsigned long long StorePurchaseable::OfferStringToID(char const *s) {
 
 char const *StorePurchaseable::CostStr() const { return MakeString("%i -", cost); }
 
+// Retail 360 fn_827A6500 (lane BU-2): the inverse of OfferStringToID --
+// formats a 64-bit offer/song ID back into the 16-digit uppercase hex form.
+// Evidence: the body is MakeString(lbl_82112510 = "%016llX", <r3>) fed into
+// ??4String@@QAAAAV0@PBD@Z (String::operator=(char const*)); the StoreInfoPanel
+// call site does `ld r3, 0x30(rX)` -- a 64-bit load of songID -- and
+// `addi r4, r31, 0x58`, i.e. (unsigned long long, String&).
+void StorePurchaseable::IDToOfferString(unsigned long long id, String &s) {
+    s = MakeString("%016llX", id);
+}
+
+// Retail 360 fn_827A64B8 (lane BU-2). rb3-Wii StoreOffer.cpp:631 gives the
+// body verbatim, and the retail operand order matches it exactly: the three
+// byte loads are this+0x28, this+0xa8, this+0x68 = isAvailable of `this`,
+// then mPack (0x80+0x28), then mAlbum (0x40+0x28).
+bool StoreOffer::IsCompletelyUnavailable() const {
+    return !IsAvailable() && !mPack.IsAvailable() && !mAlbum.IsAvailable();
+}
+
+// Retail 360 fn_827A6548 (lane BU-2) = rb3-Wii StoreOffer.cpp:182. Loads
+// mStoreOfferData (this+0xc0), sret-calls DataNode::Sym on node 0 and compares
+// the returned Symbol against the argument.
+bool operator==(const StoreOffer *o, Symbol s) { return o->ShortName() == s; }
+
 // Retail body reconstructed from Ghidra fn_82783368: retail also parses
 // album_id/pack_id into the nested purchaseables, formats the localized
 // release-date string into mReleaseDateStr (the Wii branch's DateTime member
