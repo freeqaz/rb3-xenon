@@ -319,15 +319,21 @@ int MetaPerformer::GetBattleID() const {
 }
 
 bool MetaPerformer::HasValidBattleInstarank() const {
-    // laneAY-B: this if/return shape measures best (Handle 99.8%); retail's
-    // residue here is a `subic/subfe` !=0 normalization on mBattleInstarank's
-    // valid flag that our `bool` member does not reproduce. Making
-    // Instarank::mIsValid a `char` DOES emit it, but then regresses the
-    // has_valid_instarank_data site (which retail does NOT normalize) -- so the
-    // two sites read a different type in retail. Left as-is.
-    if (HasBattle())
-        return mBattleInstarank.IsValid();
-    return false;
+    // Oracle-verbatim (rb3-Wii MetaPerformer.cpp:334). This ternary is the retail
+    // shape: it makes the two arms come out in retail's physical order (0-arm
+    // first, load second) -- verified, idx 1602/1604 go from mismatched to equal.
+    // (laneAY-B's if/return form scored higher on fuzzy but had the arms swapped.)
+    // Residue: retail normalizes the loaded byte with subic/subfe (!=0), and the
+    // resulting 3-instruction arm is why retail emits a full if/else diamond
+    // instead of our 2-instruction branch-over. Not reproducible from source:
+    //  - Instarank::mIsValid really is bool (rb3-Wii agrees); a char/int flip
+    //    WOULD emit the normalization here but retail's sibling band site
+    //    (0x82583FF4: `lbz r11,-0x2a0(r24); stw r11,0(r29)`) stores the byte RAW
+    //    with no normalize, so the flip breaks that site. Confirmed from retail
+    //    asm, not inferred.
+    //  - Forcing an int composite type (`? 0 :`) is folded away by MSVC, which
+    //    still knows the bool is 0/1. Byte-identical output.
+    return !HasBattle() ? false : mBattleInstarank.IsValid();
 }
 
 FORCE_LOCAL_INLINE
@@ -422,7 +428,7 @@ bool MetaPerformer::IsFirstSong() const { return mStars.empty(); }
 bool MetaPerformer::IsLastSong() const {
     int num_complete = NumCompleted();
     MILO_ASSERT(num_complete < NumSongs(), 0x2B0);
-    return NumSongs() - 1 == num_complete;
+    return num_complete == NumSongs() - 1;
 }
 
 bool MetaPerformer::IsSetComplete() const {

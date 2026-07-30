@@ -270,7 +270,8 @@ bool Campaign::IsUserOnLastCampaignLevel(LocalBandUser *i_pUser) {
 }
 
 bool Campaign::IsPrimaryUserOnLastCampaignLevel() {
-    return IsLastCampaignLevel(GetPrimaryCampaignLevel());
+    Symbol level = GetPrimaryCampaignLevel();
+    return IsLastCampaignLevel(level);
 }
 
 bool Campaign::IsLastCampaignLevel(Symbol level) const {
@@ -961,12 +962,15 @@ BEGIN_HANDLERS(Campaign)
         is_user_on_last_campaign_level,
         IsUserOnLastCampaignLevel(_msg->Obj<LocalBandUser>(2))
     )
-    // Retail spells this arm out (sret GetPrimaryCampaignLevel() into a Symbol
-    // temp, then the IsLastCampaignLevel tail it shares with the arm above)
-    // rather than calling the IsPrimaryUserOnLastCampaignLevel() wrapper.
+    // Retail inlines the IsPrimaryUserOnLastCampaignLevel() wrapper here. The
+    // wrapper holds its GetPrimaryCampaignLevel() result in a *named* Symbol
+    // temp (exactly like its sibling IsUserOnLastCampaignLevel), so the load of
+    // the IsLastCampaignLevel argument reads the temp's stack home
+    // (lwz r4, 0x68(r31)) rather than the sret pointer (lwz r4, 0(r3)). That
+    // makes this arm's tail byte-identical to the is_user_on_last_campaign_level
+    // arm above, which is why retail tail-merges the two (b 0x53c).
     HANDLE_EXPR(
-        is_primary_user_on_last_campaign_level,
-        IsLastCampaignLevel(GetPrimaryCampaignLevel())
+        is_primary_user_on_last_campaign_level, IsPrimaryUserOnLastCampaignLevel()
     )
     HANDLE_EXPR(has_reached_campaign_level, HasReachedCampaignLevel(_msg->Sym(2)))
     HANDLE_EXPR(

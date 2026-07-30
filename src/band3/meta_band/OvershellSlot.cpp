@@ -1845,14 +1845,43 @@ void OvershellSlot::InviteFriend(int i) {
 
 
 // Retail's body is a real 35-instruction out-of-line function (fn_825D97E8, 140
-// bytes): it fetches an object off `this`, early-outs true when null, rejects when
-// a global manager's count is >= 2, then compares a Symbol against a global and
-// consults one more bool predicate.  The callees are ICF-masked so the exact source
-// is not yet recoverable; what IS certain from OvershellSlot::Handle's
-// can_change_synapse_option arm is that retail CALLS it rather than inlining it.
-// Keep it out of line so the call shape at the use site stays correct.
+// bytes).  Decoded from the target asm, with the callees resolved against
+// scripts/target_symbol_map.json:
+//
+//   MetaPerformer *p = MetaPerformer::Current();   // bl fn_8257B4A0 (ICF-folded with
+//                                                  //   ?Main@ObjectDir@@SAPAV1@XZ; it
+//                                                  //   returns the MetaPerformer that
+//                                                  //   the two calls below use as `this`)
+//   if (!p) return true;
+//   if (TheTour-><8-byte getter at 0x8235BA70>() >= 2) return false;   // UNRESOLVED
+//   if (p->Song() == <global Symbol at 0x82C71838>) return true;       // UNRESOLVED
+//                                                  // bl fn_8257C498 =
+//                                                  //   ?Song@MetaPerformer@@QBA?AVSymbol@@XZ
+//   return !p->IsNowUsingVocalHarmony();           // bl fn_8257E170 =
+//                                                  //   ?IsNowUsingVocalHarmony@MetaPerformer@@QBA_NXZ
+//
+// The two UNRESOLVED steps depend on a Tour accessor and a global Symbol we cannot
+// yet name (0x8235BA70 is an anonymous 8-byte getter immediately preceding
+// ?GetMode@Tour@@QAA?AW4TourMode@@XZ; 0x82C71838 is an unnamed .data Symbol), so they
+// are omitted rather than invented.  The identified calls are reproduced verbatim.
+//
+// ★ Do NOT collapse this to a leaf expression.  Measured on the retail compiler
+// (16.00.10224.00, /O1 /Oi /GR /EHsc): OvershellSlot::Handle's
+// can_change_synapse_option arm only tail-merges into the shared bool->DataNode
+// epilogue when this callee is NON-LEAF.  With a leaf body (the old
+// `return mSessionMgr != 0;` placeholder) MSVC materialises `mr r3,r28` inline and
+// the block can no longer cross-jump, costing Handle 4 extra instructions.
+// `__declspec(noinline)` does NOT substitute for this -- it was measured to have no
+// effect on the call-site tail (a noinline leaf still loses the merge, a non-noinline
+// non-leaf still wins it); only the callee's leaf-ness matters.  The noinline is here
+// for a separate reason: because the two UNRESOLVED steps are omitted this body is
+// short enough that /Ob2 inlines it outright, which would delete the `bl` the arm
+// needs.  Retail's full 140-byte body would not have been inlined on its own.
 __declspec(noinline) bool OvershellSlot::CanChangeSynapseOption() {
-    return mSessionMgr != 0;
+    MetaPerformer *pPerformer = MetaPerformer::Current();
+    if (!pPerformer)
+        return true;
+    return !pPerformer->IsNowUsingVocalHarmony();
 }
 
 void OvershellSlot::UpdateProfilesList() {
