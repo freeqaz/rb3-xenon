@@ -48,12 +48,48 @@ machine code from C++ source. Target binary: vanilla retail XEX, title ID
 "known traps" box. Check it before trusting any doc's current-state claims;
 stale/boilerplate docs carry a `> **STATUS (2026-07-06):**` banner.
 
-**Optimization level: `/O1 /Oi /GR /EHsc` (retail size-optimized release, no LTCG).**
-Verified for dc3 by reading `dc3-decomp/config/373307D9/config.json` (no `/GL` in
-cflags, no `/LTCG` in ldflags). RB3 is the same Harmonix toolchain era and engine,
-so likely the same flags. **Crucially, no whole-program optimization** — TU
-spatial grouping in `.text` is preserved (empirically: the MasterAudio.cpp
-cluster of 46 functions packs into 8 KB).
+**Optimization level: `/O1 /Oi /GR /EHsc` (+ implicit `/fp:fast`) — retail
+size-optimized release, no LTCG. ✅ VERIFIED AGAINST RB3 RETAIL (lane CB-4,
+2026-07-30), no longer inferred from dc3.** Every one of seven perturbations
+scored *worse* and none scored better, so the "metric-fitted build config" hazard
+never arose (that hazard only bites when you have to interpret a **gain**):
+
+| evidence class | finding |
+|---|---|
+| `??_R4` Complete Object Locators in retail `.rdata` | **2,220** ⇒ **`/GR` ON** |
+| `FuncInfo` magic `0x19930522`, `EHFlags == 1` (`FI_EHS_FLAG`) on **all 8,541** | **`/EHs*` synchronous** — not `/EHa`, not EH-off |
+| Rich header: 401×`0x00AA` + 1,760×`0x00AB` plain C/C++ (a real `/GL` obj has machine `0x0000` and **no** `@comp.id`) | **no LTCG — now verified, not inferred** |
+| `bl __security_check_cookie`: **12** sites in one 24 KB span (DC3: **599** over 6 MB) | **`/GS` OFF** for Harmonix code |
+| whole-binary A/B (all legs on the correct 10224 compiler) | `/O2` **−13,813** matched / −29.00 pp · `/Ou` −14,255 / −29.17 pp · `/GS` −598 · `/Oi-` −465 · `/fp:precise` −47 · `/EHs` (dropping the `c`) −43 |
+
+⚠ **The era-inference was right about the flags and wrong about the compiler
+build** — RB3 retail used cl **10224**, dc3 used **11886** (see
+`docs/decomp/xdk-11164-compiler.md`). Don't let the flags being confirmed
+retro-justify the reasoning; it was the same reasoning either way.
+
+★★★ **`/GR` can NEVER be settled by a match-% sweep: `/GR-` is `.text`-byte-identical.**
+Only the `.rdata` COL evidence answers it — which is why the binary-evidence class
+was mandatory rather than a nicety. ⚠ And RTTI **type-name strings are NOT a `/GR`
+test**: `/GR-` drops `??_R4` 44→0 but `??_R0` only 73→40, because EH also emits
+them. Two control failures shaped this result — the first `/GS` cookie detector
+was **vacuous** (0 hits on a known-`/GS` object, because it assumed `lis`/`lwz`
+adjacency and the compiler schedules two instructions between them) and was caught
+before it could produce a false "retail has no `/GS`".
+
+Also measured: `/Gy` and `/GF` are byte-identical to default (already on), `/Oy`
+is a **no-op on PowerPC**, `/Ob2` is byte-identical to `/O1` (validating the claim
+below), and `@comp.id` is unchanged across **all 22 flag legs** ⇒ the Rich header
+encodes **no** flag information (a useful bound on that instrument).
+
+⛔ **Still unsettled:** the `c` in `/EHsc` rests on the metric alone (−43); the
+per-function EH instrument **failed to discriminate** (TIGHT 99 under both). And
+**per-TU flag heterogeneity is real and unexplored** — retail demonstrably has ≥1
+module built with `/GS`, and the Rich header's 401 C vs 1,760 C++ objects implies
+a `/TC`//`/TP` split nobody has examined.
+
+**Crucially, no whole-program optimization** — TU spatial grouping in `.text` is
+preserved (empirically: the MasterAudio.cpp cluster of 46 functions packs into
+8 KB).
 
 What `/O1` does: `/Ob2` aggressive within-TU inlining (so leaf math like SHA1's
 K-constants disappear into callers), ICF (identical-COMDAT folding), but

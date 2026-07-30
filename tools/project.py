@@ -1842,6 +1842,7 @@ def generate_objdiff_config(
         "Wii/1.7": "mwcc_43_213",
         "X360/14.00.2110": "msvc_ppc_14.00.2110",
         "X360/16.00.11886.00": "msvc_ppc_16.00.11886.00",
+        "X360/16.00.10224.00": "msvc_ppc_16.00.10224.00",
     }
 
     # decomp.me platform mapping (by version prefix)
