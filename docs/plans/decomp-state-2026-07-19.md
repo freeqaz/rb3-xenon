@@ -121,6 +121,75 @@ strict-matched functions / honest proxy 39,703 / `matched_code_percent`
 > swap (`max(updated_at)` 2026-07-29), but the swap invalidated **0 of 2,539**
 > `AT_LIMIT` rows and broke **0** `COMPLETE` rows. Hygiene only.
 
+> ## ⛔ Lane CB-6 — the "99 regressed COMPLETE rows" lead is a QUERY ARTIFACT
+>
+> CB-3 surfaced "99 of 5,809 `COMPLETE` rows are now below 100%" and the
+> coordinator funded a lane to repair them. **There was nothing to repair:
+> genuine regressions = 0 of 99.** Buckets: **(a) genuine 0**, (b) deliberate
+> correction 1, (c) DB artifact 98, (d) flip-caused 0 (disjoint from all of a/b/c).
+>
+> ★★★ **The count is a function of how you ask.** `matched_functions` counts
+> `match_percent_normalized ≥ 99.999` (verified — reproduces 41,214 exactly), so
+> only the first row here is metric-relevant:
+>
+> | join keying | scoring field | count |
+> |---|---|---|
+> | `(unit, symbol)` | `match_percent_normalized` | **52** ← metric-relevant |
+> | `(unit, symbol)` | `fuzzy_match_percent` | 87 |
+> | symbol only | `fuzzy_match_percent` | **99** ← the reported number |
+>
+> Also: the DB's `current_percent` is a **frozen self-report** — 0 of 5,809
+> COMPLETE rows have `current_percent < 100`; the discrepancy exists only against a
+> *fresh* report.json. ⇒ ★★ **Always state the join key and scoring field beside a
+> cross-source count**, or it is unreproducible. (Same lesson as the pool
+> provenance above: a worklist without its generating query is unauditable.)
+>
+> The 98 artifacts: **35** have `norm ≥ 99.999` but `fuzzy < 99.999` — reloc-masked,
+> and they **never left `matched_functions`** (30 are `default/keygen_xbox`);
+> **12** are stale unit keys (11 `auto_03_*_text` boundary shifts; 2 score 100.000
+> under a renamed unit); **51** are unverified bulk-promotes.
+>
+> ### ★★★ "COMPLETE" is a BULK RELABEL, not a work record
+> **5,619 of 5,809 COMPLETE rows (96.7%) share ONE timestamp, `2026-07-24
+> 10:18:06`**, from `scripts/sync_match_percent.py --promote`; 4,854 have
+> `last_model = NULL`. **Only 839 of 5,809 (14.4%) carry any attempt record.** So
+> "already-solved work that broke" is false for ~96.7% of the ledger. Precedent
+> already in-tree: `scripts/reset_false_complete.py` documents an earlier
+> false-COMPLETE class where `base_size=0` made objdiff report 100%.
+>
+> ★ **The one real drop was a correction, and the lane caught itself.**
+> `??_GRndScreenMask@@UAAPAXI@Z` 100.000 → 99.950 reads as a genuine vbase
+> regression under objdiff. It is not: `42fe0db0` (lane BQ-2) had already proven
+> the retail body at `0x824816a8` calls `??_DRndMultiMeshProxy@@`, so the row is a
+> **mispair that only scored 100 because the differing `bl` is a relocation masked
+> by `functionRelocDiffs=none`**. Repairing it would have re-introduced a
+> known-false match. ⇒ **read the commit that caused a drop before "fixing" it.**
+>
+> ### ★★★ `check_regression_lock.py` is DEAD — and as keyed would DEFER EVERY LANDING
+> Executed, not merely read. The *code* is sound (runs, exits 1 correctly, sane
+> `--allow-drop`). Everything around it is not: **unwired** (zero executable
+> references; `scripts/harvest/land.sh` never calls it — `TOOLING.md` lists it
+> "WORKING", true of the code and false of the deployment), **baseline 9 days
+> stale** (`a08764f1`, 07-21), and **S/N 38 / 1,664 = 2.3%**. 1,626 flags are
+> `100.000 → 0.000` = *key absent* across 153 units, but only **30** of those units
+> are gone — the rest are empty shells from `5f93efb6` (laneDUPUNIT), an
+> **explicitly net-0** duplicate-unit merge (`AppLabel` 158, `VocalPlayer` 192,
+> `Campaign` 134 all still exist with 0 functions).
+> ★★★ **A net-0 housekeeping landing looks to this guard like a 1,626-function
+> catastrophe — and naming an anon function, our most productive lever, is
+> indistinguishable from a regression under its `(unit, fn_name, occ)` keying.**
+> That is presumably why it was never wired.
+> **Fix list (value order):** (i) split "key absent" from "measured drop", fail only
+> on measured drops → 1,664 → 38 immediately; (ii) wire both halves into `land.sh`
+> (check before, `snapshot_landing.py` after) — the stale baseline is the root
+> cause; (iii) exclude `auto_*` units, whose boundaries shift by construction.
+>
+> ⚠ Residual uncertainty the lane flagged against its own claim: for the 38 rows
+> that were <50% at 07-21 and bulk-promoted on 07-24, **no measured record
+> survives**, so `(a) = 0` for them rests on absence-of-attempt-records plus the
+> false-100 mechanism, not on a measurement. Also, "unmapped-anon ⇒ unpairable" is
+> **not** a valid blanket rule — 249 other unmapped-anon COMPLETE rows read 100.
+
 > ✅ **FLOOR RESOLVED — this is now a direct measurement, not a sum.** BZ-1's
 > lander built HEAD itself (BZ-1 `e7dc97dd` + BZ-3 `b16c9e8c` in one worktree,
 > `config.yml` touched so the map repoint actually re-splits) and read
