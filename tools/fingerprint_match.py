@@ -27,6 +27,20 @@ import re
 import struct
 import sys
 
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# The guard helpers below were CALLED but never imported when the guards first
+# landed, so every call site raised NameError instead of failing/skipping
+# loudly. Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
+
+
 DEFAULT_ASM = os.path.join(os.path.dirname(__file__), "..", "build", "45410914", "asm")
 SYMS = os.path.join(os.path.dirname(__file__), "..", "config", "45410914", "symbols.txt")
 # rb3 retail PE (unxex'd) for RTTI scanning; dc3 leaked .map + release PE for
@@ -629,6 +643,10 @@ def triangulate(args):
     from dc3_map import (parse_map, load_objects, obj_to_cpp, demangle_safe)
 
     # --- 1. anchor set: rb3 addr -> dc3 name ---
+    # dead-index guard (lane BX-4): --unified defaults to the TU0-era
+    # unified_id.json. These subcommands DERIVE new oracles / target-map
+    # entries from it, so a dead input mints new wrong artifacts.
+    _assert_live(str(args.unified), what="unified_id (fingerprint_match)")
     with open(args.unified) as f:
         unified = json.load(f)
     rb3_to_dc3 = {}
@@ -1034,6 +1052,10 @@ def rtti(args):
     from collections import defaultdict, Counter
 
     # --- anchor / NEW-only filter set: unified_id addrs + addr->dc3_name ---
+    # dead-index guard (lane BX-4): --unified defaults to the TU0-era
+    # unified_id.json. These subcommands DERIVE new oracles / target-map
+    # entries from it, so a dead input mints new wrong artifacts.
+    _assert_live(str(args.unified), what="unified_id (fingerprint_match)")
     with open(args.unified) as f:
         unified = json.load(f)
     unified_addrs = set()
@@ -1273,6 +1295,10 @@ def vtable(args):
     from dc3_map import parse_map, load_objects, obj_to_cpp, demangle_safe
     from collections import Counter, defaultdict
 
+    # dead-index guard (lane BX-4): --unified defaults to the TU0-era
+    # unified_id.json. These subcommands DERIVE new oracles / target-map
+    # entries from it, so a dead input mints new wrong artifacts.
+    _assert_live(str(args.unified), what="unified_id (fingerprint_match)")
     with open(args.unified) as f:
         unified = json.load(f)
     unified_addrs = set()
@@ -1474,6 +1500,10 @@ def bindiff_clusters(args):
       * cluster_spotcheck.csv for clusters whose .cpp IS already pinned
         (cross-validation report)
     """
+    # dead-index guard (lane BX-4): --unified defaults to the TU0-era
+    # unified_id.json. These subcommands DERIVE new oracles / target-map
+    # entries from it, so a dead input mints new wrong artifacts.
+    _assert_live(str(args.unified), what="unified_id (fingerprint_match)")
     with open(args.unified) as f:
         unified = json.load(f)
 
@@ -1702,6 +1732,10 @@ def gen_target_map(args):
     auto-gen name within each pinned cluster (or [UNPINNED]).
     """
     # Load unified_id
+    # dead-index guard (lane BX-4): --unified defaults to the TU0-era
+    # unified_id.json. These subcommands DERIVE new oracles / target-map
+    # entries from it, so a dead input mints new wrong artifacts.
+    _assert_live(str(args.unified), what="unified_id (fingerprint_match)")
     with open(args.unified) as f:
         unified = json.load(f)
 

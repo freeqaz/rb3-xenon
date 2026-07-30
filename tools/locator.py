@@ -66,6 +66,20 @@ import os
 import re
 import sys
 
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# The guard helpers below were CALLED but never imported when the guards first
+# landed, so every call site raised NameError instead of failing/skipping
+# loudly. Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import skip_if_dead as _dead_skip, load_guarded as _guarded_load  # noqa: E402
+# ----------------------------------------------------------------------------
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 
@@ -118,7 +132,11 @@ ST_RE = re.compile(r"^(stb|sth|stw|std)\s+r(\d+),\s*(?:0x)?([0-9A-Fa-f]+)\(r(\d+
 # Loaders
 # ===========================================================================
 def load_oracle_for_tu(oracle_path, tu):
-    oracle = json.load(open(oracle_path))
+    # dead-index guard (lane BX-4). NOTE the subtle failure this prevents: the
+    # oracle's NON-address fields (bindiff_src, wii_name) are still valid, so
+    # the "no oracle records for <tu>" check below still PASSES on a dead
+    # oracle -- it just proceeds with garbage rb3_addr values.
+    oracle = _guarded_load(str(oracle_path), what="rb3-Wii oracle (locator)")
     recs = [e for e in oracle if fpm.__dict__  # keep import warm
             and tu_base(e.get("bindiff_src") or "") == tu]
     return recs
@@ -131,6 +149,10 @@ def tu_base(src):
 def load_identity_map(path):
     """int VA -> resolved callee name (dc3 demangled, else mangled)."""
     m = {}
+    # dead-index guard (lane BX-4): this map is an ANNOTATION layer, so a dead
+    # index degrades naming rather than fabricating spans -> skip, don't die.
+    if _dead_skip(str(path), what="identity map (locator annotations)"):
+        return m
     try:
         recs = json.load(open(path))
     except (OSError, ValueError):
@@ -499,7 +521,7 @@ def classify(row, true_size, S, fp_R, retail_insns, disabled=frozenset()):
 def run(args):
     tu = args.tu if args.tu.endswith((".cpp", ".c", ".cc")) else args.tu + ".cpp"
 
-    oracle = json.load(open(args.oracle))
+    oracle = _guarded_load(str(args.oracle), what="rb3-Wii oracle (locator)")
     recs = [e for e in oracle if tu_base(e.get("bindiff_src") or "") == tu]
     if not recs:
         print(f"ERROR: no oracle records for {tu}", file=sys.stderr)

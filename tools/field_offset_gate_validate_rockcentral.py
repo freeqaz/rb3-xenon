@@ -31,13 +31,32 @@ unchanged since the win, confirmed by git), so the win cannot be read from the
 live report; this static reconstruction is the faithful determination.
 
 Usage:  tools/field_offset_gate_validate_rockcentral.py
-Exit 0 iff excluded_landed == [] (zero proven wins dropped).
+Exit codes:
+  0  PASS -- a non-empty winner pool was reconstructed and the gate retained it.
+  1  FAIL -- the gate dropped a proven win.
+  2  FAIL -- the gate could NOT validate (empty/undersized winner pool, e.g. a
+     dead oracle). Historically this path returned 0/PASS; see the BX-4 note in
+     main(). "Could not check" must never render as "checked and fine".
 """
 import json
 import os
 import re
 import subprocess
 import sys
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
@@ -68,7 +87,10 @@ def carved_entries():
 
 def run_gate():
     """Run field_offset_gate and return (pin_vas, excluded_by_va)."""
-    out_json = "/tmp/field_offset_gate_rockcentral.json"
+    # ~/tmp, not /tmp: /tmp here is a RAM-backed tmpfs shared fleet-wide (CLAUDE.md).
+    out_dir = os.path.join(os.path.expanduser("~"), "tmp")
+    os.makedirs(out_dir, exist_ok=True)
+    out_json = os.path.join(out_dir, "field_offset_gate_rockcentral.json")
     subprocess.run(
         [sys.executable, os.path.join(ROOT, "tools", "field_offset_gate.py"),
          "--tu", TU, "--D", hex(D), "--class", DIVERGING, "--out", out_json],
@@ -82,7 +104,7 @@ def run_gate():
 def main():
     sizes = load_sizes(os.path.join(ROOT, "config", "45410914", "symbols.txt"))
     carved = carved_entries()
-    oracle = json.load(open(os.path.join(ROOT, "unified_id_rb3wii.json")))
+    oracle = _guarded_load(os.path.join(ROOT, "unified_id_rb3wii.json"))
     rc_vas = {int(e["rb3_addr"], 16) for e in oracle
               if (e.get("bindiff_src") or "").replace("\\", "/").rsplit("/", 1)[-1] == TU}
     gate_pin, gate_exc = run_gate()
@@ -103,6 +125,37 @@ def main():
     excluded_landed = [(va, n) for va, n in winners if va not in gate_pin]
     retained = [va for va, _ in winners if va in gate_pin]
 
+    # ---------------------------------------------------------------- BX-4 fix
+    # FALSE-PASS BUG (lane BX-4, 2026-07-30): the verdict was
+    # `ok = (len(excluded_landed) == 0)`. `excluded_landed` is derived from
+    # `winners`, so an EMPTY winner pool made it trivially empty -> exit 0 PASS.
+    # That is exactly what a dead unified_id_rb3wii.json produced: `rc_vas` came
+    # up empty, every carved entry fell into `not_rc`, `winners` == [], and the
+    # gate cheerfully reported PASS while validating NOTHING.
+    #
+    # A gate that passes when its input pool is empty is worse than no gate: it
+    # launders "I could not check" into "I checked and it's fine". So the pool
+    # must be non-empty AND at least as large as the win it is reconstructing
+    # (this script's own contract: "WINNER POOL (>= 17 landed)" -- the pool is a
+    # SUPERSET of the 17, so fewer than 17 means the reconstruction is broken,
+    # not that the gate passed).
+    MIN_POOL = 17
+    pool_faults = []
+    if not carved:
+        pool_faults.append(
+            f"carved_entries() returned 0 entries from commit {WIN_COMMIT} -- the "
+            "ground-truth diff could not be read (bad commit ref? shallow clone?).")
+    if not rc_vas:
+        pool_faults.append(
+            f"the oracle yielded 0 {TU} addresses -- cannot identify which carved "
+            "entries are RockCentral methods.")
+    if len(winners) < MIN_POOL:
+        pool_faults.append(
+            f"winner pool is {len(winners)}, expected >= {MIN_POOL} (the pool is a "
+            f"superset of the {MIN_POOL} landed methods). Breakdown: "
+            f"carved={len(carved)} not_rc={len(not_rc)} stubs={len(stubs)} "
+            f"poisoned_tail={len(doomed_tail)}.")
+
     print("=" * 70)
     print("field_offset_gate validation vs RockCentral.cpp +17")
     print("=" * 70)
@@ -115,6 +168,19 @@ def main():
     print(f"  excluded_landed (MUST be [])   : {len(excluded_landed)}")
     for va, n in excluded_landed:
         print(f"     !! 0x{va:08X} {n}")
+
+    if pool_faults:
+        print("\n" + "!" * 70)
+        print("VALIDATION: FAIL -- THE GATE COULD NOT VALIDATE ANYTHING.")
+        print("!" * 70)
+        for f in pool_faults:
+            print(f"  * {f}")
+        print("\nThis is NOT a pass. An empty/undersized winner pool means the "
+              "\nreconstruction of the +17 win failed, so this run carries no "
+              "\nevidence either way. Fix the inputs before trusting the "
+              "\nfield_offset_gate.")
+        return 2
+
     ok = (len(excluded_landed) == 0)
     print(f"\nVALIDATION: {'PASS' if ok else 'FAIL'} "
           f"(rockcentral_retained={len(retained)} "

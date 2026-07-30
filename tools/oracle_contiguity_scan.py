@@ -46,6 +46,18 @@ import os
 import re
 import sys
 from collections import defaultdict
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# TU0-era address indices are INFORMATIONLESS after the 2026-07-15 TU0->TU5 flip
+# (2-6% of their addresses are real .text function starts; chance is ~2-3%).
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 STUB_SIZE_MAX = 64          # <= this AND sim < STUB_SIM => stub-fold decoy
 STUB_SIM = 0.9
@@ -78,8 +90,11 @@ def resolve_oracle_src():
 
 
 def load_oracle(path):
-    with open(path) as f:
-        return json.load(f)
+    # dead-index guard (lane BX-4): dc3_oracle.json is TU0-era and
+    # informationless (4.25% of its 33,987 rb3_va are real .text function
+    # starts; chance is ~2.6%). Ranking TUs from it produces a confident,
+    # wrong worklist -- so refuse rather than emit one.
+    return _guarded_load(str(path), what="dc3_oracle (contiguity scan)")
 
 
 def load_symbol_sizes(path):

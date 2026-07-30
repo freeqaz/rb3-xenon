@@ -24,6 +24,20 @@ the full extent BETWEEN the oracle endpoints (missing only TU code outside them)
 """
 import argparse, bisect, json, os, re, sys
 from collections import Counter, defaultdict
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -120,7 +134,7 @@ def main():
     ap.add_argument("--objects-append", default=_p("game_splits.objects.append"))
     args = ap.parse_args()
 
-    oracle = json.load(open(args.oracle))
+    oracle = _guarded_load(args.oracle)
     funcs = load_symbols(args.symbols)
     fn_los = [a for a, _, _ in funcs]
     fn_starts = set(fn_los)

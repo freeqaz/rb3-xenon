@@ -42,6 +42,20 @@ import os
 import re
 from collections import defaultdict
 
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# The guard helpers below were CALLED but never imported when the guards first
+# landed, so every call site raised NameError instead of failing/skipping
+# loudly. Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import skip_if_dead as _dead_skip  # noqa: E402
+# ----------------------------------------------------------------------------
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT = os.path.join(ROOT, "build", "45410914", "report.json")
 SCOPE_MAP = os.path.join(ROOT, "config", "45410914", "scope_map.json")
@@ -103,6 +117,11 @@ def load_uid_addrs():
     for fname in UID_FILES:
         p = os.path.join(ROOT, fname)
         if not os.path.exists(p):
+            continue
+        # dead-index guard (lane BX-4): these UID_FILES are TU0-era. Previously
+        # a dead file silently contributed ~0 "already attributed" addrs, so
+        # triage OVER-reported unknowns without saying why. Now it says why.
+        if _dead_skip(p, what=f"UID artifact {fname}"):
             continue
         try:
             d = json.load(open(p))

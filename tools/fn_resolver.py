@@ -60,6 +60,20 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# The guard helpers below were CALLED but never imported when the guards first
+# landed, so every call site raised NameError instead of failing/skipping
+# loudly. Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import skip_if_dead as _dead_skip  # noqa: E402
+# ----------------------------------------------------------------------------
+
+
 # ---------------------------------------------------------------------------
 # Paths (relative to repo root)
 # ---------------------------------------------------------------------------
@@ -369,7 +383,10 @@ def _get_fuzzy_idx() -> dict[int, list[dict]]:
     so the output doesn't repeat identical candidates.
     """
     if "fuzzy_idx" not in _cache:
-        data = _load_json(FUZZY_PATH)
+        # dead-index guard (lane BX-4): T4 tier. Live tiers (target map,
+        # report, autoid) still work, so skip this tier instead of dying.
+        data = None if _dead_skip(str(FUZZY_PATH), what="T4 global_fuzzy_pairs") \
+            else _load_json(FUZZY_PATH)
         idx: dict[int, dict[str, dict]] = defaultdict(dict)  # addr -> {name: entry}
         if data:
             for entry in data:
@@ -387,6 +404,8 @@ def _get_unified_id_idx() -> dict[str, dict[int, list[dict]]]:
     if "uid_idx" not in _cache:
         result: dict[str, dict[int, list[dict]]] = {}
         for path, src_tag, _conf_field in UNIFIED_ID_FILES:
+            if _dead_skip(str(path), what=f"unified_id tier {src_tag}"):
+                continue  # dead-index guard (lane BX-4)
             data = _load_json(path)
             idx: dict[int, list[dict]] = defaultdict(list)
             if data:
@@ -402,7 +421,9 @@ def _get_unified_id_idx() -> dict[str, dict[int, list[dict]]]:
 def _get_rb3wii_idx() -> dict[int, list[dict]]:
     """addr → list[entry] from unified_id_rb3wii.json."""
     if "rb3wii_idx" not in _cache:
-        data = _load_json(RB3WII_PATH)
+        # dead-index guard (lane BX-4): T6 tier.
+        data = None if _dead_skip(str(RB3WII_PATH), what="T6 unified_id_rb3wii") \
+            else _load_json(RB3WII_PATH)
         idx: dict[int, list[dict]] = defaultdict(list)
         if data:
             for entry in data:
@@ -633,6 +654,8 @@ def _t5_unified_id(addr: int) -> list[Identity]:
     results = []
     uid_idx = _get_unified_id_idx()
     for path, src_tag, conf_field in UNIFIED_ID_FILES:
+        if _dead_skip(str(path), what=f"unified_id tier {src_tag}"):
+            continue  # dead-index guard (lane BX-4)
         for entry in uid_idx.get(src_tag, {}).get(addr, []):
             name = entry.get("dc3_name", "")
             conf = float(entry.get(conf_field, 0.8))

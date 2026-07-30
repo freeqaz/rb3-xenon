@@ -13,6 +13,41 @@ Pipeline:
 """
 import sys, os, glob, struct, re, hashlib, random, bisect, json
 from collections import defaultdict
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# This tool PRODUCES an address index. It validates its OWN OUTPUT so a fresh
+# index that is already dead is caught at birth rather than months later by a
+# consumer. Audit any index: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import measure as _dig_measure, LIVE_THRESHOLD_PCT as _DIG_MIN  # noqa: E402
+
+
+def _dig_report_output(path):
+    """Measure a freshly written index and say plainly whether it is usable."""
+    try:
+        n, pct = _dig_measure(str(path))
+    except Exception as e:                                    # noqa: BLE001
+        _dig_sys.stderr.write(f"[dead_index_guard] could not verify {path}: {e}\n")
+        return
+    if not n:
+        _dig_sys.stderr.write(f"[dead_index_guard] {path}: no addresses found to verify.\n")
+    elif pct < _DIG_MIN:
+        _dig_sys.stderr.write(
+            "\n" + "!" * 74 +
+            f"\n!! WROTE A DEAD INDEX: {path}\n"
+            f"!! only {pct:.2f}% of its {n:,} addresses are real .text function starts\n"
+            f"!! in config/45410914/symbols.txt (chance is ~2-3%; need >= {_DIG_MIN:.0f}%).\n"
+            "!! Its inputs are almost certainly stale w.r.t. the current binary.\n"
+            "!! DO NOT consume this file -- every tool that reads it will refuse.\n" +
+            "!" * 74 + "\n\n")
+    else:
+        _dig_sys.stderr.write(
+            f"[dead_index_guard] {path}: OK -- {pct:.2f}% of {n:,} addresses are live.\n")
+# ----------------------------------------------------------------------------
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fuzzy_content_match import read_coff_functions, opcodes, parse_splits
 from dc3_obj_source import DC3_OBJ_DIR, iter_dc3_objs
@@ -136,6 +171,7 @@ def main():
                           'jaccard':round(best[0],3),'rb3_size':sz,'dc3_size':best[3]})
     pairs.sort(key=lambda p:-p['jaccard'])
     json.dump(pairs,open('global_fuzzy_pairs.json','w'),indent=1)
+    _dig_report_output('global_fuzzy_pairs.json')
     print(f"\nGLOBAL LSH pairs (unpinned RB3, jaccard>={thr}): {len(pairs)}")
     near=[p for p in pairs if p['jaccard']>=0.97 and p['rb3_size']==p['dc3_size']]
     print(f"  of those, jaccard>=0.97 AND same size: {len(near)} (strong byte-match candidates)")

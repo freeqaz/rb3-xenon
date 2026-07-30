@@ -18,6 +18,20 @@ TU score = good / real-bodied. Predicted yield ≈ good count.
 import json, re, sys, argparse
 from pathlib import Path
 from collections import defaultdict
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 ROOT = Path(__file__).resolve().parent.parent
 ORACLE = ROOT / "unified_id_rb3wii.json"
@@ -41,7 +55,7 @@ def main():
     ap.add_argument("--top", type=int, default=40)
     args = ap.parse_args()
 
-    oracle = json.load(open(ORACLE))
+    oracle = _guarded_load(ORACLE)
     sizes = load_retail_sizes()
     tmap = json.load(open(TMAP))
 

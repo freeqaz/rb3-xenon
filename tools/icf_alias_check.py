@@ -55,6 +55,18 @@ import os
 import re
 import sys
 from collections import Counter
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# TU0-era address indices are INFORMATIONLESS after the 2026-07-15 TU0->TU5 flip
+# (2-6% of their addresses are real .text function starts; chance is ~2-3%).
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # Paths (resolved relative to repo root = parent of this file's dir)
@@ -76,6 +88,9 @@ SIM_HIGH = 0.5          # oracle similarity at/above this is a real attribution
 # own-bodied anchor support.  STUB_DOMINANCE is the fraction of the matched set
 # that must be stub-folds for the headline to flip to inflation.
 STUB_DOMINANCE = 0.60
+# Set by main() when --no-oracle is used: the FOREIGN-attribution signal is
+# unavailable, so no "HONEST" verdict from this run may be treated as a pass.
+DEGRADED_NO_ORACLE = False
 # A long contiguous foreign/stub run is itself a red flag (the manual heuristic).
 FOREIGN_RUN_FLAG = 8
 
@@ -116,9 +131,15 @@ def load_name_to_va(path=TSM):
 
 
 def load_oracle(path=ORACLE):
-    """{va_int: oracle_entry} from unified_id_rb3wii.json."""
+    """{va_int: oracle_entry} from unified_id_rb3wii.json.
+
+    dead-index guard (lane BX-4): this tool is used as a LANDING GATE
+    (.claude/wave2_finalize.js). Its INFLATED/clean verdict partly rests on
+    oracle attribution, so a dead oracle would let the gate emit a confident
+    verdict from noise. Refuse instead.
+    """
     out = {}
-    for e in load_json(path):
+    for e in _guarded_load(str(path), what="rb3-Wii oracle (icf_alias_check LANDING GATE)"):
         addr = e.get("rb3_addr")
         if not addr:
             continue
@@ -326,7 +347,8 @@ def print_verdict(label, verdicts, claimed_tu, show_list=False):
         print(f"=== {label} ===")
         print(f"claimed TU: {claimed_tu}")
         print("no 100%-matched functions in the selected set — nothing to judge.")
-        print("VERDICT: HONEST (empty set)")
+        print("VERDICT: HONEST (empty set)"
+              + (" [DEGRADED size-only -- NOT A PASS]" if DEGRADED_NO_ORACLE else ""))
         return 0
 
     real = [v for v in matched if v.klass == "REAL"]
@@ -374,7 +396,10 @@ def print_verdict(label, verdicts, claimed_tu, show_list=False):
         print(f"VERDICT: ICF-ALIAS INFLATION (stub-fold-dominated: {n_stub} of {total}) "
               f"-- {why}")
     else:
-        print(f"VERDICT: HONEST (real-bodied-dominated) -- {why}")
+        print(f"VERDICT: HONEST (real-bodied-dominated) -- {why}"
+              + (" [DEGRADED size-only: FOREIGN-attribution signal UNAVAILABLE,"
+                 " this does NOT rule out inflation -- NOT A PASS]"
+                 if DEGRADED_NO_ORACLE else ""))
 
     if show_list:
         print("\n  fn (sorted by VA):")
@@ -452,6 +477,12 @@ def main(argv=None):
                    help=f"override report.json path (default: {REPORT})")
     p.add_argument("--symbols", metavar="PATH", default=SYMBOLS)
     p.add_argument("--oracle", metavar="PATH", default=ORACLE)
+    p.add_argument("--no-oracle", action="store_true",
+                   help="run DEGRADED (size-only): skip the rb3-Wii oracle "
+                        "entirely. The FOREIGN-attribution signal -- the "
+                        "strongest inflation tell -- is UNAVAILABLE in this "
+                        "mode, so a 'clean' result is NOT a pass. Use this "
+                        "while the oracle is dead (see tools/dead_index_guard.py).")
     p.add_argument("--tsm", metavar="PATH", default=TSM)
     p.add_argument("--list", action="store_true",
                    help="list every judged function with its classification")
@@ -460,7 +491,26 @@ def main(argv=None):
     # Shared data
     sym_sizes = load_symbol_sizes(args.symbols)
     name_to_va = load_name_to_va(args.tsm)
-    oracle = load_oracle(args.oracle)
+    # dead-index guard (lane BX-4). The oracle drives `own_oracle` (REAL vs
+    # STUB-FOLD) and the FOREIGN attribution that the verdict calls "the
+    # strongest tell". A DEAD oracle resolves every lookup to None, which
+    # empties the FOREIGN set and biases this LANDING GATE toward "clean" --
+    # i.e. it would silently pass inflated pins. So: hard-fail by default,
+    # and make the degraded size-only mode explicit and loudly labelled.
+    if args.no_oracle:
+        globals()["DEGRADED_NO_ORACLE"] = True
+        oracle = {}
+        sys.stderr.write(
+            "\n" + "!" * 78 +
+            "\n!! icf_alias_check: DEGRADED MODE (--no-oracle) -- size-only.\n"
+            "!! The FOREIGN-attribution signal is UNAVAILABLE. Stub-folds that\n"
+            "!! belong to another TU are indistinguishable from unattributed\n"
+            "!! ones here, so this run can only ever FIND inflation, never\n"
+            "!! RULE IT OUT. A 'HONEST'/clean verdict below is NOT a pass.\n" +
+            "!" * 78 + "\n\n")
+        sys.stderr.flush()
+    else:
+        oracle = load_oracle(args.oracle)
 
     if args.worktree:
         wt_report_path = os.path.join(args.worktree, "build", "45410914",

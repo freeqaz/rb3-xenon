@@ -3,6 +3,20 @@
 and uid_merge.json intermediates. Reusable; run from repo root."""
 import json, os, re, subprocess
 from collections import defaultdict, Counter
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 ROOT='/home/free/code/milohax/rb3-xenon'
 DC3='/home/free/code/milohax/dc3-decomp/src'
 RB3='/home/free/code/milohax/rb3/src'
@@ -45,7 +59,7 @@ engine_cls-=NOISE; game_cls-=NOISE
 VENDOR_XDK={'xdk/d3dx9','xdk/xgraphics','xdk/xaudio2','xdk/d3d9i','xdk/xhv2',
 'xdk/xapilibi','xdk/xonline','xdk/xmic','xdk/xinput2','xdk/xmcore','xdk/xnet',
 'xdk/xlrc','xdk/xmp','xdk/xparty','xdk/xjson','xdk/xbdm','xdk/nuiaudio','xdk/nuispeech','xdk/ST'}
-d=json.load(open(ROOT+'/unified_id.json'))
+d=_guarded_load(ROOT+'/unified_id.json')
 def topclass(dn):
     if not dn: return None
     dn=re.sub(r'<.*?>','',dn)

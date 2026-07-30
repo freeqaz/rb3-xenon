@@ -26,6 +26,20 @@ import re
 import sys
 from collections import defaultdict, Counter
 from pathlib import Path
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 ROOT = Path("/home/free/code/milohax/rb3-xenon")
 DC3 = Path("/home/free/code/milohax/dc3-decomp")
@@ -115,7 +129,7 @@ def parse_asm_file(path):
 
 def main():
     print("[1/5] loading unified_id.json...", file=sys.stderr)
-    unified = json.load(open(UNIFIED))
+    unified = _guarded_load(UNIFIED)
     # rb3_addr -> dc3_name
     rb3_to_dc3 = {int(r['rb3_addr'], 16): r.get('dc3_name')
                   for r in unified if r.get('dc3_name')}

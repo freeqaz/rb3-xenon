@@ -30,6 +30,20 @@ import json
 import os
 from collections import Counter, defaultdict
 
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# The guard helpers below were CALLED but never imported when the guards first
+# landed, so every call site raised NameError instead of failing/skipping
+# loudly. Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
+
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 DEFAULT_ORACLE = os.path.join(REPO, "dc3_oracle.json")
@@ -438,6 +452,10 @@ def main():
     ap.add_argument("--provenance", help="record provenance string into batch output")
     args = ap.parse_args()
 
+    # dead-index guard (lane BX-4): span_confirm VOTES on candidate .text
+    # spans using the DC3 oracle. A dead oracle would confirm spans from
+    # noise -- and a confirmed-but-wrong span becomes a splits.txt pin.
+    _assert_live(str(args.oracle), what="dc3_oracle (span_confirm)")
     vas, tus, oracle_stems = load_oracle(args.oracle)
     splits = parse_splits(args.splits)
 
