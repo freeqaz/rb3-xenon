@@ -441,12 +441,7 @@
             "system/utl/TextFileStream.cpp": "NonMatching",
             "system/utl/TextStream.cpp": "NonMatching",
             "system/zlib/crc32.c": "NonMatching",
-            "system/char/CharBoneDir.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DMILO_MESSAGE_TIMERS"
-                ]
-            },
+            "system/char/CharBoneDir.cpp": "NonMatching",
             "system/char/CharClip.cpp": "NonMatching",
             "system/char/CharClipSet.cpp": "NonMatching",
             "system/midi/MidiParser.cpp": "NonMatching",
@@ -459,30 +454,15 @@
             "system/rndobj/Rnd.cpp": "NonMatching",
             "system/synth_xbox/FxSendMeterEffect.cpp": "NonMatching",
             "system/synth_xbox/MeterEffect.cpp": "NonMatching",
-            "system/ui/UI.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DMILO_MESSAGE_TIMERS"
-                ]
-            },
+            "system/ui/UI.cpp": "NonMatching",
             "system/ui/Utl.cpp": "NonMatching",
             "system/utl/MemTracker.cpp": "NonMatching",
             "system/world/LightPreset.cpp": "NonMatching",
             "system/os/Timer.cpp": "NonMatching",
             "system/utl/Str.cpp": "NonMatching",
             "system/rnddx9/RenderState.cpp": "NonMatching",
-            "system/world/Dir.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DMILO_MESSAGE_TIMERS"
-                ]
-            },
-            "system/obj/Dir.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DMILO_MESSAGE_TIMERS"
-                ]
-            },
+            "system/world/Dir.cpp": "NonMatching",
+            "system/obj/Dir.cpp": "NonMatching",
             "system/ui/UIListState.cpp": "NonMatching",
             "system/ui/UIListWidget.cpp": "NonMatching",
             "system/synth_xbox/Synth.cpp": "NonMatching",
@@ -615,12 +595,7 @@
             "system/flow/FlowSlider.cpp": "NonMatching",
             "system/rndobj/HiResScreen.cpp": "NonMatching",
             "system/rndobj/TexRenderer.cpp": "NonMatching",
-            "system/rndobj/Group.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DMILO_MESSAGE_TIMERS"
-                ]
-            },
+            "system/rndobj/Group.cpp": "NonMatching",
             "system/char/CharNeckTwist.cpp": "NonMatching",
             "system/rndobj/MatAnim.cpp": "NonMatching",
             "system/rndobj/EnvAnim.cpp": "NonMatching",
@@ -698,12 +673,7 @@
             "system/char/CharIKHand.cpp": "NonMatching",
             "system/rndobj/PropAnim.cpp": "NonMatching",
             "system/gesture/SkeletonClip.cpp": "NonMatching",
-            "system/char/CharLipSync.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DMILO_MESSAGE_TIMERS"
-                ]
-            },
+            "system/char/CharLipSync.cpp": "NonMatching",
             "system/rndobj/Watcher.cpp": "NonMatching",
             "system/ui/UILabel.cpp": "NonMatching",
             "system/char/CharBones.cpp": "NonMatching",

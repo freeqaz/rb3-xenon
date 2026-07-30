@@ -2730,14 +2730,14 @@ Part.cpp:
 	.text       start:0x8247C820 end:0x8247C8BC
 
 system/rndobj/Rnd.cpp:
-	.pdata      start:0x8220A6A8 end:0x8220A7A0
+	.pdata      start:0x8220A678 end:0x8220A7A0
 	.pdata      start:0x8220A7B8 end:0x8220A830
 	.pdata      start:0x8220A848 end:0x8220A868
 	.pdata      start:0x8220A868 end:0x8220A8B8
 	.pdata      start:0x8220A8C0 end:0x8220AB68
 	.pdata      start:0x8220AB78 end:0x8220AC98
 	.pdata      start:0x8220ACA0 end:0x8220B070
-	.text       start:0x8240DE40 end:0x8240E618
+	.text       start:0x8240DCB8 end:0x8240E618
 	.text       start:0x8240E6C0 end:0x8240EA90
 	.text       start:0x8240EB38 end:0x8240EC30
 	.text       start:0x8240EC30 end:0x8240F188
@@ -4420,9 +4420,9 @@ CameraInput.cpp:
 	.text       start:0x82369568 end:0x82369650
 
 Ham.cpp:
-	.pdata      start:0x821F1FE8 end:0x821F1FF8
+	.pdata      start:0x821F1FC8 end:0x821F1FF8
 	.pdata      start:0x8221E1E0 end:0x8221E1F0
-	.text       start:0x8227A828 end:0x8227A910
+	.text       start:0x8227A728 end:0x8227A910
 	.text       start:0x82545C88 end:0x82545C90
 	.text       start:0x82570C80 end:0x82570D0C
 
@@ -6747,7 +6747,7 @@ MeshDeform.cpp:
 	.pdata      start:0x8220A450 end:0x8220A458
 	.pdata      start:0x8220A460 end:0x8220A528
 	.pdata      start:0x8220A528 end:0x8220A530
-	.pdata      start:0x8220A530 end:0x8220A6A8
+	.pdata      start:0x8220A530 end:0x8220A678
 	.pdata      start:0x8220A7A0 end:0x8220A7A8
 	.pdata      start:0x8220A7B0 end:0x8220A7B8
 	.pdata      start:0x8220A830 end:0x8220A838
@@ -6756,7 +6756,7 @@ MeshDeform.cpp:
 	.text       start:0x8240B0A0 end:0x8240B0EC
 	.text       start:0x8240B208 end:0x8240C370
 	.text       start:0x8240C370 end:0x8240C4F8
-	.text       start:0x8240C4F8 end:0x8240DE40
+	.text       start:0x8240C4F8 end:0x8240DCB8
 	.text       start:0x8240E618 end:0x8240E640
 	.text       start:0x8240E698 end:0x8240E6C0
 	.text       start:0x8240EA90 end:0x8240EAB0
