@@ -1271,7 +1271,9 @@ DataNode MakeFileList(const char *cc, bool b, FileCallbackFunc *callback) {
 void Hmx::Object::InitObject() {
     static DataArray *objects = SystemConfig("objects");
     static Symbol init = "init";
-    DataArray *def = ObjectDef(gNullStr)->FindArray(init, false);
+    // Retail does NOT call ObjectDef here: it reuses the cached `objects` static
+    // and chains two FindArray calls (target: 2x FindArray, 0x ObjectDef).
+    DataArray *def = objects->FindArray(ClassName(), true)->FindArray(init, false);
     if (def) {
         def->ExecuteScript(1, this, nullptr, 1);
     }

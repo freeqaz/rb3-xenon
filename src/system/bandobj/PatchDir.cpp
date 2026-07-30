@@ -328,7 +328,11 @@ int PatchDir::SaveSize(int) {
     int bits = PatchLayer::PackedBitCount() * 50;
     int size = bits / 8;
     if (bits % 8 != 0) size++;
-    size += 0x10021;
+    // Retail RB3-360 ground truth: the folded constant is 0x10234 (lis 1 / ori 0x234),
+    // i.e. 532 + 0x10020. rb3-Wii's DEV decomp carries 0x10021 (== 0x10235) -- one too
+    // high for this binary. 0x10020 is also the exact bitmap payload size LoadFixed
+    // reads in the no-layers branch, so the composition is layer-bits + bitmap.
+    size += 0x10020;
     REPORT_SIZE("PatchDir", size);
 }
 

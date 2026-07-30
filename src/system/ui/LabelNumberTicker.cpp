@@ -181,6 +181,10 @@ void LabelNumberTicker::Poll() {
 BEGIN_HANDLERS(LabelNumberTicker)
     HANDLE_ACTION(snap_to_value, SnapToValue(_msg->Int(2)))
     HANDLE_ACTION(count_up, CountUp())
+#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
+    // Retail fn_82828820 builds exactly 2 Symbols (snap_to_value, count_up);
+    // both oracles and the rb3-Wii source agree this third arm is DC3-only.
     HANDLE_ACTION(count_up_from_current, CountUpFromCurrentValue())
+#endif
     HANDLE_SUPERCLASS(UIComponent)
 END_HANDLERS
