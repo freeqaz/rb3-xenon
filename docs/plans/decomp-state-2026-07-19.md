@@ -1,24 +1,67 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (FLOOR, summed — see the warning below): 41,187 strict-matched functions /
-honest proxy 39,677 / `matched_code_percent` ≈34.924872** (honest = matched −
+**Current (MEASURED at HEAD `b16c9e8c`): 41,187 strict-matched functions /
+honest proxy 39,677 / `matched_code_percent` 34.924870** (honest = matched −
 masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions, `total_functions` 69,367; `matched_code` ≈3,695,064 B;
-`masked_equal` 1,510).
+(~69k functions, `total_functions` 69,367; `matched_code` 3,695,064 B;
+`masked_equal` 1,510; `total_code` 10,580,036).
 
-> ⚠ **This headline is a FLOOR, not a measurement — re-measure at HEAD.** The last
-> *direct* measurement was **41,185 / 39,675 / 34.915688** (`matched_code`
-> 3,694,092) at `07795e26`, published by `f181a271`. Two lanes have landed since,
-> and **both A/B'd off that same `07795e26` baseline**, so they compose only by
-> arithmetic:
-> `41,185 + 2 (BZ-1 e7dc97dd) + 0 (BZ-3 b16c9e8c) = 41,187`, and
-> `3,694,092 + 744 (BZ-1) + 228 (BZ-3) = 3,695,064 B → 34.924872`.
-> Additivity is an *assumption* here, not a result: BZ-1 edited `Object.h` /
-> `ObjPtr_p.h`, which cascade widely, so it could in principle perturb units BZ-3
-> touched. Per the `38e579c6` precedent, **flagging a summed headline as a floor is
-> strictly better than publishing it as measured** — the next lane should measure
-> HEAD itself.
+> ✅ **FLOOR RESOLVED — this is now a direct measurement, not a sum.** BZ-1's
+> lander built HEAD itself (BZ-1 `e7dc97dd` + BZ-3 `b16c9e8c` in one worktree,
+> `config.yml` touched so the map repoint actually re-splits) and read
+> `report.json`: **41,187 / 1,510 / 39,677 / 3,695,064 B / 34.924870**, with
+> `total_functions` **69,367 across the re-split** (no split churn).
+>
+> ★ **The additivity assumption held exactly.** The preceding floor block
+> predicted 41,187 / 39,677 / 3,695,064 B by arithmetic and worried that BZ-1's
+> `Object.h` / `ObjPtr_p.h` edits — which cascade to ~281 TUs — could perturb the
+> units BZ-3 repointed. They did not: the measured triple is identical to the
+> summed one (the summed `≈34.924872` was a hand-recomputed percent; the measured
+> value is `34.924870`). **A wide PCH-header cascade and a map repoint were
+> orthogonal here** — worth knowing, but note this is one observation, not a
+> license to stop measuring. The floor discipline again did its job: the floor was
+> flagged, the next lane measured, and the flag cost nothing.
+
+> **Lane BZ-1 (`e7dc97dd`) — +2 honest, +744 B, from two DC3-vs-retail body
+> defects.** Re-A/B'd at true HEAD (`f181a271`), *not* carried from the lane's
+> original run off `66697375`, because BY-2 and BZ-2 landed in between — and BZ-2
+> touched two of the same files. Same-split (edits touch no split inputs, so
+> `config.yml` was touched on **neither** leg): matched 41,185 → 41,187 (**+2**),
+> `masked_equal` flat 1,510, honest 39,675 → **39,677**, `matched_code`
+> 3,694,092 → 3,694,836 (**+744 B**), code% 34.915688 → 34.922714
+> (**+0.007026**), `total_functions` 69,367 both legs.
+>
+> **(1) `ObjPtrList<T1,T2>::Load` carried two DC3-era parameters retail lacks.**
+> Retail's call site sets exactly `r3=this, r4=bs, r5=1`; we emitted
+> `li r7,1; li r6,0; li r5,1`. The mangled tail `_NPAVObjectDir@@1@Z` decodes as
+> `(bool, ObjectDir*, bool)`, and **rb3-Wii `ObjPtr_p.h:517` declares the retail
+> form `Load(BinStream&, bool)`**. The 4th param was never read and the
+> `ObjectDir*` was `nullptr` at every site ⇒ semantics-preserving. Every
+> `bs >> someObjPtrList` in the tree had been paying two dead `li` setups.
+> **(2) `AsyncFile::Init` doesn't save/restore `UsingCD`** — retail has no
+> `bl ?UsingCD@@` and restores with the constant `li r3,1`, i.e. plain
+> `SetUsingCD(true)`. CharIKScale::Load 96.47 → 100 (232 B); AsyncFile::Init
+> 97.97 → 100 (512 B); **+744 = exactly 232 + 512**, reproduced against the newer
+> main.
+>
+> ★★ **The corroboration is the one-directional spread, not the two 100s.**
+> Per-function set diff: **14 functions changed, all 14 UP, 0 down.** Twelve more
+> `Load`/`PostLoad` bodies improved without crossing the line — and every one is a
+> `bs >> objPtrList` caller (RndAmbientOcclusion 17.11→31.65,
+> TrackPanelDirBase::PostLoad 34.09→38.53, FaderGroup 70.28→74.15,
+> UIList::PostLoad 65.11→68.68, RndSoftParticles 34.09→36.68, Character
+> `operator>>` 87.62→90.70, RndEnviron 80.29→82.60, Spotlight 63.03→64.37,
+> CharEyes 56.39→58.72, RndText 58.71→59.30, TrackWidget 21.31→22.03,
+> CharPosConstraint 16.31→16.42). A *wrong* signature would have pushed some
+> callers away from retail; strictly-monotone improvement across twelve
+> independent bodies is evidence the correction is real rather than metric-fitted.
+>
+> ⚠ **But the family is far smaller than the blast radius.** 78 objs reference the
+> symbol; the paired post-filter over all 2,420 named near-misses finds only **13
+> callers (9,740 B)**, and 12 carry 24–563 independent mismatches where two `li`
+> are a rounding error. **Exactly one function was gated solely by this.** Textbook
+> site-count ≠ defect-count.
 
 > **Lane BZ-3 (`b16c9e8c`) — +0 functions, +228 B code, and it REFUTED ITS OWN
 > BRIEF.** Same-split A/B off `07795e26`: matched 41,185 → 41,185 (+0),
@@ -2271,6 +2314,34 @@ residue (drained); A_TOOLING ICF fold mirage; pad-probe deferred struct walls
 (drained); local-static mechanical wave; the 3 scatter-sweep w1 lossy candidates
 (CameraShot←Flow, PropAnim←PropKeys/AmbientOcclusion, CharBonesMeshes←GemManager
 — need body-dup, not whole-file include).
+
+### ⛔ Added by lane BZ-1 (2026-07-30) — two veins closed at the MECHANISM level
+
+**1. ★★★ RB3 retail was built with an OLDER X360 compiler than our DC3-era
+toolchain ⇒ ~0.127 pp of residue is one-directionally UNREACHABLE.** Two fixed
+instruction-selection differences, each byte-zero tested and each showing a
+**strictly one-way** distribution — the signature of a toolchain difference, not
+a source defect:
+- strcpy idiom: retail `cmplwi` vs our `extsb.` — **17 forward, 0 reverse**, and
+  our compiler emits `cmplwi` there **0 times in 1,118 functions**.
+- power-of-2 size test: retail `srawi.` vs our `clrrwi.` — **6 forward, 0
+  reverse**.
+
+The header is byte-identical to DC3's and a `#pragma intrinsic(strcpy)` probe was
+a **no-op**, so there is no source-side lever. Class these `build_env` and do not
+chase them. ⚠ This also *caps* specific targets: `BandCharacter::SyncProperty`
+(1,560 B) has just 2 replaces but **one is the toolchain-dead `extsb.`/`cmplwi`**,
+so it can never reach 100 — do not fund it.
+
+**2. ★★★ `comm_swap` REFUTED at the mechanism level (42 fns / 32,412 B /
+0.3064 pp) — do not re-hunt.** The pool's single biggest byte prize,
+`NextSongPanel::CountOrCreateExpandedDetails` (12,220 B, 2 diffs), contains **50
+sites of the identical construct** `ptr.Node(count++) = DataArrayPtr(...)`: we
+emit `add r3,r28,r11` at all 50, **retail emits it at 48 and swaps at 2**.
+**Retail is self-inconsistent across identical source**, so no source form can
+reproduce it. 8 of the 42 have an in-function control and **all 8** show this
+(17,856 B = 55% of the pool proven dead). This supersedes the earlier
+*statistical* refutation — it is now the mechanism.
 
 ## Method (stable)
 Fable coordinator delegates to Opus agents in `scripts/setup_worktree.sh`
