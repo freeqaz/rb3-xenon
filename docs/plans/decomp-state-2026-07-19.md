@@ -1,7 +1,7 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,953 strict-matched functions / honest proxy 39,435 /
-`matched_code_percent` 34.513645** (honest = matched − masked_equal, per the BO-8
+**Current: 40,957 strict-matched functions / honest proxy 39,439 /
+`matched_code_percent` 34.518597** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
@@ -31,6 +31,43 @@ worktree with both legs same-split, not summed from lane deltas.
 > ★★ **Sizing the vbase channel by counting sub-100 neighbours overestimates it**
 > — BU-1 predicted +10..+20, measured +9; the 99.8/99.9 bodies were thunks with
 > no vbase adjust and none moved.
+
+> **Wave BV (2026-07-30) — +4 honest, +0.004952pp code, `masked_equal` FLAT at
+> 1518.** `e22878ef` lane BV-3, landed by patch (its branch predates BV-2; a
+> merge would have reverted BV-2's `splits.txt` deletion). Re-verified in a
+> fresh worktree off `dedf6c34`, both legs same-split, `total_functions` 69367:
+>
+> | | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | base `dedf6c34` | 40953 | 1518 | 39435 | 34.513645 |
+> | +BV-3 `e22878ef` | 40957 | 1518 | 39439 | 34.518597 |
+>
+> Δ = exactly 524 bytes = 316+84+112+12, a **1:1 attribution to four map rows**
+> — no hidden extra match, no regression.
+> ⛔ **The reloc_disc COLLISION-repoint pool is CLOSED — metric-inert by
+> construction, do not re-hunt.** `report generate` hardcodes
+> `functionRelocDiffs=None`, and `masked_equal` never discloses reloc masking, so
+> a DECISIVE collision verdict by definition moves a name between two byte twins
+> that *already both score 100%*. All 32 applied and measured: **delta 0 on every
+> axis**, matching `repoint_supply.py`'s no-build prediction 32/32. It was not a
+> silent no-op either (13 symbols changed unit, one body went 0.0%→99.8%) — it
+> was live and still moved nothing.
+> ★★ **The yield was the mirror class: SIZE-IMPOSSIBLE rows** (mapped target size
+> ≠ same-unit base COMDAT size ⇒ can never reach 100% ⇒ repointing is strictly
+> non-negative). Census: 1,867 of 21,482 rows, 19 with an exact-byte in-unit
+> target, 3 shipped. Plus one phantom-class repoint
+> (`?Active@MessageTimer@@` → `?StateName@MetaMusicLoader@@`, owner found via the
+> `??_R4` COL at `0x820F9368`).
+> ★★ **A phantom row does not necessarily earn false credit — check its score
+> first.** Deleting the MessageTimer row would have been worth **0** (it sat at
+> 80.0%, never credited); all the value was in the *repoint*.
+> ★ **Read the current score, not just the sizes:** `?SetType@UIPicture@@` is
+> size-impossible yet already reads 100.0 via objdiff byte-fallback, so
+> repointing it is −1. And `?Copy@VocalTrackDir@@` had a byte-perfect,
+> right-sized, class-consistent candidate that was **method-wrong**.
+> ⚠ `collision_ablation.py`'s clean 0.00% plant rate is **optimistic** — `agree`
+> counts shared boilerplate, so same-family siblings defeat it (`--scope-unique`,
+> as laneBU4 applied to the live channel, is the fix if anyone revives this).
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
