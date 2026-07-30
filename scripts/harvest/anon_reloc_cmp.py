@@ -43,6 +43,11 @@ CHANNELS (per shared relocation offset)
            VA) compare the two retail bodies with every operand resolved to an
            absolute. Map-independent; the only channel that needs no oracle.  [NEW]
 
+  branch   an external branch dtk emitted NO usable relocation token for,
+           decoded from the ENCODING. Adjudicated as CODE: body identity of the
+           callee (tree-wide code index) against retail at the decoded VA, then
+           the bindings oracle. Never the map — see laneBY-2 below.        [BY2]
+
 INHERITED TRAPS THIS TOOL OBEYS
   * A raw byte compare of two VAs **inverts** the verdict — PC-relative `bl`
     displacements must be resolved to absolutes first
@@ -80,6 +85,38 @@ MEASURED (laneBW1, 2026-07-30, worktree baseline 41116/1510/39606/34.685703)
   Sweep of the 667 remaining byte-perfect rows: 42 shipped, and a whole-binary
   same-split A/B measured exactly +42 matched / +0 masked_equal / +42 honest /
   +0.054745 pp (= 5,792 B, a 1:1 byte attribution). All 42 read fuzzy == 100.
+
+laneBY-2 (2026-07-30) — THE UNLABELLED-BRANCH FIX. `subcommand selftest`.
+  Defect: a one-sided relocation offset was scored a SHAPE contra (=> REJECT)
+  regardless of WHICH side was missing. When the missing side is the TARGET
+  that is unsound — absence of a dtk label is not absence of a branch.
+
+  Sized on the 19,048 established masked-equal pairings (all known-correct, so
+  every REJECT over this population is false by construction):
+    * 25 pairings (0.13%), 29 offsets, carried an unlabelled external branch.
+      All 25 read REJECT before; all 25 read ACCEPT after.
+    * whole-population REJECTs 83 -> 58 (-30%).
+    * channel census after:  bind 124,852 | shape_t 68 | shape 38 | branch 28.
+      ➡ `shape_t` (target-missing, no decodable branch) is now the single
+        largest residual false-reject cause and is the obvious follow-on.
+  Precision gates (truth-ablation `control`, same worktree, before -> after):
+    * POS precision 100.00% -> 100.00% (3,733 correct, 0 wrong, UNCHANGED).
+    * NEG harmful plants 221 -> 222 (+1 / 6,200 = +0.016pp). The single new
+      plant is 0x82341190 SyncProperty BandLabel-vs-HamLabel — the documented
+      sibling-twin ambiguity, not a new error class; with truth PRESENT the
+      same row refuses as AMBIGUOUS (POS no_survivor 237 -> 236, ambiguous
+      1641 -> 1642), i.e. it never picks wrong.
+    * `pool` output is BYTE-IDENTICAL before/after: `xbranch` is deliberately
+      kept out of `relocs` so `masked_equal` — and therefore candidate
+      selection and every calibrated number above — is untouched.
+  Yield: NONE, measured not assumed. The 628-row byte-perfect sweep is
+  SHIP=0 before AND after (identical breakdown). This lane fixes the REJECT
+  ACCOUNTING; it unlocked no new map rows.
+  ⚠ Not fixed, deliberately: `tt_compare` still byte-compares `masked`, and an
+  unlabelled branch word is NOT masked, so two ICF twins at different VAs
+  carry different PC-relative displacements and read DIFF. That feeds the
+  CONTESTED clause, which is what refuses all 25 of fixture A — loosening it
+  is the false-credit direction and needs its own control run.
 
 Read-only with respect to the repo: emits JSON, never edits the map.
 """
@@ -287,6 +324,7 @@ class Cmp:
         self.RL, self.RD = RL, RD
         self._tcache, self._ocache = {}, {}
         self.bind = None      # name -> Counter(target VA), see Ctx.build_bindings
+        self.code_index = {}  # name -> code COMDAT body, tree-wide (build_bindings)
 
     # -- per-relocation-slot comparison -------------------------------------
     def cmp_one(self, bname, ttok, bdata):
@@ -380,9 +418,60 @@ class Cmp:
 
         return ("UNK", "none")
 
+    # -- branch operand recovered from the ENCODING --------------------------
+    def cmp_branch(self, bname, tva, cbyname):
+        """Adjudicate an UNLABELLED branch operand. -> (verdict, channel)
+
+        A branch target is CODE, so it is adjudicated as code:
+          1. body identity against retail at the decoded VA. ICF folds only
+             byte-identical bodies, so body identity is exactly the right test
+             and is immune to what the callee is *called*;
+          2. failing that, the observed-bindings oracle.
+
+        It deliberately does NOT consult the map. A branch callee's map VA is
+        precisely what ICF corrupts, and both observed instances prove it:
+        0x822E4460 (?GetMaxSlots@TrackConfig@@) is filed as
+        `RndAnimatable::GetRate`, and 0x82593F90 -- byte-identical to our
+        ?GetName@Accomplishment@@ -- is filed nowhere while GetName is mapped at
+        0x8244C094. Both are CORRECT branches that the map channel reads as
+        CONTRA, which is how 4 already-landed rows kept rejecting.
+        """
+        bn = self.S.anon_ns_strip(bname)
+        cc = (cbyname or {}).get(bn) or self.code_index.get(bn)
+        if cc is not None:
+            want = cc["masked"]
+            have = self.retail.read(tva, len(want))
+            if have and len(have) == len(want):
+                skip = set()
+                for k in cc["relocoffs"]:
+                    skip.update(range(k, k + 4))
+                info = diff = 0
+                for i in range(len(want)):
+                    if i in skip:
+                        continue
+                    if want[i] != have[i]:
+                        diff += 1
+                    elif want[i]:
+                        info += 1
+                if diff:
+                    return ("CONTRA", "branch")
+                if info >= self.MIN_DATA_INFO:
+                    return ("AGREE", "branch")
+        bd = self.bind.get(bn) if self.bind else None
+        if bd and tva in bd:
+            return ("UNK" if HELPER_RX.match(bn) else "AGREE", "branch")
+        return ("UNK", "branch_unk")
+
     # -- whole-body adjudication --------------------------------------------
-    def adjudicate(self, tinfo, cand, bdata):
-        """target body vs one candidate base COMDAT -> verdict dict."""
+    def adjudicate(self, tinfo, cand, bdata, bcode=None):
+        """target body vs one candidate base COMDAT -> verdict dict.
+
+        `bcode` is the unit's list of code COMDATs; it feeds the `code` channel
+        for synthesized-branch offsets only.
+        """
+        cbyname = {}
+        for c in (bcode or ()):
+            cbyname.setdefault(self.S.anon_ns_strip(c["name"]), c)
         tb, bb = {}, {}
         for off, tok in tinfo["relocs"]:
             tb.setdefault(off, tok)
@@ -390,16 +479,36 @@ class Cmp:
             if ty == PPC_PAIR:
                 continue
             bb.setdefault(off, nm)
+        xb = tinfo.get("xbranch") or {}
         agree = contra = unk = 0
         chans, det = Counter(), []
         for off in sorted(set(tb) | set(bb)):
             t, b = tb.get(off), bb.get(off)
+            synth = False
+            if t is None and b is not None and off in xb:
+                # ★★ dtk emitted no usable label, but the ENCODING says this
+                # word IS an external branch. Absence of a label is not absence
+                # of a branch -- recover the operand and adjudicate it normally
+                # (bindings oracle first, which is what makes this robust to the
+                # callee being an ICF-fold representative carrying a different
+                # map name, e.g. 0x822E4460 -> `RndAnimatable::GetRate`).
+                t = "lbl_%08X" % xb[off]
+                synth = True
             if t is None or b is None:
+                # Direction matters. `b is None` (target relocates, base does
+                # not) is reliable: base relocations come from the COFF table.
+                # `t is None` with no decodable branch is the unreliable
+                # direction the fleet was warned about -- keep it visible under
+                # its own channel rather than silently trusting it.
                 contra += 1
-                det.append((off, b, t, "SHAPE", "shape"))
-                chans["shape"] += 1
+                ch = "shape" if b is None else "shape_t"
+                det.append((off, b, t, "SHAPE", ch))
+                chans[ch] += 1
                 continue
-            v, ch = self.cmp_one(b, t, bdata)
+            if synth:
+                v, ch = self.cmp_branch(b, xb[off], cbyname)
+            else:
+                v, ch = self.cmp_one(b, t, bdata)
             det.append((off, b, t, v, ch))
             if v == "AGREE":
                 agree += 1
@@ -438,8 +547,9 @@ class Cmp:
 
     # -- caches --------------------------------------------------------------
     def target(self, asm_path):
-        """dtk target asm -> {VA: {size, masked, relocs}} with INTERNAL branch
-        labels demoted back to ordinary instructions.
+        """dtk target asm -> {VA: {size, masked, relocs, xbranch}} with INTERNAL
+        branch labels demoted back to ordinary instructions and UNLABELLED
+        external branches recovered from the encoding.
 
         ★ `reloclib._operand_relocated` treats every `lbl_`/`jmp_` token as a
         relocation, but dtk also names *intra-function* branch targets that way
@@ -450,6 +560,25 @@ class Cmp:
         comparison. Demoting them makes the comparison strictly stronger.
         reloc_disc's own copy is left untouched: its 99.41% gate is calibrated
         against that exact behaviour.
+
+        ★★ The CONVERSE defect (laneBY-2). dtk's label is not only sometimes
+        wrong, it is sometimes ABSENT, and `_operand_relocated` then records no
+        relocation at all for that offset. `?GetMaxSlots@GemManager@@` @
+        0x82b99058 is `lwz r3,4(r3); b 0x822E4460`, but dtk prints the tail call
+        as `b except_data_822D27F8` -- a token the classifier does not treat as
+        a relocation (and whose name does not even denote 0x822E4460). The base
+        COMDAT *does* carry a relocation at offset 4, so the offset went
+        one-sided and `adjudicate` scored it a SHAPE contra => REJECT on a row
+        that is correct. **Absence of a dtk label is not absence of a branch**,
+        so decode every unlabelled word from the ENCODING.
+
+        `xbranch` is deliberately kept OUT of `relocs`: `masked_equal` skips the
+        UNION of both sides' relocated words, so folding these offsets into
+        `relocs` would newly exclude real control-flow bytes from the byte
+        comparison and silently widen candidate selection. Keeping them separate
+        leaves candidate selection bit-for-bit identical to before, so the
+        tool's calibrated control numbers stay valid; only `adjudicate` consults
+        them.
         """
         k = str(asm_path)
         if k not in self._tcache:
@@ -483,7 +612,24 @@ class Cmp:
                         body[off:off + 4] = w      # internal: compare the bytes
                         continue
                     keep.append((off, tok))
-                fixed[va] = dict(size=t["size"], masked=bytes(body), relocs=keep)
+                # ★★ recover branches dtk gave no usable relocation token for
+                dtk_offs = {o for o, _ in t["relocs"]}
+                xbr = {}
+                for off in range(0, t["size"], 4):
+                    if off in dtk_offs:
+                        continue           # dtk already stated an opinion here
+                    w = self.retail.read(va + off, 4)
+                    if not w or len(w) < 4:
+                        continue
+                    dec = decode_branch(w, va + off)
+                    if dec is None:
+                        continue           # not a branch instruction at all
+                    is_call = bool(struct.unpack(">I", w)[0] & 1)
+                    if va <= dec < end and not is_call:
+                        continue           # internal control flow: base has no reloc
+                    xbr[off] = dec
+                fixed[va] = dict(size=t["size"], masked=bytes(body), relocs=keep,
+                                 xbranch=xbr)
             self._tcache[k] = fixed
         return self._tcache[k]
 
@@ -627,7 +773,7 @@ def _adjudicate_va_name(ctx, va, name, ui, va2unit, suppress_rival=True):
     if not ok:
         out.update(verdict="NOT_BYTE_PERFECT")
         return out
-    v = ctx.cmp.adjudicate(t, cand, data)
+    v = ctx.cmp.adjudicate(t, cand, data, code)
     out.update({k: v[k] for k in
                 ("verdict", "agree", "contra", "unk", "nrel", "chans",
                  "class_evidence")})
@@ -676,6 +822,51 @@ def cmd_verify(ctx, args):
     return res
 
 
+# ---------------------------------------------------------------------------
+# Regression fixtures for the unlabelled-branch defect (laneBY-2).
+#
+# Both rows are ESTABLISHED, byte-perfect, already-landed map pairings, so
+# ACCEPT is the only correct verdict. Before the fix BOTH read REJECT, each via
+# a different half of the defect. If either ever reverts to REJECT, the
+# comparator has regressed to trusting dtk's labels / the callee's map row.
+# ---------------------------------------------------------------------------
+BRANCH_FIXTURES = [
+    ("0x82b99058", "?GetMaxSlots@GemManager@@QBAHXZ", "ACCEPT",
+     "unlabelled cross-unit tail call: retail is `lwz r3,4(r3); b 0x822E4460` "
+     "but dtk prints `b except_data_822D27F8`, which the reloc classifier "
+     "ignores -> offset 4 went one-sided -> SHAPE contra. The callee "
+     "(?GetMaxSlots@TrackConfig@@) is not even defined in GemManager.obj, so "
+     "it needs the tree-wide code index; 0x822E4460 is an ICF-fold "
+     "representative filed under `RndAnimatable::GetRate`."),
+    ("0x825f72a8", "?IsAccomplishmentSecret@@YA_NPAVAccomplishment@@PBVBandProfile@@@Z",
+     "ACCEPT",
+     "same unlabelled branch, but here the callee IS mapped -- elsewhere. "
+     "?GetName@Accomplishment@@ is byte-identical to retail at the branch "
+     "target 0x82593F90 yet the map files it at 0x8244C094, so consulting the "
+     "map for a branch operand yields a false CONTRA. Body identity must win."),
+]
+
+
+def cmd_selftest(ctx, args):
+    ui, va2unit = ctx.unit_index()
+    bad = 0
+    for va, name, want, why in BRANCH_FIXTURES:
+        r = _adjudicate_va_name(ctx, int(va, 16), name, ui, va2unit)
+        got = r.get("verdict")
+        ok = got == want
+        bad += not ok
+        print(f"[{'PASS' if ok else 'FAIL'}] {va} {name}")
+        print(f"        want={want} got={got} agree={r.get('agree')} "
+              f"contra={r.get('contra')} chans={r.get('chans')}")
+        if not ok:
+            print(f"        WHY THIS FIXTURE EXISTS: {why}")
+            for d in r.get("detail", [])[:6]:
+                print(f"          {d}")
+    print(f"selftest: {len(BRANCH_FIXTURES) - bad}/{len(BRANCH_FIXTURES)} passed")
+    if bad:
+        sys.exit(1)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--worktree", required=True, type=Path)
@@ -687,6 +878,7 @@ def main():
     p.add_argument("--fragment", required=True); p.add_argument("--out")
     p = sub.add_parser("control")
     p.add_argument("--out"); p.add_argument("--limit", type=int, default=0)
+    sub.add_parser("selftest")
     p = sub.add_parser("sweep")
     p.add_argument("--pool", required=True); p.add_argument("--out", required=True)
     p.add_argument("--min-size", type=int, default=0)
@@ -699,7 +891,7 @@ def main():
     if not a.no_bindings:
         build_bindings(ctx)
     {"pool": cmd_pool, "verify": cmd_verify, "sweep": cmd_sweep,
-     "control": cmd_control}[a.cmd](ctx, a)
+     "control": cmd_control, "selftest": cmd_selftest}[a.cmd](ctx, a)
 
 
 
@@ -717,6 +909,13 @@ def build_bindings(ctx, verbose=True):
     """
     ui, _ = ctx.unit_index()
     bind = defaultdict(Counter)
+    # ★★ tree-wide code-body index (laneBY-2). A branch callee is very often an
+    # inline that the *calling* unit only references (undefined in its obj) but
+    # some other unit defines as a COMDAT -- e.g.
+    # ?GetMaxSlots@TrackConfig@@QBAHXZ is external in GemManager.obj. Every obj
+    # is parsed and cached here anyway, so indexing bodies costs nothing.
+    # Definitions that DISAGREE across units are dropped rather than guessed.
+    cidx, cbad = {}, set()
     npair = 0
     for unit, (asm, bobj) in ui.items():
         T = ctx.cmp.target(asm)
@@ -724,6 +923,14 @@ def build_bindings(ctx, verbose=True):
         byname = {}
         for c in code:
             byname.setdefault(ctx.S.anon_ns_strip(c["name"]), c)
+        for c in code:
+            n = ctx.S.anon_ns_strip(c["name"])
+            prev = cidx.get(n)
+            if prev is None:
+                cidx[n] = c
+            elif (prev["size"] != c["size"] or prev["masked"] != c["masked"]
+                  or prev["relocoffs"] != c["relocoffs"]):
+                cbad.add(n)
         for va, t in T.items():
             nm = ctx.map_va2name.get(va)
             if not nm:
@@ -743,11 +950,16 @@ def build_bindings(ctx, verbose=True):
                 v = ctx.RL.token_va(tb.get(off))
                 if v is not None:
                     bind[ctx.S.anon_ns_strip(n)][v] += 1
+    for n in cbad:
+        cidx.pop(n, None)
     if verbose:
         multi = sum(1 for v in bind.values() if len(v) > 1)
         print(f"bindings: {npair} established pairings -> {len(bind)} names "
               f"({multi} with >1 implied VA)")
+        print(f"code index: {len(cidx)} unambiguous bodies "
+              f"({len(cbad)} names dropped as inconsistent across units)")
     ctx.cmp.bind = bind
+    ctx.cmp.code_index = cidx
     return bind
 
 

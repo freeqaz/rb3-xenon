@@ -1123,12 +1123,14 @@ TrackWatcher.cpp:
 	.text       start:0x8279D6A0 end:0x8279E210
 
 DrumPlayer.cpp:
-	.pdata      start:0x8223FD78 end:0x8223FDC8
-	.text       start:0x8279E218 end:0x8279E5F0
+	.pdata      start:0x8223FD78 end:0x8223FDC0
+	.text       start:0x8279E218 end:0x8279E578
 
 MercurySwitchFilter.cpp:
+	.pdata      start:0x8223FDC0 end:0x8223FDC8
 	.pdata      start:0x8223FDC8 end:0x8223FDE8
 	.pdata      start:0x8223FDE8 end:0x8223FE00
+	.text       start:0x8279E578 end:0x8279E5F0
 	.text       start:0x8279E5F8 end:0x8279E988
 	.text       start:0x8279E990 end:0x8279EAF0
 	.text       start:0x8279EB9C end:0x8279EBB0
