@@ -149,7 +149,12 @@ public:
     bool HasIntro();
     float GetSongToTaskMgrMs();
     float GetSongMs() const;
-    void UpdatePausedState(bool, bool);
+    // Retail takes a third bool: SetPaused forwards its own (defaulted) 4th
+    // argument here, which is why the inlined set_paused handler arm sets up
+    // r6 = 1 before the call. Its use inside the body is not recoverable from
+    // the rb3-Wii oracle (Wii's build has only the two-arg form), so it is
+    // left unnamed.
+    void UpdatePausedState(bool, bool, bool = true);
     bool CanUserPause() const;
     void Restart(bool);
     void Poll();

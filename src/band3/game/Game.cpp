@@ -454,9 +454,9 @@ void Game::RemovePlayer(Player *p) {
     );
 }
 
-void Game::SetPaused(bool b1, bool b2, bool b3, bool) {
+void Game::SetPaused(bool b1, bool b2, bool b3, bool b4) {
     mGameWantsPause = b1;
-    UpdatePausedState(b2, b3);
+    UpdatePausedState(b2, b3, b4);
 }
 
 bool Game::CanUserPause() const {
@@ -1294,7 +1294,7 @@ void Game::OvershellSetPaused(bool paused) {
     }
 }
 
-void Game::UpdatePausedState(bool allowSfx, bool doRollback) {
+void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool) {
     bool wantPause = mGameWantsPause | mOvershellWantsPause;
     if ((bool)wantPause != mIsPaused) {
         if (wantPause) {
