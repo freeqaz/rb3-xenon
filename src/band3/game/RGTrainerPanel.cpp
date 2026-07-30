@@ -176,7 +176,7 @@ void RGTrainerPanel::Poll() {
 }
 
 void RGTrainerPanel::HandleChordLegend(bool b) {
-    if (mLefty != mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty()) {
+    if (mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty() != mLefty) {
         HandleLegendLefty(true);
     }
     GemTrack *track = dynamic_cast<GemTrack *>(mGemPlayer->GetUser()->GetTrack());
@@ -219,7 +219,7 @@ void RGTrainerPanel::HandleChordLegend(bool b) {
                     } else {
                         // goto folds the (HighString>=0) and (HighString<0 && Fret) branches into one tail-call; rewrite regresses match.
                         if (cur.mHighString < 0) {
-                            if (mMatcher.GetState()->GetFret(cur.mLowString)) {
+                            if ((int)mMatcher.GetState()->GetFret(cur.mLowString)) {
                                 goto lol;
                             }
                             mDir->Find<Sfx>("fret_release.cue", true)->Play(0, 0, 0);
