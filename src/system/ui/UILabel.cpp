@@ -79,19 +79,9 @@ bool UILabel::sRequireFixedLength;
 
 INIT_REVS(UILabel)
 
-namespace {
-    // rb3-Wii `RndTextUpdateDeferrer` (rndobj/Text.h there). Our RndText is the
-    // DC3-shaped one and does not carry the type, so keep a TU-local equivalent:
-    // it only brackets the deferred-update pair.
-    class RndTextUpdateDeferrer {
-    public:
-        RndTextUpdateDeferrer(RndText *t) : mText(t) { mText->DeferUpdateText(); }
-        ~RndTextUpdateDeferrer() { mText->ResolveUpdateText(); }
-
-    private:
-        RndText *mText;
-    };
-}
+// RndTextUpdateDeferrer now comes from rndobj/Text.h (as it does on rb3-Wii,
+// which is the generation retail RndText matches). The TU-local duplicate that
+// used to live here is gone.
 
 float GetTextSizeFromPctHeight(float f) {
     if (TheLoadMgr.EditMode()) {

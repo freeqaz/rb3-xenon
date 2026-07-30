@@ -3859,7 +3859,9 @@ Text.cpp:
 	.pdata      start:0x8220E080 end:0x8220E090
 	.pdata      start:0x8220E090 end:0x8220E0A0
 	.pdata      start:0x8220E108 end:0x8220E110
+	.pdata      start:0x8220E1A8 end:0x8220E1D8
 	.pdata      start:0x8220E1D8 end:0x8220E1E0
+	.pdata      start:0x8220E288 end:0x8220E2D0
 	.pdata      start:0x8220E2D0 end:0x8220E2D8
 	.pdata      start:0x8220E2F0 end:0x8220E318
 	.pdata      start:0x8220E320 end:0x8220E4E8
@@ -3881,7 +3883,9 @@ Text.cpp:
 	.text       start:0x824553D0 end:0x82455508
 	.text       start:0x82455508 end:0x824555AC
 	.text       start:0x82455E90 end:0x82455EE4
+	.text       start:0x82456CA4 end:0x82457060
 	.text       start:0x82457060 end:0x82457090
+	.text       start:0x82457F70 end:0x82459820
 	.text       start:0x82459820 end:0x82459958
 	.text       start:0x82459958 end:0x82459998
 	.text       start:0x82459E78 end:0x82459FC8

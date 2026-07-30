@@ -263,3 +263,70 @@ units' pins — `Save` → `UIFontImporter.cpp`, `~RndText` + `RotateLineVerts` 
 0x82456CA4–0x82457060 (ctor) and 0x82457F70–0x82459820 (`UpdateText` and 5
 more). Repointing these is expected to be **≈0 for match%** while our source is
 the wrong generation, so it should ride along with the port, not precede it.
+
+---
+
+# Lane BP-8 (2026-07-29) — the port landed; corrections to this doc
+
+The port this doc handed off is done: `src/system/rndobj/Text.{h,cpp}` is now the
+retail shape, all ~68 bodies ported from the rb3-Wii oracle, 8 dependent TUs
+adapted, tree builds clean. Branch `laneBP8`. Whole-binary A/B off `85aed0bf`:
+**+20 matched_functions committed / +23 with the symbol-map fragment**,
+`masked_equal_functions` unchanged, so axis-1 moves by the same amount.
+
+**The member table in this doc was exactly right.** Transcribed straight into a
+header, `cl.exe /d1reportSingleClassLayoutRndText` reproduced every offset
+first try with no filler — sizeof 0x1c8, mLines@0xd8 … bool@0x18c,
+vtordisp@0x190, Object vbase@0x194. Independent confirmation followed from
+codegen: the PROPSYNC body (2172 bytes) and HANDLERS body (1444 bytes) both
+match at **100%**, and a propsync touches nearly every member at its exact
+offset.
+
+Four corrections / additions:
+
+1. **`Line` drops rb3-Wii's separate `color` member.** This doc's *table* and its
+   *prose decomposition* disagree. Wii's Line is 0x60 = Style 0x18 + 2 ptrs +
+   2 uints + Transform 0x30 + float + Color32. On 360 Style grows to 0x24 (+0xc)
+   and Transform to 0x40 (+0x10), so keeping the separate colour gives **0x88**,
+   not 0x78. The measured table attributes every byte of [0,0x78) with no room
+   for it. The colour lives in `lineStyle.mTextColor` (on Wii both fields were
+   always written the same value — dead duplicate storage). Trust the table; the
+   prose arithmetic is wrong.
+
+2. **`Style`'s layout never needed changing** — our DC3-era Style was already
+   0x24 with retail's field order. Only rb3-Wii's *names* differ. Keeping our
+   names avoided churning Lyric, UIFontImporter, HamListRibbon, StarsDisplay and
+   UIListLabel. Note `Lyric.h`'s `// 0xbc` / `// 0xd4` comments imply an 0x18
+   Style — those are stale Wii offsets, already wrong against our own tree.
+
+3. **Retail `RndFont` is NOT the Wii generation, so the font chain is not
+   ported.** rb3-Wii's RndFont has an `mNextFont` fallback chain and Wii's
+   `Mats`/`Replace`/`GetDefiningFont` walk it. Retail syncs **`mats`** (plural,
+   `ObjPtrVec<RndMat>`) where Wii syncs **`mat`** (singular) + `next_font`; the
+   retail binary contains `mats` and not `mat`. Those three bodies are therefore
+   written chainless and are this port's known-uncertain trio. (Caution for
+   re-derivers: absence of the string `next_font` proves nothing on its own —
+   Wii does not sync it as a property either. The `mat`/`mats` split is the
+   decisive datum.)
+
+4. **Retail RndText is SAVEABLE; rb3-Wii's dev decomp is not.** Wii has
+   `SAVE_OBJ(RndText, 171)`, i.e. `MILO_ASSERT(0)`. Retail's `fn_82455928`
+   writes rev 0x15. Save was reconstructed from Load's current-revision path:
+   3 superclasses + mFont, mAlign, mText, colour, wrapWidth, leading,
+   fixedLength, italics, size, markup, capsMode = **14 items**, matching the
+   count measured off the retail body.
+
+Also refuted: the previous header's claim that Style's explicit
+`memcpy(this,&s,0x24)` copy ops were "codegen-load-bearing". For a 0x24 POD
+MSVC's implicit copy emits exactly that memcpy anyway.
+
+**Where the remaining value is locked.** `scripts/target_symbol_map.json` still
+carries DC3 manglings for RndText, so correctly-ported bodies cannot pair and
+read 0% regardless of correctness. A measured, justified fragment is at
+`~/tmp/bp8_map_fragment.json` (+ `_JUSTIFICATION.md`). Two of its renames had
+already been applied on main independently — corroboration. Still open:
+`Save`/`~RndText`/`??_G` need their ranges carved out of UIFontImporter.cpp /
+SkeletonClip.cpp / Lit_NG.cpp before they can be named (⚠ SkeletonClip is a
+BP-4 PHANTOM class), and `?erase@?$vector@VLine@RndText@@…` regressed 100→0
+when Line grew — cause not yet found (STLport triviality was tested and
+falsified).
