@@ -149,6 +149,58 @@ strict-matched functions / honest proxy 39,709 / `matched_code_percent`
 > swap (`max(updated_at)` 2026-07-29), but the swap invalidated **0 of 2,539**
 > `AT_LIMIT` rows and broke **0** `COMPLETE` rows. Hygiene only.
 
+> ## ⛔ Lane CB-8 — reloc args are SCORE-INVISIBLE; the "new vein" was already drained
+>
+> ★★★ **Analytic, not statistical.** `objdiff-cli/src/cmd/report.rs:394`
+> **hard-sets** `function_reloc_diffs: FunctionRelocDiffs::None` for report
+> generation, and `objdiff-core/src/diff/code.rs:982` makes an
+> `InstructionArg::Reloc` **unconditionally equal** under `None`. ⇒ a
+> relocation-argument difference adds **0** to `diff_score`, so it can never lower
+> `fuzzy_match_percent` and **never costs `matched_code`**. Confirmed
+> arithmetically: 59 `Symbol(reloc)` differing args across 21 functions, and
+> `diff_score/5` reconciles for **194 of 217** rows with those args contributing
+> **exactly 0**.
+>
+> ★★★ **The consequence is about CORRECTNESS, not score: a function that calls the
+> WRONG CALLEE already reads `fuzzy == 100` and is already fully credited.** The
+> metric is structurally blind to it. Same masking that let a map mispair score 100
+> in `42fe0db0` (`??_GRndScreenMask` really being `RndMultiMeshProxy`'s
+> destructor). ⇒ **never treat `fuzzy == 100` as evidence that call targets are
+> right** — that needs an inspection with `functionRelocDiffs` **not** none, the
+> opposite of the mandatory batch-scoring setting. This matters for the native
+> port, where a wrong call target is a real bug nothing in the pipeline flags.
+>
+> ⛔ **Two coordinator errors, both recorded:**
+> 1. I briefed the lane that masked residue splits into reloc-argument (live,
+>    source-fixable) and register-argument (dead). **Inverted** — the reloc half is
+>    the score-invisible one, and **100% of the scored residue is
+>    register/branch/shift**.
+> 2. I funded this as a *new* vein on a fresh size estimate. **It had already been
+>    drained twice in the same session** by lanes BW-3 and BZ-3. Their memories were
+>    already in the index; I had the information and didn't connect it. ⇒ ★★ **grep
+>    the drained ledger for a vein's mechanism before funding it as new.**
+>
+> CB-8's independent re-derivation **cross-validates both prior lanes almost
+> row-for-row** (symbol 59 args/21 fns exact; cross-type 2/2 exact; `other` 24→21 =
+> precisely BZ-3's 3 landed repoints; BW-3's `NgEnviron::UpdateApproxLighting`
+> absent from the population, confirming it landed). A replication of a drained
+> verdict is how the drained ledger earns trust — so this is logged as
+> **re-confirmed drained at 0.700 pp**, not as a new opening.
+>
+> Partition (denominator 217 fns / 86,304 B / 0.8157 pp; **0.700 pp** after
+> removing the proven-dead `NextSongPanel`, 12,220 B):
+>
+> | class | fns | bytes | pp | status |
+> |---|---|---|---|---|
+> | REG | 172 | 79,192 | 0.7485 | regalloc — **permuter BANNED** |
+> | BRANCH | 22 | 5,104 | 0.0482 | all score=5; ≈18 are **dtk REL14 tooling FPs** |
+> | SHIFT | 21 | 1,148 | 0.0109 | BZ-3's STL sibling map-mispair discriminator |
+> | CROSS+REG | 2 | 860 | 0.0081 | DateTime instruction **scheduling** swap |
+>
+> ⚠ **Not concentrated** — 217 functions across **139 units**, largest single unit
+> 14 (`keygen_xbox`), the opposite of CB-6's keygen-heavy reloc-masked subset. **No
+> shared cause; N independent defects.**
+
 > ## ⛔ Lane CB-6 — the "99 regressed COMPLETE rows" lead is a QUERY ARTIFACT
 >
 > CB-3 surfaced "99 of 5,809 `COMPLETE` rows are now below 100%" and the
