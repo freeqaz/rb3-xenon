@@ -1,11 +1,20 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `f149a4b7`, clean full rebuild): 41,213
-strict-matched functions / honest proxy 39,703 / `matched_code_percent`
-35.046990** (honest = matched − masked_equal, per the BO-8 pricing rule;
+**Current (MEASURED at HEAD `5524a135`, clean full rebuild on main): 41,218
+strict-matched functions / honest proxy 39,709 / `matched_code_percent`
+35.245968** (honest = matched − masked_equal, per the BO-8 pricing rule;
 `build/45410914/report.json`). Denominator is the whole TU5 XEX
-(`total_functions` 69,367; `matched_code` 3,707,984 B; `masked_equal` 1,510;
-`total_code` 10,580,036; `fuzzy_match_percent` 44.07144).
+(`total_functions` 69,367; `matched_code` 3,729,036 B; `masked_equal` 1,509;
+`total_code` 10,580,036).
+
+> **Wave CB (2026-07-30) — from 41,187 / 39,677 / 34.924870 to the above:
+> +31 matched, +32 honest, +0.321 pp.** Sources: the compiler flip `f149a4b7`
+> (+26 / +0.122 pp), `RGTrainerPanel::HandleChordLegend` `8bc771f5`
+> (+1 / +0.0089 pp), and three giant `Handle`s `5524a135` (+3 / +0.1867 pp).
+> ⚠ Intermediate figures quoted during the wave came from **worktree legs off
+> different bases**; only the HEAD numbers above are main-measured. Deltas within
+> a lane are valid (same worktree, same commit, split frozen); **absolute figures
+> from different legs are not comparable** to ±~2 (the split-churn floor).
 
 > ★★★ **THE COMPILER WAS WRONG FOR MONTHS, AND THE WALL BZ-1 SIZED WAS IT.**
 > Retail RB3 was built with X360 `cl.exe` build **10224** (XDK 2.0.11164); the
