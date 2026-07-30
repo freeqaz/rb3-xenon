@@ -917,7 +917,13 @@ BEGIN_HANDLERS(CamShot)
     HANDLE(set_3d_crowd, OnSetCrowdChars)
     HANDLE(add_3d_crowd, OnAddCrowdChars)
     HANDLE(clear_3d_crowd, OnClearCrowdChars)
+#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
+    // RB3-360 retail does not carry this handler. Two independent oracles over
+    // orig/45410914/band.exe agree that fn_824C4A98 builds exactly 12 Symbols
+    // and "get_crowd_dir" is not among them; the literal appears in no
+    // non-executable section of the image at all. DC3 (newer engine) added it.
     HANDLE_EXPR(get_crowd_dir, GetCrowdDir())
+#endif
     HANDLE_EXPR(gen_hide_list, 0)
     HANDLE_EXPR(clear_hide_list, 0)
     HANDLE(get_occluded, OnGetOccluded)
@@ -970,7 +976,13 @@ BEGIN_PROPSYNCS(CamShot)
     SYNC_PROP(postproc_overrides, mPostProcOverrides)
     SYNC_PROP(glow_spot, mGlowSpot)
     SYNC_PROP(crowds, mCrowds)
+#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
+    // Retail fn_824C6D80 builds exactly 25 Symbols and "crowd_state_override"
+    // is not one of them (both oracles agree; the literal is absent from every
+    // non-executable section of band.exe). The member itself IS real -- it is
+    // still saved/copied/loaded below -- only the propsync arm is DC3-only.
     SYNC_PROP(crowd_state_override, mCrowdStateOverride)
+#endif
     SYNC_PROP(ps3_per_pixel, mPS3PerPixel)
     SYNC_PROP_BITFIELD(flags, mFlags, 0xB94)
     SYNC_PROP_SET(disabled, mDisabled, )

@@ -232,10 +232,20 @@ BEGIN_HANDLERS(Hmx::Object)
     HANDLE_EXPR(is_a, IsASubclass(ClassName(), _msg->Sym(2)))
     HANDLE_EXPR(get_type, Type())
     HANDLE_EXPR(get_heap, AllocHeapName())
+#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
+    // Retail fn_8275BD78 builds exactly 23 Symbols; get_types_list is not one
+    // of them, and the literal is absent from every non-executable section of
+    // band.exe. rb3-Wii's chain also lacks it. DC3-only.
     HANDLE(get_types_list, OnGetTypeList)
+#endif
     HANDLE_ARRAY(mTypeDef)
+#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
+    // Retail's 23-Symbol chain has neither; the literals DO exist elsewhere in
+    // the image (MsgSource), so this is structural evidence only -- but both
+    // oracles agree they are absent from THIS body, and rb3-Wii lacks them too.
     HANDLE(add_sink, OnAddSink)
     HANDLE(remove_sink, OnRemoveSink)
+#endif
     Export(_msg, false);
 END_HANDLERS
 
