@@ -37,7 +37,6 @@ BEGIN_HANDLERS(RndAnimatable)
     HANDLE_ACTION(stop_animation, StopAnimation())
     HANDLE_EXPR(is_animating, IsAnimating())
     HANDLE(convert_frames, OnConvertFrames)
-    HANDLE(list_flow_labels, OnListFlowLabels)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(RndAnimatable)

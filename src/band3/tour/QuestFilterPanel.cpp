@@ -424,9 +424,6 @@ BEGIN_HANDLERS(QuestFilterPanel)
     // ??0Symbol@@QAA@PBD@Z string args inside QuestFilterPanel::Handle
     // (0x82B7AAE8) are exactly update_details, handle_leader_toggled_filters,
     // handle_filter_selected, are_current_filters_valid -- no cheat_* entries.
-    HANDLE_ACTION(cheat_win_quest, CheatWinQuest())
-    HANDLE_ACTION(cheat_cycle_challenge, CheatCycleChallenge())
-    HANDLE_ACTION(cheat_cycle_setlist, CheatCycleSetlist())
 #endif
     HANDLE_EXPR(update_details, 0)
     HANDLE_ACTION(handle_leader_toggled_filters, HandleLeaderToggledFilters(_msg->Int(2)))

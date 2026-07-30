@@ -106,7 +106,6 @@ HANDLE_ACTION(set_current_preview_file, SetCurrentPreviewFile(_msg->Str(2)))
 HANDLE_ACTION(download_preview_file, AddToDownloadQueue(_msg->Str(2)))
 HANDLE_EXPR(is_downloading_file, IsDownloadingFile(_msg->Str(2)))
 HANDLE_EXPR(allow_preview_download, AllowPreviewDownload(_msg->Str(2)))
-HANDLE_EXPR(is_playing, IsPlaying())
 HANDLE_SUPERCLASS(MsgSource)
 END_HANDLERS
 

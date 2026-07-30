@@ -387,7 +387,6 @@ BEGIN_HANDLERS(TaskMgr)
     HANDLE_EXPR(total_tick, mSongPos.GetTotalTick())
     HANDLE(time_til_next, OnTimeTilNext)
     HANDLE_ACTION(set_seconds, SetSeconds(_msg->Float(2), _msg->Int(3)))
-    HANDLE_ACTION(set_auto_seconds_beats, mAutoSecondsBeats = _msg->Int(2))
 END_HANDLERS
 
 void TaskMgr::Terminate() { SetName(nullptr, nullptr); }

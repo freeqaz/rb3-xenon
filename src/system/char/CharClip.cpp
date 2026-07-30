@@ -352,7 +352,6 @@ BEGIN_HANDLERS(CharClip)
     HANDLE(groups, OnGroups)
     HANDLE_EXPR(shares_groups, SharesGroups(_msg->Obj<CharClip>(2)))
     HANDLE(has_group, OnHasGroup)
-    HANDLE_EXPR(get_clip_events, GetClipEvents())
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

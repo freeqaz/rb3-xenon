@@ -67,19 +67,6 @@ BEGIN_HANDLERS(WorldDir)
         MILO_LOG("World msg: %s\n", sym);
     }
 #ifdef WORLDDIR_DC3_TAIL
-    HANDLE(get_physics_mgr, OnGetPhysicsManager)
-    HANDLE_ACTION(sync_physics, mPhysicsMgr->SyncObjects(_msg->Int(2)))
-    HANDLE_ACTION(
-        reset_collidable_trans, GetPhysicsManager()->ResetTrans(_msg->Obj<Hmx::Object>(2))
-    )
-    HANDLE_ACTION(
-        set_physics_driven,
-        GetPhysicsManager()->MakePhysicsDriven(_msg->Obj<Hmx::Object>(2))
-    )
-    HANDLE_ACTION(
-        set_anim_driven, GetPhysicsManager()->MakeAnimDriven(_msg->Obj<Hmx::Object>(2))
-    )
-    HANDLE_ACTION(reset_trans, GetPhysicsManager()->ResetTrans(_msg->Obj<Hmx::Object>(2)))
 #endif
     HANDLE_MEMBER_PTR((&mLightPresetMgr))
     HANDLE_SUPERCLASS(PanelDir)

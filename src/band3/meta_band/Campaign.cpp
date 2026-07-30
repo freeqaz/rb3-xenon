@@ -1030,9 +1030,6 @@ BEGIN_HANDLERS(Campaign)
     // exactly our first 41 entries, ending at `get_primary_band_logo_tex` —
     // `cheat_next_campaign_level` / `get_cheat_meta_level` / `cheat_reload_data`
     // are absent. Gate per-TU with /DRB3_STRIP_CHEAT_HANDLERS.
-    HANDLE_ACTION(cheat_next_campaign_level, CheatNextMetaLevel())
-    HANDLE_EXPR(get_cheat_meta_level, GetCheatMetaLevel())
-    HANDLE_ACTION(cheat_reload_data, CheatReloadCampaignData())
 #endif
     // Retail X360 ships none of the three cheat handlers: the in-COMDAT
     // local-static Symbol chain of fn_825A71D8 ends at get_primary_band_logo_tex

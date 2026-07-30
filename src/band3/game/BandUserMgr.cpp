@@ -537,14 +537,6 @@ BEGIN_HANDLERS(BandUserMgr)
     HANDLE_EXPR(foreach_local_user, ForEachUser(_msg, 0x4002))
     HANDLE_EXPR(get_num_participants, GetNumParticipants())
     HANDLE_EXPR(get_num_local_participants, GetNumLocalParticipants())
-    HANDLE_EXPR(debug_get_user_from_pad, GetUserFromPad(_msg->Int(2)))
-    HANDLE_EXPR(
-        debug_get_controller_type_override, DebugGetControllerTypeOverride(_msg->Int(2))
-    )
-    HANDLE_ACTION(
-        debug_set_controller_type_override,
-        DebugSetControllerTypeOverride(_msg->Int(2), (ControllerType)_msg->Int(3))
-    )
     HANDLE_MESSAGE(ProfilePreDeleteMsg)
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_SUPERCLASS(UserMgr)

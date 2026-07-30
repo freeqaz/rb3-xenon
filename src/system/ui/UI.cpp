@@ -989,7 +989,6 @@ BEGIN_HANDLERS(UIManager)
     HANDLE_MEMBER_PTR(mSink)
     // Retail lacks set_sink, is_game_screen_active and the 5 dev handlers below,
     // but gating ANY of them out is MEASURED net-negative -- see the NOTE below.
-    HANDLE_ACTION(set_sink, mSink = _msg->Obj<Hmx::Object>(2))
     HANDLE_ACTION(use_joypad, UseJoypad(_msg->Int(2), true))
     HANDLE_ACTION(set_virtual_dpad, mJoyClient->SetVirtualDpad(_msg->Int(2)))
     HANDLE_ACTION(push_screen, PushScreen(_msg->Obj<UIScreen>(2)))
@@ -1007,7 +1006,6 @@ BEGIN_HANDLERS(UIManager)
     HANDLE(is_resource, OnIsResource)
     HANDLE(foreach_screen, OnForeachCurrentScreen)
     HANDLE_EXPR(went_back, WentBack())
-    HANDLE_EXPR(is_game_screen_active, IsGameScreenActive())
     // NOTE: these 5 dev/debug handlers reference the retail-stripped members
     // (now file-scope storage, see top of this region). Retail lacks them, so
     // they leave UIManager::Handle a NonMatching function either way — but they
@@ -1022,15 +1020,7 @@ BEGIN_HANDLERS(UIManager)
     // Init cleanup funclets fn_82806354 / fn_8280637C / fn_828063CC:
     // whole-binary 39737 -> 39734. Still net -3. Do not re-attempt without a
     // fix for the funclet scope-counter renumbering first.
-    HANDLE_ACTION(toggle_load_times, ToggleLoadTimes())
-    HANDLE_EXPR(showing_load_times, mOverlay->Showing())
-    HANDLE_ACTION(toggle_dev_menu, mShowDevMenu = !mShowDevMenu)
-    HANDLE_EXPR(show_dev_menu, mShowDevMenu)
     HANDLE_MEMBER_PTR(mAutomator)
-    HANDLE_ACTION(
-        fake_keyboard_action,
-        FakeKeyboardAction((JoypadButton)_msg->Int(2), (JoypadAction)_msg->Int(3))
-    )
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_MEMBER_PTR(mCurrentScreen)
 END_HANDLERS
