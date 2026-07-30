@@ -1,0 +1,37 @@
+[
+ {
+  "va": "0x8264bce8",
+  "old": "?StaticClassName@MiniLeaderboardDisplay@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@AppMiniLeaderboardDisplay@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "DECISIVE BY CALLERS. Two functions bl this VA: 0x8264bee0 (mapped ?ClassName@AppMiniLeaderboardDisplay@@) and 0x8264c178 (mapped ?SetType@AppMiniLeaderboardDisplay@@, currently matching at 100% with the 316-byte types/objects OBJ_SET_TYPE fingerprint). A class's ClassName() and SetType() call their OWN StaticClassName(), so this VA is App's. Its body builds the literal 'MiniLeaderboardDisplay' (not 'AppMiniLeaderboardDisplay') because RETAIL's App class declares OBJ_CLASSNAME(MiniLeaderboardDisplay) -- the DTA-visible type name carries no App prefix; our src/band3/meta_band/AppMiniLeaderboardDisplay.h:38 writes OBJ_CLASSNAME(AppMiniLeaderboardDisplay), which is a separate source defect filed by this lane. This resolves lane BP-6's explicitly-accepted dupname caveat (BP-6 could not discriminate bandobj vs hamobj from the string alone) and vacates the name for its true owner in the same fragment. Metric-neutral: the VA reads 0.0% before and after (it is pinned to NextSongPanel.cpp, whose obj supplies no such COMDAT)."
+ },
+ {
+  "va": "0x82319950",
+  "old": "?StaticClassName@BandStoreUIPanel@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@MiniLeaderboardDisplay@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "BP-7's StaticClassName-literal channel flags this VA CONTRADICT: the body builds 'MiniLeaderboardDisplay' while the mapped class BandStoreUIPanel declares OBJ_CLASSNAME(BandStoreUIPanel) -- and BandStoreUIPanel is one of BP-7 Part C's confirmed phantom classes (zero byte occurrences in band.exe). Corroborated structurally by this lane: 0x82319a50 (48B ClassName) and 0x82319c48 (316B SetType, carrying the exclusive 'types'/'objects' OBJ_SET_TYPE fingerprint) both bl 0x82319950, so the three form a self-consistent class-macro group. The name is freed by the 0x8264bce8 repoint in this same fragment. Costs the VA its current false 100.0% (our StaticClassName COMDAT is 128B vs retail's 88B, so it will read 0% under the correct name) -- an honest drain of reloc-masked credit, priced as such."
+ },
+ {
+  "va": "0x82319bb0",
+  "old": "??_EMetaPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+  "new": "?SyncProperty@MiniLeaderboardDisplay@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "op": "repoint",
+  "why": "12-byte vtordisp thunk; its branch target is 0x82319a80, which App's independently-and-correctly-mapped thunk 0x8264c158 (?SyncProperty@MiniLeaderboardDisplay@@$4PPPPPPPM@DE@) identifies as ?SyncProperty@MiniLeaderboardDisplay@@. A ??_E scalar-deleting-destructor thunk cannot branch to SyncProperty, so the incumbent name is impossible. The displacement encoding $4PPPPPPPM@A@ is exactly the one our hamobj/MiniLeaderboardDisplay.cpp obj emits, and the two 12-byte bodies are byte-identical under branch masking (verified directly). Its current 100.0% is reloc-masked false credit: every 12-byte vtordisp thunk in the binary is identical machine code apart from the branch relocation, which objdiff runs with functionRelocDiffs=None."
+ },
+ {
+  "va": "0x82319bd0",
+  "old": "??_ENextSongPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+  "new": "?Copy@MiniLeaderboardDisplay@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "op": "repoint",
+  "why": "Same channel as 0x82319bb0. Branch target 0x82319af0 is named ?Copy@MiniLeaderboardDisplay@@ by App's correctly-mapped thunk 0x8264c0e8. A ??_E thunk cannot branch to Copy. Our obj emits the $4PPPPPPPM@A@ Copy thunk and it is byte-identical to retail under branch masking (verified). Drains a reloc-masked false 100.0%."
+ },
+ {
+  "va": "0x82319bf0",
+  "old": "??_ESetlistToStorePanel@@$4PPPPPPPM@A@AAPAXI@Z",
+  "new": "?PostLoad@MiniLeaderboardDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "op": "repoint",
+  "why": "Same channel as 0x82319bb0. Branch target 0x82319b68 is named ?PostLoad@MiniLeaderboardDisplay@@ by App's correctly-mapped thunk 0x8264c118. A ??_E thunk cannot branch to PostLoad. Our obj emits the $4PPPPPPPM@A@ PostLoad thunk and it is byte-identical to retail under branch masking (verified). Drains a reloc-masked false 100.0%."
+ }
+]
