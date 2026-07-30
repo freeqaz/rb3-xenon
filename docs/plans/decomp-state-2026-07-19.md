@@ -1,10 +1,36 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,936 strict-matched functions / honest proxy 39,419 /
-`matched_code_percent` 34.49724** (honest = matched − masked_equal, per the BO-8
+**Current: 40,951 strict-matched functions / honest proxy 39,434 /
+`matched_code_percent` 34.507330** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
+
+> **Wave BU (2026-07-30) — +15 honest, +0.0101pp code, `masked_equal` FLAT at
+> 1517 through every leg** (so no step bought its gain with byte-fallback
+> pairings). Attributed legs, one worktree, one split:
+>
+> | step | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | base | 40936 | 1517 | 39419 | 34.497240 |
+> | +BU-1 `6c0b1e33` BandStorePanel vbase | 40945 | 1517 | 39428 | 34.504116 |
+> | +BU-2 `1ada82c1` StoreOffer 97→100/100 | 40948 | 1517 | 39431 | 34.505970 |
+> | +BU-4 `28ba1a45` reloc_disc live funnel | 40951 | 1517 | 39434 | 34.507330 |
+>
+> ✅ **The 99.8481% SetType/vbase cohort is CLOSED** (BQ-2 → BS-1 → BU-1).
+> ★★★ **Two lanes refuted their own briefs, and both refutations were the
+> finding.** BU-1: BS-1's "no rb3-Wii oracle exists for BandStorePanel" is
+> **false** — the oracle exists and that one correction solved the target.
+> BU-2: BT-1's "StoreOffer.cpp is unpinned" is **false** — it was pinned and
+> scoring 97/100; `splits.txt` uses the **bare basename** while `objects.json`
+> uses the **path**, so a path grep reports a pinned unit as unpinned.
+> ⇒ **Verify a claimed absence (of an oracle, of a pin) before building on it.**
+> ★★ **Source alone can move nothing**: BU-2's three functions compiled
+> *byte-identical to retail* and still scored 0% until map rows were added — the
+> false-0% trap masking already-correct code.
+> ★★ **Sizing the vbase channel by counting sub-100 neighbours overestimates it**
+> — BU-1 predicted +10..+20, measured +9; the 99.8/99.9 bodies were thunks with
+> no vbase adjust and none moved.
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
