@@ -1,4 +1,7 @@
 {
+ "0x827a64b8": "?IsCompletelyUnavailable@StoreOffer@@UBA_NXZ",
+ "0x827a6500": "?IDToOfferString@StorePurchaseable@@SAX_KAAVString@@@Z",
+ "0x827a6548": "??8@YA_NPBVStoreOffer@@VSymbol@@@Z",
  "0x82279060": "?LoadStickerData@PatchDir@@QAAXXZ",
  "0x8227afc0": "?BandTerminate@@YAXXZ",
  "0x8227c218": "?BandInit@@YAXXZ",

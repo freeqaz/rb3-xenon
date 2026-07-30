@@ -14,13 +14,17 @@ public:
     StorePurchaseable();
     bool Exists() const;
     static unsigned long long OfferStringToID(char const *);
+    // Inverse of OfferStringToID (retail fn_827A6500, "%016llX").
+    static void IDToOfferString(unsigned long long, String &);
     char const *CostStr() const;
     bool IsAvailable() const { return isAvailable; }
     bool IsPurchased() const { return isPurchased; }
     unsigned long long SongID() const { return songID; }
 
-    bool isAvailable; // 0x2c
-    bool isPurchased; // 0x2d
+    // Offsets verified with cl.exe /d1reportSingleClassLayoutStorePurchaseable
+    // (lane BU-2); the previous 0x2c/0x2d comments were stale by 4 bytes.
+    bool isAvailable; // 0x28
+    bool isPurchased; // 0x29
     unsigned long long songID; // 0x30
     int cost; // 0x38
 };
@@ -33,7 +37,9 @@ public:
     // Retail vtable slot +0x54 (called by the is_completely_unavailable
     // handler, fn_827827B0) — declared before Cmp. Overridden by
     // BandStoreOffer.
-    virtual bool IsCompletelyUnavailable() const = 0;
+    // Defined in StoreOffer.cpp (retail fn_827A64B8) -- NOT pure; retail emits
+    // a real body here and BandStoreOffer overrides it.
+    virtual bool IsCompletelyUnavailable() const;
     virtual bool Cmp(StoreOffer const &, Symbol) const = 0;
 
     Symbol OfferType() const {
@@ -101,6 +107,9 @@ protected:
     SongMgr *mSongMgr; // 0xd0
     std::vector<int> mSongsInOffer; // 0xd4
 };
+
+// Retail fn_827A6548 (= rb3-Wii StoreOffer.cpp:182).
+bool operator==(const StoreOffer *, Symbol);
 
 class SortCmp {
 public:
