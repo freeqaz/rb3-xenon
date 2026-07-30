@@ -219,6 +219,21 @@ def build_command(project_dir, obj, cls, scratch_obj):
             out.append("/Fo" + scratch_obj)
             continue
         out.append(a)
+    # A BARE `/d1reportSingleClassLayout` (empty `cls`) makes the MSVC front end
+    # dereference a NULL class-name string and die.  Verified 2026-07-30 (lane BR-1):
+    # under wine the same input yields a clean
+    #   `c1xx : fatal error C1001: An internal error has occurred in the compiler
+    #    (compiler file 'msc1.cpp', line 1420)`
+    # but under wibo -- which has no SEH, so the guest's own handler never runs --
+    # it is a hard SIGSEGV (exit 139) with an unattributable coredump.  This was the
+    # mechanism behind the documented "class_layout_report.py silently emits NOTHING
+    # while exiting 0" trap.  Refuse to emit the flag without a name.
+    if not cls or not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", cls):
+        raise SystemExit(
+            f"refusing to run: class name {cls!r} is empty or not a plain identifier.\n"
+            f"A bare /d1reportSingleClassLayout crashes cl.exe (MSVC C1001 ICE; hard\n"
+            f"SIGSEGV under wibo). Pass a real class name, or use --all-classes-flag\n"
+            f"semantics via /d1reportAllClassLayout if you want every class.")
     out.insert(-1, "/d1reportSingleClassLayout" + cls)
     return out, env
 
@@ -241,7 +256,23 @@ def run_report(project_dir, cls, tu=None, verbose=False):
         if verbose:
             print("# " + " ".join(shlex.quote(a) for a in argv), file=sys.stderr)
         p = subprocess.run(argv, cwd=project_dir, capture_output=True, text=True, env=env)
-    return src, p.stdout + p.stderr
+    text = p.stdout + p.stderr
+    # NEVER fail silently.  This return code used to be discarded, which is why a
+    # crashed cl.exe surfaced as "emits nothing, exits 0" instead of an error.
+    # subprocess reports signal death as a negative return code; a shell in between
+    # would translate it to 128+N.
+    signum = -p.returncode if p.returncode < 0 else (
+        p.returncode - 128 if 128 < p.returncode < 160 else 0)
+    if signum:
+        raise SystemExit(
+            f"cl.exe died from signal {signum} while reporting the layout of '{cls}'\n"
+            f"(TU {src}).  This is an MSVC front-end crash (c1xx.dll), which real\n"
+            f"Windows/wine reports as 'fatal error C1001: internal compiler error';\n"
+            f"wibo has no SEH so it becomes a hard SIGSEGV.\n"
+            f"Re-run with --verbose to get the exact command, and capture a\n"
+            f"self-contained reproducer with tools/clcrash_capture.py.\n"
+            f"--- compiler output ---\n{text.strip()[:2000]}")
+    return src, text
 
 
 # --------------------------------------------------------------------- parsing
