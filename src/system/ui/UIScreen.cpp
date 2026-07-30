@@ -136,9 +136,7 @@ void UIScreen::SetTypeDef(DataArray *data) {
 }
 
 void UIScreen::LoadPanels() {
-    if (Archive::DebugArkOrder())
-        MILO_LOG("ArkFile: ;%s\n", Name());
-
+    // NOTE: retail has no Archive::DebugArkOrder() call here (debug-only logging).
     FOREACH (it, mPanelList) {
         if (it->mAlwaysLoad || it->mPanel->IsReferenced()) {
             it->mPanel->CheckLoad();

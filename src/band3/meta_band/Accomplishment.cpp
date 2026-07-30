@@ -154,7 +154,7 @@ Symbol Accomplishment::GetFlavorText() const { return MakeString("%s_flavor", mN
 
 bool Accomplishment::GetShouldShowDenominator() const { return mShouldShowDenominator; }
 
-bool Accomplishment::ShowBestAfterEarn() const { return mShowBestAfterEarn; }
+unsigned char Accomplishment::ShowBestAfterEarn() const { return mShowBestAfterEarn; }
 
 bool Accomplishment::HideProgress() const { return mHideProgress; }
 

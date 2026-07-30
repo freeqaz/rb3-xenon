@@ -166,6 +166,14 @@ void TrainerPanel::ResetChallenge() {
     }
 }
 
+// retail fn_826CA648 (0x50 bytes, immediately before GetChallengeRestriction):
+// the challenge_success handler arm is an out-of-line member call, not the
+// inlined getter chain the rb3-Wii dev source uses.
+bool TrainerPanel::ChallengeSuccess() const {
+    return !mSections[mCurrSection].mChallenge
+        || mSections[mCurrSection].mChallenge->Success();
+}
+
 Symbol TrainerPanel::GetChallengeRestriction(int idx) {
     TrainerChallenge *tc = mSections[idx].mChallenge;
     if ((int)tc)
@@ -366,7 +374,7 @@ BEGIN_HANDLERS(TrainerPanel)
     HANDLE_ACTION(set_curr_section, SetCurrSection(_msg->Int(2)))
     HANDLE_ACTION(inc_section, StartSection((mCurrSection + 1) % (int)mSections.size()))
     HANDLE_EXPR(get_num_sections, (int)mSections.size())
-    HANDLE_EXPR(challenge_success, !mSections[mCurrSection].mChallenge || mSections[mCurrSection].mChallenge->Success())
+    HANDLE_EXPR(challenge_success, ChallengeSuccess())
     HANDLE_EXPR(get_section_name, mSections[_msg->Int(2)].mName)
     HANDLE_EXPR(get_challenge_restriction, GetChallengeRestriction(_msg->Int(2)))
     HANDLE_EXPR(has_challenge, HasChallenge(_msg->Int(2)))

@@ -458,7 +458,7 @@ Hmx::Object *CopyObject(
     to->Copy(from, ty);
     if (setProxyFile) {
         ObjectDir *dir2 = dynamic_cast<ObjectDir *>(to);
-        if (dir2 && dir2->InlineProxyType() != kInlineAlways) {
+        if (dir2) {
             ObjectDir *dir1 = dynamic_cast<ObjectDir *>(from);
             dir2->SetProxyFile(dir1->ProxyFile(), false);
         }

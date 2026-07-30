@@ -1300,6 +1300,7 @@ extern Symbol is_tour_available;
 extern Symbol is_tour_complete;
 extern Symbol is_tuning;
 extern Symbol is_ugc;
+extern Symbol is_ugc_plus;
 extern Symbol is_underway;
 extern Symbol is_unloaded;
 extern Symbol is_unlocking_modifiers;

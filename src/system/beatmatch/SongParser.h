@@ -121,7 +121,9 @@ public:
     };
 
     SongParser(InternalSongParserSink &, int, TempoMap *&, MeasureMap *&, int);
-    virtual ~SongParser() {}
+    // NOTE: no user-declared destructor. Retail's ~SongParser emits no vptr
+    // store, which cl 10224 only omits for an implicitly-generated dtor; an
+    // empty `virtual ~SongParser() {}` costs 3 surplus instructions here.
     virtual void OnNewTrack(int);
     virtual void OnEndOfTrack();
     virtual void OnAllTracksRead();

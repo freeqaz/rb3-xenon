@@ -154,14 +154,23 @@ void SelectDifficultyPanel::PushSongDetailsToScreen(const MetaPerformer *mp) {
     static Message update_preview_song("update_preview_song", 0, 0, 0);
     update_preview_song[0] = theSong;
 
-    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-        TheSongMgr.GetSongIDFromShortName(theSong, true)
-    );
+    int songID = TheSongMgr.GetSongIDFromShortName(theSong, true);
+    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
     if (data && data->HasAlbumArt()) {
         if (TheSongMgr.IsSongMounted(theSong)) {
             update_preview_song[1] = TheSongMgr.GetAlbumArtPath(theSong);
-        } else
+        } else {
             update_preview_song[1] = gNullStr;
+            // RB3-360 retail only (absent from the rb3-Wii dev source): when the
+            // song has album art but isn't mounted, kick off a mount so the art
+            // becomes available. Ground truth = retail's TGT-only block after
+            // the not-mounted gNullStr store: ContentName(theSong, true), null
+            // check, then TheContentMgr vtable slot 0x70 == MountContent(Symbol).
+            const char *contentName = TheSongMgr.ContentName(theSong, true);
+            if (contentName) {
+                TheContentMgr.MountContent(contentName);
+            }
+        }
     } else
         update_preview_song[1] = gNullStr;
 

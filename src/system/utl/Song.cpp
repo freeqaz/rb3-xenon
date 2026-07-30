@@ -346,7 +346,8 @@ void Song::Load() {
     }
     MILO_ASSERT(sCallback, 0xF8);
     sCallback->Preload();
-    Unload();
+    // Qualified call: retail emits a direct `bl Song::Unload`, not a vtable dispatch.
+    Song::Unload();
     if (mSongName.Null())
         return;
     else
@@ -377,29 +378,27 @@ void Song::JumpTo(int tick) {
 void Song::LoadSong() {
     DataArray *cfg = TheFakeSongMgr->GetSongConfig(mSongName);
     CreateSong(mSongName, cfg, &mHxSongData, &mHxMaster);
-    if (mHxSongData && mHxMaster) {
-        RndPollable *poll = dynamic_cast<RndPollable *>(MainDir());
-        if (poll)
-            poll->Enter();
-        mSongEndFrame = mHxMaster->SongDurationMs() / 1000.0f;
-        if (mSongName != mLastLoadedSong) {
-            SetLoopStart(0);
-            SetLoopEnd(mSongEndFrame);
-        } else {
-            if (mLoopPoints.x > mSongEndFrame)
-                SetLoopStart(mSongEndFrame);
-            if (mLoopPoints.y > mSongEndFrame)
-                SetLoopEnd(mSongEndFrame);
-        }
-        JumpTo(0);
-        sCallback->ProcessBookmarks(GetBookmarks());
-        if (SystemConfig("milo_tool")->FindInt("mute_song")) {
-            mHxMaster->GetHxAudio()->SetMasterVolume(-96.0f);
-        }
-        mLastLoadedSong = mSongName;
+    // NOTE: retail has no `if (mHxSongData && mHxMaster)` guard here (both
+    // null tests are absent from the retail instruction stream).
+    RndPollable *poll = dynamic_cast<RndPollable *>(MainDir());
+    if (poll)
+        poll->Enter();
+    mSongEndFrame = mHxMaster->SongDurationMs() / 1000.0f;
+    if (mSongName != mLastLoadedSong) {
+        SetLoopStart(0);
+        SetLoopEnd(mSongEndFrame);
     } else {
-        MILO_NOTIFY("Could not create song");
+        if (mLoopPoints.x > mSongEndFrame)
+            SetLoopStart(mSongEndFrame);
+        if (mLoopPoints.y > mSongEndFrame)
+            SetLoopEnd(mSongEndFrame);
     }
+    JumpTo(0);
+    sCallback->ProcessBookmarks(GetBookmarks());
+    if (SystemConfig("milo_tool")->FindInt("mute_song")) {
+        mHxMaster->GetHxAudio()->SetMasterVolume(-96.0f);
+    }
+    mLastLoadedSong = mSongName;
 }
 
 void Song::AddSection(Symbol section, float beat) {

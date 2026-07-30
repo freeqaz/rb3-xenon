@@ -28,7 +28,7 @@ public:
     };
 
     ChordShapeGenerator();
-    virtual ~ChordShapeGenerator() {}
+    // NOTE: no user-declared destructor (implicit dtor omits the vptr store).
     OBJ_CLASSNAME(ChordShapeGenerator);
     OBJ_SET_TYPE(ChordShapeGenerator);
     virtual DataNode Handle(DataArray *, bool);

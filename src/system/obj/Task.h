@@ -20,7 +20,12 @@ enum TaskUnits {
 class Task : public Hmx::Object {
 public:
     Task();
+#ifdef HX_NATIVE
     virtual ~Task();
+#endif
+    // X360: no user-declared destructor. ~Task's body is native-only, and an
+    // empty user-declared dtor would make cl 10224 emit a surplus Task vptr
+    // store inside every derived destructor that inlines it (e.g. ~ScriptTask).
     virtual void Poll(float) = 0;
 
 #ifdef HX_NATIVE

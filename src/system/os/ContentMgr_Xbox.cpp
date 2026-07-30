@@ -24,7 +24,7 @@ const char *kContentRootFormat = "cnt%08x";
 XboxContent::XboxContent(const XCONTENT_CROSS_TITLE_DATA &data, int i2, int i3, bool b4)
     : mOverlapped(0), mLicenseBits(0), mValidLicenseBits(0),
       mRoot(MakeString(kContentRootFormat, i2)), mContentPath(MakeString("%s:", mRoot.c_str())),
-      mState(kUnmounted), mPadNum(i3), mPendingDelete(0), mCorrupt(0), mLRM(0) {
+      mState(kUnmounted), mPadNum(i3), mPendingDelete(0), mLRM(0) {
     MILO_ASSERT(mRoot.size() < kContentRootMaxLength, 0x6F);
     MILO_ASSERT(mPadNum < kNumberOfBuffers, 0x70);
     mXData = data;

@@ -412,6 +412,15 @@ bool BandSongMetadata::IsUGC() const {
     return GameOrigin() == ugc || GameOrigin() == ugc_plus;
 }
 
+// retail fn_8259E890 (between IsUGC and IsDownload): one function-local lazy
+// static "ugc_plus" + GameOrigin() compare (cntlzw/srwi == idiom). Reached
+// from the retail-only `is_ugc_plus` handler arm; absent from the rb3-Wii dev
+// source, which inlines the ugc_plus test into `is_ugc`.
+bool BandSongMetadata::IsUGCPlus() const {
+    static Symbol ugc_plus("ugc_plus");
+    return GameOrigin() == ugc_plus;
+}
+
 const char *BandSongMetadata::MidiUpdate() const {
     if (mHasDiscUpdate)
         return MakeString("./songs/updates/%s/%s_update.mid", mShortName, mShortName);
@@ -575,8 +584,9 @@ BEGIN_HANDLERS(BandSongMetadata)
     HANDLE_EXPR(year_released, mDateReleased.Year())
     HANDLE_EXPR(year_recorded, mDateRecorded.Year())
     HANDLE_EXPR(length_ms, mLengthMs)
-    HANDLE_EXPR(has_part, HasPart(_msg->Sym(2)))
+    HANDLE_EXPR(has_part, HasPart(_msg->Sym(2), false))
     HANDLE_EXPR(is_ugc, IsUGC())
+    HANDLE_EXPR(is_ugc_plus, IsUGCPlus())
     HANDLE_EXPR(is_download, IsDownload())
     HANDLE_EXPR(rating, mRating)
     HANDLE_SUPERCLASS(SongMetadata)

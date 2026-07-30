@@ -208,7 +208,14 @@ Symbol TourProgress::GetVenueForCurrentGig() const {
 }
 
 bool TourProgress::IsTourComplete() const {
-    return mOnTour && AreAllTourGigsComplete();
+    // retail branches AWAY on mOnTour != 0 (bne forward) and falls through to
+    // "return false" — that is an early-return, not a short-circuit &&.
+    if (!mOnTour)
+        return false;
+    // retail's is_tour_complete tail carries an EXTRA subic/subfe boolify that
+    // the are_all_tour_gigs_complete arm does not — i.e. the call result is
+    // re-converted here, which also stops MSVC tail-merging the two arms.
+    return AreAllTourGigsComplete() != 0;
 }
 
 bool TourProgress::AreAllTourGigsComplete() const {
@@ -228,24 +235,17 @@ Symbol TourProgress::GetTourLeaderboardGoal() const {
 
 bool TourProgress::DoesTourHaveLeaderboard() const {
     MILO_ASSERT(m_symTourDesc != "", 0x19E);
+    // RB3-360 retail has no null guard here either.
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return false;
-    else {
-        MILO_ASSERT(pTourDesc, 0x1A6);
-        return pTourDesc->HasLeaderboardGoal();
-    }
+    return pTourDesc->HasLeaderboardGoal();
 }
 
 int TourProgress::GetNumTotalGigs() const {
     MILO_ASSERT(m_symTourDesc != "", 0x1AE);
+    // RB3-360 retail has no null guard here (verified: TGT goes straight from
+    // GetTourDesc into GetNumGigs with no cmplwi/branch).
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return 0;
-    else {
-        MILO_ASSERT(pTourDesc, 0x1B6);
-        return pTourDesc->GetNumGigs();
-    }
+    return pTourDesc->GetNumGigs();
 }
 
 void TourProgress::SetNumCompletedGigs(int num) {
@@ -256,7 +256,7 @@ void TourProgress::SetNumCompletedGigs(int num) {
 int TourProgress::GetCurrentGigNum() const { return mCurrentGigNum; }
 
 int TourProgress::GetNumStarsForGig(int gig) const {
-    if (gig >= (int)unk70.size())
+    if (gig >= unk70.size())
         return 0;
     else
         return unk70[gig];
@@ -311,18 +311,18 @@ bool TourProgress::GetWonQuest() const { return mWonQuest; }
 void TourProgress::SetWonQuest(bool won) { mWonQuest = won; }
 
 int TourProgress::GetTotalStarsForTour() const {
+    // RB3-360 retail has no null guard here either.
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return 0;
-    else {
-        MILO_ASSERT(pTourDesc, 0x22D);
-        return pTourDesc->GetNumStarsPossibleForTour();
-    }
+    return pTourDesc->GetNumStarsPossibleForTour();
 }
 
 int TourProgress::GetNumStars() const {
     int num = mNewStars;
     for (std::vector<int>::const_iterator it = unk70.begin(); it != unk70.end(); ++it) {
+        // NOTE (lane CB-7a): retail emits `add rD,rD,rElem`, we emit
+        // `add rD,rElem,rD`. `+=`, `num + *it`, `*it + num` and a hoisted temp
+        // all produce byte-identical code — MSVC canonicalises the commutative
+        // operand order, so this is not source-drivable. 2 diff_arg, both here.
         num += *it;
     }
     return num;
@@ -333,7 +333,8 @@ Symbol TourProgress::GetTourStatus(int i) const {
 }
 
 int TourProgress::GetNumStarsForTourStatus(int i) const {
-    return TheTour->GetStarsForTourStatus(GetTourStatus(i));
+    Symbol status = GetTourStatus(i);
+    return TheTour->GetStarsForTourStatus(status);
 }
 
 bool TourProgress::DoesTourStatusExist(int i) const {

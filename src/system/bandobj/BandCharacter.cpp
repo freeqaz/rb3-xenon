@@ -439,23 +439,28 @@ void BandCharacter::Poll() {
         if (Showing()) {
             // Update singalong weight
             if (unk6b0) {
-                unsigned int showWeight = 0.0f;
-                if (wasShowing && MinLod() < 1) {
-                    showWeight = 1;
-                }
+                // SIGNED, not unsigned: retail sign-extends (`extsw`) before the
+                // std/lfd/fcfid int->float path; `unsigned int` makes MSVC emit
+                // `rldicl r11,r11,0,32` (zero-extend) instead.
+                int showWeight = (wasShowing && MinLod() < 1) ? 1 : 0;
                 unk6b0->SetWeight((float)showWeight);
             }
 
             // Sync outfit character state
             if (mOutfitDir) {
                 mOutfitDir->SetTeleported(mTeleported);
-                mOutfitDir->SetMinLod(MinLod());
+                // Bind the object BEFORE the call: `A->SetMinLod(MinLod())`
+                // evaluates args right-to-left, loading MinLod() before A, but
+                // retail loads A first (it wrote the plain member assignment).
+                Character *outfit = mOutfitDir;
+                outfit->SetMinLod(MinLod());
             }
 
             // Sync instrument character state
             if (mInstDir) {
                 mInstDir->SetTeleported(mTeleported);
-                mInstDir->SetMinLod(MinLod());
+                Character *inst = mInstDir;
+                inst->SetMinLod(MinLod());
             }
 
 #ifdef HX_NATIVE

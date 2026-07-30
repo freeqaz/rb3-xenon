@@ -119,7 +119,7 @@ void CommonPhraseCapturer::LocalFail(Player *p, int i2, int i3) {
     ExtendPhraseStates(i2);
     mPhraseStates[i2].unk0 = 2;
     mPhraseStates[i2].unk8 |= 1 << i3;
-    if (TheSongDB->IsUnisonPhrase(i2) && GetTrackPanel()) {
+    if (TheSongDB->IsUnisonPhrase(i2)) {
         GetTrackPanel()->UnisonPlayerFailure(p);
     }
 }

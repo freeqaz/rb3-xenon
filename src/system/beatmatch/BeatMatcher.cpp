@@ -425,7 +425,8 @@ void BeatMatcher::SetAutoplayAccuracy(float f) { HX_NO_WATCHER_GUARD(); mWatcher
 void BeatMatcher::DrivePitchBendExternally(bool b) { mDrivingPitchBendExternally = b; }
 
 void BeatMatcher::SetPitchBend(int i1, float f2, bool b3) {
-    if (mTrackTypes[i1] != kTrackDrum && b3 == mDrivingPitchBendExternally
+    if (mTrackTypes[i1] != kTrackDrum && mTrackTypes[i1] != kTrackKeys
+        && mTrackTypes[i1] != kTrackRealKeys && b3 == mDrivingPitchBendExternally
         && f2 != unk50[i1] && !b3) {
         mAudio->SetSpeed(i1, mUserGuid, powf(1.059463143348694, f2));
     }

@@ -225,6 +225,16 @@ void CustomizePanel::UpdateAssetProvider() {
 // Remaining Handle diffs: this-spill vs remat at the customize-state arm and
 // an inverted has_license/has_patch bool-normalize cross-jump direction.
 void CustomizePanel::UpdateMakeupProvider(Symbol type) {
+    // retail fn_82614E60 is 0x80 bytes and is CALLED (not inlined) from the
+    // update_makeup_provider arm. Its body is: two guarded function-local
+    // static Symbol inits ("eyes" @0x82011054, "lips" @0x820C31C0) whose
+    // *initializers* survive even though the MILO_ASSERT that consumed them is
+    // compiled out — that bulk is what keeps MSVC from inlining it. Declaring
+    // them locally reproduces retail's size naturally, instead of forcing
+    // __declspec(noinline) (which a previous lane found reshuffles the whole
+    // function).
+    static Symbol eyes("eyes");
+    static Symbol lips("lips");
     MILO_ASSERT(type == eyes || type == lips, 0x1A9);
     mMakeupProvider->Update(type);
 }

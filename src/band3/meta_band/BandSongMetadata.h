@@ -58,6 +58,7 @@ public:
     bool HasSolo(Symbol) const;
     Symbol HasSoloSym(Symbol) const;
     bool IsUGC() const;
+    bool IsUGCPlus() const;
     const char *MidiUpdate() const;
     bool IsDownload() const;
 

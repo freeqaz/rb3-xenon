@@ -616,7 +616,10 @@ void Player::StopDeployingBandEnergy(bool b) {
     }
     SetEnergyAutomatically(mBandEnergy);
     if (CanDeployOverdrive()) {
-        mUser->GetTrack()->SetCanDeploy(true);
+        Track *track = mUser->GetTrack();
+        if (track) {
+            track->SetCanDeploy(true);
+        }
         if (mTrackType == kTrackDrum) {
             EnableDrumFills(true);
         }

@@ -177,7 +177,8 @@ void UIProxy::UpdateDir() {
 
 DataNode UIProxy::OnSetProxyDir(DataArray *da) {
     if (da->Size() == 2) {
-        SetProxyDir(FilePath(da->Str(2)), da->Int(3));
+        FilePath fp(da->Str(2));
+        SetProxyDir(fp, da->Int(3));
     } else
         SetProxyDir(da->Obj<RndDir>(2));
     return DataNode(1);

@@ -123,15 +123,21 @@ END_HANDLERS
 BEGIN_CUSTOM_PROPSYNC(FileMerger::Merger)
     SYNC_PROP(name, o.mName)
     SYNC_PROP(selected, o.mSelected)
-    SYNC_PROP(loaded, o.mLoaded)
+    SYNC_PROP_SET(loaded, o.mLoaded, )
     SYNC_PROP(dir, o.mDir)
     SYNC_PROP(proxy, o.mProxy)
     SYNC_PROP(subdirs, (int &)o.mSubdirs)
-    SYNC_PROP(preclear, o.mPreClear)
-    SYNC_PROP(loaded_objects, o.mLoadedObjects) {
+    SYNC_PROP(preclear, o.mPreClear) {
+        static Symbol _s("loaded_objects");
+        if (sym == _s && (_op & (kPropSize | kPropGet))) {
+            return PropSync(o.mLoadedObjects, _val, _prop, _i + 1, _op);
+        }
+    }
+    {
         static Symbol _s("loaded_subdirs");
-        if (sym == _s && (_op & (kPropGet | kPropSize)))
+        if (sym == _s && (_op & (kPropSize | kPropGet))) {
             return PropSync(o.mLoadedSubdirs, _val, _prop, _i + 1, _op);
+        }
     }
 END_CUSTOM_PROPSYNC
 

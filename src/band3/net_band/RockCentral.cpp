@@ -965,12 +965,14 @@ void RockCentral::RecordPerformance(
         ADD_DATA_PAIR(rolls_hit_completely, stats.GetRollsHitCompletely());
         ADD_DATA_PAIR(roll_count, stats.GetRollCount());
         ADD_DATA_PAIR(hopo_gems_hopoed, stats.GetHopoGemsHopoed());
-        ADD_DATA_PAIR(hopo_gems_strummed, stats.GetHopoGemsStrummed());
+        // Retail declares hopo_gems_strummed but never inserts it: MSVC hoists a
+        // static Symbol's address above the guard `bne` and spills it only when the
+        // address is live past the init block. Retail does that for hopo_gem_count
+        // (-> stack 0x80) and high_gems_hit_high (-> 0x88) but NOT for
+        // hopo_gems_strummed, and the paired field loads are mHopoGemCount (0x1a8)
+        // and mHighGemsHitHigh (0x1ac). Keep the declaration, drop the pair.
         ADD_DATA_PAIR(hopo_gem_count, stats.GetHopoGemCount());
-        // Retail declares high_gems_hit_high (lbl_82CC938C) but never inserts it --
-        // the Symbol static exists and is constructed, yet the only references to
-        // it in fn_824FE400 are its own guard-init block. Keep the declaration,
-        // drop the pair.
+        ADD_DATA_PAIR(high_gems_hit_high, stats.GetHighGemsHitHigh());
         ADD_DATA_PAIR(high_gems_hit_low, stats.GetHighGemsHitLow());
         ADD_DATA_PAIR(high_fret_gem_count, stats.GetHighFretGemCount());
         ADD_DATA_PAIR(sustain_gems_hit_completely, stats.GetSustainGemsHitCompletely());

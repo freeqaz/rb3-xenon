@@ -176,6 +176,13 @@ void MoggClip::SetVolume(float vol) {
     }
 }
 
+void MoggClip::SetControllerVolume(float vol) {
+    mControllerVolume = vol;
+    if (mStream) {
+        mStream->Stream::SetVolume(mControllerVolume + mVolume);
+    }
+}
+
 void MoggClip::SetPan(float f1) {
     if (mNumChannels == 1) {
         SetPan(0, f1);

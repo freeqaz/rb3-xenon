@@ -55,12 +55,9 @@ public:
     void SetLoopStart(int i) { mLoopStartSample = i; }
     void SetLoopEnd(int i) { mLoopEndSample = i; }
     void EndLoop();
-    void SetControllerVolume(float vol) {
-        mControllerVolume = vol;
-        if (mStream) {
-            mStream->Stream::SetVolume(mControllerVolume + mVolume);
-        }
-    }
+    // Out-of-line (matches rb3-Wii MoggClip.h:51 + retail's direct `bl` at the
+    // SfxInst::UpdateVolume call site); an in-class body would inline instead.
+    void SetControllerVolume(float);
     bool IsStreaming() const;
     void FadeOut(float);
     void UnloadWhenFinishedPlaying(bool);

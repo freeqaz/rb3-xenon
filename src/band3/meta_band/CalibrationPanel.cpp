@@ -438,8 +438,10 @@ void CalibrationPanel::TerminateHwCalibrationState() {
 }
 
 void CalibrationPanel::InitializeVisuals() {
-    mDir->Find<RndGroup>("cal_visuals.grp", true)->SetShowing(mEnableVideo);
-    mDir->Find<RndGroup>("cal_audio.grp", true)->SetShowing(mEnableAudio);
+    RndGroup *visuals = mDir->Find<RndGroup>("cal_visuals.grp", true);
+    visuals->SetShowing(mEnableVideo);
+    RndGroup *audio = mDir->Find<RndGroup>("cal_audio.grp", true);
+    audio->SetShowing(mEnableAudio);
     mDir->Find<RndGroup>("prog_bar.grp", true)->SetShowing(false);
     if (mHardwareMode) {
         mDir->Find<RndGroup>("cal_metronome.grp", true)->SetShowing(false);
@@ -468,7 +470,7 @@ void CalibrationPanel::InitializeVisuals() {
                 mDir->Find<RndMesh>("drum_hit.mesh", true)->SetShowing(true);
                 break;
             default:
-                mDir->Find<RndMesh>("button_press_ps3.mesh", true)->SetShowing(true);
+                mDir->Find<RndMesh>("button_press_xbox.mesh", true)->SetShowing(true);
                 break;
             }
         }

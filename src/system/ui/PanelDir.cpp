@@ -188,7 +188,6 @@ BEGIN_HANDLERS(PanelDir)
     if (sym != "button_down") {
         HANDLE_MEMBER_PTR(mFocusComponent)
     }
-    HANDLE_EXPR(loaded_dir, this)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(PanelDir)

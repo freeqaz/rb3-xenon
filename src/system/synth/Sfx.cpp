@@ -73,9 +73,7 @@ void SfxInst::UpdateVolume() {
     FOREACH (it, mMoggClips) {
         MoggClip *clip = (*it)->GetMoggClip();
         if (clip) {
-            // rb3-Wii calls MoggClip::SetControllerVolume here; RB3-360's xenon
-            // MoggClip lacks it (value-stored MoggClipMap drift) -> SetVolume.
-            clip->SetVolume(mRandVol + mVolume + mOwner->Faders().GetVal());
+            clip->SetControllerVolume(mRandVol + mVolume + mOwner->Faders().GetVal());
         }
     }
 }
