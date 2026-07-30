@@ -2,9 +2,24 @@
 
 Reverse engineering the register allocation pipeline in Microsoft's Xbox 360 C++ compiler (`cl.exe` v16.00.11886, Visual Studio 2010 era) to understand why recompiled code produces different register assignments from the original binary.
 
+> ⚠ **SCOPE NOTE (2026-07-30, lane CB-3):** this research was conducted against
+> `cl.exe` build **11886** — DC3's compiler, and our fleet default until commit
+> `f149a4b7`. **RB3 retail was built with build 10224**, and we now compile with
+> it. The *mechanism* described here (BSF-based graph coloring, symbol-ID
+> iteration order, interference constraints) is a property of the allocator and
+> **still applies**. What does **not** carry over unchanged: any specific
+> **c2.dll RVA** (e.g. `0x026780` — an 11886 offset), and any **per-function
+> AT_LIMIT verdict**, several of which are simply stale (e.g.
+> `FastInvert`, previously cited as an unfixable f30/f31 swap, now **100.0%**).
+> ⚠★ **Do NOT expect a toolchain change to clear regswap walls.** `FastInvert` is
+> **absent from the flip's 48-function delta** — it was closed by earlier
+> body-port work — and lane CB-3 measured **0 of 2,576 AT_LIMIT rows** reaching
+> 100 via the flip. These are stale verdicts, not compiler-liberated ones.
+> Full explanation: `docs/decomp/patterns/unfixable-compiler.md`.
+
 ## Background
 
-The rb3-xenon decompilation (and its sibling DC3 decomp) targets a **retail release build** (`/O1`, no LTCG) for Xbox 360 (PowerPC). The compiler is MSVC for Xbox 360, targeting the PowerPC 970 (Xenon) architecture. When recompiling C++ source that produces semantically identical code, the compiler frequently assigns different registers to the same variables — causing functions to plateau at 90-97% match with no source-level fix. This research was conducted on DC3 but applies equally to rb3-xenon (same toolchain era, same flags).
+The rb3-xenon decompilation (and its sibling DC3 decomp) targets a **retail release build** (`/O1`, no LTCG) for Xbox 360 (PowerPC). The compiler is MSVC for Xbox 360, targeting the PowerPC 970 (Xenon) architecture. When recompiling C++ source that produces semantically identical code, the compiler frequently assigns different registers to the same variables — causing functions to plateau at 90-97% match with no source-level fix. This research was conducted on DC3 but applies equally to rb3-xenon (same toolchain era, same flags). ⚠ **Partly falsified (lane CB-3, 2026-07-30):** the *flags* do match, but the **compiler build does not** — DC3 is 11886, RB3 retail is 10224. The allocator mechanism transfers; specific offsets and per-function verdicts do not (see the scope note above).
 
 These "register swap" mismatches (e.g., the compiler uses r29 where the original uses r31) are the single largest category of unfixable pattern. Understanding *why* they happen required instrumenting the compiler itself.
 

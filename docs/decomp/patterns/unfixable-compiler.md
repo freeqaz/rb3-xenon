@@ -6,6 +6,74 @@ These patterns are caused by compiler optimizations or heuristics that resist si
 
 ---
 
+> ## ⚠ STATUS (2026-07-30, lane CB-3): THIS DOC WAS WRITTEN AGAINST THE WRONG COMPILER
+>
+> **This file is `dc3-decomp`'s document, imported verbatim (commit `d97d0985`).**
+> DC3 retail was built with X360 `cl.exe` build **16.00.11886.00** — which was also
+> *our* fleet default until 2026-07-30. **RB3 retail was built with build
+> `16.00.10224.00`** (XDK 2.0.11164; identified from the Rich header, see
+> `scripts/harvest/rich_header.py`). Commit `f149a4b7` flipped the fleet default to
+> 10224 (+26 matched functions, 0 losses).
+>
+> So this doc was **authored in a project where 11886 is the correct compiler and
+> imported into one where it is the wrong one.** Nothing in the original text
+> signalled that change of frame — it never names a compiler build at all. Every
+> verdict below silently carried DC3's toolchain assumption across the import.
+>
+> **Which claims are suspect, and which are not:**
+> - ⚠ **Instruction-selection verdicts are the SUSPECT class.** Which opcode the
+>   compiler picks for a given source construct is exactly what differs between
+>   compiler builds. Any "unfixable" verdict of the form *"target emits X, we emit
+>   Y"* may simply have been the wrong compiler and must be re-measured before it is
+>   trusted.
+> - ✅ **Register-allocation, instruction-scheduling and ICF *mechanisms* remain
+>   universal.** The BSF-coloring model, the interference-graph reasoning, and the
+>   ICF/COMDAT-folding sections describe how the allocator works, not which opcode
+>   it chose; they survive the compiler change. (Their *per-function verdicts* may
+>   still have moved — the mechanism is sound, the AT_LIMIT labels are stale.)
+>
+> **Measured under 10224 (lane CB-3), previously listed here as unfixable:**
+> `SfxInst::IsRunning` → **100.0%** · `StreamReceiver360::Poll` → **100.0%** ·
+> `ChunkStream::PollDecompressionWorker` → **100.0%** · `FastInvert` (listed
+> AT_LIMIT) → **100.0%**. Line ~248's claim that the compiler versions *"differ
+> only in tie-breaking … not in fundamental allocation strategy"* is **directly
+> falsified** (the flip moved 48 functions on zero source changes).
+>
+> ⚠★★ **ATTRIBUTION CORRECTION (coordinator, 2026-07-30) — these four are NOT
+> the flip's doing.** They are at 100.0% today, but **none of them appears
+> anywhere in the flip's 48-function delta** (26 gained / 19 improved / 3
+> regressed — checked against lane CB-3's own `cb3_delta.json` and corroborated by
+> lane CB-2's independent 26-gainer census, whose units are BandCharacter,
+> inflate, BinStream, DirLoader, CharUtl, vorbis `info`, deflate, SHA1, DataFunc,
+> obj/Dir, synth/Synth, OvershellPanel, printbuf, BandDirector, Sorting,
+> SongParser, rndobj/Utl, MicNull — no Sfx, no StreamReceiver360, no ChunkStream,
+> no FastInvert). They were closed by **earlier body-port work**, which means these
+> rows had been stale for some time *before* the flip.
+> ★ **The doc's claims are falsified either way — but "stale for months" and
+> "fixed by the compiler" are different lessons**, and only the second one would
+> tempt a future lane to expect a toolchain change to clear regswap walls. It
+> won't: CB-3 measured **0 of 2,576 AT_LIMIT rows** reaching 100 via the flip.
+>
+> **Two cited claims SURVIVED re-measurement** — this doc is not wrong in only one
+> direction: `StreamReceiver360::Tag` **70.166%** and `SpotlightDrawer::Init`
+> **94.107%** are still short, and their sections still describe real walls.
+>
+> **⚠ 12 of the 21 functions cited in this doc do not exist in the RB3 binary at
+> all** — several are Dance Central code that never shipped in RB3
+> (`HamPhotoDisplay::SyncProperty`, `SkeletonChooser::ShouldWaitForRecovery`,
+> `MoveCandidate::Adjacency`). Treat every example table here as
+> *possibly-about-a-different-game* until the symbol is confirmed present.
+>
+> **⚠ The c2.dll RVA `0x026780` cited throughout indexes 11886's DLL.** It is not a
+> valid offset for our current 10224 toolchain and must be re-derived before any
+> binary-patching work.
+>
+> Statistics in this file are unsourced and undated, and have been wrong before (a
+> stale "80% success rate" claim was corrected earlier). Treat all percentages as
+> suspect.
+
+---
+
 ## ASSERT_REVS / INIT_REVS Scheduling
 
 **Prevalence:** Functions with ASSERT_REVS or INIT_REVS macro (~10%)
@@ -161,7 +229,7 @@ ORDER BY current_percent DESC;
 The MSVC Xbox 360 backend (c2.dll) uses graph-coloring register allocation:
 
 1. **Interference graph building**: Each live range becomes a node. Nodes that overlap get interference edges.
-2. **BSF-based coloring** (at c2.dll RVA `0x026780`): The allocator iterates variables by **symbol ID** (which follows declaration order in source). For each variable, it uses x86 `BSF` (Bit Scan Forward) on a bitmask of available colors to find the lowest-numbered free color.
+2. **BSF-based coloring** (at c2.dll RVA `0x026780` — ⚠ **this RVA indexes build 11886's c2.dll, NOT the 10224 DLL we now compile with**; re-derive before use, lane CB-3 2026-07-30): The allocator iterates variables by **symbol ID** (which follows declaration order in source). For each variable, it uses x86 `BSF` (Bit Scan Forward) on a bitmask of available colors to find the lowest-numbered free color.
 3. **Color→Register mapping**: Colors map to PPC registers with direction depending on register class:
    - **Volatile GPR**: top-down (first color → r11, next → r10)
    - **Callee-saved GPR**: bottom-up (first color → r29, next → r30, r31)
@@ -229,7 +297,16 @@ float z, y, x;  // Instead of x, y, z
 
 Try [Variable Declaration Order](fixable-declarations.md#variable-declaration-order) with the heuristics above. If 10+ reordering attempts don't help, the register assignment is fixed by interference constraints.
 
-**Future**: Binary patching of c2.dll's coloring loop (RVA `0x026780`) could reverse the BSF scan direction or reorder the color assignment, fixing all register swap functions at once. See `../dc3-decomp/docs/plans/compiler-instrumentation.md` for the full mechanism and address map (not present in this repo).
+**Future**: Binary patching of c2.dll's coloring loop (RVA `0x026780`) could reverse the BSF scan direction or reorder the color assignment, fixing all register swap functions at once.
+
+> ⚠ **STALE ADDRESS (lane CB-3, 2026-07-30).** `0x026780` was derived against build
+> **11886**'s c2.dll (DC3's toolchain, and our former default). We now compile with
+> build **10224**, whose c2.dll is a different binary — the offset is **not valid**
+> and must be re-derived before any patching attempt. Note also that some of the
+> register-swap functions this plan was meant to fix (e.g. `FastInvert`) have since
+> reached 100% — ⚠ **not via the compiler flip** (`FastInvert` is absent from its
+> 48-function delta), but by earlier body-port work — so re-scope the target
+> population first. See `../dc3-decomp/docs/plans/compiler-instrumentation.md` for the full mechanism and address map (not present in this repo).
 
 ### Statistical Analysis (1,288 functions scanned)
 
@@ -247,6 +324,14 @@ Analysis of cached objdiff results reveals the scope of callee-saved register sw
 
 Adjacent register pairs dominate (85%+ of all callee-saved swaps), confirming the compiler versions differ only in tie-breaking within the coloring loop, not in fundamental allocation strategy.
 
+> ⚠ **FALSIFIED (2026-07-30, lane CB-3).** This sentence was written comparing DC3's
+> build against build 11886. RB3 retail is build **10224**, and switching to it moved
+> 48 functions with **zero source changes** (26 of them all the way to an exact
+> match — e.g. `BinStream::Read`, `CSHA1::Final`, `ObjectDir::SetPathName`). The
+> compiler builds therefore differ by **more** than coloring tie-breaks. The BSF
+> *mechanism* described above still stands; the inference "therefore only tie-breaking
+> differs" does not.
+
 **Variable classification of swapped entities** (173 single-pair swap functions):
 | Category | Count | % | Description |
 |----------|-------|---|-------------|
@@ -262,7 +347,7 @@ Adjacent register pairs dominate (85%+ of all callee-saved swaps), confirming th
 
 | Function | Match | Attempts | Result |
 |----------|-------|----------|--------|
-| FastInvert | 99.45% | 10+ | AT_LIMIT (f30/f31 swap) |
+| FastInvert | ~~99.45%~~ **100.0%** | 10+ | ✅ **No longer AT_LIMIT** (re-measured 2026-07-30). ⚠ **NOT the compiler flip** — absent from its 48-function delta; closed by earlier body-port work, so this row was already stale before the flip |
 | CharBonesMeshes::PoseMeshes | 99.24% | 5+ | AT_LIMIT (r10/r9, r28/r30) |
 | DxTex::ResetSurfaces | 98.4% | verified | AT_LIMIT (r28/r29 swap after extrwi fix) |
 
@@ -315,7 +400,7 @@ Changing the variable type from `bool` to pointer changes the entire code genera
 
 | Function | Match | Pattern | Notes |
 |----------|-------|---------|-------|
-| SkeletonChooser::ShouldWaitForRecovery | 92.2% | 2x subfic/subic + regswap | Changed bool→Skeleton* but dropped to 81.2% |
+| ~~SkeletonChooser::ShouldWaitForRecovery~~ | n/a | 2x subfic/subic + regswap | ⚠ **NOT PRESENT IN THE RB3 BINARY** — Dance Central code, inherited with this doc from dc3-decomp (lane CB-3, 2026-07-30) |
 
 ---
 
@@ -504,7 +589,7 @@ bl   Select                   ; call with original register
 
 | Function | Match | Gap | Notes |
 |----------|-------|-----|-------|
-| SpotlightDrawer::Init | 94.1% | ~6% | `sDefault = ptr; ptr->Select()` — target reloads sDefault for Select call |
+| SpotlightDrawer::Init | **94.107%** ✅ still a wall | ~6% | `sDefault = ptr; ptr->Select()` — target reloads sDefault for Select call. ✅ **SURVIVED re-measurement under 10224** (lane CB-3, 2026-07-30). |
 
 ---
 
@@ -549,7 +634,7 @@ These mismatches are **cosmetic** — the machine code is functionally identical
 | Function | Match | diff_arg | diff_op | Notes |
 |----------|-------|----------|---------|-------|
 | SongSortMgr::MoveOn | 94.4% | 28 | 3 | 28 lis/addi pairs + 3 register swaps |
-| HamPhotoDisplay::SyncProperty | 94.0% | 18 | 2 | Mostly address noise + float-to-int codegen |
+| ~~HamPhotoDisplay::SyncProperty~~ | n/a | 18 | 2 | ⚠ **NOT PRESENT IN THE RB3 BINARY** — Dance Central code (`Ham*`), inherited with this doc from dc3-decomp (lane CB-3, 2026-07-30) |
 
 ---
 
@@ -603,7 +688,7 @@ The shift is caused by a compiler behavior difference (guard type selection), no
 | Function | Match | Guard Target | Guard Base | Notes |
 |----------|-------|-------------|-----------|-------|
 | MoveVariant::IsRest | 98.0% | `$S4` | `$S3` | Adjacency uses ??_B in target |
-| MoveCandidate::Adjacency | 92.0% | `??_B...@51` | `$S1` | Different guard TYPE, not just number |
+| ~~MoveCandidate::Adjacency~~ | n/a | `??_B...@51` | `$S1` | ⚠ **NOT PRESENT IN THE RB3 BINARY** — Dance Central code, inherited with this doc from dc3-decomp (lane CB-3, 2026-07-30) |
 | ClipCollide::SyncWaypoint | 98.8% | `lbl_82F5ED14` | `$S2` | Same pattern, different TU |
 
 ---
@@ -682,7 +767,7 @@ gDecompressionCritSec.Exit();
 
 | Function | Match | Gap | Notes |
 |----------|-------|-----|-------|
-| ChunkStream::PollDecompressionWorker | 88.7% | ~11% | 2 genuine diffs from dead-store elimination; rest is symbol noise |
+| ChunkStream::PollDecompressionWorker | ~~88.7%~~ **100.0%** | ~11% | ✅ **No longer a wall** (re-measured 2026-07-30). ⚠ **NOT the compiler flip** (absent from its 48-function delta) — the "dead-store elimination" diagnosis was superseded by earlier work; true cause unattributed |
 
 ---
 
@@ -719,7 +804,7 @@ These mismatches are **purely cosmetic** — the machine bytes are identical, on
 
 | Function | Match | Noise Instructions | Notes |
 |----------|-------|-------------------|-------|
-| ChunkStream::PollDecompressionWorker | 88.7% | 11 of 13 mismatches | All `?A0x7ea4e606` vs `?A0x00000000` |
+| ChunkStream::PollDecompressionWorker | ~~88.7%~~ **100.0%** | 11 of 13 mismatches | ✅ **No longer a wall** (re-measured 2026-07-30). ⚠ **NOT the compiler flip** (absent from its 48-function delta) — most plausibly the **wired `obj_anon_ns_patcher.py`**, which neutralizes exactly this anon-namespace hash noise |
 | RndMat::UpdatePropertiesFromMetaMat | 96.6% | Most mismatches | `?A0x53432a53` vs `?A0x00000000` |
 
 ---
@@ -777,7 +862,7 @@ When struct members are at offsets > 0x7FFF from the base pointer, the compiler 
 
 | Function | Match | Root Cause |
 |----------|-------|------------|
-| StreamReceiver360::Tag | 70.2% | mVoice at offset 0x803c uses lwzx vs addis+subi |
+| StreamReceiver360::Tag | **70.166%** ✅ still a wall | mVoice at offset 0x803c uses lwzx vs addis+subi — ✅ **SURVIVED re-measurement under 10224** (lane CB-3, 2026-07-30). This section is still valid. |
 
 ### Scalar Deleting Destructor (??_G vs ~T + operator delete)
 
@@ -788,18 +873,36 @@ The target generates a "scalar deleting destructor" (??_G) wrapper for `delete o
 
 | Function | Match | Root Cause |
 |----------|-------|------------|
-| StreamReceiver360::Poll | 90.9% | `delete v` generates separate destructor + delete |
+| StreamReceiver360::Poll | ~~90.9%~~ **100.0%** | ✅ **No longer a wall** (re-measured 2026-07-30). ⚠ **NOT the compiler flip** (absent from its 48-function delta) — so the `??_G` scalar-deleting-destructor claim is falsified as a *current* wall, but its cause is unattributed; do not record it as a compiler-build artifact |
 
 ### cmplwi vs cmpwi for Pointer Null Checks
 
 **Typical Gap:** ~1.5%
 **Status:** Hard — compiler type-sensitivity for pointer comparisons
 
-The target uses `cmplwi` (unsigned compare) for pointer null checks, while our compiler generates `cmpwi` (signed compare). Explicit casts to `(unsigned int)` do not affect the compare instruction selection. May require compiler-level changes.
+The target uses `cmplwi` (unsigned compare) for pointer null checks, while our compiler generates `cmpwi` (signed compare). ~~Explicit casts to `(unsigned int)` do not affect the compare instruction selection. May require compiler-level changes.~~
+
+> ⚠ **FALSIFIED TWICE (2026-07-30, lane CB-3).** This is a pure
+> **instruction-selection** verdict — the suspect class — and both halves are wrong:
+> 1. **The "may require compiler-level changes" half:** `SfxInst::IsRunning`, the
+>    example cited below, now matches at **100.0%**. ⚠ But it is **absent from the
+>    compiler flip's 48-function delta**, so do *not* read this as "the compiler
+>    version fixed it" — it was closed by earlier work, and the row had been stale
+>    for some time. What is falsified is the claim that it is *currently* a wall.
+> 2. **The "casts don't help" half:** in `RGTrainerPanel::HandleChordLegend`, a
+>    `cmplwi`-vs-`cmpwi` mismatch on an *unsigned-returning* accessor
+>    (`RGState::GetFret`, mangled `…QBAIH@Z`) was closed by writing
+>    `if ((int)…GetFret(x))`. The cast **does** change compare selection — note the
+>    doc only ever tried casting to `(unsigned int)`, i.e. toward the type the value
+>    already had, which is a no-op. Casting toward **signed** is the lever. That
+>    function reached 100.0% (verified whole-binary: +1 matched, 0 lost).
+>
+> Signed-vs-unsigned compare selection follows the *type of the expression as
+> written*. Check the callee's mangled return type before assuming a wall.
 
 | Function | Match | Root Cause |
 |----------|-------|------------|
-| SfxInst::IsRunning | 98.5% | `if (ptr->GetStream())` — cmplwi vs cmpwi |
+| SfxInst::IsRunning | ~~98.5%~~ **100.0%** | ✅ **No longer a wall** (re-measured 2026-07-30). ⚠ **NOT the compiler flip** — absent from its 48-function delta; closed by earlier work |
 
 ---
 
@@ -894,7 +997,7 @@ Functions reach 99.x% AT_LIMIT with a residual ~8-instruction cluster in an inli
 
 ### Root Cause
 
-The interference graph is identical in both forms, but BSF coloring at c2.dll RVA `0x026780` (see [Register Allocation root cause](#root-cause-c2dll-register-allocator-mechanism)) picks a different color when the inlined sequence's surrounding live ranges shift. Any source-level rewrite that successfully *moves* the swap also tends to introduce *new* clusters elsewhere.
+The interference graph is identical in both forms, but BSF coloring at c2.dll RVA `0x026780` (⚠ 11886-era offset, see banner; mechanism still valid — see [Register Allocation root cause](#root-cause-c2dll-register-allocator-mechanism)) picks a different color when the inlined sequence's surrounding live ranges shift. Any source-level rewrite that successfully *moves* the swap also tends to introduce *new* clusters elsewhere.
 
 ### Detection
 
