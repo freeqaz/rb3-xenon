@@ -1,0 +1,7738 @@
+[
+ {
+  "name": "?SyncProperty@RndText@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x8245a238",
+  "win_side": "main",
+  "win_agree": 45,
+  "cands": {
+   "0x8245a238": {
+    "side": "main",
+    "unit": "default/Text",
+    "agree": 45,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8245c320": {
+    "side": "branch",
+    "unit": "default/Text",
+    "agree": 0,
+    "contra": 2,
+    "shape": 129,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SaveForEndGame@Stats@@QBAXAAVBinStream@@@Z",
+  "win": "0x82698070",
+  "win_side": "main",
+  "win_agree": 41,
+  "cands": {
+   "0x82698070": {
+    "side": "main",
+    "unit": "default/band3/game/Stats",
+    "agree": 41,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82679b40": {
+    "side": "branch",
+    "unit": "default/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 43,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewHeaderNode@SongSortByRecent@@UBAPAVHeaderSortNode@@PAVSongSortNode@@@Z",
+  "win": "0x8265c2d0",
+  "win_side": "main",
+  "win_agree": 15,
+  "cands": {
+   "0x8265c2d0": {
+    "side": "main",
+    "unit": "default/SongSortByRecent",
+    "agree": 15,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265c29c": {
+    "side": "branch",
+    "unit": "default/SongSortByRecent",
+    "agree": 0,
+    "contra": 0,
+    "shape": 37,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0CalibrationPanel@@QAA@XZ",
+  "win": "0x8260a748",
+  "win_side": "main",
+  "win_agree": 12,
+  "cands": {
+   "0x8260a748": {
+    "side": "main",
+    "unit": "default/CalibrationPanel",
+    "agree": 12,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825743e0": {
+    "side": "branch",
+    "unit": "default/CalibrationPanel",
+    "agree": 1,
+    "contra": 1,
+    "shape": 19,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??6@YAAAVBinStream@@AAV0@ABUtagBITMAPINFOHEADER@@@Z",
+  "win": "0x823fcd60",
+  "win_side": "main",
+  "win_agree": 11,
+  "cands": {
+   "0x823fcd60": {
+    "side": "main",
+    "unit": "default/Bitmap",
+    "agree": 11,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823ea0d0": {
+    "side": "branch",
+    "unit": "default/SyncStore",
+    "agree": 0,
+    "contra": 2,
+    "shape": 18,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Print@RndMesh@@UAAXXZ",
+  "win": "0x82418860",
+  "win_side": "main",
+  "win_agree": 11,
+  "cands": {
+   "0x82418860": {
+    "side": "main",
+    "unit": "default/Mesh",
+    "agree": 11,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82405d20": {
+    "side": "branch",
+    "unit": "default/Anim",
+    "agree": 0,
+    "contra": 0,
+    "shape": 41,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?CalcSpline@@YAMMQAM@Z",
+  "win": "0x82421768",
+  "win_side": "main",
+  "win_agree": 10,
+  "cands": {
+   "0x82421768": {
+    "side": "main",
+    "unit": "default/PropKeys",
+    "agree": 10,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8240eb90": {
+    "side": "branch",
+    "unit": "default/system/rndobj/Rnd",
+    "agree": 0,
+    "contra": 2,
+    "shape": 10,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetShape@Head@BandCharDesc@@QAAXAAVBandHeadShaper@@@Z",
+  "win": "0x82333e18",
+  "win_side": "main",
+  "win_agree": 10,
+  "cands": {
+   "0x82333e18": {
+    "side": "main",
+    "unit": "default/BandCharDesc",
+    "agree": 10,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82321938": {
+    "side": "branch",
+    "unit": "default/ScrollbarDisplay",
+    "agree": 0,
+    "contra": 0,
+    "shape": 24,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0Keyframe@LightPreset@@QAA@ABU01@@Z",
+  "win": "0x824b2688",
+  "win_side": "main",
+  "win_agree": 9,
+  "cands": {
+   "0x824b2688": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 9,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8249f880": {
+    "side": "branch",
+    "unit": "default/EventTrigger",
+    "agree": 0,
+    "contra": 0,
+    "shape": 14,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Init@SongSortByArtist@@UAAXXZ",
+  "win": "0x8265aad0",
+  "win_side": "main",
+  "win_agree": 9,
+  "cands": {
+   "0x8265aad0": {
+    "side": "main",
+    "unit": "default/SongSortByArtist",
+    "agree": 9,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265aaa0": {
+    "side": "branch",
+    "unit": "default/SongSortByArtist",
+    "agree": 0,
+    "contra": 0,
+    "shape": 29,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@SampleZone@@QBAXAAVBinStream@@@Z",
+  "win": "0x8272ad00",
+  "win_side": "main",
+  "win_agree": 9,
+  "cands": {
+   "0x8272ad00": {
+    "side": "main",
+    "unit": "default/SampleZone",
+    "agree": 9,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8270cdc0": {
+    "side": "branch",
+    "unit": "default/Faders",
+    "agree": 0,
+    "contra": 3,
+    "shape": 24,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ShowBriefBandMessage@TrackerBroadcastDisplay@@QBAXABVDataArrayPtr@@@Z",
+  "win": "0x826d54f0",
+  "win_side": "branch",
+  "win_agree": 9,
+  "cands": {
+   "0x826d5358": {
+    "side": "main",
+    "unit": "default/band3/game/TrackerDisplay",
+    "agree": 7,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   },
+   "0x826d54f0": {
+    "side": "branch",
+    "unit": "default/band3/game/TrackerDisplay",
+    "agree": 9,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?HandlePreSongCompletedForUser@AccomplishmentManager@@QAAXVSymbol@@PAVLocalBandUser@@@Z",
+  "win": "0x82559d18",
+  "win_side": "main",
+  "win_agree": 8,
+  "cands": {
+   "0x82559d18": {
+    "side": "main",
+    "unit": "default/band3/meta_band/AccomplishmentManager",
+    "agree": 8,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825464f0": {
+    "side": "branch",
+    "unit": "default/ProfileMgr",
+    "agree": 0,
+    "contra": 0,
+    "shape": 25,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?RotateSingerAutoplayVariationMagnitude@VocalPlayer@@QAAXH@Z",
+  "win": "0x826e4f80",
+  "win_side": "main",
+  "win_agree": 8,
+  "cands": {
+   "0x826e4f80": {
+    "side": "main",
+    "unit": "default/VocalPlayer",
+    "agree": 8,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826c66c8": {
+    "side": "branch",
+    "unit": "default/GemPlayer",
+    "agree": 0,
+    "contra": 0,
+    "shape": 62,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$SetTokenFmt@VSymbol@@HV1@@UILabel@@QAAXVSymbol@@0H0@Z",
+  "win": "0x825a5508",
+  "win_side": "main",
+  "win_agree": 7,
+  "cands": {
+   "0x825a5508": {
+    "side": "main",
+    "unit": "default/Campaign",
+    "agree": 7,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8258ccf0": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/BandProfile",
+    "agree": 0,
+    "contra": 1,
+    "shape": 15,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??4Keyframe@LightPreset@@QAAAAU01@ABU01@@Z",
+  "win": "0x824b4890",
+  "win_side": "main",
+  "win_agree": 7,
+  "cands": {
+   "0x824b4890": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 7,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824a1a08": {
+    "side": "branch",
+    "unit": "default/EventTrigger",
+    "agree": 0,
+    "contra": 0,
+    "shape": 12,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PushRecommendationsReady@StoreInfoPanel@@QAAXXZ",
+  "win": "0x82639108",
+  "win_side": "branch",
+  "win_agree": 7,
+  "cands": {
+   "0x82639010": {
+    "side": "main",
+    "unit": "default/band3/meta_band/StoreInfoPanel",
+    "agree": 5,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82639108": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/StoreInfoPanel",
+    "agree": 7,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??6@YAAAVBinStream@@AAV0@ABUMerger@FileMerger@@@Z",
+  "win": "0x823913c0",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x823913c0": {
+    "side": "main",
+    "unit": "default/FileMerger",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8237ee80": {
+    "side": "branch",
+    "unit": "default/CharClip",
+    "agree": 0,
+    "contra": 1,
+    "shape": 12,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?GetBackScreen@QuestFilterPanel@@QAA?AVSymbol@@XZ",
+  "win": "0x82b7a6c0",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x82b7a6c0": {
+    "side": "main",
+    "unit": "default/QuestFilterPanel",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b7a7d0": {
+    "side": "branch",
+    "unit": "default/QuestFilterPanel",
+    "agree": 4,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82b7a8e0": {
+    "side": "branch",
+    "unit": "default/QuestFilterPanel",
+    "agree": 4,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@CharBoneDir@@UAAXVSymbol@@@Z",
+  "win": "0x823b6580",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x823b6580": {
+    "side": "main",
+    "unit": "default/CharBoneDir",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822f0480": {
+    "side": "branch",
+    "unit": "default/CharBoneDir",
+    "agree": 0,
+    "contra": 2,
+    "shape": 20,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@CharBoneTwist@@UAAXVSymbol@@@Z",
+  "win": "0x823b7fe8",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x823b7fe8": {
+    "side": "main",
+    "unit": "default/CharBoneDir",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822f12d8": {
+    "side": "branch",
+    "unit": "default/CharBoneDir",
+    "agree": 0,
+    "contra": 0,
+    "shape": 21,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@CharDriver@@UAAXVSymbol@@@Z",
+  "win": "0x82377b98",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x82377b98": {
+    "side": "main",
+    "unit": "default/CharDriver",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8237a600": {
+    "side": "branch",
+    "unit": "default/CharDriver",
+    "agree": 0,
+    "contra": 1,
+    "shape": 43,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@CharGuitarString@@UAAXVSymbol@@@Z",
+  "win": "0x823d5ce8",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x823d5ce8": {
+    "side": "main",
+    "unit": "default/CharGuitarString",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823d6270": {
+    "side": "branch",
+    "unit": "default/CharGuitarString",
+    "agree": 0,
+    "contra": 1,
+    "shape": 25,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@CharIKFoot@@UAAXVSymbol@@@Z",
+  "win": "0x823bf650",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x823bf650": {
+    "side": "main",
+    "unit": "default/CharIKFoot",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823bfb88": {
+    "side": "branch",
+    "unit": "default/CharIKFoot",
+    "agree": 0,
+    "contra": 1,
+    "shape": 27,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@DxTexRenderer@@UAAXVSymbol@@@Z",
+  "win": "0x8273abd8",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x8273abd8": {
+    "side": "main",
+    "unit": "default/Rnd_Xbox",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822ae7b8": {
+    "side": "branch",
+    "unit": "default/BandSwatch",
+    "agree": 5,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@RndCam@@UAAXVSymbol@@@Z",
+  "win": "0x824342b8",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x824342b8": {
+    "side": "main",
+    "unit": "default/Cam",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82433e30": {
+    "side": "branch",
+    "unit": "default/Cam",
+    "agree": 0,
+    "contra": 2,
+    "shape": 23,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@RndPropAnim@@UAAXVSymbol@@@Z",
+  "win": "0x82429540",
+  "win_side": "branch",
+  "win_agree": 6,
+  "cands": {
+   "0x823ce6c0": {
+    "side": "main",
+    "unit": "default/MetaMusic",
+    "agree": 5,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82429540": {
+    "side": "branch",
+    "unit": "default/PropAnim",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?SetType@RndTransAnim@@UAAXVSymbol@@@Z",
+  "win": "0x8245f930",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x8245f930": {
+    "side": "main",
+    "unit": "default/TransAnim",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8245fe40": {
+    "side": "branch",
+    "unit": "default/TransAnim",
+    "agree": 0,
+    "contra": 1,
+    "shape": 70,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@UIFontImporter@@UAAXVSymbol@@@Z",
+  "win": "0x82819c10",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x82819c10": {
+    "side": "main",
+    "unit": "default/UIFontImporter",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8281b2a0": {
+    "side": "branch",
+    "unit": "default/UIFontImporter",
+    "agree": 0,
+    "contra": 3,
+    "shape": 291,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@UIPicture@@UAAXVSymbol@@@Z",
+  "win": "0x82816208",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x82816208": {
+    "side": "main",
+    "unit": "default/UIPicture",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x828170a8": {
+    "side": "branch",
+    "unit": "default/UIPicture",
+    "agree": 0,
+    "contra": 2,
+    "shape": 23,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@UISlider@@UAAXVSymbol@@@Z",
+  "win": "0x82809c58",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x82809c58": {
+    "side": "main",
+    "unit": "default/UISlider",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82809520": {
+    "side": "branch",
+    "unit": "default/UISlider",
+    "agree": 0,
+    "contra": 0,
+    "shape": 26,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@WorldReflection@@UAAXVSymbol@@@Z",
+  "win": "0x824e93a8",
+  "win_side": "main",
+  "win_agree": 6,
+  "cands": {
+   "0x824e93a8": {
+    "side": "main",
+    "unit": "default/LightHue",
+    "agree": 6,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824e8a40": {
+    "side": "branch",
+    "unit": "default/LightHue",
+    "agree": 0,
+    "contra": 2,
+    "shape": 23,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$SetTokenFmt@H@UILabel@@QAAXVSymbol@@H@Z",
+  "win": "0x822d79b8",
+  "win_side": "main",
+  "win_agree": 5,
+  "cands": {
+   "0x822d79b8": {
+    "side": "main",
+    "unit": "default/band3/game/PerfectSectionTracker",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826ba9b8": {
+    "side": "branch",
+    "unit": "default/FreestylePanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0DelayEffect@@QAA@PAUIXAudioBatchAllocator@@@Z",
+  "win": "0x82bb51f0",
+  "win_side": "main",
+  "win_agree": 5,
+  "cands": {
+   "0x82bb51f0": {
+    "side": "main",
+    "unit": "default/DelayEffect",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b820f8": {
+    "side": "branch",
+    "unit": "default/JsonUtils",
+    "agree": 0,
+    "contra": 1,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?GetBroadcastDescription@StreakFocusTracker@@UBA?AVDataArrayPtr@@XZ",
+  "win": "0x826d7598",
+  "win_side": "main",
+  "win_agree": 5,
+  "cands": {
+   "0x826d7598": {
+    "side": "main",
+    "unit": "default/FocusTracker",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826d7878": {
+    "side": "branch",
+    "unit": "default/FocusTracker",
+    "agree": 3,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Init@SynthSample@@SAXXZ",
+  "win": "0x82728c48",
+  "win_side": "main",
+  "win_agree": 5,
+  "cands": {
+   "0x82728c48": {
+    "side": "main",
+    "unit": "default/system/synth/SynthSample",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b6cab0": {
+    "side": "branch",
+    "unit": "default/system/synth/SynthSample",
+    "agree": 2,
+    "contra": 3,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?RandomContextSensitiveItemInternal@@YAPBDPBVDataArray@@_N1@Z",
+  "win": "0x8256dc80",
+  "win_side": "main",
+  "win_agree": 5,
+  "cands": {
+   "0x8256dc80": {
+    "side": "main",
+    "unit": "default/ContextChecker",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826d18d0": {
+    "side": "branch",
+    "unit": "default/band3/game/Tracker",
+    "agree": 0,
+    "contra": 0,
+    "shape": 17,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@PracticeSection@@UAAXVSymbol@@@Z",
+  "win": "0x823c7960",
+  "win_side": "branch",
+  "win_agree": 5,
+  "cands": {
+   "0x823c7b88": {
+    "side": "main",
+    "unit": "default/PracticeSection",
+    "agree": 0,
+    "contra": 1,
+    "shape": 20,
+    "ok": false
+   },
+   "0x823c7960": {
+    "side": "branch",
+    "unit": "default/PracticeSection",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?_M_fill_insert_aux@?$vector@VViewport@ObjectDir@@V?$StlNodeAlloc@VViewport@ObjectDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVViewport@ObjectDir@@IABV34@ABU__false_type@2@@Z",
+  "win": "0x8240c370",
+  "win_side": "main",
+  "win_agree": 5,
+  "cands": {
+   "0x8240c370": {
+    "side": "main",
+    "unit": "default/MeshDeform",
+    "agree": 5,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826c23a0": {
+    "side": "branch",
+    "unit": "default/system/world/Dir",
+    "agree": 1,
+    "contra": 2,
+    "shape": 14,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$CachedRead@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "win": "0x8241d660",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x8241d660": {
+    "side": "main",
+    "unit": "default/Mesh",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8240aa88": {
+    "side": "branch",
+    "unit": "default/Env",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__introsort_loop@PAPAVAllocInfo@@PAV1@HP6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00HP6A_NABQAV1@1@Z@Z",
+  "win": "0x827d6390",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x827d6390": {
+    "side": "main",
+    "unit": "default/MemTracker",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825d67a8": {
+    "side": "branch",
+    "unit": "default/MemTracker",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__introsort_loop@PAUMerger@FileMerger@@U12@HUSortBySelected@12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@00HUSortBySelected@12@@Z",
+  "win": "0x823321d0",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x823321d0": {
+    "side": "main",
+    "unit": "default/BandWardrobe",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231fcf0": {
+    "side": "branch",
+    "unit": "default/ScoreDisplay",
+    "agree": 0,
+    "contra": 3,
+    "shape": 19,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0SectionInfo@Stats@@QAA@XZ",
+  "win": "0x826977e8",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x826977e8": {
+    "side": "main",
+    "unit": "default/band3/game/Stats",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826792b8": {
+    "side": "branch",
+    "unit": "default/band3/game/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 13,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1NetCacheMgr@@UAA@XZ",
+  "win": "0x827cec98",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x827cec98": {
+    "side": "main",
+    "unit": "default/NetCacheMgr",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826e0f30": {
+    "side": "branch",
+    "unit": "default/NetCacheMgr",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1UIListSlot@@UAA@XZ",
+  "win": "0x82815920",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x82815920": {
+    "side": "main",
+    "unit": "default/UIListSlot",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827f0488": {
+    "side": "branch",
+    "unit": "default/UIScreen",
+    "agree": 0,
+    "contra": 1,
+    "shape": 28,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?GetIconArt@CampaignLevel@@QBA?AVString@@XZ",
+  "win": "0x82658c98",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x82658c98": {
+    "side": "main",
+    "unit": "default/CampaignLevel",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825ef6d8": {
+    "side": "branch",
+    "unit": "default/CampaignLevel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?JoypadInitXboxPCDeadzone@@YAXPAVDataArray@@@Z",
+  "win": "0x82531d90",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x82531d90": {
+    "side": "main",
+    "unit": "default/Joypad_Xinput",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8251e868": {
+    "side": "branch",
+    "unit": "default/ContentMgr",
+    "agree": 0,
+    "contra": 0,
+    "shape": 13,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewHeaderNode@SongSortByDiff@@UBAPAVHeaderSortNode@@PAVSongSortNode@@@Z",
+  "win": "0x8265d5d8",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x8265d5d8": {
+    "side": "main",
+    "unit": "default/SongSortByDiff",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265d5a8": {
+    "side": "branch",
+    "unit": "default/SongSortByDiff",
+    "agree": 0,
+    "contra": 0,
+    "shape": 23,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewSongNode@SongSortByDiff@@UBAPAVOwnedSongSortNode@@PAVSongRecord@@@Z",
+  "win": "0x8265d748",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x8265d748": {
+    "side": "main",
+    "unit": "default/SongSortByDiff",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265d740": {
+    "side": "branch",
+    "unit": "default/SongSortByDiff",
+    "agree": 0,
+    "contra": 0,
+    "shape": 16,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PropSync@@YA_NAAUWeightContext@CharBone@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x823d6e58",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x823d6e58": {
+    "side": "main",
+    "unit": "default/CharBone",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82347328": {
+    "side": "branch",
+    "unit": "default/MoveAsyncDetector",
+    "agree": 2,
+    "contra": 2,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@LightHue@@UAAXAAVBinStream@@@Z",
+  "win": "0x824e76f0",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x824e76f0": {
+    "side": "main",
+    "unit": "default/LightHue",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824d48d0": {
+    "side": "branch",
+    "unit": "default/SpotlightDrawer_NG",
+    "agree": 0,
+    "contra": 0,
+    "shape": 15,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@UIGuide@@UAAXAAVBinStream@@@Z",
+  "win": "0x828265e8",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x828265e8": {
+    "side": "main",
+    "unit": "default/UIGuide",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x828012e0": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/ViewSetting",
+    "agree": 0,
+    "contra": 1,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?UpdateSphere@RndParticleSys@@UAAXXZ",
+  "win": "0x8247c820",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x8247c820": {
+    "side": "main",
+    "unit": "default/Part",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824466d8": {
+    "side": "branch",
+    "unit": "default/Part",
+    "agree": 0,
+    "contra": 0,
+    "shape": 14,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?UpdateVocalMeters@VocalTrackDir@@QAAX_N000@Z",
+  "win": "0x822f5ea0",
+  "win_side": "main",
+  "win_agree": 4,
+  "cands": {
+   "0x822f5ea0": {
+    "side": "main",
+    "unit": "default/VocalTrackDir",
+    "agree": 4,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822e4508": {
+    "side": "branch",
+    "unit": "default/GemTrackDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 10,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__final_insertion_sort@PAUMemDiffEntry@@U?$less@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAUMemDiffEntry@@0U?$less@UMemDiffEntry@@@0@@Z",
+  "win": "0x827d6328",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x827d6328": {
+    "side": "main",
+    "unit": "default/MemTracker",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827d60a0": {
+    "side": "branch",
+    "unit": "default/MemTracker",
+    "agree": 0,
+    "contra": 0,
+    "shape": 13,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__introsort_loop@PAVDataArrayPtr@@V1@HUForAllKeyframesSorter@@@stlpmtx_std@@YAXPAVDataArrayPtr@@00HUForAllKeyframesSorter@@@Z",
+  "win": "0x8242c2d8",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8242c2d8": {
+    "side": "main",
+    "unit": "default/PropAnim",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231fcf0": {
+    "side": "branch",
+    "unit": "default/ScoreDisplay",
+    "agree": 0,
+    "contra": 3,
+    "shape": 18,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__stable_sort_aux@PAVSymbol@@V1@HVAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@00PAHVAccomplishmentCmp@@@Z",
+  "win": "0x825f4ff8",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x825f4ff8": {
+    "side": "main",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825fde28": {
+    "side": "branch",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 1,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__unguarded_linear_insert@PAUMerger@FileMerger@@U12@USortBySelected@12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@U12@USortBySelected@12@@Z",
+  "win": "0x8232e558",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8232e558": {
+    "side": "main",
+    "unit": "default/BandWardrobe",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231c080": {
+    "side": "branch",
+    "unit": "default/MeterDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0Award@@QAA@PAVDataArray@@H@Z",
+  "win": "0x825ea4a0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x825ea4a0": {
+    "side": "main",
+    "unit": "default/Award",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825d0aa8": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/MusicLibraryNetSetlists",
+    "agree": 0,
+    "contra": 0,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0DeviceChosenMsg@@QAA@H@Z",
+  "win": "0x8252b778",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8252b778": {
+    "side": "main",
+    "unit": "default/Memcard_Xbox",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825c20f0": {
+    "side": "branch",
+    "unit": "default/Memcard",
+    "agree": 2,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0MCResultMsg@@QAA@W4MCResult@@@Z",
+  "win": "0x827ac468",
+  "win_side": "branch",
+  "win_agree": 3,
+  "cands": {
+   "0x8251d0e0": {
+    "side": "main",
+    "unit": "default/MemcardMgr_Xbox",
+    "agree": 2,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x827ac468": {
+    "side": "branch",
+    "unit": "default/MemcardMgr_Xbox",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??0Message@@QAA@VSymbol@@@Z",
+  "win": "0x82271b68",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82271b68": {
+    "side": "main",
+    "unit": "default/PropKeys",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82334250": {
+    "side": "branch",
+    "unit": "default/BandCharDesc",
+    "agree": 0,
+    "contra": 4,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0ProcessedJoinRequestMsg@@QAA@_N@Z",
+  "win": "0x823e1938",
+  "win_side": "branch",
+  "win_agree": 3,
+  "cands": {
+   "0x823e1808": {
+    "side": "main",
+    "unit": "default/network/net/NetSession",
+    "agree": 2,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x823e1938": {
+    "side": "branch",
+    "unit": "default/network/net/NetSession",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??0SeqInst@@QAA@PAVSequence@@@Z",
+  "win": "0x82705bd8",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82705bd8": {
+    "side": "main",
+    "unit": "default/Sequence",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826e7ca0": {
+    "side": "branch",
+    "unit": "default/VocalPlayer",
+    "agree": 1,
+    "contra": 1,
+    "shape": 407,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0SortViewSetting@@QAA@XZ",
+  "win": "0x825d43d0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x825d43d0": {
+    "side": "main",
+    "unit": "default/band3/meta_band/ViewSetting",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825d4498": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/ViewSetting",
+    "agree": 1,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   },
+   "0x825d44f8": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/ViewSetting",
+    "agree": 1,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1CamShotFrame@@QAA@XZ",
+  "win": "0x824bfe10",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x824bfe10": {
+    "side": "main",
+    "unit": "default/CameraShot",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824acbd0": {
+    "side": "branch",
+    "unit": "default/LightPreset",
+    "agree": 0,
+    "contra": 0,
+    "shape": 18,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1PatchSticker@@QAA@XZ",
+  "win": "0x822746a0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x822746a0": {
+    "side": "main",
+    "unit": "default/PatchDir",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82716358": {
+    "side": "branch",
+    "unit": "default/PatchDir",
+    "agree": 0,
+    "contra": 3,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?AddSymbol@FixedSizeSaveableStream@@QAAHVSymbol@@@Z",
+  "win": "0x827ab578",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x827ab578": {
+    "side": "main",
+    "unit": "default/FixedSizeSaveableStream",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827866d0": {
+    "side": "branch",
+    "unit": "default/SongParser",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?EndSearch@CacheMgrXbox@@AAAXW4CacheResult@@@Z",
+  "win": "0x827d77b0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x827d77b0": {
+    "side": "main",
+    "unit": "default/CacheMgr_Xbox",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b21e0": {
+    "side": "branch",
+    "unit": "default/StorePreviewMgr",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewSongNode@SongSortByRecent@@UBAPAVOwnedSongSortNode@@PAVSongRecord@@@Z",
+  "win": "0x8265c568",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8265c568": {
+    "side": "main",
+    "unit": "default/SongSortByRecent",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265c560": {
+    "side": "branch",
+    "unit": "default/SongSortByRecent",
+    "agree": 0,
+    "contra": 0,
+    "shape": 16,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?OnMsg@MetaPerformer@@QAA?AVDataNode@@ABVModeChangedMsg@@@Z",
+  "win": "0x8257d848",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8257d848": {
+    "side": "main",
+    "unit": "default/MetaPerformer",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8257b4b8": {
+    "side": "branch",
+    "unit": "default/MetaPerformer",
+    "agree": 0,
+    "contra": 3,
+    "shape": 16,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Play@CharDriver@@QAAPAVCharClipDriver@@ABVDataNode@@HMMM@Z",
+  "win": "0x82378018",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82378018": {
+    "side": "main",
+    "unit": "default/CharDriver",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82365b68": {
+    "side": "branch",
+    "unit": "default/band3/tour/TourPropertyCollection",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ReserveToFit@@YAXPAVObjectDir@@0H@Z",
+  "win": "0x827588f0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x827588f0": {
+    "side": "main",
+    "unit": "default/DirLoader",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82733cb0": {
+    "side": "branch",
+    "unit": "default/system/rnddx9/ShaderMgr",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@NetSyncScreenMsg@@UBAXAAVBinStream@@@Z",
+  "win": "0x8269a4c0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8269a4c0": {
+    "side": "main",
+    "unit": "default/band3/game/UITransitionNetMsgs",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8267bee8": {
+    "side": "branch",
+    "unit": "default/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticByteCode@AccomplishmentMsg@@SAEXZ",
+  "win": "0x82675f28",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82675f28": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82658e68": {
+    "side": "branch",
+    "unit": "default/UIEvent",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticByteCode@SetUserTrackTypeMsg@@SAEXZ",
+  "win": "0x82675d20",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82675d20": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82675d68": {
+    "side": "branch",
+    "unit": "default/band3/game/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   },
+   "0x82658ce0": {
+    "side": "branch",
+    "unit": "default/CampaignLevel",
+    "agree": 0,
+    "contra": 3,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticByteCode@TourPlayedMsg@@SAEXZ",
+  "win": "0x82675ee8",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82675ee8": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82658e28": {
+    "side": "branch",
+    "unit": "default/UIEvent",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@AppScoreDisplay@@SA?AVSymbol@@XZ",
+  "win": "0x8256e7a8",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8256e7a8": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8256e828": {
+    "side": "branch",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@BandDirector@@SA?AVSymbol@@XZ",
+  "win": "0x8228ca38",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8228ca38": {
+    "side": "main",
+    "unit": "default/BandDirector",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8228ca90": {
+    "side": "branch",
+    "unit": "default/BandCharacter",
+    "agree": 0,
+    "contra": 1,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@BandWardrobe@@SA?AVSymbol@@XZ",
+  "win": "0x8232aca0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8232aca0": {
+    "side": "main",
+    "unit": "default/BandWardrobe",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8240dc38": {
+    "side": "branch",
+    "unit": "default/MeshDeform",
+    "agree": 1,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@FreestylePanel@@SA?AVSymbol@@XZ",
+  "win": "0x82676c70",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82676c70": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82659bb0": {
+    "side": "branch",
+    "unit": "default/SongSortBySong",
+    "agree": 0,
+    "contra": 2,
+    "shape": 14,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@RandomIntervalGroupSeq@@SA?AVSymbol@@XZ",
+  "win": "0x82705838",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82705838": {
+    "side": "main",
+    "unit": "default/Sequence",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826de388": {
+    "side": "branch",
+    "unit": "default/OverdriveTracker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@StreakMeter@@SA?AVSymbol@@XZ",
+  "win": "0x8227aac8",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8227aac8": {
+    "side": "main",
+    "unit": "default/BandCharacter",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822db0f8": {
+    "side": "branch",
+    "unit": "default/StreakMeter",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Type@NoDeviceChosenMsg@@SA?AVSymbol@@XZ",
+  "win": "0x8252a4a0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8252a4a0": {
+    "side": "main",
+    "unit": "default/Memcard_Xbox",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825171b0": {
+    "side": "branch",
+    "unit": "default/File",
+    "agree": 0,
+    "contra": 2,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Type@PartyMembersChangedMsg@@SA?AVSymbol@@XZ",
+  "win": "0x8251ba80",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x8251ba80": {
+    "side": "main",
+    "unit": "default/OvershellPanel",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8240dc38": {
+    "side": "branch",
+    "unit": "default/MeshDeform",
+    "agree": 1,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?getCalculatedSpeed@NoteVoiceInst@@AAAMM@Z",
+  "win": "0x827130b0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x827130b0": {
+    "side": "main",
+    "unit": "default/MidiInstrument",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826f5528": {
+    "side": "branch",
+    "unit": "default/GuitarFx",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?reserve@?$vector@UVocalEvent@MidiParser@@V?$StlNodeAlloc@UVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+  "win": "0x827ec5b0",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x827ec5b0": {
+    "side": "main",
+    "unit": "default/MidiParserMgr",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827c6f48": {
+    "side": "branch",
+    "unit": "default/Song",
+    "agree": 0,
+    "contra": 1,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?reserve@?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+  "win": "0x82440770",
+  "win_side": "main",
+  "win_agree": 3,
+  "cands": {
+   "0x82440770": {
+    "side": "main",
+    "unit": "default/system/rndobj/Utl",
+    "agree": 3,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8242df38": {
+    "side": "branch",
+    "unit": "default/PropAnim",
+    "agree": 0,
+    "contra": 1,
+    "shape": 10,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?5VColor@Hmx@@@@YAAAVBinStream@@AAV0@AAV?$Key@VColor@Hmx@@@@@Z",
+  "win": "0x82426b58",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82426b58": {
+    "side": "main",
+    "unit": "default/PropAnim",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8247f120": {
+    "side": "branch",
+    "unit": "default/PartAnim",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8242b688": {
+    "side": "branch",
+    "unit": "default/PropAnim",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?6UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "win": "0x824ad790",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824ad790": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82ba0f88": {
+    "side": "branch",
+    "unit": "default/VocalTrack",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?6UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "win": "0x824ad728",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824ad728": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82ba0f80": {
+    "side": "branch",
+    "unit": "default/VocalTrack",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?6UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "win": "0x824694b8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824694b8": {
+    "side": "main",
+    "unit": "default/Console",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8230dea8": {
+    "side": "branch",
+    "unit": "default/MultiMesh",
+    "agree": 1,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?6VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "win": "0x8249f558",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x82327878": {
+    "side": "main",
+    "unit": "default/FlowTrigger",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824c94d0": {
+    "side": "branch",
+    "unit": "default/EventTrigger",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8249f558": {
+    "side": "branch",
+    "unit": "default/EventTrigger",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??$?6VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "win": "0x82575c28",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82575c28": {
+    "side": "main",
+    "unit": "default/BandSongMgr",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822bbef8": {
+    "side": "branch",
+    "unit": "default/HamNavProvider",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?6VVector3@@@@YAAAVTextStream@@AAV0@ABV?$Key@VVector3@@@@@Z",
+  "win": "0x8245df70",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8245df70": {
+    "side": "main",
+    "unit": "default/MatAnim",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82461320": {
+    "side": "branch",
+    "unit": "default/TransAnim",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$_M_splice_insert_dispatch@U?$_List_iterator@VString@@U?$_Const_traits@VString@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VString@@U?$_Nonconst_traits@VString@@@stlpmtx_std@@@1@U?$_List_iterator@VString@@U?$_Const_traits@VString@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+  "win": "0x8230e430",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8230e430": {
+    "side": "main",
+    "unit": "default/SongSectionController",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822fbfe8": {
+    "side": "branch",
+    "unit": "default/VocalTrackDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__chunk_insertion_sort@PAVSymbol@@HVTourDescCmp@@@stlpmtx_std@@YAXPAVSymbol@@0HVTourDescCmp@@@Z",
+  "win": "0x82b7cce0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82b7cce0": {
+    "side": "main",
+    "unit": "default/TourDescPanel",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b7cc58": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVAccomplishmentCmp@@@Z",
+  "win": "0x825f9d68",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x825f3d08": {
+    "side": "main",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 0,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   },
+   "0x825f9d68": {
+    "side": "branch",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??$__unguarded_partition@PAPAVRndMesh@@PAV1@U?$VectorSort@PAVRndMesh@@@@@stlpmtx_std@@YAPAPAVRndMesh@@PAPAV1@0PAV1@U?$VectorSort@PAVRndMesh@@@@@Z",
+  "win": "0x8248dfe0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8248dfe0": {
+    "side": "main",
+    "unit": "default/AmbientOcclusion",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8247b5f0": {
+    "side": "branch",
+    "unit": "default/Line",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$sort@PAH@stlpmtx_std@@YAXPAH0@Z",
+  "win": "0x822d1768",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x822d1768": {
+    "side": "main",
+    "unit": "default/MoveMgr",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82349cc8": {
+    "side": "branch",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$sort@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
+  "win": "0x824bc3a0",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x822d17f0": {
+    "side": "main",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824bc3a0": {
+    "side": "branch",
+    "unit": "default/CameraManager",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??0CharBonesMeshes@@QAA@XZ",
+  "win": "0x8237c1c8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8237c1c8": {
+    "side": "main",
+    "unit": "default/CharBonesMeshes",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82433fd0": {
+    "side": "branch",
+    "unit": "default/CharBonesMeshes",
+    "agree": 0,
+    "contra": 3,
+    "shape": 23,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0FxSendPitchShift360@@QAA@XZ",
+  "win": "0x82b5ae48",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82b5ae48": {
+    "side": "main",
+    "unit": "default/system/synth_xbox/Synth",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b5aeac": {
+    "side": "branch",
+    "unit": "default/system/synth_xbox/Synth",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0NetPushScreenMsg@@QAA@PAVUIScreen@@@Z",
+  "win": "0x82536090",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82536090": {
+    "side": "main",
+    "unit": "default/BandUI",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82522b58": {
+    "side": "branch",
+    "unit": "default/DateTime",
+    "agree": 0,
+    "contra": 0,
+    "shape": 14,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+  "win": "0x8238c800",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x822ec870": {
+    "side": "main",
+    "unit": "default/SongLayout",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8238c800": {
+    "side": "branch",
+    "unit": "default/SongLayout",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??1BitmapOverride@WorldDir@@QAA@XZ",
+  "win": "0x824cb350",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824cb350": {
+    "side": "main",
+    "unit": "default/PropSync",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822a93d8": {
+    "side": "branch",
+    "unit": "default/HamCamTransform",
+    "agree": 0,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??6BinStream@@QAAAAV0@ABVSymbol@@@Z",
+  "win": "0x827c5168",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827c5168": {
+    "side": "main",
+    "unit": "default/BinStream",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827a01d8": {
+    "side": "branch",
+    "unit": "default/KeyboardTrackWatcherImpl",
+    "agree": 0,
+    "contra": 1,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??E?$ObjDirItr@VLightPreset@@@@QAAAAV0@XZ",
+  "win": "0x824b9508",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824b9508": {
+    "side": "main",
+    "unit": "default/LightPresetManager",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825aed58": {
+    "side": "branch",
+    "unit": "default/LightPresetManager",
+    "agree": 0,
+    "contra": 1,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??E?$ObjDirItr@VSynthSample@@@@QAAAAV0@XZ",
+  "win": "0x826fe9d0",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x8243e108": {
+    "side": "main",
+    "unit": "default/CheatProvider",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x826fe9d0": {
+    "side": "branch",
+    "unit": "default/CharMeshHide",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??_DBandStoreUIPanel@@QAAXXZ",
+  "win": "0x827ba378",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827ba378": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82572850": {
+    "side": "branch",
+    "unit": "default/MetaPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_DNgSpotlightDrawer@@QAAXXZ",
+  "win": "0x824d4228",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824d4228": {
+    "side": "main",
+    "unit": "default/SpotlightDrawer_NG",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824c1028": {
+    "side": "branch",
+    "unit": "default/CameraShot",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_DStreakMeter@@QAAXXZ",
+  "win": "0x822da628",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x822da628": {
+    "side": "main",
+    "unit": "default/StreakMeter",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822db150": {
+    "side": "branch",
+    "unit": "default/StreakMeter",
+    "agree": 0,
+    "contra": 1,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_DTrackDir@@QAAXXZ",
+  "win": "0x827dfe78",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827dfe78": {
+    "side": "main",
+    "unit": "default/TrackDir",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827ba7f8": {
+    "side": "branch",
+    "unit": "default/ConnectionStatusPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GCharIKScale@@UAAPAXI@Z",
+  "win": "0x8239aab0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8239aab0": {
+    "side": "main",
+    "unit": "default/CharIKScale",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8243f508": {
+    "side": "branch",
+    "unit": "default/system/rndobj/Utl",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GCharIKSliderMidi@@UAAPAXI@Z",
+  "win": "0x823cbdc0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x823cbdc0": {
+    "side": "main",
+    "unit": "default/CharIKSliderMidi",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823f0310": {
+    "side": "branch",
+    "unit": "default/CharIKSliderMidi",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GRndMeshAnim@@UAAPAXI@Z",
+  "win": "0x82470508",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82470508": {
+    "side": "main",
+    "unit": "default/MeshAnim",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b2770": {
+    "side": "branch",
+    "unit": "default/MeshAnim",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GRndTransAnim@@UAAPAXI@Z",
+  "win": "0x8245fdf8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8245fdf8": {
+    "side": "main",
+    "unit": "default/TransAnim",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826a7b38": {
+    "side": "branch",
+    "unit": "default/TransAnim",
+    "agree": 0,
+    "contra": 1,
+    "shape": 18,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?CollidePlane@UIList@@IAAHABV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@ABVPlane@@@Z",
+  "win": "0x827f9338",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827f9338": {
+    "side": "main",
+    "unit": "default/UIList",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827d3de0": {
+    "side": "branch",
+    "unit": "default/WaveFile",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Contains@ContentMgr@@QAA_NPBDAAVString@@@Z",
+  "win": "0x8251e990",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8251e990": {
+    "side": "main",
+    "unit": "default/FlowCommand",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8250b5c0": {
+    "side": "branch",
+    "unit": "default/DataFile",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?CreatePitchShift@Synth@@UAAPAVFxSendPitchShift@@HW4SendChannels@@@Z",
+  "win": "0x826fe230",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x826fe230": {
+    "side": "main",
+    "unit": "default/Sfx",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826e0290": {
+    "side": "branch",
+    "unit": "default/band3/game/ScoreTracker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Deploy@VocalTrackDir@@UAAXXZ",
+  "win": "0x822f55b0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x822f55b0": {
+    "side": "main",
+    "unit": "default/VocalTrackDir",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822f6118": {
+    "side": "branch",
+    "unit": "default/VocalTrackDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?GetDepthRangeValues@RndCam@@QBAXAAVVector4@@@Z",
+  "win": "0x824335f0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824335f0": {
+    "side": "main",
+    "unit": "default/Cam",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82420ea0": {
+    "side": "branch",
+    "unit": "default/Mesh",
+    "agree": 0,
+    "contra": 1,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Multiply@@YAXABVVector3@@ABVQuat@Hmx@@AAV1@@Z",
+  "win": "0x824ef448",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824ef448": {
+    "side": "main",
+    "unit": "default/Rot",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824dc578": {
+    "side": "branch",
+    "unit": "default/Spotlight",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Name@NetPopScreenMsg@@UBAPBDXZ",
+  "win": "0x82537230",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82537230": {
+    "side": "main",
+    "unit": "default/BandUI",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82523cf0": {
+    "side": "branch",
+    "unit": "default/BandUser",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewHeaderNode@SongSortBySong@@UBAPAVHeaderSortNode@@PAVSongSortNode@@@Z",
+  "win": "0x82659cd8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82659cd8": {
+    "side": "main",
+    "unit": "default/SongSortBySong",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82659cd0": {
+    "side": "branch",
+    "unit": "default/SongSortBySong",
+    "agree": 0,
+    "contra": 0,
+    "shape": 10,
+    "ok": false
+   },
+   "0x8263cf28": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/StoreMenuPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 23,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewSongNode@SongSortByReview@@UBAPAVOwnedSongSortNode@@PAVSongRecord@@@Z",
+  "win": "0x8265d138",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8265d138": {
+    "side": "main",
+    "unit": "default/SongSortByReview",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265d130": {
+    "side": "branch",
+    "unit": "default/SongSortByReview",
+    "agree": 0,
+    "contra": 0,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewSongNode@SongSortBySong@@UBAPAVOwnedSongSortNode@@PAVSongRecord@@@Z",
+  "win": "0x8265a030",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8265a030": {
+    "side": "main",
+    "unit": "default/SongSortBySong",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265a028": {
+    "side": "branch",
+    "unit": "default/SongSortBySong",
+    "agree": 0,
+    "contra": 0,
+    "shape": 13,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "win": "0x82517168",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x82517090": {
+    "side": "main",
+    "unit": "default/File",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x825170d8": {
+    "side": "branch",
+    "unit": "default/File",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82517120": {
+    "side": "branch",
+    "unit": "default/File",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82517168": {
+    "side": "branch",
+    "unit": "default/File",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?OnGetGemIsSustained@GemPlayer@@QAA_NH@Z",
+  "win": "0x826c3ee8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x826c3ee8": {
+    "side": "main",
+    "unit": "default/GemPlayer",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826a7558": {
+    "side": "branch",
+    "unit": "default/GemPlayer",
+    "agree": 0,
+    "contra": 0,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?OnMsg@MusicLibrary@@QAA?AVDataNode@@ABVPrimaryProfileChangedMsg@@@Z",
+  "win": "0x82540d90",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82540d90": {
+    "side": "main",
+    "unit": "default/MusicLibrary",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8253ff78": {
+    "side": "branch",
+    "unit": "default/MusicLibrary",
+    "agree": 0,
+    "contra": 2,
+    "shape": 13,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?OnZeroSphere@RndDrawable@@IAA?AVDataNode@@PBVDataArray@@@Z",
+  "win": "0x82406fe8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82406fe8": {
+    "side": "main",
+    "unit": "default/Draw",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823f43c0": {
+    "side": "branch",
+    "unit": "default/TrackPanelDir",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?RandomInt@@YAHHH@Z",
+  "win": "0x824f2f90",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824f2f90": {
+    "side": "main",
+    "unit": "default/Rand",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824dffd0": {
+    "side": "branch",
+    "unit": "default/Spotlight",
+    "agree": 0,
+    "contra": 0,
+    "shape": 11,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ReleaseTex@NgPostProc@@KAXXZ",
+  "win": "0x82b88f48",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82b88f48": {
+    "side": "main",
+    "unit": "default/PostProc_NG",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b5a4c8": {
+    "side": "branch",
+    "unit": "default/system/synth_xbox/Synth",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?RequirePushToTalk@Synth360@@UAAX_NH@Z",
+  "win": "0x82b5bc50",
+  "win_side": "branch",
+  "win_agree": 2,
+  "cands": {
+   "0x82b5bba8": {
+    "side": "main",
+    "unit": "default/system/synth_xbox/Synth",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82b5bc50": {
+    "side": "branch",
+    "unit": "default/system/synth_xbox/Synth",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?See@GemTrack@@QAAXMH@Z",
+  "win": "0x82b95040",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82b95040": {
+    "side": "main",
+    "unit": "default/GemTrack",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b63200": {
+    "side": "branch",
+    "unit": "default/system/synth_xbox/FxSendEQ",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetBeatScale@CharDriver@@QAAXM_N@Z",
+  "win": "0x823770e0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x823770e0": {
+    "side": "main",
+    "unit": "default/CharDriver",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82364c30": {
+    "side": "branch",
+    "unit": "default/band3/tour/GigFilter",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SizeAs@SampleData@@QBAHW4Format@1@@Z",
+  "win": "0x8272b3a0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x8272b3a0": {
+    "side": "main",
+    "unit": "default/SampleData",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8270d460": {
+    "side": "branch",
+    "unit": "default/UITrigger",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SyncProperty@StorePanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x827b5b68",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827b5b68": {
+    "side": "main",
+    "unit": "default/StorePanel",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82790b20": {
+    "side": "branch",
+    "unit": "default/BeatMatcher",
+    "agree": 0,
+    "contra": 0,
+    "shape": 13,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?WriteEndian@BinStream@@QAAXPBXH@Z",
+  "win": "0x827c5098",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827c5098": {
+    "side": "main",
+    "unit": "default/BinStream",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827a0108": {
+    "side": "branch",
+    "unit": "default/KeyboardTrackWatcherImpl",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+  "win": "0x826dc4c0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x826dc4c0": {
+    "side": "main",
+    "unit": "default/Font",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826ddb48": {
+    "side": "branch",
+    "unit": "default/Font",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_fill_insert@?$vector@UBeamDef@Spotlight@@V?$StlNodeAlloc@UBeamDef@Spotlight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBeamDef@Spotlight@@IABU34@@Z",
+  "win": "0x824dc578",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824dc578": {
+    "side": "main",
+    "unit": "default/Spotlight",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8270a8d8": {
+    "side": "branch",
+    "unit": "default/Spotlight",
+    "agree": 0,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?clear@?$_List_base@UCheatLog@@V?$StlNodeAlloc@UCheatLog@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "win": "0x827c15d8",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827c15d8": {
+    "side": "main",
+    "unit": "default/Cheats",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827c1544": {
+    "side": "branch",
+    "unit": "default/Cheats",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?clear@?$_List_base@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "win": "0x824cda48",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824cda48": {
+    "side": "main",
+    "unit": "default/MidiSynth",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8230e5b8": {
+    "side": "branch",
+    "unit": "default/Group",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?erase@?$list@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UMatOverride@WorldDir@@U?$_Nonconst_traits@UMatOverride@WorldDir@@@stlpmtx_std@@@2@U32@0@Z",
+  "win": "0x824cdbf0",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x824cdbf0": {
+    "side": "main",
+    "unit": "default/PropSync",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8230e658": {
+    "side": "branch",
+    "unit": "default/Group",
+    "agree": 1,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?reserve@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+  "win": "0x826cd438",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x826cd438": {
+    "side": "main",
+    "unit": "default/HolmesClient",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826adef0": {
+    "side": "branch",
+    "unit": "default/band3/game/RGTrainerPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 12,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?reserve@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+  "win": "0x827d6268",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x827d6268": {
+    "side": "main",
+    "unit": "default/MemTracker",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827d6098": {
+    "side": "branch",
+    "unit": "default/MemTracker",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?resize@?$vector@UEyeDesc@CharEyes@@V?$StlNodeAlloc@UEyeDesc@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUEyeDesc@CharEyes@@@Z",
+  "win": "0x82389838",
+  "win_side": "main",
+  "win_agree": 2,
+  "cands": {
+   "0x82389838": {
+    "side": "main",
+    "unit": "default/CharEyes",
+    "agree": 2,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8270a9b8": {
+    "side": "branch",
+    "unit": "default/HamCamTransform",
+    "agree": 0,
+    "contra": 2,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$?0H@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA@HHABV?$StlNodeAlloc@H@1@@Z",
+  "win": "0x8241b068",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8241b068": {
+    "side": "main",
+    "unit": "default/Mesh",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824083f8": {
+    "side": "branch",
+    "unit": "default/Env",
+    "agree": 0,
+    "contra": 0,
+    "shape": 10,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$_Copy_Construct@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@VDataNode@@@0@ABU10@@Z",
+  "win": "0x824f8208",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824f8208": {
+    "side": "main",
+    "unit": "default/RockCentral",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8276c970": {
+    "side": "branch",
+    "unit": "default/DataFile",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8250b870": {
+    "side": "branch",
+    "unit": "default/DataFile",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$_Copy_Construct@UPose@RndMorph@@@stlpmtx_std@@YAXPAUPose@RndMorph@@ABU12@@Z",
+  "win": "0x82483a20",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82483a20": {
+    "side": "main",
+    "unit": "default/Morph",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82471040": {
+    "side": "branch",
+    "unit": "default/MeshAnim",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$_M_splice_insert_dispatch@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+  "win": "0x824d0758",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x824d0618": {
+    "side": "main",
+    "unit": "default/Shockwave",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824d0758": {
+    "side": "branch",
+    "unit": "default/Shockwave",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824bd558": {
+    "side": "branch",
+    "unit": "default/CameraManager",
+    "agree": 0,
+    "contra": 1,
+    "shape": 7,
+    "ok": false
+   },
+   "0x824d06b8": {
+    "side": "branch",
+    "unit": "default/Shockwave",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__destroy_range_aux@V?$reverse_iterator@PAULod@Character@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULod@Character@@@0@0ABU__false_type@0@@Z",
+  "win": "0x8236fe20",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8236fe20": {
+    "side": "main",
+    "unit": "default/Character",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822a2fa8": {
+    "side": "branch",
+    "unit": "default/Character",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__destroy_range_aux@V?$reverse_iterator@PAUPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUPoint@CharHair@@@0@0ABU__false_type@0@@Z",
+  "win": "0x823a80c8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823a80c8": {
+    "side": "main",
+    "unit": "default/CharHair",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8263b0b0": {
+    "side": "branch",
+    "unit": "default/CharHair",
+    "agree": 0,
+    "contra": 1,
+    "shape": 1,
+    "ok": false
+   },
+   "0x8261e9b8": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/EventDialogPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__destroy_range_aux@V?$reverse_iterator@PAUSpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUSpotlightEntry@LightPreset@@@0@0ABU__false_type@0@@Z",
+  "win": "0x824b01d0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824b01d0": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82372f60": {
+    "side": "branch",
+    "unit": "default/LightPreset",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82360aa8": {
+    "side": "branch",
+    "unit": "default/TourPerformer",
+    "agree": 0,
+    "contra": 1,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@VTexPtr@RndMatAnim@@@@@0@0ABU__false_type@0@@Z",
+  "win": "0x824622d0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824622d0": {
+    "side": "main",
+    "unit": "default/MatAnim",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826f7948": {
+    "side": "branch",
+    "unit": "default/UITransitionHandler",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+  "win": "0x82b6f218",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82b6f218": {
+    "side": "main",
+    "unit": "default/Synapse_dsp",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827a36f0": {
+    "side": "branch",
+    "unit": "default/Synapse_dsp",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__destroy_range_aux@V?$reverse_iterator@PAVCamShotFrame@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVCamShotFrame@@@0@0ABU__false_type@0@@Z",
+  "win": "0x824c3530",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824c3530": {
+    "side": "main",
+    "unit": "default/CameraShot",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822bdcb0": {
+    "side": "branch",
+    "unit": "default/CameraShot",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__insertion_sort@PAPAVAllocInfo@@PAV1@P6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00P6A_NABQAV1@1@Z@Z",
+  "win": "0x827d5c00",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x82347600": {
+    "side": "main",
+    "unit": "default/MemTracker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x827d5c00": {
+    "side": "branch",
+    "unit": "default/MemTracker",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??$__insertion_sort@PAPAVCamShot@@PAV1@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@00UNameSort@@@Z",
+  "win": "0x824bb550",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x822d0a80": {
+    "side": "main",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824bb550": {
+    "side": "branch",
+    "unit": "default/CameraManager",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??$__insertion_sort@PAVBeatEvent@CharClip@@V12@USortByFrame@@@stlpmtx_std@@YAXPAVBeatEvent@CharClip@@00USortByFrame@@@Z",
+  "win": "0x82380158",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82380158": {
+    "side": "main",
+    "unit": "default/CharClip",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82698698": {
+    "side": "branch",
+    "unit": "default/band3/game/Stats",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+  "win": "0x82666160",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82666160": {
+    "side": "main",
+    "unit": "default/FlowSlider",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823d8818": {
+    "side": "branch",
+    "unit": "default/CharBonesBlender",
+    "agree": 0,
+    "contra": 0,
+    "shape": 12,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__make_heap@PAPAVCamShot@@UNameSort@@PAV1@H@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@0PAH@Z",
+  "win": "0x824bb5a0",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x822d02e0": {
+    "side": "main",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824bb5a0": {
+    "side": "branch",
+    "unit": "default/CameraManager",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??$__uninitialized_fill_n@PAUCharClipDisplay@@IU1@@stlpmtx_std@@YAPAUCharClipDisplay@@PAU1@IABU1@ABU__false_type@0@@Z",
+  "win": "0x824ad940",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824ad940": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b744e8": {
+    "side": "branch",
+    "unit": "default/GranularSynth",
+    "agree": 1,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$__uninitialized_fill_n@PAUHamListRibbonDrawState@@IU1@@stlpmtx_std@@YAPAUHamListRibbonDrawState@@PAU1@IABU1@ABU__false_type@0@@Z",
+  "win": "0x8239c508",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8239c508": {
+    "side": "main",
+    "unit": "default/HamListRibbon",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82772200": {
+    "side": "branch",
+    "unit": "default/HamListRibbon",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??$sort_heap@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
+  "win": "0x824bb868",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x822d0960": {
+    "side": "main",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824bb868": {
+    "side": "branch",
+    "unit": "default/CameraManager",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??0?$ObjDirItr@VPanelDir@@@@QAA@PAVObjectDir@@_N@Z",
+  "win": "0x824af860",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824af860": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824afa00": {
+    "side": "branch",
+    "unit": "default/LightPreset",
+    "agree": 1,
+    "contra": 0,
+    "shape": 1,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0?$vector@UChar3D@CharData@WorldCrowd@@V?$StlNodeAlloc@UChar3D@CharData@WorldCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+  "win": "0x824e2a20",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824e2a20": {
+    "side": "main",
+    "unit": "default/Crowd",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824e2ac0": {
+    "side": "branch",
+    "unit": "default/Crowd",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+  "win": "0x824b0aa8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824b0aa8": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824b0b20": {
+    "side": "branch",
+    "unit": "default/LightPreset",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0DxCubeTex@@QAA@XZ",
+  "win": "0x8273ee50",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8273ee50": {
+    "side": "main",
+    "unit": "default/system/rnddx9/CubeTex",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82719e78": {
+    "side": "branch",
+    "unit": "default/StreamNull",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??0NgFur@@IAA@XZ",
+  "win": "0x82b8b670",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x8282a080": {
+    "side": "main",
+    "unit": "default/rtti",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82b8b670": {
+    "side": "branch",
+    "unit": "default/Lit_NG",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??1?$ObjDirPtr@VRndDir@@@@UAA@XZ",
+  "win": "0x822908b0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822908b0": {
+    "side": "main",
+    "unit": "default/BandDirector",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822907f8": {
+    "side": "branch",
+    "unit": "default/BandDirector",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1DataArrayPtr@@QAA@XZ",
+  "win": "0x82280280",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82280280": {
+    "side": "main",
+    "unit": "default/BandCharacter",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822d2ba8": {
+    "side": "branch",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x822db0e8": {
+    "side": "branch",
+    "unit": "default/StreakMeter",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8231bd08": {
+    "side": "branch",
+    "unit": "default/MeterDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82461410": {
+    "side": "branch",
+    "unit": "default/MatAnim",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82551ff0": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/SaveLoadManager",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82637670": {
+    "side": "branch",
+    "unit": "default/Object",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x826714d0": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/AssetProvider",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x826731d0": {
+    "side": "branch",
+    "unit": "default/MainHubMessageProvider",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1LevelData@@QAA@XZ",
+  "win": "0x826fcea8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826fcea8": {
+    "side": "main",
+    "unit": "default/system/synth/Synth",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b5b1d8": {
+    "side": "branch",
+    "unit": "default/system/synth_xbox/Synth",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82b63ed0": {
+    "side": "branch",
+    "unit": "default/system/synth_xbox/FxSendMeterEffect",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1MidiChannel@@QAA@XZ",
+  "win": "0x82700d18",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82700d18": {
+    "side": "main",
+    "unit": "default/Sfx",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82719c90": {
+    "side": "branch",
+    "unit": "default/MidiSynth",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1RootContent@@UAA@XZ",
+  "win": "0x8251fa80",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8251fa80": {
+    "side": "main",
+    "unit": "default/ContentMgr_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8251fa78": {
+    "side": "branch",
+    "unit": "default/ContentMgr_Xbox",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??1bad_alloc@std@@UAA@XZ",
+  "win": "0x822744d0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822744d0": {
+    "side": "main",
+    "unit": "default/Accomplishment",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825ad700": {
+    "side": "branch",
+    "unit": "default/CameraManager",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??4MusicLibraryTask@MusicLibrary@@QAAAAV01@ABV01@@Z",
+  "win": "0x82541fa8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82541fa8": {
+    "side": "main",
+    "unit": "default/MusicLibrary",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82540cf0": {
+    "side": "branch",
+    "unit": "default/MusicLibrary",
+    "agree": 0,
+    "contra": 0,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GCacheMgrXbox@@UAAPAXI@Z",
+  "win": "0x827d7828",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827d7828": {
+    "side": "main",
+    "unit": "default/CacheMgr_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827d8aa0": {
+    "side": "branch",
+    "unit": "default/CacheMgr_Xbox",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GCacheXbox@@UAAPAXI@Z",
+  "win": "0x827dae60",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827dae60": {
+    "side": "main",
+    "unit": "default/Cache_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b5a38": {
+    "side": "branch",
+    "unit": "default/StorePanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GCharInterest@@UAAPAXI@Z",
+  "win": "0x823bee40",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823bee40": {
+    "side": "main",
+    "unit": "default/CharInterest",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822af178": {
+    "side": "branch",
+    "unit": "default/CharInterest",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GDxCam@@UAAPAXI@Z",
+  "win": "0x8273ddd8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8273ddd8": {
+    "side": "main",
+    "unit": "default/system/rnddx9/CubeTex",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822ced50": {
+    "side": "branch",
+    "unit": "default/system/rndobj/CubeTex",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GDxMultiMesh@@UAAPAXI@Z",
+  "win": "0x8273fcd8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8273fcd8": {
+    "side": "main",
+    "unit": "default/system/rnddx9/CubeTex",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822ced50": {
+    "side": "branch",
+    "unit": "default/system/rndobj/CubeTex",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GDxShader@@UAAPAXI@Z",
+  "win": "0x82736bb0",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x82734848": {
+    "side": "main",
+    "unit": "default/system/rnddx9/ShaderMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82736bb0": {
+    "side": "branch",
+    "unit": "default/system/rnddx9/ShaderMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "??_GDxTexRenderer@@UAAPAXI@Z",
+  "win": "0x8273b7c8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8273b7c8": {
+    "side": "main",
+    "unit": "default/Rnd_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823595b0": {
+    "side": "branch",
+    "unit": "default/TrackPanelDirBase",
+    "agree": 0,
+    "contra": 0,
+    "shape": 8,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GRndTexRenderer@@UAAPAXI@Z",
+  "win": "0x82445f98",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82445f98": {
+    "side": "main",
+    "unit": "default/TexRenderer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231d2b8": {
+    "side": "branch",
+    "unit": "default/Rnd_Xbox",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "??_GWaveFileData@@UAAPAXI@Z",
+  "win": "0x827d30b8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827d30b8": {
+    "side": "main",
+    "unit": "default/WaveFile",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827adce8": {
+    "side": "branch",
+    "unit": "default/HeldButtonPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?CheckAccuracyCondition@AccomplishmentSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z",
+  "win": "0x82669998",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82669998": {
+    "side": "main",
+    "unit": "default/AccomplishmentSongConditional",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82669b98": {
+    "side": "branch",
+    "unit": "default/AccomplishmentSongConditional",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@CharDriverMidi@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "win": "0x823cc128",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823cc128": {
+    "side": "main",
+    "unit": "default/CharDriverMidi",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823cd9b0": {
+    "side": "branch",
+    "unit": "default/CharDriverMidi",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@CharPollGroup@@UBA?AVSymbol@@XZ",
+  "win": "0x82408a48",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x823cd980": {
+    "side": "main",
+    "unit": "default/CharPollGroup",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82408a48": {
+    "side": "branch",
+    "unit": "default/ContentMgr_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?ClassName@FxSend@@UBA?AVSymbol@@XZ",
+  "win": "0x82716710",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82716710": {
+    "side": "main",
+    "unit": "default/system/synth/FxSend",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82720b58": {
+    "side": "branch",
+    "unit": "default/system/synth/FxSendDelay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@GemTrainerLoopPanel@@UBA?AVSymbol@@XZ",
+  "win": "0x826766c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826766c0": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82659600": {
+    "side": "branch",
+    "unit": "default/UIEvent",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@LabelNumberTicker@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "win": "0x82827ed8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82827ed8": {
+    "side": "main",
+    "unit": "default/LabelNumberTicker",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82827ee8": {
+    "side": "branch",
+    "unit": "default/LabelNumberTicker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@NewAwardPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "win": "0x82627d08",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82627d08": {
+    "side": "main",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82628c20": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@RGTrainerPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "win": "0x826b05e0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826b05e0": {
+    "side": "main",
+    "unit": "default/band3/game/RGTrainerPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826b1ab8": {
+    "side": "branch",
+    "unit": "default/band3/game/RGTrainerPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@SpotlightDrawer@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "win": "0x824d6158",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824d6158": {
+    "side": "main",
+    "unit": "default/SpotlightDrawer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822d1240": {
+    "side": "branch",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?ClassName@UIComponent@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "win": "0x827ffee8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827ffee8": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82343428": {
+    "side": "branch",
+    "unit": "default/BandHighlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?CollideShowing@WorldInstance@@UAAPAVRndDrawable@@ABVSegment@@AAMAAVPlane@@@Z",
+  "win": "0x824ea170",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824ea170": {
+    "side": "main",
+    "unit": "default/Instance",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824d7350": {
+    "side": "branch",
+    "unit": "default/SpotlightDrawer",
+    "agree": 0,
+    "contra": 0,
+    "shape": 10,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Copy@CamShot@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "win": "0x824c8cf0",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x824b87f8": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x824c8cf0": {
+    "side": "branch",
+    "unit": "default/CameraShot",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?Copy@CharBoneDir@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "win": "0x823b6720",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823b6720": {
+    "side": "main",
+    "unit": "default/CharBoneDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823b85a0": {
+    "side": "branch",
+    "unit": "default/CharBoneDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Copy@CharDriverMidi@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "win": "0x823cc138",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823cc138": {
+    "side": "main",
+    "unit": "default/CharDriverMidi",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823cdb58": {
+    "side": "branch",
+    "unit": "default/CharDriverMidi",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Copy@RndTexRenderer@@$4PPPPPPPM@3AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "win": "0x8273ab70",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8273ab70": {
+    "side": "main",
+    "unit": "default/Rnd_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822ad980": {
+    "side": "branch",
+    "unit": "default/BandSwatch",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Copy@SpotlightDrawer@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "win": "0x824d7038",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824d7038": {
+    "side": "main",
+    "unit": "default/SpotlightDrawer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822d1250": {
+    "side": "branch",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Copy@UIComponent@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "win": "0x82800090",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82800090": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x828277b0": {
+    "side": "branch",
+    "unit": "default/LabelShrinkWrapper",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82343250": {
+    "side": "branch",
+    "unit": "default/BandHighlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataDir@ObjectDir@@$4PPPPPPPM@BDM@AAPAV1@XZ",
+  "win": "0x82404898",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82404898": {
+    "side": "main",
+    "unit": "default/Anim",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827df540": {
+    "side": "branch",
+    "unit": "default/TrackDir",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataDir@UIPanel@@$4PPPPPPPM@A@AAPAVObjectDir@@XZ",
+  "win": "0x8261e2f8",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x825f1508": {
+    "side": "main",
+    "unit": "default/band3/meta_band/CampaignGoalsLeaderboardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8261e2f8": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/EventDialogPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82628f20": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82809018": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataDir@UIPanel@@$4PPPPPPPM@BI@AAPAVObjectDir@@XZ",
+  "win": "0x825f2cf0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825f2cf0": {
+    "side": "main",
+    "unit": "default/TexLoadPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82808fa8": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataDir@UIPanel@@$4PPPPPPPM@EA@AAPAVObjectDir@@XZ",
+  "win": "0x825faf00",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825faf00": {
+    "side": "main",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826412f0": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/TokenRedemptionPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataDir@UIPanel@@$4PPPPPPPM@EI@AAPAVObjectDir@@XZ",
+  "win": "0x82574558",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82574558": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b0740": {
+    "side": "branch",
+    "unit": "default/MoviePanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataDir@UIPanel@@$4PPPPPPPM@GI@AAPAVObjectDir@@XZ",
+  "win": "0x8263b8f8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8263b8f8": {
+    "side": "main",
+    "unit": "default/band3/meta_band/StoreMainPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b92d58": {
+    "side": "branch",
+    "unit": "default/band3/bandtrack/TrackPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?DataNe@@YA?AVDataNode@@PAVDataArray@@@Z",
+  "win": "0x8275db28",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8275db28": {
+    "side": "main",
+    "unit": "default/DataFunc",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82738f88": {
+    "side": "branch",
+    "unit": "default/Rnd_Xbox",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Draw@TrackPanel@@UAAXXZ",
+  "win": "0x82b90748",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82b90748": {
+    "side": "main",
+    "unit": "default/band3/bandtrack/TrackPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b90780": {
+    "side": "branch",
+    "unit": "default/band3/bandtrack/TrackPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 1,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@BAE@AAXPAVDataArray@@_N@Z",
+  "win": "0x82695de8",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x82695d88": {
+    "side": "main",
+    "unit": "default/GamePanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82695de8": {
+    "side": "branch",
+    "unit": "default/GamePanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@BE@AAXPAVDataArray@@_N@Z",
+  "win": "0x82651be0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82651be0": {
+    "side": "main",
+    "unit": "default/Matchmaker",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82652370": {
+    "side": "branch",
+    "unit": "default/Matchmaker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@BOE@AAXPAVDataArray@@_N@Z",
+  "win": "0x826c3890",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826c3890": {
+    "side": "main",
+    "unit": "default/GemPlayer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826c38e8": {
+    "side": "branch",
+    "unit": "default/GemPlayer",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@CCA@AAXPAVDataArray@@_N@Z",
+  "win": "0x826e74c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826e74c0": {
+    "side": "main",
+    "unit": "default/VocalPlayer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826e7518": {
+    "side": "branch",
+    "unit": "default/VocalPlayer",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@FI@AAXPAVDataArray@@_N@Z",
+  "win": "0x823e3538",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823e3538": {
+    "side": "main",
+    "unit": "default/network/net/NetSession",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823e3790": {
+    "side": "branch",
+    "unit": "default/network/net/NetSession",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@GM@AAXPAVDataArray@@_N@Z",
+  "win": "0x82550400",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82550400": {
+    "side": "main",
+    "unit": "default/band3/meta_band/SaveLoadManager",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82550450": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/SaveLoadManager",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Export@MsgSource@@$4PPPPPPPM@JE@AAXPAVDataArray@@_N@Z",
+  "win": "0x82566a68",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82566a68": {
+    "side": "main",
+    "unit": "default/band3/meta_band/ClosetMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82566a88": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/ClosetMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?FindPlayersImpl@BandMatchmaker@@UAAXXZ",
+  "win": "0x82653360",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82653360": {
+    "side": "main",
+    "unit": "default/Matchmaker",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82652e08": {
+    "side": "branch",
+    "unit": "default/Matchmaker",
+    "agree": 0,
+    "contra": 0,
+    "shape": 12,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?GetTier@OwnedSongSortNode@@UBAHVSymbol@@@Z",
+  "win": "0x82660a38",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82660a38": {
+    "side": "main",
+    "unit": "default/SongSortNode",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823d0c08": {
+    "side": "branch",
+    "unit": "default/CharClipSet",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@BandTrack@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x82354a10",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x8234ebd8": {
+    "side": "main",
+    "unit": "default/system/bandobj/BandTrack",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82354a10": {
+    "side": "branch",
+    "unit": "default/system/bandobj/BandTrack",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?Handle@CharDriverMidi@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x823ccf30",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823ccf30": {
+    "side": "main",
+    "unit": "default/CharDriverMidi",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823cdb68": {
+    "side": "branch",
+    "unit": "default/CharDriverMidi",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@Player@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x826a79e8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826a79e8": {
+    "side": "main",
+    "unit": "default/band3/game/Player",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826a8ab8": {
+    "side": "branch",
+    "unit": "default/band3/game/Player",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x826a9168": {
+    "side": "branch",
+    "unit": "default/band3/game/Player",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x826a9eb0": {
+    "side": "branch",
+    "unit": "default/band3/game/Player",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@RndGroup@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x82405958",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82405958": {
+    "side": "main",
+    "unit": "default/Anim",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82454990": {
+    "side": "branch",
+    "unit": "default/Group",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@SpotlightDrawer@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x824d62e8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824d62e8": {
+    "side": "main",
+    "unit": "default/SpotlightDrawer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822d25b0": {
+    "side": "branch",
+    "unit": "default/MoveMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@StarDisplay@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x8231e3f0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8231e3f0": {
+    "side": "main",
+    "unit": "default/StarDisplay",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231e708": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@StorePanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x82605090",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82605090": {
+    "side": "main",
+    "unit": "default/StorePanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b6ca8": {
+    "side": "branch",
+    "unit": "default/StorePanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@TexLoadPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x825f31c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825f31c0": {
+    "side": "main",
+    "unit": "default/TexLoadPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82628c10": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@UIComponent@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x828000c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x828000c0": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231e708": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Handle@UIPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "win": "0x82677cf8",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x825f1bd0": {
+    "side": "main",
+    "unit": "default/band3/meta_band/CampaignGoalsLeaderboardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82629688": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82677cf8": {
+    "side": "branch",
+    "unit": "default/Game",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82809048": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Highlight@RndDir@@$4PPPPPPPM@FFM@AAXXZ",
+  "win": "0x822fe7d8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822fe7d8": {
+    "side": "main",
+    "unit": "default/VocalTrackDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827f42a8": {
+    "side": "branch",
+    "unit": "default/VocalTrackDir",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Highlight@RndDrawable@@$4PPPPPPPM@BAI@AAXXZ",
+  "win": "0x822970f8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822970f8": {
+    "side": "main",
+    "unit": "default/BandDirector",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824b8808": {
+    "side": "branch",
+    "unit": "default/LightPreset",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   },
+   "0x827fbe68": {
+    "side": "branch",
+    "unit": "default/UIList",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Highlight@RndDrawable@@$4PPPPPPPM@FM@AAXXZ",
+  "win": "0x8248abc0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8248abc0": {
+    "side": "main",
+    "unit": "default/TexBlender",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822af078": {
+    "side": "branch",
+    "unit": "default/BandSwatch",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Highlight@UIComponent@@$4PPPPPPPM@A@AAXXZ",
+  "win": "0x827fff18",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827fff18": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823433f8": {
+    "side": "branch",
+    "unit": "default/BandHighlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Highlight@UIComponent@@$4PPPPPPPM@DI@AAXXZ",
+  "win": "0x82323960",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x82323930": {
+    "side": "main",
+    "unit": "default/InstrumentDifficultyDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82323960": {
+    "side": "branch",
+    "unit": "default/InstrumentDifficultyDisplay",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?Highlight@UIComponent@@$4PPPPPPPM@EA@AAXXZ",
+  "win": "0x82325940",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x823258f0": {
+    "side": "main",
+    "unit": "default/PlayerDiffIcon",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82325940": {
+    "side": "branch",
+    "unit": "default/PlayerDiffIcon",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?Highlight@UIComponent@@$4PPPPPPPM@EM@AAXXZ",
+  "win": "0x82321e68",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82321e68": {
+    "side": "main",
+    "unit": "default/ScrollbarDisplay",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82321ec8": {
+    "side": "branch",
+    "unit": "default/ScrollbarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Highlight@UIComponent@@$4PPPPPPPM@HM@AAXXZ",
+  "win": "0x82318ce0",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x82318c90": {
+    "side": "main",
+    "unit": "default/MicInputArrow",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82318ce0": {
+    "side": "branch",
+    "unit": "default/MicInputArrow",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?InqProgressValues@AccomplishmentTourConditional@@UAA_NPAVBandProfile@@AAH1@Z",
+  "win": "0x825a4890",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825a4890": {
+    "side": "main",
+    "unit": "default/band3/meta_band/AccomplishmentTourConditional",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8258bfb0": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/BandProfile",
+    "agree": 0,
+    "contra": 0,
+    "shape": 10,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Load@CharBoneDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x823b6558",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x822f0ec8": {
+    "side": "main",
+    "unit": "default/CharBoneDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x823b6558": {
+    "side": "branch",
+    "unit": "default/CharBoneDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?Load@CharPollGroup@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x823af2a8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823af2a8": {
+    "side": "main",
+    "unit": "default/CharPollGroup",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823b08c0": {
+    "side": "branch",
+    "unit": "default/CharPollGroup",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Load@UIComponent@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x827ffed8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827ffed8": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82343418": {
+    "side": "branch",
+    "unit": "default/BandHighlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x828012c8": {
+    "side": "branch",
+    "unit": "default/UIComponent",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Load@UIPanel@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x8261e2d8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8261e2d8": {
+    "side": "main",
+    "unit": "default/band3/meta_band/EventDialogPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82628f30": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82809028": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Load@UIPanel@@$4PPPPPPPM@BI@AAXAAVBinStream@@@Z",
+  "win": "0x825f2ce0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825f2ce0": {
+    "side": "main",
+    "unit": "default/TexLoadPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82808fe8": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Load@UIPanel@@$4PPPPPPPM@EA@AAXAAVBinStream@@@Z",
+  "win": "0x825faef0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825faef0": {
+    "side": "main",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82641300": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/TokenRedemptionPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Load@UIPanel@@$4PPPPPPPM@EI@AAXAAVBinStream@@@Z",
+  "win": "0x82574538",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82574538": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b08d8": {
+    "side": "branch",
+    "unit": "default/MoviePanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   },
+   "0x827b0740": {
+    "side": "branch",
+    "unit": "default/MoviePanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?LoadTable@FixedSizeSaveableStream@@QAAXH@Z",
+  "win": "0x827ab528",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827ab528": {
+    "side": "main",
+    "unit": "default/FixedSizeSaveableStream",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82786680": {
+    "side": "branch",
+    "unit": "default/SongParser",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?LookAt@Transform@@QAAXABVVector3@@0@Z",
+  "win": "0x824437d0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824437d0": {
+    "side": "main",
+    "unit": "default/TexRenderer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82430db8": {
+    "side": "branch",
+    "unit": "default/PostProc",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewObject@CampaignGoalsLeaderboardChoicePanel@@SAPAVObject@Hmx@@XZ",
+  "win": "0x8256e3c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8256e3c0": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82571738": {
+    "side": "branch",
+    "unit": "default/MetaPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewObject@FadePanel@@SAPAVObject@Hmx@@XZ",
+  "win": "0x826759e0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826759e0": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826759b8": {
+    "side": "branch",
+    "unit": "default/band3/game/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewObject@GamePanel@@SAPAVObject@Hmx@@XZ",
+  "win": "0x82675b50",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82675b50": {
+    "side": "main",
+    "unit": "default/band3/game/Game",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82675bb4": {
+    "side": "branch",
+    "unit": "default/band3/game/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewObject@HeldButtonPanel@@SAPAVObject@Hmx@@XZ",
+  "win": "0x825712d8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825712d8": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827b1638": {
+    "side": "branch",
+    "unit": "default/MoviePanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?NewObject@StoreMenuPanel@@SAPAVObject@Hmx@@XZ",
+  "win": "0x82571738",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x82570a50": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82571738": {
+    "side": "branch",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?NewSongNode@SongSortByRank@@UBAPAVOwnedSongSortNode@@PAVSongRecord@@@Z",
+  "win": "0x8265e538",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8265e538": {
+    "side": "main",
+    "unit": "default/SongSortByRank",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8265e530": {
+    "side": "branch",
+    "unit": "default/SongSortByRank",
+    "agree": 0,
+    "contra": 0,
+    "shape": 26,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PlaySequence@TrackPanel@@QAAXPBDMMM@Z",
+  "win": "0x82b916a8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82b916a8": {
+    "side": "main",
+    "unit": "default/band3/bandtrack/TrackPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b5f808": {
+    "side": "branch",
+    "unit": "default/Mic",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PostLoad@CharBoneDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x822f1090",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822f1090": {
+    "side": "main",
+    "unit": "default/CharBoneDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823b71d0": {
+    "side": "branch",
+    "unit": "default/CharBoneDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PostLoad@UIComponent@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x82800af8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82800af8": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231d208": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PostSave@ObjectDir@@$4PPPPPPPM@GJI@AAXAAVBinStream@@@Z",
+  "win": "0x822fe7a8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822fe7a8": {
+    "side": "main",
+    "unit": "default/VocalTrackDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827f42c8": {
+    "side": "branch",
+    "unit": "default/VocalTrackDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PreLoad@StarDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x8231e728",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8231e728": {
+    "side": "main",
+    "unit": "default/StarDisplay",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231d1f8": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PreLoad@UIComponent@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x828000b0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x828000b0": {
+    "side": "main",
+    "unit": "default/UIComponent",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231d1f8": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Print@RndTransformable@@$4PPPPPPPM@FLA@AAXXZ",
+  "win": "0x822fe7e8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822fe7e8": {
+    "side": "main",
+    "unit": "default/VocalTrackDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827f4450": {
+    "side": "branch",
+    "unit": "default/VocalTrackDir",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Print@RndTransformable@@$4PPPPPPPM@GI@AAXXZ",
+  "win": "0x824eb250",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824eb250": {
+    "side": "main",
+    "unit": "default/Instance",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82316448": {
+    "side": "branch",
+    "unit": "default/InlineHelp",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x8231c7f8": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82320b98": {
+    "side": "branch",
+    "unit": "default/CheckboxDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82343270": {
+    "side": "branch",
+    "unit": "default/BandHighlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x82827ec8": {
+    "side": "branch",
+    "unit": "default/LabelNumberTicker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Print@RndTransformable@@$4PPPPPPPM@KI@AAXXZ",
+  "win": "0x823258d8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823258d8": {
+    "side": "main",
+    "unit": "default/PlayerDiffIcon",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82498c28": {
+    "side": "branch",
+    "unit": "default/Lit",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Print@RndTransformable@@$4PPPPPPPM@MA@AAXXZ",
+  "win": "0x822cc140",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822cc140": {
+    "side": "main",
+    "unit": "default/BandStarDisplay",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8245c2c8": {
+    "side": "branch",
+    "unit": "default/Text",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?PropSync@@YA_NAAUCharInterestState@CharEyes@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x823870c8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823870c8": {
+    "side": "main",
+    "unit": "default/CharEyes",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823ae7a0": {
+    "side": "branch",
+    "unit": "default/CharEyes",
+    "agree": 0,
+    "contra": 1,
+    "shape": 12,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Replace@RndLight@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "win": "0x8249a0a0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8249a0a0": {
+    "side": "main",
+    "unit": "default/Lit",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82498c28": {
+    "side": "branch",
+    "unit": "default/Lit",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Replace@Spotlight@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "win": "0x824dbd28",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824dbd28": {
+    "side": "main",
+    "unit": "default/Spotlight",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x824dac50": {
+    "side": "branch",
+    "unit": "default/Spotlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Replace@TexMovie@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "win": "0x827476e8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827476e8": {
+    "side": "main",
+    "unit": "default/TexMovie",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827476f8": {
+    "side": "branch",
+    "unit": "default/TexMovie",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Rollback@VocalPlayer@@UAAXMM@Z",
+  "win": "0x826e5510",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x826e5510": {
+    "side": "main",
+    "unit": "default/VocalPlayer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826c6c58": {
+    "side": "branch",
+    "unit": "default/GemPlayer",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x8227c118",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8227c118": {
+    "side": "main",
+    "unit": "default/BandCharacter",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82289748": {
+    "side": "branch",
+    "unit": "default/BandCharacter",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@CharBoneDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x823b6700",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823b6700": {
+    "side": "main",
+    "unit": "default/CharBoneDir",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823b8148": {
+    "side": "branch",
+    "unit": "default/CharBoneDir",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@CharDriverMidi@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x823cc4e0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823cc4e0": {
+    "side": "main",
+    "unit": "default/CharDriverMidi",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823ccbe0": {
+    "side": "branch",
+    "unit": "default/CharDriverMidi",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@CharLookAt@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x823bb948",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823bb948": {
+    "side": "main",
+    "unit": "default/CharLookAt",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823a95c0": {
+    "side": "branch",
+    "unit": "default/CharHair",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Save@StarDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "win": "0x8231e400",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8231e400": {
+    "side": "main",
+    "unit": "default/StarDisplay",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8231d208": {
+    "side": "branch",
+    "unit": "default/StarDisplay",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetExcessVideoLag@ProfileMgr@@QAAXM@Z",
+  "win": "0x825475c8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825475c8": {
+    "side": "main",
+    "unit": "default/ProfileMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82533f08": {
+    "side": "branch",
+    "unit": "default/HDCache",
+    "agree": 0,
+    "contra": 0,
+    "shape": 29,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetName@Object@Hmx@@UAAXPBDPAVObjectDir@@@Z",
+  "win": "0x8275a5c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8275a5c0": {
+    "side": "main",
+    "unit": "default/Object",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82637670": {
+    "side": "branch",
+    "unit": "default/Object",
+    "agree": 0,
+    "contra": 1,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetProGuitarSongLessonComplete@SongStatusMgr@@QAAXHW4Difficulty@@@Z",
+  "win": "0x825d3588",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825d3588": {
+    "side": "main",
+    "unit": "default/SongStatusMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825b9fd8": {
+    "side": "branch",
+    "unit": "default/OvershellPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetProKeyboardSongLessonSectionComplete@SongStatusMgr@@QAAXHW4Difficulty@@H@Z",
+  "win": "0x825d3710",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825d3710": {
+    "side": "main",
+    "unit": "default/SongStatusMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x825ba160": {
+    "side": "branch",
+    "unit": "default/OvershellPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetProvider@UIListState@@QAAXPAVUIListProvider@@PAVRndDir@@@Z",
+  "win": "0x8280f268",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8280f268": {
+    "side": "main",
+    "unit": "default/UIListState",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827e9df8": {
+    "side": "branch",
+    "unit": "default/MidiParser",
+    "agree": 0,
+    "contra": 1,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetShowTimers@Rnd@@QAAX_N0@Z",
+  "win": "0x8240f078",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8240f078": {
+    "side": "main",
+    "unit": "default/system/rndobj/Rnd",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823fc440": {
+    "side": "branch",
+    "unit": "default/Bitmap",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@CalibrationWelcomePanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "win": "0x825746e0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825746e0": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82574518": {
+    "side": "branch",
+    "unit": "default/MetaPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@MsgSource@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "win": "0x82768088",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82768088": {
+    "side": "main",
+    "unit": "default/Msg",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827680b8": {
+    "side": "branch",
+    "unit": "default/Msg",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@MsgSource@@$4PPPPPPPM@FI@AAXVSymbol@@@Z",
+  "win": "0x823e3790",
+  "win_side": "branch",
+  "win_agree": 1,
+  "cands": {
+   "0x823e3558": {
+    "side": "main",
+    "unit": "default/network/net/NetSession",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   },
+   "0x823e3790": {
+    "side": "branch",
+    "unit": "default/network/net/NetSession",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   }
+  }
+ },
+ {
+  "name": "?SetType@MsgSource@@$4PPPPPPPM@FM@AAXVSymbol@@@Z",
+  "win": "0x82652360",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82652360": {
+    "side": "main",
+    "unit": "default/Matchmaker",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82651f20": {
+    "side": "branch",
+    "unit": "default/Matchmaker",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@MsgSource@@$4PPPPPPPM@JE@AAXVSymbol@@@Z",
+  "win": "0x825674c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825674c0": {
+    "side": "main",
+    "unit": "default/band3/meta_band/ClosetMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82566a88": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/ClosetMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@NewAwardPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "win": "0x82627ec8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82627ec8": {
+    "side": "main",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82628c20": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/NewAwardPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@SetlistToStorePanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "win": "0x82573d28",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82573d28": {
+    "side": "main",
+    "unit": "default/MetaPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82574518": {
+    "side": "branch",
+    "unit": "default/MetaPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetType@UIPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "win": "0x82812af0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82812af0": {
+    "side": "main",
+    "unit": "default/UIPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b7cc48": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetTypeDef@UIPanel@@$4PPPPPPPM@BI@AAXPAVDataArray@@@Z",
+  "win": "0x825f2d00",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825f2d00": {
+    "side": "main",
+    "unit": "default/TexLoadPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82809008": {
+    "side": "branch",
+    "unit": "default/TourDescPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SetTypeDef@UIPanel@@$4PPPPPPPM@EA@AAXPAVDataArray@@@Z",
+  "win": "0x825faf10",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825faf10": {
+    "side": "main",
+    "unit": "default/AccomplishmentPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82641320": {
+    "side": "branch",
+    "unit": "default/band3/meta_band/TokenRedemptionPanel",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?Start@TaskMgr@@QAAXPAVTask@@W4TaskUnits@@M@Z",
+  "win": "0x82749c18",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82749c18": {
+    "side": "main",
+    "unit": "default/Task",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8278e960": {
+    "side": "branch",
+    "unit": "default/Task",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@DxCam@@SA?AVSymbol@@XZ",
+  "win": "0x82738f08",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82738f08": {
+    "side": "main",
+    "unit": "default/Rnd_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82497880": {
+    "side": "branch",
+    "unit": "default/AnimFilter",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@RndDrawable@@SA?AVSymbol@@XZ",
+  "win": "0x82406468",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82406468": {
+    "side": "main",
+    "unit": "default/Draw",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82406930": {
+    "side": "branch",
+    "unit": "default/Draw",
+    "agree": 0,
+    "contra": 2,
+    "shape": 7,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StaticClassName@RndMultiMesh@@SA?AVSymbol@@XZ",
+  "win": "0x8240e240",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8240e240": {
+    "side": "main",
+    "unit": "default/system/rndobj/Rnd",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82484d60": {
+    "side": "branch",
+    "unit": "default/MultiMesh",
+    "agree": 0,
+    "contra": 0,
+    "shape": 9,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StopPlaying@StreamPlayer@@QAAXXZ",
+  "win": "0x827baa10",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827baa10": {
+    "side": "main",
+    "unit": "default/StreamPlayer",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82524b10": {
+    "side": "branch",
+    "unit": "default/Joypad",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?StopSequence@TrackPanel@@QAAXPBD_N@Z",
+  "win": "0x82b91718",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82b91718": {
+    "side": "main",
+    "unit": "default/band3/bandtrack/TrackPanel",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b5f878": {
+    "side": "branch",
+    "unit": "default/Mic",
+    "agree": 0,
+    "contra": 0,
+    "shape": 4,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SyncProperty@CharDriver@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x823cfad0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x823cfad0": {
+    "side": "main",
+    "unit": "default/CharDriver",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x823cf948": {
+    "side": "branch",
+    "unit": "default/CharDriver",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SyncProperty@MsgSource@@$4PPPPPPPM@BM@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x827b21c0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827b21c0": {
+    "side": "main",
+    "unit": "default/StorePreviewMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82b8b188": {
+    "side": "branch",
+    "unit": "default/Lit_NG",
+    "agree": 0,
+    "contra": 0,
+    "shape": 2,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?SyncProperty@MsgSource@@$4PPPPPPPM@KI@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "win": "0x825483b0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x825483b0": {
+    "side": "main",
+    "unit": "default/ProfileMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x82548400": {
+    "side": "branch",
+    "unit": "default/ProfileMgr",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?UpdateBounds@Spotlight@@UAAXXZ",
+  "win": "0x824d9f70",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824d9f70": {
+    "side": "main",
+    "unit": "default/Spotlight",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8272aa78": {
+    "side": "branch",
+    "unit": "default/Spotlight",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_erase@?$vector@ULevelData@@V?$StlNodeAlloc@ULevelData@@@stlpmtx_std@@@stlpmtx_std@@IAAPAULevelData@@PAU3@0ABU__false_type@2@@Z",
+  "win": "0x82b63da0",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82b63da0": {
+    "side": "main",
+    "unit": "default/system/synth_xbox/FxSendMeterEffect",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826ffd58": {
+    "side": "branch",
+    "unit": "default/CheatProvider",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCtrlPoint@RndSpline@@PAV34@ABU__false_type@2@@Z",
+  "win": "0x8276fa80",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8276fa80": {
+    "side": "main",
+    "unit": "default/Spline",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8274ad70": {
+    "side": "branch",
+    "unit": "default/DataNode",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_erase_after@?$_Slist_base@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@IAAPAU_Slist_node_base@23@PAU423@@Z",
+  "win": "0x8264db80",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8264db80": {
+    "side": "main",
+    "unit": "default/band3/meta_band/LicenseMgr",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x826323c8": {
+    "side": "branch",
+    "unit": "default/SelectDifficultyPanel",
+    "agree": 0,
+    "contra": 0,
+    "shape": 6,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndPartLauncher@@@@IABV3@@Z",
+  "win": "0x822cc808",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822cc808": {
+    "side": "main",
+    "unit": "default/StreakMeter",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822da708": {
+    "side": "branch",
+    "unit": "default/StreakMeter",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndPropAnim@@@@IABV3@@Z",
+  "win": "0x822cc878",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x822cc878": {
+    "side": "main",
+    "unit": "default/StreakMeter",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822da698": {
+    "side": "branch",
+    "unit": "default/StreakMeter",
+    "agree": 0,
+    "contra": 1,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?erase@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@2@U32@0@Z",
+  "win": "0x8241aa68",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x8241aa68": {
+    "side": "main",
+    "unit": "default/Mesh",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8241ab38": {
+    "side": "branch",
+    "unit": "default/Mesh",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?push_back@?$vector@UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUEnvironmentEntry@LightPreset@@@Z",
+  "win": "0x824b2ca8",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x824b2ca8": {
+    "side": "main",
+    "unit": "default/LightPreset",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x827e7ef8": {
+    "side": "branch",
+    "unit": "default/MidiParser",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z",
+  "win": "0x82699a50",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82699a50": {
+    "side": "main",
+    "unit": "default/band3/game/Stats",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8267b478": {
+    "side": "branch",
+    "unit": "default/Game",
+    "agree": 0,
+    "contra": 0,
+    "shape": 5,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?push_back@?$vector@VCacheDirEntry@@V?$StlNodeAlloc@VCacheDirEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVCacheDirEntry@@@Z",
+  "win": "0x827dba70",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x827dba70": {
+    "side": "main",
+    "unit": "default/Cache_Xbox",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x822ec9b8": {
+    "side": "branch",
+    "unit": "default/Cache_Xbox",
+    "agree": 0,
+    "contra": 1,
+    "shape": 1,
+    "ok": false
+   },
+   "0x822db020": {
+    "side": "branch",
+    "unit": "default/StreakMeter",
+    "agree": 0,
+    "contra": 0,
+    "shape": 3,
+    "ok": false
+   }
+  }
+ },
+ {
+  "name": "?resize@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjOwnerPtr@VCharClip@@@@@Z",
+  "win": "0x82390078",
+  "win_side": "main",
+  "win_agree": 1,
+  "cands": {
+   "0x82390078": {
+    "side": "main",
+    "unit": "default/CharEyes",
+    "agree": 1,
+    "contra": 0,
+    "shape": 0,
+    "ok": true
+   },
+   "0x8270a9b8": {
+    "side": "branch",
+    "unit": "default/HamCamTransform",
+    "agree": 0,
+    "contra": 1,
+    "shape": 0,
+    "ok": false
+   }
+  }
+ }
+]
