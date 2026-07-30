@@ -1,7 +1,7 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,116 strict-matched functions / honest proxy 39,606 /
-`matched_code_percent` 34.685703** (honest = matched − masked_equal, per the BO-8
+**Current: 41,158 strict-matched functions / honest proxy 39,648 /
+`matched_code_percent` 34.747932** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
@@ -127,6 +127,79 @@ worktree with both legs same-split, not summed from lane deltas.
 > ⚠ `collision_ablation.py`'s clean 0.00% plant rate is **optimistic** — `agree`
 > counts shared boilerplate, so same-family siblings defeat it (`--scope-unique`,
 > as laneBU4 applied to the live channel, is the fix if anyone revives this).
+
+> **Wave BW (2026-07-30) — +42 honest, +0.062229pp code, `masked_equal` FLAT at
+> 1510.** Two lanes landed by patch, each A/B'd in its own fresh worktree off
+> `7748e885` with both legs same-split; the combined row is a **measurement** of
+> main HEAD's tree, not a sum of the two claims:
+>
+> | | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | base `7748e885` | 41116 | 1510 | 39606 | 34.685703 |
+> | +BW-1 `50178cff` reloc-adjudicated anon rows | 41158 | 1510 | 39648 | 34.740448 |
+> | +BW-3 `0c91bbb2` Env_NG store + splits hardening | 41158 | 1510 | 39648 | **34.747932** |
+>
+> (BW-3 measured standalone off the same base as +0.007487pp with all three
+> function axes flat. Composing the two lanes predicted 34.747935 and the
+> measured combined figure is 34.747932 — a 3e-6 rounding artifact of the 6-dp
+> inputs, so the lanes are **cleanly additive with no interaction**.)
+>
+> ★★★ **BW-3 is the canonical "Δhonest 0 is not a failure" case.** Its functions
+> were *already* counted as matched, so no function-count axis could move by
+> construction and only `code%` could respond. Under the amended BO-8 pricing
+> rule — discard only if **both** axes are ≈0 — this is a keeper, and pricing on
+> Δhonest alone would have thrown away a real, byte-exact correctness fix.
+> ★★★ **`Max` operand order is load-bearing, and getting it backwards REGRESSES.**
+> `NgEnviron::UpdateApproxLighting` had a guarded assignment
+> (`if (n <= 1) n = 1;`) where retail stores unconditionally — the branch skips
+> only the `li r11,1` and falls into a shared `stw`, i.e. a Max. Since `Max(x,y)`
+> is `(x < y) ? y : x`, the operand order picks the comparison sense:
+> `Max(1,n)` → retail's strict `bgt` (byte-exact), `Max(n,1)` → `bge`. The wrong
+> order measured **−1 matched**, not merely +0: it converts an *argument*
+> mismatch, which objdiff folds, into an *opcode* mismatch, which it does not.
+> ★★★ **The at-100% "wrong control flow" class is 6, not 24 — screen on the reloc
+> type before funding it.** 18 of the 24 are a rendering artifact: dtk emits
+> `IMAGE_REL_PPC_REL14` against the **containing function symbol** for
+> intra-function conditional branches, so objdiff renders the destination from
+> the relocation and drops the encoded displacement; retail's real displacement
+> lands on the same row in all 18. The discriminator is perfect — all 18
+> artifacts carry reloc type 7, all 6 genuine defects carry none.
+> ★★ **An unresolvable `splits.txt` heading is now a hard failure**
+> (`tools/project.py` + `configure.py`, `RB3_ALLOW_UNRESOLVED_SPLITS=1` to
+> unblock). It used to emit `base_path: None` — a unit that can never pair and
+> reads 0% forever — announced by one `print` among thousands of build lines,
+> which is how the orphan `Rnd.cpp` heading hid for months. This matters because
+> 715 of the 719 bare headings resolve **only** via project.py's unique-basename
+> alias (BV-2), so one new colliding basename silently kills a pin. `configure.py`
+> also now rejects a **duplicate** heading, which dtk does not: it unions both
+> blocks into *both* headings, so each unit silently claims the other's ranges.
+> ⚠ **Live instance of that hazard, unfixed:** an untracked
+> `src/system/os/MasterAudio.cpp` already exists in the tree, and the bare
+> `MasterAudio.cpp:` heading resolves to `system/beatmatch/MasterAudio.cpp` via
+> the alias — adding the former to `objects.json` makes the alias ambiguous.
+> Before this landing that would have been a silent 0%; now it hard-fails naming
+> both owners.
+> ★★ **Fleet-tooling changes need the generated output byte-compared, and the
+> guards exercised.** `build.ninja` / `objdiff.json` / `compile_commands.json`
+> were verified byte-identical (sha1 `c4eb9845` / `729b8e2f` / `b744e2e8`)
+> pristine-vs-patched with rc=0 both ways, toggling **only** the two tooling
+> files so the split state was held fixed — an earlier snapshot taken before the
+> leg-A build would have been a false positive if the re-split had moved
+> `config.json`. rc=0 under the patched tooling is itself the proof the tree has
+> zero unresolved and zero duplicate headings today. All three failure paths were
+> then fired live (orphan → rc=1, escape hatch → rc=0, duplicate → rc=1), because
+> a guard that always passes is indistinguishable from dead code.
+>
+> ➡ **Carried forward, unowned: a proven map mispair.**
+> `?Store@Target@HamCamShot@@` in unit `BandCamShot` should repoint to
+> `?Store@Target@BandCamShot@@QAAXPAV2@@Z`. Our tree has **both**
+> `BandCamShot.cpp` (RB3 — `DeleteTargetCache` inside the guard, which is what
+> retail does) and `HamCamShot.cpp` (DC3 — `sCache.erase` outside the guard,
+> which is our compiled base); the map named retail's function with the **DC3
+> class name**, so retail was paired against our DC3 sibling. **The RB3 source is
+> already correct — do not "fix" the source.** BW-3 deliberately stayed off
+> `scripts/target_symbol_map.json` because BW-1 and BW-2 were contending for it.
+> ⚠ A map edit is a silent no-op without a re-split.
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
