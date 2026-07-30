@@ -33,7 +33,7 @@ BEGIN_LOADS(HamCamShot)
     d >> mZeroTime;
     d >> mMinTime;
     d >> mMaxTime;
-    mNextShots.Load(bs, 1, nullptr, true);
+    mNextShots.Load(bs, 1);
     mOriginalSizeNextShots = mNextShots.size();
     int temp;
     if (d.rev > 1) {
@@ -41,7 +41,7 @@ BEGIN_LOADS(HamCamShot)
         mPlayerFlag = (HamPlayerFlags)temp;
     }
     if (d.rev > 2) {
-        mMasterAnims.Load(bs, 1, nullptr, true);
+        mMasterAnims.Load(bs, 1);
     }
     ResetNextShot();
 END_LOADS

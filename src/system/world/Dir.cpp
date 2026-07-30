@@ -405,7 +405,7 @@ void WorldDir::PostLoad(BinStream &bs) {
     }
     if (d.rev > 0xF) {
         SyncCamShots(false);
-        mCamShotOverrides.Load(d.stream, false, nullptr, true);
+        mCamShotOverrides.Load(d.stream, false);
         SyncCamShots(true);
     }
     if (d.rev > 0x10 && d.rev != 0x17) {

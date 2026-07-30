@@ -823,13 +823,14 @@ void ObjPtrList<T1, T2>::MoveItem(
 }
 
 template <class T1, class T2>
-bool ObjPtrList<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir, bool b4) {
+bool ObjPtrList<T1, T2>::Load(BinStream &bs, bool print) {
     bool ret = true;
     clear();
     int count;
     bs >> count;
     Hmx::Object *refOwner = mOwner ? mOwner->RefOwner() : nullptr;
-    if (!dir && refOwner)
+    ObjectDir *dir = nullptr;
+    if (refOwner)
         dir = refOwner->Dir();
     if (print) {
         MILO_ASSERT(dir, 0x210);
@@ -890,7 +891,7 @@ BinStream &operator<<(BinStream &bs, const ObjPtrList<T1, ObjectDir> &c) {
 
 template <class T1>
 BinStream &operator>>(BinStream &bs, ObjPtrList<T1, ObjectDir> &list) {
-    list.Load(bs, true, nullptr, true);
+    list.Load(bs, true);
     return bs;
 }
 

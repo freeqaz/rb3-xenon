@@ -197,7 +197,7 @@ BinStream &operator>>(BinStreamRev &d, TransformArea &a) {
 
 void TransformArea::Load(BinStreamRev &d) {
     d >> mArea;
-    mCamshots.Load(d.stream, false, nullptr, true);
+    mCamshots.Load(d.stream, false);
     d >> mAnims;
     if (d.rev > 1) {
         d >> mCrowds;

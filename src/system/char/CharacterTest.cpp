@@ -121,7 +121,7 @@ BEGIN_LOADS(CharacterTest)
         mClip2 = nullptr;
     }
     d >> mTeleportTo;
-    mWalkPath.Load(d.stream, false, nullptr, true);
+    mWalkPath.Load(d.stream, false);
     d >> mShowDistMap;
     d >> mTransition;
     d >> mCycleTransition;

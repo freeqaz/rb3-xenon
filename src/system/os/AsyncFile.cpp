@@ -271,10 +271,11 @@ void AsyncFile::Init() {
     }
     MILO_ASSERT((mMode & (FILE_OPEN_READ | FILE_OPEN_WRITE)) != (FILE_OPEN_READ | FILE_OPEN_WRITE), 0xC2);
     if (mMode & FILE_OPEN_WRITE) {
-        bool curCD = UsingCD();
+        // Retail does NOT save/restore the flag: its instruction stream has no
+        // `bl ?UsingCD@@YA_NXZ` and restores with the constant `li r3,1`.
         SetUsingCD(false);
         FileQualifiedFilename(mFilename, mFilename.c_str());
-        SetUsingCD(curCD);
+        SetUsingCD(true);
     } else {
         FileQualifiedFilename(mFilename, mFilename.c_str());
     }
