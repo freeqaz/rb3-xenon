@@ -962,25 +962,25 @@ void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
         if (o->Property(lead_text, true)->NotNull()) {
             mLeadText = o->Property(lead_text, true)->Obj<RndText>();
             mLeadText->SetShowing(objexists);
-            mLeadText->SetColor(Hmx::Color32(r20, g20, b20, a20));
+            mLeadText->SetColor(Hmx::Color(r20, g20, b20, a20));
         } else
             mLeadText = 0;
         if (o->Property(harmony_text, true)->NotNull()) {
             mHarmText = o->Property(harmony_text, true)->Obj<RndText>();
             mHarmText->SetShowing(objexists);
-            mHarmText->SetColor(Hmx::Color32(r30, g30, b30, a30));
+            mHarmText->SetColor(Hmx::Color(r30, g30, b30, a30));
         } else
             mHarmText = 0;
         if (o->Property(lead_phoneme_text, true)->NotNull()) {
             mLeadPhonemeText = o->Property(lead_phoneme_text, true)->Obj<RndText>();
             mLeadPhonemeText->SetShowing(objexists);
-            mLeadPhonemeText->SetColor(Hmx::Color32(r40, g40, b40, a40));
+            mLeadPhonemeText->SetColor(Hmx::Color(r40, g40, b40, a40));
         } else
             mLeadPhonemeText = mLeadText;
         if (o->Property(harmony_phoneme_text, true)->NotNull()) {
             mHarmPhonemeText = o->Property(harmony_phoneme_text, true)->Obj<RndText>();
             mHarmPhonemeText->SetShowing(objexists);
-            mHarmPhonemeText->SetColor(Hmx::Color32(r50, g50, b50, a50));
+            mHarmPhonemeText->SetColor(Hmx::Color(r50, g50, b50, a50));
         } else
             mHarmPhonemeText = mHarmText;
     }
@@ -1145,14 +1145,14 @@ DataNode VocalTrackDir::OnSetLyricColor(const DataArray *da) {
     float blue = (float)((packed >> 16) & 255) / 255.0f;
     if (sym == lead) {
         if (mLeadText)
-            mLeadText->SetColor(Hmx::Color32(red, green, blue, alpha));
+            mLeadText->SetColor(Hmx::Color(red, green, blue, alpha));
         if (mLeadPhonemeText)
-            mLeadPhonemeText->SetColor(Hmx::Color32(red, green, blue, alpha));
+            mLeadPhonemeText->SetColor(Hmx::Color(red, green, blue, alpha));
     } else if (sym == harmony) {
         if (mHarmText)
-            mHarmText->SetColor(Hmx::Color32(red, green, blue, alpha));
+            mHarmText->SetColor(Hmx::Color(red, green, blue, alpha));
         if (mHarmPhonemeText)
-            mHarmPhonemeText->SetColor(Hmx::Color32(red, green, blue, alpha));
+            mHarmPhonemeText->SetColor(Hmx::Color(red, green, blue, alpha));
     }
     return DataNode(0);
 }

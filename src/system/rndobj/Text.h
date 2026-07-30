@@ -4,37 +4,45 @@
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "rndobj/Draw.h"
-#include "rndobj/FontBase.h"
 #include "rndobj/Font.h"
-#include "rndobj/Mat.h"
 #include "rndobj/Mesh.h"
 #include "rndobj/Trans.h"
 #include "utl/MemMgr.h"
-#include "utl/Symbol.h"
 #include "utl/StlAlloc.h"
-
-namespace Hmx {
-    class Color32;
-}
+#include "utl/Symbol.h"
+#include <map>
+#include <set>
+#include <vector>
 
 #ifndef HX_NATIVE
 using stlpmtx_std::StlNodeAlloc;
-// Convenience: on Xbox, stlpmtx_std::vector with StlNodeAlloc; on native, std::vector
+// Retail's mLines is stlpmtx_std::vector<Line, StlNodeAlloc<Line> > — proven by
+// the mangled symbol band3/bandtrack/GemManager.cpp force-instantiates:
+//   ?erase@?$vector@VLine@RndText@@V?$StlNodeAlloc@VLine@RndText@@@stlpmtx_std@@@...
+// so this macro is load-bearing, not a convenience.
 #define HX_VECTOR(T) stlpmtx_std::vector<T, stlpmtx_std::StlNodeAlloc<T> >
 #else
 #define HX_VECTOR(T) std::vector<T>
 #endif
 
-class RndCam;
-
-class TextHolder {
-public:
-    TextHolder() {}
-    virtual ~TextHolder() {}
-    virtual void SetTextToken(Symbol) = 0;
-    virtual void SetInt(int, bool) = 0;
-};
-
+// ---------------------------------------------------------------------------
+// RB3-360 RETAIL RndText.
+//
+// Ground truth: docs/decomp/rndtext-retail-layout.md (lane BP-2b) — a
+// compiler-and-retail-verified member table. Retail RndText is rb3-Wii-lineage
+// in structure, member order, Load/Save order and ctor mem-init list, with
+// 360-widened types. It is NOT the DC3-generation class this file used to hold
+// (no mStyles / StyleState / FontMap / FontMap3d / BlacklightPacket / fit /
+// scroll / mCircle block — zero string hits for any of those in the retail
+// binary).
+//
+//   base region [0x000,0x0d8)  byte-identical to our tree, untouched
+//   own members [0x0d8,0x190)  = 0xb8, fully attributed below
+//   vtordisp word      @0x190
+//   Hmx::Object vbase  @0x194
+//   RndHighlightable   @0x1C0
+//   sizeof(RndText)    = 0x1c8
+// ---------------------------------------------------------------------------
 class RndText : public RndDrawable, public RndTransformable {
 public:
     enum Alignment {
@@ -59,55 +67,52 @@ public:
         kForceUpper = 2,
     };
 
-    enum FitType {
-        /** "Performs normal line wrapping if [width] is set" */
-        kFitWrap = 0,
-        /** "Shrinks the text until it fits within [width] and [height].
-            Note that this is a very expensive process, super slow,
-            and so should never be used on dynamically changing text when in game" */
-        kFitJust = 1,
-        /** "Constrains the text to one line of [width] with ellipses" */
-        kFitEllipsis = 2,
-        /** "Stretch text to fit width" */
-        kFitStretch = 3,
-        /** "Right-to-left scroll - Reset to beginning after end scrolls off" */
-        kFitScrollMarqueeReset = 4,
-        /** "Reverse scroll direction whenever string end or beginning is reached" */
-        kFitScrollPingPong = 5,
-        /** "Continuous right-to-left scrolling. String start follows sring end" */
-        kFitScrollMarqueeWrap = 6,
-        /** "Continuous right-to-left scroll with wrapping and not care about string size.
-            '\n' will be replaced with indentation." */
-        kFitScrollMarqueeWrapAlways = 7
-    };
-
-    // RB3-360 retail layout — sizeof 0x24 (verified vs Ghidra: LyricPlate embeds
-    // two of these + mInvalidateMs@0x108/mBaked@0x10c, and RndText::Style memcpy
-    // is 0x24). This is the era-correct single-color / raw-font-ptr model, BETWEEN
-    // rb3-Wii (0x18, packed Color32) and DC3 (0x44, two Colors + ObjPtr + blacklight).
+    // sizeof 0x24 — UNCHANGED from the previous (DC3-shaped) header: retail's
+    // Style has the identical layout, only rb3-Wii's *names* differ
+    // (font/size/italics/color/brk/pre/zOffset). Keeping our field names avoids
+    // churning Lyric.{h,cpp}, UIFontImporter, HamListRibbon, StarsDisplay and
+    // UIListLabel for zero layout benefit.
+    //   MEASURED offsets, from mStyle@0x110:
+    //   font@0x110 size@0x114 italics@0x118 Hmx::Color@0x11c
+    //   brk@0x12c pre@0x12d zOffset@0x130
     class Style {
     public:
         Style()
-            : mFont(nullptr), mSize(0), mItalics(0), mTextColor(1, 1, 1),
+            : mFont(nullptr), mSize(0), mItalics(0), mTextColor(1, 1, 1, 1),
               nobreak(true), pre(false), mZOffset(0) {}
-        Style(Hmx::Object *owner);
-        Style(const Style &s) { memcpy(this, &s, 0x24); }
-        Style &operator=(const Style &s) {
-            memcpy(this, &s, 0x24);
-            return *this;
-        }
+        // rb3-Wii-lineage ctor. Wii passes Color32(-1) (opaque white); the
+        // 360 widening makes that Hmx::Color(1,1,1,1) — the ctor default the
+        // retail RndText ctor was measured to store.
+        Style(RndFont *f, float sz, float ital, const Hmx::Color &col, float z)
+            : mFont(f), mSize(sz), mItalics(ital), mTextColor(col), nobreak(true),
+              pre(false), mZOffset(z) {}
+        // NO user-declared copy ctor / operator=. The previous header carried
+        // explicit memcpy(this,&s,0x24) forms marked "codegen-load-bearing";
+        // that is REFUTED. Two reasons:
+        //   1. For a 0x24 POD, MSVC's *implicit* copy already emits exactly the
+        //      measured `li r5,0x24` + memcpy — the explicit form buys nothing.
+        //   2. Declaring them makes Style, and therefore the Line that embeds
+        //      it, non-trivially-copyable. That silently rewrites
+        //      vector<Line>::erase from the trivial pointer-subtraction memmove
+        //      into an element-wise copy loop, and retail's
+        //      ?erase@?$vector@VLine@RndText@@... is the memmove form (it
+        //      matches at 100% regardless of sizeof(Line), because the byte
+        //      count is `(char*)end - (char*)last` with no sizeof multiply --
+        //      which is exactly why it matched even when our Line was 0x14 and
+        //      retail's was 0x78). Keeping Style trivial is what holds that
+        //      retail-required instantiation at 100%.
         float GetAlpha() const { return mTextColor.alpha; }
         void SetAlpha(float alpha) { mTextColor.alpha = alpha; }
 
         /** "Font to use for this style" (raw ptr in RB3-360 retail) */
-        RndFontBase *mFont; // 0x00
+        RndFont *mFont; // 0x00
         /** "Size of the text" */
         float mSize; // 0x04
         /** "Defines the slant of the text, changed by <it> tag" */
         float mItalics; // 0x08
         /** "Color of the text, put into mesh verts. Modified by <color=r,g,b,a>." */
         Hmx::Color mTextColor; // 0x0c
-        /** "Prevent line breaks in a block" */
+        /** "Prevent line breaks in a block" (rb3-Wii `brk`) */
         bool nobreak; // 0x1c
         /** "Super-script / pre" */
         bool pre; // 0x1d
@@ -115,171 +120,57 @@ public:
         float mZOffset; // 0x20
     }; // sizeof 0x24
 
-    class StyleState {
+    // sizeof 0x78 — MEASURED four ways (divw by 0x78, two mulli 0x78, and the
+    // dtor's deallocation arithmetic).
+    //
+    // CORRECTION to docs/decomp/rndtext-retail-layout.md: that doc's *table*
+    // (which is the measurement) and its *prose decomposition* disagree. Wii's
+    // Line is 0x60 = Style 0x18 + 2 ptrs + 2 uints + Transform 0x30 + float +
+    // Color32. On 360 Style grows to 0x24 (+0xc) and Transform to 0x40 (+0x10),
+    // so KEEPING Wii's separate `color` member would give 0x88, not 0x78. The
+    // measured table attributes every byte of [0,0x78) with no room for it.
+    // Conclusion: retail DROPS Wii's redundant Line::color — the colour lives in
+    // lineStyle.mTextColor (on Wii both were written with the same value, so the
+    // duplicate was dead storage). INFERRED from the measured table, but the
+    // arithmetic only closes this one way.
+    class Line {
     public:
-        StyleState(RndText *text, float size);
+        Line()
+            : lineStyle(), mStart(nullptr), mEnd(nullptr), startIdx(0), endIdx(0),
+              mWidth(0) {
+            xfm.Reset();
+        }
+        Style lineStyle; // 0x00  (0x24)
+        /** mText.c_str() + startIdx */
+        const char *mStart; // 0x24
+        /** mText.c_str() + endIdx, after trailing-whitespace trim */
+        const char *mEnd; // 0x28
+        unsigned int startIdx; // 0x2c
+        unsigned int endIdx; // 0x30
+        Transform xfm; // 0x34  (0x40)
+        /** advance-summed width of this line */
+        float mWidth; // 0x74
+    }; // sizeof 0x78
 
-        // First 0x24 bytes: copied from Style via memcpy
-        RndFontBase *mFont; // 0x00
-        float mSize; // 0x04 - Style::mSize, then scaled by size param
-        float mItalics; // 0x08
-        Hmx::Color mTextColor; // 0x0c
-        bool nobreak; // 0x1c
-        bool pre; // 0x1d
-        float mZOffset; // 0x20
-        // End of memcpy'd Style data
-        Style *mStyle; // 0x24
-        int mFontMapIdx; // 0x28
-        float mBaseSize; // 0x2c
-        bool mActive; // 0x30
-        bool brk; // 0x31
+    class MeshInfo {
+    public:
+        MeshInfo() : mesh(nullptr), syncFlags(0), displayableChars(0) {}
+        RndMesh *mesh; // 0x0
+        int syncFlags; // 0x4
+        int displayableChars; // 0x8
     };
 
-    class BlacklightPacket {
-    public:
 #ifdef HX_NATIVE
-        RndMesh *mMesh;
-        Hmx::Color mSavedColor;
-        float mSize;
-        int mSyncFlags;
-        RndCam *mCam;
+    // mMeshMap is keyed by the RndFont* cast to an integer. `unsigned int` is
+    // pointer-width on the 32-bit console but TRUNCATES a 64-bit host pointer.
+    // The map is runtime-only (never read byte-for-byte from disk), so widening
+    // the key on native is layout-safe.
+    typedef unsigned long FontKey;
 #else
-        int unk[8];
+    typedef unsigned int FontKey;
 #endif
-    };
 
-    class FontMapBase {
-    public:
-        virtual ~FontMapBase() {}
-        virtual Symbol ClassName() const = 0;
-        virtual void SetFont(RndFontBase *) = 0;
-        virtual RndFontBase *Font() const = 0;
-        virtual int NumMeshes() const = 0;
-        virtual RndMesh *Mesh(int) const = 0;
-        virtual int NumMaterials() const = 0;
-        virtual RndMat *Material(int) const = 0;
-        virtual void ResetDisplayableChars() = 0;
-        virtual void IncrementDisplayableChars(unsigned short) = 0;
-        virtual void AllocateMeshes(RndText *, int) = 0;
-        virtual void CleanupSyncMeshes() = 0;
-        virtual void SetupCharacter(
-            unsigned short,
-            float &,
-            float,
-            const StyleState &,
-            unsigned short,
-            float,
-            FitType,
-            float
-        ) = 0;
-        virtual bool SupportsScrolling() const = 0;
-        virtual void SetupScrolling() = 0;
-        virtual void UpdateScrolling(float) = 0;
-
-        MEM_OVERLOAD(FontMapBase, 0xD7);
-
-        bool mBlacklight; // 0x4
-    };
-
-    // size 0x18
-    class FontMap : public FontMapBase {
-    public:
-        // size 0x10
-        class Page {
-        public:
-            Page() : mesh(nullptr) {}
-            ~Page() {
-                if (mesh) {
-                    RELEASE(mesh);
-                }
-            }
-            MEM_OVERLOAD(Page, 0x115);
-
-            RndMesh *mesh; // 0x0
-            int displayableChars; // 0x4
-            RndMesh::Vert *mVertStart; // 0x8
-            int mSyncFlags; // 0xc
-        };
-
-        virtual ~FontMap();
-        virtual Symbol ClassName() const { return StaticClassName(); }
-        virtual void SetFont(RndFontBase *);
-        virtual RndFontBase *Font() const { return mFont; }
-        virtual int NumMeshes() const { return mPages.size(); }
-        virtual RndMesh *Mesh(int idx) const { return mPages[idx]->mesh; }
-        virtual int NumMaterials() const { return mPages.size(); }
-        virtual RndMat *Material(int idx) const { return mFont->Mat(idx); }
-        virtual void ResetDisplayableChars();
-        virtual void IncrementDisplayableChars(unsigned short);
-        virtual void AllocateMeshes(RndText *, int);
-        virtual void CleanupSyncMeshes();
-        virtual void SetupCharacter(
-            unsigned short,
-            float &,
-            float,
-            const StyleState &,
-            unsigned short,
-            float,
-            FitType,
-            float
-        );
-        virtual bool SupportsScrolling() const { return true; }
-        virtual void SetupScrolling();
-        virtual void UpdateScrolling(float);
-
-        static Symbol StaticClassName() {
-            static Symbol name("FontMap");
-            return name;
-        }
-
-        RndFont *mFont; // 0x8
-        std::vector<Page *> mPages; // 0xc
-    };
-
-    // size 0x20
-    class FontMap3d : public FontMapBase {
-    public:
-        virtual ~FontMap3d();
-        virtual Symbol ClassName() const { return StaticClassName(); }
-        virtual void SetFont(RndFontBase *);
-        virtual RndFontBase *Font() const { return mFont; }
-        virtual int NumMeshes() const { return mMeshes.size(); }
-        virtual RndMesh *Mesh(int idx) const { return mMeshes[idx]; }
-        virtual int NumMaterials() const { return mFont && mFont->Mat(); }
-        virtual RndMat *Material(int i) const {
-            MILO_ASSERT(i==0, 0x150);
-            return mFont->Mat();
-        }
-        virtual void ResetDisplayableChars() { mDisplayableChars = 0; }
-        virtual void IncrementDisplayableChars(unsigned short);
-        virtual void AllocateMeshes(RndText *, int);
-        virtual void CleanupSyncMeshes();
-        virtual void SetupCharacter(
-            unsigned short,
-            float &,
-            float,
-            const StyleState &,
-            unsigned short,
-            float,
-            FitType,
-            float
-        );
-        virtual bool SupportsScrolling() const { return false; }
-        virtual void SetupScrolling() {}
-        virtual void UpdateScrolling(float) {}
-
-        static Symbol StaticClassName() {
-            static Symbol name("FontMap3d");
-            return name;
-        }
-
-        RndFont3d *mFont; // 0x8
-        int mDisplayableChars; // 0xc
-        std::vector<RndMesh *> mMeshes; // 0x10
-        RndMesh **mMeshCursor; // 0x1c - current position for SetupCharacter
-    };
-
-    // Hmx::Object
+    // ---- Hmx::Object ----
     virtual ~RndText();
     OBJ_CLASSNAME(Text);
     OBJ_SET_TYPE(Text);
@@ -288,111 +179,65 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
-    // RndDrawable
+    virtual void Replace(ObjRef *, Hmx::Object *);
+    virtual const char *FindPathName();
+    virtual void Print();
+    // ---- RndDrawable ----
     virtual void UpdateSphere();
     virtual float GetDistanceToPlane(const Plane &, Vector3 &);
     virtual bool MakeWorldSphere(Sphere &, bool);
     virtual void Mats(std::list<class RndMat *> &, bool);
+    // NOT `virtual` — Draw() is non-virtual in RB3-360 retail (see the smoking
+    // gun in rndobj/Draw.h: every call site is a direct `bl` to the single
+    // cull-wrapper body). Declaring it virtual would add a vtable slot.
+    DRAW_DC3_VIRTUAL void Draw();
     virtual void DrawShowing();
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
     virtual int CollidePlane(const Plane &);
-    virtual void Highlight();
-    // RndText
-    virtual Symbol TextToken() { return gNullStr; }
+    virtual void Highlight() { RndDrawable::Highlight(); }
 
     OBJ_MEM_OVERLOAD(0x19);
     NEW_OBJ(RndText);
 
+    static void Init();
+    static void Register() { REGISTER_OBJ_FACTORY(RndText); }
+    static void CollectGarbage();
+    static void ResetFaces(RndMesh *, int);
+    static std::set<RndText *> mTextMeshSet;
+
+    // ---- text ----
     const String &GetText() const { return mText; }
+    const String &RawText() const { return mText; }
     String TextASCII() const;
     void SetTextASCII(const char *);
-    void SetFixedLength(int);
-    void ReFitTextScroll(String);
-    float ComputeCharWidthsForText(String);
-    void SetAltStyle(Hmx::Object *obj) { mAltStyle = obj; }
-    FitType GetFitType() const { return mFitType; }
-    void SetFitType(FitType f) { mFitType = f; }
-    float Indentation() const { return mIndentation; }
-
-    static void Init();
-    static void DrawBlacklight();
-    static void ClearBlacklight();
-    static void SetBlacklightModeEnabled(bool b) { sBlacklightModeEnabled = b; }
-    static bool IsBlacklightModeEnabled() { return sBlacklightModeEnabled; }
-
-    int GetTextSize() const { return Max<int>(mFixedLength, mText.length()); }
-    void SetCapsMode(CapsMode c) { mCapsMode = c; }
-    void UpdateText();
-    void GetWidthHeightBox(Box &) const;
     void SetText(const char *);
-    int FontMapIndex(RndFontBase *, bool);
-    float ComputeHeight(int, float, float &);
-    int NumStyles() const { return mStyles.size(); }
-    ObjVector<Style> &Styles() { return mStyles; }
-    // RB3-era single-style line API (dc3's newer RndText replaced these with the
-    // StyleState/mStyles model). Declared decl-only so RB3 game TUs that still call
-    // the old API (e.g. band3/bandtrack/Lyric.cpp) compile; not defined here.
-    const Style &GetSingleStyle() const;
-    void ReserveLines(int);
-    void SyncMeshes();
-    int NumLines() const;
-    // RB3-era single-style color API. Decl-only (defined in the RndText TU when
-    // ported); lets RB3 game TUs (e.g. bandobj/VocalTrackDir.cpp) that read/write
-    // the single-style packed color compile. dc3's RndText uses mStyles/mTextColor.
-    void SetColor(const Hmx::Color32 &);
-    unsigned int GetSingleStyleColor() const;
-    void UpdateLineColor(int, const Hmx::Color &, bool *);
-    float GetStringWidthUTF8(const char *, const char *, bool, const Style *) const;
-    int AddLineUTF8(const String &, const Transform &, const Style &, float *, bool *, int);
-    const String &RawText() const { return mText; }
-    float Width() const { return mWidth; }
-#ifdef HX_NATIVE
-    void SetWidth(float w) { mWidth = w; }
-    Alignment GetAlignment() const { return mAlignment; }
-    void SetAlignment(Alignment a) { mAlignment = a; }
-#endif
-    float BoundsLeft() const { return mBoundsLeft; }
-    float BoundsTop() const { return mBoundsTop; }
-    float BoundsRight() const { return mBoundsRight; }
-    float BoundsBottom() const { return mBoundsBottom; }
+    void ResizeText(int);
+    void SetFixedLength(int);
+    int GetTextSize() const { return Max<int>(mFixedLength, (int)mText.length()); }
 
-    friend class UIFontImporter;
-    friend class LabelShrinkWrapper;
-    friend class UIListLabelElement;
-    friend class UILabel;
-    friend class HamLabel;
-
-    // Line class for text layout — size 0x14
-    class Line {
-    public:
-        const unsigned short *mStart; // 0x0 - pointer to first char
-        const unsigned short *mEnd; // 0x4 - pointer past last char
-        float mWidth; // 0x8
-        float mXStart; // 0xc - x starting position
-        float mYPos; // 0x10 - y position
-    };
-
-    // ------------------------------------------------------------------
-    // RB3-360 retail RndText API used by ui/UILabel.cpp. DECLARATION-ONLY,
-    // non-virtual -> layout- and vtable-neutral. Retail's RndText is the
-    // rb3-Wii-shaped one (ObjOwnerPtr<RndFont> mFont, object at 0xe4 / payload
-    // at 0xec); our member block here is still DC3-shaped, so anything that
-    // INLINES an RndText member access is capped until RndText's layout is
-    // reconstructed. Bodies land with that job.
-    // ------------------------------------------------------------------
-    RndFont *GetFont() const;
+    // ---- style ----
+    RndFont *GetFont() const { return mFont; }
     void SetFont(RndFont *);
-    float MaxLineWidth();
-    void GetVerticalBounds(float &, float &);
-    void GetStringDimensions(float &, float &, HX_VECTOR(Line) &, const char *, float);
-    void GetCurrentStringDimensions(float &, float &);
-    float Size() const;
+    float Size() const { return mStyle.mSize; }
     void SetSize(float);
+    void SetItalics(float);
+    void SetColor(const Hmx::Color &);
+    void SetMarkup(bool);
+    void SetLeading(float);
+    void SetWrapWidth(float);
+    float WrapWidth() const { return mWrapWidth; }
+    float Width() const { return mWrapWidth; }
+    const Hmx::Color &StyleColor() const { return mStyle.mTextColor; }
+    const Style &GetSingleStyle() const { return mStyle; }
+    unsigned int GetSingleStyleColor() const { return mStyle.mTextColor.PackAlpha(); }
+    /** Retail carries exactly one authored style (+ one alt); the DC3-era
+        ObjVector<Style> mStyles does not exist. */
+    int NumStyles() const { return 1; }
+    Alignment GetAlignment() const { return (Alignment)mAlign; }
+    void SetAlignment(Alignment);
+    void SetCapsMode(CapsMode c) { mCapsMode = c; }
+    void SetAltStyle(RndFont *, float, Hmx::Color *, float, float, bool);
     void SetAltSizeAndZOffset(float, float);
-    void DeferUpdateText();
-    void ResolveUpdateText();
-    void UpdateText(bool);
-    const Hmx::Color &StyleColor() const;
     void SetData(
         Alignment,
         const char *,
@@ -406,94 +251,138 @@ public:
         CapsMode,
         int
     );
-    void SetAltStyle(RndFont *, float, Hmx::Color *, float, float, bool);
 
-    void WrapText(const unsigned short *, int, float *, HX_VECTOR(Line) &, Hmx::Rect &, float);
-    void ConstructMeshes(const HX_VECTOR(Line) &, const Hmx::Rect &, float);
+    // ---- layout / meshes ----
+    void UpdateText(bool);
+    void UpdateText() { UpdateText(true); }
+    void DeferUpdateText();
+    void ResolveUpdateText();
+    void SyncMeshes();
+    void SetMeshForceNoUpdate();
+    void GetMeshes(std::vector<RndMesh *> &);
+    void ReserveLines(int);
+    int NumLines() const { return mLines.size(); }
+    float MaxLineWidth() const;
+    void GetVerticalBounds(float &, float &) const;
+    void GetCurrentStringDimensions(float &, float &);
+    void GetStringDimensions(float &, float &, HX_VECTOR(Line) &, const char *, float);
+    float GetStringWidthUTF8(const char *, const char *, bool, const Style *) const;
+    void WrapText(const char *, const Style &, HX_VECTOR(Line) &);
+
+    // Retail has no mBounds* members (the DC3 block is absent). These are
+    // computed from the line list so LabelShrinkWrapper / UIListLabel /
+    // UIListProvider keep their semantics (extents, not absolute edges).
+    float BoundsLeft() const;
+    float BoundsTop() const;
+    float BoundsRight() const;
+    float BoundsBottom() const;
+
+    // ---- single-style line API (rb3-Wii-lineage; used by band3 Lyric.cpp) ----
+    int
+    AddLineUTF8(const String &, const Transform &, const Style &, float *, bool *, int);
+    void ReplaceLineText(
+        unsigned int,
+        const String &,
+        const Transform &,
+        const Style &,
+        float *,
+        bool *,
+        int
+    );
+    void UpdateLineColor(unsigned int, const Hmx::Color &, bool *);
+    void ApplyLineText(const String &, const Style &, float &, Line &, int, int, bool *);
+    int NumCharsInBytes(const String &, const Style &, float &, int);
+
+    // ---- internals (public, as on rb3-Wii) ----
+    const char *ParseMarkup(const char *, Style *, float, float) const;
+    float GetHorizontalAlignOffset(const Line &, Alignment) const;
+    void RotateLineVerts(const Line &, RndMesh::Vert *, RndMesh::Vert *);
+    RndFont *GetDefiningFont(unsigned short &, RndFont *) const;
+    RndFont *SupportChar(unsigned short, RndFont *);
+    void UpdateMesh(RndFont *);
+    void CreateLines(RndFont *);
+    void ComputeCharWidths(float *, int, const char *, Style);
+
+    DataNode OnSetFixedLength(DataArray *);
+    DataNode OnSetFont(DataArray *);
+    DataNode OnSetAlign(DataArray *);
+    DataNode OnSetText(DataArray *);
+    DataNode OnSetSize(DataArray *);
+    DataNode OnSetWrapWidth(DataArray *);
+    DataNode OnSetColor(DataArray *);
+
+    friend class UIFontImporter;
+    friend class LabelShrinkWrapper;
+    friend class UIListLabelElement;
+    friend class UILabel;
+    friend class HamLabel;
+
+    // =======================================================================
+    // OWN MEMBER BLOCK — [0xd8, 0x190), totals exactly 0xb8.
+    // Every offset below is MEASURED (see docs/decomp/rndtext-retail-layout.md)
+    // except where tagged INFERRED.
+    // =======================================================================
+    HX_VECTOR(Line) mLines; // 0x0d8  0x0c  (stride 0x78)
+    ObjOwnerPtr<RndFont> mFont; // 0x0e4  0x0c  (payload @0x0ec)
+    float mWrapWidth; // 0x0f0  (ctor 0.0)
+    /** 360-widened: rb3-Wii packs mAlign/mCapsMode as a u8 pair. */
+    int mAlign; // 0x0f4  (ctor 0x11 kTopLeft)
+    int mCapsMode; // 0x0f8  (ctor 0)
+    float mLeading; // 0x0fc  (ctor 1.0)
+    String mText; // 0x100  0x0c
+    /** 360-widened: rb3-Wii has `int mFixedLength : 16`. */
+    int mFixedLength; // 0x10c
+    Style mStyle; // 0x110  0x24
+    /** 360: a real bool member of RndText. On rb3-Wii this is a bitfield in the
+        RndDrawable base. Serialized (Load rev > 0xD). */
+    bool mTextMarkup; // 0x134  (+3 pad)
+    Style mAltStyle; // 0x138  0x24  (Load tail: memcpy 0x24 from mStyle)
+
+    // --- runtime-only tail. Save touches NOTHING in [0x138,0x15c) or
+    // [0x178,0x190), so none of these are serialized and their identity cannot
+    // be pinned from the stream. Offsets are MEASURED; the mapping onto
+    // rb3-Wii's flags is INFERRED from role + declaration adjacency. ---
+
+    /** INFERRED = Wii `unkbp4`: enables mAltStyle for the <alt> markup tag.
+        Sits immediately after mAltStyle, and SetAltStyle writes both. */
+    bool mUseAltStyle; // 0x15c  (+3 pad)
+    // the 0x18 _Rb_tree flavour — do NOT gate this TU with RB3_RBTREE_0x1C
+    std::map<FontKey, MeshInfo> mMeshMap; // 0x160  0x18
+    /** signed; DeferUpdateText/ResolveUpdateText nest on it (cmpwi). */
+    int mDeferUpdate; // 0x178
+    /** INFERRED = Wii `unkbp5`: an UpdateText was requested while deferred.
+        Sits immediately after mDeferUpdate, which is the pair it is read with. */
+    bool mNeedsUpdate; // 0x17c  (+3 pad)
+    /** callback interface, virtual slot 1 = Update(RndMesh*) */
+    void *mMeshCallback; // 0x180
+    /** height of the current text block (GetCurrentStringDimensions out2) */
+    float mCurHeight; // 0x184
+    /** width of the current text block  (GetCurrentStringDimensions out1) */
+    float mCurWidth; // 0x188
+    /** INFERRED = Wii `unkbp6`: meshes need a rebuild on next DrawShowing. */
+    bool mMeshDirty; // 0x18c
+    // 0x18d-0x18f: EVIDENCE RAN OUT in the retail sweep (pad, or unreferenced
+    // bools). Retail's ctor was measured zeroing exactly four bools and its
+    // UpdateText omits Wii's `unkbp6 = true`, so the Draw/CollectGarbage flags
+    // were never located. Placing them here is INFERRED; it is sizeof- and
+    // offset-neutral either way (the bytes are padding otherwise), and it is
+    // what lets the rb3-Wii bodies port without inventing new members.
+    /** INFERRED = Wii `unkbp7`: lines were added manually via AddLineUTF8. */
+    bool mManualLines; // 0x18d
+    /** INFERRED = Wii `unk124b4p1`: RotateLineVerts is enabled. */
+    bool mRotateLineVerts; // 0x18e
+    /** INFERRED = Wii `unk124b4:3`: frames since last DrawShowing (compared
+        `> 4`, so 3 bits on Wii — fits a byte here). */
+    unsigned char mFramesSinceDraw; // 0x18f
 
 protected:
     RndText();
+};
 
-    void DoBasicMarkup();
-    void BuildFontMaps(bool);
-    void FitTextJust();
-    void FitTextEllipsis();
-    void FitTextScroll();
-    void SizeCheck();
-    void UpdateScrollOffsets();
-    static void DrawMesh(RndMesh *, float, int);
-    int ConvertTextToWide(const char *, HX_VECTOR(unsigned short) &);
-    void ReplaceMissingCharacters(HX_VECTOR(unsigned short) &);
-    int OnComputeCharWidths(const unsigned short *, float *, bool);
-    const unsigned short *ParseMarkup(const unsigned short *, StyleState &, unsigned short &);
+class RndTextUpdateDeferrer {
+public:
+    RndTextUpdateDeferrer(RndText *text) : mText(text) { text->DeferUpdateText(); }
+    ~RndTextUpdateDeferrer() { mText->ResolveUpdateText(); }
 
-    static void QueueBlacklightPacket(RndMesh *, float, int);
-    static FontMapBase *AcquireFontMap(RndFontBase *);
-    static bool sBlacklightModeEnabled;
-    static int sBlacklightPacketCount;
-    static std::vector<BlacklightPacket> sBlacklightPacketPool;
-    static std::list<FontMapBase *> sFontMapCache;
-
-    /** "Text value" */
-    String mText; // 0x8
-    /** "Width of text until it wraps." Ranges from 0 to 10000. */
-    float mWidth; // 0x10
-    /** "Height of the text, used for [fit_type] kFitJust". Ranges from 0 to 1000. */
-    float mHeight; // 0x14
-    /** "Lay text around circle of this circumference. Negative values face other way." */
-    float mCircle; // 0x18
-    /** "Alignment option for the text" */
-    Alignment mAlignment; // 0x1c
-    FitType mFitType; // 0x20
-    /** "Defines the CAPS mode for the text" */
-    CapsMode mCapsMode; // 0x24
-    /** "Vertical distance between lines". Ranges from -5 to 5. */
-    float mLeading; // 0x28
-    /** "Number of character maximum for the text,
-        if non-zero makes underlying mesh mutable, so updates are faster" */
-    int mFixedLength; // 0x2c
-    /** "Support markup or not.
-        In the text, use <alt>, <alt2>, <alt3>, etc to use the higher styles,
-        <sup> to get a super script, <nobreak> for preventing linebreaks in a block,
-        <it> for italics, <gtr> for Bryn's guitar chord formatting.
-        Example: Hit <it>Back</it> <alt>B</alt> to continue<sup>TM</sup> " */
-    bool mMarkup; // 0x30
-    /** "Support basic markup or not. It converts \\p to double-quotes.
-        Furthur support can be added." */
-    bool mBasicMarkup; // 0x31
-    /** "If scrolling oversized text - delay this many seconds before starting" */
-    float mScrollDelay; // 0x34
-    /** "If scrolling oversized text - scroll this many characters per second" */
-    float mScrollRate; // 0x38
-    /** "If scrolling oversized text - delay this many seconds between scrolls.
-        When the fit type is kFitScrollMarqueeWrapAlways, this value will be ignored." */
-    float mScrollPause; // 0x3c
-    bool mWrapEnabled; // 0x40
-    float mScrollTimer; // 0x44
-    float mScrollState; // 0x48
-    float mScrollSpeed; // 0x4c
-    float mScrollPos; // 0x50
-    float mTotalWidth; // 0x54
-    float mLineHeight; // 0x58
-    int mScrollCopies; // 0x5c
-    int mNumLines; // 0x60
-    /** "Space between continuous scrolling messages.
-        This value is only considered when the fit type
-        is set to kFitScrollMarqueeWrapAlways." */
-    float mIndentation; // 0x64
-    std::list<float> mLineWidths; // 0x68
-    std::list<float> mLineOffsets; // 0x70
-    ObjPtr<Hmx::Object> mAltStyle; // 0x78
-    float mScrollOffset; // 0x8c
-    int mCurScrollChars; // 0x90
-    int mScrollOutIndex; // 0x94
-    /** "The different styles this text can have" */
-    ObjVector<Style> mStyles; // 0x98
-    std::vector<FontMapBase *> mFontMaps; // 0xa8
-    float mBoundsLeft;
-    float mBoundsTop;
-    float mBoundsRight;
-    float mBoundsBottom;
-    int mNumLinesRendered; // 0xc4
-    float mConstructScale; // 0xc8
+    RndText *mText; // 0x0
 };
