@@ -35,25 +35,26 @@ from tools.defines_common import (
 )
 
 # ---------------------------------------------------------------------------
-# X360 MSVC compiler selection (opt-in; the default is the fleet toolchain)
+# X360 MSVC compiler selection (the default is the fleet toolchain)
 # ---------------------------------------------------------------------------
 # The build compiles every TU with build/compilers/$mw_version/cl.exe.  The
-# fleet default is build 11886, which is what DC3 retail was built with and what
-# every landed match% figure is measured against -- DO NOT change it casually.
+# fleet default is build 10224, extracted from XDK 2.0.11164
+# (XDKSetupXenon11164.3.exe).  That is the build retail Rock Band 3 was
+# compiled with -- confirmed by the Rich header of retail band.exe (lane CA-1)
+# and by the @comp.id stamped into objects it produces (0x00AB27F0 ->
+# prodid 0x00AB, build 0x27F0 = 10224; lane CA-2).
 #
-# A second compiler is installed alongside it: build 10224, extracted from
-# XDK 2.0.11164 (XDKSetupXenon11164.3.exe).  That is the build retail Rock Band 3
-# was compiled with -- confirmed by the Rich header of retail band.exe (lane
-# CA-1) and by the @comp.id stamped into objects it produces (0x00AB27F0 ->
-# prodid 0x00AB, build 0x27F0 = 10224; lane CA-2).  It is provided for
-# experiments only and is NOT the default.
+# FLIPPED 2026-07-30 from build 11886 (DC3's compiler, the original bring-up
+# toolchain): a whole-tree cold-cache A/B measured +26 strict / 0 lost /
+# 0 breakage under 10224 (~/tmp cc10224 experiment; pre-flip main baseline
+# 41,187 matched / floor 39,677).  10224 fixes instruction-selection walls
+# (redundant clrlwi vs mr, extsb. vs cmplwi) that no source change could.
+# All match% figures from before the flip were calibrated against 11886.
 #
-# Select it explicitly, e.g.:
-#     python3 configure.py --x360-compiler-version X360/16.00.10224.00
-#     RB3_X360_COMPILER_VERSION=X360/16.00.10224.00 python3 configure.py
-# When neither is given, behaviour is byte-identical to before this switch
-# existed.
-DEFAULT_X360_COMPILER_VERSION = "X360/16.00.11886.00"
+# 11886 remains installed for A/B archaeology; select it explicitly:
+#     python3 configure.py --x360-compiler-version X360/16.00.11886.00
+#     RB3_X360_COMPILER_VERSION=X360/16.00.11886.00 python3 configure.py
+DEFAULT_X360_COMPILER_VERSION = "X360/16.00.10224.00"
 X360_COMPILER_VERSION_ENV = "RB3_X360_COMPILER_VERSION"
 
 parser = argparse.ArgumentParser()
