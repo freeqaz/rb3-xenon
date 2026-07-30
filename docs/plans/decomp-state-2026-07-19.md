@@ -1,10 +1,31 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,922 strict-matched functions / honest proxy 39,412** (= matched −
-masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
-`match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). `matched_code_percent` 34.44971. Measured directly on main
-`e4052850` in a clean worktree, not summed from lane deltas.
+**Current: 40,925 strict-matched functions / honest proxy 39,408 /
+`matched_code_percent` 34.47950** (honest = matched − masked_equal, per the BO-8
+pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
+exactly). Denominator is the whole TU5 XEX (~69k functions). Measured directly
+on main `3384ec22` in a clean worktree, not summed from lane deltas.
+
+> ★★ **QUOTE BOTH AXES — the function count alone is now actively misleading.**
+> A one-worktree, one-split A/B of the second session's `3384ec22` over
+> `e4052850`:
+>
+> | | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | `e4052850` | 40922 | 1510 | 39412 | 34.44971 |
+> | `3384ec22` | 40925 | 1517 | **39408** | **34.47950** |
+>
+> Honest **−4**, code **+0.0298pp (~3.5 KB)**. I initially read the
+> masked_equal +7 as false credit and was **wrong**: this is real body
+> improvement that does not cross the 100% threshold, plus more functions
+> falling into byte-fallback pairing. For comparison, wave BS's BS-4 leg was
+> −2 honest for +0.0039pp — so `3384ec22` is **7.6× the code gain for 2× the
+> honest loss**, a *better* code-per-honest-function trade.
+>
+> ⇒ As the tree approaches the ceiling on easily-crossable functions, an
+> increasing share of genuine progress lands as sub-100 body improvement that
+> the at-100% count cannot see, and can even score negative. **Price landings on
+> honest AND code, and say which one moved.**
 
 > ⚠ **TWO SESSIONS ARE LANDING TO MAIN CONCURRENTLY (2026-07-30).** This
 > headline is +12 above the wave-BS chain below because a second session landed
