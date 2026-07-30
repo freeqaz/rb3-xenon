@@ -8,13 +8,13 @@
 #include "rndobj/Mesh.h"
 #include "ui/UILabel.h"
 #include "ui/UIPanel.h"
+#include "ui/UIResource.h" // laneBS1: for UIResource::Dir(); UIComponent.h only fwd-declares it
 #include "utl/BinStream.h"
 #include "utl/Loader.h"
 #include "utl/Symbol.h"
 
 LabelShrinkWrapper::LabelShrinkWrapper()
-    : mResourceDir(this), m_pLabel(this), m_pShow(0), mLeftBorder(0), mRightBorder(0),
-      mTopBorder(0), mBottomBorder(0), m_pTopLeftBone(0), m_pTopRightBone(0),
+    : m_pLabel(this), m_pShow(0), m_pTopLeftBone(0), m_pTopRightBone(0),
       m_pBottomLeftBone(0), m_pBottomRightBone(0) {}
 
 LabelShrinkWrapper::~LabelShrinkWrapper() {}
@@ -24,24 +24,14 @@ BEGIN_HANDLERS(LabelShrinkWrapper)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(LabelShrinkWrapper)
-    SYNC_PROP_MODIFY(resource, mResourceDir, Update())
     SYNC_PROP_SET(label, Label(), m_pLabel = _val.Obj<UILabel>())
     SYNC_PROP_SET(show, m_pShow, m_pShow = _val.Int())
-    SYNC_PROP_MODIFY(left_border, mLeftBorder, Update())
-    SYNC_PROP_MODIFY(right_border, mRightBorder, Update())
-    SYNC_PROP_MODIFY(top_border, mTopBorder, Update())
-    SYNC_PROP_MODIFY(bottom_border, mBottomBorder, Update())
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS
 
 BEGIN_SAVES(LabelShrinkWrapper)
     SAVE_REVS(2, 0)
     bs << m_pLabel << m_pShow;
-    bs << mResourceDir;
-    bs << mLeftBorder;
-    bs << mRightBorder;
-    bs << mTopBorder;
-    bs << mBottomBorder;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 
@@ -51,11 +41,6 @@ void LabelShrinkWrapper::Copy(const Hmx::Object *o, Hmx::Object::CopyType ty) {
     if (c) {
         m_pLabel = c->m_pLabel;
         m_pShow = c->m_pShow;
-        mLeftBorder = c->mLeftBorder;
-        mRightBorder = c->mRightBorder;
-        mTopBorder = c->mTopBorder;
-        mBottomBorder = c->mBottomBorder;
-        mResourceDir = c->mResourceDir;
     }
     Update();
 }
@@ -77,31 +62,23 @@ void LabelShrinkWrapper::PreLoad(BinStream &bs) {
     ASSERT_REVS(2, 0)
     bs >> m_pLabel;
     bs >> m_pShow;
-    if (d.rev >= 1)
-        bs >> mResourceDir;
-    if (d.rev >= 2) {
-        bs >> mLeftBorder;
-        bs >> mRightBorder;
-        bs >> mTopBorder;
-        bs >> mBottomBorder;
-    }
     UIComponent::PreLoad(d.stream);
     d.PushRev(this);
 }
 
 void LabelShrinkWrapper::PostLoad(BinStream &bs) {
     bs.PopRev(this);
-    mResourceDir.PostLoad(nullptr);
     UIComponent::PostLoad(bs);
     Update();
 }
 
 void LabelShrinkWrapper::DrawShowing() {
     if (m_pLabel && m_pShow) {
-        MILO_ASSERT(mResourceDir, 0xa7);
+        RndDir *pDir = mResource->Dir();
+        MILO_ASSERT(pDir, 0xa7);
         UpdateAndDrawWrapper();
-        mResourceDir->SetWorldXfm(WorldXfm());
-        mResourceDir->Draw();
+        pDir->SetWorldXfm(WorldXfm());
+        pDir->Draw();
     }
 }
 
@@ -111,22 +88,20 @@ void LabelShrinkWrapper::Poll() { UIComponent::Poll(); }
 
 void LabelShrinkWrapper::Update() {
     const DataArray *pTypeDef = TypeDef();
-    if (pTypeDef && mResourceDir) {
+    RndDir *pDir = mResource->Dir();
+    if (pTypeDef && pDir) {
         static Symbol topleft_bone("topleft_bone");
         static Symbol topright_bone("topright_bone");
         static Symbol bottomleft_bone("bottomleft_bone");
         static Symbol bottomright_bone("bottomright_bone");
-        m_pTopLeftBone =
-            mResourceDir->Find<RndMesh>(pTypeDef->FindStr(topleft_bone), true);
+        m_pTopLeftBone = pDir->Find<RndMesh>(pTypeDef->FindStr(topleft_bone), true);
         MILO_ASSERT(m_pTopLeftBone, 0xc5);
-        m_pTopRightBone =
-            mResourceDir->Find<RndMesh>(pTypeDef->FindStr(topright_bone), true);
+        m_pTopRightBone = pDir->Find<RndMesh>(pTypeDef->FindStr(topright_bone), true);
         MILO_ASSERT(m_pTopRightBone, 0xc7);
-        m_pBottomLeftBone =
-            mResourceDir->Find<RndMesh>(pTypeDef->FindStr(bottomleft_bone), true);
+        m_pBottomLeftBone = pDir->Find<RndMesh>(pTypeDef->FindStr(bottomleft_bone), true);
         MILO_ASSERT(m_pBottomLeftBone, 0xc9);
         m_pBottomRightBone =
-            mResourceDir->Find<RndMesh>(pTypeDef->FindStr(bottomright_bone), true);
+            pDir->Find<RndMesh>(pTypeDef->FindStr(bottomright_bone), true);
         MILO_ASSERT(m_pBottomRightBone, 0xcb);
     } else {
         m_pBottomRightBone = nullptr;
@@ -139,17 +114,23 @@ void LabelShrinkWrapper::Update() {
 void LabelShrinkWrapper::Init() { REGISTER_OBJ_FACTORY(LabelShrinkWrapper) }
 
 void LabelShrinkWrapper::UpdateAndDrawWrapper() {
+    // NOTE(laneBS1): ported from the rb3-Wii RB3 oracle
+    // (../rb3/src/system/ui/LabelShrinkWrapper.cpp:49). The previous body derived the
+    // corners from RndText bounds plus the four mLeft/Right/Top/BottomBorder floats;
+    // retail RB3 has no such members (see the header note), so it cannot be that shape.
     MILO_ASSERT(m_pLabel, 0x86);
     UILabel *label = m_pLabel;
-    RndText *text = label->TextObj();
-    float minX = text->BoundsLeft() - mLeftBorder;
-    float minZ = text->BoundsTop() - mBottomBorder;
-    float maxX = mRightBorder + text->BoundsRight() + text->BoundsLeft();
-    float maxZ = mTopBorder + text->BoundsBottom() + text->BoundsTop();
+    Vector3 vMin, vMax;
+    float w = label->GetDrawWidth();
+    float h = label->GetDrawHeight();
+    label->InqMinMaxFromWidthAndHeight(w, h, label->Alignment(), vMin, vMax);
+    float minX = vMin.x;
+    float maxX = vMax.x;
+    float maxZ = vMax.z;
+    float minZ = vMin.z;
     SetWorldXfm(label->WorldXfm());
-    auto _tmp0 = Vector3(minX, 0.0, maxZ);
-    m_pTopRightBone->SetLocalPos(Vector3(maxX, 0.0f, maxZ));
-    m_pBottomLeftBone->SetLocalPos(Vector3(minX, 0.0f, minZ));
-    m_pBottomRightBone->SetLocalPos(Vector3(maxX, 0.0f, minZ));
-    m_pTopLeftBone->SetLocalPos(_tmp0);
+    m_pTopLeftBone->SetLocalPos(minX, 0.0f, maxZ);
+    m_pTopRightBone->SetLocalPos(maxX, 0.0f, maxZ);
+    m_pBottomLeftBone->SetLocalPos(minX, 0.0f, minZ);
+    m_pBottomRightBone->SetLocalPos(maxX, 0.0f, minZ);
 }
