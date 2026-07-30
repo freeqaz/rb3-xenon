@@ -388,10 +388,26 @@ else
     [ -n "$_primary" ] && [ -d "$_primary" ] && PRIMARY_REPO="$_primary"
 fi
 
+# ⛔ DO NOT re-add `unified_id_rb3wii.json` or `global_fuzzy_pairs.json` here.
+# Both are TU0-era address indices (built May/Jun 2026, BEFORE the 2026-07-15
+# TU5 flip). Their rb3-side addresses are keyed to a DIFFERENT build of the
+# binary and now carry ZERO signal: measured against TU5's 69,209 `.text`
+# function starts they resolve at 4.27% / 2.15%, versus a random-offset null of
+# ~2.9% / ~3.9% — i.e. indistinguishable from noise, and for several shift
+# offsets an ARBITRARY shift scores HIGHER than the true one. (Positive control:
+# the live `scripts/target_symbol_map.json` resolves at 99.79% on the same test,
+# so the test does detect a live index.) Audit any candidate with
+# `tools/index_liveness_audit.py` before adding it.
+#
+# Copying them fleet-wide was actively harmful: they parse fine, so consumers
+# silently degrade instead of failing, and lane BW-2 lost time trying to use the
+# oracle as an attribution instrument before discovering it was dead. Neither is
+# a build input (0 references in build.ninja / configure.py / tools/project.py),
+# so dropping them cannot affect any build. Leaving them absent also makes
+# objdiff's `--global-byte-eq` fail LOUDLY in a worktree (its oracle loader
+# hard-fails on a missing file) rather than silently promoting nothing.
 echo "==> Copying gitignored analysis inputs (non-fatal if absent)"
 for analysis_file in \
-        global_fuzzy_pairs.json \
-        unified_id_rb3wii.json \
         struct_db.sqlite \
         config/45410914/scope_map.json; do
     # Try MAIN_REPO first, then PRIMARY_REPO fallback.
