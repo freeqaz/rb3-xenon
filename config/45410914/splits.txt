@@ -3858,9 +3858,12 @@ Text.cpp:
 	.pdata      start:0x8220E070 end:0x8220E080
 	.pdata      start:0x8220E080 end:0x8220E090
 	.pdata      start:0x8220E090 end:0x8220E0A0
+	.pdata      start:0x8220E0D8 end:0x8220E0E0
 	.pdata      start:0x8220E108 end:0x8220E110
 	.pdata      start:0x8220E1A8 end:0x8220E1D8
 	.pdata      start:0x8220E1D8 end:0x8220E1E0
+	.pdata      start:0x8220E248 end:0x8220E250
+	.pdata      start:0x8220E278 end:0x8220E280
 	.pdata      start:0x8220E288 end:0x8220E2D0
 	.pdata      start:0x8220E2D0 end:0x8220E2D8
 	.pdata      start:0x8220E2F0 end:0x8220E318
@@ -3882,9 +3885,12 @@ Text.cpp:
 	.text       start:0x82454D98 end:0x824553D0
 	.text       start:0x824553D0 end:0x82455508
 	.text       start:0x82455508 end:0x824555AC
+	.text       start:0x82455928 end:0x82455A70
 	.text       start:0x82455E90 end:0x82455EE4
 	.text       start:0x82456CA4 end:0x82457060
 	.text       start:0x82457060 end:0x82457090
+	.text       start:0x82457790 end:0x82457800
+	.text       start:0x82457EA0 end:0x82457EF0
 	.text       start:0x82457F70 end:0x82459820
 	.text       start:0x82459820 end:0x82459958
 	.text       start:0x82459958 end:0x82459998
@@ -4134,7 +4140,8 @@ SkeletonClip.cpp:
 	.pdata      start:0x8220E140 end:0x8220E150
 	.pdata      start:0x8220E150 end:0x8220E158
 	.pdata      start:0x8220E160 end:0x8220E178
-	.pdata      start:0x8220E230 end:0x8220E268
+	.pdata      start:0x8220E230 end:0x8220E248
+	.pdata      start:0x8220E250 end:0x8220E268
 	.pdata      start:0x8220E268 end:0x8220E270
 	.pdata      start:0x8220E280 end:0x8220E288
 	.pdata      start:0x82237AC8 end:0x82237AD0
@@ -4151,7 +4158,8 @@ SkeletonClip.cpp:
 	.text       start:0x824562B0 end:0x82456378
 	.text       start:0x82456378 end:0x824563D8
 	.text       start:0x824564B8 end:0x824566E8
-	.text       start:0x82457680 end:0x82457D18
+	.text       start:0x82457680 end:0x82457790
+	.text       start:0x82457800 end:0x82457D18
 	.text       start:0x82457D18 end:0x82457D98
 	.text       start:0x82457EF0 end:0x82457F70
 	.text       start:0x82703890 end:0x827038E0
@@ -5915,7 +5923,6 @@ UIListDir.cpp:
 	.text       start:0x8280DA48 end:0x8280DE60
 
 UIFontImporter.cpp:
-	.pdata      start:0x8220E0D8 end:0x8220E0E0
 	.pdata      start:0x82245DB0 end:0x82245DB8
 	.pdata      start:0x822471F8 end:0x82247308
 	.pdata      start:0x82247308 end:0x82247310
@@ -5923,7 +5930,6 @@ UIFontImporter.cpp:
 	.pdata      start:0x822474D8 end:0x822474E0
 	.pdata      start:0x822474E0 end:0x82247728
 	.pdata      start:0x82247DD0 end:0x82247DD8
-	.text       start:0x82455928 end:0x82455A70
 	.text       start:0x82802730 end:0x82802788
 	.text       start:0x82817C20 end:0x82818EB8
 	.text       start:0x82818EB8 end:0x82818F18
@@ -8791,6 +8797,7 @@ band3/meta_band/BandStorePanel.cpp:
 	.pdata      start:0x822232F0 end:0x82223308
 	.pdata      start:0x82228078 end:0x82228098
 	.pdata      start:0x82228098 end:0x82228120
+	.pdata      start:0x82228158 end:0x82228160
 	.pdata      start:0x822281D0 end:0x82228208
 	.pdata      start:0x82228208 end:0x82228218
 	.pdata      start:0x82228220 end:0x82228318
@@ -8801,6 +8808,8 @@ band3/meta_band/BandStorePanel.cpp:
 	.text       start:0x825BD450 end:0x825BD458
 	.text       start:0x826050A8 end:0x8260527C
 	.text       start:0x8260527C end:0x82605720
+	.text       start:0x826059E8 end:0x82605B24
+	.text       start:0x82606008 end:0x82606014
 	.text       start:0x82606260 end:0x82606720
 	.text       start:0x82606720 end:0x826067B8
 	.text       start:0x82606888 end:0x826078A4
@@ -11164,8 +11173,8 @@ OvershellPanel.cpp:
 	.text       start:0x825BA6C4 end:0x825BA6C8
 
 MetaPanel.cpp:
-	.pdata      start:0x821FC138 end:0x821FC1A8
-	.pdata      start:0x821FC1A8 end:0x821FC1D0
+	.pdata      start:0x821FC138 end:0x821FC178
+	.pdata      start:0x821FC1B0 end:0x821FC1D0
 	.pdata      start:0x822187C8 end:0x822187D8
 	.pdata      start:0x8221DCC8 end:0x8221DD60
 	.pdata      start:0x8221DD78 end:0x8221DDB8
@@ -11206,10 +11215,9 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E738 end:0x8221E760
 	.pdata      start:0x822281A0 end:0x822281D0
 	.pdata      start:0x82241968 end:0x82241970
-	.text       start:0x82319810 end:0x82319BC0
-	.text       start:0x82319BD0 end:0x82319C10
+	.text       start:0x82319810 end:0x82319950
 	.text       start:0x82319C20 end:0x82319C30
-	.text       start:0x82319C40 end:0x82319F74
+	.text       start:0x82319D84 end:0x82319F74
 	.text       start:0x8251BA00 end:0x8251BA78
 	.text       start:0x8256DF78 end:0x8256E4B0
 	.text       start:0x8256E570 end:0x8256E7A8
@@ -11929,10 +11937,8 @@ CamAnim.cpp:
 	.text       start:0x82486674 end:0x824867D4
 
 Lit_NG.cpp:
-	.pdata      start:0x8220E278 end:0x8220E280
 	.pdata      start:0x8220EB98 end:0x8220EBA0
 	.pdata      start:0x8225CBA8 end:0x8225CCA8
-	.text       start:0x82457EA0 end:0x82457EF0
 	.text       start:0x82463680 end:0x824636E4
 	.text       start:0x82B89E18 end:0x82B8B804
 
@@ -12954,6 +12960,19 @@ ScoreDisplay.cpp:
 system/hamobj/HamSong.cpp:
 	.pdata      start:0x8223D630 end:0x8223D638
 	.text       start:0x8276D248 end:0x8276D29C
+
+system/hamobj/MiniLeaderboardDisplay.cpp:
+	.pdata      start:0x821FC178 end:0x821FC1A8
+	.pdata      start:0x821FC1A8 end:0x821FC1B0
+	.pdata      start:0x821FC1D8 end:0x821FC1E8
+	.pdata      start:0x821FC218 end:0x821FC220
+	.text       start:0x82319950 end:0x82319BC0
+	.text       start:0x82319BD0 end:0x82319C10
+	.text       start:0x82319C40 end:0x82319D84
+	.text       start:0x82319FE8 end:0x8231A0D8
+	.text       start:0x8231A138 end:0x8231A170
+	.text       start:0x8231A350 end:0x8231A458
+	.text       start:0x8231A488 end:0x8231A498
 
 system/rndobj/PostProcMgr.cpp:
 	.pdata      start:0x821FD358 end:0x821FD360
