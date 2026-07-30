@@ -33,6 +33,20 @@ Output JSON: {"0x82XXXXXX": "?mangled@...@@Z", ...}  (ADD-ONLY to target_symbol_
 """
 import argparse, json, re, sys
 from collections import defaultdict, Counter
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 ROOT = __file__.rsplit("/tools/", 1)[0]
 REPORT = f"{ROOT}/build/45410914/report.json"
@@ -81,7 +95,7 @@ def load_named():
 def eligible(subdir_filter, min_sim):
     units, named = load_units(), load_named()
     rows, seen = [], set()
-    for r in json.load(open(ORACLE)):
+    for r in _guarded_load(ORACLE):
         if r["similarity"] < min_sim: continue
         tu = r.get("dc3_tu")
         if not tu or ":" not in tu: continue

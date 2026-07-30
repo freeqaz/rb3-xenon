@@ -65,6 +65,18 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# TU0-era address indices are INFORMATIONLESS after the 2026-07-15 TU0->TU5 flip
+# (2-6% of their addresses are real .text function starts; chance is ~2-3%).
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ORACLE = Path("/home/free/code/milohax/rb3-xenon/unified_id_rb3wii.json")
@@ -337,7 +349,12 @@ def parse_wii_name(name: str) -> Optional[Tuple[Optional[str], str, Optional[int
 # Oracle loading.
 # ---------------------------------------------------------------------------
 def load_oracle(path: Path) -> List[dict]:
-    return json.loads(path.read_text())
+    # dead-index guard (lane BX-4): unified_id_rb3wii.json is TU0-era and
+    # informationless (4.27% live). A target-symbol map built from it would
+    # rename target-obj symbols to names belonging to OTHER functions -- the
+    # renamer bakes those names into the target obj, so the damage outlives
+    # the run. Hard-fail instead.
+    return _guarded_load(str(path), what="rb3-Wii oracle (target map generator)")
 
 
 def tu_basename(src: str) -> str:

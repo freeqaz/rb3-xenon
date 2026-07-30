@@ -63,6 +63,20 @@ import re
 import sys
 from collections import defaultdict
 
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# The guard helpers below were CALLED but never imported when the guards first
+# landed, so every call site raised NameError instead of failing/skipping
+# loudly. Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import skip_if_dead as _dead_skip  # noqa: E402
+# ----------------------------------------------------------------------------
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT = os.path.join(ROOT, "build", "45410914", "report.json")
 SCOPE_MAP = os.path.join(ROOT, "config", "45410914", "scope_map.json")
@@ -615,6 +629,24 @@ def load_uid_merge(wn_data):
     here too as a guard so a stale file with raw `src` still classifies."""
     p = os.path.join(wn_data, "uid_merge.json")
     if not os.path.exists(p):
+        # DELETED ON PURPOSE by lane BX-4 (2026-07-30) -- do not "restore" it.
+        # uid_merge.json was a committed 1.48 MB TU0-era artifact: only 3.81% of
+        # its 10,671 addresses were real .text function starts (chance ~2-3%),
+        # and an exhaustive search over every 4-byte shift in +/-0x20000 topped
+        # out at 4.70%, so no rebase could recover it. It was also
+        # IRRECOVERABLE in principle: each entry is {bucket, conf, sim, source,
+        # src} keyed ONLY by the dead address -- strip the address and nothing
+        # identifiable remains to re-attach. Its generator
+        # (tools/scope_data/gen_uid_merge.py) reads unified_id.json +
+        # unified_id_rb3wii.json, which are themselves dead, so it cannot be
+        # regenerated either. This layer is simply gone; the other provenance
+        # layers carry the map. See tools/dead_index_guard.py.
+        return {}
+    # dead-index guard (lane BX-4): uid_merge.json is TU0-era (3.81% of its
+    # 10,671 addresses are real .text function starts; chance ~2-3%). It is
+    # ONE provenance layer of several, so drop it loudly rather than failing
+    # the whole scope map -- but it must never silently colour a tier again.
+    if _dead_skip(p, what="scope_map uid_merge layer"):
         return {}
     d = json.load(open(p))
     entries = d.get("entries", d)

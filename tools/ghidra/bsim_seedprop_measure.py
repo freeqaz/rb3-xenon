@@ -4,10 +4,24 @@ Inputs: seedprop_matches.json, baseline_matches.json, seeds.json, class_to_stem.
         ../unified_id_rb3wii.json. See the .md/.json verdict for the numbers this reproduces."""
 import json,sys,os
 from collections import defaultdict
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 B='/tmp/bsim_seed'
 tr=json.load(open(f'{B}/seedprop_matches.json')); bl=json.load(open(f'{B}/baseline_matches.json'))
 seeds=json.load(open(f'{B}/seeds.json')); cls_stem=json.load(open(f'{B}/class_to_stem.json'))
-uni=json.load(open('/home/free/code/milohax/rb3-xenon/unified_id_rb3wii.json'))
+uni=_guarded_load('/home/free/code/milohax/rb3-xenon/unified_id_rb3wii.json')
 oracle={u['rb3_addr'].lower():(u.get('wii_fn') or u.get('wii_name'),u.get('confidence',0)) for u in uni}
 seed_dst=set(s['dst_va'].lower() for s in seeds)
 cls=lambda n:( (n or '').split('(')[0].split('::')[-2] if len((n or '').split('(')[0].split('::'))>=2 else None)

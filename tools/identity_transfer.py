@@ -89,6 +89,20 @@ import json
 import os
 import re
 import sys
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
@@ -401,7 +415,7 @@ def main():
               f"(case-A carves OUTSIDE this set are dropped as pin-filtered)")
 
     # --- 1. oracle records for this TU; drop size==0 (ICF aliases / stubs) ---
-    oracle = json.load(open(args.oracle))
+    oracle = _guarded_load(args.oracle)
     recs = [e for e in oracle if tu_base(e["bindiff_src"]) == tu]
     if not recs:
         print(f"ERROR: no oracle records for {tu}", file=sys.stderr)

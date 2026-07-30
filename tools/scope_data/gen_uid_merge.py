@@ -5,6 +5,20 @@ from checkout (the two unified_id*.json live at repo root). Conservative thresho
 dc3 uid sim>=0.9, rb3wii uid sim>=0.7."""
 import json, os
 from collections import Counter
+# --- dead-index guard (lane BX-4) -------------------------------------------
+# These address indices are TU0-era and INFORMATIONLESS after the 2026-07-15
+# TU0->TU5 flip (2-6% of their addresses are real .text function starts; an
+# arbitrary address list scores ~2-3% by chance). Acting on them yields
+# plausible-looking WRONG artifacts, so the load is hard-gated.
+# Audit: python3 tools/dead_index_guard.py --audit
+import os as _dig_os, sys as _dig_sys
+_dig_d = _dig_os.path.dirname(_dig_os.path.abspath(__file__))
+while _dig_d != "/" and not _dig_os.path.exists(
+        _dig_os.path.join(_dig_d, "tools", "dead_index_guard.py")):
+    _dig_d = _dig_os.path.dirname(_dig_d)
+_dig_sys.path.insert(0, _dig_os.path.join(_dig_d, "tools"))
+from dead_index_guard import load_guarded as _guarded_load, assert_live as _assert_live  # noqa: E402
+# ----------------------------------------------------------------------------
 ROOT=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) \
     if '__file__' in dir() else '/home/free/code/milohax/rb3-xenon'
 ROOT='/home/free/code/milohax/rb3-xenon'
@@ -45,7 +59,7 @@ def add(a_hex, bucket, src, sim, source, conf):
                        'source':source,'conf':conf,'_rank':rank}
 
 # dc3 uid: sim>=0.9 -> conf 0.95
-d=json.load(open(ROOT+'/unified_id.json'))
+d=_guarded_load(ROOT+'/unified_id.json')
 for e in d:
     if (e.get('similarity') or 0)<0.9: continue
     a=e.get('rb3_addr','')
@@ -56,7 +70,7 @@ for e in d:
     stats['dc3_'+b]+=1
 
 # rb3wii uid: sim>=0.7 -> conf 0.7 (median 0.25 is noise; 0.7 floor per spike)
-d2=json.load(open(ROOT+'/unified_id_rb3wii.json'))
+d2=_guarded_load(ROOT+'/unified_id_rb3wii.json')
 for e in d2:
     if (e.get('similarity') or 0)<0.7: continue
     a=e.get('rb3_addr','')

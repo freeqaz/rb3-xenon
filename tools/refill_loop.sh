@@ -152,6 +152,17 @@ while [ "$iter" -lt "$MAX_ITERS" ]; do
     log "ITERATION $iter / $MAX_ITERS"
 
     # 1. pin_identified (only if a map is present) ─────────────────────────────
+    # dead-index guard (lane BX-4): global_fuzzy_pairs.json is TU0-era and
+    # informationless (2.15% of its 2,000 addresses are real .text function
+    # starts -- BELOW the ~3% chance rate). pin_identified.py would turn it
+    # into splits.txt PINS, i.e. wrong units that look plausible. Refuse.
+    if [ -f "$MAP" ] && ! python3 "$REPO/tools/dead_index_guard.py" "$MAP" >/dev/null 2>&1; then
+        log "step 1: pin_identified REFUSED -- the map is a DEAD address index."
+        python3 "$REPO/tools/dead_index_guard.py" "$MAP" 2>&1 | sed 's/^/    /' | tee -a "$LOG"
+        log "  -> pinning from it would create plausible-looking WRONG units."
+        log "  -> supply a live --map, or regenerate global_fuzzy_pairs.json."
+        exit 2
+    fi
     if [ -f "$MAP" ]; then
         log "step 1: pin_identified --apply (extend under-pinned units)"
         run python3 "$REPO/tools/pin_identified.py" --map "$MAP" \
