@@ -1,10 +1,17 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,170 strict-matched functions / honest proxy 39,660 /
-`matched_code_percent` 34.810390** (honest = matched − masked_equal, per the BO-8
+**Current: 41,167 strict-matched functions / honest proxy 39,657 /
+`matched_code_percent` 34.810730** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
+
+> ⬇ **The function count went DOWN by 3 on purpose.** Lane BX-1 (`344ebc69`)
+> deleted three map rows that were awarding credit for functions retail does not
+> contain. 41,170 → 41,167 matched / 39,660 → 39,657 honest, while `code%` rose
+> 34.810390 → 34.810730. **This is the first landing priced on being LESS
+> wrong rather than more matched**, and the headline should be read as having
+> been *corrected downward*, not regressed. See the BX-1 block below.
 
 > **Wave BU (2026-07-30) — +15 honest, +0.0101pp code, `masked_equal` FLAT at
 > 1517 through every leg** (so no step bought its gain with byte-fallback
@@ -229,7 +236,9 @@ worktree with both legs same-split, not summed from lane deltas.
 > then fired live (orphan → rc=1, escape hatch → rc=0, duplicate → rc=1), because
 > a guard that always passes is indistinguishable from dead code.
 >
-> ➡ **Carried forward, unowned: a proven map mispair.**
+> ✅ **DISCHARGED by lane BX-1 `344ebc69` — repointed. Do not re-hunt.** (It was a
+> 1-for-1 swap worth +136 B of code%, not +1 matched; the old row already counted.)
+> Original entry: **a proven map mispair.**
 > `?Store@Target@HamCamShot@@` in unit `BandCamShot` should repoint to
 > `?Store@Target@BandCamShot@@QAAXPAV2@@Z`. Our tree has **both**
 > `BandCamShot.cpp` (RB3 — `DeleteTargetCache` inside the guard, which is what
@@ -253,7 +262,18 @@ worktree with both legs same-split, not summed from lane deltas.
 > - **20 UNDECIDED are withheld, NOT condemned.** All 20 have `nrel==0` — no
 >   resolvable relocation at all, so they are **unverifiable by this instrument
 >   rather than disproven**. Do not price them as defects.
-> - **`??1ObjRefOwner@@UAA@XZ`: NEITHER claimant is right.** The proposed VA
+>   ✅ **CLOSED by BX-1: all 20 decided, ZERO defects, ZERO still unverifiable** —
+>   function-start body-uniqueness over all 10.3 MB of `.text`, sound *because*
+>   `nrel==0` on both sides. The withhold call was correct. Do not re-hunt.
+> - ⚠ **The REJECT is a FALSE reject — see BX-1.** `anon_reloc_cmp.py` mis-handles
+>   a `SHAPE` contra whose *missing* side is the target (absence of a dtk label ≠
+>   absence of a branch); `?GetMaxSlots@GemManager@@`'s callee is an ICF-fold
+>   representative named `RndAnimatable::GetRate`. Safe direction, but the
+>   comparator's REJECT count is not trustworthy until fixed.
+> - **`??1ObjRefOwner@@UAA@XZ`: NEITHER claimant is right.** ✅ **SETTLED by BX-1:
+>   correct — the incumbent row was DELETED, not repointed** (`ObjRefOwner` occurs
+>   zero times in `band.exe`; `0x8279e578` is MercurySwitchFilter's dtor).
+>   The proposed VA
 >   `0x8231f620` was rejected (contra 2 on the bind channel, `contested`, never
 >   shipped, and absent from main); main's incumbent is `0x8279e578`, and
 >   target-vs-target scores the two bodies **DIFF at 2 words** — so they cannot
@@ -340,6 +360,102 @@ worktree with both legs same-split, not summed from lane deltas.
 > target obj. That is itself reassuring: their "best alternative" is noise, not a
 > twin. Of the 159 rows with no live alternative, 26 had a single candidate and
 > 116 have their runner-up already bound to a different VA.
+
+> **Lane BX-1 `344ebc69` (2026-07-30) — −3 honest, +0.000340pp code,
+> `masked_equal` FLAT at 1510. A CORRECTNESS landing; the negative IS the
+> result.** A/B'd in a fresh worktree off `edbd5bbd`, both legs same-split
+> (restore `symbols.txt`, `rm report.cache report.json`, `touch config.yml`, full
+> build), `total_functions` 69367 both ⇒ zero split churn:
+>
+> | | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | base `edbd5bbd` | 41170 | 1510 | 39660 | 34.810390 |
+> | +BX-1 `344ebc69` | **41167** | 1510 | **39657** | **34.810730** |
+>
+> Exact function-set diff **4 lost / 1 gained**, and the three moving units'
+> `matched_code` deltas sum exactly to the global +36 B (DrumPlayer −84,
+> MoggClipMap −16, BandCamShot +136). Nothing else in the binary moved.
+>
+> ★★★ **Absence in `band.exe` is map-independent proof, and it retired a whole
+> phantom family.** The substring `ObjRefOwner` occurs **ZERO** times in
+> `orig/45410914/band.exe` — not as RTTI, not as a mangled name, not as any
+> string — while the positive controls each appear exactly once
+> (`.?AVMercurySwitchFilter@@`, `.?AVUIListCustomTemplate@@`,
+> `.?AVThreadCallback@@`, and most pointedly `.?AVObjRef@@`: the **base** class's
+> RTTI is present, so the absence is specific, not a failed search). Under `/GR` a
+> virtual dtor stores its own class's vftable and every vftable's COL bears a
+> typedesc string ⇒ no typedesc ⇒ no vftable ⇒ no such dtor exists. Deleted:
+> `??1ObjRefOwner@@UAA@XZ` @ `0x8279e578`, `??_GObjRefOwner@@UAAPAXI@Z` @
+> `0x8279e588`, `??0ObjRefOwner@@QAA@XZ` @ `0x8251c190`. Each was then positively
+> re-identified by walking the COL chain: the first two are **MercurySwitchFilter**
+> (the `??_G` is slot 0 of vtable `0x821113B4`), the third is
+> **ThreadCallback** (vtable `0x820899AC`). All three trace to `62098fc5`
+> (laneAK's reloc-masked byte-class bijection) — the selector that manufactures
+> exactly this error, since "store a vtable; blr" is byte-identical to every other
+> such body once the relocated word is masked. **This closes BW-1's
+> `??1ObjRefOwner` "NEITHER claimant is right" open item: neither was, and the
+> incumbent is now gone rather than repointed.**
+>
+> ★★★ **A mislabelled row can score as a matched FUNCTION while earning ZERO
+> matched CODE — use that as a mispair detector.** The repointed row
+> (`?Store@Target@HamCamShot@@` → `?Store@Target@BandCamShot@@` @ `0x822b41a0`,
+> discharging BW's carried-forward item) read `fuzzy_match_percent` **99.85294**
+> but `match_percent_normalized` **100.0**. So it counted toward
+> `matched_functions` (normalized ⇒ relocation-masked) yet contributed nothing to
+> `matched_code` (which needs raw fuzzy 100): unit BandCamShot went 240 → 240
+> functions but **+136 B**. That divergence between the two axes on a single row
+> is a cheap, scannable smell for the at-100% defect class. ★ Correction to
+> earlier reporting: because the old row already counted, this is a **1-for-1
+> swap, not a +1** — the whole payoff is in code%, not function count.
+> `BandCamShot.cpp` scatter-includes `hamobj/HamCamShot.cpp`, so our obj defines
+> **both** Store symbols and objdiff name-paired retail against the DC3 body while
+> the correct RB3 body sat unpaired in the same obj. **The RB3 source was already
+> correct and no source file was touched.**
+>
+> ★★★ **This landing could not have been found, or justified, by the metric.**
+> BW-2's null leg mis-named **64** rows deliberately and measured *identical* to
+> the correct leg — match% is blind to whether a name is right. So a removal like
+> this is only ever defensible on a **non-metric instrument** (binary absence + an
+> independently re-walked COL chain). The corollary bit the fleet before: **a map
+> DELETE or repoint is a silent no-op without a re-split**, because the renamer
+> bakes the name into the target obj. Proven live here after the leg-B re-split —
+> `??1ObjRefOwner@@UAA@XZ` and `??_GObjRefOwner@@UAAPAXI@Z` go **1 → 0** in
+> `obj/DrumPlayer.obj`, `??0ObjRefOwner@@QAA@XZ` **1 → 0** in
+> `obj/MoggClipMap.obj`, and `obj/BandCamShot.obj` goes HamCamShot **1 → 0** /
+> BandCamShot **0 → 1**.
+>
+> ★★ **All 20 of BW-1's UNDECIDED rows were decided: ZERO are defects, ZERO
+> remain unverifiable.** The instrument is body-uniqueness at *function-start*
+> granularity across all 10.3 MB of `.text`, sound precisely **because** `nrel==0`
+> on **both** sides, so nothing is masked. Scope limit, stated honestly: it does
+> **not** discriminate once relocations exist. BW-1's withheld-not-condemned call
+> was right, and the pool is now closed rather than carried.
+>
+> ⚠ **BW-1's comparator has a direction-dependent defect —
+> `scripts/harvest/anon_reloc_cmp.py` should be fixed.** A `SHAPE` contra whose
+> *missing* side is the **target** is unreliable: absence of a dtk label is not
+> absence of a branch. That produced a **false REJECT** on
+> `?GetMaxSlots@GemManager@@` @ `0x82b99058` (retail is
+> `lwz r3,4(r3); b 0x822E4460`, where the callee is an **ICF-fold representative**
+> whose map name is `RndAnimatable::GetRate`). The direction is safe — a false
+> REJECT is a missed accept, never false credit — but that comparator's REJECT
+> count is not trustworthy.
+>
+> ➡ **Deferred, worth +2 CORRECT matches:** a `splits.txt` boundary move would
+> recover MercurySwitchFilter's real dtor pair — `0x8279e578`/`0x8279e588` sit at
+> DrumPlayer's tail and `MercurySwitchFilter.cpp` starts 8 B later. Skipped on
+> purpose: it changes the split, and the ~2-fn churn floor would contaminate a ±2
+> measurement. Needs its own lane designed around that.
+>
+> ➡ **Unowned, and a genuine source-model divergence:** our tree emits a fully
+> polymorphic `ObjRefOwner` (vftable + RTTI + `IsDirPtr`) that **retail does not
+> contain in any form** — an `Object.h` divergence with ~281-TU blast radius via
+> the PCH. Flagged, untouched. Concretely, a **fourth** row survives on main and
+> is suspect under the very same absence argument:
+> `"0x8232aec0": "?IsDirPtr@ObjRefOwner@@UAA_NXZ"` (unit BandWardrobe, 8 B,
+> currently fuzzy-100). It was deliberately left in place so this landing
+> reproduces its verified −3 exactly; an 8-byte body is far too generic for byte
+> identity to mean anything, so it needs the COL/absence treatment of its own.
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
