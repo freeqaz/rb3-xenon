@@ -14,12 +14,42 @@ strict-matched functions / honest proxy 39,703 / `matched_code_percent`
 > 39,677 → **39,703** (+26), code% 34.924870 → **35.046990** (**+0.122 pp**),
 > `masked_equal` and fuzzy both flat, **zero losses**.
 >
-> **+0.122 pp lands within 4% of the ~0.127 pp that lane BZ-1 had measured as
-> "one-directionally unreachable" and told us to stop chasing** (below, under
-> "two veins closed at the MECHANISM level"). BZ-1's measurement was *right*; only
-> its verdict — that the wall was permanent — was wrong. Two independent methods
-> converged: codegen-idiom directionality (17 fwd/0 rev, 6 fwd/0 rev) and
-> Rich-header archaeology. That convergence is what made the swap fundable.
+> +0.122 pp lands within 4% of the ~0.127 pp lane BZ-1 had measured as
+> "one-directionally unreachable" and told us to stop chasing (below, under "two
+> veins closed at the MECHANISM level").
+>
+> ⚠★★★ **THAT MAGNITUDE AGREEMENT IS A COINCIDENCE — DO NOT CITE IT AS
+> CONFIRMATION.** The coordinator originally wrote it up here as "two independent
+> methods converged"; **lane CB-2's mechanism-level audit refutes that**. Decomposing
+> all 26 gainers by the idiom that actually gated them:
+>
+> | gating idiom | gainers |
+> |---|---|
+> | strcpy byte-loop `cmplwi`↔`extsb.` (BZ-1 predicted) | **13** |
+> | redundant `clrlwi` (ours extra) — **never enumerated** | 7 |
+> | extra sign-extend `extsb`/`extsh` — **never enumerated** | 3 |
+> | `None`↔`mr` (OvershellPanel) — **never enumerated** | 1 |
+> | multi-defect (`inflate` 41 rows, `sprintbuf` 13 rows) | 2 |
+> | **pow2 `srawi.`↔`clrrwi.` (BZ-1 predicted)** | **0** |
+>
+> So only **13 of 26** came from the predicted mechanism, **~half the recovered pp
+> comes from idioms BZ-1 never enumerated**, and **one of the two predicted arms
+> contributed exactly zero**. The right summary is: *BZ-1 correctly detected that a
+> toolchain wall existed and sized it luckily well, but its causal account was
+> half wrong.* ★ **Lesson: two numbers agreeing is not two methods converging.**
+> A magnitude match across different mechanisms is coincidence until the
+> decomposition is checked — and checking it is cheap.
+>
+> ⛔ **Corollary: the pow2 idiom is still OPEN, not collected.** CB-2 scanned
+> instruction **encodings** across all 1,094 objs under both compilers:
+> `srawi.` 6,368→6,368 and `clrrwi.` 538→538 (**Δ0**), while the same scanner on
+> the same objs resolved the strcpy swing (`extsb.` 305→124, `cmplwi`
+> 103,663→103,839) — a **positive control** proving genuine sensitivity, not
+> blindness. Total `.text` moved −736 B, so codegen definitely changed; pow2
+> selection simply did not. ⇒ BZ-1's 6 fwd / 0 rev has a **different, still-live
+> cause, most plausibly source-level** (expression form or signedness, e.g. `x/8`
+> vs `x & ~7`). That share of the ~0.127 pp was never recovered and remains
+> chaseable.
 >
 > ⚠ **Every match% figure recorded before `f149a4b7` was measured against the
 > wrong compiler.** Pre-flip and post-flip numbers are not comparable, and every
@@ -32,6 +62,64 @@ strict-matched functions / honest proxy 39,703 / `matched_code_percent`
 > The structurally identical inference about the compiler **build** was wrong and
 > cost ~0.12 pp for months. The **flags** rest on the same unverified reasoning
 > and are being measured now (lane CB-4). Measure the toolchain; don't infer it.
+
+> ## Lane CB-2 — the canonical post-swap census (2026-07-30)
+>
+> **Determinism control first:** two independent 10224 builds gave **0
+> per-function differences over 69,366 functions**, so the ±2 split-churn floor
+> never bit and all 48 changed functions are attributable to the swap alone.
+> Compiler identity was verified **at the object level** (`@comp.id` = `0xAB27F0`
+> on 40/40 objs leg A, `0x…2E6E` on 60/60 leg B), not from configure's banner.
+> Also confirmed: `match_percent_normalized == 100` counts **exactly 41,213** =
+> headline `matched_functions`, i.e. that field is what drives the metric.
+>
+> **Direction histogram — 48 changed of 69,366: 45 up / 3 down.** 26 crossed to
+> 100, **0 fell from 100**, 22 moved without crossing. Independent corroboration
+> that nothing regressed: of `decomp.db`'s 5,665 `COMPLETE` rows present in the
+> report, 62 sit below 100 under 10224 — but **all 62 were already below 100 under
+> 11886**, so the swap regressed none of them.
+>
+> **The one genuine cost: `RndLine::SetNumPoints` 98.500 → 69.693** (default/Line),
+> 141 mismatches of 244 instructions at identical 976 B. 10224 emits an extra
+> `mr r4, r28`, picks different registers, and allocates a 16-byte larger frame
+> (`stwu r1,-0xf0` vs retail `-0xe0`); one inserted instruction desynchronises
+> objdiff alignment and cascades. **Class: regalloc**, not a logic regression. It
+> never crossed 100 in either direction so Δhonest and Δcode% are both 0 — but it
+> is a named, real regression and the swap is not free. (Other two down-movers:
+> `fft_matrix_inverse_columnwise` −0.138, `Tail::UpdateVerts` −0.128, VMX
+> scheduling noise.)
+>
+> ### ✅ Regenerated near-miss pool — USE THIS, not BZ-1's handoff
+> **`/home/free/tmp/laneCB2out/nearmiss_pool_10224.json`** (+ `SUMMARY.txt`),
+> deliberately written **outside** any git worktree so a `worktree remove --force`
+> cannot destroy it. 4,158 rows, carrying its own provenance, field definitions and
+> regeneration command.
+> - **named, 0<pct<100: 2,286 rows / 1,011,268 B / 9.5583 pp** — the actionable set.
+> - anonymous: 1,872 / 87,636 B / 0.8282 pp (anon bodies can never pair — see the
+>   anon naming gate).
+> - Only **22 of 4,158** rows changed with the swap: the pool's *membership* was
+>   barely affected. What was stale in BZ-1's handoff was its **calibration and
+>   provenance**, not its contents.
+>
+> ⚠★★ **Two ranking traps, both load-bearing:**
+> 1. **`penalty = size·(100−pct)` over the FULL population is dominated by large
+>    near-ZERO-pct bodies** (`RndMesh::SyncProperty` 0.99%, `UIList::SyncProperty`
+>    0.49%) — those are **unported, not near-miss**. Rank by raw penalty and you
+>    will be handed unported giants. Use `ranked_views.near_miss_ge90_by_penalty`
+>    (**939 rows / 487,736 B / 4.61 pp**): `SaveLoadManager::SetState` 91.7%,
+>    `CharacterCreatorPanel::Handle` 95.2%, `RndPropAnim::Handle` 93.2%,
+>    `UILabel::SyncProperty` 94.1%.
+> 2. **BZ-1's pool was SIZE-ranked, not penalty-ranked** despite its handoff text
+>    claiming otherwise (`ranked_views.ge99_by_size` reproduces its shape exactly).
+>    Its `MusicLibrary::Handle` 6,160 row was **already stale — 100.0% even under
+>    11886**. And its headline signature (1,061 fns / 245,248 B / 2.32 pp) is **not
+>    reproducible** under any of 14 filters tried, because the pool definition was
+>    never recorded. ⇒ ★ **A worklist without its generating query is unauditable.**
+>    The new artifact embeds both.
+>
+> ⛔ `decomp.db` re-ingest is **low urgency for correctness**: all rows predate the
+> swap (`max(updated_at)` 2026-07-29), but the swap invalidated **0 of 2,539**
+> `AT_LIMIT` rows and broke **0** `COMPLETE` rows. Hygiene only.
 
 > ✅ **FLOOR RESOLVED — this is now a direct measurement, not a sum.** BZ-1's
 > lander built HEAD itself (BZ-1 `e7dc97dd` + BZ-3 `b16c9e8c` in one worktree,
