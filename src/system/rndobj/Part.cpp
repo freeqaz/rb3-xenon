@@ -1,5 +1,17 @@
-// Retail inlines the owner-only ObjPtr ctor in this TU (three stores, no
-// AddRef) rather than calling fn_8270B9A8. See obj/Object.h.
+// Retail inlines the owner-only ObjPtr ctor at MOST -- but not all -- sites in
+// this TU, so the TU takes inline as its default and the one exception opts back
+// out below. BINARY EVIDENCE (lane BY-1, TU5 image, retail ??0RndParticleSys@@ =
+// fn_8244E200): four owner-only ObjPtr constructions, split 3 inline / 1 called.
+//     +0x1c8 mMeshEmitter   three stores (mOwner@0x1cc, 0@0x1d0, vt@0x1c8)
+//     +0x1d4 mMat           li r5,0 / addi r3,r30,0x1d4 / bl fn_8229D9C8
+//     +0x268 mMotionParent  three stores (vt lbl_82041C18)
+//     +0x274 mBounce        three stores (vt lbl_82017A34)
+// Offsets are cl.exe /d1reportSingleClassLayout ground truth, and the out-of-line
+// callee independently corroborates which member it is: fn_8229D9C8 stores the
+// ObjPtr<RndMat> vtable, and 0x1d4 is exactly mMat (an ObjPtr<RndMat>).
+// This function is the tightest proof that retail's policy is PER-SITE, not
+// per-TU -- one function, four sites, two different expansions.
+// (Do NOT cite fn_8270B9A8 here -- that was a stale TU0 address; see obj/Object.h.)
 #define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/Part.h"
 #include "math/Geo.h"
@@ -139,7 +151,12 @@ RndParticleSys::RndParticleSys()
       mBoxExtent2(0, 0, 0), mSpeed(1, 1), mPitch(0, 0), mYaw(0, 0), mEmitRate(1, 1),
       mStartSize(gUnitsPerMeter / 4, gUnitsPerMeter / 4), mDeltaSize(0, 0),
       mStartColorLow(1, 1, 1), mStartColorHigh(1, 1, 1), mEndColorLow(1, 1, 1),
-      mEndColorHigh(1, 1, 1), mMeshEmitter(this), mMat(this), mPreserveParticles(0),
+      // PER-SITE: retail INLINES mMeshEmitter(this) (three stores at +0x1c8) but
+      // CALLS the out-of-line ctor for mMat (bl at +0x1d4, the ObjPtr<RndMat>
+      // two-arg body that stores all three fields then AddRef(this)). Spelling
+      // the two-arg overload explicitly forces that call back.
+      mEndColorHigh(1, 1, 1), mMeshEmitter(this), mMat(this, nullptr),
+      mPreserveParticles(0),
       mMotionParent(this), mBounce(this), mForceDir(0, 0, 0), mDrag(0), mBubble(0),
       mFastForward(0), mNeedForward(0), mRotate(0), mRPM(0, 0), mRPMDrag(0),
       mRandomDirection(1), mStartOffset(0, 0), mEndOffset(0, 0), mAlignWithVelocity(0),

@@ -1,3 +1,13 @@
+// Retail's ObjPtr owner-ctor inline policy is PER-SITE, not per-TU. In this TU
+// retail INLINES the owner-only ctor at the local-variable site in
+// UITrigger::Load (three stores, no AddRef), but CALLS it out-of-line at the
+// ??0UITrigger@@ member-init `mCallbackObject(this)`. So the TU opts in to the
+// inline default below, and that one member-init opts back out by spelling the
+// two-arg overload explicitly -- `mCallbackObject(this, nullptr)` binds
+// ObjPtr(Hmx::Object*, T*), which is defined out-of-class in obj/ObjPtr_p.h and
+// is too big for /Ob2 to inline (its `if (mObject) AddRef(this)` tail).
+// ui/ is PCH-excluded, so this #define precedes the Object.h include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "ui/UITrigger.h"
 #include "math/Easing.h"
 #include "obj/Data.h"
@@ -20,7 +30,7 @@ static struct {
 #define gRev gRevs_UITrigger.rev
 
 UITrigger::UITrigger()
-    : mBlockTransition(0), mCallbackObject(this), mEndTime(0), mDone(1) {}
+    : mBlockTransition(0), mCallbackObject(this, nullptr), mEndTime(0), mDone(1) {}
 
 BEGIN_PROPSYNCS(UITrigger)
     SYNC_PROP(block_transition, mBlockTransition)

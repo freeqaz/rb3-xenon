@@ -1,5 +1,14 @@
 // Retail inlines the owner-only ObjPtr ctor in this TU (three stores, no
-// AddRef) rather than calling fn_8270B9A8. See obj/Object.h.
+// AddRef). BINARY EVIDENCE (lane BY-1, TU5 image, retail ??0CharEyes@@ =
+// fn_82388E28): the ctor contains exactly EIGHT `bl` and not one of them is an
+// ObjPtr ctor -- __savegprlr_27, ??0Object@Hmx@@ (fn_8275CB88), ??0CharWeightable@@
+// (fn_823AEB30), ??0CharPollable@@ (fn_822C10B8), ClearToDefaults (fn_823BC918),
+// cos (fn_8282B570), ??0Symbol@@ (fn_827C0728), RndOverlay::Find (fn_82416BD0) --
+// while the member-init list constructs EIGHT owner-only ObjPtrs (mEyes,
+// mInterests, mFaceServo, mCamWeight, mViewDirection, mHeadLookAt, mCurInterest,
+// mFocusInterest). Eight constructions, zero calls => all inlined. Retail emits
+// the three-store form, e.g. at +0x48: stw mOwner@0x4c / stw 0@0x50 / stw vt@0x48.
+// (Do NOT cite fn_8270B9A8 here -- that was a stale TU0 address; see obj/Object.h.)
 #define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "char/CharEyes.h"
 #include "char/CharInterest.h"
