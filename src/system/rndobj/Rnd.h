@@ -219,7 +219,7 @@ public:
     );
     const Vector2 &
     DrawStringScreen(const char *c, const Vector2 &v, const Hmx::Color &color, bool b4);
-    RndPostProc *GetPostProcOverride();
+    PostProcessor *GetPostProcOverride();
     RndPostProc *GetSelectedPostProc();
     void TestPoint(const Vector3 &, RndFlare *);
     void CopyWorldCam(RndCam *);
@@ -359,7 +359,12 @@ protected:
     // override). DC3 promoted both to ObjPtr<RndPostProc> (0x14 each = +0x24),
     // which shifted mPreClearDraws..mCompressTexQueue and the whole NgRnd/DxRnd
     // own region up 0x24/0x60 bytes vs retail.
-    RndPostProc *mPostProcOverride; // 0x124
+    // ★ Type is PostProcessor*, NOT RndPostProc* (both 4 bytes, so layout at
+    // 0x124 is unchanged). RndPostProc derives from PostProcessor as its
+    // SECOND base, so assigning an RndPostProc* to this member emits the
+    // null-checked `+0x28` upcast that retail shows inlined at the
+    // set_postproc_override handler in Rnd::Handle. rb3-Wii Rnd.h:244 agrees.
+    PostProcessor *mPostProcOverride; // 0x124
 #ifdef HX_NATIVE
     ObjPtr<RndPostProc> mPostProcBlackLightOverride; // native-only (DC3 blacklight override)
 #endif
