@@ -7,14 +7,33 @@ strict-matched functions / honest proxy 39,709 / `matched_code_percent`
 (`total_functions` 69,367; `matched_code` 3,729,036 B; `masked_equal` 1,509;
 `total_code` 10,580,036).
 
-> **Wave CB (2026-07-30) — from 41,187 / 39,677 / 34.924870 to the above:
-> +31 matched, +32 honest, +0.321 pp.** Sources: the compiler flip `f149a4b7`
-> (+26 / +0.122 pp), `RGTrainerPanel::HandleChordLegend` `8bc771f5`
-> (+1 / +0.0089 pp), and three giant `Handle`s `5524a135` (+3 / +0.1867 pp).
-> ⚠ Intermediate figures quoted during the wave came from **worktree legs off
-> different bases**; only the HEAD numbers above are main-measured. Deltas within
-> a lane are valid (same worktree, same commit, split frozen); **absolute figures
-> from different legs are not comparable** to ±~2 (the split-churn floor).
+> **2026-07-30 — from 41,187 / 39,677 / 34.924870 to the above: +31 matched,
+> +32 honest, +0.321 pp**, across four landings by **two concurrent sessions**:
+>
+> | commit | matched | masked | source |
+> |---|---|---|---|
+> | `f149a4b7` | 41,213 | 1,510 | compiler flip to 10224 (**+26**) |
+> | `8bc771f5` | 41,214 | 1,510 | lane CB-3 `RGTrainerPanel::HandleChordLegend` (+1) |
+> | `d7bd717d` | 41,215 | **1,509** | *other session* — CC-recrack `String::replace` (+1) |
+> | `5524a135` | **41,218** | 1,509 | lane CB-5 Campaign/Game/OvershellSlot (**+3**) |
+>
+> ★ **The ledger is EXACTLY additive across all four — there was no split churn.**
+> The coordinator initially attributed a 1-function gap between its worktree legs
+> and main to the ±2 churn floor; that was **wrong**. The gap was entirely the
+> *other session's* landing, and once `d7bd717d` is in the chain every figure
+> reconciles to the digit. ⇒ ⚠ **In a shared tree, check `git log` before
+> explaining a discrepancy as noise** — "churn" is an available excuse that can
+> silently absorb another agent's work, and here it would have mis-credited +1.
+>
+> ⚠ Intermediate figures quoted mid-wave came from **worktree legs off different
+> bases** and are not comparable to each other; only HEAD numbers are
+> main-measured. Deltas *within* a lane (same worktree, same commit, split frozen)
+> remain valid.
+>
+> ★ Independent corroboration from the other session: it also classed
+> `RndLine::SetNumPoints` 98.5 → 69.7 as a **CSE/register-pressure `build_env`
+> artifact with no non-contorting source fix** — matching lane CB-2's regalloc
+> diagnosis of the same regression, reached by a different route.
 
 > ★★★ **THE COMPILER WAS WRONG FOR MONTHS, AND THE WALL BZ-1 SIZED WAS IT.**
 > Retail RB3 was built with X360 `cl.exe` build **10224** (XDK 2.0.11164); the
