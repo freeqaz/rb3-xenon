@@ -1,7 +1,7 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,957 strict-matched functions / honest proxy 39,439 /
-`matched_code_percent` 34.518597** (honest = matched − masked_equal, per the BO-8
+**Current: 40,964 strict-matched functions / honest proxy 39,454 /
+`matched_code_percent` 34.528618** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
@@ -32,18 +32,41 @@ worktree with both legs same-split, not summed from lane deltas.
 > — BU-1 predicted +10..+20, measured +9; the 99.8/99.9 bodies were thunks with
 > no vbase adjust and none moved.
 
-> **Wave BV (2026-07-30) — +4 honest, +0.004952pp code, `masked_equal` FLAT at
-> 1518.** `e22878ef` lane BV-3, landed by patch (its branch predates BV-2; a
-> merge would have reverted BV-2's `splits.txt` deletion). Re-verified in a
-> fresh worktree off `dedf6c34`, both legs same-split, `total_functions` 69367:
+> **Wave BV (2026-07-30) — +19 honest, +0.014973pp code.** Two lanes landed by
+> patch (both branches predate BV-2; a merge would have reverted BV-2's
+> `splits.txt` deletion). Each re-verified in its own fresh worktree, both legs
+> same-split, `total_functions` 69367:
 >
 > | | matched | masked_equal | honest | code% |
 > |---|---|---|---|---|
 > | base `dedf6c34` | 40953 | 1518 | 39435 | 34.513645 |
 > | +BV-3 `e22878ef` | 40957 | 1518 | 39439 | 34.518597 |
+> | +BV-1 `5482a0a3` | 40964 | 1510 | 39454 | 34.528618 |
 >
-> Δ = exactly 524 bytes = 316+84+112+12, a **1:1 attribution to four map rows**
-> — no hidden extra match, no regression.
+> BV-1 (StoreOfferProvider body port, +7 matched / −8 masked_equal / **+15
+> honest** / +0.010021pp) was measured off `e406eef4`, and its leg A reproduced
+> BV-3's post-landing headline **exactly** — so the two lanes are fully additive
+> with no interaction, and the wave total is a measurement, not a sum of claims.
+> ★★ **Pricing by Δmatched alone would have scored one of its legs zero:** the
+> BuildList local-static-Symbol leg moved `matched` by +0 while converting five
+> EH funclets from masked-equal to honestly equal (−5 `masked_equal`). Δhonest is
+> what saw it.
+> ★★ **Retail sizeof is 0x4C, not our 0x50 — `mPacks` does not exist.** Proven
+> three ways without a map: the ctor writes nothing to 0x4c, no function in the
+> 3546-line unit asm touches 0x4c, and `BandStorePanel.s:0x82605204` does
+> `li r3, 0x4c` before `operator new`. The Wii DEV oracle's `mPacks` fallback
+> loops in FindOffer/FindPack/FindAlbum are likewise absent from retail, as are
+> the `mElements.size()` guards (DEV-build artifacts).
+> ★ **A third splits-attribution defect in this family:** 312 bytes
+> (`0x82663830..0x82663968`) sat under `SongSortNode.cpp` while sandwiched
+> between two StoreOfferProvider blocks; it holds three StoreOfferProvider
+> methods `Handle` calls straight into. Reclaiming it cost SongSortNode nothing
+> (108 matches before and after, code% **rose** 91.72 → 94.21). The block is
+> `.pdata`-less — expected for three frameless leaves — so no `.pdata` moved with
+> it, which is why the edit is `.text`-only.
+>
+> **BV-3's** Δ = exactly 524 bytes = 316+84+112+12, a **1:1 attribution to four
+> map rows** — no hidden extra match, no regression.
 > ⛔ **The reloc_disc COLLISION-repoint pool is CLOSED — metric-inert by
 > construction, do not re-hunt.** `report generate` hardcodes
 > `functionRelocDiffs=None`, and `masked_equal` never discloses reloc masking, so
