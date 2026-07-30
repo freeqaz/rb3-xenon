@@ -980,13 +980,33 @@ Known merged patterns:
 
 ### Compiler Version Notes
 
-- Xbox 360 SDK uses **MSVC 16.00.11886.00** (Visual Studio 2010)
-- Linker: **LINK 10.0.11886.0**
-- XDK SDK: **v2.0.21173.0**
-- Target binary: **debug build** (XBDM present, no LTCG)
+> ## ⚠ CORRECTED (2026-07-30, lane CB-3) — the block below described **DC3's** binary, not RB3's
+>
+> This document is ported from `dc3-decomp`, and this bullet list states DC3's
+> toolchain and DC3's Rich header **as if they were facts about our target**.
+> They are not. See `docs/decomp/patterns/unfixable-compiler.md` for the full
+> explanation and the list of verdicts this invalidated.
+>
+> | claim | DC3 (what the text described) | **RB3 (our actual target)** |
+> |---|---|---|
+> | compiler | `cl.exe` 16.00.**11886**.00 | `cl.exe` 16.00.**10224**.00 |
+> | XDK | v2.0.21173.0 | **v2.0.11164.0** |
+> | build type | **debug** (XBDM present) | **retail**, size-optimized release |
+> | Rich header | 1871 C++ / 465 C objs @ 11886 + 3 VS2005 (Bink) | *DC3's census — not RB3's* |
+>
+> RB3's compiler was identified from its own Rich header, which survived XEX
+> packing (`scripts/harvest/rich_header.py`, `@comp.id 0x00AB27F0`). The fleet
+> default was flipped to 10224 in commit `f149a4b7` (+26 matched, 0 losses).
+> ⚠ Trust **build numbers, not the public prodid name table**, which falsely
+> reads PGO for these IDs.
+
+- ~~Xbox 360 SDK uses **MSVC 16.00.11886.00** (Visual Studio 2010)~~ → **RB3 retail: MSVC 16.00.10224.00**; 11886 is DC3's (and our former default, still selectable via `configure.py --x360-compiler-version` for A/B archaeology)
+- Linker: **LINK 10.0** (major version 10.00 on both builds — this one is not discriminating)
+- ~~XDK SDK: **v2.0.21173.0**~~ → **RB3: XDK v2.0.11164.0** (21173 is DC3's)
+- ~~Target binary: **debug build** (XBDM present, no LTCG)~~ → **RB3's target is a RETAIL, size-optimized release build** (no LTCG). "Debug build" was DC3's situation; see `CLAUDE.md`.
 - `/Gw` (Optimize Global Data) is **NOT available** (added in VS2013)
 - Current flags: `/O1 /Oi /GR /EHsc` (empirically confirmed correct — `/O2` breaks matches, `/fp:fast` has no effect)
-- Rich header: 1871 C++ objects + 465 C objects compiled with cl.exe 16.00.11886, plus 3 objects from VS2005 (Bink middleware)
+- ~~Rich header: 1871 C++ objects + 465 C objects compiled with cl.exe 16.00.11886, plus 3 objects from VS2005 (Bink middleware)~~ ⚠ **This is DC3's Rich-header census, not RB3's** (lane CB-3, 2026-07-30). RB3's own Rich header reports cl.exe **16.00.10224**; re-run `scripts/harvest/rich_header.py` against `orig/45410914/default.xex` for our real object counts.
 - Xbox 360 `/O1` = `/Oy /Ob2 /GF` (differs from standard MSVC; `/O2` = `/Oi /Oy /Ob2 /GF`)
 - `/fp:fast` is the **default** on Xbox 360 (per XDK docs `xenon_compiler_technology.htm`)
 - `#pragma fp_contract` is **ON by default** — controls fmadds generation
