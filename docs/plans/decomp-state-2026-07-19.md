@@ -1,6 +1,6 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,888 strict-matched functions / honest proxy 39,379** (= matched −
+**Current: 40,896 strict-matched functions / honest proxy 39,387** (= matched −
 masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
 (~69k functions).
