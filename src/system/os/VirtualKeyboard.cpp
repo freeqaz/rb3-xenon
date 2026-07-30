@@ -63,6 +63,5 @@ DataNode VirtualKeyboard::ShowKeyboardUI(int, int, String, String, String, int) 
 BEGIN_HANDLERS(VirtualKeyboard)
     HANDLE(show_keyboard, OnShowKeyboardUI)
     HANDLE_ACTION(clear_callback, ClearKeyboardCallback())
-    HANDLE_EXPR(get_input_string, GetInputString())
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS

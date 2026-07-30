@@ -45,17 +45,6 @@ void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
 }
 
 BEGIN_HANDLERS(RndGroup)
-    HANDLE_ACTION(sort_draws, SortDraws())
-    HANDLE_ACTION(add_object, AddObject(_msg->Obj<Hmx::Object>(2)))
-    HANDLE_ACTION(remove_object, RemoveObject(_msg->Obj<Hmx::Object>(2)))
-    HANDLE_ACTION(clear_objects, ClearObjects())
-    HANDLE_ACTION(
-        insert_object, AddObject(_msg->Obj<Hmx::Object>(2), _msg->Obj<Hmx::Object>(3))
-    )
-    HANDLE_ACTION(move_object, MoveObject(_msg->Obj<Hmx::Object>(2), _msg->Int(3)))
-    HANDLE_EXPR(num_objects, mObjects.size())
-    HANDLE_EXPR(has_object, mObjects.find(_msg->Obj<Hmx::Object>(2)) != mObjects.end())
-    HANDLE_EXPR(get_group_children, GetGroupChildren())
     HANDLE_SUPERCLASS(RndAnimatable)
     HANDLE_SUPERCLASS(RndDrawable)
     HANDLE_SUPERCLASS(RndTransformable)

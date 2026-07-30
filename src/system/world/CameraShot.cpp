@@ -922,7 +922,6 @@ BEGIN_HANDLERS(CamShot)
     // orig/45410914/band.exe agree that fn_824C4A98 builds exactly 12 Symbols
     // and "get_crowd_dir" is not among them; the literal appears in no
     // non-executable section of the image at all. DC3 (newer engine) added it.
-    HANDLE_EXPR(get_crowd_dir, GetCrowdDir())
 #endif
     HANDLE_EXPR(gen_hide_list, 0)
     HANDLE_EXPR(clear_hide_list, 0)

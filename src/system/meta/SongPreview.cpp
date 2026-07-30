@@ -37,10 +37,8 @@ SongPreview::~SongPreview() { Terminate(); }
 
 BEGIN_HANDLERS(SongPreview)
     HANDLE(start, OnStart)
-    HANDLE_ACTION(start_video, Start(_msg->Sym(2), _msg->Obj<TexMovie>(3)))
     HANDLE_ACTION(set_music_vol, SetMusicVol(_msg->Float(2)))
     HANDLE_ACTION(set_crowd_sing_vol, SetCrowdSingVol(_msg->Float(2)))
-    HANDLE_EXPR(get_song, mSong)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

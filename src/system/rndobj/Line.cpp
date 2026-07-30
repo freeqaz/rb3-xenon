@@ -36,7 +36,6 @@ BEGIN_HANDLERS(RndLine)
         set_point_pos,
         SetPointPos(_msg->Int(2), Vector3(_msg->Float(3), _msg->Float(4), _msg->Float(5)))
     )
-    HANDLE_EXPR(point_color, mPoints[_msg->Int(2)].color.PackAlpha())
     HANDLE_ACTION(
         set_point_color,
         SetPointColor(

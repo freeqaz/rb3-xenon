@@ -29,8 +29,6 @@ BEGIN_HANDLERS(RndDrawable)
     HANDLE_ACTION(update_sphere, UpdateSphere())
     HANDLE(get_sphere, OnGetSphere)
     HANDLE(copy_sphere, OnCopySphere)
-    HANDLE(get_draw_children, OnGetDrawChildren)
-    HANDLE(get_group_children, OnGetDrawChildren)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(RndDrawable)

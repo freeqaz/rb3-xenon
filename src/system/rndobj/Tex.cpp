@@ -48,7 +48,7 @@ BEGIN_HANDLERS(RndTex)
     HANDLE_EXPR(size_kb, SizeKb())
     HANDLE_EXPR(tex_type, mType)
     HANDLE_ACTION(save_bmp, SaveBitmap(_msg->Str(2)))
-    HANDLE_ACTION(save_png, _msg->Str(2)) // musta got stubbed out
+// musta got stubbed out
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

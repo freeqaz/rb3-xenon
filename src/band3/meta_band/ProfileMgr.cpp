@@ -1439,10 +1439,6 @@ BEGIN_HANDLERS(ProfileMgr)
     HANDLE_EXPR(get_mic_vol, GetMicVol(_msg->Int(2)))
     HANDLE_EXPR(get_has_seen_first_time_calibration, GetHasSeenFirstTimeCalibration())
 #ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this handler
-    HANDLE_EXPR(
-        get_has_seen_first_time_instruments,
-        GetHasSeenFirstTimeInstruments(_msg->Obj<LocalBandUser>(2))
-    )
 #endif
     HANDLE_EXPR(get_second_pedal_hihat, GetSecondPedalHiHat())
     HANDLE_ACTION(set_background_volume, SetBackgroundVolume(_msg->Int(2)))
@@ -1466,10 +1462,6 @@ BEGIN_HANDLERS(ProfileMgr)
         set_has_seen_first_time_calibration, SetHasSeenFirstTimeCalibration(_msg->Int(2))
     )
 #ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this handler
-    HANDLE_ACTION(
-        set_has_seen_first_time_instruments,
-        SetHasSeenFirstTimeInstruments(_msg->Obj<LocalBandUser>(2), _msg->Int(3))
-    )
 #endif
     HANDLE_EXPR(is_autosave_enabled, IsAutosaveEnabled(_msg->Obj<LocalBandUser>(2)))
     HANDLE_ACTION(update_mic_levels, UpdateMicLevels(_msg->Int(2)))
@@ -1477,7 +1469,6 @@ BEGIN_HANDLERS(ProfileMgr)
     HANDLE_ACTION(force_mic_gain, ForceMicGain(_msg->Int(2), _msg->Float(3)))
     HANDLE_ACTION(force_mic_output_gain, ForceMicOutputGain(_msg->Int(2), _msg->Float(3)))
 #ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this dev handler
-    HANDLE_ACTION(fake_profile_fill, FakeProfileFill())
 #endif
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ProfileChangedMsg)

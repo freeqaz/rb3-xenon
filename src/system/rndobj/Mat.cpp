@@ -63,16 +63,6 @@ RndMat::~RndMat() {
 }
 
 BEGIN_HANDLERS(RndMat)
-    HANDLE(get_metamats_dir, OnGetMetaMaterialsDir)
-    HANDLE(get_metamats, OnGetMetaMaterials)
-    HANDLE_EXPR(prop_is_hidden, OnGetPropertyDisplay(kPropDisplayHidden, _msg->Sym(2)))
-    HANDLE_EXPR(
-        prop_is_read_only, OnGetPropertyDisplay(kPropDisplayReadOnly, _msg->Sym(2))
-    )
-    HANDLE_ACTION(
-        toggle_display_all_props, mToggleDisplayAllProps = !mToggleDisplayAllProps
-    )
-    HANDLE_ACTION(create_metamat, CreateMetaMaterial(true))
     HANDLE_SUPERCLASS(BaseMaterial)
 END_HANDLERS
 

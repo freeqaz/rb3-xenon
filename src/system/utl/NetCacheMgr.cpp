@@ -25,10 +25,6 @@ NetCacheMgr::~NetCacheMgr() {}
 
 BEGIN_HANDLERS(NetCacheMgr)
     HANDLE_ACTION(init, OnInit(_msg->Array(2)))
-    HANDLE_ACTION(debug_clear_cache, DebugClearCache())
-    HANDLE_EXPR(cheat_next_server, CheatNextServer())
-    HANDLE_EXPR(server_type, mServerType)
-    HANDLE_EXPR(is_local, IsLocalFile(_msg->Str(2)))
 END_HANDLERS
 
 void NetCacheMgr::Poll() {

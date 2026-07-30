@@ -124,7 +124,6 @@ Synth::Synth() : mMuted(false), mMicClientMapper(nullptr) {
 BEGIN_HANDLERS(Synth)
     HANDLE(play, OnPassthrough)
     HANDLE(stop, OnPassthrough)
-    HANDLE_ACTION(run_flow, RunFlow(_msg->Str(2)))
     HANDLE(start_mic, OnStartMic)
     HANDLE(stop_mic, OnStopMic)
     HANDLE_ACTION(stop_playback_all_mics, StopPlaybackAllMics())
@@ -145,8 +144,6 @@ BEGIN_HANDLERS(Synth)
     )
     HANDLE_EXPR(spu_overhead, GetSPUOverhead())
     HANDLE_ACTION(set_headset_target, 0)
-    HANDLE_ACTION(stop_all_sounds, StopAllSounds())
-    HANDLE_ACTION(set_vo_edit_sound, unka8 = _msg->Str(2))
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
