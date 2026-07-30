@@ -6,7 +6,10 @@
 class NgEnviron : public RndEnviron {
 public:
     // Hmx::Object
-    OBJ_CLASSNAME(NgEnviron);
+    // Base-name registration (see SpotlightDrawer_NG.h): retail band.exe has no
+    // "NgEnviron" C string; the RndEnviron base registers the literal Environ,
+    // and DC3's Env_NG.h declares Environ here too.
+    OBJ_CLASSNAME(Environ);
     OBJ_SET_TYPE(NgEnviron);
     // RndEnviron
     virtual void Select(const Vector3 *);

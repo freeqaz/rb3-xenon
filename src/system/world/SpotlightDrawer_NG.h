@@ -31,12 +31,23 @@ public:
     NgSpotlightDrawer();
     // Hmx::Object
     virtual ~NgSpotlightDrawer();
-    OBJ_CLASSNAME(NgSpotlightDrawer)
+    // Retail registers the platform subclass under its BASE's DTA name, so
+    // milo data authored as `SpotlightDrawer` instantiates this NG class.
+    // Evidence: retail band.exe contains no "NgSpotlightDrawer" C string at
+    // all, while 0x824d1848 -- called by ClassName/SetType/Init@NgSpotlightDrawer
+    // -- builds "SpotlightDrawer".  DC3's SpotlightDrawer_NG.h agrees.
+    OBJ_CLASSNAME(SpotlightDrawer)
     OBJ_SET_TYPE_ENGINE(NgSpotlightDrawer)
 
     // PostProcessor
     virtual void EndWorld();
     virtual void DoPost();
+    // OPEN (lane BS-3, not fixed): "NgSpotlightDrawer" is absent from retail
+    // band.exe's string pool, so retail cannot return it here either -- RB3
+    // likely has no such override (DC3, which is newer, does).  Left alone
+    // deliberately: ?GetProcType@ has no target_symbol_map row anywhere, so the
+    // member is unpaired and unadjudicable, and guessing risks a regression for
+    // zero metric.  Reopen if GetProcType ever gets mapped.
     virtual char const *GetProcType() { return "NgSpotlightDrawer"; }
 
     NEW_OBJ(NgSpotlightDrawer);

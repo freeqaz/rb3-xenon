@@ -7,7 +7,11 @@
 class AppInlineHelp : public InlineHelp {
 public:
     AppInlineHelp();
-    OBJ_CLASSNAME(AppInlineHelp)
+    // Base-name registration: retail band.exe has no "AppInlineHelp" C string;
+    // 0x8256e688 -- called by ClassName/SetType@AppInlineHelp -- builds
+    // "InlineHelp", which is what the InlineHelp base declares.  (rb3-Wii's DEV
+    // decomp writes AppInlineHelp here; that is not what 360 retail links.)
+    OBJ_CLASSNAME(InlineHelp)
     OBJ_SET_TYPE(AppInlineHelp)
     NEW_OBJ(AppInlineHelp)
     virtual DataNode Handle(DataArray *, bool);

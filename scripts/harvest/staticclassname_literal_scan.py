@@ -38,12 +38,26 @@ sys.path.insert(0, str(HERE))
 from icf_contradiction_adjudicate import PE, load_symbols, BANDEXE  # noqa: E402
 
 
+def strip_comments(t):
+    """Blank out // and /* */ comments, preserving line structure.
+
+    LOAD-BEARING (lane BS-3): the OBJ_CLASSNAME search below is a plain regex
+    over the class body and will happily match a macro call written inside a
+    COMMENT.  A header that documents its own literal choice -- e.g. "DC3's
+    AppLabel repeats its base (OBJ_CLASSNAME(HamLabel))" -- then makes this
+    index report the commented token instead of the declared one, silently
+    inverting the row's verdict.  Observed for real; do not remove.
+    """
+    t = re.sub(r'/\*.*?\*/', lambda m: re.sub(r'[^\n]', ' ', m.group(0)), t, flags=re.S)
+    return re.sub(r'//[^\n]*', '', t)
+
+
 def build_lit_index(root):
     """C++ class name -> OBJ_CLASSNAME literal, parsed from our own source."""
     cls2lit = {}
     for p in list((root / "src").rglob("*.h")) + list((root / "src").rglob("*.cpp")):
         try:
-            t = p.read_text(errors="replace")
+            t = strip_comments(p.read_text(errors="replace"))
         except Exception:
             continue
         if "OBJ_CLASSNAME" not in t:
