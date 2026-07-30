@@ -1,8 +1,19 @@
 # The XDK 2.0.11164 compiler (cl build 10224) — retail RB3's actual compiler
 
-**Status: installed, verified, OPT-IN. It is NOT the default and must not become
-the default without a separate, deliberate decision.** The fleet default remains
-`X360/16.00.11886.00`; every landed match% figure is measured against it.
+> **★ STATUS SUPERSEDED (2026-07-30, commit `f149a4b7`): 10224 IS NOW THE FLEET
+> DEFAULT.** The "separate, deliberate decision" this doc called for was taken and
+> executed. Measured at HEAD: matched 41,187 → **41,213** (+26), honest floor
+> 39,677 → **39,703** (+26, `masked_equal` flat at 1,510), `matched_code_percent`
+> 34.924870 → **35.046990** (**+0.122 pp**), zero losses. `11886` stays installed
+> for A/B archaeology via `--x360-compiler-version X360/16.00.11886.00`.
+>
+> ⚠ **Every match% figure recorded before `f149a4b7` was measured against the
+> wrong compiler** and is not comparable to a post-flip number.
+
+**Originally: installed, verified, OPT-IN** (the paragraph below is kept as the
+historical record of what was true at CA-2 landing time). The fleet default was
+`X360/16.00.11886.00`; every match% figure landed before the flip is measured
+against it.
 
 Lane CA-2, 2026-07-30.
 

@@ -1,11 +1,37 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `b16c9e8c`): 41,187 strict-matched functions /
-honest proxy 39,677 / `matched_code_percent` 34.924870** (honest = matched −
-masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
-`match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions, `total_functions` 69,367; `matched_code` 3,695,064 B;
-`masked_equal` 1,510; `total_code` 10,580,036).
+**Current (MEASURED at HEAD `f149a4b7`, clean full rebuild): 41,213
+strict-matched functions / honest proxy 39,703 / `matched_code_percent`
+35.046990** (honest = matched − masked_equal, per the BO-8 pricing rule;
+`build/45410914/report.json`). Denominator is the whole TU5 XEX
+(`total_functions` 69,367; `matched_code` 3,707,984 B; `masked_equal` 1,510;
+`total_code` 10,580,036; `fuzzy_match_percent` 44.07144).
+
+> ★★★ **THE COMPILER WAS WRONG FOR MONTHS, AND THE WALL BZ-1 SIZED WAS IT.**
+> Retail RB3 was built with X360 `cl.exe` build **10224** (XDK 2.0.11164); the
+> fleet had been building with **11886** (the DC3-retail toolchain). `f149a4b7`
+> flipped the default to 10224: matched 41,187 → **41,213** (+26), honest
+> 39,677 → **39,703** (+26), code% 34.924870 → **35.046990** (**+0.122 pp**),
+> `masked_equal` and fuzzy both flat, **zero losses**.
+>
+> **+0.122 pp lands within 4% of the ~0.127 pp that lane BZ-1 had measured as
+> "one-directionally unreachable" and told us to stop chasing** (below, under
+> "two veins closed at the MECHANISM level"). BZ-1's measurement was *right*; only
+> its verdict — that the wall was permanent — was wrong. Two independent methods
+> converged: codegen-idiom directionality (17 fwd/0 rev, 6 fwd/0 rev) and
+> Rich-header archaeology. That convergence is what made the swap fundable.
+>
+> ⚠ **Every match% figure recorded before `f149a4b7` was measured against the
+> wrong compiler.** Pre-flip and post-flip numbers are not comparable, and every
+> `at_limit` / `build_env` verdict, near-miss ranking, and instruction-selection
+> claim in `docs/decomp/patterns/unfixable-compiler.md` predates it. Wave CB is
+> re-triaging exactly that.
+>
+> ★ **Transferable lesson:** `CLAUDE.md` justified the toolchain by inference —
+> *"RB3 is the same Harmonix toolchain era and engine, so likely the same flags."*
+> The structurally identical inference about the compiler **build** was wrong and
+> cost ~0.12 pp for months. The **flags** rest on the same unverified reasoning
+> and are being measured now (lane CB-4). Measure the toolchain; don't infer it.
 
 > ✅ **FLOOR RESOLVED — this is now a direct measurement, not a sum.** BZ-1's
 > lander built HEAD itself (BZ-1 `e7dc97dd` + BZ-3 `b16c9e8c` in one worktree,
