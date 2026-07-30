@@ -1,7 +1,7 @@
 {
     "main": {
         "progress_category": "game",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
             "Main.cpp": "NonMatching",
@@ -16,7 +16,7 @@
     },
     "engine": {
         "progress_category": "engine",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
             "system/math/Color.cpp": "NonMatching",
@@ -1000,7 +1000,7 @@
     },
     "hamobj": {
         "progress_category": "engine",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
             "system/hamobj/RhythmBattlePlayer.cpp": "NonMatching",
@@ -1065,7 +1065,7 @@
     },
     "xdk": {
         "progress_category": "engine",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
             "xdk/LIBCMT/osfinfo.cpp": "NonMatching",
@@ -1075,7 +1075,7 @@
     },
     "band3": {
         "progress_category": "game",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
             "band3/game/ChordbookPanel.cpp": {
@@ -1923,7 +1923,7 @@
     },
     "network": {
         "progress_category": "network",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
             "network/Plugins/Checksum/MD5/MD5.cpp": {
@@ -1990,7 +1990,7 @@
     },
     "curl": {
         "progress_category": "engine",
-        "mw_version": "X360/16.00.11886.00",
+        "mw_version": "X360/16.00.10224.00",
         "cflags": "curl",
         "objects": {
             "system/net/curl/lib/sslgen.c": {
