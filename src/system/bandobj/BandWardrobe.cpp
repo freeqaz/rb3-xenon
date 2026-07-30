@@ -53,10 +53,10 @@ const char *FlagString(int flags) {
     char *str = (char *)MakeString(
         "                                                                         "
     );
-    ptr = flagstrs;
-    char *strptr = str;
     int i5 = 0;
+    char *strptr = str;
     int i1;
+    ptr = flagstrs;
     goto loop_check;
 loop_body:
     if (flags & i1) {
