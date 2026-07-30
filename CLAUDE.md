@@ -232,10 +232,21 @@ plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
 > **Editing the jeff/objdiff/wibo/objcache sources? Rebuild the release binary
 > manually** — ninja no longer builds or tracks the tools:
 > `cargo build --release` in `../jeff`, `../objdiff`, or `../objcache`;
-> `cmake --preset release && cmake --build --preset release` in `../wibo`.
+> **`cmake --preset release64 && cmake --build --preset release64`** in `../wibo`.
 > None of these binaries is an implicit ninja input, so a tool rebuild
 > does not retrigger compiles (wibo is byte-neutral to objs — verified fork
 > vs stock objs = 0 differing bytes; objcache serves timestamp-only-different objs).
+>
+> ★ **`release64`, NOT `release` — this doc said `release` for five months and it
+> is the wrong architecture.** `CMakePresets.json`'s `release` preset uses the
+> `i686-linux-gcc.cmake` toolchain (32-bit), but the deployed
+> `build/release/wibo` is `ELF 64-bit x86-64`; `release64` uses
+> `x86_64-linux-gcc.cmake`. Building `release` produces an i686 binary that has
+> been broken since February — and chasing that breakage cost two lanes real
+> budget on 2026-07-30, one of which mis-attributed it to a clang-22 upgrade.
+> ⚠ Note the confusing layout: the *output directory* is `build/release/`
+> regardless of which preset you used, so the path does not tell you the arch —
+> check with `file build/release/wibo`.
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang) — runs the engine
 on the host. Currently boots headlessly and loads RB3 `songs.dta`.
