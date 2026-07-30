@@ -43,8 +43,15 @@ public:
     int mRedemptionState; // 0x3c
     String mActiveToken; // 0x40
     DataResultList mResultList; // 0x4c
-    std::vector<String> mListData; // 0x64
-    int mSelectedOfferIndex; // 0x6c
-    StoreEnumeration *mEnumeration; // 0x70
-    StorePurchaser *mPurchaser; // 0x74
+    std::vector<String> mListData; // 0x68
+    // Xbox-retail-only: the offer-ID list handed to XboxEnumeration. Absent from
+    // the rb3-Wii oracle (Wii uses the TheStoreMetadata.mRedemptionsTable global).
+    // Proven by retail asm: ctor zeroes 6 words at 0x74..0x88; ~TokenRedemptionPanel
+    // (0x826414C0) inlines ~_Vector_base over 0x74/0x7c with srawi/slwi 3 =>
+    // 8-byte POD element; EnumerateOffers (0x8263FEB0) push_back's an `std`-stored
+    // doubleword and passes `this+0x74` as arg2 to XboxEnumeration(int, vector<u64>*).
+    std::vector<unsigned long long> mOfferIDs; // 0x74
+    int mSelectedOfferIndex; // 0x80
+    StoreEnumeration *mEnumeration; // 0x84
+    StorePurchaser *mPurchaser; // 0x88
 };

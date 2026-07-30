@@ -69,7 +69,11 @@ void MiniLeaderboardDisplay::OldResourcePreload(BinStream &bs) {
 void LabelShrinkWrapper::OldResourcePreload(BinStream &bs) {
     char name[256];
     bs.ReadString(name, 256);
-    mResourceDir.SetName(name, true);
+    // NOTE(laneBS1): retail RB3 has no LabelShrinkWrapper::mResourceDir to name here
+    // (see the note in ui/LabelShrinkWrapper.h) -- and the rb3-Wii RB3 oracle has no
+    // OldResourcePreload for this class at all, so it is a DC3 addition. The read is
+    // kept so the stream position stays correct for whatever follows. Same treatment
+    // lane BQ-2 gave MeterDisplay::OldResourcePreload.
 }
 
 void MiniLeaderboardDisplay::Init() { REGISTER_OBJ_FACTORY(MiniLeaderboardDisplay); }
