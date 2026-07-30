@@ -463,6 +463,101 @@ a direct measurement of `7464dec6`, i.e. BX-1 **and** BX-2 together.
 > reproduces its verified −3 exactly; an 8-byte body is far too generic for byte
 > identity to mean anything, so it needs the COL/absence treatment of its own.
 
+> **Lane BX-2 `43c9771e` (2026-07-30) — +1 honest, +0.009907pp code,
+> `masked_equal` FLAT at 1510. The metric payload is one line; the VALUE is the
+> negative census that SIZES AND CLOSES the vein.** A/B'd in a fresh worktree off
+> `edbd5bbd`, both legs same-split (restore `symbols.txt`,
+> `rm report.cache report.json`, `touch config.yml`, full build),
+> `total_functions` 69367 both ⇒ zero split churn:
+>
+> | | matched | masked_equal | honest | code% | matched_code |
+> |---|---|---|---|---|---|
+> | base `edbd5bbd` | 41170 | 1510 | 39660 | 34.810390 | 3682952 |
+> | +BX-2 `43c9771e` | **41171** | 1510 | **39661** | **34.820297** | **3684000** |
+>
+> ★ The delta is **exactly 1048 B = 1048/10580036**, the full size of
+> `?Load@RndPartLauncher@@` with **no offsetting loss anywhere in the binary**. A
+> hidden regression would have shown up as a shortfall against that exact figure —
+> quote byte-exactness like this when you want evidence a change is *understood*
+> rather than lucky.
+>
+> ⛔ **VEIN SIZED AND CLOSED — do NOT re-hunt "retail inlines what we call".**
+> BW-2's `Rnd::Handle` (+0.0606pp from ONE function) was **near-unique, not the
+> first of a class**. Whole-binary caller-side `bl` census, 952 units / 21,926
+> joined functions: **delta==0 for 21,041 (96.0%)**, delta>0 for only **475
+> (2.17%, 244,476 B)**, delta<0 for 410. Per the site-count≠defect-count rule those
+> 244 KB are **blast radius, not yield**: 308 of the 475 (65%) sit **below 90%
+> fuzzy**, where a `bl`-count difference is a symptom of general divergence rather
+> than an isolated inline defect. The band where inlining is plausibly the ONLY
+> defect (97–100%) is **6 functions / 5,108 B = +0.0483pp ABSOLUTE CEILING** —
+> less than the single `Rnd::Handle` fix already banked.
+>
+> ★★★ **Retail's ObjPtr inline policy is PER-SITE, not per-TU — so
+> `RB3_OBJPTR_INLINE_OWNER_CTOR` is at the WRONG GRANULARITY.** `UITrigger.cpp`
+> carries the byte-identical 8-mismatch signature and the define *does* fix
+> `?Load@UITrigger@@` (96.32 → 100.0), but it **simultaneously breaks
+> `??0UITrigger@@` (100.0 → 86.37)**, whose `mCallbackObject(this)` member-init
+> retail calls **out-of-line**. So within ONE TU retail inlines the owner-only
+> ObjPtr ctor at a local-variable site and calls it at a member-init site. The
+> trade is metric-neutral (+164 B, 0 net functions) but converts a *correct* ctor
+> into an incorrect one, so it was **dropped on correctness-over-metric**. This
+> also explains the documented global **−121**. A site-level mechanism is the real
+> fix; the per-TU switch cannot express what retail actually did.
+>
+> ✅ **Landing-time control for exactly that hazard:** `??0RndPartLauncher@@` diffs
+> **byte-identically with and without the define** (74.9% normalized, same 85
+> instructions, same 29 mismatches) ⇒ no UITrigger-style collateral here. That site
+> uses the **two-arg `ObjPtr(owner, obj)`** overload, which the owner-only define
+> does not govern — and retail inlines that one too (`stw r11,0xc(r30)` where we
+> emit `bl ??0?$ObjPtr@VRndParticleSys@@...`), i.e. a **second, uncovered overload**
+> for any future site-level mechanism.
+>
+> ⚠ **UNSETTLED, flagged against its own landing:** `RB3_OBJPTR_INLINE_OWNER_CTOR`
+> is a per-TU build switch of exactly the shape of the **metric-fitted
+> build-config defect class** (W9's `MILO_MESSAGE_TIMERS` — all 6 per-TU
+> restorations wrong). The two addresses its `obj/Object.h` comment cites as
+> retail's out-of-line ctor/Load (`fn_8270B9A8` / `fn_8270BAD0`) have retail `bl`
+> **in-degree 0**, so that citation does **not** check out against the TU5 image.
+> CharEyes (94/99) and Part (77/81) are mostly delta==0 so nothing is obviously
+> wrong, but **the toggle-off A/B that would settle it was NOT run.** This landing
+> stands on *independent* evidence — a direct read of retail's instruction stream
+> at `PartLauncher.cpp:127`, three plain stores and no call — not on match
+> improvement, so the opt-in is safe even though the define itself is unvalidated.
+>
+> ★ **Two new instruments, both control-validated before use.**
+> `scripts/harvest/inline_census.py` (caller-side `bl` census: ours from our COFF
+> body vs retail decoded from `band.exe` `[A, A+S)`). **Caller-side is
+> load-bearing** — the tempting detector "callee in map with retail in-degree 0" is
+> **CIRCULAR**, because a function retail inlined everywhere has no out-of-line
+> body and is therefore absent from the map entirely (confirmed: zero map entries
+> for `Rnd::SetPostProcOverride`, while sibling `GetPostProcOverride` has
+> in-degree 1). Δbl is a **pure instruction count**, hence immune to the map
+> covering only 27.5k of retail's ~57k functions. Positive control run **both
+> ways** against BW-2's Rnd fix.
+> `scripts/harvest/string_absence_scan.py` reads literals from **compiled objs**
+> (`??_C@` COMDATs), never regex-over-source (a comment has poisoned such a scanner
+> here before), and searches whole-file so the 0xB200 `.text` skew cannot apply.
+> ★ **Control design matters:** ten hand-guessed positive controls failed twice
+> ("Rock Band" — retail spells it "RockBand"), which says nothing about the
+> scanner; replaced with a ground-truth control (strings referenced by fuzzy-100
+> functions MUST be present) ⇒ 11/4268 = 0.26% false-absence, and those 11 are the
+> known at-100% reloc-masked defect class, not scanner error.
+>
+> ★ **On the retail side only COUNTS are trustworthy, never NAMES.** Name-based
+> residue reported `__savegprlr_24` as "we call it, retail never does" across 59
+> callers — absurd. Two causes: map coverage (retail's `bl` target is unnamed, so
+> our named call looks unmatched) and **ICF folding** (`?EasePolyIn@@` has
+> in-degree **2,384** and absorbs every `bl` to its fold address). The lane killed
+> its own DataNode hypothesis with the paired post-filter count:
+> `?Int@DataNode@@` 784 callers / 687 (87.6%) at delta==0, `?Sym@DataNode@@` 748 /
+> 659 (88.1%) ⇒ retail DOES call them; 7.8% vs a 2.17% base rate is noise.
+>
+> ➡ **Left deliberately:** `RndGenerator::Load` (frame Δ+0x10, `gRevs_Gen`
+> divergence — different class); `SetRegularShaderConst` (permuter-class regswaps,
+> cannot reach raw 100); the 66 other ObjPtr ctor sites (all 60–85%, many other
+> defects). **Adjacent vein, unworked:** 944 functions reference retail-absent
+> DC3-era handler names (`get_trans_children`, `run_flow`, `key_intensity`).
+
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
 > ★ **The vein is real but the obvious selection axis is wrong.** BT-2 swept the
