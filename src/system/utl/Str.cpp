@@ -401,10 +401,11 @@ String &String::replace(unsigned int pos, unsigned int n, const char *buffer) {
     char *destPtr;
     char *srcPtr;
     unsigned int bufferLength, end;
-    MILO_ASSERT(pos <= capacity(), 0x241);
+    unsigned int cap = capacity();
+    MILO_ASSERT(pos <= cap, 0x241);
     end = pos + n;
-    if (end > capacity()) {
-        n = capacity() - pos;
+    if (end > cap) {
+        n = cap - pos;
     }
     bufferLength = strlen(buffer);
     if (bufferLength > n) {
