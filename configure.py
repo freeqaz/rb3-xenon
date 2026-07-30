@@ -34,6 +34,28 @@ from tools.defines_common import (
     VERSIONS
 )
 
+# ---------------------------------------------------------------------------
+# X360 MSVC compiler selection (opt-in; the default is the fleet toolchain)
+# ---------------------------------------------------------------------------
+# The build compiles every TU with build/compilers/$mw_version/cl.exe.  The
+# fleet default is build 11886, which is what DC3 retail was built with and what
+# every landed match% figure is measured against -- DO NOT change it casually.
+#
+# A second compiler is installed alongside it: build 10224, extracted from
+# XDK 2.0.11164 (XDKSetupXenon11164.3.exe).  That is the build retail Rock Band 3
+# was compiled with -- confirmed by the Rich header of retail band.exe (lane
+# CA-1) and by the @comp.id stamped into objects it produces (0x00AB27F0 ->
+# prodid 0x00AB, build 0x27F0 = 10224; lane CA-2).  It is provided for
+# experiments only and is NOT the default.
+#
+# Select it explicitly, e.g.:
+#     python3 configure.py --x360-compiler-version X360/16.00.10224.00
+#     RB3_X360_COMPILER_VERSION=X360/16.00.10224.00 python3 configure.py
+# When neither is given, behaviour is byte-identical to before this switch
+# existed.
+DEFAULT_X360_COMPILER_VERSION = "X360/16.00.11886.00"
+X360_COMPILER_VERSION_ENV = "RB3_X360_COMPILER_VERSION"
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "mode",
@@ -68,6 +90,19 @@ parser.add_argument(
     metavar="DIR",
     type=Path,
     help="path to compilers (optional)",
+)
+parser.add_argument(
+    "--x360-compiler-version",
+    metavar="VERSION",
+    type=str,
+    default=None,
+    help=(
+        "X360 MSVC compiler version directory under build/compilers "
+        f"(default: {DEFAULT_X360_COMPILER_VERSION}). Opt-in only -- e.g. "
+        "'X360/16.00.10224.00' for the XDK 2.0.11164 (retail-RB3) compiler. "
+        "May also be set via the RB3_X360_COMPILER_VERSION environment "
+        "variable; the command-line flag wins."
+    ),
 )
 parser.add_argument(
     "--map",
@@ -541,7 +576,32 @@ config.asflags = [
 ]
 config.ldflags = ldflags
 
-config.linker_version = "X360/16.00.11886.00"
+# Resolve the X360 compiler: command line > environment > fleet default.
+# Unset on both => the default string, i.e. byte-identical generated output.
+_x360_version = (
+    args.x360_compiler_version
+    or os.environ.get(X360_COMPILER_VERSION_ENV)
+    or DEFAULT_X360_COMPILER_VERSION
+)
+if _x360_version != DEFAULT_X360_COMPILER_VERSION:
+    # Only validate on the opt-in path. On the default path the compilers dir
+    # may legitimately not exist yet (it is a download edge), and probing it
+    # would change side effects relative to pre-switch behaviour.
+    _x360_dir = config.compilers() / _x360_version
+    if not (_x360_dir / "cl.exe").is_file():
+        sys.exit(
+            f"--x360-compiler-version: no cl.exe at {_x360_dir}\n"
+            f"Available under {config.compilers() / 'X360'}: "
+            + ", ".join(
+                sorted(p.name for p in (config.compilers() / "X360").glob("*"))
+            )
+        )
+    print(
+        f"NOTE: using non-default X360 compiler {_x360_version} "
+        f"(fleet default is {DEFAULT_X360_COMPILER_VERSION})",
+        file=sys.stderr,
+    )
+config.linker_version = _x360_version
 
 config.shift_jis = False
 config.progress_all = False
@@ -716,6 +776,28 @@ for (lib, lib_config) in objects.items():
     })
 
 config.libs = libs
+
+# objects.json pins "mw_version" explicitly on each library group, which beats
+# tools/project.py's set_default(..., config.linker_version) -- so setting
+# config.linker_version alone would flip only the global build.ninja variable
+# and leave all ~1094 per-object edges on the old compiler. When (and only
+# when) the opt-in switch is active, retarget those explicit pins too. On the
+# default path this loop does not run at all, so generated output is untouched.
+if _x360_version != DEFAULT_X360_COMPILER_VERSION:
+    _retargeted = 0
+    for _lib in config.libs:
+        if _lib.get("mw_version"):
+            _lib["mw_version"] = _x360_version
+            _retargeted += 1
+        for _obj in _lib.get("objects", []):
+            if getattr(_obj, "options", {}).get("mw_version"):
+                _obj.options["mw_version"] = _x360_version
+                _retargeted += 1
+    print(
+        f"NOTE: retargeted {_retargeted} explicit mw_version pin(s) to "
+        f"{_x360_version}",
+        file=sys.stderr,
+    )
 
 # Progress tracking categories. We still COMPUTE them (report.json categories are
 # consumed by other tooling) but do NOT print the dtk per-category lines: their
