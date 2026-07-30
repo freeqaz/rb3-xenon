@@ -1,12 +1,97 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,185 strict-matched functions / honest proxy 39,675 /
-`matched_code_percent` 34.915688** (honest = matched − masked_equal, per the BO-8
-pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
-exactly). Denominator is the whole TU5 XEX (~69k functions, `total_functions`
-69,367; `matched_code` 3,694,092 B; `masked_equal` 1,510). Measured in a clean
-worktree, not summed from lane deltas — this is a direct measurement of **true
-HEAD** (`66697375` + BY-2 `273066ce` + BZ-2 `07795e26`).
+**Current (FLOOR, summed — see the warning below): 41,187 strict-matched functions /
+honest proxy 39,677 / `matched_code_percent` ≈34.924872** (honest = matched −
+masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
+`match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
+(~69k functions, `total_functions` 69,367; `matched_code` ≈3,695,064 B;
+`masked_equal` 1,510).
+
+> ⚠ **This headline is a FLOOR, not a measurement — re-measure at HEAD.** The last
+> *direct* measurement was **41,185 / 39,675 / 34.915688** (`matched_code`
+> 3,694,092) at `07795e26`, published by `f181a271`. Two lanes have landed since,
+> and **both A/B'd off that same `07795e26` baseline**, so they compose only by
+> arithmetic:
+> `41,185 + 2 (BZ-1 e7dc97dd) + 0 (BZ-3 b16c9e8c) = 41,187`, and
+> `3,694,092 + 744 (BZ-1) + 228 (BZ-3) = 3,695,064 B → 34.924872`.
+> Additivity is an *assumption* here, not a result: BZ-1 edited `Object.h` /
+> `ObjPtr_p.h`, which cascade widely, so it could in principle perturb units BZ-3
+> touched. Per the `38e579c6` precedent, **flagging a summed headline as a floor is
+> strictly better than publishing it as measured** — the next lane should measure
+> HEAD itself.
+
+> **Lane BZ-3 (`b16c9e8c`) — +0 functions, +228 B code, and it REFUTED ITS OWN
+> BRIEF.** Same-split A/B off `07795e26`: matched 41,185 → 41,185 (+0),
+> `masked_equal` flat 1,510, honest 39,675 → 39,675 (+0), `matched_code`
+> 3,694,092 → 3,694,320 (**+228 B**), code% 34.915688 → 34.917840
+> (**+0.0021550pp**), `total_functions` 69,367 both legs. Both legs were re-run
+> and reproduced bit-for-bit. Per-unit over all 3,917 units: exactly three gained
+> (SpotlightDrawer +108, Mic +60, ExternalMic +60), **zero regressed**, per-unit
+> sum == aggregate. **+228 = exactly 108+60+60.**
+>
+> ★★★ **The premise "a differing shift amount means OUR struct size is wrong" is
+> WRONG — the lever inverts.** In every resolvable case our size was RIGHT and the
+> MAP had named the wrong STL sibling. Three cases settle it at the *language*
+> level, no header needed: Mic `vector<const MoveParent*>` ours 4 = `sizeof(T*)`
+> ILP32 vs retail 2; ExternalMic `vector<unsigned short>` ours 2 by the standard vs
+> retail 4; TexBlender `vector<pair<T*,float>>` ours 8 = 4+4 vs retail 64. **A
+> vector of pointers cannot have 2-byte elements.** So the shift amount is a
+> **SIBLING DISCRIMINATOR for map pairing, not a `sizeof` oracle**: STL COMDAT
+> siblings are byte-identical *except* the shift field, and objdiff folds exactly
+> that field away (`powerpc-0.4.1` decodes SH/MB/ME to `Argument::OpaqueU` →
+> `arch/ppc/mod.rs:173` `InstructionPart::opaque` → `diff/code.rs:1152`
+> `is_immediate == false`), so byte-similarity naming cannot tell twins apart and
+> picks arbitrarily. All three fixes are **repoints**, not size changes.
+>
+> ★★ **Why Δhonest 0 is the CORRECT result, not a null.** These rows were *already*
+> credited by `matched_functions` (normalized-100) but **not** by `matched_code`,
+> which counts only `match_percent == 100`. A correct repoint is therefore Δ0 on
+> the function axis and +size on the code axis. Gate used: land if Δcode% > 0 **and**
+> Δhonest ≥ 0. This is the BO-8 amended pricing rule doing real work.
+>
+> ⛔ **CHANNEL SIZED AND DRAINED — do not re-hunt.** Over the whole 220-function
+> norm-100/raw<100 population: `no_sibling` (real body divergence) **192**, anon
+> byte-fallback **20**, UNIQUE repoint **3**, ambiguous ICF **2**, already-equal
+> **3**. A wholesale shift-amount size oracle is **not feasible**; the vein is
+> 3 rows / 228 B. The 2 ambiguous rows were deliberately **not** shipped — they are
+> ICF fold classes where *every* candidate is byte-exact, so the metric cannot
+> adjudicate correctness and picking one buys **+144 B of false credit**.
+>
+> ★★ **ANTI-VACUITY GUARD IS LOAD-BEARING FOR ANY MASKED COMPARATOR (new trap).** A
+> 16 B vbase thunk `?PreLoad@BandLeadMeter@@$4...` "matched" `?FastCos@@YAMM@Z`
+> because the union of both sides' relocated words covered **all four** words — the
+> masked compare was **vacuously true**. The guard (≥4 compared words AND ≥50% of
+> body) removed 5 of 8 spurious hits, 4 UNIQUE → 3. This is the concrete form of the
+> known "masked byte-compare inverts fold adjudication" hazard.
+>
+> Sub-leads closed, do not re-hunt: the 10 Family-B `rlwinm` bitfield-mask rows
+> (incl. the TrackWidget `fn_827E39xx` septet) are **anonymous with no map row** —
+> objdiff paired them by fuzzy byte-fallback, the documented funclet class, not
+> header bugs. The DateTime rows are **not** a constant defect: retail emits
+> `addi r3,r10,<"%04d">` then `addi r4,r11,0x76c` and we emit the same two
+> instructions **transposed**, so objdiff pairs them crosswise; `0x76c` (=1900) is
+> correct on both sides. A schedule swap, and the permuter is banned.
+>
+> ➡ **Recommended, NOT done** (fleet-wide scoring change needing its own A/B, and
+> rebuilding `../objdiff` silently changes fleet split output): make PPC SH/MB/ME
+> count toward the normalized score (`arch/ppc/mod.rs:166-174` → emit as
+> `InstructionPart::unsigned`, or widen `is_immediate`). objdiff's own comment says
+> wrong-struct-size immediates "must count" — on PPC that intent is defeated.
+> Estimated truthful correction: **−21 `matched_functions`**, 15 of them anon
+> byte-fallback. ⚠ Scripting gotcha: the config id is **dotted**
+> `ppc.calculatePoolRelocations`, not camelCase. Also: `objdiff-cli`'s
+> `normalized_match_percent` is a **misnomer** — it is `match_percent` under
+> reloc-normalization, *not* `match_percent_normalized`; the CLI never exposes the
+> arg-normalized score, only `report.json` does.
+>
+> ⚠ **Landing note:** a map repoint is a **silent no-op without a re-split**, so both
+> legs forced `touch config/45410914/config.yml`; the repoint was then *proved* to
+> survive by showing the old mangled name go 1 → 0 and the new one 0 → 1 in the
+> three **defining** target objs, with the neighbouring control row
+> `?resize@...VSpotlightEntry@SpotlightDrawer...` untouched at 13 occurrences.
+> Residual old-name hits persist only in **stale `auto_*` target objs** the split
+> did not regenerate — identical in both legs, pre-dating the change. Tool landed:
+> `scripts/harvest/sibling_shift_disc.py` (read-only, build-neutral).
 
 > ⚠ **The previous headline (41,171, commit `21474152`) was already stale when it
 > was written.** BY-2's lander measured its own lane correctly off `66697375`, but
@@ -14,15 +99,16 @@ HEAD** (`66697375` + BY-2 `273066ce` + BZ-2 `07795e26`).
 > landed underneath it, so the number it published described a tree that no longer
 > existed. **Two landers racing on a shared main can each be individually correct
 > and still publish a wrong headline** — the fix is to measure HEAD itself, which
-> is what the figure above is. Encouragingly the two lanes proved **exactly
+> is what `f181a271` did (41,185 at `07795e26`). Encouragingly the two lanes proved **exactly
 > additive** here: 41,169 + 2 (BY-2) + 14 (BZ-2) = **41,185 measured**, with
 > `masked_equal` flat at 1,510 and `total_functions` 69,367 unchanged even though
 > BY-2 edited `splits.txt` (a split input).
 
 > ✅ **RESOLVED.** The preceding commit `38e579c6` correctly flagged its 41,171 as
 > a *floor* and asked the next lane to re-measure at HEAD rather than sum. That
-> re-measurement is done and is the headline above (41,185 measured, one build in
-> a worktree whose 30 changed files were hash-verified against HEAD). The floor
+> re-measurement is done and was published as `f181a271` (41,185 measured at
+> `07795e26`, one build in a worktree whose 30 changed files were hash-verified
+> against HEAD); the headline above has since gone back to being a floor. The floor
 > discipline worked exactly as intended — **flagging a known-stale headline is
 > strictly better than publishing a summed one.**
 
