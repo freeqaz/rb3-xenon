@@ -1,9 +1,33 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,896 strict-matched functions / honest proxy 39,387** (= matched −
+**Current: 40,910 strict-matched functions / honest proxy 39,400** (= matched −
 masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions).
+(~69k functions). `matched_code_percent` 34.41247.
+
+> **Wave BS (2026-07-30), verified chain — +11 honest, +12 matched, +0.023pp code.**
+> Every leg measured by the coordinator in a landing worktree, same split within
+> each A/B, `symbols.txt` restored and `report.cache` removed before each read:
+>
+> | step | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | base (`51e61cf7`) | 40898 | 1509 | 39389 | 34.38926 |
+> | +BS-3 `f45e94a2` classname literals | 40898 | 1509 | 39389 | 34.38926 |
+> | +BS-4 `9599caef` START_AUTO_TIMER | 40897 | 1510 | 39387 | 34.39312 |
+> | +BS-1 `4db258e8` vbase layout | 40905 | 1510 | 39395 | 34.40937 |
+> | +BS-2 `ebfde7b9` StaticClassName carves | 40910 | 1510 | 39400 | 34.41247 |
+>
+> Two legs are ≈0 **by construction, not by failure**, and were landed for
+> correctness with no win claimed: BS-3's `OBJ_CLASSNAME` literals reach `.text`
+> only through a relocation objdiff masks, and BS-4's timer gate traded −2
+> at-100% (inside the ±2 split-churn floor) for **+0.00386pp code** — real body
+> gains (`WorldDir::Poll` 64.20 → **100.00**) netted down by EH-funclet
+> re-pairing churn. On funclet-churning changes, quote `matched_code`.
+>
+> Note the prior headline 40,896 vs this chain's base 40,898: that gap is the
+> documented ~2-function split-churn floor, not drift. Lane BS-3 nearly banked a
+> false +2 by differencing against the quoted number instead of measuring its
+> own baseline leg — **always measure your own base in your own worktree.**
 
 > ⚠ **OPEN INTEGRITY QUESTION (2026-07-29) — read before quoting this number.**
 > laneBE closed a +560 different-unit gap-absorption channel after finding the
