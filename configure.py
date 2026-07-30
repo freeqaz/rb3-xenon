@@ -450,6 +450,40 @@ config_json_path = config_dir / "config.json"
 objects_path = config_dir / "objects.json"
 config.config_path = config_dir / "config.yml"
 config.check_sha_path = config_dir / "build.sha1"
+
+# ── HARD FAIL: duplicate splits.txt unit heading ──────────────────────────────
+# A unit heading repeated in splits.txt does NOT error — dtk unions both blocks
+# into BOTH headings, so each unit silently claims the other's ranges. That is
+# invisible in the build log and was caught previously only by reading the
+# post-split diff by hand (it cost lane BS-2 real time). Check it up front.
+_splits_path = config_dir / "splits.txt"
+if _splits_path.is_file():
+    _seen: Dict[str, int] = {}
+    for _lineno, _line in enumerate(
+        _splits_path.read_text().splitlines(), start=1
+    ):
+        # Headings are unindented and end with ':'; section rows are indented.
+        if not _line or _line[:1].isspace() or _line.lstrip().startswith("#"):
+            continue
+        _s = _line.strip()
+        if not _s.endswith(":"):
+            continue
+        _name = _s[:-1].strip()
+        if _name in _seen:
+            sys.exit(
+                "\n"
+                + "=" * 72
+                + "\nERROR: duplicate unit heading in %s\n" % _splits_path
+                + "=" * 72
+                + "\n  %r appears at line %d and again at line %d.\n"
+                % (_name, _seen[_name], _lineno)
+                + "\ndtk does NOT reject this: it unions both blocks into BOTH headings,"
+                + "\nso each unit silently claims the other's address ranges and the"
+                + "\nresulting objs are wrong in a way no build line reports."
+                + "\nMerge the two blocks into a single heading.\n"
+                + "=" * 72
+            )
+        _seen[_name] = _lineno
 # Use for any additional files that should cause a re-configure when modified
 config.reconfig_deps = [
     config_json_path,

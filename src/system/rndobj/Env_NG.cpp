@@ -205,8 +205,11 @@ void NgEnviron::UpdateApproxLighting(const Vector3 *pos) {
         }
     }
     if (mNumLightsReal > 0) {
-        if (mNumLightsApprox <= 1)
-            mNumLightsApprox = 1;
+        // Retail stores unconditionally (the branch skips only the `li r11,1`
+        // and falls into the shared `stw`), i.e. a Max, not a guarded
+        // assignment. Operand order matters: Max(x,y) is `(x<y)?y:x`, so
+        // Max(1,n) yields retail's strict `bgt` whereas Max(n,1) yields `bge`.
+        mNumLightsApprox = Max(1, mNumLightsApprox);
     }
 }
 
