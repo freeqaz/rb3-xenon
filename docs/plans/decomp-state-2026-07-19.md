@@ -1,11 +1,13 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,168 strict-matched functions / honest proxy 39,658 /
-`matched_code_percent` 34.820637** (honest = matched − masked_equal, per the BO-8
+**Current: 41,169 strict-matched functions / honest proxy 39,659 /
+`matched_code_percent` 34.824646** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
-exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
+exactly). Denominator is the whole TU5 XEX (~69k functions, `total_functions`
+69,367; `matched_code` 3,684,460 B; `masked_equal` 1,510). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas — this figure is
-a direct measurement of `7464dec6`, i.e. BX-1 **and** BX-2 together.
+a direct measurement of `7b28bbc0` (lane BY-1) on top of `e402f16c`, which was
+itself the measured BX-1 **+** BX-2 total of 41,168 / 39,658 / 34.820637.
 
 > ⬇ **Part of that number is a DELIBERATE −3.** Lane BX-1 (`344ebc69`) deleted
 > three map rows that were awarding credit for functions retail does not contain:
@@ -557,6 +559,80 @@ a direct measurement of `7464dec6`, i.e. BX-1 **and** BX-2 together.
 > cannot reach raw 100); the 66 other ObjPtr ctor sites (all 60–85%, many other
 > defects). **Adjacent vein, unworked:** 944 functions reference retail-absent
 > DC3-era handler names (`get_trans_children`, `run_flow`, `key_intensity`).
+
+> **Lane BY-1 `7b28bbc0` (2026-07-30) — +1 honest, +0.004009pp code,
+> `masked_equal` FLAT at 1510. It reopens as a PER-SITE lever the exact vein BX-2
+> above sized and closed as a per-TU one.** A/B'd in a fresh worktree off
+> `e402f16c`, both legs **full** rebuilds (1097 edges / 1094 objs each),
+> `config.yml` untouched on *both* legs so the split is frozen rather than merely
+> symmetric ⇒ `total_functions` 69367 both, zero churn:
+>
+> | | matched | masked_equal | honest | code% | matched_code |
+> |---|---|---|---|---|---|
+> | base `e402f16c` | 41168 | 1510 | 39658 | 34.820637 | 3684036 |
+> | +BY-1 `7b28bbc0` | **41169** | 1510 | **39659** | **34.824646** | **3684460** |
+>
+> ★★★ **Retail's ObjPtr owner-ctor inline policy is PER-SITE, not per-TU — proven
+> inside a SINGLE function.** Retail `??0RndParticleSys@@` builds four owner-only
+> `ObjPtr`s and splits them **3 inlined / 1 called**: `+0x1c8 mMeshEmitter`,
+> `+0x268 mMotionParent`, `+0x274 mBounce` inline to three stores, while
+> `+0x1d4 mMat` is `bl fn_8229D9C8`. Offsets are
+> `/d1reportSingleClassLayout` ground truth and the callee corroborates the member
+> independently (it stores the `ObjPtr<RndMat>` vtable, and 0x1d4 *is* `mMat`).
+> **No per-TU switch can express one function with four sites and two expansions.**
+>
+> ★★ **The lever needs NO new machinery — it is the existing two-arg overload.**
+> With `RB3_OBJPTR_INLINE_OWNER_CTOR` on, `mFoo(this)` binds the inline one-arg
+> ctor while **`mFoo(this, nullptr)` binds `ObjPtr(Hmx::Object*, T*)`**, whose body
+> is out-of-class in `obj/ObjPtr_p.h` and too big for `/Ob2` ⇒ a real `bl`. A TU
+> picks its **majority** policy with the define; each minority site opts back out
+> by spelling the two-arg overload. That is what puts `?Load@UITrigger@@` **and**
+> `??0UITrigger@@` at 100% *simultaneously* — the case BX-2 had to abandon, where
+> the per-TU switch fixed `Load` 96.3→100 while breaking the ctor 100→86.37.
+>
+> ★ Byte-exactness held: **+424 B = exactly `?Load@UITrigger@@` (106 insns)**, and
+> a per-unit diff over all **3,917** units shows **exactly one** moves
+> (`default/UITrigger`, 49→50 fns) with the other 3,916 measure-identical — zero
+> collateral from the `Object.h` PCH cascade (its edits are comment-only). A
+> per-function capture rules out a same-size swap: leg A has `Load` at 96.320755%
+> with the ctor **already** 100.0; leg B has both at 100.0. Leg A was reproduced
+> twice with byte-identical axes.
+>
+> ★★★ **`RB3_OBJPTR_INLINE_OWNER_CTOR` PASSES the metric-fitted-build-config audit
+> (cf. the W9 `MILO_MESSAGE_TIMERS` defect class) — the define is sound, its
+> GRANULARITY was wrong.** Toggle-off A/B of every opt-in: ON 41168/39658/34.820637
+> vs OFF 41167/39657/34.810730, i.e. its *entire* fleet-wide contribution is
+> **+1 fn / +1048 B = `?Load@RndPartLauncher@@`**, one unit. ★★ **But
+> "0 metric delta ⇒ inert" is FALSE** — CharEyes and Part are metric-zero while
+> their objs change by **6,164 B / 2,662 B**, and metric-zero-but-codegen-changed
+> is exactly how the W9 defect hid. So each was judged against retail's instruction
+> stream, not the metric: CharEyes **correct** (retail `??0CharEyes@@` has 8 `bl`,
+> none an ObjPtr ctor, while the ctor builds 8 `ObjPtr(this)` members), Part
+> **correct for 3 of 4** sites.
+>
+> ⛔ **Citation corrected, and the correction is a TU5 lesson.** The header comment
+> cited `fn_8270B9A8` / `fn_8270BAD0` as the out-of-line ctor/Load; those are
+> **TU0-era** addresses (written 2026-05-30, before the 2026-07-15 TU5 flip) and in
+> TU5 **neither is a function entry** — `0x8270B9A8` is +0x48 inside
+> `??1FaderTask@@`, `0x8270BAD0` is +0x90 inside
+> `?Replace@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@`. **The prose was right;
+> only the addresses were stale.** Also: `ObjPtr` is a **template**, so each `T`
+> has its own out-of-line ctor (6 distinct in the map) — a single address pair
+> could never have named the family.
+>
+> ➡ **Do NOT fund a sweep of this.** Naive sizing gives 1,464 near-misses /
+> +2.48pp across 204 units, but that is **blast radius**; tightened to shapes that
+> can actually carry the defect it is **32 ctor/`Load` functions / 11,632 B /
+> +0.1099pp absolute ceiling**, and spot-checks came back **0/2** —
+> `??0UIListWidget@@` (98.9%) is arg-setup and `?Load@CharIKScale@@` (96.5%) is the
+> *`ObjPtr::Load` argument signature*, neither is ctor-inline policy. Only 2 of 32
+> were checked.
+> ➡ **Fresh unworked lever spun out of that:** the `ObjPtr::Load` argument-signature
+> shape (`li r6,0 / li r5,1`).
+> ➡ **Hypothesis, NOT verified:** a THIRD uncovered overload — `ObjOwnerPtr`.
+> `mMotionParent` (0x268) is `ObjOwnerPtr<RndTransformable>`, which retail
+> **inlines**, but our ctor is declared out-of-line (`ObjPtr_p.h:302`) and the
+> define does not govern it. Inferred from layout + retail stream only.
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
