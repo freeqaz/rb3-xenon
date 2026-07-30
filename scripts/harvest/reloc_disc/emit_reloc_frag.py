@@ -34,6 +34,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import reloclib as R          # noqa: E402
 import relocdisc as D         # noqa: E402
+import livecontrol as LC      # noqa: E402
 
 
 def _scope(mangled):
@@ -54,6 +55,15 @@ def main():
     ap.add_argument("--funnels", nargs="+", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--census", required=True)
+    ap.add_argument("--scope-unique", action="store_true",
+                    help="laneBU4 live-pool cut: additionally require that the "
+                         "scope overlap firing scope_ok uses a token NO rival "
+                         "carries. Calibrated on the two-arm control in "
+                         "livecontrol.py: truth-absent false plants 48->9 of "
+                         "338 (14.20%%->2.66%%) while truth-present precision "
+                         "rises 99.41%%->100.00%% (133/133). Recommended for "
+                         "the LIVE pool, where truth-presence is NOT "
+                         "guaranteed the way it is in the calibration set.")
     args = ap.parse_args()
 
     wt = Path(args.worktree).resolve()
@@ -149,9 +159,12 @@ def main():
             shipA = tier == "DECISIVE" and content >= 1 and inband
             shipB = (tier == "DECISIVE" and scope_ok
                      and win["unk"] == 0 and inband and content < 1)
+            uniq = LC.scope_unique(pick, cands, vs, S)
+            if args.scope_unique and not uniq:
+                shipA = shipB = False
             census.append(dict(unit=unit, va=r["va"], size=r["size"],
                                n=len(cands), tier=tier, pick=pick,
-                               chans=chans, scope_ok=scope_ok,
+                               chans=chans, scope_ok=scope_ok, uniq=uniq,
                                agree=win["agree"] if win else 0,
                                unk=win["unk"] if win else 0,
                                ship=bool(shipA or shipB),
