@@ -11899,9 +11899,6 @@ RGState.cpp:
 	.text       start:0x8277B460 end:0x8277B46C
 	.text       start:0x8277B470 end:0x8277B484
 
-Rnd.cpp:
-	.text       start:0x8251BF98 end:0x8251BFA8
-
 WebSvcMgrCurl.cpp:
 	.pdata      start:0x821F8CC8 end:0x821F8CE8
 	.text       start:0x822E7538 end:0x822E7620
