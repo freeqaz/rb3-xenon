@@ -31,8 +31,14 @@ protected:
     Hmx::Rect mRect; // 0x64
     /** "Use current camera screen_rect instead of the full screen" */
     bool mUseCamRect; // 0x74
-    /** Retail RB3's RndScreenMask carries 148 bytes of trailing state DC3 dropped.
-        Size is load-bearing: it places the Hmx::Object virtual-base subobject where
-        retail does (+0x94), fixing the ??_G scalar-deleting-destructor this-adjust. */
-    char mDroppedTrailingState_[0x94];
+    // NOTE(laneBQ2): a 148-byte `mDroppedTrailingState_[0x94]` pad used to sit here
+    // (added by 0149637d to make ??_GRndScreenMask's `this`-adjust read -236).
+    // REMOVED: that adjustor evidence was a MAP MISPAIR -- the retail body at
+    // 0x824816a8 mapped to ??_GRndScreenMask calls ??_DRndMultiMeshProxy@@, so it is
+    // RndMultiMeshProxy's scalar deleting dtor and only scored 100% because the
+    // differing `bl` target is a relocation (functionRelocDiffs=none masks it).
+    // Ground truth instead comes from ?SetType@RndScreenMask@@ at 0x82481ad8 --
+    // content-corroborated (it `bl`s ?StaticClassName@RndScreenMask@@) -- whose
+    // vbase-displacement immediate is 84 (0x54). Dropping the pad puts the Object
+    // vtordisp at mUseCamRect(80)+1 padded = 84, matching retail exactly.
 };

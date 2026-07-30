@@ -16,13 +16,17 @@
 FileCache *PreloadPanel::sCache;
 #endif
 
+// NOTE(laneBQ2): was the member `mMaxCacheSize`; retail RB3 has no such member
+// (see PreloadPanel.h). File-scope static keeps FindData's lvalue requirement.
+static int gMaxCacheSize = 0x500000;
+
 #pragma region Hmx::Object
 
 PreloadPanel::PreloadPanel()
     : mPreloadResult(kPreloadInProgress), mMounted(0), mAppReadFailureHandler(), mContentCorrupt(0),
-      mSongDoesNotExist(0), mMaxCacheSize(0x500000) {
+      mSongDoesNotExist(0) {
     if (!sCache) {
-        sCache = new FileCache(mMaxCacheSize, kLoadBack, true, true);
+        sCache = new FileCache(gMaxCacheSize, kLoadBack, true, true);
     }
 }
 
@@ -36,7 +40,7 @@ END_HANDLERS
 
 void PreloadPanel::SetTypeDef(DataArray *d) {
     UIPanel::SetTypeDef(d);
-    d->FindData("max_cache_size", mMaxCacheSize, false);
+    d->FindData("max_cache_size", gMaxCacheSize, false);
     CheckTypeDef("song_mgr");
     CheckTypeDef("current_song");
     CheckTypeDef("on_preload_ok");
@@ -222,7 +226,7 @@ void PreloadPanel::StartCache() {
     mMounted = true;
     MILO_ASSERT(sCache, 0xFB);
     sCache->Clear();
-    sCache->SetSize(mMaxCacheSize);
+    sCache->SetSize(gMaxCacheSize);
     sCache->StartSet(0);
     if (!mSongDoesNotExist) {
         static Symbol preload_files("preload_files");
