@@ -9,6 +9,11 @@ worktree with both legs same-split, not summed from lane deltas — this figure 
 a direct measurement of `273066ce` (lane BY-2) on top of `66697375`, whose own
 41,169 / 39,659 / 34.824646 was reproduced **exactly** as this landing's leg A.
 
+> ⚠ **Read this headline as a FLOOR, not as HEAD.** Lane BZ-2 `07795e26` landed
+> *between* the BY-2 measurement and this commit and claims **+14 honest**; that
+> figure is **not measured here** and is deliberately not folded in. Whoever
+> measures next should re-measure at HEAD rather than summing the two.
+
 > ⬇ **Part of that number is a DELIBERATE −3.** Lane BX-1 (`344ebc69`) deleted
 > three map rows that were awarding credit for functions retail does not contain:
 > on its own it moved 41,170 → 41,167 matched / 39,660 → 39,657 honest while
