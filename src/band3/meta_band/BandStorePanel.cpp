@@ -4,7 +4,6 @@
 #include "meta_band/BandStoreOffer.h"
 #include "meta_band/InputMgr.h"
 #include "meta_band/SessionMgr.h"
-#include "meta_band/StoreOfferContentsProvider.h"
 #include "meta_band/StoreOfferProvider.h"
 #include "meta_band/UIEventMgr.h"
 #include "meta_band/AppLabel.h"
@@ -59,13 +58,9 @@ BandStorePanel::BandStorePanel()
     : mMetadataLoader(0), mLastRequestExtra(0), mSort(gNullStr),
       mStartBrowserAtBottom(0), mUserCanDoInput(0), mShortcutProvider(0) {
     mOfferProvider = new StoreOfferProvider(&unk38, &unk48);
-    mOfferContentsProvider = new StoreOfferContentsProvider();
 }
 
-BandStorePanel::~BandStorePanel() {
-    delete mOfferProvider;
-    delete mOfferContentsProvider;
-}
+BandStorePanel::~BandStorePanel() { delete mOfferProvider; }
 
 BandStorePanel *BandStorePanel::Instance() {
     return ObjectDir::Main()->Find<BandStorePanel>("store_panel", true);
@@ -260,8 +255,20 @@ BEGIN_HANDLERS(BandStorePanel)
     HANDLE_EXPR(lone_offer, GetLoneOffer(false))
     HANDLE_EXPR(num_extra_offers, (int)unk40.size())
     HANDLE_EXPR(first_extra_offer, GetLoneOffer(true))
+    // Retail's handler set for this unit is readable directly from its .rdata
+    // literal pool at 0x820bfb90..0x820bfc90, which bottom-up reads:
+    //   get_request_prefix, request, request_prev_chunk, request_next_chunk,
+    //   should_start_browser_at_bottom, request_in_progress, num_offers,
+    //   lone_offer, num_extra_offers, first_extra_offer, offer_provider,
+    //   sort_name, user_can_do_input, set_shortcut_data, apply_shortcut_provider
+    // i.e. this list exactly, with two corrections: there is NO
+    // offer_contents_provider (that token occurs nowhere in band.exe), and
+    // sort_name sits here rather than down by the message handlers. 14 of the
+    // 15 tokens already agreed with our order, so the pool ordering is
+    // meaningful rather than arbitrary. (Moving sort_name is metric-neutral
+    // today -- Handle is unmapped and this unit's .rdata is not pinned.)
     HANDLE_EXPR(offer_provider, mOfferProvider)
-    HANDLE_EXPR(offer_contents_provider, mOfferContentsProvider)
+    HANDLE_EXPR(sort_name, SortName())
     // rb3-Wii's user_can_do_input tail checked TheWiiCommerceMgr async op state;
     // there is no CommerceMgr on 360 (Xbox uses XboxEnumeration), so the
     // Wii-only commerce clause is dropped. (Handle is a deferred funclet wall.)
@@ -272,7 +279,6 @@ BEGIN_HANDLERS(BandStorePanel)
     HANDLE_ACTION(set_shortcut_data, SetShortcutData(_msg->Array(2)))
     HANDLE_ACTION(apply_shortcut_provider, ApplyShortcutProvider(_msg->Obj<UIList>(2)))
     HANDLE_MESSAGE(LocalUserLeftMsg)
-    HANDLE_EXPR(sort_name, SortName())
     HANDLE_MESSAGE(MetadataLoadedMsg)
     HANDLE_SUPERCLASS(StorePanel)
     HANDLE_CHECK(0x2B0)
