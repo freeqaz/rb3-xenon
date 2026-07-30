@@ -66,7 +66,13 @@ ProfileMgr::ProfileMgr()
       mVocalCueVolume(11), mVoiceChatVolume(11), mHasSeenFirstTimeCalibration(0),
       mHasConnectedProGuitar(0), mSyncOffset(0), mSongToTaskMgrMs(0), mBassBoost(0),
       mDolby(0), unk582(0), mSyncPresetIx(0), mOverscan(0), mSynapseEnabled(1), unk58a(1),
-      mSecondPedalHiHat(0), mHasLoaded(0), mCymbalConfiguration(0),
+      // unk58b defaults to TRUE: retail's LoadGlobalOptions defaults block stores the
+      // r28(=1) constant at 0x69/0x6a/0x6b and the r29(=0) constant at 0x68/0x6c, i.e.
+      // the pattern 0,0,0,0,0,1,1,1,0 over 0x60,0x61,0x62,0x64,0x68..0x6c. That pattern
+      // is itself a second, non-metric instrument for this layout: under the old
+      // 4-bools+int layout 0x6b would be mSecondPedalHiHat, which is 0 here, but retail
+      // stores 1 there -- only the 5-bool layout is consistent.
+      unk58b(1), mSecondPedalHiHat(0), mHasLoaded(0), mCymbalConfiguration(0),
       mPrimaryProfile(0), mAllUnlocked(0) {
     mSyncOffset = -mPlatformVideoLatency;
     mSongToTaskMgrMs = mPlatformVideoLatency - mPlatformAudioLatency;

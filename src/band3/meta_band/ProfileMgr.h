@@ -193,15 +193,17 @@ public:
     bool mOverscan; // 0x68
     bool mSynapseEnabled; // 0x69
     bool unk58a; // 0x6a
-    bool mSecondPedalHiHat; // 0x6b
-    // TU5 (2026-07-16 reseed): retail X360 keeps exactly ONE 4-byte member from
-    // the Wii WiiSpeak/WiiFriends block. Its identity is unknown, so a
-    // placeholder int occupies the slot. It sits BEFORE mDataResults, not after:
-    // ProfileMgr::SyncProfileSetlists passes `addi r5, r29, 0x70` for
-    // mDataResults in the target (we emitted 0x6c). With DataResultList == 0x18
-    // bytes that puts mDataResults at 0x70..0x88, which keeps the already-verified
-    // mMicVolumes @0x88 / mProfiles @0xa0 / sizeof 0xc8 anchors intact.
-    int mUnkTU5_0x6c; // 0x6c TODO: identify (Wii WiiSpeak/WiiFriends survivor)
+    // TU5 (2026-07-16 reseed) originally put a 4-byte placeholder at 0x6c to push
+    // mDataResults to 0x70. That slot assignment was one byte off: retail
+    // BYTE-loads mSecondPedalHiHat at 0x6c, not 0x6b -- see ProfileMgr::Handle
+    // HANDLE_EXPR(get_second_pedal_hihat), where retail emits `lbz r11,-0x5c(r26)`
+    // and we emitted `lbz r11,-0x5d(r26)` (r26 = this+200, so 200-0x5c = 0x6c).
+    // So the unknown survivor is a single BYTE at 0x6b and mSecondPedalHiHat
+    // follows at 0x6c; 0x6d..0x6f is tail padding, which still lands
+    // mDataResults @0x70 and preserves the verified mMicVolumes @0x88 /
+    // mProfiles @0xa0 / sizeof 0xf0 anchors.
+    bool unk58b; // 0x6b TODO: identify (read by SongSortMgr::BuildFilteredSongList)
+    bool mSecondPedalHiHat; // 0x6c
     DataResultList mDataResults; // 0x70 (ends 0x88)
     std::vector<int> mMicVolumes; // 0x88
     DataArray *mSliderConfig; // 0x94
