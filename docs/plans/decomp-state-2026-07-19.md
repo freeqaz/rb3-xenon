@@ -1,7 +1,7 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,964 strict-matched functions / honest proxy 39,454 /
-`matched_code_percent` 34.528618** (honest = matched − masked_equal, per the BO-8
+**Current: 41,116 strict-matched functions / honest proxy 39,606 /
+`matched_code_percent` 34.685703** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
@@ -32,7 +32,7 @@ worktree with both legs same-split, not summed from lane deltas.
 > — BU-1 predicted +10..+20, measured +9; the 99.8/99.9 bodies were thunks with
 > no vbase adjust and none moved.
 
-> **Wave BV (2026-07-30) — +19 honest, +0.014973pp code.** Two lanes landed by
+> **Wave BV (2026-07-30) — +171 honest, +0.172058pp code.** Three lanes landed by
 > patch (both branches predate BV-2; a merge would have reverted BV-2's
 > `splits.txt` deletion). Each re-verified in its own fresh worktree, both legs
 > same-split, `total_functions` 69367:
@@ -42,6 +42,42 @@ worktree with both legs same-split, not summed from lane deltas.
 > | base `dedf6c34` | 40953 | 1518 | 39435 | 34.513645 |
 > | +BV-3 `e22878ef` | 40957 | 1518 | 39439 | 34.518597 |
 > | +BV-1 `5482a0a3` | 40964 | 1510 | 39454 | 34.528618 |
+> | +BV-4 `1a4ad18c` | 41116 | 1510 | 39606 | 34.685703 |
+>
+> ★★★ **BV-4 is the wave: +152 honest / +0.157085pp from map rows alone, no
+> source change.** The lever is the **anonymous-target naming gate**.
+> `pair_funclets_by_bytes` (objdiff-core `diff/mod.rs:1410`) is the only path an
+> anonymous target symbol can pair through, and it demands `is_funclet_like` on
+> **both** sides — so an anonymous target *body* whose counterpart we already
+> supply can never pair at any similarity, and scores exactly 0.0 forever.
+> 6,260 such bodies (1.29 MB) sit in already-pinned, already-supplied units.
+> Naming them is the whole fix. `masked_equal` flat at 1510, all 152 land at
+> 100.0%, net delta exactly +152 ⇒ zero regressions. Vein is far from drained.
+> ★★★ **The lane shipped 177 rows; 25 were dropped as sibling/twin mispairs.**
+> Each of the 25 claims a mangled name another VA already holds. Cross-unit, so
+> obj symbol tables stay clean — but branch-normalized disassembly shows the
+> pairs are *structurally identical and semantically different*, differing only
+> in an absolute address or a single `bl`: `??1ObjRefOwner@@UAA@XZ` stores a
+> different **vtable**, `??0Symbol@@QAA@XZ` a different string constant,
+> `?ClassName@MsgSource@@UBA?AVSymbol@@XZ` calls a different StaticClassName,
+> `?JoypadUnsubscribe@@YAX...@Z` reads a different global. ⇒ **BV-4's
+> "byte-perfect" selector is reloc-masked** and must resolve relocations before
+> reuse. Open: the *pre-existing* row may be the mispair in some of the 25;
+> adjudicating needs a twin discriminator plus a map DELETE (a no-op without a
+> re-split).
+> ★★ **A raw byte-compare of two VAs INVERTS the verdict** — PC-relative `bl`
+> displacements must be resolved to absolutes first. My first pass called all 25
+> "different" for the wrong reason and would have been right by luck.
+> ★★ **Refuted en route:** "a mangled name at two VAs means one is false" is
+> **not** a valid rule here. A normalized scan of all 77,986 `.text` functions
+> finds 2,129 identical-body groups spanning 11,932 VAs (15.3%), dominated by
+> 40B/44B funclets — duplicate bodies at distinct addresses are ordinary. The 25
+> were rejected on being normalized-*different*, not on being duplicated.
+> ⚠ **Trap:** BV-4's own commit `json.dump`-rewrote `scripts/target_symbol_map.json`
+> (1-space → 2-space indent, the four compact metadata arrays exploded one element
+> per line, trailing newline dropped). A **28,769/27,051-line diff for 177 rows is
+> the tell** that a lane bypassed the appliers. Land such a branch by re-splicing
+> its rows onto main, never by taking its file.
 >
 > BV-1 (StoreOfferProvider body port, +7 matched / −8 masked_equal / **+15
 > honest** / +0.010021pp) was measured off `e406eef4`, and its leg A reproduced
