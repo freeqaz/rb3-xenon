@@ -1,7 +1,7 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,158 strict-matched functions / honest proxy 39,648 /
-`matched_code_percent` 34.747932** (honest = matched − masked_equal, per the BO-8
+**Current: 41,170 strict-matched functions / honest proxy 39,660 /
+`matched_code_percent` 34.810390** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas.
@@ -265,6 +265,81 @@ worktree with both legs same-split, not summed from lane deltas.
 >   `NO_UNIT` (the audit could not locate its unit), so it is neither confirmed
 >   nor rejected — an audit that reports 130/152 ACCEPT is silently 130/151 on
 >   coverage.
+
+> **Lane BW-2 `ec9c8667` (2026-07-30) — +12 honest, +0.062458pp code,
+> `masked_equal` FLAT at 1510.** A/B'd in a fresh worktree off `35f79c67` (the
+> post-wave-BW HEAD), both legs same-split, `total_functions` 69367 both:
+>
+> | | matched | masked_equal | honest | code% |
+> |---|---|---|---|---|
+> | base `35f79c67` | 41158 | 1510 | 39648 | 34.747932 |
+> | +BW-2 `ec9c8667` | 41170 | 1510 | 39660 | **34.810390** |
+>
+> Two halves: **302 map rows** naming anon target bodies by CALL-reloc coverage
+> (type 0x6 / REL24 only — data relocs are a vocabulary artifact, target says
+> `lbl_*` where we say `??_C@`), plus **`Rnd::SetPostProcOverride` reduced to the
+> rb3-Wii one-liner and moved above `BEGIN_HANDLERS`** (MSVC `/Ob2` only inlines a
+> definition it has already seen). The setter carries the entire code% delta:
+> `?Handle@Rnd@@` is 6,416 B and went norm **and** fuzzy 100 = +0.0606pp from one
+> function. Zero VA and zero name collisions against BW-1's 42 rows — the lanes
+> are orthogonal despite sharing the payload file.
+>
+> ★★★ **Naming pays Δhonest but +0.000000pp code% BY CONSTRUCTION.**
+> `report.rs:841` credits `matched_functions` on `match_percent_normalized`
+> (`code.rs:285` = `diff_score − arg_diff_score`, i.e. regalloc normalized away),
+> while `matched_code` needs RAW fuzzy == 100. Only same-size bodies whose entire
+> residual is register allocation can pay honest. A naming lane that reports
+> Δcode% ≈ 0 is not underperforming.
+>
+> ★★★ **Absolute match% is the WRONG axis for pricing an attribution; the margin
+> over the best alternative is the right one.** The shipped pool ran 9 rows at
+> 100, 84 at 95–99.9, 175 at 80–95, 42 at 50–80, and the obvious move — drop the
+> low band — is refuted by control. Three extra split+report legs re-pointed rows
+> at their **runner-up** name and re-scored, asking whether objdiff's alignment
+> (instrument 2) picks the same partner as call-reloc coverage (instrument 1):
+> **151 rows null-tested across all four bands, 0 INVERSIONS**; null scores mean
+> 17.4; weak band median ship **75.4 vs null 3.2**. A 50–80 score means *correct
+> name, divergent DC3-era body* (ctors, dtors, Load/Save), not a mispair.
+>
+> ★★★ **The headline metric is BLIND to attribution correctness.** The null leg
+> that deliberately mis-named **64** rows measured matched 41,128 / honest 39,618
+> — *identical to the correct leg*. A wrong map row costs nothing today and
+> poisons later lanes, so it can only be policed by an instrument other than the
+> score. This is the same shape as the at-100% defect class.
+>
+> ★★ **The real risk shape is the TWIN SIBLING, and it is invisible to the score
+> band.** Held 8 rows whose measured gap fell under a **natural break in the gap
+> distribution** (… 24.7, 26.2, then 30.6 — a 4.4-point empty band, so the
+> threshold is data-derived, not chosen): `PropSync<HideDelay>` vs
+> `PropSync<ProxyCall>` (gap **0.0**), `??_DRemoteBandUser` vs `??_DLocalBandUser`
+> (5.3), `SetConfiguration` vs `ReapplyConfiguration` (11.1), `OpenGateData::Save`
+> vs `::Load` (18.2), `DeleteCharacter` vs `RenameCharacter` (19.6),
+> `AddRemoteMachine` vs `RemoveRemoteMachine` (21.2), `RndCam::Save` (24.7),
+> `CharDriver::FindClip` vs `MyFindClip` (26.2). Holding them cost **zero** on all
+> four axes (302-row leg == 310-row leg exactly). ➡ Unowned: those 8 need a twin
+> discriminator.
+>
+> ⛔ **`unified_id_rb3wii.json` and `global_fuzzy_pairs.json` at the repo root are
+> TU0-era and effectively DEAD — only 23 of the oracle's 9,301 `fn_` addresses
+> resolve against the current report (0.25%).** `setup_worktree.sh` still copies
+> both into every worktree as "analysis inputs", and objdiff-cli's
+> `--global-byte-eq` **hard-requires** the oracle as its Rule-3 gate — so that
+> pass would today gate on a file that resolves a quarter of one percent of
+> addresses. Regenerate against TU5 before trusting either.
+>
+> ★ **A unit whose class names look wrong may be a scatter-include, not a
+> mispair.** `?ClientConnect@NetStream@@` attributed inside unit `JoypadMsgs`
+> looked like a cross-class error; `src/system/os/JoypadMsgs.cpp:25-40` in fact
+> `#include`s both `os/NetStream.cpp` and `synth/Sfx.cpp`, so both it and its
+> runner-up `?ToggleHud@Synth@@` belong there. Check for scatter-includes before
+> calling a unit/class mismatch a defect.
+>
+> ★ **17 rows were untestable because their runner-up is a ubiquitous engine
+> helper** (`Hmx::Object::SetType` was the runner-up in five different units,
+> `BinStream::operator<<(int)` in another) — those names are suppressed in the
+> target obj. That is itself reassuring: their "best alternative" is noise, not a
+> twin. Of the 159 rows with no live alternative, 26 had a single candidate and
+> 116 have their runner-up already bound to a different VA.
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
