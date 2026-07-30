@@ -3933,11 +3933,11 @@ HamScrollSpeedIndicator.cpp:
 	.text       start:0x8231EF28 end:0x8231F130
 
 LiveCameraInput.cpp:
-	.pdata      start:0x821FC7B8 end:0x821FC7C8
+	.pdata      start:0x821FC7C0 end:0x821FC7C8
 	.pdata      start:0x8220C158 end:0x8220C168
 	.pdata      start:0x8220C320 end:0x8220C328
 	.pdata      start:0x8220C328 end:0x8220C330
-	.text       start:0x8231F680 end:0x8231F6F8
+	.text       start:0x8231F6D8 end:0x8231F6F8
 	.text       start:0x8242A870 end:0x8242A958
 	.text       start:0x8242C070 end:0x8242C1C4
 	.text       start:0x8242C1CC end:0x8242C208
@@ -5075,8 +5075,9 @@ MultiMesh.cpp:
 	.text       start:0x82484D60 end:0x82484DB8
 
 Mat_NG.cpp:
+	.pdata      start:0x82212308 end:0x82212318
 	.pdata      start:0x82212318 end:0x82212368
-	.text       start:0x824A8F40 end:0x824A8F74
+	.text       start:0x824A8EC8 end:0x824A8F74
 	.text       start:0x824A8F74 end:0x824AA334
 
 HamMaster.cpp:
@@ -7369,10 +7370,6 @@ MultiMeshProxy.cpp:
 	.text       start:0x824815B8 end:0x82481638
 	.text       start:0x82481638 end:0x824816A4
 
-StandingStillGestureFilter.cpp:
-	.pdata      start:0x82241670 end:0x82241678
-	.text       start:0x827B78F8 end:0x827B7950
-
 MicNull.cpp:
 	.pdata      start:0x8223A0F0 end:0x8223A100
 	.pdata      start:0x8223A100 end:0x8223A108
@@ -8746,10 +8743,12 @@ band3/meta_band/AccomplishmentProgress.cpp:
 
 band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC1E8 end:0x821FC1F0
+	.pdata      start:0x8222CD70 end:0x8222CD78
 	.pdata      start:0x8222CD80 end:0x8222CE90
 	.pdata      start:0x8222CE98 end:0x8222CEA8
 	.text       start:0x8231A0D8 end:0x8231A138
 	.text       start:0x82323950 end:0x82323960
+	.text       start:0x8264BCE8 end:0x8264BD40
 	.text       start:0x8264BD68 end:0x8264D058
 	.text       start:0x8264D08C end:0x8264D15C
 
@@ -10947,12 +10946,12 @@ NextSongPanel.cpp:
 	.pdata      start:0x8222C3C0 end:0x8222C3C8
 	.pdata      start:0x8222C3C8 end:0x8222CD68
 	.pdata      start:0x8222CD68 end:0x8222CD70
-	.pdata      start:0x8222CD70 end:0x8222CD80
+	.pdata      start:0x8222CD78 end:0x8222CD80
 	.text       start:0x826439B0 end:0x82644E30
 	.text       start:0x82644E38 end:0x8264519C
 	.text       start:0x8264519C end:0x8264BBE0
 	.text       start:0x8264BBE0 end:0x8264BCDC
-	.text       start:0x8264BCE8 end:0x8264BD60
+	.text       start:0x8264BD40 end:0x8264BD60
 
 PerformanceData.cpp:
 	.pdata      start:0x8222D790 end:0x8222D798
@@ -11177,8 +11176,7 @@ MetaPanel.cpp:
 	.pdata      start:0x821FC1B0 end:0x821FC1D0
 	.pdata      start:0x822187C8 end:0x822187D8
 	.pdata      start:0x8221DCC8 end:0x8221DD60
-	.pdata      start:0x8221DD78 end:0x8221DDB8
-	.pdata      start:0x8221DDC0 end:0x8221DDF0
+	.pdata      start:0x8221DD78 end:0x8221DDF0
 	.pdata      start:0x8221DE08 end:0x8221DE10
 	.pdata      start:0x8221DE10 end:0x8221DE28
 	.pdata      start:0x8221DE28 end:0x8221DE60
@@ -11220,8 +11218,7 @@ MetaPanel.cpp:
 	.text       start:0x82319D84 end:0x82319F74
 	.text       start:0x8251BA00 end:0x8251BA78
 	.text       start:0x8256DF78 end:0x8256E4B0
-	.text       start:0x8256E570 end:0x8256E7A8
-	.text       start:0x8256E800 end:0x8256E998
+	.text       start:0x8256E570 end:0x8256E998
 	.text       start:0x8256EA58 end:0x8256EAB0
 	.text       start:0x8256EAB0 end:0x8256EB70
 	.text       start:0x8256EB70 end:0x8256ED60
@@ -12907,12 +12904,12 @@ OvershellDir.cpp:
 	.text       start:0x8230B618 end:0x8230BE44
 
 PlayerDiffIcon.cpp:
-	.pdata      start:0x821FCD18 end:0x821FCD20
+	.pdata      start:0x821FCD08 end:0x821FCD20
 	.pdata      start:0x821FCD28 end:0x821FCD30
 	.pdata      start:0x821FCD30 end:0x821FCD48
 	.pdata      start:0x821FCD48 end:0x821FCD50
 	.pdata      start:0x821FCDC8 end:0x821FCE30
-	.text       start:0x82324D18 end:0x82324D9C
+	.text       start:0x82324CA0 end:0x82324D9C
 	.text       start:0x82324E18 end:0x82324E5C
 	.text       start:0x82324E60 end:0x82325010
 	.text       start:0x82325010 end:0x8232514C
@@ -12947,15 +12944,15 @@ InstrumentDifficultyDisplay.cpp:
 	.text       start:0x82324C48 end:0x82324C98
 
 ScoreDisplay.cpp:
+	.pdata      start:0x821FC7B8 end:0x821FC7C0
 	.pdata      start:0x821FC7C8 end:0x821FC7D8
 	.pdata      start:0x821FC7D8 end:0x821FC8A0
 	.pdata      start:0x821FC8E8 end:0x821FC8F0
-	.pdata      start:0x8221DDB8 end:0x8221DDC0
 	.text       start:0x82319C30 end:0x82319C40
+	.text       start:0x8231F680 end:0x8231F6D8
 	.text       start:0x8231F6F8 end:0x8231F78C
 	.text       start:0x8231F790 end:0x823203AC
 	.text       start:0x82320848 end:0x823208A0
-	.text       start:0x8256E7A8 end:0x8256E800
 
 system/hamobj/HamSong.cpp:
 	.pdata      start:0x8223D630 end:0x8223D638
@@ -13202,5 +13199,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.text       start:0x822C8448 end:0x822C85A8
 
 system/meta/StoreArtLoaderPanel.cpp:
+	.pdata      start:0x82241670 end:0x82241678
 	.pdata      start:0x822416D0 end:0x822416D8
+	.text       start:0x827B78F8 end:0x827B7950
 	.text       start:0x827B7DC8 end:0x827B7E60

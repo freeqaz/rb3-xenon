@@ -1,0 +1,6 @@
+[
+ {"va": "0x8256e828",
+  "old": "?StaticClassName@AppScoreDisplay@@SA?AVSymbol@@XZ",
+  "op": "delete",
+  "why": "fn_8256E828 builds the literal at 0x8209B660 = \"AuditionSessionPanel\", NOT \"ScoreDisplay\", so it cannot be AppScoreDisplay::StaticClassName. Its true owner AuditionSessionPanel has ZERO suppliers in our tree (no .cpp emits that COMDAT), so no correct name can be placed here. The 100.0% it scores today is reloc-masked false credit: every OBJ_CLASSNAME StaticClassName body is the same rigid 22-instruction template differing only in the guard/cache/string relocations, and objdiff runs functionRelocDiffs=None. Deleting also frees ?StaticClassName@AppScoreDisplay@@ for 0x8256e7a8, whose ClassName/SetType callers prove it."}
+]

@@ -1,0 +1,12 @@
+[
+ {"va": "0x8231f680",
+  "old": "?StaticClassName@RndTex@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@ScoreDisplay@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "Three independent proofs. (1) STRING: fn_8231F680 builds the literal at 0x82032328 = \"ScoreDisplay\". (2) CALLERS: a class's ClassName()/SetType() call their OWN StaticClassName -- ?ClassName@ScoreDisplay@@ bl's it at +0x14, ?SetType@ScoreDisplay@@ (the 316B types/objects OBJ_SET_TYPE fingerprint) at +0x4c, and ?Init@ScoreDisplay@@ at +0x10. (3) SPATIAL: /O1 without LTCG preserves per-obj contribution grouping, and 0x8231F6F8 (immediately after) is already ScoreDisplay.cpp. The old RndTex name was wrong here: the real RndTex::StaticClassName is 0x82273860, proven by ?ClassName@RndTex@@ bl'ing it at +0x14. Only system/bandobj/ScoreDisplay.cpp supplies the new name, so this repoint lands with a carve of 0x8231F680-0x8231F6D8 into that unit."},
+ {"va": "0x8256e7a8",
+  "old": "?StaticClassName@ScoreDisplay@@SA?AVSymbol@@XZ",
+  "new": "?StaticClassName@AppScoreDisplay@@SA?AVSymbol@@XZ",
+  "op": "repoint",
+  "why": "There is exactly ONE ScoreDisplay::StaticClassName COMDAT and it is 0x8231f680 (see the row above), so this address cannot also be it. fn_8256E7A8 builds the SAME \"ScoreDisplay\" literal because retail's AppScoreDisplay declares OBJ_CLASSNAME(ScoreDisplay) -- the DTA type name carries no App prefix (identical to BQ-1 job A's AppMiniLeaderboardDisplay finding). Callers settle it at the identical offsets as the base pair: ?ClassName@AppScoreDisplay@@ bl's it at +0x14 and ?SetType@AppScoreDisplay@@ at +0x4c. Only band3/meta_band/MetaPanel.cpp supplies the new name, so the surgical ScoreDisplay pin here is dissolved back into MetaPanel's span in the same landing."}
+]
