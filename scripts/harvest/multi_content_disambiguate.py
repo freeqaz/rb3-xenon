@@ -156,11 +156,13 @@ def func_table(path):
                 continue
             body = bytearray(data[s["praw"] + start: s["praw"] + end])
             offs, refs = [], {}
+            reltys = defaultdict(set)      # off -> {reloc type, ...}
             for rva, si, ty in s["rel"]:
                 if not (start <= rva < end):
                     continue
                 off = rva - start
                 offs.append(off)
+                reltys[off].add(ty)
                 for b in range(4):
                     if off + b < len(body):
                         body[off + b] = 0
@@ -178,7 +180,7 @@ def func_table(path):
                                                     s["praw"] + start + off)[0]
             out[sy["name"]] = dict(sec=secn, start=start, size=end - start,
                                    body=bytes(body), offs=sorted(set(offs)),
-                                   refs=refs, words=words)
+                                   refs=refs, words=words, reltys=dict(reltys))
     return out
 
 
@@ -412,9 +414,19 @@ def load_tmap(path):
 # --------------------------------------------------------------- the compare
 STRONG = {'str', 'wstr', 'vfstr', 'f32', 'f64', 'f128'}
 
+# Reloc types whose linker fixup patches ONLY the operand field of a PPC
+# instruction, leaving the top-6 opcode bits invariant.  The `op` evidence
+# class may only compare word>>26 at these offsets -- otherwise the false-
+# negative-free guarantee breaks.  Notably EXCLUDES IMAGE_REL_PPC_ADDR32 (0x02)
+# / ADDR64 (0x01): those patch a whole data word (a jump-table / pointer
+# embedded in .text), so its high bits are address bits, not an opcode.
+#   0x03 ADDR24  0x05 ADDR14  0x06 REL24  0x07 REL14  0x10 REFHI  0x11 REFLO
+OP_INVARIANT_RELOC = frozenset({0x03, 0x05, 0x06, 0x07, 0x10, 0x11})
+OP_TOLERATE_RELOC = frozenset({0x12})   # PAIR: addend carrier, shares its off
+
 
 def evaluate(band, tmap, name2va, fn, cands, use_sym=True, truth=None, trusted=None,
-             min_sym_agree=1):
+             min_sym_agree=1, use_op=True):
     """-> (verdict, winner_va, detail)"""
     offs = fn['offs']
     if not offs:
@@ -481,22 +493,59 @@ def evaluate(band, tmap, name2va, fn, cands, use_sym=True, truth=None, trusted=N
         return ('TRUTH-CONFLICT' if conflict[truth] else
                 'TRUTH-AGREE' if agree[truth] else 'TRUTH-UNKNOWN')
 
-    winners = [c for c in cands if agree[c] and not conflict[c]]
+    # ---- op (opcode) evidence: EXCLUSION-ONLY, opcode-invariant offsets ----
+    # A masked slot zeroed the whole 4-byte word on both sides, so the opcode
+    # (word>>26) was never compared.  At an opcode-invariant reloc the true
+    # home's opcode is identical to ours by construction (only operands were
+    # relocated), so an op-CONFLICT can never exclude the true home => zero
+    # false negatives.  op contributes ONLY conflict (rival exclusion) plus
+    # agree at the winner's own slots; it NEVER manufactures a positive
+    # identity (winner still needs an independent content AGREE below).
+    op_agree = defaultdict(set)
+    op_conflict = defaultdict(set)
+    if use_op:
+        reltys = fn.get('reltys', {})
+        op_offs = [off for off in offs
+                   if reltys.get(off)
+                   and (reltys[off] & OP_INVARIANT_RELOC)
+                   and reltys[off] <= (OP_INVARIANT_RELOC | OP_TOLERATE_RELOC)]
+        for off in op_offs:
+            our_op = (fn['words'].get(off, 0)) >> 26
+            for c in cands:
+                rec = slots[c].get(off)
+                if rec is None:                  # band couldn't decode this slot
+                    continue
+                if rec['op'] == our_op:
+                    op_agree[c].add(off)
+                else:
+                    op_conflict[c].add(off)
+
+    # content-only winners, then op-exclusion applied on top
+    content_winners = [c for c in cands if agree[c] and not conflict[c]]
+    winners = [c for c in content_winners if not op_conflict[c]]
     if not winners:
         return 'NO-WINNER', None, dict(agree={hex(c): len(agree[c]) for c in cands},
-                                       conflict={hex(c): len(conflict[c]) for c in cands})
+                                       conflict={hex(c): len(conflict[c]) for c in cands},
+                                       op_conflict={hex(c): len(op_conflict[c]) for c in cands})
     if len(winners) > 1:
         return 'TIE', None, dict(winners=[hex(c) for c in winners])
     w = winners[0]
-    # honesty clause: every rival must be positively excluded at a slot the
-    # winner positively confirmed.
+    # RESOLVED-OP iff op is the SOLE separator: content alone left >1 winner,
+    # op-exclusion narrowed it to exactly this one.
+    op_broke_tie = len(content_winners) > 1
+    # honesty clause: every rival must be positively excluded (content OR op
+    # CONFLICT) at a slot the winner positively confirmed (content OR op
+    # AGREE).  The winner has zero op_conflict, so it holds op_agree at exactly
+    # the offsets where a rival was op-excluded.
     for c in cands:
         if c == w:
             continue
-        if not (conflict[c] & agree[w]):
+        if not ((conflict[c] | op_conflict[c]) & (agree[w] | op_agree[w])):
             return 'NOT-EXCLUDED', None, dict(winner=hex(w), rival=hex(c),
                                               agree=sorted(hex(o) for o in agree[w]),
-                                              rival_conflict=len(conflict[c]))
+                                              rival_conflict=len(conflict[c]),
+                                              rival_op_conflict=len(op_conflict[c]))
+    # op-AGREE is WEAK and does NOT count toward the content strength gates.
     strong = any(exp[o][0] == 'tok' and next(iter(exp[o][1]))[0] in STRONG
                  for o in agree[w])
     if not strong:
@@ -512,7 +561,21 @@ def evaluate(band, tmap, name2va, fn, cands, use_sym=True, truth=None, trusted=N
         ev.append(dict(off=o, sym=symname,
                        want=('sym' if mode == 'symva' else next(iter(want))[0]),
                        va='0x%08x' % resolved[(w, o)]))
-    return ('RESOLVED-STRONG' if strong else 'RESOLVED-SYM'), w, dict(evidence=ev)
+    # audit trail: which rivals op excluded, at what offset, our vs their op
+    op_ev = []
+    if op_broke_tie:
+        for c in content_winners:
+            if c == w:
+                continue
+            for off in sorted(op_conflict[c]):
+                op_ev.append(dict(off=off, rival='0x%08x' % c,
+                                  our_op=(fn['words'].get(off, 0)) >> 26,
+                                  their_op=slots[c][off]['op']))
+    detail = dict(evidence=ev)
+    if op_ev:
+        detail['op_evidence'] = op_ev
+    base = 'RESOLVED-STRONG' if strong else 'RESOLVED-SYM'
+    return ('RESOLVED-OP' if op_broke_tie else base), w, detail
 
 
 # --------------------------------------------------------------------- main
@@ -527,6 +590,8 @@ def main():
     ap.add_argument('--classes', default='MULTI,UNIQUE-ICF')
     ap.add_argument('--no-sym', action='store_true',
                     help='use only map-free evidence (strings / float consts)')
+    ap.add_argument('--no-op', action='store_true',
+                    help='disable the op (opcode) exclusion evidence class')
     ap.add_argument('--min-sym-agree', type=int, default=1)
     ap.add_argument('--only-units')
     ap.add_argument('--trust-audit', action='store_true',
@@ -536,7 +601,7 @@ def main():
                          'constants that VA actually references.  Emits the set of '
                          'content-CORROBORATED names (safe to use as callee '
                          'evidence) and the set of CONTRADICTED ones (existing '
-                         'mispairs -- these read 100% under objdiff normalized diff '
+                         'mispairs -- these read 100%% under objdiff normalized diff '
                          'because it masks relocations, so they are invisible in '
                          'the score).')
     ap.add_argument('--trust-out', default='/home/free/tmp/laneG/trust.json')
@@ -642,7 +707,8 @@ def main():
                 cands = hits
                 verdict, w, detail = evaluate(band, tmap, name2va, fn, cands,
                                               use_sym=not a.no_sym, trusted=trusted,
-                                              min_sym_agree=a.min_sym_agree)
+                                              min_sym_agree=a.min_sym_agree,
+                                              use_op=not a.no_op)
                 val[verdict] += 1
                 if verdict.startswith('RESOLVED'):
                     ok = (w == truth)
@@ -665,7 +731,8 @@ def main():
                 continue
             verdict, w, detail = evaluate(band, tmap, name2va, fn, cands,
                                           use_sym=not a.no_sym, trusted=trusted,
-                                              min_sym_agree=a.min_sym_agree)
+                                              min_sym_agree=a.min_sym_agree,
+                                              use_op=not a.no_op)
             stats[verdict] += 1
             if verdict.startswith('RESOLVED'):
                 claimed[w].append((tu, r['name'], verdict))
@@ -686,12 +753,12 @@ def main():
         with open(a.report, 'w') as f:
             f.write('\n'.join(lines) + '\n')
         print('held-out validation:', dict(sorted(val.items(), key=lambda kv: -kv[1])))
-        for v in ('RESOLVED-STRONG', 'RESOLVED-SYM'):
+        for v in ('RESOLVED-STRONG', 'RESOLVED-SYM', 'RESOLVED-OP'):
             h, m = val.get(v + '/HIT', 0), val.get(v + '/MISS', 0)
             if h + m:
                 print('  %-16s precision %d/%d = %.2f%%' % (v, h, h + m, 100.0 * h / (h + m)))
-        h = val.get('RESOLVED-STRONG/HIT', 0) + val.get('RESOLVED-SYM/HIT', 0)
-        m = val.get('RESOLVED-STRONG/MISS', 0) + val.get('RESOLVED-SYM/MISS', 0)
+        h = sum(val.get(v + '/HIT', 0) for v in ('RESOLVED-STRONG', 'RESOLVED-SYM', 'RESOLVED-OP'))
+        m = sum(val.get(v + '/MISS', 0) for v in ('RESOLVED-STRONG', 'RESOLVED-SYM', 'RESOLVED-OP'))
         if h + m:
             print('  %-16s precision %d/%d = %.2f%%' % ('COMBINED', h, h + m, 100.0 * h / (h + m)))
         return
