@@ -1,17 +1,23 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,167 strict-matched functions / honest proxy 39,657 /
-`matched_code_percent` 34.810730** (honest = matched − masked_equal, per the BO-8
+**Current: 41,168 strict-matched functions / honest proxy 39,658 /
+`matched_code_percent` 34.820637** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
-worktree with both legs same-split, not summed from lane deltas.
+worktree with both legs same-split, not summed from lane deltas — this figure is
+a direct measurement of `7464dec6`, i.e. BX-1 **and** BX-2 together.
 
-> ⬇ **The function count went DOWN by 3 on purpose.** Lane BX-1 (`344ebc69`)
-> deleted three map rows that were awarding credit for functions retail does not
-> contain. 41,170 → 41,167 matched / 39,660 → 39,657 honest, while `code%` rose
-> 34.810390 → 34.810730. **This is the first landing priced on being LESS
-> wrong rather than more matched**, and the headline should be read as having
-> been *corrected downward*, not regressed. See the BX-1 block below.
+> ⬇ **Part of that number is a DELIBERATE −3.** Lane BX-1 (`344ebc69`) deleted
+> three map rows that were awarding credit for functions retail does not contain:
+> on its own it moved 41,170 → 41,167 matched / 39,660 → 39,657 honest while
+> `code%` **rose** 34.810390 → 34.810730. **The first landing priced on being LESS
+> wrong rather than more matched** — read it as the headline being *corrected
+> downward*, not regressed. Lane BX-2 (`43c9771e`) then added +1 on top, and the
+> measured HEAD total confirms the two are cleanly additive (41,170 −3 +1 =
+> 41,168, measured 41,168 with `masked_equal` flat at 1,510 and
+> `total_functions` 69,367 throughout). See the BX-1 block below.
+> ⚠ BX-2 landed without its own `docs(state)` commit, so this headline had to be
+> re-measured at HEAD rather than carried from either lane's A/B.
 
 > **Wave BU (2026-07-30) — +15 honest, +0.0101pp code, `masked_equal` FLAT at
 > 1517 through every leg** (so no step bought its gain with byte-fallback
