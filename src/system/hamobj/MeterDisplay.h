@@ -58,5 +58,14 @@ protected:
     int mCurrentValue; // 0x60
     /** "max value of meter" */
     int mMaxValue; // 0x64
-    ResourceDirPtr<RndDir> mResourceDir; // 0x68
+    // NOTE(laneBQ2): `ResourceDirPtr<RndDir> mResourceDir` used to follow. Retail RB3
+    // has no such member -- the rb3-Wii oracle's MeterDisplay ends at `mMaxValue`, and
+    // RB3 reaches the dir through the INHERITED UIComponent::mResource (a UIResource*
+    // at 0x108) via mResource->Dir(). Confirmed three ways: (1) ?SetType@MeterDisplay@@
+    // at 0x8231a9a8 has vbase-displacement immediate 356, exactly where the Object
+    // vtordisp lands once these 16 bytes are gone; (2) ?AnimateToValue@ matches at 100%
+    // and pins every own member through mMaxValue (ending at 356), so the 16 bytes can
+    // only be here; (3) retail ?Poll@ reads `lwz r11,0x30(r3)` = 216+48 = 264 =
+    // UIComponent::mResource, then `lwz r11,0x14,r11` = UIResource::mDir(0x10) + the
+    // ObjDirPtr inner pointer(+4).
 };

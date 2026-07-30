@@ -7,6 +7,7 @@
 #include "os/Debug.h"
 #include "rndobj/Anim.h"
 #include "ui/UIComponent.h"
+#include "ui/UIResource.h" // laneBQ2: for UIResource::Dir(); UIComponent.h only fwd-declares it
 #include "utl/BinStream.h"
 #include "utl/Locale.h"
 #include "utl/Symbol.h"
@@ -14,7 +15,7 @@
 MeterDisplay::MeterDisplay()
     : mMeterAnim(0), mAnimPeriod(0), unk4c(0), unk50(-1), unk54(0), mShowText(0),
       mPercentageText(0), mHideDenominator(0), mWrapperText(gNullStr), mCurrentValue(0),
-      mMaxValue(0), mResourceDir(this) {}
+      mMaxValue(0) {}
 
 MeterDisplay::~MeterDisplay() { delete unk54; }
 
@@ -31,7 +32,6 @@ BEGIN_PROPSYNCS(MeterDisplay)
     SYNC_PROP_MODIFY(current_value, mCurrentValue, UpdateDisplay())
     SYNC_PROP_MODIFY(max_value, mMaxValue, UpdateDisplay())
     SYNC_PROP(anim_period, mAnimPeriod)
-    SYNC_PROP_MODIFY(resource, mResourceDir, Update())
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS
 
@@ -39,7 +39,6 @@ BEGIN_SAVES(MeterDisplay)
     SAVE_REVS(4, 0)
     bs << mShowText << mCurrentValue << mMaxValue << mPercentageText << mAnimPeriod
        << mHideDenominator << mWrapperText;
-    bs << mResourceDir;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 
@@ -53,7 +52,6 @@ BEGIN_COPYS(MeterDisplay)
     COPY_MEMBER_FROM(p, mCurrentValue)
     COPY_MEMBER_FROM(p, mMaxValue)
     COPY_MEMBER_FROM(p, mAnimPeriod)
-    COPY_MEMBER_FROM(p, mResourceDir)
     COPY_SUPERCLASS_FROM(UIComponent, p)
     Update();
 END_COPYS
@@ -83,19 +81,17 @@ void MeterDisplay::PreLoad(BinStream &bs) {
         d >> mHideDenominator;
         bs >> mWrapperText;
     }
-    bs >> mResourceDir;
     UIComponent::PreLoad(bs);
 }
 
 void MeterDisplay::PostLoad(BinStream &bs) {
-    mResourceDir.PostLoad(nullptr);
     UIComponent::PostLoad(bs);
     Update();
 }
 
 void MeterDisplay::Poll() {
-    if (mResourceDir) {
-        mResourceDir->Poll();
+    if (mResource->Dir()) {
+        mResource->Dir()->Poll();
     }
     UIComponent::Poll();
 }
@@ -108,13 +104,16 @@ void MeterDisplay::Enter() {
 void MeterDisplay::OldResourcePreload(BinStream &bs) {
     char name[256];
     bs.ReadString(name, 256);
-    mResourceDir.SetName(name, true);
+    // NOTE(laneBQ2): retail RB3 has no MeterDisplay::mResourceDir to name here (and no
+    // OldResourcePreload at all -- it is a DC3 addition). The read is kept so the
+    // stream position stays correct for whatever follows.
 }
 
 void MeterDisplay::Update() {
-    if (mResourceDir) {
+    RndDir *dir = mResource->Dir();
+    if (dir) {
         static Symbol meter_label("meter_label");
-        HamLabel *label = mResourceDir->Find<HamLabel>("meter.lbl", false);
+        HamLabel *label = dir->Find<HamLabel>("meter.lbl", false);
         if (label) {
             if (!unk54) {
                 unk54 = Hmx::Object::New<HamLabel>();
@@ -124,7 +123,7 @@ void MeterDisplay::Update() {
             label->SetShowing(false);
         }
         static Symbol meter_anim("meter_anim");
-        mMeterAnim = mResourceDir->Find<RndAnimatable>("meter.anim");
+        mMeterAnim = dir->Find<RndAnimatable>("meter.anim");
     }
 }
 
@@ -179,7 +178,8 @@ __declspec(noinline) auto _outline_UISeconds(_T* _obj) -> decltype(_obj->UISecon
 }
 
 void MeterDisplay::DrawShowing() {
-    if (!mResourceDir)
+    RndDir *dir = mResource->Dir();
+    if (!dir)
         return;
 
     float f = 0.0f;
@@ -209,8 +209,8 @@ void MeterDisplay::DrawShowing() {
             + mMeterAnim->StartFrame(),
         1.0f
     );
-    mResourceDir->SetWorldXfm(WorldXfm());
-    mResourceDir->Draw();
+    dir->SetWorldXfm(WorldXfm());
+    dir->Draw();
     if (mShowText && unk54)
         unk54->Draw();
 }
