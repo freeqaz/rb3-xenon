@@ -987,6 +987,8 @@ BEGIN_HANDLERS(UIManager)
         return 0;
     }
     HANDLE_MEMBER_PTR(mSink)
+    // Retail lacks set_sink, is_game_screen_active and the 5 dev handlers below,
+    // but gating ANY of them out is MEASURED net-negative -- see the NOTE below.
     HANDLE_ACTION(set_sink, mSink = _msg->Obj<Hmx::Object>(2))
     HANDLE_ACTION(use_joypad, UseJoypad(_msg->Int(2), true))
     HANDLE_ACTION(set_virtual_dpad, mJoyClient->SetVirtualDpad(_msg->Int(2)))
@@ -1003,7 +1005,7 @@ BEGIN_HANDLERS(UIManager)
     HANDLE_EXPR(bottom_screen, BottomScreen())
     HANDLE_EXPR(in_transition, InTransition())
     HANDLE(is_resource, OnIsResource)
-    HANDLE(foreach_current_screen, OnForeachCurrentScreen)
+    HANDLE(foreach_screen, OnForeachCurrentScreen)
     HANDLE_EXPR(went_back, WentBack())
     HANDLE_EXPR(is_game_screen_active, IsGameScreenActive())
     // NOTE: these 5 dev/debug handlers reference the retail-stripped members
@@ -1011,8 +1013,15 @@ BEGIN_HANDLERS(UIManager)
     // they leave UIManager::Handle a NonMatching function either way — but they
     // MUST stay here: gating them out renumbers this TU's EH-funclet scope
     // counters (Handle precedes Init in .text) and mispairs Init's cleanup
-    // funclets fn_827E0E0C/34/84 (a net strict-100 loss). Keeping them costs
-    // ~2% fuzzy on Handle only; it is not worth 3 strict matches.
+    // funclets (a net strict-100 loss).
+    //
+    // RE-MEASURED 2026-07-29 (laneBK W6) on the TU5 tree, now that both retail
+    // oracles have named retail's exact 15-Symbol chain for fn_82804E00.
+    // Gating out all SEVEN surplus arms (set_sink, is_game_screen_active and
+    // these 5) takes UIManager::Handle 34.52% -> 76.65% but LOSES the three
+    // Init cleanup funclets fn_82806354 / fn_8280637C / fn_828063CC:
+    // whole-binary 39737 -> 39734. Still net -3. Do not re-attempt without a
+    // fix for the funclet scope-counter renumbering first.
     HANDLE_ACTION(toggle_load_times, ToggleLoadTimes())
     HANDLE_EXPR(showing_load_times, mOverlay->Showing())
     HANDLE_ACTION(toggle_dev_menu, mShowDevMenu = !mShowDevMenu)
