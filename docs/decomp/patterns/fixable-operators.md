@@ -252,9 +252,23 @@ PowerPC `cmpwi`/`cmplwi` instruction selection depends on operand ordering.
 
 ## Commutative Operand Order
 
-**Impact:** +1-5%
-**Success Rate:** 80%
-**Time:** 5 minutes
+> **⛔ REFUTED (2026-07-30, lane BV-4) — this section's "80% success rate" was
+> wrong and cost at least two lanes real budget.** The Wave-1 AT_LIMIT audit
+> measured source-level commutative reordering as a **no-op for >99%** of
+> single-instruction `COMMUTATIVE_OP_ORDER` mismatches: the resulting `.obj` was
+> byte-identical across dozens of attempts. MSVC picks operand registers from
+> liveness and the register allocator's colour→register mapping, **not** from
+> syntactic AST order. See
+> [unfixable-compiler.md § Source-Level Operand Reordering Is Almost Always A
+> No-Op](unfixable-compiler.md#source-level-operand-reordering-is-almost-always-a-no-op-wave-1--f1).
+>
+> **Do not spend a cycle here.** The actionable lever is *upstream*: reorder the
+> variables feeding the op so the allocator assigns the registers the target
+> chose. Kept below for recognition of the symptom only.
+
+**Impact:** ~0 (refuted; see banner)
+**Success Rate:** <1% — measured, not estimated
+**Time:** not worth spending
 
 Swap operand order in commutative operations to match the original.
 
