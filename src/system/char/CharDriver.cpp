@@ -688,11 +688,14 @@ BEGIN_HANDLERS(CharDriver)
     HANDLE(play, OnPlay)
     HANDLE(play_group, OnPlayGroup)
     HANDLE(play_group_flags, OnPlayGroupFlags)
-    HANDLE_ACTION(add_beat, AddBeat(_msg->Float(2), _msg->Float(_msg->Size() - 1)))
-    HANDLE(evaluate_flags, OnEvaluateFlags)
+    // NOT a delete -- a RENAME. Retail fn_82379770 builds 15 Symbols and the
+    // rb3-Wii oracle's chain is that list verbatim; DC3 (newer) renamed these
+    // three arms. Deleting them instead costs 13 paired EH funclets (measured).
+    HANDLE_ACTION(offset, AddBeat(_msg->Float(2), _msg->Float(_msg->Size() - 1)))
+    HANDLE(get_first_playing_flags, OnGetFirstFlags)
     HANDLE(get_first_flags, OnGetFirstFlags)
     HANDLE_EXPR(first_clip, mFirst ? (Hmx::Object *)mFirst->GetClip() : (Hmx::Object *)0)
-    HANDLE_ACTION(set_clip_type, mClipType = _msg->Sym(2))
+    HANDLE_ACTION(set_starved, mStarvedHandler = _msg->Sym(2))
     HANDLE_ACTION(set_beat_scale, SetBeatScale(_msg->Float(2), true))
     HANDLE_ACTION(transfer, Transfer(*_msg->Obj<CharDriver>(2)))
     HANDLE(print, OnPrint)
@@ -700,7 +703,10 @@ BEGIN_HANDLERS(CharDriver)
     HANDLE(set_first_beat_offset, OnSetFirstBeatOffset)
     HANDLE_ACTION(clear, Clear())
     HANDLE(get_clip_or_group_list, OnGetClipOrGroupList)
+#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
+    // DC3 calls this get_last_played_group; retail has neither name here.
     HANDLE_EXPR(default_clip, mDefaultClip.Ptr())
+#endif
     HANDLE_SUPERCLASS(RndPollable)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS

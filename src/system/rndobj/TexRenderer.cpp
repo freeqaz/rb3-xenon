@@ -13,6 +13,7 @@
 #include "rndobj/Mesh.h"
 #include "rndobj/Poll.h"
 #include "rndobj/Rnd.h"
+#include "rndobj/Utl.h"
 #include "utl/FilePath.h"
 #include <cmath>
 
@@ -89,12 +90,16 @@ void RndTexRenderer::Save(BinStream &bs) {
     bs << mNoPoll;
 }
 
+DataNode RndTexRenderer::OnGetRenderTextures(DataArray *) {
+    return GetRenderTextures(Dir());
+}
+
 BEGIN_HANDLERS(RndTexRenderer)
     HANDLE_SUPERCLASS(RndAnimatable)
     HANDLE_SUPERCLASS(RndDrawable)
     HANDLE_SUPERCLASS(RndPollable)
     HANDLE_SUPERCLASS(Hmx::Object)
-    HANDLE_EXPR(get_render_textures, 3);
+    HANDLE(get_render_textures, OnGetRenderTextures)
 END_HANDLERS
 
 BEGIN_COPYS(RndTexRenderer)

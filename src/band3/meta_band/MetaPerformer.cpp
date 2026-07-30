@@ -445,9 +445,8 @@ bool MetaPerformer::PartPlaysInSet(Symbol s) const {
 }
 
 bool MetaPerformer::PartPlaysInSong(Symbol s) const {
-    BandSongMetadata *data =
-        (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(Song(), true)
-        );
+    int songID = mSongMgr->GetSongIDFromShortName(Song(), true);
+    BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
     return data && data->HasPart(s, false);
 }
 
@@ -497,9 +496,8 @@ bool MetaPerformer::SetlistHasVocalHarmony() const {
 bool MetaPerformer::SetHasMissingPart(Symbol s) const {
     for (std::vector<Symbol>::const_iterator it = mSongs.begin(); it != mSongs.end();
          ++it) {
-        BandSongMetadata *data =
-            (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(*it, true)
-            );
+        int songID = mSongMgr->GetSongIDFromShortName(*it, true);
+        BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
         if (data && !data->HasPart(s, false))
             return true;
     }

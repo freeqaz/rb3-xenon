@@ -29,9 +29,15 @@ public:
     virtual void SetSlipSpeed(float) = 0;
     virtual float GetSlipOffset() = 0;
     virtual void SetFXSend(class FxSend *) {}
-    virtual int GetPlayCursor() = 0;
+    // RB3-360 retail vtable order: PauseImpl @0x30, PlayImpl @0x34, GetPlayCursor
+    // @0x38 -- verified against the target binary (StreamReceiver::Stop dispatches
+    // slot 0x30, and the retail StreamReceiver::Play at 0x8272A3C0 dispatches 0x30
+    // then 0x34). DC3 hoisted GetPlayCursor above PauseImpl, shifting both by one
+    // slot. rb3-Wii's StreamReceiver has the same PauseImpl/PlayImpl/GetPlayCursor
+    // relative order as RB3-360, corroborating that DC3 is the one that moved it.
     virtual void PauseImpl(bool) = 0;
     virtual void PlayImpl() = 0;
+    virtual int GetPlayCursor() = 0;
     virtual void StartSendImpl(unsigned char *, int, int) = 0;
     virtual bool SendDoneImpl() = 0;
 #ifdef HX_NATIVE

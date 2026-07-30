@@ -220,7 +220,10 @@ void Player::PollMultiplier() {
             }
             unk274 = i1;
         }
-        if (TheGame->unkdc == -1.0f) {
+        // Retail materializes the bool (li 1 / mr from the shared zero / clrlwi.)
+        // rather than branching on the fcmpu directly -- i.e. the inlined
+        // InRollback() accessor, not a raw `unkdc == -1.0f` compare.
+        if (!TheGame->InRollback()) {
             unk2b8 += i1 * i3;
             unk2bc++;
         }
