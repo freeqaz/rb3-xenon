@@ -1,13 +1,13 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,169 strict-matched functions / honest proxy 39,659 /
-`matched_code_percent` 34.824646** (honest = matched − masked_equal, per the BO-8
+**Current: 41,171 strict-matched functions / honest proxy 39,661 /
+`matched_code_percent` 34.825665** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions, `total_functions`
-69,367; `matched_code` 3,684,460 B; `masked_equal` 1,510). Measured in a clean
+69,367; `matched_code` 3,684,568 B; `masked_equal` 1,510). Measured in a clean
 worktree with both legs same-split, not summed from lane deltas — this figure is
-a direct measurement of `7b28bbc0` (lane BY-1) on top of `e402f16c`, which was
-itself the measured BX-1 **+** BX-2 total of 41,168 / 39,658 / 34.820637.
+a direct measurement of `273066ce` (lane BY-2) on top of `66697375`, whose own
+41,169 / 39,659 / 34.824646 was reproduced **exactly** as this landing's leg A.
 
 > ⬇ **Part of that number is a DELIBERATE −3.** Lane BX-1 (`344ebc69`) deleted
 > three map rows that were awarding credit for functions retail does not contain:
@@ -633,6 +633,80 @@ itself the measured BX-1 **+** BX-2 total of 41,168 / 39,658 / 34.820637.
 > `mMotionParent` (0x268) is `ObjOwnerPtr<RndTransformable>`, which retail
 > **inlines**, but our ctor is declared out-of-line (`ObjPtr_p.h:302`) and the
 > define does not govern it. Inferred from layout + retail stream only.
+
+> **Lane BY-2 `273066ce` (2026-07-30) — +2 honest, +0.001019pp code,
+> `masked_equal` FLAT at 1510.** A/B'd in a fresh worktree off `66697375`; both
+> legs same-split (`symbols.txt` restored, `report.cache`+`report.json` removed,
+> `config.yml` touched on **both** legs because this lane *changes* splits) ⇒
+> `total_functions` 69367 on both, and leg A reproduced main's published headline
+> to the digit.
+>
+> | | matched | masked_equal | honest | code% | matched_code |
+> |---|---|---|---|---|---|
+> | base `66697375` | 41169 | 1510 | 39659 | 34.824646 | 3684460 |
+> | +BY-2 `273066ce` | **41171** | 1510 | **39661** | **34.825665** | **3684568** |
+>
+> The +2 is a compound: **+3** from a splits boundary move plus map rows, **−1**
+> from deleting a false-credit row.
+>
+> ★★★ **A splits boundary move ALONE pays +0 — the MAP ROWS are what convert it
+> into matches.** Three functions at DrumPlayer's `.text` tail belong to
+> `MercurySwitchFilter.cpp` (`fn_8279E578` 16 B `??1MercurySwitchFilter@@`,
+> `fn_8279E588` 68 B `??_GMercurySwitchFilter@@`, `fn_8279E5D0` 32 B
+> `?Reset@AnySignMercurySwitchFilter@@`, all identified map-independently from
+> `band.exe`). Moving the boundary measured **+0** as its own leg: the target
+> symbols are anonymous `fn_*` and objdiff's byte fallback did not pair them. The
+> lane measured that rather than assuming it — **any future splits-only lane
+> should budget +0 unless it ships map rows in the same landing.** Per-unit byte
+> attribution, reproduced exactly on the landing: DrumPlayer 9/12 848/964 →
+> **9/9 848/848 (now a 100% unit)**; MercurySwitchFilter 8/12 948/1264 → 11/15
+> 1064/1380, **+116 = 16+68+32**.
+>
+> ★★★ **dtk OVER-SPLIT one function into three, and a `return NULL` tail was
+> being scored as a matched virtual method.** `"0x8232aec0":
+> "?IsDirPtr@ObjRefOwner@@UAA_NXZ"` was **live false credit** — the renamer
+> applied it and the report scored the fragment fuzzy 100.0. BX-1 left it as
+> undecidable because an 8-byte `li r3,0; blr` body is too generic for byte
+> identity (41 candidate homes); it is now **disproven, not merely unproven**:
+> 0 vtable slots, 0 `bl` call sites across 10.3 MB of `.text`, and 0 occurrences
+> of the address anywhere in the 14 MB `band.exe` (all sections, unaligned) while
+> positive controls fire. The real function starts at `0x8232AE70`; `0x8232AEC0`
+> is literally its `return NULL` tail. BandWardrobe 238/270 22076 → 237/270 22068
+> (**−8** = the fragment).
+>
+> ★★ **A map DELETE is a silent no-op without a re-split** (the renamer bakes the
+> name into the target obj), so it was proven post-split two ways: the class-2
+> *definition* in the BandWardrobe target obj at val `0x220` reads
+> `fn_8232AEC0` instead of the mangled name, and a sweep of **all 3,917 live
+> target objs** finds **zero** remaining occurrences. ⚠ A naive `strings` grep
+> still shows one hit in `obj/auto_03_8232A52C_text.obj` — that file is a **dead
+> leftover** (no `splits.txt` heading, absent from `report.json`, mtime from the
+> previous day), a reminder that the obj dir outlives the split set.
+>
+> **Build-neutral third item:** `scripts/harvest/anon_reloc_cmp.py`'s `SHAPE`
+> defect is fixed — a one-sided relocation offset was scored a contra regardless
+> of *which* side was missing, but a missing TARGET side is not evidence (target
+> relocs are recovered from dtk's printed asm, and absence of a dtk label is not
+> absence of a branch). On 19,048 established pairings: 25 affected (0.13%), **all
+> 25 REJECT → ACCEPT**; whole-population REJECTs **83 → 58 (−30%)**. POS precision
+> **100.00% → 100.00%** (3,733 correct, 0 wrong); NEG harmful 221 → 222, the one
+> new plant being the documented BandLabel/HamLabel sibling twin, which correctly
+> refuses as *ambiguous* when truth is present. `pool` output **byte-identical**
+> (`xbranch` deliberately kept out of `relocs` so candidate selection and every
+> calibrated number stay valid). ➡ **YIELD ZERO, measured not assumed** — the
+> 628-row sweep is SHIP=0 before *and* after; this fixed REJECT **accounting**
+> only. A new `selftest` subcommand pins both failure modes.
+>
+> ➡ **Carried forward, unworked:** `tt_compare` has the **same defect family**
+> and was deliberately NOT fixed — it byte-compares `masked`, and unlabelled
+> branch words aren't masked, so ICF twins at different VAs read DIFF; it feeds
+> the CONTESTED clause that refuses all 25 of fixture A, and **loosening it is the
+> false-credit direction, needing its own control run**. `shape_t` (68
+> occurrences) is now the largest residual false-reject cause.
+> `reloc_disc/reloclib.py` untouched on purpose (its 99.41% gate is calibrated on
+> the old label-trusting behaviour). Still unlocated: where
+> `ObjRefOwner::IsDirPtr` actually lives in retail (the "41 homes" problem), and
+> the `Object.h` `ObjRefOwner` source divergence (~281-TU PCH blast radius).
 
 > **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
 > `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
