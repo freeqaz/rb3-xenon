@@ -1,10 +1,27 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,925 strict-matched functions / honest proxy 39,408 /
-`matched_code_percent` 34.47950** (honest = matched − masked_equal, per the BO-8
+**Current: 40,936 strict-matched functions / honest proxy 39,419 /
+`matched_code_percent` 34.49724** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
-exactly). Denominator is the whole TU5 XEX (~69k functions). Measured directly
-on main `3384ec22` in a clean worktree, not summed from lane deltas.
+exactly). Denominator is the whole TU5 XEX (~69k functions). Measured in a clean
+worktree with both legs same-split, not summed from lane deltas.
+
+> **Wave BT — branch harvest of 248 unmerged branches (2026-07-30).**
+> `08047ec1` lane BT-3: **+11 honest, +0.0177pp code, masked_equal flat.**
+> ★ **The vein is real but the obvious selection axis is wrong.** BT-2 swept the
+> 37 branches with ≥5 changed files — billed as highest-signal — found **0**, and
+> recommended defunding the rest. BT-3 then covered all **164** low-file-count
+> branches and found the +11. The yield was **not in source**: it was map
+> fragments, which correlate with neither branch size nor recency.
+> ★ BT-3's method is the reusable part: **invert the index** — compute the
+> (branch, file) candidate set once and group **by file**, collapsing 164 branch
+> questions into ~130 content questions. Full coverage in 6 builds.
+> ⛔ **`git diff main..<branch>` is worthless for this job** — it reports
+> everything main gained since the branch point as a "difference". Use the
+> branch's own patch (`merge-base..branch`), then per-file blob comparison, and
+> even then expect supersession to be the common case.
+> ⛔ **Drained by BT-1:** the 2,262-line StorePackedMetadata port can never score
+> (Wii-only subsystem, absent from retail — see `src/system/meta/StorePackedMetadata.h`).
 
 > ★★ **QUOTE BOTH AXES — the function count alone is now actively misleading.**
 > A one-worktree, one-split A/B of the second session's `3384ec22` over
