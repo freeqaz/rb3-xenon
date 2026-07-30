@@ -1,0 +1,15 @@
+{
+ "0x82309b20": "?ClassName@TrackPanelDir@@UBA?AVSymbol@@XZ",
+ "0x8230e7f0": "??$_Copy_Construct@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@YAXPAVPracticeSectionMapping@SongSectionController@@ABV12@@Z",
+ "0x8233d300": "?ClassName@BandList@@UBA?AVSymbol@@XZ",
+ "0x82359cb0": "?HasQuestFilter@QuestManager@@QBA_NVSymbol@@@Z",
+ "0x82359cd8": "?HasFixedSetlist@QuestManager@@QBA_NVSymbol@@@Z",
+ "0x82359d00": "?HasQuest@QuestManager@@QBA_NVSymbol@@@Z",
+ "0x8238c548": "?ClassName@CharLipSyncDriver@@UBA?AVSymbol@@XZ",
+ "0x823b9360": "?ClassName@CharWeightSetter@@UBA?AVSymbol@@XZ",
+ "0x8244ffa8": "?ClassName@RndPartLauncher@@UBA?AVSymbol@@XZ",
+ "0x82481328": "?ClassName@RndMultiMeshProxy@@UBA?AVSymbol@@XZ",
+ "0x826bc2d8": "?GetBaseBonusPoints@GemPlayer@@UBAHXZ",
+ "0x826bc308": "?GetBaseMaxStreakPoints@GemPlayer@@UBAHXZ",
+ "0x826bc338": "?GetBaseMaxPoints@GemPlayer@@UBAHXZ"
+}
