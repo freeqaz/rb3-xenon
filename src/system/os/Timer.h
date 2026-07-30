@@ -316,7 +316,26 @@ private:
     static std::list<std::pair<Timer, TimerStats> > sTimers;
 };
 
-#ifdef MILO_DEBUG
+// Retail RB3 compiled this profiling instrumentation OUT.  Evidence (laneBS4,
+// 2026-07-30), from the retail binary rather than from either source oracle:
+//
+//  1. A whole-`.text` scan of orig/45410914/band.exe decodes 197,239 `bl`
+//     instructions; exactly THREE target AutoTimer::GetTimer (0x82511A28).
+//     Two are inside Rnd::UpdateRate -- Rnd.cpp writes `AutoTimer::GetTimer()`
+//     by hand (the "cpu"/"draw"/"overlays" statics), NOT through this macro --
+//     and one is in an unpinned Rnd_Xbox tail.  This tree has ~45 macro sites
+//     in 28 TUs; if the macro had expanded, retail would show ~45+ callers.
+//  2. 27 of the 28 distinctive timer-name string literals ("char_poll",
+//     "psysmove", "crowd_iter", "hud_track_poll", ...) are absent from retail's
+//     .rdata.  The lone "faceservo" hit is the milo object path
+//     "face.faceservo", not the timer symbol.  (Positive controls fire:
+//     "CharHair" 3, "Crowd" 15, "spotlight" 22.)
+//
+// src/macros.h force-defines MILO_DEBUG tree-wide so the MILO_ASSERT family
+// stays live; that unconditionally switched this instrumentation on too.  Keep
+// the real macro for the native build, compile it out for the matching build.
+// (TrackPanel.cpp carried a hand-rolled per-TU version of this same override.)
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 #define START_AUTO_TIMER_CALLBACK(name, func, context)                                   \
     static Timer *_t = AutoTimer::GetTimer(name);                                        \
     AutoTimer _at(_t, 50.0f, func, context)
