@@ -13,6 +13,43 @@
 // tree only carries in trimmed form; widening it would ripple across the other
 // pinned Store TUs (header edits are the #1 cross-TU regression source). Keep
 // this minimal and offset-faithful.
+//
+// ── DRAINED VEIN (lane BT-1, 2026-07-30). Do not re-port the packed family. ──
+// A 2,014-line meta/StorePackedMetadata.cpp + 248-line
+// band3/meta_band/StoreOfferContentsProvider.cpp were ported from the rb3-Wii
+// DEV oracle and preserved at commit f69d26fa (tag
+// salvage-storepackedmetadata-20260730). Evaluated and rejected:
+//
+//   * The packed-metadata subsystem DOES NOT EXIST in RB3-360 retail. Tested
+//     against orig/45410914/band.exe with exact-match `strings`, controls
+//     passing (marquee_path/play_preview/dlc_store/`dlc_store/%s/dlc_upsell_
+//     %s_%s.dta` all found): all 4 StoreMetadataManager handler tokens absent
+//     (check_content_size, debug_download, debug_purchase, exit_error); 9 of 11
+//     StoreOfferContentsProvider handler tokens absent (only the generic
+//     build_list/clear_list hit, used elsewhere); all 4 path format strings
+//     absent (`/preview_art/%s_nomip.png_%s`, `/preview_audio/%s_prev.bik`,
+//     `/album_art/UGC_%d_keep.png_%s`, `/audio_prev/UGC_%s_prev.bik`);
+//     `ECContentCatalogInfo`, `Store: file %s is missing`, `%sversion` absent.
+//     autoid.json proposes 0 clusters for either file (21 for StoreOffer).
+//     Retail's store is DTA/marketplace-driven (`ml_store_*`, dlc_upsell dta),
+//     not the Wii packed-binary blob + EC_*/NAND stack the port re-declares.
+//     => No .text span exists to pin. These TUs can never score.
+//
+//   * Measured anyway on 3384ec22 in a worktree: the port COMPILES clean on
+//     current main, and both objs build (256 KB / 71 KB) -- but
+//     Delta(matched_functions - masked_equal_functions) = 0, matched_code = 0.000,
+//     because both units are unpinned (the salvage's splits.txt diff is four
+//     blank lines, zero pins).
+//
+//   * Useful negative: widening this header is metric-NEUTRAL. The cascade was
+//     verified to fire (all 5 pinned includers -- BandStorePanel,
+//     SetlistToStorePanel, StoreMenuPanel, TokenRedemptionPanel, StoreMainPanel
+//     -- actually recompiled) and the metric did not move. So the "would ripple
+//     across the other pinned Store TUs" warning above is over-cautious for a
+//     pure widening; it is still true that the widening buys nothing.
+//
+// Live frontier nearby, if you want one: meta/StoreOffer.cpp (the real 360
+// DataArray store family) is compiled but UNPINNED, with 21 autoid proposals.
 
 class StoreMarqueeTable {
 public:
