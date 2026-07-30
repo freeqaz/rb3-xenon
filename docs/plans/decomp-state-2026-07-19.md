@@ -2359,15 +2359,39 @@ chase them. ⚠ This also *caps* specific targets: `BandCharacter::SyncProperty`
 (1,560 B) has just 2 replaces but **one is the toolchain-dead `extsb.`/`cmplwi`**,
 so it can never reach 100 — do not fund it.
 
-**2. ★★★ `comm_swap` REFUTED at the mechanism level (42 fns / 32,412 B /
-0.3064 pp) — do not re-hunt.** The pool's single biggest byte prize,
-`NextSongPanel::CountOrCreateExpandedDetails` (12,220 B, 2 diffs), contains **50
-sites of the identical construct** `ptr.Node(count++) = DataArrayPtr(...)`: we
-emit `add r3,r28,r11` at all 50, **retail emits it at 48 and swaps at 2**.
-**Retail is self-inconsistent across identical source**, so no source form can
-reproduce it. 8 of the 42 have an in-function control and **all 8** show this
-(17,856 B = 55% of the pool proven dead). This supersedes the earlier
-*statistical* refutation — it is now the mechanism.
+**2. ★★★ `comm_swap` REFUTED (42 fns / 32,412 B / 0.3064 pp) — do not re-hunt.**
+Closed twice over, and **re-verified under the correct compiler by lane CB-1
+(2026-07-30) — the 10224 flip is completely INERT here**: 0 of 42 functions
+changed in *either* direction, with the same 61 mismatched instruction indices
+and the same argument strings, function for function, under both compilers
+(both legs built in one worktree at one commit, split frozen, `@comp.id`
+verified per leg: `0xAB27F0` vs `0xAB2E6E`). So **none of the flip's +26 came
+from this pool**, and the 0.3064 pp stays dead.
+
+⚠ **CB-1 also corrected this entry's own evidence — the original claim was ~10×
+thinner than it read.** The flagship `NextSongPanel::CountOrCreateExpandedDetails`
+(12,220 B, 2 diffs) does contain 50 `add r3,…` sites, but they are **not one
+population**: **45 use the pair `(r10, r11)` and are equal on both sides**, so
+they are a *different regalloc shape* (fresh `count*8` in r10 vs a
+strength-reduced byte-offset induction variable in r28) and carry **no**
+information about operand commutativity. The real discriminating population is
+**5 sites, split 2 swapped / 3 not** — not 48/2 over 50. "48 of 50 agree" reads
+as overwhelming; the actual evidence was five sites. ★ Lesson: **state the
+discriminating population, not the site count** — see
+`feedback_site_count_is_not_defect_count` (fan-out is blast radius, never yield).
+
+★★★ **The durable argument is source-side, not target-side.** BZ-1 argued from
+retail (self-inconsistent ⇒ unreproducible), which depends on retail's
+nondeterminism and was weakened by the corrected population size. CB-1's
+argument does not: all 50 sites are literally `ptr.Node(count++) =
+DataArrayPtr(...)` with zero spelling variation, and `DataArrayPtr::Node` (
+`src/system/obj/Data.h:772`) is a **single** forwarding body onto
+`DataArray::Node` (`:506`), which is a single body reducing to `return
+mNodes[i]`. **One inline body ⇒ one operand order ⇒ all 5 sites flip together,
+but retail needs two.** No source edit can produce both. (Coordinator verified
+both bodies independently.) The only lever that changes the order at all —
+`i[mNodes]` for `mNodes[i]` — trades the 2 gained for the 3 lost *in this
+function alone*, with every `Node()` caller in the binary as blast radius.
 
 ## Method (stable)
 Fable coordinator delegates to Opus agents in `scripts/setup_worktree.sh`
