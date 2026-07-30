@@ -157,13 +157,12 @@ BEGIN_PROPSYNCS(InlineHelp)
 END_PROPSYNCS
 
 BEGIN_SAVES(InlineHelp)
-    SAVE_REVS(5, 0)
+    SAVE_REVS(4, 0)
     bs << mHorizontal;
     bs << mSpacing;
     bs << mConfig;
     bs << mTextColor;
     bs << mUseConnectedControllers;
-    bs << mResourceDir;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 

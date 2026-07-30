@@ -137,7 +137,7 @@ BEGIN_PROPSYNCS(UIList)
 END_PROPSYNCS
 
 BEGIN_SAVES(UIList)
-    SAVE_REVS(0x15, 0)
+    SAVE_REVS(0x13, 0)
     SAVE_SUPERCLASS(UIComponent)
     // RB3 retail (rb3-Wii oracle): mListDir is a raw pointer recovered from the
     // resource dir at load time, NOT serialized here (DC3's ResourceDirPtr
@@ -159,7 +159,6 @@ BEGIN_SAVES(UIList)
     bs << mExtendedMeshEntries;
     bs << mExtendedCustomEntries;
     SaveHandlerData(bs);
-    bs << mLimitCircularDisplayNumToDataNum;
 END_SAVES
 
 BEGIN_LOADS(UIList)

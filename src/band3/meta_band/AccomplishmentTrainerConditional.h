@@ -11,7 +11,7 @@ class AccomplishmentTrainerConditional : public Accomplishment {
 public:
     AccomplishmentTrainerConditional(DataArray *, int);
     virtual ~AccomplishmentTrainerConditional();
-    virtual bool ShowBestAfterEarn() const;
+    virtual unsigned char ShowBestAfterEarn() const;
     virtual void UpdateIncrementalEntryName(UILabel *, Symbol);
     virtual bool InqProgressValues(BandProfile *, int &, int &);
     virtual bool IsSymbolEntryFulfilled(BandProfile *, Symbol) const;

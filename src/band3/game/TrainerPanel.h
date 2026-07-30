@@ -81,6 +81,7 @@ public:
     int FixupTick(int) const;
     int GetSectionLoopEnd(int) const;
     void ResetChallenge();
+    bool ChallengeSuccess() const;
     Symbol GetChallengeRestriction(int);
     void SetProgressMeterShowing(bool);
     void InternalInitSections(const DataEventList *);

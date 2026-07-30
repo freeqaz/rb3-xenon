@@ -121,9 +121,12 @@ void FileMergerOrganizer::FailedLoading(Loader *l) {
     for (std::list<OrganizedFileMerger>::iterator it = mOrganizedFileMergers.begin();
          it != mOrganizedFileMergers.end();
          ++it) {
-        if (it->merger->mCurLoader && it->merger->mCurLoader == l) {
-            org = &*it;
-            break;
+        if (it->merger->mCurLoader) {
+            bool isMatch = it->merger->mCurLoader == l;
+            if (isMatch) {
+                org = &*it;
+                break;
+            }
         }
     }
     MILO_ASSERT(org, 0x173);

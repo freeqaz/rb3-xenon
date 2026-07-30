@@ -255,8 +255,8 @@ void BandSongMgr::GetContentNames(Symbol s, std::vector<Symbol> &vec) const {
     int songID = GetSongIDFromShortName(s, false);
     if (mUpgradeMgr->HasUpgrade(songID)) {
         const char *contentName = mUpgradeMgr->ContentName(songID);
-        MILO_ASSERT(contentName, 0x18C);
-        if (!streq(contentName, ".")) {
+        // Retail emits a real null test here (mr. r4,r3 / beq), not an assert.
+        if (contentName && !streq(contentName, ".")) {
             vec.push_back(contentName);
         }
     }

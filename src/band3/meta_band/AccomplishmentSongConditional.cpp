@@ -261,7 +261,7 @@ bool AccomplishmentSongConditional::IsSymbolEntryFulfilled(BandProfile *profile,
     }
 }
 
-bool AccomplishmentSongConditional::ShowBestAfterEarn() const { return false; }
+unsigned char AccomplishmentSongConditional::ShowBestAfterEarn() const { return false; }
 
 void AccomplishmentSongConditional::InitializeTrackerDesc(TrackerDesc &desc) const {
     // 13 function-local statics in the target, of which only the first five

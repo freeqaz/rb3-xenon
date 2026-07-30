@@ -124,7 +124,18 @@ public:
 
 extern LoadMgr TheLoadMgr;
 
+// rb3-Wii guards this with #ifdef MILO_DEBUG; retail builds take the `false`
+// arm.  src/macros.h force-defines MILO_DEBUG tree-wide so the MILO_ASSERT
+// family stays live, which unconditionally switched this editor check on too --
+// the same trap already documented for START_AUTO_TIMER_CALLBACK in os/Timer.h,
+// and handled the same way: keep the real check for the native build, compile
+// it out for the matching build.  Retail codegen confirms it (EndingBonus::
+// SetScore inlined into EndingBonus::Handle has no TheLoadMgr.EditMode() test).
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 #define LOADMGR_EDITMODE TheLoadMgr.EditMode()
+#else
+#define LOADMGR_EDITMODE false
+#endif
 
 class FileLoader;
 typedef void (FileLoader::*FileLoaderStateFunc)(void);

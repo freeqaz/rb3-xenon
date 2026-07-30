@@ -277,25 +277,19 @@ int MidiParser::ParseAll(GemListInterface *gems, std::vector<VocalEvent> &text) 
         int startTick = INT_MAX;
         int loc48, loc4c, loc50;
         if (mVocalEvents) {
-            if (mVocalIndex < mVocalEvents->size()) {
-                int vocalTick = (*mVocalEvents)[mVocalIndex].mTick;
-                if (vocalTick < startTick) {
-                    startTick = vocalTick;
-                    which = 0;
-                }
+            if (mVocalIndex < mVocalEvents->size()
+                && MinEq(startTick, (*mVocalEvents)[mVocalIndex].mTick)) {
+                which = 0;
             }
         }
         if (mNoteParser) {
-            if (mNoteIndex < mNotes.size()) {
-                Note &curNote = mNotes[mNoteIndex];
-                int noteTick = curNote.startTick;
-                if (noteTick < startTick) {
-                    startTick = noteTick;
-                    which = 1;
-                }
+            if (mNoteIndex < mNotes.size()
+                && MinEq(startTick, mNotes[mNoteIndex].startTick)) {
+                which = 1;
             }
         }
-        if (mGems && mGems->GetGem(mGemIndex, loc48, loc4c, loc50) && loc48 < startTick) {
+        if (mGems && mGems->GetGem(mGemIndex, loc48, loc4c, loc50)
+            && MinEq(startTick, loc48)) {
             which = 2;
         }
         if (which == 0) {

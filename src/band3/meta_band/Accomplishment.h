@@ -33,7 +33,7 @@ public:
     Accomplishment(DataArray *, int);
     virtual ~Accomplishment();
     virtual AccomplishmentType GetType() const;
-    virtual bool ShowBestAfterEarn() const;
+    virtual unsigned char ShowBestAfterEarn() const;
     virtual void UpdateIncrementalEntryName(UILabel *, Symbol) { MILO_ASSERT(false, 109); }
     virtual bool IsFulfilled(BandProfile *) const;
     virtual bool IsRelevantForSong(Symbol) const;

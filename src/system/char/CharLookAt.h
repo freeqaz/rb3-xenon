@@ -43,11 +43,13 @@ public:
         const ObjPtr<RndTransformable> &ptr = mSource ? mSource : mPivot;
         return ptr;
     }
-    // NOTE: dc3-lineage CharLookAt has no separate mDest member (RB3-Wii layout
-    // had mDest@0x40). Provide GetDest() returning the source/pivot so the
-    // BandCharacter port compiles; the head/neck-lookat target plumbing is a
-    // dc3-vs-RB3 layout divergence (see port notes).
-    RndTransformable *GetDest() const { return GetSource(); }
+    // dc3 RENAMED rb3-Wii's `mDest` to `mTarget`; it was never dropped. The
+    // compiler layout report puts mTarget at 0x40 (mSource 0x28, mPivot 0x34),
+    // matching the rb3-Wii oracle exactly, and retail's BandCharacter::Poll
+    // loads the ObjPtr's object word at 0x48 == 0x40+8. The old
+    // `return GetSource()` alias made us emit GetSource's two-way
+    // mSource?mSource:mPivot select instead of retail's single load.
+    RndTransformable *GetDest() const { return mTarget; }
 
 protected:
     CharLookAt();

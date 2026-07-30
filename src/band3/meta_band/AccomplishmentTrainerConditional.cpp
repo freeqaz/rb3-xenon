@@ -97,7 +97,7 @@ bool AccomplishmentTrainerConditional::IsSymbolEntryFulfilled(
     return CheckConditionsForLesson(profile, param_2);
 }
 
-bool AccomplishmentTrainerConditional::ShowBestAfterEarn() const { return false; }
+unsigned char AccomplishmentTrainerConditional::ShowBestAfterEarn() const { return false; }
 
 bool AccomplishmentTrainerConditional::CanBeLaunched() const { return true; }
 // laneO-wrongunit scatter-include (AccomplishmentTrainerConditional <-

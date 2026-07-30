@@ -59,7 +59,6 @@ void StoreMainPanel::FinishLoad() {
     static Symbol crossfade_duration("crossfade_duration");
     mDisplayRate = TypeDef()->FindArray(display_rate, true)->Float(1);
     mCrossfadeDuration = TypeDef()->FindArray(crossfade_duration, true)->Float(1);
-    ParseConfigData();
 }
 
 void StoreMainPanel::Poll() {

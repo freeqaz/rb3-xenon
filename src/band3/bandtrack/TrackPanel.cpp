@@ -632,7 +632,13 @@ void TrackPanel::Poll() {
         }
     }
     if (!wasSoloing && soloing) {
-        static Message hide_msg("hide");
+        // Retail has TWO function-local statics sharing one guard word: a Symbol
+        // (guard bit 0x1, no atexit -- Symbol is trivially destructible) and a
+        // Message built from it (guard bit 0x2, with the ??__F atexit thunk).
+        // `static Message hide_msg("hide")` instead builds the Symbol as a stack
+        // temporary under a single guard bit.
+        static Symbol hide("hide");
+        static Message hide_msg(hide);
         SendTrackerBroadcastDisplayMessage(hide_msg);
     }
     unk62 = soloing;

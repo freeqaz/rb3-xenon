@@ -299,7 +299,7 @@ void EntityUploader::RockCentralOpComplete(bool b1, int i2, int i3) {
     if (mState == 3) {
         bool bvar1 = true;
         for (int i = 0; i < mNumUploadOps; i++) {
-            if (i3 == mUploadOps[i]->mOpID) {
+            if (mUploadOps[i]->mOpID == i3) {
                 mUploadOps[i]->mDataResultList.Update(nullptr);
                 auto _tmp0 = mUploadOps[i]->mDataResultList.NumDataResults();
                 if (_tmp0 > 0) {
@@ -315,9 +315,9 @@ void EntityUploader::RockCentralOpComplete(bool b1, int i2, int i3) {
                 }
                 if (i2 != 1 && i2 != 11) {
                     if (mUploadOps[i]->mOpType == 2) {
-                        TourSavable *obj = mUploadOps[i]->mSavableObject;
-                        if (obj)
-                            obj->UploadComplete();
+                        TourCharLocal *obj =
+                            (TourCharLocal *)mUploadOps[i]->mSavableObject;
+                        obj->UploadComplete();
                     }
                     if (mUploadOps[i]->mOpType == 4) {
                         LocalSavedSetlist *setlist =

@@ -476,7 +476,8 @@ bool AccomplishmentPanel::CanNavigateList() const {
 }
 
 bool AccomplishmentPanel::CanLaunchGoal() const {
-    if (mCareerState == kCareerStateGroup || mCareerState == kCareerStateCategory)
+    // Retail tests kCareerStateCategory (2) before kCareerStateGroup (1).
+    if (mCareerState == kCareerStateCategory || mCareerState == kCareerStateGroup)
         return false;
     Symbol selacc = SelectedAccomplishment();
     Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);
@@ -1088,7 +1089,9 @@ bool AccomplishmentPanel::ShouldShowBest() const {
             return false;
         } else {
             Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);
-            return !acc ? false : acc->ShowBestAfterEarn();
+            if (!acc)
+                return false;
+            return acc->ShowBestAfterEarn();
         }
     }
 }

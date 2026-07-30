@@ -44,7 +44,8 @@ public:
 class PatchLayer : public Hmx::Object {
 public:
     PatchLayer();
-    virtual ~PatchLayer() {}
+    // NOTE: no user-declared destructor (implicit dtor omits the vptr store
+    // that retail lacks wherever ~PatchLayer is inlined, e.g. PatchDir::LoadRemote).
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);

@@ -223,7 +223,9 @@ void SongParser::OnEndOfTrack() {
     for (int i = 0; i < mReceivers.size(); i++) {
         mReceivers[i]->OnEndOfTrack();
     }
-    mSink->OnEndOfTrack(mTrack, TrackAllowsOverlappingNotes(mTrackType));
+    mSink->OnEndOfTrack(
+        mTrack, mTrackType == kTrackKeys || mTrackType == kTrackRealKeys
+    );
 }
 
 void SongParser::OnAllTracksRead() {
@@ -1947,7 +1949,9 @@ NoStrumState SongParser::GetNoStrumState(int i, DifficultyInfo &info) {
 }
 
 bool SongParser::TrackAllowsOverlappingNotes(TrackType ty) const {
-    return ty == kTrackVocals || ty == kTrackKeys || ty == kTrackRealKeys;
+    // Retail (X360) tests only kTrackKeys/kTrackRealKeys here — the inlined body
+    // in SongParser::OnEndOfTrack emits exactly two compares (4, 5), no kTrackVocals.
+    return ty == kTrackKeys || ty == kTrackRealKeys;
 }
 
 // fn_8048F728

@@ -55,11 +55,12 @@ BEGIN_PROPSYNCS(CharLipSync)
 END_PROPSYNCS
 
 BEGIN_SAVES(CharLipSync)
-    SAVE_REVS(2, 0)
+    SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mVisemes;
     bs << mFrames;
     bs << mData;
+    bs << mPropAnim;
 END_SAVES
 
 BEGIN_LOADS(CharLipSync)
