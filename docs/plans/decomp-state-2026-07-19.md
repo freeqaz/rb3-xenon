@@ -1,9 +1,22 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 40,910 strict-matched functions / honest proxy 39,400** (= matched −
+**Current: 40,922 strict-matched functions / honest proxy 39,412** (= matched −
 masked_equal, per the BO-8 pricing rule; `build/45410914/report.json`,
 `match_percent_normalized == 100.0` exactly). Denominator is the whole TU5 XEX
-(~69k functions). `matched_code_percent` 34.41247.
+(~69k functions). `matched_code_percent` 34.44971. Measured directly on main
+`e4052850` in a clean worktree, not summed from lane deltas.
+
+> ⚠ **TWO SESSIONS ARE LANDING TO MAIN CONCURRENTLY (2026-07-30).** This
+> headline is +12 above the wave-BS chain below because a second session landed
+> `9af24b12` (+12, eight one-set source fixes) and `b2d54f2f` (+0, three
+> retail-correctness gates) *between* the BS-1 and BS-2 landings. Their commits
+> touch only `src/`; wave BS touched `splits.txt`, the symbol map, tools and
+> docs — **no overlap, verified, nothing clobbered.** But it means a lane's A/B
+> base can go stale mid-wave: always re-measure main directly rather than adding
+> lane deltas to a quoted headline. (Wave BS staged by wholesale-copying
+> `splits.txt`/`target_symbol_map.json` from a worktree based on the older
+> `51e61cf7`; that was safe *only* because the other session touched neither
+> file. Prefer a 3-way merge over a wholesale copy while main is shared.)
 
 > **Wave BS (2026-07-30), verified chain — +11 honest, +12 matched, +0.023pp code.**
 > Every leg measured by the coordinator in a landing worktree, same split within
