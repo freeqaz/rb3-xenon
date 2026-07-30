@@ -21,6 +21,17 @@ void SetlistToStorePanel::Load() {
     MILO_ASSERT(mLoaders.empty(), 0x20);
 }
 
+// Retail X360 wires `load_song_metadata` to a real method (fn_82642B38); the
+// rb3-Wii DEV build's HANDLE_ACTION(load_song_metadata, 0) is a stub.  The
+// retail body kicks off the metadata net-loaders (fn_826429A0, not yet ported --
+// it is outside this unit's pinned span so it is unscored) and then seeds
+// mAllMetadata with a one-element `offers` array.
+void SetlistToStorePanel::LoadSongMetadata() {
+    static Symbol offers("offers");
+    mAllMetadata = new DataArray(1);
+    mAllMetadata->Node(0) = DataArrayPtr(DataNode(offers));
+}
+
 void SetlistToStorePanel::Poll() { UIPanel::Poll(); }
 
 void SetlistToStorePanel::GetSongsFromMusicLibrary() {
@@ -62,7 +73,7 @@ void SetlistToStorePanel::Unload() {
 
 BEGIN_HANDLERS(SetlistToStorePanel)
     HANDLE_ACTION(get_songs_from_music_library, GetSongsFromMusicLibrary())
-    HANDLE_ACTION(load_song_metadata, 0)
+    HANDLE_ACTION(load_song_metadata, LoadSongMetadata())
     HANDLE_SUPERCLASS(UIPanel)
     HANDLE_CHECK(0xE3)
 END_HANDLERS

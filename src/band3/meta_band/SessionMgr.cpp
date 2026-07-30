@@ -332,9 +332,16 @@ DataNode SessionMgr::OnMsg(const NewRemoteUserMsg &msg) {
     Export(msg, true);
     if (TheCharSync)
         TheCharSync->UpdateCharCache();
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 stripped this dev-only block. Verified against the decompressed
+    // retail PE (orig/45410914/band.exe): SessionMgr::OnMsg(NewRemoteUserMsg)
+    // (0x82587A98, 232 bytes) contains no ??0Symbol@@QAA@PBD@Z / DataVariable /
+    // SendJunkPatchesToUser call at all -- objdiff shows the whole 14-instruction
+    // block as base-only, plus the +0x10 frame it costs.
     if (DataVariable("send_fake_patches").Int()) {
         SendJunkPatchesToUser(user);
     }
+#endif
     return 0;
 }
 

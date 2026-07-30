@@ -587,11 +587,14 @@ TrackType Campaign::GetRequiredTrackTypeForCurrentAccomplishment() const {
 }
 
 bool Campaign::HasValidUser() const {
+    // Retail's inlined arm is just `GetUser() != NULL` -- there is no
+    // TheProfileMgr.GetProfileForUser() call (the target branches where our
+    // build emits a `bl`).
     LocalBandUser *u = GetUser();
     if (!u)
         return false;
     else
-        return TheProfileMgr.GetProfileForUser(u);
+        return true;
 }
 
 LocalBandUser *Campaign::GetLaunchUser() const {
@@ -958,7 +961,13 @@ BEGIN_HANDLERS(Campaign)
         is_user_on_last_campaign_level,
         IsUserOnLastCampaignLevel(_msg->Obj<LocalBandUser>(2))
     )
-    HANDLE_EXPR(is_primary_user_on_last_campaign_level, IsPrimaryUserOnLastCampaignLevel())
+    // Retail spells this arm out (sret GetPrimaryCampaignLevel() into a Symbol
+    // temp, then the IsLastCampaignLevel tail it shares with the arm above)
+    // rather than calling the IsPrimaryUserOnLastCampaignLevel() wrapper.
+    HANDLE_EXPR(
+        is_primary_user_on_last_campaign_level,
+        IsLastCampaignLevel(GetPrimaryCampaignLevel())
+    )
     HANDLE_EXPR(has_reached_campaign_level, HasReachedCampaignLevel(_msg->Sym(2)))
     HANDLE_EXPR(
         has_score_reached_campaign_level,
@@ -1014,9 +1023,20 @@ BEGIN_HANDLERS(Campaign)
     HANDLE_EXPR(get_category_group, GetCategoryGroup(_msg->Sym(2)))
     HANDLE_EXPR(should_return_to_category_screen, ShouldReturnToCategoryScreen())
     HANDLE_EXPR(get_primary_band_logo_tex, GetPrimaryBandLogoTex())
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 stripped these three cheat handlers. Verified against the
+    // decompressed retail PE (orig/45410914/band.exe): the ordered sequence of
+    // ??0Symbol@@QAA@PBD@Z string args inside Campaign::Handle (0x825A71D8) is
+    // exactly our first 41 entries, ending at `get_primary_band_logo_tex` —
+    // `cheat_next_campaign_level` / `get_cheat_meta_level` / `cheat_reload_data`
+    // are absent. Gate per-TU with /DRB3_STRIP_CHEAT_HANDLERS.
     HANDLE_ACTION(cheat_next_campaign_level, CheatNextMetaLevel())
     HANDLE_EXPR(get_cheat_meta_level, GetCheatMetaLevel())
     HANDLE_ACTION(cheat_reload_data, CheatReloadCampaignData())
+#endif
+    // Retail X360 ships none of the three cheat handlers: the in-COMDAT
+    // local-static Symbol chain of fn_825A71D8 ends at get_primary_band_logo_tex
+    // and none of the three literals occurs anywhere in the image.
     HANDLE_MESSAGE(ProfileSwappedMsg)
     HANDLE_MESSAGE(PrimaryProfileChangedMsg)
     HANDLE_SUPERCLASS(Hmx::Object)
