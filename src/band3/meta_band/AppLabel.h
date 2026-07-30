@@ -26,7 +26,13 @@ class StoreOfferProvider;
 class AppLabel : public BandLabel {
 public:
     AppLabel() {}
-    OBJ_CLASSNAME(AppLabel);
+    // Base-name registration: retail band.exe has no "AppLabel" C string.  The
+    // producer 0x82570428 -- bl'd by SetType@AppLabel, and co-registered with
+    // AppInlineHelp by the meta_band factory at 0x82574e20 -- builds "BandLabel",
+    // this class's base.  NB the literal is NOT the prefix-stripped "Label"
+    // (zero retail bodies build that): DC3's AppLabel likewise repeats ITS own
+    // base, declaring the literal HamLabel.
+    OBJ_CLASSNAME(BandLabel);
     OBJ_SET_TYPE(AppLabel);
     NEW_OBJ(AppLabel);
     virtual DataNode Handle(DataArray *, bool);

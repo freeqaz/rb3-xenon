@@ -35,7 +35,10 @@ class AppMiniLeaderboardDisplay : public MiniLeaderboardDisplay,
 public:
     AppMiniLeaderboardDisplay();
     virtual ~AppMiniLeaderboardDisplay();
-    OBJ_CLASSNAME(AppMiniLeaderboardDisplay)
+    // Base-name registration: retail band.exe has no "AppMiniLeaderboardDisplay"
+    // C string; 0x8264bce8 -- called by ClassName/SetType@AppMiniLeaderboardDisplay
+    // -- builds "MiniLeaderboardDisplay".  DC3's AppMiniLeaderboardDisplay.h agrees.
+    OBJ_CLASSNAME(MiniLeaderboardDisplay)
     OBJ_SET_TYPE(AppMiniLeaderboardDisplay)
     virtual DataNode Handle(DataArray *, bool);
     virtual void DrawShowing();
