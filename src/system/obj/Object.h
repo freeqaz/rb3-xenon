@@ -366,20 +366,62 @@ public:
 };
 #else
 // ObjPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}. mOwner lives
-// in the ObjRefConcrete base; the ring-ref is `this`. ctor/Load are out-of-line
-// (fn_8270B9A8 / fn_8270BAD0): they store all three fields and AddRef(this).
+// in the ObjRefConcrete base; the ring-ref is `this`.
+//
+// The two-arg ctor has an out-of-line body that stores all three fields and
+// conditionally AddRef(this). Verified example (lane BY-1, TU5 image) --
+// retail fn_8229D9C8, the ObjPtr<RndMat> instantiation:
+//     stw r4,0x4(r3)   mOwner = owner
+//     stw r5,0x8(r3)   mObject = ptr
+//     stw r11,0x0(r3)  vtable  (per-T ??_7?$ObjPtr@VT@@@@6B@)
+//     cmplwi r5,0 ; beq ; bl <AddRef>
+// NOTE it is a TEMPLATE: every T gets its OWN out-of-line instantiation (each
+// stores its own per-T vtable, so ICF cannot fold them). There is therefore no
+// single "the" out-of-line ObjPtr ctor address -- scripts/target_symbol_map.json
+// carries 6 distinct ones (0x8229ef00 0x822b9590 0x82311910 0x823bd988
+// 0x823d6a10 0x823daab8). Do not cite one address pair for the family.
+//
+// ⛔ This comment previously cited "fn_8270B9A8 / fn_8270BAD0" as the
+// out-of-line ctor/Load. Those were TU0-era addresses (written 2026-05-30,
+// before the 2026-07-15 TU5 flip) and are INVALID: in the TU5 image 0x8270B9A8
+// is 0x48 bytes INSIDE ??1FaderTask@@QAA@XZ and 0x8270BAD0 is 0x90 bytes inside
+// ?Replace@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@ -- neither is a function
+// entry, let alone an ObjPtr ctor. The prose description was right; only the
+// addresses were stale.
 template <class T>
 class ObjPtr : public ObjRefConcrete<T> {
 protected:
     struct DeferOwner {};
     ObjPtr(DeferOwner, T *ptr) : ObjRefConcrete<T>(nullptr, ptr) {}
 public:
-    // ---- PER-TU: inline owner-only ctor ------------------------------------
-    // Retail's `mFoo(this)` member-init sites expand two ways depending on the
-    // TU: (a) an out-of-line `bl ??0ObjPtr...` (fn_8270B9A8) -- the default
-    // here -- or (b) INLINE to exactly three stores (mOwner@4, mObject@8 = 0,
-    // vtable@0) with no AddRef. Case (b) is visible in the retail
-    // CharNeckTwist / CharEyes / RndParticleSys constructors.
+    // ---- PER-SITE: inline owner-only ctor ----------------------------------
+    // ★★★ Retail's policy is PER-SITE, not per-TU. Proven inside a SINGLE
+    // function (lane BY-1): retail ??0RndParticleSys@@ constructs FOUR
+    // owner-only ObjPtrs and splits them 3 inlined / 1 called --
+    //     +0x1c8 mMeshEmitter  INLINE (three stores)
+    //     +0x1d4 mMat          OUT-OF-LINE (bl fn_8229D9C8 = ObjPtr<RndMat>)
+    //     +0x268 mMotionParent INLINE
+    //     +0x274 mBounce       INLINE
+    // (offsets from cl.exe /d1reportSingleClassLayout, and the callee's T
+    // independently corroborates the member: RndMat at the RndMat slot.)
+    // No per-TU switch can express that.
+    //
+    // THE PER-SITE LEVER, no new machinery required: with the define on,
+    //     mFoo(this)           -> binds the inline one-arg ctor  (three stores)
+    //     mFoo(this, nullptr)  -> binds the two-arg overload, whose body is
+    //                             out-of-class in obj/ObjPtr_p.h and too big
+    //                             for /Ob2 -> a real `bl`.
+    // So a TU picks its MAJORITY policy with the define and each minority site
+    // opts back out by spelling the two-arg overload. Live users: rndobj/Part.cpp
+    // (mMat) and ui/UITrigger.cpp (mCallbackObject) -- the latter is what lets
+    // ?Load@UITrigger@@ AND ??0UITrigger@@ both sit at 100% at the same time,
+    // which the per-TU switch alone could not do (it fixed Load 96.3->100 while
+    // breaking the ctor 100->86.37).
+    //
+    // Retail's `mFoo(this)` sites expand two ways: (a) an out-of-line
+    // `bl ??0ObjPtr...` -- the default here -- or (b) INLINE to exactly three
+    // stores (mOwner@4, mObject@8 = 0, vtable@0) with no AddRef. Case (b) is
+    // visible in the retail CharNeckTwist / CharEyes / RndParticleSys ctors.
     //
     // Splitting the owner-only case into its own body-in-class ctor is what
     // lets MSVC /Ob2 inline it: the two-arg ctor's `if (mObject) AddRef(this)`
@@ -388,7 +430,25 @@ public:
     // Measured whole-binary A/B: applying this GLOBALLY is net -121 (retail
     // mostly does NOT inline), so it is gated per-TU. Define
     // RB3_OBJPTR_INLINE_OWNER_CTOR at the top of a .cpp (before any include)
-    // to opt that TU in. NOTE: only valid for TUs outside the PCH-eligible
+    // to opt that TU in.
+    //
+    // ★ AUDIT (lane BY-1, 2026-07-30): toggle-off A/B of all opt-ins, same
+    // split (total_functions 69367 both legs), whole binary:
+    //   ON  41168 matched / 39658 honest / 34.820637% / 3684036 B
+    //   OFF 41167 matched / 39657 honest / 34.810730% / 3682988 B
+    // i.e. the define is worth exactly +1 fn / +1048 B = ?Load@RndPartLauncher@@,
+    // and a per-UNIT diff shows exactly ONE unit moves. CharEyes and Part are
+    // metric-zero -- but NOT inert (their objs change by 6164/2662 B), so each
+    // was checked against retail's instruction stream rather than the metric:
+    //   CharEyes.cpp   CORRECT -- retail ??0CharEyes@@ has 8 `bl`, none an
+    //                  ObjPtr ctor, while the ctor builds 8 ObjPtr(this) members.
+    //   Part.cpp       CORRECT for 3 of 4 sites; the 4th (mMat) is retail
+    //                  out-of-line and now uses the two-arg spelling above.
+    //   PartLauncher   CORRECT -- reaches 100%, i.e. byte identity with retail.
+    // This is the metric-fitted-build-config check (cf. W9 MILO_MESSAGE_TIMERS):
+    // the define survives it on binary evidence, the granularity did not.
+    //
+    // NOTE: only valid for TUs outside the PCH-eligible
     // dirs (char/, rndobj/, world/, ui/ are PCH-excluded), otherwise the
     // /FI decomp_pch.h include of this header precedes the .cpp's #define.
     // No layout/ABI change either way -- purely an inline-policy switch.
