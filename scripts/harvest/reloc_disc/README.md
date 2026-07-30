@@ -325,3 +325,213 @@ rows in, 3 functions out. The bottleneck is not the discriminator's precision
 (100.00% in-band under the new cut) but **pool supply** — only 16 live rows fall
 in the shippable size band. Future yield must come from enlarging the live pool
 (more pinned units with base objs), not from loosening the gate.
+
+## laneBV3 — the collision channel is METRIC-INERT BY CONSTRUCTION (pool retired)
+
+⛔ **Do not re-hunt the 32 asserted main-map defects, and do not fund a
+collision-repoint wave.** The channel is sound; it simply cannot move either
+priced axis. Mechanism, control, and measurement below.
+
+### 1. Why no collision repoint can ever pay
+
+`report generate` hardcodes `functionRelocDiffs=None`, so a body whose only
+error is *which symbol a relocation points at* scores a clean 100.0 and is
+credited in `matched_functions`. And `masked_equal_functions` does **not**
+disclose it: its only producers are the funclet over-subscription / cross-unit
+byte-promotion paths (`objdiff-core/src/diff/mod.rs:1378,1384`,
+`objdiff-cli/src/cmd/report.rs:846`) — **never** reloc masking. So the at-100%
+reloc-defect class is invisible to `matched_functions`, to
+`masked_equal_functions`, and to `matched_code_percent` alike.
+
+Now note *why* a row reaches a DECISIVE collision verdict at all: two branches
+put the same mangled name at two addresses precisely because those addresses are
+reloc-masked byte twins. A repoint therefore moves the name from one
+100%-scoring twin to another 100%-scoring twin. **Δmatched ≡ 0.**
+
+`repoint_supply.py` (new) proves this per-row **without a build**, from supply
+(does the VA's unit's base obj define the COMDAT?) and outcome (are the masked
+bytes equal?). On the 32:
+
+```
+NEUTRAL_both_match           31
+ZERO_neither_matches          1
+predicted net dmatched = 0
+```
+
+### 2. Measured, at 5.3× laneBT5's scope
+
+All 32 applied (32 deletes + 32 inserts, win-VA free in every case), same-split
+A/B, `symbols.txt` restored + `config.yml` touched + **`report.json` as well as
+`report.cache` removed** on both legs:
+
+| leg | matched | masked_equal | honest | code% |
+|---|---|---|---|---|
+| A (baseline) | 40953 | 1518 | 39435 | 34.513645 |
+| B (32 rows)  | 40953 | 1518 | 39435 | 34.513645 |
+| **Δ** | **0** | **0** | **0** | **0.000000** |
+
+Not a silent no-op: 13 symbols demonstrably changed unit in `report.json`
+(e.g. `?SetType@RndPropAnim@@` MetaMusic→PropAnim, the `PAPAVCamShot` quartet
+MoveMgr→CameraManager), and `?SetType@PracticeSection@@` went **0.0% → 99.8%**.
+The edit was live and still moved nothing. laneBT5's flat reading on 6 rows was
+the whole pool's behaviour, not bad luck. **The map change was reverted.**
+
+### 3. Truth-ablation control for this channel (`collision_ablation.py`)
+
+`collision_control.py` is truth-PRESENT (true address vs one decoy). Per the
+laneBU4 lesson, that cannot say how the channel behaves when *neither* rival is
+right — which is exactly what an asserted main-map defect claims. New arm:
+adjudicate between **two decoys** drawn from the anchor's byte-twin pool, truth
+removed by construction; any DECISIVE verdict is a false plant. Both arms share
+the tier logic, and anchors are required to be relocation-consistent first.
+
+| cut | POS n / correct / prec | NEG trials | plants | plant-rate |
+|---|---|---|---|---|
+| agree≥1 | 2558 / 2558 / **100.00%** | 2769 | 15 | 0.54% |
+| agree≥2 | 973 / 973 / 100.00% | 2769 | 1 | 0.04% |
+| agree≥3 | 625 / 625 / 100.00% | 2769 | 0 | **0.00%** |
+
+Refusal here is structurally sound: with truth absent, the COMDAT's relocations
+point at the true callees, so *both* decoys take `contra>0` → `ALL_CONTRA`.
+(The POS arm reads 100.00% where laneBT5 read 98.73%; the difference is the
+added anchor-consistency filter, which suggests BT-5's 28 "false flips" were
+mostly its own premise failing, not the discriminator.)
+
+### 4. ⚠ …and that control is still OPTIMISTIC — a real agree=5 false plant
+
+`?SetType@PracticeSection@@` was asserted at `0x823c7960` with **agree=5**, a cut
+where the table above says 0.00%. It is **wrong**: that body calls
+`fn_8236A8A8`, whose local-static string decodes to `"CharTransCopy"`, so it is
+`CharTransCopy::SetType`. main's rival was *also* wrong (124-byte target vs
+316-byte COMDAT). Truth was absent from both and the channel did not refuse.
+
+★ **`agree` counts shared boilerplate.** Every OBJ_SET_TYPE body carries the
+same relocations — the `"types"` literal, the `Symbol` ctor, its own static
+guard — so they agree with *any* SetType body. This is the identical mechanism
+laneBU4 found for `ByteCode`/`StaticByteCode` and fixed in the LIVE channel with
+`--scope-unique`; **the collision channel never received that cut.** The
+ablation control misses it because its decoys are random byte-twins, not
+**same-family siblings** — so if anyone revives this channel, that is the fix:
+same-family decoys, and port `--scope-unique` across.
+
+`collision_classcheck.py` (new) is the cheap post-filter that caught it — resolve
+the win body's callees through the map, decode local-static class strings, and
+compare against the class in the assigned name. On the 32: **CONSISTENT 15,
+CONTRADICTED 6, NO_CLASS_TOKEN 11**, but only **1 of the 6 is a real
+refutation** — the other five (`??0NgFur@@`→`??0RndFur@@` base ctor,
+`??_GDxShader@@`→`??1DxShader@@`, `Synth360`→`MicManagerXbox` delegation, and two
+posters whose string is their *method* name) all actually corroborate. Read
+CONTRADICTED as "inspect by hand". The tell for a genuine refutation is a
+same-family sibling resolving correctly beside it: `?SetType@RndPropAnim@@` →
+`?StaticClassName@RndPropAnim@@` is CONSISTENT right next to the failing row.
+
+Net characterisation of the 32: **1 refuted, 20 corroborated, 11 undecidable**
+(STL template instantiations, no class token to check).
+
+### 5. The twin-FAMILY assignment idea — measured and refused
+
+The one way a twin pool *could* pay: a family with k target twins and k rival
+COMDATs is a bipartite assignment, and every *unmapped* COMDAT paired with an
+*unmapped* twin VA in the same unit is a genuine +1, not a permutation. Census
+over all pinned units:
+
+* raw capacity **19,711** — but ~96% is `__unwind$` / `__catch$` EH funclets,
+  i.e. the pool memory already records as CLOSED. Those are credited via
+  objdiff's byte-signature fallback anyway, and any permutation of identical
+  32-byte unwind funclets is "correct" by bytes and meaningless. Naming them
+  would be metric-fitting.
+* excluding funclets and `??__E`/`??__F` boilerplate: **378**.
+* by size band: **≤32 B → 139, 33–68 B → 26, >68 B → 213.**
+
+Only **26 sit inside the validated 33–68 B band**; the rest are 12 B thunks and
+84–120 B template bodies (`ObjPtr<T>::Replace`, `NewObject@X`), out where three
+independent calibrations put precision at 85–89%. So this is a *fourth*
+independent confirmation that the size band is load-bearing, and it re-derives
+laneBU4's conclusion from the opposite direction: **supply, not gate strength,
+is the binding constraint.** Not pursued.
+
+### 6. Where the yield actually was: SIZE-IMPOSSIBLE rows (`size_impossible_scan.py`, +4)
+
+The one map-defect class in this family that *can* pay, and it is the mirror
+image of the collision channel. A collision repoint moves a name between two
+twins that both already score 100% (Δ0). A **size-impossible** row — mapped
+target size ≠ same-unit base COMDAT size — can never reach 100%, so repointing
+it is strictly non-negative.
+
+```
+map rows with a same-unit base COMDAT : 21482
+  SIZE-IMPOSSIBLE (never matchable)   :  1867
+  with an exact-byte in-unit target   :    19   -> SHIP 3 / AMBIGUOUS 5 / UNCORROBORATED 11
+```
+
+⚠ **Exact masked bytes is NOT identity** — that is this directory's whole
+premise. Every candidate goes through the class-consistency test, and it earns
+its keep here: `?Copy@VocalTrackDir@@$4…` has a byte-perfect right-sized
+candidate that calls `?Load@VocalTrackDir@@` — class-consistent, **method-wrong**,
+a *Load* thunk. Rejected. ★ So check the METHOD, not just the class.
+
+`?SetType@UIPicture@@$4…` was also dropped: size-impossible yet already reading
+**100.0** because objdiff byte-fallback-pairs our 12 B COMDAT elsewhere. A
+repoint there is −1 with no upside. **Always read the current score before
+repointing, not just the sizes.**
+
+Landed (same-split A/B, symbols.txt restored + config.yml touched + report.json
+and report.cache removed on both legs):
+
+| row | was | now |
+|---|---|---|
+| `?SetType@RndMovie@@` 0x824780b0→**0x824785f0** | 0.0% (120 B tgt vs 316 B COMDAT) | 100% |
+| `?NewObject@NgEnviron@@` 0x82b86ff8→**0x82b87420** | 79.94% | 100% |
+| `?NewObject@AppInlineHelp@@` 0x8256e8a8→**0x8256e708** | 85.56% | 100% |
+| `?Active@MessageTimer@@` 0x8270fec8 → **`?StateName@MetaMusicLoader@@`** | 80.0% | 100% |
+
+| leg | matched | masked_equal | honest | code% |
+|---|---|---|---|---|
+| A | 40953 | 1518 | 39435 | 34.513645 |
+| C | **40957** | 1518 | **39439** | **34.518597** |
+| Δ | **+4** | 0 | **+4** | **+0.004952** |
+
+Exactly **524 bytes** = 316+84+112+12, a 1:1 attribution to the four rows with no
+hidden extra match and no regression.
+
+`?SetType@RndMovie@@` is the positive twin of the `PracticeSection` trap in §4 —
+same 316 B OBJ_SET_TYPE family, same test, but its body calls
+`?StaticClassName@RndMovie@@` (string `"Movie"`), so it passes. The pair is the
+best available worked example of the discriminator succeeding and failing.
+
+`MessageTimer` is a **phantom class**: `message_timer_start/stop/dump/on` and
+`"Message Tracker Dump"` occur **0×** in `band.exe` (control `MetaMusicLoader`
+occurs 2×), and DC3's `Active()` is an in-class inline. Its 80.0% was
+coincidence — our `Active()` is `lis/lbz/blr` against a target `lis/addi/blr`,
+1 of 3 instructions. The true owner came from the `??_R4` COL at 0x820F9368
+(`.?AVMetaMusicLoader@@`), slot 3 of the `Loader` vtable = `StateName`.
+
+⚠ Note a **delete** would have been worth Δ0 here — the row was at 80.0, never
+credited. The value was in the **repoint**. Do not assume a phantom row is
+earning false credit; check its score first.
+
+### 7. Two things NOT done, and why
+
+* **`RndLight`/`DxLight`.** Identification verified (`0x8273ff80` is
+  `DxLight::ClassName`; the discriminator is that `NewObject@DxLight` calls
+  `StaticClassName@RndLight` while `Init`/`SetType`/`ClassName` call DxLight's).
+  The "swapped 2-cycle" framing is **refuted**, and the fully-correct relabel is
+  **net −1**: `rndobj/Utl.obj` supplies RndLight, not DxLight, so naming the
+  truth there unpairs two live 100%s. A +1 *is* available by pointing
+  `0x8240dcb8` at `?StaticClassName@RndLight@@` while leaving `0x8273fd30`
+  knowingly mislabelled — declined, because that is the false-credit pattern
+  this whole section argues against. Only splits re-attribution (a drained
+  channel) makes rows 1–2 pay.
+* **`fn_8274AF68` = `?Sym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z`.** Verified,
+  supply present, but **Δ0**: base 184 B vs target 60 B. Our
+  `src/system/obj/DataNode.cpp` `MILO_FAIL_DTA` block is unconditional where
+  retail is MILO_DEBUG-off (`"Data %s is not Symbol"` occurs 0× in band.exe).
+  The real lever is a **source** change across the accessor family (`Sym`
+  184/60, `Float` 200/72, plus `Int`/`Str`/`ForceSym`/`LiteralSym`), not a map
+  row. Not attempted — source blast radius beyond a map lane.
+
+⚠ **Stale-asm trap.** `build/45410914/asm/` holds **13,082** `.s` files but only
+**952** are live pinned units, and the stale ones carry a VA→raw mapping that is
+consistently 0x6A00 off — they disagree on instruction bytes at the same VA. Any
+tool that `grep -r`s that directory is reading fiction. Everything in this
+directory goes through `relocdisc.unit_iter()`, which yields only the live set.
