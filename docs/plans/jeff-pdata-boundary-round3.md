@@ -1,6 +1,43 @@
 # jeff pdata/boundary defects — round 3 design
 
-> **STATUS (2026-07-12):** design — not yet implemented.
+> **STATUS (2026-07-30): SUPERSEDED — do NOT implement.** A 3-agent Fable
+> confirmation pass (reviews at `~/tmp/jeff-r3-review/class{1,2,3}.md`) found all
+> three classes are already resolved, would corrupt, or yield ≈0 strict under the
+> honest-floor pricing rule (`Δ(matched − masked_equal_functions)`). The original
+> 2026-07-12 design text is kept below the line for history.
+>
+> - **Class 2 (pdata over-split merge): DONE.** Implemented as jeff `7e49a38`
+>   `merge_fallthrough_leaf_fragments` (symbol-layer inverse of a670a12, guards P4
+>   pdata-sacred / P5 same-split-unit / P6 `JEFF_MERGE_PROTECT`). `Stats::AddRoll`
+>   closed at 100% — the real fragments were `fn_826976E0`/`fn_826976F0`, NOT the
+>   doc's `826791B0`/`C0` (doc addresses were wrong). ~1,414 merge-groups / 1,727
+>   fragments absorbed; moved the honest floor (not masked_equal churn). Residual: none.
+> - **Class 1 (truncated-fragment repair): DROP.** Only the census landed
+>   (`fc5d2af`, env-gated `JEFF_CLASS1_CENSUS=1`); the extend/merge/demote repair was
+>   never built and must NOT be — of 959 terminatorless spans, 522 (54%) are COMPLETE
+>   self-pdata noreturn-`bl` functions that extending would corrupt. All 4 doc fixtures
+>   already flipped to 100% via grow/clamp + Class-2/4 (MeasureMap `fn_827AB6F0` is now
+>   strict 100) with no Class-1 pass. Payoff ≈0 (funclet-class PASS-3 byte-fallback,
+>   Δ(matched−masked_equal)≈0). Confirms the standing "Class 1 & 3 NO-GO".
+> - **Class 3 (except_data seed-time suppression): DROP as a match lever / DEFER as
+>   cosmetic.** The seed-time gap is real in code (`util/xex.rs` L1104-1165 ungated;
+>   genuine-EH gate applied only at write time, L1356), BUT the only priced fixture
+>   `ProfileMgr::SetSynapseEnabled` (0x825475B8) is ALREADY 100% (one 16B COMDAT — the
+>   write-time gate already skips its spurious tail except_data; the doc's "4B/12B
+>   split / at_limit" was pre-TU5-flip stale). Real class size ~300 stale TU0-rebase
+>   `Object` symbols (not 18k — that was a TU0-era figure), all match-inert; a cold
+>   re-split sheds most for free. Payoff ≈+0 strict.
+>
+> **Net: nothing here is worth building for matched-function gains.** The doc's own
+> priority section (below) is also stale — it ranks "struct-layout recon" #1 citing
+> GemPlayer/BandProfile, but GemPlayer is effectively closed and BandProfile is a
+> 32KB-class archaeology dig (see `hard-targets-triage-2026-07-12.md`). Real next
+> levers live on the current frontier — map-defect channels, homing-pool 'op'
+> evidence class, residue 75-90% band — see the campaign/measurement memory hubs.
+>
+> ---
+>
+> *Original 2026-07-12 design (historical):*
 
 Design doc for a third jeff (local dtk fork, `/home/free/code/milohax/jeff`)
 boundary-tooling session, covering the three residual function-boundary defect
