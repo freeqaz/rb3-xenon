@@ -1,18 +1,30 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current: 41,171 strict-matched functions / honest proxy 39,661 /
-`matched_code_percent` 34.825665** (honest = matched − masked_equal, per the BO-8
+**Current: 41,185 strict-matched functions / honest proxy 39,675 /
+`matched_code_percent` 34.915688** (honest = matched − masked_equal, per the BO-8
 pricing rule; `build/45410914/report.json`, `match_percent_normalized == 100.0`
 exactly). Denominator is the whole TU5 XEX (~69k functions, `total_functions`
-69,367; `matched_code` 3,684,568 B; `masked_equal` 1,510). Measured in a clean
-worktree with both legs same-split, not summed from lane deltas — this figure is
-a direct measurement of `273066ce` (lane BY-2) on top of `66697375`, whose own
-41,169 / 39,659 / 34.824646 was reproduced **exactly** as this landing's leg A.
+69,367; `matched_code` 3,694,092 B; `masked_equal` 1,510). Measured in a clean
+worktree, not summed from lane deltas — this is a direct measurement of **true
+HEAD** (`66697375` + BY-2 `273066ce` + BZ-2 `07795e26`).
 
-> ⚠ **Read this headline as a FLOOR, not as HEAD.** Lane BZ-2 `07795e26` landed
-> *between* the BY-2 measurement and this commit and claims **+14 honest**; that
-> figure is **not measured here** and is deliberately not folded in. Whoever
-> measures next should re-measure at HEAD rather than summing the two.
+> ⚠ **The previous headline (41,171, commit `21474152`) was already stale when it
+> was written.** BY-2's lander measured its own lane correctly off `66697375`, but
+> committed its `docs(state)` *after* BZ-2's code commit `07795e26` had already
+> landed underneath it, so the number it published described a tree that no longer
+> existed. **Two landers racing on a shared main can each be individually correct
+> and still publish a wrong headline** — the fix is to measure HEAD itself, which
+> is what the figure above is. Encouragingly the two lanes proved **exactly
+> additive** here: 41,169 + 2 (BY-2) + 14 (BZ-2) = **41,185 measured**, with
+> `masked_equal` flat at 1,510 and `total_functions` 69,367 unchanged even though
+> BY-2 edited `splits.txt` (a split input).
+
+> ✅ **RESOLVED.** The preceding commit `38e579c6` correctly flagged its 41,171 as
+> a *floor* and asked the next lane to re-measure at HEAD rather than sum. That
+> re-measurement is done and is the headline above (41,185 measured, one build in
+> a worktree whose 30 changed files were hash-verified against HEAD). The floor
+> discipline worked exactly as intended — **flagging a known-stale headline is
+> strictly better than publishing a summed one.**
 
 > ⬇ **Part of that number is a DELIBERATE −3.** Lane BX-1 (`344ebc69`) deleted
 > three map rows that were awarding credit for functions retail does not contain:
@@ -562,8 +574,12 @@ a direct measurement of `273066ce` (lane BY-2) on top of `66697375`, whose own
 > ➡ **Left deliberately:** `RndGenerator::Load` (frame Δ+0x10, `gRevs_Gen`
 > divergence — different class); `SetRegularShaderConst` (permuter-class regswaps,
 > cannot reach raw 100); the 66 other ObjPtr ctor sites (all 60–85%, many other
-> defects). **Adjacent vein, unworked:** 944 functions reference retail-absent
-> DC3-era handler names (`get_trans_children`, `run_flow`, `key_intensity`).
+> defects). ~~**Adjacent vein, unworked:** 944 functions reference retail-absent
+> DC3-era handler names (`get_trans_children`, `run_flow`, `key_intensity`).~~
+> ✅ **WORKED AND DRAINED by lane BZ-2 `07795e26` (+14).** The 944 was a *reference
+> count*, not a yield estimate — it funnels to 21 actionable and 80 arms removed,
+> and all three names above turned out to be **three unrelated phenomena**. See
+> the BZ-2 block below.
 
 > **Lane BY-1 `7b28bbc0` (2026-07-30) — +1 honest, +0.004009pp code,
 > `masked_equal` FLAT at 1510. It reopens as a PER-SITE lever the exact vein BX-2
@@ -638,6 +654,108 @@ a direct measurement of `273066ce` (lane BY-2) on top of `66697375`, whose own
 > `mMotionParent` (0x268) is `ObjOwnerPtr<RndTransformable>`, which retail
 > **inlines**, but our ctor is declared out-of-line (`ObjPtr_p.h:302`) and the
 > define does not govern it. Inferred from layout + retail stream only.
+
+> **Lane BZ-2 `07795e26` (2026-07-30) — +14 honest, +0.090019pp code,
+> `masked_equal` FLAT at 1510. The largest `code%` lane of the wave, and it
+> DRAINS the 944-reference handler vein flagged above.** DC3 (our engine oracle)
+> is NEWER than RB3 retail, so our `BEGIN_HANDLERS` chains carry arms retail never
+> had. laneBF (`05ef434a`, +44) proved the lever via stack-frame drift, but frame
+> drift only sees surplus plain `HANDLE()` arms (each costs one 8-byte `DataNode`
+> temp); a surplus `HANDLE_EXPR`/`HANDLE_ACTION` costs **no frame slot** yet still
+> emits a Symbol compare+branch, so it breaks the body invisibly to that scan.
+> `scripts/harvest/handler_surplus_census.py` drops the frame-drift precondition
+> and censuses all 545 `BEGIN_HANDLERS` classes against two INDEPENDENT
+> instruments, acting only on their **conjunction**: PAIRED (handler-name strings
+> the retail body itself references, read from the dtk-split listing —
+> map-dependent) and ABSENCE (does the name occur anywhere in `band.exe` —
+> map-independent, meaningful only for names ≥8 chars, so short names are reported
+> `tooshort` and never used as evidence).
+>
+> Landing A/B in a fresh worktree off `66697375`, **split FROZEN** (`config.yml`
+> touched on *neither* leg — cleaner than symmetrising), `report.cache` +
+> `report.json` removed before each leg:
+>
+> | | matched | masked_equal | honest | code% | matched_code |
+> |---|---|---|---|---|---|
+> | base `66697375` | 41169 | 1510 | 39659 | 34.824646 | 3684460 |
+> | +BZ-2 `07795e26` | **41183** | 1510 | **39673** | **34.914665** | 3693984 |
+>
+> ★★★ **The honest funnel is the lane's main durable output — and it is a
+> 45× attrition.** 944 references → 340 non-thunk `?Handle@X@@` in pinned units →
+> 336 paired → 249 retail bodies **readable** → 30 surplus → **21 actionable**
+> (extra arm AND proven absent) → 19 below 100% → **80 arms removed across 24
+> files**. Arm-level: 3,253 `HANDLE*` arms, **406 proven absent across 87
+> classes** — but after both waves only **2** classes still had a pinned sub-100
+> `Handle`, so **the vein is now DRAINED**, not merely sampled.
+>
+> ★★★ **The three headline examples decomposed into THREE UNRELATED PHENOMENA** —
+> a warning against treating a name list as one class. `run_flow` was a genuine
+> extra arm (→ Synth 100.00); `get_trans_children` is absent but retail has
+> **`get_children`**, i.e. a **rename** on a body already at 100% via masked reloc
+> ⇒ **metric-inert by construction**; and `key_intensity` **is not a handler at
+> all**, just an entry in a string array at `BandDirector.cpp:1107`.
+>
+> ★★ **Two instrument traps, both caught by controls that FAILED FIRST.**
+> (a) **vtable adjustor thunks** (`?Handle@Cls@@$4PPPPPPPM@A@AA…`) match the name
+> pattern but are a 4-instruction `b real_fn` jump with **zero strings**, so
+> *every* arm read as surplus — the control failed **123/347** until thunks were
+> excluded, then **1/192 = 0.52%**. (b) **`set_all_to_3D` has an uppercase `D`**
+> and the retail-side reader filtered `[a-z0-9_]*`, so uppercase names can never be
+> read from retail and **always look surplus**; this regressed `CamShot`
+> 93.65→87.05 and was reverted (regex now hardened; only 2 such names exist
+> tree-wide). Note the absence instrument had correctly said "present" — **the
+> conjunction gate would have blocked it**, and it was reached only by deliberately
+> relaxing to `--allow-present`. ⇒ *A control that fails is the instrument working.*
+>
+> ★★ **Landing audit: "0 regressions" was wrong at the per-function level, though
+> the net was right.** The per-function set diff (not just totals) is
+> **+16 gained / −2 lost = net +14**. The two losses are 32-byte EH guard-clear
+> funclets in `PlatformMgr` (`fn_825162B0`, `fn_825162D0`, 100 → 92.5), each
+> differing in **exactly one instruction: the static-init guard BIT INDEX** on
+> `?$S5@…Handle@PlatformMgr@@` (target clears bit 3 / bit 2 via `rlwinm`; ours
+> clears bit 0 via `clrrwi`). Removing 22 arms **renumbered the function-scope
+> static guards**, reshuffling the byte-fallback funclet pairing. Byte-fallback
+> funclet stratum ⇒ no source lever, and it doubles as a residual signal that
+> `PlatformMgr::Handle` is not yet fully right (it stops at 94.6).
+> ⇒ **Always diff the per-function SET; a −2 hides perfectly under a +16.**
+>
+> **Ten `Handle` bodies driven to exactly 100.00** (all ten confirmed in leg B;
+> **four re-verified independently via objdiff with ALL instructions equal** —
+> NetCacheMgr 49 instrs, BandUserMgr 296, Synth 580, RndDrawable 207): Synth
+> 87.87, RndDrawable 69.88, CharClip 87.62, RndTex 90.43, RndAnimatable 87.55,
+> TaskMgr 93.28, VirtualKeyboard 77.14, SongPreview 51.84, NetCacheMgr,
+> BandUserMgr 73.83. Large partials: PlatformMgr 53.2→94.6, UIManager 62.5→94.5,
+> RndMat 4.3→38.3, SongMgr 57.8→88.4, RndGroup 18.5→49.8, RndLine 77.3→92.7,
+> StorePreviewMgr 77.6→90.3.
+>
+> ⚠ **Metric-units trap for the next reader: the lane's per-body figures are
+> `fuzzy_match_percent`, NOT `match_percent_normalized`.** The two differ by
+> ~0.5pp and `matched_functions` counts *normalized* == 100 — reconciling the
+> lane's numbers against the wrong field makes every claim look ~0.5pp off. One
+> figure did not reproduce at all: NetCacheMgr's quoted 11.47 origin reads
+> normalized **2.7551** with `fuzzy` **null** in leg A (its destination 100.00 is
+> confirmed). Also `?Handle@Synth@@` is compared inside unit
+> `default/CharMeshHide` — a 13-span grab-bag unit that absorbed the range;
+> pre-existing, identical in both legs, and counted **exactly once** (checked, not
+> assumed).
+>
+> ➡ **Failed predictions worth keeping.** `WorldDir` moved **+0.000** despite six
+> jointly-proven arms removed — at 21.5% its gap is elsewhere. And **every** ≥93%
+> candidate (ProfileMgr 99.8, Campaign 99.8, QuestFilterPanel 99.2,
+> AccomplishmentPanel 98.5, RockCentral) moved **+0.000**: a body that close cannot
+> have 3 genuine extra arms, so those were extractor artifacts — harmless but inert.
+> ➡ **Left deliberately (do NOT re-hunt as a metric lever):** the **RENAME class**
+> (`get_trans_children`→`get_children`, plus `BaseMaterial`, `Watcher`, `PanelDir`,
+> `BandSongMetadata`) — real DC3-vs-retail defects, but the string is a masked
+> reloc on already-100% bodies ⇒ **Δ0 by construction**; they belong to the
+> **at-100% correctness class**, not the metric. Also left: `LabelNumberTicker`
+> (the sole control false positive), `CharDriver::default_clip` (**suffix-pooled
+> string** — `set_default_clip` contains it, an extractor blind spot), all
+> `tooshort` names, and `WorldDir`'s **MISSING** arms (retail has arms *we* lack —
+> that needs implementing bodies, not deleting lines).
+> ⚠ **zsh trap re-confirmed:** `grep --include=*.cpp` **unquoted** returned
+> "0 BEGIN_HANDLERS blocks"; caught only because the glob error printed beside the
+> zero. **Quote your globs and print denominators beside zeros.**
 
 > **Lane BY-2 `273066ce` (2026-07-30) — +2 honest, +0.001019pp code,
 > `masked_equal` FLAT at 1510.** A/B'd in a fresh worktree off `66697375`; both
