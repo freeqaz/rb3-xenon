@@ -1954,12 +1954,21 @@ BEGIN_HANDLERS(RockCentral)
     HANDLE_MESSAGE(EnumerateMessagesCompleteMsg)
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(InviteReceivedMsg)
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 stripped this dev handler. Verified against the decompressed
+    // retail PE (orig/45410914/band.exe): the ordered ??0Symbol@@QAA@PBD@Z string
+    // args inside RockCentral::Handle (0x82507F60) are exactly
+    // state, force_logout, is_online, toggle_block_login.
     HANDLE_ACTION(clear_pending_invitations, ClearPendingInvitations())
+#endif
     HANDLE_EXPR(state, mState)
     HANDLE_ACTION(force_logout, ForceLogout())
     HANDLE_EXPR(is_online, IsOnline())
     HANDLE_EXPR(toggle_block_login, BlockLoginToggle())
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 stripped this dev handler too (see band.exe 0x82507F60).
     HANDLE_ACTION(block_login, BlockLogin(_msg->Int(2)))
+#endif
     HANDLE_SUPERCLASS(MsgSource)
     HANDLE_CHECK(0xD98)
 END_HANDLERS

@@ -1239,7 +1239,8 @@
             "band3/meta_band/SessionMgr.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/meta_band/TexLoadPanel.cpp": {
@@ -1512,7 +1513,8 @@
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/DRB3_MAP_0x1C",
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/meta_band/GameplayOptions.cpp": {
@@ -1800,7 +1802,8 @@
             "band3/meta_band/SaveLoadManager.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/meta_band/WaitingUserGate.cpp": "NonMatching",
@@ -1814,7 +1817,8 @@
             "band3/net_band/RockCentral.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/tour/Tour.cpp": {
@@ -1827,7 +1831,8 @@
             "band3/tour/QuestFilterPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/tour/QuestJournal.cpp": "NonMatching",

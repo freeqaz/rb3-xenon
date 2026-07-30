@@ -17,6 +17,7 @@ public:
     virtual void Unload();
 
     void GetSongsFromMusicLibrary();
+    void LoadSongMetadata();
 
     std::vector<DataNetLoader *> mLoaders; // 0x38
     DataArray *mAllMetadata; // 0x40

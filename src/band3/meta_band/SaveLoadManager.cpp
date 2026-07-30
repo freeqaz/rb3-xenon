@@ -86,9 +86,15 @@ SaveLoadManager::~SaveLoadManager() {
 bool SaveLoadManager::IsInitialLoadDone() const { return !mInitialLoadNotDone; }
 
 bool SaveLoadManager::IsIdle() {
-    bool idle = false;
-    if (mState == kS_Idle && mRequestFlags == 0) {
+    bool idle;
+    // unk75 is retail's "load/save request pending" bool (set by AutoLoad() and
+    // Activate()); idle requires it CLEAR.  The false-store lives in the ELSE in
+    // retail (`mr r11,r25` is the join of all three failure branches), so the
+    // initialiser must not be hoisted above the test.
+    if (mState == kS_Idle && mRequestFlags == 0 && !unk75) {
         idle = true;
+    } else {
+        idle = false;
     }
     return idle;
 }
@@ -103,8 +109,10 @@ int SaveLoadManager::GetDialogFocusOption() {
 
 void SaveLoadManager::Activate() {
     if (!mActivated) {
+        // Retail stores the same literal 1 to both bytes (`li r10,1; stb 0x18;
+        // stb 0x75`) -- it is a plain bool at 0x75, not a bit in mRequestFlags.
         mActivated = true;
-        mRequestFlags |= 2;
+        unk75 = true;
     }
 }
 
@@ -134,7 +142,10 @@ void SaveLoadManager::AutoSave() {
 
 void SaveLoadManager::AutoLoad() {
     if (IsReasonToAutoload()) {
-        mRequestFlags |= 2;
+        // Same shape as Activate(): retail stores a literal 1 into the byte at
+        // 0x75 (`li r11,1; stb r11,0x75(r30)`), it does not OR bit 1 into
+        // mRequestFlags at 0x74.
+        unk75 = true;
     }
 }
 
@@ -2168,7 +2179,15 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
 BEGIN_HANDLERS(SaveLoadManager)
     HANDLE_ACTION(autosave, AutoSave())
     HANDLE_ACTION(autoload, AutoLoad())
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail X360 ships neither `delete_saves` nor `printout_savesize_info`:
+    // the in-COMDAT local-static Symbol chain of fn_82552660 runs
+    // autosave, autoload, manual_save, ... , activate and then goes straight to
+    // the ProfileSwappedMsg arm.  Both are rb3-Wii DEV-build debug handlers, so
+    // they are gated out (via /DRB3_STRIP_CHEAT_HANDLERS) for the retail match
+    // but kept for native builds.
     HANDLE_ACTION(delete_saves, ManualDelete())
+#endif
     HANDLE_ACTION(manual_save, ManualSave(_msg->Obj<LocalBandUser>(2)))
     HANDLE_EXPR(is_autosave_enabled, IsAutosaveEnabled(_msg->Obj<LocalBandUser>(2)))
     HANDLE_ACTION(enable_autosave, EnableAutosave(_msg->Obj<LocalBandUser>(2)))
@@ -2185,7 +2204,11 @@ BEGIN_HANDLERS(SaveLoadManager)
     HANDLE_EXPR(is_initial_load_done, IsInitialLoadDone())
     HANDLE_EXPR(is_idle, IsIdle())
     HANDLE_ACTION(activate, Activate())
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail ends at `activate`; printout_savesize_info is a DEV-only handler
+    // (see band.exe 0x82552660). Kept for native, gated out for the match.
     HANDLE_ACTION(printout_savesize_info, PrintoutSaveSizeInfo())
+#endif
     HANDLE_MESSAGE(ProfileSwappedMsg)
     HANDLE_MESSAGE(DeviceChosenMsg)
     HANDLE_MESSAGE(NoDeviceChosenMsg)
