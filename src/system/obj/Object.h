@@ -931,7 +931,13 @@ public:
 
     void operator=(const ObjPtrList &list);
     bool remove(T1 *);
-    bool Load(BinStream &bs, bool, ObjectDir *, bool);
+    // RB3-360 retail signature: 2 params, matching the rb3-Wii oracle
+    // (ObjPtr_p.h:517 `bool Load(BinStream&, bool)`).  Retail's call site in
+    // CharIKScale::Load passes exactly `r3=this, r4=bs, r5=1` -- the DC3-era
+    // trailing `ObjectDir*, bool` pair made every `bs >> objPtrList` emit two
+    // extra `li` argument setups.  The 4th param was never read in the body and
+    // the only caller (operator>>) always passed `nullptr, true`.
+    bool Load(BinStream &bs, bool);
 
 private:
     void Link(iterator, Node *);

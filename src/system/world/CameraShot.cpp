@@ -1259,15 +1259,15 @@ BEGIN_LOADS(CamShot)
         mGenHideList.clear();
         mHideList.clear();
         if (sCamShotRev <= 0x2F || (bs.Cached() && sCamShotRev < 0x32)) {
-            mHideList.Load(bs, false, nullptr, true);
+            mHideList.Load(bs, false);
         } else {
-            mHideList.Load(bs, false, nullptr, true);
+            mHideList.Load(bs, false);
             std::vector<RndDrawable *> tempDraws;
             LoadDrawables(bs, tempDraws, Dir());
         }
     }
     if (sCamShotRev > 0x1B) {
-        mShowList.Load(bs, false, nullptr, true);
+        mShowList.Load(bs, false);
     }
 
     if (sCamShotRev > 0xB) {
