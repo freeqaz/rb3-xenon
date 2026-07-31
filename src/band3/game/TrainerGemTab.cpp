@@ -288,14 +288,14 @@ void TrainerGemTab::Draw(int i) {
         Transform orig = mGemTab->WorldXfm();
         Transform xfm = orig;
         unsigned int tickRange = unk54->GetEndTick() - unk54->GetStartTick();
-        xfm.v.z -= 60.0f;
+        xfm.v.x -= 60.0f;
         mGemTab->SetWorldXfm(xfm);
         int half = (int)tickRange / 2;
         Render(unk54->GetStartTick(), unk54->GetStartTick() + half, 0.0f, 10.0f, i);
         mStartLabel->SetShowing(true);
         mStartLabel->Draw();
         mStartLabel->SetShowing(false);
-        xfm.v.z += 120.0f;
+        xfm.v.x += 120.0f;
         mGemTab->SetWorldXfm(xfm);
         Render(unk54->GetStartTick() + half, unk54->GetEndTick(), 0.0f, 10.0f, i);
         DrawExtraTails();

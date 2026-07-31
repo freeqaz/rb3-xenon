@@ -2068,7 +2068,7 @@ void GemPlayer::Penalize(float f1, int i2, float f3) {
         unk1fe = false;
         unk1fd = false;
         unk1ff = false;
-        FinalizeStats();
+        EndHitStreak();
         UpdateCrowdMeter(f3, i2);
         unk3c0++;
         int gemId = i2;
@@ -2437,11 +2437,11 @@ float GemPlayer::GetCommonPhraseFraction(int tick) {
     int idx = TheSongDB->GetGemList(mTrackNum)->ClosestMarkerIdxAtOrAfterTick(ext.unk0);
     if (idx != -1) {
         const std::vector<GameGem> &gems = TheSongDB->GetGems(mTrackNum);
-        for (int n = (int)gems.size() - idx; (unsigned int)idx < gems.size(); n--, idx++) {
-            if (gems[idx].GetTick() >= ext.unk4) break;
+        for (int i = idx; (unsigned int)i < gems.size(); i++) {
+            if (gems[i].GetTick() >= ext.unk4) break;
             total++;
-            if (!mGemStatus->GetHit(idx)) {
-                if (!mGemStatus->GetIgnored(idx))
+            if (!mGemStatus->GetHit(i)) {
+                if (!mGemStatus->GetIgnored(i))
                     continue;
             }
             hit++;

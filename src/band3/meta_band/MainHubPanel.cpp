@@ -438,7 +438,11 @@ DataNode MainHubPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
                     (TickerDataType)2, 0, node8c0.Int(), false, false
                 );
             }
-            mCurrentMessage = 0;
+            // NOTE: rb3-Wii dev source has `mCurrentMessage = 0;` here, but the
+            // RB3 retail X360 target emits no store to 0x48(this) at this point
+            // (objdiff: one extra `stw r30, 0x48(r29)` on our side, everything
+            // else equal). It cannot have been optimised away -- an opaque call
+            // follows immediately -- so retail's source does not have it.
             UpdateMessageProvider();
             UpdateHeader();
         } else

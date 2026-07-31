@@ -161,7 +161,7 @@ void TrackerSectionManager::GetGemStatsInRange(
     }
 }
 
-int TrackerSectionManager::GetGemIDsForRange(
+bool TrackerSectionManager::GetGemIDsForRange(
     const Player *iPlayer, int iStartTick, int iEndTick, int &oStartGemID,
     int &oEndGemID
 ) const {

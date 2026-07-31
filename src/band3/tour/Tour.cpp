@@ -683,8 +683,7 @@ void Tour::ChooseRandomSongsForQuestFilter(int count, Symbol questSym1, Symbol q
     } else if (strncmp("filter_artist_", questSym1.Str(), 14) == 0) {
         String s(questSym1.Str());
         String substr = s.substr(14);
-        SongSortMgr::SongFilter artistFilter = CreateArtistFilter(substr.c_str());
-        filter = artistFilter;
+        filter = CreateArtistFilter(substr.c_str());
     } else {
         MILO_FAIL("Invalid Random Filter = %s\n", questSym1);
     }

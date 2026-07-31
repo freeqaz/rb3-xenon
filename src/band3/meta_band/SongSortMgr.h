@@ -77,7 +77,7 @@ public:
 
         bool HasFilterType(FilterType type) const {
             MILO_ASSERT_RANGE(type, 0, kNumFilterTypes, 0x5A);
-            return filters[type].size() != 0;
+            return filters[type].size() > 0;
         }
 
         void AddFilter(FilterType type, Symbol s) {

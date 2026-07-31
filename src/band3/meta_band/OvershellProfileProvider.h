@@ -37,6 +37,9 @@ public:
     int unk24;
     int unk28;
     BandUserMgr *unk2c;
-    std::vector<int> unk30;
-    std::vector<int> unk38;
+    // NOTE: the rb3-Wii DEV oracle carries two std::vector<int> Wii-profile
+    // lists here (12 bytes each under STLport). RB3-360 retail does NOT: the
+    // OvershellSlot ctor allocates sizeof(OvershellProfileProvider) == 0x3c
+    // (60), which is exactly this class without those two vectors (0x54 - 24).
+    // The Wii profile list is a Wii-only feature, so they are omitted here.
 };

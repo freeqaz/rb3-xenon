@@ -40,7 +40,7 @@ public:
     ~TrackerSectionManager();
     bool TickAfterSection(int, int) const;
     int GetSectionEndTick(int) const;
-    int GetGemIDsForRange(const Player *, int, int, int &, int &) const;
+    bool GetGemIDsForRange(const Player *, int, int, int &, int &) const;
     void GetGemStatsInRange(const Player *, int, int, int &, int &) const;
     int FindSectionContainingTick(int) const;
     int CountGemsInSection(const Player *, int) const;
