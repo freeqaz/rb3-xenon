@@ -158,7 +158,17 @@ protected:
     // pad here rather than after mColorXfm keeps the entire mPosterLevels..
     // vignette mid-region at the offsets the .cpp accessors already match.
     // See docs/decomp/near-miss-classification-2026-06-06.md lever #6.
-    int _retail_pad_before_colorxfm[3]; // +0xc (0x5c..0x68)
+    /** "Optional luminance map used to weight the bloom source". Dropped as a
+        SyncProperty target in DC3, but retail 360 SyncProperty still emits a
+        PropSync<RndTex> call for it.
+        ★ This member IS the former 12-byte anonymous pad: sizeof(ObjPtr) on
+        retail X360 is exactly 0xc ({vtable@0, mOwner@4, mObject@8} -- see
+        obj/Object.h), so the pad's 0x5c..0x68 span is filled precisely and
+        mColorXfm stays at 0x68 where every accessor already matches.
+        ⚠ It does NOT sit before mForceCurrentInterp: placing it at 0x58 (and
+        keeping 8 bytes of pad) shifts mColorXfm +8 and costs 27 matched
+        functions across PostProc/PostProc_NG -- measured, lane CE-1. */
+    ObjPtr<RndTex> mLuminanceMap; // 0x5c..0x68
     /** "Hue: -180 to 180, 0.0 is neutral" */
     /** "Saturation: -100 to 100, 0.0 is neutral" */
     /** "Lightness: -100 to 100, 0.0 is neutral" */

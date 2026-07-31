@@ -139,7 +139,8 @@ ProcessCmd ProcCounter::ProcCommands() {
 RndPostProc::RndPostProc()
     : mPriority(1), mBloomColor(1, 1, 1, 0), mBloomThreshold(4), mBloomIntensity(0),
       mBloomGlare(0), mBloomStreak(0), mBloomStreakAttenuation(0.9f),
-      mBloomStreakAngle(0), mForceCurrentInterp(0), mColorXfm(), mPosterLevels(0),
+      mBloomStreakAngle(0), mForceCurrentInterp(0), mLuminanceMap(this, 0), mColorXfm(),
+      mPosterLevels(0),
       mPosterMin(1), mKaleidoscopeComplexity(0), mKaleidoscopeSize(0.5f),
       mKaleidoscopeAngle(0), mKaleidoscopeRadius(0), mKaleidoscopeFlipUVs(1),
       mFlickerModBounds(0, 0), mFlickerTimeBounds(0.001f, 0.007f), mFlickerSeconds(0, 0),
@@ -194,6 +195,7 @@ BEGIN_PROPSYNCS(RndPostProc)
     SYNC_PROP(bloom_streak, mBloomStreak)
     SYNC_PROP(bloom_streak_attenuation, mBloomStreakAttenuation)
     SYNC_PROP(bloom_streak_angle, mBloomStreakAngle)
+    SYNC_PROP(luminance_map, mLuminanceMap)
     SYNC_PROP_MODIFY(hue, mColorXfm.mHue, mColorXfm.AdjustColorXfm())
     SYNC_PROP_MODIFY(saturation, mColorXfm.mSaturation, mColorXfm.AdjustColorXfm())
     SYNC_PROP_MODIFY(lightness, mColorXfm.mLightness, mColorXfm.AdjustColorXfm())
