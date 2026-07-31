@@ -1,11 +1,41 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `5524a135`, clean full rebuild on main): 41,218
-strict-matched functions / honest proxy 39,709 / `matched_code_percent`
-35.245968** (honest = matched − masked_equal, per the BO-8 pricing rule;
+**Current (MEASURED at HEAD `683ee54d`, clean full rebuild on main 2026-07-31):
+41,386 strict-matched functions / honest proxy 39,898 / `matched_code_percent`
+35.700900** (honest = matched − masked_equal, per the BO-8 pricing rule;
 `build/45410914/report.json`). Denominator is the whole TU5 XEX
-(`total_functions` 69,367; `matched_code` 3,729,036 B; `masked_equal` 1,509;
+(`total_functions` 69,367; `matched_code` 3,777,168 B; `masked_equal` 1,488;
 `total_code` 10,580,036).
+
+> **2026-07-31 — from 41,218 / 39,709 / 35.245968 at `5524a135`: +168 matched,
+> +189 honest, +0.454932 pp**, over 13 commits.
+>
+> | commit | claimed | source |
+> |---|---|---|
+> | `a9cba70d` | +50 honest / +27,604 B | lane CB-7 stack |
+> | `9c4efba6` | +118 net strict | NCCC-0730-8ce6 wave (*other session*) |
+> | `1958ff73` | +1 honest / +560 B | lane CB-10 surgical MILO_DEBUG guards |
+> | `683ee54d` | **+0 default**, +1.883737 pp `name_check` | lane CB-11 map corrections |
+> | `cdf4757b` | not separately measured | ProfileMgr member identity |
+> | 8 others | none (docs / native / gitignore / xex2pack) | — |
+>
+> ★ **The ledger does NOT close exactly this time, and that is stated rather than
+> smoothed.** Claimed matched sums to **+169** against a measured **+168** — a
+> 1-function residual, inside the documented ±2 split-churn floor.
+>
+> ⚠ **`masked_equal` fell 1,509 → 1,488 (−21) and NO lane claimed it.** That drop
+> is why honest (+189) outruns matched (+168) by exactly 21. A fall in
+> `masked_equal` means functions left the "equal only under masking" bucket. Some
+> of that is presumably CB-7/NCCC bodies reaching true equality, but **nothing
+> here establishes that** — it is an unattributed movement in a quantity the
+> honest-floor metric is built on, and the next lane to touch pricing should
+> explain it rather than inherit it.
+>
+> ★ **CB-11 is the shape a correctness fix takes under this metric**: exactly +0
+> on every default-mode figure, +1.883737 pp on `name_check`, with the strict set
+> moving GAINED 1 / LOST 1 because a *false* 100 (`ObjectDir::Main` at an address
+> that isn't Main) was replaced by a *true* one (`MetaPerformer::Current`).
+> Judging that lane by the headline would have discarded it.
 
 > **2026-07-30 — from 41,187 / 39,677 / 34.924870 to the above: +31 matched,
 > +32 honest, +0.321 pp**, across four landings by **two concurrent sessions**:
