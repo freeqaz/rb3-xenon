@@ -3,8 +3,17 @@
 xex2pack - PE basefile -> unsigned/uncompressed/unencrypted XEX2-DLL packer.
 
 Targets an RGH Xbox 360 / Xenia (unsigned boot). Emits:
-  encryption = none, compression = none (raw), base = 0x84000000, DLL module flag,
-  zeroed RSA signature + all hashes/digests (RGH/devkit loaders skip HV hash checks).
+  encryption = none, compression = none (raw) or basic, base = 0x84000000,
+  DLL module flag, and a ZEROED RSA SIGNATURE -- sign downstream with
+  ../xex-patcher/tools/pack-loadable.sh, which is why xexlint's
+  "RSA signature field is all zero" is the one expected reject on our output.
+
+All three integrity chains ARE computed (they were not, originally):
+  * the page-hash chain + HvImageInfo.ImageHash
+  * the per-import-table NextImportDigest chain + HvImageInfo.ImportDigest
+  * HvImageInfo.HeaderHash
+Each algorithm was validated by recomputing it over real XEXs and matching the
+stored value bit-for-bit -- see verify_xex() for which files and what they prove.
 
 Struct field layout is taken verbatim from:
   - XenonRecomp/XenonUtils/xex.h        (Xex2Header / Xex2SecurityInfo / opt-header keys)
@@ -21,8 +30,10 @@ block verbatim (known-good encoding). A from-scratch import block can also be su
 
 Usage:
   xex2pack.py --pe basefile.pe --out out.xex --from-xex stock.xex
-  xex2pack.py --pe basefile.pe --out out.xex --entry 0x8401B590 --base 0x84000000 \
-              [--import-block imports.bin] [--pe-name RB3Enhanced.exe] [--compress basic|none]
+  xex2pack.py --pe linked.exe  --out out.xex --entry 0x8401B590 --base 0x84000000 \
+              [--import-map ordinal-map.json | --import-block imports.bin] \
+              [--pe-name RB3Enhanced.exe] [--compress basic|none]
+  xex2pack.py --verify some.xex        # recompute every digest + check import records
 """
 import argparse, hashlib, struct, sys
 
@@ -69,14 +80,6 @@ def parse_opt_headers(xex):
     return module_flags, header_size, sec_off, opts
 
 
-def opt_value_or_offset(key, val, xex):
-    """Mirror getOptHeaderPtr: low byte 0/1 => inline value, else offset into file."""
-    lb = key & 0xFF
-    if lb in (0x00, 0x01):
-        return ('value', val)
-    return ('offset', val)
-
-
 def extract_import_block(xex, opts):
     if XEX_HEADER_IMPORT_LIBRARIES not in opts:
         return None
@@ -113,21 +116,32 @@ def compute_import_digest(import_block):
 # The X360-MWCC PE (linked -XEX:NO) carries genuine XEX-shaped import plumbing:
 #   * a per-module IAT (PE FirstThunk) of 4-byte slots, one per imported ordinal
 #   * a contiguous table of 16-byte call thunks in .text, one per IAT slot:
-#         lis   r11, imagebase>>16
-#         lwz   r11, iat_off(r11)      ; load resolved pointer from its IAT slot
+#         lis   r11, HI                ; HI/LO address the IAT slot as
+#         lwz   r11, LO(r11)           ;   (HI<<16) + sign_extend16(LO)
 #         mtctr r11
 #         bctr
+#     HI is NOT simply imagebase>>16 -- link.exe emits hi16(iat_va)+1 with a
+#     negative LO once (iat_va & 0x8000), so the pair must actually be decoded.
 #     Every by-name import call site `bl`s its thunk.
 #
 # We map each import to the STOCK-FAITHFUL dual-record encoding the Xbox/Xenia
-# loader expects (verified against the RB3E 0.7 stock block + xex_module.cc):
-#   * a type-0 (variable) record at the 4-byte IAT slot   -> value (modidx<<16)|ord
-#   * a type-1 (function) record at the 16-byte .text thunk -> value 0x01000000|ord
+# loader expects (verified against the RB3E 0.7 stock block, retail RB3's own
+# import records, and xex_module.cc):
+#   * a type-0 (variable) record at the 4-byte IAT slot -> value (modidx<<16)|ord
+#   * a type-1 (function) record at the 16-byte .text thunk, whose FIRST TWO WORDS
+#     are both tagged and whose last two are the PE's own mtctr r11 / bctr:
+#         word0 = 0x01000000 | (modidx<<16) | ord
+#         word1 = 0x02000000 | (modidx<<16) | ord
 # Xenia (SetupLibraryImports) reads the big-endian record value at each record
-# address: high byte = type, low 16 = ordinal (middle "hint" ignored). For a
-# type-1 kernel function it overwrites the thunk with `sc 2; blr; nop; nop` and
-# wires the kernel shim, so the `bl thunk` call sites reach the real export. The
-# preceding type-0 slot is what its assert pairs the thunk ordinal against.
+# address: high byte = type, low 16 = ordinal. It ignores the middle byte, but the
+# RGH XexLoadImage binder does NOT -- it requires that byte to be the owning
+# library's ModuleIndex, and it requires word1's tag too. Writing only word0, or
+# writing it without the module index, yields an image that round-trips and loads
+# under Xenia yet is rejected on hardware. That was a real, months-long bug here;
+# ../xex-patcher/tools/xexlint.py rules R2/R6 exist to catch it.
+# For a type-1 kernel function Xenia overwrites the thunk and wires the kernel
+# shim, so the `bl thunk` call sites reach the real export. The preceding type-0
+# slot is what its assert pairs the thunk ordinal against.
 #
 # The XEX loader reads records big-endian, but link.exe writes the PE IAT slots
 # little-endian, so we must (re)write both the IAT slots and the thunk lead-words
@@ -136,8 +150,11 @@ def compute_import_digest(import_block):
 
 # xam.xex / xboxkrnl.exe library id + version words for this title, copied from the
 # stock RB3E 0.7 IMPORT_LIBRARIES block (identify the exact library versions the
-# title binds). NextImportDigest is intentionally zeroed (unsigned-boot philosophy;
-# Xenia/RGH do not abort on an import-digest mismatch).
+# title binds). NOTE: these are RB3E-0.7-specific -- retail RB3 binds the same two
+# library IDs but a different Version word (0x202B9C00 vs 0x20530800), so a pack
+# targeting a different title needs its own values here.
+# NextImportDigest is NOT zeroed any more: the chain is filled backwards in
+# synthesize_import_block step 3b, and HvImageInfo.ImportDigest hangs off it.
 STOCK_MODULE_META = {
     'xam.xex':      {'id': 0xFCA15C76, 'ver': 0x20530800, 'vermin': 0x20074500},
     'xboxkrnl.exe': {'id': 0x45DC17E0, 'ver': 0x20530800, 'vermin': 0x20074500},
@@ -190,9 +207,23 @@ def map_pe_to_image(pe, pe_info):
     end = align(end, PAGE_SIZE)
     img = bytearray(end)
     shdr = pe_info['size_of_headers']
+    if len(pe) < shdr:
+        raise SystemExit("--pe is truncated: SizeOfHeaders=0x%X but the file is only 0x%X bytes"
+                         % (shdr, len(pe)))
     img[0:shdr] = pe[0:shdr]
     for s in pe_info['sections']:
         copy_len = min(s['rawsz'], s['vsz']) if s['vsz'] else s['rawsz']
+        # A bytearray slice-assign with a mismatched length RESIZES the buffer:
+        # a short read (truncated file) or an out-of-range VA would shift every
+        # later section and silently emit a plausible-but-wrong image instead of
+        # failing. Both ends are therefore checked explicitly.
+        if s['raw'] + copy_len > len(pe):
+            raise SystemExit("--pe is truncated: section %s wants raw [0x%X,0x%X) "
+                             "but the file is only 0x%X bytes"
+                             % (s['name'], s['raw'], s['raw'] + copy_len, len(pe)))
+        if s['va'] + copy_len > len(img):
+            raise SystemExit("--pe section %s maps to [0x%X,0x%X), past the 0x%X-byte image"
+                             % (s['name'], s['va'], s['va'] + copy_len, len(img)))
         img[s['va']:s['va']+copy_len] = pe[s['raw']:s['raw']+copy_len]
     return bytes(img)
 
@@ -231,17 +262,27 @@ def synthesize_import_block(pe, pe_info, import_map):
         modules.append({'name': nm, 'iat_rva': ft, 'ordinals': ords})
         idx += 1
 
-    # ---- 2. .text 16-byte call-thunk table: iat_off -> thunk_va ----
+    # ---- 2. .text 16-byte call-thunk table: iat_rva -> thunk_rva ----
+    # The thunk is  lis r11,HI / lwz r11,LO(r11) / mtctr r11 / bctr  and it
+    # addresses the IAT slot at ((HI << 16) + sign_extend16(LO)).  Decode HI/LO
+    # properly instead of assuming HI == image_base>>16: link.exe emits
+    # HI = hi16(iat_va) + 1 with a NEGATIVE displacement as soon as
+    # (iat_va & 0x8000), i.e. whenever the IAT does not sit in the first 32 KiB
+    # of the image.  The old exact-match-on-image_base test silently found zero
+    # thunks in that case and the packer then died with "no .text call thunk".
     text = next(s for s in pe_info['sections'] if s['name'] == '.text')
-    lis_hi = image_base >> 16
     thunks = {}
     i = text['raw']
-    tend = text['raw'] + text['vsz']
+    tend = text['raw'] + min(text['vsz'], text['rawsz'])
     while i + 16 <= tend:
         w0, w1, w2, w3 = struct.unpack('>IIII', pe[i:i+16])
-        if ((w0 & 0xFFFF0000) == 0x3D600000 and (w0 & 0xFFFF) == lis_hi and
-                (w1 & 0xFFFF0000) == 0x816B0000 and w2 == 0x7D6903A6 and w3 == 0x4E800420):
-            thunks[w1 & 0xFFFF] = text['va'] + (i - text['raw'])
+        if ((w0 & 0xFFFF0000) == 0x3D600000 and (w1 & 0xFFFF0000) == 0x816B0000
+                and w2 == 0x7D6903A6 and w3 == 0x4E800420):
+            disp = w1 & 0xFFFF
+            if disp >= 0x8000:
+                disp -= 0x10000              # lwz displacement is signed
+            target = ((w0 & 0xFFFF) << 16) + disp
+            thunks[target - image_base] = text['va'] + (i - text['raw'])
         i += 4
 
     # ---- 3. records + image rewrites, stock-faithful (type0 IAT, type1 thunk) ----
@@ -254,6 +295,7 @@ def synthesize_import_block(pe, pe_info, import_map):
     table_blobs = []
     names = [m['name'] for m in modules]
     unmapped = []   # ordinals present in PE but absent from import_map
+    no_thunk = []   # ordinals with no .text call thunk (data/variable imports)
     per_module = []
     for mi, m in enumerate(modules):
         meta = STOCK_MODULE_META.get(m['name'])
@@ -263,16 +305,32 @@ def synthesize_import_block(pe, pe_info, import_map):
         for si, ordv in enumerate(m['ordinals']):
             iat_off = m['iat_rva'] + si*4
             iat_va = image_base + iat_off
-            if iat_off not in thunks:
-                raise SystemExit("no .text call thunk for %s ordinal %d (IAT off 0x%X)"
-                                 % (m['name'], ordv, iat_off))
-            thunk_va = image_base + thunks[iat_off]
+            tag = (mi << 16) | ordv
             # type-0 variable record at the IAT slot
             recs.append(iat_va)
-            rewrites.append((iat_va - image_base, (mi << 16) | ordv))
-            # type-1 function record at the .text thunk
-            recs.append(thunk_va)
-            rewrites.append((thunk_va - image_base, 0x01000000 | ordv))
+            rewrites.append((iat_off, tag))
+            # type-1 function record at the .text thunk. BOTH tag words must be
+            # written: the RGH XexLoadImage binder expects
+            #     word0 = 0x01000000 | (module_index << 16) | ordinal
+            #     word1 = 0x02000000 | (module_index << 16) | ordinal
+            # followed by the PE's original mtctr r11 / bctr (words 2-3, left
+            # alone). Writing only word0 -- and dropping module_index from it --
+            # leaves word1 as the original `lwz r11,off(r11)`, which is the
+            # malformed-thunk shape that made every from-source DLL bounce off
+            # XexLoadImage on hardware.
+            # Authority: ../xex-patcher/tools/fix_thunks.py and xexlint.py rules
+            # R2/R6; hardware-proven 2026-07-14, docs/plans/si-hw-fix/wave8/.
+            if iat_off in thunks:
+                thunk_rva = thunks[iat_off]
+                recs.append(image_base + thunk_rva)
+                rewrites.append((thunk_rva,     0x01000000 | tag))
+                rewrites.append((thunk_rva + 4, 0x02000000 | tag))
+            else:
+                # No call thunk -> a data/variable-only import. Stock XEXs encode
+                # those as a lone type-0 record (verified: RB3Enhanced.dll's
+                # xboxkrnl table has runs of consecutive type-0 records), so emit
+                # that instead of aborting the whole pack.
+                no_thunk.append((m['name'], ordv))
             if (m['name'], ordv) not in by_mod_ord:
                 unmapped.append((m['name'], ordv))
         count = len(recs)
@@ -315,7 +373,8 @@ def synthesize_import_block(pe, pe_info, import_map):
     block = desc + nt + tables
 
     summary = {'modules': per_module, 'block_size': block_size,
-               'name_table_size': len(nt), 'unmapped_ordinals': unmapped}
+               'name_table_size': len(nt), 'unmapped_ordinals': unmapped,
+               'variable_only': no_thunk}
     return block, rewrites, summary
 
 
@@ -357,7 +416,10 @@ def build_page_descriptors(pe_data):
                 first = va // PAGE_SIZE
                 last = (va + vsz - 1) // PAGE_SIZE
                 for p in range(first, min(last, n_pages-1) + 1):
-                    if p != 0:
+                    # CODE wins on a page shared with data. The info nibble drives
+                    # page protection, so a last-writer-wins DATA classification on
+                    # a page that also holds .text would map real code non-executable.
+                    if p != 0 and not (kind == SEC_DATA and infos[p] == SEC_CODE):
                         infos[p] = kind
     except Exception:
         pass
@@ -466,22 +528,33 @@ def pack(pe_data, out_path, entry_point, base_addr, import_block, pe_name,
     header_count = len(entries)
     sec_offset = 24 + header_count * 8
 
-    # ---- layout: header | opt-dir | secinfo(+pagedesc) | opt-data blobs | pad | basefile ----
+    # ---- layout: header | opt-dir | secinfo(+pagedesc) | opt-data blobs | pad |
+    #              IMPORT_LIBRARIES | basefile ----
+    # Stock convention, verified on all three real XEXs available here
+    # (RB3Enhanced.dll, RB3ELoader.xex, retail default.xex): SizeOfHeaders is
+    # 0x1000-aligned AND the import block is the LAST thing in the header region,
+    # ending exactly at SizeOfHeaders. Emitting it early and padding after it is a
+    # gratuitous divergence from every real XEX (xexlint warns on it), so the pad
+    # goes before the import block instead.
     data_region_start = sec_offset + len(sec_info)
     cursor = data_region_start
     opt_offsets = {}
-    data_blobs = b''
+    blobs = []
     for key, kind, payload in entries:
-        if kind == 'offset':
-            payload = payload  # bytes
-            opt_offsets[key] = cursor
-            # 4-align each data blob
-            data_blobs += payload
-            pad = align(len(payload), 4) - len(payload)
-            data_blobs += b'\x00' * pad
-            cursor += len(payload) + pad
+        if kind != 'offset' or key == XEX_HEADER_IMPORT_LIBRARIES:
+            continue
+        opt_offsets[key] = cursor
+        pad = align(len(payload), 4) - len(payload)
+        blobs.append(payload + b'\x00' * pad)
+        cursor += len(payload) + pad
 
-    size_of_headers = align(cursor, 0x1000)  # stock aligns headers to 0x1000; safe for loader
+    if import_block:
+        size_of_headers = align(cursor + len(import_block), 0x1000)
+        # &~3 keeps the block 4-aligned even for the (unseen in practice) case of
+        # a block whose own size is not a multiple of 4.
+        opt_offsets[XEX_HEADER_IMPORT_LIBRARIES] = (size_of_headers - len(import_block)) & ~3
+    else:
+        size_of_headers = align(cursor, 0x1000)
 
     # ---- build opt directory ----
     opt_dir = b''
@@ -504,7 +577,12 @@ def pack(pe_data, out_path, entry_point, base_addr, import_block, pe_name,
     assert len(xex) == sec_offset, (len(xex), sec_offset)
     xex += sec_info
     assert len(xex) == data_region_start
-    xex += data_blobs
+    xex += b''.join(blobs)
+    if import_block:
+        imp_off = opt_offsets[XEX_HEADER_IMPORT_LIBRARIES]
+        assert imp_off >= len(xex), (imp_off, len(xex))
+        xex += b'\x00' * (imp_off - len(xex))    # pad BEFORE the import block
+        xex += import_block
     # pad header region to size_of_headers
     xex += b'\x00' * (size_of_headers - len(xex))
     assert len(xex) == size_of_headers, (len(xex), size_of_headers)
@@ -540,10 +618,154 @@ def pack(pe_data, out_path, entry_point, base_addr, import_block, pe_name,
     }
 
 
+# ------------------------------------------------------------------ verifier
+def verify_xex(x):
+    """Re-parse a finished XEX2 and recompute everything the loader checks.
+    Returns (problems, skipped): both lists of human-readable strings. `problems`
+    empty means every check that RAN passed -- `skipped` says which could not run
+    (an encrypted or LZX-compressed image cannot be reconstructed here, so its page
+    hashes and import records are unverifiable). Silence is not coverage: a caller
+    must report `skipped` too, or a skip reads as a pass.
+
+    This is the guard against the worst failure mode -- emitting a *plausible*
+    image. The old round-trip test only diffed the recovered basefile, so a wrong
+    entry point, a stale digest or a malformed import record all sailed through.
+
+    Every rule below was validated against real XEXs before being trusted:
+    HeaderHash and the ImportDigest chain reproduce exactly on retail
+    orig/45410914/tu0-archive/default.xex, on the TU5 default.xex and on
+    RB3ELoader.xex; the page-hash chain reproduces 235/235 on the tu0 retail XEX.
+    (The TU5 default.xex fails 11/239 pages -- it is a locally patched image whose
+    chain was never recomputed -- so use the tu0 archive as the hash oracle.)"""
+    p, skipped = [], []
+    if x[:4] != b'XEX2':
+        return (["not a XEX2 file"], skipped)
+    soh, so, hc = struct.unpack('>I', x[8:12])[0], struct.unpack('>I', x[16:20])[0], \
+        struct.unpack('>I', x[20:24])[0]
+    opts = {}
+    for i in range(hc):
+        k, v = struct.unpack('>II', x[24+i*8:24+i*8+8])
+        opts[k] = v
+    hv = so + 8
+    sec_size, image_size = struct.unpack('>II', x[so:so+8])
+    load_addr = struct.unpack('>I', x[hv+0x108:hv+0x10C])[0]
+    n_desc = struct.unpack('>I', x[so+0x180:so+0x184])[0]
+
+    # idaxex locates the page descriptors by arithmetic off SecurityInfo.Size, so a
+    # wrong Size silently reads them from the wrong offset (xex.cpp:130-133).
+    if sec_size != 0x184 + 0x18 * n_desc:
+        p.append(f"SecurityInfo.Size 0x{sec_size:X} != 0x184 + 0x18*{n_desc} "
+                 f"(= 0x{0x184 + 0x18*n_desc:X})")
+    if so > soh or sec_size > soh - so:
+        p.append(f"SecurityInfo 0x{so:X}/size 0x{sec_size:X} does not fit in "
+                 f"SizeOfHeaders 0x{soh:X}")
+
+    # HeaderHash = SHA1(tail || head), excluding HvImageInfo. Order is load-bearing.
+    calc = hashlib.sha1(x[so + 8 + 0x174:soh] + x[0:so + 8]).digest()
+    if calc != x[hv+0x15C:hv+0x170]:
+        p.append(f"HeaderHash mismatch (stored {x[hv+0x15C:hv+0x170].hex()}, "
+                 f"calc {calc.hex()})")
+
+    # ---- reconstruct the mapped image so the page chain can be checked ----
+    img = None
+    if XEX_HEADER_FILE_FORMAT_INFO in opts:
+        fo = opts[XEX_HEADER_FILE_FORMAT_INFO]
+        fsz = struct.unpack('>I', x[fo:fo+4])[0]
+        enc, fmt = struct.unpack('>HH', x[fo+4:fo+8])
+        if enc != 0:
+            skipped.append(f"image is encrypted (Flags={enc}); page hashes + import "
+                           f"records not checkable here")
+        elif fmt not in (COMP_NONE, COMP_BASIC):
+            skipped.append(f"image uses compression format {fmt} (LZX); page hashes + "
+                           f"import records not checkable here")
+        elif fmt == COMP_NONE:
+            img = x[soh:]
+        elif fmt == COMP_BASIC:
+            parts, cur = [], soh
+            for b in range((fsz - 8) // 8):
+                ds, zs = struct.unpack('>II', x[fo+8+b*8:fo+16+b*8])
+                parts.append(x[cur:cur+ds]); parts.append(b'\x00' * zs); cur += ds
+            img = b''.join(parts)
+        if img is not None and len(img) < image_size:
+            img = img + b'\x00' * (image_size - len(img))
+    else:
+        p.append("no FILE_FORMAT_INFO header (loader hard-fails without it)")
+    if img is None and not skipped:
+        skipped.append("mapped image unavailable; page hashes + import records not checked")
+
+    # ---- page-hash chain: H_i = SHA1(page_i || descriptor_i), DataDigest_i = H_{i+1}
+    if img is not None:
+        page_size = 0x10000 if load_addr < 0x90000000 else 0x1000
+        expect = x[hv+0x10C:hv+0x120]
+        cur = 0
+        for i in range(n_desc):
+            d = x[so+0x184+i*0x18:so+0x184+i*0x18+0x18]
+            span = page_size * (struct.unpack('>I', d[:4])[0] >> 4)
+            if hashlib.sha1(img[cur:cur+span] + d).digest() != expect:
+                p.append(f"page-hash chain breaks at descriptor {i} (VA 0x{load_addr+cur:X})")
+                break
+            expect = d[4:24]; cur += span
+        if cur != image_size and not p:
+            p.append(f"page descriptors span 0x{cur:X}, ImageSize is 0x{image_size:X}")
+
+    # ---- import digest chain + in-image record encoding ----
+    if XEX_HEADER_IMPORT_LIBRARIES in opts:
+        io = opts[XEX_HEADER_IMPORT_LIBRARIES]
+        blk, nt_size, nmod = struct.unpack('>III', x[io:io+12])
+        if nmod != struct.unpack('>I', x[hv+0x120:hv+0x124])[0]:
+            p.append(f"import ModuleCount {nmod} != HvImageInfo.ImportTableCount "
+                     f"{struct.unpack('>I', x[hv+0x120:hv+0x124])[0]}")
+        off = io + 12 + nt_size
+        expect = x[hv+0x124:hv+0x138]
+        for mi in range(nmod):
+            tsz = struct.unpack('>I', x[off:off+4])[0]
+            if hashlib.sha1(x[off+4:off+tsz]).digest() != expect:
+                p.append(f"import-digest chain breaks at table {mi}")
+            cnt = struct.unpack('>H', x[off+38:off+40])[0]
+            for j in range(cnt):
+                va = struct.unpack('>I', x[off+40+j*4:off+44+j*4])[0]
+                rva = va - load_addr
+                if img is None:
+                    continue
+                if not (0 <= rva < len(img)) or rva % 4:
+                    p.append(f"lib{mi} record VA 0x{va:08X} unmapped or misaligned")
+                    continue
+                w0 = struct.unpack('>I', img[rva:rva+4])[0]
+                rtype, modn, ordn = w0 >> 24, (w0 >> 16) & 0xFF, w0 & 0xFFFF
+                if rtype not in (0, 1):
+                    p.append(f"lib{mi} VA 0x{va:08X}: record type {rtype} not in {{0,1}}")
+                elif modn != mi:
+                    p.append(f"lib{mi} VA 0x{va:08X}: module index {modn} in word0 != {mi}")
+                elif rtype == 0:
+                    if w0 != ((mi << 16) | ordn):
+                        p.append(f"lib{mi} VA 0x{va:08X}: type-0 slot 0x{w0:08X} != (mod<<16)|ord")
+                else:
+                    if rva + 16 > len(img):
+                        p.append(f"lib{mi} VA 0x{va:08X}: thunk straddles the image end")
+                        continue
+                    w1, w2, w3 = struct.unpack('>III', img[rva+4:rva+16])
+                    want1 = 0x02000000 | (mi << 16) | ordn
+                    if w1 != want1:
+                        p.append(f"lib{mi} VA 0x{va:08X}: thunk word1 0x{w1:08X} != 0x{want1:08X}"
+                                 + (" (still `lwz r11,off(r11)` -- word1 was never tagged)"
+                                    if (w1 & 0xFFFF0000) == 0x816B0000 else ""))
+                    if w2 != 0x7D6903A6 or w3 != 0x4E800420:
+                        p.append(f"lib{mi} VA 0x{va:08X}: thunk words2-3 "
+                                 f"0x{w2:08X}/0x{w3:08X} != mtctr r11 / bctr")
+            expect = x[off+4:off+24]
+            off += tsz
+        if io + blk != soh:
+            p.append(f"import block ends at 0x{io+blk:X}, SizeOfHeaders is 0x{soh:X} "
+                     f"(stock XEXs place it last, ending exactly at SizeOfHeaders)")
+    return (p, skipped)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--pe', required=True, help='input basefile (fully-mapped image, e.g. xex1tool -b output)')
-    ap.add_argument('--out', required=True)
+    ap.add_argument('--pe', help='input basefile (fully-mapped image, e.g. xex1tool -b output)')
+    ap.add_argument('--out')
+    ap.add_argument('--verify', metavar='XEX',
+                    help='verify an existing XEX2 (digests + import records) and exit')
     ap.add_argument('--from-xex', help='source XEX to copy entry-point/image-base/imports/pe-name from')
     ap.add_argument('--entry', type=lambda x: int(x, 0), help='entry point VA (overrides --from-xex)')
     ap.add_argument('--base', type=lambda x: int(x, 0), default=0x84000000)
@@ -553,9 +775,26 @@ def main():
     ap.add_argument('--pe-name', help='original PE name string')
     ap.add_argument('--compress', choices=['none', 'basic'], default='basic',
                     help='none = XexDataFormat::None (raw); basic = single DataSize/ZeroSize block. default basic.')
-    ap.add_argument('--module-flags', type=lambda x: int(x, 0),
-                    default=MODULE_TITLE | MODULE_DLL)
+    ap.add_argument('--module-flags', type=lambda x: int(x, 0), default=None,
+                    help='XEX ModuleFlags; default = --from-xex value, else TITLE|DLL (0x9)')
+    ap.add_argument('--base-from-pe', action='store_true',
+                    help="use the PE's own ImageBase instead of --base")
+    ap.add_argument('--no-verify', action='store_true',
+                    help='skip the post-pack self-check of the emitted XEX')
     args = ap.parse_args()
+
+    if args.verify:
+        problems, skipped = verify_xex(open(args.verify, 'rb').read())
+        for probl in problems:
+            print(f"  FAIL {probl}")
+        for sk in skipped:
+            print(f"  SKIP {sk}")
+        verdict = f"{len(problems)} problem(s)" if problems else "OK"
+        print(f"== {args.verify}: {verdict}"
+              + (f" ({len(skipped)} check group(s) SKIPPED)" if skipped else ""))
+        raise SystemExit(1 if problems else 0)
+    if not args.pe or not args.out:
+        ap.error("--pe and --out are required (or use --verify)")
 
     with open(args.pe, 'rb') as f:
         pe_raw = f.read()
@@ -563,6 +802,7 @@ def main():
     entry = args.entry
     import_block = None
     pe_name = args.pe_name
+    module_flags = args.module_flags
 
     # Two kinds of --pe input:
     #  * a fully-mapped basefile (offset == RVA, e.g. `xex1tool -b` output) whose
@@ -584,11 +824,27 @@ def main():
         raw_packed_end = max(raw_packed_end, _s['raw'] + _s['rawsz'])
     already_mapped = len(pe_raw) > raw_packed_end
     image = bytearray(pe_raw) if already_mapped else bytearray(map_pe_to_image(pe_raw, pe_info))
-    if entry is None:
-        entry = pe_info['image_base'] + pe_info['aoe']
+
+    base_addr = pe_info['image_base'] if args.base_from_pe else args.base
+    if pe_info['image_base'] != base_addr:
+        # NOT an error: a basefile recovered from a XEX keeps whatever ImageBase
+        # link.exe wrote, which need not be the XEX load address (measured: the
+        # stock RB3Enhanced.dll basefile says 0x88000000 while the XEX loads it at
+        # 0x84000000). The XEX value is authoritative -- but a silent mismatch is
+        # how you get an image whose absolute relocations point nowhere, so say so.
+        print(f"  [warn] PE ImageBase 0x{pe_info['image_base']:X} != XEX load address "
+              f"0x{base_addr:X} (XEX value wins; pass --base-from-pe to use the PE's)")
 
     if args.import_map:
         import json
+        if already_mapped:
+            # synthesize_import_block walks the PE's .idata/.text via the section
+            # table's RAW pointers, which are meaningless once the image has been
+            # laid out at offset == RVA. Refuse rather than emit a garbage block.
+            raise SystemExit("--import-map needs the UNMAPPED link.exe PE; --pe looks "
+                             "like an already-mapped basefile (size 0x%X > raw-packed "
+                             "end 0x%X). Use --import-block or --from-xex instead."
+                             % (len(pe_raw), raw_packed_end))
         with open(args.import_map) as f:
             import_map = json.load(f)
         # synthesize reads the unmapped PE's .idata/.text; rewrites patch the map
@@ -605,14 +861,28 @@ def main():
             print(f"    NOTE {len(summary['unmapped_ordinals'])} PE ordinal(s) not in import-map "
                   f"(named/validated from .idata only): "
                   + ", ".join(f"{mod}@{o}" for mod, o in summary['unmapped_ordinals']))
+        if summary['variable_only']:
+            print(f"    [warn] {len(summary['variable_only'])} import(s) have no .text call "
+                  f"thunk and were emitted as type-0 (variable) records only -- calls to "
+                  f"them will NOT be bound: "
+                  + ", ".join(f"{mod}@{o}" for mod, o in summary['variable_only']))
 
     pe_data = bytes(image)
 
     if args.from_xex:
         with open(args.from_xex, 'rb') as f:
             src = f.read()
-        module_flags, hsz, sec_off, opts = parse_opt_headers(src)
-        if entry is None and XEX_HEADER_ENTRY_POINT in opts:
+        src_flags, hsz, sec_off, opts = parse_opt_headers(src)
+        if module_flags is None:
+            module_flags = src_flags
+        if args.entry is None and XEX_HEADER_ENTRY_POINT in opts:
+            # The XEX entry point is authoritative and is NOT recoverable from the
+            # basefile: a basefile's PE header keeps link.exe's original ImageBase,
+            # so image_base+AddressOfEntryPoint can be off by the whole rebase delta
+            # (measured 0x8801B590 vs the true 0x8401B590 for stock RB3Enhanced.dll).
+            # This used to be dead code -- `entry` was already filled from the PE
+            # above, so `if entry is None` never fired and every --from-xex pack
+            # silently shipped a wrong entry point.
             entry = opts[XEX_HEADER_ENTRY_POINT]
         if import_block is None:
             import_block = extract_import_block(src, opts)
@@ -628,18 +898,39 @@ def main():
             import_block = f.read()
 
     if entry is None:
-        raise SystemExit("entry point required (via --entry or --from-xex)")
+        # Last resort only: correct for a genuine link.exe PE, wrong for a rebased
+        # basefile. Everything above (--entry, --from-xex) takes precedence.
+        entry = pe_info['image_base'] + pe_info['aoe']
+        print(f"  [warn] entry point derived from the PE header "
+              f"(0x{pe_info['image_base']:X}+0x{pe_info['aoe']:X}=0x{entry:X}); "
+              f"pass --entry or --from-xex if this image was rebased")
+
+    if module_flags is None:
+        module_flags = MODULE_TITLE | MODULE_DLL
 
     compression = COMP_NONE if args.compress == 'none' else COMP_BASIC
 
-    info = pack(pe_data, args.out, entry, args.base, import_block, pe_name,
-                compression, args.module_flags)
+    info = pack(pe_data, args.out, entry, base_addr, import_block, pe_name,
+                compression, module_flags)
 
     for k, v in info.items():
         if isinstance(v, int) and k in ('image_size', 'size_of_headers', 'sec_offset', 'entry_point', 'base_addr'):
             print(f"  {k:16} = 0x{v:X}")
         else:
             print(f"  {k:16} = {v}")
+
+    if not args.no_verify:
+        problems, skipped = verify_xex(open(args.out, 'rb').read())
+        for sk in skipped:
+            print(f"  [SELF-CHECK] SKIPPED: {sk}")
+        if problems:
+            print(f"  [SELF-CHECK] {len(problems)} problem(s) in {args.out}:")
+            for p in problems[:12]:
+                print(f"    FAIL {p}")
+            if len(problems) > 12:
+                print(f"    ... and {len(problems)-12} more")
+            raise SystemExit(1)
+        print("  [SELF-CHECK] ok: digests + import records verify")
 
 
 if __name__ == '__main__':
