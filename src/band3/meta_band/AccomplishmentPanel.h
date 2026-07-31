@@ -178,7 +178,9 @@ public:
     OBJ_CLASSNAME(AccomplishmentPanel);
     OBJ_SET_TYPE(AccomplishmentPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~AccomplishmentPanel() {}
+    // NOTE(laneCD8): do NOT re-add `virtual ~AccomplishmentPanel() {}` -- see
+    // ClosetPanel.h. A user-declared dtor forces ??_DAccomplishmentPanel out of
+    // line; retail inlines it into ??_GAccomplishmentPanel. Implicit = 100%.
     virtual void Enter();
     virtual void Exit();
     virtual void Load();

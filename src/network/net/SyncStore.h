@@ -11,7 +11,14 @@ class SyncObjMsg : public NetMessage {
 public:
     SyncObjMsg() : mObjData(false) {}
     SyncObjMsg(String &, unsigned int, Synchronizable *);
-    virtual ~SyncObjMsg() {}
+    // NOTE(laneCD8): the destructor is deliberately NOT declared. A user-declared
+    // `virtual ~SyncObjMsg() {}` makes MSVC emit `this->vptr = &??_7SyncObjMsg@@6B@`
+    // at destructor entry (lis/addi/stw, 3 instructions); an IMPLICITLY-declared one
+    // does not, and retail has no such store. Verified with a minimal repro under the
+    // exact retail cflags: identical classes differing only in explicit-vs-implicit
+    // dtor produce exactly this 3-instruction delta, and the implicit form also
+    // reproduces retail's `mr r30,r3`-before-`stw r3,this$` ordering. The dtor is
+    // still virtual (inherited from NetMessage) and still mangles `??1SyncObjMsg@@UAA@XZ`.
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();

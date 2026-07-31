@@ -17,7 +17,9 @@ class JoinRequestMsg : public SessionMsg {
 public:
     JoinRequestMsg() {}
     JoinRequestMsg(const std::vector<User *> &, int);
-    virtual ~JoinRequestMsg() {}
+    // NOTE(laneCD8): destructor deliberately NOT declared -- see SyncStore.h. An
+    // explicit `virtual ~JoinRequestMsg() {}` adds a 3-instruction derived-vptr
+    // store at dtor entry that retail does not have.
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     NETMSG_BYTECODE(JoinRequestMsg);

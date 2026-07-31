@@ -12,7 +12,10 @@ public:
     OBJ_CLASSNAME(ClosetPanel);
     OBJ_SET_TYPE(ClosetPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~ClosetPanel() {}
+    // NOTE(laneCD8): do NOT re-add `virtual ~ClosetPanel() {}`. A user-declared
+    // destructor forces the compiler-generated vbase-dtor helper ??_DClosetPanel
+    // OUT OF LINE; retail inlines it into ??_GClosetPanel (destroying
+    // ~DeJitterPanel at +0x94 and ~Object at +0xa4 directly). Implicit = 100%.
     virtual void Draw();
     virtual void Enter();
     virtual void Exit();
