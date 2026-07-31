@@ -155,7 +155,7 @@ LocalBandMachine *BandMachineMgr::GetLocalMachine() const { return mLocalMachine
 
 void BandMachineMgr::GetMachines(std::vector<BandMachine *> &machines) const {
     machines.push_back(mLocalMachine);
-    for (int i = 0; i < (int)mRemoteMachines.size(); i++) {
+    for (int i = 0; i < mRemoteMachines.size(); i++) {
         if (mRemoteMachines[i]->IsActive()) {
             machines.push_back(mRemoteMachines[i]);
         }
@@ -238,7 +238,7 @@ DataNode BandMachineMgr::OnMsg(const RemoteUserLeftMsg &msg) {
 
 void BandMachineMgr::RemoveRemoteMachine(unsigned int id) {
     RemoteBandMachine *target = 0;
-    for (int i = 0; i < (int)mRemoteMachines.size(); i++) {
+    for (int i = 0; i < mRemoteMachines.size(); i++) {
         if (mRemoteMachines[i]->IsActive() && mRemoteMachines[i]->GetMachineID() == id) {
             mRemoteMachines[i]->Deactivate();
             target = mRemoteMachines[i];

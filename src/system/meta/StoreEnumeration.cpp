@@ -10,11 +10,7 @@ XboxEnumeration::XboxEnumeration(int i, std::vector<unsigned long long> *offerID
     if (offerIDs != 0) {
         mOfferIDCount = (offerIDs->end() - offerIDs->begin());
         MILO_ASSERT(mOfferIDCount, 0x197);
-        u32 allocSize = mOfferIDCount << 3;
-        if (mOfferIDCount > 0x1FFFFFFFU) {
-            allocSize = 0xFFFFFFFF;
-        }
-        mOfferIDsBegin = (unsigned long long *)new char[allocSize];
+        mOfferIDsBegin = new unsigned long long[mOfferIDCount];
         memcpy(mOfferIDsBegin, &(*offerIDs)[0], mOfferIDCount << 3);
         mCurOffers = mOfferIDsBegin;
     }

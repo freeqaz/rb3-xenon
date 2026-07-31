@@ -68,7 +68,7 @@ public:
     float mArrhythmicDurationSeconds; // 0x4c
     bool mInArrhythmic; // 0x50
     int unk_0x58; // 0x54 (copied as a word by operator=)
-    int unk_0x40; // 0x58
+    float unk_0x40; // 0x58 — retail copies this with lfs/stfs in operator=, so it is a float
     bool mIsCymbalLane; // 0x5c — gem is on a game-cymbal lane
     unsigned int unk_0x44; // 0x60 - some RG chord shape
     unsigned int unk_0x48; // 0x64 - some other RG chord shape
