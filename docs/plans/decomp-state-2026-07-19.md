@@ -1,10 +1,35 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `23b5f4b1`, coordinator A/B leg on main 2026-07-31):
-41,409 strict-matched functions / honest proxy 39,922 / `matched_code_percent`
-35.768044** (honest = matched − masked_equal, per the BO-8 pricing rule).
-Denominator is the whole TU5 XEX (`total_functions` 69,367; `masked_equal` 1,487;
-`total_code` 10,580,036).
+**Current (MEASURED at HEAD `b2958f2d`, coordinator clean-worktree build 2026-07-31):
+41,631 strict-matched functions / honest proxy 40,146 / `matched_code_percent`
+36.397797** (honest = matched − masked_equal, per the BO-8 pricing rule).
+Denominator is the whole TU5 XEX (`total_functions` 69,367; `masked_equal` 1,485;
+`total_code` 10,580,036). Under `name_check`: 41,629 / 40,144 / 23.823133.
+
+> **Measured in a clean worktree, NOT on main** — main was dirty with another
+> lane's in-flight `PostProc`/`Cache.h` edits at the time, and a build there
+> would have silently folded them into the baseline.
+
+## Post-wave-CC ledger → `b2958f2d` (+222 matched / +224 honest / +0.629753 pp)
+
+| commit | matched | honest | lane |
+|---|---|---|---|
+| `d19ce57f` | **−6** | **−6** | CC-8 — 32 RTTI map corrections, 2 of CC-3's rows refuted (deliberate spend) |
+| `dbc9332c` | 0 | 0 | CC-9 — native M13 ark mount + warning policy (native-only ⇒ no X360 effect BY CONSTRUCTION, no A/B claimed) |
+| `b2958f2d` | +228 | +230 | NCCC wave 2 — near-miss band |
+| **sum** | **+222** | **+224** | matches the measured total to the digit |
+
+⚠ **The wave commit's subject says "+216 net strict"; I measure +228
+`matched_functions`.** These are *different measures* — net strict set is keyed
+`(unit, name)` and nets out renames, `matched_functions` does not — so they are
+plausibly consistent rather than contradictory. Recorded as an open reconciliation
+rather than resolved, because this wave has already produced two lane self-reports
+that did not reproduce.
+
+⚠ **`masked_equal` moved 1,487 → 1,485 (−2)**, again unattributed. That is now
+the third unexplained `masked_equal` drift (−21, −1, −2). Honest keeps outrunning
+matched by exactly these deltas. Whoever next touches pricing should explain the
+mechanism rather than inherit it.
 
 > ## Wave CC (2026-07-31) — +23 matched / +24 honest / +0.067144 pp
 > From 41,386 / 39,898 / 35.700900 at `683ee54d`. **The ledger closes EXACTLY**
