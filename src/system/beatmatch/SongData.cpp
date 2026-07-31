@@ -307,7 +307,8 @@ void SongData::PostLoad(PlayerTrackConfigList *pList) {
 void SongData::PostLoadTrack(int track) {
     TrackInfo *trackInfo = mTrackInfos[track];
     if (!trackInfo->FakeAudio()) {
-        const PhraseList &phrases = mPhraseDBs[track]->GetPhraseList(0, kCommonPhrase);
+        PhraseDB *phraseDB = mPhraseDBs[track];
+        const PhraseList &phrases = phraseDB->GetPhraseList(0, kCommonPhrase);
         for (std::vector<Phrase>::const_iterator it = phrases.mPhrases.begin();
              it != phrases.mPhrases.end();
              ++it) {
@@ -405,7 +406,7 @@ void SongData::SendGems(int track) {
 void SongData::PostLoadVocals() {
     for (int i = 0; i < mVocalNoteLists.size(); i++) {
         VocalNoteList *curList = mVocalNoteLists[i];
-        bool b = i == 0 || i == 1;
+        const bool b = i == 0 || i == 1;
         if (i == 2) {
             curList->CopyLyricPhrases();
         }
@@ -510,10 +511,10 @@ void SongData::ComputeVocalRangeData() {
 }
 
 void SongData::UnflipGems(int i1, int i2, int diff) {
-    TickedInfoCollection<String> &backup_mixes =
-        mBackupTracks[i2]->mMixes->GetMixList(diff);
     std::vector<GameGem> &backup_gems =
         mBackupTracks[i2]->mGems->GetDiffGemList(diff)->mGems;
+    TickedInfoCollection<String> &backup_mixes =
+        mBackupTracks[i2]->mMixes->GetMixList(diff);
     std::vector<GameGem> &gems = mGemDBs[i1]->GetDiffGemList(diff)->mGems;
     TickedInfoCollection<String> &mixes = mDrumMixDBs[i1]->GetMixList(diff);
     MILO_ASSERT(backup_gems.size() == gems.size(), 0x2CE);
@@ -528,8 +529,8 @@ void SongData::UnflipGems(int i1, int i2, int diff) {
             mixes.SetInfo(0, s);
         }
         int i11 = 1;
-        int _tmp2 = backup_mixes.mInfos.size();
-        int i7 = _tmp2 == 1 ? 0x7fffffff : backup_mixes.mInfos[1].mTick;
+        int i7 = backup_mixes.mInfos.size() == 1 ? 0x7fffffff
+                                                  : backup_mixes.mInfos[1].mTick;
         for (int g = 0; g < gems.size(); g++) {
             MILO_ASSERT(backup_gems[g].GetTick() == gems[g].GetTick(), 0x2F4);
             if (backup_gems[g].GetTick() >= i7) {

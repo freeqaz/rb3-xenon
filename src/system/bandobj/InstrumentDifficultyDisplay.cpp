@@ -98,8 +98,7 @@ void InstrumentDifficultyDisplay::UpdateDisplay() {
         // Retail has NO kDataString type check here (the rb3-Wii oracle's
         // `if (handled.Type() == kDataString) ... else MILO_WARN(...)` emits a
         // cmpwi 0x12 / bne that the target bytes do not contain).
-        DataNode handled = HandleType(msg);
-        mInstrumentLabel->SetIcon(*handled.Str());
+        mInstrumentLabel->SetIcon(*HandleType(msg).Str());
     }
     mInstrumentLabel->SetShowing(true);
 }

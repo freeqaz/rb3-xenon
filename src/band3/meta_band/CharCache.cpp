@@ -68,7 +68,8 @@ void CharCache::InitMe() {
     // the boot-to-menu path (the menu DTA + meta_panel.milo don't need them), so
     // defer the load here — keeps unk1c an empty dir (GetCharacter Find returns
     // null, tolerated by the menu). Re-enable once char Load is native-correct.
-    unk1c.LoadFile(FilePath("../world/shared/chars.milo"), false, true, kLoadFront, false);
+    FilePath path("../world/shared/chars.milo");
+    unk1c.LoadFile(path, false, true, kLoadFront, false);
 #endif
 }
 

@@ -328,7 +328,7 @@ void ListSuperClasses(Symbol classSym, std::vector<Symbol> &classes) {
 }
 
 void ListProperties(
-    std::list<Symbol> &props, Symbol classnm, Symbol type, std::list<Symbol> *arrayProps, bool walkSuper
+    std::list<Symbol> &props, Symbol classnm, Symbol type, std::list<Symbol> *arrayProps
 ) {
     static Symbol objects("objects");
     DataArray *cfg = SystemConfig(objects, classnm);
@@ -348,17 +348,14 @@ void ListProperties(
     if (ed) {
         WalkProps(ed, props, arrayProps);
     }
-    if (walkSuper) {
-        std::vector<Symbol> superclasses;
-        ListSuperClasses(classnm, superclasses);
-        for (std::vector<Symbol>::iterator it = superclasses.begin();
-             it != superclasses.end();
-             ++it) {
-            DataArray *scfg = SystemConfig(objects, *it);
-            DataArray *sced = scfg->FindArray("editor", false);
-            if (sced) {
-                WalkProps(sced, props, arrayProps);
-            }
+    std::vector<Symbol> superclasses;
+    ListSuperClasses(classnm, superclasses);
+    for (std::vector<Symbol>::iterator it = superclasses.begin(); it != superclasses.end();
+         ++it) {
+        DataArray *scfg = SystemConfig(objects, *it);
+        DataArray *sced = scfg->FindArray("editor", false);
+        if (sced) {
+            WalkProps(sced, props, arrayProps);
         }
     }
 }
@@ -572,7 +569,7 @@ void CopyTypeProperties(Hmx::Object *from, Hmx::Object *to) {
     if (fromTypeEditor) {
         WalkProps(fromTypeEditor, fromProps, &fromArrayProps);
     }
-    ListProperties(toProps, to->ClassName(), to->Type(), &toArrayProps, true);
+    ListProperties(toProps, to->ClassName(), to->Type(), &toArrayProps);
 
     fromProps.sort();
     toProps.sort();

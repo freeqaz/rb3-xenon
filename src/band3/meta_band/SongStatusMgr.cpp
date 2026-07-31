@@ -402,10 +402,10 @@ bool SongStatusMgr::UpdateSong(int songID, const PerformerStatsInfo &stats, bool
     SongStatus *status = CreateOrAccessSongStatus(songID);
     bool scoreUpdated = status->UpdateScore(ty, diff, stats.mScore);
     if (scoreUpdated) {
-        UpdateCachedTotalDiscScore(ty);
+        mCachedTotalDiscScores[ty] = UpdateCachedTotalDiscScore(ty);
         UpdateCachedTotalScore(ty);
     }
-    bool updated = (scoreUpdated != 0) | UpdateSongStats(ty, diff, stats, status);
+    bool updated = scoreUpdated | UpdateSongStats(ty, diff, stats, status);
     if (ty == kScoreBand && scoreUpdated) {
         status->SetInstrumentMask(stats.mInstrumentMask);
     }
@@ -413,7 +413,7 @@ bool SongStatusMgr::UpdateSong(int songID, const PerformerStatsInfo &stats, bool
     GetDateAndTime(dt);
     status->SetLastPlayed(dt.ToCode());
     if (mUpdatingStatus) {
-        if (songID == mUpdatingStatus->mSongID) {
+        if (mUpdatingStatus->mSongID == songID) {
             if (mUpdatingScoreType == ty) {
                 if (mUpdatingDifficulty == diff) {
                     TheRockCentral.CancelOutstandingCalls(this);
@@ -425,7 +425,7 @@ bool SongStatusMgr::UpdateSong(int songID, const PerformerStatsInfo &stats, bool
     status->SetDirty(ty, diff, !b && updated);
     if (ty == kScoreRealDrum) {
         bool updatestats = UpdateSongStats(kScoreDrum, diff, stats, status);
-        if (mUpdatingStatus && (songID == mUpdatingStatus->mSongID)
+        if (mUpdatingStatus && (mUpdatingStatus->mSongID == songID)
             && (mUpdatingScoreType == kScoreDrum) && (mUpdatingDifficulty == diff)) {
             TheRockCentral.CancelOutstandingCalls(this);
             mUpdatingStatus = 0;
@@ -656,8 +656,8 @@ int SongStatusMgr::GetCachedTotalStars(ScoreType ty) const {
     return mCachedTotalStars[ty];
 }
 
-void SongStatusMgr::UpdateCachedTotalDiscScore(ScoreType ty) {
-    mCachedTotalDiscScores[ty] = CalculateTotalScore(ty, rb3);
+int SongStatusMgr::UpdateCachedTotalDiscScore(ScoreType ty) {
+    return mCachedTotalDiscScores[ty] = CalculateTotalScore(ty, rb3);
 }
 
 void SongStatusMgr::UpdateCachedTotalScore(ScoreType ty) {
@@ -1017,7 +1017,7 @@ void SongStatusMgr::LoadFixed(FixedSizeSaveableStream &stream, int rev) {
             stream >> mCachedTotalDiscScores[i];
         } else {
             UpdateCachedTotalScore(i);
-            UpdateCachedTotalDiscScore(i);
+            mCachedTotalDiscScores[i] = UpdateCachedTotalDiscScore(i);
         }
         if (rev >= 0x93) {
             stream >> mCachedTotalStars[i];

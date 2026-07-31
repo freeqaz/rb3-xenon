@@ -1612,16 +1612,16 @@ void MoveDir::DrawShowing() {
 
                         for (playerIdx = 0; playerIdx < 2; playerIdx++) {
                             const Vector3 &pos = out.WorldPos(playerIdx);
-                            UtilDrawSphere(pos, radius1, color, nullptr);
+                            UtilDrawSphere(pos, radius1, color);
 
                             const char *label = MakeString("%i:%i", playerIdx, labeledBeat);
                             UtilDrawString(label, pos, color);
 
                             TheRnd.DrawLine(pos, out.Offset(playerIdx), color, false);
-                            UtilDrawSphere(out.Offset(playerIdx), radius1, color, nullptr);
+                            UtilDrawSphere(out.Offset(playerIdx), radius1, color);
 
                             TheRnd.DrawLine(pos, out.Offset(playerIdx + 2), color, false);
-                            UtilDrawSphere(out.Offset(playerIdx + 2), radius1, color, nullptr);
+                            UtilDrawSphere(out.Offset(playerIdx + 2), radius1, color);
                         }
 
                         for (playerIdx = 0; playerIdx < 2; playerIdx++) {
@@ -1631,7 +1631,7 @@ void MoveDir::DrawShowing() {
                             Hmx::Color altColor;
                             altColor.Set(zero, 1.0f, zero, 1.0f);
                             TheRnd.DrawLine(worldPos, offsetPos, altColor, false);
-                            UtilDrawSphere(offsetPos, radius2, altColor, nullptr);
+                            UtilDrawSphere(offsetPos, radius2, altColor);
 
                             const char *label = MakeString("%i", playerIdx);
                             UtilDrawString(label, offsetPos, altColor);

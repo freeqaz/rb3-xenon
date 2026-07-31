@@ -24,11 +24,7 @@ namespace {
         if (gArkFiles.empty()) {
             gArkFiles.resize(TheArchive->NumArkFiles());
             gExternalArkFiles.resize(TheArchive->NumArkFiles());
-            gOverlapped.Internal = 0;
-            gOverlapped.InternalHigh = 0;
-            gOverlapped.Offset = 0;
-            gOverlapped.OffsetHigh = 0;
-            gOverlapped.hEvent = 0;
+            memset(&gOverlapped, 0, sizeof(gOverlapped));
             for (int i = 0; i < gArkFiles.size(); i++) {
                 const char *arkFileName = TheArchive->GetArkfileName(i);
                 String fullPath;

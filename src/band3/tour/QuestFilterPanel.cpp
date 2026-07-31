@@ -408,7 +408,7 @@ void QuestFilterPanel::CheatCycleSetlist() {
     pLocalPerformer->CheatCycleSetlist();
 }
 
-int QuestFilterPanel::AreCurrentFiltersValid() {
+bool QuestFilterPanel::AreCurrentFiltersValid() {
     TourPerformerImpl *pPerformer = TheTour->m_pTourPerformer;
     MILO_ASSERT(pPerformer, 0x1EC);
     MILO_ASSERT(pPerformer->IsLocal(), 0x1ED);

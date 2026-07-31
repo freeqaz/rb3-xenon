@@ -401,7 +401,14 @@ void TrainerGemTab::DrawTails(
             Transform orig = cur;
             Transform xfm = orig;
             xfm.v.x = mInstLanes[GetLane(slot)]->WorldXfm().v.x;
-            float scale = 2.5f * ((float)gem.GetDurationTicks() / 480.0f);
+            // ★ Retail pools ONE folded constant 0x3BAAAAAB (= 2.5f/480.0f = 1/192)
+            // here, not the pair {2.5f, 1/480.0f} that `2.5f * (ticks / 480.0f)`
+            // emits. That extra pooled constant costs a seventh loop-invariant
+            // FPR, which pushes the frame from __savefpr_23/0x1e0 to
+            // __savefpr_22/0x1f0. Verified against band.exe .rdata: the target's
+            // lbl_820F38D0 holds 0x3baaaaab. Keep the constants parenthesized
+            // together so the fold happens at compile time.
+            float scale = (float)gem.GetDurationTicks() * (2.5f / 480.0f);
             float scaleX10 = 10.0f * scale;
             float endZ = xfm.v.z + scaleX10;
             if (endZ > unk12c) {

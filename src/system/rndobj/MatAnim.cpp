@@ -222,7 +222,7 @@ void RndMatAnim::LoadStages(BinStreamRev &d) {
     unsigned int stageCount;
     d >> stageCount;
     if (stageCount != 0) {
-        bool oldEditMode = TheLoadMgr.EditMode();
+        bool oldEditMode = LOADMGR_EDITMODE;
         TheLoadMgr.SetEditMode(true);
         RndMatAnim *it = this;
         int i = 1;

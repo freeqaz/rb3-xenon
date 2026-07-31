@@ -363,7 +363,7 @@ BandCrowdMeter::IconData::IconData(
 
 BEGIN_PROPSYNCS(BandCrowdMeter)
     SYNC_PROP(peak_value, mPeakValue)
-    SYNC_PROP_MODIFY(value, mValue, SetCrowd(mValue))
+    SYNC_PROP_MODIFY_ALT(value, mValue, SetCrowd(mValue))
     SYNC_PROP_MODIFY(icon_0_val, mIconValues[0], SetIconVal(0, mIconValues[0]))
     SYNC_PROP_MODIFY(icon_1_val, mIconValues[1], SetIconVal(1, mIconValues[1]))
     SYNC_PROP_MODIFY(icon_2_val, mIconValues[2], SetIconVal(2, mIconValues[2]))

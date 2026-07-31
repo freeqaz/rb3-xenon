@@ -40,10 +40,28 @@ void CharIKHead::Poll() {
         Vector3 headOffset;
         Subtract(mHead->WorldXfm().v, mHeadFilter, headOffset);
         Vector3 targetPos = mTarget->WorldXfm().v;
-        float headOffsetLen = Length(headOffset);
+        // Length(headOffset) hand-expanded with the terms rotated y,z,x.
+        // Under /fp:fast MSVC 10224 reassociates a 3-term FP sum by rotating it
+        // one step left of source order, so writing y,z,x yields retail's z,x,y
+        // FMA chain. This is codegen-load-bearing well beyond this line: it also
+        // fixes the 13-instruction inlined Multiply() dot-product block in the
+        // bone-chain loop ~250 instructions later. Plain Length() costs 12
+        // instructions. Value is identical -- only the summation order differs.
+        float headOffsetLen = std::sqrt(
+            headOffset.y * headOffset.y + headOffset.z * headOffset.z
+            + headOffset.x * headOffset.x
+        );
         if (headOffsetLen > 0) {
             float blendDist = Min(headOffsetLen, mTargetRadius * weight);
-            ScaleAddEq(targetPos, headOffset, blendDist / headOffsetLen);
+            float s = blendDist / headOffsetLen;
+            // Hand-expanded ScaleAddEq (identical body). Inlining it here rather
+            // than through the helper is codegen-load-bearing: it flips the
+            // operand order MSVC picks for the `spineToTarget *= mOffsetScale`
+            // fmuls ~300 instructions later. Reverting to the plain
+            // ScaleAddEq(targetPos, headOffset, s) call costs 1 instruction.
+            targetPos.x += headOffset.x * s;
+            targetPos.y += headOffset.y * s;
+            targetPos.z += headOffset.z * s;
         }
         Interp(mPoints[0].mBone->WorldXfm().v, targetPos, weight, targetPos);
         Vector3 spineToTarget;

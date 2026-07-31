@@ -296,7 +296,8 @@ void MetaPerformer::SetSetlistImpl(const SavedSetlist *setlist, bool reset) {
     mSetlist = setlist->GetIdentifyingToken();
     mSetlistTitle = setlist->GetTitle();
     mSetlistIsLocal = setlist->GetType() == SavedSetlist::kSetlistLocal;
-    FOREACH (it, setlist->mSongs) {
+    const std::vector<int> &songs = setlist->mSongs;
+    FOREACH (it, songs) {
         Symbol shortName = TheSongMgr.GetShortNameFromSongID(*it, true);
         MILO_ASSERT(!shortName.Null(), 0x1FB);
         mSongs.push_back(shortName);

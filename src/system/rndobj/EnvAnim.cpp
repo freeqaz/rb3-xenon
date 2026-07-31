@@ -8,6 +8,12 @@
 
 RndEnvAnim::RndEnvAnim() : mEnviron(this), mKeysOwner(this, this) {}
 
+template <>
+ObjRefConcrete<RndEnvAnim, ObjectDir>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(this->RefOwner());
+}
+
 void RndEnvAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         if (!obj)

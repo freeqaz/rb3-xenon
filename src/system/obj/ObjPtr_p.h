@@ -99,6 +99,29 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
         mObject->Release(this);
 }
 
+// Explicit specialization for RndParticleSys: retail's compiled dtor for
+// ObjRefConcrete<RndParticleSys, ObjectDir> passes mOwner (not this) as the
+// ring-ref to Release. Verified via objdiff on
+// ??1?$ObjRefConcrete@VRndParticleSys@@VObjectDir@@@@UAA@XZ (default/PartAnim):
+// target loads offset+4 (mOwner) into the arg register, base (generic `this`
+// body) emits a plain register copy -- one-instruction replace, 97.9%->100%.
+// NOT generalized to the primary template: an A/B (same worktree, clean
+// report.cache, isolated to this one header line) measured applying `mOwner`
+// GLOBALLY at -64 matched_functions (41415 -> 41351), so most other T1
+// instantiations genuinely need `this`. This is a real per-(T1,T2) divergence,
+// not a template-wide bug -- scope the fix with an explicit specialization so
+// only the RndParticleSys instantiation (shared by every ObjPtr<RndParticleSys>
+// / ObjOwnerPtr<RndParticleSys> / ObjDirPtr<RndParticleSys> site) is affected.
+// Declared here (not defined -- RndParticleSys is only forward-declared in
+// this header, and mObject->Release() needs its complete type) so every TU
+// that instantiates ObjPtr<RndParticleSys>/ObjOwnerPtr<RndParticleSys>/
+// ObjDirPtr<RndParticleSys> sees the specialization and emits an external
+// reference instead of the primary template. Defined once, out-of-line, in
+// PartAnim.cpp (which already includes rndobj/Part.h for RndParticleSys).
+class RndParticleSys;
+template <>
+ObjRefConcrete<RndParticleSys, ObjectDir>::~ObjRefConcrete();
+
 template <class T1, class T2>
 void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
     if (obj != mObject) {

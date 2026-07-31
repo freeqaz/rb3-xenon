@@ -575,12 +575,7 @@ DataNode UIFontImporter::OnAttachToImportFont(DataArray *) {
     return 0;
 }
 
-DataNode UIFontImporter::OnGenerate(DataArray *a) {
-    if (a->Size() >= 3) {
-        a->Int(2);
-    }
-    return 0;
-}
+DataNode UIFontImporter::OnGenerate(DataArray *a) { return 0; }
 
 DataNode UIFontImporter::OnGenerate3d(DataArray *a) {
     if (a->Size() >= 3) {
@@ -589,12 +584,7 @@ DataNode UIFontImporter::OnGenerate3d(DataArray *a) {
     return 0;
 }
 
-DataNode UIFontImporter::OnGenerateOG(DataArray *a) {
-    if (a->Size() >= 3) {
-        a->Int(2);
-    }
-    return 0;
-}
+DataNode UIFontImporter::OnGenerateOG(DataArray *a) { return 0; }
 
 DataNode UIFontImporter::OnShowFontPicker(DataArray *) { return 0; }
 

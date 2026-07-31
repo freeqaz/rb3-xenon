@@ -57,8 +57,8 @@ void StoreMainPanel::FinishLoad() {
     MILO_ASSERT(TypeDef(), 0x57);
     static Symbol display_rate("display_rate");
     static Symbol crossfade_duration("crossfade_duration");
-    mDisplayRate = TypeDef()->FindArray(display_rate, true)->Float(1);
-    mCrossfadeDuration = TypeDef()->FindArray(crossfade_duration, true)->Float(1);
+    mDisplayRate = TypeDef()->FindArray(Symbol(display_rate), true)->Float(1);
+    mCrossfadeDuration = TypeDef()->FindArray(Symbol(crossfade_duration), true)->Float(1);
 }
 
 void StoreMainPanel::Poll() {
@@ -192,7 +192,7 @@ const char *StoreMainPanel::MarqueePath() const {
 }
 
 BEGIN_HANDLERS(StoreMainPanel)
-    HANDLE_EXPR(is_waiting_on_enum, mConfigData == 0)
+    HANDLE_EXPR(is_waiting_on_enum, mConfigData != 0)
     HANDLE_EXPR(marquee_path, MarqueePath())
     HANDLE_MESSAGE(MetadataLoadedMsg)
     HANDLE_SUPERCLASS(StoreArtLoaderPanel)

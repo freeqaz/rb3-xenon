@@ -52,7 +52,8 @@ String DeployCountTracker::GetPlayerContributionString(Symbol s) const {
     if (pid.NotNull()) {
         Player *pPlayer = mSource->GetPlayer(pid);
         MILO_ASSERT(pPlayer, 0x62);
-        f1 = pPlayer->mStats.unk1c0;
+        Stats &stats = pPlayer->mStats;
+        f1 = stats.unk1c0;
     }
     static Symbol deploy_stat_tracker_contribution("deploy_stat_tracker_contribution");
     static Symbol deploy_stat_tracker_contribution_1("deploy_stat_tracker_contribution_1");

@@ -372,8 +372,8 @@ int ChunkStream::WriteChunk() {
 #endif
         CompressMem(mBuffers[0], size, secondbuf + 1, l38, 0);
         if (((float)mCurBufOffset / (float)l38) > 1.1f && mChunkInfo.mNumChunks != 0) {
-            size = l38 + 4;
             firstbuf = (int *)secondbuf;
+            size = l38 + 4;
         } else
             flags |= 0x1000000;
     }

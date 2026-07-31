@@ -422,9 +422,10 @@ void StandardStream::PollStream() {
         mChannels.begin(), mChannels.end(), std::mem_fun(&StreamReceiver::Poll)
     );
 
-    switch (mState) {
+    switch ((unsigned int)mState) {
     case kInit:
     case kReady:
+    case kFinished:
         break;
     case kBuffering:
         if (StuffChannels()) {
@@ -438,8 +439,6 @@ void StandardStream::PollStream() {
         if (mChannels[0]->mDoneBufferCounter > mChannels[0]->mNumBuffers + 2) {
             mState = kFinished;
         }
-        break;
-    case kFinished:
         break;
     default:
         MILO_FAIL("bad state logic.");
@@ -870,34 +869,27 @@ int StandardStream::ConsumeData(void **v, int numSamples, int startSamp) {
     }
 
     if ((unsigned int)samplesToConsume != 0) {
-        bool floatSamples = mFloatSamples;
-        std::vector<std::pair<int, int> >::iterator mapIt = mChanMaps.begin();
-        int copySize = samplesToConsume * (floatSamples ? 4 : 2);
-        while (mapIt != mChanMaps.end()) {
+        int bytesPerSample = mFloatSamples ? 4 : 2;
+        int copySize = bytesPerSample * samplesToConsume;
+        for (std::vector<std::pair<int, int> >::iterator mapIt = mChanMaps.begin();
+             mapIt != mChanMaps.end(); ++mapIt) {
             memcpy(pcm[mapIt->second], pcm[mapIt->first], copySize);
-            mapIt++;
         }
 
         short convBuf[0x800];
-        int chIdx = 0;
-        while (chIdx < numChannels) {
+        for (int chIdx = 0; chIdx < numChannels; chIdx++) {
             void *data;
             if (mFloatSamples) {
-                if ((unsigned int)samplesToConsume != 0) {
-                    int j = 0;
-                    while (j < samplesToConsume) {
-                        float f = ((float *)pcm[chIdx])[j] * 32767.0f;
-                        f = Clamp(-32767.0f, 32767.0f, f);
-                        convBuf[j] = (short)f;
-                        j++;
-                    }
+                for (unsigned int j = 0; j < (unsigned int)samplesToConsume; j++) {
+                    float f = ((float *)pcm[chIdx])[j] * 32767.0f;
+                    f = Clamp(-32767.0f, 32767.0f, f);
+                    convBuf[j] = (short)f;
                 }
                 data = convBuf;
             } else {
                 data = pcm[chIdx];
             }
             mChannels[chIdx]->WriteData(data, samplesToConsume << 1);
-            chIdx++;
         }
     }
 

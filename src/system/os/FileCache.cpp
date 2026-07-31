@@ -159,8 +159,13 @@ int FileCacheFile::Seek(int offset, int whence) {
 #pragma endregion
 #pragma region FileCache
 
-FileCache::FileCache(int size, LoaderPos lp, bool b1, bool b2)
-    : mMaxSize(size), mTryClear(0), mLoaderPos(lp), unk18(b1), unk19(b2) {
+// NOTE(NCCC-0731-ab7e/f268/opus): the DC3 4th param `bool b2` is dropped (see
+// FileCache.h). `unk19` is retained as a member, initialized 0, so that the
+// MakeString/TheDebug.Notify instantiation it guards in DumpOverSize stays
+// referenced -- deleting the member would drop that template COMDAT from this
+// obj, which is how an earlier wave lost matches.
+FileCache::FileCache(int size, LoaderPos lp, bool b1)
+    : mMaxSize(size), mTryClear(0), mLoaderPos(lp), unk18(b1), unk19(0) {
     gCaches.push_back(this);
     mEntries.reserve(0x200);
 }

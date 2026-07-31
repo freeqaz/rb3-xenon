@@ -71,7 +71,7 @@ void BandButton::DrawShowing() {
 
 void BandButton::SetState(UIComponent::State state) {
     UIComponent::State curstate;
-    if (state != *(volatile unsigned char *)&mState) {
+    if (state != mState) {
         curstate = GetState();
         UIComponent::SetState(state);
         if (mState == kFocused && mFocusAnim) {

@@ -56,8 +56,9 @@ void ReviewDisplay::Enter() {
 void ReviewDisplay::Poll() {
     UIComponent::Poll();
     MILO_ASSERT(mResource, 99);
-    if (mResource->Dir()) {
-        mResource->Dir()->Poll();
+    RndDir *dir = mResource->Dir();
+    if (dir) {
+        dir->Poll();
     }
 }
 

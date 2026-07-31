@@ -28,7 +28,7 @@ CharClipDriver::CharClipDriver(
         CharClip::SetDefaultLoopFlag(mPlayFlags, mask & 0xF0U);
     if (mask & 0xFU)
         CharClip::SetDefaultBlendFlag(mPlayFlags, mask & 0xFU);
-    if (mask & 0xF600U)
+    if (mask & 0xF600)
         CharClip::SetDefaultBeatAlignModeFlag(mPlayFlags, mask & 0xF600U);
     while (mNext && mNext->mBlendFrac == 0) {
         mNext = mNext->Exit(false);
@@ -65,9 +65,8 @@ next:
         if (mClip->Range() > 0) {
             float f7 = RandomFloat(0, mClip->Range());
             float f10 = mClip->EndBeat() + mClip->StartBeat();
-            f10 /= 2.0f;
             float f8 = mClip->StartBeat();
-            mBeat = ModRange(f8, f10, mBeat + f7);
+            mBeat = ModRange(f8, f10 * 0.5f, mBeat + f7);
         }
     }
     mWeight = 0;

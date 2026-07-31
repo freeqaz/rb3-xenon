@@ -19,6 +19,7 @@ WahEffect::WahEffect(IXAudioBatchAllocator *) {
     mPhase = 0;
     mLastInput = 0;
     mLastOutput = 0;
+    mUnk4C = 0;
     mFilterState3 = 0;
     mFilterState2 = 0;
     mFilterState1 = 0;

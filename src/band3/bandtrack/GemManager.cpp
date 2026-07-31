@@ -1422,7 +1422,8 @@ bool GemManager::InMissedPhrase(int gemId) {
 
 void GemManager::PollHitGems(float ms) {
     PruneHitGems(ms);
-    float bottom = ms / 1000.0f + mTrackDir->YToSeconds(mTemplate.mTailClipY);
+    float tailClipY = mTemplate.mTailClipY;
+    float bottom = ms / 1000.0f + mTrackDir->YToSeconds(tailClipY);
     FOREACH (it, mHitGems) {
         Gem &gem = mGems[it->mGemId];
         if (gem.OnScreen(ms)) {

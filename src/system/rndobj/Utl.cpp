@@ -554,6 +554,22 @@ void CalcSphere(RndTransAnim *a, Sphere &s) {
     }
 }
 
+// MSVC X360 cl 16.00.10224 loses the *memory provenance* of a value returned by
+// an inlined accessor: a loop bound written `c.end()` becomes a loop-invariant
+// value and is hoisted, while the same member read directly stays a memory
+// reference that the loop's `stfs` is assumed to kill, so it is reloaded every
+// iteration. Retail has the reloaded (memory-reference) form -- see the probe
+// pair in this lane's notes. Reading _M_start/_M_finish through this alias
+// reproduces it. Layout-checked: STLport _Vector_base is {_M_start, _M_finish,
+// _M_end_of_storage} with no vptr.
+template <class T>
+struct VecRaw {
+    T *start;
+    T *finish;
+    T *eos;
+};
+#define RB3_VEC_RAW(T, expr) (reinterpret_cast<VecRaw<T> &>(expr))
+
 void SpliceKeys(
     RndTransAnim *anim1, RndTransAnim *anim2, float firstFrame, float lastFrame
 ) {
@@ -611,18 +627,18 @@ void SpliceKeys(
             anim1->ScaleKeys().Add(Vector3(1.0f, 1.0f, 1.0f), lastFrame, false);
         }
 
-        for (Keys<Vector3, Vector3>::iterator it = anim1->TransKeys().begin();
-             it != anim1->TransKeys().end();
+        for (Key<Vector3> *it = RB3_VEC_RAW(Key<Vector3>, anim1->TransKeys()).start;
+             it != RB3_VEC_RAW(Key<Vector3>, anim1->TransKeys()).finish;
              it++) {
             (*it).frame += firstFrame;
         }
-        for (Keys<Hmx::Quat, Hmx::Quat>::iterator it = anim1->RotKeys().begin();
-             it != anim1->RotKeys().end();
+        for (Key<Hmx::Quat> *it = RB3_VEC_RAW(Key<Hmx::Quat>, anim1->RotKeys()).start;
+             it != RB3_VEC_RAW(Key<Hmx::Quat>, anim1->RotKeys()).finish;
              it++) {
             (*it).frame += firstFrame;
         }
-        for (Keys<Vector3, Vector3>::iterator it = anim1->ScaleKeys().begin();
-             it != anim1->ScaleKeys().end();
+        for (Key<Vector3> *it = RB3_VEC_RAW(Key<Vector3>, anim1->ScaleKeys()).start;
+             it != RB3_VEC_RAW(Key<Vector3>, anim1->ScaleKeys()).finish;
              it++) {
             (*it).frame += firstFrame;
         }
@@ -919,7 +935,7 @@ void RandomPointOnMesh(RndMesh *m, Vector3 &v1, Vector3 &v2) {
     }
 }
 
-void UtilDrawSphere(const Vector3 &v, float f, const Hmx::Color &col, RndMat *) {
+void UtilDrawSphere(const Vector3 &v, float f, const Hmx::Color &col) {
     if (!sSphereMesh) {
         MILO_NOTIFY_ONCE("Sphere mesh is not loaded");
     } else {

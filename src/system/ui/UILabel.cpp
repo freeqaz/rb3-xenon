@@ -512,6 +512,9 @@ void UILabel::Highlight() {
 
 Symbol UILabel::TextToken() { return mTextToken; }
 
+RndText *UILabel::TextObj() { return mText; }
+const RndText *UILabel::TextObj() const { return mText; }
+
 const char *UILabel::GetDefaultText() const {
     if (!mIcon.empty())
         return mIcon.c_str();
@@ -602,7 +605,7 @@ void UILabel::SetDisplayText(const char *cc, bool b) {
 void UILabel::SetColorOverride(UIColor *col) { mColorOverride = col; }
 
 bool UILabel::CheckValid(bool warn) {
-    if (mFixedLength != 0 && (int)mLabelText.length() > mFixedLength) {
+    if (mFixedLength != 0 && mLabelText.length() > mFixedLength) {
         if (warn) {
             MILO_WARN(
                 "%s: %s has fixed length of %i but text is %i long (%s)",
@@ -1031,9 +1034,14 @@ DataNode UILabel::OnGetAltMaterialVariations(const DataArray *da) {
 }
 
 BEGIN_HANDLERS(UILabel)
-    HANDLE_EXPR(
-        get_string_width, mText->GetStringWidthUTF8(_msg->Str(2), NULL, false, NULL)
-    )
+    {
+        static Symbol _s("get_string_width");
+        if (sym == _s) {
+            const char *str = _msg->Str(2);
+            RndText *text = mText;
+            return text->GetStringWidthUTF8(str, NULL, false, NULL);
+        }
+    }
     HANDLE_ACTION(adjust_height, AdjustHeight(true))
     HANDLE(set_token_fmt, OnSetTokenFmt)
     HANDLE(set_int, OnSetInt)

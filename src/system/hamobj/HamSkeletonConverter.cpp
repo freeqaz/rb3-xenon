@@ -106,7 +106,7 @@ void HamSkeletonConverter::PollDeps(
 void HamSkeletonConverter::Highlight() {
     for (int i = 0; i < kNumJoints; i++) {
         Vector3 curV = mJointPositions[i];
-        UtilDrawSphere(curV, 1.0f, Hmx::Color(0.0f, 0.0f, 1.0f), nullptr);
+        UtilDrawSphere(curV, 1.0f, Hmx::Color(0.0f, 0.0f, 1.0f));
         Transform curXfm = mBoneTransforms[i];
 
         Vector3 scaledX;

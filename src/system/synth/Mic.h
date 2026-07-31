@@ -8,6 +8,7 @@ class DataArray;
 class Mic {
 public:
     enum Type {
+        kDisconnected = 0,
         kMicNull = 2
     };
     Mic() : mInUse(0), unk8(1.0f) {}
@@ -16,6 +17,7 @@ public:
     virtual void Stop() = 0;
     virtual bool IsRunning() const = 0;
     virtual Type GetType() const = 0;
+    bool IsConnected() const { return GetType() != 0; }
     virtual void SetDMA(bool) = 0;
     virtual bool GetDMA() const = 0;
     virtual void SetGain(float) = 0;
@@ -53,7 +55,6 @@ public:
 
     void Set(const DataArray *);
 
-protected:
     bool mInUse; // 0x4
     float unk8; // 0x8
 };

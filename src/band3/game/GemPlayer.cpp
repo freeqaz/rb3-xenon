@@ -647,12 +647,14 @@ void GemPlayer::Pass(int track, float ms, int gem_id, bool cur_track) {
                 if (mTrack) {
                     mTrack->Pass(gem_id);
                 }
-                mGemStatus->mMisses++;
+                GemStatus *gs = mGemStatus;
+                gs->mMisses++;
                 UpdateSectionStats();
                 const GameGem &gem = TheSongDB->GetGem(mTrackNum, gem_id);
                 mStatCollector.PassGem(ms, gem, gem_id);
                 if (gem.GetNoStrum()) {
-                    mStats.mHopoGemCount++;
+                    Stats *stats = &mStats;
+                    stats->mHopoGemCount++;
                 }
             }
 
@@ -665,7 +667,7 @@ void GemPlayer::Pass(int track, float ms, int gem_id, bool cur_track) {
             }
 
             if (phraseFlags == 0) {
-                status->Set0x4(gem_id);
+                mGemStatus->Set0x4(gem_id);
                 if (ShouldPenalizeGem(gem_id)) {
                     Penalize(ms, gem_id, 0.0f);
                 } else {
@@ -689,14 +691,10 @@ void GemPlayer::Pass(int track, float ms, int gem_id, bool cur_track) {
                 mGemStatus->Set0x4(gem_id);
             }
 
-            mStats.m0x08++;
+            Stats *stats = &mStats;
+            stats->m0x08++;
 
-            bool skipPassMsg = false;
-            if (TheGame->mProperties.mInTrainer) {
-                if (mGemStatus->GetIgnored(gem_id)) {
-                    skipPassMsg = true;
-                }
-            }
+            bool skipPassMsg = TheGame->mProperties.mInTrainer && mGemStatus->GetIgnored(gem_id);
 
             if (!skipPassMsg) {
                 static Message passMsg("pass", 0);

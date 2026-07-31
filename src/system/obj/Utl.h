@@ -133,7 +133,7 @@ void FileCallbackFullPath(const char *, const char *);
 void FileCallback(const char *, const char *);
 void WalkProps(DataArray *, std::list<Symbol> &, std::list<Symbol> *);
 void ReloadObjectType(Hmx::Object *, DataArray *);
-void ListProperties(std::list<Symbol> &, Symbol, Symbol, std::list<Symbol> *, bool);
+void ListProperties(std::list<Symbol> &, Symbol, Symbol, std::list<Symbol> *);
 
 // mergefilter classes go here
 class MergeFilter {

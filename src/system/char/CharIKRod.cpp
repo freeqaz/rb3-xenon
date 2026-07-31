@@ -48,7 +48,8 @@ BEGIN_COPYS(CharIKRod)
         COPY_MEMBER(mSideAxis)
         COPY_MEMBER(mVertical)
         COPY_MEMBER(mDest)
-        COPY_MEMBER(mXfm)
+        const Transform &srcXfm = c->mXfm;
+        mXfm = srcXfm;
     END_COPYING_MEMBERS
 END_COPYS
 

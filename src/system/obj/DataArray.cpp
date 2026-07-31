@@ -972,6 +972,15 @@ DataNode DataArray::ExecuteScript(
 
     int numVars = 0;
     int size = mSize;
+    // MATCH-LOAD-BEARING: retail keeps the post-if index in a SEPARATE local
+    // from the `index` parameter (dc3/rb3-Wii both write `index++` here, which
+    // does NOT match).  Retail's allocator parks this variable in r30 -- the
+    // same register as the inner loop's countdown -- so it must preload r30
+    // from the parameter at entry and keep a second copy of `index` alive
+    // across the loop just to compute `+1`.  Folding this back to `index++`
+    // reuses one register in place, drops those two copies, and cascades into
+    // a 25-instruction regalloc swap (97.4%).  Do not "simplify".
+    int start = index;
 
     if (index < (size - 1) && mNodes[index].Type() == kDataArray) {
         DataArray *arr = mNodes[index].UncheckedArray();
@@ -984,15 +993,15 @@ DataNode DataArray::ExecuteScript(
             *var = _args->Evaluate(i + _argStart);
         }
 
-        index++;
+        start = index + 1;
     }
 
     DataNode ret;
-    if (index >= size) {
+    if (start >= size) {
         ret = DataNode(0);
     } else {
         Hmx::Object *setThis = DataSetThis(obj);
-        ret = ExecuteBlock(index);
+        ret = ExecuteBlock(start);
         DataSetThis(setThis);
     }
 

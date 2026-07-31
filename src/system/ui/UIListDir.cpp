@@ -79,18 +79,11 @@ END_PROPSYNCS
 BEGIN_SAVES(UIListDir)
     SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(RndDir)
-    bs << mOrientation;
-    bs << mFadeOffset;
+    bs << mOrientation << mFadeOffset;
     int numDisplay = mTestState.NumDisplay();
-    bs << mTestMode;
-    bs << numDisplay;
-    bs << mElementSpacing;
-    bs << mTestState.Speed();
-    bs << mTestNumData;
-    bs << mTestComponentState;
-    bs << mTestGapSize;
-    bs << mTestDisableElements;
-    bs << mScrollHighlightChange;
+    bs << mTestMode << numDisplay << mElementSpacing << mTestState.Speed()
+       << mTestNumData << mTestComponentState << mTestGapSize << mTestDisableElements
+       << mScrollHighlightChange;
 END_SAVES
 
 BEGIN_COPYS(UIListDir)

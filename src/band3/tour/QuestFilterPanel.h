@@ -64,7 +64,7 @@ public:
     void CheatCycleChallenge();
     void CheatCycleSetlist();
     void HandleLeaderToggledFilters(bool);
-    int AreCurrentFiltersValid();
+    bool AreCurrentFiltersValid();
 
     Symbol m_symQuest; // 0x4c
     QuestFilterProvider *m_pQuestFilterProvider; // 0x50

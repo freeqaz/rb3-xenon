@@ -50,7 +50,7 @@ void RandomXfms(RndMultiMesh *);
 void CreateAndSetMetaMat(RndMat *);
 void FixVertOrder(const RndMesh *, RndMesh *);
 
-void UtilDrawSphere(const Vector3 &, float, const Hmx::Color &, RndMat *);
+void UtilDrawSphere(const Vector3 &, float, const Hmx::Color &);
 void UtilDrawLine(const Vector2 &, const Vector2 &, const Hmx::Color &);
 void UtilDrawString(const char *, const Vector3 &, const Hmx::Color &);
 void UtilDrawAxes(const Transform &, float, const Hmx::Color &);

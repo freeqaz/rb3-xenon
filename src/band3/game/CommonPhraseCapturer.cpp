@@ -48,12 +48,11 @@ void CommonPhraseCapturer::HandlePhraseNote(GemPlayer *p, int i2, int i3, bool b
         int phraseID = TheSongDB->GetPhraseID(i2, i3);
         if (phraseID != -1) {
             ExtendPhraseStates(phraseID);
-            tracks = TheSongDB->GetCommonPhraseTracks(phraseID);
-            tracks &= ~mDisabledTracks;
+            tracks = TheSongDB->GetCommonPhraseTracks(phraseID) & ~mDisabledTracks;
             bool unison = TheSongDB->IsUnisonPhrase(phraseID);
-            if (phraseID != TheSongDB->GetPhraseID(i2, i3 + 1) && unison) {
+            if (TheSongDB->GetPhraseID(i2, i3 + 1) != phraseID && unison) {
                 mFinishedTracks |= 1 << i2;
-                if (tracks == (tracks & mFinishedTracks)) {
+                if ((tracks & mFinishedTracks) == tracks) {
                     if (IsMultiplayerPhrase(phraseID)) {
                         GetTrackPanelDir()->UnisonEnd();
                     }

@@ -24,6 +24,27 @@
 #include "rndobj/Rnd.h"
 #include "rndobj/MeshDeform.h"
 
+#ifndef HX_NATIVE
+// mTestPrefab (below, ObjOwnerPtr<BandCharDesc>) is the ONLY consumer of
+// ObjRefConcrete<BandCharDesc, ObjectDir> in the whole tree (verified: no
+// ObjPtr<BandCharDesc> exists anywhere), unlike most T1s here which are
+// shared between an ObjPtr<T> AND an ObjOwnerPtr<T> instantiation. That
+// sharing is why this is a targeted specialization rather than a change to
+// the shared ObjRefConcrete<T1,T2>::~ObjRefConcrete() body in ObjPtr_p.h:
+// ObjOwnerPtr<T>::~ObjOwnerPtr() (ObjPtr_p.h) already Release()s via
+// OwnerRef() and nulls mObject before the implicit base-class dtor runs, so
+// this base body's `if (mObject) Release(...)` is dead code at runtime for
+// this T1 -- but retail still compiles that dead branch, and it reads mOwner
+// (reinterpreted ObjRefOwner*) rather than passing `this`. Editing the
+// general template would flip that argument for ObjPtr<T>-driven T1s too,
+// where the base's Release(this) call is live and correct.
+template <>
+inline ObjRefConcrete<BandCharDesc, ObjectDir>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(reinterpret_cast<ObjRefOwner *>(mOwner));
+}
+#endif
+
 class BandCharacter : public Character,
                       public BandCharDesc,
                       public MergeFilter,

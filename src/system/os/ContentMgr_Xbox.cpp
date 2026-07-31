@@ -398,10 +398,10 @@ bool XboxContentMgr::MountContent(Symbol name) {
     if (!found) {
         MILO_NOTIFY("\"%s\" not found to mount.", name.Str());
     }
+    int mountingCount = 0;
     int prevCount = 0;
     bool done = false;
     do {
-        int mountingCount = 0;
         Content *oldest = nullptr;
         unsigned int oldestLRM = 0xFFFFFFFF;
         FOREACH (it, mContents) {
@@ -424,6 +424,7 @@ bool XboxContentMgr::MountContent(Symbol name) {
             mState = kContentMgrState7;
         }
         prevCount = mountingCount;
+        mountingCount = 0;
     } while (!done);
     return alreadyMounted;
 }

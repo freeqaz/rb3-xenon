@@ -25,7 +25,12 @@ static struct {
 std::map<Symbol, CharLipSync *> *CharLipSync::sLipSyncMap;
 
 CharLipSync::CharLipSync() : mPropAnim(this), mFrames(0) {}
-CharLipSync::~CharLipSync() { UnregisterLipSync(this); }
+// RB3-360 retail: empty destructor, matches rb3-Wii. dc3-decomp's version calls
+// UnregisterLipSync(this) here, but that call is ABSENT from retail asm (confirmed
+// via objdiff residue: retail is exactly 4 bytes / one `bl` smaller, and the
+// downstream r3->r30 register-swap on the next two loads is a mechanical
+// consequence of not clobbering r3 with that call -- not an independent bug).
+CharLipSync::~CharLipSync() {}
 
 BEGIN_HANDLERS(CharLipSync)
     HANDLE(parse, OnParse)

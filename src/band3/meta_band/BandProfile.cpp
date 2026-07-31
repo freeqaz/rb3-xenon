@@ -205,7 +205,8 @@ int BandProfile::GetCharacterStandinIndex(CharData *cd) const {
         } else if (it->IsPrefabCharacter() && !cd->IsCustomizable()) {
             PrefabChar *pPrefab = dynamic_cast<PrefabChar *>(cd);
             MILO_ASSERT(pPrefab, 0x131);
-            if (it->mName == pPrefab->GetPrefabName()) {
+            Symbol standinName = it->mName;
+            if (standinName == pPrefab->GetPrefabName()) {
                 return idx;
             }
         }

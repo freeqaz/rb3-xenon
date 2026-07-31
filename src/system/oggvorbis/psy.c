@@ -383,8 +383,8 @@ static void seed_curve(float *seed,
   const float *posts,*curve;
 
   int choice=(int)((amp+dBoffset-P_LEVEL_0)*.1f);
-  choice=max(choice,0);
-  choice=min(choice,P_LEVELS-1);
+  choice=(choice>0)?choice:0;
+  choice=min(P_LEVELS-1,choice);
   posts=curves[choice];
   curve=posts+2;
   post1=(int)posts[1];

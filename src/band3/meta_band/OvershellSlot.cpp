@@ -943,7 +943,7 @@ bool OvershellSlot::ConfirmSwapUserProfile() {
     return SwapUserProfile(state->Property("swap_user", true)->Obj<LocalBandUser>());
 }
 
-bool OvershellSlot::SwapUserProfile(LocalBandUser *) {
+__declspec(noinline) bool OvershellSlot::SwapUserProfile(LocalBandUser *) {
     ShowWiiProfileFail();
     return false;
 }

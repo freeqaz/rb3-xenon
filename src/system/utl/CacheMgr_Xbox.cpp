@@ -131,7 +131,7 @@ bool CacheMgrXbox::ShowUserSelectUIAsync(
             if (ul.QuadPart != 0) {
                 ul.QuadPart = XContentCalculateSize(ul.QuadPart, 1);
             }
-            DWORD res = ThePlatformMgr.ShowDeviceSelectorUI(
+            DWORD res = XShowDeviceSelectorUI(
                 padnum, 1, 0, ul, &mContentData.DeviceID, &mOverlapped
             );
             switch (res) {
@@ -489,8 +489,9 @@ void CacheMgrXbox::PollUnmount() {
         DWORD dw;
         DWORD res = XGetOverlappedResult(&mOverlapped, &dw, false);
         if (res != 0) {
-            if (res == 0x15 || res == 0x456 || res == 0x48F || res == 0x651
-                || XContentGetDeviceState(mContentData.DeviceID, nullptr)) {
+            if (res == 0x15 || res == 0x456 || res == 0x48F || res == 0x651) {
+                SetLastResult(kCache_ErrorStorageDeviceMissing);
+            } else if (XContentGetDeviceState(mCacheIDXbox->DeviceID(), nullptr)) {
                 SetLastResult(kCache_ErrorStorageDeviceMissing);
             } else {
                 MILO_NOTIFY(

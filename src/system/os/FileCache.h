@@ -89,7 +89,14 @@ private:
 
 class FileCache {
 public:
-    FileCache(int, LoaderPos, bool, bool);
+    // NOTE(NCCC-0731-ab7e/f268/opus): THREE params, not four. DC3 (newer) added
+    // a trailing `bool` that gates a "Forced to dump entry with size" debug
+    // spew in DumpOverSize; RB3 has no such parameter. Proven from retail
+    // codegen at PreloadPanel::PreloadPanel, which materializes only r4/r5/r6
+    // for this call (base with the DC3 signature emitted r4..r7), and
+    // corroborated by the rb3-Wii oracle, whose FileCache ctor is
+    // `FileCache(int, LoaderPos, bool)` at BOTH of its call sites.
+    FileCache(int, LoaderPos, bool);
     ~FileCache();
 
     bool DoneCaching();

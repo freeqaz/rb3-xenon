@@ -247,6 +247,42 @@ Task *RndAnimatable::Animate(
     return taskPtr;
 }
 
+// RB3-era lean overload (no listener/easeType/easePower/wrap) -- see Anim.h.
+// Body follows rb3-Wii src/system/rndobj/Anim.cpp:144.
+Task *RndAnimatable::Animate(
+    float blend,
+    bool wait,
+    float delay,
+    Rate rate,
+    float start,
+    float end,
+    float period,
+    float scale,
+    Symbol type
+) {
+    static Symbol dest("dest");
+    static Symbol loop("loop");
+    float fpu;
+    float taskStart = start;
+    if (type == dest)
+        start = mFrame;
+    if (period) {
+        fpu = std::fabs(end - taskStart);
+        fpu = fpu / period;
+    } else
+        fpu = scale * gRateFpu[rate];
+
+    AnimTask *task = new AnimTask(this, start, end, fpu, type == loop, blend);
+    if (wait) {
+        AnimTask *blendTask = task->BlendTask();
+        if (blendTask) {
+            delay += blendTask->TimeUntilEnd();
+        }
+    }
+    TheTaskMgr.Start(task, gRateUnits[rate], delay);
+    return task;
+}
+
 Task *RndAnimatable::Animate(
     float blend,
     bool wait,

@@ -58,14 +58,20 @@ void PassiveMessageQueue::HandlePassiveMessage(PassiveMessage *msg) {
     switch (msg->mType) {
     case 0: {
         static Message setupTextMsg("setup_message_text", 0, 0);
-        setupTextMsg[0] = DataNode(msg->mText, kDataArray);
+        {
+            DataNode tmp(msg->mText, kDataArray);
+            setupTextMsg[0] = tmp;
+        }
         setupTextMsg[1] = msg->unk4c;
         mCallback->Handle(setupTextMsg, true);
         break;
         }
     case 1: {
         static Message setupIconMsg("setup_message_icon", 0, 0);
-        setupIconMsg[0] = DataNode(msg->mText, kDataArray);
+        {
+            DataNode tmp(msg->mText, kDataArray);
+            setupIconMsg[0] = tmp;
+        }
         setupIconMsg[1] = msg->unk24.c_str();
         mCallback->Handle(setupIconMsg, true);
         break;
@@ -74,7 +80,10 @@ void PassiveMessageQueue::HandlePassiveMessage(PassiveMessage *msg) {
         static Message setupCareerGoalMsg(
             "setup_message_careergoal", 0, 0, 0, 0, 0, 0, 0, 0, 0
         );
-        setupCareerGoalMsg[0] = DataNode(msg->mText, kDataArray);
+        {
+            DataNode tmp(msg->mText, kDataArray);
+            setupCareerGoalMsg[0] = tmp;
+        }
         setupCareerGoalMsg[1] = msg->unk20;
         setupCareerGoalMsg[2] = msg->unk14;
         setupCareerGoalMsg[3] = msg->unk18;
@@ -88,7 +97,10 @@ void PassiveMessageQueue::HandlePassiveMessage(PassiveMessage *msg) {
         }
     case 2: {
         static Message setupCareerStepMsg("setup_message_careerstep", 0, 0, 0, 0, 0);
-        setupCareerStepMsg[0] = DataNode(msg->mText, kDataArray);
+        {
+            DataNode tmp(msg->mText, kDataArray);
+            setupCareerStepMsg[0] = tmp;
+        }
         setupCareerStepMsg[1] = msg->unk14;
         setupCareerStepMsg[2] = msg->unk18;
         setupCareerStepMsg[3] = msg->mMeterAnimValue;
@@ -100,7 +112,10 @@ void PassiveMessageQueue::HandlePassiveMessage(PassiveMessage *msg) {
         static Message setupCareerMultiGoalMsg(
             "setup_message_careermulti", 0, 0, 0, 0, 0, 0, 0, 0
         );
-        setupCareerMultiGoalMsg[0] = DataNode(msg->mText, kDataArray);
+        {
+            DataNode tmp(msg->mText, kDataArray);
+            setupCareerMultiGoalMsg[0] = tmp;
+        }
         setupCareerMultiGoalMsg[1] = msg->unk20;
         setupCareerMultiGoalMsg[2] = msg->unk14;
         setupCareerMultiGoalMsg[3] = msg->unk18;

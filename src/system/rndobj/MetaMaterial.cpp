@@ -310,7 +310,7 @@ void MetaMaterial::Init() {
 
 bool MetaMaterial::IsEquivalent(MetaMaterial *mat) {
     std::list<Symbol> props;
-    ListProperties(props, "MetaMaterial", 0, nullptr, false);
+    ListProperties(props, "MetaMaterial", 0, nullptr);
     FOREACH (it, props) {
         Symbol cur = *it;
         if (PropValDifferent(cur, mat)) {

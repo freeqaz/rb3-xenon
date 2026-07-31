@@ -176,9 +176,8 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
                             palette->Property(Symbol("colors"), true)->Array();
                         int colorIdx = layer.mColorIdx;
                         if (arr->Size() > colorIdx) {
-                            const DataArray *arr2 = layer.mColorPalette
-                                                        ->Property(Symbol("colors"), true)
-                                                        ->Array();
+                            const DataArray *arr2 =
+                                palette->Property(Symbol("colors"), true)->Array();
                             int packed = arr2->Node(colorIdx).Int(arr2);
                             layer.mColor.Unpack(packed);
                         }

@@ -56,8 +56,9 @@ const char *FlagString(int flags) {
     int i5 = 0;
     char *strptr = str;
     int i1;
+    i1 = 1 << i5;
     ptr = flagstrs;
-    goto loop_check;
+    if (i1 > 0x8000) goto loop_end;
 loop_body:
     if (flags & i1) {
         if (strptr != str) {
@@ -68,9 +69,9 @@ loop_body:
     }
     ptr++;
     i5++;
-loop_check:
     i1 = 1 << i5;
     if (i1 <= 0x8000) goto loop_body;
+loop_end:
     *strptr = 0;
     return str;
 }

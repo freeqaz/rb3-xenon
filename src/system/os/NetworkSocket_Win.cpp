@@ -106,22 +106,23 @@ bool WinSockSocket::Fail() const {
     val.tv_usec = 0;
     set.fd_count = 1;
     set.fd_array[0] = mSocket;
-    // NOTE(laneAJ-c): retail's dispatch is `beq case-1; cmpwi 1; bne exit;
-    // b case1`, i.e. the *inverted* nesting below -- an if/else where the
-    // then-branch early-returns and the else-branch holds the SOCKET_ERROR
-    // log. A switch (any case order) emits `beq case1; b exit` instead.
-    // NOTE(laneAG-imm/laneAJ-c): 99.5% -- the only difference is the polarity
-    // of the `case 1` compare (retail `bne` to the exit + `b` to the store;
-    // ours `beq` to the store + `b` to the exit); block layout is otherwise
-    // identical. Measured WORSE: if/else-if chain (76%), `default: return
-    // mFail;` switch (90%), inverted-nesting if/else (90.5%), explicit gotos
-    // spelling retail's CFG (92.4% -- MSVC hoists the log block up into the
-    // first branch), `default: break;` written first (no change).
+    // NOTE(laneF6s): 100% -- source-order of the cases (not just the compare
+    // polarity) is load-bearing. `case -1` falling through into `case 1`'s
+    // store (the shape that reads most naturally from the original comment,
+    // "fallthrough matches retail: no break here") was stuck at 99.5%/2
+    // diverging instrs no matter how the compare was phrased (5 variants
+    // tried by prior lanes, all worse or unchanged -- see git history for
+    // this file). What fixes it: write `case 1` FIRST with its own `break`,
+    // then `case -1` with its own (duplicated) store statement -- i.e. no
+    // fallthrough in source at all. This flips which case MSVC treats as the
+    // "near" branch for the second compare, matching retail's `bne`-to-exit
+    // polarity byte-for-byte (100.0% normalized, all 33 instrs equal).
     switch (select(0, nullptr, nullptr, &set, &val)) {
+    case 1:
+        const_cast<WinSockSocket *>(this)->mFail = true;
+        break;
     case -1:
         MILO_LOG("select returned SOCKET_ERROR %d\n", WSAGetLastError());
-        // fallthrough (matches retail: no break here)
-    case 1:
         const_cast<WinSockSocket *>(this)->mFail = true;
         break;
     default:

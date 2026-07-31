@@ -49,8 +49,21 @@ public:
 
     // Song
     virtual DataNode OnMBTFromSeconds(const DataArray *);
+    // Retail X360 RB3: CreateSong's vcall in Song::LoadSong lands at vtable
+    // offset 0x28, but our own-slot count (OnMBTFromSeconds, OnMBTFromTick,
+    // Unload, CreateSong -> 9..12) puts it at 0x30 -- a 2-slot/0x8 shift.
+    // rb3-Wii's dev-era Song.h has no virtual OnMBTFromTick at all and a
+    // plain non-virtual Unload(), matching this exactly. Demoted here so
+    // CreateSong reclaims slot 10 (0x28). Native engine still wants
+    // polymorphic dispatch, so gate behind HX_NATIVE (same idiom as
+    // ANIM_DC3_VIRTUAL in rndobj/Anim.h).
+#ifdef HX_NATIVE
     virtual DataNode OnMBTFromTick(const DataArray *);
     virtual void Unload();
+#else
+    DataNode OnMBTFromTick(const DataArray *);
+    void Unload();
+#endif
 
     OBJ_MEM_OVERLOAD(0x25)
 

@@ -69,9 +69,9 @@ VocalPlayer::VocalPlayer(
       , mFrameSpewData(0), mFrameSpewStream(0)
 #endif
 {
-    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-        TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
-    );
+    Symbol curSong = MetaPerformer::Current()->Song();
+    int songID = TheSongMgr.GetSongIDFromShortName(curSong, true);
+    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
     mTuningOffset = data->TuningOffset() / 100.0f;
     for (int i = 0; i < i7; i++) {
         mSingers.push_back(new Singer(this, i));
@@ -1118,12 +1118,16 @@ void VocalPlayer::SendVocalState(float f1) {
     std::vector<int> boolsToPack(mSingers.size());
     FOREACH (it, mSingers) {
         Singer *cur = *it;
-        float f10 = cur->GetFrameMicPitch();
+        // NOTE: GetFrameMicPitch() is called twice on purpose -- retail homes each
+        // inlined call's return temp to the same coalesced stack slot (two dead
+        // stfs to 0x54(r31)) and keeps the value live in f13. Hoisting it into a
+        // single local produces one materialization and drops the match to 99.2%.
         float f9 = Clamp<float>(
-            -1, 1, (f10 - cur->mFrameTargetPitch) / mMaxDetune
+            -1, 1, (cur->GetFrameMicPitch() - cur->mFrameTargetPitch) / mMaxDetune
         );
+        bool isSinging = cur->GetFrameMicPitch() != 0;
         moreFsToPack[cur->GetSingerIndex()] = f9;
-        boolsToPack[cur->GetSingerIndex()] = f10 != 0;
+        boolsToPack[cur->GetSingerIndex()] = isSinging;
     }
     int packedFs2 = PackFloats(moreFsToPack, -1, 1);
     int packedBs = PackBools(boolsToPack);
@@ -1619,7 +1623,22 @@ DECOMP_FORCEACTIVE(
     "( 0) <= ( o_rMicNumber) && ( o_rMicNumber) < ( 3)"
 )
 
+// Retail calls this out of line from Handle()'s HANDLE_MESSAGE(ButtonUpMsg) arm
+// (`subi r3,r25,0x47c; bl fn_826E5E98; clrlwi r11,r3,24`), so the arm also emits the
+// ButtonUpMsg temp construction and its ~Message() vtable restore. Retail's body is
+// the HandleDeactivateVolume path -- see the DECOMP_FORCEACTIVE strings above
+// ("HandleDeactivateVolume: Couldn't get a VocalParam for supposed volume button
+// %d!\n" plus the "( 0) <= ( o_rMicNumber) && ( o_rMicNumber) < ( 3)" range assert)
+// -- whose helpers are not ported yet, so the body stays a stub and is NOT invented.
+// /Ob2 folds that stub to a constant and deletes the whole temp, costing Handle 12
+// instructions and 0x10 of frame. auto_inline(off) restores retail's call shape.
+// Measured: moving the definition below END_HANDLERS does NOT work -- this MSVC
+// (16.00.10224) inlines out-of-line member definitions that appear *later* in the TU,
+// so parse order is not a lever; only the pragma is. Per OvershellSlot.cpp:1874,
+// __declspec(noinline) is not a substitute for auto_inline in this codebase.
+#pragma auto_inline(off)
 bool VocalPlayer::OnMsg(const ButtonUpMsg &) { return false; }
+#pragma auto_inline(on)
 
 bool VocalPlayer::AllowPitchCorrection() const {
     MILO_ASSERT(TheGameMicManager, 0xA46);
@@ -2149,7 +2168,7 @@ BEGIN_HANDLERS(VocalPlayer)
     HANDLE_EXPR(in_star_mode, 0)
     HANDLE_EXPR(score, GetScore())
     HANDLE_EXPR(percent_hit, 0)
-    HANDLE_ACTION(toggle_overlay, ToggleOverlay())
+    HANDLE_EXPR(toggle_overlay, 0)
 #ifdef HX_NATIVE
     HANDLE_EXPR(toggle_frame_spew, ToggleFrameSpew())
 #endif

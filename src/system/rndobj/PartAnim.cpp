@@ -8,6 +8,16 @@ template BinStream &operator>><Hmx::Color>(BinStream &, Key<Hmx::Color> &);
 template BinStream &
 operator>>(BinStream &, std::vector<Key<Hmx::Color> > &);
 
+// See the specialization declaration + rationale comment in obj/ObjPtr_p.h.
+// Defined here (rather than generically in ObjPtr_p.h) because it needs
+// RndParticleSys's complete type, which the generic header only forward-
+// declares.
+template <>
+ObjRefConcrete<RndParticleSys, ObjectDir>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(reinterpret_cast<ObjRefOwner *>(mOwner));
+}
+
 #pragma region Hmx::Object
 
 // RB3-360 retail: the Load reads the archive rev from a file-scope static

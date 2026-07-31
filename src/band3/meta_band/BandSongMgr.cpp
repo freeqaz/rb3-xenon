@@ -63,8 +63,8 @@ ExclusionEntry exclusionList[] = {
 };
 
 BandSongMgr::BandSongMgr()
-    : unkc0(0), unk124(1), unk154(0), mUpgradeMgr(0), mLicenseMgr(0), mMaxSongCount(-1),
-      unk13c(0), unk140(0) {
+    : unkc0(0), unk124(1), unk140(0), mUpgradeMgr(0), mLicenseMgr(0), mMaxSongCount(-1),
+      unk13c(0) {
     ClearAndShrink(mContentAltDirs);
     TheBaseSongManger = this;
 }

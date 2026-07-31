@@ -100,8 +100,8 @@ void CharCollide::Highlight() {
                 UtilDrawCigar(WorldXfm(), mCurRadius, mCurLength, white, 8);
             }
         } else {
-            UtilDrawSphere(WorldXfm().v, mOrigRadius[0], red, nullptr);
-            UtilDrawSphere(WorldXfm().v, mCurRadius[0], white, nullptr);
+            UtilDrawSphere(WorldXfm().v, mOrigRadius[0], red);
+            UtilDrawSphere(WorldXfm().v, mCurRadius[0], white);
         }
     } else {
         Plane plane(WorldXfm().v, WorldXfm().m.x);
@@ -124,7 +124,7 @@ void CharCollide::Highlight() {
                 Hmx::Color sphereColor(0, 0, 1, 1);
                 UtilDrawSphere(
                     mMesh->Verts(s->vertIdx).pos,
-                    0.1f, sphereColor, nullptr
+                    0.1f, sphereColor
                 );
                 n--;
             } while (n != 0);

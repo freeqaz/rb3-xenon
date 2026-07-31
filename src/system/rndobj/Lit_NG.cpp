@@ -175,18 +175,20 @@ void NgLight::SetShadowTransforms() {
 
     float invRange = 1.0f / mRange;
 
-    Hmx::Matrix4 projMat;
-    projMat.x.x = 1.0f; projMat.y.x = 0.0f; projMat.z.x = 0.0f; projMat.w.x = 0.0f;
-    projMat.x.y = 0.0f; projMat.y.y = 1.0f; projMat.z.y = 0.0f; projMat.w.y = 0.0f;
-    projMat.x.z = 0.0f; projMat.y.z = 0.0f; projMat.z.z = invRange; projMat.w.z = 0.0f;
-    projMat.x.w = 0.0f; projMat.y.w = 0.0f; projMat.z.w = (mBotRadius - mTopRadius) * invRange; projMat.w.w = mTopRadius;
-
-    Hmx::Matrix4 shadowMat = lightToWorld * projMat;
-
     Transform invLight;
-    Invert(lightToWorld, invLight);
+    {
+        Hmx::Matrix4 projMat;
+        projMat.x.x = 1.0f; projMat.y.x = 0.0f; projMat.z.x = 0.0f; projMat.w.x = 0.0f;
+        projMat.x.y = 0.0f; projMat.y.y = 1.0f; projMat.z.y = 0.0f; projMat.w.y = 0.0f;
+        projMat.x.z = 0.0f; projMat.y.z = 0.0f; projMat.z.z = invRange; projMat.w.z = 0.0f;
+        projMat.x.w = 0.0f; projMat.y.w = 0.0f; projMat.z.w = (mBotRadius - mTopRadius) * invRange; projMat.w.w = mTopRadius;
 
-    TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, shadowMat);
+        Hmx::Matrix4 shadowMat = lightToWorld * projMat;
+
+        Invert(lightToWorld, invLight);
+
+        TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, shadowMat);
+    }
     TheShaderMgr.SetVConstant((VShaderConstant)0x10, Hmx::Matrix4(invLight));
 }
 

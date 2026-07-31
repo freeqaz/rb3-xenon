@@ -169,9 +169,9 @@ void PerfectOverdriveTracker::Poll_(float ms) {
             streakData.unk4 = false;
             streakData.unk5 = true;
             streakData.unk6 = false;
-            streakData.unk8 = pPlayer->mStats.mHitCount;
-            streakData.unkc = pPlayer->mStats.mMissCount;
-            streakData.unk10 = pPlayer->mStats.mHitCount + pPlayer->mStats.m0x08;
+            streakData.unk8 = pPlayer->mStats.GetHitCount();
+            streakData.unkc = pPlayer->mStats.GetMissCount();
+            streakData.unk10 = pPlayer->mStats.GetHitCount() + pPlayer->mStats.m0x08;
             streakData.unk14 = -1;
             streakData.unk18 = -1.0f;
             if (isLocal) {
@@ -179,8 +179,9 @@ void PerfectOverdriveTracker::Poll_(float ms) {
             }
         } else if (wasDeploying && !streakData.unk6) {
             if (isLocal) {
-                int hitsSinceStart = pPlayer->mStats.mHitCount - streakData.unk8;
-                int endDiff = (pPlayer->mStats.mHitCount + pPlayer->mStats.m0x08) - streakData.unk10;
+                int hitsSinceStart = pPlayer->mStats.GetHitCount() - streakData.unk8;
+                int totalNotes = pPlayer->mStats.GetHitCount() + pPlayer->mStats.m0x08;
+                int endDiff = totalNotes - streakData.unk10;
                 float progress = (float)hitsSinceStart / (float)contribData.unk4;
                 int multIdx = unk8c.GetMultiplierIndex(progress);
                 if (streakData.unk14 != multIdx) {
@@ -192,11 +193,9 @@ void PerfectOverdriveTracker::Poll_(float ms) {
                     SetPlayerProgress(id, pctOfMax);
                     streakData.unk18 = pctOfMax;
                 }
-                bool failed = false;
-                int missChange = pPlayer->mStats.mMissCount - streakData.unkc;
-                bool notMissed = !missChange;
-                if ((float)hitsSinceStart / (float)endDiff < 1.0f || !notMissed)
-                    failed = true;
+                bool notMissed = pPlayer->mStats.GetMissCount() == streakData.unkc;
+                bool failed =
+                    (float)hitsSinceStart / (float)endDiff < 1.0f || !notMissed;
                 bool endStreak = failed || !isDeploying;
                 if (failed) {
                     streakData.unk6 = true;

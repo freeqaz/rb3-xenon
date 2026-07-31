@@ -895,10 +895,11 @@ CamShot::CamShot()
     : mKeyframes(this), mLooping(false), mLoopKeyframe(0),
       mNearPlane(RndCam::DefaultNearPlane()),
       mFarPlane(mNearPlane * RndCam::MaxFarNearPlaneRatio()), mUseDepthOfField(true),
-      mFilter(0.9), mClampHeight(-1), mAnims(this), mPath(this), mPathFrame(-1),
+      mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(gNullStr), mAnims(this),
+      mPath(this), mPathFrame(-1),
       mPlatform(kPlatformNone), mHideList(this), mShowList(this), mGenHideList(this),
-      mDrawOverrides(this), mPostProcOverrides(this), mParentDir(this), mCrowds(this),
-      mCrowdStateOverride(gNullStr), mPS3PerPixel(true), mGlowSpot(this), mFlags(0),
+      mParentDir(this), mDrawOverrides(this), mPostProcOverrides(this), mCrowds(this),
+      mPS3PerPixel(true), mGlowSpot(this), mFlags(0),
       mEndHideList(this), mEndShowList(this), mLastDesiredShakeOffset(0, 0, 0),
       mLastDesiredShakeAngOffset(0, 0, 0), mLastShakeOffset(0, 0, 0),
       mLastShakeAngOffset(0, 0, 0), mShakeVelocity(0, 0, 0), mShakeAngVelocity(0, 0, 0), mLastNext(0),
@@ -995,7 +996,7 @@ BEGIN_PROPSYNCS(CamShot)
 END_PROPSYNCS
 
 BEGIN_SAVES(CamShot)
-    SAVE_REVS(0x34, 0)
+    SAVE_REVS(0x32, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mKeyframes;
@@ -1029,7 +1030,6 @@ BEGIN_SAVES(CamShot)
     bs << mPS3PerPixel;
     bs << mFlags;
     bs << mCrowds;
-    bs << mCrowdStateOverride;
     bs << mAnims;
 END_SAVES
 

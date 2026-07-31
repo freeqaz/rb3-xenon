@@ -196,7 +196,7 @@ public:
     bool TrackHasIndependentSlots(int idx) const {
         return mTrackInfos[idx]->mIndependentSlots;
     }
-    bool HasTrackDiffs() const { return mTrackDifficulties.size(); }
+    bool HasTrackDiffs() const { return mTrackDifficulties.size() > 0; }
     int GetNumDifficulties() const { return mNumDifficulties; }
     int GetNumTracks() const { return mNumTracks; }
     PhraseAnalyzer *GetPhraseAnalyzer() const { return mPhraseAnalyzer; }

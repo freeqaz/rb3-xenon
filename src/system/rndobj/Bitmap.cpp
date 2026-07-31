@@ -755,17 +755,19 @@ void RndBitmap::Blt(
                 bm.PaletteColor(i, r, g, b, a);
                 colorBuffer[i] = NearestColor(r, g, b, a);
             }
+            int origDX = dX, origSX = sX, origWidth = width;
             for (; height > 0; height--, dY++, sY++) {
-                for (int w = width, sx = sX; w > 0; w--, sx++) {
-                    SetPixelIndex(dX - sX + sx, dY, colorBuffer[bm.PixelIndex(sx, sY)]);
+                for (dX = origDX, sX = origSX, width = origWidth; width > 0; width--, dX++, sX++) {
+                    SetPixelIndex(dX, dY, colorBuffer[bm.PixelIndex(sX, sY)]);
                 }
             }
         } else {
+            int origDX = dX, origSX = sX, origWidth = width;
             for (; height > 0; height--, dY++, sY++) {
-                for (int w = width, sx = sX; w > 0; w--, sx++) {
+                for (dX = origDX, sX = origSX, width = origWidth; width > 0; width--, dX++, sX++) {
                     unsigned char r, g, b, a;
-                    bm.PixelColor(sx, sY, r, g, b, a);
-                    SetPixelColor(dX - sX + sx, dY, r, g, b, a);
+                    bm.PixelColor(sX, sY, r, g, b, a);
+                    SetPixelColor(dX, dY, r, g, b, a);
                 }
             }
         }
@@ -1339,9 +1341,9 @@ void RndBitmap::Load(BinStream &bs) {
         workingMip->mMip = newMip;
         workingW = workingW >> 1;
         workingH = workingH >> 1;
+        workingMip = newMip;
         newMip->Create(workingW, workingH, 0, mBpp, mOrder, mPalette, 0, 0);
         ReadChunks(bs, newMip->mPixels, newMip->PixelBytes(), 0x8000);
-        workingMip = newMip;
     }
 }
 #endif

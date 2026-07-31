@@ -620,7 +620,7 @@ void TrackPanelDir::Coda() {
             mEndingBonus->Start(!mTrackPanel->AutoVocals());
             for (int i = 0; i < mTracks.size(); i++) {
                 BandTrack *track = mTracks[i];
-                if (track)
+                if ((int)track)
                     track->EnterCoda();
             }
         }

@@ -1183,7 +1183,7 @@ int ProfileMgr::GetMicVol(int i1) const {
 void ProfileMgr::UpdateMicLevels(int i1) {
     int micID = TheSynth->GetMicClientMapper()->GetMicIDForClientID(MicClientID(i1, -1));
     Mic *mic;
-    if (micID != -1 && (mic = TheSynth->GetMic(micID)) && mic->IsRunning()) {
+    if (micID != -1 && (mic = TheSynth->GetMic(micID)) && mic->IsConnected()) {
         int vol = GetMicVol(i1);
             float f38 = 0;
             float f3c = 0;
@@ -1195,14 +1195,14 @@ void ProfileMgr::UpdateMicLevels(int i1) {
                 f1 = mForcedMicGains[i1];
             }
             if (f1 == -1.0f) {
-                float i7 = SliderIxToDb(vol);
+                double i7 = SliderIxToDb(vol);
                 if (vol == 0)
-                    i7 = -96.0f;
+                    i7 = -96.0;
                 mic->SetVolume(i7);
                 mic->SetGain(f38);
                 mic->SetOutputGain(DbToRatio(f3c));
                 mic->SetSensitivity(f40);
-                // mic->unk8 = f44; // protected in X360 Mic base class
+                mic->unk8 = f44;
                 UpdateMultiMicDeviceSliders(mic, 9);
             } else {
                 mic->SetVolume(SliderIxToDb(vol));

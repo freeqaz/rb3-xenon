@@ -78,7 +78,7 @@ SongParser::SongParser(
         parserArr->FindFloat("keyboard_range_shift_duration_ms");
     mSubMixes = cfg->FindArray("audio")->FindArray("submixes", false);
     for (int i = 0; i < diff_nums; i++) {
-        mDifficultyInfos.push_back(32);
+        mDifficultyInfos.push_back(DifficultyInfo(32));
     }
     memset(mReportedMissingDrumSubmix, 0, 4);
 }
@@ -1749,7 +1749,7 @@ void SongParser::ParseText(int tick, const char *text) {
                         );
                         return;
                     }
-                    if (mNumDrumChannels != lookup[idx]) {
+                    if (lookup[idx] != mNumDrumChannels) {
                         MILO_WARN(
                             "%s (%s): drum mix '%s' at %s supports exactly %d %s channels; this song's configuration has %d %s channels",
                             mFilename,
@@ -2039,7 +2039,7 @@ bool SongParser::HandleRGLooseStrumStart(
 }
 
 bool SongParser::HandleRGRootNote(unsigned char uc) {
-    if ((uc + 0xFC & 0xFF) <= 0xBU) {
+    if (uc >= 4 && uc <= 15) {
         int r = uc % 12;
         mRGRootNote = r;
         if (r < 0)

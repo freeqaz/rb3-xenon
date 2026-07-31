@@ -118,8 +118,12 @@ public:
     // Non-virtual, no layout effect.
     void SetColorOverride(UIColor *);
 
-    RndText *TextObj() { return mText; }
-    const RndText *TextObj() const { return mText; }
+    // Out-of-line (not inline) -- confirmed by retail asm at a caller
+    // (BandHighlight::UpdateTargetEdge, lane NCCC-0731-ab7e/f264/sonnet):
+    // retail emits `bl` to a real getter here, not a folded direct member
+    // load, so the header body must not be inline.
+    RndText *TextObj();
+    const RndText *TextObj() const;
 
     // ------------------------------------------------------------------
     // RB3 retail API restored from the rb3-Wii oracle

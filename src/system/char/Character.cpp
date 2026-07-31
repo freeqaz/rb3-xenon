@@ -504,10 +504,10 @@ void Character::CalcBoundingSphere() {
                                         "bone_L-ankle.mesh",
                                         "bone_R-toe.mesh",
                                         "bone_L-toe.mesh" };
-    for (int i = 0; i <= 4; i++) {
+    for (int i = 0; i < 5; i++) {
         RndTransformable *t = Find<RndTransformable>(boneNames[i], false);
         if (t) {
-            mBounding.GrowToContain(Sphere(t->WorldXfm().v, 0.1));
+            mBounding.GrowToContain(Sphere(t->WorldXfm().v, 0.1f));
         }
     }
 
@@ -533,17 +533,14 @@ void Character::CalcBoundingSphere() {
     if (mBounding.GetRadius() == 0) {
         for (ObjDirItr<RndTransformable> it(this, true); it != nullptr; ++it) {
             if (strneq(it->Name(), "bone_", 5) || strneq(it->Name(), "spot_", 5)) {
-                mBounding.GrowToContain(Sphere(it->WorldXfm().v, 0.1));
+                mBounding.GrowToContain(Sphere(it->WorldXfm().v, 0.1f));
             }
             RndMesh *mesh = dynamic_cast<RndMesh *>(&*it);
-            if (mesh) {
-                if (mesh->Showing()) {
+            if (mesh && mesh->Showing()) {
                 for (int i = 0; i < mesh->Verts().size(); i++) {
-                    mBounding.GrowToContain(
-                        Sphere(mesh->SkinVertex(mesh->Verts(i), nullptr), 0.001f)
-                    );
+                    Vector3 vec = mesh->SkinVertex(mesh->Verts(i), nullptr);
+                    mBounding.GrowToContain(Sphere(vec, 0.001f));
                 }
-            }
             }
         }
     }

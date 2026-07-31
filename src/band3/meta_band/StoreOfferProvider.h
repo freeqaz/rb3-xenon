@@ -68,6 +68,16 @@ public:
     int PosToNextGroupPos(int);
     int PosToPrevGroupPos(int);
     Element *GetElementAtIndex(int) const;
+    // Retail fn_826635D8 (0x188). See the deferred-work comment block in
+    // StoreOfferProvider.cpp for the full retail body (needs FindSongOffer,
+    // which is not implemented yet); this signature-only stub exists so
+    // Handle()'s show_browser_purchased arm can emit a real `bl` (matching
+    // retail's guard-bit-numbered local-static dispatch) instead of an
+    // inline byte load against the global Symbol. noinline: retail's real
+    // body is out-of-line (called via bl, not folded into Handle); our
+    // trivial one-liner stub would otherwise get /Ob2-inlined right back
+    // into the lbz Handle used to emit before this port.
+    __declspec(noinline) bool ShowBrowserPurchased(const StoreOffer *) const;
 
 protected:
     // Retail X360 layout (from ctor/NumData/InitData asm, rel to UIListProvider

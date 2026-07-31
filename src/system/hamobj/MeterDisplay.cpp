@@ -90,8 +90,9 @@ void MeterDisplay::PostLoad(BinStream &bs) {
 }
 
 void MeterDisplay::Poll() {
-    if (mResource->Dir()) {
-        mResource->Dir()->Poll();
+    RndDir *dir = mResource->Dir();
+    if (dir) {
+        dir->Poll();
     }
     UIComponent::Poll();
 }

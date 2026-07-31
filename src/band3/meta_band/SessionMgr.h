@@ -19,7 +19,7 @@ SessionMgrUpdatedMsg() : Message(Type()) {}
 END_MESSAGE
 
 DECLARE_MESSAGE(AddLocalUserResultMsg, "add_local_user_result_msg")
-AddLocalUserResultMsg(int i, LocalUser *u) : Message(Type(), i, u) {}
+AddLocalUserResultMsg(int i, LocalUser *u) : Message(Type(), (unsigned char)i, u) {}
 bool Success() const { return mData->Int(2); }
 BandUser *GetBandUser() const {
     MILO_ASSERT(Success(), 0x33);

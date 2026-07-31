@@ -228,9 +228,7 @@ FocusTracker::GetNextFocusPlayer(const TrackerPlayerID &pid, float f, bool &b) c
             break;
         }
         bool canfocus = PlayerCanHaveFocus(ret);
-        b1 = false;
-        if (canfocus && wantsfocus)
-            b1 = true;
+        b1 = canfocus && wantsfocus;
     } while (!b1);
     return ret;
 }
@@ -467,11 +465,10 @@ void AccuracyFocusTracker::CheckCondition(float ms, bool b1, bool &bref1, bool &
         int i44 = 0;
         int i48 = 0;
         if (mSectionManager.TickAfterSection(mstick, unkcc) != 0 || b1) {
-            mSectionManager.GetGemStatsInRange(
-                pPlayer, mSectionManager.GetSectionEndTick(unkcc), mstick, i44, i48
-            );
+            int sectionEndTick = mSectionManager.GetSectionEndTick(unkcc);
+            mSectionManager.GetGemStatsInRange(pPlayer, sectionEndTick, mstick, i44, i48);
         }
-        int i5 = unke0 - (pPlayer->mStats.m0x0c - i48) - unkdc;
+        int i5 = unke0 - (pPlayer->mStats.m0x0c - unkdc) + i48;
         float f1 = 0;
         float f2 = i5;
         i5 = (pPlayer->mStats.mHitCount - i44) - unkd4;

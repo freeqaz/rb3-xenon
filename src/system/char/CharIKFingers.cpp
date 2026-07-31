@@ -518,8 +518,8 @@ void CharIKFingers::Highlight() {
     for (int i = 0; i < 5; i++) {
         FingerDesc desc(mFingers[i]);
         if (desc.mIsEngaged) {
-            UtilDrawSphere(desc.mTargetWorldPos, 0.2f, Hmx::Color(1, 0, 0), 0);
-            UtilDrawSphere(desc.mRefWorldPos, 0.2f, Hmx::Color(0, 1, 0), 0);
+            UtilDrawSphere(desc.mTargetWorldPos, 0.2f, Hmx::Color(1, 0, 0));
+            UtilDrawSphere(desc.mRefWorldPos, 0.2f, Hmx::Color(0, 1, 0));
             UtilDrawAxes(desc.mFinger01->WorldXfm(), 1.0f, Hmx::Color(1, 1, 1));
             TheRnd.DrawLine(
                 desc.mFinger01->WorldXfm().v,
