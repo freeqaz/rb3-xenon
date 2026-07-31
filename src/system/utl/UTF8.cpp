@@ -271,19 +271,25 @@ void UTF8RemoveSpaces(char *out, int len, const char *in) {
     MILO_ASSERT(out, 0x1AD);
     MILO_ASSERT(in, 0x1AE);
     MILO_ASSERT(len > 0, 0x1AF);
+    char *out_beg = out;
     unsigned short us;
-    int unk;
-    char *out_begin = out;
-    while ((*in != 0) && (out - out_begin < len - 3)) {
-        unk = DecodeUTF8(us, in);
-        if (UTF8strchr(in, us) != (char *)32) {
-            if (unk << 3)
-                *out++ = *in++;
+    char *out_end = out + len - 3;
+    bool prev_was_space = true;
+    while ((*in != 0) && (out < out_end)) {
+        us = 0;
+        unsigned int decoded = DecodeUTF8(us, in);
+        bool is_space = (us == ' ');
+        if (!(!is_space || !prev_was_space)) {
+            in += decoded;
         } else {
-            *out = '\0';
+            for (unsigned int i = decoded; i != 0; i--)
+                *out++ = *in++;
         }
+        prev_was_space = is_space;
     }
-    *out = '\0';
+    if (out > out_beg && out[-1] == ' ')
+        out--;
+    *out = 0;
 }
 
 void UTF8toWChar_t(wchar_t *wc, const char *c) {

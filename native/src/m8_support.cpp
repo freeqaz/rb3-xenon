@@ -102,10 +102,23 @@ bool GemPlayer::HasDealtWithGem(int idx) {
 }
 
 // ====================================================== CrowdRating shim =====
-// Honest headless shim: no crowd simulation. Performer::Poll calls mCrowd->Poll
-// each frame (a no-op stub in m8_link_stubs); the ctor just needs to exist so the
-// player can hold a valid, vtable-bearing instance. CrowdRating has no real
-// implementation anywhere (not in DC3, not in the rb3-Wii oracle) — documented.
+// Headless shim: no crowd simulation. Performer::Poll calls mCrowd->Poll each
+// frame (a no-op stub in m8_link_stubs); the ctor just needs to exist so the
+// player can hold a valid, vtable-bearing instance.
+//
+// ⚠ CORRECTION (lane CC-5): this block previously claimed "CrowdRating has no
+// real implementation anywhere (not in DC3, not in the rb3-Wii oracle)". That is
+// FALSE — the full implementation has been in this very repo the whole time at
+// src/band3/game/CrowdRating.cpp (139 lines, all 17 methods). Only the NATIVE
+// build was stubbing it, and a stub-execution probe (src/cc5_stub_probe.c)
+// measured CrowdRating::Poll running 25,905 times in a single rb3-score4 run —
+// i.e. the crowd meter was a no-op on the hot path while the demo reported
+// results as though the subsystem were present.
+//
+// The rb3-crowd target (M12) defines RB3_REAL_CROWD and links the real TU
+// instead. This shim is kept only for the targets that have not been migrated.
+#ifndef RB3_REAL_CROWD
 CrowdRating::CrowdRating(BandUser *, Difficulty)
     : mActive(0), mRawValue(0), mValue(0), mRunningMin(0), mSongFraction(0),
       mLoseLevel(0) {}
+#endif
