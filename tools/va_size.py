@@ -2,9 +2,18 @@
 """Find the true size of a function at a VA from band.exe .pdata.
 
 The Xbox360 PE has a .pdata section: RUNTIME_FUNCTION array sorted by BeginAddress.
-Each entry: BeginAddress (4), Flags+other (4)... actually X360 uses a 2-word format:
-  DWORD BeginAddress; DWORD: bit0..1 flags, then PrologLen(8), FuncLen(22), ...
-We just need the start delta to the NEXT entry's BeginAddress for size.
+Each entry is 2 words: DWORD BeginAddress; DWORD packed flags/lengths.
+
+⚠ The packed word is an MSVC LSB-first BITFIELD, and the field order sketched in
+earlier versions of this docstring was WRONG. The correct decode, verified against
+delta-to-next over the whole binary with zero negatives (tools/arity_screen.py):
+
+    funclen_instructions = (w >> 8) & 0x3FFFFF     # then * 4 for bytes
+
+Do NOT copy a field order out of prose -- decode it and check it reproduces
+delta-to-next. This module itself does not need the bitfield at all: it uses the
+start delta to the NEXT entry's BeginAddress, which is exact for contiguous
+functions and is the safer instrument when you only want a size.
 """
 import struct
 import sys
