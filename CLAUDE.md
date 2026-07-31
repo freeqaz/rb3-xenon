@@ -92,9 +92,51 @@ preserved (empirically: the MasterAudio.cpp cluster of 46 functions packs into
 8 KB).
 
 What `/O1` does: `/Ob2` aggressive within-TU inlining (so leaf math like SHA1's
-K-constants disappear into callers), ICF (identical-COMDAT folding), but
-*no cross-TU reordering or whole-program inlining*. dc3's linker map tags ~32k
-functions `f i` — those are `/Ob2` inlines, not LTCG magic.
+K-constants disappear into callers), but *no cross-TU reordering or whole-program
+inlining*. dc3's linker map tags ~32k functions `f i` — those are `/Ob2` inlines,
+not LTCG magic.
+
+★ **ICF is a LINKER option (`/OPT:ICF`), NOT a `/O1` effect** — this doc said
+otherwise for months. **Retail RB3 does have it**, verified on `band.exe` (lane
+CD-7, 2026-07-31): over 40,609 non-funclet `.pdata`-sized functions, bodies
+identical **including call targets** show only **51 surplus copies — *below* three
+random-offset nulls (115/158/170)** — while bodies identical **ignoring** call
+targets survive **3,967 times in 1,061 groups**. That ~78× gap *is* the signature
+of relocation-restricted folding; full folding would collapse both populations and
+no folding would leave both intact. Cross-binary positive control: the same
+scanner on **DC3 — proven ICF-ON by its leaked map** — produces the same
+signature (28 reloc-identical vs 4,941 shape-identical surplus).
+
+⇒ **MSVC folds only COMDATs identical *including relocations and associated
+`.xdata`*.** So byte-*similar* bodies at distinct addresses are **expected and do
+NOT refute ICF** — e.g. `_List_base<T>::clear` has 42 addresses, reloc-identical
+surplus **0**, because its members differ in four `bl` targets (per-`T` node
+deallocators). Folding is near-total in HMX code (**6** surplus / 32,580) and
+**17× weaker in vendor/CRT code ≥ `0x82A00000`** (25 / 8,029) — a concrete
+instance of the per-TU flag heterogeneity flagged as unexplored above, likely
+`/Gy`-off monolithic non-COMDAT `.text`.
+
+⚠ **Instruments structurally INCAPABLE of settling ICF** (same trap as `/GR`):
+match-%/objdiff (`report.rs` masks reloc args — a folded callee and a wrong callee
+score identically), and raw `memcmp` for duplicate bodies (**silently vacuous**:
+PC-relative `bl` displacements differ at different addresses, so identical
+functions are *not* identical bytes — this would "prove" ICF by finding nothing).
+The instrument that works is relocation-normalized body hashing over
+`.pdata`-authoritative extents, split reloc-identical vs shape-identical, against
+a random-offset null.
+
+⛔ **The "71.5% of `name_check` sites are ICF fold-aliases ⇒ NOISE" model does NOT
+survive** — and for a reason *independent* of ICF being real. "Callee absent from
+map ⇒ fold-alias" never measured folding; it measured **identification coverage**.
+The map names 27,515 of 66,003 functions (**41.7%**), and a null shows **36.8%** of
+*all* call sites have a callee absent from the map vs 71.6% in the charged stratum
+— an enrichment of only **~1.95×**, used as if it were a deterministic classifier.
+Retail-byte adjudication refuted **641 pairs / 2,131 sites** the census called
+noise, and only **~28%** of the stratum is explained by a proven fold. The honest
+name for that stratum is *"our callee has no identified retail address"* — a
+**triage backlog**, not noise (3,776 distinct pairs, top 100 = 46.2% of sites).
+⚠ This does **not** by itself reopen the `name_check` default decision; that rests
+on the separate finding that name_check *aggregate* code% is build-unstable.
 
 The asymmetry between binaries is **not** optimization level — it's that dc3 had
 a leaked PDB/.map giving its functions names+addresses, while RB3's are
