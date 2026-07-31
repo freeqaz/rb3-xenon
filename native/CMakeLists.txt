@@ -41,13 +41,21 @@ set(DECOMP_FLAGS
     "SHELL:-include ${CMAKE_SOURCE_DIR}/src/msvc_compat.h"
 )
 
+# Scatter-include handling: the decomp has ~250 .cpp-includes-.cpp edges to
+# reproduce retail COMDAT placement. rb3_add_executable() derives, per target,
+# which of those files must NOT also be compiled standalone. See the module.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ScatterIncludes.cmake)
+
 # --- Engine core: the subset needed for DTA parsing ---
 # obj (DataNode/DataArray/Object), utl (MemMgr/Str/Symbol/streams),
 # os (File/Debug/System), math (already known-good).
-file(GLOB ENGINE_OBJ  ${REPO_ROOT}/src/system/obj/*.cpp)
-file(GLOB ENGINE_UTL  ${REPO_ROOT}/src/system/utl/*.cpp)
-file(GLOB ENGINE_OS   ${REPO_ROOT}/src/system/os/*.cpp)
-file(GLOB ENGINE_MATH ${REPO_ROOT}/src/system/math/*.cpp)
+# CONFIGURE_DEPENDS: a bare file(GLOB) expands once and never re-runs, so a
+# newly added engine .cpp would be silently missing until someone deleted the
+# build directory.
+file(GLOB ENGINE_OBJ  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/obj/*.cpp)
+file(GLOB ENGINE_UTL  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/utl/*.cpp)
+file(GLOB ENGINE_OS   CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/os/*.cpp)
+file(GLOB ENGINE_MATH CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/math/*.cpp)
 set(ENGINE_SOURCES ${ENGINE_OBJ} ${ENGINE_UTL} ${ENGINE_OS} ${ENGINE_MATH})
 
 # Drop platform-specific TUs — native shims replace them.
@@ -67,7 +75,7 @@ set(DTA_LEXER ${REPO_ROOT}/src/system/obj/DataFlex.c)
 set(RNDOBJ_SOURCES ${REPO_ROOT}/src/system/rndobj/Anim.cpp)
 
 # --- Native platform shims (from dc3-decomp) ---
-file(GLOB PLATFORM_SHIMS ${CMAKE_SOURCE_DIR}/src/platform/*.cpp)
+file(GLOB PLATFORM_SHIMS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/platform/*.cpp)
 set(NATIVE_SHIMS
     ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
     ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
@@ -77,7 +85,7 @@ set(NATIVE_SHIMS
     ${PLATFORM_SHIMS}
 )
 
-add_executable(rb3-dta
+rb3_add_executable(rb3-dta
     ${CMAKE_SOURCE_DIR}/src/main_dta.cpp
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -120,7 +128,7 @@ set(M1_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
 )
 
-add_executable(rb3-song
+rb3_add_executable(rb3-song
     ${CMAKE_SOURCE_DIR}/src/main_song.cpp
     ${CMAKE_SOURCE_DIR}/src/m1_symbols.cpp
     ${ENGINE_SOURCES}
@@ -159,7 +167,7 @@ set(M2_SOURCES
     ${REPO_ROOT}/src/system/midi/MidiVarLen.cpp
 )
 
-add_executable(rb3-midi
+rb3_add_executable(rb3-midi
     ${CMAKE_SOURCE_DIR}/src/main_midi.cpp
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -196,7 +204,7 @@ set(M3_SOURCES
     ${REPO_ROOT}/src/system/utl/SongInfoCopy.cpp
 )
 
-add_executable(rb3-gem
+rb3_add_executable(rb3-gem
     ${CMAKE_SOURCE_DIR}/src/main_gem.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${ENGINE_SOURCES}
@@ -251,7 +259,7 @@ set(M3B_SOURCES
     ${CMAKE_SOURCE_DIR}/src/beatmatch_native_support.cpp
 )
 
-add_executable(rb3-hit
+rb3_add_executable(rb3-hit
     ${CMAKE_SOURCE_DIR}/src/main_hit.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${ENGINE_SOURCES}
@@ -287,7 +295,7 @@ target_link_libraries(rb3-hit PRIVATE Threads::Threads ZLIB::ZLIB)
 # net/tour object graph) is NOT constructed here — that is the M6 frontier; both
 # it and the real Scoring/Stats TUs compile natively but drag that cascade at
 # link time. See src/score_engine.h for the per-formula oracle provenance.
-add_executable(rb3-score
+rb3_add_executable(rb3-score
     ${CMAKE_SOURCE_DIR}/src/main_score.cpp
     ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
@@ -328,7 +336,7 @@ set(M6_GAME_SOURCES
     ${REPO_ROOT}/src/band3/game/Stats.cpp
     ${REPO_ROOT}/src/band3/game/Band.cpp
 )
-add_executable(rb3-score2
+rb3_add_executable(rb3-score2
     ${CMAKE_SOURCE_DIR}/src/main_score2.cpp
     ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
@@ -369,7 +377,7 @@ target_link_libraries(rb3-score2 PRIVATE Threads::Threads ZLIB::ZLIB)
 # OD phrases parse into the real SongData/PhraseList, phrase completion credits
 # energy via the real Player::CompleteCommonPhrase/AddEnergy, and deploy runs the
 # real Band::UpdateBonusLevel/EnergyMultiplier multiplier machinery (not the shim).
-add_executable(rb3-score3
+rb3_add_executable(rb3-score3
     ${CMAKE_SOURCE_DIR}/src/main_score3.cpp
     ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
@@ -411,7 +419,7 @@ target_link_libraries(rb3-score3 PRIVATE Threads::Threads ZLIB::ZLIB)
 # the M8 support/stub layer (minimal real SongDB backed by SongData, Game hooks,
 # headless clock). m8_link_stubs replaces m6_link_stubs (four symbols promoted to
 # real behavior); m6_symbols still supplies the singleton globals.
-add_executable(rb3-score4
+rb3_add_executable(rb3-score4
     ${CMAKE_SOURCE_DIR}/src/main_score4.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
@@ -453,7 +461,7 @@ target_link_libraries(rb3-score4 PRIVATE Threads::Threads ZLIB::ZLIB)
 # mic input is synthetic; all matching/scoring is real engine code. VocalPart.cpp
 # is added on top of the M8 object graph; unused Poll/Singer/VocalPlayer code is
 # dropped by --gc-sections. See native/src/main_vocal.cpp for the census.
-add_executable(rb3-vocal
+rb3_add_executable(rb3-vocal
     ${CMAKE_SOURCE_DIR}/src/main_vocal.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/VocalPart.cpp
@@ -498,7 +506,7 @@ target_link_libraries(rb3-vocal PRIVATE Threads::Threads ZLIB::ZLIB)
 # vocal SongDB queries). m10_link_stubs replaces m8_link_stubs (drops the
 # GetVocalNoteListCount->0 stub, adds NetSession::IsLocal). Only the mic is
 # synthetic; all scoring is real. See native/src/main_vocal2.cpp for the census.
-add_executable(rb3-vocal2
+rb3_add_executable(rb3-vocal2
     ${CMAKE_SOURCE_DIR}/src/main_vocal2.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
@@ -550,7 +558,7 @@ target_link_libraries(rb3-vocal2 PRIVATE Threads::Threads ZLIB::ZLIB)
 # (FindBestPart / AddSingerCandidate) and ambiguity machinery (AddAmbiguousPart /
 # AllScoresAreIn / ResolveAmbiguity). Only main_harmony.cpp differs from vocal2.
 # See native/src/main_harmony.cpp for the census.
-add_executable(rb3-harmony
+rb3_add_executable(rb3-harmony
     ${CMAKE_SOURCE_DIR}/src/main_harmony.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
@@ -609,7 +617,7 @@ set(M4_SAVE_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/GameplayOptions.cpp
     ${REPO_ROOT}/src/band3/meta_band/StandIn.cpp
 )
-add_executable(rb3-save
+rb3_add_executable(rb3-save
     ${CMAKE_SOURCE_DIR}/src/main_save.cpp
     ${M4_SAVE_SOURCES}
     ${ENGINE_SOURCES}
