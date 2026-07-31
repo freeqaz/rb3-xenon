@@ -734,7 +734,8 @@ void Player::PopupHelp(Symbol s, bool b) {
     if (user && user->GetDifficulty() == kDifficultyEasy) {
         BandTrack *track = GetBandTrack();
         if (track) {
-            track->SetControllerType(user->GetControllerSym());
+            Symbol ctrl = user->GetControllerSym();
+            track->SetControllerType(ctrl);
             track->PopupHelp(s, b);
         }
     }

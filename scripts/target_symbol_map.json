@@ -23120,7 +23120,7 @@
  "0x823643e8": "?SetToursPlayedMap@TourProgress@@QAAXABV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
  "0x82b924f0": "?CreateTracks@TrackPanel@@QAAXXZ",
  "0x82693368": "?GetQuestEarnedStars@TrackerManager@@QBAHXZ",
- "0x826f5898": "?GetGemIDsForRange@TrackerSectionManager@@QBAHPBVPlayer@@HHAAH1@Z",
+ "0x826f5898": "?GetGemIDsForRange@TrackerSectionManager@@QBA_NPBVPlayer@@HHAAH1@Z",
  "0x826f5c28": "?TickInSection@TrackerSectionManager@@QBA_NHH@Z",
  "0x8263e0f8": "?Exit@TrainingPanel@@UAAXXZ",
  "0x826f2148": "?GetNoteSliceWeight@VocalPart@@QBAMMMH@Z",

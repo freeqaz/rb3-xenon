@@ -119,7 +119,7 @@ bool CrowdRating::IsBelowLoseLevel() const { return mValue < mLoseLevel; }
 
 void CrowdRating::SetValue(float val) {
     mValue = val;
-    if (mValue < mRunningMin)
+    if (mRunningMin > mValue)
         mRunningMin = mValue;
     mRawValue = (kMax - kMin) * mValue + kMin;
 }

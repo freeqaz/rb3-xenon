@@ -73,7 +73,8 @@ void TrackerDisplay::Show() const {
     // DataArray::Release on the way out). The static Message is never passed.
     static Symbol showSym("show");
     static Message show_msg(showSym);
-    SendMsg(Message(showSym));
+    Message msg(showSym);
+    SendMsg(msg);
 }
 void TrackerDisplay::Hide() const {
     static Symbol hideSym("hide");

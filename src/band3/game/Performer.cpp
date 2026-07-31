@@ -230,7 +230,7 @@ void Performer::AddPoints(float points, bool apply_multiplier, bool apply_streak
         individualContribution = points * (i1 - 1);
         mStats.AddScoreStreak(individualContribution);
         overdriveContribution =
-            (i3 * (points * i1)) - points - individualContribution;
+            points * (i1 * (float)i3) - points - individualContribution;
         mStats.AddOverdrive(overdriveContribution);
         bandContribution = (points * multiplier) - individualContribution
             - overdriveContribution - points;

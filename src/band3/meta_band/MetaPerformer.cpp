@@ -1422,7 +1422,8 @@ bool MetaPerformer::HasSoloHighscore(BandUser *user) {
     else {
         LocalBandUser *localUser = dynamic_cast<LocalBandUser *>(user);
         MILO_ASSERT(localUser, 0x88A);
-        if (localUser->GetPlayer() && !localUser->GetPlayer()->GetQuarantined()) {
+        Player *player = localUser->GetPlayer();
+        if (player && !player->GetQuarantined()) {
             BandProfile *profile = TheProfileMgr.GetProfileForUser(localUser);
             if (profile) {
                 int padnum = localUser->GetPadNum();

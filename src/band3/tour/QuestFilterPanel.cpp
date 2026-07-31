@@ -208,7 +208,7 @@ inline TourSetlistType QuestFilterProvider::GetSetlistType(int i_iData) const {
 
 inline RndMat *QuestFilterProvider::Mat(int, int i_iData, UIListMesh *i_pSlot) const {
     MILO_ASSERT(i_iData < NumData(), 0x95);
-    DataSymbol(i_iData);
+    Symbol sFilter = DataSymbol(i_iData);
     TourSetlistType eType = GetSetlistType(i_iData);
     if (i_pSlot->Matches("icon")) {
         String str;
