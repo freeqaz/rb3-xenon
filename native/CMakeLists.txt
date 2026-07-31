@@ -34,10 +34,81 @@ set(ATOMIC_COMPAT_FLAGS
     -D__GCC_ATOMIC_LLONG_LOCK_FREE=2
     -D__GCC_ATOMIC_POINTER_LOCK_FREE=2
 )
+# --- Diagnostics policy ------------------------------------------------------
+# This build used to pass a blanket `-w`. The native build is the ONLY instrument
+# in this project that LINKS AND RUNS the engine (the X360 match build compiles
+# TUs and byte-compares them, so ODR faults, uninitialized reads and dead
+# branches are structurally invisible to it) -- and `-w` had its diagnostics
+# muted since the port was created. See lane CC-5 / commit dc911261.
+#
+# ★ `-w` CANNOT be layered on. Measured, not assumed: with clang,
+#   `-w -Wreturn-type` is SILENT, and even `-w -Werror=return-type` is SILENT,
+#   in either order. `-w` wins absolutely. The mechanism that does work is
+#   `-Wno-everything`, which mutes just as completely but permits selective
+#   re-enable (verified: `-Wno-everything -Werror=return-type` errors).
+#   So `-w` -> `-Wno-everything` is a NO-OP on its own, and every flag listed
+#   below is an explicit, deliberate opt-in.
+#
+# ★ Each flag below was MEASURED to produce ZERO diagnostics across all 251
+#   unique TUs (-fsyntax-only over compile_commands.json; raw counts are a
+#   fan-out artifact, so counts are of unique file:line:col:message). They are
+#   promoted to -Werror so this defect class CANNOT silently return -- a warning
+#   scrolls past in a 171-step build, an error does not.
+#
+# ⚠ DELIBERATELY NOT ENABLED (measured non-zero; each needs the
+#   transcription-error-vs-faithful-shipped-bug triage against the dc3 /
+#   rb3-Wii oracles BEFORE being touched -- fixing a faithful bug breaks the
+#   match). Unique-site counts as of this measurement:
+#     -Wshorten-64-to-32          455   (incl. the LP64 landmine)
+#     -Woverloaded-virtual         36   (CC-5: 4 real, all faithful)
+#     -Wpointer-to-int-cast        22 + -Wvoid-pointer-to-int-cast 6  (LP64)
+#     -Wparentheses                13   (via -Wlogical-op-parentheses 7,
+#                                        -Wbitwise-op-parentheses 6)
+#     -Wformat                      5   (all "%s" fed a Symbol)
+#     -Wint-to-pointer-cast         4 + -Wint-to-void-pointer-cast 3  (LP64:
+#                                        MemTrack/PoolAlloc/MemHeap store
+#                                        pointers in 32-bit words)
+#     -Wreturn-type                 2   (MidiConstants.h:34, Debug.cpp:373 --
+#                                        the latter deferred by CC-5, no oracle)
+#     -Warray-bounds                1   (GlitchFinder.cpp:361, index 1024 into
+#                                        char[1024] -- looks like a real defect)
+#     -Wswitch                      1   (NetCacheLoader.cpp:57)
+#     -Wenum-compare                1   (PlayerTrackConfigList.cpp:164 --
+#                                        VERIFIED FAITHFUL, values align 1:1)
+#     -Wunused-result               1   (VocalScoreHistory.cpp:38)
+#     -Wbitwise-instead-of-logical  1   (Geo.cpp:137 -- VERIFIED FAITHFUL, the
+#                                        `|` MUST NOT short-circuit, ClampEq
+#                                        mutates. DO NOT "FIX".)
+set(DECOMP_WARNINGS
+    -Wno-everything
+    -Werror=uninitialized
+    -Werror=sometimes-uninitialized
+    -Werror=self-assign
+    -Werror=self-move
+    -Werror=delete-non-virtual-dtor
+    -Werror=mismatched-new-delete
+    -Werror=return-stack-address
+    -Werror=dangling
+    -Werror=sizeof-pointer-memaccess
+    -Werror=memset-transposed-args
+    -Werror=infinite-recursion
+    -Werror=tautological-compare
+    -Werror=tautological-pointer-compare
+    -Werror=nonnull
+    -Werror=logical-not-parentheses
+    -Werror=bitwise-conditional-parentheses
+    -Werror=constant-logical-operand
+    -Werror=shift-count-overflow
+    -Werror=string-compare
+    -Werror=unevaluated-expression
+    -Werror=unsequenced
+    -Werror=varargs
+    -Werror=user-defined-warnings
+)
 set(DECOMP_FLAGS
     -ferror-limit=0
     -fno-omit-frame-pointer
-    -w
+    ${DECOMP_WARNINGS}
     "SHELL:-include ${CMAKE_SOURCE_DIR}/src/msvc_compat.h"
 )
 
@@ -712,3 +783,32 @@ target_include_directories(rb3-save PRIVATE
     ${REPO_ROOT}/src/network
 )
 target_link_libraries(rb3-save PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M13: mount the REAL .ark archive ----------------------------------------
+# Every other target reads loose, pre-extracted files. This one mounts RB3's
+# shipped ten-part main_xbox archive through the engine's own Archive/ArkFile
+# stack and proves it byte-exactly.
+#
+# The only new engine-facing code is src/platform/ArkRead_Native.cpp, which
+# defines NativeArkRead — the single weak no-op in dta_link_stubs.s that the
+# HX_NATIVE branch of src/system/os/ArkFile.cpp delegates to. It is picked up by
+# the PLATFORM_SHIMS glob, so all targets link the strong definition; the other
+# 13 never call it (they do not SetUsingCD(true), so NewFile never builds an
+# ArkFile), leaving their behaviour unchanged.
+rb3_add_executable(rb3-ark
+    ${CMAKE_SOURCE_DIR}/src/main_ark.cpp
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+)
+target_compile_options(rb3-ark PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_definitions(rb3-ark PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-ark SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-ark PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+)
+target_link_libraries(rb3-ark PRIVATE Threads::Threads ZLIB::ZLIB)
