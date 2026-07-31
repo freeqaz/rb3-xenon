@@ -34,6 +34,15 @@
   ],
   "groups": [
     {
+      "name": "DataNodeAssertOnlyAccessor",
+      "address": "0x8274B0F8",
+      "survivor": "?Int@DataNode@@QBAHPBVDataArray@@@Z",
+      "folded": [
+        "?Array@DataNode@@QBAPAVDataArray@@PBV2@@Z"
+      ],
+      "evidence": "RB3 retail ground truth. The body at 0x8274b0f8 is 0x24 bytes: bl <DataNode::Evaluate> / lwz r3,0(r3) / blr -- no type check, no floating point. rb3-Wii DataNode.cpp shows DataNode::Int() and DataNode::Array() are BOTH 'const DataNode &n = Evaluate();' plus checks entirely inside #ifdef MILO_DEBUG, then 'return n.mValue.integer' / 'return n.mValue.array' -- the same single word at the same offset. With MILO_DEBUG off they are byte-identical and ICF-fold. Corroboration: our tree has 6,056 REL24 calls to Int in 514 objs and 1,342 to Array in 217 (4.5:1), against a census ratio of 1171:209 (5.6:1) at this one address. NOTE this group requires lane CB-11's map correction renaming 0x8274b0f8 from ?EasePolyIn@@YAMMMM@Z (0 call sites anywhere in our tree; dc3-only) to ?Int@DataNode@@ -- without it the survivor is not map-resident and gate (a) fails. dc3's map has Int/Array/Float at THREE distinct addresses because dc3 is the newer engine and added a real runtime type check; that non-fold does NOT refute the RB3 fold."
+    },
+    {
       "name": "PoolAlloc",
       "address": "0x827960D8",
       "survivor": "?PoolAlloc@@YAPAXHHPBDH0@Z",
