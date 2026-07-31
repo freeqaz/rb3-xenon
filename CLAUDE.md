@@ -126,6 +126,18 @@ code may have subtle behavioral differences or version incompatibilities. When a
 file misbehaves, cross-check against rb3-Wii's equivalent and merge intent — do
 not assume dc3's version is correct for RB3.
 
+⚠ **`MILO_DEBUG` is force-defined tree-wide (`src/macros.h:3`) and it does NOT
+gate `MILO_ASSERT`** — the whole `MILO_*` family is `#ifdef HX_NATIVE`, which the
+match build never defines (cflags carry **no `/D` at all**), so
+`MILO_ASSERT(cond,line)` is just `((void)(cond))`. The force-define's only effect
+is to switch ON rb3-Wii **dev-build** code that retail compiled out, so every
+inherited `#ifdef MILO_DEBUG` is a suspect. **Fix per-site with the house
+pattern** `#if defined(MILO_DEBUG) && defined(HX_NATIVE)` (keeps native
+behaviour; see `os/Timer.h`, `obj/ObjMacros.h`, `utl/Loader.h`) — ⚠ **never
+blanket-remove**: the measured whole-binary control is **−21** (some guards are
+genuinely in retail). Details + census:
+`docs/decomp/patterns/milo-debug-force-define.md`.
+
 ## Decomp priority: the GAME, not the engine
 
 **Spend matching/porting effort on RB3's game layer (`src/band3/`, `src/network/`),

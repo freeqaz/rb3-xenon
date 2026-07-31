@@ -28,6 +28,17 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - **Target is a retail `/O1 /Oi /GR /EHsc` size-optimized release with ICF — NOT a debug build
   and NOT LTCG/LTO.** ICF (identical-COMDAT folding) is a separate linker feature that IS active.
   Verdict evidence: `plans/lto-vs-icf-investigation-2026-06-06.md`.
+- **`MILO_DEBUG` does NOT gate `MILO_ASSERT` — `HX_NATIVE` does.** `src/macros.h:3`
+  force-defines `MILO_DEBUG` tree-wide, and several commit messages and header comments claim
+  this is "to keep `MILO_ASSERT` live". **It is not**: `MILO_DEBUG` appears nowhere in
+  `os/Debug.h`; the whole `MILO_*` family is `#ifdef HX_NATIVE`, and the match build passes
+  **no `/D` at all**, so `MILO_ASSERT(cond,line)` is `((void)(cond))`. The force-define's only
+  effect is to switch on rb3-Wii **dev-build** code that retail compiled out. ⚠ But do **not**
+  blanket-remove it — the measured whole-binary control is **−21 functions** (one guard,
+  `BandCharacter`'s `toggle_interests_overlay` handler, is genuinely in retail and costs −22 by
+  itself). Adjudicate per site against target asm. Full census, the `HX_NATIVE` house fix
+  pattern, and the TU-local-`#undef` ODR hazard:
+  `decomp/patterns/milo-debug-force-define.md`.
 - **Worktrees and build logs go under `~/tmp` (= `/home/free/tmp`), never `/tmp`.** `/tmp` is
   RAM-backed tmpfs with no btrfs reflink — it fills up and defeats CoW. Use
   `scripts/setup_worktree.sh` + `~/tmp/rb3_build_<task>.log`.
@@ -274,6 +285,7 @@ Each of these is a **pricing or refutation** — read the verdict before re-open
 - [decomp/playbooks/nearmiss-harvest.md](decomp/playbooks/nearmiss-harvest.md) — evaluation-order-sculpting harvest waves (96–99.99% named fns; local-.cpp-only lanes; technique catalog + wall taxonomy).
 - [decomp/playbooks/offset-drift-sweep.md](decomp/playbooks/offset-drift-sweep.md) — mechanical layout/header-drift sweep (85–99.99%; the header-edit complement of nearmiss-harvest; one fix closes many fns; recon-before-edit discipline).
 - [decomp/patterns/false-layout-drift.md](decomp/patterns/false-layout-drift.md) — offset diffs that are NOT layout bugs (anchor-bias, vbase mirage, diagonal pairing); rule out before editing a header.
+- [decomp/patterns/milo-debug-force-define.md](decomp/patterns/milo-debug-force-define.md) — the `MILO_DEBUG` force-define trap: what it really gates (**not** `MILO_ASSERT` — that is `HX_NATIVE`), the full census, the `HX_NATIVE` house fix pattern, the measured **−21** blanket-removal control, and the TU-local-`#undef` ODR hazard.
 - [decomp/EH_FUNCLET_CASCADE.md](decomp/EH_FUNCLET_CASCADE.md) — **the EH-funclet cascade rule** and
   how to read a guard-bit timeline: a funclet flips on its parent's frame SIZE alone, the census
   (2,720 funclets / 1,004 parents, only ~13% source-blocked), the three failure shapes, the five

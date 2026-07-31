@@ -149,6 +149,7 @@ Patterns that *look* fixable but are traps. Rule these out first.
 | Pattern | Effect | File |
 |---------|--------|------|
 | False Layout Drift (anchor-bias, vbase mirage, diagonal pairing, red-zone) | wasted header edit + cascade regression | [false-layout-drift.md](false-layout-drift.md) |
+| `MILO_DEBUG` force-define (rb3-Wii **dev**-build guards compiled into retail) | dev-only code silently compiled in; but blanket removal is **−21** | [milo-debug-force-define.md](milo-debug-force-define.md) |
 
 ## Harmful Patterns
 
@@ -161,6 +162,8 @@ These patterns make matches **worse**. Avoid them.
 | Iterator Address-Of (`&*iter`) | -3-5% | [harmful-avoid.md](harmful-avoid.md#iterator-address-of-iter) |
 | End Iterator Explicit | -0.5% | [harmful-avoid.md](harmful-avoid.md#end-iterator-explicit) |
 | Constructor Zero-Init That Doesn’t Exist in Target | -2% to -6% | [harmful-avoid.md](harmful-avoid.md#constructor-zero-init-that-doesnt-exist-in-target) |
+| Blanket removal of `#ifdef MILO_DEBUG` guards | **−21 functions** whole-binary (measured) | [milo-debug-force-define.md](milo-debug-force-define.md#-do-not-blanket-remove--this-is-measured-not-theorised) |
+| TU-local `#undef MILO_DEBUG` to fix a **header** guard | ODR violation: two `sizeof` for one class | [milo-debug-force-define.md](milo-debug-force-define.md#-the-secondary-hazard-tu-local-undef-milo_debug) |
 
 ---
 
