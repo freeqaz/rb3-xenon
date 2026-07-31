@@ -1,27 +1,63 @@
-// rb3-xenon native — M1 song-manager loader.
+// rb3-xenon native — M1 song-manager loader, now fed from the REAL .ark.
 //
-// Boots the minimum Milo engine, parses a RB3 songs.dta, and drives the REAL
-// BandSongMgr / BandSongMetadata load path (the SongMgr/BandSongMgr cluster),
-// then prints each song's metadata *retrieved through the manager* — proving
-// the M1 cluster works end to end without a renderer, audio, or ContentMgr.
+// M14 (lane CD-3). Previously this driver took a loose songs.dta on the command
+// line, and the only test data to hand was an RB1-era rbtp2 dta with no
+// (song_id N) node — which RB3's load path REQUIRES, so the driver fabricated
+// synthetic ids to get past SongMetadata's ctor. Mounting the archive removes
+// that crutch: the real RB3 songs.dta carries real song_ids, so BandSongMgr is
+// finally driven on genuine retail metadata.
 //
-// Note on test data: the rbtp2 songs.dta is RB1-era and has no (song_id N)
-// node. RB3's real load path REQUIRES one — SongMetadata's ctor MILO_FAILs
-// without it — so this driver injects a synthetic per-song song_id (exactly
-// what a shipping RB3 songs.dta carries). Everything else (name/artist/rank/
-// genre/etc.) is parsed by the manager from the real dta.
+// That crutch is now an INSTRUMENT rather than a workaround. Injection is
+// conditional (only for song arrays that genuinely lack song_id) and the number
+// injected is COUNTED and GATED at zero in archive mode. So if the archive ever
+// silently degraded to test-shaped data, the gate fires instead of the driver
+// quietly papering over it. A workaround you can measure is worth more than one
+// you remove.
+//
+// The mount is the same three calls as rb3-midi/rb3-ark:
+//   NativeSetDataDir(dir); SetUsingCD(true); NativeArchiveInit();
+// ★ SetUsingCD(true) is load-bearing — os/File.cpp:646 gates ArkFile creation on
+// it, so without it NewFile falls through to AsyncFile and the archive-relative
+// path fails against the host filesystem, looking like a missing file rather
+// than a misconfiguration. DataReadFile("songs/songs.dta") additionally exercises
+// the archive's .dta -> gen/<base>.dtb redirect (CachedDataFile()).
+//
+// FALSIFIABILITY. Gates print individually and the exit code is derived from the
+// failure count, never from absence of stderr. Two negative controls are executed
+// and reported in the lane log rather than merely offered:
+//   --expect <N>  with a wrong N        => song-count gate FAILS, rc=1.
+//   --loose <a real but DIFFERENT dtb>  => real data, different count, gate FAILS,
+//                                          rc=1. (The Wii songs.dtb is a genuine
+//                                          file, not a synthetic mutation.)
+//
+// Usage:
+//   rb3-song <dataDir> [maxSongs] [--expect <N>]
+//   rb3-song --loose <songs.dta|dtb> [maxSongs] [--expect <N>]
 
 #include "meta_band/BandSongMetadata.h"
 #include "meta_band/BandSongMgr.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
+#include "os/Archive.h"
+#include "os/File.h"
+#include "os/System.h"
 #include "utl/Symbol.h"
+
+#include "ark_verify.h"
+
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 extern void InitMakeString();
 extern void InitM1Symbols();     // native/src/m1_symbols.cpp — interns Symbol globals
 extern DataArray *gSystemConfig; // src/system/os/System.cpp
+// native/src/platform/File_Native.cpp
+extern void NativeSetDataDir(const char *dir);
+// native/src/platform/System_Native.cpp
+extern void NativeArchiveInit();
+
+using arkverify::Gates;
 
 // The BandSongMgr load loop calls SystemConfig(missing_song_data)->FindArray(
 // songSym, false). Give it a minimal, valid config so that resolves to "no
@@ -34,8 +70,11 @@ static DataArray *MakeMinimalSystemConfig() {
     return cfg;
 }
 
-// Append (song_id <id>) to a song array so the manager's GetSongID()/
-// SongMetadata ctor can key on it. See the file header note.
+static bool HasSongId(DataArray *song) {
+    return song->FindArray(Symbol("song_id"), false) != nullptr;
+}
+
+// Append (song_id <id>) — only ever called for arrays that genuinely lack one.
 static void InjectSongId(DataArray *song, int id) {
     DataArray *idArr = new DataArray(2);
     idArr->Node(0) = DataNode(Symbol("song_id"));
@@ -44,30 +83,107 @@ static void InjectSongId(DataArray *song, int id) {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "usage: %s <songs.dta> [maxSongs]\n", argv[0]);
-        return 1;
+    const char *dataDir = nullptr;
+    const char *loosePath = nullptr;
+    int maxSongs = 20;
+    int expectSongs = -1; // -1 => default per mode
+
+    const char *positional[4] = { nullptr, nullptr, nullptr, nullptr };
+    int nPos = 0;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--loose") == 0 && i + 1 < argc) {
+            loosePath = argv[++i];
+        } else if (strcmp(argv[i], "--expect") == 0 && i + 1 < argc) {
+            expectSongs = atoi(argv[++i]);
+        } else if (nPos < 4) {
+            positional[nPos++] = argv[i];
+        }
     }
-    int maxSongs = (argc >= 3) ? atoi(argv[2]) : 20;
+
+    const bool arkMode = (loosePath == nullptr);
+    int posIdx = 0;
+    if (arkMode) {
+        if (nPos < 1) {
+            fprintf(stderr,
+                    "usage: %s <dataDir> [maxSongs] [--expect <N>]\n"
+                    "       %s --loose <songs.dta|dtb> [maxSongs] [--expect <N>]\n",
+                    argv[0], argv[0]);
+            return 1;
+        }
+        dataDir = positional[posIdx++];
+    }
+    if (posIdx < nPos)
+        maxSongs = atoi(positional[posIdx]);
+    if (maxSongs <= 0)
+        maxSongs = 20;
+    // 138 is the retail RB3 disc song count, independently established by the
+    // rb3-ark driver and by tools/ark_extract.py's DTB extraction.
+    if (expectSongs < 0)
+        expectSongs = arkMode ? 138 : 0; // 0 => "no expectation" in loose mode
+
+    Gates g;
 
     InitMakeString();
     Symbol::Init();
     InitM1Symbols(); // must follow Symbol::Init() (interns the Symbol globals)
     gSystemConfig = MakeMinimalSystemConfig();
 
-    DataArray *root = DataReadFile(argv[1], true);
-    if (!root) {
-        fprintf(stderr, "FAILED to parse %s\n", argv[1]);
-        return 1;
-    }
-    printf("Parsed %s: %d top-level nodes\n", argv[1], root->Size());
+    printf("=== rb3-xenon native M14: BandSongMgr fed from the .ark ===\n");
+    printf("mode : %s\n", arkMode ? "ARCHIVE" : "loose file (legacy)");
 
-    // Assign synthetic song IDs (100, 101, ...) to each song array.
+    const char *dtaPath = loosePath;
+    if (arkMode) {
+        printf("data : %s\n", dataDir);
+        NativeSetDataDir(dataDir);
+        SetUsingCD(true); // ★ must precede any NewFile(); see the header comment.
+        NativeArchiveInit();
+        if (!TheArchive) {
+            fprintf(stderr, "FATAL: TheArchive is null after NativeArchiveInit()\n");
+            return 1;
+        }
+        // Asked for the way game code asks; CachedDataFile() rewrites this to
+        // songs/gen/songs.dtb when UsingCD() && !FileIsLocal, so this also
+        // exercises the archive's .dta -> .dtb redirection.
+        dtaPath = "songs/songs.dta";
+    }
+    printf("dta  : %s\n\n", dtaPath);
+
+    DataArray *root = DataReadFile(dtaPath, true);
+    printf("--- gates ---\n");
+    g.Check("DataReadFile", root != nullptr, dtaPath);
+    if (!root)
+        return g.Finish();
+
+    {
+        char d[96];
+        snprintf(d, sizeof(d), "%d top-level node(s)", root->Size());
+        g.Check("parsed non-empty", root->Size() > 0, d);
+    }
+
+    // Only fabricate ids where the data genuinely lacks them, and count it.
     int nextId = 100;
+    int injected = 0, songArrays = 0;
     for (int i = 0; i < root->Size(); i++) {
         if (root->Node(i).Type() != kDataArray)
             continue;
-        InjectSongId(root->Array(i), nextId++);
+        songArrays++;
+        DataArray *song = root->Array(i);
+        if (!HasSongId(song)) {
+            InjectSongId(song, nextId++);
+            injected++;
+        }
+    }
+    {
+        char d[128];
+        snprintf(d, sizeof(d),
+                 "%d of %d song array(s) needed a synthetic song_id", injected,
+                 songArrays);
+        // In archive mode this MUST be zero: retail metadata carries real ids.
+        // In loose mode injection is expected, so the gate is informational.
+        if (arkMode)
+            g.Check("song_ids are REAL (none injected)", injected == 0, d);
+        else
+            printf("  [info] %s\n", d);
     }
 
     // Drive the real manager load path.
@@ -76,11 +192,11 @@ int main(int argc, char **argv) {
     mgr.AddSongData(root, nullptr, kLocationRoot);
 
     const std::set<int> &avail = mgr.GetAvailableSongSet();
-    printf("Manager loaded %d song(s).\n", (int)avail.size());
-    printf("  %-4s %-22s %-28s %-22s %s\n", "id", "shortname", "title", "artist", "id<->name");
+    printf("\nManager loaded %d song(s).\n", (int)avail.size());
+    printf("  %-8s %-22s %-30s %-24s %s\n", "id", "shortname", "title", "artist",
+           "id<->name");
 
-    int shown = 0;
-    int roundTripOK = 0;
+    int shown = 0, roundTripOK = 0, withMeta = 0;
     for (std::set<int>::const_iterator it = avail.begin();
          it != avail.end() && shown < maxSongs; ++it) {
         int id = *it;
@@ -93,12 +209,36 @@ int main(int argc, char **argv) {
         bool ok = (backId == id);
         if (ok)
             roundTripOK++;
-        printf("  %-4d %-22s %-28s %-22s %s\n", id, shortName.Str(), title, artist,
+        if (md && title && *title && artist && *artist)
+            withMeta++;
+        printf("  %-8d %-22s %-30s %-24s %s\n", id, shortName.Str(), title, artist,
                ok ? "OK" : "MISMATCH");
         shown++;
     }
 
-    printf("Done. Showed %d song(s); %d/%d id<->shortname round-trips OK.\n", shown,
-           roundTripOK, shown);
-    return 0;
+    printf("\n--- gates: manager ---\n");
+    {
+        char d[96];
+        snprintf(d, sizeof(d), "manager reports %d song(s)", (int)avail.size());
+        g.Check("manager loaded songs", !avail.empty(), d);
+    }
+    if (expectSongs > 0) {
+        char d[96];
+        snprintf(d, sizeof(d), "expected %d, manager loaded %d", expectSongs,
+                 (int)avail.size());
+        g.Check("song count == expected", (int)avail.size() == expectSongs, d);
+    }
+    {
+        char d[96];
+        snprintf(d, sizeof(d), "%d of %d round-trip(s) OK", roundTripOK, shown);
+        g.Check("id <-> shortname round-trips", shown > 0 && roundTripOK == shown, d);
+    }
+    {
+        char d[112];
+        snprintf(d, sizeof(d), "%d of %d shown song(s) have title AND artist",
+                 withMeta, shown);
+        g.Check("metadata non-empty", shown > 0 && withMeta == shown, d);
+    }
+
+    return g.Finish();
 }

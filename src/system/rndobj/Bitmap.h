@@ -229,9 +229,25 @@ public:
     // currently-100%-matching function calls RndBitmap::operator new (checked
     // report.json), so this is scoped risk. operator delete is left noinline,
     // matching the general MEM_OVERLOAD convention (untouched by this diff).
+    //
+    // ⚠ NATIVE GATE (lane CD-3): the retail form below is Xbox-only by
+    // CONSTRUCTION, not by preference. It depends on two things that exist only
+    // in the match build: the 2-arg `MemAlloc(int size, int align)` overload
+    // (declared under `#ifndef HX_NATIVE` in utl/MemMgr.h) and `size_t ==
+    // unsigned int` (ILP32). On x86_64 LP64 `size_t` is `unsigned long`, so
+    // `operator new(unsigned int)` is ill-formed and the 2-arg MemAlloc does not
+    // exist — the native build failed to compile from b2958f2d until this gate.
+    // The X360 match build never links, so this break was structurally invisible
+    // there. Native restores exactly the pre-b2958f2d text, MEM_OVERLOAD(RndBitmap,
+    // 0x1A); the retail branch is byte-for-byte the landed wave-2 form, so X360
+    // codegen is unchanged BY CONSTRUCTION (no token of it is altered).
+#ifdef HX_NATIVE
+    MEM_OVERLOAD(RndBitmap, 0x1A);
+#else
     static void *operator new(unsigned int s) { return (MemAlloc)(s, 0); }
     static void *operator new(unsigned int s, void *place) { return place; }
     __declspec(noinline) static void operator delete(void *v) { (MemFree)(v); }
+#endif
 
     int Width() const { return mWidth; }
     int Height() const { return mHeight; }
