@@ -14,7 +14,7 @@ from typing import Any
 DEFAULT_DB_PATH = "decomp.db"
 
 # Schema version for migrations
-SCHEMA_VERSION = 17
+SCHEMA_VERSION = 18
 
 # Default maximum attempts before deprioritizing a function
 # Functions with >= this many attempts are excluded from normal queries
@@ -535,17 +535,59 @@ def _run_migrations(conn: sqlite3.Connection, from_version: int, to_version: int
             """
         )
 
+    if from_version < 18 <= to_version:
+        # Migration v17 -> v18: Add the `live` liveness flag.
+        #
+        # ingest_report() historically UPSERTed and never pruned, so a symbol
+        # that stopped being emitted (renamed by a re-pin, or a template
+        # instantiation we no longer generate) stayed in the table forever.
+        # Measured 2026-07-31: 16,591 of 85,944 rows (19.3%) were absent from a
+        # current-HEAD report, and query_functions was happily handing those
+        # dead symbols to lanes as targets.
+        #
+        # We MARK rather than DELETE: attempts.function_id has no ON DELETE
+        # CASCADE (deleting would orphan the per-attempt reasoning logs) and
+        # merged_symbols DOES cascade (deleting would silently destroy it).
+        # The history is the point of the table, so it must outlive the symbol.
+        #
+        # NOTE: deliberately NOT reusing `excluded`, which classify_funclets.py
+        # already owns with the meaning "not a real workable target" (EH
+        # funclets). "Not workable" and "no longer exists" are different facts
+        # and must stay separately queryable.
+        print("  Migration v18: Adding functions.live liveness flag...")
+        for col_name, col_def in [
+            ("live", "INTEGER DEFAULT 1"),
+            ("last_seen_at", "TIMESTAMP"),
+        ]:
+            try:
+                conn.execute(f"ALTER TABLE functions ADD COLUMN {col_name} {col_def}")
+            except sqlite3.OperationalError as e:
+                if "duplicate column" not in str(e).lower():
+                    raise
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_functions_live ON functions(live)"
+        )
+
     # Update schema version
     conn.execute("UPDATE schema_version SET version = ?", (to_version,))
     conn.commit()
     print(f"  Migration complete. Database at v{to_version}")
 
 
+# Coverage guard for ingest pruning: a report naming fewer than this fraction
+# of the currently-live rows is treated as partial/truncated, and the prune is
+# REFUSED rather than allowed to mark the table dead.
+PRUNE_MIN_COVERAGE = 0.9
+
+
 def ingest_report(
     report_path: str | Path,
     db_path: str | Path = DEFAULT_DB_PATH,
     update_existing: bool = True,
-) -> dict[str, int]:
+    prune: bool = True,
+    force_prune: bool = False,
+    prune_threshold: float = PRUNE_MIN_COVERAGE,
+) -> dict[str, Any]:
     """
     Parse report.json and populate/update the functions table.
 
@@ -553,9 +595,17 @@ def ingest_report(
         report_path: Path to build/45410914/report.json
         db_path: Path to SQLite database
         update_existing: If True, update existing functions. If False, skip them.
+        prune: If True, mark rows absent from this report as ``live = 0``
+               (and revive any that reappear). Never DELETEs — see the v18
+               migration note: attempts/merged_symbols hang off these rows.
+        force_prune: Bypass the coverage guard below. Only for a report you
+               have independently confirmed is complete.
+        prune_threshold: Coverage guard. If this report names fewer than this
+               fraction of the currently-live rows, the prune is REFUSED.
 
     Returns:
-        Dict with counts: inserted, updated, skipped
+        Dict with counts: inserted, updated, skipped, marked_dead, revived,
+        plus the report's own top-level measures for provenance.
     """
     conn = init_database(db_path)
 
@@ -565,6 +615,7 @@ def ingest_report(
     inserted = 0
     updated = 0
     skipped = 0
+    seen: set[str] = set()
 
     # report.json structure:
     # { "units": [ { "name": "...", "functions": [ { ... } ] } ] }
@@ -575,6 +626,7 @@ def ingest_report(
             symbol = func.get("symbol", func.get("name", ""))
             if not symbol:
                 continue
+            seen.add(symbol)
 
             demangled = func.get("metadata", {}).get("demangled_name", "") or func.get("demangled", func.get("name", ""))
             size = int(func.get("size", 0) or 0)
@@ -627,8 +679,70 @@ def ingest_report(
                 )
                 inserted += 1
 
+    marked_dead = 0
+    revived = 0
+    prune_refused_reason = None
+
+    if prune:
+        live_before = conn.execute(
+            "SELECT COUNT(*) FROM functions WHERE live = 1"
+        ).fetchone()[0]
+        # Coverage guard. A truncated or partial report would otherwise mark
+        # nearly the whole table dead in one pass. Compare against the LIVE
+        # count, not the total, so a second prune of an already-pruned DB is
+        # still comparing like with like.
+        coverage = (len(seen) / live_before) if live_before else 1.0
+        if coverage < prune_threshold and not force_prune:
+            prune_refused_reason = (
+                f"report names {len(seen)} symbols but {live_before} rows are "
+                f"live (coverage {coverage:.1%} < {prune_threshold:.0%}) — "
+                f"report looks partial; prune REFUSED. Re-run with "
+                f"force_prune=True only if you have confirmed it is complete."
+            )
+        else:
+            conn.execute(
+                "CREATE TEMP TABLE IF NOT EXISTS _seen (symbol TEXT PRIMARY KEY)"
+            )
+            conn.execute("DELETE FROM _seen")
+            conn.executemany(
+                "INSERT OR IGNORE INTO _seen (symbol) VALUES (?)",
+                ((s,) for s in seen),
+            )
+            cur = conn.execute(
+                "UPDATE functions SET live = 0, updated_at = CURRENT_TIMESTAMP "
+                "WHERE live = 1 AND symbol NOT IN (SELECT symbol FROM _seen)"
+            )
+            marked_dead = cur.rowcount
+            # Revive anything that reappeared (e.g. a re-pin restoring a symbol).
+            cur = conn.execute(
+                "UPDATE functions SET live = 1, updated_at = CURRENT_TIMESTAMP "
+                "WHERE live = 0 AND symbol IN (SELECT symbol FROM _seen)"
+            )
+            revived = cur.rowcount
+            conn.execute(
+                "UPDATE functions SET last_seen_at = CURRENT_TIMESTAMP "
+                "WHERE symbol IN (SELECT symbol FROM _seen)"
+            )
+            conn.execute("DROP TABLE IF EXISTS _seen")
+
     conn.commit()
-    return {"inserted": inserted, "updated": updated, "skipped": skipped}
+
+    measures = report.get("measures", {})
+    return {
+        "inserted": inserted,
+        "updated": updated,
+        "skipped": skipped,
+        "symbols_in_report": len(seen),
+        "marked_dead": marked_dead,
+        "revived": revived,
+        "prune_refused_reason": prune_refused_reason,
+        # Provenance: the report's OWN numbers. get_stats() is a DB-wide
+        # aggregate and prints identically for a stale and a fresh ingest, so
+        # it cannot confirm the ingest took effect — these can.
+        "report_matched_functions": measures.get("matched_functions"),
+        "report_total_functions": measures.get("total_functions"),
+        "report_matched_code_percent": measures.get("matched_code_percent"),
+    }
 
 
 def get_function_by_symbol(
@@ -846,6 +960,7 @@ def query_functions(
     unicorn_class: str | None = None,
     unicorn_confidence: str | None = None,
     is_stub: bool | None = None,
+    include_dead: bool = False,
 ) -> list[dict[str, Any]]:
     """
     Query multiple functions matching criteria.
@@ -898,6 +1013,12 @@ def query_functions(
 
     query += " AND symbol NOT LIKE 'merged_%'"
     query += " AND demangled NOT LIKE '%stlpmtx_std::%'"
+
+    # Liveness: exclude symbols absent from the most recently ingested report.
+    # Without this a lane can be handed a target that no longer exists under
+    # that name (e.g. a function since re-pinned to a named symbol).
+    if not include_dead:
+        query += " AND (live IS NULL OR live = 1)"
 
     if skip_boilerplate:
         for prefix in BOILERPLATE_SYMBOL_PREFIXES:
