@@ -140,7 +140,9 @@ void TypeProps::ReplaceObject(DataNode &n, Hmx::Object *from, Hmx::Object *to) {
 void TypeProps::Replace(ObjRef *from, Hmx::Object *to) {
     if (!mMap)
         return;
-    Hmx::Object *fromObj = from->GetObj();
+    // X360: `from` IS the dying object (see RefIs in Object.h + Object.cpp:192).
+    // ObjRef::GetObj() is an elided stub returning nullptr off HX_NATIVE.
+    Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
     for (int i = mMap->Size() - 1; i > 0; i -= 2) {
         DataNode &node = mMap->Node(i);
         if (node.Type() == kDataObject) {
