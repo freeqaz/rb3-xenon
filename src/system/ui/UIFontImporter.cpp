@@ -314,10 +314,10 @@ void UIFontImporter::GenerateBitmapFilename() {
 
     class String s28(MakeString("%.2f", mFontPctSize * 100.0f));
     s28.ReplaceAll('.', '_');
-    const char *b = (mFontWeight > 500) ? "B" : "";
+    const char *b = (mFontWeight > 400) ? "B" : "";
     const char *i = mItalics ? "I" : "";
     mBitMapSaveName =
-        MakeString("%s(%s)%s%s%s.bmp", mFontName.c_str(), s28.c_str(), i, b, mult);
+        MakeString("%s(%s)%s%s%s.BMP", mFontName.c_str(), s28.c_str(), i, b, mult);
     mBitMapSaveName.ReplaceAll(' ', '_');
 }
 

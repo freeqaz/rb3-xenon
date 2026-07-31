@@ -43,10 +43,14 @@ public:
     // both NEW_OVERLOAD and OBJ_MEM_OVERLOAD are `__declspec(noinline)`, so
     // neither reproduces that shape -- spell it out here.
     static void *operator new(unsigned int s) {
-        // The Symbol temp is built inside the allocator's own argument list, so
-        // it stays live across the call and keeps its own stack slot (retail:
-        // temp @0x50, result @0x54) instead of being reused for the result.
-        return (MemAlloc)(s, (StaticClassName(), 0));
+        // The `.Str()` call is load-bearing (see OBJ_MEM_OVERLOAD in MemMgr.h):
+        // a bare `StaticClassName();` discard homes the Symbol temp into the
+        // SAME slot as `mem`, while calling `.Str()` on it reproduces retail's
+        // separate-slot placement (temp @0x50, result @0x54). Keep both the
+        // `.Str()` and the named `mem` local.
+        (void)StaticClassName().Str();
+        void *mem = (MemAlloc)(s, 0);
+        return mem;
     }
     static void *operator new(unsigned int s, void *place) { return place; }
     static void operator delete(void *v) { (MemFree)(v); }

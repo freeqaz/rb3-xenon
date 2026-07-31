@@ -52,7 +52,8 @@ void GigFilter::InitializeMusicLibraryTask(
         MILO_ASSERT(pSecondaryFilter, 102);
         SongSortMgr::SongFilter secondaryFilter = pSecondaryFilter->mFilter;
         task.filter.IntersectFilter(&secondaryFilter);
-        task.partSym = TheTour->CombinePartSymbols(task.partSym, pSecondaryFilter->mFilteredPartSym);
+        Symbol secondaryPartSym = pSecondaryFilter->mFilteredPartSym;
+        task.partSym = TheTour->CombinePartSymbols(task.partSym, secondaryPartSym);
     }
     task.allowDuplicates = false;
     task.setlistMode = MusicLibrary::kSetlistForced;

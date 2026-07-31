@@ -338,8 +338,8 @@ void CharClip::BeatEvent::Load(BinStream &bs) {
 
 CharClip::CharClip()
     : mTransitions(this), mFramesPerSec(30), mFlags(0), mPlayFlags(0), mRange(0),
-      mRelative(this), mDirty(true), mOldVer(-1), mDoNotCompress(false), mSyncAnim(this),
-      unk198(0) {
+      mRelative(this), mDirty(true), mOldVer(-1), mDoNotCompress(false),
+      mSyncAnim(this) {
     mBeatTrack.resize(1);
     mBeatTrack[0].frame = 0;
     mBeatTrack[0].value = 0;
@@ -457,8 +457,6 @@ BEGIN_SAVES(CharClip)
     bs << mZeros;
     bs << mBeatTrack;
     bs << mSyncAnim;
-    bs << mBlendSamples;
-    bs << unk198;
 END_SAVES
 
 BEGIN_COPYS(CharClip)
@@ -486,8 +484,6 @@ BEGIN_COPYS(CharClip)
         COPY_MEMBER(mZeros)
         mFacing.Set(mFull);
         mDirty = true;
-        COPY_MEMBER(mBlendSamples)
-        COPY_MEMBER(unk198)
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -643,12 +639,6 @@ BEGIN_LOADS(CharClip)
             StartBeat(),
             mFull.NumSamples()
         );
-    }
-    if (d.rev > 0x14) {
-        d >> mBlendSamples;
-    }
-    if (d.rev > 0x15) {
-        d >> unk198;
     }
 END_LOADS
 
@@ -988,22 +978,13 @@ DataNode CharClip::GetClipEvents() {
     return ret;
 }
 
-void CharClip::ApplyBlendedSkeletons(
-    CharClip **clips, CharBones &bones, float f1, float f2
-) {
-    float f60;
-    int sample = BeatToSample(f1, &f60);
-    float zero = 0.0f;
-    FOREACH (it, mBlendSamples[sample]) {
-        clips[it->first]->ScaleAdd(bones, (1.0f - f60) * it->second * f2, zero, zero);
-    }
-    if (zero < f60) {
-        int nextSample = sample + 1;
-        FOREACH (it, mBlendSamples[nextSample]) {
-            clips[it->first]->ScaleAdd(bones, f60 * it->second * f2, zero, zero);
-        }
-    }
-}
+/** DC3-only. Blend samples were added to CharClip at class rev 0x15; RB3 saves
+ *  rev 0x13 (see INIT_REVS / the target's Save), so retail's CharClip has no
+ *  mBlendSamples storage at all -- its sizeof is 0x174, not 0x184. The sole
+ *  caller (HamCharacter::ApplyBlendedSkeletons) is guarded by
+ *  CharClip::NumBlendSamples() != 0, which is now constantly false, so this is
+ *  unreachable. Retained only so the DC3-era hamobj sources keep compiling. */
+void CharClip::ApplyBlendedSkeletons(CharClip **, CharBones &, float, float) {}
 
 bool CharClip::SharesGroups(CharClip *clip) {
     FOREACH (it, mRefs) {

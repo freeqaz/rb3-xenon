@@ -14,7 +14,6 @@ XLSPConnection::XLSPConnection()
       mEnumBufferSize(0) {
     memset(&mXOverlapped, 0, sizeof(XOVERLAPPED));
     unk44 = 0;
-    mReconnectTimer.Reset();
     SetState((State)0);
 }
 
@@ -116,7 +115,6 @@ void XLSPConnection::SetState(State s) {
             }
             s = (State)4;
         } else if (newState == 4) {
-            mReconnectTimer.Restart();
             return;
         } else if (newState == 5) {
             if (mEnumHandle != INVALID_HANDLE_VALUE) {

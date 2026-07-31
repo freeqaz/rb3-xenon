@@ -93,6 +93,7 @@ void UGCPurchasePanel::Poll() {
 
 DataNode UGCPurchasePanel::OnMsg(const SigninChangedMsg &) {
     if (!ThePlatformMgr.IsUserSignedIn(mUser)) {
+        static Symbol sign_out("sign_out");
         if (TheUIEventMgr->CurrentTransitionEvent() != sign_out) {
             static Message init("init", 0);
             init[0] = 0;

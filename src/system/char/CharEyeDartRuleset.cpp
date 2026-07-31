@@ -73,7 +73,7 @@ BEGIN_COPYS(CharEyeDartRuleset)
     CREATE_COPY(CharEyeDartRuleset)
     BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mData.mMinRadius)
-        COPY_MEMBER(mData.mMaxRadius)
+        mData.mMaxRadius = c->mData.mMinRadius; // retail bug: mMaxRadius copied from source's mMinRadius, not mMaxRadius
         COPY_MEMBER(mData.mOnTargetAngleThresh)
         COPY_MEMBER(mData.mMinDartsPerSequence)
         COPY_MEMBER(mData.mMaxDartsPerSequence)

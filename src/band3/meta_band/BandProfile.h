@@ -13,7 +13,7 @@
 #include "tour/TourCharLocal.h"
 
 #define kMaxCharacters 10
-#define kMaxPatchesPerProfile 8
+#define kMaxPatchesPerProfile 19
 #define kMaxSavedSetlists 20
 #define kMaxSymbols_CampaignKeys 20
 #define kMaxSymbols_Modifiers 15
@@ -150,10 +150,15 @@ public:
     // (LoadFixed / AutoFakeFill) are not paired in the target at all, so the
     // swap costs nothing and fixes IsUnsaved / SaveLoadComplete.
     TourProgress *mTourProgress; // 0x30
-    int unk18; // 0x34 (flag, dev-only; retail never reads it)
-    std::map<Symbol, float> mLessonCompletions; // 0x30
-    SongStatusMgr *mScores; // 0x48
-    std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x4c
+    // unk18 sits AFTER mLessonCompletions (not before): BandProfile.s's
+    // SaveFixed/LoadFixed both address mLessonCompletions at 0x34 (right after
+    // mTourProgress, no gap) and mScores lands at 0x50 either way, so the
+    // 4-byte unk18 slot must be *inside* the mTourProgress..mScores span but
+    // past the 24-byte map, i.e. at 0x4c.
+    std::map<Symbol, float> mLessonCompletions; // 0x34
+    int unk18; // 0x4c (flag, dev-only; retail never reads it)
+    SongStatusMgr *mScores; // 0x50
+    std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x54
     std::vector<StandIn> mStandIns; // 0x54
     HxGuid unk5c; // 0x5c
     // unk6c (mLastPrefabCharUsed) sits HERE, exactly as on Wii — an earlier

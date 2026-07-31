@@ -304,21 +304,19 @@ AnimTask::AnimTask(
     float easePower,
     bool wait
 )
-    : mAnim(this), mListener(this), mAnimTarget(this), mBlendTask(this),
-      mBlendPeriod(blend), mLoop(loop), mEasePower(easePower) {
+    : mAnim(this), mAnimTarget(this), mBlendTask(this), mBlendPeriod(blend),
+      mLoop(loop) {
+    // listener/easeType/easePower/wait are accepted for source compatibility with
+    // the dc3-era call sites still in the tree (FlowAnimate, BandButton, ...), but
+    // RB3-era AnimTask stores none of them — see the layout note in Anim.h.
     mBlending = false;
     mBlendTime = 0;
-    mWait = wait;
-    mActive = true;
-    mEaseFunc = GetEaseFunction(easeType);
-    mListener = listener;
     MILO_ASSERT(anim, 0x213);
     mMin = Min(start, end);
     mMax = Max(start, end);
     if (NearlyZero(fpu)) {
         fpu = 1;
     }
-    mFrameSpan = (mMax - mMin) / fpu;
     if (start < end) {
         mScale = fpu;
         mOffset = mMin;
@@ -342,6 +340,9 @@ AnimTask::AnimTask(
     }
     mAnim = anim;
     mAnimTarget = anim->AnimTarget();
+    // rb3-Wii starts the anim here; dc3 deferred it to the first Poll() behind the
+    // mActive latch, which no longer exists in the RB3-era layout.
+    mAnim->StartAnim();
 }
 
 // Retail's lean-overload path never had a listener/easeType/easePower/wait
@@ -351,21 +352,16 @@ AnimTask::AnimTask(
 AnimTask::AnimTask(
     RndAnimatable *anim, float start, float end, float fpu, bool loop, float blend
 )
-    : mAnim(this), mListener(this), mAnimTarget(this), mBlendTask(this),
-      mBlendPeriod(blend), mLoop(loop), mEasePower(0) {
+    : mAnim(this), mAnimTarget(this), mBlendTask(this), mBlendPeriod(blend),
+      mLoop(loop) {
     mBlending = false;
     mBlendTime = 0;
-    mWait = false;
-    mActive = true;
-    mEaseFunc = GetEaseFunction(kEaseLinear);
-    mListener = nullptr;
     MILO_ASSERT(anim, 0x213);
     mMin = Min(start, end);
     mMax = Max(start, end);
     if (NearlyZero(fpu)) {
         fpu = 1;
     }
-    mFrameSpan = (mMax - mMin) / fpu;
     if (start < end) {
         mScale = fpu;
         mOffset = mMin;
@@ -389,6 +385,9 @@ AnimTask::AnimTask(
     }
     mAnim = anim;
     mAnimTarget = anim->AnimTarget();
+    // rb3-Wii starts the anim here; dc3 deferred it to the first Poll() behind the
+    // mActive latch, which no longer exists in the RB3-era layout.
+    mAnim->StartAnim();
 }
 
 AnimTask::~AnimTask() { TheTaskMgr.QueueTaskDelete(mBlendTask); }
@@ -420,14 +419,13 @@ float AnimTask::TimeUntilEnd() {
     return time;
 }
 
+// RB3-era Poll, ported from the rb3-Wii oracle: no easing (mEaseFunc/mEasePower),
+// no listener dispatch, no wait/active gating and no mFrameSpan — those are all
+// dc3-newer additions whose backing fields do not exist in a 0x6c AnimTask.
+// StartAnim() now happens in the ctors instead of behind the mActive latch.
 void AnimTask::Poll(float time) {
     if (!mAnim)
         return;
-    if (mActive) {
-        mAnim->StartAnim();
-        mPrevFrame = mAnim->GetFrame();
-        mActive = false;
-    }
     float blend = 1.0f;
     if (mBlendPeriod) {
         blend = time / mBlendPeriod;
@@ -445,73 +443,23 @@ void AnimTask::Poll(float time) {
             TheTaskMgr.QueueTaskDelete(mBlendTask);
     }
 
+    // rb3-Wii maps the raw task time into frame space up front, then tests that
+    // same mapped value for the end-of-anim condition below.
+    time = time * mScale + mOffset;
+
     float frame;
-    if (!mLoop && time <= mFrameSpan && mFrameSpan != 0.0f) {
-        float normalized = time / mFrameSpan;
-        float eased = mEaseFunc(normalized, mEasePower, 1.0f);
-        frame = (mScale * (eased * mFrameSpan)) + mOffset;
-    } else {
-        frame = mScale * time + mOffset;
-    }
-
     if (mLoop) {
-        frame = Mod(frame - mMin, mMax - mMin) + mMin;
-        mAnim->SetFrame(frame, blend);
-        if (!mListener)
-            goto done;
-        float range = mMax - mMin;
-        float prevNorm = mPrevFrame / range;
-        float frameNorm = frame / range;
-        if ((int)prevNorm != (int)frameNorm) {
-            static Message msg("on_anim_event", DataNode(Symbol("looped")));
-            mListener->Handle(msg, false);
-        }
+        frame = Mod(time - mMin, mMax - mMin) + mMin;
     } else {
-        if (mWait) {
-            float startFrame = mAnim->StartFrame();
-            float endFrame = mAnim->EndFrame();
-            if (time != 0.0f) {
-                if (mScale > 0.0f) {
-                    frame = mMax;
-                } else {
-                    frame = mMin;
-                }
-                if (time <= mFrameSpan && mFrameSpan != 0.0f) {
-                    float normalized = time / mFrameSpan;
-                    float eased = mEaseFunc(normalized, mEasePower, 1.0f);
-                    frame = mScale * eased * mFrameSpan + mOffset;
-                }
-                frame = fmod(frame - mMin, mMax - mMin) + mMin;
-            }
-        }
-        frame = Clamp<float>(mMin, mMax, frame);
-        mAnim->SetFrame(frame, blend);
+        frame = Clamp<float>(mMin, mMax, time);
     }
+    mAnim->SetFrame(frame, blend);
 
-    mPrevFrame = frame;
-
-#ifdef HX_NATIVE
-    // On native, DTA callbacks that would call StopAnimation() or null mAnimTarget
-    // never fire. Auto-null when a non-looping animation has completed.
-    if (mAnimTarget && !mLoop && !mBlending && !mBlendPeriod) {
-        if (time > mFrameSpan && mFrameSpan > 0.0f) {
-            mAnimTarget = NULL;
-        }
+    if (!mAnimTarget
+        || ((!mLoop && !mBlending && !mBlendPeriod)
+            && ((time > mMax || time < mMin) || mScale == 0.0f))) {
+        TheTaskMgr.QueueTaskDelete(this);
     }
-#endif
-    if (!mAnimTarget) {
-        if (!mLoop && !mBlending && !mBlendPeriod) {
-            if (time > mFrameSpan || mScale == 0.0f) {
-                if (mListener) {
-                    static Message msg("on_anim_event", DataNode(Symbol("ended")));
-                    mListener->Handle(msg, false);
-                }
-                mListener = nullptr;
-                TheTaskMgr.QueueTaskDelete(this);
-            }
-        }
-    }
-done:;
 }
 
 #pragma endregion

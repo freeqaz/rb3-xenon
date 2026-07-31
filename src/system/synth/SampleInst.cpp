@@ -6,7 +6,7 @@
 
 SampleInst::SampleInst(SynthSample *sample)
     : mSample(this, sample), mVolume(1), mBankVolume(1), mPan(0), mBankPan(0), mSpeed(1),
-      mBankSpeed(1), mSend(this), mEventReceiver(this), unk98(-1), unka0(0), unka1(0) {
+      mBankSpeed(1), mSend(this), unka0(0), unka1(0), mEventReceiver(this), unk98(-1) {
     if (mSample) {
         mSample->RegisterChild(this);
     }

@@ -99,9 +99,12 @@ private:
     bool mGuideShowing;         // 0x24
     bool mConfirmCancelSwapped; // 0x25
     bool mConnected;            // 0x26 (retail CheckForLostConnection reads +0x26)
-    PlatformRegion mRegion;     // 0x28
+    DiskError mDiskError;       // 0x28 (inferred: must precede mScreenSaver for mRegion below to
+                                //       land at 0x30 while mScreenSaver stays at its verified 0x2c)
     bool mScreenSaver;          // 0x2c (retail SetScreenSaver 0x8251c180 writes this+0x2c)
-    DiskError mDiskError;       // 0x30
+    PlatformRegion mRegion;     // 0x30 (retail SetRegion writes/reads this+0x30 — ground truth from
+                                //       the objdiff TARGET obj for SetRegion itself, verified 2026-07-30;
+                                //       NOT from Ghidra like the other offsets on this page)
     JobMgr *mJobMgr;            // 0x34
     bool unk68;                 // 0x38
     bool unk69;                 // 0x39

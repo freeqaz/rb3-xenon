@@ -52,7 +52,16 @@
 #include "VoiceoverPanel.h"
 #include "game/BandUserMgr.h"
 #include "game/GameMode.h"
+// Retail RB3-360 built CreditsPanel.cpp's TU with MILO_DEBUG off (see that file's
+// header comment: mCheatOn is a MILO_DEBUG-only member absent from retail's layout,
+// -4 bytes vs a MILO_DEBUG build). This TU (MetaPanel.cpp) force-defines MILO_DEBUG
+// tree-wide via macros.h like every other file, so scope the same undef/redefine
+// trick tightly around just this include -- CreditsPanel.h is #pragma once and only
+// reached here, so this affects nothing else in this 60-header TU.
+#include "macros.h"
+#undef MILO_DEBUG
 #include "meta/CreditsPanel.h"
+#define MILO_DEBUG
 #include "meta/HAQManager.h"
 #include "meta/HeldButtonPanel.h"
 #include "meta/MemcardMgr.h"

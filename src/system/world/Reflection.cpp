@@ -140,7 +140,7 @@ void WorldReflection::DrawShowing() {
     Multiply(cur2->WorldXfm(), tfa8, mReflectionCamera->DirtyLocalXfm());
     mReflectionCamera->Select();
     Rnd::DrawMode oldMode = TheRnd.GetDrawMode();
-    TheRnd.SetDrawMode((Rnd::DrawMode)8);
+    TheRnd.SetDrawMode((Rnd::DrawMode)7);
     DoHide();
     DoLOD(1);
     FOREACH (it, mDraws) {

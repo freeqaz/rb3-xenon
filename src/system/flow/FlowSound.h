@@ -62,10 +62,14 @@ protected:
     /** "Do we pass on running intensity to volume?" */
     bool mUseIntensity; // 0x9e
     float mCurrentIntensity; // 0xa0
-    // RB3 retail FlowSound carries 0x28 more bytes than DC3 models here:
-    // sizeof(FlowSound)==0xd4 (new(0xd4) at 0x82557840) and the FlowLabelProvider
-    // second base lands at 0xcc (??_GFlowSound subi 0xcc), vs 0xa4 without this.
+    // RB3 retail FlowSound: sizeof(FlowSound)==0xd4 (new(0xd4)). Compiler-verified
+    // layout (cl.exe /d1reportSingleClassLayoutFlowSound) shows the vtordisp +
+    // vbase-Object tail after this member is a fixed 0x2c bytes, so this pad must
+    // end at 0xd4-0x2c=0xa8, i.e. be 0x8 bytes, not the previously-reserved 0x28
+    // (that guess overshot sizeof by 0x20 -- see run_objdiff diff_arg on
+    // FlowSound::NewObject's `li r3, 0xf4` vs retail `li r3, 0xd4`).
     // DC3 is newer and dropped these members; the exact fields are unknown (no
-    // rb3-Wii Flow oracle), so reserve the gap so derived/sibling layouts match.
-    char mUnkA4[0x28]; // 0xa4
+    // rb3-Wii Flow oracle), so reserve the (now-correctly-sized) gap so
+    // derived/sibling layouts match.
+    char mUnkA4[0x8]; // 0xa0
 };

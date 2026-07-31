@@ -36,21 +36,33 @@ public:
     bool IsDemo() const { return mDemo; }
 
     Symbol mShortName; // real 0x28
-    // DO NOT swap mRestricted/mIsShared here -- measured, twice.
-    // Update{SharedStatus,Restricted} look mirrored against the target
-    // (UpdateSharedStatus reads 0x2c, UpdateRestricted 0x2e, the reverse of this
-    // order), but swapping them flips those two to 100% and simultaneously
-    // BREAKS MusicLibrary::Rebuild{Shared,Restricted}SongData, which read the
-    // same members and already match at 100% -- net 0.  Swapping the two map
-    // entries instead is also wrong: fn_825BA970 then scores 63% against
-    // UpdateRestricted (its target body calls SongMetadata::ID(), which
-    // UpdateRestricted does not).  Both pairings are therefore correct and the
-    // layout is correct, so retail most likely has a FOURTH bool here that this
-    // model collapses into one of these two.  Unresolved; needs the real
-    // SongRecord ctor/LoadFixed evidence, not another swap.
-    bool mRestricted; // real 0x2c
+    // RESOLVED (was: "DO NOT swap ... retail most likely has a FOURTH bool").
+    // There is no fourth bool.  Our NAMES for 0x2c and 0x2e were swapped, and
+    // every use site inherited the same mis-naming from the oracle -- so the
+    // wrong names over the wrong layout cancelled out to correct offsets
+    // everywhere EXCEPT the two Update* fns and the ctor, whose identity is
+    // pinned by their callee rather than by a name we are free to swap.
+    //
+    // Map-independent anchor: fn_825BA970 derefs the pointer global
+    // TheSessionMgr, loads +0x50 (GetMachineMgr()), calls
+    // BandMachineMgr::IsSongShared(id) and stores the bool to 0x2c.  Our
+    // UpdateSharedStatus compiles to that body instruction-for-instruction
+    // (26/28 equal), and the two-level global->+0x50->call shape is unique to
+    // it -- UpdateRestricted is one-level (TheSongMgr).  So 0x2c holds SHARED.
+    // Corroborated twice: fn_825BA9E0 (one-level, IsRestricted) stores 0x2e,
+    // and the ctor stores 0x2d then 0x2e for mDemo then mRestricted.
+    //
+    // The "net 0" the prior lane measured was real but mis-read: the two
+    // MusicLibrary Rebuild* fns sat at a FALSE 100% (100.0 normalized vs
+    // 99.0/99.2 raw -- callee identity masked by functionRelocDiffs=none).
+    // Swapping the fields alone breaks them; swapping the fields AND flipping
+    // the inherited mis-naming at their use sites keeps them and wins the
+    // Update* pair.  See also OwnedSongSortNode::IsEnabled, which becomes
+    // semantically sane under the corrected names (not-local && !shared =>
+    // disabled; restricted => disabled).
+    bool mIsShared; // real 0x2c
     bool mDemo; // real 0x2d
-    bool mIsShared; // real 0x2e
+    bool mRestricted; // real 0x2e
     std::map<Symbol, int> mTier; // 0x24
     ScoreType mActiveScoreType; // 0x3c
     int mScores[11]; // 0x40

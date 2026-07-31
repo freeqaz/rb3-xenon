@@ -1021,7 +1021,7 @@ RndDrawable *UIList::CollideShowing(const Segment &seg, float &fref, Plane &p) {
             p.a = tri.frame.z.x;
             p.b = tri.frame.z.y;
             p.c = tri.frame.z.z;
-            p.d = -(p.a * tri.origin.x + p.b * tri.origin.y + p.c * tri.origin.z);
+            p.d = -((p.a * tri.origin.x + p.b * tri.origin.y) + p.c * tri.origin.z);
             intersects = true;
         }
     }

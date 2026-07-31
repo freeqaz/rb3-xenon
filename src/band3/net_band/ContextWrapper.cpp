@@ -91,7 +91,7 @@ ContextWrapperPool::ContextWrapperPool() : unk8ca0(0), unk8ca4(0) {}
 ContextWrapper *
 ContextWrapperPool::NewContextWrapper(Hmx::Object *o, Updatable *u, bool b, int x) {
     CritSecTracker cst(&gContextCrit);
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 2500; i++) {
         if (!mContextWrappers[i].mContext) {
             mContextWrappers[i].SetCallbackObject(o, u, b, x);
             if (unk8ca4 < i)

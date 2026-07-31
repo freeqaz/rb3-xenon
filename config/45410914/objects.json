@@ -1539,7 +1539,6 @@
             "band3/meta_band/CustomizePanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_MAP_0x1C",
                     "/DRB3_HANDLE_LOCAL_STATIC",
                     "/DRB3_STRIP_CHEAT_HANDLERS",
                     "/DRB3_SYNCPROP_LOCAL_STATIC"
@@ -1645,6 +1644,7 @@
                 "extra_cflags": [
                     "/DRB3_HANDLE_LOCAL_STATIC",
                     "/DRB3_NO_WII_META_MEMBERS",
+                    "/DRB3_METAPERFORMER_NOVTORDISP",
                     "/vd0"
                 ]
             },

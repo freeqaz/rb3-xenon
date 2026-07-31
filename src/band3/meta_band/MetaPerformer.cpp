@@ -675,7 +675,7 @@ void MetaPerformer::PopulateSoloPlayerScore(
     score.unk18 = info.unk10;
     score.mScoreType = info.mScoreType;
     score.mDiff = info.mDifficulty;
-    score.mTotalScore = songStatusMgr->GetCachedTotalScore(score.mScoreType);
+    score.mTotalScore = songStatusMgr->GetCachedTotalScore(info.mScoreType);
     score.mTotalDiscScore = songStatusMgr->GetCachedTotalDiscScore(info.mScoreType);
     score.mAccuracy = info.mAccuracy;
     score.mScore = info.mScore;

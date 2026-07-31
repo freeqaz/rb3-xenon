@@ -65,9 +65,8 @@ protected:
     ObjPtr<FxSend> mSend; // 0x64
     float mReverbMixDb; // 0x78
     bool mReverbEnabled; // 0x7c
+    bool unka0;
+    bool unka1;
     ObjPtr<Hmx::Object> mEventReceiver; // 0x80
-    int unk94; // 0x94
-    double unk98; // 0x98
-    bool unka0; // 0xa0
-    bool unka1; // 0xa1
+    float unk98; // 0x98
 };
