@@ -671,6 +671,7 @@ config.custom_build_steps = {
             "outputs": str(stamp_dir / "anon_ns_patched.stamp"),
             "rule": "run_script",
             "order_only": "all_source",
+            "implicit": "scripts/obj_anon_ns_patcher.py",
             "variables": {
                 "cmd": "python3 scripts/obj_anon_ns_patcher.py --batch --apply",
                 "desc": "PATCH anonymous namespace hashes",
@@ -680,7 +681,10 @@ config.custom_build_steps = {
             "outputs": str(stamp_dir / "dynamic_init_patched.stamp"),
             "rule": "run_script",
             "order_only": "all_source",
-            "implicit": str(stamp_dir / "anon_ns_patched.stamp"),
+            "implicit": [
+                "scripts/obj_dynamic_init_patcher.py",
+                str(stamp_dir / "anon_ns_patched.stamp"),
+            ],
             "variables": {
                 "cmd": "python3 scripts/obj_dynamic_init_patcher.py --batch --apply",
                 "desc": "PATCH ??__E dynamic initializers STATIC->EXTERNAL",
@@ -690,7 +694,10 @@ config.custom_build_steps = {
             "outputs": str(stamp_dir / "guard_patched.stamp"),
             "rule": "run_script",
             "order_only": "all_source",
-            "implicit": str(stamp_dir / "dynamic_init_patched.stamp"),
+            "implicit": [
+                "scripts/obj_guard_patcher.py",
+                str(stamp_dir / "dynamic_init_patched.stamp"),
+            ],
             "variables": {
                 "cmd": "python3 scripts/obj_guard_patcher.py --batch --apply",
                 "desc": "PATCH $S guard variables to match ??_B naming",
@@ -700,7 +707,10 @@ config.custom_build_steps = {
             "outputs": str(stamp_dir / "bool_mangle_patched.stamp"),
             "rule": "run_script",
             "order_only": "all_source",
-            "implicit": str(stamp_dir / "guard_patched.stamp"),
+            "implicit": [
+                "scripts/obj_bool_mangle_patcher.py",
+                str(stamp_dir / "guard_patched.stamp"),
+            ],
             "variables": {
                 "cmd": "python3 scripts/obj_bool_mangle_patcher.py --batch --apply",
                 "desc": "PATCH bool parameter back-reference mangling",
@@ -710,7 +720,10 @@ config.custom_build_steps = {
             "outputs": str(stamp_dir / "atexit_scope_patched.stamp"),
             "rule": "run_script",
             "order_only": "all_source",
-            "implicit": str(stamp_dir / "bool_mangle_patched.stamp"),
+            "implicit": [
+                "scripts/obj_atexit_scope_patcher.py",
+                str(stamp_dir / "bool_mangle_patched.stamp"),
+            ],
             "variables": {
                 "cmd": "python3 scripts/obj_atexit_scope_patcher.py --batch --apply",
                 "desc": "PATCH ??__F atexit scope counters (fuzzy match)",
