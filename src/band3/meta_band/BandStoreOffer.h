@@ -15,7 +15,10 @@ public:
     // has not been re-derived against retail, so the declaration stays (there is
     // no such ctor in the retail binary and it is intentionally undefined).
     BandStoreOffer(const StorePackedOfferBase *, SongMgr *, bool);
-    virtual ~BandStoreOffer() {}
+    // NOTE(laneCD8): destructor deliberately NOT declared -- see SyncStore.h. An
+    // explicit `virtual ~BandStoreOffer() {}` adds a 3-instruction derived-vptr
+    // store at dtor entry that retail does not have. Implicit member-destruction
+    // order (mUpgrade@0x120 then mDemo@0xe0, then ~StoreOffer) matches retail.
     virtual DataNode Handle(DataArray *, bool);
     virtual bool IsCompletelyUnavailable() const;
     virtual bool Cmp(const StoreOffer &, Symbol) const;
