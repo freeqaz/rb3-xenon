@@ -105,6 +105,19 @@ core.*
 # regenerate via tools/ghidra/build_full_symbol_map.py (or run_apply_symbols.sh --full).
 /tools/ghidra/rb3_symbol_map.full.json
 
+# Stray 0-byte file that keeps getting swept in by source globs and has now been
+# untracked TWICE by hand (3b170040, d09f934b). The REAL translation unit is
+# src/system/beatmatch/MasterAudio.cpp -- that one is tracked and is what
+# config/45410914/objects.json:224 builds. This os/ path has never held content.
+/src/system/os/MasterAudio.cpp
+
+# comdat_scatter_scan.py output (regenerable; joins COMDAT scatter candidates)
+/comdat_scatter_scan.json
+
+# Pre-TU5-flip decomp.db safety backups. ⛔ TU0-era addresses are INVALID since
+# main retargeted to TU5 on 2026-07-15, so these are history, not a restore point.
+/decomp.db.tu0-backup-*
+
 # Orchestrator MCP databases (regenerable via scripts/ingest_report.py)
 /decomp.db
 /decomp.db-journal
