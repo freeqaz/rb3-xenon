@@ -23,6 +23,7 @@ void UGCPurchasePanel::Enter() {
     MILO_ASSERT(kUninitialized == mPurchaseState, 0x22);
     UIPanel::Enter();
     ThePlatformMgr.AddSink(this, SigninChangedMsg::Type());
+    XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_ALWAYS_ALLOW);
     unk4c = false;
     mPurchaseState = 1;
 }

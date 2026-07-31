@@ -60,7 +60,8 @@ inline Symbol QuestFilterProvider::DataSymbol(int i_iData) const {
 
 inline String QuestFilterProvider::GetFilterName(int i_iData) const {
     MILO_ASSERT_RANGE( i_iData, 0, NumData(), 0xC6);
-    return TheTour->GetFilterName(DataSymbol(i_iData));
+    Symbol sFilter = DataSymbol(i_iData);
+    return TheTour->GetFilterName(sFilter);
 }
 
 inline void QuestFilterProvider::UpdateSongLabel(

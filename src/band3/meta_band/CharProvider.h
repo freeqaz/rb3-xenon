@@ -34,7 +34,9 @@ public:
 
     struct CompareCharacters {
         bool operator()(const CharacterEntry &e1, const CharacterEntry &e2) const {
-            if (e1.mType == e2.mType && e1.mType - 2 <= 1U) {
+            if (e1.mType == e2.mType
+                && (e1.mType == kCharacterEntryPrefab
+                    || e1.mType == kCharacterEntryCustom)) {
                 return strcmp(Localize(e1.unk8, 0), Localize(e2.unk8, 0)) < 0;
             }
             return false;

@@ -89,9 +89,10 @@ void CampaignSongInfoPanel::Enter() {
 
 void CampaignSongInfoPanel::Unload() {
     UIPanel::Unload();
-    // Retail releases the 0x44 slot here, NOT the 0x3c provider Enter creates
-    // (lwz/stw 0x44(this) in the retail body; its setter is not yet ported).
-    RELEASE(unk44);
+    // Releases the provider Enter() creates, per rb3-Wii. The 0x44-slot reading
+    // this used to carry came from an out-of-cluster (ICF fold-alias) map row --
+    // see the note on mCampaignSourceProvider in the header.
+    RELEASE(mCampaignSourceProvider);
 }
 
 void CampaignSongInfoPanel::Load() { UIPanel::Load(); }

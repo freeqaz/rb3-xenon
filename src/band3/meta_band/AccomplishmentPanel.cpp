@@ -926,8 +926,8 @@ Symbol AccomplishmentPanel::GetAccomplishmentDescription() {
 }
 
 Symbol AccomplishmentPanel::GetAccomplishmentFanValueToken() {
-    Accomplishment *acc =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol sym = SelectedAccomplishment();
+    Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(sym);
     if (acc)
         return acc->GetMetaScoreValue();
     else

@@ -19,6 +19,7 @@ class ClosetPanel;
 class AssetStore : public Hmx::Object {
 public:
     AssetStore();
+    void Poll();
     bool HasAssetOffer(Symbol);
     bool HasAnyAssetOffers() const;
     void ShowPurchaseUI(Symbol);
