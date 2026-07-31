@@ -241,6 +241,16 @@ void Performer::AddPoints(float points, bool apply_multiplier, bool apply_streak
     float diff = add_points
         - (points + individualContribution + overdriveContribution
            + bandContribution);
+    // NOT a transcription error: `abs(<comparison>)` is a SHIPPED HARMONIX BUG,
+    // faithfully reproduced. Retail's MILO_ASSERT stringification -- preserved in
+    // the DECOMP_FORCEACTIVE block at the top of this file because the target
+    // binary literally contains the text -- reads:
+    //   "abs(add_points - (points + ... + bandContribution) < 0.01f)"
+    // i.e. the `<` really is INSIDE the abs() parens in Harmonix's own source.
+    // Consequence: this check and the MILO_ASSERT below are ONE-SIDED -- they only
+    // ever fire on a POSITIVE discrepancy, never an undercount. Do NOT "correct"
+    // the parenthesisation; it would deliberately diverge from retail behaviour.
+    // (Under HX_NATIVE the assert below is live, so it can fire on an overcount.)
     if (abs(diff > 0.0001f)) {
         MILO_WARN("points differ by %f", std::fabs(diff));
     }

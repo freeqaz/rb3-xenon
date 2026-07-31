@@ -20,7 +20,7 @@ public:
     // parse — those drag the whole band domain (a shimmed leaf). X360 never
     // sees this ctor (gated out).
     Band(bool /*native_score_tag*/, int mult, bool /*disambig*/)
-        : mBandPerformer(0), mAccumulatedScore(0), mTotalStars(0), unk30(0),
+        : mBandPerformer(0), unk30(0), mAccumulatedScore(0), mTotalStars(0),
           unk3c(0), unk40(0), unk44(0), mBonusLevel(0), mMultiplier(mult),
           mMaxMultiplier(mult), mMsWithMultiplier(0), mMsWhenMultiplierStarted(0),
           mMultiplierActive(1), unk60(0), mMaxBonusLevel(0),

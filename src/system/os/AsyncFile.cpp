@@ -168,7 +168,7 @@ int AsyncFile::Seek(int i, int j) {
 
     // Calculate new file position based on seek mode
     // j=0 (SEEK_SET): absolute, j=1 (SEEK_CUR): relative, j=2 (SEEK_END): from end
-    unsigned int newPos;
+    unsigned int newPos = mTell;
     if ((unsigned int)j == 1) {
         newPos = mTell + i;
     } else if (j == 0) {

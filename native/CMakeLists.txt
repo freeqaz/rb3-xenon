@@ -41,6 +41,31 @@ set(DECOMP_FLAGS
     "SHELL:-include ${CMAKE_SOURCE_DIR}/src/msvc_compat.h"
 )
 
+# --- Diagnostic: which link STUBS actually execute? --------------------------
+# The native build satisfies off-path symbols with hand-written stubs whose
+# comments ASSERT they are never reached ("NONE is reached on the scoring
+# path"). A stub that IS reached silently replaces real engine behaviour with a
+# no-op, making a demo's output partly fictional -- and the X360 match build
+# cannot see it, because it never links or runs. This option compiles ONLY the
+# stub TUs with -finstrument-functions and links a recorder that dumps the
+# distinct entered functions; resolve the addresses offline (see
+# src/cc5_stub_probe.c). Off by default; a normal build is unaffected.
+option(RB3_STUB_PROBE "Instrument link-stub TUs to record which stubs execute" OFF)
+set(RB3_STUB_TUS
+    ${CMAKE_SOURCE_DIR}/src/m6_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m4_save_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
+)
+if(RB3_STUB_PROBE)
+    set_source_files_properties(${RB3_STUB_TUS} PROPERTIES
+        COMPILE_OPTIONS "-finstrument-functions")
+    message(STATUS "[stub-probe] ENABLED on ${CMAKE_SOURCE_DIR}/src/*_link_stubs.cpp")
+endif()
+
 # Scatter-include handling: the decomp has ~250 .cpp-includes-.cpp edges to
 # reproduce retail COMDAT placement. rb3_add_executable() derives, per target,
 # which of those files must NOT also be compiled standalone. See the module.
@@ -84,6 +109,9 @@ set(NATIVE_SHIMS
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
     ${PLATFORM_SHIMS}
 )
+if(RB3_STUB_PROBE)
+    list(APPEND NATIVE_SHIMS ${CMAKE_SOURCE_DIR}/src/cc5_stub_probe.c)
+endif()
 
 rb3_add_executable(rb3-dta
     ${CMAKE_SOURCE_DIR}/src/main_dta.cpp
@@ -601,6 +629,52 @@ target_include_directories(rb3-harmony PRIVATE
     ${REPO_ROOT}/src/network
 )
 target_link_libraries(rb3-harmony PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# --- M12: the REAL crowd-rating / band-failure meter --------------------------
+# Same object graph as rb3-score4 (M8), but links the REAL
+# src/band3/game/CrowdRating.cpp instead of the no-op stubs, and feeds it RB3's
+# genuine shipped config/scoring.dta (crowd ...) block.
+#
+# WHY: the stub-execution probe (RB3_STUB_PROBE, src/cc5_stub_probe.c) measured
+# CrowdRating::Poll running 25,905 times in ONE rb3-score4 run -- the crowd meter
+# was a no-op on the hot path while the demo reported results as if it were real.
+# The implementation had been decompiled in-tree the whole time; only the native
+# build stubbed it. m12_link_stubs.cpp is m8_link_stubs.cpp with the 10
+# CrowdRating stubs removed so the real definitions win.
+rb3_add_executable(rb3-crowd
+    ${CMAKE_SOURCE_DIR}/src/main_crowd.cpp
+    ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${REPO_ROOT}/src/band3/game/CrowdRating.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${M6_GAME_SOURCES}
+    ${ENGINE_SOURCES}
+    ${RNDOBJ_SOURCES}
+    ${M2_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m12_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
+    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
+)
+target_compile_options(rb3-crowd PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+target_link_options(rb3-crowd PRIVATE -Wl,--gc-sections)
+target_compile_definitions(rb3-crowd PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1 RB3_REAL_CROWD=1)
+target_include_directories(rb3-crowd SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-crowd PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+)
+target_link_libraries(rb3-crowd PRIVATE Threads::Threads ZLIB::ZLIB)
 
 # --- M4: profile / save serialization round-trip -----------------------------
 # Runs RB3's real FixedSizeSaveable machinery natively (src/system/meta) and

@@ -357,7 +357,7 @@ bool HolmesClientInitOpcode(bool quiet) {
     *gStreamBuffer << u8(Holmes::kVersion) << HOLMES_CURRENT_VERSION;
     *gStreamBuffer << HolmesClient::PlatformGetHostName();
     *gStreamBuffer << gHolmesTarget;
-    *gStreamBuffer << &gMachineName[0x40];
+    *gStreamBuffer << gShareName;
     *gStreamBuffer << FileSystemRoot();
     *gStreamBuffer << u8(TheLoadMgr.GetPlatform());
     *gStreamBuffer << u8(GetGfxMode());
@@ -402,7 +402,7 @@ bool HolmesClientInitOpcode(bool quiet) {
             MILO_FAIL("Failed to find holmes target '%s'", gHolmesTarget);
         }
     }
-    if (!fail && gMachineName[0x40] == 0) {
+    if (!fail && gShareName[0] == 0) {
         String my_name(gMachineName), host_name;
         *gHolmesStream >> host_name;
         if (host_name.c_str()[0] == 0) {

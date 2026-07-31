@@ -405,6 +405,7 @@ bool GenericMapFile::ParseStack(
 void InitSystem(const char *config) {
     if (!gPreconfigOverride && config) {
         bool oldCD = UsingCD();
+        Archive *oldArchive = TheArchive;
         if (gHostConfig) {
             gUsingCD = false;
             TheArchive = nullptr;
@@ -417,13 +418,14 @@ void InitSystem(const char *config) {
         gSystemConfig = systemConfig;
         DataVariable("syscfg") = gSystemConfig;
         gUsingCD = oldCD;
-        TheArchive = TheArchive;
+        TheArchive = oldArchive;
         StripEditorData();
     }
     FinishDataRead();
 }
 
 void PreInitSystem(const char *config) {
+    Archive *oldArchive = TheArchive;
     bool oldCD = UsingCD();
     if (gHostConfig) {
         gUsingCD = false;
@@ -447,7 +449,7 @@ void PreInitSystem(const char *config) {
         MILO_ASSERT(gSystemConfig = ReadSystemConfig(config), 0x1FF);
     DataVariable("syscfg") = gSystemConfig;
     gUsingCD = oldCD;
-    TheArchive = TheArchive;
+    TheArchive = oldArchive;
     DataRegisterFunc("system_language", OnSystemLanguage);
     DataRegisterFunc("system_locale", OnSystemLocale);
     DataRegisterFunc("system_exec", OnSystemExec);

@@ -352,10 +352,6 @@ EofType ChunkStream::Eof() {
                 mCurChunk++;
                 mCurBufOffset = 0;
                 mCurReadBuffer = mBuffers[idx];
-#ifdef HX_NATIVE
-                int chunkSz = *mCurChunk & kChunkSizeMask;
-                for (int dbg = 0; dbg < chunkSz && dbg < 8; dbg++)
-#endif
                 return NotEof;
             }
         }

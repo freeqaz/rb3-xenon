@@ -9,9 +9,12 @@
 class NetCacheLoader {
 public:
     enum State {
-        // loaded = 3
-        // failed = 4
-        kS_Nil = -1
+        kS_Nil = -1,
+        kS_0x0 = 0,
+        kS_0x1 = 1,
+        kS_0x2 = 2,
+        kS_Loaded = 3,
+        kS_Failed = 4,
     };
 
     NetCacheLoader(FileCache *, const String &);
