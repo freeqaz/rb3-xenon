@@ -1,10 +1,60 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `b2958f2d`, coordinator clean-worktree build 2026-07-31):
-41,631 strict-matched functions / honest proxy 40,146 / `matched_code_percent`
-36.397797** (honest = matched − masked_equal, per the BO-8 pricing rule).
+**Current (MEASURED at HEAD `9f9b687f`, coordinator clean-worktree A/B 2026-07-31):
+41,639 strict-matched functions / honest proxy 40,154 / `matched_code_percent`
+36.412956** (honest = matched − masked_equal, per the BO-8 pricing rule).
 Denominator is the whole TU5 XEX (`total_functions` 69,367; `masked_equal` 1,485;
-`total_code` 10,580,036). Under `name_check`: 41,629 / 40,144 / 23.823133.
+`total_code` 10,580,036).
+
+## ⛔ Wave CD (2026-07-31) — STOP PRICING ON `name_check` AGGREGATE code%
+
+**A null A/B — IDENTICAL SOURCE, two builds — moved `name_check`
+`matched_code_percent` by 0.006390pp.** Across **six** builds of X360-identical
+source at the same commit it took **three distinct readings spanning 0.0439pp**,
+while in all six: `default` code% was **bit-stable at 36.397797** and
+`matched`/`honest` were **identical**.
+
+Mechanism (lane CD-4 reached it independently, by a different route):
+`matched_code` counts a function's bytes only at **EXACTLY 100%**, so **one
+reloc-NAME difference tips a large function off the cliff and forfeits its entire
+byte count**, and ICF fold representatives shift **binary-wide** in units nobody
+touched. CD-4 measured exactly that — losses in `Memcard_Xbox` (−1584 B),
+`BlockMgr` (−876 B), `MapFile_Xbox`, `Joypad_Xbox`, all with **unchanged function
+counts** and fractional 100.00 → 99.75–99.92 drops, with the default-scoring
+control showing those functions still fully matched.
+
+⚠ A/B legs are **structurally asymmetric** here: leg A can be all objcache hits
+while leg B must recompile what the patch touched. Default scoring is name-blind
+and immune; `name_check` is not.
+
+⇒ **Price on `matched`, `honest`, and `default` code%. Never price a delta below
+~0.05pp on `name_check` aggregate code%.** Use `name_check` as a *per-function
+detector* — which is what it is good for — not as an aggregate scoreboard. The
+`683ee54d` **+1.883737pp** result **stands** (≈40× the noise floor); only *small*
+nc deltas are retired.
+
+This retro-explains three things previously logged as open: the −0.043893pp
+"wobble" on the `Bitmap.h` `#ifdef` gate (identical in magnitude to the spread —
+**not codegen**), lane CD-2's reported +0.062116pp vs the coordinator's measured
++0.018223pp on the *same patch*, and CD-4's −0.028129pp alongside a clean +8.
+
+| commit | matched | honest | lane |
+|---|---|---|---|
+| `617aed5e` | 0 | 0 | CD-3 — native M14 ark + **FIX: `b2958f2d` broke the native build** |
+| `8a0ad3b4` | 0 | 0 | CD-2 — 75 adjudicated mispair rows removed (deliberate Δ0 correctness landing) |
+| `9f9b687f` | +8 | +8 | CD-4 — 6 RTTI-named gaps; ledger closes exactly, 0 untouched units moved |
+| **sum** | **+8** | **+8** | 41,631 → 41,639, matches the measured total |
+
+★ **`b2958f2d` shipped an Xbox-only `operator new` into shared `Bitmap.h` and
+killed all 15 native targets.** The X360 match build **never links**, so ODR /
+LP64 / missing-symbol faults are structurally invisible there. **Run
+`tools/native_build_gate.sh` before landing any shared-`src/` change** (validated
+with both controls: FAILS on `b2958f2d`, PASSES on the fix).
+
+★ **New blind spot, from CD-2:** sibling mispairs with **identical opcodes** hide
+in the **97–99.5%** band — `BeatMatcher::SetAutoplayError` reads 97.50% while
+sitting on `SetAutoplayCoda`. "The discriminator is size, not percentage" holds
+only for *opcode-level* differences.
 
 > **Measured in a clean worktree, NOT on main** — main was dirty with another
 > lane's in-flight `PostProc`/`Cache.h` edits at the time, and a build there
