@@ -675,7 +675,7 @@ DataNode EventTrigger::Cleanup(DataArray *arr) {
                 ObjRef::iterator rit = refs.begin();
                 ObjRef::iterator ritEnd = refs.end();
                 for (; rit != ritEnd; ++rit) {
-                    if (rit->RefOwner() && rit->RefOwner() != (EventTrigger *)iter) break;
+                    if (RefPtrOf(rit)->RefOwner() && RefPtrOf(rit)->RefOwner() != (EventTrigger *)iter) break;
                 }
                 if (rit == ritEnd && filter->GetType() != RndAnimFilter::kShuttle) {
                     static Symbol range("range");

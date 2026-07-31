@@ -111,7 +111,7 @@ bool PhysicsManager::IsShowing(Hmx::Object *obj) {
         } else {
             bool ret = false;
             for (auto it = obj->Refs().begin(); it != obj->Refs().end();) {
-                RndGroup *group = dynamic_cast<RndGroup *>(it->RefOwner());
+                RndGroup *group = dynamic_cast<RndGroup *>(RefPtrOf(it)->RefOwner());
                 ++it;
                 if (group) {
                     ret = true;

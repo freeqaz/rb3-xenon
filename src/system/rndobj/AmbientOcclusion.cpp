@@ -552,7 +552,7 @@ bool RndAmbientOcclusion::IsMeshAnimated(const RndMesh *mesh) const {
     static DataArrayPtr sPropPathScale(Symbol("scale"));
     static DataArrayPtr sPropPathRotation(Symbol("rotation"));
     FOREACH (it, mesh->Refs()) {
-        Hmx::Object *owner = it->RefOwner();
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
         if (owner) {
             if (owner->ClassName() == sRndTransAnim) {
                 return true;

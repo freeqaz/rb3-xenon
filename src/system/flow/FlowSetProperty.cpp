@@ -32,7 +32,12 @@ PropertyTask::PropertyTask(Hmx::Object *obj, DataNode &prop, DataNode &val, Task
 
     // Loop through target's refs to find existing PropertyTasks with same property
     for (ObjRef::iterator it = obj->Refs().begin(); it != refsEnd; ++it) {
+#ifdef HX_NATIVE
         Hmx::Object *refOwner = it->RefOwner();
+#else
+        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        Hmx::Object *refOwner = RefPtrOf(it)->RefOwner();
+#endif
         if (refOwner != nullptr && refOwner->ClassName() == PropertyTask::StaticClassName()) {
             PropertyTask *task = static_cast<PropertyTask *>(refOwner);
             DataArray *myProp = mProperty.Array();

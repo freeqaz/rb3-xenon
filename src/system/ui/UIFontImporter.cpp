@@ -355,7 +355,15 @@ RndFont *UIFontImporter::FindFontForMat(RndMat *mat) const {
         // type nor rbegin()/rend() exists here.  Keeping the forward FOREACH walk;
         // the container divergence is an Object-level issue, not a UIFontImporter one.
         FOREACH (it, mat->Refs()) {
-            Hmx::Object *owner = (*it).RefOwner();
+#ifdef HX_NATIVE
+            Hmx::Object *owner = it->RefOwner();
+#else
+            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+            // Calling ObjRef::RefOwner() directly inlines to a constant nullptr
+            // here (OBJREF_VIRTUAL is empty off HX_NATIVE), which lets the
+            // compiler delete this whole loop body.
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
             if (owner) {
 #ifdef HX_NATIVE
                 // Native-only: identify RndFont via Itanium-ABI typeinfo rather than
@@ -403,7 +411,13 @@ RndText *UIFontImporter::FindTextForFont(RndFont *font) const {
         static Symbol Text("Text");
         // See the Refs()-container note in FindFontForMat above.
         FOREACH (it, font->Refs()) {
-            Hmx::Object *owner = (*it).RefOwner();
+#ifdef HX_NATIVE
+            Hmx::Object *owner = it->RefOwner();
+#else
+            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+            // See the note in FindFontForMat above.
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
             if (owner) {
 #ifdef HX_NATIVE
                 // RB3's 2010-era milos serialize text objects under the bare class

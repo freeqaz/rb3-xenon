@@ -299,14 +299,14 @@ void RndTexRenderer::DrawToTexture() {
             RndMat *mat4 = nullptr;
             for (ObjRef::iterator it = mOutputTexture->Refs().begin();
                  it != mOutputTexture->Refs().end(); ++it) {
-                mat4 = dynamic_cast<RndMat *>(it->RefOwner());
+                mat4 = dynamic_cast<RndMat *>(RefPtrOf(it)->RefOwner());
                 if (mat4)
                     break;
             }
             if (mat4) {
                 for (ObjRef::iterator it = mat4->Refs().begin();
                      it != mat4->Refs().end(); ++it) {
-                    mesh5 = dynamic_cast<RndMesh *>(it->RefOwner());
+                    mesh5 = dynamic_cast<RndMesh *>(RefPtrOf(it)->RefOwner());
                     if (mesh5)
                         break;
                 }

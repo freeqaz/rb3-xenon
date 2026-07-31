@@ -109,7 +109,7 @@ void WorldDir::BitmapOverride::Sync(bool b) {
         ObjRef::iterator it = replacement->Refs().begin();
         while (it != replacement->Refs().end()) {
             ObjRef *ref = it;
-            if (ref->RefOwner()->Dir() != replacement->Dir()) {
+            if (RefPtrOf(ref)->RefOwner()->Dir() != replacement->Dir()) {
                 ObjRef *p = ref->SpliceToRing(&localRing);
                 it = ObjRef::iterator(p);
             }
@@ -122,7 +122,7 @@ void WorldDir::BitmapOverride::Sync(bool b) {
         ObjRef::iterator it = original->Refs().begin();
         while (it != original->Refs().end()) {
             ObjRef *ref = it;
-            if (ref->RefOwner() && ref->RefOwner()->Dir() != replacement->Dir()) {
+            if (RefPtrOf(ref)->RefOwner() && RefPtrOf(ref)->RefOwner()->Dir() != replacement->Dir()) {
                 ObjRef *p = ref->SpliceToRing(&localRing);
                 it = ObjRef::iterator(p);
             }

@@ -963,7 +963,12 @@ HamCamShot *HamCamShot::InitialShot() {
     HamCamShot *initialShot = this;
     ObjRef::iterator it = initialShot->Refs().begin();
     while (it != initialShot->Refs().end()) {
-        HamCamShot *cur = dynamic_cast<HamCamShot *>((*it).RefOwner());
+#ifdef HX_NATIVE
+        HamCamShot *cur = dynamic_cast<HamCamShot *>(it->RefOwner());
+#else
+        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        HamCamShot *cur = dynamic_cast<HamCamShot *>(RefPtrOf(it)->RefOwner());
+#endif
         if (cur) {
             for (ObjPtrList<HamCamShot>::iterator ni = cur->mNextShots.begin();
                  ni != cur->mNextShots.end();

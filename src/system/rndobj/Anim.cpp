@@ -152,7 +152,7 @@ bool RndAnimatable::IsAnimating() {
 
 void RndAnimatable::StopAnimation() {
     for (ObjRef::iterator it = mRefs.begin(); it != mRefs.end();) {
-        AnimTask *task = dynamic_cast<AnimTask *>(it->RefOwner());
+        AnimTask *task = dynamic_cast<AnimTask *>(RefPtrOf(it)->RefOwner());
         if (task) {
             delete task;
             it = mRefs.begin();
@@ -164,7 +164,7 @@ void RndAnimatable::StopAnimation() {
 void RndAnimatable::FireFlowLabel(Symbol s) {
     if (s.Null()) return;
     FOREACH (it, Refs()) {
-        Hmx::Object *owner = it->RefOwner();
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
         if (owner && owner->ClassName() == "AnimTask") {
             AnimTask *task = static_cast<AnimTask *>(owner);
             if (task->AnimTarget()) {
@@ -363,7 +363,7 @@ AnimTask::AnimTask(
     Hmx::Object *target = anim->AnimTarget();
     if (target) {
         FOREACH (it, target->Refs()) {
-            Hmx::Object *owner = it->RefOwner();
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
             if (owner && owner->ClassName() == StaticClassName()) {
                 mBlendTask = static_cast<AnimTask *>(owner);
                 MILO_ASSERT(mBlendTask != this, 0x231);
@@ -408,7 +408,7 @@ AnimTask::AnimTask(
     Hmx::Object *target = anim->AnimTarget();
     if (target) {
         FOREACH (it, target->Refs()) {
-            Hmx::Object *owner = it->RefOwner();
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
             if (owner && owner->ClassName() == StaticClassName()) {
                 mBlendTask = static_cast<AnimTask *>(owner);
                 MILO_ASSERT(mBlendTask != this, 0x231);
