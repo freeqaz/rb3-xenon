@@ -4,7 +4,9 @@
 
 namespace Quazal {
 
-    MD5::MD5() {
+    MD5::MD5() { init(); }
+
+    void MD5::init() {
         finalized = false;
         count[0] = 0;
         count[1] = 0;
@@ -51,13 +53,20 @@ namespace Quazal {
 
         static unsigned char PADDING[0x40] = { 0x80 };
 
-        unsigned char dest[sizeof(*count) * 2];
-        encode(dest, count, sizeof(count));
+        // The scope split is load-bearing for codegen: MSVC allocates outer-scope
+        // locals below inner-scope ones, so `l` must live outside the block to land
+        // beneath the 8-byte-aligned `dest` (retail leaves a 4-byte alignment hole
+        // between them). Flattening this puts `dest` first and breaks the match.
+        unsigned int l;
+        {
+            unsigned char dest[sizeof(*count) * 2];
+            encode(dest, count, sizeof(count));
 
-        unsigned int l = count[0] >> 3 & 0x3F;
-        unsigned int pad = l < 0x38 ? 0x38 - l : 0x78 - l;
-        update(PADDING, pad);
-        update(dest, sizeof(dest));
+            l = count[0] >> 3 & 0x3F;
+            unsigned int pad = l < 0x38 ? 0x38 - l : 0x78 - l;
+            update(PADDING, pad);
+            update(dest, sizeof(dest));
+        }
         encode(digest, state, sizeof(state));
 
         memset(buffer, 0, 1);

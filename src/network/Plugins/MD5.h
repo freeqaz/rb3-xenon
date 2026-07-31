@@ -6,6 +6,7 @@ namespace Quazal {
     class MD5 {
     public:
         MD5();
+        void init();
         void update(const unsigned char *, unsigned int);
         void finalize();
         void transform(const unsigned char *);

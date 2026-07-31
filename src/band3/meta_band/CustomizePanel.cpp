@@ -107,6 +107,7 @@ void CustomizePanel::Enter() {
     mRefreshingContent = TheContentMgr.RefreshInProgress();
     TheContentMgr.RegisterCallback(this, false);
     TheSessionMgr->AddSink(this, SigninChangedMsg::Type());
+    XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_ALWAYS_ALLOW);
 }
 
 void CustomizePanel::Poll() {
@@ -120,6 +121,7 @@ void CustomizePanel::Exit() {
     UIPanel::Exit();
     TheContentMgr.UnregisterCallback(this, true);
     TheSessionMgr->RemoveSink(this, SigninChangedMsg::Type());
+    XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_AUTO);
 }
 
 void CustomizePanel::Unload() {

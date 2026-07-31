@@ -1515,13 +1515,14 @@ Symbol AccomplishmentManager::GetReasonForFirstNewAward(LocalBandUser *i_pUser) 
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(i_pUser);
     MILO_ASSERT(pProfile, 0x93B);
     const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
+    Symbol ret;
     if (prog.HasNewAwards())
-        return prog.GetFirstNewAwardReason();
+        ret = prog.GetFirstNewAwardReason();
     else {
         MILO_ASSERT(false, 0x946);
-        Symbol ret = "";
-        return ret;
+        ret = "";
     }
+    return ret;
 }
 
 Symbol AccomplishmentManager::GetNameForFirstNewAward(LocalBandUser *i_pUser) const {
@@ -1529,13 +1530,14 @@ Symbol AccomplishmentManager::GetNameForFirstNewAward(LocalBandUser *i_pUser) co
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(i_pUser);
     MILO_ASSERT(pProfile, 0x953);
     const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
+    Symbol ret;
     if (prog.HasNewAwards())
-        return prog.GetFirstNewAward();
+        ret = prog.GetFirstNewAward();
     else {
         MILO_ASSERT(false, 0x95E);
-        Symbol ret = "";
-        return ret;
+        ret = "";
     }
+    return ret;
 }
 
 Symbol AccomplishmentManager::GetAwardDescription(Symbol s) const {

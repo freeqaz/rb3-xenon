@@ -162,7 +162,8 @@ CampaignLevel *Campaign::GetCampaignLevel(Symbol s) const {
 
 String Campaign::GetCampaignLevelIconForUser(LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0xE8);
-    CampaignLevel *pCampaignLevel = GetCampaignLevel(GetCampaignLevelForUser(i_pUser));
+    Symbol campaignLevel = GetCampaignLevelForUser(i_pUser);
+    CampaignLevel *pCampaignLevel = GetCampaignLevel(campaignLevel);
     MILO_ASSERT(pCampaignLevel, 0xED);
     return pCampaignLevel->GetIconArt();
 }
@@ -187,17 +188,18 @@ bool Campaign::HasReachedCampaignLevel(Symbol s) const {
     TourProgress *tourprog;
     if (TheGameMode->InMode("tour") && (tourprog = TheTour->GetTourProgress(), tourprog)
         && tourprog->IsOnTour()) {
-        TourDesc *pTourDesc = TheTour->GetTourDesc(tourprog->GetTourDesc());
+        Symbol tourDesc = tourprog->GetTourDesc();
+        TourDesc *pTourDesc = TheTour->GetTourDesc(tourDesc);
         MILO_ASSERT(pTourDesc, 0x118);
-        CampaignLevel *pTourCampaignLevel =
-            GetCampaignLevel(pTourDesc->GetRequiredCampaignLevel());
+        Symbol requiredLevel = pTourDesc->GetRequiredCampaignLevel();
+        CampaignLevel *pTourCampaignLevel = GetCampaignLevel(requiredLevel);
         MILO_ASSERT(pTourCampaignLevel, 0x11C);
         return pTourCampaignLevel->GetValue() >= pCampaignLevel->GetValue();
     } else {
         LocalBandUser *pUser = profile->GetAssociatedLocalBandUser();
         MILO_ASSERT(pUser, 0x125);
-        CampaignLevel *pUserCampaignLevel =
-            GetCampaignLevel(GetCampaignLevelForUser(pUser));
+        Symbol userLevel = GetCampaignLevelForUser(pUser);
+        CampaignLevel *pUserCampaignLevel = GetCampaignLevel(userLevel);
         MILO_ASSERT(pUserCampaignLevel, 0x128);
         return pUserCampaignLevel->GetValue() >= pCampaignLevel->GetValue();
     }

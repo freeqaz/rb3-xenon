@@ -20893,7 +20893,7 @@
  "0x82afc2a8": "?end@?$map@VDOHandle@Quazal@@PAVDuplicatedObject@2@U?$less@VDOHandle@Quazal@@@stlpmtx_std@@V?$MemAllocator@U?$pair@$$CBVDOHandle@Quazal@@PAVDuplicatedObject@2@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Rb_tree_iterator@U?$pair@$$CBVDOHandle@Quazal@@PAVDuplicatedObject@2@@stlpmtx_std@@U?$_ConstMapTraitsT@U?$pair@$$CBVDOHandle@Quazal@@PAVDuplicatedObject@2@@stlpmtx_std@@@priv@2@@2@XZ",
  "0x82b438c8": "?update@MD5@Quazal@@QAAXPBEI@Z",
  "0x82b43a50": "?finalize@MD5@Quazal@@QAAXXZ",
- "0x82b43c58": "??0MD5@Quazal@@QAA@XZ",
+ "0x82b43c58": "?init@MD5@Quazal@@QAAXXZ",
  "0x82b43cc8": "?transform@MD5@Quazal@@QAAXPBE@Z",
  "0x82b49580": "??0KeyedChecksumAlgorithm@Quazal@@QAA@II@Z",
  "0x82b49628": "??1KeyedChecksumAlgorithm@Quazal@@UAA@XZ",

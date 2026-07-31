@@ -50,6 +50,7 @@ ClosetMgr *ClosetMgr::GetClosetMgr() { return TheClosetMgr; }
 
 void ClosetMgr::Poll() {
     ForceClosetPoll();
+    mAssetStore.Poll();
     if (mCharacterLoading) {
         int slot = GetUserSlot();
         MILO_ASSERT(slot != -1, 0x60);
