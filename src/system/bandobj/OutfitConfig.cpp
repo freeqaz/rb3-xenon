@@ -71,7 +71,10 @@ void OutfitConfig::MatSwap::SwapResource() {
                     replace = true;
             }
             if (replace)
-                cur->Replace(mMat);
+                // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE.
+                RefPtrOf(cur)->Replace(
+                    reinterpret_cast<ObjRef *>((RndMat *)mResourceMat), mMat
+                );
         }
     }
 }
@@ -90,7 +93,10 @@ void OutfitConfig::MatSwap::UnSwapResource() {
                     replace = true;
             }
             if (replace)
-                cur->Replace(mResourceMat);
+                // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE.
+                RefPtrOf(cur)->Replace(
+                    reinterpret_cast<ObjRef *>((RndMat *)mMat), mResourceMat
+                );
         }
     }
 }

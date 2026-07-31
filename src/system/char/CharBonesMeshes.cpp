@@ -15,7 +15,10 @@ CharBonesMeshes::~CharBonesMeshes() {
 }
 
 void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
-    Hmx::Object *from = ref->GetObj();
+    // X360: the ring dispatches Replace() with the DYING Hmx::Object* reinterpret_cast
+    // to ObjRef* (Object.cpp:192/502/569), so `ref` IS the object. ObjRef::GetObj() is
+    // a non-virtual stub off HX_NATIVE returning nullptr, which kills the whole search.
+    Hmx::Object *from = reinterpret_cast<Hmx::Object *>(ref);
     if (from != mDummyMesh) {
         for (ObjVector<ObjOwnerPtr<RndTransformable> >::iterator it = mMeshes.begin();
              it != mMeshes.end();

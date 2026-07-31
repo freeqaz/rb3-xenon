@@ -2277,7 +2277,10 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
                 bool match =
                     (dir == sOutfitDir) || (dir == sResourceDir) || (dir == sToDir);
                 if (match && theirs != mine) {
-                    ref->Replace(mine);
+                    // ObjRef::Replace(Hmx::Object*) is an elided stub off
+                    // HX_NATIVE (compiles to nothing). Dispatch the real ring
+                    // Replace (vtable slot +8) with the outgoing object.
+                    RefPtrOf(ref)->Replace(reinterpret_cast<ObjRef *>(theirs), mine);
                     changed = true;
                     break;
                 }

@@ -258,7 +258,12 @@ void WorldInstance::DeleteTransientObjects() {
                     MemDoTempAllocations m;
                     for (ObjRef::iterator it = refs.begin(); it != refs.end(); ++it) {
                         if (RefPtrOf(it)->RefOwner() && RefPtrOf(it)->RefOwner()->Dir() == this) {
-                            (*it).Replace(to);
+                            // ObjRef::Replace(Hmx::Object*) is an elided stub off
+                            // HX_NATIVE; dispatch the real ring Replace (slot +8)
+                            // with the outgoing object as `from`.
+                            RefPtrOf(it)->Replace(
+                                reinterpret_cast<ObjRef *>((Hmx::Object *)obj), to
+                            );
                         }
                     }
                 }

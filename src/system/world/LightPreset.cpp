@@ -1410,7 +1410,9 @@ BEGIN_LOADS(LightPreset)
 END_LOADS
 
 void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
-    Hmx::Object *fromObj = from->GetObj();
+    // X360: `from` IS the dying object (see RefIs in Object.h + Object.cpp:192).
+    // ObjRef::GetObj() is an elided stub returning nullptr off HX_NATIVE.
+    Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
     for (uint idx = 0; idx != mSpotlights.size(); idx++) {
         if (mSpotlights[idx] == fromObj) {
             if (to)
