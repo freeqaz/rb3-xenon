@@ -66,8 +66,8 @@ void OutfitConfig::MatSwap::SwapResource() {
             ObjRef *cur = rit;
             ++rit;
             bool replace = false;
-            if (cur->RefOwner()) {
-                if (cur->RefOwner()->ClassName() == mn)
+            if (RefPtrOf(cur)->RefOwner()) {
+                if (RefPtrOf(cur)->RefOwner()->ClassName() == mn)
                     replace = true;
             }
             if (replace)
@@ -85,8 +85,8 @@ void OutfitConfig::MatSwap::UnSwapResource() {
             ObjRef *cur = rit;
             ++rit;
             bool replace = false;
-            if (cur->RefOwner()) {
-                if (cur->RefOwner()->ClassName() == mn)
+            if (RefPtrOf(cur)->RefOwner()) {
+                if (RefPtrOf(cur)->RefOwner()->ClassName() == mn)
                     replace = true;
             }
             if (replace)
@@ -1033,7 +1033,7 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
         for (ObjRef::iterator rit = refs.begin(); rit != refs.end();) {
             ObjRef *cur = rit;
             ++rit;
-            RndMesh *mesh = dynamic_cast<RndMesh *>(cur->RefOwner());
+            RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(cur)->RefOwner());
             if (mesh) {
                 if (allocTempMats) {
                     cur->Replace(it->mMat);

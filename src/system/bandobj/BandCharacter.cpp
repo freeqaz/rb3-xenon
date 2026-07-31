@@ -2272,8 +2272,8 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
              it != theirs->Refs().end();
              ++it) {
             ObjRef *ref = it;
-            if (ref->RefOwner() != NULL) {
-                ObjectDir *dir = ref->RefOwner()->Dir();
+            if (RefPtrOf(ref)->RefOwner() != NULL) {
+                ObjectDir *dir = RefPtrOf(ref)->RefOwner()->Dir();
                 bool match =
                     (dir == sOutfitDir) || (dir == sResourceDir) || (dir == sToDir);
                 if (match && theirs != mine) {

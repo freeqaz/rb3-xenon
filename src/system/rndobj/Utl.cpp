@@ -1802,7 +1802,7 @@ void ConvertBonesToTranses(ObjectDir *dir, bool b) {
                 for (ObjRef::iterator rit = it->Refs().begin();
                      !foundBoneRef && rit != it->Refs().end();
                      ++rit) {
-                    RndMesh *curRefOwner = dynamic_cast<RndMesh *>(rit->RefOwner());
+                    RndMesh *curRefOwner = dynamic_cast<RndMesh *>(RefPtrOf(rit)->RefOwner());
                     if (curRefOwner) {
                         for (int i = 0; i < curRefOwner->NumBones(); i++) {
                             if (curRefOwner->BoneTransAt(i) == itTrans) {

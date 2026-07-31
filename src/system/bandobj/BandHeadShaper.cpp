@@ -371,7 +371,7 @@ void BandHeadShaper::Reskin() {
         const ObjRef &refs = bone->Refs();
         for (ObjRef::iterator rit = refs.end(); rit != refs.begin();) {
             --rit;
-            RndMesh *mesh = dynamic_cast<RndMesh *>(rit->RefOwner());
+            RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(rit)->RefOwner());
             if (!mesh)
                 continue;
             bool isHead = strcmp(mesh->Name(), "head.mesh") == 0;

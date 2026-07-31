@@ -257,7 +257,7 @@ void WorldInstance::DeleteTransientObjects() {
                 {
                     MemDoTempAllocations m;
                     for (ObjRef::iterator it = refs.begin(); it != refs.end(); ++it) {
-                        if ((*it).RefOwner() && (*it).RefOwner()->Dir() == this) {
+                        if (RefPtrOf(it)->RefOwner() && RefPtrOf(it)->RefOwner()->Dir() == this) {
                             (*it).Replace(to);
                         }
                     }
