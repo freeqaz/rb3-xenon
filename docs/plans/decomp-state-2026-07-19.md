@@ -26,10 +26,39 @@ plausibly consistent rather than contradictory. Recorded as an open reconciliati
 rather than resolved, because this wave has already produced two lane self-reports
 that did not reproduce.
 
-⚠ **`masked_equal` moved 1,487 → 1,485 (−2)**, again unattributed. That is now
-the third unexplained `masked_equal` drift (−21, −1, −2). Honest keeps outrunning
-matched by exactly these deltas. Whoever next touches pricing should explain the
-mechanism rather than inherit it.
+## ✅ RESOLVED: the `masked_equal` drift is benign, and now has a tool
+
+The drift flagged as unexplained three times (−21, −1, −2) is **attributed and
+benign**. Mechanism, read from the fork rather than inferred
+(`objdiff-cli/src/cmd/report.rs:740-847`): `partner_groups` maps our symbols to
+the retail symbol they paired with; any group of size > 1 is an
+**over-subscription**, one member is elected owner and **every other member is
+`oversubscribed`**. `masked_equal_functions` then counts the surplus members that
+still scored a normalized 100 — a **disclosure of soft credit, never an addition
+to it**.
+
+So a masked_equal *drop* is ambiguous on its face and must be split two ways:
+**RESOLVED** (still 100, flag gone ⇒ a duplicate pairing genuinely resolved;
+honest gains a *real* point) versus **LOST_CREDIT** (fell below 100 ⇒ a real
+regression hiding inside a benign-looking drop). The headline number cannot tell
+these apart, and they have opposite meanings.
+
+Measured with the new `tools/masked_equal_attrib.py` (which has a `--self-test`
+carrying two negative controls):
+
+| delta | decomposition | verdict |
+|---|---|---|
+| CC-7 −1 | 1 RESOLVED (`QuestFilterPanel fn_82B7BC7C`), 0 LOST_CREDIT | benign — and it explains CC-7's +17 honest vs +16 matched exactly |
+| post-CC −2 | 4 RESOLVED, 2 NEW_SURPLUS, **0 LOST_CREDIT** | benign |
+
+The 4 RESOLVED rows all held normalized 100 and merely stopped being surplus; the
+2 NEW_SURPLUS climbed *into* 100 (99.9→100, 0→100) as the surplus member, so
+`matched` credits them and `honest` correctly declines. All six are 32–40 byte
+anon bodies — the documented funclet over-subscription class. **The metric
+behaved correctly; only the explanation was missing.**
+
+⚠ The older **−21 could not be retro-attributed** — no archived reports from that
+wave survive. Stated as a gap rather than assumed benign by analogy.
 
 > ## Wave CC (2026-07-31) — +23 matched / +24 honest / +0.067144 pp
 > From 41,386 / 39,898 / 35.700900 at `683ee54d`. **The ledger closes EXACTLY**
