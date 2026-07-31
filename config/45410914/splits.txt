@@ -3342,7 +3342,6 @@ Flow.cpp:
 	.pdata      start:0x82204968 end:0x82204970
 	.pdata      start:0x82204AE8 end:0x82204AF0
 	.pdata      start:0x82204B70 end:0x82204B78
-	.pdata      start:0x8221DE68 end:0x8221DE70
 	.pdata      start:0x8221E698 end:0x8221E6A8
 	.pdata      start:0x8221E768 end:0x8221E778
 	.pdata      start:0x82238D98 end:0x82238DA0
@@ -3352,7 +3351,6 @@ Flow.cpp:
 	.text       start:0x823A94F0 end:0x823A9540
 	.text       start:0x823AAD78 end:0x823AADDC
 	.text       start:0x823AB598 end:0x823AB618
-	.text       start:0x8256ED88 end:0x8256EDEC
 	.text       start:0x82574348 end:0x825743D4
 	.text       start:0x82574D90 end:0x82574E1C
 	.text       start:0x82715C88 end:0x82715CCC
@@ -4411,10 +4409,8 @@ CameraInput.cpp:
 
 Ham.cpp:
 	.pdata      start:0x821F1FC8 end:0x821F1FF8
-	.pdata      start:0x8221E1E0 end:0x8221E1F0
 	.text       start:0x8227A728 end:0x8227A910
 	.text       start:0x82545C88 end:0x82545C90
-	.text       start:0x82570C80 end:0x82570D0C
 
 HamCharacter.cpp:
 	.pdata      start:0x8220F8B8 end:0x8220F8C8
@@ -8710,9 +8706,7 @@ band3/meta_band/AccomplishmentManager.cpp:
 	.text       start:0x8255C95C end:0x8255F53C
 
 FlowSound.cpp:
-	.pdata      start:0x8221DE70 end:0x8221DE78
 	.pdata      start:0x82228DA0 end:0x82228DB8
-	.text       start:0x8256EDEC end:0x8256EE14
 	.text       start:0x82612300 end:0x82612460
 
 band3/meta_band/AccomplishmentProgress.cpp:
@@ -11164,84 +11158,36 @@ MetaPanel.cpp:
 	.pdata      start:0x821FC138 end:0x821FC178
 	.pdata      start:0x821FC1B0 end:0x821FC1D0
 	.pdata      start:0x822187C8 end:0x822187D8
-	.pdata      start:0x8221DCC8 end:0x8221DD60
-	.pdata      start:0x8221DD78 end:0x8221DDF0
-	.pdata      start:0x8221DE08 end:0x8221DE10
-	.pdata      start:0x8221DE10 end:0x8221DE28
-	.pdata      start:0x8221DE28 end:0x8221DE60
-	.pdata      start:0x8221DE78 end:0x8221DEC0
-	.pdata      start:0x8221DED8 end:0x8221DF00
-	.pdata      start:0x8221DF18 end:0x8221DF20
-	.pdata      start:0x8221DF38 end:0x8221DF40
-	.pdata      start:0x8221DF58 end:0x8221E0A8
-	.pdata      start:0x8221E0C0 end:0x8221E0E8
+	.pdata      start:0x8221DCC8 end:0x8221E100
 	.pdata      start:0x8221E110 end:0x8221E1E0
+	.pdata      start:0x8221E1E0 end:0x8221E1F0
 	.pdata      start:0x8221E1F0 end:0x8221E280
-	.pdata      start:0x8221E2A0 end:0x8221E2B0
-	.pdata      start:0x8221E2B0 end:0x8221E2C0
-	.pdata      start:0x8221E2C0 end:0x8221E2D0
-	.pdata      start:0x8221E2D0 end:0x8221E2F0
-	.pdata      start:0x8221E2F0 end:0x8221E300
-	.pdata      start:0x8221E300 end:0x8221E310
-	.pdata      start:0x8221E310 end:0x8221E330
-	.pdata      start:0x8221E330 end:0x8221E350
-	.pdata      start:0x8221E350 end:0x8221E358
-	.pdata      start:0x8221E358 end:0x8221E3E0
-	.pdata      start:0x8221E3E0 end:0x8221E4D0
+	.pdata      start:0x8221E2A0 end:0x8221E4D0
 	.pdata      start:0x8221E4D0 end:0x8221E580
-	.pdata      start:0x8221E580 end:0x8221E598
-	.pdata      start:0x8221E598 end:0x8221E5A0
+	.pdata      start:0x8221E580 end:0x8221E5A0
 	.pdata      start:0x8221E5A0 end:0x8221E5A8
 	.pdata      start:0x8221E5A8 end:0x8221E5C8
-	.pdata      start:0x8221E5D0 end:0x8221E5D8
-	.pdata      start:0x8221E5D8 end:0x8221E608
-	.pdata      start:0x8221E608 end:0x8221E610
-	.pdata      start:0x8221E610 end:0x8221E698
+	.pdata      start:0x8221E5D0 end:0x8221E698
 	.pdata      start:0x8221E6B8 end:0x8221E6F8
-	.pdata      start:0x8221E728 end:0x8221E738
-	.pdata      start:0x8221E738 end:0x8221E760
+	.pdata      start:0x8221E728 end:0x8221E760
 	.pdata      start:0x822281A0 end:0x822281D0
 	.pdata      start:0x82241968 end:0x82241970
 	.text       start:0x82319810 end:0x82319950
 	.text       start:0x82319C20 end:0x82319C30
 	.text       start:0x82319D84 end:0x82319F74
 	.text       start:0x8251BA00 end:0x8251BA78
-	.text       start:0x8256DF78 end:0x8256E4B0
-	.text       start:0x8256E570 end:0x8256E998
-	.text       start:0x8256EA58 end:0x8256EAB0
-	.text       start:0x8256EAB0 end:0x8256EB70
-	.text       start:0x8256EB70 end:0x8256ED60
-	.text       start:0x8256EE20 end:0x8256F0A8
-	.text       start:0x8256F168 end:0x8256F2D8
-	.text       start:0x8256F398 end:0x8256F3F0
-	.text       start:0x8256F4B0 end:0x8256F508
-	.text       start:0x8256F5C8 end:0x82570138
-	.text       start:0x825701F8 end:0x82570368
+	.text       start:0x8256DF78 end:0x8257041C
 	.text       start:0x825704A8 end:0x82570C78
+	.text       start:0x82570C80 end:0x82570D0C
 	.text       start:0x82570D18 end:0x825711D8
-	.text       start:0x825712D8 end:0x82571370
-	.text       start:0x82571370 end:0x825713F0
-	.text       start:0x825713F0 end:0x82571488
-	.text       start:0x82571488 end:0x825715A0
-	.text       start:0x825715A0 end:0x82571620
-	.text       start:0x82571620 end:0x825716B8
-	.text       start:0x825716B8 end:0x825717D0
-	.text       start:0x825717D0 end:0x825718E8
-	.text       start:0x825718E8 end:0x82571940
-	.text       start:0x82571940 end:0x82571DD8
-	.text       start:0x82571DD8 end:0x82572A34
+	.text       start:0x825712D8 end:0x82572A34
 	.text       start:0x82572A40 end:0x82573450
-	.text       start:0x82573470 end:0x82573678
-	.text       start:0x82573678 end:0x825736C4
+	.text       start:0x82573470 end:0x825736C4
 	.text       start:0x825736C8 end:0x825736F8
 	.text       start:0x82573700 end:0x825738B8
-	.text       start:0x82573904 end:0x82573958
-	.text       start:0x82573958 end:0x82573B30
-	.text       start:0x82573B30 end:0x82573BC8
-	.text       start:0x82573BC8 end:0x82574340
+	.text       start:0x82573904 end:0x82574340
 	.text       start:0x825744B8 end:0x82574804
-	.text       start:0x82574A28 end:0x82574AF0
-	.text       start:0x82574AF0 end:0x82574D3C
+	.text       start:0x82574A28 end:0x82574D3C
 	.text       start:0x82606150 end:0x8260625C
 	.text       start:0x827BA378 end:0x827BA3E8
 
@@ -12365,30 +12311,11 @@ ContextChecker.cpp:
 	.pdata      start:0x822089D0 end:0x822089D8
 	.pdata      start:0x82208F68 end:0x82208F70
 	.pdata      start:0x8221DB20 end:0x8221DCC8
-	.pdata      start:0x8221DD60 end:0x8221DD78
-	.pdata      start:0x8221DDF0 end:0x8221DE08
-	.pdata      start:0x8221DE60 end:0x8221DE68
-	.pdata      start:0x8221DEC0 end:0x8221DED8
-	.pdata      start:0x8221DF00 end:0x8221DF18
-	.pdata      start:0x8221DF20 end:0x8221DF38
-	.pdata      start:0x8221DF40 end:0x8221DF58
-	.pdata      start:0x8221E0A8 end:0x8221E0C0
-	.pdata      start:0x8221E0E8 end:0x8221E100
 	.pdata      start:0x8223C5C0 end:0x8223C5C8
 	.pdata      start:0x8225B4B0 end:0x8225B528
 	.text       start:0x823EF498 end:0x823EF4D8
 	.text       start:0x823F4268 end:0x823F42A8
 	.text       start:0x8256C7E0 end:0x8256DF78
-	.text       start:0x8256E4B0 end:0x8256E570
-	.text       start:0x8256E998 end:0x8256EA58
-	.text       start:0x8256ED60 end:0x8256ED88
-	.text       start:0x8256EE14 end:0x8256EE20
-	.text       start:0x8256F0A8 end:0x8256F168
-	.text       start:0x8256F2D8 end:0x8256F398
-	.text       start:0x8256F3F0 end:0x8256F4B0
-	.text       start:0x8256F508 end:0x8256F5C8
-	.text       start:0x82570138 end:0x825701F8
-	.text       start:0x82570368 end:0x8257041C
 	.text       start:0x8275B868 end:0x8275B8B0
 	.text       start:0x82B6A384 end:0x82B6AA90
 
