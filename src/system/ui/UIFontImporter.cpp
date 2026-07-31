@@ -80,16 +80,16 @@ BEGIN_PROPSYNCS(UIFontImporter)
     )
     SYNC_PROP_SET(
         font_pixel_size,
-        std::abs(
-            mLastGenWasNG ? ConvertPctHeightToHeightNG(mFontPctSize)
-                          : ConvertPctHeightToHeightOG(mFontPctSize)
-        ),
+        mLastGenWasNG ? std::abs(ConvertPctHeightToHeightNG(mFontPctSize))
+                      : std::abs(ConvertPctHeightToHeightOG(mFontPctSize)),
         mFontPctSize = mLastGenWasNG ? ConvertHeightNGToPctHeight(_val.Int())
                                      : ConvertHeightOGToPctHeight(_val.Int())
     )
-    SYNC_PROP_MODIFY(weight, mFontWeight, GenerateBitmapFilename())
+    // rb3-Wii oracle: RB3 has NO `weight` prop here -- it goes straight from
+    // font_pixel_size to `bold`, whose getter is (mFontWeight > 400).
     SYNC_PROP_SET(
-        bold, std::abs(mFontWeight), mFontWeight = 0 != _val.Int() ? 800 : 400;
+        bold, (mFontWeight > 400), if (_val.Int()) mFontWeight = 800;
+        else mFontWeight = 400;
         GenerateBitmapFilename()
     )
     SYNC_PROP_MODIFY(italics, mItalics, GenerateBitmapFilename())
@@ -107,6 +107,10 @@ BEGIN_PROPSYNCS(UIFontImporter)
     SYNC_PROP(bitmap_save_name, mBitMapSaveName)
     SYNC_PROP(gened_fonts, mGennedFonts)
     SYNC_PROP(reference_kerning, mReferenceKerning)
+    // NOTE: the oracle spells these SYNC_PROP_MODIFY_ALT, but that macro lives only
+    // in obj/ObjMacros.h (not included here).  obj/Object.h's live SYNC_PROP_MODIFY
+    // ALREADY has the ALT shape (`if (PropSync(...)) {...} else return false;`), so
+    // this is already the oracle's codegen -- no change needed.
     SYNC_PROP_MODIFY(mat_variations, mMatVariations, SyncWithGennedFonts())
     SYNC_PROP_MODIFY(handmade_font, mHandmadeFont, HandmadeFontChanged())
     SYNC_PROP(resource_name, mSyncResource)
@@ -118,8 +122,14 @@ BEGIN_PROPSYNCS(UIFontImporter)
 #endif
 END_PROPSYNCS
 
+// Retail writes the save revision by LOADING A GLOBAL, not by storing a folded
+// immediate: the target emits `lis/lwz lbl_82C793C0` where SAVE_REVS(10,4)'s
+// constexpr packRevs() gives us `lis 0x4 / ori 0xa` (= 0x4000A).  The rb3-Wii oracle
+// agrees -- it carries a file-scope `int gREV` and asserts against it on load.
+static int gSaveRev = (4 << 16) | 10; // packRevs(alt=4, rev=10)
+
 BEGIN_SAVES(UIFontImporter)
-    SAVE_REVS(10, 4)
+    bs << gSaveRev;
     bs << mLowerCaseAthroughZ;
     bs << mUpperCaseAthroughZ;
     bs << mNumbers0through9;
@@ -146,6 +156,7 @@ BEGIN_SAVES(UIFontImporter)
     bs << mGennedFonts;
     bs << mReferenceKerning;
     bs << mMatVariations;
+    bs << mDefaultMat;
     bs << mHandmadeFont;
     bs << mSyncResource;
     bs << mLastGenWasNG;
@@ -238,9 +249,14 @@ BEGIN_LOADS(UIFontImporter)
     if (d.rev > 3) {
         d >> mMatVariations;
     }
-    if (d.rev > 5 && d.rev < 10) {
-        ObjPtr<RndMat> mat(this);
-        d >> mat;
+    // Was `if (d.rev > 5 && d.rev < 10) { ObjPtr<RndMat> mat(this); d >> mat; }` --
+    // a DC3-era guard that read mDefaultMat into a DISCARDED temporary and skipped it
+    // entirely at rev 10.  Retail's Save provably WRITES mDefaultMat (adding
+    // `bs << mDefaultMat` is what took Save from 95.8% to 100%), and the rb3-Wii
+    // oracle reads it unconditionally at `rev > 5`, so the `< 10` cutoff is a DC3
+    // artifact and the discard left Save/Load asymmetric.
+    if (d.rev > 5) {
+        d >> mDefaultMat;
     }
     if (d.rev > 6) {
         d >> mHandmadeFont;
@@ -257,25 +273,31 @@ BEGIN_LOADS(UIFontImporter)
     }
 END_LOADS
 
-void UIFontImporter::ImportSettingsFromFont(RndFontBase *font) {
+// rb3-Wii oracle body.  The DC3-era version set "weight", "drop_shadow" and
+// "drop_shadow_opacity"; retail band.exe contains ZERO "drop_shadow" /
+// "drop_shadow_opacity" strings but DOES contain "bold" / "imported_font" /
+// "font_name" / "font_size" / "italics" (positive controls all fire), so the
+// oracle's property list is the RB3 one.
+// NOTE ON CONTROL FLOW: the oracle hoists a `bool has_import_font` flag, but retail
+// did NOT -- that form costs an extra local (measured: frame delta +0x10 structural,
+// with inserted li/li/clrlwi. flag machinery).  Retail uses the direct condition, so
+// only the PROPERTY LIST is taken from the oracle, not its control flow.
+void UIFontImporter::ImportSettingsFromFont(RndFont *font) {
     if (font && font->Type() == Symbol("imported_font")) {
         SetProperty("font_name", font->Property("font_name")->Str());
         SetProperty(
             "font_size", ConvertHeightNGToPctHeight(font->Property("font_size")->Int())
         );
-        SetProperty("weight", font->Property("weight")->Int());
+        SetProperty("bold", font->Property("bold")->Int());
         SetProperty("italics", font->Property("italics")->Int());
-        SetProperty("drop_shadow", font->Property("drop_shadow")->Int());
-        SetProperty("drop_shadow_opacity", font->Property("drop_shadow_opacity")->Int());
         SetProperty("left", font->Property("left")->Int());
         SetProperty("right", font->Property("right")->Int());
         SetProperty("top", font->Property("top")->Int());
         SetProperty("bottom", font->Property("bottom")->Int());
-    } else {
+    } else
         MILO_NOTIFY(
             "Can't import settings from Font because it doesnt have import_font type"
         );
-    }
 }
 
 int UIFontImporter::GetMatVariationIdx(Symbol s) const {
@@ -321,35 +343,41 @@ void UIFontImporter::GenerateBitmapFilename() {
     mBitMapSaveName.ReplaceAll(' ', '_');
 }
 
-RndFontBase *UIFontImporter::FindFontForMat(RndMat *mat) const {
+// rb3-Wii oracle (src/system/ui/UIFontImporter.cpp): RB3 has a single RndFont type,
+// so there is no Font3d arm here -- the RndFontBase/RndFont3d split is a DC3-era
+// addition.  Retail band.exe contains zero "RndFont3d" strings.
+RndFont *UIFontImporter::FindFontForMat(RndMat *mat) const {
     if (mat) {
         static Symbol Font("Font");
-        static Symbol Font3d("Font3d");
+        // NOTE: the oracle uses FOREACH_OBJREF (a REVERSE walk of a
+        // std::vector<ObjRef*>).  This tree's Hmx::Object::Refs() is a DC3-era
+        // intrusive next/prev ring returning `const ObjRef &`, so neither the vector
+        // type nor rbegin()/rend() exists here.  Keeping the forward FOREACH walk;
+        // the container divergence is an Object-level issue, not a UIFontImporter one.
         FOREACH (it, mat->Refs()) {
             Hmx::Object *owner = (*it).RefOwner();
             if (owner) {
 #ifdef HX_NATIVE
-                // Use Itanium ABI typeinfo to identify Font/Font3d without calling
-                // virtual functions — some owners may have broken vtables (.bss zeros)
-                // because their GCC key function is undefined.
+                // Native-only: identify RndFont via Itanium-ABI typeinfo rather than
+                // the virtual ClassName(), because some owners have broken vtables
+                // (.bss zeros) when their GCC key function is undefined.  Retained
+                // from the previous version; the Font3d arm is gone because RB3 has
+                // no RndFont3d.
                 void **vptr = *(void ***)owner;
-                if (!vptr) continue;
+                if (!vptr)
+                    continue;
                 void *typeinfo = vptr[-1];
-                if (!typeinfo) continue;
+                if (!typeinfo)
+                    continue;
                 const char *tname = *(const char **)((char *)typeinfo + sizeof(void *));
-                if (!tname) continue;
+                if (!tname)
+                    continue;
                 if (strcmp(tname, "7RndFont") == 0) {
-                    return static_cast<RndFont *>(static_cast<RndFontBase *>(owner));
-                }
-                if (strcmp(tname, "9RndFont3d") == 0) {
-                    return static_cast<RndFont3d *>(static_cast<RndFontBase *>(owner));
+                    return static_cast<RndFont *>(owner);
                 }
 #else
                 if (owner->ClassName() == Font) {
                     return dynamic_cast<RndFont *>(owner);
-                }
-                if (owner->ClassName() == Font3d) {
-                    return dynamic_cast<RndFont3d *>(owner);
                 }
 #endif
             }
@@ -369,16 +397,29 @@ void UIFontImporter::OnSetCharsetUTF8(String const &s) {
     mPlus = s;
 }
 
-RndText *UIFontImporter::FindTextForFont(RndFontBase *font) const {
+// rb3-Wii oracle: plain reverse ObjRef walk, no mStyle.mFont filter.
+RndText *UIFontImporter::FindTextForFont(RndFont *font) const {
     if (font) {
         static Symbol Text("Text");
+        // See the Refs()-container note in FindFontForMat above.
         FOREACH (it, font->Refs()) {
-            Hmx::Object *owner = it->RefOwner();
-            if (owner && owner->ClassName() == Text) {
-                RndText *text = dynamic_cast<RndText *>(owner);
-                if (text->mStyle.mFont == font) {
-                    return text;
+            Hmx::Object *owner = (*it).RefOwner();
+            if (owner) {
+#ifdef HX_NATIVE
+                // RB3's 2010-era milos serialize text objects under the bare class
+                // name "Text", but this decomp's class carries the "Rnd" prefix
+                // (OBJ_CLASSNAME(RndText) => ClassName() == "RndText"), so the
+                // matched `== Text` compare never fires for a natively-loaded
+                // RndText.  Accept the prefixed name too. (Oracle does the same.)
+                if (owner->ClassName() == Text
+                    || owner->ClassName() == RndText::StaticClassName()) {
+                    return dynamic_cast<RndText *>(owner);
                 }
+#else
+                if (owner->ClassName() == Text) {
+                    return dynamic_cast<RndText *>(owner);
+                }
+#endif
             }
         }
     }
@@ -409,11 +450,11 @@ Symbol UIFontImporter::GetMatVariationName(unsigned int ui) const {
     }
 }
 
-const char *UIFontImporter::GetMatVariationName(RndFontBase *font) const {
+const char *UIFontImporter::GetMatVariationName(RndFont *font) const {
     if (font && font->Mat()) {
         RndMat *mat = font->Mat();
         if (mGennedFonts.size() > 0) {
-            RndFontBase *front =
+            RndFont *front =
                 mGennedFonts.size() != 0 ? *mGennedFonts.begin() : nullptr;
             if (mat == front->Mat()) {
                 return "";
@@ -431,7 +472,7 @@ const char *UIFontImporter::GetMatVariationName(RndFontBase *font) const {
     return "";
 }
 
-RndFontBase *UIFontImporter::GetGennedFont(Symbol s) const {
+RndFont *UIFontImporter::GetGennedFont(Symbol s) const {
     if (s.Null()) {
         return *mGennedFonts.begin();
     } else {
@@ -458,7 +499,7 @@ RndFontBase *UIFontImporter::GetGennedFont(Symbol s) const {
 void UIFontImporter::SyncWithGennedFonts() {
     auto it = mGennedFonts.begin();
     for (int i = 0; it != mGennedFonts.end(); i++) {
-        RndFontBase *cur = *it;
+        RndFont *cur = *it;
         bool b4 = false;
         if (i == 0) {
             b4 = true;
@@ -486,14 +527,14 @@ void UIFontImporter::SyncWithGennedFonts() {
 void UIFontImporter::HandmadeFontChanged() {
     if (mHandmadeFont) {
         if (mGennedFonts.size() > 0) {
-            RndFontBase *font = *mGennedFonts.begin();
+            RndFont *font = *mGennedFonts.begin();
             if (font != mHandmadeFont) {
                 RndText *text = FindTextForFont(font);
                 delete font;
                 delete text;
             }
             // <?>
-            RndFontBase *next = *mGennedFonts.begin();
+            RndFont *next = *mGennedFonts.begin();
             next = mHandmadeFont;
             // </?>
             FOREACH (it, mGennedFonts) {

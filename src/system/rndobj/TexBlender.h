@@ -33,6 +33,11 @@ public:
 
     RndTex *OutputTexture() const { return mOutputTextures; }
     bool Unkc0() const { return unkc0; }
+    /** Retail stores a byte at RndTexBlender+0x7c (== `unkc0`, verified with
+        cl /d1reportSingleClassLayoutRndTexBlender) to mark the blender as needing
+        a re-render. OutfitConfig::SetSkinTextures sets it on both the eyes.cfg
+        blender and "wrinkle.texblend" when any head normal map changed. */
+    void SetUnkc0(bool b) { unkc0 = b; }
 
 protected:
     RndTexBlender();
