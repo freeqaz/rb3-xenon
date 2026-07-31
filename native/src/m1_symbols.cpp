@@ -46,6 +46,11 @@ Symbol init_msg;
 Symbol is_demo;
 Symbol is_download;
 Symbol is_ugc;
+// is_ugc_plus: BandSongMetadata's retail-only `is_ugc_plus' handler arm
+// (BandSongMetadata.cpp:589) references the Symbols3.h global. It was added
+// after this file was derived, so the rb3-song link had an undefined
+// reference to it -- see the regeneration note at the bottom of this file.
+Symbol is_ugc_plus;
 Symbol keys;
 Symbol latin1;
 Symbol length_ms;
@@ -136,6 +141,7 @@ void InitM1Symbols() {
     is_demo = Symbol("is_demo");
     is_download = Symbol("is_download");
     is_ugc = Symbol("is_ugc");
+    is_ugc_plus = Symbol("is_ugc_plus");
     keys = Symbol("keys");
     latin1 = Symbol("latin1");
     length_ms = Symbol("length_ms");
@@ -188,3 +194,15 @@ void InitM1Symbols() {
     year_recorded = Symbol("year_recorded");
     year_released = Symbol("year_released");
 }
+
+// REGENERATING THIS FILE
+// ----------------------
+// This list is derived from the rb3-song link, so it goes stale whenever a
+// decomp lane adds a handler arm that references a new Symbols3.h global (the
+// X360 build never links, so nothing there catches it). To refresh:
+//
+//   cmake --build native/build --target rb3-song 2>&1 \
+//     | grep -oP "undefined reference to .\K[a-z0-9_]+(?=')" | sort -u
+//
+// Every name that appears is a `extern Symbol' global with no definition in
+// the link; add it to both the definition list and InitM1Symbols() above.
