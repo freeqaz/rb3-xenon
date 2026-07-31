@@ -433,7 +433,18 @@ void UIManager::GotoScreenImpl(UIScreen *scr, bool b1, bool b2) {
             || mTransitionScreen != scr)) {
         CancelTransition();
 
-#ifdef MILO_DEBUG
+// Retail RB3-360 EXCLUDES this check.  Retail's GotoScreenImpl is fn_828036E8
+// (identified map-independently: PopScreen fn_82803890 does `li r6,0; li r5,0;
+// li r4,0; bl fn_828036E8` == GotoScreenImpl(nullptr,false,false)).  In that
+// body the instruction after `bl fn_82802FA8` (CancelTransition) is `stb r28,
+// 0x14(r30)` == `mWentBack = b2` -- there is NO mPushedScreens iterator setup
+// (no lwz 0x18/0x1c(r30)) and NO call to UIScreen::SharesPanels, whose ONLY
+// caller in the entire tree is this site.  src/macros.h force-defines
+// MILO_DEBUG tree-wide, which switched this rb3-Wii dev-build check on; gate it
+// on HX_NATIVE so the native port keeps the real check.  (The MILO_FAIL format
+// string is NOT evidence either way: the retail comma form discards the literal,
+// so both hypotheses predict it is absent from .rdata.)
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         // Verify that the new screen doesn't share panels with any pushed screens
         // (panels should be unique per screen to avoid resource conflicts)
         if (scr) {
@@ -471,7 +482,14 @@ void UIManager::GotoScreenImpl(UIScreen *scr, bool b1, bool b2) {
             scr->LoadPanels();
         }
 
-#ifdef MILO_DEBUG
+// Retail RB3-360 EXCLUDES this too: in fn_828036E8 the Exit/LoadPanels `bctrl`
+// falls straight through to the UIScreenChangeMsg dtor at .L_828037F0 and
+// returns -- no mTransitionScreen test and no Timer::Restart.  This is
+// corroborated by UI.h, where mOverlay/mLoadTimer are already stripped from the
+// UIManager layout (RB3_UI_DEBUG_MEMBERS, verified against retail ctor
+// 0x827DF040), so on the match build they resolve to the file-scope fallback
+// statics above rather than to real members.  Gate on HX_NATIVE.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         // Start tracking load time for the new screen
         if (mTransitionScreen) {
             if (mOverlay) mOverlay->CurrentLine() = gNullStr;

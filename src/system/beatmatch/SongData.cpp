@@ -162,7 +162,23 @@ void SongData::Load(
     std::vector<MidiReceiver *> &midircvrs,
     bool bb
 ) {
-#ifdef MILO_DEBUG
+// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out.  Note the
+// guard is NOT inert even though MILO_LOG strips to `((void)(...))` in the match
+// build: DataVariable(...) is a real out-of-line call and its Symbol literal is
+// interned, so the probe survives macro stripping.  Two independent instruments
+// agree it is absent from retail:
+//   1. asm -- target fn_82779420 opens `stw r6,0x14(r3)` / `stw r5,0x1c(r3)` /
+//      `stb 0,0x170(r3)` then a vtable bctrl for GetHopoThreshold(); a call that
+//      may observe `this` cannot be sunk below those stores, so a DataVariable
+//      probe would have to appear first.  It does not.  objdiff mismatch [4] is
+//      literally target `li r29,0x0` vs our `lis r11, ??_C@..log_midi_file_load`.
+//   2. strings -- "log_midi_file_load" has 0 hits in retail band.exe, while 6 of 9
+//      DataVariable-class positive controls (auto_hopos, banddirector,
+//      band.play_mode, beatmatch_start_mbt, cheat_pad, boost) hit exactly once.
+// Verified: this flip takes SongData::Load 86.671% -> 100.000%.
+// src/macros.h force-defines MILO_DEBUG tree-wide; keep the real probe for the
+// native build, compile it out for the matching build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (DataVariable("log_midi_file_load").Int()) {
         MILO_LOG("Loading MIDI file %s\n", midifile);
     }

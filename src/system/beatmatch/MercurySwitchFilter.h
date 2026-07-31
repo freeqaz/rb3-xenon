@@ -38,7 +38,19 @@ public:
                 mState = true;
         } else if (mAccum < mOffThreshold)
             mState = false;
-#ifdef MILO_DEBUG
+// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out.  Retail's
+// LowPassMercurySwitchFilter::Poll is target fn_8279E720 (0x8279E720, size 0xD8),
+// identified by exact field offsets: 0x14=mLastPoll, 0x4=mSensitivity,
+// 0x18=mAccum, 0x10=mState (byte), 0x8/0xc=mOn/mOffThreshold, with the
+// `for (; fvar1 > 0; fvar1 -= 17.0f)` accumulator loop at .L_8279E794 and the
+// hysteresis block ending at .L_8279E7E8 -> `lbz r3,0x10(r11)` /
+// `stfs f1,0x14(r11)` / `blr`.  That function contains ZERO `bl` instructions and
+// has no stack frame -- it is a pure leaf.  An overlay emission needs a virtual
+// Showing() call plus a varargs MakeString plus operator<<, which is structurally
+// impossible in a frameless leaf.  Retail excludes it.
+// CORRECTNESS-ONLY: fn_8279E720 is anonymous in target_symbol_map.json so it
+// cannot pair; measured metric-inert.  Keep the overlay for the native build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (gGuitarOverlay->Showing()) {
             *gGuitarOverlay
                 << MakeString("    raw %4.2f avg %4.2f out %d\n", f2, mAccum, mState);
@@ -76,11 +88,21 @@ public:
         if (mNumFrames >= mNumFramesThreshold)
             mLastOn = f1;
         bool asdf = f1 - mLastOn < mWindow;
+// This sibling overlay was left UNGUARDED, but retail excludes it just as it
+// excludes the LowPass one above.  Retail's AnySignMercurySwitchFilter::Poll is
+// target fn_8279E930 (falling through into fn_8279E948; dtk splits them at a
+// branch target), identified by exact field offsets: 0x14=mThreshold,
+// 0xc=mNumFrames, 0x10=mNumFramesThreshold, 0x8=mLastOn, 0x4=mWindow.  Like its
+// sibling it contains ZERO `bl` instructions and no stack frame -- a pure leaf,
+// which cannot host a virtual Showing() call plus varargs MakeString plus
+// operator<<.  Guarded to match, kept live for the native build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (gGuitarOverlay && gGuitarOverlay->Showing()) {
             *gGuitarOverlay << MakeString(
                 " val %4.2f    frames %4d   ->   %d\n", f2, mNumFrames, asdf
             );
         }
+#endif
         return asdf;
     }
 

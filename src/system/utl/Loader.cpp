@@ -439,7 +439,14 @@ void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
 #endif
         mCurrentPeriod = 1e+30f;
         if (ldr2 && ldr2 == mLoading.front()) {
-#ifdef MILO_DEBUG
+// Retail RB3-360 EXCLUDES this.  Retail's LoadMgr::PollUntilLoaded is
+// fn_827BF608 (identified map-independently: ForceGetLoader fn_827BFEC0 does
+// `mr r3, TheLoadMgr; li r5,0; mr r4, gotten; bl fn_827BF608`).  In that whole
+// 0xF8-byte body the second parameter ldr2 (r5) is NEVER READ -- r5 is only
+// reused later as a scratch arg to pop_front.  ldr2 is used ONLY inside this
+// guard, so a provably-dead ldr2 is exactly what excluding the guard predicts
+// (and is impossible if retail included it).  Gate on HX_NATIVE.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             MILO_FAIL(
                 "PollUntilLoaded circular dependency %s on %s",
                 ldr2->DebugText(),

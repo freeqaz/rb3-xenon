@@ -1,13 +1,21 @@
 #include "meta/StreamPlayer.h"
 #include "obj/Data.h"
 #include "obj/Object.h"
-// Retail compiled this TU's message Handle WITHOUT the MILO_DEBUG MessageTimer
+// Retail compiled this TU's message Handle WITHOUT the MessageTimer
 // instrumentation: the target ?Handle@StreamPlayer@ goes straight from
 // `Symbol sym = _msg->Sym(1)` to the set_volume static-symbol compare (no Timer
-// construction, 0xD4 not 0x1BC). Object.h transitively defines MILO_DEBUG (via
-// macros.h) which forces ObjMacros.h's heavyweight BEGIN_HANDLERS; undef it
-// before ObjMacros.h so this TU gets the lean retail Handle.
-#undef MILO_DEBUG
+// construction, 0xD4 not 0x1BC).
+//
+// This used to be enforced with a TU-local `#undef MILO_DEBUG` here.  That
+// rationale is now DEAD: the timer arm of BEGIN_HANDLERS is gated on
+// `MILO_DEBUG && HX_NATIVE` in obj/ObjMacros.h and on MILO_MESSAGE_TIMERS in
+// obj/Object.h, so the lean retail Handle is what this TU gets either way.
+// The #undef's only surviving effect was to flip the inline OBJ_SET_TYPE arm for
+// the 5 classes declared after it (Sound, MsgSource, WaitSeq, FxSendPitchShift,
+// AudioDuckerTrigger) -- i.e. this TU emitted different inline virtual bodies than
+// the rest of the tree, an ODR violation.  Proven harmless *and* pointless by
+// compiling this TU both ways (lane CB-10/D): the two .objs differ in 2 bytes, the
+// COFF timestamp and the embedded probe filename -- 0 real bytes.  So: removed.
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
 #include "synth/Stream.h"

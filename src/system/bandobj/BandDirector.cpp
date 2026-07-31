@@ -507,11 +507,17 @@ void BandDirector::EnterVenue() {
                 if (mCurWorld) {
                     if (TheCrowdAudio)
                         TheCrowdAudio->SetBank(mCurWorld);
-#ifdef MILO_DEBUG
-                    if (TheLoadMgr.EditMode()) {
+                    // rb3-Wii dev-build guard: the editor-mode sphere sync is
+                    // exactly the TheLoadMgr.EditMode() check CB-7 centralized as
+                    // LOADMGR_EDITMODE (utl/Loader.h), but this site was
+                    // open-coded under a bare #ifdef MILO_DEBUG so that fix never
+                    // reached it -- an inconsistency inside this one file, which
+                    // already uses the corrected shape at lines 437 and 829.
+                    // Route it through the macro: false for the matching build,
+                    // real EditMode() for the native port.
+                    if (LOADMGR_EDITMODE) {
                         GetWorld()->SetSphere(mCurWorld->GetSphere());
                     }
-#endif
                     mCurWorld->Handle(setup_midi_parsers_msg, false);
                     ClearLighting();
                 }

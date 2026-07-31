@@ -98,7 +98,27 @@ void CharDriver::Enter() {
 void CharDriver::Exit() { RndPollable::Exit(); }
 
 void CharDriver::Highlight() {
-#ifdef MILO_DEBUG
+// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out, so retail's
+// CharDriver::Highlight has an EMPTY body.  Both callees of the guarded body are
+// provably absent from retail band.exe (three instruments, all with firing
+// positive controls):
+//   1. `.?AVCharDebug@@` (RTTI type-name; CharDebug is polymorphic --
+//      `: public RndOverlay::Callback`, virtual dtor + virtual UpdateOverlay, and
+//      /GR is ON) has 0 hits, while controls `.?AVCharDriver@@`,
+//      `.?AVCharEyes@@`, `.?AVRndOverlay@@` have 1 each.  No CharDebug class =>
+//      no TheCharDebug => no CharDeferHighlight().
+//   2. "char_debug" -- the DataRegisterFunc/RndOverlay::Find name registered by
+//      CharDebug::Init() -- has 0 hits.
+//   3. Display() needs CharClipDisplay, whose distinctive literals ("L: %.1f",
+//      "R: %.1f", "%.1f (%.2f)", "left.ikfoot", "right.ikfoot") and even the bare
+//      substring "ClipDisplay" all have 0 hits; controls in the same dir fire
+//      (bone_ 92, faceservo 4, CharHair 3, spotlight 33).  Display()'s only
+//      caller tree-wide is this line, so /Gy + /OPT:REF strips it.
+// This is a CORRECTNESS-ONLY fix: retail's Highlight is anonymous in
+// target_symbol_map.json, so it cannot pair and the flip is metric-inert (0
+// movement, confirmed by a tree-wide MILO_DEBUG-off control).  Keep the real
+// behaviour for the native build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (gCharHighlightY == -1.0f)
         CharDeferHighlight(this);
     else

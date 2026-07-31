@@ -118,7 +118,23 @@ void CharEyes::Exit() {
 }
 
 void CharEyes::Highlight() {
-#ifdef MILO_DEBUG
+// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out, so retail's
+// CharEyes::Highlight has an EMPTY body.  Evidence: every string literal that is
+// unique to this body -- "p blink!", "GENERATED", "focus = '%s' (looking at %s)",
+// "focus = '%s'", "interest = '%s'" -- has 0 hits in retail band.exe, while the
+// matched positive controls from the UNGUARDED overlay function in this very same
+// TU (CharEyes::UpdateOverlay: "Look(FOC) ", "Look(GEN) ", "Foc(NA) ", "Look(",
+// "Foc(") hit 1/1/1/3/2.  Same file, same overlay idiom, same string class --
+// so the instrument is not vacuous, the guarded body is simply not in retail.
+// This corroborates the independent layout proof already recorded in CharEyes.h
+// (retail lacks the MILO_DEBUG-only `Vector3 mDartOffset` member: SetFocusInterest
+// strict-100 puts mNeedRecalc at this+0xf4 and GenerateDartOffset puts mData at
+// this+0xfc).
+// CORRECTNESS-ONLY: retail's Highlight is anonymous in target_symbol_map.json so
+// it cannot pair; measured metric-inert (the feared ObjVector<EyeDesc> STL
+// de-instantiation did NOT materialise -- 0 key-set changes).  Keep the real
+// overlay for the native build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (GetHead()) {
         RndGraph *oneframe = RndGraph::GetOneFrame();
         RndTransformable *trans = 0;

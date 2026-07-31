@@ -1,11 +1,14 @@
-// Retail RB3-360 compiled this TU with MILO_DEBUG OFF: CreditsPanel::mCheatOn is a
-// MILO_DEBUG-only member (rb3-Wii gates it), so retail's layout lacks it (every own
-// member + the UIPanel 2nd-base subobject sit -4 vs a MILO_DEBUG build) and the
-// is_cheat_on / debug_toggle handlers drop out. macros.h (#pragma once) force-defines
-// MILO_DEBUG tree-wide; undef it here AFTER macros.h sets its include guard so the
-// transitive re-include inside CreditsPanel.h is a no-op and the member actually drops.
+// Retail RB3-360 compiled this TU with MILO_DEBUG OFF: mCheatOn and the
+// is_cheat_on / debug_toggle_autoscroll handlers are dev-build-only.
+//
+// This TU used to enforce that with a TU-local `#undef MILO_DEBUG`, but that only
+// worked *here* -- MetaPanel.cpp also includes CreditsPanel.h and saw a different,
+// 4-bytes-larger layout (see the ODR note on CreditsPanel.h's mCheatOn).  The guards
+// are now HX_NATIVE-gated in the header and below, which is uniform across every TU,
+// so the #undef is gone.  Verified by preprocessing this TU with and without the
+// #undef: the only differences were exactly these mCheatOn sites, so the HX_NATIVE
+// conversion leaves this TU's output unchanged while fixing MetaPanel.cpp's view.
 #include "macros.h"
-#undef MILO_DEBUG
 #include "CreditsPanel.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
@@ -39,12 +42,12 @@ CreditsPanel::~CreditsPanel() {}
 
 BEGIN_HANDLERS(CreditsPanel)
     HANDLE_ACTION(pause_panel, PausePanel(_msg->Int(2)))
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     HANDLE_EXPR(is_cheat_on, mCheatOn)
 #else
     HANDLE_EXPR(is_cheat_on, false)
 #endif
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     HANDLE_ACTION(debug_toggle_autoscroll, DebugToggleAutoScroll())
 #endif
     HANDLE_MESSAGE(ButtonDownMsg)
@@ -87,7 +90,7 @@ void CreditsPanel::Load() {
 
 void CreditsPanel::Enter() {
     UIPanel::Enter();
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     mCheatOn = false;
 #endif
     mPaused = false;
@@ -178,7 +181,7 @@ void CreditsPanel::PausePanel(bool b) {
     }
 }
 
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 void CreditsPanel::DebugToggleAutoScroll() {
     if (!mAutoScroll) {
         mList->SetSpeed(mSavedSpeed);

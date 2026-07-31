@@ -2011,6 +2011,37 @@ BEGIN_HANDLERS(BandCharacter)
     HANDLE(hide_categories, OnHideCategories)
     HANDLE(restore_categories, OnRestoreCategories)
     HANDLE_ACTION(game_over, GameOver())
+// ⚠ DO NOT "clean up" this bare #ifdef MILO_DEBUG -- it is a MISNAMED
+// PLACEHOLDER, not a stray dev-build guard, and deleting it costs -22 functions.
+// Measured (lane CB-10/C, isolated: only this arm changed, ObjMacros.h untouched):
+// gating it on HX_NATIVE drops BandCharacter::Handle 98.9% -> 95.3% normalized,
+// `delete` 7 -> 38 (target-only instructions we then LACK) and introduces a
+// structural frame delta of -0x10; 19 of its EH funclets flip off the parent
+// frame size.  So retail HAS an arm in this slot.
+//
+// But it is NOT this arm.  "toggle_interests_overlay" occurs 0 times in the
+// retail binary (orig/45410914/band.exe, ascii + utf16le + utf16be), while 28 of
+// the 28 other handler names in this block are present.  Decoding every .rdata
+// label that retail's BandCharacter::Handle (fn_8228B380) actually references,
+// in order, the arm at this position is:
+//     restore_categories        0x82013818
+//     game_over                 0x820118B8
+//     hack_fix_clips_pre_merge  0x820137FC   <-- this slot
+//     list_drum_venues          0x820137E8
+//     portrait_begin            0x820137D8
+// (0x820137FC falls inside the contiguous descending-address BandCharacter string
+// pool, so the position is corroborated by pool ordering, not just by the diff.)
+//
+// Our arm is inherited from the rb3-Wii DEV build and is structurally correct --
+// same 5-instruction Symbol-compare group, same stack slot, same 0x10 of frame --
+// but semantically wrong.  Normalized objdiff runs functionRelocDiffs=none, which
+// MASKS reloc targets, so the wrong Symbol name is invisible to the metric (the
+// documented "metric is blind to attribution" class).
+//
+// Correct fix = rename to hack_fix_clips_pre_merge + recover its handler body.
+// That name appears in NO oracle (not rb3-Wii, not DC3): it is RB3-360-retail
+// exclusive, so the body has to come from the target asm.  Until then this arm
+// stays, and the native port keeps the real rb3-Wii debug-overlay behaviour.
 #ifdef MILO_DEBUG
     HANDLE(toggle_interests_overlay, OnToggleInterestDebugOverlay)
 #endif
