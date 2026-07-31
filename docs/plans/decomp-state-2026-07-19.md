@@ -1,11 +1,42 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `683ee54d`, clean full rebuild on main 2026-07-31):
-41,386 strict-matched functions / honest proxy 39,898 / `matched_code_percent`
-35.700900** (honest = matched − masked_equal, per the BO-8 pricing rule;
-`build/45410914/report.json`). Denominator is the whole TU5 XEX
-(`total_functions` 69,367; `matched_code` 3,777,168 B; `masked_equal` 1,488;
+**Current (MEASURED at HEAD `23b5f4b1`, coordinator A/B leg on main 2026-07-31):
+41,409 strict-matched functions / honest proxy 39,922 / `matched_code_percent`
+35.768044** (honest = matched − masked_equal, per the BO-8 pricing rule).
+Denominator is the whole TU5 XEX (`total_functions` 69,367; `masked_equal` 1,487;
 `total_code` 10,580,036).
+
+> ## Wave CC (2026-07-31) — +23 matched / +24 honest / +0.067144 pp
+> From 41,386 / 39,898 / 35.700900 at `683ee54d`. **The ledger closes EXACTLY**
+> — unlike the previous wave, which left a 1-function residual.
+>
+> | commit | matched | honest | lane |
+> |---|---|---|---|
+> | `d459ce15` | +1 | +1 | CC-2 — 13 map-row corrections |
+> | `b451a369` | +14 | +14 | CC-4 — 18 anon names + 8 source fixes |
+> | `aa1ddc3e` | **−8** | **−8** | CC-3 — retire 16 FALSE pairings (deliberate) |
+> | `609e01ce` | 0 | 0 | CC-6 — anon_ns patcher + build silent-no-op |
+> | `23b5f4b1` | +16 | +17 | CC-7 — 16 game-code functions to true 100% |
+> | **sum** | **+23** | **+24** | matches the measured total to the digit |
+>
+> ★ **The headline understates the wave.** Three separate false-credit classes
+> were retired and two instruments that had been silently reporting zero were
+> repaired. Every landing was independently A/B'd by the coordinator off current
+> HEAD before commit; **two lanes' self-reported baselines were wrong** (CB-11
+> measured against a stale base, CC-7 read 41,400 where the commit measures
+> 41,393, corroborated twice). ⇒ **re-measure every lane headline off HEAD.**
+>
+> ⚠ **`masked_equal` moved 1,488 → 1,487 in CC-7 and no earlier lane claimed the
+> −21 recorded in the previous wave.** Honest outruns matched by exactly those
+> deltas. Still unexplained; whoever touches pricing should explain it rather
+> than inherit it.
+>
+> **Veins closed this wave (do not re-fund):** `MEM_OVERLOAD` (the "1,103 sites"
+> were ONE ICF fold-survivor symbol whose retail body is 4 bytes, `b MemFree`;
+> and the premise inverts — retail has 21 class-scoped deletes, we emit 389); the
+> fuzzy ≥95% anon pool (briefed as 1,084 rows, **measured as 119**, now
+> dispositioned); game-code anon naming (**structurally closed** —
+> `unified_id_rb3wii.json` is a dead index at 4.27% valid starts).
 
 > **2026-07-31 — from 41,218 / 39,709 / 35.245968 at `5524a135`: +168 matched,
 > +189 honest, +0.454932 pp**, over 13 commits.
