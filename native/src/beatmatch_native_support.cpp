@@ -1,11 +1,21 @@
 // rb3-xenon native — M3b/M4 beatmatch hit-detection support TU.
 //
-// As of M4 this TU provides ONE link-only piece: the LogFile stub + the
-// `TheBeatMatchOutput` global. TrackWatcherImpl.cpp references
-// TheBeatMatchOutput.Print inside `if (IsActive())` guards, but there is no
-// LogFile.cpp in-tree and no definition of the extern global. We define both
-// here, inactive, so the guarded prints are never taken and the engine's own
-// beatmatch judgments come purely through the BeatMatchSink.
+// As of M4 this TU provided the LogFile stub AND the `TheBeatMatchOutput`
+// global, because there was no LogFile.cpp in-tree.
+//
+// ⚠ That is no longer true. `src/system/utl/LogFile.cpp` now exists, and
+// CMakeLists.txt:48 globs `src/system/utl/*.cpp` into ENGINE_UTL — so the real
+// implementation is compiled in automatically and the stubs here became
+// DUPLICATE DEFINITIONS, breaking the native link (multiple definition of
+// LogFile::Reset/AdvanceFile/Print/ctor/dtor and `typeinfo for LogFile`).
+// Nothing announced the collision: adding a file to src/system/utl/ silently
+// changes this build, which is the cost of the glob.
+//
+// So only the GLOBAL is defined here now. Behaviour is unchanged: the real
+// ctor initialises `mActive(0)` exactly as the stub did, so `IsActive()` is
+// false and every `if (TheBeatMatchOutput.IsActive())` guard in
+// TrackWatcherImpl.cpp is still skipped — the engine's beatmatch judgments
+// continue to come purely through the BeatMatchSink.
 //
 // The minimal SongData stand-in that used to live here is GONE: rb3-hit now
 // links the REAL src/system/beatmatch/SongData.cpp (see native/CMakeLists.txt
@@ -15,14 +25,8 @@
 
 #include "utl/LogFile.h"
 
-// ----------------------------------------------------------- LogFile shim ----
-LogFile::LogFile(const char *pattern)
-    : mFilePattern(pattern), mSerialNumber(0), mDirty(false), mFile(0), mActive(false) {}
-LogFile::~LogFile() {}
-void LogFile::Print(const char *) {}
-void LogFile::Reset() {}
-void LogFile::AdvanceFile() {}
-
-// The global the beatmatch code logs through; kept inactive (IsActive()==false)
-// so every `if (TheBeatMatchOutput.IsActive())` branch is skipped.
+// The global the beatmatch code logs through; inactive (IsActive()==false via
+// the real ctor's mActive(0)) so every `if (TheBeatMatchOutput.IsActive())`
+// branch is skipped. The methods come from src/system/utl/LogFile.cpp — do NOT
+// re-stub them here, that is what broke the link.
 LogFile TheBeatMatchOutput("beatmatch");
