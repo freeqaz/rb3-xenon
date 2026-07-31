@@ -1,5 +1,13 @@
+// This TU used to carry a TU-local `#undef MILO_DEBUG` to strip GamePanel's debug
+// HUD members.  That is no longer what strips them -- GamePanel.h gates them on
+// RB3_GAMEPANEL_DEBUG_MEMBERS, and this TU has no `#ifdef MILO_DEBUG` of its own.
+// Measured (preprocess A/B, lane CB-10/D): removing the #undef changed 134 lines,
+// ALL of them inline OBJ_SET_TYPE bodies (67 classes) and 0 non-SetType lines --
+// and those two OBJ_SET_TYPE arms compile byte-identically (proven separately: the
+// only textual difference is a format-string literal that never reaches .rdata).
+// So the #undef was dead weight that merely made this TU's inline virtuals differ
+// from every other TU's (an ODR violation with no upside).  Removed.
 #include "macros.h"
-#undef MILO_DEBUG
 #include "game/GamePanel.h"
 #include "game/PresenceMgr.h"
 #include "GamePanel.h"

@@ -1,5 +1,12 @@
+// Retail RB3-360 compiled this TU with MILO_DEBUG OFF (the tube-plate diagnostics
+// below are dev-build instrumentation).  This used to be enforced with a TU-local
+// `#undef MILO_DEBUG`, which is fragile: it silently reshapes every macro in every
+// header included after it (measured: 67 classes' inline OBJ_SET_TYPE bodies), so
+// this TU disagreed with the rest of the tree.  The two diagnostic blocks are now
+// HX_NATIVE-gated directly, which is uniform tree-wide, so the #undef is gone.
+// Verified by preprocessing with and without it: the only non-OBJ_SET_TYPE
+// differences were exactly those two blocks.
 #include "macros.h"
-#undef MILO_DEBUG
 #include "bandtrack/VocalTrack.h"
 #include "GraphicsUtl.h"
 #include "VocalStyle.h"
@@ -159,7 +166,7 @@ void VocalTrack::UpdateTubePlates(
             cur->PollDeploy(fvar1);
         }
     }
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (deque.size() != 0) {
         if (deque.size() > maxPlatesQueued) {
             maxPlatesQueued = std::max<int>(maxPlatesQueued, deque.size());
@@ -293,7 +300,7 @@ TubePlate *VocalTrack::GetCurrentPlate(std::deque<TubePlate *> &plates, int i2) 
             return *it;
     }
     plates.push_back(new TubePlate(i2));
-#ifdef MILO_DEBUG
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     static Symbol leadDeployMat = "deploy_mask_lead.mat";
     static Symbol harmDeployMat = "deploy_mask_harmony.mat";
 

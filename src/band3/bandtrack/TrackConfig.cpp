@@ -59,14 +59,8 @@ const char *TrackConfig::GetSlotColor(int slot) const {
     Symbol s = TrackTypeToSym(mUser->GetTrackType());
     DataArray *syscfg = SystemConfig("track_graphics", "slot_colors", s);
     int i = slot;
-#ifdef MILO_DEBUG
-    bool b = (mUser->GetTrackType() == kTrackDrum);
-    if (b && mLefty && i != 0)
-        i = mMaxSlots - i;
-#else
     if (IsDrumTrack() && UseLeftyGems() && i != 0)
         i = mMaxSlots - i;
-#endif
     return syscfg->Str(i + 1);
 }
 
