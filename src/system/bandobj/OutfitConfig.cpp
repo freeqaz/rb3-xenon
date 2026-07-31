@@ -1028,16 +1028,35 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
     for (ObjVector<MatSwap>::iterator it = mMats.begin(); it != mMats.end(); ++it) {
         if (!it->mResourceMat)
             continue;
-        MemDoTempAllocations m;
-        const ObjRef &refs = it->mResourceMat->Refs();
-        for (ObjRef::iterator rit = refs.begin(); rit != refs.end();) {
-            ObjRef *cur = rit;
+        // Do NOT cache Refs() in a local -- retail re-derives the end sentinel
+        // from mResourceMat every iteration (`lwz r11,0x14(rIT); addi r11,r11,0x20`).
+        // Caching it burns an extra callee-saved reg (__savegprlr_22 vs _23).
+        for (ObjRef::iterator rit = it->mResourceMat->Refs().begin();
+             rit != it->mResourceMat->Refs().end();) {
+            // X360: capture the ring-ref (ObjRefNode::refPtr@8) BEFORE advancing.
+            // Retail loads refPtr then next: `lwz r29,0x8(r28); lwz r28,0x0(r28)`.
+            ObjRefOwner *cur = RefPtrOf(rit);
             ++rit;
-            RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(cur)->RefOwner());
+            RndMesh *mesh = dynamic_cast<RndMesh *>(cur->RefOwner());
             if (mesh) {
                 if (allocTempMats) {
-                    cur->Replace(it->mMat);
+                    // ObjRef::Replace(Hmx::Object*) is a NON-virtual stub off
+                    // HX_NATIVE (OBJREF_VIRTUAL is empty) -- it inlines to
+                    // nothing, so the whole `if (allocTempMats)` gets deleted.
+                    // Retail dispatches ObjRefOwner::Replace (vtable slot +8)
+                    // with the outgoing object as `from`:
+                    //   lwz r11,0(r29); mr r3,r29; lwz r5,0x8(r31)
+                    //   lwz r4,0x14(r31); lwz r11,0x8(r11); mtctr; bctrl
+                    cur->Replace(
+                        reinterpret_cast<ObjRef *>((RndMat *)it->mResourceMat),
+                        it->mMat
+                    );
                 }
+                // NOTE: retail copies the 8-byte MatShaderOptions with a single
+                // ld/std pair; we emit 2x lwz/stw because our MatShaderOptions
+                // (u32 union + bool) has alignment 4, not 8. Fixing that is a
+                // struct-definition change affecting every material user -- out
+                // of scope here, and it is the residual ~14 mismatches.
                 it->mMat->SetShaderOpts(GetDefaultMatShaderOpts(mesh, it->mMat));
                 list.push_back(it->mMat);
             }
