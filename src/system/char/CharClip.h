@@ -196,7 +196,11 @@ public:
     const std::vector<BeatEvent> &BeatEvents() const { return mBeatEvents; }
     int NumBeatEvents() { return mBeatEvents.size(); }
     RndAnimatable *SyncAnim() const { return mSyncAnim; }
-    int NumBlendSamples() const { return mBlendSamples.size(); }
+    /** RB3 (class rev 0x13) predates the blend-sample vector, which DC3 added at
+     *  rev 0x15 -- see CharClip::Load. The storage does not exist in retail's
+     *  CharClip (sizeof 0x174), so this is always 0. Kept so the DC3-only
+     *  hamobj callers still compile with their paths correctly inert. */
+    int NumBlendSamples() const { return 0; }
     void SetPlayFlags(int);
     void SetDefaultBlend(int);
     void SetDefaultLoop(int);
@@ -242,7 +246,9 @@ public:
         mask = mask & 0xffff09ff | alignFlag;
     }
 
-    int DifficultyMask() const { return unk198; }
+    /** DC3 added this at class rev 0x16; RB3 is rev 0x13, so the member does not
+     *  exist in retail's layout. Always 0 (its DC3 ctor init value). */
+    int DifficultyMask() const { return 0; }
 
     friend class CharClipDriver;
 
@@ -285,6 +291,36 @@ protected:
     CharBonesSamples mOne; // 0xec
     FacingSet mFacing; // 0x158
     std::vector<CharBones::Bone> mZeros; // 0x168
-    std::vector<std::map<int, float> > mBlendSamples; // 0x174
-    int unk198; // 0x180
 };
+
+// ---------------------------------------------------------------------------
+// SCAFFOLD -- NOT believed to be retail CharClip source. Read before removing.
+//
+// Retail's .text genuinely contains std::vector<std::map<int,float> > machinery
+// (_M_clear / _M_erase / resize / operator= / the _Rb_tree + node-allocator
+// helpers). Until this commit our tree obtained those bodies as a side effect of
+// CharClip::mBlendSamples, which implicitly instantiated them in every TU that
+// included this header. mBlendSamples is a DC3-era member that retail's CharClip
+// does not have (retail sizeof == 0x174; see CharClip::NewObject), so removing it
+// is correct -- but it also removed the tree's ONLY donor for those template
+// bodies, costing 20 real byte-identical matches across 6 units.
+//
+// RB3's true donor TU is unidentified: `std::vector<std::map<int,float> >` occurs
+// nowhere else in this tree nor anywhere in the rb3-Wii oracle (plain
+// std::map<int,float> does -- BandList, VocalTrackDir, SongData -- but not the
+// vector-of-map). This explicit instantiation parks the bodies here, reproducing
+// the include-graph distribution the member used to provide, so the correct
+// layout can land without a net loss. Delete it as soon as the real donor TU is
+// identified and ported.
+//
+// The two extra instantiations below close the part of that 20-match hole the
+// vector<map> line alone does not reach: the free serializer
+// operator<<(BinStream&, map<int,float>) (BinStream.h) and map insert_unique
+// were previously implicitly instantiated by mBlendSamples users (retail's
+// linker parked their COMDATs in Font and Rot); neither is touched by the
+// vector<map> machinery. Delete together with the line above once the real
+// donor TU is found.
+// ---------------------------------------------------------------------------
+template class std::vector<std::map<int, float> >;
+template class std::map<int, float>;
+template BinStream &operator<<(BinStream &, const std::map<int, float> &);

@@ -130,30 +130,39 @@ public:
     NEW_OBJ(CustomizePanel);
     static void Init() { REGISTER_OBJ_FACTORY(CustomizePanel); }
 
-    CustomizeState mCustomizeState; // 0x3c
-    CustomizeState mPendingState; // 0x40
-    CustomizeState mPatchMenuReturnState; // 0x44
-    std::map<int, UIComponent *> mFocusComponents; // 0x48
-    ClosetMgr *mClosetMgr; // 0x60
-    LocalBandUser *mUser; // 0x64
-    BandProfile *mProfile; // 0x68
-    CharData *mCharData; // 0x6c
-    BandCharDesc *mPreviewDesc; // 0x70
-    NewAssetProvider *mNewAssetProvider; // 0x74
-    CurrentOutfitProvider *mCurrentOutfitProvider; // 0x78
-    AssetProvider *mAssetProvider; // 0x7c
-    AssetProvider *mPremiumAssetProvider; // 0x80
-    MakeupProvider *mMakeupProvider; // 0x84
-    InstrumentFinishProvider *mInstrumentFinishProvider; // 0x88
-    AssetBoutique mCurrentBoutique; // 0x8c
-    Symbol unk90; // 0x90
-    int mCurrentMakeupIndex; // 0x94
-    bool mUnlockedFacePaint; // 0x98
-    bool mUnlockedTattoos; // 0x99
-    bool mRefreshingContent; // 0x9a
-    bool mWaitingToLeave; // 0x9b
-    BandCharDesc::Patch::Category mPatchCategory; // 0x9c
-    String mPatchName; // 0xa0
+    CustomizeState mCustomizeState; // 0x40
+    CustomizeState mPendingState; // 0x44
+    CustomizeState mPatchMenuReturnState; // 0x48
+    std::map<int, UIComponent *> mFocusComponents; // 0x4c
+    // Retail places mClosetMgr at 0x68 and mProfile at 0x70, i.e. 4 bytes past
+    // where an 0x18-sized std::map would leave them.  This TU used to buy that
+    // +4 with /DRB3_MAP_0x1C, but that flag fattens *every* map in the TU --
+    // including BandProfile::mLessonCompletions, which pushed
+    // BandProfile::mProfileAssets to 0x7c3c when retail has it at 0x7c38
+    // (HasNewAssets' addi).  Carrying the word here instead is TU-honest: it
+    // moves only CustomizePanel's own members and leaves BandProfile at its
+    // retail layout.
+    int unk64; // 0x64
+    ClosetMgr *mClosetMgr; // 0x68
+    LocalBandUser *mUser; // 0x6c
+    BandProfile *mProfile; // 0x70
+    CharData *mCharData; // 0x74
+    BandCharDesc *mPreviewDesc; // 0x78
+    NewAssetProvider *mNewAssetProvider; // 0x7c
+    CurrentOutfitProvider *mCurrentOutfitProvider; // 0x80
+    AssetProvider *mAssetProvider; // 0x84
+    AssetProvider *mPremiumAssetProvider; // 0x88
+    MakeupProvider *mMakeupProvider; // 0x8c
+    InstrumentFinishProvider *mInstrumentFinishProvider; // 0x90
+    AssetBoutique mCurrentBoutique; // 0x94
+    Symbol unk90; // 0x98
+    int mCurrentMakeupIndex; // 0x9c
+    bool mUnlockedFacePaint; // 0xa0
+    bool mUnlockedTattoos; // 0xa1
+    bool mRefreshingContent; // 0xa2
+    bool mWaitingToLeave; // 0xa3
+    BandCharDesc::Patch::Category mPatchCategory; // 0xa4
+    String mPatchName; // 0xa8
     // RB3-360: no trailing mShowAssetTokens — retail members end after
     // mPatchName (RTTI: vtordisp 0xB4, vbase Hmx::Object at 0xB8). The
     // Wii-dev-only bool pushed the vbase to 0xBC and biased every

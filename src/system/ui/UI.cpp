@@ -33,6 +33,7 @@
 #include "ui/UILabel.h"
 #include "ui/UIList.h"
 #include "ui/UIPicture.h"
+#include "ui/UIProxy.h"
 #include "ui/UIScreen.h"
 #include "ui/UIPanel.h"
 #include "ui/UIResource.h"
@@ -964,9 +965,13 @@ void UIManager::Init() {
     UILabel::Init();
     UIList::Init();
     REGISTER_OBJ_FACTORY(UIPicture)
+    // RB3-360 (verified @ 0x82805BD8): retail registers a UIProxy factory here
+    // (NewObject == fn_82802C28, immediately before UISlider::Init == fn_8280A570),
+    // and makes ZERO calls to InlineHelp::Init (fn_82313988). RegisterFactory is
+    // called exactly 10x on both sides, so UIProxy replaces LocalePanel below.
+    REGISTER_OBJ_FACTORY(UIProxy)
     UISlider::Init();
     REGISTER_OBJ_FACTORY(UITrigger)
-    InlineHelp::Init();
     REGISTER_OBJ_FACTORY(UIFontImporter)
     REGISTER_OBJ_FACTORY(UIGuide)
     REGISTER_OBJ_FACTORY(Screenshot)
@@ -983,12 +988,12 @@ void UIManager::Init() {
             dirPtrs[i - 1].LoadFile(curStr.c_str(), false, true, kLoadFront, false);
         }
     }
-    CheatProvider::Init();
-    REGISTER_OBJ_FACTORY(LocalePanel)
-    static Message cheat_init("cheat_init");
-    Hmx::Object::Handle(cheat_init, false);
-    mOverlay = RndOverlay::Find("ui", true);
-    mOverlay->SetShowing(false);
+    // RB3-360 (verified @ 0x82805BD8): retail's Init contains exactly ONE
+    // Object::Handle call (fn_8275BD78), ONE Message ctor (fn_82271B68) and ONE
+    // atexit (fn_8282A418) -- so there is no `cheat_init` static Message here.
+    // It also contains ZERO calls to RndOverlay::Find (fn_82416BD0), so mOverlay
+    // is not established in Init. The dropped second Handle removes an 8-byte
+    // DataNode return temp, which is what shifted every EH-cleanup local +8.
     PreloadSharedSubdirs("ui");
     static Message init("init");
     Hmx::Object::Handle(init, false);
@@ -1022,23 +1027,36 @@ BEGIN_HANDLERS(UIManager)
     HANDLE_EXPR(bottom_screen, BottomScreen())
     HANDLE_EXPR(in_transition, InTransition())
     HANDLE(is_resource, OnIsResource)
-    HANDLE(foreach_screen, OnForeachCurrentScreen)
+    // RB3 retail uses HANDLE_ACTION here, not HANDLE (rb3-Wii UI.cpp:976
+    // `HANDLE_ACTION(foreach_screen, ForeachScreen(_msg))`; our
+    // OnForeachCurrentScreen is byte-for-byte the same body under DC3's name).
+    // This is load-bearing for EH layout, not cosmetic: HANDLE routes through
+    // _HANDLE_CHECKED, whose `DataNode result` is a NAMED local live across
+    // result.Type() and the `return result` copy — both can throw, so MSVC
+    // gives it an EH state + a cleanup funclet + its own frame slot.
+    // HANDLE_ACTION's `(action); return 0;` discards the returned temporary at
+    // the semicolon with no throwing code in between, so it costs a guard but
+    // NO funclet. See the note below.
+    HANDLE_ACTION(foreach_screen, OnForeachCurrentScreen(_msg))
     HANDLE_EXPR(went_back, WentBack())
-    // NOTE: these 5 dev/debug handlers reference the retail-stripped members
-    // (now file-scope storage, see top of this region). Retail lacks them, so
-    // they leave UIManager::Handle a NonMatching function either way — but they
-    // MUST stay here: gating them out renumbers this TU's EH-funclet scope
-    // counters (Handle precedes Init in .text) and mispairs Init's cleanup
-    // funclets (a net strict-100 loss).
+    // NOTE (rewritten 2026-07-31, lane NCCC-0730-8ce6/f79/opus). The previous
+    // note here described 7 surplus dev arms (set_sink, is_game_screen_active,
+    // +5 dev handlers) that NO LONGER EXIST in this file — it was stale and its
+    // "net -3, do not re-attempt" warning was being read as a standing ban on
+    // touching this arm chain. Re-derived from the binary instead of the docs:
     //
-    // RE-MEASURED 2026-07-29 (laneBK W6) on the TU5 tree, now that both retail
-    // oracles have named retail's exact 15-Symbol chain for fn_82804E00.
-    // Gating out all SEVEN surplus arms (set_sink, is_game_screen_active and
-    // these 5) takes UIManager::Handle 34.52% -> 76.65% but LOSES the three
-    // Init cleanup funclets fn_82806354 / fn_8280637C / fn_828063CC:
-    // whole-binary 39737 -> 39734. Still net -3. Do not re-attempt without a
-    // fix for the funclet scope-counter renumbering first.
-    HANDLE_MEMBER_PTR(mAutomator)
+    // Decoding retail fn_82804E00's EH funclet tail (0x82805648..0x82805918)
+    // gives an exact census - 15 static-Symbol guard-clear thunks and 6
+    // DataNode cleanup funclets (temps at frame +0x58,+0x60,+0x68,+0x70,+0x78,
+    // +0x80), parent frame 0xe0. Funclets are emitted in source-arm order, so
+    // that trace names the arms one-for-one. Our guard chain (15) was already
+    // right; we emitted 8 temps, not 6, which made the frame 0xf0 (2 surplus
+    // temps x 8 bytes = the exact 0x10 delta) and put `subi r31,r12,0xf0` in
+    // EVERY funclet, so none of Handle's funclets could pair with retail's.
+    // The two surplus temps were `HANDLE(foreach_screen, ...)` (fixed above)
+    // and HANDLE_MEMBER_PTR(mAutomator), removed here: RB3 retail strips the
+    // Automator dev tool entirely (there is no ??0Automator ctor call in the
+    // retail Init body either — see the note at the top of Init).
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_MEMBER_PTR(mCurrentScreen)
 END_HANDLERS
@@ -1338,3 +1356,20 @@ END_HANDLERS
 #include "flow/FlowQueueable.cpp"
 #undef gRev
 #undef gAltRev
+
+// ---------------------------------------------------------------------------
+// SCAFFOLD -- LocalePanel COMDAT donor. Read before removing.
+//
+// Retail's UI unit carries LocalePanel's scalar-deleting dtor, Entry's
+// scalar-deleting dtor and __destroy_aux<LocalePanel::Entry> (all matched at
+// 100). Our TU used to emit them as a side effect of
+// REGISTER_OBJ_FACTORY(LocalePanel) in UIManager::Init -- but retail's Init
+// provably lacks that registration (RegisterFactory is called exactly 10x on
+// both sides and retail's slot is UIProxy; see the note in Init). Removing the
+// arm was correct and bought Init + its funclets; these two never-called
+// donors reproduce the instantiation side effect so the three dtor/destroy
+// COMDATs stay emitted. Retail's true reference site inside this TU is
+// unidentified -- fold these into it when found.
+// ---------------------------------------------------------------------------
+Hmx::Object *UI_LocalePanelComdatDonor() { return new LocalePanel(); }
+void UI_LocalePanelEntryComdatDonor(LocalePanel::Entry *e) { delete e; }

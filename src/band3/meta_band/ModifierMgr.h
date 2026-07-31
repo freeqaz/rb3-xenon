@@ -1,5 +1,6 @@
 #pragma once
 #include "obj/Object.h"
+#include "obj/Msg.h"
 #include "ui/UIListProvider.h"
 #include "meta/FixedSizeSaveableStream.h"
 
@@ -20,7 +21,17 @@ public:
     bool mDefaultEnabled; // 0x4
 };
 
-class ModifierMgr : public Hmx::Object, public UIListProvider {
+// Retail X360 layout, read directly out of the ModifierMgr ctor at 0x82589C48:
+//   0x00 UIListProvider vfptr
+//   0x04 MsgSource       (carries the vbptr; ctor ??0MsgSource@@QAA@XZ called on this+4)
+//   0x1c mModifiers      (3-word vector, zeroed at 0x1c/0x20/0x24)
+//   0x28 mModifiersList  (3-word vector, zeroed at 0x28/0x2c/0x30)
+//   0x34 vtordisp
+//   0x38 Hmx::Object     VIRTUAL base (??0Object@Hmx@@QAA@XZ called on this+0x38
+//                        under the hidden vbase-ctor flag `cmplwi cr6, r4, 0`)
+// i.e. Hmx::Object is reached virtually *through MsgSource*, not as a direct
+// first base -- which is why mModifiers sits at 0x1c and not 0x2c.
+class ModifierMgr : public UIListProvider, public MsgSource {
 public:
     ModifierMgr();
     virtual ~ModifierMgr();

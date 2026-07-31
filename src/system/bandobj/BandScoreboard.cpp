@@ -1,3 +1,4 @@
+#define RB3_TU_OBJPTR_OUTOFLINE_DTOR
 // Ported from rb3-Wii src/system/bandobj/BandScoreboard.cpp (MWCC -> MSVC X360).
 #include "bandobj/BandScoreboard.h"
 #include "rndobj/PropAnim.h"

@@ -230,7 +230,7 @@ void PatchPanel::CopyFromPatch(const PatchDir *dir) { mPatch->Copy(dir, kCopySha
 void PatchPanel::CopyToPatch(PatchDir *dir) const {
     dir->Copy(mPatch, kCopyShallow);
     RndTexRenderer *tex = mDir->Find<RndTexRenderer>("patch.rndtex", true);
-    dir->CacheRenderedTex(tex->GetOutputTexture(), false);
+    dir->CacheRenderedTex(tex->GetOutputTexture(), true);
 }
 
 void PatchPanel::SetBaseSize(float baseX, float baseY) {

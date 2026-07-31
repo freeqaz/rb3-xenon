@@ -185,7 +185,6 @@ void FlowAnimate::Execute(QueueState state) {
     FLOW_LOG("Execute: state = %i\n", state);
     if (IsRunning()) {
         if (mAnimTask && kIgnore == (int)state) {
-            mAnimTask->mListener = NULL;
             if (mStopMode != kReleaseAndContinue) {
                 AnimTask *task = mAnimTask;
                 if (task) {
@@ -299,7 +298,6 @@ void FlowAnimate::OnAnimEvent(Symbol sym) {
 
     if (sym == sEnded) {
         if (mAnimTask) {
-            mAnimTask->mListener = NULL;
         }
         mAnimTask = nullptr;
         if (mRunningNodes.empty() && !mImmediateRelease) {
@@ -328,7 +326,6 @@ void FlowAnimate::OnAnimEvent(Symbol sym) {
             }
             if (mStopDeferred && mAnimTask) {
                 AnimTask *task = mAnimTask;
-                task->mListener = NULL;
                 delete (AnimTask *)mAnimTask;
                 FLOW_LOG("Timed Release From Parent \n");
                 Timer timer;
@@ -347,10 +344,9 @@ void FlowAnimate::OnAnimEvent(Symbol sym) {
 void FlowAnimate::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mAnimTask)) {
         if (mAnimTask) {
-            AnimTask *task = mAnimTask;
-            if (task->mListener == (Hmx::Object *)this) {
-                OnAnimEvent("interrupted");
-            }
+            // No mListener state in RB3-era AnimTask; a FlowAnimate is always the
+            // listener of the task it owns, so this guard is unconditionally true.
+            OnAnimEvent("interrupted");
         }
         mAnimTask = nullptr;
         return;
@@ -409,7 +405,6 @@ void FlowAnimate::RequestStop() {
 void FlowAnimate::Deactivate(bool b) {
     FLOW_LOG("Deactivate\n");
     if (mAnimTask) {
-        mAnimTask->mListener = NULL;
         AnimTask *task = mAnimTask;
         mAnimTask = NULL;
         delete task;

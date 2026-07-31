@@ -163,18 +163,18 @@ void RndCam::UpdateLocal() {
     mInvLocalProjectXfm.m.Zero();
     mInvLocalProjectXfm.v.Zero();
     if (mYFov == 0) {
-        mInvLocalProjectXfm.m.z.x = -ratio;
+        mInvLocalProjectXfm.m.y.z = -ratio;
         mLocalProjectXfm.m.x.x = 1;
-        mLocalProjectXfm.v.x = -1.0f / ratio;
+        mLocalProjectXfm.m.z.y = -1.0f / ratio;
         mInvLocalProjectXfm.m.x.x = 1;
     } else {
         float thetan = tanf(mYFov * 0.5f);
-        mLocalProjectXfm.m.z.x = 1;
-        mInvLocalProjectXfm.v.x = 1;
-        mInvLocalProjectXfm.m.x.x = thetan / ratio;
-        mInvLocalProjectXfm.m.z.x = -thetan;
+        mLocalProjectXfm.m.y.z = 1;
+        mInvLocalProjectXfm.m.z.y = 1;
         mLocalProjectXfm.m.x.x = ratio / thetan;
-        mLocalProjectXfm.v.x = -1.0f / thetan;
+        mLocalProjectXfm.m.z.y = -1.0f / thetan;
+        mInvLocalProjectXfm.m.x.x = thetan / ratio;
+        mInvLocalProjectXfm.m.y.z = -thetan;
     }
     UpdatedWorldXfm();
     mAspect = TheRnd.GetAspect();

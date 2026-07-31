@@ -416,7 +416,7 @@ DataNode AccomplishmentPanel::Details_HandleButtonDownMsg(const ButtonDownMsg &m
         SetCareerState(kCareerStateGoal, true);
         HandleSoundBack(msg.GetUser());
         break;
-    case kAction_WiiHomeMenu:
+    case kAction_ShellOption:
         SetCareerState(kCareerStateGoal, true);
         HandleSoundBack(msg.GetUser());
         break;

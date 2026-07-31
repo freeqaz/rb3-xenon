@@ -1,6 +1,7 @@
 #pragma once
 #include "net/DingoSvr.h"
 #include "net/XLSPConnection.h"
+#include "os/Timer.h"
 #include "utl/JobMgr.h"
 #include "utl/Str.h"
 
@@ -54,6 +55,14 @@ protected:
     float mMsBetweenReconnDingo; // 0x174
     unsigned int mLeaderboardID; // 0x178
     unsigned int mLeaderboardScorePropID; // 0x17c
+    // Not present at these offsets in retail -- this unit is NonMatching /
+    // unpinned (config/45410914/objects.json), so exact layout below this
+    // point is not yet load-bearing. mReconnectTimer moved here from
+    // XLSPConnection (see net/XLSPConnection.h) because retail's
+    // XLSPConnection has no such member; DingoSvrXbox::Poll is its only
+    // consumer, so it owns the timer directly now.
+    Timer mReconnectTimer;
+    int mPrevXLSPState;
 };
 
 extern DingoSvrXbox gDingoSvrXbox;

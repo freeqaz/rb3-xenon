@@ -459,6 +459,42 @@ public:
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
 #endif
     ObjPtr(const ObjPtr &p);
+    // ---- PER-TU: user-DECLARED, never-defined destructor ------------------
+    // Purely a codegen lever, gated so it is inert for every TU that does not
+    // opt in (one TU today: bandobj/BandScoreboard.cpp). No layout/ABI change:
+    // ~ObjPtr is already virtual via ObjRefOwner, so the vtable is unchanged.
+    //
+    // WHY: cl 10224 packs two sequential destructible temporaries into ONE
+    // stack slot only when the temp's destructor is USER-DECLARED and its body
+    // is NOT visible in the TU. Measured directly on the compiler with /FAs --
+    // one function, two structurally identical loops, only ~Ptr varying:
+    //     ~Ptr();      declared, no body here  ->  $T1=80  $T2=80   PACKED
+    //     (implicit -- none declared)          ->  $T1=80  $T2=96
+    //     ~Ptr() {}    inline body             ->  $T1=80  $T2=96
+    // `#pragma auto_inline(off)` does NOT do it; `__declspec(noinline)` does.
+    // So the trigger is inline *candidacy* of the dtor, and an implicit dtor is
+    // always a candidate.
+    //
+    // The one consumer is BandScoreboard::SetupScore, whose two sequential
+    // push_back(ObjPtr<RndMesh>(...)) loops retail packs into a single frame
+    // slot 0x58 (giving a 0xc0 frame, and two byte-identical unwind funclets
+    // 0x822CF254 / 0x822CF27C that BOTH do `addi r3,r31,0x58`). Without this we
+    // emitted 0x58 + 0x68 and a 0xd0 frame -- 5 diff_arg mismatches, no source
+    // spelling of the function could reach it. Whole-binary A/B of this gate:
+    // matched 41267 -> 41268, masked_equal 1508 -> 1507 (honest +2), code
+    // 35.506874% -> 35.512127%, and EXACTLY one function changed.
+    //
+    // Deliberately never defined: the opted-in TU emits an external reference
+    // for ~ObjPtr (and its vtable slot). That is fine here -- this build
+    // compiles and objdiffs .obj files and never links the game -- but a TU
+    // that must LINK cannot use this macro without providing a definition.
+    //
+    // Do NOT un-gate this. A globally user-declared ~ObjPtr makes MSVC store
+    // ??_7ObjPtr@@6B@ before the inlined base ??1ObjRefConcrete call in every
+    // containing destructor (see the "NO user dtor" note below).
+#ifdef RB3_TU_OBJPTR_OUTOFLINE_DTOR
+    ~ObjPtr();
+#endif
     // NO user dtor: retail's ~ObjPtr is compiler-generated (implicit). A
     // user-declared empty dtor makes MSVC store ??_7ObjPtr@@6B@ before the
     // inlined base ??1ObjRefConcrete call in every containing dtor

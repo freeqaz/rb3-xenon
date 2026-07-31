@@ -127,9 +127,9 @@ void StoreMainPanel::Unload() {
         mCoverArtMats[i] = 0;
     }
     mNoneTex = 0;
-    mScrollAnim = 0;
     mLabel1 = 0;
     mLabel2 = 0;
+    mScrollAnim = 0;
     if (mConfigData) {
         mConfigData->Release();
         mConfigData = 0;

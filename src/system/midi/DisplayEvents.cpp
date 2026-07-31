@@ -11,6 +11,7 @@ float DisplayEvents(DataEventList *events, float f1, float f2) {
     while (min < events->Size() && events->Event(min).end < f2)
         min++;
     float f10 = -1.0f;
+    Hmx::Rect rect;
     float fsum = f2 + (float)TheRnd.Width() / 200.0f;
     while (min < events->Size() && events->Event(min).start < fsum) {
         DataEvent curEvent(events->Event(min));
@@ -23,9 +24,9 @@ float DisplayEvents(DataEventList *events, float f1, float f2) {
         if (min < events->Size() - 1) {
             MinEq(start150, ((events->Event(min + 1).start - f2) * 200.0f + 5.0f) - 1.0f);
         }
-        auto eventRect = Hmx::Rect(start14c, f1 + 2.0f, Max(1.0f, start150 - start14c), 12.0f);
+        rect.Set(start14c, f1 + 2.0f, Max(1.0f, start150 - start14c), 12.0f);
         TheRnd.DrawRect(
-            eventRect,
+            rect,
             Hmx::Color(0, 0, 1),
             0,
             0,
@@ -45,7 +46,7 @@ float DisplayEvents(DataEventList *events, float f1, float f2) {
         }
         min++;
     }
-    auto cursorRect = Hmx::Rect(5.0f, f9 - 2.0f, 1.0f, 14.0f);
-    TheRnd.DrawRect(cursorRect, Hmx::Color(1, 0, 0), 0, 0, 0);
+    rect.Set(5.0f, f9 - 2.0f, 1.0f, 14.0f);
+    TheRnd.DrawRect(rect, Hmx::Color(1, 0, 0), 0, 0, 0);
     return f9 + f10;
 }

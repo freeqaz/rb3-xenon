@@ -362,13 +362,13 @@ void BandProfile::SetUploadFriendsToken(int i) { unk6fb4 = i; }
 void BandProfile::SaveFixed(FixedSizeSaveableStream &fsss) const {
     MILO_ASSERT(!HasCheated(), 562);
     fsss << *mTourProgress;
-    SaveStdPtr(fsss, mCharacters, kMaxCharacters, TourChar::SaveSize(151));
+    SaveStdPtr(fsss, mCharacters, kMaxCharacters, TourChar::SaveSize(152));
     MILO_ASSERT(mPatches.size() == kMaxPatchesPerProfile, 572);
-    SaveStdPtr(fsss, mPatches, kMaxPatchesPerProfile, PatchDir::SaveSize(151));
+    SaveStdPtr(fsss, mPatches, kMaxPatchesPerProfile, PatchDir::SaveSize(152));
     fsss.EnableWriteEncryption();
     fsss << *mScores;
     fsss.DisableEncryption();
-    SaveStdPtr(fsss, mSavedSetlists, kMaxSavedSetlists, LocalSavedSetlist::SaveSize(151));
+    SaveStdPtr(fsss, mSavedSetlists, kMaxSavedSetlists, LocalSavedSetlist::SaveSize(152));
     SaveStd(fsss, mLessonCompletions, 1000, 8);
     SaveStd(fsss, mCampaignKeys, 20);
     SaveStd(fsss, unk88, 20);

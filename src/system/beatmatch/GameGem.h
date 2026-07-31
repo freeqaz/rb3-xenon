@@ -143,6 +143,17 @@ public:
     unsigned char unk10b1 : 1;
     unsigned char mRealGuitar : 1;
 
+    // 0x11 -- retail X360 writes this as a whole byte (`stb rX, 0x11`) at two
+    // independent sites (SongDB::DisableCodaGems, GemTrack::SetEnableSlot), so it
+    // sits between the two bitfield groups, NOT after mRootNote where the rb3-Wii
+    // dev header puts it (the Wii DEV build genuinely stores it at 0x18).
+    // Compiler-verified (/d1reportSingleClassLayout): the only offsets that move
+    // are 0x11..0x18 (the bitfield groups each slide +1, mRootNote absorbs the
+    // vacated 0x18); mFrets stays at 0x19 and the whole tail from 0x19 on --
+    // mRGChordID 0x20, mChordNameOverride 0x24, mImportantStrings 0x28 -- and
+    // sizeof 0x44 are all unchanged. Whole-binary A/B: +2 matched, 0 regressed.
+    unsigned char unk18; // 0x11 (mPlayers?)
+
     unsigned char mLoose : 1;
     unsigned char mShowChordNums : 1;
     unsigned char mLeftHandSlide : 1;
@@ -167,7 +178,6 @@ public:
     unsigned char mRGNoteTypeStr5 : 4;
 
     unsigned char mRootNote : 8;
-    unsigned char unk18 : 8; // mPlayers?
     char mFrets[6];
     int mRGChordID;
     Symbol mChordNameOverride;

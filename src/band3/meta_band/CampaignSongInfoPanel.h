@@ -45,7 +45,10 @@ public:
     NEW_OBJ(CampaignSongInfoPanel);
     static void Init() { REGISTER_OBJ_FACTORY(CampaignSongInfoPanel); }
 
-    int unk3c; // 0x3c - retail RB3-360 has 8 bytes here before mCampaignSourceProvider
+    CampaignSourceProvider *mCampaignSourceProvider; // 0x3c - Enter() stores here, not at +8 as the stale comment claimed
     int unk40; // 0x40
-    CampaignSourceProvider *mCampaignSourceProvider; // 0x44
+    // 0x44 - retail Unload() RELEASEs this slot (lwz/stw 0x44(this)), distinct
+    // from the 0x3c provider Enter() creates. Whatever populates it lives in a
+    // not-yet-ported function; typed as the same provider class for RELEASE.
+    CampaignSourceProvider *unk44; // 0x44
 };

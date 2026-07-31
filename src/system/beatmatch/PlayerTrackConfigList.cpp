@@ -47,7 +47,7 @@ int PlayerTrackConfigList::AddConfig(
         if (u < ConfigAt(i).mUserGuid)
             break;
     }
-    for (int j = mConfigs.size() - 1; i < j; j--) {
+    for (int j = mConfigs.size() - 1; j > i; j--) {
         mConfigs[j] = mConfigs[j - 1];
     }
     mConfigs[i] = ptc;

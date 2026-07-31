@@ -7,14 +7,19 @@
 void StreamChecksum::Begin() {
     if (mState == 1)
         End();
-    mSHA1.~CSHA1();
+    mSHA1.Reset();
     mState = 1;
 }
 
 void StreamChecksum::End() {
     if (mState == 0 || mState == 2)
         return;
-    mSHA1.Final();
+#if HX_NATIVE
+    mDigest = mSHA1.Final();
+#else
+    // retail: XeCryptShaFinal(&mSHA1, mDigest.digits, 20)
+    mSHA1.Final(mDigest.digits);
+#endif
     mState = 2;
 }
 
@@ -40,7 +45,9 @@ void StreamChecksum::Update(const unsigned char *data, unsigned int ui) {
 
 void StreamChecksum::GetHash(unsigned char *uc) {
     End();
-    mSHA1.CopyDigest(uc);
+    // retail inlines the copy here (Digest::Copy lives in SHA1.cpp, and /O1 with
+    // no LTCG cannot inline across TUs), so call memcpy directly.
+    memcpy(uc, mDigest.digits, 20);
 }
 
 bool StreamChecksumValidator::Begin(const char *file, bool b) {

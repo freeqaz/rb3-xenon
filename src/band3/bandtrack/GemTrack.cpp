@@ -974,7 +974,7 @@ void GemTrack::SetEnableSlot(int slot, bool enable) {
     float cutoff =
         1000.0f * (TheTaskMgr.Seconds(TaskMgr::kRealTime) + mTrackDir->ViewTimeSeconds());
     for (std::vector<GameGem>::iterator it = gems.begin(); it != gems.end(); ++it) {
-        if (slot == it->GetSlot() && it->mMs > cutoff) {
+        if (it->GetSlot() == slot && it->mMs > cutoff) {
             if (enable)
                 it->unk18 = 0;
             else

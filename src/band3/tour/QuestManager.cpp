@@ -130,7 +130,8 @@ bool QuestManager::IsQuestAvailable(
         }
     }
     if (s2 != "") {
-        if (pQuest->GetGroup() != s2) {
+        Symbol group = pQuest->GetGroup();
+        if (group != s2) {
             return false;
         }
     }

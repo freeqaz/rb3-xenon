@@ -17,7 +17,7 @@ DingoServer &TheServer = gDingoSvrXbox;
 DingoSvrXbox::DingoSvrXbox()
     : mXLSPState(0), mXUID(0), mDingoServiceId(0), mJobMgr(this), mJobState(0), mScoreXUID(0), mCareerScore(0),
       mSessionHandle(0), mMsBetweenReconnDingo(0), mLeaderboardID(-1),
-      mLeaderboardScorePropID(-1) {}
+      mLeaderboardScorePropID(-1), mPrevXLSPState(-1) {}
 
 BEGIN_HANDLERS(DingoSvrXbox)
     HANDLE_MESSAGE(DingoJobCompleteMsg)
@@ -174,10 +174,20 @@ void DingoSvrXbox::Poll() {
         break;
     }
     mXLSPConnection.Poll();
-    if (mXLSPConnection.GetState() == 4
-        && !(mXLSPConnection.mReconnectTimer.SplitMs() < mMsBetweenReconnDingo)) {
-        Disconnect();
+    int connState = mXLSPConnection.GetState();
+    if (connState == 4) {
+        // Edge-detect entry into state 4 to Restart() the timer -- this used
+        // to happen inside XLSPConnection::SetState itself (retail doesn't do
+        // that; see net/XLSPConnection.h), so it's reproduced here at the
+        // sole call site that cared about the elapsed time.
+        if (mPrevXLSPState != 4) {
+            mReconnectTimer.Restart();
+        }
+        if (!(mReconnectTimer.SplitMs() < mMsBetweenReconnDingo)) {
+            Disconnect();
+        }
     }
+    mPrevXLSPState = connState;
 }
 
 void DingoSvrXbox::DeleteSessionComplete(bool b1) { mJobState = 0; }

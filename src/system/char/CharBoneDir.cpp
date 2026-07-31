@@ -265,7 +265,12 @@ void CharBoneDir::SyncFilter() {
     }
     mFilterNames.sort();
     FOREACH (it, mFilterNames) {
-        MILO_LOG("%s\n", *it);
+        // Retail passes *it BY VALUE through MILO_LOG's varargs, forcing a
+        // String copy-ctor/dtor pair the compiler cannot elide. The comma-form
+        // MILO_LOG evaluates its args, so an explicit temporary reproduces it
+        // (a named local would re-materialize the address instead of reusing
+        // the ctor's `this` return in r3).
+        MILO_LOG("%s\n", String(*it));
     }
 }
 

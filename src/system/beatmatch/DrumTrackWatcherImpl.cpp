@@ -111,7 +111,7 @@ int DrumTrackWatcherImpl::NextGemAfter(int gem_id, bool timeout) {
             last_tick = tick;
             if (num_skips == 2) {
                 int next = gem_id + 1;
-                return std::min(next, mGemList->NumGems() - 1);
+                return std::min(mGemList->NumGems() - 1, next);
             }
         }
         if (mGemList->GetGem(i).GetSlot() == slot)

@@ -197,8 +197,8 @@ void AccomplishmentManager::InitializePrecachedFilters() {
                  mPrecachedFilters.begin();
              it != mPrecachedFilters.end();
              ++it) {
-            SongSortMgr::SongFilter *pFilter = it->second;
             Symbol key = it->first;
+            SongSortMgr::SongFilter *pFilter = it->second;
             MILO_ASSERT(pFilter, 0xD1);
             if (TheSongSortMgr->DoesSongMatchFilter(songid, pFilter, gNullStr)) {
                 int count = GetPrecachedFilterCount(key);

@@ -42,5 +42,16 @@ private:
     int unk24;
     XOVERLAPPED mXOverlapped; // 0x28
     int unk44;
-    Timer mReconnectTimer;
+    // NB: retail RB3-360's XLSPConnection is 0x4c (76) bytes, ending here --
+    // verified via NetCacheMgrInit's `new NetCacheMgrXbox()` allocation size
+    // (li r3, 0xb4 = 180 = 0x64 NetCacheMgr base + 4 mDoneLoading/pad + 0x4c
+    // XLSPConnection) and via Ghidra decompile of the retail XLSPConnection
+    // ctor (fn 0x827d9998), which never touches anything past this field's
+    // offset (0x48) -- no Symbol/Timer construction happens. DC3 (newer game)
+    // added a reconnect-backoff `Timer mReconnectTimer` member here that RB3
+    // retail does not have; ported verbatim from dc3 this bloats the class by
+    // 52 bytes (Timer is 0x30 + 4 alignment pad) and desyncs every
+    // sizeof(XLSPConnection)-dependent allocation. Do NOT re-add it here --
+    // DingoSvrXbox (system/net/DingoSvr_Xbox.h) now owns its own
+    // mReconnectTimer instead, since only it consumed this field.
 };

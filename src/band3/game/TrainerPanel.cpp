@@ -190,7 +190,7 @@ void TrainerPanel::InitSections() {
         TheGameMode->Property("midi_parser", true)->Sym()
     );
     // MidiParser::mEvents is private; access via offset to avoid header edit.
-    InternalInitSections(*(DataEventList **)((char *)parser + 0x1c));
+    InternalInitSections(*(DataEventList **)((char *)parser + 0x18));
     if (mSections.size() == 0) {
         InternalInitSections(TheGame->GetBeatMaster()->GetMidiParserMgr()->GetEventsList());
     }

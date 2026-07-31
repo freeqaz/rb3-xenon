@@ -1997,17 +1997,17 @@ void MusicLibrary::RebuildSharedSongData() {
     TheSongMgr.SyncSharedSongs();
     SortNode *highlightedNode = GetCurrentSort()->GetNode(mCurrentHighlightIndex);
     OwnedSongSortNode *curNode = dynamic_cast<OwnedSongSortNode *>(highlightedNode);
-    bool wasShared = curNode && curNode->GetSongRecord()->mIsShared;
+    bool wasShared = curNode && curNode->GetSongRecord()->mRestricted;
     std::map<Symbol, SongRecord> &theSongs = TheSongSortMgr->mSongs;
     bool aSharedSongChanged = false;
     FOREACH (it, theSongs) {
-        if (it->second.UpdateSharedStatus()) {
+        if (it->second.UpdateRestricted()) {
             aSharedSongChanged = true;
-            it->second.UpdateRestricted();
+            it->second.UpdateSharedStatus();
         }
     }
     bool mySharedSongChanged =
-        curNode && (bool)curNode->GetSongRecord()->mIsShared != wasShared;
+        curNode && (bool)curNode->GetSongRecord()->mRestricted != wasShared;
     MILO_ASSERT(!mySharedSongChanged || aSharedSongChanged, 0xAFD);
     if (aSharedSongChanged) {
         PushSonglistToScreen();
@@ -2020,15 +2020,15 @@ void MusicLibrary::RebuildSharedSongData() {
 void MusicLibrary::RebuildRestrictedData() {
     SortNode *highlightedNode = GetCurrentSort()->GetNode(mCurrentHighlightIndex);
     OwnedSongSortNode *curNode = dynamic_cast<OwnedSongSortNode *>(highlightedNode);
-    bool wasRestricted = curNode && curNode->GetSongRecord()->mRestricted;
+    bool wasRestricted = curNode && curNode->GetSongRecord()->mIsShared;
     std::map<Symbol, SongRecord> &theSongs = TheSongSortMgr->mSongs;
     bool aRestrictedSongChanged = false;
     FOREACH (it, theSongs) {
-        if (it->second.UpdateRestricted())
+        if (it->second.UpdateSharedStatus())
             aRestrictedSongChanged = true;
     }
     bool myRestrictedSongChanged =
-        curNode && (bool)curNode->GetSongRecord()->mRestricted != wasRestricted;
+        curNode && (bool)curNode->GetSongRecord()->mIsShared != wasRestricted;
     MILO_ASSERT(!myRestrictedSongChanged || aRestrictedSongChanged, 0xB27);
     if (aRestrictedSongChanged) {
         PushSonglistToScreen();

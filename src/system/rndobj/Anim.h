@@ -202,36 +202,40 @@ public:
     AnimTask *BlendTask() const { return mBlendTask; }
     RndAnimatable *Anim() const { return mAnim; }
     Hmx::Object *AnimTarget() const { return mAnimTarget; }
-    Hmx::Object *Listener() const { return mListener; }
-    void SetListener(Hmx::Object *l) { mListener = l; }
 
     POOL_OVERLOAD(AnimTask, 0x75);
 
+    // ── RB3-era layout: sizeof(AnimTask) == 0x6c (108), NOT dc3's 0x90 (144) ──
+    // Both AnimTask::operator delete and the scalar deleting destructor embed
+    // sizeof(AnimTask) as a literal via POOL_OVERLOAD's PoolFree(sizeof(cls), v);
+    // retail emits `li r3, 0x6c` where dc3's field set gives us `li r3, 0x90`.
+    // The 36-byte delta is forced, not fitted: dc3's extra scalar members
+    // (mPrevFrame/mEaseFunc/mEasePower/mWait/mFrameSpan/mActive) total only 24
+    // bytes, so they alone CANNOT account for 36 — the 12-byte ObjPtr mListener
+    // must go too. Independently, rb3-Wii's AnimTask (the RB3-era oracle) has
+    // exactly this field set, and laying it out on our Task base (mAnim at 0x28,
+    // compiler-verified) sums to exactly 0x6c. Easing/listener/wait/active are
+    // dc3-newer engine features; RB3 had none of them.
+    // Consequence: StartAnim() moves into the ctors (rb3-Wii does it there),
+    // since there is no mActive first-poll latch any more.
     /** The animatable this task should be animating. */
-    ObjOwnerPtr<RndAnimatable> mAnim; // 0x2c
-    ObjPtr<Hmx::Object> mListener; // 0x40
-    ObjPtr<Hmx::Object> mAnimTarget; // 0x54
+    ObjOwnerPtr<RndAnimatable> mAnim; // 0x28
+    ObjPtr<Hmx::Object> mAnimTarget; // 0x34
     /** The anim task to blend into. */
-    ObjPtr<AnimTask> mBlendTask; // 0x68
+    ObjPtr<AnimTask> mBlendTask; // 0x40
     /** Whether or not this animation should blend into another. */
-    bool mBlending; // 0x7c
+    bool mBlending; // 0x4c
     /** The time it takes to blend into mBlendTask. */
-    float mBlendTime; // 0x80
-    float mBlendPeriod; // 0x84
+    float mBlendTime; // 0x50
+    float mBlendPeriod; // 0x54
     /** Start animation frame. */
-    float mMin; // 0x88
+    float mMin; // 0x58
     /** End animation frame. */
-    float mMax; // 0x8c
+    float mMax; // 0x5c
     /** Multiplier to speed of animation. */
-    float mScale; // 0x90
+    float mScale; // 0x60
     /** "Amount to offset frame for animation" */
-    float mOffset; // 0x94
+    float mOffset; // 0x64
     /** Whether or not the animation should loop. */
-    bool mLoop; // 0x98
-    float mPrevFrame; // 0x9c
-    EaseFunc *mEaseFunc; // 0xa0
-    float mEasePower; // 0xa4
-    bool mWait; // 0xa8
-    float mFrameSpan; // 0xac
-    bool mActive; // 0xb0
+    bool mLoop; // 0x68
 };
