@@ -192,15 +192,22 @@ void SongParser::Reset() {
     mCurrentFillLanes = 0;
     mCurrentCymbalSlots = 28;
     mDrumStyleGems = false;
-    mTrackName = Symbol(0);
-    mTrackType = kTrackNone;
-    mTrackPart = 0;
-    mCurTrackIndex = -1;
-    mDrumSubmixDifficultyMask = 0;
-    mSoloGemDifficultyMask = 0;
-    mVocalPhraseStartTick = -1;
-    mLastTambourineGemTick = -1;
-    mLastTambourineAutoTick = -1;
+    // The Symbol temp must live in its own scope so MSVC packs it into the
+    // stack slot vacated by the earlier resize() temps (r1+0x60), and the
+    // copy into mTrackName must sink below the tambourine stores. Both are
+    // required to reproduce retail's codegen byte-for-byte.
+    {
+        Symbol nullTrackName(0);
+        mTrackType = kTrackNone;
+        mTrackPart = 0;
+        mCurTrackIndex = -1;
+        mDrumSubmixDifficultyMask = 0;
+        mSoloGemDifficultyMask = 0;
+        mVocalPhraseStartTick = -1;
+        mLastTambourineGemTick = -1;
+        mLastTambourineAutoTick = -1;
+        mTrackName = nullTrackName;
+    }
     memset(mReportedMissingDrumSubmix, 0, 4);
     mRGHandPos = -1;
     mRGRootNote = -1;

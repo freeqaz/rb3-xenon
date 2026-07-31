@@ -33,7 +33,7 @@ void EndingBonus::SyncObjects() {
         mIconData.clear();
         for (int i = 0; i < 5; i++) {
             mIconData.push_back(MiniIconData(
-                this, Find<UnisonIcon>(MakeString("unison_icon_%d", i), true)
+                this, Find<UnisonIcon>(MakeString("unison_icon_%d", i), false)
             ));
         }
     }

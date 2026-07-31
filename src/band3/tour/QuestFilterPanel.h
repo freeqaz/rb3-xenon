@@ -26,7 +26,8 @@ public:
     void Update() {
         m_vQuestFilters.clear();
         for (int i = 0; i < 3; i++) {
-            m_vQuestFilters.push_back(m_rProgress.GetQuestFilter(i));
+            Symbol s = m_rProgress.GetQuestFilter(i);
+            m_vQuestFilters.push_back(s);
         }
     }
 

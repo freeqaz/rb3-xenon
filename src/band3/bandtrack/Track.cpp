@@ -149,8 +149,9 @@ const char *Track::GetPlayerName() const {
 
 const char *Track::UserName() const {
     const BandUser *user = mTrackConfig.GetBandUser();
-    if (user->GetPlayer())
-        return user->GetPlayer()->GetUser()->UserName();
+    Player *player = user->GetPlayer();
+    if (player)
+        return player->GetUser()->UserName();
     else
         return "";
 }
