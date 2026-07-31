@@ -924,6 +924,7 @@ StarDisplay.cpp:
 BandStarDisplay.cpp:
 	.pdata      start:0x821F1FA8 end:0x821F1FB8
 	.pdata      start:0x821F71D0 end:0x821F71D8
+	.pdata      start:0x821F7210 end:0x821F7220
 	.pdata      start:0x821F72B8 end:0x821F7308
 	.pdata      start:0x821F7370 end:0x821F7378
 	.pdata      start:0x821F7388 end:0x821F7390
@@ -931,6 +932,7 @@ BandStarDisplay.cpp:
 	.pdata      start:0x821F7480 end:0x821F74B8
 	.text       start:0x8227A628 end:0x8227A6A0
 	.text       start:0x822CB018 end:0x822CB074
+	.text       start:0x822CB2D8 end:0x822CB428
 	.text       start:0x822CBE28 end:0x822CC294
 	.text       start:0x822CC798 end:0x822CC804
 	.text       start:0x822CC8E8 end:0x822CC938
@@ -955,7 +957,8 @@ BandRetargetVignette.cpp:
 
 StreakMeter.cpp:
 	.pdata      start:0x821F7190 end:0x821F71D0
-	.pdata      start:0x821F71D8 end:0x821F7278
+	.pdata      start:0x821F71D8 end:0x821F7210
+	.pdata      start:0x821F7220 end:0x821F7278
 	.pdata      start:0x821F7280 end:0x821F72B8
 	.pdata      start:0x821F7308 end:0x821F7310
 	.pdata      start:0x821F7310 end:0x821F7320
@@ -980,7 +983,8 @@ StreakMeter.cpp:
 	.pdata      start:0x821F8288 end:0x821F82D8
 	.text       start:0x822CA9E0 end:0x822CB008
 	.text       start:0x822CB014 end:0x822CB018
-	.text       start:0x822CB074 end:0x822CB828
+	.text       start:0x822CB074 end:0x822CB2D8
+	.text       start:0x822CB428 end:0x822CB828
 	.text       start:0x822CB89C end:0x822CBE28
 	.text       start:0x822CC294 end:0x822CC2C8
 	.text       start:0x822CC2D4 end:0x822CC5CC
@@ -3031,9 +3035,7 @@ Char.cpp:
 
 SkeletonViz.cpp:
 	.pdata      start:0x821F1A58 end:0x821F1A60
-	.pdata      start:0x82241448 end:0x82241450
 	.text       start:0x82275260 end:0x82275304
-	.text       start:0x827B5300 end:0x827B53A4
 
 HamCamTransform.cpp:
 	.pdata      start:0x821F18D8 end:0x821F18E8
@@ -5258,14 +5260,14 @@ SongMgr.cpp:
 File.cpp:
 	.pdata      start:0x8220AB68 end:0x8220AB70
 	.pdata      start:0x8220AB70 end:0x8220AB78
-	.pdata      start:0x82218308 end:0x82218360
+	.pdata      start:0x82218308 end:0x82218368
 	.pdata      start:0x82218368 end:0x82218430
 	.pdata      start:0x82218430 end:0x82218488
 	.pdata      start:0x82261580 end:0x82261588
 	.text       start:0x82347528 end:0x82347530
 	.text       start:0x824111D0 end:0x8241126C
 	.text       start:0x8241126C end:0x824112AC
-	.text       start:0x825164A8 end:0x82516B10
+	.text       start:0x825164A8 end:0x82516E28
 	.text       start:0x82516E28 end:0x82517DF8
 	.text       start:0x82517DF8 end:0x8251833C
 	.text       start:0x82518340 end:0x82518354
@@ -7916,11 +7918,9 @@ VirtualKeyboard.cpp:
 	.text       start:0x82527AF0 end:0x8252839C
 
 JoypadMsgs.cpp:
-	.pdata      start:0x82218360 end:0x82218368
 	.pdata      start:0x82219EC8 end:0x82219ED8
 	.pdata      start:0x82219ED8 end:0x8221A038
 	.pdata      start:0x822232E8 end:0x822232F0
-	.text       start:0x82516B10 end:0x82516E28
 	.text       start:0x825324A0 end:0x82532520
 	.text       start:0x82532520 end:0x82533644
 	.text       start:0x825BD1F8 end:0x825BD254
@@ -7967,13 +7967,13 @@ StorePanel.cpp:
 	.pdata      start:0x82227FF0 end:0x82228078
 	.pdata      start:0x822413B0 end:0x822413F0
 	.pdata      start:0x822413F0 end:0x82241410
-	.pdata      start:0x82241410 end:0x82241448
+	.pdata      start:0x82241410 end:0x82241450
 	.pdata      start:0x82241450 end:0x82241670
 	.text       start:0x825FE5B8 end:0x825FE5EC
 	.text       start:0x82604868 end:0x8260509C
 	.text       start:0x827B4808 end:0x827B4C68
 	.text       start:0x827B4C68 end:0x827B4EB8
-	.text       start:0x827B4EB8 end:0x827B5300
+	.text       start:0x827B4EB8 end:0x827B53A4
 	.text       start:0x827B53A4 end:0x827B78EC
 
 ConnectionStatusPanel.cpp:

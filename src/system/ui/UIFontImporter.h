@@ -37,7 +37,7 @@ public:
     const char *GetMatVariationName(RndFontBase *) const;
     int GetMatVariationIdx(Symbol) const;
     RndFontBase *GetGennedFont(Symbol) const;
-    void AttachImporterToFont(RndFontBase *);
+    void AttachImporterToFont(RndFont *);
 
     int NumMatVariations() const { return mMatVariations.size(); }
     int NumGennedFonts() const { return mGennedFonts.size(); }
@@ -104,11 +104,15 @@ protected:
     String mBitmapSavePath; // 0x6c
     /** "name of the bitmap file (i.e. Arial(12).BMP)" */
     String mBitMapSaveName; // 0x78
-    ObjPtrList<RndFontBase> mGennedFonts; // 0x84
+    // RB3 retail has NO RndFontBase/RndFont3d split (that is a DC3-era addition):
+    // the retail binary contains zero "RndFontBase" strings and its RTTI carries
+    // .?AV?$ObjPtrList@VRndFont@@VObjectDir@@@@ / .?AV?$ObjPtr@VRndFont@@VObjectDir@@@@.
+    // rb3-Wii's UIFontImporter.h agrees: these members are all plain RndFont.
+    ObjPtrList<RndFont> mGennedFonts; // 0x84
     ObjPtr<RndFontBase> mReferenceKerning; // 0x98
     ObjPtrList<RndMat> mMatVariations; // 0xa4
     ObjPtr<RndMat> mDefaultMat; // 0xb8
-    ObjPtr<RndFontBase> mHandmadeFont; // 0xc4
+    ObjPtr<RndFont> mHandmadeFont; // 0xc4
     bool mCheckNG; // 0xd0
     /** "You can pull in all the importer settings from another resource file by selecting
      * it above and hitting the sync button below" */

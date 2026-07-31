@@ -2,6 +2,7 @@
 #include "char/CharDriver.h"
 #include "obj/Data.h"
 #include "obj/Dir.h"
+#include "obj/Msg.h"
 #include "obj/Object.h"
 #include "obj/Task.h"
 #include "utl/Symbol.h"
@@ -69,23 +70,23 @@ void CharDriverMidi::PollDeps(
 void CharDriverMidi::Enter() {
     mActive = true;
     CharDriver::Enter();
-    Hmx::Object *msgParser =
-        Dir()->FindObject(mParser.Str(), true);
+    MsgSource *msgParser =
+        dynamic_cast<MsgSource *>(Dir()->FindObject(mParser.Str(), true));
     if (msgParser)
         msgParser->AddSink(this);
-    Hmx::Object *msgFlagParser =
-        Dir()->FindObject(mFlagParser.Str(), true);
+    MsgSource *msgFlagParser =
+        dynamic_cast<MsgSource *>(Dir()->FindObject(mFlagParser.Str(), true));
     if (msgFlagParser)
         msgFlagParser->AddSink(this);
 }
 
 void CharDriverMidi::Exit() {
     CharDriver::Exit();
-    Hmx::Object *msgParser = ObjectDir::Main()->Find<Hmx::Object>(mParser.Str(), false);
+    MsgSource *msgParser = ObjectDir::Main()->Find<MsgSource>(mParser.Str(), false);
     if (msgParser)
         msgParser->RemoveSink(this);
-    Hmx::Object *msgFlagParser =
-        ObjectDir::Main()->Find<Hmx::Object>(mFlagParser.Str(), false);
+    MsgSource *msgFlagParser =
+        ObjectDir::Main()->Find<MsgSource>(mFlagParser.Str(), false);
     if (msgFlagParser)
         msgFlagParser->RemoveSink(this);
 }
