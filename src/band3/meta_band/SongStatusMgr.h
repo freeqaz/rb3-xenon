@@ -217,7 +217,7 @@ public:
     bool UpdateSongStats(ScoreType, Difficulty, const PerformerStatsInfo &, SongStatus *);
     void UpdateCachedTotalStars(ScoreType);
     bool UpdateSong(int, const PerformerStatsInfo &, bool);
-    void UpdateCachedTotalDiscScore(ScoreType);
+    int UpdateCachedTotalDiscScore(ScoreType);
     void UpdateCachedTotalScore(ScoreType);
     unsigned short GetBandInstrumentMask(int) const;
     Difficulty GetHighScoreDifficulty(int, ScoreType) const;

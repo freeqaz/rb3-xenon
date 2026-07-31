@@ -224,8 +224,8 @@ DataNode BandMachineMgr::OnMsg(const RemoteUserLeftMsg &msg) {
     bool remove = true;
     RemoteUser *target = msg.GetUser();
     unsigned int targetID = target->mMachineID;
-    for (int i = 0; i < (int)bandusers.size(); i++) {
-        if (targetID == bandusers[i]->mMachineID) {
+    for (unsigned int i = 0; i < bandusers.size(); i++) {
+        if (bandusers[i]->mMachineID == targetID) {
             remove = false;
             break;
         }

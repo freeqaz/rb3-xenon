@@ -351,7 +351,17 @@ String &String::operator+=(const char *str) {
 
 String &String::operator+=(Symbol s) { return *this += s.Str(); }
 
+// Retail ICF-folds this with operator+=(const String&) (same mechanism as
+// operator=(const FixedString&) above): reads the source's mStr@8 (String
+// layout), not FixedString's own mStr@0. Native build keeps true FixedString
+// semantics.
+#ifdef HX_NATIVE
 String &String::operator+=(const FixedString &str) { return *this += str.c_str(); }
+#else
+String &String::operator+=(const FixedString &str) {
+    return *this += reinterpret_cast<const String &>(str).mStr;
+}
+#endif
 
 String &String::operator+=(char c) {
     int len = length();

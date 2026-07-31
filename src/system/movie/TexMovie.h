@@ -64,7 +64,12 @@ protected:
     Movie mMovie; // 0x68
 
     TexMovie();
-    void DoBeginMovieFromFile(BinStream *, LoaderPos);
+    // RB3 retail's TexMovie::DoBeginMovieFromFile takes no LoaderPos (the
+    // LoaderPos parameter is a newer dc3-engine addition, matching
+    // Movie::BeginFromFile above -- both call sites (OnPlayMovie, SetFile)
+    // show target loading only the BinStream* arg into r4, never a second
+    // register for LoaderPos; confirmed against RB3 retail asm 2026-07-31).
+    void DoBeginMovieFromFile(BinStream *);
     DataNode OnPlayMovie(DataArray *);
     DataNode OnGetRenderTextures(DataArray *);
 };

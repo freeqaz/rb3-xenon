@@ -462,7 +462,7 @@ MetaMaterial *RndMat::CreateMetaMaterial(bool notify) {
     mat->Copy(this, kCopyDeep);
     String notCopiedProps;
     std::list<Symbol> symList;
-    ListProperties(symList, "Mat", 0, nullptr, false);
+    ListProperties(symList, "Mat", 0, nullptr);
     for (std::list<Symbol>::iterator it = symList.begin(); it != symList.end(); ++it) {
         Symbol cur = *it;
         static Symbol metamaterial("metamaterial");
@@ -529,7 +529,7 @@ void RndMat::UpdatePropertiesFromMetaMat() {
         mUpdatingFromMetaMat = true;
         String overriddenProps;
         std::list<Symbol> properties;
-        ListProperties(properties, "Mat", 0, nullptr, false);
+        ListProperties(properties, "Mat", 0, nullptr);
         for (std::list<Symbol>::iterator it = properties.begin(); it != properties.end(); ++it) {
             static Symbol metamaterial("metamaterial");
             Symbol cur = *it;

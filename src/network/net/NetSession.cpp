@@ -846,8 +846,7 @@ bool NetSession::OnMsg(const UpdateUserDataMsg &msg) {
         if (IsHost()) {
             SendToAllClientsExcept(msg, kReliable, ruser->GetMachineID());
         }
-        RemoteUserUpdatedMsg msg(ruser);
-        Handle(msg, false);
+        Handle(RemoteUserUpdatedMsg(ruser), false);
     }
     return true;
 }

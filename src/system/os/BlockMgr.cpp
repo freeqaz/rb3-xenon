@@ -41,8 +41,7 @@ int GetFreeBuffer() {
 }
 
 Block::Block()
-    : mBuffer(0), mArkfileNum(-1), mBlockNum(-1), mTimestamp(-1), mWritten(true),
-      mDebugName("") {
+    : mArkfileNum(-1), mBlockNum(-1), mWritten(true), mDebugName("") {
     mBuffer = &gBuffers[GetFreeBuffer() * 0x10000];
     UpdateTimestamp();
 }

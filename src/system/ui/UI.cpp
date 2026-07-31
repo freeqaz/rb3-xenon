@@ -553,17 +553,19 @@ UIResource *UIManager::FindResource(const DataArray *array) {
 }
 
 DataNode UIManager::OnIsResource(DataArray *arr) {
+    FilePath fp(FileRoot(), arr->Str(2));
     Symbol sym = arr->Sym(3);
     static Symbol objects("objects");
-    static Symbol resources_path("resources_path");
-    DataArray *rsrcArr = SystemConfig(objects, sym)->FindArray(resources_path, false);
-    if (rsrcArr) {
-        FilePath rsrcPath(FileMakePath(FileGetPath(rsrcArr->File()), rsrcArr->Str(1)));
-        FilePath inputPath(FileRoot(), arr->Str(2));
-        if (rsrcPath == FileGetPath(inputPath.c_str()))
-            return 1;
-    } else {
-        MILO_NOTIFY("%s does not have a resources_path set", sym);
+    static Symbol types("types");
+    static Symbol resource_file("resource_file");
+    DataArray *cfg = SystemConfig(objects, sym, types);
+    for (int i = 1; i < cfg->Size(); i++) {
+        DataArray *curArr = cfg->Array(i);
+        DataArray *rsrcArr = curArr->FindArray(resource_file, false);
+        if (rsrcArr) {
+            if (FilePath(FileGetPath(rsrcArr->File()), rsrcArr->Str(1)) == fp)
+                return 1;
+        }
     }
     return 0;
 }

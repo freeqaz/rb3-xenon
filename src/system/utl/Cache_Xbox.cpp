@@ -72,13 +72,17 @@ void CacheXbox::ThreadDone(int res) {
     MILO_ASSERT(!IsDone(), 0x1B4);
     OpType old = mOpCur;
     switch (old) {
-    case kOpDirectory:
+    case kOpFileSize:
+        // Retail's filesize op parks its out-pointer in mCacheDirList (see the
+        // cast in GetFileSizeAsync), so its done-arm clears mCacheDirList and
+        // the directory arm clears mData -- the arm bodies were mislabeled, not
+        // the enum values (GetFileSizeAsync's store pins kOpFileSize == 1).
         mLastResult = (CacheResult)res;
         mThreadStr = gNullStr;
         mCacheDirList = nullptr;
         mCallbackObj = nullptr;
         break;
-    case kOpFileSize:
+    case kOpDirectory:
         mLastResult = (CacheResult)res;
         mThreadStr = gNullStr;
         mData = nullptr;

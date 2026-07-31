@@ -454,12 +454,11 @@ void EventTrigger::TriggerSelf() {
             if (it->mEnable) {
                 mSpawnedTasks.push_back(it->mAnim->Animate(
                     it->mBlend, it->mWait, it->mDelay,
-                    it->mRate, it->mStart, it->mEnd, it->mPeriod, it->mScale, it->mType,
-                    nullptr, kEaseLinear, 0, false
+                    it->mRate, it->mStart, it->mEnd, it->mPeriod, it->mScale, it->mType
                 ));
             } else {
                 mSpawnedTasks.push_back(
-                    it->mAnim->Animate(it->mBlend, it->mWait, it->mDelay, nullptr, kEaseLinear, 0, false)
+                    it->mAnim->Animate(it->mBlend, it->mWait, it->mDelay)
                 );
             }
         }

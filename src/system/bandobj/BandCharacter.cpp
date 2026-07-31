@@ -1264,15 +1264,15 @@ void BandCharacter::DrawShowing() {
             Sphere debugSphere(Vector3(0.0f, 0.0f, 5.0f), 45.0f);
             Multiply(debugSphere, mSphereBase->WorldXfm(), debugSphere);
             Hmx::Color red(1.0f, 0.0f, 0.0f, 1.0f);
-            UtilDrawSphere(debugSphere.center, debugSphere.radius, red, 0);
+            UtilDrawSphere(debugSphere.center, debugSphere.radius, red);
             if (mInstDir) {
                 Sphere instSphere;
                 mInstDir->MakeWorldSphere(instSphere, false);
                 Hmx::Color green(0.0f, 1.0f, 0.0f, 1.0f);
-                UtilDrawSphere(instSphere.center, instSphere.GetRadius(), green, 0);
+                UtilDrawSphere(instSphere.center, instSphere.GetRadius(), green);
             }
             Hmx::Color blue(0.0f, 0.0f, 1.0f, 1.0f);
-            UtilDrawSphere(mBounding.center, mBounding.GetRadius(), blue, 0);
+            UtilDrawSphere(mBounding.center, mBounding.GetRadius(), blue);
         }
         Character::DrawShowing();
         static const DataNode &n = DataVariable("bandcharacter.show_slot");
@@ -2787,7 +2787,27 @@ BEGIN_PROPSYNCS(BandCharacter)
     SYNC_PROP(drum_venue, mDrumVenue)
     SYNC_PROP(force_vertical, mForceVertical)
     SYNC_PROP_SET(instrument_type, mInstrumentType, SetInstrumentType(_val.Sym()))
-    SYNC_PROP_SET(group_name, mGroupName, SetGroupName(_val.Str()))
+    // Hand-expanded (not via SYNC_PROP_SET): retail materializes the DataNode
+    // temp as a NAMED local (`addi r4, r31, 0x70`) rather than reusing the
+    // ctor's returned `this` (`mr r4, r3`), which is what the macro's
+    // unnamed-temporary `_val = DataNode(member)` form emits. Same lever as
+    // EditSetlistPanel.cpp's setlist_name/setlist_desc props (even the same
+    // 0x70 stack offset) -- expanded here instead of touching ObjMacros.h,
+    // whose SYNC_PROP_SET form is already correct for every other unit.
+    {
+        static Symbol _ps("group_name");
+        if (sym == _ps) {
+            if (_op == kPropSet) {
+                SetGroupName(_val.Str());
+            } else {
+                if (_op == (PropOp)0x40)
+                    return false;
+                DataNode _tmp(mGroupName);
+                _val = _tmp;
+            }
+            return true;
+        }
+    }
     SYNC_PROP_SET(
         head_lookat_weight,
         mHeadLookAt ? mHeadLookAt->Weight() : 0,

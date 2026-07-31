@@ -6,6 +6,7 @@
 #include "obj/Utl.h"
 #include "os/Debug.h"
 #include "utl/BinStream.h"
+#include <vector>
 
 Hmx::Object *ObjectStage::sOwner;
 Message PropKeys::sInterpMessage(gNullStr, 0, 0, 0, 0, 0);
@@ -913,13 +914,13 @@ void SymbolKeys::SetFrame(float frame, float blend, float) {
             case kStep: {
                 int loc8c = -1;
                 int loc90 = -1;
+                std::vector<Symbol> vec;
                 KeysLessEq(frame, loc8c, loc90);
                 if (loc8c != -1) {
-                    int i = loc8c;
                     if (mClampToPrevRange) {
                         MinEq(loc8c, mPrevRangeLast + 1);
-                        i = loc8c;
                     }
+                    int i = loc8c;
                     for (; i <= loc90; i++) {
                         Key<Symbol> &cur = (*this)[i];
                         if (i < mPrevRangeFirst || i > mPrevRangeLast) {

@@ -6,7 +6,7 @@
 #include "utl/MemMgr.h"
 
 /** "Object representing blowing wind, CharHair and Fur can point at them." */
-class RndWind : public RndHighlightable {
+class RndWind : public Hmx::Object {
 public:
     virtual ~RndWind();
     virtual void Replace(ObjRef *, Hmx::Object *);
@@ -17,7 +17,6 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual void Highlight() {}
 
     OBJ_MEM_OVERLOAD(0x1A);
     NEW_OBJ(RndWind)
@@ -40,22 +39,14 @@ protected:
 
     /** "Prevailing wind in units/sec, along each world space axis,
         adds to random component, 1 mph == 17 inches/sec == .5 meter/sec" */
-    Vector3 mPrevailing; // 0x8
+    Vector3 mPrevailing; // 0x28
     /** "Random wind speed in units/sec, along each world axis,
         adds to prevailing wind, 1 mph == 17 inches/sec == .5 meter/sec" */
-    Vector3 mRandom; // 0x18
+    Vector3 mRandom; // 0x38
     /** "how long in seconds before the wind loops, 50 is a nice default" */
-    float mTimeLoop; // 0x28
+    float mTimeLoop; // 0x48
     /** "how far in units before the wind loops, 100 is a nice default" */
-    float mSpaceLoop; // 0x2c
-    /** "If set, transforms wind by this transform." */
-    ObjPtr<RndTransformable> mTrans; // 0x30
-    /** "If set, rotates wind about z axis of [trans], like a tornado" */
-    bool mAboutZ; // 0x44
-    /** "Maximum total wind speed" */
-    float mMaxSpeed; // 0x48
-    /** "Minimum total wind speed" */
-    float mMinSpeed; // 0x4c
+    float mSpaceLoop; // 0x4c
     Vector3 mTimeRate; // 0x50
     Vector3 mSpaceRate; // 0x60
     /** "Wind owner for the wind, properties shown are not for the owner,

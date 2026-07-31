@@ -185,11 +185,9 @@ bool TourPerformerLocal::InqSongsInFilterData(
             static_cast<BandSongMetadata *>(TheSongMgr.Data(songID));
         MILO_ASSERT(pSongData, 0x124);
         Symbol artist(pSongData->Artist());
-        int artistCount;
+        int artistCount = 0;
         if (o_rSongsWithArtist.find(artist) != o_rSongsWithArtist.end()) {
             artistCount = o_rSongsWithArtist[artist];
-        } else {
-            artistCount = 0;
         }
         int newArtistCount = (o_rSongsWithArtist[artist] = artistCount + 1);
         if (newArtistCount > iHighArtistCount) {
@@ -359,7 +357,7 @@ bool TourPerformerLocal::SanityCheckFilterAgainstType(Symbol s1, Symbol s2) {
     return 1;
 }
 
-int TourPerformerLocal::SanityCheckQuestFilters() {
+bool TourPerformerLocal::SanityCheckQuestFilters() {
     GigFilter *pSecondaryFilter;
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x231);
@@ -437,35 +435,33 @@ void TourPerformerLocal::InitializeNextGig() {
     pProgress->SetCurrentGigNum(pProgress->GetNumCompletedGigs());
     Symbol currentQuestSym = pProgress->mCurrentQuest;
     if (currentQuestSym != gNullStr) {
-        if (!SanityCheckQuestFilters()) {
-            pProgress->ClearQuestFilters();
-            ChooseQuestFilters();
-            mMetaPerformer->SetSyncDirty(-1, true);
-        }
-    } else {
-        Symbol symQuest = gNullStr;
-        Symbol tourDescSym = pProgress->GetTourDesc();
-        TourDesc *pTourDesc = TheTour->GetTourDesc(tourDescSym);
-        if (!pTourDesc)
+        if (SanityCheckQuestFilters())
             return;
-        MILO_ASSERT(pTourDesc, 0x2be);
-        int currentGigNum = pProgress->GetCurrentGigNum();
-        if (pTourDesc->HasSpecificQuest(currentGigNum)) {
-            symQuest = pTourDesc->GetSpecificQuestForGigNum(currentGigNum);
-        } else if (pTourDesc->HasQuestTier(currentGigNum)) {
-            int tier = pTourDesc->GetQuestTierForGigNum(currentGigNum);
-            symQuest = ChooseRandomQuestForGroupAndTier(Symbol(""), tier);
-        } else if (pTourDesc->HasQuestGroup(currentGigNum)) {
-            Symbol group = pTourDesc->GetQuestGroupForGigNum(currentGigNum);
-            symQuest = ChooseRandomQuestForGroupAndTier(group, -1);
-        } else {
-            MILO_ASSERT(false, 0x2d1);
-        }
-        MILO_ASSERT(symQuest != gNullStr, 0x2d4);
-        pProgress->SetCurrentQuest(symQuest);
+        pProgress->ClearQuestFilters();
         ChooseQuestFilters();
         mMetaPerformer->SetSyncDirty(-1, true);
+        return;
     }
+    Symbol symQuest = gNullStr;
+    Symbol tourDescSym = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = TheTour->GetTourDesc(tourDescSym);
+    MILO_ASSERT(pTourDesc, 0x2be);
+    int currentGigNum = pProgress->GetCurrentGigNum();
+    if (pTourDesc->HasSpecificQuest(currentGigNum)) {
+        symQuest = pTourDesc->GetSpecificQuestForGigNum(currentGigNum);
+    } else if (pTourDesc->HasQuestTier(currentGigNum)) {
+        int tier = pTourDesc->GetQuestTierForGigNum(currentGigNum);
+        symQuest = ChooseRandomQuestForGroupAndTier(Symbol(""), tier);
+    } else if (pTourDesc->HasQuestGroup(currentGigNum)) {
+        Symbol group = pTourDesc->GetQuestGroupForGigNum(currentGigNum);
+        symQuest = ChooseRandomQuestForGroupAndTier(group, -1);
+    } else {
+        MILO_ASSERT(false, 0x2d1);
+    }
+    MILO_ASSERT(symQuest != gNullStr, 0x2d4);
+    pProgress->SetCurrentQuest(symQuest);
+    ChooseQuestFilters();
+    mMetaPerformer->SetSyncDirty(-1, true);
 }
 
 void TourPerformerLocal::CheatCycleChallenge() {

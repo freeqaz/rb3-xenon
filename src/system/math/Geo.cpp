@@ -24,11 +24,11 @@ void Triangle::Set(const Vector3 &v0, const Vector3 &v1, const Vector3 &v2) {
 }
 
 float gUnitsPerMeter = 39.370079f;
-float gBSPPosTol = 0.01f;
+static float gBSPPosTol = 0.01f;
 static float gBSPDirTol = 0.985f;
-static int gBSPMaxDepth = 20;
 static int gBSPMaxCandidates = 40;
-float gBSPCheckScale = 1.1f;
+static int gBSPMaxDepth = 20;
+static float gBSPCheckScale = 1.1f;
 
 void NumNodes(const BSPNode *node, int &num, int &maxDepth) {
     static int depth = 0;
@@ -176,11 +176,11 @@ void Plane::Set(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3) {
 }
 
 void SetBSPParams(float f1, float f2, int r3, int r4, float f3) {
-    gBSPPosTol = f1;
-    gBSPCheckScale = f3;
-    gBSPMaxCandidates = r4;
     gBSPDirTol = f2;
+    gBSPMaxCandidates = r4;
     gBSPMaxDepth = r3;
+    gBSPCheckScale = f3;
+    gBSPPosTol = f1;
 }
 
 DataNode SetBSPParams(DataArray *da) {
@@ -1006,7 +1006,8 @@ void BSPFace::Update() {
         d.y = curPt.y - prevPt.y;
         d.z = curPt.z - prevPt.z;
 
-        if (d.x != 0.0f || d.y != 0.0f || d.z != 0.0f) {
+        bool noChange = d.x == 0.0f && d.y == 0.0f && d.z == 0.0f;
+        if (!noChange) {
             Vector3 normal;
             normal.z = t.m.z.y * d.x - t.m.z.x * d.y;
             normal.x = t.m.z.z * d.y - t.m.z.y * d.z;

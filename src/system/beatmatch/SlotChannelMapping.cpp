@@ -51,7 +51,7 @@ MultiChannelMapping::MultiChannelMapping(
         mChannelsPerSlot.push_back(std::list<int>());
         std::list<int> &curList = mChannelsPerSlot.back();
         submix->FillChannelList(curList, i);
-        if (vec.size() != 0) {
+        if (vec.size() > 0) {
             for (std::list<int>::iterator it = curList.begin(); it != curList.end();
                  ++it) {
                 if (*it >= vec.size()) {
@@ -62,9 +62,7 @@ MultiChannelMapping::MultiChannelMapping(
                         vec.size() - 1
                     );
                 } else {
-                    int vecInt = vec[*it];
-                    int &listInt = *it;
-                    listInt = vecInt;
+                    *it = vec[*it];
                 }
             }
         }

@@ -104,7 +104,6 @@ BEGIN_COPYS(CharIKHand)
         COPY_MEMBER(mTargets)
         COPY_MEMBER(mElbowCollide)
         COPY_MEMBER(mClockwise)
-        COPY_MEMBER(mPullShoulder)
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -558,7 +557,7 @@ void CharIKHand::Highlight() {
                         true
                     );
                     UtilDrawAxes(curWorld, 1.0f, Hmx::Color(1, 1, 1));
-                    UtilDrawSphere(curWorld.v, normalized, Hmx::Color(1, 0, 0), nullptr);
+                    UtilDrawSphere(curWorld.v, normalized, Hmx::Color(1, 0, 0));
                     TheRnd.DrawLine(
                         curWorld.v,
                         it->mTarget->TransParent()->WorldXfm().v,
@@ -569,7 +568,7 @@ void CharIKHand::Highlight() {
             }
         }
         UtilDrawAxes(hand->WorldXfm(), 1.0f, Hmx::Color(1, 1, 1));
-        UtilDrawSphere(hand->WorldXfm().v, 1.0f, Hmx::Color(0, 1, 0), nullptr);
+        UtilDrawSphere(hand->WorldXfm().v, 1.0f, Hmx::Color(0, 1, 0));
     }
 }
 

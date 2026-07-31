@@ -85,7 +85,8 @@ void TourProgress::UpdateLastTouchTime() {
 String TourProgress::GetLastTouchedDateString() const {
     String ret;
     DateTime dt;
-    dt = DateTime(mLastTouchTime);
+    DateTime temp(mLastTouchTime);
+    dt = temp;
     dt.ToString(ret);
     return ret;
 }

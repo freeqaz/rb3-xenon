@@ -450,7 +450,8 @@ void ViewSettingsProvider::BuildFilters(Symbol s) {
         for (std::set<Symbol>::const_iterator it = fset.begin();
              it != fset.end();
              ++it) {
-            (*filterMaps[ft])[*it] = 0;
+            const Symbol tempSym(*it);
+            (*filterMaps[ft])[tempSym] = 0;
         }
     }
     Symbol filterSyms[9];
@@ -473,7 +474,8 @@ void ViewSettingsProvider::BuildFilters(Symbol s) {
             if (ft == 6 && data->Rank(s) == 0.0f) {
                 continue;
             }
-            (*filterMaps[ft])[filterSyms[ft]] += 1;
+            const Symbol tempSym(filterSyms[ft]);
+            (*filterMaps[ft])[tempSym] += 1;
         }
     }
     for (std::vector<ViewSetting *>::iterator it = mSettings.begin();

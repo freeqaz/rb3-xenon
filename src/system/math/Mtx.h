@@ -383,17 +383,9 @@ bool operator>(const Sphere &, const Frustum &);
 
 inline void Normalize(const Hmx::Matrix3 &in, Hmx::Matrix3 &out) {
     Normalize(in.y, out.y);
-    out.x.Set(
-        out.y.y * in.z.z - out.y.z * in.z.y,
-        out.y.z * in.z.x - out.y.x * in.z.z,
-        out.y.x * in.z.y - out.y.y * in.z.x
-    );
+    Cross(out.y, in.z, out.x);
     Normalize(out.x, out.x);
-    out.z.Set(
-        out.y.z * out.x.y - out.y.y * out.x.z,
-        out.y.x * out.x.z - out.y.z * out.x.x,
-        out.y.y * out.x.x - out.y.x * out.x.y
-    );
+    Cross(out.x, out.y, out.z);
 }
 
 void Multiply(const Hmx::Matrix3 &, const Hmx::Matrix3 &, Hmx::Matrix3 &);

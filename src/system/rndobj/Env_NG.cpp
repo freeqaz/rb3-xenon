@@ -123,8 +123,10 @@ namespace {
         Vector4 colorVec2(color.red, color.green, color.blue, 1.0f);
         TheShaderMgr.SetPConstant((PShaderConstant)(lightIdx + 0x43), colorVec2);
         Transform proj = light.Projection();
-        TheShaderMgr.SetPConstant4x3(
-            (PShaderConstant)(projIdx * 3 + 0x5f), Hmx::Matrix4(proj)
+        RndShaderMgr &shaderMgr = TheShaderMgr;
+        PShaderConstant projConst = (PShaderConstant)(projIdx * 3 + 0x5f);
+        shaderMgr.SetPConstant4x3(
+            projConst, Hmx::Matrix4(proj)
         );
         TheShaderMgr.SetPConstant((PShaderConstant)(projIdx + 5), light.GetShadowMapTex());
         TheRenderState.SetTextureFilter(projIdx + 5, (RndRenderState::FilterMode)1, false);

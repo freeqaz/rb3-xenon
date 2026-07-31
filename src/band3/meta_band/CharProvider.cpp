@@ -36,6 +36,12 @@ void CharProvider::Reload(LocalBandUser *user) {
     BandProfile *userprofile = TheProfileMgr.GetProfileForUser(unk20);
     if (userprofile)
         AddCharactersFromProfile(userprofile);
+    else {
+        std::vector<BandProfile *> profiles = TheProfileMgr.GetSignedInProfiles();
+        for (std::vector<BandProfile *>::iterator it = profiles.begin(); it != profiles.end();
+             ++it)
+            AddCharactersFromProfile(*it);
+    }
     static Symbol char_prefab("char_prefab");
     mCharacters.push_back(CharacterEntry(kCharacterEntryHeader, char_prefab, 0, 0, false)
     );
@@ -85,7 +91,7 @@ void CharProvider::AddCharactersFromProfile(BandProfile *profile) {
         MILO_ASSERT(pLocalChar, 0x8F);
         haschar = profile->HasChar(pLocalChar);
     }
-    if (chars.empty() && !haschar)
+    if (!chars.size() && !haschar)
         return;
     else {
         static Symbol char_header("char_header");

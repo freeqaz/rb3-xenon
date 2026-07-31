@@ -364,7 +364,9 @@ bool Band::IsEndOfCoda(int i1) {
             if (i8 > i7)
                 i7 = i8;
         }
-        return i7 <= i1;
+        if (i7 > i1)
+            return false;
+        return true;
     }
 }
 

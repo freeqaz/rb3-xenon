@@ -153,7 +153,7 @@ void VocalTrackDir::PreLoad(BinStream &bs) {
 }
 
 namespace {
-Symbol TypeToString(DataType ty) {
+const char *TypeToString(DataType ty) {
     static Symbol int_str("int");
     static Symbol float_str("float");
     static Symbol var_str("var");
@@ -169,31 +169,31 @@ Symbol TypeToString(DataType ty) {
     static Symbol unexpected_str("UNEXPECTED");
     switch (ty) {
     case kDataInt:
-        return int_str;
+        return int_str.Str();
     case kDataFloat:
-        return float_str;
+        return float_str.Str();
     case kDataVar:
-        return var_str;
+        return var_str.Str();
     case kDataFunc:
-        return func_str;
+        return func_str.Str();
     case kDataObject:
-        return object_str;
+        return object_str.Str();
     case kDataSymbol:
-        return symbol_str;
+        return symbol_str.Str();
     case kDataUnhandled:
-        return unhandled_str;
+        return unhandled_str.Str();
     case kDataArray:
-        return array_str;
+        return array_str.Str();
     case kDataCommand:
-        return command_str;
+        return command_str.Str();
     case kDataString:
-        return string_str;
+        return string_str.Str();
     case kDataProperty:
-        return property_str;
+        return property_str.Str();
     case kDataGlob:
-        return glob_str;
+        return glob_str.Str();
     default:
-        return unexpected_str;
+        return unexpected_str.Str();
     }
 }
 
@@ -321,8 +321,8 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
                         MILO_LOG(
                             "\tMismatched types for property %s: %s v. %s\n",
                             mTypeProps.Key(i).Str(),
-                            TypeToString(Property(mTypeProps.Key(i), true)->Type()).Str(),
-                            TypeToString(mTypeProps.Value(i).Type()).Str()
+                            TypeToString(Property(mTypeProps.Key(i), true)->Type()),
+                            TypeToString(mTypeProps.Value(i).Type())
                         );
                     }
                 }

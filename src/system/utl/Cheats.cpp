@@ -246,7 +246,10 @@ void CheatsManager::CallCheatScript(bool b1, DataArray *da, LocalUser *lu, bool 
         Hmx::Object *uiObj = ObjectDir::Main()->Find<Hmx::Object>("ui", true);
         static Message msg("cheat_invoked", 0, 0);
         msg[0] = b1;
-        msg[1] = DataNode(da, kDataArray);
+        {
+            DataNode node(da, kDataArray);
+            msg[1] = node;
+        }
         uiObj->Handle(msg, false);
     }
 }

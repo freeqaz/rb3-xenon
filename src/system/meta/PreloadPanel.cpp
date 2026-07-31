@@ -26,7 +26,16 @@ PreloadPanel::PreloadPanel()
     : mPreloadResult(kPreloadInProgress), mMounted(0), mAppReadFailureHandler(), mContentCorrupt(0),
       mSongDoesNotExist(0) {
     if (!sCache) {
-        sCache = new FileCache(gMaxCacheSize, kLoadBack, true, true);
+        // NOTE(NCCC-0731-ab7e/f268): two RB3-vs-DC3 divergences here.
+        // (1) size is the literal 0x500000, not a load of the mutable
+        //     gMaxCacheSize global (retail emits `lis r4, 0x50`); any
+        //     SetTypeDef override is reapplied later by StartCache()'s
+        //     sCache->SetSize(gMaxCacheSize).
+        // (2) THREE args, not four -- DC3 added a trailing bool to the
+        //     FileCache ctor. Retail materializes only r4/r5/r6 for this call.
+        // rb3-Wii's PreloadPanel is `new FileCache(0x500000, kLoadBack, true)`,
+        // i.e. it agrees on both points.
+        sCache = new FileCache(0x500000, kLoadBack, true);
     }
 }
 
@@ -194,7 +203,7 @@ DataNode PreloadPanel::OnMsg(const UITransitionCompleteMsg &msg) {
         HandleType(msg);
     } else {
         static Message msg("on_preload_failed");
-        if (HandleType(msg).Equal(DATA_UNHANDLED, nullptr, true)) {
+        if (HandleType(msg) == DATA_UNHANDLED) {
             MILO_ASSERT(mAppReadFailureHandler, 0x15F);
             static ContentReadFailureMsg msg(false, gNullStr);
             msg[0] = mContentCorrupt;

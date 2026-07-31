@@ -111,10 +111,10 @@ void CharIKSliderMidi::SetFraction(float f1, float f2) {
 }
 
 void CharIKSliderMidi::Highlight() {
-    UtilDrawSphere(mFirstSpot->WorldXfm().v, 1.0f, Hmx::Color(1, 1, 1), 0);
-    UtilDrawSphere(mSecondSpot->WorldXfm().v, 1.0f, Hmx::Color(1, 1, 1), 0);
-    UtilDrawSphere(mDestPos, 1.0f, Hmx::Color(1, 0, 0), 0);
-    UtilDrawSphere(mCurPos, 1.0f, Hmx::Color(0, 1, 0), 0);
+    UtilDrawSphere(mFirstSpot->WorldXfm().v, 1.0f, Hmx::Color(1, 1, 1));
+    UtilDrawSphere(mSecondSpot->WorldXfm().v, 1.0f, Hmx::Color(1, 1, 1));
+    UtilDrawSphere(mDestPos, 1.0f, Hmx::Color(1, 0, 0));
+    UtilDrawSphere(mCurPos, 1.0f, Hmx::Color(0, 1, 0));
 }
 
 void CharIKSliderMidi::Poll() {
@@ -123,8 +123,7 @@ void CharIKSliderMidi::Poll() {
     else {
         float weight = Weight();
         if (weight != 0) {
-            Character* current = Character::Current();
-            if (current && current->Teleported()) {
+            if (mMe && mMe->Teleported()) {
                 mResetAll = true;
             }
             if (mResetAll) {

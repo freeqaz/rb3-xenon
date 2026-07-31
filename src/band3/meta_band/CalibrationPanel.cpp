@@ -740,7 +740,7 @@ void CalibrationPanel::SetTestState(TestState state) {
 BEGIN_HANDLERS(CalibrationPanel)
     HANDLE(initialize_content, OnInitializeContent)
     HANDLE_EXPR(is_processing_input, mTestState != tsIdle)
-    HANDLE_EXPR(get_test_quality, GetTestQuality())
+    HANDLE_EXPR(get_test_quality, (unsigned char)GetTestQuality())
     HANDLE_EXPR(get_test_result, GetAverageTestTime())
     HANDLE(start_test, OnStartTest)
     HANDLE_MESSAGE(ButtonDownMsg)

@@ -21,9 +21,9 @@ PracticeSectionProvider::PracticeSectionProvider() {
 void PracticeSectionProvider::InitData(RndDir *) {
     mSections.clear();
     unk4c = 0;
-    FileStream stream(
-        TheSongMgr.MidiFile(MetaPerformer::Current()->Song()), FileStream::kRead, false
-    );
+    Symbol song = MetaPerformer::Current()->Song();
+    const char *midi_file = TheSongMgr.MidiFile(song);
+    FileStream stream(midi_file, FileStream::kRead, false);
     MidiSectionLister lister(&mSections, stream);
     unk28.unk0 = "full_song";
     unk28.unk4 = 0;

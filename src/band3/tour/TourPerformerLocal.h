@@ -43,7 +43,7 @@ public:
     Symbol GetRandomFixedSetlist(TourProgress *, int, Symbol);
     void ChooseQuestFilters();
     bool SanityCheckFilterAgainstType(Symbol, Symbol);
-    int SanityCheckQuestFilters();
+    bool SanityCheckQuestFilters();
     void InitializeNextGig();
     void CheatCycleChallenge();
     void CheatCycleSetlist();

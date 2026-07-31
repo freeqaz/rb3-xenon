@@ -49,7 +49,7 @@ void TexMovie::Replace(ObjRef *a, Hmx::Object *b) {
 }
 
 BEGIN_PROPSYNCS(TexMovie)
-    SYNC_PROP_MODIFY(output_texture, mTex, DoBeginMovieFromFile(nullptr, kLoadFront))
+    SYNC_PROP_MODIFY(output_texture, mTex, DoBeginMovieFromFile(nullptr))
     {
         _NEW_STATIC_SYMBOL(bink_movie_file)
         if (sym == _s) {
@@ -131,7 +131,7 @@ BEGIN_LOADS(TexMovie)
         d >> dummy;
     }
     FilePathTracker tracker(".");
-    DoBeginMovieFromFile(d.rev > 4 ? &bs : nullptr, kLoadFront);
+    DoBeginMovieFromFile(d.rev > 4 ? &bs : nullptr);
 END_LOADS
 
 void TexMovie::DrawPreClear() {
@@ -236,10 +236,10 @@ void TexMovie::DrawToTexture() {
 void TexMovie::SetFile(FilePath const &fp) {
     mMovie.End();
     sRoot = fp;
-    DoBeginMovieFromFile(nullptr, kLoadBack);
+    DoBeginMovieFromFile(nullptr);
 }
 
-void TexMovie::DoBeginMovieFromFile(BinStream *stream, LoaderPos lp) {
+void TexMovie::DoBeginMovieFromFile(BinStream *stream) {
     mMovie.End();
     if (!sRoot.empty() && mTex) {
         MILO_ASSERT(mTex->IsRenderTarget(), 0x83);
@@ -256,8 +256,7 @@ void TexMovie::DoBeginMovieFromFile(BinStream *stream, LoaderPos lp) {
             mLoop,
             false,
             i,
-            stream,
-            lp
+            stream
         );
     }
 }
@@ -265,7 +264,7 @@ void TexMovie::DoBeginMovieFromFile(BinStream *stream, LoaderPos lp) {
 DataNode TexMovie::OnPlayMovie(DataArray *d) {
     if (d->Int(2) != 0) {
         if (!mMovie.IsLoading() && !mMovie.IsOpen())
-            DoBeginMovieFromFile(nullptr, kLoadFront);
+            DoBeginMovieFromFile(nullptr);
     } else {
         mMovie.End();
     }

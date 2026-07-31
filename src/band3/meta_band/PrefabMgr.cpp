@@ -73,7 +73,8 @@ PrefabMgr *PrefabMgr::GetPrefabMgr() { return ThePrefabMgr; }
 PrefabMgr::PrefabMgr() : unk60(0) {
     static Symbol male("male");
     static Symbol female("female");
-    for (ObjDirItr<BandCharDesc> it(BandCharDesc::GetPrefabs(), true); it != 0; ++it) {
+    ObjectDir *prefabDir = BandCharDesc::GetPrefabs();
+    for (ObjDirItr<BandCharDesc> it(prefabDir, true); it != 0; ++it) {
         String str(it->Name());
         std::vector<String> substrs;
         const char *substrname;
@@ -92,7 +93,8 @@ PrefabMgr::PrefabMgr() : unk60(0) {
                 MILO_WARN("Bad charcreator prefab name: (%s)\n", str);
                 continue;
             }
-            Symbol boutiqueSym = MakeString("boutique_%s", substrsBase[2].c_str());
+            String *outfitStr = substrsBase + 2;
+            Symbol boutiqueSym = MakeString("boutique_%s", outfitStr->c_str());
             unk44.insert(boutiqueSym);
             Symbol genderSym = it->mGender;
             if (genderSym == male) {

@@ -18,7 +18,7 @@ void RectFilled2D::Draw() {
 void RectFilled2D::DrawFixedZ(float) {
     TheRnd.DrawRectScreen(mRect, mCol, nullptr, nullptr, nullptr);
 }
-void DrawSphere::Draw() { UtilDrawSphere(mCenter, mRadius, mCol, nullptr); }
+void DrawSphere::Draw() { UtilDrawSphere(mCenter, mRadius, mCol); }
 void DrawString::Draw() { TheRnd.DrawString(mText.c_str(), mPos, mCol, true); }
 void DrawString::DrawFixedZ(float) { Draw(); }
 void DrawString3D::Draw() { UtilDrawString(mText.c_str(), mPos, mCol); }
@@ -28,7 +28,7 @@ void Line::DrawFixedZ(float f) {
     TheRnd.DrawLine(Vector3(mA.x, mA.y, f), Vector3(mB.x, mB.y, f), mCol, mZBuf);
 }
 void DrawSphere::DrawFixedZ(float f) {
-    UtilDrawSphere(Vector3(mCenter.x, mCenter.z, f), mRadius, mCol, nullptr);
+    UtilDrawSphere(Vector3(mCenter.x, mCenter.z, f), mRadius, mCol);
 }
 
 void RndGraph::Draw() {

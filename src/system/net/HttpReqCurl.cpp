@@ -89,9 +89,9 @@ void HttpReqCurl::Start() {
         );
     }
     curl_easy_setopt(mReq, CURLOPT_URL, urlStr.c_str());
-    if (mUserAgent.length()) {
-        curl_easy_setopt(mReq, CURLOPT_USERAGENT, mUserAgent.c_str());
-    }
+    // RB3 retail HttpReq has no mUserAgent member (DC3-newer addition; see
+    // HttpReq.h). The adjacent CURLOPT_ACCEPT_ENCODING "gzip" literal is also
+    // absent from retail band.exe, consistent with this block postdating RB3.
     curl_easy_setopt(mReq, CURLOPT_ACCEPT_ENCODING, "gzip");
     curl_easy_setopt(mReq, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
     curl_easy_setopt(mReq, CURLOPT_FILE, &mBuffer);

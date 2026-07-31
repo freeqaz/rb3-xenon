@@ -41,6 +41,35 @@
 #include "xdk/xapilibi/xbox.h"
 #include "xdk/xaudio2/xaudio2.h"
 
+// The XAudio2 engine interface. Only the two factory slots RB3 uses are
+// spelled out; slots 0-8 (IUnknown + GetDeviceCount/GetDeviceDetails/
+// Initialize/Register/UnregisterForCallbacks/CreateSourceVoice) are padded so
+// CreateSubmixVoice lands on vtable index 9 (0x24) and CreateMasteringVoice on
+// index 10 (0x28). Abstract and never constructed, so no vtable/RTTI is
+// emitted for it.
+struct IXAudio2 {
+    virtual HRESULT QueryInterface(const void *, void **) = 0;
+    virtual unsigned int AddRef() = 0;
+    virtual unsigned int Release() = 0;
+    virtual HRESULT GetDeviceCount(UINT32 *) = 0;
+    virtual HRESULT GetDeviceDetails(UINT32, void *) = 0;
+    virtual HRESULT Initialize(UINT32, UINT32) = 0;
+    virtual HRESULT RegisterForCallbacks(void *) = 0;
+    virtual void UnregisterForCallbacks(void *) = 0;
+    virtual HRESULT CreateSourceVoice(
+        IXAudio2Voice **, const void *, UINT32, float, void *,
+        const XAUDIO2_VOICE_SENDS *, const XAUDIO2_EFFECT_CHAIN *
+    ) = 0;
+    virtual HRESULT CreateSubmixVoice(
+        IXAudio2Voice **, UINT32, UINT32, UINT32, UINT32,
+        const XAUDIO2_VOICE_SENDS *, const XAUDIO2_EFFECT_CHAIN *
+    ) = 0;
+    virtual HRESULT CreateMasteringVoice(
+        IXAudio2Voice **, UINT32, UINT32, UINT32, UINT32,
+        const XAUDIO2_EFFECT_CHAIN *
+    ) = 0;
+};
+
 // Harmonix XAudio2 wrappers (retail: CreateXAudio2Object @82B908A8,
 // CreateAudioReverb @82B8C300).
 extern "C" HRESULT CreateXAudio2Object(void **ppXAudio2, UINT32 flags, UINT32 processor);
@@ -80,9 +109,8 @@ void Synth360::PreInit() {
     }
 
     CreateXAudio2Object((void **)&unkc8, 0, 0x10);
-    (((HRESULT(*)(int *, int *, int, int, int, int, int))(*(int *)(*(int *)unkc8 + 0x28)))(
-        (int *)unkc8, &unkcc, 0, 0, 0, 0, 0
-    ));
+    ((IXAudio2 *)unkc8)
+        ->CreateMasteringVoice((IXAudio2Voice **)&unkcc, 0, 0, 0, 0, 0);
 
     {
         XAUDIO2_EFFECT_DESCRIPTOR effectDescs[2];
@@ -125,11 +153,10 @@ void Synth360::PreInit() {
     effectDescs[0].OutputChannels = 2;
     chain.EffectCount = 1;
     chain.pEffectDescriptors = effectDescs;
-    (((HRESULT(*)(int *, int *, int, int, int, int, int, XAUDIO2_EFFECT_CHAIN *)
-    )(*(int *)(*(int *)unkc8 + 0x24)))(
-        (int *)unkc8, &unkd0, 2, 48000, 0, 0x8000, 0, &chain
-    ));
-    }
+    ((IXAudio2 *)unkc8)
+        ->CreateSubmixVoice(
+            (IXAudio2Voice **)&unkd0, 2, 48000, 0, 0x8000, 0, &chain
+        );
 
     {
         XAUDIO2_SEND_DESCRIPTOR sendDesc;
@@ -138,10 +165,11 @@ void Synth360::PreInit() {
         XAUDIO2_VOICE_SENDS sends;
         sends.SendCount = 1;
         sends.pSends = &sendDesc;
-        (((HRESULT(*)(int *, int *, int, int, int, int, XAUDIO2_VOICE_SENDS *, int)
-        )(*(int *)(*(int *)unkc8 + 0x24)))(
-            (int *)unkc8, &unkd4, 6, 48000, 0, 0x7fff, &sends, 0
-        ));
+        ((IXAudio2 *)unkc8)
+            ->CreateSubmixVoice(
+                (IXAudio2Voice **)&unkd4, 6, 48000, 0, 0x7fff, &sends, 0
+            );
+    }
     }
 
     ((IXAudio2Voice *)unkd0)->SetVolume(4.0f, 0);
@@ -259,9 +287,9 @@ void Synth360::Init() {
     REGISTER_OBJ_FACTORY(FxSendSynapse360)
     REGISTER_OBJ_FACTORY(FxSendWah360)
 
-    unkc4 = SystemConfig(Symbol("synth"))->FindArray(Symbol("use_xma"), true)->Int(1) != 0;
+    unkc4 = SystemConfig(Symbol("synth"))->FindInt(Symbol("use_xma")) != 0;
 
-    if (SystemConfig(Symbol("synth"))->FindArray(Symbol("enable_headset_output"), true)->Int(1)) {
+    if (SystemConfig(Symbol("synth"))->FindInt(Symbol("enable_headset_output"))) {
         SetupHeadsetSubmixes();
     }
 
@@ -486,6 +514,7 @@ void Synth360::NewStreamFile(const char *name, File *&file, Symbol &sym) {
     if (file) {
         static Symbol mogg("mogg");
         sym = mogg;
+        return;
     }
 }
 
@@ -501,7 +530,7 @@ Stream *Synth360::NewStream(const char *name, float volume, float pan, bool b) {
 }
 
 Stream *Synth360::NewBufStream(const void *buf, int size, Symbol ext, float startMs, bool b) {
-    return new StandardStream(new BufFile(buf, size), startMs, 0.0f, ext, false, b);
+    return new StandardStream(new BufFile(buf, size), startMs, 0.0f, ext, b, false);
 }
 
 // Retail @82B2CC10 (0xFC): hxma -> XMAReader, mogg -> VorbisReader, else 0.

@@ -1052,21 +1052,20 @@ void VocalTrack::UpdateLyricZ() {
     bool leadDirty = false;
     float z;
     bool harmonyDirty = false;
-    ObjPtr<VocalTrackDir> &_ref0 = mDir;
-    _ref0->RecalculateLyricZ(&leadDirty, &harmonyDirty);
+    mDir->RecalculateLyricZ(&leadDirty, &harmonyDirty);
     if (leadDirty) {
-        std::deque<LyricPlate *>::iterator leadEnd = mLyricsLead.end();
         std::deque<LyricPlate *>::iterator it = mLyricsLead.begin();
-        for (; leadEnd != it; ++it) {
+        std::deque<LyricPlate *>::iterator leadEnd = mLyricsLead.end();
+        for (; it != leadEnd; ++it) {
             LyricPlate *plate = *it;
             if (plate->mBaked) {
                 float delta = 0.0f;
                 for (unsigned int i = 0; i < plate->mSyllables.size(); i++) {
                     Lyric *lyric = plate->mSyllables[i];
                     if (lyric->PitchNote()) {
-                        z = _ref0->unk694;
+                        z = mDir->unk694;
                     } else {
-                        z = _ref0->unk69c;
+                        z = mDir->unk69c;
                     }
                     if (delta == 0.0f) {
                         delta = z - lyric->mBeginPos.z;
@@ -1085,9 +1084,9 @@ void VocalTrack::UpdateLyricZ() {
         }
     }
     if (harmonyDirty) {
+        std::deque<LyricPlate *>::iterator it = mLyricsHarmony.begin();
         std::deque<LyricPlate *>::iterator harmonyEnd = mLyricsHarmony.end();
-        for (std::deque<LyricPlate *>::iterator it = mLyricsHarmony.begin();
-             it != harmonyEnd; ++it) {
+        for (; it != harmonyEnd; ++it) {
             LyricPlate *plate = *it;
             if (plate->mBaked) {
                 float delta = 0.0f;
@@ -1095,9 +1094,9 @@ void VocalTrack::UpdateLyricZ() {
                     Lyric *lyric = plate->mSyllables[i];
                     float z;
                     if (lyric->PitchNote()) {
-                        z = _ref0->unk698;
+                        z = mDir->unk698;
                     } else {
-                        z = _ref0->unk6a0;
+                        z = mDir->unk6a0;
                     }
                     if (delta == 0.0f) {
                         delta = z - lyric->mBeginPos.z;
@@ -2153,7 +2152,7 @@ bool VocalTrack::CheckDeploySections(
 }
 
 bool VocalTrack::IdenticalLyric(const VocalNote &n1, const VocalNote &n2) const {
-    float f6 = Abs(n1.GetMs() - n2.GetMs());
+    float f6 = Abs<float>(n1.GetMs() - n2.GetMs());
     if (f6 == 0)
         return true;
     else if (f6 > mLyricOverlapWindowMs)

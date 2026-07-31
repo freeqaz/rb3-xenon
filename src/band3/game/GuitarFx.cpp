@@ -33,7 +33,8 @@ void GuitarFx::Load() {
         MILO_FAIL("fx only for guitar and bass!");
         break;
     }
-    mFxDir.LoadFile(FilePath(".", name), true, false, kLoadFront, false);
+    FilePath fp(".", name);
+    mFxDir.LoadFile(fp, true, false, kLoadFront, false);
 }
 
 void GuitarFx::PostLoad() {

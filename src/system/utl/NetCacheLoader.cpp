@@ -70,6 +70,8 @@ void NetCacheLoader::SetState(NetCacheLoader::State state) {
         RELEASE(mNetLoader);
         mNetLoaderBuffer = nullptr;
         break;
+    default:
+        goto lab;
     }
 cleanup:
     RELEASE(mFileLoader);
@@ -86,7 +88,12 @@ lab:
         MILO_ASSERT(!mFileLoader, 0xe3);
         const char *strPath = mRemotePath.c_str();
         MILO_ASSERT(TheNetCacheMgr->IsLocalFile(strPath), 0xe6);
-        mFileLoader = new FileLoader(FilePath(strPath), strPath, kLoadFront, 0, false, true, nullptr);
+        // NOTE: `strPath` is passed directly and converted implicitly to FilePath.
+        // Writing an explicit `FilePath(strPath)` temp is NOT equivalent in codegen:
+        // MSVC keeps the ctor's returned `this` live and emits `mr r4,r3`, whereas an
+        // implicit user-defined conversion temp is rematerialized as a stack address
+        // (`addi r4,r31,0x58`) scheduled last. Retail uses the latter. Do not "fix" this.
+        mFileLoader = new FileLoader(strPath, strPath, kLoadFront, 0, false, true, nullptr);
     }
 }
 

@@ -1029,7 +1029,7 @@ void GemTrackDir::SetSideAngle(float f) {
         Hmx::Matrix3 mtx;
         Vector3 v;
         MakeEuler(mRotater->LocalXfm().m, v);
-        v.z = (f * DEG2RAD) * (unk488 - 0.5f * (mNumTracks - 1));
+        v.z = (unk488 - 0.5f * (mNumTracks - 1)) * f * DEG2RAD;
         MakeRotMatrix(v, mtx, true);
         mRotater->SetLocalRot(mtx);
     }

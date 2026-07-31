@@ -42,7 +42,7 @@ public:
     virtual bool IsSafeToDelete() const { return true; } // 0x2c
     virtual void SetTimeout(unsigned int timeout) = 0; // 0x30
     virtual void SetType(ReqType t) { mType = t; } // 0x34
-    virtual void SetUserAgent(const char *agent) { mUserAgent = agent; } // 0x38
+    virtual void SetUserAgent(const char *agent) {} // 0x38
     virtual void SetSSLCertPath(const char *path) {} // 0x3c
     virtual void SetSSLCertName(const char *name) {} // 0x40
     virtual void SetSSLVerifyPeer(unsigned short value) {} // 0x44
@@ -65,8 +65,15 @@ protected:
     unsigned int mIPAddr; // 0xc
     unsigned int mPort; // 0x10
     String mURL; // 0x14
-    ReqType mType; // 0x1c
-    String mUserAgent; // 0x20
+    // NOTE: offsets below are RB3-360 retail (String = 0xc bytes, verified from
+    // retail String ctor fn_82798E18). The DC3 header this was ported from had
+    // an 8-byte String (class String : public FixedString, public TextStream)
+    // AND an extra `String mUserAgent` here; 3*8 == 2*12 == 24, so DC3's block
+    // lands mState at 0x4c too -- a numeric coincidence, NOT corroboration.
+    // RB3 retail has no mUserAgent member: fn_82B6C830 (HasSucceeded) reads
+    // mState at 0x4c, which with a 0xc-byte String and a 0x18-byte STLport map
+    // requires exactly two Strings before mCookies.
+    ReqType mType; // 0x24
     const char *mContent; // 0x28
     unsigned int mContentLength; // 0x2c
     unsigned int mStatusCode; // 0x30

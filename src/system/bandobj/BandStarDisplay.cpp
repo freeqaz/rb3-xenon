@@ -22,7 +22,6 @@ BandStarDisplay::~BandStarDisplay() {}
 
 void BandStarDisplay::SetNumStars(float f, bool b) {
     static Symbol tour("tour");
-    static Symbol dest("dest");
     SetupStars();
     if (f < 0.0f)
         return;
@@ -31,13 +30,13 @@ void BandStarDisplay::SetNumStars(float f, bool b) {
     if (f < mNumStars)
         ResetStars();
     if (f != mNumStars) {
-        int i = (int)mNumStars;
         int newStar = (int)f;
+        int i = (int)mNumStars;
         double intPart;
         float fracPart = (float)modf(f, &intPart);
         if (newStar > i) {
             bool animated = false;
-            while (newStar > i && i < size) {
+            while (i < newStar && i < size) {
                 mStarSweepAnims[i]->SetFrame(1.0f, 1.0f);
                 mStarFullTriggers[i]->Trigger();
                 i++;
@@ -52,6 +51,7 @@ void BandStarDisplay::SetNumStars(float f, bool b) {
                 }
             }
             if (animated) {
+                static Symbol dest("dest");
                 mStarOffsetAnim->Animate(
                     0.0f, false, 0.0f, RndAnimatable::k30_fps_ui,
                     mStarOffsetAnim->GetFrame(), 10.0f * (float)i, 0.0f, 1.0f, dest

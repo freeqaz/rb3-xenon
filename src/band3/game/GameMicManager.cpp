@@ -130,8 +130,9 @@ void GameMicManager::SetPlayback(bool b1) {
     if (mPlayback != b1) {
         mPlayback = b1;
         for (int i = 0; i < mMics.size(); i++) {
-            if (mMics[i]) {
-                ApplyPlayback(b1, mMics[i]);
+            GameMic *mic = mMics[i];
+            if (mic) {
+                ApplyPlayback(b1, mic);
             }
         }
     }

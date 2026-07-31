@@ -911,7 +911,12 @@ void CheckForDuplicates() {
 }
 
 void ObjectDir::Init() {
-    MessageTimer::Init();
+    // NCCC-0731-ab7e/f173/sonnet: retail RB3-360 does not call MessageTimer::Init()
+    // or CheckForDuplicates() here (absent from the retail binary at this exact
+    // spot - a real DC3-newer-than-RB3 divergence, not a tooling artifact: base
+    // size 444B vs target 436B, an exact 8-byte / two-bl-instruction delta).
+    // dc3-decomp and rb3-Wii both call them unconditionally, so this is kept as
+    // a targeted retail-matching removal rather than a MILO_DEBUG-style guard.
     TheLoadMgr.RegisterFactory("milo", DirLoader::New);
     TheLoadMgr.RegisterFactory("milo_xbox", DirLoader::New);
     TheLoadMgr.RegisterFactory("milo_ps3", DirLoader::New);
@@ -922,7 +927,6 @@ void ObjectDir::Init() {
     TheLoadMgr.RegisterFactory("m2", DirLoader::New);
     TheLoadMgr.RegisterFactory("gh", DirLoader::New);
     TheLoadMgr.RegisterFactory("kr", DirLoader::New);
-    CheckForDuplicates();
     DataRegisterFunc("load_objects", OnLoadObjects);
     DataRegisterFunc("init_object", OnInitObject);
     DataRegisterFunc("path_name", OnPathName);

@@ -185,10 +185,6 @@ RockCentral.cpp:
 	.pdata      start:0x822241E8 end:0x82224200
 	.pdata      start:0x822244F0 end:0x822244F8
 	.pdata      start:0x82224538 end:0x82224540
-	.pdata      start:0x822245F0 end:0x82224688
-	.pdata      start:0x82224688 end:0x822246E0
-	.pdata      start:0x822246E0 end:0x82224708
-	.pdata      start:0x82224708 end:0x82224710
 	.pdata      start:0x82224758 end:0x82224770
 	.pdata      start:0x82224798 end:0x822247A8
 	.pdata      start:0x82228980 end:0x82228998
@@ -268,10 +264,6 @@ RockCentral.cpp:
 	.text       start:0x825CA900 end:0x825CA968
 	.text       start:0x825CCF84 end:0x825CCFA4
 	.text       start:0x825CD2DC end:0x825CD2FC
-	.text       start:0x825CE1D0 end:0x825CE4C0
-	.text       start:0x825CE4C0 end:0x825CE670
-	.text       start:0x825CE670 end:0x825CE730
-	.text       start:0x825CE730 end:0x825CE750
 	.text       start:0x825CEDAC end:0x825CEE2C
 	.text       start:0x825CF418 end:0x825CF458
 	.text       start:0x8260E6AC end:0x8260E70C
@@ -792,8 +784,10 @@ CrowdAudio.cpp:
 
 CrowdMeterIcon.cpp:
 	.pdata      start:0x821F1F38 end:0x821F1F48
+	.pdata      start:0x821F5FC0 end:0x821F5FD0
 	.pdata      start:0x821F5FD0 end:0x821F6278
 	.text       start:0x8227A2A8 end:0x8227A320
+	.text       start:0x822B91D0 end:0x822B9308
 	.text       start:0x822B9318 end:0x822BB3C8
 
 PatchDir.cpp:
@@ -9811,8 +9805,7 @@ MetaPerformer.cpp:
 	.pdata      start:0x82237C18 end:0x82237C20
 	.text       start:0x82466000 end:0x8246603C
 	.text       start:0x82563258 end:0x825632BC
-	.text       start:0x8257AA00 end:0x8257AD58
-	.text       start:0x8257AD78 end:0x8257ADB0
+	.text       start:0x8257AA00 end:0x8257AD18
 	.text       start:0x8257AEFC end:0x8257AF48
 	.text       start:0x8257B0D8 end:0x8257B980
 	.text       start:0x8257B980 end:0x8257B9B0
@@ -11690,7 +11683,7 @@ BandSongMgr.cpp:
 	.text       start:0x82576F0C end:0x82578A90
 	.text       start:0x82578C1C end:0x82579F50
 	.text       start:0x8257A414 end:0x8257A9F4
-	.text       start:0x8257AD58 end:0x8257AD78
+	.text       start:0x8257AD18 end:0x8257ADB0
 	.text       start:0x8257ADB0 end:0x8257AEFC
 	.text       start:0x8257AF48 end:0x8257B0D8
 	.text       start:0x8276FCE0 end:0x8276FD10
@@ -12043,8 +12036,7 @@ band3/meta_band/PassiveMessenger.cpp:
 	.pdata      start:0x822244E0 end:0x822244F0
 	.pdata      start:0x822244F8 end:0x82224528
 	.pdata      start:0x82224528 end:0x82224538
-	.pdata      start:0x82224540 end:0x822245F0
-	.pdata      start:0x82224710 end:0x82224758
+	.pdata      start:0x82224540 end:0x82224758
 	.pdata      start:0x82224770 end:0x82224778
 	.pdata      start:0x82224778 end:0x82224788
 	.pdata      start:0x82224788 end:0x82224798
@@ -12077,8 +12069,7 @@ band3/meta_band/PassiveMessenger.cpp:
 	.text       start:0x825CCFA4 end:0x825CD0CC
 	.text       start:0x825CD0D0 end:0x825CD0E4
 	.text       start:0x825CD0F0 end:0x825CD2DC
-	.text       start:0x825CD2FC end:0x825CE1D0
-	.text       start:0x825CE750 end:0x825CEDAC
+	.text       start:0x825CD2FC end:0x825CEDAC
 	.text       start:0x825CEE30 end:0x825CEEB4
 	.text       start:0x825CEEC0 end:0x825CF038
 	.text       start:0x825CF038 end:0x825CF418

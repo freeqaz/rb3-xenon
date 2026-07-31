@@ -124,8 +124,8 @@ void FreestylePanel::CreateController() {
     RELEASE(mController);
     mUser = GetFreestyleUser();
     MILO_ASSERT(mUser, 0xCB);
-    DataArray *cfg =
-        SystemConfig("beatmatcher", "controller", TheGameConfig->GetController(mUser));
+    Symbol ctrl = TheGameConfig->GetController(mUser);
+    DataArray *cfg = SystemConfig("beatmatcher", "controller", ctrl);
     BandUser *u = mUser;
     mController = NewController(
         u, cfg, this, false, u->GetGameplayOptions()->GetLefty(), kNumTrackTypes

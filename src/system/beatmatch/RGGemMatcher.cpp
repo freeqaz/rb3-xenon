@@ -145,12 +145,16 @@ bool RGGemMatcher::FretMatchImpl(
     if (numChecked == 3 && numFretted > 1) {
         if (numSwung < 2)
             return false;
-        return numFullMatch >= (int)(0.5f * numFretted);
+        if (numFullMatch >= (int)(0.5f * numFretted))
+            return true;
+        return false;
     }
     if (numChecked > 2 && numFretted > 0) {
         if (numSwung < 3)
             return false;
-        return numFullMatch >= (int)(0.5f * numFretted);
+        if (numFullMatch >= (int)(0.5f * numFretted))
+            return true;
+        return false;
     }
     return false;
 }

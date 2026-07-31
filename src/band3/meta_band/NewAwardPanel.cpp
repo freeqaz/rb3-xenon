@@ -107,8 +107,8 @@ inline RndMat *AwardAssetProvider::Mat(int, int i_iData, UIListMesh *slot) const
     if (slot->Matches("icon")) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x5B);
-        String assetStr(GetSymbolFromAssetType(pAssetMgr->GetTypeFromName(dataSym)).Str()
-        );
+        Symbol assetSym = GetSymbolFromAssetType(pAssetMgr->GetTypeFromName(dataSym));
+        String assetStr(assetSym.Str());
         return GetMatForName(assetStr);
     } else if (slot->Matches("gender")) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();

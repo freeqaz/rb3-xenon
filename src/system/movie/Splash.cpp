@@ -48,7 +48,10 @@ void Splash::Suspend() {
         if (mThreaded) {
             if (SetMutableState(kSuspending)) {
                 WaitForState(kSuspended);
-                TheNgRnd.Suspend();
+                // Cross-dispatch is intentional: the splash thread owns the
+                // device while suspended, so the main renderer RESUMES here
+                // (target dispatches vtable+0x118 = NgRnd::Resume).
+                TheNgRnd.Resume();
                 if (mCurrentMovie != NULL) {
                     mCurrentMovie->SetShowing(true);
                     mCurrentMovie->GetMovie().LockThread();
@@ -56,8 +59,19 @@ void Splash::Suspend() {
                 mHasDrawn = 0;
                 Draw();
             } else {
-                MILO_ASSERT(mState == kWaitingForTerminating, 0xeb);
-                TheNgRnd.Suspend();
+                // The volatile read is load-bearing, not a hack: retail emits a DEAD
+                // `lwz r10,0x94(r31)` (= mState) here, and again at the identical assert
+                // in Resume() (fn_82741B18 idx 39). MILO_ASSERT is ((void)(cond)) in
+                // retail builds, and MSVC 10224 /O1 fully eliminates a discarded
+                // NON-volatile load (measured: plain `mState` -> no load, 97.5%), so
+                // retail's read had volatile semantics. It is NOT a class-wide
+                // `volatile int mState` though: SetImmutableState folds its 3 mState
+                // reads into ONE load with r11 reused across a branch (idx 11/14/31),
+                // which volatile forbids. Likely true source = volatile member + a
+                // local copy in the multi-read functions; modelled site-locally here
+                // because every other mState reader is an anonymous, unpairable row.
+                MILO_ASSERT(*(volatile int *)&mState == kWaitingForTerminating, 0xeb);
+                TheNgRnd.Resume();
                 if (mCurrentMovie != NULL) {
                     mCurrentMovie->SetShowing(true);
                     mCurrentMovie->GetMovie().LockThread();

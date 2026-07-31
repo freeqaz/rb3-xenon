@@ -76,7 +76,7 @@ void NetCacheMgr::EnterLoadState() {
     if (!mHasFailed) {
         MILO_ASSERT(!mCache, 0x2ab);
         MILO_ASSERT(mLoadCacheSize, 0x2ac);
-        mCache = new FileCache(mLoadCacheSize, kLoadStayBack, true, false);
+        mCache = new FileCache(mLoadCacheSize, kLoadStayBack, true);
         mLoadCacheSize = 0;
     }
 }
@@ -308,7 +308,9 @@ bool NetLoaderRef::NeedsToDownload() {
     MILO_ASSERT(IsValid(), 0x31B);
     if (mCacheLoader) {
         int state = (int)mCacheLoader->mState;
-        return state == 1 || state == 2;
+        bool stateMatch = state == 1 || state == 2;
+        if (!stateMatch)
+            return false;
     }
     return true;
 }
@@ -345,15 +347,16 @@ void NetCacheMgr::PollLoaders() {
     bool firstDownload = true;
     std::list<NetLoaderRef>::iterator it = mNetLoaderRefs.begin();
     while (it != mNetLoaderRefs.end()) {
-        MILO_ASSERT(it->IsValid(), 0xE9);
-        if (!it->NeedsToDownload() || it->IsLoadedOrFailed()) {
-            it->Poll();
+        NetLoaderRef &netLoaderRef = *it;
+        MILO_ASSERT(netLoaderRef.IsValid(), 0xE9);
+        if (!netLoaderRef.NeedsToDownload() || netLoaderRef.IsLoadedOrFailed()) {
+            netLoaderRef.Poll();
         } else if (firstDownload) {
-            it->Poll();
+            netLoaderRef.Poll();
             firstDownload = false;
         }
-        if (it->mRefCount < 1 && it->IsSafeToDelete()) {
-            it->DeleteLoader();
+        if (netLoaderRef.mRefCount < 1 && netLoaderRef.IsSafeToDelete()) {
+            netLoaderRef.DeleteLoader();
             it = mNetLoaderRefs.erase(it);
         } else {
             ++it;

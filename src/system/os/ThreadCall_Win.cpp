@@ -74,9 +74,9 @@ void ThreadCallInit() {
 void ThreadCall(ThreadCallFunc *func, ThreadCallCallbackFunc *callback) {
     ThreadCallData &data = gData[gFreeCall];
     MILO_ASSERT(data.mType == kTCDT_None, 0x6E);
+    data.mType = kTCDT_Func;
     data.mFunc = func;
     data.mCallback = callback;
-    data.mType = kTCDT_Func;
     data.mClass = nullptr;
     gFreeCall = (gFreeCall + 1) % 12;
 }

@@ -159,7 +159,7 @@ void RndDrawable::Highlight() {
         }
         bool oldShowing = mShowing;
         mShowing = true;
-        UtilDrawSphere(s.center, s.radius, Hmx::Color(1, 1, 0), nullptr);
+        UtilDrawSphere(s.center, s.radius, Hmx::Color(1, 1, 0));
         mShowing = oldShowing;
     }
 }

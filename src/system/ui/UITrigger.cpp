@@ -83,21 +83,21 @@ void UITrigger::Trigger() {
     mStartTime = TheTaskMgr.UISeconds();
     mEndTime = 0;
     FOREACH (it, mAnims) {
-        Anim &curAnim = *it;
-        if (curAnim.mAnim) {
-            float f4 = 0;
-            if (curAnim.mEnable) {
-                if (!(curAnim.mPeriod * 30.0f)) {
-                    f4 = curAnim.mScale;
+        if (it->mAnim) {
+            float f4;
+            if (it->mEnable) {
+                f4 = it->mPeriod * 30.0f;
+                if (!f4) {
+                    f4 = it->mScale;
                     if (!f4) {
                         f4 = 1.0f;
                     }
-                    f4 = std::fabs(curAnim.mStart - curAnim.mEnd) / f4;
+                    f4 = (float)std::fabs(it->mStart - it->mEnd) / f4;
                 }
             } else {
-                f4 = std::fabs(curAnim.mAnim->StartFrame() - curAnim.mAnim->EndFrame());
+                f4 = std::fabs(it->mAnim->StartFrame() - it->mAnim->EndFrame());
             }
-            MaxEq(mEndTime, (curAnim.mDelay * 30.0f + f4) / 30.0f);
+            MaxEq(mEndTime, (it->mDelay * 30.0f + f4) / 30.0f);
         }
     }
     if (mBlockTransition && mEndTime > 5.0f) {

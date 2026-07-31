@@ -96,7 +96,8 @@ DataNode SigninScreen::OnMsg(const SigninChangedMsg &msg) {
         MILO_ASSERT(pUser, 0xA4);
         if (!mLimitUserSignin || pUser == GetUser()) {
             int bit = 1 << pUser->GetPadNum();
-            bool isSignedIn = bit & msg.GetMask();
+            int mask = msg.GetMask();
+            bool isSignedIn = bit & mask;
             MILO_ASSERT(isSignedIn == ThePlatformMgr.IsUserSignedIn(pUser), 0xAE);
             if (isSignedIn) {
                 if (mMustNotBeAGuest && ThePlatformMgr.IsUserAGuest(pUser)) {

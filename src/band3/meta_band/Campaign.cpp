@@ -882,9 +882,8 @@ void Campaign::HandleLaunchedGoalComplete() {
     MILO_ASSERT(pUser, 0x66E);
     BandProfile *pUserProfile = TheProfileMgr.GetProfileForUser(pUser);
     MILO_ASSERT(pUserProfile, 0x670);
-    unk25 = TheAccomplishmentMgr->IsCategoryComplete(
-        pUserProfile, pAccomplishment->GetCategory()
-    );
+    Symbol symCategory = pAccomplishment->GetCategory();
+    unk25 = TheAccomplishmentMgr->IsCategoryComplete(pUserProfile, symCategory);
 }
 
 RndTex *Campaign::GetPrimaryBandLogoTex() {

@@ -267,6 +267,17 @@ StoreOfferProvider::Element *StoreOfferProvider::GetElementAtIndex(int i) const 
     return mElements[i];
 }
 
+// Retail fn_826635D8 (0x188 bytes). Signature-only port: the real body needs
+// FindSongOffer (not implemented -- see the deferred-work block above) plus
+// public access to StoreOffer's protected mPack/mAlbum purchaseables, which
+// would mean a StoreOffer.h header change out of scope for this pass. This
+// stub exists only so Handle()'s show_browser_purchased arm gets a real call
+// target (retail calls this out-of-line) instead of an inline byte load --
+// ShowBrowserPurchased itself is NOT in splits.txt and is not scored.
+bool StoreOfferProvider::ShowBrowserPurchased(const StoreOffer *o) const {
+    return o->IsPurchased();
+}
+
 // Field offsets in BandStorePanel are protected; access via byte offsets.
 namespace {
 inline const String &PrevChunkPath(const BandStorePanel *p) {
@@ -426,21 +437,17 @@ BEGIN_HANDLERS(StoreOfferProvider)
         find_pack,
         (Hmx::Object *)FindPack(dynamic_cast<StoreOffer *>(_msg->GetObj(2)))
     )
-    // DEFERRED -- this arm is the WHOLE of Handle's 52-byte deficit (94.7%).
-    // Retail (0x82665824-0x826658A4) is a bog-standard macro arm:
-    //   HANDLE_EXPR(show_browser_purchased,
-    //               ShowBrowserPurchased(dynamic_cast<StoreOffer *>(_msg->GetObj(2))))
-    // using the same function-local static Symbol as its thirteen siblings
-    // (guard bit 0x40 of lbl_82E01E54). Hand-writing `sym == show_browser_purchased`
-    // against the GLOBAL Symbol costs 5 instructions where the retail token block
-    // is 15 (a 40-byte deficit), and the stub body differs by ~12 more: retail
-    // calls fn_826635D8 (ShowBrowserPurchased) where we emit an inline lbz 0x29.
-    // 40 + 12 = 52. Converting this to HANDLE_EXPR once ShowBrowserPurchased
-    // exists should close Handle outright.
-    if (sym == show_browser_purchased) {
-        StoreOffer *offer = dynamic_cast<StoreOffer *>(_msg->GetObj(2));
-        return DataNode(offer->IsPurchased());
-    }
+    // Retail (0x82665824-0x826658A4) is a bog-standard macro arm using the
+    // same function-local static Symbol as its thirteen siblings (guard bit
+    // 0x40 of lbl_82E01E54) and an out-of-line call to ShowBrowserPurchased.
+    // The prior hand-written `if (sym == show_browser_purchased)` against the
+    // GLOBAL Symbol skipped a guard bit, which shifted every later arm's
+    // packed-guard-word bit position by one -- see ShowBrowserPurchased's
+    // doc comment for why its body is still a stub.
+    HANDLE_EXPR(
+        show_browser_purchased,
+        DataNode(ShowBrowserPurchased(dynamic_cast<StoreOffer *>(_msg->GetObj(2))))
+    )
     HANDLE_EXPR(get_shortcut_array, DataNode(mShortcuts, kDataArray))
     HANDLE_EXPR(has_shortcuts, mShortcuts->Size() != 0)
     HANDLE_EXPR(pos_to_shortcut, PosToShortcut(_msg->Int(2)))

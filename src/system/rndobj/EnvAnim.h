@@ -54,3 +54,12 @@ protected:
     /** The EnvAnim that owns all of these keys. */
     ObjOwnerPtr<RndEnvAnim> mKeysOwner;
 };
+
+// Explicit specialization: retail's compiled ~ObjRefConcrete<RndEnvAnim, ObjectDir>
+// releases via RefOwner() (which devirtualizes to ObjRefConcrete::mOwner inside this
+// base dtor) rather than via the generic `this`-as-ref-identity used by the primary
+// template. See ObjPtr_p.h's primary template for the generic body; do not change
+// that shared body to match this — doing so flips other siblings (e.g. RndTex) the
+// other way (confirmed by A/B: RndEnvAnim needs mOwner, RndTex needs this).
+template <>
+ObjRefConcrete<RndEnvAnim, ObjectDir>::~ObjRefConcrete();

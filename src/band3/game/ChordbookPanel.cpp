@@ -238,15 +238,14 @@ void ChordbookPanel::FretButtonUp(int i1) {
 }
 
 void ChordbookPanel::SetFret(int string, int fret) {
-    unsigned char old = mFret[string];
+    bool changed = mFret[string] != fret;
     mFret[string] = fret;
-    bool changed = old != fret;
     static Message set_finger_fret("set_finger_fret", 0, 0);
     set_finger_fret[0] = string + 1;
     set_finger_fret[1] = fret;
     mChordLegend->HandleType(set_finger_fret);
     int curFret = mChords[mCurrentChord].fretHand.GetFret(string);
-    bool correct = curFret == fret;
+    bool correct = fret == curFret;
     SetCorrect(string, correct);
     if (Showing() && correct && fret != 0 && changed) {
         static Message play_correct_fret_msg("play_correct_fret");

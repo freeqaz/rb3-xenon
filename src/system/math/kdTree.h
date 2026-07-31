@@ -59,10 +59,17 @@ public:
             mData.index = 0;
         }
         ~kdTreeNode() {
+#ifdef HX_NATIVE
             if (mFlags & 0x8000 && GetTriList()) {
                 delete[] GetTriList();
                 SetTriList(nullptr);
             }
+#else
+            if (mFlags & 0x8000 && mData.triList) {
+                delete[] mData.triList;
+                mData.triList = nullptr;
+            }
+#endif
         }
 
         // On PPC (ILP32), pointer/float/bitfield all fit in 4 bytes and share

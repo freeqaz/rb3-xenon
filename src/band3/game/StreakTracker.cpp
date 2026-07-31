@@ -158,7 +158,8 @@ String StreakTracker::GetPlayerContributionString(Symbol s) const {
     if (pid.NotNull()) {
         Player *pPlayer = mSource->GetPlayer(pid);
         MILO_ASSERT(pPlayer, 299);
-        i4 = pPlayer->mStats.unk1c0;
+        Stats &stats = pPlayer->mStats;
+        i4 = stats.unk1c0;
     }
     static Symbol tour_goal_band_streak_player_contribution_format(
         "tour_goal_band_streak_player_contribution_format"

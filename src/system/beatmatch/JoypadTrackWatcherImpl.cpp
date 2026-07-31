@@ -28,8 +28,13 @@ bool JoypadTrackWatcherImpl::Swing(int i1, bool b1, bool b2, GemHitFlags flags) 
     KillSustainForSlot(i1);
     float now = mParent->GetNow();
     int unplayedGem = ClosestUnplayedGem(now, i1);
-    mGemList->TimeAt(unplayedGem);
-    bool i4 = InSlopWindow(mGemList->TimeAtNext(unplayedGem), now);
+    // NOTE: retail passes TimeAt()'s result to InSlopWindow and discards
+    // TimeAtNext()'s -- the rb3-Wii oracle has these two swapped. Retail keeps
+    // gemTime live across the TimeAtNext call in a callee-saved FPR (f30);
+    // swapping them back drops that FPR and shrinks the frame by 0x10.
+    float gemTime = mGemList->TimeAt(unplayedGem);
+    mGemList->TimeAtNext(unplayedGem);
+    bool i4 = InSlopWindow(gemTime, now);
     GameGem &gem5 = mGemList->GetGem(unplayedGem);
     int i6 = mGemList->GetGem(unplayedGem).GetTick();
     unsigned int u13;
@@ -50,13 +55,18 @@ bool JoypadTrackWatcherImpl::Swing(int i1, bool b1, bool b2, GemHitFlags flags) 
             unsigned int i68;
             mSongData->GetNextRoll(Track(), i9, i68, i64);
             bvar2 = true;
+            // `i` is initialized before the GetRollIntervalMs call so its live
+            // range crosses it and it is allocated a callee-saved GPR (r29), as
+            // retail does. Folding this back into the for-init puts it in a
+            // volatile register and cascades ~18 register renames.
+            int i = unplayedGem;
             float loopThreshold = now + mSyncOffset + GetRollIntervalMs(
                 mRollIntervalsConfig,
                 mSongData->TrackTypeAt(Track()),
                 mSongData->TrackDiffAt(Track()),
                 false
             );
-            for (int i = unplayedGem; i < mGemList->NumGems(); i++) {
+            for (; i < mGemList->NumGems(); i++) {
                 const GameGem &curGem = mGemList->GetGem(i);
                 if (curGem.mMs >= loopThreshold
                     || curGem.GetTick() >= i64 + i60)
@@ -77,7 +87,9 @@ bool JoypadTrackWatcherImpl::Swing(int i1, bool b1, bool b2, GemHitFlags flags) 
     if (i4) {
         if (!gem5.GetPlayed() && Playable(unplayedGem)) {
             if (gem5.NumSlots() == 1) {
-                if (i1 == gem5.GetSlot() || i1 == -1 || bvar2) {
+                // operand order is load-bearing: retail emits
+                // `cmpw cr6, <slot>, <i1>` (GetSlot() on the left).
+                if (gem5.GetSlot() == i1 || i1 == -1 || bvar2) {
                     OnHit(now, i1, unplayedGem, gem5.GetSlots(), flags);
                 } else {
                     OnMiss(now, i1, unplayedGem, 0, kGemHitFlagNone);

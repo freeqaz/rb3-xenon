@@ -71,6 +71,13 @@ bool StorePreviewMgr::AllowPreviewDownload(String const &str) {
             == mDownloadQueue.end();
 }
 
+// Retail pools the two PlayFile float args into a single 8-byte .rdata object
+// at 0x82114E48 ({-3.0f, 0.0f}), addressed as base+0 / base+4 — NOT as the
+// globally-interned __real@00000000 COMDAT (which lives at 0x82000D78 and is
+// referenced 2188x elsewhere). Same idiom as DC3's RndOverlay::Draw
+// (dc3-decomp/src/system/rndobj/Overlay.cpp:54, sDrawFloats).
+static const float sPlayFileFloats[2] = { -3.0f, 0.0f };
+
 // Retail @0x827B19B8 — no TexMovie branch, attenuation is the literal -3.0f.
 void StorePreviewMgr::PlayCurrentPreview() {
     MILO_ASSERT(mStreamPlayer, 0xd8);
@@ -83,7 +90,9 @@ void StorePreviewMgr::PlayCurrentPreview() {
         if (str.find(".mogg", len - 5) != String::npos) {
             str.erase(len - 5);
         }
-        mStreamPlayer->PlayFile(str.c_str(), -3.0f, 0.0f, false);
+        mStreamPlayer->PlayFile(
+            str.c_str(), sPlayFileFloats[0], sPlayFileFloats[1], true
+        );
     }
 }
 

@@ -265,12 +265,16 @@ void CharBoneDir::SyncFilter() {
     }
     mFilterNames.sort();
     FOREACH (it, mFilterNames) {
-        // Retail passes *it BY VALUE through MILO_LOG's varargs, forcing a
-        // String copy-ctor/dtor pair the compiler cannot elide. The comma-form
-        // MILO_LOG evaluates its args, so an explicit temporary reproduces it
-        // (a named local would re-materialize the address instead of reusing
-        // the ctor's `this` return in r3).
-        MILO_LOG("%s\n", String(*it));
+        // Retail's stripped log evaluates *it into a BY-VALUE String parameter.
+        // That distinction is load-bearing: a by-value param is caller-
+        // constructed, so MSVC destroys it through the copy-ctor's `this`
+        // return already live in r3 (49 such sites in retail).  The comma-form
+        // MILO_LOG -- ((void)("%s\n", String(*it))) -- instead makes the copy a
+        // discarded-value temporary, and MSVC re-materializes `addi r3,r31,0x78`
+        // before the dtor (only 2 such sites in all of retail).  Same ctor, same
+        // frame slot, 4 bytes apart.  MiloStripEval's by-value params reproduce
+        // the retail form; MILO_LOG itself must stay comma-form globally.
+        MiloStripEval("%s\n", *it);
     }
 }
 

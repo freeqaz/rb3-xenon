@@ -357,7 +357,6 @@ void EntityUploader::Poll() {
         mState = 0;
         mCallbackObj = nullptr;
         mCallType = 0;
-        unk34 = false;
         switch (oldCallType) {
         case 1:
         case 2:
@@ -384,7 +383,6 @@ void EntityUploader::Poll() {
         mCallbackObj = nullptr;
         RockCentralOpCompleteMsg msg(false, 1, DataNode(mEmptyArray, kDataArray));
         oldCallbackObj->Handle(msg);
-        unk34 = false;
     }
 }
 

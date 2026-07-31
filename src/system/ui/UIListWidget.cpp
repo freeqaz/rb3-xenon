@@ -13,7 +13,8 @@ UIListWidget::UIListWidget()
     for (int i = 0; i < kNumUIListWidgetStates; i++) {
         std::vector<ObjPtr<UIColor> > vec;
         for (int j = 0; j < UIComponent::kNumStates; j++) {
-            vec.push_back(ObjPtr<UIColor>(this));
+            ObjPtr<UIColor> color(this);
+            vec.push_back(color);
         }
         mColors.push_back(vec);
     }

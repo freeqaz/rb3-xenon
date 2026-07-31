@@ -96,6 +96,27 @@ public:
         float easePower = 0,
         bool wrap = false
     );
+    // Same rationale as the 3-arg and 5-arg lean overloads above: RB3-era
+    // RndAnimatable has NO listener/easeType/easePower/wrap on this form at all
+    // (see rb3-Wii Anim.h, which stops at `Symbol type`). Retail's call sites
+    // (BandStarDisplay::SetNumStars, ...) therefore emit a 10-word outgoing
+    // parameter area; routing them through the dc3-era extended overload below
+    // costs 4 extra 8-byte param slots (+0x20 of arg area), which in turn
+    // inflates the caller's frame AND its static-init guard funclets
+    // (funclet frame == 0x20 + 8 * max outgoing param count on X360 MSVC).
+    // `listener` deliberately has NO default on the extended overload so that a
+    // 9-argument call is unambiguous and binds here.
+    Task *Animate(
+        float blend,
+        bool wait,
+        float delay,
+        Rate rate,
+        float start,
+        float end,
+        float period,
+        float scale,
+        Symbol type
+    );
     Task *Animate(
         float blend,
         bool wait,
@@ -106,7 +127,7 @@ public:
         float period,
         float scale,
         Symbol type,
-        Hmx::Object *listener = nullptr,
+        Hmx::Object *listener,
         EaseType easeType = kEaseLinear,
         float easePower = 0,
         bool wrap = false

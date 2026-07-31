@@ -1227,9 +1227,7 @@ void ExtractPstCatAdjs(DataArray *arr, Symbol &s1, Symbol &s2) {
     if (eval2.Type() == kDataSymbol) {
         s1 = eval2.Sym(arr);
     } else {
-        // Retail (Ghidra 0x82281B78): the MILO_WARN print is gone but its
-        // argument DataNode temp is still evaluated (copy + conditional Release).
-        DataNode warnArg(arr->Evaluate(4));
+        MILO_WARN("unhandled light preset category at %f seconds\n", arr->Evaluate(4));
     }
     DataNode eval3(arr->Evaluate(3));
     if (eval3.Type() == kDataArray) {
@@ -1238,9 +1236,11 @@ void ExtractPstCatAdjs(DataArray *arr, Symbol &s1, Symbol &s2) {
         if (arrsize > 0) {
             s2 = evalarr->Sym(0);
             if (arrsize > 1) {
-                // Retail: warn args evaluated right-to-left, print dropped.
-                DataNode warnArg(arr->Evaluate(4));
-                evalarr->Str(1);
+                MILO_WARN(
+                    "unhandled light preset adjective: %s, %f secs\n",
+                    evalarr->Str(1),
+                    arr->Evaluate(4)
+                );
             }
         }
     }
@@ -1555,7 +1555,7 @@ DataNode BandDirector::OnLightPresetKeyframeInterp(DataArray *da) {
         return 0;
     else {
         float leadin = FindFrameWithLeadIn();
-        bool b10 = unk108 < 0.0f;
+        bool b10 = (bool)(unk108 < 0.0f);
         if (leadin >= unk108) {
             Symbol s58;
             DataArrayPtr ptr(Symbol("lightpreset_keyframe"));
@@ -1945,23 +1945,14 @@ END_PROPSYNCS
 // The volatile locals make each stub's behavior opaque: MSVC /O1 otherwise
 // constant-folds the return into callers (even across __declspec(noinline))
 // and deletes retail call sites.
-__declspec(noinline) float LightPreset::LegacyFadeIn() const { volatile float f = 0.0f; return f; }
-__declspec(noinline) void LightPreset::StaticResetEvents() { volatile int n = 0; (void)n; }
-__declspec(noinline) void LightPresetManager::GetPresets(LightPreset *&a, LightPreset *&b) {
-    volatile int n = 0; (void)n;
-    a = nullptr; b = nullptr;
-}
-__declspec(noinline) void LightPresetManager::Interp(Symbol, Symbol, float) { volatile int n = 0; (void)n; }
-__declspec(noinline) void LightPresetManager::SchedulePstKey(int) { volatile int n = 0; (void)n; }
-__declspec(noinline) void LightPresetManager::StompPresets(LightPreset *, LightPreset *) { volatile int n = 0; (void)n; }
-__declspec(noinline) LightPreset *LightPresetManager::PickRandomPreset(Symbol) {
-    volatile int n = 0;
-    return (LightPreset *)(n & 0);
-}
-__declspec(noinline) int SymToPstKeyframe(Symbol) {
-    volatile int n = LightPreset::kPresetKeyframeNum;
-    return n;
-}
+// All LightPreset/LightPresetManager stubs now live in
+// bandobj/BandDirectorStubs.cpp -- see the note there and below.
+// SymToPstKeyframe is deliberately NOT defined here -- see
+// bandobj/BandDirectorStubs.cpp. Retail implements it in another TU
+// (0x824AACB8), so its register clobber set must stay UNKNOWN to this TU.
+// Defining it here lets MSVC hold the LightPresetMgr()-adjusted `this` in a
+// volatile register across the call in OnLightPresetKeyframeInterp, which
+// costs that function its match (100.0% -> 99.9%).
 
 
 // COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker

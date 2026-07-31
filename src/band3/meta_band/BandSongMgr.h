@@ -130,7 +130,22 @@ public:
     // +0x154 are likewise never referenced in-TU but must exist: mUpgradeMgr is
     // provably at +0x158 (ClearCachedContent, a 100% match).
     std::vector<std::pair<float, float> > unk148; // 0x148
-    int unk154; // 0x154
+    // "num valid songs" -- AddSongData stores GetValidSongCount() here and
+    // GetCurSongCount() adds it to mCachedSongMetadata.size(). It lives at
+    // +0x154, NOT at the tail where rb3-Wii's dev layout puts it.
+    //
+    // Ground truth is retail's own RTTI: ??_R4BandSongMgr (COL at 0x821E0074,
+    // type descriptor 0x82C72C00 -> ".?AVBandSongMgr@@") records the Object
+    // vbase vfptr at offset 0x178, so the non-virtual prefix ends at 0x174 and
+    // there is no room for a member there. Corroborated three ways: the sibling
+    // ??_R4SongMgr COL says 0xd4 (which our SongMgr layout already reproduces
+    // exactly); retail's BandSongMgr vtordisp thunk family at 0x8257AD18 uses
+    // {0x178 dtor, 0x158 x4 MsgSource virtuals} against our {0x17c, 0x15c x4};
+    // and the pinned retail TU makes ZERO references to +0x174 or +0x154 while
+    // unk13c is provably a byte at +0x170 (lbz/stb 0x170). Folding the former
+    // `unk154` placeholder and `unk140` into one member is the only arrangement
+    // consistent with all four instruments.
+    int unk140; // 0x154 - num valid songs
     SongUpgradeMgr *mUpgradeMgr; // 0x158
     LicenseMgr *mLicenseMgr; // 0x15c
     // mContentAltDirs FOLLOWS the two manager pointers in retail: Terminate,
@@ -139,8 +154,7 @@ public:
     // to +0x16c.
     std::vector<String> mContentAltDirs; // 0x160
     int mMaxSongCount; // 0x16c
-    bool unk13c; // 0x170
-    int unk140; // 0x174 - num valid songs
+    bool unk13c; // 0x170 (prefix ends at 0x174: vtordisp 0x174, Object vbase 0x178)
 };
 
 // Retail 360 exposes the song manager through a MUTABLE POINTER global (the

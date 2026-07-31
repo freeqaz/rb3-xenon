@@ -42,7 +42,7 @@ void TrainingMgr::UnparticipateUsers() {
         LocalBandUser *pLocalBandUser = *it;
         MILO_ASSERT(pLocalBandUser, 0x4E);
         if (pLocalBandUser != mUser) {
-            pLocalBandUser->mParticipating = false;
+            pLocalBandUser->SetParticipating(false);
         }
     }
 }
@@ -54,7 +54,7 @@ void TrainingMgr::ParticipateUsers() {
          ++it) {
         LocalBandUser *pLocalBandUser = *it;
         MILO_ASSERT(pLocalBandUser, 0x5D);
-        pLocalBandUser->mParticipating = true;
+        pLocalBandUser->SetParticipating(true);
     }
 }
 

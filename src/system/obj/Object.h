@@ -1304,11 +1304,39 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
         }                                                                                \
     }
 
+#ifdef HX_NATIVE
+#define _SYNC_PROP_BITFIELD_CHECK_PREFIX(bitsym)                                          \
+    MILO_ASSERT_FMT(                                                                      \
+        strneq("BIT_", bitsym.Str(), 4), "%s does not begin with BIT_", bitsym.Str()      \
+    );
+#else
+// Retail RB3-360 keeps a live strncmp() call here even though the MILO_ASSERT_FMT
+// message-building branch is gone (lane NCCC-0731-ab7e/f133/sonnet,
+// CamShot::SyncProperty's SYNC_PROP_BITFIELD(flags,...): target has
+// `bl fn_8274AF68 / lis "BIT_" / bl strncmp` that our build was eliding entirely).
+// Flipping MILO_ASSERT_FMT globally (Debug.h) to always-evaluate regressed -21
+// exact matches / -13704 matched bytes elsewhere (21 of the other 51 call sites
+// across 22 files apparently do NOT keep their cond call in retail), so this fix
+// is scoped to just this macro's prefix check instead of the global definition.
+#define _SYNC_PROP_BITFIELD_CHECK_PREFIX(bitsym) (void)(strneq("BIT_", bitsym.Str(), 4));
+#endif
+
+/* NB(rb3-xenon, lane NCCC-0731-ab7e/f133/opus): the index is written as the
+   NON-MUTATING `_i + 1` rather than `_i++; ... Node(_i)`. Semantically identical
+   (every path inside the arm returns, so the mutation never escaped), but it
+   changes the expression tree MSVC 10224 sees: `8*(_i+1)` canonicalizes to
+   `8*_i + 8`, so the `8*_i` computed for BEGIN_PROPSYNCS's `_prop->Sym(_i)` is a
+   live common subexpression and gets parked in a callee-saved GPR. The `_i++`
+   form instead creates a fresh value `t` and recomputes `8*t`. Retail does the
+   former: CamShot::SyncProperty keeps `_i*8` in r23 (hence __savegprlr_23, not
+   _24, and a 0xd0 frame not 0xc0) and re-derives &Node(_i+1) as
+   `add r11,r23,r11 / addi r3,r11,8`. Worth +18 mismatches on CamShot
+   (99.7 -> 100.0 normalized) and +0.6pp on CharEyes; whole-binary gated at
+   41403 fns / 3783176 bytes, unchanged. */
 #define _SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                                \
     if (sym == symbol) {                                                                  \
-        _i++;                                                                             \
-        if (_i < _prop->Size()) {                                                         \
-            DataNode &node = _prop->Node(_i);                                             \
+        if (_i + 1 < _prop->Size()) {                                                      \
+            DataNode &node = _prop->Node(_i + 1);                                          \
             int res = 0;                                                                  \
             switch (node.Type()) {                                                        \
             case kDataInt:                                                                \
@@ -1316,11 +1344,7 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
                 break;                                                                    \
             case kDataSymbol: {                                                           \
                 Symbol bitsym = node.Sym();                                               \
-                MILO_ASSERT_FMT(                                                          \
-                    strneq("BIT_", bitsym.Str(), 4),                                      \
-                    "%s does not begin with BIT_",                                        \
-                    bitsym.Str()                                                          \
-                );                                                                        \
+                _SYNC_PROP_BITFIELD_CHECK_PREFIX(bitsym)                                  \
                 bitsym = bitsym.Str() + 4;                                                \
                 DataArray *macro = DataGetMacro(bitsym);                                  \
                 MILO_ASSERT_FMT(                                                          \
@@ -1345,7 +1369,7 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
             }                                                                             \
             return true;                                                                  \
         } else                                                                            \
-            return PropSync(mask_member, _val, _prop, _i, _op);                           \
+            return PropSync(mask_member, _val, _prop, _i + 1, _op);                       \
     }
 
 #define SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                                \

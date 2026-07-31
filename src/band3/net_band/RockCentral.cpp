@@ -1368,8 +1368,7 @@ void RockCentral::SyncSetlists(
             int guidIdx = 0;
             for (int j = 0; j < pairs.size(); j++) {
                 if (pairs[j].first == playerIds[i]) {
-                    ADD_BUFFER_PAIR(buf, pairs[j].second, "pid%03d_guid%03d", i, guidIdx);
-                    guidIdx++;
+                    ADD_BUFFER_PAIR(buf, pairs[j].second, "pid%03d_guid%03d", i, guidIdx++);
                 }
             }
         }
@@ -1545,7 +1544,8 @@ void RockCentral::UpdateSetlistArt(
         guid.ToString(),
         i2
     ));
-    SaveBinaryData(setlist->GetArtTex(), str, o, i4);
+    RndTex *tex = setlist->GetArtTex();
+    SaveBinaryData(tex, str, o, i4);
 }
 
 void RockCentral::UpdateBattleArt(RndTex *tex, Hmx::Object *o, int i) {

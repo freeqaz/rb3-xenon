@@ -96,6 +96,7 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "system/bandobj/BandDirectorStubs.cpp": "NonMatching",
             "system/bandobj/BandIKEffector.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -1822,6 +1823,7 @@
             "band3/tour/TourPerformerLocal.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
+                    "/DRB3_MAP_0x1C",
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },

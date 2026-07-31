@@ -240,20 +240,29 @@ protected:
     float mClampHeight; // 0xf8
     /** "Category for shot-picking" */
     Symbol mCategory; // 0xfc
-    // NB(rb3-xenon): retail RB3 CamShot is the DC3-style VIRTUAL-BASE MI layout
-    // (RTTI .?AVCamShot@@ has a virtual base at +0x1a0, plus RndAnimatable +
-    // RndTransformable both deriving virtual Hmx::Object). DC3 has
-    // `int mShotStartedPending; // 0x100` here, and the ~CamShot dtor funclet
-    // chain (vbase-relative, this-0x1a0) destroys mAnims at +0x44 — i.e. retail
-    // DOES carry this member. But our header models CamShot as SINGLE-inheritance
-    // RndAnimatable; re-adding mShotStartedPending here shifts every member after
-    // 0x100 and is net-NEGATIVE (verified: +7 funclets vs -10 incl. GetKey,
-    // CacheFrames, GetTotalDuration, OnRadio = net -3 whole-binary). The funclet
-    // +4 delta is a VBASE_WALL: it can only be fixed by reconstructing the true
-    // MI/vbase layout, not by adding this one member. See the layout report in
-    // docs/decomp (CamShot vbase reconstruction) before re-attempting.
+    // NB(rb3-xenon): member ORDER below is reconstructed from retail
+    // CamShot::Save's own this-relative offsets (r30 == this + 0x260, so
+    // member_off == 0x260 - subtrahend). Retail has a 4-byte member at 0x100
+    // and a 0xc member at 0x168, and *nothing* between mPostProcOverrides
+    // (ends 0x19c) and mCrowds (starts 0x19c). The only two members that can
+    // fill those holes are mCrowdStateOverride (Symbol, 4) and mParentDir
+    // (ObjPtr, 0xc) — a unique size-wise assignment that is byte-neutral, so
+    // the object does NOT grow and every member from mCrowds onward keeps the
+    // offset it already had (mCrowds 0x19c / mPS3PerPixel 0x1ac /
+    // mGlowSpot 0x1b0 / mFlags 0x1bc all already matched retail).
+    // ⚠ This supersedes the old "VBASE_WALL / add int mShotStartedPending"
+    // note: that hypothesis put a NEW member at 0x100, which grows the object
+    // by 4 and shifts the already-correct tail (mEndHideList..mSetFrameActive)
+    // — which is exactly why it measured net -3 whole-binary. CheckShotOver()
+    // reads mDuration (0x278) and is at 100%, proving the tail is correct and
+    // must not move.
+    /** "Force the crowd into a particular state".
+        Options are: (none bad ok great
+            skills_bad skills_ok skills_great
+            realtime_idle realtime_bad realtime_ok realtime_great) */
+    Symbol mCrowdStateOverride; // 0x100
     /** "animatables to be driven with the same frame" */
-    ObjPtrList<RndAnimatable> mAnims;
+    ObjPtrList<RndAnimatable> mAnims; // 0x104
     /** "Optional camera path to use" */
     ObjPtr<RndTransAnim> mPath; // 0x118
     float mPathFrame; // 0x12c
@@ -274,17 +283,12 @@ protected:
     // the matching layout — guarded out to keep CamShot size correct.
     std::vector<RndDrawable *> mGenHideVector;
 #endif
+    ObjPtr<RndDir> mParentDir; // 0x168
     /** "List of objects to draw in order instead of whole world" */
-    ObjPtrList<RndDrawable> mDrawOverrides;
+    ObjPtrList<RndDrawable> mDrawOverrides; // 0x174
     /** "List of objects to draw after post-processing" */
-    ObjPtrList<RndDrawable> mPostProcOverrides; // 0x190
-    ObjPtr<RndDir> mParentDir; // 0x1a4
-    /** "Force the croawd into a particular state".
-        Options are: (none bad ok great
-            skills_bad skills_ok skills_great
-            realtime_idle realtime_bad realtime_ok realtime_great) */
-    Symbol mCrowdStateOverride; // 0x1c8
-    ObjVector<CamShotCrowd> mCrowds; // 0x1b8
+    ObjPtrList<RndDrawable> mPostProcOverrides; // 0x188
+    ObjVector<CamShotCrowd> mCrowds; // 0x19c
     /** "global per-pixel setting for PS3" */
     bool mPS3PerPixel; // 0x1cc
     /** "The spotlight to get glow settings from" */

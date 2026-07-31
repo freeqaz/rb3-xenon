@@ -25,6 +25,7 @@ SongRecord::SongRecord(const BandSongMetadata *data)
     mRestricted = TheSongMgr.IsRestricted(data->ID());
     FOREACH (it, data->Ranks()) {
         Symbol key = it->first;
+        data->BandSongMetadata::HasPart(key, false);
         float val = it->second;
         int tier = TheSongMgr.RankTier(val, key);
         mTier.insert(std::make_pair(key, tier));

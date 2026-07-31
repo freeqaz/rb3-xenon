@@ -44,63 +44,17 @@ float RndWind::GetWhiteNoise(float x) {
 }
 
 void RndWind::SelfGetWind(const Vector3 &pos, float time, Vector3 &result) {
-    result.x = GetWind(mTimeRate.x * time + mSpaceRate.x * pos.x + sOffset.x) * mRandom.x
+    result.x = mRandom.x * GetWind(time * mTimeRate.x + pos.x * mSpaceRate.x + sOffset.x)
         + mPrevailing.x;
-    result.y = GetWind(mTimeRate.y * time + mSpaceRate.y * pos.y + sOffset.y) * mRandom.y
+    result.y = mRandom.y * GetWind(time * mTimeRate.y + pos.y * mSpaceRate.y + sOffset.y)
         + mPrevailing.y;
-    result.z = GetWind(mSpaceRate.z * pos.z + mTimeRate.z * time + sOffset.z) * mRandom.z
+    result.z = mRandom.z * GetWind(time * mTimeRate.z + pos.z * mSpaceRate.z + sOffset.z)
         + mPrevailing.z;
-
-    RndTransformable *trans = mTrans.Ptr();
-    if ((int)trans) {
-        const Transform &xfm = trans->WorldXfm();
-        if (mAboutZ) {
-            Vector3 zAxis(xfm.m.z);
-            Vector3 diff(pos.x - xfm.v.x, pos.y - xfm.v.y, pos.z - xfm.v.z);
-            float dot = -(diff.x * zAxis.x + diff.y * zAxis.y + diff.z * zAxis.z);
-            Vector3 proj(diff.x + zAxis.x * dot, diff.y + zAxis.y * dot,
-                diff.z + zAxis.z * dot);
-            Vector3 cross(
-                zAxis.y * proj.z - zAxis.z * proj.y,
-                zAxis.z * proj.x - zAxis.x * proj.z,
-                zAxis.x * proj.y - zAxis.y * proj.x);
-            Normalize(cross, cross);
-            float ry = result.y;
-            float rz = result.z;
-            float rx = result.x;
-            result.y = rx * (cross.z * zAxis.x - zAxis.z * cross.x)
-                + rz * zAxis.y + ry * cross.y;
-            result.z = rz * zAxis.z
-                + rx * (zAxis.y * cross.x - cross.y * zAxis.x) + ry * cross.z;
-            result.x = rz * zAxis.x
-                + ry * cross.x + rx * (cross.y * zAxis.z - cross.z * zAxis.y);
-        } else {
-            Multiply(result, xfm.m, result);
-        }
-    }
-
-    float len = sqrtf(result.x * result.x + result.y * result.y + result.z * result.z);
-    float limit;
-    if (len > 0.0f) {
-        if (len > mMaxSpeed) {
-            limit = mMaxSpeed;
-        } else if (len < mMinSpeed) {
-            limit = mMinSpeed;
-        } else {
-            goto done;
-        }
-        float scale = limit / len;
-        result.x *= scale;
-        result.y *= scale;
-        result.z *= scale;
-    }
-done:;
 }
 
 RndWind::RndWind()
     : mPrevailing(0.0f, 0.0f, 0.0f), mRandom(0.0f, 0.0f, 0.0f), mTimeLoop(100.0f),
-      mSpaceLoop(gUnitsPerMeter * 10.0f), mTrans(this), mAboutZ(false), mMaxSpeed(1e30f),
-      mMinSpeed(0.0f), mWindOwner(this, this) {
+      mSpaceLoop(gUnitsPerMeter * 10.0f), mWindOwner(this, this) {
     SyncLoops();
 }
 
@@ -132,13 +86,9 @@ END_HANDLERS
 BEGIN_PROPSYNCS(RndWind)
     SYNC_PROP(prevailing, mPrevailing)
     SYNC_PROP(random, mRandom)
-    SYNC_PROP(max_speed, mMaxSpeed)
-    SYNC_PROP(min_speed, mMinSpeed)
     SYNC_PROP_SET(wind_owner, mWindOwner.Ptr(), SetWindOwner(_val.Obj<RndWind>()))
     SYNC_PROP_MODIFY(time_loop, mTimeLoop, SyncLoops())
     SYNC_PROP_MODIFY(space_loop, mSpaceLoop, SyncLoops())
-    SYNC_PROP(trans, mTrans)
-    SYNC_PROP(about_z, mAboutZ)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
     // DC3's extra direct Hmx::Object chain is native-only.
@@ -147,17 +97,13 @@ BEGIN_PROPSYNCS(RndWind)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndWind)
-    SAVE_REVS(4, 0)
+    SAVE_REVS(2, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mPrevailing;
     bs << mRandom;
     bs << mTimeLoop;
     bs << mSpaceLoop;
     bs << mWindOwner;
-    bs << mTrans;
-    bs << mAboutZ;
-    bs << mMinSpeed;
-    bs << mMaxSpeed;
 END_SAVES
 
 BEGIN_COPYS(RndWind)
@@ -173,21 +119,17 @@ BEGIN_COPYS(RndWind)
             COPY_MEMBER(mRandom)
             COPY_MEMBER(mTimeLoop)
             COPY_MEMBER(mSpaceLoop)
-            COPY_MEMBER(mTrans)
-            COPY_MEMBER(mAboutZ)
-            COPY_MEMBER(mMinSpeed)
-            COPY_MEMBER(mMaxSpeed)
             SyncLoops();
         }
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(4, 0)
+INIT_REVS(2, 0)
 
 BEGIN_LOADS(RndWind)
     LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
-    LOAD_SUPERCLASS(RndHighlightable)
+    ASSERT_REVS(2, 0)
+    LOAD_SUPERCLASS(Hmx::Object)
     d >> mPrevailing;
     d >> mRandom;
     d >> mTimeLoop;
@@ -195,14 +137,6 @@ BEGIN_LOADS(RndWind)
     if (d.rev > 1) {
         d >> mWindOwner;
         SetWindOwner(mWindOwner);
-    }
-    if (d.rev > 2) {
-        d >> mTrans;
-        d >> mAboutZ;
-    }
-    if (d.rev > 3) {
-        d >> mMinSpeed;
-        d >> mMaxSpeed;
     }
     SyncLoops();
 END_LOADS

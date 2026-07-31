@@ -31,13 +31,13 @@ bool GuitarTrackWatcherImpl::HandleHitsAndMisses(
         if (!b1)
             flags = (GemHitFlags)(flags | kGemHitFlagSolo);
         if (gem.NumSlots() == 1) {
-            if (i2 == gem.GetSlot()) {
+            if (gem.GetSlot() == i2) {
                 OnHit(ff, i2, i1, gem.GetSlots(), flags);
                 bvar1 = true;
                 if (!b1)
                     SetLastNoStrumGem(ff, i1);
             }
-        } else if (mFretButtonsDown == gem.GetSlots()) {
+        } else if (gem.GetSlots() == mFretButtonsDown) {
             OnHit(ff, i2, i1, gem.GetSlots(), flags);
             if (!b1)
                 SetLastNoStrumGem(ff, i1);
@@ -51,13 +51,10 @@ bool GuitarTrackWatcherImpl::HandleHitsAndMisses(
             if (b1 || gem.NumSlots() > 1) {
                 if (!b1 && !b3 && HarmlessFretDown(i2, i1))
                     return false;
-                bool g5 = false;
                 mGemNotFretted = i1;
                 mFretWhenStrummed = i2;
                 mFretWaitTimeout = ff + mFretSlop;
-                if (mLastNoStrumGemHit == i1 - 1 || b2)
-                    g5 = true;
-                mHarmlessSwing = g5;
+                mHarmlessSwing = mLastNoStrumGemHit == i1 - 1 || b2;
             } else
                 OnMiss(ff, i2, i1, 0, kGemHitFlagNone);
         }

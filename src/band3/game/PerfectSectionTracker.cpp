@@ -200,30 +200,32 @@ void PerfectSectionTracker::HandleEnterExtent(float f, int i, bool b) {
             TrackType key = pPlayer->GetTrackType();
             std::map<TrackType, PlayerStreakData>::iterator it = unk5c.find(key);
             if (it != unk5c.end()) {
+                PlayerStreakData &data = it->second;
                 if (!b) {
                     int iac = 0;
                     int ib0 = 0;
                     int i5 = unk104.GetSectionStartTick(i);
-                    unk104.GetGemStatsInRange(pPlayer, i5, MsToTick(f), iac, ib0);
-                    it->second.unk0 = pPlayer->mStats.mMissCount;
-                    it->second.unk4 = pPlayer->mStats.mHitCount - iac;
-                    it->second.unk8 = pPlayer->mStats.m0x0c - ib0;
-                    it->second.unkc = unk104.CountGemsInSection(pPlayer, i);
-                    it->second.unk10 = -1.0f;
-                    it->second.unk14 = -1;
-                    it->second.unk18 = false;
+                    float tick = MsToTick(f);
+                    unk104.GetGemStatsInRange(pPlayer, i5, tick, iac, ib0);
+                    data.unk0 = pPlayer->mStats.mMissCount;
+                    data.unk4 = pPlayer->mStats.mHitCount - iac;
+                    data.unk8 = pPlayer->mStats.m0x0c - ib0;
+                    data.unkc = unk104.CountGemsInSection(pPlayer, i);
+                    data.unk10 = -1.0f;
+                    data.unk14 = -1;
+                    data.unk18 = false;
                 }
                 unk74[key] = false;
-                if (it->second.unkc > 0) {
+                if (data.unkc > 0) {
                     SetPlayerProgress(id, 0);
-                    int multidx = unke8.GetMultiplierIndex(it->second.unk1c);
-                    if (it->second.unk14 != multidx) {
+                    int multidx = unke8.GetMultiplierIndex(data.unk1c);
+                    if (data.unk14 != multidx) {
                         GetPlayerDisplay(id).SetSecondaryStateLevel(multidx);
-                        it->second.unk14 = multidx;
+                        data.unk14 = multidx;
                     }
-                    if (!it->second.unk19) {
+                    if (!data.unk19) {
                         GetPlayerDisplay(id).GainFocus(false);
-                        it->second.unk19 = true;
+                        data.unk19 = true;
                     }
                 }
             }

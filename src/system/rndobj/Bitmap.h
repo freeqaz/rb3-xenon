@@ -219,7 +219,19 @@ public:
     /** Loads this RndBitmap from a BinStream. */
     void Load(BinStream &);
 
-    MEM_OVERLOAD(RndBitmap, 0x1A);
+    // RETAIL/MATCH: hand-expanded MEM_OVERLOAD(RndBitmap, 0x1A) with `operator
+    // new` NOT noinline. Every self-TU `new RndBitmap()` in Bitmap.cpp (both
+    // Create() overloads, GenerateMips, SelfMip, Load) shows retail fully
+    // inlining operator new straight through to MemAlloc(size, align) with no
+    // out-of-line call — verified via objdiff on both Create() overloads:
+    // target `li r4,0x0; li r3,0x1c; bl fn_827BCD38 (MemAlloc, default/MemMgr)`
+    // vs our noinline-forced `li r3,0x1c; bl ??2RndBitmap@@SAPAXI@Z`. No
+    // currently-100%-matching function calls RndBitmap::operator new (checked
+    // report.json), so this is scoped risk. operator delete is left noinline,
+    // matching the general MEM_OVERLOAD convention (untouched by this diff).
+    static void *operator new(unsigned int s) { return (MemAlloc)(s, 0); }
+    static void *operator new(unsigned int s, void *place) { return place; }
+    __declspec(noinline) static void operator delete(void *v) { (MemFree)(v); }
 
     int Width() const { return mWidth; }
     int Height() const { return mHeight; }

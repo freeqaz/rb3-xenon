@@ -418,6 +418,19 @@ DataNode RndGroup::GetGroupChildren() {
     return ptr;
 }
 
+DataNode RndGroup::OnGetDraws(DataArray *) {
+    DataArray *ret = new DataArray(mDraws.size() + 1);
+    ret->Node(0) = NULL_OBJ;
+    int idx = 0;
+    for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
+         ++it) {
+        ret->Node(++idx) = *it;
+    }
+    DataNode retNode(ret, kDataArray);
+    ret->Release();
+    return retNode;
+}
+
 // sw2 scatter-include (default/Group <- math/Geo.cpp)
 #define gRev gRev_Geo
 #define gAltRev gAltRev_Geo

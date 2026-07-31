@@ -550,8 +550,9 @@ void AccomplishmentPanel::FillSetlistWithAccomplishmentSongs(Symbol s, int i) {
 }
 
 void AccomplishmentPanel::CreateAndSubmitMusicLibraryTask() {
+    Symbol selectedAcc = SelectedAccomplishment();
     Accomplishment *pAccomplishment =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        TheAccomplishmentMgr->GetAccomplishment(selectedAcc);
     MILO_ASSERT(pAccomplishment, 0x5B6);
     MusicLibrary::MusicLibraryTask cTask;
     BandProfile *pProfile = TheCampaign->GetProfile();
@@ -811,8 +812,9 @@ int AccomplishmentPanel::GetNumCompleted() {
 bool AccomplishmentPanel::IsUserOnCorrectInstrument() {
     LocalBandUser *pUser = TheCampaign->GetUser();
     MILO_ASSERT(pUser, 0x6F8);
+    Symbol selacc = SelectedAccomplishment();
     Accomplishment *pAccomplishment =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        TheAccomplishmentMgr->GetAccomplishment(selacc);
     MILO_ASSERT(pAccomplishment, 0x6FC);
     if (!pAccomplishment->IsUserOnValidController(pUser))
         return false;
@@ -823,8 +825,9 @@ bool AccomplishmentPanel::IsUserOnCorrectInstrument() {
 bool AccomplishmentPanel::HasCorrectPlayerCount() {
     LocalBandUser *pUser = TheCampaign->GetUser();
     MILO_ASSERT(pUser, 0x72A);
+    Symbol selectedacc = SelectedAccomplishment();
     Accomplishment *pAccomplishment =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        TheAccomplishmentMgr->GetAccomplishment(selectedacc);
     MILO_ASSERT(pAccomplishment, 0x72E);
     MILO_ASSERT(TheBandUserMgr, 0x730);
     int num = TheBandUserMgr->GetNumParticipants();
@@ -911,8 +914,8 @@ Symbol AccomplishmentPanel::GetAccomplishmentName() {
 }
 
 Symbol AccomplishmentPanel::GetAccomplishmentDescription() {
-    Accomplishment *acc =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selected = SelectedAccomplishment();
+    Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
     if (acc) {
         if (IsSecret())
             return acc->GetSecretDescription();
@@ -935,8 +938,8 @@ Symbol AccomplishmentPanel::GetAccomplishmentFlavor() {
     if (IsSecret())
         return gNullStr;
     else {
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol sym = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(sym);
         if (acc)
             return acc->GetFlavorText();
         else
@@ -1612,8 +1615,9 @@ inline void AccomplishmentCategoryProvider::Custom(
 
 inline AccomplishmentCategory *
 AccomplishmentCategoryProvider::GetAccomplishmentCategory(int data) const {
+    Symbol sym = DataSymbol(data);
     AccomplishmentCategory *pAccomplishmentCategory =
-        TheAccomplishmentMgr->GetAccomplishmentCategory(DataSymbol(data));
+        TheAccomplishmentMgr->GetAccomplishmentCategory(sym);
     MILO_ASSERT(pAccomplishmentCategory, 0x1E1);
     return pAccomplishmentCategory;
 }
@@ -1624,7 +1628,7 @@ inline void AccomplishmentCategoryProvider::Text(
     MILO_ASSERT(i_iData < NumData(), 0x192);
     AccomplishmentCategory *pAccomplishmentCategory = GetAccomplishmentCategory(i_iData);
     MILO_ASSERT(pAccomplishmentCategory, 0x195);
-    pAccomplishmentCategory->GetName();
+    Symbol name = pAccomplishmentCategory->GetName();
     if (slot->Matches("name")) {
         label->SetTextToken(pAccomplishmentCategory->GetName());
     } else
@@ -1651,8 +1655,8 @@ inline void AccomplishmentGroupProvider::Custom(
 
 inline AccomplishmentGroup *AccomplishmentGroupProvider::GetAccomplishmentGroup(int data
 ) const {
-    AccomplishmentGroup *pAccomplishmentGroup =
-        TheAccomplishmentMgr->GetAccomplishmentGroup(DataSymbol(data));
+    Symbol sym = DataSymbol(data);
+    AccomplishmentGroup *pAccomplishmentGroup = TheAccomplishmentMgr->GetAccomplishmentGroup(sym);
     MILO_ASSERT(pAccomplishmentGroup, 0x160);
     return pAccomplishmentGroup;
 }
@@ -1701,8 +1705,8 @@ inline void AccomplishmentGroupProvider::Text(
         int iNumTotal = TheAccomplishmentMgr->GetNumAccomplishmentsInGroup(sym);
         int iNumCompleted = prog.GetNumCompletedInGroup(sym);
         MILO_ASSERT(iNumCompleted <= iNumTotal, 0x115);
-        float level = (float)iNumCompleted / (float)iNumTotal;
-        label->SetTextToken(GetCareerLevel(level));
+        Symbol career = GetCareerLevel((float)iNumCompleted / (float)iNumTotal);
+        label->SetTextToken(career);
     } else
         label->SetTextToken(gNullStr);
 }

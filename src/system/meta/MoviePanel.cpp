@@ -184,7 +184,7 @@ void MoviePanel::Poll() {
     if (!mMovie.Poll() && !TheUI->InTransition()) {
         static Message movie_done("movie_done");
         DataNode handled = HandleType(movie_done);
-        if (handled.Equal(DATA_UNHANDLED, nullptr, true)) {
+        if (handled == DATA_UNHANDLED) {
             mMovie.End();
             PlayMovie();
         }
