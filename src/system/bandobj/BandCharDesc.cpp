@@ -120,6 +120,17 @@ Symbol BandCharDesc::GetAnimInstrument(Symbol s) {
         return s;
 }
 
+// Retail fn_82335810. Selects the head-normal-map variant suffix consumed by
+// OutfitConfig::SetSkinTextures ("%s_%s_norm_%s.tex" when non-empty, plain
+// "%s_%s_norm.tex" when empty). Retail's body calls fn_82335410 to fill 18 floats,
+// sums them in 6 groups of 3, takes the argmax, and indexes one of two 6-entry
+// const char* tables (.data 0x82C6D810 / 0x82C6D828) selected by
+// `mGender == "female"`. fn_82335410 and both tables are undecompiled here and in
+// rb3-Wii, so this is deliberately a STUB: returning "" reproduces the
+// no-variant branch, which is the conservative behaviour. Only the call SHAPE is
+// load-bearing for the OutfitConfig match; do not inline it.
+const char *BandCharDesc::HeadNormVariant() { return ""; }
+
 void BandCharDesc::SaveFixed(FixedSizeSaveableStream &stream) const {
     FixedSizeSaveable::SaveSymbolID(stream, mGender);
     stream << mSkinColor;

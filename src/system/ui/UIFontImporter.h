@@ -32,11 +32,11 @@ public:
     NEW_OBJ(UIFontImporter)
     OBJ_MEM_OVERLOAD(0x2A);
 
-    void ImportSettingsFromFont(RndFontBase *);
+    void ImportSettingsFromFont(RndFont *);
     Symbol GetMatVariationName(unsigned int) const;
-    const char *GetMatVariationName(RndFontBase *) const;
+    const char *GetMatVariationName(RndFont *) const;
     int GetMatVariationIdx(Symbol) const;
-    RndFontBase *GetGennedFont(Symbol) const;
+    RndFont *GetGennedFont(Symbol) const;
     void AttachImporterToFont(RndFont *);
 
     int NumMatVariations() const { return mMatVariations.size(); }
@@ -51,7 +51,7 @@ protected:
     String GetASCIIMinusChars();
     void SyncWithGennedFonts();
     void HandmadeFontChanged();
-    RndFontBase *FindFontForMat(RndMat *) const;
+    RndFont *FindFontForMat(RndMat *) const;
     const char *GetResourcesPath();
     DataNode OnGetResourcesPath(DataArray *);
     DataNode OnShowFontPicker(DataArray *);
@@ -64,7 +64,7 @@ protected:
     DataNode OnAttachToImportFont(DataArray *);
     void OnSetCharsetUTF8(String const &);
     DataNode OnSyncWithResourceFile(DataArray *);
-    RndText *FindTextForFont(RndFontBase *) const;
+    RndText *FindTextForFont(RndFont *) const;
 
     /** "include uppercase letters" */
     bool mUpperCaseAthroughZ; // 0x4
@@ -109,7 +109,7 @@ protected:
     // .?AV?$ObjPtrList@VRndFont@@VObjectDir@@@@ / .?AV?$ObjPtr@VRndFont@@VObjectDir@@@@.
     // rb3-Wii's UIFontImporter.h agrees: these members are all plain RndFont.
     ObjPtrList<RndFont> mGennedFonts; // 0x84
-    ObjPtr<RndFontBase> mReferenceKerning; // 0x98
+    ObjPtr<RndFont> mReferenceKerning; // 0x98
     ObjPtrList<RndMat> mMatVariations; // 0xa4
     ObjPtr<RndMat> mDefaultMat; // 0xb8
     ObjPtr<RndFont> mHandmadeFont; // 0xc4

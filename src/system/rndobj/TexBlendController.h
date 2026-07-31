@@ -31,6 +31,7 @@ public:
     BlendState GetBlendState(float &, float) const;
     RndMesh *Mesh() const { return mMesh; }
     RndTex *Tex() const { return mTex; }
+    void SetTex(RndTex *t) { mTex = t; }
 
 protected:
     RndTexBlendController();

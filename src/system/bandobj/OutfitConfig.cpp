@@ -425,6 +425,32 @@ void OutfitConfig::RecomposePatches(int flag) {
     }
 }
 
+// Retail fn_8229FF30 (0xD4 bytes, inside this TU's own .text span; called five
+// times from the 3-arg SetSkinTextures). Points one head-feature texblend
+// controller at the numbered head-normal map for the feature's current option and
+// reports whether that actually changed anything. Reconstructed from the retail
+// assembly -- rb3-Wii never decompiled it, which is exactly why its two format
+// strings sat unreferenced in the DECOMP_FORCEACTIVE at the bottom of this file.
+static bool
+SetHeadNormMap(const char *part, int option, Symbol gender, ObjectDir *dir1, ObjectDir *dir2) {
+    RndTexBlendController *ctrl =
+        dir2->Find<RndTexBlendController>(MakeString("norm_%s.texblendctl", part), false);
+    if (!ctrl) {
+        MILO_WARN("%s could not find norm_%s.texblendctl", PathName(dir2), part);
+        return false;
+    }
+    RndTex *tex =
+        dir1->Find<RndTex>(MakeString("%s_head_norm%02d.tex", gender, option + 1), false);
+    if (!tex) {
+        MILO_WARN("%s could not find head norm %d", PathName(dir1), option + 1);
+        return false;
+    }
+    if (tex == ctrl->Tex())
+        return false;
+    ctrl->SetTex(tex);
+    return true;
+}
+
 void OutfitConfig::SetSkinTextures(ObjectDir *dir1, ObjectDir *dir2, BandCharDesc *desc) {
     OutfitConfig *cfg = dir2->Find<OutfitConfig>("skin.cfg", false);
     static const char *skinMats[] = {
@@ -462,24 +488,58 @@ void OutfitConfig::SetSkinTextures(ObjectDir *dir1, ObjectDir *dir2, BandCharDes
                     curmat->SetDiffuseTex(curtex);
                 }
             }
+            // Specular map. Retail binds it UNCONDITIONALLY (SetSpecularMap is
+            // out-of-line and is called even with a null texture), then warns.
+            RndTex *spectex =
+                dir1->Find<RndTex>(MakeString("%s_%s_spec.tex", gender, partname), false);
+            curmat->SetSpecularMap(spectex);
+            if (!spectex)
+                MILO_WARN("%s could not find %s spec map", PathName(dir1), partname);
+            // Normal map. The head (i == 4) takes its normal from the wrinkle
+            // blender's output RT instead of a numbered *_norm map.
+            if (i < 4) {
+                const char *variant = desc->HeadNormVariant();
+                const char *normname;
+                if (!*variant)
+                    normname = MakeString("%s_%s_norm.tex", gender, partname);
+                else
+                    normname = MakeString("%s_%s_norm_%s.tex", gender, partname, variant);
+                RndTex *normtex = dir1->Find<RndTex>(normname, false);
+                curmat->SetNormalMap(normtex);
+                if (!normtex)
+                    MILO_WARN("%s could not find %s norm map", PathName(dir1), partname);
+            } else {
+                RndTex *wrinkletex = dir2->Find<RndTex>("head_wrinkle_output.tex", false);
+                if (wrinkletex)
+                    curmat->SetNormalMap(wrinkletex);
+                else if (cfg)
+                    MILO_WARN("%s could not find head_wrinkle_output.tex", PathName(dir2));
+            }
         } else
             MILO_WARN("%s could not find %s", PathName(dir1), skinMats[i * 2]);
     }
     OutfitConfig *eyesCfg = dir2->Find<OutfitConfig>("eyes.cfg", false);
     if (eyesCfg) {
-        // Retail runs five head-normal-map helper calls here (chin, eye, mouth,
-        // nose, shape -- BandCharDesc fields 0x2c/0x4c/0x5c/0x40/0x28), each
-        // resolving "norm_%s.texblendctl" -> RndTexBlendController and
-        // "%s_head_norm%02d.tex" -> RndTex. Those are the two format strings still
-        // sitting unreferenced in the DECOMP_FORCEACTIVE below. If any of them
-        // changed, retail then marks both eyesCfg's own wrinkle blender and the
-        // "wrinkle.texblend" blender as needing a redraw.
-        // NOT PORTED: the helper and the two flag stores. They need
-        // RndTexBlendController's API plus retail's member offsets -- retail stores
-        // a byte at RndTexBlender+0x7c, where our Wii-derived header instead has
-        // mOutputTextures, and reads the blender out of OutfitConfig+0x84, which
-        // our layout does not have either. The lookup itself is verbatim retail.
-        dir2->Find<RndTexBlender>("wrinkle.texblend", false);
+        // Five head-feature normal maps. The BandCharDesc offsets retail loads
+        // (0x2c/0x4c/0x5c/0x40/0x28) are Head-relative 0x14/0x34/0x44/0x28/0x10
+        // (Head sits at BandCharDesc+0x18), i.e. exactly mChin/mEye/mMouth/mNose/
+        // mShape -- which independently corroborates the five string literals.
+        BandCharDesc::Head &head = desc->GetHead();
+        bool changed = SetHeadNormMap("chin", head.mChin, gender, dir1, dir2);
+        changed = SetHeadNormMap("eye", head.mEye, gender, dir1, dir2) | changed;
+        changed = SetHeadNormMap("mouth", head.mMouth, gender, dir1, dir2) | changed;
+        changed = SetHeadNormMap("nose", head.mNose, gender, dir1, dir2) | changed;
+        changed = SetHeadNormMap("shape", head.mShape, gender, dir1, dir2) | changed;
+        if (changed) {
+            // OutfitConfig+0x84 is mTexBlender's object pointer: mTexBlender is an
+            // ObjPtr at 0x7c and ObjPtr is {vtable@0, mOwner@4, mObject@8}. (Both
+            // offsets verified with cl /d1reportSingleClassLayout -- the `// 0xHEX`
+            // comments in these headers are stale and say 0x68 / 0x7c.)
+            eyesCfg->mTexBlender->SetUnkc0(true);
+            RndTexBlender *wrinkle = dir2->Find<RndTexBlender>("wrinkle.texblend", false);
+            if (wrinkle)
+                wrinkle->SetUnkc0(true);
+        }
     }
     if (cfg) {
         RndMesh *torsomesh =
