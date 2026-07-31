@@ -223,6 +223,10 @@ bool StorePanel::Unloading() const {
     return UIPanel::Unloading();
 }
 
+StorePanel *StorePanel::Instance() {
+    return ObjectDir::Main()->Find<StorePanel>("store_panel", true);
+}
+
 void StorePanel::ExitStore(StoreError) const {}
 Profile *StorePanel::StoreProfile() const { return nullptr; }
 

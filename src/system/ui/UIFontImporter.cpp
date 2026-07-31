@@ -289,7 +289,7 @@ int UIFontImporter::GetMatVariationIdx(Symbol s) const {
     return -1;
 }
 
-void UIFontImporter::AttachImporterToFont(RndFontBase *font) {
+void UIFontImporter::AttachImporterToFont(RndFont *font) {
     if (font) {
         if (font->Dir() != Dir())
             MILO_NOTIFY(

@@ -465,6 +465,22 @@ void OutfitConfig::SetSkinTextures(ObjectDir *dir1, ObjectDir *dir2, BandCharDes
         } else
             MILO_WARN("%s could not find %s", PathName(dir1), skinMats[i * 2]);
     }
+    OutfitConfig *eyesCfg = dir2->Find<OutfitConfig>("eyes.cfg", false);
+    if (eyesCfg) {
+        // Retail runs five head-normal-map helper calls here (chin, eye, mouth,
+        // nose, shape -- BandCharDesc fields 0x2c/0x4c/0x5c/0x40/0x28), each
+        // resolving "norm_%s.texblendctl" -> RndTexBlendController and
+        // "%s_head_norm%02d.tex" -> RndTex. Those are the two format strings still
+        // sitting unreferenced in the DECOMP_FORCEACTIVE below. If any of them
+        // changed, retail then marks both eyesCfg's own wrinkle blender and the
+        // "wrinkle.texblend" blender as needing a redraw.
+        // NOT PORTED: the helper and the two flag stores. They need
+        // RndTexBlendController's API plus retail's member offsets -- retail stores
+        // a byte at RndTexBlender+0x7c, where our Wii-derived header instead has
+        // mOutputTextures, and reads the blender out of OutfitConfig+0x84, which
+        // our layout does not have either. The lookup itself is verbatim retail.
+        dir2->Find<RndTexBlender>("wrinkle.texblend", false);
+    }
     if (cfg) {
         RndMesh *torsomesh =
             dir1->Find<RndMesh>(MakeString("%s_tattoo_torso.mesh", gender), false);

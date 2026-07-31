@@ -989,3 +989,20 @@ void MoveMgr::FillRoutineFromReplacer(int player) {
 #include "world/CameraManager.cpp"
 #undef gRev
 #undef gAltRev
+
+// laneCD4 co-resident COMDAT (default/MoveMgr <- bandobj/CharKeyHandMidi.cpp):
+// retail emitted PropSync<CharIKFingers> at 0x822D01E8, inside MoveMgr's pinned
+// span. Its sole caller is CharKeyHandMidi::SyncProperty at 0x822D0590 (also in
+// this span, still unnamed): a 5-arm symbol chain whose arms are
+//   ik_object -> fn_822D01E8 (this-0x7c) | first_spot -> fn_822A1070 (this-0x70)
+//   second_spot -> fn_822A1070 (this-0x64) | is_right_hand -> fn_82280290 (this-0x8)
+//   fallthrough -> fn_823AEF98 (this-0x80) = SYNC_SUPERCLASS(CharWeightable)
+// which is exactly rb3-Wii's BEGIN_PROPSYNCS(CharKeyHandMidi), and the 12-byte
+// ObjPtr strides 0x7c/0x70/0x64 agree with CharKeyHandMidi.h's mIKObject @0x28.
+// We have no bandobj/CharKeyHandMidi.cpp to scatter-include, so instantiate just
+// the one COMDAT explicitly. This is .cpp-only: no class gains a member, so no
+// layout changes and no PCH cascade.
+#include "char/CharIKFingers.h"
+#include "obj/PropSync.h"
+template bool
+PropSync<CharIKFingers>(ObjPtr<CharIKFingers> &, DataNode &, DataArray *, int, PropOp);

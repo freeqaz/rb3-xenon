@@ -78,6 +78,11 @@ public:
     bool IsEnumerating() const;
     bool InCheckout() const;
 
+    // Singleton lookup by object name. Retail's StorePanel.obj emits the
+    // ObjectDir::Find<StorePanel> COMDAT (0x827B5300, RTTI-confirmed) and this
+    // is its only possible source; rb3-Wii StorePanel.h:60 / .cpp:239 agrees.
+    static StorePanel *Instance();
+
     // Retail layout (offsets are of the complete-object; UIPanel non-virtual
     // part ends at 0x3c, Hmx::Object is a shared virtual base at the tail):
     std::vector<StoreOffer *> mOffers;          // 0x3c
