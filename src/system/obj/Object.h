@@ -1894,7 +1894,9 @@ namespace Hmx {
         /** Set this Object's mTypeDef array based this Object's types entry in
          * SystemConfig. */
         OBJ_SET_TYPE(Object);
-        /** Returns whether this ref is an ObjDirPtr (vtable slot 5 in retail). */
+        /** Returns whether this ref is an ObjDirPtr (vtable slot 3 in retail;
+         * declared by ObjRefOwner, so it precedes ClassName/SetType. Retail
+         * slot 5 is SetType -- the old "slot 5" note here was wrong). */
         virtual bool IsDirPtr() { return false; }
         /** Executes a message/command on the Object.
          * @param [in] _msg The received message.
