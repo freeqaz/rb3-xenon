@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pre-landing gate: does the NATIVE build still compile+link?
+# Pre-landing gate: does the NATIVE build still compile+link — ALL of it?
 #
 # WHY THIS EXISTS
 # ---------------
@@ -27,15 +27,108 @@
 # A change confined to `native/` cannot affect the X360 build; a change to
 # `src/` can affect BOTH, and needs this gate AND a whole-binary A/B.
 #
-# USAGE
-#     tools/native_build_gate.sh [project_dir]      # default: repo root
+# ---------------------------------------------------------------------------
+# WHAT WAS WRONG WITH THIS GATE (fixed 2026-08-01, lane X2/GATE)
+# ---------------------------------------------------------------------------
+# The gate could not fail in the way that mattered. Three defects, all measured:
 #
-# Exit 0 = native still builds. Exit 1 = it does not; the diagnostics are printed
-# and the log path is reported.
+#  1. It counted `find build -executable -name 'rb3-*' | wc -l` -- binaries that
+#     EXIST, not targets THIS RUN vouches for. X1 measured a tree where 8
+#     binaries dated `Jul 31 19:09` were counted as "linked" although nothing
+#     had linked for days.
+#  2. That count was PRINTED AND NEVER ASSERTED. The only FAIL conditions were
+#     `build_rc != 0` and `errs != 0`, so a tree that compiled NOTHING AT ALL
+#     still reported "15 linked target(s)" and PASS.
+#  3. It ran plain `cmake --build`, i.e. ninja's default `-k1`, stopping at the
+#     first failing TU and concealing every independent breakage behind it. It
+#     took X1 four fix-and-rerun cycles to find four separate defects.
+#
+# (1)+(2) were a deliberate trade recorded in the old comment: a log-derived
+# count read 0 on incremental builds and "looked like catastrophic failure", so
+# a false NEGATIVE was swapped for a false POSITIVE -- the wrong direction for a
+# gate, and precisely why a 199-file matching wave killed the native build
+# unnoticed.
+#
+# HOW THE FIX WORKS -- four sets, compared:
+#
+#   MANIFEST    KNOWN_TARGETS below. A committed floor. Deleting a target's
+#               declaration cannot lower the bar silently; it FAILs until the
+#               manifest is edited in the same commit.
+#   DECLARED    parsed live from native/CMakeLists.txt (`rb3_add_executable(` /
+#               `add_executable(`), so a NEWLY ADDED target is held to the same
+#               standard immediately, with no manifest edit needed.
+#   EXPECTED    = MANIFEST u DECLARED. Monotone by construction: additions raise
+#               the bar at once, deletions never lower it.
+#   ACTUAL      per target, interrogated from the build system itself, NOT from
+#               the filesystem:
+#                 `ninja -t query <t>`  -> is it CONFIGURED?  (instant)
+#                 real `ninja <t>`      -> is it UP-TO-DATE?  ("no work to do",
+#                                          measured 0.034 s on a no-op)
+#               Freshness is thus a POSITIVE STATEMENT BY NINJA that the binary
+#               is newer than every input in its dependency graph -- which a
+#               stale Jul-31 binary on a changed tree cannot satisfy -- while an
+#               incremental no-op on a healthy tree still passes, so fixing
+#               defect (1) does NOT reintroduce the false negative the old
+#               comment was trading against. mtime-vs-run-marker additionally
+#               labels RELINKED vs UP-TO-DATE, so the operator can see which.
+#
+#               !! `ninja -n <t>` (DRY run) is NOT usable here and was rejected
+#               after measurement: CONFIGURE_DEPENDS globs make ninja plan a
+#               CMake re-run it cannot simulate, so `-n` returns rc=0 and "work
+#               to do" for EVERY target -- including a target that does not
+#               exist at all. It is a vacuous probe. The real (non-dry) probe
+#               costs 0.034 s, so there is nothing to buy by faking it.
+#
+# Every EXPECTED target must end OK, or be SKIPPED with a reason that is
+# independently verified against the environment (see conditional_reason).
+# Anything else is a FAIL that NAMES THE TARGET.
+#
+# The build runs with `-k 0` and the report gives the DISTINCT error set plus
+# every failed ninja edge and the targets they belong to, so independent
+# breakages are all visible in one run.
+#
+# USAGE
+#     tools/native_build_gate.sh [project_dir] [--strict]
+#
+#     --strict / NATIVE_GATE_STRICT=1
+#         SKIPPED targets FAIL too. Use on a machine that has the full deps
+#         tree (i.e. repo main), where a skip means the environment moved.
+#     NATIVE_GATE_ONLY="rb3-dta rb3-ark"
+#         Build+assert only these targets. The verdict can then NEVER be a bare
+#         "PASS" -- it is "PASS (PARTIAL: n of N)" and lists what was omitted --
+#         so a subset run cannot be mistaken for full coverage.
+#
+# Exit 0 = native still builds. Exit 1 = it does not; diagnostics are printed
+# and the log path is reported. Exit 2 = the gate could not run at all.
 
 set -uo pipefail
 
-DIR="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# --------------------------------------------------------------- MANIFEST ---
+# The floor. If you add or remove a target in native/CMakeLists.txt, update
+# this list IN THE SAME COMMIT -- that is the point: the change becomes a
+# reviewable line in the diff instead of a silently lowered bar.
+KNOWN_TARGETS=(
+    rb3-dta   rb3-song    rb3-midi    rb3-gem     rb3-hit
+    rb3-score rb3-score2  rb3-score3  rb3-score4
+    rb3-vocal rb3-vocal2  rb3-harmony rb3-crowd
+    rb3-save  rb3-ark
+    rb3-frame
+)
+
+STRICT="${NATIVE_GATE_STRICT:-0}"
+DIR=""
+for arg in "$@"; do
+    case "$arg" in
+        --strict) STRICT=1 ;;
+        -*)       echo "native_build_gate: unknown option $arg" >&2; exit 2 ;;
+        *)        DIR="$arg" ;;
+    esac
+done
+[ -n "$DIR" ] || DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Normalise: a relative arg such as `.` otherwise yields a log named
+# `native_gate_..log` and an unreadable "tree:" line.
+DIR="$(cd "$DIR" 2>/dev/null && pwd)" || { echo "native_build_gate: no such dir" >&2; exit 2; }
+
 LOG="${TMPDIR:-$HOME/tmp}/native_gate_$(basename "$DIR").log"
 mkdir -p "$(dirname "$LOG")"
 
@@ -43,10 +136,55 @@ if [ ! -d "$DIR/native" ]; then
     echo "native_build_gate: no native/ under $DIR" >&2
     exit 2
 fi
-
 cd "$DIR/native" || exit 2
+BUILD=build
+CML=CMakeLists.txt
 
-cmake -S . -B build -G Ninja \
+# `grep` is a shell FUNCTION shimming to `ugrep -I` in some interactive shells
+# here; it silently matches NOTHING in a file it thinks is binary (false
+# negatives only). Scripts get the real grep, but pin it anyway and pass -a so a
+# stray NUL byte in a compiler diagnostic cannot make an error line invisible.
+G() { command grep -a "$@"; }
+
+cache_get() {  # $1 = cache variable name -> its value, or empty
+    [ -f "$BUILD/CMakeCache.txt" ] || return 0
+    sed -n "s/^$1:[^=]*=//p" "$BUILD/CMakeCache.txt" | head -1
+}
+
+# --- Is a target's absence LEGITIMATE? --------------------------------------
+# Echo a reason iff the target is conditional AND the condition is independently
+# verified to hold RIGHT NOW. Silence => the absence is a defect.
+#
+# A target that is merely "not there" is NEVER accepted: the reason must be a
+# checkable fact about this machine, not a fact about the source -- otherwise
+# this function reopens the exact hole the gate exists to close.
+conditional_reason() {
+    case "$1" in
+    rb3-frame)
+        # Guarded by RB3X_BUILD_ENGINE, which native/CMakeLists.txt:858-866
+        # AUTO-DISABLES when Dawn is absent. Dawn_DIR and MILO_ENGINE_PATH both
+        # default RELATIVE to the source tree, so they resolve in the repo but
+        # NOT in a worktree -- where rb3-frame silently vanishes at rc=0. That
+        # is a real, reproducible false positive for the old gate.
+        #
+        # !! Do NOT read RB3X_BUILD_ENGINE from CMakeCache.txt to answer this.
+        # The auto-disable is a plain `set(RB3X_BUILD_ENGINE OFF)` that shadows
+        # the cache entry, so the CACHE STILL READS `ON` ON A TREE WHERE THE
+        # ENGINE IS OFF. Verified 2026-08-01 in a Dawn-less worktree:
+        # `RB3X_BUILD_ENGINE:BOOL=ON` while rb3-frame was not configured. That
+        # instrument is vacuous. The file-existence test below is the same
+        # condition CMake itself branches on.
+        local dawn; dawn="$(cache_get Dawn_DIR)"
+        if [ -n "$dawn" ] && [ ! -f "$dawn/DawnConfig.cmake" ]; then
+            echo "RB3X_BUILD_ENGINE auto-disabled -- no DawnConfig.cmake at $dawn"
+        fi
+        ;;
+    esac
+}
+
+# ------------------------------------------------------------- configure ----
+MARKER="$BUILD/.native_gate_run_marker"
+cmake -S . -B "$BUILD" -G Ninja \
       -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ > "$LOG" 2>&1
 cfg_rc=$?
 if [ $cfg_rc -ne 0 ]; then
@@ -56,88 +194,193 @@ if [ $cfg_rc -ne 0 ]; then
     exit 1
 fi
 
-# `-k 0` (keep going) is LOAD-BEARING, not a convenience. Plain `cmake --build`
-# is ninja's default -k1: it stops at the FIRST failing TU. On a tree with
-# several independent breakages that reports one and CONCEALS the rest -- during
-# X1 it took four fix-and-rerun cycles to discover there were four distinct
-# defects behind a single error line. With -k 0 the whole distinct-error set is
-# visible in one run, and the targets that are still healthy still get linked
-# (which is what makes the freshness check below meaningful after a partial
-# failure).
-cmake --build build -- -k 0 >> "$LOG" 2>&1
-build_rc=$?
+NINJA="$(cache_get CMAKE_MAKE_PROGRAM)"; [ -n "$NINJA" ] || NINJA=ninja
 
-errs=$(grep -c "error:" "$LOG")
-warns=$(grep -c "warning:" "$LOG")
-# Count the binaries that EXIST, not the "Linking" lines in the log: on an
-# incremental build ninja relinks nothing and a log-derived count reads 0, which
-# looks like catastrophic failure on a perfectly good tree. (Caught by this
-# script's own positive control doing exactly that.)
-targets=$(find build -maxdepth 1 -type f -executable -name 'rb3-*' 2>/dev/null | wc -l)
-
-# ...but "the binary exists" says nothing about WHEN it was built. At the start
-# of X1 this script reported 8 healthy targets on a tree where nothing had
-# linked for two days: the binaries were stale leftovers from before the
-# breakage landed, and a stale binary is indistinguishable from a fresh one by
-# existence alone. Ask ninja instead -- but ask it HONESTLY.
+# --------------------------------------------------- CONFIGURED target set --
+# Enumerate the nodes that have a PRODUCING EDGE in the ninja graph.
+# `ninja -t targets all` prints "<output>: <rule>" for exactly those.
 #
-# ⛔ DO NOT USE `ninja -n` HERE. It was used, and it made this gate incapable of
-# PASSING -- the exact mirror of the "cannot fail" defect the gate exists to
-# prevent. native/CMakeLists.txt installs file(GLOB ... CONFIGURE_DEPENDS ...)
-# on 8 directories, which adds a glob-recheck edge. A DRY RUN CANNOT EXECUTE THE
-# GLOB CHECK, so ninja conservatively assumes the CMake re-run is needed and
-# always plans 2 steps:
-#     $ ninja -n            -> [0/2] Re-checking globbed directories...
-#                              [1/2] Re-running CMake...
-#     $ ninja               -> ninja: no work to do.       (a REAL run checks)
-#     $ ninja -n            -> still 2, after two clean no-op builds
-# So `stale` was a CONSTANT 2 on every healthy tree and the PASS line below was
-# unreachable. Measured on main 2026-08-01.
-#
-# A real second `ninja` is the honest probe: `cmake --build` has already run, so
-# a genuine no-op must report "no work to do". If anything actually rebuilds,
-# that IS real staleness -- and unlike the dry run, this check can both pass and
-# fail. It cannot be fooled by a dry-run modelling gap, which is what bit here.
-noop="$(cd build && ninja 2>&1 | tail -1)"
-case "$noop" in
-    *"no work to do"*) stale=0 ;;
-    *)                 stale=1 ;;
-esac
+# !! `ninja -t query <t>` is NOT usable for this, and was rejected only AFTER it
+# silently passed a negative control (2026-08-01): it returns rc=0 for ANY PATH
+# THAT MERELY EXISTS ON DISK, producing "<name>:" with an empty `outputs:` and
+# no `input:` line for a target that is not in the graph at all. So it is a
+# file-existence test wearing a graph-query costume -- and a stale binary then
+# also satisfies the follow-up "no work to do" probe, because a node with no
+# inputs is trivially up to date. Both probes fall to the same cause, and they
+# fall EXACTLY in the scenario this gate exists for: a dropped target whose old
+# binary is still on disk. Tested `-t query` against an absent target with no
+# file (it correctly errors) and wrongly concluded it worked; the case that
+# matters is an absent target WITH a file.
+configured="$("$NINJA" -C "$BUILD" -t targets all 2>/dev/null | sed -n 's/^\([^:]*\): .*/\1/p')"
+if [ -z "$configured" ]; then
+    # Anti-vacuity self-check: a probe that returns nothing would mark every
+    # target absent (or, in an earlier draft, every target fine). Refuse to
+    # report rather than emit a verdict the instrument cannot support.
+    echo "NATIVE GATE: FAIL (the gate could not enumerate ANY target from the ninja graph --"
+    echo "  its own probe is broken, so no verdict is reportable)"
+    echo "log: $LOG"
+    exit 2
+fi
+# Exact-line membership, done WITHOUT a pipe on purpose.
+# `printf '%s\n' "$configured" | grep -qxF "$1"` is WRONG under `set -o
+# pipefail`, and wrong in a data-dependent way that cost a negative control to
+# find: grep -q exits at the FIRST match, printf then dies of SIGPIPE, and
+# pipefail promotes the writer's death to the pipeline's status -- so a MATCH
+# reports FALSE. It only misbehaves when the match is early enough to make grep
+# exit before printf finishes, so `rb3-save` (late in a 3102-line list) passed
+# while `rb3-dta` (line 171) failed. Same family as `prog | tail; echo $?`.
+is_configured() {
+    case $'\n'"$configured"$'\n' in
+        *$'\n'"$1"$'\n'*) return 0 ;;
+        *)                return 1 ;;
+    esac
+}
 
-if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ]; then
-    echo "NATIVE GATE: FAIL  (build rc=$build_rc, $errs error line(s))"
-    echo "--- distinct diagnostics ($(grep 'error:' "$LOG" | sed 's/.*error: //' | sort -u | wc -l) unique) ---"
-    grep "error:" "$LOG" | sed 's/.*error: //' | sort -u | head -20
-    echo "--- first site for each ---"
-    grep "error:" "$LOG" | sort -u -t: -k4 | head -10
-    echo "targets currently on disk: $targets (NOT a pass signal on a failing build)"
+# --------------------------------------------------- EXPECTED target set ----
+# DECLARED: parse the source of truth. Comments are stripped first, so a
+# commented-out declaration does not count.
+declared=()
+while IFS= read -r t; do [ -n "$t" ] && declared+=("$t"); done < <(
+    awk '{ line = $0; sub(/#.*/, "", line)
+           if (match(line, /(^|[^A-Za-z0-9_])(rb3_)?add_executable[ \t]*\([ \t]*[A-Za-z0-9_.+-]+/)) {
+               s = substr(line, RSTART, RLENGTH); sub(/.*\([ \t]*/, "", s); print s } }' "$CML" | sort -u)
+
+is_in() { local n="$1"; shift; local x; for x in "$@"; do [ "$x" = "$n" ] && return 0; done; return 1; }
+
+# EXPECTED = MANIFEST u DECLARED (manifest order first, for stable output).
+expected=("${KNOWN_TARGETS[@]}")
+new_targets=()
+for t in ${declared[@]+"${declared[@]}"}; do
+    if ! is_in "$t" "${KNOWN_TARGETS[@]}"; then expected+=("$t"); new_targets+=("$t"); fi
+done
+dropped=()
+for t in "${KNOWN_TARGETS[@]}"; do
+    is_in "$t" ${declared[@]+"${declared[@]}"} || dropped+=("$t")
+done
+
+# Optional subset. Can only ever produce a self-labelled PARTIAL verdict.
+partial=0; omitted=()
+if [ -n "${NATIVE_GATE_ONLY:-}" ]; then
+    read -r -a only <<< "$NATIVE_GATE_ONLY"
+    for t in "${expected[@]}"; do is_in "$t" "${only[@]}" || omitted+=("$t"); done
+    expected=("${only[@]}")
+    partial=1
+fi
+
+# ------------------------------------------------------------- build -------
+# -k 0: keep going after failures, so INDEPENDENT breakages are all reported in
+# one run instead of the first one masking the rest.
+: > "$MARKER"
+if [ $partial -eq 1 ]; then
+    # Only ask ninja to build names it actually knows: a requested-but-absent
+    # target must be adjudicated below (and FAIL), not abort the build here.
+    buildable=()
+    for t in "${expected[@]}"; do
+        is_configured "$t" && buildable+=("$t")
+    done
+    if [ ${#buildable[@]} -gt 0 ]; then
+        cmake --build "$BUILD" --target "${buildable[@]}" -- -k 0 >> "$LOG" 2>&1
+        build_rc=$?
+    else
+        build_rc=0
+    fi
+else
+    cmake --build "$BUILD" -- -k 0 >> "$LOG" 2>&1
+    build_rc=$?
+fi
+
+errs=$(G -c "error:" "$LOG");            errs=${errs:-0}
+warns=$(G -c "warning:" "$LOG");         warns=${warns:-0}
+failed_edges=$(G -c "^FAILED: " "$LOG"); failed_edges=${failed_edges:-0}
+distinct_of() { G "error:" "$LOG" | sed 's#^.*/\([^/]*:[0-9]*:[0-9]*: error:\)#\1#' | sort -u; }
+distinct_errs=$(distinct_of | wc -l)
+
+# Attribute failed ninja edges to targets: CMakeFiles/<target>.dir/... for
+# compiles, the bare output name for links.
+failed_targets=$(G "^FAILED: " "$LOG" \
+    | sed -n 's#.*CMakeFiles/\([^/]*\)\.dir/.*#\1#p' | sort -u)
+
+# ------------------------------------------------- per-target adjudication --
+ok=(); relinked=(); skipped_lines=(); fail_lines=()
+for t in "${expected[@]}"; do
+    if ! is_configured "$t"; then
+        # NOT CONFIGURED. Legitimate only with a verified environmental reason.
+        # NB this is a graph-edge test, NOT a file test: a leftover binary from
+        # an earlier build does NOT make a dropped target look present.
+        reason="$(conditional_reason "$t")"
+        if [ -n "$reason" ]; then
+            skipped_lines+=("  SKIPPED   $t -- $reason")
+        elif is_in "$t" ${dropped[@]+"${dropped[@]}"}; then
+            fail_lines+=("  DROPPED   $t -- declaration REMOVED from native/$CML (held by the manifest floor). If deliberate, delete it from KNOWN_TARGETS in this script, in the same commit.")
+        else
+            fail_lines+=("  MISSING   $t -- declared in native/$CML but NOT CONFIGURED, and no verified conditional reason")
+        fi
+        continue
+    fi
+    if [ ! -x "$BUILD/$t" ]; then
+        why=""
+        is_in "$t" $failed_targets && why=" -- failed edges are attributed to it in the log"
+        fail_lines+=("  NOBINARY  $t -- configured, but no executable was produced$why")
+        continue
+    fi
+    # Configured + a binary exists. Is it THIS run's? Ask ninja, not the mtime:
+    # "no work to do" is a positive statement that the binary is newer than
+    # every input in its graph. A stale binary on a changed tree cannot get it.
+    probe="$("$NINJA" -C "$BUILD" "$t" 2>&1)"; prc=$?
+    # Substring test in-shell, NOT `printf | grep -q` -- see is_configured().
+    if [ $prc -ne 0 ] || [[ "$probe" != *"no work to do"* ]]; then
+        fail_lines+=("  STALE     $t -- a binary exists but ninja does not consider it up to date (rc=$prc). It is NOT attributable to this run.")
+        continue
+    fi
+    if [ "$BUILD/$t" -nt "$MARKER" ]; then relinked+=("$t"); else ok+=("$t"); fi
+done
+
+# ------------------------------------------------------------- report ------
+echo "=== NATIVE BUILD GATE ==="
+echo "tree:      $DIR"
+echo "manifest:  ${#KNOWN_TARGETS[@]} known target(s)"
+echo "declared:  ${#declared[@]} parsed from native/$CML"
+echo "expected:  ${#expected[@]} (manifest u declared)$( [ $partial -eq 1 ] && echo "  [SUBSET REQUESTED]")"
+echo "build:     rc=$build_rc, $errs error line(s) / $distinct_errs distinct, $failed_edges failed edge(s), $warns warning(s)"
+[ ${#new_targets[@]} -gt 0 ] && echo "note:      target(s) declared but absent from this script's manifest, held to the same standard anyway: ${new_targets[*]} (add them to KNOWN_TARGETS)"
+echo
+echo "targets:"
+for t in ${relinked[@]+"${relinked[@]}"}; do echo "  OK        $t -- relinked this run"; done
+for t in ${ok[@]+"${ok[@]}"};             do echo "  OK        $t -- up to date (ninja: no work to do)"; done
+for l in ${skipped_lines[@]+"${skipped_lines[@]}"}; do echo "$l"; done
+for l in ${fail_lines[@]+"${fail_lines[@]}"};       do echo "$l"; done
+[ $partial -eq 1 ] && [ ${#omitted[@]} -gt 0 ] && echo "  OMITTED   ${omitted[*]}"
+echo
+
+n_ok=$(( ${#ok[@]} + ${#relinked[@]} ))
+n_skip=${#skipped_lines[@]}
+n_bad=${#fail_lines[@]}
+if [ $STRICT -eq 1 ] && [ $n_skip -gt 0 ]; then
+    for l in "${skipped_lines[@]}"; do echo "  STRICT-FAIL${l#  SKIPPED}"; done
+    n_bad=$(( n_bad + n_skip ))
+fi
+
+if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ] || [ $n_bad -ne 0 ]; then
+    verdict="NATIVE GATE: FAIL  (build rc=$build_rc, $errs error line(s), $n_bad target defect(s), $n_ok/${#expected[@]} target(s) good"
+    [ $n_skip -gt 0 ] && verdict="$verdict, $n_skip skipped"
+    echo "$verdict)"
+    if [ "$errs" -ne 0 ]; then
+        echo "--- distinct diagnostics ($distinct_errs) ---"
+        distinct_of | head -20
+        echo "--- $failed_edges failed edge(s) across target(s): $(echo $failed_targets | tr '\n' ' ')---"
+    fi
     echo "log: $LOG"
     exit 1
 fi
-
-if [ "$stale" -ne 0 ]; then
-    echo "NATIVE GATE: FAIL  (build reported rc=0 but a second ninja was NOT a no-op --"
-    echo "  the binaries on disk are NOT up to date with their inputs)"
-    echo "  second-ninja said: $noop"
-    echo "log: $LOG"
-    exit 1
-fi
-
-# ⛔ STILL OPEN -- the ORIGINAL Item-0 defect is NOT fixed by this hotfix.
-# `targets` above is computed by `find ... -executable` and is only PRINTED in
-# the PASS line below; it is never asserted against an EXPECTED set derived from
-# native/CMakeLists.txt. A tree that silently DROPS a target still passes. That
-# is live today: rb3-frame vanishes in any worktree because Dawn_DIR /
-# MILO_ENGINE_PATH default to paths relative to the source tree, cmake warns,
-# and the build still returns rc=0.
-# Fixing it needs EXPECTED = (committed manifest) union (targets parsed from
-# native/CMakeLists.txt), a per-target `ninja -t query` for CONFIGURED, and a
-# FAIL naming every missing target. Lane X2's GATE agent has that in flight.
 
 # The warning policy is -Wno-everything + explicit -Werror= opt-ins, so a
 # non-zero warning count here means something got past an opt-in that should
 # have been an error, or a new -W was added without -Werror=. Report, don't fail.
-echo "NATIVE GATE: PASS  (rc=0, $errs errors, $warns warnings, $targets linked target(s))"
+if [ $partial -eq 1 ]; then
+    echo "NATIVE GATE: PASS (PARTIAL: $n_ok of ${#KNOWN_TARGETS[@]} known target(s) requested) -- NOT full coverage"
+else
+    echo "NATIVE GATE: PASS  (rc=0, $errs errors, $warns warnings, $n_ok/${#expected[@]} target(s) verified$( [ $n_skip -gt 0 ] && echo ", $n_skip skipped"))"
+fi
 [ "$warns" -ne 0 ] && echo "  note: $warns warning(s) -- policy expects 0; check the opt-in list in native/CMakeLists.txt"
 echo "log: $LOG"
 exit 0
