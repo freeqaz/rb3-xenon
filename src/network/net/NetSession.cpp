@@ -84,6 +84,15 @@ namespace {
     }
 
     void DisconnectOnFail() {}
+
+    Quazal::StreamSettings *GetStreamSettingsForContext(int index) {
+        unsigned int ctx = Quazal::PseudoSingleton::GetCurrentContext();
+        if (ctx == 0) {
+            return &Quazal::Stream::s_oStreamSettings[index].mValueInDefaultContext;
+        } else {
+            return &Quazal::Stream::s_oStreamSettings[index].mValueInContextList[ctx];
+        }
+    }
 }
 
 NetSession::NetSession()
@@ -92,25 +101,14 @@ NetSession::NetSession()
       mRevertingJoinResult(0), mGameStartTime(0), mState(kIdle), mOnlineEnabled(0),
       mQNet(0) {
     SetName("session", ObjectDir::Main());
-    Symbol symCT;
-    Symbol symMS;
     DataArray *cfg = SystemConfig("net", "session");
     cfg->FindData("game_start_delay", mGameStartDelay, true);
 
-    symCT = "connection_timeout";
-    DataArray *a = cfg->FindArray(symCT, true);
+    DataArray *a = cfg->FindArray("connection_timeout", true);
     Quazal::RootTransport::s_uiDefaultConnectionTimeout = (unsigned int)a->Int(1);
-    symMS = "max_connection_silence";
-    a = cfg->FindArray(symMS, true);
+    a = cfg->FindArray("max_connection_silence", true);
     int silenceTime = a->Int(1);
-    unsigned int ctx = Quazal::PseudoSingleton::GetCurrentContext();
-    Quazal::StreamSettings *settings;
-    if (ctx == 0) {
-        settings = &Quazal::Stream::s_oStreamSettings[1].mValueInDefaultContext;
-    } else {
-        settings = &Quazal::Stream::s_oStreamSettings[1].mValueInContextList[ctx];
-    }
-    settings->SetMaxSilenceTime((unsigned int)silenceTime);
+    GetStreamSettingsForContext(1)->SetMaxSilenceTime((unsigned int)silenceTime);
 
     RegisterSessionMessages();
     TheDebug.AddFailCallback(DisconnectOnFail);
@@ -596,7 +594,8 @@ bool NetSession::OnMsg(const AddUserRequestMsg &msg) {
 bool NetSession::OnMsg(const AddUserResponseMsg &msg) {
     MILO_ASSERT(mState == kRequestingNewUser, 0x346);
     if (msg.mSuccess) {
-        AddLocalToSession(TheUserMgr->GetLocalUser(msg.mUserGuid, true));
+        LocalUser *user = TheUserMgr->GetLocalUser(msg.mUserGuid, true);
+        AddLocalToSession(user);
     }
     SetState(kIdle);
     static AddUserResultMsg result(1);

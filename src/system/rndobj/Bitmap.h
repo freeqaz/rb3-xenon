@@ -246,7 +246,7 @@ public:
 #else
     static void *operator new(unsigned int s) { return (MemAlloc)(s, 0); }
     static void *operator new(unsigned int s, void *place) { return place; }
-    __declspec(noinline) static void operator delete(void *v) { (MemFree)(v); }
+    static void operator delete(void *v) { (MemFree)(v); }
 #endif
 
     int Width() const { return mWidth; }

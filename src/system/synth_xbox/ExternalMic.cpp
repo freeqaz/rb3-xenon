@@ -62,7 +62,7 @@ void ExternalMic::dataReady(unsigned long, unsigned long, _XOVERLAPPED *pOverlap
             unsigned short *pFrameSize = data->aFrameSizes;
             for (unsigned int i = 0; i < data->numFrames; i++) {
                 unsigned short frameSize = *pFrameSize;
-                if (frameSize != 0) {
+                if (*pFrameSize != 0) {
                     if (frameSize & 1) {
                         MILO_LOG(
                             "Mic data frame length was odd: %x bytes; truncating last byte\n",

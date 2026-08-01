@@ -34,12 +34,6 @@ void TourPerformerRemote::SyncLoad(BinStream &bs, uint ui) {
 
 void TourPerformerRemote::OnSynchronized(uint ui) {
     static Symbol update_tour_display("update_tour_display");
-    DataArray *pDA;
-    {
-        DataNode dn = update_tour_display;
-        pDA = new DataArray(1);
-        pDA->Node(0) = dn;
-    }
+    DataArrayPtr pDA(update_tour_display);
     pDA->Execute();
-    pDA->Release();
 }

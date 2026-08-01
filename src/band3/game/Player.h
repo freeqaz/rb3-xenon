@@ -157,7 +157,7 @@ public:
     virtual void SetSyncOffset(float) {}
     virtual void SavePersistentData(PersistentPlayerData &) const;
     virtual void LoadPersistentData(const PersistentPlayerData &);
-    virtual int GetCodaFreestyleExtents(Extent &) const { return 0; }
+    virtual bool GetCodaFreestyleExtents(Extent &) const { return false; }
     virtual bool InTambourinePhrase() const;
     virtual bool InFreestyleSection() const;
     virtual void PopupHelp(Symbol, bool);

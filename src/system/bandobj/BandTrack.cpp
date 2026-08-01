@@ -51,8 +51,21 @@ void BandTrack::StartPulseAnims(float timeTillBeat) {
 
 DECOMP_FORCEACTIVE(BandTrack, __FILE__, "0")
 
+// Retail addresses these two revs off a SINGLE base register (one lis/addi, then
+// +0 and +4), which the compiler only does for internal-linkage statics sharing one
+// .bss chunk -- the class statics from DECLARE_REVS/INIT_REVS are PUBLIC and force a
+// separate relocation each. Retail's layout is altRev@+0, rev@+4.
+// NOTE: the NAMES are load-bearing. MSVC orders these two .bss items by a
+// deterministic symbol-table order (not decl order, not use order, not size), and
+// this pair is what places sAltRev at +0. Renaming them silently breaks the match.
+static unsigned short sAltRev;
+static unsigned short sRevision;
+
 void BandTrack::LoadTrack(BinStream &bs, bool b1, bool b2, bool b3) {
-    LOAD_REVS(bs);
+    int rev;
+    bs >> rev;
+    sRevision = getHmxRev(rev);
+    sAltRev = getAltRev(rev);
     ASSERT_REVS(3, 0);
     if (b2) {
         Symbol s;
@@ -63,27 +76,28 @@ void BandTrack::LoadTrack(BinStream &bs, bool b1, bool b2, bool b3) {
         bs >> mSimulatedNet;
         bs >> mInstrument;
     }
-    if (gRev >= 1 && !b1) {
+    if (sRevision >= 1 && !b1) {
         bs >> mStarPowerMeter;
         bs >> mStreakMeter;
     }
     bool finalbool;
-    if (gRev < 3) {
-        finalbool = false;
+    if (sRevision < 3) {
         if (!b3 || !b1)
             finalbool = true;
+        else
+            finalbool = false;
     } else
         finalbool = !b1;
     if (finalbool) {
         bs >> mPlayerIntro;
-        if (gRev < 1) {
+        if (sRevision < 1) {
             bs >> mStarPowerMeter;
             bs >> mStreakMeter;
         }
         bs >> mPopupObject;
         bs >> mPlayerFeedback;
         bs >> mFailedFeedback;
-        if (gRev >= 2)
+        if (sRevision >= 2)
             bs >> mEndgameFeedback;
     }
     if (!b1) {

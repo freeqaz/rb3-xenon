@@ -925,13 +925,13 @@ float VocalPart::ScoreNote(
     float diff = (float)sloppyPitchOut - pitch;
     float absDiff = (float)fabs(diff);
     float pitchClassDist = (float)fmod(absDiff, 12.0);
-    pitchClassDist = Min(pitchClassDist, 12.0f - pitchClassDist);
+    pitchClassDist = Min(12.0f - pitchClassDist, pitchClassDist);
     if (pitchClassDist <= 2.5f) {
+        int sign = (diff > 0.0f) ? 1 : -1;
+        diff = pitchClassDist;
         float fMagnitude = 0.5f + absDiff / 12.0f;
         int mag = (int)fMagnitude;
-        int sign = (diff > 0.0f) ? 1 : -1;
         int octaves = mag * sign;
-        diff = pitchClassDist;
         octavesOut = octaves;
         pitch += 12.0f * (float)octaves;
     }

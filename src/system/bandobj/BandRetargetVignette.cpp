@@ -13,7 +13,19 @@
 #include "utl/Symbols.h"
 #include <string.h>
 
-INIT_REVS(BandRetargetVignette);
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (altRev+0,
+// rev+4) -- not for the DECLARE_REVS/INIT_REVS class statics. Same lever as
+// BandWardrobe.cpp / BandDirector.cpp / BandSwatch.cpp. The header's
+// gRev/gAltRev static member declarations are left in place (undefined,
+// unused, harmless) since no other TU odr-uses them.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
+
 const char *BandRetargetVignette::sIkfs[] = {
     "bone_pelvis.ikf", "bone_L-ankle.ikf",   "bone_R-ankle.ikf", "bone_L-foreArm.ikf",
     "bone_L-hand.ikf", "bone_R-foreArm.ikf", "bone_R-hand.ikf",  "bone_prop0.ikf",

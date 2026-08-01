@@ -2,6 +2,8 @@
 #include "math/Utl.h"
 #include "rndobj/Rnd.h"
 
+static const float kFive = 5.0f;
+
 float DisplayEvents(DataEventList *events, float f1, float f2) {
     float f9 = f1 + 2.0f;
     int min = Min(events->CurIndex(), events->Size() - 1);
@@ -13,16 +15,16 @@ float DisplayEvents(DataEventList *events, float f1, float f2) {
     float f10 = -1.0f;
     Hmx::Rect rect;
     float fsum = f2 + (float)TheRnd.Width() / 200.0f;
-    while (min < events->Size() && events->Event(min).start < fsum) {
+    for (; min < events->Size() && events->Event(min).start < fsum; min++) {
         DataEvent curEvent(events->Event(min));
-        float start14c = (curEvent.start - f2) * 200.0f + 5.0f;
-        float start150 = (curEvent.end - f2) * 200.0f + 5.0f;
+        float start14c = (curEvent.start - f2) * 200.0f + kFive;
+        float start150 = (curEvent.end - f2) * 200.0f + kFive;
         String str108;
         str108 << curEvent.Msg();
-        MaxEq(start14c, 5.0f);
-        MinEq(start150, (float)TheRnd.Width() + 5.0f);
+        MaxEq(start14c, kFive);
+        MinEq(start150, (float)TheRnd.Width() + kFive);
         if (min < events->Size() - 1) {
-            MinEq(start150, ((events->Event(min + 1).start - f2) * 200.0f + 5.0f) - 1.0f);
+            MinEq(start150, ((events->Event(min + 1).start - f2) * 200.0f + kFive) - 1.0f);
         }
         rect.Set(start14c, f1 + 2.0f, Max(1.0f, start150 - start14c), 12.0f);
         TheRnd.DrawRect(
@@ -44,9 +46,8 @@ float DisplayEvents(DataEventList *events, float f1, float f2) {
                         )
                         .y);
         }
-        min++;
     }
-    rect.Set(5.0f, f9 - 2.0f, 1.0f, 14.0f);
+    rect.Set(kFive, f9 - 2.0f, 1.0f, 14.0f);
     TheRnd.DrawRect(rect, Hmx::Color(1, 0, 0), 0, 0, 0);
     return f9 + f10;
 }

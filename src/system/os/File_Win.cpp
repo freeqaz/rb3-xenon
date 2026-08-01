@@ -46,7 +46,7 @@ int FileMkDir(const char *iDirname) {
     if (FileIsLocal(str.c_str())) {
         return CreateDirectoryA(str.c_str(), nullptr);
     } else {
-        return HolmesClientMkDir(str.c_str());
+        return -1;
     }
 }
 

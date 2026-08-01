@@ -11,8 +11,10 @@ class GemTrackResourceManager : public Hmx::Object {
 public:
     class SmasherPlateInfo {
     public:
-        SmasherPlateInfo(Hmx::Object *o)
-            : mSmasherPlate(o, 0), mTrackInst(kInstNone), mInUse(0) {}
+        SmasherPlateInfo(Hmx::Object *o) : mSmasherPlate(o) {
+            mInUse = false;
+            mTrackInst = kInstNone;
+        }
 
         ObjPtr<RndDir> mSmasherPlate; // 0x0
         TrackInstrument mTrackInst; // 0xc

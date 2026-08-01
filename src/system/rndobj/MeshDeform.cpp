@@ -147,12 +147,12 @@ void RndMeshDeform::Print() {
     auto it = mVerts.begin();
     for (; it < mVerts.end(); ++it, ++i) {
         TheDebug << "weights" << i << ": ";
-        char *cData = (char *)it.Data();
-        int num = (int)*cData++;
-        int j = 0;
-        for (; (unsigned int)j < num; j++) {
-            TheDebug << "(" << (int)*cData++ << " " << (float)*cData++ * 0.003921568859368563
-                     << ") ";
+        u8 *cData = (u8 *)it.Data();
+        u8 *p = cData;
+        for (int j = 0; j < (int)*cData; j++) {
+            float w = (float)p[2] * 0.003921568859368563f;
+            TheDebug << "(" << p[1] << " " << w << ") ";
+            p += 2;
         }
         TheDebug << "\n";
     }

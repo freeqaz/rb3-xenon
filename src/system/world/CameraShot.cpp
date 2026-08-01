@@ -491,18 +491,20 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
     if (mBlendEase) {
         float easeOffset = 0;
         float easeEnd = 1.0f;
-        if (mBlendEaseMode) {
-            switch (mBlendEaseMode) {
-            case kBlendEaseIn:
-                easeEnd = 2.0f;
-                break;
-            case kBlendEaseOut:
-                easeOffset = -1.0f;
-                break;
-            default:
-                MILO_NOTIFY("Invalid mBlendEaseMode: %d", mBlendEaseMode);
-                break;
-            }
+        switch (mBlendEaseMode) {
+        case kBlendEaseIn:
+            easeEnd = 2.0f;
+            break;
+        case kBlendEaseInAndOut:
+            easeOffset = 0.0f;
+            easeEnd = 1.0f;
+            break;
+        case kBlendEaseOut:
+            easeOffset = -1.0f;
+            break;
+        default:
+            MILO_NOTIFY("Invalid mBlendEaseMode: %d", mBlendEaseMode);
+            break;
         }
         ATanInterpolator aint(easeOffset, easeEnd, easeOffset, easeEnd, mBlendEase);
         blendT = aint.Eval(f1);
@@ -576,16 +578,14 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
     // Interpolate zoom FOV and apply
     float zoomFOV;
     ::Interp(mZoomFOV, other.mZoomFOV, blendT, zoomFOV);
-    cam->SetFrustum(
-        mCamShot->mNearPlane, mCamShot->mFarPlane, blendedFOV + zoomFOV + mCamShot->ZoomFovOffset(), 1.0f
-    );
+    cam->SetFrustum(mCamShot->mNearPlane, mCamShot->mFarPlane, blendedFOV + zoomFOV, 1.0f);
 
     // Depth of field
     RndTransformable *focus = mFocalTarget;
     RndTransformable *towardFocus = other.mFocalTarget;
-    if (mCamShot->mUseDepthOfField
-        && (focus || hasTarget || towardFocus || thasTarget)
-        && TheUI->IsGameScreenActive()) {
+    bool doDOF = mCamShot->mUseDepthOfField
+        && (focus || hasTarget || towardFocus || thasTarget);
+    if (doDOF) {
         float blurDepth;
         float focusMult;
         ::Interp(mBlurDepth, other.mBlurDepth, blendT, blurDepth);
@@ -596,7 +596,7 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
         ::Interp(mFocusBlurMultiplier, other.mFocusBlurMultiplier, blendT, focusMult);
 
         float thisFocalDist = 0;
-        float otherFocalDist;
+        float otherFocalDist = 0;
         if (focus) {
             thisFocalDist = Distance(focus->WorldXfm().v, resultTf.v);
         } else {
@@ -606,7 +606,6 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
         if (towardFocus) {
             otherFocalDist = Distance(towardFocus->WorldXfm().v, resultTf.v);
         } else {
-            otherFocalDist = 0;
             if (thasTarget)
                 otherFocalDist = Distance(other.mLastTargetPos, resultTf.v);
         }
@@ -619,8 +618,9 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
             otherFocalDist = thisFocalDist;
         }
         float focalDist = ::Interp(thisFocalDist, otherFocalDist, blendT);
+        float scaledFocalDist = focalDist * focusMult;
         TheDOFProc->Set(
-            cam, focusMult * focalDist + focalDist, blurDepth, maxBlur, minBlur
+            cam, scaledFocalDist + focalDist, blurDepth, maxBlur, minBlur
         );
     } else {
         TheDOFProc->UnSet();
@@ -656,7 +656,9 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
     MakeRotMatrix(shakeAngOffset, rotMtx, true);
     Multiply(resultTf.m, rotMtx, resultTf.m);
 
-    mCamShot->ApplyFinalCamTransform(resultTf);
+    // NB(rb3-xenon): retail RB3 has NO ApplyFinalCamTransform call here — the
+    // virtual is a DC3-era addition (absent from the rb3-Wii oracle entirely),
+    // and retail's decomp goes straight from Multiply() to SetLocalXfm().
     cam->SetLocalXfm(resultTf);
 }
 

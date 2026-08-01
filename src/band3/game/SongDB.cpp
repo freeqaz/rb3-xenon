@@ -134,7 +134,7 @@ float SongDB::GetSongDurationMs() const { return mSongDurationMs; }
 int SongDB::GetCodaStartTick() const { return mCodaStartTick; }
 
 FORCE_LOCAL_INLINE
-bool SongDB::IsInCoda(int tick) const {
+int SongDB::IsInCoda(int tick) const {
     return mCodaStartTick != -1 && tick >= mCodaStartTick;
 }
 END_FORCE_LOCAL_INLINE

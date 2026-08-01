@@ -100,8 +100,8 @@ void UIStats::MaybePublish(UIScreen *from) {
         int compressedSize = 0x10100;
         unsigned char stackbuf[0x10100];
         unsigned char *buf = stackbuf + 0x100;
-        unsigned char *write = (unsigned char *)mPadLogWritePtr;
         unsigned char *base = (unsigned char *)mPadLogBuffer;
+        unsigned char *write = (unsigned char *)mPadLogWritePtr;
         unsigned int writeOff = (unsigned int)(write - base);
         int size;
         if (write == base || (unsigned int)mPadLogCount < 0x4000) {
@@ -153,7 +153,41 @@ void UIStats::MaybePublish(UIScreen *from) {
     for (std::vector<BandUser *>::iterator it = users.begin(); it != users.end(); ++it) {
         const BandUser *user = *it; // retail: const (selects the const GetLocal/RemoteBandUser vtable slots)
         bool participating = user->IsParticipating();
-        if (user->IsLocal()) {
+        // retail (Ghidra @0x8255f9d0): merged condition `!IsLocal() || IsNullUser()`
+        // (TU5-added User virtual, vtbl+0x70 — see os/User.h) short-circuits IsLocal() a SECOND time
+        // via the nested `if (!user->IsLocal())`; a local user with the TU5 flag set falls through
+        // both branches and is silently skipped this iteration.
+        if (!user->IsLocal() || user->IsNullUser()) {
+            if (!user->IsLocal()) {
+                MILO_ASSERT(remoteCount < DIM(mLastRemoteID), 0xEC);
+                user->GetRemoteBandUser(); // retail calls this (result unused), not Reset()
+                int controllerType = kControllerNone;
+                OnlineID id;
+                if (participating) {
+                    controllerType = user->GetControllerType();
+                    id = *user->mOnlineID;
+                }
+                if (controllerType != mLastControllerType[remoteCount]
+                    || !(id == mLastRemoteID[remoteCount])) {
+                    String key(MakeString("remote_user_%d", remoteCount));
+                    // retail keeps the ControllerTypeToSym sret pointer in r30 and reads the
+                    // Symbol via `lwz r4, 0x0(r30)` — MSVC's shape for a member call on the
+                    // TEMPORARY itself. A NAMED Symbol local (rb3-Wii's shape, UIStats.cpp:207)
+                    // measured WORSE here: it homes the Symbol to r31 and costs 0x10 of extra
+                    // frame, shrinking the frame to 0x102e0 vs retail's 0x102f0 (99.1 vs 99.2).
+                    String val(MakeString(
+                        "%s:%s",
+                        ControllerTypeToSym((ControllerType)controllerType).Str(),
+                        id.ToString()
+                    ));
+                    screenExit.AddPair(key.c_str(), DataNode(val));
+                    padUser.AddPair(key.c_str(), DataNode(val));
+                    mLastRemoteID[remoteCount] = id;
+                    // retail X360: mLastControllerType[remoteCount] is never written back here
+                }
+                remoteCount++;
+            }
+        } else {
             int padNum = user->GetLocalBandUser()->GetPadNum();
             const char *breed = JoypadGetBreedString(padNum);
             if (mLastBreedString[padNum] != breed) {
@@ -178,29 +212,6 @@ void UIStats::MaybePublish(UIScreen *from) {
                 mLastWasParticipating[padNum] = participating;
                 mLastPadID[padNum] = id;
             }
-        } else {
-            MILO_ASSERT(remoteCount < DIM(mLastRemoteID), 0xEC);
-            user->GetRemoteBandUser(); // retail calls this (result unused), not Reset()
-            int controllerType = kControllerNone;
-            OnlineID id;
-            if (participating) {
-                controllerType = user->GetControllerType();
-                id = *user->mOnlineID;
-            }
-            if (controllerType != mLastControllerType[remoteCount]
-                || !(id == mLastRemoteID[remoteCount])) {
-                String key(MakeString("remote_user_%d", remoteCount));
-                String val(MakeString(
-                    "%s:%s",
-                    ControllerTypeToSym((ControllerType)controllerType).Str(),
-                    id.ToString()
-                ));
-                screenExit.AddPair(key.c_str(), DataNode(val));
-                padUser.AddPair(key.c_str(), DataNode(val));
-                mLastRemoteID[remoteCount] = id;
-                // retail X360: mLastControllerType[remoteCount] is never written back here
-            }
-            remoteCount++;
         }
     }
 
@@ -222,12 +233,13 @@ void UIStats::MaybePublish(UIScreen *from) {
     }
     if (screenExit.mNameValPairs.size() == 1) {
         DropScreen(from);
-    } else {
-        if (mLastDroppedScreen) {
-            screenExit.AddPair("dropped_screens", DataNode(mLastDroppedScreen));
-            mLastDroppedScreen = NULL;
-        }
-        TheDataPointMgr.RecordDataPoint(screenExit);
+    } else if (mLastDroppedScreen) {
+        // retail X360 (fn_8255F9D0 @.L_8256035C) has exactly ONE `bl RecordDataPoint`
+        // in the whole function — the padUser one. rb3-Wii's DEV source records
+        // screenExit too (UIStats.cpp:241); retail dropped it. Verified by counting
+        // bl fn_827CD110 sites in the target .s: 1.
+        screenExit.AddPair("dropped_screens", DataNode(mLastDroppedScreen));
+        mLastDroppedScreen = NULL;
     }
 }
 

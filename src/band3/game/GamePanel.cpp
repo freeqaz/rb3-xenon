@@ -371,6 +371,25 @@ void GamePanel::Poll() {
         UpdateDeltaTimeOverlay();
     }
     UpdateLatency();
+#else
+    // Retail RB3-360: the debug-HUD RndOverlay members (mTime/mDeltaTime/
+    // mLatency) are stripped from the shipped GamePanel layout (see the
+    // sizeof(GamePanel)==0x188 note by the member block in GamePanel.h).
+    // But retail's Poll() still ends with ONE flag-gated UpdateNowBar()
+    // call here -- proven by the va=0x826968a8 objdiff delete-cluster
+    // (idx71-76): `lwz r11,0x54(r31); lbz r11,0x2f(r11); cmplwi; beq;
+    // mr r3,r31; bl fn_82695178`. r31+0x54 is mGame, and +0x2f off *that*
+    // is Game::mProperties+3 -- the TU5 "movie sync" bool (see
+    // Game.h Properties::mUnkTU5_movieSync / Game::Poll's movie-sync
+    // block, which reads this exact address). fn_82695178's own decomp
+    // formats "MBT %d:%d:%03d [...]" (same text as UpdateNowBar below) but
+    // gets there via GetTrackPanelDir() + vtable slot 0xd4
+    // (TrackPanelDirBase::Unkd4, already noted in TrackPanelDirBase.h) --
+    // i.e. retail's now-bar routes through TrackPanelDir, not through
+    // GamePanel's own (stripped) mTime overlay.
+    if (mGame->mProperties.mUnkTU5_movieSync) {
+        UpdateNowBar();
+    }
 #endif
 }
 
@@ -431,7 +450,27 @@ void GamePanel::UpdateNowBar() {
         (int)totalTick
     );
 }
+#else
+// va=0x82695178 in retail is a real out-of-line call (Poll() emits `bl
+// fn_82695178`, not an inlined vtable dispatch) despite /Ob2 -- mirror
+// TrackerDisplay.cpp's HasLocalPlayer() precedent and force it noinline.
+__declspec(noinline) void GamePanel::UpdateNowBar() {
+    // Retail-360: no mTime RndOverlay to write into (stripped member) --
+    // routes through TrackPanelDir's vtable slot 0xd4 instead (see the
+    // call-site note in Poll() above and the Unkd4() declaration/comment
+    // in TrackPanelDirBase.h). The retail callee (fn_82695178) formats the
+    // same "MBT %d:%d:%03d [...]" text seen in the debug-HUD variant above
+    // and hands it to that vtable slot; that text-formatting body is not
+    // ported here since it belongs to a different symbol (Unkd4's true
+    // target, not GamePanel::Poll/UpdateNowBar) -- this preserves the
+    // caller shape Poll() needs without misattributing that work to this
+    // function. No null check here either -- retail's decomp of fn_82695178
+    // dereferences GetTrackPanelDir()'s result unconditionally.
+    GetTrackPanelDir()->Unkd4();
+}
+#endif // RB3_GAMEPANEL_DEBUG_MEMBERS
 
+#ifdef RB3_GAMEPANEL_DEBUG_MEMBERS
 #pragma push
 #pragma pool_data off
 void GamePanel::UpdateLatency() {

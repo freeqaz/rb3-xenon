@@ -192,10 +192,9 @@ int SelectDifficultyPanel::GetNumSongs() const {
 
 bool SelectDifficultyPanel::IsBattle() const {
     MetaPerformer *mp = MetaPerformer::Current();
-    if (mp)
-        return mp->GetBattleID() > 0;
-    else
+    if (!mp)
         return false;
+    return mp->GetBattleID() > 0;
 }
 
 void SelectDifficultyPanel::ContentMounted(const char *, const char *) {

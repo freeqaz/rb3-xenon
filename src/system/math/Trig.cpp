@@ -6,25 +6,25 @@
 
 float gBigSinTable[0x200];
 
+// Interleaved table: even slots hold sin(k*i), odd slots hold the forward
+// difference to the previous sample (Lookup() reads offset[0]/offset[1] as a
+// delta/value pair). The compiler strength-reduces the index form below into a
+// single induction pointer, which is why the loop must be written on `i`.
 void TrigTableInit() {
-    float *tablePtr = gBigSinTable - 1;
     int i = 0;
     do {
         float sineValue = std::sin(0.024543693f * i);
-        tablePtr[1] = sineValue;
+        gBigSinTable[i * 2] = sineValue;
         if (i != 0) {
-            tablePtr[0] = sineValue - tablePtr[-1];
+            gBigSinTable[i * 2 - 1] = sineValue - gBigSinTable[i * 2 - 2];
         }
-        tablePtr += 2;
         i++;
     } while (i < 256);
+    // Final delta entry: i == 256, so this fills gBigSinTable[511] from
+    // gBigSinTable[510]. In bounds -- the write is NOT past the array end.
     float sineValue = std::sin(0.024543693f * i);
-#ifdef HX_NATIVE
-    // Original code writes past array end (i=256, index=513 in 512-element array)
-    // Benign on Xbox (overwrites adjacent global), but ASan catches it on native
-    if (i * 2 + 1 < 0x200) // guard against OOB write
-#endif
-    gBigSinTable[i * 2 + 1] = sineValue - gBigSinTable[i * 2 - 1];
+    float *deltaPtr = gBigSinTable + 1;
+    deltaPtr[i * 2 - 2] = sineValue - gBigSinTable[i * 2 - 2];
 }
 
 void TrigTableTerminate() {}

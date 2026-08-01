@@ -611,19 +611,20 @@ void MusicLibrary::PlaySetlist(bool b1) {
 }
 
 void MusicLibrary::PlaySetlist(SavedSetlist *setlist) {
+    std::vector<int> &songs = setlist->mSongs;
     int numSongs = 0;
-    FOREACH (it, setlist->mSongs) {
+    FOREACH (it, songs) {
         if (TheSongMgr.HasSong(*it) && TheSongMgr.IsRestricted(*it)) {
             numSongs++;
         }
     }
     if (numSongs != 0) {
-        TheUI->PushScreen(
-            ObjectDir::Main()->Find<UIScreen>("setlist_content_restricted_screen", true)
-        );
+        UIScreen *screen =
+            ObjectDir::Main()->Find<UIScreen>("setlist_content_restricted_screen", true);
+        TheUI->PushScreen(screen);
     } else {
         numSongs = 0;
-        FOREACH (it, setlist->mSongs) {
+        FOREACH (it, songs) {
             if (!TheSongMgr.HasSong(*it) || TheSongMgr.IsDemo(*it)
                 || !TheSessionMgr->GetMachineMgr()->IsSongShared(*it)) {
                 numSongs++;
@@ -741,9 +742,9 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
                 }
                 PlaySetlist(true);
             } else if (!b3) {
-                TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>(
-                    "leader_party_shuffle_warning_screen", true
-                ));
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("leader_party_shuffle_warning_screen", true);
+                TheUI->PushScreen(screen);
             }
         } else if (node->GetToken() == play_setlist) {
             if (GetMaxSetlistSize() == 0 || GetMaxSetlistSize() == SetlistSize()) {
@@ -761,9 +762,9 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
                 SelectNode(GetCurrentSort()->GetNode(s30.front()), user, false);
                 SetSyncDirty(-1, true);
             } else if (!b3) {
-                TheUI->PushScreen(
-                    ObjectDir::Main()->Find<UIScreen>("no_valid_songs_screen", true)
-                );
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("no_valid_songs_screen", true);
+                TheUI->PushScreen(screen);
             }
         }
         break;
@@ -772,9 +773,9 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
         if (SetlistIsFull()) {
             if (!b3) {
                 TryToSetHighlight(play_setlist, kNodeFunction, false);
-                TheUI->PushScreen(
-                    ObjectDir::Main()->Find<UIScreen>("full_setlist_screen", true)
-                );
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("full_setlist_screen", true);
+                TheUI->PushScreen(screen);
             }
         } else if (CanHeadersBeSelected() && node->GetSongCount()) {
             bool makeSetlist = !GetMakingSetlist(false);
@@ -803,17 +804,17 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
         if (SetlistIsFull()) {
             if (!b3) {
                 TryToSetHighlight(play_setlist, kNodeFunction, false);
-                TheUI->PushScreen(
-                    ObjectDir::Main()->Find<UIScreen>("full_setlist_screen", true)
-                );
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("full_setlist_screen", true);
+                TheUI->PushScreen(screen);
             }
         } else {
             if (songNode->GetSongRecord()->GetRestricted() && !b3) {
                 ParentalControlPanel *panel = ObjectDir::Main()->Find<ParentalControlPanel>("parental_control_panel", true);
                 panel->mUser = user;
-                TheUI->PushScreen(
-                    ObjectDir::Main()->Find<UIScreen>("parental_control_screen", true)
-                );
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("parental_control_screen", true);
+                TheUI->PushScreen(screen);
             } else if (IsSongAllowedInSetlist(songID, b3)) {
                 if (!songNode->IsEnabled())
                     break;
@@ -837,9 +838,9 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
             mCurrentSetlist = setlistNode->GetSetlistRecord()->GetSetlist();
             PlaySetlist(mCurrentSetlist);
         } else if (!b3) {
-            TheUI->PushScreen(
-                ObjectDir::Main()->Find<UIScreen>("leader_setlist_warning_screen", true)
-            );
+            UIScreen *screen =
+                ObjectDir::Main()->Find<UIScreen>("leader_setlist_warning_screen", true);
+            TheUI->PushScreen(screen);
         }
         break;
     }
@@ -853,42 +854,55 @@ bool MusicLibrary::IsSongAllowedInSetlist(int songID, bool b3) {
     SongMetadata *data = TheSongMgr.Data(songID);
     MILO_ASSERT(data, 0x4a2);
     if (data->IsVersionOK() == 0) {
-        if (!b3)
-            TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>("invalid_version_screen", true));
+        if (!b3) {
+            UIScreen *screen =
+                ObjectDir::Main()->Find<UIScreen>("invalid_version_screen", true);
+            TheUI->PushScreen(screen);
+        }
         return false;
     }
     if (TheSongMgr.IsDemo(data->ID())) {
         if (!TheGameMode->Property(Symbol("demos_allowed"), true)->Int(nullptr)) {
-            if (!b3)
-                TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>("demo_mode_screen", true));
+            if (!b3) {
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("demo_mode_screen", true);
+                TheUI->PushScreen(screen);
+            }
             return false;
         }
     }
     if (TheSongMgr.IsDemo(data->ID()) && !TheSessionMgr->IsLocal()) {
-        if (!b3)
-            TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>("demo_online_screen", true));
+        if (!b3) {
+            UIScreen *screen =
+                ObjectDir::Main()->Find<UIScreen>("demo_online_screen", true);
+            TheUI->PushScreen(screen);
+        }
         return false;
     }
     if (TheSongMgr.IsDemo(data->ID())) {
-        int demoNotAllowed = 0.0f;
-        if (unk12d) {
-            if (!SongSortMgr::IsSetlistSort(unkdc))
-                demoNotAllowed = 1;
-        }
-        if (demoNotAllowed) {
-            if (!b3)
-                TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>("demo_setlist_screen", true));
+        if (GetMakingSetlist(false)) {
+            if (!b3) {
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("demo_setlist_screen", true);
+                TheUI->PushScreen(screen);
+            }
             return false;
         }
     }
     if (TheSongMgr.IsRestricted(data->ID())) {
-        if (!b3)
-            TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>("content_restricted_screen", true));
+        if (!b3) {
+            UIScreen *screen =
+                ObjectDir::Main()->Find<UIScreen>("content_restricted_screen", true);
+            TheUI->PushScreen(screen);
+        }
         return false;
     }
     if (!TheSessionMgr->GetMachineMgr()->IsSongShared(songID)) {
-        if (!b3)
-            TheUI->PushScreen(ObjectDir::Main()->Find<UIScreen>("invalid_selection_screen", true));
+        if (!b3) {
+            UIScreen *screen =
+                ObjectDir::Main()->Find<UIScreen>("invalid_selection_screen", true);
+            TheUI->PushScreen(screen);
+        }
         return false;
     }
     return true;
@@ -1644,7 +1658,9 @@ void MusicLibrary::ClearSetlist() {
 
 void MusicLibrary::AppendToSetlist(int i) {
     if (!SetlistIsFull()) {
-        if (ContentDir()) {
+        // Retail 360 guards on HasSyncPermission() (Synchronizable slot 3,
+        // this+0x30), NOT ContentDir() — same pattern as PlaySetlist above.
+        if (HasSyncPermission()) {
             mSetlist.push_back(i);
             unk12c = true;
             SetSyncDirty(-1, false);

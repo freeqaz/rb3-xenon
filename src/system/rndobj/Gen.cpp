@@ -408,8 +408,8 @@ bool RndGenerator::MakeWorldSphere(Sphere &sphere, bool b) {
                         mMesh->GetSphere().GetRadius() + Length(mMesh->GetSphere().center);
                     sphere.radius += mScaleGenHigh * sum;
                 } else if (mParticleSys) {
-                    const Vector2 &startSize = mParticleSys->StartSize();
-                    sphere.radius += mScaleGenHigh * Max(startSize.x, startSize.y);
+                    sphere.radius += mScaleGenHigh
+                        * Max(mParticleSys->StartSize().x, mParticleSys->StartSize().y);
                 }
             }
         }

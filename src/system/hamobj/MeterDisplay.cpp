@@ -151,19 +151,18 @@ void MeterDisplay::UpdateDisplay() {
             );
         } else if (mHideDenominator) {
             static Symbol meter_progress_no_denominator("meter_progress_no_denominator");
-            String localized(LocalizeSeparatedInt(mCurrentValue, TheLocale));
+            String localized(LocalizeSeparatedInt(mCurrentValue));
             str = MakeString(
                 Localize(meter_progress_no_denominator, nullptr), localized
             );
         } else {
             static Symbol meter_progress("meter_progress");
-            String curLocalized(LocalizeSeparatedInt(mCurrentValue, TheLocale));
-            String maxLocalized(LocalizeSeparatedInt(mMaxValue, TheLocale));
+            String curLocalized(LocalizeSeparatedInt(mCurrentValue));
+            String maxLocalized(LocalizeSeparatedInt(mMaxValue));
             str = MakeString(
                 Localize(meter_progress, nullptr), curLocalized, maxLocalized
             );
         }
-        unk54->SetPrelocalizedString(String(""));
         if (mWrapperText != gNullStr) {
             unk54->SetTokenFmt(mWrapperText, str);
         } else {

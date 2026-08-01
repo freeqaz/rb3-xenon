@@ -743,6 +743,13 @@ void MetaPerformer::SaveAndUploadScores(
     if (users.empty())
         return;
     if (!TheGame->IsInvalidScore()) {
+        // Retail builds this dispatch Symbol as a FUNCTION-LOCAL STATIC, not the
+        // centralized global from Symbols3.h: target fn_82580D80 tests guard word
+        // lbl_82DFE9EC bit 0, then inline-constructs the Symbol object at the
+        // adjacent lbl_82DFE9E8 via Symbol::Symbol(const char*). That guard emits
+        // the mask-0x1 EH unwind funclet fn_8258102C (frame 0x70); with the global
+        // we emit no funclet here at all. Same lever as RB3_HANDLE_LOCAL_STATIC.
+        static Symbol insta_rank("insta_rank");
         bool instaRankProp = TheGameMode->Property(insta_rank, true)->Int();
         UpdateLastOfflineScores(s, info);
         UpdateScores(s, info, !instaRankProp);
@@ -1109,6 +1116,16 @@ void MetaPerformer::Restart() {
 }
 
 void MetaPerformer::TriggerSongCompletion() {
+    // Retail X360 opens this function with an audition-mode early-out that the
+    // rb3-Wii DEV oracle does not carry (verified from the retail body at
+    // 0x825827D8: a first-static guard on 0x82DFEA58 constructing Symbol
+    // "audition" at 0x8202CD0C, then vtable slot 0 of *0x82E02530 == TheGameMode
+    // -- GameMode's OWN vftable slot 0 is InMode(), since Handle/~GameMode
+    // override virtual-base slots -- and `bne` straight to the epilogue before
+    // any local is constructed).
+    static Symbol audition("audition");
+    if (TheGameMode->InMode(audition))
+        return;
     bool m16 = GetCheating();
     SetCheating(false);
     Difficulty d15 = kDifficultyExpert;

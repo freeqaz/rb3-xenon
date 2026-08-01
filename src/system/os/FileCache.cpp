@@ -378,18 +378,12 @@ void FileCache::Add(const FilePath &fp1, int iii, const FilePath &fp2) {
     if (streq(ext, "milo")) {
         file.SetRoot(DirLoader::CachedPath(fp1.c_str(), 0));
     } else if (streq(ext, "png") || streq(ext, "bmp")) {
-        if (sResourceCacheHelper)
-            file.SetRoot(sResourceCacheHelper->CacheFile(fp1.c_str()));
-        else
-            file = fp1;
+        file.SetRoot(CacheResource(fp1.c_str(), 0));
     } else if (streq(ext, "wav")) {
-        if (sWavCacheHelper)
-            file.SetRoot(sWavCacheHelper->CacheFile(fp1.c_str()));
-        else
-            file = fp1;
-    } else {
+        CacheResourceResult res;
+        file.SetRoot(CacheWav(fp1.c_str(), res));
+    } else
         file = fp1;
-    }
 
     for (int i = 0; i < mEntries.size(); i++) {
         if (file == mEntries[i]->mFileName) {

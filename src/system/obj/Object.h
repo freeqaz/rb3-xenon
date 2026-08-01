@@ -322,6 +322,14 @@ protected:
     T1 *mObject; // 0x8
 public:
     ObjRefConcrete(Hmx::Object *owner, T1 *obj);
+#ifdef RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+    // TU-gated (lane NCCC f70): owner-only base ctor leaving mObject to the
+    // DERIVED ctor body, so the mObject store lands AFTER the derived vptr
+    // store instead of before it. Only the gated ObjPtr owner-only ctor uses
+    // it; the two-arg ctor above is untouched, so out-of-line ObjPtr ctors in
+    // an opted-in TU keep initializing mObject exactly as before.
+    ObjRefConcrete(Hmx::Object *owner) : mOwner(owner) {}
+#endif
     ObjRefConcrete(const ObjRefConcrete &o);
     ~ObjRefConcrete();
     virtual Hmx::Object *RefOwner() const { return mOwner; }
@@ -447,14 +455,159 @@ public:
     //   PartLauncher   CORRECT -- reaches 100%, i.e. byte identity with retail.
     // This is the metric-fitted-build-config check (cf. W9 MILO_MESSAGE_TIMERS):
     // the define survives it on binary evidence, the granularity did not.
+#ifdef RB3_OBJPTR_INLINE_OWNER_CTOR
+#ifdef RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+    // ---- PER-TU: retail's real owner-only ctor SHAPE (lane NCCC f70) -------
+    // Semantically identical to the empty-bodied form below -- same three
+    // stores, same values, and the guard always folds because mObject is the
+    // literal nullptr -- but it emits them in retail's ORDER. Reconstructs what
+    // Harmonix's general two-arg ctor must have looked like:
+    //     ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner) {
+    //         mObject = ptr;
+    //         if (mObject) mObject->AddRef(this);
+    //     }
+    // i.e. the BASE ctor takes only the owner, and the DERIVED body assigns
+    // mObject. That puts the mObject store AFTER the derived vptr store, so
+    // retail's stream is {mOwner, vptr-lis, mObject, vptr-addi, vptr-store}
+    // with ZERO scheduler motion. Our old spelling put mObject in the base's
+    // mem-init list (before the vptr store), leaving the constant store free to
+    // float; MSVC then hoisted it 4 slots up into the lwz->add load-use stall.
+    //
+    // BOTH halves are load-bearing -- measured on ??0CharClipSet@@IAA@XZ:
+    //   base mem-init + empty body        96.6%   (mObject hoisted 4 slots)
+    //   base mem-init + folded AddRef     97.3%   (fixes the 3 leading insns)
+    //   owner-only base + body assign,
+    //     WITHOUT the folded AddRef       96.6%   (regresses again)
+    //   owner-only base + body assign
+    //     + folded AddRef                100.0%   (all 110 insns equal)
+    // Dropping either half costs the match, so the guard is not decoration.
+    //
+    // Two things that do NOT work, so nobody re-hunts them:
+    //   * Reordering the mem-initializer LIST is VACUOUS -- C++ initializes in
+    //     DECLARATION order regardless of list order; MSVC emits byte-identical
+    //     code (measured, with a live-gate control to prove the edit compiled).
+    //   * Splitting the two stores across a statement boundary inside the base
+    //     ctor (`: mOwner(owner) { mObject = obj; }`) is also inert -- the
+    //     scheduler hoists the constant store across it anyway. Only moving the
+    //     store past the derived VPTR store pins it.
+    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner) {
+        this->mObject = nullptr;
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
+#else
+#ifdef RB3_OBJPTR_INLINE_OWNER_CTOR_EH
+    // ---- PER-TU: inline owner-only ctor that KEEPS the AddRef arm ----------
+    // Same inline policy as below, but retains the two-arg body's
+    // `if (mObject) AddRef(this)`. With ptr == nullptr the arm is dead and the
+    // optimizer folds it to the same three stores -- but the FRONT END still
+    // opens an EH region for it, so MSVC registers a cleanup for the
+    // partially-constructed base subobject. That cleanup is what BOUNDS the
+    // live range of the inlined ctor's `this` temp (&mFoo), letting a later
+    // temp re-use the same frame slot. Without it the &mFoo temp stays live to
+    // function end, a second slot is allocated, and the whole tail reschedules.
+    // Evidence (lane NCCC f278, ??0RndMultiMesh@@IAA@XZ): retail 0x82469AD0 has
+    // THREE unwind funclets -- the third (0x82469C8C) is `lwz r3,0x50(r31); bl
+    // ??1ObjRef@@QAA@XZ`, i.e. it destroys the base subobject via a SAVED
+    // POINTER rather than a this-relative offset, which is the signature of an
+    // inlined ctor's EH state. Our AddRef-less inline emitted only two, so the
+    // &mMesh temp never died, the std::list temp was given a SECOND frame slot,
+    // and the whole tail rescheduled (92.47% -> 76.5%). Restoring the AddRef arm
+    // alone took it to 98.4%; all three temps then colour to frame slot 0x50.
+    //
+    // The redundant `mObject = nullptr` is LOAD-BEARING, not a typo. Retail's
+    // store order is mOwner(0x4) -> vtable(0x0) -> mObject(0x8); initialising
+    // mObject in the BASE mem-init emits it before the vtable store instead,
+    // and the scheduler then fills the addi->stw gap with it rather than the
+    // lis->addi gap -- a 3-instruction rotation, the last 1.6%. Assigning it
+    // again in the body makes the base's store dead, so the surviving store
+    // lands after the vtable and the schedule matches exactly. 98.4% -> 100.0%.
+    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner, nullptr) {
+        this->mObject = nullptr;
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
+#else
+    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner, nullptr) {}
+#endif
+#endif
+    ObjPtr(Hmx::Object *owner, T *ptr);
+#elif defined(RB3_OBJPTR_INLINE_OWNER_CTOR_EH)
+    // ---- PER-TU: FORCE-INLINE THE **TWO-ARG** CTOR (EH region preserved) ---
+    // A third policy, distinct from RB3_OBJPTR_INLINE_OWNER_CTOR above. That
+    // one inlines an owner-only ctor with an EMPTY body; this one inlines the
+    // two-arg ctor *with* its `if (mObject) AddRef(this)` body still present.
+    // With a literal nullptr the branch constant-folds away, so the emitted
+    // code is the same three stores -- but the front end has already opened an
+    // EH cleanup region for the ObjRefConcrete base around that (potentially
+    // throwing) AddRef call, and that region SURVIVES the fold.
+    //
+    // Binary evidence (??0RndMultiMeshProxy@@, retail 0x82481100): retail emits
+    // FOUR unwind funclets, one more than the empty-body form produces --
+    // fn_824812FC does `lwz r3,0x50(r31); bl fn_82270298` (an ObjRef-family
+    // dtor: `*p = vtbl; return`), i.e. a cleanup whose target is read from the
+    // $T temp slot. That funclet is what makes the `stw &mMultiMesh,$T(r31)`
+    // store LIVE. With the empty-body form the store is dead, and MSVC's
+    // prescheduler is then free to hoist it -- together with the ObjPtr vtable
+    // lis/addi -- ~25 instructions up into the vbase-fixup block's stall slots,
+    // burning r7/r8 and reordering the three member stores (measured 84.8% vs
+    // 92.7% for the plain out-of-line call).
+    //
+    // Measured (worktree A/B, same split, total_functions 69366 both legs):
+    //   ??0RndMultiMeshProxy@@ 92.74% -> 98.46%, and our build now emits the
+    //   missing funclet, which lands byte-identical to retail's 0x28-byte
+    //   fn_824812FC (99.8% -> 100.0%). Whole binary +1 fn / +40 B, and EXACTLY
+    //   those two functions change -- zero collateral, nothing regressed.
+    // Residual 3 instructions are a scheduler tie-break in the tail (we emit
+    // mObject/mOwner then lis+addi; retail emits mOwner, lis, mObject, addi).
+    // NOT source-steerable: reversing the two stores in the base ctor is
+    // normalized straight back by the scheduler (measured: byte-identical
+    // output), and #pragma optimize("t") only churns regalloc (93.6%).
+    __forceinline ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
+#elif defined(RB3_TU_OBJPTR_FORCEINLINE_CTOR)
+    // ---- PER-TU: force the TWO-arg ctor inline (a SECOND route to case (b)) --
+    // Reaches retail's inlined three-store form WITHOUT the one-arg ctor above.
+    // `ptr` is nullptr at owner-only sites, so /O1 constant-folds the
+    // `if (mObject) AddRef` branch away after inlining, leaving exactly the same
+    // three stores (mOwner@4, mObject@8 = 0, vtable@0) -- but it SCHEDULES them
+    // differently, and for some TUs that is the difference between matching and
+    // not. Measured on ??0CharServoBone@@IAA@XZ (lane NCCC-0731 f332):
+    //     baseline (out-of-line `bl ??0?$ObjPtr@VWaypoint@@@@`)  91.1%, base 316 B
+    //     RB3_OBJPTR_INLINE_OWNER_CTOR (one-arg ctor)            79.2%, base 332 B
+    //     RB3_TU_OBJPTR_FORCEINLINE_CTOR (this)                  98.5%, base 332 B
+    // Target is 332 B, so BOTH inline routes are size-exact and the 91.1%
+    // baseline is the semantically WRONG one (it carries a `bl` retail does not
+    // have) that merely aligns better -- do not read the baseline % as "closer".
+    // The one-arg route loses because MSVC hoists the ObjPtr vtable-address
+    // lis/addi up into the class's own vtable-install block and keeps it live in
+    // an extra register (r7); forcing the two-arg ctor instead leaves the
+    // constant materialized late, right where retail puts it.
+    // Residue at 98.5% is a 2-slot scheduler tie-break at the tail (retail fills
+    // the gap after `addi` with `lis`, we fill it with the mObject zero-store);
+    // the instruction multiset, all six address constants and every store offset
+    // are already identical.
+    __forceinline ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
     //
     // NOTE: only valid for TUs outside the PCH-eligible
     // dirs (char/, rndobj/, world/, ui/ are PCH-excluded), otherwise the
     // /FI decomp_pch.h include of this header precedes the .cpp's #define.
     // No layout/ABI change either way -- purely an inline-policy switch.
-#ifdef RB3_OBJPTR_INLINE_OWNER_CTOR
-    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner, nullptr) {}
-    ObjPtr(Hmx::Object *owner, T *ptr);
+#elif defined(RB3_OBJPTR_INLINE_TWOARG_CTOR)
+    // ---- PER-TU: inline the TWO-ARG ctor (keeping its AddRef branch) ------
+    // Distinct from RB3_OBJPTR_INLINE_OWNER_CTOR above, which inlines a
+    // branchless one-arg ctor. Both produce retail's three stores
+    // (mOwner@4, mObject@8, vtable@0), but they schedule differently at the
+    // call site: with a literal-null `ptr` the `if (mObject)` test folds away
+    // only AFTER inlining, so while the scheduler runs the region still
+    // contains a branch and cannot hoist later constant materializations
+    // across it. The branchless one-arg form lets MSVC hoist the ObjPtr
+    // vtable and the member float constants ~30 instructions early, which is
+    // what wrecks ??0ScrollbarDisplay@@ (92.2% -> 70.3%) even though its
+    // instruction multiset is correct.
+    ObjPtr(Hmx::Object *owner, T *ptr = nullptr) : ObjRefConcrete<T>(owner, ptr) {
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
 #else
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
 #endif

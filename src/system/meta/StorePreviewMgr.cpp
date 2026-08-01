@@ -139,11 +139,11 @@ void StorePreviewMgr::Poll() {
             break;
         mDownloadQueue.erase(mDownloadQueue.begin());
     }
-    if (!mNetCacheLoader && mDownloadQueue.begin() != mDownloadQueue.end()) {
+    if (!mNetCacheLoader && !mDownloadQueue.empty()) {
         MILO_ASSERT(!TheNetCacheMgr->IsLocalFile(mDownloadQueue.front().c_str()), 0xa5);
         mNetCacheLoader = TheNetCacheMgr->AddNetCacheLoader(
             mDownloadQueue.front().c_str(), (NetLoaderPos)1
         );
-        mDownloadQueue.erase(mDownloadQueue.begin());
+        mDownloadQueue.pop_front();
     }
 }

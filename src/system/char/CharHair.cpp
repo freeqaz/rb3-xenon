@@ -168,9 +168,10 @@ void CharHair::Hookup() {
 void CharHair::FreezePoseRaw() {
     for (int i = 0; i < mStrands.size(); i++) {
         Strand &strand = mStrands[i];
-        if (strand.Root() && strand.Root()->TransParent()) {
+        RndTransformable *root = strand.Root();
+        if ((int)root && root->TransParent()) {
             ObjVector<Point> &pts = strand.Points();
-            Transform parentXfm(strand.Root()->TransParent()->WorldXfm());
+            Transform parentXfm(root->TransParent()->WorldXfm());
             Invert(parentXfm, parentXfm);
             for (int j = 0; j < pts.size(); j++) {
                 Multiply(pts[j].pos, parentXfm, pts[j].unk5c);
@@ -232,7 +233,7 @@ static inline float RecipSqrtAccurate(float x) {
 #else
     float est = __frsqrte(x);
 #endif
-    return -(est * est * x - 3.0f) * est * 0.5f;
+    return (3.0f - est * est * x) * est * 0.5f;
 }
 
 void CharHair::SimulateInternal(float fps) {

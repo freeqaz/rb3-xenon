@@ -9,7 +9,7 @@ extern "C" {
 unsigned long long __mftb();
 #endif
 double __fsel(double fComparand, double fValGE, double fValLT);
-float __frsqrte(float);
+double __frsqrte(double);
 void __dcbst(int, void *);
 
 #ifdef __cplusplus

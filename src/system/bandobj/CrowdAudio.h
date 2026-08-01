@@ -54,7 +54,7 @@ public:
 
     int MsToLastClapBeat(float f) { return MsToBeat(f); }
 
-    static void Init() { Register(); }
+    static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(CrowdAudio) }
     NEW_OBJ(CrowdAudio);
 

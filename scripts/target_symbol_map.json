@@ -508,7 +508,7 @@
  "0x82663830": "?ShortcutToPos@StoreOfferProvider@@QAAHVSymbol@@@Z",
  "0x82663880": "?PosToNextGroupPos@StoreOfferProvider@@QAAHH@Z",
  "0x826638e0": "?PosToPrevGroupPos@StoreOfferProvider@@QAAHH@Z",
- "0x826644c0": "??0StoreOfferProvider@@QAA@PAV?$vector@PAVStoreOffer@@V?$StlNodeAlloc@PAVStoreOffer@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
+ "0x826644c0": "??0StoreOfferProvider@@QAA@PAV?$vector@PAVStoreOffer@@V?$StlNodeAlloc@PAVStoreOffer@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82664568": "?ClearList@StoreOfferProvider@@QAAXXZ",
  "0x82663408": "?FindPack@StoreOfferProvider@@QBAPBVStoreOffer@@PBV2@@Z",
  "0x826634f0": "?FindAlbum@StoreOfferProvider@@QBAPBVStoreOffer@@PBV2@@Z",

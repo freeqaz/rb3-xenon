@@ -498,6 +498,13 @@ char *yytext;
  */
 #include <stdlib.h>
 
+/* The XDK-era CRT declares the allocators __declspec(noalias)/__declspec(restrict);
+ * our trimmed LIBCMT stdlib.h does not.  Restate it here so the optimizer may keep
+ * file-scope statics live in registers across these calls. */
+__declspec(noalias) __declspec(restrict) void *malloc(size_t size);
+__declspec(noalias) __declspec(restrict) void *realloc(void *ptr, size_t size);
+__declspec(noalias) void free(void *ptr);
+
 #include "DataFlex.h"
 
 #define YY_INPUT(buf, result, max_size) (result) = (DataInput((buf), 1) != 0)
@@ -1161,8 +1168,8 @@ static int yy_get_next_buffer(YY_ONLY_ARG)
 static int yy_get_next_buffer(YY_ONLY_ARG) YY_DECL_LAST_ARG
 #endif
 {
-    register char *source = yytext_ptr;
     register char *dest = YY_G(yy_current_buffer)->yy_ch_buf;
+    register char *source = yytext_ptr;
     register int i, number_to_move;
 
     if (YY_G(yy_c_buf_p) > &YY_G(yy_current_buffer)->yy_ch_buf[YY_G(yy_n_chars) + 1])

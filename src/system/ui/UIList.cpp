@@ -41,16 +41,35 @@
 static bool gLoading = false;
 
 UIList::UIList()
-    : UITransitionHandler(this), mListDir(0), mListState(this, this), mUIListRev(0),
-      mDataProvider(0),
+    : UITransitionHandler(this), mListDir(0), mListState(this, this), mDataProvider(0),
       mNumData(100), mPaginate(0), mUser(0), mParent(0), mExtendedLabelEntries(this),
       mExtendedMeshEntries(this), mExtendedCustomEntries(this), mAutoScrollPause(2),
       mAutoScrollSendMsgs(0), mAutoScrollDir(1), mAutoScrolling(0), mAutoScrollTimer(-1),
-      mDrawManuallyControlledWidgets(0), mAllowHighlight(1),
+      mDrawManuallyControlledWidgets(0), mAllowHighlight(0)
 #ifdef HX_NATIVE
-      mUncappedNumDisplay(1),
+      ,
+      mUncappedNumDisplay(1), mScrolling(0)
 #endif
-      mScrolling(0) {}
+{
+    // Three RB3-vs-DC3 ctor divergences, each read off the retail target obj
+    // (offsets are compiler-verified via class_layout_report.py UIList):
+    //
+    //  1. mScrolling (0x23b) / mUncappedNumDisplay: DC3-newer members absent
+    //     from the rb3-Wii oracle. Retail emits no store past 0x239, so they
+    //     are init'd for HX_NATIVE only.
+    //  2. mUIListRev (0x1d0): retail's ctor does NOT zero it — its first tail
+    //     store is 0x1d4 (mDataProvider). The member is still declared and is
+    //     assigned in PreLoadWithRev, so dropping the initializer is
+    //     layout-neutral. Leaving it in emitted one extra `stw r29, 0x1d0`.
+    //  3. mAllowHighlight (0x239) is 0, not DC3's 1: retail emits
+    //     `stb r29, 0x239` (r29 == 0), and the rb3-Wii oracle's member in this
+    //     slot is likewise `unk_0x1E6(0)`. This one is load-bearing beyond its
+    //     own store — with (1) the constant 1 had two consumers (0x22c and
+    //     0x239), so MSVC hoisted `li 1` far earlier and the longer live range
+    //     cascaded into ~9 register swaps and a stack-scratch reordering across
+    //     the three inlined ObjPtrList sub-object ctors. Dropping the second
+    //     consumer collapses all of it.
+}
 
 UIList::~UIList() {
     DeleteAll(mWidgets);

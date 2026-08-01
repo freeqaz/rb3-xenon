@@ -593,9 +593,9 @@ void CharDriver::PollDeps(
     change.push_back(mBones);
 }
 
-static bool CharDriverStarved(CharClipDriver *first) {
-    if (!first) return true;
-    if (first->Next() || (first->mPlayFlags & 0xF0) == 0x10)
+bool CharDriver::Starved() {
+    if (!mFirst) return true;
+    if (mFirst->Next() || (mFirst->mPlayFlags & 0xF0) == 0x10)
         return false;
     return true;
 }
@@ -637,13 +637,14 @@ void CharDriver::Poll() {
                     float fb = (float)std::floor(beat);
                     float fo = (float)floorf(mOldBeat);
                     int i12 = (int)fb ^ ((int)fo + 1);
-                    CharClipDriver *d = playing;
                     if (i12 & flags) {
+                        CharClipDriver *d = playing;
                         while (d) {
                             d->mPlayFlags &= 0xffff0fff;
                             d = d->Next();
                         }
-                        if (firstFlags - 1 > 0 && (i12 & firstFlags - 1)) {
+                        firstFlags--;
+                        if (firstFlags > 0 && (firstFlags & i12)) {
                             Play(playing->GetClip(), 0x38, -1, kHugeFloat, 0);
                         }
                     }
@@ -652,18 +653,18 @@ void CharDriver::Poll() {
         }
     }
     mOldBeat = beat;
-    if (CharDriverStarved(mFirst) && !mStarvedHandler.Null()) {
+    if (Starved() && !mStarvedHandler.Null()) {
         Dir()->Handle(Message(mStarvedHandler), true);
     }
-    if (CharDriverStarved(mFirst) && mFirst && (mFirst->mPlayFlags & 0xF0) == 0x30) {
+    if (Starved() && mFirst && (mFirst->mPlayFlags & 0xF0) == 0x30) {
         int flags = mFirst->mPlayFlags;
         CharClip::SetDefaultBlendFlag(flags, 4);
         Play(mFirst->GetClip(), flags, -1, kHugeFloat, 0);
     }
-    if (CharDriverStarved(mFirst) && mFirst && (mFirst->mPlayFlags & 0xF0) == 0x40) {
+    if (Starved() && mFirst && (mFirst->mPlayFlags & 0xF0) == 0x40) {
         Play(mLastNode, 0x44, -1, kHugeFloat, 0);
     }
-    if (CharDriverStarved(mFirst) && mDefaultClip && mDefaultPlayStarved) {
+    if (Starved() && mDefaultClip && mDefaultPlayStarved) {
         Play(DataNode(mDefaultClip), 0x44, -1, kHugeFloat, 0);
     }
     if (mFirst) {

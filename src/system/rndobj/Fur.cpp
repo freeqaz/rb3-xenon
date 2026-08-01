@@ -6,7 +6,8 @@
 RndFur::RndFur()
     : mLayers(12), mThickness(3), mCurvature(2), mShellOut(1), mAlphaFalloff(0.5),
       mStretch(1), mSlide(1), mGravity(1), mFluidity(0.25), mRootsTint(0, 0, 0),
-      mEndsTint(1, 1, 1), mFurDetail(this), mFurTiling(1), mWind(this) {}
+      mEndsTint(1, 1, 1), mFurDetail(this, nullptr), mFurTiling(1),
+      mWind(this, nullptr) {}
 
 BEGIN_HANDLERS(RndFur)
     HANDLE_SUPERCLASS(Hmx::Object)

@@ -469,10 +469,7 @@ void BandProfile::LoadFixed(FixedSizeSaveableStream &fs, int rev) {
     BandMachineMgr *pMachineMgr = TheSessionMgr->GetMachineMgr();
     MILO_ASSERT(pMachineMgr, 0x303);
     pMachineMgr->RefreshPrimaryProfileInfo();
-    mScores->SetLocalUser(GetAssociatedLocalBandUser());
     mDirty = false;
-    if (unk18)
-        FakeProfileFill();
 }
 
 bool BandProfile::IsUnsaved() const {

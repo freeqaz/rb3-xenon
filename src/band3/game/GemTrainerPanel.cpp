@@ -522,8 +522,8 @@ void GemTrainerPanel::UpdateProgressMeter() {
             }
         } else {
             Difficulty diff = mGemPlayer->GetUser()->GetLocalBandUser()->GetDifficulty();
-            int songID =
-                TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true);
+            Symbol song = MetaPerformer::Current()->Song();
+            int songID = TheSongMgr.GetSongIDFromShortName(song, true);
             for (int i = 0; i < GetNumSections(); i++) {
                 mProgressMeter->SetCompleted(
                     i, IsSongSectionComplete(GetBandProfile(), songID, diff, i)

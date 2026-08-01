@@ -576,7 +576,7 @@ DataArray *EventTrigger::SupportedEvents() {
 }
 
 void EventTrigger::RegisterEvents() {
-    Hmx::Object *src = Dir();
+    MsgSource *src = dynamic_cast<MsgSource *>(Dir());
     if (src) {
         static Symbol trigger("trigger");
         FOREACH (it, mTriggerEvents) {
@@ -811,13 +811,13 @@ void EventTrigger::LoadOldEvent(
     if (sEventTriggerRev < 5) {
         bool b58;
         d >> b58;
-        LoadOldAnim(d.stream, b58 ? anim : nullptr);
+        LoadOldAnim(d, b58 ? anim : nullptr);
     } else {
         unsigned int count;
         d >> count;
         EventTrigger *curTrig = this;
         while (count-- != 0) {
-            curTrig->LoadOldAnim(d.stream, anim);
+            curTrig->LoadOldAnim(d, anim);
             if (count != 0) {
                 EventTrigger *newTrig = new EventTrigger();
                 mNextLink = newTrig;
@@ -862,7 +862,7 @@ void EventTrigger::LoadOldEvent(
         String str;
         d >> str;
         if (!str.empty()) {
-            MILO_NOTIFY("%s: %s", Name(), str);
+            MILO_WARN("%s: %s", Name(), str);
         }
     }
 }

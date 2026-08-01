@@ -17,6 +17,7 @@ static bool sReplaceKey = false;
 static bool sReplaceFrame = false;
 static float sFrameReplace = 0;
 static DataNode sKeyReplace;
+static unsigned short sLoadPre7Rev;
 
 #pragma region Hmx::Object
 
@@ -209,6 +210,7 @@ BEGIN_LOADS(RndPropAnim)
 
     if (d.rev < 7) {
         // Legacy format (pre-revision 7)
+        sLoadPre7Rev = d.rev;
         LoadPre7(d);
     } else {
         // Modern format: read PropKeys count and load each
@@ -239,7 +241,7 @@ END_LOADS
 
 void RndPropAnim::LoadPre7(BinStreamRev &bs) {
     ObjOwnerPtr<Hmx::Object> objPtr(this);
-    if (bs.rev < 2)
+    if (sLoadPre7Rev < 2)
         bs >> objPtr;
     int count;
     bs >> count;
@@ -251,15 +253,15 @@ void RndPropAnim::LoadPre7(BinStreamRev &bs) {
         ObjKeys objKeys(this);
         Keys<bool, bool> boolKeys;
         Keys<Hmx::Quat, Hmx::Quat> quatKeys;
-        if (bs.rev >= 2)
+        if (sLoadPre7Rev >= 2)
             bs >> objPtr;
-        if (bs.rev < 1) {
+        if (sLoadPre7Rev < 1) {
             Symbol sym;
             bs >> sym;
             arr = DataArrayPtr(sym);
         } else
             bs >> arr;
-        if (bs.rev < 3)
+        if (sLoadPre7Rev < 3)
             bs >> floatKeys;
         else {
             int animtype;
@@ -267,15 +269,15 @@ void RndPropAnim::LoadPre7(BinStreamRev &bs) {
             ty = (PropKeys::AnimKeysType)animtype;
             bs >> floatKeys;
             bs >> colorKeys;
-            Hmx::Object *oldowner = ObjectStage::sOwner;
-            if (bs.rev > 3) {
+            if (sLoadPre7Rev > 3) {
+                Hmx::Object *oldowner = ObjectStage::sOwner;
                 ObjectStage::sOwner = this;
                 bs >> objKeys;
+                ObjectStage::sOwner = oldowner;
             }
-            ObjectStage::sOwner = oldowner;
-            if (bs.rev > 4)
+            if (sLoadPre7Rev > 4)
                 bs >> boolKeys;
-            if (bs.rev > 5)
+            if (sLoadPre7Rev > 5)
                 bs >> quatKeys;
         }
         PropKeys *addedKeys = AddKeys(objPtr.Ptr(), arr, ty);
@@ -345,7 +347,7 @@ void RndPropAnim::SetFrame(float frame, float blend) {
 #ifdef HX_NATIVE
             (*it)->SetFrame(myframe, blend, mIntensity);
 #else
-            (*it)->SetFrame(myframe, blend, 1.0f);
+            (*it)->SetFrame(myframe, blend);
 #endif
         }
         mLastFrame = myframe;

@@ -244,7 +244,7 @@ void GameConfig::AutoAssignMissingSlots() {
     FOREACH (it, users) {
         LocalBandUser *pUser = *it;
         MILO_ASSERT(pUser, 0x178);
-        if (TheNetSession->HasUser(pUser) && pUser->GetSlot() == -1) {
+        if (pUser->UnkTU5Virtual() && pUser->GetSlot() == -1) {
             ControllerType ct = TrackTypeToControllerType(pUser->GetTrackType());
             if (ct == kControllerNone) {
                 ct = pUser->GetControllerType();

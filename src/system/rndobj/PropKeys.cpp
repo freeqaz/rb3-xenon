@@ -289,25 +289,42 @@ PropKeys::ExceptionID PropKeys::PropExceptionID(Hmx::Object *o, DataArray *path)
 // FloatKeys
 // ------------------------------------------------
 
-void FloatKeys::SetFrame(float frame, float f2, float f3) {
+void FloatKeys::SetFrame(float frame, float f2
+#ifdef HX_NATIVE
+    , float f3
+#endif
+) {
     if (mProp && mTarget && size()) {
         int idx;
         if (mPropExceptionID != kHandleInterp) {
             float val;
             idx = FloatAt(frame, val);
+#ifdef HX_NATIVE
             mTarget->SetProperty(mProp, val * f3);
+#else
+            mTarget->SetProperty(mProp, val);
+#endif
         } else {
             const Key<float> *prev;
             const Key<float> *next;
             float ref = 0;
             idx = AtFrame(frame, prev, next, ref);
             sInterpMessage.SetType(mInterpHandler);
+#ifdef HX_NATIVE
             sInterpMessage[0] = prev->value * f3;
             sInterpMessage[1] = next->value * f3;
+#else
+            sInterpMessage[0] = prev->value;
+            sInterpMessage[1] = next->value;
+#endif
             sInterpMessage[2] = ref;
             sInterpMessage[3] = next->frame;
             if (idx >= 1)
+#ifdef HX_NATIVE
                 sInterpMessage[4] = (*this)[idx - 1].value * f3;
+#else
+                sInterpMessage[4] = (*this)[idx - 1].value;
+#endif
             else
                 sInterpMessage[4] = 0;
             mTarget->Handle(sInterpMessage, true);
@@ -397,11 +414,17 @@ int FloatKeys::FloatAt(float frame, float &fl) {
 // ColorKeys
 // ------------------------------------------------
 
-void ColorKeys::SetFrame(float frame, float f2, float f3) {
+void ColorKeys::SetFrame(float frame, float f2
+#ifdef HX_NATIVE
+    , float f3
+#endif
+) {
     if (mProp && mTarget && size()) {
         Hmx::Color col;
         int idx = ColorAt(frame, col);
+#ifdef HX_NATIVE
         Multiply(col, f3, col);
+#endif
         mTarget->SetProperty(mProp, col.Pack());
         mLastKeyFrameIndex = idx;
     }
@@ -502,7 +525,11 @@ BinStreamRev &operator>>(BinStreamRev &bs, ObjectStage &stage) {
 // ObjectKeys
 // ------------------------------------------------
 
-void ObjectKeys::SetFrame(float frame, float blend, float) {
+void ObjectKeys::SetFrame(float frame, float blend
+#ifdef HX_NATIVE
+    , float
+#endif
+) {
     if (!mProp || !mTarget || !size())
         return;
     int idx = 0;
@@ -578,7 +605,11 @@ int ObjectKeys::ObjectAt(float frame, Hmx::Object *&obj) {
 // BoolKeys
 // ------------------------------------------------
 
-void BoolKeys::SetFrame(float frame, float f2, float f3) {
+void BoolKeys::SetFrame(float frame, float f2
+#ifdef HX_NATIVE
+    , float f3
+#endif
+) {
     if (mProp && mTarget && size()) {
         int idx = 0;
         if (mPropExceptionID == kNoException) {
@@ -668,7 +699,11 @@ int QuatKeys::QuatAt(float frame, Hmx::Quat &quat) {
     return at;
 }
 
-void QuatKeys::SetFrame(float frame, float f2, float f3) {
+void QuatKeys::SetFrame(float frame, float f2
+#ifdef HX_NATIVE
+    , float f3
+#endif
+) {
     if (mProp && mTarget && size()) {
         int idx = 0;
         if (mPropExceptionID == kTransQuat) {
@@ -734,7 +769,11 @@ void QuatKeys::Copy(const PropKeys *keys) {
 // Vector3Keys
 // ------------------------------------------------
 
-void Vector3Keys::SetFrame(float frame, float blend, float) {
+void Vector3Keys::SetFrame(float frame, float blend
+#ifdef HX_NATIVE
+    , float
+#endif
+) {
     if (!mProp || !mTarget || !size())
         return;
     int idx = 0;
@@ -880,7 +919,11 @@ void __push_heap<Key<ObjectStage>*, int, Key<ObjectStage>, less<Key<ObjectStage>
 // SymbolKeys
 // ------------------------------------------------
 
-void SymbolKeys::SetFrame(float frame, float blend, float) {
+void SymbolKeys::SetFrame(float frame, float blend
+#ifdef HX_NATIVE
+    , float
+#endif
+) {
     if (mProp && mTarget && size()) {
         int idx = 0;
         switch (mPropExceptionID) {

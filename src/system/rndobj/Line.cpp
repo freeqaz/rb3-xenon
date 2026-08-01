@@ -259,8 +259,18 @@ void RndLine::SetPointPos(int i, const Vector3 &pos) {
 
 void RndLine::SetPointColor(int i, const Hmx::Color &color, bool sync) {
     MILO_ASSERT((i >= 0) && (i < mPoints.size()), 0x1D5);
-    mPoints[i].color = color;
-    UpdatePointColor(i, sync);
+    Point *pt = &mPoints[i];
+    pt->color = color;
+    VertsMap vmap;
+    MapVerts(i, vmap);
+    vmap.v++->color = pt->color;
+    vmap.v++->color = pt->color;
+    if (vmap.t) {
+        vmap.v++->color = pt->color;
+        vmap.v++->color = pt->color;
+    }
+    if (sync)
+        mMesh->Sync(0x1F);
 }
 
 void RndLine::UpdatePointColor(int i, bool sync) {

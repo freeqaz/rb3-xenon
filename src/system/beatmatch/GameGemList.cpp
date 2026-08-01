@@ -162,11 +162,12 @@ float GameGemList::TimeAt(int idx) const {
 
 float GameGemList::TimeAtNext(int idx) const {
     MILO_ASSERT(idx < mGems.size(), 0xAC);
-    if (idx + 1 == mGems.size()) {
+    int next = idx + 1;
+    if (next == mGems.size()) {
         float ms = mGems[idx].mMs;
         return 4000.0f + ms;
     }
-    return mGems[idx + 1].mMs;
+    return mGems[next].mMs;
 }
 
 void GameGemList::RecalculateGemTimes(TempoMap *tmap) {

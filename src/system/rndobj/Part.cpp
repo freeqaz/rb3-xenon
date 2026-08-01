@@ -1537,22 +1537,22 @@ void RndParticleSys::UpdateParticles() {
                 if (mSubSamples > 1) {
                     Vector3 baseVel;
                     if (!mMeshEmitter) {
+                        f32 pitchY = mPitch.y;
+                        f32 pitchX = mPitch.x;
+                        f32 pitchMid = LimitAng(pitchY - pitchX) * 0.5f + pitchX;
                         f32 halfSample = 0.5f;
-                        f32 pitchMid = LimitAng(mPitch.y - mPitch.x) * halfSample + mPitch.x;
-                        f32 yawMid = LimitAng(mYaw.y - mYaw.x) * halfSample + mYaw.x;
+                        f32 yawY = mYaw.y;
+                        f32 yawX = mYaw.x;
+                        f32 yawMid = LimitAng(yawY - yawX) * halfSample + yawX;
                         f32 speedMid = (mSpeed.y - mSpeed.x) * halfSample + mSpeed.x;
-
                         f32 halfPi = 1.57079637f;
                         f32 cosPitch = FastSin(pitchMid + halfPi);
-                        f32 negXVel = -(FastSin(yawMid) * cosPitch * speedMid);
-                        f32 yVel = FastSin(yawMid + halfPi) * cosPitch * speedMid;
-                        f32 sinPitch = FastSin(pitchMid);
-
-                        baseVel.Set(
-                            negXVel * frameUpdate,
-                            yVel * frameUpdate,
-                            sinPitch * speedMid * frameUpdate
-                        );
+                        baseVel.x = speedMid * -(cosPitch * FastSin(yawMid));
+                        baseVel.y = speedMid * (cosPitch * FastSin(yawMid + halfPi));
+                        baseVel.z = speedMid * FastSin(pitchMid);
+                        baseVel.x *= frameUpdate;
+                        baseVel.y *= frameUpdate;
+                        baseVel.z *= frameUpdate;
 
                         Multiply(baseVel, mSubSampleXfm, baseVel);
                     } else {
@@ -1563,11 +1563,10 @@ void RndParticleSys::UpdateParticles() {
 
                     int count = mSubSamples;
                     f32 stepSize = frameUpdate / (f32)mSubSamples;
-                    Vector3 interpOffset;
                     if (count != 0) {
                         do {
                             CreateParticles(currentFrame, stepSize, locToRel);
-                            Interp(interpOffset, baseVel, 1.0f / (f32)count, interpOffset);
+                            Interp(locToRel.v, baseVel, 1.0f / (f32)count, locToRel.v);
                             count--;
                         } while (count != 0);
                     }

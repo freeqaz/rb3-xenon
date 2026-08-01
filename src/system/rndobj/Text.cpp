@@ -583,16 +583,17 @@ void RndText::SetLeading(float f) {
 
 const char *
 RndText::ParseMarkup(const char *cc, RndText::Style *style, float f3, float f4) const {
-    bool b1 = cc[1] == '/';
     const char *ptr = cc + 1;
+    bool b1 = *ptr == '/';
     if (b1)
         ptr++;
     if (strnicmp(ptr, "sup", 3) == 0) {
         style->mSize = b1 ? f3 : gSuperscriptScale * f3;
         ptr += 3;
     } else if (strnicmp(ptr, "gtr", 3) == 0) {
-        style->mSize = b1 ? f3 : gGuitarScale * f3;
-        style->mZOffset = b1 ? f4 : gGuitarZOffset;
+        const float *gtrBase = &gSuperscriptScale + 1;
+        style->mSize = b1 ? f3 : gtrBase[0] * f3;
+        style->mZOffset = b1 ? f4 : gtrBase[1];
         ptr += 3;
     } else if (strnicmp(ptr, "it", 2) == 0) {
         style->mItalics = b1 ? 0 : 0.1f;
@@ -631,13 +632,11 @@ RndText::ParseMarkup(const char *cc, RndText::Style *style, float f3, float f4) 
             style->mItalics = mAltStyle.mItalics;
         }
     }
-    for (;;) {
-        char c = *++ptr;
-        if (c == '>')
-            return ptr + 1;
-        if (!c)
-            return ptr;
-    }
+    while (*ptr != '>' && *ptr != '\0')
+        ptr++;
+    if (*ptr != '\0')
+        ptr++;
+    return ptr;
 }
 
 bool canBreak(const char *cc, int i) {
@@ -1168,11 +1167,10 @@ void RndText::UpdateMesh(RndFont *font) {
     int i8 = 0x1F;
     if (mFixedLength == 0) {
         int i1 = meshInfo->displayableChars * 2;
-        int numVerts = meshInfo->displayableChars * 4;
         ResetFaces(mesh, i1);
         i8 |= 0xA0;
-        mesh->Verts().resize(numVerts);
-    } else if (!(mesh->Mutable() & 0x1F) || mFixedLength * 4 != mesh->Verts().size()) {
+        mesh->Verts().resize(i1 * 2);
+    } else if (!(mesh->Mutable() & 0x1F) || mesh->Verts().size() != mFixedLength * 4) {
         mesh->SetMutable(0x1F);
         ResetFaces(mesh, mFixedLength * 2);
         i8 |= 0xA0;
@@ -1180,11 +1178,33 @@ void RndText::UpdateMesh(RndFont *font) {
     }
     int len = mFixedLength;
     if (len && meshInfo->displayableChars > len) {
+        // Residue: retail splits `len`'s live range with a degenerate
+        // `rlwinm r10,r10,0,0,31` (mr r10,r10) before the doubling, which flips
+        // the r10/r11 assignment across this whole guard. Four semantically
+        // identical shapes (member re-read, `len *= 2`, distinct temp, split
+        // compound-assign statements) all fold to the same IR under /O1.
         ResizeText(len * 2 - meshInfo->displayableChars);
         meshInfo->displayableChars = mFixedLength;
     }
     MILO_ASSERT(mesh->Verts().size() >= meshInfo->displayableChars * 4, 0x6CF);
+    // FONT MAT DIVERGENCE (RB3-360 retail vs DC3-ported Font.h).
+    // Retail reads the font's material with a single non-virtual field load,
+    // `lwz r4, 0x30(font)`, and repeats that idiom at every SetMat site in this
+    // TU (0x82458E20, 0x82458ED4, 0x8245911C, 0x824594C4) -- there is no vtable
+    // call anywhere. That places a raw RndMat* at RndFont+0x30, which is exactly
+    // `RndFont : public Hmx::Object` (sizeof 0x28) with a leading
+    // `ObjPtr<RndMat> mMat` at 0x28 whose mObject lands at 0x30 -- i.e. the
+    // rb3-Wii shape (`RndMat *GetMat() const { return mMat; }`), NOT the
+    // DC3 shape our Font.h currently carries (RndFontBase base + virtual Mat()
+    // over an ObjPtrVec<RndMat> mMats at 0x44, whose 0x30 is the middle of
+    // RndFontBase::mChars). Correcting that is a Font.h/FontBase.h layout lane
+    // with tree-wide blast radius; until then read the retail slot directly for
+    // the match build and keep the real accessor for the native build.
+#ifdef HX_NATIVE
     mesh->SetMat(font->Mat());
+#else
+    mesh->SetMat(*(RndMat *const *)((const char *)font + 0x30));
+#endif
     CreateLines(font);
     if (mMeshCallback) {
         struct _Callback {

@@ -134,7 +134,7 @@ int TrainerPanel::GetSectionLoopStart(int idx) const {
     if (ShouldStartEarly()) {
         int bpm = TheSongDB->GetBeatsPerMeasure(start);
         start = start - bpm * 0x1e0;
-        start = start & ~(start >> 0x1F);
+        start &= ((unsigned)start >> 0x1F) - 1;
     }
     return start;
 }

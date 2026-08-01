@@ -430,6 +430,7 @@ BEGIN_CUSTOM_PROPSYNC(HamCamShot::Target)
     SYNC_PROP_SET_TARGET_BIT(teleport, o.mTeleport)
     SYNC_PROP_SET_TARGET_BIT(return, o.mReturn)
     SYNC_PROP_SET_TARGET_BIT(self_shadow, o.mSelfShadow)
+    SYNC_PROP_SET_TARGET_BIT(hide, o.mHide)
     SYNC_PROP(env_override, o.mEnvOverride)
     SYNC_PROP_SET(target_ptr, gHamCamShot->FindTarget(o.mTarget), )
 END_CUSTOM_PROPSYNC
@@ -687,7 +688,7 @@ DataNode HamCamShot::OnListAllNextShots(const DataArray *a) {
     return ptr;
 }
 
-RndTransformable *HamCamShot::FindTarget(Symbol target) {
+RndTransformable *HamCamShot::FindTarget(Symbol target, bool) {
     static Message msg("find_target", 0);
     msg[0] = target;
     DataNode handled = HandleType(msg);

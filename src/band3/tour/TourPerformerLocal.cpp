@@ -361,8 +361,11 @@ bool TourPerformerLocal::SanityCheckQuestFilters() {
     GigFilter *pSecondaryFilter;
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x231);
-    MILO_ASSERT(!pProgress->AreQuestFiltersEmpty(), 0x233);
-    int questFilterCounts[kTour_NumQuestFilters] = { 0, 0, 0 };
+    if (pProgress->AreQuestFiltersEmpty())
+        return false;
+    int questFilterCounts[kTour_NumQuestFilters];
+    for (int ci = 0; ci < kTour_NumQuestFilters; ci++)
+        questFilterCounts[ci] = 0;
     Symbol filt = pProgress->GetFilterForCurrentGig();
     int numSongs = pProgress->GetNumSongsForCurrentGig();
     pSecondaryFilter = NULL;
@@ -370,10 +373,10 @@ bool TourPerformerLocal::SanityCheckQuestFilters() {
         pSecondaryFilter = TheQuestMgr.GetQuestFilter(filt);
         MILO_ASSERT(pSecondaryFilter, 0x242);
     }
-    std::vector<int> validSongIDs;
     std::vector<int> dummy;
+    std::vector<int> validSongIDs;
     TheSongMgr.GetValidSongs(
-        validSongIDs, *TheBandUserMgr, dummy, -1.0f, -1.0f, true, true
+        dummy, *TheBandUserMgr, validSongIDs, -1.0f, -1.0f, true, true
     );
     for (std::vector<int>::iterator it = validSongIDs.begin(); it != validSongIDs.end();
          ++it) {
@@ -387,8 +390,10 @@ bool TourPerformerLocal::SanityCheckQuestFilters() {
                 continue;
             }
         }
-        int *pCounts = questFilterCounts;
-        for (int i = 0; i < kTour_NumQuestFilters; i++, pCounts++) {
+        int i;
+        int *pCounts;
+        for (i = 0, pCounts = questFilterCounts; i < kTour_NumQuestFilters;
+             i++, pCounts++) {
             Symbol questFilter = pProgress->GetQuestFilter(i);
             Symbol setlistType = pProgress->GetSetlistTypeForCurrentGig(i);
             if (!SanityCheckFilterAgainstType(questFilter, setlistType)) {
@@ -402,13 +407,14 @@ bool TourPerformerLocal::SanityCheckQuestFilters() {
                     continue;
                 }
             } else if (!TheQuestMgr.HasFixedSetlist(questFilter)) {
-                if (strncmp(questFilter.Str(), "filter_artist_", 14) == 0) {
+                if (strncmp("filter_artist_", questFilter.Str(), 14) == 0) {
                     String artistStr(questFilter.Str());
                     String artistSubstr = artistStr.substr(14);
                     BandSongMetadata *pSongData =
                         static_cast<BandSongMetadata *>(TheSongMgr.Data(songID));
                     MILO_ASSERT(pSongData, 0x27c);
-                    if (strcmp(pSongData->Artist(), artistSubstr.c_str()) != 0) {
+                    const char *artist = pSongData->Artist();
+                    if (strcmp(artist, artistSubstr.c_str()) != 0) {
                         continue;
                     }
                 } else {

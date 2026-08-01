@@ -301,64 +301,78 @@ void HDCache::Init() {
         OpenFiles(numFilesToOpen);
         mBlockState = new int *[numArkfiles];
         CSHA1 sha;
-        unsigned char blockBuf[0x1000];
-        for (int i = 0; i < numArkfiles; i++) {
-            unsigned int blockSize = 0;
-            if (i < numFilesToOpen) {
-                *header >> blockSize;
-                if (blockSize <= 0x1000 && (blockSize & 3) == 0) {
-                    header->Read(blockBuf, blockSize);
+        {
+            unsigned char blockBuf[0x1000];
+            for (int i = 0; i < numArkfiles; i++) {
+                unsigned int blockSize = 0;
+                if (i < numFilesToOpen) {
+                    *header >> blockSize;
+                    if (blockSize <= 0x1000 && (blockSize & 3) == 0) {
+                        header->Read(blockBuf, blockSize);
+                    } else {
+                        next = false;
+                    }
+                    if (header->Fail() || !next) {
+                        blockSize = 0;
+                        next = false;
+                        numFilesToOpen = 0;
+                    }
+                    if (next) {
+                        sha.Update(blockBuf, blockSize);
+                    }
+                }
+                // Check if read/write files are valid
+                File **readFiles = &mReadArkFiles[0];
+                File **writeFiles = &mWriteArkFiles[0];
+                if (readFiles[i] == NULL || readFiles[i]->Fail() ||
+                    writeFiles[i] == NULL || writeFiles[i]->Fail()) {
+                    File *rf = readFiles[i];
+                    if (rf != NULL) { delete rf; }
+                    readFiles[i] = NULL;
+                    File *wf = writeFiles[i];
+                    if (wf != NULL) { delete wf; }
+                    writeFiles[i] = NULL;
+                }
+                if (readFiles[i] != NULL) {
+                    auto _tmp6 = TheArchive->GetArkfileNumBlocks(i);
+                    int numDwords = (_tmp6 + 0x1F) / 32;
+                    int *blockMem = new int[numDwords];
+                    memcpy(blockMem, blockBuf, blockSize);
+#ifdef HX_NATIVE
+                    // Native/safe: byte-offset dest clears exactly the tail of the
+                    // numDwords*4-byte block.
+                    memset((char *)blockMem + blockSize, 0, numDwords * 4 - blockSize);
+#else
+                    // Retail-matching (byte-exact): shipped code uses int* arithmetic,
+                    // so the dest advances blockSize*4 bytes (slwi r10,r11,2; add r3,r10,r30)
+                    // while the length stays a byte count. Latent heap overflow in the
+                    // original game on truncated cache headers; kept for fidelity.
+                    memset(blockMem + blockSize, 0, numDwords * 4 - blockSize);
+#endif
+                    mBlockState[i] = blockMem;
                 } else {
-                    next = false;
+                    mBlockState[i] = NULL;
                 }
-                if (header->Fail() || !next) {
-                    blockSize = 0;
-                    next = false;
-                    numFilesToOpen = 0;
-                }
-                if (next) {
-                    sha.Update(blockBuf, blockSize);
-                }
-            }
-            // Check if read/write files are valid
-            File **readFiles = &mReadArkFiles[0];
-            File **writeFiles = &mWriteArkFiles[0];
-            if (readFiles[i] == NULL || readFiles[i]->Fail() ||
-                writeFiles[i] == NULL || writeFiles[i]->Fail()) {
-                File *rf = readFiles[i];
-                if (rf != NULL) { delete rf; }
-                readFiles[i] = NULL;
-                File *wf = writeFiles[i];
-                if (wf != NULL) { delete wf; }
-                writeFiles[i] = NULL;
-            }
-            if (readFiles[i] != NULL) {
-                auto _tmp6 = TheArchive->GetArkfileNumBlocks(i);
-                int numDwords = (_tmp6 + 0x1F) / 32;
-                int *blockMem = new int[numDwords];
-                memcpy(blockMem, blockBuf, blockSize);
-                memset((char *)blockMem + blockSize, 0, numDwords * 4 - blockSize);
-                mBlockState[i] = blockMem;
-            } else {
-                mBlockState[i] = NULL;
             }
         }
-        bool hashValid = false;
         if (next) {
             char hash1[256], hash2[256];
-            memset(hash1, 0, 256);
-            memset(hash2, 0, 256);
+            hash1[0] = 0;
+            memset(&hash1[1], 0, 255);
+            hash2[0] = 0;
+            memset(&hash2[1], 0, 255);
             sha.Final().ReportHash(hash1, 0);
             header->Read(hash2, 0x100);
-            if (!header->Fail()) {
-                auto _tmp0 = memcmp(hash1, hash2, 256);
-                hashValid = _tmp0 == 0;
-            }
+            next = !header->Fail() && memcmp(hash1, hash2, 256) == 0;
         }
-        bool skipHdcache = OptionBool("skip_hdcache", false);
-        if (!skipHdcache & hashValid) {
+        if (OptionBool("skip_hdcache", false)) {
+            next = false;
+        }
+        if (next) {
             unk64 = true;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             TheDebug << MakeString("Using the archive cache\n");
+#endif
         } else {
             for (int i = 0; i < numArkfiles; i++) {
                 if (mBlockState[i] != NULL) {

@@ -766,6 +766,7 @@ void GemPlayer::FretButtonUp(int i1, float f2) {
             }
             mSustainsReleased++;
             if (mSustainsReleased >= mSustainsReleasedBeforePopup && mSustainHeld == 0) {
+                static Symbol hold_note("hold_note");
                 PopupHelp(hold_note, true);
                 mSustainsReleased = 0;
             }
@@ -1230,9 +1231,7 @@ void GemPlayer::Restart(bool b1) {
     mMatcher->Restart();
     SetAutoOn(false);
     ResetController(true);
-    if (!TheGameMode->InMode("practice")) {
-        SetReverb(false);
-    }
+    SetReverb(false);
     if (mUser->GetTrackType() == kTrackDrum && !TheGame->InDrumTrainer()) {
         DisableFills();
     }
@@ -1616,7 +1615,7 @@ void GemPlayer::FinalizeStats() {
     if (mTrackType == 1) {
         mStats.mHighFretGemCount = TheSongDB->GetSoloGemCount(mTrackNum);
     }
-    if (mTrackType - 1U <= 1) {
+    if (mTrackType == 1 || mTrackType == 2) {
         mStats.mSustainGemCount = TheSongDB->GetSustainGemCount(mTrackNum);
     }
     RecordTrillStats();
@@ -2033,9 +2032,14 @@ void GemPlayer::FillInProgress(int i1, int slot) {
                 f1 *= 5.0f;
             }
             float diff = ms - mLastCodaSwing[slot];
+            // Statement order here is codegen-load-bearing: the mCodaPoints
+            // load must sit between the min-select and the multiply so it is
+            // the first GPR temp allocated in this window (retail gives it
+            // r11 and the 0.001f literal-pool base r9). Folding these back
+            // into one expression reintroduces an r9<->r11 swap.
+            float capped = std::min(mCodaMashPeriod, diff);
             int oldPts = mCodaPoints;
-            int i2 =
-                (f1 * std::min(mCodaMashPeriod, diff)) / 1000.0f;
+            int i2 = (f1 * capped) / 1000.0f;
             mCodaPoints = oldPts + i2;
             mLastCodaSwing[slot] = ms;
         }
@@ -2349,12 +2353,10 @@ void GemPlayer::LocalSoloHit(int x) {
 void GemPlayer::LocalSoloEnd(int pct, int numGems) {
     int points = 0;
     Symbol awardSym;
-    Symbol trackSym = mUser->GetTrackSym();
-    TheScoring->GetSoloAward(pct, trackSym, points, awardSym);
+    TheScoring->GetSoloAward(pct, mUser->GetTrackSym(), points, awardSym);
     int total = points * numGems;
     mStats.AddSolo(total);
-    Symbol awardSymCopy = awardSym;
-    GetTrackPanelDir()->SoloEnd(GetBandTrack(), total, awardSymCopy);
+    GetTrackPanelDir()->SoloEnd(GetBandTrack(), total, awardSym);
     AddBonusPoints(total);
     mStats.UpdateBestSolo(pct);
     if (unk3d8) {
@@ -2616,7 +2618,7 @@ bool GemPlayer::AllCodaGemsHit() const {
     return false;
 }
 
-int GemPlayer::GetCodaFreestyleExtents(Extent &extent) const {
+bool GemPlayer::GetCodaFreestyleExtents(Extent &extent) const {
     int codaStartTick = TheSongDB->GetCodaStartTick();
     if (codaStartTick == -1)
         return false;

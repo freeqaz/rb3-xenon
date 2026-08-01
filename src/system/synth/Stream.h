@@ -20,15 +20,30 @@ struct Marker {
     Marker(const String &name, int position, float posMS)
         : name(name), position(position), posMS(posMS) {}
     String name; // 0x0
-    int position; // 0x8
-    float posMS; // 0xc
+    int position; // 0xc  (String is 12 bytes -- compiler-verified via
+    float posMS; // 0x10  /d1reportSingleClassLayoutMarker: sizeof(Marker) == 20)
 };
+// RB3 retail's JumpInstance is NOT dc3's four-float POD. Retail evidence
+// (TU5 raw bytes):
+//   * vector<JumpInstance>::~vector at 0x82703E08 (called on this+0x12c, which
+//     GetJumpInstances at 0x82701D00 confirms is mJumpInstances) uses
+//     `li r10,0x2c / divw / mulli r3,r11,0x2c` => sizeof == 44, and it
+//     materializes a __false_type and makes a real _M_destroy_range call =>
+//     the element is NOT trivially destructible.
+//   * that destroy-range helper (0x82703830) walks backwards by 0x2c calling
+//     the element dtor at 0x8251E650, whose whole body is
+//     `r3 = this+0x14; bl 0x827BDF38` then `r3 = this; bl 0x827BDF38`
+//     -- i.e. two Marker sub-objects at 0x0 and 0x14. 0x827BDF38 is confirmed
+//     to be Marker::~Marker by the sibling vector<Marker> dtor at 0x82703D50
+//     (identical code, `li r10,0x14`, same element dtor).
+// 20 + 20 + 4 == 44 exactly. This is an RB3-specific divergence from dc3:
+// RB3's practice-mode A/B looping (SetLoop(String&, String&) takes two marker
+// *names*) needs from/to Markers where dc3's stream only needed floats.
 struct JumpInstance {
-    float unk0;
-    float unk4;
-    float unk8;
-    float unkc;
-};
+    Marker mFrom; // 0x0
+    Marker mTo; // 0x14
+    float mTotal; // 0x28
+}; // 0x2c
 
 class Stream {
 public:

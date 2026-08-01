@@ -39,6 +39,22 @@ enum EndGameResult {
 // keeps only BeatMasterSink + Hmx::Object, placing mProperties at 0x2c —
 // verified against retail disasm (GemPlayer::CanFlail / GemManager::IsSpotlightGem
 // read mProperties bools 4 bytes lower than our old 3-base layout).
+// RB3-360 TU5-only helper owned by Game at this+0x48. Its real NAME is not
+// recoverable (absent from both the rb3-Wii dev oracle and dc3-decomp; its
+// only symbols are the anonymous fn_82677BD0 ctor / fn_82677C88 dtor inside
+// Game.cpp's own .text span), but its LAYOUT and its dtor body are fully
+// proven from retail:
+//   * sizeof == 0x18  -- `li r3, 0x18` before operator new at 0x8267C4B4
+//   * ctor takes a Symbol (MetaPerformer's song) and zero-fills 0x0..0x10,
+//     then `new VocalGuidePitch()` (`li r3, 0x2c` == our VocalGuidePitch
+//     sizeof) stored at +0x14, then Init/Load/SetSong on it
+//   * an int array at +0x0 indexed 0..3 (per-track counters, decremented at
+//     0x82679960 under a `cmpwi r29, 4 / bge` bound check)
+//   * dtor == Terminate(); Unload(); RELEASE(mGuidePitch)
+// Named in the house mUnkTU5_* placeholder style so it is not mistaken for a
+// confirmed identity. TODO: identify.
+class UnkTU5GuidePitchOwner;
+
 class Game : public BeatMasterSink, public Hmx::Object {
 public:
     enum LoadState {
@@ -94,12 +110,16 @@ public:
         bool mEnableStreak; // 0x16
         bool mShowStars; // 0x17
         bool mPlayStarSfx; // 0x18
-        // TU5: two more bools bring Properties to 29 bytes total (the +4 that
-        // re-aligns mSongPos 0x48->0x4c). Placed at the tail because no loss
-        // function reads a late Properties bool; only their count matters for
-        // layout. TODO: identify + relocate to the real insertion points.
+        // TU5: ONE more bool brings Properties to 28 bytes (0x2c..0x47).
+        // It used to be two (29 bytes, ending at 0x48) purely to push mSongPos
+        // to 0x4c, but retail actually spends that last word on a real pointer
+        // member (mUnkTU5GuidePitch, below) at this+0x48 -- proven by the retail
+        // dtor's `lwz r27, 0x48(r30)` / `stw r28, 0x48(r30)` and by Poll's
+        // `lwz r11, 0x48(r30); lwz r3, 0x14(r11)`. Span to mSongPos@0x4c is
+        // unchanged. Placed at the tail because no loss function reads a late
+        // Properties bool; only its count matters for layout.
+        // TODO: identify + relocate to the real insertion point.
         bool mUnkTU5_prop19; // 0x19 (new in TU5)
-        bool mUnkTU5_prop20; // 0x1a (new in TU5)
     };
     Game();
     virtual ~Game();
@@ -240,8 +260,12 @@ public:
     float PollShuttle();
     void RebuildData();
 
-    Properties mProperties; // 0x24
-    SongPos mSongPos; // 0x40
+    Properties mProperties; // 0x2c (28 bytes -> ends 0x47)
+    // 0x48: created in the ctor only when mProperties.mUnkTU5_movieSync is set
+    // (retail: `lbz 0x2f` -> JoypadSubscribe(this) -> new(0x18) -> stw 0x48),
+    // released in the dtor under the same guard. See the class comment above.
+    UnkTU5GuidePitchOwner *mUnkTU5GuidePitch; // 0x48
+    SongPos mSongPos; // 0x4c
     SongDB *mSongDB; // 0x54
     SongInfo *mSongInfo; // 0x58
     BeatMaster *mMaster; // 0x5c

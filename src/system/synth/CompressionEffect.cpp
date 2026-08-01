@@ -51,14 +51,14 @@ void CompressionEffect::SetParameters(CompressionEffect::Params const &params) {
 }
 
 void CompressionEffect::Process(float *samples, int numFrames, int numChannels) {
-    if (mRatio > 0.999999046f) {
+    if (mRatio > 1.01f) {
         float envelope = mEnvelope;
         float prev_peak = 0;
         float prev_sample = 0.0f;
 
         for (int frame = 0; frame < numFrames; frame++) {
             unsigned char detect_peak = 0;
-            float peak_level = 0.27027027f;
+            float peak_level = 0.00001f;
             int channel = 0;
 
             if (numChannels > 0) {
@@ -71,17 +71,17 @@ void CompressionEffect::Process(float *samples, int numFrames, int numChannels) 
                         prev_peak = prev_sample;
                         prev_sample = sample;
 
-                        if (((tmp > 0.012483216f) || (tmp < -0.012483216f)) &&
-                            (fabs(tmp - prev_peak) < 0.004999995) &&
-                            (fabsf(sample - prev_peak) < 0.004999995f)) {
+                        if (((tmp > 0.07f) || (tmp < -0.07f)) &&
+                            (fabsf(tmp - prev_peak) < 0.0003f) &&
+                            (fabsf(sample - prev_peak) < 0.0003f)) {
                             float ratio = mDCBlock;
-                            mDCBlock = ((1.0 - ratio) * 0.004999995f) + ratio;
+                            mDCBlock = ((0.08f - ratio) * 0.02f) + ratio;
                         }
                         float ratio = mDCBlock;
-                        mDCBlock = ((1.0f - ratio) * 0.01f) + ratio;
+                        mDCBlock = ((1.0f - ratio) * 0.002f) + ratio;
                     }
 
-                    float abs_sample = fabsf(sample);
+                    float abs_sample = (sample >= 0.0f) ? sample : -sample;
                     if (peak_level < abs_sample) {
                         peak_level = abs_sample;
                     }
@@ -95,21 +95,19 @@ void CompressionEffect::Process(float *samples, int numFrames, int numChannels) 
 
             if (peak_level > threshold) {
                 gain_reduction = ((((peak_level - threshold) / mRatio) + threshold) * ratio);
-                if (gain_reduction > 100000.0f) {
-                    gain_reduction = 100000.0f;
+                if (gain_reduction > 10000.0f) {
+                    gain_reduction = 10000.0f;
                 }
             }
 
             float min_level = mGateMin;
-            float attack_release;
             if (peak_level < min_level) {
-                attack_release = (((peak_level - min_level) * 0.2f) + min_level);
+                mGateMin = (((peak_level - min_level) * 0.05f) + min_level);
             } else {
-                attack_release = (((mGateMax - min_level) * 0.1f) + min_level);
+                mGateMin = (((mGateMax - min_level) * 0.001f) + min_level);
             }
-            mGateMin = attack_release;
 
-            if (peak_level < (attack_release * 0.579999983f)) {
+            if (peak_level < (mGateMin * 1.15f)) {
                 detect_peak = 1;
                 gain_reduction = 0.0f;
             }

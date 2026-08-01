@@ -117,7 +117,7 @@ bool PracticePanel::IsVocals() const {
 
 void PracticePanel::Load() {
     UIPanel::Load();
-    mGuidePitch->Load();
+    mGuidePitch->Load(true);
 }
 
 bool PracticePanel::IsLoaded() const {

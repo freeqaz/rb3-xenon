@@ -112,8 +112,6 @@ protected:
     bool ListNextShots(std::list<BandCamShot *> &);
 
 public:
-    static unsigned short gRev;
-    static unsigned short gAltRev;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
     static std::list<BandCamShot::TargetCache> sCache;

@@ -67,28 +67,44 @@ CharEyes::CharEyes()
 
 CharEyes::~CharEyes() {}
 
+// NOTE (statement order): MSVC schedules this store block by strictly
+// alternating the integer-unit and float-unit streams, each stream kept in
+// SOURCE order.  Decomposing retail's asm along those two streams recovers
+// rb3-Wii's exact statement order (member names differ, offsets do not):
+//   float: mLastLook, mAvDelta, mLastCang, mLastBlinkWeight, mDartInterval,
+//          mBlinkTimer, mUpperBlinkAngle, mLowerBlinkAngle, mDartTimer
+//   int:   mBlinkDetect, mDartEnabled, mEyeClampCount, mBlinkEnabled,
+//          mBlinkCount, mBlinkActive, mInterestFilterFlags, mEnabled,
+//          mNeedRecalc
+// We cannot use that order verbatim: our compiler unconditionally hoists the
+// single `lwz` (mDefaultFilterFlags) to the head of the integer stream, while
+// retail leaves it adjacent to its `stw`.  Verified position-invariant (3
+// source positions + a volatile-qualified load all emit it at the same slot;
+// /volatile:iso only orders volatile-vs-volatile, so it cannot pin it).  That
+// one hoist shifts the whole interleave by a slot, so the int statements below
+// are rotated by one to re-align the emitted sequence with retail.  92.6% ->
+// 93.2%; the residual 10 replaces are all downstream of the hoist.
 void CharEyes::Enter() {
     mLastFacing.Zero();
     mLastLook = 0;
-    mLastBlinkWeight = -1.0f;
+    mAvDelta = 0;
     mLastCang = 1.0f;
-    mBlinkDetect = false;
-    mBlinkActive = false;
+    mLastBlinkWeight = -1.0f;
     mDartEnabled = false;
-    mDartInterval = -1.0f;
     mEyeClampCount = -1;
+    mDartInterval = -1.0f;
     mBlinkEnabled = false;
-    mBlinkTimer = -1.0f;
     mBlinkCount = 0;
+    mBlinkTimer = -1.0f;
+    mBlinkActive = false;
     mUpperBlinkAngle = -1.0f;
     mLowerBlinkAngle = -1.0f;
+    mBlinkDetect = false;
     mInterestFilterFlags = mDefaultFilterFlags;
-    mDartTimer = 0.0f;
     mEnabled = false;
-    auto& _ref1 = mNeedRecalc;
-    _ref1 = false;
+    mNeedRecalc = false;
+    mDartTimer = 0.0f;
     RndTransformable *head = GetHead();
-    _ref1 = false;
     if (head) {
         mLastFacing = head->WorldXfm().m.y;
         Normalize(mLastFacing, mLastFacing);
@@ -595,6 +611,14 @@ RndTransformable *CharEyes::GetHead() {
             return src->TransParent();
     }
     return 0;
+}
+
+bool CharEyes::EitherEyeClamped() {
+    for (ObjVector<EyeDesc>::iterator it = mEyes.begin(); it != mEyes.end(); ++it) {
+        if (it->mEye && it->mEye->mDisableRoll)
+            return true;
+    }
+    return false;
 }
 
 RndTransformable *CharEyes::GetTarget() {
@@ -1252,13 +1276,13 @@ void CharEyes::Poll() {
     if (!head)
         return;
 
-    float dt = TheTaskMgr.DeltaSeconds();
-    if (dt < 0.0f) {
-        Exit();
+    float camWeight = TheTaskMgr.DeltaSeconds();
+    if (camWeight < 0.0f) {
+        Enter();
         return;
     }
 
-    float camWeight = 0.0f;
+    camWeight = 0.0f;
     if (mCamWeight) {
         camWeight = mCamWeight->Weight();
     }
@@ -1295,7 +1319,7 @@ void CharEyes::Poll() {
     Vector3 facingDir(headXfm.m.y);
     Normalize(facingDir, facingDir);
 
-    float cang = Dot(facingDir, targetDir);
+    float cang = Dot(targetDir, facingDir);
     cang = Clamp(-1.0f, 1.0f, cang);
 
     if (mLastCang != 1e+30f) {
@@ -1319,16 +1343,7 @@ void CharEyes::Poll() {
                 goto storeState;
             if (!blinkDetected) {
                 if (canSeeTarget) {
-                    bool anyEyeClamped = false;
-                    auto eyesEnd = mEyes.end();
-                    for (ObjVector<EyeDesc>::iterator it = mEyes.begin(); it != eyesEnd;
-                         ++it) {
-                        if (it->mEye && it->mEye->mDisableRoll) {
-                            anyEyeClamped = true;
-                            break;
-                        }
-                    }
-                    if (!anyEyeClamped)
+                    if (!EitherEyeClamped())
                         goto storeState;
                 }
                 if (mAvDelta >= 0.0f)
@@ -1345,9 +1360,11 @@ storeState:
     mLastCang = cang;
     mLastFacing = facingDir;
 
-    float headLookWeight = 0.0f;
+    float headLookWeight;
     if (mHeadLookAt) {
         headLookWeight = mHeadLookAt->Weight();
+    } else {
+        headLookWeight = 0.0f;
     }
     mDartTimer = headLookWeight;
 
@@ -1360,10 +1377,7 @@ storeState:
         EnforceMinimumTargetDistance(headPos, mTarget, mTarget);
     }
 
-    RndTransformable *eyeTarget = 0;
-    if (!mEyes.empty() && mEyes[0].mEye) {
-        eyeTarget = mEyes[0].mEye->mTarget;
-    }
+    RndTransformable *eyeTarget = GetTarget();
 
     if (eyeTarget) {
         float weight = Weight();
@@ -1403,7 +1417,14 @@ skipInterp:
 
     ProceduralBlinkUpdate();
 
+    // RB3 retail has NO CharLookAt::sDisableJitter bracket around this loop:
+    // both the target .text (objdiff idx 385-388 / 405-407 are base-only inserts)
+    // and Ghidra's decomp of the retail function go straight from
+    // ProceduralBlinkUpdate() into the loop and then to UpdateOverlay(). The
+    // bracket is an rb3-Wii DEV-build artifact, so keep it native-only.
+#ifdef HX_NATIVE
     CharLookAt::sDisableJitter = sDisableEyeJitter;
+#endif
     for (ObjVector<EyeDesc>::iterator it = mEyes.begin(); it != mEyes.end(); ++it) {
 #ifdef HX_NATIVE
         if (!it->mEye) continue;
@@ -1411,7 +1432,9 @@ skipInterp:
         it->mEye->Poll();
         LidTrackAndClampingUpdate(*it, blinkWeight);
     }
+#ifdef HX_NATIVE
     CharLookAt::sDisableJitter = false;
+#endif
 
     UpdateOverlay();
 }

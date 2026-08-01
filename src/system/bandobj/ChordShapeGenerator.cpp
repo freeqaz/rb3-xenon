@@ -13,7 +13,7 @@
 
 using std::abs;
 
-INIT_REVS(ChordShapeGenerator);
+ChordShapeGenerator::RevsT ChordShapeGenerator::gRevs = {0, 0};
 
 static Transform t;
 
@@ -77,6 +77,8 @@ END_SAVES
 
 #define kMaxFretHeights 6
 
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 BEGIN_LOADS(ChordShapeGenerator)
     LOAD_REVS(bs)
     ASSERT_REVS(1, 0)
@@ -104,6 +106,8 @@ BEGIN_LOADS(ChordShapeGenerator)
     while (mGradeDistances.size() < 6)
         mGradeDistances.push_back(0);
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 RndMesh *NewCopyMesh(const RndMesh *mesh) {
     RndMesh *ret = Hmx::Object::New<RndMesh>();

@@ -10,14 +10,12 @@ FingerShape::FingerShape(RndDir *dir)
     : mLastState(new RGState()), mFretNumberShowAnim(0), mFretNumberPositionAnim(0),
       mFretNumberText(0), mLastFretNumber(-1), mAnimPeriod(1.0f), mLefty(0) {
     MILO_ASSERT(dir, 0x1F);
-    mFretHeightAnims.reserve(6);
     mFretHeightAnims.push_back(dir->Find<RndAnimatable>("Bone01.anim", true));
     mFretHeightAnims.push_back(dir->Find<RndAnimatable>("Bone02.anim", true));
     mFretHeightAnims.push_back(dir->Find<RndAnimatable>("Bone03.anim", true));
     mFretHeightAnims.push_back(dir->Find<RndAnimatable>("Bone04.anim", true));
     mFretHeightAnims.push_back(dir->Find<RndAnimatable>("Bone05.anim", true));
     mFretHeightAnims.push_back(dir->Find<RndAnimatable>("Bone06.anim", true));
-    mContourAngleAnims.reserve(7);
     mContourHeightAnims.push_back(
         dir->Find<RndAnimatable>("shareBone_0low1_trans.tnm", true)
     );
@@ -34,7 +32,6 @@ FingerShape::FingerShape(RndDir *dir)
     mContourHeightAnims.push_back(
         dir->Find<RndAnimatable>("shareBone_6high_trans.tnm", true)
     );
-    mContourAngleAnims.reserve(7);
     mContourAngleAnims.push_back(dir->Find<RndAnimatable>("shareBone_0low1_rot.tnm", true)
     );
     mContourAngleAnims.push_back(dir->Find<RndAnimatable>("shareBone_12_rot.tnm", true));

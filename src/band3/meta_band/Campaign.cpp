@@ -433,7 +433,7 @@ int Campaign::GetCurrentPointsForNextCampaignLevelForUser(LocalBandUser *i_pUser
     else {
         BandProfile *pProfile = TheProfileMgr.GetProfileForUser(i_pUser);
         MILO_ASSERT(pProfile, 0x2B5);
-        int iCurrentMetaScore = GetCampaignMetaScoreForProfile(pProfile);
+        int iCurrentMetaScore = pProfile->GetAccomplishmentProgress().GetMetaScore();
         CampaignLevel *pCampaignLevel = GetCampaignLevel(level);
         MILO_ASSERT(pCampaignLevel, 0x2BA);
         int iCampaignLevel = pCampaignLevel->GetValue();

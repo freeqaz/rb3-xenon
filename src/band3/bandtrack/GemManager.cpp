@@ -231,10 +231,11 @@ void GemManager::UpdateArpeggios(float f1, bool b2) {
             mActiveArpeggios.erase(mActiveArpeggios.begin());
         } else {
             if (!b2 || !currentArpeggio->unk10) {
+                float ms2 = ms;
                 if (currentArpeggio->mStartTick > i1) {
-                    ms = TickToMs(currentArpeggio->mStartTick);
+                    ms2 = TickToMs(currentArpeggio->mStartTick);
                 }
-                currentArpeggio->mShape->SetYPos(mTrackDir->SecondsToY(ms / 1000.0f));
+                currentArpeggio->mShape->SetYPos(mTrackDir->SecondsToY(ms2 / 1000.0f));
             }
             break;
         }
@@ -1289,9 +1290,10 @@ void GemManager::Jump(float f1) {
     DrawTrackMasks(MsToTickInt(mTrackDir->TopSeconds() * 1000.0f + f1), MsToTickInt(f1));
 
     float f5 = mTrackDir->BottomSeconds();
+    float threshold = f1 / 1000.0f + f5;
     int i1 = -1;
     for (int i = 0; i < mEnd; i++) {
-        if (mGems[i].GetStart() < f1 / 1000.0f + f5)
+        if (mGems[i].GetStart() < threshold)
             continue;
         if (i1 < 0)
             i1 = i;
@@ -1441,7 +1443,10 @@ void GemManager::PollHitGems(float ms) {
 }
 
 void GemManager::Poll(float ms, const PlayerState &state) {
-    if (TheGame->IsWaiting() || TheGame->unkdc != -1.0f ||
+    // Retail materializes the bool (li 1 / li 0 / clrlwi.) rather than
+    // branching on the fcmpu directly -- the inlined InRollback() accessor,
+    // not a raw `unkdc != -1.0f` compare (same pattern as Player.cpp:226).
+    if (TheGame->IsWaiting() || TheGame->InRollback() ||
         (TheRGTrainerPanel && TheRGTrainerPanel->GetLegendMode())) {
         UpdateArpeggios(ms, true);
     } else {

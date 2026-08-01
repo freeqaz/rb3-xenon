@@ -256,8 +256,8 @@ BinStreamRev &operator>>(BinStreamRev &d, LightPreset::SpotlightDrawerEntry &e) 
 LightPreset::Keyframe::Keyframe(Hmx::Object *owner)
     : mSpotlightEntries(owner), mVideoVenuePostProc(owner), mTriggers(owner),
       mDuration(0), mFadeOutTime(0), mFrame(-1), mLedRed(0), mLedBlue(0), mLedGreen(0),
-      mLedYellow(0), mLedRedPattern(0), mLedBluePattern(0), mLedGreenPattern(0),
-      mLedYellowPattern(0), mStrobeSetting(0) {
+      mLedYellow(0), mLedRedPattern(6), mLedBluePattern(6), mLedGreenPattern(6),
+      mLedYellowPattern(6), mStrobeSetting(0) {
     LightPreset *preset = dynamic_cast<LightPreset *>(owner);
     MILO_ASSERT(preset, 0x56F);
 
@@ -1201,16 +1201,15 @@ void LightPreset::AnimateSpotFromPreset(
 static void AnimateSpotlightDrawerFromPreset(
     SpotlightDrawer *sd, const LightPreset::SpotlightDrawerEntry &e, float f
 ) {
-    SpotDrawParams &p = const_cast<SpotDrawParams &>(sd->Params());
     float val;
-    Interp(p.mBaseIntensity, e.mBaseIntensity, f, val);
-    p.mBaseIntensity = val;
-    Interp(p.mSmokeIntensity, e.mSmokeIntensity, f, val);
-    p.mSmokeIntensity = val;
-    Interp(p.mLightingInfluence, e.mLightInfluence, f, val);
-    p.mLightingInfluence = val;
-    Interp(p.mIntensity, e.mTotalIntensity, f, val);
-    p.mIntensity = val;
+    Interp(const_cast<SpotDrawParams &>(sd->Params()).mBaseIntensity, e.mBaseIntensity, f, val);
+    const_cast<SpotDrawParams &>(sd->Params()).mBaseIntensity = val;
+    Interp(const_cast<SpotDrawParams &>(sd->Params()).mSmokeIntensity, e.mSmokeIntensity, f, val);
+    const_cast<SpotDrawParams &>(sd->Params()).mSmokeIntensity = val;
+    Interp(const_cast<SpotDrawParams &>(sd->Params()).mLightingInfluence, e.mLightInfluence, f, val);
+    const_cast<SpotDrawParams &>(sd->Params()).mLightingInfluence = val;
+    Interp(const_cast<SpotDrawParams &>(sd->Params()).mIntensity, e.mTotalIntensity, f, val);
+    const_cast<SpotDrawParams &>(sd->Params()).mIntensity = val;
 }
 
 static float ComputeSpotBlend(int i, float f) {
@@ -1220,7 +1219,7 @@ static float ComputeSpotBlend(int i, float f) {
     else if (i % 5 > min)
         return 0.0f;
     else
-        return Min(Max((f - i / 5.0f) * 5.0f, 0.0f), 1.0f);
+        return Min(Max((f - min / 5.0f) * 5.0f, 0.0f), 1.0f);
 }
 
 void LightPreset::Animate(float f) {

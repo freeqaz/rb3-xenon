@@ -200,11 +200,12 @@ void NextSongPanel::InitializeSongReviewDisplay(int i) {
             reviewHelp->SetOverrideUser(localUser);
             MetaPerformer *performer = MetaPerformer::Current();
             MILO_ASSERT(performer, 0xEF);
-            int songID =
-                TheSongMgr.GetSongIDFromShortName(performer->GetCompletedSong(), true);
+            Symbol completedSong = performer->GetCompletedSong();
+            int songID = TheSongMgr.GetSongIDFromShortName(completedSong, true);
             BandProfile *profile = TheProfileMgr.GetProfileForUser(localUser);
             MILO_ASSERT(profile, 0xF5);
-            reviewDisplay->SetValues(profile->GetSongReview(songID), false);
+            int songReview = profile->GetSongReview(songID);
+            reviewDisplay->SetValues(songReview, false);
         } else {
             reviewDisplay->SetShowing(false);
             reviewHelp->SetShowing(false);

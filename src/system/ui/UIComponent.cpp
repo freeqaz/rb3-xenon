@@ -42,6 +42,11 @@ UIComponent::UIComponent()
       mResourceName(), mResourceDir(), mResourcePath(), mLoading(0),
       mSelectCancelled(0) {}
 
+UIComponent::~UIComponent() {
+    if (mResource)
+        mResource->Release();
+}
+
 BEGIN_PROPSYNCS(UIComponent)
     SYNC_PROP(nav_right, mNavRight)
     SYNC_PROP(nav_down, mNavDown)
@@ -73,6 +78,43 @@ void UIComponent::CopyMembers(const UIComponent *c, Hmx::Object::CopyType ty) {
     mResourceName = c->mResourceName;
     mResourceDir = c->mResourceDir;
     mResourcePath = c->mResourcePath;
+}
+
+// Ported from rb3-Wii (../rb3/src/system/ui/UIComponent.cpp) per Phase B of
+// docs/decomp/research/2026-06-11-uicomponent-virtuals.md — retail-360 has
+// this as a real UIComponent override (Object-vbase vtable slot 15,
+// fn_827DAB68), not a fallthrough to Hmx::Object::SetTypeDef.
+void UIComponent::SetTypeDef(DataArray *da) {
+    if (!da && mResourcePath.length() == 0) {
+        DataArray *cfg = SystemConfig("objects", ClassName());
+        DataArray *found = cfg->FindArray("init", false);
+        if (found) {
+            DataArray *typesArr = cfg->FindArray("types");
+            DataArray *defaultArr = typesArr->FindArray("default", false);
+            if (defaultArr) {
+                MILO_WARN(
+                    "Resetting %s (%s) to default type (%s)",
+                    ClassName(),
+                    Name(),
+                    PathName(Dir())
+                );
+                SetTypeDef(defaultArr);
+                return;
+            } else {
+                MILO_FAIL(
+                    "No default type for %s, please add to %s (%s)",
+                    ClassName(),
+                    typesArr->File(),
+                    PathName(Dir())
+                );
+                return;
+            }
+        }
+    }
+    if (TypeDef() != da) {
+        Hmx::Object::SetTypeDef(da);
+        UpdateResource();
+    }
 }
 
 void UIComponent::ResourceCopy(const UIComponent *c) {

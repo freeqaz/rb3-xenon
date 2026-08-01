@@ -79,17 +79,15 @@ void ProTrainerPanel::SetLessonComplete(int lesson) {
     } else {
         LocalBandUser *localuser = mGemPlayer->GetUser()->GetLocalBandUser();
         BandProfile *profile = TheProfileMgr.GetProfileForUser(localuser);
-        if (profile) {
-            int songID =
-                TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true);
-            Difficulty diff = localuser->GetDifficulty();
-            static Message msg("get_speed_modifier", 0);
-            msg[0] = lesson;
-            DataNode handled = Handle(msg, true);
-            mSpeedCompleted[GetCurrSection()] =
-                std::max(mSpeedCompleted[GetCurrSection()], handled.Float());
-            SetSongSectionComplete(profile, songID, diff, GetCurrSection());
-        }
+        Symbol song = MetaPerformer::Current()->Song();
+        int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+        Difficulty diff = localuser->GetDifficulty();
+        static Message msg("get_speed_modifier", 0);
+        msg[0] = lesson;
+        DataNode handled = Handle(msg, true);
+        mSpeedCompleted[GetCurrSection()] =
+            std::max(mSpeedCompleted[GetCurrSection()], handled.Float());
+        SetSongSectionComplete(profile, songID, diff, GetCurrSection());
     }
 }
 

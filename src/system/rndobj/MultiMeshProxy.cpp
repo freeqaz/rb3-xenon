@@ -1,3 +1,4 @@
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH 1
 #include "rndobj/MultiMeshProxy.h"
 #include "obj/Object.h"
 #include "rndobj/Mesh.h"

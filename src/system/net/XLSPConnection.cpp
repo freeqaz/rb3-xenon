@@ -168,11 +168,11 @@ void XLSPConnection::Poll() {
     case 3:
         if (mConnectionRequest != 0) {
             DWORD status = XNetGetConnectStatus(*(IN_ADDR *)&unk44);
-            if (status <= 1) {
+            if (status < 2) {
                 MILO_NOTIFY("XLSPConnection: Idle/establishing status while connected?");
             } else if (status == 2) {
                 return;
-            } else if (status == 3) {
+            } else if (status < 4) {
             } else {
                 MILO_NOTIFY("XNetGetConnectStatus() unhandled return: %d", status);
                 return;
@@ -184,16 +184,18 @@ void XLSPConnection::Poll() {
     case 2:
         if (mConnectionRequest != 0) {
             DWORD status = XNetGetConnectStatus(*(IN_ADDR *)&unk44);
-            if (status == 0) {
-            } else if (status == 1) {
-                return;
-            } else if (status < 3) {
-                SetState((State)3);
-                return;
-            } else if (status == 3) {
-            } else {
-                MILO_NOTIFY("XNetGetConnectStatus() unhandled return: %d", status);
-                return;
+            if (status >= 1) {
+                if (status == 1) {
+                    return;
+                } else if (status >= 3) {
+                    if (status != 3) {
+                        MILO_NOTIFY("XNetGetConnectStatus() unhandled return: %d", status);
+                        return;
+                    }
+                } else {
+                    SetState((State)3);
+                    return;
+                }
             }
             SetState((State)4);
             return;

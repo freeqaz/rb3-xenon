@@ -1,3 +1,17 @@
+// Retail inlines the owner-only ObjPtr<RndDir> ctor for mPreviewChar (3 raw
+// stores, no `bl`) while keeping mPreviewClip/mStillClip out-of-line -- a
+// per-site decision, not per-TU (see the ObjPtr block in obj/Object.h). Opt
+// this TU into the inline majority (mPreviewChar) and opt the other two back
+// out via the explicit two-arg spelling below. char/ is PCH-excluded so the
+// #define ordering here is safe (no /FI decomp_pch.h preempting it).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+// ...and take retail's owner-only ctor SHAPE: the base ctor gets only the
+// owner, the derived body assigns mObject, so the mObject store lands after
+// the derived vptr store instead of floating up into an earlier load-use
+// stall. Worth ??0CharClipSet@@IAA@XZ 96.6 -> 100 and fn_823D0AFC 99.9 -> 100;
+// whole binary 41631 -> 41633, zero regressions. Rationale + the two spellings
+// that measurably do NOT work are documented at the gate in obj/Object.h.
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/CharClipSet.h"
 #include "char/CharBoneDir.h"
 #include "char/CharClip.h"
@@ -20,7 +34,8 @@
 #include "utl/FilePath.h"
 
 CharClipSet::CharClipSet()
-    : mCharFilePath(), mPreviewChar(this), mPreviewClip(this), mStillClip(this) {
+    : mCharFilePath(), mPreviewChar(this), mPreviewClip(this, nullptr),
+      mStillClip(this, nullptr) {
     ResetPreviewState();
     SetRate(k1_fpb);
 }

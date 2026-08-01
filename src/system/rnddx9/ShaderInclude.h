@@ -62,10 +62,34 @@ public:
         }
         File *file = NewFile(str.c_str(), FILE_OPEN_NOARK | FILE_OPEN_READ);
         if (!file) {
-            MILO_NOTIFY("Could not find shader file '%s'.", str);
+            // Retail materializes str as a BY-VALUE MiloStripEval param here
+            // (copy-ctor + dtor pair) rather than MILO_NOTIFY's discarded
+            // comma-form; see CharBoneDir.cpp:277 for the mechanism.
+            // MILO_NOTIFY itself must stay comma-form globally.
+            MiloStripEval("Could not find shader file '%s'.", str);
             return ERROR_FILE_NOT_FOUND;
         } else {
             *pBytes = file->Size();
+            // Retail homes the size into a 4-byte stack local that it stores
+            // ONCE and NEVER reloads (target: `stw r3,0x50(r31)`, sitting
+            // between `stw r3,0(r28)` and the MemAlloc call).  That local also
+            // pushes both String locals +8 and grows the frame 0xa0 -> 0xb0,
+            // which is additionally what lets the String-dtor EH funclet
+            // (fn_827362B0) match -- this local is worth +2, not +1.
+            //
+            // A compiler only emits a dead store to a non-escaping local when
+            // the store is volatile-qualified.  Measured here at /O1: a plain
+            // dead `int` (whether or not it also fed MemAlloc), a 1-element
+            // array element, a one-int struct field, and an address escaped
+            // into an inlined-away MiloStripEval were ALL dead-store-eliminated
+            // and left the frame at 0xa0 -- byte-identical to omitting the
+            // local entirely (98.348%).  `volatile` is the only spelling that
+            // reproduces the artifact.
+            //
+            // It must come AFTER the *pBytes store: initialising it from
+            // file->Size() instead forces a volatile RELOAD to feed *pBytes and
+            // inserts an extra `lwz` (98.303%).  This ordering is byte-exact.
+            volatile UINT size = *pBytes;
             *ppData = MemAlloc(*pBytes, __FILE__, 0x44, "shader compile buffer");
             file->Read((void *)*ppData, *pBytes);
             delete file;

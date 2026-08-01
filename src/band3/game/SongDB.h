@@ -53,7 +53,7 @@ public:
     void OverrideBasePoints(int, TrackType, const UserGuid &, int, int, int);
     int TotalBasePoints();
     int GetCodaStartTick() const;
-    bool IsInCoda(int) const;
+    int IsInCoda(int) const;
     int GetNumTracks() const;
     int GetNumTrackData() const;
     int GetBaseMaxPoints(const UserGuid &) const;

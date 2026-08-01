@@ -11,14 +11,14 @@
 FaceHairProvider::FaceHairProvider() : mFaceHair(0) {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 0x13);
-    const std::map<Symbol, Asset *> &assets = pAssetMgr->GetAssets();
+    const std::hash_map<Symbol, Asset *> &assets = pAssetMgr->GetAssets();
     // Retail declares the property Symbol as a FUNCTION-LOCAL static (guard word
     // 0x82E02018 / Symbol 0x82E02014 + ??0Symbol@@QAA@PBD@Z inline in the ctor),
     // where the rb3-Wii dev source references the Symbols4.h global.
     static Symbol none_facehair("none_facehair");
     mMaleFaceHair.push_back(none_facehair);
     mFemaleFaceHair.push_back(none_facehair);
-    for (std::map<Symbol, Asset *>::const_iterator it = assets.begin();
+    for (std::hash_map<Symbol, Asset *>::const_iterator it = assets.begin();
          it != assets.end();
          ++it) {
         Asset *pAsset = it->second;

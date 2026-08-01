@@ -1542,6 +1542,17 @@ DataNode RndMesh::OnUnitizeNormals(const DataArray *da) {
     return 0;
 }
 
+// Retail keeps this MILO_NOTIFY call fully evaluated (TheDebugNotifier <<
+// MakeString(...)), argument Name() included. The global Debug.h release
+// definition strips MILO_NOTIFY to ((void)(args)) (measured -20 whole-binary
+// to make uniform - see Debug.h), and with that stripped form /O1 treats the
+// inlined Name() field read as dead (no observable effect) and deletes the
+// entire notify branch, including its Type()-guard polarity. Locally
+// override MILO_NOTIFY for just this function, matching the UIComponent.cpp
+// precedent (TU-scoped push_macro/pop_macro, never touch global Debug.h).
+#pragma push_macro("MILO_NOTIFY")
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)
 DataNode RndMesh::OnConfigureMesh(const DataArray *da) {
     static Symbol configurable_mesh("configurable_mesh");
     if (Type() != configurable_mesh)
@@ -1565,6 +1576,7 @@ DataNode RndMesh::OnConfigureMesh(const DataArray *da) {
     }
     return 0;
 }
+#pragma pop_macro("MILO_NOTIFY")
 
 void PackVector(
     unsigned int &output,

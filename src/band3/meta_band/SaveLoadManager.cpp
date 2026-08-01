@@ -737,9 +737,15 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     case 0x4:
+    {
+        // Retail: GetProfile() is evaluated BEFORE mWaiting=true (the stb to
+        // this+0x69 sits after the bl, and a store to `this` cannot be scheduled
+        // across an opaque call -- so this is source order, not scheduling).
+        BandProfile *pProfile = GetProfile();
         mWaiting = true;
-        TheMemcardMgr.OnSearchForDevice(GetProfile());
+        TheMemcardMgr.OnSearchForDevice(pProfile);
         break;
+    }
     case 0x5:
         if (unk7c == 2) {
             SetState((State)0x9);
@@ -790,27 +796,31 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x12:
     {
+        // Retail (Ghidra TU5 0x82550880 case 0x12): NO IsDisableWriting() check here
+        // (that belongs to a different case) -- just a straight branch on
+        // GlobalOptionsNeedsSave(): false => complete the load now; true => defer to
+        // state 0x13 (the CacheMgr GetCacheID path for global options).
         mInitialLoadNotDone = false;
         if (TheProfileMgr.GlobalOptionsNeedsSave()) {
-            if (!TheMemcardMgr.IsDisableWriting()) {
-                SetState((State)0x46);
-                break;
-            }
+            SetState((State)0x13);
+        } else {
+            TheProfileMgr.HandleProfileLoadComplete();
+            SetState((State)0x6a);
         }
-        TheProfileMgr.HandleProfileLoadComplete();
-        SetState((State)0x6a);
         break;
     }
     case 0x14: // kS_SongCacheCreateSearch (entry-like)
     {
+        // Retail (Ghidra TU5 0x82550880 case 0x14): goes straight from clearing
+        // mCacheID to the SearchAsync vtable call (offset+8) -- there is NO
+        // TheSongMgr.CreateSongCacheID()/MILO_NOTIFY step in between. Our source
+        // had an extra CreateSongCacheID() call that retail's binary does not
+        // contain (confirmed insert-only cluster, idx 252-254).
         unk4c = TheSongMgr.GetCachedSongInfoName();
         if (mCacheID != NULL) {
             TheCacheMgr->RemoveCacheID(mCacheID);
             delete mCacheID;
             mCacheID = NULL;
-        }
-        if (!TheSongMgr.CreateSongCacheID(&mCacheID)) {
-            MILO_NOTIFY("SaveLoadManager - CacheMgr search failed in CreateSongCacheID()\n");
         }
         if (!TheCacheMgr->SearchAsync(unk4c.c_str(), &mCacheID)) {
 #pragma dont_inline on
@@ -832,10 +842,16 @@ void SaveLoadManager::SetState(State newState) {
             delete mCacheID;
             mCacheID = NULL;
         }
-        const char *cacheName = unk4c.c_str();
+        // Retail evaluates the TheCacheMgr global + its vptr BEFORE the bl to
+        // Localize (vptr held in a callee-saved reg across the call). That only
+        // happens when Localize(...) is an ARGUMENT of the virtual call rather
+        // than hoisted into its own local. cacheName likewise comes after the
+        // static-init guard block, not before it.
         static Symbol song_info_cache_name("song_info_cache_name");
-        const char *locName = Localize(song_info_cache_name, NULL);
-        if (!TheCacheMgr->ShowUserSelectUIAsync(NULL, 0x25800ULL, cacheName, locName, &mCacheID)) {
+        const char *cacheName = unk4c.c_str();
+        if (!TheCacheMgr->ShowUserSelectUIAsync(
+                NULL, 0x25800ULL, cacheName, Localize(song_info_cache_name, NULL), &mCacheID
+            )) {
             if (TheCacheMgr->GetLastResult() != 0) {
                 SetState((State)0x1a);
             }
@@ -963,11 +979,13 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x28:
     {
-        if (unk7c == 0) {
-            SetState((State)0x2b);
-        } else {
+        // Retail lays the "!= 0" arm out first (beq to the ==0 arm), so the
+        // source condition is positive -- same shape as case 0x54.
+        if (unk7c != 0) {
             unk7c = 0;
             SetState((State)0x2a);
+        } else {
+            SetState((State)0x2b);
         }
         break;
     }
@@ -981,8 +999,10 @@ void SaveLoadManager::SetState(State newState) {
         // Retail order: static-init, THEN GetGlobalOptionsSize, THEN Localize.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
-        const char *locName = Localize(global_options_cache_name, NULL);
-        if (!TheCacheMgr->ShowUserSelectUIAsync(NULL, (unsigned long long)sz, kStrGlobalCacheName.Str(), locName, &mCacheID)) {
+        if (!TheCacheMgr->ShowUserSelectUIAsync(
+                NULL, (unsigned long long)sz, kStrGlobalCacheName.Str(),
+                Localize(global_options_cache_name, NULL), &mCacheID
+            )) {
             if (TheCacheMgr->GetLastResult() != kCache_NoError) {
                 SetState((State)0x2d);
             }
@@ -998,8 +1018,9 @@ void SaveLoadManager::SetState(State newState) {
             mCacheID = NULL;
         }
         static Symbol global_options_cache_name("global_options_cache_name");
-        const char *locName = Localize(global_options_cache_name, NULL);
-        TheCacheMgr->CreateCacheIDFromDeviceID(unk78, kStrGlobalCacheName.Str(), locName, &mCacheID);
+        TheCacheMgr->CreateCacheIDFromDeviceID(
+            unk78, kStrGlobalCacheName.Str(), Localize(global_options_cache_name, NULL), &mCacheID
+        );
         break;
     }
     // State 0x2d has no entry body in target (async-wait, polled).
@@ -1022,8 +1043,10 @@ void SaveLoadManager::SetState(State newState) {
         // Retail order: static-init, THEN GetGlobalOptionsSize, THEN Localize.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
-        const char *locName = Localize(global_options_cache_name, NULL);
-        if (!TheCacheMgr->ShowUserSelectUIAsync(NULL, (unsigned long long)sz, kStrGlobalCacheName.Str(), locName, &mCacheID)) {
+        if (!TheCacheMgr->ShowUserSelectUIAsync(
+                NULL, (unsigned long long)sz, kStrGlobalCacheName.Str(),
+                Localize(global_options_cache_name, NULL), &mCacheID
+            )) {
             if (TheCacheMgr->GetLastResult() != kCache_NoError) {
                 SetState((State)0x3c);
             }
@@ -1179,6 +1202,17 @@ void SaveLoadManager::SetState(State newState) {
         unk7c = 0;
         int saveResult = (mState == (State)0x43) ? 1 : -1;
         TheMemcardMgr.SaveLoadProfileComplete(GetProfile(), saveResult);
+        // WALL (measured, lane NCCC f318/opus): retail fuses these two tests into
+        // ONE unsigned compare -- `cmplwi r11,1` then `blt` (==0) and `bne` (!=1)
+        // off the same cr6. Two probes, both net-negative, reverted:
+        //   (a) `unsigned int mode = (unsigned int)mMode;` DID flip both compares
+        //       to cmplwi but MSVC still emitted two of them => unsignedness is
+        //       necessary but NOT sufficient, so the header type change from
+        //       `int mMode` to the (unsigned-underlying) SaveLoadMode enum would
+        //       not have fused them either. 96.8 -> 96.7.
+        //   (b) testing kMode_AutoSave first (target's fall-through arm is the
+        //       0x54 block, which implies that order) aligned the streams 1:1
+        //       (0 insert/delete) but produced 57 `replace` mismatches. 96.8 -> 96.1.
         if (mMode == kMode_AutoLoad) {
             SetState((State)0x3);
         } else if (mMode == kMode_AutoSave) {
@@ -1187,9 +1221,12 @@ void SaveLoadManager::SetState(State newState) {
         break;
     }
     case 0x45:
+    {
+        BandProfile *pProfile = GetProfile();
         mWaiting = true;
-        TheMemcardMgr.OnCheckForSaveContainer(GetProfile());
+        TheMemcardMgr.OnCheckForSaveContainer(pProfile);
         break;
+    }
     case 0x46:
         StartSaveAction(true);
         break;
@@ -1197,18 +1234,23 @@ void SaveLoadManager::SetState(State newState) {
         StartSaveAction(false);
         break;
     case 0x4b: // kS_ManualDeleteStart (retail numbering)
+    {
+        BandProfile *pProfile = GetProfile();
         mWaiting = true;
-        TheMemcardMgr.OnDeleteSaves(GetProfile());
+        TheMemcardMgr.OnDeleteSaves(pProfile);
         break;
+    }
     // States 0x4a, 0x4b have no entry body in target (async-wait, polled).
     case 0x51:
     {
-        bool needsWrite = false;
-        if (TheSongMgr.SongCacheNeedsWrite() && !unk68) {
-            needsWrite = true;
-        }
-        if (needsWrite) {
+        // Retail (Ghidra TU5 0x82550880 case 0x51): a 3-way branch, not 2-way --
+        // when the song cache doesn't need a write, retail ALSO checks
+        // GlobalOptionsNeedsSave() and can land on state 0x53 (our source dropped
+        // this arm entirely and always fell to 0x54).
+        if (NeedsSongCacheWrite()) {
             SetState((State)0x52);
+        } else if (TheProfileMgr.GlobalOptionsNeedsSave()) {
+            SetState((State)0x53);
         } else {
             SetState((State)0x54);
         }
@@ -1232,17 +1274,19 @@ void SaveLoadManager::SetState(State newState) {
     case 0x54:
         // Retail (Ghidra TU5 case 0x54): mirrors case 3 but with the autosavable
         // profile, then branches on a MemcardMgr predicate (fn_827ABB60).
+        // Retail lays the non-NULL arm out FIRST (beq to the NULL arm), unlike
+        // case 3 where the NULL arm leads -- so this if is written positively.
         mProfile = GetAutosavableProfile();
-        if (mProfile == NULL) {
-            mUser = NULL;
-            SetState((State)0x55);
-        } else {
+        if (mProfile != NULL) {
             mUser = mProfile->GetLocalBandUser();
             if (TheMemcardMgr.IsStorageDeviceValid(mProfile)) {
                 SetState((State)0x46);
             } else {
                 SetState((State)0x4c);
             }
+        } else {
+            mUser = NULL;
+            SetState((State)0x55);
         }
         break;
     case 0x55:
@@ -1255,7 +1299,9 @@ void SaveLoadManager::SetState(State newState) {
         if (IsReasonToUpload()) {
             mUploadProfiles = TheProfileMgr.GetSignedInProfiles();
         }
-        if (mUploadProfiles.size() != 0) {
+        // Retail compares begin()==end() directly (cmplw) rather than computing
+        // size() and testing it (subf/clrrwi.), i.e. the source says empty().
+        if (!mUploadProfiles.empty()) {
             SetState((State)0x58);
         } else {
             SetState((State)0x59);
@@ -1265,11 +1311,13 @@ void SaveLoadManager::SetState(State newState) {
     case 0x58:
     {
         MILO_ASSERT(mUploadProfiles.size() != 0, 0x8f9);
+        // Retail (Ghidra TU5 0x82550880 case 0x58) goes front() -> mWaiting=true ->
+        // UpdateFromProfile -> SendBandLogo with NOTHING in between: there is no
+        // TheMemcardMgr.AddSink(this) here and no mLocalUser temporary. Our source
+        // carried ~11 instructions of AddSink(MsgSource) setup (gNullStr x2 handler
+        // args + kSinkMode) that the retail binary does not contain at all.
         BandProfile *pProfile = mUploadProfiles.front();
         mWaiting = true;
-        Hmx::Object *localUser = NULL;
-        if (mLocalUser != NULL) localUser = mLocalUser;
-        TheMemcardMgr.AddSink(this);
         TheEntityUploader.UpdateFromProfile(pProfile, this);
         pProfile->SendBandLogo();
         break;
@@ -1277,7 +1325,9 @@ void SaveLoadManager::SetState(State newState) {
     case 0x57:
     {
         mUploadProfiles.erase(mUploadProfiles.begin());
-        if (mUploadProfiles.size() != 0) {
+        // Retail compares begin()==end() directly (cmplw) rather than computing
+        // size() and testing it (subf/clrrwi.), i.e. the source says empty().
+        if (!mUploadProfiles.empty()) {
             SetState((State)0x58);
         } else {
             SetState((State)0x59);
@@ -1372,10 +1422,14 @@ bool SaveLoadManager::IsReasonToAutosave() {
     if (TheProfileMgr.GlobalOptionsNeedsSave()) {
         return true;
     }
-    if (TheSongMgr.SongCacheNeedsWrite() && !unk68) {
+    if (NeedsSongCacheWrite()) {
         return true;
     }
     return false;
+}
+
+bool SaveLoadManager::NeedsSongCacheWrite() {
+    return TheSongMgr.SongCacheNeedsWrite() && !unk68;
 }
 
 void SaveLoadManager::AutoSaveNow() {

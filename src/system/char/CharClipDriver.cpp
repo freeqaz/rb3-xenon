@@ -174,8 +174,7 @@ void CharClipDriver::SetBeatOffset(float offset, TaskUnits units, Symbol sym) {
     mBeat += offset;
 }
 CharClipDriver *CharClipDriver::DeleteRef(ObjRef *ref, bool &b) {
-    if (RefIs(ref, mClip)) {
-        b = true;
+    if (reinterpret_cast<void *>(mClip.Ptr()) == reinterpret_cast<void *>(ref)) {
         return Exit(false);
     } else if (mNext) {
         mNext = mNext->DeleteRef(ref, b);

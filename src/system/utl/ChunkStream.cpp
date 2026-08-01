@@ -155,6 +155,18 @@ ChunkStream::ChunkStream(
     }
 }
 
+// Retail's ~ChunkStream residue copy-constructs the String arg (mFilename)
+// into the notify message (target has ??0String@@QAA@ABV0@@Z / ??1String@@UAA@XZ
+// around the 0x200-chunks branch) -- that's the COPYING form, only produced by
+// MiloStripEval, not the global comma-form MILO_NOTIFY (which never emits a
+// String copy since it's just `(void)(args)`). This site's args (mFilename,
+// mChunkInfo.mChunks[0x1ff]) have no ordering side effects, so per the rule in
+// Debug.h ("sites with destructible class args need COPYING"), MiloStripEval is
+// the right per-site form here. Locally redefine, matching the UIComponent.cpp
+// pattern. NEVER edit global Debug.h.
+#pragma push_macro("MILO_NOTIFY")
+#undef MILO_NOTIFY
+#define MILO_NOTIFY(...) MiloStripEval(__VA_ARGS__)
 ChunkStream::~ChunkStream() {
     if (mFail == false && mType == kWrite) {
         MaybeWriteChunk(true);
@@ -205,6 +217,7 @@ check_decomp:
         MemFree(mBuffers[i]);
     }
 }
+#pragma pop_macro("MILO_NOTIFY")
 
 bool ChunkStream::Cached() const { return mIsCached; }
 Platform ChunkStream::GetPlatform() const { return mPlatform; }

@@ -8,6 +8,7 @@
 #include "utl/BinStream.h"
 #include "world/ColorPalette.h"
 #include "utl/IntPacker.h"
+#include <hash_map>
 
 class PatchDir; // forward dec
 
@@ -171,15 +172,23 @@ public:
 #endif
 
     std::vector<PatchLayer> mLayers; // retail 0x1e4
-    std::map<Symbol, std::vector<PatchSticker *> > mStickerMap; // retail 0x1f0
-    // The retail PatchDir ctor (fn_82279BF0) spaces mStickerMap 0x1f0 ->
-    // mStickersLoading 0x20c, i.e. sizeof(std::map) == 0x1c in that TU (the
-    // documented per-TU _Rb_tree +4 ODR split), then mTex 0x218 and unk1c0
-    // 0x21c.  Rather than turn on RB3_MAP_0x1C -- which would also have to be
-    // set in every TU that inlines GetTex(), each with its OWN maps to shift --
-    // the same 4 bytes are spent here as an explicit pad.  This is the word
-    // that used to sit at the tail as `unk1c4`; sizeof is unchanged (0x258).
-    int unk1f0mappad;
+    // Layout AND codegen fix (mirrors world/LightPresetManager.h's mPresets):
+    // retail's mStickerMap is an stlport hash_map, NOT std::map. The
+    // PatchDir::~PatchDir() destructor loop (fn @ 0x82279408) walks it as a
+    // raw NULL-terminated singly-linked list (`it = *it`, compared against 0,
+    // not a sentinel address) with the value at node+8 -- exactly
+    // slist_node_base{_M_next@0} + pair<Symbol,vector<PatchSticker*>>{key@4,
+    // value@8}, which is the hash_map's _M_elems (an stlport slist) node
+    // shape, not an _Rb_tree node (color/parent/left/right header, value at
+    // +0x14). hash_map's own size is 0x1c (verified for LightPresetManager),
+    // so it already accounts for the 4 bytes the old std::map + explicit
+    // `unk1f0mappad` pad used to spend by hand -- pad removed accordingly;
+    // sizeof(PatchDir) unchanged (0x258), mStickersLoading stays at 0x20c.
+    struct SymbolHash {
+        size_t operator()(Symbol s) const { return (size_t)s.Str(); }
+    };
+    typedef std::hash_map<Symbol, std::vector<PatchSticker *>, SymbolHash> StickerMap;
+    StickerMap mStickerMap; // retail 0x1f0 (0x1c)
     std::vector<PatchSticker *> mStickersLoading; // retail 0x20c
     RndTex *mTex; // retail 0x218
     mutable bool unk1c0; // retail 0x21c

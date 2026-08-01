@@ -314,7 +314,7 @@ PatchDir::PatchDir() : unk1c0(0) {
 }
 
 PatchDir::~PatchDir() {
-    for (std::map<Symbol, std::vector<PatchSticker *> >::iterator it = mStickerMap.begin();
+    for (PatchDir::StickerMap::iterator it = mStickerMap.begin();
          it != mStickerMap.end();
          ++it) {
         DeleteAll(it->second);
@@ -771,7 +771,7 @@ void PatchDir::CollapseEmptyLayers() {
 }
 
 std::vector<PatchSticker *> *PatchDir::GetStickers(Symbol category) {
-    std::map<Symbol, std::vector<PatchSticker *> >::iterator it =
+    PatchDir::StickerMap::iterator it =
         mStickerMap.find(category);
     MILO_ASSERT(it != mStickerMap.end(), 0x490);
     return &it->second;
@@ -779,7 +779,7 @@ std::vector<PatchSticker *> *PatchDir::GetStickers(Symbol category) {
 
 PatchSticker *PatchDir::GetSticker(Symbol category, int ix, bool b) {
     MILO_ASSERT(!mStickerMap.empty(), 0x497);
-    std::map<Symbol, std::vector<PatchSticker *> >::iterator it =
+    PatchDir::StickerMap::iterator it =
         mStickerMap.find(category);
     MILO_ASSERT(it != mStickerMap.end(), 0x49A);
     std::vector<PatchSticker *> *stickers = &it->second;

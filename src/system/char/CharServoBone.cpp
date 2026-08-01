@@ -1,3 +1,4 @@
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR 1
 #include "char/CharServoBone.h"
 #include "char/CharBoneDir.h"
 #include "char/CharBonesMeshes.h"
@@ -74,26 +75,22 @@ END_LOADS
 void CharServoBone::Poll() {
     if (!mMeshes.empty()) {
         PoseMeshes();
-        Character *me = Character::Current();
         if (mFacingPosDelta) {
             if (!mMoveSelf) {
                 if (mDeltaChanged) {
-                    Transform tf48 = me->LocalXfm();
+                    Transform tf48 = mMe->LocalXfm();
                     MoveToDeltaFacing(tf48);
                     Transform tf78;
                     Multiply(mPelvis->LocalXfm(), tf48, tf78);
                     MoveToFacing(mPelvis->DirtyLocalXfm());
                     Transform tfa8;
                     FastInvert(mPelvis->DirtyLocalXfm(), tfa8);
-                    Multiply(tfa8, tf78, me->DirtyLocalXfm());
+                    Multiply(tfa8, tf78, mMe->DirtyLocalXfm());
                 } else {
                     MoveToFacing(mPelvis->DirtyLocalXfm());
                 }
-                for (ObjDirItr<CharBone> it(
-                         CharBoneDir::FindResourceFromClipType(mClipType), false
-                     );
-                     it != nullptr;
-                     ++it) {
+                ObjectDir *cbDir = CharBoneDir::FindResourceFromClipType(mClipType);
+                for (ObjDirItr<CharBone> it(cbDir, false); it != nullptr; ++it) {
                     if (it->BakeOutAsTopLevel()) {
                         String str(it->Name());
                         if (str.find(".cb") != String::npos) {
@@ -113,14 +110,14 @@ void CharServoBone::Poll() {
                 if (mDeltaChanged) {
                     Transform tfd8(mPelvis->LocalXfm());
                     MoveToFacing(tfd8);
-                    Multiply(tfd8, me->LocalXfm(), tfd8);
+                    Multiply(tfd8, mMe->LocalXfm(), tfd8);
                     Transform tf108;
                     FastInvert(mPelvis->LocalXfm(), tf108);
-                    Multiply(tf108, tfd8, me->DirtyLocalXfm());
+                    Multiply(tf108, tfd8, mMe->DirtyLocalXfm());
                 } else {
-                    MoveToDeltaFacing(me->DirtyLocalXfm());
+                    MoveToDeltaFacing(mMe->DirtyLocalXfm());
                 }
-                RegulateInternal(me);
+                Regulate();
             }
             mDeltaChanged = false;
         }
@@ -177,7 +174,7 @@ void CharServoBone::SetMoveSelf(bool b) {
     mDeltaChanged = true;
 }
 
-void CharServoBone::RegulateInternal(Character *me) {
+void CharServoBone::Regulate() {
     if (mRegulate) {
         CharClipDriver *driver = mMe->Driver()->Before(mMe->Driver()->Last());
         CharClipDriver *next = driver && driver->mRampIn > 0 ? driver->Next() : nullptr;

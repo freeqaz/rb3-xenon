@@ -24,6 +24,35 @@ INIT_REVS(TrackPanelDirBase);
 // GemTrackDir IS-A TrackDir IS-A RndDir, so a stored RndDir* is a GemTrackDir.
 static inline GemTrackDir *AsGemTrack(RndDir *d) { return static_cast<GemTrackDir *>(d); }
 
+// TrackPanelDirBase::TrackPanelDirBase() -- mApplauseMeter.
+//
+// Retail's ctor (Ghidra decompile of va 0x82358c20) builds mApplauseMeter with
+// THREE inline field stores (mOwner@+4, mObject@+8 = null, vtable@+0, in that
+// order) and no AddRef, while mConfiguration one member earlier keeps a real
+// `bl` to the out-of-line ObjPtr<Hmx::Object> ctor. So retail's /Ob2 inline
+// decision for the ObjPtr ctor is PER-INSTANTIATION here, and this explicit
+// specialization is how a TU expresses that without touching obj/Object.h:
+// ObjPtr<RndDir>'s two-arg ctor gets a visible inline body (identical to the
+// primary template's in obj/ObjPtr_p.h -- with ptr = 0 the AddRef branch folds
+// away, leaving exactly the three stores), while ObjPtr<Hmx::Object> still
+// instantiates the out-of-line template body and keeps its `bl`.
+//
+// NOTE the body must be NON-EMPTY to match. Measured in this TU (lane NCCC
+// f183): binding an owner-only ObjPtr ctor whose body is `{}` puts the vtable
+// store FIRST in the inlined sequence -- MSVC folds the empty ctor's vptr init
+// into the enclosing ctor's vptr-init group, so the scheduler hoists the
+// `lis/addi` of ??_7ObjPtr@VRndDir@@@@6B@ to the top of the block and the
+// owner-load chain starts four slots late (18 mismatches, 95.0%). With a body
+// present the vptr store stays last, as retail has it (3 mismatches, 99.4%).
+// The body's CONTENT is irrelevant -- a body reading no members measured
+// identically -- so this is about the ctor being non-empty, not about AddRef.
+template <>
+inline ObjPtr<RndDir>::ObjPtr(Hmx::Object *owner, RndDir *ptr)
+    : ObjRefConcrete<RndDir>(owner, ptr) {
+    if (mObject)
+        mObject->AddRef(this);
+}
+
 bool gShowHUD = true;
 
 DataNode ToggleHUD(DataArray *da) {
@@ -37,7 +66,11 @@ TrackPanelDirBase::TrackPanelDirBase()
       mGemTracks(this), unk224(0), mTrackPanel(0), mApplauseMeter(this, 0),
       mBandLogoRival(0), mBandLogo(0), mPerformanceMode(0), mDoubleSpeedActive(0),
       mIndependentTrackSpeeds(0) {
-    DataRegisterFunc("toggle_hud", ToggleHUD);
+    // Retail's ctor (Ghidra decompile of va 0x82358c20) never calls
+    // DataRegisterFunc("toggle_hud", ToggleHUD) -- unlike the rb3-Wii dev
+    // decomp, which still has it (source `../rb3` TrackPanelDirBase.cpp:35).
+    // ToggleHUD/gShowHUD stay defined above; only this dev-only registration
+    // call was stripped for the Xbox 360 retail build.
     if (SystemConfig()->FindArray("track_graphics", false)) {
         if (SystemConfig("track_graphics")->FindArray("pulse_offset", false)) {
             mPulseOffset = SystemConfig("track_graphics")->FindFloat("pulse_offset");

@@ -615,7 +615,7 @@ void GemTrack::DrawTrackElements(int from_tick, int to_tick) {
                 float soloStartSecs = TickToSeconds(soloStart);
                 float soloLen = TickToSeconds(soloEnd) - soloStartSecs;
                 mTrackDir->MakeSecondsXfm(soloStartSecs, xfm);
-                mTrackDir->SecondsToY(soloLen);
+                xfm.m.y.y = mTrackDir->SecondsToY(soloLen);
                 maskWidget->AddInstance(xfm, soloLen);
             }
             static Symbol boundaryWidName("bar_blue_beat.wid");
@@ -639,8 +639,8 @@ void GemTrack::DrawTrackElements(int from_tick, int to_tick) {
         if (TheGame->mProperties.mInPracticeMode) {
             float startMs;
             float endMs;
-            int firstSection = 0;
-            int lastSection = 0;
+            int firstSection;
+            int lastSection;
             float dummy;
             TheGamePanel->mConfig.GetPracticeSections(firstSection, lastSection);
             TheGamePanel->mConfig.GetSectionBounds(firstSection, startMs, dummy);
@@ -679,7 +679,7 @@ void GemTrack::Poll(float f) {
         mTrackConfig.TrackNum();
         topTick = (int)MsToTick(1000.0f * mTrackDir->TopSeconds() + f);
         bottomTick = (int)MsToTick(1000.0f * mTrackDir->BottomSeconds() + f);
-        if (TheGame->unkdc != -1.0f) {
+        if (TheGame->InRollback()) {
             if (bottomTick < mLastBottomTick) {
                 DrawBeatLines(bottomTick, mLastBottomTick);
             }
@@ -698,12 +698,11 @@ void GemTrack::Poll(float f) {
             DrawTrackElements(mLastTopTick, topTick);
             if (sUpdateShifting || mUpdateShifting) {
                 UpdateShifts();
-                mUpdateShifting = false;
                 sUpdateShifting = false;
+                mUpdateShifting = false;
             }
             kbd = (int)mTrackConfig.IsKeyboardTrack();
-            bool shifting = kbd & ((GemTrackDir *)kbd)->KeyShifting();
-            if (shifting) {
+            if (kbd) {
                 CheckShifts(f, topTick);
             }
             mLastPlayerState = mPlayerState;

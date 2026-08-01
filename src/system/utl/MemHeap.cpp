@@ -69,8 +69,8 @@ void MemHeap::Print(TextStream &ts, bool verbose) {
     ts << MakeString(";---------------------------------------\n");
     const char *heapInfo = MakeString("; HEAP: %i (%s), starts %p, %d bytes\n", mNum, mName, mStart, mSizeWords * 4);
     ts << heapInfo;
-    int rFrags, lFrags, freeBytes, maxFreeIdx, minFreeBytes;
-    FreeBlockStats(lFrags, rFrags, freeBytes, maxFreeIdx, minFreeBytes);
+    int lFrags, freeBytes, rFrags, biggest;
+    FreeBlockStats(lFrags, rFrags, freeBytes, biggest);
     ts << MakeString("\n");
     ts << MakeString(
         ";   lFrags =  %8d\n;   rFrags =  %8d\n;   Total Free Bytes=  %8d\n",
@@ -78,13 +78,12 @@ void MemHeap::Print(TextStream &ts, bool verbose) {
         rFrags,
         freeBytes
     );
-    unsigned int *curPtr = (unsigned int *)mStart;
-
     ts << MakeString("\n");
-    int curAllocCount = 0;
     int *curAllocPtr = nullptr;
     int curAllocSize = 0;
-    unsigned int *endPtr = curPtr + mSizeWords;
+    int curAllocCount = 0;
+    unsigned int *endPtr = (unsigned int *)End();
+    unsigned int *curPtr = (unsigned int *)mStart;
     const AllocInfo *curAllocInfo = nullptr;
     unsigned int blockSizeWords = 0;
 
@@ -94,13 +93,13 @@ void MemHeap::Print(TextStream &ts, bool verbose) {
 
         if (curFreeBlock == nullptr || curPtr != curFreeBlock) {
             // Alloc block
-            unsigned int hdr = *curPtr;
+            int hdr = *(int *)curPtr;
             unsigned int *headerPtr = curPtr;
             while (hdr == 0) {
                 headerPtr++;
-                hdr = *headerPtr;
+                hdr = *(int *)headerPtr;
             }
-            blockSizeWords = hdr >> 8;
+            blockSizeWords = *headerPtr >> 8;
 
             if (!verbose) {
                 int *newPtr = (int *)(headerPtr + 1);
@@ -110,17 +109,18 @@ void MemHeap::Print(TextStream &ts, bool verbose) {
                     curAllocCount++;
                 } else {
                     PrintAlloc(ts, curAllocPtr, curAllocSize, curAllocCount, curAllocInfo);
-                    curAllocCount = 1;
                     curAllocPtr = newPtr;
-                    curAllocInfo = newInfo;
                     curAllocSize = newSize;
+                    curAllocCount = 1;
+                    curAllocInfo = newInfo;
                 }
             }
         } else {
             // Free block
             PrintAlloc(ts, curAllocPtr, curAllocSize, curAllocCount, curAllocInfo);
-            const char *freeStr = " ; **** big free block!";
+            curAllocSize = 0;
             curAllocCount = 0;
+            const char *freeStr = " ; **** big free block!";
             unsigned int sizeWords = *curFreeBlock;
             int blockSize = sizeWords << 2;
             if (blockSize < 100000) {
@@ -135,7 +135,6 @@ void MemHeap::Print(TextStream &ts, bool verbose) {
                 freeStr
             );
             curFreeBlock = (unsigned int *)curFreeBlock[2];
-            curAllocSize = 0;
             blockSizeWords = sizeWords;
         }
     }

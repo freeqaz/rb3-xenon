@@ -13,14 +13,10 @@
 void Triangle::Set(const Vector3 &v0, const Vector3 &v1, const Vector3 &v2) {
     origin = v0;
     // edge vectors
-    frame.x.Set(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
-    frame.z.Set(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
+    Subtract(v1, v0, frame.x);
+    Subtract(v2, v0, frame.y);
     // normal = cross(edge1, edge2)
-    frame.y.Set(
-        frame.x.y * frame.z.z - frame.x.z * frame.z.y,
-        frame.x.z * frame.z.x - frame.x.x * frame.z.z,
-        frame.x.x * frame.z.y - frame.x.y * frame.z.x
-    );
+    Cross(frame.x, frame.y, frame.z);
 }
 
 float gUnitsPerMeter = 39.370079f;
@@ -315,10 +311,12 @@ void Intersect(const Transform &trans, const Plane &plane, Hmx::Ray &ray) {
     MultiplyTranspose(trans, on, point);
     const Vector3 &normal = (const Vector3 &)plane.a;
     float dotX = Dot(trans.m.x, normal);
-    float dotY = Dot(trans.m.y, normal);
-    float dotZ = Dot(trans.m.z, normal);
+    float dotY = trans.m.y.x * normal.x + trans.m.y.y * normal.y + trans.m.y.z * normal.z;
+    float dotZ = Dot(normal, trans.m.z);
     ray.dir.Set(dotX, dotY);
-    if (fabsf(dotY) > fabsf(dotX)) {
+    float absX = fabsf(ray.dir.x);
+    float absY = fabsf(ray.dir.y);
+    if (absY > absX) {
         ray.base.Set(point.x, point.y + (dotZ / dotY) * point.z);
     }
     else {
@@ -541,34 +539,35 @@ bool Intersect(const Segment &seg, const Triangle &tri, bool b, float &out) {
         return false;
     }
 
-    Vector3 segDir(segDirX, segDirY, segDirZ);
     Vector3 hitPoint;
-    Scale(segDir, t, hitPoint);
+    hitPoint.x = segDirX * t;
+    hitPoint.z = segDirZ * t;
+    hitPoint.y = segDirY * t;
 
     const Vector3 &triFrameX = tri.frame.x;
     const Vector3 &triFrameY = tri.frame.y;
 
-    float dotXX = triFrameX.y * triFrameX.y;
-    float dotYY = triFrameY.y * triFrameY.y;
+    float dotXX = triFrameX.x * triFrameX.x;
+    float dotYY = triFrameY.x * triFrameY.x;
 
-    float dotXY = triFrameY.y * triFrameX.y;
+    float dotXY = triFrameY.x * triFrameX.x;
 
     hitPoint.x = seg.start.x + hitPoint.x;
     hitPoint.y = hitPoint.y + seg.start.y;
 
-    dotXX += triFrameX.x * triFrameX.x;
-    dotYY += triFrameY.x * triFrameY.x;
+    dotXX += triFrameX.z * triFrameX.z;
+    dotYY += triFrameY.z * triFrameY.z;
     hitPoint.z = seg.start.z + hitPoint.z;
-    dotXY += triFrameY.x * triFrameX.x;
+    dotXY += triFrameY.z * triFrameX.z;
 
     hitPoint.x = hitPoint.x - tri.origin.x;
     hitPoint.y = hitPoint.y - tri.origin.y;
 
-    dotXX += triFrameX.z * triFrameX.z;
-    dotYY += triFrameY.z * triFrameY.z;
+    dotXX += triFrameX.y * triFrameX.y;
+    dotYY += triFrameY.y * triFrameY.y;
     hitPoint.z = hitPoint.z - tri.origin.z;
 
-    dotXY += triFrameY.z * triFrameX.z;
+    dotXY += triFrameY.y * triFrameX.y;
     float dotX3B = Dot(triFrameX, hitPoint);
     float dotY3B = Dot(triFrameY, hitPoint);
 
@@ -1154,24 +1153,24 @@ bool Intersect(const Transform &tf, const Hmx::Polygon &poly, const BSPNode *nod
     for (const Vector2 *i = poly.points.begin(); i != poly.points.end(); i++) {
         Vector3 v(i->x, i->y, 0.0f);
         Multiply(v, tf, v);
-        float dot = node->plane.Dot(v);
+        const Plane &pl = node->plane;
+        float dot = (pl.a * v.x + pl.c * v.z) + v.y * pl.b + pl.d;
         if (0.0f < dot)
             front = true;
         if (dot < 0.0f)
             back = true;
     }
 
-    const BSPNode *child;
     if (!back) {
-        // Entirely in front (or empty polygon)
-        child = node->left;
-        if (!child)
-            return false;
-    } else if (!front) {
-        // Entirely behind
-        child = node->right;
-        if (!child)
+        const BSPNode *child = node->left;
+        if (child && Intersect(tf, poly, child))
             return true;
+        return false;
+    } else if (!front) {
+        const BSPNode *child = node->right;
+        if (!child || Intersect(tf, poly, child))
+            return true;
+        return false;
     } else {
         // Polygon straddles the plane - clip and test both sides
         if (!node->right)
@@ -1186,16 +1185,11 @@ bool Intersect(const Transform &tf, const Hmx::Polygon &poly, const BSPNode *nod
                 return true;
             }
         }
-        r.dir.x = -r.dir.x;
-        r.dir.y = -r.dir.y;
+        r.dir.Set(-r.dir.x, -r.dir.y);
         Clip(poly, r, splitPoly);
         bool res = Intersect(tf, splitPoly, node->right);
         return res;
     }
-    bool res = Intersect(tf, poly, child);
-    if (res)
-        return true;
-    return false;
 }
 
 static inline Vector2 SubV2(const Vector2 &a, const Vector2 &b) {

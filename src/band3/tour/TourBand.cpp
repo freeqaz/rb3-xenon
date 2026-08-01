@@ -41,6 +41,7 @@ int TourBand::GetBandID() const { return TheServer.GetPlayerID(unk1c->GetPadNum(
 #pragma pop
 
 void TourBand::ProcessRetCode(int code) {
+    static Symbol band_upload_event("band_upload_event");
     static Message msg("init", 0, 0);
     if (code == 2) {
         msg[0] = Symbol("upload_error_band_name_profane");

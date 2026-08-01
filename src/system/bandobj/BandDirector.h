@@ -133,17 +133,14 @@ public:
     // TODO: find a better name for this
     // Retail (0x8227D058): direct short-circuit chain, no bool
     // materialization; GetWorld() evaluated twice (two dynamic_casts).
+    // Retail's standalone instance (0x8228da98, called via bl from
+    // OnSelectCamera/OnSetDircut) materializes the bool in r11 then
+    // masks with clrlwi before moving to r3 -- a single-expression
+    // logical-chain return reproduces that shape (see
+    // docs/decomp/patterns/fixable-bool-mask.md step 3e).
     bool NoWorlds() {
-        bool ret;
-        if (!mDisablePicking && GetWorld()
-            && !GetWorld()->GetCameraManager()->HasFreeCam()) {
-            ret = false;
-            if (!mVenue.Dir())
-                ret = true;
-        } else {
-            ret = true;
-        }
-        return ret;
+        return mDisablePicking || !GetWorld()
+            || GetWorld()->GetCameraManager()->HasFreeCam() || !mVenue.Dir();
     }
 
     DataNode OnFirstShotOK(DataArray *);

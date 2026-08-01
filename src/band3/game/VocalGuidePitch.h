@@ -7,7 +7,7 @@ public:
     VocalGuidePitch();
     virtual ~VocalGuidePitch();
 
-    void Load();
+    void Load(bool);
     bool IsLoaded() const;
     void FinishLoad();
     void Unload();

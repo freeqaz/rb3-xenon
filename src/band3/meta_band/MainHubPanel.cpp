@@ -92,6 +92,7 @@ void MainHubPanel::Enter() {
     TheSessionMgr->GetMatchmaker()->AddSink(this);
     mMachineMgr->AddSink(this);
     TheBandUI.GetOvershell()->AddSink(this, OvershellOverrideEndedMsg::Type());
+    static Symbol message_rotation_ms("message_rotation_ms");
     DataArray *rotMsArr = TypeDef()->FindArray(message_rotation_ms, false);
     if (rotMsArr)
         mMessageRotationMs = rotMsArr->Float(1);

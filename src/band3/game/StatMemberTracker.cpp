@@ -48,12 +48,14 @@ float StatMemberTracker::CalcCurrentStat() const {
         for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
              id = mSource->GetNextPlayer(id)) {
             Player *p = mSource->GetPlayer(id);
-            ret += GetStatValue(p->mStats);
+            const Stats &stats = p->mStats;
+            ret += GetStatValue(stats);
         }
     } else {
         TrackerPlayerID pid = mSource->GetFirstPlayer();
         Player *p = mSource->GetPlayer(pid);
-        ret = GetStatValue(p->mStats);
+        const Stats &stats = p->mStats;
+        ret = GetStatValue(stats);
     }
     return ret;
 }
@@ -76,7 +78,8 @@ String StatMemberTracker::GetPlayerContributionString(Symbol s) const {
     TrackerPlayerID pid = mSource->GetIDFromInstrument(s);
     if (pid.NotNull()) {
         Player *player = mSource->GetPlayer(pid);
-        float val = GetStatValue(player->mStats);
+        const Stats &stats = player->mStats;
+        float val = GetStatValue(stats);
         Symbol loc =
             (int)val == 1 ? GetSingularContributionSymbol() : GetContributionSymbol();
         return MakeString(Localize(loc, 0), val);

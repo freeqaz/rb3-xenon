@@ -33,7 +33,8 @@
 #include "utl/Messages2.h"
 #include <cfloat>
 
-INIT_REVS(BandCamShot)
+static unsigned short gRev = 0;
+static unsigned short gAltRev = 0;
 
 std::list<BandCamShot::TargetCache> BandCamShot::sCache;
 BandCamShot *gBandCamShotOwner;
@@ -89,7 +90,7 @@ RndTransformable *BandCamShot::FindTarget(Symbol s, bool b) {
 
 BinStream &operator>>(BinStream &bs, BandCamShot::Target &tgt) {
     bs >> tgt.mTarget;
-    if (BandCamShot::gRev > 0xA) {
+    if (gRev > 0xA) {
         char b;
         bs >> b;
         tgt.mTeleport = b;
@@ -97,7 +98,7 @@ BinStream &operator>>(BinStream &bs, BandCamShot::Target &tgt) {
         tgt.mTeleport = true;
     }
     bs >> tgt.mXfm;
-    if (BandCamShot::gRev == 0) {
+    if (gRev == 0) {
         Transform tf;
         bs >> tf;
     }
@@ -105,40 +106,40 @@ BinStream &operator>>(BinStream &bs, BandCamShot::Target &tgt) {
     char ret;
     bs >> ret;
     tgt.mReturn = ret;
-    if (BandCamShot::gRev > 2) {
-        if (BandCamShot::gRev < 0x1D) {
+    if (gRev > 2) {
+        if (gRev < 0x1D) {
             bool b;
             int i;
             bs >> b;
             bs >> i;
         }
-        if (BandCamShot::gRev < 0xC) {
+        if (gRev < 0xC) {
             int i;
             bs >> i;
         }
     }
-    if (BandCamShot::gRev > 3)
+    if (gRev > 3)
         bs >> tgt.mFastForward;
     else
         tgt.mFastForward = 0;
-    if (BandCamShot::gRev > 0xA)
+    if (gRev > 0xA)
         bs >> tgt.mForwardEvent;
     else
         tgt.mForwardEvent = Symbol();
-    if (BandCamShot::gRev > 5) {
+    if (gRev > 5) {
         char b;
         bs >> b;
         tgt.mSelfShadow = b;
     } else
         tgt.mSelfShadow = 1;
-    if (BandCamShot::gRev > 6) {
+    if (gRev > 6) {
         char b;
         bs >> b;
         tgt.unk1 = b;
         char b2;
         bs >> b2;
         tgt.unk2 = b2;
-        if (BandCamShot::gRev > 0x1F) {
+        if (gRev > 0x1F) {
             char bhide;
             bs >> bhide;
             tgt.mHide = bhide;
@@ -148,23 +149,23 @@ BinStream &operator>>(BinStream &bs, BandCamShot::Target &tgt) {
         tgt.unk1 = 0;
         tgt.unk2 = 1;
     }
-    if (BandCamShot::gRev >= 8 && BandCamShot::gRev <= 28) {
+    if (gRev < 0x1D && gRev > 7) {
         Symbol s;
         bs >> s;
         bs >> s;
-        if (BandCamShot::gRev > 8) {
+        if (gRev > 8) {
             bs >> s;
             bs >> s;
         }
     }
-    if (BandCamShot::gRev > 9)
+    if (gRev > 9)
         bs >> tgt.mEnvOverride;
-    if (BandCamShot::gRev >= 17 && BandCamShot::gRev <= 28) {
+    if (gRev > 0x10 && gRev < 0x1D) {
         bool b;
         bs >> b;
     }
-    if (BandCamShot::gRev > 0x14) {
-        if (BandCamShot::gRev < 0x1E) {
+    if (gRev > 0x14) {
+        if (gRev < 0x1E) {
             int b;
             bs >> b;
             tgt.mForceLod = b;
@@ -173,23 +174,23 @@ BinStream &operator>>(BinStream &bs, BandCamShot::Target &tgt) {
             bs >> b;
             tgt.mForceLod = b;
         }
-        if (BandCamShot::gRev < 0x19) {
+        if (gRev < 0x19) {
             if (tgt.mForceLod <= 0) {
                 tgt.mForceLod = -1;
             }
         }
-        if (BandCamShot::gRev < 0x1B && tgt.mForceLod < 0) {
+        if (gRev < 0x1B && tgt.mForceLod < 0) {
             tgt.mForceLod = -1;
         }
     }
-    if (BandCamShot::gRev >= 22 && BandCamShot::gRev <= 28) {
+    if (gRev < 0x1D && gRev > 0x15) {
         String s48;
         int i;
         bs >> s48;
         bs >> s48;
         bs >> i;
         bs >> i;
-        if (BandCamShot::gRev > 0x17) {
+        if (gRev > 0x17) {
             bs >> i;
             bs >> i;
             bs >> i;
@@ -220,7 +221,7 @@ BEGIN_LOADS(BandCamShot)
     if (gRev > 4)
         LOAD_SUPERCLASS(CamShot)
     bs >> mTargets;
-    if (BandCamShot::gRev >= 2 && BandCamShot::gRev <= 18) {
+    if (gRev >= 2 && gRev <= 18) {
         ObjPtr<BandCamShot> shotPtr(this);
         bs >> shotPtr;
         if (shotPtr)
@@ -531,20 +532,15 @@ void BandCamShot::ViewFreeze() {
     TheTaskMgr.SetSecondsAndBeat(
         TheTaskMgr.Seconds(TaskMgr::kRealTime), TheTaskMgr.Beat(), false
     );
-    bool b;
     FOREACH (it, mTargets) {
         Target &cur = *it;
-        b = false;
-        Character *charObj;
-        if (!(*it).mTarget.Null()) {
-            charObj = dynamic_cast<Character *>(GetTargetCache(cur.mTarget)->unk4);
-            if (charObj)
-                b = true;
-        }
-        if (b) {
-            charObj->Poll();
-            FreezeChar(charObj, true);
-        }
+        if ((*it).mTarget.Null())
+            continue;
+        Character *charObj = dynamic_cast<Character *>(GetTargetCache(cur.mTarget)->unk4);
+        if (!charObj)
+            continue;
+        charObj->Poll();
+        FreezeChar(charObj, true);
     }
 }
 

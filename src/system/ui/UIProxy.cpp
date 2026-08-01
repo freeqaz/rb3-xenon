@@ -22,22 +22,20 @@ UIProxy::UIProxy()
 void UIProxy::Init() { REGISTER_OBJ_FACTORY(UIProxy); }
 
 void UIProxy::SetTypeDef(DataArray *da) {
-    if (TypeDef() != da) {
-        UIComponent::SetTypeDef(da);
-        mDir = 0;
-        mSyncOnMove = false;
-        if (da) {
-            da->FindData("sync_on_move", mSyncOnMove, false);
-            DataArray *fileArr = da->FindArray("file", false);
-            if (fileArr->Size() != 3 || fileArr->Int(2) != 0) {
-                bool shared = true;
-                da->FindData("share", shared, false);
-                FilePath fp(FileGetPath(da->File()), fileArr->Str(1));
-                mDir.LoadFile(fp, Loading(), shared, kLoadFront, false);
-                mPolled = false;
-                if (!Loading())
-                    UpdateDir();
-            }
+    UIComponent::SetTypeDef(da);
+    mDir = 0;
+    mSyncOnMove = false;
+    if (da) {
+        da->FindData("sync_on_move", mSyncOnMove, false);
+        DataArray *fileArr = da->FindArray("file", false);
+        if (fileArr->Size() != 3 || fileArr->Int(2) != 0) {
+            bool shared = true;
+            da->FindData("share", shared, false);
+            FilePath fp(FileGetPath(da->File()), fileArr->Str(1));
+            mDir.LoadFile(fp, Loading(), shared, kLoadFront, false);
+            mPolled = false;
+            if (!Loading())
+                UpdateDir();
         }
     }
 }

@@ -45,19 +45,19 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 76);
         int trackNum = pPlayer->GetTrackNum();
-        TrackType trackType = pPlayer->GetTrackType();
 
         int phraseCount = 0;
-        int trackBit = 1 << trackNum;
         for (int i = 0; i < numCommonPhrases; i++) {
-            if (trackBit & TheSongDB->GetCommonPhraseTracks(i)) {
+            if ((1 << trackNum) & TheSongDB->GetCommonPhraseTracks(i)) {
                 phraseCount++;
             }
         }
 
-        float ratio = spotlightPhraseFrac * (float)phraseCount / beatsPerMs;
+        float ratio = (float)phraseCount * spotlightPhraseFrac;
+        ratio /= beatsPerMs;
         ratio = Min(ratio, songDurationMs);
         ratio /= songDurationMs;
+        TrackType trackType = pPlayer->GetTrackType();
         if (trackType == kTrackVocals) {
             noteCount = (int)TheSongDB->GetVocalNoteList(0)->mPhrases.size();
         } else {
@@ -67,13 +67,12 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
         int trackerCount = (int)((float)noteCount * ratio);
         MaxEq(maxCount, trackerCount);
 
-        int threshold =
-            std::max(1, (int)(deployBeats * (float)trackerCount / songBeats));
-
-        PlayerContribData &entry = unk58[trackType];
+        PlayerContribData entry;
         entry.unk0 = -1.0f;
-        entry.unk4 = threshold;
+        entry.unk4 =
+            std::max((int)(deployBeats * (float)trackerCount / songBeats), 1);
         entry.unk8 = trackerCount;
+        unk58[trackType] = entry;
     }
 
     int totalCount = 0;
@@ -84,12 +83,13 @@ void PerfectOverdriveTracker::TranslateRelativeTargets() {
         TrackType trackType = pPlayer->GetTrackType();
         std::map<TrackType, PlayerContribData>::iterator contribIter = unk58.find(trackType);
         MILO_ASSERT(contribIter != unk58.end(), 154);
+        PlayerContribData &contribData = contribIter->second;
         totalCount += maxCount;
-        contribIter->second.unk0 = (float)maxCount / (float)contribIter->second.unk8;
+        contribData.unk0 = (float)maxCount / (float)contribData.unk8;
     }
 
     for (unsigned int i = 0; i < mTargets.size(); i++) {
-        mTargets[i] = std::max<float>(1.0f, std::floor((float)totalCount * mTargets[i]));
+        mTargets[i] = std::max<float>(std::floor((float)totalCount * mTargets[i]), 1.0f);
     }
 }
 

@@ -345,8 +345,8 @@ void StreakFocusTracker::TranslateRelativeTargets() {
 
     float fcc = 1.0f / unkcc;
     for (int i = 0; i < mTargets.size(); i++) {
-        float &tref = mTargets[i];
-        tref = std::floor(fcc * tref);
+        float result = std::floor(fcc * mTargets[i]);
+        mTargets[i] = result;
     }
 }
 
@@ -491,19 +491,30 @@ void AccuracyFocusTracker::CheckCondition(float ms, bool b1, bool &bref1, bool &
 }
 
 void AccuracyFocusTracker::HandleFocusSwitch(float f) {
-    unkcc = mSectionManager.FindSectionContainingTick(MsToTick(f));
+    int i34;
+    int i38;
+    int msTick = MsToTick(f);
+    unkcc = mSectionManager.FindSectionContainingTick(msTick);
     if (unkcc != -1) {
         Player *pPlayer = mSource->GetPlayer(mFocusPlayer);
-        int i34 = 0;
-        int i38 = 0;
+        i34 = 0;
+        i38 = 0;
         if (unkcc > 0) {
             int tick = mSectionManager.GetSectionEndTick(unkcc - 1);
-            mSectionManager.GetGemStatsInRange(pPlayer, tick, MsToTick(f), i34, i38);
+            msTick = MsToTick(f);
+            mSectionManager.GetGemStatsInRange(pPlayer, tick, msTick, i34, i38);
         }
         unkd4 = pPlayer->mStats.mHitCount - i34;
-        unkdc = pPlayer->mStats.m0x0c - i38;
+        // NOTE: in AccuracyFocusTracker the header declares unke0 before unkdc,
+        // so unke0 lives at +0xe8 and unkdc at +0xec (the reverse of what the
+        // stale rb3-Wii-derived names suggest -- every member of this class is
+        // +0xc from its name). Retail stores the gem-count baseline to +0xe8 and
+        // the CountGemsInSection result to +0xec, hence the pairing below.
+        // Do NOT "fix" the names without also swapping the uses in
+        // CheckCondition(), which currently matches at 100%.
+        unke0 = pPlayer->mStats.m0x0c - i38;
         unkd8 = pPlayer->mStats.mMissCount;
-        unke0 = mSectionManager.CountGemsInSection(pPlayer, unkcc);
+        unkdc = mSectionManager.CountGemsInSection(pPlayer, unkcc);
         unke4 = -1.0f;
         unke8 = false;
     }

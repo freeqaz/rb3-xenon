@@ -62,7 +62,7 @@ AssetMgr *AssetMgr::GetAssetMgr() { return TheAssetMgr; }
 bool search(Asset *a) { return false; }
 
 Asset *AssetMgr::GetAsset(Symbol name) const {
-    std::map<Symbol, Asset *>::const_iterator asset = mAssets.find(name);
+    std::hash_map<Symbol, Asset *>::const_iterator asset = mAssets.find(name);
     if (asset != mAssets.end()) {
         return asset->second;
     }
