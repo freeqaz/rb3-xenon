@@ -83,9 +83,32 @@ encodes **no** flag information (a useful bound on that instrument).
 
 ⛔ **Still unsettled:** the `c` in `/EHsc` rests on the metric alone (−43); the
 per-function EH instrument **failed to discriminate** (TIGHT 99 under both). And
-**per-TU flag heterogeneity is real and unexplored** — retail demonstrably has ≥1
-module built with `/GS`, and the Rich header's 401 C vs 1,760 C++ objects implies
-a `/TC`//`/TP` split nobody has examined.
+the Rich header's 401 C vs 1,760 C++ objects implies a `/TC`//`/TP` split nobody
+has examined.
+
+★ **Per-TU flag heterogeneity is no longer unexplored — it is MEASURED** (lane
+CF-4, 2026-08-01), with a control:
+
+| finding | value |
+|---|---|
+| `/Od` region (Quazal NetZ) | **`0x82A6D168`–`0x82B54190`**, 5,782 fns / 933,792 B; 2,352 flagged `/Od` (61.8% of bytes) |
+| separate `/Od` island **inside** HMX code | `keygen_xbox.s` @ `0x82724A90` |
+| control: named HMX fns below `0x82A00000` flagged | **0 / 13,676** (MasterAudio 0/57, BandDirector 0/117, BandCharacter 0/165) |
+| enrichment | ≈ **413×**, exactly one false positive |
+
+⇒ **`/Od` is OBJECT-granular, not address-range** — the `keygen_xbox` island proves
+it. Two corrections to this doc's own prior claims: the **`0x82A00000` boundary is
+~450 KB too low**, and **"vendor ⇒ `/Od`" is FALSE** (zlib `inflate`/`deflate` are
+textbook `/O1`).
+⚠ The detector only became trustworthy once the **untreated-population control**
+was run — the raw "unoptimized score" alone fires on any large `/O1` function under
+register pressure, i.e. it confirms whatever you point it at.
+⚠ Side-findings for a map lane, **flagged but unverified**: nine named engine units
+each claim exactly one function inside the Quazal block, and `CameraManager.s`
+claims 13 at `0x82B02748`–`0x82B031A0` — almost certainly bad `.text` pins reading
+as false 0%. Also **4,364 addresses (3.58%) where two `.s` files disagree** (stale
+TU0-era generations under `build/45410914/asm/`) — **any asm-wide scan must filter
+to files newer than 2026-07-15** or the address axis is garbage.
 
 **Crucially, no whole-program optimization** — TU spatial grouping in `.text` is
 preserved (empirically: the MasterAudio.cpp cluster of 46 functions packs into
