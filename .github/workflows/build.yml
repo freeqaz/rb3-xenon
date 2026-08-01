@@ -33,6 +33,13 @@ jobs:
     - name: Prepare
       run: cp -R /orig .
 
+    # Guard: prove our binary-scanning methods can still FIND things in binaries.
+    # A binary-blind grep yields only FALSE NEGATIVES (silent, exit 1), which is
+    # the shape of a "decisive negative" and has already closed a repairable row.
+    # Runs after Prepare so the band.exe cross-check is exercised too.
+    - name: Grep binary guard
+      run: python3 tools/grep_binary_guard.py -v
+
     # Build the project
     - name: Build
       run: |

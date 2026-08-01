@@ -451,6 +451,30 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
 - **Case sensitivity:** dc3's tree has case-variant files (e.g. `vec.cpp` vs
   `Vec.cpp`) that collide on Windows but coexist on Linux. Use the name dc3's
   `objects.json` actually builds (lowercase `vec.cpp`, `mtx.cpp`).
+- ★★★ **`grep` in an agent's Claude shell is BINARY-BLIND — it yields only FALSE
+  NEGATIVES.** The shell snapshot (`~/.claude/shell-snapshots/snapshot-zsh-*.sh`)
+  defines a `grep` **function** routing through **ugrep with `-I`** (ignore binary
+  files). `grep -c '\.?AVUIComponent@@' orig/45410914/band.exe` prints **nothing**
+  and exits 1; `command grep -ac …` prints `1`. Silent, and shaped exactly like a
+  *decisive negative* — the verdict class that closes veins. It has already cost
+  real yield (a "no `$4` form exists anywhere" claim blocked a repairable row;
+  Python found 21).
+  **THE RULE: always pass `-a` when grep may see binary bytes.** `-a` overrides
+  the shim's `-I` *and* real grep's "binary file matches" suppression — one flag
+  defeats both independent sources. Better still: **scan binaries in Python.**
+  - Measured scope (don't over-apply): the shim dies at every process boundary —
+    zsh does not export functions — so `#!/bin/bash` scripts, `sh -c`,
+    `subprocess(..., shell=True)`, and even a fresh `zsh -c` all get **real**
+    grep. **Only commands typed directly into the Claude Bash tool are affected**,
+    which makes *documented command recipes in `.md`/skill files* the real hazard.
+  - `strings binary | grep …` is **safe** (strings output is text), but
+    `cat binary | grep …` is **suppressed** — the shim's `-I` applies to stdin too.
+  - Real grep's own binary suppression hits **printing** modes (`-o`, plain);
+    `-c` and `-q` are unaffected.
+  - Guard: **`python3 tools/grep_binary_guard.py`** (also a CI step). It builds
+    its own binary fixture so it never skips, reconstructs the shim in a subshell
+    to test the *actual* risk, and fails loudly if a recommended method returns a
+    false negative. Prove it can fail: `--self-break`.
 
 ## Matching phase (active)
 
