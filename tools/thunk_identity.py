@@ -10,12 +10,13 @@ from report.json -- is STRUCTURALLY INAPPLICABLE to vtordisp thunks. Every
 on which row, so that check cannot fail and verifies nothing.
 
 A thunk's identity is not its vtable slot and not its size -- it is its branch
-target. These stubs are exactly three instructions ending in an unconditional
-`b`, so the target decodes straight out of retail band.exe. The target body's
-plain (non-thunk) map row then names the method, and the thunk's name must
-agree with it.
+target. These stubs are straight-line code terminating in an unconditional `b`
+(three words, or FOUR when a nonzero static adjustment adds an `addi`), so the
+target decodes straight out of retail band.exe. The target body's plain
+(non-thunk) map row then names the method, and the thunk's name must agree
+with it.
 
-Two earlier revisions of this check were VACUOUS; both failure modes are
+THREE earlier revisions of this check were VACUOUS; all failure modes are
 guarded against here, and the anti-vacuity control below is not optional.
 
   v1  followed "the first branch found within 24 bytes" with no stopping
@@ -28,7 +29,14 @@ guarded against here, and the anti-vacuity control below is not optional.
       own body, and produced AGREE=0/DISAGREE=29 -- the null answer merely
       restating old != new. (.pdata-absence is not a "not a function" test.)
 
-This version decodes the three words directly and needs no extent source.
+  v3  decoded only THREE words, so the terminal `b` of every 16-byte thunk
+      (at word index 3) was missed -- 539 rows, exactly report.json's 539@16
+      population, silently reported "no-branch" and were excluded from every
+      sweep. The symptom was visible as a large no-branch count in the control
+      line and was read as noise rather than as a structural blind spot.
+      See thunk_target() for the fix and its superset validation.
+
+This version decodes up to four words directly and needs no extent source.
 
 Anti-vacuity control
 --------------------
@@ -106,16 +114,36 @@ def _branch_target(img, va):
 def thunk_target(img, va):
     """Return (target_va, form) for a stub at va, or (None, reason).
 
-    A $4 vtordisp thunk is three words ending in `b`:
+    A $4 vtordisp thunk is three or FOUR words ending in `b`:
         lwz   r11, -4(rN)
         subf  rN, r11, rN
+        addi  rN, rN, -adj     <-- present only when the static adjustment != 0
         b     target
-    Shorter adjustor stubs also occur; accept a terminal branch in any of the
-    first three word slots, preferring the longest form.
+
+    v3 fixed two defects in the v2 window (lane CF-5):
+
+    ** The 4-word form was invisible.** The window was three words wide and the
+    16-byte thunks put their terminal `b` at word index 3, so the ENTIRE 16-byte
+    family -- 539 rows, matching report.json's 539@16 population exactly -- came
+    back "no-branch" and was silently excluded from every sweep. Measured: 539 of
+    the 540 no-branch rows have a branch at word 3.
+
+    ** "Prefer the longest form" could OVER-READ.** Scanning i=2,1,0 and taking
+    the last branch means a genuine 12-byte thunk whose successor happens to
+    begin with a branch is decoded against the NEXT function's first word. Since
+    a thunk is straight-line code terminating in `b`, the FIRST branch is by
+    construction the terminal one, and it can never read past the end. Widening
+    to 4 words under prefer-longest flipped one row's verdict; under first-branch
+    it flips none.
+
+    Validated as a pure superset before adoption: over the 1,439 rows the v2
+    window could resolve at all, first-branch-over-4-words yields an IDENTICAL
+    target and verdict for every one (0 differences), and additionally resolves
+    the 539 it could not see.
     """
-    words = [img.word(va + 4 * i) for i in range(3)]
-    for i in (2, 1, 0):
-        if _is_branch(words[i]):
+    for i in range(4):
+        w = img.word(va + 4 * i)
+        if _is_branch(w):
             return _branch_target(img, va + 4 * i), f"{i + 1}w"
     return None, "no-branch"
 
@@ -213,6 +241,20 @@ def main():
         sample = pool[:args.control]
         ctl = [adjudicate(img, tmap, a, tmap[a]) for a in sample]
         c = summarize(ctl, "CONTROL (untouched $4 rows)")
+        # An EMPTY control is the most dangerous outcome of all: it prints a
+        # control line, every counter reads 0, and the all-AGREE / all-DISAGREE
+        # guards below are both False on zeros -- so the tool exits 0 and the run
+        # LOOKS controlled. This is exactly what --audit did (lane CF-5): audit
+        # proposes every $4 row, so the pool (rows NOT proposed) is the empty set,
+        # and `--audit --control 60` sampled 0 rows and passed. A control that
+        # cannot fail is not a control.
+        if not sample:
+            print("\n*** CONTROL IS EMPTY (%d rows available outside the proposed "
+                  "set): the anti-vacuity check made NO observation, so it cannot "
+                  "fail and this run is uncontrolled. In --audit mode every $4 row "
+                  "is proposed, which leaves no pool by construction."
+                  % len(pool), file=sys.stderr)
+            return 2
         if c["AGREE"] and not c["DISAGREE"]:
             print("\n*** CONTROL IS VACUOUS: all-AGREE. The instrument cannot "
                   "fail here, so its verdict on the proposed rows means nothing.",
