@@ -28736,7 +28736,7 @@
  "0x825b04c0": "??_EInterstitialMgr@@UAAPAXI@Z",
  "0x825f3ae8": "?Handle@CampaignGoalsLeaderboardChoicePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82627f58": "??_ENewAwardPanel@@UAAPAXI@Z",
- "0x8262c280": "??_EStickerProvider@@UAAPAXI@Z",
+ "0x8262c280": "??_GStickerProvider@@UAAPAXI@Z",
  "0x8262dea0": "??_EPatchSelectPanel@@UAAPAXI@Z",
  "0x82632920": "??_ESelectDifficultyPanel@@UAAPAXI@Z",
  "0x82637898": "??_ESongSelectPanel@@UAAPAXI@Z",
