@@ -40,10 +40,19 @@ CLAUDE.md "Whole-binary A/B measurement"):
        splits patch  => SPLIT ran, else REFUSE
   8. LEG B read: wipe cache + report again, regenerate, strict parse.
   9. Emit Δmatched, Δmasked_equal, Δhonest(=matched−masked_equal), Δcode%,
-     each leg's recompile count, and the absolutes for each leg ACTUALLY
-     MEASURED. Output is assembled only from this run's parsed reports —
-     there is no --baseline flag on purpose: deltas compose, absolutes do
-     not, and a baseline file is an absolute somebody else measured.
+     Δfuzzy, each leg's recompile count, and the absolutes for each leg
+     ACTUALLY MEASURED. Output is assembled only from this run's parsed
+     reports — there is no --baseline flag on purpose: deltas compose,
+     absolutes do not, and a baseline file is an absolute somebody else
+     measured.
+     Δfuzzy is in the HEADLINE, not just result.json: for map/correctness
+     lanes fuzzy_match_percent is THE witness — lane CG-3's entire result
+     (Δmatched 0, Δfuzzy +0.030838) was invisible in the old headline.
+ 10. The per-unit breakdown is a TRUNCATED top-N list, but it is printed
+     with the untruncated counts and sums plus an explicit TRUNCATED flag.
+     Lane CG-1's listed regressions summed to -18 against a -19 delta (one
+     unit fell off the end of a silent regs[:limit]), which silently breaks
+     the house discipline of pairing losses to gains by (size, unit).
 
 Scoring ruler: the ninja report edge hard-codes functionRelocDiffs=None
 (objdiff-cli report.rs generate()), i.e. the DEFAULT ruler. --name-check
@@ -441,6 +450,16 @@ class ABMeasure:
 
 
 def unit_breakdown(a_units, b_units, limit=15):
+    """Top-N regressed/improved units PLUS the metadata needed to know the
+    list is partial.
+
+    Returns (regs, imps, meta). `regs`/`imps` are truncated to `limit`, but
+    every count and sum in `meta` is computed over the FULL populations —
+    truncating the sums too would reproduce exactly the defect this exists
+    to expose (lane CG-1: listed regressions summed to -18 against a -19
+    delta because `system/rndobj/PostProcMgr` was cut off the list, with no
+    flag). Print the denominator next to the list.
+    """
     regs, imps = [], []
     for u in sorted(set(a_units) | set(b_units)):
         d = b_units.get(u, 0) - a_units.get(u, 0)
@@ -452,7 +471,39 @@ def unit_breakdown(a_units, b_units, limit=15):
                          "from": a_units.get(u, 0), "to": b_units.get(u, 0)})
     regs.sort(key=lambda x: x["delta"])
     imps.sort(key=lambda x: -x["delta"])
-    return regs[:limit], imps[:limit]
+    sum_reg = sum(r["delta"] for r in regs)      # FULL population, not regs[:limit]
+    sum_imp = sum(i["delta"] for i in imps)
+    meta = {
+        "limit": limit,
+        "n_units_regressed": len(regs),
+        "n_units_improved": len(imps),
+        "sum_regressed": sum_reg,
+        "sum_improved": sum_imp,
+        "net_unit_delta": sum_reg + sum_imp,
+        "regressions_truncated": len(regs) > limit,
+        "improvements_truncated": len(imps) > limit,
+        "regressions_hidden": max(0, len(regs) - limit),
+        "improvements_hidden": max(0, len(imps) - limit),
+    }
+    return regs[:limit], imps[:limit], meta
+
+
+def compute_delta(a, b):
+    """B-minus-A for every headline measure. Split out of main() so the
+    selftest can assert the delta SET (notably fuzzy_match_percent, which
+    used to be computed nowhere and therefore could not reach the headline).
+    """
+    return {
+        "matched_functions": b["matched_functions"] - a["matched_functions"],
+        "masked_equal_functions":
+            b["masked_equal_functions"] - a["masked_equal_functions"],
+        "honest": b["honest"] - a["honest"],
+        "matched_code_percent":
+            b["matched_code_percent"] - a["matched_code_percent"],
+        "matched_code_bytes": b["matched_code"] - a["matched_code"],
+        "fuzzy_match_percent":
+            b["fuzzy_match_percent"] - a["fuzzy_match_percent"],
+    }
 
 
 def leg_public(m):
@@ -581,16 +632,8 @@ def main():
             ab.gen_name_check("B", objdiff_bin)
 
         # --- verdict (only reachable if every stage above passed) ---
-        regs, imps = unit_breakdown(a["_units"], b["_units"])
-        delta = {
-            "matched_functions": b["matched_functions"] - a["matched_functions"],
-            "masked_equal_functions":
-                b["masked_equal_functions"] - a["masked_equal_functions"],
-            "honest": b["honest"] - a["honest"],
-            "matched_code_percent":
-                b["matched_code_percent"] - a["matched_code_percent"],
-            "matched_code_bytes": b["matched_code"] - a["matched_code"],
-        }
+        regs, imps, ubmeta = unit_breakdown(a["_units"], b["_units"])
+        delta = compute_delta(a, b)
         status = {
             "status": "measured",
             "patch_sha256_16": sha,
@@ -605,6 +648,7 @@ def main():
             "delta": delta,
             "unit_regressions": regs,
             "unit_improvements": imps,
+            "unit_breakdown_meta": ubmeta,
         }
         if args.name_check:
             anc, bnc = ab.legs["A_nc"], ab.legs["B_nc"]
@@ -633,14 +677,35 @@ def main():
               f"Δhonest={delta['honest']:+d}  "
               f"Δcode%={delta['matched_code_percent']:+.6f}pp  "
               f"Δcode_bytes={delta['matched_code_bytes']:+d}")
-        if imps:
-            print("  unit improvements:")
-            for i in imps:
-                print(f"    {i['delta']:+4d}  {i['unit']}  ({i['from']}->{i['to']})")
-        if regs:
-            print("  unit REGRESSIONS:")
-            for r in regs:
-                print(f"    {r['delta']:+4d}  {r['unit']}  ({r['from']}->{r['to']})")
+        # Δfuzzy belongs in the HEADLINE: for map/correctness lanes it is the
+        # only witness a pure permutation ever moves (Δmatched is 0 by design).
+        print(f"  Δfuzzy={delta['fuzzy_match_percent']:+.6f}pp   "
+              f"(legA {a['fuzzy_match_percent']:.6f} -> "
+              f"legB {b['fuzzy_match_percent']:.6f})")
+
+        def _unit_list(title, rows, n_total, s_total, hidden):
+            if not n_total:
+                return
+            flag = (f"   ⚠ TRUNCATED: showing {len(rows)} of {n_total}, "
+                    f"{hidden} NOT SHOWN (sum below is over ALL {n_total})"
+                    if hidden else "")
+            print(f"  {title}: {n_total} unit(s), sum {s_total:+d}{flag}")
+            for r in rows:
+                print(f"    {r['delta']:+4d}  {r['unit']}  "
+                      f"({r['from']}->{r['to']})")
+
+        _unit_list("unit improvements", imps, ubmeta["n_units_improved"],
+                   ubmeta["sum_improved"], ubmeta["improvements_hidden"])
+        _unit_list("unit REGRESSIONS", regs, ubmeta["n_units_regressed"],
+                   ubmeta["sum_regressed"], ubmeta["regressions_hidden"])
+        if ubmeta["n_units_improved"] or ubmeta["n_units_regressed"]:
+            agree = ubmeta["net_unit_delta"] == delta["matched_functions"]
+            note = "" if agree else (
+                "   ⚠ DISAGREE — matched functions live outside the unit "
+                "table; do not pair losses to gains from this list alone")
+            print(f"  unit net (ALL units) = {ubmeta['net_unit_delta']:+d}"
+                  f"   vs whole-binary Δmatched = "
+                  f"{delta['matched_functions']:+d}{note}")
         if args.name_check:
             nc = status["name_check"]
             print(f"  [opt-in name_check ruler] Δmatched={nc['delta_matched']:+d} "
@@ -756,6 +821,58 @@ def selftest():
           "(the CF-1 '0 files patched' line parses to 0 => a map leg B refuses)")
     if not ok:
         fails.append("log classifier")
+
+    # --- Δfuzzy reaches the delta set (lane CG-3's whole result was fuzzy) ---
+    fa = {"matched_functions": 10, "masked_equal_functions": 2, "honest": 8,
+          "matched_code_percent": 36.916286, "matched_code": 100,
+          "fuzzy_match_percent": 44.414110}
+    fb = dict(fa, fuzzy_match_percent=44.444948)
+    d = compute_delta(fa, fb)
+    ok = ("fuzzy_match_percent" in d
+          and abs(d["fuzzy_match_percent"] - 0.030838) < 1e-9
+          and d["matched_functions"] == 0)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  compute_delta carries Δfuzzy: Δmatched={d['matched_functions']:+d} "
+          f"Δfuzzy={d.get('fuzzy_match_percent')} "
+          "(a pure permutation moves fuzzy ONLY — an absent Δfuzzy makes it "
+          "read as a null result)")
+    if not ok:
+        fails.append("delta fuzzy")
+
+    # --- unit_breakdown flags truncation and sums the FULL population ---
+    a_u = {f"u{i}": 5 for i in range(20)}
+    b_u = {f"u{i}": 4 for i in range(20)}          # 20 units, each -1
+    b_u["gain"] = 3; a_u["gain"] = 0               # one +3 improvement
+    regs, imps, meta = unit_breakdown(a_u, b_u, limit=15)
+    ok = (len(regs) == 15 and meta["n_units_regressed"] == 20
+          and meta["sum_regressed"] == -20        # NOT -15 (the truncated sum)
+          and meta["regressions_truncated"] is True
+          and meta["regressions_hidden"] == 5
+          and meta["n_units_improved"] == 1 and meta["sum_improved"] == 3
+          and meta["improvements_truncated"] is False
+          and meta["net_unit_delta"] == -17)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  unit_breakdown truncation flag: shown={len(regs)} "
+          f"n_regressed={meta['n_units_regressed']} "
+          f"sum_regressed={meta['sum_regressed']} "
+          f"truncated={meta['regressions_truncated']} "
+          f"hidden={meta['regressions_hidden']} "
+          "(sum must be over ALL 20, not the 15 shown — lane CG-1's -18-vs-19)")
+    if not ok:
+        fails.append("unit_breakdown truncation")
+
+    regs, imps, meta = unit_breakdown({"a": 5, "b": 1}, {"a": 4, "b": 1},
+                                      limit=15)
+    ok = (meta["regressions_truncated"] is False
+          and meta["regressions_hidden"] == 0
+          and meta["n_units_regressed"] == 1 and meta["sum_regressed"] == -1)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  unit_breakdown does NOT false-flag a short list: "
+          f"truncated={meta['regressions_truncated']} "
+          f"hidden={meta['regressions_hidden']} "
+          "(the flag must discriminate, not always fire)")
+    if not ok:
+        fails.append("unit_breakdown no-false-flag")
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
