@@ -61,5 +61,9 @@ protected:
 // template. See ObjPtr_p.h's primary template for the generic body; do not change
 // that shared body to match this — doing so flips other siblings (e.g. RndTex) the
 // other way (confirmed by A/B: RndEnvAnim needs mOwner, RndTex needs this).
+// X360 only -- see the definition in EnvAnim.cpp. The native ObjRefConcrete
+// (ObjPtr_p.h:19-73) has no mOwner, so there is nothing to specialize.
+#ifndef HX_NATIVE
 template <>
 ObjRefConcrete<RndEnvAnim, ObjectDir>::~ObjRefConcrete();
+#endif

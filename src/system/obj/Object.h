@@ -2162,11 +2162,19 @@ public:
     ObjVector(Hmx::Object *o) : mOwner(o) {}
     Hmx::Object *Owner() { return mOwner; }
 
-    void push_back() { resize(size() + 1); }
+    // `this->` on the std::vector base members is REQUIRED, not style: `size`
+    // and `back` are also names of `extern Symbol` globals declared at
+    // namespace scope by utl/Symbols*.h. Unqualified, they are non-dependent
+    // and bind to whichever is visible -- so in any TU that pulled Symbols*.h
+    // ahead of this header, `size()` resolves to `Symbol size` and clang
+    // reports "type 'Symbol' does not provide a call operator". Qualifying with
+    // `this->` makes them dependent and forces base-class lookup. Purely a
+    // name-binding fix: same members, same codegen, X360 unaffected.
+    void push_back() { resize(this->size() + 1); }
 
     void push_back(const T &t) {
         push_back();
-        back() = t;
+        this->back() = t;
     }
 
     void resize(unsigned int size) { Base::resize(size, T(mOwner)); }
@@ -2231,18 +2239,21 @@ public:
 
     void resize(unsigned int ul) { Base::resize(ul, T(mOwner)); }
 
-    void push_front() { insert(begin(), T(mOwner)); }
+    // `this->` for the same reason as ObjVector above -- `size`, `back`,
+    // `front` and `begin` are all ALSO namespace-scope `extern Symbol` globals
+    // from utl/Symbols*.h. Name binding only; no codegen change.
+    void push_front() { this->insert(this->begin(), T(mOwner)); }
 
     void push_front(const T &t) {
         push_front();
-        front() = t;
+        this->front() = t;
     }
 
-    void push_back() { resize(size() + 1); }
+    void push_back() { resize(this->size() + 1); }
 
     void push_back(const T &t) {
         push_back();
-        back() = t;
+        this->back() = t;
     }
 
     void operator=(const ObjList &oList) {

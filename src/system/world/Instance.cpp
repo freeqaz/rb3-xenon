@@ -261,9 +261,21 @@ void WorldInstance::DeleteTransientObjects() {
                             // ObjRef::Replace(Hmx::Object*) is an elided stub off
                             // HX_NATIVE; dispatch the real ring Replace (slot +8)
                             // with the outgoing object as `from`.
+#ifdef HX_NATIVE
+                            // On this side the ring entry IS the ref
+                            // (obj/Object.h:277 -- RefPtrOf is the identity
+                            // overload), so ObjRef::Replace takes only the
+                            // replacement: there is no separate `from` node to
+                            // name. The identity overload also returns
+                            // `const ObjRef *` (ring iteration hands out const
+                            // nodes) while Replace mutates, hence the
+                            // const_cast. The retail arm below is unchanged.
+                            const_cast<ObjRef *>(RefPtrOf(it))->Replace(to);
+#else
                             RefPtrOf(it)->Replace(
                                 reinterpret_cast<ObjRef *>((Hmx::Object *)obj), to
                             );
+#endif
                         }
                     }
                 }

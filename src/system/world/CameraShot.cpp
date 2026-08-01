@@ -374,7 +374,8 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
         && mTargets.empty()) {
         me->mLastTargetPos = targetPos;
         tf = mWorldOffset;
-        Multiply(tf, mCamShot->WorldXfm(), tf);
+        // (X2) no `Multiply(tf, mCamShot->WorldXfm(), tf)` -- retail CamShot has
+        // no WorldXfm(); see the note at the end of BuildTransform.
         return;
     }
 #endif
@@ -472,12 +473,16 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
         }
     }
 
-#ifdef HX_NATIVE
-    // NB(rb3-xenon): DC3 CamShot inherits RndTransformable and has a real
-    // WorldXfm(). Retail CamShot does not; the multiplication is absent in
-    // rb3-Wii's BuildTransform and guarded out here to keep X360 compiling.
-    Multiply(tf, mCamShot->WorldXfm(), tf);
-#endif
+    // NB(rb3-xenon, X2): DC3's CamShot inherits RndTransformable and has a real
+    // WorldXfm(); retail CamShot is `class CamShot : public RndAnimatable`
+    // (CameraShot.h:144) and has none. The DC3-shaped
+    // `Multiply(tf, mCamShot->WorldXfm(), tf)` that used to sit here was inside
+    // `#ifdef HX_NATIVE`, i.e. it was live on the ONE side that could not
+    // compile it -- latent only because world/ was not in the native build. It
+    // is deleted rather than re-guarded: the identity world transform is the
+    // correct native behaviour for a CamShot that has no transform at all, and
+    // rb3-Wii's BuildTransform likewise has no such multiply. X360-neutral (the
+    // removed text was already excluded when HX_NATIVE is undefined).
 
     mCamShot->ApplyDynamicOffsetPreLookAt(tf, HasTargets());
     if (b3) {
