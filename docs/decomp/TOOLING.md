@@ -597,7 +597,7 @@ Machine-generated from an AST parse + a real `--help` run per argparse tool.
 | tool | status | purpose | inv | stale-glob |
 |---|---|---|---|---|
 | `__init__.py` | WORKING(no argparse) | (no docstring) | positional args | n/a |
-| `ab_measure.py` | WORKING | A/B measure a worktree against a baseline report.json. The canonical "did my struct/body edit help?" check. Optionally (re)builds the | --help | n/a |
+| `ab_measure.py` | WORKING | REWRITTEN 2026-08-01 (lane AB-TOOL): protocol-enforcing whole-binary A/B harness. Measures BOTH legs in-run (no --baseline by design), settles to zero-work, wipes report cache, strict-key reads, forces re-split for map/splits patches, REFUSES broken runs (exit 2, no numbers). See CLAUDE.md "Whole-binary A/B measurement" + /ab-measure skill. | --help, --selftest | n/a |
 | `band3_worklist_pin.py` | WORKING | Deterministic band3-worklist micro-pin + name (NO broad-oracle scatter). The safe replacement for the Sonnet `identity_transfer --tu X --apply` step t | --help | n/a |
 | `build_dc3_oracle.py` | WORKING | DC3-VA <-> RB3Xenon-VA engine oracle. Joins a BinDiff DC3-vs-RB3Xenon result with DC3's leaked ham_xbox_r.map to emit | --help | n/a |
 | `changes_fmt.py` | WORKING | (no docstring) | --help | n/a |

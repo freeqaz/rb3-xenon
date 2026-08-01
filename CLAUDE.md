@@ -493,6 +493,51 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
     to test the *actual* risk, and fails loudly if a recommended method returns a
     false negative. Prove it can fail: `--self-break`.
 
+## Whole-binary A/B measurement — use the tool, not the checklist
+
+**`python3 tools/ab_measure.py --worktree <wt> --from-dirty`** (or `--patch
+<diff>` / `--pick REF` / `--revert REF`) is the DEFAULT way to price any change
+against the whole-binary metric. The `/ab-measure` skill wraps it. It executes
+the entire A/B protocol itself and **REFUSES (exit 2, no numbers) when a
+precondition fails** — replacing the prose checklist that was broken from
+memory repeatedly (four lanes burned a leg A on 198 settle-recompiles in one
+session; one false +3 was pure settling noise). `--selftest` sanity-checks the
+refusal logic without building; the selftest itself is validated to FAIL under
+a sabotaged (vacuous) log classifier.
+
+What it enforces — the manual steps survive here only as the explanation of
+*why* (do not hand-run them as the normal path anymore):
+
+- **Settle-to-zero-work before leg A.** A fresh worktree's first build reads
+  ~+193 matched / +0.51pp of settling noise; the tool discards every
+  pre-quiescent reading and refuses if it can't reach a zero-work build.
+- **`report.json` + `report.cache` wiped before EVERY read** (stale cache
+  inflates); measures parsed **by exact key** — a missing key (e.g. the old
+  `.get('masked_equal', 0)` wrong-key bug) REFUSES instead of defaulting to 0.
+- **symbols.txt auto-restored**; patches touching it are refused outright.
+- **Map/splits patches force a re-split on BOTH legs** (rm renamer stamp +
+  `touch config/45410914/config.yml`) — an un-resplit map edit is INERT
+  (`[APPLIED] … 0 files patched`; lane CF-1 lost a whole leg to that
+  absent-vs-absent A/B). Leg B must show SPLIT ran and the renamer patched
+  >0 files, or the run refuses.
+- **Source patches must recompile ≥1 TU in leg B** or the run refuses as
+  absent-vs-absent. The leg B recompile count is taken from the build log
+  BEFORE any report step (`run_objdiff`-style flows compile invisibly, so a
+  later count reads 0 and proves nothing).
+- **Deltas only from legs measured in-run.** There is deliberately no
+  `--baseline` flag: deltas compose, absolutes do not, and a baseline file is
+  an absolute somebody else measured (the coordinator once briefed 41955 by
+  summing deltas; the measured value was 41956).
+- Default ruler = the ninja report edge (hard-coded `functionRelocDiffs=none`);
+  `--name-check` adds the opt-in name_check ruler with its noise-floor warning
+  (nc aggregate code% is build-unstable ~0.05pp).
+
+Controls executed 2026-08-01 (lane AB-TOOL): neutral comment edit ⇒ Δ0 with 1
+real leg-B recompile; bad branch-condition edit ⇒ exactly −1 matched / −88 B;
+map-row deletion ⇒ −1 via the full re-split path (renamer_patched=1674);
+future-mtime sabotage ⇒ REFUSED at settle; patch to an uncompiled source ⇒
+REFUSED absent-vs-absent.
+
 ## Matching phase (active)
 
 The pipeline is proven end-to-end on `MasterAudio.cpp` (2026-05-26): pinning a
