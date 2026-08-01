@@ -20,3 +20,8 @@ Show overall decomp progress statistics.
    - Overall function counts (total, complete, at_limit, remaining)
    - Detected pattern breakdown (merged, regswap, etc.)
    - Top 15 units with the most remaining work
+
+⚠ This skill DISPLAYS state; it does not price a change. To measure whether a
+specific change helped (Δmatched/Δhonest/Δcode%), never diff two progress
+readings by hand — use `/ab-measure` (`tools/ab_measure.py`), which runs the
+full A/B protocol and refuses broken runs.
