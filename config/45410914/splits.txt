@@ -929,6 +929,7 @@ StarDisplay.cpp:
 	.text       start:0x8231D060 end:0x8231D130
 	.text       start:0x8231D130 end:0x8231D1E8
 	.text       start:0x8231D1E8 end:0x8231D214
+	.text       start:0x8231D2B8 end:0x8231D308
 	.text       start:0x8231D310 end:0x8231D4E8
 	.text       start:0x8231D4E8 end:0x8231D670
 	.text       start:0x8231D670 end:0x8231D930
@@ -1649,7 +1650,7 @@ UIScreen.cpp:
 	.text       start:0x826426C0 end:0x82642764
 	.text       start:0x827EFF08 end:0x827F1AC0
 	.text       start:0x827F1AC0 end:0x827F2148
-	.text       start:0x827F2220 end:0x827F22A4
+	.text       start:0x827F2220 end:0x827F2240
 
 UIPanel.cpp:
 	.pdata      start:0x82246C58 end:0x82246E38
@@ -2630,7 +2631,6 @@ EventTrigger.cpp:
 	.pdata      start:0x822142B0 end:0x822142B8
 	.pdata      start:0x8223B618 end:0x8223B620
 	.pdata      start:0x8223BA68 end:0x8223BA70
-	.text       start:0x82486630 end:0x82486674
 	.text       start:0x8249B188 end:0x8249B200
 	.text       start:0x8249B220 end:0x8249B22C
 	.text       start:0x8249B230 end:0x8249B274
@@ -3384,7 +3384,7 @@ BandSwatch.cpp:
 	.pdata      start:0x821F54C0 end:0x821F54C8
 	.pdata      start:0x821F54C8 end:0x821F5600
 	.text       start:0x822AC8D0 end:0x822ACA88
-	.text       start:0x822ACA94 end:0x822ACFD0
+	.text       start:0x822ACA94 end:0x822ACAF8
 	.text       start:0x822ACFDC end:0x822ADE90
 	.text       start:0x822ADE90 end:0x822ADED8
 	.text       start:0x822ADED8 end:0x822AF178
@@ -3461,7 +3461,6 @@ CharCuff.cpp:
 	.pdata      start:0x82203F68 end:0x82203F70
 	.pdata      start:0x82203F70 end:0x82203F78
 	.pdata      start:0x82203F78 end:0x822040E0
-	.text       start:0x82397F08 end:0x82397F38
 	.text       start:0x8239D048 end:0x8239D408
 	.text       start:0x8239D408 end:0x8239D50C
 	.text       start:0x8239D518 end:0x8239F5E0
@@ -3568,6 +3567,7 @@ Mesh.cpp:
 	.text       start:0x8241C96C end:0x8241CED0
 	.text       start:0x8241CED0 end:0x8241CF40
 	.text       start:0x8241CF40 end:0x8241D000
+	.text       start:0x8241D000 end:0x8241D050
 	.text       start:0x8241D058 end:0x8241D530
 	.text       start:0x8241D530 end:0x8241D5E8
 	.text       start:0x8241D5E8 end:0x8241D660
@@ -4020,6 +4020,7 @@ CharIKHand.cpp:
 	.text       start:0x82371148 end:0x82371198
 	.text       start:0x82372CA8 end:0x82372D18
 	.text       start:0x82373CE8 end:0x82373D68
+	.text       start:0x82397F08 end:0x82397F38
 	.text       start:0x823991C0 end:0x823992E0
 	.text       start:0x823992E0 end:0x82399348
 	.text       start:0x823998A0 end:0x823999A4
@@ -4326,6 +4327,7 @@ UILabel.cpp:
 	.text       start:0x82355760 end:0x823557B8
 	.text       start:0x8237C328 end:0x8237C398
 	.text       start:0x827F2148 end:0x827F2220
+	.text       start:0x827F2240 end:0x827F22A4
 	.text       start:0x827F22A8 end:0x827F2318
 	.text       start:0x827F2338 end:0x827F23B8
 	.text       start:0x827F2438 end:0x827F2440
@@ -4923,7 +4925,6 @@ MeterDisplay.cpp:
 	.text       start:0x8231B3B0 end:0x8231B6F4
 	.text       start:0x8231B700 end:0x8231B794
 	.text       start:0x8231B794 end:0x8231C144
-	.text       start:0x8241D000 end:0x8241D050
 	.text       start:0x8248B930 end:0x8248B980
 	.text       start:0x82738A48 end:0x82738AB4
 
@@ -6912,7 +6913,6 @@ Rnd_Xbox.cpp:
 	.pdata      start:0x8223A6F8 end:0x8223A7B0
 	.pdata      start:0x8223A7B8 end:0x8223A800
 	.pdata      start:0x8223A808 end:0x8223AAE8
-	.text       start:0x8231D2B8 end:0x8231D308
 	.text       start:0x8235CC80 end:0x8235CCC8
 	.text       start:0x8241C560 end:0x8241C590
 	.text       start:0x82668A38 end:0x82668A40
@@ -7627,7 +7627,6 @@ TransConstraint.cpp:
 	.pdata      start:0x821F52C8 end:0x821F52D0
 	.pdata      start:0x8222A628 end:0x8222A638
 	.pdata      start:0x8222A658 end:0x8222A660
-	.text       start:0x822ABEC0 end:0x822ABFAC
 	.text       start:0x822EFD00 end:0x822EFD94
 	.text       start:0x82628C38 end:0x82628D94
 	.text       start:0x82628F40 end:0x82628F84
@@ -11636,9 +11635,11 @@ OutfitConfig.cpp:
 	.text       start:0x822A5030 end:0x822A51B4
 	.text       start:0x822A6270 end:0x822A6438
 	.text       start:0x822A6438 end:0x822A64A4
+	.text       start:0x822ABEC0 end:0x822ABFAC
 	.text       start:0x822AC048 end:0x822AC054
 	.text       start:0x822AC058 end:0x822AC0B0
 	.text       start:0x822ACA88 end:0x822ACA94
+	.text       start:0x822ACAF8 end:0x822ACFD0
 	.text       start:0x822ACFD0 end:0x822ACFDC
 	.text       start:0x8233CD20 end:0x8233CED0
 	.text       start:0x8270F4F8 end:0x8270F528
@@ -11971,6 +11972,7 @@ CamAnim.cpp:
 	.pdata      start:0x82210740 end:0x82210820
 	.pdata      start:0x82210828 end:0x82210838
 	.text       start:0x82485840 end:0x82486630
+	.text       start:0x82486630 end:0x82486674
 	.text       start:0x82486674 end:0x824867D4
 
 Lit_NG.cpp:
