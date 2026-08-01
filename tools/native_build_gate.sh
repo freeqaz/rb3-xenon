@@ -56,7 +56,15 @@ if [ $cfg_rc -ne 0 ]; then
     exit 1
 fi
 
-cmake --build build >> "$LOG" 2>&1
+# `-k 0` (keep going) is LOAD-BEARING, not a convenience. Plain `cmake --build`
+# is ninja's default -k1: it stops at the FIRST failing TU. On a tree with
+# several independent breakages that reports one and CONCEALS the rest -- during
+# X1 it took four fix-and-rerun cycles to discover there were four distinct
+# defects behind a single error line. With -k 0 the whole distinct-error set is
+# visible in one run, and the targets that are still healthy still get linked
+# (which is what makes the freshness check below meaningful after a partial
+# failure).
+cmake --build build -- -k 0 >> "$LOG" 2>&1
 build_rc=$?
 
 errs=$(grep -c "error:" "$LOG")
@@ -67,10 +75,29 @@ warns=$(grep -c "warning:" "$LOG")
 # script's own positive control doing exactly that.)
 targets=$(find build -maxdepth 1 -type f -executable -name 'rb3-*' 2>/dev/null | wc -l)
 
+# ...but "the binary exists" says nothing about WHEN it was built. At the start
+# of X1 this script reported 8 healthy targets on a tree where nothing had
+# linked for two days: the binaries were stale leftovers from before the
+# breakage landed, and a stale binary is indistinguishable from a fresh one by
+# existence alone. Ask ninja instead: a dry run that still has work to do means
+# at least one target is NOT up to date with its inputs.
+stale="$(cd build && ninja -n 2>/dev/null | grep -c '^\[' || true)"
+[ -z "$stale" ] && stale=0
+
 if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ]; then
     echo "NATIVE GATE: FAIL  (build rc=$build_rc, $errs error line(s))"
-    echo "--- first diagnostics ---"
-    grep "error:" "$LOG" | head -8
+    echo "--- distinct diagnostics ($(grep 'error:' "$LOG" | sed 's/.*error: //' | sort -u | wc -l) unique) ---"
+    grep "error:" "$LOG" | sed 's/.*error: //' | sort -u | head -20
+    echo "--- first site for each ---"
+    grep "error:" "$LOG" | sort -u -t: -k4 | head -10
+    echo "targets currently on disk: $targets (NOT a pass signal on a failing build)"
+    echo "log: $LOG"
+    exit 1
+fi
+
+if [ "$stale" -ne 0 ]; then
+    echo "NATIVE GATE: FAIL  (build reported rc=0 but ninja still has $stale step(s) to do --"
+    echo "  the binaries on disk are NOT up to date with their inputs)"
     echo "log: $LOG"
     exit 1
 fi
