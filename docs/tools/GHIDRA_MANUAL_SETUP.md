@@ -1,5 +1,7 @@
 # Ghidra Setup for rb3-xenon (No MCP)
 
+> **Note for rb3-xenon (audit 2026-08-01):** `orig/45410914/ham_xbox_r.map` does NOT exist — that is DC3's leaked map; RB3 retail has none. Every step below that greps or imports it must be skipped (use `tools/fingerprint_match.py` for identification instead). See the same banner in GHIDRA_SETUP.md.
+
 GUI-only Ghidra setup. No pyghidra, no MCP server. For the full AI-assisted pipeline, see [GHIDRA.md](GHIDRA.md).
 
 After setup you get ~69,000 named functions with full demangled signatures, VMX128 disassembly, and correct MSVC switch table recovery.
