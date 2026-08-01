@@ -914,6 +914,7 @@ StarDisplay.cpp:
 	.pdata      start:0x821FC4F0 end:0x821FC4F8
 	.pdata      start:0x821FC508 end:0x821FC518
 	.pdata      start:0x821FC518 end:0x821FC520
+	.pdata      start:0x821FC530 end:0x821FC538
 	.pdata      start:0x821FC538 end:0x821FC570
 	.pdata      start:0x821FC570 end:0x821FC5A0
 	.pdata      start:0x821FC5A0 end:0x821FC5C8
@@ -1646,7 +1647,7 @@ UIScreen.cpp:
 	.pdata      start:0x8222C138 end:0x8222C140
 	.pdata      start:0x82244BC8 end:0x82244D58
 	.pdata      start:0x82244D58 end:0x82244DD0
-	.pdata      start:0x82244DE8 end:0x82244DF8
+	.pdata      start:0x82244DE8 end:0x82244DF0
 	.text       start:0x826426C0 end:0x82642764
 	.text       start:0x827EFF08 end:0x827F1AC0
 	.text       start:0x827F1AC0 end:0x827F2148
@@ -2608,7 +2609,6 @@ AsyncTask.cpp:
 	.text       start:0x825337B0 end:0x82533870
 
 EventTrigger.cpp:
-	.pdata      start:0x82210820 end:0x82210828
 	.pdata      start:0x82211800 end:0x82211810
 	.pdata      start:0x82211820 end:0x82211828
 	.pdata      start:0x82211828 end:0x82211840
@@ -3379,7 +3379,7 @@ Flow.cpp:
 
 BandSwatch.cpp:
 	.pdata      start:0x821F5330 end:0x821F5390
-	.pdata      start:0x821F5390 end:0x821F53B8
+	.pdata      start:0x821F5390 end:0x821F5398
 	.pdata      start:0x821F53B8 end:0x821F54C0
 	.pdata      start:0x821F54C0 end:0x821F54C8
 	.pdata      start:0x821F54C8 end:0x821F5600
@@ -3457,7 +3457,6 @@ HamDirector.cpp:
 	.text       start:0x822BE088 end:0x822BE0B0
 
 CharCuff.cpp:
-	.pdata      start:0x82203B50 end:0x82203B58
 	.pdata      start:0x82203F68 end:0x82203F70
 	.pdata      start:0x82203F70 end:0x82203F78
 	.pdata      start:0x82203F78 end:0x822040E0
@@ -3521,6 +3520,7 @@ Mesh.cpp:
 	.pdata      start:0x8220B538 end:0x8220B5A8
 	.pdata      start:0x8220B5A8 end:0x8220B5B0
 	.pdata      start:0x8220B5B0 end:0x8220B5C8
+	.pdata      start:0x8220B5C8 end:0x8220B5D0
 	.pdata      start:0x8220B5D0 end:0x8220B5E0
 	.pdata      start:0x8220B5E0 end:0x8220B5F0
 	.pdata      start:0x8220B5F0 end:0x8220B600
@@ -4014,6 +4014,7 @@ CharIKHand.cpp:
 	.pdata      start:0x82201858 end:0x82201860
 	.pdata      start:0x82201A30 end:0x82201A38
 	.pdata      start:0x82201B30 end:0x82201B38
+	.pdata      start:0x82203B50 end:0x82203B58
 	.pdata      start:0x82203C80 end:0x82203CA0
 	.pdata      start:0x82203CA0 end:0x82203CA8
 	.pdata      start:0x82203CF0 end:0x82203CF8
@@ -4294,6 +4295,7 @@ UILabel.cpp:
 	.pdata      start:0x821FF948 end:0x821FF950
 	.pdata      start:0x82202290 end:0x82202298
 	.pdata      start:0x82244DD0 end:0x82244DE8
+	.pdata      start:0x82244DF0 end:0x82244DF8
 	.pdata      start:0x82244DF8 end:0x82244E00
 	.pdata      start:0x82244E00 end:0x82244E10
 	.pdata      start:0x82244E18 end:0x82244E20
@@ -4914,7 +4916,6 @@ MeterDisplay.cpp:
 	.pdata      start:0x821FC308 end:0x821FC338
 	.pdata      start:0x821FC338 end:0x821FC340
 	.pdata      start:0x821FC340 end:0x821FC410
-	.pdata      start:0x8220B5C8 end:0x8220B5D0
 	.pdata      start:0x82210D08 end:0x82210D10
 	.pdata      start:0x8223A7B0 end:0x8223A7B8
 	.text       start:0x8231A4F8 end:0x8231A570
@@ -6907,7 +6908,6 @@ system/rnddx9/Rnd.cpp:
 	.text       start:0x8272BAC8 end:0x82733C70
 
 Rnd_Xbox.cpp:
-	.pdata      start:0x821FC530 end:0x821FC538
 	.pdata      start:0x82200120 end:0x82200128
 	.pdata      start:0x8220B508 end:0x8220B510
 	.pdata      start:0x8223A6F8 end:0x8223A7B0
@@ -7624,7 +7624,6 @@ HAQManager.cpp:
 	.text       start:0x82BB1260 end:0x82BB1954
 
 TransConstraint.cpp:
-	.pdata      start:0x821F52C8 end:0x821F52D0
 	.pdata      start:0x8222A628 end:0x8222A638
 	.pdata      start:0x8222A658 end:0x8222A660
 	.text       start:0x822EFD00 end:0x822EFD94
@@ -11601,7 +11600,9 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4B28 end:0x821F4B30
 	.pdata      start:0x821F4C48 end:0x821F4C60
 	.pdata      start:0x821F4C60 end:0x821F4C68
+	.pdata      start:0x821F52C8 end:0x821F52D0
 	.pdata      start:0x821F52E0 end:0x821F52E8
+	.pdata      start:0x821F5398 end:0x821F53B8
 	.pdata      start:0x821FE448 end:0x821FE458
 	.text       start:0x8229CB5C end:0x8229CC10
 	.text       start:0x8229CD68 end:0x8229D350
@@ -11970,6 +11971,7 @@ Cam.cpp:
 
 CamAnim.cpp:
 	.pdata      start:0x82210740 end:0x82210820
+	.pdata      start:0x82210820 end:0x82210828
 	.pdata      start:0x82210828 end:0x82210838
 	.text       start:0x82485840 end:0x82486630
 	.text       start:0x82486630 end:0x82486674
