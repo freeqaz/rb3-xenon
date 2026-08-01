@@ -34,6 +34,15 @@ struct Stats;
 // retail mangled name ??0GamerAwardStatus@@QAA@HW4GamerAwardType@@@Z.
 enum GamerAwardType {
     kGamerAwardTypeNone = 0,
+    // ⚠ (lane CG-4) 1 and 2 ARE constructed -- GiveGamerpic passes
+    // (GamerAwardType)1 and GiveAvatarAsset passes (GamerAwardType)2
+    // (AccomplishmentProgress.cpp:294,:308). With only enumerator 0 the enum's
+    // [dcl.enum]/7 range is [0,0], so both casts are out of range and any test
+    // against them is foldable. Named from their unambiguous call sites rather
+    // than range-guarded, since the meaning here is not in doubt.
+    // X360-neutral: enumerators emit no code (whole-binary A/B measured Δ0).
+    kGamerAwardTypeGamerpic = 1,
+    kGamerAwardTypeAvatarAsset = 2,
 };
 
 class GamerAwardStatus : public FixedSizeSaveable {
