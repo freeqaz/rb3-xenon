@@ -812,3 +812,169 @@ target_include_directories(rb3-ark PRIVATE
     ${REPO_ROOT}/src/system
 )
 target_link_libraries(rb3-ark PRIVATE Threads::Threads ZLIB::ZLIB)
+
+# =============================================================================
+# X1 — milo-native-engine (shared LP64 engine), dc3 GPU flavor
+# =============================================================================
+# SPIKE-X0 (docs/plans/spike-x0-engine-dc3-flavor-2026-08-01.md) proved the
+# engine's `dc3` GPU backend flavor COMPOSES against rb3-xenon's headers:
+# 14/14 flavor-critical TUs compile, libmilo-engine.a links, ZERO source edits
+# on either side, with a 5-entry MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE. This block
+# promotes that out-of-tree harness into the real build.
+#
+# WHY `dc3` AND NOT `rb3`: rb3-xenon's src/system/rndobj/ is DC3-lineage, not
+# RB3-Wii-lineage — it supplies NgRnd (rndobj/Rnd_NG.h:14), RndCam::
+# GetViewProjectXfms (Cam.h:46), RndParticleSys::NumTilesAcross/Down (Part.h:
+# 284), and the fat RndMesh::Vert (Mesh.h:74). Every structural reason the
+# engine's `rb3` BandRnd flavor exists applies to rb3-WII, not to us. So xenon
+# takes the engine's most-mature backend and needs 5 platform exclusions where
+# rb3-Wii needs 18.
+#
+# ⚠ COMPILE-COMPAT IS NOT BEHAVIOURAL COMPAT. src/system/rndobj/Rnd.h:354-360
+# documents an Rnd/NgRnd member-layout shift vs the shape the DC3 headers
+# assume. Nothing below instantiates WgpuRnd/NgRnd — rb3-frame deliberately
+# exercises ONLY the decomp-agnostic gfx core (GpuDevice + Screenshot), so a
+# silent member-offset bug cannot masquerade as a working frame. Standing up
+# WgpuRnd is X3's job, on top of this known-good clear-frame baseline.
+# =============================================================================
+option(RB3X_BUILD_ENGINE "Build + link milo-native-engine (needs Dawn + glfw3)" ON)
+
+set(MILO_ENGINE_PATH "${CMAKE_SOURCE_DIR}/../../milo-native-engine"
+    CACHE PATH "Path to milo-native-engine checkout")
+# Soft SHA pin (warn, never fail) — mirrors rb3/native/CMakeLists.txt:88-102.
+# Seeded from the engine HEAD SPIKE-X0 measured against.
+set(MILO_ENGINE_PIN "2ea8e343cdc7c8ce680b093433f8b3d038e38b99"
+    CACHE STRING "Engine commit SHA verified against")
+
+# Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
+# Defaulted (not required) so a bare `cmake -B build` finds it; override with
+# -DDawn_DIR=... . If it is absent we DISABLE the engine rather than hard-fail:
+# find_package(Dawn REQUIRED) inside the engine would abort configure and take
+# all 15 pre-existing targets down with it on a machine without the deps tree.
+if(NOT DEFINED Dawn_DIR)
+    set(Dawn_DIR "${REPO_ROOT}/../dc3-decomp-deps/dawn/lib/cmake/Dawn"
+        CACHE PATH "Path to Dawn's CMake package config")
+endif()
+if(RB3X_BUILD_ENGINE AND NOT EXISTS "${Dawn_DIR}/DawnConfig.cmake")
+    message(WARNING
+        "RB3X_BUILD_ENGINE=ON but no Dawn at ${Dawn_DIR} — disabling the engine "
+        "(rb3-frame will not be built). Point -DDawn_DIR at a Dawn install to "
+        "enable it. The other targets are unaffected.")
+    set(RB3X_BUILD_ENGINE OFF)
+endif()
+
+if(RB3X_BUILD_ENGINE)
+    if(EXISTS "${MILO_ENGINE_PATH}/.git")
+        execute_process(COMMAND git rev-parse HEAD
+            WORKING_DIRECTORY ${MILO_ENGINE_PATH}
+            OUTPUT_VARIABLE _milo_engine_head OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT _milo_engine_head MATCHES "^${MILO_ENGINE_PIN}")
+            message(WARNING
+                "milo-native-engine HEAD is ${_milo_engine_head}\n"
+                "  but rb3-xenon-native pins ${MILO_ENGINE_PIN}\n"
+                "  (update MILO_ENGINE_PIN once the new engine state is canonical)")
+        endif()
+    endif()
+
+    # --- Context injection (verbatim from the SPIKE-X0 harness) --------------
+    # Include ORDER IS LOAD-BEARING: `src` MUST precede `src/system`, or a stub
+    # at src/<dir>/Foo.h shadows the real src/system/<dir>/Foo.h (the shadowing
+    # hazard documented in CLAUDE.md "Build wiring"). MEASURED in X0: adding
+    # src/band3, src/network or src/system/oggvorbis changes nothing — the build
+    # is byte-for-byte as clean without them, so they are deliberately absent.
+    # The engine injects its own include/ STL shim BEFORE PUBLIC, and it is
+    # byte-identical to native/include/bits/stl_iterator.h, so no consumer-side
+    # STL shim injection is needed either.
+    set(MILO_ENGINE_DECOMP_INCLUDE_DIRS
+        ${CMAKE_SOURCE_DIR}/src        # native shims + stl/ STLport-shape shims
+        ${REPO_ROOT}/src
+        ${REPO_ROOT}/src/system)
+
+    # ⚠ DECOMP_WARNINGS (the -Werror= opt-in list) is DELIBERATELY NOT PASSED to
+    # the engine. That policy was measured against xenon's own 251 TUs, never
+    # against the engine's. X0 measured what happens if you do pass it: exactly
+    # one engine TU fails, src/platform/Mesh_Wgpu.cpp:206,:299, on
+    # -Wtautological-constant-out-of-range-compare — `TheRnd.GetDrawMode() == 8`
+    # against a Rnd::DrawMode enum topping out at kDrawVelocity = 6. That is a
+    # REAL latent engine defect (two two-sided-cull overrides dead on every
+    # consumer, incl. DC3, whose blanket `-w` hides it) and it is on the engine
+    # backlog — not something to block xenon's build on. Re-enable this once the
+    # engine is clean under the full policy; it is a net asset to the engine.
+    set(MILO_ENGINE_DECOMP_COMPAT_FLAGS
+        ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS}
+        -ferror-limit=0
+        -fno-omit-frame-pointer
+        -Wno-everything
+        "SHELL:-include ${CMAKE_SOURCE_DIR}/src/msvc_compat.h")
+    # MILO_ENGINE_DECOMP_PCH deliberately unset: xenon's PCH (system.pch, built
+    # from src/system/decomp_pch.h) is a MATCH-BUILD device whose contents are
+    # codegen-load-bearing. It has nothing to do with the native build.
+
+    # Platform TUs whose xenon header twins differ. ALL five are off the gfx
+    # path and ALL have a xenon-side replacement — this is exactly what the
+    # exclude mechanism exists for. Category (b) in the X0 taxonomy:
+    #
+    #  DataParser_Native.cpp  engine declares `extern int gDataLine`; xenon's
+    #                         obj/DataFile_Flex.h:9 declares `extern DataType
+    #                         gDataLine`. xenon parses DTA via DataFlex.c
+    #                         compiled directly (DTA_LEXER above), so the TU is
+    #                         redundant here. One-WORD type disagreement, not a
+    #                         shape gap — cheap to close later.
+    #  FxSendNative.cpp       xenon's EQEffect::Params lacks mBand4Q/mBand5Freq
+    #                         (DC3 synth-FxSend shape). Off the render path.
+    #  Joypad_Native.cpp      xenon's JoypadData lacks mNumAnalogSticks.
+    #  Synth_Stub.cpp         xenon synth/VorbisReader.h ctor takes 5 args (engine
+    #                         passes 4), StandardStream.h takes 6 (engine passes
+    #                         7); NewStreamDecoder doesn't override.
+    #  FFmpegMovieImpl.cpp    engine's FFmpegMovieImpl.h:37 `void SetPaused(bool)`
+    #                         vs xenon movie/MovieImpl.h:24 `virtual bool
+    #                         SetPaused(bool)`. A NEAR-twin, not a shape gap —
+    #                         xenon HAS movie/MovieImpl.h (rb3-Wii does not).
+    #                         See the X1 doc for why this was NOT reconciled.
+    #
+    # NOT excluded, and each is a tell that xenon is DC3-lineage (every one is
+    # on rb3-Wii's 18-entry exclusion list): File_Native, AsyncFile_Native,
+    # CDReader_Native, Memory_Native (includes DC3's src/Memory.h — xenon HAS
+    # src/Memory.h, rb3-Wii does not), ThreadCall_Native, Keygen_Stub,
+    # MapFile_Stub, NetworkSocket_Stub, SampleInst_Native, StreamReceiver_Native,
+    # BoneSetup, CharTwistSolver, FFmpegAudioReader.
+    set(MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE
+        DataParser_Native.cpp
+        FxSendNative.cpp
+        Joypad_Native.cpp
+        Synth_Stub.cpp
+        FFmpegMovieImpl.cpp)
+
+    # Sticky CACHE + FORCE so a stale value from an earlier configure can't linger.
+    set(MILO_ENGINE_BUILD_GFX   ON  CACHE BOOL   "xenon: build the WebGPU gfx core" FORCE)
+    set(MILO_ENGINE_GPU_BACKEND dc3 CACHE STRING "xenon: WgpuRnd : NgRnd GPU backend" FORCE)
+    set(MILO_ENGINE_BUILD_TESTS OFF CACHE BOOL   "" FORCE)
+
+    add_subdirectory(${MILO_ENGINE_PATH} milo-engine)
+
+    # -------------------------------------------------------------------------
+    # rb3-frame — X1 smoke target: engine GPU device + CLEAR + headless
+    # screenshot. Deliberately the SMALLEST thing that proves the engine link
+    # surface works end to end (configure -> compile -> link -> run -> pixels).
+    #
+    # It links libmilo-engine.a and NOTHING ELSE from either tree: no
+    # ENGINE_SOURCES, no NATIVE_SHIMS, no dta_link_stubs.s. That is a RESULT,
+    # not a shortcut — the engine's gfx core (gfx/GpuDevice.cpp, gfx/Screenshot.cpp)
+    # is decomp-agnostic and pulls no Milo symbols, so the archive satisfies
+    # itself. It also means rb3-frame touches ZERO xenon rndobj members, which is
+    # the whole point: the Rnd/NgRnd layout caveat above cannot contaminate this
+    # baseline. The moment a target does instantiate WgpuRnd (X3), it will need
+    # the shim set AND a resolution for the 13 basename collisions between
+    # native/src/platform/ and the engine's src/platform/.
+    # -------------------------------------------------------------------------
+    add_executable(rb3-frame ${CMAKE_SOURCE_DIR}/src/main_frame.cpp)
+    target_compile_options(rb3-frame PRIVATE
+        ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+    target_compile_definitions(rb3-frame PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+    target_include_directories(rb3-frame SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+    target_include_directories(rb3-frame PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
+        ${REPO_ROOT}/src
+        ${REPO_ROOT}/src/system)
+    target_link_libraries(rb3-frame PRIVATE milo-engine Threads::Threads)
+endif()
