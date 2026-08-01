@@ -1956,7 +1956,6 @@ CharEyeDartRuleset.cpp:
 	.pdata      start:0x82205940 end:0x82205950
 	.pdata      start:0x82205978 end:0x82205998
 	.pdata      start:0x822059A0 end:0x82205A08
-	.pdata      start:0x82205A18 end:0x82205A20
 	.text       start:0x823BC918 end:0x823BD400
 	.text       start:0x823BDE70 end:0x823BDEC0
 	.text       start:0x823BDED0 end:0x823BE070
@@ -1964,7 +1963,6 @@ CharEyeDartRuleset.cpp:
 	.text       start:0x823BE46C end:0x823BE5D8
 	.text       start:0x823BE644 end:0x823BEE40
 	.text       start:0x823BEEA8 end:0x823BEEB0
-	.text       start:0x823BEF24 end:0x823BF2A4
 
 CharIKRod.cpp:
 	.pdata      start:0x822010D8 end:0x822010E8
@@ -7781,11 +7779,13 @@ FlowValueCase.cpp:
 
 CharIKFoot.cpp:
 	.pdata      start:0x82205A10 end:0x82205A18
+	.pdata      start:0x82205A18 end:0x82205A20
 	.pdata      start:0x82205A20 end:0x82205AE8
 	.pdata      start:0x82205AE8 end:0x82205AF0
 	.pdata      start:0x82205AF0 end:0x82205B00
 	.text       start:0x823BEE90 end:0x823BEEA8
 	.text       start:0x823BEEB0 end:0x823BEF24
+	.text       start:0x823BEF24 end:0x823BF2A4
 	.text       start:0x823BF2B0 end:0x823BFE1C
 	.text       start:0x823BFE20 end:0x823BFE64
 	.text       start:0x823BFE70 end:0x823BFF88
