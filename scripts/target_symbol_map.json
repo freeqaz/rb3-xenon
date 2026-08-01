@@ -15726,7 +15726,7 @@
  "0x8262fd68": "?Exit@VoiceoverPanel@@UAAXXZ",
  "0x8262fde8": "?SetVoiceoverSymbol@VoiceoverPanel@@QAAXVSymbol@@@Z",
  "0x8262ffb0": "?Handle@VoiceoverPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82631bb8": "?Unload@HelpBarPanel@@UAAXXZ",
+ "0x82631bb8": "?Unload@SaveLoadStatusPanel@@UAAXXZ",
  "0x826342f0": "??_GFrame@RhythmDetector@@QAAPAXI@Z",
  "0x82634358": "??$__destroy_range_aux@V?$reverse_iterator@PAUDistEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUDistEntry@@@0@0ABU__false_type@0@@Z",
  "0x82634690": "??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z",
