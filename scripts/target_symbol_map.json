@@ -1090,7 +1090,6 @@
  "0x823d8ff8": "?Load@CharBonesBlender@@UAAXAAVBinStream@@@Z",
  "0x823dbee0": "?SetType@Waypoint@@UAAXVSymbol@@@Z",
  "0x82406548": "?SetType@RndDrawable@@UAAXVSymbol@@@Z",
- "0x82408a80": "?SetType@CharPollGroup@@UAAXVSymbol@@@Z",
  "0x8242ffb0": "?SetType@RndPostProc@@UAAXVSymbol@@@Z",
  "0x82470188": "?SetType@RndMeshAnim@@UAAXVSymbol@@@Z",
  "0x82473ce8": "?SetType@RndFont@@UAAXVSymbol@@@Z",
@@ -7937,7 +7936,6 @@
  "0x823b4090": "?ClassName@CharBlendBone@@UBA?AVSymbol@@XZ",
  "0x823b45a0": "??0CharIKFingers@@IAA@XZ",
  "0x823bc8e8": "?ClassName@CharIKFingers@@UBA?AVSymbol@@XZ",
- "0x823c5140": "?ClassName@FxSendDelay@@UBA?AVSymbol@@XZ",
  "0x823c5568": "?Copy@CharIKRod@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x823c6148": "?ClassName@CharIKMidi@@UBA?AVSymbol@@XZ",
  "0x823c6e30": "?ClassName@CharIKSliderMidi@@UBA?AVSymbol@@XZ",
@@ -28701,5 +28699,7 @@
  "0x82302838": "?PreLoad@VocalTrackDir@@UAAXAAVBinStream@@@Z",
  "0x824cc168": "?Handle@WorldDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x824cf000": "?SyncProperty@WorldDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x824e8a40": "?Load@WorldReflection@@UAAXAAVBinStream@@@Z"
+ "0x824e8a40": "?Load@WorldReflection@@UAAXAAVBinStream@@@Z",
+ "0x823afec0": "?SetType@CharPollGroup@@UAAXVSymbol@@@Z",
+ "0x82720b58": "?ClassName@FxSendDelay@@UBA?AVSymbol@@XZ"
 }
