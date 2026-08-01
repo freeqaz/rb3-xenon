@@ -27769,7 +27769,6 @@
  "0x82406210": "?SyncProperty@RndSpline@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82289950": "?SyncProperty@BandCharDesc@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82289980": "?Save@BandCharDesc@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
- "0x8259ec38": "?IsDirPtr@Object@Hmx@@UAA_NXZ",
  "0x823b6548": "??_ECharBoneDir@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x8237bc90": "?_M_erase@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VRndTransformable@@@@PAV3@0ABU__false_type@2@@Z",
  "0x8238aba8": "?Load@CharEyes@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
