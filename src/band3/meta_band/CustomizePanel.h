@@ -41,7 +41,18 @@ public:
         kCustomizeState_BrowseBasses = 25,
         kCustomizeState_BrowseDrums = 26,
         kCustomizeState_BrowseMicrophones = 27,
-        kCustomizeState_BrowseKeyboards = 28
+        kCustomizeState_BrowseKeyboards = 28,
+        // ⚠ RANGE GUARD (lane CG-4). Enumerators topping out at 28 give this
+        // enum a [dcl.enum]/7 range of [0,31], but states 0x20..0x24 are both
+        // constructed ((CustomizeState)0x20 at CustomizePanel.cpp:46,:905) and
+        // TESTED (`mCustomizeState == 0x21/0x22/0x23` at :796,:813,:824 and
+        // `case 0x20..0x24` at :193,:897-:902) -- all outside [0,31] and hence
+        // foldable by a compiler that trusts the declared range. Same defect
+        // class as the missing Character::DrawMode 4 that killed char shadows.
+        // A RANGE GUARD, not a recovered name: the rb3-Wii oracle stops at 28
+        // too, so it cannot supply the real enumerators for 0x20..0x24.
+        // X360-neutral: an enumerator emits no code (A/B measured Δ0).
+        kCustomizeState_MaxUsed = 0x24
     };
     CustomizePanel();
     OBJ_CLASSNAME(CustomizePanel);
