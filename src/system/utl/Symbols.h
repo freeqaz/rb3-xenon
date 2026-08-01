@@ -626,7 +626,9 @@ extern Symbol skip_to_shortcut;
 extern Symbol skip_to_unfocused;
 extern Symbol skipped_song;
 extern Symbol slaves;
+#if !HX_NATIVE
 extern Symbol sleep;
+#endif // sleep: POSIX glibc name collision
 extern Symbol sleeve;
 extern Symbol slide;
 extern Symbol slot;
@@ -946,7 +948,9 @@ extern Symbol SWING;
 extern Symbol switch_to_index;
 extern Symbol switch_to_new;
 extern Symbol symbol;
+#if !HX_NATIVE
 extern Symbol sync;
+#endif // sync: POSIX glibc name collision
 extern Symbol sync_anim;
 extern Symbol sync_color;
 extern Symbol sync_color_fade;
