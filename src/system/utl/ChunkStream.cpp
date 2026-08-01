@@ -164,9 +164,15 @@ ChunkStream::ChunkStream(
 // Debug.h ("sites with destructible class args need COPYING"), MiloStripEval is
 // the right per-site form here. Locally redefine, matching the UIComponent.cpp
 // pattern. NEVER edit global Debug.h.
+// NOTE: MiloStripEval only exists `#ifndef HX_NATIVE` (Debug.h:89-107) — it is a
+// retail-codegen device, not a real logger. Guard the redefine, or the native
+// build (the project's only LINKING instrument) dies here with "use of
+// undeclared identifier 'MiloStripEval'". Same guard MidiParser.cpp:65 uses.
 #pragma push_macro("MILO_NOTIFY")
+#ifndef HX_NATIVE
 #undef MILO_NOTIFY
 #define MILO_NOTIFY(...) MiloStripEval(__VA_ARGS__)
+#endif
 ChunkStream::~ChunkStream() {
     if (mFail == false && mType == kWrite) {
         MaybeWriteChunk(true);
