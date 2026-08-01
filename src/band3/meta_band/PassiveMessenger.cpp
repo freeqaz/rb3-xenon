@@ -27,29 +27,24 @@ extern VoiceChatMgr *TheVoiceChatMgr;
 PassiveMessenger *ThePassiveMessenger;
 
 void PassiveMessageQueue::Poll() {
+    static Message hide_message_msg("hide_message");
+    static Message is_message_hiding_msg("is_message_hiding");
+    static Message show_message_msg("show_message");
     if (mTimer.Running()) {
-        mTimer.Split();
-        if (mTimer.Ms() >= mMessageDuration) {
+        if (mTimer.SplitMs() >= mMessageDuration) {
             mTimer.Stop();
-            static Message hide_message_msg("hide_message");
             mCallback->Handle(hide_message_msg, true);
         }
     }
-    bool running = mTimer.Running();
-    static Message is_message_hiding_msg("is_message_hiding");
-    if (!running && mCallback->Handle(is_message_hiding_msg, true).Int() == 0) {
-        if (!mQueue.empty()) {
-            PassiveMessage *message = GetAndPreProcessFirstMessage();
-            MILO_ASSERT(message, 0x33);
-            HandlePassiveMessage(message);
-            mQueue.pop_front();
-            delete message;
-            mTimer.Restart();
-            static Message show_message_msg("show_message");
-            mCallback->Handle(show_message_msg, true);
-        } else {
-            mCallback->Handle(clear_pics_msg, true);
-        }
+    if (!mQueue.empty() && !mTimer.Running()
+        && mCallback->Handle(is_message_hiding_msg, true).Int() == 0) {
+        PassiveMessage *message = GetAndPreProcessFirstMessage();
+        MILO_ASSERT(message, 0x33);
+        HandlePassiveMessage(message);
+        mQueue.pop_front();
+        delete message;
+        mTimer.Restart();
+        mCallback->Handle(show_message_msg, true);
     }
 }
 

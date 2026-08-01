@@ -18,6 +18,12 @@ public:
 
     void GetSongsFromMusicLibrary();
     void LoadSongMetadata();
+    /** Kicks off the per-song metadata net-loaders.  Retail calls this from
+     *  Poll() (fn_826429A0) whenever mSongs and mLoaders have drifted out of
+     *  step, i.e. the loader set no longer covers the song set.  Decl-only:
+     *  its body sits outside this unit's pinned .text span, so it is unscored
+     *  and the match build never links. */
+    void StartMetadataLoaders();
 
     std::vector<DataNetLoader *> mLoaders; // 0x38
     DataArray *mAllMetadata; // 0x40
