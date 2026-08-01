@@ -1058,12 +1058,19 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
                         it->mMat
                     );
                 }
-                // NOTE: retail copies the 8-byte MatShaderOptions with a single
-                // ld/std pair; we emit 2x lwz/stw because our MatShaderOptions
-                // (u32 union + bool) has alignment 4, not 8. Fixing that is a
-                // struct-definition change affecting every material user -- out
-                // of scope here, and it is the residual ~14 mismatches.
-                it->mMat->SetShaderOpts(GetDefaultMatShaderOpts(mesh, it->mMat));
+                // The sret result MUST be a NAMED LOCAL, not a temporary.
+                // Retail copies the 8-byte MatShaderOptions with a single
+                // ld/std pair (`ld r10,0x60(r1)` / `std r10,0x180(r11)`);
+                // with a temporary MSVC keeps the sret buffer an opaque
+                // pointer and emits 2x lwz/stw instead. A named local gives
+                // it a stack slot whose 8-byte alignment it knows, so the
+                // copy folds to ld/std. This is NOT a struct-alignment issue:
+                // retail's sizeof(BaseMaterial) is 0x18c (proven by
+                // BaseMaterial::NewObject's `li r3,0x18c`), so MatShaderOptions
+                // is align-4 in retail exactly as it is here. Every other
+                // GetDefaultMatShaderOpts caller already uses a named local.
+                MatShaderOptions opts = GetDefaultMatShaderOpts(mesh, it->mMat);
+                it->mMat->SetShaderOpts(opts);
                 list.push_back(it->mMat);
             }
         }
