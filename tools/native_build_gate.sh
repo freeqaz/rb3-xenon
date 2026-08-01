@@ -61,9 +61,12 @@
 #               the bar at once, deletions never lower it.
 #   ACTUAL      per target, interrogated from the build system itself, NOT from
 #               the filesystem:
-#                 `ninja -t query <t>`  -> is it CONFIGURED?  (instant)
-#                 real `ninja <t>`      -> is it UP-TO-DATE?  ("no work to do",
-#                                          measured 0.034 s on a no-op)
+#                 `ninja -t targets all` -> which targets are CONFIGURED, i.e.
+#                                           have a PRODUCING EDGE (instant)
+#                 real `ninja <t>`       -> is it UP-TO-DATE? ("no work to do",
+#                                           measured 0.034 s on a no-op)
+#               (NOT `ninja -t query` and NOT `ninja -n` -- both are vacuous
+#                here; see the two warnings below before changing either probe.)
 #               Freshness is thus a POSITIVE STATEMENT BY NINJA that the binary
 #               is newer than every input in its dependency graph -- which a
 #               stale Jul-31 binary on a changed tree cannot satisfy -- while an
@@ -72,12 +75,28 @@
 #               comment was trading against. mtime-vs-run-marker additionally
 #               labels RELINKED vs UP-TO-DATE, so the operator can see which.
 #
-#               !! `ninja -n <t>` (DRY run) is NOT usable here and was rejected
-#               after measurement: CONFIGURE_DEPENDS globs make ninja plan a
-#               CMake re-run it cannot simulate, so `-n` returns rc=0 and "work
-#               to do" for EVERY target -- including a target that does not
-#               exist at all. It is a vacuous probe. The real (non-dry) probe
-#               costs 0.034 s, so there is nothing to buy by faking it.
+#               !! `ninja -n` (DRY run) is NOT usable here, in EITHER of its two
+#               tempting forms, and both were measured on 2026-08-01:
+#
+#               (a) as a whole-build staleness count, it makes the gate
+#                   INCAPABLE OF PASSING -- the exact mirror of the "cannot
+#                   fail" defect this gate exists to prevent. This actually
+#                   landed on main as `6c2187fe` and was reverted in `636f59b3`.
+#                   native/CMakeLists.txt installs file(GLOB ... CONFIGURE_DEPENDS
+#                   ...) on 8 directories, adding a glob-recheck edge that A DRY
+#                   RUN CANNOT EXECUTE, so ninja always plans the CMake re-run:
+#                       $ ninja -n              -> [0/2] Re-checking globbed dirs
+#                                                  [1/2] Re-running CMake...
+#                       $ ninja                 -> ninja: no work to do.
+#                       $ ninja -n              -> STILL 2, after two clean no-ops
+#                   `stale` was therefore a CONSTANT 2 on every healthy tree.
+#
+#               (b) as a per-target probe, it is vacuous in the other direction:
+#                   it returns rc=0 and "work to do" for EVERY target, including
+#                   one that DOES NOT EXIST AT ALL.
+#
+#               The real (non-dry) probe costs 0.034 s on a no-op, so there is
+#               nothing to buy by faking it.
 #
 # Every EXPECTED target must end OK, or be SKIPPED with a reason that is
 # independently verified against the environment (see conditional_reason).
@@ -200,8 +219,10 @@ NINJA="$(cache_get CMAKE_MAKE_PROGRAM)"; [ -n "$NINJA" ] || NINJA=ninja
 # Enumerate the nodes that have a PRODUCING EDGE in the ninja graph.
 # `ninja -t targets all` prints "<output>: <rule>" for exactly those.
 #
-# !! `ninja -t query <t>` is NOT usable for this, and was rejected only AFTER it
-# silently passed a negative control (2026-08-01): it returns rc=0 for ANY PATH
+# !! `ninja -t query <t>` is NOT usable for this -- and the TODO comment left in
+# `636f59b3` explicitly recommended it, so this is a correction, not a nitpick.
+# It was rejected only AFTER it silently passed a negative control
+# (2026-08-01): it returns rc=0 for ANY PATH
 # THAT MERELY EXISTS ON DISK, producing "<name>:" with an empty `outputs:` and
 # no `input:` line for a target that is not in the graph at all. So it is a
 # file-existence test wearing a graph-query costume -- and a stale binary then
