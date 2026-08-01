@@ -38,6 +38,40 @@ guarded against here, and the anti-vacuity control below is not optional.
 
 This version decodes up to four words directly and needs no extent source.
 
+The adjustment channel (second, INDEPENDENT column -- lane CF-8)
+---------------------------------------------------------------
+The branch channel above adjudicates (method, class) only. It is structurally
+blind to the DISPLACEMENT: two thunks that jump to the same method at different
+static adjustments are indistinguishable to it, and a whole vtable block of such
+thunks is exactly the population this tool is pointed at.
+
+The `$4PPPPPPPM@<adj>@` mangling carries that displacement in its SECOND numeric
+field, and it must equal the negation of the thunk's own `addi rN,rN,imm`
+(absent `addi` == adjustment 0, with no exceptions over all 2,509 sites here).
+That makes displacement-level adjudication possible, and it is now a reported
+column rather than living only in a lane's scratch solver -- previously the
+shipped tool could not reproduce the derivation of the patches it was being used
+to bless.
+
+Baseline agreement over the whole map at d2ab626d: 1,429/1,437 (99.44%) in the
+12-byte family and 523/539 (97.03%) in the 16-byte family; `--audit` reports the
+aggregate over both, 1,953/1,978 = 98.74%.
+
+** The adjustment CONTROL line is close to vacuous by construction -- do not
+read it as corroboration. ** The base disagreement rate is only 1.26%, so a
+60-row control has (1-0.0126)^60 ~= 47% probability of showing ADJ_MISMATCH=0
+purely by chance. An all-ADJ_MATCH control line is therefore the SINGLE MOST
+LIKELY outcome even when the instrument is working, and it carries almost no
+information -- unlike the branch channel, whose control genuinely mixes (~45
+AGREE / ~9 DISAGREE per 60). Judge a run on the BRANCH control; the adjustment
+column is a per-row filter, not a calibration.
+
+** Necessary, NOT sufficient. ** This channel is far weaker at discrimination
+than the branch channel and must not be read as a second opinion of equal
+weight: on the 90 rows lane CF-8 deleted it returned ADJ_MATCH on all 90, while
+the branch channel condemned 41 of them outright. A name can carry the right
+displacement for its address and still name the wrong method.
+
 Anti-vacuity control
 --------------------
 `--control N` runs the same instrument over N randomly chosen $4 thunks the
@@ -59,6 +93,7 @@ import argparse
 import collections
 import json
 import random
+import re
 import struct
 import sys
 
@@ -100,6 +135,52 @@ class Image:
 def _is_branch(w):
     # PowerPC primary opcode 18 == b / bl / ba / bla
     return w is not None and (w >> 26) == 18
+
+
+def _adjustment_from_code(img, va):
+    """The thunk's STATIC ADJUSTMENT, read out of its own `addi rN,rN,imm`.
+
+    The 4-word vtordisp form is
+        lwz r11,-4(rN) / subf rN,r11,rN / addi rN,rN,-adj / b target
+    and the 3-word form simply omits the `addi`, which is the adjustment being
+    zero. So: locate the terminal branch (first branch, see thunk_target), and
+    if the instruction immediately before it is an `addi` (primary opcode 14),
+    the adjustment is the NEGATED immediate; otherwise it is 0.
+
+    Measured on this binary: `adj == 0` iff no `addi` is present, with no
+    exceptions over all 2,509 thunk sites.
+    """
+    for i in range(4):
+        if _is_branch(img.word(va + 4 * i)):
+            if i >= 1:
+                w = img.word(va + 4 * (i - 1))
+                if w is not None and (w >> 26) == 14:      # addi
+                    imm = struct.unpack(">h", struct.pack(">H", w & 0xFFFF))[0]
+                    return -imm
+            return 0
+    return None
+
+
+def _adjustment_from_name(name):
+    """The adjustment encoded in the mangled `$4PPPPPPPM@<adj>@` SECOND field.
+
+    MSVC's `$4` (vtordisp) mangling carries two numeric fields; the first is the
+    vtordisp offset (always `PPPPPPPM@` = -4 here) and the second is the static
+    adjustment.  Numbers are `0`-`9` for 1..10 and an `A`-`P` base-16 run
+    terminated by `@` otherwise.
+    """
+    if not isinstance(name, str):
+        return None
+    m = re.search(r"\$4([A-P]+@|[0-9])([A-P]+@|[0-9])", name)
+    if not m:
+        return None
+    s = m.group(2)
+    if re.fullmatch(r"[0-9]", s):
+        return int(s) + 1
+    v = 0
+    for ch in s[:-1]:
+        v = v * 16 + (ord(ch) - 65)
+    return v
 
 
 def _branch_target(img, va):
@@ -160,11 +241,31 @@ def adjudicate(img, tmap, addr, proposed):
     """Compare a proposed name for `addr` against its branch target's row."""
     va = int(addr, 16)
     target, form = thunk_target(img, va)
+    adj_code = _adjustment_from_code(img, va)
+    adj_name = _adjustment_from_name(proposed)
     if target is None:
-        return {"addr": addr, "verdict": "NO_BRANCH", "form": form}
+        return {"addr": addr, "verdict": "NO_BRANCH", "form": form,
+                "adj_code": adj_code, "adj_name": adj_name, "adj": "NO_BRANCH"}
     row = tmap.get("0x%08x" % target)
     rec = {"addr": addr, "target": "0x%08x" % target, "form": form,
-           "target_row": row, "proposed": proposed}
+           "target_row": row, "proposed": proposed,
+           "adj_code": adj_code, "adj_name": adj_name}
+    # ---- SECOND, INDEPENDENT CHANNEL: the static adjustment ------------------
+    # The branch channel adjudicates (method, class).  It says NOTHING about the
+    # displacement, so two thunks to the same method at different adjustments are
+    # indistinguishable to it.  The `$4PPPPPPPM@<adj>@` field must equal the
+    # thunk's own `addi`, which makes DISPLACEMENT-LEVEL adjudication possible.
+    # Baseline over the whole map at d2ab626d: 1429/1437 agree in the 12-byte
+    # family (99.44%) and 523/539 in the 16-byte family (97.03%).  Note this
+    # channel is much WEAKER at discrimination than the branch channel -- on the
+    # 90 rows lane CF-8 deleted it returned ADJ_MATCH on all 90 while the branch
+    # channel condemned 41 -- so treat ADJ_MATCH as necessary, never sufficient.
+    if adj_name is None:
+        rec["adj"] = "ADJ_UNDECODABLE"
+    elif adj_code is None:
+        rec["adj"] = "ADJ_NO_CODE"
+    else:
+        rec["adj"] = "ADJ_MATCH" if adj_name == adj_code else "ADJ_MISMATCH"
     if row is None:
         rec["verdict"] = "TARGET_UNNAMED"
     elif method_sig(row) == method_sig(proposed):
@@ -186,8 +287,12 @@ def parse_patch(path):
 
 def summarize(records, label):
     c = collections.Counter(r["verdict"] for r in records)
+    a = collections.Counter(r.get("adj") for r in records)
     print("%-38s AGREE=%-5d DISAGREE=%-5d unnamed=%-5d no-branch=%d"
           % (label, c["AGREE"], c["DISAGREE"], c["TARGET_UNNAMED"], c["NO_BRANCH"]))
+    print("%-38s ADJ_MATCH=%-5d ADJ_MISMATCH=%-5d undecodable=%-5d no-code=%d"
+          % ("  \\_ adjustment channel", a["ADJ_MATCH"], a["ADJ_MISMATCH"],
+             a["ADJ_UNDECODABLE"], a["ADJ_NO_CODE"]))
     return c
 
 
@@ -225,9 +330,10 @@ def main():
 
     if args.verbose or args.addrs:
         for r in records:
-            print("%s [%s] -> %s  %-46s %s"
+            print("%s [%s] -> %s  %-46s %-15s adj code=%-5s name=%-5s %s"
                   % (r["addr"], r.get("form", "-"), r.get("target", "-"),
-                     str(r.get("target_row"))[:44], r["verdict"]))
+                     str(r.get("target_row"))[:44], r["verdict"],
+                     r.get("adj_code"), r.get("adj_name"), r.get("adj", "-")))
         print()
 
     summarize(records, "PROPOSED")
