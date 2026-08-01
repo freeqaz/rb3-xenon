@@ -330,7 +330,24 @@ plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
   missing dep file) → passthrough, never a stale serve. Served objs are
   byte-identical to a real compile except (a) the 4-byte COFF timestamp (zeroed on
   hits) and (b) for cross-root hits, the single embedded `/Fo` path string — both
-  match-irrelevant (whole-binary `matched_functions` holds equal through all-hits
+  match-irrelevant
+  ⛔ **"match-irrelevant" is TRUE FOR THE METRIC AND BADLY MISLEADING FOR BYTE
+  COMPARISON — raw `.obj` byte comparison is a DEAD INSTRUMENT here.** A
+  cache-served obj embeds the `/Fo` path of whichever worktree **populated** the
+  entry, and **four characters of path difference shift every subsequent file
+  offset, turning one string into 96,681 differing bytes.** Measured 2026-08-01: a
+  warm worktree sampled **0 of 40** objs carrying its own root (four distinct
+  foreign roots); repo main 56/60 own + 4 foreign. A same-source null produced
+  **951 differing objs — more than the treatment it was meant to validate.**
+  Separately, the **PCH consistency signature** (4 bytes at `0x010980`, refreshed
+  on every PCH rebuild) makes **379 objs differ** — all inside PCH-eligible dirs,
+  essentially every obj in them, zero outside — even with `OBJCACHE=off`.
+  ⚠⚠ The obvious determinism control — revert and rebuild **with the cache on** —
+  is **VACUOUS**: it re-serves the identical cached bytes, so the natural way to
+  validate an obj-byte comparator *confirms* it.
+  ⇒ An obj-byte comparison is meaningful **only** with `OBJCACHE=off` on BOTH legs
+  **and** the PCH-dir residue subtracted. Otherwise use `matched_functions` /
+  `fuzzy_match_percent` or a relocation-normalized body hash. (whole-binary `matched_functions` holds equal through all-hits
   rebuilds). objcache also normalizes recorded deps to **repo-root-relative** (no
   absolute src paths in `ninja -t deps` → enables warm-worktree `.ninja_deps` seeding).
 - **Resolved gotcha (7956af7):** `<memory.h>` used to have no real match on the
