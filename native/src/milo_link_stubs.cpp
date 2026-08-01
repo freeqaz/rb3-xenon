@@ -12,12 +12,33 @@
 //       X360 (Direct3D 9), which the port replaces wholesale -- CLAUDE.md's
 //       scope list names rnddx9/rndwii as "replaced by an OpenGL/Vulkan/Metal
 //       backend". X2 loads and does not draw, so a no-op is the CORRECT
-//       behaviour here, not a placeholder for it. ★ X3 deletes this entire
-//       section by linking libmilo-engine.a, which already supplies every one
-//       of them: RenderState_Native.cpp, Rnd_Wgpu.cpp (TheRnd/TheNgRnd/
-//       TheShaderMgr), RndTex_Native.cpp + Tex_Wgpu.cpp, Mesh_Wgpu.cpp,
-//       Part_Wgpu.cpp, MeshGpuCache.cpp. That mapping is the concrete X3
-//       worklist, and it is why this section is grouped rather than scattered.
+//       behaviour here, not a placeholder for it.
+//
+//       ★ X3 UPDATE -- MOST of this section is now retired by
+//       `-DRB3_ENGINE_RENDER=1` (rb3-render links libmilo-engine.a, which
+//       supplies the real bodies), but NOT all of it, and the exception is a
+//       correction to X2's own mapping table:
+//
+//         retired    Rnd_Wgpu.cpp        TheNgRnd, TheShaderMgr, TheUI,
+//                                        FlushPostProcessingForOverlay
+//         retired    Tex_Wgpu.cpp        RndTex::{Sync,Presync}Bitmap,
+//                                        {Make,Finish}DrawTarget
+//         retired    Mesh_Wgpu.cpp       RndMesh::DrawShowing
+//         retired    MeshGpuCache.cpp    RndMesh::OnSync, CleanupGpuMesh
+//         retired    Part_Wgpu.cpp       DrawParticlesBillboard
+//         retired    TransparentQueue.cpp FlushTransparentDraws
+//         ⛔ KEPT    RenderState_Native.cpp is NOT IN THE ENGINE'S SOURCE LIST.
+//                    milo-native-engine/CMakeLists.txt:361-370 defers it (with
+//                    Skeleton_Native.cpp, PlatformMgr_Native.cpp, HttpServer,
+//                    DebugPanel) as DC3 glue, because rnddx9/RenderState.h
+//                    pulls xdk/D3D9.h. So TheRenderState and the 17
+//                    RndRenderState::Set* bodies stay stubbed even in the
+//                    render target -- and that is CORRECT, not a gap: the
+//                    WebGPU backend carries its own pipeline state and never
+//                    reads a D3D9 device state. X2's table listed this row as
+//                    engine-supplied; it was wrong.
+//         ⛔ KEPT    SpotlightDrawer::DeSelect, RndFont::CellDiff -- no engine
+//                    counterpart exists; still leaves.
 //
 //   (3) OFF-PATH SINGLETONS AND HANDLER-ONLY SYMBOLS. Reached only from
 //       BEGIN_HANDLERS blocks, editor paths, or subsystems X2 does not stand up
@@ -54,6 +75,19 @@ void WorldInstance::Load(BinStream &bs) {
     PreLoad(bs);
     PostLoad(bs);
 }
+
+// rndobj/Rnd.cpp:110 declares `extern int lbl_82F14008` — an unhomed retail
+// DATA label, not a function gap — and no TU defines it. It is the heap-overlay
+// cursor: Rnd::OnToggleHeap (:1286-1288) increments it and wraps to -1 past
+// MemNumHeaps(), and Rnd::UpdateHeap (:1379-1387) reads -1 as "show every heap"
+// and any other value as a heap index. Retail's copy lives in .bss, so
+// ZERO-INITIALISED is the faithful state (overlay starts on heap 0), and a
+// plain tentative definition is exactly that — deliberately NOT `= -1`, which
+// would silently start the overlay in a different mode from retail.
+//
+// Reached only from Rnd::PreInit's overlay wiring in the render target;
+// --gc-sections drops it in rb3-milo.
+int lbl_82F14008;
 
 // char/Char.h:10 declares `extern float gCharHighlightY` and no TU defines it.
 // Char.cpp:146/168-169 uses -1 as the "nothing highlighted" sentinel (it reads
@@ -127,6 +161,7 @@ void RndRenderState::SetStencilTestEnable(bool) {}
 void RndRenderState::SetStencilFunc(TestFunc, u8) {}
 void RndRenderState::SetStencilOp(StencilOp, StencilOp, StencilOp) {}
 
+#ifndef RB3_ENGINE_RENDER
 // --- the two renderer singletons (rnddx9/Rnd.cpp + ShaderMgr.cpp;
 //     X3: engine Rnd_Wgpu.cpp defines both as references to gWgpuRndInstance)
 //
@@ -168,6 +203,7 @@ void DrawParticlesBillboard(RndParticleSys *) {}
 //     meta/MoviePanel.cpp:29, ui/PanelDir.cpp:23)
 void FlushPostProcessingForOverlay() {}
 void FlushTransparentDraws() {}
+#endif // !RB3_ENGINE_RENDER
 
 // --- misc render leaves
 void SpotlightDrawer::DeSelect() {}
@@ -197,7 +233,12 @@ void HamWardrobe::ForceCrowdAnimationEnd() {}
 // not run. ui/ IS compiled (38/38 clean), so only the INSTANCE is missing, not
 // the class -- PanelDir and the UI object classes are real here, which is what
 // keeps PanelDir off the unregistered-*Dir desync path.
+// ⚠ The engine defines this too (Rnd_Wgpu.cpp:79 `UIManager* TheUI = nullptr;`),
+// which is a duplicate-definition collision the basename diff does NOT show --
+// so it is guarded on the same macro as section (2).
+#ifndef RB3_ENGINE_RENDER
 UIManager *TheUI;
+#endif
 
 // --- Symbol globals referenced only from BEGIN_HANDLERS / SYNC_PROP blocks.
 // Same convention and rationale as native/src/m6_symbols.cpp: declared in

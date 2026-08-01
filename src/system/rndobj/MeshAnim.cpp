@@ -287,6 +287,30 @@ void RndMeshAnim::ShrinkKeys(int num) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// SCATTER TAIL -- X360 ONLY.
+//
+// Everything below this line exists to reproduce retail's COMDAT placement and
+// emits OTHER TUs' bodies from this one. Natively it is not merely unnecessary,
+// it is unbuildable and would be wrong even if it built:
+//
+//   * synth_xbox/Voice.cpp does not compile off-Xbox (XAUDIO2 send descriptors,
+//     CreateThread) -- MEASURED, 2 errors under this build's exact flags.
+//   * band3/game/NetGameMsgs.cpp is a game TU no rndobj target compiles.
+//   * MultiMesh.cpp / Fur.cpp / ShaderMgr.cpp / mtx.cpp are ALREADY emitted by
+//     other TUs in the native rndobj source set, so emitting them here as well
+//     is a duplicate definition, not a gap.
+//
+// So the tail is guarded rather than the TU excluded. The difference matters:
+// excluding MeshAnim.cpp lost RndMeshAnim ENTIRELY -- and rndobj/Rnd.cpp:313
+// `RndMeshAnim::Init()` is an inline REGISTER_OBJ_FACTORY, so the moment
+// anything calls Rnd::PreInit (X3 does) the link demands the ctor and typeinfo
+// that the exclusion had removed. Guarding gives the native build the class and
+// costs the X360 build nothing: it passes no /D, so HX_NATIVE is never defined
+// there and the preprocessed token stream is byte-identical.
+// ---------------------------------------------------------------------------
+#ifndef HX_NATIVE
+
 // RB3 retail linker interleaved MultiMesh.cpp / ShaderMgr.cpp / mtx.cpp COMDATs
 // into this TU's .text span. Compile their bodies here so objdiff pairs them (bp2r).
 // MultiMesh's INIT_REVS collides with MeshAnim's own gRev/gAltRev (both file-scope
@@ -323,3 +347,5 @@ void RndMeshAnim::ShrinkKeys(int num) {
 #include "synth_xbox/Voice.cpp"
 #undef gRev
 #undef gAltRev
+
+#endif // !HX_NATIVE (scatter tail)

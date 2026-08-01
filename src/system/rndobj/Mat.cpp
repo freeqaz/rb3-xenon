@@ -288,8 +288,45 @@ void RndMat::Init() {
     BaseMaterial::SetDefaultMat(mat);
     RELEASE(sMetaMaterials);
     sMetaMaterials = LoadMetaMaterials();
+#ifdef HX_NATIVE
+    // ⛔ THE METAMATERIAL BLOCK IS DC3 CONTENT, AND RB3 HAS NONE OF IT.
+    //
+    // LoadMetaMaterials (:393) returns NULL unless
+    // SystemConfig("objects", "Mat", "metamaterial_path") is present and
+    // non-empty. MEASURED against the shipped RB3-360 disc, 2026-08-01:
+    //
+    //   * `metamaterial_path` appears in NO RB3 config DTA -- not objects.dta,
+    //     not rnd_objects.dta, not band_preinit_keep.dta, not band_keep.dta.
+    //   * there is no metamaterials.milo anywhere in RB3's archive.
+    //   * DC3 has BOTH (dc3-decomp/orig-assets/extracted/config/gen/
+    //     metamaterials.milo_xbox), which is where this code path comes from.
+    //
+    // So on RB3 data the next two lines are `NULL->HashTableUsedSize()`, a hard
+    // segfault three calls into Rnd::PreInit. And this body is NOT
+    // target-verified: build/45410914/report.json's `default/Mat` unit carries
+    // 5 functions and RndMat::Init is not one of them, while the body here is
+    // BYTE-IDENTICAL to dc3-decomp/src/system/rndobj/Mat.cpp:291-300. It is a
+    // DC3 port wearing a matched TU's name, and the null deref is the tell.
+    //
+    // Guarded rather than deleted, because "RB3 retail does not do this" is an
+    // inference from the data and not yet from the disassembly -- confirming it
+    // is an objdiff job on the real fn, which is X4's to schedule. Until then
+    // the X360 side keeps the exact statements it has today (this build passes
+    // no /D, so HX_NATIVE is never defined there and its token stream is
+    // unchanged) and the native side stops dying on data RB3 never shipped.
+    if (sMetaMaterials) {
+        int hashsize = (sMetaMaterials->HashTableUsedSize() + 200) * 2;
+        sMetaMaterials->Reserve(hashsize, sMetaMaterials->StrTableUsedSize() + 4400);
+    } else {
+        MILO_NOTIFY(
+            "RndMat::Init: no metamaterials (objects/Mat/metamaterial_path unset) -- "
+            "expected on RB3, which ships no metamaterial content"
+        );
+    }
+#else
     int hashsize = (sMetaMaterials->HashTableUsedSize() + 200) * 2;
     sMetaMaterials->Reserve(hashsize, sMetaMaterials->StrTableUsedSize() + 4400);
+#endif
     CreateAndSetMetaMat(mat);
 }
 

@@ -933,17 +933,50 @@ if(RB3X_BUILD_ENGINE)
     #                         See the X1 doc for why this was NOT reconciled.
     #
     # NOT excluded, and each is a tell that xenon is DC3-lineage (every one is
-    # on rb3-Wii's 18-entry exclusion list): File_Native, AsyncFile_Native,
-    # CDReader_Native, Memory_Native (includes DC3's src/Memory.h — xenon HAS
-    # src/Memory.h, rb3-Wii does not), ThreadCall_Native, Keygen_Stub,
-    # MapFile_Stub, NetworkSocket_Stub, SampleInst_Native, StreamReceiver_Native,
-    # BoneSetup, CharTwistSolver, FFmpegAudioReader.
+    # on rb3-Wii's 18-entry exclusion list): CDReader_Native, Keygen_Stub,
+    # SampleInst_Native, StreamReceiver_Native, BoneSetup, CharTwistSolver,
+    # FFmpegAudioReader.
+    #
+    # === X3: the 13 basename collisions, PAID ===============================
+    # X1 §7.5 deferred them ("the first target that links the engine AND
+    # NATIVE_SHIMS needs an exclude-or-delete decision on each"); rb3-render is
+    # that target. The decision is UNIFORM and it is exclude-the-ENGINE's-twin,
+    # for one reason: xenon's native/src/platform/ shims are what the other 16
+    # targets already link and what rb3-ark's byte-exact archive gate certifies.
+    # Swapping in the engine's copies would re-open a proven path for no gain.
+    #
+    # ⚠ The pair is not always same-named, so a basename diff UNDERCOUNTS this.
+    # Keyboard_Native.cpp (engine) and Keyboard_Stub.cpp (xenon) are different
+    # FILE names defining the SAME symbols; ditto Joypad_Native/Joypad_Stub
+    # (already excluded above for an unrelated header gap, which happens to
+    # cover it). Excluded by symbol overlap, not by name.
+    #
+    # ⚠ AND THE MEASURED COLLISION SET IS 10, NOT 13. X1's list of 13 was a
+    # basename diff of the two DIRECTORIES; three of those engine files are not
+    # in the engine's own source list at all (CMakeLists.txt:361-370 defers
+    # PlatformMgr_Native.cpp, RenderState_Native.cpp and Skeleton_Native.cpp as
+    # DC3 glue), so they never enter libmilo-engine.a and cannot collide. That
+    # also means the engine does NOT supply TheRenderState / the 17
+    # RndRenderState::Set* bodies — X2's stub-section-(2) mapping claimed it
+    # does, and it is wrong on exactly that row. See milo_link_stubs.cpp.
     set(MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE
         DataParser_Native.cpp
         FxSendNative.cpp
         Joypad_Native.cpp
         Synth_Stub.cpp
-        FFmpegMovieImpl.cpp)
+        FFmpegMovieImpl.cpp
+        # --- X3: xenon's native/src/platform/ owns these ---
+        AsyncFile_Native.cpp
+        Cache_Stub.cpp
+        ChecksumData_Stub.cpp
+        File_Native.cpp
+        Keyboard_Native.cpp      # twin of xenon's Keyboard_Stub.cpp
+        MapFile_Stub.cpp
+        Memory_Native.cpp
+        Net_Stub.cpp
+        NetworkSocket_Stub.cpp
+        ThreadCall_Native.cpp
+        VirtualKeyboard_Stub.cpp)
 
     # Sticky CACHE + FORCE so a stale value from an earlier configure can't linger.
     set(MILO_ENGINE_BUILD_GFX   ON  CACHE BOOL   "xenon: build the WebGPU gfx core" FORCE)
@@ -1029,13 +1062,6 @@ list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "/\\.[^/]*\\.cpp$")
 # "Can't make %s" + ReadDead skip), and main_milo.cpp REPORTS every such class
 # so a gap can never pass silently as a clean load.
 #
-#   MeshAnim     RndMeshAnim. Scatter-includes synth_xbox/Voice.cpp (XAUDIO2 +
-#                CreateThread) AND band3/game/NetGameMsgs.cpp, which sits on the
-#                utl/Symbols*.h x POSIX collision path (X1 SS3.3) -- the one
-#                thing X2 was told not to touch.
-#   MeshDeform   RndMeshDeform. Scatter-includes band3/meta_band/BandUI.cpp:
-#                same Symbols*.h x POSIX collision, plus an InterstitialMgr
-#                member gap (mRandomOverride).
 #   BeatClock    xenon's SongPos has no Phrase field, and BeatClock.cpp reads
 #                AccessPhrase()/GetPhrase() unconditionally (:31, :147, :153).
 #                A genuine header-shape divergence against the beatmatch
@@ -1050,10 +1076,22 @@ list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "/\\.[^/]*\\.cpp$")
 # with the band3-include-root and GemManager fixes. Counting TUs before finding
 # root causes badly overstates the work: 13 rndobj failures were 6 defects.
 #
+#
+# ★ X3: 3 -> 1. X2 predicted MeshAnim/MeshDeform would fall out cheaply once
+# `7ca1ef8a` closed the Symbols*.h x POSIX collision. RE-MEASURED, and the
+# prediction was HALF right: the Symbols collision is indeed gone, but it was
+# never the only cause. MeshAnim still failed inside synth_xbox/Voice.cpp
+# (XAUDIO2 send descriptors + CreateThread, 2 errors) and MeshDeform inside
+# band3/meta_band/BandUI.cpp (InterstitialMgr::mRandomOverride, 1 error) -- all
+# three sites in SCATTER-INCLUDED tails, none in the TU's own body. So the fix
+# is not "the blocker went away", it is an #ifndef HX_NATIVE on the two tails
+# (see the note at the top of each). X3 needs both classes because Rnd::PreInit
+# registers their factories inline, and PreInit is now on the live path.
+#
 # Anchored on /Name.cpp$ so e.g. Font.cpp does not also drop FontBase.cpp.
 set(_MILO_FORK_EXCLUDE
-    MeshAnim MeshDeform                          # rndobj  (2 of 86)
     BeatClock)                                   # world   (1 of 24)
+                                                 # rndobj  (0 of 86)
                                                  # char    (0 of 60)
                                                  # ui      (0 of 38)
 foreach(_tu ${_MILO_FORK_EXCLUDE})
@@ -1091,8 +1129,11 @@ message(STATUS "[X2] rb3-milo fork surface: ${_milo_fork_count} rndobj/char/worl
 # the 15 targets that predate it (same defensive stance as the Dawn check above).
 if(EXISTS "${MILO_ENGINE_PATH}/src/platform/NativeSettings.h")
 
-rb3_add_executable(rb3-milo
-    ${CMAKE_SOURCE_DIR}/src/main_milo.cpp
+# The fork+shim source set shared by rb3-milo (X2, load-only) and rb3-render
+# (X3, load-and-draw). Factored out rather than copied so the two targets cannot
+# drift: the ONLY differences between them are the driver TU, the engine link,
+# and RB3_ENGINE_RENDER (which retires the stub bodies the engine supplies).
+set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
     ${MILO_FORK_SOURCES}
@@ -1115,7 +1156,54 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
 )
-target_compile_options(rb3-milo PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+
+rb3_add_executable(rb3-milo
+    ${CMAKE_SOURCE_DIR}/src/main_milo.cpp
+    ${MILO_TARGET_COMMON_SOURCES}
+)
+set(MILO_TARGETS rb3-milo)
+
+# =============================================================================
+# X3 — rb3-render: the same object graph, DRAWN, through the engine's dc3
+#      WebGPU backend, headless, to a PNG.
+# =============================================================================
+# rb3-milo's charter was "load, and prove the load without a renderer". X3 keeps
+# every one of its gates and adds the renderer on top: SAME fork surface, SAME
+# shims, SAME factories, SAME archive. The delta is exactly three things --
+# main_render.cpp, `milo-engine` on the link line, and RB3_ENGINE_RENDER.
+#
+# ⚠ THIS IS THE FIRST TARGET IN THE TREE THAT INSTANTIATES WgpuRnd, i.e. the
+# first one on which src/system/rndobj/Rnd.h:354-360's member-layout caveat can
+# actually bite. It cannot bite as an ABI problem -- the engine is compiled with
+# MILO_ENGINE_DECOMP_INCLUDE_DIRS pointing at xenon's OWN headers, so both sides
+# see one rndobj/Rnd.h and offsets agree by construction. The live risk is
+# SEMANTIC: the dc3 backend reading a xenon member that exists at the right
+# offset and means something else. main_render.cpp --dump-rnd prints every
+# Rnd/NgRnd member the backend actually reads, so that class of bug is
+# measurable rather than inferred.
+if(RB3X_BUILD_ENGINE)
+    rb3_add_executable(rb3-render
+        ${CMAKE_SOURCE_DIR}/src/main_render.cpp
+        # The engine's two CONSUMER SEAMS (ShouldSkipMesh, DebugPanel::*) —
+        # header-declared, deliberately undefined in libmilo-engine.a. See the
+        # file for why RB3's answers differ from DC3's.
+        ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
+        ${MILO_TARGET_COMMON_SOURCES}
+    )
+    list(APPEND MILO_TARGETS rb3-render)
+
+    # RB3_ENGINE_RENDER retires the milo_link_stubs.cpp bodies that
+    # libmilo-engine.a defines for real (TheNgRnd/TheShaderMgr, the RndTex GPU
+    # residency four, RndMesh::DrawShowing/OnSync + CleanupGpuMesh,
+    # DrawParticlesBillboard, the two draw-order flushes, TheUI). It does NOT
+    # retire TheRenderState / RndRenderState::Set* -- see the exclude-list note
+    # above for why the engine does not supply those.
+    target_compile_definitions(rb3-render PRIVATE RB3_ENGINE_RENDER=1)
+    target_link_libraries(rb3-render PRIVATE milo-engine)
+endif()
+
+foreach(_t IN LISTS MILO_TARGETS)
+target_compile_options(${_t} PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
 # --gc-sections, for the same reason rb3-score2/3/4 use it: 162 newly-compiled
 # TUs reference a great deal of code that the LOAD path never reaches (render
@@ -1126,7 +1214,7 @@ target_compile_options(rb3-milo PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS
 # instead means the stub list below is only what the load path ACTUALLY touches
 # -- which is the difference between a stub list you can audit and one you
 # cannot.
-target_link_options(rb3-milo PRIVATE -Wl,--gc-sections)
+target_link_options(${_t} PRIVATE -Wl,--gc-sections)
 
 # --- -Werror opt-in exemptions, with the triage that earned each one ---------
 # The DECOMP_WARNINGS policy at the top of this file was MEASURED to produce
@@ -1152,7 +1240,7 @@ target_link_options(rb3-milo PRIVATE -Wl,--gc-sections)
 # exclude list -- a nice illustration that scatter-includes move diagnostics as
 # well as symbols.)
 set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Console.cpp
-    TARGET_DIRECTORY rb3-milo PROPERTIES COMPILE_OPTIONS "-Wno-self-assign")
+    TARGET_DIRECTORY ${_t} PROPERTIES COMPILE_OPTIONS "-Wno-self-assign")
 #   MultiMesh.cpp:363  `proxy = proxy;` -- a no-op store, almost certainly a
 #   decomp device to pin the variable's storage. Harmless (proxy is initialized
 #   to nullptr at :354). ⚠ BUT the loop above it assigns `proxy = sit->first`
@@ -1163,7 +1251,7 @@ set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Console.cpp
 #   recorded for triage, not patched here.
 
 set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Mat_NG.cpp
-    TARGET_DIRECTORY rb3-milo PROPERTIES
+    TARGET_DIRECTORY ${_t} PROPERTIES
     COMPILE_OPTIONS "-Wno-tautological-constant-out-of-range-compare")
 #   Mat_NG.cpp:145  `cur == 6` where cur is RndRenderState::ClampMode -- and
 #   rnddx9/RenderState.h:16 declares `enum ClampMode {};`, i.e. EMPTY. It is a
@@ -1176,10 +1264,10 @@ set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Mat_NG.cpp
 set_source_files_properties(
     ${REPO_ROOT}/src/system/rndobj/Text.cpp
     ${REPO_ROOT}/src/system/char/CharClipDisplay.cpp
-    TARGET_DIRECTORY rb3-milo PROPERTIES
+    TARGET_DIRECTORY ${_t} PROPERTIES
     COMPILE_OPTIONS "-Wno-sometimes-uninitialized")
 set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Font.cpp
-    TARGET_DIRECTORY rb3-milo PROPERTIES COMPILE_OPTIONS "-Wno-uninitialized")
+    TARGET_DIRECTORY ${_t} PROPERTIES COMPILE_OPTIONS "-Wno-uninitialized")
 #   Font.cpp:341-355  RndFont::Load's rev<4 branch declares `float w, h;` and
 #   then SHADOWS them with `int w, h;` inside the nested `if (d.rev < 2)`. Only
 #   the shadowing pair is ever written, so on the rev==2/3 path the OUTER w/h
@@ -1200,9 +1288,9 @@ set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Font.cpp
 #   That reads like a transcription artifact of a single outer-scope variable in
 #   retail. Off the load path (an editor/debug display draw), but it is a live
 #   uninitialized pointer read the moment anything calls it.
-target_compile_definitions(rb3-milo PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
-target_include_directories(rb3-milo SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_include_directories(rb3-milo PRIVATE
+target_compile_definitions(${_t} PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(${_t} SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(${_t} PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${REPO_ROOT}/src
     ${REPO_ROOT}/src/system
@@ -1213,7 +1301,8 @@ target_include_directories(rb3-milo PRIVATE
     ${REPO_ROOT}/src/band3
     ${REPO_ROOT}/src/network
     ${MILO_ENGINE_PATH}/src)   # header-only: platform/NativeSettings.h
-target_link_libraries(rb3-milo PRIVATE Threads::Threads ZLIB::ZLIB)
+target_link_libraries(${_t} PRIVATE Threads::Threads ZLIB::ZLIB)
+endforeach()
 
 else()
     message(WARNING

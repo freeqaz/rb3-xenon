@@ -465,7 +465,43 @@ void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const
 
     projMtx.z.z = farRatio;
     projMtx.x.x = (mScreenRect.w * mLocalProjectXfm.m.x.x * 2.0f) / width;
+#ifdef HX_NATIVE
+    // ⛔ THE VERTICAL FOV TERM WAS READ FROM THE WRONG MATRIX SLOT, AND IT MADE
+    //    THE ENGINE'S PROJECTION DEGENERATE.
+    //
+    // The X360 line below reads mLocalProjectXfm.v.x -- the TRANSLATION
+    // component. UpdateLocal (:162-163 in DC3's copy, :160-161 here) does
+    // `mLocalProjectXfm.v.Zero()` and then only ever writes `m.*`, so v.x is
+    // ALWAYS EXACTLY ZERO. projMtx.y.y is therefore always 0, i.e. nothing in
+    // view space contributes to NDC y, and every triangle collapses onto a
+    // line. MEASURED at X3 bring-up on crowd_female01: with this line as-is the
+    // engine's GetViewProjectXfms path returned
+    //     [ 1.8107  0  0  0 ][ 0  0  0  0 ][ -0  0  1.0011  1 ][ 0  0 -1.1123  0 ]
+    // -- an entirely zero second row -- and the frame came back a flat clear
+    // colour with the draws demonstrably issued and every texture uploaded.
+    //
+    // The vertical FOV factor lives in m.z.y: UpdateLocal writes
+    // `mLocalProjectXfm.m.z.y = -1/thetan` (and `-1/ratio` in the ortho
+    // branch). ★ DC3 HAS ALREADY FOUND AND FIXED THIS EXACT LINE --
+    // dc3-decomp/src/system/rndobj/Cam.cpp:468-472 carries the corrected slot
+    // and a comment ending "(was incorrectly mLocalProjectXfm.v.x, which is
+    // always zero)". rb3-Wii's Cam.cpp writes the same m.z.y in UpdateLocal.
+    // So three independent decomps agree on where the value is stored, and
+    // xenon is alone in reading it from somewhere else.
+    //
+    // ⚠ GATED, NOT CORRECTED OUTRIGHT, and the reason is honest rather than
+    // timid: `RndCam::GetViewProjectXfms` does not appear as a matched function
+    // in build/45410914/report.json's `default/Cam` unit (84.7% fn-matched), so
+    // this build has NO objdiff evidence about the retail body either way. The
+    // native side gets the demonstrably-correct value; the X360 side keeps
+    // exactly the bytes it compiles today (no /D is passed there, so HX_NATIVE
+    // is never defined and its token stream is unchanged). Promoting the fix
+    // unconditionally is an objdiff A/B against the real function, and it is
+    // written up as owed work in docs/plans/x3-first-render-2026-08-01.md.
+    projMtx.y.y = (-(mScreenRect.h * mLocalProjectXfm.m.z.y) * 2.0f) / height;
+#else
     projMtx.y.y = (-(mScreenRect.h * mLocalProjectXfm.v.x) * 2.0f) / height;
+#endif
     projMtx.z.y = (t + b) / height;
     projMtx.z.x = -((r + l) / width);
     projMtx.w.z = -(nearPlane * farRatio);
