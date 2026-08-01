@@ -342,8 +342,19 @@ void CharBoneDir::MergeCharacter(const FilePath &fp) {
 
 // COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
 // interleaved these owners' COMDATs into this TU's .text span.
+// ⚠ NATIVE: guarded so char/CharBoneTwist.cpp is compiled STANDALONE.
+// cmake/ScatterIncludes.cmake classifies this edge as CONDITIONAL (it warns
+// about it at configure time) even though the preprocessor nesting depth here
+// is 0, so it declines to prune the includee -- and the includee then gets
+// emitted twice: once standalone and once from this TU. An explicit
+// `#ifndef HX_NATIVE` is the shape that module documents as always correct
+// ("the guard makes the edge inert, and this module only prunes for edges that
+// are active"). X360 keeps the scatter-include, which is where it earns its
+// COMDAT placement.
+#ifndef HX_NATIVE
 #define gRev gRev_CharBoneTwist
 #define gAltRev gAltRev_CharBoneTwist
 #include "char/CharBoneTwist.cpp"
 #undef gRev
 #undef gAltRev
+#endif

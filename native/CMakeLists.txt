@@ -978,3 +978,246 @@ if(RB3X_BUILD_ENGINE)
         ${REPO_ROOT}/src/system)
     target_link_libraries(rb3-frame PRIVATE milo-engine Threads::Threads)
 endif()
+
+# =============================================================================
+# X2 — rb3-milo: load a real .milo_xbox from the mounted ark as a live object
+#      graph. LOAD ONLY; nothing here draws.
+# =============================================================================
+# X1 proved the engine links and clears a frame; it deliberately touched ZERO
+# xenon rndobj members so the Rnd/NgRnd member-layout caveat
+# (src/system/rndobj/Rnd.h:354-360) stayed unmeasured. X2 keeps that caveat
+# intact from the other direction: it stands up the xenon OBJECT graph without
+# a renderer at all.
+#
+# ⚠ THIS TARGET DOES NOT LINK libmilo-engine.a, AND THAT IS DELIBERATE.
+# Loading a .milo needs DirLoader + the object factories, which are 100% xenon
+# fork code; the engine supplies the GPU. Linking it here would (a) drag the
+# 13 native/src/platform <-> engine src/platform basename collisions into a
+# milestone that gains nothing from paying them, and (b) put WgpuRnd/NgRnd
+# member offsets on the critical path of a result that must be interpretable
+# without them. The ONE thing X2 takes from the engine tree is the header-only
+# platform/NativeSettings.h (no .cpp exists; NativeSettings::Get() is inline),
+# which rndobj/Cam.cpp includes under #ifdef HX_NATIVE.
+#
+# X3 is where the engine link and the collision table come due together.
+# =============================================================================
+file(GLOB ENGINE_RNDOBJ CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/rndobj/*.cpp)
+file(GLOB ENGINE_CHAR   CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/char/*.cpp)
+file(GLOB ENGINE_WORLD  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/world/*.cpp)
+# ui/ is 38/38 clang-LP64-clean as measured -- not one exclusion. It is here
+# because the world/ and rndobj/ object graphs reach PanelDir, UIComponent and
+# TheUI, and PanelDir is an ObjectDir SUBCLASS: stubbing it would be the exact
+# desync hazard main_milo.cpp gates against, not a cosmetic gap.
+file(GLOB ENGINE_UI     CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/ui/*.cpp)
+set(MILO_FORK_SOURCES ${ENGINE_RNDOBJ} ${ENGINE_CHAR} ${ENGINE_WORLD} ${ENGINE_UI})
+
+# Same platform/GFX filters the engine globs use. rndobj/ has no *_Xbox.cpp, but
+# keep the filters symmetric so a future one is dropped automatically. NOTE the
+# *_NG.cpp files (Rnd_NG, Env_NG, Lit_NG, Mat_NG, Fur_NG, PostProc_NG,
+# DOFProc_NG, SpotlightDrawer_NG) are KEPT: NgRnd/NgEnviron/... are the
+# DC3-lineage classes the assets actually name, not a platform backend.
+list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "_(Xbox|Win|Wii|X360)\\.cpp$")
+list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "(Dx9|DX9|Wgpu|D3D|Xenon)")
+# file(GLOB) matches dotfiles; the permuter writes hidden .permuter_work_*.cpp.
+list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "/\\.[^/]*\\.cpp$")
+
+# TUs that still do not compile under clang/LP64, each with the reason and who
+# owns it. Measured with -fsyntax-only under this target's exact flags AFTER the
+# shared-src repairs in bf03982c (which took rndobj 73->83 / 86, char 55->59 / 60,
+# world 19->22 / 24). Everything named here loses only its own object classes;
+# DirLoader degrades gracefully on an unregistered class (obj/DirLoader.cpp:927
+# "Can't make %s" + ReadDead skip), and main_milo.cpp REPORTS every such class
+# so a gap can never pass silently as a clean load.
+#
+#   MeshAnim     RndMeshAnim. Scatter-includes synth_xbox/Voice.cpp (XAUDIO2 +
+#                CreateThread) AND band3/game/NetGameMsgs.cpp, which sits on the
+#                utl/Symbols*.h x POSIX collision path (X1 SS3.3) -- the one
+#                thing X2 was told not to touch.
+#   MeshDeform   RndMeshDeform. Scatter-includes band3/meta_band/BandUI.cpp:
+#                same Symbols*.h x POSIX collision, plus an InterstitialMgr
+#                member gap (mRandomOverride).
+#   BeatClock    xenon's SongPos has no Phrase field, and BeatClock.cpp reads
+#                AccessPhrase()/GetPhrase() unconditionally (:31, :147, :153).
+#                A genuine header-shape divergence against the beatmatch
+#                SongPos, NOT a native-only break -- it wants a SongPos audit,
+#                not a guard, so it is left alone.
+#
+# ⚠ THIS LIST SHRANK FROM 8 TO 3 DURING X2, and the reason is worth recording:
+# five of the eight were NOT independent failures. Console, Font and Crowd all
+# died on ONE defect -- BandCharacter's TextureCompressed(int) failing to
+# override an intptr_t pure virtual under LP64 (fixed in bf03982c) -- reached
+# through three different scatter chains. CubeTex and CharBonesMeshes fell out
+# with the band3-include-root and GemManager fixes. Counting TUs before finding
+# root causes badly overstates the work: 13 rndobj failures were 6 defects.
+#
+# Anchored on /Name.cpp$ so e.g. Font.cpp does not also drop FontBase.cpp.
+set(_MILO_FORK_EXCLUDE
+    MeshAnim MeshDeform                          # rndobj  (2 of 86)
+    BeatClock)                                   # world   (1 of 24)
+                                                 # char    (0 of 60)
+                                                 # ui      (0 of 38)
+foreach(_tu ${_MILO_FORK_EXCLUDE})
+    list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "/${_tu}\\.cpp$")
+endforeach()
+
+# Transitive scatter-include prune -- a gap in cmake/ScatterIncludes.cmake, not
+# a compile failure.
+#
+# That module scans the TARGET'S OWN sources for `#include "*.cpp"` edges and
+# drops any includee that is also a source. It does NOT follow edges out of a
+# file that is not itself a target source. Both TUs below are reached through
+# exactly such a chain --
+#     rndobj/Font.cpp -> bandobj/BandDirector.cpp -> char/CharClip.cpp
+#     rndobj/Font.cpp -> bandobj/BandDirector.cpp -> ... -> char/Character.cpp
+# -- and bandobj/BandDirector.cpp is NOT compiled here, so the module never sees
+# the second hop and leaves CharClip/Character compiling standalone as well.
+# Result: ~30 duplicate definitions at link.
+#
+# Listing them here rather than "fixing" the module is deliberate: making the
+# module transitive changes pruning for all 16 pre-existing targets, which is a
+# behaviour change X2 has no way to validate. Recorded as an X3 item.
+set(_MILO_SCATTER_TRANSITIVE_PRUNE CharClip Character)
+foreach(_tu ${_MILO_SCATTER_TRANSITIVE_PRUNE})
+    list(FILTER MILO_FORK_SOURCES EXCLUDE REGEX "/${_tu}\\.cpp$")
+endforeach()
+
+list(LENGTH MILO_FORK_SOURCES _milo_fork_count)
+message(STATUS "[X2] rb3-milo fork surface: ${_milo_fork_count} rndobj/char/world/ui TUs")
+
+# platform/NativeSettings.h is header-only (no .cpp anywhere in the engine), so
+# this is an include path and NOT a link dependency -- rb3-milo needs no Dawn,
+# no glfw, and builds on a machine with no dc3-decomp-deps tree. If the engine
+# checkout is missing entirely, skip the target rather than break configure for
+# the 15 targets that predate it (same defensive stance as the Dawn check above).
+if(EXISTS "${MILO_ENGINE_PATH}/src/platform/NativeSettings.h")
+
+rb3_add_executable(rb3-milo
+    ${CMAKE_SOURCE_DIR}/src/main_milo.cpp
+    ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
+    ${ENGINE_SOURCES}
+    ${MILO_FORK_SOURCES}
+    # char/CharCollide.cpp unconditionally scatter-includes midi/MidiParserMgr.cpp,
+    # which pulls the whole MidiParser/MidiReader/MidiReceiver surface. These are
+    # the exact six TUs rb3-midi already links (M2_SOURCES), so this is reusing a
+    # proven set rather than stubbing a live parser -- and CharClip's midi-driven
+    # bone channels are real content, not a detour.
+    ${M2_SOURCES}
+    # Two synth leaves, and only two. char/Waypoint.cpp scatter-includes
+    # synth/Sequence.cpp (so `typeinfo for Sequence` needs its SynthPollable
+    # base) and char/CharMeshHide.cpp instantiates ObjRefConcrete<FxSend>, whose
+    # dynamic_cast needs `typeinfo for FxSend`. Both TUs are clang-clean, so
+    # compiling them is strictly better than hand-forging two type_info objects
+    # -- and it does NOT open synth/ generally (no tomcrypt, no audio device).
+    ${REPO_ROOT}/src/system/synth/Pollable.cpp
+    ${REPO_ROOT}/src/system/synth/FxSend.cpp
+    ${DTA_LEXER}
+    ${NATIVE_SHIMS}
+    ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+)
+target_compile_options(rb3-milo PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+# --gc-sections, for the same reason rb3-score2/3/4 use it: 162 newly-compiled
+# TUs reference a great deal of code that the LOAD path never reaches (render
+# methods, editor/EditMode paths, gesture/dance/flow/synth neighbours pulled in
+# through scatter-includes). Without GC every one of those references has to be
+# satisfied by a stub, and every stub is a place where real behaviour can be
+# silently replaced by a no-op. Letting the linker drop the unreachable code
+# instead means the stub list below is only what the load path ACTUALLY touches
+# -- which is the difference between a stub list you can audit and one you
+# cannot.
+target_link_options(rb3-milo PRIVATE -Wl,--gc-sections)
+
+# --- -Werror opt-in exemptions, with the triage that earned each one ---------
+# The DECOMP_WARNINGS policy at the top of this file was MEASURED to produce
+# zero diagnostics -- across the 251 TUs that were in the build AT THE TIME.
+# rb3-milo adds 162 TUs that measurement never covered, and four of them trip an
+# opt-in. That is the policy working, not the policy being wrong: each site
+# below is a real finding. But three of the four are inside MATCHED bodies,
+# where "fixing" it is a match A/B with its own objdiff evidence -- not
+# something X2 gets to do on the way past. So they are exempted PER TU, with the
+# verdict recorded, and listed in docs/plans/x2-object-graph-load-2026-08-01.md
+# as owed work. The policy stays fully armed everywhere else, including on the
+# other 158 new TUs.
+#
+# The ONE that was fixed instead of exempted is char/Character.cpp's
+# `drawMode == 4`: see char/Character.h's kCharDrawShadow -- a missing
+# enumerator meant clang folded the shadow dispatch to false, so character
+# shadows were dead natively. Adding the enumerator is provably codegen-neutral
+# for X360, so it did not need an exemption.
+# NB the exemption goes on rndobj/Console.cpp, not on MultiMesh.cpp: Console.cpp
+# unconditionally scatter-includes rndobj/MultiMesh.cpp, so ScatterIncludes
+# prunes MultiMesh from standalone compilation and the diagnostic is emitted
+# from Console's TU. (It was on MultiMesh.cpp until Console.cpp came off the
+# exclude list -- a nice illustration that scatter-includes move diagnostics as
+# well as symbols.)
+set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Console.cpp
+    TARGET_DIRECTORY rb3-milo PROPERTIES COMPILE_OPTIONS "-Wno-self-assign")
+#   MultiMesh.cpp:363  `proxy = proxy;` -- a no-op store, almost certainly a
+#   decomp device to pin the variable's storage. Harmless (proxy is initialized
+#   to nullptr at :354). ⚠ BUT the loop above it assigns `proxy = sit->first`
+#   on EVERY iteration and only breaks on a match, so after a full non-matching
+#   scan `proxy` holds the LAST pool entry rather than null -- and the
+#   `if (!proxy)` at :364 then does not fire. That is a separate, real logic
+#   defect; it is off the load path (EditMode-only collision picking) and is
+#   recorded for triage, not patched here.
+
+set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Mat_NG.cpp
+    TARGET_DIRECTORY rb3-milo PROPERTIES
+    COMPILE_OPTIONS "-Wno-tautological-constant-out-of-range-compare")
+#   Mat_NG.cpp:145  `cur == 6` where cur is RndRenderState::ClampMode -- and
+#   rnddx9/RenderState.h:16 declares `enum ClampMode {};`, i.e. EMPTY. It is a
+#   placeholder in the DX9 backend header, so EVERY comparison and every
+#   `(ClampMode)N` cast in the tree is trivially out of range. NOT a real dead
+#   branch (unlike the Character one) -- an artifact of a stub enum in a
+#   directory the port replaces wholesale. Fix belongs with rnddx9, or vanishes
+#   when X3 swaps in the engine's render state.
+
+set_source_files_properties(
+    ${REPO_ROOT}/src/system/rndobj/Text.cpp
+    ${REPO_ROOT}/src/system/char/CharClipDisplay.cpp
+    TARGET_DIRECTORY rb3-milo PROPERTIES
+    COMPILE_OPTIONS "-Wno-sometimes-uninitialized")
+set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Font.cpp
+    TARGET_DIRECTORY rb3-milo PROPERTIES COMPILE_OPTIONS "-Wno-uninitialized")
+#   Font.cpp:341-355  RndFont::Load's rev<4 branch declares `float w, h;` and
+#   then SHADOWS them with `int w, h;` inside the nested `if (d.rev < 2)`. Only
+#   the shadowing pair is ever written, so on the rev==2/3 path the OUTER w/h
+#   are read uninitialized at :354-355 to divide the bitmap dimensions. Reads
+#   like the same transcription artifact as CharClipDisplay: retail almost
+#   certainly had one pair of variables. rev<4 fonts do not appear in these
+#   assets, so it is reported rather than patched -- fixing it is a match A/B.
+#   Text.cpp:245  `int fixedLength;` is only assigned when rev > 0xB, but is
+#   read unconditionally three lines later (two MILO_ASSERTs and
+#   `mFixedLength = fixedLength`). For a rev in (8, 0xB] RndText::Load stores
+#   garbage. Plausibly FAITHFUL -- retail's own Load has the same shape -- so it
+#   wants the oracle triage before anyone touches it. Not hit by these assets
+#   (rev is far newer).
+#   CharClipDisplay.cpp:201  worse, and probably NOT faithful: the function
+#   declares `RndTransformable *data` TWICE, once at :213 and once at :219, and
+#   `goto drawIKData` at :214 jumps into the second one's scope PAST its
+#   initializer. On the goto path the `data` read at :222 is uninitialized.
+#   That reads like a transcription artifact of a single outer-scope variable in
+#   retail. Off the load path (an editor/debug display draw), but it is a live
+#   uninitialized pointer read the moment anything calls it.
+target_compile_definitions(rb3-milo PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
+target_include_directories(rb3-milo SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(rb3-milo PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${REPO_ROOT}/src
+    ${REPO_ROOT}/src/system
+    # NOT because band3/ or network/ code is compiled here -- none is. Two fork
+    # TUs scatter-include a band3 TU (char/CharBonesMeshes.cpp:213 <-
+    # bandtrack/GemManager.cpp, ui/UIList.cpp:1084 <- bandtrack/GemTrack.cpp),
+    # and those includees resolve their own headers through these roots.
+    ${REPO_ROOT}/src/band3
+    ${REPO_ROOT}/src/network
+    ${MILO_ENGINE_PATH}/src)   # header-only: platform/NativeSettings.h
+target_link_libraries(rb3-milo PRIVATE Threads::Threads ZLIB::ZLIB)
+
+else()
+    message(WARNING
+        "[X2] no milo-native-engine at ${MILO_ENGINE_PATH} — skipping rb3-milo. "
+        "rndobj/Cam.cpp includes its header-only platform/NativeSettings.h under "
+        "#ifdef HX_NATIVE. Other targets are unaffected.")
+endif()

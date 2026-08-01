@@ -293,15 +293,31 @@ void Sfx::SetReverbEnable(bool b) {
 
 // COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
 // interleaved these owners' COMDATs into this TU's .text span.
+// ⚠ NATIVE: guarded because synth/Synth.cpp would otherwise be emitted TWICE in
+// rb3-milo's link -- once through this edge and once through
+// utl/CheatProvider.cpp. cmake/ScatterIncludes.cmake prunes an includee
+// from standalone compilation, which handles ONE includer; with two, one of
+// them has to go inert. X360 keeps both (it never links, so a duplicate
+// COMDAT is invisible there -- and both placements are load-bearing for it).
+#ifndef HX_NATIVE
 #define gRev gRev_Synth
 #define gAltRev gAltRev_Synth
 #include "synth/Synth.cpp"
 #undef gRev
 #undef gAltRev
+#endif
 
 // sw2 scatter-include (default/Sfx <- world/CameraShot.cpp)
+// ⚠ NATIVE: guarded because world/CameraShot.cpp would otherwise be emitted TWICE in
+// rb3-milo's link -- once through this edge and once through
+// world/LightPreset.cpp. cmake/ScatterIncludes.cmake prunes an includee
+// from standalone compilation, which handles ONE includer; with two, one of
+// them has to go inert. X360 keeps both (it never links, so a duplicate
+// COMDAT is invisible there -- and both placements are load-bearing for it).
+#ifndef HX_NATIVE
 #define gRev gRev_CameraShot
 #define gAltRev gAltRev_CameraShot
 #include "world/CameraShot.cpp"
 #undef gRev
 #undef gAltRev
+#endif

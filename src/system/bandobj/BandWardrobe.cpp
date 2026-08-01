@@ -1326,6 +1326,24 @@ DataNode BandWardrobe::OnSelectExtras(DataArray *da) {
     return DataNode(0);
 }
 
+// ODR: `NodeCmp` is defined twice at external linkage -- here and at
+// obj/DataArray.cpp:431, with DIFFERENT bodies (that one compares DataNodes
+// generically; this one sorts ".tp" entries first). Whichever the linker picks
+// silently changes a sort order somewhere. The X360 build cannot see this: it
+// never links. obj/DataArray.cpp is in every native target's core source set
+// and its NodeCmp is the one its own qsort at :462 depends on, so this copy is
+// the one that keeps external linkage. This copy becomes `static` natively --
+// NOT deleted: the two bodies are DIFFERENT, and BandWardrobe::OnSortTargets
+// (:1356) genuinely wants THIS one. Internal linkage gives both call sites the
+// comparator they were written against, with zero behaviour change on either
+// side; deleting it would have silently handed OnSortTargets DataArray's
+// generic comparator and quietly reordered the wardrobe target list.
+// ⚠ FOLLOW-UP for the match build, where both are still external: whichever the
+// X360 linker picks, ONE of these two qsorts is calling the wrong comparator.
+// `static` on both is the right long-term answer; that is a match A/B.
+#ifdef HX_NATIVE
+static
+#endif
 int NodeCmp(const void *a, const void *b) {
     DataNode *na = (DataNode *)a;
     DataNode *nb = (DataNode *)b;

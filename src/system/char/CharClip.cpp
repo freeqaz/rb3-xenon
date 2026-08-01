@@ -16,10 +16,20 @@
 #include "world/CameraShot.h"
 #include <cmath>
 
+// ODR: `LimitAng` (declared math/Trig.h:14, external linkage) is defined TWICE
+// in this tree -- here and at char/CharForeTwist.cpp:8, with identical bodies.
+// Invisible to the X360 pipeline, which compiles TUs and byte-compares objects
+// and never links; the native build is the only instrument that can see it.
+// CharForeTwist's copy is kept as the single definition because that TU is
+// always compiled standalone, whereas this one is emitted through a
+// scatter-include chain (Font.cpp -> BandDirector.cpp -> CharClip.cpp) and so is
+// not guaranteed present in every source set. Both copies stay for the match.
+#ifndef HX_NATIVE
 float LimitAng(float ang) {
     float r = fmod(ang + PI, 2.0f * PI);
     return r < 0 ? r + PI : r - PI;
 }
+#endif
 
 const float CharClip::kBeatAccuracy = 0.02;
 CharClip::FacingSet::FacingBones CharClip::FacingSet::sFacingPos;

@@ -1066,11 +1066,19 @@ int UIList::CollidePlane(const Plane &p) {
 }
 
 // sw2 scatter-include (default/UIList <- bandobj/BandDirector.cpp)
+// ⚠ NATIVE: guarded because bandobj/BandDirector.cpp would otherwise be emitted TWICE in
+// rb3-milo's link -- once through this edge and once through
+// rndobj/Font.cpp. cmake/ScatterIncludes.cmake prunes an includee
+// from standalone compilation, which handles ONE includer; with two, one of
+// them has to go inert. X360 keeps both (it never links, so a duplicate
+// COMDAT is invisible there -- and both placements are load-bearing for it).
+#ifndef HX_NATIVE
 #define gRev gRev_BandDirector
 #define gAltRev gAltRev_BandDirector
 #include "bandobj/BandDirector.cpp"
 #undef gRev
 #undef gAltRev
+#endif
 
 // sw3 scatter-include (default/UIList <- band3/bandtrack/GemTrack.cpp) [ObjMacros owner]
 // Guarded on the UILIST_SW3_PRIMARY_TU sentinel captured at the TOP of this file:

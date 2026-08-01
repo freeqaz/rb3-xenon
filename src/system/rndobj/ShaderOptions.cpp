@@ -271,8 +271,19 @@ void ShaderMakeOptionsString(ShaderType type, const ShaderOptions &opts, String 
 }
 
 // sw2 scatter-include (default/ShaderOptions <- rndobj/Anim.cpp)
+// ⚠ NATIVE: guarded because THIS INCLUDEE HAS MULTIPLE UNCONDITIONAL
+// INCLUDERS in the native fork surface, which cmake/ScatterIncludes.cmake
+// cannot resolve by pruning: its rule drops an includee that is emitted by an
+// includer in the same target, and with N>1 includers that still leaves N
+// copies. Guarding EVERY includer makes the edges inert natively, so
+// rndobj/Anim.cpp is compiled standalone exactly once -- which is the shape
+// every native target had before X2 widened the glob. X360 is untouched: the
+// scatter-include is a COMDAT-placement device for the match build, and it
+// stays fully active there.
+#ifndef HX_NATIVE
 #define gRev gRev_Anim
 #define gAltRev gAltRev_Anim
 #include "rndobj/Anim.cpp"
 #undef gRev
 #undef gAltRev
+#endif

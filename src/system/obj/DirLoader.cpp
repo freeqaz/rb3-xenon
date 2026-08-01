@@ -983,6 +983,29 @@ void DirLoader::LoadHeader() {
     EofType t;
     while (t = mStream->Eof(), t != NotEof) {
         MILO_ASSERT(t == TempEof, 0x3E5);
+#ifdef HX_NATIVE
+        // ⛔ WITHOUT THIS, A MISSING OR TRUNCATED MILO HANGS THE PROCESS
+        // FOREVER. The loop's exit condition is Eof() == NotEof, and the only
+        // thing standing between it and an infinite spin is the MILO_ASSERT --
+        // which is a REAL abort on X360 but is deliberately non-fatal natively
+        // (os/Debug.cpp:183, "match the Xbox Continue dialog"; MILO_FATAL_FAILS
+        // opts back in). So on a stream that is already at RealEof the assert
+        // fires, does not abort, CheckSplit stays false, and the loop re-reads
+        // RealEof forever -- printing one FAIL line per iteration.
+        //
+        // Measured, not theorised: CharBoneDir::Init loads the bone-resource
+        // milos named by the shipped config, one of them did not resolve, and
+        // this loop produced ~3e8 stderr lines in about ten minutes before it
+        // was killed. The failure LOOKS like a hang, not like a missing file,
+        // which is the worst possible way to report a missing file.
+        //
+        // A real EOF here means the file is absent or truncated: Cleanup() is
+        // exactly the path the `mStream->Fail()` branch in OpenFile takes.
+        if (t == RealEof) {
+            Cleanup(MakeString("Unexpected EOF reading milo header: %s", mFile.c_str()));
+            return;
+        }
+#endif
         if (TheLoadMgr.CheckSplit())
             return;
     }

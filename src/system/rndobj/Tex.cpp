@@ -107,12 +107,23 @@ BEGIN_COPYS(RndTex)
     END_COPYING_MEMBERS
 END_COPYS
 
-#ifndef HX_NATIVE
+// ⚠ X2 -- these were `#ifndef HX_NATIVE` in the dc3 engine scaffold (c5c1650f)
+// because DC3's consumer gets RndTex's load path from the ENGINE
+// (milo-native-engine/src/platform/RndTex_Native.cpp), not from the fork.
+// rb3-milo does not link the engine (see native/CMakeLists.txt's X2 block), and
+// a .milo_xbox whose RndTex objects cannot PreLoad is not "a graph with no
+// textures" -- it is a DESYNCED STREAM, because PreLoad is what consumes the
+// texture's bytes. So the guard is dropped and xenon's OWN matched retail
+// bodies run natively, which is also the more faithful answer of the two.
+// Only the GPU-upload leaves (SyncBitmap / PresyncBitmap / MakeDrawTarget /
+// FinishDrawTarget, all defined in rnddx9/) remain unresolved, and those are
+// loud stubs in native/src/milo_link_stubs.cpp until X3 links the engine.
+// X360 is unaffected: it never defined HX_NATIVE, so these bodies were always
+// compiled there.
 BEGIN_LOADS(RndTex)
     PreLoad(bs);
     PostLoad(bs);
 END_LOADS
-#endif
 
 void RndTex::Print() {
     TheDebug << "   width: " << mWidth << "\n";
@@ -125,7 +136,7 @@ void RndTex::Print() {
 
 INIT_REVS(11, 0)
 
-#ifndef HX_NATIVE
+// (see the note above BEGIN_LOADS -- native now uses these matched bodies too)
 void RndTex::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(11, 0)
@@ -234,7 +245,6 @@ void RndTex::PostLoad(BinStream &bs) {
         RELEASE(mLoader);
     }
 }
-#endif // !HX_NATIVE
 
 void RndTex::LockBitmap(RndBitmap &bmap, int i) {
     if (mBitmap.Order() & 0x38) {

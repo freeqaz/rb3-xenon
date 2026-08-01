@@ -116,6 +116,50 @@ void SetUsingCD(bool b) { gUsingCD = b; }
 
 DataArray *SystemConfig() { return gSystemConfig; }
 
+#ifdef HX_NATIVE
+// A missing config section is FATAL on X360 by design: DataArray::FindArray's
+// fail=true path MILO_FAILs and returns null, and the caller dereferences it
+// immediately -- which is fine there, because the shipped merged config always
+// has every section a shipped code path asks for.
+//
+// A headless native harness does NOT have that guarantee. It assembles a config
+// from the subset of DTBs it can read without standing up App/UI/renderer (see
+// native/src/main_milo.cpp), so a class block can genuinely be absent -- e.g.
+// config/objects.dta ships 74 class blocks and has none for CharClipGroup, and
+// obj/Utl.cpp:82 ClassExt() asks for exactly that during a CharClipSet load.
+// Turning that into a SIGSEGV would make "how complete is my config" unaskable.
+//
+// So on native the lookup degrades to a shared EMPTY array: every FindArray on
+// it misses, which is the same answer the caller gets for a section that exists
+// but lacks the key, and MILO_FAIL still prints the miss. Nothing is silently
+// invented -- the diagnostic survives, only the crash is removed. X360 keeps
+// the original chain byte for byte (this whole block is #ifdef HX_NATIVE).
+static DataArray *EmptyConfigSection() {
+    static DataArray *sEmpty = new DataArray(0);
+    return sEmpty;
+}
+static DataArray *SafeFind(DataArray *a, Symbol s) {
+    if (!a) return EmptyConfigSection();
+    DataArray *r = a->FindArray(s, false);
+    if (!r) {
+        MILO_NOTIFY("SystemConfig: no '%s' section (native partial config)", s.Str());
+        return EmptyConfigSection();
+    }
+    return r;
+}
+
+DataArray *SystemConfig(Symbol s) {
+    DataArray *result = SafeFind(gSystemConfig, s);
+    result->SetContextPath(s.Str());
+    return result;
+}
+DataArray *SystemConfig(Symbol s1, Symbol s2) {
+    return SafeFind(SafeFind(gSystemConfig, s1), s2);
+}
+DataArray *SystemConfig(Symbol s1, Symbol s2, Symbol s3) {
+    return SafeFind(SafeFind(SafeFind(gSystemConfig, s1), s2), s3);
+}
+#else
 DataArray *SystemConfig(Symbol s) {
     DataArray *result = gSystemConfig->FindArray(s);
     result->SetContextPath(s.Str());
@@ -130,6 +174,7 @@ DataArray *SystemConfig(Symbol s1, Symbol s2) {
 DataArray *SystemConfig(Symbol s1, Symbol s2, Symbol s3) {
     return gSystemConfig->FindArray(s1)->FindArray(s2)->FindArray(s3);
 }
+#endif
 
 DataArray *SystemConfig(Symbol s1, Symbol s2, Symbol s3, Symbol s4) {
     return gSystemConfig->FindArray(s1)->FindArray(s2)->FindArray(s3)->FindArray(s4);
