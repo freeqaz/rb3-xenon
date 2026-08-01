@@ -81,6 +81,69 @@ rubber-stamping; if it returns all-DISAGREE it is miscalibrated. Either way
 its verdict on the proposed rows is worthless. Measured baseline on 60
 untouched thunks: 27 AGREE / 10 DISAGREE / 1 body-unnamed / 22 no-branch.
 
+Lane CH-1 corrections (2026-08-01) -- FOUR measured defects in the above
+-----------------------------------------------------------------------
+1. POPULATION IS NAME-DERIVED AND MISSES A THIRD OF THE VEIN. `--audit`
+   selects rows by the `$4PPPPPPPM@` string. The population defined by CODE
+   (map rows whose retail body is straight-line and ends in an unconditional
+   `b`) is 3,067 rows; only 1,980 carry the `$4` mark. The families
+   W (adjustor, 139), $2 (protected vtordisp, 14) and $0 (private, 1) were
+   never swept, and 254 rows are a BARE `b` that no name-based filter finds.
+   Use `--code-population` for the code-derived set.
+   -- Sizing note: of the 3,067, only 2,134 are compiler-generated thunks.
+   The other 933 are ordinary functions that tail-call (`?SetRotation@
+   PatchLayer@@QAAXM@Z`) or C functions (`_blkmov`); "name must equal branch
+   target" is simply FALSE for them and must never be applied there.
+   -- The W family is 139, NOT the 530 a loose `@@W` regex reports: `W4Enum@@`
+   is the mangling of an ENUM PARAMETER TYPE and false-positives 380 times.
+   Confirmed by two independent instruments (code shape AND the adjustment
+   channel: 139/139 ADJ_MATCH).
+
+2. `method_sig` RETURNS None FOR EVERY MSVC SPECIAL NAME. `??_E`/`??_G`/`??1`
+   /`??0` do not have the `?Name@Class@@` shape, so 96 destructor-thunk rows
+   came back unparsable and were silently uncounted. See `sig_strict`.
+
+3. ** RECURSION MUST STOP AT THE FIRST *NAMED* TARGET, NOT THE FIRST
+   NON-THUNK SHAPE. ** A shape-based termination test reproduces v1's disease:
+   a real function that tail-calls is shape-indistinguishable from a thunk, so
+   the walker steps THROUGH the correct answer. Measured over 2,134 rows,
+   shape-terminated recursion flipped 89 verdicts and 77 of them were
+   AGREE -> DISAGREE -- e.g. `?Load@RndDir@@$4...` lands 1-hop on
+   `?Load@RndDir@@UAAX...` (exact match), and recursion then follows RndDir::
+   Load's own tail-call into `?Load@ObjectDir@@`. Recursion exists ONLY to skip
+   ANONYMOUS intermediates. With the corrected rule just 16 of 2,134 rows need
+   a second hop.
+
+4. ** DISAGREE OVERSTATES THE DEFECT RATE ~3x BECAUSE CLASS-DIFFERS IS
+   LEGITIMATE. ** With multiple inheritance MSVC emits `?M@Derived@@W7...`
+   branching to the base implementation `?M@Base@@...`, so the CLASS
+   legitimately differs while the METHOD matches -- `?Highlight@RndDir@@$4...`
+   -> `?Highlight@RndDrawable@@UAAXXZ` is CORRECT. Split the verdict:
+   AGREE (exact) / AGREE_METHOD (class differs, MI base impl) /
+   METHOD_DIFFERS (the only candidate-defect class).
+   Measured over the 2,134-row population at 8bb0cb69:
+       AGREE 1560 | AGREE_METHOD 89 | METHOD_DIFFERS 231 | TARGET_UNNAMED 251
+   => candidate defects 231/1880 resolved = 12.29%, not the ~20-27% the
+   undifferentiated DISAGREE reports.
+
+Null controls for the METHOD_DIFFERS rate (lane CH-1)
+----------------------------------------------------
+The detector CAN fail, and was made to:
+    treatment (real map)                       12.29%
+    shuffle WITHIN a shape group, 3 seeds      67.29 / 70.37 / 70.85%
+    global shuffle of all thunk names, 3 seeds 90.64 / 90.80 / 91.97%
+The within-shape shuffle is the exact swap objdiff CANNOT see (report.rs:394
+masks reloc args), so ~5.6x separation there is the load-bearing number: the
+branch channel really does police what the metric cannot.
+
+** A FOLD-AMBIGUITY FILTER LOOKS OBVIOUS AND IS A DEAD INDEX -- DO NOT USE IT. **
+The natural story for METHOD_DIFFERS is "the target is a tiny empty virtual that
+ICF folded, so the map names one of many arbitrarily". It is REFUTED by its own
+control: target bodies <=2 instructions are 6.9% of METHOD_DIFFERS vs 6.7% of
+AGREE, and target fan-in >=10 is 14.7% of METHOD_DIFFERS vs 19.5% of AGREE
+(i.e. LOWER). Enrichment ~1.0x. Filtering on it "explains away" 45 rows on no
+information at all.
+
 Usage
 -----
   tools/thunk_identity.py --audit                 # sweep every $4 row in the map
@@ -273,6 +336,150 @@ def adjudicate(img, tmap, addr, proposed):
     else:
         rec["verdict"] = "DISAGREE"
     return rec
+
+
+
+# ---------------------------------------------------------------------------
+# Lane CH-1 corrections (see the module docstring for the measurements).
+# All of this is OPT-IN; default behaviour of --audit/--patch is unchanged.
+# ---------------------------------------------------------------------------
+
+_SPECIAL = {"??_E": "DTOR", "??_G": "DTOR", "??1": "DTOR", "??_D": "VBASEDTOR",
+            "??0": "CTOR", "??_7": "VFTABLE", "??_8": "VBTABLE", "??_9": "VCALL"}
+
+_VTORDISP = re.compile(r"@@\$([0-4])PPPPPPPM@")
+# NB the trailing [A-Z]{2} is load-bearing: without it this fires on the
+# parameter-type list `@@HM@Z` and on `W4Enum@@`, which inflates the adjustor
+# family from 139 to 530.
+_ADJUSTOR = re.compile(r"@@([WXOPGH])((?:[A-P]+@|[0-9]))([A-Z]{2})")
+
+
+def thunk_kind(name):
+    """'$0'..'$4' for vtordisp, 'W'/'X'/'O'/'P'/'G'/'H' for adjustor, else None."""
+    if not isinstance(name, str):
+        return None
+    v = _VTORDISP.search(name)
+    if v:
+        return "$" + v.group(1)
+    ms = list(_ADJUSTOR.finditer(name))
+    return ms[-1].group(1) if ms else None
+
+
+def sig_strict(name):
+    """(method, class) INCLUDING MSVC special names -- fixes defect 2.
+
+    Plain `method_sig` returns None for `??_E`/`??_G`/`??1`/`??0`, which
+    silently drops every destructor thunk (96 rows here) from the tally.
+    Destructor forms are normalised to 'DTOR' because `??_E` (vector deleting)
+    is a weak external aliasing `??_G` (scalar deleting); comparing them as
+    distinct methods MANUFACTURES false defects.
+    """
+    if not isinstance(name, str) or not name.startswith("?"):
+        return None
+    for pre, tok in _SPECIAL.items():
+        if name.startswith(pre):
+            return (tok, name[len(pre):].split("@@")[0])
+    if name.startswith("??$"):
+        m = re.match(r"\?\?\$([^@]+)@", name)
+        return (m.group(1), "<tmpl>") if m else None
+    parts = name[1:].split("@@")[0].split("@")
+    return (parts[0], parts[1]) if len(parts) >= 2 else None
+
+
+def is_forwarder(img, va, maxw=5):
+    """(words_before_branch, target) if va is straight-line code ending in an
+    unconditional `b`; None otherwise. `bl` is a CALL and is excluded."""
+    ws = []
+    for i in range(maxw):
+        w = img.word(va + 4 * i)
+        if w is None:
+            return None
+        if _is_branch(w):
+            if w & 1:
+                return None
+            return ws, _branch_target(img, va + 4 * i)
+        if (w >> 26) in (16, 19):
+            return None
+        ws.append(w)
+    return None
+
+
+def dethunk_named(img, tmap, va, maxhops=8):
+    """Hop to the final body, STOPPING AT THE FIRST NAMED TARGET -- defect 3.
+
+    Recursion exists solely to skip ANONYMOUS intermediates. Terminating on
+    "target no longer looks like a thunk" instead is v1's disease: a real
+    function that tail-calls has the same shape as a thunk, so the walker steps
+    straight through the correct answer (measured: 77 of 89 flips were
+    AGREE -> DISAGREE).
+    """
+    seen = {va}
+    hops = 0
+    while hops < maxhops:
+        d = is_forwarder(img, va)
+        if d is None:
+            return None, "no-branch", hops
+        _ws, tgt = d
+        hops += 1
+        if tgt in seen:
+            return tgt, "cycle", hops
+        if ("0x%08x" % tgt) in tmap:
+            return tgt, "named", hops
+        if is_forwarder(img, tgt) is None:
+            return tgt, "unnamed-body", hops
+        seen.add(tgt)
+        va = tgt
+    return va, "depth-cap", hops
+
+
+def adjudicate_strict(img, tmap, addr, proposed):
+    """Three-way verdict -- fixes defect 4.
+
+    AGREE          exact (method, class) match
+    AGREE_METHOD   class differs: the legitimate multiple-inheritance case
+                   (`?M@Derived@@W7...` -> `?M@Base@@...`). NOT a defect.
+    METHOD_DIFFERS the only candidate-defect class.
+    """
+    tgt, how, hops = dethunk_named(img, tmap, int(addr, 16))
+    rec = {"addr": addr, "proposed": proposed, "kind": thunk_kind(proposed),
+           "how": how, "hops": hops}
+    if tgt is None:
+        rec["verdict"] = "NO_BRANCH"
+        return rec
+    rec["target"] = "0x%08x" % tgt
+    row = tmap.get(rec["target"])
+    rec["target_row"] = row
+    if row is None:
+        rec["verdict"] = "TARGET_UNNAMED"
+        return rec
+    a, b = sig_strict(proposed), sig_strict(row)
+    if a is None or b is None:
+        rec["verdict"] = "UNPARSABLE"
+    elif a == b:
+        rec["verdict"] = "AGREE"
+    elif a[0] == b[0]:
+        rec["verdict"] = "AGREE_METHOD"
+    else:
+        rec["verdict"] = "METHOD_DIFFERS"
+    return rec
+
+
+def code_population(img, tmap):
+    """Map rows whose RETAIL BODY is a forwarder AND whose name is a
+    compiler-generated thunk -- the honest denominator (2,134 here), as opposed
+    to the 1,980 the `$4` string filter finds or the 3,067 forwarder bodies
+    (933 of which are ordinary tail-calling functions the predicate cannot
+    adjudicate)."""
+    out = {}
+    for a, n in tmap.items():
+        if not isinstance(a, str) or not a.startswith("0x") or not isinstance(n, str):
+            continue
+        if thunk_kind(n) is None:
+            continue
+        if is_forwarder(img, int(a, 16)) is None:
+            continue
+        out[a] = n
+    return out
 
 
 def parse_patch(path):
