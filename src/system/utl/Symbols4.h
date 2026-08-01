@@ -646,7 +646,9 @@ extern Symbol patchnum;
 extern Symbol path;
 extern Symbol path_frame;
 extern Symbol path_name;
+#if !HX_NATIVE
 extern Symbol pause;
+#endif // pause: POSIX glibc name collision
 extern Symbol pause_all_sfx;
 extern Symbol pause_ambient_loop;
 extern Symbol pause_guide_track;
@@ -1502,7 +1504,9 @@ extern Symbol selected_sym;
 extern Symbol selecting_color;
 extern Symbol self;
 extern Symbol self_shadow;
+#if !HX_NATIVE
 extern Symbol send;
+#endif // send: POSIX glibc name collision
 extern Symbol send_back_sound_msg_to_all;
 extern Symbol send_friendlist_changed;
 extern Symbol send_generic_request;

@@ -786,7 +786,9 @@ extern Symbol clip1;
 extern Symbol clip2;
 extern Symbol clips;
 extern Symbol clockwise;
+#if !HX_NATIVE
 extern Symbol close;
+#endif // close: POSIX glibc name collision
 extern Symbol close_nintendo_connection;
 extern Symbol closest_beat;
 extern Symbol closest_measure;
@@ -1372,7 +1374,9 @@ extern Symbol enumerate_messages;
 extern Symbol enumerate_online;
 extern Symbol enumerate_pending;
 extern Symbol env_override;
+#if !HX_NATIVE
 extern Symbol environ;
+#endif // environ: POSIX glibc name collision
 extern Symbol environ_3d;
 extern Symbol environ_map;
 extern Symbol environ_map_specmask;
