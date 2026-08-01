@@ -27,6 +27,18 @@ def dupcheck(pairs):
     return dict(pairs)
 
 
+def addr_collisions(m):
+    """Two DIFFERENT key spellings of the SAME address (e.g. 0x8262C280 vs
+    0x8262c280). object_pairs_hook cannot see these -- they are distinct JSON
+    keys -- but the renamer resolves both to one address, so one silently wins.
+    """
+    by = collections.defaultdict(list)
+    for k in m:
+        if k.startswith('0x'):
+            by[int(k, 16)].append(k)
+    return {hex(a): ks for a, ks in by.items() if len(ks) > 1}
+
+
 def injectivity(m):
     n2a = collections.defaultdict(list)
     for k, v in m.items():
@@ -78,6 +90,9 @@ def main():
         print(f'  EDIT {addr}: {expect}  ->  {new}   [{e.get("why","")}]')
 
     after = json.loads(src, object_pairs_hook=dupcheck)
+    col = addr_collisions(after)
+    if col:
+        raise SystemExit(f'REFUSING: case-variant duplicate ADDRESS keys: {col}')
     dup_after = injectivity(after)
     changed = {k for k in after if before.get(k) != after.get(k)}
     print(f'map keys after:  {len(after)} (delta {len(after)-len(before)})   '
