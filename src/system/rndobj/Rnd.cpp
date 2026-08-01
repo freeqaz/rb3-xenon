@@ -366,15 +366,29 @@ void Rnd::PreInit() {
     mRateOverlay = RndOverlay::Find("rate", true);
     mHeapOverlay = RndOverlay::Find("heap", true);
 #ifdef HX_NATIVE
-    mWatcher.SetOverlay(mWatchOverlay = RndOverlay::Find("watch", true));
-    mWatcher.Init();
+    // ⚠ "watch" is a DC3-ERA OVERLAY AND RB3 DOES NOT CONFIGURE IT.
+    // RndOverlay::Find(name, true) MILO_FAILs and returns null when the name is
+    // missing from SystemConfig("rnd", "overlays"); on X360 that abort is the
+    // whole error handling, but natively MILO_FAIL is non-fatal by design
+    // (os/Debug.cpp:183), so the null flows on and :377's SetCallback derefs it.
+    // Measured on the shipped RB3-360 config: "rate", "heap", "stats" and
+    // "timers" all resolve, "watch" does not -- consistent with the header note
+    // at Rnd.h:306 that mWatcher/mWatchOverlay are a DC3 addition rb3-Wii does
+    // not have either. Both the Find and the guard are inside HX_NATIVE, so
+    // there is nothing here for the X360 build to be affected by.
+    mWatchOverlay = RndOverlay::Find("watch", false);
+    if (mWatchOverlay) {
+        mWatcher.SetOverlay(mWatchOverlay);
+        mWatcher.Init();
+    }
 #endif
     mStatsOverlay = RndOverlay::Find("stats", true);
     mTimersOverlay = RndOverlay::Find("timers", true);
     mRateOverlay->SetCallback(this);
     mHeapOverlay->SetCallback(this);
 #ifdef HX_NATIVE
-    mWatchOverlay->SetCallback(this);
+    if (mWatchOverlay)
+        mWatchOverlay->SetCallback(this);
 #endif
     mStatsOverlay->SetCallback(this);
     mTimersOverlay->SetCallback(this);
@@ -926,7 +940,9 @@ void Rnd::CreateCubeTextures() {
 
 #ifdef HX_NATIVE
 DataNode Rnd::OnToggleWatch(const DataArray *) {
-    mWatchOverlay->SetShowing(!mWatchOverlay->Showing());
+    // Null on RB3 — the "watch" overlay is not in its config. See PreInit.
+    if (mWatchOverlay)
+        mWatchOverlay->SetShowing(!mWatchOverlay->Showing());
     return 0;
 }
 #endif

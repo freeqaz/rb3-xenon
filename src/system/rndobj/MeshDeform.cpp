@@ -250,6 +250,17 @@ void RndMeshDeform::VertArray::Copy(const RndMeshDeform::VertArray &a) {
     memcpy(mData, a.mData, mSize);
 }
 
+// ---------------------------------------------------------------------------
+// SCATTER TAIL -- X360 ONLY. Same reasoning as rndobj/MeshAnim.cpp's tail:
+// obj/Dir.cpp is already emitted by the native obj/ source set (duplicate), and
+// band3/meta_band/BandUI.cpp does not compile here (InterstitialMgr has no
+// mRandomOverride member -- MEASURED, and a genuine header gap owned by
+// band3, not something to paper over from rndobj). Guarding the tail keeps
+// RndMeshDeform itself, which rndobj/Rnd.cpp:314 `RndMeshDeform::Init()`
+// requires as soon as Rnd::PreInit runs.
+// ---------------------------------------------------------------------------
+#ifndef HX_NATIVE
+
 // sw2 scatter-include (default/MeshDeform <- obj/Dir.cpp)
 #define gRev gRev_Dir
 #define gAltRev gAltRev_Dir
@@ -263,3 +274,5 @@ void RndMeshDeform::VertArray::Copy(const RndMeshDeform::VertArray &a) {
 #include "band3/meta_band/BandUI.cpp"
 #undef gRev
 #undef gAltRev
+
+#endif // !HX_NATIVE (scatter tail)
