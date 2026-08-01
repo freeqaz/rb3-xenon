@@ -5,6 +5,13 @@
 #include "utl/MemMgr.h"
 #include "utl/Str.h"
 
+// ! DO NOT swap kOpFileSize/kOpDirectory to match ../dc3-decomp or ../rb3.
+// Both oracles declare kOpDirectory=1, kOpFileSize=2; RB3 *retail* does not.
+// Pinned by retail bytes in two 100%-matching functions (lane CF-10):
+//   CacheXbox::GetFileSizeAsync   `li r10,0x1; stw r10, 0x4, r31`  -> 1
+//   CacheXbox::GetDirectoryAsync  `li r10,0x2; stw r10, 0x4, r31`  -> 2
+// What IS inverted in retail is the op->handler pairing, not the numbering:
+// op 1 drives the directory enumeration.  See CacheXbox::ThreadStart.
 enum OpType {
     kOpNone = 0,
     kOpFileSize = 1,

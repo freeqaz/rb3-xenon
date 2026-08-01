@@ -52,9 +52,21 @@ bool CacheXbox::IsConnectedSync() {
 int CacheXbox::ThreadStart() {
     MILO_ASSERT(!IsDone(), 0x197);
     switch (mOpCur) {
-    case kOpDirectory:
-        return ThreadGetDir(mThreadStr, "");
+    // Retail pairs the ops with the *opposite* handler from what their names
+    // suggest, and it does so consistently end-to-end:
+    //   kOpFileSize (1): GetFileSizeAsync builds a wildcard *search* path via
+    //     GetCacheSearchPath and parks its out-pointer in mCacheDirList -- which
+    //     is exactly the field ThreadGetDir push_backs into -- and ThreadDone's
+    //     value-1 arm clears mCacheDirList.
+    //   kOpDirectory (2): GetDirectoryAsync uses GetCachePath, parks its list in
+    //     mData, and ThreadDone's value-2 arm clears mData.
+    // Verified in retail bytes: ThreadStart's cmpwi chain sends value 1 to
+    // ThreadGetDir(mThreadStr, "") (the two-String call) and value 2 to a
+    // no-argument handler.  Do not "correct" this to the name-intuitive
+    // pairing -- that is what puts this function at 81.5%.
     case kOpFileSize:
+        return ThreadGetDir(mThreadStr, "");
+    case kOpDirectory:
         return ThreadGetFileSize();
     case kOpRead:
         return ThreadRead();
@@ -73,10 +85,18 @@ void CacheXbox::ThreadDone(int res) {
     OpType old = mOpCur;
     switch (old) {
     case kOpFileSize:
-        // Retail's filesize op parks its out-pointer in mCacheDirList (see the
-        // cast in GetFileSizeAsync), so its done-arm clears mCacheDirList and
-        // the directory arm clears mData -- the arm bodies were mislabeled, not
-        // the enum values (GetFileSizeAsync's store pins kOpFileSize == 1).
+        // Retail's filesize op parks its out-pointer in mCacheDirList, so its
+        // done-arm clears mCacheDirList and the directory arm clears mData.
+        // The enum numbering is NOT the thing that is unusual here -- it is
+        // pinned directly by retail bytes: GetFileSizeAsync emits
+        // `li r10,1; stw r10, 0x4, r31` and GetDirectoryAsync emits
+        // `li r10,2; stw r10, 0x4, r31`, both in 100%-matching functions.
+        // ==> kOpFileSize == 1 and kOpDirectory == 2, as declared in Cache.h.
+        // (Both DC3 and rb3-Wii declare the reverse; RB3 retail does not
+        // agree with its own siblings.  Do not swap the enum to match them.)
+        // NB when reading ThreadStart/ThreadDone disassembly: both carry a
+        // `this` adjustor of -12 (they live on the ThreadCallback sub-vtable),
+        // so an offset seen off the incoming pointer is field offset - 0xc.
         mLastResult = (CacheResult)res;
         mThreadStr = gNullStr;
         mCacheDirList = nullptr;
@@ -231,8 +251,11 @@ bool CacheXbox::GetDirectoryAsync(
     } else {
         MILO_ASSERT(mThreadStr.empty(), 0x108);
         mThreadStr = mCacheID.GetCachePath(cc);
-        MILO_ASSERT(mCacheDirList == NULL, 0x10B);
-        mCacheDirList = entries;
+        // Retail stores the caller's list in mData (0x160), NOT mCacheDirList
+        // (0x168) -- verified: `stw r30, 0x160, r31` here vs `stw r30, 0x168,
+        // r31` in GetFileSizeAsync.  The op-2 done-arm clears mData to match.
+        MILO_ASSERT(mData == NULL, 0x10B);
+        mData = entries;
         mLastResult = kCache_NoError;
         mOpCur = kOpDirectory;
         ThreadCall(this);
@@ -324,7 +347,12 @@ int CacheXbox::ThreadGetFileSize() {
         DWORD fileSize = 0;
         DWORD res = GetFileSize(file, &fileSize);
         if (!(res != -1)) {
-            int *data = (int *)mCacheDirList;
+            // op 2 (kOpDirectory) is this handler's op, and op 2 parks its
+            // pointer in mData (GetDirectoryAsync stores 0x160; ThreadDone's
+            // value-2 arm clears 0x160).  INFERRED, not byte-verified: retail's
+            // counterpart (fn_827DA7C0) has no entry in target_symbol_map.json,
+            // so this function is unpaired and objdiff cannot score it.
+            int *data = (int *)mData;
             *data = res;
         } else {
             DWORD err = GetLastError();
