@@ -82,11 +82,21 @@ def main():
                    + src[m.end():])
             print(f'  INSERT {addr} = {new}   [{e.get("why","")}]')
             continue
-        old_line = ' "%s": %s,\n' % (addr, json.dumps(expect))
-        if src.count(old_line) != 1:
-            raise SystemExit(f'{addr}: line not uniquely locatable '
-                             f'({src.count(old_line)} hits)')
-        src = src.replace(old_line, ' "%s": %s,\n' % (addr, json.dumps(new)))
+        # The LAST entry in the JSON object has no trailing comma, so the
+        # comma-form pattern silently finds 0 hits (lane CJ-4 hit this on
+        # 0x82b7b0b0, the final row).  Try both forms; still demand EXACTLY one
+        # hit, so the uniqueness gate is unchanged.
+        for tail in (',\n', '\n'):
+            old_line = ' "%s": %s%s' % (addr, json.dumps(expect), tail)
+            if src.count(old_line) == 1:
+                break
+        else:
+            raise SystemExit(
+                f'{addr}: line not uniquely locatable (comma-form '
+                f'{src.count(chr(32) + chr(34) + addr + chr(34) + ": " + json.dumps(expect) + ",")} '
+                f'hits, bare-form '
+                f'{src.count(chr(32) + chr(34) + addr + chr(34) + ": " + json.dumps(expect) + chr(10))} hits)')
+        src = src.replace(old_line, ' "%s": %s%s' % (addr, json.dumps(new), tail))
         print(f'  EDIT {addr}: {expect}  ->  {new}   [{e.get("why","")}]')
 
     after = json.loads(src, object_pairs_hook=dupcheck)
