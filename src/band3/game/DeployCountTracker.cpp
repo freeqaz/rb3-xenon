@@ -78,6 +78,11 @@ void DeployCountTracker::SavePlayerStats() const {
 void DeployCountTracker::FirstFrame_(float) {
     mDeployCount = 0;
     PlayerDeployData data;
+    data.unk0 = false;
+    data.unk1 = false;
+    data.unk2 = false;
+    data.unk3 = false;
+    data.unk4 = 0;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
         mDeployDataMap[id] = data;
@@ -139,7 +144,8 @@ void DeployCountTracker::RemoteDeploy(Player *p) {
 }
 
 void DeployCountTracker::LocalDeploy(const TrackerPlayerID &pid) {
-    mDeployDataMap[pid].unk4++;
+    PlayerDeployData &data = mDeployDataMap[pid];
+    data.unk4++;
     mDeployCount++;
     static Symbol deploy_count_tracker_progress("deploy_count_tracker_progress");
     static Symbol deploy_count_tracker_progress_1("deploy_count_tracker_progress_1");

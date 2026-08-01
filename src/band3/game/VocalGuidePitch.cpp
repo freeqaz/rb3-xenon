@@ -20,10 +20,10 @@ VocalGuidePitch::VocalGuidePitch()
 
 VocalGuidePitch::~VocalGuidePitch() {}
 
-void VocalGuidePitch::Load() {
+void VocalGuidePitch::Load(bool async) {
     DataArray *cfg = SystemConfig("sound", "instruments");
     mBank.LoadFile(
-        FilePath(".", cfg->FindStr("chamberlin")), true, true, kLoadFront, false
+        FilePath(".", cfg->FindStr("chamberlin")), async, true, kLoadFront, false
     );
 }
 

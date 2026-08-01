@@ -56,6 +56,7 @@
 #include "os/PlatformMgr.h"
 #include "os/System.h"
 #include "os/File.h"
+#include "os/Joypad.h"
 #include "os/JoypadMsgs.h"
 #include "rndobj/Rnd.h"
 #include "synth/Synth.h"
@@ -162,6 +163,20 @@ void GameInit() {
 
 void GameTerminate() { TheSongMgr.Terminate(); }
 
+// Layout + dtor body proven from retail; see the comment on the forward
+// declaration in Game.h. The dtor is deliberately defined at the BOTTOM of this
+// TU so /Ob2 cannot inline it into Game::~Game -- retail calls it out of line
+// (`bl fn_82677C88` followed by `bl operator delete`, i.e. a non-virtual dtor).
+class UnkTU5GuidePitchOwner {
+public:
+    UnkTU5GuidePitchOwner(Symbol);
+    ~UnkTU5GuidePitchOwner();
+
+    int mUnkCounts[4]; // 0x0 (per-track, indices 0..3)
+    int unk10; // 0x10
+    VocalGuidePitch *mGuidePitch; // 0x14
+};
+
 Game::Game()
     : mSongDB(new SongDB()), mSongInfo(0), mIsPaused(0), mGameWantsPause(0),
       mOvershellWantsPause(0), unk6b(0), unk6c(0), mPauseTime(0), mRealtime(0), unk6f(0),
@@ -210,6 +225,10 @@ Game::~Game() {
     RELEASE(mShuttle);
     TheGame = nullptr;
     TheSongDB = nullptr;
+    if (mProperties.mUnkTU5_movieSync) {
+        JoypadUnsubscribe(this);
+        RELEASE(mUnkTU5GuidePitch);
+    }
     RELEASE(mBand);
     RELEASE(mMaster);
     RELEASE(mSongDB);
@@ -288,7 +307,7 @@ void Game::PostLoad() {
         (*it)->SetTrack(TheGameConfig->GetTrackNum((*it)->GetUserGuid()));
         (*it)->PostLoad(false);
         Extent ext(0, 0);
-        if ((*it)->GetCodaFreestyleExtents(ext) != 0) {
+        if ((*it)->GetCodaFreestyleExtents(ext)) {
             MaxEq(i24, ext.unk4);
         }
     }
@@ -306,6 +325,12 @@ void Game::PostLoad() {
     }
     if (DataVariable("print_base_points").Int()) {
         PrintBasePoints();
+        // Force-evaluate the MILO_LOG arg that RB3_LOG_NO_EVAL (this TU) drops
+        // at compile time -- retail's inlined PrintBasePoints() call site here
+        // still calls Current()->Song() for the log line even though the log
+        // itself is stripped. Same forced-eval pattern already landed for
+        // Game::Handle's HANDLE_EXPR(print_base_points, ...) below.
+        MetaPerformer::Current()->Song();
     }
     ResetVoiceChatState();
 }
@@ -577,7 +602,8 @@ DataNode Game::OnJump(const DataArray *a) {
     } else if (ty == kDataSymbol || ty == kDataString) {
         int m, b, t;
         ParseMBT(node.Str(), m, b, t);
-        int tick = TheSongDB->GetData()->GetMeasureMap()->MeasureBeatTickToTick(m, b, t);
+        MeasureMap *map = TheSongDB->GetData()->GetMeasureMap();
+        int tick = map->MeasureBeatTickToTick(m, b, t);
         Jump(TickToMs(tick), true);
     }
     return 1;
@@ -1621,6 +1647,8 @@ Game::Properties::Properties()
     : mInTrainer(TheGameMode->InMode("trainer")),
       mInDrumTrainer(TheGameMode->InMode("drum_trainer")),
       mInPracticeMode(TheGameMode->InMode("practice")),
+      mUnkTU5_movieSync(TheGameMode->InMode("audition")),
+      mUnkTU5_prop4(MetaPerformer::Current()->IsPlayingDemo()),
       mAllowOverdrivePhrases(TheGameMode->Property("allow_overdrive_phrases", true)->Int()
       ),
       mEndWithSong(TheGameMode->Property("end_with_song", true)->Int()),
@@ -1643,4 +1671,14 @@ Game::Properties::Properties()
       mCanLose(TheGameMode->Property("can_lose", true)->Int()),
       mEnableStreak(TheGameMode->Property("enable_streak", true)->Int()),
       mShowStars(TheGameMode->Property("show_stars", true)->Int()),
-      mPlayStarSfx(TheGameMode->Property("play_star_sfx", true)->Int()) {}
+      mPlayStarSfx(TheGameMode->Property("play_star_sfx", true)->Int()),
+      mUnkTU5_prop19(TheGameMode->Property("allow_drum_fills", true)->Int()) {}
+
+// Retail fn_82677C88 (Game.cpp span, non-virtual, 0x60 bytes):
+//   Terminate(); Unload(); RELEASE(mGuidePitch)
+// Defined last in the TU on purpose -- see the class definition above.
+UnkTU5GuidePitchOwner::~UnkTU5GuidePitchOwner() {
+    mGuidePitch->Terminate();
+    mGuidePitch->Unload();
+    RELEASE(mGuidePitch);
+}

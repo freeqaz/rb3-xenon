@@ -196,7 +196,7 @@ const char *DirLoader::CachedPath(const char *cc, bool b) {
                 "%s/gen/%s.milo_%s",
                 FileGetPath(cc),
                 FileGetBase(cc),
-                PlatformSymbol(TheLoadMgr.GetPlatform())
+                PlatformSymbol(kPlatformXBox)
             );
         }
     }

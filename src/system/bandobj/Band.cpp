@@ -47,14 +47,41 @@
 #include "obj/DataUtl.h"
 #include "obj/Dir.h"
 #include "ui/UILabel.h"
+#include "utl/Song.h"
 #include "world/ColorPalette.h"
 
 
 // Classes whose TUs are not yet ported in-tree. Minimal local declarations keep
 // the BandInit call sequence (and therefore its relocation layout) identical to
 // retail; the Init symbols stay undefined externals, which objdiff pairs fine.
-class BandConfiguration { public: static void Init(); };
-class BandSong { public: static void Init(); };
+//
+// BandConfiguration is an exception: retail's BandConfiguration::Init() is a
+// trivial `{ Register(); }` one-liner *defined in its own header*, so it is
+// visible to this TU (via Band.cpp's scatter-include into BandCharacter.cpp)
+// and /Ob2 inlines the whole StaticClassName+RegisterFactory pattern directly
+// into BandInit() -- exactly like BandCamShot/BandCrowdMeter alongside it. An
+// external-call stub therefore desyncs BandInit's instruction sequence. This
+// is a factory-only shim (not the full ~0x29c-byte class with its real
+// members/virtuals) that reproduces just the inlined registration shape.
+class BandConfiguration : public Hmx::Object {
+public:
+    OBJ_CLASSNAME(BandConfiguration);
+    OBJ_SET_TYPE(BandConfiguration);
+    NEW_OBJ(BandConfiguration)
+    static void Register() { REGISTER_OBJ_FACTORY(BandConfiguration); }
+    static void Init() { Register(); }
+};
+// BandSong is the same case as BandConfiguration above: retail's Init() is a
+// header-inline `{ Register(); }` one-liner, so it inlines into BandInit()
+// here too. Factory-only shim over the real base (Song, already ported).
+class BandSong : public Song {
+public:
+    OBJ_CLASSNAME(BandSong);
+    OBJ_SET_TYPE(BandSong);
+    NEW_OBJ(BandSong)
+    static void Init() { Register(); }
+    REGISTER_OBJ_FACTORY_FUNC(BandSong)
+};
 class DialogDisplay { public: static void Init(); };
 class InstrumentDifficultyDisplay { public: static void Init(); };
 class MicInputArrow { public: static void Init(); };
@@ -98,6 +125,13 @@ void BandInit() {
         CrowdMeterIcon::Init();
         EndingBonus::Init();
         GemTrackDir::Init();
+        // Retail inlines a standalone REGISTER_OBJ_FACTORY(ObjectDir) here (6-instr
+        // StaticClassName+RegisterFactory shape, address-confirmed via Ghidra decompile
+        // of 0x8227ACC8 + target .s at instrs 103-108) that neither dc3 nor rb3-Wii's
+        // BandInit() source shows -- an older-revision leftover. Call target identity
+        // is score-invisible (functionRelocDiffs=none), so matching the shape here is
+        // what matters.
+        REGISTER_OBJ_FACTORY(ObjectDir);
         LayerDir::Init();
         PatchRenderer::Init();
         PitchArrow::Init();

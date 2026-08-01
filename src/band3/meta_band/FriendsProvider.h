@@ -22,6 +22,15 @@ public:
     virtual Symbol DataSymbol(int) const;
     virtual int NumData() const;
 
+    // Declared but not yet decompiled (called from OvershellSlot::UpdateFriendsList
+    // -- retail's target asm loads mFriendsProvider and does a direct `bl` to a
+    // no-arg method whose ICF-folded symbol name in the target map is a
+    // same-shaped UIList method, not a real name). No definition needed here:
+    // objdiff compares .obj files, not a linked binary, so an undefined external
+    // reference is fine, matching the OvershellProfileProvider::Reload precedent
+    // (HX_NATIVE-only body) elsewhere in this header family.
+    void Reload();
+
     std::vector<int> unk2c; // 0x2c — friend entries; NumData() = size()
     int unk38; // 0x38
     int unk3c; // 0x3c

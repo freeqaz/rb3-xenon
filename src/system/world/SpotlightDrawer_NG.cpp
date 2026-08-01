@@ -1,3 +1,4 @@
+#define RB3_OBJPTR_FORCEINLINE_CTOR 1
 #include "world/SpotlightDrawer_NG.h"
 #include "macros.h"
 #include "math/Color.h"

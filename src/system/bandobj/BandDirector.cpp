@@ -553,25 +553,22 @@ bool BandDirector::IsMusicVideo() {
 }
 
 void BandDirector::SetShot(Symbol cat, Symbol s2) {
-    bool b1 = true;
-    if (TheBandWardrobe) {
-        if (!DirectedCut(cat))
-            b1 = false;
-    }
-    if (!b1) {
-        MILO_ASSERT(!BFTB(cat), 0x326);
-        bool shot5 = s2 == "shot_5";
-        bool playshot5 = TheBandWardrobe->PlayShot5();
-        if (shot5 == playshot5) {
-            if (shot5) {
-                cat = RemapCat(cat, TheBandWardrobe->GetPlayMode());
-            } else {
-                if (s2 != TheBandWardrobe->GetPlayMode())
-                    return;
-            }
-            mShotCategory = cat;
-            unk58 = true;
+    if (!TheBandWardrobe)
+        return;
+    if (DirectedCut(cat))
+        return;
+    MILO_ASSERT(!BFTB(cat), 0x326);
+    bool shot5 = s2 == "shot_5";
+    bool playshot5 = TheBandWardrobe->PlayShot5();
+    if (playshot5 == shot5) {
+        if (shot5) {
+            cat = RemapCat(cat, TheBandWardrobe->GetPlayMode());
+        } else {
+            if (s2 != TheBandWardrobe->GetPlayMode())
+                return;
         }
+        mShotCategory = cat;
+        unk58 = true;
     }
 }
 

@@ -11,6 +11,7 @@
 #include "net/WiiFriendMgr.h"
 
 class BandCharDesc;
+class SessionMgr;
 class LocalBandUser;
 class RemoteBandUser;
 class NullLocalBandUser;
@@ -23,8 +24,26 @@ public:
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual ~BandUser();
+    // OVERRIDE of User::IsNullUser (User vtable slot 28 = 0x70) — NOT a BandUser-introduced
+    // virtual. In rb3-Wii/TU0 this was BandUser's own slot 0; TU5 hoisted it into the User
+    // virtual base, so retail dispatches it via the vbptr adjust + 0x70, not via BandUser's
+    // own vtable slot 0. See the proof in src/system/os/User.h.
+    // NOTE: this is an OVERRIDE of User::IsNullUser (a TU5 addition to the
+    // virtual base — see os/User.h slot 28 / 0x70), NOT a new virtual introduced
+    // here as rb3-Wii/TU0 had it. Consequently it does NOT occupy a slot in
+    // BandUser's own vftable; retail reaches it through the vbptr/vbtable adjust.
     virtual bool IsNullUser() const { return false; }
-    virtual void UnkTU5Virtual() {} // TODO: TU5-inserted virtual (confirmed via Ghidra decompile of retail TrackPanel::CreateTracks: IsParticipating() call resolves to vtable+0x8, not +0x4, so this slot precedes IsParticipating, not GetLocalBandUser; still nets the same +4 shift for everything after it, incl. GetLocalBandUser 0x18->0x1c)
+    // BandUser's own vftable slot 0 (0x0), vacated when IsNullUser moved up to
+    // User. Required to keep IsParticipating at the verified +0x8 (two slots
+    // precede it; BandUserMgr::GetNumParticipants matches 100% emitting
+    // `lwz r11,0x0(r3); lwz r11,0x8(r11)`). IDENTIFIED (lane NCCC-0731-5f08/f76):
+    // retail InputMgr::IsActiveAndConnected and InputMgr::GetUserWithInvalidController
+    // call this slot as `cur-><slot0>(mSessionMgr)` -- this=the BandUser subobject,
+    // arg=the raw SessionMgr* -- where rb3-Wii dev source has
+    // `mSessionMgr->HasUser(cur)`. Declared-only (out-of-line in retail); the body
+    // is not needed for the dispatch-offset match. TODO(TU5): recover the real name.
+    virtual bool IsInSession(SessionMgr *) const;
+    virtual bool UnkTU5Virtual() const { return true; } // TODO: TU5-inserted virtual (confirmed via Ghidra decompile of retail TrackPanel::CreateTracks: IsParticipating() call resolves to vtable+0x8, not +0x4, so this slot precedes IsParticipating, not GetLocalBandUser; still nets the same +4 shift for everything after it, incl. GetLocalBandUser 0x18->0x1c). GameConfig::AutoAssignMissingSlots (va 0x82688e68) calls this slot (offset+0x4) in place of TheNetSession->HasUser(pUser) and tests the bool result -- real identity/name still unknown, signature widened from void to bool to match that call site.
     virtual bool IsParticipating() const { return mParticipating; }
     virtual int GetCurrentInstrumentCareerScore() const = 0;
     virtual int GetCurrentHardcoreIconLevel() const = 0;

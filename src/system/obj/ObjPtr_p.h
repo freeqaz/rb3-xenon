@@ -268,11 +268,45 @@ ObjPtr<T>::~ObjPtr() {}
 // runs HERE so the ring-ref recorded is `this` with the ObjPtr vtable already in
 // place. Keeping AddRef in the derived ctor makes ObjPtr's ctor the out-of-line
 // body (callers do `bl fn_8270B9A8`, not an inline vtable store + base-ctor call).
+// A SECOND, distinct inline lever, not a variant of RB3_OBJPTR_INLINE_OWNER_CTOR
+// in Object.h -- and on some sites the two point OPPOSITE ways. Define
+// RB3_OBJPTR_FORCEINLINE_CTOR at the top of a .cpp (before any include) to force
+// THIS body inline; at an `mFoo(this)` site the default `ptr = nullptr` folds the
+// AddRef branch away, leaving the same three stores.
+//
+// WHY IT IS NOT THE SAME AS THE OWNER-ONLY LEVER: that one binds a *branch-free*
+// delegating ctor, so the ??_7ObjPtr@...@6B@ address materialization floats free
+// and MSVC hoists the lis/addi to the top of the scheduling region, parking it in
+// a long-lived register across ~17 instructions. Force-inlining a body that
+// CONTAINS a (statically folded) branch keeps the vptr materialization pinned
+// after the member stores -- which is what retail does.
+// Measured on ??0NgSpotlightDrawer@@QAA@XZ (world/SpotlightDrawer_NG.cpp):
+//   plain out-of-line `bl`            92.37%
+//   RB3_OBJPTR_INLINE_OWNER_CTOR      84.50%   (vtable hoisted -- REGRESSES)
+//   RB3_OBJPTR_FORCEINLINE_CTOR       98.38%
+// It also repairs the ctor's EH unwind funclet: retail spills &mFoo to a frame
+// temp and the funclet reloads it (`lwz r3,0x54(r31); bl ~ObjPtr`), whereas the
+// non-inlined form recomputes `this+off` from the `this$` home slot. That funclet
+// (fn_824D2928, 40 B) goes 99.9 -> 100.0, so this lever is worth +1 honest match
+// on top of the ctor's fuzzy gain. Whole-binary A/B (define on vs off, header
+// edit present in BOTH legs): 41667 vs 41666 matched, exactly 2 rows changed,
+// both in the opting-in unit -- the gate is inert for every other TU.
+// Under RB3_OBJPTR_INLINE_TWOARG_CTOR the ctor is defined in-class in Object.h
+// (see the #elif chain there) -- this out-of-line body must be compiled out for
+// that TU or the two definitions collide.
+#ifndef RB3_OBJPTR_INLINE_TWOARG_CTOR
 template <class T>
+// Must repeat __forceinline on the definition: MSVC honours it here, and the
+// declaration in Object.h carries it only under the RB3_TU_OBJPTR_FORCEINLINE_CTOR
+// gate (lanes NCCC f187 + f332 — two spellings of the same per-TU lever).
+#if defined(RB3_OBJPTR_FORCEINLINE_CTOR) || defined(RB3_TU_OBJPTR_FORCEINLINE_CTOR)
+__forceinline
+#endif
 ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
     if (this->mObject)
         this->mObject->AddRef(this);
 }
+#endif
 
 template <class T>
 ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {
@@ -922,14 +956,11 @@ template <class T1, class T2>
 template <class S>
 void ObjPtrList<T1, T2>::sort(const S &cmp) {
     if (mNodes && mNodes->next) {
-        Node *sentinel = mNodes;
 #ifdef HX_NATIVE
         // Native Link() creates NULL-terminated forward links (last->next = nullptr).
         // PPC Link() creates circular links (last->next = sentinel).
+        Node *sentinel = mNodes;
         for (Node *outer = sentinel->next; outer != nullptr; outer = outer->next) {
-#else
-        for (Node *outer = sentinel->next; outer != sentinel; outer = outer->next) {
-#endif
             for (Node *inner = outer; inner != sentinel; inner = inner->prev) {
                 Node *prev = inner->prev;
                 if (cmp(inner->Obj(), prev->Obj())) {
@@ -944,6 +975,26 @@ void ObjPtrList<T1, T2>::sort(const S &cmp) {
                 }
             }
         }
+#else
+        // PPC ring: mNodes is the head sentinel, mNodes->prev is the tail.
+        // Retail walks the *other* direction from the native form: outer runs
+        // backward from (tail->prev) up to (excluding) the tail, inner walks
+        // forward via next comparing (next, cur) until cmp fails. Matches
+        // dc3-decomp's #else branch (ObjPtr_p.h) byte-for-byte.
+        Node *last = mNodes->prev;
+        for (Node *n = last->prev; n != last; n = n->prev) {
+            for (Node *x = n; x != last; x = x->next) {
+                Node *nextX = x->next;
+                if (cmp(nextX->Obj(), x->Obj())) {
+                    T1 *tmp = x->mObject;
+                    x->mObject = nextX->mObject;
+                    nextX->mObject = tmp;
+                } else {
+                    break;
+                }
+            }
+        }
+#endif
     }
 }
 

@@ -35,7 +35,7 @@ public:
     struct Target {
         Target(Hmx::Object *owner)
             : mFastForward(0), mEnvOverride(owner), mForceLOD(kLODPerFrame),
-              mTeleport(1), mReturn(1), mSelfShadow(1), unk68p4(0), unk68p3(1) {
+              mTeleport(1), mReturn(1), mSelfShadow(1), unk68p4(0), unk68p3(1), mHide(0) {
             mTo.Reset();
         }
         void UpdateTarget(Symbol, HamCamShot *);
@@ -65,6 +65,7 @@ public:
         bool mSelfShadow : 1;
         bool unk68p4 : 1;
         bool unk68p3 : 1;
+        bool mHide : 1;
     };
 
     // size 0x4c
@@ -95,7 +96,7 @@ public:
     virtual void SetPreFrame(float, float);
     virtual CamShot *CurrentShot() { return mCurrentShot; }
 
-    RndTransformable *FindTarget(Symbol);
+    RndTransformable *FindTarget(Symbol, bool = false);
     float GetTotalDurationSeconds();
     float GetTotalDuration();
     void Store();

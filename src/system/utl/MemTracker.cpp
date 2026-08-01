@@ -49,13 +49,12 @@ void DiffTblReport(const char *name, BlockStatTable &curTable, BlockStatTable &p
     curTable.SortByName();
     prevTable.SortByName();
 
-    std::vector<MemDiffEntry> diffs;
     int curNum = curTable.GetNumStats();
     int prevNum = prevTable.GetNumStats();
-    diffs.reserve(curNum + prevNum);
-
     int curIdx = 0;
     int prevIdx = 0;
+    std::vector<MemDiffEntry> diffs;
+    diffs.reserve(curNum + prevNum);
 
     while (curIdx < curNum) {
         if (prevIdx >= prevNum)
@@ -68,26 +67,27 @@ void DiffTblReport(const char *name, BlockStatTable &curTable, BlockStatTable &p
 
         int numAllocs1, numAllocs2;
         int size1, size2;
-        unsigned char heap;
+        int heap;
         const char *entryName;
 
         if (cmp < 0) {
+            entryName = curStat.mName;
             numAllocs1 = curStat.mNumAllocs;
             size1 = curStat.mSizeReq;
             numAllocs2 = 0;
             size2 = 0;
             heap = curStat.mHeap;
             curIdx++;
-            entryName = curStat.mName;
         } else if (cmp > 0) {
+            entryName = prevStat.mName;
             numAllocs1 = 0;
             size1 = 0;
             numAllocs2 = prevStat.mNumAllocs;
             size2 = prevStat.mSizeReq;
             heap = prevStat.mHeap;
             prevIdx++;
-            entryName = prevStat.mName;
         } else {
+            entryName = curStat.mName;
             numAllocs1 = curStat.mNumAllocs;
             size1 = curStat.mSizeReq;
             numAllocs2 = prevStat.mNumAllocs;
@@ -95,7 +95,6 @@ void DiffTblReport(const char *name, BlockStatTable &curTable, BlockStatTable &p
             heap = prevStat.mHeap;
             curIdx++;
             prevIdx++;
-            entryName = curStat.mName;
         }
 
         int numDiff = numAllocs1 - numAllocs2;
@@ -477,22 +476,26 @@ void MemTracker::DiffDump(TextStream &ts) {
     if (mTimeSlice) {
         ts << "(executable " << TheSystemArgs.front() << ")\n";
         ts << "(data\n";
-        short curTimeSlice = mTimeSlice;
         int count = 0;
-        for (AllocInfo **it = mHashTable->Begin(); it; it = mHashTable->Next(it)) {
-            if (curTimeSlice == (*it)->mTimeSlice) {
-                count++;
-            }
+        AllocInfo **it = mHashTable->Begin();
+        if (it) {
+            short curTimeSlice = mTimeSlice;
+            do {
+                if (curTimeSlice == (*it)->mTimeSlice) {
+                    count++;
+                }
+                it = mHashTable->Next(it);
+            } while (it);
         }
-        AllocInfo **allocVec = (AllocInfo **)DebugHeapAlloc(count * sizeof(AllocInfo *));
-        AllocInfo **allocEnd = allocVec + count;
-        AllocInfo **allocBegin = allocVec;
+        AllocInfo **allocBegin = (AllocInfo **)DebugHeapAlloc(count * sizeof(AllocInfo *));
+        AllocInfo **allocVec = allocBegin;
         for (AllocInfo **it = mHashTable->Begin(); it; it = mHashTable->Next(it)) {
-            if (curTimeSlice == (*it)->mTimeSlice) {
+            if (mTimeSlice == (*it)->mTimeSlice) {
                 *allocVec = *it;
                 allocVec++;
             }
         }
+        AllocInfo **allocEnd = allocVec;
         std::sort(allocBegin, allocEnd, StackLess);
         std::sort(mFreedInfos.begin(), mFreedInfos.end(), StackLess);
 

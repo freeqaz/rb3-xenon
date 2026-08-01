@@ -218,6 +218,18 @@ BEGIN_HANDLERS(Hmx::Object)
     HANDLE_EXPR(has, Property(_msg->Array(2), false) != nullptr)
     HANDLE_EXPR(prop_handle, HandleProperty(_msg->Array(2), _msg, true))
     HANDLE_ACTION(copy, Copy(_msg->Obj<Hmx::Object>(2), (CopyType)_msg->Int(3)))
+    // Retail (fn_8275BD78) dispatches "replace" through the ObjRefOwner vtable
+    // slot @+8 (Object.h's verified vtable-layout comment), which is the
+    // existing virtual Replace(ObjRef*, Hmx::Object*) override -- NOT a new
+    // 2-Object-arg overload (rb3-Wii's dev tree uses a differently-shaped
+    // Replace(Hmx::Object*, Hmx::Object*) here, but adding that signature to
+    // Hmx::Object would introduce a new vtable slot and shift every derived
+    // class's layout). Both message args are fetched via the same
+    // Obj<Hmx::Object> accessor retail uses elsewhere in this chain; only the
+    // first is cast to fit the existing virtual's declared parameter type.
+    HANDLE_ACTION(
+        replace, Replace((ObjRef *)_msg->Obj<Hmx::Object>(2), _msg->Obj<Hmx::Object>(3))
+    )
     HANDLE_EXPR(class_name, ClassName())
     HANDLE_EXPR(name, mName)
     HANDLE_EXPR(note, mNote)
@@ -245,8 +257,14 @@ BEGIN_HANDLERS(Hmx::Object)
     // oracles agree they are absent from THIS body, and rb3-Wii lacks them too.
     HANDLE(add_sink, OnAddSink)
     HANDLE(remove_sink, OnRemoveSink)
-#endif
+    // Third member of the same DC3-only trio. Retail fn_8275BD78 contains only
+    // FOUR indirect calls (vtable slots 0x10 ClassName x2, 0x14 SetType, and the
+    // shared $LN303 join) -- slot 0x38 (Export) appears NOWHERE in the body, and
+    // all three HANDLE_ARRAY(mTypeDef) miss paths branch straight to the
+    // warn/return block at .L_8275C7B4. Ghidra's decomp agrees. rb3-Wii's
+    // own chain ends at HANDLE_ARRAY(mTypeDef)+HANDLE_CHECK with no Export.
     Export(_msg, false);
+#endif
 END_HANDLERS
 
 BEGIN_PROPSYNCS(Hmx::Object)
@@ -436,30 +454,26 @@ ObjectDir *Hmx::Object::DataDir() {
     return mDir ? mDir : ObjectDir::Main();
 }
 
+__declspec(noinline) static const char *FindPathNameHelper(const char *name, const char *path) {
+    return MakeString("%s (%s)", name, FileLocalize(path, nullptr));
+}
+
 const char *Hmx::Object::FindPathName() {
     const char *name = (mName && *mName) ? mName : ClassName().Str();
 
     ObjectDir *dataDir = DataDir();
     if (dataDir) {
         DirLoader *loader = dataDir->Loader();
-        if (loader) {
-            return MakeString(
-                "%s (%s)",
-                name,
-                FileLocalize(loader->LoaderFile().c_str(), nullptr)
-            );
+        if ((int)loader) {
+            return FindPathNameHelper(name, loader->LoaderFile().c_str());
         } else if (!dataDir->ProxyFile().empty()) {
-            return MakeString(
-                "%s (%s)", name, FileLocalize(dataDir->ProxyFile().c_str(), nullptr)
-            );
+            return FindPathNameHelper(name, dataDir->ProxyFile().c_str());
         } else if (*dataDir->GetPathName() != '\0') {
-            return MakeString(
-                "%s (%s)", name, FileLocalize(dataDir->GetPathName(), nullptr)
-            );
+            return FindPathNameHelper(name, dataDir->GetPathName());
         } else if (dataDir != this && dataDir->Name() && *dataDir->Name()) {
             return MakeString("%s/%s", dataDir->Name(), name);
         } else if (mDir && *mDir->GetPathName()) {
-            return MakeString("%s (%s)", name, FileLocalize(mDir->GetPathName(), nullptr));
+            return FindPathNameHelper(name, mDir->GetPathName());
         }
     }
     return name;
@@ -912,7 +926,15 @@ void Hmx::Object::RegisterFactory(Symbol name, ObjectFunc *func) {
 #pragma endregion
 #pragma region Misc Methods
 
+// Retail (fn_8275BD78, Handle's "set_note" arm) calls this as a real `bl`, but
+// /Ob2 inlines this trivial one-line out-of-line member at the call site by
+// default. Per the established VocalPlayer.cpp::OnMsg(ButtonUpMsg) precedent,
+// `#pragma auto_inline(off)` is the working lever for this MSVC
+// (16.00.10224.00) -- moving the definition doesn't help, and
+// __declspec(noinline) is not a substitute (see OvershellSlot.cpp:1874).
+#pragma auto_inline(off)
 void Hmx::Object::SetNote(const char *note) { mNote = note; }
+#pragma auto_inline(on)
 
 void Hmx::Object::RemoveFromDir() {
     if (mDir && mDir != sDeleting) {

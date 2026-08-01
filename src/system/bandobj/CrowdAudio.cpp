@@ -20,6 +20,8 @@ static struct {
 
 CrowdAudio *TheCrowdAudio;
 
+void CrowdAudio::Init() { Register(); }
+
 CrowdAudio::CrowdAudio()
     : mCurrentMogg(this, 0), mOldMogg(this, 0), mFadingMogg(this, 0),
       mMainFader(Hmx::Object::New<Fader>()), mWantDuck(0), mResultsDuck(0),

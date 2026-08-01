@@ -14,7 +14,8 @@ KeysFx::KeysFx(TrackType ty) : mTrackType(ty), unk20(0x78), unk31(1), unk34(-1.0
 KeysFx::~KeysFx() {}
 
 void KeysFx::Load() {
-    mFxDir.LoadFile(FilePath(".", "sfx/keys_fx.milo"), true, false, kLoadFront, false);
+    FilePath fp(".", "sfx/keys_fx.milo");
+    mFxDir.LoadFile(fp, true, false, kLoadFront, false);
 }
 
 void KeysFx::PostLoad() { mFxDir.PostLoad(0); }

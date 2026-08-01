@@ -84,11 +84,11 @@ int TrackerSectionManager::GetSectionEndTick(int idx) const {
 
 int TrackerSectionManager::FindSectionContainingTick(int tick) const {
     int idx;
-    for (idx = 0; idx < (int)mSections.size(); idx++) {
+    for (idx = 0; idx < mSections.size(); idx++) {
         if (mSections[idx].mEndTick > tick)
             break;
     }
-    if (idx == (int)mSections.size())
+    if (idx == mSections.size())
         return -1;
     return idx;
 }

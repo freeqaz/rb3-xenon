@@ -28,6 +28,7 @@ BEGIN_HANDLERS(FreeCamera)
     )
     HANDLE_ACTION(set_parent_dof, SetParentDof(_msg->Int(2), _msg->Int(3), _msg->Int(4)))
     HANDLE_ACTION(set_frozen, mFrozen = _msg->Int(2))
+    HANDLE_ACTION(enable_depth_of_field, mEnableDOF = _msg->Int(2))
 END_HANDLERS
 
 void FreeCamera::SetParentDof(bool b1, bool b2, bool b3) {
@@ -155,12 +156,19 @@ void FreeCamera::Poll() {
 
     cam->SetLocalXfm(resultXfm);
 
-    // Handle DOF
+    // Handle DOF. Retail (0x824ED954..0x824ED9E4) gates the Set on mEnableDOF and
+    // calls UnSet() otherwise (vtable slot 0x58). The float arg order is fixed by
+    // retail's register setup: f2=BlurDepth, f3=MaxBlur, f4=MinBlur -- and MSVC's
+    // right-to-left evaluation matches (MinBlur is issued first, so it is rightmost).
     if (TheDOFProc->Enabled()) {
-        TheDOFProc->Set(
-            cam, mFocalPlane, TheDOFProc->MinBlur(), TheDOFProc->MaxBlur(),
-            TheDOFProc->BlurDepth()
-        );
+        if (mEnableDOF) {
+            TheDOFProc->Set(
+                cam, mFocalPlane, TheDOFProc->BlurDepth(), TheDOFProc->MaxBlur(),
+                TheDOFProc->MinBlur()
+            );
+        } else {
+            TheDOFProc->UnSet();
+        }
     }
 }
 

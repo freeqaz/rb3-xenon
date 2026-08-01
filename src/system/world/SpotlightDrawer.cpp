@@ -353,16 +353,12 @@ bool SpotlightDrawer::DrawNGSpotlights() {
     return GetGfxMode() == kNewGfx && TheLoadMgr.GetPlatform() != kPlatformPC;
 }
 
-void SpotlightDrawer::DeSelect() {
+__forceinline void SpotlightDrawer::DeSelect() {
     if (sCurrent != this)
         return;
-    if (sDefault != this) {
-        sDefault->Select();
-    } else {
-        PostProcessor *pp = sCurrent ? static_cast<PostProcessor *>(sCurrent) : nullptr;
-        TheRnd.UnregisterPostProcessor(pp);
-        sCurrent = nullptr;
-    }
+    if (sDefault == this)
+        return;
+    sDefault->Select();
 }
 
 void SpotlightDrawer::ApplyLightingApprox(BoxMapLighting &boxMap, float f2) const {
@@ -482,8 +478,7 @@ void DrawAccessories<LensExtract>(
     if (it == spotEnd)
         return;
     do {
-        Spotlight *sl = it->mSpotlight;
-        if (sl->LensMesh() != nullptr) {
+        if (it->mSpotlight->LensMesh() != nullptr) {
             RndMesh *disk = Spotlight::GetDiskMesh();
             RndMultiMesh *nextMesh;
             if (disk != curDisk) {
@@ -491,7 +486,7 @@ void DrawAccessories<LensExtract>(
             } else {
                 nextMesh = multiMesh;
             }
-            const Transform &lensXfm = sl->LensXfm();
+            const Transform &lensXfm = it->mSpotlight->LensXfm();
             bool visible;
             if (!disk->Showing()) {
                 visible = false;
@@ -505,9 +500,9 @@ void DrawAccessories<LensExtract>(
                 }
             }
             if (visible) {
-                bool diskChanged = (curDisk != disk);
-                RndMat *lensMat = sl->LensMesh();
-                bool matChanged = (curMat != lensMat);
+                bool diskChanged = (disk != curDisk);
+                RndMat *lensMat = it->mSpotlight->LensMesh();
+                bool matChanged = (lensMat != curMat);
                 if ((diskChanged || matChanged) && multiMesh != nullptr
                     && !multiMesh->Instances().empty()) {
                     multiMesh->DrawShowing();

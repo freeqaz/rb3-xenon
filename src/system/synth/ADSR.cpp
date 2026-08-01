@@ -148,10 +148,12 @@ void Ps2ADSR::Set(const ADSRImpl &adsr) {
     SetAttackMode(adsr.mAttackMode);
     SetSustainMode(adsr.mSustainMode);
     SetReleaseMode(adsr.mReleaseMode);
-    SetAttackRate(NearestAttackRate(adsr.mAttackRate));
+    float attackRate = adsr.mAttackRate;
+    SetAttackRate(NearestAttackRate(attackRate));
     SetDecayRate(FindNearestInTable(gDecayRate, 0x10, adsr.mDecayRate));
     SetSustainRate(NearestSustainRate(adsr.mSustainRate));
-    SetReleaseRate(NearestReleaseRate(adsr.mReleaseRate));
+    float releaseRate = adsr.mReleaseRate;
+    SetReleaseRate(NearestReleaseRate(releaseRate));
     SetSustainLevel(FindNearestInTable(gSustainLevel, 0x10, adsr.mSustainLevel));
 }
 

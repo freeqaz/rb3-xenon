@@ -248,13 +248,13 @@ static int mapping0_forward(vorbis_block *vb){
   int                    n=vb->pcmend;
   int i,j,k;
 
+  int    *nonzero    = alloca(sizeof(*nonzero)*vi->channels);
   float  **gmdct     = _vorbis_block_alloc(vb,vi->channels*sizeof(*gmdct));
   int    **ilogmaskch= _vorbis_block_alloc(vb,vi->channels*sizeof(*ilogmaskch));
   int ***floor_posts = _vorbis_block_alloc(vb,vi->channels*sizeof(*floor_posts));
-  int    *nonzero    = alloca(sizeof(*nonzero)*vi->channels);
-  float *local_ampmax=alloca(sizeof(*local_ampmax)*vi->channels);
 
   float global_ampmax=vbi->ampmax;
+  float *local_ampmax=alloca(sizeof(*local_ampmax)*vi->channels);
   int blocktype=vbi->blocktype;
 
   int modenumber=vb->W;
@@ -504,10 +504,10 @@ static int mapping0_forward(vorbis_block *vb){
   /* iterate over the many masking curve fits we've created */
 
   {
-    int **sortindex=alloca(sizeof(*sortindex)*vi->channels);
-    int *zerobundle=alloca(sizeof(*zerobundle)*vi->channels);
-    float **couple_bundle=alloca(sizeof(*couple_bundle)*vi->channels);
     float **res_bundle=alloca(sizeof(*res_bundle)*vi->channels);
+    float **couple_bundle=alloca(sizeof(*couple_bundle)*vi->channels);
+    int *zerobundle=alloca(sizeof(*zerobundle)*vi->channels);
+    int **sortindex=alloca(sizeof(*sortindex)*vi->channels);
     float **mag_memo;
     int **mag_sort;
 

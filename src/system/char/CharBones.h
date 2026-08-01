@@ -155,4 +155,9 @@ BinStream &operator>>(BinStream &, CharBones::Bone &);
 
 bool PropSync(CharBones::Bone &, DataNode &, DataArray *, int, PropOp);
 
-short MakeShortAng(float);
+inline short MakeShortAng(float f) {
+    f = f * 1638.4f + 0.5f;
+    MILO_ASSERT(f < 32768 && f > -32767, 0x60);
+    f = floor(f);
+    return f;
+}

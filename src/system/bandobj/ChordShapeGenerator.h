@@ -107,7 +107,15 @@ public:
     DataNode OnSetStringFret(const DataArray *);
     DataNode OnGetStringTrans(const DataArray *);
 
-    DECLARE_REVS;
+    // NOTE: NOT DECLARE_REVS (two separate gRev/gAltRev statics) -- MSVC does not
+    // lay out .bss in declaration order (measured on CrowdAudio, see
+    // docs/decomp/patterns/ objmacros dialect notes), so retail's Load() addresses
+    // them as one 4-byte aggregate (altRev at +0, rev at +4, sharing a single
+    // `lis`). Force that layout with an explicit struct.
+    struct RevsT {
+        __declspec(align(4)) unsigned short altRev, rev;
+    };
+    static RevsT gRevs;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
     NEW_OBJ(ChordShapeGenerator)

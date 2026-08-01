@@ -42,6 +42,21 @@ SongMetadata::SongMetadata(DataArray *main_arr, DataArray *backup_arr, bool onDi
     if (FIND_WITH_BACKUP(game_origin))
         mGameOrigin = member_arr->Sym(1);
 
+    // RB2-origin songs that carry a nonzero `ugc` member are re-tagged as
+    // user-generated content.  Retail keeps both symbols as function-local
+    // statics sharing this TU's guard word (bits 0x4 and 0x8 of lbl_82E0668C),
+    // and `ugc`'s guard sits INSIDE the rb2 comparison -- dropping this block
+    // is what shifted every later static's guard bit down by two.
+    static Symbol rb2("rb2");
+    if (mGameOrigin == rb2) {
+        static Symbol ugc("ugc");
+        if (FIND_WITH_BACKUP(ugc)) {
+            if (member_arr->Int(1) != 0) {
+                mGameOrigin = ugc;
+            }
+        }
+    }
+
     static Symbol preview("preview");
     if (FIND_WITH_BACKUP(preview)) {
         mPreviewStartTime = member_arr->Float(1);

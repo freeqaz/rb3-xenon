@@ -54,10 +54,17 @@ static inline unsigned short StoreBuildNum() {
     return *(unsigned short *)((char *)TheStoreMetadata.mVersion + 1);
 }
 
+// Retail (fn_82605128) never stores to mUserCanDoInput (0xE1) in the ctor --
+// only mStartBrowserAtBottom (0xE0) and mShortcutProvider (0xE4) are
+// zero-initialized here (verified: target is exactly one 4-byte instruction
+// shorter than a version with the `stb ...,0xe1` present). mUserCanDoInput
+// starts uninitialized on retail; SYNC_PROP(waiting, mUserCanDoInput) is the
+// first place it gets a real value. Match retail exactly rather than "fixing"
+// the apparent bug.
 BandStorePanel::BandStorePanel()
     : mMetadataLoader(0), mLastRequestExtra(0), mSort(gNullStr),
-      mStartBrowserAtBottom(0), mUserCanDoInput(0), mShortcutProvider(0) {
-    mOfferProvider = new StoreOfferProvider(&unk38, &unk48);
+      mStartBrowserAtBottom(0), mShortcutProvider(0) {
+    mOfferProvider = new StoreOfferProvider(&unk38);
 }
 
 BandStorePanel::~BandStorePanel() { delete mOfferProvider; }

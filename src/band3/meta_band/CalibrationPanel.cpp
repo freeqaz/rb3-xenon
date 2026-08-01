@@ -566,7 +566,8 @@ void CalibrationPanel::ScanHardwareModeInputs() {
             unke4 = f6 * 0.1 + f5;
         else
             unke4 = f5 * 0.9850000143051147f;
-        if (std::fabs(f4 - unk94) > 0.015625f) {
+        float d = f4 - unk94;
+        if (std::fabs(d) > 0.015625f) {
             trace_sensors.Int();
         }
         if (mEnableVideo) {
@@ -576,10 +577,7 @@ void CalibrationPanel::ScanHardwareModeInputs() {
             }
             unk94 = f6;
         } else if (mEnableAudio) {
-            float f1 = 0.49f;
-            if (JoypadGetPadData(mPad)->mType == kJoypadWiiButtonGuitar)
-                f1 = 0.2f;
-            if (0.71f > f4 && f4 > f1 && (unk94 <= f1 || 0.71f <= unk94)) {
+            if (0.71 > f4 && f4 > 0.49 && (unk94 <= 0.49 || 0.71 <= unk94)) {
                 unkdc++;
                 unkd8 += f4;
                 TriggerCalibration(mPad);

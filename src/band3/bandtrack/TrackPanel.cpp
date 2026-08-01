@@ -329,14 +329,17 @@ void TrackPanel::HandleAddUser(BandUser *user) {
     if (!pushed) {
         mTracks.push_back(newtrack);
     }
-    unk5d = true;
+    // Retail fn_82B92700's disassembly has ZERO stb instructions (117-instr
+    // body, verified via dtk target .s dump) -- no unk5d(0x6c) write anywhere
+    // in this function, unlike the rb3-Wii dev oracle which sets it here.
     newtrack->mSlotIdx = userslot;
     user->mTrack = newtrack;
     slot.mTrack = newtrack;
     slot.mInstrument = GetTrackInstrument(user->GetTrackSym());
     UpdateReservedVocalSlot();
     AssignTrack(userslot);
-    mTrackPanelDir->ConfigureTracks(!IsGameOver());
+    bool gameOver = IsGameOver();
+    mTrackPanelDir->ConfigureTracks(!gameOver);
     if (slot.mInstrument == kInstVocals && mTrackPanelDir->TracksExtended()) {
         BandTrack *vocalTrack = newtrack->GetBandTrack();
         MILO_ASSERT(vocalTrack, 0x236);

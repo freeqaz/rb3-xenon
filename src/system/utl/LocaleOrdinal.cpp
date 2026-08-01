@@ -8,18 +8,14 @@ const char *LocalizeOrdinal(
     LocaleGender gender,
     LocaleNumber number,
     bool superscriptMarkup,
-    Symbol lang,
+    Symbol unusedLang,
     Locale &locale
 ) {
     char buf[255];
-    if (lang.Null()) {
-        lang = SystemLanguage();
-    }
-    strncpy(buf, LocalizeSeparatedInt(num, locale), 255);
-    buf[254] = '\0';
+    strcpy(buf, LocalizeSeparatedInt(num));
     int len = strlen(buf);
     char code1, code2;
-    if (len > 0)
+    if (len != 0)
         code1 = buf[len - 1];
     else
         code1 = '0';
@@ -35,6 +31,7 @@ const char *LocalizeOrdinal(
     static Symbol esl("esl");
     static Symbol ita("ita");
 
+    Symbol lang = SystemLocale();
     if (lang != jpn) {
         if (lang == eng) {
             if (superscriptMarkup)

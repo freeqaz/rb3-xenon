@@ -90,12 +90,14 @@ void TourPerformerImpl::UpdateGigDataForSong(Symbol song, int stars) {
     GigData data(0);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0xDC);
-    TourDesc *pTourDesc = TheTour->GetTourDesc(pProgress->GetTourDesc());
+    Symbol tourDescSym = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = TheTour->GetTourDesc(tourDescSym);
     MILO_ASSERT(pTourDesc, 0xE1);
     int curGigNum = pProgress->GetCurrentGigNum();
     data.unk4 = stars;
+    int starsClamped = stars;
     if (stars >= 6)
-        stars = 5;
+        starsClamped = 5;
     data.unk8 = 0;
     Quest *pQuest = TheQuestMgr.GetQuest(GetCurrentQuest());
     if (pQuest) {
@@ -105,7 +107,7 @@ void TourPerformerImpl::UpdateGigDataForSong(Symbol song, int stars) {
         if (data.unk8 >= 6)
             data.unk8 = 5;
     }
-    data.unkc = stars + data.unk8;
+    data.unkc = starsClamped + data.unk8;
     data.unk0 = song;
     mGigData.push_back(data);
 }

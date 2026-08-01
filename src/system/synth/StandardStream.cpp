@@ -38,7 +38,7 @@ StandardStream::ChannelParams::ChannelParams()
 bool StandardStream::unk158;
 
 StandardStream::StandardStream(File *f, float f1, float f2, Symbol ext, bool b1, bool b2)
-    : mPollingEnabled(b2) {
+    : mPollingEnabled(b2), mFloatSamples(b1) {
     MILO_ASSERT(f, 0x4A);
     mExt = ext;
     mFile = f;
@@ -177,10 +177,17 @@ float StandardStream::GetJumpBackTotalTime(float time) const {
     int count = (int)mJumpInstances.size() - 1;
     int i = count;
     while (i >= 0) {
+        // PROVISIONAL field mapping. Retail's JumpInstance is
+        // {Marker mFrom; Marker mTo; float mTotal} (see Stream.h for the
+        // binary evidence); dc3's four-float layout this body was ported from
+        // does not exist in RB3, so the old unk8/unkc slots have no direct
+        // equivalent. This function is not currently matched (it is one of the
+        // unnamed fn_ rows in the unit), so the body is a placeholder pending a
+        // dedicated port of retail's jump/loop logic.
         const JumpInstance& jump = mJumpInstances[i];
-        float jumpTime = jump.unk8;
+        float jumpTime = jump.mFrom.posMS;
         if (time >= jumpTime) {
-            loopback = jump.unkc;
+            loopback = jump.mTotal;
             lastTime = jumpTime;
             break;
         }
@@ -939,15 +946,14 @@ void StandardStream::DoJump() {
         }
         mCurrentSamp = mJumpToSamples;
     }
+    // PROVISIONAL -- see the note in GetJumpBackTotalTime.
     JumpInstance ji;
-    ji.unk0 = mJumpFromMs;
-    ji.unk4 = mJumpToMs;
+    ji.mFrom.posMS = mJumpFromMs;
+    ji.mTo.posMS = mJumpToMs;
     if (mJumpInstances.empty()) {
-        ji.unkc = mJumpToMs - mJumpFromMs;
-        ji.unk8 = mJumpFromMs;
+        ji.mTotal = mJumpToMs - mJumpFromMs;
     } else {
-        ji.unkc = (mJumpToMs - mJumpFromMs) + mJumpInstances.back().unkc;
-        ji.unk8 = (mJumpFromMs - mJumpInstances.back().unk0) + mJumpInstances.back().unk4;
+        ji.mTotal = (mJumpToMs - mJumpFromMs) + mJumpInstances.back().mTotal;
     }
     mJumpInstances.push_back(ji);
 }

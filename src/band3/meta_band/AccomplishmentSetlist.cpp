@@ -68,5 +68,8 @@ bool AccomplishmentSetlist::CheckRequirements(
         return false;
     }
 
-    return mMinStars <= minStars;
+    if (mMinStars > minStars) {
+        return false;
+    }
+    return true;
 }

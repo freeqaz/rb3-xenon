@@ -1,3 +1,6 @@
+// Retail inlines the owner-only ObjPtr ctor in this TU (SmasherPlateInfo's
+// mSmasherPlate(this) expands to three stores, not a `bl ??0ObjPtr`).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
 #include "bandobj/GemTrackResourceManager.h"
 #include "obj/Msg.h"
 
@@ -9,7 +12,6 @@ GemTrackResourceManager::~GemTrackResourceManager() {}
 
 void GemTrackResourceManager::InitSmasherPlates() {
     SmasherPlateInfo info(this);
-    unk28.reserve(7);
     info.mSmasherPlate = unk1c->Find<RndDir>("smasher_plate_guitar", true);
     info.mTrackInst = kInstGuitar;
     unk28.push_back(info);

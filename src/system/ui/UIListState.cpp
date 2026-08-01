@@ -292,17 +292,11 @@ bool UIListState::CanScrollNext(bool b) const {
 bool UIListState::ShouldHoldDisplayInPlace(int i2) const {
     bool shouldCheck = (mTargetShowing > mFirstShowing && i2 == 0)
         || (mTargetShowing < mFirstShowing && i2 == -1);
-    if (shouldCheck) {
-        if (SnappedDataForDisplay(i2) >= 0) {
-            int nextDisp = i2 + 1;
-            if (nextDisp != mNumDisplay && Display2Data(nextDisp) != -1) {
-                if (!Provider()->IsSnappableAtData(Display2Data(nextDisp))) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+    if (!shouldCheck)
+        return false;
+    return SnappedDataForDisplay(i2) >= 0 && i2 + 1 != mNumDisplay
+        && Display2Data(i2 + 1) != -1
+        && !Provider()->IsSnappableAtData(Display2Data(i2 + 1));
 }
 
 bool UIListState::BuildScroll(int direction, int firstShowing, int selectedDisplay, ScrollState &state) const {
@@ -341,7 +335,8 @@ bool UIListState::BuildScroll(int direction, int firstShowing, int selectedDispl
             }
             state.mSelectedDisplay = sel;
         } else if (state.mSelectedDisplay > scrollMax) {
-            state.mFirstShowing += (state.mSelectedDisplay - scrollMax);
+            int diff = state.mSelectedDisplay - scrollMax;
+            state.mFirstShowing += diff;
             state.mSelectedDisplay = scrollMax;
         } else if (!mScrollPastMinDisplay || state.mSelectedDisplay >= mMinDisplay) {
             int origFirst = state.mFirstShowing;
@@ -349,33 +344,17 @@ bool UIListState::BuildScroll(int direction, int firstShowing, int selectedDispl
                 state.mFirstShowing = Max(0, origFirst - 1);
             }
             state.mSelectedDisplay = (state.mSelectedDisplay - state.mFirstShowing) + origFirst;
-            return origFirst != state.mFirstShowing;
+            return state.mFirstShowing != origFirst;
         } else {
-            state.mFirstShowing += (state.mSelectedDisplay - mMinDisplay);
+            int diff = state.mSelectedDisplay - mMinDisplay;
+            state.mFirstShowing += diff;
             state.mSelectedDisplay = mMinDisplay;
         }
 
-        int result;
-        if (state.mSelectedDisplay > scrollMax) {
-            result = scrollMax;
-        } else {
-            if (state.mSelectedDisplay < 0) {
-                result = 0;
-            } else {
-                result = state.mSelectedDisplay;
-            }
-        }
-        state.mSelectedDisplay = result;
+        ClampEq(state.mSelectedDisplay, 0, scrollMax);
 
         int maxFirst = MaxFirstShowing();
-        if (state.mFirstShowing <= maxFirst) {
-            if (state.mFirstShowing < 0) {
-                maxFirst = 0;
-            } else {
-                maxFirst = state.mFirstShowing;
-            }
-        }
-        state.mFirstShowing = maxFirst;
+        ClampEq(state.mFirstShowing, 0, maxFirst);
     }
 
     return (state.mSelectedDisplay == selectedDisplay) || (state.mFirstShowing != firstShowing);

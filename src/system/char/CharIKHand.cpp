@@ -244,9 +244,10 @@ void CharIKHand::Poll() {
         return;
     Vector3 destPos(0.0f, 0.0f, 0.0f);
     Hmx::Quat destQuat(0.0f, 0.0f, 0.0f, 0.0f);
-    if (mScalable || mHandChanged) {
-        MeasureLengths();
-        mHandChanged = false;
+    CharIKHand *self = this;
+    if (mScalable || self->mHandChanged) {
+        self->MeasureLengths();
+        self->mHandChanged = false;
     }
     if (mTargets.size() == 1) {
         RndTransformable *frontTarget = mTargets.front().mTarget;
@@ -264,20 +265,23 @@ void CharIKHand::Poll() {
         float *weightPtr = localWeights;
         auto endIt = mTargets.end();
         for (ObjVector<IKTarget>::iterator it = mTargets.begin(); it != endIt;
-             ++it) {
+             ++it, weightPtr++) {
             RndTransformable *targetTrans = it->mTarget;
             float extent = it->mExtent;
             if (targetTrans) {
-                Vector3 targetVec(targetTrans->WorldXfm().v);
-                if (extent <= 0.0f) {
-                    *weightPtr = kMaxWeight / Max(kMinWeight, LengthSquared(targetVec));
-                } else if (extent < -targetVec.z) {
-                    *weightPtr = kMinWeight;
+                Vector3 targetVec(targetTrans->LocalXfm().v);
+                if (extent > 0.0f) {
+                    if (-targetVec.z <= extent) {
+                        targetVec.z = 0.0f;
+                        *weightPtr =
+                            kMaxWeight / Max(kMinWeight, LengthSquared(targetVec));
+                    } else {
+                        *weightPtr = kMinWeight;
+                    }
                 } else {
-                    targetVec.z = 0.0f;
                     *weightPtr = kMaxWeight / Max(kMinWeight, LengthSquared(targetVec));
                 }
-                totalWeight += *weightPtr++;
+                totalWeight += *weightPtr;
             }
         }
         if (totalWeight < 1.0f) {
@@ -288,14 +292,14 @@ void CharIKHand::Poll() {
              ++it) {
             RndTransformable *targetTrans = it->mTarget;
             if (targetTrans) {
-                float curWeight = *weightPtr;
+                float curWeight = *weightPtr / totalWeight;
                 const Transform &worldXfm = targetTrans->WorldXfm();
-                ScaleAdd(destPos, worldXfm.v, curWeight / totalWeight, destPos);
+                ScaleAdd(destPos, worldXfm.v, curWeight, destPos);
                 if (mOrientation) {
                     Hmx::Matrix3 normMat;
                     Normalize(worldXfm.m, normMat);
                     Hmx::Quat q(normMat);
-                    ScaleAddEq(destQuat, q, curWeight / totalWeight);
+                    ScaleAddEq(destQuat, q, curWeight);
                 }
             }
             weightPtr++;
@@ -325,7 +329,7 @@ void CharIKHand::Poll() {
             if (!elbowParent)
                 shoulderParent = 0;
         }
-        IKElbow(shoulderParent, elbowParent);
+        self->IKElbow(shoulderParent, elbowParent);
     }
     if (charWeight != 0 && (!shoulderParent || mOrientation || mStretch)) {
         Transform handXfm(mHand->WorldXfm());
@@ -350,8 +354,10 @@ void CharIKHand::Poll() {
         Vector3 handY(handMat.y);
         Vector3 handZ(handMat.z);
         float acosDot = acosf(Dot(elbowMat.x, handZ)) - kHalfPi;
-        float absAcosDot = acosDot;
-        if (acosDot <= 0.0f)
+        float absAcosDot;
+        if (acosDot > 0.0f)
+            absAcosDot = acosDot;
+        else
             absAcosDot = -acosDot;
         float maxRads = mWristRadians;
         if (absAcosDot > maxRads) {
@@ -374,7 +380,7 @@ void CharIKHand::Poll() {
             Subtract(wristXfm.v, newFingerPos, wristXfm.v);
             mHand->SetWorldXfm(wristXfm);
             mWorldDst = wristXfm.v;
-            IKElbow(shoulderParent, elbowParent);
+            self->IKElbow(shoulderParent, elbowParent);
             mHand->SetWorldXfm(wristXfm);
         }
     }
@@ -455,7 +461,7 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
                 float sPerpDist = std::sqrt(sphereRadius * sphereRadius - sDistToAxis * sDistToAxis);
                 sphereCenter.Set(sphereToMid.x, sphereToMid.y, sphereToMid.z);
                 float sphereToAxisDist = Distance(sphereCenter, axisProj);
-                float d = (sphereToAxisDist * sphereToAxisDist + -(sDistToAxis * sDistToAxis - sPerpDist * sPerpDist)) / (sphereToAxisDist * 2.0f);
+                float d = (sPerpDist * sPerpDist - elbowLen * elbowLen + sphereToAxisDist * sphereToAxisDist) / (sphereToAxisDist * 2.0f);
                 float sqrtTerm = std::sqrt(-(d * d - sPerpDist * sPerpDist));
                 float tiltAngle = std::asin(sqrtTerm / elbowLen);
                 if (IsNaN(tiltAngle))
@@ -464,9 +470,8 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
                 tiltDir -= axisProj;
                 Normalize(tiltDir, tiltDir);
                 Scale(tiltDir, elbowLen, tiltDir);
-                double halfAngle = tiltAngle / 2.0;
-                float sinHalf = sin(halfAngle);
-                float cosHalf = cos(halfAngle);
+                float sinHalf = sin(tiltAngle / 2.0);
+                float cosHalf = cos(tiltAngle / 2.0);
                 Hmx::Quat quatDir(tiltDir.x, tiltDir.y, tiltDir.z, 0.0f);
                 Hmx::Quat quatRot(axisDir.x * sinHalf, axisDir.y * sinHalf, axisDir.z * sinHalf, cosHalf);
                 Hmx::Quat quatResult;

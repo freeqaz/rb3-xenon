@@ -106,7 +106,13 @@ OvershellSlot::OvershellSlot(
 
 OvershellSlot::~OvershellSlot() {
     mSessionMgr->RemoveSink(this, LocalUserLeftMsg::Type());
-#ifndef HX_NATIVE
+#ifdef HX_NATIVE
+    // Symmetric with the ctor's removed AddSink(UserLoginMsg::Type()) call
+    // (see the comment at the end of the ctor above): retail X360's dtor
+    // (0x825e1490) has NO TheServer.RemoveSink(UserLoginMsg::Type()) call at
+    // all -- the Ghidra decomp goes straight from the LocalUserLeftMsg
+    // RemoveSink into the RELEASE(mFriendsProvider) chain at offset 0xB4.
+    // Keep it native-only so we don't leave a dangling subscription there.
     TheServer.RemoveSink(this, UserLoginMsg::Type());
 #endif
     RELEASE(mFriendsProvider);
@@ -483,19 +489,18 @@ void OvershellSlot::SelectDifficulty(Difficulty diff) {
     bool old5e = mSongOptionsRequired;
     mSongOptionsRequired = 0;
     if (mOvershell->SongOptionsRequired()) {
-        if (!old5e && mOvershell->InSong()) {
-            if (TheGameMode->Property("skip_choose_diff_prompt", true)->Int()) {
-                pUser->SetDifficulty(diff);
-                EndOverrideFlow(kOverrideFlow_SongSettings, true);
-            } else {
-                Difficulty pUserDiff = pUser->GetDifficulty();
-                if (diff != pUserDiff) {
-                    OvershellSlotState* state = mStateMgr->GetSlotState(kState_ChooseDiffConfirm);
-                    state->SetProperty("difficulty", diff);
-                    pUser->SetOvershellSlotState(kState_ChooseDiffConfirm);
-                } else
-                    CancelSongSettings();
-            }
+        if (!old5e && mOvershell->InSong()
+            && !TheGameMode->Property("skip_choose_diff_prompt", true)->Int()) {
+            Difficulty pUserDiff = pUser->GetDifficulty();
+            if (pUserDiff != diff) {
+                OvershellSlotState* state = mStateMgr->GetSlotState(kState_ChooseDiffConfirm);
+                state->SetProperty("difficulty", diff);
+                pUser->SetOvershellSlotState(kState_ChooseDiffConfirm);
+            } else
+                CancelSongSettings();
+        } else {
+            pUser->SetDifficulty(diff);
+            EndOverrideFlow(kOverrideFlow_SongSettings, true);
         }
     } else {
         pUser->SetDifficulty(diff);
@@ -1346,8 +1351,8 @@ void OvershellSlot::UpdateView() {
         updateRestartAllowedMsg[0] = mSessionMgr->IsLocalToLeader(user);
         mOvershellDir->HandleType(updateRestartAllowedMsg);
 #endif
-        // retail X360 gates the local branch on the TU5-added User virtual too
-        if (user->IsLocal() && !user->UnkTU5Virtual_beforeUserName()) {
+        // retail X360 gates the local branch on the TU5-hoisted User::IsNullUser too
+        if (user->IsLocal() && !user->IsNullUser()) {
             b17 = c14 == 2;
             LocalBandUser *l14 = user->GetLocalBandUser();
             // retail reuses the HasOnlinePrivilege() result as the
@@ -1826,6 +1831,7 @@ void OvershellSlot::UpdateGamercardUsersList() {
 }
 
 void OvershellSlot::UpdateFriendsList() {
+    mFriendsProvider->Reload();
     static Message updateFriendsMsg("update_friends_provider", 0);
     updateFriendsMsg[0] = mFriendsProvider;
     mOvershellDir->HandleType(updateFriendsMsg);

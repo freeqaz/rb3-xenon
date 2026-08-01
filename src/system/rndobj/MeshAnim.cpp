@@ -1,10 +1,14 @@
+// [NCCC f278] opt this unity TU into the inline owner-only ObjPtr ctor.
+// Must precede the first #include of obj/Object.h (rndobj/ is PCH-excluded).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH 1
 #include "rndobj/MeshAnim.h"
 #include "obj/Object.h"
 #include "rndobj/Anim.h"
 
 #pragma region Hmx::Object
 
-RndMeshAnim::RndMeshAnim() : mMesh(this), mKeysOwner(this, this) {}
+RndMeshAnim::RndMeshAnim() : mMesh(this, nullptr), mKeysOwner(this, this) {}
 
 // Replace and SetFrame are declared in the header but never decomped.
 // On GCC, Replace is the key function — without it, the vtable ends up in .bss as zeros,

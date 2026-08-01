@@ -10,6 +10,35 @@
 #include "rndobj/Graph.h"
 #include "rndobj/Poll.h"
 
+// Retail transforms lookDir/sourceFilter with the COLUMN-VECTOR product
+// (out.i = Dot(v, m.i), i.e. each output is a dot of one matrix ROW with v),
+// which Mtx.h has no overload for -- Mtx.h only supplies the transpose
+// (Vector3, Matrix3) form, whose out.x reads the matrix COLUMN {0x0,0x10,0x20}.
+// Retail's asm at va 0x823ba738 reads rows {0x0,0x4,0x8} / {0x10,0x14,0x18} /
+// {0x20,0x24,0x28}, so the two call sites below need this overload. rb3-Wii has
+// it in its own Mtx.h; its body is hand-unrolled into accx/accy/accz temporaries
+// which is MWCC-shaped and costs MSVC 6 extra instructions here (aliasing
+// reloads, since `out` may alias `v`) -- the Dot() spelling is what matches.
+// NOTE: this belongs in math/Mtx.h, but adding it there is a header change with
+// engine-wide blast radius, so it is kept TU-local pending its own A/B.
+inline void Multiply(const Hmx::Matrix3 &m, const Vector3 &v, Vector3 &out) {
+    out.Set(Dot(v, m.x), Dot(v, m.y), Dot(v, m.z));
+}
+
+// Same product as Mtx.h's Multiply(Vector3, Matrix3, Vector3), but with each
+// product written VECTOR-first (v.x * m.x.x) instead of Mtx.h's matrix-first
+// (m.x.x * v.x). MSVC keeps that operand order, and retail is vector-first.
+// Mtx.h (and dc3's) are matrix-first; fixing that in the header is a candidate
+// engine-wide force multiplier, but needs a whole-binary A/B, hence the local
+// copy under a distinct name.
+inline void MultiplyVM(const Vector3 &v, const Hmx::Matrix3 &m, Vector3 &vout) {
+    vout.Set(
+        v.x * m.x.x + v.y * m.y.x + v.z * m.z.x,
+        v.x * m.x.y + v.y * m.y.y + v.z * m.z.y,
+        v.x * m.x.z + v.y * m.y.z + v.z * m.z.z
+    );
+}
+
 // RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
 // the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
 // The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
@@ -221,7 +250,18 @@ void CharLookAt::Poll() {
                         Interp(unka4, source->WorldXfm().m.y, 0.1f, unka4);
                     }
                     Subtract(source->WorldXfm().m.y, unka4, sourceFilter);
-                    float filterSq = LengthSquared(sourceFilter);
+                    // LengthSquared(sourceFilter), but spelled with the component
+                    // temporaries rb3-Wii's LengthSquared() carries and ours does
+                    // not. The DECLARATION order is load-bearing: MSVC emits the
+                    // three fsubs rotated one position left of the decl order, so
+                    // (y,z,x) here reproduces retail's (z,x,y). Vec.h's plain
+                    // "v.x*v.x + v.y*v.y + v.z*v.z" gives (y,z,x) and cannot be
+                    // fixed by reordering the summands -- /fp:fast reassociates
+                    // and canonicalizes the sum, so only the temporaries move it.
+                    float fsy = sourceFilter.y;
+                    float fsz = sourceFilter.z;
+                    float fsx = sourceFilter.x;
+                    float filterSq = fsx * fsx + fsy * fsy + fsz * fsz;
                     float srcRad = mSourceRadius * DEG2RAD;
                     if (filterSq > srcRad * srcRad) {
                         float sqrtFilter = std::sqrt(filterSq);
@@ -239,10 +279,10 @@ void CharLookAt::Poll() {
                     Subtract(mTarget->WorldXfm().v, source->WorldXfm().v, lookDir);
                     MakeRotQuat(source->WorldXfm().m.y, lookDir, rotQuat);
                     MakeRotMatrix(rotQuat, rotMat);
-                    Multiply(pivotXfm.m.y, rotMat, lookDir);
+                    MultiplyVM(pivotXfm.m.y, rotMat, lookDir);
                 } else
                     Normalize(lookDir, lookDir);
-                Multiply(lookDir, mPivot->TransParent()->WorldXfm().m, lookDir);
+                Multiply(mPivot->TransParent()->WorldXfm().m, lookDir, lookDir);
                 Normalize(lookDir, lookDir);
                 mDisableRoll = mLookLimits.Clamp(lookDir);
                 Normalize(lookDir, lookDir);
@@ -252,10 +292,20 @@ void CharLookAt::Poll() {
                 mPivotLookTarget = lookDir;
                 // retail (this build/version, vanilla 45410914) has NEITHER the
                 // rb3-Wii debug-only mTestRange preview branch NOR the mShowRange
-                // preview switch NOR the eye-jitter perturbation block -- all
-                // absent from the compiled retail Poll(). Do not reintroduce.
+                // preview switch -- both absent from the compiled retail Poll().
+                // Do not reintroduce those two. The eye-jitter block below IS
+                // present in retail, minus rb3-Wii's later-added sDisableJitter/
+                // "cheat.disable_eye_jitter" dev guards (retail's asm gates on
+                // mEnableJitter && deltasecs>0.0f only -- verified via va
+                // 0x823ba738 Ghidra decomp + objdiff instruction-level match).
+                if (mEnableJitter && deltasecs > 0.0f) {
+                    float yawJitter = RandomFloat(-mYawJitterLimit, mYawJitterLimit);
+                    float pitchJitter = RandomFloat(-mPitchJitterLimit, mPitchJitterLimit);
+                    lookDir.x += pitchJitter * DEG2RAD;
+                    lookDir.z += yawJitter * DEG2RAD;
+                }
                 if (mSourceRadius > 0.0f) {
-                    Multiply(sourceFilter, mPivot->TransParent()->WorldXfm().m, sourceFilter);
+                    Multiply(mPivot->TransParent()->WorldXfm().m, sourceFilter, sourceFilter);
                     lookDir -= sourceFilter;
                 }
                 if (mAllowRoll) {

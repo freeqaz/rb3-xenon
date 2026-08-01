@@ -13,9 +13,8 @@ int BandHeadShaper::sEyeNum;
 int BandHeadShaper::sMouthNum;
 int BandHeadShaper::sNoseNum;
 int BandHeadShaper::sShapeNum;
-static ObjectDir *gHeads[2];
-#define gHeadMale gHeads[0]
-#define gHeadFemale gHeads[1]
+static ObjectDir *gFemaleDir;
+static ObjectDir *gMaleDir;
 std::vector<int> gHeadMaleMapping;
 std::vector<int> gHeadFemaleMapping;
 ObjDirPtr<ObjectDir> gVisemes[4] = { ObjDirPtr<ObjectDir>(0),
@@ -82,8 +81,8 @@ void SetMeshAnim(ObjectDir *dir, std::vector<int> &vec) {
 
 int GetNum(const char *cc, int i1, ObjectDir *dir, int i2) {
 #ifdef HX_NATIVE
-    // The female-head branch in BandHeadShaper::Init reuses gHeadMale for the load
-    // (matched-fork transcription), leaving gHeadFemale null on native, so dir can
+    // The female-head branch in BandHeadShaper::Init reuses gMaleDir for the load
+    // (matched-fork transcription), leaving gFemaleDir null on native, so dir can
     // arrive null here; guard the deref (the menu boot needs no face-deform counts).
     if (!dir)
         return 0;
@@ -111,19 +110,19 @@ int GetNum(const char *cc, int i1, ObjectDir *dir, int i2) {
 }
 
 ObjectDir *BandHeadShaper::GetViseme(Symbol s, bool b) {
+    static Symbol female("female");
     return gVisemes[b + 2 * (s != female)];
 }
 
 ObjectDir *FindSubdir(ObjectDir *dir, const char *cc) {
 #ifdef HX_NATIVE
-    if (!dir) // gHeadFemale can be null on native (see GetNum note)
+    if (!dir) // gFemaleDir can be null on native (see GetNum note)
         return 0;
 #endif
     ObjectDir *subdir = dir->Find<ObjectDir>(cc, false);
-    if (subdir)
-        return subdir->SubDir(0);
-    else
+    if (!subdir)
         return 0;
+    return subdir->SubDir(0);
 }
 
 void BandHeadShaper::Init() {
@@ -140,16 +139,19 @@ void BandHeadShaper::Init() {
     if (_tmp0 && genderpath[0] != 0) {
         static int _x = MemFindHeap("char");
         MemPushHeap(_x);
-        gHeadMale = DirLoader::LoadObjects(FilePath(genderpath), 0, 0);
-        SetMeshAnim(gHeadMale, gHeadMaleMapping);
-        sChinNum = GetNum("chin", 5, gHeadMale, -1);
-        sEyeNum = GetNum("eye", 7, gHeadMale, -1);
-        sMouthNum = GetNum("mouth", 5, gHeadMale, -1);
-        sNoseNum = GetNum("nose", 5, gHeadMale, -1);
-        sShapeNum = GetNum("shape", 1, gHeadMale, -1);
-        GetNum("jaw", 5, gHeadMale, 1);
-        gVisemes[2] = FindSubdir(gHeadMale, "visemes");
-        gVisemes[3] = FindSubdir(gHeadMale, "vignette_visemes");
+        {
+            FilePath fp(genderpath);
+            gMaleDir = DirLoader::LoadObjects(fp, 0, 0);
+        }
+        SetMeshAnim(gMaleDir, gHeadMaleMapping);
+        sChinNum = GetNum("chin", 5, gMaleDir, -1);
+        sEyeNum = GetNum("eye", 7, gMaleDir, -1);
+        sMouthNum = GetNum("mouth", 5, gMaleDir, -1);
+        sNoseNum = GetNum("nose", 5, gMaleDir, -1);
+        sShapeNum = GetNum("shape", 1, gMaleDir, -1);
+        GetNum("jaw", 5, gMaleDir, 1);
+        gVisemes[2] = FindSubdir(gMaleDir, "visemes");
+        gVisemes[3] = FindSubdir(gMaleDir, "vignette_visemes");
         MemPopHeap();
     }
     auto _tmp1 = cfg->FindData("head_female_path", genderpath, false);
@@ -160,16 +162,19 @@ void BandHeadShaper::Init() {
     if (_tmp1 && genderpath[0] != 0) {
         static int _x = MemFindHeap("char");
         MemPushHeap(_x);
-        gHeadFemale = DirLoader::LoadObjects(FilePath(genderpath), 0, 0);
-        SetMeshAnim(gHeadFemale, gHeadFemaleMapping);
-        GetNum("chin", 5, gHeadFemale, sChinNum);
-        GetNum("eye", 7, gHeadFemale, sEyeNum);
-        GetNum("mouth", 5, gHeadFemale, sMouthNum);
-        GetNum("nose", 5, gHeadFemale, sNoseNum);
-        GetNum("shape", 1, gHeadFemale, sShapeNum);
-        GetNum("jaw", 5, gHeadFemale, 1);
-        gVisemes[0] = FindSubdir(gHeadFemale, "visemes");
-        gVisemes[1] = FindSubdir(gHeadFemale, "vignette_visemes");
+        {
+            FilePath fp(genderpath);
+            gFemaleDir = DirLoader::LoadObjects(fp, 0, 0);
+        }
+        SetMeshAnim(gFemaleDir, gHeadFemaleMapping);
+        GetNum("chin", 5, gFemaleDir, sChinNum);
+        GetNum("eye", 7, gFemaleDir, sEyeNum);
+        GetNum("mouth", 5, gFemaleDir, sMouthNum);
+        GetNum("nose", 5, gFemaleDir, sNoseNum);
+        GetNum("shape", 1, gFemaleDir, sShapeNum);
+        GetNum("jaw", 5, gFemaleDir, 1);
+        gVisemes[0] = FindSubdir(gFemaleDir, "visemes");
+        gVisemes[1] = FindSubdir(gFemaleDir, "vignette_visemes");
         MemPopHeap();
     }
     for (int i = 0; i < 4; i++) {
@@ -192,8 +197,8 @@ int BandHeadShaper::GetCount(Symbol s) {
 }
 
 void BandHeadShaper::Terminate() {
-    RELEASE(gHeadFemale);
-    RELEASE(gHeadMale);
+    RELEASE(gFemaleDir);
+    RELEASE(gMaleDir);
     for (int i = 0; i < 4; i++)
         gVisemes[i] = 0;
 }
@@ -209,7 +214,7 @@ bool BandHeadShaper::Start(
         return false;
     else {
         static Symbol female("female");
-        ObjectDir *visemedir = gVisemes[0 + 2 * (s != female)];
+        ObjectDir *visemedir = GetViseme(s, false);
         if (visemedir) {
             CharClip *clip = visemedir->Find<CharClip>("Base", false);
             if (clip) {
@@ -220,7 +225,7 @@ bool BandHeadShaper::Start(
         mDst = mesh;
         mBonesOnly = b;
         mMapping = s == female ? &gHeadFemaleMapping : &gHeadMaleMapping;
-        mHeadDir = s == female ? gHeadFemale : gHeadMale;
+        mHeadDir = s == female ? gFemaleDir : gMaleDir;
         if (mMapping->size() == 0)
             return false;
         else {

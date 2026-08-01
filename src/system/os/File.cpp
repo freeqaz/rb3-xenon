@@ -263,12 +263,23 @@ DataNode OnFileRoot(DataArray *da) { return gRoot; }
 DataNode OnFileGetExt(DataArray *da) { return FileGetExt(da->Str(1)); }
 DataNode OnFileMatch(DataArray *da) { return FileMatch(da->Str(1), da->Str(2)); }
 
+// The guarded do/while is load-bearing for matching -- do NOT fold it back into
+// the equivalent `for (i = 2; i < thresh; i++)`. With the `for` form MSVC runs
+// its count-down-to-zero induction-variable elimination: it drops `i` entirely,
+// synthesizes a decrementing trip counter (`addic.`/`bne`) and precomputes the
+// post-loop value of `i` ahead of the loop -- 2 extra preheader instructions to
+// save 1 on the back edge. Retail keeps a true loop-carried `i` (`addi`/`cmpw`/
+// `blt`) alongside the byte-offset accumulator. Writing the rotation by hand
+// suppresses the transform and reproduces retail exactly.
 DataNode OnWithFileRoot(DataArray *da) {
     FilePathTracker fpt(da->Str(1));
     int thresh = da->Size() - 1;
-    int i;
-    for (i = 2; i < thresh; i++) {
-        da->Command(i)->Execute();
+    int i = 2;
+    if (i < thresh) {
+        do {
+            da->Command(i)->Execute();
+            i++;
+        } while (i < thresh);
     }
     return da->Evaluate(i);
 }

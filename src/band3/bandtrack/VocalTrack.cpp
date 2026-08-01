@@ -2240,10 +2240,10 @@ void VocalTrack::BuildStaticDeployZone(
         );
     }
     // The `!!` forces MSVC's int->bool normalize (`subic`/`subfe`) that retail
-    // emits here; without it we return the raw byte. Residue: retail applies the
-    // idiom to the raw r3 with no leading `clrlwi r11,r3,24`, i.e. its IsInCoda
-    // result is int-typed at this point. A `(int)` cast folds straight back to
-    // the un-normalized form (96.3%), so `!!` is the best source-side form.
+    // emits here; without it we store the raw return value. This only reproduces
+    // retail exactly because SongDB::IsInCoda returns `int`, not `bool` — a bool
+    // return makes MSVC narrow to the low byte first (`clrlwi r11,r3,24`), which
+    // retail does not do at any IsInCoda call site.
     bool i6 = !!TheSongDB->IsInCoda(MsToTickInt(fpair.first));
     float f1;
     RndGroup *u4;
@@ -2292,10 +2292,11 @@ void VocalTrack::BuildScrollingDeployZone(
         if ((*(it + 1))->GetBeginMs() > endMs)
             break;
     }
-    float xPos = unk78 * (startMs / unk74);
+    float xPos = unk78 * (1.0f / unk74) * startMs;
     float minX = lastLyricX + mStaticDeployBufferX;
     if (xPos < minX)
         xPos = minX;
+    float endXPos = unk78 * (1.0f / unk74) * endMs;
     float height;
     float z;
     if (part == 0) {
@@ -2305,9 +2306,9 @@ void VocalTrack::BuildScrollingDeployZone(
         height = mDir->mHarmLyricHeight * 0.5f;
         z = (mDir->mPitchTopZ + mDir->mTrackTopZ) * 0.5f;
     }
-    bool inCoda = TheSongDB->IsInCoda(MsToTickInt(startMs));
+    bool inCoda = !!TheSongDB->IsInCoda(MsToTickInt(startMs));
     mNoteTube->SetPointPos(0, Vector3(0, 0, z));
-    mNoteTube->SetPointPos(1, Vector3(unk78 * (endMs / unk74) - xPos, 0, z));
+    mNoteTube->SetPointPos(1, Vector3(endXPos - xPos, 0, z));
     mNoteTube->unk_0x30 = height;
     mNoteTube->SetBackParent(inCoda ? mDir->mBREGrp : mDir->mPitchScrollGroup);
     mNoteTube->SetXPos(xPos);

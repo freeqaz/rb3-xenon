@@ -380,9 +380,9 @@ DataNode AccomplishmentPanel::Goal_HandleButtonDownMsg(const ButtonDownMsg &msg)
         return 0;
     case kAction_Cancel:
         SetCareerState(kCareerStateCategory, true);
-        HandleSoundSelect(msg.GetUser());
+        HandleSoundBack(msg.GetUser());
         break;
-    case kAction_WiiHomeMenu:
+    case kAction_ShellOption:
         if (CanNavigateList()) {
             SetCareerState(kCareerStateDetails, true);
             HandleSoundSelect(msg.GetUser());
@@ -489,7 +489,7 @@ bool AccomplishmentPanel::CanLaunchGoal() const {
         return false;
     if (!TheAccomplishmentMgr->IsAvailableToEarn(selacc))
         return false;
-    return acc->CanBeLaunched();
+    return acc->CanBeLaunched() != 0;
 }
 
 void AccomplishmentPanel::BuildSetList() {

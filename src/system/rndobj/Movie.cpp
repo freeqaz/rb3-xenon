@@ -39,8 +39,9 @@ BEGIN_PROPSYNCS(RndMovie)
 #endif
 END_PROPSYNCS
 
+static int gSaveRev_RndMovie = 8;
 BEGIN_SAVES(RndMovie)
-    SAVE_REVS(8, 0)
+    bs << gSaveRev_RndMovie;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mFile << mTex << mStream << mLoop;

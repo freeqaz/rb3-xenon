@@ -576,12 +576,7 @@ void MasterAudio::Hit(int i1, float f2, int i3, unsigned int ui, GemHitFlags fla
 void MasterAudio::ReleaseGem(int i1, float f2, int i3, float f4) {
     AudioTrackNum num = TrackNumAt(i1);
     GameGem &gem = mSongData->GetGemList(i1)->GetGem(i3);
-    bool b2 = false;
-    if (i3 == mTrackData[num]->LastPlayedGem() && !gem.IgnoreDuration()) {
-        if (f4 > 0)
-            b2 = true;
-    }
-    if (b2) {
+    if (i3 == mTrackData[num]->LastPlayedGem() && !gem.IgnoreDuration() && f4 > 0) {
         int slot = gem.GetSlot();
         MuteTrack(num, slot, (DontPlayReason)1, 50.0f);
         mTrackData[num]->Miss(slot, f2);

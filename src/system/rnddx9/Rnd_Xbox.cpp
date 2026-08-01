@@ -63,16 +63,16 @@ DxRnd::DxRnd()
       mPostProcDone(false),
       mSuspended(false),
       mPIXCaptureState(false),
-      mPreInited(false),
-      unk408(0) {
-    mFrontBuffers[0] = nullptr;
+      mPreInited(false) {
     mInited = 1;
-    mFrontBuffers[1] = nullptr;
+    for (int i = 0; i < 2; i++)
+        mFrontBuffers[i] = nullptr;
     mBackBuffer = nullptr;
     mWorldDepth = nullptr;
     mOffscreenRT = nullptr;
     mOffscreenDepth = nullptr;
     mFlags = 0;
+    mColorRampTex = nullptr;
     mFrontBufIdx = 0;
     mNumTiles = 0;
     unk34d = true;
@@ -141,7 +141,6 @@ void DxRnd::Init(HWND__ *h) {
     PreInit(h);
     mOcclusionQueryMgr = new DxRndOcclusionQueryMgr();
     NgRnd::Init();
-    DxTex::Init();
     mAsyncSwapNext = false;
 }
 

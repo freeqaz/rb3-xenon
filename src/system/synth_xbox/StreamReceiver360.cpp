@@ -37,10 +37,8 @@ StreamReceiver360::StreamReceiver360(int sampleRate, int numBuffers, bool slip)
 }
 
 StreamReceiver360::~StreamReceiver360() {
-    if (mVoice != 0) {
-        delete mVoice;
-    }
-    if (mSlipEnabled && mSlipVoice != 0) {
+    delete mVoice;
+    if (mSlipEnabled) {
         delete mSlipVoice;
     }
     DeleteAll(mPendingVoices);

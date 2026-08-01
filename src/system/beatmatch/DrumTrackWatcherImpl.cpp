@@ -132,9 +132,9 @@ void DrumTrackWatcherImpl::JumpHook(float f) {
 void DrumTrackWatcherImpl::CheckForKickAutoplay(float f) {
     if (gKickAutoplay && mIsCurrentTrack && !IsCheating()) {
         float offset = f + mSyncOffset;
-        int i8;
         int cap = mGemList->NumGems() - 1;
-        while (i8 = mNextKickGemToAutoplay, i8 <= cap) {
+        while (mNextKickGemToAutoplay <= cap) {
+            int i8 = mNextKickGemToAutoplay;
             float timeAt = mGemList->TimeAt(i8);
             GameGem &curGem = mGemList->GetGem(i8);
             int slot = curGem.GetSlot();

@@ -288,7 +288,7 @@ public:
     virtual int GetBaseMaxStreakPoints() const;
     virtual int GetBaseBonusPoints() const;
     virtual void SetSyncOffset(float);
-    virtual int GetCodaFreestyleExtents(Extent &) const;
+    virtual bool GetCodaFreestyleExtents(Extent &) const;
     virtual void EnterAnnoyingMode() { mAnnoyingMode = true; }
     virtual void ChangeDifficulty(Difficulty);
     virtual void HandleNewSection(const PracticeSection &, int, int);

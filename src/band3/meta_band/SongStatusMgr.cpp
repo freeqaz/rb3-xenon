@@ -935,8 +935,6 @@ void SongStatusMgr::UploadDirtyScores() {
 
     for (std::hash_map<int, SongStatus *>::iterator it = mSongStatusCache.begin();
          it != mSongStatusCache.end(); ++it) {
-        int songID = it->first;
-        if (songID == 0 || !mSongMgr->HasSong(songID)) continue;
         SongStatus *status = it->second;
         for (int scoreType = 0; scoreType < 11; scoreType++) {
             for (int diff = 0; diff < 4; diff++) {
@@ -945,7 +943,9 @@ void SongStatusMgr::UploadDirtyScores() {
                     mUpdatingScoreType = (ScoreType)scoreType;
                     mUpdatingDifficulty = (Difficulty)diff;
                     static DataResultList tempResult;
-                    if (mSongMgr->GetShortNameFromSongID(status->mSongID, false).Null()) {
+                    Symbol shortName =
+                        mSongMgr->GetShortNameFromSongID(status->mSongID, false);
+                    if (shortName.Null()) {
                         static RockCentralOpCompleteMsg fakeRockCentralComplete(true, 0, DataNode(0));
                         OnMsg(fakeRockCentralComplete);
                     } else {

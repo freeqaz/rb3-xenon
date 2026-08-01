@@ -14,6 +14,10 @@
 
 #ifdef HX_NATIVE
 XCallbackFunc *PlatformMgr::sXShowCallback;
+// Definition for the static mTimer demoted out of the object in PlatformMgr.h
+// (2026-07-31). Guarded like sXShowCallback above: the match build never links,
+// so emitting storage here would only add COMDATs retail's obj does not have.
+Timer PlatformMgr::mTimer;
 #endif
 
 PlatformMgr ThePlatformMgr;
@@ -201,8 +205,10 @@ BEGIN_HANDLERS(PlatformMgr)
     HANDLE_ACTION(
         set_notify_ui_location, SetNotifyUILocation((NotifyLocation)_msg->Int(2))
     )
+    HANDLE_EXPR(has_hard_drive, mHasHardDrive)
+    HANDLE_EXPR(get_rbn_member_pad_num, mRBNMemberPadNum)
     HANDLE_EXPR(get_region, GetRegion())
-    HANDLE_SUPERCLASS(Hmx::Object)
+    HANDLE_SUPERCLASS(MsgSource)
 END_HANDLERS
 
 #ifdef HX_NATIVE

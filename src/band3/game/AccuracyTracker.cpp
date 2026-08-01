@@ -15,6 +15,12 @@ AccuracyTracker::~AccuracyTracker() {}
 
 void AccuracyTracker::FirstFrame_(float) { mBandDisplay.Initialize(mDesc.mName); }
 
+// Sentinel meaning "no player reported an accuracy this poll".  Retail loads this
+// from .rdata twice (rematerialized across the ReachedAnyTarget() calls) rather
+// than caching it in a callee-saved FPR, which is what a bare -2.0f literal
+// produces -- i.e. the original source named this constant.
+static const float kInvalidAccuracy = -2.0f;
+
 void AccuracyTracker::Poll_(float) {
     if (!mSource->IsFinished()) {
         MILO_ASSERT(mTargets.front() > 0.0f, 0x33);
@@ -30,7 +36,7 @@ void AccuracyTracker::Poll_(float) {
                 i2++;
             }
         }
-        float f1 = -2.0f;
+        float f1 = kInvalidAccuracy;
         if (i2 > 0) {
             f1 = f6 / (float)i2;
         }
@@ -38,7 +44,7 @@ void AccuracyTracker::Poll_(float) {
             ReachedAnyTarget();
             mCurrentAccuracy = f1;
             ReachedAnyTarget();
-            if (mCurrentAccuracy == -2.0f) {
+            if (mCurrentAccuracy == kInvalidAccuracy) {
                 mBandDisplay.SetPercentageProgress(TrackerDisplay::kMissingPercentage);
             } else {
                 mBandDisplay.SetPercentageProgress(mCurrentAccuracy);

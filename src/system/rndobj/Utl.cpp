@@ -2244,43 +2244,56 @@ void BurnXfm(RndMesh *mesh, bool keepTranslation) {
     Hmx::Matrix3 normalMat;
     Invert(xfm.m, normalMat);
 
+    float yz = normalMat.y.z;
+    float xz = normalMat.x.z;
     float xy = normalMat.x.y;
     normalMat.x.y = normalMat.y.x;
-    normalMat.y.x = xy;
-
-    float xz = normalMat.x.z;
     normalMat.x.z = normalMat.z.x;
-    normalMat.z.x = xz;
-
-    float yz = normalMat.y.z;
     normalMat.y.z = normalMat.z.y;
     normalMat.z.y = yz;
+    normalMat.z.x = xz;
+    normalMat.y.x = xy;
 
     for (RndMesh::Vert *it = mesh->Verts().begin(); it != mesh->Verts().end(); it++) {
         Multiply(it->pos, xfm, it->pos);
-        Multiply(it->norm, normalMat, it->norm);
+        // The two normal/tangent transforms are written out rather than calling
+        // Multiply(Vector3, Matrix3, Vector3) from Mtx.h. They are the same
+        // expression, but MSVC's inline-substitution path and directly-written
+        // source do NOT produce the same schedule here, and retail matches the
+        // written-out form (98.2% -> 98.7%). Neither form emits an out-of-line
+        // COMDAT for that inline -- retail's Utl.obj has no such symbol either --
+        // so nothing is lost by not calling it. Do not "clean this up".
+        it->norm.Set(
+            normalMat.x.x * it->norm.x + normalMat.y.x * it->norm.y
+                + normalMat.z.x * it->norm.z,
+            normalMat.x.y * it->norm.x + normalMat.y.y * it->norm.y
+                + normalMat.z.y * it->norm.z,
+            normalMat.x.z * it->norm.x + normalMat.y.z * it->norm.y
+                + normalMat.z.z * it->norm.z
+        );
         Normalize(it->norm, it->norm);
-        Vector3 tangent(it->tangent.x, it->tangent.y, it->tangent.z);
-        Multiply(tangent, normalMat, tangent);
-        Normalize(tangent, tangent);
-        it->tangent.x = tangent.x;
-        it->tangent.y = tangent.y;
-        it->tangent.z = tangent.z;
+        ((Vector3 &)it->tangent)
+            .Set(
+                normalMat.x.x * it->tangent.x + normalMat.y.x * it->tangent.y
+                    + normalMat.z.x * it->tangent.z,
+                normalMat.x.y * it->tangent.x + normalMat.y.y * it->tangent.y
+                    + normalMat.z.y * it->tangent.z,
+                normalMat.x.z * it->tangent.x + normalMat.y.z * it->tangent.y
+                    + normalMat.z.z * it->tangent.z
+            );
+        Normalize((Vector3 &)it->tangent, (Vector3 &)it->tangent);
     }
     mesh->Sync(0x1F);
-    if (mesh->GetBSPTree()) {
-        MultiplyEq(mesh->GetBSPTree(), xfm);
-    }
+    MultiplyEq(mesh->GetBSPTree(), xfm);
     Sphere s;
     Multiply(mesh->GetSphere(), xfm, s);
     mesh->SetSphere(s);
 
-    Transform ident;
-    ident.Reset();
+    xfm.Reset();
     if (keepTranslation) {
-        ident.v = mesh->LocalXfm().v;
+        xfm.v = mesh->LocalXfm().v;
     }
-    mesh->SetLocalXfm(ident);
+    mesh->SetLocalXfm(xfm);
 }
 
 void TessellateMesh(RndMesh *mesh) {

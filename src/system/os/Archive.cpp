@@ -255,6 +255,16 @@ bool Archive::GetFileInfo(
     return false;
 }
 
+// Local override, TU-scoped only: retail's stripped MILO_FAIL residue here
+// COPY-CONSTRUCTS the class-typed mBasename arg (String ctor+dtor pair around
+// auStack_a8 in the retail decomp), matching the MiloStripEval by-value-param
+// shape documented in Debug.h for MILO_WARN -- not the tree-wide comma form
+// ((void)(args)) that MILO_FAIL otherwise uses. Scoped with push/pop_macro so
+// it does not touch the shared header or any other MILO_FAIL call site.
+#pragma push_macro("MILO_FAIL")
+#undef MILO_FAIL
+#define MILO_FAIL(...) MiloStripEval(__VA_ARGS__)
+
 void Archive::Read(int heap_headroom) {
     MILO_LOG("Reading the archive\n");
     FileStream arkhdr(MakeString("%s.hdr", mBasename), FileStream::kReadNoArk, true);
@@ -288,6 +298,7 @@ void Archive::Read(int heap_headroom) {
         arkhdr.DisableEncryption();
     }
 }
+#pragma pop_macro("MILO_FAIL")
 
 void Archive::Merge(Archive &shadow) {
     std::vector<FileEntry> extraFileEntries;

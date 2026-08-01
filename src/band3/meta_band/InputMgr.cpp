@@ -74,12 +74,11 @@ bool InputMgr::IsActiveAndConnected(ControllerType ct) const {
          ++it) {
         BandUser *cur = *it;
         if (cur->IsLocal()) {
-            LocalBandUser *localUser = cur->GetLocalBandUser();
-            if (HasValidController(localUser, ct)) {
+            if (HasValidController(cur->GetLocalBandUser(), ct)) {
                 if (AllowInput(cur))
                     return true;
                 if (canexitremotely) {
-                    if (mSessionMgr->HasUser(cur))
+                    if (cur->IsInSession(mSessionMgr))
                         return true;
                 }
             }
@@ -131,7 +130,7 @@ LocalBandUser *InputMgr::GetUserWithInvalidController() const {
     for (std::vector<LocalBandUser *>::iterator it = users.begin(); it != users.end();
          ++it) {
         LocalBandUser *cur = *it;
-        if (mSessionMgr->HasUser(cur) || (user == cur)) {
+        if (cur->IsInSession(mSessionMgr) || (user == cur)) {
             if (!HasValidController(cur, cur->GetControllerType()))
                 return cur;
         }
@@ -193,7 +192,7 @@ DataNode InputMgr::OnMsg(const ButtonDownMsg &msg) {
         && !mEventMgr->HasActiveDialogEvent()
         && TheUI->GetTransitionState() == UIManager::kTransitionNone
         && !TheUI->InComponentSelect() && AllowRemoteExit()) {
-        if (mSessionMgr->HasUser(pLocalBandUser) && pLocalBandUser->mOvershellState == 5) {
+        if (pLocalBandUser->IsInSession(mSessionMgr) && pLocalBandUser->mOvershellState == 5) {
             static Symbol remote_exit("remote_exit");
             mEventMgr->TriggerEvent(remote_exit, 0);
             return 0;

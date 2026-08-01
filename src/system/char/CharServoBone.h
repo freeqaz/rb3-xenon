@@ -37,6 +37,7 @@ public:
     void MoveToFacing(Transform &);
     void MoveToDeltaFacing(Transform &);
     void ZeroDeltas();
+    void Regulate();
     void SetRegulateWaypoint(Waypoint *wp) { mRegulate = wp; }
 
     OBJ_MEM_OVERLOAD(0x1B)
@@ -56,7 +57,6 @@ public:
 protected:
     // CharBonesMeshes
     virtual void ReallocateInternal();
-    void RegulateInternal(Character *);
     void DoRegulate(Waypoint *, class CharClipDriver *, float, float);
 
     CharServoBone();

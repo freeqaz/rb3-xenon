@@ -115,7 +115,16 @@ public:
      * @returns True if the index exists in the keys, false if not.
      */
     virtual bool FrameFromIndex(int index, float &frame) { return false; }
-    virtual void SetFrame(float, float, float) {}
+    // RB3 retail PropKeys::SetFrame is a 2-arg virtual (verified: rb3-Wii dev
+    // source `PropKeys::SetFrame(float,float)`; RB3-360 retail disasm at the
+    // RndPropAnim::SetFrame call site only preps f1/f2, no f3). DC3 added a
+    // 3rd "intensity" arg — keep it for the native engine only, gated like
+    // PROPKEYS_DC3_VIRTUAL above.
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    ) {}
     /** Duplicate the key at the given index. */
     virtual void CloneKey(int idx) {}
     /** Given a supplied frame, get the corresponding key index. */
@@ -310,7 +319,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;
@@ -357,7 +370,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;
@@ -405,7 +422,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;
@@ -456,7 +477,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;
@@ -503,7 +528,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;
@@ -552,7 +581,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;
@@ -603,7 +636,11 @@ public:
             f = (*this)[idx].frame;
         return true;
     }
-    virtual void SetFrame(float, float, float);
+    virtual void SetFrame(float, float
+#ifdef HX_NATIVE
+        , float
+#endif
+    );
     virtual void CloneKey(int idx) {
         if (!mProp || !mTarget)
             return;

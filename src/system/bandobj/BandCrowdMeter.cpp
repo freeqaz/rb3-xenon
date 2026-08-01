@@ -79,15 +79,8 @@ void BandCrowdMeter::UpdatePlayers(const std::vector<TrackInstrument> &insts) {
     for (int i = 0; i < insts.size(); i++) {
         IconData &curicon = mIconData[i];
         bool curused = curicon.Used();
-        bool i10 = 0;
-        bool valid = false;
-        if (insts[i] != kInstNone && insts[i] != kInstPending) {
-            valid = true;
-        }
-        if (valid) {
-            if (curicon.unk0->HasIcon())
-                i10 = 1;
-        }
+        bool i10 = insts[i] != kInstNone && insts[i] != kInstPending
+            && curicon.unk0->HasIcon();
         if (i10 != curused) {
             curicon.SetUsed(i10);
             if (!i10) {
@@ -397,6 +390,17 @@ END_HANDLERS
 
 SAVE_OBJ(BandCrowdMeter, 0x251)
 
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (altRev+0,
+// rev+4) -- not for the DECLARE_REVS/INIT_REVS class statics. Same lever as
+// BandWardrobe.cpp / BandDirector.cpp / BandSwatch.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
+
 void BandCrowdMeter::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(3, 0);
@@ -412,6 +416,8 @@ void BandCrowdMeter::PreLoad(BinStream &bs) {
         bs >> mPeakValue;
     RndDir::PreLoad(bs);
 }
+#undef gRev
+#undef gAltRev
 
 void BandCrowdMeter::PostLoad(BinStream &bs) { RndDir::PostLoad(bs); }
 

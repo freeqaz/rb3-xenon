@@ -64,7 +64,13 @@ void NetLoader::SetSize(int size) { mSize = size; }
 void NetLoader::PostDownload() { mIsLoaded = true; }
 const char *NetLoader::GetRemotePath() const { return mStrRemotePath.c_str(); }
 void NetLoader::SetFailType(NetLoaderFailType ft) { mFailType = ft; }
-char *NetLoader::GetBuffer() { return mBuffer; }
+char *NetLoader::GetBuffer() {
+    char *buf = nullptr;
+    if (mIsLoaded != false) {
+        buf = mBuffer;
+    }
+    return buf;
+}
 
 NetLoaderStub::NetLoaderStub(const String &str) : NetLoader(str), mFileLoader(nullptr) {
     FilePath path(
@@ -117,10 +123,7 @@ void DataNetLoader::PollLoading() {
     if (mNetLoader) {
         if (mNetLoader->IsLoaded()) {
             int size = mNetLoader->GetSize();
-            char *buffer = nullptr;
-            if (mNetLoader->IsLoaded()) {
-                buffer = mNetLoader->GetBuffer();
-            }
+            char *buffer = mNetLoader->GetBuffer();
             const char *remotePath = mNetLoader->GetRemotePath();
             if (streq(FileGetExt(remotePath), "dtz")) {
                 DataArray::SetFile(remotePath);
@@ -129,11 +132,14 @@ void DataNetLoader::PollLoading() {
                 BufStream bs(buffer, size, true);
                 mData = DataReadStream(&bs);
             }
+            TheNetCacheMgr->DeleteNetLoader(mNetLoader);
+            mNetLoader = nullptr;
         } else if (!mNetLoader->HasFailed()) {
             return;
+        } else {
+            TheNetCacheMgr->DeleteNetLoader(mNetLoader);
+            mNetLoader = nullptr;
         }
-        TheNetCacheMgr->DeleteNetLoader(mNetLoader);
-        mNetLoader = nullptr;
     }
 }
 

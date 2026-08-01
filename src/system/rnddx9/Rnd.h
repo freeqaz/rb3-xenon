@@ -226,11 +226,17 @@ private:
     bool mPrintGlitches;
     bool mCaptureNextFrame;
     bool mPIXCaptureState; // 0x39b
-    RegisterAlloc mRegAlloc; // 0x3f8
-    int mDefaultVSRegAlloc; // 0x3fc
-    int mDefaultPSRegAlloc; // 0x400
-    bool mPreInited;
-    int unk408;
+    RegisterAlloc mRegAlloc; // 0x39c
+    // Retail RB3 places mPreInited at 0x39c+4 == 0x3a0: DxRnd::PreInit does
+    // `lbz r11, 0x3a0(r3)` / `stb r11, 0x3a0(r3)`, and the ctor's last init-list
+    // bool store is `stb r29, 0x3a0(r30)`. The two mDefault*RegAlloc ints below
+    // are DC3-only (retail PreInit has no SystemConfig("rnd")/shader_gpr_alloc
+    // block) and retail never references 0x3a4/0x3a8/0x3ac at all, so they must
+    // follow mPreInited rather than precede it.
+    bool mPreInited; // 0x3a0
+    int mDefaultVSRegAlloc; // 0x3a4
+    int mDefaultPSRegAlloc; // 0x3a8
+    int unk408; // 0x3ac
 };
 
 #define GPU_GPRS 0x80

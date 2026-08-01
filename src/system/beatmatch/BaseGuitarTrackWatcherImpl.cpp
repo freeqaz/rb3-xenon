@@ -183,8 +183,7 @@ void BaseGuitarTrackWatcherImpl::TryToFinishSwing(float f, int i) {
             mLastLateGemHit = f;
         } else {
             if (!IsChordSubset(mGemNotFretted) && IsCoreGuitar()) {
-                unsigned int btns = GetFretButtonsDown();
-                OnMiss(f, mFretWhenStrummed, mGemNotFretted, btns, kGemHitFlagNone);
+                OnMiss(f, mFretWhenStrummed, mGemNotFretted, GetFretButtonsDown(), kGemHitFlagNone);
                 ResetGemNotFretted();
             }
         }
@@ -247,8 +246,7 @@ void BaseGuitarTrackWatcherImpl::CheckForFretTimeout(float f) {
                     ));
                 }
                 if (IsCoreGuitar()) {
-                    unsigned int btns = GetFretButtonsDown();
-                    OnMiss(f, mFretWhenStrummed, mGemNotFretted, btns, kGemHitFlagNone);
+                    OnMiss(f, mFretWhenStrummed, mGemNotFretted, GetFretButtonsDown(), kGemHitFlagNone);
                 }
             }
         }

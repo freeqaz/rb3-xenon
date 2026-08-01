@@ -288,9 +288,6 @@ TextStream &operator<<(TextStream &ts, RndTex::Type ty) {
     case RndTex::kDeviceTexture:
         ts << "DeviceTexture";
         break;
-    case RndTex::kRegularLinear:
-        ts << "RegularLinear";
-        break;
     }
     return ts;
 }
@@ -370,13 +367,6 @@ const char *CheckDim(int dim, RndTex::Type ty, bool b) {
                 err = "%s: dimensions not multiple of 8";
             }
         }
-        if (GetGfxMode() == kOldGfx) {
-            if (b && dim > 0x400) {
-                err = "%s: dimensions greater than 1024";
-            } else if (dim > 0x1000) {
-                err = "%s: dimensions greater than 4096";
-            }
-        }
         if (b && !::PowerOf2(dim)) {
             err = "%s: dimensions are not power-of-2";
         }
@@ -386,7 +376,7 @@ const char *CheckDim(int dim, RndTex::Type ty, bool b) {
 
 const char *
 RndTex::CheckSize(int width, int height, int bpp, int numMips, Type ty, bool file) {
-    if (ty == kDepthVolumeMap || ty == kDensityMap || (ty & 0x1000) || (ty & 0x2000)) {
+    if (ty == kDepthVolumeMap || ty == kDensityMap || (ty & 0x1000)) {
         return 0;
     } else {
         const char *err = CheckDim(width, ty, file);
@@ -394,16 +384,6 @@ RndTex::CheckSize(int width, int height, int bpp, int numMips, Type ty, bool fil
             err = CheckDim(height, ty, file);
             if (!err && bpp != 4 && bpp != 8 && bpp != 16 && bpp != 24 && bpp != 32) {
                 err = "%s: invalid bpp";
-            }
-        }
-        int sizeBytes = (width * height * bpp) >> 3;
-        if (GetGfxMode() == kOldGfx && !err) {
-            if (sizeBytes > 0x7FFF0) {
-                err = "%s: size over 524,272 bytes";
-            } else if (sizeBytes & 0xF) {
-                err = "%s: size not multiple of 16 bytes";
-            } else if (numMips > 6) {
-                err = "%s: more than 6 mip levels";
             }
         }
         return err;
@@ -470,10 +450,10 @@ void RndTex::SetBitmap(const FilePath &path) {
 
 void RndTex::SetBitmap(int w, int h, int bpp, Type ty, bool useMips, const char *path) {
     PresyncBitmap();
+    mType = ty;
     mWidth = w;
     mHeight = h;
     mBpp = bpp;
-    mType = ty;
     mFilepath.Set(FilePath::Root().c_str(), "");
     mNumMips = 0;
     mBitmap.Reset();
@@ -491,11 +471,12 @@ void RndTex::SetBitmap(int w, int h, int bpp, Type ty, bool useMips, const char 
             }
         }
     } else {
-        const char *err = CheckSize(mWidth, mHeight, mBpp, mNumMips, mType, false);
+        int curBpp = mBpp;
+        const char *err = CheckSize(mWidth, mHeight, curBpp, mNumMips, mType, false);
         if (err) {
             MILO_NOTIFY(err, Name());
         } else if (!(mType & 0x204)) {
-            int platformBpp = mBpp;
+            int platformBpp = curBpp;
             int platformOrder;
             PlatformBppOrder(path, platformBpp, platformOrder, true);
             mBitmap.Create(

@@ -329,47 +329,65 @@ void WorldInstance::SyncDir() {
             for (ObjDirItr<Hmx::Object> it(mDir, false); it != nullptr; ++it) {
                 bool curMesh = NULL != dynamic_cast<RndMesh *>(&*it);
                 if (!grp || (it != grp && !GroupedUnder(grp, it))) {
-                    // not in shared group - fall through to iterate
-                } else if (!(curMesh)) {
-                    continue;
-                } else {
-                    grp->RemoveObject(it);
-                    // fall through to iterate
-                }
-                if (it->ClassName() == texSym
-                    || it->ClassName() == cubeSym
-                    || it->ClassName() == synthSym
-                    || it->ClassName() == movieSym)
-                    continue;
-                if (it == mDir)
-                    continue;
-                EventTrigger *trig = dynamic_cast<EventTrigger *>(&*it);
-                if (trig && trig->HasTriggerEvents()) {
-                    MILO_NOTIFY("%s must be in shared.grp", PathName(it));
-                } else {
-                    Hmx::Object *foundObj = FindObject(it->Name(), false);
-                    if (!foundObj) {
-                        foundObj = Hmx::Object::NewObject(it->ClassName());
-                        bool deep = true;
-                        if (it->ClassName() == grpSym || curMesh)
-                            deep = false;
-                        CopyObject(it, foundObj, (Hmx::Object::CopyType)deep, true);
+                iterate:
+                    if (it->ClassName() == texSym
+                        || it->ClassName() == cubeSym
+                        || it->ClassName() == synthSym
+                        || it->ClassName() == movieSym)
+                        continue;
+                    if (it == mDir)
+                        continue;
+                    EventTrigger *trig = dynamic_cast<EventTrigger *>(&*it);
+                    if (trig && trig->HasTriggerEvents()) {
+                        MILO_NOTIFY("%s must be in shared.grp", PathName(it));
+                    } else {
+                        Hmx::Object *foundObj = FindObject(it->Name(), false);
+                        if (!foundObj) {
+                            foundObj = Hmx::Object::NewObject(it->ClassName());
+                            Hmx::Object::CopyType ty = Hmx::Object::kCopyShallow;
+                            if (it->ClassName() == grpSym || curMesh)
+                                ty = Hmx::Object::kCopyDeep;
+                            CopyObject(it, foundObj, ty, true);
+                        }
+                        objPairs.push_back(ObjPair(it, foundObj));
                     }
-                    objPairs.push_back(ObjPair(foundObj, it));
+                } else if (curMesh) {
+                    grp->RemoveObject(it);
+                    goto iterate;
                 }
             }
 
             std::list<ObjPair>::const_iterator p = objPairs.begin();
             for (; p != objPairs.end(); ++p) {
-                if (!p->from->Dir()) {
-                    MILO_FAIL(
-                        "%s %s->Dir() is null, to is %s",
-                        PathName(this),
-                        p->from->Name(),
-                        p->to->Name()
-                    );
+                MILO_ASSERT(p->from->Dir(), 0x2CA);
+#ifdef HX_NATIVE
+                ObjRef refs;
+                refs.Clear();
+                Hmx::Object *pFrom = p->from;
+                for (ObjRef::iterator it = pFrom->Refs().begin(); it != pFrom->Refs().end(); ++it) {
+                    if (RefPtrOf(it)->RefOwner() && !RefPtrOf(it)->RefOwner()->Dir()) {
+                        it = it->MoveBefore(&refs);
+                    }
                 }
-                const_cast<ObjRef &>(p->from->Refs()).ReplaceList(p->to);
+                refs.ReplaceList(p->to);
+#else
+                // RB3 retail: Hmx::Object::mRefs is a std::list<ObjRefOwner *>
+                // (sentinel {next,prev}@0x20 == STLport _List_node_base; ring
+                // entries are 0xc-byte _List_node<ObjRefOwner *>). Retail
+                // snapshots it by copy-construction, then dispatches Replace on
+                // each entry whose owner lives outside any dir. RefOwner() is
+                // deliberately re-called (retail does not cache it).
+                std::list<ObjRefOwner *> fromRefs(
+                    *reinterpret_cast<const std::list<ObjRefOwner *> *>(&p->from->Refs())
+                );
+                for (std::list<ObjRefOwner *>::const_iterator it = fromRefs.begin();
+                     it != fromRefs.end();
+                     ++it) {
+                    if ((*it)->RefOwner() && !(*it)->RefOwner()->Dir()) {
+                        (*it)->Replace(reinterpret_cast<ObjRef *>(p->from), p->to);
+                    }
+                }
+#endif
             }
 
             Reserve(mDir->HashTableSize(), mDir->StrTableSize());

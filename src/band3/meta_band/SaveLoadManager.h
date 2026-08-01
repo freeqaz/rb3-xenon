@@ -126,6 +126,10 @@ protected:
     void StartSaveAction(bool);
     bool IsReasonToAutosave();
     bool IsReasonToUpload();
+    // Retail (Ghidra TU5 fn_8254BE88) keeps this check as a real out-of-line
+    // helper (called from SetState case 0x51 and IsReasonToAutosave) rather than
+    // inlining `TheSongMgr.SongCacheNeedsWrite() && !unk68` at each call site.
+    bool NeedsSongCacheWrite();
 
     // Retail RB3-360 layout reconstructed from ctor fn_825521E0 (Ghidra TU5) +
     // objdiff full listing (2026-07-24). sizeof = 0xb0; Hmx::Object virtual base

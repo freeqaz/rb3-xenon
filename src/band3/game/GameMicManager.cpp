@@ -166,7 +166,8 @@ void GameMicManager::CreateMic(int idx) {
 }
 
 void GameMicManager::LoadMicFx() {
-    unk20.LoadFile(FilePath(".", "sfx/mic_fx.milo"), true, false, kLoadFront, false);
+    FilePath fp(".", "sfx/mic_fx.milo");
+    unk20.LoadFile(fp, true, false, kLoadFront, false);
 }
 
 int GameMicManager::GetMicCount() const {

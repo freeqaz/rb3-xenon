@@ -51,7 +51,6 @@ JsonConverter::JsonConverter() {}
 JsonConverter::~JsonConverter() {
     if (mObjects.size() > 0) {
         for (int i = mObjects.size() - 1; i >= 0; i--) {
-            mObjects[i]->Release();
             delete mObjects[i];
         }
     }

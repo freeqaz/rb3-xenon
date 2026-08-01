@@ -9,7 +9,16 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 
-INIT_REVS(InstrumentDifficultyDisplay);
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (altRev+0,
+// rev+4) -- not for the DECLARE_REVS/INIT_REVS class statics. Same lever as
+// BandSwatch.cpp / BandWardrobe.cpp / BandDirector.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 void InstrumentDifficultyDisplay::Init() {
     Register();
@@ -152,9 +161,9 @@ void InstrumentDifficultyDisplay::Update() {
     mVocalPartMesh->Copy(vocalpartmesh, kCopyShallow);
     vocalpartmesh->SetShowing(false);
     static Symbol instrument_label("instrument_label");
+    static Symbol instrument_icon("instrument_icon");
     BandLabel *instrLabel =
         dir->Find<BandLabel>(typeDef->FindStr(instrument_label), true);
-    static Symbol instrument_icon("instrument_icon");
     BandLabel *instrIcon = dir->Find<BandLabel>(typeDef->FindStr(instrument_icon), true);
     if (mInstrumentState == kName) {
         mInstrumentLabel->ResourceCopy(instrLabel);

@@ -63,7 +63,9 @@ GemSmasher::~GemSmasher() {}
 bool GemSmasher::Null() const { return !mDir; }
 
 void GemSmasher::Reset(bool b) {
+    static Message reset_msg("reset");
     mDir->HandleType(reset_msg);
+    static Message reset_particles_msg("reset_particles");
     if (b)
         mDir->HandleType(reset_particles_msg);
     mBurning = false;

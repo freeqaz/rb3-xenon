@@ -22,9 +22,12 @@ END_HANDLERS
 const char *GetPrefabPortraitPath(PrefabChar *pPrefab) {
     MILO_ASSERT(pPrefab, 0x29);
     Symbol prefabSym = pPrefab->GetPrefabName();
+    static Symbol prefab_mgr("prefab_mgr");
+    static Symbol prefab_portrait_path_prefix("prefab_portrait_path_prefix");
     static const char *strPrefix(
         SystemConfig(prefab_mgr)->FindStr(prefab_portrait_path_prefix)
     );
+    static Symbol prefab_portrait_path_suffix("prefab_portrait_path_suffix");
     static const char *strSuffix(
         SystemConfig(prefab_mgr)->FindStr(prefab_portrait_path_suffix)
     );

@@ -83,6 +83,8 @@ void BandPerformer::ComputePoints() {
     FOREACH (it, players) {
         if (!(*it)->GetQuarantined()) {
             BandUser *u = (*it)->GetUser();
+            // See NoOneContributingToCrowd: retail dispatches the null-user test
+            // through virtual-base User's vftable slot 0x70, not BandUser's own.
             if (!u->IsNullUser()) {
                 i5 += (*it)->GetScore();
             }
@@ -103,12 +105,15 @@ int BandPerformer::CodaScore() const {
 }
 
 void BandPerformer::ForceScore(int i1) {
-    int b1 = 0;
+    // bool, not int: retail zero-extends the flag to a byte before using it
+    // (`clrlwi r10, r29, 24` ahead of the `subic`/`subfe` select), which only
+    // happens for an 8-bit-typed flag.
+    bool b1 = false;
     std::vector<Player *> &players = mBand->GetActivePlayers();
     FOREACH (it, players) {
         if (!(*it)->GetQuarantined()) {
             (*it)->ForceScore(b1 ? 0 : i1);
-            b1 = 1;
+            b1 = true;
         }
     }
 }
@@ -176,6 +181,7 @@ float BandPerformer::WeightedCrowdLevel() const {
     for (int i = 0; i < numplayers; i++) {
         BandUser *user = players[i]->GetUser();
         MILO_ASSERT(user, 0xEF);
+        // See NoOneContributingToCrowd: virtual-base User vftable slot 0x70.
         if (!players[i]->GetQuarantined() && !user->IsNullUser()) {
             u12 |= players[i]->GetEnabledState() != kPlayerDisabled;
             crowdratings.push_back(players[i]->GetCrowdRating());
@@ -198,6 +204,15 @@ bool BandPerformer::NoOneContributingToCrowd() const {
     std::vector<Player *> &players = mBand->GetActivePlayers();
     FOREACH (it, players) {
         if (!(*it)->GetQuarantined()) {
+            // Retail dispatches this null-user test through the *virtual base*
+            // User's vftable at slot 0x70 (the TU5-added User virtual), not through
+            // BandUser's own vftable: the target does the vbase adjust
+            // (`lwz r10,4(r11); lwz r10,4(r10); add r11,r10,r11; addi r3,r11,4`)
+            // and then `lwz r11,4(r11); lwz r11,0x70(r11)`. Calling BandUser's
+            // own IsNullUser() emits only `lwz r11,0(r3); lwz r11,0(r11)`.
+            // So the real function behind User's 0x70 slot is IsNullUser(); until
+            // that virtual is reclassified across os/User.h + BandUser.h (wide
+            // fan-out, ~10 other call sites), call it here under its current name.
             if (!(*it)->GetUser()->IsNullUser()
                 && (*it)->GetEnabledState() != kPlayerDisconnected) {
                 return false;

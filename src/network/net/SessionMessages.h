@@ -5,6 +5,7 @@
 #include "utl/BinStream.h"
 #include "utl/HxGuid.h"
 #include "utl/MemStream.h"
+#include "xdk/xnet/winsockx.h"
 
 class SessionMsg : public NetMessage {
 public:
@@ -37,6 +38,7 @@ public:
     std::vector<UserGuid> mUserGuids; // 0x8
     std::vector<MemStream> mUserDatas; // 0x10
     MemStream mAuthData; // 0x18
+    XNADDR mXnAddr; // 0x40 (compiler-verified; retail-only field, absent from rb3-Wii source)
 };
 
 enum JoinResponseError {

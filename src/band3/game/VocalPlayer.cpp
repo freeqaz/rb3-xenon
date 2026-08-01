@@ -1228,7 +1228,7 @@ int VocalPlayer::GetSpotlightPhraseID() const {
 void VocalPlayer::HandlePhraseEnd(float f1) {
     std::vector<VocalPart *> voxParts = mVocalParts;
     std::sort(voxParts.begin(), voxParts.end(), VocalPart::FramePhraseMeterFracSorter);
-    for (int i = 0.0f; voxParts.size() > i; i++) {
+    for (int i = 0.0f; i < voxParts.size(); i++) {
         VocalPart *cur = voxParts[i];
         cur->SetPhraseScoreMultiplier(mPartScoreMultipliers->Float(i + 1));
         cur->SetPhraseRank(i);
@@ -1236,17 +1236,18 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     int i4 = GetSpotlightPhraseID();
     float fc4 = -1.0f;
     int ic8 = -1;
+    int i16 = 0;
     int i15 = 0;
     int i14 = mPhraseActivePartCount;
     mPhraseActivePartCount = 0;
-    int id8;
     float fcc;
     float fd0;
-    int idc;
     std::vector<float> vec58;
-    std::vector<int> vec60(3);
+    std::vector<int> vec60(3, 0);
     FOREACH (it, mVocalParts) {
         VocalPart *cur = *it;
+        int id8;
+        int idc;
         vec58.push_back(cur->MaxPhraseScore());
         float fd4 = FramePhraseMeterFrac(cur->PartIndex());
         if (!cur->InEmptyPhrase() && cur->InPlayablePhrase()
@@ -1260,6 +1261,7 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
             vec60[cur->PartIndex()] = 1;
             mPhraseActivePartCount++;
         }
+        i16 += idc;
         if (id8 > ic8 && ScoringEnabled() && cur->ScoringEnabled()) {
             ic8 = id8;
         }
@@ -1278,10 +1280,9 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
         cur->HandlePhraseEnd(f1, vec58);
         FOREACH (it2, mVocalParts) {
             VocalPart *curPart = *it2;
+            float pct = cur->GetPartPercentage(curPart->PartIndex());
             mStats.SetSingerPartPercentage(
-                cur->GetSingerIndex(),
-                curPart->PartIndex(),
-                cur->GetPartPercentage(curPart->PartIndex())
+                cur->GetSingerIndex(), curPart->PartIndex(), pct
             );
         }
         float fe0, fe4;
@@ -1304,9 +1305,9 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
         ic8 = i15 + 3;
     if (ic8 != -1) {
         int idx = mVocalParts.front()->CurrentPhraseIndex();
-        int min = std::min(ic8, 4);
         // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call); the
         // Wii dev build passes idx.
+        int min = std::min(ic8, 4);
         UpdateCrowdMeter(min, idx - 1);
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
@@ -1322,7 +1323,6 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     (void)b14;
 #else
     if (mTrack) {
-        int i16 = 0;
         if (ScoringEnabled()) {
             mTrack->OnPhraseComplete(fcc, fd0, i16);
         }

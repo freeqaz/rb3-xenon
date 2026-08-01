@@ -325,6 +325,11 @@ public:
     }
 
     /// Returns the dot product between `vec` and the plane normal.
+    // NOTE: the explicit temporaries (and the a,c,b evaluation order) are
+    // load-bearing for RndDrawable::CollidePlane's schedule (100% with this
+    // form, 82% fused). Geo's Intersect preferred the fused single-expression
+    // form (its last 7 diff_args) — adjudicated at wave NCCC-0731-5f08 landing:
+    // CollidePlane's full match wins; do not fuse without measuring both TUs.
     float Dot(const Vector3 &vec) const {
         float ax = a * vec.x;
         float cz = c * vec.z;
@@ -409,11 +414,18 @@ inline void Multiply(const Vector3 &v, const Transform &t, Vector3 &out) {
         );
         Add(out, t.v, out);
     } else {
-        out.Set(
-            t.m.x.x * v.x + t.m.y.x * v.y + t.m.z.x * v.z + t.v.x,
-            t.m.x.y * v.x + t.m.y.y * v.y + t.m.z.y * v.z + t.v.y,
-            t.m.x.z * v.x + t.m.y.z * v.y + t.m.z.z * v.z + t.v.z
+        // RB3 retail cannot write through `out` here because it aliases t.v, so
+        // it rotates into a temporary and adds the translation on the way out.
+        // (DC3 later fused this into a single 4-term out.Set(); that fused form
+        // schedules the three components Z,Y,X and tail-merges with the branch
+        // above -- retail evaluates X,Y,Z and does not. Do not "simplify" back.)
+        Vector3 tmp;
+        tmp.Set(
+            t.m.x.x * v.x + t.m.y.x * v.y + t.m.z.x * v.z,
+            t.m.x.y * v.x + t.m.y.y * v.y + t.m.z.y * v.z,
+            t.m.x.z * v.x + t.m.y.z * v.y + t.m.z.z * v.z
         );
+        Add(tmp, t.v, out);
     }
 }
 

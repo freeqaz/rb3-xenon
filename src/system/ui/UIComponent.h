@@ -44,7 +44,7 @@ public:
     };
 
     // Hmx::Object
-    virtual ~UIComponent() {}
+    virtual ~UIComponent();
     OBJ_CLASSNAME(UIComponent)
     OBJ_SET_TYPE_ENGINE(UIComponent)
     virtual DataNode Handle(DataArray *, bool);
@@ -52,6 +52,12 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    // retail-360 UIComponent overrides SetTypeDef (Object-vbase vtable slot;
+    // slot-neutral — see docs/decomp/research/2026-06-11-uicomponent-virtuals.md
+    // §1.2 slot 15 = fn_827DAB68 = retail UIComponent::SetTypeDef thunk. Was
+    // deferred as "Phase B"; ported here to fix UIProxy::SetTypeDef's callsite
+    // this-adjustment (fixed offset vs our former Object-vbase runtime lookup).
+    virtual void SetTypeDef(DataArray *);
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     // RndDrawable

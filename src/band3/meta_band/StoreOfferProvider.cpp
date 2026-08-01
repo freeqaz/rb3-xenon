@@ -23,15 +23,9 @@
 
 extern bool operator==(const StoreOffer *o, Symbol s);
 
-StoreOfferProvider::StoreOfferProvider(
-    std::vector<StoreOffer *> *offers, std::vector<StoreOffer *> *packs
-)
-    // Retail (fn_826644C0) stores 0 to 0x34..0x48 and mOffers to 0x30, but writes
-    // NOTHING to 0x4c (mPacks) and never reads the second parameter -- consistent
-    // with FindOffer/FindPack/FindAlbum all lacking their mPacks paths. mPacks
-    // almost certainly does not exist in the retail class at all; the member is
-    // kept (it is last, so no offsets shift) only so sizeof and BandStorePanel's
-    // `new StoreOfferProvider` allocation stay untouched.
+StoreOfferProvider::StoreOfferProvider(std::vector<StoreOffer *> *offers)
+    // Retail (fn_826644C0) stores 0 to 0x34..0x48 and mOffers to 0x30; there is
+    // no second parameter and no mPacks member (removed -- see StoreOfferProvider.h).
     : mShortcuts(NULL),
       mOffers(offers),
       mElements(),
@@ -111,11 +105,10 @@ void StoreOfferProvider::InitData(RndDir *dir) {
 //      the Strings are at 0xB8/0xC4 -- exactly what BandStorePanel.h:94-95
 //      documents. Today we read into mNextChunkPath.mCap and mMenuTitle.
 //
-// mPacks should be REMOVED entirely (member + second ctor parameter). Retail's
-// sizeof(StoreOfferProvider) is 0x4C, not our 0x50: BandStorePanel.s:0x82605204
-// does `li r3, 0x4c` before operator new, no function in the unit touches
-// 0x4c, and the ctor never reads its second argument. Doing so also touches
-// BandStorePanel.cpp:60, so it wants its own A/B.
+// mPacks REMOVED (member + second ctor parameter, lane NCCC-0731-5f08/f102):
+// retail's sizeof(StoreOfferProvider) is 0x4C, not 0x50 -- confirmed via
+// class_layout_report.py and BandStorePanel's ctor (`li r3, 0x4c` before
+// operator new). See StoreOfferProvider.h and BandStorePanel.cpp:60.
 // ---------------------------------------------------------------------------
 // Text(): still a compile-green stub, NonMatching. See ShowBrowserPurchased above.
 void StoreOfferProvider::Text(int i, int pos, UIListLabel *listLabel, UILabel *label)
@@ -228,8 +221,7 @@ Symbol StoreOfferProvider::PosToShortcut(int pos) {
 }
 
 int StoreOfferProvider::ShortcutToPos(Symbol s) {
-    unsigned int n = mElements.size();
-    for (unsigned int i = 0; i < n; i++) {
+    for (unsigned int i = 0; i < mElements.size(); i++) {
         if (mElements[i]->mShortcut == s) {
             return i;
         }

@@ -11,13 +11,6 @@
 
 CharBones *gPropBones;
 
-short MakeShortAng(float f) {
-    f = f * 1638.4f + 0.5f;
-    MILO_ASSERT(f < 32768 && f > -32767, 0x60);
-    f = floor(f);
-    return f;
-}
-
 short ShortVector3::ToShort(float f) {
     // Scale float to short range: divide by 1300 scale factor, multiply by short max (32767),
     // add 0.5 for rounding, clamp to valid range, then floor to convert to integer

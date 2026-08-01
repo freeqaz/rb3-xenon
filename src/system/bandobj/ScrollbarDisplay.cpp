@@ -1,3 +1,4 @@
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR 1
 // Ported from rb3-Wii src/system/bandobj/ScrollbarDisplay.cpp (MWCC -> MSVC X360).
 #include "bandobj/ScrollbarDisplay.h"
 #include "decomp.h"

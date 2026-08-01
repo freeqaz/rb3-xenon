@@ -72,8 +72,8 @@ const char *BandIntensityString(int num) {
     return "";
 }
 
-void BandCharacter::Init() { Register(); }
-void BandCharacter::Terminate() {}
+__declspec(noinline) void BandCharacter::Init() { Register(); }
+__declspec(noinline) void BandCharacter::Terminate() { __asm nop }
 
 BandCharacter::BandCharacter()
     : mPlayFlags(0), unk454(this, 0), mAddDriver(0), mFaceDriver(0), mForceNextGroup(0),
@@ -207,10 +207,7 @@ bool BandCharacter::InVignetteOrCloset() const {
     static Symbol shell("shell");
     static Symbol vignette("vignette");
     Symbol cliptype = mDriver->ClipType();
-    bool ret = false;
-    if (cliptype == shell || cliptype == vignette)
-        ret = true;
-    return ret;
+    return cliptype == shell || cliptype == vignette;
 }
 
 DECOMP_FORCEACTIVE(BandCharacter, "BandCharacter.no_anim")

@@ -115,8 +115,7 @@ void ModifierMgr::ToggleModifierEnabled(Symbol s) {
 }
 
 bool ModifierMgr::IsModifierActive(Symbol s) const {
-    Modifier *mod = GetModifier(s, false);
-    return mod && IsModifierActive(mod);
+    return IsModifierActive(GetModifier(s, true));
 }
 
 bool ModifierMgr::IsModifierDelayedEffect(Symbol s) const {
@@ -124,7 +123,7 @@ bool ModifierMgr::IsModifierDelayedEffect(Symbol s) const {
 }
 
 bool ModifierMgr::IsModifierActive(Modifier *mod) const {
-    if (!mod || !mod->mDefaultEnabled)
+    if (!mod->mDefaultEnabled)
         return false;
     else if (IsModifierUnlocked(mod))
         return true;

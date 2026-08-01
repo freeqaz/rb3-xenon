@@ -260,11 +260,11 @@ void CharLipSyncDriver::Poll() {
             if (mAlternateDriver)
                 songTime = mAlternateDriver->TopClipFrame();
             mMainPlayback->Poll(songTime);
-            unsigned int count = mMainPlayback->mWeights.size();
-            for (unsigned int i = 0; i < count; i++) {
-                float curWeight = mMainPlayback->mWeights[i].mCurWeight;
+            CharLipSync::PlayBack *pb = mMainPlayback;
+            for (unsigned int i = 0; i < pb->mWeights.size(); i++) {
+                float curWeight = pb->mWeights[i].mCurWeight;
                 if (curWeight != 0.0f) {
-                    CharClip *clip = mMainPlayback->mWeights[i].mClip;
+                    CharClip *clip = pb->mWeights[i].mClip;
                     if (clip != mBlinkClip) {
                         if (mSongOwner)
                             curWeight = 0.0f;
@@ -286,8 +286,7 @@ void CharLipSyncDriver::Poll() {
             }
             mSongOwner->mMainPlayback->Poll(songTime);
             CharLipSync::PlayBack *pb = mSongOwner->mMainPlayback;
-            unsigned int count = pb->mWeights.size();
-            for (unsigned int i = 0; i < count; i++) {
+            for (unsigned int i = 0; i < pb->mWeights.size(); i++) {
                 float curWeight = weight * pb->mWeights[i].mCurWeight;
                 CharClip *clip = pb->mWeights[i].mClip;
                 if (curWeight != 0.0f && clip && clip != mSongOwner->mBlinkClip) {

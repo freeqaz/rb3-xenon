@@ -355,11 +355,7 @@ void PanelDir::SetFocusComponent(UIComponent *newComponent, Symbol nav_type) {
             "Trying to set focus on a component that can't have focus.  Component: %s",
             newComponent->Name()
         );
-    else if (newComponent == mFocusComponent) {
-        if (mFocusComponent) {
-            mFocusComponent->SetState(UIComponent::kFocused);
-        }
-    } else {
+    else if (newComponent != mFocusComponent) {
         UIComponent *focused = FocusComponent();
         if (mFocusComponent && mFocusComponent->GetState() != UIComponent::kDisabled) {
             mFocusComponent->SetState(UIComponent::kNormal);

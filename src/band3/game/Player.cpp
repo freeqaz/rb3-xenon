@@ -975,10 +975,11 @@ void Player::FinalizeStats() {
     mStats.mUnisonPhraseCount = TheSongDB->GetNumUnisonPhrases(mTrackNum);
     int i1 = 0, i2 = 0, i3 = 0;
     GetMultiplier(true, i1, i2, i3);
+    int mult1 = i1;
     float songMs = GetSongMs();
-    mStats.EndStreakMultiplier(songMs, i1);
-    songMs = GetSongMs();
-    mStats.StopDeployingOverdrive(songMs, i1 * i3);
+    mStats.EndStreakMultiplier(songMs, mult1);
+    int overdriveMult = i1 * i3;
+    mStats.StopDeployingOverdrive(GetSongMs(), overdriveMult);
     if (unk2bc > 0) {
         mStats.mAverageMultiplier = (float)unk2b8 / (float)unk2bc;
     }

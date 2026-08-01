@@ -33,11 +33,22 @@ public:
     // UserMgr::GetLocalUsers). This re-matches User::SyncSave and AppLabel::SetUserName
     // under TU5. Absent from DC3/rb3-Wii User (a TU0->TU5 patch addition). Declared-only
     // (defined out-of-line in retail); its body is not needed for the dispatch-offset
-    // match. TODO(TU5): recover the real name/semantics of this virtual.
-    // Return type is bool, not const char*: retail OvershellSlot::UpdateView calls
-    // it as `if (user->IsLocal() && !user->UnkTU5Virtual_beforeUserName())` and
-    // tests the result with `clrlwi. r11, r3, 24` (byte/bool), not a pointer compare.
-    virtual bool UnkTU5Virtual_beforeUserName() const;
+    // match.
+    //
+    // IDENTIFIED (lane NCCC-0731-5f08/f54): this slot is IsNullUser(). In rb3-Wii/TU0
+    // IsNullUser was introduced by BandUser (BandUser's own vtable slot 0); the TU0->TU5
+    // patch hoisted it up into the User virtual base. Proof, from retail
+    // BandPerformer::ComputeScoreData: `user->UserName()` (a known User virtual) on a
+    // BandUser* emits the 6-instruction virtual-base adjust
+    //     lwz r11,4(user); lwz r11,4(r11); add r11,r11,user; addi r3,r11,4;
+    //     lwz r11,4(r11); lwz r11,0x74(r11)
+    // which matches retail BYTE-FOR-BYTE at slot 0x74 (= User vtable slot 29, UserName).
+    // In the SAME function retail's `user->IsNullUser()` emits that identical sequence
+    // with the final load at 0x70 (= slot 28, this one) — so IsNullUser is dispatched
+    // through the User virtual base, not through BandUser's own vtable. Result is tested
+    // with `clrlwi. r11, r3, 24` (byte/bool), consistent with the OvershellSlot::UpdateView
+    // reading `if (user->IsLocal() && !user->IsNullUser())`.
+    virtual bool IsNullUser() const;
     virtual const char *UserName() const = 0;
 
     unsigned int GetMachineID() const { return mMachineID; }

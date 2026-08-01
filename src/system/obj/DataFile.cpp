@@ -746,7 +746,7 @@ int DataLoaderThreadObj::ThreadStart() {
     BufStream bs(mBuffer, mBufLen, true);
     bs.SetName(FileLocalize(mLoader->LoaderFile().c_str(), nullptr));
     if (mDtb) {
-        bool runChecksum = HasFileChecksumData() && !mLocal;
+        bool runChecksum = HasFileChecksumData() && !FileIsLocal(mFilename);
         if (runChecksum) {
             bs.StartChecksum(mFilename);
         }

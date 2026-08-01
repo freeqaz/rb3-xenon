@@ -31,11 +31,11 @@ inline double __fsel(double a, double b, double c) { return a >= 0.0 ? b : c; }
 #include "xdk/LIBCMT/ppcintrinsics.h"
 #endif
 
-RndTex *gImpostorTex[kNumLods];
-RndCam *gImpostorCamera;
-RndMat *gImpostorMat;
-int gNumCrowd;
-WorldCrowd *gParent;
+static RndTex *gImpostorTex[kNumLods] = { nullptr };
+static RndCam *gImpostorCamera = nullptr;
+static RndMat *gImpostorMat = nullptr;
+static int gNumCrowd = 0;
+static WorldCrowd *gParent = nullptr;
 #ifdef HX_NATIVE
 static std::unordered_map<Character *, RndTex *> sImpostorCache;
 #endif

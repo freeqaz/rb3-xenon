@@ -231,16 +231,8 @@ public:
     bool IsOverdrive(int pitch) const { return pitch == 116; }
     bool IsSolo(int pitch) const { return pitch == mSoloPitch; }
     bool IsInSection(int tick) const {
-        bool b2 = true;
-        if (mSectionStartTick != -1) {
-            bool b1 = false;
-            if (tick >= mSectionStartTick && tick < mSectionEndTick) {
-                b1 = true;
-            }
-            if (!b1)
-                b2 = false;
-        }
-        return b2;
+        return mSectionStartTick == -1
+            || (tick >= mSectionStartTick && tick < mSectionEndTick);
     }
     bool NoMidiReader() const { return !mMidiReader; }
 

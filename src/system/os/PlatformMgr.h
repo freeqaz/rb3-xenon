@@ -99,8 +99,15 @@ private:
     bool mGuideShowing;         // 0x24
     bool mConfirmCancelSwapped; // 0x25
     bool mConnected;            // 0x26 (retail CheckForLostConnection reads +0x26)
-    DiskError mDiskError;       // 0x28 (inferred: must precede mScreenSaver for mRegion below to
-                                //       land at 0x30 while mScreenSaver stays at its verified 0x2c)
+    bool mHasHardDrive;         // 0x27 (retail Handle's "has_hard_drive" wire reads this+0x27 as a
+                                //       byte — ground truth from Ghidra decompile of Handle
+                                //       (0x825152e0), verified 2026-07-31)
+    int mRBNMemberPadNum;       // 0x28 (retail Handle's "get_rbn_member_pad_num" wire reads this+0x28
+                                //       as a uint — ground truth from Ghidra decompile of Handle,
+                                //       verified 2026-07-31. This offset was PREVIOUSLY misattributed
+                                //       to mDiskError below, which was only ever an unverified guess —
+                                //       no function in the whole-binary report reads/writes mDiskError,
+                                //       so relocating it here carries no regression risk.)
     bool mScreenSaver;          // 0x2c (retail SetScreenSaver 0x8251c180 writes this+0x2c)
     PlatformRegion mRegion;     // 0x30 (retail SetRegion writes/reads this+0x30 — ground truth from
                                 //       the objdiff TARGET obj for SetRegion itself, verified 2026-07-30;
@@ -108,13 +115,19 @@ private:
     JobMgr *mJobMgr;            // 0x34
     bool unk68;                 // 0x38
     bool unk69;                 // 0x39
-    // DC3-only XSocial block (absent in retail RB3, 2012 addition) — kept for
-    // compile compatibility with DC3-ported PlatformMgr.cpp/PlatformMgr_Xbox.cpp,
-    // moved to the tail so the retail members above keep retail offsets.
-    bool mHasXSocialPhotoPost;
-    bool mHasXSocialLinkPost;
-    XOVERLAPPED mOverlapped;
-    int unk4c; // DC3 mSocialCapabilities
+    // ★ SIZE IS LOAD-BEARING (2026-07-31, lane NCCC f59/opus). The retail member
+    // block runs 0x1c..0x47 inclusive — 44 bytes — putting the vtordisp at 0x48
+    // and the virtual Hmx::Object base's vfptr at 0x4c. Ground truth: retail
+    // PlatformMgr::Handle (0x825152e0) is compiled against that vbase subobject
+    // and opens `mr r25,r4` / `subi r3,r25,0x4c` to recover the PlatformMgr*.
+    // Our block used to run to 0xa0 (vbase at 0xa4), which biased EVERY
+    // this-relative access in Handle by exactly 0x58 = 88 bytes.
+    // The DC3-only XSocial block (mHasXSocialPhotoPost, mHasXSocialLinkPost,
+    // XOVERLAPPED mOverlapped, int unk4c = 36 bytes) and the Wii-only
+    // `Timer mTimer` (48 bytes + 4 pad = 52) were removed here to give back
+    // exactly those 88 bytes. Neither is referenced by any COMPILED TU —
+    // PlatformMgr_Xbox.cpp (their only user) is not in objects.json.
+    // ⚠ Do not add members above the vbase without re-checking this budget.
     DataNode OnSignInUsers(DataArray *);
 
 public:
@@ -199,12 +212,20 @@ public:
     bool IsCheckingProfanity() const;
     void *StartProfanity(const unsigned short **, int, char *, Hmx::Object *);
     bool IsConnected() { return mConnected; }
+    bool HasHardDrive() { return mHasHardDrive; }
     bool ScreenSaver() { return mScreenSaver; }
     DiskError GetDiskError() const { return mDiskError; }
     int SignInMask() const { return mSigninMask; }
+    int RBNMemberPadNum() const { return mRBNMemberPadNum; }
     void QueueEnumJob(Job *);
     void CancelEnumJob(int);
     void Init();
+    // Rehomed from 0x28 (see mRBNMemberPadNum above): retail's 0x28 is the RBN pad num.
+    // 0x64 is existing tail padding between mHomeMenuWii (0x60) and the 8-aligned mTimer
+    // (0x68), so this costs no sizeof change. The true retail offset is still UNKNOWN —
+    // SetDiskError is not identified in the retail binary, so this is a placement of
+    // convenience, not ground truth.
+    DiskError mDiskError;   // 0x64 (placeholder home; NOT verified against retail)
     void RegionInit();
     void PreInit();
     DWORD
@@ -221,8 +242,16 @@ public:
     // Wii-origin data members referenced by ported meta_band/OvershellPanel.
     // Added at the end to avoid disturbing the existing X360 layout; these are
     // never accessed in a matching TU.
-    HomeMenu *mHomeMenuWii; // Wii: pointer to Wii home-menu object
-    Timer mTimer;           // Wii: net-start-utility retry timer
+    HomeMenu *mHomeMenuWii; // 0x44 — last member; block ends at 0x48 (see the
+                            // "SIZE IS LOAD-BEARING" note above).
+    // `Timer mTimer` was an INSTANCE member (48B) until 2026-07-31; it pushed the
+    // virtual Hmx::Object base from retail's 0x4c out to 0xa4. Retail-360's member
+    // block is only 44 bytes (0x1c..0x47), which physically cannot hold a 48-byte
+    // Timer, so retail has no such instance member. Demoted to `static` so it costs
+    // zero object storage while keeping OvershellPanel's Wii-lineage
+    // `ThePlatformMgr.mTimer.Running()` call site compiling unchanged (that function,
+    // OvershellPanel::ResolveAutoSignInStates, is unmapped — not a measured symbol).
+    static Timer mTimer;
 };
 
 extern PlatformMgr ThePlatformMgr;

@@ -151,9 +151,8 @@ inline int Mod(int num, int modbase) {
         return 0;
     int div = num % modbase;
     if (div < 0)
-        return div + modbase;
-    else
-        return div;
+        div += modbase;
+    return div;
 }
 
 inline bool NearlyOne(float f) { return fabs(f - 1.0f) < 0.0001f; }

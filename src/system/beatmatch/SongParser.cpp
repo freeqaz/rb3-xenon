@@ -297,7 +297,7 @@ bool SongParser::OnMidiMessageCommonOn(int tick, unsigned char pitch) {
         return false;
 }
 
-bool SongParser::OnMidiMessageCommonOff(int tick, unsigned char uc) {
+__declspec(noinline) bool SongParser::OnMidiMessageCommonOff(int tick, unsigned char uc) {
     if (HandlePhraseEnd(tick, uc))
         return true;
     else
@@ -713,11 +713,13 @@ void SongParser::OnGemEnd(int tick, unsigned char pitch) {
                 geminfo.track = mTrack;
                 geminfo.ms = GetTempoMap()->TickToTime(infotick);
                 geminfo.tick = infotick;
-                bool ignore = false;
+                bool ignore;
                 geminfo.duration_ms = ticktime - geminfo.ms;
                 geminfo.duration_ticks = tick - infotick;
                 if (mIgnoreGemDurations || geminfo.duration_ticks <= 160)
                     ignore = true;
+                else
+                    ignore = false;
                 geminfo.ignore_duration = ignore;
                 geminfo.players = info.mGemsInProgress[slot].mPlayers;
                 geminfo.slots = ComputeSlots(slot, infotick, tick, info.mGemsInProgress);
@@ -725,22 +727,28 @@ void SongParser::OnGemEnd(int tick, unsigned char pitch) {
                 geminfo.is_cymbal =
                     (info.mGemsInProgress[slot].mCymbalSlots & geminfo.slots)
                     == geminfo.slots;
-#ifdef HX_NATIVE
-                // GEM_STREAM_FIX: dispatch each gem to its actual difficulty
-                // (`num` was computed via PitchToSlot above). The decompiled
-                // original `AddMultiGem(0, ...)` looks like a constant-vs-variable
-                // mis-decomp: it pushes every gem (Easy..Expert) to diff=0 only,
-                // so when GemTrack queries the player's current difficulty
-                // (typically Expert=3) the list is empty. Without this, no
-                // gem_*.mesh notes ever flow down the highway.
+                // Retail machine code at 0x82786cb0 loads `num` (not a constant
+                // 0) into the AddMultiGem arg register here -- verified via
+                // objdiff against the retail .obj (idx 103: `mr r4, r26` where
+                // r26 holds `num`). The old #ifdef HX_NATIVE/#else split assumed
+                // retail's decompile showed a constant-vs-variable mis-decomp
+                // bug and only fixed it for the native port; that assumption is
+                // now proven wrong by the retail bytes themselves, so both
+                // builds dispatch each gem to its actual difficulty.
                 mSink->AddMultiGem(num, geminfo);
-#else
-                mSink->AddMultiGem(0, geminfo);
-#endif
+                // Retail groups the trailing disjunct with the mDrumStyleGems
+                // test, NOT with the whole conjunction: at 0x82786cb0+0x1d0 the
+                // `mRollInProgress == -1` early-out branches clear past the
+                // whole block (to the mTrillInProgress load), whereas the
+                // rb3-Wii transcription's `(A && B && C && !D) || slot != 0`
+                // would have to fall through to the `slot` test. The
+                // mDrumStyleGems test then branches *into* the body when the
+                // flag is clear, and only falls to `cmpwi slot, 0` when it is
+                // set -- i.e. `... && (!mDrumStyleGems || slot != 0)`.
                 if (mRollInProgress != -1 && abs(mRollInProgress - infotick) < 10
-                        && mRollMask & (1 << num) && !mDrumStyleGems
-                    || slot != 0) {
-                    mRollSlotsArray[num] |= geminfo.slots;
+                    && mRollMask & (1 << num) && (!mDrumStyleGems || slot != 0)) {
+                    unsigned int &rollslots = mRollSlotsArray[num];
+                    rollslots = rollslots | geminfo.slots;
                 }
                 if (mTrillInProgress != -1 && mTrillMask & (1 << num)) {
                     MILO_ASSERT(!mTrillSlotsArray.empty(), 0x46A);
@@ -971,12 +979,12 @@ void SongParser::StartVocalNote(int tick, unsigned char data, const char *lyric)
                     PrintTick(tick),
                     mNextLyric
                 );
-                mNextLyricTextTick = tick;
-                mNextLyric = lyric;
             }
+            mNextLyricTextTick = tick;
+            mNextLyric = lyric;
         } else {
             float ticktime = GetTempoMap()->TickToTime(tick);
-            if (mLyricPitchSet || mLyricTextSet && mCurVocalNote.GetTick() != tick) {
+            if ((mLyricPitchSet || mLyricTextSet) && tick != mCurVocalNote.GetTick()) {
                 if (data != 0) {
                     MILO_WARN(
                         "%s (%s): misaligned note at %s (expected at %s)",
@@ -1450,12 +1458,13 @@ void SongParser::OnMidiMessageRealGuitarOn(
 void SongParser::OnMidiMessageRealGuitarOff(
     int tick, unsigned char pitch, unsigned char data2, unsigned char channel
 ) {
-    if (!OnMidiMessageCommonOff(tick, pitch) && pitch != 108 && (pitch - 4 > 11U)
+    if (!OnMidiMessageCommonOff(tick, pitch) && pitch != 108) {
+    bool inRange = pitch >= 4 && pitch <= 15;
+    if (!inRange
         && !HandleRGChordNamingStop(tick, pitch) && !HandleRGEnharmonicStop(tick, pitch)
         && !HandleRGSlashesStop(tick, pitch) && !HandleRGChordMarkupStop(tick, pitch)
         && !HandleRGRollStop(tick, pitch)) {
-        bool _cond = !HandleRGTrillStop(tick, pitch);
-        if (_cond) {
+        if (!HandleRGTrillStop(tick, pitch)) {
         int difflevel = RGGetDifficultyLevel(pitch);
         if (difflevel == -1) {
             MILO_WARN(
@@ -1485,6 +1494,7 @@ void SongParser::OnMidiMessageRealGuitarOff(
                 );
             }
         }
+    }
     }
     }
 }
@@ -1609,10 +1619,24 @@ bool SongParser::CheckDrumCymbalMarker(int tick, int pitch, bool b) {
         return false;
 }
 
-bool SongParser::CheckRollMarker(int, int pitch, bool) { return pitch == 126; }
-bool SongParser::CheckTrillMarker(int pitch, bool) { return pitch == 127; }
+bool SongParser::CheckRollMarker(int, int pitch, bool) {
+    if (pitch == 126)
+        return true;
+    return false;
+}
+bool SongParser::CheckTrillMarker(int pitch, bool) {
+    if (pitch == 127)
+        return true;
+    return false;
+}
 
 bool SongParser::CheckForceHopoMarker(int tick, int pitch, bool b) {
+    // Same shape as CheckKeyboardRangeMarker/PitchToSlot: retail (0x82785AC0)
+    // has its own function-local static Symbol keys (guard 0x82E06420, storage
+    // 0x82E0641C) that is initialised and never read. Its ctor call is what
+    // makes retail's CheckForceHopoMarker a non-leaf, so callers must
+    // re-materialise r4/r5/r6 after calling it.
+    static Symbol keys("keys");
     if (mTrackType == kTrackRealKeys)
         return false;
     int mod = pitch % 12;
@@ -1810,7 +1834,7 @@ void SongParser::AnalyzeTrackList() {
     int i1 = mParts.size();
     const char *c64;
     for (; i < _ref0.size(); i++) {
-        if (IsPartTrackName(_ref0[i].Str(), &c64)) {
+        if (IsPartTrackName(mTrackNames[i].Str(), &c64)) {
             Symbol s68 = c64;
             DataArray *arr = mTrackNameMapping->FindArray(s68, false);
             if (arr) {
@@ -1828,35 +1852,26 @@ void SongParser::AnalyzeTrackList() {
             }
         }
     }
-    for (; i1 < mParts.size(); i1++) {
-        int num = mSongInfo->TrackIndex((SongInfoAudioType)mParts[i1].audio_type);
+    for (int i2 = i1; i2 < mParts.size(); i2++) {
+        int num = mSongInfo->TrackIndex((SongInfoAudioType)mParts[i2].audio_type);
         if (num == -1) {
-            if (!mParts[i1].FakeAudio()) {
+            if (!mParts[i2].FakeAudio()) {
                 MILO_WARN(
-                    "%s: Couldn't find instrument for part %s", mFilename, mParts[i1].part
+                    "%s: Couldn't find instrument for part %s", mFilename, mParts[i2].part
                 );
-            } else {
-                mParts[i1].audio_track_num.Set(num);
             }
+        } else {
+            // K8 (resolved 2026-07-31, lane NCCC f320): this success-case
+            // assignment used to live under `#ifdef HX_NATIVE` because the
+            // matched-fork decomp had put Set(num) inside the (num == -1) /
+            // FakeAudio branch instead.  Retail's Ghidra decomp of 0x827885A8
+            // stores to +0xc in the (num != -1) branch, and objdiff idx 119
+            // proves it: retail is `stw r3, 0xc(r11)` (the live num) while the
+            // old shape folded num to the constant -1 (`li r23,-1`).  So the
+            // structure below is both retail-correct and what the native port
+            // needed; the HX_NATIVE workaround is now redundant and removed.
+            mParts[i2].audio_track_num.Set(num);
         }
-#ifdef HX_NATIVE
-        // K8: the matched-fork decomp left out the success-case assignment in the
-        // (num != -1) branch above — without it, AnalyzeTrackList leaves
-        // audio_track_num at the PartInfo ctor default of -1 for every real track.
-        // Game::PostLoad -> MasterAudio::SetTrack then derefs mTrackData[-1] when a
-        // real player is wired up (Player exists with a valid track type). Set it
-        // on the success path so SongData::AddTrack sees a valid AudioTrackNum.
-        // Without this the gameplay crash chain is:
-        //   GemPlayer::SetTrack(playerTrackNum) -> BeatMatcher::SetTrack(i) ->
-        //   MasterAudio::SetTrack(uguid, i) -> mTrackData[TrackNumAt(i)] where
-        //   TrackNumAt(i)==mTrackInfos[i]->mAudioTrackNum (-1) -> vector OOB.
-        // Safe additive HX_NATIVE block — does NOT regress the no-player baseline
-        // (validated: GAME no players -> AssignTrack early-exits via partPlays=0
-        // -> SetTrack/PostLoad never run).
-        else {
-            mParts[i1].audio_track_num.Set(num);
-        }
-#endif
     }
     if (mParts.empty()) {
         MILO_WARN("%s: None of the required PART tracks were found", mFilename);

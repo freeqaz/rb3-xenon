@@ -378,7 +378,8 @@ END_HANDLERS
 #pragma push
 #pragma pool_data off
 BEGIN_PROPSYNCS(TrackWidget)
-    SYNC_PROP_MODIFY_ALT(meshes, mMeshes, CheckScales()) {
+    SYNC_PROP_MODIFY_ALT(meshes, mMeshes, CheckScales())
+    {
         static Symbol _s("wide_widget");
         if (sym == _s) {
             if (_op == kPropSet) {
@@ -391,48 +392,7 @@ BEGIN_PROPSYNCS(TrackWidget)
     SYNC_PROP(meshes_left, mMeshesLeft)
     SYNC_PROP(meshes_span, mMeshesSpan)
     SYNC_PROP(meshes_right, mMeshesRight)
-    SYNC_PROP_STATIC(environ, mEnviron)
-    SYNC_PROP(base_length, mBaseLength)
-    SYNC_PROP(base_width, mBaseWidth) {
-        static Symbol _s("max_meshes");
-        if (sym == _s) {
-            if (_op == kPropSet) {
-                mMaxMeshes = _val.Int();
-            } else
-                _val = DataNode(mMaxMeshes);
-            return true;
-        }
-    }
-    SYNC_PROP_MODIFY_ALT(font, mFont, SyncImp())
-    SYNC_PROP_MODIFY_ALT(text_obj, mTextObj, SyncImp())
-    SYNC_PROP_MODIFY(text_alignment, (int &)mTextAlignment, SyncImp())
-    SYNC_PROP_MODIFY_ALT(text_color, mTextColor, SyncImp())
-    SYNC_PROP_MODIFY_ALT(alt_text_color, mAltTextColor, SyncImp())
-    SYNC_PROP_MODIFY_ALT(mat, mMat, SyncImp())
-    SYNC_PROP(x_offset, mXOffset)
-    SYNC_PROP(y_offset, mYOffset)
-    SYNC_PROP(z_offset, mZOffset) {
-        static Symbol _s("allow_shift");
-        if (sym == _s) {
-            if (_op == kPropSet) {
-                mAllowShift = _val.Int();
-            } else
-                _val = DataNode(mAllowShift);
-            return true;
-        }
-    }
-    {
-        static Symbol _s("allow_line_rotation");
-        bool bit = mAllowLineRotation;
-        if (sym == _s) {
-            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
-            mAllowLineRotation = bit;
-            if (!(_op & (kPropSize | kPropGet))) {
-                SyncImp();
-            }
-            return ret;
-        }
-    }
+    SYNC_PROP(environ, mEnviron)
     {
         static Symbol _s("allow_rotation");
         int bit = mAllowRotation;
@@ -445,6 +405,21 @@ BEGIN_PROPSYNCS(TrackWidget)
             return ret;
         }
     }
+    SYNC_PROP(base_length, mBaseLength)
+    SYNC_PROP(base_width, mBaseWidth)
+    {
+        static Symbol _s("max_meshes");
+        if (sym == _s) {
+            if (_op == kPropSet) {
+                mMaxMeshes = _val.Int();
+            } else
+                _val = DataNode(mMaxMeshes);
+            return true;
+        }
+    }
+    SYNC_PROP_MODIFY_ALT(font, mFont, SyncImp())
+    SYNC_PROP_MODIFY_ALT(text_obj, mTextObj, SyncImp())
+    SYNC_PROP_MODIFY(text_alignment, (int &)mTextAlignment, SyncImp())
     {
         static Symbol _s("chars_per_inst");
         int bit = mCharsPerInst;
@@ -469,12 +444,40 @@ BEGIN_PROPSYNCS(TrackWidget)
             return ret;
         }
     }
+    SYNC_PROP_MODIFY_ALT(text_color, mTextColor, SyncImp())
+    SYNC_PROP_MODIFY_ALT(alt_text_color, mAltTextColor, SyncImp())
+    SYNC_PROP_MODIFY_ALT(mat, mMat, SyncImp())
     {
         static Symbol _s("widget_type");
         int bit = mWidgetType;
         if (sym == _s) {
             bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
             mWidgetType = bit;
+            if (!(_op & (kPropSize | kPropGet))) {
+                SyncImp();
+            }
+            return ret;
+        }
+    }
+    SYNC_PROP(x_offset, mXOffset)
+    SYNC_PROP(y_offset, mYOffset)
+    SYNC_PROP(z_offset, mZOffset)
+    {
+        static Symbol _s("allow_shift");
+        if (sym == _s) {
+            if (_op == kPropSet) {
+                mAllowShift = _val.Int();
+            } else
+                _val = DataNode(mAllowShift);
+            return true;
+        }
+    }
+    {
+        static Symbol _s("allow_line_rotation");
+        bool bit = mAllowLineRotation;
+        if (sym == _s) {
+            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
+            mAllowLineRotation = bit;
             if (!(_op & (kPropSize | kPropGet))) {
                 SyncImp();
             }

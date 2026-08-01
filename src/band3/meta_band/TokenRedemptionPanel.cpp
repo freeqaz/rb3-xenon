@@ -180,6 +180,15 @@ DataNode TokenRedemptionPanel::OnMsg(const ButtonDownMsg &msg) {
 
 DataNode TokenRedemptionPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
     static Message token_msg("token_redemption_msg", gNullStr);
+    static Symbol token_redemption_ready("token_redemption_ready");
+    static Symbol token_redemption_purchased("token_redemption_purchased");
+    static Symbol token_redemption_not_found("token_redemption_not_found");
+    static Symbol token_redemption_other_player("token_redemption_other_player");
+    static Symbol token_redemption_too_late("token_redemption_too_late");
+    static Symbol token_redemption_too_early("token_redemption_too_early");
+    static Symbol token_redemption_wrong_platform("token_redemption_wrong_platform");
+    static Symbol token_redemption_error("token_redemption_error");
+    static Symbol token_error_no_previous_offers("token_error_no_previous_offers");
     int state = mRedemptionState;
     if (state != kRequestingOffers && state != kRequestingPreviousOffers) {
         return 1;
@@ -223,35 +232,47 @@ DataNode TokenRedemptionPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
                 EnumerateOffers(u);
             }
             return 1;
-        case 0xA0006:
+        case 0xA0006: {
+            static Symbol token_redemption_purchased("token_redemption_purchased");
             MILO_ASSERT(mRedemptionState == kReportingPurchase, 0x1EA);
             token_msg[0] = token_redemption_purchased;
             break;
-        case 0x800A0003:
+        }
+        case 0x800A0003: {
+            static Symbol token_redemption_not_found("token_redemption_not_found");
             MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1F1);
             mResultList.Clear();
             token_msg[0] = token_redemption_not_found;
             break;
-        case 0x800A0005:
+        }
+        case 0x800A0005: {
+            static Symbol token_redemption_other_player("token_redemption_other_player");
             MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1F7);
             mResultList.Clear();
             token_msg[0] = token_redemption_other_player;
             break;
-        case 0x800A0008:
+        }
+        case 0x800A0008: {
+            static Symbol token_redemption_too_late("token_redemption_too_late");
             MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1FD);
             mResultList.Clear();
             token_msg[0] = token_redemption_too_late;
             break;
-        case 0x800A0009:
+        }
+        case 0x800A0009: {
+            static Symbol token_redemption_too_early("token_redemption_too_early");
             MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x203);
             mResultList.Clear();
             token_msg[0] = token_redemption_too_early;
             break;
-        case 0x800A000B:
+        }
+        case 0x800A000B: {
+            static Symbol token_redemption_wrong_platform("token_redemption_wrong_platform");
             MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x209);
             mResultList.Clear();
             token_msg[0] = token_redemption_wrong_platform;
             break;
+        }
         default:
             token_msg[0] = errSym;
             break;

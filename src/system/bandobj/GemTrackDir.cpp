@@ -284,26 +284,22 @@ void GemTrackDir::SyncObjects() {
     if (!mChordShapeGen)
         mChordShapeGen = Find<RndDir>("RG_chord_generator", true)
                              ->Find<ChordShapeGenerator>("ChordShapeGenerator01", true);
-    bool b1 = true;
-    if (mTrackInstrument != kInstRealBass && mTrackInstrument != kInstRealGuitar)
-        b1 = false;
-    if (!mFingerShape && b1) {
-        SyncFingerFeedback();
+    if (!mFingerShape) {
         RndDir *outlinedir = Find<RndDir>("chord_shape_outline", true);
+        mFingerShape = new FingerShape(outlinedir);
         RndGroup *outline = outlinedir->Find<RndGroup>("outline.grp", true);
         RndGroup *smash = Find<RndGroup>("rg_smasher_glow.grp", true);
         for (int i = 0; i < 6; i++) {
-            RndMesh *mesh = outlinedir->Find<RndMesh>(
-                MakeString("gem_smasher_glow_%d.mesh", i), true
-            );
+            const char *nm = MakeString("gem_smasher_glow_%d.mesh", i);
+            RndMesh *mesh = outlinedir->Find<RndMesh>(nm, true);
             outline->RemoveObject(mesh);
             smash->AddObject(mesh, 0);
         }
     }
-    if (!mArpShapePool && b1) {
+    if (!mArpShapePool) {
         ObjectDir *arpdir = Find<ObjectDir>("arpeggio_source", true);
         RndGroup *shapesgrp = Find<RndGroup>("arpeggio_shapes.grp", true);
-        mArpShapePool = new ArpeggioShapePool(arpdir, shapesgrp, 15);
+        mArpShapePool = new ArpeggioShapePool(arpdir, shapesgrp, 12);
     }
 }
 

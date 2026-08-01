@@ -50,6 +50,7 @@ void JoinRequestMsg::Save(BinStream &bs) const {
 }
 
 void JoinRequestMsg::Load(BinStream &bs) {
+    bs.Read(&mXnAddr, sizeof(mXnAddr));
     unsigned char numusers;
     bs >> numusers;
     for (int i = 0; i < numusers; i++) {

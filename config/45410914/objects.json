@@ -89,7 +89,13 @@
                     "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
-            "system/bandobj/BandLeadMeter.cpp": "NonMatching",
+            "system/bandobj/BandLeadMeter.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/bandobj/BandDirector.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -134,7 +140,8 @@
             "system/bandobj/StarDisplay.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/MicInputArrow.cpp": "NonMatching",
@@ -168,7 +175,8 @@
             "system/bandobj/SongSectionController.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/StreakMeter.cpp": "NonMatching",
@@ -191,15 +199,26 @@
                 ]
             },
             "system/bandobj/BandPatchMesh.cpp": "NonMatching",
-            "system/bandobj/GemTrackDir.cpp": "NonMatching",
-            "system/bandobj/NoteTube.cpp": "NonMatching",
-            "system/bandobj/PitchArrow.cpp": {
+            "system/bandobj/GemTrackDir.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
-            "system/bandobj/BandHighlight.cpp": "NonMatching",
+            "system/bandobj/NoteTube.cpp": "NonMatching",
+            "system/bandobj/PitchArrow.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
+            "system/bandobj/BandHighlight.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "system/bandobj/OutfitConfig.cpp": "NonMatching",
             "system/bandobj/LayerDir.cpp": {
                 "status": "NonMatching",
@@ -212,7 +231,8 @@
             "system/track/TrackWidget.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
             "system/beatmatch/GuitarController.cpp": "NonMatching",
@@ -695,7 +715,12 @@
             "system/flow/FlowAnimate.cpp": "NonMatching",
             "system/rndobj/Rnd_NG.cpp": "NonMatching",
             "system/char/CharClipDriver.cpp": "NonMatching",
-            "system/char/CharLookAt.cpp": "NonMatching",
+            "system/char/CharLookAt.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_NOTIFY_ONCE_EVAL"
+                ]
+            },
             "system/char/CharHair.cpp": "NonMatching",
             "system/flow/FlowSwitch.cpp": "NonMatching",
             "system/char/CharUtl.cpp": "NonMatching",
