@@ -1291,7 +1291,6 @@ FreeCamera.cpp:
 	.pdata      start:0x82215C10 end:0x82215C60
 	.text       start:0x824ED460 end:0x824ED4FC
 	.text       start:0x824ED500 end:0x824EDF04
-	.text       start:0x82A9FD08 end:0x82A9FD18
 
 FileChecksum.cpp:
 	.pdata      start:0x82215C60 end:0x82215C70
@@ -6037,9 +6036,6 @@ CameraManager.cpp:
 	.pdata      start:0x82222218 end:0x82222220
 	.pdata      start:0x82222220 end:0x822222B0
 	.pdata      start:0x822222B8 end:0x822222C0
-	.pdata      start:0x822569B0 end:0x822569D8
-	.pdata      start:0x822569D8 end:0x822569F8
-	.pdata      start:0x822569F8 end:0x82256A08
 	.text       start:0x824B9ED8 end:0x824BBE38
 	.text       start:0x824BBE9C end:0x824BD6B8
 	.text       start:0x824D6F68 end:0x824D6FDC
@@ -6047,10 +6043,6 @@ CameraManager.cpp:
 	.text       start:0x825ACD30 end:0x825ACEB4
 	.text       start:0x825ACEC0 end:0x825AD768
 	.text       start:0x825AD7A4 end:0x825AD810
-	.text       start:0x82B02748 end:0x82B02C08
-	.text       start:0x82B02C08 end:0x82B03000
-	.text       start:0x82B03000 end:0x82B031A0
-	.text       start:0x82B031A0 end:0x82B03360
 
 UITrigger.cpp:
 	.pdata      start:0x82238558 end:0x82238560
@@ -6717,10 +6709,6 @@ SpotlightDrawer_NG.cpp:
 	.text       start:0x824D1930 end:0x824D199C
 	.text       start:0x824D19A0 end:0x824D4C28
 
-TimeConversion.cpp:
-	.pdata      start:0x82250980 end:0x82250988
-	.text       start:0x82A6DE40 end:0x82A6DE84
-
 Trans.cpp:
 	.pdata      start:0x821F6540 end:0x821F6548
 	.pdata      start:0x822092E8 end:0x822092F0
@@ -6800,9 +6788,7 @@ vec.cpp:
 	.text       start:0x8240B0F0 end:0x8240B208
 
 HamDriver.cpp:
-	.pdata      start:0x82252398 end:0x822523A0
 	.text       start:0x824F6EB8 end:0x824F6EC4
-	.text       start:0x82A99170 end:0x82A991B4
 
 Graph.cpp:
 	.pdata      start:0x8220EC20 end:0x8220EC50
@@ -6813,7 +6799,6 @@ Graph.cpp:
 	.pdata      start:0x8220EC90 end:0x8220ECA0
 	.pdata      start:0x8220ECA0 end:0x8220ECA8
 	.pdata      start:0x822382D0 end:0x822382D8
-	.pdata      start:0x82253120 end:0x82253128
 	.text       start:0x824644E0 end:0x824646B8
 	.text       start:0x824646B8 end:0x82464890
 	.text       start:0x82464890 end:0x82464920
@@ -6822,7 +6807,6 @@ Graph.cpp:
 	.text       start:0x82464A50 end:0x82464B18
 	.text       start:0x82464B18 end:0x82464BCC
 	.text       start:0x8270AAC0 end:0x8270AB08
-	.text       start:0x82AADA28 end:0x82AADA68
 
 ssluse.c:
 	.pdata      start:0x82255508 end:0x82255510
@@ -7493,10 +7477,6 @@ CharIKSliderMidi.cpp:
 	.text       start:0x823CB350 end:0x823CBF28
 	.text       start:0x823F0310 end:0x823F0354
 
-Crowd3DCharHandle.cpp:
-	.pdata      start:0x82252190 end:0x82252198
-	.text       start:0x82A963D8 end:0x82A964E4
-
 FlowSwitchCase.cpp:
 	.pdata      start:0x82204EC0 end:0x82204EC8
 	.text       start:0x823B08D0 end:0x823B0914
@@ -7636,10 +7616,6 @@ LocaleOrdinal.cpp:
 	.text       start:0x827CF0D0 end:0x827CF860
 	.text       start:0x827CF860 end:0x827CF888
 
-VirtualKeyboard_Xbox.cpp:
-	.pdata      start:0x82250950 end:0x82250958
-	.text       start:0x82A6DC40 end:0x82A6DCC0
-
 FlowWhile.cpp:
 	.pdata      start:0x821FE950 end:0x821FE958
 	.pdata      start:0x821FE978 end:0x821FE980
@@ -7648,10 +7624,6 @@ FlowWhile.cpp:
 	.text       start:0x823423DC end:0x82342438
 	.text       start:0x82342680 end:0x823426F8
 	.text       start:0x82402F68 end:0x82402FA0
-
-GlitchFinder.cpp:
-	.pdata      start:0x822513D8 end:0x822513E0
-	.text       start:0x82A7FAE0 end:0x82A7FC24
 
 SessionJobs_Xbox.cpp:
 	.pdata      start:0x82208DA0 end:0x82208DA8
@@ -11727,7 +11699,6 @@ BandSongMgr.cpp:
 	.pdata      start:0x8221ECD0 end:0x8221ECD8
 	.pdata      start:0x8221ECE8 end:0x8221ECF0
 	.pdata      start:0x8223DC40 end:0x8223DC48
-	.pdata      start:0x82255468 end:0x82255470
 	.text       start:0x8256A100 end:0x8256A150
 	.text       start:0x825754B0 end:0x82575C28
 	.text       start:0x82575C28 end:0x82575C88
@@ -11740,7 +11711,6 @@ BandSongMgr.cpp:
 	.text       start:0x8257AF48 end:0x8257B0D8
 	.text       start:0x8276FCE0 end:0x8276FD10
 	.text       start:0x827740E0 end:0x82774148
-	.text       start:0x82AE4520 end:0x82AE45EC
 
 CampaignLevel.cpp:
 	.pdata      start:0x8222D978 end:0x8222D990
