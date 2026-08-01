@@ -905,6 +905,37 @@ namespace {
         // the only geometry there is, or the consumer drives
         // Character::DrawShowing and lets DrawLodOrShadow choose. Both are
         // X4-shaped; neither is a xenon change.
+        // ⚠ THE VIEWPORT DEPTH RANGE IS [0,0] UNLESS SOMEONE SETS IT.
+        //
+        // NgRnd::Viewport's default ctor zeroes all six fields (rndobj/Rnd_NG.h:18
+        // — and DC3's copy is byte-identical, so this is a SHARED default, not a
+        // xenon divergence). WgpuRnd::ApplyViewport (Rnd_Wgpu.cpp:566-574) papers
+        // over zero Width/Height by substituting the render-target size, but it
+        // passes MinZ/MaxZ THROUGH: wgpu SetViewport(x, y, w, h, 0.0f, 0.0f).
+        //
+        // A [0,0] depth range is legal and does not stop anything rasterising —
+        // which is exactly why it is dangerous. Every fragment's depth is forced
+        // to 0, so the depth buffer stops discriminating and draw order silently
+        // becomes paint order. On a single-mesh subject nothing looks wrong; on a
+        // venue it is wrong everywhere and looks like a material bug.
+        //
+        // Setting it here rather than reporting it is deliberate: the viewport is
+        // the CONSUMER's to establish (on X360, Rnd's own device bring-up does
+        // it), and DC3's viewer gets away without one only because its scenes
+        // have not needed depth to be right. Measured A/B on these two cells: the
+        // PNGs are byte-identical either way, so this changes nothing X3 shows —
+        // it removes a trap X4 would otherwise walk into with a venue.
+        {
+            NgRnd::Viewport v;
+            v.X = 0;
+            v.Y = 0;
+            v.Width = (unsigned int)gWgpuRnd->Gpu().WindowWidth();
+            v.Height = (unsigned int)gWgpuRnd->Gpu().WindowHeight();
+            v.MinZ = 0.0f;
+            v.MaxZ = 1.0f;
+            TheNgRnd.SetViewport(v);
+        }
+
         int lodForced = 0;
         for (int f = 0; f < frames; f++) {
             TheRnd.BeginDrawing();
@@ -1015,7 +1046,18 @@ int main(int argc, char **argv) {
     }
     const char *dataDir = pos[0];
     const char *outDir = pos[1];
-    mkdir(outDir, 0755);
+    // mkdir -p. A single mkdir() silently no-ops on a missing PARENT and the
+    // failure only surfaces four gates later as "coverage 0.00%", which reads
+    // like a renderer bug. (It did, once, during X3 bring-up.)
+    {
+        std::string path(outDir);
+        for (size_t i = 1; i <= path.size(); i++) {
+            if (i == path.size() || path[i] == '/') {
+                std::string part = path.substr(0, i);
+                mkdir(part.c_str(), 0755);
+            }
+        }
+    }
 
     // Per-cell camera framing. The static-mesh cell is a wide flat track piece
     // and the character is a tall narrow figure, so one distance multiplier

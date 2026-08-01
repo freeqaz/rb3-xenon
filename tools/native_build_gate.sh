@@ -131,7 +131,7 @@ KNOWN_TARGETS=(
     rb3-score rb3-score2  rb3-score3  rb3-score4
     rb3-vocal rb3-vocal2  rb3-harmony rb3-crowd
     rb3-save  rb3-ark
-    rb3-frame
+    rb3-frame rb3-milo    rb3-render
 )
 
 STRICT="${NATIVE_GATE_STRICT:-0}"
@@ -195,6 +195,27 @@ conditional_reason() {
         # condition CMake itself branches on.
         local dawn; dawn="$(cache_get Dawn_DIR)"
         if [ -n "$dawn" ] && [ ! -f "$dawn/DawnConfig.cmake" ]; then
+            echo "RB3X_BUILD_ENGINE auto-disabled -- no DawnConfig.cmake at $dawn"
+        fi
+        ;;
+    rb3-milo)
+        # X2. Needs no Dawn and no GPU -- its ONLY engine dependency is the
+        # header-only platform/NativeSettings.h that rndobj/Cam.cpp includes
+        # under #ifdef HX_NATIVE. So the condition is the ENGINE CHECKOUT, not
+        # Dawn, and it is tested the same way CMake tests it: file existence.
+        local eng; eng="$(cache_get MILO_ENGINE_PATH)"
+        if [ -n "$eng" ] && [ ! -f "$eng/src/platform/NativeSettings.h" ]; then
+            echo "no milo-native-engine checkout at $eng (needs platform/NativeSettings.h)"
+        fi
+        ;;
+    rb3-render)
+        # X3. Needs BOTH -- it links libmilo-engine.a (so Dawn) and it lives
+        # inside the rb3-milo block (so the checkout). Report whichever is
+        # actually absent; if neither is, silence, and the target must be there.
+        local eng dawn; eng="$(cache_get MILO_ENGINE_PATH)"; dawn="$(cache_get Dawn_DIR)"
+        if [ -n "$eng" ] && [ ! -f "$eng/src/platform/NativeSettings.h" ]; then
+            echo "no milo-native-engine checkout at $eng"
+        elif [ -n "$dawn" ] && [ ! -f "$dawn/DawnConfig.cmake" ]; then
             echo "RB3X_BUILD_ENGINE auto-disabled -- no DawnConfig.cmake at $dawn"
         fi
         ;;
