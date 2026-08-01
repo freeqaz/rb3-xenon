@@ -90,21 +90,25 @@ const char *SortViewSetting::GetCurrentStatus() const {
     return Localize(TheMusicLibrary->GetCurrentSortName(true), nullptr);
 }
 
+// Retail fn_825D4608 (43 instructions) writes ONE short-circuit expression: it
+// accumulates into a single scratch register (li r11,1 / li r11,0) and byte-masks
+// once at the return (`clrlwi r3,r11,24`). The two bool locals this used to carry
+// (`ok`, `signedIn`) cost two extra callee-saved registers -- retail's prologue
+// saves only r31 (`std r31,-0x10(r1)`) where ours reached for __savegprlr_29 --
+// plus their `li r29,0`/`li r30,0` initialisers. Retail also inlines
+// TheRockCentral.IsOnline() to a field compare (`lwz r11,0x38(TheRockCentral)` /
+// `cmpwi r11,0x2`), which only happens when it sits inside the same expression.
 bool SortViewSetting::IsActive(int idx) const {
     if (idx == 4) {
-        bool ok = false;
-        bool signedIn = false;
-        if (TheProfileMgr.HasPrimaryProfile()) {
-            BandProfile *prof = TheProfileMgr.GetPrimaryProfile();
-            LocalBandUser *user = prof->GetAssociatedLocalBandUser();
-            if (ThePlatformMgr.IsUserSignedIntoLive(user)) {
-                signedIn = true;
-            }
-        }
-        if (signedIn && TheRockCentral.IsOnline()) {
-            ok = true;
-        }
-        return ok;
+        // GetPrimaryProfile(), not HasPrimaryProfile(): retail tests the full
+        // 32-bit result (`cmplwi r3,0x0`), which is a POINTER test -- a bool
+        // return would be byte-masked (`clrlwi. r11,r3,24`). fn_82545DD8 is
+        // duly called twice, once per use.
+        return TheProfileMgr.GetPrimaryProfile()
+            && ThePlatformMgr.IsUserSignedIntoLive(
+                   TheProfileMgr.GetPrimaryProfile()->GetAssociatedLocalBandUser()
+               )
+            && TheRockCentral.IsOnline();
     }
     return true;
 }
@@ -181,29 +185,34 @@ void FilterViewSetting::Custom(int, int idx, UIListCustom *, Hmx::Object *obj)
 
 int FilterViewSetting::NumData() const { return mFilters.size(); }
 
+// Retail fn_825D5E88 is only 58 instructions and contains NO DataArray allocation
+// and NO Release (lane CF-7, read off the asm). The hand-rolled `new DataArray(2)`
+// inherited from the rb3-Wii DEV source was ~60 instructions of pure excess:
+// retail calls the TEMPLATED overload ??$SetTokenFmt@PAD@UILabel@@QAAXVSymbol@@PAD@Z
+// = SetTokenFmt(Symbol, char*), which builds the DataArrayPtr internally and
+// already places the token at Node(0) and the argument at Node(1) -- so the
+// ordering bug the old comment documented stays fixed, it is just fixed by the
+// library rather than by hand.
+//
+// Two other retail details:
+//  * LocalizeSeparatedInt is called with ONE argument (r3 = count only; no r4 is
+//    set up at the call site), i.e. the `LocalizeSeparatedInt(int)` overload, not
+//    the `(int, Locale&)` one.
+//  * The two function-local statics are initialised BEFORE the count is loaded
+//    (guard blocks at 0x825D5ED4-0x825D5F30 precede `lwz r3,0x4(r11)`), so they
+//    must be declared ahead of `count`. Guard word lbl_82DFFB04:
+//    bit 0x1 = song_select_song (lbl_820B0C14), bit 0x2 = song_select_songs
+//    (lbl_820B0C00) -- singular first.
 void FilterViewSetting::Text(int, int idx, UIListLabel *slot, UILabel *label)
     const {
-    int _tmp0 = slot->Matches("name");
-    if (_tmp0) {
+    if (slot->Matches("name")) {
         label->SetTextToken(mFilters[idx].mSym);
     } else {
-        int count = mFilters[idx].mCount;
         static Symbol song_select_song("song_select_song");
         static Symbol song_select_songs("song_select_songs");
+        int count = mFilters[idx].mCount;
         Symbol fmt = (count == 1) ? song_select_song : song_select_songs;
-        DataNode word(fmt);
-        DataNode num(LocalizeSeparatedInt(count, TheLocale));
-        DataArray *da = new DataArray(2);
-        // Node(0) must be the locale-symbol token; Node(1) the substitution arg.
-        // SetTokenFmt calls ForceSym(0) to get the symbol to localize, then
-        // loops from index 1 onward to feed format arguments. The original code
-        // had num first (kDataString) and word second (kDataSymbol), which made
-        // ForceSym(0) intern the count string ("30") as a symbol, fail the
-        // locale lookup, and show the count instead of "30 Songs".
-        da->Node(0) = word;
-        da->Node(1) = num;
-        label->SetTokenFmt(da);
-        da->Release();
+        label->SetTokenFmt(fmt, LocalizeSeparatedInt(count));
     }
 }
 

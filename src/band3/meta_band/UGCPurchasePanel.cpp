@@ -39,7 +39,18 @@ void UGCPurchasePanel::Unload() {
     UIPanel::Unload();
 }
 
+// Retail fn_8263EDF0 (0x450). Three function-local statics share the packed guard
+// word lbl_82E01730, and the bit indices give the declaration order (lane CF-7,
+// read off the asm; strings from band.exe):
+//   0x1 Symbol  demo_upgrade       -- initialised at function TOP, BEFORE the
+//                                     UIPanel::Poll() call, so it must be declared
+//                                     first even though its only use is in case 3
+//   0x2 Message checkout_failed    -- case 5
+//   0x4 Message checkout_finished  -- case 6
+// MSVC emits the guard AT the declaration point and does not hoist, so the
+// placement above is load-bearing, not cosmetic.
 void UGCPurchasePanel::Poll() {
+    static Symbol demo_upgrade("demo_upgrade");
     UIPanel::Poll();
     switch (mPurchaseState) {
     case 1:
@@ -73,10 +84,14 @@ void UGCPurchasePanel::Poll() {
             mPurchaser = 0;
         }
         break;
-    case 5:
+    case 5: {
         mPurchaseState = 0;
-        Handle(checkout_failed_msg, false);
+        // Retail uses a FUNCTION-LOCAL static here (guard bit 0x2 of lbl_82E01730,
+        // ctor string lbl_820CE060 = "checkout_failed"), not the interned global.
+        static Message checkout_failed("checkout_failed");
+        Handle(checkout_failed, false);
         break;
+    }
     case 6: {
         mPurchaseState = 0;
         static Message msg("checkout_finished", 0);
