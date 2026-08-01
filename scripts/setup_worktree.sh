@@ -204,9 +204,88 @@ if [ "$WARM_CACHE" -eq 1 ]; then
     # only the FIRST creation after a landing pays the small incremental rebuild
     # and every other worktree reflinks an already-warm cache for free. Non-fatal:
     # main may be mid-repair (a common reason to spin up a worktree).
-    echo "==> Refreshing main's object cache (amortized; no-op if already current)"
-    ( cd "$MAIN_REPO" && ./tools/ninja-locked all_source ) >/dev/null 2>&1 \
-        || echo "  WARN: main cache refresh failed (non-fatal; worktree will rebuild what's stale)" >&2
+    #
+    # ⚠ THIS BUILDS IN THE SHARED MAIN TREE, AND A BUILD RUNS THE SPLIT.
+    # `ninja all_source` cannot avoid it: `build/$VERSION/config.json` is an
+    # input to the build.ninja generator edge, so ninja brings config.json (=
+    # the `split` rule) up to date before ANY target. The split's depfile inputs
+    # are orig/default.xex + config/$VERSION/splits.txt + config/$VERSION/
+    # symbols.txt — two of which the split itself REWRITES (jeff split.rs
+    # split_pdata clears the whole .pdata split set and re-derives one range per
+    # .text block). So whenever main's splits.txt carries .text edits whose
+    # .pdata has not been derived yet — the normal state right after a
+    # splits-touching patch is landed, since lanes land by patch and never
+    # rebuild main — this line silently rewrites a TRACKED file in the shared
+    # tree, out from under whatever agent owns it.
+    #
+    # MEASURED (lane CF-9, 2026-08-01):
+    #   * settled main: the split rewrites NOTHING — splits.txt/symbols.txt keep
+    #     their exact mtimes, git status stays clean. Two worktree creations on a
+    #     clean main left main clean. So this is NOT an every-dispatch bug.
+    #   * unsettled: after removing 12 .text blocks, one build rewrote
+    #     splits.txt (sha1 ee47802b -> 9fbd4133, 10 derived .pdata lines).
+    #     Non-idempotency confirmed.
+    # Consequence: main goes dirty under config/, which trips the `_changed`
+    # gate below, so EVERY worktree created afterwards silently falls back to a
+    # full ~1095-object rebuild instead of a 0-compile no-op — and slower
+    # worktrees push the fleet toward its <=4-concurrent-build cap.
+    #
+    # Fix, in two parts, both scoped as narrowly as possible because writing to
+    # a shared tree is the hazard we are removing, not one to add more of:
+    #   (1) PRE-FLIGHT: if main already has uncommitted config/ changes, some
+    #       agent owns that file — do not build in their tree at all. Skipping
+    #       costs nothing we had: a dirty config/ already fails the seeding gate,
+    #       so those worktrees were going to rebuild either way.
+    #   (2) POST-FLIGHT: otherwise config/ was CLEAN when we started, so any
+    #       config/ change now is provably OUR side effect and restoring it to
+    #       HEAD cannot destroy anyone's work. We still re-verify the file is
+    #       byte-identical to what our own build produced before restoring, so a
+    #       third party writing inside the window is left alone.
+    # RB3_WT_ALLOW_MAIN_MUTATION=1 opts out of the restore (debugging only).
+    _refresh_skip=""
+    if ! git -C "$MAIN_REPO" diff --quiet -- config/ 2>/dev/null \
+       || ! git -C "$MAIN_REPO" diff --quiet --cached -- config/ 2>/dev/null; then
+        _refresh_skip="main has uncommitted config/ changes (another agent owns them)"
+    fi
+    if [ -n "$_refresh_skip" ]; then
+        echo "==> SKIPPING main object-cache refresh: $_refresh_skip"
+        echo "    (refusing to run the split in the shared tree; worktree rebuilds what's stale)"
+    else
+        # config/ is clean here, so record HEAD-state hashes of exactly the two
+        # tracked files the split rewrites.
+        _split_outputs="config/$VERSION/splits.txt config/$VERSION/symbols.txt"
+        _pre_hashes="$( cd "$MAIN_REPO" && sha1sum $_split_outputs 2>/dev/null || true )"
+
+        echo "==> Refreshing main's object cache (amortized; no-op if already current)"
+        ( cd "$MAIN_REPO" && ./tools/ninja-locked all_source ) >/dev/null 2>&1 \
+            || echo "  WARN: main cache refresh failed (non-fatal; worktree will rebuild what's stale)" >&2
+
+        _post_hashes="$( cd "$MAIN_REPO" && sha1sum $_split_outputs 2>/dev/null || true )"
+        if [ "$_pre_hashes" != "$_post_hashes" ]; then
+            if [ "${RB3_WT_ALLOW_MAIN_MUTATION:-0}" -eq 1 ]; then
+                echo "  WARN: the split rewrote main's $_split_outputs; leaving it dirty" >&2
+                echo "        (RB3_WT_ALLOW_MAIN_MUTATION=1). Subsequent worktrees will NOT be seeded." >&2
+            else
+                for _f in $_split_outputs; do
+                    # Restore ONLY files that (a) we saw clean, (b) actually changed,
+                    # and (c) still hold exactly the bytes our build wrote — so a
+                    # concurrent writer in the window is never clobbered.
+                    _now="$( cd "$MAIN_REPO" && sha1sum "$_f" 2>/dev/null || true )"
+                    case "$_post_hashes" in
+                        *"$_now"*) ;;
+                        *) echo "  WARN: $_f changed again after our build — leaving it alone" >&2
+                           continue ;;
+                    esac
+                    case "$_pre_hashes" in
+                        *"$_now"*) continue ;;   # unchanged by us
+                    esac
+                    git -C "$MAIN_REPO" checkout -- "$_f" 2>/dev/null \
+                        && echo "  restored main's $_f (split-derived churn undone; main stays clean)" \
+                        || echo "  WARN: could not restore main's $_f" >&2
+                done
+            fi
+        fi
+    fi
 
     echo "==> build/$VERSION/  (reflink copy — private build dir + WARM object cache)"
     reflink_dir_besteffort "$MAIN_REPO/build/$VERSION" "$WT_BUILD"
