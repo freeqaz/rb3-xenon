@@ -473,7 +473,10 @@ BandCharacter.cpp:
 	.text       start:0x8227ABC8 end:0x8227AC40
 	.text       start:0x8227AE48 end:0x8227AEA0
 	.text       start:0x8227AEA0 end:0x8227AF48
-	.text       start:0x8227AFA0 end:0x8227C6D0
+	.text       start:0x8227AFA0 end:0x8227B408
+	.text       start:0x8227B4A8 end:0x8227B9B8
+	.text       start:0x8227BA58 end:0x8227BB98
+	.text       start:0x8227BC38 end:0x8227C6D0
 	.text       start:0x8227C6D0 end:0x8227C968
 	.text       start:0x8227C968 end:0x8227C9F8
 	.text       start:0x8227C9F8 end:0x8227DF28
@@ -2769,6 +2772,7 @@ UI.cpp:
 	.text       start:0x8251CD08 end:0x8251CE24
 	.text       start:0x8268B9A0 end:0x8268B9EC
 	.text       start:0x828024B0 end:0x82802530
+	.text       start:0x82802530 end:0x82802588
 	.text       start:0x82802588 end:0x828025A8
 	.text       start:0x828025B0 end:0x82802630
 	.text       start:0x82802630 end:0x82802688
@@ -2845,7 +2849,9 @@ LightPreset.cpp:
 	.text       start:0x82380A44 end:0x82380A70
 	.text       start:0x82381088 end:0x823810F4
 	.text       start:0x824AA460 end:0x824AA4D8
-	.text       start:0x824AA6B8 end:0x824AAEA4
+	.text       start:0x824AA6B8 end:0x824AA8A8
+	.text       start:0x824AA930 end:0x824AAA70
+	.text       start:0x824AAB10 end:0x824AAEA4
 	.text       start:0x824AAEA8 end:0x824B4390
 	.text       start:0x824B43F8 end:0x824B5570
 	.text       start:0x824B55A0 end:0x824B8818
@@ -3777,6 +3783,7 @@ CharIKFingers.cpp:
 HamPhotoDisplay.cpp:
 	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F79E0 end:0x821F79E8
+	.text       start:0x8227B9B8 end:0x8227BA58
 	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822D38B0 end:0x822D3900
 
@@ -7300,6 +7307,7 @@ system/synth_xbox/SynthSample.cpp:
 	.pdata      start:0x8225B678 end:0x8225B680
 	.text       start:0x82B6C6F8 end:0x82B6C7B0
 	.text       start:0x82B6C7C0 end:0x82B6C830
+	.text       start:0x82B6C850 end:0x82B6C8F0
 
 CrazeHollaback.cpp:
 	.pdata      start:0x821F6860 end:0x821F6868
@@ -7540,9 +7548,11 @@ Gesture.cpp:
 	.pdata      start:0x821FB898 end:0x821FB8A8
 	.pdata      start:0x821FBB08 end:0x821FBB10
 	.pdata      start:0x8223D1A8 end:0x8223D1B8
+	.text       start:0x8227BB98 end:0x8227BC38
 	.text       start:0x82310C40 end:0x82310D60
 	.text       start:0x82310E38 end:0x82310E44
 	.text       start:0x823134F8 end:0x8231355C
+	.text       start:0x82329778 end:0x82329810
 	.text       start:0x82768A98 end:0x82768B08
 
 CharGuitarString.cpp:
@@ -11557,7 +11567,8 @@ LayerDir.cpp:
 	.text       start:0x823263F0 end:0x8232645C
 	.text       start:0x82326500 end:0x82326D1C
 	.text       start:0x82327608 end:0x82327878
-	.text       start:0x823278F0 end:0x82329B14
+	.text       start:0x823278F0 end:0x82329778
+	.text       start:0x82329810 end:0x82329B14
 
 PitchArrow.cpp:
 	.pdata      start:0x821F2080 end:0x821F2090
@@ -12181,7 +12192,8 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82728028 end:0x82728CFC
 	.text       start:0x82728E38 end:0x82728FDC
 	.text       start:0x82729080 end:0x827291F4
-	.text       start:0x82B6C844 end:0x82B6CAF8
+	.text       start:0x82B6C844 end:0x82B6C850
+	.text       start:0x82B6C8F0 end:0x82B6CAF8
 	.text       start:0x82B801A8 end:0x82B801D4
 
 SpeechMgr.cpp:
@@ -13105,3 +13117,10 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.pdata      start:0x822416D0 end:0x822416D8
 	.text       start:0x827B78F8 end:0x827B7950
 	.text       start:0x827B7DC8 end:0x827B7E60
+
+system/world/World.cpp:
+	.text       start:0x824AA8A8 end:0x824AA930
+	.text       start:0x824AAA70 end:0x824AAB10
+
+system/hamobj/PhotoSpotlightPositioner.cpp:
+	.text       start:0x8227B408 end:0x8227B4A8
