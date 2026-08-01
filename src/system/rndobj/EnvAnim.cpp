@@ -8,11 +8,20 @@
 
 RndEnvAnim::RndEnvAnim() : mEnviron(this), mKeysOwner(this, this) {}
 
+// X360 only. The whole point of this specialization is to release via the
+// ObjRefConcrete::mOwner member, and mOwner exists ONLY in the retail arm of
+// obj/ObjPtr_p.h (the `#else` at :74-140); the HX_NATIVE arm (:19-73) has a
+// two-member ObjRefConcrete whose dtor releases via `this`. So natively there
+// is nothing to specialize -- and EnvAnim.h's matching declaration is likewise
+// #ifndef'd, so native TUs use the primary template uniformly and no ODR
+// hazard is created between this TU and the ones that instantiate implicitly.
+#ifndef HX_NATIVE
 template <>
 ObjRefConcrete<RndEnvAnim, ObjectDir>::~ObjRefConcrete() {
     if (mObject)
         mObject->Release(this->RefOwner());
 }
+#endif
 
 void RndEnvAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {

@@ -64,9 +64,16 @@ void UTF8ToUpper(unsigned short, char *);
 // Self-verifying layout gates. Every one of these is MEASURED in
 // docs/decomp/rndtext-retail-layout.md; if a header edit ever moves them the
 // build breaks here instead of silently scoring 0%.
+// ...on the X360 (ILP32) side only. Every one of these three sizes counts
+// pointers, so all three are wrong by construction under LP64 -- e.g. RndText
+// grows past 0x1c8. Guarded exactly like rndobj/Cam.cpp:22-24's
+// `static_assert(sizeof(Frustum) == 0x60)`. The gate keeps its full force where
+// it means something (the match build); natively it is noise.
+#ifndef HX_NATIVE
 typedef char _rndtext_size_check[sizeof(RndText) == 0x1c8 ? 1 : -1];
 typedef char _rndtext_style_size_check[sizeof(RndText::Style) == 0x24 ? 1 : -1];
 typedef char _rndtext_line_size_check[sizeof(RndText::Line) == 0x78 ? 1 : -1];
+#endif
 
 std::set<RndText *> RndText::mTextMeshSet;
 

@@ -1911,7 +1911,15 @@ void BandCharacter::Compress(RndTex *tex, bool b) {
     tex->Compress((RndTex::AlphaCompress)b);
 }
 
+// See the declaration in BandCharacter.h: the parameter is intptr_t under LP64
+// so the override binds to Rnd::CompressTextureCallback's pure virtual. The
+// body is unchanged -- `i` is compared against a std::list<int> of texture IDs,
+// which narrows identically on ILP32.
+#ifdef HX_NATIVE
+void BandCharacter::TextureCompressed(intptr_t i) {
+#else
 void BandCharacter::TextureCompressed(int i) {
+#endif
     std::list<int>::iterator it;
     for (it = mCompressedTextureIDs.begin();
          it != mCompressedTextureIDs.end() && *it != i;

@@ -12,11 +12,20 @@ operator>>(BinStream &, std::vector<Key<Hmx::Color> > &);
 // Defined here (rather than generically in ObjPtr_p.h) because it needs
 // RndParticleSys's complete type, which the generic header only forward-
 // declares.
+//
+// X360 only, for the same reason as the RndEnvAnim twin in EnvAnim.cpp: the
+// body reads ObjRefConcrete::mOwner, which exists only in the retail arm of
+// ObjPtr_p.h -- and that header only DECLARES this specialization inside the
+// same retail arm (:123). Compiling the definition natively would therefore
+// also be an ODR hazard, not just a compile error: this TU would emit a strong
+// specialization while every other native TU emitted the primary template.
+#ifndef HX_NATIVE
 template <>
 ObjRefConcrete<RndParticleSys, ObjectDir>::~ObjRefConcrete() {
     if (mObject)
         mObject->Release(reinterpret_cast<ObjRefOwner *>(mOwner));
 }
+#endif
 
 #pragma region Hmx::Object
 

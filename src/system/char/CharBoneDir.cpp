@@ -274,7 +274,14 @@ void CharBoneDir::SyncFilter() {
         // before the dtor (only 2 such sites in all of retail).  Same ctor, same
         // frame slot, 4 bytes apart.  MiloStripEval's by-value params reproduce
         // the retail form; MILO_LOG itself must stay comma-form globally.
+        //
+        // MiloStripEval is declared ONLY `#ifndef HX_NATIVE` (os/Debug.h:89) --
+        // it is a retail-codegen device, not a logger. Same guard X1 applied at
+        // utl/ChunkStream.cpp:169 and os/Archive.cpp:266 for the identical
+        // pattern; natively the site is simply dropped.
+#ifndef HX_NATIVE
         MiloStripEval("%s\n", *it);
+#endif
     }
 }
 

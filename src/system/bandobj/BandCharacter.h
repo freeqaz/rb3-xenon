@@ -90,7 +90,19 @@ public:
     virtual bool SetFocusInterest(CharInterest *, int);
     virtual void SetInterestFilterFlags(int);
     virtual void ClearInterestFilterFlags();
+    // Rnd::CompressTextureCallback::TextureCompressed takes intptr_t
+    // (rndobj/Rnd.h:106) and is PURE. On ILP32 `intptr_t == int`, so `int` is a
+    // valid override for X360; under LP64 it is a different type, the override
+    // does not bind, and BandCharacter stays abstract -- which makes
+    // BandCharacter.h:200's NEW_OBJ(BandCharacter) ill-formed and takes down
+    // every TU that reaches this header (X2: rndobj/Console.cpp and
+    // rndobj/Font.cpp, via their bandobj scatter chains). Same split the
+    // sibling callback already uses at gesture/StreamRecorder.h:33-37.
+#ifdef HX_NATIVE
+    virtual void TextureCompressed(intptr_t);
+#else
     virtual void TextureCompressed(int);
+#endif
     virtual RndTex *GetPatchTex(Patch &);
     virtual RndMesh *GetPatchMesh(Patch &);
     virtual RndTex *GetBandLogo();

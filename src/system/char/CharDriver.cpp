@@ -774,8 +774,26 @@ BEGIN_PROPSYNCS(CharDriver)
 #endif
 END_PROPSYNCS
 
-#ifdef HX_NATIVE
-// Template instantiation for std::map<CharClip*, float>
+// STLport-only explicit instantiation of std::map<CharClip*, float>'s red-black
+// tree. INERT ON BOTH SIDES, deliberately.
+//
+// It arrived with the dc3 engine scaffold (c5c1650f) under `#ifdef HX_NATIVE`,
+// which is the wrong polarity twice over: `_Rb_tree`, `less`, `_Select1st`,
+// `priv::_MapTraitsT` and `StlNodeAlloc` are STLport namespace-level names that
+// libstdc++/libc++ do not expose, so this CANNOT compile natively -- and every
+// sibling of this construct in the tree (beatmatch/GameGemList.cpp:13,
+// game/Stats.cpp:9, game/Singer.cpp) is correctly `#ifndef HX_NATIVE`. The
+// polarity bug went unnoticed for as long as char/ was outside the native
+// build; X2 put it in and it failed instantly (5 rndobj TUs reach it through
+// the PropKeys/Utl scatter chain).
+//
+// It is neutralised to `#if 0` rather than flipped to `#ifndef HX_NATIVE`
+// because flipping would ENABLE it on X360, where it has been excluded since it
+// landed -- forcing a COMDAT emission the match build has never seen. That is a
+// match experiment with its own A/B, not an X2 drive-by. `#if 0` preserves the
+// X360 preprocessed token stream exactly (HX_NATIVE is never defined there, so
+// the block was already excluded) while unblocking the native side.
+#if 0
 namespace stlpmtx_std {
 
 template class _Rb_tree<CharClip*, less<CharClip*>, pair<CharClip* const, float>,
